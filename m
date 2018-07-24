@@ -2,106 +2,149 @@ Return-Path: <SRS0=hTZH=KI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A77C9C6778A
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 16:52:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1841AC6778A
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 16:53:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6250B20875
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 16:52:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6250B20875
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id C383E20875
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 16:53:07 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="KUe+Ljla"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C383E20875
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388886AbeGXSAI (ORCPT
+        id S2388735AbeGXSA0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 14:00:08 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:57739 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388673AbeGXSAH (ORCPT
+        Tue, 24 Jul 2018 14:00:26 -0400
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:46011 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388442AbeGXR5F (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 14:00:07 -0400
-Received: from kresse.hi.pengutronix.de ([2001:67c:670:100:1d::2a])
-        by metis.ext.pengutronix.de with esmtp (Exim 4.89)
-        (envelope-from <l.stach@pengutronix.de>)
-        id 1fi0Y7-00007b-CE; Tue, 24 Jul 2018 18:52:35 +0200
-Message-ID: <1532451152.32306.8.camel@pengutronix.de>
-Subject: Re: [PATCH v3 1/2] Revert "ARM: dts: imx7d: Invert legacy PCI irq
- mapping"
-From:   Lucas Stach <l.stach@pengutronix.de>
-To:     Leonard Crestez <leonard.crestez@nxp.com>,
-        Andrey Smirnov <andrew.smirnov@gmail.com>,
-        Richard Zhu <hongxing.zhu@nxp.com>,
-        Shawn Guo <shawnguo@kernel.org>
-Cc:     Anson Huang <Anson.Huang@nxp.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Joao Pinto <Joao.Pinto@synopsys.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Dong Aisheng <aisheng.dong@nxp.com>, linux-imx@nxp.com,
-        kernel@pengutronix.de, linux-pci@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Date:   Tue, 24 Jul 2018 18:52:32 +0200
-In-Reply-To: <ed0ceaa10da805bc79e85ec7d60fcce9d4327066.1532448745.git.leonard.crestez@nxp.com>
-References: <cover.1532448745.git.leonard.crestez@nxp.com>
-         <ed0ceaa10da805bc79e85ec7d60fcce9d4327066.1532448745.git.leonard.crestez@nxp.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6-1+deb9u1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::2a
-X-SA-Exim-Mail-From: l.stach@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+        Tue, 24 Jul 2018 13:57:05 -0400
+Received: by mail-pl0-f68.google.com with SMTP id j8-v6so1955675pll.12
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Jul 2018 09:49:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=4w4IN2J6dONrrlVeO1+L0Kz9qBIwIaC7ttYkBFQeQFw=;
+        b=KUe+LjlaQlS1O5ciNkx+mQgwWTRmPZ13UHy/USQfoyc0dAXMTwzk2Xx6qUc7AlF0O2
+         QiGXnGLkJwj+BaRXaUO015beIxRmiskoZ3V8mMejwoG8eJCaOM0zKqmuuA0SSSqaghC0
+         k1TppukdfSo15YKpxR2HelnJKmM6fpiatM8sk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=4w4IN2J6dONrrlVeO1+L0Kz9qBIwIaC7ttYkBFQeQFw=;
+        b=a/SOifGY3exHRBPGfn0kto88wH7djmPVjmW2o9lfX+jGeqbk63Bf/0/t8xEB/OCUrO
+         2OEFSXYXvsz8Kcaj7kScc6q9xGyGx6FUYudttrCM8DeZZDnvWQqSZ8POEM058hyJZAPI
+         +dVUI1TYodtxK2isEXtGmlu2LHtC6wOjvESEnEbWw/dAEIfJcuAPUliFfG344gmrjVKJ
+         hblE/GVjGjDOVB8zeFRvyXs+D6kXdX8OO1Sozq51qoY/frFowjFVntjIP31qjgMJHHhe
+         a5GhC9KlNsxV6ksZAt4/9HkbTmTaBgfOqxJHXUD/RaYxIAwLMXHU/sS5y5jm/jL9Tge7
+         8MbQ==
+X-Gm-Message-State: AOUpUlErcDslcHNGyimD9CFm1uevRLm+xmu6KaQCRa9gwdLmX3/wQ++G
+        wrF+BrnCb9uCwMx0xIWFHZ5XMg==
+X-Google-Smtp-Source: AAOMgpc3bGW4E04kHUgFezSeoq8fvmHs03wRkMlKKtoD4yLsHExUpfOH9KDFmVzDOLA8REAbdGIg7g==
+X-Received: by 2002:a17:902:4203:: with SMTP id g3-v6mr17515330pld.315.1532450984795;
+        Tue, 24 Jul 2018 09:49:44 -0700 (PDT)
+Received: from www.outflux.net (173-164-112-133-Oregon.hfc.comcastbusiness.net. [173.164.112.133])
+        by smtp.gmail.com with ESMTPSA id w13-v6sm2179184pgs.89.2018.07.24.09.49.42
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 24 Jul 2018 09:49:42 -0700 (PDT)
+From:   Kees Cook <keescook@chromium.org>
+To:     Herbert Xu <herbert@gondor.apana.org.au>
+Cc:     Kees Cook <keescook@chromium.org>, Arnd Bergmann <arnd@arndb.de>,
+        Eric Biggers <ebiggers@google.com>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Alasdair Kergon <agk@redhat.com>,
+        Rabin Vincent <rabinv@axis.com>,
+        Tim Chen <tim.c.chen@linux.intel.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Pavel Machek <pavel@ucw.cz>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        Philipp Reisner <philipp.reisner@linbit.com>,
+        Lars Ellenberg <lars.ellenberg@linbit.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        Giovanni Cabiddu <giovanni.cabiddu@intel.com>,
+        Mike Snitzer <snitzer@redhat.com>,
+        Paul Mackerras <paulus@samba.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        David Howells <dhowells@redhat.com>,
+        Johannes Berg <johannes@sipsolutions.net>,
+        Tudor-Dan Ambarus <tudor.ambarus@microchip.com>,
+        Jia-Ju Bai <baijiaju1990@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        David Woodhouse <dwmw@amazon.co.uk>,
+        Will Deacon <will.deacon@arm.com>, dm-devel@redhat.com,
+        linux-pm@vger.kernel.org, linux-crypto@vger.kernel.org,
+        drbd-dev@lists.linbit.com, linux-block@vger.kernel.org,
+        qat-linux@intel.com, linux-ppp@vger.kernel.org,
+        netdev@vger.kernel.org, devel@driverdev.osuosl.org,
+        linux-afs@lists.infradead.org, linux-wireless@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v6 01/18] crypto: xcbc: Remove VLA usage
+Date:   Tue, 24 Jul 2018 09:49:19 -0700
+Message-Id: <20180724164936.37477-2-keescook@chromium.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180724164936.37477-1-keescook@chromium.org>
+References: <20180724164936.37477-1-keescook@chromium.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am Dienstag, den 24.07.2018, 19:14 +0300 schrieb Leonard Crestez:
-> This reverts commit 1c86c9dd82f859b474474a7fee0d5195da2c9c1d.
-> 
-> That commit followed the reference manual but unfortunately the imx7d
-> manual is incorrect.
-> 
-> Tested with ath9k pcie card and confirmed internally.
-> 
-> Signed-off-by: Leonard Crestez <leonard.crestez@nxp.com>
+In the quest to remove all stack VLA usage from the kernel[1], this uses
+the maximum blocksize and adds a sanity check. For xcbc, the blocksize
+must always be 16, so use that, since it's already being enforced during
+instantiation.
 
-Acked-by: Lucas Stach <l.stach@pengutronix.de>
+[1] https://lkml.kernel.org/r/CA+55aFzCG-zNmZwX4A2FQpadafLfEzK6CC=qPXydAacU1RqZWA@mail.gmail.com
 
-> ---
->  arch/arm/boot/dts/imx7d.dtsi | 12 ++++++++----
->  1 file changed, 8 insertions(+), 4 deletions(-)
-> 
-> diff --git a/arch/arm/boot/dts/imx7d.dtsi b/arch/arm/boot/dts/imx7d.dtsi
-> index 7cbc2ffa4b3a..7234e8330a57 100644
-> --- a/arch/arm/boot/dts/imx7d.dtsi
-> +++ b/arch/arm/boot/dts/imx7d.dtsi
-> @@ -124,14 +124,18 @@
-> >  		num-lanes = <1>;
-> >  		interrupts = <GIC_SPI 122 IRQ_TYPE_LEVEL_HIGH>;
-> >  		interrupt-names = "msi";
-> >  		#interrupt-cells = <1>;
-> >  		interrupt-map-mask = <0 0 0 0x7>;
-> > -		interrupt-map = <0 0 0 1 &intc GIC_SPI 122 IRQ_TYPE_LEVEL_HIGH>,
-> > -				<0 0 0 2 &intc GIC_SPI 123 IRQ_TYPE_LEVEL_HIGH>,
-> > -				<0 0 0 3 &intc GIC_SPI 124 IRQ_TYPE_LEVEL_HIGH>,
-> > -				<0 0 0 4 &intc GIC_SPI 125 IRQ_TYPE_LEVEL_HIGH>;
-> > +		/*
-> > +		 * Reference manual lists pci irqs incorrectly
-> > +		 * Real hardware ordering is same as imx6: D+MSI, C, B, A
-> > +		 */
-> > +		interrupt-map = <0 0 0 1 &intc GIC_SPI 125 IRQ_TYPE_LEVEL_HIGH>,
-> > +				<0 0 0 2 &intc GIC_SPI 124 IRQ_TYPE_LEVEL_HIGH>,
-> > +				<0 0 0 3 &intc GIC_SPI 123 IRQ_TYPE_LEVEL_HIGH>,
-> > +				<0 0 0 4 &intc GIC_SPI 122 IRQ_TYPE_LEVEL_HIGH>;
-> >  		clocks = <&clks IMX7D_PCIE_CTRL_ROOT_CLK>,
-> >  			 <&clks IMX7D_PLL_ENET_MAIN_100M_CLK>,
-> >  			 <&clks IMX7D_PCIE_PHY_ROOT_CLK>;
-> >  		clock-names = "pcie", "pcie_bus", "pcie_phy";
-> >  		assigned-clocks = <&clks IMX7D_PCIE_CTRL_ROOT_SRC>,
+Signed-off-by: Kees Cook <keescook@chromium.org>
+---
+ crypto/xcbc.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
+
+diff --git a/crypto/xcbc.c b/crypto/xcbc.c
+index 25c75af50d3f..c055f57fab11 100644
+--- a/crypto/xcbc.c
++++ b/crypto/xcbc.c
+@@ -57,15 +57,17 @@ struct xcbc_desc_ctx {
+ 	u8 ctx[];
+ };
+ 
++#define XCBC_BLOCKSIZE	16
++
+ static int crypto_xcbc_digest_setkey(struct crypto_shash *parent,
+ 				     const u8 *inkey, unsigned int keylen)
+ {
+ 	unsigned long alignmask = crypto_shash_alignmask(parent);
+ 	struct xcbc_tfm_ctx *ctx = crypto_shash_ctx(parent);
+-	int bs = crypto_shash_blocksize(parent);
+ 	u8 *consts = PTR_ALIGN(&ctx->ctx[0], alignmask + 1);
+ 	int err = 0;
+-	u8 key1[bs];
++	u8 key1[XCBC_BLOCKSIZE];
++	int bs = sizeof(key1);
+ 
+ 	if ((err = crypto_cipher_setkey(ctx->child, inkey, keylen)))
+ 		return err;
+@@ -212,7 +214,7 @@ static int xcbc_create(struct crypto_template *tmpl, struct rtattr **tb)
+ 		return PTR_ERR(alg);
+ 
+ 	switch(alg->cra_blocksize) {
+-	case 16:
++	case XCBC_BLOCKSIZE:
+ 		break;
+ 	default:
+ 		goto out_put_alg;
+-- 
+2.17.1
+
