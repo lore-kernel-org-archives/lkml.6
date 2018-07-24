@@ -2,58 +2,59 @@ Return-Path: <SRS0=hTZH=KI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=0.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DED0CECDFB8
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 10:43:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26C2BECDFB8
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 10:43:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9C3F220852
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 10:43:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9C3F220852
+	by mail.kernel.org (Postfix) with ESMTP id D8AED20875
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 10:43:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D8AED20875
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ziswiler.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388718AbeGXLte (ORCPT
+        id S2388734AbeGXLtg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 07:49:34 -0400
-Received: from mout.perfora.net ([74.208.4.197]:50755 "EHLO mout.perfora.net"
+        Tue, 24 Jul 2018 07:49:36 -0400
+Received: from mout.perfora.net ([74.208.4.196]:38299 "EHLO mout.perfora.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388313AbeGXLte (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 07:49:34 -0400
+        id S2388296AbeGXLtg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Jul 2018 07:49:36 -0400
 Received: from localhost.localdomain.toradex.int ([46.140.72.82]) by
  mrelay.perfora.net (mreueus003 [74.208.5.2]) with ESMTPA (Nemesis) id
- 0LrLMg-1g9fM510rU-0137a6; Tue, 24 Jul 2018 12:43:37 +0200
+ 0MGyFo-1floXh1jla-00DlFM; Tue, 24 Jul 2018 12:43:39 +0200
 From:   Marcel Ziswiler <marcel@ziswiler.com>
 To:     devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
         linux-kernel@vger.kernel.org
 Cc:     Marcel Ziswiler <marcel.ziswiler@toradex.com>,
+        Mikko Perttunen <mperttunen@nvidia.com>,
         Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>
-Subject: [PATCH 11/15] ARM: tegra: apalis-tk1: enable emmc ddr52 mode
-Date:   Tue, 24 Jul 2018 12:43:05 +0200
-Message-Id: <20180724104309.21741-12-marcel@ziswiler.com>
+Subject: [PATCH 12/15] ARM: tegra: apalis-tk1: add toradex,apalis-tk1-v1.2 compatible
+Date:   Tue, 24 Jul 2018 12:43:06 +0200
+Message-Id: <20180724104309.21741-13-marcel@ziswiler.com>
 X-Mailer: git-send-email 2.14.4
 In-Reply-To: <20180724104309.21741-1-marcel@ziswiler.com>
 References: <20180724104309.21741-1-marcel@ziswiler.com>
-X-Provags-ID: V03:K1:QiT9/UNRtZyLs7ENi1nRClMH6TsSQ3wXk3YjlA40MqMENR9IIYI
- jfRWL3VuY88KSwy4PsBgb6uqyCturmiGjhVlQ3Uabr9Igpdl8+nPbCasCWCw/QZmee92J95
- BPoHJZFqaZRg8UQaRjGRUAYzpk9RPe08zhiTtrYPKuGN2ewG8kjDfj2+INIUN3atzWWDHJ2
- rQa5PjnTmSzrnsOQNmK4A==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:P0fmeH1AuLU=:zAXXuquu5VzRvwk4OnHx4P
- lUWQJRIAIcDvsq//F/TS8+S6S5OhA1zllQfqLZL2XfQ4J9eFu5bZJy2LBYRZyhVS1sL6IUBec
- z/YqIMmK/4P4WP6k8M65kxiPhe/iA+TRSNoxKkCiGnBNV2kK6vr7TbnyKso5n2H11ewegp0rR
- IttPEKsU+blSkif7qINSOnkNlI3vEodU0bwIcibMkL35VsaOKE7LRNVhXeuF6n36C2yJosA1W
- 0eb/tI27xp+PZ6+DRAAAjkXB9n/m/USwB5u4Ykp90WTa+tTWI4j6+xocrjgugS1dxKwjwi1zF
- 6k8rod1aqodMSmpC53WrUWQ4signlYJDPJVGB7TjEIYtMjaG1mORVpEyLe3JJqr4Ba6+R5Pm3
- 4e1oGAbflpCPXUXmOXeAR1qarC71cchgOPC/DWzcoAWJ/MQHbfMgfLnpITJkoSGP4zOXH9Hiv
- yr8ivcNB6SBUq1F3DL+7eH/9GbtRWpu5bANaLmTal5FkHm3blpP4Cvxsb1NmhJ6NyVB641tv/
- nb9E/VdGdKO+lpJ2Z1oiKcJG/ZbanBWIPrg4VgzrraIOCqBQ7KMuPbciwwURTu3mMHDZlMWWq
- LnpesNKP/Ugae5iLGBZ5BvxvEEyqfvoVofoYRJ4IlF5L1YWL9lTWR4eVz3f1z8biiGWtAK4Cf
- DUDW7G7XCIPHTFt5ZUA/94a1/3c1u8xtQd7CGzg2r/mfuK60Qhl6AJSCvjNxrolQlCcA=
+X-Provags-ID: V03:K1:T+L7V9bMSFZq8BW3vHP3ZjElY5hRl2S39mRzFldI2IWnJOHmPHk
+ SUkb5/jzfQBcyjWnfri4F5tCXdQ/YnmmEm1ViYMEQk5WCxNUC5qwhlLW6sSRfogFBLB1GTX
+ WFu1aOceKRrEwxC+g4SN99qt8bIAfl1VMBIq7RG5+sQDIUVxlovzsO8xx8FWx/9bg9O0lE+
+ nYONOW2F6agBA31Yijfdg==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:3SI+0m3Q6d4=:mLwYC15sno4ZfHkgVg9GMn
+ jlQYgApPdNRE9skH1MMoLqAkXNVI7cpE5BDLcnpw6THH8cFG7098kdEa61AMQS6tdbX04hKX2
+ uRkeAKMz5N7DVZK54WeL1uLEwx8fB4SpEz4CfuIUSnotj2FLqRT5Kp3iYgd45/w1fWmpJNIRd
+ Zmc+1r7REzDWcIztTlZDggatVLfGGhDIKTBHHI76MK5lC/ypjIhOeD1w+puPxpj9R+hLZMUGu
+ lOPe6M7okbPXAmMrmBnkxvxk0hFwq7EwDqNCnDo5P4F4VicApfwl++riOeODm2xiooWjiv1vM
+ lhL2VaAVHwdfbT+skQjT9XSZBR0uAsWY3GWgqQi1xZxAJATP/ZqxW4UBN+QBQhPg25FC7EnxF
+ Oay0l90eIRqHyfK1VaH3KPwbJ8g4UwMAwdqAYVIC+xNNz2gdgzN/1VpOJd9/uQ8g4xguhWHLP
+ gtYcW6zH/NxSgWwQGhFU3Ts6jQa4loJlr8nLffFsPFdBXjDTcI6Mdl3LsyxNWshjRsm8mDHo2
+ a82J/xsef31kxYaVyoktly0/CUUjtyruXsQ74+T4yZMj1jF8aF7bL4UYkJZLups9NNDOPCrOQ
+ DbaYsvaPDW/NY+FkeeTEKuz+FTRAtOaHmtGYRtFAHjK5I3I3/VxUF/NW79la+SVvCSxxWC7ke
+ CUl4Kjs/33++sP3yJ38zwQu3DxQHtRFcC2jsebgHGD5p0HzxglMtulx56ErWLDO33Jxo=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -61,56 +62,43 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
-Add mmc-ddr-1_8v property enabling eMMC DDR52 mode.
-
-root@apalis-tk1-mainline:~# cat /sys/kernel/debug/mmc2/ios
-clock:          52000000 Hz
-actual clock:   52000000 Hz
-vdd:            21 (3.3 ~ 3.4 V)
-bus mode:       2 (push-pull)
-chip select:    0 (don't care)
-power mode:     2 (on)
-bus width:      3 (8 bits)
-timing spec:    8 (mmc DDR52)
-signal voltage: 1 (1.80 V)
-driver type:    0 (driver type B)
-root@apalis-tk1-mainline:~# hdparm -t /dev/mmcblk2
-
-/dev/mmcblk2:
- Timing buffered disk reads: 256 MB in  3.02 seconds =  84.83 MB/sec
+Add toradex,apalis-tk1-v1.2 compatible.
 
 Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
 ---
 
- arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi | 1 +
- arch/arm/boot/dts/tegra124-apalis.dtsi      | 1 +
- 2 files changed, 2 insertions(+)
+ Documentation/devicetree/bindings/arm/tegra.txt | 2 ++
+ arch/arm/boot/dts/tegra124-apalis-v1.2-eval.dts | 3 ++-
+ 2 files changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi b/arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi
-index 6c255cb70339..13486fe407d2 100644
---- a/arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi
-+++ b/arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi
-@@ -1919,6 +1919,7 @@
- 		non-removable;
- 		vmmc-supply = <&reg_module_3v3>; /* VCC */
- 		vqmmc-supply = <&reg_1v8_vddio>; /* VCCQ */
-+		mmc-ddr-1_8v;
- 	};
+diff --git a/Documentation/devicetree/bindings/arm/tegra.txt b/Documentation/devicetree/bindings/arm/tegra.txt
+index 1073a5e66122..1c90cb32da19 100644
+--- a/Documentation/devicetree/bindings/arm/tegra.txt
++++ b/Documentation/devicetree/bindings/arm/tegra.txt
+@@ -51,6 +51,8 @@ board-specific compatible values:
+   toradex,apalis_t30-v1.1-eval
+   toradex,apalis-tk1
+   toradex,apalis-tk1-eval
++  toradex,apalis-tk1-v1.2
++  toradex,apalis-tk1-v1.2-eval
+   toradex,colibri_t20-512
+   toradex,colibri_t30
+   toradex,colibri_t30-eval-v3
+diff --git a/arch/arm/boot/dts/tegra124-apalis-v1.2-eval.dts b/arch/arm/boot/dts/tegra124-apalis-v1.2-eval.dts
+index aafaf2c3e195..89783fe76f65 100644
+--- a/arch/arm/boot/dts/tegra124-apalis-v1.2-eval.dts
++++ b/arch/arm/boot/dts/tegra124-apalis-v1.2-eval.dts
+@@ -11,7 +11,8 @@
+ / {
+ 	model = "Toradex Apalis TK1 on Apalis Evaluation Board";
+ 	compatible = "toradex,apalis-tk1-v1.2-eval", "toradex,apalis-tk1-eval",
+-		     "toradex,apalis-tk1", "nvidia,tegra124";
++		     "toradex,apalis-tk1-v1.2", "toradex,apalis-tk1",
++		     "nvidia,tegra124";
  
- 	/* CPU DFLL clock */
-diff --git a/arch/arm/boot/dts/tegra124-apalis.dtsi b/arch/arm/boot/dts/tegra124-apalis.dtsi
-index 72253d918ebd..77ca508d755e 100644
---- a/arch/arm/boot/dts/tegra124-apalis.dtsi
-+++ b/arch/arm/boot/dts/tegra124-apalis.dtsi
-@@ -1948,6 +1948,7 @@
- 		non-removable;
- 		vmmc-supply = <&reg_module_3v3>; /* VCC */
- 		vqmmc-supply = <&reg_1v8_vddio>; /* VCCQ */
-+		mmc-ddr-1_8v;
- 	};
- 
- 	/* CPU DFLL clock */
+ 	aliases {
+ 		rtc0 = "/i2c@7000c000/rtc@68";
 -- 
 2.14.4
 
