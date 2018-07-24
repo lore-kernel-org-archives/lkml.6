@@ -2,111 +2,193 @@ Return-Path: <SRS0=hTZH=KI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D33FEECDFB8
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 15:25:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8EC2C6778A
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 15:28:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8D2F520880
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 15:25:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 61EAB2064D
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 15:28:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="dSuwEy1P"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D2F520880
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VvRHuhSK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 61EAB2064D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727840AbeGXQcU (ORCPT
+        id S1727985AbeGXQfi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 12:32:20 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:55630 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727353AbeGXQcU (ORCPT
+        Tue, 24 Jul 2018 12:35:38 -0400
+Received: from mail-qk0-f196.google.com ([209.85.220.196]:45885 "EHLO
+        mail-qk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726857AbeGXQfi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 12:32:20 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=kP6fQBvk68k0r5Fkbzxfz48WqjXx/QC19IRv2y+R0NA=; b=dSuwEy1PMSp3B2tzfJi92LztU
-        RBrI9d2ZWXtxZ4Jz8Q4HnipKRnYtwMNfAXkQCHLcQSErhwHDziZLGgJYcwvqUd6/FMaKpE8W95ooq
-        78c7YKzwYnG2YM87LEWBcjfO3vziS+Z0TfDEORRrEigLMYCMgzB1Sh5X+T5u95q6IhcFg=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1fhzBa-0005Yl-Lo; Tue, 24 Jul 2018 15:25:14 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 4CE761123A86; Tue, 24 Jul 2018 16:25:14 +0100 (BST)
-Date:   Tue, 24 Jul 2018 16:25:14 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Doug Anderson <dianders@chromium.org>
-Cc:     David Collins <collinsd@codeaurora.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        devicetree@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Matthias Kaehlcke <mka@chromium.org>
-Subject: Re: [PATCH v9 1/2] regulator: dt-bindings: add QCOM RPMh regulator
- bindings
-Message-ID: <20180724152514.GJ13268@sirena.org.uk>
-References: <cover.1531531808.git.collinsd@codeaurora.org>
- <56b9d5c38cfe46da1228c54f001a49773c3e31dc.1531531808.git.collinsd@codeaurora.org>
- <CAD=FV=VmfqWRGRMEn+0dzZ8x4R5vVaHbkthXAN91Lm-XmP9Gqg@mail.gmail.com>
- <20180724145755.GF13268@sirena.org.uk>
- <CAD=FV=Uo8sT72a0gRitOVoK0SfC-_QixsovW94_LnL6H7QdKvA@mail.gmail.com>
+        Tue, 24 Jul 2018 12:35:38 -0400
+Received: by mail-qk0-f196.google.com with SMTP id c192-v6so2852772qkg.12;
+        Tue, 24 Jul 2018 08:28:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc:content-transfer-encoding;
+        bh=CL4cDMIRjJhSUtfYehZsb+gGtz4jCO+QPOox9zUqR3w=;
+        b=VvRHuhSKLtG7oddwijG/YQCj2hhJ9SKJWVDf4o3s5Ym9W/byyrPLyQVJOl504bg2wW
+         h2KK2rCRjyBqI1flUcPgzljegBCehmLQBqAtJTJOE2ChWf/ZRrUg2PRvMWHwY0SlHKnA
+         0iH8sTvRgD917YeN42SGObonCUuMtRRjCpa8eX5hkDbRHt7IioWBoHX3qWHcX/o/TvWT
+         FqQSnc4MJHMsrMdMtE4noSPQ3xMSJAjeyA32VfEkKkZPV54QjZY2vIyb3xjxecejJL50
+         AkrzUmun+Y3DNTSPZBWM7biGCtXWoIG7tH2UN9k1ezA7fTtTDC/stXGXCEfKHxvvVxE+
+         AVrA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
+         :date:message-id:subject:to:cc:content-transfer-encoding;
+        bh=CL4cDMIRjJhSUtfYehZsb+gGtz4jCO+QPOox9zUqR3w=;
+        b=ZYgZ9KbvSwKuDDONsO/Gua2ZtACF7BMrCq+Ec0r/jLRdqkCnTSsH7nsPp3QMI8Kf3q
+         dXE0Msa1TjJyPqCxYhzcQSx4jCg9E2BVohokt8duvA5v1JlLDo5yqOtqx64o2pS+Qgpk
+         4n8vGmxruYQUAH6jucBXyH3iNjLEbq5SdBASzGA0Llyj0fADE9Ju7rfxoQZgUR0djLGE
+         NooWNs98Gt5gnAFDFGuLjXAdD9W8qC2gJmdyuUWvQ6yBevvg//JamVT100kmv3cu3c3A
+         /AhdHjWcAmIM023VQerdh4u1qqmbC7wkLohyIlsNBqwxMiLccOW4kHLqCLX/H8a8LDeV
+         vvwA==
+X-Gm-Message-State: AOUpUlFXQltKayMdecUGyjyZZ0HhzJ+8+t9QTkulIvLky/IoOkCbh2o/
+        ilHJ92MztWe9Fu/LPKQIjh0Sbogm3LoQuYRliv8=
+X-Google-Smtp-Source: AAOMgpfpGIzQhmFgtN3HrK1u/qMGmEaJElVY8VvUUANydqzsombDwVIULI8GIUhNus+zxHq0AMtT3mH+GCBx7+jYFvo=
+X-Received: by 2002:a37:8786:: with SMTP id j128-v6mr15357755qkd.32.1532446116721;
+ Tue, 24 Jul 2018 08:28:36 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="vkEkAx9hr54EJ73W"
-Content-Disposition: inline
-In-Reply-To: <CAD=FV=Uo8sT72a0gRitOVoK0SfC-_QixsovW94_LnL6H7QdKvA@mail.gmail.com>
-X-Cookie: Join the march to save individuality!
-User-Agent: Mutt/1.10.0 (2018-05-17)
+Received: by 2002:a0c:967d:0:0:0:0:0 with HTTP; Tue, 24 Jul 2018 08:28:36
+ -0700 (PDT)
+In-Reply-To: <20180711224625.airwna6gzyatoowe@eaf>
+References: <20180710214131.4106527-1-arnd@arndb.de> <20180711224625.airwna6gzyatoowe@eaf>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Tue, 24 Jul 2018 17:28:36 +0200
+X-Google-Sender-Auth: 2_SW_kCiYXfwcu5Y2Yu5mmk0nlc
+Message-ID: <CAK8P3a2NXEC_+VNw4bkorisUCfVg_94ooTNN+SZe78dF_uqmWQ@mail.gmail.com>
+Subject: Re: [PATCH 1/2] [v2] hfs/hfsplus: follow MacOS time behavior
+To:     =?UTF-8?Q?Ernesto_A=2E_Fern=C3=A1ndez?= 
+        <ernesto.mnd.fernandez@gmail.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        y2038 Mailman List <y2038@lists.linaro.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        "# 3.4.x" <stable@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Vyacheslav Dubeyko <slava@dubeyko.com>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Jul 12, 2018 at 12:46 AM, Ernesto A. Fern=C3=A1ndez
+<ernesto.mnd.fernandez@gmail.com> wrote:
 
---vkEkAx9hr54EJ73W
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+>> -#define __hfs_u_to_mtime(sec)        cpu_to_be32(sec + 2082844800U - sy=
+s_tz.tz_minuteswest * 60)
+>> -#define __hfs_m_to_utime(sec)        (be32_to_cpu(sec) - 2082844800U  +=
+ sys_tz.tz_minuteswest * 60)
+>> +static inline time64_t __hfs_m_to_utime(__be32 mt)
+>> +{
+>> +     time64_t ut =3D (u32)(be32_to_cpu(mt) - 2082844800U);
+>> +
+>> +     /*
+>> +      * Times past 2040-02-06 06:28 are assumed to be invalid,
+>> +      * matching the MacOS behavior.
+>> +      */
+>> +     if (ut > 2082844800U + UINT_MAX)
+>
+> I'm not sure what you were going for here, but this isn't right. Times
+> as early as 2036 will be considered invalid.
 
-On Tue, Jul 24, 2018 at 08:11:30AM -0700, Doug Anderson wrote:
+Right, the calculation makes no sense, I have no idea how I ever
+got there. I was trying to check for the 2040 date, and rearranged my
+code multiple times for that. What I probably meant was
 
-> RPMh itself landed in Andy's tree and he sent a pull request on
-> Saturday.  Feel free to refer to the request ("[GIT PULL] Qualcomm
-> Driver updates for 4.19") AKA
-> <https://patchwork.kernel.org/patch/10539125/>.
+     if (ut + 2082844800U > UINT_MAX)
 
-> It doesn't look like arm-soc has picked up Andy's pull request yet
-> though.  If having it in arm-soc is a requirement then I'm happy to
-> monitor arm-soc and ping this thread again when it's there.
+or
 
-There was also some other thing called command DB as well which was a
-separate series.  Ideally there'd be a branch I could pull as there's a
-build dependency on rpmh so I can't apply until the code has landed in
-my tree, don't know what command DB is exactly.
+    if (ut > UINT_MAX - 2082844800U)
 
---vkEkAx9hr54EJ73W
-Content-Type: application/pgp-signature; name="signature.asc"
+>> +             ut =3D 0;
+>> +
+>> +     return ut + sys_tz.tz_minuteswest * 60;
+>> +}
+>>
+>> +static inline __be32 __hfs_u_to_mtime(time64_t ut)
+>> +{
+>> +     ut -=3D - sys_tz.tz_minuteswest * 60;
+>            ^^^^^
+>         An extra minus.
 
------BEGIN PGP SIGNATURE-----
+I saw that Andrew had added a fix on top and assumed he got it right, but
+upon checking again later I see that it's still there.
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAltXRNkACgkQJNaLcl1U
-h9B3bwf+La4kf/5PmQL+J1NQkMHGXm91bKmR8eDDzkpswmiG1B1RLB/AcEIHjQGG
-O+4kg+zfIT25E1bdVzcKvjJO4rwSHpXMpIIdgJc0NAGVCO4rb0Jh9qyWJnNzStMW
-cVcRGg09wXvTzY11DT5LFLA//oqx3Dsw++sfGg+h2JoYsR0evnpHNXHQkRIlgDCa
-PkNmkkTfPh4lPJjr99znmyuox8Llg+rwI9MmcqzDzuJTW2yj517Dyh07FXbcHU0X
-GTVo10ah2mYE2RecDa3gRxNizHq8+qqhFnIA9zXITZfZCwVtFRajTw2ddFCxs518
-6VoHO9Jy76VEYE7eQMc7bzeMYlhtlg==
-=AohO
------END PGP SIGNATURE-----
+>> +
+>> +     /*
+>> +      * MacOS wraps "invalid" times after 2040 when writing back, so
+>> +      * let's do the same here.
+>> +      */
+>> +     return cpu_to_be32(lower_32_bits(ut + 2082844800U));
+>> +}
+>>  #define HFS_I(inode) (container_of(inode, struct hfs_inode_info, vfs_in=
+ode))
+>>  #define HFS_SB(sb)   ((struct hfs_sb_info *)(sb)->s_fs_info)
+>>
+>> -#define hfs_m_to_utime(time) (struct timespec){ .tv_sec =3D __hfs_m_to_=
+utime(time) }
+>> -#define hfs_u_to_mtime(time) __hfs_u_to_mtime((time).tv_sec)
+>> +#define hfs_m_to_utime(time)   (struct timespec){ .tv_sec =3D __hfs_m_t=
+o_utime(time) }
+>> +#define hfs_u_to_mtime(time)   __hfs_u_to_mtime((time).tv_sec)
+>
+> Are the new spaces intentional?
 
---vkEkAx9hr54EJ73W--
+No, I should drop that.
+
+>>  #define hfs_mtime()          __hfs_u_to_mtime(get_seconds())
+>>
+>>  static inline const char *hfs_mdb_name(struct super_block *sb)
+>> diff --git a/fs/hfsplus/hfsplus_fs.h b/fs/hfsplus/hfsplus_fs.h
+>> index d9255abafb81..7f0943e540a0 100644
+>> --- a/fs/hfsplus/hfsplus_fs.h
+>> +++ b/fs/hfsplus/hfsplus_fs.h
+>> @@ -530,9 +530,29 @@ int hfsplus_submit_bio(struct super_block *sb, sect=
+or_t sector, void *buf,
+>>                      void **data, int op, int op_flags);
+>>  int hfsplus_read_wrapper(struct super_block *sb);
+>>
+>> -/* time macros */
+>> -#define __hfsp_mt2ut(t)              (be32_to_cpu(t) - 2082844800U)
+>> -#define __hfsp_ut2mt(t)              (cpu_to_be32(t + 2082844800U))
+>> +/* time helpers */
+>> +static inline time64_t __hfsp_mt2ut(__be32 mt)
+>> +{
+>> +     time64_t ut =3D (u32)(be32_to_cpu(mt) - 2082844800U);
+>> +
+>> +     /*
+>> +      * Times past 2040-02-06 06:28 are assumed to be invalid,
+>> +      * matching the MacOS behavior.
+>> +      */
+>> +     if (ut > 2082844800U + UINT_MAX)
+>
+> Same as before, 2036-2040 will be invalid.
+>
+>
+> For the record, your original solution (supporting the 1970-2106 range)
+> still makes more sense to me. It seems Apple is not using the 1904-1970
+> range for anything; if they are still supporting hfsplus by the 2030s I
+> assume they will deal with this in a similar way.
+
+I'm definitely fine with it either way. The current approach was based on
+the feedback I got from Viacheslav Dubeyko, and on what I found
+in the various other implementations. Viacheslav, are you ok with
+changing the hfs code back to my original interpretation of the
+timestamps, using the 1970..2106 range?
+
+Andrew, can you drop both my hfs/hfsplus patches for now? At
+this point it seems better to start from scratch than to fix up the
+bugs individually.
+
+      Arnd
