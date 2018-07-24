@@ -2,127 +2,161 @@ Return-Path: <SRS0=hTZH=KI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF45EECDFB8
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 09:50:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39A5FC6778A
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 09:51:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 70EFA20874
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 09:50:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 70EFA20874
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+	by mail.kernel.org (Postfix) with ESMTP id EA1D820875
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 09:50:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EA1D820875
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388386AbeGXK4B (ORCPT
+        id S2388424AbeGXK4g (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 06:56:01 -0400
-Received: from mx2.suse.de ([195.135.220.15]:51192 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726479AbeGXK4A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 06:56:00 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 7AD62B036;
-        Tue, 24 Jul 2018 09:50:20 +0000 (UTC)
-Subject: Re: [PATCH v1 0/2] mm/kdump: exclude reserved pages in dumps
-To:     Michal Hocko <mhocko@kernel.org>,
-        David Hildenbrand <david@redhat.com>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Baoquan He <bhe@redhat.com>, Dave Young <dyoung@redhat.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Hari Bathini <hbathini@linux.vnet.ibm.com>,
-        Huang Ying <ying.huang@intel.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        =?UTF-8?Q?Marc-Andr=c3=a9_Lureau?= <marcandre.lureau@redhat.com>,
-        Matthew Wilcox <mawilcox@microsoft.com>,
-        Miles Chen <miles.chen@mediatek.com>,
-        Pavel Tatashin <pasha.tatashin@oracle.com>,
-        Petr Tesarik <ptesarik@suse.cz>
-References: <20180720123422.10127-1-david@redhat.com>
- <9f46f0ed-e34c-73be-60ca-c892fb19ed08@suse.cz>
- <f8d7b5f9-e5ee-0625-f53d-50d1841e1388@redhat.com>
- <20180724072237.GA28386@dhcp22.suse.cz>
-From:   Vlastimil Babka <vbabka@suse.cz>
-Openpgp: preference=signencrypt
-Autocrypt: addr=vbabka@suse.cz; prefer-encrypt=mutual; keydata=
- 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
- cqmP8roqufIAj+Ohhzs=
-Message-ID: <c0df3f96-e8e5-f0eb-2a57-b804a2b0545c@suse.cz>
-Date:   Tue, 24 Jul 2018 11:48:00 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <20180724072237.GA28386@dhcp22.suse.cz>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Tue, 24 Jul 2018 06:56:36 -0400
+Received: from mout.kundenserver.de ([212.227.126.131]:41720 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726457AbeGXK4g (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Jul 2018 06:56:36 -0400
+Received: from wuerfel.lan ([109.193.40.16]) by mrelayeu.kundenserver.de
+ (mreue004 [212.227.15.129]) with ESMTPA (Nemesis) id
+ 0MbtgI-1fOZqu1l6U-00JH3X; Tue, 24 Jul 2018 11:50:02 +0200
+From:   Arnd Bergmann <arnd@arndb.de>
+To:     Will Deacon <will.deacon@arm.com>
+Cc:     AKASHI Takahiro <takahiro.akashi@linaro.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Tony Luck <tony.luck@intel.com>,
+        Fenghua Yu <fenghua.yu@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-ia64@vger.kernel.org, linux-acpi@vger.kernel.org
+Subject: [PATCH] [SUBMITTED 20180724] arm64: fix ACPI dependencies
+Date:   Tue, 24 Jul 2018 11:48:45 +0200
+Message-Id: <20180724094957.1967541-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.18.0
+X-Provags-ID: V03:K1:yfLeV5ksPZGStHZPAZnTLlx/uNVqewNHwK+Q0iYxCKPZallPThV
+ 7GacXVPYOVy1Ck+ef4m7MgnZ/VllpZrdugDgFWgGHjL60uOBci0p3RbDkfUjvqwJ+Sk23nD
+ 2r4uVYTIBtGrC2nu1VLeK88ynJ58c+JT9fnUsx+bE+DuJuE5rI2WXG20h/V8rFPP1cSZ/bK
+ hymY+8fSIn8oLJv9vEUiA==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:nWCLyOBv998=:n4eks7N3+ELf/E9vKhWJW5
+ 2YuMQj0uyPrqWBn7nj3Huis5RFuc+nAcEA2nbaoSnVa2amYK0oc2RPD1fQKVP+9AOOEknOwQ0
+ EqIAULhkYVKjNlqDPdIhowPyvwGOiZYJX+llaZBhaceFtIEOjsUZFgXbuzFnj7HNNkPX4VfxN
+ pBDGEYA3HhjYJBhB8FhERFENXeQ3cTOplJoa76h2rViQtOdXpMtBEL+fqDxXsdLOK525Z3iW1
+ GTGD657Bz8hrufJngRnlL18C9kCxOQ0Cn5M4dXLFwCniGwe6Nd4Veb/tFEcF5X+Wt2bCJnGGc
+ E7LVz2K+34g5IztomsDzIvG47tQD5OmTZ+r72WR5S29/8h2QLRhAWOJKjkG9GsdcZEVFbCbyl
+ pOWSBeXaJ7CBC7cg8ECNSOdEEXg13FSakbAZDMjExCgzwOuxqpbRCrTaQOCLdRE9gsR7Q9Wod
+ AjOCO0lLW1Sgx0aIEI/QOFQ4QYK2ZjXvKPAAqrFotWmohom6YeRGLVLFSoad3QiJzM0UuNlqN
+ FkJoPr/CNzCA3KOovZ0gHC8fY/3yNs5+MLA1LWPWNh0sNuQ+xPErqzjtoj8PHBQm0J4ky3Cn2
+ 8tzM5As8JZGBA7BLGpSSNWrg/ZPOVO9Mdsh/6pPgNGlEnZEBF3p2FH/SHlja6y9/mt007f3Ix
+ 6hDmkvT4CckpXp+Pt8C9v89exq4cNIBYnGvK9/jpy7nni4jyPIkH06wBkqvmG7okkd8Q=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/24/2018 09:22 AM, Michal Hocko wrote:
-> On Mon 23-07-18 19:12:58, David Hildenbrand wrote:
->> On 23.07.2018 13:45, Vlastimil Babka wrote:
->>> On 07/20/2018 02:34 PM, David Hildenbrand wrote:
->>>> Dumping tools (like makedumpfile) right now don't exclude reserved pages.
->>>> So reserved pages might be access by dump tools although nobody except
->>>> the owner should touch them.
->>>
->>> Are you sure about that? Or maybe I understand wrong. Maybe it changed
->>> recently, but IIRC pages that are backing memmap (struct pages) are also
->>> PG_reserved. And you definitely do want those in the dump.
->>
->> I proposed a new flag/value to mask pages that are logically offline but
->> Michal wanted me to go into this direction.
->>
->> While we can special case struct pages in dump tools ("we have to
->> read/interpret them either way, so we can also dump them"), it smells
->> like my original attempt was cleaner. Michal?
-> 
-> But we do not have many page flags spare and even if we have one or two
-> this doesn't look like the use for them. So I still think we should try
-> the PageReserved way.
+Kconfig reports a warning on x86 builds after the ARM64 dependency
+was added.
 
-First we would have to audit everything that's using PageReserved and
-might be important for the crash dump to be useful. memmap might not be
-the only case...
+drivers/acpi/Kconfig:6:error: recursive dependency detected!
+drivers/acpi/Kconfig:6:       symbol ACPI depends on EFI
+
+This rephrases the dependency to keep the ARM64 details out of the
+shared Kconfig file, so Kconfig no longer gets confused by it.
+
+For consistency, all three architectures that support ACPI now
+select ARCH_SUPPORTS_ACPI in exactly the configuration in which
+they allow it. We still need the 'default x86', as each one
+wants a different default: default-y on x86, default-n on arm64,
+and always-y on ia64.
+
+Fixes: 5bcd44083a08 ("drivers: acpi: add dependency of EFI for arm64")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+v2: use 'select ARCH_SUPPORTS_ACPI' for all three.
+---
+ arch/arm64/Kconfig   | 1 +
+ arch/ia64/Kconfig    | 1 +
+ arch/x86/Kconfig     | 1 +
+ drivers/acpi/Kconfig | 8 +++++---
+ 4 files changed, 8 insertions(+), 3 deletions(-)
+
+diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+index cdcaa6a798b2..2f987a938405 100644
+--- a/arch/arm64/Kconfig
++++ b/arch/arm64/Kconfig
+@@ -1267,6 +1267,7 @@ config EFI
+ 	bool "UEFI runtime support"
+ 	depends on OF && !CPU_BIG_ENDIAN
+ 	depends on KERNEL_MODE_NEON
++	select ARCH_SUPPORTS_ACPI
+ 	select LIBFDT
+ 	select UCS2_STRING
+ 	select EFI_PARAMS_FROM_FDT
+diff --git a/arch/ia64/Kconfig b/arch/ia64/Kconfig
+index ff861420b8f5..02eb68d5d1c0 100644
+--- a/arch/ia64/Kconfig
++++ b/arch/ia64/Kconfig
+@@ -16,6 +16,7 @@ config IA64
+ 	select ARCH_MIGHT_HAVE_PC_SERIO
+ 	select PCI if (!IA64_HP_SIM)
+ 	select ACPI if (!IA64_HP_SIM)
++	select ARCH_SUPPORTS_ACPI if (!IA64_HP_SIM)
+ 	select ACPI_SYSTEM_POWER_STATES_SUPPORT if ACPI
+ 	select ARCH_MIGHT_HAVE_ACPI_PDC if ACPI
+ 	select HAVE_UNSTABLE_SCHED_CLOCK
+diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+index 088b719bc5d1..442575220708 100644
+--- a/arch/x86/Kconfig
++++ b/arch/x86/Kconfig
+@@ -76,6 +76,7 @@ config X86
+ 	select ARCH_MIGHT_HAVE_ACPI_PDC		if ACPI
+ 	select ARCH_MIGHT_HAVE_PC_PARPORT
+ 	select ARCH_MIGHT_HAVE_PC_SERIO
++	select ARCH_SUPPORTS_ACPI
+ 	select ARCH_SUPPORTS_ATOMIC_RMW
+ 	select ARCH_SUPPORTS_NUMA_BALANCING	if X86_64
+ 	select ARCH_USE_BUILTIN_BSWAP
+diff --git a/drivers/acpi/Kconfig b/drivers/acpi/Kconfig
+index a8da730fabc6..1edca05ee0ae 100644
+--- a/drivers/acpi/Kconfig
++++ b/drivers/acpi/Kconfig
+@@ -5,11 +5,10 @@
+ 
+ menuconfig ACPI
+ 	bool "ACPI (Advanced Configuration and Power Interface) Support"
+-	depends on !IA64_HP_SIM
+-	depends on IA64 || X86 || (ARM64 && EFI)
++	depends on ARCH_SUPPORTS_ACPI
+ 	depends on PCI
+ 	select PNP
+-	default y if (IA64 || X86)
++	default y if X86
+ 	help
+ 	  Advanced Configuration and Power Interface (ACPI) support for 
+ 	  Linux requires an ACPI-compliant platform (hardware/firmware),
+@@ -41,6 +40,9 @@ menuconfig ACPI
+ 	  <http://www.acpi.info>
+ 	  <http://www.uefi.org/acpi/specs>
+ 
++config ARCH_SUPPORTS_ACPI
++	bool
++
+ if ACPI
+ 
+ config ACPI_LEGACY_TABLES_LOOKUP
+-- 
+2.18.0
 
