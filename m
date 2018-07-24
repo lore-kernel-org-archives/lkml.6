@@ -6,21 +6,21 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF396C28CF6
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 20:41:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52AAFC6778F
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 20:41:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7412120852
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 20:41:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7412120852
+	by mail.kernel.org (Postfix) with ESMTP id 16FD220852
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 20:41:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 16FD220852
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388851AbeGXVtJ (ORCPT
+        id S2388935AbeGXVtk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 17:49:09 -0400
+        Tue, 24 Jul 2018 17:49:40 -0400
 Received: from mga09.intel.com ([134.134.136.24]:61798 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388819AbeGXVtJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S2388838AbeGXVtJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 24 Jul 2018 17:49:09 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
@@ -28,9 +28,9 @@ Received: from fmsmga004.fm.intel.com ([10.253.24.48])
   by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Jul 2018 13:40:55 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.51,399,1526367600"; 
-   d="scan'208";a="74172834"
+   d="scan'208";a="74172840"
 Received: from rchatre-s.jf.intel.com ([10.54.70.76])
-  by fmsmga004.fm.intel.com with ESMTP; 24 Jul 2018 13:40:29 -0700
+  by fmsmga004.fm.intel.com with ESMTP; 24 Jul 2018 13:40:30 -0700
 From:   Reinette Chatre <reinette.chatre@intel.com>
 To:     tglx@linutronix.de, fenghua.yu@intel.com, tony.luck@intel.com,
         vikas.shivappa@linux.intel.com
@@ -38,9 +38,9 @@ Cc:     gavin.hindman@intel.com, jithu.joseph@intel.com,
         dave.hansen@intel.com, mingo@redhat.com, hpa@zytor.com,
         x86@kernel.org, linux-kernel@vger.kernel.org,
         Reinette Chatre <reinette.chatre@intel.com>
-Subject: [RFC PATCH 2/7] x86/intel_rdt: Enable a pseudo-locked region to be restored
-Date:   Tue, 24 Jul 2018 13:40:13 -0700
-Message-Id: <8c4815c47eebb1380e761f333988ff3a85f63082.1532463771.git.reinette.chatre@intel.com>
+Subject: [RFC PATCH 3/7] x86/intel_rdt: Enable user to trigger pseudo-locked region restore
+Date:   Tue, 24 Jul 2018 13:40:14 -0700
+Message-Id: <1905054751d4388177b14de220b6adb708e04c3d.1532463771.git.reinette.chatre@intel.com>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <cover.1532463771.git.reinette.chatre@intel.com>
 References: <cover.1532463771.git.reinette.chatre@intel.com>
@@ -51,155 +51,124 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Memory that has been pseudo-locked to cache could be evicted if
-an instruction like WBINVD has been used on a core in the cache
-hierarchy. When this happens the region of cache would remained
-orphaned.
-
-Make it possible for pseudo-locked memory that may have been evicted
-to be restored to its original cache region. In preparation for
-the restoration to be triggered from user space as well as automatically
-within the kernel the restoration does not assume that the
-last_cmd_status log facility is available, instead, if any errors do
-occur during restoration, they will be written to the kernel log buffer.
-
-Temporarily add the unused attribute to the function. It will be removed
-at the time the function is used.
+Expose a new debugfs file that user can use to trigger the restoration
+of a specific Cache Pseudo-Locked region at any time.
 
 Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
 ---
- arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c | 111 ++++++++++++++++++++
- 1 file changed, 111 insertions(+)
+ Documentation/x86/intel_rdt_ui.txt          | 18 ++++++---
+ arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c | 45 ++++++++++++++++++++-
+ 2 files changed, 56 insertions(+), 7 deletions(-)
 
+diff --git a/Documentation/x86/intel_rdt_ui.txt b/Documentation/x86/intel_rdt_ui.txt
+index f662d3c530e5..4b124a54eee3 100644
+--- a/Documentation/x86/intel_rdt_ui.txt
++++ b/Documentation/x86/intel_rdt_ui.txt
+@@ -507,6 +507,17 @@ Cache Pseudo-Locking Debugging Interface
+ The pseudo-locking debugging interface is enabled by default (if
+ CONFIG_DEBUG_FS is enabled) and can be found in /sys/kernel/debug/resctrl.
+ 
++The debugging interface supports the restoration and measurement of the cache
++pseudo-locked region. When a pseudo-locked region is created a new debugfs
++directory is created for it in debugfs as /sys/kernel/debug/resctrl/<newdir>.
++Two write-only files, pseudo_lock_measure and pseudo_lock_restore, are present
++in this directory.
++
++A Cache Pseudo-Locked region can be restored by writing one of 'Yy1' or 'on'
++to pseudo_lock_restore. This would be needed if it is found that the memory
++has been evicted from the cache and will result in the memory being
++pseudo-locked to the original cache region.
++
+ There is no explicit way for the kernel to test if a provided memory
+ location is present in the cache. The pseudo-locking debugging interface uses
+ the tracing infrastructure to provide two ways to measure cache residency of
+@@ -525,11 +536,8 @@ the pseudo-locked region:
+    the system, if any other measurements are in progress the counters and
+    their corresponding event registers will be clobbered.
+ 
+-When a pseudo-locked region is created a new debugfs directory is created for
+-it in debugfs as /sys/kernel/debug/resctrl/<newdir>. A single
+-write-only file, pseudo_lock_measure, is present in this directory. The
+-measurement on the pseudo-locked region depends on the number, 1 or 2,
+-written to this debugfs file. Since the measurements are recorded with the
++The measurement on the pseudo-locked region depends on the number, 1 or 2,
++written to pseudo_lock_measure. Since the measurements are recorded with the
+ tracing infrastructure the relevant tracepoints need to be enabled before the
+ measurement is triggered.
+ 
 diff --git a/arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c b/arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c
-index f80c58f8adc3..693f99594e9f 100644
+index 693f99594e9f..246cff17ce66 100644
 --- a/arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c
 +++ b/arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c
-@@ -453,6 +453,16 @@ static int pseudo_lock_fn(void *_rdtgrp)
- #endif /* CONFIG_X86_64 */
- #endif /* CONFIG_KASAN */
+@@ -1290,7 +1290,7 @@ static int _pseudo_lock_restore(struct rdtgroup *rdtgrp)
+ 	return ret;
+ }
  
-+	/*
-+	 * In the case of a pseudo-locked region restore, if the thread
-+	 * does not get on the CPU and the process attempting
-+	 * a restore is interrupted then the thread remains in runnable
-+	 * state but the closid would have been freed and nothing is
-+	 * waiting on this restoration anymore.
-+	 */
-+	if (!closid_allocated(rdtgrp->closid))
-+		return 0;
-+
- 	/*
- 	 * Make sure none of the allocated memory is cached. If it is we
- 	 * will get a cache hit in below loop from outside of pseudo-locked
-@@ -1191,6 +1201,107 @@ static const struct file_operations pseudo_measure_fops = {
- 	.llseek = default_llseek,
- };
+-static int __attribute__ ((unused)) pseudo_lock_restore(struct rdtgroup *rdtgrp)
++static int pseudo_lock_restore(struct rdtgroup *rdtgrp)
+ {
+ 	int ret;
  
-+/**
-+ * _pseudo_lock_restore - Pseudo-Lock possibly evicted memory again
-+ * @rdtgrp: Resource group to which pseudo-locked region belongs
-+ *
-+ * Pseudo-locked memory could be evicted from the cache with an instruction
-+ * like WBINVD or when the cache is affected by platform power savings. In
-+ * support of recovering from these situations the pseudo-locked region can
-+ * be restored by pseudo-locking the memory again.
-+ *
-+ * Return: 0 if region was successfully restored, <0 on failure.
-+ */
-+static int _pseudo_lock_restore(struct rdtgroup *rdtgrp)
+@@ -1302,6 +1302,43 @@ static int __attribute__ ((unused)) pseudo_lock_restore(struct rdtgroup *rdtgrp)
+ 	return ret;
+ }
+ 
++static ssize_t pseudo_lock_restore_trigger(struct file *file,
++					   const char __user *user_buf,
++					   size_t count, loff_t *ppos)
 +{
-+	struct pseudo_lock_region *plr = rdtgrp->plr;
-+	struct task_struct *thread;
-+	struct rdt_resource *r;
-+	struct rdt_domain *dom;
-+	int closid;
++	struct rdtgroup *rdtgrp = file->private_data;
++	size_t buf_size;
++	char buf[32];
 +	int ret;
++	bool bv;
 +
-+	plr->cpu = cpumask_first(&plr->d->cpu_mask);
++	buf_size = min(count, (sizeof(buf) - 1));
++	if (copy_from_user(buf, user_buf, buf_size))
++		return -EFAULT;
 +
-+	if (!cpu_online(plr->cpu)) {
-+		pr_err("Failed to restore region %s. Associated CPU offline.\n",
-+		       rdtgrp->kn->name);
-+		ret = -ENODEV;
-+		goto out;
++	buf[buf_size] = '\0';
++	ret = strtobool(buf, &bv);
++	if (ret == 0 && bv) {
++		ret = debugfs_file_get(file->f_path.dentry);
++		if (ret)
++			return ret;
++		ret = pseudo_lock_restore(rdtgrp);
++		if (ret == 0)
++			ret = count;
++		debugfs_file_put(file->f_path.dentry);
++	} else {
++		ret = -EINVAL;
 +	}
 +
-+	closid = closid_alloc();
-+	if (closid < 0) {
-+		pr_err("Failed to restore region %s. No free closid.\n",
-+		       rdtgrp->kn->name);
-+		ret = -ENOSPC;
-+		goto out;
-+	}
-+
-+	rdtgrp->closid = closid;
-+
-+	/*
-+	 * Associate the newly allocated closid with the CBM of the
-+	 * Cache Pseudo-Locked region.
-+	 */
-+	for_each_alloc_enabled_rdt_resource(r) {
-+		list_for_each_entry(dom, &r->domains, list)
-+			dom->have_new_ctrl = false;
-+	}
-+
-+	plr->d->new_ctrl = plr->cbm;
-+	plr->d->have_new_ctrl = true;
-+
-+	ret = update_domains(plr->r, rdtgrp->closid);
-+	if (ret < 0) {
-+		pr_err("Unable to program CBM of region %s\n",
-+		       rdtgrp->kn->name);
-+		goto out_closid;
-+	}
-+
-+	plr->thread_done = 0;
-+
-+	thread = kthread_create_on_node(pseudo_lock_fn, rdtgrp,
-+					cpu_to_node(plr->cpu),
-+					"pseudo_lock/%u", plr->cpu);
-+	if (IS_ERR(thread)) {
-+		ret = PTR_ERR(thread);
-+		pr_err("Locking thread error %d during restore of %s\n",
-+		       ret, rdtgrp->kn->name);
-+		goto out_closid;
-+	}
-+
-+	kthread_bind(thread, plr->cpu);
-+	wake_up_process(thread);
-+
-+	ret = wait_event_interruptible(plr->lock_thread_wq,
-+				       plr->thread_done == 1);
-+	if (ret < 0) {
-+		pr_err("Locking thread interrupted during restore of %s\n",
-+		       rdtgrp->kn->name);
-+		goto out_closid;
-+	}
-+
-+	ret = 0;
-+
-+out_closid:
-+	closid_free(rdtgrp->closid);
-+out:
 +	return ret;
 +}
 +
-+static int __attribute__ ((unused)) pseudo_lock_restore(struct rdtgroup *rdtgrp)
-+{
-+	int ret;
-+
-+	cpus_read_lock();
-+	mutex_lock(&rdtgroup_mutex);
-+	ret = _pseudo_lock_restore(rdtgrp);
-+	mutex_unlock(&rdtgroup_mutex);
-+	cpus_read_unlock();
-+	return ret;
-+}
++static const struct file_operations pseudo_restore_fops = {
++	.write = pseudo_lock_restore_trigger,
++	.open = simple_open,
++	.llseek = default_llseek,
++};
 +
  /**
   * rdtgroup_pseudo_lock_create - Create a pseudo-locked region
   * @rdtgrp: resource group to which pseudo-lock region belongs
+@@ -1385,10 +1422,14 @@ int rdtgroup_pseudo_lock_create(struct rdtgroup *rdtgrp)
+ 	if (!IS_ERR_OR_NULL(debugfs_resctrl)) {
+ 		plr->debugfs_dir = debugfs_create_dir(rdtgrp->kn->name,
+ 						      debugfs_resctrl);
+-		if (!IS_ERR_OR_NULL(plr->debugfs_dir))
++		if (!IS_ERR_OR_NULL(plr->debugfs_dir)) {
+ 			debugfs_create_file("pseudo_lock_measure", 0200,
+ 					    plr->debugfs_dir, rdtgrp,
+ 					    &pseudo_measure_fops);
++			debugfs_create_file("pseudo_lock_restore", 0200,
++					    plr->debugfs_dir, rdtgrp,
++					    &pseudo_restore_fops);
++		}
+ 	}
+ 
+ 	dev = device_create(pseudo_lock_class, NULL,
 -- 
 2.17.0
 
