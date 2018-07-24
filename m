@@ -6,129 +6,194 @@ X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB5CFC6778A
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 03:30:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD360C6778A
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 03:34:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 62B6420844
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 03:30:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4AF5120844
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 03:34:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="GyoxY+ea";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="R5By0Z1V"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 62B6420844
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="GdhO/Ubb";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="IzoTOIcd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4AF5120844
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388225AbeGXEen (ORCPT
+        id S2388236AbeGXEjD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 00:34:43 -0400
-Received: from mail-vk0-f65.google.com ([209.85.213.65]:34387 "EHLO
-        mail-vk0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388140AbeGXEen (ORCPT
+        Tue, 24 Jul 2018 00:39:03 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:48612 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388140AbeGXEjD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 00:34:43 -0400
-Received: by mail-vk0-f65.google.com with SMTP id l143-v6so1376653vke.1
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Jul 2018 20:30:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=8xBqHfj+h9JaQucRna70u2kTOWQGl60PEQjHGQ9dWKk=;
-        b=GyoxY+ea5v1vECA1YYKAzoSir1cpCG1lclnSaCXV6bXF9XQEeNzdldFAb3lxkFW5st
-         KA4P76dVyLbeq9uSk8A9MWuw2Ovtho8Lh07nDJ8WeHWRLJB5kQvEbY79wdcF1IcS9pL0
-         fKNdBmX67/de4VK9ViwwvKq2UmFs/8skwo1iOyMwU+lX3wubVGH0Pq96hIbWl1/7B73w
-         j9iwrgPoFFsAm0LevR1Z33yJnlIrFZ7O8kv6/eFcyVh6BNrAlIT8odl3c4Rj/iHB8huw
-         NxcvSqUASoaf4xqBsvJKuHihTisK24z29zExH5KogLJIyXEiljXjdSkXphOl/35iK7ot
-         DEYQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=8xBqHfj+h9JaQucRna70u2kTOWQGl60PEQjHGQ9dWKk=;
-        b=R5By0Z1VHUkOgI5D2zlsCItltiv7ifb8ho1pWRxvy7DBWTCrnW0IVHCEygJjlfG2P6
-         TOSzzqg4/8nrZvFSuDjY+QhMM3dDnM6pvBi91kTVYzQJh6C2rXJHwWaEC5s77AArOOat
-         DIQGBAvAZJovyrsF29DkunDpcRFULbwabiw8E=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
-         :date:message-id:subject:to:cc;
-        bh=8xBqHfj+h9JaQucRna70u2kTOWQGl60PEQjHGQ9dWKk=;
-        b=ex/S2xK8MMrodTElrsqT5GJ5qSsWQpOAq0OaWc32W+l8YK0dqRKpOMyWvULeol8oBy
-         NxybNuW6iSFIngIblaB6ckbX+EnGqDThh1jId9Cx25TvsCdrIIAEFj8NtC13Bju1tmO+
-         w5JgecyV86Kfz7DyHIg/JYRuKUyAh7zSTz79wx5T5kSoxeJfOkaQBa/7uLpTAkrcrM8g
-         vr5IgGOirQLwaKg0eNi4suL6mlrcmgH3Aw+NJgdf/XOJUl803w/VKV2o0AyHWakZ/9b2
-         2G2Zi/glP8M+5kgiLIDVdde+8gQShoz/glacOC/mKbTQfyWGQLMIoRydNkMl12IH7oxo
-         luJQ==
-X-Gm-Message-State: AOUpUlEjtsvSRLJH4g5VItgWfxawJ8PihhhBuVs7xuqCuPpFFE61hWZy
-        X9DZWQBe84Hop4alTYV2sbEMH+bSqpKo3JOGwklr7g==
-X-Google-Smtp-Source: AAOMgpdMWhBegeIDEo6vK8zziihWNUoasu3Je6K5nZD0MnTqqVRYS8V9BLcqms7bRIaDVRiaItXxsveSv59iV3hgR9U=
-X-Received: by 2002:a1f:ebc7:: with SMTP id j190-v6mr9294171vkh.114.1532403022446;
- Mon, 23 Jul 2018 20:30:22 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a1f:cd5:0:0:0:0:0 with HTTP; Mon, 23 Jul 2018 20:30:21 -0700 (PDT)
-In-Reply-To: <f4f92dcd-7a63-f9de-a7a0-c403672d5c6c@codeaurora.org>
-References: <20180723215404.74296-1-dianders@chromium.org> <20180723215404.74296-3-dianders@chromium.org>
- <f4f92dcd-7a63-f9de-a7a0-c403672d5c6c@codeaurora.org>
-From:   Doug Anderson <dianders@chromium.org>
-Date:   Mon, 23 Jul 2018 20:30:21 -0700
-X-Google-Sender-Auth: -boQoYvWeDywXYSV8ucZD0RvBRo
-Message-ID: <CAD=FV=WkC5BsreD8t8_+-5J3ztFp5nAFAA+HSwHVvYW3ED3yiA@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] clk: qcom: Add qspi (Quad SPI) clocks for sdm845
-To:     Taniya Das <tdas@codeaurora.org>
-Cc:     Stephen Boyd <sboyd@kernel.org>,
-        Andy Gross <andy.gross@linaro.org>, grahamr@codeaurora.org,
-        Girish Mahadevan <girishm@codeaurora.org>,
-        Amit Nischal <anischal@codeaurora.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
+        Tue, 24 Jul 2018 00:39:03 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id C310C60B12; Tue, 24 Jul 2018 03:34:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1532403281;
+        bh=PRN2FZISIA/C+HBEiKQbsJO4GKWKcSiK3nX9ZRSU+Ts=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=GdhO/UbbuunI41RpSmA++TGwUqJ+l9EqAE0noLTds/Ai0SfdNYG8QwbDfVCDFrex/
+         EPjy6a7is4lqB1D23M+FgO+614ZXC4+GuErYK3wvMWyuJr6wtY52Wht3CJS0Y3dwqk
+         bO04P9aMFih85JLMWZd4Btt61eiWLzzYKRIA1v9k=
+Received: from [10.206.24.39] (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: asutoshd@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id CA8596055D;
+        Tue, 24 Jul 2018 03:34:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1532403280;
+        bh=PRN2FZISIA/C+HBEiKQbsJO4GKWKcSiK3nX9ZRSU+Ts=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=IzoTOIcdqn4MI3XUXfLT4iFwp2AwA1OuSnwv30bl5hGi185z6wd2iSTSXrZe2RmC4
+         tEgcLq+96IYkBs2UzBKx94TAUSDdNqy2h5vAvffjhTf8IutjVt/HWsmIYvYvnD0ADn
+         uX2yQMj0s4Auw2OdSlbjD7oBsYAWUoxDXa8OIqds=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org CA8596055D
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=asutoshd@codeaurora.org
+Subject: Re: [PATCH v1 4/9] scsi: ufs: add option to change default UFS power
+ management level
+To:     Rob Herring <robh@kernel.org>
+Cc:     Subhash Jadavani <subhashj@codeaurora.org>,
+        Can Guo <cang@codeaurora.org>,
+        Vivek Gautam <vivek.gautam@codeaurora.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Vinayak Holikatti <vinholikatti@gmail.com>,
+        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        linux-scsi@vger.kernel.org,
         linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        David Brown <david.brown@linaro.org>,
-        "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Venkat Gopalakrishnan <venkatg@codeaurora.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Mathieu Malaterre <malat@debian.org>,
+        devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <cover.1530880006.git.asutoshd@codeaurora.org>
+ <ff2b648007a400c60ba804a0c5cab0166bd268e7.1530880006.git.asutoshd@codeaurora.org>
+ <20180711203317.GA14983@rob-hp-laptop>
+ <4b85de8b-d03e-da93-704b-e70922a9fbea@codeaurora.org>
+ <CAL_JsqLXUvUj8n=1Xv-_ssqB6rayMvxOTnGzeN1vS9yx4-jqOQ@mail.gmail.com>
+From:   "Asutosh Das (asd)" <asutoshd@codeaurora.org>
+Message-ID: <f1d3af9d-3ff0-c15b-013d-013ba6dde287@codeaurora.org>
+Date:   Tue, 24 Jul 2018 09:04:34 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <CAL_JsqLXUvUj8n=1Xv-_ssqB6rayMvxOTnGzeN1vS9yx4-jqOQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On 7/23/2018 8:06 PM, Rob Herring wrote:
+> On Sun, Jul 22, 2018 at 9:20 PM Asutosh Das (asd)
+> <asutoshd@codeaurora.org> wrote:
+>>
+>> On 7/12/2018 2:03 AM, Rob Herring wrote:
+>>> On Fri, Jul 06, 2018 at 06:00:31PM +0530, Asutosh Das wrote:
+>>>> From: Subhash Jadavani <subhashj@codeaurora.org>
+>>>>
+>>>> UFS device and link can be put in multiple different low power modes hence
+>>>> UFS driver supports multiple different low power modes. By default UFS
+>>>> driver selects the default (optimal) low power mode (which gives moderate
+>>>> power savings and have relatively less enter and exit latencies) but
+>>>> we might have to tune this default power mode for different chipset
+>>>> platforms to meet the low power requirements/goals. Hence this patch
+>>>> adds option to change default UFS low power mode (level).
+>>>>
+>>>> Signed-off-by: Subhash Jadavani <subhashj@codeaurora.org>
+>>>> Signed-off-by: Venkat Gopalakrishnan <venkatg@codeaurora.org>
+>>>> Signed-off-by: Can Guo <cang@codeaurora.org>
+>>>> Signed-off-by: Asutosh Das <asutoshd@codeaurora.org>
+>>>> ---
+>>>>    .../devicetree/bindings/ufs/ufshcd-pltfrm.txt      | 11 ++++++++
+>>>>    drivers/scsi/ufs/ufshcd-pltfrm.c                   | 14 +++++++++++
+>>>>    drivers/scsi/ufs/ufshcd.c                          | 29 +++++++++++++++-------
+>>>>    drivers/scsi/ufs/ufshcd.h                          |  4 +--
+>>>>    4 files changed, 47 insertions(+), 11 deletions(-)
+>>>>
+>>>> diff --git a/Documentation/devicetree/bindings/ufs/ufshcd-pltfrm.txt b/Documentation/devicetree/bindings/ufs/ufshcd-pltfrm.txt
+>>>> index c39dfef..f564d9a 100644
+>>>> --- a/Documentation/devicetree/bindings/ufs/ufshcd-pltfrm.txt
+>>>> +++ b/Documentation/devicetree/bindings/ufs/ufshcd-pltfrm.txt
+>>>> @@ -38,6 +38,15 @@ Optional properties:
+>>>>                         defined or a value in the array is "0" then it is assumed
+>>>>                         that the frequency is set by the parent clock or a
+>>>>                         fixed rate clock source.
+>>>> +- rpm-level         : UFS Runtime power management level. Following PM levels are supported:
+>>>> +                      0 - Both UFS device and Link in active state (Highest power consumption)
+>>>> +                      1 - UFS device in active state but Link in Hibern8 state
+>>>> +                      2 - UFS device in Sleep state but Link in active state
+>>>> +                      3 - UFS device in Sleep state and Link in hibern8 state (default PM level)
+>>>> +                      4 - UFS device in Power-down state and Link in Hibern8 state
+>>>> +                      5 - UFS device in Power-down state and Link in OFF state (Lowest power consumption)
+>>>> +- spm-level         : UFS System power management level. Allowed PM levels are same as rpm-level.
+>>>
+>>> What's the default?
+>>>
+>>> I assume these are minimums? The OS can pick higher power states. This
+>>> seems to be a bit Linux specific (as 'runtime PM' could be considered
+>>> Linux specific). For every other device, we don't put this type of
+>>> information in DT, but is user controlled.
+>> I didn't completely understand your comment.
+>> Do you not want these properties to be in DT file?
+> 
+> Right, not if it is a user decision.
+> 
+>> When you say user-controlled, do you mean control it through sysfs entries?
+> 
+> Yes.
+> 
+>>> So really, wouldn't 1
+>>> property be sufficient for cases where a mode doesn't work due to
+>>> some h/w limitation. Otherwise, it is an OS or user decision.
+>> I didn't completely understand this. Could you please elaborate on your
+>> intent here?
+> 
+> The case that makes sense for this to be in DT is if there are h/w
+> limitations that prevent some low power modes. In such a case, that
+> limit is not likely specific to runtime PM or system suspend.
+> 
+>>>>    -lanes-per-direction       : number of lanes available per direction - either 1 or 2.
+>>>>                         Note that it is assume same number of lanes is used both
+>>>>                         directions at once. If not specified, default is 2 lanes per direction.
+>>>> @@ -66,4 +75,6 @@ Example:
+>>>>               freq-table-hz = <100000000 200000000>, <0 0>, <0 0>;
+>>>>               phys = <&ufsphy1>;
+>>>>               phy-names = "ufsphy";
+>>>> +            rpm-level = <3>;
+>>>
+>>> Why specified if 3 is the default?
+>> Ah yes - that should be removed.
+>> I'll remove it in v2.
+>>
+>>>
+>>>> +            spm-level = <5>;
+>>>
+>>> These seem like sane defaults. When and why would you use some
+>>> different?
+>> I think each of the deeper sleep modes are associated with an increasing
+>> wakeup latency. For e.g. '0' would have the highest power-consumption
+>> and no resume latency at all as compared to '5'.
+>> So depending on use-cases other modes may be chosen.
+> 
+> The use-case can change in a running system. For example if you are
+> plugged in, then you probably don't want to enter a lower power mode.
+> 
+> Rob
+> 
 
-On Mon, Jul 23, 2018 at 7:22 PM, Taniya Das <tdas@codeaurora.org> wrote:
->
->
-> On 7/24/2018 3:24 AM, Douglas Anderson wrote:
->>
->> Add both the interface and core clock.
->>
->> Signed-off-by: Douglas Anderson <dianders@chromium.org>
->> ---
->>
->> Changes in v2:
->> - Only 19.2, 100, 150, and 300 MHz now.
->> - All clocks come from MAIN rather than EVEN.
->> - Use parent map 0 instead of new parent map 9.
->>
->>   drivers/clk/qcom/gcc-sdm845.c | 63 +++++++++++++++++++++++++++++++++++
->>   1 file changed, 63 insertions(+)
->>
->> diff --git a/drivers/clk/qcom/gcc-sdm845.c b/drivers/clk/qcom/gcc-sdm845.c
->> index 0f694ed4238a..5bca634e277a 100644
->> --- a/drivers/clk/qcom/gcc-sdm845.c
->> +++ b/drivers/clk/qcom/gcc-sdm845.c
->> @@ -162,6 +162,13 @@ static const char * const gcc_parent_names_10[] = {
->>         "core_bi_pll_test_se",
->>   };
->>   +static const char * const gcc_parent_names_9[] = {
->> +       "bi_tcxo",
->> +       "gpll0",
->> +       "gpll0_out_even",
->> +       "core_pi_sleep_clk",
->> +};
->> +
->
->
-> Please remove this.
+Ok - Thanks.
+I'm gonna make the following changes in v2:
+1. Remove these entries from DT
+2. Add support for these entries in sysfs.
+3. Keep 3 as the default value for [rpm/spm]-levels
 
-Oops, that's embarrassing.  Please stay tuned for v3.
+-asd
 
--Doug
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, a 
+Linux Foundation Collaborative Project
