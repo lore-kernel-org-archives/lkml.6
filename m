@@ -2,180 +2,121 @@ Return-Path: <SRS0=hTZH=KI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 930FFC28CF6
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 21:18:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB37FC28CF6
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 21:24:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 47FED20874
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 21:18:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 47FED20874
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
+	by mail.kernel.org (Postfix) with ESMTP id 88AC320856
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 21:24:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 88AC320856
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xmission.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388608AbeGXW1J (ORCPT
+        id S2388632AbeGXWdG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 18:27:09 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:38680 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388471AbeGXW1J (ORCPT
+        Tue, 24 Jul 2018 18:33:06 -0400
+Received: from out03.mta.xmission.com ([166.70.13.233]:59052 "EHLO
+        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388476AbeGXWdG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 18:27:09 -0400
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id CE4FF80564; Tue, 24 Jul 2018 23:18:44 +0200 (CEST)
-Date:   Tue, 24 Jul 2018 23:18:42 +0200
-From:   Pavel Machek <pavel@ucw.cz>
-To:     Andy Lutomirski <luto@amacapital.net>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Joerg Roedel <joro@8bytes.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>, Peter Anvin <hpa@zytor.com>,
-        the arch/x86 maintainers <x86@kernel.org>,
+        Tue, 24 Jul 2018 18:33:06 -0400
+Received: from in01.mta.xmission.com ([166.70.13.51])
+        by out03.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1fi4nS-0004Pk-MK; Tue, 24 Jul 2018 15:24:42 -0600
+Received: from [97.119.167.31] (helo=x220.xmission.com)
+        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1fi4nR-0008HI-Oe; Tue, 24 Jul 2018 15:24:42 -0600
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Oleg Nesterov <oleg@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-mm <linux-mm@kvack.org>,
-        Andrew Lutomirski <luto@kernel.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        =?iso-8859-1?Q?J=FCrgen_Gro=DF?= <jgross@suse.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Borislav Petkov <bp@alien8.de>, Jiri Kosina <jkosina@suse.cz>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Brian Gerst <brgerst@gmail.com>,
-        David Laight <David.Laight@aculab.com>,
-        Denys Vlasenko <dvlasenk@redhat.com>,
-        Eduardo Valentin <eduval@amazon.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Will Deacon <will.deacon@arm.com>,
-        "Liguori, Anthony" <aliguori@amazon.com>,
-        Daniel Gruss <daniel.gruss@iaik.tugraz.at>,
-        Hugh Dickins <hughd@google.com>,
-        Kees Cook <keescook@google.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Waiman Long <llong@redhat.com>,
-        "David H . Gutteridge" <dhgutteridge@sympatico.ca>,
-        Joerg Roedel <jroedel@suse.de>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>
-Subject: Re: [PATCH 0/3] PTI for x86-32 Fixes and Updates
-Message-ID: <20180724211842.GB29308@amd>
-References: <1532103744-31902-1-git-send-email-joro@8bytes.org>
- <20180723140925.GA4285@amd>
- <CA+55aFynT9Sp7CbnB=GqLbns7GFZbv3pDSQm_h0jFvJpz3ES+g@mail.gmail.com>
- <20180723213830.GA4632@amd>
- <39A1C149-DA03-46D1-801F-0205DCD69A36@amacapital.net>
+        Wen Yang <wen.yang99@zte.com.cn>, majiang <ma.jiang@zte.com.cn>
+References: <87efft5ncd.fsf_-_@xmission.com>
+        <20180724032419.20231-20-ebiederm@xmission.com>
+        <CA+55aFxNijeenFd6o7fg3iJFqAjdTZLaFV2=Eaqbg1fDOzx26A@mail.gmail.com>
+        <874lgo5xdg.fsf@xmission.com>
+        <CA+55aFw_CTTRTZfUf1e9yg04X_djG3q7HrCG-XqnyQorpKjaTQ@mail.gmail.com>
+        <87fu084cxj.fsf@xmission.com>
+        <CA+55aFxUc3ttEAuRS7GKs9aTjTFw1poE80DASFSXudVQCuWpHg@mail.gmail.com>
+        <87a7qg4bb3.fsf_-_@xmission.com>
+        <CA+55aFxe+Ku78ZEvd_F2TD_3gTmLXw0kzo4HDE-ngkYfSHQfPw@mail.gmail.com>
+Date:   Tue, 24 Jul 2018 16:24:28 -0500
+In-Reply-To: <CA+55aFxe+Ku78ZEvd_F2TD_3gTmLXw0kzo4HDE-ngkYfSHQfPw@mail.gmail.com>
+        (Linus Torvalds's message of "Tue, 24 Jul 2018 13:56:05 -0700")
+Message-ID: <87pnzc2upf.fsf@xmission.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="mxv5cy4qt+RJ9ypb"
-Content-Disposition: inline
-In-Reply-To: <39A1C149-DA03-46D1-801F-0205DCD69A36@amacapital.net>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Type: text/plain
+X-XM-SPF: eid=1fi4nR-0008HI-Oe;;;mid=<87pnzc2upf.fsf@xmission.com>;;;hst=in01.mta.xmission.com;;;ip=97.119.167.31;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX1/wSOSEwl4W8QzPAKuZoJl+dE0jUhfEIz8=
+X-SA-Exim-Connect-IP: 97.119.167.31
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+Subject: Re: [PATCH v2 20/20] signal: Don't restart fork when signals come in.
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Linus Torvalds <torvalds@linux-foundation.org> writes:
 
---mxv5cy4qt+RJ9ypb
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> On Tue, Jul 24, 2018 at 1:40 PM Eric W. Biederman <ebiederm@xmission.com> wrote:
+>>
+>> +       if (signal_pending(current)) {
+>> +               retval = restart_syscall();
+>> +               goto fork_out;
+>> +       }
+>
+> Oh, the previous version had this too, but it wasn't as obvious
+> because it was just in a single line:
+>
+>         return ERR_PTR(restart_syscall());
+>
+> but it's just crazy.
+>
+> It should just be
+>
+>         retval = -ERESTARTNOINTR;
+>         if (signal_pending(current))
+>                 goto fork_out;
+>
+> because it's just silly and pointless to change the code to use
+> restart_syscall() here.
+>
+> All restart_syscall() does is
+>
+>         set_tsk_thread_flag(current, TIF_SIGPENDING);
+>         return -ERESTARTNOINTR;
+>
+> and you just *checked* that TIF_SIGPENDING was already set. So the
+> above is completely pointless.
+>
+> It is not clear why you made that change. The old code had the simpler
+> "just return -ERESTARTNOINTR" model.
+>
+> Did the restart_syscall() thing come in by mistake from some previous
+> trials and it just hung around?
 
-On Mon 2018-07-23 14:50:50, Andy Lutomirski wrote:
->=20
->=20
-> > On Jul 23, 2018, at 2:38 PM, Pavel Machek <pavel@ucw.cz> wrote:
-> >=20
-> >> On Mon 2018-07-23 12:00:08, Linus Torvalds wrote:
-> >>> On Mon, Jul 23, 2018 at 7:09 AM Pavel Machek <pavel@ucw.cz> wrote:
-> >>>=20
-> >>> Meanwhile... it looks like gcc is not slowed down significantly, but
-> >>> other stuff sees 30% .. 40% slowdowns... which is rather
-> >>> significant.
-> >>=20
-> >> That is more or less expected.
-> >>=20
-> >> Gcc spends about 90+% of its time in user space, and the system calls
-> >> it *does* do tend to be "real work" (open/read/etc). And modern gcc's
-> >> no longer have the pipe between cpp and cc1, so they don't have that
-> >> issue either (which would have sjhown the PTI slowdown a lot more)
-> >>=20
-> >> Some other loads will do a lot more time traversing the user/kernel
-> >> boundary, and in 32-bit mode you won't be able to take advantage of
-> >> the address space ID's, so you really get the full effect.
-> >=20
-> > Understood. Just -- bzip2 should include quite a lot of time in
-> > userspace, too.=20
-> >=20
-> >>> Would it be possible to have per-process control of kpti? I have
-> >>> some processes where trading of speed for security would make sense.
-> >>=20
-> >> That was pretty extensively discussed, and no sane model for it was
-> >> ever agreed upon.  Some people wanted it per-thread, others per-mm,
-> >> and it wasn't clear how to set it either and how it should inherit
-> >> across fork/exec, and what the namespace rules etc should be.
-> >>=20
-> >> You absolutely need to inherit it (so that you can say "I trust this
-> >> session" or whatever), but at the same time you *don't* want to
-> >> inherit if you have a server you trust that then spawns user processes
-> >> (think "I want systemd to not have the overhead, but the user
-> >> processes it spawns obviously do need protection").
-> >>=20
-> >> It was just a morass. Nothing came out of it.  I guess people can
-> >> discuss it again, but it's not simple.
-> >=20
-> > I agree it is not easy. OTOH -- 30% of user-visible performance is a
-> > _lot_. That is worth spending man-years on...  Ok, problem is not as
-> > severe on modern CPUs with address space ID's, but...
-> >=20
-> > What I want is "if A can ptrace B, and B has pti disabled, A can have
-> > pti disabled as well". Now.. I see someone may want to have it
-> > per-thread, because for stuff like javascript JIT, thread may have
-> > rights to call ptrace, but is unable to call ptrace because JIT
-> > removed that ability... hmm...
->=20
-> No, you don=E2=80=99t want that. The problem is that Meltdown isn=E2=80=
-=99t a problem that exists in isolation. It=E2=80=99s very plausible that J=
-avaScript code could trigger a speculation attack that, with PTI off, could=
- read kernel memory.
+I think this is the one place in the kernel where we can restart a
+system call and not set TIF_SIGPENDING.
 
-Ok, you are right. It is more tricky then I thought.
+Several years ago I made the mistake in the networking code of returning
+-ERESTARTNOINTR and forgetting to set TIF_SIGPENDING.  That wasn't fun.
+So I wrote restart_syscall and use it so I don't make that mistake
+again.
 
-Still, I probably don't need to run grep's and cat's with PTI
-on. Chromium (etc) probably needs it. Python interpretter running my
-own code probably does not.
+In this case your suggesting will definitely generate better code so I
+am happy to make a V3 with that doesn't use restart_syscall.  A person
+working in the guts of fork can reasonably be expected understand and to
+have all of the subtleties in cache as they work on that part of fork.
 
-Yes, my Thinkpad X60 is probably thermal-throttled. It is not really
-new machine. I switched to T40p for now :-).
-
-What is the "worst" case people are seeing?
-time dd if=3D/dev/zero of=3D/dev/null bs=3D1 count=3D10000000
-can reproduce 3x slowdown, but that's basically microbenchmark.
-
-root-only per-process enable/disable of kpti should not be too hard to
-do. Would there be interest in that?
-
-Best regards,
-
-								Pavel
---
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---mxv5cy4qt+RJ9ypb
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAltXl7IACgkQMOfwapXb+vKkRQCfTP3tSQsIpQiIYF3/7KW+67l/
-PZYAnjaG42dv7CN8Jr3OMHjQVH73pfJ7
-=1WCR
------END PGP SIGNATURE-----
-
---mxv5cy4qt+RJ9ypb--
+Eric
