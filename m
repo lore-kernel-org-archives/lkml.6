@@ -6,80 +6,91 @@ X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F143C6778A
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 05:29:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 221FBC6778A
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 05:30:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 46A4220874
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 05:29:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 46A4220874
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ZenIV.linux.org.uk
+	by mail.kernel.org (Postfix) with ESMTP id D6FA120874
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 05:30:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D6FA120874
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388258AbeGXGeK (ORCPT
+        id S2388275AbeGXGf2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 02:34:10 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:39254 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388109AbeGXGeK (ORCPT
+        Tue, 24 Jul 2018 02:35:28 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:32922 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388146AbeGXGf1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 02:34:10 -0400
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.87 #1 (Red Hat Linux))
-        id 1fhpt3-0000zK-6p; Tue, 24 Jul 2018 05:29:29 +0000
-Date:   Tue, 24 Jul 2018 06:29:29 +0100
-From:   Al Viro <viro@ZenIV.linux.org.uk>
-To:     "Dae R. Jeong" <threeearcat@gmail.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        byoungyoung@purdue.edu, kt0755@gmail.com, bammanag@purdue.edu
-Subject: Re: KASAN: use-after-free Read in link_path_walk
-Message-ID: <20180724052929.GI30522@ZenIV.linux.org.uk>
-References: <20180724034542.GA19283@dragonet>
- <20180724051726.GH30522@ZenIV.linux.org.uk>
+        Tue, 24 Jul 2018 02:35:27 -0400
+Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0655B516;
+        Tue, 24 Jul 2018 05:30:45 +0000 (UTC)
+Date:   Tue, 24 Jul 2018 07:30:42 +0200
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Georgios Tsotsos <tsotsos@gmail.com>
+Cc:     devel@driverdev.osuosl.org, jhogan@kernel.org,
+        linux-kernel@vger.kernel.org, aaro.koskinen@iki.fi
+Subject: Re: [PATCH] Staging: octeon: Apply Licence and resolves warnings
+ according to TODO list. There are also a few "checks" that probably should
+ revised but i think most of them could be resolved by breaking down
+ cvmx_usb_poll_channel()
+Message-ID: <20180724053042.GA13338@kroah.com>
+References: <20180723222117.542-1-tsotsos@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180724051726.GH30522@ZenIV.linux.org.uk>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+In-Reply-To: <20180723222117.542-1-tsotsos@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 24, 2018 at 06:17:26AM +0100, Al Viro wrote:
-> On Tue, Jul 24, 2018 at 12:45:42PM +0900, Dae R. Jeong wrote:
-> > Diagnosis:
-> > We think that it is possible that link_path_walk() dereferences a
-> > freed pointer when cleanup_mnt() is executed between path_init() and
-> > link_path_walk().
-> > 
-> > Since I'm not an expert on a file system and don't fully understand
-> > the crash, please see a executed program and a crash log below in
-> > case that my understanding is wrong.
-> > 
-> > 
-> > Executed Program:
-> > Thread0                     Thread1
-> > mkdir("./file0")
-> >      |--------------------------|
-> >      |                      mount("./file0", "./file0", "devpts", 0x0, "")
-> >      |                          |
-> > openat(AT_FDCWD,            chroot("./file0")
-> > "/dev/vcs", 0x200, 0x0)     umount("./file0", 0x2)
-> > 
-> > openat(), chroot(), umount() syscalls are executed after mount() syscall.
-> > We think a race occurs between openat() and chroot() because RaceFuzzer
-> > executed openat() and chroot() concurrently.
-> > 
-> > 
-> > (Possible) Thread interleaving:
-> > CPU0 (path_openat)                      CPU1 (cleanup_mnt)
+On Tue, Jul 24, 2018 at 01:21:17AM +0300, Georgios Tsotsos wrote:
+> Signed-off-by: Georgios Tsotsos <tsotsos@gmail.com>
+> ---
+>  drivers/staging/octeon-usb/octeon-hcd.c | 55 ++++++++++++++++++---------------
+>  drivers/staging/octeon-usb/octeon-hcd.h |  1 +
 
-Wait a bloody minute.  Where does cleanup_mnt() come from in that thing?
-You are doing lazy-umount of the thing you've chrooted into; if it ends
-up with zero refcount on that mount, we are already in deep, deep trouble,
-races with open() on not.  Simply following that with stat / (in thread 1,
-without thread0 at all) would end up accessing the same vfsmount.  And
-if it's been freed, we are well and truly fucked, race or no race.
+Hi,
 
-I really want details.  *Is* cleanup_mnt() called by thread 1 in your
-reproducer before the use-after-free hits?  And what's the root of
-thread 0 at that point?
+This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
+a patch that has triggered this response.  He used to manually respond
+to these common problems, but in order to save his sanity (he kept
+writing the same thing over and over, yet to different people), I was
+created.  Hopefully you will not take offence and will fix the problem
+in your patch and resubmit it so that it can be accepted into the Linux
+kernel tree.
+
+You are receiving this message because of the following common error(s)
+as indicated below:
+
+- Your patch did many different things all at once, making it difficult
+  to review.  All Linux kernel patches need to only do one thing at a
+  time.  If you need to do multiple things (such as clean up all coding
+  style issues in a file/driver), do it in a sequence of patches, each
+  one doing only one thing.  This will make it easier to review the
+  patches to ensure that they are correct, and to help alleviate any
+  merge issues that larger patches can cause.
+
+- You did not specify a description of why the patch is needed, or
+  possibly, any description at all, in the email body.  Please read the
+  section entitled "The canonical patch format" in the kernel file,
+  Documentation/SubmittingPatches for what is needed in order to
+  properly describe the change.
+
+- You did not write a descriptive Subject: for the patch, allowing Greg,
+  and everyone else, to know what this patch is all about.  Please read
+  the section entitled "The canonical patch format" in the kernel file,
+  Documentation/SubmittingPatches for what a proper Subject: line should
+  look like.
+
+If you wish to discuss this problem further, or you have questions about
+how to resolve this issue, please feel free to respond to this email and
+Greg will reply once he has dug out from the pending patches received
+from other developers.
+
+thanks,
+
+greg k-h's patch email bot
