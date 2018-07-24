@@ -2,214 +2,119 @@ Return-Path: <SRS0=hTZH=KI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A233ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 16:03:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8CD8C6778A
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 16:04:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 221C220856
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 16:03:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 221C220856
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 6C3C420856
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 16:04:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C3C420856
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=the-dreams.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388583AbeGXRKz (ORCPT
+        id S2388593AbeGXRLU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 13:10:55 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:57933 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2388397AbeGXRKy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 13:10:54 -0400
-Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 1A6391C7F3449;
-        Wed, 25 Jul 2018 00:03:39 +0800 (CST)
-Received: from [127.0.0.1] (10.111.220.140) by DGGEMS403-HUB.china.huawei.com
- (10.3.19.203) with Microsoft SMTP Server id 14.3.382.0; Wed, 25 Jul 2018
- 00:03:32 +0800
-Subject: Re: [PATCH 4/5] f2fs: let BG_GC check every dirty segments and gc
- over a threshold
-To:     Chao Yu <chao@kernel.org>, <jaegeuk@kernel.org>,
-        <yuchao0@huawei.com>, <yunlong.song@icloud.com>
-CC:     <miaoxie@huawei.com>, <bintian.wang@huawei.com>,
-        <shengyong1@huawei.com>, <heyunlei@huawei.com>,
-        <linux-f2fs-devel@lists.sourceforge.net>,
-        <linux-kernel@vger.kernel.org>
-References: <1532355022-163029-1-git-send-email-yunlong.song@huawei.com>
- <1532355022-163029-5-git-send-email-yunlong.song@huawei.com>
- <866f57e1-ef22-112c-6386-f80a054d1e32@kernel.org>
-From:   Yunlong Song <yunlong.song@huawei.com>
-Message-ID: <b3d5e584-66ff-a0ef-8730-7091d47790fd@huawei.com>
-Date:   Wed, 25 Jul 2018 00:01:10 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
+        Tue, 24 Jul 2018 13:11:20 -0400
+Received: from www.zeus03.de ([194.117.254.33]:57348 "EHLO mail.zeus03.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388397AbeGXRLU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Jul 2018 13:11:20 -0400
+Received: (qmail 27242 invoked from network); 24 Jul 2018 18:04:07 +0200
+Received: by mail.zeus03.de with ESMTPSA (ECDHE-RSA-AES256-GCM-SHA384 encrypted, authenticated); 24 Jul 2018 18:04:07 +0200
+X-UD-Smtp-Session: l3s3148p1@wMxy6cBxfsAgAwDPW8tnAAId4P/+oMhl
+Date:   Tue, 24 Jul 2018 18:04:07 +0200
+From:   Wolfram Sang <wsa@the-dreams.de>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Peter Rosin <peda@axentia.se>,
+        Linux I2C <linux-i2c@vger.kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Przemyslaw Sroka <psroka@cadence.com>,
+        Arkadiusz Golec <agolec@cadence.com>,
+        Alan Douglas <adouglas@cadence.com>,
+        Bartosz Folta <bfolta@cadence.com>,
+        Damian Kos <dkos@cadence.com>,
+        Alicja Jurasik-Urbaniak <alicja@cadence.com>,
+        Cyprian Wronka <cwronka@cadence.com>,
+        Suresh Punnoose <sureshp@cadence.com>,
+        Rafal Ciepiela <rafalc@cadence.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Nishanth Menon <nm@ti.com>, Rob Herring <robh+dt@kernel.org>,
+        Pawel Moll <pawel.moll@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ian Campbell <ijc+devicetree@hellion.org.uk>,
+        Kumar Gala <galak@codeaurora.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Vitor Soares <Vitor.Soares@synopsys.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Xiang Lin <Xiang.Lin@synaptics.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Sekhar Nori <nsekhar@ti.com>, pgaj@cadence.com
+Subject: Re: [PATCH v6 00/10] Add the I3C subsystem
+Message-ID: <20180724160407.jdjofll5clmzwnr2@katana>
+References: <2ab0ab75-2df0-2714-f007-c33b25481016@axentia.se>
+ <20180720101206.tv7nsoanwo5ftnia@ninjato>
+ <CAK8P3a2Pqo5DuYBb09+w4nGWGOw+e_tZPxnA06qjNO_6Hw6NvQ@mail.gmail.com>
+ <21b269c5-a3a7-c5de-c81e-c9c9301ae13e@axentia.se>
+ <CAK8P3a1t2fhdw7HwxNkOs9o2pBECZ0ZdOysA=r2SPTWEvx76kw@mail.gmail.com>
+ <20180720151751.242d4809@bbrezillon>
+ <CAK8P3a14_6uf9VLYU0YnmFp0Q=DZBKc0cAesBh0opanGDZMFRA@mail.gmail.com>
+ <20180724162806.318a92c6@bbrezillon>
+ <CAK8P3a3YQbiiJMTHTVh63fOvtA1sa0J5Eb4z7xbnpBPwUDkqxg@mail.gmail.com>
+ <CAMuHMdXif_iufXx0Y+UJjKs9TNLfrTONoFvUSyrpkfaT0=ydRQ@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <866f57e1-ef22-112c-6386-f80a054d1e32@kernel.org>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Originating-IP: [10.111.220.140]
-X-CFilter-Loop: Reflected
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="azurd2khkr4qdjyu"
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdXif_iufXx0Y+UJjKs9TNLfrTONoFvUSyrpkfaT0=ydRQ@mail.gmail.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
-
-On 2018/7/24 22:52, Chao Yu wrote:
-> On 2018/7/23 22:10, Yunlong Song wrote:
->> BG_GC is triggered in idle time, so it is better check every dirty
->> segment and finds the best victim to gc. Otherwise, BG_GC will be
->> limited to only 8G areas, and probably select a victim which has nearly
-> If 8GB range is not enough and just hard code now, we can export it in sysfs and
-> do the configuration.
-There is already a sysfs entry called max_victim_search, but the default 
-value is defined
-as DEF_MAX_VICTIM_SEARCH, i.e., 4096, equals to 8GB. So can we increase 
-this default
-value to UINT_MAX?
->
->> full of valid blocks, resulting a big WAI. Besides, we also add a
-> BGGC should move cold data anway, if we only consider WA, hot data section can
-> be selected with very high probability, but hot data can do OPU itself sooner or
-> later, so moving them will cause higher WA.
-Yes, but this problem also appears in the default 8G area, even in 8G 
-area, perhaps there is
-still a victim section which has fewest valid blocks but with hot data 
-type. This patch adds
-a bggc_threshold to avoid big WA and wishes SSR write data to the 
-section whose threshold
-is over bggc_threshold but with cold data type. Since the initial 
-min_cost in BG_GC is valued
-as UINT_MAX, BG_GC can always successfully select a victim and move 
-blocks in common case,
-but sometimes it is not needed, for example, there are already enough 
-free sections and each
-dirty section has same valid blocks, if BG_GC continue its job, then 
-there is a big WA.
-
->
-> I think the better way is we can export a sysfs entry to adjust factor to
-> control weight of aging or valid block of section. So that, user can adjust it
-> to select less valid block candidate first instead of high aging one.
-How about export the bggc_threshold as sysfs entry, the default value is 
-defined as the old
-fggc_threshold, i.e., (main - ovp) / (main - rsvd) * BLKS_PER_SEC. User 
-can adjust this value
-to control the WA and non-WA requirement.
-
->
-> Thanks,
->
->> bggc_threshold (which is the old "fggc_threshold", so revert commit
->> "299254") to stop BG_GC when there is no good choice. This is especially
->> good for large section case to reduce WAI.
->>
->> Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
->> ---
->>   fs/f2fs/f2fs.h    |  2 ++
->>   fs/f2fs/gc.c      | 23 ++++++++++++++++++++---
->>   fs/f2fs/segment.h |  9 +++++++++
->>   3 files changed, 31 insertions(+), 3 deletions(-)
->>
->> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
->> index f8a7b42..24a9d7f 100644
->> --- a/fs/f2fs/f2fs.h
->> +++ b/fs/f2fs/f2fs.h
->> @@ -1220,6 +1220,8 @@ struct f2fs_sb_info {
->>   	unsigned int cur_fg_victim_sec;		/* current FG_GC victim section num */
->>   	unsigned int cur_bg_victim_sec;		/* current BG_GC victim section num */
->>   	unsigned int gc_mode;			/* current GC state */
->> +	/* threshold for selecting bg victims */
->> +	u64 bggc_threshold;
->>   	/* for skip statistic */
->>   	unsigned long long skipped_atomic_files[2];	/* FG_GC and BG_GC */
->>   
->> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
->> index 0e7a265..21e8d59 100644
->> --- a/fs/f2fs/gc.c
->> +++ b/fs/f2fs/gc.c
->> @@ -189,9 +189,8 @@ static void select_policy(struct f2fs_sb_info *sbi, int gc_type,
->>   		p->ofs_unit = sbi->segs_per_sec;
->>   	}
->>   
->> -	/* we need to check every dirty segments in the FG_GC case */
->> -	if (gc_type != FG_GC &&
->> -			(sbi->gc_mode != GC_URGENT) &&
->> +	/* we need to check every dirty segments in the GC case */
->> +	if (p->alloc_mode == SSR &&
->>   			p->max_search > sbi->max_victim_search)
->>   		p->max_search = sbi->max_victim_search;
->>   
->> @@ -230,6 +229,10 @@ static unsigned int check_bg_victims(struct f2fs_sb_info *sbi)
->>   	for_each_set_bit(secno, dirty_i->victim_secmap, MAIN_SECS(sbi)) {
->>   		if (sec_usage_check(sbi, secno))
->>   			continue;
->> +
->> +		if (no_bggc_candidate(sbi, secno))
->> +			continue;
->> +
->>   		clear_bit(secno, dirty_i->victim_secmap);
->>   		return GET_SEG_FROM_SEC(sbi, secno);
->>   	}
->> @@ -368,6 +371,10 @@ static int get_victim_by_default(struct f2fs_sb_info *sbi,
->>   		if (sec_usage_check(sbi, secno))
->>   			goto next;
->>   
->> +		if (gc_type == BG_GC && p.alloc_mode == LFS &&
->> +					no_bggc_candidate(sbi, secno))
->> +			goto next;
->> +
->>   		cost = get_gc_cost(sbi, segno, &p);
->>   
->>   		if (p.min_cost > cost) {
->> @@ -1140,8 +1147,18 @@ int f2fs_gc(struct f2fs_sb_info *sbi, bool sync,
->>   
->>   void f2fs_build_gc_manager(struct f2fs_sb_info *sbi)
->>   {
->> +	u64 main_count, resv_count, ovp_count;
->> +
->>   	DIRTY_I(sbi)->v_ops = &default_v_ops;
->>   
->> +	/* threshold of # of valid blocks in a section for victims of BG_GC */
->> +	main_count = SM_I(sbi)->main_segments << sbi->log_blocks_per_seg;
->> +	resv_count = SM_I(sbi)->reserved_segments << sbi->log_blocks_per_seg;
->> +	ovp_count = SM_I(sbi)->ovp_segments << sbi->log_blocks_per_seg;
->> +
->> +	sbi->bggc_threshold = div64_u64((main_count - ovp_count) *
->> +					BLKS_PER_SEC(sbi), (main_count - resv_count));
->> +
->>   	sbi->gc_pin_file_threshold = DEF_GC_FAILED_PINNED_FILES;
->>   
->>   	/* give warm/cold data area from slower device */
->> diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
->> index b21bb96..932e59b 100644
->> --- a/fs/f2fs/segment.h
->> +++ b/fs/f2fs/segment.h
->> @@ -785,6 +785,15 @@ static inline block_t sum_blk_addr(struct f2fs_sb_info *sbi, int base, int type)
->>   				- (base + 1) + type;
->>   }
->>   
->> +static inline bool no_bggc_candidate(struct f2fs_sb_info *sbi,
->> +                        unsigned int secno)
->> +{
->> +    if (get_valid_blocks(sbi, GET_SEG_FROM_SEC(sbi, secno), true) >
->> +                        sbi->bggc_threshold)
->> +        return true;
->> +    return false;
->> +}
->> +
->>   static inline bool sec_usage_check(struct f2fs_sb_info *sbi, unsigned int secno)
->>   {
->>   	if (IS_CURSEC(sbi, secno) || (sbi->cur_fg_victim_sec == secno) ||
->>
-> .
->
-
--- 
-Thanks,
-Yunlong Song
+--azurd2khkr4qdjyu
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
 
+> The major disadvantage of reprobing is that it may cause visual disturbances
+> when i2c slaves are involved with e.g. the display pipeline (think HDMI encoders
+> etc.).
+
+Another one is that you might find bugs related to re-binding which can
+be surprisingly hard to solve... IIRC we had a case with the regulator
+subsystem where rebinding the PMIC which regulated the CPU is still
+unresolved. I think. I'd need to recheck to be sure.
+
+
+--azurd2khkr4qdjyu
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAltXTfcACgkQFA3kzBSg
+KbZJMRAAoASg3Xz5S+EiFA1oGbaG/eYs1kMV30Fa71M1Aw2ZMbiMSj80M+O2u6e9
+mAcE/YmG6C6Kjmoq/kqRCxH2ow0lq2XYwKDskvb/F7VqEJSK032gaeSR8SM8LAzf
+Kfw11CLk69jkkg8n7pEcP7Y7RQA/5rkcOQ6xCKAmHlcbK6cO60C0CFjZNEp0u8wI
+bFooAy0YP4kq87YwEv+He6L2Gc0/B9oHr/38ZVacpIKy6/f+5pV62jy2vlN03TqZ
+an5lQhn1E8FvGmv9sP4fYXXs37luC2gVooB/Vif+klUKBXeio7Mv37Y6qLhZq7m8
+08CUDc9tRUrZwdd4aBiMHEVH8bxbuu9MIWMGoOoRy9lYDY1GygJ+t3BBTs20LPqw
+C8CInPnUHAw65GAn5v3BmD408JNAjCFvlQxeuh9kAgPovvA5lh2WCg7SCPCNan0x
+X1nST092EdDP8kq4F8wMRRnvvs5VTZC44cpjxx4le6WfF0PnIa4QN5RSFpGm3Hg1
+Vpu2m//myn8kv9PKH9FBBNcSMKbSCbYq7IX0IEkLJ76CHwoQlE/COdG1hG2TL4JM
+bJcwi1GlHB7D1UnfHGfo1QaBkEaAEJy/lwVWreNsj1x7FOfClu1LnjCJe0vTmY9s
+Ce2zyepKxfrrygojEkVZyBOeZFPmvsXvywu0tUP2+8CLFq0ssEw=
+=Or7q
+-----END PGP SIGNATURE-----
+
+--azurd2khkr4qdjyu--
