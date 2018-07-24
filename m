@@ -3,28 +3,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C070CECDFB8
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 10:43:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BBB3FECDFB8
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 10:43:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7ED1B20875
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 10:43:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7ED1B20875
+	by mail.kernel.org (Postfix) with ESMTP id 8023A20875
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 10:43:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8023A20875
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ziswiler.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388767AbeGXLtk (ORCPT
+        id S2388786AbeGXLtn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 07:49:40 -0400
-Received: from mout.perfora.net ([74.208.4.196]:57617 "EHLO mout.perfora.net"
+        Tue, 24 Jul 2018 07:49:43 -0400
+Received: from mout.perfora.net ([74.208.4.196]:38385 "EHLO mout.perfora.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388296AbeGXLtk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 07:49:40 -0400
+        id S2388296AbeGXLtl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Jul 2018 07:49:41 -0400
 Received: from localhost.localdomain.toradex.int ([46.140.72.82]) by
  mrelay.perfora.net (mreueus003 [74.208.5.2]) with ESMTPA (Nemesis) id
- 0LyTxo-1g2WTp26nG-015rOy; Tue, 24 Jul 2018 12:43:44 +0200
+ 0M1Gz0-1g1vaL2OYy-00tGEA; Tue, 24 Jul 2018 12:43:46 +0200
 From:   Marcel Ziswiler <marcel@ziswiler.com>
 To:     devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
         linux-kernel@vger.kernel.org
@@ -33,27 +33,27 @@ Cc:     Marcel Ziswiler <marcel.ziswiler@toradex.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>
-Subject: [PATCH 14/15] ARM: tegra: apalis-tk1: reorder cpu dfll clock properties
-Date:   Tue, 24 Jul 2018 12:43:08 +0200
-Message-Id: <20180724104309.21741-15-marcel@ziswiler.com>
+Subject: [PATCH 15/15] ARM: tegra: apalis-tk1: reorder SD card properties
+Date:   Tue, 24 Jul 2018 12:43:09 +0200
+Message-Id: <20180724104309.21741-16-marcel@ziswiler.com>
 X-Mailer: git-send-email 2.14.4
 In-Reply-To: <20180724104309.21741-1-marcel@ziswiler.com>
 References: <20180724104309.21741-1-marcel@ziswiler.com>
-X-Provags-ID: V03:K1:FWK/8a4ffohrMpgNgiz+Jq9VLstd0VjMSknLz4MWPz8sgLRl7wX
- mYUp6S4YtHE7qoacMPjvXR9plSAtyuMkzYMm8OlCW489ttjxAN28SX1bTOs9cYclMAPZijU
- 3qnemsMi7ueLi8ETR5UA+Xcg9ibyHc7o97FhLn0etClsA4TqEjpn9SX+EGn9oRyws/oQUrM
- HB7xI/xffmIaqbZj9Gj8Q==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:85+v+8yye6s=:u1iGKF3lbzUyFK4wRRGBJx
- BCNfeYzSpQWOoZXdPQpRxDLvNuVnR0ktHwDiy0nZBB1aoMtGAHwjJ5a76DUKXI/Wwen8XjDPE
- zLSZmiB2WfF/X56Ht+HP2oJz1rKlbfmd4ajc3paJhhWhmDUnwSx6jKISKQzWaR0PghePeQuG5
- 8RcsIbrfmUms/MqgF01P8hKjRoFL83tTDj9+reIWkYRpYCGV2xJuWVn1ha5qBUekTcOk8wCAa
- rRWWRPiYX2wWx0dPD/7DZWtGiOjZj4VL0CcnXcEVR1supSRchZkD6BbrKomBfIGJAvYUe0d6i
- EEFuyjyOiyUMxVj02U6WQ2f3+kCHimfITFEqhMehdHZuw4YlL/bryZJy1hMSUHdfYoCe46+iE
- x6dhwmDHSyQLPhucGulCHQW/ZPLP+xGTPHzeEJiHsKxkJNK0gReo9iX8B3u+yUQzRVdunG0Zs
- E3rHbA0GV9foLk/Eya7bdDAc4ANZ+ipz6M99ygr5B6DXVfhbg3TrA1u+jCMvW7TMycKJzB5+5
- lw8O0Ucs+L+Mb8cVRs3uJ8hccuPDd6gHoDM+9IVlE2kb0ZTqROmciFKaX0jMSwgURkVcRdEsh
- n+rFF40Iqr44qvo0LRXfcmSQTjyWy56YwIRcCYJDYlwkUf5aQmD8NK5H8FgVjs/KBfq3YnFgH
- uZxOFC0NoV8rbzObtHK7Igly8KbE8B7dC9KCeeiuTKhuO6Ol4QRHJ81obvYpOGevkaaQ=
+X-Provags-ID: V03:K1:+f7EPuiXSInyAPaIiqmk+h0qzTMqq3LJJc4rxRoNigWWdq2ltlm
+ kr2sAEbWYJEcmY6/ULYllIWbIGR/HYCht/90O5u+5RDt0O2NDjIVGZrXMvVwQm17G5b3SZV
+ bLl4ka7TchzVauTwm+Gl0KkZmDzxZurDJKGmtCcaYzz3COTgzy9+aUaBlwOkqASkqaLQoOI
+ OJ/Wmdqm9zArfnNzn0ItQ==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:R7UhaTH3eG8=:wpxPcfYiEtZf31Vr/FN8fZ
+ Rirxi0AcGmTm9ZsDKCedtYo09JDPXsBWDqj6U4qASjT5kf2azcf8Ytk0LOG6fA0QoX2BiSq1p
+ DgoogTg+dIyzXBiEK+UizNhE5a+qB8F5tBqbqk01SV2o2N4IwMOssInoggkmMeubaqmukHi0p
+ j8ee/hjDWmj/ZLHnZymIWkmcCw3gf0KBrDFt1EMmBqlZiTX9H0Pic8u7+g/XsefreOpziEMgA
+ P+ER0CSfWzyQr9ui5CnZr+CMIJwJhfMjcd+/c+Kvwxbri+8/aN08I/5qj8i3GBJPjsBUh7pM9
+ eRoGTNr5nEIQT+PAqdiHnkXuB99v+X+k8jPVKCJm5fwtCdGAHXgCH93Zqm52VjCe32S6CWBlY
+ shrnr0oYAvs9dxgcwm71tFQS/boaNrqacR/7KukNaMWMKxUFWr0DokxIZXojCiNWj/pmOmYwF
+ j3Ii6iWtz/RfsCy9P/EwSji0EknNSP0oHfuBkFU0G9EktrRIYauxYt4Hi4QpmEsxOU/DWCBRU
+ DL14m+HGa8UQ9n2Umk/4Jyc/4oAf4IYVp2EQNeKDKn/PscFgenr9X8pW81OHdFzIFxmTftJLt
+ 8ZAwmR5iQvQQxMAZt1itixSOdCfec4/Ov5g9HSuDelgbWWSmXK/itsG/EIZsXka1WFUqHDlLr
+ rlkdmo5bGRqaG3iYAb2tOHuqmbfQFZnKzAR3V5z4KSf4gD99XD974EiCOTM6KIDagCkk=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -61,44 +61,66 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
-Reorder CPU DFLL clock properties.
+Reorder SD card properties.
 
 Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
 ---
 
- arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi | 2 +-
- arch/arm/boot/dts/tegra124-apalis.dtsi      | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ arch/arm/boot/dts/tegra124-apalis-eval.dts      | 4 ++--
+ arch/arm/boot/dts/tegra124-apalis-v1.2-eval.dts | 4 ++--
+ 2 files changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi b/arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi
-index 13486fe407d2..0837af1bf658 100644
---- a/arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi
-+++ b/arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi
-@@ -1925,8 +1925,8 @@
- 	/* CPU DFLL clock */
- 	clock@70110000 {
+diff --git a/arch/arm/boot/dts/tegra124-apalis-eval.dts b/arch/arm/boot/dts/tegra124-apalis-eval.dts
+index 84ab7dc9febb..7d32e402a0f1 100644
+--- a/arch/arm/boot/dts/tegra124-apalis-eval.dts
++++ b/arch/arm/boot/dts/tegra124-apalis-eval.dts
+@@ -180,18 +180,18 @@
+ 	/* Apalis MMC1 */
+ 	sdhci@700b0000 {
  		status = "okay";
--		vdd-cpu-supply = <&reg_vdd_cpu>;
- 		nvidia,i2c-fs-rate = <400000>;
-+		vdd-cpu-supply = <&reg_vdd_cpu>;
++		bus-width = <4>;
+ 		/* MMC1_CD# */
+ 		cd-gpios = <&gpio TEGRA_GPIO(V, 3) GPIO_ACTIVE_LOW>;
+-		bus-width = <4>;
+ 		vqmmc-supply = <&vddio_sdmmc1>;
  	};
  
- 	ahub@70300000 {
-diff --git a/arch/arm/boot/dts/tegra124-apalis.dtsi b/arch/arm/boot/dts/tegra124-apalis.dtsi
-index 77ca508d755e..18e9e9e8b474 100644
---- a/arch/arm/boot/dts/tegra124-apalis.dtsi
-+++ b/arch/arm/boot/dts/tegra124-apalis.dtsi
-@@ -1954,8 +1954,8 @@
- 	/* CPU DFLL clock */
- 	clock@70110000 {
+ 	/* Apalis SD1 */
+ 	sdhci@700b0400 {
  		status = "okay";
--		vdd-cpu-supply = <&reg_vdd_cpu>;
- 		nvidia,i2c-fs-rate = <400000>;
-+		vdd-cpu-supply = <&reg_vdd_cpu>;
++		bus-width = <4>;
+ 		/* SD1_CD# */
+ 		cd-gpios = <&gpio TEGRA_GPIO(V, 2) GPIO_ACTIVE_LOW>;
+-		bus-width = <4>;
+ 		vqmmc-supply = <&vddio_sdmmc3>;
  	};
  
- 	ahub@70300000 {
+diff --git a/arch/arm/boot/dts/tegra124-apalis-v1.2-eval.dts b/arch/arm/boot/dts/tegra124-apalis-v1.2-eval.dts
+index 5319f88d3cab..91d54d14f527 100644
+--- a/arch/arm/boot/dts/tegra124-apalis-v1.2-eval.dts
++++ b/arch/arm/boot/dts/tegra124-apalis-v1.2-eval.dts
+@@ -146,18 +146,18 @@
+ 	/* Apalis MMC1 */
+ 	sdhci@700b0000 {
+ 		status = "okay";
++		bus-width = <4>;
+ 		/* MMC1_CD# */
+ 		cd-gpios = <&gpio TEGRA_GPIO(V, 3) GPIO_ACTIVE_LOW>;
+-		bus-width = <4>;
+ 		vqmmc-supply = <&vddio_sdmmc1>;
+ 	};
+ 
+ 	/* Apalis SD1 */
+ 	sdhci@700b0400 {
+ 		status = "okay";
++		bus-width = <4>;
+ 		/* SD1_CD# */
+ 		cd-gpios = <&gpio TEGRA_GPIO(V, 2) GPIO_ACTIVE_LOW>;
+-		bus-width = <4>;
+ 		vqmmc-supply = <&vddio_sdmmc3>;
+ 	};
+ 
 -- 
 2.14.4
 
