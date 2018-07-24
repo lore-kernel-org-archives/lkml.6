@@ -6,90 +6,67 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 164EAECDFB8
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 12:54:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C23CECDFB8
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 12:55:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D30B520875
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 12:54:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D30B520875
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 4A79A20856
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 12:55:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4A79A20856
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388694AbeGXOAa (ORCPT
+        id S2388562AbeGXOBx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 10:00:30 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:59537 "EHLO mail.bootlin.com"
+        Tue, 24 Jul 2018 10:01:53 -0400
+Received: from mga18.intel.com ([134.134.136.126]:46215 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388297AbeGXOA3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 10:00:29 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id C36EA2093A; Tue, 24 Jul 2018 14:54:06 +0200 (CEST)
-Received: from localhost (AAubervilliers-681-1-78-122.w90-88.abo.wanadoo.fr [90.88.20.122])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 9166020756;
-        Tue, 24 Jul 2018 14:53:56 +0200 (CEST)
-Date:   Tue, 24 Jul 2018 14:53:57 +0200
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     stevenvandenbrandenstift@gmail.com
-Cc:     wens@csie.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH] sun4i: dts: add gpu node to sun4i-a10 platform
-Message-ID: <20180724125357.g7dddqwjouwv2dnj@flea>
-References: <20180723160954.14115-1-stevenvandenbrandenstift@gmail.com>
+        id S2388297AbeGXOBx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Jul 2018 10:01:53 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Jul 2018 05:55:31 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,398,1526367600"; 
+   d="scan'208";a="242877074"
+Received: from paasikivi.fi.intel.com ([10.237.72.42])
+  by orsmga005.jf.intel.com with ESMTP; 24 Jul 2018 05:55:13 -0700
+Received: by paasikivi.fi.intel.com (Postfix, from userid 1000)
+        id 96391203B0; Tue, 24 Jul 2018 15:55:12 +0300 (EEST)
+Date:   Tue, 24 Jul 2018 15:55:12 +0300
+From:   Sakari Ailus <sakari.ailus@linux.intel.com>
+To:     Todor Tomov <todor.tomov@linaro.org>
+Cc:     mchehab@kernel.org, hans.verkuil@cisco.com,
+        laurent.pinchart+renesas@ideasonboard.com,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 34/35] media: camss: csid: Add support for events
+ triggered by user controls
+Message-ID: <20180724125512.oz2xiaodzk67eyhu@paasikivi.fi.intel.com>
+References: <1532343772-27382-1-git-send-email-todor.tomov@linaro.org>
+ <1532343772-27382-35-git-send-email-todor.tomov@linaro.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="nhgclqhun6yotmsy"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180723160954.14115-1-stevenvandenbrandenstift@gmail.com>
-User-Agent: NeoMutt/20180622
+In-Reply-To: <1532343772-27382-35-git-send-email-todor.tomov@linaro.org>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Todor,
 
---nhgclqhun6yotmsy
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Mon, Jul 23, 2018 at 02:02:51PM +0300, Todor Tomov wrote:
+> Changing a user control value can trigger an event to other
+> users. Add support for that.
+> 
+> Signed-off-by: Todor Tomov <todor.tomov@linaro.org>
 
-On Mon, Jul 23, 2018 at 06:09:54PM +0200, stevenvandenbrandenstift@gmail.co=
-m wrote:
-> From: Steven Vanden Branden <stevenvandenbrandenstift@gmail.com>
->=20
-> Add mali gpu node to sun4i a10 platforms.
-> Tested with offscreen rendering with lima mesa (freedesktop gitlab)
->=20
-> Signed-off-by: Steven Vanden Branden <stevenvandenbrandenstift@gmail.com>
+Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
 
-Applied (while slighly changing your commit title, the prefix should
-be "ARM: dts: sun4i: ..")
+No need to wait more acks from me; please just check the comments I've
+given so far.
 
-Thanks!
-Maxime
---=20
-Maxime Ripard, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---nhgclqhun6yotmsy
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAltXIWQACgkQ0rTAlCFN
-r3RoVQ//cKcHuxcfdpqlLhIhlcQaF1M9s9HWJ9GmB/dOLW1LWKMd+tdSMgdVG0iY
-VrG47xQDhNjAnYoJzRaEFZqtSqLX5QsbvXhCk29AUoXbo2f6wYvq+nr7cj74PJoj
-N587uwjoqFBK/MTb/n2C0r0bZRWLMbcbe2iE6pu+kmQQsUS5eB0t7LShT5AtIBIo
-9ZN03BAzo1OyihjRGiqdf9z5ZcNI5ChkPjBQoedBm+S+urHydl1Odi5wgp2vDsby
-gcQc5+6RfHSYO7pCA3us5j7/t35YLR9xwQIgY7ep6HzfKz96oQ+AX1PSOmvGSrHU
-VjhsrcbLmVySHEnYBikLN35E6QbTc4JDgB0PbjXZWgZ9luwubPSY/oR+9aS2C4Rd
-I1RBuKZRhIm02rRIwF5diBpFBv5PoZNXLnGNvTPsxow/pVGKz2FQKUA1FHBP7c1V
-kgw7t9StPPAv4J7Stwk3U+E73QBrGoZHIOdwFyEGjll1JCh4BTIL9YhvAM8Ihh9+
-YEu2Yo1UbkMTEA1PImIC8qwFLQY1RacD76YIp2iPsqbKp1aaNzzAjFn8w5LZck92
-MFFtRzm0sZPj1WKViEIbmCa/SLcCf7ZFyurnuspdTDiAzM500bWlVu2YemCP+fDy
-JWJ/QCjzUQwCKVjGCggaHhIDg5+p4GITkt9EMgLmUM4CuZSwUBo=
-=b4HL
------END PGP SIGNATURE-----
-
---nhgclqhun6yotmsy--
+-- 
+Sakari Ailus
+sakari.ailus@linux.intel.com
