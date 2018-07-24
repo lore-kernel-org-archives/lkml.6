@@ -2,120 +2,140 @@ Return-Path: <SRS0=hTZH=KI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.4 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0113C6778A
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 07:26:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 982B5C6778A
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 07:27:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5D65320875
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 07:26:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D65320875
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=the-dreams.de
+	by mail.kernel.org (Postfix) with ESMTP id 49F7220856
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 07:27:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 49F7220856
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388476AbeGXIbn (ORCPT
+        id S2388521AbeGXIcH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 04:31:43 -0400
-Received: from sauhun.de ([88.99.104.3]:54538 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388394AbeGXIbn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 04:31:43 -0400
-Received: from localhost (p54B3332A.dip0.t-ipconnect.de [84.179.51.42])
-        by pokefinder.org (Postfix) with ESMTPSA id D9CF3634593;
-        Tue, 24 Jul 2018 09:26:37 +0200 (CEST)
-Date:   Tue, 24 Jul 2018 09:26:37 +0200
-From:   Wolfram Sang <wsa@the-dreams.de>
-To:     Phil Reid <preid@electromag.com.au>
-Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        kernel@pengutronix.de,
-        Jarkko Nikula <jarkko.nikula@linux.intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH/RFT 1/6] i2c: designware: use open drain for recovery GPIO
-Message-ID: <20180724072637.smhlrx4kpyh6hvwa@ninjato>
-References: <20180713210920.3648-1-wsa+renesas@sang-engineering.com>
- <20180713210920.3648-2-wsa+renesas@sang-engineering.com>
- <daaf702b-642f-e0fd-6a2e-7f0f817efba3@electromag.com.au>
- <20180717090920.zy6lkeqlcewhrfs5@ninjato>
- <b8d7c7aa-dbde-3037-4a1b-691bcf045131@electromag.com.au>
+        Tue, 24 Jul 2018 04:32:07 -0400
+Received: from mail-io0-f199.google.com ([209.85.223.199]:50164 "EHLO
+        mail-io0-f199.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388483AbeGXIcH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Jul 2018 04:32:07 -0400
+Received: by mail-io0-f199.google.com with SMTP id k9-v6so2099154iob.16
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Jul 2018 00:27:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to
+         :content-transfer-encoding;
+        bh=RaXoG5I4P8QrMYqwbHD6hdmPvRtklTW2vAfXn/f0BT8=;
+        b=NTBJlH4GQxlTOgUBxCl6xWg7ZY25si79mJ5ug1ODCG0wApcWSIzqzDu+jVxfdlNzXP
+         Tn4VdN1RczdaJymXX71UChhKr1BUj1s1+8BLjV6FZ9h/T8CDfiEKU8zzHqj2TJD1pLb5
+         dsR8mBjW+R7fPFymKED76+zTrnFCyVHmGWFfIrBTdO/o2rOcKN6ZMnG1LTxwJGoC+ESw
+         Nqw8xYv7wr59Mg+t9uHHCMiJ8+nB5bWXt0oxQeQaGoxU/fqVqDHDXgv9la6ntVkfzRd8
+         hGfyQ+mlJx75D5O4rdtwkwgXO2CetCNp8dWL8tQd0eF2lHZYIU9KTr5odfwOS3e4mhO5
+         dieA==
+X-Gm-Message-State: AOUpUlHUTaUiNLO4wo6kGjChJ3YfI3T6MMS6M1AXNUVwltvPD6wvZHBZ
+        7gZ4TwCgdsCDnqXI1bSuPJoiJO9rKmQ1e8l+RrqYGs/Q4H+H
+X-Google-Smtp-Source: AAOMgpfIVy401XKXVo+YxeQFV4CupvQx99L/VqjWVcO1YHaSb1ee4fQHgzfOh0V1vLd0NVA1FOFZ5PtzTsYhojHGZk4rz381UEeR
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="ofht27vhe5ktigiu"
-Content-Disposition: inline
-In-Reply-To: <b8d7c7aa-dbde-3037-4a1b-691bcf045131@electromag.com.au>
-User-Agent: NeoMutt/20170113 (1.7.2)
+X-Received: by 2002:a24:6253:: with SMTP id d80-v6mr946325itc.23.1532417221990;
+ Tue, 24 Jul 2018 00:27:01 -0700 (PDT)
+Date:   Tue, 24 Jul 2018 00:27:01 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000002a222a0571b9b069@google.com>
+Subject: general protection fault in cpuacct_charge
+From:   syzbot <syzbot+a22ee0b9ff4d252439f4@syzkaller.appspotmail.com>
+To:     linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        tglx@linutronix.de
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Transfer-Encoding: base64
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
---ofht27vhe5ktigiu
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hi Phil,
-
-> > So, it is not possible to read SCL status then? Hmm, currently a working
-> > get_scl is required...
-=2E..
-> > Well, I don't know much about this IP core and how/where it is used. I
-> > just wonder what happens if another user comes along using an
-> > open-drain GPIO. Is that possible?
-> >=20
-> > I assume it is the same with SDA? Non open-drain? Output only?
-> >=20
->=20
-> Just had a closer look at how it's setup here.
-> Maybe the following helps.
-
-Thanks for the detailed explanation. I am just afraid it is a litle too
-detailed for me. I am not sure if I can read it correctly:
-
-When you read the SCL/SDA GPIO, does it return the true state of the
-SCL/SDA line or does it just reflect the value it was set to output?
-
-> There's no concept of HiZ internally in the FPGA.
-
-Which probably means SDA is to be treated the same as SCL -> push/pull.
-
-> If there was some kinda of OpenDrain gpio driver that modelled a FET
-> driven by a push pull GPIO I guess it could be made to work.
-
-Still, that sounds quite unlikely to me, so we can for now assume that
-all designware users will have push/pull?
-
-Disclaimer: I have zero experience with this core, I don't know how hard
-it is to modify or which versions are out there.
-
-Thanks for your help,
-
-   Wolfram
-
-
---ofht27vhe5ktigiu
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAltW1KkACgkQFA3kzBSg
-KbYqQA/7BLzkFJlpp83m/0LTH8LUFT1nWqSkrPjWGUw5PF91E91L4NNfHUHQLazy
-jDKPrnTqnCz3WPMHrPHeRWRXZXCdv6s172wI2ubd8Xt1mH1T2fwu4X1g4yvVfDZj
-xnF+Y0v9A/KVFTaM29rJo9pq6PAvJOip8haW3yC29+kF9tIJjBxkcJim0cZ4m7Yr
-WVK37EzDI6x2FRfGWG2cy5bxUCRldCnDEmrkXS37X2PPjB4I81gZKh2T1bTfP4ac
-VWwYMcNXfGpnNNBBB7ZftSdAq16hXCxIg/xyoM/xzfOxCMLWaEGeOJTQvzYyUkN1
-PkZ1TO2fTa2GyB1zfCvIIRFZxNiUmuNvIWFG7a81q1pkIpfd45GznplnyW95elji
-LkkcwBu0UL7vdEKXWsnF0qjqArKy/NtbSIMTRQHXc7Pazu1hlQkVhwVhFKBsrIFS
-0ylIQg4+eK5WMLGSuZgpfLw3GQascmbPb53Cny18O9lV20Cx4d3qrXdCefMFH3Df
-AF8XbcWELKzvVtrMrg1p9QtflCBYOx+Dq/tUzrDKU1Ufumamf9YBTPGkv4LMXJ0Y
-L7mqscD9RYZYn1RKAS5QB6cagz5i7dPrivreTyDPG4SdLHCqU4F4LAuhI/g/Aaxa
-muLCmtzU6y1vKOdgF3odUucqZeFKP2Nla0KzIJc3ubpnlfvwKTc=
-=1srA
------END PGP SIGNATURE-----
-
---ofht27vhe5ktigiu--
+SGVsbG8sDQoNCnN5emJvdCBmb3VuZCB0aGUgZm9sbG93aW5nIGNyYXNoIG9uOg0KDQpIRUFEIGNv
+bW1pdDogICAgOGFlNzFlNzZjZjFmIE1lcmdlIGJyYW5jaCAnYnBmLW9mZmxvYWQtc2hhcmluZycN
+CmdpdCB0cmVlOiAgICAgICBicGYtbmV4dA0KY29uc29sZSBvdXRwdXQ6IGh0dHBzOi8vc3l6a2Fs
+bGVyLmFwcHNwb3QuY29tL3gvbG9nLnR4dD94PTE2NDVmOTc4NDAwMDAwDQprZXJuZWwgY29uZmln
+OiAgaHR0cHM6Ly9zeXprYWxsZXIuYXBwc3BvdC5jb20veC8uY29uZmlnP3g9ODkxMjk2NjdiNDY0
+OTZjMw0KZGFzaGJvYXJkIGxpbms6IGh0dHBzOi8vc3l6a2FsbGVyLmFwcHNwb3QuY29tL2J1Zz9l
+eHRpZD1hMjJlZTBiOWZmNGQyNTI0MzlmNA0KY29tcGlsZXI6ICAgICAgIGdjYyAoR0NDKSA4LjAu
+MSAyMDE4MDQxMyAoZXhwZXJpbWVudGFsKQ0KDQpVbmZvcnR1bmF0ZWx5LCBJIGRvbid0IGhhdmUg
+YW55IHJlcHJvZHVjZXIgZm9yIHRoaXMgY3Jhc2ggeWV0Lg0KDQpJTVBPUlRBTlQ6IGlmIHlvdSBm
+aXggdGhlIGJ1ZywgcGxlYXNlIGFkZCB0aGUgZm9sbG93aW5nIHRhZyB0byB0aGUgY29tbWl0Og0K
+UmVwb3J0ZWQtYnk6IHN5emJvdCthMjJlZTBiOWZmNGQyNTI0MzlmNEBzeXprYWxsZXIuYXBwc3Bv
+dG1haWwuY29tDQoNCmthc2FuOiBDT05GSUdfS0FTQU5fSU5MSU5FIGVuYWJsZWQNCmthc2FuOiBH
+UEYgY291bGQgYmUgY2F1c2VkIGJ5IE5VTEwtcHRyIGRlcmVmIG9yIHVzZXIgbWVtb3J5IGFjY2Vz
+cw0KZ2VuZXJhbCBwcm90ZWN0aW9uIGZhdWx0OiAwMDAwIFsjMV0gU01QIEtBU0FODQpDUFU6IDEg
+UElEOiAwIENvbW06IO+/vUcr77+9Ae+/ve+/ve+/vTB477+977+977+977+977+977+9IE5vdCB0
+YWludGVkIDQuMTguMC1yYzMrICM1OA0KSGFyZHdhcmUgbmFtZTogR29vZ2xlIEdvb2dsZSBDb21w
+dXRlIEVuZ2luZS9Hb29nbGUgQ29tcHV0ZSBFbmdpbmUsIEJJT1MgIA0KR29vZ2xlIDAxLzAxLzIw
+MTENClJJUDogMDAxMDp0YXNrX2NzcyBpbmNsdWRlL2xpbnV4L2Nncm91cC5oOjQ3NyBbaW5saW5l
+XQ0KUklQOiAwMDEwOnRhc2tfY2Ega2VybmVsL3NjaGVkL2NwdWFjY3QuYzo0MyBbaW5saW5lXQ0K
+UklQOiAwMDEwOmNwdWFjY3RfY2hhcmdlKzB4MWI4LzB4NWQwIGtlcm5lbC9zY2hlZC9jcHVhY2N0
+LmM6MzQ5DQpDb2RlOiA2OCBmZiBmZiBmZiA4NSBjMCA3NCAwZCA4MCAzZCA0NSAzMSAzYyAwOCAw
+MCAwZiA4NCAwNCAwMiAwMCAwMCA0OCBiOCAgDQowMCAwMCAwMCAwMCAwMCBmYyBmZiBkZiA0OSA4
+ZCA3ZCAxMCA0OCA4OSBmYSA0OCBjMSBlYSAwMyA8ODA+IDNjIDAyIDAwIDBmICANCjg1IDY1IDAz
+IDAwIDAwIDRkIDhiIDY1IDEwIDRkIDg1IGU0IDBmIDg0IDBhIDAxIDAwDQpSU1A6IDAwMTg6ZmZm
+Zjg4MDFkYWYwNzJiMCBFRkxBR1M6IDAwMDEwMDA2DQpSQVg6IGRmZmZmYzAwMDAwMDAwMDAgUkJY
+OiBmZmZmODgwMWM3MmI0MGMwIFJDWDogMDAwMDAwMDAwMDAwMDAwMA0KUkRYOiAwMDAwMDAwMDAw
+MDAwOWYzIFJTSTogMDAwMDAwMDBmZmZmODgwMSBSREk6IDAwMDAwMDAwMDAwMDRmOTkNClJCUDog
+ZmZmZjg4MDFkYWYwNzM0OCBSMDg6IDAwMDAwMDAwMDAwMDAwMDAgUjA5OiAwMDAwMDAwMDAwMDAw
+MDAwDQpSMTA6IDAwMDA3ODBiYWY1MjQ4NGQgUjExOiAwMDAwMDAwMDAwMDAwMDAwIFIxMjogMWZm
+ZmYxMDAzYjVlMGU1Yw0KUjEzOiAwMDAwMDAwMDAwMDA0Zjg5IFIxNDogZGZmZmZjMDAwMDAwMDAw
+MCBSMTU6IDFmZmZmMTAwM2I1ZTBlNTgNCkZTOiAgMDAwMDdmNGJhODQxMzcwMCgwMDAwKSBHUzpm
+ZmZmODgwMWRhZjAwMDAwKDAwMDApIGtubEdTOjAwMDAwMDAwMDAwMDAwMDANCkNTOiAgMDAxMCBE
+UzogMDAwMCBFUzogMDAwMCBDUjA6IDAwMDAwMDAwODAwNTAwMzMNCkNSMjogMDAwMDAwMDAyMDAw
+MDM0MCBDUjM6IDAwMDAwMDAxY2YwYWMwMDAgQ1I0OiAwMDAwMDAwMDAwMTQwNmUwDQpEUjA6IDAw
+MDAwMDAwMDAwMDAwMDAgRFIxOiAwMDAwMDAwMDAwMDAwMDAwIERSMjogMDAwMDAwMDAwMDAwMDAw
+MA0KRFIzOiAwMDAwMDAwMDAwMDAwMDAwIERSNjogMDAwMDAwMDBmZmZlMGZmMCBEUjc6IDAwMDAw
+MDAwMDAwMDA0MDANCkNhbGwgVHJhY2U6DQogIDxJUlE+DQogIGNncm91cF9hY2NvdW50X2NwdXRp
+bWUgaW5jbHVkZS9saW51eC9jZ3JvdXAuaDo3MjQgW2lubGluZV0NCiAgdXBkYXRlX2N1cnIrMHgz
+ODkvMHhjMDAga2VybmVsL3NjaGVkL2ZhaXIuYzo4MzINCiAgZW5xdWV1ZV9lbnRpdHkrMHg0MGQv
+MHgyMTMwIGtlcm5lbC9zY2hlZC9mYWlyLmM6NDE5NQ0KICBlbnF1ZXVlX3Rhc2tfZmFpcisweDIy
+ZC8weDkxMCBrZXJuZWwvc2NoZWQvZmFpci5jOjU0MDgNCiAgZW5xdWV1ZV90YXNrIGtlcm5lbC9z
+Y2hlZC9jb3JlLmM6NzUxIFtpbmxpbmVdDQogIGFjdGl2YXRlX3Rhc2srMHgxMjMvMHgyZTAga2Vy
+bmVsL3NjaGVkL2NvcmUuYzo3NzANCiAgdHR3dV9hY3RpdmF0ZSBrZXJuZWwvc2NoZWQvY29yZS5j
+OjE2NTkgW2lubGluZV0NCiAgdHR3dV9kb19hY3RpdmF0ZSsweGQ1LzB4MWYwIGtlcm5lbC9zY2hl
+ZC9jb3JlLmM6MTcxOA0KICB0dHd1X3F1ZXVlIGtlcm5lbC9zY2hlZC9jb3JlLmM6MTg2MyBbaW5s
+aW5lXQ0KICB0cnlfdG9fd2FrZV91cCsweDk0OC8weDEyYjAga2VybmVsL3NjaGVkL2NvcmUuYzoy
+MDc2DQogIHdha2VfdXBfcHJvY2VzcysweDEwLzB4MjAga2VybmVsL3NjaGVkL2NvcmUuYzoyMTQ5
+DQogIGhydGltZXJfd2FrZXVwKzB4NDgvMHg2MCBrZXJuZWwvdGltZS9ocnRpbWVyLmM6MTY0Nw0K
+ICBfX3J1bl9ocnRpbWVyIGtlcm5lbC90aW1lL2hydGltZXIuYzoxMzk4IFtpbmxpbmVdDQogIF9f
+aHJ0aW1lcl9ydW5fcXVldWVzKzB4M2ViLzB4MTBjMCBrZXJuZWwvdGltZS9ocnRpbWVyLmM6MTQ2
+MA0KICBocnRpbWVyX2ludGVycnVwdCsweDJmMy8weDc1MCBrZXJuZWwvdGltZS9ocnRpbWVyLmM6
+MTUxOA0KICBsb2NhbF9hcGljX3RpbWVyX2ludGVycnVwdCBhcmNoL3g4Ni9rZXJuZWwvYXBpYy9h
+cGljLmM6MTAyNSBbaW5saW5lXQ0KICBzbXBfYXBpY190aW1lcl9pbnRlcnJ1cHQrMHgxNjUvMHg3
+MzAgYXJjaC94ODYva2VybmVsL2FwaWMvYXBpYy5jOjEwNTANCiAgYXBpY190aW1lcl9pbnRlcnJ1
+cHQrMHhmLzB4MjAgYXJjaC94ODYvZW50cnkvZW50cnlfNjQuUzo4NjMNCiAgPC9JUlE+DQpNb2R1
+bGVzIGxpbmtlZCBpbjoNCkR1bXBpbmcgZnRyYWNlIGJ1ZmZlcjoNCiAgICAoZnRyYWNlIGJ1ZmZl
+ciBlbXB0eSkNCi0tLVsgZW5kIHRyYWNlIDYzYTUxM2QwZjU1Y2MyOTAgXS0tLQ0KUklQOiAwMDEw
+OnRhc2tfY3NzIGluY2x1ZGUvbGludXgvY2dyb3VwLmg6NDc3IFtpbmxpbmVdDQpSSVA6IDAwMTA6
+dGFza19jYSBrZXJuZWwvc2NoZWQvY3B1YWNjdC5jOjQzIFtpbmxpbmVdDQpSSVA6IDAwMTA6Y3B1
+YWNjdF9jaGFyZ2UrMHgxYjgvMHg1ZDAga2VybmVsL3NjaGVkL2NwdWFjY3QuYzozNDkNCkNvZGU6
+IDY4IGZmIGZmIGZmIDg1IGMwIDc0IDBkIDgwIDNkIDQ1IDMxIDNjIDA4IDAwIDBmIDg0IDA0IDAy
+IDAwIDAwIDQ4IGI4ICANCjAwIDAwIDAwIDAwIDAwIGZjIGZmIGRmIDQ5IDhkIDdkIDEwIDQ4IDg5
+IGZhIDQ4IGMxIGVhIDAzIDw4MD4gM2MgMDIgMDAgMGYgIA0KODUgNjUgMDMgMDAgMDAgNGQgOGIg
+NjUgMTAgNGQgODUgZTQgMGYgODQgMGEgMDEgMDANClJTUDogMDAxODpmZmZmODgwMWRhZjA3MmIw
+IEVGTEFHUzogMDAwMTAwMDYNClJBWDogZGZmZmZjMDAwMDAwMDAwMCBSQlg6IGZmZmY4ODAxYzcy
+YjQwYzAgUkNYOiAwMDAwMDAwMDAwMDAwMDAwDQpSRFg6IDAwMDAwMDAwMDAwMDA5ZjMgUlNJOiAw
+MDAwMDAwMGZmZmY4ODAxIFJESTogMDAwMDAwMDAwMDAwNGY5OQ0KUkJQOiBmZmZmODgwMWRhZjA3
+MzQ4IFIwODogMDAwMDAwMDAwMDAwMDAwMCBSMDk6IDAwMDAwMDAwMDAwMDAwMDANClIxMDogMDAw
+MDc4MGJhZjUyNDg0ZCBSMTE6IDAwMDAwMDAwMDAwMDAwMDAgUjEyOiAxZmZmZjEwMDNiNWUwZTVj
+DQpSMTM6IDAwMDAwMDAwMDAwMDRmODkgUjE0OiBkZmZmZmMwMDAwMDAwMDAwIFIxNTogMWZmZmYx
+MDAzYjVlMGU1OA0KRlM6ICAwMDAwN2Y0YmE4NDEzNzAwKDAwMDApIEdTOmZmZmY4ODAxZGFmMDAw
+MDAoMDAwMCkga25sR1M6MDAwMDAwMDAwMDAwMDAwMA0KQ1M6ICAwMDEwIERTOiAwMDAwIEVTOiAw
+MDAwIENSMDogMDAwMDAwMDA4MDA1MDAzMw0KQ1IyOiAwMDAwMDAwMDIwMDAwMzQwIENSMzogMDAw
+MDAwMDFjZjBhYzAwMCBDUjQ6IDAwMDAwMDAwMDAxNDA2ZTANCkRSMDogMDAwMDAwMDAwMDAwMDAw
+MCBEUjE6IDAwMDAwMDAwMDAwMDAwMDAgRFIyOiAwMDAwMDAwMDAwMDAwMDAwDQpEUjM6IDAwMDAw
+MDAwMDAwMDAwMDAgRFI2OiAwMDAwMDAwMGZmZmUwZmYwIERSNzogMDAwMDAwMDAwMDAwMDQwMA0K
+DQoNCi0tLQ0KVGhpcyBidWcgaXMgZ2VuZXJhdGVkIGJ5IGEgYm90LiBJdCBtYXkgY29udGFpbiBl
+cnJvcnMuDQpTZWUgaHR0cHM6Ly9nb28uZ2wvdHBzbUVKIGZvciBtb3JlIGluZm9ybWF0aW9uIGFi
+b3V0IHN5emJvdC4NCnN5emJvdCBlbmdpbmVlcnMgY2FuIGJlIHJlYWNoZWQgYXQgc3l6a2FsbGVy
+QGdvb2dsZWdyb3Vwcy5jb20uDQoNCnN5emJvdCB3aWxsIGtlZXAgdHJhY2sgb2YgdGhpcyBidWcg
+cmVwb3J0LiBTZWU6DQpodHRwczovL2dvby5nbC90cHNtRUojYnVnLXN0YXR1cy10cmFja2luZyBm
+b3IgaG93IHRvIGNvbW11bmljYXRlIHdpdGggIA0Kc3l6Ym90Lg0K
