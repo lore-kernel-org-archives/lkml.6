@@ -6,98 +6,76 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B950ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 15:02:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0F19C6778A
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 15:02:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4C73B20874
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 15:02:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4C73B20874
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by mail.kernel.org (Postfix) with ESMTP id 9744D20856
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 15:02:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9744D20856
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sony.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727757AbeGXQJn (ORCPT
+        id S2388711AbeGXQJu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 12:09:43 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:45129 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726857AbeGXQJn (ORCPT
+        Tue, 24 Jul 2018 12:09:50 -0400
+Received: from seldsegrel01.sonyericsson.com ([37.139.156.29]:13024 "EHLO
+        SELDSEGREL01.sonyericsson.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726857AbeGXQJu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 12:09:43 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w6OF2Vf0032218
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Tue, 24 Jul 2018 08:02:31 -0700
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w6OF2UPS032215;
-        Tue, 24 Jul 2018 08:02:30 -0700
-Date:   Tue, 24 Jul 2018 08:02:30 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Len Brown <tipbot@zytor.com>
-Message-ID: <tip-d9e6dbcf28f383bf08e6a3180972f5722e514a54@git.kernel.org>
-Cc:     tglx@linutronix.de, mingo@kernel.org,
-        torvalds@linux-foundation.org, hpa@zytor.com,
-        linux-kernel@vger.kernel.org, peterz@infradead.org,
-        len.brown@intel.com
-Reply-To: peterz@infradead.org, len.brown@intel.com, tglx@linutronix.de,
-          hpa@zytor.com, torvalds@linux-foundation.org, mingo@kernel.org,
-          linux-kernel@vger.kernel.org
-In-Reply-To: <d0c7129e509660be9ec6b233284b8d42d90659e8.1532207856.git.len.brown@intel.com>
-References: <d0c7129e509660be9ec6b233284b8d42d90659e8.1532207856.git.len.brown@intel.com>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/urgent] x86/apic: Future-proof the TSC_DEADLINE quirk for
- SKX
-Git-Commit-ID: d9e6dbcf28f383bf08e6a3180972f5722e514a54
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Tue, 24 Jul 2018 12:09:50 -0400
+Subject: Re: [PATCH RESEND] kthread, tracing: Don't expose half-written comm
+ when creating kthreads
+To:     Steven Rostedt <rostedt@goodmis.org>
+CC:     <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@kernel.org>,
+        Jens Axboe <axboe@kernel.dk>, Tejun Heo <tj@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Enderborg <peter.enderborg@sony.com>,
+        Yoshitaka Seto <yoshitaka.seto@sony.com>,
+        Oleksiy Avramchenko <oleksiy.avramchenko@sony.com>,
+        KOSAKI Motohiro <kosaki.motohiro@jp.fujitsu.com>,
+        John Stultz <john.stultz@linaro.org>
+References: <20180723134210.54013-1-snild@sony.com>
+ <20180723095550.08203a24@gandalf.local.home>
+ <9d762b4e-20a7-578f-90c8-10a044921d67@sony.com>
+ <20180723113741.66df3b50@gandalf.local.home>
+ <7749ed7d-50d5-4b95-fbd2-b056a1fff957@sony.com>
+ <20180723124154.14ef0679@gandalf.local.home>
+ <72573a9f-694e-fc4b-cfd1-d9cde504a480@sony.com>
+ <20180724104815.05d2ac68@gandalf.local.home>
+From:   Snild Dolkow <snild@sony.com>
+Message-ID: <cbdab69a-28a4-08fd-a6c9-6db30958b12b@sony.com>
+Date:   Tue, 24 Jul 2018 17:02:54 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+In-Reply-To: <20180724104815.05d2ac68@gandalf.local.home>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  d9e6dbcf28f383bf08e6a3180972f5722e514a54
-Gitweb:     https://git.kernel.org/tip/d9e6dbcf28f383bf08e6a3180972f5722e514a54
-Author:     Len Brown <len.brown@intel.com>
-AuthorDate: Sat, 21 Jul 2018 17:19:19 -0400
-Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Tue, 24 Jul 2018 10:05:13 +0200
+On 07/24/2018 04:48 PM, Steven Rostedt wrote:
+> On Tue, 24 Jul 2018 10:17:37 +0200
+> Snild Dolkow <snild@sony.com> wrote:
+> 
+>> 	creator                         other
+>> 	vsnprintf:
+>> 	  fill (not terminated)
+>> 	  count the rest                read/use comm
+> 
+> I think it would be better to state what was reading the comm. Like
+> 
+> 					trace_sched_waking(p)
+> 					  memcpy(comm, p->comm, TASK_COMM_LEN)
+> 
+> But the rest looks fine.
+> 
+> -- Steve
 
-x86/apic: Future-proof the TSC_DEADLINE quirk for SKX
+Works for me. Reworded v2 coming up soon.
 
-All SKX with stepping higher than 4 support the TSC_DEADLINE,
-no matter the microcode version.
-
-Without this patch, upcoming SKX steppings will not be able to use
-their TSC_DEADLINE timer.
-
-Signed-off-by: Len Brown <len.brown@intel.com>
-Cc: <stable@kernel.org> # v4.14+
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Fixes: 616dd5872e ("x86/apic: Update TSC_DEADLINE quirk with additional SKX stepping")
-Link: http://lkml.kernel.org/r/d0c7129e509660be9ec6b233284b8d42d90659e8.1532207856.git.len.brown@intel.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
----
- arch/x86/kernel/apic/apic.c | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/arch/x86/kernel/apic/apic.c b/arch/x86/kernel/apic/apic.c
-index 2aabd4cb0e3f..adbda5847b14 100644
---- a/arch/x86/kernel/apic/apic.c
-+++ b/arch/x86/kernel/apic/apic.c
-@@ -573,6 +573,9 @@ static u32 skx_deadline_rev(void)
- 	case 0x04: return 0x02000014;
- 	}
- 
-+	if (boot_cpu_data.x86_stepping > 4)
-+		return 0;
-+
- 	return ~0U;
- }
- 
+//Snild
