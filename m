@@ -2,132 +2,118 @@ Return-Path: <SRS0=hTZH=KI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E7A3C6778A
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 18:26:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6146C6778A
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 18:29:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 16BF320856
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 18:26:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 16BF320856
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 8028B20856
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 18:29:14 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UvG6ZspS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8028B20856
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388659AbeGXTeB (ORCPT
+        id S2388597AbeGXTg4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 15:34:01 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:52076 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2388427AbeGXTeA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 15:34:00 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 99998DC41;
-        Tue, 24 Jul 2018 18:26:15 +0000 (UTC)
-Received: from llong.com (dhcp-17-175.bos.redhat.com [10.18.17.175])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 4B75D111AF18;
-        Tue, 24 Jul 2018 18:26:15 +0000 (UTC)
-From:   Waiman Long <longman@redhat.com>
-To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Waiman Long <longman@redhat.com>
-Subject: [PATCH v2 2/2] cpufreq: Fix a circular lock dependency problem
-Date:   Tue, 24 Jul 2018 14:26:05 -0400
-Message-Id: <1532456765-17576-3-git-send-email-longman@redhat.com>
-In-Reply-To: <1532456765-17576-1-git-send-email-longman@redhat.com>
-References: <1532456765-17576-1-git-send-email-longman@redhat.com>
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Tue, 24 Jul 2018 18:26:15 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Tue, 24 Jul 2018 18:26:15 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'longman@redhat.com' RCPT:''
+        Tue, 24 Jul 2018 15:36:56 -0400
+Received: from mail-ed1-f41.google.com ([209.85.208.41]:40764 "EHLO
+        mail-ed1-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388386AbeGXTg4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Jul 2018 15:36:56 -0400
+Received: by mail-ed1-f41.google.com with SMTP id e19-v6so4946349edq.7
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Jul 2018 11:29:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=pF1E53ahFgFoZEzrq0Bn5AJykCFtor6bJ4xRAeCaIJo=;
+        b=UvG6ZspSyvTtH/MYuUD4XfsSsif7hi/dSun53QFAx+HzMWjYGsG2pmjutLAY9Zitmf
+         qSMCXREdXmEJe8OPr/kmIPLaX60p5tHzGsa050m+ZOGvkoOCcbm6rOru/4N8zqFtHzSx
+         nKPTDdic4GpoIiT7BaY0iLDB/qGuVnQzz65AiKwgk74F+fQsCkFNOHwK/w3lJfhDmSjI
+         SC+YesS+3OyCEtNGkAOe/J49Z79DyHQxvPxgs88iTmmTfweEtLb1gy3rlhdaZdAQUZU+
+         KUz7pdfNlvq8gAMW1EJV4JPCspOIrHFtpaBY3l+9aFrJ/sLfHBzjtCppGyCA9nai0j2k
+         ka7A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=pF1E53ahFgFoZEzrq0Bn5AJykCFtor6bJ4xRAeCaIJo=;
+        b=WbMTQ6B54k5oYgXp6eXbluTCtWLfiopuF6GWAOuEm9vCkdY2s9XT7Zh8Lnsc1RV22Z
+         RQ5izBNvjT4K5swAN2tM99cY5d6NXck7+zWJXRx3Z54gZH3TJl1yVKhNOQcXmCvE9Zw3
+         Y5NRPWSeK0A9WfYS60kpppgxdqdUbyvLijeE4tJLHOHSjCzhh0dg9vvU/Xr99oYjdlzY
+         Omaa91zGE8AxYaj6UaWIDQsO2bD1bPccJdN0s4P5qyo3mOc0Wh7dhVX2+fv1sfGVzodE
+         ZNkLFTvGmGAnNVSojJD9/TFuzeyIvCuQdQ+BapG1+9a8Gl5V0ViPCOi9GJqchPHdgQmd
+         pIhQ==
+X-Gm-Message-State: AOUpUlHlLcS5KHoAcHrNm/pSrdJuS91xXsRaRdLh/udc6K7ctVuPIODJ
+        QUhqyrL7fUxl8a3RpmZgnko9zm0=
+X-Google-Smtp-Source: AAOMgpfX8LQOU4FQM3C8FXwcp4xyKpq8en9Pi6qHUvLVKxF/jsyDQ3A+bwpg57VQjg+uRcjVVQxPZw==
+X-Received: by 2002:a50:f049:: with SMTP id u9-v6mr19848441edl.91.1532456950683;
+        Tue, 24 Jul 2018 11:29:10 -0700 (PDT)
+Received: from avx2 (nat4-minsk-pool-46-53-177-92.telecom.by. [46.53.177.92])
+        by smtp.gmail.com with ESMTPSA id e20-v6sm4883031eds.20.2018.07.24.11.29.09
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 24 Jul 2018 11:29:10 -0700 (PDT)
+Date:   Tue, 24 Jul 2018 21:29:08 +0300
+From:   Alexey Dobriyan <adobriyan@gmail.com>
+To:     akpm@linux-foundation.org
+Cc:     linux-kernel@vger.kernel.org, dancol@google.com, vbabka@suse.cz
+Subject: Re: +
+ mm-proc-pid-smaps_rollup-convert-to-single-value-seq_file.patch added to -mm
+ tree
+Message-ID: <20180724182908.GD27053@avx2>
+References: <20180723235548.nLTzP%akpm@linux-foundation.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20180723235548.nLTzP%akpm@linux-foundation.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-With lockdep turned on, the following circular lock dependency problem
-was reported:
+On Mon, Jul 23, 2018 at 04:55:48PM -0700, akpm@linux-foundation.org wrote:
+> The patch titled
+>      Subject: mm: /proc/pid/smaps_rollup: convert to single value seq_file
+> has been added to the -mm tree.  Its filename is
+>      mm-proc-pid-smaps_rollup-convert-to-single-value-seq_file.patch
 
-[   57.470040] ======================================================
-[   57.502900] WARNING: possible circular locking dependency detected
-[   57.535208] 4.18.0-0.rc3.1.el8+7.x86_64+debug #1 Tainted: G
-[   57.577761] ------------------------------------------------------
-[   57.609714] tuned/1505 is trying to acquire lock:
-[   57.633808] 00000000559deec5 (cpu_hotplug_lock.rw_sem){++++}, at: store+0x27/0x120
-[   57.672880]
-[   57.672880] but task is already holding lock:
-[   57.702184] 000000002136ca64 (kn->count#118){++++}, at: kernfs_fop_write+0x1d0/0x410
-[   57.742176]
-[   57.742176] which lock already depends on the new lock.
-[   57.742176]
-[   57.785220]
-[   57.785220] the existing dependency chain (in reverse order) is:
-    :
-[   58.932512] other info that might help us debug this:
-[   58.932512]
-[   58.973344] Chain exists of:
-[   58.973344]   cpu_hotplug_lock.rw_sem --> subsys mutex#5 --> kn->count#118
-[   58.973344]
-[   59.030795]  Possible unsafe locking scenario:
-[   59.030795]
-[   59.061248]        CPU0                    CPU1
-[   59.085377]        ----                    ----
-[   59.108160]   lock(kn->count#118);
-[   59.124935]                                lock(subsys mutex#5);
-[   59.156330]                                lock(kn->count#118);
-[   59.186088]   lock(cpu_hotplug_lock.rw_sem);
-[   59.208541]
-[   59.208541]  *** DEADLOCK ***
+> Subject: mm: /proc/pid/smaps_rollup: convert to single value seq_file
+> 
+> The /proc/pid/smaps_rollup file is currently implemented via the
+> m_start/m_next/m_stop seq_file iterators shared with the other maps files,
+> that iterate over vma's.  However, the rollup file doesn't print anything
+> for each vma, only accumulate the stats.
 
-In the cpufreq_register_driver() function, the lock sequence is:
+What I don't understand why keep seq_ops then and not do all the work in
+->show hook.  Currently /proc/*/smaps_rollup is at ~500 bytes so with
+minimum 1 page seq buffer, no buffer resizing is possible.
 
-  cpus_read_lock --> kn->count
+> +static int show_smaps_rollup(struct seq_file *m, void *v)
+> +{
+> +	struct proc_maps_private *priv = m->private;
+> +	struct mem_size_stats *mss = priv->rollup;
+> +	struct vm_area_struct *vma;
+> +
+> +	/*
+> +	 * We might be called multiple times when e.g. the seq buffer
+> +	 * overflows. Gather the stats only once.
 
-For the cpufreq sysfs store method, the lock sequence is:
+It doesn't!
 
-  kn->count --> cpus_read_lock
-
-These sequences are actually safe as they are taking a share lock on
-cpu_hotplug_lock. However, the current lockdep code doesn't check for
-share locking when detecting circular lock dependency.  Fixing that
-could be a substantial effort.
-
-Instead, we can work around this problem by using cpus_read_trylock()
-in the store method which is much simpler. The chance of not getting
-the read lock is very small. If that happens, the userspace application
-that writes the sysfs file will get an error.
-
-Signed-off-by: Waiman Long <longman@redhat.com>
----
- drivers/cpufreq/cpufreq.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
-index b0dfd32..1ddb5ce 100644
---- a/drivers/cpufreq/cpufreq.c
-+++ b/drivers/cpufreq/cpufreq.c
-@@ -923,7 +923,12 @@ static ssize_t store(struct kobject *kobj, struct attribute *attr,
- 	struct freq_attr *fattr = to_attr(attr);
- 	ssize_t ret = -EINVAL;
- 
--	cpus_read_lock();
-+	/*
-+	 * cpus_read_trylock() is used here to work around a circular lock
-+	 * dependency problem with respect to the cpufreq_register_driver().
-+	 */
-+	if (!cpus_read_trylock())
-+		return -EBUSY;
- 
- 	if (cpu_online(policy->cpu)) {
- 		down_write(&policy->rwsem);
--- 
-1.8.3.1
-
+> +	if (!mss->finished) {
+> +		for (vma = priv->mm->mmap; vma; vma = vma->vm_next) {
+> +			smap_gather_stats(vma, mss);
+> +			mss->last_vma_end = vma->vm_end;
+>  		}
+> -		last_vma = !m_next_vma(priv, vma);
+> -	} else {
+> -		rollup_mode = false;
+> -		memset(&mss_stack, 0, sizeof(mss_stack));
+> -		mss = &mss_stack;
