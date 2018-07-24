@@ -2,105 +2,129 @@ Return-Path: <SRS0=hTZH=KI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66DA7ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 14:37:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DEAB0ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 14:38:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1829520852
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 14:37:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8E35A20852
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 14:38:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Mz7p7KmT";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Xzl/NnPU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1829520852
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="D6jK/g+X"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8E35A20852
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388631AbeGXPoi (ORCPT
+        id S2388603AbeGXPpY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 11:44:38 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:51082 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388495AbeGXPoi (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 11:44:38 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id B8B0260B74; Tue, 24 Jul 2018 14:37:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1532443071;
-        bh=pyhlGJKjLTaGq4dTTwUBbeKdu5zUV9YzWzlxod0Rt2o=;
-        h=From:To:Cc:Subject:Date:From;
-        b=Mz7p7KmT5UzL00HvBswtlO2PpNF9xFKw5Jg/3Os7J9XPaqtzBMwGJHkZ+tkKGH9P0
-         pgkqNADpQTSZYkVJxfeFK/dscscY7+wniGLPcZ3Uv6OgMyY9UIEtv1XOdcN0U/rB9c
-         TtOjzhIIBuwGgFFci7mQVRWpy0yKGOLOMFDF0QWk=
-Received: from mojha-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: mojha@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 08C7560285;
-        Tue, 24 Jul 2018 14:37:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1532443070;
-        bh=pyhlGJKjLTaGq4dTTwUBbeKdu5zUV9YzWzlxod0Rt2o=;
-        h=From:To:Cc:Subject:Date:From;
-        b=Xzl/NnPUB0cGnSsJ8g8sRBGCHuoSJfWJXPNv7snn2U4L0kM5x05jtCZtn7pI+4dJd
-         QqEionnuZCGMkOSNcwgvBey9pV1Ei77TDV818xfUkTBwNQIeDf7OKMjsh2neawEVAr
-         pwtCB5Osu7M3pFw08NOUaJF8QokDSLUtpmqzFcHY=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 08C7560285
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=mojha@codeaurora.org
-From:   Mukesh Ojha <mojha@codeaurora.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     gkohli@qti.qualcomm.com, neeraju@qti.qualcomm.com,
-        Mukesh Ojha <mojha@codeaurora.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Brendan Jackman <brendan.jackman@arm.com>,
-        Mathieu Malaterre <malat@debian.org>
-Subject: [PATCH] cpu/hotplug: Fix cpuhp_step name for timers
-Date:   Tue, 24 Jul 2018 20:07:38 +0530
-Message-Id: <1532443058-22343-1-git-send-email-mojha@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
+        Tue, 24 Jul 2018 11:45:24 -0400
+Received: from mail-db5eur01on0076.outbound.protection.outlook.com ([104.47.2.76]:6314
+        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2388373AbeGXPpY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Jul 2018 11:45:24 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=AYo0gKts61nZzEys4N/7whHaM5X6KbK7xRRBLb8Ph8s=;
+ b=D6jK/g+XzabYmqe/DqZfzQ17PkY+GgZYJp8AdyBlUUq3iQFXM/lFA2EB8WfKJ59F9DI+/5DoSVITziB5ECEY76UsEbDV5aNcRV171orkRvJEtsu6spxnzvS69JWtrT6KLGS2DMOVZlPqEvAUOKRpKMc9Ft8DxJ0/UCfJGZnWCe4=
+Received: from AM3PR04MB338.eurprd04.prod.outlook.com (10.242.110.15) by
+ AM3PR04MB0806.eurprd04.prod.outlook.com (10.242.253.144) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.973.16; Tue, 24 Jul 2018 14:38:33 +0000
+Received: from AM3PR04MB338.eurprd04.prod.outlook.com
+ ([fe80::84f9:3f8e:a8c7:1720]) by AM3PR04MB338.eurprd04.prod.outlook.com
+ ([fe80::84f9:3f8e:a8c7:1720%12]) with mapi id 15.20.0973.022; Tue, 24 Jul
+ 2018 14:38:33 +0000
+From:   Ioana Ciocoi Radulescu <ruxandra.radulescu@nxp.com>
+To:     Horia Geanta <horia.geanta@nxp.com>,
+        Roy Pledge <roy.pledge@nxp.com>,
+        "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        Leo Li <leoyang.li@nxp.com>
+CC:     Laurentiu Tudor <laurentiu.tudor@nxp.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "arnd@arndb.de" <arnd@arndb.de>,
+        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+        "robin.murphy@arm.com" <robin.murphy@arm.com>
+Subject: RE: [PATCH v3 0/4] staging/fsl-mc/bus: Move DPIO from staging to
+ drivers/soc/fsl
+Thread-Topic: [PATCH v3 0/4] staging/fsl-mc/bus: Move DPIO from staging to
+ drivers/soc/fsl
+Thread-Index: AQHUI1mrGlFQJvKpDUqhG1SBjEJbiaSecNfg
+Date:   Tue, 24 Jul 2018 14:38:33 +0000
+Message-ID: <AM3PR04MB33800EB3509E6715AC49DC294550@AM3PR04MB338.eurprd04.prod.outlook.com>
+References: <20180724142131.28970-1-roy.pledge@nxp.com>
+ <VI1PR0402MB3485147A99F219D5FA1B668B98550@VI1PR0402MB3485.eurprd04.prod.outlook.com>
+In-Reply-To: <VI1PR0402MB3485147A99F219D5FA1B668B98550@VI1PR0402MB3485.eurprd04.prod.outlook.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=ruxandra.radulescu@nxp.com; 
+x-originating-ip: [192.88.166.1]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;AM3PR04MB0806;6:vJMH1FMIYP6kAjx9dRK1NRodBEoCN2rpRlR9iCuFpLJ8a1KFpjjzhTq5lNPTXn+duBPXSqu+vyqBcsUexgoQ5Nd5o/VWH6QrDzylIKgq3khccCqWePI305vddE5b2vr23TPyHd65kD1bLmbWn6H6VyShUB2BPldIrlV1QZjpLQe9kWKHTRWRHrF9cG5q8eZZr93PgjpeBkagGA7kxmH0paY8TFHpQhZG98LgN4jkkchbl9wZ3+Ner8iNZ4pJmOsfCYi8fjB2wjjmyIt+nSYRaHwrh+SVkFdjxPY//hphjCBQqcgxdRCLNCrlk0eR+6kVAMVdby18k/RCYYK0BDxP/2nCgMaDUSafm3UPj7LzghjuiTvmy40OHx/S3MRUzn87HKrcAktaI8C76mFXsQnAw44kbeMH6Ort/LtiRG6N26t32d/Xc//yvkX9JaEWtBbCOQ/HNOmwnRcO710rsbfvpw==;5:ltdiFPGH77JfeuxkhtgkFLiiGCKmvLXfTv69VIskTraMHTtON9/E4IvXth7bs+hr1CNhkdBi63duSgg+bklOMAVpNMWpx2IHDYAJqn/kGwCfGCJcdMxU+0Kc7pqA47EgaWxZE4sQwFJhQqMHk4vwkHEKfPax0U6I+6TbmB1Rklw=;7:EO8MZndeqexK41F1Jz+Hjvy0aUpHbY2aKlC51r9Q9xSsvcs5elqAcmyLN1WXcU3KXgHNA97PySTdsHajqMXozXLFAVgDe8lSjCdONaCUMiwMfS5HtNihxG4fkIj7Ofthxgkj6Kr6JWzv+YMCIbMr/TaUVtOEPlxkCh79MVsGbb46zwP1JX/SeQMJWehLiCZ/mwsu+tXQjsoMD8SLezY1fn7WOaLQRPFzAHDbNgjJ1z802v79xou+Lbsa3LHVWWSu
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: 1957d5df-3198-4955-87fc-08d5f1732223
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(5600073)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM3PR04MB0806;
+x-ms-traffictypediagnostic: AM3PR04MB0806:
+x-microsoft-antispam-prvs: <AM3PR04MB0806316F76E9BAE5F42DCFB394550@AM3PR04MB0806.eurprd04.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(180628864354917)(9452136761055)(185117386973197)(258649278758335);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3002001)(3231311)(944501410)(52105095)(93006095)(93001095)(10201501046)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123564045)(20161123558120)(20161123562045)(6072148)(201708071742011)(7699016);SRVR:AM3PR04MB0806;BCL:0;PCL:0;RULEID:;SRVR:AM3PR04MB0806;
+x-forefront-prvs: 0743E8D0A6
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(376002)(346002)(396003)(366004)(39860400002)(189003)(13464003)(199004)(476003)(81156014)(3846002)(305945005)(446003)(5660300001)(8936002)(66066001)(6116002)(11346002)(54906003)(2201001)(6436002)(486006)(8676002)(55016002)(110136005)(86362001)(68736007)(99286004)(9686003)(102836004)(81166006)(26005)(6246003)(53546011)(6506007)(14444005)(2906002)(106356001)(105586002)(2900100001)(316002)(7736002)(97736004)(5250100002)(53936002)(478600001)(4326008)(14454004)(7696005)(6636002)(76176011)(256004)(229853002)(33656002)(74316002)(2501003)(25786009);DIR:OUT;SFP:1101;SCL:1;SRVR:AM3PR04MB0806;H:AM3PR04MB338.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: OeoWxeITegzt392bG8DmcDW9Z8zqruUolJ+Hpv4DhZfg2ijdxFfUiZInEHDH2ffEGY++dUjyuuJpSWWHtn8X+uzSUoUpwUACX79JOfsYU37YMEGQ+hG59q4hJl/vmT/cL9GrSvJgmJudE4UL5hOoU3XLeQu8PyW0s6I8TvT1knp4RkiWMENptgOBQxMHDj4wS2rpROW6O8lGRcCFa7QR16rNuxqsrmWkR7jAPDe73FjZU7T4YAKs23VOWyOoXHdh79os2Q02+PhpShgKLP3nXLrmyYBGJB1auSe2RjDWunfNtO36hcO6lfYyJvrRytLR+zdBDtFl9Cr6aNvvBYuUX6PolULnIGpuI3WZupbZ6Go=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="iso-8859-2"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1957d5df-3198-4955-87fc-08d5f1732223
+X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Jul 2018 14:38:33.7749
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM3PR04MB0806
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-After commit 249d4a9b3246 ("timers: Reinitialize per cpu bases
-on hotplug") i.e introduction of state CPUHP_TIMERS_PREPARE
-instead of CPUHP_TIMERS_DEAD the cpuhp_step name "timers:dead"
-for timer looks to invalid. So, better to name it as
-"timers:prepare".
+> -----Original Message-----
+> From: Horia Geanta
+> Sent: Tuesday, July 24, 2018 5:35 PM
+> To: Roy Pledge <roy.pledge@nxp.com>; devel@driverdev.osuosl.org; linux-
+> arm-kernel@lists.infradead.org; gregkh@linuxfoundation.org; Leo Li
+> <leoyang.li@nxp.com>
+> Cc: Laurentiu Tudor <laurentiu.tudor@nxp.com>; Ioana Ciocoi Radulescu
+> <ruxandra.radulescu@nxp.com>; linux-kernel@vger.kernel.org;
+> arnd@arndb.de; catalin.marinas@arm.com; robin.murphy@arm.com
+> Subject: Re: [PATCH v3 0/4] staging/fsl-mc/bus: Move DPIO from staging to
+> drivers/soc/fsl
+>=20
+> On 7/24/2018 5:21 PM, Roy Pledge wrote:
+> > Move the NXP DPIO (Datapath I/O driver) from the staging/fsl-
+> mc/bus/dpio
+> > directory to the drivers/soc/fsl directory.
+> >
+> > The DPIO driver enables access to the Queue and Buffer Managemer
+> (QBMAN)
+> > hardware of NXP DPAA2 devices. This is a prerequiste for moving the
+> DPAA2
+> > Ethernet device driver from the staging directory.
+> >
+> For the series:
+> Reviewed-by: Horia Geant=E3 <horia.geanta@nxp.com>
 
-Signed-off-by: Mukesh Ojha <mojha@codeaurora.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Lai Jiangshan <jiangshanlai@gmail.com>
-Cc: Ingo Molnar <mingo@kernel.org>
-Cc: Brendan Jackman <brendan.jackman@arm.com>
-Cc: Mathieu Malaterre <malat@debian.org>
----
- kernel/cpu.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/kernel/cpu.c b/kernel/cpu.c
-index 0db8938..8e6606a 100644
---- a/kernel/cpu.c
-+++ b/kernel/cpu.c
-@@ -1274,7 +1274,7 @@ static int __init cpu_hotplug_pm_sync_init(void)
- 	 * otherwise a RCU stall occurs.
- 	 */
- 	[CPUHP_TIMERS_PREPARE] = {
--		.name			= "timers:dead",
-+		.name			= "timers:prepare",
- 		.startup.single		= timers_prepare_cpu,
- 		.teardown.single	= timers_dead_cpu,
- 	},
--- 
-Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center,
-Inc. is a member of the Code Aurora Forum, a Linux Foundation Collaborative Project
-
+Also:
+Reviewed-by: Ioana Radulescu <ruxandra.radulescu@nxp.com>
