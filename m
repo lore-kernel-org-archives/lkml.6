@@ -2,64 +2,96 @@ Return-Path: <SRS0=hTZH=KI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DFDEECDFB8
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 16:38:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 842B4C6778A
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 16:42:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 042A420856
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 16:38:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 042A420856
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 15A9220874
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 16:42:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 15A9220874
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388466AbeGXRp1 (ORCPT
+        id S2388422AbeGXRuC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 13:45:27 -0400
-Received: from foss.arm.com ([217.140.101.70]:54946 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388330AbeGXRp1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 13:45:27 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1D0B380D;
-        Tue, 24 Jul 2018 09:38:09 -0700 (PDT)
-Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id E15F23F5B3;
-        Tue, 24 Jul 2018 09:38:08 -0700 (PDT)
-Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
-        id 8D41F1AE3B5E; Tue, 24 Jul 2018 17:38:08 +0100 (BST)
-Date:   Tue, 24 Jul 2018 17:38:08 +0100
-From:   Will Deacon <will.deacon@arm.com>
-To:     Laura Abbott <labbott@redhat.com>
-Cc:     Alexander Popov <alex.popov@linux.com>,
-        Kees Cook <keescook@chromium.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        kernel-hardening@lists.openwall.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Catalin Marinas <catalin.marinas@arm.com>
-Subject: Re: [PATCHv3 0/2] Stackleak for arm64
-Message-ID: <20180724163807.GE25888@arm.com>
-References: <1531341400-12077-1-git-send-email-alex.popov@linux.com>
- <20180720214154.2940-1-labbott@redhat.com>
+        Tue, 24 Jul 2018 13:50:02 -0400
+Received: from mailout.easymail.ca ([64.68.200.34]:46107 "EHLO
+        mailout.easymail.ca" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388334AbeGXRuC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Jul 2018 13:50:02 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by mailout.easymail.ca (Postfix) with ESMTP id 3976F217D1;
+        Tue, 24 Jul 2018 16:42:43 +0000 (UTC)
+Received: from mailout.easymail.ca ([127.0.0.1])
+        by localhost (emo02-pco.easydns.vpn [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id vr8xgNcajEOh; Tue, 24 Jul 2018 16:42:43 +0000 (UTC)
+Received: from [192.168.1.87] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mailout.easymail.ca (Postfix) with ESMTPSA id 38C5120F65;
+        Tue, 24 Jul 2018 16:42:33 +0000 (UTC)
+Subject: Re: [PATCH] usb: usbip: remove redundant pointer ep
+To:     Colin King <colin.king@canonical.com>,
+        Valentina Manea <valentina.manea.m@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-usb@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Shuah Khan <shuah@kernel.org>
+References: <20180713104501.11482-1-colin.king@canonical.com>
+From:   Shuah Khan <shuah@kernel.org>
+Message-ID: <4c77677e-a9b2-7482-9121-e3d94c9b8802@kernel.org>
+Date:   Tue, 24 Jul 2018 10:42:33 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180720214154.2940-1-labbott@redhat.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <20180713104501.11482-1-colin.king@canonical.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Laura,
+On 07/13/2018 04:45 AM, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> Pointer ep is being assigned but is never used hence it is
+> redundant and can be removed.
+> 
+> Cleans up clang warning:
+> warning: variable 'ep' set but not used [-Wunused-but-set-variable]
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>  drivers/usb/usbip/vudc_dev.c | 2 --
+>  1 file changed, 2 deletions(-)
+> 
+> diff --git a/drivers/usb/usbip/vudc_dev.c b/drivers/usb/usbip/vudc_dev.c
+> index 1b9a4f87db59..1634d8698e15 100644
+> --- a/drivers/usb/usbip/vudc_dev.c
+> +++ b/drivers/usb/usbip/vudc_dev.c
+> @@ -279,12 +279,10 @@ static int vep_disable(struct usb_ep *_ep)
+>  static struct usb_request *vep_alloc_request(struct usb_ep *_ep,
+>  		gfp_t mem_flags)
+>  {
+> -	struct vep *ep;
+>  	struct vrequest *req;
+>  
+>  	if (!_ep)
+>  		return NULL;
+> -	ep = to_vep(_ep);
+>  
+>  	req = kzalloc(sizeof(*req), mem_flags);
+>  	if (!req)
+> 
 
-On Fri, Jul 20, 2018 at 02:41:52PM -0700, Laura Abbott wrote:
-> This is the version of stackleak for arm64, hopefully ready for queueing
+Thanks for the patch. Looks good to me.
 
-Thanks. I'll push these into linux-next tomorrow, once I've had a chance
-to test my conflict resolution in entry.S.
+Acked-by: Shuah Khan (Samsung OSG) <shuah@kernel.org>
 
-Will
+thanks,
+-- Shuah
