@@ -2,171 +2,130 @@ Return-Path: <SRS0=hTZH=KI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D02EBC6778A
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 14:38:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98F26ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 14:39:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 72C0F20852
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 14:38:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4EA1C20852
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 14:39:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="kfHIuuM+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 72C0F20852
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="Q03xXZR6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4EA1C20852
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388660AbeGXPp2 (ORCPT
+        id S2388594AbeGXPq2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 11:45:28 -0400
-Received: from aserp2130.oracle.com ([141.146.126.79]:52044 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388373AbeGXPp2 (ORCPT
+        Tue, 24 Jul 2018 11:46:28 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:33580 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388482AbeGXPq2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 11:45:28 -0400
-Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
-        by aserp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w6OEXd0B098767;
-        Tue, 24 Jul 2018 14:38:06 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2018-07-02;
- bh=RlruvZg7UzNxCzRqScvpP0fi/NrtjCyGPj5KqEWoS8A=;
- b=kfHIuuM+bna6yGd+3CwdcvXTzFfLicYw71YX3JLvkTyfptowbW0Oe9GhhXcpSwgHoqJZ
- WSH/lyvtjZB+t/q0aSsjpTI41GsxPzSC8nrTka09ceskAeoj3ItG+PBz0Q/c6lDFRsZj
- ASO6USTxN2DyfyE0qivILLj43l/73XMN6Hvzi1NxuAHknabIB/rJa55n9AyX76YJ0W0Y
- BY6Fou7b/qgDNzt0aCRYvF9SMG78dSJOzzuU0chrQcYxaPHtEQCc9DLrAOYIUUqILc0x
- L1KrPjPzadelVmm3gcngMTrZkJBg1eQJJhRQjinlgA9KBCslyAmybwHL16lwEEONqZUW 8w== 
-Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
-        by aserp2130.oracle.com with ESMTP id 2kbtbcse3p-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 24 Jul 2018 14:38:05 +0000
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w6OEc3m8030887
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 24 Jul 2018 14:38:04 GMT
-Received: from abhmp0002.oracle.com (abhmp0002.oracle.com [141.146.116.8])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w6OEbxOG014293;
-        Tue, 24 Jul 2018 14:38:01 GMT
-Received: from dhcp-burlington7-2nd-B-east-10-152-55-162.usdhcp.oraclecorp.com (/10.152.32.65)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 24 Jul 2018 07:07:53 -0700
-Subject: Re: [PATCH v2] xen/pv: Call get_cpu_address_sizes to set
- x86_virt/phys_bits
-To:     "M. Vefa Bicakci" <m.v.b@runbox.com>, linux-kernel@vger.kernel.org
-Cc:     "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
+        Tue, 24 Jul 2018 11:46:28 -0400
+Received: by mail-pg1-f196.google.com with SMTP id r5-v6so3062459pgv.0
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Jul 2018 07:39:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=M7tYNFeGc2SNxNgzs5Sh/vs4M214DPBR/3bVbs9kSrc=;
+        b=Q03xXZR6CXUqJ5uvQ9kQ693tXWIAx8MYOZB/dONKt/NDG/F5z1PB6wv8UrlFFfKxq7
+         UQ3SLKikKTkglwW6a8xlXNhxmEZ4FqJmNOZAxCf9OQKB/OQQmtBDDShkGAFizRHS81Ny
+         J10zASWSayrXXLgHhEy9urrpqCBshlG0WEPaxfWvDDCiUEB6PN2z9Z7FDM+6LwrB1cOL
+         vdUzNynx692r+Cq/QJ1bStGhGeX/k2VSi0kFOwUsmgIZONFmjwOjNFvnmdvx/osl/ODE
+         w1/pCRLRw0dCzinD9iJ5ndn/3xdulF424gnVHh7e5msJJOuVYUuToJWSjQKQmyI5c6RQ
+         u6iQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=M7tYNFeGc2SNxNgzs5Sh/vs4M214DPBR/3bVbs9kSrc=;
+        b=dKdkeiusQ4mCqDnOxOMQzQXPr5lr/Iltt8OJTNSguQyw0F6za9OacAYpep1QM4sVCv
+         sKYC/z7rOvAEhsKplFt50PU1qROL42VuSJEjcX+RopReFfM95Mf2HxMufd2uPgLPR1FJ
+         RwNYGUrv18lAKm8qCUTji1upLY8QAlGL1TSJaLWwveKe7Rc6GssDck9JpdVzmeBrojE9
+         JJx2BTiCjebjhgvpBa2gIrIAiRuPwaZUG8rllgMc6tWpSUC/1HUr3yJ03eWfPJBe/afz
+         F3KCv1so9Hc5XiE8EWsghWvdBzCHHSkruu9deuvV93nw1THRycnV/qSNEqoaZCOmQqOX
+         gRng==
+X-Gm-Message-State: AOUpUlGYwbDElkb5jU5LSjiN1vh0gjSvDU1MriJGhFADvdALpRxzICqe
+        KfvsldwjE6Q8wjXL0c+CUIdfjQ==
+X-Google-Smtp-Source: AAOMgpcbOq7HokHdP4TNgCHOc3Bo3oHBTYXhDX2nxT8xcKlZedqZ3dblPSER+opEW3p3tV4Ya4bB5Q==
+X-Received: by 2002:a62:954:: with SMTP id e81-v6mr17950654pfd.231.1532443180464;
+        Tue, 24 Jul 2018 07:39:40 -0700 (PDT)
+Received: from ?IPv6:2601:646:c200:7429:1c8a:b8aa:9094:f2d2? ([2601:646:c200:7429:1c8a:b8aa:9094:f2d2])
+        by smtp.gmail.com with ESMTPSA id b192-v6sm17659961pga.2.2018.07.24.07.39.38
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 24 Jul 2018 07:39:39 -0700 (PDT)
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (1.0)
+Subject: Re: [PATCH 0/3] PTI for x86-32 Fixes and Updates
+From:   Andy Lutomirski <luto@amacapital.net>
+X-Mailer: iPhone Mail (15G77)
+In-Reply-To: <20180724133935.GA30797@amd>
+Date:   Tue, 24 Jul 2018 07:39:38 -0700
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Joerg Roedel <joro@8bytes.org>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Juergen Gross <jgross@suse.com>,
-        xen-devel@lists.xenproject.org, x86@kernel.org,
-        stable@vger.kernel.org
-References: <20180721194909.23903-2-m.v.b@runbox.com>
- <20180724124547.32562-1-m.v.b@runbox.com>
-From:   Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=boris.ostrovsky@oracle.com; prefer-encrypt=mutual; keydata=
- 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
- Jg6OxFYd01z+a+oL
-Message-ID: <3ac07f7d-19f3-923f-57c4-a12c605ff6ad@oracle.com>
-Date:   Tue, 24 Jul 2018 10:08:19 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
-MIME-Version: 1.0
-In-Reply-To: <20180724124547.32562-1-m.v.b@runbox.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8963 signatures=668706
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1806210000 definitions=main-1807240156
+        Ingo Molnar <mingo@kernel.org>, Peter Anvin <hpa@zytor.com>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-mm <linux-mm@kvack.org>,
+        Andrew Lutomirski <luto@kernel.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        =?utf-8?Q?J=C3=BCrgen_Gro=C3=9F?= <jgross@suse.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Borislav Petkov <bp@alien8.de>, Jiri Kosina <jkosina@suse.cz>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Brian Gerst <brgerst@gmail.com>,
+        David Laight <David.Laight@aculab.com>,
+        Denys Vlasenko <dvlasenk@redhat.com>,
+        Eduardo Valentin <eduval@amazon.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Will Deacon <will.deacon@arm.com>,
+        "Liguori, Anthony" <aliguori@amazon.com>,
+        Daniel Gruss <daniel.gruss@iaik.tugraz.at>,
+        Hugh Dickins <hughd@google.com>,
+        Kees Cook <keescook@google.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Waiman Long <llong@redhat.com>,
+        "David H . Gutteridge" <dhgutteridge@sympatico.ca>,
+        Joerg Roedel <jroedel@suse.de>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <17482884-2DC3-4A09-8AAC-01AC4D8DE293@amacapital.net>
+References: <1532103744-31902-1-git-send-email-joro@8bytes.org> <20180723140925.GA4285@amd> <CA+55aFynT9Sp7CbnB=GqLbns7GFZbv3pDSQm_h0jFvJpz3ES+g@mail.gmail.com> <20180724133935.GA30797@amd>
+To:     Pavel Machek <pavel@ucw.cz>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/24/2018 08:45 AM, M. Vefa Bicakci wrote:
-> Commit d94a155c59c9 ("x86/cpu: Prevent cpuinfo_x86::x86_phys_bits
-> adjustment corruption") has moved the query and calculation of the
-> x86_virt_bits and x86_phys_bits fields of the cpuinfo_x86 struct
-> from the get_cpu_cap function to a new function named
-> get_cpu_address_sizes.
->
-> One of the call sites related to Xen PV VMs was unfortunately missed
-> in the aforementioned commit. This prevents successful boot-up of
-> kernel versions 4.17 and up in Xen PV VMs if CONFIG_DEBUG_VIRTUAL
-> is enabled, due to the following code path:
->
->   enlighten_pv.c::xen_start_kernel
->     mmu_pv.c::xen_reserve_special_pages
->       page.h::__pa
->         physaddr.c::__phys_addr
->           physaddr.h::phys_addr_valid
->
-> phys_addr_valid uses boot_cpu_data.x86_phys_bits to validate physical
-> addresses. boot_cpu_data.x86_phys_bits is no longer populated before
-> the call to xen_reserve_special_pages due to the aforementioned commit
-> though, so the validation performed by phys_addr_valid fails, which
-> causes __phys_addr to trigger a BUG, preventing boot-up.
->
-> Signed-off-by: M. Vefa Bicakci <m.v.b@runbox.com>
-> Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-> Cc: Andy Lutomirski <luto@kernel.org>
-> Cc: Ingo Molnar <mingo@redhat.com>
-> Cc: "H. Peter Anvin" <hpa@zytor.com>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-> Cc: Juergen Gross <jgross@suse.com>
-> Cc: xen-devel@lists.xenproject.org
-> Cc: x86@kernel.org
-> Cc: stable@vger.kernel.org # for v4.17 and up
-> Fixes: d94a155c59c9 ("x86/cpu: Prevent cpuinfo_x86::x86_phys_bits adjustment corruption")
-
-Reviewed-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
 
 
+> On Jul 24, 2018, at 6:39 AM, Pavel Machek <pavel@ucw.cz> wrote:
+>=20
+>> On Mon 2018-07-23 12:00:08, Linus Torvalds wrote:
+>>> On Mon, Jul 23, 2018 at 7:09 AM Pavel Machek <pavel@ucw.cz> wrote:
+>>>=20
+>>> Meanwhile... it looks like gcc is not slowed down significantly, but
+>>> other stuff sees 30% .. 40% slowdowns... which is rather
+>>> significant.
+>>=20
+>> That is more or less expected.
+>=20
+> Ok, so I was wrong. bzip2 showed 30% slowdown, but running test in a
+> loop, I get (on v4.18) that, too.
+>=20
+>=20
 
+...
+
+The obvious cause would be thermal issues, which are increasingly common in l=
+aptops.  You could get cycle counts from perf stat, perhaps.
