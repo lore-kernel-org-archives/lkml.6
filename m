@@ -2,198 +2,155 @@ Return-Path: <SRS0=hTZH=KI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD360C6778A
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 03:34:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42AD3ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 03:35:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4AF5120844
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 03:34:45 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="GdhO/Ubb";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="IzoTOIcd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4AF5120844
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id 07F1220874
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 03:35:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 07F1220874
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388236AbeGXEjD (ORCPT
+        id S2388293AbeGXEjT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 00:39:03 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:48612 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388140AbeGXEjD (ORCPT
+        Tue, 24 Jul 2018 00:39:19 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:34070 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S2388107AbeGXEjT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 00:39:03 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id C310C60B12; Tue, 24 Jul 2018 03:34:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1532403281;
-        bh=PRN2FZISIA/C+HBEiKQbsJO4GKWKcSiK3nX9ZRSU+Ts=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=GdhO/UbbuunI41RpSmA++TGwUqJ+l9EqAE0noLTds/Ai0SfdNYG8QwbDfVCDFrex/
-         EPjy6a7is4lqB1D23M+FgO+614ZXC4+GuErYK3wvMWyuJr6wtY52Wht3CJS0Y3dwqk
-         bO04P9aMFih85JLMWZd4Btt61eiWLzzYKRIA1v9k=
-Received: from [10.206.24.39] (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: asutoshd@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id CA8596055D;
-        Tue, 24 Jul 2018 03:34:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1532403280;
-        bh=PRN2FZISIA/C+HBEiKQbsJO4GKWKcSiK3nX9ZRSU+Ts=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=IzoTOIcdqn4MI3XUXfLT4iFwp2AwA1OuSnwv30bl5hGi185z6wd2iSTSXrZe2RmC4
-         tEgcLq+96IYkBs2UzBKx94TAUSDdNqy2h5vAvffjhTf8IutjVt/HWsmIYvYvnD0ADn
-         uX2yQMj0s4Auw2OdSlbjD7oBsYAWUoxDXa8OIqds=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org CA8596055D
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=asutoshd@codeaurora.org
-Subject: Re: [PATCH v1 4/9] scsi: ufs: add option to change default UFS power
- management level
-To:     Rob Herring <robh@kernel.org>
-Cc:     Subhash Jadavani <subhashj@codeaurora.org>,
-        Can Guo <cang@codeaurora.org>,
-        Vivek Gautam <vivek.gautam@codeaurora.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Vinayak Holikatti <vinholikatti@gmail.com>,
-        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        linux-scsi@vger.kernel.org,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Venkat Gopalakrishnan <venkatg@codeaurora.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Mathieu Malaterre <malat@debian.org>,
-        devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <cover.1530880006.git.asutoshd@codeaurora.org>
- <ff2b648007a400c60ba804a0c5cab0166bd268e7.1530880006.git.asutoshd@codeaurora.org>
- <20180711203317.GA14983@rob-hp-laptop>
- <4b85de8b-d03e-da93-704b-e70922a9fbea@codeaurora.org>
- <CAL_JsqLXUvUj8n=1Xv-_ssqB6rayMvxOTnGzeN1vS9yx4-jqOQ@mail.gmail.com>
-From:   "Asutosh Das (asd)" <asutoshd@codeaurora.org>
-Message-ID: <f1d3af9d-3ff0-c15b-013d-013ba6dde287@codeaurora.org>
-Date:   Tue, 24 Jul 2018 09:04:34 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Tue, 24 Jul 2018 00:39:19 -0400
+Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w6O3Y7Xa194557
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Jul 2018 23:34:57 -0400
+Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2kdqff1am0-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Jul 2018 23:34:57 -0400
+Received: from localhost
+        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <ravi.bangoria@linux.ibm.com>;
+        Tue, 24 Jul 2018 04:34:55 +0100
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 24 Jul 2018 04:34:51 +0100
+Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w6O3YopF41222270
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 24 Jul 2018 03:34:50 GMT
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 1593FAE055;
+        Tue, 24 Jul 2018 06:35:00 +0100 (BST)
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 2DC17AE045;
+        Tue, 24 Jul 2018 06:34:57 +0100 (BST)
+Received: from [9.124.31.70] (unknown [9.124.31.70])
+        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Tue, 24 Jul 2018 06:34:57 +0100 (BST)
+Subject: Re: [PATCH v6 3/6] Uprobes: Support SDT markers having reference
+ count (semaphore)
+To:     Oleg Nesterov <oleg@redhat.com>
+Cc:     srikar@linux.vnet.ibm.com, rostedt@goodmis.org,
+        mhiramat@kernel.org, peterz@infradead.org, mingo@redhat.com,
+        acme@kernel.org, alexander.shishkin@linux.intel.com,
+        jolsa@redhat.com, namhyung@kernel.org,
+        linux-kernel@vger.kernel.org, ananth@linux.vnet.ibm.com,
+        alexis.berlemont@gmail.com, naveen.n.rao@linux.vnet.ibm.com,
+        linux-arm-kernel@lists.infradead.org, linux-mips@linux-mips.org,
+        linux@armlinux.org.uk, ralf@linux-mips.org, paul.burton@mips.com,
+        Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+References: <20180716084706.28244-1-ravi.bangoria@linux.ibm.com>
+ <20180716084706.28244-4-ravi.bangoria@linux.ibm.com>
+ <20180723162629.GA8584@redhat.com>
+From:   Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+Date:   Tue, 24 Jul 2018 09:04:47 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-In-Reply-To: <CAL_JsqLXUvUj8n=1Xv-_ssqB6rayMvxOTnGzeN1vS9yx4-jqOQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <20180723162629.GA8584@redhat.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 18072403-0012-0000-0000-0000028DDCE5
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18072403-0013-0000-0000-000020BFBBBF
+Message-Id: <e722ee62-eaba-3abd-7f34-bf38ba3d4f95@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-24_01:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1806210000 definitions=main-1807240036
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 7/23/2018 8:06 PM, Rob Herring wrote:
-> On Sun, Jul 22, 2018 at 9:20 PM Asutosh Das (asd)
-> <asutoshd@codeaurora.org> wrote:
+Hi Oleg,
+
+On 07/23/2018 09:56 PM, Oleg Nesterov wrote:
+> I have a mixed feeling about this series... I'll try to summarise my thinking
+> tomorrow, but I do not see any obvious problem so far. Although I have some
+> concerns about 5/6, I need to re-read it after sleep.
+
+Sure.
+
+> 
+> 
+> On 07/16, Ravi Bangoria wrote:
 >>
->> On 7/12/2018 2:03 AM, Rob Herring wrote:
->>> On Fri, Jul 06, 2018 at 06:00:31PM +0530, Asutosh Das wrote:
->>>> From: Subhash Jadavani <subhashj@codeaurora.org>
->>>>
->>>> UFS device and link can be put in multiple different low power modes hence
->>>> UFS driver supports multiple different low power modes. By default UFS
->>>> driver selects the default (optimal) low power mode (which gives moderate
->>>> power savings and have relatively less enter and exit latencies) but
->>>> we might have to tune this default power mode for different chipset
->>>> platforms to meet the low power requirements/goals. Hence this patch
->>>> adds option to change default UFS low power mode (level).
->>>>
->>>> Signed-off-by: Subhash Jadavani <subhashj@codeaurora.org>
->>>> Signed-off-by: Venkat Gopalakrishnan <venkatg@codeaurora.org>
->>>> Signed-off-by: Can Guo <cang@codeaurora.org>
->>>> Signed-off-by: Asutosh Das <asutoshd@codeaurora.org>
->>>> ---
->>>>    .../devicetree/bindings/ufs/ufshcd-pltfrm.txt      | 11 ++++++++
->>>>    drivers/scsi/ufs/ufshcd-pltfrm.c                   | 14 +++++++++++
->>>>    drivers/scsi/ufs/ufshcd.c                          | 29 +++++++++++++++-------
->>>>    drivers/scsi/ufs/ufshcd.h                          |  4 +--
->>>>    4 files changed, 47 insertions(+), 11 deletions(-)
->>>>
->>>> diff --git a/Documentation/devicetree/bindings/ufs/ufshcd-pltfrm.txt b/Documentation/devicetree/bindings/ufs/ufshcd-pltfrm.txt
->>>> index c39dfef..f564d9a 100644
->>>> --- a/Documentation/devicetree/bindings/ufs/ufshcd-pltfrm.txt
->>>> +++ b/Documentation/devicetree/bindings/ufs/ufshcd-pltfrm.txt
->>>> @@ -38,6 +38,15 @@ Optional properties:
->>>>                         defined or a value in the array is "0" then it is assumed
->>>>                         that the frequency is set by the parent clock or a
->>>>                         fixed rate clock source.
->>>> +- rpm-level         : UFS Runtime power management level. Following PM levels are supported:
->>>> +                      0 - Both UFS device and Link in active state (Highest power consumption)
->>>> +                      1 - UFS device in active state but Link in Hibern8 state
->>>> +                      2 - UFS device in Sleep state but Link in active state
->>>> +                      3 - UFS device in Sleep state and Link in hibern8 state (default PM level)
->>>> +                      4 - UFS device in Power-down state and Link in Hibern8 state
->>>> +                      5 - UFS device in Power-down state and Link in OFF state (Lowest power consumption)
->>>> +- spm-level         : UFS System power management level. Allowed PM levels are same as rpm-level.
->>>
->>> What's the default?
->>>
->>> I assume these are minimums? The OS can pick higher power states. This
->>> seems to be a bit Linux specific (as 'runtime PM' could be considered
->>> Linux specific). For every other device, we don't put this type of
->>> information in DT, but is user controlled.
->> I didn't completely understand your comment.
->> Do you not want these properties to be in DT file?
+>> +static int delayed_uprobe_install(struct vm_area_struct *vma)
+>> +{
+>> +	struct list_head *pos, *q;
+>> +	struct delayed_uprobe *du;
+>> +	unsigned long vaddr;
+>> +	int ret = 0, err = 0;
+>> +
+>> +	mutex_lock(&delayed_uprobe_lock);
+>> +	list_for_each_safe(pos, q, &delayed_uprobe_list) {
+>> +		du = list_entry(pos, struct delayed_uprobe, list);
+>> +
+>> +		if (!du->uprobe->ref_ctr_offset ||
 > 
-> Right, not if it is a user decision.
-> 
->> When you say user-controlled, do you mean control it through sysfs entries?
-> 
-> Yes.
-> 
->>> So really, wouldn't 1
->>> property be sufficient for cases where a mode doesn't work due to
->>> some h/w limitation. Otherwise, it is an OS or user decision.
->> I didn't completely understand this. Could you please elaborate on your
->> intent here?
-> 
-> The case that makes sense for this to be in DT is if there are h/w
-> limitations that prevent some low power modes. In such a case, that
-> limit is not likely specific to runtime PM or system suspend.
-> 
->>>>    -lanes-per-direction       : number of lanes available per direction - either 1 or 2.
->>>>                         Note that it is assume same number of lanes is used both
->>>>                         directions at once. If not specified, default is 2 lanes per direction.
->>>> @@ -66,4 +75,6 @@ Example:
->>>>               freq-table-hz = <100000000 200000000>, <0 0>, <0 0>;
->>>>               phys = <&ufsphy1>;
->>>>               phy-names = "ufsphy";
->>>> +            rpm-level = <3>;
->>>
->>> Why specified if 3 is the default?
->> Ah yes - that should be removed.
->> I'll remove it in v2.
->>
->>>
->>>> +            spm-level = <5>;
->>>
->>> These seem like sane defaults. When and why would you use some
->>> different?
->> I think each of the deeper sleep modes are associated with an increasing
->> wakeup latency. For e.g. '0' would have the highest power-consumption
->> and no resume latency at all as compared to '5'.
->> So depending on use-cases other modes may be chosen.
-> 
-> The use-case can change in a running system. For example if you are
-> plugged in, then you probably don't want to enter a lower power mode.
-> 
-> Rob
-> 
+> Is it possible to see ->ref_ctr_offset == 0 in delayed_uprobe_list?
 
-Ok - Thanks.
-I'm gonna make the following changes in v2:
-1. Remove these entries from DT
-2. Add support for these entries in sysfs.
-3. Keep 3 as the default value for [rpm/spm]-levels
+I'll remove this check.
 
--asd
+> 
+>> @@ -1072,7 +1282,13 @@ int uprobe_mmap(struct vm_area_struct *vma)
+>>  	struct uprobe *uprobe, *u;
+>>  	struct inode *inode;
+>>  
+>> -	if (no_uprobe_events() || !valid_vma(vma, true))
+>> +	if (no_uprobe_events())
+>> +		return 0;
+>> +
+>> +	if (vma->vm_flags & VM_WRITE)
+>> +		delayed_uprobe_install(vma);
+> 
+> Obviously not nice performance-wise... OK, I do not know if it will actually
+> hurt in practice and probably we can use the better data structures if necessary.
+> But can't we check MMF_HAS_UPROBES at least? I mean,
+> 
+> 	if (vma->vm_flags & VM_WRITE && test_bit(MMF_HAS_UPROBES, &vma->vm_mm->flags))
+> 		delayed_uprobe_install(vma);
+> 
+> ?
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, a 
-Linux Foundation Collaborative Project
+Yes.
+
+> 
+> 
+> Perhaps we can even add another flag later, MMF_HAS_DELAYED_UPROBES set by
+> delayed_uprobe_add().
+
+Yes, good idea.
+
+Thanks for the review,
+Ravi
+
