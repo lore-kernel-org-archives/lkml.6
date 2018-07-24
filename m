@@ -2,219 +2,156 @@ Return-Path: <SRS0=hTZH=KI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD999C28CF6
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 21:07:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8631CC28CF6
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 21:09:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 65B8620875
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 21:07:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3342220875
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 21:09:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="lsN5H/OF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 65B8620875
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="AcLlzmcX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3342220875
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388882AbeGXWQL (ORCPT
+        id S2388936AbeGXWRq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 18:16:11 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:39339 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388823AbeGXWQL (ORCPT
+        Tue, 24 Jul 2018 18:17:46 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:44360 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388748AbeGXWRq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 18:16:11 -0400
-Received: by mail-pg1-f193.google.com with SMTP id g2-v6so3725836pgs.6
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Jul 2018 14:07:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:in-reply-to:message-id:references
-         :user-agent:mime-version;
-        bh=GRpMvOtQ2l4EWsyFMosWvTYZzcMc5iTWpAY5ngEzkuw=;
-        b=lsN5H/OFLNNc7MzqgLfTH21qJ+pljulOpQ/hF45IXmXn1DY7NDIpU30dGn2eVKVub4
-         vRSVLOFimGJINmhyswNmdfjhBrwRgL3WcjolU8B08hK/Jk66m1NX/ubbAXNpGginmciV
-         rTLsNUC0khsINDJUTDptuvEGc7aoMx9mloM1xgdam3tMHCYodVGxPmXRId6r6URAMm8s
-         zdgXgWE8frwNYyQBw5StdMr/v+csKcZHkCzZFjpRC++cAgQk/+CR/T7F2RACT3IgN4rj
-         3v5o+BZFD6LlPWVU5z/P7BYDaPtuuaj018EoVa2z0yORwLqadQdGJUk0vOacRad7PUIR
-         zyuA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
-         :references:user-agent:mime-version;
-        bh=GRpMvOtQ2l4EWsyFMosWvTYZzcMc5iTWpAY5ngEzkuw=;
-        b=tNVxiMYGuxrog6rBOe5OvzcUQ6+KQ9WN8UGgW9JSDlHTyaz9X/RDyF+oFZM1GVVPAb
-         tLGeFe58rLQCk8J9UFrI58TtvbynBpVQ8QzpMrhNXKgS+qF3P4boalg5oLx/kGitZfQL
-         xNjGDuY3tuCgUDYBndUOMTDKjpKOL96+GCRuCfbEL88BBR9f2xNWW5bI1O4CeraJMDJ1
-         6mKoXJgtk8hzUz+XUNmZAYkIJyhAkxvzWRHw1872suJegttC83XDyNkhaEknuSssAjTE
-         CCf6b2GeVQXo3vXF/H4OWEPkpgGe4F6qFhKuH1m1WD5jAOKYpRx4+N7nlCsB77Hv8v1d
-         WQqQ==
-X-Gm-Message-State: AOUpUlEOy9Cq+Zd7cS0dcJaOWRlVBg5c+dwwyfbl8WIygzjBf9l7+yYX
-        U01hcxgAvzYjMgVqpM6XZt1UVSA9UBc=
-X-Google-Smtp-Source: AAOMgpemc+5yBvV5dh8ku8rTX8SCYB8L0jNsRVFK4xUWd+aMwpByImhdwJj25yO+e6nwRd9r6MBLGQ==
-X-Received: by 2002:a65:658d:: with SMTP id u13-v6mr17985311pgv.20.1532466470849;
-        Tue, 24 Jul 2018 14:07:50 -0700 (PDT)
-Received: from [2620:15c:17:3:3a5:23a7:5e32:4598] ([2620:15c:17:3:3a5:23a7:5e32:4598])
-        by smtp.gmail.com with ESMTPSA id 84-v6sm34654729pfj.33.2018.07.24.14.07.49
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 24 Jul 2018 14:07:50 -0700 (PDT)
-Date:   Tue, 24 Jul 2018 14:07:49 -0700 (PDT)
-From:   David Rientjes <rientjes@google.com>
-X-X-Sender: rientjes@chino.kir.corp.google.com
-To:     Michal Hocko <mhocko@kernel.org>
-cc:     Andrew Morton <akpm@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>, linux-mm@kvack.org,
-        "David (ChunMing) Zhou" <David1.Zhou@amd.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?Q?Radim_Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        David Airlie <airlied@linux.ie>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        Doug Ledford <dledford@redhat.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Mike Marciniszyn <mike.marciniszyn@intel.com>,
-        Dennis Dalessandro <dennis.dalessandro@intel.com>,
-        Sudeep Dutt <sudeep.dutt@intel.com>,
-        Ashutosh Dixit <ashutosh.dixit@intel.com>,
-        Dimitri Sivanich <sivanich@sgi.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Juergen Gross <jgross@suse.com>,
-        =?UTF-8?Q?J=C3=A9r=C3=B4me_Glisse?= <jglisse@redhat.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Felix Kuehling <felix.kuehling@amd.com>, kvm@vger.kernel.org,
-        amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        intel-gfx@lists.freedesktop.org, linux-rdma@vger.kernel.org,
-        xen-devel@lists.xenproject.org,
-        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
-        Leon Romanovsky <leonro@mellanox.com>
-Subject: Re: [PATCH] mm, oom: distinguish blockable mode for mmu notifiers
-In-Reply-To: <20180724141747.GP28386@dhcp22.suse.cz>
-Message-ID: <alpine.DEB.2.21.1807241405450.191477@chino.kir.corp.google.com>
-References: <20180716115058.5559-1-mhocko@kernel.org> <20180720170902.d1137060c23802d55426aa03@linux-foundation.org> <20180724141747.GP28386@dhcp22.suse.cz>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Tue, 24 Jul 2018 18:17:46 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=ZW+d7LcHvUY0wD+TmRQdqHazSoRmSj6LibW2rnm4GqY=; b=AcLlzmcXpeTyQOh0o1AaJLg6Z
+        7JOTMVrED2jEbJHRnxExcum7jP68Bu8qhsbuIF15WFOPgkJpVMiMT83O9HRnMp3f1JDmqhL/Pqwi5
+        SHudqAzsBP86AovMFc7yvdlKwgUiTE0MxPGeCpia+2ppWt5vMDNpv1/ceAmS3DL+kGmEp4ZBs3l6e
+        iw2EN/SnA4BGY6vp3r+Ispux41bktxa8+nSb3iuQ7ARfMtn1qMUwbFeB2l1RnBpfAqyXw/umtU5OU
+        aiOEaDaTZDW3zmahU877z5tCQ/VYiCkP1Fnc8akcoI41/oxQTj/hC9epLGQGssdYw/Zzx6GuUyjLQ
+        DUteFFZCQ==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fi4Yd-0004fn-9j; Tue, 24 Jul 2018 21:09:23 +0000
+Date:   Tue, 24 Jul 2018 14:09:23 -0700
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Cannon Matthews <cannonmatthews@google.com>
+Cc:     Michal Hocko <mhocko@kernel.org>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org,
+        Andres Lagar-Cavilla <andreslc@google.com>,
+        Salman Qazi <sqazi@google.com>, Paul Turner <pjt@google.com>,
+        David Matlack <dmatlack@google.com>,
+        Peter Feiner <pfeiner@google.com>,
+        Alain Trinh <nullptr@google.com>
+Subject: Re: [PATCH] RFC: clear 1G pages with streaming stores on x86
+Message-ID: <20180724210923.GA20168@bombadil.infradead.org>
+References: <20180724204639.26934-1-cannonmatthews@google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180724204639.26934-1-cannonmatthews@google.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 24 Jul 2018, Michal Hocko wrote:
+On Tue, Jul 24, 2018 at 01:46:39PM -0700, Cannon Matthews wrote:
+> Reimplement clear_gigantic_page() to clear gigabytes pages using the
+> non-temporal streaming store instructions that bypass the cache
+> (movnti), since an entire 1GiB region will not fit in the cache anyway.
+> 
+> Doing an mlock() on a 512GiB 1G-hugetlb region previously would take on
+> average 134 seconds, about 260ms/GiB which is quite slow. Using `movnti`
+> and optimizing the control flow over the constituent small pages, this
+> can be improved roughly by a factor of 3-4x, with the 512GiB mlock()
+> taking only 34 seconds on average, or 67ms/GiB.
 
-> oom_reap_task_mm should return false when __oom_reap_task_mm return
-> false. This is what my patch did but it seems this changed by
-> http://www.ozlabs.org/~akpm/mmotm/broken-out/mm-oom-remove-oom_lock-from-oom_reaper.patch
-> so that one should be fixed.
+This is great data ...
+
+> - The calls to cond_resched() have been reduced from between every 4k
+> page to every 64, as between all of the 256K page seemed overly
+> frequent.  Does this seem like an appropriate frequency? On an idle
+> system with many spare CPUs it get's rescheduled typically once or twice
+> out of the 4096 times it calls cond_resched(), which seems like it is
+> maybe the right amount, but more insight from a scheduling/latency point
+> of view would be helpful.
+
+... which makes the lack of data here disappointing -- what're the
+comparable timings if you do check every 4kB or every 64kB instead of
+every 256kB?
+
+> The assembly code for the __clear_page_nt routine is more or less
+> taken directly from the output of gcc with -O3 for this function with
+> some tweaks to support arbitrary sizes and moving memory barriers:
 > 
-> diff --git a/mm/oom_kill.c b/mm/oom_kill.c
-> index 104ef4a01a55..88657e018714 100644
-> --- a/mm/oom_kill.c
-> +++ b/mm/oom_kill.c
-> @@ -565,7 +565,7 @@ static bool oom_reap_task_mm(struct task_struct *tsk, struct mm_struct *mm)
->  	/* failed to reap part of the address space. Try again later */
->  	if (!__oom_reap_task_mm(mm)) {
->  		up_read(&mm->mmap_sem);
-> -		return true;
-> +		return false;
->  	}
->  
->  	pr_info("oom_reaper: reaped process %d (%s), now anon-rss:%lukB, file-rss:%lukB, shmem-rss:%lukB\n",
+> void clear_page_nt_64i (void *page)
+> {
+>   for (int i = 0; i < GiB /sizeof(long long int); ++i)
+>     {
+>       _mm_stream_si64 (((long long int*)page) + i, 0);
+>     }
+>   sfence();
+> }
 > 
+> In general I would love to hear any thoughts and feedback on this
+> approach and any ways it could be improved.
 > 
-> On top of that the proposed cleanup looks as follows:
+> Some specific questions:
 > 
-> diff --git a/mm/oom_kill.c b/mm/oom_kill.c
-> index 88657e018714..4e185a282b3d 100644
-> --- a/mm/oom_kill.c
-> +++ b/mm/oom_kill.c
-> @@ -541,8 +541,16 @@ bool __oom_reap_task_mm(struct mm_struct *mm)
->  	return ret;
->  }
->  
-> +/*
-> + * Reaps the address space of the give task.
-> + *
-> + * Returns true on success and false if none or part of the address space
-> + * has been reclaimed and the caller should retry later.
-> + */
->  static bool oom_reap_task_mm(struct task_struct *tsk, struct mm_struct *mm)
->  {
-> +	bool ret = true;
+> - What is the appropriate method for defining an arch specific
+> implementation like this, is the #ifndef code sufficient, and did stuff
+> land in appropriate files?
+> 
+> - Are there any obvious pitfalls or caveats that have not been
+> considered? In particular the iterator over mem_map_next() seemed like a
+> no-op on x86, but looked like it could be important in certain
+> configurations or architectures I am not familiar with.
+> 
+> - Are there any x86_64 implementations that do not support SSE2
+> instructions like `movnti` ? What is the appropriate way to detect and
+> code around that if so?
+
+No.  SSE2 was introduced with the Pentium 4, before x86-64.  The XMM
+registers are used as part of the x86-64 calling conventions, so SSE2
+is mandatory for x86-64 implementations.
+
+> - Is there anything that could be improved about the assembly code? I
+> originally wrote it in C and don't have much experience hand writing x86
+> asm, which seems riddled with optimization pitfalls.
+
+I suspect it might be slightly faster if implemented as inline asm in the
+x86 clear_gigantic_page() implementation instead of a function call.
+Might not affect performance a lot though.
+
+> - Is the highmem codepath really necessary? would 1GiB pages really be
+> of much use on a highmem system? We recently removed some other parts of
+> the code that support HIGHMEM for gigantic pages (see:
+> http://lkml.kernel.org/r/20180711195913.1294-1-mike.kravetz@oracle.com)
+> so this seems like a logical continuation.
+
+PAE paging doesn't support 1GB pages, so there's no need for it on x86.
+
+> diff --git a/mm/memory.c b/mm/memory.c
+> index 7206a634270b..2515cae4af4e 100644
+> --- a/mm/memory.c
+> +++ b/mm/memory.c
+> @@ -70,6 +70,7 @@
+>  #include <linux/dax.h>
+>  #include <linux/oom.h>
+> 
 > +
->  	if (!down_read_trylock(&mm->mmap_sem)) {
->  		trace_skip_task_reaping(tsk->pid);
->  		return false;
-> @@ -555,28 +563,28 @@ static bool oom_reap_task_mm(struct task_struct *tsk, struct mm_struct *mm)
->  	 * down_write();up_write() cycle in exit_mmap().
->  	 */
->  	if (test_bit(MMF_OOM_SKIP, &mm->flags)) {
-> -		up_read(&mm->mmap_sem);
->  		trace_skip_task_reaping(tsk->pid);
-> -		return true;
-> +		goto out_unlock;
->  	}
->  
->  	trace_start_task_reaping(tsk->pid);
->  
->  	/* failed to reap part of the address space. Try again later */
-> -	if (!__oom_reap_task_mm(mm)) {
-> -		up_read(&mm->mmap_sem);
-> -		return false;
-> -	}
-> +	ret = __oom_reap_task_mm(mm);
-> +	if (!ret)
-> +		goto out_finish;
->  
->  	pr_info("oom_reaper: reaped process %d (%s), now anon-rss:%lukB, file-rss:%lukB, shmem-rss:%lukB\n",
->  			task_pid_nr(tsk), tsk->comm,
->  			K(get_mm_counter(mm, MM_ANONPAGES)),
->  			K(get_mm_counter(mm, MM_FILEPAGES)),
->  			K(get_mm_counter(mm, MM_SHMEMPAGES)));
-> +out_finish:
-> +	trace_finish_task_reaping(tsk->pid);
-> +out_unlock:
->  	up_read(&mm->mmap_sem);
->  
-> -	trace_finish_task_reaping(tsk->pid);
-> -	return true;
-> +	return ret;
->  }
->  
->  #define MAX_OOM_REAP_RETRIES 10
+>  #include <asm/io.h>
+>  #include <asm/mmu_context.h>
+>  #include <asm/pgalloc.h>
 
-I think we still want to trace when reaping was skipped to know that the 
-oom reaper will retry again later.
+Spurious.
 
-
-
-mm/oom_kill.c: clean up oom_reap_task_mm() fix
-
-indicate reaping has been partially skipped so we can expect future skips 
-or another start before finish.
-
-Signed-off-by: David Rientjes <rientjes@google.com>
----
- mm/oom_kill.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
-
-diff --git a/mm/oom_kill.c b/mm/oom_kill.c
---- a/mm/oom_kill.c
-+++ b/mm/oom_kill.c
-@@ -569,10 +569,12 @@ static bool oom_reap_task_mm(struct task_struct *tsk, struct mm_struct *mm)
- 
- 	trace_start_task_reaping(tsk->pid);
- 
--	/* failed to reap part of the address space. Try again later */
- 	ret = __oom_reap_task_mm(mm);
--	if (!ret)
-+	if (!ret) {
-+		/* Failed to reap part of the address space. Try again later */
-+		trace_skip_task_reaping(tsk->pid);
- 		goto out_finish;
-+	}
- 
- 	pr_info("oom_reaper: reaped process %d (%s), now anon-rss:%lukB, file-rss:%lukB, shmem-rss:%lukB\n",
- 			task_pid_nr(tsk), tsk->comm,
