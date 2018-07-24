@@ -6,198 +6,155 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08142C28CF6
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 21:36:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E17B7C6778F
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 21:37:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B4FF220685
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 21:36:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B4FF220685
+	by mail.kernel.org (Postfix) with ESMTP id 9E3DC20685
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 21:37:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9E3DC20685
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388838AbeGXWpW (ORCPT
+        id S1727985AbeGXWpR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 18:45:22 -0400
-Received: from mout.kundenserver.de ([212.227.126.135]:57848 "EHLO
+        Tue, 24 Jul 2018 18:45:17 -0400
+Received: from mout.kundenserver.de ([212.227.126.187]:50214 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388608AbeGXWpV (ORCPT
+        with ESMTP id S1727353AbeGXWpR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 18:45:21 -0400
+        Tue, 24 Jul 2018 18:45:17 -0400
 Received: from wuerfel.lan ([109.193.40.16]) by mrelayeu.kundenserver.de
  (mreue006 [212.227.15.129]) with ESMTPA (Nemesis) id
- 0LthuT-1g74Rb04mr-011BmG; Tue, 24 Jul 2018 23:36:34 +0200
+ 0LaNXn-1gQExR41BX-00mGC6; Tue, 24 Jul 2018 23:36:35 +0200
 From:   Arnd Bergmann <arnd@arndb.de>
 To:     dalias@libc.org
 Cc:     ysato@users.sourceforge.jp, baolin.wang@linaro.org,
         y2038@lists.linaro.org, linux-sh@vger.kernel.org,
         linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH v2 1/4] sh: dreamcast: rtc: push down rtc class ops into driver
-Date:   Tue, 24 Jul 2018 23:36:21 +0200
-Message-Id: <20180724213624.3899336-1-arnd@arndb.de>
+Subject: [PATCH v2 4/4] sh: remove board_time_init() callback
+Date:   Tue, 24 Jul 2018 23:36:24 +0200
+Message-Id: <20180724213624.3899336-4-arnd@arndb.de>
 X-Mailer: git-send-email 2.18.0
-X-Provags-ID: V03:K1:7Uh8AsYkJMOjFM01VrXgDnXSbrDNz+LOZatv9aU/vPLtBX9TRwU
- E/uK2f+Hi7/H/2Uz3mJ9xlDK+IVFjfE6Z++qQbUs9KYqRtp18PO6DMqjCMBj8RjfkAp9fPC
- 5R730vBo6IYzv5xb9X6LS10ZqcGg60SznjdImIaivpkAfqB8IpWRHzog3kLhpqih6C7Qblm
- hu1HIJHr5+7NmNEDR+fYQ==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:zl42cKfB+Fg=:HJ61kPAGgHqO2PzTjPVUo+
- 8Bnw2GE00aDnMlWsMM1rax08uLJu2J1ilkfDlCkthlEGiCcAHhjcwcFbGPZ3fz8F4THiswT7P
- TWH4VJvtWUlF31JJ+jWfCS4lcSNv1VRkaik2pikmjO/o+IlpdJKToXJPSzqULYoZB8WeIreEK
- TLCl9Ix+IZX5R1Ioc8IfgctoEhfnpUrHdqq40qoiLGhEecMuk/RSuQ85dghzgqV4uU4Ulth84
- dLb4oZ72WYLlHW+QNYbz177EmKC1qh73iy+UVaeBTwz81jSX8MIfASRD3uoR3TedRfrERK9J4
- 2XuugufzB8lWGMUffcqsPunQ3XiWzIZbun+eSBjB2lHris42IYcefamrs6l2JXwRvvIb17j2Y
- RX7cUZ+D75LGsd7Wg5UhWyqXWdJ+QcDDEmmi392wJicLsqpoZaTkNJWbLWbPKllCd6KNi6Vc6
- acqD71Eh9NANXyaCbWi0ntPoEiYj6Bx8oioEyH2nRaXrYDRUFZT7cureF3ge27kP8EGQSnKuz
- m3GWz7yr33RlDGvHo4OPverg7YrWFrXbG6pCzG6I2L4HhWa/TK47v4mGK/eXzgZCjmsRq/0T0
- inWOZHdGK0Fo48XHYfsnLffxGZ/cp3RnJ8/v0zoBw8cct9RcfAqQR79XhyprmqulQowy7a1Pm
- lkoU82zO6uUM1kckG1YP2zJYLuQNlseWz8tI9S1KPJRhT+ZbLEIoDCqnfFoaKqRdlA08=
+In-Reply-To: <20180724213624.3899336-1-arnd@arndb.de>
+References: <20180724213624.3899336-1-arnd@arndb.de>
+X-Provags-ID: V03:K1:ZIgKU6i9R1fUvipMJQ5XnC7WK7Kl7pHPhsRQgqorIIQraZm0/xW
+ si+aR951mBzu8QwQg0Ljmmav1LriJa9x6ZaoFJTixhiZdRKEUNfviZ1+0TaM+XvOHU3jat/
+ ILB1740/tuT8v7ISq5RajA8Z7xD4xG6eLhtt9IMhUa/d0oWJkNvcBCWOB9cuQoEXqJgpQhq
+ 9OmabJJGWUbSGHmCicXWA==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:FOwVERHe538=:hha4BmIKFU6ccpw912TdQz
+ cbJ+tA4AizkZqJ0ODpqiSR95yOL1QJdsE5uql7nRe4nacR5slhhPFch+W7U2ZEP6kOEwGr3Er
+ cW2FnP5woxm3yYnTWAqAmtjLhKuYKtTJlLBKZ1OoDiOhIeO7ULcCLa+JhyGhcLQGBHyX9LPa4
+ QF79HOZ0XFPONs/KDcPnXc3J71IvGEJ1O3lq3B5YwETZ87/SiTc6GUfVujd9MsANP+PoiQgng
+ nP/yo4LYkytzu2uKxFIvRw9raKLQdShYBlNsBQnnbHpYun5h6p43vGQUXBhkcMDyLLmtFZGYa
+ t92cvST3wcO7jGe8nxXUaAsS2JMxIE4adqsNU9WsTryjC3hcWxLq8N6LzKAFwcBX16j1aK71Y
+ W2yHT117+hfQkpCw+iH14jRtUlYGEtEazbdmUmpydNc1Ozr1Z2exTuV1G+ywUVXKf/DqM7YYT
+ ENhWsXpnkkRe8Z47TNRdwhQhLiwoiRxb4xw8cjFECoi53kdCVI2X4giOoY83D6mqvj0SKfjrg
+ V3x7Pz9Q46EDzrBLi6Lk/mZAP8dJP3wMYpfH7466tAJAbvzSRWtKpyF4HgU7YXaME2XuvU2dK
+ gUisS1UxFZDLAd7TWg02vUREeqWgHWU/alG6K+ZsFCrxJTz9WYg6bOewaJFWeNMRP06QU4vub
+ r/KZbj1nbjz34ny0IKEgbQZ4pmfwOMWmYzqTNMdxmtQ8QK3tJcyfczQu/ZciPM1aqYYc=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The dreamcast RTC support has an extra level of indirection to
-provide either the old read_persistent_clock/update_persistent_clock
-interface or the rtc-generic device for hctosys/systohc.
-
-Both do the same thing here, so we can do away with the abstraction
-and simply enable the RTC core code to take care of it.
+The only remaining user of board_time_init() is the of-generic
+machine, and that just calls the global timer_init() function.
+Calling that one has no effect on non-DT platforms, so we can
+simply call it unconditionally in place of board_time_init().
 
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- arch/sh/boards/mach-dreamcast/Makefile        |  4 +-
- arch/sh/boards/mach-dreamcast/rtc.c           | 39 +++++++++++++------
- arch/sh/boards/mach-dreamcast/setup.c         |  1 -
- arch/sh/configs/dreamcast_defconfig           |  2 +
- arch/sh/include/mach-dreamcast/mach/sysasic.h |  1 -
- 5 files changed, 31 insertions(+), 16 deletions(-)
+v2: fix a typo as pointed out by the kbuild bot
+---
+ Documentation/sh/new-machine.txt | 8 --------
+ arch/sh/boards/of-generic.c      | 8 --------
+ arch/sh/include/asm/rtc.h        | 1 -
+ arch/sh/kernel/time.c            | 5 +----
+ 4 files changed, 1 insertion(+), 21 deletions(-)
 
-diff --git a/arch/sh/boards/mach-dreamcast/Makefile b/arch/sh/boards/mach-dreamcast/Makefile
-index 7b97546c7e5f..62b024bc2a3e 100644
---- a/arch/sh/boards/mach-dreamcast/Makefile
-+++ b/arch/sh/boards/mach-dreamcast/Makefile
-@@ -2,5 +2,5 @@
- # Makefile for the Sega Dreamcast specific parts of the kernel
- #
+diff --git a/Documentation/sh/new-machine.txt b/Documentation/sh/new-machine.txt
+index f0354164cb0e..e0961a66130b 100644
+--- a/Documentation/sh/new-machine.txt
++++ b/Documentation/sh/new-machine.txt
+@@ -116,7 +116,6 @@ might look something like:
+  * arch/sh/boards/vapor/setup.c - Setup code for imaginary board
+  */
+ #include <linux/init.h>
+-#include <asm/rtc.h> /* for board_time_init() */
  
--obj-y	 := setup.o irq.o rtc.o
+ const char *get_system_type(void)
+ {
+@@ -132,13 +131,6 @@ int __init platform_setup(void)
+ 	 * this board.
+ 	 */
+ 
+-  	/* 
+-	 * Presume all FooTech boards have the same broken timer,
+-	 * and also presume that we've defined foo_timer_init to
+-	 * do something useful.
+-	 */
+-  	board_time_init = foo_timer_init;
 -
-+obj-y	 := setup.o irq.o
-+obj-$(CONFIG_RTC_DRV_GENERIC) += rtc.o
-diff --git a/arch/sh/boards/mach-dreamcast/rtc.c b/arch/sh/boards/mach-dreamcast/rtc.c
-index 061d65714fcc..4f168d8d2951 100644
---- a/arch/sh/boards/mach-dreamcast/rtc.c
-+++ b/arch/sh/boards/mach-dreamcast/rtc.c
-@@ -11,8 +11,9 @@
-  */
+ 	/* Start-up imaginary PCI ... */
  
- #include <linux/time.h>
--#include <asm/rtc.h>
--#include <asm/io.h>
-+#include <linux/rtc.h>
-+#include <linux/io.h>
-+#include <linux/platform_device.h>
- 
- /* The AICA RTC has an Epoch of 1/1/1950, so we must subtract 20 years (in
-    seconds) to get the standard Unix Epoch when getting the time, and add
-@@ -30,9 +31,10 @@
-  *
-  * Grabs the current RTC seconds counter and adjusts it to the Unix Epoch.
-  */
--static void aica_rtc_gettimeofday(struct timespec *ts)
-+static int aica_rtc_gettimeofday(struct device *dev, struct rtc_time *tm)
- {
- 	unsigned long val1, val2;
-+	time64_t t;
- 
- 	do {
- 		val1 = ((__raw_readl(AICA_RTC_SECS_H) & 0xffff) << 16) |
-@@ -42,10 +44,12 @@ static void aica_rtc_gettimeofday(struct timespec *ts)
- 			(__raw_readl(AICA_RTC_SECS_L) & 0xffff);
- 	} while (val1 != val2);
- 
--	ts->tv_sec = val1 - TWENTY_YEARS;
-+	/* normalize to 1970..2106 time range */
-+	t = (u32)(val1 - TWENTY_YEARS);
- 
--	/* Can't get nanoseconds with just a seconds counter. */
--	ts->tv_nsec = 0;
-+	rtc_time64_to_tm(t, tm);
-+
-+	return 0;
+ 	/* And whatever else ... */
+diff --git a/arch/sh/boards/of-generic.c b/arch/sh/boards/of-generic.c
+index 26789ad28193..04d9a666f924 100644
+--- a/arch/sh/boards/of-generic.c
++++ b/arch/sh/boards/of-generic.c
+@@ -117,18 +117,10 @@ static void __init sh_of_mem_reserve(void)
+ 	early_init_fdt_scan_reserved_mem();
  }
  
- /**
-@@ -54,10 +58,11 @@ static void aica_rtc_gettimeofday(struct timespec *ts)
-  *
-  * Adjusts the given @tv to the AICA Epoch and sets the RTC seconds counter.
-  */
--static int aica_rtc_settimeofday(const time_t secs)
-+static int aica_rtc_settimeofday(struct device *dev, struct rtc_time *tm)
- {
- 	unsigned long val1, val2;
--	unsigned long adj = secs + TWENTY_YEARS;
-+	time64_t secs = rtc_tm_to_time64(tm);
-+	u32 adj = secs + TWENTY_YEARS;
- 
- 	do {
- 		__raw_writel((adj & 0xffff0000) >> 16, AICA_RTC_SECS_H);
-@@ -73,9 +78,19 @@ static int aica_rtc_settimeofday(const time_t secs)
- 	return 0;
- }
- 
--void aica_time_init(void)
-+static const struct rtc_class_ops rtc_generic_ops = {
-+	.read_time = aica_rtc_gettimeofday,
-+	.set_time = aica_rtc_settimeofday,
-+};
-+
-+static int __init aica_time_init(void)
- {
--	rtc_sh_get_time = aica_rtc_gettimeofday;
--	rtc_sh_set_time = aica_rtc_settimeofday;
+-static void __init sh_of_time_init(void)
+-{
+-	pr_info("SH generic board support: scanning for clocksource devices\n");
+-	timer_probe();
 -}
-+	struct platform_device *pdev;
-+
-+	pdev = platform_device_register_data(NULL, "rtc-generic", -1,
-+					     &rtc_generic_ops,
-+					     sizeof(rtc_generic_ops));
- 
-+	return PTR_ERR_OR_ZERO(pdev);
-+}
-+arch_initcall(aica_time_init);
-diff --git a/arch/sh/boards/mach-dreamcast/setup.c b/arch/sh/boards/mach-dreamcast/setup.c
-index ad1a4db72e04..672c2ad8f8d5 100644
---- a/arch/sh/boards/mach-dreamcast/setup.c
-+++ b/arch/sh/boards/mach-dreamcast/setup.c
-@@ -30,7 +30,6 @@
- 
- static void __init dreamcast_setup(char **cmdline_p)
+-
+ static void __init sh_of_setup(char **cmdline_p)
  {
--	board_time_init = aica_time_init;
- }
+ 	struct device_node *root;
  
- static struct sh_machine_vector mv_dreamcast __initmv = {
-diff --git a/arch/sh/configs/dreamcast_defconfig b/arch/sh/configs/dreamcast_defconfig
-index 3f08dc54480b..1d27666c029f 100644
---- a/arch/sh/configs/dreamcast_defconfig
-+++ b/arch/sh/configs/dreamcast_defconfig
-@@ -70,3 +70,5 @@ CONFIG_PROC_KCORE=y
- CONFIG_TMPFS=y
- CONFIG_HUGETLBFS=y
- # CONFIG_CRYPTO_ANSI_CPRNG is not set
-+CONFIG_RTC_CLASS=y
-+CONFIG_RTC_DRV_GENERIC=y
-diff --git a/arch/sh/include/mach-dreamcast/mach/sysasic.h b/arch/sh/include/mach-dreamcast/mach/sysasic.h
-index 58f710e1ebc2..59effd1ed3e1 100644
---- a/arch/sh/include/mach-dreamcast/mach/sysasic.h
-+++ b/arch/sh/include/mach-dreamcast/mach/sysasic.h
-@@ -42,7 +42,6 @@
- /* arch/sh/boards/mach-dreamcast/irq.c */
- extern int systemasic_irq_demux(int);
- extern void systemasic_irq_init(void);
--extern void aica_time_init(void);
+-	board_time_init = sh_of_time_init;
+-
+ 	sh_mv.mv_name = "Unknown SH model";
+ 	root = of_find_node_by_path("/");
+ 	if (root) {
+diff --git a/arch/sh/include/asm/rtc.h b/arch/sh/include/asm/rtc.h
+index fe55fbb181aa..69dbae2949b0 100644
+--- a/arch/sh/include/asm/rtc.h
++++ b/arch/sh/include/asm/rtc.h
+@@ -3,7 +3,6 @@
+ #define _ASM_RTC_H
  
- #endif /* __ASM_SH_DREAMCAST_SYSASIC_H */
+ void time_init(void);
+-extern void (*board_time_init)(void);
+ 
+ #define RTC_CAP_4_DIGIT_YEAR	(1 << 0)
+ 
+diff --git a/arch/sh/kernel/time.c b/arch/sh/kernel/time.c
+index eb0a91270499..8a1c6c8ab4ec 100644
+--- a/arch/sh/kernel/time.c
++++ b/arch/sh/kernel/time.c
+@@ -22,8 +22,6 @@
+ #include <asm/clock.h>
+ #include <asm/rtc.h>
+ 
+-void (*board_time_init)(void);
+-
+ static void __init sh_late_time_init(void)
+ {
+ 	/*
+@@ -41,8 +39,7 @@ static void __init sh_late_time_init(void)
+ 
+ void __init time_init(void)
+ {
+-	if (board_time_init)
+-		board_time_init();
++	timer_probe();
+ 
+ 	clk_init();
  
 -- 
 2.18.0
