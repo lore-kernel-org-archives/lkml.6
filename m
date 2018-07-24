@@ -6,194 +6,123 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64C0CECDFB8
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 13:05:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19446C6778A
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 13:05:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1858E20875
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 13:05:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1858E20875
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id CE6B020874
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 13:05:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CE6B020874
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388403AbeGXOL0 (ORCPT
+        id S2388419AbeGXOLq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 10:11:26 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:38320 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2388279AbeGXOL0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 10:11:26 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 18DE7B798;
-        Tue, 24 Jul 2018 13:05:01 +0000 (UTC)
-Received: from madcap2.tricolour.ca (ovpn-112-54.rdu2.redhat.com [10.10.112.54])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 7755E1C641;
-        Tue, 24 Jul 2018 13:04:56 +0000 (UTC)
-Date:   Tue, 24 Jul 2018 09:02:03 -0400
-From:   Richard Guy Briggs <rgb@redhat.com>
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     Eric Paris <eparis@parisplace.org>, linux-audit@redhat.com,
-        linux-kernel@vger.kernel.org, Steve Grubb <sgrubb@redhat.com>
-Subject: Re: [RFC PATCH ghak59 V1 3/6] audit: exclude user records from
- syscall context
-Message-ID: <20180724130203.by5ev4xhaixgzvq5@madcap2.tricolour.ca>
-References: <cover.1529003588.git.rgb@redhat.com>
- <907e32319825bb6336a662f4f6f6d173f56f3226.1529003588.git.rgb@redhat.com>
- <CAHC9VhSKcxHScr-ZNQU3iVrqhU4CDKW7tpn3e+NBKAAmnpRP4g@mail.gmail.com>
- <20180712214608.ed4chli7mdc7ymin@madcap2.tricolour.ca>
- <20180723164035.wkazolpmpf3mvdxw@madcap2.tricolour.ca>
- <CAHC9VhQ3qxHQ6mHhs1JNMg5qr3qJJh2DpD147QWnfsXdM7=rGA@mail.gmail.com>
+        Tue, 24 Jul 2018 10:11:46 -0400
+Received: from foss.arm.com ([217.140.101.70]:51020 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388279AbeGXOLp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Jul 2018 10:11:45 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 550007A9;
+        Tue, 24 Jul 2018 06:05:21 -0700 (PDT)
+Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7AA713F6A8;
+        Tue, 24 Jul 2018 06:05:18 -0700 (PDT)
+Date:   Tue, 24 Jul 2018 14:05:16 +0100
+From:   Mark Rutland <mark.rutland@arm.com>
+To:     Ingo Molnar <mingo@kernel.org>
+Cc:     Peter Zijlstra <peterz@infradead.org>, mingo@redhat.com,
+        andy.shevchenko@gmail.com, arnd@arndb.de, aryabinin@virtuozzo.com,
+        boqun.feng@gmail.com, catalin.marinas@arm.com, dvyukov@google.com,
+        glider@google.com, hpa@zytor.com, linux-kernel@vger.kernel.org,
+        parri.andrea@gmail.com, peter@hurleysoftware.com,
+        tglx@linutronix.de, will.deacon@arm.com,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCHv4 01/12] atomic/tty: Fix up atomic abuse in ldsem
+Message-ID: <20180724130515.ung6ox2p4rgzn746@lakrids.cambridge.arm.com>
+References: <20180716113017.3909-1-mark.rutland@arm.com>
+ <20180716113017.3909-2-mark.rutland@arm.com>
+ <20180724071518.GA7300@gmail.com>
+ <20180724092036.GN2494@hirez.programming.kicks-ass.net>
+ <20180724092324.vnfowffsla4kja5c@lakrids.cambridge.arm.com>
+ <20180724111313.GA14212@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAHC9VhQ3qxHQ6mHhs1JNMg5qr3qJJh2DpD147QWnfsXdM7=rGA@mail.gmail.com>
-User-Agent: NeoMutt/20180512
-X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Tue, 24 Jul 2018 13:05:01 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Tue, 24 Jul 2018 13:05:01 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'rgb@redhat.com' RCPT:''
+In-Reply-To: <20180724111313.GA14212@gmail.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-07-23 17:00, Paul Moore wrote:
-> On Mon, Jul 23, 2018 at 12:43 PM Richard Guy Briggs <rgb@redhat.com> wrote:
-> > On 2018-07-12 17:46, Richard Guy Briggs wrote:
-> > > On 2018-06-28 18:11, Paul Moore wrote:
-> > > > On Thu, Jun 14, 2018 at 4:23 PM Richard Guy Briggs <rgb@redhat.com> wrote:
-> > > > > Since the function audit_log_common_recv_msg() is shared by a number of
-> > > > > AUDIT_CONFIG_CHANGE and the entire range of AUDIT_USER_* record types,
-> > > > > and since the AUDIT_CONFIG_CHANGE message type has been converted to a
-> > > > > syscall accompanied record type, special-case the AUDIT_USER_* range of
-> > > > > messages so they remain standalone records.
-> > > > >
-> > > > > See: https://github.com/linux-audit/audit-kernel/issues/59
-> > > > > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+On Tue, Jul 24, 2018 at 01:13:13PM +0200, Ingo Molnar wrote:
+> 
+> * Mark Rutland <mark.rutland@arm.com> wrote:
+> 
+> > On Tue, Jul 24, 2018 at 11:20:36AM +0200, Peter Zijlstra wrote:
+> > > On Tue, Jul 24, 2018 at 09:15:18AM +0200, Ingo Molnar wrote:
+> > > > 
+> > > > * Mark Rutland <mark.rutland@arm.com> wrote:
+> > > > 
+> > > > > From: Peter Zijlstra <peterz@infradead.org>
+> > > > > 
+> > > > > Mark found ldsem_cmpxchg() needed an (atomic_long_t *) cast to keep
+> > > > > working after making the atomic_long interface type safe.
+> > > > > 
+> > > > > Needing casts is bad form, which made me look at the code. There are no
+> > > > > ld_semaphore::count users outside of these functions so there is no
+> > > > > reason why it can not be an atomic_long_t in the first place, obviating
+> > > > > the need for this cast.
+> > > > > 
+> > > > > That also ensures the loads use atomic_long_read(), which implies (at
+> > > > > least) READ_ONCE() in order to guarantee single-copy-atomic loads.
+> > > > > 
+> > > > > When using atomic_long_try_cmpxchg() the ldsem_cmpxchg() wrapper gets
+> > > > > very thin (the only difference is not changing *old on success, which
+> > > > > most callers don't seem to care about).
+> > > > > 
+> > > > > So rework the whole thing to use atomic_long_t and its accessors
+> > > > > directly.
+> > > > > 
+> > > > > While there, fixup all the horrible comment styles.
+> > > > > 
+> > > > > Cc: Peter Hurley <peter@hurleysoftware.com>
+> > > > > Acked-by: Will Deacon <will.deacon@arm.com>
+> > > > > Reported-by: Mark Rutland <mark.rutland@arm.com>
+> > > > > Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+> > > > > Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+> > > > > Signed-off-by: Mark Rutland <mark.rutland@arm.com>
+> > > > > Cc: Ingo Molnar <mingo@kernel.org>
 > > > > > ---
-> > > > >  kernel/audit.c | 12 +++++++++---
-> > > > >  1 file changed, 9 insertions(+), 3 deletions(-)
-> > > >
-> > > > I think this is fine, but see my previous comment about combining 2/6
-> > > > and 3/6 as a safety measure.
-> > >
-> > > This one I left as a seperate patch for discussion.  We'd previously
-> > > talked about connecting all possible records with syscall records if
-> > > they exist, but this one I'm unsure about, since we don't really care
-> > > what userspace process is issuing this message.  It is just the message
-> > > content itself that is important.  Or is it?  Are we concerned about
-> > > CAP_AUDIT_WRITE holders/abusers and want as much info about them as we
-> > > can get in case they go rogue or pear-shaped?
-> >
-> > I'm waiting on re-spinning this patchset because of this open question.
-> >
-> > Is connecting AUDIT_USER* records desirable or a liability?
+> > > > >  drivers/tty/tty_ldsem.c   | 82 ++++++++++++++++++++---------------------------
+> > > > >  include/linux/tty_ldisc.h |  4 +--
+> > > > >  2 files changed, 37 insertions(+), 49 deletions(-)
+> > > > > 
+> > > > > Note: Greg has queued this via the in the tty tree for v4.19, which can be seen at: 
+> > > > > 
+> > > > > https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/tty.git/commit/?h=tty-next&id=5fd691afdf929061c391d897fa627822c3b2fd5a
+> > > > 
+> > > > Can this patch be skipped, or do the others depend on it?
+> > > 
+> > > IIRC it depends on it, without this patch you get build issues due to
+> > > atomic_long_cmpxchg() getting picky about it's arguments (type safety
+> > > improved).
+> > 
+> > Yup. Without this patch, there will be a build regression at patch 9,
+> > when we move to generated atomic_long_*() wrappers.
 > 
-> Like I said, I think special casing the AUDIT_USER* records so they
-> are *not* associated with other records is okay, and perhaps even the
-> right thing to do.  The problem is that we don't have the necessary
-> context (har har) to match any kernel events (and there is the
-> possibility that there are none) to the userspace generated
-> AUDIT_USER* event.  Further, I don't think this is something we would
-> ever be able to solve in a reasonable manner.
+> Ok, then these bits will have to wait until Greg's tree goes upstream
+> in about two weeks.
 
-Ok, having said that, I think I'd still prefer to keep this patch
-seperate, partly to retain the simplicity of the previous patch and make
-very clear what each one is doing, and partly if we decide to change our
-mind in the future that these AUDIT_USER* records should be autonomous.
+Ok.
 
-> > > > > diff --git a/kernel/audit.c b/kernel/audit.c
-> > > > > index e469234..c8c2efc 100644
-> > > > > --- a/kernel/audit.c
-> > > > > +++ b/kernel/audit.c
-> > > > > @@ -1057,7 +1057,8 @@ static int audit_netlink_ok(struct sk_buff *skb, u16 msg_type)
-> > > > >         return err;
-> > > > >  }
-> > > > >
-> > > > > -static void audit_log_common_recv_msg(struct audit_buffer **ab, u16 msg_type)
-> > > > > +static void __audit_log_common_recv_msg(struct audit_context *context,
-> > > > > +                                       struct audit_buffer **ab, u16 msg_type)
-> > > > >  {
-> > > > >         uid_t uid = from_kuid(&init_user_ns, current_uid());
-> > > > >         pid_t pid = task_tgid_nr(current);
-> > > > > @@ -1067,7 +1068,7 @@ static void audit_log_common_recv_msg(struct audit_buffer **ab, u16 msg_type)
-> > > > >                 return;
-> > > > >         }
-> > > > >
-> > > > > -       *ab = audit_log_start(audit_context(), GFP_KERNEL, msg_type);
-> > > > > +       *ab = audit_log_start(context, GFP_KERNEL, msg_type);
-> > > > >         if (unlikely(!*ab))
-> > > > >                 return;
-> > > > >         audit_log_format(*ab, "pid=%d uid=%u", pid, uid);
-> > > > > @@ -1075,6 +1076,11 @@ static void audit_log_common_recv_msg(struct audit_buffer **ab, u16 msg_type)
-> > > > >         audit_log_task_context(*ab);
-> > > > >  }
-> > > > >
-> > > > > +static inline void audit_log_common_recv_msg(struct audit_buffer **ab, u16 msg_type)
-> > > > > +{
-> > > > > +       __audit_log_common_recv_msg(audit_context(), ab, msg_type);
-> > > > > +}
-> > > > > +
-> > > > >  int is_audit_feature_set(int i)
-> > > > >  {
-> > > > >         return af.features & AUDIT_FEATURE_TO_MASK(i);
-> > > > > @@ -1341,7 +1347,7 @@ static int audit_receive_msg(struct sk_buff *skb, struct nlmsghdr *nlh)
-> > > > >                                 if (err)
-> > > > >                                         break;
-> > > > >                         }
-> > > > > -                       audit_log_common_recv_msg(&ab, msg_type);
-> > > > > +                       __audit_log_common_recv_msg(NULL, &ab, msg_type);
-> > > > >                         if (msg_type != AUDIT_USER_TTY)
-> > > > >                                 audit_log_format(ab, " msg='%.*s'",
-> > > > >                                                  AUDIT_MESSAGE_TEXT_MAX,
-> > > > > --
-> > > > > 1.8.3.1
-> > > > >
-> > > >
-> > > >
-> > > > --
-> > > > paul moore
-> > > > www.paul-moore.com
-> > > >
-> > > > --
-> > > > Linux-audit mailing list
-> > > > Linux-audit@redhat.com
-> > > > https://www.redhat.com/mailman/listinfo/linux-audit
-> > >
-> > > - RGB
-> > >
-> > > --
-> > > Richard Guy Briggs <rgb@redhat.com>
-> > > Sr. S/W Engineer, Kernel Security, Base Operating Systems
-> > > Remote, Ottawa, Red Hat Canada
-> > > IRC: rgb, SunRaycer
-> > > Voice: +1.647.777.2635, Internal: (81) 32635
-> > >
-> > > --
-> > > Linux-audit mailing list
-> > > Linux-audit@redhat.com
-> > > https://www.redhat.com/mailman/listinfo/linux-audit
-> >
-> > - RGB
-> >
-> > --
-> > Richard Guy Briggs <rgb@redhat.com>
-> > Sr. S/W Engineer, Kernel Security, Base Operating Systems
-> > Remote, Ottawa, Red Hat Canada
-> > IRC: rgb, SunRaycer
-> > Voice: +1.647.777.2635, Internal: (81) 32635
-> 
-> 
-> 
-> -- 
-> paul moore
-> www.paul-moore.com
+> Which patches can I apply as a preparatory step?
 
-- RGB
+Patches 2-6 can be applied now.
 
---
-Richard Guy Briggs <rgb@redhat.com>
-Sr. S/W Engineer, Kernel Security, Base Operating Systems
-Remote, Ottawa, Red Hat Canada
-IRC: rgb, SunRaycer
-Voice: +1.647.777.2635, Internal: (81) 32635
+I guess I should rebase and resend the remaining bits once Greg's tree
+goes upstream?
+
+Thanks,
+Mark.
