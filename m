@@ -6,196 +6,216 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EA79ECDE5F
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 02:29:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8E63ECDE5F
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 02:29:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4D5C020852
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 02:29:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D5C020852
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=aosc.io
+	by mail.kernel.org (Postfix) with ESMTP id 903E820880
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 02:29:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 903E820880
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388332AbeGXDdJ convert rfc822-to-8bit (ORCPT
+        id S2388384AbeGXDdf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 23:33:09 -0400
-Received: from hermes.aosc.io ([199.195.250.187]:60130 "EHLO hermes.aosc.io"
+        Mon, 23 Jul 2018 23:33:35 -0400
+Received: from mga03.intel.com ([134.134.136.65]:60379 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388258AbeGXDdJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 23:33:09 -0400
-Received: from localhost (localhost [127.0.0.1]) (Authenticated sender: icenowy@aosc.io)
-        by hermes.aosc.io (Postfix) with ESMTPSA id B26CC9F154;
-        Tue, 24 Jul 2018 02:28:56 +0000 (UTC)
-Date:   Tue, 24 Jul 2018 10:28:50 +0800
-In-Reply-To: <CAGb2v64Qae4O430kP30DQNhp0Dt774OHt0nMe35ckp8X=CTFLg@mail.gmail.com>
-References: <20180724011551.49603-1-icenowy@aosc.io> <20180724011551.49603-4-icenowy@aosc.io> <CAGb2v67zR-Q9n7L6CaFKDUJFHFEC_h8-RYxkdyeyJb_GbNmkJw@mail.gmail.com> <CEA43CB7-1DA6-4983-BF18-82C4A48FB92B@aosc.io> <CAGb2v64Qae4O430kP30DQNhp0Dt774OHt0nMe35ckp8X=CTFLg@mail.gmail.com>
+        id S2388258AbeGXDdf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Jul 2018 23:33:35 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Jul 2018 19:29:27 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,396,1526367600"; 
+   d="scan'208";a="74906990"
+Received: from blu2-desk2.ccr.corp.intel.com (HELO [10.0.2.15]) ([10.239.13.1])
+  by fmsmga001.fm.intel.com with ESMTP; 23 Jul 2018 19:29:18 -0700
+Subject: Re: [RFC PATCH 05/10] iommu/vt-d: Setup DMA remapping for mediated
+ devices
+To:     "Liu, Yi L" <yi.l.liu@intel.com>, Joerg Roedel <joro@8bytes.org>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Kirti Wankhede <kwankhede@nvidia.com>
+References: <1532239773-15325-1-git-send-email-baolu.lu@linux.intel.com>
+ <1532239773-15325-6-git-send-email-baolu.lu@linux.intel.com>
+ <A2975661238FB949B60364EF0F2C257439CA1449@SHSMSX104.ccr.corp.intel.com>
+Cc:     "Raj, Ashok" <ashok.raj@intel.com>,
+        "Kumar, Sanjay K" <sanjay.k.kumar@intel.com>,
+        "Pan, Jacob jun" <jacob.jun.pan@intel.com>,
+        "Tian, Kevin" <kevin.tian@intel.com>,
+        "Sun, Yi Y" <yi.y.sun@intel.com>,
+        "peterx@redhat.com" <peterx@redhat.com>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Jacob Pan <jacob.jun.pan@linux.intel.com>
+From:   Lu Baolu <baolu.lu@linux.intel.com>
+Message-ID: <5B568EFB.2040908@linux.intel.com>
+Date:   Tue, 24 Jul 2018 10:29:15 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:38.0) Gecko/20100101
+ Thunderbird/38.5.1
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: 8BIT
-Subject: Re: [linux-sunxi] Re: [PATCH 3/3] arm64: allwinner: dts: h6: add Wi-Fi support for Pine H64 model A/B
-To:     wens@csie.org, Chen-Yu Tsai <wens@csie.org>
-CC:     Maxime Ripard <maxime.ripard@bootlin.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>
-From:   Icenowy Zheng <icenowy@aosc.io>
-Message-ID: <AC678B03-19B7-4110-B333-72188CE71296@aosc.io>
+In-Reply-To: <A2975661238FB949B60364EF0F2C257439CA1449@SHSMSX104.ccr.corp.intel.com>
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi,
 
+On 07/23/2018 12:44 PM, Liu, Yi L wrote:
+>> From: Lu Baolu [mailto:baolu.lu@linux.intel.com]
+>> Sent: Sunday, July 22, 2018 2:09 PM
+>>
+>> This configures the second level page table when external components request to
+>> allocate a domain for a mediated device.
+> I think it should be the time when adding a mediate device to the domain.
 
-于 2018年7月24日 GMT+08:00 上午10:26:02, Chen-Yu Tsai <wens@csie.org> 写到:
->On Tue, Jul 24, 2018 at 10:23 AM, Icenowy Zheng <icenowy@aosc.io>
->wrote:
->>
->>
->> 于 2018年7月24日 GMT+08:00 上午10:21:59, Chen-Yu Tsai <wens@csie.org> 写到:
->>>On Tue, Jul 24, 2018 at 9:15 AM, Icenowy Zheng <icenowy@aosc.io>
->wrote:
->>>> The Pine H64 model A has a Wi-Fi module connector and the model B
->has
->>>an
->>>> on-board RTL8723BS Wi-Fi module.
->>>>
->>>> Add support for them. For model A, as it's not defaultly present,
->>>keep
->>>> it disabled now.
->>>
->>>Nope. Pine64 actually has two WiFi/BT modules. And they require
->>>different
->>>device tree snippets for both the WiFi and BT side. This is better
->>>resolved
->>>with device tree overlays.
->>>
->>>I have both, though I've yet found time to work on them.
->>
->> I have also both.
->>
->> The skeleton here can get the Wi-Fi of both to work.
->
->Cool. Then I can put away my RTL module for now. :)
-
-P.S. SDIO is auto detectable, and for BCM chips, the OOB interrupt
-is only a bonus function and it can fall back to standard in-band
-interrupt (which doesn't need special binding, and is currently
-used by mainline r8723bs driver.)
+You are right. Will correct it.
 
 >
->ChenYu
+>> Cc: Ashok Raj <ashok.raj@intel.com>
+>> Cc: Jacob Pan <jacob.jun.pan@linux.intel.com>
+>> Cc: Kevin Tian <kevin.tian@intel.com>
+>> Cc: Liu Yi L <yi.l.liu@intel.com>
+>> Signed-off-by: Sanjay Kumar <sanjay.k.kumar@intel.com>
+>> Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
+>> ---
+>>  drivers/iommu/intel-iommu.c | 73
+>> ++++++++++++++++++++++++++++++++++++++++-----
+>>  1 file changed, 66 insertions(+), 7 deletions(-)
+>>
+>> diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c index
+>> 57ccfc4..b6e9ea8 100644
+>> --- a/drivers/iommu/intel-iommu.c
+>> +++ b/drivers/iommu/intel-iommu.c
+>> @@ -2569,8 +2569,9 @@ static struct dmar_domain
+>> *dmar_insert_one_dev_info(struct intel_iommu *iommu,
+>>  	if (dev)
+>>  		dev->archdata.iommu = info;
+>>
+>> -	if (dev && dev_is_pci(dev) && sm_supported(iommu)) {
+>> -		bool pass_through;
+>> +	if (dev && sm_supported(iommu)) {
+>> +		bool pass_through = hw_pass_through &&
+>> +				domain_type_is_si(domain);
+>>
+>>  		ret = intel_pasid_alloc_table(dev);
+>>  		if (ret) {
+>> @@ -2579,12 +2580,21 @@ static struct dmar_domain
+>> *dmar_insert_one_dev_info(struct intel_iommu *iommu,
+>>  			return NULL;
+>>  		}
+>>
+>> -		/* Setup the PASID entry for requests without PASID: */
+>> -		pass_through = hw_pass_through && domain_type_is_si(domain);
+>>  		spin_lock(&iommu->lock);
+>> -		intel_pasid_setup_second_level(iommu, domain, dev,
+>> -					       PASID_RID2PASID,
+>> -					       pass_through);
+>> +
+>> +		/* Setup the PASID entry for requests without PASID: */
+>> +		if (dev_is_pci(dev))
+>> +			intel_pasid_setup_second_level(iommu, domain, dev,
+>> +						       PASID_RID2PASID,
+> can domain->default_pasid be initialized to be PASID_RID2PASID if the domain
+> is not a domain used by mediated device?
+
+PASID_RID2PASID is 0 as well.
+
+
 >
+>> +						       pass_through);
+>> +		/* Setup the PASID entry for mediated devices: */
+>> +		else if (dev_is_mdev(dev))
+>> +			intel_pasid_setup_second_level(iommu, domain, dev,
+>> +						       domain->default_pasid,
+>> +						       false);
+>> +		else
+>> +			pr_err("Unsupported device %s\n", dev_name(dev));
+>> +
+>>  		spin_unlock(&iommu->lock);
+>>  	}
+>>  	spin_unlock_irqrestore(&device_domain_lock, flags); @@ -4937,6 +4947,32
+>> @@ static void domain_context_clear(struct intel_iommu *iommu, struct device
+>> *dev)
+>>  	pci_for_each_dma_alias(to_pci_dev(dev), &domain_context_clear_one_cb,
+>> iommu);  }
 >>
->>>
->>>ChenYu
->>>
->>>> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
->>>> ---
->>>>  .../allwinner/sun50i-h6-pine-h64-model-b.dts  |  8 +++++
->>>>  .../boot/dts/allwinner/sun50i-h6-pine-h64.dts | 29
->>>+++++++++++++++++++
->>>>  2 files changed, 37 insertions(+)
->>>>
->>>> diff --git
->>>a/arch/arm64/boot/dts/allwinner/sun50i-h6-pine-h64-model-b.dts
->>>b/arch/arm64/boot/dts/allwinner/sun50i-h6-pine-h64-model-b.dts
->>>> index d0fcc25efb00..d0f775613c9b 100644
->>>> --- a/arch/arm64/boot/dts/allwinner/sun50i-h6-pine-h64-model-b.dts
->>>> +++ b/arch/arm64/boot/dts/allwinner/sun50i-h6-pine-h64-model-b.dts
->>>> @@ -18,3 +18,11 @@
->>>>                 };
->>>>         };
->>>>  };
->>>> +
->>>> +&mmc1 {
->>>> +       status = "okay";
->>>> +};
->>>> +
->>>> +&wifi_pwrseq {
->>>> +       status = "okay";
->>>> +};
->>>> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h6-pine-h64.dts
->>>b/arch/arm64/boot/dts/allwinner/sun50i-h6-pine-h64.dts
->>>> index a85867f8b684..75db6d4139bf 100644
->>>> --- a/arch/arm64/boot/dts/allwinner/sun50i-h6-pine-h64.dts
->>>> +++ b/arch/arm64/boot/dts/allwinner/sun50i-h6-pine-h64.dts
->>>> @@ -40,6 +40,12 @@
->>>>                         gpios = <&r_pio 0 7 GPIO_ACTIVE_HIGH>; /*
->PL7
->>>*/
->>>>                 };
->>>>         };
->>>> +
->>>> +       wifi_pwrseq: wifi_pwrseq {
->>>> +               compatible = "mmc-pwrseq-simple";
->>>> +               reset-gpios = <&r_pio 1 3 GPIO_ACTIVE_LOW>; /* PL2
->*/
->>>> +               status = "disabled";
->>>> +       };
->>>>  };
->>>>
->>>>  &mmc0 {
->>>> @@ -50,6 +56,17 @@
->>>>         status = "okay";
->>>>  };
->>>>
->>>> +&mmc1 {
->>>> +       pinctrl-names = "default";
->>>> +       pinctrl-0 = <&mmc1_pins>;
->>>> +       vmmc-supply = <&reg_cldo2>;
->>>> +       vqmmc-supply = <&reg_bldo2>;
->>>> +       mmc-pwrseq = <&wifi_pwrseq>;
->>>> +       bus-width = <4>;
->>>> +       non-removable;
->>>> +       status = "disabled";
->>>> +};
->>>> +
->>>>  &mmc2 {
->>>>         pinctrl-names = "default";
->>>>         pinctrl-0 = <&mmc2_pins>;
->>>> @@ -128,12 +145,24 @@
->>>>                         };
->>>>
->>>>                         reg_cldo2: cldo2 {
->>>> +                               /*
->>>> +                                * This regulator is connected with
->>>CLDO3.
->>>> +                                * Before the kernel can support
->>>synchronized
->>>> +                                * enable of coupled regulators,
->keep
->>>them
->>>> +                                * both always on as a ugly hack.
->>>> +                                */
->>>> +                               regulator-always-on;
->>>>                                 regulator-min-microvolt =
-><3300000>;
->>>>                                 regulator-max-microvolt =
-><3300000>;
->>>>                                 regulator-name = "vcc-wifi-1";
->>>>                         };
->>>>
->>>>                         reg_cldo3: cldo3 {
->>>> +                               /*
->>>> +                                * This regulator is connected with
->>>CLDO2.
->>>> +                                * See the comments for CLDO2.
->>>> +                                */
->>>> +                               regulator-always-on;
->>>>                                 regulator-min-microvolt =
-><3300000>;
->>>>                                 regulator-max-microvolt =
-><3300000>;
->>>>                                 regulator-name = "vcc-wifi-2";
->>>> --
->>>> 2.18.0
->>>>
+>> +static void
+>> +iommu_flush_ext_iotlb(struct intel_iommu *iommu, u16 did, u32 pasid,
+> Per latest VT-d spec, its new name is pasid-based-iotlb. Pls update the naming
+> accordingly. :)
+
+Okay.
+
+Best regards,
+Lu Baolu
+
+>
+> Regards,
+> Yi Liu
+>
+>> +u64 gran) {
+>> +	struct qi_desc desc;
+>> +
+>> +	desc.high = 0;
+>> +	desc.low = QI_EIOTLB_PASID(pasid) | QI_EIOTLB_DID(did) |
+>> +			QI_EIOTLB_GRAN(gran) | QI_EIOTLB_TYPE;
+>> +
+>> +	qi_submit_sync(&desc, iommu);
+>> +}
+>> +
+>> +static void iommu_flush_pasid_dev_iotlb(struct intel_iommu *iommu,
+>> +					struct device *dev, int sid, int pasid) {
+>> +	struct qi_desc desc;
+>> +	struct pci_dev *pdev = to_pci_dev(dev);
+>> +	int qdep = pci_ats_queue_depth(pdev);
+>> +
+>> +	desc.low = QI_DEV_EIOTLB_PASID(pasid) | QI_DEV_EIOTLB_SID(sid) |
+>> +			QI_DEV_EIOTLB_QDEP(qdep) | QI_DEIOTLB_TYPE;
+>> +	desc.high = QI_DEV_EIOTLB_ADDR(-1ULL >> 1) | QI_DEV_EIOTLB_SIZE;
+>> +
+>> +	qi_submit_sync(&desc, iommu);
+>> +}
+>> +
+>>  static void __dmar_remove_one_dev_info(struct device_domain_info *info)  {
+>>  	struct intel_iommu *iommu;
+>> @@ -4949,6 +4985,29 @@ static void __dmar_remove_one_dev_info(struct
+>> device_domain_info *info)
 >>
+>>  	iommu = info->iommu;
+>>
+>> +	if (dev_is_mdev(info->dev)) {
+>> +		struct dmar_domain *domain = info->domain;
+>> +		int did = domain->iommu_did[iommu->seq_id];
+>> +		int sid = info->bus << 8 | info->devfn;
+>> +		struct device *dev = info->dev;
+>> +
+>> +		intel_pasid_clear_entry(dev, domain->default_pasid);
+>> +
+>> +		/* Flush IOTLB including PASID Cache: */
+>> +		iommu->flush.flush_iotlb(iommu, did, 0, 0, DMA_TLB_DSI_FLUSH);
+>> +
+>> +		/*
+>> +		 * Flush EIOTLB. The only way to flush global mappings within
+>> +		 * a PASID is to use QI_GRAN_ALL_ALL.
+>> +		 */
+>> +		iommu_flush_ext_iotlb(iommu, did, domain->default_pasid,
+>> +				      QI_GRAN_ALL_ALL);
+>> +
+>> +		/* Flush Dev TLB: */
+>> +		iommu_flush_pasid_dev_iotlb(iommu, dev_mdev_parent(dev), sid,
+>> +					    domain->default_pasid);
+>> +	}
+>> +
+>>  	if (info->dev) {
+>>  		iommu_disable_dev_iotlb(info);
+>>  		domain_context_clear(iommu, info->dev);
 >> --
->> You received this message because you are subscribed to the Google
->Groups "linux-sunxi" group.
->> To unsubscribe from this group and stop receiving emails from it,
->send an email to linux-sunxi+unsubscribe@googlegroups.com.
->> For more options, visit https://groups.google.com/d/optout.
+>> 2.7.4
+>
+
