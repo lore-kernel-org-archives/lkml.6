@@ -2,82 +2,120 @@ Return-Path: <SRS0=hTZH=KI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C63B3C6778A
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 09:06:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 299E2C6778A
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 09:07:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 602AA20875
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 09:06:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CF8DE20874
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 09:07:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="tQqSFAnO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 602AA20875
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (2048-bit key) header.d=cogentembedded-com.20150623.gappssmtp.com header.i=@cogentembedded-com.20150623.gappssmtp.com header.b="JQ/ajZSy"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF8DE20874
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cogentembedded.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388254AbeGXKMW (ORCPT
+        id S2388322AbeGXKMg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 06:12:22 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:60284 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388183AbeGXKMW (ORCPT
+        Tue, 24 Jul 2018 06:12:36 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:33199 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388277AbeGXKMf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 06:12:22 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=LnRtPCzjtqPyA1bIeiKzRLggHqhK6KPMwRNG3gUGTm8=; b=tQqSFAnOfY1OUdwkRe7RBQ6A7
-        JF1KsEYmTVxeCrZbWowh0LelvaZ6bsBX42dCPcD2YC2dzyVYGuHZalfqSUY3svwZ4C7Nd7PkxXxbD
-        J88rMOE4ea6T0kX9PBNJ/QDCqsCOh896QYIRSyB7kkGF55myfBjR7mav2wHi8ZokGHOvAidLc0QSt
-        0NIswmRsVkGUh+7yHXbWwJaufWUUJtmSfPJMmo7ChHPot6oY8/oCb2vZRrqkiNnhX0LtfdA0yKO7e
-        jMpiwRKkiPy1/RjUPn6bY5GRyV3MV057eQ9MkaQIbhl0NOFj/INYLMnlDT8+Sg1UgGoArlFM+DDwc
-        MVeEGaPWg==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fhtHR-0005kv-RD; Tue, 24 Jul 2018 09:06:54 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 6FAC520275F47; Tue, 24 Jul 2018 11:06:51 +0200 (CEST)
-Date:   Tue, 24 Jul 2018 11:06:51 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     jiang.biao2@zte.com.cn
-Cc:     chen.lin130@zte.com.cn, mingo@redhat.com,
-        linux-kernel@vger.kernel.org, zhong.weidong@zte.com.cn,
-        tan.hu@zte.com.cn.cn, cheng.lin130@zte.com.cn, tan.hu@zte.com.cn
-Subject: Re: [PATCH] sched/numa: do not balance tasks onto isolated cpus
-Message-ID: <20180724090651.GK2494@hirez.programming.kicks-ass.net>
-References: <20180723084031.GX2494@hirez.programming.kicks-ass.net>
- <201807240911372861670@zte.com.cn>
+        Tue, 24 Jul 2018 06:12:35 -0400
+Received: by mail-lj1-f196.google.com with SMTP id s12-v6so2943141ljj.0
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Jul 2018 02:07:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=/0ZkL1X3kVQ2lK9hrFx5WRXojic5Sp7Z/BpPysytY54=;
+        b=JQ/ajZSyTqRAeRmwrmTCVcmbBk6JJ+flYtk6TCLhKkDJHsqJxN6OhPw9I6Hxrl8PnG
+         +7OOV0PlumdQGzlaWNP1Q5q+6WAdMGQevBBlBn3ZDWCFXEpFSM1cFSCkcxY9deXp2HAl
+         /NnvrAF5NznjwJ7k6hGsWr0x5r2dyQPfMffjdIhx/PxgAFR2O97tKBt9FTjdcnY6jIZb
+         7qz6T5aX0nWTS3Uad1HRjoYlSRFMI0vCuG35Kl/zt21uG7qyi6UCQ/MAEEDxaaT+InBJ
+         g3E1XlM1OMTyem1cf2zi6MSCN2QC+VrHKaRP0V6QHXvUN/J+0EYk/+Z74vFpVcT2p0uY
+         BojQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=/0ZkL1X3kVQ2lK9hrFx5WRXojic5Sp7Z/BpPysytY54=;
+        b=qeSxqL+pEFnmfFONjGshr2uK3sVm/T0QTaAN0kEZbSpytkp6XD/q5whbIubjRHL3bd
+         OmdR9ApoP//a5NbC4AhOeElivb6kAOdmjcsubp9tx22ISFPyMVnn0Xo8q+oHzijmnZtS
+         acUhluPV/vi6Wr1vvI/BAHMPJ7lkENuNbtNYKazsxti6PwgPnG3+PkCoFl+Jd5m938K2
+         NNQUetOnRAXCdbltjrpwgFxHyvGEEgdmNP0B73p4ZnaSTgsJN+s0XOV+j1OMnCL8LxsM
+         BTX5bGkomSsNdpBVAXOdqRczGHKhZ777OdDkardmqwHyDHCtUG23XLUhAbeRGEmsQGJu
+         0OEw==
+X-Gm-Message-State: AOUpUlFAnjREtW6wKgZ0gqWscpzktIhtaznGA5DT4SrIgkuZfN3LlCBS
+        3ljXjS0cDXPUzf0rEv2sG0EhXD+ma1I=
+X-Google-Smtp-Source: AAOMgpe11sHjatDzrkoUx2i7/+SH4xYHnfWMyPWQ37+z6i0vNcehc9Lz2xkxvLMekIO2IfyM89WDkg==
+X-Received: by 2002:a2e:429c:: with SMTP id h28-v6mr1589810ljf.67.1532423225706;
+        Tue, 24 Jul 2018 02:07:05 -0700 (PDT)
+Received: from [192.168.0.126] ([31.173.87.47])
+        by smtp.gmail.com with ESMTPSA id p84-v6sm2180845ljb.19.2018.07.24.02.07.04
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 24 Jul 2018 02:07:04 -0700 (PDT)
+Subject: Re: [PATCH] mwifiex: Fix skipped vendor specific IEs
+To:     roman.stratiienko@globallogic.com, akarwar@marvell.com
+Cc:     nishants@marvell.com, kvalo@codeaurora.org,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <1532352699-3232-1-git-send-email-roman.stratiienko@globallogic.com>
+From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <c378bdc5-23f9-4eb2-948f-a5944f0a7136@cogentembedded.com>
+Date:   Tue, 24 Jul 2018 12:07:04 +0300
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <201807240911372861670@zte.com.cn>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <1532352699-3232-1-git-send-email-roman.stratiienko@globallogic.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 24, 2018 at 09:11:37AM +0800, jiang.biao2@zte.com.cn wrote:
+Hello!
 
-> >> Signed-off-by: Cheng Lin <cheng.lin130@zte.com.cn>
-> >> Signed-off-by: Tan Hu <tan.hu@zte.com.cn>
-> >> Signed-off-by: Jiang Biao <jiang.biao2@zte.com.cn>
-> > 
-> >This SoB chain is invalid.
+On 7/23/2018 4:31 PM, roman.stratiienko@globallogic.com wrote:
 
-> Mm, we don't quite understand what the *Signed-off-by* precisely means,
-> Does it only mean DCO(developer certificate of origin)?
-> As we understood, multiple SoBs could be used to indicate co-authors.
-> If SoB only means DCO, how can the patches reflect co-authors?
+> From: Roman Stratiienko <roman.stratiienko@globallogic.com>
+> 
+> Only microsoft specific IE is added by FW
+> Let other IEs to pass from userspace
 
-It specifically does not allow for co-authorship. I think there's a
-Co-Authored-by: tag invented by some people (check the git logs) but
-especially for such a dinky little patch, I wouldn't bother. Maybe have
-your co-workers review the patch or something.
+    "To" not needed here.
 
+> 
+> Signed-off-by: Roman Stratiienko <roman.stratiienko@globallogic.com>
+> ---
+>   drivers/net/wireless/marvell/mwifiex/ie.c | 10 +++++++++-
+>   1 file changed, 9 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/net/wireless/marvell/mwifiex/ie.c b/drivers/net/wireless/marvell/mwifiex/ie.c
+> index c488c30..c58b345 100644
+> --- a/drivers/net/wireless/marvell/mwifiex/ie.c
+> +++ b/drivers/net/wireless/marvell/mwifiex/ie.c
+> @@ -353,8 +353,16 @@ static int mwifiex_uap_parse_tail_ies(struct mwifiex_private *priv,
+>   		case WLAN_EID_HT_OPERATION:
+>   		case WLAN_EID_VHT_CAPABILITY:
+>   		case WLAN_EID_VHT_OPERATION:
+> -		case WLAN_EID_VENDOR_SPECIFIC:
+>   			break;
+> +		case WLAN_EID_VENDOR_SPECIFIC:
+> +			/* Skip only Microsoft IE that added by FW
+                                                   ^^^^
+    That's?
 
+> +			 * Let other vendor specific IE to pass
+
+    "To" not needed here as well...
+
+[...]
+
+MBR, Sergei
