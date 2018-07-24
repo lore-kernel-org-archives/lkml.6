@@ -2,100 +2,133 @@ Return-Path: <SRS0=hTZH=KI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56C0EC6778A
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 12:44:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2618AECDFB8
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 12:45:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0ADCC20875
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 12:44:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D0A7A20856
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 12:45:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hVHX7P/t"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0ADCC20875
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Krxz3Snk"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D0A7A20856
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728154AbeGXNu6 (ORCPT
+        id S2388315AbeGXNvx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 09:50:58 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:44561 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726270AbeGXNu5 (ORCPT
+        Tue, 24 Jul 2018 09:51:53 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:45444 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726656AbeGXNvw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 09:50:57 -0400
-Received: by mail-lj1-f196.google.com with SMTP id q127-v6so3449050ljq.11;
-        Tue, 24 Jul 2018 05:44:37 -0700 (PDT)
+        Tue, 24 Jul 2018 09:51:52 -0400
+Received: by mail-wr1-f66.google.com with SMTP id t13-v6so3989409wrv.12
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Jul 2018 05:45:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=z2YuT3WSac+TXsGcGdJHgZsKLCLA7LdSkFzQ/c9X/yI=;
-        b=hVHX7P/tvYPeeTFCWiQZPYLWnCl3+wHf2QY2bAWdO9kZ16af091G1QHY/RMehcTxW0
-         o/KAllqRjnVOWLi6LkqU5TDOyPwjbHSyJYEcx5gbw4LHfv87AvcKCs8Yp1hVE+2Oxpiz
-         Pe9Te0HpuMAXSZOeORReJ1Pf0Hz8+MiQXHIhDBaBSYqrM5az1CkFw+xOBqwRcaxozCtj
-         MW67jBxGyD2AqFmE8nTZGLywE0aY69NSXw53vOW9Q9wp9m4De2CkkKKi/H49IXGanOHE
-         dEQrf4qvO3+TSM2EORR2PTbpx2mxHHkvmajHQUTxVD2+H+AgqbWJade9w8TGoq7m/LNc
-         msig==
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=ohk6vanHvp6EtnqecZC1eKlDGR9Ndg+XQD0fvlMTc28=;
+        b=Krxz3SnkDMAhe7NvOzHlfmIl12MxNVYBaQIs2r7qdcxQas80vyKWz2HNLK5rmPzWJ3
+         1gIjzbNWudgjPFwlcHCowZ+JEDv3K72jclyQWSH0EX9KqexkR4MxzfeTFok0XMG5w2zM
+         g2D8IotrlU7WcavNPVruH1hoLZPawyeboV1FE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=z2YuT3WSac+TXsGcGdJHgZsKLCLA7LdSkFzQ/c9X/yI=;
-        b=CplYnWXAdiLdiapTjsCAIwEnoC97qv5IbDXHAzxOf6pupIkJ5fC01VxmHMHhzBJNrj
-         ZxX3ayEdOsLmLBcURUL5+gw/9DYvXh7iJqVly9mQhcsihMjQxgKAdM6lWULtZ0YTcKlv
-         E7LbxiIWvWeBIGfXHDkqB203jmZ1nCdQsKbGL9SfXzJ0inGnKBPTnpfIKBdQeAkMj6xh
-         JalvD/E2u/QT0Jv/BvEo5yQRzLkDcMrpGtuFiYvBBCMWjnCKLwBdpu7Py+BPkAYH4wv3
-         1CiOcohBVYawdtOeafKxCHP2TJvZSCvzWE10rke5evaJQH08bAuxl4EMiiLN9EDwlFTw
-         tgPg==
-X-Gm-Message-State: AOUpUlG4s5BoWFiq7GV0IhZo5HrRUmjRNHZ630+WtAX1vMYGn++nDCVL
-        tjdPkUBItEfKBWX94skDT9w=
-X-Google-Smtp-Source: AAOMgpeZ+10JJCyblUVLiluQej/98OhGdcjLassYJIzt4zt4xbJaDFPm+O0NKGDqNHYquy2CpqJZ7Q==
-X-Received: by 2002:a2e:9ec9:: with SMTP id h9-v6mr3639109ljk.133.1532436276959;
-        Tue, 24 Jul 2018 05:44:36 -0700 (PDT)
-Received: from dimapc.localnet (109-252-90-13.nat.spd-mgts.ru. [109.252.90.13])
-        by smtp.gmail.com with ESMTPSA id x23-v6sm2288933ljj.86.2018.07.24.05.44.35
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=ohk6vanHvp6EtnqecZC1eKlDGR9Ndg+XQD0fvlMTc28=;
+        b=HWA4A0f0cSJuZt87YA49A41pRmwItAa36PbX46DMTz1IozyP7fzbpIo8/pn8WjX+kF
+         Y1RvIFWanVxm4Krw66DDjr345VJv+pmXPWt4xItl5/T0venzsZVUncct2Z8vtNHAJ0yd
+         SC844SyLXeagK6XA+Torn+9CNDUQsClZunC3bYuvbuWxaEctpk5mDQ4c3jaezUgq6ckk
+         16T7/nadV0jDhPYnl3qAIfui45iRcBfd4LGBF5ynfkVryd5quAiSmKaRfejnLQ8qZNqE
+         gQVoftTT9L8jnrd2dWCTEdpSfBU5N3dRGVJx69luK1jPGc8UX+zAPCZ1+IglS+nLjw6M
+         ArsQ==
+X-Gm-Message-State: AOUpUlHMpH8LKcse0vSR0/V4blAuEoS/X/WjHZHIxmN7WkE8zCKg0BDT
+        WLBjl5yfYYHJQack2b5wToASPXkYX5Q=
+X-Google-Smtp-Source: AAOMgpeuJ1UWWEohdISU5xmkTUaFUaeX+LYUEk/UwniTU4OgsDd028jrqxLSaq8lBD558Va5qouG+g==
+X-Received: by 2002:adf:8325:: with SMTP id 34-v6mr11183492wrd.67.1532436331920;
+        Tue, 24 Jul 2018 05:45:31 -0700 (PDT)
+Received: from [192.168.27.197] ([37.157.136.206])
+        by smtp.gmail.com with ESMTPSA id b10-v6sm10016051wrp.49.2018.07.24.05.45.30
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 24 Jul 2018 05:44:36 -0700 (PDT)
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Marcel Ziswiler <marcel.ziswiler@toradex.com>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "jonathanh@nvidia.com" <jonathanh@nvidia.com>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "mperttunen@nvidia.com" <mperttunen@nvidia.com>,
-        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>
-Subject: Re: [PATCH 00/15] ARM: dts: tegra: apalis-tk1: major revamp
-Date:   Tue, 24 Jul 2018 15:44:35 +0300
-Message-ID: <2532956.xKQ6NZiSWF@dimapc>
-In-Reply-To: <1532435072.6124.1.camel@toradex.com>
-References: <20180724104309.21741-1-marcel@ziswiler.com> <1532435072.6124.1.camel@toradex.com>
+        Tue, 24 Jul 2018 05:45:31 -0700 (PDT)
+Subject: Re: [PATCH v3 00/35] Qualcomm Camera Subsystem driver - 8x96 support
+To:     Hans Verkuil <hverkuil@xs4all.nl>
+Cc:     mchehab@kernel.org, sakari.ailus@linux.intel.com,
+        hans.verkuil@cisco.com, laurent.pinchart+renesas@ideasonboard.com,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1532343772-27382-1-git-send-email-todor.tomov@linaro.org>
+ <d548ed20-23ac-0ef9-9cbe-67da42cde19a@xs4all.nl>
+From:   Todor Tomov <todor.tomov@linaro.org>
+Message-ID: <a102905e-8dd1-935d-1e50-57c42d949feb@linaro.org>
+Date:   Tue, 24 Jul 2018 15:45:28 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <d548ed20-23ac-0ef9-9cbe-67da42cde19a@xs4all.nl>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tuesday, 24 July 2018 15:24:34 MSK Marcel Ziswiler wrote:
-> Sorry, I meant to write "minor revamp" in the subject line here as
-> Apalis TK1 was already in quite good a shape but this are still some
-> worthy improvements (;-p).
+Hi Hans,
+
+On 24.07.2018 14:22, Hans Verkuil wrote:
+> Hi Todor,
 > 
-> On Tue, 2018-07-24 at 12:42 +0200, Marcel Ziswiler wrote:
+> On 23/07/18 13:02, Todor Tomov wrote:
+>> Changelog v3:
+>> - split patch 08 to device tree binding patch and driver patch and
+>>   improve commit message.
+>>
+>> --------------------------------------------------------------------------------
+>>
+>> This patchset adds support for the Qualcomm Camera Subsystem found
+>> on Qualcomm MSM8996 and APQ8096 SoC to the existing driver which
+>> used to support MSM8916 and APQ8016.
+>>
+>> The camera subsystem hardware on 8x96 is similar to 8x16 but
+>> supports more cameras and features. More details are added in the
+>> driver document by the last patch.
+>>
+>> The first 3 patches are dependencies which have already been on
+>> the mainling list but I'm adding them here for completeness.
+>>
+>> The following 12 patches add general updates and fixes to the driver.
+>> Then the rest add the support for the new hardware.
+>>
+>> The driver is tested on Dragonboard 410c (APQ8016) and Dragonboard 820c
+>> (APQ8096) with OV5645 camera sensors. media-ctl [1], yavta [2] and
+>> GStreamer were used for testing.
+>>
+>> [1] https://git.linuxtv.org//v4l-utils.git
+>> [2] http://git.ideasonboard.org/yavta.git
+> 
+> Unless I am mistaken the only thing we're waiting for is an Ack from Rob for
+> patch 8 (dt bindings), right?
+
+We are definitely waiting for Rob's feedback. If there are more comments
+meanwhile I will take care of them too but I think we don't have any so
+far (or at least didn't have any until some minutes ago :)).
+
+> 
+> If I get that this week, then I can make a pull request in time for 4.19.
+
+This will be really nice if we can do it. Thanks!
+
+> 
+> Regards,
+> 
+> 	Hans
 > 
 
-Marcel,
-
-All your emails that are sent from "toradex.com" are treated as spam by Gmail 
-because "This message has a from address in toradex.com but has failed 
-toradex.com's required tests for authentication.", is there anything you could 
-do to fix that?
-
-
-
+-- 
+Best regards,
+Todor Tomov
