@@ -2,121 +2,306 @@ Return-Path: <SRS0=hTZH=KI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C62BECDFB8
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 09:21:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8512ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 09:21:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 084B420852
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 09:21:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 46C5420875
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 09:21:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HrrA1ZGo"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 084B420852
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="exs5/DJU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 46C5420875
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388371AbeGXK0x (ORCPT
+        id S2388399AbeGXK1R (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 06:26:53 -0400
-Received: from mail-oi0-f48.google.com ([209.85.218.48]:33153 "EHLO
-        mail-oi0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388182AbeGXK0x (ORCPT
+        Tue, 24 Jul 2018 06:27:17 -0400
+Received: from mail-lf1-f49.google.com ([209.85.167.49]:43741 "EHLO
+        mail-lf1-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388350AbeGXK1R (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 06:26:53 -0400
-Received: by mail-oi0-f48.google.com with SMTP id l10-v6so6300622oii.0;
-        Tue, 24 Jul 2018 02:21:21 -0700 (PDT)
+        Tue, 24 Jul 2018 06:27:17 -0400
+Received: by mail-lf1-f49.google.com with SMTP id f135-v6so767098lfg.10
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Jul 2018 02:21:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=PgGmu8rZ1+8joALR8uyHh3Rj8sp7wqCVeFgW6gXks5M=;
-        b=HrrA1ZGoLdXphHvZNs08APl6VPfYHaOwtuy8cEAHnhzVsf9fihfBIwysGwF2L3Y1+M
-         pg+KfXm8/xjkwlerWtAY8OT669NmaLaEC4SuLGk52M0PuVgu4ka5F73GAFCxODimV7e2
-         CF6wq/dHnFWvtPMsQtXX8b3vHz77lFian1npRR0dK051Gm4xrmAJm49Nt9u4Z8ZgiFcP
-         3dGFsYOXx/h57dAB8gCOqeg5zoqkeW2QTNMsZmYNp8uo0qeEn1Y+f5ikyBaR+pUROkqh
-         S3mbSdQ6VdWofhrQJnfACi3oDBJ/HfEr/+8NjHFpUiFoittiiYXdh7kzgH1QwJ6GW9IV
-         074A==
+        d=linaro.org; s=google;
+        h=mime-version:from:date:message-id:subject:to:cc;
+        bh=wbRzGpR2TkUsVoXE+71odyN3mRqQx2Wyb7zsCIV59cQ=;
+        b=exs5/DJUhdKoN+uO//TqP6yAjO3dNkL3yIYfcZJa6+fuVd34462otMD3wFSd1rMja0
+         xFFd4AgDDNBXXYgJF0vvY2GgHM6fOX14CwYQnBy6IdBTV5e2mcMwj79FsovL9A6klC7s
+         BbdOKhlLLWA+2i3sRd1AB1KXMgD93ArxBMfto=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
-         :date:message-id:subject:to:cc;
-        bh=PgGmu8rZ1+8joALR8uyHh3Rj8sp7wqCVeFgW6gXks5M=;
-        b=V4KWoFSgQscf3bmGzegpOXAII6Poq+1K1WqCYX7tPcm/YWBZFDYMsrHYZXUUV+j1tO
-         mAdcJPPbxjlQJkdjE8etMDohRj0NxGMXPTOEA/g09K9axFZzc8j+Wq6VKM1/MZHZPjK2
-         flKxiDUTEdvTeqm1xIkpm43Fv5tbSTSnyvFr2Qh8Q9v9KHxzv2WojNDak00AmAZN7ADP
-         vUbn3Lf2Gm7IR/zKrvTO/c+XXOchvQJtj1bAEp0NN7Uc1bLoLG3lUtUfSNt3yLmx7zxJ
-         ppIyHMOQqP1h9WT6UlQfOWp97lLarj1S05nnrqE9dEg5hdAT81resS4xdpqdk5rKd5CW
-         jwRA==
-X-Gm-Message-State: AOUpUlGj8MtMUA7RgHIKvSnyFsoRhg6rE1o2fpPQvoBjCvFtVH3ztGYN
-        INdQ89lvxcUmxWA8OVP4i1tpqBx00hemmTdVkDc=
-X-Google-Smtp-Source: AAOMgpfyXqSuTsGFEzX+MZz1rn8DFSyEOqVKw1mkf/xTRuP4UQLYvY7WzNsYYznFL16bW1QoZV2Sg5MeOA7myvUMMNs=
-X-Received: by 2002:aca:6285:: with SMTP id w127-v6mr2255012oib.120.1532424080954;
- Tue, 24 Jul 2018 02:21:20 -0700 (PDT)
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=wbRzGpR2TkUsVoXE+71odyN3mRqQx2Wyb7zsCIV59cQ=;
+        b=ZsCEVtgWXH1cDp4p2Jg8OF8B1sSaR1ovYWCRR7UtKVbgfCSsOVCAYFSC/Bp/DfJwSp
+         8+KN+kFzLdgssWRfTZE3VRyOduOWmKxi/pxIK1slWBsq8DFhp7KQLeuv3Lt5B7LRmxeq
+         vHCzMUdy6LylZeWoEBDCML0J2FtRKVjWw/Xb7TF0unaR56DGbsJmYt5Ywy39vDJvbHj5
+         /el6nGBf+9nuybNy9aLKOp11bRZkBN3v51rHrNMSvHzldLep++m9f+5VZqn4egz/t4WD
+         hzdn9l+Q5HuGJi4D6wFvvPJCOCx3D+Z0oNifTupishZJ/zldtJrK140J5d4wahiS0DBb
+         NoxA==
+X-Gm-Message-State: AOUpUlFR5N7VhYhCxnT2rrrhxz1yzC8gkied8tYEtNf5mNYS0aaIErBy
+        creziLXDAyaZkEb2YyF3N1xTxRXu+yUMjMjQt2cQDQ==
+X-Google-Smtp-Source: AAOMgpf3EXSlRodekOoFkXiYPd9PQwDC5etsSB1QCF5UCvPvcJQ0gPqo4xrIX/I7M3EyD8dcGayzCSfXyzHhjWzr+lU=
+X-Received: by 2002:a19:8ecf:: with SMTP id a76-v6mr10082501lfl.52.1532424102743;
+ Tue, 24 Jul 2018 02:21:42 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a9d:63d2:0:0:0:0:0 with HTTP; Tue, 24 Jul 2018 02:21:20
+Received: by 2002:a19:169b:0:0:0:0:0 with HTTP; Tue, 24 Jul 2018 02:21:42
  -0700 (PDT)
-In-Reply-To: <20180724091226.GB22465@amd>
-References: <20180723214917.GA3733@amd> <CAJZ5v0g=Ey6ZiyjA3NWS_C5zXBUydJNaKOZDbRNFYUGEc8YuaQ@mail.gmail.com>
- <20180724091226.GB22465@amd>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Tue, 24 Jul 2018 11:21:20 +0200
-X-Google-Sender-Auth: jj-vifumRZ6bxdm7DxrZU_H_GGc
-Message-ID: <CAJZ5v0g0b2ucGEn3+hhEgw4FVJP4oV1D+99a3jTNjq4av_qsDg@mail.gmail.com>
-Subject: Re: linux-next-20180723: battery status funny after bootup
-To:     Pavel Machek <pavel@ucw.cz>
-Cc:     "Rafael J. Wysocki" <rafael@kernel.org>, lucas.magasweran@ieee.org,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        Linux-pm mailing list <linux-pm@vger.kernel.org>,
-        Len Brown <lenb@kernel.org>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>
+From:   Naresh Kamboju <naresh.kamboju@linaro.org>
+Date:   Tue, 24 Jul 2018 14:51:42 +0530
+Message-ID: <CA+G9fYs-AzZ4x2x8m5kOYaEg_vagaorjQAkWs9C5ghOnCLYZvA@mail.gmail.com>
+Subject: selftests: bpf: test_progs: deadlock at trace_call_bpf
+To:     netdev@vger.kernel.org, ast@kernel.org,
+        Daniel Borkmann <daniel@iogearbox.net>, rostedt@goodmis.org
+Cc:     open list <linux-kernel@vger.kernel.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 24, 2018 at 11:12 AM, Pavel Machek <pavel@ucw.cz> wrote:
-> On Tue 2018-07-24 10:27:08, Rafael J. Wysocki wrote:
->> On Mon, Jul 23, 2018 at 11:49 PM, Pavel Machek <pavel@ucw.cz> wrote:
->> >
->> > pavel@amd:~$ cat /proc/acpi/battery/BAT0/state
->> > present:                 yes
->> > capacity state:          ok
->> > charging state:          charged
->> > present rate:            0 mW
->> > remaining capacity:      0 mWh
->> > present voltage:         0 mV
->> > pavel@amd:~$ uname -a
->> > Linux amd 4.18.0-rc6-next-20180723+ #141 SMP Mon Jul 23 22:11:47 CEST
->> > 2018 i686 GNU/Linux
->> >
->> > It will correct itself if I unplug/replug the AC adapter, I
->> > believe. Gnome2 battery monitor also looks confused.
->>
->> There are two battery changes in linux-next now that are not present
->> in the mainline
->>
->> 2a2aad34362b ACPI: battery: remove redundant old_present check on insertion
->> 706ac4aa536f ACPI: battery: use cache_time as cache "enabled"
->>
->> Does reverting any of them help?  Or is the problem present in the
->> mainline too?
->
-> Thanks for pointers! Not it mainline, I'd notice that.
->
-> I reverted 706ac4aa536f , and on the next boot:
->
-> pavel@amd:~$ cat /proc/acpi/battery/BAT0/state
-> present:                 yes
-> capacity state:          ok
-> charging state:          charged
-> present rate:            0 mW
-> remaining capacity:      37150 mWh
-> present voltage:         16400 mV
->
-> ..plus icon was ok from the start.
+Deadlock warning on x86 machine while testing selftests: bpf:
+test_progs and running linux next 4.18.0-rc3-next-20180705 and still
+happening on 4.18.0-rc5-next-20180720.
 
-OK, I'll drop 706ac4aa536f then, thanks!
+Any one noticed this kernel warning about deadlock ?
+
+selftests: bpf: test_progs
+libbpf: incorrect bpf_call opcode
+libbpf: incorrect bpf_call opcode
+test_pkt_access:FAIL:ipv4 err 0 errno 2 retval 0 duration 126
+test_pkt_access:FAIL:ipv6 err 0 errno 2 retval 0 duration 115
+test_xdp:FAIL:ipv4 err 0 errno 2 retval 3 size 74
+test_xdp:FAIL:ipv6 err 0 errno 2 retval 3 size 114
+test_xdp_adjust_tail:FAIL:ipv4 err 0 errno 2 retval 1 size 54
+test_xdp_adjust_tail:FAIL:ipv6 err 0 errno 2 retval 3 siz[   69.901655]
+[   69.903862] ========================================================
+[   69.910213] WARNING: possible irq lock inversion dependency detected
+[   69.916559] 4.18.0-rc3-next-20180705 #1 Not tainted
+[   69.921428] --------------------------------------------------------
+[   69.927774] dd/2928 just changed the state of lock:
+[   69.932643] 0000000022eeb38d (&head->lock){+...}, at:
+pcpu_freelist_push+0x28/0x50
+[   69.940208] but this lock was taken by another, HARDIRQ-safe lock
+in the past:
+[   69.947420]  (&rq->lock){-.-.}
+[   69.947421]
+[   69.947421]
+[   69.947421] and interrupts could create inverse lock ordering between them.
+[   69.947421]
+[   69.961842]
+[   69.961842] other info that might help us debug this:
+[   69.968357]  Possible interrupt unsafe locking scenario:
+[   69.968357]
+[   69.975136]        CPU0                    CPU1
+[   69.979659]        ----                    ----
+[   69.984184]   lock(&head->lock);
+[   69.987406]                                local_irq_disable();
+[   69.993319]                                lock(&rq->lock);
+[   69.998882]                                lock(&head->lock);
+[   70.004618]   <Interrupt>
+[   70.007235]     lock(&rq->lock);
+[   70.010461]
+[   70.010461]  *** DEADLOCK ***
+[   70.010461]
+[   70.016372] 1 lock held by dd/2928:
+[   70.019856]  #0: 00000000ab9293c8 (rcu_read_lock){....}, at:
+trace_call_bpf+0x37/0x1d0
+[   70.027768]
+[   70.027768] the shortest dependencies between 2nd lock and 1st lock:
+[   70.035586]  -> (&rq->lock){-.-.} ops: 1401365 {
+[   70.040204]     IN-HARDIRQ-W at:
+[   70.043428]                       lock_acquire+0xd5/0x1c0
+[   70.048820]                       _raw_spin_lock+0x2f/0x40
+[   70.054299]                       scheduler_tick+0x51/0xf0
+[   70.059781]                       update_process_times+0x47/0x60
+[   70.065779]                       tick_periodic+0x2b/0xc0
+[   70.071171]                       tick_handle_periodic+0x25/0x70
+[   70.077168]                       timer_interrupt+0x15/0x20
+[   70.082731]                       __handle_irq_event_percpu+0x48/0x320
+[   70.089250]                       handle_irq_event_percpu+0x32/0x80
+[   70.095505]                       handle_irq_event+0x39/0x60
+[   70.101157]                       handle_level_irq+0x7f/0x100
+[   70.106893]                       handle_irq+0x6f/0x110
+[   70.112112]                       do_IRQ+0x5c/0x110
+[   70.116982]                       ret_from_intr+0x0/0x1d
+[   70.122286]                       _raw_spin_unlock_irqrestore+0x38/0x50
+[   70.128891]                       __setup_irq+0x45d/0x700
+[   70.134281]                       setup_irq+0x4c/0x90
+[   70.139324]                       hpet_time_init+0x25/0x37
+[   70.144803]                       x86_late_time_init+0xf/0x1c
+[   70.150538]                       start_kernel+0x40c/0x4ca
+[   70.156017]                       x86_64_start_reservations+0x24/0x26
+[   70.162445]                       x86_64_start_kernel+0x6f/0x72
+[   70.168357]                       secondary_startup_64+0xa4/0xb0
+[   70.174356]     IN-SOFTIRQ-W at:
+[   70.177578]                       lock_acquire+0xd5/0x1c0
+[   70.182970]                       _raw_spin_lock+0x2f/0x40
+[   70.188448]                       try_to_wake_up+0x31b/0x540
+[   70.194097]                       wake_up_process+0x15/0x20
+[   70.199661]                       swake_up_locked+0x24/0x40
+[   70.205226]                       swake_up_one+0x1f/0x30
+[   70.210530]                       rcu_gp_kthread_wake+0x3b/0x40
+[   70.216441]                       rcu_accelerate_cbs_unlocked+0x9c/0xe0
+[   70.223048]                       rcu_process_callbacks+0x111/0x10c0
+[   70.229396]                       __do_softirq+0xbf/0x493
+[   70.234788]                       irq_exit+0xc3/0xd0
+[   70.239743]                       smp_apic_timer_interrupt+0x93/0x2a0
+[   70.246176]                       apic_timer_interrupt+0xf/0x20
+[   70.252084]                       console_unlock+0x4e8/0x620
+[   70.257737]                       vprintk_emit+0x254/0x430
+[   70.263214]                       vprintk_default+0x1f/0x30
+[   70.268776]                       vprintk_func+0x27/0x60
+[   70.274082]                       printk+0x52/0x6e
+[   70.278864]                       native_cpu_up+0x71b/0x7a0
+[   70.284431]                       bringup_cpu+0x2a/0xb0
+[   70.289648]                       cpuhp_invoke_callback+0xb2/0xb20
+[   70.295818]                       _cpu_up+0xae/0x160
+[   70.300776]                       do_cpu_up+0x8d/0xb0
+[   70.305818]                       cpu_up+0x13/0x20
+[   70.310602]                       smp_init+0x67/0xc4
+[   70.315559]                       kernel_init_freeable+0x134/0x259
+[   70.321731]                       kernel_init+0xe/0x110
+[   70.326947]                       ret_from_fork+0x3a/0x50
+[   70.332339]     INITIAL USE at:
+[   70.335477]                      lock_acquire+0xd5/0x1c0
+[   70.340780]                      _raw_spin_lock_irqsave+0x3a/0x50
+[   70.346864]                      rq_attach_root+0x1b/0xc0
+[   70.352255]                      sched_init+0x310/0x432
+[   70.357472]                      start_kernel+0x26e/0x4ca
+[   70.362861]                      x86_64_start_reservations+0x24/0x26
+[   70.369207]                      x86_64_start_kernel+0x6f/0x72
+[   70.375048]                      secondary_startup_64+0xa4/0xb0
+[   70.380958]   }
+[   70.382710]   ... key      at: [<ffffffff8716faf8>] __key.69482+0x0/0x8
+[   70.389310]   ... acquired at:
+[   70.392364]    _raw_spin_lock+0x2f/0x40
+[   70.396192]    pcpu_freelist_pop+0x7a/0xd0
+[   70.400286]    bpf_get_stackid+0x1ca/0x470
+[   70.404383]    bpf_get_stackid_tp+0x11/0x20
+[   70.408559]    ___bpf_prog_run+0x7f2/0x1090
+[   70.412739]    __bpf_prog_run32+0x39/0x50
+[   70.416742]    trace_call_bpf+0xc8/0x1d0
+[   70.420659]    perf_trace_run_bpf_submit+0x42/0xb0
+[   70.425444]    perf_trace_sched_switch+0x116/0x190
+[   70.430227]    __schedule+0x6d8/0xa20
+[   70.433883]    schedule+0x3d/0x90
+[   70.437194]    worker_thread+0xd0/0x410
+[   70.441025]    kthread+0x10d/0x140
+[   70.444424]    ret_from_fork+0x3a/0x50
+[   70.448165]
+[   70.449658] -> (&head->lock){+...} ops: 61660 {
+[   70.454181]    HARDIRQ-ON-W at:
+[   70.457319]                     lock_acquire+0xd5/0x1c0
+[   70.462536]                     _raw_spin_lock+0x2f/0x40
+[   70.467841]                     pcpu_freelist_push+0x28/0x50
+[   70.473492]                     bpf_get_stackid+0x43a/0x470
+[   70.479054]                     bpf_get_stackid_tp+0x11/0x20
+[   70.484724]                     ___bpf_prog_run+0x7f2/0x1090
+[   70.490372]                     __bpf_prog_run32+0x39/0x50
+[   70.495852]                     trace_call_bpf+0xc8/0x1d0
+[   70.501243]                     perf_trace_run_bpf_submit+0x42/0xb0
+[   70.507500]                     perf_trace_urandom_read+0xbf/0x100
+[   70.513670]                     urandom_read+0x1ce/0x340
+[   70.518975]                     __vfs_read+0x37/0x160
+[   70.524027]                     vfs_read+0xa8/0x150
+[   70.528898]                     ksys_read+0x58/0xc0
+[   70.533766]                     __x64_sys_read+0x1a/0x20
+[   70.539092]                     do_syscall_64+0x4f/0x190
+[   70.544401]                     entry_SYSCALL_64_after_hwframe+0x49/0xbe
+[   70.551092]    INITIAL USE at:
+[   70.554143]                    lock_acquire+0xd5/0x1c0
+[   70.559272]                    _raw_spin_lock+0x2f/0x40
+[   70.564491]                    pcpu_freelist_populate+0xb6/0x110
+[   70.570489]                    htab_map_alloc+0x3b6/0x4c0
+[   70.575878]                    map_create+0xf0/0x370
+[   70.580836]                    __x64_sys_bpf+0x10b/0x260
+[   70.586138]                    do_syscall_64+0x4f/0x190
+[   70.591356]                    entry_SYSCALL_64_after_hwframe+0x49/0xbe
+[   70.597960]  }
+[   70.599624]  ... key      at: [<ffffffff87d4c5a0>] __key.11024+0x0/0x8
+[   70.606142]  ... acquired at:
+[   70.609104]    mark_lock+0x392/0x570
+[   70.612676]    __lock_acquire+0x5cd/0x13c0
+[   70.616767]    lock_acquire+0xd5/0x1c0
+[   70.620511]    _raw_spin_lock+0x2f/0x40
+[   70.624342]    pcpu_freelist_push+0x28/0x50
+[   70.628519]    bpf_get_stackid+0x43a/0x470
+[   70.632610]    bpf_get_stackid_tp+0x11/0x20
+[   70.636785]    ___bpf_prog_run+0x7f2/0x1090
+[   70.640965]    __bpf_prog_run32+0x39/0x50
+[   70.644969]    trace_call_bpf+0xc8/0x1d0
+[   70.648886]    perf_trace_run_bpf_submit+0x42/0xb0
+[   70.653668]    perf_trace_urandom_read+0xbf/0x100
+[   70.658366]    urandom_read+0x1ce/0x340
+[   70.662199]    __vfs_read+0x37/0x160
+[   70.665768]    vfs_read+0xa8/0x150
+[   70.669166]    ksys_read+0x58/0xc0
+[   70.672562]    __x64_sys_read+0x1a/0x20
+[   70.676393]    do_syscall_64+0x4f/0x190
+[   70.680223]    entry_SYSCALL_64_after_hwframe+0x49/0xbe
+[   70.685440]
+[   70.686933]
+[   70.686933] stack backtrace:
+[   70.691283] CPU: 3 PID: 2928 Comm: dd Not tainted 4.18.0-rc3-next-20180705 #1
+[   70.698405] Hardware name: Supermicro SYS-5019S-ML/X11SSH-F, BIOS
+2.0b 07/27/2017
+[   70.705875] Call Trace:
+[   70.708321]  dump_stack+0x68/0x95
+[   70.711631]  print_irq_inversion_bug.part.41+0x1a5/0x1b1
+[   70.716935]  check_usage_backwards+0x14b/0x160
+[   70.721374]  mark_lock+0x392/0x570
+[   70.724771]  ? mark_lock+0x392/0x570
+[   70.728340]  ? print_shortest_lock_dependencies+0x1a0/0x1a0
+[   70.733904]  __lock_acquire+0x5cd/0x13c0
+[   70.737823]  ? find_get_entry+0x1a2/0x2f0
+[   70.741825]  lock_acquire+0xd5/0x1c0
+[   70.745397]  ? lock_acquire+0xd5/0x1c0
+[   70.749141]  ? pcpu_freelist_push+0x28/0x50
+[   70.753317]  _raw_spin_lock+0x2f/0x40
+[   70.756974]  ? pcpu_freelist_push+0x28/0x50
+[   70.761153]  pcpu_freelist_push+0x28/0x50
+[   70.765156]  bpf_get_stackid+0x43a/0x470
+[   70.769073]  bpf_get_stackid_tp+0x11/0x20
+[   70.773077]  ___bpf_prog_run+0x7f2/0x1090
+[   70.777083]  __bpf_prog_run32+0x39/0x50
+[   70.780912]  ? lock_acquire+0xd5/0x1c0
+[   70.784656]  trace_call_bpf+0xc8/0x1d0
+[   70.788399]  perf_trace_run_bpf_submit+0x42/0xb0
+[   70.793013]  perf_trace_urandom_read+0xbf/0x100
+[   70.797544]  urandom_read+0x1ce/0x340
+[   70.801202]  __vfs_read+0x37/0x160
+[   70.804598]  ? security_file_permission+0x8d/0xb0
+[   70.809297]  ? security_file_permission+0x8d/0xb0
+[   70.813993]  vfs_read+0xa8/0x150
+[   70.817218]  ksys_read+0x58/0xc0
+[   70.820442]  __x64_sys_read+0x1a/0x20
+[   70.824106]  do_syscall_64+0x4f/0x190
+[   70.827764]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+[   70.832807] RIP: 0033:0x7f302526f160
+[   70.836378] Code: b6 fe ff ff 48 8d 3d 97 b1 08 00 48 83 ec 08 e8
+66 d3 01 00 66 0f 1f 44 00 00 83 3d e9 15 2c 00 00 75 10 b8 00 00 00
+00 0f 05 <48> 3d 01 f0 ff ff 73 31 c3 48 83 ec 08 e8 7e 94 01 00 48 89
+04 24
+[   70.855253] RSP: 002b:00007fff096fd4e8 EFLAGS: 00000246 ORIG_RAX:
+0000000000000000
+[   70.862812] RAX: ffffffffffffffda RBX: 0000000000000001 RCX: 00007f302526f160
+[   70.869935] RDX: 0000000000000200 RSI: 000000000070f000 RDI: 0000000000000000
+[   70.877060] RBP: 0000000000000200 R08: 000000000070f000 R09: 0000000000711060
+[   70.884183] R10: 0000000000000871 R11: 0000000000000246 R12: 000000000070f000
+[   70.891306] R13: 0000000000000000 R14: 0000000000000200 R15: 0000000000000000
+e 54
+test_l4lb:FAIL:ipv4 err 0 errno 2 retval 7 size 54 magic 1234
+
+Full kernel selftest test log,
+https://lkft.validation.linaro.org/scheduler/job/314724#L2142
+
+Best regards
+Naresh Kamboju
