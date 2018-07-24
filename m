@@ -2,149 +2,82 @@ Return-Path: <SRS0=hTZH=KI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03608C6778A
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 09:03:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C63B3C6778A
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 09:06:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B776D20875
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 09:03:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B776D20875
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
+	by mail.kernel.org (Postfix) with ESMTP id 602AA20875
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 09:06:57 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="tQqSFAnO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 602AA20875
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388309AbeGXKJW (ORCPT
+        id S2388254AbeGXKMW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 06:09:22 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:56941 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388185AbeGXKJW (ORCPT
+        Tue, 24 Jul 2018 06:12:22 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:60284 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388183AbeGXKMW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 06:09:22 -0400
-Received: from mail-pl0-f69.google.com ([209.85.160.69])
-        by youngberry.canonical.com with esmtps (TLS1.0:RSA_AES_128_CBC_SHA1:16)
-        (Exim 4.76)
-        (envelope-from <kai.heng.feng@canonical.com>)
-        id 1fhtEX-0000NM-9t
-        for linux-kernel@vger.kernel.org; Tue, 24 Jul 2018 09:03:53 +0000
-Received: by mail-pl0-f69.google.com with SMTP id f91-v6so2474318plb.10
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Jul 2018 02:03:53 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=76bKq/Rt4J64OL7sdPRiXAnnXI41XRy++gC9P4TX+HE=;
-        b=qIEpGeSwv7fq0tmZiJncZ2ONc9RgehR7B0zS2A+ZP38LeRzFrybUOAU46Tu+lL64FH
-         ZY22fhwRgS9+ViV5W2YmBJu70xZfz+Z3mIEflJuIEiF1fktXJOGt7rcUEq6/cLVqQ507
-         eQHuBv546Cpoc3vxrHFa0O4yofQJiI8h88/9EQuhEfkmMIaFt7GaliMB18yESOhrMhY4
-         ZA+BQG2XhHeiV0ccsvcIZD1Yosz/Wlgj7WqYLxVwzViAhLNtyiyXIZMk0sRgVPM1/QVQ
-         jAIJenT/P5E7K1nV/Hzdset0GlgyGH+NlqMOxKHwJo4AxmAoOHp+VB/jsfFvLCGEJ4Np
-         hfcg==
-X-Gm-Message-State: AOUpUlENNoHFT5PXkY1mdzYusp9+ANZwaQdS6XyO6faElQJiDpW4//wG
-        xRB8YRVO37uL54y1w4sEDhlHTDNK0wO4njvywKON2ZsiYqgW0vXO7EQRhQUfZGctODJ7H9NA30M
-        /aPNUSY7qFSD01egWlkx22cybfcsXl1h4hHNCfeWqnA==
-X-Received: by 2002:a63:f309:: with SMTP id l9-v6mr15191380pgh.369.1532423032019;
-        Tue, 24 Jul 2018 02:03:52 -0700 (PDT)
-X-Google-Smtp-Source: AAOMgpfglrbXCUL16GtdYM20ahWcdNXsLBeUnxsdLdiZgbQ7OLCV+eAE00T1ry51ZgHQG7/+2Xrghg==
-X-Received: by 2002:a63:f309:: with SMTP id l9-v6mr15191367pgh.369.1532423031813;
-        Tue, 24 Jul 2018 02:03:51 -0700 (PDT)
-Received: from [10.101.46.95] ([175.41.48.77])
-        by smtp.gmail.com with ESMTPSA id z8-v6sm15944789pfe.163.2018.07.24.02.03.49
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 24 Jul 2018 02:03:51 -0700 (PDT)
-Content-Type: text/plain;
-        charset=us-ascii;
-        delsp=yes;
-        format=flowed
-Mime-Version: 1.0 (Mac OS X Mail 11.4 \(3445.8.2\))
-Subject: Re: [PATCH 1/5] misc: rtsx_usb: Use USB remote wakeup signaling for
- card insertion detection
-From:   Kai Heng Feng <kai.heng.feng@canonical.com>
-In-Reply-To: <Pine.LNX.4.44L0.1807231018290.1644-100000@iolanthe.rowland.org>
-Date:   Tue, 24 Jul 2018 17:03:47 +0800
-Cc:     arnd@arndb.de, gregkh@linuxfoundation.org, ulf.hansson@linaro.org,
-        bauer.chen@realtek.com, ricky_wu@realtek.com,
-        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org
-Content-Transfer-Encoding: 7bit
-Message-Id: <DCDB68D2-142C-4A1F-ABE3-6A9741E997E8@canonical.com>
-References: <Pine.LNX.4.44L0.1807231018290.1644-100000@iolanthe.rowland.org>
-To:     Alan Stern <stern@rowland.harvard.edu>
-X-Mailer: Apple Mail (2.3445.8.2)
+        Tue, 24 Jul 2018 06:12:22 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=LnRtPCzjtqPyA1bIeiKzRLggHqhK6KPMwRNG3gUGTm8=; b=tQqSFAnOfY1OUdwkRe7RBQ6A7
+        JF1KsEYmTVxeCrZbWowh0LelvaZ6bsBX42dCPcD2YC2dzyVYGuHZalfqSUY3svwZ4C7Nd7PkxXxbD
+        J88rMOE4ea6T0kX9PBNJ/QDCqsCOh896QYIRSyB7kkGF55myfBjR7mav2wHi8ZokGHOvAidLc0QSt
+        0NIswmRsVkGUh+7yHXbWwJaufWUUJtmSfPJMmo7ChHPot6oY8/oCb2vZRrqkiNnhX0LtfdA0yKO7e
+        jMpiwRKkiPy1/RjUPn6bY5GRyV3MV057eQ9MkaQIbhl0NOFj/INYLMnlDT8+Sg1UgGoArlFM+DDwc
+        MVeEGaPWg==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fhtHR-0005kv-RD; Tue, 24 Jul 2018 09:06:54 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 6FAC520275F47; Tue, 24 Jul 2018 11:06:51 +0200 (CEST)
+Date:   Tue, 24 Jul 2018 11:06:51 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     jiang.biao2@zte.com.cn
+Cc:     chen.lin130@zte.com.cn, mingo@redhat.com,
+        linux-kernel@vger.kernel.org, zhong.weidong@zte.com.cn,
+        tan.hu@zte.com.cn.cn, cheng.lin130@zte.com.cn, tan.hu@zte.com.cn
+Subject: Re: [PATCH] sched/numa: do not balance tasks onto isolated cpus
+Message-ID: <20180724090651.GK2494@hirez.programming.kicks-ass.net>
+References: <20180723084031.GX2494@hirez.programming.kicks-ass.net>
+ <201807240911372861670@zte.com.cn>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <201807240911372861670@zte.com.cn>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, Jul 24, 2018 at 09:11:37AM +0800, jiang.biao2@zte.com.cn wrote:
 
-> On Jul 23, 2018, at 10:19 PM, Alan Stern <stern@rowland.harvard.edu> wrote:
->
-> On Mon, 23 Jul 2018, Kai-Heng Feng wrote:
->
->> Although rtsx_usb doesn't support card removal detection, card insertion
->> will resume rtsx_usb by USB remote wakeup signaling.
->>
->> When rtsx_usb gets resumed, also resumes its child devices,
->> rtsx_usb_sdmmc and rtsx_usb_ms, to notify them there's a card in its
->> slot.
->>
->> Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
->> ---
->>  drivers/misc/cardreader/rtsx_usb.c | 13 +++++++++++++
->>  1 file changed, 13 insertions(+)
->>
->> diff --git a/drivers/misc/cardreader/rtsx_usb.c  
->> b/drivers/misc/cardreader/rtsx_usb.c
->> index b97903ff1a72..fed83453e5c5 100644
->> --- a/drivers/misc/cardreader/rtsx_usb.c
->> +++ b/drivers/misc/cardreader/rtsx_usb.c
->> @@ -723,8 +723,20 @@ static int rtsx_usb_suspend(struct usb_interface  
->> *intf, pm_message_t message)
->>  	return 0;
->>  }
->>
->> +static int rtsx_usb_resume_child(struct device *dev, void *data)
->> +{
->> +	/* No need to wake up self again */
->> +	if (dev == data)
->> +		return 0;
->
-> Is this test actually needed?  device_for_each_child() won't enumerate
-> the device it is called for, only that device's children.
+> >> Signed-off-by: Cheng Lin <cheng.lin130@zte.com.cn>
+> >> Signed-off-by: Tan Hu <tan.hu@zte.com.cn>
+> >> Signed-off-by: Jiang Biao <jiang.biao2@zte.com.cn>
+> > 
+> >This SoB chain is invalid.
 
-Ok, I'll update this part.
+> Mm, we don't quite understand what the *Signed-off-by* precisely means,
+> Does it only mean DCO(developer certificate of origin)?
+> As we understood, multiple SoBs could be used to indicate co-authors.
+> If SoB only means DCO, how can the patches reflect co-authors?
 
->
->> +
->> +	dev_dbg(dev, "%s called\n", __func__);
->
-> Not necessary.  People can use ftrace if they want this information.
+It specifically does not allow for co-authorship. I think there's a
+Co-Authored-by: tag invented by some people (check the git logs) but
+especially for such a dinky little patch, I wouldn't bother. Maybe have
+your co-workers review the patch or something.
 
-Sure I'll remove it.
-This is to make the change more aligned with the original code. It uses  
-similar function on other places too.
 
-Kai-Heng
-
->
-> Alan Stern
->
->> +	pm_request_resume(dev);
->> +	return 0;
->> +}
->> +
->>  static int rtsx_usb_resume(struct usb_interface *intf)
->>  {
->> +	device_for_each_child(&intf->dev, &intf->dev, rtsx_usb_resume_child);
->>  	return 0;
->>  }
->>
->> @@ -734,6 +746,7 @@ static int rtsx_usb_reset_resume(struct  
->> usb_interface *intf)
->>  		(struct rtsx_ucr *)usb_get_intfdata(intf);
->>
->>  	rtsx_usb_reset_chip(ucr);
->> +	device_for_each_child(&intf->dev, &intf->dev, rtsx_usb_resume_child);
->>  	return 0;
->>  }
