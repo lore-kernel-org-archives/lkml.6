@@ -6,44 +6,53 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B72A2C6778A
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 17:04:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8858AC6778A
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 17:06:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 78D6320856
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 17:04:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 78D6320856
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
+	by mail.kernel.org (Postfix) with ESMTP id 342A120844
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 17:06:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 342A120844
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388588AbeGXSLr (ORCPT
+        id S2388506AbeGXSOT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 14:11:47 -0400
-Received: from smtprelay0093.hostedemail.com ([216.40.44.93]:36871 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2388457AbeGXSLr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 14:11:47 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay08.hostedemail.com (Postfix) with ESMTP id 0E181182CF66C;
-        Tue, 24 Jul 2018 17:04:21 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-HE-Tag: hand83_7d1b9839a7547
-X-Filterd-Recvd-Size: 2478
-Received: from XPS-9350.home (unknown [47.151.153.53])
-        (Authenticated sender: joe@perches.com)
-        by omf04.hostedemail.com (Postfix) with ESMTPA;
-        Tue, 24 Jul 2018 17:04:19 +0000 (UTC)
-Message-ID: <05b832407b24e0a27e419906187cd863bc1617c7.camel@perches.com>
-Subject: [PATCH] checkpatch: Validate SPDX license with spdxcheck.py
-From:   Joe Perches <joe@perches.com>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        LKML <linux-kernel@vger.kernel.org>,
+        Tue, 24 Jul 2018 14:14:19 -0400
+Received: from mga11.intel.com ([192.55.52.93]:59870 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388333AbeGXSOS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Jul 2018 14:14:18 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Jul 2018 10:06:53 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,398,1526367600"; 
+   d="scan'208";a="75539825"
+Received: from smile.fi.intel.com (HELO smile) ([10.237.72.86])
+  by orsmga001.jf.intel.com with ESMTP; 24 Jul 2018 10:06:37 -0700
+Message-ID: <399c1cc851f983370a0308c76c68a97ff41a5d4f.camel@linux.intel.com>
+Subject: Re: [PATCH v4 1/3] lib: add crc64 calculation routines
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Coly Li <colyli@suse.de>, Eric Biggers <ebiggers3@gmail.com>
+Cc:     linux-kernel@vger.kernel.org, linux-bcache@vger.kernel.org,
+        linux-block@vger.kernel.org,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rob Herring <robh@kernel.org>,
-        Andy Whitcroft <apw@canonical.com>
-Date:   Tue, 24 Jul 2018 10:04:18 -0700
-Content-Type: text/plain; charset="ISO-8859-1"
+        Michael Lyle <mlyle@lyle.org>,
+        Kent Overstreet <kent.overstreet@gmail.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Randy Dunlap <rdunlap@infradead.org>
+Date:   Tue, 24 Jul 2018 20:06:36 +0300
+In-Reply-To: <dd95ab25-562e-1318-19e9-c8163969252f@suse.de>
+References: <20180718165545.1622-1-colyli@suse.de>
+         <20180718165545.1622-2-colyli@suse.de>
+         <20180724042637.GA1944@sol.localdomain>
+         <dd95ab25-562e-1318-19e9-c8163969252f@suse.de>
+Organization: Intel Finland Oy
+Content-Type: text/plain; charset="UTF-8"
 X-Mailer: Evolution 3.28.1-2 
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
@@ -52,54 +61,26 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use the existing scripts/spdxcheck.py to validate any
-SPDX-License-Identifier found in line 1 or 2 of patches or files.
+On Wed, 2018-07-25 at 00:29 +0800, Coly Li wrote:
+> On 2018/7/24 12:26 PM, Eric Biggers wrote:
+> > On Thu, Jul 19, 2018 at 12:55:43AM +0800, Coly Li wrote:
+> > > This patch adds the re-write crc64 calculation routines for Linux
+> > > kernel.
+> > > The CRC64 polynomical arithmetic follows ECMA-182 specification,
+> > > inspired
+> > 
+> > "polynomical" => "polynomial".  Same everywhere else in the patches.
+> > 
+> 
+> Hi Eric,
+> 
+> Thanks for your careful review. I will post a fixing patch to fix all
+> these issues.
 
-Miscellanea:
+IIUC this series in Andrew's quilt. So, it's still possible to replace
+it with better one, I suppose. Ask Andrew (at least I remember recent
+case where he just replaced series by fixed one).
 
-o Properly indent the existing SPDX-License-Identifier block.
-
-Signed-off-by: Joe Perches <joe@perches.com>
----
- scripts/checkpatch.pl | 20 ++++++++++++++++++--
- 1 file changed, 18 insertions(+), 2 deletions(-)
-
-diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
-index 34e4683de7a3..4523dd6d0476 100755
---- a/scripts/checkpatch.pl
-+++ b/scripts/checkpatch.pl
-@@ -849,6 +849,16 @@ sub is_maintained_obsolete {
- 	return $status =~ /obsolete/i;
- }
- 
-+sub is_SPDX_License_valid {
-+	my ($license) = @_;
-+
-+	return 1 if (!$tree || which("python") eq "" || !(-e "$root/scripts/spdxcheck.py"));
-+
-+	my $status = `echo "$license" | python $root/scripts/spdxcheck.py -`;
-+	return 0 if ($status ne "");
-+	return 1;
-+}
-+
- my $camelcase_seeded = 0;
- sub seed_camelcase_includes {
- 	return if ($camelcase_seeded);
-@@ -2978,8 +2988,14 @@ sub process {
- 
- 				if ($comment !~ /^$/ &&
- 				    $rawline !~ /^\+\Q$comment\E SPDX-License-Identifier: /) {
--					WARN("SPDX_LICENSE_TAG",
--					     "Missing or malformed SPDX-License-Identifier tag in line $checklicenseline\n" . $herecurr);
-+					 WARN("SPDX_LICENSE_TAG",
-+					      "Missing or malformed SPDX-License-Identifier tag in line $checklicenseline\n" . $herecurr);
-+				} elsif ($rawline =~ /(SPDX-License-Identifier: .*)/) {
-+					 my $spdx_license = $1;
-+					 if (!is_SPDX_License_valid($spdx_license)) {
-+						  WARN("SPDX_LICENSE_TAG",
-+						       "'$spdx_license' is not supported in LICENSES/...\n" . $herecurr);
-+					 }
- 				}
- 			}
- 		}
-
+-- 
+Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Intel Finland Oy
