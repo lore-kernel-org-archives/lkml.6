@@ -2,140 +2,105 @@ Return-Path: <SRS0=hTZH=KI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D66DC6778F
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 22:39:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F988C6778F
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 22:39:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 204BD20852
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 22:39:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 204BD20852
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 3231B20852
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 22:39:22 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GHB3wOd2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3231B20852
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388870AbeGXXri (ORCPT
+        id S2388907AbeGXXr6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 19:47:38 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:57950 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2388495AbeGXXrh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 19:47:37 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 57CD04077EE6;
-        Tue, 24 Jul 2018 22:38:58 +0000 (UTC)
-Received: from ovpn-112-75.rdu2.redhat.com (ovpn-112-75.rdu2.redhat.com [10.10.112.75])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 5FC8D111AF1B;
-        Tue, 24 Jul 2018 22:38:55 +0000 (UTC)
-Message-ID: <89963f4c8c4f89bc766ffc0b58fe8e24942c3793.camel@redhat.com>
-Subject: Re: [PATCH] audit: fix potential null dereference
- 'context->module.name'
-From:   Eric Paris <eparis@redhat.com>
-To:     Paul Moore <paul@paul-moore.com>, wang.yi59@zte.com.cn
-Cc:     linux-audit@redhat.com, linux-kernel@vger.kernel.org,
-        jiang.biao2@zte.com.cn, zhong.weidong@zte.com.cn
-Date:   Tue, 24 Jul 2018 18:38:54 -0400
-In-Reply-To: <CAHC9VhQy6Rakx6WZ236R+PjwtaZ2Sq9SuoGMC8iejOmhRbCM_w@mail.gmail.com>
-References: <1532411834-33775-1-git-send-email-wang.yi59@zte.com.cn>
-         <450ab68cc6b7cebbf1b6292e3140932ea1ac9e57.camel@redhat.com>
-         <CAHC9VhQy6Rakx6WZ236R+PjwtaZ2Sq9SuoGMC8iejOmhRbCM_w@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Tue, 24 Jul 2018 22:38:58 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Tue, 24 Jul 2018 22:38:58 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'eparis@redhat.com' RCPT:''
+        Tue, 24 Jul 2018 19:47:58 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:47023 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388495AbeGXXr6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Jul 2018 19:47:58 -0400
+Received: by mail-wr1-f68.google.com with SMTP id h14-v6so5545516wrw.13
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Jul 2018 15:39:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=f+MgZzw5Ux7MdErReYsPxHPNO4xcYfhBpeim1XLKRbE=;
+        b=GHB3wOd2KEbECsKPmtFRzXsS5jdS2Fz0s7r3D8kjtTdf2IvcRxVyRJJJz/3hJwSdTY
+         cfHCDlzWuP07WpkT8sdDSkkVETogQUDuN6LW9GxuFbqxpxgChahpE1NTYZkjF473jV6m
+         sTmt+x1ShXBR6BKbj65xohVJInm0VF83MCxlvCo1yn7ffs1XVzJPaUPQpNGLaAIDwUrZ
+         nQrHC8zQTkwbRnBwGlu0NOwGNbDZGdBsVKKvUVdpbTfbrBaEPkiRCjSkIL5ZW/yCT+PT
+         a2ZAByl4WY9QO30+bNmqZDJujSjUjgQrQPp+11w+n+jtlv6I5Ahm1nHSZeLCZaETMf6m
+         b7+g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=f+MgZzw5Ux7MdErReYsPxHPNO4xcYfhBpeim1XLKRbE=;
+        b=O00uh2/M4Z6sSSf5Ln8/RlmnzlJLh6QoFMNE4bnyZw5qlgyaL44x3CUSgxsDwIVKmG
+         T9Al5Xn2fkLOtKyQmqQgwAWAYoslD3+C3jyC+JctArYrasQsNqgc12Yt0+6Vp+b+oxeS
+         F1IW9z4aXG8luvViPJWPuAWSwGjNzuuXi3oE1nzNNYXpDTsP/pfrOEpKAkqirpVw5gQW
+         2QekbZg+ZQJLvUkBNMlfVqeWYbhTH+enApap1nC/hY8g1tAxNzyF2AUV2be920vNJmjR
+         b6C0hNZ0UKmUxCe/Gd+4xdatissi5jUfdQEreMJPKjs2ZZngqqjrGt+p9sde533cRP84
+         wtDQ==
+X-Gm-Message-State: AOUpUlFfvHXjLoCQBNBSBNLXboeacSwTi9NeZj2eOg8gvvwpQiVsTrob
+        C7ipjxSf1SjhVT9vOe9IL4o=
+X-Google-Smtp-Source: AAOMgpeiC+jtJWpnfjPIJlaJCrsPgv8X3rAQp4M9HBu1I19CtO0BLhn4tI2fzp+XfaA/GSBb61w36g==
+X-Received: by 2002:adf:ef8c:: with SMTP id d12-v6mr13657649wro.195.1532471958015;
+        Tue, 24 Jul 2018 15:39:18 -0700 (PDT)
+Received: from we.local (athedsl-4407117.home.otenet.gr. [79.130.175.61])
+        by smtp.gmail.com with ESMTPSA id q70-v6sm229575wmd.39.2018.07.24.15.39.17
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 24 Jul 2018 15:39:17 -0700 (PDT)
+Received: from localhost (localhost [127.0.0.1])
+        by we.local (Postfix) with ESMTP id 20C78640816;
+        Wed, 25 Jul 2018 01:39:16 +0300 (EEST)
+X-Virus-Scanned: amavisd-new at local
+Received: from we.local ([127.0.0.1])
+        by localhost (we.local [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id XnHuuNRzzEiy; Wed, 25 Jul 2018 01:39:15 +0300 (EEST)
+Received: by we.local (Postfix, from userid 1000)
+        id AA50364081F; Wed, 25 Jul 2018 01:39:15 +0300 (EEST)
+From:   Georgios Tsotsos <tsotsos@gmail.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Georgios Tsotsos <tsotsos@gmail.com>,
+        Aaro Koskinen <aaro.koskinen@iki.fi>,
+        James Hogan <jhogan@kernel.org>, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 0/4] Staging: octeon-usb: Fixes and Coding style applied. 
+Date:   Wed, 25 Jul 2018 01:38:49 +0300
+Message-Id: <20180724223853.10198-1-tsotsos@gmail.com>
+X-Mailer: git-send-email 2.16.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2018-07-24 at 15:55 -0400, Paul Moore wrote:
-> On Tue, Jul 24, 2018 at 7:39 AM Eric Paris <eparis@redhat.com> wrote:
-> > Would it make more sense to actually check for failure on
-> > allocation
-> > rather than try to remember to deal with it later? How about we
-> > just
-> > have audit_log_kern_module return an error and fail if we are OOM?
-> 
-> Generally I agree, checking on allocation is the right thing to do.
-> However, in this particular case the error recovery for a failed
-> allocation would likely ignore the record entirely, and I think a
-> module load record with a "(null)" module name is still better than
-> no
-> module load record at all ... and yes, I understand that if the
-> module
-> name allocation fails there is a good chance other allocations will
-> fail and we might not emit the record, but I'll take my chances that
-> the load is transient and the system is able to recover in a timely
-> manner.
+Hello, 
 
-On the load_module() code path passing the error up the stack would
-cause the module to not be loaded, instead of being loaded with loss of
-name information. I'd rather have the module not loaded and a
-name=(null) record than it BE loaded and get name=(null)
+Previously patches were sent with wrong cover format, please ignore.
 
-You've sold me on why Yi Wang's patch is good, but not on why we
-wouldn't propagate the error up the stack on load/delete. (even if we
-may choose to delete the module on OOM)
+I am sending four patches which trying to resolve TODO list requirements 
+no 45 about octeon-usb. 
+There are SPDX licence additions on c and header files. 
+Checkpatch warnings are resolved,also a notice about CVMX_WAIT_FOR_FIELD32 macro.
+It could improve readability and maintenance of this module if function
+cvmx_usb_poll_channel() break down (and probably some others too)
 
--Eric
+Georgios Tsotsos (4):
+  Staging: octeon-usb: Adds SPDX License Identifier
+  Staging: octeon-usb: Applying coding style for column width.
+  Staging: octeon-usb: Change coding style for CVMX_WAIT_FOR_FIELD32 marco.
+  Staging: octeon-usb: Adds SPDX License Identifier for header file
 
-> > (also this seems like a good place to use kstrdup, instead of
-> > kmalloc+strcpy)
-> 
-> Yes, I agree.  Yi Wang, could you submit a v2 of this patch using
-> kstrdup()?
-> 
-> > On Tue, 2018-07-24 at 13:57 +0800, Yi Wang wrote:
-> > > The variable 'context->module.name' may be null pointer when
-> > > kmalloc return null, so it's better to check it before using
-> > > to avoid null dereference.
-> > > 
-> > > Signed-off-by: Yi Wang <wang.yi59@zte.com.cn>
-> > > Reviewed-by: Jiang Biao <jiang.biao2@zte.com.cn>
-> > > ---
-> > >  kernel/auditsc.c | 11 ++++++++---
-> > >  1 file changed, 8 insertions(+), 3 deletions(-)
-> > > 
-> > > diff --git a/kernel/auditsc.c b/kernel/auditsc.c
-> > > index e80459f..4830b83 100644
-> > > --- a/kernel/auditsc.c
-> > > +++ b/kernel/auditsc.c
-> > > @@ -1272,8 +1272,12 @@ static void show_special(struct
-> > > audit_context
-> > > *context, int *call_panic)
-> > >               break;
-> > >       case AUDIT_KERN_MODULE:
-> > >               audit_log_format(ab, "name=");
-> > > -             audit_log_untrustedstring(ab, context-
-> > > >module.name);
-> > > -             kfree(context->module.name);
-> > > +             if (context->module.name) {
-> > > +                     audit_log_untrustedstring(ab, context-
-> > > > module.name);
-> > > 
-> > > +                     kfree(context->module.name);
-> > > +             } else
-> > > +                     audit_log_format(ab, "(null)");
-> > > +
-> > >               break;
-> > >       }
-> > >       audit_log_end(ab);
-> > > @@ -2409,7 +2413,8 @@ void __audit_log_kern_module(char *name)
-> > >       struct audit_context *context = current->audit_context;
-> > > 
-> > >       context->module.name = kmalloc(strlen(name) + 1,
-> > > GFP_KERNEL);
-> > > -     strcpy(context->module.name, name);
-> > > +     if (context->module.name)
-> > > +             strcpy(context->module.name, name);
-> > >       context->type = AUDIT_KERN_MODULE;
-> > >  }
-> > > 
-> 
-> 
-> 
+ drivers/staging/octeon-usb/octeon-hcd.c | 55 ++++++++++++++++++---------------
+ drivers/staging/octeon-usb/octeon-hcd.h |  1 +
+ 2 files changed, 31 insertions(+), 25 deletions(-)
+
+-- 
+2.16.4
