@@ -1,104 +1,150 @@
 Return-Path: <SRS0=hTZH=KI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Level: *
+X-Spam-Status: No, score=1.3 required=3.0 tests=DKIM_SIGNED,FSL_HELO_FAKE,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29794C6778A
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 11:11:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E276DC6778A
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 11:13:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D022A20882
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 11:11:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 964FB205F4
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 11:13:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="PxdW1GGG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D022A20882
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="L14K6aLZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 964FB205F4
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388460AbeGXMRr (ORCPT
+        id S2388416AbeGXMTO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 08:17:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56410 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388241AbeGXMRr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 08:17:47 -0400
-Received: from mail-wm0-f53.google.com (mail-wm0-f53.google.com [74.125.82.53])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AC21320882;
-        Tue, 24 Jul 2018 11:11:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1532430711;
-        bh=eMVrwzgIBHouClke94neqAhscAmgbKbg45ZCwVnq93M=;
-        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
-        b=PxdW1GGGWnkuh6K+yGjNCTQdQvRHG/6y74vpBFYb9JsYiaNwcbAEXwyNmEr53cftQ
-         3ugnk2x4iZosk2Y0mNxTvxnjXsssxcXBagRQpI1jk49iVWUn4hHZXAIAA+k/2d5uXd
-         0Cv/437rMVU511azwgZRDLWaN3R9etVOhqMGt3Vo=
-Received: by mail-wm0-f53.google.com with SMTP id s9-v6so2122073wmh.3;
-        Tue, 24 Jul 2018 04:11:50 -0700 (PDT)
-X-Gm-Message-State: AOUpUlGj+gVSb5fbQqXbmGH27ZmO4Z291vRvWGjrm67VE1m5nXUY7GSc
-        ULM5T4b49Q3HtFcrTST6FfnrgjQtQ+6ksDH7FUQ=
-X-Google-Smtp-Source: AAOMgpclJrfuo6eRe1eGfPiQiqgNIkiiDXxwjqhEaNxg2ccVBLth0WX2J6WFjbrsNCdIdJi0Q2zRwrnRrpeoc+3YX/A=
-X-Received: by 2002:a1c:c14:: with SMTP id 20-v6mr1784489wmm.117.1532430709171;
- Tue, 24 Jul 2018 04:11:49 -0700 (PDT)
+        Tue, 24 Jul 2018 08:19:14 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:33372 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388241AbeGXMTO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Jul 2018 08:19:14 -0400
+Received: by mail-wr1-f66.google.com with SMTP id g6-v6so3753875wrp.0
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Jul 2018 04:13:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=mqI1Hv96+jL7MQ+RddRuzNVcFPgmH0HdtwTqlDynhws=;
+        b=L14K6aLZyvqiwtQ4qWyV48oo3yN7CwP8ptKLhNDzYBVPp8QJZjIBXhPWI4CTsa/nVB
+         c0D7c41ZUNqDFAH+kdxtHjkIpPOxogAmEibT0BUoHnVGwn1bGg6VQ/8JwmhazPA7N5Yr
+         63QR/JDHsVFlJ1zFO92z5Z+I6WTEflAmuMEAdAb+FHtad813oE6BY3TnwtC++1zcfz4X
+         0SzzMk7a3ovQZZMXi2oLR+/+cPp2c7IV6yXfEMGSKHkezQxLgoIv9uTz6/KadcoUlxr5
+         ak5O6FPIj74cZUUac4ur8hIJhJhZMHvNuvU4GXq0vhi3wWXJgeEnEWWJQOZZPk/ul5Hw
+         ARCA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=mqI1Hv96+jL7MQ+RddRuzNVcFPgmH0HdtwTqlDynhws=;
+        b=c1dz3ylYNtrdpa/CupNgypMX5U7aUMXUOYxNmrSA8CCW5Bcndx7sp2Iwfbzxn4Jff4
+         iRhis7/XxTODAuMc4rmPMlEdHWpgSi8r+k0AOpzbW4wpVynZFdIxp0SfTNfhm/qUW+sm
+         I1BUDOECB39G6uncNOf6/uFU+8jq+bc6l8yjFgCXYiaZjYScZRrufmvXkvFzK11Y9Aoi
+         4SMjmfzGPfjflVSeAs5P1irbDvpck/CmmSXmGgaFEg28YUx7SnV5iqI1O6XjBhsaVt7+
+         422Z8J/DjfmGQAru1O0vI/v2xQdcRiSniSO4WwJwtlwogm+9IZMCdiFVRpg9qzwZwo3s
+         iLRg==
+X-Gm-Message-State: AOUpUlE2g7TD8+SIE5+grRuWDwj3+ee/2evZtum2BAM0hGJ8sZ/Udml4
+        JTNiRZAvGoWl6nRmAk9Mluw=
+X-Google-Smtp-Source: AAOMgpfOjwncL4CRdBk4EQmAbCNzs6K0Y9gp9dSrhKRRyYSTZFnFjaCw8KqyoLDi9ld5+nIcO/BBzg==
+X-Received: by 2002:a5d:528f:: with SMTP id c15-v6mr11243035wrv.102.1532430796693;
+        Tue, 24 Jul 2018 04:13:16 -0700 (PDT)
+Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
+        by smtp.gmail.com with ESMTPSA id v1-v6sm30789288wrs.34.2018.07.24.04.13.15
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 24 Jul 2018 04:13:15 -0700 (PDT)
+Date:   Tue, 24 Jul 2018 13:13:13 +0200
+From:   Ingo Molnar <mingo@kernel.org>
+To:     Mark Rutland <mark.rutland@arm.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>, mingo@redhat.com,
+        andy.shevchenko@gmail.com, arnd@arndb.de, aryabinin@virtuozzo.com,
+        boqun.feng@gmail.com, catalin.marinas@arm.com, dvyukov@google.com,
+        glider@google.com, hpa@zytor.com, linux-kernel@vger.kernel.org,
+        parri.andrea@gmail.com, peter@hurleysoftware.com,
+        tglx@linutronix.de, will.deacon@arm.com,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCHv4 01/12] atomic/tty: Fix up atomic abuse in ldsem
+Message-ID: <20180724111313.GA14212@gmail.com>
+References: <20180716113017.3909-1-mark.rutland@arm.com>
+ <20180716113017.3909-2-mark.rutland@arm.com>
+ <20180724071518.GA7300@gmail.com>
+ <20180724092036.GN2494@hirez.programming.kicks-ass.net>
+ <20180724092324.vnfowffsla4kja5c@lakrids.cambridge.arm.com>
 MIME-Version: 1.0
-Received: by 2002:adf:9141:0:0:0:0:0 with HTTP; Tue, 24 Jul 2018 04:11:48
- -0700 (PDT)
-In-Reply-To: <5ef968e1cb2a473cad97f6bfead369ca@AcuMS.aculab.com>
-References: <20180723162020.6221-1-krzk@kernel.org> <5ef968e1cb2a473cad97f6bfead369ca@AcuMS.aculab.com>
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-Date:   Tue, 24 Jul 2018 13:11:48 +0200
-X-Gmail-Original-Message-ID: <CAJKOXPdveQeg_M42v69m9vBEz2SaJE0_BZNRUqGLt4Ve+ZLYSg@mail.gmail.com>
-Message-ID: <CAJKOXPdveQeg_M42v69m9vBEz2SaJE0_BZNRUqGLt4Ve+ZLYSg@mail.gmail.com>
-Subject: Re: [PATCH] net: ethernet: fs-enet: Use generic CRC32 implementation
-To:     David Laight <David.Laight@aculab.com>
-Cc:     Pantelis Antoniou <pantelis.antoniou@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Eric Biggers <ebiggers3@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180724092324.vnfowffsla4kja5c@lakrids.cambridge.arm.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 24 July 2018 at 13:05, David Laight <David.Laight@aculab.com> wrote:
-> From: Krzysztof Kozlowski
->> Sent: 23 July 2018 17:20
->> Use generic kernel CRC32 implementation because it:
->> 1. Should be faster (uses lookup tables),
->
-> Are you sure?
-> The lookup tables are unlikely to be in the data cache and
-> the 6 cache misses kill performance.
-> (Not that it particularly matters when setting up multicast hash tables).
 
-Good point, so this statement should be rather "Could be faster"... I
-did not run any performance tests so this is not backed up by any
-data.
+* Mark Rutland <mark.rutland@arm.com> wrote:
 
-I think the main benefit is rather easier code maintenance by removing
-duplicated, custom code.
+> On Tue, Jul 24, 2018 at 11:20:36AM +0200, Peter Zijlstra wrote:
+> > On Tue, Jul 24, 2018 at 09:15:18AM +0200, Ingo Molnar wrote:
+> > > 
+> > > * Mark Rutland <mark.rutland@arm.com> wrote:
+> > > 
+> > > > From: Peter Zijlstra <peterz@infradead.org>
+> > > > 
+> > > > Mark found ldsem_cmpxchg() needed an (atomic_long_t *) cast to keep
+> > > > working after making the atomic_long interface type safe.
+> > > > 
+> > > > Needing casts is bad form, which made me look at the code. There are no
+> > > > ld_semaphore::count users outside of these functions so there is no
+> > > > reason why it can not be an atomic_long_t in the first place, obviating
+> > > > the need for this cast.
+> > > > 
+> > > > That also ensures the loads use atomic_long_read(), which implies (at
+> > > > least) READ_ONCE() in order to guarantee single-copy-atomic loads.
+> > > > 
+> > > > When using atomic_long_try_cmpxchg() the ldsem_cmpxchg() wrapper gets
+> > > > very thin (the only difference is not changing *old on success, which
+> > > > most callers don't seem to care about).
+> > > > 
+> > > > So rework the whole thing to use atomic_long_t and its accessors
+> > > > directly.
+> > > > 
+> > > > While there, fixup all the horrible comment styles.
+> > > > 
+> > > > Cc: Peter Hurley <peter@hurleysoftware.com>
+> > > > Acked-by: Will Deacon <will.deacon@arm.com>
+> > > > Reported-by: Mark Rutland <mark.rutland@arm.com>
+> > > > Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+> > > > Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+> > > > Signed-off-by: Mark Rutland <mark.rutland@arm.com>
+> > > > Cc: Ingo Molnar <mingo@kernel.org>
+> > > > ---
+> > > >  drivers/tty/tty_ldsem.c   | 82 ++++++++++++++++++++---------------------------
+> > > >  include/linux/tty_ldisc.h |  4 +--
+> > > >  2 files changed, 37 insertions(+), 49 deletions(-)
+> > > > 
+> > > > Note: Greg has queued this via the in the tty tree for v4.19, which can be seen at: 
+> > > > 
+> > > > https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/tty.git/commit/?h=tty-next&id=5fd691afdf929061c391d897fa627822c3b2fd5a
+> > > 
+> > > Can this patch be skipped, or do the others depend on it?
+> > 
+> > IIRC it depends on it, without this patch you get build issues due to
+> > atomic_long_cmpxchg() getting picky about it's arguments (type safety
+> > improved).
+> 
+> Yup. Without this patch, there will be a build regression at patch 9,
+> when we move to generated atomic_long_*() wrappers.
 
->> 2. Removes duplicated CRC generation code,
->> 3. Uses well-proven algorithm instead of coding it one more time.
-> ...
->>
->> Not tested on hardware.
->
-> Have you verified that the old and new functions give the
-> same result for a few mac addresses?
-> It is very easy to use the wrong bits in crc calculations
-> or generate the output in the wrong bit order.
+Ok, then these bits will have to wait until Greg's tree goes upstream
+in about two weeks.
 
-I copied the original code and new one onto a different driver and run
-this in a loop for thousands of data input (although not all possible
-MAC combinations). The output was the same. I agree however that real
-testing would be important.
+Which patches can I apply as a preparatory step?
 
-Best regards,
-Krzysztof
+Thanks,
+
+	Ingo
