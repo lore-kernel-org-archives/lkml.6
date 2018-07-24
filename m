@@ -2,145 +2,275 @@ Return-Path: <SRS0=hTZH=KI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 893B9C28CF6
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 21:30:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44145C6778F
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 21:30:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 33BCD20882
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 21:30:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 33BCD20882
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+	by mail.kernel.org (Postfix) with ESMTP id DEDAB20882
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 21:30:37 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="U0BlLMWH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DEDAB20882
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388668AbeGXWif (ORCPT
+        id S2388726AbeGXWi7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 18:38:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60370 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388543AbeGXWif (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 18:38:35 -0400
-Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AE7C320856;
-        Tue, 24 Jul 2018 21:30:10 +0000 (UTC)
-Date:   Tue, 24 Jul 2018 17:30:08 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Tom Zanussi <tom.zanussi@linux.intel.com>
-Cc:     Masami Hiramatsu <mhiramat@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>, Shuah Khan <shuah@kernel.org>,
-        Hiraku Toyooka <hiraku.toyooka@cybertrust.co.jp>,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH 1/3] [BUGFIX] tracing: Fix double free of
- event_trigger_data
-Message-ID: <20180724173008.454cdf10@gandalf.local.home>
-In-Reply-To: <20180724164959.3cbc1422@gandalf.local.home>
-References: <153149923649.11274.14970833360963898112.stgit@devbox>
-        <153149926702.11274.12489440326560729788.stgit@devbox>
-        <20180723221006.60cc7aa9@vmware.local.home>
-        <20180725000909.6c8b2f3881ee75c4f6bd466b@kernel.org>
-        <20180724164959.3cbc1422@gandalf.local.home>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Tue, 24 Jul 2018 18:38:59 -0400
+Received: from mail-io0-f194.google.com ([209.85.223.194]:39633 "EHLO
+        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388543AbeGXWi7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Jul 2018 18:38:59 -0400
+Received: by mail-io0-f194.google.com with SMTP id o22-v6so4664765ioh.6
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Jul 2018 14:30:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=KqfGyzjgpEMOyaFXh9jRmYF6HrJr8naPN4N0Uy3muUw=;
+        b=U0BlLMWHrhZoGKiFbmmF1McCpd02rxD1YU5TlNSdrGrJxxjNxNS57wyEtu0oaX86eM
+         8M2isaJIQ1xkwFheMo0iK5/g/sJ1UOxdtnQ2u6GAGP5OUyYEH+cwbszka2Vq8Wx9JbcD
+         B7q/11w9XpFsHymgVgBXpwBtmXy07zXtu3SYg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=KqfGyzjgpEMOyaFXh9jRmYF6HrJr8naPN4N0Uy3muUw=;
+        b=UPrcUjaAozheeshuE3bkDSLjcJ1sdb+DowniYPgSfj+THHoxsAk0X1sGkdtq/uKWpX
+         SdVmaKFzesMSpSZcmHUGp/13mpg0Y5uJVHZldo7oBJhjYtA+bHVGX6XrrMiRv0pst90+
+         qup71wuzGLJuLWNC7nKlIsE70pVlfJvHI6vCLwwiBQPLAwgvi7UKA4vVAIaiyrqG1OaU
+         BlrPpWt/Rn6n5hvVbbaa/tKKeBSyxy/uu5B62OE/ToeHARR/WAMbnRVo6NUfTqpkFgRZ
+         j1ThIuljWR9xbTdNH316ptss1eLT35ZGp5fjixkFbLKxdxcqC19ozVc3zzgqnADjPVwC
+         Wk6g==
+X-Gm-Message-State: AOUpUlG6c75lhavaqoYOcbMQxJ1jEmiei2o6mOAFVTqXwP1nK/mSV9uS
+        9YerqtIUAh+u2QZ2w0f1Jx5jvw==
+X-Google-Smtp-Source: AAOMgpcqEHpR6UVAZ4Z/pbMBjD0Ow/+m1PPI4Ix0Bl/qm4Bl9pnW88RUsfM3+8ddYM0ZCk3Vfk/V+A==
+X-Received: by 2002:a6b:828d:: with SMTP id m13-v6mr16009646ioi.161.1532467834945;
+        Tue, 24 Jul 2018 14:30:34 -0700 (PDT)
+Received: from xps15 (S0106002369de4dac.cg.shawcable.net. [68.147.8.254])
+        by smtp.gmail.com with ESMTPSA id t187-v6sm2292624ita.28.2018.07.24.14.30.32
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 24 Jul 2018 14:30:34 -0700 (PDT)
+Date:   Tue, 24 Jul 2018 15:30:31 -0600
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+To:     Suzuki K Poulose <suzuki.poulose@arm.com>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        robh@kernel.org, sudeep.holla@arm.com, frowand.list@gmail.com,
+        devicetree@vger.kernel.org, mark.rutland@arm.com,
+        matt.sealey@arm.com, charles.garcia-tobin@arm.com,
+        coresight@lists.linaro.org, john.horley@arm.com,
+        mike.leach@linaro.org
+Subject: Re: [PATCH v2 02/10] coresight: platform: Refactor graph endpoint
+ parsing
+Message-ID: <20180724213031.GA22451@xps15>
+References: <1531997715-6767-1-git-send-email-suzuki.poulose@arm.com>
+ <1531997715-6767-3-git-send-email-suzuki.poulose@arm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1531997715-6767-3-git-send-email-suzuki.poulose@arm.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 24 Jul 2018 16:49:59 -0400
-Steven Rostedt <rostedt@goodmis.org> wrote:
+Good afternoon,
 
-> > Hmm it seems we should review the register_trigger() implementation.
-> > It should return the return value of trace_event_trigger_enable_disable(),
-> > shouldn't it?
-> >  
+On Thu, Jul 19, 2018 at 11:55:06AM +0100, Suzuki K Poulose wrote:
+> Refactor the of graph endpoint parsing code, to make the error
+> handling easier.
 > 
-> Yeah, that's not done well. I'll fix it up.
+> Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
+> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+> ---
+> Changes since v1:
+>  - Splitted from the of_node refcounting fix, part1
+> ---
+>  drivers/hwtracing/coresight/of_coresight.c | 129 +++++++++++++++++------------
+>  1 file changed, 75 insertions(+), 54 deletions(-)
 > 
-> Thanks for pointing it out.
+> diff --git a/drivers/hwtracing/coresight/of_coresight.c b/drivers/hwtracing/coresight/of_coresight.c
+> index 6880bee..68faaf8 100644
+> --- a/drivers/hwtracing/coresight/of_coresight.c
+> +++ b/drivers/hwtracing/coresight/of_coresight.c
+> @@ -114,17 +114,69 @@ int of_coresight_get_cpu(const struct device_node *node)
+>  }
+>  EXPORT_SYMBOL_GPL(of_coresight_get_cpu);
+>  
+> +/*
+> + * of_coresight_parse_endpoint : Parse the given output endpoint @ep
+> + * and fill the connection information in @pdata[*@i].
+> + *
+> + * Parses the local port, remote device name and the remote port. Also
+> + * updates *@i to point to the next index, when an entry is added.
+> + *
+> + * Returns :
+> + *	 0	- If the parsing completed without any fatal errors.
+> + *	-Errno	- Fatal error, abort the scanning.
+> + */
+> +static int of_coresight_parse_endpoint(struct device *dev,
+> +				       struct device_node *ep,
+> +				       struct coresight_platform_data *pdata,
+> +				       int *i)
+> +{
+> +	int ret = 0;
+> +	struct of_endpoint endpoint, rendpoint;
+> +	struct device_node *rparent = NULL;
+> +	struct device_node *rport = NULL;
+> +	struct device *rdev = NULL;
+> +
+> +	do {
+> +		/* Parse the local port details */
+> +		if (of_graph_parse_endpoint(ep, &endpoint))
+> +			break;
+> +		/*
+> +		 * Get a handle on the remote port and parent
+> +		 * attached to it.
+> +		 */
+> +		rparent = of_graph_get_remote_port_parent(ep);
+> +		if (!rparent)
+> +			break;
+> +		rport = of_graph_get_remote_port(ep);
+> +		if (!rport)
+> +			break;
+> +		if (of_graph_parse_endpoint(rport, &rendpoint))
+> +			break;
+> +
+> +		/* If the remote device is not available, defer probing */
+> +		rdev = of_coresight_get_endpoint_device(rparent);
+> +		if (!rdev) {
+> +			ret = -EPROBE_DEFER;
+> +			break;
+> +		}
+> +
+> +		pdata->outports[*i] = endpoint.port;
+> +		pdata->child_names[*i] = dev_name(rdev);
+> +		pdata->child_ports[*i] = rendpoint.id;
+> +		/* Move the index */
+> +		(*i)++;
 
-Tom,
+Not a big fan, makes the code needlessly complex.  Incrementation of the index
+can be done in the while loop of of_get_coresight_platform_data().  See below.
 
-register_trigger() is messed up. I should have caught this when it was
-first submitted, but I'm totally confused. The comments don't match the
-code.
+> +	} while (0);
+> +
+> +	return ret;
+> +}
+> +
+>  struct coresight_platform_data *
+>  of_get_coresight_platform_data(struct device *dev,
+>  			       const struct device_node *node)
+>  {
+>  	int i = 0, ret = 0;
+>  	struct coresight_platform_data *pdata;
+> -	struct of_endpoint endpoint, rendpoint;
+> -	struct device *rdev;
+>  	struct device_node *ep = NULL;
+> -	struct device_node *rparent = NULL;
+> -	struct device_node *rport = NULL;
+>  
+>  	pdata = devm_kzalloc(dev, sizeof(*pdata), GFP_KERNEL);
+>  	if (!pdata)
+> @@ -132,64 +184,33 @@ of_get_coresight_platform_data(struct device *dev,
+>  
+>  	/* Use device name as sysfs handle */
+>  	pdata->name = dev_name(dev);
+> +	pdata->cpu = of_coresight_get_cpu(node);
+>  
+>  	/* Get the number of input and output port for this component */
+>  	of_coresight_get_ports(node, &pdata->nr_inport, &pdata->nr_outport);
+>  
+> -	if (pdata->nr_outport) {
+> -		ret = of_coresight_alloc_memory(dev, pdata);
+> +	/* If there are no output connections, we are done */
+> +	if (!pdata->nr_outport)
+> +		return pdata;
+> +
+> +	ret = of_coresight_alloc_memory(dev, pdata);
+> +	if (ret)
+> +		return ERR_PTR(ret);
+> +
+> +	/* Iterate through each port to discover topology */
+> +	while ((ep = of_graph_get_next_endpoint(node, ep))) {
+> +		/*
+> +		 * No need to deal with input ports, processing for as
+> +		 * processing for output ports will deal with them.
+> +		 */
 
-First we have this:
+This comment has been broken for a while... It should read:
 
-	ret = cmd_ops->reg(glob, trigger_ops, trigger_data, file);
-	/*
-	 * The above returns on success the # of functions enabled,
-	 * but if it didn't find any functions it returns zero.
-	 * Consider no functions a failure too.
-	 */
+		/*
+		 * No need to deal with input ports, as processing
+		 * for output ports will deal with them.
+		 */
 
-Which looks to be total BS.
+> +		if (of_find_property(ep, "slave-mode", NULL))
+> +			continue;
+> +
+> +		ret = of_coresight_parse_endpoint(dev, ep, pdata, &i);
+>  		if (ret)
+>  			return ERR_PTR(ret);
 
-As we have this:
+                i++;
 
-/**
- * register_trigger - Generic event_command @reg implementation
- * @glob: The raw string used to register the trigger
- * @ops: The trigger ops associated with the trigger
- * @data: Trigger-specific data to associate with the trigger
- * @file: The trace_event_file associated with the event
- *
- * Common implementation for event trigger registration.
- *
- * Usually used directly as the @reg method in event command
- * implementations.
- *
- * Return: 0 on success, errno otherwise
- */
-static int register_trigger(char *glob, struct event_trigger_ops *ops,
-			    struct event_trigger_data *data,
-			    struct trace_event_file *file)
-{
-	struct event_trigger_data *test;
-	int ret = 0;
-
-	list_for_each_entry_rcu(test, &file->triggers, list) {
-		if (test->cmd_ops->trigger_type == data->cmd_ops->trigger_type) {
-			ret = -EEXIST;
-			goto out;
-		}
-	}
-
-	if (data->ops->init) {
-		ret = data->ops->init(data->ops, data);
-		if (ret < 0)
-			goto out;
-	}
-
-	list_add_rcu(&data->list, &file->triggers);
-	ret++;
-
-	update_cond_flag(file);
-	if (trace_event_trigger_enable_disable(file, 1) < 0) {
-		list_del_rcu(&data->list);
-		update_cond_flag(file);
-		ret--;
-	}
-out:
-	return ret;
-}
-
-Where the comment is total wrong. It doesn't return 0 on success, it
-returns 1. And if trace_event_trigger_enable_disable() fails it returns
-zero.
-
-And that can fail with the call->class->reg() return value, which could
-fail for various strange reasons. I don't know why we would want to
-return 0 when it fails?
-
-I don't see where ->reg() would return anything but 1 on success. Maybe
-I'm missing something. I'll look some more, but I'm thinking of changing
-->reg() to return zero on all success, and negative on all errors and
-just check those results.
-
--- Steve
+> -
+> -		/* Iterate through each port to discover topology */
+> -		do {
+> -			/* Get a handle on a port */
+> -			ep = of_graph_get_next_endpoint(node, ep);
+> -			if (!ep)
+> -				break;
+> -
+> -			/*
+> -			 * No need to deal with input ports, processing for as
+> -			 * processing for output ports will deal with them.
+> -			 */
+> -			if (of_find_property(ep, "slave-mode", NULL))
+> -				continue;
+> -
+> -			/* Get a handle on the local endpoint */
+> -			ret = of_graph_parse_endpoint(ep, &endpoint);
+> -
+> -			if (ret)
+> -				continue;
+> -
+> -			/* The local out port number */
+> -			pdata->outports[i] = endpoint.port;
+> -
+> -			/*
+> -			 * Get a handle on the remote port and parent
+> -			 * attached to it.
+> -			 */
+> -			rparent = of_graph_get_remote_port_parent(ep);
+> -			rport = of_graph_get_remote_port(ep);
+> -
+> -			if (!rparent || !rport)
+> -				continue;
+> -
+> -			if (of_graph_parse_endpoint(rport, &rendpoint))
+> -				continue;
+> -
+> -			rdev = of_coresight_get_endpoint_device(rparent);
+> -			if (!rdev)
+> -				return ERR_PTR(-EPROBE_DEFER);
+> -
+> -			pdata->child_names[i] = dev_name(rdev);
+> -			pdata->child_ports[i] = rendpoint.id;
+> -
+> -			i++;
+> -		} while (ep);
+>  	}
+>  
+> -	pdata->cpu = of_coresight_get_cpu(node);
+> -
+>  	return pdata;
+>  }
+>  EXPORT_SYMBOL_GPL(of_get_coresight_platform_data);
+> -- 
+> 2.7.4
+> 
