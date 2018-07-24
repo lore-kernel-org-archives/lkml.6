@@ -2,80 +2,117 @@ Return-Path: <SRS0=hTZH=KI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0F19C6778A
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 15:02:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7158AC6778A
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 15:03:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9744D20856
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 15:02:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9744D20856
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sony.com
+	by mail.kernel.org (Postfix) with ESMTP id 2D15D20874
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 15:03:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D15D20874
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=denx.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388711AbeGXQJu (ORCPT
+        id S2388761AbeGXQJ4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 12:09:50 -0400
-Received: from seldsegrel01.sonyericsson.com ([37.139.156.29]:13024 "EHLO
-        SELDSEGREL01.sonyericsson.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726857AbeGXQJu (ORCPT
+        Tue, 24 Jul 2018 12:09:56 -0400
+Received: from mail-out.m-online.net ([212.18.0.9]:48407 "EHLO
+        mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388717AbeGXQJ4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 12:09:50 -0400
-Subject: Re: [PATCH RESEND] kthread, tracing: Don't expose half-written comm
- when creating kthreads
-To:     Steven Rostedt <rostedt@goodmis.org>
-CC:     <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@kernel.org>,
-        Jens Axboe <axboe@kernel.dk>, Tejun Heo <tj@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Enderborg <peter.enderborg@sony.com>,
-        Yoshitaka Seto <yoshitaka.seto@sony.com>,
-        Oleksiy Avramchenko <oleksiy.avramchenko@sony.com>,
-        KOSAKI Motohiro <kosaki.motohiro@jp.fujitsu.com>,
-        John Stultz <john.stultz@linaro.org>
-References: <20180723134210.54013-1-snild@sony.com>
- <20180723095550.08203a24@gandalf.local.home>
- <9d762b4e-20a7-578f-90c8-10a044921d67@sony.com>
- <20180723113741.66df3b50@gandalf.local.home>
- <7749ed7d-50d5-4b95-fbd2-b056a1fff957@sony.com>
- <20180723124154.14ef0679@gandalf.local.home>
- <72573a9f-694e-fc4b-cfd1-d9cde504a480@sony.com>
- <20180724104815.05d2ac68@gandalf.local.home>
-From:   Snild Dolkow <snild@sony.com>
-Message-ID: <cbdab69a-28a4-08fd-a6c9-6db30958b12b@sony.com>
-Date:   Tue, 24 Jul 2018 17:02:54 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <20180724104815.05d2ac68@gandalf.local.home>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Tue, 24 Jul 2018 12:09:56 -0400
+Received: from frontend01.mail.m-online.net (unknown [192.168.8.182])
+        by mail-out.m-online.net (Postfix) with ESMTP id 41ZhS15sX8z1qymC;
+        Tue, 24 Jul 2018 17:02:56 +0200 (CEST)
+Received: from localhost (dynscan1.mnet-online.de [192.168.6.70])
+        by mail.m-online.net (Postfix) with ESMTP id 41ZhS0465Fz1tLPC;
+        Tue, 24 Jul 2018 17:02:56 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at mnet-online.de
+Received: from mail.mnet-online.de ([192.168.8.182])
+        by localhost (dynscan1.mail.m-online.net [192.168.6.70]) (amavisd-new, port 10024)
+        with ESMTP id Ws36ZnJC-HSs; Tue, 24 Jul 2018 17:02:55 +0200 (CEST)
+X-Auth-Info: jSaA3PMZFbWs7WCRIQzxVX4UNzp6Nnl4dXpjPcZ+iWs=
+Received: from xpert.denx.de (unknown [62.91.23.180])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.mnet-online.de (Postfix) with ESMTPSA;
+        Tue, 24 Jul 2018 17:02:54 +0200 (CEST)
+From:   Parthiban Nallathambi <pn@denx.de>
+To:     tglx@linutronix.de, jason@lakedaemon.net, marc.zyngier@arm.com,
+        robh+dt@kernel.org, mark.rutland@arm.com, afaerber@suse.de,
+        catalin.marinas@arm.com, will.deacon@arm.com,
+        manivannan.sadhasivam@linaro.org
+Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, sravanhome@gmail.com,
+        thomas.liau@actions-semi.com, mp-cs@actions-semi.com,
+        linux@cubietech.com, edgar.righi@lsitec.org.br,
+        laisa.costa@lsitec.org.br, guilherme.simoes@lsitec.org.br,
+        mkzuffo@lsi.usp.br, Parthiban Nallathambi <pn@denx.de>
+Subject: [PATCH 1/3] dt-bindings: interrupt-controller: Actions external interrupt controller
+Date:   Tue, 24 Jul 2018 17:02:17 +0200
+Message-Id: <20180724150219.1807724-2-pn@denx.de>
+X-Mailer: git-send-email 2.14.4
+In-Reply-To: <20180724150219.1807724-1-pn@denx.de>
+References: <20180724150219.1807724-1-pn@denx.de>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/24/2018 04:48 PM, Steven Rostedt wrote:
-> On Tue, 24 Jul 2018 10:17:37 +0200
-> Snild Dolkow <snild@sony.com> wrote:
-> 
->> 	creator                         other
->> 	vsnprintf:
->> 	  fill (not terminated)
->> 	  count the rest                read/use comm
-> 
-> I think it would be better to state what was reading the comm. Like
-> 
-> 					trace_sched_waking(p)
-> 					  memcpy(comm, p->comm, TASK_COMM_LEN)
-> 
-> But the rest looks fine.
-> 
-> -- Steve
+Actions Semi OWL family SoC's provides support for external interrupt
+controller to be connected and controlled using SIRQ pins. S500, S700
+and S900 provides 3 SIRQ lines and works independently for 3 external
+interrupt controllers.
 
-Works for me. Reworded v2 coming up soon.
+Signed-off-by: Parthiban Nallathambi <pn@denx.de>
+Signed-off-by: Saravanan Sekar <sravanhome@gmail.com>
+---
+ .../interrupt-controller/actions,owl-sirq.txt      | 34 ++++++++++++++++++++++
+ 1 file changed, 34 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/interrupt-controller/actions,owl-sirq.txt
 
-//Snild
+diff --git a/Documentation/devicetree/bindings/interrupt-controller/actions,owl-sirq.txt b/Documentation/devicetree/bindings/interrupt-controller/actions,owl-sirq.txt
+new file mode 100644
+index 000000000000..c5f8a29573c8
+--- /dev/null
++++ b/Documentation/devicetree/bindings/interrupt-controller/actions,owl-sirq.txt
+@@ -0,0 +1,34 @@
++Actions Semi Owl SoCs SIRQ interrupt controller
++
++S500, S700 and S900 SoC's from Actions provides interface, in which external
++interrupt controller can be connected. It has the following properties:
++
++- inputs three interrupt signal from external interrupt controller
++
++Required properties:
++
++- compatible: should be one of the following
++	"actions,s700-sirq"
++	"actions,s900-sirq"
++- reg: physical base address of the controller and length of memory mapped.
++- interrupt-controller: identifies the node as an interrupt controller
++- #interrupt-cells: specifies the number of cells needed to encode an interrupt
++  source, should be 2.
++- interrupts: specifies the interrupt line in the interrupt controller and
++  interrupt type (level or edge triggered)
++- sampling-rate-24m: this means the external controller's interrupts can be
++  sampled at 24MHz. Sampling can be specified for each SIRQ lines, as an array
++  element. By default, all lines are sampled at 32KHz.
++
++Example:
++
++sirq: interrupt-controller@e01b0000 {
++	compatible = "actions,s700-sirq";
++	reg = <0 0xe01b0000 0 0x1000>;
++	interrupts = <GIC_SPI 13 IRQ_TYPE_LEVEL_HIGH>,
++		<GIC_SPI 14 IRQ_TYPE_LEVEL_HIGH>,
++		<GIC_SPI 15 IRQ_TYPE_LEVEL_HIGH>;
++	interrupt-controller;
++	#interrupt-cells = <2>;
++	sampling-rate-24m = <0 0 1>;
++};
+-- 
+2.14.4
+
