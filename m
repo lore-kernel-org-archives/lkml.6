@@ -6,84 +6,85 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E46CC6778A
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 09:37:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C676DC6778A
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 09:39:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 22B2120856
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 09:37:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 22B2120856
+	by mail.kernel.org (Postfix) with ESMTP id 76E8120856
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 09:39:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 76E8120856
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388443AbeGXKnQ (ORCPT
+        id S2388332AbeGXKpR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 06:43:16 -0400
-Received: from mout.kundenserver.de ([212.227.126.133]:58552 "EHLO
+        Tue, 24 Jul 2018 06:45:17 -0400
+Received: from mout.kundenserver.de ([212.227.17.10]:40801 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388149AbeGXKnQ (ORCPT
+        with ESMTP id S2388223AbeGXKpR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 06:43:16 -0400
+        Tue, 24 Jul 2018 06:45:17 -0400
 Received: from wuerfel.lan ([109.193.40.16]) by mrelayeu.kundenserver.de
- (mreue007 [212.227.15.129]) with ESMTPA (Nemesis) id
- 0Mfwsi-1fKiZT0zUS-00NB7y; Tue, 24 Jul 2018 11:37:07 +0200
+ (mreue104 [212.227.15.145]) with ESMTPA (Nemesis) id
+ 0Ma2zH-1fR4870eqN-00Loxu; Tue, 24 Jul 2018 11:39:28 +0200
 From:   Arnd Bergmann <arnd@arndb.de>
-To:     Mark Brown <broonie@kernel.org>
-Cc:     Arnd Bergmann <arnd@arndb.de>, Liam Girdwood <lgirdwood@gmail.com>,
-        Carlo Caione <carlo@caione.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        alsa-devel@alsa-project.org, linux-arm-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] ASoC: meson: axg-spdifout: select SND_PCM_IEC958
-Date:   Tue, 24 Jul 2018 11:36:45 +0200
-Message-Id: <20180724093705.1691747-1-arnd@arndb.de>
+To:     Bjorn Helgaas <bhelgaas@google.com>
+Cc:     Alex Williamson <alex.williamson@redhat.com>,
+        James Puthukattukaran <james.puthukattukaran@oracle.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] PCI: fix unused variable warning
+Date:   Tue, 24 Jul 2018 11:39:03 +0200
+Message-Id: <20180724093924.1752416-1-arnd@arndb.de>
 X-Mailer: git-send-email 2.18.0
-X-Provags-ID: V03:K1:ajL6zwNSpxYI+LB6xDn8DiUN4uJ/sCiKoo+3YpjkWjfL2chb7ab
- +xmf2ku71NFbOGSspMEStQhmc0RG53buKnypRSWiLDj5vGXJPdlqs6qX//5xg/tmhe1ggU2
- ro+jXhDr91e9J2YNKKKoK1z7pRVsIIEO8TUM2T1GRQ9s5I1bBvIs03bSQAvUOaD/sjhPFAD
- KaM+9Y3/QdIEBhGzkY28g==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:jEFgp+6BVCI=:HAR2hNr3FfoM5aHRSgTIWs
- FzoO85lTGa/PwRbaxjpIb6+D8iqMwhysR8/iXLtvRG15o07FZZEZNykyOB8sa1Mk9KzO9cxVW
- 9DoY93mohHbmmVY4ysryH7qdRkN8U8xHwFpyrk8XHKmKWjDPLQXtviNt4hmEujEtVTi/MeE49
- U8ePWXsr39Vt8nESWM2ezaG81yZvMb4ecN89j4jTQzG60Vf7d9+QSHqZ2yfvEE0+zq237wzaO
- J+BHqQTU1CLVeA37ea09UuuenVm7r1joM0mULCSZASuoY5V4fxK8ByxB0gj740Ca6yneZ/9kg
- mqyopj1C/dEXJ1v4aOAeEsuTW1vckBhEkzMiZ8/7uYcoIaPyZaNp02q1sZ9ZTA9usQQ3iVbGc
- Wx1xgwsQGpA+ENiHae8Hq07ucCCC0EoOWjlGp9/lNRU3KwBXbZXeyfz28HGholYCf9T8jnFNd
- i3pVjxEqwwM1G/6BQruVUd3GbOI9niNreYS816rVjikynZgbpHWyjDcXi4P0va9Ka6SVsZN/Z
- O0UbztuTV56nIyj5SVukwTqxM1N996fgp0B9KQen1oUEQYuv6WSGj+tjF5Eoc6qXp+DfHTia6
- R45QsEXrsMqjbOWBzM17U9I52I10gjMrfvP9yH/Wg6rQdZfAjlvzx0/qn8tb9/v1dPs3+Fjab
- RJlHx/gcy1q6EX1J6nZbbNyYDaBpZmioptwdicOB4d76PHEESLo5QbirT0vg9/mzvy+c=
+X-Provags-ID: V03:K1:USQGrNY0FLcQHMFs8WFsx4d0jCn3RIOVCCoNW2NBfRr9ho1zjB9
+ 1/KYFRhQcfp6uTkSFpNU1z70YoM4fXUU7Fn8I6p04JXpW2VMQSsJEBbmhhvXXcDZTGSTr/M
+ uyaPvMwXQNkGwwuMmHAGJvcAGcGhjMSo5+2g5XB1ueF5yM1aKoOVlqQzG8SjYLs5yDsuvpa
+ laHQ9iqVtQyZ7vs6dpEGw==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:lLNtJO+WDYE=:jtlbfSvdDp4B4mLUnfpQ18
+ f3i5pg+kE1Z/anqcrBE52LtuRt3Cxy3sgIdTfRdmZpSKIH1YY+R954+jDfGs/mtZ1erKNIXB+
+ XMPz2ThicN+6V4fvoNoYbx2/2NT/ilHf+q10tP4HLL3C4Go438Olucmba6OXhvdmPry56Vzz7
+ LA54pWHcs42VfHElW4oeMajuhigtcqebCoeAzg9uGfVYLW7RXpE1aBoIjAhLlSdOPt5nRxYJs
+ 2z7iZsOnie8ZdaXdN/hxNYQH5gXgmsdQecIZT4GJbU03s3gMnuPAuwhgeCPrGqeXX9nEXrs7q
+ EHS0TLUtbCKCPo+qqFK+oyILrNkqyU5AIFoVcKEcvrFpjqRxQ+Q3z9H/4dQjJUW66MS+Qj8zj
+ aDnhKcmd5Vfz9EmSHidI7+39v4osvkkCh9oPEOjl8d1zi00+g4sFScAIVhy3uoI4oskdSStmM
+ 2Xp6yZIAFrVEWKQsFUqSXxCzkp8ejmNNkwW+5rfhLSDiEoMo6UjI5nQzJ1EPvQKYb1HLm34Ao
+ Fo45d1F/5SI16BH0ZBmkuZK1gqIpiGnxvt9L8vUnEpjFoiCIgsOR/0sU49ExJtnDeX1PdeFjI
+ 0qEHVQCBjnC383wfd8Gyd30jnLrfFhYmL3v25BaifrMUkh8QCFuMGvgBXQhfsItQbejdS2k7Q
+ YoSkvHsi144/n3oyrMb/4gHJRDgKIqzFpshdiGWQ6Q5URjFt+exSBhAe67T21B/oF1cQ=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When CONFIG_SND_PCM_IEC958 is disabled, we get a link error for the
-new driver:
+The newly introduced function produces a warning without CONFIG_PCI_QUIRKS:
 
-sound/soc/meson/axg-spdifout.o: In function `axg_spdifout_hw_params':
-axg-spdifout.c:(.text+0x650): undefined reference to `snd_pcm_create_iec958_consumer_hw_params'
+drivers/pci/probe.c: In function 'pci_bus_read_dev_vendor_id':
+drivers/pci/probe.c:2221:18: error: unused variable 'bridge' [-Werror=unused-variable]
 
-The other users use 'select', so we should do the same here.
+Move the variable declaration into that #ifdef to avoid the warning.
 
-Fixes: 53eb4b7aaa04 ("ASoC: meson: add axg spdif output")
+Fixes: ac5ea104a279 ("PCI: Workaround IDT switch ACS Source Validation erratum")
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- sound/soc/meson/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/pci/probe.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/sound/soc/meson/Kconfig b/sound/soc/meson/Kconfig
-index 4cf93c05a982..8af8bc358a90 100644
---- a/sound/soc/meson/Kconfig
-+++ b/sound/soc/meson/Kconfig
-@@ -56,6 +56,7 @@ config SND_MESON_AXG_SOUND_CARD
+diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
+index 1c581346c5b9..7a5323798312 100644
+--- a/drivers/pci/probe.c
++++ b/drivers/pci/probe.c
+@@ -2218,9 +2218,9 @@ bool pci_bus_generic_read_dev_vendor_id(struct pci_bus *bus, int devfn, u32 *l,
+ bool pci_bus_read_dev_vendor_id(struct pci_bus *bus, int devfn, u32 *l,
+ 				int timeout)
+ {
++#ifdef CONFIG_PCI_QUIRKS
+ 	struct pci_dev *bridge = bus->self;
  
- config SND_MESON_AXG_SPDIFOUT
- 	tristate "Amlogic AXG SPDIF Output Support"
-+	select SND_PCM_IEC958
- 	imply SND_SOC_SPDIF
- 	help
- 	  Select Y or M to add support for SPDIF output serializer embedded
+-#ifdef CONFIG_PCI_QUIRKS
+ 	/*
+ 	 * Certain IDT switches have an issue where they improperly trigger
+ 	 * ACS Source Validation errors on completions for config reads.
 -- 
 2.18.0
 
