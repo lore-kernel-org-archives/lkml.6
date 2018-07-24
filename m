@@ -2,185 +2,116 @@ Return-Path: <SRS0=hTZH=KI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.1 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,UPPERCASE_50_75,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63852C28CF6
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 21:49:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E865C28CF6
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 21:51:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1DB7820685
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 21:49:22 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="RRcyw5g/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1DB7820685
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 52EB420685
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 21:51:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 52EB420685
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388797AbeGXW5s (ORCPT
+        id S2388719AbeGXW7p convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 18:57:48 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:50834 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388494AbeGXW5s (ORCPT
+        Tue, 24 Jul 2018 18:59:45 -0400
+Received: from mail-io0-f193.google.com ([209.85.223.193]:36057 "EHLO
+        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388488AbeGXW7p (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 18:57:48 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Subject:Cc:To:
-        From:Date:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=NoI5KxVju+ROeYKV43K4sPdM6J5FvDbtDxwE/nUUmk8=; b=RRcyw5g/FWZqQetdRVlVgcnYl
-        nni/8oTFEeY2mMDf1Oz9Nl+r7fN4vWfAzkgVGRHkiI5vrFvcmjmGpreVYx+Roz6VAgzcK/ZJ0+yXN
-        a+diS++6JKXAPXVyXJGpPybPBXAzX9aCYPwZ5kdfni85AGwfgIbU2JBmtIeb11CAhlSQ4U7f1jXwj
-        ILk/71AEDCP8lhhdNxuTrfS93YizEtVrAJvEPlq7fMje7ZV7PhWpFuVTSaVuDji7lvfiDAKCqSy2W
-        7JY6h1AaDCIJbMp9jcwyYLaEX2QbGzWBHg7SVXzwzdq0fu1qbY9bjfZGE9bhTgEAfRI5quKEySoOq
-        7IPrE5AUQ==;
-Received: from 177.41.135.13.dynamic.adsl.gvt.net.br ([177.41.135.13] helo=coco.lan)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fi5BC-0000WL-7C; Tue, 24 Jul 2018 21:49:14 +0000
-Date:   Tue, 24 Jul 2018 18:49:08 -0300
-From:   Mauro Carvalho Chehab <mchehab+kde@kernel.org>
-To:     Jacopo Mondi <jacopo+renesas@jmondi.org>
-Cc:     hverkuil@xs4all.nl, mchehab@kernel.org, ysato@users.sourceforge.jp,
-        dalias@libc.org, linux-renesas-soc@vger.kernel.org,
-        linux-media@vger.kernel.org, linux-sh@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/9] sh: defconfig: migor: Update defconfig
-Message-ID: <20180724184908.28b4f27b@coco.lan>
-In-Reply-To: <1530699346-3235-2-git-send-email-jacopo+renesas@jmondi.org>
-References: <1530699346-3235-1-git-send-email-jacopo+renesas@jmondi.org>
-        <1530699346-3235-2-git-send-email-jacopo+renesas@jmondi.org>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+        Tue, 24 Jul 2018 18:59:45 -0400
+Received: by mail-io0-f193.google.com with SMTP id r15-v6so4699355ioa.3
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Jul 2018 14:51:16 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=1yqp9sw96nf6iRMIc7/i74VIBHuCIaWujDI31lJSzK0=;
+        b=ACHCQS+nKJmzOzLJe38j5s7sjhuuvxl/19bTJ4rq7ytj+spGQcXAVe2QtoA2qyt/kv
+         wEQBLv1rK+hNGIYjLKWdPL2vMT/ThNH3LjqN9UJOc2vNWpqPCIRtQ81RrtjG4KxgkZxM
+         4e5Y+V+EghFr9gZCQOQFmQslr2LFMlFH4C/ATRoqVB1xvXOL0VJCEWX3oxUbEB3c+cKP
+         6NNrKmHB3b/NwdN4pW1VlqYAopGK5vUVf1tih9JMrLhaS79BxIdHDA/+mPVTElXvjvOo
+         8XNNhuR0lUtFMbksSc9ELyKemTuDRiZRnnVG7vbkKX1bnI8QhATW4nnZjR4Px9qUjViD
+         Aqmw==
+X-Gm-Message-State: AOUpUlEp4DT1lZXuSFJlFLW4f+jz1t/KgKVETSvXW+G2r4FngZg6F/3I
+        7j9CxuLVF+aci7MZEPE4ATZB8y3GQhw=
+X-Google-Smtp-Source: AAOMgpcI+pktUCt1lIE4sem49Vce+RBNtyhrSBlGh4l8oSSiZVWC5KLpuGoXzQ+wJ8WwvQISUqGaxg==
+X-Received: by 2002:a6b:a082:: with SMTP id j124-v6mr14660845ioe.35.1532469076203;
+        Tue, 24 Jul 2018 14:51:16 -0700 (PDT)
+Received: from mail-it0-f54.google.com (mail-it0-f54.google.com. [209.85.214.54])
+        by smtp.gmail.com with ESMTPSA id t64-v6sm1571937ita.13.2018.07.24.14.51.15
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 24 Jul 2018 14:51:15 -0700 (PDT)
+Received: by mail-it0-f54.google.com with SMTP id h23-v6so5893680ita.5
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Jul 2018 14:51:15 -0700 (PDT)
+X-Received: by 2002:a02:8a59:: with SMTP id e25-v6mr17335696jal.82.1532469075269;
+ Tue, 24 Jul 2018 14:51:15 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Received: by 2002:a02:52c2:0:0:0:0:0 with HTTP; Tue, 24 Jul 2018 14:51:14
+ -0700 (PDT)
+In-Reply-To: <AM3PR04MB33800EB3509E6715AC49DC294550@AM3PR04MB338.eurprd04.prod.outlook.com>
+References: <20180724142131.28970-1-roy.pledge@nxp.com> <VI1PR0402MB3485147A99F219D5FA1B668B98550@VI1PR0402MB3485.eurprd04.prod.outlook.com>
+ <AM3PR04MB33800EB3509E6715AC49DC294550@AM3PR04MB338.eurprd04.prod.outlook.com>
+From:   Li Yang <leoyang.li@nxp.com>
+Date:   Tue, 24 Jul 2018 16:51:14 -0500
+X-Gmail-Original-Message-ID: <CADRPPNQTPKdT2wWO5tyt-tRhdkMfWRExjUjmwDBwRZ8053jSng@mail.gmail.com>
+Message-ID: <CADRPPNQTPKdT2wWO5tyt-tRhdkMfWRExjUjmwDBwRZ8053jSng@mail.gmail.com>
+Subject: Re: [PATCH v3 0/4] staging/fsl-mc/bus: Move DPIO from staging to drivers/soc/fsl
+To:     Ioana Ciocoi Radulescu <ruxandra.radulescu@nxp.com>
+Cc:     Horia Geanta <horia.geanta@nxp.com>,
+        Roy Pledge <roy.pledge@nxp.com>,
+        "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        Laurentiu Tudor <laurentiu.tudor@nxp.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "arnd@arndb.de" <arnd@arndb.de>,
+        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+        "robin.murphy@arm.com" <robin.murphy@arm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Wed,  4 Jul 2018 12:15:38 +0200
-Jacopo Mondi <jacopo+renesas@jmondi.org> escreveu:
+On Tue, Jul 24, 2018 at 9:38 AM, Ioana Ciocoi Radulescu
+<ruxandra.radulescu@nxp.com> wrote:
+>> -----Original Message-----
+>> From: Horia Geanta
+>> Sent: Tuesday, July 24, 2018 5:35 PM
+>> To: Roy Pledge <roy.pledge@nxp.com>; devel@driverdev.osuosl.org; linux-
+>> arm-kernel@lists.infradead.org; gregkh@linuxfoundation.org; Leo Li
+>> <leoyang.li@nxp.com>
+>> Cc: Laurentiu Tudor <laurentiu.tudor@nxp.com>; Ioana Ciocoi Radulescu
+>> <ruxandra.radulescu@nxp.com>; linux-kernel@vger.kernel.org;
+>> arnd@arndb.de; catalin.marinas@arm.com; robin.murphy@arm.com
+>> Subject: Re: [PATCH v3 0/4] staging/fsl-mc/bus: Move DPIO from staging to
+>> drivers/soc/fsl
+>>
+>> On 7/24/2018 5:21 PM, Roy Pledge wrote:
+>> > Move the NXP DPIO (Datapath I/O driver) from the staging/fsl-
+>> mc/bus/dpio
+>> > directory to the drivers/soc/fsl directory.
+>> >
+>> > The DPIO driver enables access to the Queue and Buffer Managemer
+>> (QBMAN)
+>> > hardware of NXP DPAA2 devices. This is a prerequiste for moving the
+>> DPAA2
+>> > Ethernet device driver from the staging directory.
+>> >
+>> For the series:
+>> Reviewed-by: Horia Geantă <horia.geanta@nxp.com>
+>
+> Also:
+> Reviewed-by: Ioana Radulescu <ruxandra.radulescu@nxp.com>
 
-> Update defconfig to Linux v4.18-rc2.
-> 
-> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-
-Why do you want to apply this via the media tree?
-
-IMO, the natural path would be to submit this to the SUPERH
-maintainer. If there is a good reason for merging via media,
-I'd expect an ack from the maintainer to do it so.
-
-Regards,
-Mauro
-
-> 
-> ---
-> The updated config file generated by:
-> 
-> make ARCH=sh migor_defconfig
-> make ARCH=sh menuconfig
-> make ARCH=sh savedefconfig
-> cp defconfig arch/sh/configs/migor_defconfig
-> ---
-> ---
->  arch/sh/configs/migor_defconfig | 25 ++-----------------------
->  1 file changed, 2 insertions(+), 23 deletions(-)
-> 
-> diff --git a/arch/sh/configs/migor_defconfig b/arch/sh/configs/migor_defconfig
-> index e04f21b..a85a327 100644
-> --- a/arch/sh/configs/migor_defconfig
-> +++ b/arch/sh/configs/migor_defconfig
-> @@ -3,8 +3,6 @@ CONFIG_IKCONFIG=y
->  CONFIG_IKCONFIG_PROC=y
->  CONFIG_LOG_BUF_SHIFT=14
->  CONFIG_BLK_DEV_INITRD=y
-> -# CONFIG_CC_OPTIMIZE_FOR_SIZE is not set
-> -# CONFIG_SYSCTL_SYSCALL is not set
->  CONFIG_SLAB=y
->  CONFIG_PROFILING=y
->  CONFIG_OPROFILE=y
-> @@ -13,9 +11,7 @@ CONFIG_MODULES=y
->  CONFIG_CPU_SUBTYPE_SH7722=y
->  CONFIG_MEMORY_START=0x0c000000
->  CONFIG_NUMA=y
-> -# CONFIG_MIGRATION is not set
->  CONFIG_SH_MIGOR=y
-> -# CONFIG_SH_TIMER_CMT is not set
->  CONFIG_SECCOMP=y
->  CONFIG_CMDLINE_OVERWRITE=y
->  CONFIG_CMDLINE="console=tty0 console=ttySC0,115200 earlyprintk=serial ip=on root=/dev/nfs ip=dhcp"
-> @@ -27,7 +23,6 @@ CONFIG_IP_PNP=y
->  CONFIG_IP_PNP_DHCP=y
->  # CONFIG_IPV6 is not set
->  CONFIG_UEVENT_HELPER_PATH="/sbin/hotplug"
-> -CONFIG_FW_LOADER=m
->  CONFIG_MTD=y
->  CONFIG_MTD_CMDLINE_PARTS=y
->  CONFIG_MTD_BLOCK=y
-> @@ -40,9 +35,7 @@ CONFIG_BLK_DEV_RAM=y
->  CONFIG_SCSI=y
->  CONFIG_BLK_DEV_SD=y
->  CONFIG_NETDEVICES=y
-> -CONFIG_NET_ETHERNET=y
->  CONFIG_SMC91X=y
-> -# CONFIG_INPUT_MOUSEDEV is not set
->  CONFIG_INPUT_EVDEV=y
->  # CONFIG_KEYBOARD_ATKBD is not set
->  CONFIG_KEYBOARD_SH_KEYSC=y
-> @@ -50,30 +43,16 @@ CONFIG_KEYBOARD_SH_KEYSC=y
->  CONFIG_INPUT_TOUCHSCREEN=y
->  CONFIG_TOUCHSCREEN_MIGOR=y
->  # CONFIG_SERIO is not set
-> -CONFIG_VT_HW_CONSOLE_BINDING=y
->  CONFIG_SERIAL_SH_SCI=y
-> -CONFIG_SERIAL_SH_SCI_NR_UARTS=3
-> -CONFIG_SERIAL_SH_SCI_CONSOLE=y
->  CONFIG_HW_RANDOM=y
->  CONFIG_I2C=y
->  CONFIG_I2C_SH_MOBILE=y
->  # CONFIG_HWMON is not set
->  CONFIG_MEDIA_SUPPORT=y
-> -CONFIG_VIDEO_DEV=y
-> -# CONFIG_VIDEO_ALLOW_V4L1 is not set
-> -# CONFIG_MEDIA_TUNER_CUSTOMISE is not set
-> -CONFIG_VIDEO_HELPER_CHIPS_AUTO=y
-> -CONFIG_SOC_CAMERA=y
-> -CONFIG_SOC_CAMERA_TW9910=y
-> -CONFIG_SOC_CAMERA_OV772X=y
-> -CONFIG_VIDEO_SH_MOBILE_CEU=y
-> -# CONFIG_RADIO_ADAPTERS is not set
->  CONFIG_FB=y
->  CONFIG_FB_SH_MOBILE_LCDC=y
->  CONFIG_FRAMEBUFFER_CONSOLE=y
->  CONFIG_FRAMEBUFFER_CONSOLE_DETECT_PRIMARY=y
-> -CONFIG_FONTS=y
-> -CONFIG_FONT_MINI_4x6=y
->  CONFIG_LOGO=y
->  # CONFIG_LOGO_LINUX_MONO is not set
->  # CONFIG_LOGO_LINUX_VGA16 is not set
-> @@ -81,7 +60,6 @@ CONFIG_LOGO=y
->  # CONFIG_LOGO_SUPERH_MONO is not set
->  # CONFIG_LOGO_SUPERH_CLUT224 is not set
->  CONFIG_USB_GADGET=y
-> -CONFIG_USB_GADGET_M66592=y
->  CONFIG_USB_G_SERIAL=m
->  CONFIG_RTC_CLASS=y
->  CONFIG_RTC_DRV_RS5C372=y
-> @@ -95,6 +73,7 @@ CONFIG_NFS_FS=y
->  CONFIG_ROOT_NFS=y
->  CONFIG_DEBUG_FS=y
->  CONFIG_CRYPTO_MANAGER=y
-> -# CONFIG_CRYPTO_ANSI_CPRNG is not set
->  # CONFIG_CRYPTO_HW is not set
->  CONFIG_CRC_T10DIF=y
-> +CONFIG_FONTS=y
-> +CONFIG_FONT_MINI_4x6=y
-
-
+Applied to soc/fsl tree.
 
 Thanks,
-Mauro
+Leo
