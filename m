@@ -2,102 +2,106 @@ Return-Path: <SRS0=hTZH=KI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC655C6778F
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 22:39:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F91EC28CF6
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 22:39:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 151DB20852
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 22:39:29 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QXVZBRuh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 151DB20852
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id A518120880
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 22:39:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A518120880
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388999AbeGXXsF (ORCPT
+        id S2389015AbeGXXsM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 19:48:05 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:33140 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388970AbeGXXsF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 19:48:05 -0400
-Received: by mail-wr1-f66.google.com with SMTP id g6-v6so5592739wrp.0
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Jul 2018 15:39:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=oQ1hrQIbXo4ILuEEm0+/82cRNiOE8p1XgzNfg9kLRKo=;
-        b=QXVZBRuhdpX4LhiHuppijSP0W+JWX9K2TulYF89ZFMRheIMFf3FD7meeZndiRlnMNP
-         /xiCDdVu6OAVMLMc+fgcPXENGESc7SUc52yWK2xaOO5Ob4vEzsial2o/IJqo7sqcp2bv
-         m96xF4Enq6RIYgowFqIn4q9A8eFKZcmQvr3KlqospJJ6zipVIatd6Dgn1Oo/phkEEh+T
-         j52Gjv9OQjYSl40wzjv2Xp299bmnSk3yQKS2NhPdeMrZWQ8EWSMZsfdqmYViiNng72hh
-         gCraXOKhf5QOs03e7znpBCEgtkZdY0+Ry0t7RR4F3iLmHEa7CagcZOLhPxZ6DEbvdkQ1
-         ky1g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=oQ1hrQIbXo4ILuEEm0+/82cRNiOE8p1XgzNfg9kLRKo=;
-        b=Ke9Oaonml04p6nJcWptju/xRJ2R/VIjtLy4uE6iw3Bb0VBbCbfMbe6UZQSrqEkbmF6
-         l18qoOA0pdEdTWNhWtAW4lQIveprUp53kuO9RMriYghCYmWfxDgr9c0lqPkjjAjsg/lq
-         ejmdD1eNytxyjijsab3gg8eggIL0GKQn7j/RQ7ec69zm8DFgpnHNWk7NOHp9T63mbsf2
-         Wmw8tT2tMSvgLc32/s8/jz3EsbsIKj5c98+fyMvbETw5wtLq8GCS5y8s5KikpYth5b/o
-         i7aGAxZmlKSsN9mJJJ6KhWin8QYxA6I3XBmoZP2tiyODRJGrlJLFuiY6cz40WD8jhKoy
-         lV1A==
-X-Gm-Message-State: AOUpUlHrK17QDEgucrkpi5FfjrAO124y6LnGk41ysVSYi/0lrW6Q7ius
-        6qSX2ZkMfUCPlTfEF7ZQ1Sc=
-X-Google-Smtp-Source: AAOMgpf7BXlCn2AVhJGiCs3UL2mTXM1UyjkeoEgLNbUynxFlIwdzZVwKZ229xQmHNFj4rdqFX/AUFw==
-X-Received: by 2002:adf:de84:: with SMTP id w4-v6mr13462210wrl.270.1532471964927;
-        Tue, 24 Jul 2018 15:39:24 -0700 (PDT)
-Received: from we.local (athedsl-4407117.home.otenet.gr. [79.130.175.61])
-        by smtp.gmail.com with ESMTPSA id j3-v6sm15658297wrt.70.2018.07.24.15.39.24
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 24 Jul 2018 15:39:24 -0700 (PDT)
-Received: from localhost (localhost [127.0.0.1])
-        by we.local (Postfix) with ESMTP id 292D6640816;
-        Wed, 25 Jul 2018 01:39:23 +0300 (EEST)
-X-Virus-Scanned: amavisd-new at local
-Received: from we.local ([127.0.0.1])
-        by localhost (we.local [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id LT8r0vypp3Be; Wed, 25 Jul 2018 01:39:22 +0300 (EEST)
-Received: by we.local (Postfix, from userid 1000)
-        id BDFF0640824; Wed, 25 Jul 2018 01:39:22 +0300 (EEST)
-From:   Georgios Tsotsos <tsotsos@gmail.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Georgios Tsotsos <tsotsos@gmail.com>,
-        Aaro Koskinen <aaro.koskinen@iki.fi>,
-        James Hogan <jhogan@kernel.org>, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 4/4] Staging: octeon-usb: Adds SPDX License Identifier for header file
-Date:   Wed, 25 Jul 2018 01:38:53 +0300
-Message-Id: <20180724223853.10198-5-tsotsos@gmail.com>
-X-Mailer: git-send-email 2.16.4
-In-Reply-To: <20180724223853.10198-1-tsotsos@gmail.com>
-References: <20180724223853.10198-1-tsotsos@gmail.com>
+        Tue, 24 Jul 2018 19:48:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54268 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388945AbeGXXsL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Jul 2018 19:48:11 -0400
+Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id A9EB220852;
+        Tue, 24 Jul 2018 22:39:31 +0000 (UTC)
+Date:   Tue, 24 Jul 2018 18:39:30 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Zubin Mithra <zsm@chromium.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Guenter Roeck <groeck@chromium.org>,
+        Al Viro <viro@zeniv.linux.org.uk>
+Subject: Re: [PATCH] tracefs: Annotate tracefs_ops with __ro_after_init
+Message-ID: <20180724183930.1ac4bcd0@gandalf.local.home>
+In-Reply-To: <CAGXu5jJ7jS=ChfVF1oRJsGu-bSXK_WvTs94f_dQ9ud9Bt81-WA@mail.gmail.com>
+References: <20180724200214.95975-1-zsm@chromium.org>
+        <CAGXu5jJ7jS=ChfVF1oRJsGu-bSXK_WvTs94f_dQ9ud9Bt81-WA@mail.gmail.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Signed-off-by: Georgios Tsotsos <tsotsos@gmail.com>
----
- drivers/staging/octeon-usb/octeon-hcd.h | 1 +
- 1 file changed, 1 insertion(+)
+On Tue, 24 Jul 2018 15:07:18 -0700
+Kees Cook <keescook@chromium.org> wrote:
 
-diff --git a/drivers/staging/octeon-usb/octeon-hcd.h b/drivers/staging/octeon-usb/octeon-hcd.h
-index 3353aefe662e..769c36cf6614 100644
---- a/drivers/staging/octeon-usb/octeon-hcd.h
-+++ b/drivers/staging/octeon-usb/octeon-hcd.h
-@@ -1,3 +1,4 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
- /*
-  * Octeon HCD hardware register definitions.
-  *
--- 
-2.16.4
+> Adding Steven (maintainer) and Al (fs) to CC...
+
+Thanks, first I've seen of this.
+
+> 
+> On Tue, Jul 24, 2018 at 1:02 PM, Zubin Mithra <zsm@chromium.org> wrote:
+> > tracefs_ops is initialized inside tracefs_create_instance_dir and not
+> > modified after. tracefs_create_instance_dir allows for initialization
+> > only once, and is called from create_trace_instances(marked __init),
+> > which is called from tracer_init_tracefs(marked __init).
+
+Then, especially with this change, we should mark
+tracefs_create_instance_dir() as init, as it would fail any other time.
+
+> >
+> > Signed-off-by: Zubin Mithra <zsm@chromium.org>
+> > Reviewed-by: Kees Cook <keescook@chromium.org>  
+> 
+> Who's tree should this go through?
+
+I can take it or someone else can, and I'll ack it if need be.
+
+-- Steve
+
+
+> 
+> Thanks!
+> 
+> -Kees
+> 
+> > ---
+> >  fs/tracefs/inode.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/fs/tracefs/inode.c b/fs/tracefs/inode.c
+> > index bea8ad876bf9..20e965873f27 100644
+> > --- a/fs/tracefs/inode.c
+> > +++ b/fs/tracefs/inode.c
+> > @@ -53,7 +53,7 @@ static const struct file_operations tracefs_file_operations = {
+> >  static struct tracefs_dir_ops {
+> >         int (*mkdir)(const char *name);
+> >         int (*rmdir)(const char *name);
+> > -} tracefs_ops;
+> > +} tracefs_ops __ro_after_init;
+> >
+> >  static char *get_dname(struct dentry *dentry)
+> >  {
+> > --
+> > 2.18.0.233.g985f88cf7e-goog
+> >  
+> 
+> 
+> 
 
