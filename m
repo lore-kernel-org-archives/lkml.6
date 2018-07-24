@@ -2,157 +2,108 @@ Return-Path: <SRS0=hTZH=KI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8620C6778A
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 09:13:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0344ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 09:13:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9C9DE20874
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 09:13:15 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="jYxEcq7D"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9C9DE20874
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id 513BC20874
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 09:13:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 513BC20874
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388325AbeGXKSm (ORCPT
+        id S2388358AbeGXKSy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 06:18:42 -0400
-Received: from mail-yw0-f193.google.com ([209.85.161.193]:34164 "EHLO
-        mail-yw0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726189AbeGXKSm (ORCPT
+        Tue, 24 Jul 2018 06:18:54 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:59532 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S2388334AbeGXKSy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 06:18:42 -0400
-Received: by mail-yw0-f193.google.com with SMTP id j68-v6so1275206ywg.1
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Jul 2018 02:13:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:in-reply-to:message-id:references
-         :user-agent:mime-version;
-        bh=Myk3ZsuyfUQNIndGeIVSHuFFOeov84KG9Di98BnSPts=;
-        b=jYxEcq7DcfBtw0Qnt0nDLjc86RQwxWQs1NVVW6mxLcjYzlQ99Huz6uxiZMPDEgSi1W
-         FMwNUCj6zLPs/Zoi6ScgVlljuwA7dPbPl9d/mjcUIxZU4cSXaptN6decaLfhJI57szGe
-         fBh1ibLIXbwcrqUoOTdg3ogNwDCqF1BC1EhGmcTwCEHgrXDsdshaQ9+crDLuouKkgrDq
-         UUhwAZXhM/lkZWyd3f99ynFN59AwP5GiMG27D0dWheEGfHmJwmkqWnaARwYehmOp4rSY
-         1dy+pj+L4KSePMfVF1nPJGXz6+Ob9yxhVAZpiWuWYoHYjmJtuBuJ9WrSQdEI1kmgjmA5
-         Si1A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
-         :references:user-agent:mime-version;
-        bh=Myk3ZsuyfUQNIndGeIVSHuFFOeov84KG9Di98BnSPts=;
-        b=VHyFRMrxNyll1ctEZCHtGIKwXg/+eYjNg0nxh0uJflVGjrsxejBsDjr7ydIvrCfVJ2
-         josTC4y3qBdO4IYgXXvtSe2/ZI8hcmZslRog32fqHZ5HqIr+37Mxfv/l7t5ku0aUeIYw
-         jFbr5bZ9knRhajqDRyssu4TjvrrVBFVk4B7ZEMlqz4rNaIzIqB37pvuQF5gtB4eheL7B
-         sdbVe8gV8ztCalBqs8YayMhF4WMCqw2pti2CQCGKECqxS1m2tS8sIKFIJSWM992cDL3Q
-         plg2KcfeQ/sxj3ADjX5tonnwODYyP9VLFZ7uOgy9DZL7eUHWoW5W/jsFhGcJ7TQASKmz
-         KWNw==
-X-Gm-Message-State: AOUpUlGxtNiHyWvh1LfgFExpIIKQT39x4Dt55dXxkJAQ3WmPo014uPpd
-        EDj6YBVdx+sZkycAIzddU1l3JQ==
-X-Google-Smtp-Source: AAOMgpcA1Nc5vanaNMxNaybtB113ietQxe9Dj+CDtcf7lxEcxKS8+ibb5PPvL6NfiDF5i7ZwQ+Oy6w==
-X-Received: by 2002:a81:a742:: with SMTP id e63-v6mr8757540ywh.388.1532423592182;
-        Tue, 24 Jul 2018 02:13:12 -0700 (PDT)
-Received: from eggly.attlocal.net (172-10-233-147.lightspeed.sntcca.sbcglobal.net. [172.10.233.147])
-        by smtp.gmail.com with ESMTPSA id k9-v6sm15775409ywh.33.2018.07.24.02.13.10
-        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Tue, 24 Jul 2018 02:13:11 -0700 (PDT)
-Date:   Tue, 24 Jul 2018 02:12:58 -0700 (PDT)
-From:   Hugh Dickins <hughd@google.com>
-X-X-Sender: hugh@eggly.anvils
-To:     Matthew Wilcox <willy@infradead.org>
-cc:     Hugh Dickins <hughd@google.com>,
-        syzbot <syzbot+b8e0dfee3fd8c9012771@syzkaller.appspotmail.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        syzkaller-bugs@googlegroups.com
-Subject: Re: kernel BUG at mm/shmem.c:LINE!
-In-Reply-To: <20180723225454.GC18236@bombadil.infradead.org>
-Message-ID: <alpine.LSU.2.11.1807240121590.1105@eggly.anvils>
-References: <000000000000d624c605705e9010@google.com> <20180709143610.GD2662@bombadil.infradead.org> <alpine.LSU.2.11.1807221856350.5536@eggly.anvils> <20180723140150.GA31843@bombadil.infradead.org> <alpine.LSU.2.11.1807231111310.1698@eggly.anvils>
- <20180723203628.GA18236@bombadil.infradead.org> <alpine.LSU.2.11.1807231531240.2545@eggly.anvils> <20180723225454.GC18236@bombadil.infradead.org>
-User-Agent: Alpine 2.11 (LSU 23 2013-08-11)
-MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+        Tue, 24 Jul 2018 06:18:54 -0400
+Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w6O946b9028383
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Jul 2018 05:13:24 -0400
+Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2ke0sa9pvq-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Jul 2018 05:13:23 -0400
+Received: from localhost
+        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <shilpa.bhat@linux.vnet.ibm.com>;
+        Tue, 24 Jul 2018 10:13:22 +0100
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
+        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 24 Jul 2018 10:13:19 +0100
+Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w6O9DIww40698040
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 24 Jul 2018 09:13:18 GMT
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id EF69E4C058;
+        Tue, 24 Jul 2018 12:13:33 +0100 (BST)
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 8DD2E4C04E;
+        Tue, 24 Jul 2018 12:13:32 +0100 (BST)
+Received: from oc4502181600.in.ibm.com (unknown [9.124.35.122])
+        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Tue, 24 Jul 2018 12:13:32 +0100 (BST)
+From:   Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com>
+To:     mpe@ellerman.id.au, linux@roeck-us.net
+Cc:     linuxppc-dev@lists.ozlabs.org, linux-hwmon@vger.kernel.org,
+        linux-kernel@vger.kernel.org, ego@linux.vnet.ibm.com,
+        stewart@linux.ibm.com,
+        Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com>
+Subject: [PATCH v8 0/2] hwmon/powernv: Add attributes to enable/disable sensors
+Date:   Tue, 24 Jul 2018 14:43:07 +0530
+X-Mailer: git-send-email 1.8.3.1
+X-TM-AS-GCONF: 00
+x-cbid: 18072409-4275-0000-0000-0000029CD63B
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18072409-4276-0000-0000-000037A50CCF
+Message-Id: <1532423589-18730-1-git-send-email-shilpa.bhat@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-24_03:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=403 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1806210000 definitions=main-1807240097
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 23 Jul 2018, Matthew Wilcox wrote:
-> On Mon, Jul 23, 2018 at 03:42:22PM -0700, Hugh Dickins wrote:
-> > On Mon, 23 Jul 2018, Matthew Wilcox wrote:
-> > > I figured out a fix and pushed it to the 'ida' branch in
-> > > git://git.infradead.org/users/willy/linux-dax.git
-> > 
-> > Great, thanks a lot for sorting that out so quickly. But I've cloned
-> > the tree and don't see today's patch, so assume you've folded the fix
-> > into an existing commit? If possible, please append the diff of today's
-> > fix to this thread so that we can try it out. Or if that's difficult,
-> > please at least tell which files were modified, then I can probably
-> > work it out from the diff of those files against mmotm.
-> 
-> Sure!  It's just this:
-> 
-> diff --git a/lib/xarray.c b/lib/xarray.c
-> index 32a9c2a6a9e9..383c410997eb 100644
-> --- a/lib/xarray.c
-> +++ b/lib/xarray.c
-> @@ -660,6 +660,8 @@ void xas_create_range(struct xa_state *xas)
->  	unsigned char sibs = xas->xa_sibs;
->  
->  	xas->xa_index |= ((sibs + 1) << shift) - 1;
-> +	if (!xas_top(xas->xa_node) && xas->xa_node->shift == xas->xa_shift)
-> +		xas->xa_offset |= sibs;
->  	xas->xa_shift = 0;
->  	xas->xa_sibs = 0;
+This patch series adds new attribute to enable or disable a sensor at
+runtime.
 
-Yes, that's a big improvement, the huge "cp" is now fine, thank you.
+Changes from v7:
+- Use of_for_each_phandle() and of_count_phandle_with_args() to parse
+  through the phandle array
 
-I've updated my xfstests tree, and tried that on mmotm with this patch.
-The few failures are exactly the same as on 4.18-rc6, whether mounting
-tmpfs as huge or not. But four of the tests, generic/{340,345,346,354}
-crash (oops) on 4.18-rc5-mm1 + your patch above, but pass on 4.18-rc6.
+v7 : https://lkml.org/lkml/2018/7/20/72
+v6 : https://lkml.org/lkml/2018/7/18/806
+v5 : https://lkml.org/lkml/2018/7/15/15
+v4 : https://lkml.org/lkml/2018/7/6/379
+v3 : https://lkml.org/lkml/2018/7/5/476
+v2 : https://lkml.org/lkml/2018/7/4/263
+v1 : https://lkml.org/lkml/2018/3/22/214
 
-That was simply with non-huge tmpfs: I just patched them out and didn't
-try for whether they crash with huge tmpfs too: probably they do, but
-that won't be very interesting until the non-huge crashes are fixed.
+Shilpasri G Bhat (2):
+  powernv:opal-sensor-groups: Add support to enable sensor groups
+  hwmon: ibmpowernv: Add attributes to enable/disable sensor groups
 
-I paid no attention to where the crashes were, I was just pressing on
-to skip the problem tests to get as full a run as possible, with that
-list of what's problematic and needs further investigation.
+ Documentation/hwmon/ibmpowernv                     |  43 +++-
+ arch/powerpc/include/asm/opal-api.h                |   1 +
+ arch/powerpc/include/asm/opal.h                    |   2 +
+ .../powerpc/platforms/powernv/opal-sensor-groups.c |  28 +++
+ arch/powerpc/platforms/powernv/opal-wrappers.S     |   1 +
+ drivers/hwmon/ibmpowernv.c                         | 238 ++++++++++++++++++---
+ 6 files changed, 279 insertions(+), 34 deletions(-)
 
-To test non-huge tmpfs (as root), I wrap xfstests' check script as
-follows (you'll want to mkdir or substitute somewhere else for /xft):
+-- 
+1.8.3.1
 
-export FSTYP=tmpfs
-export DISABLE_UDF_TEST=1
-export TEST_DEV=tmpfs1:
-export TEST_DIR=/xft
-export SCRATCH_DEV=tmpfs2:
-export SCRATCH_MNT=/mnt
-mount -t $FSTYP -o size=1088M $TEST_DEV $TEST_DIR || exit $?
-./check "$@" # typically "-g auto"
-umount /xft /mnt 2>/dev/null
-
-But don't bother with "-g auto" for the moment: I have workarounds in
-for a few of them, generic/{027,213,449}, which we need not get into
-right now (without them, two of those tests can take close to forever).
-
-To test huge tmpfs (as root), I wrap xfstests' check script as:
-
-export FSTYP=tmpfs
-export DISABLE_UDF_TEST=1
-export TEST_DEV=tmpfs1:
-export TEST_DIR=/xft
-export SCRATCH_DEV=tmpfs2:
-export SCRATCH_MNT=/mnt
-export TMPFS_MOUNT_OPTIONS="-o size=1088M,huge=always"
-mount -t $FSTYP $TMPFS_MOUNT_OPTIONS $TEST_DEV $TEST_DIR || exit $?
-./check "$@" # typically "-g auto"
-umount /xft /mnt 2>/dev/null
-
-Hugh
