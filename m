@@ -6,44 +6,44 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56B65C6778A
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 12:35:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 459C7C6778A
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 12:37:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 12D5E20671
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 12:35:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 12D5E20671
+	by mail.kernel.org (Postfix) with ESMTP id E9C6A20671
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 12:37:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E9C6A20671
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388406AbeGXNl0 (ORCPT
+        id S2388389AbeGXNoL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 09:41:26 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:58579 "EHLO mail.bootlin.com"
+        Tue, 24 Jul 2018 09:44:11 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:58674 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388256AbeGXNl0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 09:41:26 -0400
+        id S2388256AbeGXNoL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Jul 2018 09:44:11 -0400
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 63BF420737; Tue, 24 Jul 2018 14:35:07 +0200 (CEST)
+        id B86B9207B3; Tue, 24 Jul 2018 14:37:50 +0200 (CEST)
 Received: from localhost (AAubervilliers-681-1-78-122.w90-88.abo.wanadoo.fr [90.88.20.122])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 2CCD4203EC;
-        Tue, 24 Jul 2018 14:35:07 +0200 (CEST)
-Date:   Tue, 24 Jul 2018 14:35:07 +0200
+        by mail.bootlin.com (Postfix) with ESMTPSA id 83E9420737;
+        Tue, 24 Jul 2018 14:37:40 +0200 (CEST)
+Date:   Tue, 24 Jul 2018 14:37:41 +0200
 From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Ayan Kumar Halder <ayan.halder@arm.com>
-Cc:     liviu.dudau@arm.com, brian.starkey@arm.com,
-        ville.syrjala@linux.intel.com, airlied@linux.ie, wens@csie.org,
-        dri-devel@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        nd@arm.com
-Subject: Re: [PATCH] drm/sun4i: Use (struct drm_format_info) fields to
- determine if a format is yuv and multi planar or not.
-Message-ID: <20180724123507.rqnq4dkjjvk24w4t@flea>
-References: <1532336220-3791-1-git-send-email-ayan.halder@arm.com>
+To:     Jernej =?utf-8?Q?=C5=A0krabec?= <jernej.skrabec@siol.net>
+Cc:     wens@csie.org, robh+dt@kernel.org, airlied@linux.ie,
+        mark.rutland@arm.com, dri-devel@lists.freedesktop.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
+Subject: Re: [PATCH v2 00/18] Allwinner R40 HDMI refactoring
+Message-ID: <20180724123741.bbkjgy2uwmzsj45k@flea>
+References: <20180710203511.18454-1-jernej.skrabec@siol.net>
+ <20180711083036.7attjq4hm5ay5gmn@flea>
+ <2309112.TTVI9Fv1ar@jernej-laptop>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="yc2wbemgvjqr2pc4"
+        protocol="application/pgp-signature"; boundary="32fdg44zyqfmmwtk"
 Content-Disposition: inline
-In-Reply-To: <1532336220-3791-1-git-send-email-ayan.halder@arm.com>
+In-Reply-To: <2309112.TTVI9Fv1ar@jernej-laptop>
 User-Agent: NeoMutt/20180622
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -51,25 +51,54 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---yc2wbemgvjqr2pc4
-Content-Type: text/plain; charset=us-ascii
+--32fdg44zyqfmmwtk
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jul 23, 2018 at 09:57:00AM +0100, Ayan Kumar Halder wrote:
-> We do not need sun4i_backend_format_is_packed_yuv422() /
-> sun4i_backend_format_is_planar_yuv() to determine if the format is yuv mu=
-lti planar
-> or not. (struct drm_format_info *)->is_yuv tells if the format is yuv or =
-not.
-> And (struct drm_format_info *)->num_planes denotes the number of planes.
+On Sun, Jul 22, 2018 at 04:43:56PM +0200, Jernej =C5=A0krabec wrote:
+> Hi Maxime,
 >=20
-> This issue was identified during a review on a previous patch:-
-> https://lists.freedesktop.org/archives/dri-devel/2018-July/183840.html
+> Dne sreda, 11. julij 2018 ob 10:30:36 CEST je Maxime Ripard napisal(a):
+> > On Tue, Jul 10, 2018 at 10:34:53PM +0200, Jernej Skrabec wrote:
+> > > This series fixes several issues found in R40 HDMI patch series after
+> > > it was applied. Conversation can be found here:
+> > > http://lists.infradead.org/pipermail/linux-arm-kernel/2018-June/58601=
+1.htm
+> > > l
+> > >=20
+> > > Patches are based on latest linux-next (next-20180710) and are ordered
+> > > in such way that they don't break R40 HDMI at any time. Because of th=
+at
+> > > I suggest that whole series goes through drm-misc to preserve that or=
+der.
+> > >=20
+> > > I also tested those patches on H3 to make sure it doesn't break other
+> > > platforms. However, it would be nice to test for regressions also on
+> > > older SoCs (with DE1).
+> > >=20
+> > > Best regards,
+> > > Jernej
+> >=20
+> > Applied all patches but the patch 10, thanks!
+> > Maxime
 >=20
-> Signed-off-by: Ayan Kumar halder <ayan.halder@arm.com>
+> It seems that you forgot to merge some patches:
+>=20
+> [PATCH v2 12/18] drm/sun4i: tcon: Add another way for matching mixers wit=
+h=20
+> tcon
+> [PATCH v2 13/18] drm/sun4i: tcon: Add support for R40 TCON
+>=20
+> Without them, R40 display pipeline can't work.
+>=20
+> Maybe they are in your spam folder?
 
-Applied, thanks!
+Thanks for telling me, I'm not quite sure what happened.
+
+I've applied them.
+
+Sorry,
 Maxime
 
 --=20
@@ -77,24 +106,24 @@ Maxime Ripard, Bootlin (formerly Free Electrons)
 Embedded Linux and Kernel engineering
 https://bootlin.com
 
---yc2wbemgvjqr2pc4
+--32fdg44zyqfmmwtk
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAltXHPoACgkQ0rTAlCFN
-r3QqyBAAigSGBzqNcB70W79YTi3xGns3wp4IuRPb8QuMofbMjosCiu0Z5WsVuP8i
-DzoCd5eLvo2dhgFD+HYbF6aBbHLZkaP6jVnWmmRAzoTWjhpuNr3Qtl/WvD+C+xdE
-oUKyeuulSerVloBTz161oDL6oqSu/iTszRcr80FJYE7rv37JhqmAMPb1h4UPBqfw
-Qmpdezdf9Ci/OzvFpBkkEHAuoQZOxtSdPxEVbbGwUmoNgBC2cEubAWiYHxMKO4f6
-fRHHYJX27x0k2q2OZUGoFLTmiHCI48mf0hnxBSINhvUgVJyQO025qZYERu9Z2YxM
-Dr7Ky1sTTDMSBL8W55g5Usc6ga1d2SNI9pyB4vDvxf6WlDZaTuQSQmWknGM7zoFp
-K9r87hB9kyZvNkskuj6SnB8y3IVr6HbqE65xg9OUTKznTaClaInPbNvqYpfO2SW8
-05FJiGDxq8G/w1iKGSY6CdcJoqvkKIS0k+JLsVRnHRxO4BPj1T/gcB86QPQFkd96
-7lL4wrh+Vk+yqH5NX4OlUmA0Fk5dyxzYVA5LOEIFJA9v0gOY5cRJJhLwwpMxlq4U
-dV0bIk1ObXf2D45CsK4B23FMBqnAUyTBEEEGr6MOGQ4p3Og1oxyXtqUyLCIWHRlz
-Gzf1wSb7gVa8z+yfMf2GqBVO4nQNoUV7OXvLCQ21PjLy9a8MpHw=
-=Xsw+
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAltXHZQACgkQ0rTAlCFN
+r3QoKg//UALd/tvBxAnyMwMcVQrsMpdkYoevVrEcfZbviWMAEosEF/6v539iNm3l
+/FKgAY2hemnAmn7lgRXH9mPOLZCVaPtHjeWgOw8HjwVnDF49jNJJn3t8xWGkLsrj
+WNCixZsjNFHx3+ZpN66r0fVfhIUVVaCmuTFpX5rdBw05KEGJ+T7d4GJYLvzYJs0u
+IhklxPqKcYqrb5apfWZ8t9ZokrvJADL2djZGVlFq5sJHElmxGbYkJ1QpwjgiftuB
+OnLd9HLqbKoUIj+7J1S2wMGtzUW/9Bj5xYyAEjw3VBUKIQPgCpTTbDna4XyMJizU
+TkH+HEYxrY2S9WpJ+Inm7x29/r0xw6DmGbdYENec4OckKWcz2G0nvYpoStnubKaU
+KVLkCrEORKc/jcvA/DdqcyGDPwSMddMChDYQm558czXtIFq9j/fMqUWTZr54+FFa
+EqURxkX+hkj5l/H98wsok2sAXkXJCigLawOxlSEbM5bWFEX2n89mZrO3IW6f/QIZ
+WjI94eo5alyqnZkf/Gpy7QYMxmM88f9m2brWBPH3TwM9dBsZWiY3rhe+JVuVMXsc
+E7wCxF6e92CkSyi5+K8yt3MaTQ4iTBDp5AJcdT+s8rxJ7G9p3+qGYMLuRlEvnFlR
+3XACHOnbYiWyunWndvSVNjlFrlABHjwdPALt5IbR2b5DTl5akS8=
+=NVTJ
 -----END PGP SIGNATURE-----
 
---yc2wbemgvjqr2pc4--
+--32fdg44zyqfmmwtk--
