@@ -6,117 +6,141 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB37FC28CF6
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 21:24:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 893B9C28CF6
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 21:30:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 88AC320856
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 21:24:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 88AC320856
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xmission.com
+	by mail.kernel.org (Postfix) with ESMTP id 33BCD20882
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 21:30:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 33BCD20882
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388632AbeGXWdG (ORCPT
+        id S2388668AbeGXWif (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 18:33:06 -0400
-Received: from out03.mta.xmission.com ([166.70.13.233]:59052 "EHLO
-        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388476AbeGXWdG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 18:33:06 -0400
-Received: from in01.mta.xmission.com ([166.70.13.51])
-        by out03.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1fi4nS-0004Pk-MK; Tue, 24 Jul 2018 15:24:42 -0600
-Received: from [97.119.167.31] (helo=x220.xmission.com)
-        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1fi4nR-0008HI-Oe; Tue, 24 Jul 2018 15:24:42 -0600
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Oleg Nesterov <oleg@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Wen Yang <wen.yang99@zte.com.cn>, majiang <ma.jiang@zte.com.cn>
-References: <87efft5ncd.fsf_-_@xmission.com>
-        <20180724032419.20231-20-ebiederm@xmission.com>
-        <CA+55aFxNijeenFd6o7fg3iJFqAjdTZLaFV2=Eaqbg1fDOzx26A@mail.gmail.com>
-        <874lgo5xdg.fsf@xmission.com>
-        <CA+55aFw_CTTRTZfUf1e9yg04X_djG3q7HrCG-XqnyQorpKjaTQ@mail.gmail.com>
-        <87fu084cxj.fsf@xmission.com>
-        <CA+55aFxUc3ttEAuRS7GKs9aTjTFw1poE80DASFSXudVQCuWpHg@mail.gmail.com>
-        <87a7qg4bb3.fsf_-_@xmission.com>
-        <CA+55aFxe+Ku78ZEvd_F2TD_3gTmLXw0kzo4HDE-ngkYfSHQfPw@mail.gmail.com>
-Date:   Tue, 24 Jul 2018 16:24:28 -0500
-In-Reply-To: <CA+55aFxe+Ku78ZEvd_F2TD_3gTmLXw0kzo4HDE-ngkYfSHQfPw@mail.gmail.com>
-        (Linus Torvalds's message of "Tue, 24 Jul 2018 13:56:05 -0700")
-Message-ID: <87pnzc2upf.fsf@xmission.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
+        Tue, 24 Jul 2018 18:38:35 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60370 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388543AbeGXWif (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Jul 2018 18:38:35 -0400
+Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id AE7C320856;
+        Tue, 24 Jul 2018 21:30:10 +0000 (UTC)
+Date:   Tue, 24 Jul 2018 17:30:08 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Tom Zanussi <tom.zanussi@linux.intel.com>
+Cc:     Masami Hiramatsu <mhiramat@kernel.org>,
+        Ingo Molnar <mingo@redhat.com>, Shuah Khan <shuah@kernel.org>,
+        Hiraku Toyooka <hiraku.toyooka@cybertrust.co.jp>,
+        linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH 1/3] [BUGFIX] tracing: Fix double free of
+ event_trigger_data
+Message-ID: <20180724173008.454cdf10@gandalf.local.home>
+In-Reply-To: <20180724164959.3cbc1422@gandalf.local.home>
+References: <153149923649.11274.14970833360963898112.stgit@devbox>
+        <153149926702.11274.12489440326560729788.stgit@devbox>
+        <20180723221006.60cc7aa9@vmware.local.home>
+        <20180725000909.6c8b2f3881ee75c4f6bd466b@kernel.org>
+        <20180724164959.3cbc1422@gandalf.local.home>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1fi4nR-0008HI-Oe;;;mid=<87pnzc2upf.fsf@xmission.com>;;;hst=in01.mta.xmission.com;;;ip=97.119.167.31;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX1/wSOSEwl4W8QzPAKuZoJl+dE0jUhfEIz8=
-X-SA-Exim-Connect-IP: 97.119.167.31
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-Subject: Re: [PATCH v2 20/20] signal: Don't restart fork when signals come in.
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Linus Torvalds <torvalds@linux-foundation.org> writes:
+On Tue, 24 Jul 2018 16:49:59 -0400
+Steven Rostedt <rostedt@goodmis.org> wrote:
 
-> On Tue, Jul 24, 2018 at 1:40 PM Eric W. Biederman <ebiederm@xmission.com> wrote:
->>
->> +       if (signal_pending(current)) {
->> +               retval = restart_syscall();
->> +               goto fork_out;
->> +       }
->
-> Oh, the previous version had this too, but it wasn't as obvious
-> because it was just in a single line:
->
->         return ERR_PTR(restart_syscall());
->
-> but it's just crazy.
->
-> It should just be
->
->         retval = -ERESTARTNOINTR;
->         if (signal_pending(current))
->                 goto fork_out;
->
-> because it's just silly and pointless to change the code to use
-> restart_syscall() here.
->
-> All restart_syscall() does is
->
->         set_tsk_thread_flag(current, TIF_SIGPENDING);
->         return -ERESTARTNOINTR;
->
-> and you just *checked* that TIF_SIGPENDING was already set. So the
-> above is completely pointless.
->
-> It is not clear why you made that change. The old code had the simpler
-> "just return -ERESTARTNOINTR" model.
->
-> Did the restart_syscall() thing come in by mistake from some previous
-> trials and it just hung around?
+> > Hmm it seems we should review the register_trigger() implementation.
+> > It should return the return value of trace_event_trigger_enable_disable(),
+> > shouldn't it?
+> >  
+> 
+> Yeah, that's not done well. I'll fix it up.
+> 
+> Thanks for pointing it out.
 
-I think this is the one place in the kernel where we can restart a
-system call and not set TIF_SIGPENDING.
+Tom,
 
-Several years ago I made the mistake in the networking code of returning
--ERESTARTNOINTR and forgetting to set TIF_SIGPENDING.  That wasn't fun.
-So I wrote restart_syscall and use it so I don't make that mistake
-again.
+register_trigger() is messed up. I should have caught this when it was
+first submitted, but I'm totally confused. The comments don't match the
+code.
 
-In this case your suggesting will definitely generate better code so I
-am happy to make a V3 with that doesn't use restart_syscall.  A person
-working in the guts of fork can reasonably be expected understand and to
-have all of the subtleties in cache as they work on that part of fork.
+First we have this:
 
-Eric
+	ret = cmd_ops->reg(glob, trigger_ops, trigger_data, file);
+	/*
+	 * The above returns on success the # of functions enabled,
+	 * but if it didn't find any functions it returns zero.
+	 * Consider no functions a failure too.
+	 */
+
+Which looks to be total BS.
+
+As we have this:
+
+/**
+ * register_trigger - Generic event_command @reg implementation
+ * @glob: The raw string used to register the trigger
+ * @ops: The trigger ops associated with the trigger
+ * @data: Trigger-specific data to associate with the trigger
+ * @file: The trace_event_file associated with the event
+ *
+ * Common implementation for event trigger registration.
+ *
+ * Usually used directly as the @reg method in event command
+ * implementations.
+ *
+ * Return: 0 on success, errno otherwise
+ */
+static int register_trigger(char *glob, struct event_trigger_ops *ops,
+			    struct event_trigger_data *data,
+			    struct trace_event_file *file)
+{
+	struct event_trigger_data *test;
+	int ret = 0;
+
+	list_for_each_entry_rcu(test, &file->triggers, list) {
+		if (test->cmd_ops->trigger_type == data->cmd_ops->trigger_type) {
+			ret = -EEXIST;
+			goto out;
+		}
+	}
+
+	if (data->ops->init) {
+		ret = data->ops->init(data->ops, data);
+		if (ret < 0)
+			goto out;
+	}
+
+	list_add_rcu(&data->list, &file->triggers);
+	ret++;
+
+	update_cond_flag(file);
+	if (trace_event_trigger_enable_disable(file, 1) < 0) {
+		list_del_rcu(&data->list);
+		update_cond_flag(file);
+		ret--;
+	}
+out:
+	return ret;
+}
+
+Where the comment is total wrong. It doesn't return 0 on success, it
+returns 1. And if trace_event_trigger_enable_disable() fails it returns
+zero.
+
+And that can fail with the call->class->reg() return value, which could
+fail for various strange reasons. I don't know why we would want to
+return 0 when it fails?
+
+I don't see where ->reg() would return anything but 1 on success. Maybe
+I'm missing something. I'll look some more, but I'm thinking of changing
+->reg() to return zero on all success, and negative on all errors and
+just check those results.
+
+-- Steve
