@@ -2,112 +2,141 @@ Return-Path: <SRS0=hTZH=KI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 768CFECDFB8
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 13:35:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7522DECDFB8
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 13:35:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2457220856
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 13:35:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2457220856
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 392D320856
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 13:35:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 392D320856
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388401AbeGXOlm (ORCPT
+        id S2388422AbeGXOmF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 10:41:42 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:58000 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2388321AbeGXOlm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 10:41:42 -0400
-Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w6ODTSl3048653
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Jul 2018 09:35:10 -0400
-Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2ke3r5vh70-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Jul 2018 09:35:10 -0400
-Received: from localhost
-        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Tue, 24 Jul 2018 14:35:07 +0100
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
-        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 24 Jul 2018 14:35:03 +0100
-Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w6ODZ27K42991762
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 24 Jul 2018 13:35:02 GMT
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 3B8134C05E;
-        Tue, 24 Jul 2018 16:35:18 +0100 (BST)
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 9912C4C040;
-        Tue, 24 Jul 2018 16:35:16 +0100 (BST)
-Received: from localhost.localdomain (unknown [9.80.84.53])
-        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Tue, 24 Jul 2018 16:35:16 +0100 (BST)
-Subject: Re: [PATCH 1/2] security/keys/secure_key: Adds the secure key
- support based on CAAM.
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Udit Agarwal <udit.agarwal@nxp.com>,
-        "dhowells@redhat.com" <dhowells@redhat.com>,
-        "zohar@linux.vnet.ibm.com" <zohar@linux.vnet.ibm.com>,
-        "jmorris@namei.org" <jmorris@namei.org>,
-        "serge@hallyn.com" <serge@hallyn.com>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Cc:     Sahil Malhotra <sahil.malhotra@nxp.com>,
-        Ruchika Gupta <ruchika.gupta@nxp.com>,
-        Horia Geanta <horia.geanta@nxp.com>,
-        Aymen Sghaier <aymen.sghaier@nxp.com>
-Date:   Tue, 24 Jul 2018 09:34:50 -0400
-In-Reply-To: <AM5PR0401MB2660B8C1DD5ED9989239EF009E550@AM5PR0401MB2660.eurprd04.prod.outlook.com>
-References: <20180720054656.29143-1-udit.agarwal@nxp.com>
-         <1532302451.6206.22.camel@linux.ibm.com>
-         <AM5PR0401MB2660B8C1DD5ED9989239EF009E550@AM5PR0401MB2660.eurprd04.prod.outlook.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 18072413-0020-0000-0000-000002AA7AED
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18072413-0021-0000-0000-000020F70D76
-Message-Id: <1532439290.3277.52.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-24_04:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1806210000 definitions=main-1807240144
+        Tue, 24 Jul 2018 10:42:05 -0400
+Received: from mx2.suse.de ([195.135.220.15]:38076 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2388313AbeGXOmF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Jul 2018 10:42:05 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 99057ACCA;
+        Tue, 24 Jul 2018 13:35:31 +0000 (UTC)
+Date:   Tue, 24 Jul 2018 15:35:30 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     David Hildenbrand <david@redhat.com>
+Cc:     Vlastimil Babka <vbabka@suse.cz>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Baoquan He <bhe@redhat.com>, Dave Young <dyoung@redhat.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Hari Bathini <hbathini@linux.vnet.ibm.com>,
+        Huang Ying <ying.huang@intel.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        =?iso-8859-1?Q?Marc-Andr=E9?= Lureau 
+        <marcandre.lureau@redhat.com>,
+        Matthew Wilcox <mawilcox@microsoft.com>,
+        Miles Chen <miles.chen@mediatek.com>,
+        Pavel Tatashin <pasha.tatashin@oracle.com>,
+        Petr Tesarik <ptesarik@suse.cz>
+Subject: Re: [PATCH v1 0/2] mm/kdump: exclude reserved pages in dumps
+Message-ID: <20180724133530.GN28386@dhcp22.suse.cz>
+References: <20180720123422.10127-1-david@redhat.com>
+ <9f46f0ed-e34c-73be-60ca-c892fb19ed08@suse.cz>
+ <20180723123043.GD31229@dhcp22.suse.cz>
+ <8daae80c-871e-49b6-1cf1-1f0886d3935d@redhat.com>
+ <20180724072536.GB28386@dhcp22.suse.cz>
+ <8eb22489-fa6b-9825-bc63-07867a40d59b@redhat.com>
+ <20180724131343.GK28386@dhcp22.suse.cz>
+ <af5353ee-319e-17ec-3a39-df997a5adf43@redhat.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <af5353ee-319e-17ec-3a39-df997a5adf43@redhat.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2018-07-24 at 12:31 +0000, Udit Agarwal wrote:
-> Yes the secure keys and CAAM are correlated. Secure keys depends on
-> NXP CAAM crypto HW accelerator.  Secure key is a random data of
-> length X (passed using keyctl command) & derived using CAAM. Blob of
-> this data is also created using CAAM. Only blob is visible to user
-> space.
+On Tue 24-07-18 15:27:51, David Hildenbrand wrote:
+> On 24.07.2018 15:13, Michal Hocko wrote:
+> > On Tue 24-07-18 14:17:12, David Hildenbrand wrote:
+> >> On 24.07.2018 09:25, Michal Hocko wrote:
+> >>> On Mon 23-07-18 19:20:43, David Hildenbrand wrote:
+> >>>> On 23.07.2018 14:30, Michal Hocko wrote:
+> >>>>> On Mon 23-07-18 13:45:18, Vlastimil Babka wrote:
+> >>>>>> On 07/20/2018 02:34 PM, David Hildenbrand wrote:
+> >>>>>>> Dumping tools (like makedumpfile) right now don't exclude reserved pages.
+> >>>>>>> So reserved pages might be access by dump tools although nobody except
+> >>>>>>> the owner should touch them.
+> >>>>>>
+> >>>>>> Are you sure about that? Or maybe I understand wrong. Maybe it changed
+> >>>>>> recently, but IIRC pages that are backing memmap (struct pages) are also
+> >>>>>> PG_reserved. And you definitely do want those in the dump.
+> >>>>>
+> >>>>> You are right. reserve_bootmem_region will make all early bootmem
+> >>>>> allocations (including those backing memmaps) PageReserved. I have asked
+> >>>>> several times but I haven't seen a satisfactory answer yet. Why do we
+> >>>>> even care for kdump about those. If they are reserved the nobody should
+> >>>>> really look at those specific struct pages and manipulate them. Kdump
+> >>>>> tools are using a kernel interface to read the content. If the specific
+> >>>>> content is backed by a non-existing memory then they should simply not
+> >>>>> return anything.
+> >>>>>
+> >>>>
+> >>>> "new kernel" provides an interface to read memory from "old kernel".
+> >>>>
+> >>>> The new kernel has no idea about
+> >>>> - which memory was added/online in the old kernel
+> >>>> - where struct pages of the old kernel are and what their content is
+> >>>> - which memory is save to touch and which not
+> >>>>
+> >>>> Dump tools figure all that out by interpreting the VMCORE. They e.g.
+> >>>> identify "struct pages" and see if they should be dumped. The "new
+> >>>> kernel" only allows to read that memory. It cannot hinder to crash the
+> >>>> system (e.g. if a dump tool would try to read a hwpoison page).
+> >>>>
+> >>>> So how should the "new kernel" know if a page can be touched or not?
+> >>>
+> >>> I am sorry I am not familiar with kdump much. But from what I remember
+> >>> it reads from /proc/vmcore and implementation of this interface should
+> >>> simply return EINVAL or alike when you try to dump inaccessible memory
+> >>> range.
+> >>
+> >> Oh, and BTW, while something like -EINVAL could work, we usually don't
+> >> want to try to read certain pages at all (e.g. ballooned pages -
+> >> accessing the page might work but involves quite some overhead in the
+> >> hypervisor).
+> >>
+> >> So we should either handle this in dump tools (reserved + ...?) or while
+> >> doing the read similar to XEN (is_ram_page()).
+> > 
+> > Yes, I think this is the proper way. Just test for PageOnline
+> > in read_from_oldmem/copy_oldmem_page. Btw. we already page
+> > pfn_to_online_page which performs the per-section online/offline
+> > status. This should be extendable to consider your new PageOffline
+> > state.
+> 
+> That is the important bit:
+> 
+> What the new kernel sees is not what the old kernel saw.
+> 
+> Checking for pfn_to_online_page() from
+> read_from_oldmem/copy_oldmem_page() is plain wrong.
+> 
+> E.g. ACPI hotplug memory is not even added in the new kernel - see
+> "acpi_no_memhotplug" which is used in kdump environments.
+> 
+> The only thing we can do is
+> - query the hypervisor
+> - try to access and get an exception
 
-The term "secure keys" is really generic.  What makes the "secure
-keys" secure?  We introduced "trusted keys", because TPM 1.2 didn't
-support symmetric keys.  We shouldn't just duplicate "trusted keys"
-for different HW, but improve upon it (eg. symmetric keys never leave
-the device).
-
-The new key type should define generic methods, which are implemented
-for NXP CAAM rypto HW accelerator as an example.
-
-Mimi
-
+But we do preserve struct page's (aka memmap) from the crash kernel,
+don't we? So you have the whole state there. Or am I missing something?
+-- 
+Michal Hocko
+SUSE Labs
