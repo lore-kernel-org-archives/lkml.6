@@ -2,122 +2,118 @@ Return-Path: <SRS0=hTZH=KI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 082A2ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 15:58:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35B4CECDFB8
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 15:58:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 985DF20874
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 15:58:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B347020874
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 15:58:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=cmpxchg-org.20150623.gappssmtp.com header.i=@cmpxchg-org.20150623.gappssmtp.com header.b="TarmybQU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 985DF20874
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=cmpxchg.org
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="GJP6OoX7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B347020874
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388628AbeGXRFq (ORCPT
+        id S2388641AbeGXRFw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 13:05:46 -0400
-Received: from mail-yb0-f193.google.com ([209.85.213.193]:40933 "EHLO
-        mail-yb0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388539AbeGXRFp (ORCPT
+        Tue, 24 Jul 2018 13:05:52 -0400
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:36255 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388413AbeGXRFq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 13:05:45 -0400
-Received: by mail-yb0-f193.google.com with SMTP id y11-v6so1814170ybm.7
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Jul 2018 08:58:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cmpxchg-org.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=1HixM+5ULudAYJSpUtJpJEudBqo7w2K0gXdXrRIXYek=;
-        b=TarmybQUl9cPow5/ZvWD+JrZXLkqHvRzQm02DewOeeHk8KW1asSeQBlEBnDSC1BpMa
-         js1hGK8C2MLyxF/U3yaiIIzbW9+BWxjQgyQaamUCHu1KpboASBXnt+qXxrjhoenx4gX9
-         /k/asiQlnbhPto+PZYhPY2sU2pLMfNnzBwB/KJ3VQAJsM+XYYPwb/lHaeF9AnW8yxHTl
-         9gxZ7JqByV6uar/rCufAq3+/G25uRqlhfdez/+zuE7L2dZ5NW1y1E2iZTIMQ1MwHlBdm
-         ynd1YiHIWg+7iz0elQJsqFq4fFDnbmWVjm7X5f9WzMqlncH3x8OUZz85ftWWV6BgDDhF
-         lX0g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=1HixM+5ULudAYJSpUtJpJEudBqo7w2K0gXdXrRIXYek=;
-        b=sodZ3bHNMXWgm3QBcIpQEbJ2bRebZ059kDhwyZL6AW9IGEzXEMI9kt4sp6BfOp+ZUN
-         F8zpsf2bPd2LEYOFXSH3Pt7cKEu52tDSgEjo+THJ/U12dy4NYCFE3atVOpwQQBQx9TWo
-         RvZKwdkEuc3S43vft72P8vsC1PICgRkxvuNf7VLAVCSO5xSrohT9Cc19qQXKVKAMBJDV
-         pgYnDBQvl5odAaKKVnksk56HemZqUCUVJDRaEhUolkniJUlkHhEJUKHh38Kv7QJ/i8e4
-         50dJo1W+c6dN/iaRnOT6WlnrUINeqUyGUH+OpJfyW/5LYXky7iEKtl46P2hc16NVh62I
-         GwQQ==
-X-Gm-Message-State: AOUpUlFh2Ox8tWXREXaBIlqG1cv3koI5nLhOeqrJNsr7QhmWUOxNRruF
-        u+2yDjRCch8MsBrMKzyNXquAhA==
-X-Google-Smtp-Source: AAOMgpd3C+u5HxZ7DzgPVqcVGq43iyFMIGp5/yRjZ4A2SjJ5D7gF9sd0SHEv+vctgtEIMqze+OTJyA==
-X-Received: by 2002:a25:d410:: with SMTP id m16-v6mr9294606ybf.398.1532447917120;
-        Tue, 24 Jul 2018 08:58:37 -0700 (PDT)
-Received: from localhost ([2620:10d:c091:180::1:c07])
-        by smtp.gmail.com with ESMTPSA id 21-v6sm609155ywf.79.2018.07.24.08.58.35
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 24 Jul 2018 08:58:35 -0700 (PDT)
-Date:   Tue, 24 Jul 2018 12:01:26 -0400
-From:   Johannes Weiner <hannes@cmpxchg.org>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Tejun Heo <tj@kernel.org>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Vinayak Menon <vinmenon@codeaurora.org>,
-        Christopher Lameter <cl@linux.com>,
-        Mike Galbraith <efault@gmx.de>,
-        Shakeel Butt <shakeelb@google.com>, linux-mm@kvack.org,
-        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-team@fb.com
-Subject: Re: [PATCH 08/10] psi: pressure stall information for CPU, memory,
- and IO
-Message-ID: <20180724160126.GC11598@cmpxchg.org>
-References: <20180712172942.10094-1-hannes@cmpxchg.org>
- <20180712172942.10094-9-hannes@cmpxchg.org>
- <20180718120318.GC2476@hirez.programming.kicks-ass.net>
- <20180719184740.GA26291@cmpxchg.org>
- <20180719203114.GL2494@hirez.programming.kicks-ass.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180719203114.GL2494@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+        Tue, 24 Jul 2018 13:05:46 -0400
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20180724155837euoutp011a2ba7bddd68b9ae79118f4bb9af6fa7~EWUL2nMMa1978719787euoutp01b;
+        Tue, 24 Jul 2018 15:58:37 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20180724155837euoutp011a2ba7bddd68b9ae79118f4bb9af6fa7~EWUL2nMMa1978719787euoutp01b
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1532447917;
+        bh=JXY2AP8393pcmweHCT6sw4UgBxuKKX9gLJ8JjaXVyeU=;
+        h=From:To:Cc:Subject:Date:In-reply-to:References:From;
+        b=GJP6OoX7xGNnfglL4xa2UaEqptd9BpKDXxGHwbQI3K+lAicwnJwpB9by6vkB7MTc6
+         vkSoeCqfLWP2RBvc/QQWN292z5Y9fuRE0OAsMQEfEzyXcwCdlP0Lb899NIDPjnapL6
+         fd5NNPEqQ52fRL/dprNjeYyyzt0kcGXN9iTq2h1A=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20180724155836eucas1p2cc9d46bff499e42776d301e9ab562785~EWULhDa8y1850318503eucas1p25;
+        Tue, 24 Jul 2018 15:58:36 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges3new.samsung.com (EUCPMTA) with SMTP id BD.D8.61560.CAC475B5; Tue, 24
+        Jul 2018 16:58:36 +0100 (BST)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20180724155836eucas1p220267599c363d6e0e5a2ef1a2236b57c~EWUK5rRLH2655126551eucas1p2p;
+        Tue, 24 Jul 2018 15:58:36 +0000 (GMT)
+X-AuditID: cbfec7f5-207ff7000002f078-66-5b574caccf37
+Received: from eusync1.samsung.com ( [203.254.199.211]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id 92.18.04183.CAC475B5; Tue, 24
+        Jul 2018 16:58:36 +0100 (BST)
+Received: from amdc3058.localnet ([106.120.53.102]) by eusync1.samsung.com
+        (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5
+        2014)) with ESMTPA id <0PCD008OBODNLZ90@eusync1.samsung.com>; Tue, 24 Jul
+        2018 16:58:36 +0100 (BST)
+From:   Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Cc:     Florian Tobias Schandinat <FlorianSchandinat@gmx.de>,
+        dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] video: fbdev: mark expected switch fall-throughs
+Date:   Tue, 24 Jul 2018 17:58:35 +0200
+Message-id: <61303804.R82jaX4LRF@amdc3058>
+User-Agent: KMail/4.13.3 (Linux/3.13.0-96-generic; KDE/4.13.3; x86_64; ; )
+In-reply-to: <20180709224145.GA15004@embeddedor.com>
+MIME-version: 1.0
+Content-transfer-encoding: 7Bit
+Content-type: text/plain; charset="us-ascii"
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrEIsWRmVeSWpSXmKPExsWy7djPc7prfMKjDW6v1rG48vU9m0XnzGuM
+        Flv3qFqc6PvAanF51xw2B1aPdQdVPT58jPO4332cyePzJrkAligum5TUnMyy1CJ9uwSujG0v
+        PzAV/GOqOPRuHmMD43amLkZODgkBE4l/v96ydjFycQgJrGCUaL4ylQnC+cwoMa/tCytM1f2p
+        89ggEssYJRpWzIFyfjNKrH/9ix2kik3ASmJi+ypGEFtEwEhi9oxusLnMAjMYJV68OcMCkhAW
+        cJXo/dXLDGKzCKhKLF3YBLaCV0BLYsGSLrBmUQEviS372sEO5ARa/en3BUaIGkGJH5Pvgc1h
+        FpCX2Ld/KiuErSNx9tg6RpBlEgJz2CT2ND1hgbjbReLlm4VQtrDEq+Nb2CFsGYnLk7tZIBqm
+        M0q8+bUUylnPKLHmzDFo2FhLHD5+EWoFn8SkbdOBzuYAivNKdLQJQZR4SMy+swsafO2MEtdO
+        zWWawCgzC8m1s5BcOwvJtQsYmVcxiqeWFuempxYb56WW6xUn5haX5qXrJefnbmIExvzpf8e/
+        7mDc9yfpEKMAB6MSD+8Hu/BoIdbEsuLK3EOMEhzMSiK8i0SBQrwpiZVVqUX58UWlOanFhxil
+        OViUxHnjNOqihATSE0tSs1NTC1KLYLJMHJxSDYzpx9sX7T+cvXZtzt+dBrY1jF3Resx7S/Pa
+        Snys46Mt4rIL57LWztmmsCUp+GOmgI9HtJpqqvFVndfx+nsbmY3W8E0r7D1/JIuhfZUok25z
+        HUPRnn/aAh8+O8mv2vMrXT6Fh/9jktBDHxum1Sy1Z25ceNjjs+Gxwv8DsuWn96jfZp/hK5HR
+        osRSnJFoqMVcVJwIAOdHGd31AgAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrHLMWRmVeSWpSXmKPExsVy+t/xy7prfMKjDf40MVtc+fqezaJz5jVG
+        i617VC1O9H1gtbi8aw6bA6vHuoOqHh8+xnnc7z7O5PF5k1wASxSXTUpqTmZZapG+XQJXxraX
+        H5gK/jFVHHo3j7GBcTtTFyMnh4SAicT9qfPYuhi5OIQEljBKrJh+lR3C+csoserwfTaQKjYB
+        K4mJ7asYQWwRASOJ2TO6WUGKmAVmMEr87d7HApIQFnCV6P3VywxiswioSixd2MQKYvMKaEks
+        WNIF1iwq4CWxZV872GpOoNWffl8AiwsJdDJKfP0cA1EvKPFj8j2wmcwC8hL79k9lhbC1JNbv
+        PM40gZF/FpKyWUjKZiEpW8DIvIpRJLW0ODc9t9hIrzgxt7g0L10vOT93EyMwVLcd+7llB2PX
+        u+BDjAIcjEo8vB6O4dFCrIllxZW5hxglOJiVRHgXiQKFeFMSK6tSi/Lji0pzUosPMUpzsCiJ
+        8543qIwSEkhPLEnNTk0tSC2CyTJxcEo1MIae/TZhXeSRvYlHHCWvuex03rjn+fasz8+NTUvS
+        LB36fTb+yxF+Li+f99Isdc3uDnXVJZd2H7kfeGtlYrlPyxPufQ2NNkktzF/3rfz2N+2ZdFXm
+        jBQbPUHTf0udj4tV9Feo8WvKhYU0/ZdimT1v3sL+u43X5eU+aTd9SN1ulRV3RDlXUcOyWoml
+        OCPRUIu5qDgRAJwhhpZRAgAA
+X-CMS-MailID: 20180724155836eucas1p220267599c363d6e0e5a2ef1a2236b57c
+X-Msg-Generator: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20180709224217epcas1p397f731700d48b9b39d12afb5c41f8f06
+References: <CGME20180709224217epcas1p397f731700d48b9b39d12afb5c41f8f06@epcas1p3.samsung.com>
+        <20180709224145.GA15004@embeddedor.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 19, 2018 at 10:31:15PM +0200, Peter Zijlstra wrote:
-> On Thu, Jul 19, 2018 at 02:47:40PM -0400, Johannes Weiner wrote:
-> > On Wed, Jul 18, 2018 at 02:03:18PM +0200, Peter Zijlstra wrote:
-> > > On Thu, Jul 12, 2018 at 01:29:40PM -0400, Johannes Weiner wrote:
-> > > > +	/* Update task counts according to the set/clear bitmasks */
-> > > > +	for (to = 0; (bo = ffs(clear)); to += bo, clear >>= bo) {
-> > > > +		int idx = to + (bo - 1);
-> > > > +
-> > > > +		if (tasks[idx] == 0 && !psi_bug) {
-> > > > +			printk_deferred(KERN_ERR "psi: task underflow! cpu=%d idx=%d tasks=[%u %u %u] clear=%x set=%x\n",
-> > > > +					cpu, idx, tasks[0], tasks[1], tasks[2],
-> > > > +					clear, set);
-> > > > +			psi_bug = 1;
-> > > > +		}
-> > > 
-> > > 		WARN_ONCE(!tasks[idx], ...);
-> > 
-> > It's just open-coded because of the printk_deferred, since this is
-> > inside the scheduler.
+On Monday, July 09, 2018 05:41:45 PM Gustavo A. R. Silva wrote:
+> In preparation to enabling -Wimplicit-fallthrough, mark switch cases
+> where we are expecting to fall through.
 > 
-> Yeah, meh. There's ton of WARNs in the scheduler, WARNs should not
-> trigger anyway.
+> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 
-This one in particular gave us quite a runaround. We had a subtle bug
-in how psi processed task CPU migration that would only manifest with
-hundreds of thousands of machine hours. When it triggered, instead of
-the warning, we'd crash on a corrupted stack with a completely useless
-crash dump - PC pointing to things that couldn't possibly trap etc.
+Patch queued for 4.19, thanks.
 
-So printk_deferred has been a lot more useful in those rare but
-desparate cases ;-) Plus we keep the machine alive.
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
+
