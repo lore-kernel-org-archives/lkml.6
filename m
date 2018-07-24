@@ -2,130 +2,152 @@ Return-Path: <SRS0=hTZH=KI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8120C6778A
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 08:08:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5C75C6778A
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 08:09:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5C7CA20856
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 08:08:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5C7CA20856
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 59E3F20875
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 08:09:56 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=android.com header.i=@android.com header.b="ADzBQG4a"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 59E3F20875
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=android.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388616AbeGXJOL (ORCPT
+        id S2388631AbeGXJPI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 05:14:11 -0400
-Received: from mga02.intel.com ([134.134.136.20]:1798 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388515AbeGXJOL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 05:14:11 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Jul 2018 01:08:56 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,397,1526367600"; 
-   d="scan'208";a="59325753"
-Received: from unknown (HELO [10.239.13.97]) ([10.239.13.97])
-  by orsmga008.jf.intel.com with ESMTP; 24 Jul 2018 01:08:32 -0700
-Message-ID: <5B56DF81.4030606@intel.com>
-Date:   Tue, 24 Jul 2018 16:12:49 +0800
-From:   Wei Wang <wei.w.wang@intel.com>
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:31.0) Gecko/20100101 Thunderbird/31.7.0
+        Tue, 24 Jul 2018 05:15:08 -0400
+Received: from mail-it0-f65.google.com ([209.85.214.65]:52154 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388487AbeGXJPH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Jul 2018 05:15:07 -0400
+Received: by mail-it0-f65.google.com with SMTP id g14-v6so2612836iti.1
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Jul 2018 01:09:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=android.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=9gGdEF1zB6Pdw8DPASw4wytgbd93/MBTrKbGDhz42NQ=;
+        b=ADzBQG4ajUoQdEOtbKPiT3oFffDUeFLlIrgnuM91pyVCjlHrsghXRLLQQE1tJW1z3I
+         eLkayClGTYDgU4MIH6hz2dpmaAXKyODHZZHyTwdTTm8UrldeMxu6kgeN3lKp9K3avxhR
+         Zqw41t+pGAiW38lRlDJupH/neGWsef/EJtRVbB4eZoH3fcPGqzg7XShDYC9t3duR8KjL
+         uoSul4ns7SvrxJDQm1T2GK5zw5gYSuUPOZrv8PKtR5CNI2wKXxo73g1zc8Lk1Llwtkgk
+         zpwI6gyS27hcPd6UuUB9yo4OC0Aqc9EVoZ0qy/jxL4tlYrFUSaNzGihJRtwJJOCtFhqY
+         YmPQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=9gGdEF1zB6Pdw8DPASw4wytgbd93/MBTrKbGDhz42NQ=;
+        b=Ln39YfBZhvvW+l+Q+oX3mS7UOAyDwFseu3vupIekPhvrU8w1efIbvevI3JnPA8hdBy
+         XgaDBoC0yuLGw5EwzUc2qyW5MX9RByjf0pTtgFqZBMOgElKGGjuZhJBMohTfcksDkGAS
+         l+4LcidlbppGaigpbVZN+GpRo9h6QSwM61qIPVe8SRIpvmhfhm/nICQh2j+679Bk+oEH
+         EEwVS7A6fKm5o0dcRUfcqEyP/PPXt2vGG2oyNOsOsBzDBy+ChCUDwj3PlB2dT6QJHsQr
+         j7V7qkWTpiFujA7lkOb7UMKWwX4RBgvlb6aeeJEOetqSPAjHmS4zBW702LLnNCA4eBvB
+         KJlg==
+X-Gm-Message-State: AOUpUlEae4k5c5XmgQZWP29ovjSscR76omG3dCsRRbxEQ5VhGQzzJZSH
+        IG5wIW5loo3z7tEObJ6J0Kqm8LkLEZ++0eiyE2QfdQ==
+X-Google-Smtp-Source: AAOMgpfAWUbYnAx/1nBULpTHgacpcsEOo8OBmAq6+r2OiYOX+S7Bj2QOjdbpVyi6+gyPKFvc8YmoUNZZKO36GC95u5o=
+X-Received: by 2002:a24:d0cd:: with SMTP id m196-v6mr1971471itg.9.1532419792278;
+ Tue, 24 Jul 2018 01:09:52 -0700 (PDT)
 MIME-Version: 1.0
-To:     "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
-        "Michael S. Tsirkin" <mst@redhat.com>
-CC:     virtio-dev@lists.oasis-open.org, linux-kernel@vger.kernel.org,
-        virtualization@lists.linux-foundation.org, kvm@vger.kernel.org,
-        linux-mm@kvack.org, mhocko@kernel.org, akpm@linux-foundation.org,
-        torvalds@linux-foundation.org, pbonzini@redhat.com,
-        liliang.opensource@gmail.com, yang.zhang.wz@gmail.com,
-        quan.xu0@gmail.com, nilal@redhat.com, riel@redhat.com,
-        peterx@redhat.com
-Subject: Re: [PATCH v36 0/5] Virtio-balloon: support free page reporting
-References: <1532075585-39067-1-git-send-email-wei.w.wang@intel.com> <20180723122342-mutt-send-email-mst@kernel.org> <20180723143604.GB2457@work-vm>
-In-Reply-To: <20180723143604.GB2457@work-vm>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
+Received: by 2002:a4f:bb58:0:0:0:0:0 with HTTP; Tue, 24 Jul 2018 01:09:51
+ -0700 (PDT)
+In-Reply-To: <CAK8P3a1F2j3PL2ng7xw9TbCQqwn_U+1D5ChH+v8qWVrxOfW3xw@mail.gmail.com>
+References: <20180716122125.175792-1-maco@android.com> <CAK8P3a1F2j3PL2ng7xw9TbCQqwn_U+1D5ChH+v8qWVrxOfW3xw@mail.gmail.com>
+From:   Martijn Coenen <maco@android.com>
+Date:   Tue, 24 Jul 2018 10:09:51 +0200
+Message-ID: <CAB0TPYH2G_+faZDcvoEyUmZfwP0j83P0KeZXSJdN9rJ4M1ad3w@mail.gmail.com>
+Subject: Re: [PATCH 0/6] Symbol namespaces
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Oliver Neukum <oneukum@suse.com>, Jessica Yu <jeyu@kernel.org>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        linux-m68k <linux-m68k@lists.linux-m68k.org>,
+        USB list <linux-usb@vger.kernel.org>,
+        USB Storage list <usb-storage@lists.one-eyed-alien.net>,
+        linux-scsi <linux-scsi@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Martijn Coenen <maco@google.com>,
+        Sandeep Patil <sspatil@google.com>,
+        Iliyan Malchev <malchev@google.com>,
+        Joel Fernandes <joelaf@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/23/2018 10:36 PM, Dr. David Alan Gilbert wrote:
-> * Michael S. Tsirkin (mst@redhat.com) wrote:
->> On Fri, Jul 20, 2018 at 04:33:00PM +0800, Wei Wang wrote:
->>> This patch series is separated from the previous "Virtio-balloon
->>> Enhancement" series. The new feature, VIRTIO_BALLOON_F_FREE_PAGE_HINT,
->>> implemented by this series enables the virtio-balloon driver to report
->>> hints of guest free pages to the host. It can be used to accelerate live
->>> migration of VMs. Here is an introduction of this usage:
->>>
->>> Live migration needs to transfer the VM's memory from the source machine
->>> to the destination round by round. For the 1st round, all the VM's memory
->>> is transferred. From the 2nd round, only the pieces of memory that were
->>> written by the guest (after the 1st round) are transferred. One method
->>> that is popularly used by the hypervisor to track which part of memory is
->>> written is to write-protect all the guest memory.
->>>
->>> This feature enables the optimization by skipping the transfer of guest
->>> free pages during VM live migration. It is not concerned that the memory
->>> pages are used after they are given to the hypervisor as a hint of the
->>> free pages, because they will be tracked by the hypervisor and transferred
->>> in the subsequent round if they are used and written.
->>>
->>> * Tests
->>> - Test Environment
->>>      Host: Intel(R) Xeon(R) CPU E5-2699 v4 @ 2.20GHz
->>>      Guest: 8G RAM, 4 vCPU
->>>      Migration setup: migrate_set_speed 100G, migrate_set_downtime 2 second
->>>
->>> - Test Results
->>>      - Idle Guest Live Migration Time (results are averaged over 10 runs):
->>>          - Optimization v.s. Legacy = 409ms vs 1757ms --> ~77% reduction
->>> 	(setting page poisoning zero and enabling ksm don't affect the
->>>           comparison result)
->>>      - Guest with Linux Compilation Workload (make bzImage -j4):
->>>          - Live Migration Time (average)
->>>            Optimization v.s. Legacy = 1407ms v.s. 2528ms --> ~44% reduction
->>>          - Linux Compilation Time
->>>            Optimization v.s. Legacy = 5min4s v.s. 5min12s
->>>            --> no obvious difference
->> I'd like to see dgilbert's take on whether this kind of gain
->> justifies adding a PV interfaces, and what kind of guest workload
->> is appropriate.
->>
->> Cc'd.
-> Well, 44% is great ... although the measurement is a bit weird.
+Hi Arnd,
+
+On Mon, Jul 23, 2018 at 4:28 PM, Arnd Bergmann <arnd@arndb.de> wrote:
+> This looks nice. I don't want to overload you with additional
+> requests, but it might be good to think about how this can
+> be taken further, if we want to actually convert large
+> parts of the kernel to it.
+
+No worries about overloading, I'm happy with all feedback to make this better.
+
+> I have two ideas:
 >
-> a) A 2 second downtime is very large; 300-500ms is more normal
+> - It would be nice to have a simple mechanism in Kconfig
+>   to put all symbols in a module into a namespace that is
+>   derived from KBUILD_MODNAME, to avoid having to
+>   annotate every symbol separately. This could be similar
+>   to how we ended up dealing with EXPORT_NO_SYMBOLS
+>   in the linux-2.4 days, with the goal of eventually having
+>   a namespace for each symbol. Similarly, we could pass
+>   a number of default namespaces through the Makefile,
+>   e.g. if we have a directory that has lots of drivers that all
+>   import the symbols from a common subsystem module.
 
-No problem, I will set downtime to 400ms for the tests.
-
-> b) I'm not sure what the 'average' is  - is that just between a bunch of
-> repeated migrations?
-
-Yes, just repeatedly ("source<---->destination" migration) do the tests 
-and get an averaged result.
-
-
-> c) What load was running in the guest during the live migration?
-
-The first one above just uses a guest without running any specific 
-workload (named idle guests).
-The second one uses a guest with the Linux compilation workload running.
+I'm hinging on two thoughts here; I really like it because it
+obviously reduces work and makes this easier to use. On the other
+hand, you now have to look in multiple places to see if a symbol is
+exported to a namespace/imported from a module. Perhaps it depends on
+how coarse-grained the namespaces end up being. Either way, I think it
+would be pretty easy to cook up patches for this.
 
 >
-> An interesting measurement to add would be to do the same test but
-> with a VM with a lot more RAM but the same load;  you'd hope the gain
-> would be even better.
-> It would be interesting, especially because the users who are interested
-> are people creating VMs allocated with lots of extra memory (for the
-> worst case) but most of the time migrating when it's fairly idle.
+> - If this is possible to implement, it would be great to have
+>   a way to limit the globally visible symbols in a module
+>   to the ones that are explicitly exported  even when a that
+>   module is built-in rather than loadable. Not sure how this
+>   is best done though. A couple of things can be done with
+>   objcopy, or possibly by reintroducing partial linking (which
+>   was removed not too long ago).
 
-OK. I will add tests of a guest with larger memory.
+If I understand you correctly, this is orthogonal to symbol
+namespaces, right? Though I think there is value in doing the same
+thing for symbol namespaces: right now, the only way to find out if
+all modules correctly import a symbol exported to a namespace is to
+run an 'allmodconfig'; not having to do that would be a win. Being
+able to do the same thing for the exported symbols in the global
+namespace is very similar. So yeah, I think this is a good idea and
+will look into this more.
 
-Best,
-Wei
+Do you think these things should be a part of these series, or can it
+be a follow-up?
+
+Thanks,
+Martijn
+
+>
+>         Arnd
