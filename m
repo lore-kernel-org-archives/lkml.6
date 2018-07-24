@@ -2,114 +2,94 @@ Return-Path: <SRS0=hTZH=KI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8438C6778A
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 13:23:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7C20C6778A
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 13:23:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5F7D220875
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 13:23:10 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="QQL/j7yH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5F7D220875
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id A89AA20875
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 13:23:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A89AA20875
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388329AbeGXO3g (ORCPT
+        id S2388355AbeGXO3w (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 10:29:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60534 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388295AbeGXO3g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 10:29:36 -0400
-Received: from localhost (unknown [171.61.90.205])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 46F8F20852;
-        Tue, 24 Jul 2018 13:23:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1532438588;
-        bh=5gMAuvLfwZnQAzioqK7tm85OE6ffyBDtYnpSQyDE6O8=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=QQL/j7yHmAr7DiGBY3/zN/coXs8/82ng1Lzyi5zEAAuScUHcEWE+iM0NmJKwLT6RR
-         45cYEZcJWx2uFb1TgwXR0YOMvkQnLD0wgD21/FZL0Z1PxMedlinyB6HQ2XmvvGlqSd
-         3YX7Dcl2XnUbuxx+hhClPiuERVtn0vC7CT6+Zd6U=
-Date:   Tue, 24 Jul 2018 18:52:59 +0530
-From:   Vinod <vkoul@kernel.org>
-To:     Paul Cercueil <paul@crapouillou.net>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>,
-        James Hogan <jhogan@kernel.org>,
-        Zubair Lutfullah Kakakhel <Zubair.Kakakhel@imgtec.com>,
-        Mathieu Malaterre <malat@debian.org>,
-        Daniel Silsby <dansilsby@gmail.com>, dmaengine@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mips@linux-mips.org
-Subject: Re: [PATCH v3 03/18] dmaengine: dma-jz4780: Avoid hardcoding number
- of channels
-Message-ID: <20180724132259.GF3661@vkoul-mobl>
-References: <20180721110643.19624-1-paul@crapouillou.net>
- <20180721110643.19624-4-paul@crapouillou.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180721110643.19624-4-paul@crapouillou.net>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+        Tue, 24 Jul 2018 10:29:52 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:34716 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2388333AbeGXO3w (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Jul 2018 10:29:52 -0400
+Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w6ODIl7P008444
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Jul 2018 09:23:23 -0400
+Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2ke3r5uy5b-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Jul 2018 09:23:23 -0400
+Received: from localhost
+        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <rppt@linux.vnet.ibm.com>;
+        Tue, 24 Jul 2018 14:23:21 +0100
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
+        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 24 Jul 2018 14:23:18 +0100
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w6ODNIph30343202
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 24 Jul 2018 13:23:18 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 747F9A4040;
+        Tue, 24 Jul 2018 16:23:32 +0100 (BST)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id E4A33A4055;
+        Tue, 24 Jul 2018 16:23:30 +0100 (BST)
+Received: from rapoport-lnx (unknown [9.148.8.56])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Tue, 24 Jul 2018 16:23:30 +0100 (BST)
+Received: by rapoport-lnx (sSMTP sendmail emulation); Tue, 24 Jul 2018 16:23:15 +0300
+From:   Mike Rapoport <rppt@linux.vnet.ibm.com>
+To:     Jeff Dike <jdike@addtoit.com>, Richard Weinberger <richard@nod.at>
+Cc:     Michal Hocko <mhocko@kernel.org>, linux-um@lists.infradead.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>
+Subject: [PATCH 0/2] um: switch to NO_BOOTMEM
+Date:   Tue, 24 Jul 2018 16:23:12 +0300
+X-Mailer: git-send-email 2.7.4
+X-TM-AS-GCONF: 00
+x-cbid: 18072413-0008-0000-0000-0000025709F6
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18072413-0009-0000-0000-000021BD7D91
+Message-Id: <1532438594-4530-1-git-send-email-rppt@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-24_04:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=590 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1806210000 definitions=main-1807240141
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 21-07-18, 13:06, Paul Cercueil wrote:
+Hi,
 
-> +static const struct jz4780_dma_soc_data jz4780_dma_soc_data[] = {
-> +	[ID_JZ4780] = { .nb_channels = 32, },
+These patches convert UML to use NO_BOOTMEM.
+Tested on x86-64.
 
-why the array of structs?
+Mike Rapoport (2):
+  um: setup_physmem: stop using global variables
+  um: switch to NO_BOOTMEM
 
-> +};
-> +
-> +static const struct of_device_id jz4780_dma_dt_match[] = {
-> +	{ .compatible = "ingenic,jz4780-dma", .data = (void *)ID_JZ4780 },
-
-the data should be jz4780_dma_soc_data? as you would add more data
-later.. and not the enum..
-
-> -	jzdma = devm_kzalloc(dev, sizeof(*jzdma), GFP_KERNEL);
-> +	version = (enum jz_version)of_id->data;
-> +	soc_data = &jz4780_dma_soc_data[version];
-
-this can be simplified if we do:
-
-        soc_data = device_get_match_data(pdev);
-
-with:
-
-static const struct jz4780_dma_soc_data jz4780_dma_soc_data = {
-        .nb_channels = 32,
-};
-
-and
-        { .compatible = "ingenic,jz4780-dma", .data = (void *)jz4780_dma_soc_data },
-
-You add more parameters in future patches and store soc_data in driver
-object and use as is..
-
-> +	jzdma = devm_kzalloc(dev, sizeof(*jzdma)
-> +				+ sizeof(*jzdma->chan) * soc_data->nb_channels,
-> +				GFP_KERNEL);
->  	if (!jzdma)
->  		return -ENOMEM;
->  
-> +	jzdma->soc_data = soc_data;
-> +	jzdma->version = version;
-
-why do you need to store version, driver should handle values and not
-versions..
+ arch/um/Kconfig.common   |  2 ++
+ arch/um/kernel/physmem.c | 22 ++++++++++------------
+ 2 files changed, 12 insertions(+), 12 deletions(-)
 
 -- 
-~Vinod
+2.7.4
+
