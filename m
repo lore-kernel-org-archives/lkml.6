@@ -2,113 +2,143 @@ Return-Path: <SRS0=hTZH=KI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30A95C6778A
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 17:14:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13F76C6778A
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 17:17:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E2C0120844
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 17:14:52 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="D72A8lFT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E2C0120844
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id C0ED120844
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 17:17:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C0ED120844
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388546AbeGXSWS (ORCPT
+        id S2388474AbeGXSZN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 14:22:18 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:41710 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388388AbeGXSWS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 14:22:18 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=XN11HUk8mzAsEWcv9oz8nTa26WLsJtGxds82DNtJD2E=; b=D72A8lFTg1q37kgN8T32I4VOw
-        2uVydv2Rl2sf01QI9RjS6fKTIeZb1U1hVqWIiUNJ2OsLkZB99IOh+xpKY2AVWKFrjeqwfl2nSwBDn
-        tc4ampJLBZVl6f1i6YzTfFKJorckNguSWuGYfamc6sBThLcBkO/l3+7AUXOnGFUV5UXUM=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1fi0tJ-0005gn-AC; Tue, 24 Jul 2018 17:14:29 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id E8B131123A86; Tue, 24 Jul 2018 18:14:28 +0100 (BST)
-Date:   Tue, 24 Jul 2018 18:14:28 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     "Agrawal, Akshu" <Akshu.Agrawal@amd.com>
-Cc:     djkurtz@chromium.org, Alexander.Deucher@amd.com,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        Dylan Reid <dgreid@chromium.org>,
-        "Mukunda, Vijendar" <Vijendar.Mukunda@amd.com>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Wei Yongjun <weiyongjun1@huawei.com>,
-        "moderated list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM..." 
-        <alsa-devel@alsa-project.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] ASoC: AMD: Add a fix voltage regulator for DA7219 and
- ADAU7002
-Message-ID: <20180724171428.GQ13268@sirena.org.uk>
-References: <1532068715-2992-1-git-send-email-akshu.agrawal@amd.com>
- <20180720121816.GD10784@sirena.org.uk>
- <50343cff-bad4-7677-851f-f0b818ae7b29@amd.com>
+        Tue, 24 Jul 2018 14:25:13 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:55524 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388413AbeGXSZN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Jul 2018 14:25:13 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A33B080D;
+        Tue, 24 Jul 2018 10:17:44 -0700 (PDT)
+Received: from e110439-lin (e110439-lin.emea.arm.com [10.4.12.126])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 015653F575;
+        Tue, 24 Jul 2018 10:17:41 -0700 (PDT)
+Date:   Tue, 24 Jul 2018 18:17:39 +0100
+From:   Patrick Bellasi <patrick.bellasi@arm.com>
+To:     Suren Baghdasaryan <surenb@google.com>
+Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Tejun Heo <tj@kernel.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Paul Turner <pjt@google.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Todd Kjos <tkjos@google.com>,
+        Joel Fernandes <joelaf@google.com>,
+        Steve Muckle <smuckle@google.com>
+Subject: Re: [PATCH v2 12/12] sched/core: uclamp: use percentage clamp values
+Message-ID: <20180724171739.GC3162@e110439-lin>
+References: <20180716082906.6061-1-patrick.bellasi@arm.com>
+ <20180716082906.6061-13-patrick.bellasi@arm.com>
+ <CAJuCfpEwRtXoa_tnWTFP8CuyPMHsLAXky14K_jyphEeo2d32qg@mail.gmail.com>
+ <20180724164303.GB3162@e110439-lin>
+ <CAJuCfpHddNKXNVBs21sCADcHjW7zxxue8jg1B4KbPh-QLNe46g@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="TSQPSNmi3T91JED+"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <50343cff-bad4-7677-851f-f0b818ae7b29@amd.com>
-X-Cookie: If in doubt, mumble.
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <CAJuCfpHddNKXNVBs21sCADcHjW7zxxue8jg1B4KbPh-QLNe46g@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 24-Jul 10:11, Suren Baghdasaryan wrote:
+> On Tue, Jul 24, 2018 at 9:43 AM, Patrick Bellasi
+> <patrick.bellasi@arm.com> wrote:
+> > On 21-Jul 21:04, Suren Baghdasaryan wrote:
+> >> On Mon, Jul 16, 2018 at 1:29 AM, Patrick Bellasi
+> >> <patrick.bellasi@arm.com> wrote:
+> >
+> > [...]
+> >
+> >> > +static inline unsigned int scale_from_percent(unsigned int pct)
+> >> > +{
+> >> > +       WARN_ON(pct > 100);
+> >> > +
+> >> > +       return ((SCHED_FIXEDPOINT_SCALE * pct) / 100);
+> >> > +}
+> >> > +
+> >> > +static inline unsigned int scale_to_percent(unsigned int value)
+> >> > +{
+> >> > +       unsigned int rounding = 0;
+> >> > +
+> >> > +       WARN_ON(value > SCHED_FIXEDPOINT_SCALE);
+> >> > +
+> >> > +       /* Compensate rounding errors for: 0, 256, 512, 768, 1024 */
+> >> > +       if (likely((value & 0xFF) && ~(value & 0x700)))
+> >> > +               rounding = 1;
+> >>
+> >> Hmm. I don't think ~(value & 0x700) will ever yield FALSE... What am I missing?
+> >
+> > So, 0x700 is the topmost 3 bits sets (111 0000 0000) which different
+> > configuration corresponds to:
+> >
+> >  001 0000 0000 =>  256
+> >  010 0000 0000 =>  512
+> >  011 0000 0000 =>  768
+> >  100 0000 0000 => 1024
+> >
+> > Thus, if 0x700 matches then we have one of these values in input and
+> > for these cases we have to add a unit to the percentage value.
+> >
+> > For the case (value == 0) we translate it into 0% thanks to the check
+> > on (value & 0xFF) to ensure rounding = 0.
+> >
+> 
+> I think just (value & 0xFF) is enough to get you the right behavior.
+> ~(value & 0x700) is not needed, it's effectively a NoOp which always
+> yields TRUE. For any *value* (value & 0x700) == 0x...00 and ~(value &
+> 0x700) == 0x...FF == TRUE.
 
---TSQPSNmi3T91JED+
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+And you are actually right! ;)
 
-On Mon, Jul 23, 2018 at 10:56:44AM +0530, Agrawal, Akshu wrote:
+> > Here is a small python snippet I've used to check the conversion of
+> > all the possible percentage values:
+> >
+> > ---8<---
+> > values = range(0, 101)
+> > for pct in xrange(0, 101):
+> >         util = int((1024 * pct) / 100)
+> >         rounding = 1
+> >         if not ((util & 0xFF) and ~(util & 0x700)):
 
-> This approach shows inconsistencies and in some boot cycles da7219 fails
-> to get regulator. Form the logs (below) it shows time gap between the
-> time we call =E2=80=9Cplatform_device_register(&acp_da7219_regulator);=E2=
-=80=9D and when
-> the regulator actually gets registered.
+... it works also by patching the line above!
 
-This hack isn't going to help with that AFAICT, you're still registering
-a platform device and relying on it appearing in time?  It just
-registers less often.  I think what we need here is a way to register
-the link between the devices independently of the regulator registering
-or firmware, that way we won't get a dummy regulator.  Since AFAICT we
-know the names of the devices that are being registered we can use their
-dev_name()s which seems tractable - we need a function in
-regulator/machine.h which lets you provide a set of struct
-regulator_consumer_supply for a target dev_name.
 
---TSQPSNmi3T91JED+
-Content-Type: application/pgp-signature; name="signature.asc"
+> >             print "Fixing util_to_perc({:3d} => {:4d})".format(pct, util)
+> >             rounding = 0
+> >         pct2 = (rounding + ((100 * util) / 1024))
+> >         if pct2 in values:
+> >                 values.remove(pct2)
+> >         if pct != pct2:
+> >             print "Convertion failed for: {:3d} => {:4d} => {:3d}".format(pct, util, pct2)
+> > if values:
+> >     print "ERROR: not all percentage values converted"
+> > ---8<---
 
------BEGIN PGP SIGNATURE-----
+Good catch, thanks!
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAltXXnQACgkQJNaLcl1U
-h9BhIQf9Fw7VLwNBmWVu4Ia61h8wt8CJ6Hg0m4ICosSAtNfWPiTTy+PnMRP/Q0pg
-PJbjtkWAeE6TTbeXeQ4F8OHaGa/bvk4q820HM7WhXGfToXkL9iKsE3vjB0U6JqwT
-UlUyNIA9d+eV8DmAxxsmG/4hRT13lkXtPF2BdkC6QsmrFWK50Oimh3DLJZOGAg5o
-LnuQCCcctf33BQ2ZG2t28QF10NWUqIPGsT9D5GL4vsf9zc5pBD+DxjzgaVA8pgAJ
-GOKim7OGpkzZZS/Y5G1QrWSW4hmgj+TBi+gWYcT+z50753trqTN3ZcCH2QuNfado
-KOVNcXfo0aQZWNsUI6F1aP0YYcGLfQ==
-=Nzh7
------END PGP SIGNATURE-----
+-- 
+#include <best/regards.h>
 
---TSQPSNmi3T91JED+--
+Patrick Bellasi
