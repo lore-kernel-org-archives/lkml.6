@@ -2,124 +2,127 @@ Return-Path: <SRS0=hTZH=KI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0153CECDFB8
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 05:47:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03B00C6778A
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 05:49:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B69A520856
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 05:47:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B69A520856
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 7CB9C20856
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 05:49:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7CB9C20856
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388264AbeGXGv4 (ORCPT
+        id S2388246AbeGXGyj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 02:51:56 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:51766 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2388146AbeGXGv4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 02:51:56 -0400
-Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w6O5iQsN039714
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Jul 2018 01:47:12 -0400
-Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2kdwxq0n0p-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Jul 2018 01:47:12 -0400
-Received: from localhost
-        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <rppt@linux.vnet.ibm.com>;
-        Tue, 24 Jul 2018 06:47:10 +0100
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
-        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 24 Jul 2018 06:47:07 +0100
-Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w6O5l6uj40304676
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 24 Jul 2018 05:47:06 GMT
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 38961AE051;
-        Tue, 24 Jul 2018 08:47:16 +0100 (BST)
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id B80E2AE04D;
-        Tue, 24 Jul 2018 08:47:15 +0100 (BST)
-Received: from rapoport-lnx (unknown [9.148.8.56])
-        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Tue, 24 Jul 2018 08:47:15 +0100 (BST)
-Date:   Tue, 24 Jul 2018 08:47:04 +0300
-From:   Mike Rapoport <rppt@linux.vnet.ibm.com>
-To:     Richard Kuo <rkuo@codeaurora.org>
-Cc:     Michal Hocko <mhocko@kernel.org>, linux-hexagon@vger.kernel.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] hexagon: switch to NO_BOOTMEM
-References: <1531726998-10971-1-git-send-email-rppt@linux.vnet.ibm.com>
- <20180723212339.GA12771@codeaurora.org>
+        Tue, 24 Jul 2018 02:54:39 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:45505 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388140AbeGXGyj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Jul 2018 02:54:39 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 3C0E6207B0; Tue, 24 Jul 2018 07:49:52 +0200 (CEST)
+Received: from bbrezillon (91-160-177-164.subs.proxad.net [91.160.177.164])
+        by mail.bootlin.com (Postfix) with ESMTPSA id C7579206F6;
+        Tue, 24 Jul 2018 07:49:51 +0200 (CEST)
+Date:   Tue, 24 Jul 2018 07:49:51 +0200
+From:   Boris Brezillon <boris.brezillon@bootlin.com>
+To:     Randy Dunlap <rdunlap@infradead.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Linux-sh list <linux-sh@vger.kernel.org>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        linux-mtd@lists.infradead.org,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rich Felker <dalias@libc.org>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Subject: Re: [PATCH v2] mtd/maps: fix solutionengine.c printk format
+ warnings
+Message-ID: <20180724074951.62c49935@bbrezillon>
+In-Reply-To: <0ca72308-0551-97dc-dc74-11e1d8dac5b1@infradead.org>
+References: <0ca72308-0551-97dc-dc74-11e1d8dac5b1@infradead.org>
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180723212339.GA12771@codeaurora.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-TM-AS-GCONF: 00
-x-cbid: 18072405-0020-0000-0000-000002AA431C
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18072405-0021-0000-0000-000020F6D281
-Message-Id: <20180724054704.GA16933@rapoport-lnx>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-24_02:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=872 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1806210000 definitions=main-1807240060
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 23, 2018 at 04:23:39PM -0500, Richard Kuo wrote:
-> 
-> On Mon, Jul 16, 2018 at 10:43:18AM +0300, Mike Rapoport wrote:
-> > This patch adds registration of the system memory with memblock, eliminates
-> > bootmem initialization and converts early memory reservations from bootmem
-> > to memblock.
-> > 
-> > Signed-off-by: Mike Rapoport <rppt@linux.vnet.ibm.com>
-> 
-> Sorry for the delay, and thanks for this patch.
-> 
-> I think the first memblock_reserve should use ARCH_PFN_OFFSET instead of
-> PHYS_OFFSET.
+On Sun, 22 Jul 2018 16:28:52 -0700
+Randy Dunlap <rdunlap@infradead.org> wrote:
 
-memblock_reserve gets physical address rather than a pfn.
+> From: Randy Dunlap <rdunlap@infradead.org>
+> 
+> Fix 2 printk format warnings (this driver is currently only used by
+> arch/sh/) by using "%pap" instead of "%lx".
+> (or we could just cast the physical addresses to unsigned int)
+> 
+> Fixes these build warnings:
+> 
+> ../drivers/mtd/maps/solutionengine.c: In function 'init_soleng_maps':
+> ../include/linux/kern_levels.h:5:18: warning: format '%lx' expects argument of type 'long unsigned int', but argument 2 has type 'resource_size_t' {aka 'unsigned int'} [-Wformat=]
+> ../drivers/mtd/maps/solutionengine.c:62:54: note: format string is defined here
+>   printk(KERN_NOTICE "Solution Engine: Flash at 0x%08lx, EPROM at 0x%08lx\n",
+>                                                   ~~~~^
+>                                                   %08x
+> ../include/linux/kern_levels.h:5:18: warning: format '%lx' expects argument of type 'long unsigned int', but argument 3 has type 'resource_size_t' {aka 'unsigned int'} [-Wformat=]
+> ../drivers/mtd/maps/solutionengine.c:62:72: note: format string is defined here
+>   printk(KERN_NOTICE "Solution Engine: Flash at 0x%08lx, EPROM at 0x%08lx\n",
+>                                                                     ~~~~^
+>                                                                     %08x
+> 
+> Cc: David Woodhouse <dwmw2@infradead.org>
+> Cc: Brian Norris <computersforpeace@gmail.com>
+> Cc: Boris Brezillon <boris.brezillon@bootlin.com>
+> Cc: Marek Vasut <marek.vasut@gmail.com>
+> Cc: Richard Weinberger <richard@nod.at>
+> Cc: linux-mtd@lists.infradead.org
+> Cc: Yoshinori Sato <ysato@users.sourceforge.jp>
+> Cc: Rich Felker <dalias@libc.org>
+> Cc: linux-sh@vger.kernel.org
+> Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+> 
+> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+> ---
+> v2: indent all lines inside the new block
+> 
+>  drivers/mtd/maps/solutionengine.c |   11 ++++++++---
+>  1 file changed, 8 insertions(+), 3 deletions(-)
+> 
+> --- linux-next-20180717.orig/drivers/mtd/maps/solutionengine.c
+> +++ linux-next-20180717/drivers/mtd/maps/solutionengine.c
+> @@ -59,9 +59,14 @@ static int __init init_soleng_maps(void)
+>  			return -ENXIO;
+>  		}
+>  	}
+> -	printk(KERN_NOTICE "Solution Engine: Flash at 0x%08lx, EPROM at 0x%08lx\n",
+> -	       soleng_flash_map.phys & 0x1fffffff,
+> -	       soleng_eprom_map.phys & 0x1fffffff);
 
-If I read arch/hexagon/include/asm/mem-layout.h correctly, the PHYS_OFFSET
-*is* the physical address of the RAM and ARCH_PFN_OFFSET is the first pfn:
+Hm, not sure why masking with 0x1fffffff is required. It seems .phys is
+either 0 or 0x1000000, so maybe we should just go for 
 
-#define PHYS_PFN_OFFSET	(PHYS_OFFSET >> PAGE_SHIFT)
-#define ARCH_PFN_OFFSET	PHYS_PFN_OFFSET
+	printk(KERN_NOTICE "Solution Engine: Flash at 0x%pap, EPROM at 0x%pap\n",
+	       &soleng_flash_map.phys, &soleng_eprom_map.phys);
 
-Did I miss something?
- 
-> If you can amend that I'd be happy to take it through my tree or it can go
-> through any other.
-> 
-> 
-> Thanks,
-> Richard Kuo
-> 
-> 
-> -- 
-> Employee of Qualcomm Innovation Center, Inc.
-> Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum, 
-> a Linux Foundation Collaborative Project
-> 
 
--- 
-Sincerely yours,
-Mike.
+> +	{
+> +		resource_size_t fl_phys = soleng_flash_map.phys & 0x1fffffff;
+> +		resource_size_t ep_phys = soleng_eprom_map.phys & 0x1fffffff;
+> +
+> +		printk(KERN_NOTICE
+> +		       "Solution Engine: Flash at 0x%pap, EPROM at 0x%pap\n",
+> +	       	       &fl_phys, &ep_phys);
+> +	}
+>  	flash_mtd->owner = THIS_MODULE;
+>  
+>  	eprom_mtd = do_map_probe("map_rom", &soleng_eprom_map);
+> 
+> 
 
