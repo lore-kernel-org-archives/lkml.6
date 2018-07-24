@@ -1,169 +1,114 @@
 Return-Path: <SRS0=hTZH=KI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: *
-X-Spam-Status: No, score=1.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FSL_HELO_FAKE,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Level: 
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 449F7ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 18:10:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5344C6778A
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 18:12:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F191D20874
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 18:10:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8D9EE20874
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 18:12:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GrvEXPt9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F191D20874
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AKYHt5bI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D9EE20874
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388571AbeGXTSM (ORCPT
+        id S2388546AbeGXTUF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 15:18:12 -0400
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:42299 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388541AbeGXTSM (ORCPT
+        Tue, 24 Jul 2018 15:20:05 -0400
+Received: from mail-wm0-f42.google.com ([74.125.82.42]:37201 "EHLO
+        mail-wm0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388436AbeGXTUF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 15:18:12 -0400
-Received: by mail-lf1-f65.google.com with SMTP id u202-v6so3611710lff.9;
-        Tue, 24 Jul 2018 11:10:30 -0700 (PDT)
+        Tue, 24 Jul 2018 15:20:05 -0400
+Received: by mail-wm0-f42.google.com with SMTP id n11-v6so3445506wmc.2
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Jul 2018 11:12:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=hFAW59Khn9P51t9LU2/3fUxZAC83Qi+KTgtC2HraFB8=;
-        b=GrvEXPt9LqICM3Lw26kIaJU+GdIsOeNNrTT4fkoVGkChDXfqYFAMQszjbQBNrtzrrF
-         BNSO7dI6WA6dNmaxv8ZWv1Sa/E9OM37nXq/TxYRXzFh/INGLXhvDGOR5p44VL2E8RjC9
-         nuw5PXVO/CDNVE6A3yqCXzGSf1J52mRZB+maUZVdGQ+xOh47H2/JEoJLQx37sYExrZMl
-         7SAuvgK4j+CN7j/fj9zIt+UbDwwLZkD59j72VMIUP22OwAN1yBcoLbKzo/P4xNiMeA8i
-         w9CUVyWtOUedvDKBesQrCccxQxUfNvuNaPiZ/eTZqiWvie1AQBlOi9jV2oz0kL+cBl4i
-         brmg==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=i3elQdLne5LPkd+vmZTPUOaGdqdb9m7zCuJuwDIywFM=;
+        b=AKYHt5bIG/VsO6QSEjC+1P0Ok5m2GiyfCT0wVa5Fe/miHu5VvUxkoe2hkLrlGsUu6v
+         kZUsq1sHqhvftnxS8h9PSXj93PG8UZX86hqhKubIdG5w6yG1Hb6TouQ9Sg6erJW5kY4t
+         MtpNs90xtrfjKGCDFHkvu7joDDyCfb2+mdi3Z1x5qABKf/++uBwxXT5ep3yFpCGWXsdp
+         ksmFRr5GsUHO8JcLi3Ci4fhdbQUKTAHfr23QXBohOURUFkubx8NvWQpoFTKUfMZmvAfx
+         +x+O8FeRb1GhFnsfoRL4xVcw8ZjRgayoKPlZliITSDlpYfMMMQ8WUDA8C44qOzUiiiBJ
+         E5Bg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=hFAW59Khn9P51t9LU2/3fUxZAC83Qi+KTgtC2HraFB8=;
-        b=da35ZX/1Ih4DrgmYomHSVqJ3nZ/LiFpTb6sVULUmq0ZcYhg6zlLgvqNEwxRc2rtnn4
-         0LBB3OvO4I8QReHDR4Jyq9B6Pr2Wf9ljfOSH7GAHR/mO8KFyPTHpHEhvlUFCVj8uaWg7
-         bpjIyu15HbtklYW/XyRmlynGf2GdVOxxdcRXRV1z7suKmjUu8VSPQ9ZkKmUPC2/hBpgq
-         5FR9mTIsqKoLkAWhsxfYmp5CUSdd7Z2vNMlnNI/B1E12N5Fr1ZFr698zyo0CJjSbR6QH
-         aNfHnqwyjRQYgyqvizbcM4i2cPKaRx2Rkq1skc/FfkLeXP1rNhSzskpxf9Y0gz8Vs4ay
-         CC/w==
-X-Gm-Message-State: AOUpUlGZI6NxXGTWtY7EnlA/qIwdz1ALK+Qe7BimuCjzg4b1lt2P87dY
-        fvo8XbeH+Jdd7OiCsNHZ6HI=
-X-Google-Smtp-Source: AAOMgpevvAnLDwuRkqzy0WJ5kzu5X3/o1+1/Eg3P0EDN/ieDxOaIlr3bE5L2LAC8EJ4FFxJKAJRHpA==
-X-Received: by 2002:a19:7609:: with SMTP id c9-v6mr10362983lff.73.1532455829276;
-        Tue, 24 Jul 2018 11:10:29 -0700 (PDT)
-Received: from gmail.com (c-2ec2f9f0-74736162.cust.telenor.se. [46.194.249.240])
-        by smtp.gmail.com with ESMTPSA id y5-v6sm1831944ljj.75.2018.07.24.11.10.15
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 24 Jul 2018 11:10:28 -0700 (PDT)
-Date:   Tue, 24 Jul 2018 20:09:59 +0200
-From:   Marcus Folkesson <marcus.folkesson@gmail.com>
-To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc:     Alexey Khoroshilov <khoroshilov@ispras.ru>,
-        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] input: pxrc - do not store USB device in private struct
-Message-ID: <20180724180959.GA2864@gmail.com>
-References: <20180716144014.6331-1-marcus.folkesson@gmail.com>
- <20180724023804.6mnbstzdrcp74rev@penguin>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=i3elQdLne5LPkd+vmZTPUOaGdqdb9m7zCuJuwDIywFM=;
+        b=CPdFRxliMXARQxaqZVNEfqgAJmu90cM5TPEBeTsCDcpU40fYx9qFU9JvdyvphDeI/Y
+         u6VG19XSVIY8+tU97o1ib25aRNWmDXAVbtzO93AukcOxrCsQT8nT6Dx4LW3kYfx9JwPh
+         Db+tM4Gch9cDquJCGyTDyUtnv9QRnvsKudE6v/LYrwupUvDtjBfqlbCYeDcWIuYH/d+J
+         Wdf7yK4b9DM9JqMU2i3AgmOTa3GU36Wj6Ik7vqwEipo0jhDqjXa8YRcTsho1or5jZhAV
+         KmkJf0f00ugDoINKigiWIJ+tqRjgzv5lX5uGkIpNMecc8ZQF9nIT1qtQjOF5nuu6k0Fv
+         aQNg==
+X-Gm-Message-State: AOUpUlFcI6TcWn4jZoUQZjuWfnOpNIMVSagLZKWXtQP/6fA8H+Lhgsy2
+        jk8/g0qdbXFAjkk2mQ9dCz7U8MNVLCxF/8YbaXM=
+X-Google-Smtp-Source: AAOMgpfE0Y/qBK322caOnl48SOrmzRz+4VBNOn9ffsIJohrv+bqPZvLA82TWYGsJVg6KafYRY1PeCQjrKmOkCfgIAmo=
+X-Received: by 2002:a1c:57c1:: with SMTP id l184-v6mr2652897wmb.16.1532455943269;
+ Tue, 24 Jul 2018 11:12:23 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="YiEDa0DAkWCtVeE4"
-Content-Disposition: inline
-In-Reply-To: <20180724023804.6mnbstzdrcp74rev@penguin>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+References: <20180720180034.3964-1-logang@deltatee.com> <20180720180034.3964-5-logang@deltatee.com>
+ <CAJ80sat2gx3jaDi3LVDG6GhZ6qKmuKWxyaP_0VoR5k3VfGybqw@mail.gmail.com>
+ <b14a3c42-4a23-bff5-3e1b-9a1423611230@deltatee.com> <CAJ80saunKS6hbNFBKjbQqSo32+KeLZurksCtnHNw-C35Zjq2Xw@mail.gmail.com>
+ <8809f02e-93de-f81a-31e0-90f2c1983b70@deltatee.com>
+In-Reply-To: <8809f02e-93de-f81a-31e0-90f2c1983b70@deltatee.com>
+From:   Allen Hubbe <allenbh@gmail.com>
+Date:   Tue, 24 Jul 2018 14:12:11 -0400
+Message-ID: <CAJ80sauPtUBJ5q9iSGPArwvetBwEkjNaRmS_6adP5moK5ejLqg@mail.gmail.com>
+Subject: Re: [PATCH v2 4/8] NTB: ntb_pingpong: Choose doorbells based on port number
+To:     logang@deltatee.com
+Cc:     linux-kernel@vger.kernel.org, linux-ntb@googlegroups.com,
+        Jon Mason <jdmason@kudzu.us>, fancer.lancer@gmail.com,
+        Shyam-sundar.S-k@amd.com, shuah@kernel.org, dmeyer@gigaio.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, Jul 24, 2018 at 1:37 PM Logan Gunthorpe <logang@deltatee.com> wrote:
+> Not really. Given that we know there are only two peers, we always use
+> the other side's doorbell register. You'd only use the nearby doorbell
+> register if you wanted to trigger your own interrupt -- that would be
+> weird and we don't really have the API sophistication to do that.
+>
+> If we wanted to support multiple peers with some number in crosslink
+> then we'd need to revamp things _significantly_. In this case we'd have
+> multiple doorbell registers which each apply to a different subset of
+> peers. This gets _very_ complicated and hurts my head.
 
---YiEDa0DAkWCtVeE4
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+...huh, looks like peer index was omitted from ntb_peer_db_set and
+friends.  Adding peer index there would make the interface consistent
+with other ntb_peer functions.  Peer index would allow the hw driver
+to select which doorbell register to use for each peer.  Adding a
+ntb_peer_db_valid_bits to that would allow a subset of bits in the
+shared register to be associated with each peer.
 
-Hello Dmitry,
+I think that's all that would need to change, not significantly more,
+to support multiple doorbell registers associated with different
+subsets of peers.  The complication would at least be hidden in the hw
+driver, where it would need to maintain some mapping from peer index
+to the right set of registers.
 
-On Tue, Jul 24, 2018 at 02:38:04AM +0000, Dmitry Torokhov wrote:
-> Hi Marcus,
->=20
-> On Mon, Jul 16, 2018 at 04:40:14PM +0200, Marcus Folkesson wrote:
-> > The USB device is only needed during setup, so put it back after
-> > initialization and do not store it in our private struct.
-> >=20
-> > Also, the USB device is a parent of USB interface so our driver
-> > model rules ensure that USB device should not disappear while
-> > interface device is still there.
-> > So not keep a refcount on the device is safe.
-> >=20
-> > Reported-by: Alexey Khoroshilov <khoroshilov@ispras.ru>
-> > Signed-off-by: Marcus Folkesson <marcus.folkesson@gmail.com>
-> > ---
-> >  drivers/input/joystick/pxrc.c | 22 ++++++++++++----------
-> >  1 file changed, 12 insertions(+), 10 deletions(-)
-> >=20
-> > diff --git a/drivers/input/joystick/pxrc.c b/drivers/input/joystick/pxr=
-c.c
-> > index 07a0dbd3ced2..46a7acb747bf 100644
-> > --- a/drivers/input/joystick/pxrc.c
-> > +++ b/drivers/input/joystick/pxrc.c
-> ...
->=20
-> > @@ -204,23 +204,25 @@ static int pxrc_probe(struct usb_interface *intf,
-> >  		return -ENOMEM;
-> > =20
-> >  	mutex_init(&pxrc->pm_mutex);
-> > -	pxrc->udev =3D usb_get_dev(interface_to_usbdev(intf));
-> > +	udev =3D usb_get_dev(interface_to_usbdev(intf));
->=20
-> There is really no need to "get" device for the probe duration, or in
-> general, when you are not storing the reference to it.
->=20
-> I posted series with an updated version of this patch plus couple more
-> cleanups/fixes, and would appreciate if you could give it a spin.
+> But as I said,
+> I'm not trying to add new functionality for multi-peer crosslink or
+> anything like that. I'm just trying to fix the 2 crosslink peer case so
+> it works like it did when it was originally merged.
 
-Thank you for doing this.
+I thought for sure ntb_peer_db_set already had peer index, and I was
+wrong.  Go ahead with the change as in your patch, I won't force the
+issue or that you to do that extra work and touch all the drivers
+again for this.  It can be addressed when there is renued interest in
+making things work more than one peer.
 
-I have reviewed the patchset and tested on real hardware, and it looks good
-to me.
-
-For what it's worth:
-
-Reviewed-by: Marcus Folkesson <marcus.folkesson@gmail.com>
-Tested-by: Marcus Folkesson <marcus.folkesson@gmail.com>=20
-
-On the whole patchset.
-
->=20
-> Thanks.
->=20
-> --=20
-> Dmitry
-
-Best regards
-Marcus Folkesson
-
---YiEDa0DAkWCtVeE4
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEBVGi6LZstU1kwSxliIBOb1ldUjIFAltXa3EACgkQiIBOb1ld
-UjKr6RAAxBBPXuGaXIepNqA8k4QPrnfqoD4Giy9cteMeKIC4AF4baWejBZHqf+8D
-qhq65jx1IoP+ZRXZVDNRT5HPKGnAaIMPLe1+1Mer2tMwQkmDjZNYtbxcSKjCrhoz
-51UhUEsMIpGKuiB1doQ8IOPywBiUik6SvpJeXJQOehnFMo+hiozOy/re0E8ZsK62
-h7aPLFAn2dgOsUWbikVSVoduc/Wcik1+3BFLkkBdXdajRqTYG/6mOSS6+4aSnPND
-UowfABodFGb6U7PgU1B2iCvxClMyw1STY6TqwAUa1uotkfPj5bB6Zce+lAU0BbWR
-IRTdA5MiRe+AnFqfexlQNu81RVtIGy4Qej0cCQ87QI5HO1vza3d4nLo7yWXhFops
-WW7UeMGiFAjari4oHJNWfk9VH2HI4S32eeCe3xqdPzNMdIMhX0Xrlb1Bo+iFW9lx
-dD2Y3XNuiX0WITmrLx7+dr+SEqgDvhgxjvXUUqQYlii0yZMagKt+iA3paypFr960
-AzKdqpGi2EkJUZ2acwR61S8pbib68X1Rpvq0D4QDCqeDKZ0v0SN/vTN6mTBYh1Uz
-IVU89c09T902uORhbLRiEAUVe809KiSIVCgqvlJQJJw1rSLW+o4nOVR6dXMlshsf
-gnaPTut28qETXr/nDkQ1setbDDDanv5643j8JAKc2GOwkLwGaJU=
-=t1xJ
------END PGP SIGNATURE-----
-
---YiEDa0DAkWCtVeE4--
+This patch, and the others in this series:
+Acked-by: Allen Hubbe <allenbh@gmail.com>
