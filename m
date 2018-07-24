@@ -2,169 +2,97 @@ Return-Path: <SRS0=hTZH=KI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3595C6778A
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 17:24:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D95CBC6778A
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 17:26:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 900D020874
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 17:24:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 891DE20880
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 17:26:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="G9Feiah7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 900D020874
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=joelfernandes.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fuykkmiG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 891DE20880
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388510AbeGXSbg (ORCPT
+        id S2388443AbeGXSdz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 14:31:36 -0400
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:41385 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388393AbeGXSbg (ORCPT
+        Tue, 24 Jul 2018 14:33:55 -0400
+Received: from mail-wm0-f52.google.com ([74.125.82.52]:40697 "EHLO
+        mail-wm0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388366AbeGXSdz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 14:31:36 -0400
-Received: by mail-pl0-f67.google.com with SMTP id w8-v6so2055305ply.8
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Jul 2018 10:24:06 -0700 (PDT)
+        Tue, 24 Jul 2018 14:33:55 -0400
+Received: by mail-wm0-f52.google.com with SMTP id y9-v6so2499819wma.5
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Jul 2018 10:26:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=joelfernandes.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=toxk+IXZeNr5JmdgFIwY4a/V6xKEg9X97pyxPK/3kCo=;
-        b=G9Feiah7WFmqxB/rnB5qOGhj4xArhsT0Yd7mQZJroSNWqoXogYDddp4Frmoezy0js8
-         pXjdkkddxrqDp6/E5g0NeqxpBFkKDdzr3giKQlsWcOgXniDp6I9g9O8b+3DjHi75xRWN
-         6t7sSD79gu1I/tuICvW9T8LMqWEVQuMHZzbpI=
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=rbsW5ZsbCTNMAb40mYjR9YiJ9HAi5X8Qd7iZ1KjWSGU=;
+        b=fuykkmiGu4Kuk6EIdsVO+luTNU3loT75ceoKjjKqEWysuG436KyTz/T9gDHgUpZWM4
+         Gy3kdBevx66n7OkHv9Bev/p+MQbAkOfB63w1NrMsxFONa5VCLCkGr7WwCx0G9HzIfsiX
+         pir5G077h6bTnMkVeeMheVm3tHBCyJo+OBNKcWPVmIB+AF9DI4NSnolBRhCDyWZX+E5a
+         qg9Pbmtk439bcCLGj7ckHPCVUJLFiuOUtKY7e7Z7Xvi3yg8SFk3jdx7cm50V6bpX1x40
+         7TRUshpB3eR52KbVITPazMrGVdIZGJbWevEEtyZIS7aDl3zrPwgqxSy8O3gUo3JTobMf
+         JWsQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=toxk+IXZeNr5JmdgFIwY4a/V6xKEg9X97pyxPK/3kCo=;
-        b=Tw+507umCD/qaqGDx+QDf4go1n61MGtZG0Zr1Le+9P0AO5N2NgTtiST8vnerGtcs9A
-         mDciyad1+L5dMLpIDitPNIZJw+VJokh3ExcsBcEMVcZjhpV8QD0NqrIGADID3OIE2MC6
-         Td/m9Xd7xti64VPooWbyB4gCdJKdcI7uK18raBoY9sQP9FW23XFg4uZFKDrZaC9bpYu3
-         80VZ5ix+9wJjZV6vJ+du9ZYUR6Q/UFgbxmJknqwbBtuXjegPWDh3uuvoCSLhtFPcosq8
-         38Q3HzPxQBTavprVP2AbM7IhL4MAGGa9CyhBy3I3Zyzqco0WicpYjp3nG+HJwSbkw6sG
-         lKmA==
-X-Gm-Message-State: AOUpUlGZXRIn5hq0cQizDgZVNtrElYrCckKntNao2c/x/tzQNx9whlHg
-        Uymt32W9HU9l/0Np+gpBlHEWlw==
-X-Google-Smtp-Source: AAOMgpcVp9A9cmonCixRLRuB14B2bFAwiGqYA0yRr1DUmwz8rMWU+Fg4NPOVCSwpi9PyN6t3qGK0Rg==
-X-Received: by 2002:a17:902:a40b:: with SMTP id p11-v6mr17950827plq.228.1532453046184;
-        Tue, 24 Jul 2018 10:24:06 -0700 (PDT)
-Received: from localhost ([2620:0:1000:1600:3122:ea9c:d178:eb])
-        by smtp.gmail.com with ESMTPSA id p64-v6sm19522303pfa.47.2018.07.24.10.24.05
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 24 Jul 2018 10:24:05 -0700 (PDT)
-Date:   Tue, 24 Jul 2018 10:24:05 -0700
-From:   Joel Fernandes <joel@joelfernandes.org>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     linux-kernel@vger.kernel.org, kernel-team@android.com,
-        Ruchi Kandoi <kandoiruchi@google.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
-        linux-pm@vger.kernel.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Viresh Kumar <viresh.kumar@linaro.org>
-Subject: Re: [PATCH v2] cpufreq: trace frequency limits change
-Message-ID: <20180724172405.GA257870@joelaf.mtv.corp.google.com>
-References: <20180720222114.200311-1-joel@joelfernandes.org>
- <20180724094932.11e10452@gandalf.local.home>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=rbsW5ZsbCTNMAb40mYjR9YiJ9HAi5X8Qd7iZ1KjWSGU=;
+        b=fs0/S7rE8ssBg51XIRwPYhd4quzE+I34mLkIIXyW0O+CtmQmiNZKvxpK34k6ELzA8j
+         VxQZn00kzW2uTD6c8r8pXdIB6hTRcaZdaM0i3z6G0N5orV0VnnZwcbdGdApa0h9n/+wp
+         7WakSJlgE+rF3fxdbUh1zgDL8s1S+l30dmXxn7/AOd1h9IBbR78r/ashRgvRSyA/OOKt
+         05zXCMnbS48nrntlOSqd2lrKZE3KE2d1ZG8La5An6SUM5tnPN2ECaZvyO7yA8YwNFf9g
+         P6z0vm/PFF8uTP67MU8ydHB9ZuoDMo820nBxTq6D7/3nIn7Wgkgo1XeqF4BrUCLoadCA
+         jeHg==
+X-Gm-Message-State: AOUpUlFoncCypI67MDfux8+mjLNubeLkwM268mrOQjvgOFRSv4EeCAoD
+        DhGRsWW6WchEwAVHgAerjBy/YA1Kx+eJY4gMzuzPMQ==
+X-Google-Smtp-Source: AAOMgpflOEBnbtkE5zGVgDjspAuRKt7kK9LtLTdTIo3k7doopNn4gGcjsYypp4Qxy1i9832/zImWtXTMuukPEoCJ2Mc=
+X-Received: by 2002:a1c:6d94:: with SMTP id b20-v6mr2603265wmi.28.1532453183850;
+ Tue, 24 Jul 2018 10:26:23 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180724094932.11e10452@gandalf.local.home>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+References: <20180720180034.3964-1-logang@deltatee.com> <20180720180034.3964-5-logang@deltatee.com>
+ <CAJ80sat2gx3jaDi3LVDG6GhZ6qKmuKWxyaP_0VoR5k3VfGybqw@mail.gmail.com> <b14a3c42-4a23-bff5-3e1b-9a1423611230@deltatee.com>
+In-Reply-To: <b14a3c42-4a23-bff5-3e1b-9a1423611230@deltatee.com>
+From:   Allen Hubbe <allenbh@gmail.com>
+Date:   Tue, 24 Jul 2018 13:26:12 -0400
+Message-ID: <CAJ80saunKS6hbNFBKjbQqSo32+KeLZurksCtnHNw-C35Zjq2Xw@mail.gmail.com>
+Subject: Re: [PATCH v2 4/8] NTB: ntb_pingpong: Choose doorbells based on port number
+To:     logang@deltatee.com
+Cc:     linux-kernel@vger.kernel.org, linux-ntb@googlegroups.com,
+        Jon Mason <jdmason@kudzu.us>, fancer.lancer@gmail.com,
+        Shyam-sundar.S-k@amd.com, shuah@kernel.org, dmeyer@gigaio.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 24, 2018 at 09:49:32AM -0400, Steven Rostedt wrote:
-> On Fri, 20 Jul 2018 15:21:14 -0700
-> Joel Fernandes <joel@joelfernandes.org> wrote:
-> 
-> > From: Ruchi Kandoi <kandoiruchi@google.com>
-> > 
-> > systrace used for tracing for Android systems has carried a patch for
-> > many years in the Android tree that traces when the cpufreq limits
-> > change.  With the help of this information, systrace can know when the
-> > policy limits change and can visually display the data. Lets add
-> > upstream support for the same.
-> > 
-> > Signed-off-by: Ruchi Kandoi <kandoiruchi@google.com>
-> > Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
-> > ---
-> > v1->v2: Minor changes suggested by Viresh
-> > 
-> >  Documentation/trace/events-power.rst |  1 +
-> >  drivers/cpufreq/cpufreq.c            |  1 +
-> >  include/trace/events/power.h         | 25 +++++++++++++++++++++++++
-> >  3 files changed, 27 insertions(+)
-> > 
-> > diff --git a/Documentation/trace/events-power.rst b/Documentation/trace/events-power.rst
-> > index a77daca75e30..2ef318962e29 100644
-> > --- a/Documentation/trace/events-power.rst
-> > +++ b/Documentation/trace/events-power.rst
-> > @@ -27,6 +27,7 @@ cpufreq.
-> >  
-> >    cpu_idle		"state=%lu cpu_id=%lu"
-> >    cpu_frequency		"state=%lu cpu_id=%lu"
-> > +  cpu_frequency_limits	"min=%lu max=%lu cpu_id=%lu"
-> >  
-> >  A suspend event is used to indicate the system going in and out of the
-> >  suspend mode:
-> > diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
-> > index b0dfd3222013..4fd935df101e 100644
-> > --- a/drivers/cpufreq/cpufreq.c
-> > +++ b/drivers/cpufreq/cpufreq.c
-> > @@ -2236,6 +2236,7 @@ static int cpufreq_set_policy(struct cpufreq_policy *policy,
-> >  
-> >  	policy->min = new_policy->min;
-> >  	policy->max = new_policy->max;
-> > +	trace_cpu_frequency_limits(policy->min, policy->max, policy->cpu);
-> 
-> Wouldn't it make more sense just to pass in "policy"?
+On Mon, Jul 23, 2018 at 12:08 PM Logan Gunthorpe <logang@deltatee.com> wrote:
+> I don't think you'll ever have a case where two peers have the same
+> index, as the index is really an abstract concept the hardware doesn't
+> really know about.
 
-Yes I agree, good idea.
+That is the point of index, that there should never be two peers with
+the same index, and also that the range of index values is bounded.
+Port numbers are problematic, so I'm worried about the change to use
+port number in the client drivers instead of using index.  For
+example, this change assumes that the index value is < bits per long
+long, because the value is used in BIT_ULL(port number).
 
-> >  
-> >  	policy->cached_target_freq = UINT_MAX;
-> >  
-> > diff --git a/include/trace/events/power.h b/include/trace/events/power.h
-> > index 908977d69783..f5bec45108b6 100644
-> > --- a/include/trace/events/power.h
-> > +++ b/include/trace/events/power.h
-> > @@ -148,6 +148,31 @@ DEFINE_EVENT(cpu, cpu_frequency,
-> >  	TP_ARGS(frequency, cpu_id)
-> >  );
-> >  
-> > +TRACE_EVENT(cpu_frequency_limits,
-> > +
-> > +	TP_PROTO(unsigned int min_freq, unsigned int max_freq,
-> > +		unsigned int cpu_id),
-> > +
-> > +	TP_ARGS(min_freq, max_freq, cpu_id),
-> > +
-> > +	TP_STRUCT__entry(
-> > +		__field(u32, min_freq)
-> > +		__field(u32, max_freq)
-> > +		__field(u32, cpu_id)
-> > +	),
-> > +
-> > +	TP_fast_assign(
-> > +		__entry->min_freq = min_freq;
-> > +		__entry->max_freq = max_freq;
-> > +		__entry->cpu_id = cpu_id;
-> 
-> Then have here:
-> 
-> 		__entry->min_freq = policy->min;
-> 		__entry->max_freq = policy->max;
-> 		__entry->puc_id = policy->cpu;
-> 
-> It would also make the footprint of the tracepoint in the code smaller
-> as it would pass fewer parameters to the trace event.
-
-Yes, that's a great idea. I'll make the change and post v3.
-
--Joel
- 
+Maybe I'm missing something...  In the crosslink case, there is
+another doorbell register on the other side of the crosslink.  Whether
+to use the nearby or via-crosslink doorbell depends on the peer
+index... making assumptions about the hw driver, but is that about
+right?  Then you are selecting bits in the doorbell register based on
+port number, ok, that must be how the bits of the shared db register
+are associated with ports in your configuration.  Maybe what's
+actually needed is a ntb_peer_db_valid_mask(peer index), and if only
+the port-numbered db bit (or any other combination) is valid for that
+peer, so be it, that can be an implementation choice of the hw driver
+and below.
