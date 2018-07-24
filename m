@@ -6,105 +6,95 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75BA2ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 16:05:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C801FECDFB8
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 16:07:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2794220844
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 16:05:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2794220844
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=aosc.io
+	by mail.kernel.org (Postfix) with ESMTP id 7E81220844
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 16:07:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7E81220844
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388621AbeGXRM2 (ORCPT
+        id S2388496AbeGXROo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 13:12:28 -0400
-Received: from hermes.aosc.io ([199.195.250.187]:55580 "EHLO hermes.aosc.io"
+        Tue, 24 Jul 2018 13:14:44 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:39162 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388361AbeGXRM2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 13:12:28 -0400
-Received: from localhost (localhost [127.0.0.1]) (Authenticated sender: icenowy@aosc.io)
-        by hermes.aosc.io (Postfix) with ESMTPSA id 7D6BB9F734;
-        Tue, 24 Jul 2018 16:05:03 +0000 (UTC)
-Message-ID: <f77bcb551d60e9d5332dad20c1ef1a1e83ddcc5b.camel@aosc.io>
-Subject: Re: [PATCH v2 00/18] Allwinner R40 HDMI refactoring
-From:   Icenowy Zheng <icenowy@aosc.io>
-To:     Maxime Ripard <maxime.ripard@bootlin.com>,
-        Jernej =?gb2312?Q?=810=947krabec?= <jernej.skrabec@siol.net>
-Cc:     mark.rutland@arm.com, devicetree@vger.kernel.org, airlied@linux.ie,
-        linux-sunxi@googlegroups.com, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, wens@csie.org, robh+dt@kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Date:   Wed, 25 Jul 2018 00:04:49 +0800
-In-Reply-To: <20180724123741.bbkjgy2uwmzsj45k@flea>
-References: <20180710203511.18454-1-jernej.skrabec@siol.net>
-         <20180711083036.7attjq4hm5ay5gmn@flea> <2309112.TTVI9Fv1ar@jernej-laptop>
-         <20180724123741.bbkjgy2uwmzsj45k@flea>
-Organization: Anthon Open-Source Community
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        id S2388427AbeGXROn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Jul 2018 13:14:43 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 95B1220733; Tue, 24 Jul 2018 18:07:30 +0200 (CEST)
+Received: from bbrezillon (91-160-177-164.subs.proxad.net [91.160.177.164])
+        by mail.bootlin.com (Postfix) with ESMTPSA id D9145203D9;
+        Tue, 24 Jul 2018 18:07:29 +0200 (CEST)
+Date:   Tue, 24 Jul 2018 18:07:29 +0200
+From:   Boris Brezillon <boris.brezillon@bootlin.com>
+To:     Wolfram Sang <wsa@the-dreams.de>
+Cc:     Arnd Bergmann <arnd@arndb.de>, Peter Rosin <peda@axentia.se>,
+        linux-i2c@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Przemyslaw Sroka <psroka@cadence.com>,
+        Arkadiusz Golec <agolec@cadence.com>,
+        Alan Douglas <adouglas@cadence.com>,
+        Bartosz Folta <bfolta@cadence.com>,
+        Damian Kos <dkos@cadence.com>,
+        Alicja Jurasik-Urbaniak <alicja@cadence.com>,
+        Cyprian Wronka <cwronka@cadence.com>,
+        Suresh Punnoose <sureshp@cadence.com>,
+        Rafal Ciepiela <rafalc@cadence.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Nishanth Menon <nm@ti.com>, Rob Herring <robh+dt@kernel.org>,
+        Pawel Moll <pawel.moll@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ian Campbell <ijc+devicetree@hellion.org.uk>,
+        Kumar Gala <galak@codeaurora.org>,
+        DTML <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Vitor Soares <Vitor.Soares@synopsys.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Xiang Lin <Xiang.Lin@synaptics.com>,
+        linux-gpio@vger.kernel.org, Sekhar Nori <nsekhar@ti.com>,
+        Przemyslaw Gaj <pgaj@cadence.com>
+Subject: Re: [PATCH v6 00/10] Add the I3C subsystem
+Message-ID: <20180724180729.4aed4a7a@bbrezillon>
+In-Reply-To: <20180724155717.aodl6xehacparo7b@katana>
+References: <20180719152930.3715-1-boris.brezillon@bootlin.com>
+        <CAK8P3a2MP5+oFz--e+BM24D8Ahw7H_RKgN1S6wY1nQE6JL0dmw@mail.gmail.com>
+        <2ab0ab75-2df0-2714-f007-c33b25481016@axentia.se>
+        <20180720101206.tv7nsoanwo5ftnia@ninjato>
+        <CAK8P3a2Pqo5DuYBb09+w4nGWGOw+e_tZPxnA06qjNO_6Hw6NvQ@mail.gmail.com>
+        <21b269c5-a3a7-c5de-c81e-c9c9301ae13e@axentia.se>
+        <CAK8P3a1t2fhdw7HwxNkOs9o2pBECZ0ZdOysA=r2SPTWEvx76kw@mail.gmail.com>
+        <a74a7472-e900-d031-d10b-b12f03ea9ff1@axentia.se>
+        <20180720154132.2fwmwpiwtxa73ljf@ninjato>
+        <CAK8P3a0+8a9LCyW2WX6gO2Pi3GJa_ofznC07LMHjWmxZ4HaX7Q@mail.gmail.com>
+        <20180724155717.aodl6xehacparo7b@katana>
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-在 2018-07-24二的 14:37 +0200，Maxime Ripard写道：
-> On Sun, Jul 22, 2018 at 04:43:56PM +0200, Jernej Škrabec wrote:
-> > Hi Maxime,
-> > 
-> > Dne sreda, 11. julij 2018 ob 10:30:36 CEST je Maxime Ripard
-> > napisal(a):
-> > > On Tue, Jul 10, 2018 at 10:34:53PM +0200, Jernej Skrabec wrote:
-> > > > This series fixes several issues found in R40 HDMI patch series
-> > > > after
-> > > > it was applied. Conversation can be found here:
-> > > > 
-http://lists.infradead.org/pipermail/linux-arm-kernel/2018-June/586011.htm
-> > > > l
-> > > > 
-> > > > Patches are based on latest linux-next (next-20180710) and are
-> > > > ordered
-> > > > in such way that they don't break R40 HDMI at any time. Because
-> > > > of that
-> > > > I suggest that whole series goes through drm-misc to preserve
-> > > > that order.
-> > > > 
-> > > > I also tested those patches on H3 to make sure it doesn't break
-> > > > other
-> > > > platforms. However, it would be nice to test for regressions
-> > > > also on
-> > > > older SoCs (with DE1).
-> > > > 
-> > > > Best regards,
-> > > > Jernej
-> > > 
-> > > Applied all patches but the patch 10, thanks!
-> > > Maxime
-> > 
-> > It seems that you forgot to merge some patches:
-> > 
-> > [PATCH v2 12/18] drm/sun4i: tcon: Add another way for matching
-> > mixers with 
-> > tcon
-> > [PATCH v2 13/18] drm/sun4i: tcon: Add support for R40 TCON
-> > 
-> > Without them, R40 display pipeline can't work.
-> > 
-> > Maybe they are in your spam folder?
-> 
-> Thanks for telling me, I'm not quite sure what happened.
-> 
-> I've applied them.
+On Tue, 24 Jul 2018 17:57:17 +0200
+Wolfram Sang <wsa@the-dreams.de> wrote:
 
-BTW without them the board cannot boot because of dead loop in
-sun4i_drv_probe().
-
+> > I think an SoC design we will likely see is an i3c master multiplexed with
+> > an i2c master to access one bus. The i2c master can then use clock
+> > stretching and other things that may not work in the i3c master, and it
+> > may be used in the absence of proper i3c drivers in the OS.  
 > 
-> Sorry,
-> Maxime
-> 
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+> Multiplexed? Well, as soon you want to use I3C features like IBI, this
+> is not going to work, right? It will not even work with Linux being an
+> I2C slave itself. Or do you mean running the I3C and I2C controller
+> simultaneously using the same wires?
 
+I think we should switch to an I3C mindset. It seems the use cases
+we're discussing so far are I2C use cases. Keep in mind that I3C bus
+management is completely different from I2C one (event if I3C is
+backward compatible with I2C, it's just a feature, not the foundation
+of the I3C protocol).
