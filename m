@@ -7,57 +7,57 @@ X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 984AAECDFB8
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 16:43:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A065C6778A
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 16:43:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 505CE2064D
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 16:43:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 10D532064D
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 16:43:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HAb+uQba"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 505CE2064D
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hXF6t5cj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 10D532064D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388659AbeGXRvB (ORCPT
+        id S2388675AbeGXRvJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 13:51:01 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:45455 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388333AbeGXRvB (ORCPT
+        Tue, 24 Jul 2018 13:51:09 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:36744 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388333AbeGXRvI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 13:51:01 -0400
-Received: by mail-pg1-f194.google.com with SMTP id f1-v6so3279388pgq.12;
-        Tue, 24 Jul 2018 09:43:41 -0700 (PDT)
+        Tue, 24 Jul 2018 13:51:08 -0400
+Received: by mail-pf1-f195.google.com with SMTP id d14-v6so983096pfo.3;
+        Tue, 24 Jul 2018 09:43:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=HEntl0EBSh+VHmSftZDapg3XX86cjd85caaA6ut9+wE=;
-        b=HAb+uQbaNoo5JjjX0w8fE4dvLBGMrH/tRwbsUWkpw8/d0kR12JFfomSAb1jlwQsDqE
-         0IS+0wUjhHYs3uFMFQzUG3GzphnFjcehPFHKMHWO70tr/HEXtp6gttycAQ+rINRq8AZU
-         9RaT7oD+7SrK2x7V6tbRxlY/bTZCHSS8Tn7pyrQssxv19m1mhoDY92fLBU/HYLoZxzNu
-         lxc4FxVjJ4KcWJE7wUYSZKe6ZgbN/NSgzGtgr1wQkb8Vp21RhxFc+cwn0zsquxzTCULg
-         D73Hko58sg3KtYfvMitSTd/9EUXx56fkeZsXUeRmK1fV1ykVy2PCKnTcaBKXHJiy3VQU
-         QnSA==
+        bh=ZvIZKJEwpMIpohq/LdYvTtmJaLs5qZc4iqS3mjg1E9g=;
+        b=hXF6t5cjrR8pCnFh4OmOIMeVh3OyISEe9Xxmo0Uy4jjPF5AUXwH3V4uZHJqZXXNJqH
+         HjfqPcHpQMEjnPY0yg/du0uH9OclQM+XJ053dBFOSvgpVAKlX8Q3S3GJCUaeWLtWfT0V
+         1bCFiks9sCkeTc3cITWOGk2SRWh2m9/dD1TFPRLKdkiEDDHiVDOw6Wi5EMJzK70QVQXh
+         M1xhc2uI9tlGaKwqnIdTbHK340OfD8fBI3sBNEd8eghElxnyZB4NsOYYhg6UZgzVo9zo
+         RkfUb28rAyO9PUdqbRHsIb7i9qs4PjGn0XVgeDHXMDGkSU7C27bbJeykNMtZCo6A3XIq
+         7/bg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=HEntl0EBSh+VHmSftZDapg3XX86cjd85caaA6ut9+wE=;
-        b=TgYJyfRc3kWpO2MluVghXy8T/aTaEGl8ujVBMztECeTfNfXi3Q3men49ODyuQmsTRb
-         hS1AKgVfBAlk+/oRp7r85yPwBQ7TcgPoNgILdFIAuMc0+mJaetMnhF8FDivZhGkXmBvF
-         aAF/QW90Eg0qqVLKn0o/nmGcBTcgZxVKwLE4WHami6EfH61r8dYx7pjUODwKYreQAWwd
-         wi4Vl37EYqk5RxMqKLaLwpz0G2pE8pq8dGrr0yEpmjNS+KiHv4AjKj/BQOQIYOnmFy5d
-         51yDfTTRsEpcsUoVoqe8DJUHPS53uA6886n6VHnjjpZJGwCpwAgCcLjGOHlPEqfyzsg9
-         LEbQ==
-X-Gm-Message-State: AOUpUlFS5hSJcxSgdjpnpaMiXntHShQ4JgdZTr9/t1y/DgaGsZ8mAnRq
-        1ludf79ZwoALwEGFA5joDUc=
-X-Google-Smtp-Source: AAOMgpeIBDbao+5on9tpmdkH5Av/6Q2iCKpKNAEvOXbYWOMp/rLQoxWcmMoZkCpGe7jBh2vZu2tn+Q==
-X-Received: by 2002:a62:9849:: with SMTP id q70-v6mr18405953pfd.178.1532450621447;
-        Tue, 24 Jul 2018 09:43:41 -0700 (PDT)
+        bh=ZvIZKJEwpMIpohq/LdYvTtmJaLs5qZc4iqS3mjg1E9g=;
+        b=K56tYW78B7m+suy8i0ZupPbPscX8Zn1So/tggX15xwXw0EjmxO7PRaJrAOaVR7PQJQ
+         JL89TWlkRk4yj/H4mO4Eoi63gP/7uUwT7MhZ9/nlYJx/sQvsa6IXncciDS5WeMhnl+is
+         Acqg6QIVxwwXBfonpzYfHfYpsvsdsUdVGbo+o7pn1F6yOx6Wg2uo09MuYferW7rOlmvm
+         0n5aKFT648WVmJai+a664Q1wPP8pebx8XNKxYOIoOsaKas3jTRjzBhHBUFbtqkc57Y8N
+         7/+xNI0M9DUREP4YqdxFxcRrM+fH7gYh7CZ/wn1wGP7PFEj3Vb+ZfjjRnJonUo3LcpiG
+         VG4Q==
+X-Gm-Message-State: AOUpUlFT7+S05YLnlTX/Q6PQf+GxGw6cB1dOGys5JbF9egcYsg8BSYVr
+        BSheV1tMQozrR8TdXBF+jCw=
+X-Google-Smtp-Source: AAOMgpdWxjh7j0n/11RQ7ldGUxwer27Du/uChLHjeB9tkCuhJsAe0NleEDSkbVZnmxFuhshI5TVIkw==
+X-Received: by 2002:a65:6211:: with SMTP id d17-v6mr17445108pgv.450.1532450629144;
+        Tue, 24 Jul 2018 09:43:49 -0700 (PDT)
 Received: from localhost.localdomain (109-252-90-13.nat.spd-mgts.ru. [109.252.90.13])
-        by smtp.gmail.com with ESMTPSA id j1-v6sm39410536pfk.125.2018.07.24.09.43.34
+        by smtp.gmail.com with ESMTPSA id j1-v6sm39410536pfk.125.2018.07.24.09.43.41
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 24 Jul 2018 09:43:40 -0700 (PDT)
+        Tue, 24 Jul 2018 09:43:48 -0700 (PDT)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Peter De Schrijver <pdeschrijver@nvidia.com>,
@@ -68,9 +68,9 @@ To:     Thierry Reding <thierry.reding@gmail.com>,
 Cc:     Rob Herring <robh+dt@kernel.org>, linux-tegra@vger.kernel.org,
         linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v5 6/8] clk: tegra20: Turn EMC clock gate into divider
-Date:   Tue, 24 Jul 2018 19:42:19 +0300
-Message-Id: <20180724164221.3307-7-digetx@gmail.com>
+Subject: [PATCH v5 7/8] clk: tegra20: Check whether direct PLLM sourcing is turned off for EMC
+Date:   Tue, 24 Jul 2018 19:42:20 +0300
+Message-Id: <20180724164221.3307-8-digetx@gmail.com>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180724164221.3307-1-digetx@gmail.com>
 References: <20180724164221.3307-1-digetx@gmail.com>
@@ -79,78 +79,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Kernel should never gate the EMC clock as it causes immediate lockup, so
-removing clk-gate functionality doesn't affect anything. Turning EMC clk
-gate into divider allows to implement glitch-less EMC scaling, avoiding
-reparenting to a backup clock.
+Ensure that direct PLLM sourcing is turned off for EMC as we don't support
+that configuration in the clk driver.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
 ---
- drivers/clk/tegra/clk-tegra20.c | 36 ++++++++++++++++++++++++---------
- 1 file changed, 26 insertions(+), 10 deletions(-)
+ drivers/clk/tegra/clk-tegra20.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
 diff --git a/drivers/clk/tegra/clk-tegra20.c b/drivers/clk/tegra/clk-tegra20.c
-index cc857d4d4a86..68551effb5ca 100644
+index 68551effb5ca..c71b61162a32 100644
 --- a/drivers/clk/tegra/clk-tegra20.c
 +++ b/drivers/clk/tegra/clk-tegra20.c
-@@ -578,7 +578,6 @@ static struct tegra_clk tegra20_clks[tegra_clk_max] __initdata = {
- 	[tegra_clk_afi] = { .dt_id = TEGRA20_CLK_AFI, .present = true },
- 	[tegra_clk_fuse] = { .dt_id = TEGRA20_CLK_FUSE, .present = true },
- 	[tegra_clk_kfuse] = { .dt_id = TEGRA20_CLK_KFUSE, .present = true },
--	[tegra_clk_emc] = { .dt_id = TEGRA20_CLK_EMC, .present = true },
- };
+@@ -800,7 +800,9 @@ static struct tegra_periph_init_data tegra_periph_nodiv_clk_list[] = {
  
- static unsigned long tegra20_clk_measure_input_freq(void)
-@@ -799,6 +798,31 @@ static struct tegra_periph_init_data tegra_periph_nodiv_clk_list[] = {
- 	TEGRA_INIT_DATA_NODIV("disp2",	mux_pllpdc_clkm, CLK_SOURCE_DISP2, 30, 2, 26,  0, TEGRA20_CLK_DISP2),
- };
- 
-+static void __init tegra20_emc_clk_init(void)
-+{
-+	struct clk *clk;
-+
-+	clk = clk_register_mux(NULL, "emc_mux", mux_pllmcp_clkm,
-+			       ARRAY_SIZE(mux_pllmcp_clkm),
-+			       CLK_SET_RATE_NO_REPARENT,
-+			       clk_base + CLK_SOURCE_EMC,
-+			       30, 2, 0, &emc_lock);
-+
-+	clk = tegra_clk_register_mc("mc", "emc_mux", clk_base + CLK_SOURCE_EMC,
-+				    &emc_lock);
-+	clks[TEGRA20_CLK_MC] = clk;
-+
-+	/*
-+	 * Note that 'emc_mux' source and 'emc' rate shouldn't be changed at
-+	 * the same time due to a HW bug, this won't happen because we're
-+	 * defining 'emc_mux' and 'emc' as distinct clocks.
-+	 */
-+	clk = tegra_clk_register_divider("emc", "emc_mux",
-+				clk_base + CLK_SOURCE_EMC, CLK_IS_CRITICAL,
-+				TEGRA_DIVIDER_INT, 0, 8, 1, &emc_lock);
-+	clks[TEGRA20_CLK_EMC] = clk;
-+}
-+
- static void __init tegra20_periph_clk_init(void)
+ static void __init tegra20_emc_clk_init(void)
  {
- 	struct tegra_periph_init_data *data;
-@@ -812,15 +836,7 @@ static void __init tegra20_periph_clk_init(void)
- 	clks[TEGRA20_CLK_AC97] = clk;
++	const u32 use_pllm_ud = BIT(29);
+ 	struct clk *clk;
++	u32 emc_reg;
  
- 	/* emc */
--	clk = clk_register_mux(NULL, "emc_mux", mux_pllmcp_clkm,
--			       ARRAY_SIZE(mux_pllmcp_clkm),
--			       CLK_SET_RATE_NO_REPARENT,
--			       clk_base + CLK_SOURCE_EMC,
--			       30, 2, 0, &emc_lock);
--
--	clk = tegra_clk_register_mc("mc", "emc_mux", clk_base + CLK_SOURCE_EMC,
--				    &emc_lock);
--	clks[TEGRA20_CLK_MC] = clk;
-+	tegra20_emc_clk_init();
+ 	clk = clk_register_mux(NULL, "emc_mux", mux_pllmcp_clkm,
+ 			       ARRAY_SIZE(mux_pllmcp_clkm),
+@@ -812,6 +814,14 @@ static void __init tegra20_emc_clk_init(void)
+ 				    &emc_lock);
+ 	clks[TEGRA20_CLK_MC] = clk;
  
- 	/* dsi */
- 	clk = tegra_clk_register_periph_gate("dsi", "pll_d", 0, clk_base, 0,
++	/* un-divided pll_m_out0 is currently unsupported */
++	emc_reg = readl_relaxed(clk_base + CLK_SOURCE_EMC);
++	if (emc_reg & use_pllm_ud) {
++		pr_err("%s: un-divided PllM_out0 used as clock source\n",
++		       __func__);
++		return;
++	}
++
+ 	/*
+ 	 * Note that 'emc_mux' source and 'emc' rate shouldn't be changed at
+ 	 * the same time due to a HW bug, this won't happen because we're
 -- 
 2.18.0
 
