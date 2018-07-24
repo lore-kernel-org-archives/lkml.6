@@ -2,302 +2,168 @@ Return-Path: <SRS0=hTZH=KI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 174ADECDFB8
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 10:44:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A513BC6778A
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 10:47:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C344B20852
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 10:44:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C344B20852
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ziswiler.com
+	by mail.kernel.org (Postfix) with ESMTP id 422A120852
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 10:47:52 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YDtDKZV4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 422A120852
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388599AbeGXLtY (ORCPT
+        id S2388445AbeGXLxl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 07:49:24 -0400
-Received: from mout.perfora.net ([74.208.4.196]:59219 "EHLO mout.perfora.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388413AbeGXLtY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 07:49:24 -0400
-Received: from localhost.localdomain.toradex.int ([46.140.72.82]) by
- mrelay.perfora.net (mreueus003 [74.208.5.2]) with ESMTPA (Nemesis) id
- 0MZmmm-1fQwfB09Xi-00LZIm; Tue, 24 Jul 2018 12:43:27 +0200
-From:   Marcel Ziswiler <marcel@ziswiler.com>
-To:     devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     Marcel Ziswiler <marcel.ziswiler@toradex.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Subject: [PATCH 06/15] ARM: tegra: apalis-tk1: add missing regulators
-Date:   Tue, 24 Jul 2018 12:43:00 +0200
-Message-Id: <20180724104309.21741-7-marcel@ziswiler.com>
-X-Mailer: git-send-email 2.14.4
-In-Reply-To: <20180724104309.21741-1-marcel@ziswiler.com>
-References: <20180724104309.21741-1-marcel@ziswiler.com>
-X-Provags-ID: V03:K1:ITrmAPoTHwZut9yFXDIIGfIMmCuEhbhDAQr/8mrv2wScl4Q0IQW
- BleDpXBtbU1jreQUxhEDAhgtfz+q/lEK0VkVSdLGugsDR9hP1CFw4gHC5zefibzusufoyBa
- FxTdwyLnhgruZCSKCzlxzUVtQ94MSOtbACK6tIC9j95knTdimupIwUn7hNRBJtYNsWFQZnt
- KZFvsvbXQXiML8l7dTdhA==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:zCdCre6Lbzc=:H0MWIPjJ5tChdzMjN9b2Eq
- emjY8XQkL0Woq/WHxugcLQbWwLH1hN525siHTZhqttdM06vEshsy0eo7Wn8TTW+5eFISFtqdy
- O7w0awLoOUO1gHJgSDJ6d3yDoWFesw9BHpyCODKnFgfTx3x9V/qQ8t73tBVmAOlB4xX5qwXXF
- CkFVnV/j4AvbKnvVDrQhwMw3bK0y/CDI8Lk/zL5HDSMciNksnr1nhX3fReu3TG4+mcBoa8IlL
- 4TFK2lNm3eAojOu+I+GqJcLbO8LVMDdq/zaiyt/RXY4lqxA3K3WSSra2o8NxEWSR5x4A/8iFD
- NY/zpz8LoIDc1WJJhIQ8scOG77l2PMO3lMt01odu/ntI6YZJCNGpS0gkF1rFlBnvCkUhYsi5N
- mJ1kNMEzr3Cf0phnpCcGQtR7oiFWyZWnnjlsaQSnYJMVo1rSdXt0PPJC3ufTekBsa5zc/TUtz
- qEg/wm3j44/EFurEvPpTmRyrWSqvmTE+ERoTjBkNl78HMQHvlGIC6vNO0ZcByvPvRjR/GSeao
- 6FUDulsQpvt5LPHAtzJEmzSDyUPYDOKOJ3tN8/vkchENBrtgIe8mIHrm+/N0+s9pYHPImOYaU
- mjt35A6Ohfe0sZCTXS8ocTGrUP/3ZUyylmlqAf2L7ci1am9lzDu3ERWxeO6G9MVwpTgcJgemC
- vSqwVEpTQsGYa4T3pN6DB5BYGbnj7sdfF9IHMJ6fRP9rGhXd97RZDTAz1dLOnbj5rOgo=
+        Tue, 24 Jul 2018 07:53:41 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:42005 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388307AbeGXLxk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Jul 2018 07:53:40 -0400
+Received: by mail-lj1-f196.google.com with SMTP id f1-v6so3164417ljc.9;
+        Tue, 24 Jul 2018 03:47:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=E1WiLk+F+7CjPGSyq2onh46HhSjFMXz9x1Dl0NOr89k=;
+        b=YDtDKZV4YiCFIsjESPjVYApCmr5bZC0gj9cOC78MtTr/XcJ7EpVBHJrCOE/sJ1+rd8
+         MJAuBD8wMyVA26Ccp6Xfszac91CupG1KSE/IMTc/93/axnrwhoqh4IaKmlW3pBMats9R
+         yL4WAQycliDeGZz/H5R6/P7XBalpz4K0/3wkkpLSaqisljjk03UUGMPjrQjlyKgvQ3jH
+         +jxLCfR4wTDETGMBztjDJXG2F7qO+jNntt3B+FAQkhUtoEZ9acB+FYoxn2BGXV17915e
+         UibzOVK8cZ2bQIHk6TgTYrcWtGyfCts3gfJLk5vV8MZEm1lZbZq9N9WeMlcR7/4dNkdw
+         l+wA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=E1WiLk+F+7CjPGSyq2onh46HhSjFMXz9x1Dl0NOr89k=;
+        b=n7/hvevQ17SHb8esHCDH5fyW2ErKdH0h2X5bK+uEma4WgR43hJ7f8H9KAODo6VjYXE
+         p+SqPOOHEJ4amgYOP0bJlCwqY2emGV7l8+IY9nxgki7ZlUAlDzVyoTTBJjQOnuqWAGBZ
+         0WoZfv3ADD14T2hrdOLb2RQh9ZmbtizsM5jYH4S81dyHqXMqT3s2TYKJAQEkcS4NDEW6
+         FFp93ZusxuzVxMGlYzL8TPuIEa0zfKm2DOkd/dkuVkOL1sSfev4Q3zHENfMuWDf3xReZ
+         iVpl3OpeqTbvs5L928yRxpH5cokCwJPMdseujxmEl0tClVUNId0gJyJfHpucSapeD/It
+         A4wA==
+X-Gm-Message-State: AOUpUlGBnFH76PNI+N+J3ckIkB84MZA9ttnL/p+ZI2fq6GmIgUM8vjtK
+        rg7neT0N9cq416a6/74zZys=
+X-Google-Smtp-Source: AAOMgpf2Ac2WaIGRqll+HekrvFMlG3Me7fWoASR0DTxObe4nScELdNFLhpjonBrmiVR7u0ISXs315w==
+X-Received: by 2002:a2e:88d0:: with SMTP id a16-v6mr11157321ljk.63.1532429267206;
+        Tue, 24 Jul 2018 03:47:47 -0700 (PDT)
+Received: from ?IPv6:2001:2012:22e:1b00:f2e2:9015:9262:3fde? ([2001:2012:22e:1b00:f2e2:9015:9262:3fde])
+        by smtp.gmail.com with ESMTPSA id f28-v6sm2228997lje.61.2018.07.24.03.47.45
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 24 Jul 2018 03:47:45 -0700 (PDT)
+Subject: Re: [PATCH] net/p9/trans_fd.c: fix double list_del()
+To:     Dominique Martinet <asmadeus@codewreck.org>
+Cc:     jiangyiwen <jiangyiwen@huawei.com>, davem@davemloft.net,
+        v9fs-developer@lists.sourceforge.net, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller@googlegroups.com
+References: <20180723121902.20201-1-tomasbortoli@gmail.com>
+ <5B568374.9010507@huawei.com>
+ <844e4101-6980-82dd-6f02-0a7193ed438c@gmail.com>
+ <20180724101932.GA17454@nautica>
+From:   Tomas Bortoli <tomasbortoli@gmail.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=tomasbortoli@gmail.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <2e02c44a-0775-dc74-c3a9-3c41759d182b@gmail.com>
+Date:   Tue, 24 Jul 2018 12:47:44 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <20180724101932.GA17454@nautica>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+On 07/24/2018 12:19 PM, Dominique Martinet wrote:
+> Tomas Bortoli wrote on Tue, Jul 24, 2018:
+>>>> @@ -228,6 +226,7 @@ static void p9_conn_cancel(struct p9_conn *m, int err)
+>>>>  			req->t_err = err;
+>>>>  		p9_client_cb(m->client, req, REQ_STATUS_ERROR);
+>>>>  	}
+>>>> +	spin_unlock(&m->client->lock);
+>>>
+>>> If you want to expand the ranges of client->lock, the cancel_list will not
+>>> be necessary, you can optimize this code.
+>>>
+>>
+>> Unfortunately, not. Moving the spin_lock() before the for makes the
+>> crash appear again. This because the calls to list_move() in the for
+>> before delete all the elements from req->req_list, so the list is empty,
+>> another call to list_del() would trigger a double del.
+>> That's why we hold the lock to update the status of all those requests..
+>> otherwise we have again the race with p9_fd_cancel().
+> 
+> What (I think) he meant is that since you're holding the lock all the
+> way, you don't need to transfer all the items to a temporary list to
+> loop on it immediately afterwards, but you could call the client cb
+> directly.
+> 
+Yeah that is possible.
 
-Add missing regulators:
-- reg_module_3v3_audio being VDDA supply of SGTL5000
-- VDDD supply of SGTL5000 actually being reg_1v8_vio
-- TMP451 temperature sensor vcc supply being reg_module_3v3
-- usb3-0 vbus supply being reg_usbh_vbus
-- usb3-1 vbus supply being reg_usbo1_vbus
-- carrier board HDMI supply being reg_5v0
-- carrier board sata target 5v supply being reg_5v0
-- carrier board sata target 12v supply being reg_12v0
-- carrier board reg_3v3 actually being backlight power supply
+> I'm personally not a fan of this approach as that would duplicate the
+> code, even if the loop isn't big...
 
-Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+Yep
 
----
+> 
+> This code is only called at disconnect time so I think using the extra
+> list doesn't hurt anyone; but as usual do what you feel is better; I
+> don't mind much either way.
+> 
 
- arch/arm/boot/dts/tegra124-apalis-eval.dts      | 18 ++++++++++++++++++
- arch/arm/boot/dts/tegra124-apalis-v1.2-eval.dts | 18 ++++++++++++++++++
- arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi     | 14 +++++++++++++-
- arch/arm/boot/dts/tegra124-apalis.dtsi          | 14 +++++++++++++-
- 4 files changed, 62 insertions(+), 2 deletions(-)
-
-diff --git a/arch/arm/boot/dts/tegra124-apalis-eval.dts b/arch/arm/boot/dts/tegra124-apalis-eval.dts
-index a6ad759dddb4..c2e918d345de 100644
---- a/arch/arm/boot/dts/tegra124-apalis-eval.dts
-+++ b/arch/arm/boot/dts/tegra124-apalis-eval.dts
-@@ -72,6 +72,7 @@
- 	host1x@50000000 {
- 		hdmi@54280000 {
- 			status = "okay";
-+			hdmi-supply = <&reg_5v0>;
- 		};
- 	};
- 
-@@ -164,6 +165,8 @@
- 	/* Apalis Serial ATA */
- 	sata@70020000 {
- 		status = "okay";
-+		target-5v-supply = <&reg_5v0>;
-+		target-12v-supply = <&reg_12v0>;
- 	};
- 
- 	hda@70030000 {
-@@ -230,6 +233,7 @@
- 		default-brightness-level = <6>;
- 		/* BKL1_ON */
- 		enable-gpios = <&gpio TEGRA_GPIO(BB, 5) GPIO_ACTIVE_HIGH>;
-+		power-supply = <&reg_3v3>;
- 	};
- 
- 	gpio-keys {
-@@ -244,6 +248,13 @@
- 		};
- 	};
- 
-+	reg_3v3: regulator-3v3 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "3.3V_SW";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+	};
-+
- 	reg_5v0: regulator-5v0 {
- 		compatible = "regulator-fixed";
- 		regulator-name = "5V_SW";
-@@ -251,6 +262,13 @@
- 		regulator-max-microvolt = <5000000>;
- 	};
- 
-+	reg_12v0: regulator-12v0 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "12V_SW";
-+		regulator-min-microvolt = <12000000>;
-+		regulator-max-microvolt = <12000000>;
-+	};
-+
- 	/* USBO1_EN */
- 	reg_usbo1_vbus: regulator-usbo1-vbus {
- 		compatible = "regulator-fixed";
-diff --git a/arch/arm/boot/dts/tegra124-apalis-v1.2-eval.dts b/arch/arm/boot/dts/tegra124-apalis-v1.2-eval.dts
-index 8a8d5fa0ecd1..eebcc013771e 100644
---- a/arch/arm/boot/dts/tegra124-apalis-v1.2-eval.dts
-+++ b/arch/arm/boot/dts/tegra124-apalis-v1.2-eval.dts
-@@ -36,6 +36,7 @@
- 	host1x@50000000 {
- 		hdmi@54280000 {
- 			status = "okay";
-+			hdmi-supply = <&reg_5v0>;
- 		};
- 	};
- 
-@@ -129,6 +130,8 @@
- 	/* Apalis Serial ATA */
- 	sata@70020000 {
- 		status = "okay";
-+		target-5v-supply = <&reg_5v0>;
-+		target-12v-supply = <&reg_12v0>;
- 	};
- 
- 	hda@70030000 {
-@@ -195,6 +198,7 @@
- 		default-brightness-level = <6>;
- 		/* BKL1_ON */
- 		enable-gpios = <&gpio TEGRA_GPIO(BB, 5) GPIO_ACTIVE_HIGH>;
-+		power-supply = <&reg_3v3>;
- 	};
- 
- 	gpio-keys {
-@@ -209,6 +213,13 @@
- 		};
- 	};
- 
-+	reg_3v3: regulator-3v3 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "3.3V_SW";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+	};
-+
- 	reg_5v0: regulator-5v0 {
- 		compatible = "regulator-fixed";
- 		regulator-name = "5V_SW";
-@@ -216,6 +227,13 @@
- 		regulator-max-microvolt = <5000000>;
- 	};
- 
-+	reg_12v0: regulator-12v0 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "12V_SW";
-+		regulator-min-microvolt = <12000000>;
-+		regulator-max-microvolt = <12000000>;
-+	};
-+
- 	/* USBO1_EN */
- 	reg_usbo1_vbus: regulator-usbo1-vbus {
- 		compatible = "regulator-fixed";
-diff --git a/arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi b/arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi
-index 8323fddceed8..a8dcf960e44f 100644
---- a/arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi
-+++ b/arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi
-@@ -1565,7 +1565,8 @@
- 		sgtl5000: codec@a {
- 			compatible = "fsl,sgtl5000";
- 			reg = <0x0a>;
--			VDDA-supply = <&reg_module_3v3>;
-+			VDDA-supply = <&reg_module_3v3_audio>;
-+			VDDD-supply = <&reg_1v8_vddio>;
- 			VDDIO-supply = <&reg_1v8_vddio>;
- 			clocks = <&tegra_car TEGRA124_CLK_EXTERN1>;
- 		};
-@@ -1754,6 +1755,7 @@
- 			interrupt-parent = <&gpio>;
- 			interrupts = <TEGRA_GPIO(I, 6) IRQ_TYPE_LEVEL_LOW>;
- 			#thermal-sensor-cells = <1>;
-+			vcc-supply = <&reg_module_3v3>;
- 		};
- 	};
- 
-@@ -1902,11 +1904,13 @@
- 			usb3-0 {
- 				status = "okay";
- 				nvidia,usb2-companion = <2>;
-+				vbus-supply = <&reg_usbh_vbus>;
- 			};
- 
- 			usb3-1 {
- 				status = "okay";
- 				nvidia,usb2-companion = <0>;
-+				vbus-supply = <&reg_usbo1_vbus>;
- 			};
- 		};
- 	};
-@@ -1989,6 +1993,14 @@
- 		vin-supply = <&reg_3v3_mxm>;
- 	};
- 
-+	reg_module_3v3_audio: regulator-module-3v3-audio {
-+		compatible = "regulator-fixed";
-+		regulator-name = "+V3.3_AUDIO_AVDD_S";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+		regulator-always-on;
-+	};
-+
- 	sound {
- 		compatible = "toradex,tegra-audio-sgtl5000-apalis_tk1",
- 			     "nvidia,tegra-audio-sgtl5000";
-diff --git a/arch/arm/boot/dts/tegra124-apalis.dtsi b/arch/arm/boot/dts/tegra124-apalis.dtsi
-index 4ad14c7a64db..b2aca71f96e7 100644
---- a/arch/arm/boot/dts/tegra124-apalis.dtsi
-+++ b/arch/arm/boot/dts/tegra124-apalis.dtsi
-@@ -1594,7 +1594,8 @@
- 		sgtl5000: codec@a {
- 			compatible = "fsl,sgtl5000";
- 			reg = <0x0a>;
--			VDDA-supply = <&reg_module_3v3>;
-+			VDDA-supply = <&reg_module_3v3_audio>;
-+			VDDD-supply = <&reg_1v8_vddio>;
- 			VDDIO-supply = <&reg_1v8_vddio>;
- 			clocks = <&tegra_car TEGRA124_CLK_EXTERN1>;
- 		};
-@@ -1783,6 +1784,7 @@
- 			interrupt-parent = <&gpio>;
- 			interrupts = <TEGRA_GPIO(I, 6) IRQ_TYPE_LEVEL_LOW>;
- 			#thermal-sensor-cells = <1>;
-+			vcc-supply = <&reg_module_3v3>;
- 		};
- 	};
- 
-@@ -1931,11 +1933,13 @@
- 			usb3-0 {
- 				status = "okay";
- 				nvidia,usb2-companion = <2>;
-+				vbus-supply = <&reg_usbh_vbus>;
- 			};
- 
- 			usb3-1 {
- 				status = "okay";
- 				nvidia,usb2-companion = <0>;
-+				vbus-supply = <&reg_usbo1_vbus>;
- 			};
- 		};
- 	};
-@@ -2018,6 +2022,14 @@
- 		vin-supply = <&reg_3v3_mxm>;
- 	};
- 
-+	reg_module_3v3_audio: regulator-module-3v3-audio {
-+		compatible = "regulator-fixed";
-+		regulator-name = "+V3.3_AUDIO_AVDD_S";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+		regulator-always-on;
-+	};
-+
- 	sound {
- 		compatible = "toradex,tegra-audio-sgtl5000-apalis_tk1",
- 			     "nvidia,tegra-audio-sgtl5000";
--- 
-2.14.4
-
+I think it's fine as it is.
