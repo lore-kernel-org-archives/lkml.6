@@ -2,84 +2,102 @@ Return-Path: <SRS0=hTZH=KI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00AABECDFB8
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 01:45:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0861BECDE5F
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 01:48:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B80F420852
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 01:45:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B80F420852
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id A58E020880
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 01:48:04 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="iBUktD1G"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A58E020880
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388362AbeGXCtF (ORCPT
+        id S2388326AbeGXCwA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 22:49:05 -0400
-Received: from mga07.intel.com ([134.134.136.100]:43787 "EHLO mga07.intel.com"
+        Mon, 23 Jul 2018 22:52:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51504 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388267AbeGXCtF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 22:49:05 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Jul 2018 18:45:07 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,394,1526367600"; 
-   d="scan'208";a="57321336"
-Received: from unknown (HELO [10.239.13.97]) ([10.239.13.97])
-  by fmsmga008.fm.intel.com with ESMTP; 23 Jul 2018 18:45:03 -0700
-Message-ID: <5B5685A0.9040005@intel.com>
-Date:   Tue, 24 Jul 2018 09:49:20 +0800
-From:   Wei Wang <wei.w.wang@intel.com>
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:31.0) Gecko/20100101 Thunderbird/31.7.0
+        id S2388267AbeGXCwA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Jul 2018 22:52:00 -0400
+Received: from [192.168.0.217] (c-71-202-137-17.hsd1.ca.comcast.net [71.202.137.17])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5C2EE20852;
+        Tue, 24 Jul 2018 01:48:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1532396881;
+        bh=7VhrONIrhUb1PELHnDWvvakBkhQ+kSUGYS2FCZeAhgQ=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=iBUktD1GZXxUZhtblOfqH4mfg3kayjQWwa9DImaKUBaEQ8Tjyft4ZMRNPuB4xSScA
+         T6nNtIYdCNDCSbSJZg4vbuVEsTAELgUVRnx7b8umD/gsTpfjRXSadMNQ4v4xMejEo6
+         USEvfkzz4N5ucnJa3utPOoH88BCXgTLdjPK0QgpA=
+Subject: Re: [PATCH 5/7] x86/vdso: Add vDSO functions for direct store
+ instructions
+To:     Fenghua Yu <fenghua.yu@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, H Peter Anvin <hpa@zytor.com>
+Cc:     Ashok Raj <ashok.raj@intel.com>, Alan Cox <alan@linux.intel.com>,
+        Ravi V Shankar <ravi.v.shankar@intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>, x86 <x86@kernel.org>
+References: <1532350557-98388-1-git-send-email-fenghua.yu@intel.com>
+ <1532350557-98388-6-git-send-email-fenghua.yu@intel.com>
+From:   Andy Lutomirski <luto@kernel.org>
+Message-ID: <10870309-993a-0abc-635a-92c05bbad140@kernel.org>
+Date:   Mon, 23 Jul 2018 18:48:00 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-To:     "Michael S. Tsirkin" <mst@redhat.com>
-CC:     virtio-dev@lists.oasis-open.org, linux-kernel@vger.kernel.org,
-        virtualization@lists.linux-foundation.org, kvm@vger.kernel.org,
-        linux-mm@kvack.org, mhocko@kernel.org, akpm@linux-foundation.org,
-        torvalds@linux-foundation.org, pbonzini@redhat.com,
-        liliang.opensource@gmail.com, yang.zhang.wz@gmail.com,
-        quan.xu0@gmail.com, nilal@redhat.com, riel@redhat.com,
-        peterx@redhat.com
-Subject: Re: [PATCH v36 2/5] virtio_balloon: replace oom notifier with shrinker
-References: <1532075585-39067-1-git-send-email-wei.w.wang@intel.com> <1532075585-39067-3-git-send-email-wei.w.wang@intel.com> <20180722174125-mutt-send-email-mst@kernel.org> <5B55AE56.5030404@intel.com> <20180723170826-mutt-send-email-mst@kernel.org>
-In-Reply-To: <20180723170826-mutt-send-email-mst@kernel.org>
-Content-Type: text/plain; charset=windows-1252; format=flowed
+In-Reply-To: <1532350557-98388-6-git-send-email-fenghua.yu@intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/23/2018 10:13 PM, Michael S. Tsirkin wrote:
->>>    	vb->vb_dev_info.inode->i_mapping->a_ops = &balloon_aops;
->>>    #endif
->>> +	err = virtio_balloon_register_shrinker(vb);
->>> +	if (err)
->>> +		goto out_del_vqs;
->>> So we can get scans before device is ready. Leak will fail
->>> then. Why not register later after device is ready?
->> Probably no.
->>
->> - it would be better not to set device ready when register_shrinker failed.
-> That's very rare so I won't be too worried.
+On 07/23/2018 05:55 AM, Fenghua Yu wrote:
+> User wants to query if direct store instructions are supported and use
+> the instructions. The vDSO functions provides fast interface for user
+> to query the support and use the instructions.
+> 
+> movdiri_supported and its alias __vdso_movdiri_supported check if
+> movdiri instructions are supported.
+> 
+> movdir64b_supported and its alias __vdso_movdir64b_supported checks
+> if movdir64b instruction is supported.
+> 
+> movdiri32 and its alias __vdso_movdiri32 provide user APIs for calling
+> 32-bit movdiri instruction.
+> 
+> movdiri64 and its alias __vdso_movdiri64 provide user APIs for calling
+> 64-bit movdiri instruction.
+> 
+> movdir64b and its alias __vdso_movdir64b provide user APIs to move
+> 64-byte data through movdir64b instruction.
+> 
+> The instructions can be implemented in intrinsic functions in future
+> GCC. But the vDSO interfaces are available to user without the
+> intrinsic functions support in GCC and the APIs movdiri_supported and
+> movdir64b_supported cannot be implemented as GCC functions.
 
-Just a little confused with the point here. "very rare" means it still 
-could happen (even it's a corner case), and if that happens, we got 
-something wrong functionally. So it will be a bug if we change like 
-that, right?
+I'm not convinced that any of this belongs in the vDSO at all.  You 
+could just add AT_HWCAP (or AT_HWCAP2) flags for the new instructions. 
+Or user code could use CPUID just like for any other new instruction. 
+But, if there really is some compelling reason to add this to the vDSO, 
+then see below:
 
-Still couldn't understand the reason of changing shrinker_register after 
-device_ready (the original oom notifier was registered before setting 
-device ready too)?
-(I think the driver won't get shrinker_scan called if device isn't ready 
-because of the reasons below)
 
->> - When the device isn't ready, ballooning won't happen, that is,
->> vb->num_pages will be 0, which results in shrinker_count=0 and shrinker_scan
->> won't be called.
++
+> +notrace bool __vdso_movdiri_supported(void)
+> +{
+> +	return _vdso_funcs_data->movdiri_supported;
 
-Best,
-Wei
+return static_cpu_has(X86_FEATURE_MOVDIRI);
+
+And all the VVAR stuff can be removed.
