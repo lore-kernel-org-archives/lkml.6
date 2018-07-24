@@ -4,56 +4,55 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BC7FECDFB8
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 16:52:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C777ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 16:52:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 450FC20882
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 16:52:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 16D3720875
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 16:52:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="jX0T/1t+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 450FC20882
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="DJygc/Zu"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 16D3720875
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388570AbeGXR5K (ORCPT
+        id S2388834AbeGXR7v (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 13:57:10 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:42636 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388541AbeGXR5K (ORCPT
+        Tue, 24 Jul 2018 13:59:51 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:35930 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388511AbeGXR5I (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 13:57:10 -0400
-Received: by mail-pf1-f196.google.com with SMTP id l9-v6so982081pff.9
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Jul 2018 09:49:49 -0700 (PDT)
+        Tue, 24 Jul 2018 13:57:08 -0400
+Received: by mail-pf1-f193.google.com with SMTP id d14-v6so986588pfo.3
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Jul 2018 09:49:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=om28ZBbqlVOdWVGgbNqly+1dcj2BlW29w8AmBA0lHYw=;
-        b=jX0T/1t+6ISxyA0Xu/P8wbMfZX4kQyW0Su7SqfXTq8k/RPM2fjPSGS0aCOhAlQST+W
-         b4Vk7coIKTa9vBa1wvkAXRWt0UsEdIwSMy7PAf6LroT/KbEEyPbumKF92+ACRdPHGsJ3
-         2IdOeyVA5HEJgHD7cpjQMPRtLT3BSGgo+mUQE=
+        h=from:to:cc:subject:date:message-id;
+        bh=XDw0a+jCaRK07DPwSkSUufRYjzCRo7QSPtOCTbdYGig=;
+        b=DJygc/ZuxYg2AQ0JUqgfs8uSOmuzC2wxtA9su7QqdjIBMjpPTjtoqTkFsjjOkK13tX
+         DZND+IYwF3ufwEU6d4yCv9al5NkBEhjAgW0Bw1NgqL+cWS6cK4iz3fEyyRcI1i8khmPc
+         4DJ1U/NXRloXV+JQTjlVXGvHO9J7bQhoArsTE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=om28ZBbqlVOdWVGgbNqly+1dcj2BlW29w8AmBA0lHYw=;
-        b=DnJ8BE5eSDGgbzOS+3sargwcqk2e8FxUZ1iO9bMWcZs5PKYY0HLqzgQBd1k2vrVHtk
-         fdp6k8M97ixTDtve5tbtmdmRrGqZuaE2Es319RnpdYGAzQK5B7rlNVRWzrs2UCSjqX4C
-         J2ReCvJJk7tNjkgq2GsmjqVkKikwzmo6KoXwNzAf8qIRrHvbWJ2R7+Ttf+8oJ/WqbyJk
-         efoBT2GDwoD8e5ayNAwlnVmMsB9ZbBoUsLjGdwwxoYW/AIblMHdFUHL1xXLrUS5ZJoEN
-         P9ZNAKZZ3J62nhHOKSNhPi6fgI+9HhnO2AGluPwJ6hE3Jt3cgdUc5nmVyjgz68GbQJdg
-         h1dg==
-X-Gm-Message-State: AOUpUlEROMIPSlPteBl77qMcUd+4a0Ts9q0OCvOdjXlxf/oYSbt2oUfd
-        wHNyfFHf2xuIxHA6+8jZPgOHvw==
-X-Google-Smtp-Source: AAOMgpdhL4Vph4rx299lhM5n19LKgB1pTVs3ajNSBPEwKLgtHfWzGMh/cSt8mACt4jv1jm5N7igODA==
-X-Received: by 2002:a63:220d:: with SMTP id i13-v6mr17411926pgi.212.1532450989120;
-        Tue, 24 Jul 2018 09:49:49 -0700 (PDT)
-Received: from www.outflux.net (173-164-112-133-Oregon.hfc.comcastbusiness.net. [173.164.112.133])
-        by smtp.gmail.com with ESMTPSA id s195-v6sm25373097pgs.76.2018.07.24.09.49.44
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=XDw0a+jCaRK07DPwSkSUufRYjzCRo7QSPtOCTbdYGig=;
+        b=h/Ob0X4osUpbrhGnVZANw2DiBHBwp94k5FfY/13HmmXGo2ZM6CSz4QAIPTgTFR2DVh
+         58IH7oCJsYmMV/FDPJa8iB4d+ngDeV/57lRo5L7/EUIl6rMe8XvGqKRMaunpelO2SNMw
+         zSJ0GXNRd74ucfupR2m53/LC3mKeD1M/DsumytPIuySKzbfH3mDobpbStr6NdoCq6BMX
+         CBr2bE4tUNkw4SQvvvEQK9fFe+wGx1F8JJDm21k7gSTnrlHlKa+LrlRNQIMx4bqLxYI+
+         CpRqQ3bRlq2JGMKrr2LmaKIGrqsXjPxHwQ+s1od+V2Hrkoa0FPYr8DTxL+hfmHm86MUt
+         ZIZg==
+X-Gm-Message-State: AOUpUlF1i6+Q/DuuXyFAuLzafCM1QWXsfu7LlG5BUfbmZoEYqHlf5FC3
+        mwVh8a5uiMbYr+CtQwXrD+Q9dA==
+X-Google-Smtp-Source: AAOMgpejwAxrjuI1z2QcP7sAwD36/xBj0gpdarxw/C4svHwjAhOwWLvU80FDlLknSYQwJO4HAZbEtw==
+X-Received: by 2002:a63:7703:: with SMTP id s3-v6mr17343122pgc.339.1532450987414;
         Tue, 24 Jul 2018 09:49:47 -0700 (PDT)
+Received: from www.outflux.net (173-164-112-133-Oregon.hfc.comcastbusiness.net. [173.164.112.133])
+        by smtp.gmail.com with ESMTPSA id d123-v6sm17965601pfa.22.2018.07.24.09.49.42
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 24 Jul 2018 09:49:42 -0700 (PDT)
 From:   Kees Cook <keescook@chromium.org>
 To:     Herbert Xu <herbert@gondor.apana.org.au>
 Cc:     Kees Cook <keescook@chromium.org>, Arnd Bergmann <arnd@arndb.de>,
@@ -89,70 +88,123 @@ Cc:     Kees Cook <keescook@chromium.org>, Arnd Bergmann <arnd@arndb.de>,
         netdev@vger.kernel.org, devel@driverdev.osuosl.org,
         linux-afs@lists.infradead.org, linux-wireless@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v6 05/18] crypto alg: Introduce generic max blocksize and alignmask
-Date:   Tue, 24 Jul 2018 09:49:23 -0700
-Message-Id: <20180724164936.37477-6-keescook@chromium.org>
+Subject: [PATCH v6 00/18] crypto: Remove VLA usage
+Date:   Tue, 24 Jul 2018 09:49:18 -0700
+Message-Id: <20180724164936.37477-1-keescook@chromium.org>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180724164936.37477-1-keescook@chromium.org>
-References: <20180724164936.37477-1-keescook@chromium.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In the quest to remove all stack VLA usage from the kernel[1], this
-exposes a new general upper bound on crypto blocksize and alignmask
-(higher than for the existing cipher limits) for VLA removal,
-and introduces new checks.
+For newly added CCs on this series: your Ack/Review would be very
+welcome! Especially for the ahash-to-shash conversion patches.
 
-At present, the highest cra_alignmask in the kernel is 63. The highest
-cra_blocksize is 144 (SHA3_224_BLOCK_SIZE, 18 8-byte words). For the
-new blocksize limit, I went with 160 (20 8-byte words).
+v6:
+- make xcbc blocksize unconditional
+- add ahash-to-shash conversion patch series to entirely remove
+  AHASH_REQUEST_ON_STACK from the kernel
+
+v5:
+- limit AHASH_REQUEST_ON_STACK size only to non-async hash wrapping.
+- sanity-check ahash reqsize only when doing shash wrapping.
+- remove frame_warn changes in favor of shash conversions and other fixes.
+- send ahash to shash conversion patches and other fixes separately.
+
+v4:
+- add back *_REQUEST_ON_STACK patches.
+- programmatically find stack sizes for *_REQUEST_ON_STACK patches.
+- whitelist some code that trips FRAME_WARN on 32-bit builds.
+- fix alignment patches.
+
+v3:
+- drop *_REQUEST_ON_STACK patches. The rest of this series is pretty
+  straight-forward, and I'd like to get them tested in -next while
+  we continue to chip away at the *_REQUEST_ON_STACK VLA removal patches
+  separately. "Part 2" will continue with those.
+
+v2:
+- use 512 instead of PAGE_SIZE / 8 to avoid bloat on large-page archs.
+- swtich xcbc to "16" max universally.
+- fix typo in bounds check for dm buffer size.
+- examine actual reqsizes for skcipher and ahash instead of guessing.
+- improve names and comments for alg maxes
+
+This is nearly the last of the VLA removals[1], but it's one of the
+largest because crypto gets used in lots of places. After looking
+through code, usage, reading the threads Gustavo started, and comparing
+the use-cases to the other VLA removals that have landed in the kernel,
+I think this series is likely the best way forward to shut the door on
+VLAs forever.
+
+For background, the crypto stack usage is for callers to do an immediate
+bit of work that doesn't allocate new memory. This means that other VLA
+removal techniques (like just using kmalloc) aren't workable, and the
+next common technique is needed: examination of maximum stack usage and
+the addition of sanity checks. This series does that, and in several
+cases, these maximums were already implicit in the code.
+
+This series is intended to land via the crypto tree for 4.19, though it
+touches dm, networking, and a few other things as well, since there are
+dependent patches (new crypto #defines being used, etc).
+
+Thanks!
+
+-Kees
 
 [1] https://lkml.kernel.org/r/CA+55aFzCG-zNmZwX4A2FQpadafLfEzK6CC=qPXydAacU1RqZWA@mail.gmail.com
 
-Signed-off-by: Kees Cook <keescook@chromium.org>
----
- crypto/algapi.c         | 7 ++++++-
- include/crypto/algapi.h | 4 +++-
- 2 files changed, 9 insertions(+), 2 deletions(-)
+Ard Biesheuvel (1):
+  crypto: ccm: Remove VLA usage
 
-diff --git a/crypto/algapi.c b/crypto/algapi.c
-index c0755cf4f53f..496fc51bf215 100644
---- a/crypto/algapi.c
-+++ b/crypto/algapi.c
-@@ -57,9 +57,14 @@ static int crypto_check_alg(struct crypto_alg *alg)
- 	if (alg->cra_alignmask & (alg->cra_alignmask + 1))
- 		return -EINVAL;
- 
--	if (alg->cra_blocksize > PAGE_SIZE / 8)
-+	/* General maximums for all algs. */
-+	if (alg->cra_alignmask > MAX_ALGAPI_ALIGNMASK)
- 		return -EINVAL;
- 
-+	if (alg->cra_blocksize > MAX_ALGAPI_BLOCKSIZE)
-+		return -EINVAL;
-+
-+	/* Lower maximums for specific alg types. */
- 	if (!alg->cra_type && (alg->cra_flags & CRYPTO_ALG_TYPE_MASK) ==
- 			       CRYPTO_ALG_TYPE_CIPHER) {
- 		if (alg->cra_alignmask > MAX_CIPHER_ALIGNMASK)
-diff --git a/include/crypto/algapi.h b/include/crypto/algapi.h
-index bd5e8ccf1687..21371ac8f355 100644
---- a/include/crypto/algapi.h
-+++ b/include/crypto/algapi.h
-@@ -20,8 +20,10 @@
- /*
-  * Maximum values for blocksize and alignmask, used to allocate
-  * static buffers that are big enough for any combination of
-- * ciphers and architectures.
-+ * algs and architectures. Ciphers have a lower maximum size.
-  */
-+#define MAX_ALGAPI_BLOCKSIZE		160
-+#define MAX_ALGAPI_ALIGNMASK		63
- #define MAX_CIPHER_BLOCKSIZE		16
- #define MAX_CIPHER_ALIGNMASK		15
- 
+Kees Cook (17):
+  crypto: xcbc: Remove VLA usage
+  crypto: cbc: Remove VLA usage
+  crypto: hash: Remove VLA usage
+  dm: Remove VLA usage from hashes
+  crypto alg: Introduce generic max blocksize and alignmask
+  crypto: qat: Remove VLA usage
+  crypto: shash: Remove VLA usage in unaligned hashing
+  crypto: skcipher: Remove VLA usage for SKCIPHER_REQUEST_ON_STACK
+  ppp: mppe: Remove VLA usage
+  x86/power/64: Remove VLA usage
+  dm crypt: Convert essiv from ahash to shash
+  drbd: Convert from ahash to shash
+  wireless/lib80211: Convert from ahash to shash
+  staging: rtl8192u: ieee80211: Convert from ahash to shash
+  staging: rtl8192e: ieee80211: Convert from ahash to shash
+  rxrpc: Reuse SKCIPHER_REQUEST_ON_STACK buffer
+  crypto: Remove AHASH_REQUEST_ON_STACK
+
+ arch/x86/power/hibernate_64.c                 | 36 +++++++-----
+ crypto/ahash.c                                |  4 +-
+ crypto/algapi.c                               |  7 ++-
+ crypto/algif_hash.c                           |  2 +-
+ crypto/ccm.c                                  |  9 ++-
+ crypto/shash.c                                | 33 ++++++-----
+ crypto/xcbc.c                                 |  8 ++-
+ drivers/block/drbd/drbd_int.h                 | 13 +++--
+ drivers/block/drbd/drbd_main.c                | 14 ++---
+ drivers/block/drbd/drbd_nl.c                  | 39 ++++---------
+ drivers/block/drbd/drbd_receiver.c            | 35 +++++------
+ drivers/block/drbd/drbd_worker.c              | 56 ++++++++----------
+ drivers/crypto/qat/qat_common/qat_algs.c      |  8 ++-
+ drivers/md/dm-crypt.c                         | 31 +++++-----
+ drivers/md/dm-integrity.c                     | 23 ++++++--
+ drivers/md/dm-verity-fec.c                    |  5 +-
+ drivers/net/ppp/ppp_mppe.c                    | 56 +++++++++---------
+ drivers/staging/rtl8192e/rtllib_crypt_tkip.c  | 56 +++++++++---------
+ .../rtl8192u/ieee80211/ieee80211_crypt_tkip.c | 57 +++++++++---------
+ include/crypto/algapi.h                       |  4 +-
+ include/crypto/cbc.h                          |  4 +-
+ include/crypto/hash.h                         | 11 ++--
+ include/crypto/internal/skcipher.h            |  1 +
+ include/crypto/skcipher.h                     |  4 +-
+ include/linux/compiler-gcc.h                  |  1 -
+ net/rxrpc/rxkad.c                             | 25 ++++----
+ net/wireless/lib80211_crypt_tkip.c            | 58 +++++++++----------
+ 27 files changed, 313 insertions(+), 287 deletions(-)
+
 -- 
 2.17.1
 
