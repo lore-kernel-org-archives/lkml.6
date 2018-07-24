@@ -2,187 +2,117 @@ Return-Path: <SRS0=hTZH=KI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F11A7ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 09:18:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FC72C6778A
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 09:20:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A2E2F20852
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 09:18:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A2E2F20852
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 34BAE20852
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 09:20:47 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="DykZCpUH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 34BAE20852
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388365AbeGXKYQ (ORCPT
+        id S2388362AbeGXK0Q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 06:24:16 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:35402 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2388161AbeGXKYP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 06:24:15 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 6198A40122A1;
-        Tue, 24 Jul 2018 09:18:43 +0000 (UTC)
-Received: from [10.36.116.136] (ovpn-116-136.ams2.redhat.com [10.36.116.136])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 7D35C2156897;
-        Tue, 24 Jul 2018 09:18:40 +0000 (UTC)
-Subject: Re: [PATCH v1 0/2] mm/kdump: exclude reserved pages in dumps
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     Vlastimil Babka <vbabka@suse.cz>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Baoquan He <bhe@redhat.com>, Dave Young <dyoung@redhat.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Hari Bathini <hbathini@linux.vnet.ibm.com>,
-        Huang Ying <ying.huang@intel.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        =?UTF-8?Q?Marc-Andr=c3=a9_Lureau?= <marcandre.lureau@redhat.com>,
-        Matthew Wilcox <mawilcox@microsoft.com>,
-        Miles Chen <miles.chen@mediatek.com>,
-        Pavel Tatashin <pasha.tatashin@oracle.com>,
-        Petr Tesarik <ptesarik@suse.cz>
-References: <20180720123422.10127-1-david@redhat.com>
- <9f46f0ed-e34c-73be-60ca-c892fb19ed08@suse.cz>
- <20180723123043.GD31229@dhcp22.suse.cz>
- <8daae80c-871e-49b6-1cf1-1f0886d3935d@redhat.com>
- <20180724072536.GB28386@dhcp22.suse.cz>
- <d4528eb7-9d8b-4073-afad-d8dd1390aa91@redhat.com>
- <20180724085358.GG28386@dhcp22.suse.cz>
-From:   David Hildenbrand <david@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
- 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
- SE+xAvmumFBY
-Organization: Red Hat GmbH
-Message-ID: <aae9f664-2a49-9e71-6eb5-a63f535c2079@redhat.com>
-Date:   Tue, 24 Jul 2018 11:18:39 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Tue, 24 Jul 2018 06:26:16 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:40748 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388222AbeGXK0Q (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Jul 2018 06:26:16 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=fq4UHO4hK4TE5lecoyKu8KB1w1+cpVq9v7bk1UG4vxg=; b=DykZCpUHhGhzyTT+QJFku+Xso
+        UZQpymRoZiWF35iob4ZTzlzS2+oGh1hlRBwoxwROW7k0x31oQx+wWEUYILGEsfJcV0JTL+raaTf0n
+        56irmD+Z/6CzMBqj28UVLsZ93ulrcybiqvR90hG9sQViu+pZ15qP2OfXQjIszS9sX+xhRUCdrMufl
+        ATvq9mFPmRwDNWkC3rMNrMzEMn8Qw3msI9pciEh40UpqGey/U4PKswr6yE+icGxUije9eOi9gNKQU
+        cWx21WHITrSp5mmI41nC5giOgtaf+B3gBs7m8W3cJSpjHr2OWAHycAt01JAtv/SfWpVOiHE64Dn2/
+        +Ozpb5cIQ==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fhtUk-0003Vd-5Y; Tue, 24 Jul 2018 09:20:38 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id A686520275F47; Tue, 24 Jul 2018 11:20:36 +0200 (CEST)
+Date:   Tue, 24 Jul 2018 11:20:36 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Ingo Molnar <mingo@kernel.org>
+Cc:     Mark Rutland <mark.rutland@arm.com>, mingo@redhat.com,
+        andy.shevchenko@gmail.com, arnd@arndb.de, aryabinin@virtuozzo.com,
+        boqun.feng@gmail.com, catalin.marinas@arm.com, dvyukov@google.com,
+        glider@google.com, hpa@zytor.com, linux-kernel@vger.kernel.org,
+        parri.andrea@gmail.com, peter@hurleysoftware.com,
+        tglx@linutronix.de, will.deacon@arm.com,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCHv4 01/12] atomic/tty: Fix up atomic abuse in ldsem
+Message-ID: <20180724092036.GN2494@hirez.programming.kicks-ass.net>
+References: <20180716113017.3909-1-mark.rutland@arm.com>
+ <20180716113017.3909-2-mark.rutland@arm.com>
+ <20180724071518.GA7300@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20180724085358.GG28386@dhcp22.suse.cz>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Tue, 24 Jul 2018 09:18:43 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Tue, 24 Jul 2018 09:18:43 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'david@redhat.com' RCPT:''
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180724071518.GA7300@gmail.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 24.07.2018 10:53, Michal Hocko wrote:
-> On Tue 24-07-18 10:46:20, David Hildenbrand wrote:
->> On 24.07.2018 09:25, Michal Hocko wrote:
->>> On Mon 23-07-18 19:20:43, David Hildenbrand wrote:
->>>> On 23.07.2018 14:30, Michal Hocko wrote:
->>>>> On Mon 23-07-18 13:45:18, Vlastimil Babka wrote:
->>>>>> On 07/20/2018 02:34 PM, David Hildenbrand wrote:
->>>>>>> Dumping tools (like makedumpfile) right now don't exclude reserved pages.
->>>>>>> So reserved pages might be access by dump tools although nobody except
->>>>>>> the owner should touch them.
->>>>>>
->>>>>> Are you sure about that? Or maybe I understand wrong. Maybe it changed
->>>>>> recently, but IIRC pages that are backing memmap (struct pages) are also
->>>>>> PG_reserved. And you definitely do want those in the dump.
->>>>>
->>>>> You are right. reserve_bootmem_region will make all early bootmem
->>>>> allocations (including those backing memmaps) PageReserved. I have asked
->>>>> several times but I haven't seen a satisfactory answer yet. Why do we
->>>>> even care for kdump about those. If they are reserved the nobody should
->>>>> really look at those specific struct pages and manipulate them. Kdump
->>>>> tools are using a kernel interface to read the content. If the specific
->>>>> content is backed by a non-existing memory then they should simply not
->>>>> return anything.
->>>>>
->>>>
->>>> "new kernel" provides an interface to read memory from "old kernel".
->>>>
->>>> The new kernel has no idea about
->>>> - which memory was added/online in the old kernel
->>>> - where struct pages of the old kernel are and what their content is
->>>> - which memory is save to touch and which not
->>>>
->>>> Dump tools figure all that out by interpreting the VMCORE. They e.g.
->>>> identify "struct pages" and see if they should be dumped. The "new
->>>> kernel" only allows to read that memory. It cannot hinder to crash the
->>>> system (e.g. if a dump tool would try to read a hwpoison page).
->>>>
->>>> So how should the "new kernel" know if a page can be touched or not?
->>>
->>> I am sorry I am not familiar with kdump much. But from what I remember
->>> it reads from /proc/vmcore and implementation of this interface should
->>> simply return EINVAL or alike when you try to dump inaccessible memory
->>> range.
->>
->> I assume the main problem with this approach is that we would always
->> have to fallback to reading old memory from vmcore page by page. e.g.
->> makedumpfile will always try to read bigger bunches. I also assume the
->> reason HWPOISON is handled in dump tools instead of in the kernel using
->> the mechanism you describe is the case.
+On Tue, Jul 24, 2018 at 09:15:18AM +0200, Ingo Molnar wrote:
 > 
-> Is falling back to page-by-page for some ranges a real problem? I mean
-> most of pages will simply be there so you can go in larger chunks. Once
-> you get EINVAL, you just fall back to page-by-page for that particular
-> range.
+> * Mark Rutland <mark.rutland@arm.com> wrote:
 > 
+> > From: Peter Zijlstra <peterz@infradead.org>
+> > 
+> > Mark found ldsem_cmpxchg() needed an (atomic_long_t *) cast to keep
+> > working after making the atomic_long interface type safe.
+> > 
+> > Needing casts is bad form, which made me look at the code. There are no
+> > ld_semaphore::count users outside of these functions so there is no
+> > reason why it can not be an atomic_long_t in the first place, obviating
+> > the need for this cast.
+> > 
+> > That also ensures the loads use atomic_long_read(), which implies (at
+> > least) READ_ONCE() in order to guarantee single-copy-atomic loads.
+> > 
+> > When using atomic_long_try_cmpxchg() the ldsem_cmpxchg() wrapper gets
+> > very thin (the only difference is not changing *old on success, which
+> > most callers don't seem to care about).
+> > 
+> > So rework the whole thing to use atomic_long_t and its accessors
+> > directly.
+> > 
+> > While there, fixup all the horrible comment styles.
+> > 
+> > Cc: Peter Hurley <peter@hurleysoftware.com>
+> > Acked-by: Will Deacon <will.deacon@arm.com>
+> > Reported-by: Mark Rutland <mark.rutland@arm.com>
+> > Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+> > Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+> > Signed-off-by: Mark Rutland <mark.rutland@arm.com>
+> > Cc: Ingo Molnar <mingo@kernel.org>
+> > ---
+> >  drivers/tty/tty_ldsem.c   | 82 ++++++++++++++++++++---------------------------
+> >  include/linux/tty_ldisc.h |  4 +--
+> >  2 files changed, 37 insertions(+), 49 deletions(-)
+> > 
+> > Note: Greg has queued this via the in the tty tree for v4.19, which can be seen at: 
+> > 
+> > https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/tty.git/commit/?h=tty-next&id=5fd691afdf929061c391d897fa627822c3b2fd5a
+> 
+> Can this patch be skipped, or do the others depend on it?
 
-Looking at makedumpfile code, I assume implementation wise it should be
-possible. They always try to read 256 pages at a time. If we get an
--EINVAL (-EIO?) we could fallback to reading page by page.
+IIRC it depends on it, without this patch you get build issues due to
+atomic_long_cmpxchg() getting picky about it's arguments (type safety
+improved).
 
-This implies having to properly handle exceptions when accessing memory.
-Not sure if that will be easy. Maybe is_ram_page() is the better
-alternative, because it hinders us from trying to read invalid memory
-(or memory with random content) in the first place.
 
-Will have to think about this and look into the details.
-
--- 
-
-Thanks,
-
-David / dhildenb
