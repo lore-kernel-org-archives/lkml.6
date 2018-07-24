@@ -6,33 +6,33 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B932C6778A
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 03:25:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D280C6778A
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 03:25:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D3ED420852
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 03:25:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D3ED420852
+	by mail.kernel.org (Postfix) with ESMTP id F04FF20852
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 03:25:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F04FF20852
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xmission.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728179AbeGXE3V (ORCPT
+        id S1728292AbeGXE3X (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 00:29:21 -0400
-Received: from out02.mta.xmission.com ([166.70.13.232]:51230 "EHLO
-        out02.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726270AbeGXE3T (ORCPT
+        Tue, 24 Jul 2018 00:29:23 -0400
+Received: from out01.mta.xmission.com ([166.70.13.231]:58703 "EHLO
+        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726270AbeGXE3W (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 00:29:19 -0400
+        Tue, 24 Jul 2018 00:29:22 -0400
 Received: from in01.mta.xmission.com ([166.70.13.51])
-        by out02.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        by out01.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
         (Exim 4.87)
         (envelope-from <ebiederm@xmission.com>)
-        id 1fhnwb-0007Rq-1u; Mon, 23 Jul 2018 21:25:01 -0600
+        id 1fhnwd-0005av-MM; Mon, 23 Jul 2018 21:25:03 -0600
 Received: from [97.119.167.31] (helo=x220.int.ebiederm.org)
         by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
         (Exim 4.87)
         (envelope-from <ebiederm@xmission.com>)
-        id 1fhnwa-0008AK-Eb; Mon, 23 Jul 2018 21:25:00 -0600
+        id 1fhnwc-0008AK-LK; Mon, 23 Jul 2018 21:25:03 -0600
 From:   "Eric W. Biederman" <ebiederm@xmission.com>
 To:     Linus Torvalds <torvalds@linux-foundation.org>
 Cc:     Oleg Nesterov <oleg@redhat.com>,
@@ -40,16 +40,16 @@ Cc:     Oleg Nesterov <oleg@redhat.com>,
         linux-kernel@vger.kernel.org, Wen Yang <wen.yang99@zte.com.cn>,
         majiang <ma.jiang@zte.com.cn>,
         "Eric W. Biederman" <ebiederm@xmission.com>
-Date:   Mon, 23 Jul 2018 22:24:01 -0500
-Message-Id: <20180724032419.20231-2-ebiederm@xmission.com>
+Date:   Mon, 23 Jul 2018 22:24:02 -0500
+Message-Id: <20180724032419.20231-3-ebiederm@xmission.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <87efft5ncd.fsf_-_@xmission.com>
 References: <87efft5ncd.fsf_-_@xmission.com>
-X-XM-SPF: eid=1fhnwa-0008AK-Eb;;;mid=<20180724032419.20231-2-ebiederm@xmission.com>;;;hst=in01.mta.xmission.com;;;ip=97.119.167.31;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX1/OE8+23Pb3kzcjL4iQJKQplTeZuYX1/NE=
+X-XM-SPF: eid=1fhnwc-0008AK-LK;;;mid=<20180724032419.20231-3-ebiederm@xmission.com>;;;hst=in01.mta.xmission.com;;;ip=97.119.167.31;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX18HAZ4PNO+6pRj5sVk++tOrWkCNtB5l4Y0=
 X-SA-Exim-Connect-IP: 97.119.167.31
 X-SA-Exim-Mail-From: ebiederm@xmission.com
-Subject: [PATCH 02/20] pids: Move task_pid_type into sched/signal.h
+Subject: [PATCH 03/20] pids: Compute task_tgid using signal->leader_pid
 X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
 X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
 Sender: linux-kernel-owner@vger.kernel.org
@@ -57,53 +57,176 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The function is general and inline so there is no need
-to hide it inside of exit.c
+The cost is the the same and this removes the need
+to worry about complications that come from de_thread
+and group_leader changing.
+
+__task_pid_nr_ns has been updated to take advantage of this change.
 
 Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
 ---
- include/linux/sched/signal.h | 8 ++++++++
- kernel/exit.c                | 8 --------
- 2 files changed, 8 insertions(+), 8 deletions(-)
+ arch/ia64/kernel/asm-offsets.c       |  2 +-
+ arch/ia64/kernel/fsys.S              |  8 ++++----
+ drivers/platform/x86/thinkpad_acpi.c |  1 +
+ fs/fuse/file.c                       |  1 +
+ fs/notify/fanotify/fanotify.c        |  1 +
+ include/linux/sched.h                |  5 -----
+ include/linux/sched/signal.h         |  5 +++++
+ include/net/scm.h                    |  1 +
+ kernel/pid.c                         | 15 ++++++++-------
+ 9 files changed, 22 insertions(+), 17 deletions(-)
 
+diff --git a/arch/ia64/kernel/asm-offsets.c b/arch/ia64/kernel/asm-offsets.c
+index f4db2168d1b8..f5433bb7f04a 100644
+--- a/arch/ia64/kernel/asm-offsets.c
++++ b/arch/ia64/kernel/asm-offsets.c
+@@ -50,7 +50,6 @@ void foo(void)
+ 
+ 	DEFINE(IA64_TASK_BLOCKED_OFFSET,offsetof (struct task_struct, blocked));
+ 	DEFINE(IA64_TASK_CLEAR_CHILD_TID_OFFSET,offsetof (struct task_struct, clear_child_tid));
+-	DEFINE(IA64_TASK_GROUP_LEADER_OFFSET, offsetof (struct task_struct, group_leader));
+ 	DEFINE(IA64_TASK_TGIDLINK_OFFSET, offsetof (struct task_struct, pids[PIDTYPE_PID].pid));
+ 	DEFINE(IA64_PID_LEVEL_OFFSET, offsetof (struct pid, level));
+ 	DEFINE(IA64_PID_UPID_OFFSET, offsetof (struct pid, numbers[0]));
+@@ -68,6 +67,7 @@ void foo(void)
+ 	DEFINE(IA64_SIGNAL_GROUP_STOP_COUNT_OFFSET,offsetof (struct signal_struct,
+ 							     group_stop_count));
+ 	DEFINE(IA64_SIGNAL_SHARED_PENDING_OFFSET,offsetof (struct signal_struct, shared_pending));
++	DEFINE(IA64_SIGNAL_LEADER_PID_OFFSET, offsetof (struct signal_struct, leader_pid));
+ 
+ 	BLANK();
+ 
+diff --git a/arch/ia64/kernel/fsys.S b/arch/ia64/kernel/fsys.S
+index fe742ffafc7a..eaf5a0d6f3e0 100644
+--- a/arch/ia64/kernel/fsys.S
++++ b/arch/ia64/kernel/fsys.S
+@@ -62,16 +62,16 @@ ENTRY(fsys_getpid)
+ 	.prologue
+ 	.altrp b6
+ 	.body
+-	add r17=IA64_TASK_GROUP_LEADER_OFFSET,r16
++	add r17=IA64_TASK_SIGNAL_OFFSET,r16
+ 	;;
+-	ld8 r17=[r17]				// r17 = current->group_leader
++	ld8 r17=[r17]				// r17 = current->signal
+ 	add r9=TI_FLAGS+IA64_TASK_SIZE,r16
+ 	;;
+ 	ld4 r9=[r9]
+-	add r17=IA64_TASK_TGIDLINK_OFFSET,r17
++	add r17=IA64_SIGNAL_LEADER_PID_OFFSET,r17
+ 	;;
+ 	and r9=TIF_ALLWORK_MASK,r9
+-	ld8 r17=[r17]				// r17 = current->group_leader->pids[PIDTYPE_PID].pid
++	ld8 r17=[r17]				// r17 = current->signal->leader_pid
+ 	;;
+ 	add r8=IA64_PID_LEVEL_OFFSET,r17
+ 	;;
+diff --git a/drivers/platform/x86/thinkpad_acpi.c b/drivers/platform/x86/thinkpad_acpi.c
+index cae9b0595692..d556e95c532c 100644
+--- a/drivers/platform/x86/thinkpad_acpi.c
++++ b/drivers/platform/x86/thinkpad_acpi.c
+@@ -57,6 +57,7 @@
+ #include <linux/list.h>
+ #include <linux/mutex.h>
+ #include <linux/sched.h>
++#include <linux/sched/signal.h>
+ #include <linux/kthread.h>
+ #include <linux/freezer.h>
+ #include <linux/delay.h>
+diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+index a201fb0ac64f..b00a3f126a89 100644
+--- a/fs/fuse/file.c
++++ b/fs/fuse/file.c
+@@ -12,6 +12,7 @@
+ #include <linux/slab.h>
+ #include <linux/kernel.h>
+ #include <linux/sched.h>
++#include <linux/sched/signal.h>
+ #include <linux/module.h>
+ #include <linux/compat.h>
+ #include <linux/swap.h>
+diff --git a/fs/notify/fanotify/fanotify.c b/fs/notify/fanotify/fanotify.c
+index f90842efea13..6e828cb82e5e 100644
+--- a/fs/notify/fanotify/fanotify.c
++++ b/fs/notify/fanotify/fanotify.c
+@@ -8,6 +8,7 @@
+ #include <linux/mount.h>
+ #include <linux/sched.h>
+ #include <linux/sched/user.h>
++#include <linux/sched/signal.h>
+ #include <linux/types.h>
+ #include <linux/wait.h>
+ #include <linux/audit.h>
+diff --git a/include/linux/sched.h b/include/linux/sched.h
+index 87bf02d93a27..a461ff89a3af 100644
+--- a/include/linux/sched.h
++++ b/include/linux/sched.h
+@@ -1202,11 +1202,6 @@ static inline struct pid *task_pid(struct task_struct *task)
+ 	return task->pids[PIDTYPE_PID].pid;
+ }
+ 
+-static inline struct pid *task_tgid(struct task_struct *task)
+-{
+-	return task->group_leader->pids[PIDTYPE_PID].pid;
+-}
+-
+ /*
+  * Without tasklist or RCU lock it is not safe to dereference
+  * the result of task_pgrp/task_session even if task == current,
 diff --git a/include/linux/sched/signal.h b/include/linux/sched/signal.h
-index 113d1ad1ced7..d8ef0a3d2e7e 100644
+index d8ef0a3d2e7e..b95a272c1ab5 100644
 --- a/include/linux/sched/signal.h
 +++ b/include/linux/sched/signal.h
-@@ -556,6 +556,14 @@ extern bool current_is_single_threaded(void);
- typedef int (*proc_visitor)(struct task_struct *p, void *data);
- void walk_process_tree(struct task_struct *top, proc_visitor, void *);
+@@ -564,6 +564,11 @@ struct pid *task_pid_type(struct task_struct *task, enum pid_type type)
+ 	return task->pids[type].pid;
+ }
  
-+static inline
-+struct pid *task_pid_type(struct task_struct *task, enum pid_type type)
++static inline struct pid *task_tgid(struct task_struct *task)
 +{
-+	if (type != PIDTYPE_PID)
-+		task = task->group_leader;
-+	return task->pids[type].pid;
++	return task->signal->leader_pid;
 +}
 +
  static inline int get_nr_threads(struct task_struct *tsk)
  {
  	return tsk->signal->nr_threads;
-diff --git a/kernel/exit.c b/kernel/exit.c
-index c3c7ac560114..16432428fc6c 100644
---- a/kernel/exit.c
-+++ b/kernel/exit.c
-@@ -1001,14 +1001,6 @@ struct wait_opts {
- 	int			notask_error;
- };
+diff --git a/include/net/scm.h b/include/net/scm.h
+index 903771c8d4e3..1ce365f4c256 100644
+--- a/include/net/scm.h
++++ b/include/net/scm.h
+@@ -8,6 +8,7 @@
+ #include <linux/security.h>
+ #include <linux/pid.h>
+ #include <linux/nsproxy.h>
++#include <linux/sched/signal.h>
  
--static inline
--struct pid *task_pid_type(struct task_struct *task, enum pid_type type)
--{
--	if (type != PIDTYPE_PID)
--		task = task->group_leader;
--	return task->pids[type].pid;
--}
+ /* Well, we should have at least one descriptor open
+  * to accept passed FDs 8)
+diff --git a/kernel/pid.c b/kernel/pid.c
+index 157fe4b19971..d0de2b59f86f 100644
+--- a/kernel/pid.c
++++ b/kernel/pid.c
+@@ -421,13 +421,14 @@ pid_t __task_pid_nr_ns(struct task_struct *task, enum pid_type type,
+ 	if (!ns)
+ 		ns = task_active_pid_ns(current);
+ 	if (likely(pid_alive(task))) {
+-		if (type != PIDTYPE_PID) {
+-			if (type == __PIDTYPE_TGID)
+-				type = PIDTYPE_PID;
 -
- static int eligible_pid(struct wait_opts *wo, struct task_struct *p)
- {
- 	return	wo->wo_type == PIDTYPE_MAX ||
+-			task = task->group_leader;
+-		}
+-		nr = pid_nr_ns(rcu_dereference(task->pids[type].pid), ns);
++		struct pid *pid;
++		if (type == PIDTYPE_PID)
++			pid = task_pid(task);
++		else if (type == __PIDTYPE_TGID)
++			pid = task_tgid(task);
++		else
++			pid = rcu_dereference(task->group_leader->pids[type].pid);
++		nr = pid_nr_ns(pid, ns);
+ 	}
+ 	rcu_read_unlock();
+ 
 -- 
 2.17.1
 
