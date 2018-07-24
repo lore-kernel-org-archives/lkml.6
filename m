@@ -6,113 +6,73 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DBE4ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 14:44:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7321C6778A
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 14:44:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DA0552064D
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 14:44:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DA0552064D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=aosc.io
+	by mail.kernel.org (Postfix) with ESMTP id A0F732064D
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 14:44:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A0F732064D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388580AbeGXPvE convert rfc822-to-8bit (ORCPT
+        id S2388620AbeGXPvJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 11:51:04 -0400
-Received: from hermes.aosc.io ([199.195.250.187]:53237 "EHLO hermes.aosc.io"
+        Tue, 24 Jul 2018 11:51:09 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:36290 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388495AbeGXPvE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 11:51:04 -0400
-Received: from localhost (localhost [127.0.0.1]) (Authenticated sender: icenowy@aosc.io)
-        by hermes.aosc.io (Postfix) with ESMTPSA id 4D6BF9F7AE;
-        Tue, 24 Jul 2018 14:43:19 +0000 (UTC)
-Date:   Tue, 24 Jul 2018 22:42:32 +0800
-In-Reply-To: <20180724144151.myyg7slocsfjjsfi@flea>
-References: <20180724011551.49603-1-icenowy@aosc.io> <20180724011551.49603-4-icenowy@aosc.io> <CAGb2v67zR-Q9n7L6CaFKDUJFHFEC_h8-RYxkdyeyJb_GbNmkJw@mail.gmail.com> <CEA43CB7-1DA6-4983-BF18-82C4A48FB92B@aosc.io> <CAGb2v64Qae4O430kP30DQNhp0Dt774OHt0nMe35ckp8X=CTFLg@mail.gmail.com> <AC678B03-19B7-4110-B333-72188CE71296@aosc.io> <CAGb2v656oPmAX=_y88b05xqrona3HFtU-VmNQhHxK_n-4gD+aw@mail.gmail.com> <20180724144151.myyg7slocsfjjsfi@flea>
+        id S2388495AbeGXPvI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Jul 2018 11:51:08 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 3D434207AD; Tue, 24 Jul 2018 16:44:18 +0200 (CEST)
+Received: from windsurf (176.199.29.109.rev.sfr.net [109.29.199.176])
+        by mail.bootlin.com (Postfix) with ESMTPSA id C8062206A6;
+        Tue, 24 Jul 2018 16:44:07 +0200 (CEST)
+Date:   Tue, 24 Jul 2018 16:44:07 +0200
+From:   Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+To:     Sam Ravnborg <sam@ravnborg.org>
+Cc:     "David S . Miller" <davem@davemloft.net>,
+        sparclinux@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Hanna Hawa <hannah@marvell.com>
+Subject: Re: [PATCH 1/2] sparc: move MSI related definitions to where they
+ are used
+Message-ID: <20180724164407.4fa57d1f@windsurf>
+In-Reply-To: <20180724143736.GA22088@ravnborg.org>
+References: <20180724115305.11289-1-thomas.petazzoni@bootlin.com>
+        <20180724143736.GA22088@ravnborg.org>
+Organization: Bootlin (formerly Free Electrons)
+X-Mailer: Claws Mail 3.15.1-dirty (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: 8BIT
-Subject: Re: [linux-sunxi] Re: [PATCH 3/3] arm64: allwinner: dts: h6: add Wi-Fi support for Pine H64 model A/B
-To:     maxime.ripard@bootlin.com,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>
-CC:     linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>
-From:   Icenowy Zheng <icenowy@aosc.io>
-Message-ID: <198DB486-4789-4777-9596-2BD6FAFFB741@aosc.io>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hello,
 
+Thanks for the review.
 
-于 2018年7月24日 GMT+08:00 下午10:41:51, Maxime Ripard <maxime.ripard@bootlin.com> 写到:
->On Tue, Jul 24, 2018 at 10:37:51AM +0800, Chen-Yu Tsai wrote:
->> On Tue, Jul 24, 2018 at 10:28 AM, Icenowy Zheng <icenowy@aosc.io>
->wrote:
->> >
->> >
->> > 于 2018年7月24日 GMT+08:00 上午10:26:02, Chen-Yu Tsai <wens@csie.org> 写到:
->> >>On Tue, Jul 24, 2018 at 10:23 AM, Icenowy Zheng <icenowy@aosc.io>
->> >>wrote:
->> >>>
->> >>>
->> >>> 于 2018年7月24日 GMT+08:00 上午10:21:59, Chen-Yu Tsai <wens@csie.org>
->写到:
->> >>>>On Tue, Jul 24, 2018 at 9:15 AM, Icenowy Zheng <icenowy@aosc.io>
->> >>wrote:
->> >>>>> The Pine H64 model A has a Wi-Fi module connector and the model
->B
->> >>has
->> >>>>an
->> >>>>> on-board RTL8723BS Wi-Fi module.
->> >>>>>
->> >>>>> Add support for them. For model A, as it's not defaultly
->present,
->> >>>>keep
->> >>>>> it disabled now.
->> >>>>
->> >>>>Nope. Pine64 actually has two WiFi/BT modules. And they require
->> >>>>different
->> >>>>device tree snippets for both the WiFi and BT side. This is
->better
->> >>>>resolved
->> >>>>with device tree overlays.
->> >>>>
->> >>>>I have both, though I've yet found time to work on them.
->> >>>
->> >>> I have also both.
->> >>>
->> >>> The skeleton here can get the Wi-Fi of both to work.
->> >>
->> >>Cool. Then I can put away my RTL module for now. :)
->> >
->> > P.S. SDIO is auto detectable, and for BCM chips, the OOB interrupt
->> > is only a bonus function and it can fall back to standard in-band
->> > interrupt (which doesn't need special binding, and is currently
->> > used by mainline r8723bs driver.)
->> 
->> Correct. With BT you'll have serdev device nodes with different
->> compatibles. Then you'll have to resort to overlays, and you'd
->probably
->> end up adding WiFi OOB interrupt bits as well.
->> 
->> So the question remaining is: should we enable the MMC part, along
->> with power sequencing and regulator supplies, by default? Thinking
->> more about it, I'm actually OK with it. The board connectors are
->> clearly marked as being for a WiFi+BT module. The whole space on
->> the board is surrounded by a box in silkscreen. Sorry for the
->> initial nack.
->> 
->> Maxime, any thoughts?
->
->If there's a need for an overlay anyway, there's no real reason to
->enable it by default, especially if not everything is there.
+On Tue, 24 Jul 2018 16:37:36 +0200, Sam Ravnborg wrote:
 
-Everything is there, for model B support.
+> One nitpick below.
+> But other than that this is a nice cleanup:
+> Acked-by: Sam Ravnborg <sam@ravnborg.org>
+> > +/*
+> > + * Locations of MSI Registers.
+> > + */  
+> 
+> The SPARC way to format comments follows netdev style.
+> So put it all in one line and everyone are happy:
 
->
->Maxime
+Well, the code is being moved from arch/sparc to arch/sparc, so
+apparently, it was already non-compliant to this specific coding style
+rule. Should the comments be made compliant as part of the same commit,
+or a separate one ?
+
+Thomas
+-- 
+Thomas Petazzoni, CTO, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
