@@ -2,103 +2,99 @@ Return-Path: <SRS0=hTZH=KI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77892C6778A
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 11:05:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82BBBC6778A
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 11:06:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3793020881
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 11:05:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3793020881
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi
+	by mail.kernel.org (Postfix) with ESMTP id 39BB420856
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 11:06:13 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="GU0xCc7U"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 39BB420856
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388577AbeGXMLE (ORCPT
+        id S2388581AbeGXMMF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 08:11:04 -0400
-Received: from nblzone-211-213.nblnetworks.fi ([83.145.211.213]:37330 "EHLO
-        hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2388307AbeGXMLD (ORCPT
+        Tue, 24 Jul 2018 08:12:05 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:44288 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388308AbeGXMME (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 08:11:03 -0400
-Received: from valkosipuli.localdomain (valkosipuli.retiisi.org.uk [IPv6:2001:1bc8:1a6:d3d5::80:2])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by hillosipuli.retiisi.org.uk (Postfix) with ESMTPS id 3826C634C7F;
-        Tue, 24 Jul 2018 14:05:08 +0300 (EEST)
-Received: from sakke by valkosipuli.localdomain with local (Exim 4.89)
-        (envelope-from <sakari.ailus@retiisi.org.uk>)
-        id 1fhv7s-0008O2-0P; Tue, 24 Jul 2018 14:05:08 +0300
-Date:   Tue, 24 Jul 2018 14:05:07 +0300
-From:   Sakari Ailus <sakari.ailus@iki.fi>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     linux-kernel@vger.kernel.org,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-media@vger.kernel.org
-Subject: Re: [PATCH 14/26] media: Convert entity ID allocation to new IDA API
-Message-ID: <20180724110507.idyjc3vbbivwbxtb@valkosipuli.retiisi.org.uk>
-References: <20180621212835.5636-1-willy@infradead.org>
- <20180621212835.5636-15-willy@infradead.org>
+        Tue, 24 Jul 2018 08:12:04 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=lpxmNjuxya1iKPYA56mlRfufSyBXWg6ZYzE2nufeo20=; b=GU0xCc7U3G4+A8yXi5fFqUyuy
+        IEI5QHq0zDAc6ENEeWGtYz2UKx2ztppt7x+YlSN8STs6IC6w/siMPEHV9A5cUDc3y0A/wDyzFJmL4
+        3fgTUGRu79/U7FXZWIREqhaXeLk67iNhjCVCJ+3/SBt5fRFVOY6Rz4eL81BTyGHjZYAzc=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=finisterre.ee.mobilebroadband)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1fhv8k-0005J1-Ow; Tue, 24 Jul 2018 11:06:02 +0000
+Received: by finisterre.ee.mobilebroadband (Postfix, from userid 1000)
+        id 2D97C440078; Tue, 24 Jul 2018 12:06:02 +0100 (BST)
+Date:   Tue, 24 Jul 2018 12:06:02 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc:     lee.jones@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        lgirdwood@gmail.com, tiwai@suse.com, bgoswami@codeaurora.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        vkoul@kernel.org, alsa-devel@alsa-project.org
+Subject: Re: [PATCH 04/12] ASoC: dt-bindings: add dt bindings for wcd9335
+ audio codec
+Message-ID: <20180724110602.GA2414@sirena.org.uk>
+References: <20180723155410.9494-1-srinivas.kandagatla@linaro.org>
+ <20180723155410.9494-5-srinivas.kandagatla@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="XsQoSWH+UP9D9v3l"
 Content-Disposition: inline
-In-Reply-To: <20180621212835.5636-15-willy@infradead.org>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <20180723155410.9494-5-srinivas.kandagatla@linaro.org>
+X-Cookie: Many are called, few volunteer.
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 21, 2018 at 02:28:23PM -0700, Matthew Wilcox wrote:
-> Removes a call to ida_pre_get().
-> 
-> Signed-off-by: Matthew Wilcox <willy@infradead.org>
 
-Reviewed-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+--XsQoSWH+UP9D9v3l
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-> ---
->  drivers/media/media-device.c | 16 +++++-----------
->  1 file changed, 5 insertions(+), 11 deletions(-)
-> 
-> diff --git a/drivers/media/media-device.c b/drivers/media/media-device.c
-> index ae59c3177555..d51088bcd735 100644
-> --- a/drivers/media/media-device.c
-> +++ b/drivers/media/media-device.c
-> @@ -575,18 +575,12 @@ int __must_check media_device_register_entity(struct media_device *mdev,
->  	entity->num_links = 0;
->  	entity->num_backlinks = 0;
->  
-> -	if (!ida_pre_get(&mdev->entity_internal_idx, GFP_KERNEL))
-> -		return -ENOMEM;
-> -
-> -	mutex_lock(&mdev->graph_mutex);
-> -
-> -	ret = ida_get_new_above(&mdev->entity_internal_idx, 1,
-> -				&entity->internal_idx);
-> -	if (ret < 0) {
-> -		mutex_unlock(&mdev->graph_mutex);
-> +	ret = ida_alloc_min(&mdev->entity_internal_idx, 1, GFP_KERNEL);
-> +	if (ret < 0)
->  		return ret;
-> -	}
-> +	entity->internal_idx = ret;
->  
-> +	mutex_lock(&mdev->graph_mutex);
->  	mdev->entity_internal_idx_max =
->  		max(mdev->entity_internal_idx_max, entity->internal_idx);
->  
-> @@ -632,7 +626,7 @@ static void __media_device_unregister_entity(struct media_entity *entity)
->  	struct media_interface *intf;
->  	unsigned int i;
->  
-> -	ida_simple_remove(&mdev->entity_internal_idx, entity->internal_idx);
-> +	ida_free(&mdev->entity_internal_idx, entity->internal_idx);
->  
->  	/* Remove all interface links pointing to this entity */
->  	list_for_each_entry(intf, &mdev->interfaces, graph_obj.list) {
+On Mon, Jul 23, 2018 at 04:54:02PM +0100, Srinivas Kandagatla wrote:
+> This patch adds bindings for wcd9335 audio codec which can support both SLIMbus
+> and I2S/I2C interface.
 
--- 
-Sakari Ailus
-e-mail: sakari.ailus@iki.fi
+...
+
+> +Qualcomm WCD9335 Codec is a standalone Hi-Fi audio codec IC,
+> +It supports both I2S/I2C and SLIMbus audio interfaces.
+
+This is a standalone audio CODEC but it also has a MFD binding?  I'd
+have just expected a single binding for a single device.
+
+--XsQoSWH+UP9D9v3l
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAltXCBkACgkQJNaLcl1U
+h9DjUQgAhEc7q7FN5HJ0PcoeN33FJ2gHFVad+B5osDVH7AtT2KJYhuyKyooPmCKf
+G7AoBrcpFbPac9r0AkPW6EwwjEbNKHKUuZplf+vTX9dpBceUivyjDMXS3oykxt00
+EauORHigaj8nADXX/dq8uRuMn5Tv5NGJNfSzWJsw9FPJRsVKzduaT7wbTLiPAbeO
+37hN9sO58B1OFPVkQHInWOlhzCsNMFlvtRBR2EDmegxqb4DolDllJza1u+nwWHIm
+2hbHe+VgPvy/9LRZ2T2G0kdETrY/oI2L/noucOlLqWbCftHn0b99CY1DkcsYsh8j
+sdwGSE68wbIh8lw3V9zA3+brtjpWuA==
+=opx9
+-----END PGP SIGNATURE-----
+
+--XsQoSWH+UP9D9v3l--
