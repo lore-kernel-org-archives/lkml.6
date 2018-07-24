@@ -1,243 +1,136 @@
 Return-Path: <SRS0=hTZH=KI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Level: *
+X-Spam-Status: No, score=1.3 required=3.0 tests=DKIM_SIGNED,FSL_HELO_FAKE,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7641CC6778A
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 11:14:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D1A6ECDFBB
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 11:14:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 222D320875
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 11:14:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5104B20875
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 11:14:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f+cd3YPh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 222D320875
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OugJTgFr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5104B20875
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388661AbeGXMUq (ORCPT
+        id S2388685AbeGXMUr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 08:20:46 -0400
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:41368 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388241AbeGXMUq (ORCPT
+        Tue, 24 Jul 2018 08:20:47 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:55455 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388360AbeGXMUr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 08:20:46 -0400
-Received: by mail-lf1-f65.google.com with SMTP id v22-v6so2684042lfe.8;
-        Tue, 24 Jul 2018 04:14:46 -0700 (PDT)
+        Tue, 24 Jul 2018 08:20:47 -0400
+Received: by mail-wm0-f68.google.com with SMTP id f21-v6so2123184wmc.5;
+        Tue, 24 Jul 2018 04:14:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=OL0FHnY8MX0kTOXn2ByFJgCCIR3LfOuLzloTJMZDYXU=;
-        b=f+cd3YPheXkVcIilRkvioz/X2O3m7Ci/LM4b+oUW+12zQnEFcd+K+x0Ot8sMNLeoX2
-         bVLTLBFTj9EK2BVvRQ5IHkFBtdcqiyNZv+nZ9qo6ciw9h2cqzkWGBWp2pWnW8xWvCePI
-         sa0Ev5BKGLhRg0AlaSMjkvhwPhBtZenE5Og/SM4K6icfFa9nfqqiyZ1Jbz1rtj1WAAUi
-         SRn05kbraBtO466Hh2Ly6S3PLtTypWaJz9iej+jT1ZZWByh7ixc/bDm975RfNr3QCV7P
-         gwjgRfJ5qxnM2l2VXhKfNTPmCcnlu2kVDYRHsJuNgnL27t/0AhSe9WHxUixW8js32Hj5
-         PMrA==
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=LGHltUa+4XbgFnAGSYQ8WjuLRULtr9GAkTv5DlGLJ0w=;
+        b=OugJTgFrOv2EJl+8G5l9My+J7L5mjGneUeCM6VLc9PBDgKbHrOhAqMBkwM3NkQ5Nmu
+         BmB93U1qo75dv5KIl/ef9T6hewwfU87n5m1hoiu7cHPcNbtgd2b03eConPakZsTKpD1T
+         eVoS7QVCSH+SlOF4DxXjBMH5uzJgWWS3hJAUSiFFWRgrBpNIUFAPO/pdvGSdXICKxqle
+         9LG081VRGBqi8l2lH0orBApb1Hr3eCoBlQVNwopF96LW/7CUzzP6ULqUy5m/ec8iIJYH
+         H81uYIe6SBGk6WEE/33RNl9G0uJqi4S+TgQBhe4dH3no7qHE/l/9LxV5DsZ6OBe5kbXF
+         9HjQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=OL0FHnY8MX0kTOXn2ByFJgCCIR3LfOuLzloTJMZDYXU=;
-        b=PRgEdN+OTLw2a9KAL8goa0/tG/DDVTtOeo/38usDSU7QaL3/YavLZs4p6QjVg0aA30
-         dD5aNmklte1qsXb82k1jxD9x3CbOPr0JZfhLCff7beKLwN/Wl9zzqgy/jgEzEyBYz+od
-         F6m5A3d5G3LK9CttipHtF/PRusbs8pZCTH8kj4zT71aXNrp8Noe51hXXnzy0EaTIrWw4
-         IeKXFoR0rrB22Z33tT+tuDqrpxFdnSfKrDPIE3CWwW5sfocS+KGTGAVTk6V3STWSFX9X
-         cbmecF9ovl/vqmTis4TCpznt1SxZEv85gVep9Ea3OUvD8PvU6NdW3X6cvr5Co7dM27Q/
-         U/ig==
-X-Gm-Message-State: AOUpUlEV1aJMjGGs6gj+9VksBaVAf4grIUaiF6evKfTWHjYSw534U09X
-        dpOXNSF1/3vwY/6sKWTwmro=
-X-Google-Smtp-Source: AAOMgpe11dK7QFToq6eSIee8UwXBDLcjFwD+nfaI9WMip/h2sMPRPJylq/ADDZA9LmRhaUlz4m/0og==
-X-Received: by 2002:a19:12df:: with SMTP id 92-v6mr9639324lfs.80.1532430885664;
-        Tue, 24 Jul 2018 04:14:45 -0700 (PDT)
-Received: from dimapc.localnet ([109.252.90.13])
-        by smtp.gmail.com with ESMTPSA id l14-v6sm2258252ljh.91.2018.07.24.04.14.44
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 24 Jul 2018 04:14:44 -0700 (PDT)
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Peter Geis <pgwipeout@gmail.com>
-Cc:     broonie@kernel.org, lgirdwood@gmail.com, robh+dt@kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org
-Subject: Re: [PATCH 2/2 v2] Add support for CPCAP regulators on Tegra devices.
-Date:   Tue, 24 Jul 2018 14:14:43 +0300
-Message-ID: <2471666.ni9k6lzQ9Y@dimapc>
-In-Reply-To: <e59e552c-fabb-0251-05b5-2361bf273232@gmail.com>
-References: <20180723193848.32491-1-pgwipeout@gmail.com> <4588004.Gnq6nbUl2V@dimapc> <e59e552c-fabb-0251-05b5-2361bf273232@gmail.com>
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=LGHltUa+4XbgFnAGSYQ8WjuLRULtr9GAkTv5DlGLJ0w=;
+        b=VLp2VvP2xj62utGBIhs2YM1S21IRoRt7bsLTRis2Uq8LHk2JSlqG1lXeWjJmgKFKo9
+         yQN+qhBDPzDUtPEO+hZbesG+HrnmtXTUS+xQvSUtzZq2wWM66tM+icppvyzLx8Gg4gm9
+         5V0gKGHYzUznxuGaEoHB8Xd6v/3W5b2EgAquufktGTyPwmHNvCpwWA4ssKb/d8cofrwu
+         abnDa8ha8Cd42mZDsHvYD2I0KCWt+vV3Niv2UVpPBeQc3+R3bOK89iyoxLz4CQKrynZQ
+         eeA2GAQHEtBcreuHQGNup2FG9AcfPBHAXkD8YaaSg4cPuWBxGxNBLXScGUjGOGpJn+Ha
+         utwg==
+X-Gm-Message-State: AOUpUlFXsAhQ6ZbpdaVXloa0tZZOECMVeajfuJYLEEUaHozZEGfy8BaA
+        NCrxUBfRYnYITMZWqwJgFWU=
+X-Google-Smtp-Source: AAOMgpfKS+geeRcgC+lHdhOL8u0DvWunUczWs1bpr9BrqKmXtSvaUBpzAurA1rS5SJhaSy/mx9zI9Q==
+X-Received: by 2002:a1c:b586:: with SMTP id e128-v6mr1573907wmf.141.1532430888542;
+        Tue, 24 Jul 2018 04:14:48 -0700 (PDT)
+Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
+        by smtp.gmail.com with ESMTPSA id z3-v6sm9228192wru.27.2018.07.24.04.14.47
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 24 Jul 2018 04:14:47 -0700 (PDT)
+Date:   Tue, 24 Jul 2018 13:14:45 +0200
+From:   Ingo Molnar <mingo@kernel.org>
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     Nadav Amit <namit@vmware.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        X86 ML <x86@kernel.org>, Sam Ravnborg <sam@ravnborg.org>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
+Subject: Re: [PATCH v6 1/9] Makefile: Prepare for using macros for inline asm
+Message-ID: <20180724111445.GB14212@gmail.com>
+References: <20180622172212.199633-1-namit@vmware.com>
+ <20180622172212.199633-2-namit@vmware.com>
+ <CAK7LNASaZd9fupgu4vxc6+tnCnNMdrCi7LTwS56K1LaKODoCtA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAK7LNASaZd9fupgu4vxc6+tnCnNMdrCi7LTwS56K1LaKODoCtA@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tuesday, 24 July 2018 04:57:24 MSK Peter Geis wrote:
-> On 07/23/2018 08:27 PM, Dmitry Osipenko wrote:
-> > On Monday, 23 July 2018 22:38:48 MSK Peter Geis wrote:
-> >> Added support for the CPCAP power management regulator functions on
-> >> Tegra devices.
-> >> Added sw2_sw4 value tables, which provide power to the Tegra core and
-> >> aux devices.
-> >> Added the Tegra init tables and device tree compatibility match.
-> >> 
-> >> Signed-off-by: Peter Geis <pgwipeout@gmail.com>
-> >> ---
-> >> 
-> >>   .../bindings/regulator/cpcap-regulator.txt    |  1 +
-> >>   drivers/regulator/cpcap-regulator.c           | 80 +++++++++++++++++++
-> >>   2 files changed, 81 insertions(+)
-> >> 
-> >> diff --git
-> >> a/Documentation/devicetree/bindings/regulator/cpcap-regulator.txt
-> >> b/Documentation/devicetree/bindings/regulator/cpcap-regulator.txt index
-> >> 675f4437ce92..3e2d33ab1731 100644
-> >> --- a/Documentation/devicetree/bindings/regulator/cpcap-regulator.txt
-> >> +++ b/Documentation/devicetree/bindings/regulator/cpcap-regulator.txt
-> >> @@ -4,6 +4,7 @@ Motorola CPCAP PMIC voltage regulators
-> >> 
-> >>   Requires node properties:
-> >>   
-> >>   - "compatible" value one of:
-> >>       "motorola,cpcap-regulator"
-> >> 
-> >> +    "motorola,tegra-cpcap-regulator"
-> >> 
-> >>       "motorola,mapphone-cpcap-regulator"
-> >>   
-> >>   Required regulator properties:
-> >> diff --git a/drivers/regulator/cpcap-regulator.c
-> >> b/drivers/regulator/cpcap-regulator.c index c0b1e04bd90f..cb3774be445d
-> >> 100644
-> >> --- a/drivers/regulator/cpcap-regulator.c
-> >> +++ b/drivers/regulator/cpcap-regulator.c
-> >> @@ -412,6 +412,82 @@ static struct cpcap_regulator omap4_regulators[] = {
-> >> 
-> >>   	{ /* sentinel */ },
-> >>   
-> >>   };
-> >> 
-> >> +static struct cpcap_regulator tegra_regulators[] = {
-> >> +	CPCAP_REG(SW1, CPCAP_REG_S1C1, CPCAP_REG_ASSIGN2,
-> >> +		  CPCAP_BIT_SW1_SEL, unknown_val_tbl,
-> >> +		  0, 0, 0, 0, 0, 0),
-> >> +	CPCAP_REG(SW2, CPCAP_REG_S2C1, CPCAP_REG_ASSIGN2,
-> >> +		  CPCAP_BIT_SW2_SEL, sw2_sw4_val_tbl,
-> >> +		  0xf00, 0x7f, 0, 0x800, 0, 120),
-> >> +	CPCAP_REG(SW3, CPCAP_REG_S3C, CPCAP_REG_ASSIGN2,
-> >> +		  CPCAP_BIT_SW3_SEL, unknown_val_tbl,
-> >> +		  0, 0, 0, 0, 0, 0),
-> >> +	CPCAP_REG(SW4, CPCAP_REG_S4C1, CPCAP_REG_ASSIGN2,
-> >> +		  CPCAP_BIT_SW4_SEL, sw2_sw4_val_tbl,
-> >> +		  0xf00, 0x7f, 0, 0x900, 0, 100),
-> >> +	CPCAP_REG(SW5, CPCAP_REG_S5C, CPCAP_REG_ASSIGN2,
-> >> +		  CPCAP_BIT_SW5_SEL, sw5_val_tbl,
-> >> +		  0x2a, 0, 0, 0x22, 0, 0),
-> >> +	CPCAP_REG(SW6, CPCAP_REG_S6C, CPCAP_REG_ASSIGN2,
-> >> +		  CPCAP_BIT_SW6_SEL, unknown_val_tbl,
-> >> +		  0, 0, 0, 0, 0, 0),
-> >> +	CPCAP_REG(VCAM, CPCAP_REG_VCAMC, CPCAP_REG_ASSIGN2,
-> >> +		  CPCAP_BIT_VCAM_SEL, vcam_val_tbl,
-> >> +		  0x87, 0x30, 4, 0x7, 0, 420),
-> >> +	CPCAP_REG(VCSI, CPCAP_REG_VCSIC, CPCAP_REG_ASSIGN3,
-> >> +		  CPCAP_BIT_VCSI_SEL, vcsi_val_tbl,
-> >> +		  0x47, 0x10, 4, 0x7, 0, 350),
-> >> +	CPCAP_REG(VDAC, CPCAP_REG_VDACC, CPCAP_REG_ASSIGN3,
-> >> +		  CPCAP_BIT_VDAC_SEL, vdac_val_tbl,
-> >> +		  0x87, 0x30, 4, 0x3, 0, 420),
-> >> +	CPCAP_REG(VDIG, CPCAP_REG_VDIGC, CPCAP_REG_ASSIGN2,
-> >> +		  CPCAP_BIT_VDIG_SEL, vdig_val_tbl,
-> >> +		  0x87, 0x30, 4, 0x5, 0, 420),
-> >> +	CPCAP_REG(VFUSE, CPCAP_REG_VFUSEC, CPCAP_REG_ASSIGN3,
-> >> +		  CPCAP_BIT_VFUSE_SEL, vfuse_val_tbl,
-> >> +		  0x80, 0xf, 0, 0x80, 0, 420),
-> >> +	CPCAP_REG(VHVIO, CPCAP_REG_VHVIOC, CPCAP_REG_ASSIGN3,
-> >> +		  CPCAP_BIT_VHVIO_SEL, vhvio_val_tbl,
-> >> +		  0x17, 0, 0, 0x2, 0, 0),
-> >> +	CPCAP_REG(VSDIO, CPCAP_REG_VSDIOC, CPCAP_REG_ASSIGN2,
-> >> +		  CPCAP_BIT_VSDIO_SEL, vsdio_val_tbl,
-> >> +		  0x87, 0x38, 3, 0x2, 0, 420),
-> >> +	CPCAP_REG(VPLL, CPCAP_REG_VPLLC, CPCAP_REG_ASSIGN3,
-> >> +		  CPCAP_BIT_VPLL_SEL, vpll_val_tbl,
-> >> +		  0x43, 0x18, 3, 0x1, 0, 420),
-> >> +	CPCAP_REG(VRF1, CPCAP_REG_VRF1C, CPCAP_REG_ASSIGN3,
-> >> +		  CPCAP_BIT_VRF1_SEL, vrf1_val_tbl,
-> >> +		  0xac, 0x2, 1, 0xc, 0, 10),
-> >> +	CPCAP_REG(VRF2, CPCAP_REG_VRF2C, CPCAP_REG_ASSIGN3,
-> >> +		  CPCAP_BIT_VRF2_SEL, vrf2_val_tbl,
-> >> +		  0x23, 0x8, 3, 0x3, 0, 10),
-> >> +	CPCAP_REG(VRFREF, CPCAP_REG_VRFREFC, CPCAP_REG_ASSIGN3,
-> >> +		  CPCAP_BIT_VRFREF_SEL, vrfref_val_tbl,
-> >> +		  0x23, 0x8, 3, 0x3, 0, 420),
-> >> +	CPCAP_REG(VWLAN1, CPCAP_REG_VWLAN1C, CPCAP_REG_ASSIGN3,
-> >> +		  CPCAP_BIT_VWLAN1_SEL, vwlan1_val_tbl,
-> >> +		  0x47, 0x10, 4, 0x5, 0, 420),
-> >> +	CPCAP_REG(VWLAN2, CPCAP_REG_VWLAN2C, CPCAP_REG_ASSIGN3,
-> >> +		  CPCAP_BIT_VWLAN2_SEL, vwlan2_val_tbl,
-> >> +		  0x20c, 0xc0, 6, 0x8, 0, 420),
-> >> +	CPCAP_REG(VSIM, CPCAP_REG_VSIMC, CPCAP_REG_ASSIGN3,
-> >> +		  0xffff, vsim_val_tbl,
-> >> +		  0x23, 0x8, 3, 0x3, 0, 420),
-> >> +	CPCAP_REG(VSIMCARD, CPCAP_REG_VSIMC, CPCAP_REG_ASSIGN3,
-> >> +		  0xffff, vsimcard_val_tbl,
-> >> +		  0x1e80, 0x8, 3, 0x1e00, 0, 420),
-> >> +	CPCAP_REG(VVIB, CPCAP_REG_VVIBC, CPCAP_REG_ASSIGN3,
-> >> +		  CPCAP_BIT_VVIB_SEL, vvib_val_tbl,
-> >> +		  0x1, 0xc, 2, 0, 0x1, 500),
-> >> +	CPCAP_REG(VUSB, CPCAP_REG_VUSBC, CPCAP_REG_ASSIGN3,
-> >> +		  CPCAP_BIT_VUSB_SEL, vusb_val_tbl,
-> >> +		  0x11c, 0x40, 6, 0xc, 0, 0),
-> >> +	CPCAP_REG(VAUDIO, CPCAP_REG_VAUDIOC, CPCAP_REG_ASSIGN4,
-> >> +		  CPCAP_BIT_VAUDIO_SEL, vaudio_val_tbl,
-> >> +		  0x16, 0x1, 0, 0x4, 0, 0),
-> >> +	{ /* sentinel */ },
-> >> +};
-> >> +
-> >> 
-> >>   static const struct of_device_id cpcap_regulator_id_table[] = {
-> >>   
-> >>   	{
-> >>   	
-> >>   		.compatible = "motorola,cpcap-regulator",
-> >> 
-> >> @@ -420,6 +496,10 @@ static const struct of_device_id
-> >> cpcap_regulator_id_table[] = { .compatible =
-> >> "motorola,mapphone-cpcap-regulator",
-> >> 
-> >>   		.data = omap4_regulators,
-> >>   	
-> >>   	},
-> >> 
-> >> +	{
-> >> +		.compatible = "motorola,tegra-cpcap-regulator",
-> >> +		.data = tegra_regulators,
-> >> +	},
-> >> 
-> >>   	{},
-> >>   
-> >>   };
-> >>   MODULE_DEVICE_TABLE(of, cpcap_regulator_id_table);
-> > 
-> > Are those cpcap_regulator values really common for all Tegra's? Probably
-> > better to name the DT compatible like "motorola,xoom-cpcap-regulator" or
-> > "motorola,mz602-cpcap-regulator".
-> > 
-> > The DT binding documentation should be updated with the new compatible
-> > value in the
-> > Documentation/devicetree/bindings/regulator/cpcap-regulator.txt
-> I see your point, from my research the only other device that ever
-> paired a Tegra with a cpcap was the Atrix 4g, and it has completely
-> different values.
-> For now I will change the value to "motorola,xoom-cpcap-regulator",
-> since these values are common across the entire Xoom line.
-> The DT binding documentation was updated as part of this patch, it will
-> be adjusted to the new value.
 
-Now I see that you've updated the doc in this patch, thank you.
+* Masahiro Yamada <yamada.masahiro@socionext.com> wrote:
 
+> 2018-06-23 2:22 GMT+09:00 Nadav Amit <namit@vmware.com>:
+> > Using macros for inline assembly improves both readability and
+> > compilation decisions that are distorted by big assembly blocks that use
+> > alternative sections. Compile macros.S and use it to assemble all C
+> > files. Currently, only x86 will use it.
+> >
+> > Cc: Sam Ravnborg <sam@ravnborg.org>
+> > Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
+> > Cc: Michal Marek <michal.lkml@markovi.net>
+> > Cc: Thomas Gleixner <tglx@linutronix.de>
+> > Cc: Ingo Molnar <mingo@redhat.com>
+> > Cc: "H. Peter Anvin" <hpa@zytor.com>
+> > Cc: x86@kernel.org
+> > Cc: linux-kbuild@vger.kernel.org
+> > Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+> > Signed-off-by: Nadav Amit <namit@vmware.com>
+> > ---
+> 
+> 
+> 
+> Acked-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> 
+> 
+> 
+> 
+> >  Makefile                 |  9 +++++++--
+> >  arch/x86/Makefile        | 11 +++++++++--
+> >  arch/x86/kernel/macros.S |  7 +++++++
+> >  scripts/Kbuild.include   |  4 +++-
+> >  scripts/mod/Makefile     |  2 ++
+> >  5 files changed, 28 insertions(+), 5 deletions(-)
+> >  create mode 100644 arch/x86/kernel/macros.S
 
+So this patch appears to break the xtensa cross-build on my system, with an older 
+version of crosstools:
+
+  MODPOST vmlinux.o
+/home/mingo/crosstool-korg/bin//gcc-4.9.0-nolibc/xtensa-linux/bin/xtensa-linux-ld:./arch/xtensa/kernel/vmlinux.lds:430: 
+syntax error
+/home/mingo/tip/Makefile:1010: recipe for target 'vmlinux' failed
+make[1]: *** [vmlinux] Error 1
+make[1]: Leaving directory '/dev/shm/tip/build'
+Makefile:146: recipe for target 'sub-make' failed
+
+Thanks,
+
+	Ingo
