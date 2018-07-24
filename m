@@ -2,117 +2,121 @@ Return-Path: <SRS0=hTZH=KI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FC72C6778A
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 09:20:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C62BECDFB8
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 09:21:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 34BAE20852
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 09:20:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 084B420852
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 09:21:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="DykZCpUH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 34BAE20852
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HrrA1ZGo"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 084B420852
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388362AbeGXK0Q (ORCPT
+        id S2388371AbeGXK0x (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 06:26:16 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:40748 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388222AbeGXK0Q (ORCPT
+        Tue, 24 Jul 2018 06:26:53 -0400
+Received: from mail-oi0-f48.google.com ([209.85.218.48]:33153 "EHLO
+        mail-oi0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388182AbeGXK0x (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 06:26:16 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=fq4UHO4hK4TE5lecoyKu8KB1w1+cpVq9v7bk1UG4vxg=; b=DykZCpUHhGhzyTT+QJFku+Xso
-        UZQpymRoZiWF35iob4ZTzlzS2+oGh1hlRBwoxwROW7k0x31oQx+wWEUYILGEsfJcV0JTL+raaTf0n
-        56irmD+Z/6CzMBqj28UVLsZ93ulrcybiqvR90hG9sQViu+pZ15qP2OfXQjIszS9sX+xhRUCdrMufl
-        ATvq9mFPmRwDNWkC3rMNrMzEMn8Qw3msI9pciEh40UpqGey/U4PKswr6yE+icGxUije9eOi9gNKQU
-        cWx21WHITrSp5mmI41nC5giOgtaf+B3gBs7m8W3cJSpjHr2OWAHycAt01JAtv/SfWpVOiHE64Dn2/
-        +Ozpb5cIQ==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fhtUk-0003Vd-5Y; Tue, 24 Jul 2018 09:20:38 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id A686520275F47; Tue, 24 Jul 2018 11:20:36 +0200 (CEST)
-Date:   Tue, 24 Jul 2018 11:20:36 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Ingo Molnar <mingo@kernel.org>
-Cc:     Mark Rutland <mark.rutland@arm.com>, mingo@redhat.com,
-        andy.shevchenko@gmail.com, arnd@arndb.de, aryabinin@virtuozzo.com,
-        boqun.feng@gmail.com, catalin.marinas@arm.com, dvyukov@google.com,
-        glider@google.com, hpa@zytor.com, linux-kernel@vger.kernel.org,
-        parri.andrea@gmail.com, peter@hurleysoftware.com,
-        tglx@linutronix.de, will.deacon@arm.com,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCHv4 01/12] atomic/tty: Fix up atomic abuse in ldsem
-Message-ID: <20180724092036.GN2494@hirez.programming.kicks-ass.net>
-References: <20180716113017.3909-1-mark.rutland@arm.com>
- <20180716113017.3909-2-mark.rutland@arm.com>
- <20180724071518.GA7300@gmail.com>
+        Tue, 24 Jul 2018 06:26:53 -0400
+Received: by mail-oi0-f48.google.com with SMTP id l10-v6so6300622oii.0;
+        Tue, 24 Jul 2018 02:21:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=PgGmu8rZ1+8joALR8uyHh3Rj8sp7wqCVeFgW6gXks5M=;
+        b=HrrA1ZGoLdXphHvZNs08APl6VPfYHaOwtuy8cEAHnhzVsf9fihfBIwysGwF2L3Y1+M
+         pg+KfXm8/xjkwlerWtAY8OT669NmaLaEC4SuLGk52M0PuVgu4ka5F73GAFCxODimV7e2
+         CF6wq/dHnFWvtPMsQtXX8b3vHz77lFian1npRR0dK051Gm4xrmAJm49Nt9u4Z8ZgiFcP
+         3dGFsYOXx/h57dAB8gCOqeg5zoqkeW2QTNMsZmYNp8uo0qeEn1Y+f5ikyBaR+pUROkqh
+         S3mbSdQ6VdWofhrQJnfACi3oDBJ/HfEr/+8NjHFpUiFoittiiYXdh7kzgH1QwJ6GW9IV
+         074A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
+         :date:message-id:subject:to:cc;
+        bh=PgGmu8rZ1+8joALR8uyHh3Rj8sp7wqCVeFgW6gXks5M=;
+        b=V4KWoFSgQscf3bmGzegpOXAII6Poq+1K1WqCYX7tPcm/YWBZFDYMsrHYZXUUV+j1tO
+         mAdcJPPbxjlQJkdjE8etMDohRj0NxGMXPTOEA/g09K9axFZzc8j+Wq6VKM1/MZHZPjK2
+         flKxiDUTEdvTeqm1xIkpm43Fv5tbSTSnyvFr2Qh8Q9v9KHxzv2WojNDak00AmAZN7ADP
+         vUbn3Lf2Gm7IR/zKrvTO/c+XXOchvQJtj1bAEp0NN7Uc1bLoLG3lUtUfSNt3yLmx7zxJ
+         ppIyHMOQqP1h9WT6UlQfOWp97lLarj1S05nnrqE9dEg5hdAT81resS4xdpqdk5rKd5CW
+         jwRA==
+X-Gm-Message-State: AOUpUlGj8MtMUA7RgHIKvSnyFsoRhg6rE1o2fpPQvoBjCvFtVH3ztGYN
+        INdQ89lvxcUmxWA8OVP4i1tpqBx00hemmTdVkDc=
+X-Google-Smtp-Source: AAOMgpfyXqSuTsGFEzX+MZz1rn8DFSyEOqVKw1mkf/xTRuP4UQLYvY7WzNsYYznFL16bW1QoZV2Sg5MeOA7myvUMMNs=
+X-Received: by 2002:aca:6285:: with SMTP id w127-v6mr2255012oib.120.1532424080954;
+ Tue, 24 Jul 2018 02:21:20 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180724071518.GA7300@gmail.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+Received: by 2002:a9d:63d2:0:0:0:0:0 with HTTP; Tue, 24 Jul 2018 02:21:20
+ -0700 (PDT)
+In-Reply-To: <20180724091226.GB22465@amd>
+References: <20180723214917.GA3733@amd> <CAJZ5v0g=Ey6ZiyjA3NWS_C5zXBUydJNaKOZDbRNFYUGEc8YuaQ@mail.gmail.com>
+ <20180724091226.GB22465@amd>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Tue, 24 Jul 2018 11:21:20 +0200
+X-Google-Sender-Auth: jj-vifumRZ6bxdm7DxrZU_H_GGc
+Message-ID: <CAJZ5v0g0b2ucGEn3+hhEgw4FVJP4oV1D+99a3jTNjq4av_qsDg@mail.gmail.com>
+Subject: Re: linux-next-20180723: battery status funny after bootup
+To:     Pavel Machek <pavel@ucw.cz>
+Cc:     "Rafael J. Wysocki" <rafael@kernel.org>, lucas.magasweran@ieee.org,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        Linux-pm mailing list <linux-pm@vger.kernel.org>,
+        Len Brown <lenb@kernel.org>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 24, 2018 at 09:15:18AM +0200, Ingo Molnar wrote:
-> 
-> * Mark Rutland <mark.rutland@arm.com> wrote:
-> 
-> > From: Peter Zijlstra <peterz@infradead.org>
-> > 
-> > Mark found ldsem_cmpxchg() needed an (atomic_long_t *) cast to keep
-> > working after making the atomic_long interface type safe.
-> > 
-> > Needing casts is bad form, which made me look at the code. There are no
-> > ld_semaphore::count users outside of these functions so there is no
-> > reason why it can not be an atomic_long_t in the first place, obviating
-> > the need for this cast.
-> > 
-> > That also ensures the loads use atomic_long_read(), which implies (at
-> > least) READ_ONCE() in order to guarantee single-copy-atomic loads.
-> > 
-> > When using atomic_long_try_cmpxchg() the ldsem_cmpxchg() wrapper gets
-> > very thin (the only difference is not changing *old on success, which
-> > most callers don't seem to care about).
-> > 
-> > So rework the whole thing to use atomic_long_t and its accessors
-> > directly.
-> > 
-> > While there, fixup all the horrible comment styles.
-> > 
-> > Cc: Peter Hurley <peter@hurleysoftware.com>
-> > Acked-by: Will Deacon <will.deacon@arm.com>
-> > Reported-by: Mark Rutland <mark.rutland@arm.com>
-> > Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-> > Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-> > Signed-off-by: Mark Rutland <mark.rutland@arm.com>
-> > Cc: Ingo Molnar <mingo@kernel.org>
-> > ---
-> >  drivers/tty/tty_ldsem.c   | 82 ++++++++++++++++++++---------------------------
-> >  include/linux/tty_ldisc.h |  4 +--
-> >  2 files changed, 37 insertions(+), 49 deletions(-)
-> > 
-> > Note: Greg has queued this via the in the tty tree for v4.19, which can be seen at: 
-> > 
-> > https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/tty.git/commit/?h=tty-next&id=5fd691afdf929061c391d897fa627822c3b2fd5a
-> 
-> Can this patch be skipped, or do the others depend on it?
+On Tue, Jul 24, 2018 at 11:12 AM, Pavel Machek <pavel@ucw.cz> wrote:
+> On Tue 2018-07-24 10:27:08, Rafael J. Wysocki wrote:
+>> On Mon, Jul 23, 2018 at 11:49 PM, Pavel Machek <pavel@ucw.cz> wrote:
+>> >
+>> > pavel@amd:~$ cat /proc/acpi/battery/BAT0/state
+>> > present:                 yes
+>> > capacity state:          ok
+>> > charging state:          charged
+>> > present rate:            0 mW
+>> > remaining capacity:      0 mWh
+>> > present voltage:         0 mV
+>> > pavel@amd:~$ uname -a
+>> > Linux amd 4.18.0-rc6-next-20180723+ #141 SMP Mon Jul 23 22:11:47 CEST
+>> > 2018 i686 GNU/Linux
+>> >
+>> > It will correct itself if I unplug/replug the AC adapter, I
+>> > believe. Gnome2 battery monitor also looks confused.
+>>
+>> There are two battery changes in linux-next now that are not present
+>> in the mainline
+>>
+>> 2a2aad34362b ACPI: battery: remove redundant old_present check on insertion
+>> 706ac4aa536f ACPI: battery: use cache_time as cache "enabled"
+>>
+>> Does reverting any of them help?  Or is the problem present in the
+>> mainline too?
+>
+> Thanks for pointers! Not it mainline, I'd notice that.
+>
+> I reverted 706ac4aa536f , and on the next boot:
+>
+> pavel@amd:~$ cat /proc/acpi/battery/BAT0/state
+> present:                 yes
+> capacity state:          ok
+> charging state:          charged
+> present rate:            0 mW
+> remaining capacity:      37150 mWh
+> present voltage:         16400 mV
+>
+> ..plus icon was ok from the start.
 
-IIRC it depends on it, without this patch you get build issues due to
-atomic_long_cmpxchg() getting picky about it's arguments (type safety
-improved).
-
-
+OK, I'll drop 706ac4aa536f then, thanks!
