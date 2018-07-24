@@ -2,130 +2,86 @@ Return-Path: <SRS0=hTZH=KI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B740C6778F
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 19:41:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DCAEC28CF6
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 19:45:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2068920874
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 19:41:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2068920874
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 46F3320875
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 19:45:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 46F3320875
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=supermicro.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388776AbeGXUts (ORCPT
+        id S2388632AbeGXUx0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 16:49:48 -0400
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:43015 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388476AbeGXUts (ORCPT
+        Tue, 24 Jul 2018 16:53:26 -0400
+Received: from mgb.supermicro.com ([207.212.57.85]:43677 "EHLO
+        mgb.supermicro.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388470AbeGXUx0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 16:49:48 -0400
-Received: by mail-ed1-f68.google.com with SMTP id b20-v6so5112665edt.10;
-        Tue, 24 Jul 2018 12:41:47 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=HLoASFOtpKimNUhvJQIklnjcmsdzzhCenPa448uNxgo=;
-        b=k2hRbv8e6eOejDXW+ONGoXHI+RZD95Zki1T+mKgyYJDZea7HN4I/Oim88cYYJxF3Dl
-         lV2NnSdXWW+wnxTth6ZOZ7S2aOTyu61IucslUDVhwMvZfta/FKCF+Qh4cmkQau0gC5x0
-         MkXr0wm9m2E8A5QA3Vd5HHvb6QS/9+DZ39UsXs1o+9dvALVkEuKYalmW1KaN4r+H5Zrs
-         XrNeQkXSilvzw+fvODQmI+Bvos0iJDMH9G9fIcSVgtb8X9yaTmYgHfWrZO+JLmdK5nVt
-         8b7vAVkOLv6fOm06n9t+Ir4DK2GZsnSouAiUaqF5GuwijtDiAFMEL1r8WqWRZ9tA4C+V
-         uVdg==
-X-Gm-Message-State: AOUpUlGC/XQqQZPLhPDkpvnoq9ARUk/SzBRfeZn+Z3/8QL4nOo9anKp3
-        GmgUzJe+Atx/z+85wC8pJto=
-X-Google-Smtp-Source: AAOMgpdI0Ki6G5ePIp0mujLjxbjVk4bqBCyEj2Gfg4RiV3tMlh0ExoGBo16wCxzSn2cUypR3UpoQVg==
-X-Received: by 2002:a50:b86f:: with SMTP id k44-v6mr19122924ede.310.1532461307224;
-        Tue, 24 Jul 2018 12:41:47 -0700 (PDT)
-Received: from kozik-lap (xdsl-188-155-58-14.adslplus.ch. [188.155.58.14])
-        by smtp.googlemail.com with ESMTPSA id m20-v6sm6206285edc.96.2018.07.24.12.41.44
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 24 Jul 2018 12:41:46 -0700 (PDT)
-Date:   Tue, 24 Jul 2018 21:41:42 +0200
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Tomasz Figa <tomasz.figa@gmail.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Kukjin Kim <kgene@kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     =?utf-8?B?UGF3ZcWC?= Chmiel <pawel.mikolaj.chmiel@gmail.com>,
-        Sylwester Nawrocki <snawrocki@kernel.org>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Pankaj Dubey <pankaj.dubey@samsung.com>
-Subject: Re: [RFT v2 06/10] pinctrl: samsung: Write external wakeup interrupt
- mask
-Message-ID: <20180724194142.22nav7lfpouzd57o@kozik-lap>
-References: <20180723175302.22535-1-krzk@kernel.org>
- <20180723175302.22535-7-krzk@kernel.org>
+        Tue, 24 Jul 2018 16:53:26 -0400
+Received: from pps.filterd (MGB.supermicro.com [127.0.0.1])
+        by MGB.supermicro.com (8.16.0.22/8.16.0.22) with SMTP id w6OJjNad015438;
+        Tue, 24 Jul 2018 12:45:23 -0700
+Received: from ex2013-mbx1.supermicro.com (ex2013-mbx1.supermicro.com [10.2.1.36])
+        by MGB.supermicro.com with ESMTP id 2kc4es96ny-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
+        Tue, 24 Jul 2018 12:45:23 -0700
+Received: from [172.16.95.100] (10.2.0.41) by EX2013-MBX1.supermicro.com
+ (10.2.1.36) with Microsoft SMTP Server (TLS) id 15.0.1236.3; Tue, 24 Jul 2018
+ 12:44:27 -0700
+Subject: Re: [RFC] x86, tsc: Add kcmdline args for skipping tsc calibration
+ sequences
+From:   patrickg <patrickg@supermicro.com>
+To:     "Brown, Len" <len.brown@intel.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+CC:     "mingo@kernel.org" <mingo@kernel.org>,
+        "Du, Alek" <alek.du@intel.com>,
+        "arjan@linux.intel.com" <arjan@linux.intel.com>,
+        "Tang, Feng" <feng.tang@intel.com>
+References: <fdf96605-a4a0-049b-51c9-1e68cc2a9b93@supermicro.com>
+ <1A7043D5F58CCB44A599DFD55ED4C94849A1AACF@FMSMSX126.amr.corp.intel.com>
+ <c7582a8c-8cc1-eff3-2452-a8d42d23fea1@supermicro.com>
+Message-ID: <cb798dcd-8cd6-8a92-9f6c-50bec0afe204@supermicro.com>
+Date:   Tue, 24 Jul 2018 12:45:22 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20180723175302.22535-7-krzk@kernel.org>
-User-Agent: NeoMutt/20170609 (1.8.3)
+In-Reply-To: <c7582a8c-8cc1-eff3-2452-a8d42d23fea1@supermicro.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.2.0.41]
+X-ClientProxiedBy: EX2013-CA1.supermicro.com (10.2.1.31) To
+ EX2013-MBX1.supermicro.com (10.2.1.36)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-24_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1806210000 definitions=main-1807240208
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 23, 2018 at 07:52:58PM +0200, Krzysztof Kozlowski wrote:
-> The pinctrl driver defines an IRQ chip which handles external wakeup
-> interrupts, therefore from logical point of view, it is the owner of
-> external interrupt mask.  The register controlling the mask belongs to
-> Power Management Unit address space so it has to be accessed with PMU
-> syscon regmap handle.
-> 
-> This mask should be written to hardware during system suspend.  Till now
-> ARMv7 machine code was responsible for this which created a dependency
-> between pin controller driver and arch/arm/mach code.
-> 
-> Try to rework this dependency so the pinctrl driver will write external
-> wakeup interrupt mask during late suspend.
-> 
-> Impact on ARMv7 designs (S5Pv210 and Exynos)
-> ============================================
-> This duplicates setting mask with existing machine code
-> arch/arm/mach-exynos/suspend.c and arch/arm/mach-s5pv210/pm.c but it is
-> not a problem - the wakeup mask register will be written twice.  The
-> machine code will be cleaned up later.
-> 
-> The difference between implementation here and ARMv7 machine code
-> (arch/arm/mach-*) is the time of writing the mask:
-> 1. The machine code is writing the mask quite late during system suspend
->    path, after offlining secondary CPUs and just before doing actual
->    suspend.
-> 2. The implementation in pinctrl driver uses late suspend ops, therefore it
->    will write the mask much earlier.  Hopefully late enough, after all
->    drivers will enable or disable its interrupt wakeup
->    (enable_irq_wake() etc).
-> 
-> Impact on ARMv8 designs (Exynos5433 and Exynos7)
-> ================================================
-> The Suspend to RAM was not supported and external wakeup interrupt mask
-> was not written to HW.  This change brings us one step closer to
-> supporting Suspend to RAM.
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> Cc: Tomasz Figa <tomasz.figa@gmail.com>
-> Cc: Sylwester Nawrocki <snawrocki@kernel.org>
-> Acked-by: Tomasz Figa <tomasz.figa@gmail.com>
-> ---
->  drivers/pinctrl/samsung/pinctrl-exynos.c    | 50 ++++++++++++++++++++++++++++-
->  drivers/pinctrl/samsung/pinctrl-samsung.h   |  3 ++
->  include/linux/soc/samsung/exynos-regs-pmu.h |  2 ++
->  3 files changed, 54 insertions(+), 1 deletion(-)
+K, did significant poking.
 
-Thanks, applied all previous, up to this one.
+native_calibrate_cpu is getting precidence no matter what because on SKL server, native_calibrate_tsc is always returning zero (Note that there is a caveat 2 lines down).
 
-Best regards,
-Krzysztof
+In native_calibrate_tsc, I'm seeing it always return zero after the `switch (boot_cpu_data.x86_model)`.  crystal_khz is zero so it rolls through that, never assigns it.
 
+Now I'm apparently not testing on production CPU's.  I've requested that they drop em' in so I can ensure `CPUID 15H TSC/Crystal ratio` doesn't differ between the ES and Prod silicon, since that will effect the math 
+
+Anyways, Then after calibrate is found to be zero, it's utilizing the CPUID calculation from native_calibrate_cpu for tsc_khz since that's returning a 'proper' value when it does the reassignment:
+
+---
+    if (tsc_khz == 0) /* Hits here and reassigns tsc_khz to the cpuid calculation. */
+        tsc_khz = cpu_khz;
+    else if (abs(cpu_khz - tsc_khz) * 10 > tsc_khz)
+        cpu_khz = tsc_khz;
+---
+
+I'll post another update when I've checked with Prod CPU's, /probably/ tomorrow.
