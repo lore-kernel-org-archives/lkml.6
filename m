@@ -2,113 +2,124 @@ Return-Path: <SRS0=hTZH=KI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4624AC6778A
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 16:43:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 925D7ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 16:43:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F312820874
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 16:43:05 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nFzBz39M"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F312820874
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 584B220874
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 16:43:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 584B220874
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388512AbeGXRuX (ORCPT
+        id S2388535AbeGXRu2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 13:50:23 -0400
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:41574 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388415AbeGXRuX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 13:50:23 -0400
-Received: by mail-pl0-f65.google.com with SMTP id w8-v6so2009574ply.8;
-        Tue, 24 Jul 2018 09:43:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=9w9JS9k45Mkm5m6z6QbcilGriIHYUaz9xF/Kh7/wMsg=;
-        b=nFzBz39Mc7bv7RWDsnUL8xqFcLdPcQWI+0KJ581+47dp06Awn9GGFqp440AM8tIvVh
-         HNMwT3/Jd11J+WaKnZXNglOHaMYS0M+B9l6jDb2QlmE5s4anvD4K4at6AI2fBB36Ao1M
-         KBbR2iJFxEdfYVKqATeLpT0cWU4a1KFWAVxHx6rTGo9geNj60brjhWXdQdo5R0j+zwGN
-         gdlNNfhyNa01cZzWmH05skV3HN1dxj9xBEQJ63AhTwcrkXaGB4UBwJq0LLR5pHha6J05
-         saOKPg/HVmGiiEqzv2GnTZyHk5oLMJGKSsMt/FXCeqhy8G9xNbQRAyqw86sYHxETJUOe
-         7ORg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=9w9JS9k45Mkm5m6z6QbcilGriIHYUaz9xF/Kh7/wMsg=;
-        b=f5b/50Sv14OXCJdc0f/f01q+PN1o7Zne9qUmfjqD8ydQpV8NTm+hitBr+VaBkhYq6f
-         q55izlSqOY4I2fWwvfdaBEQhCsZ6QZSYejOrRW7kJ+Ts4kcm9dKsbI5mQOCMzenBN6sN
-         HBfGfxUzYzWyzN1t49RTgBAHhv1vUIiI/tl22gQsbvlRTcX9fTj9FSnFe8g2LrClCGSw
-         SUmzSzo49Zsjh2Nvsmf5zxzgMaYQ3AOpEv27zITUHOD30nY1Dof6CMTjc2hWmzKyjtk5
-         eM43LQbH0HnGlFFOAYbvu0XtH/sVMjR4qgxnlhQCUZdWiC0ZFDXULWOVMhjbDqBmLuF/
-         j7zg==
-X-Gm-Message-State: AOUpUlGppPhviVPf3dnzTzYKCmAJl/oU3RZBt5lQcnMXawDlpOghagCt
-        Czvi9iEmUho2P0/OcKN+VWQeJtaN
-X-Google-Smtp-Source: AAOMgpcW0zikbPwe8m/8vn7EBSGbCXIDMVUY+Ra+/ve2BGFmnSC0c7Yhkw7pYjY2v6+NOYCibnMG0w==
-X-Received: by 2002:a17:902:b48c:: with SMTP id y12-v6mr17461770plr.97.1532450583413;
-        Tue, 24 Jul 2018 09:43:03 -0700 (PDT)
-Received: from localhost.localdomain (109-252-90-13.nat.spd-mgts.ru. [109.252.90.13])
-        by smtp.gmail.com with ESMTPSA id j1-v6sm39410536pfk.125.2018.07.24.09.42.56
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 24 Jul 2018 09:43:02 -0700 (PDT)
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     Rob Herring <robh+dt@kernel.org>, linux-tegra@vger.kernel.org,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v5 1/8] dt: bindings: tegra20-emc: Document interrupt property
-Date:   Tue, 24 Jul 2018 19:42:14 +0300
-Message-Id: <20180724164221.3307-2-digetx@gmail.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180724164221.3307-1-digetx@gmail.com>
-References: <20180724164221.3307-1-digetx@gmail.com>
+        Tue, 24 Jul 2018 13:50:28 -0400
+Received: from foss.arm.com ([217.140.101.70]:54996 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388515AbeGXRu1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Jul 2018 13:50:27 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E51C380D;
+        Tue, 24 Jul 2018 09:43:08 -0700 (PDT)
+Received: from e110439-lin (e110439-lin.emea.arm.com [10.4.12.126])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 465043F5B3;
+        Tue, 24 Jul 2018 09:43:06 -0700 (PDT)
+Date:   Tue, 24 Jul 2018 17:43:03 +0100
+From:   Patrick Bellasi <patrick.bellasi@arm.com>
+To:     Suren Baghdasaryan <surenb@google.com>
+Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Tejun Heo <tj@kernel.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Paul Turner <pjt@google.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Todd Kjos <tkjos@google.com>,
+        Joel Fernandes <joelaf@google.com>,
+        Steve Muckle <smuckle@google.com>
+Subject: Re: [PATCH v2 12/12] sched/core: uclamp: use percentage clamp values
+Message-ID: <20180724164303.GB3162@e110439-lin>
+References: <20180716082906.6061-1-patrick.bellasi@arm.com>
+ <20180716082906.6061-13-patrick.bellasi@arm.com>
+ <CAJuCfpEwRtXoa_tnWTFP8CuyPMHsLAXky14K_jyphEeo2d32qg@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAJuCfpEwRtXoa_tnWTFP8CuyPMHsLAXky14K_jyphEeo2d32qg@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-EMC has a dedicated interrupt that is used to notify about completion of
-HW operations. Document the interrupt property.
+On 21-Jul 21:04, Suren Baghdasaryan wrote:
+> On Mon, Jul 16, 2018 at 1:29 AM, Patrick Bellasi
+> <patrick.bellasi@arm.com> wrote:
 
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-Acked-by: Rob Herring <robh@kernel.org>
-Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
----
- .../devicetree/bindings/arm/tegra/nvidia,tegra20-emc.txt        | 2 ++
- 1 file changed, 2 insertions(+)
+[...]
 
-diff --git a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-emc.txt b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-emc.txt
-index 4c33b29dc660..a6fe401d0d48 100644
---- a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-emc.txt
-+++ b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-emc.txt
-@@ -10,6 +10,7 @@ Properties:
-   and chosen using the ramcode board selector. If omitted, only one
-   set of tables can be present and said tables will be used
-   irrespective of ram-code configuration.
-+- interrupts : Should contain EMC General interrupt.
- 
- Child device nodes describe the memory settings for different configurations and clock rates.
- 
-@@ -20,6 +21,7 @@ Example:
- 		#size-cells = < 0 >;
- 		compatible = "nvidia,tegra20-emc";
- 		reg = <0x7000f4000 0x200>;
-+		interrupts = <0 78 0x04>;
- 	}
- 
- 
+> > +static inline unsigned int scale_from_percent(unsigned int pct)
+> > +{
+> > +       WARN_ON(pct > 100);
+> > +
+> > +       return ((SCHED_FIXEDPOINT_SCALE * pct) / 100);
+> > +}
+> > +
+> > +static inline unsigned int scale_to_percent(unsigned int value)
+> > +{
+> > +       unsigned int rounding = 0;
+> > +
+> > +       WARN_ON(value > SCHED_FIXEDPOINT_SCALE);
+> > +
+> > +       /* Compensate rounding errors for: 0, 256, 512, 768, 1024 */
+> > +       if (likely((value & 0xFF) && ~(value & 0x700)))
+> > +               rounding = 1;
+> 
+> Hmm. I don't think ~(value & 0x700) will ever yield FALSE... What am I missing?
+
+So, 0x700 is the topmost 3 bits sets (111 0000 0000) which different
+configuration corresponds to:
+
+ 001 0000 0000 =>  256
+ 010 0000 0000 =>  512
+ 011 0000 0000 =>  768
+ 100 0000 0000 => 1024
+
+Thus, if 0x700 matches then we have one of these values in input and
+for these cases we have to add a unit to the percentage value.
+
+For the case (value == 0) we translate it into 0% thanks to the check
+on (value & 0xFF) to ensure rounding = 0.
+
+Here is a small python snippet I've used to check the conversion of
+all the possible percentage values:
+
+---8<---
+values = range(0, 101)
+for pct in xrange(0, 101):
+	util = int((1024 * pct) / 100)
+        rounding = 1
+        if not ((util & 0xFF) and ~(util & 0x700)):
+            print "Fixing util_to_perc({:3d} => {:4d})".format(pct, util)
+            rounding = 0
+	pct2 = (rounding + ((100 * util) / 1024))
+	if pct2 in values:
+		values.remove(pct2)
+        if pct != pct2:
+            print "Convertion failed for: {:3d} => {:4d} => {:3d}".format(pct, util, pct2)
+if values:
+    print "ERROR: not all percentage values converted"
+---8<---
+
 -- 
-2.18.0
+#include <best/regards.h>
 
+Patrick Bellasi
