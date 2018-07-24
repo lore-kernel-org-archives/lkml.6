@@ -2,70 +2,101 @@ Return-Path: <SRS0=hTZH=KI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BBD0ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 09:59:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90463C6778A
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 10:03:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D976420852
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 09:59:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D976420852
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gliwa.com
+	by mail.kernel.org (Postfix) with ESMTP id 2BBC320852
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 10:03:16 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="2NRgKubw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2BBC320852
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388457AbeGXLFK (ORCPT
+        id S2388349AbeGXLIz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 07:05:10 -0400
-Received: from s30320.gliwa.com ([148.251.52.238]:37946 "EHLO mail.gliwa.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726270AbeGXLFK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 07:05:10 -0400
-Received: by mail.gliwa.com (Postfix, from userid 992)
-        id A7BC2344492; Tue, 24 Jul 2018 11:59:28 +0200 (CEST)
-X-Virus-Checker-Version: ClamAV 0.100.0/24777/Tue Jul 24 02:41:32 2018
-X-Virus-Status: OK
-Received: from [192.168.0.50] (x5ce308b8.dyn.telefonica.de [92.227.8.184])
-        by mail.gliwa.com (Postfix) with ESMTPSA id 7C95F344488;
-        Tue, 24 Jul 2018 11:59:28 +0200 (CEST)
-From:   Claudio <claudio.fontana@gliwa.com>
-Subject: ftrace global trace_pipe_raw
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-kernel@vger.kernel.org
-References: <73e2f61e-7e7b-d8be-6c94-896cf94e7567@gliwa.com>
- <20180709113257.79152dd0@gandalf.local.home>
-Message-ID: <39d1df95-a695-1041-38a6-b94d1eee9eb2@gliwa.com>
-Date:   Tue, 24 Jul 2018 11:59:28 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <20180709113257.79152dd0@gandalf.local.home>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+        Tue, 24 Jul 2018 07:08:55 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:37197 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726367AbeGXLIz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Jul 2018 07:08:55 -0400
+Received: by mail-wm0-f65.google.com with SMTP id n11-v6so1914102wmc.2
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Jul 2018 03:03:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=message-id:subject:from:to:cc:date:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=BxwVO/EcXpPeF3isg3l9x8hE+UN+sMl/J3Mw5faKj2k=;
+        b=2NRgKubwlUVqKvX+euKA3+Xc0LDCAdk5V/ecwQhMlbS9a2eq4UqGYJuXbVovnrDJHi
+         UcFp3TCqyz5jhvkXdigGMeXk+4eoSGPwD/0bZ3/Cxd2RITrEbKI4aoO6bXe2lPJM1eTp
+         hd7Et7E2Zrjmx/e/BK3fZFoQeFFpNx21RL+q4sEsogFqfD+WLjks7e4Sxb2B7IbW05f6
+         ndJdBMgZ33IsYeTKqTbN350HGk+3WbDs22LsgAm0K0IEAvjI7ZG1B8P44TFcZ7/jweto
+         dPPlEJ851Fd6J+D829WJZCXnLVzHHvQLPNMxrAqdyvy3yqmnNzg/aFPHopsB8TIJoiIi
+         m6xA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=BxwVO/EcXpPeF3isg3l9x8hE+UN+sMl/J3Mw5faKj2k=;
+        b=rNTdSvzzF4sXGp6Bb0QnfKb6HVCtAdwWuxitoO9vR4Und+PjoRMFJndBiEJNNWneen
+         JE+bSDGLkrBtyq26irfYzud7nsm7HCPXWAafx44A/xw4GdIlAJqJxCvBf/XdQK+aqFSn
+         n9VRf9ZwT9it7ZJ2RvbbJvDgoEpkp1WpLj3SwGprNZegVgae0Lvx5cane7QBc0sRCUSA
+         LsyDTjLUmeVLNW7dp+T+mBgipEUNVoRsA9Ml9yNPwmUP4N+hZwAz5piWB82NiYV49rEe
+         8uX0HwAxUZ0E1zSALA0TAITRvMzWzew9Z7JN82wuhB2C40l0L7cnbSyhOVLbUO5GCmhp
+         6IZg==
+X-Gm-Message-State: AOUpUlFTUbxl+V+iFagGfMhCewSsdQhe897tBcnYTZ/S1mU/JrzvfYMB
+        OsxJPED/mW2FPFZQ2OupKmXang==
+X-Google-Smtp-Source: AAOMgpdVb/9QHQKnWvEH2knfx2hg8n+wZL11jhOl9afSLJ4y9f9fN2PGVh6DlReTgNo02QbagkOrIQ==
+X-Received: by 2002:a1c:b584:: with SMTP id e126-v6mr1711118wmf.136.1532426592417;
+        Tue, 24 Jul 2018 03:03:12 -0700 (PDT)
+Received: from boomer.lan (cag06-3-82-243-161-21.fbx.proxad.net. [82.243.161.21])
+        by smtp.gmail.com with ESMTPSA id w8-v6sm8985208wrp.72.2018.07.24.03.03.11
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 24 Jul 2018 03:03:11 -0700 (PDT)
+Message-ID: <59fdcf671ffd0ef60e4d982ba269f853089ee7da.camel@baylibre.com>
+Subject: Re: [PATCH] ASoC: meson: axg-spdifout: select SND_PCM_IEC958
+From:   jbrunet@baylibre.com
+To:     Arnd Bergmann <arnd@arndb.de>, Mark Brown <broonie@kernel.org>
+Cc:     Liam Girdwood <lgirdwood@gmail.com>,
+        Carlo Caione <carlo@caione.org>,
+        Kevin Hilman <khilman@baylibre.com>,
+        alsa-devel@alsa-project.org, linux-arm-kernel@lists.infradead.org,
+        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
+Date:   Tue, 24 Jul 2018 12:03:10 +0200
+In-Reply-To: <20180724093705.1691747-1-arnd@arndb.de>
+References: <20180724093705.1691747-1-arnd@arndb.de>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.4 (3.28.4-1.fc28) 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Steven,
+On Tue, 2018-07-24 at 11:36 +0200, Arnd Bergmann wrote:
+> When CONFIG_SND_PCM_IEC958 is disabled, we get a link error for the
+> new driver:
+> 
+> sound/soc/meson/axg-spdifout.o: In function `axg_spdifout_hw_params':
+> axg-spdifout.c:(.text+0x650): undefined reference to
+> `snd_pcm_create_iec958_consumer_hw_params'
 
-I am doing correlation of linux sched events, following all tasks between cpus,
-and one thing that would be really convenient would be to have a global
-trace_pipe_raw, in addition to the per-cpu ones, with already sorted events.
+I used arm64 defconfig to do all my test and this symbol was selected
+by the HDMI codec driver, which is probably why missed it. 
 
-I would imagine the core functionality is already available, since trace_pipe
-in the tracing directory already shows all events regardless of CPU, and so
-it would be a matter of doing the same for trace_pipe_raw.
+Thanks a lot for fixing the problem Arnd.
 
-But is there a good reason why trace_pipe_raw is available only per-cpu?
+> 
+> The other users use 'select', so we should do the same here.
+> 
+> Fixes: 53eb4b7aaa04 ("ASoC: meson: add axg spdif output")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-Would work in the direction of adding a global trace_pipe_raw be considered
-for inclusion?
+Acked-by: Jerome Brunet <jbrunet@baylibre.com>
 
-Thank you,
-
-Claudio
