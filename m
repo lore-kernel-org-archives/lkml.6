@@ -2,252 +2,166 @@ Return-Path: <SRS0=hTZH=KI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=FROM_EXCESS_BASE64,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A198ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 13:40:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C654ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 13:40:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0355420856
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 13:40:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0355420856
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id E2EC320856
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 13:40:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E2EC320856
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388462AbeGXOqq (ORCPT
+        id S2388473AbeGXOrW convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 10:46:46 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:9713 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2388428AbeGXOqp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 10:46:45 -0400
-Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 7FB34AA302FD1;
-        Tue, 24 Jul 2018 21:40:04 +0800 (CST)
-Received: from [127.0.0.1] (10.111.220.140) by DGGEMS405-HUB.china.huawei.com
- (10.3.19.205) with Microsoft SMTP Server id 14.3.382.0; Tue, 24 Jul 2018
- 21:39:55 +0800
-Subject: Re: [PATCH 2/5] f2fs: add cur_victim_sec for BG_GC to avoid skipping
- BG_GC victim
-To:     Chao Yu <yuchao0@huawei.com>, <jaegeuk@kernel.org>,
-        <chao@kernel.org>, <yunlong.song@icloud.com>
-CC:     <miaoxie@huawei.com>, <bintian.wang@huawei.com>,
-        <shengyong1@huawei.com>, <heyunlei@huawei.com>,
-        <linux-f2fs-devel@lists.sourceforge.net>,
-        <linux-kernel@vger.kernel.org>
-References: <1532355022-163029-1-git-send-email-yunlong.song@huawei.com>
- <1532355022-163029-3-git-send-email-yunlong.song@huawei.com>
- <42824b9f-6ebb-2280-0a62-c74954fff39c@huawei.com>
-From:   Yunlong Song <yunlong.song@huawei.com>
-Message-ID: <a052ec0f-1581-a199-0eb4-7adeef6d55fc@huawei.com>
-Date:   Tue, 24 Jul 2018 21:39:13 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
+        Tue, 24 Jul 2018 10:47:22 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:33693 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388338AbeGXOrW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Jul 2018 10:47:22 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 4A14A2073D; Tue, 24 Jul 2018 15:40:47 +0200 (CEST)
+Received: from dell-desktop.home (AAubervilliers-681-1-78-122.w90-88.abo.wanadoo.fr [90.88.20.122])
+        by mail.bootlin.com (Postfix) with ESMTPSA id E5388203D9;
+        Tue, 24 Jul 2018 15:40:36 +0200 (CEST)
+Date:   Tue, 24 Jul 2018 15:40:37 +0200
+From:   =?UTF-8?B?TXlsw6huZQ==?= Josserand <mylene.josserand@bootlin.com>
+To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc:     robh+dt@kernel.org, mark.rutland@arm.com,
+        maxime.ripard@bootlin.com, wens@csie.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        thomas.petazzoni@bootlin.com, linux-input@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v3 1/3] Input: edt-ft5x06 - Add support for regulator
+Message-ID: <20180724154037.25174c07@dell-desktop.home>
+In-Reply-To: <20180723223926.GL100814@dtor-ws>
+References: <20180718182719.29663-1-mylene.josserand@bootlin.com>
+        <20180718182719.29663-2-mylene.josserand@bootlin.com>
+        <20180718224645.ns7nvqxvqc6huxcz@core>
+        <20180723223926.GL100814@dtor-ws>
+Organization: Bootlin
+X-Mailer: Claws Mail 3.14.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <42824b9f-6ebb-2280-0a62-c74954fff39c@huawei.com>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Originating-IP: [10.111.220.140]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hello Dmitry,
 
+Thank you for your review!
 
-On 2018/7/24 21:11, Chao Yu wrote:
-> On 2018/7/23 22:10, Yunlong Song wrote:
->> If f2fs aborts BG_GC, then the section bit of victim_secmap will be set,
->> which will cause the section skipped in the future get_victim of BG_GC.
->> In a worst case that each section in the victim_secmap is set and there
->> are enough free sections (so FG_GC can not be triggered), then BG_GC
->> will skip all the sections and cannot find any victims, causing BG_GC
-> If f2fs aborts BG_GC, we'd better to clear victim_secmap?
-We can keep the bit set in victim_secmap for FG_GC use next time as 
-before, the diffierent
-is that this patch will make BG_GC ignore the bit set in victim_secmap, 
-so BG_GC can still
-get the the section (which is in set) as victim and do GC jobs.
->
->> failed each time. Besides, SSR also uses BG_GC to get ssr segment, if
-> Looks like foreground GC will try to grab section which is selected as
-> victim of background GC?
-Yes, this is exactly the value of victim_secmap, it helps FG_GC reduce 
-time in selecting victims
-and continue the job which BG_GC has not finished.
+On Mon, 23 Jul 2018 15:39:26 -0700
+Dmitry Torokhov <dmitry.torokhov@gmail.com> wrote:
 
->
-> Thanks,
->
->> many sections in the victim_secmap are set, then SSR cannot get a proper
->> ssr segment to allocate blocks, which makes SSR inefficiently. To fix
->> this problem, we can add cur_victim_sec for BG_GC similar like that in
->> FG_GC to avoid selecting the same section repeatedly.
->>
->> Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
->> ---
->>   fs/f2fs/f2fs.h              |  3 ++-
->>   fs/f2fs/gc.c                | 15 +++++++++------
->>   fs/f2fs/segment.h           |  3 ++-
->>   fs/f2fs/super.c             |  3 ++-
->>   include/trace/events/f2fs.h | 18 ++++++++++++------
->>   5 files changed, 27 insertions(+), 15 deletions(-)
->>
->> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
->> index 57a8851..f8a7b42 100644
->> --- a/fs/f2fs/f2fs.h
->> +++ b/fs/f2fs/f2fs.h
->> @@ -1217,7 +1217,8 @@ struct f2fs_sb_info {
->>   	/* for cleaning operations */
->>   	struct mutex gc_mutex;			/* mutex for GC */
->>   	struct f2fs_gc_kthread	*gc_thread;	/* GC thread */
->> -	unsigned int cur_victim_sec;		/* current victim section num */
->> +	unsigned int cur_fg_victim_sec;		/* current FG_GC victim section num */
->> +	unsigned int cur_bg_victim_sec;		/* current BG_GC victim section num */
->>   	unsigned int gc_mode;			/* current GC state */
->>   	/* for skip statistic */
->>   	unsigned long long skipped_atomic_files[2];	/* FG_GC and BG_GC */
->> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
->> index 2ba470d..705d419 100644
->> --- a/fs/f2fs/gc.c
->> +++ b/fs/f2fs/gc.c
->> @@ -367,8 +367,6 @@ static int get_victim_by_default(struct f2fs_sb_info *sbi,
->>   
->>   		if (sec_usage_check(sbi, secno))
->>   			goto next;
->> -		if (gc_type == BG_GC && test_bit(secno, dirty_i->victim_secmap))
->> -			goto next;
->>   
->>   		cost = get_gc_cost(sbi, segno, &p);
->>   
->> @@ -391,14 +389,17 @@ static int get_victim_by_default(struct f2fs_sb_info *sbi,
->>   		if (p.alloc_mode == LFS) {
->>   			secno = GET_SEC_FROM_SEG(sbi, p.min_segno);
->>   			if (gc_type == FG_GC)
->> -				sbi->cur_victim_sec = secno;
->> -			else
->> +				sbi->cur_fg_victim_sec = secno;
->> +			else {
->>   				set_bit(secno, dirty_i->victim_secmap);
->> +				sbi->cur_bg_victim_sec = secno;
->> +			}
->>   		}
->>   		*result = (p.min_segno / p.ofs_unit) * p.ofs_unit;
->>   
->>   		trace_f2fs_get_victim(sbi->sb, type, gc_type, &p,
->> -				sbi->cur_victim_sec,
->> +				sbi->cur_fg_victim_sec,
->> +				sbi->cur_bg_victim_sec,
->>   				prefree_segments(sbi), free_segments(sbi));
->>   	}
->>   out:
->> @@ -1098,7 +1099,9 @@ int f2fs_gc(struct f2fs_sb_info *sbi, bool sync,
->>   	}
->>   
->>   	if (gc_type == FG_GC)
->> -		sbi->cur_victim_sec = NULL_SEGNO;
->> +		sbi->cur_fg_victim_sec = NULL_SEGNO;
->> +	else
->> +		sbi->cur_bg_victim_sec = NULL_SEGNO;
->>   
->>   	if (!sync) {
->>   		if (has_not_enough_free_secs(sbi, sec_freed, 0)) {
->> diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
->> index 5049551..b21bb96 100644
->> --- a/fs/f2fs/segment.h
->> +++ b/fs/f2fs/segment.h
->> @@ -787,7 +787,8 @@ static inline block_t sum_blk_addr(struct f2fs_sb_info *sbi, int base, int type)
->>   
->>   static inline bool sec_usage_check(struct f2fs_sb_info *sbi, unsigned int secno)
->>   {
->> -	if (IS_CURSEC(sbi, secno) || (sbi->cur_victim_sec == secno))
->> +	if (IS_CURSEC(sbi, secno) || (sbi->cur_fg_victim_sec == secno) ||
->> +		(sbi->cur_bg_victim_sec == secno))
->>   		return true;
->>   	return false;
->>   }
->> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
->> index 7187885..ef69ebf 100644
->> --- a/fs/f2fs/super.c
->> +++ b/fs/f2fs/super.c
->> @@ -2386,7 +2386,8 @@ static void init_sb_info(struct f2fs_sb_info *sbi)
->>   	sbi->root_ino_num = le32_to_cpu(raw_super->root_ino);
->>   	sbi->node_ino_num = le32_to_cpu(raw_super->node_ino);
->>   	sbi->meta_ino_num = le32_to_cpu(raw_super->meta_ino);
->> -	sbi->cur_victim_sec = NULL_SECNO;
->> +	sbi->cur_fg_victim_sec = NULL_SECNO;
->> +	sbi->cur_bg_victim_sec = NULL_SECNO;
->>   	sbi->max_victim_search = DEF_MAX_VICTIM_SEARCH;
->>   
->>   	sbi->dir_level = DEF_DIR_LEVEL;
->> diff --git a/include/trace/events/f2fs.h b/include/trace/events/f2fs.h
->> index 7956989..0f01f82 100644
->> --- a/include/trace/events/f2fs.h
->> +++ b/include/trace/events/f2fs.h
->> @@ -693,10 +693,12 @@
->>   TRACE_EVENT(f2fs_get_victim,
->>   
->>   	TP_PROTO(struct super_block *sb, int type, int gc_type,
->> -			struct victim_sel_policy *p, unsigned int pre_victim,
->> +			struct victim_sel_policy *p, unsigned int pre_fg_victim,
->> +			unsigned int pre_bg_victim,
->>   			unsigned int prefree, unsigned int free),
->>   
->> -	TP_ARGS(sb, type, gc_type, p, pre_victim, prefree, free),
->> +	TP_ARGS(sb, type, gc_type, p, pre_fg_victim, pre_bg_victim,
->> +		prefree, free),
->>   
->>   	TP_STRUCT__entry(
->>   		__field(dev_t,	dev)
->> @@ -707,7 +709,8 @@
->>   		__field(unsigned int,	victim)
->>   		__field(unsigned int,	cost)
->>   		__field(unsigned int,	ofs_unit)
->> -		__field(unsigned int,	pre_victim)
->> +		__field(unsigned int,	pre_fg_victim)
->> +		__field(unsigned int,	pre_bg_victim)
->>   		__field(unsigned int,	prefree)
->>   		__field(unsigned int,	free)
->>   	),
->> @@ -721,14 +724,16 @@
->>   		__entry->victim		= p->min_segno;
->>   		__entry->cost		= p->min_cost;
->>   		__entry->ofs_unit	= p->ofs_unit;
->> -		__entry->pre_victim	= pre_victim;
->> +		__entry->pre_fg_victim	= pre_fg_victim;
->> +		__entry->pre_bg_victim	= pre_bg_victim;
->>   		__entry->prefree	= prefree;
->>   		__entry->free		= free;
->>   	),
->>   
->>   	TP_printk("dev = (%d,%d), type = %s, policy = (%s, %s, %s), "
->>   		"victim = %u, cost = %u, ofs_unit = %u, "
->> -		"pre_victim_secno = %d, prefree = %u, free = %u",
->> +		"pre_fg_victim_secno = %d, pre_bg_victim_secno = %d, "
->> +		"prefree = %u, free = %u",
->>   		show_dev(__entry->dev),
->>   		show_data_type(__entry->type),
->>   		show_gc_type(__entry->gc_type),
->> @@ -737,7 +742,8 @@
->>   		__entry->victim,
->>   		__entry->cost,
->>   		__entry->ofs_unit,
->> -		(int)__entry->pre_victim,
->> +		(int)__entry->pre_fg_victim,
->> +		(int)__entry->pre_bg_victim,
->>   		__entry->prefree,
->>   		__entry->free)
->>   );
->>
->
-> .
->
+> On Thu, Jul 19, 2018 at 12:46:45AM +0200, Ondřej Jirman wrote:
+> > Hello Mylène,
+> > 
+> > On Wed, Jul 18, 2018 at 08:27:17PM +0200, Mylène Josserand wrote:  
+> > > Add the support of regulator to use it as VCC source.
+> > > 
+> > > Signed-off-by: Mylène Josserand <mylene.josserand@bootlin.com>
+> > > ---
+> > >  .../bindings/input/touchscreen/edt-ft5x06.txt      |  1 +
+> > >  drivers/input/touchscreen/edt-ft5x06.c             | 29 ++++++++++++++++++++++
+> > >  2 files changed, 30 insertions(+)
+> > > 
+> > > diff --git a/Documentation/devicetree/bindings/input/touchscreen/edt-ft5x06.txt b/Documentation/devicetree/bindings/input/touchscreen/edt-ft5x06.txt
+> > > index 025cf8c9324a..48e975b9c1aa 100644
+> > > --- a/Documentation/devicetree/bindings/input/touchscreen/edt-ft5x06.txt
+> > > +++ b/Documentation/devicetree/bindings/input/touchscreen/edt-ft5x06.txt
+> > > @@ -30,6 +30,7 @@ Required properties:
+> > >  Optional properties:
+> > >   - reset-gpios: GPIO specification for the RESET input
+> > >   - wake-gpios:  GPIO specification for the WAKE input
+> > > + - vcc-supply:  Regulator that supplies the touchscreen
+> > >  
+> > >   - pinctrl-names: should be "default"
+> > >   - pinctrl-0:   a phandle pointing to the pin settings for the
+> > > diff --git a/drivers/input/touchscreen/edt-ft5x06.c b/drivers/input/touchscreen/edt-ft5x06.c
+> > > index 1e18ca0d1b4e..aa94494b06b5 100644
+> > > --- a/drivers/input/touchscreen/edt-ft5x06.c
+> > > +++ b/drivers/input/touchscreen/edt-ft5x06.c
+> > > @@ -39,6 +39,7 @@
+> > >  #include <linux/input/mt.h>
+> > >  #include <linux/input/touchscreen.h>
+> > >  #include <linux/of_device.h>
+> > > +#include <linux/regulator/consumer.h>
+> > >  
+> > >  #define WORK_REGISTER_THRESHOLD		0x00
+> > >  #define WORK_REGISTER_REPORT_RATE	0x08
+> > > @@ -91,6 +92,7 @@ struct edt_ft5x06_ts_data {
+> > >  	struct touchscreen_properties prop;
+> > >  	u16 num_x;
+> > >  	u16 num_y;
+> > > +	struct regulator *vcc;
+> > >  
+> > >  	struct gpio_desc *reset_gpio;
+> > >  	struct gpio_desc *wake_gpio;
+> > > @@ -991,6 +993,22 @@ static int edt_ft5x06_ts_probe(struct i2c_client *client,
+> > >  
+> > >  	tsdata->max_support_points = chip_data->max_support_points;
+> > >  
+> > > +	tsdata->vcc = devm_regulator_get(&client->dev, "vcc");
+> > > +	if (IS_ERR(tsdata->vcc)) {
+> > > +		error = PTR_ERR(tsdata->vcc);
+> > > +		if (error != -EPROBE_DEFER)
+> > > +			dev_err(&client->dev, "failed to request regulator: %d\n",
+> > > +				error);
+> > > +		return error;
+> > > +	}
+> > > +
+> > > +	error = regulator_enable(tsdata->vcc);
+> > > +	if (error < 0) {
+> > > +		dev_err(&client->dev, "failed to enable vcc: %d\n",
+> > > +			error);
+> > > +		return error;
+> > > +	}
+> > > +
+> > >  	tsdata->reset_gpio = devm_gpiod_get_optional(&client->dev,
+> > >  						     "reset", GPIOD_OUT_HIGH);
+> > >  	if (IS_ERR(tsdata->reset_gpio)) {  
+> 
+> You need to disable regulator here. We do not have
+> devm_regulator_enable() (and Mark had some concerns about mixing managed
+> and unmanaged APIs for regulators so we can't simply introduce it),
+> so I'd recommend using devm_add_action_or_reset() and iunstall custom
+> action to turn off regulator.
+
+Yep, I see. Thank you about "devm_add_action_or_reset", I did not know
+this function. I will add it in next version.
+
+> 
+> > > @@ -1120,20 +1138,31 @@ static int edt_ft5x06_ts_remove(struct i2c_client *client)
+> > >  static int __maybe_unused edt_ft5x06_ts_suspend(struct device *dev)
+> > >  {
+> > >  	struct i2c_client *client = to_i2c_client(dev);
+> > > +	struct edt_ft5x06_ts_data *tsdata = i2c_get_clientdata(client);
+> > >  
+> > >  	if (device_may_wakeup(dev))
+> > >  		enable_irq_wake(client->irq);
+> > >  
+> > > +	regulator_disable(tsdata->vcc);
+> > > +  
+> > 
+> > How will the touchscreen wakeup the system with interrupt if you power it off
+> > on suspend? Perhaps guard this with device_may_wakeup() too?   
+> 
+> Exactly, it should be in an "else" branch.
+> 
+> Thanks.
+> 
+
+I see, I will add it in v4.
+
+Best regards,
 
 -- 
-Thanks,
-Yunlong Song
-
-
+Mylène Josserand, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
