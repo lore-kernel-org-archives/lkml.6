@@ -3,131 +3,72 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E060EC6778A
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 08:36:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0409DECDFB8
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 08:37:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A1FFE20685
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 08:36:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A1FFE20685
+	by mail.kernel.org (Postfix) with ESMTP id B16E020685
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 08:37:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B16E020685
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388639AbeGXJl5 (ORCPT
+        id S2388657AbeGXJmf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 05:41:57 -0400
-Received: from foss.arm.com ([217.140.101.70]:45188 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388531AbeGXJl5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 05:41:57 -0400
+        Tue, 24 Jul 2018 05:42:35 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:45232 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388500AbeGXJmf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Jul 2018 05:42:35 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 87F2080D;
-        Tue, 24 Jul 2018 01:36:35 -0700 (PDT)
-Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 58D843F237;
-        Tue, 24 Jul 2018 01:36:35 -0700 (PDT)
-Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
-        id E74B81AE3B5E; Tue, 24 Jul 2018 09:36:34 +0100 (BST)
-Date:   Tue, 24 Jul 2018 09:36:34 +0100
-From:   Will Deacon <will.deacon@arm.com>
-To:     Vivek Gautam <vivek.gautam@codeaurora.org>
-Cc:     joro@8bytes.org, robh+dt@kernel.org, robin.murphy@arm.com,
-        andy.gross@linaro.org, mark.rutland@arm.com,
-        iommu@lists.linux-foundation.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, tfiga@chromium.org,
-        sricharan@codeaurora.org, linux-arm-msm@vger.kernel.org,
-        david.brown@linaro.org, linux-soc@vger.kernel.org,
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 615D780D;
+        Tue, 24 Jul 2018 01:37:14 -0700 (PDT)
+Received: from e105550-lin.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DDE2F3F237;
+        Tue, 24 Jul 2018 01:37:12 -0700 (PDT)
+Date:   Tue, 24 Jul 2018 09:37:10 +0100
+From:   Morten Rasmussen <morten.rasmussen@arm.com>
+To:     Qais Yousef <qais.yousef@arm.com>
+Cc:     vincent.guittot@linaro.org, peterz@infradead.org,
+        linux-kernel@vger.kernel.org, dietmar.eggemann@arm.com,
+        mingo@redhat.com, valentin.schneider@arm.com,
         linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 3/3] iommu/arm-smmu: Error out only if not enough context
- interrupts
-Message-ID: <20180724083633.GA19324@arm.com>
-References: <20180719175356.14753-1-vivek.gautam@codeaurora.org>
- <20180719175356.14753-4-vivek.gautam@codeaurora.org>
+Subject: Re: [PATCH 1/4] sched/topology: SD_ASYM_CPUCAPACITY flag detection
+Message-ID: <20180724083710.GB29978@e105550-lin.cambridge.arm.com>
+References: <1532093554-30504-1-git-send-email-morten.rasmussen@arm.com>
+ <1532093554-30504-2-git-send-email-morten.rasmussen@arm.com>
+ <dbd8deec-a79d-5697-0c50-ea1a9ab7e5c9@arm.com>
+ <20180723152551.GA29978@e105550-lin.cambridge.arm.com>
+ <b75f665f-7d60-5d83-eaf6-88c534afe254@arm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180719175356.14753-4-vivek.gautam@codeaurora.org>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <b75f665f-7d60-5d83-eaf6-88c534afe254@arm.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 19, 2018 at 11:23:56PM +0530, Vivek Gautam wrote:
-> Currently we check if the number of context banks is not equal to
-> num_context_interrupts. However, there are booloaders such as, one
-> on sdm845 that reserves few context banks and thus kernel views
-> less than the total available context banks.
-> So, although the hardware definition in device tree would mention
-> the correct number of context interrupts, this number can be
-> greater than the number of context banks visible to smmu in kernel.
-> We should therefore error out only when the number of context banks
-> is greater than the available number of context interrupts.
+On Mon, Jul 23, 2018 at 05:07:50PM +0100, Qais Yousef wrote:
+> On 23/07/18 16:27, Morten Rasmussen wrote:
+> >It does increase the cost of things like hotplug slightly and
+> >repartitioning of root_domains a slightly but I don't see how we can
+> >avoid it if we want generic code to set this flag. If the costs are not
+> >acceptable I think the only option is to make the detection architecture
+> >specific.
 > 
-> Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
-> Suggested-by: Tomasz Figa <tfiga@chromium.org>
-> Cc: Robin Murphy <robin.murphy@arm.com>
-> Cc: Will Deacon <will.deacon@arm.com>
-> ---
->  drivers/iommu/arm-smmu.c | 19 +++++++++++++------
->  1 file changed, 13 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/iommu/arm-smmu.c b/drivers/iommu/arm-smmu.c
-> index 7c69736a30f8..4cb53bf4f423 100644
-> --- a/drivers/iommu/arm-smmu.c
-> +++ b/drivers/iommu/arm-smmu.c
-> @@ -2229,12 +2229,19 @@ static int arm_smmu_device_probe(struct platform_device *pdev)
->  	if (err)
->  		return err;
->  
-> -	if (smmu->version == ARM_SMMU_V2 &&
-> -	    smmu->num_context_banks != smmu->num_context_irqs) {
-> -		dev_err(dev,
-> -			"found only %d context interrupt(s) but %d required\n",
-> -			smmu->num_context_irqs, smmu->num_context_banks);
-> -		return -ENODEV;
-> +	if (smmu->version == ARM_SMMU_V2) {
-> +		if (smmu->num_context_banks > smmu->num_context_irqs) {
-> +			dev_err(dev,
-> +			      "found only %d context irq(s) but %d required\n",
-> +			      smmu->num_context_irqs, smmu->num_context_banks);
-> +			return -ENODEV;
-> +		} else if (smmu->num_context_banks < smmu->num_context_irqs) {
-> +			/* loose extra context interrupts */
-> +			dev_notice(dev,
-> +			      "found %d context irq(s) but only %d required\n",
-> +			      smmu->num_context_irqs, smmu->num_context_banks);
-> +			smmu->num_context_irqs = smmu->num_context_banks;
-> +		}
+> I think hotplug is already expensive and this overhead would be small in
+> comparison. But this could be called when frequency changes if I understood
+> correctly - this is the one I wasn't sure how 'hot' it could be. I wouldn't
+> expect frequency changes at a very high rate because it's relatively
+> expensive too..
 
-I don't see the utility in the new message. Can you simplify with the patch
-below on top? It's a bit weird that we only decide to ignore the extra irqs
-after calling platform_get_irq() on them, but that seems to be harmless.
-
-Will
-
---->8
-
-diff --git a/drivers/iommu/arm-smmu.c b/drivers/iommu/arm-smmu.c
-index aa46c1ed5bf9..5349e22b5c78 100644
---- a/drivers/iommu/arm-smmu.c
-+++ b/drivers/iommu/arm-smmu.c
-@@ -2109,13 +2109,10 @@ static int arm_smmu_device_probe(struct platform_device *pdev)
- 			      "found only %d context irq(s) but %d required\n",
- 			      smmu->num_context_irqs, smmu->num_context_banks);
- 			return -ENODEV;
--		} else if (smmu->num_context_banks < smmu->num_context_irqs) {
--			/* loose extra context interrupts */
--			dev_notice(dev,
--			      "found %d context irq(s) but only %d required\n",
--			      smmu->num_context_irqs, smmu->num_context_banks);
--			smmu->num_context_irqs = smmu->num_context_banks;
- 		}
-+
-+		/* Ignore superfluous interrupts */
-+		smmu->num_context_irqs = smmu->num_context_banks;
- 	}
- 
- 	for (i = 0; i < smmu->num_global_irqs; ++i) {
+A frequency change shouldn't lead to a flag change or a rebuild of the
+sched_domain hierarhcy. The situations where the hierarchy should be
+rebuild to update the flag is during boot as we only know the amount of
+asymmetry once cpufreq has been initialized, when cpus are hotplugged
+in/out, and when root_domains change due to cpuset reconfiguration. So
+it should be a relatively rare event.
