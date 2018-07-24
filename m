@@ -2,89 +2,606 @@ Return-Path: <SRS0=hTZH=KI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5549C6778A
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 16:31:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1957C6778A
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 16:32:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5E92820844
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 16:31:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E92820844
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 4980120844
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 16:32:44 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=ettus-com.20150623.gappssmtp.com header.i=@ettus-com.20150623.gappssmtp.com header.b="ZvY87tQG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4980120844
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ettus.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388493AbeGXRiq (ORCPT
+        id S2388612AbeGXRj6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 13:38:46 -0400
-Received: from mailout.easymail.ca ([64.68.200.34]:45563 "EHLO
-        mailout.easymail.ca" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388409AbeGXRiq (ORCPT
+        Tue, 24 Jul 2018 13:39:58 -0400
+Received: from mail-yb0-f193.google.com ([209.85.213.193]:44505 "EHLO
+        mail-yb0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388467AbeGXRj6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 13:38:46 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by mailout.easymail.ca (Postfix) with ESMTP id CB075217DD;
-        Tue, 24 Jul 2018 16:31:29 +0000 (UTC)
-Received: from mailout.easymail.ca ([127.0.0.1])
-        by localhost (emo02-pco.easydns.vpn [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id pRdQxoJtIQX9; Tue, 24 Jul 2018 16:31:29 +0000 (UTC)
-Received: from [192.168.1.87] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mailout.easymail.ca (Postfix) with ESMTPSA id EA214216AA;
-        Tue, 24 Jul 2018 16:31:21 +0000 (UTC)
-Subject: Re: [PATCH 18/18] cpupower: change strncpy+truncation to strlcpy
-To:     Dominique Martinet <asmadeus@codewreck.org>
-Cc:     Thomas Renninger <trenn@suse.com>,
-        Colin Ian King <colin.king@canonical.com>,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Shuah Khan <shuah@kernel.org>
-References: <1531444483-17338-1-git-send-email-asmadeus@codewreck.org>
- <1531445169-19912-1-git-send-email-asmadeus@codewreck.org>
-From:   Shuah Khan <shuah@kernel.org>
-Message-ID: <2d421d32-ab85-1d4e-0aaf-7f221e0110b0@kernel.org>
-Date:   Tue, 24 Jul 2018 10:31:15 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Tue, 24 Jul 2018 13:39:58 -0400
+Received: by mail-yb0-f193.google.com with SMTP id l16-v6so1856313ybk.11
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Jul 2018 09:32:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ettus-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=n2GJZS3evPU6OrIsDI4cLY4mHlgP9TQMnJ+dP4ZgrDk=;
+        b=ZvY87tQGiurwDkJpoE8KrBvIK+WS38LX/w6YaK7J4aTDzfkf9pV3nN9FKw2NgSP81y
+         +rq8hLPtsRrQgbDi8Vn5ASLfcg70jK6OfrfLc2KBXy0/FNaEFdv+xE2tWJaRqN0uWGaC
+         ZiwWRH7FgqSqoSgBVM3cZvRUKIk5C7uyzsanMwdst8iu0YFBLM4uWLGhKjVYw6WxOmo8
+         P7hI4ECNH3EKhUc/ijWzD8B8spyiDEoKegVlMvfh5FGG8HUC0j693g2q+IdKPzmWBydA
+         N43ag1ZGOcz2mLv/+QPgbPv2SfJzpcWBsYEqjgfmtsunIpLH/3WYHxwUfJLBEW1vtMAd
+         JvQA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=n2GJZS3evPU6OrIsDI4cLY4mHlgP9TQMnJ+dP4ZgrDk=;
+        b=r180wqCBBwHK/MRPjJSzEaH6JJ+2jUY17kV2qj1XgmepgtLOoLCy0FFSDT5GL9itWe
+         KVS+Wk/s9HZMHY4Tl6H6FRUmmwRmdSK0UkPPXVUekeWLd/c/o3RRu3Ak9XRBJE34Q/Yl
+         gmC85p8/tVHG6ZEP0NfvQxs/Sh1nM/4j/Qu7RA597LKHvgFFoOT9yTnjYYdOgM2SI9ai
+         7VDrGBOUm5ZvSTYxWIpZYzmvNAFXAZsYZC5Ibh2iEhBhldSOqsQfq2M7TLOHpQEB9dI/
+         ZwMXSB+CtQSbulvEPBDyLpKgrVEhot4LFIf7bA9/Frkc8pi6JC+RIKyLVOSKVrm7TZnN
+         BCog==
+X-Gm-Message-State: AOUpUlFn5K9/DAoq2ApBgm6MHkLfTTpX7nNHcuKRNoODOoO8iG/IovoV
+        qrYmANMheohdSFpH9djiSsthjSLY2Nj15Hs1iuhOWg==
+X-Google-Smtp-Source: AAOMgpdl4dTDZ2Z55m/mHNw5iA3H/HZR1gl/I+OnVoSU9QKEyuHytjH8aMHvwY4M9XzaFrLzQkG3GLIqI8UCt8vrepc=
+X-Received: by 2002:a25:e90d:: with SMTP id n13-v6mr9261823ybd.99.1532449960839;
+ Tue, 24 Jul 2018 09:32:40 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <1531445169-19912-1-git-send-email-asmadeus@codewreck.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Received: by 2002:a81:3c0a:0:0:0:0:0 with HTTP; Tue, 24 Jul 2018 09:32:40
+ -0700 (PDT)
+In-Reply-To: <1532441858-13507-2-git-send-email-appana.durga.rao@xilinx.com>
+References: <1532441858-13507-1-git-send-email-appana.durga.rao@xilinx.com> <1532441858-13507-2-git-send-email-appana.durga.rao@xilinx.com>
+From:   Moritz Fischer <moritz.fischer@ettus.com>
+Date:   Tue, 24 Jul 2018 09:32:40 -0700
+Message-ID: <CAAtXAHeVXw4BT7XF+Mu=nR9U9nK=nR_+x+JKSQU1owwPbt_HPA@mail.gmail.com>
+Subject: Re: [PATCH v3 2/2] fpga: zynq-fpga: Add support for readback
+To:     Appana Durga Kedareswara rao <appana.durga.rao@xilinx.com>
+Cc:     Alan Tull <atull@kernel.org>, navam@xilinx.com,
+        Michal Simek <michals@xilinx.com>, linux-fpga@vger.kernel.org,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/12/2018 07:26 PM, Dominique Martinet wrote:
-> Generated by scripts/coccinelle/misc/strncpy_truncation.cocci
-> 
-> Signed-off-by: Dominique Martinet <asmadeus@codewreck.org>
+Hi Appana,
+
+On Tue, Jul 24, 2018 at 7:17 AM, Appana Durga Kedareswara rao
+<appana.durga.rao@xilinx.com> wrote:
+> This patch does the below
+> --> Adds support for readback of pl configuration data
+> --> Adds support for readback of pl configuration registers
+
+Can you please make the commit message such that you have full sentences?
+
+"Add support for readback of FPGA configuration data and registers" of example.
+
+>
+> Usage:
+> Readback of PL configuration registers
+>         cat /sys/kernel/debug/fpga/fpga0/image
+> Readback of PL configuration data
+>         echo 1 > /sys/module/zynqmp_fpga/parameters/readback_type
+
+The patch below is for Zynq if I'm not mistaken, not ZynqMP?
+
+>         cat /sys/kernel/debug/fpga/fpga0/image
+>
+> Signed-off-by: Appana Durga Kedareswara rao <appana.durga.rao@xilinx.com>
 > ---
-> 
-> Please see https://marc.info/?l=linux-kernel&m=153144450722324&w=2 (the
-> first patch of the serie) for the motivation behind this patch
-> 
->  tools/power/cpupower/bench/parse.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/tools/power/cpupower/bench/parse.c b/tools/power/cpupower/bench/parse.c
-> index 9ba8a44ad2a7..1566b89989b2 100644
-> --- a/tools/power/cpupower/bench/parse.c
-> +++ b/tools/power/cpupower/bench/parse.c
-> @@ -221,9 +221,8 @@ int prepare_config(const char *path, struct config *config)
->  			sscanf(val, "%u", &config->cpu);
->  
->  		else if (strcmp("governor", opt) == 0) {
-> -			strncpy(config->governor, val,
-> +			strlcpy(config->governor, val,
->  					sizeof(config->governor));
-> -			config->governor[sizeof(config->governor) - 1] = '\0';
->  		}
->  
->  		else if (strcmp("priority", opt) == 0) {
-> 
+> Changes for v3:
+> --> Added support for pl configuration data readback
+> --> Improved the pl configuration register readback logic.
+> Changes for v2:
+> --> Removed locks from the read_ops as lock handling is done in the framework.
+>
+>  drivers/fpga/zynq-fpga.c | 400 +++++++++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 400 insertions(+)
+>
+> diff --git a/drivers/fpga/zynq-fpga.c b/drivers/fpga/zynq-fpga.c
+> index 70b15b3..5f1a1aa 100644
+> --- a/drivers/fpga/zynq-fpga.c
+> +++ b/drivers/fpga/zynq-fpga.c
+> @@ -31,6 +31,7 @@
+>  #include <linux/regmap.h>
+>  #include <linux/string.h>
+>  #include <linux/scatterlist.h>
+> +#include <linux/seq_file.h>
+>
+>  /* Offsets into SLCR regmap */
+>
+> @@ -127,6 +128,72 @@
+>  /* Disable global resets */
+>  #define FPGA_RST_NONE_MASK             0x0
+>
+> +static bool readback_type;
+> +module_param(readback_type, bool, 0644);
+> +MODULE_PARM_DESC(readback_type,
+> +               "readback_type 0-configuration register read "
+> +               "1- configuration data read (default: 0)");
 
-Thanks for the patch. I will pull this in for 4.19-rc1
+Not sure a module param is the best solution here.
+> +
+> +/**
+> + * struct zynq_configreg - Configuration register offsets
+> + * @reg:       Name of the configuration register.
+> + * @offset:    Register offset.
+> + */
+> +struct zynq_configreg {
+> +       char *reg;
+> +       u32 offset;
+> +};
+> +
+> +static struct zynq_configreg cfgreg[] = {
+> +       {.reg = "CRC",          .offset = 0},
+> +       {.reg = "FAR",          .offset = 1},
+> +       {.reg = "FDRI",         .offset = 2},
+> +       {.reg = "FDRO",         .offset = 3},
+> +       {.reg = "CMD",          .offset = 4},
+> +       {.reg = "CTRL0",        .offset = 5},
+> +       {.reg = "MASK",         .offset = 6},
+> +       {.reg = "STAT",         .offset = 7},
+> +       {.reg = "LOUT",         .offset = 8},
+> +       {.reg = "COR0",         .offset = 9},
+> +       {.reg = "MFWR",         .offset = 10},
+> +       {.reg = "CBC",          .offset = 11},
+> +       {.reg = "IDCODE",       .offset = 12},
+> +       {.reg = "AXSS",         .offset = 13},
+> +       {.reg = "COR1",         .offset = 14},
+> +       {.reg = "WBSTR",        .offset = 16},
+> +       {.reg = "TIMER",        .offset = 17},
+> +       {.reg = "BOOTSTS",      .offset = 22},
+> +       {.reg = "CTRL1",        .offset = 24},
+> +       {}
+> +};
+> +
+> +/* Masks for Configuration registers */
+> +#define FAR_ADDR_MASK          0x00000000
+> +#define RCFG_CMD_MASK          0x00000004
+> +#define START_CMD_MASK         0x00000005
+> +#define RCRC_CMD_MASK          0x00000007
 
--- Shuah
+BIT() and GENMASK() would work here.
+
+> +#define SHUTDOWN_CMD_MASK      0x0000000B
+> +#define DESYNC_WORD_MASK       0x0000000D
+> +#define BUSWIDTH_SYNCWORD_MASK 0x000000BB
+> +#define NOOP_WORD_MASK         0x20000000
+> +#define BUSWIDTH_DETECT_MASK   0x11220044
+> +#define SYNC_WORD_MASK         0xAA995566
+> +#define DUMMY_WORD_MASK                0xFFFFFFFF
+
+GENMASK() would probably work for most of the above ones
+> +
+> +#define TYPE_HDR_SHIFT         29
+> +#define TYPE_REG_SHIFT         13
+> +#define TYPE_OP_SHIFT          27
+> +#define TYPE_OPCODE_NOOP       0
+> +#define TYPE_OPCODE_READ       1
+> +#define TYPE_OPCODE_WRITE      2
+> +#define TYPE_FAR_OFFSET                1
+> +#define TYPE_FDRO_OFFSET       3
+> +#define TYPE_CMD_OFFSET                4
+> +
+> +#define READ_DMA_SIZE          0x200
+> +#define DUMMY_FRAMES_SIZE      0x28
+> +#define SLCR_PCAP_FREQ         10000000
+> +
+>  struct zynq_fpga_priv {
+>         int irq;
+>         struct clk *clk;
+> @@ -140,6 +207,7 @@ struct zynq_fpga_priv {
+>         struct scatterlist *cur_sg;
+>
+>         struct completion dma_done;
+> +       u32 size;
+>  };
+>
+>  static inline void zynq_fpga_write(struct zynq_fpga_priv *priv, u32 offset,
+> @@ -164,6 +232,27 @@ static inline void zynq_fpga_set_irq(struct zynq_fpga_priv *priv, u32 enable)
+>         zynq_fpga_write(priv, INT_MASK_OFFSET, ~enable);
+>  }
+>
+> +static void zynq_fpga_dma_xfer(struct zynq_fpga_priv *priv, u32 srcaddr,
+> +                              u32 srclen, u32 dstaddr, u32 dstlen)
+> +{
+> +       zynq_fpga_write(priv, DMA_SRC_ADDR_OFFSET, srcaddr);
+> +       zynq_fpga_write(priv, DMA_DST_ADDR_OFFSET, dstaddr);
+> +       zynq_fpga_write(priv, DMA_SRC_LEN_OFFSET, srclen);
+> +       zynq_fpga_write(priv, DMA_DEST_LEN_OFFSET, dstlen);
+> +}
+> +
+> +static int zynq_fpga_wait_fordone(struct zynq_fpga_priv *priv)
+> +{
+> +       u32 status;
+> +       int ret;
+> +
+> +       ret = zynq_fpga_poll_timeout(priv, INT_STS_OFFSET, status,
+> +                                    status & IXR_D_P_DONE_MASK,
+> +                                    INIT_POLL_DELAY,
+> +                                    INIT_POLL_TIMEOUT);
+> +       return ret;
+> +}
+> +
+>  /* Must be called with dma_lock held */
+>  static void zynq_step_dma(struct zynq_fpga_priv *priv)
+>  {
+> @@ -192,6 +281,7 @@ static void zynq_step_dma(struct zynq_fpga_priv *priv)
+>                         priv->dma_elm++;
+>                 }
+>
+> +               priv->size += len;
+>                 zynq_fpga_write(priv, DMA_SRC_ADDR_OFFSET, addr);
+>                 zynq_fpga_write(priv, DMA_DST_ADDR_OFFSET, DMA_INVALID_ADDRESS);
+>                 zynq_fpga_write(priv, DMA_SRC_LEN_OFFSET, len / 4);
+> @@ -401,6 +491,7 @@ static int zynq_fpga_ops_write(struct fpga_manager *mgr, struct sg_table *sgt)
+>         int i;
+>
+>         priv = mgr->priv;
+> +       priv->size = 0;
+>
+>         /* The hardware can only DMA multiples of 4 bytes, and it requires the
+>          * starting addresses to be aligned to 64 bits (UG585 pg 212).
+> @@ -546,12 +637,321 @@ static enum fpga_mgr_states zynq_fpga_ops_state(struct fpga_manager *mgr)
+>         return FPGA_MGR_STATE_UNKNOWN;
+>  }
+>
+> +static int zynq_type1_pkt(u8 reg, u8 opcode, u16 size)
+> +{
+> +       /*
+> +        * Type 1 Packet Header Format
+> +        * The header section is always a 32-bit word.
+> +        *
+> +        * HeaderType | Opcode | Register Address | Reserved | Word Count
+> +        * [31:29]      [28:27]         [26:13]      [12:11]     [10:0]
+> +        * --------------------------------------------------------------
+> +        *   001          xx      RRRRRRRRRxxxxx        RR      xxxxxxxxxxx
+> +        *
+> +        * @R: means the bit is not used and reserved for future use.
+> +        * The reserved bits should be written as 0s.
+> +        *
+> +        * Generating the Type 1 packet header which involves sifting of Type1
+Shifting? Maybe you can just reference the section that documents this in the
+TRM?
+> +        * Header Mask, Register value and the OpCode which is 01 in this case
+> +        * as only read operation is to be carried out and then performing OR
+> +        * operation with the Word Length.
+> +        */
+> +       return (((1 << TYPE_HDR_SHIFT) |
+> +               (reg << TYPE_REG_SHIFT) |
+> +               (opcode << TYPE_OP_SHIFT)) | size);
+> +
+> +}
+> +
+> +/****************************************************************************/
+> +/**
+> + *
+> + * Generates a Type 2 packet header that reads back the requested Configuration
+> + * register.
+> + *
+> + * @param        OpCode is the read/write operation code.
+> + * @param        Size is the size of the word to be read.
+> + *
+> + * @return       Type 2 packet header to read the specified register
+> + *
+> + * @note         None.
+> + *
+> + *****************************************************************************/
+> +static int zynq_type2_pkt(u8 OpCode, u32 Size)
+
+No camel case please, can you make Size and OpCode small caps please?
+Also please make the two functions consistent.
+> +{
+> +       /*
+> +        * Type 2 Packet Header Format
+> +        * The header section is always a 32-bit word.
+> +        *
+> +        * HeaderType | Opcode |  Word Count
+> +        * [31:29]      [28:27]         [26:0]
+> +        * --------------------------------------------------------------
+> +        *   010          xx      xxxxxxxxxxxxx
+> +        *
+> +        * @R: means the bit is not used and reserved for future use.
+> +        * The reserved bits should be written as 0s.
+> +        *
+> +        * Generating the Type 2 packet header which involves sifting of Type 2
+
+s/sifting/shifting/
+> +        * Header Mask, OpCode and then performing OR
+> +        * operation with the Word Length.
+> +        */
+> +       return (((2 << TYPE_HDR_SHIFT) |
+> +               (OpCode << TYPE_OP_SHIFT)) | Size);
+> +}
+> +
+> +static int zynq_fpga_read_cfgdata(struct fpga_manager *mgr,
+> +                                 struct seq_file *s)
+> +{
+> +       struct zynq_fpga_priv *priv;
+> +       int ret = 0, i, cmdindex, clk_rate;
+> +       unsigned int *buf;
+> +       dma_addr_t dma_addr;
+> +       u32 intr_status, status;
+> +       size_t size;
+
+Reverse xmas tree please
+> +
+> +       priv = mgr->priv;
+> +       size = priv->size + READ_DMA_SIZE + DUMMY_FRAMES_SIZE;
+> +       buf = dma_zalloc_coherent(mgr->dev.parent, size,
+> +                                &dma_addr, GFP_KERNEL);
+> +       if (!buf)
+> +               return -ENOMEM;
+> +
+> +       seq_puts(s, "zynq FPGA Configuration data contents are\n");
+> +
+> +       /*
+> +        * There is no h/w flow control for pcap read
+> +        * to prevent the FIFO from over flowing, reduce
+> +        * the PCAP operating frequency.
+> +        */
+> +       clk_rate = clk_get_rate(priv->clk);
+> +       ret = clk_set_rate(priv->clk, SLCR_PCAP_FREQ);
+> +       if (ret) {
+> +               dev_err(&mgr->dev, "Unable to reduce the PCAP freq\n");
+> +               goto free_dmabuf;
+> +       }
+> +
+> +       ret = zynq_fpga_poll_timeout(priv, STATUS_OFFSET, status,
+> +                                    status & STATUS_PCFG_INIT_MASK,
+> +                                    INIT_POLL_DELAY,
+> +                                    INIT_POLL_TIMEOUT);
+> +       if (ret) {
+> +               dev_err(&mgr->dev, "Timeout waiting for PCFG_INIT\n");
+> +               goto restore_pcap_clk;
+> +       }
+> +
+> +       cmdindex = 0;
+> +       buf[cmdindex++] = DUMMY_WORD_MASK;
+> +       buf[cmdindex++] = BUSWIDTH_SYNCWORD_MASK;
+> +       buf[cmdindex++] = BUSWIDTH_DETECT_MASK;
+> +       buf[cmdindex++] = DUMMY_WORD_MASK;
+> +       buf[cmdindex++] = SYNC_WORD_MASK;
+> +       buf[cmdindex++] = NOOP_WORD_MASK;
+> +       buf[cmdindex++] = zynq_type1_pkt(TYPE_CMD_OFFSET, TYPE_OPCODE_WRITE,
+> +                                        1);
+> +       buf[cmdindex++] = SHUTDOWN_CMD_MASK;
+> +       buf[cmdindex++] = NOOP_WORD_MASK;
+> +       buf[cmdindex++] = zynq_type1_pkt(TYPE_CMD_OFFSET, TYPE_OPCODE_WRITE,
+> +                                        1);
+> +       buf[cmdindex++] = RCRC_CMD_MASK;
+> +       for (i = 0; i < 6; i++)
+Magic constant?
+> +               buf[cmdindex++] = NOOP_WORD_MASK;
+> +       buf[cmdindex++] = zynq_type1_pkt(TYPE_CMD_OFFSET, TYPE_OPCODE_WRITE,
+> +                                        1);
+> +       buf[cmdindex++] = RCFG_CMD_MASK;
+> +       buf[cmdindex++] = NOOP_WORD_MASK;
+> +       buf[cmdindex++] = zynq_type1_pkt(TYPE_FAR_OFFSET, TYPE_OPCODE_WRITE,
+> +                                        1);
+> +       buf[cmdindex++] = FAR_ADDR_MASK;
+> +       buf[cmdindex++] = zynq_type1_pkt(TYPE_FDRO_OFFSET, TYPE_OPCODE_READ,
+> +                                        0);
+> +       buf[cmdindex++] = zynq_type2_pkt(TYPE_OPCODE_READ, priv->size/4);
+> +       for (i = 0; i < 32; i++)
+Magic constant?
+> +               buf[cmdindex++] = NOOP_WORD_MASK;
+> +
+> +       intr_status = zynq_fpga_read(priv, INT_STS_OFFSET);
+> +       zynq_fpga_write(priv, INT_STS_OFFSET, intr_status);
+> +
+> +       /* Write to PCAP */
+> +       zynq_fpga_dma_xfer(priv, dma_addr, cmdindex,
+> +                          DMA_INVALID_ADDRESS, 0);
+> +       ret = zynq_fpga_wait_fordone(priv);
+> +       if (ret) {
+> +               dev_err(&mgr->dev, "SRCDMA: Timeout waiting for D_P_DONE\n");
+> +               goto restore_pcap_clk;
+> +       }
+> +       intr_status = zynq_fpga_read(priv, INT_STS_OFFSET);
+> +       zynq_fpga_write(priv, INT_STS_OFFSET, intr_status);
+> +
+> +       /* READ From PACP */
+> +       zynq_fpga_dma_xfer(priv, DMA_INVALID_ADDRESS, 0,
+> +                          dma_addr + READ_DMA_SIZE, priv->size/4);
+> +       ret = zynq_fpga_wait_fordone(priv);
+> +       if (ret) {
+> +               dev_err(&mgr->dev, "DSTDMA: Timeout waiting for D_P_DONE\n");
+> +               goto restore_pcap_clk;
+> +       }
+> +       intr_status = zynq_fpga_read(priv, INT_STS_OFFSET);
+> +       zynq_fpga_write(priv, INT_STS_OFFSET, intr_status);
+> +
+> +       /* Write to PCAP */
+> +       cmdindex = 0;
+> +       buf[cmdindex++] = NOOP_WORD_MASK;
+> +       buf[cmdindex++] = zynq_type1_pkt(TYPE_CMD_OFFSET,
+> +                                        TYPE_OPCODE_WRITE, 1);
+> +       buf[cmdindex++] = START_CMD_MASK;
+> +       buf[cmdindex++] = NOOP_WORD_MASK;
+> +
+> +       buf[cmdindex++] = zynq_type1_pkt(TYPE_CMD_OFFSET,
+> +                                        TYPE_OPCODE_WRITE, 1);
+> +       buf[cmdindex++] = RCRC_CMD_MASK;
+> +       buf[cmdindex++] = NOOP_WORD_MASK;
+> +       buf[cmdindex++] = zynq_type1_pkt(TYPE_CMD_OFFSET,
+> +                                        TYPE_OPCODE_WRITE, 1);
+> +       buf[cmdindex++] = DESYNC_WORD_MASK;
+> +       buf[cmdindex++] = NOOP_WORD_MASK;
+> +       buf[cmdindex++] = NOOP_WORD_MASK;
+> +
+> +       zynq_fpga_dma_xfer(priv, dma_addr, cmdindex,
+> +                          DMA_INVALID_ADDRESS, 0);
+> +       ret = zynq_fpga_wait_fordone(priv);
+> +       if (ret) {
+> +               dev_err(&mgr->dev, "SRCDMA1: Timeout waiting for D_P_DONE\n");
+> +               goto restore_pcap_clk;
+> +       }
+> +
+> +       seq_write(s, &buf[READ_DMA_SIZE/4], priv->size);
+> +
+> +restore_pcap_clk:
+> +       clk_set_rate(priv->clk, clk_rate);
+> +free_dmabuf:
+> +       dma_free_coherent(mgr->dev.parent, size, buf,
+> +                         dma_addr);
+> +       return ret;
+> +}
+> +
+> +static int zynq_fpga_getconfigreg(struct fpga_manager *mgr, u8 reg,
+> +                                 dma_addr_t dma_addr, int *buf)
+zynq_fpga_get_config_reg maybe?
+> +{
+> +       struct zynq_fpga_priv *priv;
+> +       int ret = 0, cmdindex, src_dmaoffset;
+> +       u32 intr_status, status;
+
+Same here.
+> +
+> +       priv = mgr->priv;
+> +
+> +       src_dmaoffset = 0x8;
+> +       cmdindex = 2;
+> +       buf[cmdindex++] = DUMMY_WORD_MASK;
+> +       buf[cmdindex++] = BUSWIDTH_SYNCWORD_MASK;
+> +       buf[cmdindex++] = BUSWIDTH_DETECT_MASK;
+> +       buf[cmdindex++] = DUMMY_WORD_MASK;
+> +       buf[cmdindex++] = SYNC_WORD_MASK;
+> +       buf[cmdindex++] = NOOP_WORD_MASK;
+> +       buf[cmdindex++] = zynq_type1_pkt(reg, TYPE_OPCODE_READ, 1);
+> +       buf[cmdindex++] = NOOP_WORD_MASK;
+> +       buf[cmdindex++] = NOOP_WORD_MASK;
+> +
+> +       ret = zynq_fpga_poll_timeout(priv, STATUS_OFFSET, status,
+> +                                    status & STATUS_PCFG_INIT_MASK,
+> +                                    INIT_POLL_DELAY,
+> +                                    INIT_POLL_TIMEOUT);
+> +       if (ret) {
+> +               dev_err(&mgr->dev, "Timeout waiting for PCFG_INIT\n");
+> +               goto out;
+> +       }
+> +
+> +       /* Write to PCAP */
+> +       intr_status = zynq_fpga_read(priv, INT_STS_OFFSET);
+> +       zynq_fpga_write(priv, INT_STS_OFFSET, IXR_ALL_MASK);
+> +
+> +       zynq_fpga_dma_xfer(priv, dma_addr + src_dmaoffset, cmdindex,
+> +                          DMA_INVALID_ADDRESS, 0);
+> +       ret = zynq_fpga_wait_fordone(priv);
+> +       if (ret) {
+> +               dev_err(&mgr->dev, "SRCDMA: Timeout waiting for D_P_DONE\n");
+> +               goto out;
+> +       }
+> +       zynq_fpga_set_irq(priv, intr_status);
+> +
+> +       /* READ From PACP */
+
+READ -> Read ?
+> +       zynq_fpga_dma_xfer(priv, DMA_INVALID_ADDRESS, 0, dma_addr, 1);
+> +       ret = zynq_fpga_wait_fordone(priv);
+> +       if (ret) {
+> +               dev_err(&mgr->dev, "DSTDMA: Timeout waiting for D_P_DONE\n");
+> +               goto out;
+> +       }
+> +
+> +       /* Write to PCAP */
+> +       cmdindex = 2;
+> +       buf[cmdindex++] = zynq_type1_pkt(TYPE_CMD_OFFSET,
+> +                                        TYPE_OPCODE_WRITE, 1);
+> +       buf[cmdindex++] = DESYNC_WORD_MASK;
+> +       buf[cmdindex++] = NOOP_WORD_MASK;
+> +       buf[cmdindex++] = NOOP_WORD_MASK;
+> +       zynq_fpga_dma_xfer(priv, dma_addr + src_dmaoffset, cmdindex,
+> +                          DMA_INVALID_ADDRESS, 0);
+> +       ret = zynq_fpga_wait_fordone(priv);
+> +       if (ret)
+> +               dev_err(&mgr->dev, "SRCDMA1: Timeout waiting for D_P_DONE\n");
+> +out:
+> +       return ret;
+> +}
+> +
+> +static int zynq_fpga_read_cfgreg(struct fpga_manager *mgr,
+> +                                struct seq_file *s)
+> +{
+> +       int ret = 0;
+> +       unsigned int *buf;
+> +       dma_addr_t dma_addr;
+> +       struct zynq_configreg *p = cfgreg;
+
+And here.
+> +
+> +       buf = dma_zalloc_coherent(mgr->dev.parent, READ_DMA_SIZE,
+> +                                &dma_addr, GFP_KERNEL);
+> +       if (!buf)
+> +               return -ENOMEM;
+> +
+> +       seq_puts(s, "zynq FPGA Configuration register contents are\n");
+
+Zynq FPGA, maybe caps here...
+> +
+> +       while (p->reg) {
+> +               ret = zynq_fpga_getconfigreg(mgr, p->offset, dma_addr, buf);
+> +               if (ret)
+> +                       goto free_dmabuf;
+> +               seq_printf(s, "%s --> \t %x \t\r\n", p->reg, buf[0]);
+> +               p++;
+> +       }
+> +
+> +free_dmabuf:
+> +       dma_free_coherent(mgr->dev.parent, READ_DMA_SIZE, buf,
+> +                         dma_addr);
+> +       return ret;
+> +}
+> +
+> +static int zynq_fpga_ops_read(struct fpga_manager *mgr, struct seq_file *s)
+> +{
+> +       struct zynq_fpga_priv *priv;
+> +       int ret;
+> +
+> +       priv = mgr->priv;
+> +
+> +       ret = clk_enable(priv->clk);
+> +       if (ret)
+> +               return ret;
+> +
+> +       if (readback_type)
+> +               ret = zynq_fpga_read_cfgdata(mgr, s);
+> +       else
+> +               ret = zynq_fpga_read_cfgreg(mgr, s);
+> +
+> +       clk_disable(priv->clk);
+> +
+> +       return ret;
+> +}
+> +
+>  static const struct fpga_manager_ops zynq_fpga_ops = {
+>         .initial_header_size = 128,
+>         .state = zynq_fpga_ops_state,
+>         .write_init = zynq_fpga_ops_write_init,
+>         .write_sg = zynq_fpga_ops_write,
+>         .write_complete = zynq_fpga_ops_write_complete,
+> +       .read = zynq_fpga_ops_read,
+>  };
+>
+>  static int zynq_fpga_probe(struct platform_device *pdev)
+> --
+> 2.7.4
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-fpga" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
+Thanks,
+
+Moritz
