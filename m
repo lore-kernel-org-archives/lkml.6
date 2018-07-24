@@ -6,47 +6,47 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D087ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 15:02:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B950ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 15:02:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3731420856
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 15:02:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3731420856
+	by mail.kernel.org (Postfix) with ESMTP id 4C73B20874
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 15:02:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4C73B20874
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388706AbeGXQJ2 (ORCPT
+        id S1727757AbeGXQJn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 12:09:28 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:45905 "EHLO
+        Tue, 24 Jul 2018 12:09:43 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:45129 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388248AbeGXQJ2 (ORCPT
+        with ESMTP id S1726857AbeGXQJn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 12:09:28 -0400
+        Tue, 24 Jul 2018 12:09:43 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w6OF20ee032167
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w6OF2Vf0032218
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Tue, 24 Jul 2018 08:02:00 -0700
+        Tue, 24 Jul 2018 08:02:31 -0700
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w6OF20Z4032164;
-        Tue, 24 Jul 2018 08:02:00 -0700
-Date:   Tue, 24 Jul 2018 08:02:00 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w6OF2UPS032215;
+        Tue, 24 Jul 2018 08:02:30 -0700
+Date:   Tue, 24 Jul 2018 08:02:30 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for zhong jiang <tipbot@zytor.com>
-Message-ID: <tip-387048f51aecaa083e660fe0f15ad339354b116e@git.kernel.org>
-Cc:     riel@redhat.com, peterz@infradead.org, hpa@zytor.com,
-        mingo@kernel.org, torvalds@linux-foundation.org,
-        linux-kernel@vger.kernel.org, tglx@linutronix.de,
-        zhongjiang@huawei.com
-Reply-To: hpa@zytor.com, peterz@infradead.org, riel@redhat.com,
-          zhongjiang@huawei.com, tglx@linutronix.de,
-          linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-          mingo@kernel.org
-In-Reply-To: <1532159732-22939-1-git-send-email-zhongjiang@huawei.com>
-References: <1532159732-22939-1-git-send-email-zhongjiang@huawei.com>
+From:   tip-bot for Len Brown <tipbot@zytor.com>
+Message-ID: <tip-d9e6dbcf28f383bf08e6a3180972f5722e514a54@git.kernel.org>
+Cc:     tglx@linutronix.de, mingo@kernel.org,
+        torvalds@linux-foundation.org, hpa@zytor.com,
+        linux-kernel@vger.kernel.org, peterz@infradead.org,
+        len.brown@intel.com
+Reply-To: peterz@infradead.org, len.brown@intel.com, tglx@linutronix.de,
+          hpa@zytor.com, torvalds@linux-foundation.org, mingo@kernel.org,
+          linux-kernel@vger.kernel.org
+In-Reply-To: <d0c7129e509660be9ec6b233284b8d42d90659e8.1532207856.git.len.brown@intel.com>
+References: <d0c7129e509660be9ec6b233284b8d42d90659e8.1532207856.git.len.brown@intel.com>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/mm] x86/mm/tlb: Make clear_asid_other() static
-Git-Commit-ID: 387048f51aecaa083e660fe0f15ad339354b116e
+Subject: [tip:x86/urgent] x86/apic: Future-proof the TSC_DEADLINE quirk for
+ SKX
+Git-Commit-ID: d9e6dbcf28f383bf08e6a3180972f5722e514a54
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -60,43 +60,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  387048f51aecaa083e660fe0f15ad339354b116e
-Gitweb:     https://git.kernel.org/tip/387048f51aecaa083e660fe0f15ad339354b116e
-Author:     zhong jiang <zhongjiang@huawei.com>
-AuthorDate: Sat, 21 Jul 2018 15:55:32 +0800
+Commit-ID:  d9e6dbcf28f383bf08e6a3180972f5722e514a54
+Gitweb:     https://git.kernel.org/tip/d9e6dbcf28f383bf08e6a3180972f5722e514a54
+Author:     Len Brown <len.brown@intel.com>
+AuthorDate: Sat, 21 Jul 2018 17:19:19 -0400
 Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Tue, 24 Jul 2018 09:52:32 +0200
+CommitDate: Tue, 24 Jul 2018 10:05:13 +0200
 
-x86/mm/tlb: Make clear_asid_other() static
+x86/apic: Future-proof the TSC_DEADLINE quirk for SKX
 
-Fixes the following sparse warning:
+All SKX with stepping higher than 4 support the TSC_DEADLINE,
+no matter the microcode version.
 
-  arch/x86/mm/tlb.c:38:6: warning: symbol 'clear_asid_other' was not declared. Should it be static?
+Without this patch, upcoming SKX steppings will not be able to use
+their TSC_DEADLINE timer.
 
-Signed-off-by: zhong jiang <zhongjiang@huawei.com>
+Signed-off-by: Len Brown <len.brown@intel.com>
+Cc: <stable@kernel.org> # v4.14+
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Rik van Riel <riel@redhat.com>
 Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: dave.hansen@linux.intel.com
-Cc: kirill.shutemov@linux.intel.com
-Cc: tim.c.chen@linux.intel.com
-Link: http://lkml.kernel.org/r/1532159732-22939-1-git-send-email-zhongjiang@huawei.com
+Fixes: 616dd5872e ("x86/apic: Update TSC_DEADLINE quirk with additional SKX stepping")
+Link: http://lkml.kernel.org/r/d0c7129e509660be9ec6b233284b8d42d90659e8.1532207856.git.len.brown@intel.com
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- arch/x86/mm/tlb.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/x86/kernel/apic/apic.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/arch/x86/mm/tlb.c b/arch/x86/mm/tlb.c
-index f086195f644c..752dbf4e0e50 100644
---- a/arch/x86/mm/tlb.c
-+++ b/arch/x86/mm/tlb.c
-@@ -36,7 +36,7 @@
-  * necessary invalidation by clearing out the 'ctx_id' which
-  * forces a TLB flush when the context is loaded.
-  */
--void clear_asid_other(void)
-+static void clear_asid_other(void)
- {
- 	u16 asid;
+diff --git a/arch/x86/kernel/apic/apic.c b/arch/x86/kernel/apic/apic.c
+index 2aabd4cb0e3f..adbda5847b14 100644
+--- a/arch/x86/kernel/apic/apic.c
++++ b/arch/x86/kernel/apic/apic.c
+@@ -573,6 +573,9 @@ static u32 skx_deadline_rev(void)
+ 	case 0x04: return 0x02000014;
+ 	}
+ 
++	if (boot_cpu_data.x86_stepping > 4)
++		return 0;
++
+ 	return ~0U;
+ }
  
