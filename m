@@ -2,137 +2,120 @@ Return-Path: <SRS0=hTZH=KI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61F56C28CF6
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 22:15:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D27C2C6778F
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 22:22:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0EDE120856
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 22:15:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0EDE120856
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
+	by mail.kernel.org (Postfix) with ESMTP id 8AAA020880
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 22:22:29 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bgtvrewD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8AAA020880
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388793AbeGXXYW (ORCPT
+        id S2388832AbeGXXbC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 19:24:22 -0400
-Received: from mx2.suse.de ([195.135.220.15]:39272 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2388572AbeGXXYV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 19:24:21 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 6039BAFA6;
-        Tue, 24 Jul 2018 22:15:45 +0000 (UTC)
-Subject: Re: [PATCH 04/15] MIPS: dts: img: pistachio_marduk: Switch mmc to 1
- bit mode
-To:     linux-mips@linux-mips.org
-Cc:     Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>,
-        James Hogan <jhogan@kernel.org>, linux-kernel@vger.kernel.org,
-        Ian Pozella <Ian.Pozella@imgtec.com>,
-        James Hartley <james.hartley@sondrel.com>,
-        Rahul Bedarkar <rahulbedarkar89@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org
-References: <20180722212010.3979-1-afaerber@suse.de>
- <20180722212010.3979-5-afaerber@suse.de>
-From:   =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>
-Openpgp: preference=signencrypt
-Autocrypt: addr=afaerber@suse.de; prefer-encrypt=mutual; keydata=
- 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
-Organization: SUSE Linux GmbH
-Message-ID: <1b7064bc-7008-2c1c-2398-143401bbc368@suse.de>
-Date:   Wed, 25 Jul 2018 00:15:44 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <20180722212010.3979-5-afaerber@suse.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        Tue, 24 Jul 2018 19:31:02 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:42964 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388572AbeGXXbB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Jul 2018 19:31:01 -0400
+Received: by mail-wr1-f68.google.com with SMTP id e7-v6so5535664wrs.9
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Jul 2018 15:22:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=ui/ENQsK3coGxM9u4SbPNHKRlXUII1ql5vAqIOw34B4=;
+        b=bgtvrewD3tirV080j1ZNd/8mh2196u8Cn7BSyRx50FqRcvYGQVPWLfVDMucX5isPKh
+         JimBCc5P1LkjqwVS3f0tvhAOdkIbuyGHDoccl0EjW8kr8oyZEiIOj71mpOXwd71FgtdJ
+         /UinQA6+YHFEYAuXa7rcriMd+rEpkl3eKY0d8PRKnvrhL9RD4lpI0THOoDrj+tj/Mmty
+         34bo7PeAlEQF2gPhIv+ZNfcbVAbTTNbUGUGOd5FrUDDGxsgLoJcUGGZO+Qo/0R9XQRu+
+         F29a2/OzH8RvzkdM3tzN9FGpEpFLBkbmDxGD5z4+c1X5rgm8FQLMUvd9fICdq1GYbRZk
+         nfgg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=ui/ENQsK3coGxM9u4SbPNHKRlXUII1ql5vAqIOw34B4=;
+        b=PRU8CjJg/0xdc0wv/IUIa891SUBfjoXWpQ34w508ARoGnfmX1dmGmbh9TMYiCb1qvT
+         CKqJrz9ux1zR7VvHg7liJhSKjCd+mGaxeig1rpuFJH6/hLnttpt4OiMsaWuCg8Pxapur
+         Y/WtFZiG/nm89LxWhXNa0Mn4O8JdYxzc57R1drIyV/ChtJ5m/Oxdpt8cdE/Cm8l0995j
+         BBBDAs2M86SqHQM1BiHO9/oha8Po6cAhieV92j6RT3qm8MLak/ixd+YSbTHEuXApsnFw
+         xxR2VDh3ju1u+2HMFB7Hn/I1IafA8KWyEpuYbnOh6su7MAy2Aa17C2ZZJOMWkWYE7gQe
+         IUTA==
+X-Gm-Message-State: AOUpUlGH0MvEnH6s+GxTPeWR3/rcw0/1WlV8ZsVeNamIJ82QGaQW8Gfx
+        dpmqLiTJcnrnCi0mv3gK0lg=
+X-Google-Smtp-Source: AAOMgpfUNn7jCmHGeqvHEesYo4FIAkW7DEPv2xIoo1yEwm3bBREez4CV/gAphFVby5zC3Nvs6Nz7MA==
+X-Received: by 2002:a5d:60c5:: with SMTP id x5-v6mr13853404wrt.232.1532470944503;
+        Tue, 24 Jul 2018 15:22:24 -0700 (PDT)
+Received: from we.local (athedsl-4407117.home.otenet.gr. [79.130.175.61])
+        by smtp.gmail.com with ESMTPSA id p3-v6sm14792125wrg.47.2018.07.24.15.22.23
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 24 Jul 2018 15:22:23 -0700 (PDT)
+Received: from localhost (localhost [127.0.0.1])
+        by we.local (Postfix) with ESMTP id 385FB64081F;
+        Wed, 25 Jul 2018 01:22:22 +0300 (EEST)
+X-Virus-Scanned: amavisd-new at local
+Received: from we.local ([127.0.0.1])
+        by localhost (we.local [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id 37qeFkkaMGba; Wed, 25 Jul 2018 01:22:21 +0300 (EEST)
+Received: by we.local (Postfix, from userid 1000)
+        id 5D63E6408C0; Wed, 25 Jul 2018 01:22:21 +0300 (EEST)
+From:   Georgios Tsotsos <tsotsos@gmail.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Georgios Tsotsos <tsotsos@gmail.com>,
+        Aaro Koskinen <aaro.koskinen@iki.fi>,
+        James Hogan <jhogan@kernel.org>, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 2/4] Staging: octeon-usb: Applying coding style for column width.
+Date:   Wed, 25 Jul 2018 01:22:09 +0300
+Message-Id: <20180724222212.8742-3-tsotsos@gmail.com>
+X-Mailer: git-send-email 2.16.4
+In-Reply-To: <20180724222212.8742-1-tsotsos@gmail.com>
+References: <20180724222212.8742-1-tsotsos@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am 22.07.2018 um 23:19 schrieb Andreas Färber:
-> From: Ian Pozella <Ian.Pozella@imgtec.com>
-> 
-> The mmc block in Pistachio allows 1 to 8 data bits to be used.
-> Marduk uses 4 bits allowing the upper 4 bits to be allocated
-> to the Mikrobus ports. However these bits are still connected
-> internally meaning the mmc block recieves signals on all data lines
+This patch resolves the warnings as its refereed to TODO list.
+There are also a code style issues that could be resolved via breaking
+down cvmx_usb_poll_channel().
 
-"receives"
+Signed-off-by: Georgios Tsotsos <tsotsos@gmail.com>
+---
+ drivers/staging/octeon-usb/octeon-hcd.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
-I had fixed a number of typos from the downstream patches already, but
-this one slipped through.
-
-Regards,
-Andreas
-
-> and seems the internal HW CRC checks get corrupted by this erroneous
-> data.
-> 
-> We cannot control what data is sent on these lines because they go
-> to external ports. 1 bit mode does not exhibit the issue hence the
-> safe default is to use this. If a user knows that in their use case
-> they will not use the upper bits then they can set to 4 bit mode in
-> order to improve performance.
-> 
-> Also make sure that the upper 4 bits don't get allocated to the mmc
-> driver (the default is to assign all 8 pins) so they can be allocated
-> to other drivers. Allocating all 4 despite setting 1 bit mode as this
-> matches what is there in hardware.
-> 
-> Signed-off-by: Ian Pozella <Ian.Pozella@imgtec.com>
-> Signed-off-by: Andreas Färber <afaerber@suse.de>
-[snip]
-
+diff --git a/drivers/staging/octeon-usb/octeon-hcd.c b/drivers/staging/octeon-usb/octeon-hcd.c
+index cff5e790b196..0d3ec12788fc 100644
+--- a/drivers/staging/octeon-usb/octeon-hcd.c
++++ b/drivers/staging/octeon-usb/octeon-hcd.c
+@@ -2637,12 +2637,14 @@ static int cvmx_usb_poll_channel(struct octeon_hcd *usb, int channel)
+ 				hcintmsk.u32 = 0;
+ 				hcintmsk.s.chhltdmsk = 1;
+ 				cvmx_usb_write_csr32(usb,
+-						     CVMX_USBCX_HCINTMSKX(channel, usb->index),
+-						     hcintmsk.u32);
++						CVMX_USBCX_HCINTMSKX(channel,
++							usb->index),
++							hcintmsk.u32);
+ 				usbc_hcchar.s.chdis = 1;
+ 				cvmx_usb_write_csr32(usb,
+-						     CVMX_USBCX_HCCHARX(channel, usb->index),
+-						     usbc_hcchar.u32);
++						CVMX_USBCX_HCCHARX(channel,
++							usb->index),
++							usbc_hcchar.u32);
+ 				return 0;
+ 			} else if (usbc_hcint.s.xfercompl) {
+ 				/*
 -- 
-SUSE Linux GmbH, Maxfeldstr. 5, 90409 Nürnberg, Germany
-GF: Felix Imendörffer, Jane Smithard, Graham Norton
-HRB 21284 (AG Nürnberg)
+2.16.4
+
