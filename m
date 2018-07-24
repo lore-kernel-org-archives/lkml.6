@@ -6,105 +6,94 @@ X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71092ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 15:14:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85088C6778A
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 15:15:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 35C8020874
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 15:14:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 35C8020874
+	by mail.kernel.org (Postfix) with ESMTP id 479BD20874
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 15:15:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 479BD20874
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388466AbeGXQVf (ORCPT
+        id S2388488AbeGXQV5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 12:21:35 -0400
-Received: from foss.arm.com ([217.140.101.70]:53588 "EHLO foss.arm.com"
+        Tue, 24 Jul 2018 12:21:57 -0400
+Received: from foss.arm.com ([217.140.101.70]:53622 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388306AbeGXQVe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 12:21:34 -0400
+        id S2388332AbeGXQV4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Jul 2018 12:21:56 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9EB9A80D;
-        Tue, 24 Jul 2018 08:14:37 -0700 (PDT)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id EB4EA15AB;
+        Tue, 24 Jul 2018 08:14:59 -0700 (PDT)
 Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 6F19B3F237;
-        Tue, 24 Jul 2018 08:14:37 -0700 (PDT)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id BD6503F237;
+        Tue, 24 Jul 2018 08:14:59 -0700 (PDT)
 Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
-        id 1C3651AE3B5E; Tue, 24 Jul 2018 16:14:37 +0100 (BST)
-Date:   Tue, 24 Jul 2018 16:14:37 +0100
+        id 6B57A1AE3B5E; Tue, 24 Jul 2018 16:14:59 +0100 (BST)
+Date:   Tue, 24 Jul 2018 16:14:59 +0100
 From:   Will Deacon <will.deacon@arm.com>
-To:     "Rafael J. Wysocki" <rafael@kernel.org>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        AKASHI Takahiro <takahiro.akashi@linaro.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+To:     Alexei Colin <acolin@isi.edu>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         Catalin Marinas <catalin.marinas@arm.com>,
-        Tony Luck <tony.luck@intel.com>,
-        Fenghua Yu <fenghua.yu@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-ia64@vger.kernel.org,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>
-Subject: Re: [PATCH] [SUBMITTED 20180724] arm64: fix ACPI dependencies
-Message-ID: <20180724151435.GB25412@arm.com>
-References: <20180724094957.1967541-1-arnd@arndb.de>
- <CAJZ5v0jMtWDZePW=mu_cO2PjHVGp1hQThSveq9+=2aNozESENQ@mail.gmail.com>
- <20180724102102.GI19324@arm.com>
- <CAJZ5v0h1zGHrMo6HLtSMWE4kM9YK-3QvgHnBaRrEpMHAJrrMtg@mail.gmail.com>
+        Alex Bounine <alex.bou9@gmail.com>,
+        Barry Wood <barry.wood@idt.com>,
+        John Paul Walters <jwalters@isi.edu>
+Subject: Re: [PATCH] arm64: enable RapidIO config options in Kconfig
+Message-ID: <20180724151458.GE25412@arm.com>
+References: <20180724134513.86796-1-acolin@isi.edu>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAJZ5v0h1zGHrMo6HLtSMWE4kM9YK-3QvgHnBaRrEpMHAJrrMtg@mail.gmail.com>
+In-Reply-To: <20180724134513.86796-1-acolin@isi.edu>
 User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 24, 2018 at 12:23:48PM +0200, Rafael J. Wysocki wrote:
-> On Tue, Jul 24, 2018 at 12:21 PM, Will Deacon <will.deacon@arm.com> wrote:
-> > On Tue, Jul 24, 2018 at 11:54:25AM +0200, Rafael J. Wysocki wrote:
-> >> On Tue, Jul 24, 2018 at 11:48 AM, Arnd Bergmann <arnd@arndb.de> wrote:
-> >> > Kconfig reports a warning on x86 builds after the ARM64 dependency
-> >> > was added.
-> >> >
-> >> > drivers/acpi/Kconfig:6:error: recursive dependency detected!
-> >> > drivers/acpi/Kconfig:6:       symbol ACPI depends on EFI
-> >> >
-> >> > This rephrases the dependency to keep the ARM64 details out of the
-> >> > shared Kconfig file, so Kconfig no longer gets confused by it.
-> >> >
-> >> > For consistency, all three architectures that support ACPI now
-> >> > select ARCH_SUPPORTS_ACPI in exactly the configuration in which
-> >> > they allow it. We still need the 'default x86', as each one
-> >> > wants a different default: default-y on x86, default-n on arm64,
-> >> > and always-y on ia64.
-> >> >
-> >> > Fixes: 5bcd44083a08 ("drivers: acpi: add dependency of EFI for arm64")
-> >> > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> >> > ---
-> >> > v2: use 'select ARCH_SUPPORTS_ACPI' for all three.
-> >>
-> >> LGTM
-> >>
-> >> Reviewed-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> >
-> > Same here:
-> >
-> > Acked-by: Will Deacon <will.deacon@arm.com>
-> >
-> > Would it be ok if I take this via the arm64 tree, since that's where the
-> > warning was introduced?
+On Tue, Jul 24, 2018 at 09:45:14AM -0400, Alexei Colin wrote:
+> ARM64 SoCs with a PCI bus present the RapiodIO options; SoCs with
+> RapidIO IP blocks but without a PCI bus, need to select HAS_RAPIDIO in
+> Kconfig.platforms.
 > 
-> Yes, it would, from the ACPI side.
+> HAS_RAPIDIO was chosen over HAVE_RAPIDIO to be consistent with
+> other architectures which already define this flag (powerpc).
+> 
+> Signed-off-by: Alexei Colin <acolin@isi.edu>
+> ---
+> 
+> Tested that kernel builds with RapidIO subsystem and switch drivers and that
+> modules insert successfully in a custom Qemu hardware model.
+> Maintainers for RapidIO subsystem CCed.
+> Similar patch for ARM has been submitted.
+> 
+>  arch/arm64/Kconfig | 16 ++++++++++++++++
+>  1 file changed, 16 insertions(+)
+> 
+> diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+> index 42c090cf0292..8dceaa5b674c 100644
+> --- a/arch/arm64/Kconfig
+> +++ b/arch/arm64/Kconfig
+> @@ -293,6 +293,22 @@ config PCI_SYSCALL
+>  
+>  source "drivers/pci/Kconfig"
+>  
+> +config HAS_RAPIDIO
+> +	bool
+> +	default n
+> +
+> +config RAPIDIO
+> +	tristate "RapidIO support"
+> +	depends on HAS_RAPIDIO || PCI
+> +	help
+> +	  This feature enables support for RapidIO high-performance
+> +	  packet-switched interconnect.
+> +
+> +	  If you say Y here, the kernel will include drivers and
+> +	  infrastructure code to support RapidIO interconnect devices.
 
-Ok, I'll stick this into next tomorrow pending any objections from the x86
-maintainers.
+It feels a bit weird to push this help text into the arch Kconfig files,
+rather than just have them provide the HAS_RAPIDIO symbol, but if that's
+what everybody else is doing then I guess it's fine.
 
 Will
