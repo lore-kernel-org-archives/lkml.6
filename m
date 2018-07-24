@@ -2,114 +2,134 @@ Return-Path: <SRS0=hTZH=KI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4ED1FC6778A
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 13:02:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F83FC6778A
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 13:03:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1030720874
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 13:02:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1030720874
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id E775120874
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 13:03:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E775120874
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388386AbeGXOI0 (ORCPT
+        id S2388332AbeGXOKO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 10:08:26 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:54825 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388302AbeGXOIZ (ORCPT
+        Tue, 24 Jul 2018 10:10:14 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:53661 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388279AbeGXOKO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 10:08:25 -0400
-Received: by mail-wm0-f68.google.com with SMTP id c14-v6so2439662wmb.4
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Jul 2018 06:02:01 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=3BgljC+3PT0Ic4dJXbKfRELkvUnoZrlTurBgY1AEfa0=;
-        b=W7Cp76Lq6Zc/RLjjNl+LcQZQ63NkODfPP8/aJ2mUo27lshJUnQtt/aaYH1UPE4Ltph
-         OqITstqKvRKl9U1zwBP9bkeSH9SV2wyBWi7vHPZ+EXD9uRelVwSZivYWnCz/g3JoytfT
-         P1WJpLN+LH5b/Rb0dBwavnPEtgxGPxTxiJ/SIGPYbhb7cCHh3i5ejHStRV0QSBfE3Jni
-         d1ElMqc3Lo3c750fkDwarhwJ7x36hM2c/qD9ZwpDd9xN4I/6bAYqZy+agTsEya3pC9jK
-         pLag2x3dG89bvrO0dFzC6dQtol8lOgmvpTfS/kim8E6QKnYJ2O1kTCSYoXECc/ROXSXu
-         Sy2A==
-X-Gm-Message-State: AOUpUlHdIJxKm6LNmh3avw/lckXILStc5fQPoEm/rVYLrFGbNGy0UXt0
-        8+0+ABW5OxVyvZ5T7Kg0w2OLSp+Z2DY=
-X-Google-Smtp-Source: AAOMgpdZLDRjUaCiyl5k4X8a8ayBtWRoKnUAu6A6sH3GFZB1OgUiu2gKtWxK2A0o+VGmFsNKdaY5gA==
-X-Received: by 2002:a1c:7506:: with SMTP id o6-v6mr1945308wmc.60.1532437320892;
-        Tue, 24 Jul 2018 06:02:00 -0700 (PDT)
-Received: from veci.piliscsaba.redhat.com (catv-212-96-48-140.catv.broadband.hu. [212.96.48.140])
-        by smtp.gmail.com with ESMTPSA id f20-v6sm1993358wmd.3.2018.07.24.06.01.59
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 24 Jul 2018 06:02:00 -0700 (PDT)
-From:   Miklos Szeredi <mszeredi@redhat.com>
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: [PATCH v3] vfs: don't evict uninitialized inode
-Date:   Tue, 24 Jul 2018 15:01:55 +0200
-Message-Id: <20180724130155.20641-1-mszeredi@redhat.com>
-X-Mailer: git-send-email 2.14.3
-In-Reply-To: <20180724064929.GD19722@shao2-debian>
-References: <20180724064929.GD19722@shao2-debian>
+        Tue, 24 Jul 2018 10:10:14 -0400
+Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
+        id B7CC98055A; Tue, 24 Jul 2018 15:03:47 +0200 (CEST)
+Date:   Tue, 24 Jul 2018 15:03:46 +0200
+From:   Pavel Machek <pavel@ucw.cz>
+To:     Oliver Neukum <oneukum@suse.com>
+Cc:     Yu Chen <yu.c.chen@intel.com>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Eric Biggers <ebiggers@google.com>,
+        "Lee, Chun-Yi" <jlee@suse.com>, Theodore Ts o <tytso@mit.edu>,
+        Stephan Mueller <smueller@chronox.de>,
+        Denis Kenzior <denkenz@gmail.com>, linux-pm@vger.kernel.org,
+        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Gu, Kookoo" <kookoo.gu@intel.com>,
+        "Zhang, Rui" <rui.zhang@intel.com>
+Subject: Re: [PATCH 0/4][RFC v2] Introduce the in-kernel hibernation
+ encryption
+Message-ID: <20180724130110.GA29006@amd>
+References: <cover.1531924968.git.yu.c.chen@intel.com>
+ <20180718202235.GA4132@amd>
+ <20180718235851.GA22170@sandybridge-desktop>
+ <20180719110149.GA4679@amd>
+ <20180719132003.GA30981@sandybridge-desktop>
+ <20180720102532.GA20284@amd>
+ <1532346156.3057.11.camel@suse.com>
+ <20180723162302.GA4503@sandybridge-desktop>
+ <20180724120133.GD26036@amd>
+ <1532436474.17797.20.camel@suse.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="oC1+HKm2/end4ao3"
+Content-Disposition: inline
+In-Reply-To: <1532436474.17797.20.camel@suse.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-iput() ends up calling ->evict() on new inode, which is not yet initialized
-by owning fs.  So use destroy_inode() instead.
 
-Add to sb->s_inodes list only if inode is not in I_CREATING state (meaning
-that it wasn't allocated with new_inode(), which already does the
-insertion).
+--oC1+HKm2/end4ao3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Reported-by: Al Viro <viro@zeniv.linux.org.uk>
-Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
-Fixes: 80ea09a002bf ("vfs: factor out inode_insert5()")
----
- fs/inode.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+On Tue 2018-07-24 14:47:54, Oliver Neukum wrote:
+> On Di, 2018-07-24 at 14:01 +0200, Pavel Machek wrote:
+> > Hi!
+> >=20
+> > > > > >        "There have some functions be locked-down because
+> > > > > >        there have no appropriate mechanisms to check the
+> > > > > >        integrity of writing data."
+> > > > > >        https://patchwork.kernel.org/patch/10476751/
+> > > > >=20
+> > > > > So your goal is to make hibernation compatible with kernel
+> > > > > lockdown? Do your patches provide sufficient security that hibern=
+ation
+> > > > > can be enabled with kernel lockdown?
+> > > >=20
+> > > > OK, maybe I am dense, but if the key comes from user space, will th=
+at
+> > > > be enough?
+> > > >=20
+> > >=20
+> > > Good point, we once tried to generate key in kernel, but people
+> > > suggest to generate key in userspace and provide it to the
+> > > kernel, which is what ecryptfs do currently, so it seems this
+> > > should also be safe for encryption in kernel.
+> >=20
+> > Safe against what kind of attack? Please describe what kind of
+> > security you are trying to provide.
+>=20
+> Unsigned code must not take over the priviledge level of signed code.
+> Hence:
+>=20
+> 1. Unsigned code must not allowed to read sensitive parts of signed
+> code's memory space
+>=20
+> 2. Unsigned code must not be able to alter the memory space of
+> signed code -> snapshots that are changed must not be able to be
+> resumed
 
-diff --git a/fs/inode.c b/fs/inode.c
-index 04dd7e0d5142..0aa5b29b6f87 100644
---- a/fs/inode.c
-+++ b/fs/inode.c
-@@ -1050,6 +1050,7 @@ struct inode *inode_insert5(struct inode *inode, unsigned long hashval,
- {
- 	struct hlist_head *head = inode_hashtable + hash(inode->i_sb, hashval);
- 	struct inode *old;
-+	bool creating = inode->i_state & I_CREATING;
- 
- again:
- 	spin_lock(&inode_hash_lock);
-@@ -1083,6 +1084,8 @@ struct inode *inode_insert5(struct inode *inode, unsigned long hashval,
- 	inode->i_state |= I_NEW;
- 	hlist_add_head(&inode->i_hash, head);
- 	spin_unlock(&inode->i_lock);
-+	if (!creating)
-+		inode_sb_list_add(inode);
- unlock:
- 	spin_unlock(&inode_hash_lock);
- 
-@@ -1117,12 +1120,13 @@ struct inode *iget5_locked(struct super_block *sb, unsigned long hashval,
- 	struct inode *inode = ilookup5(sb, hashval, test, data);
- 
- 	if (!inode) {
--		struct inode *new = new_inode(sb);
-+		struct inode *new = alloc_inode(sb);
- 
- 		if (new) {
-+			new->i_state = 0;
- 			inode = inode_insert5(new, hashval, test, set, data);
- 			if (unlikely(inode != new))
--				iput(new);
-+				destroy_inode(new);
- 		}
- 	}
- 	return inode;
--- 
-2.14.3
+Ok.
 
+> > I don't think generating key in userspace is good enough for providing
+> > guarantees for secure-boot.
+>=20
+> Why?
+
+Because then, userpace has both key (now) and encrypted image (after
+reboot), so it can decrypt, modify, re-encrypt...?
+
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--oC1+HKm2/end4ao3
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAltXI7IACgkQMOfwapXb+vK8JwCfeZUQh+2gddlW14jEDIAOd7bG
+keQAoIysDM0pDoo0PllRmxnnEFrNOo38
+=CdfA
+-----END PGP SIGNATURE-----
+
+--oC1+HKm2/end4ao3--
