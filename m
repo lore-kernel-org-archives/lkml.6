@@ -2,121 +2,109 @@ Return-Path: <SRS0=hTZH=KI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ECAE2C28CF6
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 20:49:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F811C28CF6
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 20:50:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A4B3D20856
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 20:49:37 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ng2TCdrg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A4B3D20856
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id DCAB820856
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 20:50:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DCAB820856
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388849AbeGXV5u (ORCPT
+        id S2388893AbeGXV6R (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 17:57:50 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:33256 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388690AbeGXV5u (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 17:57:50 -0400
-Received: by mail-wm0-f68.google.com with SMTP id r24-v6so6626580wmh.0
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Jul 2018 13:49:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=geto6TEds4J48/qWPw030L/yQw8RmJ9eE0n+jGzwFow=;
-        b=Ng2TCdrgfBmnbqNsewAD/Dcjk6aqj8oP+bQAzmGuFfPaHLekj/tPGsme+Afwr/Nh7m
-         32nzg2n9AZqx4ieLnbpWp2MUHkda9xuMSKe3oO6zTfUzbsP4SZQ2sxu6KQro9fuPnIfJ
-         3YWk1Xy/rf0lw/Ef0UDnTB4tH94Rlf+KsP1gIUr9f4n0yrUFFI/ewQ+M+55EVvbYKFOn
-         EkJkT+a0ODWdybKfdh1jO3qW4rlCsptUOIuOc2B62IpWIVUZIMdo1Id22kl0uBRr+vf4
-         abI7xcwe84uHs+UbhKunbwljM2BLZMMn43j/HEgE8tyCj7StgHU+euQrZSEtawWh179L
-         IdPg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=geto6TEds4J48/qWPw030L/yQw8RmJ9eE0n+jGzwFow=;
-        b=kdQah6DSMgtJLPG0oQ/B0g1yYMOAggLzTGd3OdI2JIzH6JjkmdfKoKHP0nUWI1Is+V
-         AOmZXCw0SdbfuXRKh8VDhL1MHN42HUcNIjB12dXKJHyyLxnqmZl7eEo+WfH6clm2mS1p
-         84AwJmKgiX54j3PAibnXIMcCQerAIkDs5VlgAJP48NUgJ4u+HrezLWv5U+IaKuT7zqz7
-         uvWvdtAFl3Fq/uQfqTxxXVintFYRezBCRHCVCztRSe/rpA1KNGx/ssueFWtHvSsbIBMD
-         6RXrXtFnwvUUvXsgEdAERbXxPsXPUujcMAjrj9nUmSIcjrVanZduT9D2xDQQcsVtuWO9
-         D1JQ==
-X-Gm-Message-State: AOUpUlFvx/OxQba9tcoM0We0aBzJYZC1hyHPlhyM/AZm/giwNbqoSCga
-        mJVHkmVizgCb9KD5fbpk4DDcy0Vi59u7ob97TqI=
-X-Google-Smtp-Source: AAOMgpe1HoYtCrpIFsoDGhveTeRUcBJ7KzI6TBoj1x2YKCJaNq+B88oBXmlscOnTZ2I2OmrMCg+6hRemAKsS7GWYBFM=
-X-Received: by 2002:a1c:d750:: with SMTP id o77-v6mr2818652wmg.67.1532465373957;
- Tue, 24 Jul 2018 13:49:33 -0700 (PDT)
+        Tue, 24 Jul 2018 17:58:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52892 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388812AbeGXV6R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Jul 2018 17:58:17 -0400
+Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1EC5620856;
+        Tue, 24 Jul 2018 20:50:01 +0000 (UTC)
+Date:   Tue, 24 Jul 2018 16:49:59 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Masami Hiramatsu <mhiramat@kernel.org>
+Cc:     Ingo Molnar <mingo@redhat.com>, Shuah Khan <shuah@kernel.org>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>,
+        Hiraku Toyooka <hiraku.toyooka@cybertrust.co.jp>,
+        linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH 1/3] [BUGFIX] tracing: Fix double free of
+ event_trigger_data
+Message-ID: <20180724164959.3cbc1422@gandalf.local.home>
+In-Reply-To: <20180725000909.6c8b2f3881ee75c4f6bd466b@kernel.org>
+References: <153149923649.11274.14970833360963898112.stgit@devbox>
+        <153149926702.11274.12489440326560729788.stgit@devbox>
+        <20180723221006.60cc7aa9@vmware.local.home>
+        <20180725000909.6c8b2f3881ee75c4f6bd466b@kernel.org>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Received: by 2002:adf:979e:0:0:0:0:0 with HTTP; Tue, 24 Jul 2018 13:49:33
- -0700 (PDT)
-In-Reply-To: <20180723142956.3718-1-baijiaju1990@gmail.com>
-References: <20180723142956.3718-1-baijiaju1990@gmail.com>
-From:   Alex Deucher <alexdeucher@gmail.com>
-Date:   Tue, 24 Jul 2018 16:49:33 -0400
-Message-ID: <CADnq5_MWJhQfqYL7KOnx5O+WfgZT01PhvPpROMj2_CeCCaA+iQ@mail.gmail.com>
-Subject: Re: [PATCH] gpu: drm: amdgpu: Replace mdelay with msleep in cik_pcie_gen3_enable()
-To:     Jia-Ju Bai <baijiaju1990@gmail.com>
-Cc:     "Deucher, Alexander" <alexander.deucher@amd.com>,
-        Christian Koenig <christian.koenig@amd.com>,
-        Chunming Zhou <David1.Zhou@amd.com>,
-        Dave Airlie <airlied@linux.ie>, Rex Zhu <Rex.Zhu@amd.com>,
-        "Wentland, Harry" <harry.wentland@amd.com>,
-        "Li, Samuel" <Samuel.Li@amd.com>,
-        Maling list - DRI developers 
-        <dri-devel@lists.freedesktop.org>,
-        amd-gfx list <amd-gfx@lists.freedesktop.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 23, 2018 at 10:29 AM, Jia-Ju Bai <baijiaju1990@gmail.com> wrote:
-> cik_pcie_gen3_enable() is only called by cik_common_hw_init(), which is
-> never called in atomic context.
-> cik_pcie_gen3_enable() calls mdelay() to busily wait, which is not
-> necessary.
-> mdelay() can be replaced with msleep().
->
-> This is found by a static analysis tool named DCNS written by myself.
->
-> Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+On Wed, 25 Jul 2018 00:09:09 +0900
+Masami Hiramatsu <mhiramat@kernel.org> wrote:
 
-Applied.  thanks!
+> Hmm, your patch seems to leak a memory since event_trigger_init() will
+> be called twice on same trigger_data (Note that event_trigger_init()
+> does not init ref counter, but increment it.) So we should decrement
+> it when we find it is succeeded. Moreover, if register_trigger()
 
-Alex
+Good catch, and easily fixed.
 
-> ---
->  drivers/gpu/drm/amd/amdgpu/cik.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> fails before calling data->ops->init() (see -EEXIST case), the ref
+> counter will be 0 (-1 +1). But if it fails after data->ops->init(),
+> the ref counter will be 1 (-1 +1 +1). It still be unstable.
+> (Ah, that means we may have another trouble...)
+
+I'm not sure there's a problem here. I now have:
+
+ out_reg:
+	/* Up the trigger_data count to make sure reg doesn't free it on failuer */
+	event_trigger_init(trigger_ops, trigger_data);
+	ret = cmd_ops->reg(glob, trigger_ops, trigger_data, file);
+	/*
+	 * The above returns on success the # of functions enabled,
+	 * but if it didn't find any functions it returns zero.
+	 * Consider no functions a failure too.
+	 */
+	if (!ret) {
+		ret = -ENOENT;
+	} else if (ret > 0)
+		ret = 0;
+
+	/* Down the counter of trigger_data or free it if not used anymore */
+	event_trigger_free(trigger_ops, trigger_data);
+ out:
+	return ret;
+
+Thus we increment trigger_data before calling reg, and free it
+afterward. But if reg() did an init too, then the event_trigger_free()
+just decs the ref counter.
+
+As for register_trigger()
+
+
+> 
+> > 
+> > P.S. This brings up another minor bug. The failure should return ENOMEM
+> > not ENOENT.  
+> 
+> Hmm it seems we should review the register_trigger() implementation.
+> It should return the return value of trace_event_trigger_enable_disable(),
+> shouldn't it?
 >
-> diff --git a/drivers/gpu/drm/amd/amdgpu/cik.c b/drivers/gpu/drm/amd/amdgpu/cik.c
-> index 0df22030e713..5b7fab2c2008 100644
-> --- a/drivers/gpu/drm/amd/amdgpu/cik.c
-> +++ b/drivers/gpu/drm/amd/amdgpu/cik.c
-> @@ -1476,7 +1476,7 @@ static void cik_pcie_gen3_enable(struct amdgpu_device *adev)
->                                 tmp |= PCIE_LC_CNTL4__LC_REDO_EQ_MASK;
->                                 WREG32_PCIE(ixPCIE_LC_CNTL4, tmp);
->
-> -                               mdelay(100);
-> +                               msleep(100);
->
->                                 /* linkctl */
->                                 pci_read_config_word(root, bridge_pos + PCI_EXP_LNKCTL, &tmp16);
-> --
-> 2.17.0
->
-> _______________________________________________
-> amd-gfx mailing list
-> amd-gfx@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/amd-gfx
+
+Yeah, that's not done well. I'll fix it up.
+
+Thanks for pointing it out.
+
+-- Steve
