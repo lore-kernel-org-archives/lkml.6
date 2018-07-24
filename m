@@ -2,97 +2,154 @@ Return-Path: <SRS0=hTZH=KI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56B33ECDE5F
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 01:11:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 668ADECDFB8
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 01:13:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CDB6720852
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 01:11:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CDB6720852
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zte.com.cn
+	by mail.kernel.org (Postfix) with ESMTP id 173A220875
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 01:13:52 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="OsNyF+TR";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="mmlXLrUn"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 173A220875
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388300AbeGXCPe (ORCPT
+        id S2388316AbeGXCRl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 22:15:34 -0400
-Received: from mx7.zte.com.cn ([202.103.147.169]:42184 "EHLO mxct.zte.com.cn"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388234AbeGXCPe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 22:15:34 -0400
-Received: from mse02.zte.com.cn (unknown [10.30.3.21])
-        by Forcepoint Email with ESMTPS id CBD3AA94A383619B4DC2;
-        Tue, 24 Jul 2018 09:11:39 +0800 (CST)
-Received: from kjyxapp02.zte.com.cn ([10.30.12.201])
-        by mse02.zte.com.cn with SMTP id w6O1BapH017570;
-        Tue, 24 Jul 2018 09:11:36 +0800 (GMT-8)
-        (envelope-from jiang.biao2@zte.com.cn)
-Received: from mapi (kjyxapp04[null])
-        by mapi (Zmail) with MAPI id mid14;
-        Tue, 24 Jul 2018 09:11:37 +0800 (CST)
-Date:   Tue, 24 Jul 2018 09:11:37 +0800 (CST)
-X-Zmail-TransId: 2b065b567cc9c125f9b5
-X-Mailer: Zmail v1.0
-Message-ID: <201807240911372861670@zte.com.cn>
-In-Reply-To: <20180723084031.GX2494@hirez.programming.kicks-ass.net>
-References: 1532324370-80651-1-git-send-email-chen.lin130@zte.com.cn,20180723084031.GX2494@hirez.programming.kicks-ass.net
-Mime-Version: 1.0
-From:   <jiang.biao2@zte.com.cn>
-To:     <peterz@infradead.org>
-Cc:     <chen.lin130@zte.com.cn>, <mingo@redhat.com>,
-        <linux-kernel@vger.kernel.org>, <zhong.weidong@zte.com.cn>,
-        <tan.hu@zte.com.cn.cn>, <cheng.lin130@zte.com.cn>,
-        <tan.hu@zte.com.cn>
-Subject: =?UTF-8?B?UmU6IFtQQVRDSF0gc2NoZWQvbnVtYTogZG8gbm90IGJhbGFuY2UgdGFza3Mgb250byBpc29sYXRlZCBjcHVz?=
-Content-Type: multipart/mixed;
-        boundary="=====_001_next====="
-X-MAIL: mse02.zte.com.cn w6O1BapH017570
+        Mon, 23 Jul 2018 22:17:41 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:40364 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388234AbeGXCRl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Jul 2018 22:17:41 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 1692C607B9; Tue, 24 Jul 2018 01:13:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1532394829;
+        bh=Ph+CJC+vZ9uLLGSxmCxmhUhqv4EM+7gkn0cfUW6Y6lU=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=OsNyF+TRJ0BCquwWTHdbROXjMlCFmCXsLFqAUMYth1vL2I+MMhFR6yNypZFDE6t1N
+         SAtpvN8l6T4x+xVLUR/V3MElEOOnPhqHRXTq3wWzY8iYK8k5+dcJo2OfaZXFXV8on5
+         +xHsEIub+ST6p9pSEb64Q9P9Qf9BBPvkxNrt1yVk=
+Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by smtp.codeaurora.org (Postfix) with ESMTP id 1ACF76071B;
+        Tue, 24 Jul 2018 01:13:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1532394828;
+        bh=Ph+CJC+vZ9uLLGSxmCxmhUhqv4EM+7gkn0cfUW6Y6lU=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=mmlXLrUnIVzmdM07ipfGGA6famdayUQV9cOPgqL0Y5YE6s3ZVNgRdfeRz6QanA14j
+         CXv8epHbP9jJDF2G9bRN+nh2vh1lDvCg0L5y7Sv+asL42YwN9NHajRZbYVXIGNA6+D
+         qI9HCSgd/9p6KBh3WGDh9/maaEoulpHnepyr33sQ=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Mon, 23 Jul 2018 18:13:48 -0700
+From:   isaacm@codeaurora.org
+To:     peterz@infradead.org, matt@codeblueprint.co.uk, mingo@kernel.org,
+        tglx@linutronix.de, bigeasy@linutronix.de
+Cc:     linux-kernel@vger.kernel.org, psodagud@codeaurora.org,
+        gregkh@linuxfoundation.org, pkondeti@codeaurora.org,
+        stable@vger.kernel.org
+Subject: Re: [PATCH] stop_machine: Disable preemption after queueing stopper
+ threads
+In-Reply-To: <1531856129-9871-1-git-send-email-isaacm@codeaurora.org>
+References: <1531856129-9871-1-git-send-email-isaacm@codeaurora.org>
+Message-ID: <a30d1e147d3181fc7b294262e380a10c@codeaurora.org>
+X-Sender: isaacm@codeaurora.org
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi all,
 
+Are there any comments about this patch?
 
---=====_001_next=====
-Content-Type: multipart/alternative;
-	boundary="=====_003_next====="
-
-
---=====_003_next=====
-Content-Type: text/plain;
-	charset="UTF-8"
-Content-Transfer-Encoding: base64
-
-Pgo+IE9uIE1vbiwgSnVsIDIzLCAyMDE4IGF0IDAxOjM5OjMwUE0gKzA4MDAsIENoZW4gTGluIHdy
-b3RlOgo+PiBGcm9tOiBDaGVuIExpbiA8Y2hlbmcubGluMTMwQHp0ZS5jb20uY24+Cj4+Cj4+IE5V
-TUEgYmFsYW5jaW5nIGhhcyBub3QgdGFrZW4gKmlzb2xjcHVzKGlzb2xhdGVkIGNwdXMpKiBpbnRv
-Cj4+IGNvbnNpZGVyYXRpb24uIEl0IG1heSBtaWdyYXRlIHRhc2tzIG9udG8gaXNvbGF0ZWQgY3B1
-cyBhbmQgdGhlCj4+IG1pZ3JhdGVkIHRhc2tzIHdpbGwgbmV2ZXIgZXNjYXBlIGZyb20gdGhlIGlz
-b2xhdGVkIGNwdXMsIHdoaWNoIHdpbGwKPj4gYnJlYWsgdGhlIGlzb2xhdGlvbiBwcm92aWRlZCBi
-eSAqaXNvbGNwdXMqIGJvb3QgcGFyYW1ldGVyIGFuZAo+PiBpbnRyZHVjZSB2YXJpb3VzIHByb2Js
-ZW1zLgo+Pgo+PiBUaGlzIHBhdGNoIGVuc3VyZSBOVU1BIGJhbGFuY2luZyBub3QgdG8gYmFsYW5j
-ZSB0YXNrcyBvbnRvIGlhb2xhdGVkCj4+IGNwdXMuCj4KPiBJJ20gbm90IHN1cmUgd2hhdCBrZXJu
-ZWwgeW91J3JlIHBhdGNoaW5nLCBidXQgY3B1X2lzb2xhdGVkX21hcCBkb2Vzbid0Cj4gZXhpc3Qg
-YW55bW9yZS4gQWxzbywgaWYgaXQgc3RlcHMgb24gaXNvbGF0ZWQgQ1BVcywgdGhpcyBpcyB0aGUg
-d3JvbmcgZml4Cj4gYW55d2F5LiBMb2FkLWJhbGFuY2luZyBzaG91bGQgYmUgY29uc3RyYWluZWQg
-dG8gdGhlIGN1cnJlbnQgcm9vdCBkb21haW4uCkluZGVlZCwgd2UgdXNlZCA0LjE0IHZlcnNpb24g
-YW5kIG1hZGUgd3JvbmcgYXNzdW1wdGlvbiwgc29ycnkgZm9yIHRoYXQuCldlIHdpbGwgcmV0ZXN0
-IG9uIGxhdGVzdCBtYWlubGluZSB2ZXJzaW9uLCByZXdvcmsgdGhlIHBhdGNoIGFuZCBzZW5kIGFu
-b3RoZXIKdmVyc2lvbi4KCj4+IFNpZ25lZC1vZmYtYnk6IENoZW5nIExpbiA8Y2hlbmcubGluMTMw
-QHp0ZS5jb20uY24+Cj4+IFNpZ25lZC1vZmYtYnk6IFRhbiBIdSA8dGFuLmh1QHp0ZS5jb20uY24+
-Cj4+IFNpZ25lZC1vZmYtYnk6IEppYW5nIEJpYW8gPGppYW5nLmJpYW8yQHp0ZS5jb20uY24+Cj4g
-Cj5UaGlzIFNvQiBjaGFpbiBpcyBpbnZhbGlkLgpNbSwgd2UgZG9uJ3QgcXVpdGUgdW5kZXJzdGFu
-ZCB3aGF0IHRoZSAqU2lnbmVkLW9mZi1ieSogcHJlY2lzZWx5IG1lYW5zLApEb2VzIGl0IG9ubHkg
-bWVhbiBEQ08oZGV2ZWxvcGVyIGNlcnRpZmljYXRlIG9mIG9yaWdpbik/CkFzIHdlIHVuZGVyc3Rv
-b2QsIG11bHRpcGxlIFNvQnMgY291bGQgYmUgdXNlZCB0byBpbmRpY2F0ZSBjby1hdXRob3JzLgpJ
-ZiBTb0Igb25seSBtZWFucyBEQ08sIGhvdyBjYW4gdGhlIHBhdGNoZXMgcmVmbGVjdCBjby1hdXRo
-b3JzPwoKVGhhbmtzIGEgbG90LgpKaWFuZywKUmVnYXJkcw==
-
-
---=====_003_next=====--
-
---=====_001_next=====--
-
+Thanks,
+Isaac Manjarres
+On 2018-07-17 12:35, Isaac J. Manjarres wrote:
+> This commit:
+> 
+> 9fb8d5dc4b64 ("stop_machine, Disable preemption when
+> waking two stopper threads")
+> 
+> does not fully address the race condition that can occur
+> as follows:
+> 
+> On one CPU, call it CPU 3, thread 1 invokes
+> cpu_stop_queue_two_works(2, 3,...), and the execution is such
+> that thread 1 queues the works for migration/2 and migration/3,
+> and is preempted after releasing the locks for migration/2 and
+> migration/3, but before waking the threads.
+> 
+> Then, On CPU 2, a kworker, call it thread 2, is running,
+> and it invokes cpu_stop_queue_two_works(1, 2,...), such that
+> thread 2 queues the works for migration/1 and migration/2.
+> Meanwhile, on CPU 3, thread 1 resumes execution, and wakes
+> migration/2 and migration/3. This means that when CPU 2
+> releases the locks for migration/1 and migration/2, but before
+> it wakes those threads, it can be preempted by migration/2.
+> 
+> If thread 2 is preempted by migration/2, then migration/2 will
+> execute the first work item successfully, since migration/3
+> was woken up by CPU 3, but when it goes to execute the second
+> work item, it disables preemption, calls multi_cpu_stop(),
+> and thus, CPU 2 will wait forever for migration/1, which should
+> have been woken up by thread 2. However migration/1 cannot be
+> woken up by thread 2, since it is a kworker, so it is affine to
+> CPU 2, but CPU 2 is running migration/2 with preemption
+> disabled, so thread 2 will never run.
+> 
+> Disable preemption after queueing works for stopper threads
+> to ensure that the operation of queueing the works and waking
+> the stopper threads is atomic.
+> 
+> Fixes: 9fb8d5dc4b64 ("stop_machine, Disable preemption when waking two
+> stopper threads")
+> Co-Developed-by: Prasad Sodagudi <psodagud@codeaurora.org>
+> Co-Developed-by: Pavankumar Kondeti <pkondeti@codeaurora.org>
+> Signed-off-by: Isaac J. Manjarres <isaacm@codeaurora.org>
+> Signed-off-by: Prasad Sodagudi <psodagud@codeaurora.org>
+> Signed-off-by: Pavankumar Kondeti <pkondeti@codeaurora.org>
+> Cc: stable@vger.kernel.org
+> ---
+>  kernel/stop_machine.c | 10 +++++++++-
+>  1 file changed, 9 insertions(+), 1 deletion(-)
+> 
+> diff --git a/kernel/stop_machine.c b/kernel/stop_machine.c
+> index 1ff523d..e190d1e 100644
+> --- a/kernel/stop_machine.c
+> +++ b/kernel/stop_machine.c
+> @@ -260,6 +260,15 @@ static int cpu_stop_queue_two_works(int cpu1,
+> struct cpu_stop_work *work1,
+>  	err = 0;
+>  	__cpu_stop_queue_work(stopper1, work1, &wakeq);
+>  	__cpu_stop_queue_work(stopper2, work2, &wakeq);
+> +	/*
+> +	 * The waking up of stopper threads has to happen
+> +	 * in the same scheduling context as the queueing.
+> +	 * Otherwise, there is a possibility of one of the
+> +	 * above stoppers being woken up by another CPU,
+> +	 * and preempting us. This will cause us to n ot
+> +	 * wake up the other stopper forever.
+> +	 */
+> +	preempt_disable();
+>  unlock:
+>  	raw_spin_unlock(&stopper2->lock);
+>  	raw_spin_unlock_irq(&stopper1->lock);
+> @@ -271,7 +280,6 @@ static int cpu_stop_queue_two_works(int cpu1,
+> struct cpu_stop_work *work1,
+>  	}
+> 
+>  	if (!err) {
+> -		preempt_disable();
+>  		wake_up_q(&wakeq);
+>  		preempt_enable();
+>  	}
