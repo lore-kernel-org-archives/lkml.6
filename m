@@ -2,126 +2,88 @@ Return-Path: <SRS0=hTZH=KI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E53CECDE5F
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 02:51:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B155EECDE5F
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 02:53:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 06A5E20779
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 02:51:31 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="jAgXze0d"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 06A5E20779
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 722D820779
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 02:53:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 722D820779
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388448AbeGXDzk (ORCPT
+        id S2388455AbeGXD5R (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 23:55:40 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:41987 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388263AbeGXDzk (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 23:55:40 -0400
-Received: by mail-pf1-f196.google.com with SMTP id l9-v6so487566pff.9
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Jul 2018 19:51:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=txKumXrCwsJ2SBxzMOb/NbZpSTq91k1tqQrJZCO3LMM=;
-        b=jAgXze0dSOw2UANSA7IwGq5NpfuKN4Nf/E0pten2rnmMdhVreDCpXlIEiVkk/Fv3ag
-         wgCzpi1gRsfGnwmTV+IQLtGukfMPehZAa++vgBYG2Iu3il0VhaSHnOdexDq5DLgeV33q
-         Se8mXgxA3Sn0UYxhYgDf49bnA6DQTiirhBfmc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=txKumXrCwsJ2SBxzMOb/NbZpSTq91k1tqQrJZCO3LMM=;
-        b=QB+SKZZ3jq21Jvs8qz8+105bAjqXrTsu19FlzEvKQTfhQetii+1sy4lHOEIXSFXrjf
-         jPe70dWg0cDnOvphB7svD0ZTmvUCkxWuceH5S7ubasSoAafPMxb15eV360AnanW6cfGP
-         4AFZs+mdDfTLC3PuIEC2nKZQy/VCBnywBp4A4dqEuNTSaUsgHIpKnyNJtjtUudRzmfqR
-         +CiZM+q1V63SIItkQ9BfSq5VMvgmfKXzQ3c7Ykgyfmb7neLv0XmrrrURi/6CXAtvC+gC
-         zFn+i9oPkJuKCDWiaoVBBtaZgNmDDZsXafzB8sczmIFrd07oVyV2R/0VvLvShk6TT6wx
-         a8sA==
-X-Gm-Message-State: AOUpUlHDMJS28V5GGPsTrzA09xkOMTuxA38U81lJMKfJ89oF7KK2rXJe
-        Ip6kyQw7wvS0XGMwqXqNnYErxA==
-X-Google-Smtp-Source: AAOMgpdrPug9ZVEM4BCmvIUvDupVO4ZtfZb0J1uuLzcnnsGXStxBmXXRG1eIzhwfh/Gd9RDcqg3Q1A==
-X-Received: by 2002:a62:c4c3:: with SMTP id h64-v6mr15714313pfk.39.1532400688351;
-        Mon, 23 Jul 2018 19:51:28 -0700 (PDT)
-Received: from ubt.spreadtrum.com ([117.18.48.102])
-        by smtp.gmail.com with ESMTPSA id y132-v6sm14770373pfb.91.2018.07.23.19.51.24
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 23 Jul 2018 19:51:27 -0700 (PDT)
-From:   Chunyan Zhang <zhang.chunyan@linaro.org>
-To:     Ulf Hansson <ulf.hansson@linaro.org>,
-        Adrian Hunter <adrian.hunter@intel.com>
-Cc:     linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Baolin Wang <baolin.wang@linaro.org>,
-        Billows Wu <billows.wu@spreadtrum.com>,
-        Jason Wu <jason.wu@unisoc.com>, zhang.lyra@gmail.com
-Subject: [PATCH V4 4/7] mmc: sdhci: add 32-bit block count support for v4 mode
-Date:   Tue, 24 Jul 2018 10:51:11 +0800
-Message-Id: <1532400671-23429-1-git-send-email-zhang.chunyan@linaro.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1532340508-8749-5-git-send-email-zhang.chunyan@linaro.org>
-References: <1532340508-8749-5-git-send-email-zhang.chunyan@linaro.org>
+        Mon, 23 Jul 2018 23:57:17 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:58860 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2388263AbeGXD5R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Jul 2018 23:57:17 -0400
+Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 5A68F2CD69BEB;
+        Tue, 24 Jul 2018 10:53:00 +0800 (CST)
+Received: from [127.0.0.1] (10.134.22.195) by DGGEMS412-HUB.china.huawei.com
+ (10.3.19.212) with Microsoft SMTP Server id 14.3.382.0; Tue, 24 Jul 2018
+ 10:52:54 +0800
+Subject: Re: [PATCH 1/5] f2fs: clear victim_secmap when section has full valid
+ blocks
+To:     Yunlong Song <yunlong.song@huawei.com>, <jaegeuk@kernel.org>,
+        <chao@kernel.org>, <yunlong.song@icloud.com>
+CC:     <miaoxie@huawei.com>, <bintian.wang@huawei.com>,
+        <shengyong1@huawei.com>, <heyunlei@huawei.com>,
+        <linux-f2fs-devel@lists.sourceforge.net>,
+        <linux-kernel@vger.kernel.org>
+References: <1532355022-163029-1-git-send-email-yunlong.song@huawei.com>
+ <1532355022-163029-2-git-send-email-yunlong.song@huawei.com>
+From:   Chao Yu <yuchao0@huawei.com>
+Message-ID: <fe1659bb-5fed-4d2d-5b68-a109b0235547@huawei.com>
+Date:   Tue, 24 Jul 2018 10:52:54 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <1532355022-163029-2-git-send-email-yunlong.song@huawei.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.134.22.195]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Host Controller Version 4.10 re-defines SDMA System Address register
-as 32-bit Block Count for v4 mode, and SDMA uses ADMA System
-Address register (05Fh-058h) instead if v4 mode is enabled. Also
-when using 32-bit block count, 16-bit block count register need
-to be set to zero.
+On 2018/7/23 22:10, Yunlong Song wrote:
+> Without this patch, f2fs only clears victim_secmap when it finds out
+> that the section has no valid blocks at all, but forgets to clear the
+> victim_secmap when the whole section has full valid blocks.
+> 
+> Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
+> ---
+>  fs/f2fs/segment.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+> index cfff7cf..255bff5 100644
+> --- a/fs/f2fs/segment.c
+> +++ b/fs/f2fs/segment.c
+> @@ -776,7 +776,9 @@ static void __remove_dirty_segment(struct f2fs_sb_info *sbi, unsigned int segno,
+>  		if (test_and_clear_bit(segno, dirty_i->dirty_segmap[t]))
+>  			dirty_i->nr_dirty[t]--;
+>  
+> -		if (get_valid_blocks(sbi, segno, true) == 0)
+> +		if (get_valid_blocks(sbi, segno, true) == 0 ||
+> +			get_valid_blocks(sbi, segno, true) ==
+> +			(sbi->segs_per_sec << sbi->log_blocks_per_seg))
 
-Signed-off-by: Chunyan Zhang <zhang.chunyan@linaro.org>
----
- drivers/mmc/host/sdhci.c | 14 +++++++++++++-
- drivers/mmc/host/sdhci.h |  1 +
- 2 files changed, 14 insertions(+), 1 deletion(-)
+BLKS_PER_SEC(sbi)?
 
-diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
-index 920d8ec..c272a2b 100644
---- a/drivers/mmc/host/sdhci.c
-+++ b/drivers/mmc/host/sdhci.c
-@@ -1070,7 +1070,19 @@ static void sdhci_prepare_data(struct sdhci_host *host, struct mmc_command *cmd)
- 	/* Set the DMA boundary value and block size */
- 	sdhci_writew(host, SDHCI_MAKE_BLKSZ(host->sdma_boundary, data->blksz),
- 		     SDHCI_BLOCK_SIZE);
--	sdhci_writew(host, data->blocks, SDHCI_BLOCK_COUNT);
-+
-+	/*
-+	 * For Version 4.10 onwards, if v4 mode is enabled, 16-bit Block Count
-+	 * register need to be set to zero, 32-bit Block Count register would
-+	 * be selected.
-+	 */
-+	if (host->version >= SDHCI_SPEC_410 && host->v4_mode) {
-+		if (sdhci_readw(host, SDHCI_BLOCK_COUNT))
-+			sdhci_writew(host, 0, SDHCI_BLOCK_COUNT);
-+		sdhci_writew(host, data->blocks, SDHCI_32BIT_BLK_CNT);
-+	} else {
-+		sdhci_writew(host, data->blocks, SDHCI_BLOCK_COUNT);
-+	}
- }
- 
- static inline bool sdhci_auto_cmd12(struct sdhci_host *host,
-diff --git a/drivers/mmc/host/sdhci.h b/drivers/mmc/host/sdhci.h
-index 23318ff..81aae07 100644
---- a/drivers/mmc/host/sdhci.h
-+++ b/drivers/mmc/host/sdhci.h
-@@ -28,6 +28,7 @@
- 
- #define SDHCI_DMA_ADDRESS	0x00
- #define SDHCI_ARGUMENT2		SDHCI_DMA_ADDRESS
-+#define SDHCI_32BIT_BLK_CNT	SDHCI_DMA_ADDRESS
- 
- #define SDHCI_BLOCK_SIZE	0x04
- #define  SDHCI_MAKE_BLKSZ(dma, blksz) (((dma & 0x7) << 12) | (blksz & 0xFFF))
--- 
-2.7.4
+Thanks,
+
+>  			clear_bit(GET_SEC_FROM_SEG(sbi, segno),
+>  						dirty_i->victim_secmap);
+>  	}
+> 
 
