@@ -2,135 +2,169 @@ Return-Path: <SRS0=hTZH=KI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7B38C6778A
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 17:24:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3595C6778A
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 17:24:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5796720875
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 17:24:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5796720875
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=aosc.io
+	by mail.kernel.org (Postfix) with ESMTP id 900D020874
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 17:24:09 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="G9Feiah7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 900D020874
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=joelfernandes.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388473AbeGXSb1 convert rfc822-to-8bit (ORCPT
+        id S2388510AbeGXSbg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 14:31:27 -0400
-Received: from hermes.aosc.io ([199.195.250.187]:57869 "EHLO hermes.aosc.io"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388393AbeGXSb1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 14:31:27 -0400
-Received: from localhost (localhost [127.0.0.1]) (Authenticated sender: icenowy@aosc.io)
-        by hermes.aosc.io (Postfix) with ESMTPSA id 7EB3D9F540;
-        Tue, 24 Jul 2018 17:23:50 +0000 (UTC)
-Date:   Wed, 25 Jul 2018 01:23:21 +0800
-In-Reply-To: <2421648.YmhYGBseh5@jernej-laptop>
-References: <20180710203511.18454-1-jernej.skrabec@siol.net> <20180724123741.bbkjgy2uwmzsj45k@flea> <f77bcb551d60e9d5332dad20c1ef1a1e83ddcc5b.camel@aosc.io> <2421648.YmhYGBseh5@jernej-laptop>
+        Tue, 24 Jul 2018 14:31:36 -0400
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:41385 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388393AbeGXSbg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Jul 2018 14:31:36 -0400
+Received: by mail-pl0-f67.google.com with SMTP id w8-v6so2055305ply.8
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Jul 2018 10:24:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=joelfernandes.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=toxk+IXZeNr5JmdgFIwY4a/V6xKEg9X97pyxPK/3kCo=;
+        b=G9Feiah7WFmqxB/rnB5qOGhj4xArhsT0Yd7mQZJroSNWqoXogYDddp4Frmoezy0js8
+         pXjdkkddxrqDp6/E5g0NeqxpBFkKDdzr3giKQlsWcOgXniDp6I9g9O8b+3DjHi75xRWN
+         6t7sSD79gu1I/tuICvW9T8LMqWEVQuMHZzbpI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=toxk+IXZeNr5JmdgFIwY4a/V6xKEg9X97pyxPK/3kCo=;
+        b=Tw+507umCD/qaqGDx+QDf4go1n61MGtZG0Zr1Le+9P0AO5N2NgTtiST8vnerGtcs9A
+         mDciyad1+L5dMLpIDitPNIZJw+VJokh3ExcsBcEMVcZjhpV8QD0NqrIGADID3OIE2MC6
+         Td/m9Xd7xti64VPooWbyB4gCdJKdcI7uK18raBoY9sQP9FW23XFg4uZFKDrZaC9bpYu3
+         80VZ5ix+9wJjZV6vJ+du9ZYUR6Q/UFgbxmJknqwbBtuXjegPWDh3uuvoCSLhtFPcosq8
+         38Q3HzPxQBTavprVP2AbM7IhL4MAGGa9CyhBy3I3Zyzqco0WicpYjp3nG+HJwSbkw6sG
+         lKmA==
+X-Gm-Message-State: AOUpUlGZXRIn5hq0cQizDgZVNtrElYrCckKntNao2c/x/tzQNx9whlHg
+        Uymt32W9HU9l/0Np+gpBlHEWlw==
+X-Google-Smtp-Source: AAOMgpcVp9A9cmonCixRLRuB14B2bFAwiGqYA0yRr1DUmwz8rMWU+Fg4NPOVCSwpi9PyN6t3qGK0Rg==
+X-Received: by 2002:a17:902:a40b:: with SMTP id p11-v6mr17950827plq.228.1532453046184;
+        Tue, 24 Jul 2018 10:24:06 -0700 (PDT)
+Received: from localhost ([2620:0:1000:1600:3122:ea9c:d178:eb])
+        by smtp.gmail.com with ESMTPSA id p64-v6sm19522303pfa.47.2018.07.24.10.24.05
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 24 Jul 2018 10:24:05 -0700 (PDT)
+Date:   Tue, 24 Jul 2018 10:24:05 -0700
+From:   Joel Fernandes <joel@joelfernandes.org>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     linux-kernel@vger.kernel.org, kernel-team@android.com,
+        Ruchi Kandoi <kandoiruchi@google.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
+        linux-pm@vger.kernel.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Viresh Kumar <viresh.kumar@linaro.org>
+Subject: Re: [PATCH v2] cpufreq: trace frequency limits change
+Message-ID: <20180724172405.GA257870@joelaf.mtv.corp.google.com>
+References: <20180720222114.200311-1-joel@joelfernandes.org>
+ <20180724094932.11e10452@gandalf.local.home>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: 8BIT
-Subject: Re: [linux-sunxi] Re: [PATCH v2 00/18] Allwinner R40 HDMI refactoring
-To:     linux-arm-kernel@lists.infradead.org,
-        =?UTF-8?Q?Jernej_=C5=A0krabec?= <jernej.skrabec@siol.net>,
-        linux-sunxi@googlegroups.com
-CC:     mark.rutland@arm.com, devicetree@vger.kernel.org,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        airlied@linux.ie, wens@csie.org, robh+dt@kernel.org
-From:   Icenowy Zheng <icenowy@aosc.io>
-Message-ID: <706812FC-7DE2-476E-845C-8429AECC797A@aosc.io>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180724094932.11e10452@gandalf.local.home>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, Jul 24, 2018 at 09:49:32AM -0400, Steven Rostedt wrote:
+> On Fri, 20 Jul 2018 15:21:14 -0700
+> Joel Fernandes <joel@joelfernandes.org> wrote:
+> 
+> > From: Ruchi Kandoi <kandoiruchi@google.com>
+> > 
+> > systrace used for tracing for Android systems has carried a patch for
+> > many years in the Android tree that traces when the cpufreq limits
+> > change.  With the help of this information, systrace can know when the
+> > policy limits change and can visually display the data. Lets add
+> > upstream support for the same.
+> > 
+> > Signed-off-by: Ruchi Kandoi <kandoiruchi@google.com>
+> > Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+> > ---
+> > v1->v2: Minor changes suggested by Viresh
+> > 
+> >  Documentation/trace/events-power.rst |  1 +
+> >  drivers/cpufreq/cpufreq.c            |  1 +
+> >  include/trace/events/power.h         | 25 +++++++++++++++++++++++++
+> >  3 files changed, 27 insertions(+)
+> > 
+> > diff --git a/Documentation/trace/events-power.rst b/Documentation/trace/events-power.rst
+> > index a77daca75e30..2ef318962e29 100644
+> > --- a/Documentation/trace/events-power.rst
+> > +++ b/Documentation/trace/events-power.rst
+> > @@ -27,6 +27,7 @@ cpufreq.
+> >  
+> >    cpu_idle		"state=%lu cpu_id=%lu"
+> >    cpu_frequency		"state=%lu cpu_id=%lu"
+> > +  cpu_frequency_limits	"min=%lu max=%lu cpu_id=%lu"
+> >  
+> >  A suspend event is used to indicate the system going in and out of the
+> >  suspend mode:
+> > diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
+> > index b0dfd3222013..4fd935df101e 100644
+> > --- a/drivers/cpufreq/cpufreq.c
+> > +++ b/drivers/cpufreq/cpufreq.c
+> > @@ -2236,6 +2236,7 @@ static int cpufreq_set_policy(struct cpufreq_policy *policy,
+> >  
+> >  	policy->min = new_policy->min;
+> >  	policy->max = new_policy->max;
+> > +	trace_cpu_frequency_limits(policy->min, policy->max, policy->cpu);
+> 
+> Wouldn't it make more sense just to pass in "policy"?
 
+Yes I agree, good idea.
 
-于 2018年7月25日 GMT+08:00 上午1:20:42, "Jernej Škrabec" <jernej.skrabec@siol.net> 写到:
->Dne torek, 24. julij 2018 ob 18:04:49 CEST je Icenowy Zheng napisal(a):
->> 在 2018-07-24二的 14:37 +0200，Maxime Ripard写道：
->> 
->> > On Sun, Jul 22, 2018 at 04:43:56PM +0200, Jernej Škrabec wrote:
->> > > Hi Maxime,
->> > > 
->> > > Dne sreda, 11. julij 2018 ob 10:30:36 CEST je Maxime Ripard
->> > > 
->> > > napisal(a):
->> > > > On Tue, Jul 10, 2018 at 10:34:53PM +0200, Jernej Skrabec wrote:
->> > > > > This series fixes several issues found in R40 HDMI patch
->series
->> > > > > after
->> 
->> > > > > it was applied. Conversation can be found here:
->>
->http://lists.infradead.org/pipermail/linux-arm-kernel/2018-June/586011.htm
->> 
->> > > > > l
->> > > > > 
->> > > > > Patches are based on latest linux-next (next-20180710) and
->are
->> > > > > ordered
->> > > > > in such way that they don't break R40 HDMI at any time.
->Because
->> > > > > of that
->> > > > > I suggest that whole series goes through drm-misc to preserve
->> > > > > that order.
->> > > > > 
->> > > > > I also tested those patches on H3 to make sure it doesn't
->break
->> > > > > other
->> > > > > platforms. However, it would be nice to test for regressions
->> > > > > also on
->> > > > > older SoCs (with DE1).
->> > > > > 
->> > > > > Best regards,
->> > > > > Jernej
->> > > > 
->> > > > Applied all patches but the patch 10, thanks!
->> > > > Maxime
->> > > 
->> > > It seems that you forgot to merge some patches:
->> > > 
->> > > [PATCH v2 12/18] drm/sun4i: tcon: Add another way for matching
->> > > mixers with
->> > > tcon
->> > > [PATCH v2 13/18] drm/sun4i: tcon: Add support for R40 TCON
->> > > 
->> > > Without them, R40 display pipeline can't work.
->> > > 
->> > > Maybe they are in your spam folder?
->> > 
->> > Thanks for telling me, I'm not quite sure what happened.
->> > 
->> > I've applied them.
->> 
->> BTW without them the board cannot boot because of dead loop in
->> sun4i_drv_probe().
->
->Does it work for you now?
+> >  
+> >  	policy->cached_target_freq = UINT_MAX;
+> >  
+> > diff --git a/include/trace/events/power.h b/include/trace/events/power.h
+> > index 908977d69783..f5bec45108b6 100644
+> > --- a/include/trace/events/power.h
+> > +++ b/include/trace/events/power.h
+> > @@ -148,6 +148,31 @@ DEFINE_EVENT(cpu, cpu_frequency,
+> >  	TP_ARGS(frequency, cpu_id)
+> >  );
+> >  
+> > +TRACE_EVENT(cpu_frequency_limits,
+> > +
+> > +	TP_PROTO(unsigned int min_freq, unsigned int max_freq,
+> > +		unsigned int cpu_id),
+> > +
+> > +	TP_ARGS(min_freq, max_freq, cpu_id),
+> > +
+> > +	TP_STRUCT__entry(
+> > +		__field(u32, min_freq)
+> > +		__field(u32, max_freq)
+> > +		__field(u32, cpu_id)
+> > +	),
+> > +
+> > +	TP_fast_assign(
+> > +		__entry->min_freq = min_freq;
+> > +		__entry->max_freq = max_freq;
+> > +		__entry->cpu_id = cpu_id;
+> 
+> Then have here:
+> 
+> 		__entry->min_freq = policy->min;
+> 		__entry->max_freq = policy->max;
+> 		__entry->puc_id = policy->cpu;
+> 
+> It would also make the footprint of the tracepoint in the code smaller
+> as it would pass fewer parameters to the trace event.
 
-Yes, although it cannot output 1920x1200 to my father's DVI
-monitor, but if it output a smaller resolution (e.g. 1024x600, by
-insert my WaveShare LCD first then the monitor) it works.
+Yes, that's a great idea. I'll make the change and post v3.
 
->
->> 
->> > Sorry,
->> > Maxime
->> > 
->> > _______________________________________________
->> > linux-arm-kernel mailing list
->> > linux-arm-kernel@lists.infradead.org
->> > http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
->
->
->
->
->
->_______________________________________________
->linux-arm-kernel mailing list
->linux-arm-kernel@lists.infradead.org
->http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+-Joel
+ 
