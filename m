@@ -2,122 +2,203 @@ Return-Path: <SRS0=hTZH=KI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0499C28CF6
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 20:53:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60F07C28CF6
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 20:54:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9693F20685
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 20:53:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9693F20685
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 1C7BA20685
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 20:54:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C7BA20685
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388855AbeGXWCI (ORCPT
+        id S2388879AbeGXWC2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 18:02:08 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:34346 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388651AbeGXWCI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 18:02:08 -0400
-Received: from akpm3.svl.corp.google.com (unknown [104.133.9.92])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4A940D9D;
-        Tue, 24 Jul 2018 20:53:51 +0000 (UTC)
-Date:   Tue, 24 Jul 2018 13:53:50 -0700
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     Cannon Matthews <cannonmatthews@google.com>
-Cc:     Michal Hocko <mhocko@kernel.org>,
-        Mike Kravetz <mike.kravetz@oracle.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org,
-        Andres Lagar-Cavilla <andreslc@google.com>,
-        Salman Qazi <sqazi@google.com>, Paul Turner <pjt@google.com>,
-        David Matlack <dmatlack@google.com>,
-        Peter Feiner <pfeiner@google.com>,
-        Alain Trinh <nullptr@google.com>
-Subject: Re: [PATCH] RFC: clear 1G pages with streaming stores on x86
-Message-Id: <20180724135350.91a90f4f8742ec59c42721c3@linux-foundation.org>
-In-Reply-To: <20180724204639.26934-1-cannonmatthews@google.com>
-References: <20180724204639.26934-1-cannonmatthews@google.com>
-X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Tue, 24 Jul 2018 18:02:28 -0400
+Received: from mga05.intel.com ([192.55.52.43]:33122 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388651AbeGXWC2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Jul 2018 18:02:28 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Jul 2018 13:54:11 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,399,1526367600"; 
+   d="scan'208";a="69597167"
+Received: from sai-dev-mach.sc.intel.com ([143.183.140.52])
+  by orsmga003.jf.intel.com with ESMTP; 24 Jul 2018 13:54:10 -0700
+From:   Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
+To:     x86@kernel.org, linux-kernel@vger.kernel.org
+Cc:     Sai Praneeth <sai.praneeth.prakhya@intel.com>,
+        Tim C Chen <tim.c.chen@intel.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ravi Shankar <ravi.v.shankar@intel.com>,
+        Ingo Molnar <mingo@kernel.org>
+Subject: [PATCH] x86/speculation: Support Enhanced IBRS on future CPUs
+Date:   Tue, 24 Jul 2018 13:53:56 -0700
+Message-Id: <1532465636-25240-1-git-send-email-sai.praneeth.prakhya@intel.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 24 Jul 2018 13:46:39 -0700 Cannon Matthews <cannonmatthews@google.com> wrote:
+From: Sai Praneeth <sai.praneeth.prakhya@intel.com>
 
-> Reimplement clear_gigantic_page() to clear gigabytes pages using the
-> non-temporal streaming store instructions that bypass the cache
-> (movnti), since an entire 1GiB region will not fit in the cache anyway.
-> 
-> ...
-> 
-> Tested:
-> 	Time to `mlock()` a 512GiB region on broadwell CPU
-> 				AVG time (s)	% imp.	ms/page
-> 	clear_page_erms		133.584		-	261
-> 	clear_page_nt		34.154		74.43%	67
+Some future Intel processors may support "Enhanced IBRS" which is an
+"always on" mode i.e. IBRS bit in SPEC_CTRL MSR is enabled once and
+never disabled. According to specification[1], this should simplify
+software enabling and improve performance.
 
-A gigantic improvement!
+[With enhanced IBRS, the predicted targets of indirect branches executed
+cannot be controlled by software that was executed in a less privileged
+predictor mode or on another logical processor. As a result, software
+operating on a processor with enhanced IBRS need not use WRMSR to set
+IA32_SPEC_CTRL.IBRS after every transition to a more privileged
+predictor mode. Software can isolate predictor modes effectively simply
+by setting the bit once. Software need not disable enhanced IBRS prior
+to entering a sleep state such as MWAIT or HLT.] - Specification
 
-> --- a/arch/x86/include/asm/page_64.h
-> +++ b/arch/x86/include/asm/page_64.h
-> @@ -56,6 +56,9 @@ static inline void clear_page(void *page)
-> 
->  void copy_page(void *to, void *from);
-> 
-> +#define __HAVE_ARCH_CLEAR_GIGANTIC_PAGE
-> +void __clear_page_nt(void *page, u64 page_size);
+Even with enhanced IBRS, we still need to make sure that IBRS bit in
+SPEC_CTRL MSR is always set i.e. while booting, if we detect support for
+Enhanced IBRS, we enable IBRS bit in SPEC_CTRL MSR and we should also
+make sure that it remains set always. In other words, if the guest has
+cleared IBRS bit, upon VMEXIT the bit should still be set.
 
-Nit: the modern way is
+Fortunately, kernel already has the infrastructure ready. kvm/vmx.c does
+x86_spec_ctrl_set_guest() before entering guest and
+x86_spec_ctrl_restore_host() after leaving guest. So, the guest view of
+SPEC_CTRL MSR is restored before entering guest and the host view of
+SPEC_CTRL MSR is restored before entering host and hence IBRS will be
+set after VMEXIT.
 
-#ifndef __clear_page_nt
-void __clear_page_nt(void *page, u64 page_size);
-#define __clear_page_nt __clear_page_nt
-#endif
+For Intel CPUs that support Enhanced IBRS, this patch also makes
+Enhanced IBRS as the default Spectre V2 mitigation technique instead of
+retpoline. Also, we still need IBPB even with enhanced IBRS.
 
-Not sure why, really.  I guess it avoids adding two symbols and 
-having to remember and maintain the relationship between them.
+[1] https://software.intel.com/sites/default/files/managed/c5/63/336996-Speculative-Execution-Side-Channel-Mitigations.pdf
 
-> --- /dev/null
-> +++ b/arch/x86/lib/clear_gigantic_page.c
-> @@ -0,0 +1,30 @@
-> +#include <asm/page.h>
-> +
-> +#include <linux/kernel.h>
-> +#include <linux/mm.h>
-> +#include <linux/sched.h>
-> +
-> +#if defined(CONFIG_TRANSPARENT_HUGEPAGE) || defined(CONFIG_HUGETLBFS)
-> +#define PAGES_BETWEEN_RESCHED 64
-> +void clear_gigantic_page(struct page *page,
-> +				unsigned long addr,
-> +				unsigned int pages_per_huge_page)
-> +{
-> +	int i;
-> +	void *dest = page_to_virt(page);
-> +	int resched_count = 0;
-> +
-> +	BUG_ON(pages_per_huge_page % PAGES_BETWEEN_RESCHED != 0);
-> +	BUG_ON(!dest);
-> +
-> +	might_sleep();
+Signed-off-by: Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
+Originally-by: David Woodhouse <dwmw@amazon.co.uk>
+Cc: Tim C Chen <tim.c.chen@intel.com>
+Cc: Dave Hansen <dave.hansen@intel.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Ravi Shankar <ravi.v.shankar@intel.com>
+Cc: Ingo Molnar <mingo@kernel.org>
+---
+ arch/x86/include/asm/cpufeatures.h   |  1 +
+ arch/x86/include/asm/nospec-branch.h |  2 +-
+ arch/x86/kernel/cpu/bugs.c           | 29 +++++++++++++++++++++++++++--
+ arch/x86/kernel/cpu/common.c         |  3 +++
+ 4 files changed, 32 insertions(+), 3 deletions(-)
 
-cond_resched() already does might_sleep() - it doesn't seem needed here.
-
-> +	for (i = 0; i < pages_per_huge_page; i += PAGES_BETWEEN_RESCHED) {
-> +		__clear_page_nt(dest + (i * PAGE_SIZE),
-> +				PAGES_BETWEEN_RESCHED * PAGE_SIZE);
-> +		resched_count += cond_resched();
-> +	}
-> +	/* __clear_page_nt requrires and `sfence` barrier. */
-> +	wmb();
-> +	pr_debug("clear_gigantic_page: rescheduled %d times\n", resched_count);
-> +}
-> +#endif
+diff --git a/arch/x86/include/asm/cpufeatures.h b/arch/x86/include/asm/cpufeatures.h
+index 5701f5cecd31..f75815b1dbee 100644
+--- a/arch/x86/include/asm/cpufeatures.h
++++ b/arch/x86/include/asm/cpufeatures.h
+@@ -219,6 +219,7 @@
+ #define X86_FEATURE_IBPB		( 7*32+26) /* Indirect Branch Prediction Barrier */
+ #define X86_FEATURE_STIBP		( 7*32+27) /* Single Thread Indirect Branch Predictors */
+ #define X86_FEATURE_ZEN			( 7*32+28) /* "" CPU is AMD family 0x17 (Zen) */
++#define X86_FEATURE_IBRS_ENHANCED		( 7*32+29) /* "ibrs_enhanced" Use Enhanced IBRS in kernel */
+ 
+ /* Virtualization flags: Linux defined, word 8 */
+ #define X86_FEATURE_TPR_SHADOW		( 8*32+ 0) /* Intel TPR Shadow */
+diff --git a/arch/x86/include/asm/nospec-branch.h b/arch/x86/include/asm/nospec-branch.h
+index f6f6c63da62f..fd2a8c1b88bc 100644
+--- a/arch/x86/include/asm/nospec-branch.h
++++ b/arch/x86/include/asm/nospec-branch.h
+@@ -214,7 +214,7 @@ enum spectre_v2_mitigation {
+ 	SPECTRE_V2_RETPOLINE_MINIMAL_AMD,
+ 	SPECTRE_V2_RETPOLINE_GENERIC,
+ 	SPECTRE_V2_RETPOLINE_AMD,
+-	SPECTRE_V2_IBRS,
++	SPECTRE_V2_IBRS_ENHANCED,
+ };
+ 
+ /* The Speculative Store Bypass disable variants */
+diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
+index 5c0ea39311fe..a66517de1301 100644
+--- a/arch/x86/kernel/cpu/bugs.c
++++ b/arch/x86/kernel/cpu/bugs.c
+@@ -130,6 +130,7 @@ static const char *spectre_v2_strings[] = {
+ 	[SPECTRE_V2_RETPOLINE_MINIMAL_AMD]	= "Vulnerable: Minimal AMD ASM retpoline",
+ 	[SPECTRE_V2_RETPOLINE_GENERIC]		= "Mitigation: Full generic retpoline",
+ 	[SPECTRE_V2_RETPOLINE_AMD]		= "Mitigation: Full AMD retpoline",
++	[SPECTRE_V2_IBRS_ENHANCED]		= "Mitigation: Enhanced IBRS",
+ };
+ 
+ #undef pr_fmt
+@@ -349,6 +350,8 @@ static void __init spectre_v2_select_mitigation(void)
+ 
+ 	case SPECTRE_V2_CMD_FORCE:
+ 	case SPECTRE_V2_CMD_AUTO:
++		if (boot_cpu_has(X86_FEATURE_IBRS_ENHANCED))
++			goto skip_retpoline_enable_ibrs;
+ 		if (IS_ENABLED(CONFIG_RETPOLINE))
+ 			goto retpoline_auto;
+ 		break;
+@@ -385,7 +388,22 @@ static void __init spectre_v2_select_mitigation(void)
+ 					 SPECTRE_V2_RETPOLINE_MINIMAL;
+ 		setup_force_cpu_cap(X86_FEATURE_RETPOLINE);
+ 	}
++	goto enable_other_mitigations;
+ 
++skip_retpoline_enable_ibrs:
++	mode = SPECTRE_V2_IBRS_ENHANCED;
++
++	/*
++	 * As we don't use IBRS in kernel, nobody should have set
++	 * SPEC_CTRL_IBRS until now. Shout loud if somebody did enable
++	 * SPEC_CTRL_IBRS before us.
++	 */
++	WARN_ON_ONCE(x86_spec_ctrl_base & SPEC_CTRL_IBRS);
++
++	/* Ensure SPEC_CTRL_IBRS is set after VMEXIT from a guest */
++	x86_spec_ctrl_base |= SPEC_CTRL_IBRS;
++
++enable_other_mitigations:
+ 	spectre_v2_enabled = mode;
+ 	pr_info("%s\n", spectre_v2_strings[mode]);
+ 
+@@ -415,9 +433,16 @@ static void __init spectre_v2_select_mitigation(void)
+ 
+ 	/*
+ 	 * Retpoline means the kernel is safe because it has no indirect
+-	 * branches. But firmware isn't, so use IBRS to protect that.
++	 * branches. Enhanced IBRS protects firmware too, so, enable restricted
++	 * speculation around firmware calls only when Enhanced IBRS isn't
++	 * supported.
++	 *
++	 * Use "mode" to check Enhanced IBRS instead of boot_cpu_has(), because
++	 * user might select retpoline on command line and if CPU supports
++	 * Enhanced IBRS, we might un-intentionally not enable IBRS around
++	 * firmware calls.
+ 	 */
+-	if (boot_cpu_has(X86_FEATURE_IBRS)) {
++	if (boot_cpu_has(X86_FEATURE_IBRS) && mode != SPECTRE_V2_IBRS_ENHANCED) {
+ 		setup_force_cpu_cap(X86_FEATURE_USE_IBRS_FW);
+ 		pr_info("Enabling Restricted Speculation for firmware calls\n");
+ 	}
+diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
+index eb4cb3efd20e..8ed73a46511f 100644
+--- a/arch/x86/kernel/cpu/common.c
++++ b/arch/x86/kernel/cpu/common.c
+@@ -1005,6 +1005,9 @@ static void __init cpu_set_bug_bits(struct cpuinfo_x86 *c)
+ 	   !cpu_has(c, X86_FEATURE_AMD_SSB_NO))
+ 		setup_force_cpu_bug(X86_BUG_SPEC_STORE_BYPASS);
+ 
++	if (ia32_cap & ARCH_CAP_IBRS_ALL)
++		setup_force_cpu_cap(X86_FEATURE_IBRS_ENHANCED);
++
+ 	if (x86_match_cpu(cpu_no_meltdown))
+ 		return;
+ 
+-- 
+2.7.4
 
