@@ -2,92 +2,125 @@ Return-Path: <SRS0=hTZH=KI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F36CC6778A
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 17:57:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A0C9C6778A
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 17:58:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B75FD20844
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 17:57:25 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="aI2EH2Og"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B75FD20844
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
+	by mail.kernel.org (Postfix) with ESMTP id 4CEF520844
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 17:58:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4CEF520844
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xmission.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388718AbeGXTFB (ORCPT
+        id S2388484AbeGXTG2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 15:05:01 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:42302 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388705AbeGXTFA (ORCPT
+        Tue, 24 Jul 2018 15:06:28 -0400
+Received: from out03.mta.xmission.com ([166.70.13.233]:33863 "EHLO
+        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388414AbeGXTG1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 15:05:00 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=References:In-Reply-To:Message-Id:
-        Date:Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=Gj7iSFnwOf+CI7HCg1QW1Nd6RqKyr0qFIqZNPXrbr6A=; b=aI2EH2OgBrSiQzYqyDr8MpHbO
-        0e8y08YEY+6s5Enb1CkmWq6WA425+klUSv2LsRZh36PI7URuoHWmqj+n3gYUPmqR94ik4gSDiNoNq
-        350s1Cf4BPLJK2SV22rnExUn5Cs5bkFsJLDtUX6ZIXVjr8BZiY7h0r3jH3Ax30uS7FZUCIdWCe5cc
-        RyBjqBEayKk65Dr9ab2a4QZ/nW3PQE5PBLYLUjwuFK4mFf1RqzHEA55LujfO2DJP848JK5Xr5JJw3
-        QTMfXSaj2shYPmjb8oxCEbci2+3qnpCR6BIJ3f0DVbiqUYMaeFJmNd9vFrALv/E/5Qp7uV1pyfrmD
-        vChrIJEDQ==;
-Received: from 089144194224.atnat0003.highway.a1.net ([89.144.194.224] helo=localhost)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fi1Ym-0007Gq-MN; Tue, 24 Jul 2018 17:57:21 +0000
-From:   Christoph Hellwig <hch@lst.de>
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     Randy Dunlap <rdunlap@infradead.org>,
-        Richard Weinberger <richard@nod.at>,
-        Ley Foon Tan <lftan@altera.com>,
-        Michal Simek <monstr@monstr.eu>, linux-kbuild@vger.kernel.org,
-        linux-um@lists.infradead.org, linux-arch@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 10/10] kconfig: add a Memory Management options" menu
-Date:   Tue, 24 Jul 2018 19:56:46 +0200
-Message-Id: <20180724175646.3621-11-hch@lst.de>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180724175646.3621-1-hch@lst.de>
-References: <20180724175646.3621-1-hch@lst.de>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+        Tue, 24 Jul 2018 15:06:27 -0400
+Received: from in01.mta.xmission.com ([166.70.13.51])
+        by out03.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1fi1aC-0004qq-Vt; Tue, 24 Jul 2018 11:58:49 -0600
+Received: from [97.119.167.31] (helo=x220.xmission.com)
+        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1fi1aC-0001XC-5K; Tue, 24 Jul 2018 11:58:48 -0600
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Oleg Nesterov <oleg@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Wen Yang <wen.yang99@zte.com.cn>, majiang <ma.jiang@zte.com.cn>
+References: <87efft5ncd.fsf_-_@xmission.com>
+        <20180724032419.20231-20-ebiederm@xmission.com>
+        <CA+55aFxNijeenFd6o7fg3iJFqAjdTZLaFV2=Eaqbg1fDOzx26A@mail.gmail.com>
+Date:   Tue, 24 Jul 2018 12:58:35 -0500
+In-Reply-To: <CA+55aFxNijeenFd6o7fg3iJFqAjdTZLaFV2=Eaqbg1fDOzx26A@mail.gmail.com>
+        (Linus Torvalds's message of "Tue, 24 Jul 2018 10:27:58 -0700")
+Message-ID: <874lgo5xdg.fsf@xmission.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
+MIME-Version: 1.0
+Content-Type: text/plain
+X-XM-SPF: eid=1fi1aC-0001XC-5K;;;mid=<874lgo5xdg.fsf@xmission.com>;;;hst=in01.mta.xmission.com;;;ip=97.119.167.31;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX18DUmslOieX6tURFBDmHOwEhv8ashzDt9k=
+X-SA-Exim-Connect-IP: 97.119.167.31
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+Subject: Re: [PATCH 20/20] signal: Don't restart fork when signals come in.
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This moves all the options under a proper menu.
+Linus Torvalds <torvalds@linux-foundation.org> writes:
 
-Based on a patch from Randy Dunlap.
+> This is completely broken.
+>
+> On Mon, Jul 23, 2018 at 8:27 PM Eric W. Biederman <ebiederm@xmission.com> wrote:
+>>
+>> diff --git a/kernel/fork.c b/kernel/fork.c
+>> index 6c358846a8b8..6ee5822f0085 100644
+>> --- a/kernel/fork.c
+>> +++ b/kernel/fork.c
+>> @@ -1602,6 +1603,24 @@ static __latent_entropy struct task_struct *copy_process(
+>>  {
+>>         int retval;
+>>         struct task_struct *p;
+>> +       struct multiprocess_signals delayed;
+>> +
+>> +       /*
+>> +        * Force any signals received before this point to be delivered
+>> +        * before the fork happens.  Collect up signals sent to multiple
+>> +        * processes that happen during the fork and delay them so that
+>> +        * they appear to happen after the fork.
+>> +        */
+>> +       sigemptyset(&delayed.signal);
+>> +       INIT_HLIST_NODE(&delayed.node);
+>> +
+>> +       spin_lock_irq(&current->sighand->siglock);
+>> +       if (!(clone_flags & CLONE_THREAD))
+>> +               hlist_add_head(&delayed.node, &current->signal->multiprocess);
+>
+> Here you add the entry to the multiprocess list.
+>
+>> +       recalc_sigpending();
+>> +       spin_unlock_irq(&current->sighand->siglock);
+>> +       if (signal_pending(current))
+>> +               return ERR_PTR(restart_syscall());
+>
+> .. and here you return with the list entry still there, pointing to
+> the stack that you now no longer use.
+>
+> The same is true of *all* the error cases, because the only point you
+> remove it is for the success case:
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
-Tested-by: Randy Dunlap <rdunlap@infradead.org>
-Acked-by: Randy Dunlap <rdunlap@infradead.org>
----
- mm/Kconfig | 5 +++++
- 1 file changed, 5 insertions(+)
+Yes you are quite right.   Easy enough to fix, but it definitely needs
+to be fixed.
 
-diff --git a/mm/Kconfig b/mm/Kconfig
-index ce95491abd6a..9ae1b6a8e30f 100644
---- a/mm/Kconfig
-+++ b/mm/Kconfig
-@@ -1,3 +1,6 @@
-+
-+menu "Memory Management options"
-+
- config SELECT_MEMORY_MODEL
- 	def_bool y
- 	depends on ARCH_SELECT_MEMORY_MODEL
-@@ -762,3 +765,5 @@ config GUP_BENCHMARK
- 
- config ARCH_HAS_PTE_SPECIAL
- 	bool
-+
-+endmenu
--- 
-2.18.0
+I will respin.
 
+Eric
+
+
+>> @@ -1979,6 +1982,8 @@ static __latent_entropy struct task_struct *copy_process(
+>>                         attach_pid(p, PIDTYPE_TGID);
+>>                         attach_pid(p, PIDTYPE_PGID);
+>>                         attach_pid(p, PIDTYPE_SID);
+>> +                       p->signal->shared_pending.signal = delayed.signal;
+>> +                       hlist_del(&delayed.node);
+>
+> So for all the error cases, you leave a dangling pointer to the
+> current stack in that signal handler, and then return an error.
+>
+> Guaranteed stack and list corruption.
+>
+>                  Linus
