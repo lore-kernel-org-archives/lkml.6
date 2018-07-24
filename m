@@ -6,36 +6,37 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7C0AC6778A
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 11:07:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 152DAC6778A
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 11:07:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6E3F920881
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 11:07:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6E3F920881
+	by mail.kernel.org (Postfix) with ESMTP id C9A2F205F4
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 11:07:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C9A2F205F4
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388679AbeGXMNP (ORCPT
+        id S2388723AbeGXMNS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 08:13:15 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:48478 "EHLO
+        Tue, 24 Jul 2018 08:13:18 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:48508 "EHLO
         foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388585AbeGXMNO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 08:13:14 -0400
+        id S2388552AbeGXMNS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Jul 2018 08:13:18 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D66F215AB;
-        Tue, 24 Jul 2018 04:07:19 -0700 (PDT)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1E5D115BE;
+        Tue, 24 Jul 2018 04:07:23 -0700 (PDT)
 Received: from e112298-lin.Emea.Arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id A5FBB3F237;
-        Tue, 24 Jul 2018 04:07:18 -0700 (PDT)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id BEA033F237;
+        Tue, 24 Jul 2018 04:07:21 -0700 (PDT)
 From:   Julien Thierry <julien.thierry@arm.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     tglx@linutronix.de, peterz@infradead.org, marc.zyngier@arm.com,
         ricardo.neri-calderon@linux.intel.com, mingo@kernel.org,
-        Julien Thierry <julien.thierry@arm.com>
-Subject: [PATCH 2/4] genirq: Provide NMI management for percpu_devid interrupts
-Date:   Tue, 24 Jul 2018 12:07:05 +0100
-Message-Id: <1532430427-57151-3-git-send-email-julien.thierry@arm.com>
+        Julien Thierry <julien.thierry@arm.com>,
+        Will Deacon <will.deacon@arm.com>
+Subject: [PATCH 4/4] irqdesc: Add domain handler for NMIs
+Date:   Tue, 24 Jul 2018 12:07:07 +0100
+Message-Id: <1532430427-57151-5-git-send-email-julien.thierry@arm.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1532430427-57151-1-git-send-email-julien.thierry@arm.com>
 References: <1532430427-57151-1-git-send-email-julien.thierry@arm.com>
@@ -44,242 +45,80 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add support for percpu_devid interrupts treated as NMIs.
+NMI handling code should be executed between calls to nmi_enter and
+nmi_exit.
 
-Percpu_devid NMIs need to be setup/torn down on each CPU they target.
-
-The same restrictions as for global NMIs still apply for percpu_devid NMIs.
+Add a separate domain handler to properly setup NMI context when handling
+an interrupt requested as NMI.
 
 Signed-off-by: Julien Thierry <julien.thierry@arm.com>
 Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Ingo Molnar <mingo@kernel.org>
 Cc: Marc Zyngier <marc.zyngier@arm.com>
+Cc: Will Deacon <will.deacon@arm.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
 ---
- include/linux/interrupt.h |   9 +++
- kernel/irq/manage.c       | 149 ++++++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 158 insertions(+)
+ include/linux/irqdesc.h |  3 +++
+ kernel/irq/irqdesc.c    | 33 +++++++++++++++++++++++++++++++++
+ 2 files changed, 36 insertions(+)
 
-diff --git a/include/linux/interrupt.h b/include/linux/interrupt.h
-index 3b1a320..59d3877 100644
---- a/include/linux/interrupt.h
-+++ b/include/linux/interrupt.h
-@@ -168,10 +168,15 @@ struct irqaction {
- 				    devname, percpu_dev_id);
+diff --git a/include/linux/irqdesc.h b/include/linux/irqdesc.h
+index dd1e40d..7c0a243 100644
+--- a/include/linux/irqdesc.h
++++ b/include/linux/irqdesc.h
+@@ -171,6 +171,9 @@ static inline int handle_domain_irq(struct irq_domain *domain,
+ {
+ 	return __handle_domain_irq(domain, hwirq, true, regs);
  }
- 
-+extern int __must_check
-+request_percpu_nmi(unsigned int irq, irq_handler_t handler,
-+		   const char *devname, void __percpu *dev);
 +
- extern const void *free_irq(unsigned int, void *);
- extern void free_percpu_irq(unsigned int, void __percpu *);
++int handle_domain_nmi(struct irq_domain *domain, unsigned int hwirq,
++		      struct pt_regs *regs);
+ #endif
  
- extern const void *free_nmi(unsigned int irq, void *dev_id);
-+extern void free_percpu_nmi(unsigned int irq, void __percpu *percpu_dev_id);
- 
- struct device;
- 
-@@ -224,7 +229,11 @@ struct irqaction {
- extern void irq_wake_thread(unsigned int irq, void *dev_id);
- 
- extern void disable_nmi_nosync(unsigned int irq);
-+extern void disable_percpu_nmi(unsigned int irq);
- extern void enable_nmi(unsigned int irq);
-+extern void enable_percpu_nmi(unsigned int irq, unsigned int type);
-+extern int ready_percpu_nmi(unsigned int irq);
-+extern void teardown_percpu_nmi(unsigned int irq);
- 
- /* The following three functions are for the core kernel use only. */
- extern void suspend_device_irqs(void);
-diff --git a/kernel/irq/manage.c b/kernel/irq/manage.c
-index 3b87143..ad41c4d 100644
---- a/kernel/irq/manage.c
-+++ b/kernel/irq/manage.c
-@@ -2162,6 +2162,11 @@ void enable_percpu_irq(unsigned int irq, unsigned int type)
+ /* Test to see if a driver has successfully requested an irq */
+diff --git a/kernel/irq/irqdesc.c b/kernel/irq/irqdesc.c
+index afc7f90..f2b6f9d 100644
+--- a/kernel/irq/irqdesc.c
++++ b/kernel/irq/irqdesc.c
+@@ -664,6 +664,39 @@ int __handle_domain_irq(struct irq_domain *domain, unsigned int hwirq,
+ 	set_irq_regs(old_regs);
+ 	return ret;
  }
- EXPORT_SYMBOL_GPL(enable_percpu_irq);
- 
-+void enable_percpu_nmi(unsigned int irq, unsigned int type)
-+{
-+	enable_percpu_irq(irq, type);
-+}
-+
- /**
-  * irq_percpu_is_enabled - Check whether the per cpu irq is enabled
-  * @irq:	Linux irq number to check for
-@@ -2201,6 +2206,11 @@ void disable_percpu_irq(unsigned int irq)
- }
- EXPORT_SYMBOL_GPL(disable_percpu_irq);
- 
-+void disable_percpu_nmi(unsigned int irq)
-+{
-+	disable_percpu_irq(irq);
-+}
-+
- /*
-  * Internal function to unregister a percpu irqaction.
-  */
-@@ -2232,6 +2242,8 @@ static struct irqaction *__free_percpu_irq(unsigned int irq, void __percpu *dev_
- 	/* Found it - now remove it from the list of entries: */
- 	desc->action = NULL;
- 
-+	desc->istate &= ~IRQS_NMI;
-+
- 	raw_spin_unlock_irqrestore(&desc->lock, flags);
- 
- 	unregister_handler_proc(irq, action);
-@@ -2285,6 +2297,19 @@ void free_percpu_irq(unsigned int irq, void __percpu *dev_id)
- }
- EXPORT_SYMBOL_GPL(free_percpu_irq);
- 
-+void free_percpu_nmi(unsigned int irq, void __percpu *dev_id)
-+{
-+	struct irq_desc *desc = irq_to_desc(irq);
-+
-+	if (!desc || !irq_settings_is_per_cpu_devid(desc))
-+		return;
-+
-+	if (WARN_ON(!(desc->istate & IRQS_NMI)))
-+		return;
-+
-+	kfree(__free_percpu_irq(irq, dev_id));
-+}
-+
- /**
-  *	setup_percpu_irq - setup a per-cpu interrupt
-  *	@irq: Interrupt line to setup
-@@ -2375,6 +2400,130 @@ int __request_percpu_irq(unsigned int irq, irq_handler_t handler,
- EXPORT_SYMBOL_GPL(__request_percpu_irq);
- 
- /**
-+ *	request_percpu_nmi - allocate a percpu interrupt line for NMI delivery
-+ *	@irq: Interrupt line to allocate
-+ *	@handler: Function to be called when the IRQ occurs.
-+ *	@devname: An ascii name for the claiming device
-+ *	@dev_id: A percpu cookie passed back to the handler function
-+ *
-+ *	This call allocates interrupt resources and enables the
-+ *	interrupt on the local CPU. If the interrupt is supposed to be
-+ *	enabled on other CPUs, it has to be done on each CPU using
-+ *	enable_percpu_nmi().
-+ *
-+ *	Dev_id must be globally unique. It is a per-cpu variable, and
-+ *	the handler gets called with the interrupted CPU's instance of
-+ *	that variable.
-+ *
-+ *	Interrupt lines requested for NMI delivering should have auto enabling
-+ *	setting disabled.
-+ *
-+ *	If the interrupt line cannot be used to deliver NMIs, function
-+ *	will fail returning a negative value.
-+ */
-+int request_percpu_nmi(unsigned int irq, irq_handler_t handler,
-+		       const char *name, void __percpu *dev_id)
-+{
-+	struct irqaction *action;
-+	struct irq_desc *desc;
-+	unsigned long flags;
-+	int retval;
-+
-+	if (!handler)
-+		return -EINVAL;
-+
-+	desc = irq_to_desc(irq);
-+
-+	if (!desc || !irq_settings_can_request(desc)
-+	    || !irq_settings_is_per_cpu_devid(desc)
-+	    || irq_settings_can_autoenable(desc)
-+	    || !irq_supports_nmi(desc))
-+		return -EINVAL;
-+
-+	/* The line cannot already be NMI */
-+	if (desc->istate & IRQS_NMI)
-+		return -EINVAL;
-+
-+	action = kzalloc(sizeof(struct irqaction), GFP_KERNEL);
-+	if (!action)
-+		return -ENOMEM;
-+
-+	action->handler = handler;
-+	action->flags = IRQF_PERCPU | IRQF_NO_SUSPEND | IRQF_NO_THREAD
-+		| IRQF_NOBALANCING;
-+	action->name = name;
-+	action->percpu_dev_id = dev_id;
-+
-+	retval = irq_chip_pm_get(&desc->irq_data);
-+	if (retval < 0)
-+		goto err_out;
-+
-+	retval = __setup_irq(irq, desc, action);
-+	if (retval)
-+		goto err_irq_setup;
-+
-+	raw_spin_lock_irqsave(&desc->lock, flags);
-+	desc->istate |= IRQS_NMI;
-+	raw_spin_unlock_irqrestore(&desc->lock, flags);
-+
-+	return 0;
-+
-+err_irq_setup:
-+	irq_chip_pm_put(&desc->irq_data);
-+err_out:
-+	kfree(action);
-+
-+	return retval;
-+}
-+
-+int ready_percpu_nmi(unsigned int irq)
-+{
-+	unsigned long flags;
-+	struct irq_desc *desc = irq_get_desc_lock(irq, &flags,
-+						  IRQ_GET_DESC_CHECK_PERCPU);
-+	int ret = 0;
-+
-+	if (!desc) {
-+		ret = -EINVAL;
-+		goto out;
-+	}
-+
-+	if (WARN(!(desc->istate & IRQS_NMI),
-+		 KERN_ERR "ready_percpu_nmi called for a non-NMI interrupt: irq %u\n",
-+		 irq)) {
-+		ret = -EINVAL;
-+		goto out;
-+	}
-+
-+	ret = irq_nmi_setup(desc);
-+	if (ret) {
-+		pr_err("Failed to setup NMI delivery: irq %u\n", irq);
-+		goto out;
-+	}
-+
-+out:
-+	irq_put_desc_unlock(desc, flags);
-+	return ret;
-+}
-+
-+void teardown_percpu_nmi(unsigned int irq)
-+{
-+	unsigned long flags;
-+	struct irq_desc *desc = irq_get_desc_lock(irq, &flags,
-+						  IRQ_GET_DESC_CHECK_PERCPU);
-+
-+	if (!desc)
-+		return;
-+
-+	if (WARN_ON(!(desc->istate & IRQS_NMI)))
-+		goto out;
-+
-+	irq_nmi_teardown(desc);
-+out:
-+	irq_put_desc_unlock(desc, flags);
-+}
 +
 +/**
-  *	irq_get_irqchip_state - returns the irqchip state of a interrupt.
-  *	@irq: Interrupt line that is forwarded to a VM
-  *	@which: One of IRQCHIP_STATE_* the caller wants to know about
++ * handle_domain_nmi - Invoke the handler for a HW irq belonging to a domain
++ * @domain:	The domain where to perform the lookup
++ * @hwirq:	The HW irq number to convert to a logical one
++ * @regs:	Register file coming from the low-level handling code
++ *
++ * Returns:	0 on success, or -EINVAL if conversion has failed
++ */
++int handle_domain_nmi(struct irq_domain *domain, unsigned int hwirq,
++		      struct pt_regs *regs)
++{
++	struct pt_regs *old_regs = set_irq_regs(regs);
++	unsigned int irq;
++	int ret = 0;
++
++	nmi_enter();
++
++	irq = irq_find_mapping(domain, hwirq);
++
++	/*
++	 * ack_bad_irq is not NMI-safe, just report
++	 * an invalid interrupt.
++	 */
++	if (likely(irq))
++		generic_handle_irq(irq);
++	else
++		ret = -EINVAL;
++
++	nmi_exit();
++	set_irq_regs(old_regs);
++	return ret;
++}
+ #endif
+ 
+ /* Dynamic interrupt handling */
 -- 
 1.9.1
 
