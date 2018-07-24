@@ -2,106 +2,332 @@ Return-Path: <SRS0=hTZH=KI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-10.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_MED,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F91EC28CF6
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 22:39:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FA85C28CF6
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 22:46:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A518120880
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 22:39:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A518120880
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+	by mail.kernel.org (Postfix) with ESMTP id CBB4320852
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 22:46:50 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="EgiXL2ut"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CBB4320852
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389015AbeGXXsM (ORCPT
+        id S2388851AbeGXXz3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 19:48:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54268 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388945AbeGXXsL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 19:48:11 -0400
-Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A9EB220852;
-        Tue, 24 Jul 2018 22:39:31 +0000 (UTC)
-Date:   Tue, 24 Jul 2018 18:39:30 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Zubin Mithra <zsm@chromium.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Guenter Roeck <groeck@chromium.org>,
-        Al Viro <viro@zeniv.linux.org.uk>
-Subject: Re: [PATCH] tracefs: Annotate tracefs_ops with __ro_after_init
-Message-ID: <20180724183930.1ac4bcd0@gandalf.local.home>
-In-Reply-To: <CAGXu5jJ7jS=ChfVF1oRJsGu-bSXK_WvTs94f_dQ9ud9Bt81-WA@mail.gmail.com>
-References: <20180724200214.95975-1-zsm@chromium.org>
-        <CAGXu5jJ7jS=ChfVF1oRJsGu-bSXK_WvTs94f_dQ9ud9Bt81-WA@mail.gmail.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Tue, 24 Jul 2018 19:55:29 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:46383 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388479AbeGXXz3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Jul 2018 19:55:29 -0400
+Received: by mail-pf1-f196.google.com with SMTP id u24-v6so1189517pfn.13
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Jul 2018 15:46:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=GzGVy7APnjBkq3bC65L+G6LChGTLaZHf9aWjvjtrwu4=;
+        b=EgiXL2utxPOWKtH7BDpX7ZEQ5CZzyb7CTvMvu9bb6hIPvtlvh6hKhotE+2HyCIOGTK
+         bRzIUgqHgzqCEZhpUxLxI+pj9eUCJTYhymftdbODKGyHj1R7IJya1Xa2FA8c8xfbexM+
+         FJKYa3l6som+CGM1qBVq2682BBZ7E+gIu9+tkar0py9yhKkf0+ych7ISR3uf0uxOuc9x
+         y7XwTMU5LZcpXTAMe7FdEP/st1rie9rIIesUcaBOiwkzA5ToZD2BLgeNO12mJW35Lp1J
+         qbjYRnOR9TQXNPW7NKqb3M6zQMiAweYshq9MgiVQu8xmc+T/GKGVxtIIebAsc1Ro7ThA
+         vYig==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=GzGVy7APnjBkq3bC65L+G6LChGTLaZHf9aWjvjtrwu4=;
+        b=QdLQkQdC21eJ02o5jepNXpkjLJbguHdGSfoFGK1TmDHqJrB7ZkwcWj0fgdF5V3vXGE
+         hYM8875utPbCEZbEhm1VsCxOchpHGC20Y5pcSlSGtnQbyk00+w/pmC8q3xzIUuXSrtWh
+         XGq83ke7bSRTJfExQHUkK3sR53ruuQzJ3mFdY2DBbd94LIgGD1A/8TVcXnSnubejfgJZ
+         kMmFZC46W5f3RtnRSgsPJ467HhNQnqm5OxN4nQFz68MKnKz8LjUVNpCl/3PFl0sXBsUx
+         ahT2b5DWSsfhkfe6JyurHD8dsbo2B9olYmFvtOujT1YAuGK+6S3bu9UJGvZBKAmHRZw5
+         JcTA==
+X-Gm-Message-State: AOUpUlEieR3VylQAAhd1ACJLUSTCPqp71XtZrZepgzmGxBIa9OoEzK9z
+        7mRPbE6QkmjRs1hrHzaXn7CYPQ==
+X-Google-Smtp-Source: AAOMgpfv/e6THL7CNyCf9XzlcnKwVkVKJZ+iPoIGX98oKlWidykNqkPnUuqOnwMtgH3Z4bZkS0+BqA==
+X-Received: by 2002:a63:5c7:: with SMTP id 190-v6mr17538515pgf.385.1532472407442;
+        Tue, 24 Jul 2018 15:46:47 -0700 (PDT)
+Received: from shakeelb.mtv.corp.google.com ([2620:15c:2cb:201:3a5f:3a4f:fa44:6b63])
+        by smtp.gmail.com with ESMTPSA id k26-v6sm32721310pfb.167.2018.07.24.15.46.45
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 24 Jul 2018 15:46:46 -0700 (PDT)
+From:   Shakeel Butt <shakeelb@google.com>
+To:     Johannes Weiner <hannes@cmpxchg.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Greg Thelen <gthelen@google.com>,
+        Bruce Merry <bmerry@ska.ac.za>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
+        linux-mm@kvack.org, Shakeel Butt <shakeelb@google.com>
+Subject: [PATCH] memcg: reduce memcg tree traversals for stats collection
+Date:   Tue, 24 Jul 2018 15:46:35 -0700
+Message-Id: <20180724224635.143944-1-shakeelb@google.com>
+X-Mailer: git-send-email 2.18.0.233.g985f88cf7e-goog
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 24 Jul 2018 15:07:18 -0700
-Kees Cook <keescook@chromium.org> wrote:
+Currently cgroup-v1's memcg_stat_show traverses the memcg tree ~17 times
+to collect the stats while cgroup-v2's memory_stat_show traverses the
+memcg tree thrice. On a large machine, a couple thousand memcgs is very
+normal and if the churn is high and memcgs stick around during to
+several reasons, tens of thousands of nodes in memcg tree can exist.
+This patch has refactored and shared the stat collection code between
+cgroup-v1 and cgroup-v2 and has reduced the tree traversal to just one.
 
-> Adding Steven (maintainer) and Al (fs) to CC...
+I ran a simple benchmark which reads the root_mem_cgroup's stat file
+1000 times in the presense of 2500 memcgs on cgroup-v1. The results are:
 
-Thanks, first I've seen of this.
+Without the patch:
+$ time ./read-root-stat-1000-times
 
-> 
-> On Tue, Jul 24, 2018 at 1:02 PM, Zubin Mithra <zsm@chromium.org> wrote:
-> > tracefs_ops is initialized inside tracefs_create_instance_dir and not
-> > modified after. tracefs_create_instance_dir allows for initialization
-> > only once, and is called from create_trace_instances(marked __init),
-> > which is called from tracer_init_tracefs(marked __init).
+real    0m1.663s
+user    0m0.000s
+sys     0m1.660s
 
-Then, especially with this change, we should mark
-tracefs_create_instance_dir() as init, as it would fail any other time.
+With the patch:
+$ time ./read-root-stat-1000-times
 
-> >
-> > Signed-off-by: Zubin Mithra <zsm@chromium.org>
-> > Reviewed-by: Kees Cook <keescook@chromium.org>  
-> 
-> Who's tree should this go through?
+real    0m0.468s
+user    0m0.000s
+sys     0m0.467s
 
-I can take it or someone else can, and I'll ack it if need be.
+Signed-off-by: Shakeel Butt <shakeelb@google.com>
+---
+ mm/memcontrol.c | 150 +++++++++++++++++++++++-------------------------
+ 1 file changed, 73 insertions(+), 77 deletions(-)
 
--- Steve
-
-
-> 
-> Thanks!
-> 
-> -Kees
-> 
-> > ---
-> >  fs/tracefs/inode.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/fs/tracefs/inode.c b/fs/tracefs/inode.c
-> > index bea8ad876bf9..20e965873f27 100644
-> > --- a/fs/tracefs/inode.c
-> > +++ b/fs/tracefs/inode.c
-> > @@ -53,7 +53,7 @@ static const struct file_operations tracefs_file_operations = {
-> >  static struct tracefs_dir_ops {
-> >         int (*mkdir)(const char *name);
-> >         int (*rmdir)(const char *name);
-> > -} tracefs_ops;
-> > +} tracefs_ops __ro_after_init;
-> >
-> >  static char *get_dname(struct dentry *dentry)
-> >  {
-> > --
-> > 2.18.0.233.g985f88cf7e-goog
-> >  
-> 
-> 
-> 
+diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+index a5869b9d5194..d90993ef1d7d 100644
+--- a/mm/memcontrol.c
++++ b/mm/memcontrol.c
+@@ -3122,29 +3122,34 @@ static int mem_cgroup_hierarchy_write(struct cgroup_subsys_state *css,
+ 	return retval;
+ }
+ 
+-static void tree_stat(struct mem_cgroup *memcg, unsigned long *stat)
+-{
+-	struct mem_cgroup *iter;
+-	int i;
+-
+-	memset(stat, 0, sizeof(*stat) * MEMCG_NR_STAT);
+-
+-	for_each_mem_cgroup_tree(iter, memcg) {
+-		for (i = 0; i < MEMCG_NR_STAT; i++)
+-			stat[i] += memcg_page_state(iter, i);
+-	}
+-}
++struct accumulated_stats {
++	unsigned long stat[MEMCG_NR_STAT];
++	unsigned long events[NR_VM_EVENT_ITEMS];
++	unsigned long lru_pages[NR_LRU_LISTS];
++	const unsigned int *stats_array;
++	const unsigned int *events_array;
++	int stats_size;
++	int events_size;
++};
+ 
+-static void tree_events(struct mem_cgroup *memcg, unsigned long *events)
++static void accumulate_memcg_tree(struct mem_cgroup *memcg,
++				  struct accumulated_stats *acc)
+ {
+-	struct mem_cgroup *iter;
++	struct mem_cgroup *mi;
+ 	int i;
+ 
+-	memset(events, 0, sizeof(*events) * NR_VM_EVENT_ITEMS);
++	for_each_mem_cgroup_tree(mi, memcg) {
++		for (i = 0; i < acc->stats_size; i++)
++			acc->stat[i] += memcg_page_state(mi,
++				acc->stats_array ? acc->stats_array[i] : i);
+ 
+-	for_each_mem_cgroup_tree(iter, memcg) {
+-		for (i = 0; i < NR_VM_EVENT_ITEMS; i++)
+-			events[i] += memcg_sum_events(iter, i);
++		for (i = 0; i < acc->events_size; i++)
++			acc->events[i] += memcg_sum_events(mi,
++				acc->events_array ? acc->events_array[i] : i);
++
++		for (i = 0; i < NR_LRU_LISTS; i++)
++			acc->lru_pages[i] +=
++				mem_cgroup_nr_lru_pages(mi, BIT(i));
+ 	}
+ }
+ 
+@@ -3555,6 +3560,7 @@ static int memcg_stat_show(struct seq_file *m, void *v)
+ 	unsigned long memory, memsw;
+ 	struct mem_cgroup *mi;
+ 	unsigned int i;
++	struct accumulated_stats acc;
+ 
+ 	BUILD_BUG_ON(ARRAY_SIZE(memcg1_stat_names) != ARRAY_SIZE(memcg1_stats));
+ 	BUILD_BUG_ON(ARRAY_SIZE(mem_cgroup_lru_names) != NR_LRU_LISTS);
+@@ -3587,32 +3593,27 @@ static int memcg_stat_show(struct seq_file *m, void *v)
+ 		seq_printf(m, "hierarchical_memsw_limit %llu\n",
+ 			   (u64)memsw * PAGE_SIZE);
+ 
+-	for (i = 0; i < ARRAY_SIZE(memcg1_stats); i++) {
+-		unsigned long long val = 0;
++	memset(&acc, 0, sizeof(acc));
++	acc.stats_size = ARRAY_SIZE(memcg1_stats);
++	acc.stats_array = memcg1_stats;
++	acc.events_size = ARRAY_SIZE(memcg1_events);
++	acc.events_array = memcg1_events;
++	accumulate_memcg_tree(memcg, &acc);
+ 
++	for (i = 0; i < ARRAY_SIZE(memcg1_stats); i++) {
+ 		if (memcg1_stats[i] == MEMCG_SWAP && !do_memsw_account())
+ 			continue;
+-		for_each_mem_cgroup_tree(mi, memcg)
+-			val += memcg_page_state(mi, memcg1_stats[i]) *
+-			PAGE_SIZE;
+-		seq_printf(m, "total_%s %llu\n", memcg1_stat_names[i], val);
++		seq_printf(m, "total_%s %llu\n", memcg1_stat_names[i],
++			   (u64)acc.stat[i] * PAGE_SIZE);
+ 	}
+ 
+-	for (i = 0; i < ARRAY_SIZE(memcg1_events); i++) {
+-		unsigned long long val = 0;
+-
+-		for_each_mem_cgroup_tree(mi, memcg)
+-			val += memcg_sum_events(mi, memcg1_events[i]);
+-		seq_printf(m, "total_%s %llu\n", memcg1_event_names[i], val);
+-	}
+-
+-	for (i = 0; i < NR_LRU_LISTS; i++) {
+-		unsigned long long val = 0;
++	for (i = 0; i < ARRAY_SIZE(memcg1_events); i++)
++		seq_printf(m, "total_%s %llu\n", memcg1_event_names[i],
++			   (u64)acc.events[i]);
+ 
+-		for_each_mem_cgroup_tree(mi, memcg)
+-			val += mem_cgroup_nr_lru_pages(mi, BIT(i)) * PAGE_SIZE;
+-		seq_printf(m, "total_%s %llu\n", mem_cgroup_lru_names[i], val);
+-	}
++	for (i = 0; i < NR_LRU_LISTS; i++)
++		seq_printf(m, "total_%s %llu\n", mem_cgroup_lru_names[i],
++			   (u64)acc.lru_pages[i] * PAGE_SIZE);
+ 
+ #ifdef CONFIG_DEBUG_VM
+ 	{
+@@ -5737,8 +5738,7 @@ static int memory_events_show(struct seq_file *m, void *v)
+ static int memory_stat_show(struct seq_file *m, void *v)
+ {
+ 	struct mem_cgroup *memcg = mem_cgroup_from_css(seq_css(m));
+-	unsigned long stat[MEMCG_NR_STAT];
+-	unsigned long events[NR_VM_EVENT_ITEMS];
++	struct accumulated_stats acc;
+ 	int i;
+ 
+ 	/*
+@@ -5752,66 +5752,62 @@ static int memory_stat_show(struct seq_file *m, void *v)
+ 	 * Current memory state:
+ 	 */
+ 
+-	tree_stat(memcg, stat);
+-	tree_events(memcg, events);
++	memset(&acc, 0, sizeof(acc));
++	acc.stats_size = MEMCG_NR_STAT;
++	acc.events_size = NR_VM_EVENT_ITEMS;
++	accumulate_memcg_tree(memcg, &acc);
+ 
+ 	seq_printf(m, "anon %llu\n",
+-		   (u64)stat[MEMCG_RSS] * PAGE_SIZE);
++		   (u64)acc.stat[MEMCG_RSS] * PAGE_SIZE);
+ 	seq_printf(m, "file %llu\n",
+-		   (u64)stat[MEMCG_CACHE] * PAGE_SIZE);
++		   (u64)acc.stat[MEMCG_CACHE] * PAGE_SIZE);
+ 	seq_printf(m, "kernel_stack %llu\n",
+-		   (u64)stat[MEMCG_KERNEL_STACK_KB] * 1024);
++		   (u64)acc.stat[MEMCG_KERNEL_STACK_KB] * 1024);
+ 	seq_printf(m, "slab %llu\n",
+-		   (u64)(stat[NR_SLAB_RECLAIMABLE] +
+-			 stat[NR_SLAB_UNRECLAIMABLE]) * PAGE_SIZE);
++		   (u64)(acc.stat[NR_SLAB_RECLAIMABLE] +
++			 acc.stat[NR_SLAB_UNRECLAIMABLE]) * PAGE_SIZE);
+ 	seq_printf(m, "sock %llu\n",
+-		   (u64)stat[MEMCG_SOCK] * PAGE_SIZE);
++		   (u64)acc.stat[MEMCG_SOCK] * PAGE_SIZE);
+ 
+ 	seq_printf(m, "shmem %llu\n",
+-		   (u64)stat[NR_SHMEM] * PAGE_SIZE);
++		   (u64)acc.stat[NR_SHMEM] * PAGE_SIZE);
+ 	seq_printf(m, "file_mapped %llu\n",
+-		   (u64)stat[NR_FILE_MAPPED] * PAGE_SIZE);
++		   (u64)acc.stat[NR_FILE_MAPPED] * PAGE_SIZE);
+ 	seq_printf(m, "file_dirty %llu\n",
+-		   (u64)stat[NR_FILE_DIRTY] * PAGE_SIZE);
++		   (u64)acc.stat[NR_FILE_DIRTY] * PAGE_SIZE);
+ 	seq_printf(m, "file_writeback %llu\n",
+-		   (u64)stat[NR_WRITEBACK] * PAGE_SIZE);
++		   (u64)acc.stat[NR_WRITEBACK] * PAGE_SIZE);
+ 
+-	for (i = 0; i < NR_LRU_LISTS; i++) {
+-		struct mem_cgroup *mi;
+-		unsigned long val = 0;
+-
+-		for_each_mem_cgroup_tree(mi, memcg)
+-			val += mem_cgroup_nr_lru_pages(mi, BIT(i));
+-		seq_printf(m, "%s %llu\n",
+-			   mem_cgroup_lru_names[i], (u64)val * PAGE_SIZE);
+-	}
++	for (i = 0; i < NR_LRU_LISTS; i++)
++		seq_printf(m, "%s %llu\n", mem_cgroup_lru_names[i],
++			   (u64)acc.lru_pages[i] * PAGE_SIZE);
+ 
+ 	seq_printf(m, "slab_reclaimable %llu\n",
+-		   (u64)stat[NR_SLAB_RECLAIMABLE] * PAGE_SIZE);
++		   (u64)acc.stat[NR_SLAB_RECLAIMABLE] * PAGE_SIZE);
+ 	seq_printf(m, "slab_unreclaimable %llu\n",
+-		   (u64)stat[NR_SLAB_UNRECLAIMABLE] * PAGE_SIZE);
++		   (u64)acc.stat[NR_SLAB_UNRECLAIMABLE] * PAGE_SIZE);
+ 
+ 	/* Accumulated memory events */
+ 
+-	seq_printf(m, "pgfault %lu\n", events[PGFAULT]);
+-	seq_printf(m, "pgmajfault %lu\n", events[PGMAJFAULT]);
++	seq_printf(m, "pgfault %lu\n", acc.events[PGFAULT]);
++	seq_printf(m, "pgmajfault %lu\n", acc.events[PGMAJFAULT]);
+ 
+-	seq_printf(m, "pgrefill %lu\n", events[PGREFILL]);
+-	seq_printf(m, "pgscan %lu\n", events[PGSCAN_KSWAPD] +
+-		   events[PGSCAN_DIRECT]);
+-	seq_printf(m, "pgsteal %lu\n", events[PGSTEAL_KSWAPD] +
+-		   events[PGSTEAL_DIRECT]);
+-	seq_printf(m, "pgactivate %lu\n", events[PGACTIVATE]);
+-	seq_printf(m, "pgdeactivate %lu\n", events[PGDEACTIVATE]);
+-	seq_printf(m, "pglazyfree %lu\n", events[PGLAZYFREE]);
+-	seq_printf(m, "pglazyfreed %lu\n", events[PGLAZYFREED]);
++	seq_printf(m, "pgrefill %lu\n", acc.events[PGREFILL]);
++	seq_printf(m, "pgscan %lu\n", acc.events[PGSCAN_KSWAPD] +
++		   acc.events[PGSCAN_DIRECT]);
++	seq_printf(m, "pgsteal %lu\n", acc.events[PGSTEAL_KSWAPD] +
++		   acc.events[PGSTEAL_DIRECT]);
++	seq_printf(m, "pgactivate %lu\n", acc.events[PGACTIVATE]);
++	seq_printf(m, "pgdeactivate %lu\n", acc.events[PGDEACTIVATE]);
++	seq_printf(m, "pglazyfree %lu\n", acc.events[PGLAZYFREE]);
++	seq_printf(m, "pglazyfreed %lu\n", acc.events[PGLAZYFREED]);
+ 
+ 	seq_printf(m, "workingset_refault %lu\n",
+-		   stat[WORKINGSET_REFAULT]);
++		   acc.stat[WORKINGSET_REFAULT]);
+ 	seq_printf(m, "workingset_activate %lu\n",
+-		   stat[WORKINGSET_ACTIVATE]);
++		   acc.stat[WORKINGSET_ACTIVATE]);
+ 	seq_printf(m, "workingset_nodereclaim %lu\n",
+-		   stat[WORKINGSET_NODERECLAIM]);
++		   acc.stat[WORKINGSET_NODERECLAIM]);
+ 
+ 	return 0;
+ }
+-- 
+2.18.0.233.g985f88cf7e-goog
 
