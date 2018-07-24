@@ -2,83 +2,73 @@ Return-Path: <SRS0=hTZH=KI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E770DECDFB8
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 17:32:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9189ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 17:32:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8F92120880
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 17:32:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F92120880
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 7541C20883
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 17:32:41 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Oo7BWD2w"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7541C20883
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388624AbeGXSjf (ORCPT
+        id S2388631AbeGXSkK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 14:39:35 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:55126 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2388407AbeGXSje (ORCPT
+        Tue, 24 Jul 2018 14:40:10 -0400
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:34572 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388408AbeGXSkK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 14:39:34 -0400
-Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w6OHT9RC126269
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Jul 2018 13:32:02 -0400
-Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2ke5yx0trs-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Jul 2018 13:32:00 -0400
-Received: from localhost
-        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <ldufour@linux.vnet.ibm.com>;
-        Tue, 24 Jul 2018 18:31:58 +0100
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
-        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 24 Jul 2018 18:31:55 +0100
-Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w6OHVsk640042626
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 24 Jul 2018 17:31:54 GMT
-Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 5DB6652050;
-        Tue, 24 Jul 2018 20:32:09 +0100 (BST)
-Received: from [9.145.45.110] (unknown [9.145.45.110])
-        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id CA6955204E;
-        Tue, 24 Jul 2018 20:32:08 +0100 (BST)
-Subject: Re: [RFC v5 PATCH 2/2] mm: mmap: zap pages with read mmap_sem in
- munmap
-To:     Yang Shi <yang.shi@linux.alibaba.com>, mhocko@kernel.org,
-        willy@infradead.org, kirill@shutemov.name,
-        akpm@linux-foundation.org
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <1531956101-8526-1-git-send-email-yang.shi@linux.alibaba.com>
- <1531956101-8526-3-git-send-email-yang.shi@linux.alibaba.com>
- <25fca2a1-0a55-13eb-0c75-6d0238fe780b@linux.vnet.ibm.com>
- <b8c128c4-3a8e-ed17-2d9f-76f71bfdad43@linux.alibaba.com>
-From:   Laurent Dufour <ldufour@linux.vnet.ibm.com>
-Date:   Tue, 24 Jul 2018 19:31:53 +0200
+        Tue, 24 Jul 2018 14:40:10 -0400
+Received: from dlelxv90.itg.ti.com ([172.17.2.17])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id w6OHWbWR014457;
+        Tue, 24 Jul 2018 12:32:37 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1532453557;
+        bh=gF8QzFGGNWOc8qkZ0hphWrHwUrV8QNZ151Hjffzh/5c=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=Oo7BWD2woIeSjilACbYRl4yBn8MHYFouGUHjx7Qfy4Sv9vwCb+Q5ByldSibTfmAjR
+         rSomtypIitaOUq8Tg18+7lUdFLCAZgJYGka6r//kYMArAsaRXLKpp4MWAP1VhbqSZv
+         Mo/Ei3ZfFXAyzhfAzRKy35C0Evw94z4k1ZjlTjTg=
+Received: from DLEE112.ent.ti.com (dlee112.ent.ti.com [157.170.170.23])
+        by dlelxv90.itg.ti.com (8.14.3/8.13.8) with ESMTP id w6OHWam2013073;
+        Tue, 24 Jul 2018 12:32:36 -0500
+Received: from DLEE105.ent.ti.com (157.170.170.35) by DLEE112.ent.ti.com
+ (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Tue, 24
+ Jul 2018 12:32:36 -0500
+Received: from dlep33.itg.ti.com (157.170.170.75) by DLEE105.ent.ti.com
+ (157.170.170.35) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
+ Tue, 24 Jul 2018 12:32:36 -0500
+Received: from [172.24.190.89] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dlep33.itg.ti.com (8.14.3/8.13.8) with ESMTP id w6OHWXUT000858;
+        Tue, 24 Jul 2018 12:32:34 -0500
+Subject: Re: [PATCH 0/5] ti_am335x_tsc: Enable wakeup capability
+To:     Lee Jones <lee.jones@linaro.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>
+CC:     Jonathan Cameron <jic23@kernel.org>, <linux-iio@vger.kernel.org>,
+        <linux-omap@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-input@vger.kernel.org>
+References: <20180630103318.25355-1-vigneshr@ti.com>
+ <dcb4a63b-9ecb-a72e-bfb8-ebb62017b4f7@ti.com> <20180718074736.GA4641@dell>
+ <20180718170902.vk7rahyoaevucxbi@penguin> <20180723053708.GA4213@dell>
+From:   Vignesh R <vigneshr@ti.com>
+Message-ID: <2236aa96-ca56-fa30-157d-2f484c6968cc@ti.com>
+Date:   Tue, 24 Jul 2018 23:03:30 +0530
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <b8c128c4-3a8e-ed17-2d9f-76f71bfdad43@linux.alibaba.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20180723053708.GA4213@dell>
+Content-Type: text/plain; charset="utf-8"
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 18072417-0016-0000-0000-000001EAD8A7
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18072417-0017-0000-0000-0000323FB69E
-Message-Id: <e9553340-3b8d-bc26-781d-8a6a8716bc8f@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-24_05:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1806210000 definitions=main-1807240185
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -86,419 +76,58 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 
 
-On 24/07/2018 19:26, Yang Shi wrote:
+On Monday 23 July 2018 11:07 AM, Lee Jones wrote:
+> On Wed, 18 Jul 2018, Dmitry Torokhov wrote:
 > 
-> 
-> On 7/24/18 10:18 AM, Laurent Dufour wrote:
->> On 19/07/2018 01:21, Yang Shi wrote:
->>> When running some mmap/munmap scalability tests with large memory (i.e.
->>>> 300GB), the below hung task issue may happen occasionally.
->>> INFO: task ps:14018 blocked for more than 120 seconds.
->>>         Tainted: G            E 4.9.79-009.ali3000.alios7.x86_64 #1
->>>   "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this
->>> message.
->>>   ps              D    0 14018      1 0x00000004
->>>    ffff885582f84000 ffff885e8682f000 ffff880972943000 ffff885ebf499bc0
->>>    ffff8828ee120000 ffffc900349bfca8 ffffffff817154d0 0000000000000040
->>>    00ffffff812f872a ffff885ebf499bc0 024000d000948300 ffff880972943000
->>>   Call Trace:
->>>    [<ffffffff817154d0>] ? __schedule+0x250/0x730
->>>    [<ffffffff817159e6>] schedule+0x36/0x80
->>>    [<ffffffff81718560>] rwsem_down_read_failed+0xf0/0x150
->>>    [<ffffffff81390a28>] call_rwsem_down_read_failed+0x18/0x30
->>>    [<ffffffff81717db0>] down_read+0x20/0x40
->>>    [<ffffffff812b9439>] proc_pid_cmdline_read+0xd9/0x4e0
->>>    [<ffffffff81253c95>] ? do_filp_open+0xa5/0x100
->>>    [<ffffffff81241d87>] __vfs_read+0x37/0x150
->>>    [<ffffffff812f824b>] ? security_file_permission+0x9b/0xc0
->>>    [<ffffffff81242266>] vfs_read+0x96/0x130
->>>    [<ffffffff812437b5>] SyS_read+0x55/0xc0
->>>    [<ffffffff8171a6da>] entry_SYSCALL_64_fastpath+0x1a/0xc5
+>> On Wed, Jul 18, 2018 at 08:47:36AM +0100, Lee Jones wrote:
+>>> On Tue, 17 Jul 2018, Vignesh R wrote:
 >>>
->>> It is because munmap holds mmap_sem exclusively from very beginning to
->>> all the way down to the end, and doesn't release it in the middle. When
->>> unmapping large mapping, it may take long time (take ~18 seconds to
->>> unmap 320GB mapping with every single page mapped on an idle machine).
+>>>> Hi Dmitry,
+>>>>
+>>>> On Saturday 30 June 2018 04:03 PM, Vignesh R wrote:
+>>>>> On AM335x, resistive TSC can wakeup the system from low power state.
+>>>>> Currently, parent MFD device is marked as wakeup source, which is
+>>>>> inaccurate as its the touch event generated by TSC thats the wakeup
+>>>>> source. This series moves all wakeup related calls to operate on TSC
+>>>>> device instead of MFD. It also marks TSC IRQ as wakeup capable, so that
+>>>>> its not disabled during system suspend.
+>>>>>
+>>>>> This series is based on Dmitry's comments here:
+>>>>> https://lkml.org/lkml/2018/4/24/65
+>>>>>
+>>>>> There are many new patches in this series, hence did not mark this as v4.
+>>>>>
+>>>>> Vignesh R (5):
+>>>>>   mfd: ti_am335x_tscadc: Don't mark TSCADC MFD as wakeup capable
+>>>>>   Input: ti_am335x_tsc: Mark TSC device as wakeup source
+>>>>>   mfd: ti_am335x_tscadc: Keep ADC interface on if child is wakeup
+>>>>>     capable
+>>>>>   iio: adc: ti_am335x_adc: Disable ADC during suspend unconditionally
+>>>>>   Input: ti_am335x_tsc: Mark IRQ as wakeup capable
+>>>>>
+>>>>>  drivers/iio/adc/ti_am335x_adc.c           | 12 ++++--------
+>>>>>  drivers/input/touchscreen/ti_am335x_tsc.c | 22 +++++++++++++++++-----
+>>>>>  drivers/mfd/ti_am335x_tscadc.c            | 14 +++++++++++++-
+>>>>>  3 files changed, 34 insertions(+), 14 deletions(-)
+>>>>>
+>>>>
+>>>> Gentle ping... Could you review/pick this series? MFD amd IIO bits are
+>>>> already ACKed
 >>>
->>> Zapping pages is the most time consuming part, according to the
->>> suggestion from Michal Hocko [1], zapping pages can be done with holding
->>> read mmap_sem, like what MADV_DONTNEED does. Then re-acquire write
->>> mmap_sem to cleanup vmas.
->>>
->>> But, some part may need write mmap_sem, for example, vma splitting. So,
->>> the design is as follows:
->>>          acquire write mmap_sem
->>>          lookup vmas (find and split vmas)
->>>     detach vmas
->>>          deal with special mappings
->>>          downgrade_write
->>>
->>>          zap pages
->>>     free page tables
->>>          release mmap_sem
->>>
->>> The vm events with read mmap_sem may come in during page zapping, but
->>> since vmas have been detached before, they, i.e. page fault, gup, etc,
->>> will not be able to find valid vma, then just return SIGSEGV or -EFAULT
->>> as expected.
->>>
->>> If the vma has VM_LOCKED | VM_HUGETLB | VM_PFNMAP or uprobe, they are
->>> considered as special mappings. They will be dealt with before zapping
->>> pages with write mmap_sem held. Basically, just update vm_flags.
->>>
->>> And, since they are also manipulated by unmap_single_vma() which is
->>> called by unmap_vma() with read mmap_sem held in this case, to
->>> prevent from updating vm_flags in read critical section, a new
->>> parameter, called "skip_flags" is added to unmap_region(), unmap_vmas()
->>> and unmap_single_vma(). If it is true, then just skip unmap those
->>> special mappings. Currently, the only place which pass true to this
->>> parameter is us.
->>>
->>> With this approach we don't have to re-acquire mmap_sem again to clean
->>> up vmas to avoid race window which might get the address space changed.
->>>
->>> And, since the lock acquire/release cost is managed to the minimum and
->>> almost as same as before, the optimization could be extended to any size
->>> of mapping without incuring significan penalty to small mappings.
->>                           ^       ^
->>                       incurring significant
-> 
-> Thanks for catching the typo.
-> 
->>> For the time being, just do this in munmap syscall path. Other
->>> vm_munmap() or do_munmap() call sites (i.e mmap, mremap, etc) remain
->>> intact for stability reason.
->>>
->>> With the patches, exclusive mmap_sem hold time when munmap a 80GB
->>> address space on a machine with 32 cores of E5-2680 @ 2.70GHz dropped to
->>> us level from second.
->>>
->>> munmap_test-15002 [008]   594.380138: funcgraph_entry: | 
->>> vm_munmap_zap_rlock() {
->>> munmap_test-15002 [008]   594.380146: funcgraph_entry:      !2485684 us |   
->>> unmap_region();
->>> munmap_test-15002 [008]   596.865836: funcgraph_exit:       !2485692 us |  }
->>>
->>> Here the excution time of unmap_region() is used to evaluate the time of
->>> holding read mmap_sem, then the remaining time is used with holding
->>> exclusive lock.
->>>
->>> [1] https://lwn.net/Articles/753269/
->>>
->>> Suggested-by: Michal Hocko <mhocko@kernel.org>
->>> Suggested-by: Kirill A. Shutemov <kirill@shutemov.name>
->>> Cc: Matthew Wilcox <willy@infradead.org>
->>> Cc: Laurent Dufour <ldufour@linux.vnet.ibm.com>
->>> Cc: Andrew Morton <akpm@linux-foundation.org>
->>> Signed-off-by: Yang Shi <yang.shi@linux.alibaba.com>
->>> ---
->>>   include/linux/mm.h |  2 +-
->>>   mm/memory.c        | 35 +++++++++++++------
->>>   mm/mmap.c          | 99
->>> +++++++++++++++++++++++++++++++++++++++++++++++++-----
->>>   3 files changed, 117 insertions(+), 19 deletions(-)
->>>
->>> diff --git a/include/linux/mm.h b/include/linux/mm.h
->>> index a0fbb9f..95a4e97 100644
->>> --- a/include/linux/mm.h
->>> +++ b/include/linux/mm.h
->>> @@ -1321,7 +1321,7 @@ void zap_vma_ptes(struct vm_area_struct *vma, unsigned
->>> long address,
->>>   void zap_page_range(struct vm_area_struct *vma, unsigned long address,
->>>               unsigned long size);
->>>   void unmap_vmas(struct mmu_gather *tlb, struct vm_area_struct *start_vma,
->>> -        unsigned long start, unsigned long end);
->>> +        unsigned long start, unsigned long end, bool skip_flags);
->>>
->>>   /**
->>>    * mm_walk - callbacks for walk_page_range
->>> diff --git a/mm/memory.c b/mm/memory.c
->>> index 7206a63..00ecdae 100644
->>> --- a/mm/memory.c
->>> +++ b/mm/memory.c
->>> @@ -1514,7 +1514,7 @@ void unmap_page_range(struct mmu_gather *tlb,
->>>   static void unmap_single_vma(struct mmu_gather *tlb,
->>>           struct vm_area_struct *vma, unsigned long start_addr,
->>>           unsigned long end_addr,
->>> -        struct zap_details *details)
->>> +        struct zap_details *details, bool skip_flags)
->>>   {
->>>       unsigned long start = max(vma->vm_start, start_addr);
->>>       unsigned long end;
->>> @@ -1525,11 +1525,13 @@ static void unmap_single_vma(struct mmu_gather *tlb,
->>>       if (end <= vma->vm_start)
->>>           return;
->>>
->>> -    if (vma->vm_file)
->>> -        uprobe_munmap(vma, start, end);
->>> +    if (!skip_flags) {
->>> +        if (vma->vm_file)
->>> +            uprobe_munmap(vma, start, end);
->>>
->>> -    if (unlikely(vma->vm_flags & VM_PFNMAP))
->>> -        untrack_pfn(vma, 0, 0);
->>> +        if (unlikely(vma->vm_flags & VM_PFNMAP))
->>> +            untrack_pfn(vma, 0, 0);
->>> +    }
->> I think a comment would be welcomed here to detail why it is safe to not call
->> uprobe_munmap() and untrack_pfn() here i.e this has already been done in
->> do_munmap_zap_rlock().
-> 
-> OK
-> 
+>>> MFD patches are reviewed "for my own reference" meaning that we
+>>> haven't yet agreed on a merge plan yet.
 >>
->>>       if (start != end) {
->>>           if (unlikely(is_vm_hugetlb_page(vma))) {
->>> @@ -1546,7 +1548,19 @@ static void unmap_single_vma(struct mmu_gather *tlb,
->>>                */
->>>               if (vma->vm_file) {
->>>                   i_mmap_lock_write(vma->vm_file->f_mapping);
->>> -                __unmap_hugepage_range_final(tlb, vma, start, end, NULL);
->>> +                if (!skip_flags)
->>> +                    /*
->>> +                     * The vma is being unmapped with read
->>> +                     * mmap_sem.
->>> +                     * Can't update vm_flags, it will be
->>> +                     * updated later with exclusive lock
->>> +                     * held
->>> +                     */
->>> +                    __unmap_hugepage_range(tlb, vma, start,
->>> +                            end, NULL);
->>> +                else
->>> +                    __unmap_hugepage_range_final(tlb, vma,
->>> +                            start, end, NULL);
->>>                   i_mmap_unlock_write(vma->vm_file->f_mapping);
->>>               }
->>>           } else
->>> @@ -1574,13 +1588,14 @@ static void unmap_single_vma(struct mmu_gather *tlb,
->>>    */
->>>   void unmap_vmas(struct mmu_gather *tlb,
->>>           struct vm_area_struct *vma, unsigned long start_addr,
->>> -        unsigned long end_addr)
->>> +        unsigned long end_addr, bool skip_flags)
->>>   {
->>>       struct mm_struct *mm = vma->vm_mm;
->>>
->>>       mmu_notifier_invalidate_range_start(mm, start_addr, end_addr);
->>>       for ( ; vma && vma->vm_start < end_addr; vma = vma->vm_next)
->>> -        unmap_single_vma(tlb, vma, start_addr, end_addr, NULL);
->>> +        unmap_single_vma(tlb, vma, start_addr, end_addr, NULL,
->>> +                 skip_flags);
->>>       mmu_notifier_invalidate_range_end(mm, start_addr, end_addr);
->>>   }
->>>
->>> @@ -1604,7 +1619,7 @@ void zap_page_range(struct vm_area_struct *vma,
->>> unsigned long start,
->>>       update_hiwater_rss(mm);
->>>       mmu_notifier_invalidate_range_start(mm, start, end);
->>>       for ( ; vma && vma->vm_start < end; vma = vma->vm_next) {
->>> -        unmap_single_vma(&tlb, vma, start, end, NULL);
->>> +        unmap_single_vma(&tlb, vma, start, end, NULL, false);
->>>
->>>           /*
->>>            * zap_page_range does not specify whether mmap_sem should be
->>> @@ -1641,7 +1656,7 @@ static void zap_page_range_single(struct
->>> vm_area_struct *vma, unsigned long addr
->>>       tlb_gather_mmu(&tlb, mm, address, end);
->>>       update_hiwater_rss(mm);
->>>       mmu_notifier_invalidate_range_start(mm, address, end);
->>> -    unmap_single_vma(&tlb, vma, address, end, details);
->>> +    unmap_single_vma(&tlb, vma, address, end, details, false);
->>>       mmu_notifier_invalidate_range_end(mm, address, end);
->>>       tlb_finish_mmu(&tlb, address, end);
->>>   }
->>> diff --git a/mm/mmap.c b/mm/mmap.c
->>> index 2504094..f5d5312 100644
->>> --- a/mm/mmap.c
->>> +++ b/mm/mmap.c
->>> @@ -73,7 +73,7 @@
->>>
->>>   static void unmap_region(struct mm_struct *mm,
->>>           struct vm_area_struct *vma, struct vm_area_struct *prev,
->>> -        unsigned long start, unsigned long end);
->>> +        unsigned long start, unsigned long end, bool skip_flags);
->>>
->>>   /* description of effects of mapping type and prot in current implementation.
->>>    * this is due to the limited x86 page protection hardware.  The expected
->>> @@ -1824,7 +1824,7 @@ unsigned long mmap_region(struct file *file, unsigned
->>> long addr,
->>>       fput(file);
->>>
->>>       /* Undo any partial mapping done by a device driver. */
->>> -    unmap_region(mm, vma, prev, vma->vm_start, vma->vm_end);
->>> +    unmap_region(mm, vma, prev, vma->vm_start, vma->vm_end, false);
->>>       charged = 0;
->>>       if (vm_flags & VM_SHARED)
->>>           mapping_unmap_writable(file->f_mapping);
->>> @@ -2559,7 +2559,7 @@ static void remove_vma_list(struct mm_struct *mm,
->>> struct vm_area_struct *vma)
->>>    */
->>>   static void unmap_region(struct mm_struct *mm,
->>>           struct vm_area_struct *vma, struct vm_area_struct *prev,
->>> -        unsigned long start, unsigned long end)
->>> +        unsigned long start, unsigned long end, bool skip_flags)
->>>   {
->>>       struct vm_area_struct *next = prev ? prev->vm_next : mm->mmap;
->>>       struct mmu_gather tlb;
->>> @@ -2567,7 +2567,7 @@ static void unmap_region(struct mm_struct *mm,
->>>       lru_add_drain();
->>>       tlb_gather_mmu(&tlb, mm, start, end);
->>>       update_hiwater_rss(mm);
->>> -    unmap_vmas(&tlb, vma, start, end);
->>> +    unmap_vmas(&tlb, vma, start, end, skip_flags);
->>>       free_pgtables(&tlb, vma, prev ? prev->vm_end : FIRST_USER_ADDRESS,
->>>                    next ? next->vm_start : USER_PGTABLES_CEILING);
->>>       tlb_finish_mmu(&tlb, start, end);
->>> @@ -2778,6 +2778,79 @@ static inline void munmap_mlock_vma(struct
->>> vm_area_struct *vma,
->>>       }
->>>   }
->>>
->>> +/*
->>> + * Zap pages with read mmap_sem held
->>> + *
->>> + * uf is the list for userfaultfd
->>> + */
->>> +static int do_munmap_zap_rlock(struct mm_struct *mm, unsigned long start,
->>> +                   size_t len, struct list_head *uf)
->>> +{
->>> +    unsigned long end = 0;
->>> +    struct vm_area_struct *start_vma = NULL, *prev, *vma;
->>> +    int ret = 0;
->>> +
->>> +    if (!munmap_addr_sanity(start, len))
->>> +        return -EINVAL;
->>> +
->>> +    len = PAGE_ALIGN(len);
->>> +
->>> +    end = start + len;
->>> +
->>> +    /*
->>> +     * need write mmap_sem to split vmas and detach vmas
->>> +     * splitting vma up-front to save PITA to clean if it is failed
->>> +     */
->>> +    if (down_write_killable(&mm->mmap_sem))
->>> +        return -EINTR;
->>> +
->>> +    ret = munmap_lookup_vma(mm, &start_vma, &prev, start, end);
->>> +    if (ret != 1)
->>> +        goto out;
->>> +
->>> +    if (unlikely(uf)) {
->>> +        ret = userfaultfd_unmap_prep(start_vma, start, end, uf);
->>> +        if (ret)
->>> +            goto out;
->>> +    }
->>> +
->>> +    /* Handle mlocked vmas */
->>> +    if (mm->locked_vm)
->>> +        munmap_mlock_vma(start_vma, end);
->>> +
->>> +    /* Detach vmas from rbtree */
->>> +    detach_vmas_to_be_unmapped(mm, start_vma, prev, end);
->>> +
->>> +    /*
->>> +     * Clear uprobe, VM_PFNMAP and hugetlb mapping in advance since they
->>> +     * need update vm_flags with write mmap_sem
->>> +     */
->>> +    vma = start_vma;
->>> +    for ( ; vma && vma->vm_start < end; vma = vma->vm_next) {
->>> +        if (vma->vm_file)
->>> +            uprobe_munmap(vma, vma->vm_start, vma->vm_end);
->>> +        if (unlikely(vma->vm_flags & VM_PFNMAP))
->>> +            untrack_pfn(vma, 0, 0);130680130680
->>> +        if (is_vm_hugetlb_page(vma))
->>> +            vma->vm_flags &= ~VM_MAYSHARE;
->>> +    }
->>> +
->>> +    downgrade_write(&mm->mmap_sem);
->>> +
->>> +    /* zap mappings with read mmap_sem */
->>> +    unmap_region(mm, start_vma, prev, start, end, true);
->>> +
->>> +    arch_unmap(mm, start_vma, start, end);
->>> +    remove_vma_list(mm, start_vma);
->>> +    up_read(&mm->mmap_sem);
->>> +
->>> +    return 0;
->>> +
->>> +out:
->>> +    up_write(&mm->mmap_sem);
->>> +    return ret;
->>> +}
->>> +
->>>   /* Munmap is split into 2 main parts -- this part which finds
->>>    * what needs doing, and the areas themselves, which do the
->>>    * work.  This now handles partial unmappings.
->>> @@ -2826,7 +2899,7 @@ int do_munmap(struct mm_struct *mm, unsigned long
->>> start, size_t len,
->>>        * Remove the vma's, and unmap the actual pages
->>>        */
->>>       detach_vmas_to_be_unmapped(mm, vma, prev, end);
->>> -    unmap_region(mm, vma, prev, start, end);
->>> +    unmap_region(mm, vma, prev, start, end, false);
->>>
->>>       arch_unmap(mm, vma, start, end);
->>>
->>> @@ -2836,6 +2909,17 @@ int do_munmap(struct mm_struct *mm, unsigned long
->>> start, size_t len,
->>>       return 0;
->>>   }
->>>
->>> +static int vm_munmap_zap_rlock(unsigned long start, size_t len)
->>> +{
->>> +    int ret;
->>> +    struct mm_struct *mm = current->mm;
->>> +    LIST_HEAD(uf);
->>> +
->>> +    ret = do_munmap_zap_rlock(mm, start, len, &uf);
->>> +    userfaultfd_unmap_complete(mm, &uf);
->>> +    return ret;
->>> +}
->>> +
->>>   int vm_munmap(unsigned long start, size_t len)
->>>   {
->>>       int ret;
->> A stupid question, since the overhead of vm_munmap_zap_rlock() compared to
->> vm_munmap() is not significant, why not putting that in vm_munmap() instead of
->> introducing a new vm_munmap_zap_rlock() ?
+>> I think this series makes sense to be pushed through a single tree as
+>> opposed to being spread between 3, even if it could technically be
+>> possible. It looks like Jonathan is fine with going it through either
+>> his or some other tree, I am fine with it going through MFD.
 > 
-> Since vm_munmap() is called in other paths too, i.e. drm driver, kvm, etc. I'm
-> not quite sure if those paths are safe enough to this optimization. And, it
-> looks they are not the main sources of the latency, so here I introduced
-> vm_munmap_zap_rlock() for munmap() only.
+> I'm happy either way.
+> 
+Thanks Dmitry, Jonathan and Lee Jones!
 
-For my information, what could be unsafe for these paths ?
+Could this be applied to one of the trees now? MFD perhaps?
 
-> 
-> If someone reports or we see they are the sources of latency too, and the
-> optimization is proved safe to them, we can definitely extend this to all
-> vm_munmap() calls
-> 
-> Thanks,
-> Yang
-> 
->>
->>> @@ -2855,10 +2939,9 @@ int vm_munmap(unsigned long start, size_t len)
->>>   SYSCALL_DEFINE2(munmap, unsigned long, addr, size_t, len)
->>>   {
->>>       profile_munmap(addr);
->>> -    return vm_munmap(addr, len);
->>> +    return vm_munmap_zap_rlock(addr, len);
->>>   }
->>>
->>> -
->>>   /*
->>>    * Emulation of deprecated remap_file_pages() syscall.
->>>    */
->>> @@ -3146,7 +3229,7 @@ void exit_mmap(struct mm_struct *mm)
->>>       tlb_gather_mmu(&tlb, mm, 0, -1);
->>>       /* update_hiwater_rss(mm) here? but nobody should be looking */
->>>       /* Use -1 here to ensure all VMAs in the mm are unmapped */
->>> -    unmap_vmas(&tlb, vma, 0, -1);
->>> +    unmap_vmas(&tlb, vma, 0, -1, false);
->>>       free_pgtables(&tlb, vma, FIRST_USER_ADDRESS, USER_PGTABLES_CEILING);
->>>       tlb_finish_mmu(&tlb, 0, -1);
->>>
-> 
-
+-- 
+Regards
+Vignesh
