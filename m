@@ -3,104 +3,107 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BDB7C28CF6
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 22:31:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63B17C28CF6
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 22:36:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0268320874
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 22:31:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0268320874
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=i-love.sakura.ne.jp
+	by mail.kernel.org (Postfix) with ESMTP id 1ACBC20874
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 22:36:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1ACBC20874
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388699AbeGXXkV (ORCPT
+        id S2388736AbeGXXpQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 19:40:21 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:39860 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727353AbeGXXkV (ORCPT
+        Tue, 24 Jul 2018 19:45:16 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:53262 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388587AbeGXXpQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 19:40:21 -0400
-Received: from fsav302.sakura.ne.jp (fsav302.sakura.ne.jp [153.120.85.133])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id w6OMVXdK098348;
-        Wed, 25 Jul 2018 07:31:33 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav302.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav302.sakura.ne.jp);
- Wed, 25 Jul 2018 07:31:33 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav302.sakura.ne.jp)
-Received: from [192.168.1.8] (softbank126074194044.bbtec.net [126.74.194.44])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id w6OMVT8F098339
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
-        Wed, 25 Jul 2018 07:31:33 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Subject: Re: [patch v4] mm, oom: fix unnecessary killing of additional
- processes
-To:     David Rientjes <rientjes@google.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>, linux-kernel@vger.kernel.org,
+        Tue, 24 Jul 2018 19:45:16 -0400
+Received: from akpm3.svl.corp.google.com (unknown [104.133.9.92])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id CC205DA0;
+        Tue, 24 Jul 2018 22:36:22 +0000 (UTC)
+Date:   Tue, 24 Jul 2018 15:36:21 -0700
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     Souptick Joarder <jrdr.linux@gmail.com>
+Cc:     willy@infradead.org, viro@zeniv.linux.org.uk, hughd@google.com,
+        mhocko@suse.com, ross.zwisler@linux.intel.com,
+        zi.yan@cs.rutgers.edu, kirill.shutemov@linux.intel.com,
+        dan.j.williams@intel.com, gregkh@linuxfoundation.org,
+        mark.rutland@arm.com, riel@redhat.com, pasha.tatashin@oracle.com,
+        jschoenh@amazon.de, kstewart@linuxfoundation.org,
+        rientjes@google.com, tglx@linutronix.de, peterz@infradead.org,
+        mgorman@suse.de, yang.s@alibaba-inc.com, minchan@kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-mm@kvack.org
-References: <alpine.DEB.2.21.1806211434420.51095@chino.kir.corp.google.com>
- <d19d44c3-c8cf-70a1-9b15-c98df233d5f0@i-love.sakura.ne.jp>
- <alpine.DEB.2.21.1807181317540.49359@chino.kir.corp.google.com>
- <a78fb992-ad59-0cdb-3c38-8284b2245f21@i-love.sakura.ne.jp>
- <alpine.DEB.2.21.1807200133310.119737@chino.kir.corp.google.com>
- <alpine.DEB.2.21.1807201314230.231119@chino.kir.corp.google.com>
- <ca34b123-5c81-569f-85ea-4851bc569962@i-love.sakura.ne.jp>
- <alpine.DEB.2.21.1807201505550.38399@chino.kir.corp.google.com>
- <f8d24892-b05e-73a8-36d5-4fe278f84c44@i-love.sakura.ne.jp>
- <alpine.DEB.2.21.1807241444370.206335@chino.kir.corp.google.com>
-From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Message-ID: <05dbc69a-1c26-adec-15c6-f7192f8d2ae0@i-love.sakura.ne.jp>
-Date:   Wed, 25 Jul 2018 07:31:24 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <alpine.DEB.2.21.1807241444370.206335@chino.kir.corp.google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Subject: Re: [PATCH v3] mm: Change return type int to vm_fault_t for fault
+ handlers
+Message-Id: <20180724153621.e7eed7faa1d265eee73a7031@linux-foundation.org>
+In-Reply-To: <20180604171727.GA20279@jordon-HP-15-Notebook-PC>
+References: <20180604171727.GA20279@jordon-HP-15-Notebook-PC>
+X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/07/25 6:45, David Rientjes wrote:
-> On Sat, 21 Jul 2018, Tetsuo Handa wrote:
-> 
->> You can't apply "[patch v4] mm, oom: fix unnecessary killing of additional processes"
->> because Michal's patch which removes oom_lock serialization was added to -mm tree.
->>
-> 
-> I've rebased the patch to linux-next and posted a v5.
-> 
->> You might worry about situations where __oom_reap_task_mm() is a no-op.
->> But that is not always true. There is no point with emitting
->>
->>   pr_info("oom_reaper: unable to reap pid:%d (%s)\n", ...);
->>   debug_show_all_locks();
->>
->> noise and doing
->>
->>   set_bit(MMF_OOM_SKIP, &mm->flags);
->>
->> because exit_mmap() will not release oom_lock until __oom_reap_task_mm()
->> completes. That is, except extra noise, there is no difference with
->> current behavior which sets set_bit(MMF_OOM_SKIP, &mm->flags) after
->> returning from __oom_reap_task_mm().
->>
-> 
-> v5 has restructured how exit_mmap() serializes its unmapping with the oom 
-> reaper.  It sets MMF_OOM_SKIP while holding mm->mmap_sem.
-> 
+On Mon, 4 Jun 2018 22:47:27 +0530 Souptick Joarder <jrdr.linux@gmail.com> wrote:
 
-I think that v5 is still wrong. exit_mmap() keeps mmap_sem held for write does
-not prevent oom_reap_task() from emitting the noise and setting MMF_OOM_SKIP
-after timeout. Since your purpose is to wait for release of memory which could
-not be reclaimed by __oom_reap_task_mm(), what if __oom_reap_task_mm() was no-op and
-exit_mmap() was preempted immediately after returning from __oom_reap_task_mm() ?
+> Use new return type vm_fault_t for fault handler. For
+> now, this is just documenting that the function returns
+> a VM_FAULT value rather than an errno. Once all instances
+> are converted, vm_fault_t will become a distinct type.
+> 
+> Ref-> commit 1c8f422059ae ("mm: change return type to vm_fault_t")
+> 
+> The aim is to change the return type of finish_fault()
+> and handle_mm_fault() to vm_fault_t type. As part of
+> that clean up return type of all other recursively called
+> functions have been changed to vm_fault_t type.
+> 
+> The places from where handle_mm_fault() is getting invoked
+> will be change to vm_fault_t type but in a separate patch.
+> 
+> vmf_error() is the newly introduce inline function
+> in 4.17-rc6.
 
-Also, I believe that userspace visible knob is not needed.
+Looks OK.
+
+For some reason the shmem.c changes are already present.
+
+One incidental fixup:
+
+From: Andrew Morton <akpm@linux-foundation.org>
+Subject: mm-change-return-type-int-to-vm_fault_t-for-fault-handlers-fix
+
+don't shadow outer local `ret' in __do_huge_pmd_anonymous_page()
+
+--- a/mm/huge_memory.c~mm-change-return-type-int-to-vm_fault_t-for-fault-handlers-fix
++++ a/mm/huge_memory.c
+@@ -584,15 +584,15 @@ static vm_fault_t __do_huge_pmd_anonymou
+ 
+ 		/* Deliver the page fault to userland */
+ 		if (userfaultfd_missing(vma)) {
+-			vm_fault_t ret;
++			vm_fault_t ret2;
+ 
+ 			spin_unlock(vmf->ptl);
+ 			mem_cgroup_cancel_charge(page, memcg, true);
+ 			put_page(page);
+ 			pte_free(vma->vm_mm, pgtable);
+-			ret = handle_userfault(vmf, VM_UFFD_MISSING);
+-			VM_BUG_ON(ret & VM_FAULT_FALLBACK);
+-			return ret;
++			ret2 = handle_userfault(vmf, VM_UFFD_MISSING);
++			VM_BUG_ON(ret2 & VM_FAULT_FALLBACK);
++			return ret2;
+ 		}
+ 
+ 		entry = mk_huge_pmd(page, vma->vm_page_prot);
 
