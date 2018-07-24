@@ -6,159 +6,226 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CB79ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 16:54:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD078C6778A
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 16:55:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E9CE420856
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 16:54:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E9CE420856
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 7CDBB20856
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 16:55:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7CDBB20856
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388525AbeGXSBm (ORCPT
+        id S2388451AbeGXSDQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 14:01:42 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:41270 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388322AbeGXSBl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 14:01:41 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id E1B8D2072C; Tue, 24 Jul 2018 18:54:16 +0200 (CEST)
-Received: from bbrezillon (91-160-177-164.subs.proxad.net [91.160.177.164])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 20107206A6;
-        Tue, 24 Jul 2018 18:54:16 +0200 (CEST)
-Date:   Tue, 24 Jul 2018 18:54:15 +0200
-From:   Boris Brezillon <boris.brezillon@bootlin.com>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
-        Peter Rosin <peda@axentia.se>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        Linux I2C <linux-i2c@vger.kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Przemyslaw Sroka <psroka@cadence.com>,
-        Arkadiusz Golec <agolec@cadence.com>,
-        Alan Douglas <adouglas@cadence.com>,
-        Bartosz Folta <bfolta@cadence.com>,
-        Damian Kos <dkos@cadence.com>,
-        Alicja Jurasik-Urbaniak <alicja@cadence.com>,
-        Cyprian Wronka <cwronka@cadence.com>,
-        Suresh Punnoose <sureshp@cadence.com>,
-        Rafal Ciepiela <rafalc@cadence.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Nishanth Menon <nm@ti.com>, Rob Herring <robh+dt@kernel.org>,
-        Pawel Moll <pawel.moll@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ian Campbell <ijc+devicetree@hellion.org.uk>,
-        Kumar Gala <galak@codeaurora.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Vitor Soares <Vitor.Soares@synopsys.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Xiang Lin <Xiang.Lin@synaptics.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Sekhar Nori <nsekhar@ti.com>, Przemyslaw Gaj <pgaj@cadence.com>
-Subject: Re: [PATCH v6 00/10] Add the I3C subsystem
-Message-ID: <20180724185415.6126751e@bbrezillon>
-In-Reply-To: <CAK8P3a0wcmeFKvRf7=FTNvePayc2AxniHoNkLOuzQQCt=MiLjQ@mail.gmail.com>
-References: <20180719152930.3715-1-boris.brezillon@bootlin.com>
-        <2ab0ab75-2df0-2714-f007-c33b25481016@axentia.se>
-        <20180720101206.tv7nsoanwo5ftnia@ninjato>
-        <CAK8P3a2Pqo5DuYBb09+w4nGWGOw+e_tZPxnA06qjNO_6Hw6NvQ@mail.gmail.com>
-        <21b269c5-a3a7-c5de-c81e-c9c9301ae13e@axentia.se>
-        <CAK8P3a1t2fhdw7HwxNkOs9o2pBECZ0ZdOysA=r2SPTWEvx76kw@mail.gmail.com>
-        <20180720151751.242d4809@bbrezillon>
-        <CAK8P3a14_6uf9VLYU0YnmFp0Q=DZBKc0cAesBh0opanGDZMFRA@mail.gmail.com>
-        <20180724162806.318a92c6@bbrezillon>
-        <CAK8P3a3YQbiiJMTHTVh63fOvtA1sa0J5Eb4z7xbnpBPwUDkqxg@mail.gmail.com>
-        <CAMuHMdXif_iufXx0Y+UJjKs9TNLfrTONoFvUSyrpkfaT0=ydRQ@mail.gmail.com>
-        <CAK8P3a0jc1k9weTNbqSJXkCSFefus9OPyU5_v5=mTFxiDd0q5Q@mail.gmail.com>
-        <CAMuHMdXJ_FGXXwNx8h0ZfskJGRWES1xLuTQpD59Vw1Smp6FTRg@mail.gmail.com>
-        <CAK8P3a17t=_o04GsowS2RnTwKKVxt8KuJtT36N=Ea-SOq7fTow@mail.gmail.com>
-        <20180724181437.1d1b27a8@bbrezillon>
-        <CAK8P3a0wcmeFKvRf7=FTNvePayc2AxniHoNkLOuzQQCt=MiLjQ@mail.gmail.com>
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Tue, 24 Jul 2018 14:03:16 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:39565 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388403AbeGXSDP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Jul 2018 14:03:15 -0400
+Received: from kresse.hi.pengutronix.de ([2001:67c:670:100:1d::2a])
+        by metis.ext.pengutronix.de with esmtp (Exim 4.89)
+        (envelope-from <l.stach@pengutronix.de>)
+        id 1fi0b8-0000aj-6j; Tue, 24 Jul 2018 18:55:42 +0200
+Message-ID: <1532451341.32306.9.camel@pengutronix.de>
+Subject: Re: [PATCH v3 2/2] PCI: imx: Initial imx7d pm support
+From:   Lucas Stach <l.stach@pengutronix.de>
+To:     Leonard Crestez <leonard.crestez@nxp.com>,
+        Andrey Smirnov <andrew.smirnov@gmail.com>,
+        Richard Zhu <hongxing.zhu@nxp.com>,
+        Shawn Guo <shawnguo@kernel.org>
+Cc:     Anson Huang <Anson.Huang@nxp.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Joao Pinto <Joao.Pinto@synopsys.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Dong Aisheng <aisheng.dong@nxp.com>, linux-imx@nxp.com,
+        kernel@pengutronix.de, linux-pci@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Date:   Tue, 24 Jul 2018 18:55:41 +0200
+In-Reply-To: <acafccc294f15a281cf1d253c15a3eec2d1c8cc5.1532448745.git.leonard.crestez@nxp.com>
+References: <cover.1532448745.git.leonard.crestez@nxp.com>
+         <acafccc294f15a281cf1d253c15a3eec2d1c8cc5.1532448745.git.leonard.crestez@nxp.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6-1+deb9u1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::2a
+X-SA-Exim-Mail-From: l.stach@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 24 Jul 2018 18:25:22 +0200
-Arnd Bergmann <arnd@arndb.de> wrote:
-
-> On Tue, Jul 24, 2018 at 6:14 PM, Boris Brezillon
-> <boris.brezillon@bootlin.com> wrote:
-> > On Tue, 24 Jul 2018 17:58:29 +0200
-> > Arnd Bergmann <arnd@arndb.de> wrote:
-> >  
-> >> On Tue, Jul 24, 2018 at 5:46 PM, Geert Uytterhoeven
-> >> <geert@linux-m68k.org> wrote:  
-> >> > On Tue, Jul 24, 2018 at 5:40 PM Arnd Bergmann <arnd@arndb.de> wrote:  
-> >> >> On Tue, Jul 24, 2018 at 5:15 PM, Geert Uytterhoeven
-> >> >> <geert@linux-m68k.org> wrote:  
-> >> >> > On Tue, Jul 24, 2018 at 5:05 PM Arnd Bergmann <arnd@arndb.de> wrote:  
-> >> The second case is the one that started the discussion, and
-> >> this is where I said I'd prefer to associate each slave with at
-> >> most one master at boot time, while the current v6 patch
-> >> is prepared for having one slave be accessed alternatingly
-> >> by multiple masters using the master handover, though so
-> >> far nobody has been able to describe exactly how we'd pick
-> >> which master is active at what point,  
-> >
-> > Even if it's not yet implemented, I have everything in place to figure
-> > this out (see the ->cur_master field in the i3c_bus object). Now,
-> > what's missing is a list of possible masters attached to an i3c device
-> > so that the framework can pick the most appropriate one at runtime and
-> > initiate mastership handover if required (if the selected master is not
-> > the currently active one).
-> >
-> > The selection logic should look like this:
-> >
-> >         if (active_master supports requested feature)
-> >                 use active master
-> >         else
-> >                 pick an inactive one that has relevant caps and initiate
-> >                 mastership handover (+ update bus->cur_master)  
+Am Dienstag, den 24.07.2018, 19:14 +0300 schrieb Leonard Crestez:
+> On imx7d the pcie-phy power domain is turned off in suspend and this can
+> make the system hang after resume when attempting any read from PCI.
 > 
-> How would you deal with soft requirements like performance?
-> E.g. if you have one master that can do large transfers faster
-> through a special DMA engine, and other master that can
-> be faster for small transfers, but both support all capabilities
-> for that device, won't you need some complex logic to avoid
-> being stuck with a slow master indefinitely?
-
-True.
-
+> Fix this by adding minimal suspend/resume code from the nxp internal
+> tree. This will prepare for powering down on suspend and reset the block
+> on resume.
 > 
-> >> or what specific scenario
-> >> would require it.  
-> >
-> > I think I described a scenario (masters having different
-> > capabilities all connected to the same bus), though I don't know how
-> > likely this use case is :-/.  
+> Code is only for imx7d but a very similar sequence can be used for
+> other socs.
 > 
-> I was looking for something more specific here. What (lack of)
-> capabilities could two i3c controllers have that require you to
-> use both of them for the same device, rather than picking
-> a master for each slave with the right feature set?
+> > The original author is mostly Richard Zhu <hongxing.zhu@nxp.com>, this
+> patch adjusts the code to the upstream imx7d implemention using reset
+> controls and power domains.
+> 
+> Signed-off-by: Leonard Crestez <leonard.crestez@nxp.com>
 
-Hehe, if I had a clear answer to this question we wouldn't have this
-discussion :-). I gave you an example:
+Reviewed-by: Lucas Stach <l.stach@pengutronix.de>
 
-- master A supporting IBIs but not HDR transactions
-- master B supporting HDR modes but not IBIs
-
-but as I said, I'm not sure how likely this example is...
-
-The question is more, should we design things so that we can at some
-point implement a solution to support those funky setups, or should we
-just ignore it and risk breaking sysfs/DT ABI when/if we have to support
-that?
-
-This is really an open question. I initially went for the former, but
-have no objection switching to the latter.
+> ---
+>  drivers/pci/controller/dwc/pci-imx6.c | 97 +++++++++++++++++++++++++--
+>  1 file changed, 92 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/pci/controller/dwc/pci-imx6.c b/drivers/pci/controller/dwc/pci-imx6.c
+> index 4a9a673b4777..65b6d1015723 100644
+> --- a/drivers/pci/controller/dwc/pci-imx6.c
+> +++ b/drivers/pci/controller/dwc/pci-imx6.c
+> @@ -540,10 +540,28 @@ static int imx6_pcie_wait_for_speed_change(struct imx6_pcie *imx6_pcie)
+>  
+> >  	dev_err(dev, "Speed change timeout\n");
+> >  	return -EINVAL;
+>  }
+>  
+> +static void imx6_pcie_ltssm_enable(struct device *dev)
+> +{
+> > +	struct imx6_pcie *imx6_pcie = dev_get_drvdata(dev);
+> +
+> > +	switch (imx6_pcie->variant) {
+> > +	case IMX6Q:
+> > +	case IMX6SX:
+> > +	case IMX6QP:
+> > +		regmap_update_bits(imx6_pcie->iomuxc_gpr, IOMUXC_GPR12,
+> > +				   IMX6Q_GPR12_PCIE_CTL_2,
+> > +				   IMX6Q_GPR12_PCIE_CTL_2);
+> > +		break;
+> > +	case IMX7D:
+> > +		reset_control_deassert(imx6_pcie->apps_reset);
+> > +		break;
+> > +	}
+> +}
+> +
+>  static int imx6_pcie_establish_link(struct imx6_pcie *imx6_pcie)
+>  {
+> >  	struct dw_pcie *pci = imx6_pcie->pci;
+> >  	struct device *dev = pci->dev;
+> >  	u32 tmp;
+> @@ -558,15 +576,11 @@ static int imx6_pcie_establish_link(struct imx6_pcie *imx6_pcie)
+> >  	tmp &= ~PCIE_RC_LCR_MAX_LINK_SPEEDS_MASK;
+> >  	tmp |= PCIE_RC_LCR_MAX_LINK_SPEEDS_GEN1;
+> >  	dw_pcie_writel_dbi(pci, PCIE_RC_LCR, tmp);
+>  
+> >  	/* Start LTSSM. */
+> > -	if (imx6_pcie->variant == IMX7D)
+> > -		reset_control_deassert(imx6_pcie->apps_reset);
+> > -	else
+> > -		regmap_update_bits(imx6_pcie->iomuxc_gpr, IOMUXC_GPR12,
+> > -				   IMX6Q_GPR12_PCIE_CTL_2, 1 << 10);
+> > +	imx6_pcie_ltssm_enable(dev);
+>  
+> >  	ret = imx6_pcie_wait_for_link(imx6_pcie);
+> >  	if (ret)
+> >  		goto err_reset_phy;
+>  
+> @@ -680,10 +694,82 @@ static int imx6_add_pcie_port(struct imx6_pcie *imx6_pcie,
+>  
+>  static const struct dw_pcie_ops dw_pcie_ops = {
+> >  	.link_up = imx6_pcie_link_up,
+>  };
+>  
+> +#ifdef CONFIG_PM_SLEEP
+> +static void imx6_pcie_ltssm_disable(struct device *dev)
+> +{
+> > +	struct imx6_pcie *imx6_pcie = dev_get_drvdata(dev);
+> +
+> > +	switch (imx6_pcie->variant) {
+> > +	case IMX6SX:
+> > +	case IMX6QP:
+> > +		regmap_update_bits(imx6_pcie->iomuxc_gpr, IOMUXC_GPR12,
+> > +				   IMX6Q_GPR12_PCIE_CTL_2, 0);
+> > +		break;
+> > +	case IMX7D:
+> > +		reset_control_assert(imx6_pcie->apps_reset);
+> > +		break;
+> > +	default:
+> > +		dev_err(dev, "ltssm_disable not supported\n");
+> > +	}
+> +}
+> +
+> +static void imx6_pcie_clk_disable(struct imx6_pcie *imx6_pcie)
+> +{
+> > +	clk_disable_unprepare(imx6_pcie->pcie);
+> > +	clk_disable_unprepare(imx6_pcie->pcie_phy);
+> > +	clk_disable_unprepare(imx6_pcie->pcie_bus);
+> +
+> > +	if (imx6_pcie->variant == IMX7D) {
+> > +		regmap_update_bits(imx6_pcie->iomuxc_gpr, IOMUXC_GPR12,
+> > +				   IMX7D_GPR12_PCIE_PHY_REFCLK_SEL,
+> > +				   IMX7D_GPR12_PCIE_PHY_REFCLK_SEL);
+> > +	}
+> +}
+> +
+> +static int imx6_pcie_suspend_noirq(struct device *dev)
+> +{
+> > +	struct imx6_pcie *imx6_pcie = dev_get_drvdata(dev);
+> +
+> > +	if (imx6_pcie->variant != IMX7D)
+> > +		return 0;
+> +
+> > +	imx6_pcie_clk_disable(imx6_pcie);
+> > +	imx6_pcie_ltssm_disable(dev);
+> +
+> > +	return 0;
+> +}
+> +
+> +static int imx6_pcie_resume_noirq(struct device *dev)
+> +{
+> > +	int ret;
+> > +	struct imx6_pcie *imx6_pcie = dev_get_drvdata(dev);
+> > +	struct pcie_port *pp = &imx6_pcie->pci->pp;
+> +
+> > +	if (imx6_pcie->variant != IMX7D)
+> > +		return 0;
+> +
+> > +	imx6_pcie_assert_core_reset(imx6_pcie);
+> > +	imx6_pcie_init_phy(imx6_pcie);
+> > +	imx6_pcie_deassert_core_reset(imx6_pcie);
+> > +	dw_pcie_setup_rc(pp);
+> +
+> > +	ret = imx6_pcie_establish_link(imx6_pcie);
+> > +	if (ret < 0)
+> > +		dev_info(dev, "pcie link is down after resume.\n");
+> +
+> > +	return 0;
+> +}
+> +#endif
+> +
+> +static const struct dev_pm_ops imx6_pcie_pm_ops = {
+> > +	SET_NOIRQ_SYSTEM_SLEEP_PM_OPS(imx6_pcie_suspend_noirq,
+> > +				      imx6_pcie_resume_noirq)
+> +};
+> +
+>  static int imx6_pcie_probe(struct platform_device *pdev)
+>  {
+> >  	struct device *dev = &pdev->dev;
+> >  	struct dw_pcie *pci;
+> >  	struct imx6_pcie *imx6_pcie;
+> @@ -846,10 +932,11 @@ static const struct of_device_id imx6_pcie_of_match[] = {
+>  static struct platform_driver imx6_pcie_driver = {
+> >  	.driver = {
+> > >  		.name	= "imx6q-pcie",
+> >  		.of_match_table = imx6_pcie_of_match,
+> >  		.suppress_bind_attrs = true,
+> > +		.pm = &imx6_pcie_pm_ops,
+> >  	},
+> >  	.probe    = imx6_pcie_probe,
+> >  	.shutdown = imx6_pcie_shutdown,
+>  };
+>  
