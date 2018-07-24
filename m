@@ -2,196 +2,287 @@ Return-Path: <SRS0=hTZH=KI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4278BECDE5F
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 00:56:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48FD1ECDE5F
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 01:03:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D8F6120874
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 00:56:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D3ACF20852
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 01:03:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="H6VUW9aj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D8F6120874
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F2G8Zezs"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D3ACF20852
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388285AbeGXCAQ (ORCPT
+        id S2388300AbeGXCHj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 23 Jul 2018 22:00:16 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:40485 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388227AbeGXCAQ (ORCPT
+        Mon, 23 Jul 2018 22:07:39 -0400
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:34191 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388188AbeGXCHj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Jul 2018 22:00:16 -0400
-Received: by mail-pg1-f193.google.com with SMTP id x5-v6so1582710pgp.7
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Jul 2018 17:56:27 -0700 (PDT)
+        Mon, 23 Jul 2018 22:07:39 -0400
+Received: by mail-pl0-f67.google.com with SMTP id f6-v6so963670plo.1
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Jul 2018 18:03:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=le7y31HR/Bi4pdssjNqnjp0yx7LL2M7ZC2semmqdVZ8=;
-        b=H6VUW9aj2ZqMlEmfB5jEr/QaOGG1JZlQOHf2QpPP3HrW0AhN4XKPlxVYpi9guBRzdE
-         P2fbYmQKcn+PpKeYxuMbpj41Hf4TJRdHsUquXJsoHg1/kAbV71T7+ffC+Q9ZZdJSA0h8
-         5tcN9KCWo3pJkB9aZYCVLPx7sadI+3AFbbKiw=
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=P9AAx3nRNXji98I1i7QgXsQtUip40cjcnvDhkg2JekQ=;
+        b=F2G8ZezsLhHPDLsQHmMe+eTQ2zqS1F0XIKsWqpXltRPdI9MmOEQx7/4iM6a5LQBurF
+         ira80QY26Zg0yYCaSBzoSwvnzFFKN+d+xmkqJSdU/0qFoINUAz/TvDCwXxVRKggpPSWd
+         c2zeN2XJV399U9cutiLNGhg1OKKGm9eJaLpNrghRwZN5N1TrbsGw/nam3KynXbhv6xkn
+         40zTkQlM3njz2NOSrSqLRPQXFUG8gLkp09/xs8JSm483aw5Us0z9jRSqWijRhA1GPcdU
+         elIF+bYKRiUnJzMwKwvegKSpAksRxo+kVItBEKJdTTifZAIfyU4E+6FbuI/1d3NzKVQP
+         V9bg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=le7y31HR/Bi4pdssjNqnjp0yx7LL2M7ZC2semmqdVZ8=;
-        b=IrJ/TPNfSp/SOUiuNJNVlBIIhZMgW4oH1CdZzsTsUB2LgW8Uj1eGfzFTPTYCUOvJnh
-         8fI5NHO8wYhxS1XN5n6vs1aM3s8OZvp1VtzoccOp5Ku4NYyMD0GSqdwndJn0wlkZrdq9
-         Hx/yMLXknyImzGTmZUkZ0re47WMJy5J27/b43H3RUKiZOfD0DzSZ440OVajYQ3p4FmpH
-         nCY23YhL9Q6SUyppsDWbauljqMCid23EPPHyNb+d091DmENIv1R1rZKyreAHcY34sUBM
-         QUKVIOJw2BGmxM8cOrSQ+5QbGReXU3xSYwDqUT8TgZzgqCXcMXsN/OMfCpIVgbqNmtmo
-         p5nA==
-X-Gm-Message-State: AOUpUlH9HkAnInxVkxPpxeVC5pnikT+zcVY84Sfeyeh6mMLTZh3t11bm
-        FshJ3kehm4kmNrqcGh0UHpn8rHuUOQk=
-X-Google-Smtp-Source: AAOMgpcrFGUeUemQ5im1Rmbz66W3bgKZw183MvcATAZKk1RD4bO6OWiezHmXqD0fTNrzxhKhCIMTrA==
-X-Received: by 2002:a63:fd06:: with SMTP id d6-v6mr14379608pgh.348.1532393786655;
-        Mon, 23 Jul 2018 17:56:26 -0700 (PDT)
-Received: from minitux (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id y69-v6sm27997581pfd.36.2018.07.23.17.56.25
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=P9AAx3nRNXji98I1i7QgXsQtUip40cjcnvDhkg2JekQ=;
+        b=iVPcxm526YLGYFd6plfo2cSae5g/zg3UpRJJR9ea2eSpSlqe3NWLfMNNhPcOcFZ9ed
+         W0o3vm9oKjwV2VrPKQHg4IKruAxnm7bS7aq2szNQQ/niNNBfTn715GySkqqEhWTUfrY7
+         Gm3bVIXCfgdVEndpqqqcDvWAdScUtcftF99mIJswzsnEVn1VAN5JYVfWJ58KTNdnbrOg
+         gTi4BJSdzvxehbH9+sHEe3Psj1RvfSNCZoBl7HJKChFk4pHJ5Owj4n+uDrOH8v8G/a+w
+         IRdprf6W8HC8IZpvBHEtVQkP/4VJ/Lru7XPe6aeW3deTDA8/PheSEE5ZRNK8BqOFg1bm
+         +EIw==
+X-Gm-Message-State: AOUpUlEpgZphc2cSsDwkfGMnb1WQtD9WHkI54XdBf+LjM1ApHHfnGRq0
+        qcARt78jBrKK7wd+BYKRm/bdHQWG
+X-Google-Smtp-Source: AAOMgpctPTpSCVB8rviw16HYkDwJxvg4mdap9CFCDfrcB8qO4MopsvFL76Hf+q/zH0C23z7LlWJ91A==
+X-Received: by 2002:a17:902:42c3:: with SMTP id h61-v6mr14847240pld.319.1532394228397;
+        Mon, 23 Jul 2018 18:03:48 -0700 (PDT)
+Received: from rodete-desktop-imager.corp.google.com ([2401:fa00:d:10:affa:813f:5380:6613])
+        by smtp.gmail.com with ESMTPSA id z184-v6sm18868308pgd.83.2018.07.23.18.03.44
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 23 Jul 2018 17:56:26 -0700 (PDT)
-Date:   Mon, 23 Jul 2018 17:55:21 -0700
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Cc:     David Lechner <david@lechnology.com>, Pavel Machek <pavel@ucw.cz>,
-        Baolin Wang <baolin.wang@linaro.org>,
-        Mark Brown <broonie@kernel.org>,
-        Linux LED Subsystem <linux-leds@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3 1/2] leds: core: Introduce generic pattern interface
-Message-ID: <20180724005521.GG30024@minitux>
-References: <20180714222924.GA2776@amd>
- <20180714223907.GB2776@amd>
- <1138f834-e805-6076-bb5b-aa1fdc1f2606@gmail.com>
- <2c3a8911-150a-9b25-2a66-a9432047f96b@lechnology.com>
- <68996338-a902-2b57-0bb9-df274a496b06@gmail.com>
- <20180718075637.GA10279@amd>
- <CAMz4kuJa=s19q7wQFQT1giUe0AN4hpux4PG2koUcnE7q_x7LCQ@mail.gmail.com>
- <20180718120836.GB23157@amd>
- <47b1b143-48dd-a265-c2af-254dda53a2cc@lechnology.com>
- <8e51d2f1-0fc0-a968-4f97-3a4e09dd99e0@gmail.com>
+        Mon, 23 Jul 2018 18:03:46 -0700 (PDT)
+Date:   Tue, 24 Jul 2018 10:03:42 +0900
+From:   Minchan Kim <minchan@kernel.org>
+To:     Tino Lehnig <tino.lehnig@contabo.de>
+Cc:     ngupta@vflare.org, linux-kernel@vger.kernel.org,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: Zram writeback feature unstable with heavy swap utilization -
+ BUG: Bad page state in process...
+Message-ID: <20180724010342.GA195675@rodete-desktop-imager.corp.google.com>
+References: <0516ae2d-b0fd-92c5-aa92-112ba7bd32fc@contabo.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <8e51d2f1-0fc0-a968-4f97-3a4e09dd99e0@gmail.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <0516ae2d-b0fd-92c5-aa92-112ba7bd32fc@contabo.de>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri 20 Jul 12:11 PDT 2018, Jacek Anaszewski wrote:
+Hi Tino,
 
-> Hi David,
+Thanks for the report.
+
+On Mon, Jul 23, 2018 at 02:29:32PM +0200, Tino Lehnig wrote:
+> Hello,
 > 
-> On 07/18/2018 07:00 PM, David Lechner wrote:
-> > 
-> > 
-> > On 7/18/18 7:08 AM, Pavel Machek wrote:
-> > > On Wed 2018-07-18 19:32:01, Baolin Wang wrote:
-> > > > On 18 July 2018 at 15:56, Pavel Machek <pavel@ucw.cz> wrote:
-> > > > > Hi!
-> > > > > 
-> > > > > > > > > > I believe I meant "changing patterns
-> > > > > > > > > > from kernel in response to events
-> > > > > > > > > > is probably overkill"... or something like that.
-> > > > > > > > > 
-> > > > > > > > > Anyway -- to clean up the confusion -- I'd like to see
-> > > > > > > > > 
-> > > > > > > > > echo pattern > trigger
-> > > > > > > > > echo "1 2 3 4 5 6 7 8" > somewhere
-> > > > > > > > 
-> > > > > > > > s/somewhere/pattern/
-> > > > > > > > 
-> > > > > > > > pattern trigger should create "pattern" file
-> > > > > > > > similarly how ledtrig-timer
-> > > > > > > > creates delay_{on|off} files.
-> > > > > 
-> > > > > Yes, that sounds reasonable. v5 still says
-> > > > > 
-> > > > > +               Writing non-empty string to this file will
-> > > > > activate the pattern,
-> > > > > +               and empty string will disable the pattern.
-> > > > > 
-> > > > > I'd deactivate the pattern by simply writing something else to the
-> > > > > trigger file.
-> > > > 
-> > > > For the case we met in patch 2, it is not related with trigger things.
-> > > > We just set some series of tuples including brightness and duration
-> > > > (ms) to the hardware to enable the breath mode of the LED, we did not
-> > > > trigger anything. So it is weird to write something to trigger file to
-> > > > deactive the pattern.
-> > > 
-> > > Confused. I thought that "breathing mode" would be handled similar way
-> > > to hardware blinking: userland selects pattern trigger, pattern file
-> > > appears (similar way to delay_on/delay_off files with blinking), he
-> > > configures it, hardware brightness follows the pattern ("breathing
-> > > mode"). If pattern is no longer required, echo none > trigger stops
-> > > it.
-> > >                                     Pavel
-> > > 
-> > 
-> > I was confused too when I first read this thread. But after reviewing
-> > v5, it is clear that this is _not_ a trigger (and it should not be a
-> > trigger). This is basically the equivalent the brightness attribute -
-> > except that now the brightness changes over time instead of being a
-> > constant value.
+> after enabling the writeback feature in zram, I encountered the kernel bug
+> below with heavy swap utilization. There is one specific workload that
+> triggers the bug reliably and that is running Windows in KVM while
+> overcommitting memory. The Windows VMs would fill all allocated memory with
+> zero pages while booting. A few seconds after the host hits zram swap, the
+> console on the host is flooded with the bug message. A few more seconds
+> later I also encountered filesystem errors on the host causing the root
+> filesystem to be mounted read-only. The filesystem errors do not occur when
+> leaving RAM available for the host OS by limiting physical memory of the
+> QEMU processes via cgroups.
 > 
-> Pattern trigger would be just more flexible version of existing
-> ledtrig-timer.c, which also changes brightness over time.
+> I started three KVM instances with the following commands in my tests. Any
+> Windows ISO or disk image can be used. Less instances and smaller allocated
+> memory will also trigger the bug as long as swapping occurs. The type of
+> writeback device does not seem to matter. I have tried a SATA SSD and an
+> NVMe Optane drive so far. My test machine has 256 GB of RAM and one CPU. I
+> saw the same behavior on another machine with two CPUs and 128 GB of RAM.
 > 
-> Trigger, by definition, is a kernel based source of LED events,
-> so timer trigger falls under this definition, same way as pattern
-> trigger would.
+> The bug does not occur when using zram as swap without "backing_dev" being
+> set, but I had even more severe problems when running the same test on
+> Ubuntu Kernels 4.15 and 4.17. Regardless of the writeback feature being used
+> or not, the host would eventually lock up entirely when swap is in use on
+> zram. The lockups may not be related directly to zram though and were
+> apparently fixed in 4.18. I had absolutely no problems on Ubuntu Kernel 4.13
+> either, before the writeback feature was introduced.
+
+We didn't release v4.18 yet. Could you say what kernel tree/what version
+you used?
+
+Now I don't have enough time to dig in.
+
+Sergey, I really appreciate if you could have availabe time to look into.
+Anyway, I could try to see it asap if Sergey is not available.
+No worry.
+
+Thanks.
+
+
 > 
-> What may cause confusion is the possibility of exploiting hardware
-> capabilities, in case the requested settings fit in.
-> ledtrig-timer fathom the hardware capabilities using blink_set op,
-> and pattern trigger would use pattern_set op for that purpose.
+> Thank you for your attention.
 > 
-
-For the use cases I had in mind it's perfectly fine to describe this as
-a trigger.
-
-But that said, I rather quickly started playing around with associating
-patterns to trigger events; e.g. having a continuous pulse associated
-with the bluetooth "power" trigger or defining a smooth rampdown for the
-mmc activity trigger.
-
-> > This way, the pattern can be used in conjunction with triggers.
-> > 
-> > For example, one might want to set the _pattern_ to something like a
-> > "breathe" pattern and set the _trigger_ to the power supply charging
-> > full trigger. This way, the LED will be off until the battery is full
-> > and then the LED will "breath" when the battery is full.
+> --
 > 
-> AFAICS you comprehend "pattern trigger" notion as a LED trigger that
-> activates pattern functionality. I'd say that you'd need a specialized
-> "battery" trigger for that purpose, that instead of calling
-> led_set_brightness_nosleep() would schedule call to
-> led_trigger_set(led_cdev "pattern"), assuming that pattern trigger
-> would be implemented as I explained above.
+> commands used:
 > 
+> modprobe zram
+> echo 1 > /sys/block/zram0/reset
+> echo lz4 > /sys/block/zram0/comp_algorithm
+> echo /dev/nvme0n1 > /sys/block/zram0/backing_dev
+> echo 256G > /sys/block/zram0/disksize
+> mkswap /dev/zram0
+> swapon /dev/zram0
+> 
+> kvm -nographic -smp 20 -m 131072 -cdrom winpe.iso
+> 
+> --
+> 
+> log message:
+> 
+> BUG: Bad page state in process qemu-system-x86  pfn:3dfab21
+> page:ffffdfb137eac840 count:0 mapcount:0 mapping:0000000000000000 index:0x1
+> flags: 0x17fffc000000008(uptodate)
+> raw: 017fffc000000008 dead000000000100 dead000000000200 0000000000000000
+> raw: 0000000000000001 0000000000000000 00000000ffffffff 0000000000000000
+> page dumped because: PAGE_FLAGS_CHECK_AT_PREP flag set
+> bad because of flags: 0x8(uptodate)
+> Modules linked in: lz4 lz4_compress zram zsmalloc intel_rapl sb_edac
+> x86_pkg_temp_thermal intel_powerclamp coretemp kvm_intel kvm irqbypass
+> crct10dif_pclmul crc32_pclmul ghash_clmulni_intel bin
+> fmt_misc pcbc aesni_intel aes_x86_64 crypto_simd cryptd iTCO_wdt glue_helper
+> iTCO_vendor_support intel_cstate lpc_ich mei_me intel_uncore intel_rapl_perf
+> pcspkr joydev sg mfd_core ioatdma mei wmi evdev ipmi_si ipmi_devintf
+> ipmi_msghandler
+> acpi_power_meter acpi_pad button ip_tables x_tables autofs4 ext4
+> crc32c_generic crc16 mbcache jbd2 fscrypto hid_generic usbhid hid sd_mod
+> xhci_pci ehci_pci ahci libahci xhci_hcd ehci_hcd libata igb i2c_algo_bit
+> crc32c_intel scsi_mod i2c_i8
+> 01 dca usbcore
+> CPU: 4 PID: 1039 Comm: qemu-system-x86 Tainted: G    B 4.18.0-rc5+ #1
+> Hardware name: Supermicro Super Server/X10SRL-F, BIOS 2.0b 05/02/2017
+> Call Trace:
+>  dump_stack+0x5c/0x7b
+>  bad_page+0xba/0x120
+>  get_page_from_freelist+0x1016/0x1250
+>  __alloc_pages_nodemask+0xfa/0x250
+>  alloc_pages_vma+0x7c/0x1c0
+>  do_swap_page+0x347/0x920
+>  ? __update_load_avg_se.isra.38+0x1eb/0x1f0
+>  ? cpumask_next_wrap+0x3d/0x60
+>  __handle_mm_fault+0x7b4/0x1110
+>  ? update_load_avg+0x5ea/0x720
+>  handle_mm_fault+0xfc/0x1f0
+>  __get_user_pages+0x12f/0x690
+>  get_user_pages_unlocked+0x148/0x1f0
+>  __gfn_to_pfn_memslot+0xff/0x3c0 [kvm]
+>  try_async_pf+0x87/0x230 [kvm]
+>  tdp_page_fault+0x132/0x290 [kvm]
+>  ? vmexit_fill_RSB+0xc/0x30 [kvm_intel]
+>  kvm_mmu_page_fault+0x74/0x570 [kvm]
+>  ? vmexit_fill_RSB+0xc/0x30 [kvm_intel]
+>  ? vmexit_fill_RSB+0x18/0x30 [kvm_intel]
+>  ? vmexit_fill_RSB+0xc/0x30 [kvm_intel]
+>  ? vmexit_fill_RSB+0x18/0x30 [kvm_intel]
+>  ? vmexit_fill_RSB+0xc/0x30 [kvm_intel]
+>  ? vmexit_fill_RSB+0x18/0x30 [kvm_intel]
+>  ? vmexit_fill_RSB+0xc/0x30 [kvm_intel]
+>  ? vmexit_fill_RSB+0x18/0x30 [kvm_intel]
+>  ? vmexit_fill_RSB+0xc/0x30 [kvm_intel]
+>  ? vmexit_fill_RSB+0x18/0x30 [kvm_intel]
+>  ? vmexit_fill_RSB+0xc/0x30 [kvm_intel]
+>  ? vmx_vcpu_run+0x375/0x620 [kvm_intel]
+>  kvm_arch_vcpu_ioctl_run+0x9b3/0x1990 [kvm]
+>  ? __update_load_avg_se.isra.38+0x1eb/0x1f0
+>  ? kvm_vcpu_ioctl+0x388/0x5d0 [kvm]
+>  kvm_vcpu_ioctl+0x388/0x5d0 [kvm]
+>  ? __switch_to+0x395/0x450
+>  ? __switch_to+0x395/0x450
+>  do_vfs_ioctl+0xa2/0x630
+>  ? __schedule+0x3fd/0x890
+>  ksys_ioctl+0x70/0x80
+>  ? exit_to_usermode_loop+0xca/0xf0
+>  __x64_sys_ioctl+0x16/0x20
+>  do_syscall_64+0x55/0x100
+>  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+> RIP: 0033:0x7fb30361add7
+> Code: 00 00 00 48 8b 05 c1 80 2b 00 64 c7 00 26 00 00 00 48 c7 c0 ff ff ff
+> ff c3 66 2e 0f 1f 84 00 00 00 00 00 b8 10 00 00 00 0f 05 <48> 3d 01 f0 ff ff
+> 73 01 c3 48 8b 0d 91 80 2b 00 f7 d8 64 89 01 48
+> RSP: 002b:00007fb2e97f98b8 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+> RAX: ffffffffffffffda RBX: 000000000000ae80 RCX: 00007fb30361add7
+> RDX: 0000000000000000 RSI: 000000000000ae80 RDI: 0000000000000015
+> RBP: 00005652b984e0f0 R08: 00005652b7d513d0 R09: 0000000000000001
+> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+> R13: 00007fb308c66000 R14: 0000000000000000 R15: 00005652b984e0f0
+> 
+> --
+> 
+> ver_linux: Debian 9.5 with Kernel 4.18.0-rc5+
+> 
+> GNU C               	6.3.0
+> GNU Make            	4.1
+> Binutils            	2.28
+> Util-linux          	2.29.2
+> Mount               	2.29.2
+> Module-init-tools   	23
+> E2fsprogs           	1.43.4
+> Linux C Library     	2.24
+> Dynamic linker (ldd)	2.24
+> Linux C++ Library   	6.0.22
+> Procps              	3.3.12
+> Kbd                 	2.0.3
+> Console-tools       	2.0.3
+> Sh-utils            	8.26
+> Udev                	232
+> 
+> --
+> 
+> cpuinfo:
+> 
+> processor	: 0
+> vendor_id	: GenuineIntel
+> cpu family	: 6
+> model		: 79
+> model name	: Intel(R) Xeon(R) CPU E5-2630 v4 @ 2.20GHz
+> stepping	: 1
+> microcode	: 0xb000021
+> cpu MHz		: 1200.632
+> cache size	: 25600 KB
+> physical id	: 0
+> siblings	: 20
+> core id		: 0
+> cpu cores	: 10
+> apicid		: 0
+> initial apicid	: 0
+> fpu		: yes
+> fpu_exception	: yes
+> cpuid level	: 20
+> wp		: yes
+> flags		: fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat
+> pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx pdpe1gb
+> rdtscp lm constant_tsc arch_perfmon pebs bts rep_good nopl xtopology
+> nonstop_tsc cpuid aperfmperf pni pclmulqdq dtes64 monitor ds_cpl vmx smx est
+> tm2 ssse3 sdbg fma cx16 xtpr pdcm pcid dca sse4_1 sse4_2 x2apic movbe popcnt
+> tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm abm 3dnowprefetch
+> cpuid_fault epb cat_l3 cdp_l3 invpcid_single pti intel_ppin tpr_shadow vnmi
+> flexpriority ept vpid fsgsbase tsc_adjust bmi1 hle avx2 smep bmi2 erms
+> invpcid rtm cqm rdt_a rdseed adx smap intel_pt xsaveopt cqm_llc
+> cqm_occup_llc cqm_mbm_total cqm_mbm_local dtherm ida arat pln pts
+> bugs		: cpu_meltdown spectre_v1 spectre_v2 spec_store_bypass
+> bogomips	: 4400.00
+> clflush size	: 64
+> cache_alignment	: 64
+> address sizes	: 46 bits physical, 48 bits virtual
+> power management:
+> 
+> --
+> Kind regards,
+> 
+> Tino Lehnig
 
-Presumably the battery logic has a number of states; low batter
-discharging, low battery charging, full battery, levels in-between.
 
-Defining the levels for these and an appropriate UX seems like a job for
-something with a little bit of configurability and product specific
-logic. The transitions here would need to reconfigure the pattern, so it
-doesn't seem unreasonable for it to also set the pattern trigger.
-
-
-I'm not sure this logic does belong in the kernel, but I think that
-question is of less importance for the design of this.
-
-Regards,
-Bjorn
