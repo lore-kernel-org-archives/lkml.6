@@ -2,117 +2,200 @@ Return-Path: <SRS0=hTZH=KI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 348D6C6778A
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 14:27:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B930C6778A
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 14:28:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D619220856
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 14:27:05 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=toradex.com header.i=@toradex.com header.b="sRV34d/b"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D619220856
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=toradex.com
+	by mail.kernel.org (Postfix) with ESMTP id D1AE820880
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 14:28:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D1AE820880
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388601AbeGXPdr (ORCPT
+        id S2388562AbeGXPfH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 11:33:47 -0400
-Received: from mail-eopbgr30096.outbound.protection.outlook.com ([40.107.3.96]:45074
-        "EHLO EUR03-AM5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2388460AbeGXPdr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 11:33:47 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=toradex.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=GdRc+SmCthAGZ0BfR6Lwj5JhrnFRHPg3+xMt0NzolVc=;
- b=sRV34d/bZxTlO97pM4WgcTb5jzC9MeGRkSTcRrFs0O/IPScvhhDf42ahx5T3RLiX1W+yn/qM6qX9Cpjwp+ma6Pipf3eUr7RiDUsju/9k59V9ywSuP+ypq0vjygGhb9NMXWKkIQJAl3BVwmN0Z1PHycM00YeoAIstkNpvzmIR94s=
-Received: from VI1PR0501MB2590.eurprd05.prod.outlook.com (10.168.137.14) by
- VI1PR0501MB2494.eurprd05.prod.outlook.com (10.168.136.21) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.973.20; Tue, 24 Jul 2018 14:26:59 +0000
-Received: from VI1PR0501MB2590.eurprd05.prod.outlook.com
- ([fe80::dc61:4a61:b84:357e]) by VI1PR0501MB2590.eurprd05.prod.outlook.com
- ([fe80::dc61:4a61:b84:357e%8]) with mapi id 15.20.0973.022; Tue, 24 Jul 2018
- 14:26:59 +0000
-From:   Marcel Ziswiler <marcel.ziswiler@toradex.com>
-To:     "digetx@gmail.com" <digetx@gmail.com>
-CC:     "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "jonathanh@nvidia.com" <jonathanh@nvidia.com>,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>
-Subject: Re: [PATCH 01/28] ARM: tegra: apalis_t30: enable broken-hpi on emmc
-Thread-Topic: [PATCH 01/28] ARM: tegra: apalis_t30: enable broken-hpi on emmc
-Thread-Index: AQHUIdwHffQ5dkRq20eMTdGpauMmpqSeaoIAgAAGhQA=
-Date:   Tue, 24 Jul 2018 14:26:58 +0000
-Message-ID: <1532442416.6124.28.camel@toradex.com>
-References: <20180722164936.20581-1-marcel@ziswiler.com>
-         <20180722164936.20581-2-marcel@ziswiler.com> <1992775.WBgY65Ajyy@dimapc>
-In-Reply-To: <1992775.WBgY65Ajyy@dimapc>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=marcel.ziswiler@toradex.com; 
-x-originating-ip: [46.140.72.82]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;VI1PR0501MB2494;6:ffuFu4IbceCSPLNO91kS4+MWyys+FB68/ct1JOfZUatYFe9Ah62vDvEQS0akDkr0XdX/YyqQyFxty9aabpOezm0gDNjAG3Yea9R5r2ae76uL1T4qp5kbqO6Ob+lCHNwMhEy5S1PvKIpVFNUbEJf7bAMoYDuPnMnbj6y6AoGW9x9aVucUOZ79lFrMpuvvxrTj2+aTt7aORkuuiWTlWiEUSh5s+e8E5enqKCP4G2/gqm49kExz4dtakssu5jznXQwcbq4VfNLPk2kzL4BjW9oH2hqg2zvB0f8VxU8muGEin7xPQCRTfGjfPSCk+RflXueJYXbl4nvBE/rptYjmjmtU+YF8asTWCUYLdFiNH/SO9VrOT611JXvumUubdIKzknpFclfjwaTB/g7GzAQhvg/J8lgV75rh3SDYQiSlFdzlsyq8z2iCp+iQP5gr/w+jr8PKdU8w60Kspqleo2t5F0A5jA==;5:nAFnmwsQMiaaI6oB5+8P+Mwg1nyAX3pdRbxGUjB7fBPdQfz+MyWxbu75zKLCdifnwxIiVxflfGRXcJOLJZBYuqkTyiyuPv0P0mgOtn7ABNtHIyMbvslD0LrHSTK119MHQYXYVs3DWuDQOnKcYYrC8DzEaiwg4kywsqqzU2Zuusw=;7:Q/Elv7uj+3WaR2oqsSr2x4Hcor/oCNXN1BUzFTtDqhc0/iGB0bigm4+TCxL+wCFFzaf6nW404LISKIMKYFSglK8T1OD0zIIzwG5psLW16wUsmGLWvBNk8+dqxfTW5kuj2CoLvYc/4zMOhKFGnQtCYCmuf89T5i+HyRfz+KRx6EEEeeK1Y7Qhc4y9MCiizxVjDYjGEwrkv0BQ/mU+34KB3oR9FO57AcZrDhAB+YYCV0TgoR1YMEQIxs6MOLaghaY7
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: e519a1c2-3926-4f3c-3d83-08d5f17183f4
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(5600073)(711020)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(2017052603328)(7153060)(7193020);SRVR:VI1PR0501MB2494;
-x-ms-traffictypediagnostic: VI1PR0501MB2494:
-x-microsoft-antispam-prvs: <VI1PR0501MB24946556E9773B58F0EEF510FB550@VI1PR0501MB2494.eurprd05.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:;
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3002001)(10201501046)(93006095)(93001095)(3231311)(944501410)(52105095)(149027)(150027)(6041310)(20161123564045)(20161123562045)(20161123558120)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011)(7699016);SRVR:VI1PR0501MB2494;BCL:0;PCL:0;RULEID:;SRVR:VI1PR0501MB2494;
-x-forefront-prvs: 0743E8D0A6
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39840400004)(136003)(396003)(366004)(346002)(376002)(199004)(189003)(7736002)(103116003)(76176011)(102836004)(6916009)(486006)(446003)(2616005)(476003)(11346002)(6506007)(44832011)(26005)(36756003)(186003)(305945005)(5640700003)(8936002)(54906003)(99286004)(68736007)(6436002)(316002)(229853002)(6486002)(1361003)(6512007)(1411001)(81166006)(81156014)(8676002)(2906002)(1730700003)(2900100001)(5250100002)(5660300001)(3846002)(6116002)(53936002)(2501003)(25786009)(6246003)(39060400002)(2351001)(97736004)(106356001)(105586002)(14454004)(478600001)(66066001)(86362001)(256004)(14444005)(4326008);DIR:OUT;SFP:1102;SCL:1;SRVR:VI1PR0501MB2494;H:VI1PR0501MB2590.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: toradex.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: 64aHTZaTceu/Z4ioQUIEXBECd8iZQ/SLVzuB8XD8PhB0oZ3mNAYbzqovl6SkaFGw55bNXMLyUZdwaEk6tx8RODs3r1VYBp4VzBzp64WZhyhifjrZYzyCWQV8ix8OCluJqmjAIjisy1BqxvxY6OWmBv2ZBZT9h3D+8CldnaGUKVIm9AIQ6mZ0ps56udta+pTldqWxBlOtmEFReuoowjw7UJK6PW0kpZgpUrDoD9rBy0jftqMtr/W7Gun5tpIwISCrjygC+zpLOOimltOTJNKSmeQSJXfv4M9moDgf+tTmmvjTlhD3nB+LMtFPCv1epb0xIcWJrTK7wT5BwMVXulUNICryzaq0rFoO85MXDT4BauE=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <4BBD8A1BD91E8D439C0DA234949EB48E@eurprd05.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        Tue, 24 Jul 2018 11:35:07 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:35682 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388460AbeGXPfH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Jul 2018 11:35:07 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 07C9E207AB; Tue, 24 Jul 2018 16:28:19 +0200 (CEST)
+Received: from bbrezillon (AAubervilliers-681-1-78-122.w90-88.abo.wanadoo.fr [90.88.20.122])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 48CCE203D9;
+        Tue, 24 Jul 2018 16:28:08 +0200 (CEST)
+Date:   Tue, 24 Jul 2018 16:28:06 +0200
+From:   Boris Brezillon <boris.brezillon@bootlin.com>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Peter Rosin <peda@axentia.se>, Wolfram Sang <wsa@the-dreams.de>,
+        linux-i2c@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Przemyslaw Sroka <psroka@cadence.com>,
+        Arkadiusz Golec <agolec@cadence.com>,
+        Alan Douglas <adouglas@cadence.com>,
+        Bartosz Folta <bfolta@cadence.com>,
+        Damian Kos <dkos@cadence.com>,
+        Alicja Jurasik-Urbaniak <alicja@cadence.com>,
+        Cyprian Wronka <cwronka@cadence.com>,
+        Suresh Punnoose <sureshp@cadence.com>,
+        Rafal Ciepiela <rafalc@cadence.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Nishanth Menon <nm@ti.com>, Rob Herring <robh+dt@kernel.org>,
+        Pawel Moll <pawel.moll@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ian Campbell <ijc+devicetree@hellion.org.uk>,
+        Kumar Gala <galak@codeaurora.org>,
+        DTML <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Vitor Soares <Vitor.Soares@synopsys.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Xiang Lin <Xiang.Lin@synaptics.com>,
+        linux-gpio@vger.kernel.org, Sekhar Nori <nsekhar@ti.com>,
+        Przemyslaw Gaj <pgaj@cadence.com>
+Subject: Re: [PATCH v6 00/10] Add the I3C subsystem
+Message-ID: <20180724162806.318a92c6@bbrezillon>
+In-Reply-To: <CAK8P3a14_6uf9VLYU0YnmFp0Q=DZBKc0cAesBh0opanGDZMFRA@mail.gmail.com>
+References: <20180719152930.3715-1-boris.brezillon@bootlin.com>
+        <CAK8P3a2MP5+oFz--e+BM24D8Ahw7H_RKgN1S6wY1nQE6JL0dmw@mail.gmail.com>
+        <2ab0ab75-2df0-2714-f007-c33b25481016@axentia.se>
+        <20180720101206.tv7nsoanwo5ftnia@ninjato>
+        <CAK8P3a2Pqo5DuYBb09+w4nGWGOw+e_tZPxnA06qjNO_6Hw6NvQ@mail.gmail.com>
+        <21b269c5-a3a7-c5de-c81e-c9c9301ae13e@axentia.se>
+        <CAK8P3a1t2fhdw7HwxNkOs9o2pBECZ0ZdOysA=r2SPTWEvx76kw@mail.gmail.com>
+        <20180720151751.242d4809@bbrezillon>
+        <CAK8P3a14_6uf9VLYU0YnmFp0Q=DZBKc0cAesBh0opanGDZMFRA@mail.gmail.com>
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-X-OriginatorOrg: toradex.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e519a1c2-3926-4f3c-3d83-08d5f17183f4
-X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Jul 2018 14:26:58.8612
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: d9995866-0d9b-4251-8315-093f062abab4
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0501MB2494
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gVHVlLCAyMDE4LTA3LTI0IGF0IDE3OjAzICswMzAwLCBEbWl0cnkgT3NpcGVua28gd3JvdGU6
-DQo+IE9uIFN1bmRheSwgMjIgSnVseSAyMDE4IDE5OjQ5OjA5IE1TSyBNYXJjZWwgWmlzd2lsZXIg
-d3JvdGU6DQo+ID4gRnJvbTogTWFyY2VsIFppc3dpbGVyIDxtYXJjZWwuemlzd2lsZXJAdG9yYWRl
-eC5jb20+DQo+ID4gDQo+ID4gQXZvaWQgZU1NQyBpc3N1ZXMgYnkgc3BlY2lmeWluZyBicm9rZW4t
-aHBpLg0KPiA+IA0KPiA+IFNpZ25lZC1vZmYtYnk6IE1hcmNlbCBaaXN3aWxlciA8bWFyY2VsLnpp
-c3dpbGVyQHRvcmFkZXguY29tPg0KPiA+IA0KPiA+IC0tLQ0KPiANCj4gSXMgaXQgYSBzcGVjaWZp
-YyBlTU1DIGNhcmQgbW9kZWwgdGhhdCBoYXMgYnJva2VuIEhQSSBvciBpdCBpcyBhIGhvc3QgDQo+
-IGNvbnRyb2xsZXIgYnVnPw0KDQpUaGF0IGlzIGEgdmVyeSBnb29kIHF1ZXN0aW9uLiBTbyBmYXIg
-d2Ugb25seSBoYXZlIGNvbmZpcm1hdGlvbiB0aGF0IGF0DQpsZWFzdCBzb21lIGVNTUNzIGZyb20g
-SHluaXggcmVzcC4gU0tIeW5peCBkZWZpbml0ZWx5IGRvIGhhdmUgYmFkDQpmaXJtd2FyZS4gSSBh
-bHNvIGZvdW5kIG91dCB0aGF0IEFTVVMgcmVzcC4gR29vZ2xlIGRpZCBkaXNhYmxlIEhQSSBvbg0K
-dGhlaXIgTmV4dXMgNyB0YWJsZXQuIFRoZXJlZm9yZSwgd2UgYWxzbyBkaXNhYmxlZCBIUEkgcXVp
-dGUgYSB3aGlsZSBhZ28NCmluIG91ciBkb3duc3RyZWFtIEJTUHMgd2hpY2ggd2Ugc3VjY2Vzc2Z1
-bGx5IHZhbGlkYXRlZCAmIHZlcmlmaWVkIGRvaW5nDQpwb3dlciBjdXRzIGFuZCBydW5uaW5nIHN0
-cmVzcyB0ZXN0cyBpbiBvdXIgdGVtcGVyYXR1cmUgY2hhbWJlcnMuIEkNCmd1ZXNzIHdlIHdvdWxk
-IGhhdmUgdG8gcnVuIG1vcmUgZXh0ZW5zaXZlIHRlc3RzIHdpdGggbWFpbmxpbmUgd2l0aCBhbmQN
-CndpdGhvdXQgdGhpcyBzZXR0aW5nIHRvIGJlIGFibGUgdG8gcmVhbGx5IGFuc3dlciB5b3VyIHF1
-ZXN0aW9uLiBGb3Igbm93DQpJIGp1c3Qgc3VjY2Vzc2Z1bGx5IHJ1biBhIGZldyBBcGFsaXMgVDMw
-IGFuZCBDb2xpYnJpIFQzMCBtb2R1bGVzIHdpdGgNCnRoaXMgc2V0dGluZyBvdmVyIHRoZSB3ZWVr
-ZW5kIGRvaW5nIGJvdGggaGRwYXJtIC10IGFzIHdlbGwgYXMgZGRpbmcNCnNvbWUgdXJhbmRvbSBm
-aWxlcyB0byB0aGUgZU1NQyBpbiBhIGxvb3Agd2l0aG91dCBzZWVpbmcgYW55IGlzc3Vlcy4=
+Hi Arnd,
+
+On Tue, 24 Jul 2018 16:03:38 +0200
+Arnd Bergmann <arnd@arndb.de> wrote:
+
+> On Fri, Jul 20, 2018 at 3:17 PM, Boris Brezillon
+> <boris.brezillon@bootlin.com> wrote:
+> > On Fri, 20 Jul 2018 13:28:10 +0200 Arnd Bergmann <arnd@arndb.de> wrote:
+> >  
+> >> On Fri, Jul 20, 2018 at 1:13 PM, Peter Rosin <peda@axentia.se> wrote:  
+> >> > On 2018-07-20 12:57, Arnd Bergmann wrote:  
+> >> >> * What I understand from reading i2c-demux-pinctrl.c, a slave device
+> >> >>   will only ever be observable from one master at a time, when you
+> >> >>   switch over, all children get removed on one master and added to
+> >> >>   the other one, to be probed again by their respective drivers.
+> >> >>   I can see this as a useful feature on i3c as well, in particular to
+> >> >>   deal with the situation where we have i2c slaves connected to a
+> >> >>   pinmux that can switch them between an i3c master and an
+> >> >>   i2c-only master (possibly a gpio based one). That particular use
+> >> >>   case however doesn't seem to fix well in the current code, which
+> >> >>   is structure around i3c buses.  
+> >> >
+> >> > It's pretty easy to come up with examples where this reprobing is
+> >> > not desirable at all. E.g. if one of the involved I2C devices is
+> >> > a HDMI encoder (I have a TDA19988 here) sitting in the middle of the
+> >> > graphics pipeline. Blink-blink on the screen because some *other*
+> >> > unrelated device needed to be accessed by an alternative master. Not
+> >> > pretty.  
+> >>
+> >> Agreed, we definitely don't want to reprobe all devices during normal
+> >> operation for i3c master handover.
+> >>  
+> >
+> > Re-probing would not happen, no matter the solution we choose. It's
+> > that, in one case, you would have X virtual/linux devices representing
+> > the same physical device and in the other case, you would just have
+> > one, and everytime a transfer is requested by the driver, the core
+> > would pick the appropriate master to do it (most likely the one in
+> > control of the bus at that time)  
+> 
+> I think this is one of the cases I'd want to avoid: controlling multiple
+> masters that are active at the same time without going through
+> the handover.
+
+That's simply not possible, the I3C protocol forbids it. There can only
+be one active master on the bus at any point in time.
+
+> 
+> If we have an actual pinmux between two masters and only one
+> of them can even see the bus, I think we should go through a
+> complete remove/probe cycle the way that the i2c-demux-pinctrl
+> does today. If OTOH we a primary/secondary master pair with
+> handover capability, I would prefer to not see one slave on
+> both devices at the same time, or (ideally) only use one of the
+> two masters and disable the other one completely.
+
+Again, you don't have a choice because it's part of the protocol. At
+any time, you only have one active master on the bus, and other masters
+are acting as slaves until they gain bus ownership (if they ever do).
+Say that device A wants to do an HDR transfer on the bus, and HDR is
+only supported by master X, but master Y is currently owning the bus.
+Master X will first have to request bus ownership before doing the
+transfer requested by device A.
+
+Now, imagine that device A wants to do an SDR transfer which is
+supported by both master X and master Y, and master Y is in control.
+Instead of requesting a bus handover, the framework would just
+automatically decide to do the transfer through master Y. That's the
+sort of things this separate bus/master representation allows.
+
+> 
+> >> If we find a case in which it is needed, we could still deal with it
+> >> like this:
+> >> - enumerate all slaves connected to the bus for each of the
+> >>   two masters  
+> >
+> > That's what will happen if you don't share the same bus representation.  
+> 
+> To clarify: I meant list them in the DT representation, not enumerate
+> them in Linux during boot. Sorry for using a misleading description here.
+
+Okay.
+
+> 
+> >> - mark each slave as status="enabled" in at most one of the
+> >>   buses, and as disabled everywhere else  
+> >
+> > We shouldn't need to do that. We can just let the driver check whether
+> > the master provides the necessary capabilities to efficiently
+> > communicate with the device, and if it does not just return -ENOTSUPP
+> > in the ->probe() function. This way you'll have a device, but not
+> > driver controlling it on one bus, and on the other bus, you'll have
+> > another device (which points to the same physical device) this time
+> > with a driver attached to it.  
+> 
+> I'd still hope that we can completely avoid that case and never
+> have the case where one physical device has two live
+> representations in the kernel. It /could/ still be done of course,
+> but would not always do the right thing, depending on the
+> type of device (a temperature sensor could just be probed
+> twice without problems, a network device probably cannot)
+
+Not really feasible if we don't share the same bus representation. So,
+that means you hope we'll never have a real case where 2 masters are
+connected to the same physical bus and both exposed to the same Linux
+instance.
+
+I'm still unsure what you think adds complexity in the current
+approach. When I implemented it, it looked like is was almost the same
+(in term of complexity) to have a bus object separated from the master,
+but I'm probably missing something.
+
+Anyway, here's what I propose. I'll work on a v7 where the bus object
+is tied to the master (and not exposed in sysfs or the DT
+representation) and the master itself is not represented as a device on
+the bus. This way you'll have both solutions to compare them and take a
+decision.
+
+Regards,
+
+Boris
