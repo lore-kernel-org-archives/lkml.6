@@ -2,118 +2,161 @@ Return-Path: <SRS0=hTZH=KI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35B4CECDFB8
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 15:58:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA16CECDFB8
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 15:59:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B347020874
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 15:58:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4C1D120874
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 15:59:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="GJP6OoX7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B347020874
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OOcI+rnV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4C1D120874
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388641AbeGXRFw (ORCPT
+        id S2388551AbeGXRGn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 13:05:52 -0400
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:36255 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388413AbeGXRFq (ORCPT
+        Tue, 24 Jul 2018 13:06:43 -0400
+Received: from mail-oi0-f66.google.com ([209.85.218.66]:34260 "EHLO
+        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388324AbeGXRGn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 13:05:46 -0400
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20180724155837euoutp011a2ba7bddd68b9ae79118f4bb9af6fa7~EWUL2nMMa1978719787euoutp01b;
-        Tue, 24 Jul 2018 15:58:37 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20180724155837euoutp011a2ba7bddd68b9ae79118f4bb9af6fa7~EWUL2nMMa1978719787euoutp01b
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1532447917;
-        bh=JXY2AP8393pcmweHCT6sw4UgBxuKKX9gLJ8JjaXVyeU=;
-        h=From:To:Cc:Subject:Date:In-reply-to:References:From;
-        b=GJP6OoX7xGNnfglL4xa2UaEqptd9BpKDXxGHwbQI3K+lAicwnJwpB9by6vkB7MTc6
-         vkSoeCqfLWP2RBvc/QQWN292z5Y9fuRE0OAsMQEfEzyXcwCdlP0Lb899NIDPjnapL6
-         fd5NNPEqQ52fRL/dprNjeYyyzt0kcGXN9iTq2h1A=
-Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20180724155836eucas1p2cc9d46bff499e42776d301e9ab562785~EWULhDa8y1850318503eucas1p25;
-        Tue, 24 Jul 2018 15:58:36 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges3new.samsung.com (EUCPMTA) with SMTP id BD.D8.61560.CAC475B5; Tue, 24
-        Jul 2018 16:58:36 +0100 (BST)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20180724155836eucas1p220267599c363d6e0e5a2ef1a2236b57c~EWUK5rRLH2655126551eucas1p2p;
-        Tue, 24 Jul 2018 15:58:36 +0000 (GMT)
-X-AuditID: cbfec7f5-207ff7000002f078-66-5b574caccf37
-Received: from eusync1.samsung.com ( [203.254.199.211]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id 92.18.04183.CAC475B5; Tue, 24
-        Jul 2018 16:58:36 +0100 (BST)
-Received: from amdc3058.localnet ([106.120.53.102]) by eusync1.samsung.com
-        (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5
-        2014)) with ESMTPA id <0PCD008OBODNLZ90@eusync1.samsung.com>; Tue, 24 Jul
-        2018 16:58:36 +0100 (BST)
-From:   Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc:     Florian Tobias Schandinat <FlorianSchandinat@gmx.de>,
-        dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org,
+        Tue, 24 Jul 2018 13:06:43 -0400
+Received: by mail-oi0-f66.google.com with SMTP id 13-v6so8430200ois.1;
+        Tue, 24 Jul 2018 08:59:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=Bq5wHhmbmGGbbZStcNtL2N8nEdzVdUrzgal6/FwqlK0=;
+        b=OOcI+rnV0+cqG6t0HnpJKLPmeJ+V3tGUVOsrOImaMNI2klA/b+YLIaP8KlypaEBpPo
+         JiiArL/L5TLA4r76v2Ve5tKDo8Y/a+W/nHwvgg8ubaslPLzhsDRueOg1MmmuCThTyFdn
+         0hLi5pSj/QWWUq9oXE3YnxFUE/+UOTYk+uKm8LEebW1tYQraOxcFnnOQ4l7xnBznL46X
+         bQA2Oep3thPvDcX8asSFgqtRr2objeczdFP0d5pcnsNMj8+4WYtNvVH1tucuQdCOIFVy
+         3VNMp1BIwaYzbD7aj/kXPBEvBGlQofB4r3WPKxCw86CsEi83T1+PZALo+c8nI5V0iUxN
+         2Scw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=Bq5wHhmbmGGbbZStcNtL2N8nEdzVdUrzgal6/FwqlK0=;
+        b=QdaBq+dol/rPr2TslbNZEZt69d2qDJ2DqXBcG7ZFvEikZ8s1DSCmUas2j95Y6e8xvl
+         BnbXkhYXCx6+gmTy26j4AS+iJraapqwhSsFmqcXqLZenNxTM41kSM7kx5cbHxZziZwnZ
+         DJdHEW8OZn8DMpZbUfktl5aD/rIjwXE30IO/RZVyMaa1Kt4KtbhoRExLpjpJAqwNxU6e
+         LHcxq+VS3AWKHSqUxlTfIVWSdy5QFStdCTP1Vcn7VrqONtXtRvN1QefMOHZG+I8hHdAZ
+         IqJIQ0lMtFJHmYH0S6VUMG+RkrIP/7cq+apPcJKLdUfRTzpkomxByRxI0ShjKPTc/1JN
+         WyEQ==
+X-Gm-Message-State: AOUpUlFGTJ8A+xI3KN0qx9h1aE7ME08eVU1I4pEBZ7DEu9IMiBIfFeJ/
+        vsc+0JR3mIAvUKM9z7koTW9IcHBlNjw=
+X-Google-Smtp-Source: AAOMgpcYRiDy/4G0b/LNTfqDrF1soZmARartE+68KDqQ2KTPhtcz7ZLeGg3u3WLyzudm/VjVa01zDw==
+X-Received: by 2002:aca:5004:: with SMTP id e4-v6mr4020910oib.111.1532447974214;
+        Tue, 24 Jul 2018 08:59:34 -0700 (PDT)
+Received: from nuclearis2-1.gtech (c-98-195-139-126.hsd1.tx.comcast.net. [98.195.139.126])
+        by smtp.gmail.com with ESMTPSA id w204-v6sm14707285oif.2.2018.07.24.08.59.33
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 24 Jul 2018 08:59:33 -0700 (PDT)
+Subject: Re: [PATCH v2] PCI/AER: Do not clear AER bits if we don't own AER
+To:     linux-pci@vger.kernel.org, bhelgaas@google.com
+Cc:     keith.busch@intel.com, alex_gagniuc@dellteam.com,
+        austin_bolen@dell.com, shyam_iyer@dell.com,
+        Frederick Lawler <fred@fredlawl.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Oza Pawandeep <poza@codeaurora.org>,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] video: fbdev: mark expected switch fall-throughs
-Date:   Tue, 24 Jul 2018 17:58:35 +0200
-Message-id: <61303804.R82jaX4LRF@amdc3058>
-User-Agent: KMail/4.13.3 (Linux/3.13.0-96-generic; KDE/4.13.3; x86_64; ; )
-In-reply-to: <20180709224145.GA15004@embeddedor.com>
-MIME-version: 1.0
-Content-transfer-encoding: 7Bit
-Content-type: text/plain; charset="us-ascii"
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrEIsWRmVeSWpSXmKPExsWy7djPc7prfMKjDW6v1rG48vU9m0XnzGuM
-        Flv3qFqc6PvAanF51xw2B1aPdQdVPT58jPO4332cyePzJrkAligum5TUnMyy1CJ9uwSujG0v
-        PzAV/GOqOPRuHmMD43amLkZODgkBE4l/v96ydjFycQgJrGCUaL4ylQnC+cwoMa/tCytM1f2p
-        89ggEssYJRpWzIFyfjNKrH/9ix2kik3ASmJi+ypGEFtEwEhi9oxusLnMAjMYJV68OcMCkhAW
-        cJXo/dXLDGKzCKhKLF3YBLaCV0BLYsGSLrBmUQEviS372sEO5ARa/en3BUaIGkGJH5Pvgc1h
-        FpCX2Ld/KiuErSNx9tg6RpBlEgJz2CT2ND1hgbjbReLlm4VQtrDEq+Nb2CFsGYnLk7tZIBqm
-        M0q8+bUUylnPKLHmzDFo2FhLHD5+EWoFn8SkbdOBzuYAivNKdLQJQZR4SMy+swsafO2MEtdO
-        zWWawCgzC8m1s5BcOwvJtQsYmVcxiqeWFuempxYb56WW6xUn5haX5qXrJefnbmIExvzpf8e/
-        7mDc9yfpEKMAB6MSD+8Hu/BoIdbEsuLK3EOMEhzMSiK8i0SBQrwpiZVVqUX58UWlOanFhxil
-        OViUxHnjNOqihATSE0tSs1NTC1KLYLJMHJxSDYzpx9sX7T+cvXZtzt+dBrY1jF3Resx7S/Pa
-        Snys46Mt4rIL57LWztmmsCUp+GOmgI9HtJpqqvFVndfx+nsbmY3W8E0r7D1/JIuhfZUok25z
-        HUPRnn/aAh8+O8mv2vMrXT6Fh/9jktBDHxum1Sy1Z25ceNjjs+Gxwv8DsuWn96jfZp/hK5HR
-        osRSnJFoqMVcVJwIAOdHGd31AgAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrHLMWRmVeSWpSXmKPExsVy+t/xy7prfMKjDf40MVtc+fqezaJz5jVG
-        i617VC1O9H1gtbi8aw6bA6vHuoOqHh8+xnnc7z7O5PF5k1wASxSXTUpqTmZZapG+XQJXxraX
-        H5gK/jFVHHo3j7GBcTtTFyMnh4SAicT9qfPYuhi5OIQEljBKrJh+lR3C+csoserwfTaQKjYB
-        K4mJ7asYQWwRASOJ2TO6WUGKmAVmMEr87d7HApIQFnCV6P3VywxiswioSixd2MQKYvMKaEks
-        WNIF1iwq4CWxZV872GpOoNWffl8AiwsJdDJKfP0cA1EvKPFj8j2wmcwC8hL79k9lhbC1JNbv
-        PM40gZF/FpKyWUjKZiEpW8DIvIpRJLW0ODc9t9hIrzgxt7g0L10vOT93EyMwVLcd+7llB2PX
-        u+BDjAIcjEo8vB6O4dFCrIllxZW5hxglOJiVRHgXiQKFeFMSK6tSi/Lji0pzUosPMUpzsCiJ
-        8543qIwSEkhPLEnNTk0tSC2CyTJxcEo1MIae/TZhXeSRvYlHHCWvuex03rjn+fasz8+NTUvS
-        LB36fTb+yxF+Li+f99Isdc3uDnXVJZd2H7kfeGtlYrlPyxPufQ2NNkktzF/3rfz2N+2ZdFXm
-        jBQbPUHTf0udj4tV9Feo8WvKhYU0/ZdimT1v3sL+u43X5eU+aTd9SN1ulRV3RDlXUcOyWoml
-        OCPRUIu5qDgRAJwhhpZRAgAA
-X-CMS-MailID: 20180724155836eucas1p220267599c363d6e0e5a2ef1a2236b57c
-X-Msg-Generator: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20180709224217epcas1p397f731700d48b9b39d12afb5c41f8f06
-References: <CGME20180709224217epcas1p397f731700d48b9b39d12afb5c41f8f06@epcas1p3.samsung.com>
-        <20180709224145.GA15004@embeddedor.com>
+References: <20180717153135.25925-1-mr.nuke.me@gmail.com>
+ <20180723165251.11424-1-mr.nuke.me@gmail.com>
+From:   "Alex G." <mr.nuke.me@gmail.com>
+Message-ID: <3d05f662-2c29-90cd-9c74-6456939a0e6b@gmail.com>
+Date:   Tue, 24 Jul 2018 10:59:32 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <20180723165251.11424-1-mr.nuke.me@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Monday, July 09, 2018 05:41:45 PM Gustavo A. R. Silva wrote:
-> In preparation to enabling -Wimplicit-fallthrough, mark switch cases
-> where we are expecting to fall through.
+
+
+On 07/23/2018 11:52 AM, Alexandru Gagniuc wrote:
+> When we don't own AER, we shouldn't touch the AER error bits. Clearing
+> error bits willy-nilly might cause firmware to miss some errors. In
+> theory, these bits get cleared by FFS, or via ACPI _HPX method. These
+> mechanisms are not subject to the problem.
 > 
-> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+> This race is mostly of theoretical significance, since I can't
+> reasonably demonstrate this race in the lab.
+> 
+> On a side-note, pcie_aer_is_kernel_first() is created to alleviate the
+> need for two checks: aer_cap and get_firmware_first().
+> 
+> Signed-off-by: Alexandru Gagniuc <mr.nuke.me@gmail.com>
+> ---
+>   drivers/pci/pcie/aer.c | 17 ++++++++++-------
+>   1 file changed, 10 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/pci/pcie/aer.c b/drivers/pci/pcie/aer.c
+> index a2e88386af28..85c3e173c025 100644
+> --- a/drivers/pci/pcie/aer.c
+> +++ b/drivers/pci/pcie/aer.c
+> @@ -307,6 +307,12 @@ int pcie_aer_get_firmware_first(struct pci_dev *dev)
+>   		aer_set_firmware_first(dev);
+>   	return dev->__aer_firmware_first;
+>   }
+> +
+> +static bool pcie_aer_is_kernel_first(struct pci_dev *dev)
+> +{
+> +	return !!dev->aer_cap && !pcie_aer_get_firmware_first(dev);
+> +}
+> +
+>   #define	PCI_EXP_AER_FLAGS	(PCI_EXP_DEVCTL_CERE | PCI_EXP_DEVCTL_NFERE | \
+>   				 PCI_EXP_DEVCTL_FERE | PCI_EXP_DEVCTL_URRE)
+>   
+> @@ -337,10 +343,7 @@ bool aer_acpi_firmware_first(void)
+>   
+>   int pci_enable_pcie_error_reporting(struct pci_dev *dev)
+>   {
+> -	if (pcie_aer_get_firmware_first(dev))
+> -		return -EIO;
+> -
+> -	if (!dev->aer_cap)
+> +	if (!pcie_aer_is_kernel_first(dev))
+>   		return -EIO;
+>   
+>   	return pcie_capability_set_word(dev, PCI_EXP_DEVCTL, PCI_EXP_AER_FLAGS);
+> @@ -349,7 +352,7 @@ EXPORT_SYMBOL_GPL(pci_enable_pcie_error_reporting);
+>   
+>   int pci_disable_pcie_error_reporting(struct pci_dev *dev)
+>   {
+> -	if (pcie_aer_get_firmware_first(dev))
+> +	if (!pcie_aer_is_kernel_first(dev))
+>   		return -EIO;
+>   
+>   	return pcie_capability_clear_word(dev, PCI_EXP_DEVCTL,
+> @@ -383,10 +386,10 @@ int pci_cleanup_aer_error_status_regs(struct pci_dev *dev)
+>   	if (!pci_is_pcie(dev))
+>   		return -ENODEV;
+>   
+> -	pos = dev->aer_cap;
+> -	if (!pos)
+> +	if (pcie_aer_is_kernel_first(dev))
 
-Patch queued for 4.19, thanks.
+This here is missing a '!'. It's in my local branch, so I must have 
+exported the patch before I fixed that. I'll get that fixed next rev.
 
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
-
+>   		return -EIO;
+>   
+> +	pos = dev->aer_cap;
+>   	port_type = pci_pcie_type(dev);
+>   	if (port_type == PCI_EXP_TYPE_ROOT_PORT) {
+>   		pci_read_config_dword(dev, pos + PCI_ERR_ROOT_STATUS, &status);
+> 
