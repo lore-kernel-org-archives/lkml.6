@@ -2,124 +2,119 @@ Return-Path: <SRS0=hTZH=KI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BDD8FECDFB8
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 16:58:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 045C3ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 16:58:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4D97C20856
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 16:58:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B159620856
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 16:58:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="ZnVEgiOV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D97C20856
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="XPvrLBAq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B159620856
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388572AbeGXSFq (ORCPT
+        id S2388565AbeGXSGN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 14:05:46 -0400
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:35783 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388415AbeGXSFq (ORCPT
+        Tue, 24 Jul 2018 14:06:13 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:43084 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388324AbeGXSGN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 14:05:46 -0400
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20180724165821euoutp02cee6ac7025d363082d137222aba9c292~EXIVrH7LG2986429864euoutp02U;
-        Tue, 24 Jul 2018 16:58:21 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20180724165821euoutp02cee6ac7025d363082d137222aba9c292~EXIVrH7LG2986429864euoutp02U
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1532451501;
-        bh=9tyD6ir9p7ZP3N0hDQNhc2o2GH4Ir7mchWMWgNE3L+k=;
-        h=From:To:Cc:Subject:Date:In-reply-to:References:From;
-        b=ZnVEgiOVzVsZrKWvmq2Oy5AP6vqKmASSG82tQ2zRsQUsfloeqFmhB0AR0sZkeQE2k
-         wlOVcQ3x1WVwGCsTjI1dhmNqUBGYqWEagWsWFKg+G4vSjFEEzJEm6ly6w4eTsGLN3S
-         yt6xQughZ9nH00Lh3cQ2Bx6kgJxy846DrvkpBcc0=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20180724165820eucas1p22ab5422b8595799990be3af5fe848b2b~EXIUtCwrD2568725687eucas1p2n;
-        Tue, 24 Jul 2018 16:58:20 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges1new.samsung.com (EUCPMTA) with SMTP id 99.0E.04627.BAA575B5; Tue, 24
-        Jul 2018 17:58:19 +0100 (BST)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20180724165819eucas1p1e1ffdecb438bb3c49ca65c880eeede34~EXIT-5QLN0676206762eucas1p1P;
-        Tue, 24 Jul 2018 16:58:19 +0000 (GMT)
-X-AuditID: cbfec7f2-0d3ff70000021213-29-5b575aabcae6
-Received: from eusync1.samsung.com ( [203.254.199.211]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id B9.BD.04178.BAA575B5; Tue, 24
-        Jul 2018 17:58:19 +0100 (BST)
-Received: from amdc3058.localnet ([106.120.53.102]) by eusync1.samsung.com
-        (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5
-        2014)) with ESMTPA id <0PCD0033ZR57TV40@eusync1.samsung.com>; Tue, 24 Jul
-        2018 17:58:19 +0100 (BST)
-From:   Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-To:     Colin King <colin.king@canonical.com>
-Cc:     linux-omap@vger.kernel.org, linux-fbdev@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] omapfb: encoder-tpd12s015: remove redundant pointer
- 'in'
-Date:   Tue, 24 Jul 2018 18:58:19 +0200
-Message-id: <7824518.4rCHaMUqme@amdc3058>
-User-Agent: KMail/4.13.3 (Linux/3.13.0-96-generic; KDE/4.13.3; x86_64; ; )
-In-reply-to: <20180720185213.3085-1-colin.king@canonical.com>
-MIME-version: 1.0
-Content-transfer-encoding: 7Bit
-Content-type: text/plain; charset="us-ascii"
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrMIsWRmVeSWpSXmKPExsWy7djPc7qro8KjDe632Vj8Xt3LZnHl63s2
-        i623pC1O9H1gtbi8aw6bxewl/SwObB6zGnrZPO53H2fy+LxJLoA5issmJTUnsyy1SN8ugSuj
-        5/YrpoJ/zBUrFx5ka2CczdzFyMkhIWAiMe/8c7YuRi4OIYEVjBLLt62Bcj4zSjx62MAGU3Xk
-        0iRWiMQyRokrbUeYIJzfjBK7725gBKliE7CSmNi+Csjm4BAR0JQ4f64IpIZZYD6jxJ7NC8Em
-        CQv4S+xqfQFWzyKgKrHrz3wwmxeovnnKArCbRAW8JLbsa2cCsTkFbCW6flxkhqgRlPgx+R4L
-        iM0sIC+xb/9UVghbR+LssXWMIMskBBawSbyacYYd4mwXiS0zP0M9Kizx6vgWqLiMRGfHQSaI
-        humMEm9+LWWBcNYzSqw5c4wJospa4vDxi1Ar+CQmbZvODPKahACvREebEESJh8SVpbtZIEEx
-        gVGitWcF0wRGmVlIrp2F5NpZSK5dwMi8ilE8tbQ4Nz212DAvtVyvODG3uDQvXS85P3cTIzDq
-        T/87/mkH49dLSYcYBTgYlXh4P9iFRwuxJpYVV+YeYpTgYFYS4TUNBArxpiRWVqUW5ccXleak
-        Fh9ilOZgURLnjdOoixISSE8sSc1OTS1ILYLJMnFwSjUwhp6r1Vzk2qB5+36PhGG0Vun93IeL
-        2WYfPd/5o6Lhy+bPrpMnbSuJkH+Xs68ia6Oc1TaJZ8rielkHRW/cLZht/t7Pi+ddf8W7A/PY
-        yhm/fFsgzWTA3/H9of7x3ztS71b/PsDx3VQs1bLv6e8DYuftY8+/EXhx4g6vW0+BmwDDnkSn
-        +J6CSZa2SizFGYmGWsxFxYkA2YXO3fYCAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrALMWRmVeSWpSXmKPExsVy+t/xy7qro8KjDbatkLL4vbqXzeLK1/ds
-        FltvSVuc6PvAanF51xw2i9lL+lkc2DxmNfSyedzvPs7k8XmTXABzFJdNSmpOZllqkb5dAldG
-        z+1XTAX/mCtWLjzI1sA4m7mLkZNDQsBE4silSaxdjFwcQgJLGCWOL/gP5fxllDi88TQjSBWb
-        gJXExPZVQDYHh4iApsT5c0UgNcwC8xkl3rxcywRSIyzgK3Hg0S6wqSwCqhK7/swH6+UFqm+e
-        sgAsLirgJbFlXztYPaeArUTXj4vMEMsmMUqsWjqFBaJBUOLH5HtgNrOAvMS+/VNZIWwtifU7
-        jzNNYOSfhaRsFpKyWUjKFjAyr2IUSS0tzk3PLTbUK07MLS7NS9dLzs/dxAgM123Hfm7ewXhp
-        Y/AhRgEORiUeXg/H8Ggh1sSy4srcQ4wSHMxKIrymgUAh3pTEyqrUovz4otKc1OJDjNIcLEri
-        vOcNKqOEBNITS1KzU1MLUotgskwcnFINjFoemqub5qRzfZo+XziklMnwoscFI+Eo/UcXHl/d
-        9SHuGd+Bj2u9uHzm6xfHfnqa0LHm+br579Ltyp6efv7jZUa304fPPbL1uW6pazlm6f16NK/J
-        dK1rlkhknNpfbuOCzneb2Nt6nmZsWuy5XTRh+f1Onp+/Ga5HrdU/sMHshMxWs5PL/nKUsSmx
-        FGckGmoxFxUnAgAC3OdlUwIAAA==
-X-CMS-MailID: 20180724165819eucas1p1e1ffdecb438bb3c49ca65c880eeede34
-X-Msg-Generator: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20180720185219epcas1p2542795dbad64a8343ce7e9eff8dd7cce
-References: <CGME20180720185219epcas1p2542795dbad64a8343ce7e9eff8dd7cce@epcas1p2.samsung.com>
-        <20180720185213.3085-1-colin.king@canonical.com>
+        Tue, 24 Jul 2018 14:06:13 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=smU+gF6kwz+oR987+eA+tS2/aZiOfhyatg61cj3eHuo=; b=XPvrLBAqGv0yqCAbU4Fn2Lp65
+        NJ9PmOu8XVKk21Ic4ivEdqCQp2Q5XEPKa/BErKmSnq9OprF8bco4VDm4dLtNkkAm1wuBD6vd9wuOu
+        eUNI+1PAwQSWCpikGvb0ZU4+6Vt8Bz7awMT8B+QgmgwJxsdTT5nWE3G3IIWbxqD5piQWw=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1fi0dw-0005fy-7c; Tue, 24 Jul 2018 16:58:36 +0000
+Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
+        id 65ED71123A86; Tue, 24 Jul 2018 17:58:35 +0100 (BST)
+Date:   Tue, 24 Jul 2018 17:58:35 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     Adam Thomson <Adam.Thomson.Opensource@diasemi.com>
+Cc:     Daniel Kurtz <djkurtz@chromium.org>,
+        Akshu Agrawal <akshu.agrawal@amd.com>,
+        Support Opensource <Support.Opensource@diasemi.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        "moderated list:SOUND" <alsa-devel@alsa-project.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2] ASoC: da7219: Allow pdata to specify a VDDIO
+Message-ID: <20180724165835.GO13268@sirena.org.uk>
+References: <20180722232822.34641-1-djkurtz@chromium.org>
+ <2E89032DDAA8B9408CB92943514A0337019830B8F8@SW-EX-MBX01.diasemi.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="68uOmRXIw+u8y5pO"
+Content-Disposition: inline
+In-Reply-To: <2E89032DDAA8B9408CB92943514A0337019830B8F8@SW-EX-MBX01.diasemi.com>
+X-Cookie: Join the march to save individuality!
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Friday, July 20, 2018 07:52:13 PM Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Pointer 'in' is being assigned but is never used hence it is
-> redundant and can be removed.
-> 
-> Cleans up clang warning:
-> warning: variable 'in' set but not used [-Wunused-but-set-variable]
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-Patch queued for 4.19, thanks.
+--68uOmRXIw+u8y5pO
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
+On Mon, Jul 23, 2018 at 02:41:26PM +0000, Adam Thomson wrote:
+> On 23 July 2018 00:28, Daniel Kurtz wrote:
 
+> > Provide a new device property to let such systems specify a different
+> > VDDIO if needed (e.g., 1.8V).
+
+> I'm not sure what the general view on this is. In the past it was suggest=
+ed
+> the regulator framework was the way to go to pass this kind of informatio=
+n,
+> but obviously ACPI platforms don't tend to use it.
+
+> Mark, what is your feeling on this? Would you be in favour of some kind o=
+f=20
+> fixed voltage regulator representation, similar to the patch for the AMD
+> platform (ASoC: AMD: Add a fix voltage regulator for DA7219 and ADAU7002),
+> albeit tweaked to avoid asynchronous probe() issues, or is this a reasona=
+ble
+> route? Personally in my mind, and in an ideal world, I'd prefer just one =
+method
+> for retrieving this data in the codec driver, but that may not be sensibl=
+e.
+
+Yeah, keeping things consistent if we can seems like a definite win
+which points towards using regulators here.  One other thing that
+concerns me with using device properties here is what exactly we'd be
+expecting to set them - I'd not expect system integrators to suddenly
+start adding such properties.
+
+--68uOmRXIw+u8y5pO
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAltXWroACgkQJNaLcl1U
+h9DRbQf/f9qcI/FZGoXzYAQJISjJeHSz0eZ81Q6qSqn7jRcnPmZHqJjVfxmuoavu
+sBvaTCi++RQhAvx6PqEpmnMoQpAQCto0/N8b8jcBUn+SKAPn90cvWwKpNnSCZksF
+5t3hjH6SGq57f0vg3PwF4HcjSwRjp9NRleTsPqARgD8lbqKwHHW67PCmt3E/jG7O
+09dXqpw28uH/chkRg/aH9ruiNBEufd6x6dXMXQMiEWMVam5I0JrH+o1BabG6uCF2
+Big/B4j32E+i9jz1jbv8DRUVybFWxNaNXECV0dre7sPnBTOeJ6xbXGYhVEXuLB6Z
+bIIjAwwTaaJd4KXnz//7b8wMmbpK5A==
+=nY4j
+-----END PGP SIGNATURE-----
+
+--68uOmRXIw+u8y5pO--
