@@ -2,116 +2,193 @@ Return-Path: <SRS0=hTZH=KI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F6ADECDFB8
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 07:28:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BEEFECDFB8
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 07:28:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E329120881
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 07:28:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E329120881
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 529AC20875
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 07:28:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 529AC20875
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=de.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388511AbeGXIdl (ORCPT
+        id S2388568AbeGXIdt convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 04:33:41 -0400
-Received: from mx2.suse.de ([195.135.220.15]:55162 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2388390AbeGXIdk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 04:33:40 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 64D23AE1E;
-        Tue, 24 Jul 2018 07:28:34 +0000 (UTC)
-Date:   Tue, 24 Jul 2018 09:28:33 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Shakeel Butt <shakeelb@google.com>
-Cc:     jing.xia.mail@gmail.com, Johannes Weiner <hannes@cmpxchg.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        chunyan.zhang@unisoc.com, Cgroups <cgroups@vger.kernel.org>,
-        Linux MM <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH] mm: memcg: fix use after free in mem_cgroup_iter()
-Message-ID: <20180724072833.GC28386@dhcp22.suse.cz>
-References: <1531994807-25639-1-git-send-email-jing.xia@unisoc.com>
- <20180719104345.GV7193@dhcp22.suse.cz>
- <CALvZod55Ku7U3soLtuYY_HL2_mMp5+OT-hngdZkPRGN9xm1a9Q@mail.gmail.com>
- <20180723064441.GA17905@dhcp22.suse.cz>
- <CALvZod5UwJp8cM3OcjCDadkjKgAnGHj8XVcgjFk5Thcst02MAQ@mail.gmail.com>
+        Tue, 24 Jul 2018 04:33:49 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:44522 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2388390AbeGXIds (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Jul 2018 04:33:48 -0400
+Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w6O7OxTE126689
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Jul 2018 03:28:43 -0400
+Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2kdyets1v4-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Jul 2018 03:28:42 -0400
+Received: from localhost
+        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <borntraeger@de.ibm.com>;
+        Tue, 24 Jul 2018 08:28:40 +0100
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 24 Jul 2018 08:28:37 +0100
+Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w6O7SaTZ35717154
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 24 Jul 2018 07:28:37 GMT
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 8E7024C04E;
+        Tue, 24 Jul 2018 10:28:52 +0100 (BST)
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 4BFB04C04A;
+        Tue, 24 Jul 2018 10:28:52 +0100 (BST)
+Received: from oc7330422307.ibm.com (unknown [9.152.224.87])
+        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Tue, 24 Jul 2018 10:28:52 +0100 (BST)
+Subject: Re: Linux 4.18-rc6
+To:     Martin Schwidefsky <schwidefsky@de.ibm.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        David Miller <davem@davemloft.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <CA+55aFzMheDA-2z=MdGgJrz-REcrknb+4OEvRKaJipm+x6xEhw@mail.gmail.com>
+ <20180723204617.GA14487@roeck-us.net>
+ <CA+55aFyuaEGGksOxv3aAp0THYkAapap-JY65A0A81S0qUE0S+g@mail.gmail.com>
+ <20180723212330.GA7441@roeck-us.net>
+ <CA+55aFw3tRe70mUgV70oi6xBwSLx0h_supRGoNUHgrcSGxUgeg@mail.gmail.com>
+ <20180724081845.1cc4c9d8@mschwideX1>
+ <25151348-ce12-f754-876c-8b39b23d16a1@de.ibm.com>
+ <20180724092403.332125ff@mschwideX1>
+From:   Christian Borntraeger <borntraeger@de.ibm.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=borntraeger@de.ibm.com; prefer-encrypt=mutual; keydata=
+ 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
+ syiRa+UVlsKmx1hsEg==
+Date:   Tue, 24 Jul 2018 09:28:36 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+In-Reply-To: <20180724092403.332125ff@mschwideX1>
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+x-cbid: 18072407-0008-0000-0000-00000256DF69
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18072407-0009-0000-0000-000021BD512B
+Message-Id: <11ff0af2-294e-9d5a-ad1b-d1c475a01a31@de.ibm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CALvZod5UwJp8cM3OcjCDadkjKgAnGHj8XVcgjFk5Thcst02MAQ@mail.gmail.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-24_03:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=901 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1806210000 definitions=main-1807240079
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 23-07-18 09:17:28, Shakeel Butt wrote:
-> On Sun, Jul 22, 2018 at 11:44 PM Michal Hocko <mhocko@kernel.org> wrote:
-> >
-> > On Thu 19-07-18 09:23:10, Shakeel Butt wrote:
-> > > On Thu, Jul 19, 2018 at 3:43 AM Michal Hocko <mhocko@kernel.org> wrote:
-> > > >
-> > > > [CC Andrew]
-> > > >
-> > > > On Thu 19-07-18 18:06:47, Jing Xia wrote:
-> > > > > It was reported that a kernel crash happened in mem_cgroup_iter(),
-> > > > > which can be triggered if the legacy cgroup-v1 non-hierarchical
-> > > > > mode is used.
-> > > > >
-> > > > > Unable to handle kernel paging request at virtual address 6b6b6b6b6b6b8f
-> > > > > ......
-> > > > > Call trace:
-> > > > >   mem_cgroup_iter+0x2e0/0x6d4
-> > > > >   shrink_zone+0x8c/0x324
-> > > > >   balance_pgdat+0x450/0x640
-> > > > >   kswapd+0x130/0x4b8
-> > > > >   kthread+0xe8/0xfc
-> > > > >   ret_from_fork+0x10/0x20
-> > > > >
-> > > > >   mem_cgroup_iter():
-> > > > >       ......
-> > > > >       if (css_tryget(css))    <-- crash here
-> > > > >           break;
-> > > > >       ......
-> > > > >
-> > > > > The crashing reason is that mem_cgroup_iter() uses the memcg object
-> > > > > whose pointer is stored in iter->position, which has been freed before
-> > > > > and filled with POISON_FREE(0x6b).
-> > > > >
-> > > > > And the root cause of the use-after-free issue is that
-> > > > > invalidate_reclaim_iterators() fails to reset the value of
-> > > > > iter->position to NULL when the css of the memcg is released in non-
-> > > > > hierarchical mode.
-> > > >
-> > > > Well, spotted!
-> > > >
-> > > > I suspect
-> > > > Fixes: 6df38689e0e9 ("mm: memcontrol: fix possible memcg leak due to interrupted reclaim")
-> > > >
-> > > > but maybe it goes further into past. I also suggest
-> > > > Cc: stable
-> > > >
-> > > > even though the non-hierarchical mode is strongly discouraged.
-> > >
-> > > Why not set root_mem_cgroup's use_hierarchy to true by default on
-> > > init? If someone wants non-hierarchical mode, they can explicitly set
-> > > it to false.
-> >
-> > We do not change defaults under users feet usually.
-> 
-> Then how non-hierarchical mode is being discouraged currently? I don't
-> see any comments in the docs.
 
-css_create warns about non-hierarchical hierarchies. We've been running
-with a similar warning in (even older) SLES kernels for years now and
-quite some tools have been updated because they simply didn't know they
-are doing something wrong.
--- 
-Michal Hocko
-SUSE Labs
+
+On 07/24/2018 09:24 AM, Martin Schwidefsky wrote:
+> On Tue, 24 Jul 2018 09:15:58 +0200
+> Christian Borntraeger <borntraeger@de.ibm.com> wrote:
+> 
+>> On 07/24/2018 08:18 AM, Martin Schwidefsky wrote:
+>>> On Mon, 23 Jul 2018 16:17:22 -0700
+>>> Linus Torvalds <torvalds@linux-foundation.org> wrote:
+>>>   
+>>>> On Mon, Jul 23, 2018 at 2:23 PM Guenter Roeck <linux@roeck-us.net> wrote:  
+>>>>>    
+>>>>>>
+>>>>>> Martin - can we just remove the
+>>>>>>
+>>>>>>          select HAVE_GCC_PLUGINS
+>>>>>>
+>>>>>> from the s390 Kconfig file (or perhaps add "if BROKEN" or something to
+>>>>>> disable it).
+>>>>>>
+>>>>>> Because if it's not getting fixed, it shouldn't be exposed.
+>>>>>>    
+>>>>> The problem only affects 4.18 - the code has been rearranged in -next.
+>>>>> Only, in my builders, I can't disable a flag for individual releases,
+>>>>> so I just disabled it completely for s390.    
+>>>>
+>>>> Well, I'm not going to release a 4.18 with a known problem, so in 4.18
+>>>> this *will* be disabled if it's not fixed.
+>>>>
+>>>> The fact that it might be fixed in linux-next is entirely immaterial
+>>>> to the release of 4.18.  
+>>>
+>>> Ok, if gcc with the plugins and an allmodconfig is considered to be
+>>> important enough to warrant a fix, it can be pulled from here:
+>>>
+>>> git://git.kernel.org/pub/scm/linux/kernel/git/s390/linux.git for-linus
+>>>
+>>> Martin Schwidefsky (1):
+>>>       s390: disable gcc plugins
+>>>
+>>> Once that is in I will create another patch to undo this one and place
+>>> it after the early boot rework.  
+>>
+>> On the list a different fix was proposed about 2 weeks ago,
+>>
+>> something like
+>>
+>> CFLAGS_als.o += $(DISABLE_LATENT_ENTROPY_PLUGIN)
+>>
+>> and I prefer that. Because your patch disables all gcc plugins.
+> 
+> This change would cause trouble with patch dependencies as als.c is moved
+> to a different directory. I would prefer to disable all gcc plugins for
+> 4.18.
+
+ok.
+
