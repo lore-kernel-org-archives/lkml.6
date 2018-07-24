@@ -5,89 +5,131 @@ X-Spam-Level:
 X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1362BC28CF6
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 23:29:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D484C28CF6
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 23:36:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BD68B2088E
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 23:29:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BD68B2088E
+	by mail.kernel.org (Postfix) with ESMTP id 2043D20856
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 23:36:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2043D20856
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388487AbeGYAiI (ORCPT
+        id S2388509AbeGYAow (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 20:38:08 -0400
-Received: from mail-io0-f194.google.com ([209.85.223.194]:40220 "EHLO
-        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388438AbeGYAiI (ORCPT
+        Tue, 24 Jul 2018 20:44:52 -0400
+Received: from mail-it0-f68.google.com ([209.85.214.68]:51293 "EHLO
+        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388408AbeGYAow (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 20:38:08 -0400
-Received: by mail-io0-f194.google.com with SMTP id l14-v6so4844307iob.7;
-        Tue, 24 Jul 2018 16:29:18 -0700 (PDT)
+        Tue, 24 Jul 2018 20:44:52 -0400
+Received: by mail-it0-f68.google.com with SMTP id g14-v6so6231448iti.1;
+        Tue, 24 Jul 2018 16:36:00 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Cffg0zKFwY6a2w8PlWQ+92x2BOUt7wGbBHB5bDOIhrs=;
-        b=k3vbRdeZ/c1iON7x8bjG4Ju0ousoZG0cLSAuzvyXu5ZCxQ6dBtFg0WAMPSAK8Rg0HH
-         3alRMojMoXyCtgAYQO/wCWQnPxdoYFfeOOVNRyS1SdOjjV8PZQJPqRoY/4YdmBUYy06A
-         86hpiSpaEVTUGDr4BBeYBnChm8DMzwKbH0uoO53XsuxXVOvfGY4vsOGUA+Gf950g4L7S
-         peo1lyFJXq0YupKEkMLMXMJtgE5QIVrY5OD2UGY9Tgvz8V7PRMcwj2H3r7GOhFwDATvV
-         bcBi3arZQs0kGZwVJ+R5HPYQZfU9SmYWmGf688yWsU9P20b2q/51hlXLDgTCVdRhJ6r5
-         ltjg==
-X-Gm-Message-State: AOUpUlE9D88JENuoFrGejT9TMjCSOvNQ3YC0Pgs6Ppr66T+OktGeTEPL
-        tUIHVzr1dy9Z+ZwhRBE7cQ==
-X-Google-Smtp-Source: AAOMgpeGl8RL7IzIN70Po8GQix3e9lZt8tFgMiqqmQ8kf6TT77IhqRwkrU5LcynmCZoAzoGEZHrhkQ==
-X-Received: by 2002:a6b:9711:: with SMTP id z17-v6mr14678319iod.205.1532474958529;
-        Tue, 24 Jul 2018 16:29:18 -0700 (PDT)
+        bh=iw3euw7oC9bkeiUxYufiNbsATI3ldXyqCpm7dffnnL8=;
+        b=arWMNlUIeSluiYDXtBoagZqyXaCx6GdFe6fO10tJBPzip9iZMCZInKc0wm435B0IsF
+         iOqMpgBIo79IAD46sjNMB4Eh3JacXhwRPJO+9khuqN05avar/eZbCBt/NzGwIQRV5C3X
+         IXPcRIQyQUXUx1zRFE5GrD4U8gNF+ptzpZtAfm0qxxx/euBRahceGFcXAPnh2gushY4V
+         seODCXXuEGkT31w2L2BELphg1p3dV2nbO8Iw7N0R8dOl2n/xkWUbvjLVrXZlAajdM3zL
+         gjNSLohWbwK72uX9P7oXAcgga057KE4jMIMaVO6WUHNdncSR3geRVynP3tpHUzzAdgL9
+         xi+A==
+X-Gm-Message-State: AOUpUlFTZnGweypqhiKm3eO9eUByAdshU7eij51pd2Az7OPzAw6O6rg7
+        KbqxTTAspfDhWYgdjnRiVw==
+X-Google-Smtp-Source: AAOMgpe5zr/4tWtXINC/Eb4w/q3ntKLTWr0JjGY7kTHPUkRcj1VEfw8WMBohjRKKwkRtwd7iAN++/g==
+X-Received: by 2002:a02:5952:: with SMTP id p79-v6mr16945367jab.129.1532475360345;
+        Tue, 24 Jul 2018 16:36:00 -0700 (PDT)
 Received: from localhost ([24.51.61.72])
-        by smtp.gmail.com with ESMTPSA id f195-v6sm1601451itf.41.2018.07.24.16.29.17
+        by smtp.gmail.com with ESMTPSA id i3-v6sm1624849iti.40.2018.07.24.16.35.59
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 24 Jul 2018 16:29:18 -0700 (PDT)
-Date:   Tue, 24 Jul 2018 17:29:17 -0600
+        Tue, 24 Jul 2018 16:35:59 -0700 (PDT)
+Date:   Tue, 24 Jul 2018 17:35:58 -0600
 From:   Rob Herring <robh@kernel.org>
-To:     Yixun Lan <yixun.lan@amlogic.com>
-Cc:     Jerome Brunet <jbrunet@baylibre.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Carlo Caione <carlo@caione.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Liang Yang <liang.yang@amlogic.com>,
-        Qiufang Dai <qiufang.dai@amlogic.com>,
-        Jian Hu <jian.hu@amlogic.com>, linux-clk@vger.kernel.org,
-        linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH v3 1/2] clk: meson: add DT documentation for emmc clock
- controller
-Message-ID: <20180724232917.GA27041@rob-hp-laptop>
-References: <20180712211244.11428-1-yixun.lan@amlogic.com>
- <20180712211244.11428-2-yixun.lan@amlogic.com>
+To:     Paul Cercueil <paul@crapouillou.net>
+Cc:     Vinod Koul <vkoul@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>,
+        James Hogan <jhogan@kernel.org>,
+        Zubair Lutfullah Kakakhel <Zubair.Kakakhel@imgtec.com>,
+        Mathieu Malaterre <malat@debian.org>,
+        Daniel Silsby <dansilsby@gmail.com>, dmaengine@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mips@linux-mips.org
+Subject: Re: [PATCH v3 01/18] doc: dt-bindings: jz4780-dma: Update bindings
+ to reflect driver changes
+Message-ID: <20180724233558.GA30764@rob-hp-laptop>
+References: <20180721110643.19624-1-paul@crapouillou.net>
+ <20180721110643.19624-2-paul@crapouillou.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180712211244.11428-2-yixun.lan@amlogic.com>
+In-Reply-To: <20180721110643.19624-2-paul@crapouillou.net>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 12, 2018 at 09:12:43PM +0000, Yixun Lan wrote:
-> Document the MMC sub clock controller driver, the potential consumer
-> of this driver is MMC or NAND. Also add three clock bindings IDs which
-> provided by this driver.
-> 
-> Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
-> ---
->  .../bindings/clock/amlogic,mmc-clkc.txt       | 31 +++++++++++++++++++
->  .../clock/amlogic,meson-mmc-clkc.h            | 16 ++++++++++
->  2 files changed, 47 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/amlogic,mmc-clkc.txt
->  create mode 100644 include/dt-bindings/clock/amlogic,meson-mmc-clkc.h
+On Sat, Jul 21, 2018 at 01:06:26PM +0200, Paul Cercueil wrote:
+> The driver is now compatible with four SoCs: JZ4780, JZ4770, JZ4725B and
+> JZ4740.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+What the driver supports is irrelevant to the binding.
+>
+> Besides, it now expects the devicetree to supply a second memory
+> resource. This resource is mandatory on the newly supported SoCs.
+> For the JZ4780, new devicetree code must also provide it, although the
+> driver is still compatible with older devicetree binaries.
+> 
+> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+> Tested-by: Mathieu Malaterre <malat@debian.org>
+> ---
+>  Documentation/devicetree/bindings/dma/jz4780-dma.txt | 14 ++++++++++----
+>  1 file changed, 10 insertions(+), 4 deletions(-)
+> 
+>  v2: New patch in this series; regroups the changes made to the
+>  jz4780-dma.txt doc file in the previous version of the patchset.
+> 
+>  v3: Updated example to comply with devicetree specification
+> 
+> diff --git a/Documentation/devicetree/bindings/dma/jz4780-dma.txt b/Documentation/devicetree/bindings/dma/jz4780-dma.txt
+> index f25feee62b15..14f33305e194 100644
+> --- a/Documentation/devicetree/bindings/dma/jz4780-dma.txt
+> +++ b/Documentation/devicetree/bindings/dma/jz4780-dma.txt
+> @@ -2,8 +2,13 @@
+>  
+>  Required properties:
+>  
+> -- compatible: Should be "ingenic,jz4780-dma"
+> -- reg: Should contain the DMA controller registers location and length.
+> +- compatible: Should be one of:
+> +  * ingenic,jz4740-dma
+> +  * ingenic,jz4725b-dma
+> +  * ingenic,jz4770-dma
+> +  * ingenic,jz4780-dma
+
+So none of these are compatible with each other? It should be one valid 
+combination per line.
+
+> +- reg: Should contain the DMA channel registers location and length, followed
+> +  by the DMA controller registers location and length.
+>  - interrupts: Should contain the interrupt specifier of the DMA controller.
+>  - interrupt-parent: Should be the phandle of the interrupt controller that
+>  - clocks: Should contain a clock specifier for the JZ4780 PDMA clock.
+> @@ -20,9 +25,10 @@ Optional properties:
+>  
+>  Example:
+>  
+> -dma: dma@13420000 {
+> +dma: dma-controller@13420000 {
+>  	compatible = "ingenic,jz4780-dma";
+> -	reg = <0x13420000 0x10000>;
+> +	reg = <0x13420000 0x400
+> +	       0x13421000 0x40>;
+>  
+>  	interrupt-parent = <&intc>;
+>  	interrupts = <10>;
+> -- 
+> 2.11.0
+> 
