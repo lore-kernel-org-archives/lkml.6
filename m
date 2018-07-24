@@ -2,147 +2,230 @@ Return-Path: <SRS0=hTZH=KI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51534C28CF6
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 21:52:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DFD47C28CF6
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 21:54:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0AD0820685
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 21:52:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0AD0820685
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 824BB20685
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 21:54:22 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="hgqXkaeE"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 824BB20685
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=paul-moore.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728096AbeGXXAd (ORCPT
+        id S2388748AbeGXXCs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 19:00:33 -0400
-Received: from foss.arm.com ([217.140.101.70]:58196 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726889AbeGXXAc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 19:00:32 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 025AB15A2;
-        Tue, 24 Jul 2018 14:52:04 -0700 (PDT)
-Received: from [192.168.1.123] (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 092233F5B3;
-        Tue, 24 Jul 2018 14:52:00 -0700 (PDT)
-Subject: Re: [PATCH v3 0/6] add non-strict mode support for arm-smmu-v3
-To:     Zhen Lei <thunder.leizhen@huawei.com>,
-        Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        iommu <iommu@lists.linux-foundation.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-References: <1531376312-2192-1-git-send-email-thunder.leizhen@huawei.com>
-From:   Robin Murphy <robin.murphy@arm.com>
-Message-ID: <aace9ec9-a36a-79a8-98eb-bbedd06f11a4@arm.com>
-Date:   Tue, 24 Jul 2018 22:51:58 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Tue, 24 Jul 2018 19:02:48 -0400
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:44607 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388549AbeGXXCs (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Jul 2018 19:02:48 -0400
+Received: by mail-lf1-f68.google.com with SMTP id g6-v6so4010335lfb.11
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Jul 2018 14:54:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=V3daoH7M3DEI/0B0n4Tg6yHU7g58X2Y9N61ZlLxshmA=;
+        b=hgqXkaeEVuv4lkgv44qa39/acUowGt0GLtgkje8xEY9HsnOS9vgPcmiIXVuRuKcirD
+         sATmYYVCID1OlvQIAFDsu7WCrfjHN2gGUekUmxHuFsFAIKcR0oGZEkBKjwf463MKbETn
+         RSIFojBioVnVavHCXGwhG53F6BkwXAoR6b/effkCkdPKfbANr52sb7mUKsusxxhDgCMQ
+         v75m7Pa5/zMABU95KJ2YmiabqtX7xk1E1b3KCgYoanhPbYHEneqVIBSYYohMizY/oNyz
+         nwQWbiuwiv6xlBd1Zct8MOfpROYMyFuExidXPlU6lFns5WObIXYK1k+xDs0bZvtvXYE4
+         SaJg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=V3daoH7M3DEI/0B0n4Tg6yHU7g58X2Y9N61ZlLxshmA=;
+        b=VQM0J25bBdQcepHk70FQS6Ph1HviLjY9qC2pohVms+yiZbI+Z4J0j92YprFJlSOlsT
+         xN2K0GygxEw/Nyl+NEAvznSqkFVeDqKfoeB3CNXdhV60Xch8JlctRzLFjpbOO6OUwKV2
+         5Gst4ppj9wAqCRgWV2zE9vhfWBids1JRYsWIn3d/hHp5gua562vzvyF7e2PLr8eYmW1U
+         20rAVlpDKo3PnIiku+W5Iq9gGzO2FzqSQb51bDf7wjWmxRpMqPJTSUTcfpQ9REIqaU/c
+         3AcB7tpziyFCJpmLrb3Kan4WXLpb9DXVulLSNCOOuL5EKf53l21L8j1zP673DUinF7E3
+         S7Dg==
+X-Gm-Message-State: AOUpUlHJegssgoLAXxnJ6cP/Ca6jPhZHoPt18gYHOuc/+MBDkZnmJsrg
+        s5PfKdPnOi5oe9I00lX7xnnl6Mk3bjxQdpE7bDl4
+X-Google-Smtp-Source: AAOMgpckIFKek5U28fwAEukTIR2klpBBolfHuSo2+3baypRgf7Wj3DihYSaxhDQBdJ4toJMDjo00qaTTGYCR6ImULt0=
+X-Received: by 2002:a19:dd5c:: with SMTP id u89-v6mr10798023lfg.83.1532469255762;
+ Tue, 24 Jul 2018 14:54:15 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <1531376312-2192-1-git-send-email-thunder.leizhen@huawei.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+References: <cover.1528304203.git.rgb@redhat.com> <0377c3ced6bdbc44fe17f9a5679cb6eda4304024.1528304203.git.rgb@redhat.com>
+ <CAHC9VhRk+qLAyizM9i8D+cjKxyhruuj_Z9N0QRmjM-fjm4hgRw@mail.gmail.com> <20180724190613.ww6yhsqpa7n4s62k@madcap2.tricolour.ca>
+In-Reply-To: <20180724190613.ww6yhsqpa7n4s62k@madcap2.tricolour.ca>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Tue, 24 Jul 2018 17:54:04 -0400
+Message-ID: <CAHC9VhQ3KwG-YmpJsOa9k=YqQmaQTaJXeB=eM9Fm80hujbngBg@mail.gmail.com>
+Subject: Re: [RFC PATCH ghak90 (was ghak32) V3 01/10] audit: add container id
+To:     rgb@redhat.com
+Cc:     cgroups@vger.kernel.org, containers@lists.linux-foundation.org,
+        linux-api@vger.kernel.org, linux-audit@redhat.com,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, ebiederm@xmission.com, luto@kernel.org,
+        jlayton@redhat.com, carlos@redhat.com, dhowells@redhat.com,
+        viro@zeniv.linux.org.uk, simo@redhat.com,
+        Eric Paris <eparis@parisplace.org>, serge@hallyn.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-07-12 7:18 AM, Zhen Lei wrote:
-> v2 -> v3:
-> Add a bootup option "iommu_strict_mode" to make the manager can choose which
-> mode to be used. The first 5 patches have not changed.
-> +	iommu_strict_mode=	[arm-smmu-v3]
-> +		0 - strict mode (default)
-> +		1 - non-strict mode
-> 
-> v1 -> v2:
-> Use the lowest bit of the io_pgtable_ops.unmap's iova parameter to pass the strict mode:
-> 0, IOMMU_STRICT;
-> 1, IOMMU_NON_STRICT;
-> Treat 0 as IOMMU_STRICT, so that the unmap operation can compatible with
-> other IOMMUs which still use strict mode. In other words, this patch series
-> will not impact other IOMMU drivers. I tried add a new quirk IO_PGTABLE_QUIRK_NON_STRICT
-> in io_pgtable_cfg.quirks, but it can not pass the strict mode of the domain from SMMUv3
-> driver to io-pgtable module.
+On Tue, Jul 24, 2018 at 3:09 PM Richard Guy Briggs <rgb@redhat.com> wrote:
+> On 2018-07-20 18:13, Paul Moore wrote:
+> > On Wed, Jun 6, 2018 at 1:00 PM Richard Guy Briggs <rgb@redhat.com> wrot=
+e:
+> > > Implement the proc fs write to set the audit container identifier of =
+a
+> > > process, emitting an AUDIT_CONTAINER_ID record to document the event.
+> > >
+> > > This is a write from the container orchestrator task to a proc entry =
+of
+> > > the form /proc/PID/audit_containerid where PID is the process ID of t=
+he
+> > > newly created task that is to become the first task in a container, o=
+r
+> > > an additional task added to a container.
+> > >
+> > > The write expects up to a u64 value (unset: 18446744073709551615).
+> > >
+> > > The writer must have capability CAP_AUDIT_CONTROL.
+> > >
+> > > This will produce a record such as this:
+> > >   type=3DCONTAINER_ID msg=3Daudit(2018-06-06 12:39:29.636:26949) : op=
+=3Dset opid=3D2209 old-contid=3D18446744073709551615 contid=3D123456 pid=3D=
+628 auid=3Droot uid=3Droot tty=3DttyS0 ses=3D1 subj=3Dunconfined_u:unconfin=
+ed_r:unconfined_t:s0-s0:c0.c1023 comm=3Dbash exe=3D/usr/bin/bash res=3Dyes
+> > >
+> > > The "op" field indicates an initial set.  The "pid" to "ses" fields a=
+re
+> > > the orchestrator while the "opid" field is the object's PID, the proc=
+ess
+> > > being "contained".  Old and new audit container identifier values are
+> > > given in the "contid" fields, while res indicates its success.
+> > >
+> > > It is not permitted to unset or re-set the audit container identifier=
+.
+> > > A child inherits its parent's audit container identifier, but then ca=
+n
+> > > be set only once after.
+> > >
+> > > See: https://github.com/linux-audit/audit-kernel/issues/90
+> > > See: https://github.com/linux-audit/audit-userspace/issues/51
+> > > See: https://github.com/linux-audit/audit-testsuite/issues/64
+> > > See: https://github.com/linux-audit/audit-kernel/wiki/RFE-Audit-Conta=
+iner-ID
+> > >
+> > > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+> > > ---
+> > >  fs/proc/base.c             | 37 ++++++++++++++++++++++++
+> > >  include/linux/audit.h      | 25 ++++++++++++++++
+> > >  include/uapi/linux/audit.h |  2 ++
+> > >  kernel/auditsc.c           | 71 ++++++++++++++++++++++++++++++++++++=
+++++++++++
+> > >  4 files changed, 135 insertions(+)
 
-What exactly is the issue there? We don't have any problem with other 
-quirks like NO_DMA, and as I said before, by the time we're allocating 
-the io-pgtable in arm_smmu_domain_finalise() we already know everything 
-there is to know about the domain.
+...
 
-> Add a new member domain_non_strict in struct iommu_dma_cookie, this member will only be
-> initialized when the related domain and IOMMU driver support non-strict mode.
-> 
-> v1:
-> In common, a IOMMU unmap operation follow the below steps:
-> 1. remove the mapping in page table of the specified iova range
-> 2. execute tlbi command to invalid the mapping which is cached in TLB
-> 3. wait for the above tlbi operation to be finished
-> 4. free the IOVA resource
-> 5. free the physical memory resource
-> 
-> This maybe a problem when unmap is very frequently, the combination of tlbi
-> and wait operation will consume a lot of time. A feasible method is put off
-> tlbi and iova-free operation, when accumulating to a certain number or
-> reaching a specified time, execute only one tlbi_all command to clean up
-> TLB, then free the backup IOVAs. Mark as non-strict mode.
-> 
-> But it must be noted that, although the mapping has already been removed in
-> the page table, it maybe still exist in TLB. And the freed physical memory
-> may also be reused for others. So a attacker can persistent access to memory
-> based on the just freed IOVA, to obtain sensible data or corrupt memory. So
-> the VFIO should always choose the strict mode.
-> 
-> Some may consider put off physical memory free also, that will still follow
-> strict mode. But for the map_sg cases, the memory allocation is not controlled
-> by IOMMU APIs, so it is not enforceable.
-> 
-> Fortunately, Intel and AMD have already applied the non-strict mode, and put
-> queue_iova() operation into the common file dma-iommu.c., and my work is based
-> on it. The difference is that arm-smmu-v3 driver will call IOMMU common APIs to
-> unmap, but Intel and AMD IOMMU drivers are not.
-> 
-> Below is the performance data of strict vs non-strict for NVMe device:
-> Randomly Read  IOPS: 146K(strict) vs 573K(non-strict)
-> Randomly Write IOPS: 143K(strict) vs 513K(non-strict)
+> > > @@ -2112,6 +2116,73 @@ int audit_set_loginuid(kuid_t loginuid)
+> > >  }
+> > >
+> > >  /**
+> > > + * audit_set_contid - set current task's audit_context contid
+> > > + * @contid: contid value
+> > > + *
+> > > + * Returns 0 on success, -EPERM on permission failure.
+> > > + *
+> > > + * Called (set) from fs/proc/base.c::proc_contid_write().
+> > > + */
+> > > +int audit_set_contid(struct task_struct *task, u64 contid)
+> > > +{
+> > > +       u64 oldcontid;
+> > > +       int rc =3D 0;
+> > > +       struct audit_buffer *ab;
+> > > +       uid_t uid;
+> > > +       struct tty_struct *tty;
+> > > +       char comm[sizeof(current->comm)];
+> > > +
+> > > +       /* Can't set if audit disabled */
+> > > +       if (!task->audit)
+> > > +               return -ENOPROTOOPT;
+> > > +       oldcontid =3D audit_get_contid(task);
+> > > +       /* Don't allow the audit containerid to be unset */
+> > > +       if (!cid_valid(contid))
+> > > +               rc =3D -EINVAL;
+> > > +       /* if we don't have caps, reject */
+> > > +       else if (!capable(CAP_AUDIT_CONTROL))
+> > > +               rc =3D -EPERM;
+> > > +       /* if task has children or is not single-threaded, deny */
+> > > +       else if (!list_empty(&task->children))
+> > > +               rc =3D -EBUSY;
+> >
+> > Is this safe without holding tasklist_lock?  I worry we might be
+> > vulnerable to a race with fork().
+> >
+> > > +       else if (!(thread_group_leader(task) && thread_group_empty(ta=
+sk)))
+> > > +               rc =3D -EALREADY;
+> >
+> > Similar concern here as well, although related to threads.
+>
+> I think you are correct here and tasklist_lock should cover both.  Do we
+> also want rcu_read_lock() immediately preceeding it?
 
-How does that compare to passthrough performance? One thing I'm not 
-entirely clear about is what the realistic use-case for this is - even 
-if invalidation were infinitely fast, enabling translation still 
-typically has a fair impact on overall system performance in terms of 
-latency, power, memory bandwidth, etc., so I can't help wonder what 
-devices exist today for which performance is critical and robustness* is 
-unimportant, yet have crippled addressing capabilities such that they 
-can't just use passthrough.
+You'll need to take a closer look and determine the locking scheme. I
+simply took a quick look while reviewing this patch to see what of the
+existing locks, if any, would be most applicable here; tasklist_lock
+seemed like a good starting point.
 
-Robin.
+It looks like tasklist_lock is defined as a rwlock_t so I'm not sure
+it would make sense to use it with a RCU protected structure
+(typically it's RCU+spinlock), but maybe that is the case with a
+task_struct, you'll need to check.
 
+> > > +       /* it is already set, and not inherited from the parent, reje=
+ct */
+> > > +       else if (cid_valid(oldcontid) && !task->audit->inherited)
+> > > +               rc =3D -EEXIST;
+> >
+> > Maybe I'm missing something, but why do we care about preventing
+> > reassigning the audit container ID in this case?  The task is single
+> > threaded and has no descendants at this point so it should be safe,
+> > yes?  So long as the task changing the audit container ID has
+> > capable(CAP_AUDIT_CONTOL) it shouldn't matter, right?
+>
+> Because we hammered out this idea 6 months ago in the design phase and I
+> thought we all firmly agreed that the audit container identifier could
+> only be set once.  Has any significant discussion happenned since then
+> to change that wisdom?  I just wonder why this is coming up now.
 
-* I don't want to say "security" here, since I'm actually a lot less 
-concerned about the theoretical malicious endpoint/wild write scenarios 
-than the the much more straightforward malfunctioning device and/or 
-buggy driver causing use-after-free style memory corruption. Also, I'm 
-sick of the word "security"...
+Implementation, and time, can change how one looks at an earlier
+design.  I believe this is why most well reasoned specifications have
+a reference design.
 
-> 
-> Zhen Lei (6):
->    iommu/arm-smmu-v3: fix the implementation of flush_iotlb_all hook
->    iommu/dma: add support for non-strict mode
->    iommu/amd: use default branch to deal with all non-supported
->      capabilities
->    iommu/io-pgtable-arm: add support for non-strict mode
->    iommu/arm-smmu-v3: add support for non-strict mode
->    iommu/arm-smmu-v3: add bootup option "iommu_strict_mode"
-> 
->   Documentation/admin-guide/kernel-parameters.txt | 12 +++++++
->   drivers/iommu/amd_iommu.c                       |  4 +--
->   drivers/iommu/arm-smmu-v3.c                     | 42 +++++++++++++++++++++++--
->   drivers/iommu/dma-iommu.c                       | 25 +++++++++++++++
->   drivers/iommu/io-pgtable-arm.c                  | 23 ++++++++------
->   include/linux/iommu.h                           |  7 +++++
->   6 files changed, 98 insertions(+), 15 deletions(-)
-> 
+Remind me why the design had the restriction of write once for the
+audit container ID?  At this point given the CAP_AUDIT_CONTROL and the
+single-thread, no-children restrictions I'm not sure what harm there
+is in allowing the value to be written multiple times (so long as the
+changes are audited of course).
+
+> > Related, I'm questioning if we would ever care if the audit container
+> > ID was inherited or not?
+>
+> We do since that is the only way we can tell if the value has been set
+> once already or inherited unless we check if the parent's audit
+> container identifier is identical (which tells us it was inherited).
+
+Tied to the above question.  If we don't care about multiple changes,
+given the other constraints, we probably don't need the inherited
+flag.
+
+--=20
+paul moore
+www.paul-moore.com
