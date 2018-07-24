@@ -2,117 +2,115 @@ Return-Path: <SRS0=hTZH=KI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52D03C6778A
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 08:54:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 319A0C6778A
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 08:56:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1916020856
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 08:54:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1916020856
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id D746E20856
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 08:56:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D746E20856
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388256AbeGXJ71 (ORCPT
+        id S2388244AbeGXKCR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 05:59:27 -0400
-Received: from mx2.suse.de ([195.135.220.15]:58970 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2388218AbeGXJ71 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 05:59:27 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 57BADACB8;
-        Tue, 24 Jul 2018 08:54:00 +0000 (UTC)
-Date:   Tue, 24 Jul 2018 10:53:58 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     David Hildenbrand <david@redhat.com>
-Cc:     Vlastimil Babka <vbabka@suse.cz>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Baoquan He <bhe@redhat.com>, Dave Young <dyoung@redhat.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Hari Bathini <hbathini@linux.vnet.ibm.com>,
-        Huang Ying <ying.huang@intel.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        =?iso-8859-1?Q?Marc-Andr=E9?= Lureau 
-        <marcandre.lureau@redhat.com>,
-        Matthew Wilcox <mawilcox@microsoft.com>,
-        Miles Chen <miles.chen@mediatek.com>,
-        Pavel Tatashin <pasha.tatashin@oracle.com>,
-        Petr Tesarik <ptesarik@suse.cz>
-Subject: Re: [PATCH v1 0/2] mm/kdump: exclude reserved pages in dumps
-Message-ID: <20180724085358.GG28386@dhcp22.suse.cz>
-References: <20180720123422.10127-1-david@redhat.com>
- <9f46f0ed-e34c-73be-60ca-c892fb19ed08@suse.cz>
- <20180723123043.GD31229@dhcp22.suse.cz>
- <8daae80c-871e-49b6-1cf1-1f0886d3935d@redhat.com>
- <20180724072536.GB28386@dhcp22.suse.cz>
- <d4528eb7-9d8b-4073-afad-d8dd1390aa91@redhat.com>
+        Tue, 24 Jul 2018 06:02:17 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:51983 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388149AbeGXKCQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Jul 2018 06:02:16 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id D5043207AD; Tue, 24 Jul 2018 10:56:48 +0200 (CEST)
+Received: from localhost (AAubervilliers-681-1-78-122.w90-88.abo.wanadoo.fr [90.88.20.122])
+        by mail.bootlin.com (Postfix) with ESMTPSA id A5A3F20731;
+        Tue, 24 Jul 2018 10:56:38 +0200 (CEST)
+Date:   Tue, 24 Jul 2018 10:56:39 +0200
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Icenowy Zheng <icenowy@aosc.io>
+Cc:     Chen-Yu Tsai <wens@csie.org>, linux-arm-kernel@lists.infradead.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-sunxi@googlegroups.com
+Subject: Re: [PATCH 2/3] arm64: allwinner: dts: h6: add pinmux for MMC1
+Message-ID: <20180724085639.2cebno52qfxrzmdw@flea>
+References: <20180724011551.49603-1-icenowy@aosc.io>
+ <20180724011551.49603-3-icenowy@aosc.io>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="m4pt6utzooijv4ko"
 Content-Disposition: inline
-In-Reply-To: <d4528eb7-9d8b-4073-afad-d8dd1390aa91@redhat.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <20180724011551.49603-3-icenowy@aosc.io>
+User-Agent: NeoMutt/20180622
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 24-07-18 10:46:20, David Hildenbrand wrote:
-> On 24.07.2018 09:25, Michal Hocko wrote:
-> > On Mon 23-07-18 19:20:43, David Hildenbrand wrote:
-> >> On 23.07.2018 14:30, Michal Hocko wrote:
-> >>> On Mon 23-07-18 13:45:18, Vlastimil Babka wrote:
-> >>>> On 07/20/2018 02:34 PM, David Hildenbrand wrote:
-> >>>>> Dumping tools (like makedumpfile) right now don't exclude reserved pages.
-> >>>>> So reserved pages might be access by dump tools although nobody except
-> >>>>> the owner should touch them.
-> >>>>
-> >>>> Are you sure about that? Or maybe I understand wrong. Maybe it changed
-> >>>> recently, but IIRC pages that are backing memmap (struct pages) are also
-> >>>> PG_reserved. And you definitely do want those in the dump.
-> >>>
-> >>> You are right. reserve_bootmem_region will make all early bootmem
-> >>> allocations (including those backing memmaps) PageReserved. I have asked
-> >>> several times but I haven't seen a satisfactory answer yet. Why do we
-> >>> even care for kdump about those. If they are reserved the nobody should
-> >>> really look at those specific struct pages and manipulate them. Kdump
-> >>> tools are using a kernel interface to read the content. If the specific
-> >>> content is backed by a non-existing memory then they should simply not
-> >>> return anything.
-> >>>
-> >>
-> >> "new kernel" provides an interface to read memory from "old kernel".
-> >>
-> >> The new kernel has no idea about
-> >> - which memory was added/online in the old kernel
-> >> - where struct pages of the old kernel are and what their content is
-> >> - which memory is save to touch and which not
-> >>
-> >> Dump tools figure all that out by interpreting the VMCORE. They e.g.
-> >> identify "struct pages" and see if they should be dumped. The "new
-> >> kernel" only allows to read that memory. It cannot hinder to crash the
-> >> system (e.g. if a dump tool would try to read a hwpoison page).
-> >>
-> >> So how should the "new kernel" know if a page can be touched or not?
-> > 
-> > I am sorry I am not familiar with kdump much. But from what I remember
-> > it reads from /proc/vmcore and implementation of this interface should
-> > simply return EINVAL or alike when you try to dump inaccessible memory
-> > range.
-> 
-> I assume the main problem with this approach is that we would always
-> have to fallback to reading old memory from vmcore page by page. e.g.
-> makedumpfile will always try to read bigger bunches. I also assume the
-> reason HWPOISON is handled in dump tools instead of in the kernel using
-> the mechanism you describe is the case.
 
-Is falling back to page-by-page for some ranges a real problem? I mean
-most of pages will simply be there so you can go in larger chunks. Once
-you get EINVAL, you just fall back to page-by-page for that particular
-range.
--- 
-Michal Hocko
-SUSE Labs
+--m4pt6utzooijv4ko
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Tue, Jul 24, 2018 at 09:15:50AM +0800, Icenowy Zheng wrote:
+> The MMC1 controller on H6, in the reference design and most third party
+> design, is used to connect SDIO Wi-Fi.
+>=20
+> Add pinmux for it.
+>=20
+> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+> ---
+>  arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi | 8 ++++++++
+>  1 file changed, 8 insertions(+)
+>=20
+> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi b/arch/arm64/bo=
+ot/dts/allwinner/sun50i-h6.dtsi
+> index cfa5fffcf62b..ba1a3a3e2149 100644
+> --- a/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
+> +++ b/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
+> @@ -134,6 +134,14 @@
+>  				bias-pull-up;
+>  			};
+> =20
+> +			mmc1_pins: mmc1-pins {
+> +				pins =3D "PG0", "PG1", "PG2", "PG3",
+> +				       "PG4", "PG5";
+> +				function =3D "mmc1";
+> +				drive-strength =3D <30>;
+> +				bias-pull-up;
+> +			};
+> +
+
+Is that the sole muxing option for MMC1? If so, it should be added to
+the mmc1 node.
+
+Maxime
+
+--=20
+Maxime Ripard, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--m4pt6utzooijv4ko
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAltW6cYACgkQ0rTAlCFN
+r3QyVQ//cFfd6lGu4M7oL5C0+WEjCcQp83rcd9xC7g+SMavEwmo32v0VkePWN9No
+BthJFmngNoSmYAnRXk3K1o4VLfARzvoiMKI5MmR/u8G2bdJ2vZOTEwVpDwWGFklK
+S0E0odT7FwOtSjhzGDqt1GO7vWAI7irSREWG0kDrTtX3smjqzxCFcOnZX652pPhE
+HoZ95xSyFoCIGxrGjtsovQL6Y55ag0N2bfpg2YW1h3Nwt7FbWyjab8NgomicF1RY
+Kx7JKCvoVVMqYDwAkVeaGwo5/ej2oErUmRHlYizbd4iijdQ0dyjRU0ZIIP4Y+Ibu
+HY8VzrjS7/9Sfnr28r8YwF3Cr0wtL6UHzzJhj9Nd0f2lZceV34oFW5nSoHxu69ao
+WJwe3uQSE9xPgyCGwGmUWUJ7G60fbDsjEhIhagPOpCNmX4BTdGlOTJha811ntwA3
+9AT55ACdweU6kd/xjwj2XyHrpURY/7V62Dp/KbJ8r4Q5lEVjFyXtYBnZc8OGQCj0
+4/BUR8tkjuFRZcqEj0JjP0QkqM4NHVJ4cHmC4wfd9ADM35CIoXRw36oUS2Xl9mqd
+nysQN0IWXmHXkJyURD8ZwJ/I3y2lajM4Dy4jjjiWABJ3EQFSGguDC/vvWdWmFJ7n
+QgCxrrsUutgu4bDYrU/c3YKLieBq1nM3gwtXaj3K9FWLGBC3HDs=
+=4Scx
+-----END PGP SIGNATURE-----
+
+--m4pt6utzooijv4ko--
