@@ -6,59 +6,57 @@ X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52580C6778A
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 16:56:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9FF8C6778A
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 16:56:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0AF8A20875
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 16:56:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6468F20875
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 16:56:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="X3kCdf0U"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0AF8A20875
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="CgkzIzBn"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6468F20875
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388567AbeGXSDm (ORCPT
+        id S2388602AbeGXSDx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 14:03:42 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:35030 "EHLO
+        Tue, 24 Jul 2018 14:03:53 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:34049 "EHLO
         mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388533AbeGXSDm (ORCPT
+        with ESMTP id S2388539AbeGXSDm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 24 Jul 2018 14:03:42 -0400
-Received: by mail-pg1-f194.google.com with SMTP id e6-v6so3312500pgv.2
+Received: by mail-pg1-f194.google.com with SMTP id y5-v6so3319374pgv.1
         for <linux-kernel@vger.kernel.org>; Tue, 24 Jul 2018 09:56:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=SXSUe20DYbH44YyT3AXD6Igiq+2PNNXg+ovqiA/boxo=;
-        b=X3kCdf0Uj63XqAnAuieU1YsZS8JiiKErKvsj99jp4RKXC93FHBkqibyLChQHlXi7Vg
-         vn5ozP+TKXJymsuETeBbDnK3EqeHB5k+DWPvr18ZQ6skGgedc/wZdm1WBHKPVQBSqL/X
-         Lc/BlOuZzIHXkUIzWZbM0u99uEHbW/wsxeLCc=
+        bh=0ojuoFtpY49pRoRZrlcC4u6qgVkehMZZO1daFH4ebQg=;
+        b=CgkzIzBn05lmhk+e5TxjjScesDSSObcCCDKeeEetNTDQqzFBrOQOV5dpyPCniZo7Vx
+         ya0Qd8SN1iPqfA/0N1NH3sMbIObBCd3gLY9JtF7Eol3k1gcOI0v7oiPJWAB6Rb4aejv+
+         1n3po6/tG1epyvHDeSHaxKEgii74YV5qc+tvQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=SXSUe20DYbH44YyT3AXD6Igiq+2PNNXg+ovqiA/boxo=;
-        b=OC5ABNORxeauGd4bF3WsMy/xsy9fdbDXnOhfEZtWMGm9NeCnfhQzFEtx/HxOeL9zws
-         CvV5QGMRULcUaoiB8/qzDEt/W7g3GfO8KZOL2SfXtsdSWVbTfVfLEJRy4YpWkjGqr50Y
-         MFNCpEQOOBDG4rlVsqYnAEYNiWf2UCeP2kIGvq4tAaKz5FVyiBxiqaHIbRVuofwHj+Wy
-         5nivXPlL+t3cmsPahLoHDCCpJIdTLAel+Ioou12b9WaeTSsq8KhwD7hMl4eFUuVPLlKM
-         8GJAOtNP9gMUUVXX8ueA0Hoo0FYVSbu3MPkfsQp7nihHzNIF0WMARPLyzliBPiSko6Er
-         zZsA==
-X-Gm-Message-State: AOUpUlE9DaU9px225rZzpA9W0VJQnpjqvNxEk3D3IUR49MG2GevOgm2p
-        xNPFqr3L65Ff78ivgsJKsLGv5Q==
-X-Google-Smtp-Source: AAOMgpddHoILTxA1pmdfiJJbwrLlV21a44LIGXnVTGqBwS4fr6cqOWabudmShtMReuuLuLA5JZVXyw==
-X-Received: by 2002:a63:2506:: with SMTP id l6-v6mr16840145pgl.237.1532451378306;
-        Tue, 24 Jul 2018 09:56:18 -0700 (PDT)
+        bh=0ojuoFtpY49pRoRZrlcC4u6qgVkehMZZO1daFH4ebQg=;
+        b=HFuz9ty78AFiFod9CWQBH1BK627lFRUqVVHCjFoB2wRUIFG69Vt93rBvKwgMos8s+i
+         vYcfFZbDCMWd0yPaTV55bvteMZkM/gNC5hOrYsMHjQEpg09lc9u/R8BxDwGCDWayVwQB
+         zjCUts6JpbP4PwQLLmos//IqvP7fHUBw6QhS1TfK9jhPeeUZfVCeb5BVWR8Ip1ppVzDO
+         bXQWGtbuMXLsiA2WtoSaqIrbuKT9WhYhGPV73f79q/OcMIje8vhKWtvMZSLPjo6aq2+9
+         EKYyQfd5kce5Uz1AlGlZhjtb6fSVPuHF2fsW4HwSLduwsY/nJRExMzVyqlWNQWxzzCQP
+         8CHA==
+X-Gm-Message-State: AOUpUlFscn3EYQAx3OA4QZNLeCA1aUYg8iZJuluFzjx3EguId/nh9hF0
+        yhdVWYoLVYcaofngSHWW9uWKlQ==
+X-Google-Smtp-Source: AAOMgpf+xHiYmSuy+iFsx+BWYX3LSu60mgKBhzZNEgiNUYprSNUZMSYoiShz+vEbEyowvo14sudtLA==
+X-Received: by 2002:a63:714a:: with SMTP id b10-v6mr16668343pgn.73.1532451379202;
+        Tue, 24 Jul 2018 09:56:19 -0700 (PDT)
 Received: from www.outflux.net (173-164-112-133-Oregon.hfc.comcastbusiness.net. [173.164.112.133])
-        by smtp.gmail.com with ESMTPSA id d145-v6sm18467198pfd.52.2018.07.24.09.56.15
+        by smtp.gmail.com with ESMTPSA id b12-v6sm17874054pfe.148.2018.07.24.09.56.16
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 24 Jul 2018 09:56:16 -0700 (PDT)
+        Tue, 24 Jul 2018 09:56:17 -0700 (PDT)
 From:   Kees Cook <keescook@chromium.org>
 To:     Herbert Xu <herbert@gondor.apana.org.au>
-Cc:     Kees Cook <keescook@chromium.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>,
+Cc:     Kees Cook <keescook@chromium.org>, Arnd Bergmann <arnd@arndb.de>,
         Eric Biggers <ebiggers@google.com>,
         "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
         Alasdair Kergon <agk@redhat.com>,
@@ -91,9 +89,9 @@ Cc:     Kees Cook <keescook@chromium.org>,
         netdev@vger.kernel.org, devel@driverdev.osuosl.org,
         linux-afs@lists.infradead.org, linux-wireless@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v6 17/18] crypto: ccm: Remove VLA usage
-Date:   Tue, 24 Jul 2018 09:49:35 -0700
-Message-Id: <20180724164936.37477-18-keescook@chromium.org>
+Subject: [PATCH v6 16/18] rxrpc: Reuse SKCIPHER_REQUEST_ON_STACK buffer
+Date:   Tue, 24 Jul 2018 09:49:34 -0700
+Message-Id: <20180724164936.37477-17-keescook@chromium.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180724164936.37477-1-keescook@chromium.org>
 References: <20180724164936.37477-1-keescook@chromium.org>
@@ -102,54 +100,108 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+The use of SKCIPHER_REQUEST_ON_STACK() will trigger FRAME_WARN warnings
+(when less than 2048) once the VLA is no longer hidden from the check:
 
-In the quest to remove all stack VLA usage from the kernel[1], this
-drops AHASH_REQUEST_ON_STACK by preallocated the ahash request area
-with the skcipher area (which are not used at the same time).
+net/rxrpc/rxkad.c:398:1: warning: the frame size of 1152 bytes is larger than 1024 bytes [-Wframe-larger-than=]
+net/rxrpc/rxkad.c:242:1: warning: the frame size of 1152 bytes is larger than 1024 bytes [-Wframe-larger-than=]
 
-[1] https://lkml.kernel.org/r/CA+55aFzCG-zNmZwX4A2FQpadafLfEzK6CC=qPXydAacU1RqZWA@mail.gmail.com
+This passes the initial SKCIPHER_REQUEST_ON_STACK allocation to the leaf
+functions for reuse. Two requests allocated on the stack is not needed
+when only one is used at a time.
 
-Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
 Signed-off-by: Kees Cook <keescook@chromium.org>
+Acked-by: Arnd Bergmann <arnd@arndb.de>
 ---
- crypto/ccm.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ net/rxrpc/rxkad.c | 25 +++++++++++++------------
+ 1 file changed, 13 insertions(+), 12 deletions(-)
 
-diff --git a/crypto/ccm.c b/crypto/ccm.c
-index 0a083342ec8c..b242fd0d3262 100644
---- a/crypto/ccm.c
-+++ b/crypto/ccm.c
-@@ -50,7 +50,10 @@ struct crypto_ccm_req_priv_ctx {
- 	u32 flags;
- 	struct scatterlist src[3];
- 	struct scatterlist dst[3];
--	struct skcipher_request skreq;
-+	union {
-+		struct ahash_request ahreq;
-+		struct skcipher_request skreq;
-+	};
- };
- 
- struct cbcmac_tfm_ctx {
-@@ -181,7 +184,7 @@ static int crypto_ccm_auth(struct aead_request *req, struct scatterlist *plain,
- 	struct crypto_ccm_req_priv_ctx *pctx = crypto_ccm_reqctx(req);
- 	struct crypto_aead *aead = crypto_aead_reqtfm(req);
- 	struct crypto_ccm_ctx *ctx = crypto_aead_ctx(aead);
--	AHASH_REQUEST_ON_STACK(ahreq, ctx->mac);
-+	struct ahash_request *ahreq = &pctx->ahreq;
- 	unsigned int assoclen = req->assoclen;
- 	struct scatterlist sg[3];
- 	u8 *odata = pctx->odata;
-@@ -427,7 +430,7 @@ static int crypto_ccm_init_tfm(struct crypto_aead *tfm)
- 	crypto_aead_set_reqsize(
- 		tfm,
- 		align + sizeof(struct crypto_ccm_req_priv_ctx) +
--		crypto_skcipher_reqsize(ctr));
-+		max(crypto_ahash_reqsize(mac), crypto_skcipher_reqsize(ctr)));
- 
- 	return 0;
- 
+diff --git a/net/rxrpc/rxkad.c b/net/rxrpc/rxkad.c
+index 278ac0807a60..6393391fac86 100644
+--- a/net/rxrpc/rxkad.c
++++ b/net/rxrpc/rxkad.c
+@@ -146,10 +146,10 @@ static int rxkad_prime_packet_security(struct rxrpc_connection *conn)
+ static int rxkad_secure_packet_auth(const struct rxrpc_call *call,
+ 				    struct sk_buff *skb,
+ 				    u32 data_size,
+-				    void *sechdr)
++				    void *sechdr,
++				    struct skcipher_request *req)
+ {
+ 	struct rxrpc_skb_priv *sp = rxrpc_skb(skb);
+-	SKCIPHER_REQUEST_ON_STACK(req, call->conn->cipher);
+ 	struct rxkad_level1_hdr hdr;
+ 	struct rxrpc_crypt iv;
+ 	struct scatterlist sg;
+@@ -183,12 +183,12 @@ static int rxkad_secure_packet_auth(const struct rxrpc_call *call,
+ static int rxkad_secure_packet_encrypt(const struct rxrpc_call *call,
+ 				       struct sk_buff *skb,
+ 				       u32 data_size,
+-				       void *sechdr)
++				       void *sechdr,
++				       struct skcipher_request *req)
+ {
+ 	const struct rxrpc_key_token *token;
+ 	struct rxkad_level2_hdr rxkhdr;
+ 	struct rxrpc_skb_priv *sp;
+-	SKCIPHER_REQUEST_ON_STACK(req, call->conn->cipher);
+ 	struct rxrpc_crypt iv;
+ 	struct scatterlist sg[16];
+ 	struct sk_buff *trailer;
+@@ -296,11 +296,12 @@ static int rxkad_secure_packet(struct rxrpc_call *call,
+ 		ret = 0;
+ 		break;
+ 	case RXRPC_SECURITY_AUTH:
+-		ret = rxkad_secure_packet_auth(call, skb, data_size, sechdr);
++		ret = rxkad_secure_packet_auth(call, skb, data_size, sechdr,
++					       req);
+ 		break;
+ 	case RXRPC_SECURITY_ENCRYPT:
+ 		ret = rxkad_secure_packet_encrypt(call, skb, data_size,
+-						  sechdr);
++						  sechdr, req);
+ 		break;
+ 	default:
+ 		ret = -EPERM;
+@@ -316,10 +317,10 @@ static int rxkad_secure_packet(struct rxrpc_call *call,
+  */
+ static int rxkad_verify_packet_1(struct rxrpc_call *call, struct sk_buff *skb,
+ 				 unsigned int offset, unsigned int len,
+-				 rxrpc_seq_t seq)
++				 rxrpc_seq_t seq,
++				 struct skcipher_request *req)
+ {
+ 	struct rxkad_level1_hdr sechdr;
+-	SKCIPHER_REQUEST_ON_STACK(req, call->conn->cipher);
+ 	struct rxrpc_crypt iv;
+ 	struct scatterlist sg[16];
+ 	struct sk_buff *trailer;
+@@ -402,11 +403,11 @@ static int rxkad_verify_packet_1(struct rxrpc_call *call, struct sk_buff *skb,
+  */
+ static int rxkad_verify_packet_2(struct rxrpc_call *call, struct sk_buff *skb,
+ 				 unsigned int offset, unsigned int len,
+-				 rxrpc_seq_t seq)
++				 rxrpc_seq_t seq,
++				 struct skcipher_request *req)
+ {
+ 	const struct rxrpc_key_token *token;
+ 	struct rxkad_level2_hdr sechdr;
+-	SKCIPHER_REQUEST_ON_STACK(req, call->conn->cipher);
+ 	struct rxrpc_crypt iv;
+ 	struct scatterlist _sg[4], *sg;
+ 	struct sk_buff *trailer;
+@@ -549,9 +550,9 @@ static int rxkad_verify_packet(struct rxrpc_call *call, struct sk_buff *skb,
+ 	case RXRPC_SECURITY_PLAIN:
+ 		return 0;
+ 	case RXRPC_SECURITY_AUTH:
+-		return rxkad_verify_packet_1(call, skb, offset, len, seq);
++		return rxkad_verify_packet_1(call, skb, offset, len, seq, req);
+ 	case RXRPC_SECURITY_ENCRYPT:
+-		return rxkad_verify_packet_2(call, skb, offset, len, seq);
++		return rxkad_verify_packet_2(call, skb, offset, len, seq, req);
+ 	default:
+ 		return -ENOANO;
+ 	}
 -- 
 2.17.1
 
