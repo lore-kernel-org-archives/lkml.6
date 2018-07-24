@@ -2,81 +2,260 @@ Return-Path: <SRS0=hTZH=KI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27188C28CF6
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 20:39:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5780C28CF6
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 20:40:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DB7BF20852
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 20:39:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DB7BF20852
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 8723B20852
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 20:40:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8723B20852
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xmission.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388801AbeGXVrK (ORCPT
+        id S2388817AbeGXVtA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 17:47:10 -0400
-Received: from mga17.intel.com ([192.55.52.151]:42383 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388765AbeGXVrK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 17:47:10 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Jul 2018 13:38:58 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,399,1526367600"; 
-   d="scan'208";a="67229028"
-Received: from maru.jf.intel.com ([10.54.51.80])
-  by FMSMGA003.fm.intel.com with ESMTP; 24 Jul 2018 13:37:31 -0700
-From:   Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
-To:     Brendan Higgins <brendanhiggins@google.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Joel Stanley <joel@jms.id.au>,
-        Andrew Jeffery <andrew@aj.id.au>, linux-i2c@vger.kernel.org,
-        openbmc@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org,
-        linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Cc:     Jarkko Nikula <jarkko.nikula@linux.intel.com>,
-        James Feist <james.feist@linux.intel.com>,
-        Vernon Mauery <vernon.mauery@linux.intel.com>,
-        Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
-Subject: [PATCH i2c-next v2] i2c: aspeed: Add an explicit type casting for *get_clk_reg_val
-Date:   Tue, 24 Jul 2018 13:36:15 -0700
-Message-Id: <20180724203615.5770-1-jae.hyun.yoo@linux.intel.com>
-X-Mailer: git-send-email 2.18.0
+        Tue, 24 Jul 2018 17:49:00 -0400
+Received: from out02.mta.xmission.com ([166.70.13.232]:41235 "EHLO
+        out02.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388721AbeGXVtA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Jul 2018 17:49:00 -0400
+Received: from in02.mta.xmission.com ([166.70.13.52])
+        by out02.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1fi46w-00058R-0Y; Tue, 24 Jul 2018 14:40:46 -0600
+Received: from [97.119.167.31] (helo=x220.xmission.com)
+        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1fi46v-0000Fy-71; Tue, 24 Jul 2018 14:40:45 -0600
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Oleg Nesterov <oleg@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Wen Yang <wen.yang99@zte.com.cn>, majiang <ma.jiang@zte.com.cn>
+References: <87efft5ncd.fsf_-_@xmission.com>
+        <20180724032419.20231-20-ebiederm@xmission.com>
+        <CA+55aFxNijeenFd6o7fg3iJFqAjdTZLaFV2=Eaqbg1fDOzx26A@mail.gmail.com>
+        <874lgo5xdg.fsf@xmission.com>
+        <CA+55aFw_CTTRTZfUf1e9yg04X_djG3q7HrCG-XqnyQorpKjaTQ@mail.gmail.com>
+        <87fu084cxj.fsf@xmission.com>
+        <CA+55aFxUc3ttEAuRS7GKs9aTjTFw1poE80DASFSXudVQCuWpHg@mail.gmail.com>
+Date:   Tue, 24 Jul 2018 15:40:32 -0500
+In-Reply-To: <CA+55aFxUc3ttEAuRS7GKs9aTjTFw1poE80DASFSXudVQCuWpHg@mail.gmail.com>
+        (Linus Torvalds's message of "Tue, 24 Jul 2018 13:15:21 -0700")
+Message-ID: <87a7qg4bb3.fsf_-_@xmission.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
+MIME-Version: 1.0
+Content-Type: text/plain
+X-XM-SPF: eid=1fi46v-0000Fy-71;;;mid=<87a7qg4bb3.fsf_-_@xmission.com>;;;hst=in02.mta.xmission.com;;;ip=97.119.167.31;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX1/iyDkSWSQHH48JaLytBhe1iZULGJjU6zk=
+X-SA-Exim-Connect-IP: 97.119.167.31
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+Subject: [PATCH v2 20/20] signal: Don't restart fork when signals come in.
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This commit fixes this sparse warning:
-drivers/i2c/busses/i2c-aspeed.c:875:38: warning: incorrect type in assignment (different modifiers)
-drivers/i2c/busses/i2c-aspeed.c:875:38:    expected unsigned int ( *get_clk_reg_val )( ... )
-drivers/i2c/busses/i2c-aspeed.c:875:38:    got void const *const data
 
-Signed-off-by: Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
+Wen Yang <wen.yang99@zte.com.cn> and majiang <ma.jiang@zte.com.cn>
+report that a periodic signal received during fork can cause fork to
+continually restart preventing an application from making progress.
+
+The code was being overly pesimistic.  Fork needs to guarantee that a
+signal sent to multiple processes is logically delivered before the
+fork and just to the forking process or logically delivered after the
+fork to both the forking process and it's newly spawned child.  For
+signals like periodic timers that are always delivered to a single
+process fork can safely complete and let them appear to logically
+delivered after the fork().
+
+While examining this issue I also discovered that fork today will miss
+signals delivered to multiple processes during the fork and handled by
+another thread.  Similarly the current code will also miss blocked
+signals that are delivered to multiple process, as those signals will
+not appear pending during fork.
+
+Add a list of each thread that is currently forking, and keep on that
+list a signal set that records all of the signals sent to multiple
+processes.  When fork completes initialize the new processes
+shared_pending signal set with it.  The calculate_sigpending function
+will see those signals and set TIF_SIGPENDING causing the new task to
+take the slow path to userspace to handle those signals.  Making it
+appear as if those signals were received immediately after the fork.
+
+It is not possible to send real time signals to multiple processes and
+exceptions don't go to multiple processes, which means that that are
+no signals sent to multiple processes that require siginfo.  This
+means it is safe to not bother collecting siginfo on signals sent
+during fork.
+
+The sigaction of a child of fork is initially the same as the
+sigaction of the parent process.  So a signal the parent ignores the
+child will also initially ignore.  Therefore it is safe to ignore
+signals sent to multiple processes and ignored by the forking process.
+
+Signals sent to only a single process or only a single thread and delivered
+during fork are treated as if they are received after the fork, and generally
+not dealt with.  They won't cause any problems.
+
+V2: Added removal from the multiprocess list on failure.
+
+Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=200447
+Reported-by: Wen Yang <wen.yang99@zte.com.cn> and
+Reported-by: majiang <ma.jiang@zte.com.cn>
+Fixes: 4a2c7a7837da ("[PATCH] make fork() atomic wrt pgrp/session signals")
+Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
 ---
-Changes since v1:
-- Fixed title and added Reported-by tag.
+ include/linux/sched/signal.h |  8 +++++++
+ kernel/fork.c                | 44 +++++++++++++++++++++++-------------
+ kernel/signal.c              |  9 ++++++++
+ 3 files changed, 45 insertions(+), 16 deletions(-)
 
- drivers/i2c/busses/i2c-aspeed.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/i2c/busses/i2c-aspeed.c b/drivers/i2c/busses/i2c-aspeed.c
-index efb89422d496..a4f956c6d567 100644
---- a/drivers/i2c/busses/i2c-aspeed.c
-+++ b/drivers/i2c/busses/i2c-aspeed.c
-@@ -872,7 +872,7 @@ static int aspeed_i2c_probe_bus(struct platform_device *pdev)
- 	if (!match)
- 		bus->get_clk_reg_val = aspeed_i2c_24xx_get_clk_reg_val;
- 	else
--		bus->get_clk_reg_val = match->data;
-+		bus->get_clk_reg_val = (u32 (*)(u32))match->data;
+diff --git a/include/linux/sched/signal.h b/include/linux/sched/signal.h
+index f3507bf165d0..62262021cf7e 100644
+--- a/include/linux/sched/signal.h
++++ b/include/linux/sched/signal.h
+@@ -69,6 +69,11 @@ struct thread_group_cputimer {
+ 	bool checking_timer;
+ };
  
- 	/* Initialize the I2C adapter */
- 	spin_lock_init(&bus->lock);
++struct multiprocess_signals {
++	sigset_t signal;
++	struct hlist_node node;
++};
++
+ /*
+  * NOTE! "signal_struct" does not have its own
+  * locking, because a shared signal_struct always
+@@ -90,6 +95,9 @@ struct signal_struct {
+ 	/* shared signal handling: */
+ 	struct sigpending	shared_pending;
+ 
++	/* For collecting multiprocess signals during fork */
++	struct hlist_head	multiprocess;
++
+ 	/* thread group exit support */
+ 	int			group_exit_code;
+ 	/* overloaded:
+diff --git a/kernel/fork.c b/kernel/fork.c
+index 6c358846a8b8..7cd3d22bca94 100644
+--- a/kernel/fork.c
++++ b/kernel/fork.c
+@@ -1456,6 +1456,7 @@ static int copy_signal(unsigned long clone_flags, struct task_struct *tsk)
+ 	init_waitqueue_head(&sig->wait_chldexit);
+ 	sig->curr_target = tsk;
+ 	init_sigpending(&sig->shared_pending);
++	INIT_HLIST_HEAD(&sig->multiprocess);
+ 	seqlock_init(&sig->stats_lock);
+ 	prev_cputime_init(&sig->prev_cputime);
+ 
+@@ -1602,6 +1603,7 @@ static __latent_entropy struct task_struct *copy_process(
+ {
+ 	int retval;
+ 	struct task_struct *p;
++	struct multiprocess_signals delayed;
+ 
+ 	/*
+ 	 * Don't allow sharing the root directory with processes in a different
+@@ -1649,6 +1651,25 @@ static __latent_entropy struct task_struct *copy_process(
+ 			return ERR_PTR(-EINVAL);
+ 	}
+ 
++	/*
++	 * Force any signals received before this point to be delivered
++	 * before the fork happens.  Collect up signals sent to multiple
++	 * processes that happen during the fork and delay them so that
++	 * they appear to happen after the fork.
++	 */
++	sigemptyset(&delayed.signal);
++	INIT_HLIST_NODE(&delayed.node);
++
++	spin_lock_irq(&current->sighand->siglock);
++	if (!(clone_flags & CLONE_THREAD))
++		hlist_add_head(&delayed.node, &current->signal->multiprocess);
++	recalc_sigpending();
++	spin_unlock_irq(&current->sighand->siglock);
++	if (signal_pending(current)) {
++		retval = restart_syscall();
++		goto fork_out;
++	}
++
+ 	retval = -ENOMEM;
+ 	p = dup_task_struct(current, node);
+ 	if (!p)
+@@ -1934,22 +1955,6 @@ static __latent_entropy struct task_struct *copy_process(
+ 		goto bad_fork_cancel_cgroup;
+ 	}
+ 
+-	if (!(clone_flags & CLONE_THREAD)) {
+-		/*
+-		 * Process group and session signals need to be delivered to just the
+-		 * parent before the fork or both the parent and the child after the
+-		 * fork. Restart if a signal comes in before we add the new process to
+-		 * it's process group.
+-		 * A fatal signal pending means that current will exit, so the new
+-		 * thread can't slip out of an OOM kill (or normal SIGKILL).
+-		 */
+-		recalc_sigpending();
+-		if (signal_pending(current)) {
+-			retval = -ERESTARTNOINTR;
+-			goto bad_fork_cancel_cgroup;
+-		}
+-	}
+-
+ 
+ 	init_task_pid_links(p);
+ 	if (likely(p->pid)) {
+@@ -1979,6 +1984,8 @@ static __latent_entropy struct task_struct *copy_process(
+ 			attach_pid(p, PIDTYPE_TGID);
+ 			attach_pid(p, PIDTYPE_PGID);
+ 			attach_pid(p, PIDTYPE_SID);
++			p->signal->shared_pending.signal = delayed.signal;
++			hlist_del(&delayed.node);
+ 			__this_cpu_inc(process_counts);
+ 		} else {
+ 			current->signal->nr_threads++;
+@@ -2060,6 +2067,11 @@ static __latent_entropy struct task_struct *copy_process(
+ 	put_task_stack(p);
+ 	free_task(p);
+ fork_out:
++	if (!(clone_flags & CLONE_THREAD)) {
++		spin_lock_irq(&current->sighand->siglock);
++		hlist_del(&delayed.node);
++		spin_unlock_irq(&current->sighand->siglock);
++	}
+ 	return ERR_PTR(retval);
+ }
+ 
+diff --git a/kernel/signal.c b/kernel/signal.c
+index 78e2d5d196f3..5b1aab94daf6 100644
+--- a/kernel/signal.c
++++ b/kernel/signal.c
+@@ -1123,6 +1123,15 @@ static int __send_signal(int sig, struct siginfo *info, struct task_struct *t,
+ out_set:
+ 	signalfd_notify(t, sig);
+ 	sigaddset(&pending->signal, sig);
++
++	/* Let multiprocess signals appear after on-going forks */
++	if (type > PIDTYPE_TGID) {
++		struct multiprocess_signals *delayed;
++		hlist_for_each_entry(delayed, &t->signal->multiprocess, node) {
++			sigaddset(&delayed->signal, sig);
++		}
++	}
++
+ 	complete_signal(sig, t, type);
+ ret:
+ 	trace_signal_generate(sig, info, t, type != PIDTYPE_PID, result);
 -- 
-2.18.0
+2.17.1
 
