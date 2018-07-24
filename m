@@ -6,52 +6,52 @@ X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B351ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 16:51:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1173EC6778A
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 16:51:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2D64A20875
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 16:51:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BCF8620875
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 16:51:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="S92o1ZFw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D64A20875
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="dyArO5HP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BCF8620875
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388781AbeGXR7J (ORCPT
+        id S2388616AbeGXR5M (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 13:59:09 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:39465 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388619AbeGXR5O (ORCPT
+        Tue, 24 Jul 2018 13:57:12 -0400
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:38120 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388582AbeGXR5M (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 13:57:14 -0400
-Received: by mail-pf1-f196.google.com with SMTP id j8-v6so982195pff.6
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Jul 2018 09:49:53 -0700 (PDT)
+        Tue, 24 Jul 2018 13:57:12 -0400
+Received: by mail-pl0-f66.google.com with SMTP id b1-v6so2023441pls.5
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Jul 2018 09:49:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=EgkhKZ/Kq1WYLP+KKm550fKJfIA30Q04zx67UHx5CVw=;
-        b=S92o1ZFwaZ2aylf4k1VTGxvWM7JZPhGcyXrz7iZHR94z/kaZL0L6kH2rRGVWrH6iju
-         eUpSLl/7EISqe9730FeeGBGn7J6lWJa1DO2CrW7zgkLsAF3YR1X8Wk74laRSb+Zs4zvj
-         SYx8wnid83S/p8ReZrV3kGlfr/ZxMOFmYYKnA=
+        bh=xi1UiijgPtH3bEbgxLJTLT+H3zXPa7fDlbmxyBVC5QY=;
+        b=dyArO5HPDOmgxu1KqX1PLyjELlLB/4D/84YPYAORv5WvH1EukArfqKSZklwmUMMB7a
+         /TGpsRkqAMjiQVw/mB48Ccn1vguQr0t20yF9CE+lGYxame7S7lxWefDK14kQapdlhLEk
+         203wUEPeCBMmH4vWUkmIeSP0Tbz3jZdvFjhbE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=EgkhKZ/Kq1WYLP+KKm550fKJfIA30Q04zx67UHx5CVw=;
-        b=kquDSHK/MMZHBKVNRQTruaOd5xMeHckfEZ9uBfu0udKY082tATeua0bgwG+I6wBLIG
-         2Hyi3X8YzfmLfbOXD9rG/LzSvemFo3rpz3ZMC7GMIJI4LjqlUaegtiM0q5S2SgWhv5g3
-         XUZ2y9iwU+pc3QpYg2wK7jb2ErdjcizgGu4vVMJqqb2906vTiXkUPKV39Dwe28JKQ2wp
-         IZ8sDpLoSXwCeKkMbQ75cGhEFtbJuZm8ZHyNU8xs492rMeDU/23jO1BIVLO+5P3tu/GQ
-         6YFVviLeagQw2zvlQMmhK07vE7UUTQZ0DmeHASKDmd+qd+vIqmHirNltHavzI/8Mb8kr
-         8P7Q==
-X-Gm-Message-State: AOUpUlGbKjsgwn2PjQpIkYx9ReX+bo6ehtm1bZyn+6CnMAMjvDoJBIPI
-        i0O0DHpN9IZrBlk3QXrPDUe1ew==
-X-Google-Smtp-Source: AAOMgpflp49N0AC5xiB8mpCD9AbiIwFcdTzaeSIcKVrYl9oEty5XsAmRJYRzowpikmxDTVIEKkvfJg==
-X-Received: by 2002:a62:9d14:: with SMTP id i20-v6mr18485201pfd.3.1532450992941;
-        Tue, 24 Jul 2018 09:49:52 -0700 (PDT)
+        bh=xi1UiijgPtH3bEbgxLJTLT+H3zXPa7fDlbmxyBVC5QY=;
+        b=irBYB9tDfLYFktEvA+ih7tSCQ51g/NileaNqtP+Bbj+wxBOiqEZmprF0Lk/8RDGC6T
+         4zC7J5yVXNUG5+4kDpxvVQkIgKRzm24J8Gi8y1Hj6Y+kT5FON8mrQlnQoz9gYrX6vqVZ
+         i4Kt/RjC54ijnbRmz3ybVDZ++FQjGXrVVspKdWgnMPYZHkIbRi+D9Urz0KfF2IeWohPp
+         ytMNuuLcsZm5OJ4kbjFp94erSGHsy0QmohUFQlv6hP1VC9JQE6kcKyp2oYaCtec0aa7d
+         9X/RH68AaTWaws5RyGiitGm5puQvIpGQjhC532HoRm8K0IA7NygeOJlvJsyxevjVKOph
+         oOrw==
+X-Gm-Message-State: AOUpUlGdk0jXBeaHfwIx1cEi3x/iI4IJr7sxgcy1fA/eV0PJh5a4fFjo
+        CI9g98ZNsXxyqiBb/n4PAPx8ww==
+X-Google-Smtp-Source: AAOMgpeVOEL3rwh7h++k7IUoH+FXXTX0DIe/o1QEmZSs2q6LYLTUBCJLP1OSBUBvuU8XEGR4LWmKqA==
+X-Received: by 2002:a17:902:b112:: with SMTP id q18-v6mr17394185plr.284.1532450990853;
+        Tue, 24 Jul 2018 09:49:50 -0700 (PDT)
 Received: from www.outflux.net (173-164-112-133-Oregon.hfc.comcastbusiness.net. [173.164.112.133])
-        by smtp.gmail.com with ESMTPSA id a15-v6sm19835983pfe.32.2018.07.24.09.49.46
+        by smtp.gmail.com with ESMTPSA id e2-v6sm13671874pgo.92.2018.07.24.09.49.45
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
         Tue, 24 Jul 2018 09:49:47 -0700 (PDT)
 From:   Kees Cook <keescook@chromium.org>
@@ -89,9 +89,9 @@ Cc:     Kees Cook <keescook@chromium.org>, Arnd Bergmann <arnd@arndb.de>,
         netdev@vger.kernel.org, devel@driverdev.osuosl.org,
         linux-afs@lists.infradead.org, linux-wireless@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v6 09/18] ppp: mppe: Remove VLA usage
-Date:   Tue, 24 Jul 2018 09:49:27 -0700
-Message-Id: <20180724164936.37477-10-keescook@chromium.org>
+Subject: [PATCH v6 08/18] crypto: skcipher: Remove VLA usage for SKCIPHER_REQUEST_ON_STACK
+Date:   Tue, 24 Jul 2018 09:49:26 -0700
+Message-Id: <20180724164936.37477-9-keescook@chromium.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180724164936.37477-1-keescook@chromium.org>
 References: <20180724164936.37477-1-keescook@chromium.org>
@@ -101,123 +101,52 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 In the quest to remove all stack VLA usage from the kernel[1], this
-removes the discouraged use of AHASH_REQUEST_ON_STACK (and associated
-VLA) by switching to shash directly and keeping the associated descriptor
-allocated with the regular state on the heap.
+caps the skcipher request size similar to other limits and adds a sanity
+check at registration. Looking at instrumented tcrypt output, the largest
+is for lrw:
+
+	crypt: testing lrw(aes)
+	crypto_skcipher_set_reqsize: 8
+	crypto_skcipher_set_reqsize: 88
+	crypto_skcipher_set_reqsize: 472
 
 [1] https://lkml.kernel.org/r/CA+55aFzCG-zNmZwX4A2FQpadafLfEzK6CC=qPXydAacU1RqZWA@mail.gmail.com
 
 Signed-off-by: Kees Cook <keescook@chromium.org>
-Acked-by: Arnd Bergmann <arnd@arndb.de>
 ---
- drivers/net/ppp/ppp_mppe.c | 56 ++++++++++++++++++++------------------
- 1 file changed, 30 insertions(+), 26 deletions(-)
+ include/crypto/internal/skcipher.h | 1 +
+ include/crypto/skcipher.h          | 4 +++-
+ 2 files changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/ppp/ppp_mppe.c b/drivers/net/ppp/ppp_mppe.c
-index 6c7fd98cb00a..a205750b431b 100644
---- a/drivers/net/ppp/ppp_mppe.c
-+++ b/drivers/net/ppp/ppp_mppe.c
-@@ -96,7 +96,7 @@ static inline void sha_pad_init(struct sha_pad *shapad)
-  */
- struct ppp_mppe_state {
- 	struct crypto_skcipher *arc4;
--	struct crypto_ahash *sha1;
-+	struct shash_desc *sha1;
- 	unsigned char *sha1_digest;
- 	unsigned char master_key[MPPE_MAX_KEY_LEN];
- 	unsigned char session_key[MPPE_MAX_KEY_LEN];
-@@ -136,25 +136,16 @@ struct ppp_mppe_state {
-  */
- static void get_new_key_from_sha(struct ppp_mppe_state * state)
+diff --git a/include/crypto/internal/skcipher.h b/include/crypto/internal/skcipher.h
+index e42f7063f245..5035482cbe68 100644
+--- a/include/crypto/internal/skcipher.h
++++ b/include/crypto/internal/skcipher.h
+@@ -130,6 +130,7 @@ static inline struct crypto_skcipher *crypto_spawn_skcipher(
+ static inline void crypto_skcipher_set_reqsize(
+ 	struct crypto_skcipher *skcipher, unsigned int reqsize)
  {
--	AHASH_REQUEST_ON_STACK(req, state->sha1);
--	struct scatterlist sg[4];
--	unsigned int nbytes;
--
--	sg_init_table(sg, 4);
--
--	nbytes = setup_sg(&sg[0], state->master_key, state->keylen);
--	nbytes += setup_sg(&sg[1], sha_pad->sha_pad1,
--			   sizeof(sha_pad->sha_pad1));
--	nbytes += setup_sg(&sg[2], state->session_key, state->keylen);
--	nbytes += setup_sg(&sg[3], sha_pad->sha_pad2,
--			   sizeof(sha_pad->sha_pad2));
--
--	ahash_request_set_tfm(req, state->sha1);
--	ahash_request_set_callback(req, 0, NULL, NULL);
--	ahash_request_set_crypt(req, sg, state->sha1_digest, nbytes);
--
--	crypto_ahash_digest(req);
--	ahash_request_zero(req);
-+	crypto_shash_init(state->sha1);
-+	crypto_shash_update(state->sha1, state->master_key,
-+			    state->keylen);
-+	crypto_shash_update(state->sha1, sha_pad->sha_pad1,
-+			    sizeof(sha_pad->sha_pad1));
-+	crypto_shash_update(state->sha1, state->session_key,
-+			    state->keylen);
-+	crypto_shash_update(state->sha1, sha_pad->sha_pad2,
-+			    sizeof(sha_pad->sha_pad2));
-+	crypto_shash_final(state->sha1, state->sha1_digest);
++	BUG_ON(reqsize > SKCIPHER_MAX_REQSIZE);
+ 	skcipher->reqsize = reqsize;
  }
  
- /*
-@@ -200,6 +191,7 @@ static void mppe_rekey(struct ppp_mppe_state * state, int initial_key)
- static void *mppe_alloc(unsigned char *options, int optlen)
- {
- 	struct ppp_mppe_state *state;
-+	struct crypto_shash *shash;
- 	unsigned int digestsize;
+diff --git a/include/crypto/skcipher.h b/include/crypto/skcipher.h
+index 2f327f090c3e..c48e194438cf 100644
+--- a/include/crypto/skcipher.h
++++ b/include/crypto/skcipher.h
+@@ -139,9 +139,11 @@ struct skcipher_alg {
+ 	struct crypto_alg base;
+ };
  
- 	if (optlen != CILEN_MPPE + sizeof(state->master_key) ||
-@@ -217,13 +209,21 @@ static void *mppe_alloc(unsigned char *options, int optlen)
- 		goto out_free;
- 	}
- 
--	state->sha1 = crypto_alloc_ahash("sha1", 0, CRYPTO_ALG_ASYNC);
--	if (IS_ERR(state->sha1)) {
--		state->sha1 = NULL;
-+	shash = crypto_alloc_shash("sha1", 0, 0);
-+	if (IS_ERR(shash))
-+		goto out_free;
++#define SKCIPHER_MAX_REQSIZE	472
 +
-+	state->sha1 = kmalloc(sizeof(*state->sha1) +
-+				     crypto_shash_descsize(shash),
-+			      GFP_KERNEL);
-+	if (!state->sha1) {
-+		crypto_free_shash(shash);
- 		goto out_free;
- 	}
-+	state->sha1->tfm = shash;
-+	state->sha1->flags = 0;
+ #define SKCIPHER_REQUEST_ON_STACK(name, tfm) \
+ 	char __##name##_desc[sizeof(struct skcipher_request) + \
+-		crypto_skcipher_reqsize(tfm)] CRYPTO_MINALIGN_ATTR; \
++		SKCIPHER_MAX_REQSIZE] CRYPTO_MINALIGN_ATTR; \
+ 	struct skcipher_request *name = (void *)__##name##_desc
  
--	digestsize = crypto_ahash_digestsize(state->sha1);
-+	digestsize = crypto_shash_digestsize(shash);
- 	if (digestsize < MPPE_MAX_KEY_LEN)
- 		goto out_free;
- 
-@@ -246,7 +246,10 @@ static void *mppe_alloc(unsigned char *options, int optlen)
- 
- out_free:
- 	kfree(state->sha1_digest);
--	crypto_free_ahash(state->sha1);
-+	if (state->sha1) {
-+		crypto_free_shash(state->sha1->tfm);
-+		kzfree(state->sha1);
-+	}
- 	crypto_free_skcipher(state->arc4);
- 	kfree(state);
- out:
-@@ -261,7 +264,8 @@ static void mppe_free(void *arg)
- 	struct ppp_mppe_state *state = (struct ppp_mppe_state *) arg;
- 	if (state) {
- 		kfree(state->sha1_digest);
--		crypto_free_ahash(state->sha1);
-+		crypto_free_shash(state->sha1->tfm);
-+		kzfree(state->sha1);
- 		crypto_free_skcipher(state->arc4);
- 		kfree(state);
- 	}
+ /**
 -- 
 2.17.1
 
