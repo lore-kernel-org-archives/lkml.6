@@ -2,143 +2,171 @@ Return-Path: <SRS0=hTZH=KI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6DCCC6778A
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 12:16:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C11AC6778A
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 12:17:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 625E820875
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 12:16:15 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="bo2un52r"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 625E820875
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id CDBB220874
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 12:17:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CDBB220874
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388339AbeGXNWZ (ORCPT
+        id S2388383AbeGXNXe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 09:22:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44516 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388301AbeGXNWZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 09:22:25 -0400
-Received: from localhost (unknown [106.201.120.141])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Tue, 24 Jul 2018 09:23:34 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:33126 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2388248AbeGXNXe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Jul 2018 09:23:34 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D633420874;
-        Tue, 24 Jul 2018 12:16:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1532434572;
-        bh=AyhUL07q62Yr8x39qhOd1Bm2NH9qEtXIcCoNfzOVqQw=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=bo2un52rz+29aV6aa4lH7SPcUflaQIN4wiKbWazZsrTyhuYB03T9FalaIoc2eiSzC
-         PqGG07HL2x2mw9nxLKEQLKHDNVF1uqIdu81kfDDohwZFGf9CMru28hL/jPuqF9/3ed
-         YWx9CsG/8VU0r8dQpcbk4J+LcMzNE6ba+PccJWQ0=
-Date:   Tue, 24 Jul 2018 17:46:04 +0530
-From:   Vinod <vkoul@kernel.org>
-To:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc:     dan.j.williams@intel.com, afaerber@suse.de, robh+dt@kernel.org,
-        dmaengine@vger.kernel.org, liuwei@actions-semi.com,
-        96boards@ucrobotics.com, devicetree@vger.kernel.org,
-        daniel.thompson@linaro.org, amit.kucheria@linaro.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        hzhang@ucrobotics.com, bdong@ucrobotics.com,
-        manivannanece23@gmail.com, thomas.liau@actions-semi.com,
-        jeff.chen@actions-semi.com, pn@denx.de, edgar.righi@lsitec.org.br
-Subject: Re: [PATCH v2 1/4] dt-bindings: dma: Add binding for Actions Semi
- Owl SoCs
-Message-ID: <20180724121604.GA2587@vkoul-mobl>
-References: <20180723041743.32024-1-manivannan.sadhasivam@linaro.org>
- <20180723041743.32024-2-manivannan.sadhasivam@linaro.org>
+        by mx1.redhat.com (Postfix) with ESMTPS id 50B1E402332F;
+        Tue, 24 Jul 2018 12:17:20 +0000 (UTC)
+Received: from [10.36.116.136] (ovpn-116-136.ams2.redhat.com [10.36.116.136])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id A3421111AF15;
+        Tue, 24 Jul 2018 12:17:13 +0000 (UTC)
+Subject: Re: [PATCH v1 0/2] mm/kdump: exclude reserved pages in dumps
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     Vlastimil Babka <vbabka@suse.cz>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Baoquan He <bhe@redhat.com>, Dave Young <dyoung@redhat.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Hari Bathini <hbathini@linux.vnet.ibm.com>,
+        Huang Ying <ying.huang@intel.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        =?UTF-8?Q?Marc-Andr=c3=a9_Lureau?= <marcandre.lureau@redhat.com>,
+        Matthew Wilcox <mawilcox@microsoft.com>,
+        Miles Chen <miles.chen@mediatek.com>,
+        Pavel Tatashin <pasha.tatashin@oracle.com>,
+        Petr Tesarik <ptesarik@suse.cz>
+References: <20180720123422.10127-1-david@redhat.com>
+ <9f46f0ed-e34c-73be-60ca-c892fb19ed08@suse.cz>
+ <20180723123043.GD31229@dhcp22.suse.cz>
+ <8daae80c-871e-49b6-1cf1-1f0886d3935d@redhat.com>
+ <20180724072536.GB28386@dhcp22.suse.cz>
+From:   David Hildenbrand <david@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+ SE+xAvmumFBY
+Organization: Red Hat GmbH
+Message-ID: <8eb22489-fa6b-9825-bc63-07867a40d59b@redhat.com>
+Date:   Tue, 24 Jul 2018 14:17:12 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180723041743.32024-2-manivannan.sadhasivam@linaro.org>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20180724072536.GB28386@dhcp22.suse.cz>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Tue, 24 Jul 2018 12:17:20 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Tue, 24 Jul 2018 12:17:20 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'david@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Mani,
-
-Patch title should be dmaengine: ... Please always use the apt tags and
-one can find them using git log <subsystem>
-
-On 23-07-18, 09:47, Manivannan Sadhasivam wrote:
-> Add devicetree binding for Actions Semi Owl SoCs DMA controller.
-
-
-It would help for review to describe the controller here
-
+On 24.07.2018 09:25, Michal Hocko wrote:
+> On Mon 23-07-18 19:20:43, David Hildenbrand wrote:
+>> On 23.07.2018 14:30, Michal Hocko wrote:
+>>> On Mon 23-07-18 13:45:18, Vlastimil Babka wrote:
+>>>> On 07/20/2018 02:34 PM, David Hildenbrand wrote:
+>>>>> Dumping tools (like makedumpfile) right now don't exclude reserved pages.
+>>>>> So reserved pages might be access by dump tools although nobody except
+>>>>> the owner should touch them.
+>>>>
+>>>> Are you sure about that? Or maybe I understand wrong. Maybe it changed
+>>>> recently, but IIRC pages that are backing memmap (struct pages) are also
+>>>> PG_reserved. And you definitely do want those in the dump.
+>>>
+>>> You are right. reserve_bootmem_region will make all early bootmem
+>>> allocations (including those backing memmaps) PageReserved. I have asked
+>>> several times but I haven't seen a satisfactory answer yet. Why do we
+>>> even care for kdump about those. If they are reserved the nobody should
+>>> really look at those specific struct pages and manipulate them. Kdump
+>>> tools are using a kernel interface to read the content. If the specific
+>>> content is backed by a non-existing memory then they should simply not
+>>> return anything.
+>>>
+>>
+>> "new kernel" provides an interface to read memory from "old kernel".
+>>
+>> The new kernel has no idea about
+>> - which memory was added/online in the old kernel
+>> - where struct pages of the old kernel are and what their content is
+>> - which memory is save to touch and which not
+>>
+>> Dump tools figure all that out by interpreting the VMCORE. They e.g.
+>> identify "struct pages" and see if they should be dumped. The "new
+>> kernel" only allows to read that memory. It cannot hinder to crash the
+>> system (e.g. if a dump tool would try to read a hwpoison page).
+>>
+>> So how should the "new kernel" know if a page can be touched or not?
 > 
-> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> ---
->  .../devicetree/bindings/dma/owl-dma.txt       | 46 +++++++++++++++++++
->  1 file changed, 46 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/dma/owl-dma.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/dma/owl-dma.txt b/Documentation/devicetree/bindings/dma/owl-dma.txt
-> new file mode 100644
-> index 000000000000..dd6ce237b216
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/dma/owl-dma.txt
-> @@ -0,0 +1,46 @@
-> +* Actions Semi Owl SoCs DMA controller
-> +
-> +This binding follows the generic DMA bindings defined in dma.txt.
-> +
-> +Required properties:
-> +- compatible: Should be "actions,s900-dma".
-> +- reg: Should contain DMA registers location and length.
-> +- interrupts: Should contain 4 interrupts shared by all channel.
-> +- #dma-cells: Must be <1>. Used to represent the number of integer
-> +              cells in the dmas property of client device.
-> +- dma-channels: Physical channels supported.
-> +- dma-requests: Virtual channels supported.
+> I am sorry I am not familiar with kdump much. But from what I remember
+> it reads from /proc/vmcore and implementation of this interface should
+> simply return EINVAL or alike when you try to dump inaccessible memory
+> range.
 
-not really, virtual channel is a software concepts. On the other hand
-you may have request lines in hw and you can describe that, if not skip
-this one
+Oh, and BTW, while something like -EINVAL could work, we usually don't
+want to try to read certain pages at all (e.g. ballooned pages -
+accessing the page might work but involves quite some overhead in the
+hypervisor).
 
-> +- clocks: Phandle and Specifier of the clock feeding the DMA controller.
-> +
-> +Example:
-> +
-> +Controller:
-> +                dma: dma-controller@e0260000 {
-> +                        compatible = "actions,s900-dma";
-> +                        reg = <0x0 0xe0260000 0x0 0x1000>;
-> +                        interrupts = <GIC_SPI 57 IRQ_TYPE_LEVEL_HIGH>,
-> +                                     <GIC_SPI 58 IRQ_TYPE_LEVEL_HIGH>,
-> +                                     <GIC_SPI 59 IRQ_TYPE_LEVEL_HIGH>,
-> +                                     <GIC_SPI 60 IRQ_TYPE_LEVEL_HIGH>;
-> +                        #dma-cells = <1>;
-> +                        dma-channels = <12>;
-> +                        dma-requests = <46>;
-> +                        clocks = <&clock CLK_DMAC>;
-> +                };
-> +
-> +Client:
-> +
-> +DMA clients connected to the Actions Semi Owl SoCs DMA controller must
-> +use the format described in the dma.txt file, using a two-cell specifier
-> +for each channel.
-> +
-> +The two cells in order are:
-> +1. A phandle pointing to the DMA controller.
-> +2. The channel id.
-> +
-> +uart5: serial@e012a000 {
-> +        ...
-> +        dma-names = "tx", "rx";
-> +        dmas = <&dma 26>, <&dma 27>;
-> +        ...
-> +};
-> -- 
-> 2.17.1
+So we should either handle this in dump tools (reserved + ...?) or while
+doing the read similar to XEN (is_ram_page()).
+
+I wonder if we could convert the early allocated memory (PG_reserved) at
+some point (buddy initialized) into ordinary "simply allocated" memory.
 
 -- 
-~Vinod
+
+Thanks,
+
+David / dhildenb
