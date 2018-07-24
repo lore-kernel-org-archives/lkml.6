@@ -2,306 +2,179 @@ Return-Path: <SRS0=hTZH=KI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8512ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 09:21:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20BF7C6778A
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 09:22:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 46C5420875
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 09:21:50 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="exs5/DJU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 46C5420875
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id D4D9620852
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 09:22:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D4D9620852
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388399AbeGXK1R (ORCPT
+        id S2388412AbeGXK2L (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 06:27:17 -0400
-Received: from mail-lf1-f49.google.com ([209.85.167.49]:43741 "EHLO
-        mail-lf1-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388350AbeGXK1R (ORCPT
+        Tue, 24 Jul 2018 06:28:11 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:53973 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388251AbeGXK2L (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 06:27:17 -0400
-Received: by mail-lf1-f49.google.com with SMTP id f135-v6so767098lfg.10
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Jul 2018 02:21:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:from:date:message-id:subject:to:cc;
-        bh=wbRzGpR2TkUsVoXE+71odyN3mRqQx2Wyb7zsCIV59cQ=;
-        b=exs5/DJUhdKoN+uO//TqP6yAjO3dNkL3yIYfcZJa6+fuVd34462otMD3wFSd1rMja0
-         xFFd4AgDDNBXXYgJF0vvY2GgHM6fOX14CwYQnBy6IdBTV5e2mcMwj79FsovL9A6klC7s
-         BbdOKhlLLWA+2i3sRd1AB1KXMgD93ArxBMfto=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
-        bh=wbRzGpR2TkUsVoXE+71odyN3mRqQx2Wyb7zsCIV59cQ=;
-        b=ZsCEVtgWXH1cDp4p2Jg8OF8B1sSaR1ovYWCRR7UtKVbgfCSsOVCAYFSC/Bp/DfJwSp
-         8+KN+kFzLdgssWRfTZE3VRyOduOWmKxi/pxIK1slWBsq8DFhp7KQLeuv3Lt5B7LRmxeq
-         vHCzMUdy6LylZeWoEBDCML0J2FtRKVjWw/Xb7TF0unaR56DGbsJmYt5Ywy39vDJvbHj5
-         /el6nGBf+9nuybNy9aLKOp11bRZkBN3v51rHrNMSvHzldLep++m9f+5VZqn4egz/t4WD
-         hzdn9l+Q5HuGJi4D6wFvvPJCOCx3D+Z0oNifTupishZJ/zldtJrK140J5d4wahiS0DBb
-         NoxA==
-X-Gm-Message-State: AOUpUlFR5N7VhYhCxnT2rrrhxz1yzC8gkied8tYEtNf5mNYS0aaIErBy
-        creziLXDAyaZkEb2YyF3N1xTxRXu+yUMjMjQt2cQDQ==
-X-Google-Smtp-Source: AAOMgpf3EXSlRodekOoFkXiYPd9PQwDC5etsSB1QCF5UCvPvcJQ0gPqo4xrIX/I7M3EyD8dcGayzCSfXyzHhjWzr+lU=
-X-Received: by 2002:a19:8ecf:: with SMTP id a76-v6mr10082501lfl.52.1532424102743;
- Tue, 24 Jul 2018 02:21:42 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a19:169b:0:0:0:0:0 with HTTP; Tue, 24 Jul 2018 02:21:42
- -0700 (PDT)
-From:   Naresh Kamboju <naresh.kamboju@linaro.org>
-Date:   Tue, 24 Jul 2018 14:51:42 +0530
-Message-ID: <CA+G9fYs-AzZ4x2x8m5kOYaEg_vagaorjQAkWs9C5ghOnCLYZvA@mail.gmail.com>
-Subject: selftests: bpf: test_progs: deadlock at trace_call_bpf
-To:     netdev@vger.kernel.org, ast@kernel.org,
-        Daniel Borkmann <daniel@iogearbox.net>, rostedt@goodmis.org
-Cc:     open list <linux-kernel@vger.kernel.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>
+        Tue, 24 Jul 2018 06:28:11 -0400
+Received: from kresse.hi.pengutronix.de ([2001:67c:670:100:1d::2a])
+        by metis.ext.pengutronix.de with esmtp (Exim 4.89)
+        (envelope-from <l.stach@pengutronix.de>)
+        id 1fhtWN-00016p-4p; Tue, 24 Jul 2018 11:22:19 +0200
+Message-ID: <1532424136.32306.3.camel@pengutronix.de>
+Subject: Re: [PATCH v3 3/3] dmaengine: imx-sdma: allocate max 20 bds for one
+ transfer
+From:   Lucas Stach <l.stach@pengutronix.de>
+To:     Robin Gong <yibin.gong@nxp.com>,
+        "vkoul@kernel.org" <vkoul@kernel.org>,
+        "dan.j.williams@intel.com" <dan.j.williams@intel.com>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "linux@armlinux.org.uk" <linux@armlinux.org.uk>
+Cc:     "dmaengine@vger.kernel.org" <dmaengine@vger.kernel.org>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Date:   Tue, 24 Jul 2018 11:22:16 +0200
+In-Reply-To: <DB6PR04MB322323354B2184421502FC5889560@DB6PR04MB3223.eurprd04.prod.outlook.com>
+References: <1532367972-29707-1-git-send-email-yibin.gong@nxp.com>
+         <1532367972-29707-4-git-send-email-yibin.gong@nxp.com>
+         <1532343252.3163.99.camel@pengutronix.de>
+         <DB6PR04MB322323354B2184421502FC5889560@DB6PR04MB3223.eurprd04.prod.outlook.com>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6-1+deb9u1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::2a
+X-SA-Exim-Mail-From: l.stach@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Deadlock warning on x86 machine while testing selftests: bpf:
-test_progs and running linux next 4.18.0-rc3-next-20180705 and still
-happening on 4.18.0-rc5-next-20180720.
+Am Montag, den 23.07.2018, 13:55 +0000 schrieb Robin Gong:
+> > -----Original Message-----
+> > From: Lucas Stach [mailto:l.stach@pengutronix.de]
+> > Sent: 2018年7月23日 18:54
+> > To: Robin Gong <yibin.gong@nxp.com>; vkoul@kernel.org;
+> > dan.j.williams@intel.com; s.hauer@pengutronix.de; linux@armlinux.or
+> > g.uk
+> > Cc: dmaengine@vger.kernel.org; dl-linux-imx <linux-imx@nxp.com>;
+> > kernel@pengutronix.de; linux-arm-kernel@lists.infradead.org;
+> > linux-kernel@vger.kernel.org
+> > Subject: Re: [PATCH v3 3/3] dmaengine: imx-sdma: allocate max 20
+> > bds for one
+> > transfer
+> > 
+> > Am Dienstag, den 24.07.2018, 01:46 +0800 schrieb Robin Gong:
+> > > If multi-bds used in one transfer, all bds should be consisten
+> > > memory.To easily follow it, enlarge the dma pool size into 20
+> > > bds, and
+> > > it will report error if the number of bds is over than 20. For
+> > > dmatest, the max count for single transfer is NUM_BD *
+> > 
+> > SDMA_BD_MAX_CNT
+> > > = 20 * 65535 = ~1.28MB.
+> > 
+> > Both the commit message and the comment need a lot more care to
+> > actually
+> > tell what this commit is trying to achieve. Currently I don't
+> > follow at all. What
+> > does "consisten" mean? Do you mean BDs should be contiguous in
+> > memory?
+> 
+> Yes, BDs should be contiguous  one by one in memory.
 
-Any one noticed this kernel warning about deadlock ?
+Okay, but this isn't what the code change does. By increasing the size
+parameter of the dma pool you just allocate 20 times as much memory as
+needed for each BD. So actually the BDs end up being very non-
+contiguous in memory as there are now holes of 19 BD sizes between the
+start of each BD.
 
-selftests: bpf: test_progs
-libbpf: incorrect bpf_call opcode
-libbpf: incorrect bpf_call opcode
-test_pkt_access:FAIL:ipv4 err 0 errno 2 retval 0 duration 126
-test_pkt_access:FAIL:ipv6 err 0 errno 2 retval 0 duration 115
-test_xdp:FAIL:ipv4 err 0 errno 2 retval 3 size 74
-test_xdp:FAIL:ipv6 err 0 errno 2 retval 3 size 114
-test_xdp_adjust_tail:FAIL:ipv4 err 0 errno 2 retval 1 size 54
-test_xdp_adjust_tail:FAIL:ipv6 err 0 errno 2 retval 3 siz[   69.901655]
-[   69.903862] ========================================================
-[   69.910213] WARNING: possible irq lock inversion dependency detected
-[   69.916559] 4.18.0-rc3-next-20180705 #1 Not tainted
-[   69.921428] --------------------------------------------------------
-[   69.927774] dd/2928 just changed the state of lock:
-[   69.932643] 0000000022eeb38d (&head->lock){+...}, at:
-pcpu_freelist_push+0x28/0x50
-[   69.940208] but this lock was taken by another, HARDIRQ-safe lock
-in the past:
-[   69.947420]  (&rq->lock){-.-.}
-[   69.947421]
-[   69.947421]
-[   69.947421] and interrupts could create inverse lock ordering between them.
-[   69.947421]
-[   69.961842]
-[   69.961842] other info that might help us debug this:
-[   69.968357]  Possible interrupt unsafe locking scenario:
-[   69.968357]
-[   69.975136]        CPU0                    CPU1
-[   69.979659]        ----                    ----
-[   69.984184]   lock(&head->lock);
-[   69.987406]                                local_irq_disable();
-[   69.993319]                                lock(&rq->lock);
-[   69.998882]                                lock(&head->lock);
-[   70.004618]   <Interrupt>
-[   70.007235]     lock(&rq->lock);
-[   70.010461]
-[   70.010461]  *** DEADLOCK ***
-[   70.010461]
-[   70.016372] 1 lock held by dd/2928:
-[   70.019856]  #0: 00000000ab9293c8 (rcu_read_lock){....}, at:
-trace_call_bpf+0x37/0x1d0
-[   70.027768]
-[   70.027768] the shortest dependencies between 2nd lock and 1st lock:
-[   70.035586]  -> (&rq->lock){-.-.} ops: 1401365 {
-[   70.040204]     IN-HARDIRQ-W at:
-[   70.043428]                       lock_acquire+0xd5/0x1c0
-[   70.048820]                       _raw_spin_lock+0x2f/0x40
-[   70.054299]                       scheduler_tick+0x51/0xf0
-[   70.059781]                       update_process_times+0x47/0x60
-[   70.065779]                       tick_periodic+0x2b/0xc0
-[   70.071171]                       tick_handle_periodic+0x25/0x70
-[   70.077168]                       timer_interrupt+0x15/0x20
-[   70.082731]                       __handle_irq_event_percpu+0x48/0x320
-[   70.089250]                       handle_irq_event_percpu+0x32/0x80
-[   70.095505]                       handle_irq_event+0x39/0x60
-[   70.101157]                       handle_level_irq+0x7f/0x100
-[   70.106893]                       handle_irq+0x6f/0x110
-[   70.112112]                       do_IRQ+0x5c/0x110
-[   70.116982]                       ret_from_intr+0x0/0x1d
-[   70.122286]                       _raw_spin_unlock_irqrestore+0x38/0x50
-[   70.128891]                       __setup_irq+0x45d/0x700
-[   70.134281]                       setup_irq+0x4c/0x90
-[   70.139324]                       hpet_time_init+0x25/0x37
-[   70.144803]                       x86_late_time_init+0xf/0x1c
-[   70.150538]                       start_kernel+0x40c/0x4ca
-[   70.156017]                       x86_64_start_reservations+0x24/0x26
-[   70.162445]                       x86_64_start_kernel+0x6f/0x72
-[   70.168357]                       secondary_startup_64+0xa4/0xb0
-[   70.174356]     IN-SOFTIRQ-W at:
-[   70.177578]                       lock_acquire+0xd5/0x1c0
-[   70.182970]                       _raw_spin_lock+0x2f/0x40
-[   70.188448]                       try_to_wake_up+0x31b/0x540
-[   70.194097]                       wake_up_process+0x15/0x20
-[   70.199661]                       swake_up_locked+0x24/0x40
-[   70.205226]                       swake_up_one+0x1f/0x30
-[   70.210530]                       rcu_gp_kthread_wake+0x3b/0x40
-[   70.216441]                       rcu_accelerate_cbs_unlocked+0x9c/0xe0
-[   70.223048]                       rcu_process_callbacks+0x111/0x10c0
-[   70.229396]                       __do_softirq+0xbf/0x493
-[   70.234788]                       irq_exit+0xc3/0xd0
-[   70.239743]                       smp_apic_timer_interrupt+0x93/0x2a0
-[   70.246176]                       apic_timer_interrupt+0xf/0x20
-[   70.252084]                       console_unlock+0x4e8/0x620
-[   70.257737]                       vprintk_emit+0x254/0x430
-[   70.263214]                       vprintk_default+0x1f/0x30
-[   70.268776]                       vprintk_func+0x27/0x60
-[   70.274082]                       printk+0x52/0x6e
-[   70.278864]                       native_cpu_up+0x71b/0x7a0
-[   70.284431]                       bringup_cpu+0x2a/0xb0
-[   70.289648]                       cpuhp_invoke_callback+0xb2/0xb20
-[   70.295818]                       _cpu_up+0xae/0x160
-[   70.300776]                       do_cpu_up+0x8d/0xb0
-[   70.305818]                       cpu_up+0x13/0x20
-[   70.310602]                       smp_init+0x67/0xc4
-[   70.315559]                       kernel_init_freeable+0x134/0x259
-[   70.321731]                       kernel_init+0xe/0x110
-[   70.326947]                       ret_from_fork+0x3a/0x50
-[   70.332339]     INITIAL USE at:
-[   70.335477]                      lock_acquire+0xd5/0x1c0
-[   70.340780]                      _raw_spin_lock_irqsave+0x3a/0x50
-[   70.346864]                      rq_attach_root+0x1b/0xc0
-[   70.352255]                      sched_init+0x310/0x432
-[   70.357472]                      start_kernel+0x26e/0x4ca
-[   70.362861]                      x86_64_start_reservations+0x24/0x26
-[   70.369207]                      x86_64_start_kernel+0x6f/0x72
-[   70.375048]                      secondary_startup_64+0xa4/0xb0
-[   70.380958]   }
-[   70.382710]   ... key      at: [<ffffffff8716faf8>] __key.69482+0x0/0x8
-[   70.389310]   ... acquired at:
-[   70.392364]    _raw_spin_lock+0x2f/0x40
-[   70.396192]    pcpu_freelist_pop+0x7a/0xd0
-[   70.400286]    bpf_get_stackid+0x1ca/0x470
-[   70.404383]    bpf_get_stackid_tp+0x11/0x20
-[   70.408559]    ___bpf_prog_run+0x7f2/0x1090
-[   70.412739]    __bpf_prog_run32+0x39/0x50
-[   70.416742]    trace_call_bpf+0xc8/0x1d0
-[   70.420659]    perf_trace_run_bpf_submit+0x42/0xb0
-[   70.425444]    perf_trace_sched_switch+0x116/0x190
-[   70.430227]    __schedule+0x6d8/0xa20
-[   70.433883]    schedule+0x3d/0x90
-[   70.437194]    worker_thread+0xd0/0x410
-[   70.441025]    kthread+0x10d/0x140
-[   70.444424]    ret_from_fork+0x3a/0x50
-[   70.448165]
-[   70.449658] -> (&head->lock){+...} ops: 61660 {
-[   70.454181]    HARDIRQ-ON-W at:
-[   70.457319]                     lock_acquire+0xd5/0x1c0
-[   70.462536]                     _raw_spin_lock+0x2f/0x40
-[   70.467841]                     pcpu_freelist_push+0x28/0x50
-[   70.473492]                     bpf_get_stackid+0x43a/0x470
-[   70.479054]                     bpf_get_stackid_tp+0x11/0x20
-[   70.484724]                     ___bpf_prog_run+0x7f2/0x1090
-[   70.490372]                     __bpf_prog_run32+0x39/0x50
-[   70.495852]                     trace_call_bpf+0xc8/0x1d0
-[   70.501243]                     perf_trace_run_bpf_submit+0x42/0xb0
-[   70.507500]                     perf_trace_urandom_read+0xbf/0x100
-[   70.513670]                     urandom_read+0x1ce/0x340
-[   70.518975]                     __vfs_read+0x37/0x160
-[   70.524027]                     vfs_read+0xa8/0x150
-[   70.528898]                     ksys_read+0x58/0xc0
-[   70.533766]                     __x64_sys_read+0x1a/0x20
-[   70.539092]                     do_syscall_64+0x4f/0x190
-[   70.544401]                     entry_SYSCALL_64_after_hwframe+0x49/0xbe
-[   70.551092]    INITIAL USE at:
-[   70.554143]                    lock_acquire+0xd5/0x1c0
-[   70.559272]                    _raw_spin_lock+0x2f/0x40
-[   70.564491]                    pcpu_freelist_populate+0xb6/0x110
-[   70.570489]                    htab_map_alloc+0x3b6/0x4c0
-[   70.575878]                    map_create+0xf0/0x370
-[   70.580836]                    __x64_sys_bpf+0x10b/0x260
-[   70.586138]                    do_syscall_64+0x4f/0x190
-[   70.591356]                    entry_SYSCALL_64_after_hwframe+0x49/0xbe
-[   70.597960]  }
-[   70.599624]  ... key      at: [<ffffffff87d4c5a0>] __key.11024+0x0/0x8
-[   70.606142]  ... acquired at:
-[   70.609104]    mark_lock+0x392/0x570
-[   70.612676]    __lock_acquire+0x5cd/0x13c0
-[   70.616767]    lock_acquire+0xd5/0x1c0
-[   70.620511]    _raw_spin_lock+0x2f/0x40
-[   70.624342]    pcpu_freelist_push+0x28/0x50
-[   70.628519]    bpf_get_stackid+0x43a/0x470
-[   70.632610]    bpf_get_stackid_tp+0x11/0x20
-[   70.636785]    ___bpf_prog_run+0x7f2/0x1090
-[   70.640965]    __bpf_prog_run32+0x39/0x50
-[   70.644969]    trace_call_bpf+0xc8/0x1d0
-[   70.648886]    perf_trace_run_bpf_submit+0x42/0xb0
-[   70.653668]    perf_trace_urandom_read+0xbf/0x100
-[   70.658366]    urandom_read+0x1ce/0x340
-[   70.662199]    __vfs_read+0x37/0x160
-[   70.665768]    vfs_read+0xa8/0x150
-[   70.669166]    ksys_read+0x58/0xc0
-[   70.672562]    __x64_sys_read+0x1a/0x20
-[   70.676393]    do_syscall_64+0x4f/0x190
-[   70.680223]    entry_SYSCALL_64_after_hwframe+0x49/0xbe
-[   70.685440]
-[   70.686933]
-[   70.686933] stack backtrace:
-[   70.691283] CPU: 3 PID: 2928 Comm: dd Not tainted 4.18.0-rc3-next-20180705 #1
-[   70.698405] Hardware name: Supermicro SYS-5019S-ML/X11SSH-F, BIOS
-2.0b 07/27/2017
-[   70.705875] Call Trace:
-[   70.708321]  dump_stack+0x68/0x95
-[   70.711631]  print_irq_inversion_bug.part.41+0x1a5/0x1b1
-[   70.716935]  check_usage_backwards+0x14b/0x160
-[   70.721374]  mark_lock+0x392/0x570
-[   70.724771]  ? mark_lock+0x392/0x570
-[   70.728340]  ? print_shortest_lock_dependencies+0x1a0/0x1a0
-[   70.733904]  __lock_acquire+0x5cd/0x13c0
-[   70.737823]  ? find_get_entry+0x1a2/0x2f0
-[   70.741825]  lock_acquire+0xd5/0x1c0
-[   70.745397]  ? lock_acquire+0xd5/0x1c0
-[   70.749141]  ? pcpu_freelist_push+0x28/0x50
-[   70.753317]  _raw_spin_lock+0x2f/0x40
-[   70.756974]  ? pcpu_freelist_push+0x28/0x50
-[   70.761153]  pcpu_freelist_push+0x28/0x50
-[   70.765156]  bpf_get_stackid+0x43a/0x470
-[   70.769073]  bpf_get_stackid_tp+0x11/0x20
-[   70.773077]  ___bpf_prog_run+0x7f2/0x1090
-[   70.777083]  __bpf_prog_run32+0x39/0x50
-[   70.780912]  ? lock_acquire+0xd5/0x1c0
-[   70.784656]  trace_call_bpf+0xc8/0x1d0
-[   70.788399]  perf_trace_run_bpf_submit+0x42/0xb0
-[   70.793013]  perf_trace_urandom_read+0xbf/0x100
-[   70.797544]  urandom_read+0x1ce/0x340
-[   70.801202]  __vfs_read+0x37/0x160
-[   70.804598]  ? security_file_permission+0x8d/0xb0
-[   70.809297]  ? security_file_permission+0x8d/0xb0
-[   70.813993]  vfs_read+0xa8/0x150
-[   70.817218]  ksys_read+0x58/0xc0
-[   70.820442]  __x64_sys_read+0x1a/0x20
-[   70.824106]  do_syscall_64+0x4f/0x190
-[   70.827764]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-[   70.832807] RIP: 0033:0x7f302526f160
-[   70.836378] Code: b6 fe ff ff 48 8d 3d 97 b1 08 00 48 83 ec 08 e8
-66 d3 01 00 66 0f 1f 44 00 00 83 3d e9 15 2c 00 00 75 10 b8 00 00 00
-00 0f 05 <48> 3d 01 f0 ff ff 73 31 c3 48 83 ec 08 e8 7e 94 01 00 48 89
-04 24
-[   70.855253] RSP: 002b:00007fff096fd4e8 EFLAGS: 00000246 ORIG_RAX:
-0000000000000000
-[   70.862812] RAX: ffffffffffffffda RBX: 0000000000000001 RCX: 00007f302526f160
-[   70.869935] RDX: 0000000000000200 RSI: 000000000070f000 RDI: 0000000000000000
-[   70.877060] RBP: 0000000000000200 R08: 000000000070f000 R09: 0000000000711060
-[   70.884183] R10: 0000000000000871 R11: 0000000000000246 R12: 000000000070f000
-[   70.891306] R13: 0000000000000000 R14: 0000000000000200 R15: 0000000000000000
-e 54
-test_l4lb:FAIL:ipv4 err 0 errno 2 retval 7 size 54 magic 1234
+So something isn't right with this change.
 
-Full kernel selftest test log,
-https://lkft.validation.linaro.org/scheduler/job/314724#L2142
+Regards,
+Lucas
 
-Best regards
-Naresh Kamboju
+> > 
+> > What do you gain by over-allocating each BD by a factor of 20?
+> 
+> I guess dma_pool_alloc will return error in such case, and then cause
+> dma setup
+> transfer failure.
+> > 
+> > Regards,
+> > Lucas
+> > 
+> > > Signed-off-by: Robin Gong <yibin.gong@nxp.com>
+> > > ---
+> > >  drivers/dma/imx-sdma.c | 17 ++++++++++++++++-
+> > >  1 file changed, 16 insertions(+), 1 deletion(-)
+> > > 
+> > > diff --git a/drivers/dma/imx-sdma.c b/drivers/dma/imx-sdma.c
+> > > index
+> > > b4ec2d2..5973489 100644
+> > > --- a/drivers/dma/imx-sdma.c
+> > > +++ b/drivers/dma/imx-sdma.c
+> > > @@ -298,6 +298,15 @@ struct sdma_context_data {
+> > > >  	u32  scratch7;
+> > > 
+> > >  } __attribute__ ((packed));
+> > > 
+> > > +/*
+> > > + * All bds in one transfer should be consitent on SDMA. To
+> > > easily
+> > > +follow it,just
+> > > + * set the dma pool size as the enough bds. For example, in
+> > > dmatest
+> > > +case, the
+> > > + * max 20 bds means the max for single transfer is NUM_BD *
+> > > +SDMA_BD_MAX_CNT = 20
+> > > + * * 65535 = ~1.28MB. 20 bds supposed to be enough basically.If
+> > > it's
+> > > +still not
+> > > + * enough in some specific cases, enlarge it here.Warning
+> > > message
+> > > +would also
+> > > + * appear if the bd numbers is over than 20.
+> > > + */
+> > > +#define NUM_BD 20
+> > > 
+> > >  struct sdma_engine;
+> > > 
+> > > @@ -1273,7 +1282,7 @@ static int sdma_alloc_chan_resources(struct
+> > > dma_chan *chan)
+> > > >  		goto disable_clk_ahb;
+> > > >  	sdmac->bd_pool = dma_pool_create("bd_pool", chan-
+> > > > >device->dev,
+> > > > -				sizeof(struct
+> > > > sdma_buffer_descriptor),
+> > > > +				NUM_BD * sizeof(struct
+> > > > sdma_buffer_descriptor),
+> > > >  				32, 0);
+> > > >  	return 0;
+> > > 
+> > > @@ -1314,6 +1323,12 @@ static struct sdma_desc
+> > > *sdma_transfer_init(struct sdma_channel *sdmac,
+> > >  {
+> > > >  	struct sdma_desc *desc;
+> > > > +	if (bds > NUM_BD) {
+> > > > +		dev_err(sdmac->sdma->dev, "%d bds exceed the
+> > > > max %d\n",
+> > > > +			bds, NUM_BD);
+> > > > +		goto err_out;
+> > > > +	}
+> > > 
+> > > +
+> > > >  	desc = kzalloc((sizeof(*desc)), GFP_NOWAIT);
+> > > >  	if (!desc)
+> > > >  		goto err_out;
