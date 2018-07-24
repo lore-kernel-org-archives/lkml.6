@@ -2,229 +2,233 @@ Return-Path: <SRS0=hTZH=KI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B652FC6778A
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 13:09:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08F6FC6778A
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 13:11:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6B0C020875
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 13:09:55 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Roy6cHAj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B0C020875
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id B1C6A20874
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 13:11:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B1C6A20874
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388396AbeGXOQS (ORCPT
+        id S2388362AbeGXORu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 10:16:18 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58806 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388299AbeGXOQS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 10:16:18 -0400
-Received: from localhost (unknown [171.61.90.205])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3912820874;
-        Tue, 24 Jul 2018 13:09:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1532437792;
-        bh=smruhvTynsLIpO/HqtFh1l2Z+jgrXXMobQ4m1PZ8964=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Roy6cHAj51vE9JNPDsaiI+HlW2sACjfsHj0S4k42fwlZ7nPWyG6SVRF71KINzXKKM
-         ma2Ck0vIEfrvJKKgNgzeHDobMAOV7uW62zWfoyMxn1BeQY7h1hKS+iqawWuKzxh0Am
-         bCZMjBkdPkHyjdIqo1d3MahDcQdZLeyGgiLxXPT8=
-Date:   Tue, 24 Jul 2018 18:39:43 +0530
-From:   Vinod <vkoul@kernel.org>
-To:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc:     dan.j.williams@intel.com, afaerber@suse.de, robh+dt@kernel.org,
-        dmaengine@vger.kernel.org, liuwei@actions-semi.com,
-        96boards@ucrobotics.com, devicetree@vger.kernel.org,
-        daniel.thompson@linaro.org, amit.kucheria@linaro.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        hzhang@ucrobotics.com, bdong@ucrobotics.com,
-        manivannanece23@gmail.com, thomas.liau@actions-semi.com,
-        jeff.chen@actions-semi.com, pn@denx.de, edgar.righi@lsitec.org.br
-Subject: Re: [PATCH v2 3/4] dma: Add Actions Semi Owl family S900 DMA driver
-Message-ID: <20180724130943.GD3661@vkoul-mobl>
-References: <20180723041743.32024-1-manivannan.sadhasivam@linaro.org>
- <20180723041743.32024-4-manivannan.sadhasivam@linaro.org>
- <20180724124614.GB2587@vkoul-mobl>
+        Tue, 24 Jul 2018 10:17:50 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:10116 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2388299AbeGXORu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Jul 2018 10:17:50 -0400
+Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id EDEF55FE93EF3;
+        Tue, 24 Jul 2018 21:11:17 +0800 (CST)
+Received: from [127.0.0.1] (10.134.22.195) by DGGEMS402-HUB.china.huawei.com
+ (10.3.19.202) with Microsoft SMTP Server id 14.3.382.0; Tue, 24 Jul 2018
+ 21:11:12 +0800
+Subject: Re: [PATCH 2/5] f2fs: add cur_victim_sec for BG_GC to avoid skipping
+ BG_GC victim
+To:     Yunlong Song <yunlong.song@huawei.com>, <jaegeuk@kernel.org>,
+        <chao@kernel.org>, <yunlong.song@icloud.com>
+CC:     <miaoxie@huawei.com>, <bintian.wang@huawei.com>,
+        <shengyong1@huawei.com>, <heyunlei@huawei.com>,
+        <linux-f2fs-devel@lists.sourceforge.net>,
+        <linux-kernel@vger.kernel.org>
+References: <1532355022-163029-1-git-send-email-yunlong.song@huawei.com>
+ <1532355022-163029-3-git-send-email-yunlong.song@huawei.com>
+From:   Chao Yu <yuchao0@huawei.com>
+Message-ID: <42824b9f-6ebb-2280-0a62-c74954fff39c@huawei.com>
+Date:   Tue, 24 Jul 2018 21:11:14 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180724124614.GB2587@vkoul-mobl>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <1532355022-163029-3-git-send-email-yunlong.song@huawei.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.134.22.195]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-somehow this got stuck so sending again...
+On 2018/7/23 22:10, Yunlong Song wrote:
+> If f2fs aborts BG_GC, then the section bit of victim_secmap will be set,
+> which will cause the section skipped in the future get_victim of BG_GC.
+> In a worst case that each section in the victim_secmap is set and there
+> are enough free sections (so FG_GC can not be triggered), then BG_GC
+> will skip all the sections and cannot find any victims, causing BG_GC
 
-On 24-07-18, 18:16, Vinod wrote:
-> On 23-07-18, 09:47, Manivannan Sadhasivam wrote:
-> 
-> > +#include <linux/bitops.h>
-> > +#include <linux/clk.h>
-> > +#include <linux/delay.h>
-> > +#include <linux/dmaengine.h>
-> > +#include <linux/dma-mapping.h>
-> > +#include <linux/dmapool.h>
-> > +#include <linux/err.h>
-> > +#include <linux/init.h>
-> > +#include <linux/interrupt.h>
-> > +#include <linux/io.h>
-> > +#include <linux/mm.h>
-> > +#include <linux/module.h>
-> > +#include <linux/of_device.h>
-> > +#include <linux/of_dma.h>
-> 
-> do you need this?
-> 
-> > +/* OWL_DMAX_MODE Bits */
-> > +#define OWL_DMA_MODE_TS(x)			(((x) & 0x3f) << 0)
-> > +#define OWL_DMA_MODE_ST(x)			(((x) & 0x3) << 8)
-> > +#define	OWL_DMA_MODE_ST_DEV			OWL_DMA_MODE_ST(0)
-> > +#define	OWL_DMA_MODE_ST_DCU			OWL_DMA_MODE_ST(2)
-> > +#define	OWL_DMA_MODE_ST_SRAM			OWL_DMA_MODE_ST(3)
-> 
-> what are you trying to do with this? Generally we would define register
-> bits using BIT and GENMASK here..
-> 
-> > +/* Extract the bit field to new shift */
-> > +#define BIT_FIELD(val, width, shift, newshift)	\
-> > +		((((val) >> (shift)) & ((BIT(width)) - 1)) << (newshift))
-> 
-> why new shift? I guess you want to extract bits from a register here and
-> use those, right?
-> 
-> > +struct owl_dma_lli_hw {
-> > +	u32	next_lli;	/* physical address of the next link list */
-> > +	u32	saddr;		/* source physical address */
-> > +	u32	daddr;		/* destination physical address */
-> > +	u32	flen:20;	/* frame length */
-> > +	u32	fcnt:12;	/* frame count */
-> > +	u32	src_stride;	/* source stride */
-> > +	u32	dst_stride;	/* destination stride */
-> > +	u32	ctrla;		/* dma_mode and linklist ctrl */
-> > +	u32	ctrlb;		/* interrupt control */
-> > +	u32	const_num;	/* data for constant fill */
-> 
-> i think you can skip comment here or kernel-doc style, please pick one
-> and not both
-> 
-> > +struct owl_dma_txd {
-> > +	struct virt_dma_desc	vd;
-> > +	struct list_head	lli_list;
-> 
-> why do you need this list. vd has its own list as well!
-> 
-> > +static void pchan_update(void __iomem *reg, u32 val, bool state)
-> 
-> why does this not use pchan as arg as the name of API implies (you did
-> that on the other two)
-> 
-> > +static inline int owl_dma_cfg_lli(struct owl_dma_vchan *vchan,
-> > +				  struct owl_dma_lli *lli,
-> > +				  dma_addr_t src, dma_addr_t dst,
-> > +				  u32 len, enum dma_transfer_direction dir)
-> > +{
-> > +	struct owl_dma_lli_hw *hw = &lli->hw;
-> > +	u32 mode;
-> > +
-> > +	mode = OWL_DMA_MODE_PW(0);
-> > +
-> > +	switch (dir) {
-> > +	case DMA_MEM_TO_MEM:
-> > +		mode |= OWL_DMA_MODE_TS(0) | OWL_DMA_MODE_ST_DCU |
-> > +			OWL_DMA_MODE_DT_DCU | OWL_DMA_MODE_SAM_INC |
-> > +			OWL_DMA_MODE_DAM_INC;
-> > +
-> > +		break;
-> > +	default:
-> > +		return -EINVAL;
-> > +	}
-> > +
-> > +	hw->next_lli = 0; /* One link list by default */
-> > +	hw->saddr = src;
-> > +	hw->daddr = dst;
-> > +
-> > +	hw->fcnt = 1; /* Frame count fixed as 1 */
-> > +	hw->flen = len; /* Max frame length is 1MB */
-> 
-> are you checking that somewhere?
-> 
-> > +static struct owl_dma_pchan *owl_dma_get_pchan(struct owl_dma *od,
-> > +					       struct owl_dma_vchan *vchan)
-> > +{
-> > +	struct owl_dma_pchan *pchan;
-> > +	unsigned long flags;
-> > +	int i;
-> > +
-> > +	for (i = 0; i < od->nr_pchans; i++) {
-> > +		pchan = &od->pchans[i];
-> > +
-> > +		spin_lock_irqsave(&pchan->lock, flags);
-> > +		if (!pchan->vchan) {
-> > +			pchan->vchan = vchan;
-> > +			spin_unlock_irqrestore(&pchan->lock, flags);
-> > +			break;
-> > +		}
-> > +
-> > +		spin_unlock_irqrestore(&pchan->lock, flags);
-> > +	}
-> > +
-> > +	if (i == od->nr_pchans) {
-> > +		/* No physical channel available, cope with it */
-> > +		dev_dbg(od->dma.dev, "no physical channel available\n");
-> 
-> not sure about this. The concept of virt-chan is that you would submit a
-> transaction to controller for different channels. If channel is busy the
-> txn is simply queued up. You do not need a _free_ channel
-> 
-> > +static void owl_dma_pause_pchan(struct owl_dma_pchan *pchan)
-> > +{
-> > +	pchan_writel(pchan, 1, OWL_DMAX_PAUSE);
-> > +}
-> > +
-> > +static void owl_dma_resume_pchan(struct owl_dma_pchan *pchan)
-> > +{
-> > +	pchan_writel(pchan, 0, OWL_DMAX_PAUSE);
-> > +}
-> 
-> mempcy and pause/resume dont make much sense, are you sure you want that
-> here and not later on slave copy
-> 
-> > +static void owl_dma_free_txd(struct owl_dma *od, struct owl_dma_txd *txd)
-> > +{
-> > +	struct owl_dma_lli *lli, *_lli;
-> > +
-> > +	if (unlikely(!txd))
-> > +		return;
-> > +
-> > +	list_for_each_entry_safe(lli, _lli, &txd->lli_list, node) {
-> > +		owl_dma_free_lli(od, lli);
-> > +	}
-> 
-> braces not required here
-> 
-> > +static int owl_dma_remove(struct platform_device *pdev)
-> > +{
-> > +	struct owl_dma *od = platform_get_drvdata(pdev);
-> > +
-> > +	of_dma_controller_free(pdev->dev.of_node);
-> > +	dma_async_device_unregister(&od->dma);
-> > +
-> > +	/* Mask all interrupts for this execution environment */
-> > +	dma_writel(od, 0x0, OWL_DMA_IRQ_EN0);
-> > +	owl_dma_free(od);
-> 
-> the tasklets are killed but irqs can still run and trigger the irqs :)
-> -- 
-> ~Vinod
+If f2fs aborts BG_GC, we'd better to clear victim_secmap?
 
--- 
-~Vinod
+> failed each time. Besides, SSR also uses BG_GC to get ssr segment, if
+
+Looks like foreground GC will try to grab section which is selected as
+victim of background GC?
+
+Thanks,
+
+> many sections in the victim_secmap are set, then SSR cannot get a proper
+> ssr segment to allocate blocks, which makes SSR inefficiently. To fix
+> this problem, we can add cur_victim_sec for BG_GC similar like that in
+> FG_GC to avoid selecting the same section repeatedly.
+> 
+> Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
+> ---
+>  fs/f2fs/f2fs.h              |  3 ++-
+>  fs/f2fs/gc.c                | 15 +++++++++------
+>  fs/f2fs/segment.h           |  3 ++-
+>  fs/f2fs/super.c             |  3 ++-
+>  include/trace/events/f2fs.h | 18 ++++++++++++------
+>  5 files changed, 27 insertions(+), 15 deletions(-)
+> 
+> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> index 57a8851..f8a7b42 100644
+> --- a/fs/f2fs/f2fs.h
+> +++ b/fs/f2fs/f2fs.h
+> @@ -1217,7 +1217,8 @@ struct f2fs_sb_info {
+>  	/* for cleaning operations */
+>  	struct mutex gc_mutex;			/* mutex for GC */
+>  	struct f2fs_gc_kthread	*gc_thread;	/* GC thread */
+> -	unsigned int cur_victim_sec;		/* current victim section num */
+> +	unsigned int cur_fg_victim_sec;		/* current FG_GC victim section num */
+> +	unsigned int cur_bg_victim_sec;		/* current BG_GC victim section num */
+>  	unsigned int gc_mode;			/* current GC state */
+>  	/* for skip statistic */
+>  	unsigned long long skipped_atomic_files[2];	/* FG_GC and BG_GC */
+> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+> index 2ba470d..705d419 100644
+> --- a/fs/f2fs/gc.c
+> +++ b/fs/f2fs/gc.c
+> @@ -367,8 +367,6 @@ static int get_victim_by_default(struct f2fs_sb_info *sbi,
+>  
+>  		if (sec_usage_check(sbi, secno))
+>  			goto next;
+> -		if (gc_type == BG_GC && test_bit(secno, dirty_i->victim_secmap))
+> -			goto next;
+>  
+>  		cost = get_gc_cost(sbi, segno, &p);
+>  
+> @@ -391,14 +389,17 @@ static int get_victim_by_default(struct f2fs_sb_info *sbi,
+>  		if (p.alloc_mode == LFS) {
+>  			secno = GET_SEC_FROM_SEG(sbi, p.min_segno);
+>  			if (gc_type == FG_GC)
+> -				sbi->cur_victim_sec = secno;
+> -			else
+> +				sbi->cur_fg_victim_sec = secno;
+> +			else {
+>  				set_bit(secno, dirty_i->victim_secmap);
+> +				sbi->cur_bg_victim_sec = secno;
+> +			}
+>  		}
+>  		*result = (p.min_segno / p.ofs_unit) * p.ofs_unit;
+>  
+>  		trace_f2fs_get_victim(sbi->sb, type, gc_type, &p,
+> -				sbi->cur_victim_sec,
+> +				sbi->cur_fg_victim_sec,
+> +				sbi->cur_bg_victim_sec,
+>  				prefree_segments(sbi), free_segments(sbi));
+>  	}
+>  out:
+> @@ -1098,7 +1099,9 @@ int f2fs_gc(struct f2fs_sb_info *sbi, bool sync,
+>  	}
+>  
+>  	if (gc_type == FG_GC)
+> -		sbi->cur_victim_sec = NULL_SEGNO;
+> +		sbi->cur_fg_victim_sec = NULL_SEGNO;
+> +	else
+> +		sbi->cur_bg_victim_sec = NULL_SEGNO;
+>  
+>  	if (!sync) {
+>  		if (has_not_enough_free_secs(sbi, sec_freed, 0)) {
+> diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
+> index 5049551..b21bb96 100644
+> --- a/fs/f2fs/segment.h
+> +++ b/fs/f2fs/segment.h
+> @@ -787,7 +787,8 @@ static inline block_t sum_blk_addr(struct f2fs_sb_info *sbi, int base, int type)
+>  
+>  static inline bool sec_usage_check(struct f2fs_sb_info *sbi, unsigned int secno)
+>  {
+> -	if (IS_CURSEC(sbi, secno) || (sbi->cur_victim_sec == secno))
+> +	if (IS_CURSEC(sbi, secno) || (sbi->cur_fg_victim_sec == secno) ||
+> +		(sbi->cur_bg_victim_sec == secno))
+>  		return true;
+>  	return false;
+>  }
+> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+> index 7187885..ef69ebf 100644
+> --- a/fs/f2fs/super.c
+> +++ b/fs/f2fs/super.c
+> @@ -2386,7 +2386,8 @@ static void init_sb_info(struct f2fs_sb_info *sbi)
+>  	sbi->root_ino_num = le32_to_cpu(raw_super->root_ino);
+>  	sbi->node_ino_num = le32_to_cpu(raw_super->node_ino);
+>  	sbi->meta_ino_num = le32_to_cpu(raw_super->meta_ino);
+> -	sbi->cur_victim_sec = NULL_SECNO;
+> +	sbi->cur_fg_victim_sec = NULL_SECNO;
+> +	sbi->cur_bg_victim_sec = NULL_SECNO;
+>  	sbi->max_victim_search = DEF_MAX_VICTIM_SEARCH;
+>  
+>  	sbi->dir_level = DEF_DIR_LEVEL;
+> diff --git a/include/trace/events/f2fs.h b/include/trace/events/f2fs.h
+> index 7956989..0f01f82 100644
+> --- a/include/trace/events/f2fs.h
+> +++ b/include/trace/events/f2fs.h
+> @@ -693,10 +693,12 @@
+>  TRACE_EVENT(f2fs_get_victim,
+>  
+>  	TP_PROTO(struct super_block *sb, int type, int gc_type,
+> -			struct victim_sel_policy *p, unsigned int pre_victim,
+> +			struct victim_sel_policy *p, unsigned int pre_fg_victim,
+> +			unsigned int pre_bg_victim,
+>  			unsigned int prefree, unsigned int free),
+>  
+> -	TP_ARGS(sb, type, gc_type, p, pre_victim, prefree, free),
+> +	TP_ARGS(sb, type, gc_type, p, pre_fg_victim, pre_bg_victim,
+> +		prefree, free),
+>  
+>  	TP_STRUCT__entry(
+>  		__field(dev_t,	dev)
+> @@ -707,7 +709,8 @@
+>  		__field(unsigned int,	victim)
+>  		__field(unsigned int,	cost)
+>  		__field(unsigned int,	ofs_unit)
+> -		__field(unsigned int,	pre_victim)
+> +		__field(unsigned int,	pre_fg_victim)
+> +		__field(unsigned int,	pre_bg_victim)
+>  		__field(unsigned int,	prefree)
+>  		__field(unsigned int,	free)
+>  	),
+> @@ -721,14 +724,16 @@
+>  		__entry->victim		= p->min_segno;
+>  		__entry->cost		= p->min_cost;
+>  		__entry->ofs_unit	= p->ofs_unit;
+> -		__entry->pre_victim	= pre_victim;
+> +		__entry->pre_fg_victim	= pre_fg_victim;
+> +		__entry->pre_bg_victim	= pre_bg_victim;
+>  		__entry->prefree	= prefree;
+>  		__entry->free		= free;
+>  	),
+>  
+>  	TP_printk("dev = (%d,%d), type = %s, policy = (%s, %s, %s), "
+>  		"victim = %u, cost = %u, ofs_unit = %u, "
+> -		"pre_victim_secno = %d, prefree = %u, free = %u",
+> +		"pre_fg_victim_secno = %d, pre_bg_victim_secno = %d, "
+> +		"prefree = %u, free = %u",
+>  		show_dev(__entry->dev),
+>  		show_data_type(__entry->type),
+>  		show_gc_type(__entry->gc_type),
+> @@ -737,7 +742,8 @@
+>  		__entry->victim,
+>  		__entry->cost,
+>  		__entry->ofs_unit,
+> -		(int)__entry->pre_victim,
+> +		(int)__entry->pre_fg_victim,
+> +		(int)__entry->pre_bg_victim,
+>  		__entry->prefree,
+>  		__entry->free)
+>  );
+> 
+
