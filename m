@@ -2,106 +2,112 @@ Return-Path: <SRS0=hTZH=KI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
-	version=3.4.0
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CB80C6778F
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 20:55:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7AB1C28CF6
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 20:56:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E33EB20685
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 20:55:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6E67B20685
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 20:56:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="uxdT4kbG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E33EB20685
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="TVDgqoUX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6E67B20685
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388907AbeGXWDw (ORCPT
+        id S2388912AbeGXWEe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 18:03:52 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:42971 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388640AbeGXWDv (ORCPT
+        Tue, 24 Jul 2018 18:04:34 -0400
+Received: from mail-it0-f67.google.com ([209.85.214.67]:51504 "EHLO
+        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388750AbeGXWEd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 18:03:51 -0400
-Received: by mail-pg1-f195.google.com with SMTP id y4-v6so3702435pgp.9
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Jul 2018 13:55:35 -0700 (PDT)
+        Tue, 24 Jul 2018 18:04:33 -0400
+Received: by mail-it0-f67.google.com with SMTP id g14-v6so5751995iti.1
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Jul 2018 13:56:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:in-reply-to:message-id:references
-         :user-agent:mime-version;
-        bh=okBAlDaxM0DNqW7zvcq7HlrqbxW7pHlut6qsdwTqoyk=;
-        b=uxdT4kbGdTtAvJ75Nx4Uy4Gs4UPePCI9Ha0khp8C4ZP6fll5CyFVvR+wCteneUJXy/
-         Im3svmPSqS67CLvbBmQ+6grwETAKbPlDznYttjZKLmqQikspi+1KLSHFxwlrblHpiLQ4
-         SwYmgmfKmknGbWkPnRrUyqHgj5fZlDSoTGvKelLHSr4zqQbRQZK2RdGA/x9RivL2OJI4
-         W1H/P7iN2GoPnG9BBDZRtCYc2khgIy9hTe47+mIJD/AtA0YwLUQdUoHDkudTXwY3/JCm
-         33Wiowd/K7L0fAIGNUv78alTKx2DMJoAgKq7bj7gppmk9/34hw65ha5UEka1KWBM5YTf
-         qzgQ==
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Y5z8QBCb1+WU7KddsQteXqZLmiC50etz5tUj6z/ercs=;
+        b=TVDgqoUXALwCwc0vDoDchQm9uRj+Dl3SZg02exWxoh4ln6XFW0E1qyCgaUfcQeaOEC
+         WcT4UAk9YDl29bKyVC+E+9MxK2lwzyNIVNDYvqOJhuNIH+J9lK0lDvJ9OjHSMV2jyCXH
+         Y+eNd6vtk02qbbzKSrKT6HmX/ur/lq1vW4UAQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
-         :references:user-agent:mime-version;
-        bh=okBAlDaxM0DNqW7zvcq7HlrqbxW7pHlut6qsdwTqoyk=;
-        b=OuwGASXcUkPJfJqDKi3UxHbqph6xahtzYNigj8s0BuBMoswqfLo6LSxqNrkbbWXUOq
-         a5gQVl1J8Sp0kw3gUkKG2Vt56guyRtBiOmkiEcEsdlNjsFHac82O7xh3jB+Qm9HOoNZZ
-         +5FI+flloaC2aYQSlH9gjOF7lRjR9vEyzJquK2miz3MqqOj1CGy7Kldv1LcJ8+Vrtl9U
-         U7TQ6wqfZ7kiRAhQ6DZTsYYwjEfvUWKC57X0aGGYh4Pgr1qdpF2Qkru7aC4GRTgErMeX
-         0GyKO4vwAwcvTklo6/EYC7qu319KuLABS9KJ/rv+5Skd0aLLHRNiD2C/6WFce+FS1JVe
-         Lq8A==
-X-Gm-Message-State: AOUpUlG1oLYPE0hiGVMTKHaV6nPe4an7Zz/VTw0nS54N2/MUkxv0rDek
-        zTyKSuKBWqG1vG9mT6vMweZtCOg7W/Y=
-X-Google-Smtp-Source: AAOMgpcgt5sD63Bvc5e6WpgeMpMJTSrKFadmQq4Gxy1eqZ5iDdeqiOLAUa1Ygn4yJ7Kk8EXW9It01g==
-X-Received: by 2002:a63:8c51:: with SMTP id q17-v6mr18229002pgn.236.1532465734584;
-        Tue, 24 Jul 2018 13:55:34 -0700 (PDT)
-Received: from [2620:15c:17:3:3a5:23a7:5e32:4598] ([2620:15c:17:3:3a5:23a7:5e32:4598])
-        by smtp.gmail.com with ESMTPSA id l84-v6sm19409007pfg.3.2018.07.24.13.55.33
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 24 Jul 2018 13:55:33 -0700 (PDT)
-Date:   Tue, 24 Jul 2018 13:55:33 -0700 (PDT)
-From:   David Rientjes <rientjes@google.com>
-X-X-Sender: rientjes@chino.kir.corp.google.com
-To:     Michal Hocko <mhocko@kernel.org>
-cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        linux-mm@kvack.org, LKML <linux-kernel@vger.kernel.org>,
-        Michal Hocko <mhocko@suse.com>
-Subject: Re: [PATCH] mm, oom: remove oom_lock from oom_reaper
-In-Reply-To: <20180719075922.13784-1-mhocko@kernel.org>
-Message-ID: <alpine.DEB.2.21.1807241355200.191886@chino.kir.corp.google.com>
-References: <20180719075922.13784-1-mhocko@kernel.org>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Y5z8QBCb1+WU7KddsQteXqZLmiC50etz5tUj6z/ercs=;
+        b=BYNPk88sXxHx6zxQ7Taw0MS4xci5Dx1Sv+8s1v+CTS3muExxLGdHl/7zQdfPhEyENb
+         EIR8++dq6ue2OSHiVhCpHxtH7ZegDQMNAMxYbo92loPjYhmmXYOWG9hBjnxJ0YK+4rY8
+         Xndzfx1/q2n1wZzSW6jSOKn8hQ9GrKTAL/Y3QuSDlNAJBaQ6zkoLCvUenuerSzbvbqdm
+         3NF6Vtm9hfmRsN4qfwx8TskEM/Zoeqf9EAtXN/GDEjhK9uzkgT7rYW/OXVd+4DlscIEa
+         PMmr+NZH5RTHhu++nJZoXPyrF35Sg088x0SVq9AVVDD3yPwufLP+Q+i7a72ndODzRRHW
+         qhtg==
+X-Gm-Message-State: AOUpUlGc2kVPkeoyLjio9rKV6/NxEZTAe3Dzopvm8fYI6I0njNJNkWpz
+        AM89MJYfGD2zg46LeSu++G1X82DJBRahBCNlnBk=
+X-Google-Smtp-Source: AAOMgpcqSWdoaSaLAw+x+0g7Vgx4mPAJ1Y7JRtyRhOt8lE2Ym4iwHZYsW1TGJJp/tFB2/rwEjidd7VG3tLbCrO+ElcY=
+X-Received: by 2002:a24:b211:: with SMTP id u17-v6mr3944239ite.1.1532465776461;
+ Tue, 24 Jul 2018 13:56:16 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+References: <87efft5ncd.fsf_-_@xmission.com> <20180724032419.20231-20-ebiederm@xmission.com>
+ <CA+55aFxNijeenFd6o7fg3iJFqAjdTZLaFV2=Eaqbg1fDOzx26A@mail.gmail.com>
+ <874lgo5xdg.fsf@xmission.com> <CA+55aFw_CTTRTZfUf1e9yg04X_djG3q7HrCG-XqnyQorpKjaTQ@mail.gmail.com>
+ <87fu084cxj.fsf@xmission.com> <CA+55aFxUc3ttEAuRS7GKs9aTjTFw1poE80DASFSXudVQCuWpHg@mail.gmail.com>
+ <87a7qg4bb3.fsf_-_@xmission.com>
+In-Reply-To: <87a7qg4bb3.fsf_-_@xmission.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Tue, 24 Jul 2018 13:56:05 -0700
+Message-ID: <CA+55aFxe+Ku78ZEvd_F2TD_3gTmLXw0kzo4HDE-ngkYfSHQfPw@mail.gmail.com>
+Subject: Re: [PATCH v2 20/20] signal: Don't restart fork when signals come in.
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     Oleg Nesterov <oleg@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Wen Yang <wen.yang99@zte.com.cn>, majiang <ma.jiang@zte.com.cn>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 19 Jul 2018, Michal Hocko wrote:
+On Tue, Jul 24, 2018 at 1:40 PM Eric W. Biederman <ebiederm@xmission.com> wrote:
+>
+> +       if (signal_pending(current)) {
+> +               retval = restart_syscall();
+> +               goto fork_out;
+> +       }
 
-> From: Michal Hocko <mhocko@suse.com>
-> 
-> oom_reaper used to rely on the oom_lock since e2fe14564d33 ("oom_reaper:
-> close race with exiting task"). We do not really need the lock anymore
-> though. 212925802454 ("mm: oom: let oom_reap_task and exit_mmap run
-> concurrently") has removed serialization with the exit path based on the
-> mm reference count and so we do not really rely on the oom_lock anymore.
-> 
-> Tetsuo was arguing that at least MMF_OOM_SKIP should be set under the
-> lock to prevent from races when the page allocator didn't manage to get
-> the freed (reaped) memory in __alloc_pages_may_oom but it sees the flag
-> later on and move on to another victim. Although this is possible in
-> principle let's wait for it to actually happen in real life before we
-> make the locking more complex again.
-> 
-> Therefore remove the oom_lock for oom_reaper paths (both exit_mmap and
-> oom_reap_task_mm). The reaper serializes with exit_mmap by mmap_sem +
-> MMF_OOM_SKIP flag. There is no synchronization with out_of_memory path
-> now.
-> 
-> Suggested-by: David Rientjes <rientjes@google.com>
-> Signed-off-by: Michal Hocko <mhocko@suse.com>
+Oh, the previous version had this too, but it wasn't as obvious
+because it was just in a single line:
 
-Acked-by: David Rientjes <rientjes@google.com>
+        return ERR_PTR(restart_syscall());
+
+but it's just crazy.
+
+It should just be
+
+        retval = -ERESTARTNOINTR;
+        if (signal_pending(current))
+                goto fork_out;
+
+because it's just silly and pointless to change the code to use
+restart_syscall() here.
+
+All restart_syscall() does is
+
+        set_tsk_thread_flag(current, TIF_SIGPENDING);
+        return -ERESTARTNOINTR;
+
+and you just *checked* that TIF_SIGPENDING was already set. So the
+above is completely pointless.
+
+It is not clear why you made that change. The old code had the simpler
+"just return -ERESTARTNOINTR" model.
+
+Did the restart_syscall() thing come in by mistake from some previous
+trials and it just hung around?
+
+            Linus
