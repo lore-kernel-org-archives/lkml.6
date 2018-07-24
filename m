@@ -2,126 +2,261 @@ Return-Path: <SRS0=hTZH=KI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ADA0DC6778A
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 14:16:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03BA4ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 14:17:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 587F720856
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 14:16:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A358220874
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 14:17:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=toradex.com header.i=@toradex.com header.b="riGiGPAv"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 587F720856
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=toradex.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="xpA+tnZ5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A358220874
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388469AbeGXPXT (ORCPT
+        id S2388531AbeGXPYe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 11:23:19 -0400
-Received: from mail-eopbgr30113.outbound.protection.outlook.com ([40.107.3.113]:62047
-        "EHLO EUR03-AM5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2388358AbeGXPXT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 11:23:19 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=toradex.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=DoISFlNoN+wmFTn2NzxX+6e30PE3qInRsU5ffq8nA5c=;
- b=riGiGPAvIDI0IgKig+bwCzA4O2Fsfg4N+XYtH0GnTJ802dSQ5laHDGVx6SSF13dRJ+z8fDPnzJ1ztWOAfyV801sS8UXIVRMQYy2+YXtbbRjOtdPJhKPjqiKx5liNk7dSfHNaI8vL1dEhiYy1qZ80Q53PbsmYIP16cz6gVU0mEkQ=
-Received: from VI1PR0501MB2590.eurprd05.prod.outlook.com (10.168.137.14) by
- VI1PR0501MB2350.eurprd05.prod.outlook.com (10.169.135.27) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.973.16; Tue, 24 Jul 2018 14:16:33 +0000
-Received: from VI1PR0501MB2590.eurprd05.prod.outlook.com
- ([fe80::dc61:4a61:b84:357e]) by VI1PR0501MB2590.eurprd05.prod.outlook.com
- ([fe80::dc61:4a61:b84:357e%8]) with mapi id 15.20.0973.022; Tue, 24 Jul 2018
- 14:16:33 +0000
-From:   Marcel Ziswiler <marcel.ziswiler@toradex.com>
-To:     "digetx@gmail.com" <digetx@gmail.com>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "jonathanh@nvidia.com" <jonathanh@nvidia.com>,
-        "mperttunen@nvidia.com" <mperttunen@nvidia.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH 00/15] ARM: dts: tegra: apalis-tk1: major revamp
-Thread-Topic: [PATCH 00/15] ARM: dts: tegra: apalis-tk1: major revamp
-Thread-Index: AQHUIzsmvhNTA8KQdkOtPSRemoHbvqSeTBYAgAAFmoCAABmwgA==
-Date:   Tue, 24 Jul 2018 14:16:33 +0000
-Message-ID: <1532441791.6124.20.camel@toradex.com>
-References: <20180724104309.21741-1-marcel@ziswiler.com>
-         <1532435072.6124.1.camel@toradex.com> <2532956.xKQ6NZiSWF@dimapc>
-In-Reply-To: <2532956.xKQ6NZiSWF@dimapc>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=marcel.ziswiler@toradex.com; 
-x-originating-ip: [46.140.72.82]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;VI1PR0501MB2350;6:WDmMWKiH+ZcB4qsHUm306ZpZJp75C1kNcPWaqdADT/TtgZG4fNtCEPJJUwp+pxY3he5BI6sphPZAhomLOvQWWNy7BXENXDIeHqGQ2yEXyRutU25lxmd49xZbkRBUEnQJ56lzYcWJmIK6W1UxAha3E2K9qA/OUUPjpaMa4c3jYDe1kj7G8fmURlQ/4f8ohb8CYQJpC4Q83cozXEUr6dS9mER5MpNBEqCa63plNpQgGnG1UOd1/FARcz8JZh8qlcOSNeg+OSCtQZqZUfxhCQXdsbryw3/CQLiKIWj84UJ4nPOTsje14+hOX0Ba3qSwtsapQVRRPa2HuJX87BAEZDkSNbjdwhbak0jPdKgMLwuBj/vr1/1i6qcL3/+Vwn02/FJVgeiVPRYGQTXner7r8wL807bp/yWFCdSpYg47zAy5f073KPS9A6KQ6xV8oYvyGEci/FBOV6nDHrjk6Cg0GfW59A==;5:vDVd2ul0+69/YjlNC05sVqEypObzXc4kb8gVRSWuPAOFp1Q9NUUfqo33yZ9QYwog8Rnrrfox1IkQP71kKiT1VY4T+4dHQZOlmFGdZYYZYyrFQ+/JrwLT7I2dVtV0ZIwjJDuyu/Gj/dGkLqOL5ETjcJvF+EEojWX1cnQMribJo0c=;7:8Z5Ljo8s2IAq5oHqtPfbt8fqyry3W312MoGz5fhIfecO8h8h9UwkpFEFlZOhBSPsbxxPCgOO4x586gR30hUbDfq8WLMnAdv3Uxtce0cGyKmDm2b20Owxfzn8/IQXFljIfRRVGw2mE+fJwZDB5fGC03NmP7CUgKb2qlTRo6Niic0JcpM3jDRg6Gwwx3vKsEOXeUrcEWnePkvmS0VwXv55EdZJDk6x18Uysa5zUaRMQuYh8KiINliRKd4tCKJLjb/j
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: 3c578641-d15a-4010-e69c-08d5f1700f00
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(5600073)(711020)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(2017052603328)(7153060)(7193020);SRVR:VI1PR0501MB2350;
-x-ms-traffictypediagnostic: VI1PR0501MB2350:
-x-microsoft-antispam-prvs: <VI1PR0501MB2350B932743023D9940AF3D9FB550@VI1PR0501MB2350.eurprd05.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(192374486261705);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(10201501046)(3002001)(93006095)(93001095)(3231311)(944501410)(52105095)(149027)(150027)(6041310)(20161123558120)(20161123562045)(20161123564045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011)(7699016);SRVR:VI1PR0501MB2350;BCL:0;PCL:0;RULEID:;SRVR:VI1PR0501MB2350;
-x-forefront-prvs: 0743E8D0A6
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(39840400004)(366004)(346002)(396003)(136003)(189003)(52314003)(199004)(6116002)(8676002)(6916009)(44832011)(102836004)(14444005)(81166006)(6506007)(1730700003)(186003)(3846002)(81156014)(2616005)(76176011)(1361003)(256004)(476003)(68736007)(11346002)(4326008)(26005)(99286004)(25786009)(53936002)(45080400002)(5250100002)(446003)(2501003)(36756003)(39060400002)(103116003)(6486002)(106356001)(105586002)(2351001)(97736004)(7736002)(6512007)(14454004)(478600001)(5640700003)(66066001)(2900100001)(8936002)(486006)(6436002)(6246003)(2906002)(86362001)(1411001)(316002)(5660300001)(54906003)(229853002)(305945005)(487294005)(491534004);DIR:OUT;SFP:1102;SCL:1;SRVR:VI1PR0501MB2350;H:VI1PR0501MB2590.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: toradex.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: 9t6eVsO4/JrUN1iN1DsBnUEfTgAYmOf3JF807rIja8F1mdYhIDR9jfrpXNTfPF+54F4JqQIuxD6OBJkHhtUvv4H4PETgG1fD3fRDjdmJFi1K93PE5dvcJxjObWJm7LgvRudA70EFa1rGzSP+crgYNv8e2HZ57pOe/DYkVKjCygp8p6JSX9Kxn1o52EeQncRC79m5QYe+oBpEFuXNXc+rfSgV3QV3XzsDSWKJhi/1/OGeg3fL+GWwu5bpsCLDX3dtCdHdHXzFlXG5GZ9jv+UPzcDXIEli9MbOxSVuP+CBBtfMBhuK45UXXSVHIc0waDjsQPBGxpjN/kxZ7M7ux2Bwap2g3niTmyjb9pvSmh6knew=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <4CBBE2B1DED11D4D972A2617A39218F4@eurprd05.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        Tue, 24 Jul 2018 11:24:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48690 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388395AbeGXPYd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Jul 2018 11:24:33 -0400
+Received: from [192.168.0.101] (unknown [49.77.226.53])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3A32A20856;
+        Tue, 24 Jul 2018 14:17:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1532441871;
+        bh=LbofyzvvLR93PltpQ5PMcT+M/71da3Jm9/pMfmkjGfE=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=xpA+tnZ55D1clC3Q57R6J86ldHm8dZ6Wp5oY+M7fEOiC8YNXiB8VETnstDE4+HD++
+         4a2n8QjBAcaokbT8NhryClglkGhLdvcChZHFfd3YXhO1lagyoXlyTh+pT9vi9d2KXA
+         M3GAzwTW41bwsKyqZzMjGCIYxef3MwmUKlumnKKg=
+Subject: Re: [PATCH 2/5] f2fs: add cur_victim_sec for BG_GC to avoid skipping
+ BG_GC victim
+To:     Yunlong Song <yunlong.song@huawei.com>,
+        Chao Yu <yuchao0@huawei.com>, jaegeuk@kernel.org,
+        yunlong.song@icloud.com
+Cc:     miaoxie@huawei.com, bintian.wang@huawei.com, shengyong1@huawei.com,
+        heyunlei@huawei.com, linux-f2fs-devel@lists.sourceforge.net,
+        linux-kernel@vger.kernel.org
+References: <1532355022-163029-1-git-send-email-yunlong.song@huawei.com>
+ <1532355022-163029-3-git-send-email-yunlong.song@huawei.com>
+ <42824b9f-6ebb-2280-0a62-c74954fff39c@huawei.com>
+ <a052ec0f-1581-a199-0eb4-7adeef6d55fc@huawei.com>
+From:   Chao Yu <chao@kernel.org>
+Message-ID: <07419cf7-057a-e92a-2478-4f827a1d6b2f@kernel.org>
+Date:   Tue, 24 Jul 2018 22:17:39 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-X-OriginatorOrg: toradex.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3c578641-d15a-4010-e69c-08d5f1700f00
-X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Jul 2018 14:16:33.1610
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: d9995866-0d9b-4251-8315-093f062abab4
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0501MB2350
+In-Reply-To: <a052ec0f-1581-a199-0eb4-7adeef6d55fc@huawei.com>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gVHVlLCAyMDE4LTA3LTI0IGF0IDE1OjQ0ICswMzAwLCBEbWl0cnkgT3NpcGVua28gd3JvdGU6
-DQo+IE9uIFR1ZXNkYXksIDI0IEp1bHkgMjAxOCAxNToyNDozNCBNU0sgTWFyY2VsIFppc3dpbGVy
-IHdyb3RlOg0KPiA+IFNvcnJ5LCBJIG1lYW50IHRvIHdyaXRlICJtaW5vciByZXZhbXAiIGluIHRo
-ZSBzdWJqZWN0IGxpbmUgaGVyZSBhcw0KPiA+IEFwYWxpcyBUSzEgd2FzIGFscmVhZHkgaW4gcXVp
-dGUgZ29vZCBhIHNoYXBlIGJ1dCB0aGlzIGFyZSBzdGlsbA0KPiA+IHNvbWUNCj4gPiB3b3J0aHkg
-aW1wcm92ZW1lbnRzICg7LXApLg0KPiA+IA0KPiA+IE9uIFR1ZSwgMjAxOC0wNy0yNCBhdCAxMjo0
-MiArMDIwMCwgTWFyY2VsIFppc3dpbGVyIHdyb3RlOg0KPiA+IA0KPiANCj4gTWFyY2VsLA0KPiAN
-Cj4gQWxsIHlvdXIgZW1haWxzIHRoYXQgYXJlIHNlbnQgZnJvbSAidG9yYWRleC5jb20iIGFyZSB0
-cmVhdGVkIGFzIHNwYW0NCj4gYnkgR21haWwgDQo+IGJlY2F1c2UgIlRoaXMgbWVzc2FnZSBoYXMg
-YSBmcm9tIGFkZHJlc3MgaW4gdG9yYWRleC5jb20gYnV0IGhhcw0KPiBmYWlsZWQgDQo+IHRvcmFk
-ZXguY29tJ3MgcmVxdWlyZWQgdGVzdHMgZm9yIGF1dGhlbnRpY2F0aW9uLiIsIGlzIHRoZXJlIGFu
-eXRoaW5nDQo+IHlvdSBjb3VsZCANCj4gZG8gdG8gZml4IHRoYXQ/DQoNCkhpIERtaXRyeQ0KDQpI
-bSwgdW5mb3J0dW5hdGVseSwgVG9yYWRleCB3YXMgYW4gTSQgb25seSBzaG9wIHdoZW4gSSBqb2lu
-ZWQgbW9yZSB0aGVuDQo3IHllYXJzIGFnbyBhbmQgc28gZmFyIEkgd2FzIHVuYWJsZSB0byBjb252
-aW5jZSBvdXIgSVQgdG8gc3dpdGNoIHRvDQpzb21lIGdyb3duIHVwIGVtYWlsIHN5c3RlbS4gVGhl
-cmVmb3JlLCBJIGFtIHN0dWNrIHdpdGggRXhjaGFuZ2UsIE9mZmljZQ0KMzY1IG9yIHdoYXRldmVy
-IE0kIG5vd2FkYXlzIHNlZW0gdG8gY2FsbCBpdC4gQW55d2F5LCBJIHJlYWxseSB0aG91Z2h0DQpz
-ZW5kaW5nIGZyb20gQW5kcm9pZCBvciBFdm9sdXRpb24gdmlhIHRoZWlyIHJlc3AuIEV4Y2hhbmdl
-IGNvbm5lY3RvcnMNCndvdWxkIHByb3Blcmx5IGRvIFNQRiwgREtJTSBhbmQgZXZlbiBETUFSQy4g
-SSBqdXN0IGNvbmZpcm1lZCB0aGlzIHdoZW4NCnNlbmRpbmcgc29tZXRoaW5nIHRvIG15IGdtYWls
-IGFkZHJlc3MgYW5kIGRvaW5nICJTaG93IG9yaWdpbmFsIi4NCg0KU2luY2UgTGludXMgaGltc2Vs
-ZiBwb2ludGVkIG91dCBhbnkgb2YgbXkgcGF0Y2hlcyBlbmRpbmcgdXAgaW4gaGlzIHNwYW0NCmZv
-bGRlciBJIGRvIHNlbmQgdGhlbSB2aWEgbXkgcHJpdmF0ZSBlbWFpbCB3aGljaCB3aGlsZSBub3Qg
-aGF2aW5nIGFueQ0KYWR2YW5jZWQgc2VjdXJpdHkgY29uZmlndXJlZCBzaG91bGQgc3RpbGwgYmUg
-dmFsaWQuIE1vdmluZyBpdCB0byBhDQpmdWxseSBzZWN1cmUgY29uZmlndXJhdGlvbiBpbmNsdWRp
-bmcgRE5TU0VDIGFuZCBzdHVmZiBpcyBzdGlsbCBwZW5kaW5nDQpvbiBteSBzaWRlLg0KDQpDYW4g
-eW91IHBsZWFzZSB0ZWxsIG1lIHdoaWNoIGV4YWN0IGVtYWlsIGl0IGlzIHRoYXQgeW91IGdvdCB0
-aGlzDQpyZXBvcnRlZCBvbiBzbyBJIG1heSBmdXJ0aGVyIGludmVzdGlnYXRlIHdoYXQgaXMgZ29p
-bmcgb24/DQoNCkNoZWVycw0KDQpNYXJjZWw=
+On 2018/7/24 21:39, Yunlong Song wrote:
+> 
+> 
+> On 2018/7/24 21:11, Chao Yu wrote:
+>> On 2018/7/23 22:10, Yunlong Song wrote:
+>>> If f2fs aborts BG_GC, then the section bit of victim_secmap will be set,
+>>> which will cause the section skipped in the future get_victim of BG_GC.
+>>> In a worst case that each section in the victim_secmap is set and there
+>>> are enough free sections (so FG_GC can not be triggered), then BG_GC
+>>> will skip all the sections and cannot find any victims, causing BG_GC
+>> If f2fs aborts BG_GC, we'd better to clear victim_secmap?
+> We can keep the bit set in victim_secmap for FG_GC use next time as before, the
+
+No, I don't think we could assume that FGGC will come soon, and in adaptive
+mode, after we triggered SSR agressively, FG_GC will be much less.
+
+For your case, we need to clear victim_secmap.
+
+> diffierent
+> is that this patch will make BG_GC ignore the bit set in victim_secmap, so BG_GC
+> can still
+> get the the section (which is in set) as victim and do GC jobs.
+
+I guess this scenario is the case our previous scheme tries to prevent, since if
+in selected section, all block there are cached and set dirty, BGGC will end up
+with doing nothing, it's inefficient.
+
+Thanks,
+
+>>
+>>> failed each time. Besides, SSR also uses BG_GC to get ssr segment, if
+>> Looks like foreground GC will try to grab section which is selected as
+>> victim of background GC?
+> Yes, this is exactly the value of victim_secmap, it helps FG_GC reduce time in
+> selecting victims
+> and continue the job which BG_GC has not finished.
+> 
+>>
+>> Thanks,
+>>
+>>> many sections in the victim_secmap are set, then SSR cannot get a proper
+>>> ssr segment to allocate blocks, which makes SSR inefficiently. To fix
+>>> this problem, we can add cur_victim_sec for BG_GC similar like that in
+>>> FG_GC to avoid selecting the same section repeatedly.
+>>>
+>>> Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
+>>> ---
+>>>   fs/f2fs/f2fs.h              |  3 ++-
+>>>   fs/f2fs/gc.c                | 15 +++++++++------
+>>>   fs/f2fs/segment.h           |  3 ++-
+>>>   fs/f2fs/super.c             |  3 ++-
+>>>   include/trace/events/f2fs.h | 18 ++++++++++++------
+>>>   5 files changed, 27 insertions(+), 15 deletions(-)
+>>>
+>>> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+>>> index 57a8851..f8a7b42 100644
+>>> --- a/fs/f2fs/f2fs.h
+>>> +++ b/fs/f2fs/f2fs.h
+>>> @@ -1217,7 +1217,8 @@ struct f2fs_sb_info {
+>>>       /* for cleaning operations */
+>>>       struct mutex gc_mutex;            /* mutex for GC */
+>>>       struct f2fs_gc_kthread    *gc_thread;    /* GC thread */
+>>> -    unsigned int cur_victim_sec;        /* current victim section num */
+>>> +    unsigned int cur_fg_victim_sec;        /* current FG_GC victim section
+>>> num */
+>>> +    unsigned int cur_bg_victim_sec;        /* current BG_GC victim section
+>>> num */
+>>>       unsigned int gc_mode;            /* current GC state */
+>>>       /* for skip statistic */
+>>>       unsigned long long skipped_atomic_files[2];    /* FG_GC and BG_GC */
+>>> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+>>> index 2ba470d..705d419 100644
+>>> --- a/fs/f2fs/gc.c
+>>> +++ b/fs/f2fs/gc.c
+>>> @@ -367,8 +367,6 @@ static int get_victim_by_default(struct f2fs_sb_info *sbi,
+>>>             if (sec_usage_check(sbi, secno))
+>>>               goto next;
+>>> -        if (gc_type == BG_GC && test_bit(secno, dirty_i->victim_secmap))
+>>> -            goto next;
+>>>             cost = get_gc_cost(sbi, segno, &p);
+>>>   @@ -391,14 +389,17 @@ static int get_victim_by_default(struct f2fs_sb_info
+>>> *sbi,
+>>>           if (p.alloc_mode == LFS) {
+>>>               secno = GET_SEC_FROM_SEG(sbi, p.min_segno);
+>>>               if (gc_type == FG_GC)
+>>> -                sbi->cur_victim_sec = secno;
+>>> -            else
+>>> +                sbi->cur_fg_victim_sec = secno;
+>>> +            else {
+>>>                   set_bit(secno, dirty_i->victim_secmap);
+>>> +                sbi->cur_bg_victim_sec = secno;
+>>> +            }
+>>>           }
+>>>           *result = (p.min_segno / p.ofs_unit) * p.ofs_unit;
+>>>             trace_f2fs_get_victim(sbi->sb, type, gc_type, &p,
+>>> -                sbi->cur_victim_sec,
+>>> +                sbi->cur_fg_victim_sec,
+>>> +                sbi->cur_bg_victim_sec,
+>>>                   prefree_segments(sbi), free_segments(sbi));
+>>>       }
+>>>   out:
+>>> @@ -1098,7 +1099,9 @@ int f2fs_gc(struct f2fs_sb_info *sbi, bool sync,
+>>>       }
+>>>         if (gc_type == FG_GC)
+>>> -        sbi->cur_victim_sec = NULL_SEGNO;
+>>> +        sbi->cur_fg_victim_sec = NULL_SEGNO;
+>>> +    else
+>>> +        sbi->cur_bg_victim_sec = NULL_SEGNO;
+>>>         if (!sync) {
+>>>           if (has_not_enough_free_secs(sbi, sec_freed, 0)) {
+>>> diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
+>>> index 5049551..b21bb96 100644
+>>> --- a/fs/f2fs/segment.h
+>>> +++ b/fs/f2fs/segment.h
+>>> @@ -787,7 +787,8 @@ static inline block_t sum_blk_addr(struct f2fs_sb_info
+>>> *sbi, int base, int type)
+>>>     static inline bool sec_usage_check(struct f2fs_sb_info *sbi, unsigned int
+>>> secno)
+>>>   {
+>>> -    if (IS_CURSEC(sbi, secno) || (sbi->cur_victim_sec == secno))
+>>> +    if (IS_CURSEC(sbi, secno) || (sbi->cur_fg_victim_sec == secno) ||
+>>> +        (sbi->cur_bg_victim_sec == secno))
+>>>           return true;
+>>>       return false;
+>>>   }
+>>> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+>>> index 7187885..ef69ebf 100644
+>>> --- a/fs/f2fs/super.c
+>>> +++ b/fs/f2fs/super.c
+>>> @@ -2386,7 +2386,8 @@ static void init_sb_info(struct f2fs_sb_info *sbi)
+>>>       sbi->root_ino_num = le32_to_cpu(raw_super->root_ino);
+>>>       sbi->node_ino_num = le32_to_cpu(raw_super->node_ino);
+>>>       sbi->meta_ino_num = le32_to_cpu(raw_super->meta_ino);
+>>> -    sbi->cur_victim_sec = NULL_SECNO;
+>>> +    sbi->cur_fg_victim_sec = NULL_SECNO;
+>>> +    sbi->cur_bg_victim_sec = NULL_SECNO;
+>>>       sbi->max_victim_search = DEF_MAX_VICTIM_SEARCH;
+>>>         sbi->dir_level = DEF_DIR_LEVEL;
+>>> diff --git a/include/trace/events/f2fs.h b/include/trace/events/f2fs.h
+>>> index 7956989..0f01f82 100644
+>>> --- a/include/trace/events/f2fs.h
+>>> +++ b/include/trace/events/f2fs.h
+>>> @@ -693,10 +693,12 @@
+>>>   TRACE_EVENT(f2fs_get_victim,
+>>>         TP_PROTO(struct super_block *sb, int type, int gc_type,
+>>> -            struct victim_sel_policy *p, unsigned int pre_victim,
+>>> +            struct victim_sel_policy *p, unsigned int pre_fg_victim,
+>>> +            unsigned int pre_bg_victim,
+>>>               unsigned int prefree, unsigned int free),
+>>>   -    TP_ARGS(sb, type, gc_type, p, pre_victim, prefree, free),
+>>> +    TP_ARGS(sb, type, gc_type, p, pre_fg_victim, pre_bg_victim,
+>>> +        prefree, free),
+>>>         TP_STRUCT__entry(
+>>>           __field(dev_t,    dev)
+>>> @@ -707,7 +709,8 @@
+>>>           __field(unsigned int,    victim)
+>>>           __field(unsigned int,    cost)
+>>>           __field(unsigned int,    ofs_unit)
+>>> -        __field(unsigned int,    pre_victim)
+>>> +        __field(unsigned int,    pre_fg_victim)
+>>> +        __field(unsigned int,    pre_bg_victim)
+>>>           __field(unsigned int,    prefree)
+>>>           __field(unsigned int,    free)
+>>>       ),
+>>> @@ -721,14 +724,16 @@
+>>>           __entry->victim        = p->min_segno;
+>>>           __entry->cost        = p->min_cost;
+>>>           __entry->ofs_unit    = p->ofs_unit;
+>>> -        __entry->pre_victim    = pre_victim;
+>>> +        __entry->pre_fg_victim    = pre_fg_victim;
+>>> +        __entry->pre_bg_victim    = pre_bg_victim;
+>>>           __entry->prefree    = prefree;
+>>>           __entry->free        = free;
+>>>       ),
+>>>         TP_printk("dev = (%d,%d), type = %s, policy = (%s, %s, %s), "
+>>>           "victim = %u, cost = %u, ofs_unit = %u, "
+>>> -        "pre_victim_secno = %d, prefree = %u, free = %u",
+>>> +        "pre_fg_victim_secno = %d, pre_bg_victim_secno = %d, "
+>>> +        "prefree = %u, free = %u",
+>>>           show_dev(__entry->dev),
+>>>           show_data_type(__entry->type),
+>>>           show_gc_type(__entry->gc_type),
+>>> @@ -737,7 +742,8 @@
+>>>           __entry->victim,
+>>>           __entry->cost,
+>>>           __entry->ofs_unit,
+>>> -        (int)__entry->pre_victim,
+>>> +        (int)__entry->pre_fg_victim,
+>>> +        (int)__entry->pre_bg_victim,
+>>>           __entry->prefree,
+>>>           __entry->free)
+>>>   );
+>>>
+>>
+>> .
+>>
+> 
