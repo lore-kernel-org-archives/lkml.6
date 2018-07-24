@@ -2,230 +2,128 @@ Return-Path: <SRS0=hTZH=KI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD078C6778A
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 16:55:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50BCAC6778A
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 16:56:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7CDBB20856
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 16:55:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7CDBB20856
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 09B2320875
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 16:56:20 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="NUe10EpS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 09B2320875
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388451AbeGXSDQ (ORCPT
+        id S2388514AbeGXSDk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 14:03:16 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:39565 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388403AbeGXSDP (ORCPT
+        Tue, 24 Jul 2018 14:03:40 -0400
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:45440 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388449AbeGXSDk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 14:03:15 -0400
-Received: from kresse.hi.pengutronix.de ([2001:67c:670:100:1d::2a])
-        by metis.ext.pengutronix.de with esmtp (Exim 4.89)
-        (envelope-from <l.stach@pengutronix.de>)
-        id 1fi0b8-0000aj-6j; Tue, 24 Jul 2018 18:55:42 +0200
-Message-ID: <1532451341.32306.9.camel@pengutronix.de>
-Subject: Re: [PATCH v3 2/2] PCI: imx: Initial imx7d pm support
-From:   Lucas Stach <l.stach@pengutronix.de>
-To:     Leonard Crestez <leonard.crestez@nxp.com>,
-        Andrey Smirnov <andrew.smirnov@gmail.com>,
-        Richard Zhu <hongxing.zhu@nxp.com>,
-        Shawn Guo <shawnguo@kernel.org>
-Cc:     Anson Huang <Anson.Huang@nxp.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Joao Pinto <Joao.Pinto@synopsys.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Dong Aisheng <aisheng.dong@nxp.com>, linux-imx@nxp.com,
-        kernel@pengutronix.de, linux-pci@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Date:   Tue, 24 Jul 2018 18:55:41 +0200
-In-Reply-To: <acafccc294f15a281cf1d253c15a3eec2d1c8cc5.1532448745.git.leonard.crestez@nxp.com>
-References: <cover.1532448745.git.leonard.crestez@nxp.com>
-         <acafccc294f15a281cf1d253c15a3eec2d1c8cc5.1532448745.git.leonard.crestez@nxp.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6-1+deb9u1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::2a
-X-SA-Exim-Mail-From: l.stach@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+        Tue, 24 Jul 2018 14:03:40 -0400
+Received: by mail-pl0-f66.google.com with SMTP id j8-v6so1963086pll.12
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Jul 2018 09:56:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=NcyGQqHeJf08FCzNacBJKb8s2eWekxJenaMH09CYQ7Y=;
+        b=NUe10EpSwaK9hTK+tgq8KHU1ZJEoxtFiiin1GLrUvH5befNzNbJp/dbqZtx0wwTjsZ
+         S+9uldBhcSPn9UrOn3TzkhsKoKOGNGOHdl2zL3armIVu/iYQm29La09prGGpC6w7v5to
+         kzrazNWKQj2c568+uReKEwROKVWqmdLy51RJM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=NcyGQqHeJf08FCzNacBJKb8s2eWekxJenaMH09CYQ7Y=;
+        b=pklOGyzHacql27uWTzYziYqaHi969457rvpqY0Pna/PU+kQ2Ekk2WTb2falQClwmW1
+         KrX5WA1FHQRKdHBzDn3QZHEBJ+6/R93KQHCPRY3YUi45VSPfRWf5DySzhOOIJN+ilUjj
+         RCNSDzK0+tZ/pQxDf8VQdwycvbEyQV6ZCcLGMYktPbgrP0Q0PdHlfFv8x3MyUDZf5iS2
+         73rRnG90fVLJOPaRvJygtewOKsjBQGxPWPpU9le+eFMPV6/vN4OrWzRs6p59ei/LsqVa
+         G8s2Im8vBL9oemYPN+244DVv1RzVPufDoUHlP90Pn6UH1sODSyYG3ahgosO+AKqlDyFQ
+         Bvvw==
+X-Gm-Message-State: AOUpUlFL2CmaTumhpPPU/Y7S3vDb33ISXSbSoG1DRbJFLxKr2ocG+/rF
+        FYE4KjweWwRtZCBypxdLXSA4zg==
+X-Google-Smtp-Source: AAOMgpdsCSzdgHfeKIerJQZi1yIP1qsAKuD1uCzih3O8Vp+lUv2MyL1OLAAO13EERm9srC2f7xhK+w==
+X-Received: by 2002:a17:902:a5:: with SMTP id a34-v6mr18046476pla.60.1532451377375;
+        Tue, 24 Jul 2018 09:56:17 -0700 (PDT)
+Received: from www.outflux.net (173-164-112-133-Oregon.hfc.comcastbusiness.net. [173.164.112.133])
+        by smtp.gmail.com with ESMTPSA id z4-v6sm21812205pfl.11.2018.07.24.09.56.15
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 24 Jul 2018 09:56:16 -0700 (PDT)
+From:   Kees Cook <keescook@chromium.org>
+To:     Herbert Xu <herbert@gondor.apana.org.au>
+Cc:     Kees Cook <keescook@chromium.org>, Arnd Bergmann <arnd@arndb.de>,
+        Eric Biggers <ebiggers@google.com>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Alasdair Kergon <agk@redhat.com>,
+        Rabin Vincent <rabinv@axis.com>,
+        Tim Chen <tim.c.chen@linux.intel.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Pavel Machek <pavel@ucw.cz>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        Philipp Reisner <philipp.reisner@linbit.com>,
+        Lars Ellenberg <lars.ellenberg@linbit.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        Giovanni Cabiddu <giovanni.cabiddu@intel.com>,
+        Mike Snitzer <snitzer@redhat.com>,
+        Paul Mackerras <paulus@samba.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        David Howells <dhowells@redhat.com>,
+        Johannes Berg <johannes@sipsolutions.net>,
+        Tudor-Dan Ambarus <tudor.ambarus@microchip.com>,
+        Jia-Ju Bai <baijiaju1990@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        David Woodhouse <dwmw@amazon.co.uk>,
+        Will Deacon <will.deacon@arm.com>, dm-devel@redhat.com,
+        linux-pm@vger.kernel.org, linux-crypto@vger.kernel.org,
+        drbd-dev@lists.linbit.com, linux-block@vger.kernel.org,
+        qat-linux@intel.com, linux-ppp@vger.kernel.org,
+        netdev@vger.kernel.org, devel@driverdev.osuosl.org,
+        linux-afs@lists.infradead.org, linux-wireless@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v6 18/18] crypto: Remove AHASH_REQUEST_ON_STACK
+Date:   Tue, 24 Jul 2018 09:49:36 -0700
+Message-Id: <20180724164936.37477-19-keescook@chromium.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180724164936.37477-1-keescook@chromium.org>
+References: <20180724164936.37477-1-keescook@chromium.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am Dienstag, den 24.07.2018, 19:14 +0300 schrieb Leonard Crestez:
-> On imx7d the pcie-phy power domain is turned off in suspend and this can
-> make the system hang after resume when attempting any read from PCI.
-> 
-> Fix this by adding minimal suspend/resume code from the nxp internal
-> tree. This will prepare for powering down on suspend and reset the block
-> on resume.
-> 
-> Code is only for imx7d but a very similar sequence can be used for
-> other socs.
-> 
-> > The original author is mostly Richard Zhu <hongxing.zhu@nxp.com>, this
-> patch adjusts the code to the upstream imx7d implemention using reset
-> controls and power domains.
-> 
-> Signed-off-by: Leonard Crestez <leonard.crestez@nxp.com>
+All users of AHASH_REQUEST_ON_STACK have been removed from the kernel, so
+drop it entirely so no VLAs get reintroduced by future users.
 
-Reviewed-by: Lucas Stach <l.stach@pengutronix.de>
+Signed-off-by: Kees Cook <keescook@chromium.org>
+---
+ include/crypto/hash.h | 5 -----
+ 1 file changed, 5 deletions(-)
 
-> ---
->  drivers/pci/controller/dwc/pci-imx6.c | 97 +++++++++++++++++++++++++--
->  1 file changed, 92 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/pci/controller/dwc/pci-imx6.c b/drivers/pci/controller/dwc/pci-imx6.c
-> index 4a9a673b4777..65b6d1015723 100644
-> --- a/drivers/pci/controller/dwc/pci-imx6.c
-> +++ b/drivers/pci/controller/dwc/pci-imx6.c
-> @@ -540,10 +540,28 @@ static int imx6_pcie_wait_for_speed_change(struct imx6_pcie *imx6_pcie)
->  
-> >  	dev_err(dev, "Speed change timeout\n");
-> >  	return -EINVAL;
->  }
->  
-> +static void imx6_pcie_ltssm_enable(struct device *dev)
-> +{
-> > +	struct imx6_pcie *imx6_pcie = dev_get_drvdata(dev);
-> +
-> > +	switch (imx6_pcie->variant) {
-> > +	case IMX6Q:
-> > +	case IMX6SX:
-> > +	case IMX6QP:
-> > +		regmap_update_bits(imx6_pcie->iomuxc_gpr, IOMUXC_GPR12,
-> > +				   IMX6Q_GPR12_PCIE_CTL_2,
-> > +				   IMX6Q_GPR12_PCIE_CTL_2);
-> > +		break;
-> > +	case IMX7D:
-> > +		reset_control_deassert(imx6_pcie->apps_reset);
-> > +		break;
-> > +	}
-> +}
-> +
->  static int imx6_pcie_establish_link(struct imx6_pcie *imx6_pcie)
->  {
-> >  	struct dw_pcie *pci = imx6_pcie->pci;
-> >  	struct device *dev = pci->dev;
-> >  	u32 tmp;
-> @@ -558,15 +576,11 @@ static int imx6_pcie_establish_link(struct imx6_pcie *imx6_pcie)
-> >  	tmp &= ~PCIE_RC_LCR_MAX_LINK_SPEEDS_MASK;
-> >  	tmp |= PCIE_RC_LCR_MAX_LINK_SPEEDS_GEN1;
-> >  	dw_pcie_writel_dbi(pci, PCIE_RC_LCR, tmp);
->  
-> >  	/* Start LTSSM. */
-> > -	if (imx6_pcie->variant == IMX7D)
-> > -		reset_control_deassert(imx6_pcie->apps_reset);
-> > -	else
-> > -		regmap_update_bits(imx6_pcie->iomuxc_gpr, IOMUXC_GPR12,
-> > -				   IMX6Q_GPR12_PCIE_CTL_2, 1 << 10);
-> > +	imx6_pcie_ltssm_enable(dev);
->  
-> >  	ret = imx6_pcie_wait_for_link(imx6_pcie);
-> >  	if (ret)
-> >  		goto err_reset_phy;
->  
-> @@ -680,10 +694,82 @@ static int imx6_add_pcie_port(struct imx6_pcie *imx6_pcie,
->  
->  static const struct dw_pcie_ops dw_pcie_ops = {
-> >  	.link_up = imx6_pcie_link_up,
->  };
->  
-> +#ifdef CONFIG_PM_SLEEP
-> +static void imx6_pcie_ltssm_disable(struct device *dev)
-> +{
-> > +	struct imx6_pcie *imx6_pcie = dev_get_drvdata(dev);
-> +
-> > +	switch (imx6_pcie->variant) {
-> > +	case IMX6SX:
-> > +	case IMX6QP:
-> > +		regmap_update_bits(imx6_pcie->iomuxc_gpr, IOMUXC_GPR12,
-> > +				   IMX6Q_GPR12_PCIE_CTL_2, 0);
-> > +		break;
-> > +	case IMX7D:
-> > +		reset_control_assert(imx6_pcie->apps_reset);
-> > +		break;
-> > +	default:
-> > +		dev_err(dev, "ltssm_disable not supported\n");
-> > +	}
-> +}
-> +
-> +static void imx6_pcie_clk_disable(struct imx6_pcie *imx6_pcie)
-> +{
-> > +	clk_disable_unprepare(imx6_pcie->pcie);
-> > +	clk_disable_unprepare(imx6_pcie->pcie_phy);
-> > +	clk_disable_unprepare(imx6_pcie->pcie_bus);
-> +
-> > +	if (imx6_pcie->variant == IMX7D) {
-> > +		regmap_update_bits(imx6_pcie->iomuxc_gpr, IOMUXC_GPR12,
-> > +				   IMX7D_GPR12_PCIE_PHY_REFCLK_SEL,
-> > +				   IMX7D_GPR12_PCIE_PHY_REFCLK_SEL);
-> > +	}
-> +}
-> +
-> +static int imx6_pcie_suspend_noirq(struct device *dev)
-> +{
-> > +	struct imx6_pcie *imx6_pcie = dev_get_drvdata(dev);
-> +
-> > +	if (imx6_pcie->variant != IMX7D)
-> > +		return 0;
-> +
-> > +	imx6_pcie_clk_disable(imx6_pcie);
-> > +	imx6_pcie_ltssm_disable(dev);
-> +
-> > +	return 0;
-> +}
-> +
-> +static int imx6_pcie_resume_noirq(struct device *dev)
-> +{
-> > +	int ret;
-> > +	struct imx6_pcie *imx6_pcie = dev_get_drvdata(dev);
-> > +	struct pcie_port *pp = &imx6_pcie->pci->pp;
-> +
-> > +	if (imx6_pcie->variant != IMX7D)
-> > +		return 0;
-> +
-> > +	imx6_pcie_assert_core_reset(imx6_pcie);
-> > +	imx6_pcie_init_phy(imx6_pcie);
-> > +	imx6_pcie_deassert_core_reset(imx6_pcie);
-> > +	dw_pcie_setup_rc(pp);
-> +
-> > +	ret = imx6_pcie_establish_link(imx6_pcie);
-> > +	if (ret < 0)
-> > +		dev_info(dev, "pcie link is down after resume.\n");
-> +
-> > +	return 0;
-> +}
-> +#endif
-> +
-> +static const struct dev_pm_ops imx6_pcie_pm_ops = {
-> > +	SET_NOIRQ_SYSTEM_SLEEP_PM_OPS(imx6_pcie_suspend_noirq,
-> > +				      imx6_pcie_resume_noirq)
-> +};
-> +
->  static int imx6_pcie_probe(struct platform_device *pdev)
->  {
-> >  	struct device *dev = &pdev->dev;
-> >  	struct dw_pcie *pci;
-> >  	struct imx6_pcie *imx6_pcie;
-> @@ -846,10 +932,11 @@ static const struct of_device_id imx6_pcie_of_match[] = {
->  static struct platform_driver imx6_pcie_driver = {
-> >  	.driver = {
-> > >  		.name	= "imx6q-pcie",
-> >  		.of_match_table = imx6_pcie_of_match,
-> >  		.suppress_bind_attrs = true,
-> > +		.pm = &imx6_pcie_pm_ops,
-> >  	},
-> >  	.probe    = imx6_pcie_probe,
-> >  	.shutdown = imx6_pcie_shutdown,
->  };
->  
+diff --git a/include/crypto/hash.h b/include/crypto/hash.h
+index 21587011ab0f..fca3e28c77a4 100644
+--- a/include/crypto/hash.h
++++ b/include/crypto/hash.h
+@@ -64,11 +64,6 @@ struct ahash_request {
+ 	void *__ctx[] CRYPTO_MINALIGN_ATTR;
+ };
+ 
+-#define AHASH_REQUEST_ON_STACK(name, ahash) \
+-	char __##name##_desc[sizeof(struct ahash_request) + \
+-		crypto_ahash_reqsize(ahash)] CRYPTO_MINALIGN_ATTR; \
+-	struct ahash_request *name = (void *)__##name##_desc
+-
+ /**
+  * struct ahash_alg - asynchronous message digest definition
+  * @init: **[mandatory]** Initialize the transformation context. Intended only to initialize the
+-- 
+2.17.1
+
