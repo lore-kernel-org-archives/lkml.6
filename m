@@ -2,97 +2,123 @@ Return-Path: <SRS0=hTZH=KI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA642C6778A
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 05:17:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE65DECDFB8
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 05:19:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 80B0C20852
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 05:17:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 80B0C20852
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ZenIV.linux.org.uk
+	by mail.kernel.org (Postfix) with ESMTP id AD9DE20852
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 05:19:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AD9DE20852
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388178AbeGXGWJ (ORCPT
+        id S2388199AbeGXGXq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 02:22:09 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:39052 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726098AbeGXGWJ (ORCPT
+        Tue, 24 Jul 2018 02:23:46 -0400
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:45911 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726189AbeGXGXq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 02:22:09 -0400
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.87 #1 (Red Hat Linux))
-        id 1fhphO-0000ao-GU; Tue, 24 Jul 2018 05:17:26 +0000
-Date:   Tue, 24 Jul 2018 06:17:26 +0100
-From:   Al Viro <viro@ZenIV.linux.org.uk>
-To:     "Dae R. Jeong" <threeearcat@gmail.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        byoungyoung@purdue.edu, kt0755@gmail.com, bammanag@purdue.edu
-Subject: Re: KASAN: use-after-free Read in link_path_walk
-Message-ID: <20180724051726.GH30522@ZenIV.linux.org.uk>
-References: <20180724034542.GA19283@dragonet>
+        Tue, 24 Jul 2018 02:23:46 -0400
+Received: by mail-lf1-f66.google.com with SMTP id j143-v6so2064176lfj.12
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Jul 2018 22:19:07 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=LVQu27la5jZgoJxzys3veTLUm0IGukX2fOskHBvRhJI=;
+        b=RbvIm3H3YF7mE3c2VJEZAUG4G5CFhU0eoone484awfAe3wj8z2AuGBpdC7iaZ/MyHZ
+         rw91dUGBpSQgcM/++7aYgE2GoUobmfzJ2JE9RJ64TfCifczzMk4JdEvFqRrB98jT8sEK
+         t3X0gUkSzJ9tNw8bl76dX2MZreO8noafZ0Ple4a5uRR8z0AQqQ1LVLjYmwMh9qkmdU++
+         kg2jSz+ObyLkovX0gcVb71BadjkSnopD+mpgSmdpYI+eEby5X5enPZ8rQjR9jc79PTQq
+         g9CZgdWf1E5HIGUDFmSrnITTaWh9fNGbE0wdAb8uF/KGZ74OQYU/UE1vgxJIjWwuUCbZ
+         jYoQ==
+X-Gm-Message-State: AOUpUlECHFuSFE9C54oWNNGU32M/GeL1L7omQcRKj+FCDmJm8o2E6rAG
+        3GWe9robyeTscfRZxTP5I6QOuUJGnrpDgYZJdw/GEw==
+X-Google-Smtp-Source: AAOMgpcBbUok+oED/txc5RkcjwWE+L6UeqgxyGGysiPGzW0FQcpHRzDM2IXcG2MZ74KNkg06vhXPaFs45ciZ4ZZGc4k=
+X-Received: by 2002:a19:1c81:: with SMTP id c123-v6mr9431890lfc.105.1532409546441;
+ Mon, 23 Jul 2018 22:19:06 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180724034542.GA19283@dragonet>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+Received: by 2002:a2e:81a:0:0:0:0:0 with HTTP; Mon, 23 Jul 2018 22:19:05 -0700 (PDT)
+In-Reply-To: <20180723133527.GA9450@arm.com>
+References: <20180709234229.20181-1-takahiro.akashi@linaro.org>
+ <20180712164918.GA26935@arm.com> <20180713003434.GZ28220@linaro.org>
+ <CAKv+Gu9PT75XTXGsh1jc5roRO_d2QYKEamq42mfbsXzmerAUzA@mail.gmail.com>
+ <20180717051222.GA11258@linaro.org> <20180723133527.GA9450@arm.com>
+From:   Bhupesh Sharma <bhsharma@redhat.com>
+Date:   Tue, 24 Jul 2018 10:49:05 +0530
+Message-ID: <CACi5LpO=ObREcWfr6Y+7+bv3c1VkOEkw80CLELHDO6QD4xbeow@mail.gmail.com>
+Subject: Re: [PATCH v3.1 0/4] arm64: kexec,kdump: fix boot failures on
+ acpi-only system
+To:     Will Deacon <will.deacon@arm.com>
+Cc:     AKASHI Takahiro <takahiro.akashi@linaro.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        "Baicar, Tyler" <tbaicar@codeaurora.org>,
+        Dave Young <dyoung@redhat.com>,
+        James Morse <james.morse@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Al Stone <al.stone@linaro.org>,
+        Graeme Gregory <graeme.gregory@linaro.org>,
+        Hanjun Guo <hanjun.guo@linaro.org>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Kexec Mailing List <kexec@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 24, 2018 at 12:45:42PM +0900, Dae R. Jeong wrote:
-> Diagnosis:
-> We think that it is possible that link_path_walk() dereferences a
-> freed pointer when cleanup_mnt() is executed between path_init() and
-> link_path_walk().
-> 
-> Since I'm not an expert on a file system and don't fully understand
-> the crash, please see a executed program and a crash log below in
-> case that my understanding is wrong.
-> 
-> 
-> Executed Program:
-> Thread0                     Thread1
-> mkdir("./file0")
->      |--------------------------|
->      |                      mount("./file0", "./file0", "devpts", 0x0, "")
->      |                          |
-> openat(AT_FDCWD,            chroot("./file0")
-> "/dev/vcs", 0x200, 0x0)     umount("./file0", 0x2)
-> 
-> openat(), chroot(), umount() syscalls are executed after mount() syscall.
-> We think a race occurs between openat() and chroot() because RaceFuzzer
-> executed openat() and chroot() concurrently.
-> 
-> 
-> (Possible) Thread interleaving:
-> CPU0 (path_openat)                      CPU1 (cleanup_mnt)
-> =====                                   =====
-> s = path_init(nd, flags);
-> if (IS_ERR(s)) {
->           put_filp(file);
->                   return ERR_CAST(s);
-> }
-> 
->                                         deactivate_super(mnt->mnt.mnt_sb);
-> 
-> while (!(error = link_path_walk(s, nd)) &&
-> 
-> // (in link_path_walk())
-> struct dentry *parent = nd->path.dentry;
-> nd->flags &= ~LOOKUP_JUMPED;
-> if (unlikely(parent->d_flags & DCACHE_OP_HASH)) { // UAF occured
+Hi Will,
 
-Do we have LOOKUP_RCU in nd->flags at that point?  And how in hell
-did we get that dentry there?  In LOOKUP_RCU mode no freeing should
-be happening until after we call rcu_read_unlock(), unless the final
-dput() has happened before rcu_read_lock().  In which case we shouldn't
-have gotten to that dentry in the first place.  And in non-LOOKUP_RCU
-mode we are bloody well holding references to everything (vfsmount
-and dentry alike), so that deactivate_super() shouldn't have been
-called as long as we are holding that reference.
+On Mon, Jul 23, 2018 at 7:05 PM, Will Deacon <will.deacon@arm.com> wrote:
+> On Tue, Jul 17, 2018 at 02:12:23PM +0900, AKASHI Takahiro wrote:
+>> On Fri, Jul 13, 2018 at 07:49:45AM +0200, Ard Biesheuvel wrote:
+>> > On 13 July 2018 at 02:34, AKASHI Takahiro <takahiro.akashi@linaro.org> wrote:
+>> > > On Thu, Jul 12, 2018 at 05:49:19PM +0100, Will Deacon wrote:
+>> > >> Hi Akashi,
+>> > >>
+>> > >> On Tue, Jul 10, 2018 at 08:42:25AM +0900, AKASHI Takahiro wrote:
+>> > >> > This patch series is a set of bug fixes to address kexec/kdump
+>> > >> > failures which are sometimes observed on ACPI-only system and reported
+>> > >> > in LAK-ML before.
+>> > >>
+>> > >> I tried picking this up, along with Ard's fixup, but I'm seeing a build
+>> > >> failure for allmodconfig:
+>> > >>
+>> > >> arch/arm64/kernel/acpi.o: In function `__acpi_get_mem_attribute':
+>> > >> acpi.c:(.text+0x60): undefined reference to `efi_mem_attributes'
+>> > >>
+>> > >> I didn't investigate further. Please can you fix this?
+>> > >
+>> > > Because CONFIG_ACPI is on and CONFIG_EFI is off.
+>> > >
+>> > > This can happen in allmodconfig as CONFIG_EFI depends on
+>> > > !CONFIG_CPU_BIG_ENDIAN, which is actually on in this case.
+>> > >
+>> >
+>> > Allowing both CONFIG_ACPI and CONFIG_CPU_BIG_ENDIAN to be configured
+>> > makes no sense at all. Things will surely break if you start using BE
+>> > memory accesses while parsing ACPI tables.
+>> >
+>> > Allowing CONFIG_ACPI without CONFIG_EFI makes no sense either, since
+>> > on arm64, the only way to find the ACPI tables is through a UEFI
+>> > configuration table.
+>>
+>>
+>> Do you agree to this?
+>
+> Yes; please post a new series which resolves these dependencies and includes
+> Ard's fixup from before.
 
-Details, please.  Ideally - how to reproduce that.
+I see that Akashi has already posted a v4 here with the suggested fixes:
+https://lkml.org/lkml/2018/7/22/321
+
+Thanks,
+Bhupesh
