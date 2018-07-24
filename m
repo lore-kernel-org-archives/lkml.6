@@ -2,267 +2,97 @@ Return-Path: <SRS0=hTZH=KI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36892ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 05:05:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA642C6778A
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 05:17:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E316020875
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 05:05:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E316020875
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org
+	by mail.kernel.org (Postfix) with ESMTP id 80B0C20852
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 05:17:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 80B0C20852
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ZenIV.linux.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388352AbeGXGKb (ORCPT
+        id S2388178AbeGXGWJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 02:10:31 -0400
-Received: from gate.crashing.org ([63.228.1.57]:54449 "EHLO gate.crashing.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388287AbeGXGKb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 02:10:31 -0400
-Received: from pasglop.ozlabs.ibm.com (localhost.localdomain [127.0.0.1])
-        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id w6O55JLH028169;
-        Tue, 24 Jul 2018 00:05:24 -0500
-From:   Benjamin Herrenschmidt <benh@kernel.crashing.org>
-To:     openbmc@lists.ozlabs.org
-Cc:     Joel Stanley <joel@jms.id.au>, linux-aspeed@lists.ozlabs.org,
-        Andrew Jeffery <andrew@aj.id.au>,
-        Eddie James <eajames@linux.vnet.ibm.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Subject: [PATCH 1/5] fsi: Add new central chardev support
-Date:   Tue, 24 Jul 2018 15:05:15 +1000
-Message-Id: <20180724050519.31920-2-benh@kernel.crashing.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180724050519.31920-1-benh@kernel.crashing.org>
-References: <20180724050519.31920-1-benh@kernel.crashing.org>
+        Tue, 24 Jul 2018 02:22:09 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:39052 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726098AbeGXGWJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Jul 2018 02:22:09 -0400
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.87 #1 (Red Hat Linux))
+        id 1fhphO-0000ao-GU; Tue, 24 Jul 2018 05:17:26 +0000
+Date:   Tue, 24 Jul 2018 06:17:26 +0100
+From:   Al Viro <viro@ZenIV.linux.org.uk>
+To:     "Dae R. Jeong" <threeearcat@gmail.com>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        byoungyoung@purdue.edu, kt0755@gmail.com, bammanag@purdue.edu
+Subject: Re: KASAN: use-after-free Read in link_path_walk
+Message-ID: <20180724051726.GH30522@ZenIV.linux.org.uk>
+References: <20180724034542.GA19283@dragonet>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180724034542.GA19283@dragonet>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The various FSI devices (sbefifo, occ, scom, more to come)
-currently use misc devices.
+On Tue, Jul 24, 2018 at 12:45:42PM +0900, Dae R. Jeong wrote:
+> Diagnosis:
+> We think that it is possible that link_path_walk() dereferences a
+> freed pointer when cleanup_mnt() is executed between path_init() and
+> link_path_walk().
+> 
+> Since I'm not an expert on a file system and don't fully understand
+> the crash, please see a executed program and a crash log below in
+> case that my understanding is wrong.
+> 
+> 
+> Executed Program:
+> Thread0                     Thread1
+> mkdir("./file0")
+>      |--------------------------|
+>      |                      mount("./file0", "./file0", "devpts", 0x0, "")
+>      |                          |
+> openat(AT_FDCWD,            chroot("./file0")
+> "/dev/vcs", 0x200, 0x0)     umount("./file0", 0x2)
+> 
+> openat(), chroot(), umount() syscalls are executed after mount() syscall.
+> We think a race occurs between openat() and chroot() because RaceFuzzer
+> executed openat() and chroot() concurrently.
+> 
+> 
+> (Possible) Thread interleaving:
+> CPU0 (path_openat)                      CPU1 (cleanup_mnt)
+> =====                                   =====
+> s = path_init(nd, flags);
+> if (IS_ERR(s)) {
+>           put_filp(file);
+>                   return ERR_CAST(s);
+> }
+> 
+>                                         deactivate_super(mnt->mnt.mnt_sb);
+> 
+> while (!(error = link_path_walk(s, nd)) &&
+> 
+> // (in link_path_walk())
+> struct dentry *parent = nd->path.dentry;
+> nd->flags &= ~LOOKUP_JUMPED;
+> if (unlikely(parent->d_flags & DCACHE_OP_HASH)) { // UAF occured
 
-This is problematic as the minor device space for misc is
-limited and there can be a lot of them. Also it limits our
-ability to move them to a dedicated /dev/fsi directory or
-to be smart about device naming and numbering.
+Do we have LOOKUP_RCU in nd->flags at that point?  And how in hell
+did we get that dentry there?  In LOOKUP_RCU mode no freeing should
+be happening until after we call rcu_read_unlock(), unless the final
+dput() has happened before rcu_read_lock().  In which case we shouldn't
+have gotten to that dentry in the first place.  And in non-LOOKUP_RCU
+mode we are bloody well holding references to everything (vfsmount
+and dentry alike), so that deactivate_super() shouldn't have been
+called as long as we are holding that reference.
 
-It also means we have IDAs on every single of these drivers
-
-This creates a common fsi "device_type" for the optional
-/dev/fsi grouping and a dev_t allocator for all FSI devices.
-
-"Legacy" devices get to use a backward compatible numbering
-scheme (as long as chip id <16 and there's only one copy
-of a given unit type per chip).
-
-A single major number and a single IDA are shared for all
-FSI devices.
-
-This doesn't convert the FSI device drivers to use the new
-scheme yet, they will be converted individually.
-
-Signed-off-by: Benjamin Herrenschmidt <benh@kernel.crashing.org>
----
- drivers/fsi/Kconfig    | 15 +++++++
- drivers/fsi/fsi-core.c | 95 +++++++++++++++++++++++++++++++++++++++++-
- include/linux/fsi.h    | 12 +++++-
- 3 files changed, 119 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/fsi/Kconfig b/drivers/fsi/Kconfig
-index 8d82b1e60514..af3a20dd5aa4 100644
---- a/drivers/fsi/Kconfig
-+++ b/drivers/fsi/Kconfig
-@@ -12,6 +12,21 @@ menuconfig FSI
- 
- if FSI
- 
-+config FSI_NEW_DEV_NODE
-+	bool "Create '/dev/fsi' directory for char devices"
-+	default n
-+	---help---
-+	This option causes char devices created for FSI devices to be
-+	located under a common /dev/fsi/ directory. Set to N unless your
-+	userspace has been updated to handle the new location.
-+
-+	Additionally, it also causes the char device names to be offset
-+	by one so that chip 0 will have /dev/scom1 and chip1 /dev/scom2
-+	to match old userspace expectations.
-+
-+	New userspace will use udev rules to generate predictable access
-+	symlinks in /dev/fsi/by-path when this option is enabled.
-+
- config FSI_MASTER_GPIO
- 	tristate "GPIO-based FSI master"
- 	depends on GPIOLIB
-diff --git a/drivers/fsi/fsi-core.c b/drivers/fsi/fsi-core.c
-index eab6c5c4990e..faa1760a5a40 100644
---- a/drivers/fsi/fsi-core.c
-+++ b/drivers/fsi/fsi-core.c
-@@ -92,6 +92,13 @@ struct fsi_slave {
- static const int slave_retries = 2;
- static int discard_errors;
- 
-+static dev_t fsi_base_dev;
-+static DEFINE_IDA(fsi_minor_ida);
-+#define FSI_CHAR_MAX_DEVICES	0x1000
-+
-+/* Legacy /dev numbering: 4 devices per chip, 16 chips */
-+#define FSI_CHAR_LEGACY_TOP	64
-+
- static int fsi_master_read(struct fsi_master *master, int link,
- 		uint8_t slave_id, uint32_t addr, void *val, size_t size);
- static int fsi_master_write(struct fsi_master *master, int link,
-@@ -627,6 +634,7 @@ static void fsi_slave_release(struct device *dev)
- {
- 	struct fsi_slave *slave = to_fsi_slave(dev);
- 
-+	fsi_free_minor(slave->dev.devt);
- 	of_node_put(dev->of_node);
- 	kfree(slave);
- }
-@@ -729,6 +737,75 @@ static ssize_t chip_id_show(struct device *dev,
- 
- static DEVICE_ATTR_RO(chip_id);
- 
-+static char *fsi_cdev_devnode(struct device *dev, umode_t *mode,
-+			      kuid_t *uid, kgid_t *gid)
-+{
-+#ifdef CONFIG_FSI_NEW_DEV_NODE
-+	return kasprintf(GFP_KERNEL, "fsi/%s", dev_name(dev));
-+#else
-+	return kasprintf(GFP_KERNEL, "%s", dev_name(dev));
-+#endif
-+}
-+
-+const struct device_type fsi_cdev_type = {
-+	.name = "fsi-cdev",
-+	.devnode = fsi_cdev_devnode,
-+};
-+EXPORT_SYMBOL_GPL(fsi_cdev_type);
-+
-+/* Backward compatible /dev/ numbering in "old style" mode */
-+static int fsi_adjust_index(int index)
-+{
-+#ifdef CONFIG_FSI_NEW_DEV_NODE
-+	return index;
-+#else
-+	return index + 1;
-+#endif
-+}
-+
-+static int __fsi_get_new_minor(struct fsi_slave *slave, enum fsi_dev_type type,
-+			       dev_t *out_dev, int *out_index)
-+{
-+	int cid = slave->chip_id;
-+	int id;
-+
-+	/* Check if we qualify for legacy numbering */
-+	if (cid >= 0 && cid < 16 && type < 4) {
-+		/* Try reserving the legacy number */
-+		id = (cid << 4) | type;
-+		id = ida_simple_get(&fsi_minor_ida, id, id + 1, GFP_KERNEL);
-+		if (id >= 0) {
-+			*out_index = fsi_adjust_index(cid);
-+			*out_dev = fsi_base_dev + id;
-+			return 0;
-+		}
-+		/* Other failure */
-+		if (id != -ENOSPC)
-+			return id;
-+		/* Fallback to non-legacy allocation */
-+	}
-+	id = ida_simple_get(&fsi_minor_ida, FSI_CHAR_LEGACY_TOP,
-+			    FSI_CHAR_MAX_DEVICES, GFP_KERNEL);
-+	if (id < 0)
-+		return id;
-+	*out_index = fsi_adjust_index(id);
-+	*out_dev = fsi_base_dev + id;
-+	return 0;
-+}
-+
-+int fsi_get_new_minor(struct fsi_device *fdev, enum fsi_dev_type type,
-+		      dev_t *out_dev, int *out_index)
-+{
-+	return __fsi_get_new_minor(fdev->slave, type, out_dev, out_index);
-+}
-+EXPORT_SYMBOL_GPL(fsi_get_new_minor);
-+
-+void fsi_free_minor(dev_t dev)
-+{
-+	ida_simple_remove(&fsi_minor_ida, MINOR(dev));
-+}
-+EXPORT_SYMBOL_GPL(fsi_free_minor);
-+
- static int fsi_slave_init(struct fsi_master *master, int link, uint8_t id)
- {
- 	uint32_t chip_id;
-@@ -953,7 +1030,7 @@ static int fsi_slave_remove_device(struct device *dev, void *arg)
- static int fsi_master_remove_slave(struct device *dev, void *arg)
- {
- 	device_for_each_child(dev, NULL, fsi_slave_remove_device);
--	device_unregister(dev);
-+	put_device(dev);
- 	return 0;
- }
- 
-@@ -1091,13 +1168,27 @@ EXPORT_SYMBOL_GPL(fsi_bus_type);
- 
- static int __init fsi_init(void)
- {
--	return bus_register(&fsi_bus_type);
-+	int rc;
-+
-+	rc = alloc_chrdev_region(&fsi_base_dev, 0, FSI_CHAR_MAX_DEVICES, "fsi");
-+	if (rc)
-+		return rc;
-+	rc = bus_register(&fsi_bus_type);
-+	if (rc)
-+		goto fail_bus;
-+	return 0;
-+
-+ fail_bus:
-+	unregister_chrdev_region(fsi_base_dev, FSI_CHAR_MAX_DEVICES);
-+	return rc;
- }
- postcore_initcall(fsi_init);
- 
- static void fsi_exit(void)
- {
- 	bus_unregister(&fsi_bus_type);
-+	unregister_chrdev_region(fsi_base_dev, FSI_CHAR_MAX_DEVICES);
-+	ida_destroy(&fsi_minor_ida);
- }
- module_exit(fsi_exit);
- module_param(discard_errors, int, 0664);
-diff --git a/include/linux/fsi.h b/include/linux/fsi.h
-index 141fd38d061f..ec3be0d5b786 100644
---- a/include/linux/fsi.h
-+++ b/include/linux/fsi.h
-@@ -76,8 +76,18 @@ extern int fsi_slave_read(struct fsi_slave *slave, uint32_t addr,
- extern int fsi_slave_write(struct fsi_slave *slave, uint32_t addr,
- 		const void *val, size_t size);
- 
-+extern struct bus_type fsi_bus_type;
-+extern const struct device_type fsi_cdev_type;
- 
-+enum fsi_dev_type {
-+	fsi_dev_cfam,
-+	fsi_dev_sbefifo,
-+	fsi_dev_scom,
-+	fsi_dev_occ
-+};
- 
--extern struct bus_type fsi_bus_type;
-+extern int fsi_get_new_minor(struct fsi_device *fdev, enum fsi_dev_type type,
-+			     dev_t *out_dev, int *out_index);
-+extern void fsi_free_minor(dev_t dev);
- 
- #endif /* LINUX_FSI_H */
--- 
-2.17.1
-
+Details, please.  Ideally - how to reproduce that.
