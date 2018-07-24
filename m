@@ -2,131 +2,100 @@ Return-Path: <SRS0=hTZH=KI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B91EECDFB8
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 15:46:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 649FFC6778A
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 15:46:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C611C20856
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 15:46:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C611C20856
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	by mail.kernel.org (Postfix) with ESMTP id 21B4920856
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 15:46:40 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="Nv7VYz4x"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 21B4920856
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=fb.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388480AbeGXQx2 (ORCPT
+        id S2388505AbeGXQxm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 12:53:28 -0400
-Received: from mail-vk0-f67.google.com ([209.85.213.67]:43278 "EHLO
-        mail-vk0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388300AbeGXQx2 (ORCPT
+        Tue, 24 Jul 2018 12:53:42 -0400
+Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:40434 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S2388330AbeGXQxm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 12:53:28 -0400
-Received: by mail-vk0-f67.google.com with SMTP id s17-v6so2261671vke.10;
-        Tue, 24 Jul 2018 08:46:22 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=oa7UlTiloXoc6U/EcthojwxasXcOuDWL7biSXvLmbsM=;
-        b=WtAqTPQfUXQ91k0phXSxk3yV/V4TOTpOK1TmqZPn/W6T6qCmH3WeMWqqWttaBbmMsR
-         vzlySAzAeTdy4+wVMldnQRH/evW7kd4KjNAcqXn3vhBZO/jAYMxn/c5XFwlSpVYbAHAV
-         Ji40kI4bkrLcdFs7KYo/eRGTYQojmkn+htuYwyysHF+mZfwLODtT/eDJvr4uXxCrcsN4
-         2SzjSw/ENkjhtaDmWYR7TPWV2ekFGnVS72Rub1nOXNGr0sO2XAYxQm0ikRbuJTwZ23Zn
-         33QlHPtx3ZW7v79PYMJxw2tBKv1Iipx2tQcKTKw5v//P+bSjxGclIELnkM8zJJL430aH
-         enSg==
-X-Gm-Message-State: AOUpUlGB0PL7hp2ittyiHuoH8ywaweSE/wVePF8NAb2io/8Alu3ZImDQ
-        oqTDWUA9FQZErcvbzYNw+CiMMZv0s2wBoUXLMg8=
-X-Google-Smtp-Source: AAOMgpcU60zKK0qSYG0cTym8Png/z7Ymcjt9IAF/gltFoVGGagMcKNO5pc9zoawf8PGQRMGuLaL1cBW36dAdM14BVPY=
-X-Received: by 2002:a1f:8948:: with SMTP id l69-v6mr11025960vkd.132.1532447182109;
- Tue, 24 Jul 2018 08:46:22 -0700 (PDT)
+        Tue, 24 Jul 2018 12:53:42 -0400
+Received: from pps.filterd (m0001255.ppops.net [127.0.0.1])
+        by mx0b-00082601.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w6OFgBb3000611;
+        Tue, 24 Jul 2018 08:45:56 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=date : from : to : cc :
+ subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=facebook; bh=gQ3jyUw+HUxRgby5xab85hRDwOZ2e9xXI7PxG3WTbAU=;
+ b=Nv7VYz4xAEl388Ma87uicNnpffeqra7GjwmmlermyVRdEJN/y4WvRMt5XsLu4Kktg+R/
+ ISgUNd7QbuxiP6/M1ew3yyLvaxnGwihLRKIdoJ3Y9pd3NA/MQnGWrL+HxeeYMaEWzv/p
+ QRwNPsCaYWqNvQRvXkKIuMhEYYKTUWxtT2g= 
+Received: from mail.thefacebook.com ([199.201.64.23])
+        by mx0b-00082601.pphosted.com with ESMTP id 2kdrra1v8g-1
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Tue, 24 Jul 2018 08:45:56 -0700
+Received: from kafai-mbp (192.168.52.123) by mail.thefacebook.com
+ (192.168.16.11) with Microsoft SMTP Server (TLS) id 14.3.361.1; Tue, 24 Jul
+ 2018 08:45:53 -0700
+Date:   Tue, 24 Jul 2018 08:45:49 -0700
+From:   Martin KaFai Lau <kafai@fb.com>
+To:     YueHaibing <yuehaibing@huawei.com>
+CC:     <ast@kernel.org>, <daniel@iogearbox.net>,
+        <quentin.monnet@netronome.com>, <jakub.kicinski@netronome.com>,
+        <bhole_prashant_q7@lab.ntt.co.jp>, <osk@fb.com>,
+        <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <davem@davemloft.net>
+Subject: Re: [PATCH bpf-next] bpf: btf: fix inconsistent IS_ERR and PTR_ERR
+Message-ID: <20180724154549.dulibeesja7ajwni@kafai-mbp>
+References: <20180724025524.22012-1-yuehaibing@huawei.com>
 MIME-Version: 1.0
-References: <20180719152930.3715-1-boris.brezillon@bootlin.com>
- <CAK8P3a2MP5+oFz--e+BM24D8Ahw7H_RKgN1S6wY1nQE6JL0dmw@mail.gmail.com>
- <2ab0ab75-2df0-2714-f007-c33b25481016@axentia.se> <20180720101206.tv7nsoanwo5ftnia@ninjato>
- <CAK8P3a2Pqo5DuYBb09+w4nGWGOw+e_tZPxnA06qjNO_6Hw6NvQ@mail.gmail.com>
- <21b269c5-a3a7-c5de-c81e-c9c9301ae13e@axentia.se> <CAK8P3a1t2fhdw7HwxNkOs9o2pBECZ0ZdOysA=r2SPTWEvx76kw@mail.gmail.com>
- <20180720151751.242d4809@bbrezillon> <CAK8P3a14_6uf9VLYU0YnmFp0Q=DZBKc0cAesBh0opanGDZMFRA@mail.gmail.com>
- <20180724162806.318a92c6@bbrezillon> <CAK8P3a3YQbiiJMTHTVh63fOvtA1sa0J5Eb4z7xbnpBPwUDkqxg@mail.gmail.com>
- <CAMuHMdXif_iufXx0Y+UJjKs9TNLfrTONoFvUSyrpkfaT0=ydRQ@mail.gmail.com> <CAK8P3a0jc1k9weTNbqSJXkCSFefus9OPyU5_v5=mTFxiDd0q5Q@mail.gmail.com>
-In-Reply-To: <CAK8P3a0jc1k9weTNbqSJXkCSFefus9OPyU5_v5=mTFxiDd0q5Q@mail.gmail.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Tue, 24 Jul 2018 17:46:09 +0200
-Message-ID: <CAMuHMdXJ_FGXXwNx8h0ZfskJGRWES1xLuTQpD59Vw1Smp6FTRg@mail.gmail.com>
-Subject: Re: [PATCH v6 00/10] Add the I3C subsystem
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Boris Brezillon <boris.brezillon@bootlin.com>,
-        Peter Rosin <peda@axentia.se>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        Linux I2C <linux-i2c@vger.kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Przemyslaw Sroka <psroka@cadence.com>,
-        Arkadiusz Golec <agolec@cadence.com>,
-        Alan Douglas <adouglas@cadence.com>,
-        Bartosz Folta <bfolta@cadence.com>,
-        Damian Kos <dkos@cadence.com>,
-        Alicja Jurasik-Urbaniak <alicja@cadence.com>,
-        Cyprian Wronka <cwronka@cadence.com>,
-        Suresh Punnoose <sureshp@cadence.com>,
-        Rafal Ciepiela <rafalc@cadence.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Nishanth Menon <nm@ti.com>, Rob Herring <robh+dt@kernel.org>,
-        Pawel Moll <pawel.moll@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ian Campbell <ijc+devicetree@hellion.org.uk>,
-        Kumar Gala <galak@codeaurora.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Vitor Soares <Vitor.Soares@synopsys.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Xiang Lin <Xiang.Lin@synaptics.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Sekhar Nori <nsekhar@ti.com>, pgaj@cadence.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20180724025524.22012-1-yuehaibing@huawei.com>
+User-Agent: NeoMutt/20180512
+X-Originating-IP: [192.168.52.123]
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-24_04:,,
+ signatures=0
+X-Proofpoint-Spam-Reason: safe
+X-FB-Internal: Safe
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Arnd,
+On Tue, Jul 24, 2018 at 10:55:24AM +0800, YueHaibing wrote:
+> Fix inconsistent IS_ERR and PTR_ERR in get_btf,
+> the proper pointer to be passed as argument is '*btf'
+> 
+> This issue was detected with the help of Coccinelle.
+> 
+> Fixes: 2d3feca8c44f ("bpf: btf: print map dump and lookup with btf info")
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Acked-by: Martin KaFai Lau <kafai@fb.com>
 
-On Tue, Jul 24, 2018 at 5:40 PM Arnd Bergmann <arnd@arndb.de> wrote:
-> On Tue, Jul 24, 2018 at 5:15 PM, Geert Uytterhoeven
-> <geert@linux-m68k.org> wrote:
-> > On Tue, Jul 24, 2018 at 5:05 PM Arnd Bergmann <arnd@arndb.de> wrote:
->
-> >> That's not the case I was describing here, I was thinking of what
-> >> Wolfram described with the Renesas SoC that has two i2c masters
-> >> multiplexed through the pinmux layer. I would assume that we
-> >> can still do the same thing in i3c by shutting down the current
-> >> master without a handover, and reprobing everything from scratch.
-> >
-> > The major disadvantage of reprobing is that it may cause visual disturbances
-> > when i2c slaves are involved with e.g. the display pipeline (think HDMI encoders
-> > etc.).
->
-> Do you mean we should reuse the device pointer and association with
-> the driver even when we switch out the i3c master using the pinmux?
->
-> Or do you mean we need to be prepared for driving a single
-> slave through multiple masters over the lifetime of that device,
-> but using the i3c master handover protocol?
-> In the second case, how do we decide which master to use
-> for accessing a device for a given request?
-
-I'll have to defer to Wolfram. He's the i2c and muxing expert.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+> ---
+>  tools/bpf/bpftool/map.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/tools/bpf/bpftool/map.c b/tools/bpf/bpftool/map.c
+> index 9c81918..0ee3ba4 100644
+> --- a/tools/bpf/bpftool/map.c
+> +++ b/tools/bpf/bpftool/map.c
+> @@ -230,7 +230,7 @@ static int get_btf(struct bpf_map_info *map_info, struct btf **btf)
+>  
+>  	*btf = btf__new((__u8 *)btf_info.btf, btf_info.btf_size, NULL);
+>  	if (IS_ERR(*btf)) {
+> -		err = PTR_ERR(btf);
+> +		err = PTR_ERR(*btf);
+>  		*btf = NULL;
+>  	}
+>  
+> -- 
+> 2.7.0
+> 
+> 
