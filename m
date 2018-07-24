@@ -2,125 +2,173 @@ Return-Path: <SRS0=hTZH=KI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BBB3FECDFB8
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 10:43:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB128C6778A
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 10:44:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8023A20875
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 10:43:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8023A20875
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ziswiler.com
+	by mail.kernel.org (Postfix) with ESMTP id 9B0AD20852
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 10:44:24 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="XNdN6HUe";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="XNdN6HUe"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B0AD20852
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388786AbeGXLtn (ORCPT
+        id S2388794AbeGXLuM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 07:49:43 -0400
-Received: from mout.perfora.net ([74.208.4.196]:38385 "EHLO mout.perfora.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388296AbeGXLtl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 07:49:41 -0400
-Received: from localhost.localdomain.toradex.int ([46.140.72.82]) by
- mrelay.perfora.net (mreueus003 [74.208.5.2]) with ESMTPA (Nemesis) id
- 0M1Gz0-1g1vaL2OYy-00tGEA; Tue, 24 Jul 2018 12:43:46 +0200
-From:   Marcel Ziswiler <marcel@ziswiler.com>
-To:     devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     Marcel Ziswiler <marcel.ziswiler@toradex.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Subject: [PATCH 15/15] ARM: tegra: apalis-tk1: reorder SD card properties
-Date:   Tue, 24 Jul 2018 12:43:09 +0200
-Message-Id: <20180724104309.21741-16-marcel@ziswiler.com>
-X-Mailer: git-send-email 2.14.4
-In-Reply-To: <20180724104309.21741-1-marcel@ziswiler.com>
-References: <20180724104309.21741-1-marcel@ziswiler.com>
-X-Provags-ID: V03:K1:+f7EPuiXSInyAPaIiqmk+h0qzTMqq3LJJc4rxRoNigWWdq2ltlm
- kr2sAEbWYJEcmY6/ULYllIWbIGR/HYCht/90O5u+5RDt0O2NDjIVGZrXMvVwQm17G5b3SZV
- bLl4ka7TchzVauTwm+Gl0KkZmDzxZurDJKGmtCcaYzz3COTgzy9+aUaBlwOkqASkqaLQoOI
- OJ/Wmdqm9zArfnNzn0ItQ==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:R7UhaTH3eG8=:wpxPcfYiEtZf31Vr/FN8fZ
- Rirxi0AcGmTm9ZsDKCedtYo09JDPXsBWDqj6U4qASjT5kf2azcf8Ytk0LOG6fA0QoX2BiSq1p
- DgoogTg+dIyzXBiEK+UizNhE5a+qB8F5tBqbqk01SV2o2N4IwMOssInoggkmMeubaqmukHi0p
- j8ee/hjDWmj/ZLHnZymIWkmcCw3gf0KBrDFt1EMmBqlZiTX9H0Pic8u7+g/XsefreOpziEMgA
- P+ER0CSfWzyQr9ui5CnZr+CMIJwJhfMjcd+/c+Kvwxbri+8/aN08I/5qj8i3GBJPjsBUh7pM9
- eRoGTNr5nEIQT+PAqdiHnkXuB99v+X+k8jPVKCJm5fwtCdGAHXgCH93Zqm52VjCe32S6CWBlY
- shrnr0oYAvs9dxgcwm71tFQS/boaNrqacR/7KukNaMWMKxUFWr0DokxIZXojCiNWj/pmOmYwF
- j3Ii6iWtz/RfsCy9P/EwSji0EknNSP0oHfuBkFU0G9EktrRIYauxYt4Hi4QpmEsxOU/DWCBRU
- DL14m+HGa8UQ9n2Umk/4Jyc/4oAf4IYVp2EQNeKDKn/PscFgenr9X8pW81OHdFzIFxmTftJLt
- 8ZAwmR5iQvQQxMAZt1itixSOdCfec4/Ov5g9HSuDelgbWWSmXK/itsG/EIZsXka1WFUqHDlLr
- rlkdmo5bGRqaG3iYAb2tOHuqmbfQFZnKzAR3V5z4KSf4gD99XD974EiCOTM6KIDagCkk=
+        Tue, 24 Jul 2018 07:50:12 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:56858 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388284AbeGXLuL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Jul 2018 07:50:11 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 6529C6074D; Tue, 24 Jul 2018 10:44:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1532429061;
+        bh=vabIQLySUTNUiE37Z1pVG6OeqHXFOh0SZFrTo9AjiGw=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=XNdN6HUeMSD+neHY/SAN21dCCygaaBZH1KXRv4uWs+It5j4G4eKWHBcho2TJMGOgf
+         8/GuizgukCIgVsIT+sxvAEwHqYbngs+uT/nVPa5Npj1tDr7IVBlhbIb5fxGShiyGSh
+         adseK9NvjUnKrQl5mOgrz37qhQxqfzqxQ6Fhh/x4=
+Received: from [10.4.34.47] (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: tdas@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id B23B5602BC;
+        Tue, 24 Jul 2018 10:44:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1532429061;
+        bh=vabIQLySUTNUiE37Z1pVG6OeqHXFOh0SZFrTo9AjiGw=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=XNdN6HUeMSD+neHY/SAN21dCCygaaBZH1KXRv4uWs+It5j4G4eKWHBcho2TJMGOgf
+         8/GuizgukCIgVsIT+sxvAEwHqYbngs+uT/nVPa5Npj1tDr7IVBlhbIb5fxGShiyGSh
+         adseK9NvjUnKrQl5mOgrz37qhQxqfzqxQ6Fhh/x4=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B23B5602BC
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=tdas@codeaurora.org
+Subject: Re: [PATCH v6 2/2] cpufreq: qcom-hw: Add support for QCOM cpufreq HW
+ driver
+To:     Viresh Kumar <viresh.kumar@linaro.org>
+Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Amit Nischal <anischal@codeaurora.org>,
+        devicetree@vger.kernel.org, robh@kernel.org,
+        skannan@codeaurora.org, amit.kucheria@linaro.org,
+        evgreen@google.com
+References: <1531892220-2046-1-git-send-email-tdas@codeaurora.org>
+ <1531892220-2046-3-git-send-email-tdas@codeaurora.org>
+ <20180718054647.ysomgxiwzbuuptoc@vireshk-i7>
+From:   Taniya Das <tdas@codeaurora.org>
+Message-ID: <d5c00072-84d3-6eda-52db-6d6dd4e313e1@codeaurora.org>
+Date:   Tue, 24 Jul 2018 16:14:15 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <20180718054647.ysomgxiwzbuuptoc@vireshk-i7>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+Hello Viresh,
 
-Reorder SD card properties.
+Thanks for your review comments.
 
-Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+On 7/18/2018 11:16 AM, Viresh Kumar wrote:
+> On 18-07-18, 11:07, Taniya Das wrote:
+>> +static int qcom_cpu_resources_init(struct platform_device *pdev,
+>> +				   struct device_node *np, unsigned int cpu,
+>> +				   unsigned long xo_rate)
+>> +{
+>> +	struct cpufreq_qcom *c;
+>> +	struct resource res;
+>> +	struct device *dev = &pdev->dev;
+>> +	const u16 *offsets;
+>> +	cpumask_t cpus_related;
+>> +	int ret, i, cpu_r;
+>> +	void __iomem *base;
+>> +
+>> +	cpumask_clear(&cpus_related);
+>> +
+>> +	ret = qcom_get_related_cpus(np, &cpus_related);
+>> +	if (ret) {
+>> +		dev_err(dev, "%s failed to get related CPUs\n", np->name);
+>> +		return ret;
+>> +	}
+>> +
+>> +	/* Related CPUs */
+>> +	cpu_r = cpumask_first(&cpus_related);
+>> +	if (cpu != cpu_r) {
+>> +		qcom_freq_domain_map[cpu] = qcom_freq_domain_map[cpu_r];
+>> +		return 0;
+>> +	}
+>> +
+>> +	c = devm_kzalloc(dev, sizeof(*c), GFP_KERNEL);
+>> +	if (!c)
+>> +		return -ENOMEM;
+>> +
+>> +	offsets = of_device_get_match_data(&pdev->dev);
+>> +	if (!offsets)
+>> +		return -EINVAL;
+>> +
+>> +	if (of_address_to_resource(np, 0, &res))
+>> +		return -ENOMEM;
+>> +
+>> +	base = devm_ioremap_resource(dev, &res);
+>> +	if (!base)
+>> +		return -ENOMEM;
+>> +
+>> +	for (i = REG_ENABLE; i < REG_ARRAY_SIZE; i++)
+>> +		c->reg_bases[i] = base + offsets[i];
+>> +
+>> +	/* HW should be in enabled state to proceed */
+>> +	if (!(readl_relaxed(c->reg_bases[REG_ENABLE]) & 0x1)) {
+>> +		dev_err(dev, "%s cpufreq hardware not enabled\n", np->name);
+>> +		return -ENODEV;
+>> +	}
+>> +
+>> +	cpumask_copy(&c->related_cpus, &cpus_related);
+>> +
+>> +	c->max_cores = cpumask_weight(&c->related_cpus);
+>> +	if (!c->max_cores)
+>> +		return -ENOENT;
+>> +
+>> +	c->xo_rate = xo_rate;
+>> +
+>> +	ret = qcom_cpufreq_hw_read_lut(pdev, c);
+>> +	if (ret) {
+>> +		dev_err(dev, "%s failed to read LUT\n", np->name);
+>> +		return ret;
+>> +	}
+>> +
+>> +	qcom_freq_domain_map[cpu] = c;
+> 
+> Set this for all related CPUs here and then the check at the top of
+> this routine will be simply:
+> 
+> if (qcom_freq_domain_map[cpu])
+>          return 0;
+> 
 
----
+Please check the latest series, I have updated the code.
 
- arch/arm/boot/dts/tegra124-apalis-eval.dts      | 4 ++--
- arch/arm/boot/dts/tegra124-apalis-v1.2-eval.dts | 4 ++--
- 2 files changed, 4 insertions(+), 4 deletions(-)
+>> +
+>> +	return 0;
+>> +}
+>> +
 
-diff --git a/arch/arm/boot/dts/tegra124-apalis-eval.dts b/arch/arm/boot/dts/tegra124-apalis-eval.dts
-index 84ab7dc9febb..7d32e402a0f1 100644
---- a/arch/arm/boot/dts/tegra124-apalis-eval.dts
-+++ b/arch/arm/boot/dts/tegra124-apalis-eval.dts
-@@ -180,18 +180,18 @@
- 	/* Apalis MMC1 */
- 	sdhci@700b0000 {
- 		status = "okay";
-+		bus-width = <4>;
- 		/* MMC1_CD# */
- 		cd-gpios = <&gpio TEGRA_GPIO(V, 3) GPIO_ACTIVE_LOW>;
--		bus-width = <4>;
- 		vqmmc-supply = <&vddio_sdmmc1>;
- 	};
- 
- 	/* Apalis SD1 */
- 	sdhci@700b0400 {
- 		status = "okay";
-+		bus-width = <4>;
- 		/* SD1_CD# */
- 		cd-gpios = <&gpio TEGRA_GPIO(V, 2) GPIO_ACTIVE_LOW>;
--		bus-width = <4>;
- 		vqmmc-supply = <&vddio_sdmmc3>;
- 	};
- 
-diff --git a/arch/arm/boot/dts/tegra124-apalis-v1.2-eval.dts b/arch/arm/boot/dts/tegra124-apalis-v1.2-eval.dts
-index 5319f88d3cab..91d54d14f527 100644
---- a/arch/arm/boot/dts/tegra124-apalis-v1.2-eval.dts
-+++ b/arch/arm/boot/dts/tegra124-apalis-v1.2-eval.dts
-@@ -146,18 +146,18 @@
- 	/* Apalis MMC1 */
- 	sdhci@700b0000 {
- 		status = "okay";
-+		bus-width = <4>;
- 		/* MMC1_CD# */
- 		cd-gpios = <&gpio TEGRA_GPIO(V, 3) GPIO_ACTIVE_LOW>;
--		bus-width = <4>;
- 		vqmmc-supply = <&vddio_sdmmc1>;
- 	};
- 
- 	/* Apalis SD1 */
- 	sdhci@700b0400 {
- 		status = "okay";
-+		bus-width = <4>;
- 		/* SD1_CD# */
- 		cd-gpios = <&gpio TEGRA_GPIO(V, 2) GPIO_ACTIVE_LOW>;
--		bus-width = <4>;
- 		vqmmc-supply = <&vddio_sdmmc3>;
- 	};
- 
 -- 
-2.14.4
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation.
 
+--
