@@ -6,96 +6,132 @@ X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01AE7ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 14:45:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 200F9C6778A
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 14:47:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B81BF2064D
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 14:45:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B81BF2064D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id C12D020874
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 14:47:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C12D020874
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388579AbeGXPwe (ORCPT
+        id S2388596AbeGXPy2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 11:52:34 -0400
-Received: from foss.arm.com ([217.140.101.70]:53010 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388460AbeGXPwe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 11:52:34 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0FFA180D;
-        Tue, 24 Jul 2018 07:45:45 -0700 (PDT)
-Received: from e103592.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 67AD33F237;
-        Tue, 24 Jul 2018 07:45:43 -0700 (PDT)
-Date:   Tue, 24 Jul 2018 15:45:35 +0100
-From:   Dave Martin <Dave.Martin@arm.com>
-To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc:     linux-rt-users@vger.kernel.org,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Mike Galbraith <efault@gmx.de>,
-        Will Deacon <will.deacon@arm.com>,
-        linux-kernel@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>,
-        tglx@linutronix.de, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH RT v2] arm64: fpsimd: use a local_lock() in addition to
- local_bh_disable()
-Message-ID: <20180724144522.GA4240@e103592.cambridge.arm.com>
-References: <20180522172115.fpqguqlsq6bavtxy@linutronix.de>
- <20180522132429.6f1dcf92@gandalf.local.home>
- <20180522173333.aawadhkcekzvrswp@linutronix.de>
- <20180711092555.268adf7f@gandalf.local.home>
- <20180711133157.bvrza5vmthu6lwjd@linutronix.de>
- <20180711093346.782af07a@gandalf.local.home>
- <20180713174937.5ddaqpylalcmc3jq@linutronix.de>
- <20180716151737.GO9486@e103592.cambridge.arm.com>
- <20180718091209.u76gzacanj5avhdl@linutronix.de>
- <20180718092448.v6j7wdahtsediqhh@linutronix.de>
+        Tue, 24 Jul 2018 11:54:28 -0400
+Received: from smtp.nue.novell.com ([195.135.221.5]:46443 "EHLO
+        smtp.nue.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388430AbeGXPy2 (ORCPT
+        <rfc822;groupwise-linux-kernel@vger.kernel.org:0:0>);
+        Tue, 24 Jul 2018 11:54:28 -0400
+Received: from linux-l9pv.suse (124-11-22-254.static.tfn.net.tw [124.11.22.254])
+        by smtp.nue.novell.com with ESMTP (TLS encrypted); Tue, 24 Jul 2018 16:47:26 +0200
+Date:   Tue, 24 Jul 2018 22:47:12 +0800
+From:   joeyli <jlee@suse.com>
+To:     Oliver Neukum <oneukum@suse.com>
+Cc:     Pavel Machek <pavel@ucw.cz>, Yu Chen <yu.c.chen@intel.com>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Eric Biggers <ebiggers@google.com>,
+        Theodore Ts o <tytso@mit.edu>,
+        Stephan Mueller <smueller@chronox.de>,
+        Denis Kenzior <denkenz@gmail.com>, linux-pm@vger.kernel.org,
+        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Gu, Kookoo" <kookoo.gu@intel.com>,
+        "Zhang, Rui" <rui.zhang@intel.com>
+Subject: Re: [PATCH 0/4][RFC v2] Introduce the in-kernel hibernation
+ encryption
+Message-ID: <20180724144712.GV18419@linux-l9pv.suse>
+References: <cover.1531924968.git.yu.c.chen@intel.com>
+ <20180718202235.GA4132@amd>
+ <20180718235851.GA22170@sandybridge-desktop>
+ <20180719110149.GA4679@amd>
+ <20180719132003.GA30981@sandybridge-desktop>
+ <20180720102532.GA20284@amd>
+ <1532346156.3057.11.camel@suse.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180718092448.v6j7wdahtsediqhh@linutronix.de>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <1532346156.3057.11.camel@suse.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 18, 2018 at 11:24:48AM +0200, Sebastian Andrzej Siewior wrote:
-> On 2018-07-18 11:12:10 [+0200], To Dave Martin wrote:
-> > > > -	if (may_use_simd()) {
-> > > > +	if (!IS_ENABLED(CONFIG_PREEMPT_RT_BASE) && may_use_simd()) {
-> > > 
-> > > I suspect this is wrong -- see comments on the commit message.
+Hi Oliver,
+
+On Mon, Jul 23, 2018 at 01:42:36PM +0200, Oliver Neukum wrote:
+> On Fr, 2018-07-20 at 12:25 +0200, Pavel Machek wrote:
+> > Hi!
 > 
-> I'm sorry, I pressed send too early, I was aiming for the draft folder.
-> So yes, based on that EFI that might be interruptible, let me try to
-> look at the initial issue again and maybe I get another idea how to deal
-> with this.
-> One question: If EFI is interruptible that means, we call into EFI - how
-> do we get out? Does EFI enable interrupts and the kernel receives an
-> interrupt and treats this EFI call like a regular context switch?
+> Hello,
+> 
+> > > Let me paste the log here:
+> > > 
+> > > 1. (This is not to compare with uswsusp but other
+> > >     tools) One advantage is: Users do not have to
+> > >     encrypt the whole swap partition as other tools.
+> > 
+> > Well.. encrypting the partition seems like good idea anyway.
+> 
+> Yes, but it is a policy decision the kernel should not force.
+> STD needs to work anyway.
+> 
+> > > 2. Ideally kernel memory should be encrypted by the
+> > >    kernel itself. We have uswsusp to support user
+> > >    space hibernation, however doing the encryption
+> > >    in kernel space has more advantages:
+> > >    2.1 Not having to transfer plain text kernel memory to
+> > >        user space. Per Lee, Chun-Yi, uswsusp is disabled
+> > >        when the kernel is locked down:
+> > >        https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/
+> > >        linux-fs.git/commit/?h=lockdown-20180410&
+> > >        id=8732c1663d7c0305ae01ba5a1ee4d2299b7b4612
+> > >        due to:
+> > >        "There have some functions be locked-down because
+> > >        there have no appropriate mechanisms to check the
+> > >        integrity of writing data."
+> > >        https://patchwork.kernel.org/patch/10476751/
+> > 
+> > So your goal is to make hibernation compatible with kernel
+> > lockdown? Do your patches provide sufficient security that hibernation
+> > can be enabled with kernel lockdown?
+> 
+> OK, maybe I am dense, but if the key comes from user space, will that
+> be enough?
+> 
+> > >    2.2 Not having to copy each page to user space
+> > >        one by one not in parallel, which might introduce
+> > >        significant amount of copy_to_user() and it might
+> > >        not be efficient on servers having large amount of DRAM.
+> > 
+> > So how big speedup can be attributed by not doing copy_to_user?
+> 
+> That would be an argument for compression in kernel space.
+> Not encrpting would always be faster.
+> 
+> > >    2.3 Distribution has requirement to do snapshot
+> > >        signature for verification, which can be built
+> > >        by leveraging this patch set.
+> > 
+> > Signatures can be done by uswsusp, too, right?
+> 
+> Not if you want to keep the chain of trust intact. User space
+> is not signed.
 
-AFAIK the only safe way to get out permanently is for the call to
-return.  Note, I've not gone through the spec in fine detail myself.
+Yes, any user space key helper must be authenticated for secure boot
+(or the kernel locked-down mode).
 
-The OS may handle interrupts occurring during the EFI call, but we
-still have to return to EFI afterwards to finish off the call.  From
-the Linux perspective, I think this means that EFI calls are non-
-preemptible.
+If user choices the user space helper, then they should awares that
+this approach can not be trusted when kernel is in locked-down mode.
+The user space helper be protected by IMA/EVM, or the initrd be
+authentricated with trusted boot.
 
-Under RT, I'm pretty sure that we can't safely resume the interrupted
-EFI call on a different cpu from the one it was interrupted on.  Even
-if it doesn't say this explicitly in the UEFI spec, I think it will be
-assumed in implementations.
+The user space key helper is useful when the machine doesn't have
+TPM or EFI firmware, but user still wants to use the hibernation
+encryption/verification.
 
+For kernel locked-down mode, EFI key or trusted key TPM can be
+trusted because they can only be created/visibled in kernel space.
 
-Certain EFI calls are not long-running and may need to be called from
-interrupt context in Linux, which means that there may be live kernel-
-mode NEON state.  This is why there are separate FPSIMD/SVE percpu stash
-buffers for EFI specifically.
-
-Does this make sense?  It's is probably not very clear, but I'm trying
-to hide the fact that I haven't looked at the UEFI spec for ages...
-
-Cheers
----Dave
+Thanks
+Joey Lee
