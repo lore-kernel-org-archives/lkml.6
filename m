@@ -2,192 +2,285 @@ Return-Path: <SRS0=hTZH=KI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B0F9C6778A
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 19:02:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F02E0C6778A
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 19:09:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0640520874
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 19:02:32 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LCkfwlmE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0640520874
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 9A7E620856
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 19:09:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9A7E620856
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388551AbeGXUKV (ORCPT
+        id S2388571AbeGXURK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 16:10:21 -0400
-Received: from mail-qt0-f194.google.com ([209.85.216.194]:39090 "EHLO
-        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388479AbeGXUKU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 16:10:20 -0400
-Received: by mail-qt0-f194.google.com with SMTP id q12-v6so5229724qtp.6;
-        Tue, 24 Jul 2018 12:02:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=Ue7cw4iJYGtSvAcbffVanrrxMYEef3dzMSmzxrnAOSs=;
-        b=LCkfwlmEVS3OejBes8gBw22+iTSD2KJuRLPnWujpUmkiRcVG2uFuW60GN5P92fKErQ
-         cNAsxtbZaGS9RLtA21zX7uuIcxHti9+Ey/Dqr+eFCBJ7d/27WFhmF6S3IoH3D8gX4+8w
-         vTgV0w/evBI199xGWOzCIK3z20c2OKNtXzDQWGvJTilb/l0ET0UriuiiwdR+V3t6U9Kf
-         2tFAV0BNj7JLNgfDX/VmsUzcnwDOE16+1D8KkiV8CTXky1DYE3a93oGAQM9LPkGV7KTf
-         GFBl9v4dOFrm+EwoYf0vlbUqhYLvR9VEQYNHokO5KIxbh3UfGMqElGZ0mCCTvS/8FmNb
-         LdTw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=Ue7cw4iJYGtSvAcbffVanrrxMYEef3dzMSmzxrnAOSs=;
-        b=MANxOxfBMHT2cMJ4OlfADg4VfJeXENc4MoBejJhe4eMn96R97zEYUGlCMA+uKYg1Yf
-         Gkgbn7BO5EI8+WUx3exnd11p31vigb8m82cNl7hFdnKzeNmRaadTPHkOdMo2hcI98P18
-         l2vDcedFr8h06WH7YQFj6nazEukc4zgaYOCVsYEL1VOyFf7eleV7Yh0jg/FKmaHugchA
-         HJ2E7rS8jrAEv0ZIUZ2/HdF3sT00wRin7mITtlu0A+pgrtUTbm8xkn9VBZ/YTCrxwFKm
-         0/zUF9LaCCrftiWfQAaeYUmvnXf70Qzk2T6mQ9sMFdt5oeKkYeH/ayesHmyMivJTzFzQ
-         CtEg==
-X-Gm-Message-State: AOUpUlFIN5ucC1lmqwRDY1tCGeAAWqwQlNgjFJcRBq9AE+tUc5sdNIFb
-        4Sruzmc1t6XmIozf9hwi5w==
-X-Google-Smtp-Source: AAOMgpdvZ38Nyry7sL+sD5vnrYgW9vxhIm/XHzw0pRQExznwoKF2/qAQZrrFnQAEa93CohLrMEDVrA==
-X-Received: by 2002:aed:3bb7:: with SMTP id r52-v6mr17286001qte.77.1532458948643;
-        Tue, 24 Jul 2018 12:02:28 -0700 (PDT)
-Received: from gabell.bos.redhat.com (nat-pool-bos-t.redhat.com. [66.187.233.206])
-        by smtp.gmail.com with ESMTPSA id o68-v6sm8085181qkf.9.2018.07.24.12.02.27
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 24 Jul 2018 12:02:28 -0700 (PDT)
-From:   Masayoshi Mizuma <msys.mizuma@gmail.com>
-To:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Borislav Petkov <bp@alien8.de>, linux-edac@vger.kernel.org
-Cc:     Masayoshi Mizuma <msys.mizuma@gmail.com>,
-        linux-kernel@vger.kernel.org, Tony Luck <tony.luck@intel.com>,
-        Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>
-Subject: [PATCH v2] EDAC, sb_edac: Add support for systems with segmented PCI buses
-Date:   Tue, 24 Jul 2018 15:02:13 -0400
-Message-Id: <20180724190213.26359-1-msys.mizuma@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Tue, 24 Jul 2018 16:17:10 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:50442 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2388393AbeGXURK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Jul 2018 16:17:10 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id AF3FA4079F0D;
+        Tue, 24 Jul 2018 19:09:16 +0000 (UTC)
+Received: from madcap2.tricolour.ca (ovpn-112-54.rdu2.redhat.com [10.10.112.54])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id D444DFF69;
+        Tue, 24 Jul 2018 19:09:06 +0000 (UTC)
+Date:   Tue, 24 Jul 2018 15:06:13 -0400
+From:   Richard Guy Briggs <rgb@redhat.com>
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     cgroups@vger.kernel.org, containers@lists.linux-foundation.org,
+        linux-api@vger.kernel.org, linux-audit@redhat.com,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, ebiederm@xmission.com, luto@kernel.org,
+        jlayton@redhat.com, carlos@redhat.com, dhowells@redhat.com,
+        viro@zeniv.linux.org.uk, simo@redhat.com,
+        Eric Paris <eparis@parisplace.org>, serge@hallyn.com
+Subject: Re: [RFC PATCH ghak90 (was ghak32) V3 01/10] audit: add container id
+Message-ID: <20180724190613.ww6yhsqpa7n4s62k@madcap2.tricolour.ca>
+References: <cover.1528304203.git.rgb@redhat.com>
+ <0377c3ced6bdbc44fe17f9a5679cb6eda4304024.1528304203.git.rgb@redhat.com>
+ <CAHC9VhRk+qLAyizM9i8D+cjKxyhruuj_Z9N0QRmjM-fjm4hgRw@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHC9VhRk+qLAyizM9i8D+cjKxyhruuj_Z9N0QRmjM-fjm4hgRw@mail.gmail.com>
+User-Agent: NeoMutt/20180512
+X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Tue, 24 Jul 2018 19:09:16 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Tue, 24 Jul 2018 19:09:16 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'rgb@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>
+On 2018-07-20 18:13, Paul Moore wrote:
+> On Wed, Jun 6, 2018 at 1:00 PM Richard Guy Briggs <rgb@redhat.com> wrote:
+> > Implement the proc fs write to set the audit container identifier of a
+> > process, emitting an AUDIT_CONTAINER_ID record to document the event.
+> >
+> > This is a write from the container orchestrator task to a proc entry of
+> > the form /proc/PID/audit_containerid where PID is the process ID of the
+> > newly created task that is to become the first task in a container, or
+> > an additional task added to a container.
+> >
+> > The write expects up to a u64 value (unset: 18446744073709551615).
+> >
+> > The writer must have capability CAP_AUDIT_CONTROL.
+> >
+> > This will produce a record such as this:
+> >   type=CONTAINER_ID msg=audit(2018-06-06 12:39:29.636:26949) : op=set opid=2209 old-contid=18446744073709551615 contid=123456 pid=628 auid=root uid=root tty=ttyS0 ses=1 subj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 comm=bash exe=/usr/bin/bash res=yes
+> >
+> > The "op" field indicates an initial set.  The "pid" to "ses" fields are
+> > the orchestrator while the "opid" field is the object's PID, the process
+> > being "contained".  Old and new audit container identifier values are
+> > given in the "contid" fields, while res indicates its success.
+> >
+> > It is not permitted to unset or re-set the audit container identifier.
+> > A child inherits its parent's audit container identifier, but then can
+> > be set only once after.
+> >
+> > See: https://github.com/linux-audit/audit-kernel/issues/90
+> > See: https://github.com/linux-audit/audit-userspace/issues/51
+> > See: https://github.com/linux-audit/audit-testsuite/issues/64
+> > See: https://github.com/linux-audit/audit-kernel/wiki/RFE-Audit-Container-ID
+> >
+> > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+> > ---
+> >  fs/proc/base.c             | 37 ++++++++++++++++++++++++
+> >  include/linux/audit.h      | 25 ++++++++++++++++
+> >  include/uapi/linux/audit.h |  2 ++
+> >  kernel/auditsc.c           | 71 ++++++++++++++++++++++++++++++++++++++++++++++
+> >  4 files changed, 135 insertions(+)
+> 
+> ...
+> 
+> > --- a/include/linux/audit.h
+> > +++ b/include/linux/audit.h
+> > @@ -606,6 +621,16 @@ static inline bool audit_loginuid_set(struct task_struct *tsk)
+> >        return uid_valid(audit_get_loginuid(tsk));
+> > }
+> >
+> > +static inline bool cid_valid(u64 contid)
+> > +{
+> > +       return contid != AUDIT_CID_UNSET;
+> > +}
+> > +
+> > +static inline bool audit_contid_set(struct task_struct *tsk)
+> > +{
+> > +       return cid_valid(audit_get_contid(tsk));
+> > +}
+> 
+> For the sake of consistency I think we should rename cid_valid() to
+> audit_contid_valid().
 
-Currently, sb_edac driver does not support systems which has
-multi PCI segments. If the driver is loaded to such system,
-a slab-out-bounds happens [*].
+Ok.
 
-This patch extends sb_edac driver to check whether segment number
-and bus number matches when deciding how to group memory controller
-PCI devices to CPU sockets. 
+> > diff --git a/kernel/auditsc.c b/kernel/auditsc.c
+> > index 59ef7a81..611e926 100644
+> > --- a/kernel/auditsc.c
+> > +++ b/kernel/auditsc.c
+> > @@ -956,6 +956,8 @@ int audit_alloc(struct task_struct *tsk)
+> >                 return -ENOMEM;
+> >         info->loginuid = audit_get_loginuid(current);
+> >         info->sessionid = audit_get_sessionid(current);
+> > +       info->contid = audit_get_contid(current);
+> > +       info->inherited = true;
+> 
+> First see my others comments in this patch about inheritence, but if
+> we decide that flagging inherited values is important we should
+> probably rename the "inherited" field to indicate that it applies to
+> just the "contid" field.
 
-[*] KASAN report is as follows.
-==================================================================
-BUG: KASAN: slab-out-of-bounds in sbridge_get_all_devices.constprop.14+0x75f/0x96a [sb_edac]
-Read of size 8 at addr ffff8c0d44dfe850 by task modprobe/4221
+Ok.
 
-CPU: 19 PID: 4221 Comm: modprobe Not tainted 4.18.0-rc5 #2
-Call Trace:
- dump_stack+0xc2/0x16b
- ? show_regs_print_info+0x5/0x5
- ? kmsg_dump_rewind_nolock+0xd9/0xd9
- ? pci_get_dev_by_id+0x57/0x70
- ? pci_get_device+0x155/0x210
- print_address_description+0x6a/0x270
- kasan_report+0x258/0x380
- ? sbridge_get_all_devices.constprop.14+0x75f/0x96a [sb_edac]
- sbridge_get_all_devices.constprop.14+0x75f/0x96a [sb_edac]
-...
-==================================================================
+> >         tsk->audit = info;
+> >
+> >         if (likely(!audit_ever_enabled))
+> > @@ -985,6 +987,8 @@ int audit_alloc(struct task_struct *tsk)
+> >  struct audit_task_info init_struct_audit = {
+> >         .loginuid = INVALID_UID,
+> >         .sessionid = AUDIT_SID_UNSET,
+> > +       .contid = AUDIT_CID_UNSET,
+> > +       .inherited = true,
+> >         .ctx = NULL,
+> >  };
+> >
+> > @@ -2112,6 +2116,73 @@ int audit_set_loginuid(kuid_t loginuid)
+> >  }
+> >
+> >  /**
+> > + * audit_set_contid - set current task's audit_context contid
+> > + * @contid: contid value
+> > + *
+> > + * Returns 0 on success, -EPERM on permission failure.
+> > + *
+> > + * Called (set) from fs/proc/base.c::proc_contid_write().
+> > + */
+> > +int audit_set_contid(struct task_struct *task, u64 contid)
+> > +{
+> > +       u64 oldcontid;
+> > +       int rc = 0;
+> > +       struct audit_buffer *ab;
+> > +       uid_t uid;
+> > +       struct tty_struct *tty;
+> > +       char comm[sizeof(current->comm)];
+> > +
+> > +       /* Can't set if audit disabled */
+> > +       if (!task->audit)
+> > +               return -ENOPROTOOPT;
+> > +       oldcontid = audit_get_contid(task);
+> > +       /* Don't allow the audit containerid to be unset */
+> > +       if (!cid_valid(contid))
+> > +               rc = -EINVAL;
+> > +       /* if we don't have caps, reject */
+> > +       else if (!capable(CAP_AUDIT_CONTROL))
+> > +               rc = -EPERM;
+> > +       /* if task has children or is not single-threaded, deny */
+> > +       else if (!list_empty(&task->children))
+> > +               rc = -EBUSY;
+> 
+> Is this safe without holding tasklist_lock?  I worry we might be
+> vulnerable to a race with fork().
+> 
+> > +       else if (!(thread_group_leader(task) && thread_group_empty(task)))
+> > +               rc = -EALREADY;
+> 
+> Similar concern here as well, although related to threads.
 
-Fixes: e2f747b1f42a ("EDAC, sb_edac: Assign EDAC memory controller per h/w controller")
+I think you are correct here and tasklist_lock should cover both.  Do we
+also want rcu_read_lock() immediately preceeding it?
 
-Signed-off-by: Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>
-Reviewed-by: Tony Luck <tony.luck@intel.com>
----
- drivers/edac/sb_edac.c | 17 ++++++++++++-----
- 1 file changed, 12 insertions(+), 5 deletions(-)
+> > +       /* it is already set, and not inherited from the parent, reject */
+> > +       else if (cid_valid(oldcontid) && !task->audit->inherited)
+> > +               rc = -EEXIST;
+> 
+> Maybe I'm missing something, but why do we care about preventing
+> reassigning the audit container ID in this case?  The task is single
+> threaded and has no descendants at this point so it should be safe,
+> yes?  So long as the task changing the audit container ID has
+> capable(CAP_AUDIT_CONTOL) it shouldn't matter, right?
 
-diff --git a/drivers/edac/sb_edac.c b/drivers/edac/sb_edac.c
-index 4a89c80..07726fb 100644
---- a/drivers/edac/sb_edac.c
-+++ b/drivers/edac/sb_edac.c
-@@ -352,6 +352,7 @@ struct pci_id_table {
- 
- struct sbridge_dev {
- 	struct list_head	list;
-+	int			seg;
- 	u8			bus, mc;
- 	u8			node_id, source_id;
- 	struct pci_dev		**pdev;
-@@ -729,7 +730,8 @@ static inline int numcol(u32 mtr)
- 	return 1 << cols;
- }
- 
--static struct sbridge_dev *get_sbridge_dev(u8 bus, enum domain dom, int multi_bus,
-+static struct sbridge_dev *get_sbridge_dev(int seg, u8 bus, enum domain dom,
-+					   int multi_bus,
- 					   struct sbridge_dev *prev)
- {
- 	struct sbridge_dev *sbridge_dev;
-@@ -747,14 +749,15 @@ static struct sbridge_dev *get_sbridge_dev(u8 bus, enum domain dom, int multi_bu
- 				      : sbridge_edac_list.next, struct sbridge_dev, list);
- 
- 	list_for_each_entry_from(sbridge_dev, &sbridge_edac_list, list) {
--		if (sbridge_dev->bus == bus && (dom == SOCK || dom == sbridge_dev->dom))
-+		if ((sbridge_dev->seg == seg) && (sbridge_dev->bus == bus) &&
-+				(dom == SOCK || dom == sbridge_dev->dom))
- 			return sbridge_dev;
- 	}
- 
- 	return NULL;
- }
- 
--static struct sbridge_dev *alloc_sbridge_dev(u8 bus, enum domain dom,
-+static struct sbridge_dev *alloc_sbridge_dev(int seg, u8 bus, enum domain dom,
- 					     const struct pci_id_table *table)
- {
- 	struct sbridge_dev *sbridge_dev;
-@@ -771,6 +774,7 @@ static struct sbridge_dev *alloc_sbridge_dev(u8 bus, enum domain dom,
- 		return NULL;
- 	}
- 
-+	sbridge_dev->seg = seg;
- 	sbridge_dev->bus = bus;
- 	sbridge_dev->dom = dom;
- 	sbridge_dev->n_devs = table->n_devs_per_imc;
-@@ -2246,6 +2250,7 @@ static int sbridge_get_onedevice(struct pci_dev **prev,
- 	struct sbridge_dev *sbridge_dev = NULL;
- 	const struct pci_id_descr *dev_descr = &table->descr[devno];
- 	struct pci_dev *pdev = NULL;
-+	int seg = 0;
- 	u8 bus = 0;
- 	int i = 0;
- 
-@@ -2276,10 +2281,12 @@ static int sbridge_get_onedevice(struct pci_dev **prev,
- 		/* End of list, leave */
- 		return -ENODEV;
- 	}
-+	seg = pci_domain_nr(pdev->bus);
- 	bus = pdev->bus->number;
- 
- next_imc:
--	sbridge_dev = get_sbridge_dev(bus, dev_descr->dom, multi_bus, sbridge_dev);
-+	sbridge_dev = get_sbridge_dev(seg, bus, dev_descr->dom,
-+				      multi_bus, sbridge_dev);
- 	if (!sbridge_dev) {
- 		/* If the HA1 wasn't found, don't create EDAC second memory controller */
- 		if (dev_descr->dom == IMC1 && devno != 1) {
-@@ -2292,7 +2299,7 @@ static int sbridge_get_onedevice(struct pci_dev **prev,
- 		if (dev_descr->dom == SOCK)
- 			goto out_imc;
- 
--		sbridge_dev = alloc_sbridge_dev(bus, dev_descr->dom, table);
-+		sbridge_dev = alloc_sbridge_dev(seg, bus, dev_descr->dom, table);
- 		if (!sbridge_dev) {
- 			pci_dev_put(pdev);
- 			return -ENOMEM;
--- 
-2.18.0
+Because we hammered out this idea 6 months ago in the design phase and I
+thought we all firmly agreed that the audit container identifier could
+only be set once.  Has any significant discussion happenned since then
+to change that wisdom?  I just wonder why this is coming up now.
 
+> Related, I'm questioning if we would ever care if the audit container
+> ID was inherited or not?
+
+We do since that is the only way we can tell if the value has been set
+once already or inherited unless we check if the parent's audit
+container identifier is identical (which tells us it was inherited).
+
+> > +       if (!rc) {
+> > +               task_lock(task);
+> > +               task->audit->contid = contid;
+> > +               task->audit->inherited = false;
+> > +               task_unlock(task);
+> 
+> I suspect the task_lock() may not be what we want here, but if we are
+> using task_lock() to protect the audit fields two things come to mind:
+> 
+> 1. We should update the header comments for task_lock() in task.h to
+> indicate that it also protects ->audit.
+
+Fair enough.
+
+> 2. Where else do we need to worry about taking this lock?  At the very
+> least we should take this lock near the top of this function before we
+> check task->audit and not drop it until after we have set it, or
+> failed the operation for one of the reasons above.
+
+Agreed, since another process on another CPU could race attempting this
+same operation.  However, the task_lock() comment precludes using it
+with write_lock_irq(&task_lock) that might be required above.
+
+> > +       }
+> > +
+> > +       if (!audit_enabled)
+> > +               return rc;
+> > +
+> > +       ab = audit_log_start(audit_context(), GFP_KERNEL, AUDIT_CONTAINER_ID);
+> > +       if (!ab)
+> > +               return rc;
+> > +
+> > +       uid = from_kuid(&init_user_ns, task_uid(current));
+> > +       tty = audit_get_tty(current);
+> > +       audit_log_format(ab, "op=set opid=%d old-contid=%llu contid=%llu pid=%d uid=%u auid=%u tty=%s ses=%u",
+> > +                        task_tgid_nr(task), oldcontid, contid,
+> > +                        task_tgid_nr(current), uid
+> > +                        from_kuid(&init_user_ns, audit_get_loginuid(current)),
+> > +                        tty ? tty_name(tty) : "(none)",
+> > +                        audit_get_sessionid(current));
+> > +       audit_put_tty(tty);
+> > +       audit_log_task_context(ab);
+> > +       audit_log_format(ab, " comm=");
+> > +       audit_log_untrustedstring(ab, get_task_comm(comm, current));
+> > +       audit_log_d_path_exe(ab, current->mm);
+> > +       audit_log_format(ab, " res=%d", !rc);
+> > +       audit_log_end(ab);
+> > +       return rc;
+> > +}
+> > +
+> > +/**
+> >   * __audit_mq_open - record audit data for a POSIX MQ open
+> >   * @oflag: open flag
+> >   * @mode: mode bits
+> 
+> --
+> paul moore
+> www.paul-moore.com
+
+- RGB
+
+--
+Richard Guy Briggs <rgb@redhat.com>
+Sr. S/W Engineer, Kernel Security, Base Operating Systems
+Remote, Ottawa, Red Hat Canada
+IRC: rgb, SunRaycer
+Voice: +1.647.777.2635, Internal: (81) 32635
