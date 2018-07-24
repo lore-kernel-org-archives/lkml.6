@@ -2,98 +2,189 @@ Return-Path: <SRS0=hTZH=KI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_MUTT
+X-Spam-Status: No, score=-0.6 required=3.0 tests=FROM_EXCESS_BASE64,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4623C6778A
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 13:11:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CE1EECDFB8
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 13:13:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 84E2320880
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 13:11:32 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="E7FfNi7r"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 84E2320880
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 0A64C20852
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 13:13:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0A64C20852
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388445AbeGXOR4 (ORCPT
+        id S2388374AbeGXOT7 convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 10:17:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59464 "EHLO mail.kernel.org"
+        Tue, 24 Jul 2018 10:19:59 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:32819 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388370AbeGXORz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 10:17:55 -0400
-Received: from localhost (unknown [171.61.90.205])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5AD5620875;
-        Tue, 24 Jul 2018 13:11:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1532437890;
-        bh=ZbqDJKeq58If8A+a5JAw0oIyX+jmylv6EzSkZrCKJ4E=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=E7FfNi7rwW4Ank8UpoHk7rAfkyR2iNDuH3d8RhidG4eqauToeRaaQYrp95Q8goUw5
-         dKmUCjdlD0LopPSP8ZBPZU5JU0bjebVrdchRXko4bSsmed0swsff+djlVx8/lpGRNB
-         sAPaenFZShDTU/eEkyg2KlErCv2syFCic5nvknvQ=
-Date:   Tue, 24 Jul 2018 18:41:21 +0530
-From:   Vinod <vkoul@kernel.org>
-To:     Paul Cercueil <paul@crapouillou.net>
-Cc:     Paul Burton <paul.burton@mips.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        James Hogan <jhogan@kernel.org>,
-        Zubair Lutfullah Kakakhel <Zubair.Kakakhel@imgtec.com>,
-        Mathieu Malaterre <malat@debian.org>,
-        Daniel Silsby <dansilsby@gmail.com>, dmaengine@vger.kernel.org,
+        id S2388265AbeGXOT6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Jul 2018 10:19:58 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id F174920737; Tue, 24 Jul 2018 15:13:29 +0200 (CEST)
+Received: from dell-desktop.home (AAubervilliers-681-1-78-122.w90-88.abo.wanadoo.fr [90.88.20.122])
+        by mail.bootlin.com (Postfix) with ESMTPSA id A0992203D9;
+        Tue, 24 Jul 2018 15:13:19 +0200 (CEST)
+Date:   Tue, 24 Jul 2018 15:13:19 +0200
+From:   =?UTF-8?B?TXlsw6huZQ==?= Josserand <mylene.josserand@bootlin.com>
+To:     =?UTF-8?B?T25kxZllag==?= Jirman <megous@megous.com>
+Cc:     dmitry.torokhov@gmail.com, robh+dt@kernel.org,
+        mark.rutland@arm.com, maxime.ripard@bootlin.com, wens@csie.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mips@linux-mips.org
-Subject: Re: [PATCH v3 00/18] JZ4780 DMA patchset v3
-Message-ID: <20180724131121.GE3661@vkoul-mobl>
-References: <20180721110643.19624-1-paul@crapouillou.net>
- <20180723175846.udmjtkx7fsaf52wa@pburton-laptop>
- <1532430574.2610.0@smtp.crapouillou.net>
+        thomas.petazzoni@bootlin.com, linux-input@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v3 1/3] Input: edt-ft5x06 - Add support for regulator
+Message-ID: <20180724151319.3139c5ae@dell-desktop.home>
+In-Reply-To: <20180718224645.ns7nvqxvqc6huxcz@core>
+References: <20180718182719.29663-1-mylene.josserand@bootlin.com>
+        <20180718182719.29663-2-mylene.josserand@bootlin.com>
+        <20180718224645.ns7nvqxvqc6huxcz@core>
+Organization: Bootlin
+X-Mailer: Claws Mail 3.14.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1532430574.2610.0@smtp.crapouillou.net>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 24-07-18, 13:09, Paul Cercueil wrote:
-> Hi,
-> 
-> Le lun. 23 juil. 2018 � 19:58, Paul Burton <paul.burton@mips.com> a �crit :
-> > Hi Paul & Vinod,
-> > 
-> > On Sat, Jul 21, 2018 at 01:06:25PM +0200, Paul Cercueil wrote:
-> > >  This is the version 3 of my jz4780-dma driver update patchset.
-> > > 
-> > >  Apologies to the DMA people, the v2 of this patchset did not make
-> > > it to
-> > >  their mailing-list; see the bottom of this email for a description
-> > > of
-> > >  what happened in v2.
-> > > 
-> > >  Changelog from v2 to v3:
-> > > 
-> > >  - Modified the devicetree bindings to comply with the specification
-> > > 
-> > >  - New patch [06/18] allows the JZ4780 DMA driver to be compiled
-> > > within a
-> > >    generic MIPS kernel.
-> > 
-> > Would you prefer to take the MIPS .dts changes in patches 16-18 through
-> > the DMA tree with the rest of the series?
-> 
-> I think it would make sense yes.
+Hello,
 
-okay will do so when the series is merged
+Thank you for your review.
+
+On Thu, 19 Jul 2018 00:46:45 +0200
+Ondřej Jirman <megous@megous.com> wrote:
+
+> Hello Mylène,
+> 
+> On Wed, Jul 18, 2018 at 08:27:17PM +0200, Mylène Josserand wrote:
+> > Add the support of regulator to use it as VCC source.
+> > 
+> > Signed-off-by: Mylène Josserand <mylene.josserand@bootlin.com>
+> > ---
+> >  .../bindings/input/touchscreen/edt-ft5x06.txt      |  1 +
+> >  drivers/input/touchscreen/edt-ft5x06.c             | 29 ++++++++++++++++++++++
+> >  2 files changed, 30 insertions(+)
+> > 
+> > diff --git a/Documentation/devicetree/bindings/input/touchscreen/edt-ft5x06.txt b/Documentation/devicetree/bindings/input/touchscreen/edt-ft5x06.txt
+> > index 025cf8c9324a..48e975b9c1aa 100644
+> > --- a/Documentation/devicetree/bindings/input/touchscreen/edt-ft5x06.txt
+> > +++ b/Documentation/devicetree/bindings/input/touchscreen/edt-ft5x06.txt
+> > @@ -30,6 +30,7 @@ Required properties:
+> >  Optional properties:
+> >   - reset-gpios: GPIO specification for the RESET input
+> >   - wake-gpios:  GPIO specification for the WAKE input
+> > + - vcc-supply:  Regulator that supplies the touchscreen
+> >  
+> >   - pinctrl-names: should be "default"
+> >   - pinctrl-0:   a phandle pointing to the pin settings for the
+> > diff --git a/drivers/input/touchscreen/edt-ft5x06.c b/drivers/input/touchscreen/edt-ft5x06.c
+> > index 1e18ca0d1b4e..aa94494b06b5 100644
+> > --- a/drivers/input/touchscreen/edt-ft5x06.c
+> > +++ b/drivers/input/touchscreen/edt-ft5x06.c
+> > @@ -39,6 +39,7 @@
+> >  #include <linux/input/mt.h>
+> >  #include <linux/input/touchscreen.h>
+> >  #include <linux/of_device.h>
+> > +#include <linux/regulator/consumer.h>
+> >  
+> >  #define WORK_REGISTER_THRESHOLD		0x00
+> >  #define WORK_REGISTER_REPORT_RATE	0x08
+> > @@ -91,6 +92,7 @@ struct edt_ft5x06_ts_data {
+> >  	struct touchscreen_properties prop;
+> >  	u16 num_x;
+> >  	u16 num_y;
+> > +	struct regulator *vcc;
+> >  
+> >  	struct gpio_desc *reset_gpio;
+> >  	struct gpio_desc *wake_gpio;
+> > @@ -991,6 +993,22 @@ static int edt_ft5x06_ts_probe(struct i2c_client *client,
+> >  
+> >  	tsdata->max_support_points = chip_data->max_support_points;
+> >  
+> > +	tsdata->vcc = devm_regulator_get(&client->dev, "vcc");
+> > +	if (IS_ERR(tsdata->vcc)) {
+> > +		error = PTR_ERR(tsdata->vcc);
+> > +		if (error != -EPROBE_DEFER)
+> > +			dev_err(&client->dev, "failed to request regulator: %d\n",
+> > +				error);
+> > +		return error;
+> > +	}
+> > +
+> > +	error = regulator_enable(tsdata->vcc);
+> > +	if (error < 0) {
+> > +		dev_err(&client->dev, "failed to enable vcc: %d\n",
+> > +			error);
+> > +		return error;
+> > +	}
+> > +
+> >  	tsdata->reset_gpio = devm_gpiod_get_optional(&client->dev,
+> >  						     "reset", GPIOD_OUT_HIGH);
+> >  	if (IS_ERR(tsdata->reset_gpio)) {
+> > @@ -1120,20 +1138,31 @@ static int edt_ft5x06_ts_remove(struct i2c_client *client)
+> >  static int __maybe_unused edt_ft5x06_ts_suspend(struct device *dev)
+> >  {
+> >  	struct i2c_client *client = to_i2c_client(dev);
+> > +	struct edt_ft5x06_ts_data *tsdata = i2c_get_clientdata(client);
+> >  
+> >  	if (device_may_wakeup(dev))
+> >  		enable_irq_wake(client->irq);
+> >  
+> > +	regulator_disable(tsdata->vcc);
+> > +  
+> 
+> How will the touchscreen wakeup the system with interrupt if you power it off
+> on suspend? Perhaps guard this with device_may_wakeup() too? 
+
+True, thank you for pointing it out.
+
+> 
+> >  	return 0;
+> >  }
+> >  
+> >  static int __maybe_unused edt_ft5x06_ts_resume(struct device *dev)
+> >  {
+> >  	struct i2c_client *client = to_i2c_client(dev);
+> > +	struct edt_ft5x06_ts_data *tsdata = i2c_get_clientdata(client);
+> > +	int ret;
+> >  
+> >  	if (device_may_wakeup(dev))
+> >  		disable_irq_wake(client->irq);
+> >  
+> > +	ret = regulator_enable(tsdata->vcc);
+> > +	if (ret < 0) {
+> > +		dev_err(dev, "failed to enable vcc: %d\n", ret);
+> > +		return ret;
+> > +	}
+> > +  
+> 
+> Ditto.
+
+ack
+
+> 
+> Regards,
+>   o.
+> 
+> >  	return 0;
+> >  }
+> >  
+> > -- 
+> > 2.11.0
+> > 
+> > 
+> > _______________________________________________
+> > linux-arm-kernel mailing list
+> > linux-arm-kernel@lists.infradead.org
+> > http://lists.infradead.org/mailman/listinfo/linux-arm-kernel  
+
+
+Best regards,
 
 -- 
-~Vinod
+Mylène Josserand, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
