@@ -2,94 +2,112 @@ Return-Path: <SRS0=hTZH=KI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 717B3ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 13:33:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 768CFECDFB8
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 13:35:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2663420880
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 13:33:54 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="gliWVfAP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2663420880
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 2457220856
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 13:35:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2457220856
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388412AbeGXOkW (ORCPT
+        id S2388401AbeGXOlm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 10:40:22 -0400
-Received: from mail-oi0-f45.google.com ([209.85.218.45]:37659 "EHLO
-        mail-oi0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388321AbeGXOkW (ORCPT
+        Tue, 24 Jul 2018 10:41:42 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:58000 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2388321AbeGXOlm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 10:40:22 -0400
-Received: by mail-oi0-f45.google.com with SMTP id k81-v6so7461987oib.4
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Jul 2018 06:33:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=DxwA46rfNWzVwaysnN1wqm4+glssjQdjUYUo9bSlWLQ=;
-        b=gliWVfAPDD1qEJzU1dtPk9LI57iIeU1wXUEitTjlIoI98T/Aj4kZfRKkW2wqSRvxm3
-         b1ZPR8R4tobSvIJ4vQAI9OpmzrlltQvSBd+ME3NVciiEu8g1dv5f4krnAG8+3bD4DYIA
-         P68lIlqbuSxgrqYWgT6b9h1aKy0U1XdNrrChE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=DxwA46rfNWzVwaysnN1wqm4+glssjQdjUYUo9bSlWLQ=;
-        b=VvgR+5tVMuEOHVHFKmWQkTTORMybRtU9+AisFm/JHySBONlCdrnAzob0Ja6E7w0K+F
-         OwPIfieo8ISbpiFVAo40zNmRXKLunyIl/zOSa5wida0jg+6soPApCi1T7d1lfLrv/hzu
-         JbICLlIn0J3uH3ReFGeiGt0lbiabRxs4TRj4c0AX+3TOA8ax2zZa6th/MeIGfV6yG9eX
-         l+HAWTIqPbeRuZ3j+qQcxddoppyFv91S11qS3qIFh2xBRQ8iFkVm3AWEBuDT/FOqpx5s
-         Z554+NxmnGpUmfzdyAWWnhfceobFvOw7a2uqC1fctX3Z1dJQaxtfwoP87rVGfnFFhQCN
-         ivdw==
-X-Gm-Message-State: AOUpUlHGMZGMTuLvHB6QdxKDwGExpOje0VfpucHGTo1Gg+btX+F1mhM6
-        F9XIbF9r0zchVwiIfRbYJxh92w==
-X-Google-Smtp-Source: AAOMgpdd/dxMAy+9r7lm7JxsfRo0B/gEo81QeV9ENutCpq+EW39xyhnV9jnomzO7BUsh6usFsjJhIg==
-X-Received: by 2002:aca:de04:: with SMTP id v4-v6mr3408859oig.328.1532439230822;
-        Tue, 24 Jul 2018 06:33:50 -0700 (PDT)
-Received: from di3.localdomain (68-248-140-212.lightspeed.austtx.sbcglobal.net. [68.248.140.212])
-        by smtp.gmail.com with ESMTPSA id r3-v6sm8502975oig.49.2018.07.24.06.33.49
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 24 Jul 2018 06:33:50 -0700 (PDT)
-From:   Brian Brooks <brian.brooks@linaro.org>
-To:     ast@kernel.org, daniel@iogearbox.net, bjorn.topel@intel.com,
-        magnus.karlsson@intel.com
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Brian Brooks <brian.brooks@linaro.org>
-Subject: [PATCH bpf-next] samples/bpf: xdpsock: order memory on AArch64
-Date:   Tue, 24 Jul 2018 08:33:37 -0500
-Message-Id: <20180724133337.20175-1-brian.brooks@linaro.org>
-X-Mailer: git-send-email 2.18.0
+        Tue, 24 Jul 2018 10:41:42 -0400
+Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w6ODTSl3048653
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Jul 2018 09:35:10 -0400
+Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2ke3r5vh70-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Jul 2018 09:35:10 -0400
+Received: from localhost
+        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Tue, 24 Jul 2018 14:35:07 +0100
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
+        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 24 Jul 2018 14:35:03 +0100
+Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w6ODZ27K42991762
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 24 Jul 2018 13:35:02 GMT
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 3B8134C05E;
+        Tue, 24 Jul 2018 16:35:18 +0100 (BST)
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 9912C4C040;
+        Tue, 24 Jul 2018 16:35:16 +0100 (BST)
+Received: from localhost.localdomain (unknown [9.80.84.53])
+        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Tue, 24 Jul 2018 16:35:16 +0100 (BST)
+Subject: Re: [PATCH 1/2] security/keys/secure_key: Adds the secure key
+ support based on CAAM.
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Udit Agarwal <udit.agarwal@nxp.com>,
+        "dhowells@redhat.com" <dhowells@redhat.com>,
+        "zohar@linux.vnet.ibm.com" <zohar@linux.vnet.ibm.com>,
+        "jmorris@namei.org" <jmorris@namei.org>,
+        "serge@hallyn.com" <serge@hallyn.com>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Cc:     Sahil Malhotra <sahil.malhotra@nxp.com>,
+        Ruchika Gupta <ruchika.gupta@nxp.com>,
+        Horia Geanta <horia.geanta@nxp.com>,
+        Aymen Sghaier <aymen.sghaier@nxp.com>
+Date:   Tue, 24 Jul 2018 09:34:50 -0400
+In-Reply-To: <AM5PR0401MB2660B8C1DD5ED9989239EF009E550@AM5PR0401MB2660.eurprd04.prod.outlook.com>
+References: <20180720054656.29143-1-udit.agarwal@nxp.com>
+         <1532302451.6206.22.camel@linux.ibm.com>
+         <AM5PR0401MB2660B8C1DD5ED9989239EF009E550@AM5PR0401MB2660.eurprd04.prod.outlook.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 18072413-0020-0000-0000-000002AA7AED
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18072413-0021-0000-0000-000020F70D76
+Message-Id: <1532439290.3277.52.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-24_04:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1806210000 definitions=main-1807240144
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Signed-off-by: Brian Brooks <brian.brooks@linaro.org>
----
- samples/bpf/xdpsock_user.c | 5 +++++
- 1 file changed, 5 insertions(+)
+On Tue, 2018-07-24 at 12:31 +0000, Udit Agarwal wrote:
+> Yes the secure keys and CAAM are correlated. Secure keys depends on
+> NXP CAAM crypto HW accelerator.  Secure key is a random data of
+> length X (passed using keyctl command) & derived using CAAM. Blob of
+> this data is also created using CAAM. Only blob is visible to user
+> space.
 
-diff --git a/samples/bpf/xdpsock_user.c b/samples/bpf/xdpsock_user.c
-index 5904b1543831..1e82f7c617c3 100644
---- a/samples/bpf/xdpsock_user.c
-+++ b/samples/bpf/xdpsock_user.c
-@@ -145,8 +145,13 @@ static void dump_stats(void);
- 	} while (0)
- 
- #define barrier() __asm__ __volatile__("": : :"memory")
-+#ifdef __aarch64__
-+#define u_smp_rmb() __asm__ __volatile__("dmb ishld": : :"memory")
-+#define u_smp_wmb() __asm__ __volatile__("dmb ishst": : :"memory")
-+#else
- #define u_smp_rmb() barrier()
- #define u_smp_wmb() barrier()
-+#endif
- #define likely(x) __builtin_expect(!!(x), 1)
- #define unlikely(x) __builtin_expect(!!(x), 0)
- 
--- 
-2.18.0
+The term "secure keys" is really generic.  What makes the "secure
+keys" secure?  We introduced "trusted keys", because TPM 1.2 didn't
+support symmetric keys.  We shouldn't just duplicate "trusted keys"
+for different HW, but improve upon it (eg. symmetric keys never leave
+the device).
+
+The new key type should define generic methods, which are implemented
+for NXP CAAM rypto HW accelerator as an example.
+
+Mimi
 
