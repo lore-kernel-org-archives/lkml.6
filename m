@@ -2,67 +2,96 @@ Return-Path: <SRS0=hTZH=KI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ECF33C6778A
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 05:56:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D4E0C6778A
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 05:58:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A2B1120875
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 05:56:30 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Iw07A1gC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A2B1120875
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id BF1FC20852
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 05:58:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BF1FC20852
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zte.com.cn
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388334AbeGXHBO (ORCPT
+        id S2388274AbeGXHD3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 03:01:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47846 "EHLO mail.kernel.org"
+        Tue, 24 Jul 2018 03:03:29 -0400
+Received: from mxhk.zte.com.cn ([63.217.80.70]:53880 "EHLO mxhk.zte.com.cn"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388196AbeGXHBO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 03:01:14 -0400
-Received: from localhost (unknown [106.201.120.141])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E1C6E20856;
-        Tue, 24 Jul 2018 05:56:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1532411788;
-        bh=RkQYC1kxq83LtafQ1F45BSfhXIUJ058jJPEjkQAkULQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Iw07A1gCJD8kQj+QzKxkXzkwDcucKY0L63KCBBaleCZt8BhX/orCH5faI5vQTFrVF
-         a83IxCL/LmvZwLoV4eGWE4MUoMdjlc5y27cZm0eEv59vd4JY0OQb7zH2wvmlxGfaBt
-         UcmSyBcTn/DH498vBB+0zo2hfg1UcoARgn/3kHB4=
-Date:   Tue, 24 Jul 2018 11:26:20 +0530
-From:   Vinod <vkoul@kernel.org>
-To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Cc:     lee.jones@linaro.org, robh+dt@kernel.org, broonie@kernel.org,
-        mark.rutland@arm.com, lgirdwood@gmail.com, tiwai@suse.com,
-        bgoswami@codeaurora.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org
-Subject: Re: [PATCH 01/12] mfd: dt-bindings: Add wcd9335 mfd bindings
-Message-ID: <20180724055620.GJ3219@vkoul-mobl>
-References: <20180723155410.9494-1-srinivas.kandagatla@linaro.org>
- <20180723155410.9494-2-srinivas.kandagatla@linaro.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180723155410.9494-2-srinivas.kandagatla@linaro.org>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+        id S2388161AbeGXHD3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Jul 2018 03:03:29 -0400
+Received: from mse01.zte.com.cn (unknown [10.30.3.20])
+        by Forcepoint Email with ESMTPS id D393C640F2208226E32E;
+        Tue, 24 Jul 2018 13:58:39 +0800 (CST)
+Received: from notes_smtp.zte.com.cn ([10.30.1.239])
+        by mse01.zte.com.cn with ESMTP id w6O5wXL7068236;
+        Tue, 24 Jul 2018 13:58:33 +0800 (GMT-8)
+        (envelope-from wang.yi59@zte.com.cn)
+Received: from fox-host8.localdomain ([10.74.120.8])
+          by szsmtp06.zte.com.cn (Lotus Domino Release 8.5.3FP6)
+          with ESMTP id 2018072413583685-1465621 ;
+          Tue, 24 Jul 2018 13:58:36 +0800 
+From:   Yi Wang <wang.yi59@zte.com.cn>
+To:     paul@paul-moore.com
+Cc:     eparis@redhat.com, linux-audit@redhat.com,
+        linux-kernel@vger.kernel.org, jiang.biao2@zte.com.cn,
+        wang.yi59@zte.com.cn, zhong.weidong@zte.com.cn
+Subject: [PATCH] audit: fix potential null dereference 'context->module.name'
+Date:   Tue, 24 Jul 2018 13:57:14 +0800
+Message-Id: <1532411834-33775-1-git-send-email-wang.yi59@zte.com.cn>
+X-Mailer: git-send-email 1.8.3.1
+X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
+ 21, 2013) at 2018-07-24 13:58:36,
+        Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
+ 2018-07-24 13:58:29,
+        Serialize complete at 2018-07-24 13:58:29
+X-MAIL: mse01.zte.com.cn w6O5wXL7068236
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 23-07-18, 16:53, Srinivas Kandagatla wrote:
-> Qualcomm WCD9335 Codec is a standalone Hi-Fi audio codec IC, supports
-> Qualcomm Technologies, Inc. (QTI) multimedia solutions, including
-> the MSM8996, MSM8976, and MSM8956 chipsets. It has in-build
+The variable 'context->module.name' may be null pointer when
+kmalloc return null, so it's better to check it before using
+to avoid null dereference.
 
-in-built perhaps?
+Signed-off-by: Yi Wang <wang.yi59@zte.com.cn>
+Reviewed-by: Jiang Biao <jiang.biao2@zte.com.cn>
+---
+ kernel/auditsc.c | 11 ++++++++---
+ 1 file changed, 8 insertions(+), 3 deletions(-)
 
+diff --git a/kernel/auditsc.c b/kernel/auditsc.c
+index e80459f..4830b83 100644
+--- a/kernel/auditsc.c
++++ b/kernel/auditsc.c
+@@ -1272,8 +1272,12 @@ static void show_special(struct audit_context *context, int *call_panic)
+ 		break;
+ 	case AUDIT_KERN_MODULE:
+ 		audit_log_format(ab, "name=");
+-		audit_log_untrustedstring(ab, context->module.name);
+-		kfree(context->module.name);
++		if (context->module.name) {
++			audit_log_untrustedstring(ab, context->module.name);
++			kfree(context->module.name);
++		} else
++			audit_log_format(ab, "(null)");
++
+ 		break;
+ 	}
+ 	audit_log_end(ab);
+@@ -2409,7 +2413,8 @@ void __audit_log_kern_module(char *name)
+ 	struct audit_context *context = current->audit_context;
+ 
+ 	context->module.name = kmalloc(strlen(name) + 1, GFP_KERNEL);
+-	strcpy(context->module.name, name);
++	if (context->module.name)
++		strcpy(context->module.name, name);
+ 	context->type = AUDIT_KERN_MODULE;
+ }
+ 
 -- 
-~Vinod
+1.8.3.1
+
