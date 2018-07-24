@@ -2,381 +2,398 @@ Return-Path: <SRS0=hTZH=KI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0027ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 14:06:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80275C6778A
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 14:06:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 75F89205C9
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 14:06:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 75F89205C9
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 1B1DA205C9
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 14:06:39 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="iox9d4jy"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1B1DA205C9
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388501AbeGXPMw (ORCPT
+        id S2388507AbeGXPNP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 11:12:52 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:40702 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2388385AbeGXPMw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 11:12:52 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 6725B7D84D;
-        Tue, 24 Jul 2018 14:06:12 +0000 (UTC)
-Received: from madcap2.tricolour.ca (ovpn-112-54.rdu2.redhat.com [10.10.112.54])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id B603C16878;
-        Tue, 24 Jul 2018 14:06:02 +0000 (UTC)
-Date:   Tue, 24 Jul 2018 10:03:09 -0400
-From:   Richard Guy Briggs <rgb@redhat.com>
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     cgroups@vger.kernel.org, containers@lists.linux-foundation.org,
-        linux-api@vger.kernel.org, linux-audit@redhat.com,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, ebiederm@xmission.com, luto@kernel.org,
-        jlayton@redhat.com, carlos@redhat.com, dhowells@redhat.com,
-        viro@zeniv.linux.org.uk, simo@redhat.com,
-        Eric Paris <eparis@parisplace.org>, serge@hallyn.com
-Subject: Re: [RFC PATCH ghak90 (was ghak32) V3 07/10] audit: add support for
- containerid to network namespaces
-Message-ID: <20180724140309.i6o2yjdoif5krxtw@madcap2.tricolour.ca>
-References: <cover.1528304203.git.rgb@redhat.com>
- <562cfaf7629b64252aac7cf3cecdd70b471af5b5.1528304204.git.rgb@redhat.com>
- <CAHC9VhStmCOS=o2aM7zHLGUYyfuCu_d1so4Cp4T-qetGnJpUUg@mail.gmail.com>
+        Tue, 24 Jul 2018 11:13:15 -0400
+Received: from mail-pg1-f181.google.com ([209.85.215.181]:38590 "EHLO
+        mail-pg1-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388320AbeGXPNO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Jul 2018 11:13:14 -0400
+Received: by mail-pg1-f181.google.com with SMTP id k3-v6so2990071pgq.5
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Jul 2018 07:06:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=1HATMKGbfzHl1M03j0VQGcHBKdIJwrqn+vRy9TvyanQ=;
+        b=iox9d4jy2bSfoc6irrlhRVGAGLODNr/WdDYNKhXeSC01AdZv09IlJRjtUlUAjrd+1t
+         EyyzJxKa67msL5rA9r7uTVCQxL5fH2Bb4EbbEJxOrn+ZkF/bT0xFR89XZdQJ6FzCPo48
+         SIFc8FmAPqWf4GeEDtRCOBePkHQgLBlMC8Gqk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=1HATMKGbfzHl1M03j0VQGcHBKdIJwrqn+vRy9TvyanQ=;
+        b=OKd5AEAJXmjPAGA7Mzox/dWFMadqmmXPVGL+ROHV7oOwtqZUF7pu+GiYS7dAQJbLD2
+         Y95r+48J66V6ytDHV2F5cQuOYsB+AjvYN4p1WwbYGKeXSlVUWLRQSEXKsBSaNQL90SHf
+         l0JODNa4IZvA9d2LlJobWDNCxrtpvEH+sdRFGt6hJrcYz6Bm69OJUuPRwzSZjJmyxDGj
+         YQioV8tPKEc9vHO5N7YSToIiCRHCw6RWtuhYstPuh3Na5Q8jk/o52iaVXWgygjaHKYTC
+         Kse3ueGJhDprWz2SDWGEVKUhrUaSVNarmD5y66D4GQhHd6TtlqEb8g4Bqg360lElHYnj
+         TxeQ==
+X-Gm-Message-State: AOUpUlFmnhon6Q+P8eY6VFIHtuC0TrO9clw/IaqyeXrS6L7MlKN2LEge
+        AM6OmCSyFcAPvlxH9auWUYfe9A==
+X-Google-Smtp-Source: AAOMgpdZr8emVBpqwX1lxfpZdHenDgj1aXpeAymQRaTClZdVpzCAAQrFCDyrOUx6gKPRXqpsXkiVxQ==
+X-Received: by 2002:a65:614a:: with SMTP id o10-v6mr15991173pgv.387.1532441195555;
+        Tue, 24 Jul 2018 07:06:35 -0700 (PDT)
+Received: from tfiga.tok.corp.google.com ([2401:fa00:4:4:5b21:5966:1198:d1e9])
+        by smtp.gmail.com with ESMTPSA id u11-v6sm23871996pfd.117.2018.07.24.07.06.30
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 24 Jul 2018 07:06:34 -0700 (PDT)
+From:   Tomasz Figa <tfiga@chromium.org>
+To:     linux-media@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org,
+        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Pawel Osciak <posciak@chromium.org>,
+        Alexandre Courbot <acourbot@chromium.org>, kamil@wypas.org,
+        a.hajda@samsung.com, Kyungmin Park <kyungmin.park@samsung.com>,
+        jtp.park@samsung.com, Philipp Zabel <p.zabel@pengutronix.de>,
+        =?UTF-8?q?Tiffany=20Lin=20=28=E6=9E=97=E6=85=A7=E7=8F=8A=29?= 
+        <tiffany.lin@mediatek.com>,
+        =?UTF-8?q?Andrew-CT=20Chen=20=28=E9=99=B3=E6=99=BA=E8=BF=AA=29?= 
+        <andrew-ct.chen@mediatek.com>, todor.tomov@linaro.org,
+        nicolas@ndufresne.ca,
+        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Dave Stevenson <dave.stevenson@raspberrypi.org>,
+        ezequiel@collabora.com, Tomasz Figa <tfiga@chromium.org>
+Subject: [PATCH 0/2] Document memory-to-memory video codec interfaces
+Date:   Tue, 24 Jul 2018 23:06:19 +0900
+Message-Id: <20180724140621.59624-1-tfiga@chromium.org>
+X-Mailer: git-send-email 2.18.0.233.g985f88cf7e-goog
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHC9VhStmCOS=o2aM7zHLGUYyfuCu_d1so4Cp4T-qetGnJpUUg@mail.gmail.com>
-User-Agent: NeoMutt/20180512
-X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Tue, 24 Jul 2018 14:06:12 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Tue, 24 Jul 2018 14:06:12 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'rgb@redhat.com' RCPT:''
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-07-20 18:14, Paul Moore wrote:
-> On Wed, Jun 6, 2018 at 1:03 PM Richard Guy Briggs <rgb@redhat.com> wrote:
-> > Audit events could happen in a network namespace outside of a task
-> > context due to packets received from the net that trigger an auditing
-> > rule prior to being associated with a running task.  The network
-> > namespace could in use by multiple containers by association to the
-> > tasks in that network namespace.  We still want a way to attribute
-> > these events to any potential containers.  Keep a list per network
-> > namespace to track these audit container identifiiers.
-> >
-> > Add/increment the audit container identifier on:
-> > - initial setting of the audit container identifier via /proc
-> > - clone/fork call that inherits an audit container identifier
-> > - unshare call that inherits an audit container identifier
-> > - setns call that inherits an audit container identifier
-> > Delete/decrement the audit container identifier on:
-> > - an inherited audit container identifier dropped when child set
-> > - process exit
-> > - unshare call that drops a net namespace
-> > - setns call that drops a net namespace
-> >
-> > See: https://github.com/linux-audit/audit-kernel/issues/92
-> > See: https://github.com/linux-audit/audit-testsuite/issues/64
-> > See: https://github.com/linux-audit/audit-kernel/wiki/RFE-Audit-Container-ID
-> > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
-> > ---
-> >  include/linux/audit.h | 23 ++++++++++++++++
-> >  kernel/audit.c        | 72 +++++++++++++++++++++++++++++++++++++++++++++++++++
-> >  kernel/auditsc.c      |  5 ++++
-> >  kernel/nsproxy.c      |  4 +++
-> >  4 files changed, 104 insertions(+)
-> 
-> ...
-> 
-> > diff --git a/include/linux/audit.h b/include/linux/audit.h
-> > index 1e37abf..7e2e51c 100644
-> > --- a/include/linux/audit.h
-> > +++ b/include/linux/audit.h
-> > @@ -87,6 +88,12 @@ struct audit_field {
-> >         u32                             op;
-> >  };
-> >
-> > +struct audit_contid {
-> > +       struct list_head        list;
-> > +       u64                     id;
-> > +       refcount_t              refcount;
-> > +};
-> 
-> Do we need to worry about locking the audit container ID list?  Does
-> the network namespace code (or some other namespace code) ensure that
-> add/deletes are serialized?
+This series attempts to add the documentation of what was discussed
+during Media Workshops at LinuxCon Europe 2012 in Barcelona and then
+later Embedded Linux Conference Europe 2014 in Düsseldorf and then
+eventually written down by Pawel Osciak and tweaked a bit by Chrome OS
+video team (but mostly in a cosmetic way or making the document more
+precise), during the several years of Chrome OS using the APIs in
+production.
 
-Now that you mention it, I don't have any idea.  I'll need to look into this.
+Note that most, if not all, of the API is already implemented in
+existing mainline drivers, such as s5p-mfc or mtk-vcodec. Intention of
+this series is just to formalize what we already have.
 
-> > @@ -156,6 +163,10 @@ extern void audit_log_task_info(struct audit_buffer *ab,
-> >                                 struct task_struct *tsk);
-> >  extern int audit_log_contid(struct audit_context *context,
-> >                                      char *op, u64 contid);
-> > +extern struct list_head *audit_get_contid_list(const struct net *net);
-> > +extern void audit_contid_add(struct net *net, u64 contid);
-> > +extern void audit_contid_del(struct net *net, u64 contid);
-> 
-> I wonder if we should change these function names to indicate that
-> they are managing the netns/cid list?  Right now there is no mention
-> of networking other than the first parameter.
-> 
-> Maybe audit_netns_contid_*()?
+It is an initial conversion from Google Docs to RST, so formatting is
+likely to need some further polishing. It is also the first time for me
+to create such long RST documention. I could not find any other instance
+of similar userspace sequence specifications among our Media documents,
+so I mostly followed what was there in the source. Feel free to suggest
+a better format.
 
-I was going to protest that they should be more generally named
-functions to deal with namespaces rather than specifically network
-namespaces, but each type of namespace will need its own accessor
-functions since each type of namespace has a different namespace type
-pointer.  It is tempting to try to generalize it, but that could be an
-excercise for the reader if another type of namespace needs this sort of
-support.
+Much of credits should go to Pawel Osciak, for writing most of the
+original text of the initial RFC.
 
-> > +extern void audit_switch_task_namespaces(struct nsproxy *ns, struct task_struct *p);
-> >
-> >  extern int                 audit_update_lsm_rules(void);
-> >
-> > @@ -209,6 +220,18 @@ static inline void audit_log_task_info(struct audit_buffer *ab,
-> >  static inline int audit_log_contid(struct audit_context *context,
-> >                                             char *op, u64 contid)
-> >  { }
-> > +static inline struct list_head *audit_get_contid_list(const struct net *net)
-> > +{
-> > +       static LIST_HEAD(list);
-> > +       return &list;
-> > +}
-> 
-> Why can't we just return NULL here like a normal dummy function?  It's
-> only ever used inside audit.  Actually, why is this even in
-> include/linux/audit.h, couldn't we put it in kernel/audit.h or even
-> just make it a static in audit.c?
+Changes since RFC:
+(https://lore.kernel.org/patchwork/project/lkml/list/?series=348588)
+ - The number of changes is too big to list them all here. Thanks to
+   a huge number of very useful comments from everyone (Philipp, Hans,
+   Nicolas, Dave, Stanimir, Alexandre) we should have the interfaces much
+   more specified now. The issues collected since previous revisions and
+   answers leading to this revision are listed below.
 
-You are right, static in kernel/audit.c is sufficient.
+General issues
 
-> > +static inline void audit_contid_add(struct net *net, u64 contid)
-> > +{ }
-> > +static inline void audit_contid_del(struct net *net, u64 contid)
-> > +{ }
-> > +static inline void audit_switch_task_namespaces(struct nsproxy *ns, struct task_struct *p)
-> > +{ }
-> > +
-> >  #define audit_enabled 0
-> >  #endif /* CONFIG_AUDIT */
-> >
-> > diff --git a/kernel/audit.c b/kernel/audit.c
-> > index ba304a8..ecd2de4 100644
-> > --- a/kernel/audit.c
-> > +++ b/kernel/audit.c
-> > @@ -106,6 +106,7 @@
-> >   */
-> >  struct audit_net {
-> >         struct sock *sk;
-> > +       struct list_head contid_list;
-> >  };
-> >
-> >  /**
-> > @@ -311,6 +312,76 @@ static struct sock *audit_get_sk(const struct net *net)
-> >         return aunet->sk;
-> >  }
-> >
-> > +/**
-> > + * audit_get_contid_list - Return the audit container ID list for the given network namespace
-> > + * @net: the destination network namespace
-> > + *
-> > + * Description:
-> > + * Returns the list pointer if valid, NULL otherwise.  The caller must ensure
-> > + * that a reference is held for the network namespace while the sock is in use.
-> > + */
-> > +struct list_head *audit_get_contid_list(const struct net *net)
-> > +{
-> > +       struct audit_net *aunet = net_generic(net, audit_net_id);
-> > +
-> > +       return &aunet->contid_list;
-> > +}
-> > +
-> > +void audit_contid_add(struct net *net, u64 contid)
-> > +{
-> > +       struct list_head *contid_list = audit_get_contid_list(net);
-> > +       struct audit_contid *cont;
-> > +
-> > +       if (!cid_valid(contid))
-> > +               return;
-> > +       if (!list_empty(contid_list))
-> > +               list_for_each_entry(cont, contid_list, list)
-> > +                       if (cont->id == contid) {
-> > +                               refcount_inc(&cont->refcount);
-> > +                               return;
-> > +                       }
-> 
-> <thinking out loud>I think this is fine for right now, but we may need
-> to be a bit clever about how we store the IDs - walking an unsorted
-> list with lots of entries may prove to be too painful.</thinking out
-> loud>
+  Should TRY_/S_FMT really return an error if invalid format is set,
+  rather than falling back to some valid format? That would be
+  contradicting to the general spec.
 
-Ok, agreed, it may want a hash array list...  That should be a
-straightforward optimization later.
+  Answer: Keep non-error behavior for existing spec compatibility, but
+  consider returning error for Request API.
 
-> > +       cont = kmalloc(sizeof(struct audit_contid), GFP_KERNEL);
-> > +       if (!cont)
-> > +               return;
-> > +       INIT_LIST_HEAD(&cont->list);
-> > +       cont->id = contid;
-> > +       refcount_set(&cont->refcount, 1);
-> > +       list_add(&cont->list, contid_list);
-> > +}
-> > +
-> > +void audit_contid_del(struct net *net, u64 contid)
-> > +{
-> > +       struct list_head *contid_list = audit_get_contid_list(net);
-> > +       struct audit_contid *cont = NULL;
-> > +       int found = 0;
-> > +
-> > +       if (!cid_valid(contid))
-> > +               return;
-> > +       if (!list_empty(contid_list))
-> > +               list_for_each_entry(cont, contid_list, list)
-> > +                       if (cont->id == contid) {
-> > +                               found = 1;
-> > +                               break;
-> 
-> You don't really need the found variable, you can just move all of the
-> work you need to do up into the if statement and return from inside
-> the if statement.
+  The number of possible opens of M2M video node should not be
+  artificially limited. Drivers should defer allocating limited resources
+  (e.g. hardware instances) until initialization is attempted to allow
+  probing and pre-opening of video nodes. (Hans suggested vb2 queue setup
+  or REQBUFS.)
 
-Fine, sure.
+  Answer: Allocate hardware resources in REQBUFS (or later).
 
-> > +                       }
-> > +       if (!found)
-> > +               return;
-> > +       list_del(&cont->list);
-> > +       if (refcount_dec_and_test(&cont->refcount))
-> > +               kfree(cont);
-> 
-> Don't you want to dec_and_test first and only remove it from the list
-> if there are no other references?
+  How about colorimetry settings (colorspace, xfer function, etc.)?
+  Normally it is not needed for decoding itself, but some codecs can parse
+  it from the stream.  If user space can parse by itself, should it set it
+  on OUTPUT queue?  What should happen on CAPTURE queue if colorimetry can
+  be parsed, colorimetry can’t be parsed.
 
-I don't think so.  Let me try to describe it in prose to see if I
-understood this properly and see if this makes more sense: I want to
-remove this audit_contid list member from this net's audit_contid list
-and decrement unconditionally this member's refcount so it knows there
-is one less thing pointing at it and when there is no longer anything
-pointing at it, free it.
+  Answer: Mention copying colorimetry from OUTPUT to CAPTURE queue only.
+  Potentially extend for hardware that can do colorspace conversion later.
 
-> > +}
-> >
-> > +void audit_switch_task_namespaces(struct nsproxy *ns, struct task_struct *p)
-> > +{
-> > +       u64 contid = audit_get_contid(p);
-> > +       struct nsproxy *new = p->nsproxy;
-> > +
-> > +       if (!cid_valid(contid))
-> > +               return;
-> > +       audit_contid_del(ns->net_ns, contid);
-> > +       if (new)
-> > +               audit_contid_add(new->net_ns, contid);
-> > +}
-> > +
-> >  void audit_panic(const char *message)
-> >  {
-> >         switch (audit_failure) {
-> > @@ -1550,6 +1621,7 @@ static int __net_init audit_net_init(struct net *net)
-> >                 return -ENOMEM;
-> >         }
-> >         aunet->sk->sk_sndtimeo = MAX_SCHEDULE_TIMEOUT;
-> > +       INIT_LIST_HEAD(&aunet->contid_list);
-> >
-> >         return 0;
-> >  }
-> > diff --git a/kernel/auditsc.c b/kernel/auditsc.c
-> > index ea1ee35..6ab5e5e 100644
-> > --- a/kernel/auditsc.c
-> > +++ b/kernel/auditsc.c
-> > @@ -75,6 +75,7 @@
-> >  #include <linux/uaccess.h>
-> >  #include <linux/fsnotify_backend.h>
-> >  #include <uapi/linux/limits.h>
-> > +#include <net/net_namespace.h>
-> >
-> >  #include "audit.h"
-> >
-> > @@ -2165,6 +2166,7 @@ int audit_set_contid(struct task_struct *task, u64 contid)
-> >         uid_t uid;
-> >         struct tty_struct *tty;
-> >         char comm[sizeof(current->comm)];
-> > +       struct net *net = task->nsproxy->net_ns;
-> >
-> >         /* Can't set if audit disabled */
-> >         if (!task->audit)
-> > @@ -2185,10 +2187,13 @@ int audit_set_contid(struct task_struct *task, u64 contid)
-> >         else if (cid_valid(oldcontid) && !task->audit->inherited)
-> >                 rc = -EEXIST;
-> >         if (!rc) {
-> > +               if (cid_valid(oldcontid))
-> > +                       audit_contid_del(net, oldcontid);
-> >                 task_lock(task);
-> >                 task->audit->contid = contid;
-> >                 task->audit->inherited = false;
-> >                 task_unlock(task);
-> > +               audit_contid_add(net, contid);
-> >         }
-> >
-> >         if (!audit_enabled)
-> > diff --git a/kernel/nsproxy.c b/kernel/nsproxy.c
-> > index f6c5d33..dcb69fe 100644
-> > --- a/kernel/nsproxy.c
-> > +++ b/kernel/nsproxy.c
-> > @@ -27,6 +27,7 @@
-> >  #include <linux/syscalls.h>
-> >  #include <linux/cgroup.h>
-> >  #include <linux/perf_event.h>
-> > +#include <linux/audit.h>
-> >
-> >  static struct kmem_cache *nsproxy_cachep;
-> >
-> > @@ -140,6 +141,7 @@ int copy_namespaces(unsigned long flags, struct task_struct *tsk)
-> >         struct nsproxy *old_ns = tsk->nsproxy;
-> >         struct user_namespace *user_ns = task_cred_xxx(tsk, user_ns);
-> >         struct nsproxy *new_ns;
-> > +       u64 contid = audit_get_contid(tsk);
-> >
-> >         if (likely(!(flags & (CLONE_NEWNS | CLONE_NEWUTS | CLONE_NEWIPC |
-> >                               CLONE_NEWPID | CLONE_NEWNET |
-> > @@ -167,6 +169,7 @@ int copy_namespaces(unsigned long flags, struct task_struct *tsk)
-> >                 return  PTR_ERR(new_ns);
-> >
-> >         tsk->nsproxy = new_ns;
-> > +       audit_contid_add(new_ns->net_ns, contid);
-> >         return 0;
-> >  }
-> >
-> > @@ -224,6 +227,7 @@ void switch_task_namespaces(struct task_struct *p, struct nsproxy *new)
-> >         ns = p->nsproxy;
-> >         p->nsproxy = new;
-> >         task_unlock(p);
-> > +       audit_switch_task_namespaces(ns, p);
-> >
-> >         if (ns && atomic_dec_and_test(&ns->count))
-> >                 free_nsproxy(ns);
-> > --
-> > 1.8.3.1
-> >
-> > --
-> > Linux-audit mailing list
-> > Linux-audit@redhat.com
-> > https://www.redhat.com/mailman/listinfo/linux-audit
-> 
-> --
-> paul moore
-> www.paul-moore.com
+Decoder issues
 
-- RGB
+  Is VIDIOC_ENUM_FRAMESIZES mandatory? Coda doesn’t implement it, s5p-mfc
+  either.
 
---
-Richard Guy Briggs <rgb@redhat.com>
-Sr. S/W Engineer, Kernel Security, Base Operating Systems
-Remote, Ottawa, Red Hat Canada
-IRC: rgb, SunRaycer
-Voice: +1.647.777.2635, Internal: (81) 32635
+  Answer: Make it mandatory. Otherwise nobody would implement it.
+
+  Should we support all the three specification modes of
+  VIDIOC_ENUM_FRAMESIZES (continuous, discrete and stepwise)? On both
+  queues?
+
+  Answer: Support all 3 size specification modes, not to diverge from
+  general specification.
+
+  Should ENUM_FRAMESIZES return coded or visible size?
+
+  Answer: That should be the value that characterizes the stream, so
+  coded size. Visible size is just a crop.
+
+  How should ENUM_FRAMESIZES be affected by profiles and levels?
+
+  Answer: Not in current specification - the logic is too complicated and
+  it might make more sense to actually handle this in user space.  (In
+  theory, level implies supported frame sizes + other factors.)
+
+  Is VIDIOC_ENUM_FRAMEINTERVALS mandatory?  Coda doesn’t implement it,
+  s5p-mfc either.  What is the meaning of frame interval for m2m in
+  general?
+
+  Answer: Do not include in this specification, because there is no way
+  to return meaningful values for memory-to-memory devices.
+
+  What to do for coded formats for which coded resolution can’t be parsed
+  (due to format or hardware limitation)? Current draft mentions setting
+  them on OUTPUT queue. What would be the effect on CAPTURE queue?
+  Should OUTPUT queue format include width/height? Would that mean coded
+  or visible size? If so, should they always be configured? Gstreamer
+  seems to pass visible size from the container.
+
+  Answer: If OUTPUT format has non-zero width and height, the driver must
+  behave as it instantly parsed the coded size from the stream, including
+  updating CAPTURE format and queuing source change event. If another
+  parameters are parsed later by hardware, a dynamic resolution change
+  sequence would be triggered. However, for hardware not parsing such
+  parameters from the stream, stateless API should be seriously
+  considered.
+
+  How about the legacy behavior of G_FMT(CAPTURE) blocking until queued
+  OUTPUT buffers are processed?
+
+  Answer: Do not include in the specification, keep in existing drivers for
+  compatibility.
+
+  Should we allow preallocating CAPTURE queue before parsing as an
+  optimization?  If user space allocated buffers bigger than required, it
+  may be desirable to use them if hardware allows.  Similarly, if a
+  decreasing resolution change happened, it may be desirable to avoid
+  buffer reallocation.  Gstreamer seems to rely on this behavior to be
+  allowed and works luckily because it allocates resolutions matching what
+  is parsed later.
+
+  Answer: Yes. The client can setup CAPTURE queue beforehand. The driver
+  would still issue a source change event, but if existing buffers are
+  compatible with driver requirements (size and count), there is no need to
+  reallocate. Similarly for dynamic resolution change. 
+
+  What is the meaning of CAPTURE format?  Should it be coded format,
+  visible format or something else?
+
+  Answer: It should be a hardware-specific frame buffer size (>= coded
+  size), minimum needed for decoding to proceed.
+
+  Which selection target should be used for visible rectangle? Should we
+  also report CROP/COMPOSE_DEFAULT and COMPOSE_PADDED (the area that
+  hardware actually overwrites)? How about CROP_BOUNDS?
+
+  Answer: COMPOSE. Also require most of the other meaningful targets.
+  Make them default to visible rectangle and, on hardware without
+  crop/compose/scale ability, read-only.
+
+  What if the hardware only supports handling complete frames?  Current
+  draft says that Source OUTPUT buffers must contain: - H.264/AVC: one or
+  more complete NALUs of an Annex B elementary stream; one buffer does not
+  have to contain enough data to decode a frame;
+
+  Answer: Defer to specification of particular V4L2_PIX_FMT (FourCC), to be
+  further specified later. Current drivers seem to implement support for
+  various formats in various ways (especially H264). Moreover, various
+  userspace applications have their own way of splitting the bitstream. We
+  need to keep all existing users working, so sorting this out will require
+  quite a bit of effort and should not be blocking the already de facto
+  defined part of the specification.
+
+  Does the driver need to flush its CAPTURE queue internally when a seek is
+  issued? Or the client needs to explicitly restart streaming on CAPTURE
+  queue?
+
+  Answer: No guarantees for CAPTURE queue from codec. User space needs to
+  handle.
+
+  Must all drivers support dynamic resolution change?  Gstreamer parses the
+  stream itself and it can handle the change itself by resetting the
+  decode.
+
+  Answer: Yes, if it's a feature of the coded format. There is already
+  userspace relying on this. A hardware that cannot support this, should
+  likely use the stateless codec interface.
+
+  What happens with OUTPUT queue format (resolution, colorimetry) after
+  resolution change? Currently always 0 on s5p-mfc. mtk-vcodec reports
+  coded resolution.
+
+  Answer: Coded size on OUTPUT queue.
+
+  Can we allow G_FMT(CAPTURE) after resolution change before
+  REQBUFS(CAPTURE, 0)?  This would allow keeping current buffer set if the
+  resolution decreased.
+
+  Answer: Yes, even before STREAMOFF(CAPTURE).
+
+  Should the client also read visible resolution after resolution change?
+  Current draft doesn’t mention it.
+
+  Answer: Yes.
+
+  Is there a requirement or expectation for the encoded data to be framed
+  as a single encoded frame per buffer, or is feeding in full buffer sized
+  chunks from a ES valid?  It's not stated for the description of
+  V4L2_PIX_FMT_H264 etc either.  Should we tie such requirements to
+  particular format (FourCC)?
+
+  Answer: Defer to specification of particular V4L2_PIX_FMT (FourCC), to be
+  further specified later. Similarly to the earlier issue with H264.
+
+  How about first frame in case of VP8, VP9 or H264_NO_SC? Should that
+  include only headers?
+
+  Answer: There is no separate header in case of VP8 and VP9. There are
+  only full frames. V4L2_PIX_FMT_H264_NO_SC implies user space splitting
+  headers (SPS, PPS) and frame data (slice) into separate buffers, due
+  to the nature of the format.
+
+  Should we have a separate format for headers and data in separate
+  buffers?
+
+  Answer: As with the other format-specific issues - defer to format
+  specification.`
+
+  How about timestamp copying between OUTPUT and CAPTURE buffers?
+  The draft says - buffers may become available on the CAPTURE queue
+  without additional buffers queued to OUTPUT (e.g. during flush or EOS)
+  What timestamps would those buffers have?
+
+  Answer: Those CAPTURE buffers would originate from an earelier OUTPUT
+  buffer, just being delayed. Timestamp would match those OUTPUT buffers.
+
+  Supposedly there are existing decoders that can’t deal with seek to a
+  non-resume point and end up returning corrupt frames.
+
+  Answer: There is userspace relying on this behavior not crashing the
+  system or causing a fatal decode error. Corrupt frames are okay. We can
+  extend the specification later with a control that gives a hint to the
+  client.
+
+  Maybe we should state what happens to reference buffers, things like DPB.
+  Can we CMD_STOP, then V4L2_DEC_CMD_START and continue with the ref kept?
+
+  Answer: Refs lost - same as STREAMOFF(CAPTURE), STREAMON(CAPTURE), except
+  that buffers are successfully returned to user space.
+
+  After I streamoff, do I need to send PPS/SPS again after STREAMON, or
+  will the codec remember, and the following IDR is fine? (ndufresne: For
+  sure the DPB will be gone)
+
+  Answer: Decoder needs to keep PPS/SPS across STREAMOFF(OUTPUT),
+  STREAMON(OUTPUT). If we seek to another place in the stream that
+  references the same PPS/SPS, no need to queue the same PPS/SPS again
+  (since decoder needs to hold it). If we seek somewhere far, skipping
+  PPS/SPS on the way, we can’t guarantee anything. In practice most client
+  implementations already include PPS/SPS at seek before IDR.
+
+Encoder issues
+
+  Is S_FMT() really mandatory during initialization sequence?  In theory,
+  the client could just G_FMT() and use what’s already there. (tfiga: In
+  practice unlikely.)
+
+  Answer: Not mandatory, but it's the only thing that makes sense.
+
+  When does the actual encoding start? Once both queues are streaming?
+
+  Answer: When both queues start streaming.
+
+  When does the encoding stop/resets? As soon as one queue receives
+  STREAMOFF?
+
+  Answer: STREAMOFF on CAPTURE. After restarting streaming on CAPTURE,
+  encoder will generate a stream independent of the stream generated
+  before. E.g. no references frames from before the restart (no H.264 long
+  term reference), any headers that must be included in a standalone stream
+  must be produced again. OUTPUT queue might be restarted on demand to
+  let the client change the buffer set or extended later to support
+  encoding streams with dynamic resolution changes.
+
+  How should we handle hardware that cannot control encoding parameters
+  dynamically?  Should the driver internally stop, reconfigure and restart?
+  Or should we defer this to user space?
+
+  Answer: Disallow setting respective controls when streaming.
+
+  Which queue should be master, i.e. be capable of overriding settings on
+  the other queue?
+
+  Answer: CAPTURE, since coded format is likely to determine the list of
+  supported raw formats.
+
+  How should we describe the behavior of two queues?
+
+  Answer: Say that standard M2M principles apply. Also mention no direct
+  relation between order of raw frames being queued and encoded frames
+  dequeued, other than timestamp.
+
+  How should encoder controls be handled?  
+  
+  Answer: Keep up to the driver. Use Request API to set controls for exact
+  frames.
+
+  What should VIDIOC_STREAMON do on an already streaming queue, but after
+  V4L2_ENC_CMD_STOP?
+  https://linuxtv.org/downloads/v4l-dvb-apis/uapi/v4l/vidioc-encoder-cmd.html
+  says A read() or VIDIOC_STREAMON call sends an implicit START command to
+  the encoder if it has not been started yet.
+  https://linuxtv.org/downloads/v4l-dvb-apis/uapi/v4l/vidioc-streamon.html
+  says If VIDIOC_STREAMON is called when streaming is already in progress,
+  or if VIDIOC_STREAMOFF is called when streaming is already stopped, then
+  0 is returned. Nothing happens in the case of VIDIOC_STREAMON[...].
+
+  Answer: Nothing, as per the specification. Use V4L2_ENC_CMD_START for
+  resuming from pause.
+
+Tomasz Figa (2):
+  media: docs-rst: Document memory-to-memory video decoder interface
+  media: docs-rst: Document memory-to-memory video encoder interface
+
+ Documentation/media/uapi/v4l/dev-decoder.rst | 872 +++++++++++++++++++
+ Documentation/media/uapi/v4l/dev-encoder.rst | 550 ++++++++++++
+ Documentation/media/uapi/v4l/devices.rst     |   2 +
+ Documentation/media/uapi/v4l/v4l2.rst        |  12 +-
+ 4 files changed, 1435 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/media/uapi/v4l/dev-decoder.rst
+ create mode 100644 Documentation/media/uapi/v4l/dev-encoder.rst
+
+-- 
+2.18.0.233.g985f88cf7e-goog
+
