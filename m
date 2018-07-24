@@ -6,99 +6,86 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99D24ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 11:07:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26BECECDFB8
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 11:07:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 51A2F205F4
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 11:07:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 51A2F205F4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id B39BA205F4
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 11:07:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B39BA205F4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388602AbeGXMNM (ORCPT
+        id S2388728AbeGXMNs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 08:13:12 -0400
-Received: from foss.arm.com ([217.140.101.70]:48448 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388296AbeGXMNL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 08:13:11 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C80AF80D;
-        Tue, 24 Jul 2018 04:07:16 -0700 (PDT)
-Received: from e112298-lin.Emea.Arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 7315F3F237;
-        Tue, 24 Jul 2018 04:07:15 -0700 (PDT)
-From:   Julien Thierry <julien.thierry@arm.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     tglx@linutronix.de, peterz@infradead.org, marc.zyngier@arm.com,
-        ricardo.neri-calderon@linux.intel.com, mingo@kernel.org,
-        Julien Thierry <julien.thierry@arm.com>
-Subject: [PATCH 0/4] Provide core API for NMIs
-Date:   Tue, 24 Jul 2018 12:07:03 +0100
-Message-Id: <1532430427-57151-1-git-send-email-julien.thierry@arm.com>
-X-Mailer: git-send-email 1.9.1
+        Tue, 24 Jul 2018 08:13:48 -0400
+Received: from mout.kundenserver.de ([217.72.192.75]:39627 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388196AbeGXMNs (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Jul 2018 08:13:48 -0400
+Received: from wuerfel.lan ([109.193.40.16]) by mrelayeu.kundenserver.de
+ (mreue104 [212.227.15.145]) with ESMTPA (Nemesis) id
+ 0M5gVc-1fxXDS2Td2-00xcBg; Tue, 24 Jul 2018 13:07:50 +0200
+From:   Arnd Bergmann <arnd@arndb.de>
+To:     Andrew Morton <akpm@linux-foundation.org>,
+        Eric Biggers <ebiggers@google.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org
+Subject: [PATCH] eventfs: include linux/errno.h in header
+Date:   Tue, 24 Jul 2018 13:07:13 +0200
+Message-Id: <20180724110737.3985088-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.18.0
+X-Provags-ID: V03:K1:EaZLP1ln1XERN2do726xHF8PsMLl8sf2X/ECuPcP5KWpi0zRPfQ
+ 4CoOa1PxvRmbVUdkLQ9UVZ90Z8FhI/3v4vIaRSySl2eGPvSUPNY5aOZOWfAlZn/jp9FBRzi
+ z2fqwz8eLvbniP1fpyhPbM/aJ0MwMnh4Rbk++1zPtATM5yMlFbR+8YczHO3lIZ2xmYejp2h
+ GH6viKnvh79JhDz7mhgAA==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:U7a4NBuKkw4=:4xaUhXEBZhYOMUKCAw8I3w
+ ojqkyVsxUPnC+noSR1oURxXBvU8M71wfvUjdfD/u2EAz50XqQr3WrHbgxbZ9UOHSGpjFge9gC
+ /x1hbpkOh23ewnbmW/5j4UiU0BqFpEJrVHdmiGeqPSRxcUkdRavTRF0hhQb1VMkT4BM0zmnbv
+ XDbEERD6LH6r9aZoYa/dSaVEbQ7w9PleBql/UpljOfp0HpCx6tCXA21QWW7bawLVb/F8/N4+o
+ q9XppxZcVTX8zCVbxbtH4j0i6dI0mRrYHqKB5G9Dqo3FU0W90jYJT0/wA0jaOE9ghucXhgO2R
+ dXzM5Xx9k7WHBSBkJ0Ub07Q6vWzjgyylc43e7yGE0TcL91SM+SkMBPP9gG4ORHMD++X040nYr
+ RvGkEB8GI9DOwcAhzyRYv+sJcvnPlbfqGMGipAkiVwdUMgNjOYFlKjo0+QQ6++LZnmj02HwkY
+ hNdTVPENxXpyCj2qybH/AKSKoNiWrLzPyDCEC3AVNsb2Xn49knzeuTGi2tsIZrrviaJ1juq2T
+ ErsVVkNwb5U8GoRirZ9EqErSpmAgqxwAkD4cAKCqt+eZuO8FhH+F39xNg2jP+yga2zjT3dgOq
+ Tr+EKJ6HjxsBSY6cR9L5FCaqIL6o0LHj6APNJtvV6bOqxTIo6L8zRUniZHgx5DztKncMBh8uY
+ QTWQKI6VhKRADjxplWKw34GDbUa3lwsShqiY5noqaWy3mXFy6cBMBy03ZRbT6NtJLem8=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+The new gasket staging driver ran into a randconfig build failure when
+CONFIG_EVENTFD is disabled:
 
-This patch series provides a way for irqchips to define some IRQs as NMIs.
+In file included from drivers/staging/gasket/gasket_interrupt.h:11,
+                 from drivers/staging/gasket/gasket_interrupt.c:4:
+include/linux/eventfd.h: In function 'eventfd_ctx_fdget':
+include/linux/eventfd.h:51:9: error: implicit declaration of function 'ERR_PTR' [-Werror=implicit-function-declaration]
 
-For this to be possible, the irqchip must:
-- be a root irqchip
-- not require bus locking
-- have the NMI support flag
+I can't see anything wrong with including eventfd.h before err.h,
+so the easiest fix is to make it possible to do this by including the
+file where it is needed.
 
-Once these conditions are met, interrupt lines can be requested as NMIs.
-These lines must not be shared and the IRQ handling must not be threaded.
-Callbacks are added to the irqchip in order to set up (clean up) the
-necessary resources for NMIs before enabling (before releasing) the
-corresponding interrupt line.
+Fixes: 9a69f5087ccc ("drivers/staging: Gasket driver framework + Apex driver")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ include/linux/eventfd.h | 1 +
+ 1 file changed, 1 insertion(+)
 
-For reference, see the examples of the support provided by GICv3 [1] and
-for the request and management of an NMI in the arm_pmu driver [2]. (These
-are not on the list yet as I'd like the focus of the discussion to be on
-the API for now)
+diff --git a/include/linux/eventfd.h b/include/linux/eventfd.h
+index 7094718b653b..ffcc7724ca21 100644
+--- a/include/linux/eventfd.h
++++ b/include/linux/eventfd.h
+@@ -11,6 +11,7 @@
+ 
+ #include <linux/fcntl.h>
+ #include <linux/wait.h>
++#include <linux/err.h>
+ 
+ /*
+  * CAREFUL: Check include/uapi/asm-generic/fcntl.h when defining
+-- 
+2.18.0
 
-This work was motivated by a discussion on Ricardo Neri's patch [3]
-
-Patches 1 & 2 provide functions necessary to request and manage NMIs.
-Patches 3 & 4 provide functions for NMI handling.
-
-Changes since RFC[4]:
-- Rebased to v4.18-rc6
-- Remove disable_nmi, one should call disable_nmi_nosync instead
-- Remove code related to affinity balancing from NMI functions
-- Require PERCPU configuration for NMIs
-
-[1] http://www.linux-arm.org/git?p=linux-jt.git;a=commitdiff;h=be1beaf15fe840c8a430b9a8191a5b33877f3c0f
-[2] http://www.linux-arm.org/git?p=linux-jt.git;a=commitdiff;h=cc35056203445a38b1343fc23d6f3a7b2d707603
-[3] https://patchwork.kernel.org/patch/10461381/
-[4] https://lkml.org/lkml/2018/7/9/768
-
-Thanks,
-
-Julien
-
--->
-
-Julien Thierry (4):
-  genirq: Provide basic NMI management for interrupt lines
-  genirq: Provide NMI management for percpu_devid interrupts
-  genirq: Provide NMI handlers
-  irqdesc: Add domain handler for NMIs
-
- include/linux/interrupt.h |  18 +++
- include/linux/irq.h       |  10 ++
- include/linux/irqdesc.h   |   3 +
- kernel/irq/chip.c         |  54 +++++++
- kernel/irq/debugfs.c      |   6 +-
- kernel/irq/internals.h    |   1 +
- kernel/irq/irqdesc.c      |  33 ++++
- kernel/irq/manage.c       | 377 +++++++++++++++++++++++++++++++++++++++++++++-
- 8 files changed, 499 insertions(+), 3 deletions(-)
-
---
-1.9.1
