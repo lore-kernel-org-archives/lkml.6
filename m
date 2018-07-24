@@ -2,113 +2,127 @@ Return-Path: <SRS0=hTZH=KI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5344C6778A
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 18:12:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AED0ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 18:14:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8D9EE20874
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 18:12:27 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AKYHt5bI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D9EE20874
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 38C7C20874
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 18:14:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 38C7C20874
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388546AbeGXTUF (ORCPT
+        id S2388566AbeGXTWT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 15:20:05 -0400
-Received: from mail-wm0-f42.google.com ([74.125.82.42]:37201 "EHLO
-        mail-wm0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388436AbeGXTUF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 15:20:05 -0400
-Received: by mail-wm0-f42.google.com with SMTP id n11-v6so3445506wmc.2
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Jul 2018 11:12:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=i3elQdLne5LPkd+vmZTPUOaGdqdb9m7zCuJuwDIywFM=;
-        b=AKYHt5bIG/VsO6QSEjC+1P0Ok5m2GiyfCT0wVa5Fe/miHu5VvUxkoe2hkLrlGsUu6v
-         kZUsq1sHqhvftnxS8h9PSXj93PG8UZX86hqhKubIdG5w6yG1Hb6TouQ9Sg6erJW5kY4t
-         MtpNs90xtrfjKGCDFHkvu7joDDyCfb2+mdi3Z1x5qABKf/++uBwxXT5ep3yFpCGWXsdp
-         ksmFRr5GsUHO8JcLi3Ci4fhdbQUKTAHfr23QXBohOURUFkubx8NvWQpoFTKUfMZmvAfx
-         +x+O8FeRb1GhFnsfoRL4xVcw8ZjRgayoKPlZliITSDlpYfMMMQ8WUDA8C44qOzUiiiBJ
-         E5Bg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=i3elQdLne5LPkd+vmZTPUOaGdqdb9m7zCuJuwDIywFM=;
-        b=CPdFRxliMXARQxaqZVNEfqgAJmu90cM5TPEBeTsCDcpU40fYx9qFU9JvdyvphDeI/Y
-         u6VG19XSVIY8+tU97o1ib25aRNWmDXAVbtzO93AukcOxrCsQT8nT6Dx4LW3kYfx9JwPh
-         Db+tM4Gch9cDquJCGyTDyUtnv9QRnvsKudE6v/LYrwupUvDtjBfqlbCYeDcWIuYH/d+J
-         Wdf7yK4b9DM9JqMU2i3AgmOTa3GU36Wj6Ik7vqwEipo0jhDqjXa8YRcTsho1or5jZhAV
-         KmkJf0f00ugDoINKigiWIJ+tqRjgzv5lX5uGkIpNMecc8ZQF9nIT1qtQjOF5nuu6k0Fv
-         aQNg==
-X-Gm-Message-State: AOUpUlFcI6TcWn4jZoUQZjuWfnOpNIMVSagLZKWXtQP/6fA8H+Lhgsy2
-        jk8/g0qdbXFAjkk2mQ9dCz7U8MNVLCxF/8YbaXM=
-X-Google-Smtp-Source: AAOMgpfE0Y/qBK322caOnl48SOrmzRz+4VBNOn9ffsIJohrv+bqPZvLA82TWYGsJVg6KafYRY1PeCQjrKmOkCfgIAmo=
-X-Received: by 2002:a1c:57c1:: with SMTP id l184-v6mr2652897wmb.16.1532455943269;
- Tue, 24 Jul 2018 11:12:23 -0700 (PDT)
+        Tue, 24 Jul 2018 15:22:19 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:50864 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2388366AbeGXTWT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Jul 2018 15:22:19 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 818197D84D;
+        Tue, 24 Jul 2018 18:14:36 +0000 (UTC)
+Received: from [10.36.117.134] (ovpn-117-134.ams2.redhat.com [10.36.117.134])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 61CAB178BC;
+        Tue, 24 Jul 2018 18:14:30 +0000 (UTC)
+Subject: Re: [PATCH v2 01/17] x86/cpu: create Dhyana init file and register
+ new cpu_dev to system
+To:     Pu Wen <puwen@hygon.cn>, tglx@linutronix.de, bp@alien8.de,
+        thomas.lendacky@amd.com, mingo@redhat.com, hpa@zytor.com,
+        peterz@infradead.org, tony.luck@intel.com, rkrcmar@redhat.com,
+        boris.ostrovsky@oracle.com, jgross@suse.com, rjw@rjwysocki.net,
+        lenb@kernel.org, viresh.kumar@linaro.org, mchehab@kernel.org,
+        trenn@suse.com, shuah@kernel.org, JBeulich@suse.com, x86@kernel.org
+Cc:     linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+        kvm@vger.kernel.org, xen-devel@lists.xenproject.org
+References: <1532352037-7151-1-git-send-email-puwen@hygon.cn>
+ <1532352037-7151-2-git-send-email-puwen@hygon.cn>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <ed090643-09da-cde7-6edd-970d973afd4d@redhat.com>
+Date:   Tue, 24 Jul 2018 20:14:29 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-References: <20180720180034.3964-1-logang@deltatee.com> <20180720180034.3964-5-logang@deltatee.com>
- <CAJ80sat2gx3jaDi3LVDG6GhZ6qKmuKWxyaP_0VoR5k3VfGybqw@mail.gmail.com>
- <b14a3c42-4a23-bff5-3e1b-9a1423611230@deltatee.com> <CAJ80saunKS6hbNFBKjbQqSo32+KeLZurksCtnHNw-C35Zjq2Xw@mail.gmail.com>
- <8809f02e-93de-f81a-31e0-90f2c1983b70@deltatee.com>
-In-Reply-To: <8809f02e-93de-f81a-31e0-90f2c1983b70@deltatee.com>
-From:   Allen Hubbe <allenbh@gmail.com>
-Date:   Tue, 24 Jul 2018 14:12:11 -0400
-Message-ID: <CAJ80sauPtUBJ5q9iSGPArwvetBwEkjNaRmS_6adP5moK5ejLqg@mail.gmail.com>
-Subject: Re: [PATCH v2 4/8] NTB: ntb_pingpong: Choose doorbells based on port number
-To:     logang@deltatee.com
-Cc:     linux-kernel@vger.kernel.org, linux-ntb@googlegroups.com,
-        Jon Mason <jdmason@kudzu.us>, fancer.lancer@gmail.com,
-        Shyam-sundar.S-k@amd.com, shuah@kernel.org, dmeyer@gigaio.com
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1532352037-7151-2-git-send-email-puwen@hygon.cn>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Tue, 24 Jul 2018 18:14:36 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Tue, 24 Jul 2018 18:14:36 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'pbonzini@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 24, 2018 at 1:37 PM Logan Gunthorpe <logang@deltatee.com> wrote:
-> Not really. Given that we know there are only two peers, we always use
-> the other side's doorbell register. You'd only use the nearby doorbell
-> register if you wanted to trigger your own interrupt -- that would be
-> weird and we don't really have the API sophistication to do that.
->
-> If we wanted to support multiple peers with some number in crosslink
-> then we'd need to revamp things _significantly_. In this case we'd have
-> multiple doorbell registers which each apply to a different subset of
-> peers. This gets _very_ complicated and hurts my head.
+On 23/07/2018 15:20, Pu Wen wrote:
+> Add x86 architecture support for new processor Hygon Dhyana Family 18h.
+> Rework to create a separated file(arch/x86/kernel/cpu/hygon.c) from the
+> AMD init one(arch/x86/kernel/cpu/amd.c) to initialize Dhyana CPU. In
+> this way we can remove old AMD architecture support codes from Hygon
+> code path and generate a clear initialization flow for Hygon processors,
+> it also reduce long-term maintenance effort.
+> Also add hygon.c Maintainer information in accordance.
+> 
+> To identify Hygon processors, add a new vendor type X86_VENDOR_HYGON(9)
+> for system recognition.
+> 
+> To enable Hygon processor config, add a separated Kconfig entry(CPU_SUP_
+> HYGON) for Dhyana CPU in kernel config setup.
 
-...huh, looks like peer index was omitted from ntb_peer_db_set and
-friends.  Adding peer index there would make the interface consistent
-with other ntb_peer functions.  Peer index would allow the hw driver
-to select which doorbell register to use for each peer.  Adding a
-ntb_peer_db_valid_bits to that would allow a subset of bits in the
-shared register to be associated with each peer.
+If Hygon processors are currently the same as AMD, I don't see the point
+in creating a new file just for them.  Likewise for example in patch 6
 
-I think that's all that would need to change, not significantly more,
-to support multiple doorbell registers associated with different
-subsets of peers.  The complication would at least be hidden in the hw
-driver, where it would need to maintain some mapping from peer index
-to the right set of registers.
 
-> But as I said,
-> I'm not trying to add new functionality for multi-peer crosslink or
-> anything like that. I'm just trying to fix the 2 crosslink peer case so
-> it works like it did when it was originally merged.
++	case X86_VENDOR_HYGON:
++		ideal_nops = p6_nops;
++		return;
++
+ 	case X86_VENDOR_AMD:
+ 		if (boot_cpu_data.x86 > 0xf) {
+ 			ideal_nops = p6_nops;
 
-I thought for sure ntb_peer_db_set already had peer index, and I was
-wrong.  Go ahead with the change as in your patch, I won't force the
-issue or that you to do that extra work and touch all the drivers
-again for this.  It can be addressed when there is renued interest in
-making things work more than one peer.
+Should only need to add "case X86_VENDOR_HYGON:".  Or you could even
+reuse X86_VENDOR_AMD.
 
-This patch, and the others in this series:
-Acked-by: Allen Hubbe <allenbh@gmail.com>
+Paolo
