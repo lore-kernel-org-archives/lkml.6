@@ -3,107 +3,99 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD280C6778A
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 08:24:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B84BC6778A
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 08:27:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 712EB205F4
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 08:24:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4F95E20875
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 08:27:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jJXFS6bE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 712EB205F4
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XOKDrrSt"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F95E20875
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388611AbeGXJaN (ORCPT
+        id S2388620AbeGXJc3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 05:30:13 -0400
-Received: from mail-oi0-f65.google.com ([209.85.218.65]:36475 "EHLO
-        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388405AbeGXJaN (ORCPT
+        Tue, 24 Jul 2018 05:32:29 -0400
+Received: from mail-oi0-f43.google.com ([209.85.218.43]:37022 "EHLO
+        mail-oi0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388406AbeGXJc3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 05:30:13 -0400
-Received: by mail-oi0-f65.google.com with SMTP id n21-v6so6056114oig.3
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Jul 2018 01:24:54 -0700 (PDT)
+        Tue, 24 Jul 2018 05:32:29 -0400
+Received: by mail-oi0-f43.google.com with SMTP id k81-v6so6032393oib.4;
+        Tue, 24 Jul 2018 01:27:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:sender:in-reply-to:references:from:date:message-id
          :subject:to:cc;
-        bh=CJfZVlBwHzg812l6pz3xse3JdS+NVb3v/rForrGBQfA=;
-        b=jJXFS6bEkh3wbFDCX1OgEPwrncosFqzC1Am9kNMhfjg3cD7a8GNh6nv1sQjn9y79Sd
-         mzHbfDb6bDYFfOuYfSFyaollM3B0c+/PIiLHMZPrf9X0cl5iSwxc6TC1FT0ftu0ySKF8
-         JJ72VH9+PwskS9rdGlJDGYUAkqLWtur1Fc8zg2thli1P4RmTJ7i1npIxtCOnYINPpUgh
-         wclysKIBTLCHdhF+t616Ya0cOa6p9o+oImB6WHoxTh0uC3tYLmCLETmWMcOEtELZJSsw
-         aGG00UYtHx2/nXFpdsYW9ud6HT4sAvVRgym7sq0gvUMkta7AaInzUhaSaUYWH9oOT/Z0
-         98pA==
+        bh=1OovNaK4G4KGaeUvh+f3JGUXUtFQJe4nQ/h1dRDsnK8=;
+        b=XOKDrrSt3294aU5uthoF/0iNIeYhk8gCnZEdcgy1vIJ2L6KABLDKC1/Qba5m/q1Mqj
+         K7YQ4GNYnf7gd1JxrQuHdH7eQs5zvP/af/huIgiTmm99WSTsKqg8GMEJ9vuzKvFja4te
+         WxmOUpJZTMtcUApFhubyd4ni9BglLdcybOgbTqO7fes1/GGVYfT6QqNEBOxXEsajswbn
+         G32ic6sF9s+eX3cX9PHEk8RXyXAsgZ6c2OLw/1tTdQBHwilQQG9Bq6+IZb9BAyI6lYHz
+         xLZamRQMs/F4uePU3Y3I0BcBVz4CFhSBD7++/evusOvtvTJaKxxGRGFVYXTvNCDjmqnK
+         +rPg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
          :date:message-id:subject:to:cc;
-        bh=CJfZVlBwHzg812l6pz3xse3JdS+NVb3v/rForrGBQfA=;
-        b=ToYQMaRM7nSfZf2GoSarrcO05vX6RS9QAjwZOQ5xuutYOiWaZm3C2ZgpznyUGdKMIS
-         hvzTFto8HcQt5i2+jzqDdM7Qm33LmDEcaVj0DNYdVBRZM3miDJI2HQeF9WV7dkiOPpm5
-         aamI9PILjTcSH/xxJZ4BoZNi1SZRUxRer32aZXgNYCZLgaF4W4M3Re4YF6L79lwfwuMd
-         4BMzARLagMhyw6rI5wZifULsuAU9p9hM8Bfa96VyqDCJctHx6BMEkurGDn5e7TU/BVjE
-         DGnoIHKfWFwJ3ih0rRFwMrbrWTg8kJweZjytpq+rnXEPXP4U28TmxGlxBrkIzi+cZE2Y
-         NvGg==
-X-Gm-Message-State: AOUpUlFvA/UGl8rynXwi5KOUI1XyZcuTJMY9nY7Ig5XmRGJPLVsQRaqK
-        LGqrFeh0HOgVThuZS5EWQiNpK8p6Q//L2/jXYWY=
-X-Google-Smtp-Source: AAOMgpeuEJLAV3yLdFvbt6D++92X5yO3coh1QNipk+pvFfEs2bcxGPaqQr1xitHr95AZk344GzGcEXJv2x0lmEybqXY=
-X-Received: by 2002:aca:ecd0:: with SMTP id k199-v6mr2333783oih.227.1532420693684;
- Tue, 24 Jul 2018 01:24:53 -0700 (PDT)
+        bh=1OovNaK4G4KGaeUvh+f3JGUXUtFQJe4nQ/h1dRDsnK8=;
+        b=CTV5ksY+gMsrvkJ9/187JygjSVwjx+zXfhK1iIT74fFrL3t6BqjcL7BxRaqD/GQSQy
+         aH5mSbth4DaCau03TAL5QEo6rhSUhTpatjJxwxivw+5dGcnh81ThzZE0uqypo+LpNBxl
+         +JePB+Y17L/5p4JUi++BiLkipEVGo6jrS41UrgrUMN8/lsKh0FKaGb6/mUWaPkNIp788
+         kZrvXM/OTNRfSyo/k5KnnFLuyuX8P8y5wbQps35bZ8ewkD+57ZKb4DpqGvfBChHz0dLC
+         4G0USNitL0iR7Mjk8SpY5le2AuYUM43Qw2Mr1UtoUKZkSUJght31lll4FmWu5eu5EUap
+         v6Sg==
+X-Gm-Message-State: AOUpUlHjmMbh9YRJErb9H52C1lgvNPOwsQLnBKRM/ZAIVjxx6B26hFUM
+        91g55sWx3x9BlKTVLOTYjJXv7WB/fboEqX/rh83cRetr
+X-Google-Smtp-Source: AAOMgpdX6gqCEsV+qj8DcY7urWg1QZyBdwqekjI4o67LHWp8BKtYtcZXgE/E3I+pJvVVUP4rzQ+9xnuN71xQpLG5Blc=
+X-Received: by 2002:aca:5b0b:: with SMTP id p11-v6mr2381809oib.116.1532420829276;
+ Tue, 24 Jul 2018 01:27:09 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a9d:63d2:0:0:0:0:0 with HTTP; Tue, 24 Jul 2018 01:24:53
+Received: by 2002:a9d:63d2:0:0:0:0:0 with HTTP; Tue, 24 Jul 2018 01:27:08
  -0700 (PDT)
-In-Reply-To: <e4ca8572ed913ab65f63be8a351d4439@codeaurora.org>
-References: <1532035440-7860-1-git-send-email-rishabhb@codeaurora.org>
- <CAJZ5v0gWqx5Op-Bbg7bAYALCyBPsc=-+homAYj2Q1qd3WsqmDw@mail.gmail.com> <e4ca8572ed913ab65f63be8a351d4439@codeaurora.org>
+In-Reply-To: <20180723214917.GA3733@amd>
+References: <20180723214917.GA3733@amd>
 From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Tue, 24 Jul 2018 10:24:53 +0200
-X-Google-Sender-Auth: -7w6NkHsVsyz-M4eIydnqq3ntn8
-Message-ID: <CAJZ5v0ixuWo9RC21Z8zVhuHfkr1uV4vdqMh4s+qGMR7R8Wycag@mail.gmail.com>
-Subject: Re: [PATCH] dd: Invoke one probe retry cycle after every initcall level
-To:     Rishabh Bhatnagar <rishabhb@codeaurora.org>
-Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        ckadabi@codeaurora.org, tsoni@codeaurora.org,
-        Vikram Mulukutla <markivx@codeaurora.org>
+Date:   Tue, 24 Jul 2018 10:27:08 +0200
+X-Google-Sender-Auth: sez4KU-WyfioyMA2Khy7QsxdLVE
+Message-ID: <CAJZ5v0g=Ey6ZiyjA3NWS_C5zXBUydJNaKOZDbRNFYUGEc8YuaQ@mail.gmail.com>
+Subject: Re: linux-next-20180723: battery status funny after bootup
+To:     Pavel Machek <pavel@ucw.cz>
+Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        Linux-pm mailing list <linux-pm@vger.kernel.org>,
+        Len Brown <lenb@kernel.org>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 23, 2018 at 10:22 PM,  <rishabhb@codeaurora.org> wrote:
-> On 2018-07-23 04:17, Rafael J. Wysocki wrote:
->>
->> On Thu, Jul 19, 2018 at 11:24 PM, Rishabh Bhatnagar
->> <rishabhb@codeaurora.org> wrote:
->>>
->>> Drivers that are registered at an initcall level may have to
->>> wait until late_init before the probe deferral mechanism can
->>> retry their probe functions. It is possible that their
->>> dependencies were resolved much earlier, in some cases even
->>> before the next initcall level. Invoke one probe retry cycle
->>> at every _sync initcall level, allowing these drivers to be
->>> probed earlier.
->>
->>
->> Can you please say something about the actual use case this is
->> expected to address?
+On Mon, Jul 23, 2018 at 11:49 PM, Pavel Machek <pavel@ucw.cz> wrote:
 >
-> We have a display driver that depends 3 other devices to be
-> probed so that it can bring-up the display. Because of dependencies
-> not being met the deferral mechanism defers the probes for a later time,
-> even though the dependencies might be met earlier. With this change
-> display can be brought up much earlier.
+> pavel@amd:~$ cat /proc/acpi/battery/BAT0/state
+> present:                 yes
+> capacity state:          ok
+> charging state:          charged
+> present rate:            0 mW
+> remaining capacity:      0 mWh
+> present voltage:         0 mV
+> pavel@amd:~$ uname -a
+> Linux amd 4.18.0-rc6-next-20180723+ #141 SMP Mon Jul 23 22:11:47 CEST
+> 2018 i686 GNU/Linux
+>
+> It will correct itself if I unplug/replug the AC adapter, I
+> believe. Gnome2 battery monitor also looks confused.
 
-OK
+There are two battery changes in linux-next now that are not present
+in the mainline
 
-What runlevel brings up the display after the change?
+2a2aad34362b ACPI: battery: remove redundant old_present check on insertion
+706ac4aa536f ACPI: battery: use cache_time as cache "enabled"
 
-Thanks,
-Rafael
+Does reverting any of them help?  Or is the problem present in the mainline too?
