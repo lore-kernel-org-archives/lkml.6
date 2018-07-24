@@ -2,93 +2,127 @@ Return-Path: <SRS0=hTZH=KI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D95A7ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 16:48:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8A8CECDFB8
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 16:48:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 86F1A20874
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 16:48:02 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b9giYCcK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 86F1A20874
+	by mail.kernel.org (Postfix) with ESMTP id 8A8E520874
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 16:48:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8A8E520874
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388488AbeGXRzU (ORCPT
+        id S2388526AbeGXRz2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 13:55:20 -0400
-Received: from mail-yw0-f196.google.com ([209.85.161.196]:33689 "EHLO
-        mail-yw0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388366AbeGXRzU (ORCPT
+        Tue, 24 Jul 2018 13:55:28 -0400
+Received: from mailout.easymail.ca ([64.68.200.34]:46348 "EHLO
+        mailout.easymail.ca" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388366AbeGXRz1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 13:55:20 -0400
-Received: by mail-yw0-f196.google.com with SMTP id c135-v6so1781231ywa.0;
-        Tue, 24 Jul 2018 09:48:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=4osEqmHfFW6eorHBKgXcnpl7P0iPuLxKk27eYCPoeVo=;
-        b=b9giYCcKu9F4v3s9KtSs+LdkJFS578GjWS7EFcMedKCdaDATCGcnggy77O+E8bUTCz
-         NItLVZXQp7qvFB3aYDfzG18UhjijTVwTCU2llOFf8FKy0LAjrpVSEFfxK+YxQ4PmmRSN
-         SFt/2S4uGGZ8uqkPG+uKtk+xMUjMPgSiDNYqoL0tVwYLZoMMUeFaxcFVv4G9nRC1lzqm
-         Byj7xJxa8rJy8xRIANOj+yJWGjNasVekLy35KXCDMt1Mfx97doeKF5Iq1FJSzAWJpayw
-         3dny76a/BZRzp54ZHA4zo9+qQ0Sfnr4EPx7LArXxOQVFD2Isn1zBmeZs2+i+Vb7osyOx
-         J4Lg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=4osEqmHfFW6eorHBKgXcnpl7P0iPuLxKk27eYCPoeVo=;
-        b=PGYYeRB+NQcJG+ncnQWr7jh7pXKBy49UiYHRLPyxdKAPOBWLHCkFzRgC/kDw4bJ2Qe
-         sqab4W0qI2XqO8SFcvsjSSdD759kJO4QV21U3iJCzV+UDSkop1Jt8sZ2kv4l5xxV8Rlf
-         z3vyv/bE8vboivieEdYKHTpVh2gitf5cTuJeFQnEgsjMYA4mY/y5MnzrlIOjuFLMDBPs
-         FzYkWdfDsxhrwWKN51jrDdrp4m3RfuJ6xNQ9dVScgqWOlxLBjAEptWOXkpOXtxw98m+9
-         G/9cZolCK6h2+RlDzuCiGvMNTqBLuk7sNDFJ8fx5WZvgki7Xu+LU8aH3QszfYhaemAvF
-         MXlA==
-X-Gm-Message-State: AOUpUlG8ogFEp6kirsExrYtza2DIY7JgSVvBsm/MsP+l/vzKtcTdSpB8
-        ovd5+yTlqParYexDf33ZNWRqBmHE
-X-Google-Smtp-Source: AAOMgpepYm/+jm8uzzUElkaBJQl1Pu8oYkb7+nhc+ch6WvdSlZGG/TtTK4VeItyqI1pBLDmFrHU8pA==
-X-Received: by 2002:a81:2d57:: with SMTP id t84-v6mr9717524ywt.152.1532450879619;
-        Tue, 24 Jul 2018 09:47:59 -0700 (PDT)
-Received: from localhost ([2620:10d:c091:200::2:c936])
-        by smtp.gmail.com with ESMTPSA id u64-v6sm12992129ywu.107.2018.07.24.09.47.58
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 24 Jul 2018 09:47:58 -0700 (PDT)
-Date:   Tue, 24 Jul 2018 09:47:57 -0700
-From:   Tejun Heo <tj@kernel.org>
-To:     Corentin Labbe <clabbe@baylibre.com>
-Cc:     hdegoede@redhat.com, sfr@canb.auug.org.au, mperttunen@nvidia.com,
-        linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] Revert "ata: ahci_platform: convert kcalloc to
- devm_kcalloc"
-Message-ID: <20180724164757.GO1934745@devbig577.frc2.facebook.com>
-References: <1531824575-852-1-git-send-email-clabbe@baylibre.com>
+        Tue, 24 Jul 2018 13:55:27 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by mailout.easymail.ca (Postfix) with ESMTP id 97D02217C9;
+        Tue, 24 Jul 2018 16:48:06 +0000 (UTC)
+Received: from mailout.easymail.ca ([127.0.0.1])
+        by localhost (emo02-pco.easydns.vpn [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id HO0oZTgORUFj; Tue, 24 Jul 2018 16:48:06 +0000 (UTC)
+Received: from [192.168.1.87] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mailout.easymail.ca (Postfix) with ESMTPSA id 4A75821783;
+        Tue, 24 Jul 2018 16:47:53 +0000 (UTC)
+Subject: Re: [PATCH kselftest-next] Add cgroup core selftests
+To:     Roman Gushchin <guro@fb.com>, Claudio <claudiozumbo@gmail.com>
+Cc:     linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+        cgroups@vger.kernel.org, Claudio Zumbo <claudioz@fb.com>,
+        Tejun Heo <tj@kernel.org>, kernel-team@fb.com,
+        Shuah Khan <shuah@kernel.org>
+References: <20180718173358.14007-1-claudiozumbo@gmail.com>
+ <20180719170829.GB21770@castle.DHCP.thefacebook.com>
+From:   Shuah Khan <shuah@kernel.org>
+Message-ID: <5fa20088-3797-7252-43b1-c7ede9e142f8@kernel.org>
+Date:   Tue, 24 Jul 2018 10:47:53 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1531824575-852-1-git-send-email-clabbe@baylibre.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <20180719170829.GB21770@castle.DHCP.thefacebook.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 17, 2018 at 10:49:35AM +0000, Corentin Labbe wrote:
-> Since ahci_platform_put_resources() use target_pwrs after "devm_" freed
-> it, we cannot use devm_kcalloc for allocating target_pwrs.
+On 07/19/2018 11:08 AM, Roman Gushchin wrote:
+> On Wed, Jul 18, 2018 at 07:33:58PM +0200, Claudio wrote:
+>> This commit adds tests for some of the core functionalities
+>> of cgroups v2.
+>>
+>> The commit adds tests for some core principles of croup V2 API:
+>>
+>> - test_cgcore_internal_process_constraint
+>>
+>>   Tests internal process constraint.
+>>   You can't add a pid to a domain parent if a controller is enabled.
+>>
+>> - test_cgcore_top_down_constraint_enable
+>>
+>>    Tests that you can't enable a controller on a child if it's not enabled
+>>    on the parent.
+>>
+>> - test_cgcore_top_down_constraint_disable
+>>
+>>   Tests that you can't disable a controller on a parent if it's
+>>   enabled in a child.
+>>
+>> - test_cgcore_no_internal_process_constraint_on_threads
+>>
+>>   Tests that there's no internal process constrain on threaded cgroups.
+>>   You can add threads/processes on a parent with a controller enabled.
+>>
+>> - test_cgcore_parent_becomes_threaded
+>>
+>>   Tests that when a child becomes threaded the parent type becomes
+>>   domain threaded.
+>>
+>> - test_cgcore_invalid_domain
+>>
+>>   In a situation like:
+>>
+>>   A (domain threaded) - B (threaded) - C (domain)
+>>
+>>   it tests that C can't be used until it is turned into a threaded cgroup.
+>>   The "cgroup.type" file will report "domain (invalid)" in these cases.
+>>   Operations which fail due to invalid topology use EOPNOTSUPP as the errno.
+>>
+>> - test_cgcore_populated
+>>
+>>   In a situation like:
+>>
+>>   A(0) - B(0) - C(1)
+>>          \ D(0)
+>>
+>>   It tests that A, B and C's "populated" fields would be 1 while D's 0.
+>>   It tests that after the one process in C is moved to root, A,B and C's
+>>   "populated" fields would flip to "0" and file modified events will
+>>   be generated on the "cgroup.events" files of both cgroups.
+>>
+>> Signed-off-by: Claudio Zumbo <claudioz@fb.com>
+>> Cc: Shuah Khan <shuah@kernel.org>
+>> Cc: Roman Gushchin <guro@fb.com>
+>> Cc: Tejun Heo <tj@kernel.org>
+>> Cc: kernel-team@fb.com
 > 
-> This reverts commit bd0038b1b4f499d814d8f33a55b1df5ea6cf3b85.
+> Looks good to me!
 > 
-> Reported-by: Mikko Perttunen <mperttunen@nvidia.com>
-> Signed-off-by: Corentin Labbe <clabbe@baylibre.com>
+> Reviewed-by: Roman Gushchin <guro@fb.com>
+> 
+> Thank you!
+> 
 
-Applied to libata/for-4.19.  Sorry about the delay.
+Thanks for the new test. I will queue this up for 4.19-rc1
 
-Thanks.
-
--- 
-tejun
+-- Shuah
