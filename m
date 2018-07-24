@@ -2,256 +2,538 @@ Return-Path: <SRS0=hTZH=KI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2890C6778A
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 03:45:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6457AC6778A
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 03:57:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 66E3320852
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 03:45:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DBBE420852
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 03:57:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ryyoDkeW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 66E3320852
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="mJTa5/Hw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DBBE420852
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388278AbeGXEuK (ORCPT
+        id S2388285AbeGXFBX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 00:50:10 -0400
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:39842 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388158AbeGXEuK (ORCPT
+        Tue, 24 Jul 2018 01:01:23 -0400
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:60532 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388131AbeGXFBX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 00:50:10 -0400
-Received: by mail-pl0-f66.google.com with SMTP id m1-v6so1113627plt.6;
-        Mon, 23 Jul 2018 20:45:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=ah10RAO1Co6RTCKf3AjDGwwvS+aQt8y+xGQg1xtu+Z0=;
-        b=ryyoDkeWSWaI4D44X8boURgO4Toj0eYY6YtX/otM0/z+5desSpcelrmi0SIJ8h0+/J
-         v/r8z2TZE0D4c2j5F8roLzB83zgm2u9aktyPcnhGBN7aNCaaZihW86qyYSLtsq5b/k1P
-         6dIc5sFUfqz0jvsgrw4LGd0Ju1npw+eu1OMMWdS7XUzmJNEVdv7Oaqp0BlAsJgErSKb3
-         pSUGAiLUO8CTGQK3Eh1Z+w28zJi3JBKKG8100Vr1r5KuPtOC3qHfR2G7flbyeb8fPWuT
-         gAC0XyvJQcEXRBwABCufTkOrYfuFJCEV4feKfWUxHT77flp1bxHQ2d7Yxj7XpP1EXLnY
-         MwRA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=ah10RAO1Co6RTCKf3AjDGwwvS+aQt8y+xGQg1xtu+Z0=;
-        b=KqiP8v0JUVhLhPRMAjNUuFddjqiIFSXuf5SruHtcIDi2GS5+7/B5VONAPnfD6edsyQ
-         zx2e6V8p8VH+6z5XChabYn43gnZRFoKvHfTQFGdAiJ1eRHHt24DDArepafme7tpATlxx
-         Nsg+l0fP2MIcIRt62Qo5w0YqKX8TNJbSiZeMT0RiZ5IEoOXbdlz8wkmJtsooyWtFxfbw
-         Z2k1lAiT/dOiGfzkF2O1xzjBpdMfQSMHWq2w/h+sh4tb9bYOjJ8UjjC4w61dN6GxjuyL
-         Hfm2x8mazEpteXg7lIY/alVcUmeIRv2QO5/bnXLg1BLPYuXYCaPRQvquqJEox3kLMKIo
-         yhvA==
-X-Gm-Message-State: AOUpUlH/CYh/MXmzQfwxjZm7Ol64D1Idb6kW9e1LNL3Gmz1umfDrQx7/
-        RuurO42NyHkJn7oysRb488CJ+fRJ
-X-Google-Smtp-Source: AAOMgpctzLQZWSQAKDpdqDzc+9ZIji0w89/IWH3huLatw1HSVIxvT0gs7CVqcBHQLbbyDFHBaGP5AA==
-X-Received: by 2002:a17:902:bd93:: with SMTP id q19-v6mr15266223pls.238.1532403947189;
-        Mon, 23 Jul 2018 20:45:47 -0700 (PDT)
-Received: from dragonet (dragonet.kaist.ac.kr. [143.248.133.220])
-        by smtp.gmail.com with ESMTPSA id a20-v6sm13389293pfi.124.2018.07.23.20.45.45
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 23 Jul 2018 20:45:46 -0700 (PDT)
-Date:   Tue, 24 Jul 2018 12:45:42 +0900
-From:   "Dae R. Jeong" <threeearcat@gmail.com>
-To:     viro@zeniv.linux.org.uk
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        byoungyoung@purdue.edu, kt0755@gmail.com, bammanag@purdue.edu
-Subject: KASAN: use-after-free Read in link_path_walk
-Message-ID: <20180724034542.GA19283@dragonet>
+        Tue, 24 Jul 2018 01:01:23 -0400
+Received: from dlelxv90.itg.ti.com ([172.17.2.17])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id w6O3ufTu129533;
+        Mon, 23 Jul 2018 22:56:41 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1532404601;
+        bh=TQMjGh1xVLX04xvGwelsKF83cfOWC6wKER81LNIuqeQ=;
+        h=Subject:To:References:From:Date:In-Reply-To;
+        b=mJTa5/HwGwd2gSebjbCxgF5/ASACLoCt4sFFodZf8liHuKd+lQY+KvN2UtYBI0u6O
+         mf9iimTd33111eHNzQ12eIxwhjoPoKDoTYf+eaBhKukxRD1v+WVTpvMWP+hNeYHboR
+         LsEfT9jUddJ3txU9x2DSUoXHKA8ZpNL4Z8JSp+LU=
+Received: from DFLE113.ent.ti.com (dfle113.ent.ti.com [10.64.6.34])
+        by dlelxv90.itg.ti.com (8.14.3/8.13.8) with ESMTP id w6O3ufYc001236;
+        Mon, 23 Jul 2018 22:56:41 -0500
+Received: from DFLE101.ent.ti.com (10.64.6.22) by DFLE113.ent.ti.com
+ (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Mon, 23
+ Jul 2018 22:56:41 -0500
+Received: from dlep33.itg.ti.com (157.170.170.75) by DFLE101.ent.ti.com
+ (10.64.6.22) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
+ Mon, 23 Jul 2018 22:56:41 -0500
+Received: from [172.24.190.233] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dlep33.itg.ti.com (8.14.3/8.13.8) with ESMTP id w6O3uc0A026991;
+        Mon, 23 Jul 2018 22:56:39 -0500
+Subject: Re: [PATCH v2] phy: Add driver for Cadence MHDP DisplayPort SD0801
+ PHY
+To:     Scott Telford <stelford@cadence.com>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <dkos@cadence.com>
+References: <201807191323.JVEjlMdZ%fengguang.wu@intel.com>
+ <1532090477-15559-1-git-send-email-stelford@cadence.com>
+From:   Kishon Vijay Abraham I <kishon@ti.com>
+Message-ID: <f4b7167e-a210-2196-07ba-0c22fd88fa64@ti.com>
+Date:   Tue, 24 Jul 2018 09:26:38 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
+ Thunderbird/45.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <1532090477-15559-1-git-send-email-stelford@cadence.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Reporting the crash: KASAN: use-after-free Read in link_path_walk
+Hi,
 
-This crash has been found in v4.17-rc1 using RaceFuzzer (a modified
-version of Syzkaller), which we describe more at the end of this
-report. Our analysis shows that the race occurs when invoking two
-syscalls concurrently, open() and chroot().
+On Friday 20 July 2018 06:11 PM, Scott Telford wrote:
+> Add driver for the Cadence SD0801 "Torrent" PHY used with the Cadence MHDP
+> DisplayPort Tx controller.
+> 
+> Integration with the MHDP driver will be the subject of another commit.
+> 
+> Signed-off-by: Scott Telford <stelford@cadence.com>
+> ---
+>  .../devicetree/bindings/phy/phy-cadence-dp.txt     |  28 ++
+>  drivers/phy/Kconfig                                |   1 +
+>  drivers/phy/Makefile                               |   1 +
+>  drivers/phy/cadence/Kconfig                        |  10 +
+>  drivers/phy/cadence/Makefile                       |   1 +
+>  drivers/phy/cadence/phy-cadence-dp.c               | 436 +++++++++++++++++++++
+>  drivers/phy/cadence/phy-cadence-dp.h               | 117 ++++++
+>  7 files changed, 594 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/phy/phy-cadence-dp.txt
+>  create mode 100644 drivers/phy/cadence/Kconfig
+>  create mode 100644 drivers/phy/cadence/Makefile
+>  create mode 100644 drivers/phy/cadence/phy-cadence-dp.c
+>  create mode 100644 drivers/phy/cadence/phy-cadence-dp.h
+> 
+> diff --git a/Documentation/devicetree/bindings/phy/phy-cadence-dp.txt b/Documentation/devicetree/bindings/phy/phy-cadence-dp.txt
+> new file mode 100644
+> index 0000000..8de0526
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/phy/phy-cadence-dp.txt
+> @@ -0,0 +1,28 @@
+> +Cadence MHDP DisplayPort SD0801 PHY binding
+> +===========================================
+> +
+> +This binding describes the Cadence SD0801 PHY hardware included with
+> +the Cadence MHDP DisplayPort controller.
+> +
+> +-------------------------------------------------------------------------------
+> +Required properties (controller (parent) node):
+> +- compatible	: Should be "cdns,dp-phy"
+> +- reg		: Defines the following sets of registers in the parent
+> +		  mhdp device:
+> +			- Offset of the DPTX PHY configuration registers
+> +			- Offset of the SD0801 PHY configuration registers
+> +- num_lanes	: Number of DisplayPort lanes to use (1, 2 or 4)
+> +- max_bit_rate	: Maximum DisplayPort link bit rate to use, in Mbps (2160,
+> +		  2430, 2700, 3240, 4320, 5400 or 8100)
+> +- #phy-cells	: from the generic PHY bindings, must be 0.
+> +-------------------------------------------------------------------------------
+> +
+> +Example:
+> +	dp_phy: phy@f0fb030a00 {
+> +		compatible = "cdns,dp-phy";
+> +		reg = <0xf0 0xfb030a00 0x0 0x00000040>,
+> +		      <0xf0 0xfb500000 0x0 0x00100000>;
+> +		num_lanes = <4>;
+> +		max_bit_rate = <8100>;
+> +		#phy-cells = <0>;
+> +	};
 
-Diagnosis:
-We think that it is possible that link_path_walk() dereferences a
-freed pointer when cleanup_mnt() is executed between path_init() and
-link_path_walk().
+dt bindings should be a separate patch
+> diff --git a/drivers/phy/Kconfig b/drivers/phy/Kconfig
+> index 5c8d452..cc47f85 100644
+> --- a/drivers/phy/Kconfig
+> +++ b/drivers/phy/Kconfig
+> @@ -43,6 +43,7 @@ config PHY_XGENE
+>  source "drivers/phy/allwinner/Kconfig"
+>  source "drivers/phy/amlogic/Kconfig"
+>  source "drivers/phy/broadcom/Kconfig"
+> +source "drivers/phy/cadence/Kconfig"
+>  source "drivers/phy/hisilicon/Kconfig"
+>  source "drivers/phy/lantiq/Kconfig"
+>  source "drivers/phy/marvell/Kconfig"
+> diff --git a/drivers/phy/Makefile b/drivers/phy/Makefile
+> index 84e3bd9..ba48acd 100644
+> --- a/drivers/phy/Makefile
+> +++ b/drivers/phy/Makefile
+> @@ -15,6 +15,7 @@ obj-$(CONFIG_ARCH_RENESAS)		+= renesas/
+>  obj-$(CONFIG_ARCH_ROCKCHIP)		+= rockchip/
+>  obj-$(CONFIG_ARCH_TEGRA)		+= tegra/
+>  obj-y					+= broadcom/	\
+> +					   cadence/	\
+>  					   hisilicon/	\
+>  					   marvell/	\
+>  					   motorola/	\
+> diff --git a/drivers/phy/cadence/Kconfig b/drivers/phy/cadence/Kconfig
+> new file mode 100644
+> index 0000000..57fff7d
+> --- /dev/null
+> +++ b/drivers/phy/cadence/Kconfig
+> @@ -0,0 +1,10 @@
+> +#
+> +# Phy driver for Cadence MHDP DisplayPort controller
+> +#
+> +config PHY_CADENCE_DP
+> +	tristate "Cadence MHDP DisplayPort PHY driver"
+> +	depends on OF
+> +	depends on HAS_IOMEM
+> +	select GENERIC_PHY
+> +	help
+> +	  Support for Cadence MHDP DisplayPort PHY.
+> diff --git a/drivers/phy/cadence/Makefile b/drivers/phy/cadence/Makefile
+> new file mode 100644
+> index 0000000..e5b0a11
+> --- /dev/null
+> +++ b/drivers/phy/cadence/Makefile
+> @@ -0,0 +1 @@
+> +obj-$(CONFIG_PHY_CADENCE_DP)	+= phy-cadence-dp.o
+> diff --git a/drivers/phy/cadence/phy-cadence-dp.c b/drivers/phy/cadence/phy-cadence-dp.c
+> new file mode 100644
+> index 0000000..c1cf89b
+> --- /dev/null
+> +++ b/drivers/phy/cadence/phy-cadence-dp.c
+> @@ -0,0 +1,436 @@
+> +/*
+> + * Cadence MHDP DisplayPort SD0801 PHY driver.
+> + *
+> + * Copyright 2018 Cadence Design Systems, Inc.
+> + *
+> + * SPDX-License-Identifier: GPL-2.0-only
+> + */
+> +
+> +#include <linux/delay.h>
+> +#include <linux/err.h>
+> +#include <linux/io.h>
+> +#include <linux/iopoll.h>
+> +#include <linux/kernel.h>
+> +#include <linux/module.h>
+> +#include <linux/of.h>
+> +#include <linux/of_address.h>
+> +#include <linux/of_device.h>
+> +#include <linux/phy/phy.h>
+> +#include "phy-cadence-dp.h"
 
-Since I'm not an expert on a file system and don't fully understand
-the crash, please see a executed program and a crash log below in
-case that my understanding is wrong.
+If phy-cadence-dp.h is not going to be used in multiple files, then all the
+definitions should be added here and the .h can removed.
+> +
+> +
+> +static const struct phy_ops cdns_dp_phy_ops = {
+> +	.init		= cdns_dp_phy_init,
+> +	.owner		= THIS_MODULE,
+> +};
+> +
+> +static const struct of_device_id cdns_dp_phy_of_match[] = {
+> +	{
+> +		.compatible = "cdns,dp-phy"
+> +	},
+> +	{}
+> +};
+> +
+> +MODULE_DEVICE_TABLE(of, cdns_dp_phy_of_match);
+> +
+> +static int cdns_dp_phy_probe(struct platform_device *pdev)
 
+The file organization is slightly different. Can we follow what other drivers
+do by having the probe in the bottom of the file and other functions above that?
+> +{
+> +	struct resource *regs;
+> +	struct cdns_dp_phy *cdns_phy;
+> +	struct device *dev = &pdev->dev;
+> +	struct phy_provider *phy_provider;
+> +	struct phy *phy;
+> +	int err;
+> +
+> +	cdns_phy = devm_kzalloc(dev, sizeof(*cdns_phy), GFP_KERNEL);
+> +	if (!cdns_phy)
+> +		return -ENOMEM;
+> +
+> +	cdns_phy->dev = &pdev->dev;
+> +
+> +	phy = devm_phy_create(dev, NULL, &cdns_dp_phy_ops);
+> +	if (IS_ERR(phy)) {
+> +		dev_err(dev, "failed to create DisplayPort PHY\n");
+> +		return PTR_ERR(phy);
+> +	}
+> +
+> +	regs = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> +	cdns_phy->base = devm_ioremap_resource(&pdev->dev, regs);
+> +	if (IS_ERR(cdns_phy->base))
+> +		return PTR_ERR(cdns_phy->base);
+> +
+> +	regs = platform_get_resource(pdev, IORESOURCE_MEM, 1);
+> +	cdns_phy->sd_base = devm_ioremap_resource(&pdev->dev, regs);
+> +	if (IS_ERR(cdns_phy->sd_base))
+> +		return PTR_ERR(cdns_phy->sd_base);
+> +
+> +	err = device_property_read_u32(dev, "num_lanes",
+> +				       &(cdns_phy->num_lanes));
+> +	if (err)
+> +		cdns_phy->num_lanes = DEFAULT_NUM_LANES;
+> +
+> +	switch (cdns_phy->num_lanes) {
+> +	case 1:
+> +	case 2:
+> +	case 4:
+> +		/* valid number of lanes */
+> +		break;
+> +	default:
+> +		dev_err(dev, "unsupported number of lanes: %d\n",
+> +			cdns_phy->num_lanes);
+> +		return -EINVAL;
+> +	}
+> +
+> +	err = device_property_read_u32(dev, "max_bit_rate",
+> +		   &(cdns_phy->max_bit_rate));
+> +	if (err)
+> +		cdns_phy->max_bit_rate = DEFAULT_MAX_BIT_RATE;
+> +
+> +	switch (cdns_phy->max_bit_rate) {
+> +	case 2160:
+> +	case 2430:
+> +	case 2700:
+> +	case 3240:
+> +	case 4320:
+> +	case 5400:
+> +	case 8100:
+> +		/* valid bit rate */
+> +		break;
+> +	default:
+> +		dev_err(dev, "unsupported max bit rate: %dMbps\n",
+> +			cdns_phy->max_bit_rate);
+> +		return -EINVAL;
+> +	}
+> +
+> +	phy_set_drvdata(phy, cdns_phy);
+> +
+> +	phy_provider = devm_of_phy_provider_register(dev, of_phy_simple_xlate);
+> +
+> +	dev_info(dev, "%d lanes, max bit rate %d.%03d Gbps\n",
+> +		 cdns_phy->num_lanes,
+> +		 cdns_phy->max_bit_rate / 1000,
+> +		 cdns_phy->max_bit_rate % 1000);
+> +
+> +	return PTR_ERR_OR_ZERO(phy_provider);
+> +}
+> +
+> +
+> +static int cdns_dp_phy_init(struct phy *phy)
+> +{
+> +	unsigned char lane_bits;
+> +
+> +	struct cdns_dp_phy *cdns_phy = phy_get_drvdata(phy);
+> +
+> +	writel(0x0003, cdns_phy->base + PHY_AUX_CTRL); /* enable AUX */
+> +
+> +	/* PHY PMA registers configuration function */
+> +	cdns_dp_phy_pma_cfg(cdns_phy);
+> +
+> +	/* Set lines power state to A0
+> +	 * Set lines pll clk enable to 0
+> +	 */
+> +
+> +	cdns_dp_phy_write_field(cdns_phy, PHY_PMA_XCVR_POWER_STATE_REQ,
+> +				PHY_POWER_STATE_LN_0, 6, 0x0000);
+> +
+> +	if (cdns_phy->num_lanes >= 2) {
+> +		cdns_dp_phy_write_field(cdns_phy,
+> +					PHY_PMA_XCVR_POWER_STATE_REQ,
+> +					PHY_POWER_STATE_LN_1, 6, 0x0000);
+> +
+> +		if (cdns_phy->num_lanes == 4) {
+> +			cdns_dp_phy_write_field(cdns_phy,
+> +						PHY_PMA_XCVR_POWER_STATE_REQ,
+> +						PHY_POWER_STATE_LN_2, 6, 0);
+> +			cdns_dp_phy_write_field(cdns_phy,
+> +						PHY_PMA_XCVR_POWER_STATE_REQ,
+> +						PHY_POWER_STATE_LN_3, 6, 0);
+> +		}
+> +	}
+> +
+> +	cdns_dp_phy_write_field(cdns_phy, PHY_PMA_XCVR_PLLCLK_EN,
+> +				0, 1, 0x0000);
+> +
+> +	if (cdns_phy->num_lanes >= 2) {
+> +		cdns_dp_phy_write_field(cdns_phy, PHY_PMA_XCVR_PLLCLK_EN,
+> +					1, 1, 0x0000);
+> +		if (cdns_phy->num_lanes == 4) {
+> +			cdns_dp_phy_write_field(cdns_phy,
+> +						PHY_PMA_XCVR_PLLCLK_EN,
+> +						2, 1, 0x0000);
+> +			cdns_dp_phy_write_field(cdns_phy,
+> +						PHY_PMA_XCVR_PLLCLK_EN,
+> +						3, 1, 0x0000);
+> +		}
+> +	}
+> +
+> +	/* release phy_l0*_reset_n and pma_tx_elec_idle_ln_* based on
+> +	 * used lanes
+> +	 */
+> +	lane_bits = (1 << cdns_phy->num_lanes) - 1;
+> +	writel(((0xF & ~lane_bits) << 4) | (0xF & lane_bits),
+> +		   cdns_phy->base + PHY_RESET);
+> +
+> +	/* release pma_xcvr_pllclk_en_ln_*, only for the master lane */
+> +	writel(0x0001, cdns_phy->base + PHY_PMA_XCVR_PLLCLK_EN);
+> +
+> +	/* PHY PMA registers configuration functions */
+> +	cdns_dp_phy_pma_cmn_vco_cfg_25mhz(cdns_phy);
+> +	cdns_dp_phy_pma_cmn_rate(cdns_phy);
+> +
+> +	/* take out of reset */
+> +	cdns_dp_phy_write_field(cdns_phy, PHY_RESET, 8, 1, 1);
+> +	cdns_dp_phy_wait_pma_cmn_ready(cdns_phy);
+> +	cdns_dp_phy_run(cdns_phy);
+> +
+> +	return 0;
+> +}
+> +
+> +static void cdns_dp_phy_wait_pma_cmn_ready(struct cdns_dp_phy *cdns_phy)
+> +{
+> +	unsigned int reg;
+> +	int ret;
+> +
+> +	ret = readl_poll_timeout(cdns_phy->base + PHY_PMA_CMN_READY, reg,
+> +				 reg & 1, 0, 500);
+> +	if (ret == -ETIMEDOUT)
+> +		dev_err(cdns_phy->dev,
+> +			"timeout waiting for PMA common ready\n");
+> +}
+> +
+> +static void cdns_dp_phy_pma_cfg(struct cdns_dp_phy *cdns_phy)
+> +{
+> +	unsigned int i;
+> +
+> +	/* PMA common configuration */
+> +	cdns_dp_phy_pma_cmn_cfg_25mhz(cdns_phy);
+> +
+> +	/* PMA lane configuration to deal with multi-link operation */
+> +	for (i = 0; i < cdns_phy->num_lanes; i++)
+> +		cdns_dp_phy_pma_lane_cfg(cdns_phy, i);
+> +}
+> +
+> +static void cdns_dp_phy_pma_cmn_cfg_25mhz(struct cdns_dp_phy *cdns_phy)
+> +{
+> +	/* refclock registers - assumes 25 MHz refclock */
+> +	writel(0x0019, cdns_phy->sd_base + CMN_SSM_BIAS_TMR);
+> +	writel(0x0032, cdns_phy->sd_base + CMN_PLLSM0_PLLPRE_TMR);
+> +	writel(0x00D1, cdns_phy->sd_base + CMN_PLLSM0_PLLLOCK_TMR);
+> +	writel(0x0032, cdns_phy->sd_base + CMN_PLLSM1_PLLPRE_TMR);
+> +	writel(0x00D1, cdns_phy->sd_base + CMN_PLLSM1_PLLLOCK_TMR);
+> +	writel(0x007D, cdns_phy->sd_base + CMN_BGCAL_INIT_TMR);
+> +	writel(0x007D, cdns_phy->sd_base + CMN_BGCAL_ITER_TMR);
+> +	writel(0x0019, cdns_phy->sd_base + CMN_IBCAL_INIT_TMR);
+> +	writel(0x001E, cdns_phy->sd_base + CMN_TXPUCAL_INIT_TMR);
+> +	writel(0x0006, cdns_phy->sd_base + CMN_TXPUCAL_ITER_TMR);
+> +	writel(0x001E, cdns_phy->sd_base + CMN_TXPDCAL_INIT_TMR);
+> +	writel(0x0006, cdns_phy->sd_base + CMN_TXPDCAL_ITER_TMR);
+> +	writel(0x02EE, cdns_phy->sd_base + CMN_RXCAL_INIT_TMR);
+> +	writel(0x0006, cdns_phy->sd_base + CMN_RXCAL_ITER_TMR);
+> +	writel(0x0002, cdns_phy->sd_base + CMN_SD_CAL_INIT_TMR);
+> +	writel(0x0002, cdns_phy->sd_base + CMN_SD_CAL_ITER_TMR);
+> +	writel(0x000E, cdns_phy->sd_base + CMN_SD_CAL_REFTIM_START);
+> +	writel(0x012B, cdns_phy->sd_base + CMN_SD_CAL_PLLCNT_START);
+> +	/* PLL registers */
+> +	writel(0x0409, cdns_phy->sd_base + CMN_PDIAG_PLL0_CP_PADJ_M0);
+> +	writel(0x1001, cdns_phy->sd_base + CMN_PDIAG_PLL0_CP_IADJ_M0);
+> +	writel(0x0F08, cdns_phy->sd_base + CMN_PDIAG_PLL0_FILT_PADJ_M0);
+> +	writel(0x0004, cdns_phy->sd_base + CMN_PLL0_DSM_DIAG_M0);
+> +	writel(0x00FA, cdns_phy->sd_base + CMN_PLL0_VCOCAL_INIT_TMR);
+> +	writel(0x0004, cdns_phy->sd_base + CMN_PLL0_VCOCAL_ITER_TMR);
+> +	writel(0x00FA, cdns_phy->sd_base + CMN_PLL1_VCOCAL_INIT_TMR);
+> +	writel(0x0004, cdns_phy->sd_base + CMN_PLL1_VCOCAL_ITER_TMR);
+> +	writel(0x0318, cdns_phy->sd_base + CMN_PLL0_VCOCAL_REFTIM_START);
 
-Executed Program:
-Thread0                     Thread1
-mkdir("./file0")
-     |--------------------------|
-     |                      mount("./file0", "./file0", "devpts", 0x0, "")
-     |                          |
-openat(AT_FDCWD,            chroot("./file0")
-"/dev/vcs", 0x200, 0x0)     umount("./file0", 0x2)
+Are these values that are written just calibration data or are they bitfields
+for a specific setting. If they are not calibration data, then macros should be
+added.
+> +}
+> +
+> +static void cdns_dp_phy_pma_cmn_vco_cfg_25mhz(struct cdns_dp_phy *cdns_phy)
+> +{
+> +	/* Assumes 25 MHz refclock */
+> +	switch (cdns_phy->max_bit_rate) {
+> +		/* Setting VCO for 10.8GHz */
+> +	case 2700:
+> +	case 5400:
+> +		writel(0x01B0, cdns_phy->sd_base + CMN_PLL0_INTDIV_M0);
+> +		writel(0x0000, cdns_phy->sd_base + CMN_PLL0_FRACDIVL_M0);
+> +		writel(0x0002, cdns_phy->sd_base + CMN_PLL0_FRACDIVH_M0);
+> +		writel(0x0120, cdns_phy->sd_base + CMN_PLL0_HIGH_THR_M0);
+> +		break;
+> +		/* Setting VCO for 9.72GHz */
+> +	case 2430:
+> +	case 3240:
+> +		writel(0x0184, cdns_phy->sd_base + CMN_PLL0_INTDIV_M0);
+> +		writel(0xCCCD, cdns_phy->sd_base + CMN_PLL0_FRACDIVL_M0);
+> +		writel(0x0002, cdns_phy->sd_base + CMN_PLL0_FRACDIVH_M0);
+> +		writel(0x0104, cdns_phy->sd_base + CMN_PLL0_HIGH_THR_M0);
+> +		break;
+> +		/* Setting VCO for 8.64GHz */
+> +	case 2160:
+> +	case 4320:
+> +		writel(0x0159, cdns_phy->sd_base + CMN_PLL0_INTDIV_M0);
+> +		writel(0x999A, cdns_phy->sd_base + CMN_PLL0_FRACDIVL_M0);
+> +		writel(0x0002, cdns_phy->sd_base + CMN_PLL0_FRACDIVH_M0);
+> +		writel(0x00E7, cdns_phy->sd_base + CMN_PLL0_HIGH_THR_M0);
+> +		break;
+> +		/* Setting VCO for 8.1GHz */
+> +	case 8100:
+> +		writel(0x0144, cdns_phy->sd_base + CMN_PLL0_INTDIV_M0);
+> +		writel(0x0000, cdns_phy->sd_base + CMN_PLL0_FRACDIVL_M0);
+> +		writel(0x0002, cdns_phy->sd_base + CMN_PLL0_FRACDIVH_M0);
+> +		writel(0x00D8, cdns_phy->sd_base + CMN_PLL0_HIGH_THR_M0);
+> +		break;
+> +	}
+> +
+> +	writel(0x0002, cdns_phy->sd_base + CMN_PDIAG_PLL0_CTRL_M0);
+> +	writel(0x0318, cdns_phy->sd_base + CMN_PLL0_VCOCAL_PLLCNT_START);
 
-openat(), chroot(), umount() syscalls are executed after mount() syscall.
-We think a race occurs between openat() and chroot() because RaceFuzzer
-executed openat() and chroot() concurrently.
+same for this function also.
+> +}
+> +
+> +static void cdns_dp_phy_pma_cmn_rate(struct cdns_dp_phy *cdns_phy)
+> +{
+> +	unsigned int clk_sel_val = 0;
+> +	unsigned int hsclk_div_val = 0;
+> +	unsigned int i;
+> +
+> +	/* 16'h0000 for single DP link configuration */
+> +	writel(0x0000, cdns_phy->sd_base + PHY_PLL_CFG);
+> +
+> +	switch (cdns_phy->max_bit_rate) {
+> +	case 1620:
+> +		clk_sel_val = 0x0f01;
+> +		hsclk_div_val = 2;
+> +		break;
+> +	case 2160:
+> +	case 2430:
+> +	case 2700:
+> +		clk_sel_val = 0x0701;
+> +		 hsclk_div_val = 1;
+> +		break;
+> +	case 3240:
+> +		clk_sel_val = 0x0b00;
+> +		hsclk_div_val = 2;
+> +		break;
+> +	case 4320:
+> +	case 5400:
+> +		clk_sel_val = 0x0301;
+> +		hsclk_div_val = 0;
+> +		break;
+> +	case 8100:
+> +		clk_sel_val = 0x0200;
+> +		hsclk_div_val = 0;
+> +		break;
+> +	}
+> +
+> +	writel(clk_sel_val, cdns_phy->sd_base + CMN_PDIAG_PLL0_CLK_SEL_M0);
+> +
+> +	/* PMA lane configuration to deal with multi-link operation */
+> +	for (i = 0; i < cdns_phy->num_lanes; i++) {
+> +		writel(hsclk_div_val,
+> +		       cdns_phy->sd_base + (XCVR_DIAG_HSCLK_DIV | (i<<11)));
+> +	}
+> +}
+> +
+> +static void cdns_dp_phy_pma_lane_cfg(struct cdns_dp_phy *cdns_phy,
+> +				     unsigned int lane)
+> +{
+> +	unsigned int i;
+> +
+> +	i = 0x0007 & lane;
 
+macro for mask has to be added.
 
-(Possible) Thread interleaving:
-CPU0 (path_openat)                      CPU1 (cleanup_mnt)
-=====                                   =====
-s = path_init(nd, flags);
-if (IS_ERR(s)) {
-          put_filp(file);
-                  return ERR_CAST(s);
-}
-
-                                        deactivate_super(mnt->mnt.mnt_sb);
-
-while (!(error = link_path_walk(s, nd)) &&
-
-// (in link_path_walk())
-struct dentry *parent = nd->path.dentry;
-nd->flags &= ~LOOKUP_JUMPED;
-if (unlikely(parent->d_flags & DCACHE_OP_HASH)) { // UAF occured
-
-
-Crash log:
-==================================================================
-BUG: KASAN: use-after-free in link_path_walk+0x46e/0xcd0 fs/namei.c:2061
-Read of size 4 at addr ffff8801cbe6cb80 by task syz-executor0/28699
-
-CPU: 0 PID: 28699 Comm: syz-executor0 Not tainted 4.17.0-rc1 #1
-Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.8.2-0-g33fbe13 by qemu-project.org 04/01/2014
-Call Trace:
- __dump_stack lib/dump_stack.c:77 [inline]
- dump_stack+0x166/0x21c lib/dump_stack.c:113
- print_address_description+0x73/0x250 mm/kasan/report.c:256
- kasan_report_error mm/kasan/report.c:354 [inline]
- kasan_report+0x23f/0x360 mm/kasan/report.c:412
- check_memory_region_inline mm/kasan/kasan.c:260 [inline]
- __asan_load4+0x78/0x80 mm/kasan/kasan.c:698
- link_path_walk+0x46e/0xcd0 fs/namei.c:2061
- path_openat+0x23c/0x2040 fs/namei.c:3500
- do_filp_open+0x175/0x230 fs/namei.c:3535
- do_sys_open+0x3c7/0x4a0 fs/open.c:1093
- __do_sys_open fs/open.c:1111 [inline]
- __se_sys_open fs/open.c:1106 [inline]
- __x64_sys_open+0x4c/0x60 fs/open.c:1106
- do_syscall_64+0x15f/0x4a0 arch/x86/entry/common.c:287
- entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x410601
-RSP: 002b:00007f7345489660 EFLAGS: 00000293 ORIG_RAX: 0000000000000002
-RAX: ffffffffffffffda RBX: cccccccccccccccd RCX: 0000000000410601
-RDX: 0000000000000000 RSI: 0000000000010180 RDI: 00007f7345489710
-RBP: 00000000000006e1 R08: 236573756f6d2f74 R09: 0000000000000000
-R10: 00000000200004c0 R11: 0000000000000293 R12: 00007f734548a6d4
-R13: 00000000ffffffff R14: 00000000006ff5b8 R15: 0000000000000000
-
-Allocated by task 28699:
- save_stack+0x43/0xd0 mm/kasan/kasan.c:448
- set_track mm/kasan/kasan.c:460 [inline]
- kasan_kmalloc+0xae/0xe0 mm/kasan/kasan.c:553
- kasan_slab_alloc+0x12/0x20 mm/kasan/kasan.c:490
- kmem_cache_alloc+0x12e/0x760 mm/slab.c:3554
- __d_alloc+0xc0/0x6e0 fs/dcache.c:1638
- d_alloc_anon fs/dcache.c:1742 [inline]
- d_make_root+0x2d/0x70 fs/dcache.c:1934
- devpts_fill_super+0x23b/0x500 fs/devpts/inode.c:482
- mount_nodev+0x59/0xd0 fs/super.c:1211
- devpts_mount+0x2c/0x40 fs/devpts/inode.c:509
- mount_fs+0x50/0x200 fs/super.c:1268
- vfs_kern_mount.part.26+0xbc/0x2c0 fs/namespace.c:1037
- vfs_kern_mount fs/namespace.c:2514 [inline]
- do_new_mount fs/namespace.c:2517 [inline]
- do_mount+0xb82/0x1bb0 fs/namespace.c:2847
- ksys_mount+0xab/0x120 fs/namespace.c:3063
- __do_sys_mount fs/namespace.c:3077 [inline]
- __se_sys_mount fs/namespace.c:3074 [inline]
- __x64_sys_mount+0x67/0x80 fs/namespace.c:3074
- do_syscall_64+0x15f/0x4a0 arch/x86/entry/common.c:287
- entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-Freed by task 28700:
- save_stack+0x43/0xd0 mm/kasan/kasan.c:448
- set_track mm/kasan/kasan.c:460 [inline]
- __kasan_slab_free+0x11a/0x170 mm/kasan/kasan.c:521
- kasan_slab_free+0xe/0x10 mm/kasan/kasan.c:528
- __cache_free mm/slab.c:3498 [inline]
- kmem_cache_free+0x83/0x2a0 mm/slab.c:3756
- __d_free fs/dcache.c:257 [inline]
- dentry_free+0x8c/0xe0 fs/dcache.c:347
- __dentry_kill+0x3d6/0x440 fs/dcache.c:582
- dentry_kill+0x8f/0x320 fs/dcache.c:686
- dput.part.22+0x430/0x4e0 fs/dcache.c:850
- dput fs/dcache.c:830 [inline]
- do_one_tree+0x43/0x50 fs/dcache.c:1523
- shrink_dcache_for_umount+0xa5/0x1c0 fs/dcache.c:1537
- generic_shutdown_super+0xb0/0x330 fs/super.c:425
- kill_anon_super fs/super.c:1037 [inline]
- kill_litter_super+0x48/0x60 fs/super.c:1047
- devpts_kill_sb+0x49/0x50 fs/devpts/inode.c:519
- deactivate_locked_super+0x71/0xb0 fs/super.c:313
- deactivate_super+0x10f/0x150 fs/super.c:344
- cleanup_mnt+0x6b/0xc0 fs/namespace.c:1173
- __cleanup_mnt+0x16/0x20 fs/namespace.c:1180
- task_work_run+0x152/0x1b0 kernel/task_work.c:113
- tracehook_notify_resume include/linux/tracehook.h:191 [inline]
- exit_to_usermode_loop+0x262/0x270 arch/x86/entry/common.c:166
- prepare_exit_to_usermode arch/x86/entry/common.c:196 [inline]
- syscall_return_slowpath arch/x86/entry/common.c:265 [inline]
- do_syscall_64+0x473/0x4a0 arch/x86/entry/common.c:290
- entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-The buggy address belongs to the object at ffff8801cbe6cb80
- which belongs to the cache dentry(17:syz0) of size 288
-The buggy address is located 0 bytes inside of
- 288-byte region [ffff8801cbe6cb80, ffff8801cbe6cca0)
-The buggy address belongs to the page:
-page:ffffea00072f9b00 count:1 mapcount:0 mapping:ffff8801cbe6c080 index:0x0
-flags: 0x2fffc0000000100(slab)
-raw: 02fffc0000000100 ffff8801cbe6c080 0000000000000000 000000010000000b
-raw: ffffea00072f8ca0 ffffea00072f8da0 ffff8801dc812c80 ffff8801de41a740
-page dumped because: kasan: bad access detected
-page->mem_cgroup:ffff8801de41a740
-
-Memory state around the buggy address:
- ffff8801cbe6ca80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
- ffff8801cbe6cb00: fb fb fb fb fb fb fb fb fc fc fc fc fc fc fc fc
->ffff8801cbe6cb80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-                   ^
- ffff8801cbe6cc00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
- ffff8801cbe6cc80: fb fb fb fb fc fc fc fc fc fc fc fc fb fb fb fb
-==================================================================
-
-
-= About RaceFuzzer
-
-RaceFuzzer is a customized version of Syzkaller, specifically tailored
-to find race condition bugs in the Linux kernel. While we leverage
-many different technique, the notable feature of RaceFuzzer is in
-leveraging a custom hypervisor (QEMU/KVM) to interleave the
-scheduling. In particular, we modified the hypervisor to intentionally
-stall a per-core execution, which is similar to supporting per-core
-breakpoint functionality. This allows RaceFuzzer to force the kernel
-to deterministically trigger racy condition (which may rarely happen
-in practice due to randomness in scheduling).
-
-RaceFuzzer's C repro always pinpoints two racy syscalls. Since C
-repro's scheduling synchronization should be performed at the user
-space, its reproducibility is limited (reproduction may take from 1
-second to 10 minutes (or even more), depending on a bug). This is
-because, while RaceFuzzer precisely interleaves the scheduling at the
-kernel's instruction level when finding this bug, C repro cannot fully
-utilize such a feature. Please disregard all code related to
-"should_hypercall" in the C repro, as this is only for our debugging
-purposes using our own hypervisor.
+Thanks
+Kishon
