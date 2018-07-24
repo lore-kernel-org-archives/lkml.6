@@ -2,96 +2,158 @@ Return-Path: <SRS0=hTZH=KI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0771CC6778A
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 09:23:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B6DBECDFB8
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 09:23:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B201520852
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 09:23:18 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B3XHuErD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B201520852
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by mail.kernel.org (Postfix) with ESMTP id 0963D20852
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 09:23:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0963D20852
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388417AbeGXK2r (ORCPT
+        id S2388434AbeGXK2w (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 06:28:47 -0400
-Received: from mail-qt0-f195.google.com ([209.85.216.195]:38008 "EHLO
-        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388236AbeGXK2r (ORCPT
+        Tue, 24 Jul 2018 06:28:52 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:53802 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2388236AbeGXK2u (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 06:28:47 -0400
-Received: by mail-qt0-f195.google.com with SMTP id y19-v6so3419540qto.5
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Jul 2018 02:23:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=jDWsSL4qcEGslJUGS0dWVQTKmPUr0fxHXXABEJaaqSA=;
-        b=B3XHuErDLgYdxyNl29mu6N9KQ23tJT/0YehRpqE44rXsafufMKn2QKbE70Iqfre4Kz
-         cbfP6kn7aIfljmLcZ7YTY2iGOxrcQAA5h1cEW4LcZDeIzQty3NLIgEZDbICA8N4vXCk2
-         280o8zfOTjSBQm6ebf72iQ0YXb6sMHHZttLPag4Ma7GV7xbAoAKhAwQ6QqBvB2okUeo9
-         hgV+d6XAZVV5/GOYZmVHUkksZQpiUWOOfbmnsqI+wfGazoMbilv09l6g0I1kZzzt/nMZ
-         ML83MbmMYF6TsDd7NQ1O6JQSIfhPH0X42uekku+XrHCBAIJm1JHQ31GWz1Iu4ROXOGgA
-         98FA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
-         :date:message-id:subject:to:cc;
-        bh=jDWsSL4qcEGslJUGS0dWVQTKmPUr0fxHXXABEJaaqSA=;
-        b=mmgTucAn04wMloTtrsGqFfLUK/I06kYaNPYFZXUuI/i2xdIwOW1EEWvFkyYv4T/DxC
-         CbhpLzUuKusCz8WMmQW4TorRMKzhtVafgt9Zyg4pFJsOJH3whHglOB/pUN4xGnzIrlUF
-         PxZ+9CdAaGB+DOId33dtg5cIDWSIYaJGsfo4ESLkqs77xry6N3ls5lBiTWcY0TLXVAl6
-         PtDmXVprsuHIWH9ILtbejjZTMVN6xzG+Mwxw6d1RhKHvppqy4ffpvDoKmG7jYIHB0HK6
-         xrtvtfPD5k1f4HrrGcmpkpK6RQmLNPNLFbaLQ18GZHWQkNYEvg/kle40cyRsVqWmUlQ8
-         EwSw==
-X-Gm-Message-State: AOUpUlFI+620Zdl2fO6U2rd2+7M40awthfMAcwXCs3xK7mTcDTA9duN3
-        X/L6+X5U6jUvAUIuWqLFZxOI7zmUK0RFl8nQJy0=
-X-Google-Smtp-Source: AAOMgpfQeXVYxGmLVkz9ShsWMCj8fsWBAZP2/wkLOaysEbpVLuLnW5/7rliezxLVu3PU5YYGthOeNLCCJVq3xfOPX3w=
-X-Received: by 2002:ac8:30e3:: with SMTP id w32-v6mr15868571qta.280.1532424195115;
- Tue, 24 Jul 2018 02:23:15 -0700 (PDT)
+        Tue, 24 Jul 2018 06:28:50 -0400
+Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w6O9Ja0T029987
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Jul 2018 05:23:18 -0400
+Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2kdydypge3-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Jul 2018 05:23:17 -0400
+Received: from localhost
+        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <prudo@linux.ibm.com>;
+        Tue, 24 Jul 2018 10:23:14 +0100
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
+        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 24 Jul 2018 10:23:08 +0100
+Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w6O9N7Oq31981570
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 24 Jul 2018 09:23:07 GMT
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 2037411C050;
+        Tue, 24 Jul 2018 12:23:22 +0100 (BST)
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 90BA511C052;
+        Tue, 24 Jul 2018 12:23:21 +0100 (BST)
+Received: from ThinkPad (unknown [9.152.212.29])
+        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Tue, 24 Jul 2018 12:23:21 +0100 (BST)
+Date:   Tue, 24 Jul 2018 11:23:06 +0200
+From:   Philipp Rudo <prudo@linux.ibm.com>
+To:     AKASHI Takahiro <takahiro.akashi@linaro.org>
+Cc:     catalin.marinas@arm.com, will.deacon@arm.com, dhowells@redhat.com,
+        vgoyal@redhat.com, herbert@gondor.apana.org.au,
+        davem@davemloft.net, dyoung@redhat.com, bhe@redhat.com,
+        arnd@arndb.de, schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
+        ard.biesheuvel@linaro.org, bhsharma@redhat.com,
+        kexec@lists.infradead.org, linux-kernel@vger.kernel.org,
+        james.morse@arm.com, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v12 03/16] s390, kexec_file: drop arch_kexec_mem_walk()
+In-Reply-To: <20180724065759.19186-4-takahiro.akashi@linaro.org>
+References: <20180724065759.19186-1-takahiro.akashi@linaro.org>
+        <20180724065759.19186-4-takahiro.akashi@linaro.org>
+Organization: IBM
+X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Received: by 2002:a0c:967d:0:0:0:0:0 with HTTP; Tue, 24 Jul 2018 02:23:14
- -0700 (PDT)
-In-Reply-To: <58f371f95c10969bacff4d5bc393ff0f0c6102fb.1532415410.git.fthain@telegraphics.com.au>
-References: <58f371f95c10969bacff4d5bc393ff0f0c6102fb.1532415410.git.fthain@telegraphics.com.au>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Tue, 24 Jul 2018 11:23:14 +0200
-X-Google-Sender-Auth: BLlVnKbcw7KnBgP1drPrOASbEnU
-Message-ID: <CAK8P3a1e-HHm9+sYYmsgOHtqLK_GD_uMxuKg9dMo_xEfHAHP5g@mail.gmail.com>
-Subject: Re: [PATCH] m68k/mac: Rework patch "use time64_t in RTC handling"
-To:     Finn Thain <fthain@telegraphics.com.au>
-Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
-        linux-m68k <linux-m68k@lists.linux-m68k.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 18072409-0012-0000-0000-0000028E0256
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18072409-0013-0000-0000-000020BFE2B2
+Message-Id: <20180724112306.299540b5@ThinkPad>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-24_03:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1806210000 definitions=main-1807240099
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 24, 2018 at 9:07 AM, Finn Thain <fthain@telegraphics.com.au> wrote:
-> This addresses the issues arising from commit 324caa29cd04
-> ("m68k: mac: use time64_t in RTC handling").
->
-> Adopt __u32 for the union in via_read_time(), consistent with changes
-> to via_write_time().
->
-> Use low_32_bits() in via_write_time(), consistent with changes to
-> pmu_write_time() and cuda_write_time().
->
-> Have via_read_time() return a time64_t, consistent with changes to
-> pmu_read_time and cuda_read_time().
->
-> Drop the pointless wraparound conditional in via_read_time().
->
-> Cc: Arnd Bergmann <arnd@arndb.de>
-> Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
+Hi AKASHI,
 
-Reviewed-by: Arnd Bergmann <arnd@arndb.de>
+the patch looks good to me.
 
-Thanks for fixing it up!
+Reviewed-by: Philipp Rudo <prudo@linux.ibm.com>
+
+Thanks
+Philipp
+
+
+On Tue, 24 Jul 2018 15:57:46 +0900
+AKASHI Takahiro <takahiro.akashi@linaro.org> wrote:
+
+> Since s390 already knows where to locate buffers, calling
+> arch_kexec_mem_walk() has no sense. So we can just drop it as kbuf->mem
+> indicates this while all other architectures sets it to 0 initially.
+> 
+> This change is a preparatory work for the next patch, where all the
+> variant memory walks, either on system resource or memblock, will be
+> put in one common place so that it will satisfy all the architectures'
+> need.
+> 
+> Signed-off-by: AKASHI Takahiro <takahiro.akashi@linaro.org>
+> Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
+> Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
+> Cc: Dave Young <dyoung@redhat.com>
+> Cc: Vivek Goyal <vgoyal@redhat.com>
+> Cc: Baoquan He <bhe@redhat.com>
+> ---
+>  arch/s390/kernel/machine_kexec_file.c | 10 ----------
+>  kernel/kexec_file.c                   |  4 ++++
+>  2 files changed, 4 insertions(+), 10 deletions(-)
+> 
+> diff --git a/arch/s390/kernel/machine_kexec_file.c b/arch/s390/kernel/machine_kexec_file.c
+> index f413f57f8d20..32023b4f9dc0 100644
+> --- a/arch/s390/kernel/machine_kexec_file.c
+> +++ b/arch/s390/kernel/machine_kexec_file.c
+> @@ -134,16 +134,6 @@ int kexec_file_add_initrd(struct kimage *image, struct s390_load_data *data,
+>  	return ret;
+>  }
+>  
+> -/*
+> - * The kernel is loaded to a fixed location. Turn off kexec_locate_mem_hole
+> - * and provide kbuf->mem by hand.
+> - */
+> -int arch_kexec_walk_mem(struct kexec_buf *kbuf,
+> -			int (*func)(struct resource *, void *))
+> -{
+> -	return 1;
+> -}
+> -
+>  int arch_kexec_apply_relocations_add(struct purgatory_info *pi,
+>  				     Elf_Shdr *section,
+>  				     const Elf_Shdr *relsec,
+> diff --git a/kernel/kexec_file.c b/kernel/kexec_file.c
+> index 63c7ce1c0c3e..bf39df5e5bb9 100644
+> --- a/kernel/kexec_file.c
+> +++ b/kernel/kexec_file.c
+> @@ -534,6 +534,10 @@ int kexec_locate_mem_hole(struct kexec_buf *kbuf)
+>  {
+>  	int ret;
+>  
+> +	/* Arch knows where to place */
+> +	if (kbuf->mem)
+> +		return 0;
+> +
+>  	ret = arch_kexec_walk_mem(kbuf, locate_mem_hole_callback);
+>  
+>  	return ret == 1 ? 0 : -EADDRNOTAVAIL;
+
