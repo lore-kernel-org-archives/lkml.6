@@ -6,40 +6,40 @@ X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F33B2C6778A
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 17:57:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF3CAC6778A
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 17:57:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ABA1F20856
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 17:57:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AFB9920856
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 17:57:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="GRA3D3pg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ABA1F20856
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="VItZERpP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AFB9920856
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388685AbeGXTEz (ORCPT
+        id S2388703AbeGXTE6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 15:04:55 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:42170 "EHLO
+        Tue, 24 Jul 2018 15:04:58 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:42232 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388476AbeGXTEy (ORCPT
+        with ESMTP id S2388476AbeGXTE5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 15:04:54 -0400
+        Tue, 24 Jul 2018 15:04:57 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=References:In-Reply-To:Message-Id:
         Date:Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
         List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=Nd/NAshcC+N9sJXOXpHOLtro9zm+WHYdhQEaujYnfgA=; b=GRA3D3pgUmiEmBuvmGjkJm3AQ
-        zKYxu2r+yim72J4VfGXyMLAwb/G5OTLfQx90f9Q+sfC3wft9PIpqJs/1ntjWxOuiAjV6Uuu7bsQ/d
-        DYdkbE8fhODG6b9N4L3pb2iXeOZnmCT2kzipy1W+6sBrb60dPawR5xgKSAB+PoFsKwk4gLY409ErA
-        rr0OqXvzEJGZwnPOFLnvQfwxX+O9N4toKEz8cZPiASvZxy6W61VGtiX5PQ5KY2Vx1OVU9kNohXaML
-        CgCUB9h8CBkFRhPbfJ0VvpSaGZuAlLaReC2Emh0vuMDlR/qiAG8iB9dXniDf3282pwgN/Din0B8BU
-        uiHssx1JQ==;
+         bh=4hIEQbQJkffoYpzl9w5ONUHKIok0l2QGSgTO2IRGDks=; b=VItZERpPidbdC5i8osCPRDMLM
+        olH2c03sahJsP9BiFwgDmBHZPOz4jqw1uLyoZvaspYFEmbWUwTjdXw729zqj9+N6yktFtYdlzdK1/
+        L7DImFOY2BnDgsqdsU5Jhx75Pi+f8JJK9s9F5E23ragwpueFm4fEnAeoVCC73o/B4FhQo31JekTPM
+        Ni1361byHYZmN4cvPfMiAM8U5TyqQSCunT22tynACxIVjvQXG3Rx7i8tTf+7svo90iS4oBnWKh5hJ
+        m9DT0VdQ2wHQiiFt3ks/bRALlzhx3TWCNggvlmEem/s3ARQkCk8+rdmo0sjM/xgZpcn7vu3dEPOkE
+        SsiQH6QAQ==;
 Received: from 089144194224.atnat0003.highway.a1.net ([89.144.194.224] helo=localhost)
         by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fi1Yg-0007Dz-O2; Tue, 24 Jul 2018 17:57:15 +0000
+        id 1fi1Yj-0007FL-Lk; Tue, 24 Jul 2018 17:57:18 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     Masahiro Yamada <yamada.masahiro@socionext.com>
 Cc:     Randy Dunlap <rdunlap@infradead.org>,
@@ -48,9 +48,9 @@ Cc:     Randy Dunlap <rdunlap@infradead.org>,
         Michal Simek <monstr@monstr.eu>, linux-kbuild@vger.kernel.org,
         linux-um@lists.infradead.org, linux-arch@lists.infradead.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 08/10] kconfig: use a menu in arch/Kconfig to reduce clutter
-Date:   Tue, 24 Jul 2018 19:56:44 +0200
-Message-Id: <20180724175646.3621-9-hch@lst.de>
+Subject: [PATCH 09/10] kconfig: move the "Executable file formats" menu to fs/Kconfig.binfmt
+Date:   Tue, 24 Jul 2018 19:56:45 +0200
+Message-Id: <20180724175646.3621-10-hch@lst.de>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180724175646.3621-1-hch@lst.de>
 References: <20180724175646.3621-1-hch@lst.de>
@@ -60,35 +60,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Randy Dunlap <rdunlap@infradead.org>
+No need to have this in the top-level Kconfig.
 
-Put everything in arch/Kconfig into a General options menu
-so that they don't clutter up the main/major/primary list of
-menu options.
-
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
 Signed-off-by: Christoph Hellwig <hch@lst.de>
+Tested-by: Randy Dunlap <rdunlap@infradead.org>
+Acked-by: Randy Dunlap <rdunlap@infradead.org>
 ---
- arch/Kconfig | 4 ++++
- 1 file changed, 4 insertions(+)
+ Kconfig           | 2 --
+ fs/Kconfig.binfmt | 5 +++++
+ 2 files changed, 5 insertions(+), 2 deletions(-)
 
-diff --git a/arch/Kconfig b/arch/Kconfig
-index cddd0faae4cb..6cf1b17a8df2 100644
---- a/arch/Kconfig
-+++ b/arch/Kconfig
-@@ -9,6 +9,8 @@
- #
- source "arch/$(SRCARCH)/Kconfig"
+diff --git a/Kconfig b/Kconfig
+index a5997d6c2029..48a80beab685 100644
+--- a/Kconfig
++++ b/Kconfig
+@@ -13,9 +13,7 @@ source "init/Kconfig"
  
-+menu "General architecture-dependent options"
+ source "kernel/Kconfig.freezer"
+ 
+-menu "Executable file formats"
+ source "fs/Kconfig.binfmt"
+-endmenu
+ 
+ source "mm/Kconfig"
+ 
+diff --git a/fs/Kconfig.binfmt b/fs/Kconfig.binfmt
+index 56df483de619..b795f8da81f3 100644
+--- a/fs/Kconfig.binfmt
++++ b/fs/Kconfig.binfmt
+@@ -1,3 +1,6 @@
 +
- config CRASH_CORE
- 	bool
- 
-@@ -981,3 +983,5 @@ config REFCOUNT_FULL
- 	  security flaw exploits.
- 
- source "kernel/gcov/Kconfig"
++menu "Executable file formats"
++
+ config BINFMT_ELF
+ 	bool "Kernel support for ELF binaries"
+ 	depends on MMU
+@@ -187,3 +190,5 @@ config COREDUMP
+ 	  This option enables support for performing core dumps. You almost
+ 	  certainly want to say Y here. Not necessary on systems that never
+ 	  need debugging or only ever run flawless code.
 +
 +endmenu
 -- 
