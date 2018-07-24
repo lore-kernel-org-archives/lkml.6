@@ -2,155 +2,179 @@ Return-Path: <SRS0=hTZH=KI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42AD3ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 03:35:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42971C6778A
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 03:36:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 07F1220874
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 03:35:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 07F1220874
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id E1CD820844
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 03:36:16 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V1KZJVww"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E1CD820844
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388293AbeGXEjT (ORCPT
+        id S2388354AbeGXEkf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 00:39:19 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:34070 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2388107AbeGXEjT (ORCPT
+        Tue, 24 Jul 2018 00:40:35 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:35402 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388144AbeGXEkf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 00:39:19 -0400
-Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w6O3Y7Xa194557
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Jul 2018 23:34:57 -0400
-Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2kdqff1am0-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Jul 2018 23:34:57 -0400
-Received: from localhost
-        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <ravi.bangoria@linux.ibm.com>;
-        Tue, 24 Jul 2018 04:34:55 +0100
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
-        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 24 Jul 2018 04:34:51 +0100
-Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w6O3YopF41222270
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 24 Jul 2018 03:34:50 GMT
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 1593FAE055;
-        Tue, 24 Jul 2018 06:35:00 +0100 (BST)
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 2DC17AE045;
-        Tue, 24 Jul 2018 06:34:57 +0100 (BST)
-Received: from [9.124.31.70] (unknown [9.124.31.70])
-        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Tue, 24 Jul 2018 06:34:57 +0100 (BST)
-Subject: Re: [PATCH v6 3/6] Uprobes: Support SDT markers having reference
- count (semaphore)
-To:     Oleg Nesterov <oleg@redhat.com>
-Cc:     srikar@linux.vnet.ibm.com, rostedt@goodmis.org,
-        mhiramat@kernel.org, peterz@infradead.org, mingo@redhat.com,
-        acme@kernel.org, alexander.shishkin@linux.intel.com,
-        jolsa@redhat.com, namhyung@kernel.org,
-        linux-kernel@vger.kernel.org, ananth@linux.vnet.ibm.com,
-        alexis.berlemont@gmail.com, naveen.n.rao@linux.vnet.ibm.com,
-        linux-arm-kernel@lists.infradead.org, linux-mips@linux-mips.org,
-        linux@armlinux.org.uk, ralf@linux-mips.org, paul.burton@mips.com,
-        Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-References: <20180716084706.28244-1-ravi.bangoria@linux.ibm.com>
- <20180716084706.28244-4-ravi.bangoria@linux.ibm.com>
- <20180723162629.GA8584@redhat.com>
-From:   Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-Date:   Tue, 24 Jul 2018 09:04:47 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Tue, 24 Jul 2018 00:40:35 -0400
+Received: by mail-pg1-f194.google.com with SMTP id e6-v6so1836840pgv.2
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Jul 2018 20:36:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=aBKs3ApLXL4Lf/oYRdSYKJe63Z/0UeElX80F31sDpyg=;
+        b=V1KZJVwwrtwpZTjQw4jF6xsk2lu+Yb4g4oi2fPxD04lHShre1JQXmOD2JpG7Kle+3h
+         B4kb0uGeJvpoP5WZMU88jYD+/EOlD2DhAWKdI25ijVqO8HipGfeSmfOok/tDBRkLjBI4
+         YrPlok/uV0+FoLcoYItPEjtKOld79ZsU39IuS5UdrZeyyquIiXBbl0wrOwi8BZyNLOgd
+         JCw/E8FSlCYT+qo4I73cpXGrbBz2dlsdTe857gVS/pZNey+SKP/gd6sHv5VcygDEFNbe
+         l048gBYJZmKEcmiFEd1hcytZQCmg93hCvgkMYMWlHIcUabT3KuJnK+1ClKp/VXXWxeJd
+         s0BA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=aBKs3ApLXL4Lf/oYRdSYKJe63Z/0UeElX80F31sDpyg=;
+        b=p5ZWDCLY/7ctx/QW7rXVAYzkRw2KaYY401K1/CNwvnHa98GZzhg9baRqeASptfmX6Q
+         ODg5E6LJSX5mYPAEjglq0+KzPtKLWAK7IdIm/HunacjwzYwjStPNYlYvKfAu9iRQPdsy
+         QFYKeVsT0oo2/07vNBU3tDcz+Zkx/xHpuHMmWCcEMXaRkVDHaJpiIkMRwrv5yboDWwlP
+         kEnmn/OkGVSGuD/IK7M2GNKxXOih++7F64Bm0WCeP8F+q1OEve1aGolB57W2hT3VklbY
+         T39ByzZFvGFPtFR9DARxkdlaNw0j/Dq+FvBxRjvGAmBC6zsJ2QUfsINzMfH4/JcRCDKc
+         V9uw==
+X-Gm-Message-State: AOUpUlGmGffbJaFJ0t8KP6Db+UhAA1P3dmGZCFd3nDYD/7Ea5B/KMv9M
+        w2TXTu66R9dR7fHmSi9ertE8rmbRZkU=
+X-Google-Smtp-Source: AAOMgpfVImjMUmGdQml+WzOOnrAE7g41zFyuUuxUxnFcijTqPoBPntDD+UJ8ktKDpUgRgsua2Vza2w==
+X-Received: by 2002:a62:d8c:: with SMTP id 12-v6mr16049808pfn.202.1532403373846;
+        Mon, 23 Jul 2018 20:36:13 -0700 (PDT)
+Received: from dragonet (dragonet.kaist.ac.kr. [143.248.133.220])
+        by smtp.gmail.com with ESMTPSA id y3-v6sm13407710pge.29.2018.07.23.20.36.11
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 23 Jul 2018 20:36:13 -0700 (PDT)
+Date:   Tue, 24 Jul 2018 12:36:08 +0900
+From:   "Dae R. Jeong" <threeearcat@gmail.com>
+To:     perex@perex.cz, tiwai@suse.com, colin.king@canonical.com
+Cc:     alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
+        lifeasageek@gmail.com, kt0755@gmail.com, bammanag@purdue.edu
+Subject: WARNING in port_delete
+Message-ID: <20180724033608.GA17607@dragonet>
 MIME-Version: 1.0
-In-Reply-To: <20180723162629.GA8584@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 18072403-0012-0000-0000-0000028DDCE5
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18072403-0013-0000-0000-000020BFBBBF
-Message-Id: <e722ee62-eaba-3abd-7f34-bf38ba3d4f95@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-24_01:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1806210000 definitions=main-1807240036
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Oleg,
+Reporting the crash: WARNING in port_delete
 
-On 07/23/2018 09:56 PM, Oleg Nesterov wrote:
-> I have a mixed feeling about this series... I'll try to summarise my thinking
-> tomorrow, but I do not see any obvious problem so far. Although I have some
-> concerns about 5/6, I need to re-read it after sleep.
+This crash has been found in v4.18-rc3 using RaceFuzzer (a modified
+version of Syzkaller), which we descrbie more at the end of this
+report. Our analysis shows that the race occurs when invoking two close
+syscalls concurrently.
 
-Sure.
 
-> 
-> 
-> On 07/16, Ravi Bangoria wrote:
->>
->> +static int delayed_uprobe_install(struct vm_area_struct *vma)
->> +{
->> +	struct list_head *pos, *q;
->> +	struct delayed_uprobe *du;
->> +	unsigned long vaddr;
->> +	int ret = 0, err = 0;
->> +
->> +	mutex_lock(&delayed_uprobe_lock);
->> +	list_for_each_safe(pos, q, &delayed_uprobe_list) {
->> +		du = list_entry(pos, struct delayed_uprobe, list);
->> +
->> +		if (!du->uprobe->ref_ctr_offset ||
-> 
-> Is it possible to see ->ref_ctr_offset == 0 in delayed_uprobe_list?
+The executed program is as follows:
+r0 = open("/dev/snd/seq", 0x0, 0x0)
+ioctl(r0, SNDRV_SEQ_IOCTL_CREATE_PORT, {{0x80}, "706f72943000000000000000000000000000000000000000000000000000000000233f770800000000000000000000000000000000000000001000", 0xffffffffffffffff, 0xfffffffffffffbff})
+r1 = openat(AT_FDCWD, "/dev/sequencer2", 0x8402, 0x0)
+close(r0)
+close(r1)
 
-I'll remove this check.
+and two threads executed the program as follows:
+Thread0                                     Thread1
+open("/dev/snd/seq")
+ioctl(r0, SNDRV_SEQ_IOCTL_CREATE_PORT)
+openat("/dev/sequencer2")
+close(r0)                                   close(r1)
 
-> 
->> @@ -1072,7 +1282,13 @@ int uprobe_mmap(struct vm_area_struct *vma)
->>  	struct uprobe *uprobe, *u;
->>  	struct inode *inode;
->>  
->> -	if (no_uprobe_events() || !valid_vma(vma, true))
->> +	if (no_uprobe_events())
->> +		return 0;
->> +
->> +	if (vma->vm_flags & VM_WRITE)
->> +		delayed_uprobe_install(vma);
-> 
-> Obviously not nice performance-wise... OK, I do not know if it will actually
-> hurt in practice and probably we can use the better data structures if necessary.
-> But can't we check MMF_HAS_UPROBES at least? I mean,
-> 
-> 	if (vma->vm_flags & VM_WRITE && test_bit(MMF_HAS_UPROBES, &vma->vm_mm->flags))
-> 		delayed_uprobe_install(vma);
-> 
-> ?
+(Note that two close() syscalls were exeuted after openat() syscall, and
+two close() syscalls were executed concurrently.)
 
-Yes.
 
-> 
-> 
-> Perhaps we can even add another flag later, MMF_HAS_DELAYED_UPROBES set by
-> delayed_uprobe_add().
+Crash log:
+==================================================================
+WARNING: CPU: 1 PID: 32519 at /home/daeryong/workspace/race-fuzzer/kernels_repo/kernel_v4.18-rc3/sound/core/seq/seq_ports.c:275 port_delete+0xde/0xf0 sound/core/seq/seq_ports.c:275
+Kernel panic - not syncing: panic_on_warn set ...
 
-Yes, good idea.
+CPU: 1 PID: 32519 Comm: syz-executor0 Not tainted 4.18.0-rc3 #1
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.8.2-0-g33fbe13 by qemu-project.org 04/01/2014
+Call Trace:
+ __dump_stack lib/dump_stack.c:77 [inline]
+ dump_stack+0x16e/0x22c lib/dump_stack.c:113
+ panic+0x1a8/0x3a7 kernel/panic.c:184
+ __warn+0x191/0x1a0 kernel/panic.c:536
+ report_bug+0x132/0x1b0 lib/bug.c:186
+ fixup_bug.part.10+0x28/0x50 arch/x86/kernel/traps.c:178
+ fixup_bug arch/x86/kernel/traps.c:247 [inline]
+ do_error_trap+0x284/0x2c0 arch/x86/kernel/traps.c:296
+ do_invalid_op+0x1b/0x20 arch/x86/kernel/traps.c:316
+ invalid_op+0x14/0x20 arch/x86/entry/entry_64.S:992
+RIP: 0010:port_delete+0xde/0xf0 sound/core/seq/seq_ports.c:275
+Code: 00 00 e8 b5 68 d2 fd 8b 83 58 01 00 00 85 c0 75 1d e8 86 5c ae fd 48 89 df e8 3e 52 d2 fd 31 c0 5b 41 5c 5d c3 e8 72 5c ae fd <0f> 0b eb c8 e8 69 5c ae fd 0f 0b eb da 0f 1f 44 00 00 55 48 89 e5 
+RSP: 0018:ffff8801d635f900 EFLAGS: 00010216
+RAX: 0000000000040000 RBX: ffff8801da196900 RCX: ffffffff839b86ee
+RDX: 0000000000005e94 RSI: ffffc90002640000 RDI: ffff8801da196978
+RBP: ffff8801d635f910 R08: 0000000000000098 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000000 R12: ffffffff839ba820
+R13: ffff8801da196950 R14: ffff8801ed5bc080 R15: ffff8801da196958
+ snd_seq_delete_port+0x2b0/0x2d0 sound/core/seq/seq_ports.c:303
+ snd_seq_ioctl_delete_port+0x5b/0xa0 sound/core/seq/seq_clientmgr.c:1325
+ snd_seq_kernel_client_ctl+0xd4/0xf0 sound/core/seq/seq_clientmgr.c:2361
+ snd_seq_event_port_detach+0xcb/0x120 sound/core/seq/seq_ports.c:705
+ delete_port+0x3a/0x70 sound/core/seq/oss/seq_oss_init.c:354
+ snd_seq_oss_release+0x7c/0x90 sound/core/seq/oss/seq_oss_init.c:433
+ odev_release+0x40/0x60 sound/core/seq/oss/seq_oss.c:153
+ __fput+0x234/0x470 fs/file_table.c:209
+ ____fput+0x15/0x20 fs/file_table.c:243
+ task_work_run+0x15a/0x1c0 kernel/task_work.c:113
+ tracehook_notify_resume include/linux/tracehook.h:192 [inline]
+ exit_to_usermode_loop+0x2a3/0x2b0 arch/x86/entry/common.c:166
+ prepare_exit_to_usermode arch/x86/entry/common.c:197 [inline]
+ syscall_return_slowpath arch/x86/entry/common.c:268 [inline]
+ do_syscall_64+0x485/0x4b0 arch/x86/entry/common.c:293
+ entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x456469
+Code: 1d ba fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 eb b9 fb ff c3 66 2e 0f 1f 84 00 00 00 00 
+RSP: 002b:00007fe9a8936b28 EFLAGS: 00000246 ORIG_RAX: 0000000000000003
+RAX: 0000000000000000 RBX: 000000000072bfa0 RCX: 0000000000456469
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000014
+RBP: 0000000000000054 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007fe9a89376d4
+R13: 00000000ffffffff R14: 00000000006f5880 R15: 0000000000000000
+Dumping ftrace buffer:
+   (ftrace buffer empty)
+Kernel Offset: disabled
+Rebooting in 86400 seconds..
 
-Thanks for the review,
-Ravi
 
+= About RaceFuzzer
+
+RaceFuzzer is a customized version of Syzkaller, specifically tailored
+to find race condition bugs in the Linux kernel. While we leverage
+many different technique, the notable feature of RaceFuzzer is in
+leveraging a custom hypervisor (QEMU/KVM) to interleave the
+scheduling. In particular, we modified the hypervisor to intentionally
+stall a per-core execution, which is similar to supporting per-core
+breakpoint functionality. This allows RaceFuzzer to force the kernel
+to deterministically trigger racy condition (which may rarely happen
+in practice due to randomness in scheduling).
+
+RaceFuzzer's C repro always pinpoints two racy syscalls. Since C
+repro's scheduling synchronization should be performed at the user
+space, its reproducibility is limited (reproduction may take from 1
+second to 10 minutes (or even more), depending on a bug). This is
+because, while RaceFuzzer precisely interleaves the scheduling at the
+kernel's instruction level when finding this bug, C repro cannot fully
+utilize such a feature. Please disregard all code related to
+"should_hypercall" in the C repro, as this is only for our debugging
+purposes using our own hypervisor.
