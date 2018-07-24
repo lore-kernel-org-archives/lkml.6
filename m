@@ -6,46 +6,51 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5D12ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 15:01:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7D31ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 15:02:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 68FBF20856
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 15:01:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 68FBF20856
+	by mail.kernel.org (Postfix) with ESMTP id 8708020856
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 15:02:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8708020856
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388619AbeGXQIe (ORCPT
+        id S2388661AbeGXQJU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 12:08:34 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:50487 "EHLO
+        Tue, 24 Jul 2018 12:09:20 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:42169 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388538AbeGXQIe (ORCPT
+        with ESMTP id S2388300AbeGXQJU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 12:08:34 -0400
+        Tue, 24 Jul 2018 12:09:20 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w6OF0tZW032036
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w6OF1QXn032119
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Tue, 24 Jul 2018 08:00:55 -0700
+        Tue, 24 Jul 2018 08:01:27 -0700
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w6OF0tHl032033;
-        Tue, 24 Jul 2018 08:00:55 -0700
-Date:   Tue, 24 Jul 2018 08:00:55 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w6OF1Q9U032116;
+        Tue, 24 Jul 2018 08:01:26 -0700
+Date:   Tue, 24 Jul 2018 08:01:26 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for YueHaibing <tipbot@zytor.com>
-Message-ID: <tip-2397134ce2d73dcf1d4846579f594c9f3880b2ec@git.kernel.org>
-Cc:     hpa@zytor.com, yuehaibing@huawei.com, peterz@infradead.org,
-        torvalds@linux-foundation.org, mingo@kernel.org,
-        linux-kernel@vger.kernel.org, tglx@linutronix.de
-Reply-To: hpa@zytor.com, yuehaibing@huawei.com, peterz@infradead.org,
-          mingo@kernel.org, torvalds@linux-foundation.org,
-          linux-kernel@vger.kernel.org, tglx@linutronix.de
-In-Reply-To: <20180720073213.14996-1-yuehaibing@huawei.com>
-References: <20180720073213.14996-1-yuehaibing@huawei.com>
+From:   tip-bot for Thomas Gleixner <tipbot@zytor.com>
+Message-ID: <tip-d2753e6b4882a637a0e8fb3b9c2e15f33265300e@git.kernel.org>
+Cc:     jolsa@redhat.com, vincent.weaver@maine.edu, hpa@zytor.com,
+        pmenzel+linux-x86@molgen.mpg.de, linux-kernel@vger.kernel.org,
+        pmenzel@molgen.mpg.de, tglx@linutronix.de, eranian@google.com,
+        peterz@infradead.org, alexander.shishkin@linux.intel.com,
+        mingo@kernel.org, bp@alien8.de, acme@redhat.com,
+        torvalds@linux-foundation.org
+Reply-To: acme@redhat.com, torvalds@linux-foundation.org, bp@alien8.de,
+          mingo@kernel.org, eranian@google.com, peterz@infradead.org,
+          tglx@linutronix.de, alexander.shishkin@linux.intel.com,
+          pmenzel@molgen.mpg.de, linux-kernel@vger.kernel.org,
+          pmenzel+linux-x86@molgen.mpg.de, vincent.weaver@maine.edu,
+          jolsa@redhat.com, hpa@zytor.com
+In-Reply-To: <alpine.DEB.2.21.1807200958390.1580@nanos.tec.linutronix.de>
+References: <alpine.DEB.2.21.1807200958390.1580@nanos.tec.linutronix.de>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/cleanups] x86/platform/pcspeaker: Use PTR_ERR_OR_ZERO() to
- fix ptr_ret.cocci warning
-Git-Commit-ID: 2397134ce2d73dcf1d4846579f594c9f3880b2ec
+Subject: [tip:perf/urgent] perf/x86/amd/ibs: Don't access non-started event
+Git-Commit-ID: d2753e6b4882a637a0e8fb3b9c2e15f33265300e
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -59,43 +64,79 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  2397134ce2d73dcf1d4846579f594c9f3880b2ec
-Gitweb:     https://git.kernel.org/tip/2397134ce2d73dcf1d4846579f594c9f3880b2ec
-Author:     YueHaibing <yuehaibing@huawei.com>
-AuthorDate: Fri, 20 Jul 2018 15:32:13 +0800
+Commit-ID:  d2753e6b4882a637a0e8fb3b9c2e15f33265300e
+Gitweb:     https://git.kernel.org/tip/d2753e6b4882a637a0e8fb3b9c2e15f33265300e
+Author:     Thomas Gleixner <tglx@linutronix.de>
+AuthorDate: Fri, 20 Jul 2018 10:39:07 +0200
 Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Tue, 24 Jul 2018 09:46:42 +0200
+CommitDate: Tue, 24 Jul 2018 09:51:10 +0200
 
-x86/platform/pcspeaker: Use PTR_ERR_OR_ZERO() to fix ptr_ret.cocci warning
+perf/x86/amd/ibs: Don't access non-started event
 
-The ptr_ret.cocci script generates the following warning:
+Paul Menzel reported the following bug:
 
-  arch/x86/kernel/pcspeaker.c:12:8-14: WARNING: PTR_ERR_OR_ZERO can be used
+> Enabling the undefined behavior sanitizer and building GNU/Linux 4.18-rc5+
+> (with some unrelated commits) with GCC 8.1.0 from Debian Sid/unstable, the
+> warning below is shown.
+>
+> > [    2.111913]
+> > ================================================================================
+> > [    2.111917] UBSAN: Undefined behaviour in arch/x86/events/amd/ibs.c:582:24
+> > [    2.111919] member access within null pointer of type 'struct perf_event'
+> > [    2.111926] CPU: 0 PID: 144 Comm: udevadm Not tainted 4.18.0-rc5-00316-g4864b68cedf2 #104
+> > [    2.111928] Hardware name: ASROCK E350M1/E350M1, BIOS TIMELESS 01/01/1970
+> > [    2.111930] Call Trace:
+> > [    2.111943]  dump_stack+0x55/0x89
+> > [    2.111949]  ubsan_epilogue+0xb/0x33
+> > [    2.111953]  handle_null_ptr_deref+0x7f/0x90
+> > [    2.111958]  __ubsan_handle_type_mismatch_v1+0x55/0x60
+> > [    2.111964]  perf_ibs_handle_irq+0x596/0x620
 
-Use PTR_ERR_OR_ZERO() rather than an open-coded version to fix this.
+The code dereferences event before checking the STARTED bit. Patch
+below should cure the issue.
 
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+The warning should not trigger, if I analyzed the thing correctly.
+(And Paul's testing confirms this.)
+
+Reported-by: Paul Menzel <pmenzel@molgen.mpg.de>
+Tested-by: Paul Menzel <pmenzel@molgen.mpg.de>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Jiri Olsa <jolsa@redhat.com>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Paul Menzel <pmenzel+linux-x86@molgen.mpg.de>
 Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: gregkh@linuxfoundation.org
-Cc: kstewart@linuxfoundation.org
-Cc: pombredanne@nexb.com
-Link: http://lkml.kernel.org/r/20180720073213.14996-1-yuehaibing@huawei.com
+Cc: Stephane Eranian <eranian@google.com>
+Cc: Vince Weaver <vincent.weaver@maine.edu>
+Link: http://lkml.kernel.org/r/alpine.DEB.2.21.1807200958390.1580@nanos.tec.linutronix.de
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- arch/x86/kernel/pcspeaker.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/x86/events/amd/ibs.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/arch/x86/kernel/pcspeaker.c b/arch/x86/kernel/pcspeaker.c
-index da5190a1ea16..4a710ffffd9a 100644
---- a/arch/x86/kernel/pcspeaker.c
-+++ b/arch/x86/kernel/pcspeaker.c
-@@ -9,6 +9,6 @@ static __init int add_pcspkr(void)
+diff --git a/arch/x86/events/amd/ibs.c b/arch/x86/events/amd/ibs.c
+index 4b98101209a1..d50bb4dc0650 100644
+--- a/arch/x86/events/amd/ibs.c
++++ b/arch/x86/events/amd/ibs.c
+@@ -579,7 +579,7 @@ static int perf_ibs_handle_irq(struct perf_ibs *perf_ibs, struct pt_regs *iregs)
+ {
+ 	struct cpu_perf_ibs *pcpu = this_cpu_ptr(perf_ibs->pcpu);
+ 	struct perf_event *event = pcpu->event;
+-	struct hw_perf_event *hwc = &event->hw;
++	struct hw_perf_event *hwc;
+ 	struct perf_sample_data data;
+ 	struct perf_raw_record raw;
+ 	struct pt_regs regs;
+@@ -602,6 +602,10 @@ fail:
+ 		return 0;
+ 	}
  
- 	pd = platform_device_register_simple("pcspkr", -1, NULL, 0);
- 
--	return IS_ERR(pd) ? PTR_ERR(pd) : 0;
-+	return PTR_ERR_OR_ZERO(pd);
- }
- device_initcall(add_pcspkr);
++	if (WARN_ON_ONCE(!event))
++		goto fail;
++
++	hwc = &event->hw;
+ 	msr = hwc->config_base;
+ 	buf = ibs_data.regs;
+ 	rdmsrl(msr, *buf);
