@@ -2,134 +2,214 @@ Return-Path: <SRS0=hTZH=KI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E2813C6778A
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 16:02:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A233ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 16:03:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9CC6C2088E
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 16:02:49 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="BTIFEvRI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9CC6C2088E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 221C220856
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 16:03:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 221C220856
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388634AbeGXRJ4 (ORCPT
+        id S2388583AbeGXRKz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 13:09:56 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:33742 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388332AbeGXRJy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 13:09:54 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
-        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
-        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=BXOkjd+lfkHiZWLJRqYbmvHFg7Bdfg3pkESRCBiOEUY=; b=BTIFEvRIVwu9
-        7Q+V4EJlxxArs21+K/oVngNOhz+/5MLLry1Gp3jy7uGudumkXqnJFbw+pXL9z4uniYsc3Iu//+7Qg
-        80ZcMwF8um0kq5xYzm9h5pFUdIKL1TUFlFj+pCSYJRKp53pfUCdVbJzSG2BYbB7mPy0mlZ6WwLBSr
-        8Z5KY=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1fhzls-0005ar-QL; Tue, 24 Jul 2018 16:02:44 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 8E9F61123A86; Tue, 24 Jul 2018 17:02:44 +0100 (BST)
-From:   Mark Brown <broonie@kernel.org>
-To:     Peter Geis <pgwipeout@gmail.com>
-Cc:     Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org
-Subject: Applied "regulator: Add sw2_sw4 voltage table to cpcap regulator." to the regulator tree
-In-Reply-To: 
-Message-Id: <20180724160244.8E9F61123A86@debutante.sirena.org.uk>
-Date:   Tue, 24 Jul 2018 17:02:44 +0100 (BST)
+        Tue, 24 Jul 2018 13:10:55 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:57933 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2388397AbeGXRKy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Jul 2018 13:10:54 -0400
+Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 1A6391C7F3449;
+        Wed, 25 Jul 2018 00:03:39 +0800 (CST)
+Received: from [127.0.0.1] (10.111.220.140) by DGGEMS403-HUB.china.huawei.com
+ (10.3.19.203) with Microsoft SMTP Server id 14.3.382.0; Wed, 25 Jul 2018
+ 00:03:32 +0800
+Subject: Re: [PATCH 4/5] f2fs: let BG_GC check every dirty segments and gc
+ over a threshold
+To:     Chao Yu <chao@kernel.org>, <jaegeuk@kernel.org>,
+        <yuchao0@huawei.com>, <yunlong.song@icloud.com>
+CC:     <miaoxie@huawei.com>, <bintian.wang@huawei.com>,
+        <shengyong1@huawei.com>, <heyunlei@huawei.com>,
+        <linux-f2fs-devel@lists.sourceforge.net>,
+        <linux-kernel@vger.kernel.org>
+References: <1532355022-163029-1-git-send-email-yunlong.song@huawei.com>
+ <1532355022-163029-5-git-send-email-yunlong.song@huawei.com>
+ <866f57e1-ef22-112c-6386-f80a054d1e32@kernel.org>
+From:   Yunlong Song <yunlong.song@huawei.com>
+Message-ID: <b3d5e584-66ff-a0ef-8730-7091d47790fd@huawei.com>
+Date:   Wed, 25 Jul 2018 00:01:10 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
+MIME-Version: 1.0
+In-Reply-To: <866f57e1-ef22-112c-6386-f80a054d1e32@kernel.org>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Originating-IP: [10.111.220.140]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch
 
-   regulator: Add sw2_sw4 voltage table to cpcap regulator.
 
-has been applied to the regulator tree at
+On 2018/7/24 22:52, Chao Yu wrote:
+> On 2018/7/23 22:10, Yunlong Song wrote:
+>> BG_GC is triggered in idle time, so it is better check every dirty
+>> segment and finds the best victim to gc. Otherwise, BG_GC will be
+>> limited to only 8G areas, and probably select a victim which has nearly
+> If 8GB range is not enough and just hard code now, we can export it in sysfs and
+> do the configuration.
+There is already a sysfs entry called max_victim_search, but the default 
+value is defined
+as DEF_MAX_VICTIM_SEARCH, i.e., 4096, equals to 8GB. So can we increase 
+this default
+value to UINT_MAX?
+>
+>> full of valid blocks, resulting a big WAI. Besides, we also add a
+> BGGC should move cold data anway, if we only consider WA, hot data section can
+> be selected with very high probability, but hot data can do OPU itself sooner or
+> later, so moving them will cause higher WA.
+Yes, but this problem also appears in the default 8G area, even in 8G 
+area, perhaps there is
+still a victim section which has fewest valid blocks but with hot data 
+type. This patch adds
+a bggc_threshold to avoid big WA and wishes SSR write data to the 
+section whose threshold
+is over bggc_threshold but with cold data type. Since the initial 
+min_cost in BG_GC is valued
+as UINT_MAX, BG_GC can always successfully select a victim and move 
+blocks in common case,
+but sometimes it is not needed, for example, there are already enough 
+free sections and each
+dirty section has same valid blocks, if BG_GC continue its job, then 
+there is a big WA.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git 
+>
+> I think the better way is we can export a sysfs entry to adjust factor to
+> control weight of aging or valid block of section. So that, user can adjust it
+> to select less valid block candidate first instead of high aging one.
+How about export the bggc_threshold as sysfs entry, the default value is 
+defined as the old
+fggc_threshold, i.e., (main - ovp) / (main - rsvd) * BLKS_PER_SEC. User 
+can adjust this value
+to control the WA and non-WA requirement.
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
+>
+> Thanks,
+>
+>> bggc_threshold (which is the old "fggc_threshold", so revert commit
+>> "299254") to stop BG_GC when there is no good choice. This is especially
+>> good for large section case to reduce WAI.
+>>
+>> Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
+>> ---
+>>   fs/f2fs/f2fs.h    |  2 ++
+>>   fs/f2fs/gc.c      | 23 ++++++++++++++++++++---
+>>   fs/f2fs/segment.h |  9 +++++++++
+>>   3 files changed, 31 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+>> index f8a7b42..24a9d7f 100644
+>> --- a/fs/f2fs/f2fs.h
+>> +++ b/fs/f2fs/f2fs.h
+>> @@ -1220,6 +1220,8 @@ struct f2fs_sb_info {
+>>   	unsigned int cur_fg_victim_sec;		/* current FG_GC victim section num */
+>>   	unsigned int cur_bg_victim_sec;		/* current BG_GC victim section num */
+>>   	unsigned int gc_mode;			/* current GC state */
+>> +	/* threshold for selecting bg victims */
+>> +	u64 bggc_threshold;
+>>   	/* for skip statistic */
+>>   	unsigned long long skipped_atomic_files[2];	/* FG_GC and BG_GC */
+>>   
+>> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+>> index 0e7a265..21e8d59 100644
+>> --- a/fs/f2fs/gc.c
+>> +++ b/fs/f2fs/gc.c
+>> @@ -189,9 +189,8 @@ static void select_policy(struct f2fs_sb_info *sbi, int gc_type,
+>>   		p->ofs_unit = sbi->segs_per_sec;
+>>   	}
+>>   
+>> -	/* we need to check every dirty segments in the FG_GC case */
+>> -	if (gc_type != FG_GC &&
+>> -			(sbi->gc_mode != GC_URGENT) &&
+>> +	/* we need to check every dirty segments in the GC case */
+>> +	if (p->alloc_mode == SSR &&
+>>   			p->max_search > sbi->max_victim_search)
+>>   		p->max_search = sbi->max_victim_search;
+>>   
+>> @@ -230,6 +229,10 @@ static unsigned int check_bg_victims(struct f2fs_sb_info *sbi)
+>>   	for_each_set_bit(secno, dirty_i->victim_secmap, MAIN_SECS(sbi)) {
+>>   		if (sec_usage_check(sbi, secno))
+>>   			continue;
+>> +
+>> +		if (no_bggc_candidate(sbi, secno))
+>> +			continue;
+>> +
+>>   		clear_bit(secno, dirty_i->victim_secmap);
+>>   		return GET_SEG_FROM_SEC(sbi, secno);
+>>   	}
+>> @@ -368,6 +371,10 @@ static int get_victim_by_default(struct f2fs_sb_info *sbi,
+>>   		if (sec_usage_check(sbi, secno))
+>>   			goto next;
+>>   
+>> +		if (gc_type == BG_GC && p.alloc_mode == LFS &&
+>> +					no_bggc_candidate(sbi, secno))
+>> +			goto next;
+>> +
+>>   		cost = get_gc_cost(sbi, segno, &p);
+>>   
+>>   		if (p.min_cost > cost) {
+>> @@ -1140,8 +1147,18 @@ int f2fs_gc(struct f2fs_sb_info *sbi, bool sync,
+>>   
+>>   void f2fs_build_gc_manager(struct f2fs_sb_info *sbi)
+>>   {
+>> +	u64 main_count, resv_count, ovp_count;
+>> +
+>>   	DIRTY_I(sbi)->v_ops = &default_v_ops;
+>>   
+>> +	/* threshold of # of valid blocks in a section for victims of BG_GC */
+>> +	main_count = SM_I(sbi)->main_segments << sbi->log_blocks_per_seg;
+>> +	resv_count = SM_I(sbi)->reserved_segments << sbi->log_blocks_per_seg;
+>> +	ovp_count = SM_I(sbi)->ovp_segments << sbi->log_blocks_per_seg;
+>> +
+>> +	sbi->bggc_threshold = div64_u64((main_count - ovp_count) *
+>> +					BLKS_PER_SEC(sbi), (main_count - resv_count));
+>> +
+>>   	sbi->gc_pin_file_threshold = DEF_GC_FAILED_PINNED_FILES;
+>>   
+>>   	/* give warm/cold data area from slower device */
+>> diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
+>> index b21bb96..932e59b 100644
+>> --- a/fs/f2fs/segment.h
+>> +++ b/fs/f2fs/segment.h
+>> @@ -785,6 +785,15 @@ static inline block_t sum_blk_addr(struct f2fs_sb_info *sbi, int base, int type)
+>>   				- (base + 1) + type;
+>>   }
+>>   
+>> +static inline bool no_bggc_candidate(struct f2fs_sb_info *sbi,
+>> +                        unsigned int secno)
+>> +{
+>> +    if (get_valid_blocks(sbi, GET_SEG_FROM_SEC(sbi, secno), true) >
+>> +                        sbi->bggc_threshold)
+>> +        return true;
+>> +    return false;
+>> +}
+>> +
+>>   static inline bool sec_usage_check(struct f2fs_sb_info *sbi, unsigned int secno)
+>>   {
+>>   	if (IS_CURSEC(sbi, secno) || (sbi->cur_fg_victim_sec == secno) ||
+>>
+> .
+>
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From ad66225dff3f30fece4f5133ea14058c95f4e29a Mon Sep 17 00:00:00 2001
-From: Peter Geis <pgwipeout@gmail.com>
-Date: Tue, 24 Jul 2018 09:25:40 -0400
-Subject: [PATCH] regulator: Add sw2_sw4 voltage table to cpcap regulator.
-
-SW2 and SW4 use a shared table to provide voltage to the cpu core and
-devices on Tegra hardware.
-Added this table to the cpcap regulator driver as the first step to
-supporting this device on Tegra.
-
-Signed-off-by: Peter Geis <pgwipeout@gmail.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- drivers/regulator/cpcap-regulator.c | 23 +++++++++++++++++++++++
- 1 file changed, 23 insertions(+)
-
-diff --git a/drivers/regulator/cpcap-regulator.c b/drivers/regulator/cpcap-regulator.c
-index bd910fe123d9..c0b1e04bd90f 100644
---- a/drivers/regulator/cpcap-regulator.c
-+++ b/drivers/regulator/cpcap-regulator.c
-@@ -271,6 +271,29 @@ static struct regulator_ops cpcap_regulator_ops = {
- };
- 
- static const unsigned int unknown_val_tbl[] = { 0, };
-+static const unsigned int sw2_sw4_val_tbl[] = { 612500, 625000, 637500,
-+						650000, 662500, 675000,
-+						687500, 700000, 712500,
-+						725000, 737500, 750000,
-+						762500, 775000, 787500,
-+						800000, 812500, 825000,
-+						837500, 850000, 862500,
-+						875000, 887500, 900000,
-+						912500, 925000, 937500,
-+						950000, 962500, 975000,
-+						987500, 1000000, 1012500,
-+						1025000, 1037500, 1050000,
-+						1062500, 1075000, 1087500,
-+						1100000, 1112500, 1125000,
-+						1137500, 1150000, 1162500,
-+						1175000, 1187500, 1200000,
-+						1212500, 1225000, 1237500,
-+						1250000, 1262500, 1275000,
-+						1287500, 1300000, 1312500,
-+						1325000, 1337500, 1350000,
-+						1362500, 1375000, 1387500,
-+						1400000, 1412500, 1425000,
-+						1437500, 1450000, 1462500, };
- static const unsigned int sw5_val_tbl[] = { 0, 5050000, };
- static const unsigned int vcam_val_tbl[] = { 2600000, 2700000, 2800000,
- 					     2900000, };
 -- 
-2.18.0
+Thanks,
+Yunlong Song
+
 
