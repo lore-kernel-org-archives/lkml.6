@@ -6,34 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 658D0ECDFBB
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 08:18:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ECD1CECDFB8
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 08:18:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 24B7E20880
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 08:18:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 24B7E20880
+	by mail.kernel.org (Postfix) with ESMTP id 90491205F4
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 08:18:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 90491205F4
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388813AbeGXJX1 (ORCPT
+        id S2388826AbeGXJXh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 05:23:27 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:3361 "EHLO
+        Tue, 24 Jul 2018 05:23:37 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:28280 "EHLO
         mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S2388644AbeGXJWr (ORCPT
+        with ESMTP id S2388601AbeGXJWq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 05:22:47 -0400
-X-UUID: 2580607beee84ca8990e88ca9a7c71bd-20180724
-Received: from mtkcas06.mediatek.inc [(172.21.101.30)] by mailgw02.mediatek.com
+        Tue, 24 Jul 2018 05:22:46 -0400
+X-UUID: 235869d793a94e0c80953139cd79c239-20180724
+Received: from mtkexhb02.mediatek.inc [(172.21.101.103)] by mailgw02.mediatek.com
         (envelope-from <stu.hsieh@mediatek.com>)
         (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 931220600; Tue, 24 Jul 2018 16:17:28 +0800
+        with ESMTP id 991237379; Tue, 24 Jul 2018 16:17:24 +0800
 Received: from mtkcas07.mediatek.inc (172.21.101.84) by
- mtkmbs03n2.mediatek.inc (172.21.101.182) with Microsoft SMTP Server (TLS) id
- 15.0.1210.3; Tue, 24 Jul 2018 16:17:21 +0800
+ mtkmbs03n1.mediatek.inc (172.21.101.181) with Microsoft SMTP Server (TLS) id
+ 15.0.1210.3; Tue, 24 Jul 2018 16:17:22 +0800
 Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas07.mediatek.inc
  (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
- Transport; Tue, 24 Jul 2018 16:17:21 +0800
+ Transport; Tue, 24 Jul 2018 16:17:22 +0800
 From:   Stu Hsieh <stu.hsieh@mediatek.com>
 To:     CK Hu <ck.hu@mediatek.com>, Philipp Zabel <p.zabel@pengutronix.de>
 CC:     David Airlie <airlied@linux.ie>,
@@ -43,9 +43,9 @@ CC:     David Airlie <airlied@linux.ie>,
         <linux-mediatek@lists.infradead.org>,
         <linux-kernel@vger.kernel.org>, <srv_heupstream@mediatek.com>,
         Stu Hsieh <stu.hsieh@mediatek.com>
-Subject: [PATCH v1 07/15] drm/mediatek: add layer config to set RDMA for plane setting
-Date:   Tue, 24 Jul 2018 16:17:07 +0800
-Message-ID: <1532420235-22268-8-git-send-email-stu.hsieh@mediatek.com>
+Subject: [PATCH v1 14/15] drm/mediatek: fixed the error value for add DSI1 in mutex
+Date:   Tue, 24 Jul 2018 16:17:14 +0800
+Message-ID: <1532420235-22268-15-git-send-email-stu.hsieh@mediatek.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1532420235-22268-1-git-send-email-stu.hsieh@mediatek.com>
 References: <1532420235-22268-1-git-send-email-stu.hsieh@mediatek.com>
@@ -57,66 +57,26 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch add layer config to set RDMA for plane setting
-
-Layer config set the data address and pitch to RDMA from plane setting.
+This patch fixed the error value for add DSI1 in mutex
 
 Signed-off-by: Stu Hsieh <stu.hsieh@mediatek.com>
 ---
- drivers/gpu/drm/mediatek/mtk_disp_rdma.c | 20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
+ drivers/gpu/drm/mediatek/mtk_drm_ddp.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/mediatek/mtk_disp_rdma.c b/drivers/gpu/drm/mediatek/mtk_disp_rdma.c
-index 78a1a0057aff..4ad0715c8341 100644
---- a/drivers/gpu/drm/mediatek/mtk_disp_rdma.c
-+++ b/drivers/gpu/drm/mediatek/mtk_disp_rdma.c
-@@ -36,13 +36,17 @@
- #define DISP_REG_RDMA_SIZE_CON_0		0x0014
- #define DISP_REG_RDMA_SIZE_CON_1		0x0018
- #define DISP_REG_RDMA_TARGET_LINE		0x001c
-+#define DISP_RDMA_MEM_SRC_PITCH			0x002c
-+#define DISP_RDMA_MEM_GMC_SETTING_0		0x0030
- #define DISP_REG_RDMA_FIFO_CON			0x0040
- #define RDMA_FIFO_UNDERFLOW_EN				BIT(31)
- #define RDMA_FIFO_PSEUDO_SIZE(bytes)			(((bytes) / 16) << 16)
- #define RDMA_OUTPUT_VALID_FIFO_THRESHOLD(bytes)		((bytes) / 16)
- #define RDMA_FIFO_SIZE(rdma)			((rdma)->data->fifo_size)
-+#define DISP_RDMA_MEM_START_ADDR		0x0f00
- 
- #define MATRIX_INT_MTX_SEL_DEFAULT		0xb00000
-+#define RDMA_MEM_GMC				0x40402020
- 
- struct mtk_disp_rdma_data {
- 	unsigned int fifo_size;
-@@ -152,12 +156,28 @@ static void mtk_rdma_config(struct mtk_ddp_comp *comp, unsigned int width,
- 	writel(reg, comp->regs + DISP_REG_RDMA_FIFO_CON);
- }
- 
-+static void mtk_rdma_layer_config(struct mtk_ddp_comp *comp, unsigned int idx,
-+				  struct mtk_plane_state *state)
-+{
-+	struct mtk_plane_pending_state *pending = &state->pending;
-+	unsigned int addr = pending->addr;
-+	unsigned int pitch = pending->pitch & 0xffff;
-+
-+	if (pending->height == 0u || pending->width == 0u)
-+		return;
-+
-+	writel_relaxed(addr, comp->regs + DISP_RDMA_MEM_START_ADDR);
-+	writel_relaxed(pitch, comp->regs + DISP_RDMA_MEM_SRC_PITCH);
-+	writel(RDMA_MEM_GMC, comp->regs + DISP_RDMA_MEM_GMC_SETTING_0);
-+}
-+
- static const struct mtk_ddp_comp_funcs mtk_disp_rdma_funcs = {
- 	.config = mtk_rdma_config,
- 	.start = mtk_rdma_start,
- 	.stop = mtk_rdma_stop,
- 	.enable_vblank = mtk_rdma_enable_vblank,
- 	.disable_vblank = mtk_rdma_disable_vblank,
-+	.layer_config = mtk_rdma_layer_config,
- };
- 
- static int mtk_disp_rdma_bind(struct device *dev, struct device *master,
+diff --git a/drivers/gpu/drm/mediatek/mtk_drm_ddp.c b/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
+index 3239f22785fd..ac047fdb1a2b 100644
+--- a/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
++++ b/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
+@@ -437,7 +437,7 @@ void mtk_disp_mutex_add_comp(struct mtk_disp_mutex *mutex,
+ 		reg = MUTEX_SOF_DSI0;
+ 		break;
+ 	case DDP_COMPONENT_DSI1:
+-		reg = MUTEX_SOF_DSI0;
++		reg = MUTEX_SOF_DSI1;
+ 		break;
+ 	case DDP_COMPONENT_DSI2:
+ 		reg = MUTEX_SOF_DSI2;
 -- 
 2.12.5
 
