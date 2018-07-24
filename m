@@ -2,85 +2,91 @@ Return-Path: <SRS0=hTZH=KI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2E02C6778A
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 11:57:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E6D9C6778A
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 11:57:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 79308205F4
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 11:57:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 79308205F4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id D638E205F4
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 11:57:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D638E205F4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388424AbeGXNDb (ORCPT
+        id S2388435AbeGXNDy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 09:03:31 -0400
-Received: from mx2.suse.de ([195.135.220.15]:34362 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2388280AbeGXNDb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 09:03:31 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id B7AA7AC9C;
-        Tue, 24 Jul 2018 11:57:21 +0000 (UTC)
-Message-ID: <1532432981.17797.13.camel@suse.com>
-Subject: Re: [PATCH 0/4][RFC v2] Introduce the in-kernel hibernation
- encryption
-From:   Oliver Neukum <oneukum@suse.com>
-To:     Pavel Machek <pavel@ucw.cz>
-Cc:     Yu Chen <yu.c.chen@intel.com>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Eric Biggers <ebiggers@google.com>,
-        "Lee, Chun-Yi" <jlee@suse.com>, Theodore Ts o <tytso@mit.edu>,
-        Stephan Mueller <smueller@chronox.de>,
-        Denis Kenzior <denkenz@gmail.com>, linux-pm@vger.kernel.org,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Gu, Kookoo" <kookoo.gu@intel.com>,
-        "Zhang, Rui" <rui.zhang@intel.com>
-Date:   Tue, 24 Jul 2018 13:49:41 +0200
-In-Reply-To: <20180723122227.GA30092@amd>
-References: <cover.1531924968.git.yu.c.chen@intel.com>
-         <20180718202235.GA4132@amd> <20180718235851.GA22170@sandybridge-desktop>
-         <20180719110149.GA4679@amd> <20180719132003.GA30981@sandybridge-desktop>
-         <20180720102532.GA20284@amd> <1532346156.3057.11.camel@suse.com>
-         <20180723122227.GA30092@amd>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.6 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Tue, 24 Jul 2018 09:03:54 -0400
+Received: from mout.kundenserver.de ([212.227.126.187]:50419 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388280AbeGXNDy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Jul 2018 09:03:54 -0400
+Received: from wuerfel.lan ([109.193.40.16]) by mrelayeu.kundenserver.de
+ (mreue003 [212.227.15.129]) with ESMTPA (Nemesis) id
+ 0LpzzH-1gAvVU2V0h-00fiLG; Tue, 24 Jul 2018 13:57:23 +0200
+From:   Arnd Bergmann <arnd@arndb.de>
+To:     Sean Wang <sean.wang@mediatek.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>
+Cc:     Arnd Bergmann <arnd@arndb.de>, linux-mediatek@lists.infradead.org,
+        linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] pinctrl: mediatek: include chained_irq.h header
+Date:   Tue, 24 Jul 2018 13:57:10 +0200
+Message-Id: <20180724115722.1274065-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.18.0
+X-Provags-ID: V03:K1:pu6z03XZYAUPwPYaCMvSunngiXwsf9+Yh0/GFGUJKD1z9joMbct
+ /+zlggqTGROD5zoEHJ4FUqWpsNg7GtFoehaiPlWPmj0Dpel8+ew656R60sdS77+vOSt3z/j
+ dyXWw1Zwr7cfu7eEReOOA+QbbDpbpu3C6fEBdUjCc4ieUFkPa6VzCzi0nKWaRLHEHEAzOPt
+ BBwiCSfDfTyo9iUjBo0eQ==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:5CYKAEnta/Y=:+3cjpHxBhSvk+xZOskHK6n
+ X2qK19CWH7FDdguTknbY9AMhh5a3p0agC18Xiv6PCtVIdS1RfH6axjPuID2Tm3Ki4suekIpPJ
+ ZbW8L3kjpYM7QcbOgT/BmT3ls8WujBM5hz1gx7jcrDcrLioF5JQ4CLNHk5VKQX7Q0a2enYNQx
+ +QlO/TjBilyglIiaUVaVTzNDDGG9Tnlx9T7MixlbJE9KHDHPtq5IhKliUyZdmZ9eAsN93UvGw
+ 7psxex/reWnvDM6zqwWQOHS+uNKP32P54NVOz9TydZFIzJHk/HUlkbqSeT4YggowJvXt14d5Y
+ cTY6Jc0TZFG4KkR3sNan35OeuCqs2eFUqOMLnWILCzs98AWZ8FAIS0G5+eMF4t/2FeC391TfU
+ wJ+wXoE/cDnRd8Q0bVWwFZ4z4F9SI3OaBwbvgnbJ6K9hO9NgrVBT0rV260h3CUlLf7yXCV5dS
+ F747B0p18RwBWNn+CG6By+kdauERy/v/rwFica7pukImyBUnHHoXhtoP9NdVWEiROEGlavZDH
+ ctON1ZQDen9XT4lMmz1vi5lFWQxrtNzPCFJglMPM81iLPb+mOKbjCzEaqEZ9Ys425mIe6n+0m
+ zJPGv1VtWj9TAkM23nQxHQTGIO908GlgVxRPy7/D97QxR+YJjk/A739UHAXA4lcRQjKvpOBkN
+ Xp8GPauCwqY8tH5nWkxGv0aKPuAFTYdzPXMgag0ZKrdnsialCSJzAqX7JIN5H9oS3j4M=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mo, 2018-07-23 at 14:22 +0200, Pavel Machek wrote:
+Some randconfig builds fail in the mtk-eint driver:
 
-> > Yes. But you are objecting to encryption in kernel space at all,
-> > aren't you?
-> 
-> I don't particulary love the idea of doing hibernation encryption in
-> the kernel, correct.
-> 
-> But we have this weird thing called secure boot, some people seem to
-> want. So we may need some crypto in the kernel -- but I'd like
-> something that works with uswsusp, too. Plus, it is mandatory that
-> patch explains what security guarantees they want to provide against
-> what kinds of attacks...
+drivers/pinctrl/mediatek/mtk-eint.c: In function 'mtk_eint_irq_handler':
+drivers/pinctrl/mediatek/mtk-eint.c:324:2: error: implicit declaration of function 'chained_irq_enter'; did you mean 'rcu_irq_enter'? [-Werror=implicit-function-declaration]
+  chained_irq_enter(chip, desc);
+  ^~~~~~~~~~~~~~~~~
+  rcu_irq_enter
+drivers/pinctrl/mediatek/mtk-eint.c:367:2: error: implicit declaration of function 'chained_irq_exit'; did you mean 'rcu_irq_exit'? [-Werror=implicit-function-declaration]
 
-Hi,
+The functions are declared in linux/irqchip/chained_irq.h, and including
+that header makes it build in all configurations.
 
-very well, maybe we should state clearly that the goal of these
-patch set is to make Secure Boot and STD coexist. Anything else
-is a nice side effect, but not the primary justification, right?
+Fixes: e46df235b4e6 ("pinctrl: mediatek: refactor EINT related code for all MediaTek pinctrl can fit")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ drivers/pinctrl/mediatek/mtk-eint.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-And we further agree that the model of Secure Boot requires the
-encryption to be done in kernel space, don't we?
-Furthermore IMHO the key must also be generated in trusted code,
-hence in kernel space. Yu Chen, I really cannot see how
-a symmetrical encryption with a known key can be secure.
-
-	Regards
-		Oliver
+diff --git a/drivers/pinctrl/mediatek/mtk-eint.c b/drivers/pinctrl/mediatek/mtk-eint.c
+index 30f3316747e2..a613e546717a 100644
+--- a/drivers/pinctrl/mediatek/mtk-eint.c
++++ b/drivers/pinctrl/mediatek/mtk-eint.c
+@@ -13,6 +13,7 @@
+ #include <linux/err.h>
+ #include <linux/gpio.h>
+ #include <linux/io.h>
++#include <linux/irqchip/chained_irq.h>
+ #include <linux/irqdomain.h>
+ #include <linux/of_irq.h>
+ #include <linux/platform_device.h>
+-- 
+2.18.0
 
