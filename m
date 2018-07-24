@@ -2,285 +2,116 @@ Return-Path: <SRS0=hTZH=KI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F02E0C6778A
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 19:09:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD02AC6778A
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 19:10:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9A7E620856
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 19:09:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9A7E620856
+	by mail.kernel.org (Postfix) with ESMTP id 72F0520856
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 19:10:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 72F0520856
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388571AbeGXURK (ORCPT
+        id S2388603AbeGXUS2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 16:17:10 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:50442 "EHLO mx1.redhat.com"
+        Tue, 24 Jul 2018 16:18:28 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:49916 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2388393AbeGXURK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 16:17:10 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+        id S2388429AbeGXUS2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Jul 2018 16:18:28 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id AF3FA4079F0D;
-        Tue, 24 Jul 2018 19:09:16 +0000 (UTC)
-Received: from madcap2.tricolour.ca (ovpn-112-54.rdu2.redhat.com [10.10.112.54])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id D444DFF69;
-        Tue, 24 Jul 2018 19:09:06 +0000 (UTC)
-Date:   Tue, 24 Jul 2018 15:06:13 -0400
-From:   Richard Guy Briggs <rgb@redhat.com>
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     cgroups@vger.kernel.org, containers@lists.linux-foundation.org,
-        linux-api@vger.kernel.org, linux-audit@redhat.com,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, ebiederm@xmission.com, luto@kernel.org,
-        jlayton@redhat.com, carlos@redhat.com, dhowells@redhat.com,
-        viro@zeniv.linux.org.uk, simo@redhat.com,
-        Eric Paris <eparis@parisplace.org>, serge@hallyn.com
-Subject: Re: [RFC PATCH ghak90 (was ghak32) V3 01/10] audit: add container id
-Message-ID: <20180724190613.ww6yhsqpa7n4s62k@madcap2.tricolour.ca>
-References: <cover.1528304203.git.rgb@redhat.com>
- <0377c3ced6bdbc44fe17f9a5679cb6eda4304024.1528304203.git.rgb@redhat.com>
- <CAHC9VhRk+qLAyizM9i8D+cjKxyhruuj_Z9N0QRmjM-fjm4hgRw@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHC9VhRk+qLAyizM9i8D+cjKxyhruuj_Z9N0QRmjM-fjm4hgRw@mail.gmail.com>
-User-Agent: NeoMutt/20180512
-X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Tue, 24 Jul 2018 19:09:16 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Tue, 24 Jul 2018 19:09:16 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'rgb@redhat.com' RCPT:''
+        by mx1.redhat.com (Postfix) with ESMTPS id 6DCAC402243B;
+        Tue, 24 Jul 2018 19:10:35 +0000 (UTC)
+Received: from llong.com (dhcp-17-175.bos.redhat.com [10.18.17.175])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id EF3A72166BA3;
+        Tue, 24 Jul 2018 19:10:34 +0000 (UTC)
+From:   Waiman Long <longman@redhat.com>
+To:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Will Deacon <will.deacon@arm.com>
+Cc:     linux-kernel@vger.kernel.org, Joe Mario <jmario@redhat.com>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Waiman Long <longman@redhat.com>
+Subject: [PATCH v3] locking/rwsem: Exit read lock slowpath if queue empty & no writer
+Date:   Tue, 24 Jul 2018 15:10:25 -0400
+Message-Id: <1532459425-19204-1-git-send-email-longman@redhat.com>
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Tue, 24 Jul 2018 19:10:35 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Tue, 24 Jul 2018 19:10:35 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'longman@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-07-20 18:13, Paul Moore wrote:
-> On Wed, Jun 6, 2018 at 1:00 PM Richard Guy Briggs <rgb@redhat.com> wrote:
-> > Implement the proc fs write to set the audit container identifier of a
-> > process, emitting an AUDIT_CONTAINER_ID record to document the event.
-> >
-> > This is a write from the container orchestrator task to a proc entry of
-> > the form /proc/PID/audit_containerid where PID is the process ID of the
-> > newly created task that is to become the first task in a container, or
-> > an additional task added to a container.
-> >
-> > The write expects up to a u64 value (unset: 18446744073709551615).
-> >
-> > The writer must have capability CAP_AUDIT_CONTROL.
-> >
-> > This will produce a record such as this:
-> >   type=CONTAINER_ID msg=audit(2018-06-06 12:39:29.636:26949) : op=set opid=2209 old-contid=18446744073709551615 contid=123456 pid=628 auid=root uid=root tty=ttyS0 ses=1 subj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 comm=bash exe=/usr/bin/bash res=yes
-> >
-> > The "op" field indicates an initial set.  The "pid" to "ses" fields are
-> > the orchestrator while the "opid" field is the object's PID, the process
-> > being "contained".  Old and new audit container identifier values are
-> > given in the "contid" fields, while res indicates its success.
-> >
-> > It is not permitted to unset or re-set the audit container identifier.
-> > A child inherits its parent's audit container identifier, but then can
-> > be set only once after.
-> >
-> > See: https://github.com/linux-audit/audit-kernel/issues/90
-> > See: https://github.com/linux-audit/audit-userspace/issues/51
-> > See: https://github.com/linux-audit/audit-testsuite/issues/64
-> > See: https://github.com/linux-audit/audit-kernel/wiki/RFE-Audit-Container-ID
-> >
-> > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
-> > ---
-> >  fs/proc/base.c             | 37 ++++++++++++++++++++++++
-> >  include/linux/audit.h      | 25 ++++++++++++++++
-> >  include/uapi/linux/audit.h |  2 ++
-> >  kernel/auditsc.c           | 71 ++++++++++++++++++++++++++++++++++++++++++++++
-> >  4 files changed, 135 insertions(+)
-> 
-> ...
-> 
-> > --- a/include/linux/audit.h
-> > +++ b/include/linux/audit.h
-> > @@ -606,6 +621,16 @@ static inline bool audit_loginuid_set(struct task_struct *tsk)
-> >        return uid_valid(audit_get_loginuid(tsk));
-> > }
-> >
-> > +static inline bool cid_valid(u64 contid)
-> > +{
-> > +       return contid != AUDIT_CID_UNSET;
-> > +}
-> > +
-> > +static inline bool audit_contid_set(struct task_struct *tsk)
-> > +{
-> > +       return cid_valid(audit_get_contid(tsk));
-> > +}
-> 
-> For the sake of consistency I think we should rename cid_valid() to
-> audit_contid_valid().
+It was discovered that a constant stream of readers with occassional
+writers pounding on a rwsem may cause many of the readers to enter the
+slowpath unnecessarily thus increasing latency and lowering performance.
 
-Ok.
+In the current code, a reader entering the slowpath critical section
+will unconditionally set the WAITING_BIAS, if not set yet, and clear
+its active count even if no one is in the wait queue and no writer
+is present. This causes some incoming readers to observe the presence
+of waiters in the wait queue and hence have to go into the slowpath
+themselves.
 
-> > diff --git a/kernel/auditsc.c b/kernel/auditsc.c
-> > index 59ef7a81..611e926 100644
-> > --- a/kernel/auditsc.c
-> > +++ b/kernel/auditsc.c
-> > @@ -956,6 +956,8 @@ int audit_alloc(struct task_struct *tsk)
-> >                 return -ENOMEM;
-> >         info->loginuid = audit_get_loginuid(current);
-> >         info->sessionid = audit_get_sessionid(current);
-> > +       info->contid = audit_get_contid(current);
-> > +       info->inherited = true;
-> 
-> First see my others comments in this patch about inheritence, but if
-> we decide that flagging inherited values is important we should
-> probably rename the "inherited" field to indicate that it applies to
-> just the "contid" field.
+With sufficient numbers of readers and a relatively short lock hold time,
+the WAITING_BIAS may be repeatedly turned on and off and a substantial
+portion of the readers will go into the slowpath sustaining a rather
+long queue in the wait queue spinlock and repeated WAITING_BIAS on/off
+cycle until the logjam is broken opportunistically.
 
-Ok.
+To avoid this situation from happening, an additional check is added to
+detect the special case that the reader in the critical section is the
+only one in the wait queue and no writer is present. When that happens,
+it can just exit the slowpath and return immediately as its active count
+has already been set in the lock.  Other incoming readers won't observe
+the presence of waiters and so will not be forced into the slowpath.
 
-> >         tsk->audit = info;
-> >
-> >         if (likely(!audit_ever_enabled))
-> > @@ -985,6 +987,8 @@ int audit_alloc(struct task_struct *tsk)
-> >  struct audit_task_info init_struct_audit = {
-> >         .loginuid = INVALID_UID,
-> >         .sessionid = AUDIT_SID_UNSET,
-> > +       .contid = AUDIT_CID_UNSET,
-> > +       .inherited = true,
-> >         .ctx = NULL,
-> >  };
-> >
-> > @@ -2112,6 +2116,73 @@ int audit_set_loginuid(kuid_t loginuid)
-> >  }
-> >
-> >  /**
-> > + * audit_set_contid - set current task's audit_context contid
-> > + * @contid: contid value
-> > + *
-> > + * Returns 0 on success, -EPERM on permission failure.
-> > + *
-> > + * Called (set) from fs/proc/base.c::proc_contid_write().
-> > + */
-> > +int audit_set_contid(struct task_struct *task, u64 contid)
-> > +{
-> > +       u64 oldcontid;
-> > +       int rc = 0;
-> > +       struct audit_buffer *ab;
-> > +       uid_t uid;
-> > +       struct tty_struct *tty;
-> > +       char comm[sizeof(current->comm)];
-> > +
-> > +       /* Can't set if audit disabled */
-> > +       if (!task->audit)
-> > +               return -ENOPROTOOPT;
-> > +       oldcontid = audit_get_contid(task);
-> > +       /* Don't allow the audit containerid to be unset */
-> > +       if (!cid_valid(contid))
-> > +               rc = -EINVAL;
-> > +       /* if we don't have caps, reject */
-> > +       else if (!capable(CAP_AUDIT_CONTROL))
-> > +               rc = -EPERM;
-> > +       /* if task has children or is not single-threaded, deny */
-> > +       else if (!list_empty(&task->children))
-> > +               rc = -EBUSY;
-> 
-> Is this safe without holding tasklist_lock?  I worry we might be
-> vulnerable to a race with fork().
-> 
-> > +       else if (!(thread_group_leader(task) && thread_group_empty(task)))
-> > +               rc = -EALREADY;
-> 
-> Similar concern here as well, although related to threads.
+The issue was found in a customer site where they had an application
+that pounded on the pread64 syscalls heavily on an XFS filesystem. The
+application was run in a recent 4-socket boxes with a lot of CPUs. They
+saw significant spinlock contention in the rwsem_down_read_failed() call.
+With this patch applied, the system CPU usage went down from 85% to 57%,
+and the spinlock contention in the pread64 syscalls was gone.
 
-I think you are correct here and tasklist_lock should cover both.  Do we
-also want rcu_read_lock() immediately preceeding it?
+v3: Revise the commit log and comment again.
+v2: Add customer testing results and remove wording that may cause
+    confusion.
 
-> > +       /* it is already set, and not inherited from the parent, reject */
-> > +       else if (cid_valid(oldcontid) && !task->audit->inherited)
-> > +               rc = -EEXIST;
-> 
-> Maybe I'm missing something, but why do we care about preventing
-> reassigning the audit container ID in this case?  The task is single
-> threaded and has no descendants at this point so it should be safe,
-> yes?  So long as the task changing the audit container ID has
-> capable(CAP_AUDIT_CONTOL) it shouldn't matter, right?
+Signed-off-by: Waiman Long <longman@redhat.com>
+---
+ kernel/locking/rwsem-xadd.c | 13 ++++++++++++-
+ 1 file changed, 12 insertions(+), 1 deletion(-)
 
-Because we hammered out this idea 6 months ago in the design phase and I
-thought we all firmly agreed that the audit container identifier could
-only be set once.  Has any significant discussion happenned since then
-to change that wisdom?  I just wonder why this is coming up now.
+diff --git a/kernel/locking/rwsem-xadd.c b/kernel/locking/rwsem-xadd.c
+index 3064c50..01fcb80 100644
+--- a/kernel/locking/rwsem-xadd.c
++++ b/kernel/locking/rwsem-xadd.c
+@@ -233,8 +233,19 @@ static void __rwsem_mark_wake(struct rw_semaphore *sem,
+ 	waiter.type = RWSEM_WAITING_FOR_READ;
+ 
+ 	raw_spin_lock_irq(&sem->wait_lock);
+-	if (list_empty(&sem->wait_list))
++	if (list_empty(&sem->wait_list)) {
++		/*
++		 * In case the wait queue is empty and the lock isn't owned
++		 * by a writer, this reader can exit the slowpath and return
++		 * immediately as its RWSEM_ACTIVE_READ_BIAS has already
++		 * been set in the count.
++		 */
++		if (atomic_long_read(&sem->count) >= 0) {
++			raw_spin_unlock_irq(&sem->wait_lock);
++			return sem;
++		}
+ 		adjustment += RWSEM_WAITING_BIAS;
++	}
+ 	list_add_tail(&waiter.list, &sem->wait_list);
+ 
+ 	/* we're now waiting on the lock, but no longer actively locking */
+-- 
+1.8.3.1
 
-> Related, I'm questioning if we would ever care if the audit container
-> ID was inherited or not?
-
-We do since that is the only way we can tell if the value has been set
-once already or inherited unless we check if the parent's audit
-container identifier is identical (which tells us it was inherited).
-
-> > +       if (!rc) {
-> > +               task_lock(task);
-> > +               task->audit->contid = contid;
-> > +               task->audit->inherited = false;
-> > +               task_unlock(task);
-> 
-> I suspect the task_lock() may not be what we want here, but if we are
-> using task_lock() to protect the audit fields two things come to mind:
-> 
-> 1. We should update the header comments for task_lock() in task.h to
-> indicate that it also protects ->audit.
-
-Fair enough.
-
-> 2. Where else do we need to worry about taking this lock?  At the very
-> least we should take this lock near the top of this function before we
-> check task->audit and not drop it until after we have set it, or
-> failed the operation for one of the reasons above.
-
-Agreed, since another process on another CPU could race attempting this
-same operation.  However, the task_lock() comment precludes using it
-with write_lock_irq(&task_lock) that might be required above.
-
-> > +       }
-> > +
-> > +       if (!audit_enabled)
-> > +               return rc;
-> > +
-> > +       ab = audit_log_start(audit_context(), GFP_KERNEL, AUDIT_CONTAINER_ID);
-> > +       if (!ab)
-> > +               return rc;
-> > +
-> > +       uid = from_kuid(&init_user_ns, task_uid(current));
-> > +       tty = audit_get_tty(current);
-> > +       audit_log_format(ab, "op=set opid=%d old-contid=%llu contid=%llu pid=%d uid=%u auid=%u tty=%s ses=%u",
-> > +                        task_tgid_nr(task), oldcontid, contid,
-> > +                        task_tgid_nr(current), uid
-> > +                        from_kuid(&init_user_ns, audit_get_loginuid(current)),
-> > +                        tty ? tty_name(tty) : "(none)",
-> > +                        audit_get_sessionid(current));
-> > +       audit_put_tty(tty);
-> > +       audit_log_task_context(ab);
-> > +       audit_log_format(ab, " comm=");
-> > +       audit_log_untrustedstring(ab, get_task_comm(comm, current));
-> > +       audit_log_d_path_exe(ab, current->mm);
-> > +       audit_log_format(ab, " res=%d", !rc);
-> > +       audit_log_end(ab);
-> > +       return rc;
-> > +}
-> > +
-> > +/**
-> >   * __audit_mq_open - record audit data for a POSIX MQ open
-> >   * @oflag: open flag
-> >   * @mode: mode bits
-> 
-> --
-> paul moore
-> www.paul-moore.com
-
-- RGB
-
---
-Richard Guy Briggs <rgb@redhat.com>
-Sr. S/W Engineer, Kernel Security, Base Operating Systems
-Remote, Ottawa, Red Hat Canada
-IRC: rgb, SunRaycer
-Voice: +1.647.777.2635, Internal: (81) 32635
