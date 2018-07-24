@@ -1,70 +1,101 @@
 Return-Path: <SRS0=hTZH=KI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: *
-X-Spam-Status: No, score=2.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,PHOTO_EDITING_FREEM,SPF_PASS autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Level: 
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DCB34C6778A
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 15:00:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5D12ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 15:01:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A0A8D20856
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 15:00:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A0A8D20856
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=wintersportsequipment.com
+	by mail.kernel.org (Postfix) with ESMTP id 68FBF20856
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 15:01:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 68FBF20856
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388695AbeGXQGm (ORCPT
+        id S2388619AbeGXQIe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 12:06:42 -0400
-Received: from unassigned.psychz.net ([107.160.7.32]:34068 "EHLO itluggage.com"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2388522AbeGXQGm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 12:06:42 -0400
-X-Greylist: delayed 315 seconds by postgrey-1.27 at vger.kernel.org; Tue, 24 Jul 2018 12:06:41 EDT
-To:     linux-kernel@vger.kernel.org
-Subject: for your photos
-Message-ID: <d2e7a0dbf06db0ec6c9fb15e1c24b60d@chillinproducts.com>
-Date:   Tue, 24 Jul 2018 14:06:45 +0200
-From:   "Roland" <jelmensamah@wintersportsequipment.com>
-Reply-To: kaufhaosi@sina.com
+        Tue, 24 Jul 2018 12:08:34 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:50487 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388538AbeGXQIe (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Jul 2018 12:08:34 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w6OF0tZW032036
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Tue, 24 Jul 2018 08:00:55 -0700
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w6OF0tHl032033;
+        Tue, 24 Jul 2018 08:00:55 -0700
+Date:   Tue, 24 Jul 2018 08:00:55 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for YueHaibing <tipbot@zytor.com>
+Message-ID: <tip-2397134ce2d73dcf1d4846579f594c9f3880b2ec@git.kernel.org>
+Cc:     hpa@zytor.com, yuehaibing@huawei.com, peterz@infradead.org,
+        torvalds@linux-foundation.org, mingo@kernel.org,
+        linux-kernel@vger.kernel.org, tglx@linutronix.de
+Reply-To: hpa@zytor.com, yuehaibing@huawei.com, peterz@infradead.org,
+          mingo@kernel.org, torvalds@linux-foundation.org,
+          linux-kernel@vger.kernel.org, tglx@linutronix.de
+In-Reply-To: <20180720073213.14996-1-yuehaibing@huawei.com>
+References: <20180720073213.14996-1-yuehaibing@huawei.com>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/cleanups] x86/platform/pcspeaker: Use PTR_ERR_OR_ZERO() to
+ fix ptr_ret.cocci warning
+Git-Commit-ID: 2397134ce2d73dcf1d4846579f594c9f3880b2ec
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; format=flowed; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I would like to speak with the person that managing photos for your
-company?
+Commit-ID:  2397134ce2d73dcf1d4846579f594c9f3880b2ec
+Gitweb:     https://git.kernel.org/tip/2397134ce2d73dcf1d4846579f594c9f3880b2ec
+Author:     YueHaibing <yuehaibing@huawei.com>
+AuthorDate: Fri, 20 Jul 2018 15:32:13 +0800
+Committer:  Ingo Molnar <mingo@kernel.org>
+CommitDate: Tue, 24 Jul 2018 09:46:42 +0200
 
-We provide image editing like – photos cutting out and retouching.
+x86/platform/pcspeaker: Use PTR_ERR_OR_ZERO() to fix ptr_ret.cocci warning
 
-Enhancing your images is just a part of what we can do for your business.
-Whether you’re an ecommerce
-store or portrait photographer, real estate professional, or an e-Retailer,
-we are your personal team
-of photo editors that integrate seamlessly with your business.
+The ptr_ret.cocci script generates the following warning:
 
-Our mainly services are:
+  arch/x86/kernel/pcspeaker.c:12:8-14: WARNING: PTR_ERR_OR_ZERO can be used
 
- . Cut out, masking, clipping path, deep etching, transparent background
- . Colour correction, black and white, light and shadows etc.
- . Dust cleaning, spot cleaning
- . Beauty retouching, skin retouching, face retouching, body retouching
- . Fashion/Beauty Image Retouching
- . Product image Retouching
- . Real estate image Retouching
- . Wedding & Event Album Design.
- . Restoration and repair old images
- . Vector Conversion
- . Portrait image Retouching
+Use PTR_ERR_OR_ZERO() rather than an open-coded version to fix this.
 
-We can provide you editing test on your photos.
-Please reply if you are interested.
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: gregkh@linuxfoundation.org
+Cc: kstewart@linuxfoundation.org
+Cc: pombredanne@nexb.com
+Link: http://lkml.kernel.org/r/20180720073213.14996-1-yuehaibing@huawei.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+---
+ arch/x86/kernel/pcspeaker.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks,
-Roland
-
+diff --git a/arch/x86/kernel/pcspeaker.c b/arch/x86/kernel/pcspeaker.c
+index da5190a1ea16..4a710ffffd9a 100644
+--- a/arch/x86/kernel/pcspeaker.c
++++ b/arch/x86/kernel/pcspeaker.c
+@@ -9,6 +9,6 @@ static __init int add_pcspkr(void)
+ 
+ 	pd = platform_device_register_simple("pcspkr", -1, NULL, 0);
+ 
+-	return IS_ERR(pd) ? PTR_ERR(pd) : 0;
++	return PTR_ERR_OR_ZERO(pd);
+ }
+ device_initcall(add_pcspkr);
