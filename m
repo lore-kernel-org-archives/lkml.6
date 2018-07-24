@@ -2,83 +2,80 @@ Return-Path: <SRS0=hTZH=KI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_MED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15BE3C28CF6
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 20:00:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 536A5C6778F
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 20:00:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CD51120880
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 20:00:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CD51120880
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id EB92E20880
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 20:00:27 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="PazNeWvw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB92E20880
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388695AbeGXVI0 (ORCPT
+        id S2388726AbeGXVI3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 17:08:26 -0400
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:45037 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388466AbeGXVI0 (ORCPT
+        Tue, 24 Jul 2018 17:08:29 -0400
+Received: from mail-lj1-f178.google.com ([209.85.208.178]:43343 "EHLO
+        mail-lj1-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388699AbeGXVI3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 17:08:26 -0400
-Received: by mail-ed1-f67.google.com with SMTP id f23-v6so5136130edr.11;
-        Tue, 24 Jul 2018 13:00:21 -0700 (PDT)
+        Tue, 24 Jul 2018 17:08:29 -0400
+Received: by mail-lj1-f178.google.com with SMTP id r13-v6so4675477ljg.10
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Jul 2018 13:00:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=afsmkqbzM0laTKBiD5uerJtPWgYnNA5ry00NwSH90a4=;
+        b=PazNeWvwtxTu7j8H9dNTf5PIiaDZFNcSxw/VwrbqNie0QvONvhGxUbkjhNLlAutZaf
+         al2lmz/QANCyWv0jeEijfAZ3qETduIrEnW0Y2kg18WuS7YM4l5KnFaxTFSyCGJnYof3c
+         3oTmJXGk6iCuFxKXu5OGp+QQpHoXeinjXtD4wD+pZLPcuQBQSSpPlHmqp7m/ycgYNCSw
+         bBvFuL9VDDc44sepKmrHkceRTQRMQ7ZDJNljuV5/KFknXs5djxCZ3+WKPCoZd7ptKE13
+         gRWcS27YbhUX0Iyf1jaBmWf742KwQIdz6mhNThW6NfWZTwmGaAqLp/ShHXY9hmQM08sD
+         aORw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=o+6etfhMf0YuFoC2tElGN9Ch+OyTu4cH8W1qO2y4+zY=;
-        b=Ugoy+Cpb33hdC6aeGF7Ed70l6atcs7rkF5Khf/zOd/1X7uVT0hVZJJjAhn7q5Uu8hi
-         z30SKIIacHbNkNz4XyPEAhCTCjFyuSi/NbuguFOuM9kBG6sM0yCT1NISRrSQ+ALFH86T
-         5xWWZ+lQ1yt3oBOcqS/gzWQpMThkpXrgMTzUPTUKCP+0SnYS5XP0JJMRF5uhvQDEEpPt
-         Dgkc6lVE0cgx3wW1RbIWpmNTpFwFdVy0b4On2f4XlvQ2dw2mcxLSzykZxycBBroizy2P
-         de7gkOoEJ7BcJGVZuauM0R5ZwM0lOWT91wkm3PxoTWJYon8ZxYNK4H9hnCkTQp7m4CSR
-         sm/A==
-X-Gm-Message-State: AOUpUlGd/7VBaaKBRQEy4s6/juZNNGyg4NDjo6e6YQZ4PCxgRTSplNga
-        WGsHqQvMlmnp3elWsXxDVEw=
-X-Google-Smtp-Source: AAOMgpcAqe/7PLv0XCVOYLPr0sD88tyUJyZ8fUdeLE/znv0m43jKF/tkT4hf8XLsSfruMyVtXLxGuw==
-X-Received: by 2002:a50:b3c8:: with SMTP id t8-v6mr19992322edd.95.1532462421094;
-        Tue, 24 Jul 2018 13:00:21 -0700 (PDT)
-Received: from kozik-lap (xdsl-188-155-58-14.adslplus.ch. [188.155.58.14])
-        by smtp.googlemail.com with ESMTPSA id s21-v6sm5355862edr.62.2018.07.24.13.00.19
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 24 Jul 2018 13:00:20 -0700 (PDT)
-Date:   Tue, 24 Jul 2018 22:00:18 +0200
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Tomasz Figa <tomasz.figa@gmail.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-gpio@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: pinctrl: samsung: Add SPDX license
- identifier
-Message-ID: <20180724200018.mg6f55dxmgax5dtw@kozik-lap>
-References: <20180718200350.6590-1-krzk@kernel.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=afsmkqbzM0laTKBiD5uerJtPWgYnNA5ry00NwSH90a4=;
+        b=ogwtCAd6XxH8oBfH+VgfndZb3NuafONEAuNWSQcgkXgWi2SMPe+xNyfTixLdiBa3xE
+         2jEv62YHUKBmTIn8sBa0fk0zPNAMOPNNXOV23Ga5zoFE2SxpTfNKys0hkKtTcSQ1ZSck
+         yjgcuANhjMbj9isdy++QzR2m1/Jxkv1g1BUSXE1aC9YWVzns+WH4sMeNeqzlqVm/VXP0
+         IvABrn/edOD5Cdm0X+hd7XE/CWEnyzAto5RWpa+8iYP7iiFLVAiibdOBxpWf1G6m6X1e
+         w4Ta/3+m6JR7TED6z+JWyMyXodCt6YOhZuON4fYbrz1VL24kDa671dSLWYoG2WIgyn+p
+         Ti3Q==
+X-Gm-Message-State: AOUpUlHUACljDC28Q8fRvnvc2NWCrehvwe1Q4DEsnbfTyp8A3WeRGP/l
+        KYrVK/SwtwoNZqx21SP7+/sWBvBwQ+GQrp4f6/YCuA==
+X-Google-Smtp-Source: AAOMgpfZziB4Z9g1ZlYqF6xucjrg/B5cNUFMvJRqZUpmYt2EiDV1lFrfrMgGfc/pTOOUiFUTqR21ekeopiuj+5sYH34=
+X-Received: by 2002:a2e:82cc:: with SMTP id n12-v6mr1446191ljh.58.1532462423805;
+ Tue, 24 Jul 2018 13:00:23 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20180718200350.6590-1-krzk@kernel.org>
-User-Agent: NeoMutt/20170609 (1.8.3)
+References: <20180718001455.140575-1-rkir@google.com> <20180718001455.140575-3-rkir@google.com>
+ <20180721074611.GC6484@kroah.com>
+In-Reply-To: <20180721074611.GC6484@kroah.com>
+From:   Roman Kiryanov <rkir@google.com>
+Date:   Tue, 24 Jul 2018 13:00:12 -0700
+Message-ID: <CAOGAQerbVvG64uguOQ0nxv0-BPSMQxm6FH9AGupNm62DXtzLHQ@mail.gmail.com>
+Subject: Re: [PATCH 3/3] tty: Mark goldfish_tty_line_count as const
+To:     gregkh@linuxfoundation.org
+Cc:     linux-kernel@vger.kernel.org, Todd Kjos <tkjos@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 18, 2018 at 10:03:50PM +0200, Krzysztof Kozlowski wrote:
-> Replace GPL license statement with SPDX license identifier (GPL-2.0).
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> ---
->  include/dt-bindings/pinctrl/samsung.h | 7 ++-----
->  1 file changed, 2 insertions(+), 5 deletions(-)
+> Then why not just make it a #define?
 
-Applied.
+With "const" the diff is smaller.
 
-Best regards,
-Krzysztof
+> No need to waste the memory of a variable, right?
 
+I believe the compiler will produce the same binary for const and for
+#define if optimization is enabled.
