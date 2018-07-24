@@ -2,117 +2,124 @@ Return-Path: <SRS0=hTZH=KI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AE54C28CF6
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 22:07:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4493C28CF6
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 22:09:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C134F20880
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 22:07:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 63B8720856
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 22:09:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="dKE6tR3q"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C134F20880
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pCVql7Vx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 63B8720856
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388845AbeGXXP5 (ORCPT
+        id S2388666AbeGXXSB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 19:15:57 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:37728 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388488AbeGXXP5 (ORCPT
+        Tue, 24 Jul 2018 19:18:01 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:35477 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726889AbeGXXSA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 19:15:57 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=2ZC1VRzLwKgVWmRtaJUcpGn7LZWAgp4Y0LJjh/8TWec=; b=dKE6tR3qzkjOc5+8eP2joKu+VD
-        xj4InYB3g6gFZYkUoUAbcZU9kgIvYiCLZt8Voc1uboj2tkcOYZg04t/ELhxrcYfsCmOKkr9B9z0n0
-        kev1Ta64jbfomhlT0lVGpo+xy72UqnB2OkbpIHBi2tsKxo4YG4UxT50VqnMPWxP1QmaQb6No2CD3P
-        4kR4gXdPaq2oHk5k1tmZdpvxiVo5zGxNtt7JVNKrI/9XhZaYNKJVO6thURUPEZs32h+amIEnYwHVK
-        7HjInC0CVQmpALX3fNxvB0AH8tuhwLI6oxVIo7W7BfNdjGDTo0CMsLNn4gwYC9SYfAbr3oUIkmyga
-        J7Plse1A==;
-Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fi5Si-0004ew-MQ; Tue, 24 Jul 2018 22:07:22 +0000
-Subject: Re: [PATCH 1/4] arc: fix some build issues in delay.h
-To:     Vineet Gupta <Vineet.Gupta1@synopsys.com>,
-        Randy Dunlap <rd.dunlab@gmail.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Cc:     "linux-snps-arc@lists.infradead.org" 
-        <linux-snps-arc@lists.infradead.org>
-References: <20180724204622.2366-1-rd.dunlab@gmail.com>
- <20180724204622.2366-2-rd.dunlab@gmail.com>
- <C2D7FE5348E1B147BCA15975FBA23075012B08394D@us01wembx1.internal.synopsys.com>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <c265f489-9c7a-5002-68ea-755c090756cc@infradead.org>
-Date:   Tue, 24 Jul 2018 15:07:19 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Tue, 24 Jul 2018 19:18:00 -0400
+Received: by mail-pg1-f195.google.com with SMTP id e6-v6so3825022pgv.2;
+        Tue, 24 Jul 2018 15:09:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=LzitGvfo7yUEzlJBRlOK34PhKWnibYzQyV2HN8+eokE=;
+        b=pCVql7VxJOIKYd0P7Qo8VlNVdhWjalTPgs8nNjWKcoU+XgqZg6mZi0ENXZ9eMdXVC6
+         nUhcfEkh6Y36NCrmJA0MPceDnzzgvr8ZUISgl0r7tKZlze0xaXq5DTSuwTAGGfOFWhl8
+         FcYD+CcgkbpC2YWiWJmzo6St1/ESnBVSXNrZQyH6dSmQers1l63YBjhSx++PNxGabavS
+         sQCQz5Ko2TTixpc5fzOvC1lw8dxdDZbLLC4PP/bMI+O+IkDKBLrodtsk+reScy6IlA2W
+         Yp/y/UiVzSZo5CS8HHKdMifXmAM09C2Rv/slhTqEGJ/W80hWpFfvMog7ONplCQqm95Wx
+         v7Sg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=LzitGvfo7yUEzlJBRlOK34PhKWnibYzQyV2HN8+eokE=;
+        b=Rfo9sWVX5sK3VIfwdl+Uzi/22A9XyICWSbx9hrBRxURnZDOqUjtyX1Y3uTQLhYCAjq
+         M7qsk13TAUq0YtzpMa7YxBGwa/6cM3Iuf+wuPjyFRmwHULAe+i1m7WGY+jy8L7/v5pPw
+         bJcBr0ZZQe4sPQDCdzVhnEfJb6M1THSCzvM6kGuImKOjzEEV8eHEhpw2gR/6Ujzihjyq
+         6wu4Bid73HVa6LHxHdhv+SZ7Z087R3GdpanlVKX3Z4yRvDbo0KNogTjwxNLZE0H6OFju
+         k8Gv2safyDiVhk+9bsuiKY0xg6MztCZrao5rEHxf6iV6iMlVYUtrweuElOKjqNcRA1vz
+         X1Ag==
+X-Gm-Message-State: AOUpUlEAjSlGa7o1/Aa1FWjwF6VHB297XxYggRsgvj6EYPFpV2JGrc7g
+        t+BtGxSPr89oo16QCWu0FiS95g6pZw4mw5aQaCY=
+X-Google-Smtp-Source: AAOMgpfw6mrdWl1zHOtGyeuCXmRY/aKrZniR52zU5WSzMTJ7g4rs8iqX2r73ao3a0lwGYaKPjyZOi+9sezMhx2XThwU=
+X-Received: by 2002:a62:cd3:: with SMTP id 80-v6mr19602583pfm.184.1532470167277;
+ Tue, 24 Jul 2018 15:09:27 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <C2D7FE5348E1B147BCA15975FBA23075012B08394D@us01wembx1.internal.synopsys.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <1a3f59a9-0ba5-c83f-16a6-f9550a84f693@gmail.com>
+ <CAM_iQpWabZorkMNswyfHyS4KT=f_bgMtK8K35=84uah6Kfqxew@mail.gmail.com>
+ <1a27e301-3275-b349-a2f8-afdfdc02f04f@gmail.com> <20180718.125938.2271502580775162784.davem@davemloft.net>
+ <28c30574-391c-b4bd-c337-51d3040d901a@gmail.com> <CAM_iQpW4-JkZY7jXx0Q1b907hQ85UOL1eXv2YHwSukb5L=apUg@mail.gmail.com>
+ <5021d874-8e99-6eba-f24b-4257c62d4457@gmail.com>
+In-Reply-To: <5021d874-8e99-6eba-f24b-4257c62d4457@gmail.com>
+From:   Cong Wang <xiyou.wangcong@gmail.com>
+Date:   Tue, 24 Jul 2018 15:09:25 -0700
+Message-ID: <CAM_iQpUc-H2kZCBevePs6g-8qKyJkUhdd1ZDSQgYsCG0ChfC2w@mail.gmail.com>
+Subject: Re: [PATCH RFC/RFT net-next 00/17] net: Convert neighbor tables to per-namespace
+To:     David Ahern <dsahern@gmail.com>
+Cc:     David Miller <davem@davemloft.net>,
+        Linux Kernel Network Developers <netdev@vger.kernel.org>,
+        nikita.leshchenko@oracle.com,
+        Roopa Prabhu <roopa@cumulusnetworks.com>,
+        Stephen Hemminger <stephen@networkplumber.org>,
+        Ido Schimmel <idosch@mellanox.com>,
+        Jiri Pirko <jiri@mellanox.com>,
+        Saeed Mahameed <saeedm@mellanox.com>,
+        Alexander Aring <alex.aring@gmail.com>,
+        linux-wpan@vger.kernel.org,
+        NetFilter <netfilter-devel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/24/2018 03:04 PM, Vineet Gupta wrote:
-> On 07/24/2018 01:46 PM, Randy Dunlap wrote:
->> From: Randy Dunlap <rdunlap@infradead.org>
->>
->> Fix build errors in arch/arc/'s delay.h:
->> - add <linux/delay.h> for loops_per_jiffy
->> - add <asm-generic/types.h> for "u64"
->>
->> In file included from ../drivers/infiniband/hw/cxgb3/cxio_hal.c:32:
->> ../arch/arc/include/asm/delay.h: In function '__udelay':
->> ../arch/arc/include/asm/delay.h:61:12: error: 'u64' undeclared (first use in this function)
->>   loops = ((u64) usecs * 4295 * HZ * loops_per_jiffy) >> 32;
->>             ^~~
->>
->> In file included from ../drivers/infiniband/hw/cxgb3/cxio_hal.c:32:
->> ../arch/arc/include/asm/delay.h: In function '__udelay':
->> ../arch/arc/include/asm/delay.h:63:37: error: 'loops_per_jiffy' undeclared (first use in this function)
->>   loops = ((u64) usecs * 4295 * HZ * loops_per_jiffy) >> 32;
->>                                      ^~~~~~~~~~~~~~~
->>
->> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
->> Cc: Vineet Gupta <vgupta@synopsys.com>
->> Cc: Ofer Levi <oferle@mellanox.com>
->> Cc: linux-snps-arc@lists.infradead.org
->> ---
->>  arch/arc/include/asm/delay.h |    2 ++
->>  1 file changed, 2 insertions(+)
->>
->> --- linux-next-20180723.orig/arch/arc/include/asm/delay.h
->> +++ linux-next-20180723/arch/arc/include/asm/delay.h
->> @@ -17,6 +17,8 @@
->>  #ifndef __ASM_ARC_UDELAY_H
->>  #define __ASM_ARC_UDELAY_H
->>  
->> +#include <linux/delay.h>
-> 
-> this file in turn includes asm/delay.h - the header guards will catch nested
-> inclusion still seems ugly. Should we just reference loops_per_jiffy here like
-> other arches do in theur delay.h
+On Tue, Jul 24, 2018 at 8:14 AM David Ahern <dsahern@gmail.com> wrote:
+>
+> On 7/19/18 11:12 AM, Cong Wang wrote:
+> > On Thu, Jul 19, 2018 at 9:16 AM David Ahern <dsahern@gmail.com> wrote:
+> >>
+> >> Chatting with Nikolay about this and he brought up a good corollary - ip
+> >> fragmentation. It really is a similar problem in that memory is consumed
+> >> as a result of packets received from an external entity. The ipfrag
+> >> sysctls are per namespace with a limit that non-init_net namespaces can
+> >> not set high_thresh > the current value of init_net. Potential memory
+> >> consumed by fragments scales with the number of namespaces which is the
+> >> primary concern with making neighbor tables per namespace.
+> >
+> > Nothing new, already discussed:
+> > https://marc.info/?l=linux-netdev&m=140391416215988&w=2
+> >
+> > :)
+> >
+>
+> Neighbor tables, bridge fdbs, vxlan fdbs and ip fragments all consume
+> local memory resources due to received packets. bridge and vxlan fdb's
+> are fairly straightforward analogs to neighbor entries; they are per
+> device with no limits on the number of entries. Fragments have memory
+> limits per namespace. So neighbor tables are the only ones with this
+> strict limitation and concern on memory consumption.
+>
+> I get the impression there is no longer a strong resistance against
+> moving the tables to per namespace, but deciding what is the right
+> approach to handle backwards compatibility. Correct? Changing the
+> accounting is inevitably going to be noticeable to some use case(s), but
+> with sysctl settings it is a simple runtime update once the user knows
+> to make the change.
 
-Yes, that's a good idea.  I'll do that.
+This question definitely should go to Eric Biederman who was against
+my proposal.
 
->> +#include <asm-generic/types.h>
->>  #include <asm/param.h>		/* HZ */
->>  
->>  static inline void __delay(unsigned long loops)
->>
-> 
-
-
--- 
-~Randy
+Let's add Eric into CC.
