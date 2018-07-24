@@ -2,86 +2,109 @@ Return-Path: <SRS0=hTZH=KI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BC7FC6778A
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 18:23:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EDF2AC6778A
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 18:23:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 06FED20875
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 18:23:13 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LHCRqG9A"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 06FED20875
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id B21F320875
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 18:23:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B21F320875
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=deltatee.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388611AbeGXTay (ORCPT
+        id S2388628AbeGXTbG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 15:30:54 -0400
-Received: from mail-ed1-f46.google.com ([209.85.208.46]:35106 "EHLO
-        mail-ed1-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388409AbeGXTay (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 15:30:54 -0400
-Received: by mail-ed1-f46.google.com with SMTP id e6-v6so4936528edr.2
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Jul 2018 11:23:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Hj9pb6SXOkZjhEFtTO+CicARixKFIiQEk3s1A9p6VL0=;
-        b=LHCRqG9AcFYE38j88PrPdrUhVMi2ZlmR1Ua49ncxqntrZH+xyz9xzXvKA1l8gn3Ndw
-         c9l/g+H8KAp91zFwRKBeBZfC/XWm5U8C2nfyhtMqJSLB1G1Sb9CiuZZAVmOjfMO5jCOm
-         wGkpQUDwM+I2WbAM5KRAR5gttp87pL7xDlRQ2d5WoUxCjir436lf1S4vUTTV33v9emz7
-         +kJtfOG5pplpHfJoBsfFuAPh2eS8I6UEF6jJU4ZH3jsAcXmjmSWE70rg1+EH7+8EVTlm
-         XZyTfTqazMf5PUa4CdqxrDN4+SGehgw5qcE8nGN4VddBeMUHZFjI26DBcKubX+AbTTjY
-         mFSA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Hj9pb6SXOkZjhEFtTO+CicARixKFIiQEk3s1A9p6VL0=;
-        b=jeTMyM09mkoABJareQ94+TXS5Rr4M1iTLnxcOWV/TciDFGORVrattRt2zgmUi6MKZK
-         xFr1a+bAvmQ0fqwIiUTHL4c5ovE6hDHLKZD2l7R+nbb/06RWpbgBv/+j9NbNOi7xD84T
-         /CPj1fHGwc6QE/Upw4fwHSlo243vjFSC1n9TGcGXXEBjdKG6XK3txm2Ptu7p+OF0GBpX
-         E+SX2tk/YsIXRD3rzvxRuQV8Wzk+NK/TNckaa5np4EMYHIsfOkcOLEgwdRB1qG/RIX1B
-         UQALtoC44hrZMqpHWj/i+s8v5De06xdzeRhxjvhvJVpS1INqkaiQq3Ek0gsFR/3cH74L
-         PY6A==
-X-Gm-Message-State: AOUpUlFOv9N1JbrfFO51OvOszFeFk3wx5Mi3XF+r6X//FklKPvQHWvCu
-        xnsKR3d65B1rUur1VHxyReGtVQU=
-X-Google-Smtp-Source: AAOMgpfQ5EWNa0nEnsbwMBPmFWy5Kx5jN78EDx8TAU7OUCQwTATnO5LydveCAWHS+eA+o9PH2urYiA==
-X-Received: by 2002:a50:adaa:: with SMTP id a39-v6mr20078895edd.194.1532456590197;
-        Tue, 24 Jul 2018 11:23:10 -0700 (PDT)
-Received: from avx2 (nat4-minsk-pool-46-53-177-92.telecom.by. [46.53.177.92])
-        by smtp.gmail.com with ESMTPSA id g6-v6sm6621591edn.28.2018.07.24.11.23.08
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 24 Jul 2018 11:23:09 -0700 (PDT)
-Date:   Tue, 24 Jul 2018 21:23:07 +0300
-From:   Alexey Dobriyan <adobriyan@gmail.com>
-To:     akpm@linux-foundation.org
-Cc:     linux-kernel@vger.kernel.org, dancol@google.com, vbabka@suse.cz
-Subject: Re: + mm-proc-pid-maps-remove-is_pid-and-related-wrappers.patch
- added to -mm tree
-Message-ID: <20180724182307.GA27053@avx2>
-References: <20180723235540.qS9To%akpm@linux-foundation.org>
+        Tue, 24 Jul 2018 15:31:06 -0400
+Received: from ale.deltatee.com ([207.54.116.67]:37802 "EHLO ale.deltatee.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388463AbeGXTbG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Jul 2018 15:31:06 -0400
+Received: from guinness.priv.deltatee.com ([172.16.1.162])
+        by ale.deltatee.com with esmtp (Exim 4.89)
+        (envelope-from <logang@deltatee.com>)
+        id 1fi1xp-0003VV-Rp; Tue, 24 Jul 2018 12:23:14 -0600
+To:     Allen Hubbe <allenbh@gmail.com>
+Cc:     linux-kernel@vger.kernel.org, linux-ntb@googlegroups.com,
+        Jon Mason <jdmason@kudzu.us>, fancer.lancer@gmail.com,
+        Shyam-sundar.S-k@amd.com, shuah@kernel.org, dmeyer@gigaio.com
+References: <20180720180034.3964-1-logang@deltatee.com>
+ <20180720180034.3964-5-logang@deltatee.com>
+ <CAJ80sat2gx3jaDi3LVDG6GhZ6qKmuKWxyaP_0VoR5k3VfGybqw@mail.gmail.com>
+ <b14a3c42-4a23-bff5-3e1b-9a1423611230@deltatee.com>
+ <CAJ80saunKS6hbNFBKjbQqSo32+KeLZurksCtnHNw-C35Zjq2Xw@mail.gmail.com>
+ <8809f02e-93de-f81a-31e0-90f2c1983b70@deltatee.com>
+ <CAJ80sauPtUBJ5q9iSGPArwvetBwEkjNaRmS_6adP5moK5ejLqg@mail.gmail.com>
+From:   Logan Gunthorpe <logang@deltatee.com>
+Message-ID: <8bc2ed4f-f032-c969-2e7f-f00135f567ec@deltatee.com>
+Date:   Tue, 24 Jul 2018 12:23:13 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
+In-Reply-To: <CAJ80sauPtUBJ5q9iSGPArwvetBwEkjNaRmS_6adP5moK5ejLqg@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20180723235540.qS9To%akpm@linux-foundation.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 172.16.1.162
+X-SA-Exim-Rcpt-To: dmeyer@gigaio.com, shuah@kernel.org, Shyam-sundar.S-k@amd.com, fancer.lancer@gmail.com, jdmason@kudzu.us, linux-ntb@googlegroups.com, linux-kernel@vger.kernel.org, allenbh@gmail.com
+X-SA-Exim-Mail-From: logang@deltatee.com
+Subject: Re: [PATCH v2 4/8] NTB: ntb_pingpong: Choose doorbells based on port
+ number
+X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
+X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 23, 2018 at 04:55:40PM -0700, akpm@linux-foundation.org wrote:
-> 
-> The patch titled
->      Subject: mm: /proc/pid/*maps remove is_pid and related wrappers
-> has been added to the -mm tree.  Its filename is
->      mm-proc-pid-maps-remove-is_pid-and-related-wrappers.patch
 
-Reviewed-by: Alexey Dobriyan <adobriyan@gmail.com>
+
+On 24/07/18 12:12 PM, Allen Hubbe wrote:
+> On Tue, Jul 24, 2018 at 1:37 PM Logan Gunthorpe <logang@deltatee.com> wrote:
+>> Not really. Given that we know there are only two peers, we always use
+>> the other side's doorbell register. You'd only use the nearby doorbell
+>> register if you wanted to trigger your own interrupt -- that would be
+>> weird and we don't really have the API sophistication to do that.
+>>
+>> If we wanted to support multiple peers with some number in crosslink
+>> then we'd need to revamp things _significantly_. In this case we'd have
+>> multiple doorbell registers which each apply to a different subset of
+>> peers. This gets _very_ complicated and hurts my head.
+> 
+> ...huh, looks like peer index was omitted from ntb_peer_db_set and
+> friends.  Adding peer index there would make the interface consistent
+> with other ntb_peer functions.  Peer index would allow the hw driver
+> to select which doorbell register to use for each peer.  Adding a
+> ntb_peer_db_valid_bits to that would allow a subset of bits in the
+> shared register to be associated with each peer.
+
+The way the switch hardware works (switchtec and I assume IDT) is that
+there is only one doorbell register for all peers which can trigger any
+peer that doesn't have the corresponding bit masked. So the way it was
+designed without the index maxes sense except when we start to add
+multi-peer crosslink insanity. I don't think adding a peer index would
+be sufficient as the clients would need to know which peers share which
+doorbells.
+
+If I were to attempt something like this, I'd probably look at
+introducing a segment index to the entire API. So that each switch in a
+crosslink topology is it's own segment with it's own set of peers, peer
+index space, doorbell registers, etc. But that's all very complicated
+and messy and probably something I wouldn't even look at until we have
+finished with traditional multi-host setups.
+
+> I thought for sure ntb_peer_db_set already had peer index, and I was
+> wrong.  Go ahead with the change as in your patch, I won't force the
+> issue or that you to do that extra work and touch all the drivers
+> again for this.  It can be addressed when there is renued interest in
+> making things work more than one peer.
+> 
+> This patch, and the others in this series:
+> Acked-by: Allen Hubbe <allenbh@gmail.com>
+
+Thanks!
+
+Logan
+
