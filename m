@@ -4,127 +4,169 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DEAB0ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 14:38:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D02EBC6778A
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 14:38:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8E35A20852
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 14:38:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 72C0F20852
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 14:38:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="D6jK/g+X"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8E35A20852
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="kfHIuuM+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 72C0F20852
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388603AbeGXPpY (ORCPT
+        id S2388660AbeGXPp2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 11:45:24 -0400
-Received: from mail-db5eur01on0076.outbound.protection.outlook.com ([104.47.2.76]:6314
-        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2388373AbeGXPpY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 11:45:24 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=AYo0gKts61nZzEys4N/7whHaM5X6KbK7xRRBLb8Ph8s=;
- b=D6jK/g+XzabYmqe/DqZfzQ17PkY+GgZYJp8AdyBlUUq3iQFXM/lFA2EB8WfKJ59F9DI+/5DoSVITziB5ECEY76UsEbDV5aNcRV171orkRvJEtsu6spxnzvS69JWtrT6KLGS2DMOVZlPqEvAUOKRpKMc9Ft8DxJ0/UCfJGZnWCe4=
-Received: from AM3PR04MB338.eurprd04.prod.outlook.com (10.242.110.15) by
- AM3PR04MB0806.eurprd04.prod.outlook.com (10.242.253.144) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.973.16; Tue, 24 Jul 2018 14:38:33 +0000
-Received: from AM3PR04MB338.eurprd04.prod.outlook.com
- ([fe80::84f9:3f8e:a8c7:1720]) by AM3PR04MB338.eurprd04.prod.outlook.com
- ([fe80::84f9:3f8e:a8c7:1720%12]) with mapi id 15.20.0973.022; Tue, 24 Jul
- 2018 14:38:33 +0000
-From:   Ioana Ciocoi Radulescu <ruxandra.radulescu@nxp.com>
-To:     Horia Geanta <horia.geanta@nxp.com>,
-        Roy Pledge <roy.pledge@nxp.com>,
-        "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        Leo Li <leoyang.li@nxp.com>
-CC:     Laurentiu Tudor <laurentiu.tudor@nxp.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "arnd@arndb.de" <arnd@arndb.de>,
-        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
-        "robin.murphy@arm.com" <robin.murphy@arm.com>
-Subject: RE: [PATCH v3 0/4] staging/fsl-mc/bus: Move DPIO from staging to
- drivers/soc/fsl
-Thread-Topic: [PATCH v3 0/4] staging/fsl-mc/bus: Move DPIO from staging to
- drivers/soc/fsl
-Thread-Index: AQHUI1mrGlFQJvKpDUqhG1SBjEJbiaSecNfg
-Date:   Tue, 24 Jul 2018 14:38:33 +0000
-Message-ID: <AM3PR04MB33800EB3509E6715AC49DC294550@AM3PR04MB338.eurprd04.prod.outlook.com>
-References: <20180724142131.28970-1-roy.pledge@nxp.com>
- <VI1PR0402MB3485147A99F219D5FA1B668B98550@VI1PR0402MB3485.eurprd04.prod.outlook.com>
-In-Reply-To: <VI1PR0402MB3485147A99F219D5FA1B668B98550@VI1PR0402MB3485.eurprd04.prod.outlook.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=ruxandra.radulescu@nxp.com; 
-x-originating-ip: [192.88.166.1]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;AM3PR04MB0806;6:vJMH1FMIYP6kAjx9dRK1NRodBEoCN2rpRlR9iCuFpLJ8a1KFpjjzhTq5lNPTXn+duBPXSqu+vyqBcsUexgoQ5Nd5o/VWH6QrDzylIKgq3khccCqWePI305vddE5b2vr23TPyHd65kD1bLmbWn6H6VyShUB2BPldIrlV1QZjpLQe9kWKHTRWRHrF9cG5q8eZZr93PgjpeBkagGA7kxmH0paY8TFHpQhZG98LgN4jkkchbl9wZ3+Ner8iNZ4pJmOsfCYi8fjB2wjjmyIt+nSYRaHwrh+SVkFdjxPY//hphjCBQqcgxdRCLNCrlk0eR+6kVAMVdby18k/RCYYK0BDxP/2nCgMaDUSafm3UPj7LzghjuiTvmy40OHx/S3MRUzn87HKrcAktaI8C76mFXsQnAw44kbeMH6Ort/LtiRG6N26t32d/Xc//yvkX9JaEWtBbCOQ/HNOmwnRcO710rsbfvpw==;5:ltdiFPGH77JfeuxkhtgkFLiiGCKmvLXfTv69VIskTraMHTtON9/E4IvXth7bs+hr1CNhkdBi63duSgg+bklOMAVpNMWpx2IHDYAJqn/kGwCfGCJcdMxU+0Kc7pqA47EgaWxZE4sQwFJhQqMHk4vwkHEKfPax0U6I+6TbmB1Rklw=;7:EO8MZndeqexK41F1Jz+Hjvy0aUpHbY2aKlC51r9Q9xSsvcs5elqAcmyLN1WXcU3KXgHNA97PySTdsHajqMXozXLFAVgDe8lSjCdONaCUMiwMfS5HtNihxG4fkIj7Ofthxgkj6Kr6JWzv+YMCIbMr/TaUVtOEPlxkCh79MVsGbb46zwP1JX/SeQMJWehLiCZ/mwsu+tXQjsoMD8SLezY1fn7WOaLQRPFzAHDbNgjJ1z802v79xou+Lbsa3LHVWWSu
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: 1957d5df-3198-4955-87fc-08d5f1732223
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(5600073)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM3PR04MB0806;
-x-ms-traffictypediagnostic: AM3PR04MB0806:
-x-microsoft-antispam-prvs: <AM3PR04MB0806316F76E9BAE5F42DCFB394550@AM3PR04MB0806.eurprd04.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(180628864354917)(9452136761055)(185117386973197)(258649278758335);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3002001)(3231311)(944501410)(52105095)(93006095)(93001095)(10201501046)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123564045)(20161123558120)(20161123562045)(6072148)(201708071742011)(7699016);SRVR:AM3PR04MB0806;BCL:0;PCL:0;RULEID:;SRVR:AM3PR04MB0806;
-x-forefront-prvs: 0743E8D0A6
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(376002)(346002)(396003)(366004)(39860400002)(189003)(13464003)(199004)(476003)(81156014)(3846002)(305945005)(446003)(5660300001)(8936002)(66066001)(6116002)(11346002)(54906003)(2201001)(6436002)(486006)(8676002)(55016002)(110136005)(86362001)(68736007)(99286004)(9686003)(102836004)(81166006)(26005)(6246003)(53546011)(6506007)(14444005)(2906002)(106356001)(105586002)(2900100001)(316002)(7736002)(97736004)(5250100002)(53936002)(478600001)(4326008)(14454004)(7696005)(6636002)(76176011)(256004)(229853002)(33656002)(74316002)(2501003)(25786009);DIR:OUT;SFP:1101;SCL:1;SRVR:AM3PR04MB0806;H:AM3PR04MB338.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: OeoWxeITegzt392bG8DmcDW9Z8zqruUolJ+Hpv4DhZfg2ijdxFfUiZInEHDH2ffEGY++dUjyuuJpSWWHtn8X+uzSUoUpwUACX79JOfsYU37YMEGQ+hG59q4hJl/vmT/cL9GrSvJgmJudE4UL5hOoU3XLeQu8PyW0s6I8TvT1knp4RkiWMENptgOBQxMHDj4wS2rpROW6O8lGRcCFa7QR16rNuxqsrmWkR7jAPDe73FjZU7T4YAKs23VOWyOoXHdh79os2Q02+PhpShgKLP3nXLrmyYBGJB1auSe2RjDWunfNtO36hcO6lfYyJvrRytLR+zdBDtFl9Cr6aNvvBYuUX6PolULnIGpuI3WZupbZ6Go=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="iso-8859-2"
-Content-Transfer-Encoding: quoted-printable
+        Tue, 24 Jul 2018 11:45:28 -0400
+Received: from aserp2130.oracle.com ([141.146.126.79]:52044 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388373AbeGXPp2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Jul 2018 11:45:28 -0400
+Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
+        by aserp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w6OEXd0B098767;
+        Tue, 24 Jul 2018 14:38:06 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=RlruvZg7UzNxCzRqScvpP0fi/NrtjCyGPj5KqEWoS8A=;
+ b=kfHIuuM+bna6yGd+3CwdcvXTzFfLicYw71YX3JLvkTyfptowbW0Oe9GhhXcpSwgHoqJZ
+ WSH/lyvtjZB+t/q0aSsjpTI41GsxPzSC8nrTka09ceskAeoj3ItG+PBz0Q/c6lDFRsZj
+ ASO6USTxN2DyfyE0qivILLj43l/73XMN6Hvzi1NxuAHknabIB/rJa55n9AyX76YJ0W0Y
+ BY6Fou7b/qgDNzt0aCRYvF9SMG78dSJOzzuU0chrQcYxaPHtEQCc9DLrAOYIUUqILc0x
+ L1KrPjPzadelVmm3gcngMTrZkJBg1eQJJhRQjinlgA9KBCslyAmybwHL16lwEEONqZUW 8w== 
+Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
+        by aserp2130.oracle.com with ESMTP id 2kbtbcse3p-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 24 Jul 2018 14:38:05 +0000
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w6OEc3m8030887
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 24 Jul 2018 14:38:04 GMT
+Received: from abhmp0002.oracle.com (abhmp0002.oracle.com [141.146.116.8])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w6OEbxOG014293;
+        Tue, 24 Jul 2018 14:38:01 GMT
+Received: from dhcp-burlington7-2nd-B-east-10-152-55-162.usdhcp.oraclecorp.com (/10.152.32.65)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 24 Jul 2018 07:07:53 -0700
+Subject: Re: [PATCH v2] xen/pv: Call get_cpu_address_sizes to set
+ x86_virt/phys_bits
+To:     "M. Vefa Bicakci" <m.v.b@runbox.com>, linux-kernel@vger.kernel.org
+Cc:     "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Juergen Gross <jgross@suse.com>,
+        xen-devel@lists.xenproject.org, x86@kernel.org,
+        stable@vger.kernel.org
+References: <20180721194909.23903-2-m.v.b@runbox.com>
+ <20180724124547.32562-1-m.v.b@runbox.com>
+From:   Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=boris.ostrovsky@oracle.com; prefer-encrypt=mutual; keydata=
+ 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
+ Jg6OxFYd01z+a+oL
+Message-ID: <3ac07f7d-19f3-923f-57c4-a12c605ff6ad@oracle.com>
+Date:   Tue, 24 Jul 2018 10:08:19 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1957d5df-3198-4955-87fc-08d5f1732223
-X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Jul 2018 14:38:33.7749
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM3PR04MB0806
+In-Reply-To: <20180724124547.32562-1-m.v.b@runbox.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8963 signatures=668706
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1806210000 definitions=main-1807240156
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> -----Original Message-----
-> From: Horia Geanta
-> Sent: Tuesday, July 24, 2018 5:35 PM
-> To: Roy Pledge <roy.pledge@nxp.com>; devel@driverdev.osuosl.org; linux-
-> arm-kernel@lists.infradead.org; gregkh@linuxfoundation.org; Leo Li
-> <leoyang.li@nxp.com>
-> Cc: Laurentiu Tudor <laurentiu.tudor@nxp.com>; Ioana Ciocoi Radulescu
-> <ruxandra.radulescu@nxp.com>; linux-kernel@vger.kernel.org;
-> arnd@arndb.de; catalin.marinas@arm.com; robin.murphy@arm.com
-> Subject: Re: [PATCH v3 0/4] staging/fsl-mc/bus: Move DPIO from staging to
-> drivers/soc/fsl
->=20
-> On 7/24/2018 5:21 PM, Roy Pledge wrote:
-> > Move the NXP DPIO (Datapath I/O driver) from the staging/fsl-
-> mc/bus/dpio
-> > directory to the drivers/soc/fsl directory.
-> >
-> > The DPIO driver enables access to the Queue and Buffer Managemer
-> (QBMAN)
-> > hardware of NXP DPAA2 devices. This is a prerequiste for moving the
-> DPAA2
-> > Ethernet device driver from the staging directory.
-> >
-> For the series:
-> Reviewed-by: Horia Geant=E3 <horia.geanta@nxp.com>
+On 07/24/2018 08:45 AM, M. Vefa Bicakci wrote:
+> Commit d94a155c59c9 ("x86/cpu: Prevent cpuinfo_x86::x86_phys_bits
+> adjustment corruption") has moved the query and calculation of the
+> x86_virt_bits and x86_phys_bits fields of the cpuinfo_x86 struct
+> from the get_cpu_cap function to a new function named
+> get_cpu_address_sizes.
+>
+> One of the call sites related to Xen PV VMs was unfortunately missed
+> in the aforementioned commit. This prevents successful boot-up of
+> kernel versions 4.17 and up in Xen PV VMs if CONFIG_DEBUG_VIRTUAL
+> is enabled, due to the following code path:
+>
+>   enlighten_pv.c::xen_start_kernel
+>     mmu_pv.c::xen_reserve_special_pages
+>       page.h::__pa
+>         physaddr.c::__phys_addr
+>           physaddr.h::phys_addr_valid
+>
+> phys_addr_valid uses boot_cpu_data.x86_phys_bits to validate physical
+> addresses. boot_cpu_data.x86_phys_bits is no longer populated before
+> the call to xen_reserve_special_pages due to the aforementioned commit
+> though, so the validation performed by phys_addr_valid fails, which
+> causes __phys_addr to trigger a BUG, preventing boot-up.
+>
+> Signed-off-by: M. Vefa Bicakci <m.v.b@runbox.com>
+> Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+> Cc: Andy Lutomirski <luto@kernel.org>
+> Cc: Ingo Molnar <mingo@redhat.com>
+> Cc: "H. Peter Anvin" <hpa@zytor.com>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+> Cc: Juergen Gross <jgross@suse.com>
+> Cc: xen-devel@lists.xenproject.org
+> Cc: x86@kernel.org
+> Cc: stable@vger.kernel.org # for v4.17 and up
+> Fixes: d94a155c59c9 ("x86/cpu: Prevent cpuinfo_x86::x86_phys_bits adjustment corruption")
 
-Also:
-Reviewed-by: Ioana Radulescu <ruxandra.radulescu@nxp.com>
+Reviewed-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+
+
+
