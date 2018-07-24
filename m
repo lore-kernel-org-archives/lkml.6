@@ -2,101 +2,91 @@ Return-Path: <SRS0=hTZH=KI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9D17C6778A
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 17:37:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46F19ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 17:38:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6EA4320883
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 17:37:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6EA4320883
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=deltatee.com
+	by mail.kernel.org (Postfix) with ESMTP id 02F6020883
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 17:38:11 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="ANpgjXFX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 02F6020883
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388526AbeGXSpT (ORCPT
+        id S2388536AbeGXSpl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 14:45:19 -0400
-Received: from ale.deltatee.com ([207.54.116.67]:37462 "EHLO ale.deltatee.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388427AbeGXSpT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 14:45:19 -0400
-Received: from guinness.priv.deltatee.com ([172.16.1.162])
-        by ale.deltatee.com with esmtp (Exim 4.89)
-        (envelope-from <logang@deltatee.com>)
-        id 1fi1Fj-0002XE-AN; Tue, 24 Jul 2018 11:37:40 -0600
-To:     Allen Hubbe <allenbh@gmail.com>
-Cc:     linux-kernel@vger.kernel.org, linux-ntb@googlegroups.com,
-        Jon Mason <jdmason@kudzu.us>, fancer.lancer@gmail.com,
-        Shyam-sundar.S-k@amd.com, shuah@kernel.org, dmeyer@gigaio.com
-References: <20180720180034.3964-1-logang@deltatee.com>
- <20180720180034.3964-5-logang@deltatee.com>
- <CAJ80sat2gx3jaDi3LVDG6GhZ6qKmuKWxyaP_0VoR5k3VfGybqw@mail.gmail.com>
- <b14a3c42-4a23-bff5-3e1b-9a1423611230@deltatee.com>
- <CAJ80saunKS6hbNFBKjbQqSo32+KeLZurksCtnHNw-C35Zjq2Xw@mail.gmail.com>
-From:   Logan Gunthorpe <logang@deltatee.com>
-Message-ID: <8809f02e-93de-f81a-31e0-90f2c1983b70@deltatee.com>
-Date:   Tue, 24 Jul 2018 11:37:37 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Tue, 24 Jul 2018 14:45:41 -0400
+Received: from mail-it0-f68.google.com ([209.85.214.68]:40370 "EHLO
+        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388414AbeGXSpl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Jul 2018 14:45:41 -0400
+Received: by mail-it0-f68.google.com with SMTP id h23-v6so4855728ita.5;
+        Tue, 24 Jul 2018 10:38:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=BCJUgo3VmES9ZNd5k7h52n+7vq5jYqixBeFxcSoDsKg=;
+        b=ANpgjXFXSjp5DI5KYstwUie6UoG4YxBfJiljIGkvl45WL1+9dzbhaSXWokVBLfgTcq
+         lWcDPcHkHbDFUfNRkgn17AjSQcWi53W/m20Dae49Aan1lbaIJ7mc+Y6Wn1RHyuzlr56l
+         coEyBeKyLEmvu/jBEJdOZp0u5Kzc4l8Zh/FEA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=BCJUgo3VmES9ZNd5k7h52n+7vq5jYqixBeFxcSoDsKg=;
+        b=kyZXoF+pPV/9XF8EpsllM1SqMsvOHGr+VxjJEGq10HZX/cayU01vc6tyNXWwJk0A+v
+         h2cLLHwxnkJa4b+hqU39oT84MlRj8dU8M1hhoWTPvTWdgEKqFYS7pCUIW2qYFt5PYGa/
+         wSCO3WqtYQtG7dSEHPk0BpIgQytR8+XGBoZXS2v4iujianxQ09mUk/XT6hNvx6pCWsaR
+         WjakvjMyN1DivGGYKFYzOqhMAOBbMCHbEkBCfoLPCkL0HYfzY0nySeyH92G7XIM4XZwL
+         UN8WCdfiKjd8iAQXIf70VjmUmRzRncN8gzanLZNSNQSEeWtBI49gRgu8ASFV23AflqPK
+         OKpw==
+X-Gm-Message-State: AOUpUlH0ZJMRAov3rZQkas7sfZkaDTO5iySuK3RJrVbs9FRgOMzy2JlK
+        I7gOMuwUwxAGIv0MhcmiinjxDP5K+o4OESH1f4EEeA==
+X-Google-Smtp-Source: AAOMgpe+/NMA23h0cUMXV81h5HBXuxMRQAliccrtBSpARxBBq2REHprhUW9nGPSax/5486NLKPdiJV4jQoaXUbegfuI=
+X-Received: by 2002:a24:5002:: with SMTP id m2-v6mr3487603itb.16.1532453887401;
+ Tue, 24 Jul 2018 10:38:07 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <CAJ80saunKS6hbNFBKjbQqSo32+KeLZurksCtnHNw-C35Zjq2Xw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 172.16.1.162
-X-SA-Exim-Rcpt-To: dmeyer@gigaio.com, shuah@kernel.org, Shyam-sundar.S-k@amd.com, fancer.lancer@gmail.com, jdmason@kudzu.us, linux-ntb@googlegroups.com, linux-kernel@vger.kernel.org, allenbh@gmail.com
-X-SA-Exim-Mail-From: logang@deltatee.com
-Subject: Re: [PATCH v2 4/8] NTB: ntb_pingpong: Choose doorbells based on port
- number
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
+References: <1532381973-11856-1-git-send-email-linux@roeck-us.net> <20180724004110.37d0e5dc@coco.lan>
+In-Reply-To: <20180724004110.37d0e5dc@coco.lan>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Tue, 24 Jul 2018 10:37:56 -0700
+Message-ID: <CA+55aFyV=5QNJXn+t_ZDCigGi+HjM6N94DRb_E50_xUsk+VTFA@mail.gmail.com>
+Subject: Re: [PATCH] media: staging: omap4iss: Include asm/cacheflush.h after
+ generic includes
+To:     mchehab+samsung@kernel.org
+Cc:     Guenter Roeck <linux@roeck-us.net>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Staging subsystem List <devel@driverdev.osuosl.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        David Miller <davem@davemloft.net>,
+        Randy Dunlap <rdunlap@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Jul 23, 2018 at 8:41 PM Mauro Carvalho Chehab
+<mchehab+samsung@kernel.org> wrote:
+>
+> While I won't be against merging it, IMHO a better fix would be to
+> add the includes asm/cacheflush.h needs inside it, e. g. something
+> like adding:
 
+No. The <asm/*> includes really should come after <linux/*>.
 
-On 24/07/18 11:26 AM, Allen Hubbe wrote:
-> On Mon, Jul 23, 2018 at 12:08 PM Logan Gunthorpe <logang@deltatee.com> wrote:
->> I don't think you'll ever have a case where two peers have the same
->> index, as the index is really an abstract concept the hardware doesn't
->> really know about.
-> 
-> That is the point of index, that there should never be two peers with
-> the same index, and also that the range of index values is bounded.
+This is a media driver bug, plain and simple.
 
-Yes, I think we are making the same point.
+We should strive to avoid adding more header includes, it's one of the
+major causes of kernel build slowdown.
 
-> Port numbers are problematic, so I'm worried about the change to use
-> port number in the client drivers instead of using index.  For
-> example, this change assumes that the index value is < bits per long
-> long, because the value is used in BIT_ULL(port number).
-
-Huh?, I'm not making that change... We still use the index to refer to
-the peer, but the resource we are using is based on the port number,
-just as it was before my changes. Perhaps you can point out in my
-patches what change you are worried about?
-
-> Maybe I'm missing something...  In the crosslink case, there is
-> another doorbell register on the other side of the crosslink.  Whether
-> to use the nearby or via-crosslink doorbell depends on the peer
-> index... making assumptions about the hw driver, but is that about
-> right? 
-
-Not really. Given that we know there are only two peers, we always use
-the other side's doorbell register. You'd only use the nearby doorbell
-register if you wanted to trigger your own interrupt -- that would be
-weird and we don't really have the API sophistication to do that.
-
-If we wanted to support multiple peers with some number in crosslink
-then we'd need to revamp things _significantly_. In this case we'd have
-multiple doorbell registers which each apply to a different subset of
-peers. This gets _very_ complicated and hurts my head. But as I said,
-I'm not trying to add new functionality for multi-peer crosslink or
-anything like that. I'm just trying to fix the 2 crosslink peer case so
-it works like it did when it was originally merged.
-
-Logan
+             Linus
