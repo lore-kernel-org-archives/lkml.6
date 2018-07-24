@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84787ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 14:22:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE8E5C6778A
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 14:22:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 228F920874
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 14:22:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 63AEA20856
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 14:22:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="ciSI/ULY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 228F920874
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="IDBxniYK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 63AEA20856
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388614AbeGXP2x (ORCPT
+        id S2388628AbeGXP24 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 11:28:53 -0400
+        Tue, 24 Jul 2018 11:28:56 -0400
 Received: from mail-he1eur01on0046.outbound.protection.outlook.com ([104.47.0.46]:13408
         "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2388540AbeGXP2w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 11:28:52 -0400
+        id S2388430AbeGXP2z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Jul 2018 11:28:55 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=3xe4bTCOnz+rR7Mysxu8fEOPpliQmrKVSBXiujyPOj8=;
- b=ciSI/ULYR7l2U3cKaULk110KbbyCrmOtqKAdJdIAzABz5tsqjaeuMoeuqxxFEQyRE1xoku6gFUCIbVn1oaZlLQIRqEitYrgyjLIaOlpeD0JBnjRDMt28KbJxA8gvY+6hm3YKcIIRU9KNMnlSnez4RVMMF6YjscYNmWzdP//3qwA=
+ bh=aCWE3FDOpEchDhuhfHWTQa/4Gt2s7X/io9xzOEAuxW0=;
+ b=IDBxniYKVORO3KEdK0r/B85tdzmumVFk1/hEvv6Ye2jRIcU+/ajJOhilllhKQsr2cxurXgRRB0K3Ymdx94S01qQGcXFl9vGxg/OXOHAMEEs6aV/b3QjTAEZ0AwlHUp/dP82rv/ytuEQnzKrQhfFbxkQwVJWjKgDCaBFeW+SZuK8=
 Authentication-Results: spf=none (sender IP is )
  smtp.mailfrom=roy.pledge@nxp.com; 
 Received: from rhuath.am.freescale.net (64.157.242.222) by
  DB7PR04MB4490.eurprd04.prod.outlook.com (2603:10a6:5:35::16) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.973.21; Tue, 24 Jul 2018 14:21:57 +0000
+ 15.20.973.21; Tue, 24 Jul 2018 14:21:59 +0000
 From:   Roy Pledge <roy.pledge@nxp.com>
 To:     devel@driverdev.osuosl.org, linux-arm-kernel@lists.infradead.org,
         gregkh@linuxfoundation.org, leoyang.li@nxp.com
@@ -42,9 +42,9 @@ Cc:     laurentiu.tudor@nxp.com, ruxandra.radulescu@nxp.com,
         horia.geanta@nxp.com, linux-kernel@vger.kernel.org, arnd@arndb.de,
         catalin.marinas@arm.com, robin.murphy@arm.com,
         Roy Pledge <roy.pledge@nxp.com>
-Subject: [PATCH v3 3/4] drivers/staging: Remove fsl-mc driver from staging
-Date:   Tue, 24 Jul 2018 09:21:30 -0500
-Message-Id: <20180724142131.28970-4-roy.pledge@nxp.com>
+Subject: [PATCH v3 4/4] drivers/soc/fsl/dpio: Convert DPIO documentation to .rst
+Date:   Tue, 24 Jul 2018 09:21:31 -0500
+Message-Id: <20180724142131.28970-5-roy.pledge@nxp.com>
 X-Mailer: git-send-email 2.8.3
 In-Reply-To: <20180724142131.28970-1-roy.pledge@nxp.com>
 References: <20180724142131.28970-1-roy.pledge@nxp.com>
@@ -55,50 +55,52 @@ X-Originating-IP: [64.157.242.222]
 X-ClientProxiedBy: SN6PR0102CA0006.prod.exchangelabs.com (2603:10b6:805:1::19)
  To DB7PR04MB4490.eurprd04.prod.outlook.com (2603:10a6:5:35::16)
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 4e26a36e-febd-4a7a-aa1f-08d5f170d163
+X-MS-Office365-Filtering-Correlation-Id: 957dc7ea-0d93-4bb1-d199-08d5f170d2c8
 X-MS-Office365-Filtering-HT: Tenant
 X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(5600073)(711020)(4618075)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(2017052603328)(7153060)(7193020);SRVR:DB7PR04MB4490;
-X-Microsoft-Exchange-Diagnostics: 1;DB7PR04MB4490;3:Wt/xGzOQp6HN6q0xfnjkTIftjAfv4S7blEIgJ6geRCiSmok49SWjCANb7MsPlCx0VgosCioTwe527EmicJUci3rho+0zWl+MNC4Np+yGpnAdQGc3xQ/s2VnF0M2t7+vKdkWi/wFU9A5YgtftWcjMJCoKAeBVIhywVbXS2yhRKm9wznFke7JFhkcza8SJ8cdN2zjYQ9QcEOXhW02o38UMxFAuL46Lz8rW4xSA2vU5BhEi2XRuU9VznarqDoJDRgIq;25:QrD1PpgTKRfzlVawr/1URG5WRy5K/Wk/m9V2xQ5i4jDnFArzKP/8gFCmxitmi/kfYrYlx8NY2WauWepFUCnWj00+WHj1jvIFKG+XJttWCTdr6jNh4E1yUft7ijXhO19ud4vzMnz5yDeyHOFiP4YaFyOPcL/qDnH+RjbyrzhaEG48hdLhaHkgbtMA/TfG00AFPw7M43nYPHUIjwKoZCYem7YCjQQP/VTczNENyFIc9lidHGxj7O4QlHY1WnWRNu2C6vHks2R5gGDMKz8vxD2cproGdvnysId2nr2YaQcZ6IGJc+YdQ+VeFEvJvQdXFM/Y8QjAPTAhfl2joYHNi8tMDg==;31:3gHMXkyvUJkYrTZj4SKUVvaZaB/ugzUfnZGZChK/LkMns9+W2+1++H8cIYbhZoIIhFLEFItgqD5sRWPJhBkTGDyq7z8WvglhyRhl0hPxZeu8KzPCUaiejD4io4w/rcRX2MSzdi9MQILKUGJfg/lhOCwB+Z7rrrjSiLiOkadbqGfdLceLaTvd/iZz2pWYVxACnrEIm0yU2Se5Y1eJkmgh0VS2mgM6KynSIyOV3TKtkDc=
+X-Microsoft-Exchange-Diagnostics: 1;DB7PR04MB4490;3:WQ7XxEm+dMMIqMftO0HoDJpnLLQwzt9QZ/7cBtP8DVjkmUZbxAPKB6kqu6HTw0rkuchvCniuJYQ9R2YcEVbJCsowjMWrWXJfem360coSR/2iWo9q2B3Nxk+l+PtEZbLSmaDCp1XqccNg72Veu25kOa0OBwS2JvXl6tx78dkhJyx9BDtQSryiyiyqWEVbhUHC4lwnkuF4/7FKNHQUbLXunRTgYXuffk70fJsm/7MTkA3FSGyWzuVCuTns/r+ARtDs;25:82qwNkMHguMSw9nO9ZyL9gD/iKmAqjnZ52dfjX1R1Ut1entaNM3/0wcY4nsHgLG5Y021/1OiqXm1JKNtCN3fDgDulm6y7bBUeLa9L6i+ynG6ljSUHmT+geg5tZjUmpU5BPpiHX1dKglh6sj5F8U7ObHb28FYMdTNq/7rHv/MlKcnYonk5xkKxwtU/8r0wimNDyPDTTWJgXI+jR5f8fQ7L84MQHGfIPvsn6dTcbKsIyTnTD4ZngCXgTtf+UntP84o26IDoJpfs89BEf1UNh8WhG9edB11il0XrrGqFKy4BwDOiFTE8JuZWWiyOIxZQGfVkKuyJlGg3vlQ/HK1erdjXA==;31:pcRuq+DsTIK+Buo79/ztHl0zIl7Q6MmOwqUnGzVmqnGVBQ1ru+z3dJ8bhBekYfzwhf1lCEDHLPvHSVJwpMLbcICM3fgWYCYHhvMauZHQa92ma/i2J8DGrUjRQOWJucvzW2WPCGwNv42zjU/AQ0fuL2i0SEF1fXKkxQlcuSkBU/kEbZtSm6wD+C5MJ389HxkiLZLOxMOw2DSfwRH4Bdk2gC/KIr9w4OC1S4Kb8XDKWe8=
 X-MS-TrafficTypeDiagnostic: DB7PR04MB4490:
-X-Microsoft-Exchange-Diagnostics: 1;DB7PR04MB4490;20:QwX1lhtSl0vRCqmqGGrTzfBtbdegc9+MR5O3QHLpx+IOpB8rOm2JLpBjkwoPSf8GhcWrmuei2Ov7Punwyl5Im3c5IkVmphrFuSvNExaq6snyVfBrXbFhxicTeQ5g+CnUp8OiKEzayeSftyY3z/5Dp2IySvrWrkdacqh55OO/lhVu1BPN7ZUeVtQErFvyI16/g/dsQE0O9owyjgKRiUZ0bqsy5is2InShv7Tnt0ER+iWSJcWBYHzJ8lyxKxIxqv/oT8Nh1ByBgzx6iiVI+q2fuFwA7rn/eFgaX4bQgsiLaGiwyY4jQi+6CWfFNao12ZJpxaenXpHIpUteq5yFPxQNdGLkoYhTDYD09AwoWNvceukZVa/z1G86SXn/Q6y34k+nRYZzQ5JfmFz7hIlSrHn6V3k62JYP9DDWNvEssJ/YZ0cx19eJGPddMEkM10lBy4voMM8klDg+bFatSmx5pBXkOX18Jbtjg7kgyBRTb66pFb21PmWDQH8nTFgbThfrSGYp;4:WnwA3VdhZI5mc4DE3ri9De9Rz6FTiP4uSdzCGh0k4/RRu8NEa4owuUoOeimmpI3bWZdQ/xst3167h9ZMGcATIz7PUWXCxBP62srQXv3sJXSjQyc+ytGzX4cK/kGS8SZyiyf8UUrSdiW9ppyD+xL0xQRmtrYPB02DvoDyxy5gr1kFQVZ7t6L0Rit47AvRTZbcGCn27OaYEyoiyjqg5H8V+EqCkrfYXd1ykeUU1evw0Jmx0aMlmYEb7EH3HD9ruSnalgwwbVXH6PEUiiOcbktZ7BlxtrmXKvG40pF+H+l5SbkoWkdS73dhWW0wxz9nsViD
-X-Microsoft-Antispam-PRVS: <DB7PR04MB4490AFF4629910F632D5307586550@DB7PR04MB4490.eurprd04.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:(185117386973197);
+X-Microsoft-Exchange-Diagnostics: 1;DB7PR04MB4490;20:xmsdyNnf8PoC+GVKyKzHDbOY569FXg9VTYAjHx36OQenBxHoho4RzyZonHfsaNv44xa+kc16a/IRHelZzJ3kvS2vUMYZRMFo24BOK5g1Ms7la8Wwp3hqRaxKGawFTv1+3ntGulMrVKJqy6gqB7G7JELeEQry2QiARCUG5cKKMJOXftE6cratqU3IINghE9l4xFeuKE4TwUrxJeeVrNEmwpyt4kIBggtUY1x1C92grPyMA9r+mUoPga0xiWfKDtvNcgjZqFl5uJ52Fg7EG2mrj9yw4yQj1/pFuwEmulJMlTtxri9AOMYl6NSGJwZINd2qxYa3ZUtXxo1DC5VjdUpaxl8TNYGU7/y56lctaHfhAOB7NpsrxPRmby5XW/5A92psJW8pKZmS8gwR+lqCdrJAjFaVBOjnaGTRYF3F2Pr4L68hVsDVXA4laltSTpLsqFD/4ANvjsEphvJ7lIY8kB08IGqiqiGVD3RSg38RPgXCD5u5fkaiigpHqA/JoM7x3B+u;4:THPyuJkJYptuTrAwY92U08VR7bAeQilP6l3shnmC7W2o/Vj2AQG7Xir3a6mK7gS1QEbxhh0G48oKdWBFPHZPOgodlLwhq23ClWtuSNi9VdaAAiHJjrsibHLkua6jjn/q0JPGe4HjfQlMnSp0D4V80j1hEyO4peYJW8VigqB8jJ4n52oj6hM1Ma37omHcc5pTN4CgeV3WIfvar2xWoivvsloO8auCI7jNbbCTn99ZOe/HEjtowI7sHrvAWsCUmzsyAqebi8bcxcXP1UViKTci1VgRRarq2tmQ7oqDfEQtHkSrKI46qZlHuhrhO/2xSfA9apnh9gu/oLQWXllZGFKZtXajd650pxpbD1ZWT+1Nwmn+eG0cV2NeCvDyyl+Rp2ce
+X-Microsoft-Antispam-PRVS: <DB7PR04MB44900B87CF7E069AEF0334C786550@DB7PR04MB4490.eurprd04.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:(185117386973197)(227817650892897)(275809806118684);
 X-MS-Exchange-SenderADCheck: 1
 X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(10201501046)(93006095)(93001095)(3231311)(944501410)(52105095)(3002001)(6055026)(149027)(150027)(6041310)(20161123564045)(20161123562045)(20161123560045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011)(7699016);SRVR:DB7PR04MB4490;BCL:0;PCL:0;RULEID:;SRVR:DB7PR04MB4490;
 X-Forefront-PRVS: 0743E8D0A6
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(136003)(376002)(346002)(396003)(39860400002)(366004)(199004)(189003)(1076002)(2616005)(105586002)(44832011)(66066001)(446003)(11346002)(486006)(2906002)(3450700001)(47776003)(478600001)(6486002)(36756003)(53936002)(106356001)(956004)(86362001)(6512007)(476003)(386003)(81156014)(5660300001)(6506007)(16526019)(68736007)(6636002)(97736004)(8936002)(6666003)(305945005)(76176011)(52116002)(186003)(50226002)(26005)(81166006)(7736002)(316002)(48376002)(14444005)(3846002)(6116002)(16586007)(25786009)(4326008)(43066004)(51416003)(8676002)(50466002);DIR:OUT;SFP:1101;SCL:1;SRVR:DB7PR04MB4490;H:rhuath.am.freescale.net;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(979002)(136003)(376002)(346002)(396003)(39860400002)(366004)(199004)(189003)(1076002)(2616005)(105586002)(44832011)(66066001)(446003)(11346002)(486006)(2906002)(3450700001)(47776003)(478600001)(6486002)(36756003)(53936002)(106356001)(956004)(86362001)(6512007)(476003)(386003)(81156014)(5660300001)(6506007)(16526019)(68736007)(6636002)(97736004)(8936002)(6666003)(305945005)(76176011)(52116002)(186003)(50226002)(26005)(81166006)(7736002)(316002)(48376002)(14444005)(3846002)(6116002)(16586007)(25786009)(4326008)(43066004)(51416003)(8676002)(50466002)(142923001)(969003)(989001)(999001)(1009001)(1019001);DIR:OUT;SFP:1101;SCL:1;SRVR:DB7PR04MB4490;H:rhuath.am.freescale.net;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
 Received-SPF: None (protection.outlook.com: nxp.com does not designate
  permitted sender hosts)
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;DB7PR04MB4490;23:YS6gpikVTNwe3u+dfxhHkkkBIl/vmFka14WtfZn2+?=
- =?us-ascii?Q?gUAnujRxFdMMxRQBbtgIKm44c44RPAQMXOc+JPwrKh0z/YQ5x3oAAOn6RkLZ?=
- =?us-ascii?Q?A5qKGZwNpJdVvLArctheeVz1QUwec2TKM8dzi9am27Nq5Wo0THxTF9xOUzyB?=
- =?us-ascii?Q?0hValivSPo9xOzCgWAUEVyBEdRMW4z9Ysi39/PVHCxPSfurSCN/BsudezscB?=
- =?us-ascii?Q?ceg552L6xbN/Zu2LjPFYDCFi8CMaixMb5bVt2dOAj4MtUom80HjoDyxdrUA3?=
- =?us-ascii?Q?E+S1aq310ZCIZIq5/2mGtOvuG7N7GuCre39xtVK8Y9L7HUJObtKZmhdVU+F5?=
- =?us-ascii?Q?UmJkJb9N1K3xM8s2n30RxWYfq6pHhRjBHRRqzCrirlmlcxpVABHmr1Oc3FoP?=
- =?us-ascii?Q?czoiRDBdmNSOzcORE1dHuXafObececRvZwRMtwd9K/CrREIlrC+kV/XRdHAe?=
- =?us-ascii?Q?/u7P0xCx+dJIhNUygm4cYP5Auk6czCsEkmpYf1PyVA0UN08YWrmo8WpAygSv?=
- =?us-ascii?Q?dAopS+l1quO5FOBC1GC1/ElYkT8uwPXlUBFWsLfSMJQ0GtSNuNS34/hJueX0?=
- =?us-ascii?Q?5KcOOlJPdxF5C1gfdft+czWrBS5pxcbEqaim1BKLVU5WjlosMn4ocAdoOjoK?=
- =?us-ascii?Q?951v18MA7qPP/CWoSw+mxSUKvmBXTDWCcV3lJGHasaMgEiyqWvnkSXHMQdtw?=
- =?us-ascii?Q?oh1IG5OE41tEw/qpDS2IOXRxLvL7BmG62sSF9ZbUJAY9XKO4onQpciu2GAu0?=
- =?us-ascii?Q?zwtYXMHhpl3RfO3vMULY2203yviHNeXxJlYk47fP+csMJFpO9PPCDK3OajSf?=
- =?us-ascii?Q?LWVVbaf73QtYVP/oEQxYx9KDoODCabPRGGX//zKRSSNLhX1YTZKIkArpHXXh?=
- =?us-ascii?Q?ZjlegA5FgX6RZFfq+RSidGpt2viRq2rW1+RVw5SjR76qJpfSQ250mpyjcCFj?=
- =?us-ascii?Q?ZbN38Q+bzoLRO/cE4qC4lj4X1vUlloBTFtk159t6FeCcglCWiewmbp/xlAaf?=
- =?us-ascii?Q?h3JUpdCgfP4ZYvDxv5x51pHVP23MBFlNHDGy9Nk9vxYcGXPWHov/tP9+LmMr?=
- =?us-ascii?Q?88DddwD04sAV0vGOFcLqCMTuBqjXMgmte/NA6nSBA1uqvMYmeyjY02A6eMGz?=
- =?us-ascii?Q?1V4QqBAzlkavLzCbncBAtrCOnvUl9frHQS7Li56lECyLUyQ/eaIk+5YTIzhA?=
- =?us-ascii?Q?H3KxhnBos6JoNxCIBQqjv3iVDFyyG8vSkoJizc0w0BHhty94/OTJwi+Gx5R4?=
- =?us-ascii?Q?z96u2zImVpc8pU4vfs2IlV61BW6DiZBXS54riNX?=
-X-Microsoft-Antispam-Message-Info: rB1CUgavYG8LDqW02dpPPiZkAgmGXxCEanlep6S9Ndhfnx1LJ1TKr65WIfsBIfi2WE4rtKdfdPWXPM6WGBWL1V5m/qx3PyhZGfzWqRnYt+wd8eraEWyw1KJjPfk9gJjGrARoKvmgUBZEFUEEH1t273joVW2YTB8j7VBWbsfxM1MwWm/kkFY0CwhMDNUoCfCKjV0PQGJL+AJcNYp1l9FHVtp/KgUZbK0+rx4e3fCJLUzpyxqJ97HbokRUaVtOQwugIbTAPGNYsXhxbaQrWD0eI21TNGLrqa06mCHGluiSEpZ9cXJ1JZbMp1IjPfBSGFtDB0IVCqAzJl8o7EOXIx3jjCy9/K+9IpSaxIzh0ihhZrw=
-X-Microsoft-Exchange-Diagnostics: 1;DB7PR04MB4490;6:g3JgmaqwYefpGQIZ4oLJlaVY0u/M2CPlos4U5yLINp/FZj3W2IKtUjLSG4T3PwedtCom1u1zBTwENFYWgZqhnIT8rWr8kfe4q8nzwKdL4apkliGnLjA80+rIALbNt5+7uAncyOf3ZZNpgxiZtwXKILbs0dsHRLYaQw8EbCtqtsv1nd9UCjmlMfi0dsz3WMek20tDoYanejdjlSuhs7z1dr051L3DwRk+A4itLmx2eIf0lQsc7o0QKPPUqdH7A3PWqNGYMiY/aNI8J6Sgf0PV5B0FnHCcIh+DNPng1PDyvNoPiRBL/c9Ca9o3tBwdfPV8iNq910e3AjEludNAV4jT+oaTmA+iDUIl2DdO9thkZkG8smqWyBdiSYtLdWfyNrO2ApHyZJlho+OAZfVEVtGlktP37d+Fvdgwrx9/+HhvrRaBojwiNsreA2ur19d++KX+LYeQVrDT9Nnbr2OENNNWrg==;5:znuMPiTa5rfCJpASvfYCOQAKXhxVeo//K2uouqhNnzdiclW5LXcopA2KGQXihvk1Cnf8nm85QG+rr/M4wIuVrCmBV52RsNfMZwS+0EsSxHoJUBgEv8oTYog4f1tZv1Xp3ge71HBteknUXhbVGgctK7EfjSLt7WvHsbWnvXjuqzo=;7:r2I1BcjArj6iN6y5CgqaihtO0VRk0wCPZTeJ65+euCE/1jEpIhc9srSx7SEXbHXROvypzauPJYhj8buWK6TfwDbsSUfYrZax7esHYXp1n0GChVylZmYhZ8UZFnz8M6YLEDgYYWu7SWImiJy1tl+AB4FYIxnrXapMUqSLCLy5qRuH6KCBIoCBiuFbJPT0zGxGM8kqhkCI9uvWhxvduFYlLZY0dhwnN6S0kDE72QVeeo8zGvxA5t6OuXaev7jMlgdL
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;DB7PR04MB4490;23:veyDMQn6uI9b6BCvAQDzQPYWIOUwA8EZKKGK2PYXe?=
+ =?us-ascii?Q?kqR97kz4Up7hQAPZspItpz3kwluoOONgcfghPoVYAqWUEC8flx6HcnAAGSjF?=
+ =?us-ascii?Q?aNYA9+p3OB2r0qUWZkFNXvgQg1jTfEb8ednvjC8RZU+eQVVUuwMyKfvwQmC4?=
+ =?us-ascii?Q?sN9AS9LNRuJ474kLaiHbYz9x30xQOZoTJp6H665yEdw0DR6nTjRIticMjKEX?=
+ =?us-ascii?Q?o+FkjAn6+ej9nGGdCILkd0Lj4pMciLW4f0oAHGxi1GzEgHksD+3RybidHQtV?=
+ =?us-ascii?Q?6Jm4J15uo4egviNIEMjE6RykYW1xqzAsWpB8JaIrWBEt3fGG3doliduoiy3v?=
+ =?us-ascii?Q?wnrSdJRTahLgp18/M045pcpFu4r/2N7YjTZ8nC783zB2Waj/1ZVYGU+xXwwl?=
+ =?us-ascii?Q?axrQuFVrEKBCk476+w4FdLDehzbpNy+tFcVpCFbrNUk3/HOhi0I3T/+2BZT6?=
+ =?us-ascii?Q?12nQjScO+hmqZA5q/+0vPfod0uvQBOHTACwwPCKvyqTeU04LpO9SMJjB80U3?=
+ =?us-ascii?Q?WKbrGLsiCU5f9l1Nqcc18gfxsQfGPkGE/7sRS7Mgltew8jXGo5oXOyIpV+0U?=
+ =?us-ascii?Q?4J+Wxr+Pv0inBhlOn8tEnINsHrny4qUctxEuPfgvvD8kg5G++YNiuT4JBkfQ?=
+ =?us-ascii?Q?jGz1Ii5C0uQ39ZvF2VjRj/Ppvh8JaMKDaAZrgEESVLmJs0PK5j3YL5SwOr/I?=
+ =?us-ascii?Q?hbTx30VwCaQ4F1tx+8wk3OGnzfzSkvpOFMU66GUus6Zq191lxceKhiAIzlkh?=
+ =?us-ascii?Q?V1HGj5Gwwh9MHMk1klIKn1Br/zcalHucBuDurb9WrvwAY48ngdY1jUxBeksR?=
+ =?us-ascii?Q?raF/FqlFOBmSanUGFTp9i1PKddkl4Iay6PwJTgtoqFU929h8Uj4jfRRNQDCT?=
+ =?us-ascii?Q?Z0yiGsvT5BadBUWk/DTr1psokj2WSy42LDzaGlKOkTMr3MHIbxNYSErXkAqT?=
+ =?us-ascii?Q?vCHQ8ZQNkx5Vu4xp3F9sw/l6NVuPgKKMLjJh0+5vR8PKamwRbtWAfNrVGazc?=
+ =?us-ascii?Q?j9ryYq4e/ovvBtes2tH8sC0D/gBd4HX1u4qkiSYVPWMFWkd29btPhF2inKoq?=
+ =?us-ascii?Q?FAET1Ru1gkCI6GSQLdjU2eKCr6TBJyfZ5LbD7nho3V5h09/Bd2MGMh9AcwJx?=
+ =?us-ascii?Q?GkvO8hbPU3/1jnY3t5TAHS2xBKS7TXwimiolgbLuG638wYw6zzg0g9CxcZYz?=
+ =?us-ascii?Q?QjVvXgDZItaZfuUiTeuswDuKCah2ObIvxjKnUtnaCpqvwcJTcQ7atbql5qrg?=
+ =?us-ascii?Q?r5Kfc/VwUyXtCoA9nHfmPT+3OxcCeDokzaB5vWgucobw38/Yc4O711MFMI1f?=
+ =?us-ascii?Q?ugp336rga3HOI6VEYXl2dT70L9ZUHjdEbQhHHsaKejIQ2tv2SaEzLgZHt3lx?=
+ =?us-ascii?Q?H5sGRYV6tXTWAzprrNFBARvIwGyUT7MEVDhTmHnbDVE+8Z5?=
+X-Microsoft-Antispam-Message-Info: z6PIXyq4Txgkv0zYU28uKxonQaV/4044l7cjXnvA4ctFGhXwVdEgETwjUhwmsZ8InCXoNgD3NHZQmmAw0o55bV33I5Aj1OvOqNtfL8OYc4hxOqaM1jdtDIQ1h8sUkPB6bx/Bm5gqF9XEROJdqZ20NXty5Y3ANzOSM4CXscqVX7DFKYtg2R/iH70PmKAUJOLW3AudsGbws5v4dzlRz/YNak86cronysmFXKpnpsEi9UtJuVNHh12o6e0FFaFNY+IYBuRffgNiDDjyncbE0+HAYHT/+dk8+A7DRLI2S9s6KMYz6fQ3R+hMlTW6oEBMhAyWv5rWKx29ttxJfwEQiVrMnfCRSkbHYtYQbMrphYFE9Z0=
+X-Microsoft-Exchange-Diagnostics: 1;DB7PR04MB4490;6:SD21AtikspExLUn0AzXcbHMGXJJmARBkOTqBLR6H2S+ueQMVKcu/NufHggDXQqGh7B29vmTpYuoU7YfjtR8gLi2Zk4XW3r0DYxRxS4XjhRRK/XDdk/bKUQ5DBLqI0NDpJ0FEYbJMjPqis5znifjNAsb3Xy4GMqQHeCpNKpaXb8MSgwT+zG7l7R1u6tiftlwsr8Yy1tp0k8dAiX4Yv1GsBPhk6wn7VJkttHuka43eK5qV+AkIBkuIQ/yhjLJ3bgpzHV0/40Gv606z8rZrkAH73y7OB8cHXCnoHcV+W+H93j1TPlrlEXYFRzzDha1lYwZ/Mcwus6MLqbSehh55VWUcIkGdCPWduAInJ+kittSFlFJuaH7bc8yI2ofQBJG1tV8bVEmjWuXi3Bikao3eVCifnQod6zH4LJmy5oM7EvHYPEWwxAB4c6UDSl955IQ2Tdh2NDlZBvNdipN5fGQ847I+lg==;5:C15Onczft/r5msi1D0C4LHAHrKUlNZM2XMdrDhs4ATtWaRyiBt0EKpJi1tvxnbSe+JAXYM9ZjrzpkRSCRPnrBsrFo7onpdFtxd5Y2OkIFfLFo32gpJze0v7glSKtMD3gCblYRIsWCY8fMjbun4da95DFVAUHCORXIXngc3ppTnM=;7:wQpSB3sREpHOezFsfbx1pGiyXm/dmqjwHqUqlUjRSRMmpQpYH3VJMqWCmpjV6valUmN/5rq35eD0G8rnVLucblSeqgoChl4ZSj56v2668/hv9XRYCqVo2Q/7cnnnMG3r143BbtvCJ6RFlNlIjlRf7bJckXmJo9moL6DCteI3vN9R6QtXFezp0Hm9M3HYYnWSNhE4A0kBhMLswC5FcDhGLDYW2MFPqDt2JOn0eoaWzjFegCylLd/0f4Y2BW3CqqjZ
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
 X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Jul 2018 14:21:57.5050
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Jul 2018 14:21:59.8446
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4e26a36e-febd-4a7a-aa1f-08d5f170d163
+X-MS-Exchange-CrossTenant-Network-Message-Id: 957dc7ea-0d93-4bb1-d199-08d5f170d2c8
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB7PR04MB4490
@@ -107,92 +109,113 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove the staging/drivers/fsl-mc directory from the staging
-area now that all the components have been moved to the main
-kernel areas.
+Convert the Datapath I/O documentation to .rst format
+and move to the Documation/networking/dpaa2 directory
 
 Signed-off-by: Roy Pledge <roy.pledge@nxp.com>
 ---
- drivers/staging/Kconfig             | 2 --
- drivers/staging/Makefile            | 1 -
- drivers/staging/fsl-mc/Kconfig      | 2 --
- drivers/staging/fsl-mc/Makefile     | 3 ---
- drivers/staging/fsl-mc/bus/Kconfig  | 7 -------
- drivers/staging/fsl-mc/bus/Makefile | 7 -------
- 6 files changed, 22 deletions(-)
- delete mode 100644 drivers/staging/fsl-mc/Kconfig
- delete mode 100644 drivers/staging/fsl-mc/Makefile
- delete mode 100644 drivers/staging/fsl-mc/bus/Kconfig
- delete mode 100644 drivers/staging/fsl-mc/bus/Makefile
+ .../networking/dpaa2/dpio-driver.rst               | 29 +++++++++++++++++++---
+ Documentation/networking/dpaa2/index.rst           |  1 +
+ 2 files changed, 27 insertions(+), 3 deletions(-)
+ rename drivers/soc/fsl/dpio/dpio-driver.txt => Documentation/networking/dpaa2/dpio-driver.rst (95%)
 
-diff --git a/drivers/staging/Kconfig b/drivers/staging/Kconfig
-index 75a4804..47b61c3 100644
---- a/drivers/staging/Kconfig
-+++ b/drivers/staging/Kconfig
-@@ -92,8 +92,6 @@ source "drivers/staging/clocking-wizard/Kconfig"
+diff --git a/drivers/soc/fsl/dpio/dpio-driver.txt b/Documentation/networking/dpaa2/dpio-driver.rst
+similarity index 95%
+rename from drivers/soc/fsl/dpio/dpio-driver.txt
+rename to Documentation/networking/dpaa2/dpio-driver.rst
+index 72ba9da..1358810 100644
+--- a/drivers/soc/fsl/dpio/dpio-driver.txt
++++ b/Documentation/networking/dpaa2/dpio-driver.rst
+@@ -1,7 +1,15 @@
+-Copyright 2016 NXP
++.. include:: <isonum.txt>
++
++DPAA2 DPIO (Data Path I/O) Overview
++===================================
++
++:Copyright: |copy| 2016-2018 NXP
++
++This document provides an overview of the Freescale DPAA2 DPIO
++drivers
  
- source "drivers/staging/fbtft/Kconfig"
+ Introduction
+-------------
++============
  
--source "drivers/staging/fsl-mc/Kconfig"
--
- source "drivers/staging/fsl-dpaa2/Kconfig"
+ A DPAA2 DPIO (Data Path I/O) is a hardware object that provides
+ interfaces to enqueue and dequeue frames to/from network interfaces
+@@ -27,8 +35,11 @@ provides services that:
  
- source "drivers/staging/wilc1000/Kconfig"
-diff --git a/drivers/staging/Makefile b/drivers/staging/Makefile
-index e84959a..bfef8f2 100644
---- a/drivers/staging/Makefile
-+++ b/drivers/staging/Makefile
-@@ -37,7 +37,6 @@ obj-$(CONFIG_CRYPTO_SKEIN)	+= skein/
- obj-$(CONFIG_UNISYSSPAR)	+= unisys/
- obj-$(CONFIG_COMMON_CLK_XLNX_CLKWZRD)	+= clocking-wizard/
- obj-$(CONFIG_FB_TFT)		+= fbtft/
--obj-$(CONFIG_FSL_MC_BUS)	+= fsl-mc/
- obj-$(CONFIG_FSL_DPAA2)		+= fsl-dpaa2/
- obj-$(CONFIG_WILC1000)		+= wilc1000/
- obj-$(CONFIG_MOST)		+= most/
-diff --git a/drivers/staging/fsl-mc/Kconfig b/drivers/staging/fsl-mc/Kconfig
-deleted file mode 100644
-index 3002229..0000000
---- a/drivers/staging/fsl-mc/Kconfig
-+++ /dev/null
-@@ -1,2 +0,0 @@
--# SPDX-License-Identifier: GPL-2.0
--source "drivers/staging/fsl-mc/bus/Kconfig"
-diff --git a/drivers/staging/fsl-mc/Makefile b/drivers/staging/fsl-mc/Makefile
-deleted file mode 100644
-index 1468388..0000000
---- a/drivers/staging/fsl-mc/Makefile
-+++ /dev/null
-@@ -1,3 +0,0 @@
--# SPDX-License-Identifier: GPL-2.0
--# Freescale Management Complex (MC) bus drivers
--obj-$(CONFIG_FSL_MC_BUS)	+= bus/
-diff --git a/drivers/staging/fsl-mc/bus/Kconfig b/drivers/staging/fsl-mc/bus/Kconfig
-deleted file mode 100644
-index 90f234d..0000000
---- a/drivers/staging/fsl-mc/bus/Kconfig
-+++ /dev/null
-@@ -1,7 +0,0 @@
--# SPDX-License-Identifier: GPL-2.0
--#
--# DPAA2 fsl-mc bus
--#
--# Copyright (C) 2014-2016 Freescale Semiconductor, Inc.
--#
--
-diff --git a/drivers/staging/fsl-mc/bus/Makefile b/drivers/staging/fsl-mc/bus/Makefile
-deleted file mode 100644
-index 2141e4b..0000000
---- a/drivers/staging/fsl-mc/bus/Makefile
-+++ /dev/null
-@@ -1,7 +0,0 @@
--# SPDX-License-Identifier: GPL-2.0
--#
--# Freescale Management Complex (MC) bus drivers
--#
--# Copyright (C) 2014 Freescale Semiconductor, Inc.
--#
--
+ The Linux DPIO driver consists of 3 primary components--
+    DPIO object driver-- fsl-mc driver that manages the DPIO object
++
+    DPIO service-- provides APIs to other Linux drivers for services
++
+    QBman portal interface-- sends portal commands, gets responses
++::
+ 
+           fsl-mc          other
+            bus           drivers
+@@ -45,8 +56,9 @@ The Linux DPIO driver consists of 3 primary components--
+                             |
+                          hardware
+ 
++
+ The diagram below shows how the DPIO driver components fit with the other
+-DPAA2 Linux driver components:
++DPAA2 Linux driver components::
+                                                    +------------+
+                                                    | OS Network |
+                                                    |   Stack    |
+@@ -98,20 +110,29 @@ DPIO service  (dpio-service.c, dpaa2-io.h)
+ 
+    Notification handling
+       dpaa2_io_service_register()
++
+       dpaa2_io_service_deregister()
++
+       dpaa2_io_service_rearm()
+ 
+    Queuing
+       dpaa2_io_service_pull_fq()
++
+       dpaa2_io_service_pull_channel()
++
+       dpaa2_io_service_enqueue_fq()
++
+       dpaa2_io_service_enqueue_qd()
++
+       dpaa2_io_store_create()
++
+       dpaa2_io_store_destroy()
++
+       dpaa2_io_store_next()
+ 
+    Buffer pool management
+       dpaa2_io_service_release()
++
+       dpaa2_io_service_acquire()
+ 
+ QBman portal interface (qbman-portal.c)
+@@ -120,7 +141,9 @@ QBman portal interface (qbman-portal.c)
+    The qbman-portal component provides APIs to do the low level hardware
+    bit twiddling for operations such as:
+       -initializing Qman software portals
++
+       -building and sending portal commands
++
+       -portal interrupt configuration and processing
+ 
+    The qbman-portal APIs are not public to other drivers, and are
+diff --git a/Documentation/networking/dpaa2/index.rst b/Documentation/networking/dpaa2/index.rst
+index 4c6586c..10bea11 100644
+--- a/Documentation/networking/dpaa2/index.rst
++++ b/Documentation/networking/dpaa2/index.rst
+@@ -6,3 +6,4 @@ DPAA2 Documentation
+    :maxdepth: 1
+ 
+    overview
++   dpio-driver
 -- 
 2.7.4
 
