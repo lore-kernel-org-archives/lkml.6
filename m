@@ -2,127 +2,99 @@ Return-Path: <SRS0=hTZH=KI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19446C6778A
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 13:05:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B66EC6778A
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 13:06:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CE6B020874
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 13:05:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CE6B020874
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 1ACEB20881
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 13:06:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1ACEB20881
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388419AbeGXOLq (ORCPT
+        id S2388401AbeGXOMd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 10:11:46 -0400
-Received: from foss.arm.com ([217.140.101.70]:51020 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388279AbeGXOLp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 10:11:45 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 550007A9;
-        Tue, 24 Jul 2018 06:05:21 -0700 (PDT)
-Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7AA713F6A8;
-        Tue, 24 Jul 2018 06:05:18 -0700 (PDT)
-Date:   Tue, 24 Jul 2018 14:05:16 +0100
-From:   Mark Rutland <mark.rutland@arm.com>
-To:     Ingo Molnar <mingo@kernel.org>
-Cc:     Peter Zijlstra <peterz@infradead.org>, mingo@redhat.com,
-        andy.shevchenko@gmail.com, arnd@arndb.de, aryabinin@virtuozzo.com,
-        boqun.feng@gmail.com, catalin.marinas@arm.com, dvyukov@google.com,
-        glider@google.com, hpa@zytor.com, linux-kernel@vger.kernel.org,
-        parri.andrea@gmail.com, peter@hurleysoftware.com,
-        tglx@linutronix.de, will.deacon@arm.com,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCHv4 01/12] atomic/tty: Fix up atomic abuse in ldsem
-Message-ID: <20180724130515.ung6ox2p4rgzn746@lakrids.cambridge.arm.com>
-References: <20180716113017.3909-1-mark.rutland@arm.com>
- <20180716113017.3909-2-mark.rutland@arm.com>
- <20180724071518.GA7300@gmail.com>
- <20180724092036.GN2494@hirez.programming.kicks-ass.net>
- <20180724092324.vnfowffsla4kja5c@lakrids.cambridge.arm.com>
- <20180724111313.GA14212@gmail.com>
+        Tue, 24 Jul 2018 10:12:33 -0400
+Received: from mx2.suse.de ([195.135.220.15]:54364 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2388279AbeGXOMd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Jul 2018 10:12:33 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 1D2A3AD1E;
+        Tue, 24 Jul 2018 13:06:07 +0000 (UTC)
+Date:   Tue, 24 Jul 2018 15:06:06 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Vlastimil Babka <vbabka@suse.cz>
+Cc:     David Hildenbrand <david@redhat.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Baoquan He <bhe@redhat.com>, Dave Young <dyoung@redhat.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Hari Bathini <hbathini@linux.vnet.ibm.com>,
+        Huang Ying <ying.huang@intel.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        =?iso-8859-1?Q?Marc-Andr=E9?= Lureau 
+        <marcandre.lureau@redhat.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Miles Chen <miles.chen@mediatek.com>,
+        Pavel Tatashin <pasha.tatashin@oracle.com>,
+        Petr Tesarik <ptesarik@suse.cz>
+Subject: Re: [PATCH v1 0/2] mm/kdump: exclude reserved pages in dumps
+Message-ID: <20180724130606.GJ28386@dhcp22.suse.cz>
+References: <20180720123422.10127-1-david@redhat.com>
+ <9f46f0ed-e34c-73be-60ca-c892fb19ed08@suse.cz>
+ <20180723123043.GD31229@dhcp22.suse.cz>
+ <dca091d3-4c3d-eff5-57f8-a9a45050198d@suse.cz>
+ <20180724111913.GH28386@dhcp22.suse.cz>
+ <d14d7a45-91fd-63ef-ea57-513752af1f9e@suse.cz>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180724111313.GA14212@gmail.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <d14d7a45-91fd-63ef-ea57-513752af1f9e@suse.cz>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 24, 2018 at 01:13:13PM +0200, Ingo Molnar wrote:
-> 
-> * Mark Rutland <mark.rutland@arm.com> wrote:
-> 
-> > On Tue, Jul 24, 2018 at 11:20:36AM +0200, Peter Zijlstra wrote:
-> > > On Tue, Jul 24, 2018 at 09:15:18AM +0200, Ingo Molnar wrote:
-> > > > 
-> > > > * Mark Rutland <mark.rutland@arm.com> wrote:
-> > > > 
-> > > > > From: Peter Zijlstra <peterz@infradead.org>
-> > > > > 
-> > > > > Mark found ldsem_cmpxchg() needed an (atomic_long_t *) cast to keep
-> > > > > working after making the atomic_long interface type safe.
-> > > > > 
-> > > > > Needing casts is bad form, which made me look at the code. There are no
-> > > > > ld_semaphore::count users outside of these functions so there is no
-> > > > > reason why it can not be an atomic_long_t in the first place, obviating
-> > > > > the need for this cast.
-> > > > > 
-> > > > > That also ensures the loads use atomic_long_read(), which implies (at
-> > > > > least) READ_ONCE() in order to guarantee single-copy-atomic loads.
-> > > > > 
-> > > > > When using atomic_long_try_cmpxchg() the ldsem_cmpxchg() wrapper gets
-> > > > > very thin (the only difference is not changing *old on success, which
-> > > > > most callers don't seem to care about).
-> > > > > 
-> > > > > So rework the whole thing to use atomic_long_t and its accessors
-> > > > > directly.
-> > > > > 
-> > > > > While there, fixup all the horrible comment styles.
-> > > > > 
-> > > > > Cc: Peter Hurley <peter@hurleysoftware.com>
-> > > > > Acked-by: Will Deacon <will.deacon@arm.com>
-> > > > > Reported-by: Mark Rutland <mark.rutland@arm.com>
-> > > > > Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-> > > > > Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-> > > > > Signed-off-by: Mark Rutland <mark.rutland@arm.com>
-> > > > > Cc: Ingo Molnar <mingo@kernel.org>
-> > > > > ---
-> > > > >  drivers/tty/tty_ldsem.c   | 82 ++++++++++++++++++++---------------------------
-> > > > >  include/linux/tty_ldisc.h |  4 +--
-> > > > >  2 files changed, 37 insertions(+), 49 deletions(-)
-> > > > > 
-> > > > > Note: Greg has queued this via the in the tty tree for v4.19, which can be seen at: 
-> > > > > 
-> > > > > https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/tty.git/commit/?h=tty-next&id=5fd691afdf929061c391d897fa627822c3b2fd5a
-> > > > 
-> > > > Can this patch be skipped, or do the others depend on it?
-> > > 
-> > > IIRC it depends on it, without this patch you get build issues due to
-> > > atomic_long_cmpxchg() getting picky about it's arguments (type safety
-> > > improved).
+On Tue 24-07-18 14:22:06, Vlastimil Babka wrote:
+> On 07/24/2018 01:19 PM, Michal Hocko wrote:
+> >> When creating a crashdump, I definitely need the pages containing memmap
+> >> included in the dump, so I can inspect the struct pages. But this is a
+> >> bit recursive issue, so I'll try making it clearer:
+> >>
+> >> 1) there are kernel pages with data (e.g. slab) that I typically need in
+> >> the dump, and are not PageReserved
+> >> 2) there are struct pages for pages 1) in the memmap that physically
+> >> hold the pageflags for 1), and these are PageReserved
+> >> 3) there are struct pages for pages 2) somewhere else in the memmap,
+> >> physically hold the pageflags for 2). They are probably also
+> >> PageReserved themselves ? and self-referencing.
+> >>
+> >> Excluding PageReserved from dump means there won't be cases 2) and 3) in
+> >> the dump, which at least for case 2) is making such dump almost useless
+> >> in many cases.
 > > 
-> > Yup. Without this patch, there will be a build regression at patch 9,
-> > when we move to generated atomic_long_*() wrappers.
+> > Yes, we cannot simply exclude all PageReserved pages. I was merely
+> > suggesting to rule out new special PageReserved pages that are denoting 
+> > offline pages. The same could be applied to HWPoison pages
 > 
-> Ok, then these bits will have to wait until Greg's tree goes upstream
-> in about two weeks.
+> So how about marking them with some "page type" that we got after
+> Matthew's struct page reorg? I assume the pages we're talking about are
+> in a state that they don't need the mapcount/mapping field or whatever
+> unions with the page type... but I guess some care would be needed to
+> not have false positives when the union field is actually used but
+> happens to look like the new type.
 
-Ok.
+The idea was to use PageReserved because those pages are generally
+ignored by MM and then reuse some parts of the struct page. It belongs
+to the owner of the page and nothing should be really used from it at
+the time when you mark it offline. So pagetype or something else is
+merely an implementation detail.
 
-> Which patches can I apply as a preparatory step?
-
-Patches 2-6 can be applied now.
-
-I guess I should rebase and resend the remaining bits once Greg's tree
-goes upstream?
-
-Thanks,
-Mark.
+-- 
+Michal Hocko
+SUSE Labs
