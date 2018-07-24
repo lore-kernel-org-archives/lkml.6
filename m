@@ -2,133 +2,124 @@ Return-Path: <SRS0=hTZH=KI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33E3FC6778A
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 15:40:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C411C6778A
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 15:41:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DD69820856
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 15:40:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 02FC220856
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 15:41:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="N2a95CH0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD69820856
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="B7bv2mO3"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 02FC220856
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388400AbeGXQrl (ORCPT
+        id S2388427AbeGXQsY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 12:47:41 -0400
-Received: from mail-qt0-f194.google.com ([209.85.216.194]:35473 "EHLO
-        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388319AbeGXQrl (ORCPT
+        Tue, 24 Jul 2018 12:48:24 -0400
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:50006 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388321AbeGXQsY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 12:47:41 -0400
-Received: by mail-qt0-f194.google.com with SMTP id a5-v6so4540907qtp.2;
-        Tue, 24 Jul 2018 08:40:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=r2NvQ32/3TJuGxWnhIYaXT4o02GHAX5lhdRpMkKwc80=;
-        b=N2a95CH0eoPNLflk2ooDnAJhpZIMrDpocEfljiMENUgOAQ8t0CMmS1aXTy6nL+d+Ly
-         6ODDjau7J9yNCRAVyvnsEUkolSrcZF7JsHAToUmprzzg/g0bZNKBz1S5CUN0A8sGIDeN
-         RYst73sJzlcc1kVWEAlkcaTPvMmaks13C27ev8HpsGY08XkSNg9aYwFJle9wrSIYU3H2
-         Y4BaSrspSMKfEepdHPZp4I7NvELNVOpc5TnhUJd196Ct4BfsJHhGRqcASGyoHKQQPOA/
-         srAkOSH4odqatzWQCv+NyCwTLDSNE67DmuLZTyqg5YwHL4NTSSHFO7XLjW0x+ICT6DCc
-         qBfg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
-         :date:message-id:subject:to:cc;
-        bh=r2NvQ32/3TJuGxWnhIYaXT4o02GHAX5lhdRpMkKwc80=;
-        b=Z7IB3Iw/A/P3gc8qqfeBxH9fOW+dDtBbZLpz7Y+XtFn02OVyjzC9yZwmfJ1C7aha//
-         zMgf+ge1wTvjfjf1aksxOk5c0W1xiLBHzzMgzYgp+1UOCBbS2VujdImsM5G0p+dXdEFn
-         q9s4o74NaZElayK3kjjBAfbnawNWw081L7R1FqND5998CybfgQJkGTZNCH4zGU+Low4F
-         T0fdqJQlxZjJI2m0XPXhpekgJDCKEgf5NlXXSMDUaua/422DBRzXJLmu3iBiacV3jOkE
-         O5h6l/Z6Ex/EGusACyrJBxTxw4XYrEmOd00DhJJmWHZegq15L/uEqdicWCiQnCgD17C6
-         7MPw==
-X-Gm-Message-State: AOUpUlGRO4ou6ySfGJiuPSQoqIcNi3IesyzWC8nJFiOmsufFxQyQzJ3E
-        JbgQp2kj0JpkeO/URUe8M9VCI01eCk2pFwQE/+w=
-X-Google-Smtp-Source: AAOMgpcaM/1AV1TLuxpTt/HG/5ZAuIqdYl0XqDI3gJlFUJSAxnPKYxdEIiRQfyOaJuLpfikgWa8o1n0ZkqZYSVqlN8k=
-X-Received: by 2002:ac8:3676:: with SMTP id n51-v6mr16826868qtb.163.1532446837337;
- Tue, 24 Jul 2018 08:40:37 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a0c:967d:0:0:0:0:0 with HTTP; Tue, 24 Jul 2018 08:40:36
- -0700 (PDT)
-In-Reply-To: <CAMuHMdXif_iufXx0Y+UJjKs9TNLfrTONoFvUSyrpkfaT0=ydRQ@mail.gmail.com>
-References: <20180719152930.3715-1-boris.brezillon@bootlin.com>
- <CAK8P3a2MP5+oFz--e+BM24D8Ahw7H_RKgN1S6wY1nQE6JL0dmw@mail.gmail.com>
- <2ab0ab75-2df0-2714-f007-c33b25481016@axentia.se> <20180720101206.tv7nsoanwo5ftnia@ninjato>
- <CAK8P3a2Pqo5DuYBb09+w4nGWGOw+e_tZPxnA06qjNO_6Hw6NvQ@mail.gmail.com>
- <21b269c5-a3a7-c5de-c81e-c9c9301ae13e@axentia.se> <CAK8P3a1t2fhdw7HwxNkOs9o2pBECZ0ZdOysA=r2SPTWEvx76kw@mail.gmail.com>
- <20180720151751.242d4809@bbrezillon> <CAK8P3a14_6uf9VLYU0YnmFp0Q=DZBKc0cAesBh0opanGDZMFRA@mail.gmail.com>
- <20180724162806.318a92c6@bbrezillon> <CAK8P3a3YQbiiJMTHTVh63fOvtA1sa0J5Eb4z7xbnpBPwUDkqxg@mail.gmail.com>
- <CAMuHMdXif_iufXx0Y+UJjKs9TNLfrTONoFvUSyrpkfaT0=ydRQ@mail.gmail.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Tue, 24 Jul 2018 17:40:36 +0200
-X-Google-Sender-Auth: idNgmZlYSLkoITfn-DGB6S3RKT8
-Message-ID: <CAK8P3a0jc1k9weTNbqSJXkCSFefus9OPyU5_v5=mTFxiDd0q5Q@mail.gmail.com>
-Subject: Re: [PATCH v6 00/10] Add the I3C subsystem
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Boris Brezillon <boris.brezillon@bootlin.com>,
-        Peter Rosin <peda@axentia.se>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        Linux I2C <linux-i2c@vger.kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Przemyslaw Sroka <psroka@cadence.com>,
-        Arkadiusz Golec <agolec@cadence.com>,
-        Alan Douglas <adouglas@cadence.com>,
-        Bartosz Folta <bfolta@cadence.com>,
-        Damian Kos <dkos@cadence.com>,
-        Alicja Jurasik-Urbaniak <alicja@cadence.com>,
-        Cyprian Wronka <cwronka@cadence.com>,
-        Suresh Punnoose <sureshp@cadence.com>,
-        Rafal Ciepiela <rafalc@cadence.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Nishanth Menon <nm@ti.com>, Rob Herring <robh+dt@kernel.org>,
-        Pawel Moll <pawel.moll@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ian Campbell <ijc+devicetree@hellion.org.uk>,
-        Kumar Gala <galak@codeaurora.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Vitor Soares <Vitor.Soares@synopsys.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Xiang Lin <Xiang.Lin@synaptics.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Sekhar Nori <nsekhar@ti.com>, Przemyslaw Gaj <pgaj@cadence.com>
-Content-Type: text/plain; charset="UTF-8"
+        Tue, 24 Jul 2018 12:48:24 -0400
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20180724154120euoutp02279feb7ee7417c1dd208e363c1b97359~EWFF2sCYU2936729367euoutp02d;
+        Tue, 24 Jul 2018 15:41:20 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20180724154120euoutp02279feb7ee7417c1dd208e363c1b97359~EWFF2sCYU2936729367euoutp02d
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1532446880;
+        bh=vECeDS2FB743aZ7yXU2ppK1Gznj45Jy9uSsVe2MLopk=;
+        h=From:To:Cc:Subject:Date:In-reply-to:References:From;
+        b=B7bv2mO34QoDXR/cRo0yzoTQeu8TO9QcJs5PeeiwDFb7gEws03ciD2tLv2qGppbHc
+         14q+dnBBRzQFa2ze8DUsJgpE1ijBVpQcP84Yy5K+SDnoN0qvMenC/7vUwE+ksFs5PI
+         axYu7i8kTW1czPwQhmpVcAGl9AEtU5FlZm/XE70w=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20180724154119eucas1p26a7023a375cdf66c03024417df35d5fc~EWFFGOPDt1624816248eucas1p2E;
+        Tue, 24 Jul 2018 15:41:19 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges1new.samsung.com (EUCPMTA) with SMTP id 80.A9.04627.E98475B5; Tue, 24
+        Jul 2018 16:41:19 +0100 (BST)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20180724154118eucas1p180ec17317f481006ff980de622c0304e~EWFEUoZDe1220812208eucas1p1s;
+        Tue, 24 Jul 2018 15:41:18 +0000 (GMT)
+X-AuditID: cbfec7f2-0edff70000021213-67-5b57489e3f27
+Received: from eusync1.samsung.com ( [203.254.199.211]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id 31.49.04178.E98475B5; Tue, 24
+        Jul 2018 16:41:18 +0100 (BST)
+Received: from amdc3058.localnet ([106.120.53.102]) by eusync1.samsung.com
+        (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5
+        2014)) with ESMTPA id <0PCD0088LNKULZ90@eusync1.samsung.com>; Tue, 24 Jul
+        2018 16:41:18 +0100 (BST)
+From:   Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To:     Anton Vasilyev <vasilyev@ispras.ru>
+Cc:     Aleksandar Markovic <aleksandar.markovic@mips.com>,
+        Miodrag Dinic <miodrag.dinic@mips.com>,
+        Goran Ferenc <goran.ferenc@mips.com>,
+        dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, ldv-project@linuxtesting.org
+Subject: Re: [PATCH] video: goldfishfb: fix memory leak on driver remove
+Date:   Tue, 24 Jul 2018 17:41:17 +0200
+Message-id: <2385463.SiM69ykDI2@amdc3058>
+User-Agent: KMail/4.13.3 (Linux/3.13.0-96-generic; KDE/4.13.3; x86_64; ; )
+In-reply-to: <20180706120422.14628-1-vasilyev@ispras.ru>
+MIME-version: 1.0
+Content-transfer-encoding: 7Bit
+Content-type: text/plain; charset="us-ascii"
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrKIsWRmVeSWpSXmKPExsWy7djP87rzPcKjDfZVWsz9uILF4srX92wW
+        i9/5WCzv7mKxONH3gdXi8q45bBanZkxnsuien+PA4THj31RGjzuv/7J63O8+zuTx+shDFo/P
+        m+QCWKO4bFJSczLLUov07RK4MrZ/n8lYMJul4uH9qSwNjHuYuxg5OSQETCRuP7jD1MXIxSEk
+        sIJRYs23FWwQzmdGifczjsFVbdz0nBEisYxRouXeIVYI5zejxJN7nYwgVWwCVhIT21eB2SIC
+        6hJTHzQxgxQxC7QwSczufM8OkhAW8JC4fnoLK4jNIqAq0bHjPNgKXgFNidbNU1lAbFEBL4kt
+        +9qZQGxOAQuJ1VPXsEDUCEr8mHwPzGYWkJfYt38qK4StI3H22DpGiFP3sEksfBcBYbtIfP//
+        gg3CFpZ4dXwLO4QtI9HZcRDsaQmB6YwSb34tZYFw1gND4MwxJogqa4nDxy9CbeCTmLRtOtCl
+        HEBxXomONiGIEg+J7/c2MUOCoptR4ueXR2wTGGVmITl2FpJjZyE5dgEj8ypG8dTS4tz01GLD
+        vNRyveLE3OLSvHS95PzcTYzAxHD63/FPOxi/Xko6xCjAwajEw/vBLjxaiDWxrLgy9xCjBAez
+        kgjvIlGgEG9KYmVValF+fFFpTmrxIUZpDhYlcd44jbooIYH0xJLU7NTUgtQimCwTB6dUA2Nb
+        +OXCopO65bf3vGCQfyde7tRgoW6XeXTLwoVuV1dJT3ZOsXvtZm64YJX01D/Ttn3fyCZg9tI5
+        9SFruXTWTDZHi0NT1ZZxLG+pKPc+ejuJpSeJY9np/rOv+5UiNzu7rhKvnP7z/h1n4fumWotM
+        mt8qH/U7L/Z7m13dutDrmp13Jx6VzkhvKFViKc5INNRiLipOBAAO85s2CAMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrCLMWRmVeSWpSXmKPExsVy+t/xy7rzPMKjDSbc57GY+3EFi8WVr+/Z
+        LBa/87FY3t3FYnGi7wOrxeVdc9gsTs2YzmTRPT/HgcNjxr+pjB53Xv9l9bjffZzJ4/WRhywe
+        nzfJBbBGcdmkpOZklqUW6dslcGVs/z6TsWA2S8XD+1NZGhj3MHcxcnJICJhIbNz0nLGLkYtD
+        SGAJo8T6OS9ZIJy/jBI7Dr9iBaliE7CSmNi+ihHEFhFQl5j6oIkZpIhZoIVJYs6Le2BFwgIe
+        EtdPbwGzWQRUJTp2nAdbwSugKdG6eSoLiC0q4CWxZV87E4jNKWAhsXrqGqhtvYwSx3ufMEI0
+        CEr8mHwPrIFZQF5i3/6prBC2lsT6nceZJjDyz0JSNgtJ2SwkZQsYmVcxiqSWFuem5xYb6hUn
+        5haX5qXrJefnbmIEhvW2Yz8372C8tDH4EKMAB6MSD6+HY3i0EGtiWXFl7iFGCQ5mJRHeRaJA
+        Id6UxMqq1KL8+KLSnNTiQ4zSHCxK4rznDSqjhATSE0tSs1NTC1KLYLJMHJxSDYxKP3Sknp+8
+        5u5SlN+5QKMhju/W5qsX7rL1x2yPuaJsnlAQ/0e8SVWtsNq+4fLxb8EqvawdS8K49m6OUDV9
+        /8FYoPBrltUPi+8zZbQ4jhbNcG98ZKljoHCH4Xh0646dZrMtZ3eeKbL6+vzWv5VPtyvVXWc/
+        fnG75QPL9FkfV59ev2eSwVfBO95KLMUZiYZazEXFiQDq+aqdZwIAAA==
+X-CMS-MailID: 20180724154118eucas1p180ec17317f481006ff980de622c0304e
+X-Msg-Generator: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20180706120501epcas5p3a2db5a74c3b4b0d2c8e102fbe3943de6
+References: <CGME20180706120501epcas5p3a2db5a74c3b4b0d2c8e102fbe3943de6@epcas5p3.samsung.com>
+        <20180706120422.14628-1-vasilyev@ispras.ru>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 24, 2018 at 5:15 PM, Geert Uytterhoeven
-<geert@linux-m68k.org> wrote:
-> On Tue, Jul 24, 2018 at 5:05 PM Arnd Bergmann <arnd@arndb.de> wrote:
+On Friday, July 06, 2018 03:04:22 PM Anton Vasilyev wrote:
+> goldfish_fb_probe() allocates memory for fb, but goldfish_fb_remove() does
+> not have deallocation of fb, which leads to memory leak on probe/remove.
+> 
+> The patch adds deallocation into goldfish_fb_remove().
+> 
+> Found by Linux Driver Verification project (linuxtesting.org).
+> 
+> Signed-off-by: Anton Vasilyev <vasilyev@ispras.ru>
 
->> That's not the case I was describing here, I was thinking of what
->> Wolfram described with the Renesas SoC that has two i2c masters
->> multiplexed through the pinmux layer. I would assume that we
->> can still do the same thing in i3c by shutting down the current
->> master without a handover, and reprobing everything from scratch.
->
-> The major disadvantage of reprobing is that it may cause visual disturbances
-> when i2c slaves are involved with e.g. the display pipeline (think HDMI encoders
-> etc.).
+Patch queued for 4.19, thanks.
 
-Do you mean we should reuse the device pointer and association with
-the driver even when we switch out the i3c master using the pinmux?
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
 
-Or do you mean we need to be prepared for driving a single
-slave through multiple masters over the lifetime of that device,
-but using the i3c master handover protocol?
-In the second case, how do we decide which master to use
-for accessing a device for a given request?
-
-       Arnd
