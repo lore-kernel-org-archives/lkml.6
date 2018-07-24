@@ -6,77 +6,110 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 067D2ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 11:52:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0090EC6778A
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 11:52:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B2E2F205F4
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 11:52:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B2E2F205F4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id B6054205F4
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 11:52:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B6054205F4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388384AbeGXM6S (ORCPT
+        id S2388457AbeGXM6u (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 08:58:18 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:57434 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388225AbeGXM6S (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 08:58:18 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 3E43920756; Tue, 24 Jul 2018 13:52:10 +0200 (CEST)
-Received: from localhost (unknown [109.29.199.176])
-        by mail.bootlin.com (Postfix) with ESMTPSA id F03462072B;
-        Tue, 24 Jul 2018 13:52:09 +0200 (CEST)
-From:   Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-To:     Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>,
-        James Hogan <jhogan@kernel.org>
-Cc:     linux-mips@linux-mips.org, linux-kernel@vger.kernel.org,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Hanna Hawa <hannah@marvell.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: [PATCH] mips: use asm-generic version of msi.h
-Date:   Tue, 24 Jul 2018 13:52:08 +0200
-Message-Id: <20180724115208.11199-1-thomas.petazzoni@bootlin.com>
-X-Mailer: git-send-email 2.14.4
+        Tue, 24 Jul 2018 08:58:50 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:43828 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2388254AbeGXM6u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Jul 2018 08:58:50 -0400
+Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id D6A7F4BA41DC;
+        Tue, 24 Jul 2018 19:52:39 +0800 (CST)
+Received: from localhost (10.177.31.96) by DGGEMS410-HUB.china.huawei.com
+ (10.3.19.210) with Microsoft SMTP Server id 14.3.382.0; Tue, 24 Jul 2018
+ 19:52:34 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <davem@davemloft.net>, <kvalo@codeaurora.org>
+CC:     <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <linux-wireless@vger.kernel.org>, <wcn36xx@lists.infradead.org>,
+        YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH] wcn36xx: use dma_zalloc_coherent instead of allocator/memset
+Date:   Tue, 24 Jul 2018 19:52:11 +0800
+Message-ID: <20180724115211.19264-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.177.31.96]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is necessary to be able to include <linux/msi.h> when
-CONFIG_GENERIC_MSI_IRQ_DOMAIN is enabled. Without this, a build with
-CONFIG_GENERIC_MSI_IRQ_DOMAIN fails with:
+Use dma_zalloc_coherent instead of dma_alloc_coherent
+followed by memset 0.
 
-   In file included from include/linux/kvm_host.h:20:0,
-                    from arch/mips/kernel/asm-offsets.c:24:
->> include/linux/msi.h:197:10: fatal error: asm/msi.h: No such file or directory
-    #include <asm/msi.h>
-             ^~~~~~~~~~~
-   compilation terminated.
-   make[2]: *** [arch/mips/kernel/asm-offsets.s] Error 1
-   make[2]: Target '__build' not remade because of errors.
-   make[1]: *** [prepare0] Error 2
-   make[1]: Target 'prepare' not remade because of errors.
-   make: *** [sub-make] Error 2
-
-Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- arch/mips/include/asm/Kbuild | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/net/wireless/ath/wcn36xx/dxe.c | 19 +++++++++----------
+ 1 file changed, 9 insertions(+), 10 deletions(-)
 
-diff --git a/arch/mips/include/asm/Kbuild b/arch/mips/include/asm/Kbuild
-index 45d541baf359..58351e48421e 100644
---- a/arch/mips/include/asm/Kbuild
-+++ b/arch/mips/include/asm/Kbuild
-@@ -8,6 +8,7 @@ generic-y += irq_work.h
- generic-y += local64.h
- generic-y += mcs_spinlock.h
- generic-y += mm-arch-hooks.h
-+generic-y += msi.h
- generic-y += parport.h
- generic-y += percpu.h
- generic-y += preempt.h
+diff --git a/drivers/net/wireless/ath/wcn36xx/dxe.c b/drivers/net/wireless/ath/wcn36xx/dxe.c
+index 06cfe8d..5ab3e31 100644
+--- a/drivers/net/wireless/ath/wcn36xx/dxe.c
++++ b/drivers/net/wireless/ath/wcn36xx/dxe.c
+@@ -174,13 +174,12 @@ static int wcn36xx_dxe_init_descs(struct device *dev, struct wcn36xx_dxe_ch *wcn
+ 	int i;
+ 
+ 	size = wcn_ch->desc_num * sizeof(struct wcn36xx_dxe_desc);
+-	wcn_ch->cpu_addr = dma_alloc_coherent(dev, size, &wcn_ch->dma_addr,
+-					      GFP_KERNEL);
++	wcn_ch->cpu_addr = dma_zalloc_coherent(dev, size,
++					       &wcn_ch->dma_addr,
++					       GFP_KERNEL);
+ 	if (!wcn_ch->cpu_addr)
+ 		return -ENOMEM;
+ 
+-	memset(wcn_ch->cpu_addr, 0, size);
+-
+ 	cur_dxe = (struct wcn36xx_dxe_desc *)wcn_ch->cpu_addr;
+ 	cur_ctl = wcn_ch->head_blk_ctl;
+ 
+@@ -628,13 +627,13 @@ int wcn36xx_dxe_allocate_mem_pools(struct wcn36xx *wcn)
+ 		16 - (WCN36XX_BD_CHUNK_SIZE % 8);
+ 
+ 	s = wcn->mgmt_mem_pool.chunk_size * WCN36XX_DXE_CH_DESC_NUMB_TX_H;
+-	cpu_addr = dma_alloc_coherent(wcn->dev, s, &wcn->mgmt_mem_pool.phy_addr,
+-				      GFP_KERNEL);
++	cpu_addr = dma_zalloc_coherent(wcn->dev, s,
++				       &wcn->mgmt_mem_pool.phy_addr,
++				       GFP_KERNEL);
+ 	if (!cpu_addr)
+ 		goto out_err;
+ 
+ 	wcn->mgmt_mem_pool.virt_addr = cpu_addr;
+-	memset(cpu_addr, 0, s);
+ 
+ 	/* Allocate BD headers for DATA frames */
+ 
+@@ -643,13 +642,13 @@ int wcn36xx_dxe_allocate_mem_pools(struct wcn36xx *wcn)
+ 		16 - (WCN36XX_BD_CHUNK_SIZE % 8);
+ 
+ 	s = wcn->data_mem_pool.chunk_size * WCN36XX_DXE_CH_DESC_NUMB_TX_L;
+-	cpu_addr = dma_alloc_coherent(wcn->dev, s, &wcn->data_mem_pool.phy_addr,
+-				      GFP_KERNEL);
++	cpu_addr = dma_zalloc_coherent(wcn->dev, s,
++				       &wcn->data_mem_pool.phy_addr,
++				       GFP_KERNEL);
+ 	if (!cpu_addr)
+ 		goto out_err;
+ 
+ 	wcn->data_mem_pool.virt_addr = cpu_addr;
+-	memset(cpu_addr, 0, s);
+ 
+ 	return 0;
+ 
 -- 
-2.14.4
+2.7.0
+
 
