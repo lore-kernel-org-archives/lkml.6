@@ -2,187 +2,142 @@ Return-Path: <SRS0=hTZH=KI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33691C28CF6
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 19:54:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09317C28CF6
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 19:56:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EE2E020852
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 19:54:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EE2E020852
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id B3C4120880
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 19:56:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B3C4120880
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ssi.bg
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388760AbeGXVCC (ORCPT
+        id S2388712AbeGXVEK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 17:02:02 -0400
-Received: from mail-qt0-f193.google.com ([209.85.216.193]:44167 "EHLO
-        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388572AbeGXVCC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 17:02:02 -0400
-Received: by mail-qt0-f193.google.com with SMTP id b15-v6so5387233qtp.11
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Jul 2018 12:54:00 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=oNjFS0dcLSG7SsDaWI6O7p5t9gTOEPyQqyv9R3BGNds=;
-        b=KBZOr9qwPvNNebEtWUJOi9qNK+as01QOCfeapvP2LPQGsLenrFYQcGeRoaCeDa5phU
-         WOUKVxbFyVOumgYHNNMfFKzqSU+QJMqOJA82zcuJjw2aKDp/ELcnfRokUzAZqXFIdjLA
-         NpagfkI+E1HctBLLcrifyV2xaGusht8deKmdKnwlsC0O1avfCXMnwt6v1gpy+Av/pXtA
-         frTekJVvuSiTRua3yC7s1AQeFSAK+4lO8eCiSfzNJvbqrOQBhpGzyLroqaGE27RNznpz
-         aEb9+8udD+PZlNUU2pi+wImJ38Lh1+V1g8Cgt2ZZJJMUA8a50k31mEDs2/YxHBmlMnDJ
-         3bfQ==
-X-Gm-Message-State: AOUpUlHn2eoKAXFT3Tdd2vNOcYbwHXcShZqRSO7vzsQNk5aQThnBzbA8
-        iFTlc5EhodS3M3OzkbrFIPXN+A==
-X-Google-Smtp-Source: AAOMgpepz8WQcgqTx0P2U7oOMwt9sFBsV/JMSfup80T9jL6hRW55JplFmyJRJl9GUrX4I1Kj7g3kFQ==
-X-Received: by 2002:ac8:21d2:: with SMTP id 18-v6mr18242818qtz.70.1532462039655;
-        Tue, 24 Jul 2018 12:53:59 -0700 (PDT)
-Received: from laptop.jcline.org.com (nat-pool-rdu-t.redhat.com. [66.187.233.202])
-        by smtp.gmail.com with ESMTPSA id d12-v6sm8007755qtp.6.2018.07.24.12.53.58
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 24 Jul 2018 12:53:58 -0700 (PDT)
-From:   Jeremy Cline <jcline@redhat.com>
-To:     Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Shuah Khan <shuah@kernel.org>
-Cc:     Lawrence Brakmo <brakmo@fb.com>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        Jeremy Cline <jcline@redhat.com>
-Subject: [PATCH v2] bpf: Add Python 3 support to selftests scripts for bpf
-Date:   Tue, 24 Jul 2018 15:53:34 -0400
-Message-Id: <20180724195334.13965-1-jcline@redhat.com>
-X-Mailer: git-send-email 2.17.1
+        Tue, 24 Jul 2018 17:04:10 -0400
+Received: from ja.ssi.bg ([178.16.129.10]:55252 "EHLO ja.ssi.bg"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2388587AbeGXVEK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Jul 2018 17:04:10 -0400
+X-Greylist: delayed 497 seconds by postgrey-1.27 at vger.kernel.org; Tue, 24 Jul 2018 17:04:09 EDT
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+        by ja.ssi.bg (8.15.2/8.15.2) with ESMTP id w6OJlChI005294;
+        Tue, 24 Jul 2018 22:47:14 +0300
+Date:   Tue, 24 Jul 2018 22:47:12 +0300 (EEST)
+From:   Julian Anastasov <ja@ssi.bg>
+To:     Tan Hu <tan.hu@zte.com.cn>
+cc:     wensong@linux-vs.org, horms@verge.net.au, pablo@netfilter.org,
+        kadlec@blackhole.kfki.hu, fw@strlen.de, davem@davemloft.net,
+        netdev@vger.kernel.org, lvs-devel@vger.kernel.org,
+        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
+        linux-kernel@vger.kernel.org, zhong.weidong@zte.com.cn,
+        jiang.biao2@zte.com.cn
+Subject: Re: [PATCH] ipvs: fix race between ip_vs_conn_new() and
+ ip_vs_del_dest()
+In-Reply-To: <1532419953-5517-1-git-send-email-tan.hu@zte.com.cn>
+Message-ID: <alpine.LFD.2.20.1807242216100.3314@ja.home.ssi.bg>
+References: <1532419953-5517-1-git-send-email-tan.hu@zte.com.cn>
+User-Agent: Alpine 2.20 (LFD 67 2015-01-07)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Adjust tcp_client.py and tcp_server.py to work with Python 3 by using
-the print function, marking string literals as bytes, and using the
-newer exception syntax. This should be functionally equivalent and
-supports Python 3+.
 
-Signed-off-by: Jeremy Cline <jcline@redhat.com>
----
+	Hello,
 
-Changes since v1:
-  - Drop Python 2 support
+On Tue, 24 Jul 2018, Tan Hu wrote:
 
- tools/testing/selftests/bpf/tcp_client.py | 12 ++++++------
- tools/testing/selftests/bpf/tcp_server.py | 16 ++++++++--------
- 2 files changed, 14 insertions(+), 14 deletions(-)
+> We came across infinite loop in ipvs when using ipvs in docker
+> env.
+> 
+> When ipvs receives new packets and cannot find an ipvs connection,
+> it will create a new connection, then if the dest is unavailable
+> (i.e. IP_VS_DEST_F_AVAILABLE), the packet will be dropped sliently.
+> 
+> But if the dropped packet is the first packet of this connection,
+> the connection control timer never has a chance to start and the
+> ipvs connection cannot be released. This will lead to memory leak, or
+> infinite loop in cleanup_net() when net namespace is released like
+> this:
+> 
+>     ip_vs_conn_net_cleanup at ffffffffa0a9f31a [ip_vs]
+>     __ip_vs_cleanup at ffffffffa0a9f60a [ip_vs]
+>     ops_exit_list at ffffffff81567a49
+>     cleanup_net at ffffffff81568b40
+>     process_one_work at ffffffff810a851b
+>     worker_thread at ffffffff810a9356
+>     kthread at ffffffff810b0b6f
+>     ret_from_fork at ffffffff81697a18
+> 
+> race condition:
+>     CPU1                           CPU2
+>     ip_vs_in()
+>       ip_vs_conn_new()
+>                                    ip_vs_del_dest()
+>                                      __ip_vs_unlink_dest()
+>                                        ~IP_VS_DEST_F_AVAILABLE
+>       cp->dest && !IP_VS_DEST_F_AVAILABLE
+>       __ip_vs_conn_put
+>       ...
+>       cleanup_net  ---> infinite looping
+> 
+> Fix this by checking whether the timer already started.
 
-diff --git a/tools/testing/selftests/bpf/tcp_client.py b/tools/testing/selftests/bpf/tcp_client.py
-index 481dccdf140c..7f8200a8702b 100755
---- a/tools/testing/selftests/bpf/tcp_client.py
-+++ b/tools/testing/selftests/bpf/tcp_client.py
-@@ -1,4 +1,4 @@
--#!/usr/bin/env python2
-+#!/usr/bin/env python3
- #
- # SPDX-License-Identifier: GPL-2.0
- #
-@@ -9,11 +9,11 @@ import subprocess
- import select
- 
- def read(sock, n):
--    buf = ''
-+    buf = b''
-     while len(buf) < n:
-         rem = n - len(buf)
-         try: s = sock.recv(rem)
--        except (socket.error), e: return ''
-+        except (socket.error) as e: return b''
-         buf += s
-     return buf
- 
-@@ -22,7 +22,7 @@ def send(sock, s):
-     count = 0
-     while count < total:
-         try: n = sock.send(s)
--        except (socket.error), e: n = 0
-+        except (socket.error) as e: n = 0
-         if n == 0:
-             return count;
-         count += n
-@@ -39,10 +39,10 @@ try:
- except socket.error as e:
-     sys.exit(1)
- 
--buf = ''
-+buf = b''
- n = 0
- while n < 1000:
--    buf += '+'
-+    buf += b'+'
-     n += 1
- 
- sock.settimeout(1);
-diff --git a/tools/testing/selftests/bpf/tcp_server.py b/tools/testing/selftests/bpf/tcp_server.py
-index bc454d7d0be2..b39903fca4c8 100755
---- a/tools/testing/selftests/bpf/tcp_server.py
-+++ b/tools/testing/selftests/bpf/tcp_server.py
-@@ -1,4 +1,4 @@
--#!/usr/bin/env python2
-+#!/usr/bin/env python3
- #
- # SPDX-License-Identifier: GPL-2.0
- #
-@@ -9,11 +9,11 @@ import subprocess
- import select
- 
- def read(sock, n):
--    buf = ''
-+    buf = b''
-     while len(buf) < n:
-         rem = n - len(buf)
-         try: s = sock.recv(rem)
--        except (socket.error), e: return ''
-+        except (socket.error) as e: return b''
-         buf += s
-     return buf
- 
-@@ -22,7 +22,7 @@ def send(sock, s):
-     count = 0
-     while count < total:
-         try: n = sock.send(s)
--        except (socket.error), e: n = 0
-+        except (socket.error) as e: n = 0
-         if n == 0:
-             return count;
-         count += n
-@@ -43,7 +43,7 @@ host = socket.gethostname()
- 
- try: serverSocket.bind((host, 0))
- except socket.error as msg:
--    print 'bind fails: ', msg
-+    print('bind fails: ' + str(msg))
- 
- sn = serverSocket.getsockname()
- serverPort = sn[1]
-@@ -51,10 +51,10 @@ serverPort = sn[1]
- cmdStr = ("./tcp_client.py %d &") % (serverPort)
- os.system(cmdStr)
- 
--buf = ''
-+buf = b''
- n = 0
- while n < 500:
--    buf += '.'
-+    buf += b'.'
-     n += 1
- 
- serverSocket.listen(MAX_PORTS)
-@@ -79,5 +79,5 @@ while True:
-                 serverSocket.close()
-                 sys.exit(0)
-     else:
--        print 'Select timeout!'
-+        print('Select timeout!')
-         sys.exit(1)
--- 
-2.17.1
+	Looks like an old bug...
 
+> 
+> Signed-off-by: Tan Hu <tan.hu@zte.com.cn>
+> Reviewed-by: Jiang Biao <jiang.biao2@zte.com.cn>
+> ---
+>  net/netfilter/ipvs/ip_vs_core.c | 10 +++++++---
+>  1 file changed, 7 insertions(+), 3 deletions(-)
+> 
+> diff --git a/net/netfilter/ipvs/ip_vs_core.c b/net/netfilter/ipvs/ip_vs_core.c
+> index 0679dd1..ca9e7cc 100644
+> --- a/net/netfilter/ipvs/ip_vs_core.c
+> +++ b/net/netfilter/ipvs/ip_vs_core.c
+> @@ -1972,13 +1972,17 @@ static int ip_vs_in_icmp_v6(struct netns_ipvs *ipvs, struct sk_buff *skb,
+>  	if (cp->dest && !(cp->dest->flags & IP_VS_DEST_F_AVAILABLE)) {
+>  		/* the destination server is not available */
+
+		Add: u32 flags = cp->flags;
+
+>  
+> +		/* when timer already started, silently drop the packet.*/
+> +		if (timer_pending(&cp->timer))
+> +			__ip_vs_conn_put(cp);
+> +		else
+> +			ip_vs_conn_put(cp);
+
+	When ip_vs_conn_put is called for IP_VS_CONN_F_ONE_PACKET
+it is possible to call ip_vs_conn_expire and to free cp with
+ip_vs_conn_rcu_free immediately. What we can do is to avoid the
+ip_vs_conn_expire_now call in such case by reading the flags
+early (as above) and adding the needed check (as below).
+
+> +
+>  		if (sysctl_expire_nodest_conn(ipvs)) {
+
+	Add !(flags & IP_VS_CONN_F_ONE_PACKET) check in above 'if'.
+
+>  			/* try to expire the connection immediately */
+>  			ip_vs_conn_expire_now(cp);
+>  		}
+> -		/* don't restart its timer, and silently
+> -		   drop the packet. */
+> -		__ip_vs_conn_put(cp);
+> +
+>  		return NF_DROP;
+>  	}
+>  
+
+Regards
+
+--
+Julian Anastasov <ja@ssi.bg>
