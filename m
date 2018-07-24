@@ -6,33 +6,33 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25594ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 03:27:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6442ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 03:27:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D192420852
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 03:27:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D192420852
+	by mail.kernel.org (Postfix) with ESMTP id 6039620852
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 03:27:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6039620852
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xmission.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388516AbeGXEbz (ORCPT
+        id S2388504AbeGXEby (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 00:31:55 -0400
-Received: from out02.mta.xmission.com ([166.70.13.232]:51377 "EHLO
-        out02.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388199AbeGXEby (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 24 Jul 2018 00:31:54 -0400
+Received: from out02.mta.xmission.com ([166.70.13.232]:51389 "EHLO
+        out02.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388455AbeGXEbx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Jul 2018 00:31:53 -0400
 Received: from in01.mta.xmission.com ([166.70.13.51])
         by out02.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
         (Exim 4.87)
         (envelope-from <ebiederm@xmission.com>)
-        id 1fhnz4-0007ik-5Z; Mon, 23 Jul 2018 21:27:34 -0600
+        id 1fhnz4-0007ix-P4; Mon, 23 Jul 2018 21:27:34 -0600
 Received: from [97.119.167.31] (helo=x220.int.ebiederm.org)
         by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
         (Exim 4.87)
         (envelope-from <ebiederm@xmission.com>)
-        id 1fhnxg-0008AK-3W; Mon, 23 Jul 2018 21:26:23 -0600
+        id 1fhnxz-0008AK-L0; Mon, 23 Jul 2018 21:26:28 -0600
 From:   "Eric W. Biederman" <ebiederm@xmission.com>
 To:     Linus Torvalds <torvalds@linux-foundation.org>
 Cc:     Oleg Nesterov <oleg@redhat.com>,
@@ -40,16 +40,16 @@ Cc:     Oleg Nesterov <oleg@redhat.com>,
         linux-kernel@vger.kernel.org, Wen Yang <wen.yang99@zte.com.cn>,
         majiang <ma.jiang@zte.com.cn>,
         "Eric W. Biederman" <ebiederm@xmission.com>
-Date:   Mon, 23 Jul 2018 22:24:17 -0500
-Message-Id: <20180724032419.20231-18-ebiederm@xmission.com>
+Date:   Mon, 23 Jul 2018 22:24:19 -0500
+Message-Id: <20180724032419.20231-20-ebiederm@xmission.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <87efft5ncd.fsf_-_@xmission.com>
 References: <87efft5ncd.fsf_-_@xmission.com>
-X-XM-SPF: eid=1fhnxg-0008AK-3W;;;mid=<20180724032419.20231-18-ebiederm@xmission.com>;;;hst=in01.mta.xmission.com;;;ip=97.119.167.31;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX18qBtVUp59V8gX/MoEQMzOHRYYDx6f6e9g=
+X-XM-SPF: eid=1fhnxz-0008AK-L0;;;mid=<20180724032419.20231-20-ebiederm@xmission.com>;;;hst=in01.mta.xmission.com;;;ip=97.119.167.31;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX1+brDt3Pp41jFJPW2k9CcUlh8JXI3xo7Kw=
 X-SA-Exim-Connect-IP: 97.119.167.31
 X-SA-Exim-Mail-From: ebiederm@xmission.com
-Subject: [PATCH 18/20] signal: Add calculate_sigpending()
+Subject: [PATCH 20/20] signal: Don't restart fork when signals come in.
 X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
 X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
 Sender: linux-kernel-owner@vger.kernel.org
@@ -57,97 +57,173 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a function calculate_sigpending to test to see if any signals are
-pending for a new task immediately following fork.  Signals have to
-happen either before or after fork.  Today our practice is to push
-all of the signals to before the fork, but that has the downside that
-frequent or periodic signals can make fork take much much longer than
-normal or prevent fork from completing entirely.
+Wen Yang <wen.yang99@zte.com.cn> and majiang <ma.jiang@zte.com.cn>
+report that a periodic signal received during fork can cause fork to
+continually restart preventing an application from making progress.
 
-So we need move signals that we can after the fork to prevent that.
+The code was being overly pesimistic.  Fork needs to guarantee that a
+signal sent to multiple processes is logically delivered before the
+fork and just to the forking process or logically delivered after the
+fork to both the forking process and it's newly spawned child.  For
+signals like periodic timers that are always delivered to a single
+process fork can safely complete and let them appear to logically
+delivered after the fork().
 
-This updates the code to set TIF_SIGPENDING on a new task if there
-are signals or other activities that have moved so that they appear
-to happen after the fork.
+While examining this issue I also discovered that fork today will miss
+signals delivered to multiple processes during the fork and handled by
+another thread.  Similarly the current code will also miss blocked
+signals that are delivered to multiple process, as those signals will
+not appear pending during fork.
 
-As the code today restarts if it sees any such activity this won't
-immediately have an effect, as there will be no reason for it
-to set TIF_SIGPENDING immediately after the fork.
+Add a list of each thread that is currently forking, and keep on that
+list a signal set that records all of the signals sent to multiple
+processes.  When fork completes initialize the new processes
+shared_pending signal set with it.  The calculate_sigpending function
+will see those signals and set TIF_SIGPENDING causing the new task to
+take the slow path to userspace to handle those signals.  Making it
+appear as if those signals were received immediately after the fork.
 
-Adding calculate_sigpending means the code in fork can safely be
-changed to not always restart if a signal is pending.
+It is not possible to send real time signals to multiple processes and
+exceptions don't go to multiple processes, which means that that are
+no signals sent to multiple processes that require siginfo.  This
+means it is safe to not bother collecting siginfo on signals sent
+during fork.
 
-The new calculate_sigpending function sets sigpending if there
-are pending bits in jobctl, pending signals, the freezer needs
-to freeze the new task or the live kernel patching framework
-need the new thread to take the slow path to userspace.
+The sigaction of a child of fork is initially the same as the
+sigaction of the parent process.  So a signal the parent ignores the
+child will also initially ignore.  Therefore it is safe to ignore
+signals sent to multiple processes and ignored by the forking process.
 
-I have verified that setting TIF_SIGPENDING does make a new process
-take the slow path to userspace before it executes it's first userspace
-instruction.
+Signals sent to only a single process or only a single thread and delivered
+during fork are treated as if they are received after the fork, and generally
+not dealt with.  They won't cause any problems.
 
-I have looked at the callers of signal_wake_up and the code paths
-setting TIF_SIGPENDING and I don't see else that needs to be handled.
-The code probably doesn't need to set TIF_SIGPENDING for the kernel
-live patching as it uses a separate thread flag as well.  But at this
-point it seems safer to copy recalc_sigpending and get the kernel live
-patching folks to sort out their story later.
-
+Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=200447
+Reported-by: Wen Yang <wen.yang99@zte.com.cn> and
+Reported-by: majiang <ma.jiang@zte.com.cn>
+Fixes: 4a2c7a7837da ("[PATCH] make fork() atomic wrt pgrp/session signals")
 Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
 ---
- include/linux/sched/signal.h |  1 +
- kernel/fork.c                |  1 +
- kernel/signal.c              | 13 +++++++++++++
- 3 files changed, 15 insertions(+)
+ include/linux/sched/signal.h |  8 ++++++++
+ kernel/fork.c                | 37 ++++++++++++++++++++----------------
+ kernel/signal.c              |  9 +++++++++
+ 3 files changed, 38 insertions(+), 16 deletions(-)
 
 diff --git a/include/linux/sched/signal.h b/include/linux/sched/signal.h
-index 94558ffa82ab..7cabc0bc38f6 100644
+index f3507bf165d0..62262021cf7e 100644
 --- a/include/linux/sched/signal.h
 +++ b/include/linux/sched/signal.h
-@@ -372,6 +372,7 @@ static inline int signal_pending_state(long state, struct task_struct *p)
-  */
- extern void recalc_sigpending_and_wake(struct task_struct *t);
- extern void recalc_sigpending(void);
-+extern void calculate_sigpending(struct task_struct *new);
+@@ -69,6 +69,11 @@ struct thread_group_cputimer {
+ 	bool checking_timer;
+ };
  
- extern void signal_wake_up_state(struct task_struct *t, unsigned int state);
++struct multiprocess_signals {
++	sigset_t signal;
++	struct hlist_node node;
++};
++
+ /*
+  * NOTE! "signal_struct" does not have its own
+  * locking, because a shared signal_struct always
+@@ -90,6 +95,9 @@ struct signal_struct {
+ 	/* shared signal handling: */
+ 	struct sigpending	shared_pending;
  
++	/* For collecting multiprocess signals during fork */
++	struct hlist_head	multiprocess;
++
+ 	/* thread group exit support */
+ 	int			group_exit_code;
+ 	/* overloaded:
 diff --git a/kernel/fork.c b/kernel/fork.c
-index 22d4cdb9a7ca..e07281254552 100644
+index 6c358846a8b8..6ee5822f0085 100644
 --- a/kernel/fork.c
 +++ b/kernel/fork.c
-@@ -1988,6 +1988,7 @@ static __latent_entropy struct task_struct *copy_process(
- 					  &p->signal->thread_head);
- 		}
- 		attach_pid(p, PIDTYPE_PID);
-+		calculate_sigpending(p);
- 		nr_threads++;
+@@ -1456,6 +1456,7 @@ static int copy_signal(unsigned long clone_flags, struct task_struct *tsk)
+ 	init_waitqueue_head(&sig->wait_chldexit);
+ 	sig->curr_target = tsk;
+ 	init_sigpending(&sig->shared_pending);
++	INIT_HLIST_HEAD(&sig->multiprocess);
+ 	seqlock_init(&sig->stats_lock);
+ 	prev_cputime_init(&sig->prev_cputime);
+ 
+@@ -1602,6 +1603,24 @@ static __latent_entropy struct task_struct *copy_process(
+ {
+ 	int retval;
+ 	struct task_struct *p;
++	struct multiprocess_signals delayed;
++
++	/*
++	 * Force any signals received before this point to be delivered
++	 * before the fork happens.  Collect up signals sent to multiple
++	 * processes that happen during the fork and delay them so that
++	 * they appear to happen after the fork.
++	 */
++	sigemptyset(&delayed.signal);
++	INIT_HLIST_NODE(&delayed.node);
++
++	spin_lock_irq(&current->sighand->siglock);
++	if (!(clone_flags & CLONE_THREAD))
++		hlist_add_head(&delayed.node, &current->signal->multiprocess);
++	recalc_sigpending();
++	spin_unlock_irq(&current->sighand->siglock);
++	if (signal_pending(current))
++		return ERR_PTR(restart_syscall());
+ 
+ 	/*
+ 	 * Don't allow sharing the root directory with processes in a different
+@@ -1934,22 +1953,6 @@ static __latent_entropy struct task_struct *copy_process(
+ 		goto bad_fork_cancel_cgroup;
  	}
  
+-	if (!(clone_flags & CLONE_THREAD)) {
+-		/*
+-		 * Process group and session signals need to be delivered to just the
+-		 * parent before the fork or both the parent and the child after the
+-		 * fork. Restart if a signal comes in before we add the new process to
+-		 * it's process group.
+-		 * A fatal signal pending means that current will exit, so the new
+-		 * thread can't slip out of an OOM kill (or normal SIGKILL).
+-		 */
+-		recalc_sigpending();
+-		if (signal_pending(current)) {
+-			retval = -ERESTARTNOINTR;
+-			goto bad_fork_cancel_cgroup;
+-		}
+-	}
+-
+ 
+ 	init_task_pid_links(p);
+ 	if (likely(p->pid)) {
+@@ -1979,6 +1982,8 @@ static __latent_entropy struct task_struct *copy_process(
+ 			attach_pid(p, PIDTYPE_TGID);
+ 			attach_pid(p, PIDTYPE_PGID);
+ 			attach_pid(p, PIDTYPE_SID);
++			p->signal->shared_pending.signal = delayed.signal;
++			hlist_del(&delayed.node);
+ 			__this_cpu_inc(process_counts);
+ 		} else {
+ 			current->signal->nr_threads++;
 diff --git a/kernel/signal.c b/kernel/signal.c
-index dddbea558455..f6687c7d7a8c 100644
+index 78e2d5d196f3..5b1aab94daf6 100644
 --- a/kernel/signal.c
 +++ b/kernel/signal.c
-@@ -172,6 +172,19 @@ void recalc_sigpending(void)
- 
- }
- 
-+void calculate_sigpending(struct task_struct *new)
-+{
-+	/* Have any signals or users of TIF_SIGPENDING been delayed
-+	 * until after fork?
-+	 */
-+	bool pending = (new->jobctl & JOBCTL_PENDING_MASK) ||
-+		PENDING(&new->pending, &new->blocked) ||
-+		PENDING(&new->signal->shared_pending, &new->blocked) ||
-+		freezing(new) || klp_patch_pending(new);
+@@ -1123,6 +1123,15 @@ static int __send_signal(int sig, struct siginfo *info, struct task_struct *t,
+ out_set:
+ 	signalfd_notify(t, sig);
+ 	sigaddset(&pending->signal, sig);
 +
-+	update_tsk_thread_flag(new, TIF_SIGPENDING, pending);
-+}
++	/* Let multiprocess signals appear after on-going forks */
++	if (type > PIDTYPE_TGID) {
++		struct multiprocess_signals *delayed;
++		hlist_for_each_entry(delayed, &t->signal->multiprocess, node) {
++			sigaddset(&delayed->signal, sig);
++		}
++	}
 +
- /* Given the mask, find the first available signal that should be serviced. */
- 
- #define SYNCHRONOUS_MASK \
+ 	complete_signal(sig, t, type);
+ ret:
+ 	trace_signal_generate(sig, info, t, type != PIDTYPE_PID, result);
 -- 
 2.17.1
 
