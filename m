@@ -6,25 +6,25 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BA2DECDFB8
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 10:43:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B673C6778A
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 10:43:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CBC3520894
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 10:43:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CBC3520894
+	by mail.kernel.org (Postfix) with ESMTP id 0BE4720852
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 10:43:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0BE4720852
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ziswiler.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388646AbeGXLt0 (ORCPT
+        id S2388665AbeGXLt2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 07:49:26 -0400
-Received: from mout.perfora.net ([74.208.4.196]:58255 "EHLO mout.perfora.net"
+        Tue, 24 Jul 2018 07:49:28 -0400
+Received: from mout.perfora.net ([74.208.4.194]:53465 "EHLO mout.perfora.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388583AbeGXLtZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 07:49:25 -0400
+        id S2388583AbeGXLt1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Jul 2018 07:49:27 -0400
 Received: from localhost.localdomain.toradex.int ([46.140.72.82]) by
  mrelay.perfora.net (mreueus003 [74.208.5.2]) with ESMTPA (Nemesis) id
- 0Lvj4s-1g5HdV0DaG-017VII; Tue, 24 Jul 2018 12:43:29 +0200
+ 0MXXjU-1fTBjB0P0I-00WWaG; Tue, 24 Jul 2018 12:43:31 +0200
 From:   Marcel Ziswiler <marcel@ziswiler.com>
 To:     devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
         linux-kernel@vger.kernel.org
@@ -33,27 +33,27 @@ Cc:     Marcel Ziswiler <marcel.ziswiler@toradex.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>
-Subject: [PATCH 07/15] ARM: tegra: apalis-tk1: drop unused pinmux label
-Date:   Tue, 24 Jul 2018 12:43:01 +0200
-Message-Id: <20180724104309.21741-8-marcel@ziswiler.com>
+Subject: [PATCH 08/15] ARM: tegra: apalis-tk1: white-space clean-up
+Date:   Tue, 24 Jul 2018 12:43:02 +0200
+Message-Id: <20180724104309.21741-9-marcel@ziswiler.com>
 X-Mailer: git-send-email 2.14.4
 In-Reply-To: <20180724104309.21741-1-marcel@ziswiler.com>
 References: <20180724104309.21741-1-marcel@ziswiler.com>
-X-Provags-ID: V03:K1:lSVdgZXJy+rYuqzJ3JLcert80LcAdHp7ZFDIGEfUvwG+aA5d9Mi
- XStc55JJ8mXqPCTUj5yc/E4fQIyYAKowv0Hse0OUP4n8Gjzbdass+ls1JJnArFacz+AtBf7
- Ny4B0/YVHVULbEDjsX2/2fl5N6E9kiBqq8P1H7n8ixFuvQAMKKi3E/4pp2B80cyhcLH5Rdo
- xtYmB94hmZwetQjv+VMrg==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:Afym3Tte2PU=:8dgLWIaxs3PAlXJcdp4mxK
- wCW3iPu+6pSq8cyv/Xh4woieC5PS2LyuNIZF7y/g56dG/V94FfrD7eM1peC8EGCDB++ExVmNF
- lwn7nHBpLmEVmaY7c1Pc7h9opAs/duSW95ae95vjhW0odOcKo36N+V1UqU0Ua2bogSWvfXFRt
- nbRZRLcSilJPV2rbNEhtB2rEbYsozeJB/ewPVyrtp+DdZIk6QDlFqb+Fbo307/20bmmiykGLv
- 0Con9Q9xvIu0uGJHu7dbqY6ODyEp+rjcQzbQ3gNwhzPPrBHdC1NEamjdvusxm8wLs+8k+LkAT
- auudq6CtG67qNPU3ss2zMESRlLiXxJWuikM+OAkazSnG/0FeR5OkWRX0Pl0w+e+lrg2k8Ynpn
- qpm3ED80x0scNzFpwPx8X2NM26bYXy4xzWJIMlTRgHkLyoI2O9ojNYjzpvlBIm4MtssR/JO07
- dIfL0xcLimMnPYJyw634Koyw5/R6FzvMfXt60Lk5IB4WM2ObDp2nBgxU9EAopvXRoaxuckURl
- UvX1GtJHQyJOm0xqqkNY2CxgeTC/h85b2ChejcOaxw1q+25664S66uyWB1BTRe1VOlyPwzfl+
- aeuNmG5E36cKvGhDuRH/K7MtkgWb3bhVbxPe6j213OjwAit8CtEkvy/KfnxER7vREx8eUQvNA
- lWFOqWls/K5bCirZ3SIzrWwCdJX/edxnBecQk81nmWepoINKNwVcg81HRjZo9Ufr8Rpo=
+X-Provags-ID: V03:K1:Pj4UMNGQ8utcAYupMcznktL+COFGcScxDJZTfLXJABvVFycl577
+ eGDvLU/u2QpJjKllmYMbqHJeL24Rz3iyZxqTsjn3TICTLbvlKVCZOmMKkPR1IstxWVpf10Y
+ ROMskgfZzp/0TIGJcRP7er0ouxEAX7oeYeBUJHhX7gSYPBxxQGaAYePgYrTfcYuspsCT8/z
+ nfbjiiJ4j0dyoWLyX6aeA==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:67DNKV+x0aw=:1DAGR/emrI+PgV1pON1ARc
+ 4/RsmvCLCPN3YgtXMXH2VO94hjcxY2rul/UdM4MpzKpaAA7fiPlDmoeU4j9bTtuVNje2a32xV
+ PyQVkNx4jEFhk/cP2bzqWgNf2DeCpmD8hWiZiUbeYu1huKXvctbm9MirP5XSVAc7GYyNpOo5k
+ Ygeblsrru6oS+kV9lTLjUa0c/4LkEHe8OIpevrEx455qkm3cmCR6DqzD31ZQzDTbdzyaX+WuZ
+ /tDkr8d+V09y1ePSOjvKCsIvCXeJHijVgdnN/XkzqqYXbw6fcZyXT0guI1SwTzx2kKgrSCvSz
+ 1T9VQK6GThDPsNIuftALghkiSx8L3O9QdMCpu4ZEsnSf6ckUVPNBrbppeabJDa1gSILLaD9AY
+ oxJvxc+SkKcGrAkX8ioTOEl5s8lgUlwTeubMa4FT8+pqnZunNmkaUx7tUXvHgiwKa6ltAh14/
+ Bg2jnMRSNTa7GmWqeq0eFsKW/98QETrphehFMABPU03tE8zMBEZXkr8sUmgfItworl7KPQlbn
+ S67rg27dS0S/AgLQOKgqhzuqHBytzBm/gmotkw0fXB4tH0YbILYd3dCF21oX11LXBNRiah6uc
+ R8fdAJuViDXOevjfLnH9AyuJCaaRJFRcjS/22QCJ5MMP0BN6irZRd5RJvioCBvtyPg3EpbHxu
+ TsEltvxwsDui9UV6PwfEzCj+xvWqu0/1TPBEjqLYxVyp2FU2AhF4N/MadUQC78ZfrsPU=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -61,41 +61,71 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
-Drop unused pinmux label.
+White-space clean-up.
 
 Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
 ---
 
- arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi | 2 +-
- arch/arm/boot/dts/tegra124-apalis.dtsi      | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi | 3 ---
+ arch/arm/boot/dts/tegra124-apalis.dtsi      | 3 ---
+ 2 files changed, 6 deletions(-)
 
 diff --git a/arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi b/arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi
-index a8dcf960e44f..866946d683d4 100644
+index 866946d683d4..8ea696c91341 100644
 --- a/arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi
 +++ b/arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi
-@@ -68,7 +68,7 @@
- 		vdd-supply = <&reg_vdd_gpu>;
- 	};
+@@ -1881,7 +1881,6 @@
+ 			usb2-0 {
+ 				status = "okay";
+ 				mode = "otg";
+-
+ 				vbus-supply = <&reg_usbo1_vbus>;
+ 			};
  
--	pinmux: pinmux@70000868 {
-+	pinmux@70000868 {
- 		pinctrl-names = "default";
- 		pinctrl-0 = <&state_default>;
+@@ -1889,7 +1888,6 @@
+ 			usb2-1 {
+ 				status = "okay";
+ 				mode = "host";
+-
+ 				vbus-supply = <&reg_usbh_vbus>;
+ 			};
+ 
+@@ -1897,7 +1895,6 @@
+ 			usb2-2 {
+ 				status = "okay";
+ 				mode = "host";
+-
+ 				vbus-supply = <&reg_usbh_vbus>;
+ 			};
  
 diff --git a/arch/arm/boot/dts/tegra124-apalis.dtsi b/arch/arm/boot/dts/tegra124-apalis.dtsi
-index b2aca71f96e7..2cf5d02afbbc 100644
+index 2cf5d02afbbc..ab63e5653d73 100644
 --- a/arch/arm/boot/dts/tegra124-apalis.dtsi
 +++ b/arch/arm/boot/dts/tegra124-apalis.dtsi
-@@ -103,7 +103,7 @@
- 		vdd-supply = <&reg_vdd_gpu>;
- 	};
+@@ -1910,7 +1910,6 @@
+ 			usb2-0 {
+ 				status = "okay";
+ 				mode = "otg";
+-
+ 				vbus-supply = <&reg_usbo1_vbus>;
+ 			};
  
--	pinmux: pinmux@70000868 {
-+	pinmux@70000868 {
- 		pinctrl-names = "default";
- 		pinctrl-0 = <&state_default>;
+@@ -1918,7 +1917,6 @@
+ 			usb2-1 {
+ 				status = "okay";
+ 				mode = "host";
+-
+ 				vbus-supply = <&reg_usbh_vbus>;
+ 			};
+ 
+@@ -1926,7 +1924,6 @@
+ 			usb2-2 {
+ 				status = "okay";
+ 				mode = "host";
+-
+ 				vbus-supply = <&reg_usbh_vbus>;
+ 			};
  
 -- 
 2.14.4
