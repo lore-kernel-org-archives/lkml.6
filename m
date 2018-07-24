@@ -6,52 +6,52 @@ X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE061ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 16:50:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 786EBECDFB8
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 16:50:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A0A2A2089C
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 16:50:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2885F20883
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 16:50:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="bqCFx0Ji"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A0A2A2089C
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="I0n31esw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2885F20883
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388738AbeGXR5T (ORCPT
+        id S2388770AbeGXR5X (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 13:57:19 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:36581 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388706AbeGXR5S (ORCPT
+        Tue, 24 Jul 2018 13:57:23 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:42523 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388746AbeGXR5V (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 13:57:18 -0400
-Received: by mail-pg1-f195.google.com with SMTP id s7-v6so3301776pgv.3
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Jul 2018 09:49:57 -0700 (PDT)
+        Tue, 24 Jul 2018 13:57:21 -0400
+Received: by mail-pg1-f194.google.com with SMTP id y4-v6so3294034pgp.9
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Jul 2018 09:49:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=+KSRUj/0qvL/pmvBGcl9scVjMMFqpRubuQt1mN2b+58=;
-        b=bqCFx0Jik8X9JYE3Y5uDzvqC3mHEdtYjbzng4JyAov2RxzBQcjptIhXxzO8PH3RJn3
-         eH+cKtotdFhdJ1lNh7ImCkjMXCRI9ivBMArWL1hC+97ZlE4aE89Zkztl1xeUeTQ4/v7e
-         kDvXrJMlU19+S4jxmNmKqlPfgNAHLRm4Jg90k=
+        bh=6pNFetmmz11JBFPOEOzFiraD/6Zu8EQD4uGZBgpwh0A=;
+        b=I0n31eswI68uJ00aoNJ5L2yYwtzgLm7mMALidYXOtWCO6XfGhtfIKst/K+kyLtT3ns
+         nclLRXHA26FoRlXAxdtNpVxeW0JWvUQ+0GNThCv3UZuMBO0ka8vfLvA+6gvqWEWtuqHV
+         DpU5VFza+Am3Okq/gibGjR0qfU3u1zdKPJiDY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=+KSRUj/0qvL/pmvBGcl9scVjMMFqpRubuQt1mN2b+58=;
-        b=YAop0BKqtaPdTFbCg5ZwF6TvSESqZKX4Lnwz07bMkYtYEZMzwDGV3XzHvch3Gh04IP
-         /ZuIRbFdJwEyELaGNUjTiKc6eINDk5aRrwvQPY29QXw4vANaELWORmY4a6WBNG/VOxdS
-         SY+ZzjDNaOAlEaYnMW++H0tRX8F3vthVQIiLvA4amoxlUgRni50vkJlDGRG/zE9w889F
-         ie6MuIfxeLI1i7FABtMDOFiWpkPVB431eoB7iNXnx7CzT2N7CxNXhqMYacDCi7o8WNQ1
-         WL0MhZAxLzjaULzrBlGwQJshirjiJ4Cx9vWniPTbqY8VGpcIbc8Jfr19fJpkD/UAb5te
-         98AA==
-X-Gm-Message-State: AOUpUlF943SWlxh5umUWLPgdrJslqBJGdtX4OGKEkcjdHoVN7nAwfo4z
-        GPA57AvoPGS2iC6vJ2VmHnK9XA==
-X-Google-Smtp-Source: AAOMgpeXBCzKp+W+s1UuSZoP5kLT0BLIUEg2hNBm/TGpDGYB9h6deRtHnOkdF2k7HOrKSf/4MbakMw==
-X-Received: by 2002:a63:790b:: with SMTP id u11-v6mr16888983pgc.111.1532450997108;
-        Tue, 24 Jul 2018 09:49:57 -0700 (PDT)
+        bh=6pNFetmmz11JBFPOEOzFiraD/6Zu8EQD4uGZBgpwh0A=;
+        b=UaNqCerkKUvl7lkXI0G9QTRYLoMVbjzqYdGyBPpuuM8ypIGXOo6YbhwSQyxmV9eDEw
+         rK3TOTmmoABd3Vvb5ovW/jsBtVsgnZzhZ/6YL265ZB0Zd5/wnfNPqmt5OLf/aaWrMxdV
+         +dea4qyWWraBuo0tAaYXEE3lSI7/OY756gveOfuwGA6Hb4PHYblvcJ7VQr//YusEf5l5
+         vmShp8UZ9+6gtVfmEUaaOWeyV/lUt/ehdtrfx9TFCwA6EonE8wo0LWnHr2vUA6CMuudw
+         yg60mDextKh8BRQziAbnwasX7czcPI21Rw26dYMlTkevt9Sspp/4blEggRLMKHVBxbkq
+         6FDg==
+X-Gm-Message-State: AOUpUlHtdzsU0MStWNjOjMQDdhrZLHhMlcoXrsb2USq6V5bRD+ZaoquF
+        +1pbkUM0sZrSeYtWBb1e2TJSBg==
+X-Google-Smtp-Source: AAOMgpcG/mt3ci5UUbxhf/UoGW3g9EmUimCfCYx9Nh05PYTNf0VKpMi8hdwU0JhF5Cxrd1pZV+ki5g==
+X-Received: by 2002:a63:2506:: with SMTP id l6-v6mr16822157pgl.237.1532450999438;
+        Tue, 24 Jul 2018 09:49:59 -0700 (PDT)
 Received: from www.outflux.net (173-164-112-133-Oregon.hfc.comcastbusiness.net. [173.164.112.133])
-        by smtp.gmail.com with ESMTPSA id j83-v6sm25798959pfj.71.2018.07.24.09.49.47
+        by smtp.gmail.com with ESMTPSA id c131-v6sm36228560pga.69.2018.07.24.09.49.49
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
         Tue, 24 Jul 2018 09:49:54 -0700 (PDT)
 From:   Kees Cook <keescook@chromium.org>
@@ -89,9 +89,9 @@ Cc:     Kees Cook <keescook@chromium.org>, Arnd Bergmann <arnd@arndb.de>,
         netdev@vger.kernel.org, devel@driverdev.osuosl.org,
         linux-afs@lists.infradead.org, linux-wireless@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v6 13/18] wireless/lib80211: Convert from ahash to shash
-Date:   Tue, 24 Jul 2018 09:49:31 -0700
-Message-Id: <20180724164936.37477-14-keescook@chromium.org>
+Subject: [PATCH v6 15/18] staging: rtl8192e: ieee80211: Convert from ahash to shash
+Date:   Tue, 24 Jul 2018 09:49:33 -0700
+Message-Id: <20180724164936.37477-16-keescook@chromium.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180724164936.37477-1-keescook@chromium.org>
 References: <20180724164936.37477-1-keescook@chromium.org>
@@ -100,6 +100,7 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+This is an identical change to the wireless/lib80211 of the same name.
 In preparing to remove all stack VLA usage from the kernel[1], this
 removes the discouraged use of AHASH_REQUEST_ON_STACK in favor of
 the smaller SHASH_DESC_ON_STACK by converting from ahash-wrapped-shash
@@ -111,26 +112,26 @@ a fixed size in a later patch to the crypto subsystem.
 
 Signed-off-by: Kees Cook <keescook@chromium.org>
 ---
- net/wireless/lib80211_crypt_tkip.c | 58 +++++++++++++++---------------
- 1 file changed, 29 insertions(+), 29 deletions(-)
+ drivers/staging/rtl8192e/rtllib_crypt_tkip.c | 56 ++++++++++----------
+ 1 file changed, 28 insertions(+), 28 deletions(-)
 
-diff --git a/net/wireless/lib80211_crypt_tkip.c b/net/wireless/lib80211_crypt_tkip.c
-index ba0a1f398ce5..21040aba3a81 100644
---- a/net/wireless/lib80211_crypt_tkip.c
-+++ b/net/wireless/lib80211_crypt_tkip.c
-@@ -65,9 +65,9 @@ struct lib80211_tkip_data {
- 	int key_idx;
+diff --git a/drivers/staging/rtl8192e/rtllib_crypt_tkip.c b/drivers/staging/rtl8192e/rtllib_crypt_tkip.c
+index ae103b0b7a2a..9f18be14dda6 100644
+--- a/drivers/staging/rtl8192e/rtllib_crypt_tkip.c
++++ b/drivers/staging/rtl8192e/rtllib_crypt_tkip.c
+@@ -50,9 +50,9 @@ struct rtllib_tkip_data {
  
+ 	int key_idx;
  	struct crypto_skcipher *rx_tfm_arc4;
 -	struct crypto_ahash *rx_tfm_michael;
 +	struct crypto_shash *rx_tfm_michael;
  	struct crypto_skcipher *tx_tfm_arc4;
 -	struct crypto_ahash *tx_tfm_michael;
 +	struct crypto_shash *tx_tfm_michael;
- 
  	/* scratch buffers for virt_to_page() (crypto API) */
- 	u8 rx_hdr[16], tx_hdr[16];
-@@ -106,8 +106,7 @@ static void *lib80211_tkip_init(int key_idx)
+ 	u8 rx_hdr[16];
+ 	u8 tx_hdr[16];
+@@ -74,8 +74,7 @@ static void *rtllib_tkip_init(int key_idx)
  		goto fail;
  	}
  
@@ -138,9 +139,9 @@ index ba0a1f398ce5..21040aba3a81 100644
 -						  CRYPTO_ALG_ASYNC);
 +	priv->tx_tfm_michael = crypto_alloc_shash("michael_mic", 0, 0);
  	if (IS_ERR(priv->tx_tfm_michael)) {
+ 		pr_debug("Could not allocate crypto API michael_mic\n");
  		priv->tx_tfm_michael = NULL;
- 		goto fail;
-@@ -120,8 +119,7 @@ static void *lib80211_tkip_init(int key_idx)
+@@ -90,8 +89,7 @@ static void *rtllib_tkip_init(int key_idx)
  		goto fail;
  	}
  
@@ -148,11 +149,11 @@ index ba0a1f398ce5..21040aba3a81 100644
 -						  CRYPTO_ALG_ASYNC);
 +	priv->rx_tfm_michael = crypto_alloc_shash("michael_mic", 0, 0);
  	if (IS_ERR(priv->rx_tfm_michael)) {
+ 		pr_debug("Could not allocate crypto API michael_mic\n");
  		priv->rx_tfm_michael = NULL;
- 		goto fail;
-@@ -131,9 +129,9 @@ static void *lib80211_tkip_init(int key_idx)
+@@ -101,9 +99,9 @@ static void *rtllib_tkip_init(int key_idx)
  
-       fail:
+ fail:
  	if (priv) {
 -		crypto_free_ahash(priv->tx_tfm_michael);
 +		crypto_free_shash(priv->tx_tfm_michael);
@@ -162,9 +163,9 @@ index ba0a1f398ce5..21040aba3a81 100644
  		crypto_free_skcipher(priv->rx_tfm_arc4);
  		kfree(priv);
  	}
-@@ -145,9 +143,9 @@ static void lib80211_tkip_deinit(void *priv)
- {
- 	struct lib80211_tkip_data *_priv = priv;
+@@ -117,9 +115,9 @@ static void rtllib_tkip_deinit(void *priv)
+ 	struct rtllib_tkip_data *_priv = priv;
+ 
  	if (_priv) {
 -		crypto_free_ahash(_priv->tx_tfm_michael);
 +		crypto_free_shash(_priv->tx_tfm_michael);
@@ -174,14 +175,13 @@ index ba0a1f398ce5..21040aba3a81 100644
  		crypto_free_skcipher(_priv->rx_tfm_arc4);
  	}
  	kfree(priv);
-@@ -510,29 +508,31 @@ static int lib80211_tkip_decrypt(struct sk_buff *skb, int hdr_len, void *priv)
- 	return keyidx;
+@@ -504,29 +502,31 @@ static int rtllib_tkip_decrypt(struct sk_buff *skb, int hdr_len, void *priv)
  }
  
--static int michael_mic(struct crypto_ahash *tfm_michael, u8 * key, u8 * hdr,
--		       u8 * data, size_t data_len, u8 * mic)
+ 
+-static int michael_mic(struct crypto_ahash *tfm_michael, u8 *key, u8 *hdr,
 +static int michael_mic(struct crypto_shash *tfm_michael, u8 *key, u8 *hdr,
-+		       u8 *data, size_t data_len, u8 *mic)
+ 		       u8 *data, size_t data_len, u8 *mic)
  {
 -	AHASH_REQUEST_ON_STACK(req, tfm_michael);
 -	struct scatterlist sg[2];
@@ -189,7 +189,7 @@ index ba0a1f398ce5..21040aba3a81 100644
  	int err;
  
 -	if (tfm_michael == NULL) {
--		pr_warn("%s(): tfm_michael == NULL\n", __func__);
+-		pr_warn("michael_mic: tfm_michael == NULL\n");
 -		return -1;
 -	}
 -	sg_init_table(sg, 2);
@@ -223,9 +223,9 @@ index ba0a1f398ce5..21040aba3a81 100644
  	return err;
  }
  
-@@ -654,9 +654,9 @@ static int lib80211_tkip_set_key(void *key, int len, u8 * seq, void *priv)
+@@ -663,9 +663,9 @@ static int rtllib_tkip_set_key(void *key, int len, u8 *seq, void *priv)
  {
- 	struct lib80211_tkip_data *tkey = priv;
+ 	struct rtllib_tkip_data *tkey = priv;
  	int keyidx;
 -	struct crypto_ahash *tfm = tkey->tx_tfm_michael;
 +	struct crypto_shash *tfm = tkey->tx_tfm_michael;
