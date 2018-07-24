@@ -2,134 +2,142 @@ Return-Path: <SRS0=hTZH=KI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A70AC28CF6
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 21:57:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37B5BC28CF6
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 22:00:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0353620685
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 21:57:19 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="DoGhjGEF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0353620685
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=paul-moore.com
+	by mail.kernel.org (Postfix) with ESMTP id DAD3520852
+	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 22:00:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DAD3520852
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388753AbeGXXFq (ORCPT
+        id S1728256AbeGXXI3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 19:05:46 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:45313 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728210AbeGXXFp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 19:05:45 -0400
-Received: by mail-lj1-f195.google.com with SMTP id q5-v6so4900609ljh.12
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Jul 2018 14:57:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Iyh5/l+9wD2eF4PbLjsGylOS3pcSnbgG5lxBOiJtv7M=;
-        b=DoGhjGEFLXH/VmUfT2DZ1uRIe7PGeONHlydjg7CmnJFONvkNtiTKzgd5tMI7gUqf66
-         B2135K0QjoIpT7qlEfkC6EHuVnSJsVc8LTL3/iTBCHye0QUbkr8sSF/u9avSveOGJ4xC
-         jdybmi9a2lphSZ43t/L8ze90Ue1jGkE8V8vwal7/58zdbNbOsGLOcRSjKhAnjUi/pHj6
-         HFSLTeU1SU7RvWg7LnO/yRABCKu6aafRoGfgXMTk8lRtjOfFxC5ZpwnrGICNxwKs2rCV
-         Q+F5ipIFNIAd4giMTjuZg0JZTpyxyV1VeEhpXu3FqQS9x5mqzYnYK1YmIFV9IWEgbgaA
-         w0dw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Iyh5/l+9wD2eF4PbLjsGylOS3pcSnbgG5lxBOiJtv7M=;
-        b=cj4rn6bAEdqpLvy0OVWE1hvrUfSQmkPXsZIo902qJK0+ShMZZfpue5zFsCMimPVoiK
-         CGGRZ3Hp1TXC0lyx+NguNJQLCVbtU/2c9FjWZnp58Ynx6BGIuBEfeNShvZRBfzCtMh6g
-         hg+YHt/29mVTh2LBWoezB7VTJMspL5aIG3PMYUSmr7ieeZuNnJJkeXIQ+hR0ev/FFF2C
-         bXdfWELM7eYpiXZvQ0TVsiJs5Xywjj5PBvy7uE/ABBGnPrmlQXCPfs1ApIPoG3wtLLv3
-         UODBZ6zOW5pp/o0Vw7X5ye4kUJ5H5qcsiscvHCyznbFPYbYvGfD7XXG1QAOoXZfLoaVu
-         MNKQ==
-X-Gm-Message-State: AOUpUlFWuGUNJO2lBXsT77Ua6N/XQM9DIGby91Wqszl5vIJs/U0mC0Jz
-        Y7VisbRt2840rDmQYHrfVZDiKddCQiCqlMjDWuHt
-X-Google-Smtp-Source: AAOMgpdb7EYD0HKAMDp4wXA/aRJUhIowwFyk9T6VyTaWD0NDUNnoh9X2Nlgyh4K3jWvQ/BpDPio0Qp8/t38D7wv2SwI=
-X-Received: by 2002:a2e:291c:: with SMTP id u28-v6mr12886349lje.70.1532469434080;
- Tue, 24 Jul 2018 14:57:14 -0700 (PDT)
+        Tue, 24 Jul 2018 19:08:29 -0400
+Received: from inva021.nxp.com ([92.121.34.21]:46280 "EHLO inva021.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727643AbeGXXI3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Jul 2018 19:08:29 -0400
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id F409F20005E;
+        Tue, 24 Jul 2018 23:59:56 +0200 (CEST)
+Received: from smtp.na-rdc02.nxp.com (inv1260.us-phx01.nxp.com [134.27.49.11])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 8ACF0200047;
+        Tue, 24 Jul 2018 23:59:56 +0200 (CEST)
+Received: from az84smr01.freescale.net (az84smr01.freescale.net [10.64.34.197])
+        by inv1260.na-rdc02.nxp.com (Postfix) with ESMTP id F16B040A70;
+        Tue, 24 Jul 2018 14:59:55 -0700 (MST)
+Received: from someleo.am.freescale.net (someleo.am.freescale.net [10.81.32.99])
+        by az84smr01.freescale.net (8.14.3/8.14.0) with ESMTP id w6OLxtdS027717;
+        Tue, 24 Jul 2018 14:59:55 -0700
+From:   Li Yang <leoyang.li@nxp.com>
+To:     arm@kernel.org
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        shawnguo@kernel.org, gregkh@linuxfoundation.org,
+        Roy Pledge <roy.pledge@nxp.com>
+Subject: [GIT PULL] updates to soc/fsl drivers for v4.19
+Date:   Tue, 24 Jul 2018 16:59:55 -0500
+Message-Id: <1532469595-12060-1-git-send-email-leoyang.li@nxp.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-References: <cover.1528304203.git.rgb@redhat.com> <dcd3d6e27c4beb8aec11805faeb4de7013132bd7.1528304204.git.rgb@redhat.com>
- <CAHC9VhRkH+UaZXfbsmfMsuCO7rQ48R5cBPU__00eG=pyO7AyCw@mail.gmail.com> <20180724193725.k27la4ubg2g2n4qm@madcap2.tricolour.ca>
-In-Reply-To: <20180724193725.k27la4ubg2g2n4qm@madcap2.tricolour.ca>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Tue, 24 Jul 2018 17:57:02 -0400
-Message-ID: <CAHC9VhTX99Gqnv5SQbm1_3KON7g2R83qSt=bM3KJibDnORBXzQ@mail.gmail.com>
-Subject: Re: [RFC PATCH ghak90 (was ghak32) V3 04/10] audit: add support for
- non-syscall auxiliary records
-To:     rgb@redhat.com
-Cc:     cgroups@vger.kernel.org, containers@lists.linux-foundation.org,
-        linux-api@vger.kernel.org, linux-audit@redhat.com,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, ebiederm@xmission.com, luto@kernel.org,
-        jlayton@redhat.com, carlos@redhat.com, dhowells@redhat.com,
-        viro@zeniv.linux.org.uk, simo@redhat.com,
-        Eric Paris <eparis@parisplace.org>, serge@hallyn.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 24, 2018 at 3:40 PM Richard Guy Briggs <rgb@redhat.com> wrote:
-> On 2018-07-20 18:14, Paul Moore wrote:
-> > On Wed, Jun 6, 2018 at 1:01 PM Richard Guy Briggs <rgb@redhat.com> wrote:
-> > > Standalone audit records have the timestamp and serial number generated
-> > > on the fly and as such are unique, making them standalone.  This new
-> > > function audit_alloc_local() generates a local audit context that will
-> > > be used only for a standalone record and its auxiliary record(s).  The
-> > > context is discarded immediately after the local associated records are
-> > > produced.
-> > >
-> > > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
-> > > ---
-> > >  include/linux/audit.h |  8 ++++++++
-> > >  kernel/auditsc.c      | 25 +++++++++++++++++++++++--
-> > >  2 files changed, 31 insertions(+), 2 deletions(-)
+Hi arm-soc maintainers,
 
-...
+Please merge the following tag to get updates to the soc/fsl drivers:
+  Moves DPAA2 DPIO driver from staging to fsl/soc
+  Adds multiple-pin support to QE gpio driver
 
-> > > +       struct audit_context *context;
-> > > +
-> > > +       if (!audit_ever_enabled)
-> > > +               return NULL; /* Return if not auditing. */
-> > > +
-> > > +       context = audit_alloc_context(AUDIT_RECORD_CONTEXT);
-> > > +       if (!context)
-> > > +               return NULL;
-> > > +       context->serial = audit_serial();
-> > > +       context->ctime = current_kernel_time64();
-> > > +       context->in_syscall = 1;
-> >
-> > Setting in_syscall is both interesting and a bit troubling, if for no
-> > other reason than I expect most (all?) callers to be in an interrupt
-> > context when audit_alloc_local() is called.  Setting in_syscall would
-> > appear to be conceptually in this case.  Can you help explain why this
-> > is the right thing to do, or necessary to ensure things are handled
-> > correctly?
->
-> I'll admit this is cheating a bit, but seemed harmless.  It is needed so
-> that auditsc_get_stamp() from audit_get_stamp() from audit_log_start()
-> doesn't bail on me without giving me its already assigned time and
-> serial values rather than generating a new one.  I did look to see if
-> there were any other undesireable side effects and found none, so I'm
-> tmepted to rename the ->in_syscall to something a bit more helpful.  I
-> could add a new audit_context structure member to make
-> auditsc_get_stamp() co-operative, but this seems wasteful and
-> unnecessary.
+Regards,
+Leo
 
-That's what I suspected.
 
-Let's look into renaming the "in_syscall" field, it borderline
-confusing now, and hijacking it for something which is very obviously
-not "in syscall" is A Very Bad Thing.
+The following changes since commit ce397d215ccd07b8ae3f71db689aedb85d56ab40:
 
--- 
-paul moore
-www.paul-moore.com
+  Linux 4.18-rc1 (2018-06-17 08:04:49 +0900)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/leo/linux.git tags/soc-fsl-for-4.19
+
+for you to fetch changes up to 4625210899095195600062ff8542f37a1c9f5dd4:
+
+  soc: fsl: cleanup Kconfig menu (2018-07-24 16:19:16 -0500)
+
+----------------------------------------------------------------
+Various updates to soc/fsl for 4.19
+
+Moves DPAA2 DPIO driver from staging to fsl/soc
+Adds multiple-pin support to QE gpio driver
+
+----------------------------------------------------------------
+Horia Geantă (1):
+      staging: fsl-dpaa2: eth: move generic FD defines to DPIO
+
+Joakim Tjernlund (1):
+      soc: fsl: qe: gpio: Add qe_gpio_set_multiple
+
+Li Yang (1):
+      soc: fsl: cleanup Kconfig menu
+
+Roy Pledge (3):
+      staging: fsl-mc: Move DPIO from staging to drivers/soc/fsl
+      staging: fsl-mc: Remove remaining files
+      soc: fsl: dpio: Convert DPIO documentation to .rst
+
+ .../networking/dpaa2/dpio-driver.rst               | 29 +++++++++++++++++++---
+ Documentation/networking/dpaa2/index.rst           |  1 +
+ MAINTAINERS                                        |  2 +-
+ drivers/crypto/caam/sg_sw_qm2.h                    |  2 +-
+ drivers/crypto/caam/sg_sw_sec4.h                   |  2 +-
+ drivers/soc/fsl/Kconfig                            | 15 ++++++++++-
+ drivers/soc/fsl/Makefile                           |  1 +
+ .../{staging/fsl-mc/bus => soc/fsl}/dpio/Makefile  |  0
+ .../fsl-mc/bus => soc/fsl}/dpio/dpio-cmd.h         |  0
+ .../fsl-mc/bus => soc/fsl}/dpio/dpio-driver.c      |  2 +-
+ .../fsl-mc/bus => soc/fsl}/dpio/dpio-service.c     |  2 +-
+ .../{staging/fsl-mc/bus => soc/fsl}/dpio/dpio.c    |  0
+ .../{staging/fsl-mc/bus => soc/fsl}/dpio/dpio.h    |  0
+ .../fsl-mc/bus => soc/fsl}/dpio/qbman-portal.c     |  2 +-
+ .../fsl-mc/bus => soc/fsl}/dpio/qbman-portal.h     |  2 +-
+ drivers/soc/fsl/qbman/Kconfig                      |  2 +-
+ drivers/soc/fsl/qe/Kconfig                         |  2 +-
+ drivers/soc/fsl/qe/gpio.c                          | 28 +++++++++++++++++++++
+ drivers/staging/Kconfig                            |  2 --
+ drivers/staging/Makefile                           |  1 -
+ drivers/staging/fsl-dpaa2/ethernet/dpaa2-eth.c     |  4 +--
+ drivers/staging/fsl-dpaa2/ethernet/dpaa2-eth.h     | 22 ++++++----------
+ drivers/staging/fsl-mc/Kconfig                     |  2 --
+ drivers/staging/fsl-mc/Makefile                    |  3 ---
+ drivers/staging/fsl-mc/bus/Kconfig                 | 16 ------------
+ drivers/staging/fsl-mc/bus/Makefile                |  9 -------
+ .../fsl-mc/include => include/soc/fsl}/dpaa2-fd.h  | 12 +++++++++
+ .../include => include/soc/fsl}/dpaa2-global.h     |  0
+ .../fsl-mc/include => include/soc/fsl}/dpaa2-io.h  |  0
+ 29 files changed, 100 insertions(+), 63 deletions(-)
+ rename drivers/staging/fsl-mc/bus/dpio/dpio-driver.txt => Documentation/networking/dpaa2/dpio-driver.rst (95%)
+ rename drivers/{staging/fsl-mc/bus => soc/fsl}/dpio/Makefile (100%)
+ rename drivers/{staging/fsl-mc/bus => soc/fsl}/dpio/dpio-cmd.h (100%)
+ rename drivers/{staging/fsl-mc/bus => soc/fsl}/dpio/dpio-driver.c (99%)
+ rename drivers/{staging/fsl-mc/bus => soc/fsl}/dpio/dpio-service.c (99%)
+ rename drivers/{staging/fsl-mc/bus => soc/fsl}/dpio/dpio.c (100%)
+ rename drivers/{staging/fsl-mc/bus => soc/fsl}/dpio/dpio.h (100%)
+ rename drivers/{staging/fsl-mc/bus => soc/fsl}/dpio/qbman-portal.c (99%)
+ rename drivers/{staging/fsl-mc/bus => soc/fsl}/dpio/qbman-portal.h (99%)
+ delete mode 100644 drivers/staging/fsl-mc/Kconfig
+ delete mode 100644 drivers/staging/fsl-mc/Makefile
+ delete mode 100644 drivers/staging/fsl-mc/bus/Kconfig
+ delete mode 100644 drivers/staging/fsl-mc/bus/Makefile
+ rename {drivers/staging/fsl-mc/include => include/soc/fsl}/dpaa2-fd.h (97%)
+ rename {drivers/staging/fsl-mc/include => include/soc/fsl}/dpaa2-global.h (100%)
+ rename {drivers/staging/fsl-mc/include => include/soc/fsl}/dpaa2-io.h (100%)
