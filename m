@@ -2,108 +2,112 @@ Return-Path: <SRS0=S+WB=KJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8065C6778F
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 18:56:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF0EBC67790
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 18:56:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 60C2D204EC
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 18:56:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 60C2D204EC
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=stgolabs.net
+	by mail.kernel.org (Postfix) with ESMTP id 969E0204EC
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 18:56:52 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="M5e7x0XS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 969E0204EC
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730136AbeGYUJa (ORCPT
+        id S1730661AbeGYUJr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 16:09:30 -0400
-Received: from smtp2.provo.novell.com ([137.65.250.81]:50946 "EHLO
-        smtp2.provo.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729354AbeGYUJa (ORCPT
-        <rfc822;groupwise-linux-kernel@vger.kernel.org:0:0>);
-        Wed, 25 Jul 2018 16:09:30 -0400
-Received: from linux-r8p5.suse.de (prv-ext-foundry1int.gns.novell.com [137.65.251.240])
-        by smtp2.provo.novell.com with ESMTP (TLS encrypted); Wed, 25 Jul 2018 12:56:27 -0600
-From:   Davidlohr Bueso <dave@stgolabs.net>
-To:     akpm@linux-foundation.org
-Cc:     jbaron@akamai.com, viro@zeniv.linux.org.uk,
-        linux-kernel@vger.kernel.org, dave@stgolabs.net,
-        Davidlohr Bueso <dbueso@suse.de>
-Subject: [PATCH -next] fs/epoll: simply CONFIG_NET_RX_BUSY_POLL ifdefery
-Date:   Wed, 25 Jul 2018 11:56:20 -0700
-Message-Id: <20180725185620.11020-1-dave@stgolabs.net>
-X-Mailer: git-send-email 2.16.4
+        Wed, 25 Jul 2018 16:09:47 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:34672 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729354AbeGYUJr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Jul 2018 16:09:47 -0400
+Received: by mail-wr1-f68.google.com with SMTP id c13-v6so8379673wrt.1;
+        Wed, 25 Jul 2018 11:56:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=oJxrfVe1uDDH5M0hxVnH68FAhp+MBnBnp10Zrsvodyc=;
+        b=M5e7x0XSdxNqjnmN6LUMXooAsU8zhICc4RvskDgSRAeGhqgpveZtGpzzZcRewaGGh7
+         Xu3O1zr7cQdm/qDe+Jwl3uOIfHjEO+VEwheM0Edjzof9O+LPA7GZw+4GdoW9wMAueiUt
+         h5ldmLRR1qAShaDjLwAHYd5Iu10Lv7EYPdsE2AITeG62jjmQ6Sy1gof9/rmsUpKuTs7B
+         yCzNtzt2V0lb5CK7ElS3dRbB9Je/P8vv6GustaCWYJ72WuSMSaOtYNEfvIAfFsqVeo2v
+         CWsgtc08YBaUqufdRvs5Q4ZP9UXEPY/mvON2IikeiHghJbDQd3NlrinQTEauMSURz9rl
+         2Ypg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=oJxrfVe1uDDH5M0hxVnH68FAhp+MBnBnp10Zrsvodyc=;
+        b=WGyEVUAFbAUeUHhGWhEcy9y4YQ3tZelTQ5FhKY72x185dszmGniUnMfp6rTQhsukIl
+         o7qyqc1ISwOJBe2aSDSHmKKjBxbg02G8SYDU/NjnNaP27bFEiXHqmLqtQzvLUnEVCpQS
+         tD1i/pbsAVwcrXHeTL5r+w9XXY7leQG8FbPOUotKz2mtCurrVYzTVmSYvtAgAuXfaskS
+         FM6ahRZ7rMdpaThPkU8/BsgPeZsXfx7HCz3WBmcdyODP6cyy7toza79gqQxhtKcsGzlo
+         jGIicthu2GaAie67tduFyjPmBkWw0WlCzm6G4qC3Msy9k/VaODZOwxoLF1uDlOKNtbhp
+         9pSQ==
+X-Gm-Message-State: AOUpUlH71ftnVcpuXktGWctw6W/2N/7SK+4Gsf1Sv6SxqPs8Z6kkpbj3
+        033qn09z3v4yQ6H7nFgLA64=
+X-Google-Smtp-Source: AAOMgpeP6bEs334X1wkS5Nt/Qol6vIeWWDseyaJfDhAgRpjC9zufH0Y57tsyBCp4pb9wi9WUe90D4w==
+X-Received: by 2002:adf:fc86:: with SMTP id g6-v6mr15061829wrr.216.1532545007954;
+        Wed, 25 Jul 2018 11:56:47 -0700 (PDT)
+Received: from euri.wifirst.net (eth-west-pareq2-46-193-2-21.wb.wifirst.net. [46.193.2.21])
+        by smtp.googlemail.com with ESMTPSA id w8-v6sm14912243wrp.72.2018.07.25.11.56.46
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 25 Jul 2018 11:56:47 -0700 (PDT)
+From:   Varsha Rao <rvarsha016@gmail.com>
+To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+        Nicholas Mc Guire <der.herr@hofr.at>,
+        Arend van Spriel <arend.vanspriel@broadcom.com>,
+        Franky Lin <franky.lin@broadcom.com>,
+        Hante Meuleman <hante.meuleman@broadcom.com>,
+        Chi-Hsien Lin <chi-hsien.lin@cypress.com>,
+        Wright Feng <wright.feng@cypress.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        linux-wireless@vger.kernel.org,
+        brcm80211-dev-list.pdl@broadcom.com,
+        brcm80211-dev-list@cypress.com, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     Varsha Rao <rvarsha016@gmail.com>
+Subject: [PATCH] net: wireless: brcmsmac: Remove extra parentheses
+Date:   Wed, 25 Jul 2018 20:56:22 +0200
+Message-Id: <20180725185625.4220-1-rvarsha016@gmail.com>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-... 'tis easier on the eye.
+Remove the unnecessary parentheses to fix the clang warning of
+extraneous parentheses.
 
-Signed-off-by: Davidlohr Bueso <dbueso@suse.de>
+Signed-off-by: Varsha Rao <rvarsha016@gmail.com>
 ---
- fs/eventpoll.c | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+ drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/fs/eventpoll.c b/fs/eventpoll.c
-index 1b1abc461fc0..0ab82d0d4e02 100644
---- a/fs/eventpoll.c
-+++ b/fs/eventpoll.c
-@@ -391,7 +391,6 @@ static bool ep_busy_loop_end(void *p, unsigned long start_time)
+diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c b/drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c
+index 1a187557982e..4deba3075083 100644
+--- a/drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c
++++ b/drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c
+@@ -25453,12 +25453,12 @@ void wlc_phy_cal_perical_nphy_run(struct brcms_phy *pi, u8 caltype)
+ 			(pi->cal_type_override ==
+ 			 PHY_PERICAL_FULL) ? true : false;
  
- 	return ep_events_available(ep) || busy_loop_timeout(start_time);
- }
--#endif /* CONFIG_NET_RX_BUSY_POLL */
+-	if ((pi->mphase_cal_phase_id > MPHASE_CAL_STATE_INIT)) {
++	if (pi->mphase_cal_phase_id > MPHASE_CAL_STATE_INIT) {
+ 		if (pi->nphy_txiqlocal_chanspec != pi->radio_chanspec)
+ 			wlc_phy_cal_perical_mphase_restart(pi);
+ 	}
  
- /*
-  * Busy poll if globally on and supporting sockets found && no events,
-@@ -401,20 +400,16 @@ static bool ep_busy_loop_end(void *p, unsigned long start_time)
-  */
- static void ep_busy_loop(struct eventpoll *ep, int nonblock)
- {
--#ifdef CONFIG_NET_RX_BUSY_POLL
- 	unsigned int napi_id = READ_ONCE(ep->napi_id);
+-	if ((pi->mphase_cal_phase_id == MPHASE_CAL_STATE_RXCAL))
++	if (pi->mphase_cal_phase_id == MPHASE_CAL_STATE_RXCAL)
+ 		wlapi_bmac_write_shm(pi->sh->physhim, M_CTS_DURATION, 10000);
  
- 	if ((napi_id >= MIN_NAPI_ID) && net_busy_loop_on())
- 		napi_busy_loop(napi_id, nonblock ? NULL : ep_busy_loop_end, ep);
--#endif
- }
- 
- static inline void ep_reset_busy_poll_napi_id(struct eventpoll *ep)
- {
--#ifdef CONFIG_NET_RX_BUSY_POLL
- 	if (ep->napi_id)
- 		ep->napi_id = 0;
--#endif
- }
- 
- /*
-@@ -422,7 +417,6 @@ static inline void ep_reset_busy_poll_napi_id(struct eventpoll *ep)
-  */
- static inline void ep_set_busy_poll_napi_id(struct epitem *epi)
- {
--#ifdef CONFIG_NET_RX_BUSY_POLL
- 	struct eventpoll *ep;
- 	unsigned int napi_id;
- 	struct socket *sock;
-@@ -452,9 +446,15 @@ static inline void ep_set_busy_poll_napi_id(struct epitem *epi)
- 
- 	/* record NAPI ID for use in next busy poll */
- 	ep->napi_id = napi_id;
--#endif
- }
- 
-+#else
-+#define ep_busy_loop(ep, nonblock)		do { } while (0)
-+#define ep_reset_busy_poll_napi_id(ep)		do { } while (0)
-+#define ep_set_busy_poll_napi_id(epi)		do { } while (0)
-+
-+#endif /* CONFIG_NET_RX_BUSY_POLL */
-+
- /**
-  * ep_call_nested - Perform a bound (possibly) nested call, by checking
-  *                  that the recursion limit is not exceeded, and that
+ 	wlapi_suspend_mac_and_wait(pi->sh->physhim);
 -- 
-2.16.4
+2.17.0
 
