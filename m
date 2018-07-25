@@ -2,220 +2,221 @@ Return-Path: <SRS0=S+WB=KJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D22AC67790
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 18:30:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A74D5C67790
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 18:31:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D567720843
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 18:30:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 46EF620843
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 18:31:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kdab.com header.i=@kdab.com header.b="uSoAwf75"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D567720843
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kdab.com
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="IifeVxYt"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 46EF620843
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730793AbeGYTnO (ORCPT
+        id S1730965AbeGYToj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 15:43:14 -0400
-Received: from mail.kdab.com ([176.9.126.58]:22867 "EHLO mail.kdab.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729939AbeGYTnO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Jul 2018 15:43:14 -0400
-X-Greylist: delayed 415 seconds by postgrey-1.27 at vger.kernel.org; Wed, 25 Jul 2018 15:43:12 EDT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kdab.com; h=
- content-type:content-type:mime-version:references:in-reply-to
- :organization:message-id:date:date:subject:subject:from:from; s=
- dkim; t=1532543005; x=1533407006; bh=Y8O72nL386ShfejRqpyXSgnttzK
- 7GmWbIQH+Rk+e6sA=; b=uSoAwf75auc8oCJPFxj0rA7aGKfgAjf0asuWs5/wQbG
- +iSClLg4beYwmqawGPDWM2LHGqu/TH0Ys0PZMizvwM6Ivepsec1KkUo0zv0PgfAv
- pKa1bwW33h4a0WRc1cdti1tY1RSuS7KDnmrgsYYwG8J/sXf7idAjegCJN5oovGGw
- =
-X-Virus-Scanned: amavisd-new at kdab.com
-From:   Milian Wolff <milian.wolff@kdab.com>
-To:     Jiri Olsa <jolsa@redhat.com>
-Cc:     Sandipan Das <sandipan@linux.ibm.com>, acme@kernel.org,
-        linux-kernel@vger.kernel.org, namhyung@kernel.org,
-        ravi.bangoria@linux.ibm.com, naveen.n.rao@linux.vnet.ibm.com
-Subject: Re: [PATCH] perf script: Show correct offsets for DWARF-based
- unwinding
-Date:   Wed, 25 Jul 2018 20:23:18 +0200
-Message-ID: <1962880.1xTuyOsKT9@agathebauer>
-Organization: KDAB
-In-Reply-To: <20180709142507.GA7917@krava>
-References: <20180703120555.32971-1-sandipan@linux.ibm.com>
- <20180709142507.GA7917@krava>
+        Wed, 25 Jul 2018 15:44:39 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:46415 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730048AbeGYToj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Jul 2018 15:44:39 -0400
+Received: by mail-pf1-f195.google.com with SMTP id u24-v6so1988282pfn.13
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Jul 2018 11:31:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=m7F+4MkbXWX1uwgpQf0vD/8WFCQ/oNlerITjk70RjiU=;
+        b=IifeVxYtBbL/mY2O4GjzhWyRj0lZMGIRFWsIBoq3BGBUsAhckyCu1Mt4MmfdQA9nuk
+         0hWCC0Xb7YJAtm7W7jK6Crs6f4+oPUcr1HkK/WqEe5oUBMH5kGby9yVXAS1cFOquApv9
+         ZWNDfravOEl7dGXWOGWQv/wCtzeH9DtWPIhnk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=m7F+4MkbXWX1uwgpQf0vD/8WFCQ/oNlerITjk70RjiU=;
+        b=Yujj2dURm1OGzrFnooNAXN6KUjo/pB4LDOClAIkziqFZu4kb/fOfIqjwr+yYfC5ED3
+         haxmyZohG+zaZTGluk52wgPbpQY9RdFYwxxWyPH9xI00hSO0bDrjzlDT7XFdRICd3gc7
+         gRdC+6ygm9hfYd4pT9W/Q6qiQqB03uOoAtLX11VyeRS7e2/L3vHf70CnWWohUkE5sBRv
+         LslrXKhR99CNKE8XjjRuV2e53httuH0o6qqrhgUalLZoX+dPc/Od3vOU1VRdsL79IoDG
+         yOxFE6ttTkrqwlllAPzrMJxv8sZExk9hNuNnR+VIbG2pX4Hkl6+6MdZ1M0CSMc4qNkOt
+         PPvQ==
+X-Gm-Message-State: AOUpUlHJuko3aEI2Arz6A2peO6vonZ0rUfbGeMg+35Pm4TyMu2IyiKXH
+        dBcEQ8aUndiymZKeC8j6pLK59A==
+X-Google-Smtp-Source: AAOMgpcbc2FVeVpN7wHgMMbg3wSVHwguAVqYX9Tu5qwgMUnLb+LxGISytaA9lo/gGQ1jEphcV9ZvRQ==
+X-Received: by 2002:a63:5421:: with SMTP id i33-v6mr21848048pgb.417.1532543506167;
+        Wed, 25 Jul 2018 11:31:46 -0700 (PDT)
+Received: from localhost ([2620:0:1000:1501:8e2d:4727:1211:622])
+        by smtp.gmail.com with ESMTPSA id o3-v6sm18001377pgv.53.2018.07.25.11.31.45
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 25 Jul 2018 11:31:45 -0700 (PDT)
+Date:   Wed, 25 Jul 2018 11:31:44 -0700
+From:   Matthias Kaehlcke <mka@chromium.org>
+To:     Balakrishna Godavarthi <bgodavar@codeaurora.org>
+Cc:     marcel@holtmann.org, johan.hedberg@gmail.com,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-bluetooth@vger.kernel.org, thierry.escande@linaro.org,
+        rtatiya@codeaurora.org, hemantg@codeaurora.org,
+        linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH v10 7/7] Bluetooth: hci_qca: Add support for Qualcomm
+ Bluetooth chip wcn3990
+Message-ID: <20180725183144.GQ129942@google.com>
+References: <20180720133243.6851-1-bgodavar@codeaurora.org>
+ <20180720133243.6851-8-bgodavar@codeaurora.org>
+ <20180723195441.GM129942@google.com>
+ <81c324ee9104508cf5c862de3f697e4c@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="nextPart4551067.DBdu5eTDgD";
- micalg="sha256"; protocol="application/pkcs7-signature"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <81c324ee9104508cf5c862de3f697e4c@codeaurora.org>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---nextPart4551067.DBdu5eTDgD
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
-
-On Montag, 9. Juli 2018 16:25:07 CEST Jiri Olsa wrote:
-> On Tue, Jul 03, 2018 at 05:35:55PM +0530, Sandipan Das wrote:
+On Tue, Jul 24, 2018 at 09:25:16PM +0530, Balakrishna Godavarthi wrote:
+> Hi Matthias,
 > 
-> SNIP
-> 
-> > After:
-> >   # perf report --stdio --no-children -s sym,srcline -g address
-> >   
-> >   # Samples: 1  of event 'probe_libc:inet_pton'
-> >   # Event count (approx.): 1
-> >   #
-> >   # Overhead  Symbol                Source:Line
-> >   # ........  ....................  ...........
-> >   #
-> >   
-> >      100.00%  [.] __GI___inet_pton  inet_pton.c
-> >      
-> >               ---gaih_inet.constprop.7 getaddrinfo.c:537
-> >               
-> >                  getaddrinfo getaddrinfo.c:2304
-> >                  main ping.c:519
-> >                  generic_start_main.isra.0 libc-start.c:308
-> >                  __libc_start_main libc-start.c:102
-> >   
-> >   ...
-> >   
-> >   # perf script -F comm,ip,sym,symoff,srcline,dso
-> >   
-> >   ping
-> >   
-> >               7fffb38aaf28 __GI___inet_pton+0x8 (/usr/lib64/libc-2.26.so)
-> >     
-> >     inet_pton.c:68
-> >     
-> >               7fffb385fa53 gaih_inet.constprop.7+0xf43
-> >               (/usr/lib64/libc-2.26.so)
-> >     
-> >     getaddrinfo.c:537
-> >     
-> >               7fffb38605b3 getaddrinfo+0x163 (/usr/lib64/libc-2.26.so)
-> >     
-> >     getaddrinfo.c:2304
-> >     
-> >                  130782d6f main+0x3df (/usr/bin/ping)
-> >     
-> >     ping.c:519
-> >     
-> >               7fffb377369f generic_start_main.isra.0+0x13f
-> >               (/usr/lib64/libc-2.26.so)
-> >     
-> >     libc-start.c:308
-> >     
-> >               7fffb3773897 __libc_start_main+0xb7
-> >               (/usr/lib64/libc-2.26.so)
-> >     
-> >     libc-start.c:102
+> On 2018-07-24 01:24, Matthias Kaehlcke wrote:
+> > On Fri, Jul 20, 2018 at 07:02:43PM +0530, Balakrishna Godavarthi wrote:
+> > > +	 * sometimes we will face communication synchronization issues,
+> > > +	 * like reading version command timeouts. In which HCI_SETUP fails,
+> > > +	 * to overcome these issues, we try to communicate by performing an
+> > > +	 * COLD power OFF and ON.
+> > > +	 */
+> > > +	for (i = 1; i <= 10 && ret; i++) {
 > > 
-> > Fixes: 67540759151a ("perf unwind: Use addr_location::addr instead of ip
-> > for entries") Signed-off-by: Sandipan Das <sandipan@linux.ibm.com>
+> > Is it really that bad that more than say 3 iterations might be needed?
+> > 
+> [Bala]: will restrict to 3 iterations.
+
+Is 3x expected to be enough to 'guarantee' as successful
+initialization? Just wondered about the 10x since it suddendly changed
+from 1x. What is the failure rate without retries?
+
+Could you provide more information about the 'communication
+synchronization issues'? Is the root cause understood? Maybe there is
+a better way than retries.
+
+> > > +static void qca_regulator_get_current(struct device *dev,
+> > > +				      struct qca_vreg *vregs)
+> > > +{
+> > > +	char prop_name[32]; /* 32 is max size of property name */
+> > > +
+> > > +	/* We have different platforms where the load value is controlled
+> > > +	 * via PMIC controllers. In such cases load required to power ON
+> > > +	 * Bluetooth chips are defined in the PMIC. We have option to set
+> > > +	 * operation mode like high or low power modes.
+> > > +	 * We do have some platforms where driver need to enable the load
+> > > for
+> > > +	 * WCN3990. Based on the current property value defined for the
+> > > +	 * regulators, driver will decide the regulator output load.
+> > > +	 * If the current property for the regulator is defined in the dts
+> > > +	 * we will read from dts tree, else from the default load values.
+> > > +	 */
+> > 
+> > Let's make sure we all really understand why this is needed. You
+> > mentioned RPMh regulators earlier and said a special value of 1uA
+> > would be needed to enable high power mode. Later when I pointed to the
+> > RPMh regulator code you agreed that this special value wouldn't make
+> > any difference.
+> > 
+> > Now the defaults are higher:
+> > 
+> [Bala]: today i got the info from the power teams here, currently in the
+> downstream what we have is different wrt to the
+>         patch "https://patchwork.kernel.org/patch/10524299/" by David
+> Collins.
+>         prior to his patch we have different architecture where 1uA will
+> change the mode to HPM mode.
+>         which is not valid, so 1uA will not work any more. we have go with
+> actual current values.
+
+Ok, in any case downstream drivers shouldn't impact the design of
+upstream drivers. If there are incompatibilities the BT driver needs
+to be hacked in the downstream tree.
+
+>         coming back to reading current values from dts. we have reason for
+> it.
+>         let us assume that later stages of wcn3990 if we have less current
+> values than default values.
+>         instead of updating the driver again, we can assign the current no
+> in the dts, which we will read.
 > 
-> looks good to me, Milian?
+>         This is how it works.
 > 
-> Acked-by: Jiri Olsa <jolsa@kernel.org>
+>         if(current value for the reg is declared in dts tree)
+>               consider the current value from the dts.
+>         else
+>            go with default value.
+> 
+>       pls let me know if you any queries.
 
-Sorry for the delay, I was on vacation.
+If I understand correctly you describe a hypothetical situation of a
+future wcn3990 variant having lower power requirements. I'd say let's
+deal with this when these chips actually exist and need to be
+supported by Linux. As of now it seems there is no need for current
+limits in the DT.
 
-The above looks somewhat strange to me - why is there no `(inlined)` suffix 
-visible anymore?
+> > > +	if (device_property_read_bool(dev, prop_name))
+> > > +		device_property_read_u32(dev, prop_name, &vregs->load_uA);
+> > 
+> > Why device_property_read_bool()?
+> > 
+> [Bala]: if the current prop is present we read from dts. else we go with
+> default current no's.
+>         if block  is used to check whether the property is present in dts or
+> not.
+>         this is required because before calling _regualtor_get_current() we
+> hold the default current in the vregs[].
+>         if we skip the read bool here, if the current property is not
+> present then the function call of device_property_read_u32() will assign
+> zero the vregs[].
+>         so we miss the default current values.
+> 
+>         this how it work if we miss read_bool check
+> 
+>         //vregs hold default current
+>          device_property_read_u32(dev, prop_name, &vregs->load_uA);
+>          the above will read the current property value from dts store in
+> the vregs.. if the property is missing in dts it will store zero.
 
-Also, I can't test this patch locally, since - even without this patch - 
-inline frame resolution with perf seems to be completely broken for me. It 
-doesn't seem to be a perf regression - going back in time doesn't resole this 
-- but rather of its dependencies or even of the DWARF emitted by the compilers 
-I have available to test...
+Where does of_property_read_u32() set the value to zero when the
+property does not exist?
 
-Cheers
+A simple test in a probe function:
 
--- 
-Milian Wolff | milian.wolff@kdab.com | Senior Software Engineer
-KDAB (Deutschland) GmbH, a KDAB Group company
-Tel: +49-30-521325470
-KDAB - The Qt, C++ and OpenGL Experts
---nextPart4551067.DBdu5eTDgD
-Content-Type: application/pkcs7-signature; name="smime.p7s"
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Transfer-Encoding: base64
+{
+	u32 v = 123;
+	of_property_read_u32(node, "no-such-property", &v);
+	printk("DBG: v = %d\n", v);
+}
 
-MIAGCSqGSIb3DQEHAqCAMIACAQExDzANBglghkgBZQMEAgEFADCABgkqhkiG9w0BBwEAAKCCDEIw
-ggXmMIIDzqADAgECAhBqm+E4O/8ra58B1dm4p1JWMA0GCSqGSIb3DQEBDAUAMIGFMQswCQYDVQQG
-EwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxmb3JkMRowGAYD
-VQQKExFDT01PRE8gQ0EgTGltaXRlZDErMCkGA1UEAxMiQ09NT0RPIFJTQSBDZXJ0aWZpY2F0aW9u
-IEF1dGhvcml0eTAeFw0xMzAxMTAwMDAwMDBaFw0yODAxMDkyMzU5NTlaMIGXMQswCQYDVQQGEwJH
-QjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxmb3JkMRowGAYDVQQK
-ExFDT01PRE8gQ0EgTGltaXRlZDE9MDsGA1UEAxM0Q09NT0RPIFJTQSBDbGllbnQgQXV0aGVudGlj
-YXRpb24gYW5kIFNlY3VyZSBFbWFpbCBDQTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEB
-AL6znlesKHZ1QBbHOAOY08YYdiFQ8yV5C0y1oNF9Olg+nKcxLqf2NHbZhGra0D00SOTq9bus3/mx
-gUsg/Wh/eXQ0pnp8tZ8XZWAnlyKMpjL+qUByRjXCA6RQyDMqVaVUkbIr5SU0RDX/kSsKwer3H1pT
-/HUrBN0X8sKtPTdGX8XAWt/VdMLBrZBlgvnkCos+KQWWCo63OTTqRvaq8aWccm+KOMjTcE6s2mj6
-RkalweyDI7X+7U5lNo6jzC8RTXtVV4/Vwdax720YpMPJQaDaElmOupyTf1Qib+cpukNJnQmwygjD
-8m046DQkLnpXNCAGjuJy1F5NATksUsbfJAr7FLUCAwEAAaOCATwwggE4MB8GA1UdIwQYMBaAFLuv
-fgI9+qbxPISOre44mOzZMjLUMB0GA1UdDgQWBBSCr2yM+MX+lmF86B89K3FIXsSLwDAOBgNVHQ8B
-Af8EBAMCAYYwEgYDVR0TAQH/BAgwBgEB/wIBADARBgNVHSAECjAIMAYGBFUdIAAwTAYDVR0fBEUw
-QzBBoD+gPYY7aHR0cDovL2NybC5jb21vZG9jYS5jb20vQ09NT0RPUlNBQ2VydGlmaWNhdGlvbkF1
-dGhvcml0eS5jcmwwcQYIKwYBBQUHAQEEZTBjMDsGCCsGAQUFBzAChi9odHRwOi8vY3J0LmNvbW9k
-b2NhLmNvbS9DT01PRE9SU0FBZGRUcnVzdENBLmNydDAkBggrBgEFBQcwAYYYaHR0cDovL29jc3Au
-Y29tb2RvY2EuY29tMA0GCSqGSIb3DQEBDAUAA4ICAQB4XLKBKDRPPO5fVs6fl1bsj6JrF/bz9kkI
-BtTYLzXN30D+03Hj6OxCDBEaIeNmsBhrJmuubvyE7HtoSmR809AgcYboW+rcTNZ/8u/Hv+GTrNI/
-AhqX2/kiQNxmgUPt/eJPs92Qclj0HnVyy9TnSvGkSDU7I5Px+TbO+88G4zipA2psZaWeEykgzClZ
-lPz1FjTCkk77ZXp5cQYYexE6zeeN4/0OqqoAloFrjAF4o50YJafX8mnahjp3I2Y2mkjhk0xQfhNq
-bzlLWPoT3m7j7U26u7zg6swjOq8hITYc3/np5tM5aVyu6t99p17bTbY7+1RTWBviN9YJzK8HxzOb
-XYWBf/L+VGOYNsQDTxAk0Hbvb1j6KjUhg7fO294F29QIhhmiNOr84JHoy+fNLpfvYc/Q9EtFOI5I
-SYgOxLk3nD/whbUe9rmEQXLp8MB933Ij474gwwCPUpwv9mj2PMnXoc7mbrS22XUSeTwxCTP9bcmU
-dp4jmIoWfhQm7X9w/Zgddg+JZ/YnIHOwsGsaTUgj7fIvxqith7DoJC91WJ8Lce3CVJqb1XWeKIJ8
-4F7YLXZN0oa7TktYgDdmQVxYkZo1c5noaDKH9Oq9cbm/vOYRUM1cWcef20Wkyk5S/GFyyPJwG0fR
-1nRas3DqAf4cXxMiEKcff7PNa4M3RGTqH0pWR8p6EjCCBlQwggU8oAMCAQICEAf6KCF9+1doL2oE
-OTPysLwwDQYJKoZIhvcNAQELBQAwgZcxCzAJBgNVBAYTAkdCMRswGQYDVQQIExJHcmVhdGVyIE1h
-bmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBDQSBMaW1pdGVkMT0w
-OwYDVQQDEzRDT01PRE8gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2VjdXJlIEVtYWls
-IENBMB4XDTE3MDUyMzAwMDAwMFoXDTIwMDUyMjIzNTk1OVowggFZMQswCQYDVQQGEwJTRTEPMA0G
-A1UEERMGNjgzIDMxMRIwEAYDVQQIEwlWYWVybWxhbmQxEDAOBgNVBAcTB0hhZ2ZvcnMxGDAWBgNV
-BAkTD05vcnJpbmdzIHZhZWcgMjEPMA0GA1UEEhMGQm94IDMwMSYwJAYDVQQKDB1LbGFyw6RsdmRh
-bGVucyBEYXRha29uc3VsdCBBQjEdMBsGA1UECxMUQSBLREFCIEdyb3VwIENvbXBhbnkxQzBBBgNV
-BAsMOklzc3VlZCB0aHJvdWdoIEtsYXLDpGx2ZGFsZW5zIERhdGFrb25zdWx0IEFCIEUtUEtJIE1h
-bmFnZXIxHzAdBgNVBAsTFkNvcnBvcmF0ZSBTZWN1cmUgRW1haWwxFTATBgNVBAMTDE1pbGlhbiBX
-b2xmZjEkMCIGCSqGSIb3DQEJARYVbWlsaWFuLndvbGZmQGtkYWIuY29tMIIBIjANBgkqhkiG9w0B
-AQEFAAOCAQ8AMIIBCgKCAQEAxrzfNBVvRbiAknuTBXuQnNm9sLIFLo0vbPB6kswk78A3tA++Zn5c
-lQUHhGlQq1cdYxagnUpqwvG3Sod15mPSOLkAPf/mabLN7p+lFbRaUP+97ZkTZtvb4BCC3osIEFI4
-G393OSFWqc2qmIPE/SwSASbAA20Fcaa2M6P1lhOk/ttUh2jIurTPF0wUycIA7lBddrOgaOA8e2m6
-iLTNHtlrfRbBaUX91D5ebY+UWmIjXSQ9+CtutMzBkwnF0rZKririvOkklg9VzEGNQVHrQfDF2s/U
-pOtmtuVSwElauGT/KALyCFuIrYC1pmaKH8S1xODJqiRaf6jH8E+KQzKjyM/ErwIDAQABo4IB1TCC
-AdEwHwYDVR0jBBgwFoAUgq9sjPjF/pZhfOgfPStxSF7Ei8AwHQYDVR0OBBYEFN+m99RtIuA1bSdw
-6b1brOX7X3AJMA4GA1UdDwEB/wQEAwIFoDAMBgNVHRMBAf8EAjAAMB0GA1UdJQQWMBQGCCsGAQUF
-BwMEBggrBgEFBQcDAjBGBgNVHSAEPzA9MDsGDCsGAQQBsjEBAgEDBTArMCkGCCsGAQUFBwIBFh1o
-dHRwczovL3NlY3VyZS5jb21vZG8ubmV0L0NQUzBaBgNVHR8EUzBRME+gTaBLhklodHRwOi8vY3Js
-LmNvbW9kb2NhLmNvbS9DT01PRE9SU0FDbGllbnRBdXRoZW50aWNhdGlvbmFuZFNlY3VyZUVtYWls
-Q0EuY3JsMIGLBggrBgEFBQcBAQR/MH0wVQYIKwYBBQUHMAKGSWh0dHA6Ly9jcnQuY29tb2RvY2Eu
-Y29tL0NPTU9ET1JTQUNsaWVudEF1dGhlbnRpY2F0aW9uYW5kU2VjdXJlRW1haWxDQS5jcnQwJAYI
-KwYBBQUHMAGGGGh0dHA6Ly9vY3NwLmNvbW9kb2NhLmNvbTAgBgNVHREEGTAXgRVtaWxpYW4ud29s
-ZmZAa2RhYi5jb20wDQYJKoZIhvcNAQELBQADggEBABf47LSJADqH+ow9INv3QM1NC/qq2bjxGvsZ
-68iD11VEUAFlsYfsVTgQqUirwPVTYenXtwVBELHZyywsui1JxL7HKQetLQegDDP/RyfjReVaWxhy
-3OpuItsgLVbru9QVgPifnoBFPtfZcwjeJDmeSbLT8oj4Rd0KYBOIve7WKvsfNPsNwfbLwY2zILkE
-LjxZcVi2AwZHDyab+dzL/3YcLuJj1lSawBGn7ilpcdZydlv4aye51pD/MemLIYLcylt+ImrmjnTV
-y+QlAHRF3s5FE8yAr+W1MBD/1bKZCSgFt8VQoAlz3hiQh8QqZp4Zl8WuVL4+mP/mT6VDEWgq/0Bo
-cukxggJuMIICagIBATCBrDCBlzELMAkGA1UEBhMCR0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hl
-c3RlcjEQMA4GA1UEBxMHU2FsZm9yZDEaMBgGA1UEChMRQ09NT0RPIENBIExpbWl0ZWQxPTA7BgNV
-BAMTNENPTU9ETyBSU0EgQ2xpZW50IEF1dGhlbnRpY2F0aW9uIGFuZCBTZWN1cmUgRW1haWwgQ0EC
-EAf6KCF9+1doL2oEOTPysLwwDQYJYIZIAWUDBAIBBQCggZMwGAYJKoZIhvcNAQkDMQsGCSqGSIb3
-DQEHATAcBgkqhkiG9w0BCQUxDxcNMTgwNzI1MTgyMzE4WjAoBgkqhkiG9w0BCQ8xGzAZMAsGCWCG
-SAFlAwQBAjAKBggqhkiG9w0DBzAvBgkqhkiG9w0BCQQxIgQg3vB6JQ9JiFeAxYDr+GOAftIX8Wfe
-nTkpIHbx/F9I74MwDQYJKoZIhvcNAQEBBQAEggEAkeMgwUnQqy6VxlAZg9+bBCZwYC3eKQWf2IaB
-fhO3waJAR4tn20Dh9WFfUAuQljavfkmnSMyVw5emySc4Xxe2WQnCI9k/7hK0ZFN3IaZQrxdF7arg
-BE2ThTrb8FNi8f/fHT6ceuupWrA+Gg85R4aIGUR7zraIyiM7ztdFlAm6loZjGf29unnm7CM3nTEq
-AsKsUIn/NemCsEUE2rQ7XEDNfwfAXrJ+z1D8uuVBMwk9hEz3jyQNkSLvUVnpGN+tSDEyXrvOhvKz
-NSfKFhoD75bIInz201V2AYu+pphf6NDuS8KRUExQNLt0eu92nC6vhbsj2z8jsARGb9SxcnoDb5YX
-kQAAAAAAAA==
+[    7.598366] DBG: v = 123
 
+And looking at the code, of_property_read_u32() ends up in a call to
+of_property_read_variable_u32_array():
 
---nextPart4551067.DBdu5eTDgD--
+int of_property_read_variable_u32_array(const struct device_node *np,
+			       const char *propname, u32 *out_values,
+			       size_t sz_min, size_t sz_max)
+{
+	size_t sz, count;
+	const __be32 *val = of_find_property_value_of_size(np, propname,
+						(sz_min * sizeof(*out_values)),
+						(sz_max * sizeof(*out_values)),
+						&sz);
 
+	if (IS_ERR(val))
+		return PTR_ERR(val);
 
+	...
+}
+
+i.e. 'out_values' is not modified when the property does not exit.
