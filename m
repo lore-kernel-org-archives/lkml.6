@@ -2,244 +2,166 @@ Return-Path: <SRS0=S+WB=KJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E50D3C67790
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 12:17:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E26E7C6778F
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 12:19:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9555F20844
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 12:17:48 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=akkea.ca header.i=@akkea.ca header.b="NQe8ztCw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9555F20844
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=akkea.ca
+	by mail.kernel.org (Postfix) with ESMTP id 8C5EE20844
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 12:19:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C5EE20844
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729014AbeGYN3L (ORCPT
+        id S1728989AbeGYNbP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 09:29:11 -0400
-Received: from node.akkea.ca ([192.155.83.177]:46202 "EHLO node.akkea.ca"
+        Wed, 25 Jul 2018 09:31:15 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:33307 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728775AbeGYN3L (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Jul 2018 09:29:11 -0400
-Received: by node.akkea.ca (Postfix, from userid 33)
-        id 50C7D54204A; Wed, 25 Jul 2018 12:17:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=akkea.ca; s=mail;
-        t=1532521065; bh=7bXOIgBVjqc8eRTMJ5DU9zGv9XOWLDmL316TwKNjgRc=;
-        h=To:Subject:Date:From:Cc:In-Reply-To:References;
-        b=NQe8ztCwWcL74vzDc4kDNXLYCWTraFQTvf/4xjWC4aI3+t/ZH6Y3EfXrZiC8kiSCn
-         gwjjTSPZ1n25oBMEAV094SZlvNQE626FtZLlLnRRCSNPsAFd9RtnoC6KQdjhXC+nm7
-         Uolb4vfmUV60E3++tAM7qp7P5vei92NXM+76ldlw=
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH] bq25890_charger.c : add the BQ25896 part
-X-PHP-Originating-Script: 1000:rcube.php
+        id S1728901AbeGYNbP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Jul 2018 09:31:15 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 103FD207A8; Wed, 25 Jul 2018 14:19:47 +0200 (CEST)
+Received: from localhost (AAubervilliers-681-1-78-122.w90-88.abo.wanadoo.fr [90.88.20.122])
+        by mail.bootlin.com (Postfix) with ESMTPSA id CF26F206A6;
+        Wed, 25 Jul 2018 14:19:46 +0200 (CEST)
+Date:   Wed, 25 Jul 2018 14:19:47 +0200
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Icenowy Zheng <icenowy@aosc.io>
+Cc:     Chen-Yu Tsai <wens@csie.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>
+Subject: Re: [linux-sunxi] Re: [PATCH 3/3] arm64: allwinner: dts: h6: add
+ Wi-Fi support for Pine H64 model A/B
+Message-ID: <20180725121947.ox4zykod6jjadvfw@flea>
+References: <20180724011551.49603-1-icenowy@aosc.io>
+ <20180724011551.49603-4-icenowy@aosc.io>
+ <CAGb2v67zR-Q9n7L6CaFKDUJFHFEC_h8-RYxkdyeyJb_GbNmkJw@mail.gmail.com>
+ <CEA43CB7-1DA6-4983-BF18-82C4A48FB92B@aosc.io>
+ <CAGb2v64Qae4O430kP30DQNhp0Dt774OHt0nMe35ckp8X=CTFLg@mail.gmail.com>
+ <AC678B03-19B7-4110-B333-72188CE71296@aosc.io>
+ <CAGb2v656oPmAX=_y88b05xqrona3HFtU-VmNQhHxK_n-4gD+aw@mail.gmail.com>
+ <20180724144151.myyg7slocsfjjsfi@flea>
+ <198DB486-4789-4777-9596-2BD6FAFFB741@aosc.io>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Wed, 25 Jul 2018 06:17:45 -0600
-From:   Angus Ainslie <angus@akkea.ca>
-Cc:     Sebastian Reichel <sre@kernel.org>, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Angus Ainslie <angus.ainslie@puri.sm>
-In-Reply-To: <CAJKOXPczJWdNugbHiLRQv1krUFhZH=muix3M9R2LUT5=4zypYA@mail.gmail.com>
-References: <20180723135117.2090-1-angus@akkea.ca>
- <CAJKOXPczJWdNugbHiLRQv1krUFhZH=muix3M9R2LUT5=4zypYA@mail.gmail.com>
-Message-ID: <cdfed37dd6a24a4afffc0d880601e2c7@www.akkea.ca>
-X-Sender: angus@akkea.ca
-User-Agent: Roundcube Webmail/1.1.3
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="bve3mvkgddeqoul3"
+Content-Disposition: inline
+In-Reply-To: <198DB486-4789-4777-9596-2BD6FAFFB741@aosc.io>
+User-Agent: NeoMutt/20180622
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Krzysztof,
 
-On 2018-07-25 03:58, Krzysztof Kozlowski wrote:
-> On 23 July 2018 at 15:51, Angus Ainslie <angus@akkea.ca> wrote:
->> Add some debugging to be able to check the proper initialization
->> of the BQ25896 part.
-> 
-> Hi,
-> 
-> This should be split into separate patchset. Do not mix two features
-> in one commit.
-> 
+--bve3mvkgddeqoul3
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Ok, I'll take it apart
+On Tue, Jul 24, 2018 at 10:42:32PM +0800, Icenowy Zheng wrote:
+>=20
+>=20
+> =E4=BA=8E 2018=E5=B9=B47=E6=9C=8824=E6=97=A5 GMT+08:00 =E4=B8=8B=E5=8D=88=
+10:41:51, Maxime Ripard <maxime.ripard@bootlin.com> =E5=86=99=E5=88=B0:
+> >On Tue, Jul 24, 2018 at 10:37:51AM +0800, Chen-Yu Tsai wrote:
+> >> On Tue, Jul 24, 2018 at 10:28 AM, Icenowy Zheng <icenowy@aosc.io>
+> >wrote:
+> >> >
+> >> >
+> >> > =E4=BA=8E 2018=E5=B9=B47=E6=9C=8824=E6=97=A5 GMT+08:00 =E4=B8=8A=E5=
+=8D=8810:26:02, Chen-Yu Tsai <wens@csie.org> =E5=86=99=E5=88=B0:
+> >> >>On Tue, Jul 24, 2018 at 10:23 AM, Icenowy Zheng <icenowy@aosc.io>
+> >> >>wrote:
+> >> >>>
+> >> >>>
+> >> >>> =E4=BA=8E 2018=E5=B9=B47=E6=9C=8824=E6=97=A5 GMT+08:00 =E4=B8=8A=
+=E5=8D=8810:21:59, Chen-Yu Tsai <wens@csie.org>
+> >=E5=86=99=E5=88=B0:
+> >> >>>>On Tue, Jul 24, 2018 at 9:15 AM, Icenowy Zheng <icenowy@aosc.io>
+> >> >>wrote:
+> >> >>>>> The Pine H64 model A has a Wi-Fi module connector and the model
+> >B
+> >> >>has
+> >> >>>>an
+> >> >>>>> on-board RTL8723BS Wi-Fi module.
+> >> >>>>>
+> >> >>>>> Add support for them. For model A, as it's not defaultly
+> >present,
+> >> >>>>keep
+> >> >>>>> it disabled now.
+> >> >>>>
+> >> >>>>Nope. Pine64 actually has two WiFi/BT modules. And they require
+> >> >>>>different
+> >> >>>>device tree snippets for both the WiFi and BT side. This is
+> >better
+> >> >>>>resolved
+> >> >>>>with device tree overlays.
+> >> >>>>
+> >> >>>>I have both, though I've yet found time to work on them.
+> >> >>>
+> >> >>> I have also both.
+> >> >>>
+> >> >>> The skeleton here can get the Wi-Fi of both to work.
+> >> >>
+> >> >>Cool. Then I can put away my RTL module for now. :)
+> >> >
+> >> > P.S. SDIO is auto detectable, and for BCM chips, the OOB interrupt
+> >> > is only a bonus function and it can fall back to standard in-band
+> >> > interrupt (which doesn't need special binding, and is currently
+> >> > used by mainline r8723bs driver.)
+> >>=20
+> >> Correct. With BT you'll have serdev device nodes with different
+> >> compatibles. Then you'll have to resort to overlays, and you'd
+> >probably
+> >> end up adding WiFi OOB interrupt bits as well.
+> >>=20
+> >> So the question remaining is: should we enable the MMC part, along
+> >> with power sequencing and regulator supplies, by default? Thinking
+> >> more about it, I'm actually OK with it. The board connectors are
+> >> clearly marked as being for a WiFi+BT module. The whole space on
+> >> the board is surrounded by a box in silkscreen. Sorry for the
+> >> initial nack.
+> >>=20
+> >> Maxime, any thoughts?
+> >
+> >If there's a need for an overlay anyway, there's no real reason to
+> >enable it by default, especially if not everything is there.
+>=20
+> Everything is there, for model B support.
 
->> Enable the BQ25896 part.
->> 
->> Add 2 new parameters "voltage_now" and "model_name".
->> 
->> Signed-off-by: Angus Ainslie <angus.ainslie@puri.sm>
-> 
-> Your signed-off-by does not match From address.
-> 
+Except BT?
 
-That was intentional as I wanted Purism to get credit for it. I'm 
-guessing that's not the correct way of doing it.
+Maxime
 
->> ---
->>  drivers/power/supply/bq25890_charger.c | 68 
->> ++++++++++++++++++++++----
->>  1 file changed, 58 insertions(+), 10 deletions(-)
->> 
->> diff --git a/drivers/power/supply/bq25890_charger.c 
->> b/drivers/power/supply/bq25890_charger.c
->> index 8e2c41ded171..32cdae15ce40 100644
->> --- a/drivers/power/supply/bq25890_charger.c
->> +++ b/drivers/power/supply/bq25890_charger.c
->> @@ -32,6 +32,7 @@
->>  #define BQ25890_IRQ_PIN                        "bq25890_irq"
->> 
->>  #define BQ25890_ID                     3
->> +#define BQ25896_ID                     0
->> 
->>  enum bq25890_fields {
->>         F_EN_HIZ, F_EN_ILIM, F_IILIM,                                
->> /* Reg00 */
->> @@ -153,8 +154,8 @@ static const struct reg_field bq25890_reg_fields[] 
->> = {
->>         [F_CONV_RATE]           = REG_FIELD(0x02, 6, 6),
->>         [F_BOOSTF]              = REG_FIELD(0x02, 5, 5),
->>         [F_ICO_EN]              = REG_FIELD(0x02, 4, 4),
->> -       [F_HVDCP_EN]            = REG_FIELD(0x02, 3, 3),
->> -       [F_MAXC_EN]             = REG_FIELD(0x02, 2, 2),
->> +       [F_HVDCP_EN]            = REG_FIELD(0x02, 3, 3),  // reserved 
->> on BQ25896
->> +       [F_MAXC_EN]             = REG_FIELD(0x02, 2, 2),  // reserved 
->> on BQ25896
->>         [F_FORCE_DPM]           = REG_FIELD(0x02, 1, 1),
->>         [F_AUTO_DPDM_EN]        = REG_FIELD(0x02, 0, 0),
->>         /* REG03 */
->> @@ -163,6 +164,7 @@ static const struct reg_field bq25890_reg_fields[] 
->> = {
->>         [F_OTG_CFG]             = REG_FIELD(0x03, 5, 5),
->>         [F_CHG_CFG]             = REG_FIELD(0x03, 4, 4),
->>         [F_SYSVMIN]             = REG_FIELD(0x03, 1, 3),
->> +       /* MIN_VBAT_SEL on BQ25896 */
->>         /* REG04 */
->>         [F_PUMPX_EN]            = REG_FIELD(0x04, 7, 7),
->>         [F_ICHG]                = REG_FIELD(0x04, 0, 6),
->> @@ -181,7 +183,7 @@ static const struct reg_field bq25890_reg_fields[] 
->> = {
->>         [F_CHG_TMR]             = REG_FIELD(0x07, 1, 2),
->>         [F_JEITA_ISET]          = REG_FIELD(0x07, 0, 0),
->>         /* REG08 */
->> -       [F_BATCMP]              = REG_FIELD(0x08, 6, 7),
->> +       [F_BATCMP]              = REG_FIELD(0x08, 6, 7), // 5-7 on 
->> BQ25896
-> 
-> So this field is different on BQ25896...
-> 
+--=20
+Maxime Ripard, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
-The BATCMP field is not currently used by the driver but it is reference 
-by "bq25890_tables". Should I remove that reference or make a special 
-case for something that isn't used ?
+--bve3mvkgddeqoul3
+Content-Type: application/pgp-signature; name="signature.asc"
 
->>         [F_VCLAMP]              = REG_FIELD(0x08, 2, 4),
->>         [F_TREG]                = REG_FIELD(0x08, 0, 1),
->>         /* REG09 */
->> @@ -195,12 +197,13 @@ static const struct reg_field 
->> bq25890_reg_fields[] = {
->>         [F_PUMPX_DN]            = REG_FIELD(0x09, 0, 0),
->>         /* REG0A */
->>         [F_BOOSTV]              = REG_FIELD(0x0A, 4, 7),
->> +       /* PFM_OTG_DIS 3 on BQ25896 */
->>         [F_BOOSTI]              = REG_FIELD(0x0A, 0, 2),
->>         /* REG0B */
->>         [F_VBUS_STAT]           = REG_FIELD(0x0B, 5, 7),
->>         [F_CHG_STAT]            = REG_FIELD(0x0B, 3, 4),
->>         [F_PG_STAT]             = REG_FIELD(0x0B, 2, 2),
->> -       [F_SDP_STAT]            = REG_FIELD(0x0B, 1, 1),
->> +       [F_SDP_STAT]            = REG_FIELD(0x0B, 1, 1), // reserved 
->> on BQ25896
->>         [F_VSYS_STAT]           = REG_FIELD(0x0B, 0, 0),
->>         /* REG0C */
->>         [F_WD_FAULT]            = REG_FIELD(0x0C, 7, 7),
->> @@ -401,6 +404,18 @@ static int 
->> bq25890_power_supply_get_property(struct power_supply *psy,
->>                 val->strval = BQ25890_MANUFACTURER;
->>                 break;
->> 
->> +       case POWER_SUPPLY_PROP_MODEL_NAME:
->> +               bq->chip_id = bq25890_field_read(bq, F_PN);
-> 
-> Why do you need to read it again?
-> 
+-----BEGIN PGP SIGNATURE-----
 
-Right, it should be set in probe.
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAltYat0ACgkQ0rTAlCFN
+r3RXXQ/+O/j53xdIBK7aZHZSYYNGM4LbCT4+183lU8sEY+0FAx7O3mVqkRySnt0E
+Yxcyw47z+7C5YISHe/VSmSpZkFyhcVtLsxIILSKwchbJftAXQzoExsOt644LLcAK
+KzDb/DxJJPAMVH2G81IOmdZB1JHZvsKEKcYGF/1xbCGkq2gN0ro4vo0hx608Wdet
+4HgEqtDFTLLQeiiPE+BgHO3OKW50tQoR+ayDUY2QwdmYR53hdzEiIXprRTnLG8Ck
+yVULQrl41UYY6VXOT5mLupuw2YICKRCHK9aNFG4P+4BRFfiOzPLORvLyOrUg3tur
+NlI1PzCT3DuBIspTu3kOCL+R6lQyqqXvYNQTdm/s5yV6ATa9/azafgpX9y+xRq7q
+V5SKXHCR2TMfm5XSCw3nGAgoowmXbTS9QVcqtrDUsBcSCblXcKyUnAn5UA0BGDZx
+uluG7vqkKzNt6LVCZctI2R/1euFIM0bxmer8JJ5YmkqhD+C/jqBDBpImQzzSflXl
+oJbS9bNYXtjtNyyhj8V9nA1fC9qid3aSSWvpJuBmdz7fZCDi0nGGnehYCuy35L7g
+iaN7pyjOx8CZZnq/PhCjZVrkPsKDRxNW/0hbhx01EvOUsvjpVAQ86qTdYEYrlYG6
+HRMtvUp0RWk2NZQw99AJ237LtXreAO0+DlOkYgknG9LREsD4AAY=
+=LDtb
+-----END PGP SIGNATURE-----
 
->> +
->> +               if (bq->chip_id == BQ25890_ID)
->> +                       val->strval = "BQ25890";
->> +               else if (bq->chip_id == BQ25896_ID)
->> +                       val->strval = "BQ25896";
->> +               else
->> +                       val->strval = "UNKNOWN";
->> +
->> +               break;
->> +
->>         case POWER_SUPPLY_PROP_ONLINE:
->>                 val->intval = state.online;
->>                 break;
->> @@ -453,6 +468,20 @@ static int 
->> bq25890_power_supply_get_property(struct power_supply *psy,
->>                 val->intval = bq25890_find_val(bq->init_data.iterm, 
->> TBL_ITERM);
->>                 break;
->> 
->> +       case POWER_SUPPLY_PROP_VOLTAGE_NOW:
->> +               if (!state.online) {
->> +                       val->intval = 0;
->> +                       break;
->> +               }
-> 
-> This looks like unrelated change. Please split it.
-> 
-
-Ok
-
->> +
->> +               ret = bq25890_field_read(bq, F_SYSV); /* read measured 
->> value */
->> +               if (ret < 0)
->> +                       return ret;
->> +
->> +               /* converted_val = 2.304V + ADC_val * 20mV (table 
->> 10.3.15) */
->> +               val->intval = 2304000 + ret * 20000;
->> +               break;
->> +
->>         default:
->>                 return -EINVAL;
->>         }
->> @@ -608,30 +637,43 @@ static int bq25890_hw_init(struct bq25890_device 
->> *bq)
->>         };
->> 
->>         ret = bq25890_chip_reset(bq);
->> -       if (ret < 0)
->> +       if (ret < 0) {
->> +               dev_dbg(bq->dev, "BQ259x reset failed %d\n", ret);
-> 
-> "BQ259x" prefix is not needed.
-> 
-
-Ok
-
-[snip]
-
-> 
-> Document the compatible. If you run checkpatch.... it would point it.
-
-Sorry, I'll fix all the checkpatch errors.
-
-> 
-> Best regards,
-> Krzysztof
-
-Cheers
-Angus
+--bve3mvkgddeqoul3--
