@@ -6,33 +6,33 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8BD9C6778F
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 16:39:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4131EECDE5F
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 16:39:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8890B208C4
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 16:39:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8890B208C4
+	by mail.kernel.org (Postfix) with ESMTP id D7A96208A3
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 16:39:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D7A96208A3
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731225AbeGYRva (ORCPT
+        id S1731263AbeGYRvb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 13:51:30 -0400
-Received: from ns.mm-sol.com ([37.157.136.199]:35590 "EHLO extserv.mm-sol.com"
+        Wed, 25 Jul 2018 13:51:31 -0400
+Received: from ns.mm-sol.com ([37.157.136.199]:35656 "EHLO extserv.mm-sol.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729184AbeGYRv1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Jul 2018 13:51:27 -0400
+        id S1728653AbeGYRvb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Jul 2018 13:51:31 -0400
 Received: from mms-0439.qualcomm.mm-sol.com (unknown [37.157.136.206])
-        by extserv.mm-sol.com (Postfix) with ESMTPSA id 4DF6FCD64;
+        by extserv.mm-sol.com (Postfix) with ESMTPSA id D7DE4CD73;
         Wed, 25 Jul 2018 19:38:54 +0300 (EEST)
 From:   Todor Tomov <todor.tomov@linaro.org>
 To:     mchehab@kernel.org, sakari.ailus@linux.intel.com,
         hans.verkuil@cisco.com, laurent.pinchart+renesas@ideasonboard.com,
         linux-media@vger.kernel.org
 Cc:     linux-kernel@vger.kernel.org, Todor Tomov <todor.tomov@linaro.org>
-Subject: [PATCH v4 18/34] media: camss: Add basic runtime PM support
-Date:   Wed, 25 Jul 2018 19:38:27 +0300
-Message-Id: <1532536723-19062-19-git-send-email-todor.tomov@linaro.org>
+Subject: [PATCH v4 33/34] media: doc: media/v4l-drivers: Update Qualcomm CAMSS driver document for 8x96
+Date:   Wed, 25 Jul 2018 19:38:42 +0300
+Message-Id: <1532536723-19062-34-git-send-email-todor.tomov@linaro.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1532536723-19062-1-git-send-email-todor.tomov@linaro.org>
 References: <1532536723-19062-1-git-send-email-todor.tomov@linaro.org>
@@ -41,401 +41,300 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There is a PM domain for each of the VFE hardware modules. Add
-support for basic runtime PM support to be able to control the
-PM domains. When a PM domain needs to be powered on - a device
-link is created. When a PM domain needs to be powered off -
-its device link is removed. This allows separate and
-independent control of the PM domains.
-
-Suspend/Resume is still not supported.
+Update the document to describe the support of Camera Subsystem
+on MSM8996/APQ8096.
 
 Signed-off-by: Todor Tomov <todor.tomov@linaro.org>
 ---
- drivers/media/platform/qcom/camss/camss-csid.c   | 13 ++++-
- drivers/media/platform/qcom/camss/camss-csiphy.c | 15 +++++-
- drivers/media/platform/qcom/camss/camss-ispif.c  | 26 ++++++++--
- drivers/media/platform/qcom/camss/camss-vfe.c    | 17 +++++++
- drivers/media/platform/qcom/camss/camss.c        | 63 ++++++++++++++++++++++++
- drivers/media/platform/qcom/camss/camss.h        | 11 +++++
- 6 files changed, 139 insertions(+), 6 deletions(-)
+ Documentation/media/v4l-drivers/qcom_camss.rst     |  93 +++++++++++-------
+ .../media/v4l-drivers/qcom_camss_8x96_graph.dot    | 104 +++++++++++++++++++++
+ 2 files changed, 164 insertions(+), 33 deletions(-)
+ create mode 100644 Documentation/media/v4l-drivers/qcom_camss_8x96_graph.dot
 
-diff --git a/drivers/media/platform/qcom/camss/camss-csid.c b/drivers/media/platform/qcom/camss/camss-csid.c
-index 627ef44..3ba087f 100644
---- a/drivers/media/platform/qcom/camss/camss-csid.c
-+++ b/drivers/media/platform/qcom/camss/camss-csid.c
-@@ -13,6 +13,7 @@
- #include <linux/kernel.h>
- #include <linux/of.h>
- #include <linux/platform_device.h>
-+#include <linux/pm_runtime.h>
- #include <linux/regulator/consumer.h>
- #include <media/media-entity.h>
- #include <media/v4l2-device.h>
-@@ -316,19 +317,27 @@ static int csid_set_power(struct v4l2_subdev *sd, int on)
- 	if (on) {
- 		u32 hw_version;
+diff --git a/Documentation/media/v4l-drivers/qcom_camss.rst b/Documentation/media/v4l-drivers/qcom_camss.rst
+index 9e66b7b..f27c8df 100644
+--- a/Documentation/media/v4l-drivers/qcom_camss.rst
++++ b/Documentation/media/v4l-drivers/qcom_camss.rst
+@@ -7,34 +7,34 @@ Introduction
+ ------------
  
--		ret = regulator_enable(csid->vdda);
-+		ret = pm_runtime_get_sync(dev);
- 		if (ret < 0)
- 			return ret;
+ This file documents the Qualcomm Camera Subsystem driver located under
+-drivers/media/platform/qcom/camss-8x16.
++drivers/media/platform/qcom/camss.
  
-+		ret = regulator_enable(csid->vdda);
-+		if (ret < 0) {
-+			pm_runtime_put_sync(dev);
-+			return ret;
-+		}
+ The current version of the driver supports the Camera Subsystem found on
+-Qualcomm MSM8916 and APQ8016 processors.
++Qualcomm MSM8916/APQ8016 and MSM8996/APQ8096 processors.
+ 
+ The driver implements V4L2, Media controller and V4L2 subdev interfaces.
+ Camera sensor using V4L2 subdev interface in the kernel is supported.
+ 
+ The driver is implemented using as a reference the Qualcomm Camera Subsystem
+-driver for Android as found in Code Aurora [#f1]_.
++driver for Android as found in Code Aurora [#f1]_ [#f2]_.
+ 
+ 
+ Qualcomm Camera Subsystem hardware
+ ----------------------------------
+ 
+-The Camera Subsystem hardware found on 8x16 processors and supported by the
+-driver consists of:
++The Camera Subsystem hardware found on 8x16 / 8x96 processors and supported by
++the driver consists of:
+ 
+-- 2 CSIPHY modules. They handle the Physical layer of the CSI2 receivers.
++- 2 / 3 CSIPHY modules. They handle the Physical layer of the CSI2 receivers.
+   A separate camera sensor can be connected to each of the CSIPHY module;
+-- 2 CSID (CSI Decoder) modules. They handle the Protocol and Application layer
+-  of the CSI2 receivers. A CSID can decode data stream from any of the CSIPHY.
+-  Each CSID also contains a TG (Test Generator) block which can generate
++- 2 / 4 CSID (CSI Decoder) modules. They handle the Protocol and Application
++  layer of the CSI2 receivers. A CSID can decode data stream from any of the
++  CSIPHY. Each CSID also contains a TG (Test Generator) block which can generate
+   artificial input data for test purposes;
+ - ISPIF (ISP Interface) module. Handles the routing of the data streams from
+   the CSIDs to the inputs of the VFE;
+-- VFE (Video Front End) module. Contains a pipeline of image processing hardware
+-  blocks. The VFE has different input interfaces. The PIX (Pixel) input
++- 1 / 2 VFE (Video Front End) module(s). Contain a pipeline of image processing
++  hardware blocks. The VFE has different input interfaces. The PIX (Pixel) input
+   interface feeds the input data to the image processing pipeline. The image
+   processing pipeline contains also a scale and crop module at the end. Three
+   RDI (Raw Dump Interface) input interfaces bypass the image processing
+@@ -49,18 +49,33 @@ The current version of the driver supports:
+ 
+ - Input from camera sensor via CSIPHY;
+ - Generation of test input data by the TG in CSID;
+-- RDI interface of VFE - raw dump of the input data to memory.
++- RDI interface of VFE
+ 
+-  Supported formats:
++  - Raw dump of the input data to memory.
+ 
+-  - YUYV/UYVY/YVYU/VYUY (packed YUV 4:2:2 - V4L2_PIX_FMT_YUYV /
+-    V4L2_PIX_FMT_UYVY / V4L2_PIX_FMT_YVYU / V4L2_PIX_FMT_VYUY);
+-  - MIPI RAW8 (8bit Bayer RAW - V4L2_PIX_FMT_SRGGB8 /
+-    V4L2_PIX_FMT_SGRBG8 / V4L2_PIX_FMT_SGBRG8 / V4L2_PIX_FMT_SBGGR8);
+-  - MIPI RAW10 (10bit packed Bayer RAW - V4L2_PIX_FMT_SBGGR10P /
+-    V4L2_PIX_FMT_SGBRG10P / V4L2_PIX_FMT_SGRBG10P / V4L2_PIX_FMT_SRGGB10P);
+-  - MIPI RAW12 (12bit packed Bayer RAW - V4L2_PIX_FMT_SRGGB12P /
+-    V4L2_PIX_FMT_SGBRG12P / V4L2_PIX_FMT_SGRBG12P / V4L2_PIX_FMT_SRGGB12P).
++    Supported formats:
 +
- 		ret = csid_set_clock_rates(csid);
- 		if (ret < 0) {
- 			regulator_disable(csid->vdda);
-+			pm_runtime_put_sync(dev);
- 			return ret;
- 		}
- 
- 		ret = camss_enable_clocks(csid->nclocks, csid->clock, dev);
- 		if (ret < 0) {
- 			regulator_disable(csid->vdda);
-+			pm_runtime_put_sync(dev);
- 			return ret;
- 		}
- 
-@@ -339,6 +348,7 @@ static int csid_set_power(struct v4l2_subdev *sd, int on)
- 			disable_irq(csid->irq);
- 			camss_disable_clocks(csid->nclocks, csid->clock);
- 			regulator_disable(csid->vdda);
-+			pm_runtime_put_sync(dev);
- 			return ret;
- 		}
- 
-@@ -348,6 +358,7 @@ static int csid_set_power(struct v4l2_subdev *sd, int on)
- 		disable_irq(csid->irq);
- 		camss_disable_clocks(csid->nclocks, csid->clock);
- 		ret = regulator_disable(csid->vdda);
-+		pm_runtime_put_sync(dev);
- 	}
- 
- 	return ret;
-diff --git a/drivers/media/platform/qcom/camss/camss-csiphy.c b/drivers/media/platform/qcom/camss/camss-csiphy.c
-index 0383e94..4aeaedb 100644
---- a/drivers/media/platform/qcom/camss/camss-csiphy.c
-+++ b/drivers/media/platform/qcom/camss/camss-csiphy.c
-@@ -13,6 +13,7 @@
- #include <linux/kernel.h>
- #include <linux/of.h>
- #include <linux/platform_device.h>
-+#include <linux/pm_runtime.h>
- #include <media/media-entity.h>
- #include <media/v4l2-device.h>
- #include <media/v4l2-subdev.h>
-@@ -240,13 +241,21 @@ static int csiphy_set_power(struct v4l2_subdev *sd, int on)
- 		u8 hw_version;
- 		int ret;
- 
--		ret = csiphy_set_clock_rates(csiphy);
-+		ret = pm_runtime_get_sync(dev);
- 		if (ret < 0)
- 			return ret;
- 
-+		ret = csiphy_set_clock_rates(csiphy);
-+		if (ret < 0) {
-+			pm_runtime_put_sync(dev);
-+			return ret;
-+		}
++    - YUYV/UYVY/YVYU/VYUY (packed YUV 4:2:2 - V4L2_PIX_FMT_YUYV /
++      V4L2_PIX_FMT_UYVY / V4L2_PIX_FMT_YVYU / V4L2_PIX_FMT_VYUY);
++    - MIPI RAW8 (8bit Bayer RAW - V4L2_PIX_FMT_SRGGB8 /
++      V4L2_PIX_FMT_SGRBG8 / V4L2_PIX_FMT_SGBRG8 / V4L2_PIX_FMT_SBGGR8);
++    - MIPI RAW10 (10bit packed Bayer RAW - V4L2_PIX_FMT_SBGGR10P /
++      V4L2_PIX_FMT_SGBRG10P / V4L2_PIX_FMT_SGRBG10P / V4L2_PIX_FMT_SRGGB10P /
++      V4L2_PIX_FMT_Y10P);
++    - MIPI RAW12 (12bit packed Bayer RAW - V4L2_PIX_FMT_SRGGB12P /
++      V4L2_PIX_FMT_SGBRG12P / V4L2_PIX_FMT_SGRBG12P / V4L2_PIX_FMT_SRGGB12P).
++    - (8x96 only) MIPI RAW14 (14bit packed Bayer RAW - V4L2_PIX_FMT_SRGGB14P /
++      V4L2_PIX_FMT_SGBRG14P / V4L2_PIX_FMT_SGRBG14P / V4L2_PIX_FMT_SRGGB14P).
 +
- 		ret = camss_enable_clocks(csiphy->nclocks, csiphy->clock, dev);
--		if (ret < 0)
-+		if (ret < 0) {
-+			pm_runtime_put_sync(dev);
- 			return ret;
-+		}
- 
- 		enable_irq(csiphy->irq);
- 
-@@ -259,6 +268,8 @@ static int csiphy_set_power(struct v4l2_subdev *sd, int on)
- 		disable_irq(csiphy->irq);
- 
- 		camss_disable_clocks(csiphy->nclocks, csiphy->clock);
++  - (8x96 only) Format conversion of the input data.
 +
-+		pm_runtime_put_sync(dev);
- 	}
- 
- 	return 0;
-diff --git a/drivers/media/platform/qcom/camss/camss-ispif.c b/drivers/media/platform/qcom/camss/camss-ispif.c
-index ed50cc5..2c6c0d2 100644
---- a/drivers/media/platform/qcom/camss/camss-ispif.c
-+++ b/drivers/media/platform/qcom/camss/camss-ispif.c
-@@ -14,6 +14,7 @@
- #include <linux/kernel.h>
- #include <linux/mutex.h>
- #include <linux/platform_device.h>
-+#include <linux/pm_runtime.h>
- #include <media/media-entity.h>
- #include <media/v4l2-device.h>
- #include <media/v4l2-subdev.h>
-@@ -169,6 +170,14 @@ static int ispif_reset(struct ispif_device *ispif)
- 	u32 val;
- 	int ret;
- 
-+	ret = camss_pm_domain_on(to_camss(ispif), PM_DOMAIN_VFE0);
-+	if (ret < 0)
-+		return ret;
++    Supported input formats:
 +
-+	ret = camss_pm_domain_on(to_camss(ispif), PM_DOMAIN_VFE1);
-+	if (ret < 0)
-+		return ret;
++    - MIPI RAW10 (10bit packed Bayer RAW - V4L2_PIX_FMT_SBGGR10P / V4L2_PIX_FMT_Y10P).
 +
- 	ret = camss_enable_clocks(ispif->nclocks_for_reset,
- 				  ispif->clock_for_reset,
- 				  to_device(ispif));
-@@ -201,12 +210,15 @@ static int ispif_reset(struct ispif_device *ispif)
- 		msecs_to_jiffies(ISPIF_RESET_TIMEOUT_MS));
- 	if (!time) {
- 		dev_err(to_device(ispif), "ISPIF reset timeout\n");
--		return -EIO;
-+		ret = -EIO;
- 	}
- 
- 	camss_disable_clocks(ispif->nclocks_for_reset, ispif->clock_for_reset);
- 
--	return 0;
-+	camss_pm_domain_off(to_camss(ispif), PM_DOMAIN_VFE0);
-+	camss_pm_domain_off(to_camss(ispif), PM_DOMAIN_VFE1);
++    Supported output formats:
 +
-+	return ret;
- }
++    - Plain16 RAW10 (10bit unpacked Bayer RAW - V4L2_PIX_FMT_SBGGR10 / V4L2_PIX_FMT_Y10).
  
- /*
-@@ -232,12 +244,19 @@ static int ispif_set_power(struct v4l2_subdev *sd, int on)
- 			goto exit;
- 		}
+ - PIX interface of VFE
  
--		ret = camss_enable_clocks(ispif->nclocks, ispif->clock, dev);
-+		ret = pm_runtime_get_sync(dev);
- 		if (ret < 0)
- 			goto exit;
+@@ -75,14 +90,16 @@ The current version of the driver supports:
  
-+		ret = camss_enable_clocks(ispif->nclocks, ispif->clock, dev);
-+		if (ret < 0) {
-+			pm_runtime_put_sync(dev);
-+			goto exit;
-+		}
+     - NV12/NV21 (two plane YUV 4:2:0 - V4L2_PIX_FMT_NV12 / V4L2_PIX_FMT_NV21);
+     - NV16/NV61 (two plane YUV 4:2:2 - V4L2_PIX_FMT_NV16 / V4L2_PIX_FMT_NV61).
++    - (8x96 only) YUYV/UYVY/YVYU/VYUY (packed YUV 4:2:2 - V4L2_PIX_FMT_YUYV /
++      V4L2_PIX_FMT_UYVY / V4L2_PIX_FMT_YVYU / V4L2_PIX_FMT_VYUY).
+ 
+   - Scaling support. Configuration of the VFE Encoder Scale module
+     for downscalling with ratio up to 16x.
+ 
+   - Cropping support. Configuration of the VFE Encoder Crop module.
+ 
+-- Concurrent and independent usage of two data inputs - could be camera sensors
+-  and/or TG.
++- Concurrent and independent usage of two (8x96: three) data inputs -
++  could be camera sensors and/or TG.
+ 
+ 
+ Driver Architecture and Design
+@@ -90,14 +107,14 @@ Driver Architecture and Design
+ 
+ The driver implements the V4L2 subdev interface. With the goal to model the
+ hardware links between the modules and to expose a clean, logical and usable
+-interface, the driver is split into V4L2 sub-devices as follows:
++interface, the driver is split into V4L2 sub-devices as follows (8x16 / 8x96):
+ 
+-- 2 CSIPHY sub-devices - each CSIPHY is represented by a single sub-device;
+-- 2 CSID sub-devices - each CSID is represented by a single sub-device;
+-- 2 ISPIF sub-devices - ISPIF is represented by a number of sub-devices equal
+-  to the number of CSID sub-devices;
+-- 4 VFE sub-devices - VFE is represented by a number of sub-devices equal to
+-  the number of the input interfaces (3 RDI and 1 PIX).
++- 2 / 3 CSIPHY sub-devices - each CSIPHY is represented by a single sub-device;
++- 2 / 4 CSID sub-devices - each CSID is represented by a single sub-device;
++- 2 / 4 ISPIF sub-devices - ISPIF is represented by a number of sub-devices
++  equal to the number of CSID sub-devices;
++- 4 / 8 VFE sub-devices - VFE is represented by a number of sub-devices equal to
++  the number of the input interfaces (3 RDI and 1 PIX for each VFE).
+ 
+ The considerations to split the driver in this particular way are as follows:
+ 
+@@ -115,8 +132,8 @@ The considerations to split the driver in this particular way are as follows:
+ 
+ Each VFE sub-device is linked to a separate video device node.
+ 
+-The media controller pipeline graph is as follows (with connected two OV5645
+-camera sensors):
++The media controller pipeline graph is as follows (with connected two / three
++OV5645 camera sensors):
+ 
+ .. _qcom_camss_graph:
+ 
+@@ -124,7 +141,13 @@ camera sensors):
+     :alt:   qcom_camss_graph.dot
+     :align: center
+ 
+-    Media pipeline graph
++    Media pipeline graph 8x16
 +
- 		ret = ispif_reset(ispif);
- 		if (ret < 0) {
-+			pm_runtime_put_sync(dev);
- 			camss_disable_clocks(ispif->nclocks, ispif->clock);
- 			goto exit;
- 		}
-@@ -252,6 +271,7 @@ static int ispif_set_power(struct v4l2_subdev *sd, int on)
- 			goto exit;
- 		} else if (ispif->power_count == 1) {
- 			camss_disable_clocks(ispif->nclocks, ispif->clock);
-+			pm_runtime_put_sync(dev);
- 		}
- 
- 		ispif->power_count--;
-diff --git a/drivers/media/platform/qcom/camss/camss-vfe.c b/drivers/media/platform/qcom/camss/camss-vfe.c
-index 3f589c4..474e1dd 100644
---- a/drivers/media/platform/qcom/camss/camss-vfe.c
-+++ b/drivers/media/platform/qcom/camss/camss-vfe.c
-@@ -15,6 +15,7 @@
- #include <linux/mutex.h>
- #include <linux/of.h>
- #include <linux/platform_device.h>
-+#include <linux/pm_runtime.h>
- #include <linux/spinlock_types.h>
- #include <linux/spinlock.h>
- #include <media/media-entity.h>
-@@ -1981,6 +1982,14 @@ static int vfe_get(struct vfe_device *vfe)
- 	mutex_lock(&vfe->power_lock);
- 
- 	if (vfe->power_count == 0) {
-+		ret = camss_pm_domain_on(vfe->camss, vfe->id);
-+		if (ret < 0)
-+			goto error_pm_domain;
++.. kernel-figure:: qcom_camss_8x96_graph.dot
++    :alt:   qcom_camss_8x96_graph.dot
++    :align: center
 +
-+		ret = pm_runtime_get_sync(vfe->camss->dev);
-+		if (ret < 0)
-+			goto error_pm_runtime_get;
-+
- 		ret = vfe_set_clock_rates(vfe);
- 		if (ret < 0)
- 			goto error_clocks;
-@@ -2012,6 +2021,12 @@ static int vfe_get(struct vfe_device *vfe)
- 	camss_disable_clocks(vfe->nclocks, vfe->clock);
++    Media pipeline graph 8x96
  
- error_clocks:
-+	pm_runtime_put_sync(vfe->camss->dev);
-+
-+error_pm_runtime_get:
-+	camss_pm_domain_off(vfe->camss, vfe->id);
-+
-+error_pm_domain:
- 	mutex_unlock(&vfe->power_lock);
  
- 	return ret;
-@@ -2034,6 +2049,8 @@ static void vfe_put(struct vfe_device *vfe)
- 			vfe_halt(vfe);
- 		}
- 		camss_disable_clocks(vfe->nclocks, vfe->clock);
-+		pm_runtime_put_sync(vfe->camss->dev);
-+		camss_pm_domain_off(vfe->camss, vfe->id);
- 	}
+ Implementation
+@@ -149,8 +172,12 @@ APQ8016 Specification:
+ https://developer.qualcomm.com/download/sd410/snapdragon-410-processor-device-specification.pdf
+ Referenced 2016-11-24.
  
- 	vfe->power_count--;
-diff --git a/drivers/media/platform/qcom/camss/camss.c b/drivers/media/platform/qcom/camss/camss.c
-index 171e2c9..dcc0c30 100644
---- a/drivers/media/platform/qcom/camss/camss.c
-+++ b/drivers/media/platform/qcom/camss/camss.c
-@@ -14,6 +14,8 @@
- #include <linux/platform_device.h>
- #include <linux/of.h>
- #include <linux/of_graph.h>
-+#include <linux/pm_runtime.h>
-+#include <linux/pm_domain.h>
- #include <linux/slab.h>
- #include <linux/videodev2.h>
++APQ8096 Specification:
++https://developer.qualcomm.com/download/sd820e/qualcomm-snapdragon-820e-processor-apq8096sge-device-specification.pdf
++Referenced 2018-06-22.
  
-@@ -393,6 +395,26 @@ int camss_get_pixel_clock(struct media_entity *entity, u32 *pixel_clock)
- 	return 0;
- }
+ References
+ ----------
  
-+int camss_pm_domain_on(struct camss *camss, int id)
-+{
-+	if (camss->version == CAMSS_8x96) {
-+		camss->genpd_link[id] = device_link_add(camss->dev,
-+				camss->genpd[id], DL_FLAG_STATELESS |
-+				DL_FLAG_PM_RUNTIME | DL_FLAG_RPM_ACTIVE);
-+
-+		if (!camss->genpd_link[id])
-+			return -EINVAL;
-+	}
-+
-+	return 0;
+ .. [#f1] https://source.codeaurora.org/quic/la/kernel/msm-3.10/
++.. [#f2] https://source.codeaurora.org/quic/la/kernel/msm-3.18/
+diff --git a/Documentation/media/v4l-drivers/qcom_camss_8x96_graph.dot b/Documentation/media/v4l-drivers/qcom_camss_8x96_graph.dot
+new file mode 100644
+index 0000000..de34f0a
+--- /dev/null
++++ b/Documentation/media/v4l-drivers/qcom_camss_8x96_graph.dot
+@@ -0,0 +1,104 @@
++digraph board {
++	rankdir=TB
++	n00000001 [label="{{<port0> 0} | msm_csiphy0\n/dev/v4l-subdev0 | {<port1> 1}}", shape=Mrecord, style=filled, fillcolor=green]
++	n00000001:port1 -> n0000000a:port0 [style=dashed]
++	n00000001:port1 -> n0000000d:port0 [style=dashed]
++	n00000001:port1 -> n00000010:port0 [style=dashed]
++	n00000001:port1 -> n00000013:port0 [style=dashed]
++	n00000004 [label="{{<port0> 0} | msm_csiphy1\n/dev/v4l-subdev1 | {<port1> 1}}", shape=Mrecord, style=filled, fillcolor=green]
++	n00000004:port1 -> n0000000a:port0 [style=dashed]
++	n00000004:port1 -> n0000000d:port0 [style=dashed]
++	n00000004:port1 -> n00000010:port0 [style=dashed]
++	n00000004:port1 -> n00000013:port0 [style=dashed]
++	n00000007 [label="{{<port0> 0} | msm_csiphy2\n/dev/v4l-subdev2 | {<port1> 1}}", shape=Mrecord, style=filled, fillcolor=green]
++	n00000007:port1 -> n0000000a:port0 [style=dashed]
++	n00000007:port1 -> n0000000d:port0 [style=dashed]
++	n00000007:port1 -> n00000010:port0 [style=dashed]
++	n00000007:port1 -> n00000013:port0 [style=dashed]
++	n0000000a [label="{{<port0> 0} | msm_csid0\n/dev/v4l-subdev3 | {<port1> 1}}", shape=Mrecord, style=filled, fillcolor=green]
++	n0000000a:port1 -> n00000016:port0 [style=dashed]
++	n0000000a:port1 -> n00000019:port0 [style=dashed]
++	n0000000a:port1 -> n0000001c:port0 [style=dashed]
++	n0000000a:port1 -> n0000001f:port0 [style=dashed]
++	n0000000d [label="{{<port0> 0} | msm_csid1\n/dev/v4l-subdev4 | {<port1> 1}}", shape=Mrecord, style=filled, fillcolor=green]
++	n0000000d:port1 -> n00000016:port0 [style=dashed]
++	n0000000d:port1 -> n00000019:port0 [style=dashed]
++	n0000000d:port1 -> n0000001c:port0 [style=dashed]
++	n0000000d:port1 -> n0000001f:port0 [style=dashed]
++	n00000010 [label="{{<port0> 0} | msm_csid2\n/dev/v4l-subdev5 | {<port1> 1}}", shape=Mrecord, style=filled, fillcolor=green]
++	n00000010:port1 -> n00000016:port0 [style=dashed]
++	n00000010:port1 -> n00000019:port0 [style=dashed]
++	n00000010:port1 -> n0000001c:port0 [style=dashed]
++	n00000010:port1 -> n0000001f:port0 [style=dashed]
++	n00000013 [label="{{<port0> 0} | msm_csid3\n/dev/v4l-subdev6 | {<port1> 1}}", shape=Mrecord, style=filled, fillcolor=green]
++	n00000013:port1 -> n00000016:port0 [style=dashed]
++	n00000013:port1 -> n00000019:port0 [style=dashed]
++	n00000013:port1 -> n0000001c:port0 [style=dashed]
++	n00000013:port1 -> n0000001f:port0 [style=dashed]
++	n00000016 [label="{{<port0> 0} | msm_ispif0\n/dev/v4l-subdev7 | {<port1> 1}}", shape=Mrecord, style=filled, fillcolor=green]
++	n00000016:port1 -> n00000022:port0 [style=dashed]
++	n00000016:port1 -> n0000002b:port0 [style=dashed]
++	n00000016:port1 -> n00000034:port0 [style=dashed]
++	n00000016:port1 -> n0000003d:port0 [style=dashed]
++	n00000016:port1 -> n00000046:port0 [style=dashed]
++	n00000016:port1 -> n0000004f:port0 [style=dashed]
++	n00000016:port1 -> n00000058:port0 [style=dashed]
++	n00000016:port1 -> n00000061:port0 [style=dashed]
++	n00000019 [label="{{<port0> 0} | msm_ispif1\n/dev/v4l-subdev8 | {<port1> 1}}", shape=Mrecord, style=filled, fillcolor=green]
++	n00000019:port1 -> n00000022:port0 [style=dashed]
++	n00000019:port1 -> n0000002b:port0 [style=dashed]
++	n00000019:port1 -> n00000034:port0 [style=dashed]
++	n00000019:port1 -> n0000003d:port0 [style=dashed]
++	n00000019:port1 -> n00000046:port0 [style=dashed]
++	n00000019:port1 -> n0000004f:port0 [style=dashed]
++	n00000019:port1 -> n00000058:port0 [style=dashed]
++	n00000019:port1 -> n00000061:port0 [style=dashed]
++	n0000001c [label="{{<port0> 0} | msm_ispif2\n/dev/v4l-subdev9 | {<port1> 1}}", shape=Mrecord, style=filled, fillcolor=green]
++	n0000001c:port1 -> n00000022:port0 [style=dashed]
++	n0000001c:port1 -> n0000002b:port0 [style=dashed]
++	n0000001c:port1 -> n00000034:port0 [style=dashed]
++	n0000001c:port1 -> n0000003d:port0 [style=dashed]
++	n0000001c:port1 -> n00000046:port0 [style=dashed]
++	n0000001c:port1 -> n0000004f:port0 [style=dashed]
++	n0000001c:port1 -> n00000058:port0 [style=dashed]
++	n0000001c:port1 -> n00000061:port0 [style=dashed]
++	n0000001f [label="{{<port0> 0} | msm_ispif3\n/dev/v4l-subdev10 | {<port1> 1}}", shape=Mrecord, style=filled, fillcolor=green]
++	n0000001f:port1 -> n00000022:port0 [style=dashed]
++	n0000001f:port1 -> n0000002b:port0 [style=dashed]
++	n0000001f:port1 -> n00000034:port0 [style=dashed]
++	n0000001f:port1 -> n0000003d:port0 [style=dashed]
++	n0000001f:port1 -> n00000046:port0 [style=dashed]
++	n0000001f:port1 -> n0000004f:port0 [style=dashed]
++	n0000001f:port1 -> n00000058:port0 [style=dashed]
++	n0000001f:port1 -> n00000061:port0 [style=dashed]
++	n00000022 [label="{{<port0> 0} | msm_vfe0_rdi0\n/dev/v4l-subdev11 | {<port1> 1}}", shape=Mrecord, style=filled, fillcolor=green]
++	n00000022:port1 -> n00000025 [style=bold]
++	n00000025 [label="msm_vfe0_video0\n/dev/video0", shape=box, style=filled, fillcolor=yellow]
++	n0000002b [label="{{<port0> 0} | msm_vfe0_rdi1\n/dev/v4l-subdev12 | {<port1> 1}}", shape=Mrecord, style=filled, fillcolor=green]
++	n0000002b:port1 -> n0000002e [style=bold]
++	n0000002e [label="msm_vfe0_video1\n/dev/video1", shape=box, style=filled, fillcolor=yellow]
++	n00000034 [label="{{<port0> 0} | msm_vfe0_rdi2\n/dev/v4l-subdev13 | {<port1> 1}}", shape=Mrecord, style=filled, fillcolor=green]
++	n00000034:port1 -> n00000037 [style=bold]
++	n00000037 [label="msm_vfe0_video2\n/dev/video2", shape=box, style=filled, fillcolor=yellow]
++	n0000003d [label="{{<port0> 0} | msm_vfe0_pix\n/dev/v4l-subdev14 | {<port1> 1}}", shape=Mrecord, style=filled, fillcolor=green]
++	n0000003d:port1 -> n00000040 [style=bold]
++	n00000040 [label="msm_vfe0_video3\n/dev/video3", shape=box, style=filled, fillcolor=yellow]
++	n00000046 [label="{{<port0> 0} | msm_vfe1_rdi0\n/dev/v4l-subdev15 | {<port1> 1}}", shape=Mrecord, style=filled, fillcolor=green]
++	n00000046:port1 -> n00000049 [style=bold]
++	n00000049 [label="msm_vfe1_video0\n/dev/video4", shape=box, style=filled, fillcolor=yellow]
++	n0000004f [label="{{<port0> 0} | msm_vfe1_rdi1\n/dev/v4l-subdev16 | {<port1> 1}}", shape=Mrecord, style=filled, fillcolor=green]
++	n0000004f:port1 -> n00000052 [style=bold]
++	n00000052 [label="msm_vfe1_video1\n/dev/video5", shape=box, style=filled, fillcolor=yellow]
++	n00000058 [label="{{<port0> 0} | msm_vfe1_rdi2\n/dev/v4l-subdev17 | {<port1> 1}}", shape=Mrecord, style=filled, fillcolor=green]
++	n00000058:port1 -> n0000005b [style=bold]
++	n0000005b [label="msm_vfe1_video2\n/dev/video6", shape=box, style=filled, fillcolor=yellow]
++	n00000061 [label="{{<port0> 0} | msm_vfe1_pix\n/dev/v4l-subdev18 | {<port1> 1}}", shape=Mrecord, style=filled, fillcolor=green]
++	n00000061:port1 -> n00000064 [style=bold]
++	n00000064 [label="msm_vfe1_video3\n/dev/video7", shape=box, style=filled, fillcolor=yellow]
++	n000000e2 [label="{{} | ov5645 3-0039\n/dev/v4l-subdev19 | {<port0> 0}}", shape=Mrecord, style=filled, fillcolor=green]
++	n000000e2:port0 -> n00000004:port0 [style=bold]
++	n000000e4 [label="{{} | ov5645 3-003a\n/dev/v4l-subdev20 | {<port0> 0}}", shape=Mrecord, style=filled, fillcolor=green]
++	n000000e4:port0 -> n00000007:port0 [style=bold]
++	n000000e6 [label="{{} | ov5645 3-003b\n/dev/v4l-subdev21 | {<port0> 0}}", shape=Mrecord, style=filled, fillcolor=green]
++	n000000e6:port0 -> n00000001:port0 [style=bold]
 +}
-+
-+void camss_pm_domain_off(struct camss *camss, int id)
-+{
-+	if (camss->version == CAMSS_8x96)
-+		device_link_del(camss->genpd_link[id]);
-+}
-+
- /*
-  * camss_of_parse_endpoint_node - Parse port endpoint node
-  * @dev: Device
-@@ -896,6 +918,23 @@ static int camss_probe(struct platform_device *pdev)
- 		}
- 	}
- 
-+	if (camss->version == CAMSS_8x96) {
-+		camss->genpd[PM_DOMAIN_VFE0] = dev_pm_domain_attach_by_id(
-+						camss->dev, PM_DOMAIN_VFE0);
-+		if (IS_ERR(camss->genpd[PM_DOMAIN_VFE0]))
-+			return PTR_ERR(camss->genpd[PM_DOMAIN_VFE0]);
-+
-+		camss->genpd[PM_DOMAIN_VFE1] = dev_pm_domain_attach_by_id(
-+						camss->dev, PM_DOMAIN_VFE1);
-+		if (IS_ERR(camss->genpd[PM_DOMAIN_VFE1])) {
-+			dev_pm_domain_detach(camss->genpd[PM_DOMAIN_VFE0],
-+					     true);
-+			return PTR_ERR(camss->genpd[PM_DOMAIN_VFE1]);
-+		}
-+	}
-+
-+	pm_runtime_enable(dev);
-+
- 	return 0;
- 
- err_register_subdevs:
-@@ -912,6 +951,13 @@ void camss_delete(struct camss *camss)
- 	media_device_unregister(&camss->media_dev);
- 	media_device_cleanup(&camss->media_dev);
- 
-+	pm_runtime_disable(camss->dev);
-+
-+	if (camss->version == CAMSS_8x96) {
-+		dev_pm_domain_detach(camss->genpd[PM_DOMAIN_VFE0], true);
-+		dev_pm_domain_detach(camss->genpd[PM_DOMAIN_VFE1], true);
-+	}
-+
- 	kfree(camss);
- }
- 
-@@ -947,12 +993,29 @@ static const struct of_device_id camss_dt_match[] = {
- 
- MODULE_DEVICE_TABLE(of, camss_dt_match);
- 
-+static int camss_runtime_suspend(struct device *dev)
-+{
-+	return 0;
-+}
-+
-+static int camss_runtime_resume(struct device *dev)
-+{
-+	return 0;
-+}
-+
-+static const struct dev_pm_ops camss_pm_ops = {
-+	SET_SYSTEM_SLEEP_PM_OPS(pm_runtime_force_suspend,
-+				pm_runtime_force_resume)
-+	SET_RUNTIME_PM_OPS(camss_runtime_suspend, camss_runtime_resume, NULL)
-+};
-+
- static struct platform_driver qcom_camss_driver = {
- 	.probe = camss_probe,
- 	.remove = camss_remove,
- 	.driver = {
- 		.name = "qcom-camss",
- 		.of_match_table = camss_dt_match,
-+		.pm = &camss_pm_ops,
- 	},
- };
- 
-diff --git a/drivers/media/platform/qcom/camss/camss.h b/drivers/media/platform/qcom/camss/camss.h
-index dff1045..418996d 100644
---- a/drivers/media/platform/qcom/camss/camss.h
-+++ b/drivers/media/platform/qcom/camss/camss.h
-@@ -10,6 +10,7 @@
- #ifndef QC_MSM_CAMSS_H
- #define QC_MSM_CAMSS_H
- 
-+#include <linux/device.h>
- #include <linux/types.h>
- #include <media/v4l2-async.h>
- #include <media/v4l2-device.h>
-@@ -56,6 +57,12 @@ struct resources_ispif {
- 	char *interrupt;
- };
- 
-+enum pm_domain {
-+	PM_DOMAIN_VFE0,
-+	PM_DOMAIN_VFE1,
-+	PM_DOMAIN_COUNT
-+};
-+
- enum camss_version {
- 	CAMSS_8x16,
- 	CAMSS_8x96,
-@@ -75,6 +82,8 @@ struct camss {
- 	int vfe_num;
- 	struct vfe_device *vfe;
- 	atomic_t ref_count;
-+	struct device *genpd[PM_DOMAIN_COUNT];
-+	struct device_link *genpd_link[PM_DOMAIN_COUNT];
- };
- 
- struct camss_camera_interface {
-@@ -99,6 +108,8 @@ int camss_enable_clocks(int nclocks, struct camss_clock *clock,
- 			struct device *dev);
- void camss_disable_clocks(int nclocks, struct camss_clock *clock);
- int camss_get_pixel_clock(struct media_entity *entity, u32 *pixel_clock);
-+int camss_pm_domain_on(struct camss *camss, int id);
-+void camss_pm_domain_off(struct camss *camss, int id);
- void camss_delete(struct camss *camss);
- 
- #endif /* QC_MSM_CAMSS_H */
 -- 
 2.7.4
 
