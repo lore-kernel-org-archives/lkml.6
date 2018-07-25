@@ -2,181 +2,70 @@ Return-Path: <SRS0=S+WB=KJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32084C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 02:21:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75A74C6778F
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 02:24:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CDFBF20844
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 02:21:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CDFBF20844
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 1B59820852
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 02:24:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1B59820852
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388506AbeGYDav (ORCPT
+        id S1728237AbeGYDdm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 23:30:51 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:35148 "EHLO mx1.redhat.com"
+        Tue, 24 Jul 2018 23:33:42 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:55563 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727646AbeGYDav (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 23:30:51 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id E9251805A530;
-        Wed, 25 Jul 2018 02:21:26 +0000 (UTC)
-Received: from localhost (ovpn-8-17.pek2.redhat.com [10.72.8.17])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 0863310C1E;
-        Wed, 25 Jul 2018 02:21:18 +0000 (UTC)
-Date:   Wed, 25 Jul 2018 10:21:15 +0800
-From:   Baoquan He <bhe@redhat.com>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org, robh+dt@kernel.org,
-        dan.j.williams@intel.com, nicolas.pitre@linaro.org,
-        josh@joshtriplett.org, fengguang.wu@intel.com, bp@suse.de,
-        andy.shevchenko@gmail.com, patrik.r.jakobsson@gmail.com,
-        airlied@linux.ie, kys@microsoft.com, haiyangz@microsoft.com,
-        sthemmin@microsoft.com, dmitry.torokhov@gmail.com,
-        frowand.list@gmail.com, keith.busch@intel.com,
-        jonathan.derrick@intel.com, lorenzo.pieralisi@arm.com,
-        bhelgaas@google.com, tglx@linutronix.de, brijesh.singh@amd.com,
-        jglisse@redhat.com, thomas.lendacky@amd.com,
-        gregkh@linuxfoundation.org, baiyaowei@cmss.chinamobile.com,
-        richard.weiyang@gmail.com, devel@linuxdriverproject.org,
-        linux-input@vger.kernel.org, linux-nvdimm@lists.01.org,
-        devicetree@vger.kernel.org, linux-pci@vger.kernel.org,
-        ebiederm@xmission.com, vgoyal@redhat.com, dyoung@redhat.com,
-        yinghai@kernel.org, monstr@monstr.eu, davem@davemloft.net,
-        chris@zankel.net, jcmvbkbc@gmail.com, gustavo@padovan.org,
-        maarten.lankhorst@linux.intel.com, seanpaul@chromium.org,
-        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        kexec@lists.infradead.org
-Subject: Re: [PATCH v7 4/4] kexec_file: Load kernel at top of system RAM if
- required
-Message-ID: <20180725022115.GH6480@MiWiFi-R3L-srv>
-References: <20180718024944.577-1-bhe@redhat.com>
- <20180718024944.577-5-bhe@redhat.com>
- <20180718153326.b795e9ea7835432a56cd7011@linux-foundation.org>
- <20180719151753.GB7147@localhost.localdomain>
- <20180719124444.c893712cca2e6f2649d1bc0d@linux-foundation.org>
+        id S1727353AbeGYDdl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Jul 2018 23:33:41 -0400
+Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id DCC61931CEFDA;
+        Wed, 25 Jul 2018 10:24:14 +0800 (CST)
+Received: from [127.0.0.1] (10.177.31.96) by DGGEMS414-HUB.china.huawei.com
+ (10.3.19.214) with Microsoft SMTP Server id 14.3.382.0; Wed, 25 Jul 2018
+ 10:24:09 +0800
+Subject: Re: [PATCH] ARM: dma-mapping: always clear allocated buffers
+To:     Christoph Hellwig <hch@infradead.org>
+References: <20180724140435.17112-1-yuehaibing@huawei.com>
+ <20180724180906.GA8240@infradead.org>
+CC:     <linux@armlinux.org.uk>, <matthias.bgg@gmail.com>,
+        <vladimir.murzin@arm.com>, <linux-kernel@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <akpm@linux-foundation.org>, <iamjoonsoo.kim@lge.com>,
+        <robin.murphy@arm.com>, <treding@nvidia.com>,
+        <zhongjiang@huawei.com>
+From:   YueHaibing <yuehaibing@huawei.com>
+Message-ID: <0414bb3e-33a2-8f30-f765-ee10ecb44fad@huawei.com>
+Date:   Wed, 25 Jul 2018 10:24:07 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.2.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180719124444.c893712cca2e6f2649d1bc0d@linux-foundation.org>
-User-Agent: Mutt/1.9.1 (2017-09-22)
-X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Wed, 25 Jul 2018 02:21:27 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Wed, 25 Jul 2018 02:21:27 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'bhe@redhat.com' RCPT:''
+In-Reply-To: <20180724180906.GA8240@infradead.org>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.177.31.96]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Andrew,
-
-On 07/19/18 at 12:44pm, Andrew Morton wrote:
-> On Thu, 19 Jul 2018 23:17:53 +0800 Baoquan He <bhe@redhat.com> wrote:
-> > > As far as I can tell, the above is the whole reason for the patchset,
-> > > yes?  To avoid confusing users.
-> > 
-> > 
-> > In fact, it's not just trying to avoid confusing users. Kexec loading
-> > and kexec_file loading are just do the same thing in essence. Just we
-> > need do kernel image verification on uefi system, have to port kexec
-> > loading code to kernel. 
-> > 
-> > Kexec has been a formal feature in our distro, and customers owning
-> > those kind of very large machine can make use of this feature to speed
-> > up the reboot process. On uefi machine, the kexec_file loading will
-> > search place to put kernel under 4G from top to down. As we know, the
-> > 1st 4G space is DMA32 ZONE, dma, pci mmcfg, bios etc all try to consume
-> > it. It may have possibility to not be able to find a usable space for
-> > kernel/initrd. From the top down of the whole memory space, we don't
-> > have this worry. 
-> > 
-> > And at the first post, I just posted below with AKASHI's
-> > walk_system_ram_res_rev() version. Later you suggested to use
-> > list_head to link child sibling of resource, see what the code change
-> > looks like.
-> > http://lkml.kernel.org/r/20180322033722.9279-1-bhe@redhat.com
-> > 
-> > Then I posted v2
-> > http://lkml.kernel.org/r/20180408024724.16812-1-bhe@redhat.com
-> > Rob Herring mentioned that other components which has this tree struct
-> > have planned to do the same thing, replacing the singly linked list with
-> > list_head to link resource child sibling. Just quote Rob's words as
-> > below. I think this could be another reason.
-> > 
-> > ~~~~~ From Rob
-> > The DT struct device_node also has the same tree structure with
-> > parent, child, sibling pointers and converting to list_head had been
-> > on the todo list for a while. ACPI also has some tree walking
-> > functions (drivers/acpi/acpica/pstree.c). Perhaps there should be a
-> > common tree struct and helpers defined either on top of list_head or a
-> > ~~~~~
-> > new struct if that saves some size.
+On 2018/7/25 2:09, Christoph Hellwig wrote:
+> On Tue, Jul 24, 2018 at 10:04:35PM +0800, YueHaibing wrote:
+>> Sean Wang report dma_zalloc_coherent doesn't work as expect on his
+>> armv7,the allocated mem is not zeroed.The reason is __alloc_from_pool
+>> doesn't honor __GFP_ZERO.
 > 
-> Please let's get all this into the changelogs?
+> Please explain the "why" a little more.  All the explanations are in
+> the referenced arm64 commit and should be mentioned here as well.
 
-Sorry for late reply because of some urgent customer hotplug issues.
-
-I am rewriting all change logs, and cover letter. Then found I was wrong
-about the 2nd reason. The current kexec_file_load calls
-kexec_locate_mem_hole() to go through all system RAM region, if one
-region is larger than the size of kernel or initrd, it will search a
-position in that region from top to down. Since kexec will jump to 2nd
-kernel and don't need to care the 1st kernel's data, we can always find
-a usable space to load kexec kernel/initrd under 4G.
-
-So the only reason for this patch is keeping consistent with kexec_load
-and avoid confusion.
-
-And since x86 5-level paging mode has been added, we have another issue
-for top-down searching in the whole system RAM. That is we support
-dynamic 4-level to 5-level changing. Namely a kernel compiled with
-5-level support, we can add 'no5lvl' to force 4-level. Then jumping from
-a 5-level kernel to 4-level kernel, e.g we load kernel at the top of
-system RAM in 5-level paging mode which might be bigger than 64TB, then
-try to jump to 4-level kernel with the upper limit of 64TB. For this
-case, we need add limit for kexec kernel loading if in 5-level kernel.
-
-All this mess makes me hesitate to choose a deligate method. Maybe I
-should drop this patchset.
+ok, will send v2.
 
 > 
-> > > 
-> > > Is that sufficient?  Can we instead simplify their lives by providing
-> > > better documentation or informative printks or better Kconfig text,
-> > > etc?
-> > > 
-> > > And who *are* the people who are performing this configuration?  Random
-> > > system administrators?  Linux distro engineers?  If the latter then
-> > > they presumably aren't easily confused!
-> > 
-> > Kexec was invented for kernel developer to speed up their kernel
-> > rebooting. Now high end sever admin, kernel developer and QE are also
-> > keen to use it to reboot large box for faster feature testing, bug
-> > debugging. Kernel dev could know this well, about kernel loading
-> > position, admin or QE might not be aware of it very well. 
-> > 
-> > > 
-> > > In other words, I'm trying to understand how much benefit this patchset
-> > > will provide to our users as a whole.
-> > 
-> > Understood. The list_head replacing patch truly involes too many code
-> > changes, it's risky. I am willing to try any idea from reviewers, won't
-> > persuit they have to be accepted finally. If don't have a try, we don't
-> > know what it looks like, and what impact it may have. I am fine to take
-> > AKASHI's simple version of walk_system_ram_res_rev() to lower risk, even
-> > though it could be a little bit low efficient.
+> .
 > 
-> The larger patch produces a better result.  We can handle it ;)
 
-For this issue, if we stop changing the kexec top down searching code,
-I am not sure if we should post this replacing with list_head patches
-separately.
-
-Thanks
-Baoquan
