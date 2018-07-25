@@ -2,217 +2,105 @@ Return-Path: <SRS0=S+WB=KJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B1C4C67790
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 17:38:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF0D4C6778F
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 17:38:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B260920843
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 17:38:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B260920843
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xmission.com
+	by mail.kernel.org (Postfix) with ESMTP id 85EB320843
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 17:38:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 85EB320843
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729514AbeGYSvD (ORCPT
+        id S1729898AbeGYSvH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 14:51:03 -0400
-Received: from out02.mta.xmission.com ([166.70.13.232]:59395 "EHLO
-        out02.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729337AbeGYSvD (ORCPT
+        Wed, 25 Jul 2018 14:51:07 -0400
+Received: from mail-it0-f67.google.com ([209.85.214.67]:36747 "EHLO
+        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729337AbeGYSvG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Jul 2018 14:51:03 -0400
-Received: from in02.mta.xmission.com ([166.70.13.52])
-        by out02.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1fiNjw-0006S4-OI; Wed, 25 Jul 2018 11:38:20 -0600
-Received: from [97.119.167.31] (helo=x220.xmission.com)
-        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1fiNjh-0006gU-7k; Wed, 25 Jul 2018 11:38:20 -0600
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     David Ahern <dsahern@gmail.com>
-Cc:     Cong Wang <xiyou.wangcong@gmail.com>,
-        David Miller <davem@davemloft.net>,
-        Linux Kernel Network Developers <netdev@vger.kernel.org>,
-        nikita.leshchenko@oracle.com,
-        Roopa Prabhu <roopa@cumulusnetworks.com>,
-        Stephen Hemminger <stephen@networkplumber.org>,
-        Ido Schimmel <idosch@mellanox.com>,
-        Jiri Pirko <jiri@mellanox.com>,
-        Saeed Mahameed <saeedm@mellanox.com>,
-        Alexander Aring <alex.aring@gmail.com>,
-        linux-wpan@vger.kernel.org,
-        NetFilter <netfilter-devel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <1a3f59a9-0ba5-c83f-16a6-f9550a84f693@gmail.com>
-        <CAM_iQpWabZorkMNswyfHyS4KT=f_bgMtK8K35=84uah6Kfqxew@mail.gmail.com>
-        <1a27e301-3275-b349-a2f8-afdfdc02f04f@gmail.com>
-        <20180718.125938.2271502580775162784.davem@davemloft.net>
-        <28c30574-391c-b4bd-c337-51d3040d901a@gmail.com>
-        <CAM_iQpW4-JkZY7jXx0Q1b907hQ85UOL1eXv2YHwSukb5L=apUg@mail.gmail.com>
-        <5021d874-8e99-6eba-f24b-4257c62d4457@gmail.com>
-        <CAM_iQpUc-H2kZCBevePs6g-8qKyJkUhdd1ZDSQgYsCG0ChfC2w@mail.gmail.com>
-        <87muufze8w.fsf@xmission.com>
-        <4b03b5f6-87ce-9ff2-7c14-598beebd8fb8@gmail.com>
-Date:   Wed, 25 Jul 2018 12:38:01 -0500
-In-Reply-To: <4b03b5f6-87ce-9ff2-7c14-598beebd8fb8@gmail.com> (David Ahern's
-        message of "Wed, 25 Jul 2018 08:06:10 -0600")
-Message-ID: <87zhyfw70m.fsf@xmission.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
+        Wed, 25 Jul 2018 14:51:06 -0400
+Received: by mail-it0-f67.google.com with SMTP id p81-v6so9796392itp.1;
+        Wed, 25 Jul 2018 10:38:25 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=0ZYNMraE45yoayfKYmMKBMwB0niswFTtF5Y8itzeSi0=;
+        b=Ji5RD48Ll/rx0HGpEEwAnyQpwsYX98DheTPGFtHoRXhHwm0hrObblbXD6lOfR1LB1A
+         A6rmAC4Ss4ZkYZaxrH/tYjHzM+xnQXCcoBoM6tEBl6ENMGJ8l1NlV1yWBYRaJmQQyw92
+         0uEQXnyp3iXpBYZmYDjWu1Cnt5OLXRVIOATfqbxJF1839crdT80BX/iOv0+NkMItCncQ
+         b4X2i//iRduHsFv672Dnhy4BFprvC85YRCbEVKlW/1nxRSRYPsIY/gT5J86bWZR7dp8e
+         mhqQIepPVM11dnv6+883rOHeYC/VNpr9xDqIe85LEumvoWj/oSgGIWSDtG1I7/S78LGQ
+         IUtA==
+X-Gm-Message-State: AOUpUlHqbk10DTc81Vm8NvUNUdcqIoemR/DNE5CCfQQa9FxgvrArpE/C
+        +478br4tdOibpe9Wy+I8PQ==
+X-Google-Smtp-Source: AAOMgpdv8lSSZUcYvXXakDTlYd0rPLHtfUckWMVeY1osoOY9FM+ZcaYKwwy1gZhMyG5/ub05B6BZAw==
+X-Received: by 2002:a02:3f25:: with SMTP id d37-v6mr19614972jaa.109.1532540305155;
+        Wed, 25 Jul 2018 10:38:25 -0700 (PDT)
+Received: from localhost ([24.51.61.72])
+        by smtp.gmail.com with ESMTPSA id v82-v6sm1502735iod.14.2018.07.25.10.38.24
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 25 Jul 2018 10:38:24 -0700 (PDT)
+Date:   Wed, 25 Jul 2018 11:38:23 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     Tomasz Figa <tomasz.figa@gmail.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Kukjin Kim <kgene@kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        =?utf-8?B?UGF3ZcWC?= Chmiel <pawel.mikolaj.chmiel@gmail.com>,
+        Sylwester Nawrocki <snawrocki@kernel.org>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Pankaj Dubey <pankaj.dubey@samsung.com>
+Subject: Re: [RFT v2 03/10] pinctrl: samsung: Document hidden requirement
+ about one external wakeup
+Message-ID: <20180725173823.GA25530@rob-hp-laptop>
+References: <20180723175302.22535-1-krzk@kernel.org>
+ <20180723175302.22535-4-krzk@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1fiNjh-0006gU-7k;;;mid=<87zhyfw70m.fsf@xmission.com>;;;hst=in02.mta.xmission.com;;;ip=97.119.167.31;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX19cmKYb78zOmX0ScL5RJ/ALOgA8mSq3RFU=
-X-SA-Exim-Connect-IP: 97.119.167.31
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-Subject: Re: [PATCH RFC/RFT net-next 00/17] net: Convert neighbor tables to per-namespace
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180723175302.22535-4-krzk@kernel.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-David Ahern <dsahern@gmail.com> writes:
+On Mon, Jul 23, 2018 at 07:52:55PM +0200, Krzysztof Kozlowski wrote:
+> Hardware (S5Pv210 and all Exynos SoCs) provides only 32 external
+> interrupts which can wakeup device from deep sleep modes.  On S5Pv210
+> these are gph0-gph3.  On all Exynos designs these are gpx0-gpx3.
+> There is only one 32-bit register for controlling the external wakeup
+> interrupt mask (masking and unmasking waking capability of these
+> interrupts).
+> 
+> This lead to implementation in pinctrl driver and machine code which was
+> using static memory for storing the mask value and not caring about
+> multiple devices of pin controller... because only one pin controller
+> device will be handling this.
+> 
+> Since each pin controller node in Device Tree maps onto one device, this
+> corresponds to hidden assumption in parsing the Device Tree: external
+> wakeup interrupts can be defined only once.  Make this assumption an
+> explicit requirement.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> Cc: Tomasz Figa <tomasz.figa@gmail.com>
+> Cc: Sylwester Nawrocki <snawrocki@kernel.org>
+> Acked-by: Tomasz Figa <tomasz.figa@gmail.com>
+> ---
+>  Documentation/devicetree/bindings/pinctrl/samsung-pinctrl.txt | 9 +++++++--
+>  1 file changed, 7 insertions(+), 2 deletions(-)
 
-> On 7/25/18 6:33 AM, Eric W. Biederman wrote:
->> Cong Wang <xiyou.wangcong@gmail.com> writes:
->> 
->>> On Tue, Jul 24, 2018 at 8:14 AM David Ahern <dsahern@gmail.com> wrote:
->>>>
->>>> On 7/19/18 11:12 AM, Cong Wang wrote:
->>>>> On Thu, Jul 19, 2018 at 9:16 AM David Ahern <dsahern@gmail.com> wrote:
->>>>>>
->>>>>> Chatting with Nikolay about this and he brought up a good corollary - ip
->>>>>> fragmentation. It really is a similar problem in that memory is consumed
->>>>>> as a result of packets received from an external entity. The ipfrag
->>>>>> sysctls are per namespace with a limit that non-init_net namespaces can
->>>>>> not set high_thresh > the current value of init_net. Potential memory
->>>>>> consumed by fragments scales with the number of namespaces which is the
->>>>>> primary concern with making neighbor tables per namespace.
->>>>>
->>>>> Nothing new, already discussed:
->>>>> https://marc.info/?l=linux-netdev&m=140391416215988&w=2
->>>>>
->>>>> :)
->>>>>
->>>>
->>>> Neighbor tables, bridge fdbs, vxlan fdbs and ip fragments all consume
->>>> local memory resources due to received packets. bridge and vxlan fdb's
->>>> are fairly straightforward analogs to neighbor entries; they are per
->>>> device with no limits on the number of entries. Fragments have memory
->>>> limits per namespace. So neighbor tables are the only ones with this
->>>> strict limitation and concern on memory consumption.
->>>>
->>>> I get the impression there is no longer a strong resistance against
->>>> moving the tables to per namespace, but deciding what is the right
->>>> approach to handle backwards compatibility. Correct? Changing the
->>>> accounting is inevitably going to be noticeable to some use case(s), but
->>>> with sysctl settings it is a simple runtime update once the user knows
->>>> to make the change.
->>>
->>> This question definitely should go to Eric Biederman who was against
->>> my proposal.
->>>
->>> Let's add Eric into CC.
->> 
->> Given that the entries are per device and the devices are per-namespace,
->> semantically neighbours are already kept in a per-namespace manner.  So
->> this is all about making the code not honoring global resource limits.
->> Making the code not honor gc_thresh3.
->> 
->> Skimming through the code today the default for gc_thresh3 is 1024.
->> Which means that we limit the neighbour tables to 1024 entries per
->> protocol type.
->> 
->> There are some pretty compelling reasons especially with ipv4 to keep
->> the subnet size down.  Arp storms are a real thing.
->> 
->> I don't know off the top of my head what the reasons for limiting the
->> neighbour table sizes.  I would be much more comfortable with a patchset
->> like this if we did some research and figured out the reasons why
->> we have a global limit.  Then changed the code to remove those limits.
->> 
->> When the limits are gone.  When the code can support large subnets
->> without tuning.  We we don't have to worry about someone scanning an all
->> addresses in an ipv6 subnet and causing a DOS on working machines.
->> I think it is completely appropriate to look to see if something per
->> network namespace needs to happen.
->> 
->> So please let's address the limits, not the fact that some specific
->> corner case ran into them.
->> 
->> If we are going to neuter gc_thresh3 let's go as far as removing it
->> entirely.  If we are going to make the neighbour table per something
->> let's make it per network device.  If we can afford the multiple hash
->> tables then a hash table per device is better.   Perhaps we want to move
->> to rhash tables while we look at this, instead of an old hand grown
->> version of resizable hash table.
->
-> Given the uses cases with increasing number of devices (> 10,000),
-> per-device tables will have more problems than per namespace - in
-> reference to your concern in the last paragraph below.
->
->> 
->> Unless I misread something all your patchset did is reshuffle code and
->> data structures so that gc_thresh3 does not apply accross namespaces.
->> That does not feel like it really fixes anything.  That just lies to
->> people.
->
-> This patch set fixes the lie that network namespaces provide complete
-> isolation when in fact one namespace can evict neighbor entries from
-> another. An arp storm you are concerned about in one namespace impacts
-> all containers.
-
-Network namespaces can not provide complete isolation.  They share the
-same kernel and they do not dedicate resources to each other.
-Namespaces in general are about the names.  They are about sharing a
-machine efficiently.
-
-I humbly suggest that anyone who wants ``complete'' isolation to use vm
-at the very least.
-
-I do think the limits on the neighbour table are quite likely too
-strict.  We should be able to relax them and continue to have a
-networking stack that works for everyone.
-
-> It starts by removing the proliferation of open coded references to
-> arp_tbl and nd_tbl, moving them behind the existing neigh_find_table.
-> From there (patches 14-16) it makes the tables per-namespace and hence
-> makes the gc_thresh parameters which are per-table now
-> per-table-per-namespace.
->
-> So it removes the global thresholds because the global ones are just
-> wrong given the meaning of a network namespace and provides the more
-> appropriate per-namespace limits.
-
-Absolutely NOT.  Global thresholds are exactly correct given the fact
-you are running on a single kernel.
-
-Memory is not free (Even though we are swimming in enough of it memory
-rarely matters).  One of the few remaining challenges is for containers
-is finding was to limit resources in such a way that one application
-does not mess things up for another container during ordinary usage.
-
-It looks like the neighbour tables absolutely are that kind of problem,
-because the artificial limits are too strict.   Completely giving up on
-limits does not seem right approach either.  We need to fix the limits
-we have (perhaps making them go away entirely), not just apply a
-band-aid.  Let's get to the bottom of this and make the system better.
-
->> Further unless I misread something you are increasing the number of
->> timers to 3 per namespace.  If I create create a thousand network
->> namespaces that feels like it will hurt system performance overall.
->
-> It seems to me the timers are per neighbor entry not table. The per
-> table ones are for proxies.
-
-It seems I misread that bit when I was refreshing my memory on what
-everything is doing.  If we can already have 1024 timers that makes
-timers not a concern.
-
-Eric
-
+Reviewed-by: Rob Herring <robh@kernel.org>
