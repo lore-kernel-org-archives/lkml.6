@@ -2,261 +2,192 @@ Return-Path: <SRS0=S+WB=KJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CF65C6778F
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 16:31:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2C0AC67790
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 16:34:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 41F26204EC
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 16:31:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 41F26204EC
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 768AF20852
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 16:34:29 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="vYOWDogn"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 768AF20852
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730524AbeGYRnq (ORCPT
+        id S1729143AbeGYRqx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 13:43:46 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:46008 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728871AbeGYRnp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Jul 2018 13:43:45 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        Wed, 25 Jul 2018 13:46:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52586 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728694AbeGYRqx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Jul 2018 13:46:53 -0400
+Received: from mail-yw0-f182.google.com (mail-yw0-f182.google.com [209.85.161.182])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id B2CB98197000;
-        Wed, 25 Jul 2018 16:31:19 +0000 (UTC)
-Received: from vitty.brq.redhat.com (unknown [10.40.205.21])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 5C1572156897;
-        Wed, 25 Jul 2018 16:31:16 +0000 (UTC)
-From:   Vitaly Kuznetsov <vkuznets@redhat.com>
-To:     kvm@vger.kernel.org
-Cc:     Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
-        Roman Kagan <rkagan@virtuozzo.com>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        "Michael Kelley (EOSG)" <Michael.H.Kelley@microsoft.com>,
-        Mohammed Gamal <mmorsy@redhat.com>,
-        Cathy Avery <cavery@redhat.com>, linux-kernel@vger.kernel.org,
-        Jim Mattson <jmattson@google.com>,
-        Liran Alon <liran.alon@oracle.com>
-Subject: [PATCH v3 6/6] KVM: nVMX: optimize prepare_vmcs02{,_full} for Enlightened VMCS case
-Date:   Wed, 25 Jul 2018 18:30:57 +0200
-Message-Id: <20180725163057.13948-7-vkuznets@redhat.com>
-In-Reply-To: <20180725163057.13948-1-vkuznets@redhat.com>
-References: <20180725163057.13948-1-vkuznets@redhat.com>
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Wed, 25 Jul 2018 16:31:19 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Wed, 25 Jul 2018 16:31:19 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'vkuznets@redhat.com' RCPT:''
+        by mail.kernel.org (Postfix) with ESMTPSA id 5722720852;
+        Wed, 25 Jul 2018 16:34:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1532536466;
+        bh=JWYuIpckcl1hQfAfk2lsVYXc/nJOjgvy6VEC10XmCuo=;
+        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
+        b=vYOWDogn2pKPG/ZM8gxgit99gmGOhbVFzY7cP9bEVyg8lIW/QSBbI4ifDqJN7lWoe
+         l7AMRoM9yXPknUr0AAMoAH5008rQPZUw1Bh7AVbVbbqsEYfHW/Z5BkVNpvgP7mVawH
+         mytKIeT7O4fAHE1u5qfCUVUQDQxotePhnCM6CcjY=
+Received: by mail-yw0-f182.google.com with SMTP id l189-v6so3077386ywb.10;
+        Wed, 25 Jul 2018 09:34:26 -0700 (PDT)
+X-Gm-Message-State: AOUpUlHnpm2GwE+knNRVujdjQc1ahEahuXU4ikosVQjz97WU7QfO487w
+        sHuPu30Iec2JaOU1X84mKmL4/MtRKTH7EDi2Fjo=
+X-Google-Smtp-Source: AAOMgpf3oIqnArJpHjK5fXQTMw/VcEgPPSNrpTDpxb794/V8fgrAq0a67iaRYUP7cELqj/+Zawd40r7iHfyg0pmytiI=
+X-Received: by 2002:a81:a348:: with SMTP id a69-v6mr11382764ywh.142.1532536465512;
+ Wed, 25 Jul 2018 09:34:25 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:a25:8182:0:0:0:0:0 with HTTP; Wed, 25 Jul 2018 09:33:44
+ -0700 (PDT)
+In-Reply-To: <CANk1AXRewvAAxRi=kmCNL3CEki9ODk7LvLS6q8Hd64JRanyfew@mail.gmail.com>
+References: <5553262.evi6GU8epL@pcbe13614> <CANk1AXRewvAAxRi=kmCNL3CEki9ODk7LvLS6q8Hd64JRanyfew@mail.gmail.com>
+From:   Alan Tull <atull@kernel.org>
+Date:   Wed, 25 Jul 2018 11:33:44 -0500
+X-Gmail-Original-Message-ID: <CANk1AXRYAPMgvFo-oLEz0-WwUstTvKD5f0_5NkvKzEO3K1=f2Q@mail.gmail.com>
+Message-ID: <CANk1AXRYAPMgvFo-oLEz0-WwUstTvKD5f0_5NkvKzEO3K1=f2Q@mail.gmail.com>
+Subject: Re: fpga: fpga_mgr_free usage
+To:     federico.vaga@cern.ch
+Cc:     linux-fpga@vger.kernel.org,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When Enlightened VMCS is in use by L1 hypervisor we can avoid vmwriting
-VMCS fields which did not change.
+On Wed, Jul 11, 2018 at 10:59 AM, Alan Tull <atull@kernel.org> wrote:
+> On Wed, Jul 11, 2018 at 7:38 AM, Federico Vaga <federico.vaga@cern.ch> wrote:
+>
+> Hi Federico,
+>
+>> Hi Alan,
+>>
+>> I have another point that I would like to discuss. It is about the
+>> usage of 'fpga_mgr_free()' which does not look like consistent.
+>>
+>> This function, according to the current implementation, can be used by
+>> an FPGA manager user and it is used by the FPGA manager itself on
+>> device release. This means that the user can only use this function if
+>> fpga_mgr_register() fails (to clean up), otherwise the user must NOT
+>> use this function, otherwise we most likely get an oops (NULL or
+>> invalid pointer). The example here is correct, this is what we should
+>> do:
+>>
+>> https://www.kernel.org/doc/html/latest/driver-api/fpga/fpga-mgr.html
+>>
+>> But I suggest to document it better or prevent this type of mistakes
+>> from happening. Following a couple of proposals
+>>
+>> ------
+>> 1.
+>> Document it better. This is easy, in the fpga_mgr_free() kernel-doc
+>> comment we explain that the use of this function must be limited to
+>> clean up the memory on a registration failure. If an FPGA manager has
+>> been successfully registered then it will be freed by the framework
+>> itself.
 
-Our first goal is to achieve minimal impact on traditional VMCS case so
-we're not wrapping each vmwrite() with an if-changed checker. We also can't
-utilize static keys as Enlightened VMCS usage is per-guest.
+As I was researching this, I remembered why I implemented it this way.
+  See below for that explanation.
 
-This patch implements the simpliest solution: checking fields in groups.
-We skip single vmwrite() statements as doing the check will cost us
-something even in non-evmcs case and the win is tiny. Unfortunately, this
-makes prepare_vmcs02_full{,_full}() code Enlightened VMCS-dependent (and
-a bit ugly).
+It looks like I'm going to switch to option 1 here and add more
+documentation for both fpga_mgr_free() and fpga_mgr_unregister().
+Note that fpga_mgr_unregister() already says that that it frees the
+manager, and the usage example already does the right thing, but I'll
+add more words to really beat the message in.
 
-Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
----
- arch/x86/kvm/vmx.c | 137 +++++++++++++++++++++++++++++------------------------
- 1 file changed, 76 insertions(+), 61 deletions(-)
+>>
+>> But still, this does not prevent an oops from happening.
+>> ------
+>> 2.
+>> Remove the fpga_mgr_free() from fpga_mgr_dev_release() and ask the
+>> user to free the manager when necessary.
+>>
+>> This makes the usage consistent: the user creates and destroy its own
+>> objects. This is also consistent with our other discussion where we
+>> said, among the other things, that the module that uses the FPGA
+>> manager can the owner of the fpga_manager data structure.
+>
+> You're not the first to complain about this.  I think I'll err on the
+> side of consistency and implement your option 2 here.
+>
+> Alan
 
-diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
-index 8eab23fc86a9..27f80eb3cb93 100644
---- a/arch/x86/kvm/vmx.c
-+++ b/arch/x86/kvm/vmx.c
-@@ -12028,44 +12028,65 @@ static int nested_vmx_load_cr3(struct kvm_vcpu *vcpu, unsigned long cr3, bool ne
- static void prepare_vmcs02_full(struct kvm_vcpu *vcpu, struct vmcs12 *vmcs12)
- {
- 	struct vcpu_vmx *vmx = to_vmx(vcpu);
-+	struct hv_enlightened_vmcs *hv_evmcs = vmx->nested.hv_evmcs;
-+
-+	if (!hv_evmcs || !(hv_evmcs->hv_clean_fields &
-+			   HV_VMX_ENLIGHTENED_CLEAN_FIELD_GUEST_GRP2)) {
-+		vmcs_write16(GUEST_ES_SELECTOR, vmcs12->guest_es_selector);
-+		vmcs_write16(GUEST_SS_SELECTOR, vmcs12->guest_ss_selector);
-+		vmcs_write16(GUEST_DS_SELECTOR, vmcs12->guest_ds_selector);
-+		vmcs_write16(GUEST_FS_SELECTOR, vmcs12->guest_fs_selector);
-+		vmcs_write16(GUEST_GS_SELECTOR, vmcs12->guest_gs_selector);
-+		vmcs_write16(GUEST_LDTR_SELECTOR, vmcs12->guest_ldtr_selector);
-+		vmcs_write16(GUEST_TR_SELECTOR, vmcs12->guest_tr_selector);
-+		vmcs_write32(GUEST_ES_LIMIT, vmcs12->guest_es_limit);
-+		vmcs_write32(GUEST_SS_LIMIT, vmcs12->guest_ss_limit);
-+		vmcs_write32(GUEST_DS_LIMIT, vmcs12->guest_ds_limit);
-+		vmcs_write32(GUEST_FS_LIMIT, vmcs12->guest_fs_limit);
-+		vmcs_write32(GUEST_GS_LIMIT, vmcs12->guest_gs_limit);
-+		vmcs_write32(GUEST_LDTR_LIMIT, vmcs12->guest_ldtr_limit);
-+		vmcs_write32(GUEST_TR_LIMIT, vmcs12->guest_tr_limit);
-+		vmcs_write32(GUEST_GDTR_LIMIT, vmcs12->guest_gdtr_limit);
-+		vmcs_write32(GUEST_IDTR_LIMIT, vmcs12->guest_idtr_limit);
-+		vmcs_write32(GUEST_ES_AR_BYTES, vmcs12->guest_es_ar_bytes);
-+		vmcs_write32(GUEST_SS_AR_BYTES, vmcs12->guest_ss_ar_bytes);
-+		vmcs_write32(GUEST_DS_AR_BYTES, vmcs12->guest_ds_ar_bytes);
-+		vmcs_write32(GUEST_FS_AR_BYTES, vmcs12->guest_fs_ar_bytes);
-+		vmcs_write32(GUEST_GS_AR_BYTES, vmcs12->guest_gs_ar_bytes);
-+		vmcs_write32(GUEST_LDTR_AR_BYTES, vmcs12->guest_ldtr_ar_bytes);
-+		vmcs_write32(GUEST_TR_AR_BYTES, vmcs12->guest_tr_ar_bytes);
-+		vmcs_writel(GUEST_SS_BASE, vmcs12->guest_ss_base);
-+		vmcs_writel(GUEST_DS_BASE, vmcs12->guest_ds_base);
-+		vmcs_writel(GUEST_FS_BASE, vmcs12->guest_fs_base);
-+		vmcs_writel(GUEST_GS_BASE, vmcs12->guest_gs_base);
-+		vmcs_writel(GUEST_LDTR_BASE, vmcs12->guest_ldtr_base);
-+		vmcs_writel(GUEST_TR_BASE, vmcs12->guest_tr_base);
-+		vmcs_writel(GUEST_GDTR_BASE, vmcs12->guest_gdtr_base);
-+		vmcs_writel(GUEST_IDTR_BASE, vmcs12->guest_idtr_base);
-+	}
-+
-+	if (!hv_evmcs || !(hv_evmcs->hv_clean_fields &
-+			   HV_VMX_ENLIGHTENED_CLEAN_FIELD_GUEST_GRP1)) {
-+		vmcs_write32(GUEST_SYSENTER_CS, vmcs12->guest_sysenter_cs);
-+		vmcs_writel(GUEST_PENDING_DBG_EXCEPTIONS,
-+			    vmcs12->guest_pending_dbg_exceptions);
-+		vmcs_writel(GUEST_SYSENTER_ESP, vmcs12->guest_sysenter_esp);
-+		vmcs_writel(GUEST_SYSENTER_EIP, vmcs12->guest_sysenter_eip);
-+
-+		if (vmx_mpx_supported())
-+			vmcs_write64(GUEST_BNDCFGS, vmcs12->guest_bndcfgs);
- 
--	vmcs_write16(GUEST_ES_SELECTOR, vmcs12->guest_es_selector);
--	vmcs_write16(GUEST_SS_SELECTOR, vmcs12->guest_ss_selector);
--	vmcs_write16(GUEST_DS_SELECTOR, vmcs12->guest_ds_selector);
--	vmcs_write16(GUEST_FS_SELECTOR, vmcs12->guest_fs_selector);
--	vmcs_write16(GUEST_GS_SELECTOR, vmcs12->guest_gs_selector);
--	vmcs_write16(GUEST_LDTR_SELECTOR, vmcs12->guest_ldtr_selector);
--	vmcs_write16(GUEST_TR_SELECTOR, vmcs12->guest_tr_selector);
--	vmcs_write32(GUEST_ES_LIMIT, vmcs12->guest_es_limit);
--	vmcs_write32(GUEST_SS_LIMIT, vmcs12->guest_ss_limit);
--	vmcs_write32(GUEST_DS_LIMIT, vmcs12->guest_ds_limit);
--	vmcs_write32(GUEST_FS_LIMIT, vmcs12->guest_fs_limit);
--	vmcs_write32(GUEST_GS_LIMIT, vmcs12->guest_gs_limit);
--	vmcs_write32(GUEST_LDTR_LIMIT, vmcs12->guest_ldtr_limit);
--	vmcs_write32(GUEST_TR_LIMIT, vmcs12->guest_tr_limit);
--	vmcs_write32(GUEST_GDTR_LIMIT, vmcs12->guest_gdtr_limit);
--	vmcs_write32(GUEST_IDTR_LIMIT, vmcs12->guest_idtr_limit);
--	vmcs_write32(GUEST_ES_AR_BYTES, vmcs12->guest_es_ar_bytes);
--	vmcs_write32(GUEST_SS_AR_BYTES, vmcs12->guest_ss_ar_bytes);
--	vmcs_write32(GUEST_DS_AR_BYTES, vmcs12->guest_ds_ar_bytes);
--	vmcs_write32(GUEST_FS_AR_BYTES, vmcs12->guest_fs_ar_bytes);
--	vmcs_write32(GUEST_GS_AR_BYTES, vmcs12->guest_gs_ar_bytes);
--	vmcs_write32(GUEST_LDTR_AR_BYTES, vmcs12->guest_ldtr_ar_bytes);
--	vmcs_write32(GUEST_TR_AR_BYTES, vmcs12->guest_tr_ar_bytes);
--	vmcs_writel(GUEST_SS_BASE, vmcs12->guest_ss_base);
--	vmcs_writel(GUEST_DS_BASE, vmcs12->guest_ds_base);
--	vmcs_writel(GUEST_FS_BASE, vmcs12->guest_fs_base);
--	vmcs_writel(GUEST_GS_BASE, vmcs12->guest_gs_base);
--	vmcs_writel(GUEST_LDTR_BASE, vmcs12->guest_ldtr_base);
--	vmcs_writel(GUEST_TR_BASE, vmcs12->guest_tr_base);
--	vmcs_writel(GUEST_GDTR_BASE, vmcs12->guest_gdtr_base);
--	vmcs_writel(GUEST_IDTR_BASE, vmcs12->guest_idtr_base);
--
--	vmcs_write32(GUEST_SYSENTER_CS, vmcs12->guest_sysenter_cs);
--	vmcs_writel(GUEST_PENDING_DBG_EXCEPTIONS,
--		vmcs12->guest_pending_dbg_exceptions);
--	vmcs_writel(GUEST_SYSENTER_ESP, vmcs12->guest_sysenter_esp);
--	vmcs_writel(GUEST_SYSENTER_EIP, vmcs12->guest_sysenter_eip);
-+		/*
-+		 * L1 may access the L2's PDPTR, so save them to construct
-+		 * vmcs12
-+		 */
-+		if (enable_ept) {
-+			vmcs_write64(GUEST_PDPTR0, vmcs12->guest_pdptr0);
-+			vmcs_write64(GUEST_PDPTR1, vmcs12->guest_pdptr1);
-+			vmcs_write64(GUEST_PDPTR2, vmcs12->guest_pdptr2);
-+			vmcs_write64(GUEST_PDPTR3, vmcs12->guest_pdptr3);
-+		}
-+	}
- 
- 	if (nested_cpu_has_xsaves(vmcs12))
- 		vmcs_write64(XSS_EXIT_BITMAP, vmcs12->xss_exit_bitmap);
-@@ -12123,9 +12144,6 @@ static void prepare_vmcs02_full(struct kvm_vcpu *vcpu, struct vmcs12 *vmcs12)
- 
- 	set_cr4_guest_host_mask(vmx);
- 
--	if (vmx_mpx_supported())
--		vmcs_write64(GUEST_BNDCFGS, vmcs12->guest_bndcfgs);
--
- 	if (enable_vpid) {
- 		if (nested_cpu_has_vpid(vmcs12) && vmx->nested.vpid02)
- 			vmcs_write16(VIRTUAL_PROCESSOR_ID, vmx->nested.vpid02);
-@@ -12133,16 +12151,6 @@ static void prepare_vmcs02_full(struct kvm_vcpu *vcpu, struct vmcs12 *vmcs12)
- 			vmcs_write16(VIRTUAL_PROCESSOR_ID, vmx->vpid);
- 	}
- 
--	/*
--	 * L1 may access the L2's PDPTR, so save them to construct vmcs12
--	 */
--	if (enable_ept) {
--		vmcs_write64(GUEST_PDPTR0, vmcs12->guest_pdptr0);
--		vmcs_write64(GUEST_PDPTR1, vmcs12->guest_pdptr1);
--		vmcs_write64(GUEST_PDPTR2, vmcs12->guest_pdptr2);
--		vmcs_write64(GUEST_PDPTR3, vmcs12->guest_pdptr3);
--	}
--
- 	if (cpu_has_vmx_msr_bitmap())
- 		vmcs_write64(MSR_BITMAP, __pa(vmx->nested.vmcs02.msr_bitmap));
- }
-@@ -12163,6 +12171,7 @@ static int prepare_vmcs02(struct kvm_vcpu *vcpu, struct vmcs12 *vmcs12,
- {
- 	struct vcpu_vmx *vmx = to_vmx(vcpu);
- 	u32 exec_control, vmcs12_exec_ctrl;
-+	struct hv_enlightened_vmcs *hv_evmcs = vmx->nested.hv_evmcs;
- 
- 	if (vmx->nested.dirty_vmcs12 || vmx->nested.hv_evmcs) {
- 		prepare_vmcs02_full(vcpu, vmcs12);
-@@ -12174,11 +12183,14 @@ static int prepare_vmcs02(struct kvm_vcpu *vcpu, struct vmcs12 *vmcs12,
- 	 * with vmx_shadow_fields.h.
- 	 */
- 
--	vmcs_write16(GUEST_CS_SELECTOR, vmcs12->guest_cs_selector);
--	vmcs_write32(GUEST_CS_LIMIT, vmcs12->guest_cs_limit);
--	vmcs_write32(GUEST_CS_AR_BYTES, vmcs12->guest_cs_ar_bytes);
--	vmcs_writel(GUEST_ES_BASE, vmcs12->guest_es_base);
--	vmcs_writel(GUEST_CS_BASE, vmcs12->guest_cs_base);
-+	if (!hv_evmcs || !(hv_evmcs->hv_clean_fields &
-+			   HV_VMX_ENLIGHTENED_CLEAN_FIELD_GUEST_GRP2)) {
-+		vmcs_write16(GUEST_CS_SELECTOR, vmcs12->guest_cs_selector);
-+		vmcs_write32(GUEST_CS_LIMIT, vmcs12->guest_cs_limit);
-+		vmcs_write32(GUEST_CS_AR_BYTES, vmcs12->guest_cs_ar_bytes);
-+		vmcs_writel(GUEST_ES_BASE, vmcs12->guest_es_base);
-+		vmcs_writel(GUEST_CS_BASE, vmcs12->guest_cs_base);
-+	}
- 
- 	/*
- 	 * Not in vmcs02: GUEST_PML_INDEX, HOST_FS_SELECTOR, HOST_GS_SELECTOR,
-@@ -12194,12 +12206,15 @@ static int prepare_vmcs02(struct kvm_vcpu *vcpu, struct vmcs12 *vmcs12,
- 		vmcs_write64(GUEST_IA32_DEBUGCTL, vmx->nested.vmcs01_debugctl);
- 	}
- 	if (vmx->nested.nested_run_pending) {
--		vmcs_write32(VM_ENTRY_INTR_INFO_FIELD,
--			     vmcs12->vm_entry_intr_info_field);
--		vmcs_write32(VM_ENTRY_EXCEPTION_ERROR_CODE,
--			     vmcs12->vm_entry_exception_error_code);
--		vmcs_write32(VM_ENTRY_INSTRUCTION_LEN,
--			     vmcs12->vm_entry_instruction_len);
-+		if (!hv_evmcs || !(hv_evmcs->hv_clean_fields &
-+			   HV_VMX_ENLIGHTENED_CLEAN_FIELD_CONTROL_EVENT)) {
-+			vmcs_write32(VM_ENTRY_INTR_INFO_FIELD,
-+				     vmcs12->vm_entry_intr_info_field);
-+			vmcs_write32(VM_ENTRY_EXCEPTION_ERROR_CODE,
-+				     vmcs12->vm_entry_exception_error_code);
-+			vmcs_write32(VM_ENTRY_INSTRUCTION_LEN,
-+				     vmcs12->vm_entry_instruction_len);
-+		}
- 		vmcs_write32(GUEST_INTERRUPTIBILITY_INFO,
- 			     vmcs12->guest_interruptibility_info);
- 		vmx->loaded_vmcs->nmi_known_unmasked =
--- 
-2.14.4
+If you write a class or create a device, the kernel wants a release
+function and will give a warning if you leave it out.  The warning is
+"Device 'fpga0' does not have a release() function, it is broken and
+must be fixed." and comes from drivers/base/core.c.
 
+I will add some more documentation to make it clear that once a a
+mgr/bridge/region has been registered, the cleanup will be handled
+automatically when the device goes away.  Until the
+fpga_(mgr|bridge|region)_register succeeds, the caller still needs to
+do cleanup.
+
+I did find one bug while looking at this.  I'll post some patches.
+
+Full message was:
+root@cyclone5:~# rmmod socfpga
+[   48.206235] fpga_manager fpga0: fpga_mgr_unregister Altera SOCFPGA
+FPGA Manager
+[   48.213677] ------------[ cut here ]------------
+[   48.218312] WARNING: CPU: 1 PID: 1369 at
+/home/atull/repos/linux-socfpga/drivers/base/core.c:895
+device_release+0x9c/0xa0
+[   48.229293] Device 'fpga0' does not have a release() function, it
+is broken and must be fixed.
+[   48.237904] Modules linked in: socfpga(-) altera_hps2fpga fpga_mgr
+fpga_bridge [last unloaded: fpga_region]
+[   48.247659] CPU: 1 PID: 1369 Comm: rmmod Not tainted
+4.18.0-rc5-next-20180717-00012-ge5f548e-dirty #3
+[   48.256843] Hardware name: Altera SOCFPGA
+[   48.260858] [<c01137ac>] (unwind_backtrace) from [<c010dc04>]
+(show_stack+0x20/0x24)
+[   48.268582] [<c010dc04>] (show_stack) from [<c07d448c>]
+(dump_stack+0x8c/0xa0)
+[   48.275786] [<c07d448c>] (dump_stack) from [<c0123bc0>] (__warn+0x104/0x11c)
+[   48.282810] [<c0123bc0>] (__warn) from [<c0123c2c>]
+(warn_slowpath_fmt+0x54/0x70)
+[   48.290269] [<c0123c2c>] (warn_slowpath_fmt) from [<c052c9cc>]
+(device_release+0x9c/0xa0)
+[   48.298418] [<c052c9cc>] (device_release) from [<c07d904c>]
+(kobject_put+0xa8/0xe0)
+[   48.306047] [<c07d904c>] (kobject_put) from [<c052ec3c>]
+(device_unregister+0x2c/0x30)
+[   48.313939] [<c052ec3c>] (device_unregister) from [<bf01262c>]
+(fpga_mgr_unregister+0x58/0x74 [fpga_mgr])
+[   48.323475] [<bf01262c>] (fpga_mgr_unregister [fpga_mgr]) from
+[<bf02b01c>] (socfpga_fpga_remove+0x1c/0x24 [socfpga])
+[   48.334047] [<bf02b01c>] (socfpga_fpga_remove [socfpga]) from
+[<c0534be8>] (platform_drv_remove+0x34/0x4c)
+[   48.343664] [<c0534be8>] (platform_drv_remove) from [<c0532f64>]
+(device_release_driver_internal+0x180/0x230)
+[   48.353538] [<c0532f64>] (device_release_driver_internal) from
+[<c0533090>] (driver_detach+0x58/0xa0)
+[   48.362720] [<c0533090>] (driver_detach) from [<c0531bf8>]
+(bus_remove_driver+0x5c/0xb4)
+[   48.370781] [<c0531bf8>] (bus_remove_driver) from [<c0533a70>]
+(driver_unregister+0x38/0x58)
+[   48.379186] [<c0533a70>] (driver_unregister) from [<c0534cd0>]
+(platform_driver_unregister+0x1c/0x20)
+[   48.388370] [<c0534cd0>] (platform_driver_unregister) from
+[<bf02b688>] (socfpga_fpga_driver_exit+0x18/0x990 [socfpga])
+[   48.399113] [<bf02b688>] (socfpga_fpga_driver_exit [socfpga]) from
+[<c01ad948>] (sys_delete_module+0x1a0/0x1f0)
+[   48.409164] [<c01ad948>] (sys_delete_module) from [<c0101000>]
+(ret_fast_syscall+0x0/0x54)
+[   48.417391] Exception stack(0xee6dbfa8 to 0xee6dbff0)
+[   48.422424] bfa0:                   0001dce0 beba4be0 0001dd1c
+00000800 0000000a 80080000
+[   48.430568] bfc0: 0001dce0 beba4be0 00000000 00000081 0001c22c
+00000000 00000001 beba4dcc
+[   48.438708] bfe0: b6ecdd00 beba4b9c 00012b43 b6ecdd0c
+[   48.443773] ---[ end trace bcf003ed0f464330 ]---
+
+Alan
