@@ -2,161 +2,125 @@ Return-Path: <SRS0=S+WB=KJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC437C67790
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 17:02:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D134AC6778F
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 17:08:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 891AD20833
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 17:02:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7575220833
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 17:08:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="YjaTy5TB"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 891AD20833
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="mfLVhCjU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7575220833
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729530AbeGYSPJ (ORCPT
+        id S1729162AbeGYSUn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 14:15:09 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:46047 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729159AbeGYSPI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Jul 2018 14:15:08 -0400
-Received: by mail-pg1-f193.google.com with SMTP id f1-v6so5701497pgq.12
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Jul 2018 10:02:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=OiGBo+518rwaAJ4oU4DLbpg+/8imsg0Wpv4PxHuMRQI=;
-        b=YjaTy5TBbrpHKbRQiCBh3rvX46c1zUlzpvrfYsc6n87kWO0Dr16Rnk8faVq5LoR6mJ
-         cTENQr2iID1v/MhXFTweBQSYVn6NVX6Xea7g8yhsTDvyFG5WBG7vNj/Jbw+7b1OtEtU/
-         gynEGzsdGBY9yNTzsIbiwndFu1HtF1Os+LTOY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=OiGBo+518rwaAJ4oU4DLbpg+/8imsg0Wpv4PxHuMRQI=;
-        b=ShIfZeHe1tF9flV31+XBJfryZsj1Gt3JTP5226p/XKRTiq3gFr/a82JeNrn7Vfc+75
-         keuU250sqYP0ObLeC51qRNiGogjPfrE1GWRg5XbsL0YiH9aLl1OY2u3wuZZUlYUThFbV
-         mJet5akI+UF3OJ7om6zsaPbvueamZonlHsl7WLLS3lgBQASOjIALxtx/nBCEw8kSJA7R
-         d/NcNgNZHj+28zPEzg6PJSJzNYTKoO8P17uSrMWtP9s2XWjqNiNN+tESaPNXeIB6vVMv
-         oa3jR7r697jB1Yy2cAsPkAJDkRVkcxozEgICrYmPSS2efgZCNLKZKpJoIAQx70tbPZrc
-         SsxA==
-X-Gm-Message-State: AOUpUlH/Qr9v7WSeSqj22Q+z05DovwmJdByB4+4dfdE5dHYhYQQlVgZ1
-        dIunzQ+aDv/SVMBz4K5hxUcXTSgO/e8=
-X-Google-Smtp-Source: AAOMgpcayYzMx3/ACat583aQoNO8WQ4bt13IyIcZdOvZI3hkX/44J2OIoquMeWGVLqcSJCLnMLIzqw==
-X-Received: by 2002:a62:198e:: with SMTP id 136-v6mr22930243pfz.103.1532538155057;
-        Wed, 25 Jul 2018 10:02:35 -0700 (PDT)
-Received: from localhost ([2620:0:1000:1501:8e2d:4727:1211:622])
-        by smtp.gmail.com with ESMTPSA id v22-v6sm37076386pfi.60.2018.07.25.10.02.34
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 25 Jul 2018 10:02:34 -0700 (PDT)
-Date:   Wed, 25 Jul 2018 10:02:33 -0700
-From:   Matthias Kaehlcke <mka@chromium.org>
-To:     Balakrishna Godavarthi <bgodavar@codeaurora.org>
-Cc:     marcel@holtmann.org, johan.hedberg@gmail.com,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-bluetooth@vger.kernel.org, thierry.escande@linaro.org,
-        rtatiya@codeaurora.org, hemantg@codeaurora.org,
-        linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH v10 4/7] Bluetooth: hci_qca: Add wrapper functions for
- setting UART speed
-Message-ID: <20180725170233.GP129942@google.com>
-References: <20180720133243.6851-1-bgodavar@codeaurora.org>
- <20180720133243.6851-5-bgodavar@codeaurora.org>
- <20180723175611.GL129942@google.com>
- <12b59e77a4ee99c3de7bbd73ff10ce4b@codeaurora.org>
+        Wed, 25 Jul 2018 14:20:43 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33782 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728557AbeGYSUn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Jul 2018 14:20:43 -0400
+Received: from swboyd.mtv.corp.google.com (unknown [104.132.1.75])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id BFBD320833;
+        Wed, 25 Jul 2018 17:08:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1532538488;
+        bh=LVBXrFAsNyO6G9QbeyXaCGMEG/R+o/JiwmmClLylLsY=;
+        h=From:To:Cc:Subject:Date:From;
+        b=mfLVhCjU7/y5A8NpUqzslLrCLOQSNdpBgE5HLABbLVPCjfkGMEb7RGB2KFh3oYOJB
+         lDkAD6FOhWnTC6syuIJWYYBb+ieqh8u/ek3YmBHYSWZe8fkQDszEFBuQoVeAak/JBa
+         +i+2ZE5yDObmyvifY9fMQs0IYWxreygVBT9PqxgM=
+From:   sboyd@kernel.org
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] clk fixes for v4.18-rc6
+Date:   Wed, 25 Jul 2018 10:08:07 -0700
+Message-Id: <20180725170807.12780-1-sboyd@kernel.org>
+X-Mailer: git-send-email 2.18.0.233.g985f88cf7e-goog
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <12b59e77a4ee99c3de7bbd73ff10ce4b@codeaurora.org>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 24, 2018 at 12:32:36PM +0530, Balakrishna Godavarthi wrote:
-> Hi Matthias,
-> 
-> On 2018-07-23 23:26, Matthias Kaehlcke wrote:
-> > On Fri, Jul 20, 2018 at 07:02:40PM +0530, Balakrishna Godavarthi wrote:
-> > > In function qca_setup, we set initial and operating speeds for
-> > > Qualcomm
-> > > Bluetooth SoC's. This block of code is common across different
-> > > Qualcomm Bluetooth SoC's. Instead of duplicating the code, created
-> > > a wrapper function to set the speeds. So that future coming SoC's
-> > > can use these wrapper functions to set speeds.
-> > > 
-> > > Signed-off-by: Balakrishna Godavarthi <bgodavar@codeaurora.org>
-> > > Reviewed-by: Matthias Kaehlcke <mka@chromium.org>
-> > > ---
-> > >  drivers/bluetooth/hci_qca.c | 93
-> > > ++++++++++++++++++++++++++++---------
-> > >  1 file changed, 70 insertions(+), 23 deletions(-)
-> > > 
-> > > diff --git a/drivers/bluetooth/hci_qca.c b/drivers/bluetooth/hci_qca.c
-> > > index 5f1c0a8fd5cd..5f8a74d65bec 100644
-> > > --- a/drivers/bluetooth/hci_qca.c
-> > > +++ b/drivers/bluetooth/hci_qca.c
-> > > @@ -119,6 +119,11 @@ struct qca_data {
-> > >  	u64 votes_off;
-> > >  };
-> > > 
-> > > +enum qca_speed_type {
-> > > +	QCA_INIT_SPEED = 1,
-> > > +	QCA_OPER_SPEED
-> > > +};
-> > > +
-> > >  struct qca_serdev {
-> > >  	struct hci_uart	 serdev_hu;
-> > >  	struct gpio_desc *bt_en;
-> > > @@ -923,6 +928,61 @@ static inline void host_set_baudrate(struct
-> > > hci_uart *hu, unsigned int speed)
-> > >  		hci_uart_set_baudrate(hu, speed);
-> > >  }
-> > > 
-> > > +static unsigned int qca_get_speed(struct hci_uart *hu,
-> > > +				  enum qca_speed_type speed_type)
-> > > +{
-> > > +	unsigned int speed = 0;
-> > > +
-> > > +	if (speed_type == QCA_INIT_SPEED) {
-> > > +		if (hu->init_speed)
-> > > +			speed = hu->init_speed;
-> > > +		else if (hu->proto->init_speed)
-> > > +			speed = hu->proto->init_speed;
-> > > +	} else {
-> > > +		if (hu->oper_speed)
-> > > +			speed = hu->oper_speed;
-> > > +		else if (hu->proto->oper_speed)
-> > > +			speed = hu->proto->oper_speed;
-> > > +	}
-> > > +
-> > > +	return speed;
-> > > +}
-> > > +
-> > > +static int qca_check_speeds(struct hci_uart *hu)
-> > > +{
-> > > +	if (!qca_get_speed(hu, QCA_INIT_SPEED) ||
-> > > +	    !qca_get_speed(hu, QCA_OPER_SPEED))
-> > > +		return -EINVAL;
-> > 
-> > You changed this from:
-> > 
-> > 	/* One or the other speeds should be non zero. */
-> > 	if (!qca_get_speed(hu, QCA_INIT_SPEED) &&
-> > 	    !qca_get_speed(hu, QCA_OPER_SPEED))
-> > 		return -EINVAL;
-> > 
-> > There is no entry in the change log. What is the reason for this
-> > change?
-> 
-> [Bala] : My bad i missed to add the log,as the above  if for ROME chip,
-> having INIT or OPER speed is fine.
+From: Stephen Boyd <sboyd@kernel.org>
 
-Ok, thanks for the clarification, I recall this was discussed earlier.
+The following changes since commit 9cc63791fad6d2624878c93f3415da77780e68a7:
+
+  Merge branch 'clk-fix-imx6ul-defs' into clk-fixes (2018-06-29 11:40:29 -0700)
+
+are available in the Git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-fixes-for-linus
+
+for you to fetch changes up to 565b9937f44d5ab7956339b6c105c03471ce3243:
+
+  clk: aspeed: Support HPLL strapping on ast2400 (2018-07-11 09:34:25 -0700)
+
+----------------------------------------------------------------
+One more round of updates for problems seen this -rc series. Drivers fixes
+are:
+
+ - Amlogic Meson audio divider fix and CPU clk critical marking
+
+ - Qualcomm multimedia GDSC marked as 'always on' to keep display working
+
+ - Aspeed fixes for critical clks, resets causing clks to stay disabled, and
+   an incorrect HPLL frequency calculation
+
+ - Marvell Armada 3700 cpu clks would undervolt when switching from low
+   frequencies to high frequencies because the voltage didn't stabilize in
+   time so now we switch to an intermediate frequency
+
+Plus we have a core framework thinko that messed up the debugfs flag
+printing logic to make it not very useful.
+
+----------------------------------------------------------------
+Benjamin Herrenschmidt (1):
+      clk: aspeed: Treat a gate in reset as disabled
+
+Geert Uytterhoeven (1):
+      clk: Really show symbolic clock flags in debugfs
+
+Gregory CLEMENT (1):
+      clk: mvebu: armada-37xx-periph: Fix switching CPU rate from 300Mhz to 1.2GHz
+
+Jerome Brunet (1):
+      clk: meson: audio-divider is one based
+
+Joel Stanley (2):
+      clk: aspeed: Mark bclk (PCIe) and dclk (VGA) as critical
+      clk: aspeed: Support HPLL strapping on ast2400
+
+Neil Armstrong (1):
+      clk: meson-gxbb: set fclk_div2 as CLK_IS_CRITICAL
+
+Stephen Boyd (1):
+      Merge tag 'meson-clk-fixes-4.18-1' of https://github.com/BayLibre/clk-meson into clk-fixes
+
+Vinod Koul (1):
+      clk: qcom: gcc-msm8996: Disable halt check on UFS tx clock
+
+Vivek Gautam (1):
+      clk/mmcc-msm8996: Make mmagic_bimc_gdsc ALWAYS_ON
+
+ drivers/clk/clk-aspeed.c               | 59 +++++++++++++++++++++++++---------
+ drivers/clk/clk.c                      |  3 +-
+ drivers/clk/meson/clk-audio-divider.c  |  2 +-
+ drivers/clk/meson/gxbb.c               |  1 +
+ drivers/clk/mvebu/armada-37xx-periph.c | 38 ++++++++++++++++++++++
+ drivers/clk/qcom/gcc-msm8996.c         |  1 +
+ drivers/clk/qcom/mmcc-msm8996.c        |  1 +
+ 7 files changed, 87 insertions(+), 18 deletions(-)
+
+-- 
+Sent by a computer through tubes
