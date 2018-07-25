@@ -2,95 +2,104 @@ Return-Path: <SRS0=S+WB=KJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF90AC67790
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 21:12:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D8A2C6778F
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 21:12:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A26EA20844
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 21:12:27 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="VX//NAAq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A26EA20844
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+	by mail.kernel.org (Postfix) with ESMTP id D06FB20844
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 21:12:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D06FB20844
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731364AbeGYWZy (ORCPT
+        id S1731411AbeGYWZ6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 18:25:54 -0400
-Received: from mail-wr1-f54.google.com ([209.85.221.54]:42661 "EHLO
-        mail-wr1-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731316AbeGYWZy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Jul 2018 18:25:54 -0400
-Received: by mail-wr1-f54.google.com with SMTP id e7-v6so8666887wrs.9
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Jul 2018 14:12:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=message-id:subject:from:to:cc:date:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=J4nPdfggiOGVQERpd2IiCg01DZ78gI915G5m/TcNWxY=;
-        b=VX//NAAqU8pHo5OjRscWy1bz5P1c/fAigpys+IseJzxvC5EQwz7ousgJnNLemRmFGk
-         smmw8jSaybUMgYqHJrINHLqv0t+jgeCURTw584KCKEcPZBBEeqZ9ZChkKNpv4rOZXIV1
-         BCbwGN4lxL2YesrxAug9qGV+VkHQRTtcoVdfD6ihubQ+6pRlGxibWvYE1CfgVN5or9pH
-         hn1zs7rpR25OPH7m9JYNpkpzJwraXm7ogQNwX+NIWzvuzws0zYVkkZk4niVT5/xPhOC3
-         2zcX6m6dmWmw2rBYgN1AqjU7CQ/t2FRwZnGtC7Zetyl3ha11Wat2VQW0ZtGm2rD3cVrU
-         ht5g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=J4nPdfggiOGVQERpd2IiCg01DZ78gI915G5m/TcNWxY=;
-        b=g5AmUF2WlWaohSs2nekPwK0HYaA6JFq19KLCdr+GTM2lfS8Mnsn2eOeR7PvOCcSt0E
-         xsFpnaULrWvOnsHBTP72NuQywclcbZjui5NWy2ld6l2/1OHXfZRK18qGdN74Pel2sEBe
-         +La4CfLRySsjK/yVlEiraG2Q/s9t24PqRYtVQ4Kynz5YMspcDLDz/Qv7C/se9yBSNB6B
-         N9bHEd9AHK77yx4ybbOYk3AWqaB6fdWpxLPYloum+ZP4rh+QyUsC7e5VE+7HT+SdmBr7
-         TFqJK7k3OjqTYakYflNAlxFSqRsUvkM2ZgG9IF1BuUkGch9DbHf36oH584mGwv77iEqU
-         3flA==
-X-Gm-Message-State: AOUpUlF2H6qKpwd0IATgKrRL2D4GmANqCic+j06T4G/Cz0ORznzJl1q9
-        fZhg4yyzfsuUB0wn0xzUATI4vQ==
-X-Google-Smtp-Source: AAOMgpfanEAd90UeBgypVuq6cEL47lUee/jFfRAuV9rmBQAjig5Tz4kEk+moxGsK5v10HdFnKZRkag==
-X-Received: by 2002:adf:de84:: with SMTP id w4-v6mr16411133wrl.270.1532553144068;
-        Wed, 25 Jul 2018 14:12:24 -0700 (PDT)
-Received: from boomer (cag06-3-82-243-161-21.fbx.proxad.net. [82.243.161.21])
-        by smtp.gmail.com with ESMTPSA id f17-v6sm16324389wrs.1.2018.07.25.14.12.22
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 25 Jul 2018 14:12:23 -0700 (PDT)
-Message-ID: <5bd3eb356f7b9ef18a409b549e3d6ac97733a4cf.camel@baylibre.com>
-Subject: Re: [PATCH 14/15] ASoC: meson: add axg sound card DT binding
- documentation
-From:   jbrunet@baylibre.com
-To:     Rob Herring <robh@kernel.org>
-Cc:     Mark Brown <broonie@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Carlo Caione <carlo@caione.org>, alsa-devel@alsa-project.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-amlogic@lists.infradead.org
-Date:   Wed, 25 Jul 2018 23:12:21 +0200
-In-Reply-To: <20180725190619.GA20234@rob-hp-laptop>
-References: <20180717153643.8806-1-jbrunet@baylibre.com>
-         <20180717153643.8806-18-jbrunet@baylibre.com>
-         <20180725190619.GA20234@rob-hp-laptop>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.4 (3.28.4-1.fc28) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Wed, 25 Jul 2018 18:25:58 -0400
+Received: from mga11.intel.com ([192.55.52.93]:47404 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731316AbeGYWZ5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Jul 2018 18:25:57 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Jul 2018 14:12:27 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,402,1526367600"; 
+   d="scan'208";a="75929544"
+Received: from theros.lm.intel.com (HELO linux.intel.com) ([10.232.112.164])
+  by orsmga001.jf.intel.com with ESMTP; 25 Jul 2018 14:12:26 -0700
+Date:   Wed, 25 Jul 2018 15:12:26 -0600
+From:   Ross Zwisler <ross.zwisler@linux.intel.com>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Ross Zwisler <ross.zwisler@linux.intel.com>, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jan Kara <jack@suse.cz>, Jeff Layton <jlayton@redhat.com>,
+        Lukas Czerner <lczerner@redhat.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Goldwyn Rodrigues <rgoldwyn@suse.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Ryusuke Konishi <konishi.ryusuke@lab.ntt.co.jp>,
+        linux-nilfs@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>,
+        Chao Yu <yuchao0@huawei.com>,
+        linux-f2fs-devel@lists.sourceforge.net
+Subject: Re: [PATCH v14 00/74] Convert page cache to XArray
+Message-ID: <20180725211226.GA12326@linux.intel.com>
+Mail-Followup-To: Ross Zwisler <ross.zwisler@linux.intel.com>,
+        Matthew Wilcox <willy@infradead.org>, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jan Kara <jack@suse.cz>, Jeff Layton <jlayton@redhat.com>,
+        Lukas Czerner <lczerner@redhat.com>, Christoph Hellwig <hch@lst.de>,
+        Goldwyn Rodrigues <rgoldwyn@suse.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Ryusuke Konishi <konishi.ryusuke@lab.ntt.co.jp>,
+        linux-nilfs@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>,
+        Chao Yu <yuchao0@huawei.com>,
+        linux-f2fs-devel@lists.sourceforge.net
+References: <20180617020052.4759-1-willy@infradead.org>
+ <20180619031257.GA12527@linux.intel.com>
+ <20180619092230.GA1438@bombadil.infradead.org>
+ <20180619164037.GA6679@linux.intel.com>
+ <20180619171638.GE1438@bombadil.infradead.org>
+ <20180627110529.GA19606@bombadil.infradead.org>
+ <20180627194438.GA20774@linux.intel.com>
+ <20180725210323.GB1366@bombadil.infradead.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180725210323.GB1366@bombadil.infradead.org>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2018-07-25 at 13:06 -0600, Rob Herring wrote:
-> On Tue, Jul 17, 2018 at 05:36:41PM +0200, Jerome Brunet wrote:
-> > Add the DT binding documentation for axg sound card
+On Wed, Jul 25, 2018 at 02:03:23PM -0700, Matthew Wilcox wrote:
+> On Wed, Jun 27, 2018 at 01:44:38PM -0600, Ross Zwisler wrote:
+> > On Wed, Jun 27, 2018 at 04:05:29AM -0700, Matthew Wilcox wrote:
+> > > On Tue, Jun 19, 2018 at 10:16:38AM -0700, Matthew Wilcox wrote:
+> > > > I think I see a bug.  No idea if it's the one you're hitting ;-)
+> > > > 
+> > > > I had been intending to not use the 'entry' to decide whether we were
+> > > > waiting on a 2MB or 4kB page, but rather the xas.  I shelved that idea,
+> > > > but not before dropping the DAX_PMD flag being passed from the PMD
+> > > > pagefault caller.  So if I put that back ...
+> > > 
+> > > Did you get a chance to test this?
+> > 
+> > With this patch it doesn't deadlock, but the test dies with a SIGBUS and we
+> > hit a WARN_ON in the DAX code:
+> > 
+> > WARNING: CPU: 5 PID: 1678 at fs/dax.c:226 get_unlocked_entry+0xf7/0x120
+> > 
+> > I don't have a lot of time this week to debug further.  The quickest path to
+> > victory is probably for you to get this reproducing in your test setup.  Does
+> > XFS + DAX + generic/340 pass for you?
 > 
-> I see Mark already applied, but...
+> I now have generic/340 passing.  I've pushed a new version to
+> git://git.infradead.org/users/willy/linux-dax.git xarray
 
-It's very recent, no DT using it yet.
-
-I can easily have your 3 comments fixed if it is OK with Mark. I'll submit
-something for this tomorrow.
-
+Thanks, I'll throw it in my test setup.
