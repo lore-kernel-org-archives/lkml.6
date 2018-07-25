@@ -2,91 +2,110 @@ Return-Path: <SRS0=S+WB=KJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EB95C67790
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 05:55:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4AD9C67790
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 06:14:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5466D20844
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 05:55:55 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="kXmEq6Z5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5466D20844
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	by mail.kernel.org (Postfix) with ESMTP id 90B2520671
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 06:14:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 90B2520671
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728526AbeGYHF5 (ORCPT
+        id S1728498AbeGYHYH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 03:05:57 -0400
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:55912 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728348AbeGYHF5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Jul 2018 03:05:57 -0400
-Received: from dlelxv90.itg.ti.com ([172.17.2.17])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id w6P5tpHs009244;
-        Wed, 25 Jul 2018 00:55:51 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1532498151;
-        bh=tB5mD508qNUlVMYvuwrZsal5WtCorhCPt7IqF4L3YvU=;
-        h=From:To:CC:Subject:Date;
-        b=kXmEq6Z5Y5OTb4KA0mu7r+3/WykMjk3Xh4863dz/EmW11CWx0F0kv2U0OGqpIRUgc
-         xqAqTpMNXXvbHg3qlp0liUFa0JfeEXDoGMjgMAP9UU+Dfu4S069T7z/QQa6F8K8k1k
-         q4Hkk9GvOKnQSiZt+zLOHeYzynm3O9Yw+uJ7uQh8=
-Received: from DLEE105.ent.ti.com (dlee105.ent.ti.com [157.170.170.35])
-        by dlelxv90.itg.ti.com (8.14.3/8.13.8) with ESMTP id w6P5tphb004065;
-        Wed, 25 Jul 2018 00:55:51 -0500
-Received: from DLEE113.ent.ti.com (157.170.170.24) by DLEE105.ent.ti.com
- (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Wed, 25
- Jul 2018 00:55:50 -0500
-Received: from dflp33.itg.ti.com (10.64.6.16) by DLEE113.ent.ti.com
- (157.170.170.24) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
- Wed, 25 Jul 2018 00:55:50 -0500
-Received: from ula0393675.india.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dflp33.itg.ti.com (8.14.3/8.13.8) with ESMTP id w6P5tmmX027691;
-        Wed, 25 Jul 2018 00:55:49 -0500
-From:   Keerthy <j-keerthy@ti.com>
-To:     <tony@atomide.com>
-CC:     <t-kristo@ti.com>, <j-keerthy@ti.com>,
-        <linux-omap@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>
-Subject: [PATCH] arm: dts: am4372: setup rtc as system-power-controller
-Date:   Wed, 25 Jul 2018 11:25:35 +0530
-Message-ID: <1532498135-9031-1-git-send-email-j-keerthy@ti.com>
-X-Mailer: git-send-email 1.9.1
+        Wed, 25 Jul 2018 03:24:07 -0400
+Received: from mx2.suse.de ([195.135.220.15]:43736 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728338AbeGYHYH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Jul 2018 03:24:07 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id CC24BAE21;
+        Wed, 25 Jul 2018 06:13:57 +0000 (UTC)
+Date:   Wed, 25 Jul 2018 08:13:55 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     David Rientjes <rientjes@google.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>, linux-mm@kvack.org,
+        "David (ChunMing) Zhou" <David1.Zhou@amd.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        David Airlie <airlied@linux.ie>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        Doug Ledford <dledford@redhat.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Mike Marciniszyn <mike.marciniszyn@intel.com>,
+        Dennis Dalessandro <dennis.dalessandro@intel.com>,
+        Sudeep Dutt <sudeep.dutt@intel.com>,
+        Ashutosh Dixit <ashutosh.dixit@intel.com>,
+        Dimitri Sivanich <sivanich@sgi.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Juergen Gross <jgross@suse.com>,
+        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Felix Kuehling <felix.kuehling@amd.com>, kvm@vger.kernel.org,
+        amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        intel-gfx@lists.freedesktop.org, linux-rdma@vger.kernel.org,
+        xen-devel@lists.xenproject.org,
+        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+        Leon Romanovsky <leonro@mellanox.com>
+Subject: Re: [PATCH] mm, oom: distinguish blockable mode for mmu notifiers
+Message-ID: <20180725061355.GS28386@dhcp22.suse.cz>
+References: <20180716115058.5559-1-mhocko@kernel.org>
+ <20180720170902.d1137060c23802d55426aa03@linux-foundation.org>
+ <20180724141747.GP28386@dhcp22.suse.cz>
+ <alpine.DEB.2.21.1807241405450.191477@chino.kir.corp.google.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <alpine.DEB.2.21.1807241405450.191477@chino.kir.corp.google.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-RTC alarm2 is connected to pmic_en line and hence can be used to control
-the pmic enabling/disabling. Hence add the system-power-controller for rtc
-node.
+On Tue 24-07-18 14:07:49, David Rientjes wrote:
+[...]
+> mm/oom_kill.c: clean up oom_reap_task_mm() fix
+> 
+> indicate reaping has been partially skipped so we can expect future skips 
+> or another start before finish.
 
-Signed-off-by: Keerthy <j-keerthy@ti.com>
----
- arch/arm/boot/dts/am4372.dtsi | 1 +
- 1 file changed, 1 insertion(+)
+But we are not skipping. This is essentially the same case as mmap_sem
+trylock fail. Maybe we can add a bool parameter to trace_finish_task_reaping
+to denote partial success?
 
-diff --git a/arch/arm/boot/dts/am4372.dtsi b/arch/arm/boot/dts/am4372.dtsi
-index f0cbd86..d4b7c59 100644
---- a/arch/arm/boot/dts/am4372.dtsi
-+++ b/arch/arm/boot/dts/am4372.dtsi
-@@ -469,6 +469,7 @@
- 			ti,hwmods = "rtc";
- 			clocks = <&clk_32768_ck>;
- 			clock-names = "int-clk";
-+			system-power-controller;
- 			status = "disabled";
- 		};
- 
+> Signed-off-by: David Rientjes <rientjes@google.com>
+> ---
+>  mm/oom_kill.c | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
+> 
+> diff --git a/mm/oom_kill.c b/mm/oom_kill.c
+> --- a/mm/oom_kill.c
+> +++ b/mm/oom_kill.c
+> @@ -569,10 +569,12 @@ static bool oom_reap_task_mm(struct task_struct *tsk, struct mm_struct *mm)
+>  
+>  	trace_start_task_reaping(tsk->pid);
+>  
+> -	/* failed to reap part of the address space. Try again later */
+>  	ret = __oom_reap_task_mm(mm);
+> -	if (!ret)
+> +	if (!ret) {
+> +		/* Failed to reap part of the address space. Try again later */
+> +		trace_skip_task_reaping(tsk->pid);
+>  		goto out_finish;
+> +	}
+>  
+>  	pr_info("oom_reaper: reaped process %d (%s), now anon-rss:%lukB, file-rss:%lukB, shmem-rss:%lukB\n",
+>  			task_pid_nr(tsk), tsk->comm,
+
 -- 
-1.9.1
-
+Michal Hocko
+SUSE Labs
