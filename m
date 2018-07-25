@@ -2,437 +2,167 @@ Return-Path: <SRS0=S+WB=KJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E632C67790
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 16:40:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CEA8C67790
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 16:40:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BCAD120852
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 16:40:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BCAD120852
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 203A020852
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 16:40:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 203A020852
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731379AbeGYRwe (ORCPT
+        id S1731398AbeGYRwj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 13:52:34 -0400
-Received: from ns.mm-sol.com ([37.157.136.199]:35602 "EHLO extserv.mm-sol.com"
+        Wed, 25 Jul 2018 13:52:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54712 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730065AbeGYRv3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Jul 2018 13:51:29 -0400
-Received: from mms-0439.qualcomm.mm-sol.com (unknown [37.157.136.206])
-        by extserv.mm-sol.com (Postfix) with ESMTPSA id B3183CD6E;
-        Wed, 25 Jul 2018 19:38:54 +0300 (EEST)
-From:   Todor Tomov <todor.tomov@linaro.org>
-To:     mchehab@kernel.org, sakari.ailus@linux.intel.com,
-        hans.verkuil@cisco.com, laurent.pinchart+renesas@ideasonboard.com,
-        linux-media@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, Todor Tomov <todor.tomov@linaro.org>
-Subject: [PATCH v4 28/34] media: camss: vfe: Add support for UYVY output from VFE on 8x96
-Date:   Wed, 25 Jul 2018 19:38:37 +0300
-Message-Id: <1532536723-19062-29-git-send-email-todor.tomov@linaro.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1532536723-19062-1-git-send-email-todor.tomov@linaro.org>
-References: <1532536723-19062-1-git-send-email-todor.tomov@linaro.org>
+        id S1730065AbeGYRwi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Jul 2018 13:52:38 -0400
+Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1E23D20882;
+        Wed, 25 Jul 2018 16:40:10 +0000 (UTC)
+Date:   Wed, 25 Jul 2018 12:40:08 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Masami Hiramatsu <mhiramat@kernel.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>,
+        Hiraku Toyooka <hiraku.toyooka@cybertrust.co.jp>,
+        Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [PATCH] tracing: Fix double free of event_trigger_data
+Message-ID: <20180725124008.7008e586@gandalf.local.home>
+In-Reply-To: <20180726004349.e71303133ff8e095a1a1499e@kernel.org>
+References: <20180725085740.5e7efaa1@gandalf.local.home>
+        <20180726004349.e71303133ff8e095a1a1499e@kernel.org>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add support to output UYVY formats from the VFE (via the PIX interface).
-A configuration for the realign module in the VFE is added. As the
-realign module is present on 8x96 but not on 8x16, this is supported
-on 8x96 only.
+On Thu, 26 Jul 2018 00:43:49 +0900
+Masami Hiramatsu <mhiramat@kernel.org> wrote:
 
-Signed-off-by: Todor Tomov <todor.tomov@linaro.org>
----
- drivers/media/platform/qcom/camss/camss-vfe-4-1.c |   6 +
- drivers/media/platform/qcom/camss/camss-vfe-4-7.c | 129 ++++++++++++++++++----
- drivers/media/platform/qcom/camss/camss-vfe.c     |  31 +++++-
- drivers/media/platform/qcom/camss/camss-vfe.h     |   2 +
- drivers/media/platform/qcom/camss/camss-video.c   |   8 ++
- 5 files changed, 152 insertions(+), 24 deletions(-)
+> On Wed, 25 Jul 2018 08:57:40 -0400
+> Steven Rostedt <rostedt@goodmis.org> wrote:
+> 
+> > From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
+> > 
+> > Running the following:
+> > 
+> >  # cd /sys/kernel/debug/tracing
+> >  # echo 500000 > buffer_size_kb
+> > [ Or some other number that takes up most of memory ]
+> >  # echo snapshot > events/sched/sched_switch/trigger
+> > 
+> > Triggers the following bug:
+> > 
+> >  ------------[ cut here ]------------
+> >  kernel BUG at mm/slub.c:296!
+> >  invalid opcode: 0000 [#1] SMP DEBUG_PAGEALLOC PTI
+> >  CPU: 6 PID: 6878 Comm: bash Not tainted 4.18.0-rc6-test+ #1066
+> >  Hardware name: Hewlett-Packard HP Compaq Pro 6300 SFF/339A, BIOS K01 v03.03 07/14/2016
+> >  RIP: 0010:kfree+0x16c/0x180
+> >  Code: 05 41 0f b6 72 51 5b 5d 41 5c 4c 89 d7 e9 ac b3 f8 ff 48 89 d9 48 89 da 41 b8 01 00 00 00 5b 5d 41 5c 4c 89 d6 e9 f4 f3 ff ff <0f> 0b 0f 0b 48 8b 3d d9 d8 f9 00 e9 c1 fe ff ff 0f 1f 40 00 0f 1f
+> >  RSP: 0018:ffffb654436d3d88 EFLAGS: 00010246
+> >  RAX: ffff91a9d50f3d80 RBX: ffff91a9d50f3d80 RCX: ffff91a9d50f3d80
+> >  RDX: 00000000000006a4 RSI: ffff91a9de5a60e0 RDI: ffff91a9d9803500
+> >  RBP: ffffffff8d267c80 R08: 00000000000260e0 R09: ffffffff8c1a56be
+> >  R10: fffff0d404543cc0 R11: 0000000000000389 R12: ffffffff8c1a56be
+> >  R13: ffff91a9d9930e18 R14: ffff91a98c0c2890 R15: ffffffff8d267d00
+> >  FS:  00007f363ea64700(0000) GS:ffff91a9de580000(0000) knlGS:0000000000000000
+> >  CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> >  CR2: 000055c1cacc8e10 CR3: 00000000d9b46003 CR4: 00000000001606e0
+> >  Call Trace:
+> >   event_trigger_callback+0xee/0x1d0
+> >   event_trigger_write+0xfc/0x1a0
+> >   __vfs_write+0x33/0x190
+> >   ? handle_mm_fault+0x115/0x230
+> >   ? _cond_resched+0x16/0x40
+> >   vfs_write+0xb0/0x190
+> >   ksys_write+0x52/0xc0
+> >   do_syscall_64+0x5a/0x160
+> >   entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> >  RIP: 0033:0x7f363e16ab50
+> >  Code: 73 01 c3 48 8b 0d 38 83 2c 00 f7 d8 64 89 01 48 83 c8 ff c3 66 0f 1f 44 00 00 83 3d 79 db 2c 00 00 75 10 b8 01 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 31 c3 48 83 ec 08 e8 1e e3 01 00 48 89 04 24
+> >  RSP: 002b:00007fff9a4c6378 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
+> >  RAX: ffffffffffffffda RBX: 0000000000000009 RCX: 00007f363e16ab50
+> >  RDX: 0000000000000009 RSI: 000055c1cacc8e10 RDI: 0000000000000001
+> >  RBP: 000055c1cacc8e10 R08: 00007f363e435740 R09: 00007f363ea64700
+> >  R10: 0000000000000073 R11: 0000000000000246 R12: 0000000000000009
+> >  R13: 0000000000000001 R14: 00007f363e4345e0 R15: 00007f363e4303c0
+> >  Modules linked in: ip6table_filter ip6_tables snd_hda_codec_hdmi snd_hda_codec_realtek snd_hda_codec_generic snd_hda_intel snd_hda_codec snd_hwdep snd_hda_core snd_seq snd_seq_device i915 snd_pcm snd_timer i2c_i801 snd soundcore i2c_algo_bit drm_kms_helper
+> > 86_pkg_temp_thermal video kvm_intel kvm irqbypass wmi e1000e
+> >  ---[ end trace d301afa879ddfa25 ]---
+> > 
+> > The cause is because the register_snapshot_trigger() call failed to
+> > allocate the snapshot buffer, and then called unregister_trigger()
+> > which freed the data that was passed to it. Then on return to the
+> > function that called register_snapshot_trigger(), as it sees it
+> > failed to register, it frees the trigger_data again and causes
+> > a double free.
+> > 
+> > By calling event_trigger_init() on the trigger_data (which only ups
+> > the reference counter for it), and then event_trigger_free() afterward,
+> > the trigger_data would not get freed by the registering trigger function
+> > as it would only up and lower the ref count for it. If the register
+> > trigger function fails, then the event_trigger_free() called after it
+> > will free the trigger data normally.
+> > 
+> > Link: http://lkml.kernel.org/r/20180724191331.738eb819@gandalf.local.home
+> >   
+> 
+> Looks good to me.
+> 
+> Reviewed-by: Masami Hiramatsu <mhiramat@kernel.org>
+> 
 
-diff --git a/drivers/media/platform/qcom/camss/camss-vfe-4-1.c b/drivers/media/platform/qcom/camss/camss-vfe-4-1.c
-index 41184dc..da3a9fe 100644
---- a/drivers/media/platform/qcom/camss/camss-vfe-4-1.c
-+++ b/drivers/media/platform/qcom/camss/camss-vfe-4-1.c
-@@ -542,6 +542,11 @@ static void vfe_set_xbar_cfg(struct vfe_device *vfe, struct vfe_output *output,
- 	}
- }
- 
-+static void vfe_set_realign_cfg(struct vfe_device *vfe, struct vfe_line *line,
-+				u8 enable)
-+{
-+	/* empty */
-+}
- static void vfe_set_rdi_cid(struct vfe_device *vfe, enum vfe_line_id id, u8 cid)
- {
- 	vfe_reg_clr(vfe, VFE_0_RDI_CFG_x(id),
-@@ -989,6 +994,7 @@ const struct vfe_hw_ops vfe_ops_4_1 = {
- 	.wm_set_subsample = vfe_wm_set_subsample,
- 	.bus_disconnect_wm_from_rdi = vfe_bus_disconnect_wm_from_rdi,
- 	.set_xbar_cfg = vfe_set_xbar_cfg,
-+	.set_realign_cfg = vfe_set_realign_cfg,
- 	.set_rdi_cid = vfe_set_rdi_cid,
- 	.reg_update = vfe_reg_update,
- 	.reg_update_clear = vfe_reg_update_clear,
-diff --git a/drivers/media/platform/qcom/camss/camss-vfe-4-7.c b/drivers/media/platform/qcom/camss/camss-vfe-4-7.c
-index 45e6711..4c584bf 100644
---- a/drivers/media/platform/qcom/camss/camss-vfe-4-7.c
-+++ b/drivers/media/platform/qcom/camss/camss-vfe-4-7.c
-@@ -34,6 +34,7 @@
- #define VFE_0_MODULE_ZOOM_EN		0x04c
- #define VFE_0_MODULE_ZOOM_EN_SCALE_ENC		BIT(1)
- #define VFE_0_MODULE_ZOOM_EN_CROP_ENC		BIT(2)
-+#define VFE_0_MODULE_ZOOM_EN_REALIGN_BUF	BIT(9)
- 
- #define VFE_0_CORE_CFG			0x050
- #define VFE_0_CORE_CFG_PIXEL_PATTERN_YCBYCR	0x4
-@@ -87,6 +88,9 @@
- 
- #define VFE_0_BUS_XBAR_CFG_x(x)		(0x90 + 0x4 * ((x) / 2))
- #define VFE_0_BUS_XBAR_CFG_x_M_PAIR_STREAM_EN			BIT(2)
-+#define VFE_0_BUS_XBAR_CFG_x_M_REALIGN_BUF_EN			BIT(3)
-+#define VFE_0_BUS_XBAR_CFG_x_M_PAIR_STREAM_SWAP_INTRA		(0x1 << 4)
-+#define VFE_0_BUS_XBAR_CFG_x_M_PAIR_STREAM_SWAP_INTER		(0x2 << 4)
- #define VFE_0_BUS_XBAR_CFG_x_M_PAIR_STREAM_SWAP_INTER_INTRA	(0x3 << 4)
- #define VFE_0_BUS_XBAR_CFG_x_M_SINGLE_STREAM_SEL_SHIFT		8
- #define VFE_0_BUS_XBAR_CFG_x_M_SINGLE_STREAM_SEL_LUMA		0x0
-@@ -221,6 +225,11 @@
- #define VFE_0_CLAMP_ENC_MIN_CFG_CH1		(0x0 << 8)
- #define VFE_0_CLAMP_ENC_MIN_CFG_CH2		(0x0 << 16)
- 
-+#define VFE_0_REALIGN_BUF_CFG			0xaac
-+#define VFE_0_REALIGN_BUF_CFG_CB_ODD_PIXEL     BIT(2)
-+#define VFE_0_REALIGN_BUF_CFG_CR_ODD_PIXEL     BIT(3)
-+#define VFE_0_REALIGN_BUF_CFG_HSUB_ENABLE      BIT(4)
-+
- #define CAMIF_TIMEOUT_SLEEP_US 1000
- #define CAMIF_TIMEOUT_ALL_US 1000000
- 
-@@ -311,7 +320,7 @@ static void vfe_wm_frame_based(struct vfe_device *vfe, u8 wm, u8 enable)
- 
- #define CALC_WORD(width, M, N) (((width) * (M) + (N) - 1) / (N))
- 
--static int vfe_word_per_line(u32 format, u32 pixel_per_line)
-+static int vfe_word_per_line_by_pixel(u32 format, u32 pixel_per_line)
- {
- 	int val = 0;
- 
-@@ -333,6 +342,11 @@ static int vfe_word_per_line(u32 format, u32 pixel_per_line)
- 	return val;
- }
- 
-+static int vfe_word_per_line_by_bytes(u32 bytes_per_line)
-+{
-+	return CALC_WORD(bytes_per_line, 1, 8);
-+}
-+
- static void vfe_get_wm_sizes(struct v4l2_pix_format_mplane *pix, u8 plane,
- 			     u16 *width, u16 *height, u16 *bytesperline)
- {
-@@ -351,6 +365,15 @@ static void vfe_get_wm_sizes(struct v4l2_pix_format_mplane *pix, u8 plane,
- 		*height = pix->height;
- 		*bytesperline = pix->plane_fmt[0].bytesperline;
- 		break;
-+	case V4L2_PIX_FMT_YUYV:
-+	case V4L2_PIX_FMT_YVYU:
-+	case V4L2_PIX_FMT_VYUY:
-+	case V4L2_PIX_FMT_UYVY:
-+		*width = pix->width;
-+		*height = pix->height;
-+		*bytesperline = pix->plane_fmt[plane].bytesperline;
-+		break;
-+
- 	}
- }
- 
-@@ -365,7 +388,7 @@ static void vfe_wm_line_based(struct vfe_device *vfe, u32 wm,
- 
- 		vfe_get_wm_sizes(pix, plane, &width, &height, &bytesperline);
- 
--		wpl = vfe_word_per_line(pix->pixelformat, width);
-+		wpl = vfe_word_per_line_by_pixel(pix->pixelformat, width);
- 
- 		reg = height - 1;
- 		reg |= ((wpl + 3) / 4 - 1) << 16;
-@@ -373,7 +396,7 @@ static void vfe_wm_line_based(struct vfe_device *vfe, u32 wm,
- 		writel_relaxed(reg, vfe->base +
- 			       VFE_0_BUS_IMAGE_MASTER_n_WR_IMAGE_SIZE(wm));
- 
--		wpl = vfe_word_per_line(pix->pixelformat, bytesperline);
-+		wpl = vfe_word_per_line_by_bytes(bytesperline);
- 
- 		reg = 0x3;
- 		reg |= (height - 1) << 2;
-@@ -536,32 +559,97 @@ static void vfe_set_xbar_cfg(struct vfe_device *vfe, struct vfe_output *output,
- 	struct vfe_line *line = container_of(output, struct vfe_line, output);
- 	u32 p = line->video_out.active_fmt.fmt.pix_mp.pixelformat;
- 	u32 reg;
--	unsigned int i;
- 
--	for (i = 0; i < output->wm_num; i++) {
--		if (i == 0) {
--			reg = VFE_0_BUS_XBAR_CFG_x_M_SINGLE_STREAM_SEL_LUMA <<
--				VFE_0_BUS_XBAR_CFG_x_M_SINGLE_STREAM_SEL_SHIFT;
--		} else if (i == 1) {
--			reg = VFE_0_BUS_XBAR_CFG_x_M_PAIR_STREAM_EN;
--			if (p == V4L2_PIX_FMT_NV12 || p == V4L2_PIX_FMT_NV16)
--				reg |= VFE_0_BUS_XBAR_CFG_x_M_PAIR_STREAM_SWAP_INTER_INTRA;
--		}
-+	switch (p) {
-+	case V4L2_PIX_FMT_NV12:
-+	case V4L2_PIX_FMT_NV21:
-+	case V4L2_PIX_FMT_NV16:
-+	case V4L2_PIX_FMT_NV61:
-+		reg = VFE_0_BUS_XBAR_CFG_x_M_SINGLE_STREAM_SEL_LUMA <<
-+			VFE_0_BUS_XBAR_CFG_x_M_SINGLE_STREAM_SEL_SHIFT;
-+
-+		if (output->wm_idx[0] % 2 == 1)
-+			reg <<= 16;
-+
-+		if (enable)
-+			vfe_reg_set(vfe,
-+				    VFE_0_BUS_XBAR_CFG_x(output->wm_idx[0]),
-+				    reg);
-+		else
-+			vfe_reg_clr(vfe,
-+				    VFE_0_BUS_XBAR_CFG_x(output->wm_idx[0]),
-+				    reg);
-+
-+		reg = VFE_0_BUS_XBAR_CFG_x_M_PAIR_STREAM_EN;
-+		if (p == V4L2_PIX_FMT_NV12 || p == V4L2_PIX_FMT_NV16)
-+			reg |= VFE_0_BUS_XBAR_CFG_x_M_PAIR_STREAM_SWAP_INTER_INTRA;
-+
-+		if (output->wm_idx[1] % 2 == 1)
-+			reg <<= 16;
- 
--		if (output->wm_idx[i] % 2 == 1)
-+		if (enable)
-+			vfe_reg_set(vfe,
-+				    VFE_0_BUS_XBAR_CFG_x(output->wm_idx[1]),
-+				    reg);
-+		else
-+			vfe_reg_clr(vfe,
-+				    VFE_0_BUS_XBAR_CFG_x(output->wm_idx[1]),
-+				    reg);
-+		break;
-+	case V4L2_PIX_FMT_YUYV:
-+	case V4L2_PIX_FMT_YVYU:
-+	case V4L2_PIX_FMT_VYUY:
-+	case V4L2_PIX_FMT_UYVY:
-+		reg = VFE_0_BUS_XBAR_CFG_x_M_REALIGN_BUF_EN;
-+		reg |= VFE_0_BUS_XBAR_CFG_x_M_PAIR_STREAM_EN;
-+
-+		if (p == V4L2_PIX_FMT_YUYV || p == V4L2_PIX_FMT_YVYU)
-+			reg |= VFE_0_BUS_XBAR_CFG_x_M_PAIR_STREAM_SWAP_INTER_INTRA;
-+
-+		if (output->wm_idx[0] % 2 == 1)
- 			reg <<= 16;
- 
- 		if (enable)
- 			vfe_reg_set(vfe,
--				    VFE_0_BUS_XBAR_CFG_x(output->wm_idx[i]),
-+				    VFE_0_BUS_XBAR_CFG_x(output->wm_idx[0]),
- 				    reg);
- 		else
- 			vfe_reg_clr(vfe,
--				    VFE_0_BUS_XBAR_CFG_x(output->wm_idx[i]),
-+				    VFE_0_BUS_XBAR_CFG_x(output->wm_idx[0]),
- 				    reg);
-+		break;
-+	default:
-+		break;
- 	}
- }
- 
-+static void vfe_set_realign_cfg(struct vfe_device *vfe, struct vfe_line *line,
-+				u8 enable)
-+{
-+	u32 p = line->video_out.active_fmt.fmt.pix_mp.pixelformat;
-+	u32 val = VFE_0_MODULE_ZOOM_EN_REALIGN_BUF;
-+
-+	if (p != V4L2_PIX_FMT_YUYV && p != V4L2_PIX_FMT_YVYU &&
-+			p != V4L2_PIX_FMT_VYUY && p != V4L2_PIX_FMT_UYVY)
-+		return;
-+
-+	if (enable) {
-+		vfe_reg_set(vfe, VFE_0_MODULE_ZOOM_EN, val);
-+	} else {
-+		vfe_reg_clr(vfe, VFE_0_MODULE_ZOOM_EN, val);
-+		return;
-+	}
-+
-+	val = VFE_0_REALIGN_BUF_CFG_HSUB_ENABLE;
-+
-+	if (p == V4L2_PIX_FMT_UYVY || p == V4L2_PIX_FMT_YUYV)
-+		val |= VFE_0_REALIGN_BUF_CFG_CR_ODD_PIXEL;
-+	else
-+		val |= VFE_0_REALIGN_BUF_CFG_CB_ODD_PIXEL;
-+
-+	writel_relaxed(val, vfe->base + VFE_0_REALIGN_BUF_CFG);
-+}
-+
- static void vfe_set_rdi_cid(struct vfe_device *vfe, enum vfe_line_id id, u8 cid)
- {
- 	vfe_reg_clr(vfe, VFE_0_RDI_CFG_x(id),
-@@ -911,11 +999,11 @@ static void vfe_set_module_cfg(struct vfe_device *vfe, u8 enable)
- 		       VFE_0_MODULE_ZOOM_EN_CROP_ENC;
- 
- 	if (enable) {
--		writel_relaxed(val_lens, vfe->base + VFE_0_MODULE_LENS_EN);
--		writel_relaxed(val_zoom, vfe->base + VFE_0_MODULE_ZOOM_EN);
-+		vfe_reg_set(vfe, VFE_0_MODULE_LENS_EN, val_lens);
-+		vfe_reg_set(vfe, VFE_0_MODULE_ZOOM_EN, val_zoom);
- 	} else {
--		writel_relaxed(0x0, vfe->base + VFE_0_MODULE_LENS_EN);
--		writel_relaxed(0x0, vfe->base + VFE_0_MODULE_ZOOM_EN);
-+		vfe_reg_clr(vfe, VFE_0_MODULE_LENS_EN, val_lens);
-+		vfe_reg_clr(vfe, VFE_0_MODULE_ZOOM_EN, val_zoom);
- 	}
- }
- 
-@@ -1028,6 +1116,7 @@ const struct vfe_hw_ops vfe_ops_4_7 = {
- 	.wm_set_subsample = vfe_wm_set_subsample,
- 	.bus_disconnect_wm_from_rdi = vfe_bus_disconnect_wm_from_rdi,
- 	.set_xbar_cfg = vfe_set_xbar_cfg,
-+	.set_realign_cfg = vfe_set_realign_cfg,
- 	.set_rdi_cid = vfe_set_rdi_cid,
- 	.reg_update = vfe_reg_update,
- 	.reg_update_clear = vfe_reg_update_clear,
-diff --git a/drivers/media/platform/qcom/camss/camss-vfe.c b/drivers/media/platform/qcom/camss/camss-vfe.c
-index dc353d6..d85d663 100644
---- a/drivers/media/platform/qcom/camss/camss-vfe.c
-+++ b/drivers/media/platform/qcom/camss/camss-vfe.c
-@@ -203,6 +203,9 @@ static u32 vfe_src_pad_code(struct vfe_line *line, u32 sink_code,
- 		{
- 			u32 src_code[] = {
- 				MEDIA_BUS_FMT_YUYV8_2X8,
-+				MEDIA_BUS_FMT_YVYU8_2X8,
-+				MEDIA_BUS_FMT_UYVY8_2X8,
-+				MEDIA_BUS_FMT_VYUY8_2X8,
- 				MEDIA_BUS_FMT_YUYV8_1_5X8,
- 			};
- 
-@@ -213,6 +216,9 @@ static u32 vfe_src_pad_code(struct vfe_line *line, u32 sink_code,
- 		{
- 			u32 src_code[] = {
- 				MEDIA_BUS_FMT_YVYU8_2X8,
-+				MEDIA_BUS_FMT_YUYV8_2X8,
-+				MEDIA_BUS_FMT_UYVY8_2X8,
-+				MEDIA_BUS_FMT_VYUY8_2X8,
- 				MEDIA_BUS_FMT_YVYU8_1_5X8,
- 			};
- 
-@@ -223,6 +229,9 @@ static u32 vfe_src_pad_code(struct vfe_line *line, u32 sink_code,
- 		{
- 			u32 src_code[] = {
- 				MEDIA_BUS_FMT_UYVY8_2X8,
-+				MEDIA_BUS_FMT_YUYV8_2X8,
-+				MEDIA_BUS_FMT_YVYU8_2X8,
-+				MEDIA_BUS_FMT_VYUY8_2X8,
- 				MEDIA_BUS_FMT_UYVY8_1_5X8,
- 			};
- 
-@@ -233,6 +242,9 @@ static u32 vfe_src_pad_code(struct vfe_line *line, u32 sink_code,
- 		{
- 			u32 src_code[] = {
- 				MEDIA_BUS_FMT_VYUY8_2X8,
-+				MEDIA_BUS_FMT_YUYV8_2X8,
-+				MEDIA_BUS_FMT_YVYU8_2X8,
-+				MEDIA_BUS_FMT_UYVY8_2X8,
- 				MEDIA_BUS_FMT_VYUY8_1_5X8,
- 			};
- 
-@@ -308,10 +320,6 @@ static void vfe_init_outputs(struct vfe_device *vfe)
- 		output->buf[0] = NULL;
- 		output->buf[1] = NULL;
- 		INIT_LIST_HEAD(&output->pending_bufs);
--
--		output->wm_num = 1;
--		if (vfe->line[i].id == VFE_LINE_PIX)
--			output->wm_num = 2;
- 	}
- }
- 
-@@ -567,6 +575,7 @@ static int vfe_get_output(struct vfe_line *line)
- {
- 	struct vfe_device *vfe = to_vfe(line);
- 	struct vfe_output *output;
-+	struct v4l2_format *f = &line->video_out.active_fmt;
- 	unsigned long flags;
- 	int i;
- 	int wm_idx;
-@@ -582,6 +591,18 @@ static int vfe_get_output(struct vfe_line *line)
- 
- 	output->active_buf = 0;
- 
-+	switch (f->fmt.pix_mp.pixelformat) {
-+	case V4L2_PIX_FMT_NV12:
-+	case V4L2_PIX_FMT_NV21:
-+	case V4L2_PIX_FMT_NV16:
-+	case V4L2_PIX_FMT_NV61:
-+		output->wm_num = 2;
-+		break;
-+	default:
-+		output->wm_num = 1;
-+		break;
-+	}
-+
- 	for (i = 0; i < output->wm_num; i++) {
- 		wm_idx = vfe_reserve_wm(vfe, line->id);
- 		if (wm_idx < 0) {
-@@ -712,6 +733,7 @@ static int vfe_enable_output(struct vfe_line *line)
- 		ops->enable_irq_pix_line(vfe, 0, line->id, 1);
- 		ops->set_module_cfg(vfe, 1);
- 		ops->set_camif_cfg(vfe, line);
-+		ops->set_realign_cfg(vfe, line, 1);
- 		ops->set_xbar_cfg(vfe, output, 1);
- 		ops->set_demux_cfg(vfe, line);
- 		ops->set_scale_cfg(vfe, line);
-@@ -776,6 +798,7 @@ static int vfe_disable_output(struct vfe_line *line)
- 
- 		ops->enable_irq_pix_line(vfe, 0, line->id, 0);
- 		ops->set_module_cfg(vfe, 0);
-+		ops->set_realign_cfg(vfe, line, 0);
- 		ops->set_xbar_cfg(vfe, output, 0);
- 
- 		ops->set_camif_cmd(vfe, 0);
-diff --git a/drivers/media/platform/qcom/camss/camss-vfe.h b/drivers/media/platform/qcom/camss/camss-vfe.h
-index 71f6c97..0d10071 100644
---- a/drivers/media/platform/qcom/camss/camss-vfe.h
-+++ b/drivers/media/platform/qcom/camss/camss-vfe.h
-@@ -107,6 +107,8 @@ struct vfe_hw_ops {
- 			     u8 enable);
- 	void (*set_rdi_cid)(struct vfe_device *vfe, enum vfe_line_id id,
- 			    u8 cid);
-+	void (*set_realign_cfg)(struct vfe_device *vfe, struct vfe_line *line,
-+				u8 enable);
- 	void (*reg_update)(struct vfe_device *vfe, enum vfe_line_id line_id);
- 	void (*reg_update_clear)(struct vfe_device *vfe,
- 				 enum vfe_line_id line_id);
-diff --git a/drivers/media/platform/qcom/camss/camss-video.c b/drivers/media/platform/qcom/camss/camss-video.c
-index ba7d0c4..e6e114a 100644
---- a/drivers/media/platform/qcom/camss/camss-video.c
-+++ b/drivers/media/platform/qcom/camss/camss-video.c
-@@ -179,6 +179,14 @@ static const struct camss_format_info formats_pix_8x96[] = {
- 	  { { 1, 1 } }, { { 1, 2 } }, { 8 } },
- 	{ MEDIA_BUS_FMT_VYUY8_2X8, V4L2_PIX_FMT_NV61, 1,
- 	  { { 1, 1 } }, { { 1, 2 } }, { 8 } },
-+	{ MEDIA_BUS_FMT_UYVY8_2X8, V4L2_PIX_FMT_UYVY, 1,
-+	  { { 1, 1 } }, { { 1, 1 } }, { 16 } },
-+	{ MEDIA_BUS_FMT_VYUY8_2X8, V4L2_PIX_FMT_VYUY, 1,
-+	  { { 1, 1 } }, { { 1, 1 } }, { 16 } },
-+	{ MEDIA_BUS_FMT_YUYV8_2X8, V4L2_PIX_FMT_YUYV, 1,
-+	  { { 1, 1 } }, { { 1, 1 } }, { 16 } },
-+	{ MEDIA_BUS_FMT_YVYU8_2X8, V4L2_PIX_FMT_YVYU, 1,
-+	  { { 1, 1 } }, { { 1, 1 } }, { 16 } },
- };
- 
- /* -----------------------------------------------------------------------------
--- 
-2.7.4
 
+Hmm, looks to me that event_enable_trigger_func() suffers the same
+issue. Perhaps we should add this patch too:
+
+-- Steve
+
+diff --git a/kernel/trace/trace_events_trigger.c b/kernel/trace/trace_events_trigger.c
+index d18ec0e58be2..2681d917f896 100644
+--- a/kernel/trace/trace_events_trigger.c
++++ b/kernel/trace/trace_events_trigger.c
+@@ -1457,6 +1457,10 @@ int event_enable_trigger_func(struct event_command *cmd_ops,
+ 	ret = trace_event_enable_disable(event_enable_file, 1, 1);
+ 	if (ret < 0)
+ 		goto out_put;
++
++	/* Up the trigger_data count to make sure reg doesn't free it on failure */
++	event_trigger_init(trigger_ops, trigger_data);
++
+ 	ret = cmd_ops->reg(glob, trigger_ops, trigger_data, file);
+ 	/*
+ 	 * The above returns on success the # of functions enabled,
+@@ -1464,12 +1468,13 @@ int event_enable_trigger_func(struct event_command *cmd_ops,
+ 	 * Consider no functions a failure too.
+ 	 */
+ 	if (!ret) {
++		cmd_ops->unreg(glob, trigger_ops, trigger_data, file);
+ 		ret = -ENOENT;
+-		goto out_disable;
+-	} else if (ret < 0)
+-		goto out_disable;
+-	/* Just return zero, not the number of enabled functions */
+-	ret = 0;
++	} else if (ret > 0)
++		ret = 0;
++
++	/* Down the counter of trigger_data or free it if not used anymore */
++	event_trigger_free(trigger_ops, trigger_data);
+  out:
+ 	return ret;
+ 
