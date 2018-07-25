@@ -2,73 +2,107 @@ Return-Path: <SRS0=S+WB=KJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C572BC67790
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 20:43:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97937C67790
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 20:44:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7777F20882
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 20:43:31 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="JTQyjou4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7777F20882
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 514AC20671
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 20:44:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 514AC20671
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731465AbeGYV4u (ORCPT
+        id S1731409AbeGYV5e (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 17:56:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48384 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730623AbeGYV4u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Jul 2018 17:56:50 -0400
-Received: from localhost (unknown [104.132.1.75])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5E44E20671;
-        Wed, 25 Jul 2018 20:43:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1532551408;
-        bh=ykW4iKDhsdseMCp0OmX6S+yQ0DTUvaWrEFXereDQeTI=;
-        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
-        b=JTQyjou4L1jX5w6gmEJB9Nkhubx5biqf7tyXPQN9JmgYyXRlmcjNAjhuj7E9fFchi
-         LtX/Ux+bYokMDkon34keKEXqY3aZ+hqNkXvzTv4t0dL9tL7zhheNobW5J6TUbU2N9R
-         FQKiBX8B2qvj+FfPhKP8xRXEATBTZLcmRK5jbmp8=
-Content-Type: text/plain; charset="utf-8"
+        Wed, 25 Jul 2018 17:57:34 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:59345 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730623AbeGYV5d (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Jul 2018 17:57:33 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w6PKi3Sr499198
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Wed, 25 Jul 2018 13:44:03 -0700
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w6PKi33C499064;
+        Wed, 25 Jul 2018 13:44:03 -0700
+Date:   Wed, 25 Jul 2018 13:44:03 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Thomas Richter <tipbot@zytor.com>
+Message-ID: <tip-8a95c8994509c55abf1e38c0cc037b1205725e21@git.kernel.org>
+Cc:     heiko.carstens@de.ibm.com, tglx@linutronix.de,
+        borntraeger@de.ibm.com, mingo@kernel.org, acme@redhat.com,
+        schwidefsky@de.ibm.com, brueckner@linux.ibm.com,
+        tmricht@linux.ibm.com, raspl@linux.ibm.com,
+        linux-kernel@vger.kernel.org, hpa@zytor.com
+Reply-To: tglx@linutronix.de, borntraeger@de.ibm.com,
+          heiko.carstens@de.ibm.com, schwidefsky@de.ibm.com,
+          brueckner@linux.ibm.com, mingo@kernel.org, acme@redhat.com,
+          tmricht@linux.ibm.com, raspl@linux.ibm.com,
+          linux-kernel@vger.kernel.org, hpa@zytor.com
+In-Reply-To: <20180712070936.67547-1-tmricht@linux.ibm.com>
+References: <20180712070936.67547-1-tmricht@linux.ibm.com>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:perf/core] perf kvm: Fix subcommands on s390
+Git-Commit-ID: 8a95c8994509c55abf1e38c0cc037b1205725e21
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-To:     Aapo Vienamo <avienamo@nvidia.com>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>
-From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <1531396382-5579-2-git-send-email-avienamo@nvidia.com>
-Cc:     Prashant Gaikwad <pgaikwad@nvidia.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-tegra@vger.kernel.org, Aapo Vienamo <avienamo@nvidia.com>
-References: <1531396382-5579-1-git-send-email-avienamo@nvidia.com>
- <1531396382-5579-2-git-send-email-avienamo@nvidia.com>
-Message-ID: <153255140774.48062.4242502150376707649@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: [PATCH v6 1/4] clk: tegra: Fix includes required by fence_udelay()
-Date:   Wed, 25 Jul 2018 13:43:27 -0700
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Aapo Vienamo (2018-07-12 04:52:59)
-> Add the missing linux/delay.h include statement for udelay() used by
-> fence_udelay() macro.
-> =
+Commit-ID:  8a95c8994509c55abf1e38c0cc037b1205725e21
+Gitweb:     https://git.kernel.org/tip/8a95c8994509c55abf1e38c0cc037b1205725e21
+Author:     Thomas Richter <tmricht@linux.ibm.com>
+AuthorDate: Thu, 12 Jul 2018 09:09:36 +0200
+Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
+CommitDate: Tue, 24 Jul 2018 14:49:49 -0300
 
-> Signed-off-by: Aapo Vienamo <avienamo@nvidia.com>
-> Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
-> Acked-by: Jon Hunter <jonathanh@nvidia.com>
-> ---
+perf kvm: Fix subcommands on s390
 
-Applied to clk-next
+With commit eca0fa28cd0d ("perf record: Provide detailed information on
+s390 CPU") s390 platform provides detailed type/model/capacity
+information in the CPU identifier string instead of just "IBM/S390".
 
+This breaks 'perf kvm' support which uses hard coded string IBM/S390 to
+compare with the CPU identifier string. Fix this by changing the
+comparison.
+
+Reported-by: Stefan Raspl <raspl@linux.ibm.com>
+Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
+Reviewed-by: Hendrik Brueckner <brueckner@linux.ibm.com>
+Tested-by: Stefan Raspl <raspl@linux.ibm.com>
+Acked-by: Christian Borntraeger <borntraeger@de.ibm.com>
+Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
+Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Cc: stable@vger.kernel.org
+Fixes: eca0fa28cd0d ("perf record: Provide detailed information on s390 CPU")
+Link: http://lkml.kernel.org/r/20180712070936.67547-1-tmricht@linux.ibm.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/perf/arch/s390/util/kvm-stat.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/tools/perf/arch/s390/util/kvm-stat.c b/tools/perf/arch/s390/util/kvm-stat.c
+index d233e2eb9592..aaabab5e2830 100644
+--- a/tools/perf/arch/s390/util/kvm-stat.c
++++ b/tools/perf/arch/s390/util/kvm-stat.c
+@@ -102,7 +102,7 @@ const char * const kvm_skip_events[] = {
+ 
+ int cpu_isa_init(struct perf_kvm_stat *kvm, const char *cpuid)
+ {
+-	if (strstr(cpuid, "IBM/S390")) {
++	if (strstr(cpuid, "IBM")) {
+ 		kvm->exit_reasons = sie_exit_reasons;
+ 		kvm->exit_reasons_isa = "SIE";
+ 	} else
