@@ -2,330 +2,100 @@ Return-Path: <SRS0=S+WB=KJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0447C67790
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 03:32:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70E6DC67790
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 03:50:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3BEB020856
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 03:32:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 13F6120844
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 03:50:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="bkpM2YF7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3BEB020856
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="QRmUWsX8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 13F6120844
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728339AbeGYEl6 (ORCPT
+        id S1727729AbeGYFA1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 00:41:58 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:56082 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726878AbeGYEl6 (ORCPT
+        Wed, 25 Jul 2018 01:00:27 -0400
+Received: from mail-it0-f65.google.com ([209.85.214.65]:34647 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726515AbeGYFA1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Jul 2018 00:41:58 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w6P3TDJH039000;
-        Wed, 25 Jul 2018 03:32:18 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id; s=corp-2018-07-02;
- bh=uZLiuEfgznhvf5HtOPxq7pUfYbiDCU998L/+8MG+Wh8=;
- b=bkpM2YF7PanFnisUWERIYfQjT5HV0YyIxP9B3FaE+0x6fehBl34lS9N/cKxOvm1iZ0j9
- Ihgl6lPg9bhL+dyLKVZjUY78tCkyHZ2xiy7yYnXztQNitifhGv9ywBY4kwB4lFSaOKFj
- 9IF7SLx6YI/vWYHtIaE9HRiQlbKUFx4rRf+IR13ugO4N9aWJY5U1uFI68c2Y7j6hxo7N
- rzIh8qfTfq/t2yQtU/otQ6p3586q92iu90Cv/bBl5Y5dLfETpZqudN3Xa8q/Cv3W1v7t
- 6LSAGYszhKqTPolY4UpsCmnl3hhKHKwZEGoud5Eipl6cnV8M0QxpeEcIkhjz76xay0H3 JA== 
-Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
-        by userp2130.oracle.com with ESMTP id 2kbv8t3mkm-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 25 Jul 2018 03:32:17 +0000
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w6P3WGd8026380
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 25 Jul 2018 03:32:16 GMT
-Received: from abhmp0019.oracle.com (abhmp0019.oracle.com [141.146.116.25])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w6P3WGwE004331;
-        Wed, 25 Jul 2018 03:32:16 GMT
-Received: from arepaka.us.oracle.com (/10.211.54.103)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 24 Jul 2018 20:32:16 -0700
-From:   Avinash Repaka <avinash.repaka@oracle.com>
-To:     Santosh Shilimkar <santosh.shilimkar@oracle.com>,
-        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
-        linux-rdma@vger.kernel.org, rds-devel@oss.oracle.com,
-        linux-kernel@vger.kernel.org
-Cc:     avinash.repaka@oracle.com
-Subject: [PATCH] RDS: RDMA: Fix the NULL-ptr deref in rds_ib_get_mr
-Date:   Tue, 24 Jul 2018 20:31:58 -0700
-Message-Id: <1532489518-27042-1-git-send-email-avinash.repaka@oracle.com>
-X-Mailer: git-send-email 2.4.11
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8964 signatures=668706
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=859
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1806210000 definitions=main-1807250037
+        Wed, 25 Jul 2018 01:00:27 -0400
+Received: by mail-it0-f65.google.com with SMTP id d70-v6so16572978ith.1
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Jul 2018 20:50:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=Rr3MHkYSW9aiKM7ASTwIA8/2DdgLrYSk+6ohTH7Vjjs=;
+        b=QRmUWsX8d/WBHFEZF+CZoB2OXAV1NCDQbcQ5RFe3WiPw/N9UqyoHzoaWCKgegs6oAD
+         IzUk1EX5WEJ84e5B144Ra2zg9NZp/K8NGx3tGcp8hBucqWdv/d/FXe/3vFVHIGuSucmI
+         QPL01A94/Hzu0A8v10Y2KEaYfPwAwfENnuRZo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=Rr3MHkYSW9aiKM7ASTwIA8/2DdgLrYSk+6ohTH7Vjjs=;
+        b=mEgLt+mMqfm/ObQTs11xCFhcIMzeLuZIFzQPqLhPfnMmWZvDi8LqCUQTVaneUlit2e
+         GGl86Loqe+4OeKSIf5CiGINnrAJ4LrTp/P5zn13v4cWbL1lsaAqSkzsvPu+rdjjhV4ce
+         4L7JSkt9AOxKFJ4ppfnblBEzTprwoHhM/GMSJ4IaUc/gs2nHKewBCGdUycNyVhUMidvI
+         pPxY3XavnXcPA72aEFa+JfdmFVvKo06nPnhH6tLHvgDz0JOj0gd6P7r9B6fjnm6JLHK0
+         +BANBt2rz/6TOloD4XS9aFsP1QlDsJibhBE0dqN9YONEGuMXVnr+pEJJbmZnuayW7eCj
+         XRGw==
+X-Gm-Message-State: AOUpUlHF5XvbxH8EVSXRjmoUvclfhSePahG+zHkM7yJCtOm+jq9Mpk8m
+        dXHs0FWzeluJGiOnTlz4QAF2gc5JjMKhXp6de+SYyQ==
+X-Google-Smtp-Source: AAOMgpchu2zeA03XUyMwuNMi326GxcjALejxPYxON/d/ZF63bwuzUFPvEsxsacLxxcKn7lo3c6Ku7GpO60zT2H3JVfQ=
+X-Received: by 2002:a24:62d0:: with SMTP id d199-v6mr4612162itc.91.1532490645589;
+ Tue, 24 Jul 2018 20:50:45 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:a02:4441:0:0:0:0:0 with HTTP; Tue, 24 Jul 2018 20:50:45
+ -0700 (PDT)
+In-Reply-To: <20180724173544.18876-1-joel@joelfernandes.org>
+References: <20180724173544.18876-1-joel@joelfernandes.org>
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+Date:   Wed, 25 Jul 2018 09:20:45 +0530
+Message-ID: <CAKohponm0CbBNLY19B-9ccfe3d3jreSJLDePEROR+w1=1JZEWw@mail.gmail.com>
+Subject: Re: [PATCH v3] cpufreq: trace frequency limits change
+To:     Joel Fernandes <joel@joelfernandes.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "Cc: Android Kernel" <kernel-team@android.com>,
+        Ruchi Kandoi <kandoiruchi@google.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Steven Rostedt <rostedt@goodmis.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Registration of a memory region(MR) through FRMR/fastreg(unlike FMR)
-needs a connection/qp. With a proxy qp, this dependency on connection
-will be removed, but that needs more infrastructure patches, which is a
-work in progress.
+On 24 July 2018 at 23:05, Joel Fernandes <joel@joelfernandes.org> wrote:
+> From: Ruchi Kandoi <kandoiruchi@google.com>
+>
+> systrace used for tracing for Android systems has carried a patch for
+> many years in the Android tree that traces when the cpufreq limits
+> change.  With the help of this information, systrace can know when the
+> policy limits change and can visually display the data. Lets add
+> upstream support for the same.
+>
+> Signed-off-by: Ruchi Kandoi <kandoiruchi@google.com>
+> Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+> ---
+> Viresh since I changed the patch, could you Ack it again?
+>
+> v2->v3: reduce parameters to tracepoint call (Steve)
+> v1->v2: correct ordering of min/max (Viresh)
+>
+>  Documentation/trace/events-power.rst |  1 +
+>  drivers/cpufreq/cpufreq.c            |  1 +
+>  include/trace/events/power.h         | 25 +++++++++++++++++++++++++
+>  3 files changed, 27 insertions(+)
 
-As an intermediate fix, the get_mr returns EOPNOTSUPP when connection
-details are not populated. The MR registration through sendmsg() will
-continue to work even with fast registration, since connection in this
-case is formed upfront.
-
-This patch fixes the following crash:
-kasan: GPF could be caused by NULL-ptr deref or user memory access
-general protection fault: 0000 [#1] SMP KASAN
-Modules linked in:
-CPU: 1 PID: 4244 Comm: syzkaller468044 Not tainted 4.16.0-rc6+ #361
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-Google 01/01/2011
-RIP: 0010:rds_ib_get_mr+0x5c/0x230 net/rds/ib_rdma.c:544
-RSP: 0018:ffff8801b059f890 EFLAGS: 00010202
-RAX: dffffc0000000000 RBX: ffff8801b07e1300 RCX: ffffffff8562d96e
-RDX: 000000000000000d RSI: 0000000000000001 RDI: 0000000000000068
-RBP: ffff8801b059f8b8 R08: ffffed0036274244 R09: ffff8801b13a1200
-R10: 0000000000000004 R11: ffffed0036274243 R12: ffff8801b13a1200
-R13: 0000000000000001 R14: ffff8801ca09fa9c R15: 0000000000000000
-FS:  00007f4d050af700(0000) GS:ffff8801db300000(0000)
-knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f4d050aee78 CR3: 00000001b0d9b006 CR4: 00000000001606e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- __rds_rdma_map+0x710/0x1050 net/rds/rdma.c:271
- rds_get_mr_for_dest+0x1d4/0x2c0 net/rds/rdma.c:357
- rds_setsockopt+0x6cc/0x980 net/rds/af_rds.c:347
- SYSC_setsockopt net/socket.c:1849 [inline]
- SyS_setsockopt+0x189/0x360 net/socket.c:1828
- do_syscall_64+0x281/0x940 arch/x86/entry/common.c:287
- entry_SYSCALL_64_after_hwframe+0x42/0xb7
-RIP: 0033:0x4456d9
-RSP: 002b:00007f4d050aedb8 EFLAGS: 00000246 ORIG_RAX: 0000000000000036
-RAX: ffffffffffffffda RBX: 00000000006dac3c RCX: 00000000004456d9
-RDX: 0000000000000007 RSI: 0000000000000114 RDI: 0000000000000004
-RBP: 00000000006dac38 R08: 00000000000000a0 R09: 0000000000000000
-R10: 0000000020000380 R11: 0000000000000246 R12: 0000000000000000
-R13: 00007fffbfb36d6f R14: 00007f4d050af9c0 R15: 0000000000000005
-Code: fa 48 c1 ea 03 80 3c 02 00 0f 85 cc 01 00 00 4c 8b bb 80 04 00 00
-48
-b8 00 00 00 00 00 fc ff df 49 8d 7f 68 48 89 fa 48 c1 ea 03 <80> 3c 02
-00 0f
-85 9c 01 00 00 4d 8b 7f 68 48 b8 00 00 00 00 00
-RIP: rds_ib_get_mr+0x5c/0x230 net/rds/ib_rdma.c:544 RSP:
-ffff8801b059f890
----[ end trace 7e1cea13b85473b0 ]---
-
-Reported-by: syzbot+b51c77ef956678a65834@syzkaller.appspotmail.com
-Signed-off-by: Santosh Shilimkar <santosh.shilimkar@oracle.com>
-Signed-off-by: Avinash Repaka <avinash.repaka@oracle.com>
----
- net/rds/ib_frmr.c |  5 +++++
- net/rds/ib_mr.h   |  3 ++-
- net/rds/ib_rdma.c | 21 +++++++++++++--------
- net/rds/rdma.c    | 13 ++++++++-----
- net/rds/rds.h     |  5 ++++-
- net/rds/send.c    | 12 +++++++-----
- 6 files changed, 39 insertions(+), 20 deletions(-)
-
-diff --git a/net/rds/ib_frmr.c b/net/rds/ib_frmr.c
-index 48332a6..d152e48 100644
---- a/net/rds/ib_frmr.c
-+++ b/net/rds/ib_frmr.c
-@@ -344,6 +344,11 @@ struct rds_ib_mr *rds_ib_reg_frmr(struct rds_ib_device *rds_ibdev,
- 	struct rds_ib_frmr *frmr;
- 	int ret;
- 
-+	if (!ic) {
-+		/* TODO: Add FRWR support for RDS_GET_MR using proxy qp*/
-+		return ERR_PTR(-EOPNOTSUPP);
-+	}
-+
- 	do {
- 		if (ibmr)
- 			rds_ib_free_frmr(ibmr, true);
-diff --git a/net/rds/ib_mr.h b/net/rds/ib_mr.h
-index 0ea4ab0..655f01d 100644
---- a/net/rds/ib_mr.h
-+++ b/net/rds/ib_mr.h
-@@ -115,7 +115,8 @@ void rds_ib_get_mr_info(struct rds_ib_device *rds_ibdev,
- 			struct rds_info_rdma_connection *iinfo);
- void rds_ib_destroy_mr_pool(struct rds_ib_mr_pool *);
- void *rds_ib_get_mr(struct scatterlist *sg, unsigned long nents,
--		    struct rds_sock *rs, u32 *key_ret);
-+		    struct rds_sock *rs, u32 *key_ret,
-+		    struct rds_connection *conn);
- void rds_ib_sync_mr(void *trans_private, int dir);
- void rds_ib_free_mr(void *trans_private, int invalidate);
- void rds_ib_flush_mrs(void);
-diff --git a/net/rds/ib_rdma.c b/net/rds/ib_rdma.c
-index e678699..2e49a40 100644
---- a/net/rds/ib_rdma.c
-+++ b/net/rds/ib_rdma.c
-@@ -537,11 +537,12 @@ void rds_ib_flush_mrs(void)
- }
- 
- void *rds_ib_get_mr(struct scatterlist *sg, unsigned long nents,
--		    struct rds_sock *rs, u32 *key_ret)
-+		    struct rds_sock *rs, u32 *key_ret,
-+		    struct rds_connection *conn)
- {
- 	struct rds_ib_device *rds_ibdev;
- 	struct rds_ib_mr *ibmr = NULL;
--	struct rds_ib_connection *ic = rs->rs_conn->c_transport_data;
-+	struct rds_ib_connection *ic = NULL;
- 	int ret;
- 
- 	rds_ibdev = rds_ib_get_device(rs->rs_bound_addr);
-@@ -550,6 +551,9 @@ void *rds_ib_get_mr(struct scatterlist *sg, unsigned long nents,
- 		goto out;
- 	}
- 
-+	if (conn)
-+		ic = conn->c_transport_data;
-+
- 	if (!rds_ibdev->mr_8k_pool || !rds_ibdev->mr_1m_pool) {
- 		ret = -ENODEV;
- 		goto out;
-@@ -559,17 +563,18 @@ void *rds_ib_get_mr(struct scatterlist *sg, unsigned long nents,
- 		ibmr = rds_ib_reg_frmr(rds_ibdev, ic, sg, nents, key_ret);
- 	else
- 		ibmr = rds_ib_reg_fmr(rds_ibdev, sg, nents, key_ret);
--	if (ibmr)
--		rds_ibdev = NULL;
--
-- out:
--	if (!ibmr)
-+	if (IS_ERR(ibmr)) {
-+		ret = PTR_ERR(ibmr);
- 		pr_warn("RDS/IB: rds_ib_get_mr failed (errno=%d)\n", ret);
-+	} else {
-+		return ibmr;
-+	}
- 
-+ out:
- 	if (rds_ibdev)
- 		rds_ib_dev_put(rds_ibdev);
- 
--	return ibmr;
-+	return ERR_PTR(ret);
- }
- 
- void rds_ib_destroy_mr_pool(struct rds_ib_mr_pool *pool)
-diff --git a/net/rds/rdma.c b/net/rds/rdma.c
-index 634cfcb..80920e4 100644
---- a/net/rds/rdma.c
-+++ b/net/rds/rdma.c
-@@ -170,7 +170,8 @@ static int rds_pin_pages(unsigned long user_addr, unsigned int nr_pages,
- }
- 
- static int __rds_rdma_map(struct rds_sock *rs, struct rds_get_mr_args *args,
--				u64 *cookie_ret, struct rds_mr **mr_ret)
-+			  u64 *cookie_ret, struct rds_mr **mr_ret,
-+			  struct rds_conn_path *cp)
- {
- 	struct rds_mr *mr = NULL, *found;
- 	unsigned int nr_pages;
-@@ -269,7 +270,8 @@ static int __rds_rdma_map(struct rds_sock *rs, struct rds_get_mr_args *args,
- 	 * Note that dma_map() implies that pending writes are
- 	 * flushed to RAM, so no dma_sync is needed here. */
- 	trans_private = rs->rs_transport->get_mr(sg, nents, rs,
--						 &mr->r_key);
-+						 &mr->r_key,
-+						 cp ? cp->cp_conn : NULL);
- 
- 	if (IS_ERR(trans_private)) {
- 		for (i = 0 ; i < nents; i++)
-@@ -330,7 +332,7 @@ int rds_get_mr(struct rds_sock *rs, char __user *optval, int optlen)
- 			   sizeof(struct rds_get_mr_args)))
- 		return -EFAULT;
- 
--	return __rds_rdma_map(rs, &args, NULL, NULL);
-+	return __rds_rdma_map(rs, &args, NULL, NULL, NULL);
- }
- 
- int rds_get_mr_for_dest(struct rds_sock *rs, char __user *optval, int optlen)
-@@ -354,7 +356,7 @@ int rds_get_mr_for_dest(struct rds_sock *rs, char __user *optval, int optlen)
- 	new_args.cookie_addr = args.cookie_addr;
- 	new_args.flags = args.flags;
- 
--	return __rds_rdma_map(rs, &new_args, NULL, NULL);
-+	return __rds_rdma_map(rs, &new_args, NULL, NULL, NULL);
- }
- 
- /*
-@@ -782,7 +784,8 @@ int rds_cmsg_rdma_map(struct rds_sock *rs, struct rds_message *rm,
- 	    rm->m_rdma_cookie != 0)
- 		return -EINVAL;
- 
--	return __rds_rdma_map(rs, CMSG_DATA(cmsg), &rm->m_rdma_cookie, &rm->rdma.op_rdma_mr);
-+	return __rds_rdma_map(rs, CMSG_DATA(cmsg), &rm->m_rdma_cookie,
-+			      &rm->rdma.op_rdma_mr, rm->m_conn_path);
- }
- 
- /*
-diff --git a/net/rds/rds.h b/net/rds/rds.h
-index f2272fb..60b3b78 100644
---- a/net/rds/rds.h
-+++ b/net/rds/rds.h
-@@ -464,6 +464,8 @@ struct rds_message {
- 			struct scatterlist	*op_sg;
- 		} data;
- 	};
-+
-+	struct rds_conn_path *m_conn_path;
- };
- 
- /*
-@@ -544,7 +546,8 @@ struct rds_transport {
- 					unsigned int avail);
- 	void (*exit)(void);
- 	void *(*get_mr)(struct scatterlist *sg, unsigned long nr_sg,
--			struct rds_sock *rs, u32 *key_ret);
-+			struct rds_sock *rs, u32 *key_ret,
-+			struct rds_connection *conn);
- 	void (*sync_mr)(void *trans_private, int direction);
- 	void (*free_mr)(void *trans_private, int invalidate);
- 	void (*flush_mrs)(void);
-diff --git a/net/rds/send.c b/net/rds/send.c
-index 94c7f74..59f17a2 100644
---- a/net/rds/send.c
-+++ b/net/rds/send.c
-@@ -1169,6 +1169,13 @@ int rds_sendmsg(struct socket *sock, struct msghdr *msg, size_t payload_len)
- 		rs->rs_conn = conn;
- 	}
- 
-+	if (conn->c_trans->t_mp_capable)
-+		cpath = &conn->c_path[rds_send_mprds_hash(rs, conn)];
-+	else
-+		cpath = &conn->c_path[0];
-+
-+	rm->m_conn_path = cpath;
-+
- 	/* Parse any control messages the user may have included. */
- 	ret = rds_cmsg_send(rs, rm, msg, &allocated_mr);
- 	if (ret) {
-@@ -1192,11 +1199,6 @@ int rds_sendmsg(struct socket *sock, struct msghdr *msg, size_t payload_len)
- 		goto out;
- 	}
- 
--	if (conn->c_trans->t_mp_capable)
--		cpath = &conn->c_path[rds_send_mprds_hash(rs, conn)];
--	else
--		cpath = &conn->c_path[0];
--
- 	if (rds_destroy_pending(conn)) {
- 		ret = -EAGAIN;
- 		goto out;
--- 
-2.4.11
-
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
