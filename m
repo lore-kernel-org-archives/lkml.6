@@ -2,116 +2,95 @@ Return-Path: <SRS0=S+WB=KJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43343C6778F
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 21:12:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF90AC67790
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 21:12:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E08FF20852
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 21:12:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A26EA20844
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 21:12:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="oofteiJ4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E08FF20852
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="VX//NAAq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A26EA20844
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731309AbeGYWZj (ORCPT
+        id S1731364AbeGYWZy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 18:25:39 -0400
-Received: from mail-oi0-f65.google.com ([209.85.218.65]:35739 "EHLO
-        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730357AbeGYWZj (ORCPT
+        Wed, 25 Jul 2018 18:25:54 -0400
+Received: from mail-wr1-f54.google.com ([209.85.221.54]:42661 "EHLO
+        mail-wr1-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731316AbeGYWZy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Jul 2018 18:25:39 -0400
-Received: by mail-oi0-f65.google.com with SMTP id i12-v6so16474580oik.2;
-        Wed, 25 Jul 2018 14:12:10 -0700 (PDT)
+        Wed, 25 Jul 2018 18:25:54 -0400
+Received: by mail-wr1-f54.google.com with SMTP id e7-v6so8666887wrs.9
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Jul 2018 14:12:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=Es0czL5E75BKCHYy1xyR78B3sa+q0YTkVFLqEagPYbo=;
-        b=oofteiJ4tXfFBlCnrYZADIF8p38rqy9M78Uuak2t7GgXW8+m6QAyG9kGDHQHt7mx/l
-         PhQSaK5J1RIqGcvr2MVmb3vAdmerU2sbPX4CCB1ffo6JcMSR9am1HFcunAiSI5n82SFq
-         fHavAzBHeXiR8NeOFnQutECGI8bZQbVZNnRcO4ZV00htMpZNTp72Zby1OL7Vkd9XD8KT
-         87L1YDhW6dX9NAm6vDovcs1Nax8C+PacIF8OI9gHHzb7YELWFyqZLmycvgZuFohkjHU4
-         nxOvPnCR2kCqwHboISx2x3NPXMDiy+D83Gz4mr9XINccdTu084PdcPbw7Il5+BzlhaTJ
-         8qzw==
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=message-id:subject:from:to:cc:date:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=J4nPdfggiOGVQERpd2IiCg01DZ78gI915G5m/TcNWxY=;
+        b=VX//NAAqU8pHo5OjRscWy1bz5P1c/fAigpys+IseJzxvC5EQwz7ousgJnNLemRmFGk
+         smmw8jSaybUMgYqHJrINHLqv0t+jgeCURTw584KCKEcPZBBEeqZ9ZChkKNpv4rOZXIV1
+         BCbwGN4lxL2YesrxAug9qGV+VkHQRTtcoVdfD6ihubQ+6pRlGxibWvYE1CfgVN5or9pH
+         hn1zs7rpR25OPH7m9JYNpkpzJwraXm7ogQNwX+NIWzvuzws0zYVkkZk4niVT5/xPhOC3
+         2zcX6m6dmWmw2rBYgN1AqjU7CQ/t2FRwZnGtC7Zetyl3ha11Wat2VQW0ZtGm2rD3cVrU
+         ht5g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=Es0czL5E75BKCHYy1xyR78B3sa+q0YTkVFLqEagPYbo=;
-        b=UUgDIfZeiVl+fgp0G9YPiV8Lky/krSz7b77jh6lQnO3+Zghys2Pnon73inQv6iOZ+E
-         Pwi5e5dYhgDJNMLhT2ykG+X/QT7CBGpY6JTXOQQ5eSjxBOuoP3CEepybQIdp0QW+bJGJ
-         Vs2g5rw0oSkZACY0csuWYQeAQLzzJiFc7Cd6FsUpNBDNYF8uBamKD5nh+7Ig1MRVIamz
-         dYU/0YZi++Kmd58DzBmEAyO+Dbd+SgINVVfUJnnzrB7nlcpaIXMwS4kJzntUvyTtZxoI
-         gxw4OXwDsJNMGitDHISs1FMTG3yLBJWLd2hjDo/d6NbHoGEKKvVVFmGqHPlcFS9GWQpM
-         2CFw==
-X-Gm-Message-State: AOUpUlF5TSAACcJSeuJRWdmMJ04AsvhyfUf47ejtTdOjq1F8qFob9TpG
-        3h0urPoabfL+C/XBWsjGAoszojlcq2IQJJEijPg=
-X-Google-Smtp-Source: AAOMgpdYT8xeOg/0IlmeMs23h6mJrp6kp37nYTtat7WV8JjL/+LkL0OCuXalXz4pJIE4o+E2tl3x/XAT6qcy4NCVtMI=
-X-Received: by 2002:aca:cd41:: with SMTP id d62-v6mr4674077oig.207.1532553129518;
- Wed, 25 Jul 2018 14:12:09 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:ac9:42c1:0:0:0:0:0 with HTTP; Wed, 25 Jul 2018 14:12:08
- -0700 (PDT)
-In-Reply-To: <153254834342.92573.16877025672192312745.stgit@bhelgaas-glaptop.roam.corp.google.com>
-References: <153254813164.92573.10755585465477668768.stgit@bhelgaas-glaptop.roam.corp.google.com>
- <153254834342.92573.16877025672192312745.stgit@bhelgaas-glaptop.roam.corp.google.com>
-From:   Alexander Duyck <alexander.duyck@gmail.com>
-Date:   Wed, 25 Jul 2018 14:12:08 -0700
-Message-ID: <CAKgT0UewV82FKVMkW975+upccaRJF4i6oQYzNh5jC02wcGmhXQ@mail.gmail.com>
-Subject: Re: [Intel-wired-lan] [PATCH v1 1/4] igb: Remove unnecessary include
- of <linux/pci-aspm.h>
-To:     Bjorn Helgaas <helgaas@kernel.org>
-Cc:     linux-pci <linux-pci@vger.kernel.org>,
-        Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
-        Johannes Berg <johannes.berg@intel.com>, linuxwifi@intel.com,
-        Netdev <netdev@vger.kernel.org>, linux-wireless@vger.kernel.org,
-        ath9k-devel@qca.qualcomm.com, LKML <linux-kernel@vger.kernel.org>,
-        Luca Coelho <luciano.coelho@intel.com>,
-        intel-wired-lan <intel-wired-lan@lists.osuosl.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Kalle Valo <kvalo@codeaurora.org>
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=J4nPdfggiOGVQERpd2IiCg01DZ78gI915G5m/TcNWxY=;
+        b=g5AmUF2WlWaohSs2nekPwK0HYaA6JFq19KLCdr+GTM2lfS8Mnsn2eOeR7PvOCcSt0E
+         xsFpnaULrWvOnsHBTP72NuQywclcbZjui5NWy2ld6l2/1OHXfZRK18qGdN74Pel2sEBe
+         +La4CfLRySsjK/yVlEiraG2Q/s9t24PqRYtVQ4Kynz5YMspcDLDz/Qv7C/se9yBSNB6B
+         N9bHEd9AHK77yx4ybbOYk3AWqaB6fdWpxLPYloum+ZP4rh+QyUsC7e5VE+7HT+SdmBr7
+         TFqJK7k3OjqTYakYflNAlxFSqRsUvkM2ZgG9IF1BuUkGch9DbHf36oH584mGwv77iEqU
+         3flA==
+X-Gm-Message-State: AOUpUlF2H6qKpwd0IATgKrRL2D4GmANqCic+j06T4G/Cz0ORznzJl1q9
+        fZhg4yyzfsuUB0wn0xzUATI4vQ==
+X-Google-Smtp-Source: AAOMgpfanEAd90UeBgypVuq6cEL47lUee/jFfRAuV9rmBQAjig5Tz4kEk+moxGsK5v10HdFnKZRkag==
+X-Received: by 2002:adf:de84:: with SMTP id w4-v6mr16411133wrl.270.1532553144068;
+        Wed, 25 Jul 2018 14:12:24 -0700 (PDT)
+Received: from boomer (cag06-3-82-243-161-21.fbx.proxad.net. [82.243.161.21])
+        by smtp.gmail.com with ESMTPSA id f17-v6sm16324389wrs.1.2018.07.25.14.12.22
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 25 Jul 2018 14:12:23 -0700 (PDT)
+Message-ID: <5bd3eb356f7b9ef18a409b549e3d6ac97733a4cf.camel@baylibre.com>
+Subject: Re: [PATCH 14/15] ASoC: meson: add axg sound card DT binding
+ documentation
+From:   jbrunet@baylibre.com
+To:     Rob Herring <robh@kernel.org>
+Cc:     Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Carlo Caione <carlo@caione.org>, alsa-devel@alsa-project.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-amlogic@lists.infradead.org
+Date:   Wed, 25 Jul 2018 23:12:21 +0200
+In-Reply-To: <20180725190619.GA20234@rob-hp-laptop>
+References: <20180717153643.8806-1-jbrunet@baylibre.com>
+         <20180717153643.8806-18-jbrunet@baylibre.com>
+         <20180725190619.GA20234@rob-hp-laptop>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.4 (3.28.4-1.fc28) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 25, 2018 at 12:52 PM, Bjorn Helgaas <helgaas@kernel.org> wrote:
-> From: Bjorn Helgaas <bhelgaas@google.com>
->
-> The igb driver doesn't need anything provided by pci-aspm.h, so remove
-> the unnecessary include of it.
->
-> Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+On Wed, 2018-07-25 at 13:06 -0600, Rob Herring wrote:
+> On Tue, Jul 17, 2018 at 05:36:41PM +0200, Jerome Brunet wrote:
+> > Add the DT binding documentation for axg sound card
+> 
+> I see Mark already applied, but...
 
-Looks good to me.
+It's very recent, no DT using it yet.
 
-Acked-by: Alexander Duyck <alexander.h.duyck@intel.com>
+I can easily have your 3 comments fixed if it is OK with Mark. I'll submit
+something for this tomorrow.
 
-> ---
->  drivers/net/ethernet/intel/igb/igb_main.c |    1 -
->  1 file changed, 1 deletion(-)
->
-> diff --git a/drivers/net/ethernet/intel/igb/igb_main.c b/drivers/net/ethernet/intel/igb/igb_main.c
-> index f707709969ac..c77fda05f683 100644
-> --- a/drivers/net/ethernet/intel/igb/igb_main.c
-> +++ b/drivers/net/ethernet/intel/igb/igb_main.c
-> @@ -22,7 +22,6 @@
->  #include <linux/if.h>
->  #include <linux/if_vlan.h>
->  #include <linux/pci.h>
-> -#include <linux/pci-aspm.h>
->  #include <linux/delay.h>
->  #include <linux/interrupt.h>
->  #include <linux/ip.h>
->
-> _______________________________________________
-> Intel-wired-lan mailing list
-> Intel-wired-lan@osuosl.org
-> https://lists.osuosl.org/mailman/listinfo/intel-wired-lan
