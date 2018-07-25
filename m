@@ -2,82 +2,203 @@ Return-Path: <SRS0=S+WB=KJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5469AC67790
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 10:20:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC8BFC6778F
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 10:27:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0A8EB20843
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 10:20:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0A8EB20843
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 63B4820899
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 10:27:27 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="UYbxRnLz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 63B4820899
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728775AbeGYLbf (ORCPT
+        id S1728786AbeGYLi2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 07:31:35 -0400
-Received: from mga18.intel.com ([134.134.136.126]:16905 "EHLO mga18.intel.com"
+        Wed, 25 Jul 2018 07:38:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56886 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728411AbeGYLbf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Jul 2018 07:31:35 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Jul 2018 03:20:33 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,401,1526367600"; 
-   d="scan'208";a="59325489"
-Received: from hu.sh.intel.com ([10.239.160.33])
-  by orsmga007.jf.intel.com with ESMTP; 25 Jul 2018 03:20:28 -0700
-From:   Chen Hu <hu1.chen@intel.com>
-Cc:     Chen Hu <hu1.chen@intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>, linux-serial@vger.kernel.org,
+        id S1728651AbeGYLi2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Jul 2018 07:38:28 -0400
+Received: from mail-wm0-f52.google.com (mail-wm0-f52.google.com [74.125.82.52])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id D170020890;
+        Wed, 25 Jul 2018 10:27:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1532514445;
+        bh=I9yVjWBN29vSV8Om7OfqtIbGBpqvoqCF4fGdtTn4xc4=;
+        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
+        b=UYbxRnLze8adnrUKmwpLPmCkhJAlQUKkxCRkz6mHGLCxr3nwnhVcQglCIXzW7SVrg
+         JtcBqqYOLVh1JeG5SjVmSsHzktwIpBqUDhgnyfy41bfmxySNZkR4UlXvIjjbmS0fKW
+         4j5tJtSp1XGZCKHn9WwODByjm6XFdSeAULABcfHI=
+Received: by mail-wm0-f52.google.com with SMTP id s14-v6so5487213wmc.1;
+        Wed, 25 Jul 2018 03:27:24 -0700 (PDT)
+X-Gm-Message-State: AOUpUlFHVzw4/j8t7DJviSjojDqZjV/C5qUa8fotrbhSTz76JtQ/87fM
+        hIRE0YkywtyC7h3vEKjdvyN7vz1ZYbsFY7ZzId8=
+X-Google-Smtp-Source: AAOMgpeeVX+9IXpmt8BqOibRUyu2sbPCROPTzAeSIjpBzX/9vPF1qgrAXDKYkYFTfXxvJuu1CEi8Z0cO79/YxyYDUjg=
+X-Received: by 2002:a1c:9550:: with SMTP id x77-v6mr4001042wmd.135.1532514443304;
+ Wed, 25 Jul 2018 03:27:23 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:adf:9141:0:0:0:0:0 with HTTP; Wed, 25 Jul 2018 03:27:22
+ -0700 (PDT)
+In-Reply-To: <20180723040816.19455-2-matheus@castello.eng.br>
+References: <20180723040816.19455-1-matheus@castello.eng.br> <20180723040816.19455-2-matheus@castello.eng.br>
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+Date:   Wed, 25 Jul 2018 12:27:22 +0200
+X-Gmail-Original-Message-ID: <CAJKOXPeWq9hohuLSKMopWjHAgm+DX2YXCxqhpK+5N5nySzYpDg@mail.gmail.com>
+Message-ID: <CAJKOXPeWq9hohuLSKMopWjHAgm+DX2YXCxqhpK+5N5nySzYpDg@mail.gmail.com>
+Subject: Re: [PATCH 1/4] power: supply: max17040: Add IRQ handler for low SOC alert
+To:     Matheus Castello <matheus@castello.eng.br>
+Cc:     sre@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH] serial: core: stop passing NULL in uart_resume_port
-Date:   Wed, 25 Jul 2018 18:04:50 +0800
-Message-Id: <20180725100450.22300-1-hu1.chen@intel.com>
-X-Mailer: git-send-email 2.13.0
-To:     unlisted-recipients:; (no To-header on input)
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We found the baud rate is changed after S3 on some Intel Broxton
-platforms. The baud rate should be restored during resume. However, some
-set_termios() callback such as dw8250_set_termios() for DesignWare 8250
-will skip setting if old termios is NULL. We address this issue via
-passing a dummy.
+On 23 July 2018 at 06:08, Matheus Castello <matheus@castello.eng.br> wrote:
+> According datasheet max17040 has a pin for alert host for low SOC.
+> This pin can be used as external interrupt, so we need to check for
+> interrupts assigned for device and handle it.
+>
+> In hadler we are checking and storing fuel gauge registers values
+> and send an uevent to notificate user space, so user space can decide
+> save work or turn off since the alert demonstrate that the battery may
+> no have the power to keep the system turned on for much longer.
+>
+> Signed-off-by: Matheus Castello <matheus@castello.eng.br>
+> ---
+>  drivers/power/supply/max17040_battery.c | 51 +++++++++++++++++++++++++++++++++
+>  1 file changed, 51 insertions(+)
+>
+> diff --git a/drivers/power/supply/max17040_battery.c b/drivers/power/supply/max17040_battery.c
+> index 33c40f79d23d..6e54e58814a9 100644
+> --- a/drivers/power/supply/max17040_battery.c
+> +++ b/drivers/power/supply/max17040_battery.c
+> @@ -17,6 +17,7 @@
+>  #include <linux/err.h>
+>  #include <linux/i2c.h>
+>  #include <linux/delay.h>
+> +#include <linux/interrupt.h>
+>  #include <linux/power_supply.h>
+>  #include <linux/max17040_battery.h>
+>  #include <linux/slab.h>
+> @@ -179,6 +180,24 @@ static void max17040_work(struct work_struct *work)
+>                            MAX17040_DELAY);
+>  }
+>
+> +static irqreturn_t max17040_thread_handler(int id, void *dev)
+> +{
+> +       struct max17040_chip *chip = dev;
+> +       struct i2c_client *client = chip->client;
+> +
+> +       dev_warn(&client->dev, "IRQ: Alert battery low level");
+> +       /* read registers */
+> +       max17040_get_vcell(chip->client);
 
-Signed-off-by: Chen Hu <hu1.chen@intel.com>
----
- drivers/tty/serial/serial_core.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+You just stored chip->client in client...
 
-diff --git a/drivers/tty/serial/serial_core.c b/drivers/tty/serial/serial_core.c
-index f02965936f2e..8b815f1539e8 100644
---- a/drivers/tty/serial/serial_core.c
-+++ b/drivers/tty/serial/serial_core.c
-@@ -2217,6 +2217,7 @@ int uart_resume_port(struct uart_driver *drv, struct uart_port *uport)
- 	struct device *tty_dev;
- 	struct uart_match match = {uport, drv};
- 	struct ktermios termios;
-+	static struct ktermios dummy;
- 
- 	mutex_lock(&port->mutex);
- 
-@@ -2277,7 +2278,7 @@ int uart_resume_port(struct uart_driver *drv, struct uart_port *uport)
- 			pm_runtime_put_autosuspend(uport->dev);
- 			if (ret == 0) {
- 				if (tty)
--					uart_change_speed(tty, state, NULL);
-+					uart_change_speed(tty, state, &dummy);
- 				pm_runtime_get_sync(uport->dev);
- 				spin_lock_irq(&uport->lock);
- 				ops->set_mctrl(uport, uport->mctrl);
--- 
-2.13.0
+> +       max17040_get_soc(chip->client);
+> +       max17040_get_online(chip->client);
+> +       max17040_get_status(chip->client);
 
+This duplicates max17040_work(). Can you split common part?
+
+> +
+> +       /* send uevent */
+> +       power_supply_changed(chip->battery);
+> +
+> +       return IRQ_HANDLED;
+> +}
+> +
+>  static enum power_supply_property max17040_battery_props[] = {
+>         POWER_SUPPLY_PROP_STATUS,
+>         POWER_SUPPLY_PROP_ONLINE,
+> @@ -200,6 +219,8 @@ static int max17040_probe(struct i2c_client *client,
+>         struct i2c_adapter *adapter = to_i2c_adapter(client->dev.parent);
+>         struct power_supply_config psy_cfg = {};
+>         struct max17040_chip *chip;
+> +       int ret;
+> +       unsigned int flags;
+
+Define them in scope using them.
+
+>
+>         if (!i2c_check_functionality(adapter, I2C_FUNC_SMBUS_BYTE))
+>                 return -EIO;
+> @@ -221,6 +242,24 @@ static int max17040_probe(struct i2c_client *client,
+>                 return PTR_ERR(chip->battery);
+>         }
+>
+> +       /* check interrupt */
+> +       if (client->irq) {
+> +               dev_info(&client->dev, "IRQ: enabled\n");
+> +               flags = IRQF_TRIGGER_FALLING | IRQF_ONESHOT;
+> +
+> +               ret = devm_request_threaded_irq(&client->dev, client->irq,
+> +                                               NULL,
+> +                                               max17040_thread_handler, flags,
+> +                                               chip->battery->desc->name,
+> +                                               chip);
+
+Please indent it to parenthesis.
+
+> +               if (ret) {
+> +                       client->irq = 0;
+> +                       if (ret != -EBUSY)
+> +                               dev_warn(&client->dev,
+> +                                       "Failed to get IRQ err %d \n", ret);
+> +               }
+> +       }
+> +
+>         max17040_reset(client);
+>         max17040_get_version(client);
+>
+> @@ -248,6 +287,12 @@ static int max17040_suspend(struct device *dev)
+>         struct max17040_chip *chip = i2c_get_clientdata(client);
+>
+>         cancel_delayed_work(&chip->work);
+> +
+> +       if (chip->client->irq) {
+
+I think this should use device wakeup properties (e.g.
+device_init_wakeup(), device_may_wakeup()) coming from pdata.
+
+It would be nice to CC users of this driver. We have it on some of
+boards. Unfortunately get_maintainer will not point it automatically
+so:
+scripts/get_maintainer.pl -f drivers/mfd/max14577.c
+
+Best regards,
+Krzysztof
+
+> +               disable_irq(chip->client->irq);
+> +               enable_irq_wake(chip->client->irq);
+> +       }
+> +
+>         return 0;
+>  }
+>
+> @@ -258,6 +303,12 @@ static int max17040_resume(struct device *dev)
+>
+>         queue_delayed_work(system_power_efficient_wq, &chip->work,
+>                            MAX17040_DELAY);
+> +
+> +       if (chip->client->irq) {
+> +               disable_irq_wake(chip->client->irq);
+> +               enable_irq(chip->client->irq);
+> +       }
+> +
+>         return 0;
+>  }
+>
+> --
+> 2.13.3
+>
