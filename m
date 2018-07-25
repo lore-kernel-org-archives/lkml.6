@@ -2,215 +2,122 @@ Return-Path: <SRS0=S+WB=KJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F8E7C67790
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 12:27:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F08BCC67790
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 12:27:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 39E1320844
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 12:27:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 39E1320844
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 9A63820891
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 12:27:41 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=goldelico.com header.i=@goldelico.com header.b="SCvToeCE"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9A63820891
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goldelico.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729073AbeGYNim (ORCPT
+        id S1729091AbeGYNjH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 09:38:42 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:33585 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728791AbeGYNim (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Jul 2018 09:38:42 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 070222091A; Wed, 25 Jul 2018 14:27:12 +0200 (CEST)
-Received: from localhost.localdomain (unknown [80.255.6.130])
-        by mail.bootlin.com (Postfix) with ESMTPSA id BE297207B3;
-        Wed, 25 Jul 2018 14:26:51 +0200 (CEST)
-From:   Quentin Schulz <quentin.schulz@bootlin.com>
-To:     alexandre.belloni@bootlin.com, robh+dt@kernel.org,
-        mark.rutland@arm.com, linus.walleij@linaro.org
-Cc:     ralf@linux-mips.org, paul.burton@mips.com, jhogan@kernel.org,
-        linux-gpio@vger.kernel.org, linux-mips@linux-mips.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        thomas.petazzoni@bootlin.com,
-        Quentin Schulz <quentin.schulz@bootlin.com>
-Subject: [PATCH 2/2] pinctrl: ocelot: add support for interrupt controller
-Date:   Wed, 25 Jul 2018 14:26:21 +0200
-Message-Id: <20180725122621.31713-2-quentin.schulz@bootlin.com>
-X-Mailer: git-send-email 2.14.1
-In-Reply-To: <20180725122621.31713-1-quentin.schulz@bootlin.com>
-References: <20180725122621.31713-1-quentin.schulz@bootlin.com>
+        Wed, 25 Jul 2018 09:39:07 -0400
+Received: from mo4-p01-ob.smtp.rzone.de ([85.215.255.53]:30838 "EHLO
+        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728791AbeGYNjG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Jul 2018 09:39:06 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1532521656;
+        s=strato-dkim-0002; d=goldelico.com;
+        h=To:References:Message-Id:Cc:Date:In-Reply-To:From:Subject:
+        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
+        bh=JsntnmaWsubbScLuU7xEocNdIi9CO4sb/iuOcIjCzsQ=;
+        b=SCvToeCE31UOcstqwMmBsbbJ3fqxqDHK6RhuoCvOqyEavnq+NWi6epAHQvYhc3ZY/3
+        xiWF4difhJzTncZF3V5H0vCh0NJCOGXwcY8ScX/Z062nm+JIq+FePra2O14HJ7FUDgiT
+        essaRvaLeloh+jz0FrBuvfQJYGzpnXb7enRGv3bG8iYxb7/ExNIc5zcG1UM5GVDPJuFT
+        Aitgo0c8j9O9rUFUdoiOfsGMxs9PM1iSNcJp/NseMvjUuW6yNa4LVeWOmRg5fMdZc1yA
+        ckoPeMVQXBVspan+0I+HfpJzVr9K0FYtpsY9+wsiHxytU//hKQ3ZlZngltTdnnyM7Grv
+        HWgg==
+X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMgPgp8VKxflSZ1P34KBj4Qpw87Wiuc1qET/2Lw=="
+X-RZG-CLASS-ID: mo00
+Received: from imac.fritz.box
+        by smtp.strato.de (RZmta 43.13 DYNA|AUTH)
+        with ESMTPSA id 6047f4u6PCRWfPK
+        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
+        (Client did not present a certificate);
+        Wed, 25 Jul 2018 14:27:32 +0200 (CEST)
+Content-Type: text/plain; charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 9.3 \(3124\))
+Subject: Re: [PATCH 09/32] ARM: dts: omap3-gta04: make NAND partitions compatible with recent U-Boot
+From:   "H. Nikolaus Schaller" <hns@goldelico.com>
+In-Reply-To: <20180725083305.GB8303@lenoch>
+Date:   Wed, 25 Jul 2018 14:27:31 +0200
+Cc:     Marek Belisko <marek@goldelico.com>,
+        =?utf-8?Q?Beno=C3=AEt_Cousson?= <bcousson@baylibre.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-omap@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, letux-kernel@openphoenux.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <85BC9F70-2E58-4915-9405-7CC1855975C4@goldelico.com>
+References: <cover.1532501910.git.hns@goldelico.com> <8dcf3efd3270451314a663c125841ca87ed2b387.1532501910.git.hns@goldelico.com> <20180725080735.GA7467@lenoch> <EECC7962-DEAB-4C21-98A7-EBAE4AEA312B@goldelico.com> <20180725083305.GB8303@lenoch>
+To:     Ladislav Michl <ladis@linux-mips.org>
+X-Mailer: Apple Mail (2.3124)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This GPIO controller can serve as an interrupt controller as well on the
-GPIOs it handles.
 
-An interrupt is generated whenever a GPIO line changes and the
-interrupt for this GPIO line is enabled. This means that both the
-changes from low to high and high to low generate an interrupt.
+> Am 25.07.2018 um 10:33 schrieb Ladislav Michl <ladis@linux-mips.org>:
+>=20
+> On Wed, Jul 25, 2018 at 10:18:28AM +0200, H. Nikolaus Schaller wrote:
+>>=20
+>>> Am 25.07.2018 um 10:07 schrieb Ladislav Michl =
+<ladis@linux-mips.org>:
+>>>=20
+>>> On Wed, Jul 25, 2018 at 08:58:41AM +0200, H. Nikolaus Schaller =
+wrote:
+>>>> Vendor defined U-Boot has changed the partition scheme a while ago:
+>>>>=20
+>>>> * kernel partition 6MB
+>>>> * file system partition uses the remainder up to end of the NAND
+>>>> * increased size of the environment partition (to get an OneNAND =
+compatible base address)
+>>>> * shrink the U-Boot partition
+>>>>=20
+>>>> Let's be compatible (e.g. Debian kernel built from upstream).
+>>>=20
+>>> That, in fact, is breaking compatibility.
+>>=20
+>> With what? Nobody is using the old u-boot partition scheme any more
+>> (it is >5 years old).
+>>=20
+>>> So once you are touching this
+>>> what about relying on partitioning provided by bootloader just to =
+prevent
+>>> something like this happening again?
+>>=20
+>> Well, we define what compatible means here (since we are the vendor).
+>> And people complain with us. We simply recommend them to upgrade the
+>> boot-loader.
+>=20
+> Fair enough. Suggestion was to remove partitioning scheme from DTB =
+alltogether
+> and let U-Boot provide one. But you being vendor you decide, of course =
+:)
+> (I'd use only two partitions: MLO and UBI, latter one with BCH8, and =
+store
+> everything in UBI volumes. That's a bit more flexible approach)
 
-For some use cases, it makes sense to ignore the high to low change and
-not generate an interrupt. Such a use case is a line that is hold in a
-level high/low manner until the event holding the line gets acked.
-This can be achieved by making sure the interrupt on the GPIO controller
-side gets acked and masked only after the line gets hold in its default
-state, this is what's done with the fasteoi functions.
+Yes, that is a good goal for a future setup and would of course be =
+better.
+Like U-Boot already provides the memory layout for RAM.
 
-Only IRQ_TYPE_EDGE_BOTH and IRQ_TYPE_LEVEL_HIGH are supported for now.
+Hopefully, someone will work out patches for u-boot plus kernel (which =
+is always
+painful to keep these two in sync and tested). But I don't want to do =
+that now.
 
-Signed-off-by: Quentin Schulz <quentin.schulz@bootlin.com>
----
- drivers/pinctrl/Kconfig          |   1 +
- drivers/pinctrl/pinctrl-ocelot.c | 102 ++++++++++++++++++++++++++++++++++++++-
- 2 files changed, 101 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/pinctrl/Kconfig b/drivers/pinctrl/Kconfig
-index dd50371225bc..891d80ef038a 100644
---- a/drivers/pinctrl/Kconfig
-+++ b/drivers/pinctrl/Kconfig
-@@ -332,6 +332,7 @@ config PINCTRL_OCELOT
- 	depends on OF
- 	depends on MSCC_OCELOT || COMPILE_TEST
- 	select GPIOLIB
-+	select GPIOLIB_IRQCHIP
- 	select GENERIC_PINCONF
- 	select GENERIC_PINCTRL_GROUPS
- 	select GENERIC_PINMUX_FUNCTIONS
-diff --git a/drivers/pinctrl/pinctrl-ocelot.c b/drivers/pinctrl/pinctrl-ocelot.c
-index 15bb1cb8729b..d80b32413b09 100644
---- a/drivers/pinctrl/pinctrl-ocelot.c
-+++ b/drivers/pinctrl/pinctrl-ocelot.c
-@@ -11,6 +11,7 @@
- #include <linux/interrupt.h>
- #include <linux/io.h>
- #include <linux/of_device.h>
-+#include <linux/of_irq.h>
- #include <linux/of_platform.h>
- #include <linux/pinctrl/pinctrl.h>
- #include <linux/pinctrl/pinmux.h>
-@@ -427,11 +428,98 @@ static const struct gpio_chip ocelot_gpiolib_chip = {
- 	.owner = THIS_MODULE,
- };
- 
-+static void ocelot_irq_mask(struct irq_data *data)
-+{
-+	struct gpio_chip *chip = irq_data_get_irq_chip_data(data);
-+	struct ocelot_pinctrl *info = gpiochip_get_data(chip);
-+	unsigned int gpio = irqd_to_hwirq(data);
-+
-+	regmap_update_bits(info->map, OCELOT_GPIO_INTR_ENA, BIT(gpio), 0);
-+}
-+
-+static void ocelot_irq_unmask(struct irq_data *data)
-+{
-+	struct gpio_chip *chip = irq_data_get_irq_chip_data(data);
-+	struct ocelot_pinctrl *info = gpiochip_get_data(chip);
-+	unsigned int gpio = irqd_to_hwirq(data);
-+
-+	regmap_update_bits(info->map, OCELOT_GPIO_INTR_ENA, BIT(gpio),
-+			   BIT(gpio));
-+}
-+
-+static void ocelot_irq_ack(struct irq_data *data)
-+{
-+	struct gpio_chip *chip = irq_data_get_irq_chip_data(data);
-+	struct ocelot_pinctrl *info = gpiochip_get_data(chip);
-+	unsigned int gpio = irqd_to_hwirq(data);
-+
-+	regmap_write_bits(info->map, OCELOT_GPIO_INTR, BIT(gpio), BIT(gpio));
-+}
-+
-+static int ocelot_irq_set_type(struct irq_data *data, unsigned int type);
-+
-+static struct irq_chip ocelot_eoi_irqchip = {
-+	.name		= "gpio",
-+	.irq_mask	= ocelot_irq_mask,
-+	.irq_eoi	= ocelot_irq_ack,
-+	.irq_unmask	= ocelot_irq_unmask,
-+	.flags          = IRQCHIP_EOI_THREADED | IRQCHIP_EOI_IF_HANDLED,
-+	.irq_set_type	= ocelot_irq_set_type,
-+};
-+
-+static struct irq_chip ocelot_irqchip = {
-+	.name		= "gpio",
-+	.irq_mask	= ocelot_irq_mask,
-+	.irq_ack	= ocelot_irq_ack,
-+	.irq_unmask	= ocelot_irq_unmask,
-+	.irq_set_type	= ocelot_irq_set_type,
-+};
-+
-+static int ocelot_irq_set_type(struct irq_data *data, unsigned int type)
-+{
-+	type &= IRQ_TYPE_SENSE_MASK;
-+
-+	if (!(type & (IRQ_TYPE_EDGE_BOTH | IRQ_TYPE_LEVEL_HIGH)))
-+		return -EINVAL;
-+
-+	if (type & IRQ_TYPE_LEVEL_HIGH)
-+		irq_set_chip_handler_name_locked(data, &ocelot_eoi_irqchip,
-+						 handle_fasteoi_irq, NULL);
-+	if (type & IRQ_TYPE_EDGE_BOTH)
-+		irq_set_chip_handler_name_locked(data, &ocelot_irqchip,
-+						 handle_edge_irq, NULL);
-+
-+	return 0;
-+}
-+
-+static void ocelot_irq_handler(struct irq_desc *desc)
-+{
-+	struct irq_chip *parent_chip = irq_desc_get_chip(desc);
-+	struct gpio_chip *chip = irq_desc_get_handler_data(desc);
-+	struct ocelot_pinctrl *info = gpiochip_get_data(chip);
-+	unsigned int reg = 0, irq;
-+	unsigned long irqs;
-+
-+	regmap_read(info->map, OCELOT_GPIO_INTR_IDENT, &reg);
-+	if (!reg)
-+		return;
-+
-+	chained_irq_enter(parent_chip, desc);
-+
-+	irqs = reg;
-+
-+	for_each_set_bit(irq, &irqs, OCELOT_PINS) {
-+		generic_handle_irq(irq_linear_revmap(chip->irq.domain, irq));
-+	}
-+
-+	chained_irq_exit(parent_chip, desc);
-+}
-+
- static int ocelot_gpiochip_register(struct platform_device *pdev,
- 				    struct ocelot_pinctrl *info)
- {
- 	struct gpio_chip *gc;
--	int ret;
-+	int ret, irq;
- 
- 	info->gpio_chip = ocelot_gpiolib_chip;
- 
-@@ -446,7 +534,17 @@ static int ocelot_gpiochip_register(struct platform_device *pdev,
- 	if (ret)
- 		return ret;
- 
--	/* TODO: this can be used as an irqchip but no board is using that */
-+	irq = irq_of_parse_and_map(pdev->dev.of_node, 0);
-+	if (irq <= 0)
-+		return irq;
-+
-+	ret = gpiochip_irqchip_add(gc, &ocelot_irqchip, 0, handle_edge_irq,
-+				   IRQ_TYPE_NONE);
-+	if (ret)
-+		return ret;
-+
-+	gpiochip_set_chained_irqchip(gc, &ocelot_irqchip, irq,
-+				     ocelot_irq_handler);
- 
- 	return 0;
- }
--- 
-2.14.1
+BR and thanks,
+Nikolaus
 
