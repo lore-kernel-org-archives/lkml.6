@@ -7,67 +7,68 @@ X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6199C6778F
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 18:50:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C860BC67790
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 18:53:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8F87720833
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 18:50:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6F07120833
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 18:53:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X5BZDx/9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F87720833
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="t0A/ZhIo"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6F07120833
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731281AbeGYUDC (ORCPT
+        id S1731168AbeGYUGR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 16:03:02 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:35829 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729354AbeGYUDC (ORCPT
+        Wed, 25 Jul 2018 16:06:17 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:54158 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729213AbeGYUGQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Jul 2018 16:03:02 -0400
-Received: by mail-wr1-f65.google.com with SMTP id a3-v6so8357337wrt.2;
-        Wed, 25 Jul 2018 11:50:05 -0700 (PDT)
+        Wed, 25 Jul 2018 16:06:16 -0400
+Received: by mail-wm0-f65.google.com with SMTP id s9-v6so7078131wmh.3;
+        Wed, 25 Jul 2018 11:53:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id;
-        bh=IR4dRtFeBOzwrZBIMPRfMg7fGDrniXCfHPGE7xwhZ80=;
-        b=X5BZDx/9nN80jkIYlLTx4b5qwJECbhx+xRXapJ1WunX9Tbx819I2KZ8QkjaVchFPoK
-         usNVOnSsSxpD5jWAHDGLHujw6iCNE66R+OUAUDlrXFA4ae6JLjYnDE5tDifUoeqmPU7U
-         XIs/Qj+Ot0EwZ6GmJmXQkHlW5UpFkJbPxrSh7NofdnA8MR9Rw5HFVj5730eD6lzBZNTS
-         NYQxuYz5h1GNMargjgAun+Stb9XMX5KwXSQgE0PAPSCdKlb/7Jp1j8oUcgl2VwiX5euR
-         8GphjYz3Ls96heu94fu44epllksLCosG0TMUg4AUWHCsmgSCNPKQG4YWP7JbmVvDRq19
-         1ngA==
+        bh=T2XmLz4t7bJY8qwNpH6u+IO0Q4CPhV2M+ECjf20HV8w=;
+        b=t0A/ZhIos3bHLy4735EXMJX6WSm1+4LTbjEOb9Cyqcuk2hgwp2BRdh+kpXitErOGsg
+         vutgXM/LWxCQql1rloNjMFIN/i6xi0iv6UrWWj7d+s45W+guuSpv5UjhQYnsAF26Xxlk
+         KMzf8VD3Kvx5JdGBgu89KpZRUucibFg9XB0kvODeXOVhg7qgYIrhWT0Kremd7Q3zDHl+
+         eb5igBU0lMkSpVyuElkAnreeM3MxfLnaCn2L9P9FDrNYY5F+gyUu5kU/s2XIlEvepLlW
+         NbC2zgHXAo1BPumw+MUZzYSqMaWSzSdpfuvq6bVVZenrlEbLp4A1IaGQX275IMd2kfZQ
+         tRDg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=IR4dRtFeBOzwrZBIMPRfMg7fGDrniXCfHPGE7xwhZ80=;
-        b=jewy7UdidVib3arBtrNiCol9yIFU1tgsqJPE0RKPg48kqhJ5XyG1lwMhRhfwF++dCQ
-         8erjbrE3kfeXqRMuryf+7G7uw3HF0e7UR4DBsmd913EHHAl9LtuYQgv2/fDPfGbAInpZ
-         Q5hleWuT7GvdZY2tQ7FAr7veDRSQjyGFeeju3/SAUxXZhvW57ETfnwNlvBXjtMZV7+16
-         /5peugInnc0sWC2BAkaYkQs3gIpVmEFuvwf5it2R/pikz2JFE7xWdwrYvoKc3Rj3B3uv
-         RkoZwm9C6Jqqt34DEHYXNiT9KjerVO2v4Td4kFoN2k4Ys0vyw9heGroEBUAEHEdpLDXG
-         FA7g==
-X-Gm-Message-State: AOUpUlH86cdkzUgqvAdGkvvz7FaNIVsRP+BslB9sIqM1c6yMTLD05exy
-        3/ZxcbvRJ+egWkH0OnaTUTP6KZC0gCI=
-X-Google-Smtp-Source: AAOMgpeVU/tnZgJLmCE0OWIiLOWNj3vRHuu+WAWWZuMi5gCK9Yef/7lk8Q+g9QjbDKHtfFuqUp55hw==
-X-Received: by 2002:adf:ac2d:: with SMTP id v42-v6mr15553811wrc.142.1532544604548;
-        Wed, 25 Jul 2018 11:50:04 -0700 (PDT)
+        bh=T2XmLz4t7bJY8qwNpH6u+IO0Q4CPhV2M+ECjf20HV8w=;
+        b=WEfITpUBsuvFRCsz6UnurfPPDzp2RSAmbHdviq8ClDOtYLytEs6ektO0H6IKpT5MUH
+         hqpLrqtvfDx8dhPrU+YjvSsGAii2Z70A5Vy+Ms8X6Nz5hUzg7uRuqX6oFqadYtRwp3Qd
+         SXvWP2l8PnTH4+vDYm6Sky3QOJCGcQBb9wOEoFuqswxSy/LOKqqDZvEXEfONmF5QL+bo
+         A9slQZFupvWY2OeC9DhAM22f/Hapa/fbrnU9WC6RkUqwlkIjQfdg04R1o1e447MOsgIm
+         rPwVAumMMS+KCRGk/TSzMXRuBEgyzZ3HNl4zgOazbqk1B/drC73s0/r21YVSANN26M4F
+         ChRw==
+X-Gm-Message-State: AOUpUlF55ZoIvQKW6MsJbD5UiZu40luH3LPn0zX4FtT/H4AYthvKoqU/
+        XZHpkEJtizUraG5tjUKh+Ug=
+X-Google-Smtp-Source: AAOMgpc6blNR7imDk8LBGL1bxdzQ2psQBJb1M+VrvcRJbLUM7yQcfUSP5ORnVXNR2RwX+A2rLp6duQ==
+X-Received: by 2002:a1c:82c8:: with SMTP id e191-v6mr5008152wmd.35.1532544798374;
+        Wed, 25 Jul 2018 11:53:18 -0700 (PDT)
 Received: from euri.wifirst.net (eth-west-pareq2-46-193-2-21.wb.wifirst.net. [46.193.2.21])
-        by smtp.googlemail.com with ESMTPSA id q140-v6sm8895066wmb.35.2018.07.25.11.50.03
+        by smtp.googlemail.com with ESMTPSA id e204-v6sm4928475wma.8.2018.07.25.11.53.17
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 25 Jul 2018 11:50:03 -0700 (PDT)
+        Wed, 25 Jul 2018 11:53:17 -0700 (PDT)
 From:   Varsha Rao <rvarsha016@gmail.com>
 To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>,
         Nicholas Mc Guire <der.herr@hofr.at>,
+        QCA ath9k Development <ath9k-devel@qca.qualcomm.com>,
         Kalle Valo <kvalo@codeaurora.org>,
         "David S. Miller" <davem@davemloft.net>,
         linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
         linux-kernel@vger.kernel.org
 Cc:     Varsha Rao <rvarsha016@gmail.com>
-Subject: [PATCH] net: wireless: ath6kl: Remove unnecessary parentheses
-Date:   Wed, 25 Jul 2018 20:49:48 +0200
-Message-Id: <20180725184949.4032-1-rvarsha016@gmail.com>
+Subject: [PATCH] net: wireless: ath9k: Remove unnecessary parentheses
+Date:   Wed, 25 Jul 2018 20:53:03 +0200
+Message-Id: <20180725185305.4118-1-rvarsha016@gmail.com>
 X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -79,22 +80,22 @@ parentheses.
 
 Signed-off-by: Varsha Rao <rvarsha016@gmail.com>
 ---
- drivers/net/wireless/ath/ath6kl/main.c | 2 +-
+ drivers/net/wireless/ath/ath9k/debug_sta.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/wireless/ath/ath6kl/main.c b/drivers/net/wireless/ath/ath6kl/main.c
-index 808fb30be9ad..451297441532 100644
---- a/drivers/net/wireless/ath/ath6kl/main.c
-+++ b/drivers/net/wireless/ath/ath6kl/main.c
-@@ -639,7 +639,7 @@ void ath6kl_connect_event(struct ath6kl_vif *vif, u16 channel, u8 *bssid,
- 	memcpy(vif->bssid, bssid, sizeof(vif->bssid));
- 	vif->bss_ch = channel;
+diff --git a/drivers/net/wireless/ath/ath9k/debug_sta.c b/drivers/net/wireless/ath/ath9k/debug_sta.c
+index a6f45f1bb5bb..ed8b77a74630 100644
+--- a/drivers/net/wireless/ath/ath9k/debug_sta.c
++++ b/drivers/net/wireless/ath/ath9k/debug_sta.c
+@@ -116,7 +116,7 @@ void ath_debug_rate_stats(struct ath_softc *sc,
+ 		if (rxs->rate_idx >= ARRAY_SIZE(rstats->ht_stats))
+ 			goto exit;
  
--	if ((vif->nw_type == INFRA_NETWORK)) {
-+	if (vif->nw_type == INFRA_NETWORK) {
- 		ath6kl_wmi_listeninterval_cmd(ar->wmi, vif->fw_vif_idx,
- 					      vif->listen_intvl_t, 0);
- 		ath6kl_check_ch_switch(ar, channel);
+-		if ((rxs->bw == RATE_INFO_BW_40))
++		if (rxs->bw == RATE_INFO_BW_40)
+ 			rstats->ht_stats[rxs->rate_idx].ht40_cnt++;
+ 		else
+ 			rstats->ht_stats[rxs->rate_idx].ht20_cnt++;
 -- 
 2.17.0
 
