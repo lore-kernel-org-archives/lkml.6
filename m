@@ -6,46 +6,49 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B55AC67790
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 20:40:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EF76C67790
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 20:40:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DEBA720671
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 20:40:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DEBA720671
+	by mail.kernel.org (Postfix) with ESMTP id 0D64320671
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 20:40:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0D64320671
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731278AbeGYVyB (ORCPT
+        id S1731316AbeGYVyD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 17:54:01 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:34463 "EHLO
+        Wed, 25 Jul 2018 17:54:03 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:59453 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730337AbeGYVyA (ORCPT
+        with ESMTP id S1730337AbeGYVyC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Jul 2018 17:54:00 -0400
+        Wed, 25 Jul 2018 17:54:02 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w6PKePun498453
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w6PKds0t498408
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Wed, 25 Jul 2018 13:40:25 -0700
+        Wed, 25 Jul 2018 13:39:54 -0700
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w6PKePat498450;
-        Wed, 25 Jul 2018 13:40:25 -0700
-Date:   Wed, 25 Jul 2018 13:40:25 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w6PKdsIC498405;
+        Wed, 25 Jul 2018 13:39:54 -0700
+Date:   Wed, 25 Jul 2018 13:39:54 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
-Message-ID: <tip-ohqyisr6qge79qa95ojslptx@git.kernel.org>
-Cc:     namhyung@kernel.org, acme@redhat.com, adrian.hunter@intel.com,
-        mingo@kernel.org, jolsa@kernel.org, linux-kernel@vger.kernel.org,
-        dsahern@gmail.com, wangnan0@huawei.com, hpa@zytor.com,
-        tglx@linutronix.de
-Reply-To: tglx@linutronix.de, hpa@zytor.com, wangnan0@huawei.com,
-          dsahern@gmail.com, linux-kernel@vger.kernel.org,
-          jolsa@kernel.org, mingo@kernel.org, adrian.hunter@intel.com,
-          namhyung@kernel.org, acme@redhat.com
+From:   tip-bot for Alexey Budankov <tipbot@zytor.com>
+Message-ID: <tip-06dc5bf21f3f90750fcc073fbc6ce2a0324df051@git.kernel.org>
+Cc:     linux-kernel@vger.kernel.org, ak@linux.intel.com, jolsa@redhat.com,
+        namhyung@kernel.org, mingo@kernel.org, peterz@infradead.org,
+        alexey.budankov@linux.intel.com, acme@redhat.com, hpa@zytor.com,
+        alexander.shishkin@linux.intel.com, tglx@linutronix.de
+Reply-To: ak@linux.intel.com, jolsa@redhat.com, namhyung@kernel.org,
+          linux-kernel@vger.kernel.org, peterz@infradead.org,
+          alexey.budankov@linux.intel.com, acme@redhat.com, hpa@zytor.com,
+          alexander.shishkin@linux.intel.com, tglx@linutronix.de,
+          mingo@kernel.org
+In-Reply-To: <ad30b774-219b-7b80-c610-4e9e298cf8a7@linux.intel.com>
+References: <ad30b774-219b-7b80-c610-4e9e298cf8a7@linux.intel.com>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf hists: Clarify callchain disabling when
- available
-Git-Commit-ID: e9de7e2f7e22989fefc760cf0920062c58b2b2b1
+Subject: [tip:perf/core] perf tests: Check that complex event name is parsed
+ correctly
+Git-Commit-ID: 06dc5bf21f3f90750fcc073fbc6ce2a0324df051
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -59,151 +62,115 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  e9de7e2f7e22989fefc760cf0920062c58b2b2b1
-Gitweb:     https://git.kernel.org/tip/e9de7e2f7e22989fefc760cf0920062c58b2b2b1
-Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
-AuthorDate: Wed, 20 Jun 2018 15:58:20 -0300
+Commit-ID:  06dc5bf21f3f90750fcc073fbc6ce2a0324df051
+Gitweb:     https://git.kernel.org/tip/06dc5bf21f3f90750fcc073fbc6ce2a0324df051
+Author:     Alexey Budankov <alexey.budankov@linux.intel.com>
+AuthorDate: Tue, 19 Jun 2018 11:45:40 +0300
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Tue, 24 Jul 2018 14:37:33 -0300
+CommitDate: Tue, 24 Jul 2018 14:37:11 -0300
 
-perf hists: Clarify callchain disabling when available
+perf tests: Check that complex event name is parsed correctly
 
-We want to allow having mixed events with/without callchains, not
-using a global flag to show callchains, but allowing supressing
-callchains when they are present.
+Extend regression testing to cover case of complex event names enabled
+by the cset f92da71280fb ("perf record: Enable arbitrary event names
+thru name= modifier").
 
-So invert the logic of the last parameter to hists__fprint() to
-that effect.
+Testing it:
 
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: David Ahern <dsahern@gmail.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
+  # perf test
+   1: vmlinux symtab matches kallsyms                       : Skip
+   2: Detect openat syscall event                           : Ok
+   3: Detect openat syscall event on all cpus               : Ok
+   4: Read samples using the mmap interface                 : Ok
+   5: Test data source output                               : Ok
+   6: Parse event definition strings                        : Ok		<===!
+   7: Simple expression parser                              : Ok
+...
+
+Committer testing:
+
+  # perf test "event definition"
+   6: Parse event definition strings                        : Ok
+  # perf test -v 6 2> /tmp/before
+  # perf test -v 6 2> /tmp/after
+  # diff -u /tmp/before /tmp/after
+  --- /tmp/before	2018-06-19 10:50:21.485572638 -0300
+  +++ /tmp/after	2018-06-19 10:50:40.886572896 -0300
+  @@ -1,6 +1,6 @@
+    6: Parse event definition strings                        :
+   --- start ---
+  -test child forked, pid 24259
+  +test child forked, pid 24904
+   running test 0 'syscalls:sys_enter_openat'Using CPUID GenuineIntel-6-3D
+   registering plugin: /root/.traceevent/plugins/plugin_kvm.so
+   registering plugin: /root/.traceevent/plugins/plugin_hrtimer.so
+  @@ -136,9 +136,11 @@
+   running test 50 '4:0x6530160/name=numpmu/'
+   running test 51 'L1-dcache-misses/name=cachepmu/'
+   running test 52 'intel_pt//u'
+  +running test 53 'cycles/name='COMPLEX_CYCLES_NAME:orig=cycles,desc=chip-clock-ticks'/Duk'
+   running test 0 'cpu/config=10,config1,config2=3,period=1000/u'
+   running test 1 'cpu/config=1,name=krava/u,cpu/config=2/u'
+   running test 2 'cpu/config=1,call-graph=fp,time,period=100000/,cpu/config=2,call-graph=no,time=0,period=2000/'
+  +running test 3 'cpu/name='COMPLEX_CYCLES_NAME:orig=cycles,desc=chip-clock-ticks',period=0x1,event=0x2,umask=0x3/ukp'
+   el-capacity -> cpu/event=0x54,umask=0x2/
+   el-conflict -> cpu/event=0x54,umask=0x1/
+   el-start -> cpu/event=0xc8,umask=0x1/
+  #
+
+Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
+Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
 Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Wang Nan <wangnan0@huawei.com>
-Link: https://lkml.kernel.org/n/tip-ohqyisr6qge79qa95ojslptx@git.kernel.org
+Cc: Peter Zijlstra <peterz@infradead.org>
+Link: http://lkml.kernel.org/r/ad30b774-219b-7b80-c610-4e9e298cf8a7@linux.intel.com
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/builtin-c2c.c    | 4 ++--
- tools/perf/builtin-diff.c   | 2 +-
- tools/perf/builtin-report.c | 4 ++--
- tools/perf/builtin-top.c    | 2 +-
- tools/perf/ui/stdio/hist.c  | 8 ++++----
- tools/perf/util/hist.h      | 2 +-
- 6 files changed, 11 insertions(+), 11 deletions(-)
+ tools/perf/tests/parse-events.c | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
 
-diff --git a/tools/perf/builtin-c2c.c b/tools/perf/builtin-c2c.c
-index 6a8738f7ead3..f2ea85ee573f 100644
---- a/tools/perf/builtin-c2c.c
-+++ b/tools/perf/builtin-c2c.c
-@@ -2193,7 +2193,7 @@ static void print_cacheline(struct c2c_hists *c2c_hists,
- 	fprintf(out, "%s\n", bf);
- 	fprintf(out, "  -------------------------------------------------------------\n");
- 
--	hists__fprintf(&c2c_hists->hists, false, 0, 0, 0, out, true);
-+	hists__fprintf(&c2c_hists->hists, false, 0, 0, 0, out, false);
+diff --git a/tools/perf/tests/parse-events.c b/tools/perf/tests/parse-events.c
+index 61211918bfba..a36313daec4e 100644
+--- a/tools/perf/tests/parse-events.c
++++ b/tools/perf/tests/parse-events.c
+@@ -1322,6 +1322,14 @@ static int test__intel_pt(struct perf_evlist *evlist)
+ 	return 0;
  }
  
- static void print_pareto(FILE *out)
-@@ -2268,7 +2268,7 @@ static void perf_c2c__hists_fprintf(FILE *out, struct perf_session *session)
- 	fprintf(out, "=================================================\n");
- 	fprintf(out, "#\n");
- 
--	hists__fprintf(&c2c.hists.hists, true, 0, 0, 0, stdout, false);
-+	hists__fprintf(&c2c.hists.hists, true, 0, 0, 0, stdout, true);
- 
- 	fprintf(out, "\n");
- 	fprintf(out, "=================================================\n");
-diff --git a/tools/perf/builtin-diff.c b/tools/perf/builtin-diff.c
-index d660cb7b222b..39db2ee32d48 100644
---- a/tools/perf/builtin-diff.c
-+++ b/tools/perf/builtin-diff.c
-@@ -696,7 +696,7 @@ static void hists__process(struct hists *hists)
- 	hists__output_resort(hists, NULL);
- 
- 	hists__fprintf(hists, !quiet, 0, 0, 0, stdout,
--		       symbol_conf.use_callchain);
-+		       !symbol_conf.use_callchain);
- }
- 
- static void data__fprintf(void)
-diff --git a/tools/perf/builtin-report.c b/tools/perf/builtin-report.c
-index c04dc7b53797..02f7a3c27761 100644
---- a/tools/perf/builtin-report.c
-+++ b/tools/perf/builtin-report.c
-@@ -478,8 +478,8 @@ static int perf_evlist__tty_browse_hists(struct perf_evlist *evlist,
- 
- 		hists__fprintf_nr_sample_events(hists, rep, evname, stdout);
- 		hists__fprintf(hists, !quiet, 0, 0, rep->min_percent, stdout,
--			       symbol_conf.use_callchain ||
--			       symbol_conf.show_branchflag_count);
-+			       !(symbol_conf.use_callchain ||
-+			         symbol_conf.show_branchflag_count));
- 		fprintf(stdout, "\n\n");
- 	}
- 
-diff --git a/tools/perf/builtin-top.c b/tools/perf/builtin-top.c
-index ffdc2769ff9f..d21d8751e749 100644
---- a/tools/perf/builtin-top.c
-+++ b/tools/perf/builtin-top.c
-@@ -307,7 +307,7 @@ static void perf_top__print_sym_table(struct perf_top *top)
- 	hists__output_recalc_col_len(hists, top->print_entries - printed);
- 	putchar('\n');
- 	hists__fprintf(hists, false, top->print_entries - printed, win_width,
--		       top->min_percent, stdout, symbol_conf.use_callchain);
-+		       top->min_percent, stdout, !symbol_conf.use_callchain);
- }
- 
- static void prompt_integer(int *target, const char *msg)
-diff --git a/tools/perf/ui/stdio/hist.c b/tools/perf/ui/stdio/hist.c
-index 69b7a28f7a1c..74c4ae1f0a05 100644
---- a/tools/perf/ui/stdio/hist.c
-+++ b/tools/perf/ui/stdio/hist.c
-@@ -529,7 +529,7 @@ out:
- 
- static int hist_entry__fprintf(struct hist_entry *he, size_t size,
- 			       char *bf, size_t bfsz, FILE *fp,
--			       bool use_callchain)
-+			       bool ignore_callchains)
++static int test__checkevent_complex_name(struct perf_evlist *evlist)
++{
++	struct perf_evsel *evsel = perf_evlist__first(evlist);
++
++	TEST_ASSERT_VAL("wrong complex name parsing", strcmp(evsel->name, "COMPLEX_CYCLES_NAME:orig=cycles,desc=chip-clock-ticks") == 0);
++	return 0;
++}
++
+ static int count_tracepoints(void)
  {
- 	int ret;
- 	int callchain_ret = 0;
-@@ -550,7 +550,7 @@ static int hist_entry__fprintf(struct hist_entry *he, size_t size,
+ 	struct dirent *events_ent;
+@@ -1658,6 +1666,11 @@ static struct evlist_test test__events[] = {
+ 		.check = test__intel_pt,
+ 		.id    = 52,
+ 	},
++	{
++		.name  = "cycles/name='COMPLEX_CYCLES_NAME:orig=cycles,desc=chip-clock-ticks'/Duk",
++		.check = test__checkevent_complex_name,
++		.id    = 53
++	}
+ };
  
- 	ret = fprintf(fp, "%s\n", bf);
+ static struct evlist_test test__events_pmu[] = {
+@@ -1676,6 +1689,11 @@ static struct evlist_test test__events_pmu[] = {
+ 		.check = test__checkevent_pmu_partial_time_callgraph,
+ 		.id    = 2,
+ 	},
++	{
++		.name  = "cpu/name='COMPLEX_CYCLES_NAME:orig=cycles,desc=chip-clock-ticks',period=0x1,event=0x2,umask=0x3/ukp",
++		.check = test__checkevent_complex_name,
++		.id    = 3,
++	}
+ };
  
--	if (hist_entry__has_callchains(he) && use_callchain)
-+	if (hist_entry__has_callchains(he) && !ignore_callchains)
- 		callchain_ret = hist_entry_callchain__fprintf(he, total_period,
- 							      0, fp);
- 
-@@ -755,7 +755,7 @@ int hists__fprintf_headers(struct hists *hists, FILE *fp)
- 
- size_t hists__fprintf(struct hists *hists, bool show_header, int max_rows,
- 		      int max_cols, float min_pcnt, FILE *fp,
--		      bool use_callchain)
-+		      bool ignore_callchains)
- {
- 	struct rb_node *nd;
- 	size_t ret = 0;
-@@ -799,7 +799,7 @@ size_t hists__fprintf(struct hists *hists, bool show_header, int max_rows,
- 		if (percent < min_pcnt)
- 			continue;
- 
--		ret += hist_entry__fprintf(h, max_cols, line, linesz, fp, use_callchain);
-+		ret += hist_entry__fprintf(h, max_cols, line, linesz, fp, ignore_callchains);
- 
- 		if (max_rows && ++nr_rows >= max_rows)
- 			break;
-diff --git a/tools/perf/util/hist.h b/tools/perf/util/hist.h
-index 73049f7f0f60..3badd7f1e1b8 100644
---- a/tools/perf/util/hist.h
-+++ b/tools/perf/util/hist.h
-@@ -181,7 +181,7 @@ size_t events_stats__fprintf(struct events_stats *stats, FILE *fp);
- 
- size_t hists__fprintf(struct hists *hists, bool show_header, int max_rows,
- 		      int max_cols, float min_pcnt, FILE *fp,
--		      bool use_callchain);
-+		      bool ignore_callchains);
- size_t perf_evlist__fprintf_nr_events(struct perf_evlist *evlist, FILE *fp);
- 
- void hists__filter_by_dso(struct hists *hists);
+ struct terms_test {
