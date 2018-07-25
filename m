@@ -2,105 +2,139 @@ Return-Path: <SRS0=S+WB=KJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D020C6778F
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 17:23:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F5DEC6778F
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 17:25:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DDF7720852
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 17:23:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 273BD20882
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 17:25:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m8tawwFP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DDF7720852
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="U+O8qaZ9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 273BD20882
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729450AbeGYSgO (ORCPT
+        id S1729369AbeGYShu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 14:36:14 -0400
-Received: from mail-pf1-f172.google.com ([209.85.210.172]:44074 "EHLO
-        mail-pf1-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728741AbeGYSgO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Jul 2018 14:36:14 -0400
-Received: by mail-pf1-f172.google.com with SMTP id k21-v6so1942484pff.11;
-        Wed, 25 Jul 2018 10:23:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=to:cc:from:subject:message-id:date:user-agent:mime-version
-         :content-language:content-transfer-encoding;
-        bh=VmU7+L904IvlaG7fqi5iWeqPyvadF/3l/1qlDzvJTYk=;
-        b=m8tawwFPNtOBThLRSjh/WurPTzyTrYuOATdMBlPPTXEZyV6wvhvo1zcUFWHq3bGazY
-         8QCtqvyH9Es+xGHXQbTAgO9EECqy23dIu5Mx4IcFyprFDFpiV6dKgg9pbg29TFUWlCHk
-         Y6chOOuhrKUqBSNNPGUoasXPsEdVjQQut4zqERodBZdhl9EHpgDHQsjul/hzcGGgKUiF
-         cQEvCizpS8t/tVgkrp/YCp73ZXW9OwOOzDq49Rm7GoyRdHL4ugTlWIxvS7HkLyHiK13g
-         9SndqWzlhqhAeW4Y0flJeg02boGAg+md1I1CfsCFi0oECY0ILjEZPQsqCuPynTcu+22r
-         tyhw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:cc:from:subject:message-id:date:user-agent
-         :mime-version:content-language:content-transfer-encoding;
-        bh=VmU7+L904IvlaG7fqi5iWeqPyvadF/3l/1qlDzvJTYk=;
-        b=T7Wd6Z4QUmSElbX0i1QJj40kjrF7CYvZXp1gwAtrwNjjy/cmwokSgqr1UW1RHGD6rj
-         JZ17jJxI8Es8eX5Rh1SW2TJw7W81U1+Q0oh2zy1VPLtFFo/GTWJSfhUCkSeFwy6s+HFd
-         cL28q8hOQ6+KGkg2vMjQPOF3/Qtq64ezdph60ZuC+uQwOdHtM5q6Liayj4oKvGQL/iCY
-         NCR/x3pXSgejwYzUttg1wBBgNtDIZrGUdEcBQrKEsO92/pc2xaUxOg1NAM2+BSutsFmu
-         HlLhUXhIwQOLohKNQsE96BbGGnRjoptZJBPsrD0L/li6iA05BkiL5NAFa5niDdYbPHrJ
-         1ehw==
-X-Gm-Message-State: AOUpUlEAGKD2QIZ/++NDEP3drqg87hB4YzbX5r8rptKz3cZTGix+VhI1
-        z6fJnISkHQsekJK/n4cZInrlKlcs
-X-Google-Smtp-Source: AAOMgpeFfujakYwek/X+UFdXmMI3ZiWorkne9IGWPT6Auyd1DgSOKUloMmdxPvCf4IGsvV6mpfd3/Q==
-X-Received: by 2002:a63:41c6:: with SMTP id o189-v6mr21787885pga.323.1532539416737;
-        Wed, 25 Jul 2018 10:23:36 -0700 (PDT)
-Received: from [192.168.0.77] ([211.196.191.92])
-        by smtp.gmail.com with ESMTPSA id q28-v6sm27447092pfg.144.2018.07.25.10.23.33
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 25 Jul 2018 10:23:35 -0700 (PDT)
-To:     Daniel Borkmann <daniel@iogearbox.net>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Martin KaFai Lau <kafai@fb.com>
-Cc:     Arnaldo Carvalho de Melo <acme@redhat.com>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-From:   Taeung Song <treeze.taeung@gmail.com>
-Subject: [Question] bpf: about a new 'tools/bpf/bpf_dwarf2btf'
-Message-ID: <47cfb90e-a9f4-8127-2b89-0e20d9fda2f0@gmail.com>
-Date:   Thu, 26 Jul 2018 02:23:32 +0900
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Wed, 25 Jul 2018 14:37:50 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36930 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729027AbeGYSht (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Jul 2018 14:37:49 -0400
+Received: from mail-qt0-f179.google.com (mail-qt0-f179.google.com [209.85.216.179])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id C6FA120882;
+        Wed, 25 Jul 2018 17:25:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1532539511;
+        bh=yPcgiuO34klavLXlURoLMItDduQc+7e1KLdxuVUFkuw=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=U+O8qaZ9MHUFyYD8GetAtQQjBAe9WXkhdeSCuhTara7aLEuHYweKgKL6NAYNUUcxS
+         jhsbimzKQ5bldQMoeVEYu/aHnTSG1yWdrnb9t0KkBNZ648lW6OZA4dtohw2/rwC+mO
+         r8k/y+a2z3SzwATB7yrNIb8CRcTUIAzQ4s2dEUaU=
+Received: by mail-qt0-f179.google.com with SMTP id d4-v6so8394622qtn.13;
+        Wed, 25 Jul 2018 10:25:11 -0700 (PDT)
+X-Gm-Message-State: AOUpUlFf1vwvVhkVoHL1/IL8qgIwKRXBmAKMARDdXXM7Tp/Qv0obsOJD
+        zWflTRU5AWTMfY3c/7uSuhm9eF9v5qrOM4OPtA==
+X-Google-Smtp-Source: AAOMgpeoPksRaHbuRpZQrMIOk/sOfH1RLlVb9Fr+o0UNfYqI9Rqf0Ci4WvImKA8frWGlfBgr9Poq5JSLsEfl77GcfJ0=
+X-Received: by 2002:ac8:96b:: with SMTP id z40-v6mr21501665qth.362.1532539510879;
+ Wed, 25 Jul 2018 10:25:10 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <1531997715-6767-1-git-send-email-suzuki.poulose@arm.com>
+ <1531997715-6767-10-git-send-email-suzuki.poulose@arm.com>
+ <20180725160939.GA24323@rob-hp-laptop> <e96b9bda-8a58-a817-5580-7771af7c9e28@arm.com>
+In-Reply-To: <e96b9bda-8a58-a817-5580-7771af7c9e28@arm.com>
+From:   Rob Herring <robh@kernel.org>
+Date:   Wed, 25 Jul 2018 11:24:59 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqKhiA=Yr3gWhxaQxT56NUai77Lg5iVfQUaTtBW=a5-kFQ@mail.gmail.com>
+Message-ID: <CAL_JsqKhiA=Yr3gWhxaQxT56NUai77Lg5iVfQUaTtBW=a5-kFQ@mail.gmail.com>
+Subject: Re: [PATCH v2 09/10] coresight: Cleanup coresight DT bindings
+To:     Suzuki K Poulose <suzuki.poulose@arm.com>
+Cc:     "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Frank Rowand <frowand.list@gmail.com>,
+        devicetree@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
+        Matt Sealey <matt.sealey@arm.com>,
+        Charles Garcia-Tobin <charles.garcia-tobin@arm.com>,
+        coresight@lists.linaro.org, John Horley <john.horley@arm.com>,
+        Mike Leach <mike.leach@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Wed, Jul 25, 2018 at 10:13 AM Suzuki K Poulose
+<suzuki.poulose@arm.com> wrote:
+>
+> On 07/25/2018 05:09 PM, Rob Herring wrote:
+> > On Thu, Jul 19, 2018 at 11:55:13AM +0100, Suzuki K Poulose wrote:
+> >> The coresight drivers relied on default bindings for graph
+> >> in DT, while reusing the "reg" field of the "ports" to indicate
+> >> the actual hardware port number for the connections. This can
+> >> cause duplicate ports with same addresses, but different
+> >> direction. However, with the rules getting stricter w.r.t to the
+> >> address mismatch with the label, it is no longer possible to use
+> >> the port address field for the hardware port number.
+> >>
+> >> This patch introduces new DT binding rules for coresight
+> >> components, based on the same generic DT graph bindings, but
+> >> avoiding the address duplication.
+> >>
+> >> - All output ports must be specified under a child node with
+> >>    name "out-ports".
+> >> - All input ports must be specified under a childe node with
+> >>    name "in-ports".
+> >> - Port address should match the hardware port number.
+> >>
+> >> The support for legacy bindings is retained, with a warning.
+> >>
+> >> Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
+> >> Cc: Sudeep Holla <sudeep.holla@arm.com>
+> >> Cc: Rob Herring <robh@kernel.org>
+> >> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+> >> ---
+> >>   .../devicetree/bindings/arm/coresight.txt          | 91 ++++++++++----------
+> >>   drivers/hwtracing/coresight/of_coresight.c         | 97 +++++++++++++++++++---
+> >>   2 files changed, 129 insertions(+), 59 deletions(-)
+> >>
+> >> diff --git a/Documentation/devicetree/bindings/arm/coresight.txt b/Documentation/devicetree/bindings/arm/coresight.txt
+> >> index 8e21512..f39d2c6 100644
+> >> --- a/Documentation/devicetree/bindings/arm/coresight.txt
+> >> +++ b/Documentation/devicetree/bindings/arm/coresight.txt
+> >> @@ -104,19 +104,9 @@ The connections must be described via generic DT graph bindings as described
+> >>   by the "bindings/graph.txt", where each "port" along with an "endpoint"
+> >>   component represents a hardware port and the connection.
+> >>
+> >> -Since it is possible to have multiple connections for any coresight component
+> >> -with a specific direction of data flow, each connection must define the
+> >> -following properties to uniquely identify the connection details.
+> >> -
+> >> - * Direction of the data flow w.r.t the component :
+> >> -   Each input port must have the following property defined at the "endpoint"
+> >> -   for the port.
+> >> -    "slave-mode"
+> >> -
+> >> - * Hardware Port number at the component:
+> >> -     -  The hardware port number is assumed to be the address of the "port"
+> >> -         component.
+> >> -
+> >
+> > Why do you add this in the previous patch and then remove it here?
+>
+> The only use case I can think of it is for someone to look back on the
+> legacy bindings, which were never documented. I could skip the parts
+> that are being removed.
 
-Building bpf programs with .BTF section,
-I thought it'd be better to convert dwarf info to .BTF by
-a new tool such as 'tools/bpf/bpf_dwarf2btf' instead of pahole
-in the future.
+Yeah, I'd just remove it. Finding the text that exists for 1 commit is
+a little hard. Now that we've discussed it here, googling for it will
+be easier.
 
-Currently for bpf binary that have .BTF section,
-we need to use pahole from https://github.com/iamkafai/pahole/tree/btf
-with the command line such as "pahole -J bpf_prog.o".
-
-I think it is great but if implementing new 'bpf_dwarf2btf'
-(dwarf parsing + btf encoder code written by Martin KaFai Lau on
-the pahole project i.e. btf.h, btf_encoder.c, btf_encoder.h, libbtf.c, 
-libbtf.h),
-BPF developers would more easily use functionalities based on BTF.
-
-What do you think about this ? Do you think this is needed ?
-Or, already implementing something like this ?
-
-If it is needed, I want to try to make 'tools/bpf/bpf_dwarf2btf'
-based on the pahole code. I'd appreciate it, if you reply to this
-
-Thanks,
-Taeung
+Rob
