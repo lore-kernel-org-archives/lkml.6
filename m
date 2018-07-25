@@ -2,82 +2,115 @@ Return-Path: <SRS0=S+WB=KJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A1CAC67790
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 08:06:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D775C67790
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 08:07:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A94AA2064D
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 08:06:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A94AA2064D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id F15552064D
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 08:07:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F15552064D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-mips.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728584AbeGYJRT (ORCPT
+        id S1728595AbeGYJSL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 05:17:19 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:38094 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728222AbeGYJRS (ORCPT
+        Wed, 25 Jul 2018 05:18:11 -0400
+Received: from eddie.linux-mips.org ([148.251.95.138]:41362 "EHLO
+        cvs.linux-mips.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728222AbeGYJSL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Jul 2018 05:17:18 -0400
-Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E74F6BA9;
-        Wed, 25 Jul 2018 08:06:46 +0000 (UTC)
-Date:   Wed, 25 Jul 2018 10:06:30 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Cc:     jslaby@suse.com,
-        syzbot <syzbot+3aa9784721dfb90e984d@syzkaller.appspotmail.com>,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH v2] n_tty: Protect tty->disc_data using refcount.
-Message-ID: <20180725080630.GA17932@kroah.com>
-References: <001a113ed31a122ced0568cc6be1@google.com>
- <db45a090-593d-23d2-e6b2-ede5b308f02f@I-love.SAKURA.ne.jp>
- <35d649ce-0c22-f839-aa4d-19733bf31a9c@I-love.SAKURA.ne.jp>
- <83fdde07-2f8e-8d20-30a2-a8f0804a5044@I-love.SAKURA.ne.jp>
- <8e83cd9a-e28c-a9f4-5f47-98f2046a5dfb@I-love.SAKURA.ne.jp>
+        Wed, 25 Jul 2018 05:18:11 -0400
+Received: (from localhost user: 'ladis' uid#1021 fake: STDIN
+        (ladis@eddie.linux-mips.org)) by eddie.linux-mips.org
+        id S23991808AbeGYIHgfKYzg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org> + 2 others);
+        Wed, 25 Jul 2018 10:07:36 +0200
+Date:   Wed, 25 Jul 2018 10:07:35 +0200
+From:   Ladislav Michl <ladis@linux-mips.org>
+To:     "H. Nikolaus Schaller" <hns@goldelico.com>
+Cc:     Marek Belisko <marek@goldelico.com>,
+        =?iso-8859-2?Q?Beno=EEt?= Cousson <bcousson@baylibre.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-omap@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, letux-kernel@openphoenux.org
+Subject: Re: [PATCH 09/32] ARM: dts: omap3-gta04: make NAND partitions
+ compatible with recent U-Boot
+Message-ID: <20180725080735.GA7467@lenoch>
+References: <cover.1532501910.git.hns@goldelico.com>
+ <8dcf3efd3270451314a663c125841ca87ed2b387.1532501910.git.hns@goldelico.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <8e83cd9a-e28c-a9f4-5f47-98f2046a5dfb@I-love.SAKURA.ne.jp>
+In-Reply-To: <8dcf3efd3270451314a663c125841ca87ed2b387.1532501910.git.hns@goldelico.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 25, 2018 at 12:22:16AM +0900, Tetsuo Handa wrote:
-> >From 118c64e86641a97d44dec39e313a95b12d9bc3b2 Mon Sep 17 00:00:00 2001
-> From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-> Date: Wed, 25 Jul 2018 00:15:18 +0900
-> Subject: [PATCH v2] n_tty: Protect tty->disc_data using refcount.
+On Wed, Jul 25, 2018 at 08:58:41AM +0200, H. Nikolaus Schaller wrote:
+> Vendor defined U-Boot has changed the partition scheme a while ago:
 > 
-> syzbot is reporting NULL pointer dereference at n_tty_set_termios() [1].
-> This is because ioctl(TIOCVHANGUP) versus ioctl(TCSETS) can race.
+> * kernel partition 6MB
+> * file system partition uses the remainder up to end of the NAND
+> * increased size of the environment partition (to get an OneNAND compatible base address)
+> * shrink the U-Boot partition
 > 
-> Since we don't want to introduce new locking dependency, this patch
-> converts "struct n_tty_data *ldata = tty->disc_data;" in individual
-> function into a function argument which follows "struct tty *", and
-> holds tty->disc_data at each "struct tty_ldisc_ops" hook using refcount
-> in order to ensure that memory which contains "struct n_tty_data" will
-> not be released while processing individual function.
-> 
-> [1] https://syzkaller.appspot.com/bug?id=1e850009fca0b64ce49dc16499bda4f7de0ab1a5
-> 
-> Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+> Let's be compatible (e.g. Debian kernel built from upstream).
+
+That, in fact, is breaking compatibility. So once you are touching this
+what about relying on partitioning provided by bootloader just to prevent
+something like this happening again?
+
+	ladis
+
+> Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
 > ---
->  drivers/tty/n_tty.c | 511 ++++++++++++++++++++++++++++++++--------------------
->  1 file changed, 314 insertions(+), 197 deletions(-)
-
-What changed from v1?  I haven't had the chance to review your first
-patch, sorry, it's still in my queue.  I was hoping that someone else
-would help out with that as well :)
-
-thanks,
-
-greg k-h
+>  arch/arm/boot/dts/omap3-gta04.dtsi | 12 ++++++------
+>  1 file changed, 6 insertions(+), 6 deletions(-)
+> 
+> diff --git a/arch/arm/boot/dts/omap3-gta04.dtsi b/arch/arm/boot/dts/omap3-gta04.dtsi
+> index 65f77a0b5dd4..03fe404cbf56 100644
+> --- a/arch/arm/boot/dts/omap3-gta04.dtsi
+> +++ b/arch/arm/boot/dts/omap3-gta04.dtsi
+> @@ -645,22 +645,22 @@
+>  
+>  		bootloaders@80000 {
+>  			label = "U-Boot";
+> -			reg = <0x80000 0x1e0000>;
+> +			reg = <0x80000 0x1c0000>;
+>  		};
+>  
+> -		bootloaders_env@260000 {
+> +		bootloaders_env@240000 {
+>  			label = "U-Boot Env";
+> -			reg = <0x260000 0x20000>;
+> +			reg = <0x240000 0x40000>;
+>  		};
+>  
+>  		kernel@280000 {
+>  			label = "Kernel";
+> -			reg = <0x280000 0x400000>;
+> +			reg = <0x280000 0x600000>;
+>  		};
+>  
+> -		filesystem@680000 {
+> +		filesystem@880000 {
+>  			label = "File System";
+> -			reg = <0x680000 0xf980000>;
+> +			reg = <0x880000 0>;	/* 0 = MTDPART_SIZ_FULL */
+>  		};
+>  	};
+>  };
+> -- 
+> 2.12.2
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-omap" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
