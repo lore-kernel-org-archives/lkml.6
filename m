@@ -2,141 +2,149 @@ Return-Path: <SRS0=S+WB=KJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 544A8C6778F
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 13:17:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10AF5C67790
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 13:18:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EFDA42088E
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 13:17:49 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SSFB4xpL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EFDA42088E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id CA59E2088E
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 13:18:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA59E2088E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729026AbeGYO30 (ORCPT
+        id S1729072AbeGYO3o (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 10:29:26 -0400
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:44950 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728476AbeGYO30 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Jul 2018 10:29:26 -0400
-Received: by mail-pl0-f66.google.com with SMTP id m16-v6so3289941pls.11
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Jul 2018 06:17:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=niJb2veS3MeGNKE6rC0w8/XDdjdsqnSK/SWHduEDlbA=;
-        b=SSFB4xpL3pG8nl0iFP38XJ8hZkkeoVOqgvE9J64eAuay4XurASx9AUbBImdKf8ptul
-         S8aIYIkoEhSS0C0r3/OikIVyNzCsnxFjj8d5ZIE83mWzsbNqLHrbNmTIy/spluzQtJ3v
-         RSbxOSxy4msCfoLLQTXjNfHRiPRrl+2XF/eq1dHV1L1CAOpJX3Bj6PSTMNY9LuTExGok
-         gZ70R2io3Bawg7ALCXHoxwm/cwjD/13BLRFsX8p+8vhzKgP1jD4MScRaVeLsvOegps5b
-         QdN5lDTAi2MME6FYOMY0wP6pVdfPgvmeGl0+4m39W3gq+F9bEARyBjtJ59xCNafkOqiB
-         CEbw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=niJb2veS3MeGNKE6rC0w8/XDdjdsqnSK/SWHduEDlbA=;
-        b=fLW/0u/iXuQDLFpuzoHLPLBZ0610Y/NDhobH6Ug816zPk4gIdg1gPjDFXkolH3ivub
-         QbDDCM+HdM6Hq0GtdiawRfxkfDZcVT7xUf6L+tCvta3IF2OWF7dyGhTzuP80ShvcAm/S
-         JFJo4ALHlJWEwVieBOhIfzaEQVen6Fskku1QnMvgFT69rhpmXg+Q6FI4h2doxVtIFH+F
-         RbH9jFvD6zfAJseDRx9j+AoX+1nyjPy2WBAIoh3tyFnawHHmSJHJQcw9mwPFTnK8hRSJ
-         Oz5bNgx0GObIzqBhYIMOoq+9jHIyU8dpVlO4JPf3pSo58guCK4pA/vVVTQIxTymYP4KT
-         K+Hw==
-X-Gm-Message-State: AOUpUlG/z+3eu/xHOD3D6nCRDhhTboeMYRJ5YifqnXEoC4GmWDJtO21/
-        LQ9aVhi1idProAIC4jZGKkA=
-X-Google-Smtp-Source: AAOMgpe91SXYnYI0mTEWzYo4WyKShMeUiX48y7qRo0fYfG55GbmQTlAzMOEGBOg/RJGIcxoXudf1Bw==
-X-Received: by 2002:a17:902:561:: with SMTP id 88-v6mr20898726plf.320.1532524667202;
-        Wed, 25 Jul 2018 06:17:47 -0700 (PDT)
-Received: from smtp.gmail.com ([140.113.169.102])
-        by smtp.gmail.com with ESMTPSA id m4-v6sm10440606pgn.82.2018.07.25.06.17.44
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 25 Jul 2018 06:17:46 -0700 (PDT)
-Date:   Wed, 25 Jul 2018 10:17:42 -0300
-From:   Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
-To:     Souptick Joarder <jrdr.linux@gmail.com>
-Cc:     willy@infradead.org, airlied@linux.ie, daniel.vetter@ffwll.ch,
-        gustavo.padovan@collabora.com, hamohammed.sa@gmail.com,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] gpu/drm/vkms: Use new return type vm_fault_t
-Message-ID: <20180725131742.knj2udm5aydxqrkg@smtp.gmail.com>
-References: <20180723170418.GA6417@jordon-HP-15-Notebook-PC>
+        Wed, 25 Jul 2018 10:29:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35694 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728824AbeGYO3o (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Jul 2018 10:29:44 -0400
+Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id BC41B20843;
+        Wed, 25 Jul 2018 13:18:03 +0000 (UTC)
+Date:   Wed, 25 Jul 2018 09:18:02 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Joel Fernandes <joel@joelfernandes.org>
+Cc:     linux-kernel@vger.kernel.org, kernel-team@android.com,
+        Ruchi Kandoi <kandoiruchi@google.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
+        linux-pm@vger.kernel.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Viresh Kumar <viresh.kumar@linaro.org>
+Subject: Re: [PATCH v3] cpufreq: trace frequency limits change
+Message-ID: <20180725091802.74400a81@gandalf.local.home>
+In-Reply-To: <20180724173544.18876-1-joel@joelfernandes.org>
+References: <20180724173544.18876-1-joel@joelfernandes.org>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180723170418.GA6417@jordon-HP-15-Notebook-PC>
-User-Agent: NeoMutt/20180622
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Tue, 24 Jul 2018 10:35:44 -0700
+Joel Fernandes <joel@joelfernandes.org> wrote:
 
-Thanks for the patch,
-
-I reviewed and tested it; everything is fine. I only suggest removing
-the "gpu" part from the patch title (i.e., "drm/vkms: Use new return
-type vm_fault_t").
-
-On 07/23, Souptick Joarder wrote:
-> Use new return type vm_fault_t for fault handler.
+> From: Ruchi Kandoi <kandoiruchi@google.com>
 > 
-> Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
+> systrace used for tracing for Android systems has carried a patch for
+> many years in the Android tree that traces when the cpufreq limits
+> change.  With the help of this information, systrace can know when the
+> policy limits change and can visually display the data. Lets add
+> upstream support for the same.
+> 
+> Signed-off-by: Ruchi Kandoi <kandoiruchi@google.com>
+> Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+
+Better ;-)
+
+Acked-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+
+-- Steve
+
 > ---
->  drivers/gpu/drm/vkms/vkms_drv.h | 2 +-
->  drivers/gpu/drm/vkms/vkms_gem.c | 5 ++---
->  2 files changed, 3 insertions(+), 4 deletions(-)
+> Viresh since I changed the patch, could you Ack it again?
 > 
-> diff --git a/drivers/gpu/drm/vkms/vkms_drv.h b/drivers/gpu/drm/vkms/vkms_drv.h
-> index 07be29f..d5d04a8 100644
-> --- a/drivers/gpu/drm/vkms/vkms_drv.h
-> +++ b/drivers/gpu/drm/vkms/vkms_drv.h
-> @@ -65,7 +65,7 @@ struct drm_gem_object *vkms_gem_create(struct drm_device *dev,
->  				       u32 *handle,
->  				       u64 size);
->  
-> -int vkms_gem_fault(struct vm_fault *vmf);
-> +vm_fault_t vkms_gem_fault(struct vm_fault *vmf);
->  
->  int vkms_dumb_create(struct drm_file *file, struct drm_device *dev,
->  		     struct drm_mode_create_dumb *args);
-> diff --git a/drivers/gpu/drm/vkms/vkms_gem.c b/drivers/gpu/drm/vkms/vkms_gem.c
-> index c7e3836..62e05dc 100644
-> --- a/drivers/gpu/drm/vkms/vkms_gem.c
-> +++ b/drivers/gpu/drm/vkms/vkms_gem.c
-> @@ -43,14 +43,14 @@ void vkms_gem_free_object(struct drm_gem_object *obj)
->  	kfree(gem);
->  }
->  
-> -int vkms_gem_fault(struct vm_fault *vmf)
-> +vm_fault_t vkms_gem_fault(struct vm_fault *vmf)
->  {
->  	struct vm_area_struct *vma = vmf->vma;
->  	struct vkms_gem_object *obj = vma->vm_private_data;
->  	unsigned long vaddr = vmf->address;
->  	pgoff_t page_offset;
->  	loff_t num_pages;
-> -	int ret;
-> +	vm_fault_t ret = VM_FAULT_SIGBUS;
->  
->  	page_offset = (vaddr - vma->vm_start) >> PAGE_SHIFT;
->  	num_pages = DIV_ROUND_UP(obj->gem.size, PAGE_SIZE);
-> @@ -58,7 +58,6 @@ int vkms_gem_fault(struct vm_fault *vmf)
->  	if (page_offset > num_pages)
->  		return VM_FAULT_SIGBUS;
->  
-> -	ret = -ENOENT;
->  	mutex_lock(&obj->pages_lock);
->  	if (obj->pages) {
->  		get_page(obj->pages[page_offset]);
-> -- 
-> 1.9.1
+> v2->v3: reduce parameters to tracepoint call (Steve)
+> v1->v2: correct ordering of min/max (Viresh)
 > 
+>  Documentation/trace/events-power.rst |  1 +
+>  drivers/cpufreq/cpufreq.c            |  1 +
+>  include/trace/events/power.h         | 25 +++++++++++++++++++++++++
+>  3 files changed, 27 insertions(+)
+> 
+> diff --git a/Documentation/trace/events-power.rst b/Documentation/trace/events-power.rst
+> index a77daca75e30..2ef318962e29 100644
+> --- a/Documentation/trace/events-power.rst
+> +++ b/Documentation/trace/events-power.rst
+> @@ -27,6 +27,7 @@ cpufreq.
+>  
+>    cpu_idle		"state=%lu cpu_id=%lu"
+>    cpu_frequency		"state=%lu cpu_id=%lu"
+> +  cpu_frequency_limits	"min=%lu max=%lu cpu_id=%lu"
+>  
+>  A suspend event is used to indicate the system going in and out of the
+>  suspend mode:
+> diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
+> index b0dfd3222013..52566f1f1050 100644
+> --- a/drivers/cpufreq/cpufreq.c
+> +++ b/drivers/cpufreq/cpufreq.c
+> @@ -2236,6 +2236,7 @@ static int cpufreq_set_policy(struct cpufreq_policy *policy,
+>  
+>  	policy->min = new_policy->min;
+>  	policy->max = new_policy->max;
+> +	trace_cpu_frequency_limits(policy);
+>  
+>  	policy->cached_target_freq = UINT_MAX;
+>  
+> diff --git a/include/trace/events/power.h b/include/trace/events/power.h
+> index 908977d69783..f7aece721aed 100644
+> --- a/include/trace/events/power.h
+> +++ b/include/trace/events/power.h
+> @@ -5,6 +5,7 @@
+>  #if !defined(_TRACE_POWER_H) || defined(TRACE_HEADER_MULTI_READ)
+>  #define _TRACE_POWER_H
+>  
+> +#include <linux/cpufreq.h>
+>  #include <linux/ktime.h>
+>  #include <linux/pm_qos.h>
+>  #include <linux/tracepoint.h>
+> @@ -148,6 +149,30 @@ DEFINE_EVENT(cpu, cpu_frequency,
+>  	TP_ARGS(frequency, cpu_id)
+>  );
+>  
+> +TRACE_EVENT(cpu_frequency_limits,
+> +
+> +	TP_PROTO(struct cpufreq_policy *policy),
+> +
+> +	TP_ARGS(policy),
+> +
+> +	TP_STRUCT__entry(
+> +		__field(u32, min_freq)
+> +		__field(u32, max_freq)
+> +		__field(u32, cpu_id)
+> +	),
+> +
+> +	TP_fast_assign(
+> +		__entry->min_freq = policy->min;
+> +		__entry->max_freq = policy->max;
+> +		__entry->cpu_id = policy->cpu;
+> +	),
+> +
+> +	TP_printk("min=%lu max=%lu cpu_id=%lu",
+> +		  (unsigned long)__entry->min_freq,
+> +		  (unsigned long)__entry->max_freq,
+> +		  (unsigned long)__entry->cpu_id)
+> +);
+> +
+>  TRACE_EVENT(device_pm_callback_start,
+>  
+>  	TP_PROTO(struct device *dev, const char *pm_ops, int event),
+
