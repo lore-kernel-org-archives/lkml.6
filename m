@@ -2,100 +2,132 @@ Return-Path: <SRS0=S+WB=KJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BAC94C6778F
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 07:10:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 672E5C6778F
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 07:11:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6FD0420882
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 07:10:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6FD0420882
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 1E4CE20844
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 07:11:41 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kapsi.fi header.i=@kapsi.fi header.b="0vypqJPW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E4CE20844
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kapsi.fi
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728607AbeGYIUa (ORCPT
+        id S1728648AbeGYIV6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 04:20:30 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:42608 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727460AbeGYIUa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Jul 2018 04:20:30 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id A36F64075764;
-        Wed, 25 Jul 2018 07:10:10 +0000 (UTC)
-Received: from localhost (ovpn-8-27.pek2.redhat.com [10.72.8.27])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id CB528111DCE6;
-        Wed, 25 Jul 2018 07:10:09 +0000 (UTC)
-Date:   Wed, 25 Jul 2018 15:10:06 +0800
-From:   Baoquan He <bhe@redhat.com>
-To:     Chao Fan <fanc.fnst@cn.fujitsu.com>
-Cc:     linux-kernel@vger.kernel.org, x86@kernel.org, hpa@zytor.com,
-        tglx@linutronix.de, mingo@redhat.com, keescook@chromium.org,
-        yasu.isimatu@gmail.com, indou.takao@jp.fujitsu.com,
-        caoj.fnst@cn.fujitsu.com, douly.fnst@cn.fujitsu.com
-Subject: Re: [PATCH v4 1/4] x86/boot: Add acpitb.h to help parse acpi tables
-Message-ID: <20180725071006.GJ6480@MiWiFi-R3L-srv>
-References: <20180723092908.32656-1-fanc.fnst@cn.fujitsu.com>
- <20180723092908.32656-2-fanc.fnst@cn.fujitsu.com>
- <20180724060257.GE6480@MiWiFi-R3L-srv>
- <20180724083657.GB818@localhost.localdomain>
+        Wed, 25 Jul 2018 04:21:58 -0400
+Received: from mail.kapsi.fi ([91.232.154.25]:39621 "EHLO mail.kapsi.fi"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728496AbeGYIV6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Jul 2018 04:21:58 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
+         s=20161220; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
+        MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender:Reply-To:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=L7nAIy1ib05GTXhgTIWU79BablvQZMfRO6Y3INS3ddg=; b=0vypqJPW4mbY21Ea7l7QjcX/xZ
+        Y3kTZCNaUn2BW+SV7delyOaPSlzPj59qWxargtByLzAW1+EvQb+u0SWXFQEtYcbp2cTi1ORkogLqc
+        9J56LB3THe6T3ZoJMP2ZeVyDiGuBRLNAXNviIfcGZNRk/UmpOvpOHrQhfCCGiL8zf7blKL+BV0Kbo
+        NhJsb2//5hpuQuYLdNsAPCeenFBrNfbbPT3OUBzZXt2WClo7EwW3KPfgiaJTLoGIT8mvBfFMrwrEw
+        YIO9I5p84tSDvQP096kWzdUS3KwrDLLnXEv8EWJ1uL6+ilmfan95yNbC2acyxthvh2x4OTckecyh8
+        SSUpGpzw==;
+Received: from [193.209.96.43] (helo=[10.21.26.144])
+        by mail.kapsi.fi with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.89)
+        (envelope-from <cyndis@kapsi.fi>)
+        id 1fiDxO-0003Fc-DL; Wed, 25 Jul 2018 10:11:34 +0300
+Subject: Re: [PATCH 03/10] mmc: tegra: Power on the calibration pad
+To:     Aapo Vienamo <avienamo@nvidia.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Mikko Perttunen <mperttunen@nvidia.com>
+Cc:     linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1532442591-5640-1-git-send-email-avienamo@nvidia.com>
+ <1532442865-6391-1-git-send-email-avienamo@nvidia.com>
+ <1532442865-6391-2-git-send-email-avienamo@nvidia.com>
+From:   Mikko Perttunen <cyndis@kapsi.fi>
+Message-ID: <3a364a72-1052-b0c8-35f5-2987c2c2784c@kapsi.fi>
+Date:   Wed, 25 Jul 2018 10:11:34 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180724083657.GB818@localhost.localdomain>
-User-Agent: Mutt/1.9.1 (2017-09-22)
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Wed, 25 Jul 2018 07:10:10 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Wed, 25 Jul 2018 07:10:10 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'bhe@redhat.com' RCPT:''
+In-Reply-To: <1532442865-6391-2-git-send-email-avienamo@nvidia.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 193.209.96.43
+X-SA-Exim-Mail-From: cyndis@kapsi.fi
+X-SA-Exim-Scanned: No (on mail.kapsi.fi); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/24/18 at 04:36pm, Chao Fan wrote:
-> On Tue, Jul 24, 2018 at 02:02:57PM +0800, Baoquan He wrote:
-> >Hi chao,
-> >
-> >On 07/23/18 at 05:29pm, Chao Fan wrote:
-> >> In order to parse ACPI tables, reuse the head file linux/acpi.h,
-> >> so that the files in 'compressed' directory can read ACPI table
-> >> by including this head file.
-> >> 
-> >> Signed-off-by: Chao Fan <fanc.fnst@cn.fujitsu.com>
-> >> ---
-> >>  arch/x86/boot/compressed/acpitb.h | 7 +++++++
-> >>  1 file changed, 7 insertions(+)
-> >>  create mode 100644 arch/x86/boot/compressed/acpitb.h
-> >> 
-> >> diff --git a/arch/x86/boot/compressed/acpitb.h b/arch/x86/boot/compressed/acpitb.h
-> >> new file mode 100644
-> >> index 000000000000..f8ab6e5b3e06
-> >> --- /dev/null
-> >> +++ b/arch/x86/boot/compressed/acpitb.h
-> >> @@ -0,0 +1,7 @@
-> >> +/* SPDX-License-Identifier: GPL-2.0 */
-> >> +#include <linux/acpi.h>
-> >> +
-> >> +#define ACPI_MAX_TABLES                128
-> >> +
-> >> +/* Function to get ACPI SRAT table pointer. */
-> >> +struct acpi_table_header *get_acpi_srat_table(void);
-> >
-> >Since acpitb.h includes so few lines of code, not sure if we can move
-> >them into .c files directly.
-> >
-> >By the way, you might need to rebase this patchset on top of
-> >tip/x86/boot.
-> 
-> Sorry Baoquan,
-> 
-> I tried to add this patcheset to the tip/x86/boot branch using both 'patch'
-> command and 'git am'. I found no problem and no offset.
-> So is there some problems when you use them?
+Reviewed-by: Mikko Perttunen <mperttunen@nvidia.com>
 
-That's great, just to remind.
-
+On 24.07.2018 17:34, Aapo Vienamo wrote:
+> Automatic pad drive strength calibration is performed on a separate pad
+> identical to the ones used for driving the actual bus. Power on the
+> calibration pad during the calibration procedure and power it off
+> afterwards to save power.
+> 
+> Signed-off-by: Aapo Vienamo <avienamo@nvidia.com>
+> ---
+>   drivers/mmc/host/sdhci-tegra.c | 21 +++++++++++++++++++++
+>   1 file changed, 21 insertions(+)
+> 
+> diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
+> index 6008e2f..61067b7 100644
+> --- a/drivers/mmc/host/sdhci-tegra.c
+> +++ b/drivers/mmc/host/sdhci-tegra.c
+> @@ -209,11 +209,30 @@ static void tegra_sdhci_reset(struct sdhci_host *host, u8 mask)
+>   	tegra_host->ddr_signaling = false;
+>   }
+>   
+> +static void tegra_sdhci_configure_cal_pad(struct sdhci_host *host, bool enable)
+> +{
+> +	u32 reg;
+> +
+> +	/*
+> +	 * Enable or disable the additional I/O pad used by the drive strength
+> +	 * calibration process.
+> +	 */
+> +	reg = sdhci_readl(host, SDHCI_TEGRA_SDMEM_COMP_PADCTRL);
+> +	if (enable)
+> +		reg |= SDHCI_TEGRA_PAD_E_INPUT_OR_E_PWRD;
+> +	else
+> +		reg &= ~SDHCI_TEGRA_PAD_E_INPUT_OR_E_PWRD;
+> +	sdhci_writel(host, reg, SDHCI_TEGRA_SDMEM_COMP_PADCTRL);
+> +	udelay(1);
+> +}
+> +
+>   static void tegra_sdhci_pad_autocalib(struct sdhci_host *host)
+>   {
+>   	unsigned timeout = 10;
+>   	u32 reg;
+>   
+> +	tegra_sdhci_configure_cal_pad(host, true);
+> +
+>   	reg = sdhci_readl(host, SDHCI_TEGRA_AUTO_CAL_CONFIG);
+>   	reg |= SDHCI_AUTO_CAL_ENABLE | SDHCI_AUTO_CAL_START;
+>   	sdhci_writel(host, reg, SDHCI_TEGRA_AUTO_CAL_CONFIG);
+> @@ -227,6 +246,8 @@ static void tegra_sdhci_pad_autocalib(struct sdhci_host *host)
+>   		timeout--;
+>   	} while (timeout);
+>   
+> +	tegra_sdhci_configure_cal_pad(host, false);
+> +
+>   	if (timeout == 0)
+>   		dev_err(mmc_dev(host->mmc), "Pad autocal timed out\n");
+>   }
+> 
