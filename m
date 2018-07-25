@@ -2,133 +2,119 @@ Return-Path: <SRS0=S+WB=KJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70A92C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 02:39:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 969FEC28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 02:41:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1EB2F20856
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 02:39:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1EB2F20856
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zte.com.cn
+	by mail.kernel.org (Postfix) with ESMTP id 52FA720856
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 02:41:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 52FA720856
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388529AbeGYDtY (ORCPT
+        id S2388541AbeGYDub (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 23:49:24 -0400
-Received: from mxhk.zte.com.cn ([63.217.80.70]:60414 "EHLO mxhk.zte.com.cn"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727353AbeGYDtY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 23:49:24 -0400
-Received: from mse01.zte.com.cn (unknown [10.30.3.20])
-        by Forcepoint Email with ESMTPS id 5D9FAAF97150380B47A0;
-        Wed, 25 Jul 2018 10:39:54 +0800 (CST)
-Received: from notes_smtp.zte.com.cn ([10.30.1.239])
-        by mse01.zte.com.cn with ESMTP id w6P2dmGn074604;
-        Wed, 25 Jul 2018 10:39:48 +0800 (GMT-8)
-        (envelope-from tan.hu@zte.com.cn)
-Received: from localhost.localdomain ([10.75.9.60])
-          by szsmtp06.zte.com.cn (Lotus Domino Release 8.5.3FP6)
-          with ESMTP id 2018072510395327-1663834 ;
-          Wed, 25 Jul 2018 10:39:53 +0800 
-From:   Tan Hu <tan.hu@zte.com.cn>
-To:     wensong@linux-vs.org, horms@verge.net.au, ja@ssi.bg,
-        pablo@netfilter.org, kadlec@blackhole.kfki.hu, fw@strlen.de,
-        davem@davemloft.net
-Cc:     netdev@vger.kernel.org, lvs-devel@vger.kernel.org,
-        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
-        linux-kernel@vger.kernel.org, zhong.weidong@zte.com.cn,
-        jiang.biao2@zte.com.cn
-Subject: [PATCH v2] ipvs: fix race between ip_vs_conn_new() and ip_vs_del_dest()
-Date:   Wed, 25 Jul 2018 10:49:40 +0800
-Message-Id: <1532486980-17844-1-git-send-email-tan.hu@zte.com.cn>
-X-Mailer: git-send-email 1.8.3.1
-X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
- 21, 2013) at 2018-07-25 10:39:53,
-        Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
- 2018-07-25 10:39:41,
-        Serialize complete at 2018-07-25 10:39:41
-X-MAIL: mse01.zte.com.cn w6P2dmGn074604
+        Tue, 24 Jul 2018 23:50:31 -0400
+Received: from mailgw01.mediatek.com ([210.61.82.183]:24743 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S2388420AbeGYDub (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Jul 2018 23:50:31 -0400
+X-UUID: eed5b49cfb8f4c0b9ff3d9cd36235ed4-20180725
+Received: from mtkcas08.mediatek.inc [(172.21.101.126)] by mailgw01.mediatek.com
+        (envelope-from <ck.hu@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 1842499235; Wed, 25 Jul 2018 10:40:57 +0800
+Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
+ mtkmbs01n2.mediatek.inc (172.21.101.79) with Microsoft SMTP Server (TLS) id
+ 15.0.1210.3; Wed, 25 Jul 2018 10:40:55 +0800
+Received: from [172.21.77.4] (172.21.77.4) by MTKCAS06.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
+ Transport; Wed, 25 Jul 2018 10:40:55 +0800
+Message-ID: <1532486454.9280.12.camel@mtksdaap41>
+Subject: Re: [PATCH v1 06/15] drm/mediatek: add memory mode for RDMA
+From:   CK Hu <ck.hu@mediatek.com>
+To:     Stu Hsieh <stu.hsieh@mediatek.com>
+CC:     Philipp Zabel <p.zabel@pengutronix.de>,
+        David Airlie <airlied@linux.ie>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        <dri-devel@lists.freedesktop.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <srv_heupstream@mediatek.com>
+Date:   Wed, 25 Jul 2018 10:40:54 +0800
+In-Reply-To: <1532420235-22268-7-git-send-email-stu.hsieh@mediatek.com>
+References: <1532420235-22268-1-git-send-email-stu.hsieh@mediatek.com>
+         <1532420235-22268-7-git-send-email-stu.hsieh@mediatek.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.10.4-0ubuntu2 
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We came across infinite loop in ipvs when using ipvs in docker
-env.
+Hi, Stu:
 
-When ipvs receives new packets and cannot find an ipvs connection,
-it will create a new connection, then if the dest is unavailable
-(i.e. IP_VS_DEST_F_AVAILABLE), the packet will be dropped sliently.
+On Tue, 2018-07-24 at 16:17 +0800, Stu Hsieh wrote:
+> This patch add memory mode for RDMA
+> 
+> If use RDMA to read data from memory, it should set memory mode to RDMA
+> 
+> Signed-off-by: Stu Hsieh <stu.hsieh@mediatek.com>
+> ---
+>  drivers/gpu/drm/mediatek/mtk_disp_rdma.c | 16 +++++++++++++++-
+>  1 file changed, 15 insertions(+), 1 deletion(-)
+> 
 
-But if the dropped packet is the first packet of this connection,
-the connection control timer never has a chance to start and the
-ipvs connection cannot be released. This will lead to memory leak, or
-infinite loop in cleanup_net() when net namespace is released like
-this:
+[...]
 
-    ip_vs_conn_net_cleanup at ffffffffa0a9f31a [ip_vs]
-    __ip_vs_cleanup at ffffffffa0a9f60a [ip_vs]
-    ops_exit_list at ffffffff81567a49
-    cleanup_net at ffffffff81568b40
-    process_one_work at ffffffff810a851b
-    worker_thread at ffffffff810a9356
-    kthread at ffffffff810b0b6f
-    ret_from_fork at ffffffff81697a18
+>  static inline struct mtk_disp_rdma *comp_to_rdma(struct mtk_ddp_comp *comp)
+> @@ -111,7 +116,8 @@ static void mtk_rdma_start(struct mtk_ddp_comp *comp)
+>  
+>  static void mtk_rdma_stop(struct mtk_ddp_comp *comp)
+>  {
+> -	rdma_update_bits(comp, DISP_REG_RDMA_GLOBAL_CON, RDMA_ENGINE_EN, 0);
+> +	writel(RDMA_SOFT_RESET, comp->regs + DISP_REG_RDMA_GLOBAL_CON);
+> +	writel(0, comp->regs + DISP_REG_RDMA_GLOBAL_CON);
 
-race condition:
-    CPU1                           CPU2
-    ip_vs_in()
-      ip_vs_conn_new()
-                                   ip_vs_del_dest()
-                                     __ip_vs_unlink_dest()
-                                       ~IP_VS_DEST_F_AVAILABLE
-      cp->dest && !IP_VS_DEST_F_AVAILABLE
-      __ip_vs_conn_put
-    ...
-    cleanup_net  ---> infinite looping
+Without reset, what happen to dram mode? Why direct link mode need not
+this reset?
 
-Fix this by checking whether the timer already started.
+>  }
+>  
+>  static void mtk_rdma_config(struct mtk_ddp_comp *comp, unsigned int width,
+> @@ -121,10 +127,18 @@ static void mtk_rdma_config(struct mtk_ddp_comp *comp, unsigned int width,
+>  	unsigned int threshold;
+>  	unsigned int reg;
+>  	struct mtk_disp_rdma *rdma = comp_to_rdma(comp);
+> +	bool *rdma_memory_mode = comp->comp_mode;
+>  
+>  	rdma_update_bits(comp, DISP_REG_RDMA_SIZE_CON_0, 0xfff, width);
+>  	rdma_update_bits(comp, DISP_REG_RDMA_SIZE_CON_1, 0xfffff, height);
+>  
+> +	if (*rdma_memory_mode == true) {
+> +		rdma_update_bits(comp, DISP_REG_RDMA_SIZE_CON_0, 0xff0000,
+> +				 MATRIX_INT_MTX_SEL_DEFAULT);
+> +		rdma_update_bits(comp, DISP_REG_RDMA_GLOBAL_CON,
+> +				 RDMA_MODE_MEMORY, RDMA_MODE_MEMORY);
+> +	}
+> +
 
-Signed-off-by: Tan Hu <tan.hu@zte.com.cn>
-Reviewed-by: Jiang Biao <jiang.biao2@zte.com.cn>
----
-v2: fix use-after-free in CONN_ONE_PACKET case suggested by Julian Anastasov
+I would like this to be a kind of 'layer' config. In some SoC, one layer
+of OVL could switch to direct link input or dram input. So I think it's
+better to move this setting into some layer interface.
 
- net/netfilter/ipvs/ip_vs_core.c | 15 +++++++++++----
- 1 file changed, 11 insertions(+), 4 deletions(-)
+Regards,
+CK
 
-diff --git a/net/netfilter/ipvs/ip_vs_core.c b/net/netfilter/ipvs/ip_vs_core.c
-index 0679dd1..a17104f 100644
---- a/net/netfilter/ipvs/ip_vs_core.c
-+++ b/net/netfilter/ipvs/ip_vs_core.c
-@@ -1972,13 +1972,20 @@ static int ip_vs_in_icmp_v6(struct netns_ipvs *ipvs, struct sk_buff *skb,
- 	if (cp->dest && !(cp->dest->flags & IP_VS_DEST_F_AVAILABLE)) {
- 		/* the destination server is not available */
- 
--		if (sysctl_expire_nodest_conn(ipvs)) {
-+		__u32 flags = cp->flags; 
-+
-+		/* when timer already started, silently drop the packet.*/
-+		if (timer_pending(&cp->timer))
-+			__ip_vs_conn_put(cp);
-+		else
-+			ip_vs_conn_put(cp);
-+
-+		if (sysctl_expire_nodest_conn(ipvs) &&
-+		    !(flags & IP_VS_CONN_F_ONE_PACKET)) {
- 			/* try to expire the connection immediately */
- 			ip_vs_conn_expire_now(cp);
- 		}
--		/* don't restart its timer, and silently
--		   drop the packet. */
--		__ip_vs_conn_put(cp);
-+
- 		return NF_DROP;
- 	}
- 
--- 
-1.8.3.1
+>  	/*
+>  	 * Enable FIFO underflow since DSI and DPI can't be blocked.
+>  	 * Keep the FIFO pseudo size reset default of 8 KiB. Set the
+
 
