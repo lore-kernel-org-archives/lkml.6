@@ -2,152 +2,132 @@ Return-Path: <SRS0=S+WB=KJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A59E3C6778F
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 22:57:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DAA41C67790
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 23:05:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 589B820685
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 22:57:30 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=endlessm-com.20150623.gappssmtp.com header.i=@endlessm-com.20150623.gappssmtp.com header.b="QHB7+/Nd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 589B820685
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=endlessm.com
+	by mail.kernel.org (Postfix) with ESMTP id 9294C20843
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 23:05:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9294C20843
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731753AbeGZALT (ORCPT
+        id S1731745AbeGZATg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 20:11:19 -0400
-Received: from mail-oi0-f68.google.com ([209.85.218.68]:38612 "EHLO
-        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731702AbeGZALS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Jul 2018 20:11:18 -0400
-Received: by mail-oi0-f68.google.com with SMTP id v8-v6so16867616oie.5
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Jul 2018 15:57:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=endlessm-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=4DFenC4IFmeOdLYVoPIkOsKOkd0Rud+Nhk9jcHit5Ow=;
-        b=QHB7+/Ndxu3QCw2GdN/va8neKfG5lCRDMW6v7xZbET6WvCJK3fJdJJGxqZYAFESPmy
-         loTmu7jnHGiaJIicvwOqtxiP/TvhABO6NirqnyJw0K9yTgu5zwIp/SVxJH4DZ1m18Ria
-         H3ivSNcsAjb0gy0oQz2hRkaPHw+NCFsvGUo+sX6M3ylZ58Ukn2g3iPvXoqzDZ7AaJCKI
-         LCgLRSFtSpxlruwi/9kpMKx95mllddXdtqZQUiRIGxddEJi0O6i1bm6EMajUhhZfs3AT
-         x2PYBvrXvvzS/gh2ej9DpBpw4DsqdnQjkO09RpxT2Shbrfurp6DPrRP30ibds148PL4m
-         vVmA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=4DFenC4IFmeOdLYVoPIkOsKOkd0Rud+Nhk9jcHit5Ow=;
-        b=dhys2w2oL5iyHDyBFX1+4t9tILuPeKaS/W1BPPDBMUN0GLHmvGWS4E9ThpZYXHc/Ic
-         fJJRkVYe0j21uopTOHi8w6SFsU2nco2BrO1/tetOrx8to+Xc3Cm6F5ge6DPywbQkIx+a
-         sfda57wgRl/LBXiMRVO1ba73njQzLRDzwlFCZj1nJTj3j9S+Bkh8xqzQT6qqWGY0LMMk
-         G8t0K/vlhf9nt/Dvh0VC2STCeJ1Rt9p0GVXkzMOKP9FbrzlufVGK+h+v7Pfn1vCu/KA6
-         yk+eucbDBqIHFuodngeHYpBXlCKxY5KMLWvfTMJx4/djADr/eejzDPdO5y7+fbBNC2JA
-         XZ0Q==
-X-Gm-Message-State: AOUpUlEGglhZZz8OjVBSsCzbyoIPwRn/2mTr+mkrQ1l4nFinuTlgABeD
-        MnFqKe0TF08k+l02/SukeZ50zh+DQcgd73jYZyfUuw==
-X-Google-Smtp-Source: AAOMgpcaeXlHDswzC/hso0vu3LPkrPG4R7OxlyyVquHiAMhQwsmbUzp2q8mIu4F2JFfasOB1xhv9KgVmUJ6o7yDiqCk=
-X-Received: by 2002:aca:b355:: with SMTP id c82-v6mr5779202oif.9.1532559446803;
- Wed, 25 Jul 2018 15:57:26 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a9d:3e18:0:0:0:0:0 with HTTP; Wed, 25 Jul 2018 15:57:26
- -0700 (PDT)
-In-Reply-To: <20180717122327.GG7193@dhcp22.suse.cz>
-References: <20180712172942.10094-1-hannes@cmpxchg.org> <20180716155745.10368-1-drake@endlessm.com>
- <20180717112515.GE7193@dhcp22.suse.cz> <CAD8Lp45W00ga-P-nb6iytgSGW4xwSzmaTHA87DOvSotN0S2edw@mail.gmail.com>
- <20180717122327.GG7193@dhcp22.suse.cz>
-From:   Daniel Drake <drake@endlessm.com>
-Date:   Wed, 25 Jul 2018 17:57:26 -0500
-Message-ID: <CAD8Lp44P2X5BNj14QjJBiv-_MxdVTP2UPQk3pX5iX4NEL46zwA@mail.gmail.com>
-Subject: Re: [PATCH 0/10] psi: pressure stall information for CPU, memory, and
- IO v2
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     hannes@cmpxchg.org, Linux Kernel <linux-kernel@vger.kernel.org>,
-        linux-mm@kvack.org, cgroups@vger.kernel.org,
-        Linux Upstreaming Team <linux@endlessm.com>,
-        linux-block@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Andrew Morton <akpm@linuxfoundation.org>,
-        Tejun Heo <tj@kernel.org>,
-        Balbir Singh <bsingharora@gmail.com>,
-        Mike Galbraith <efault@gmx.de>,
-        Oliver Yang <yangoliver@me.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        xxx xxx <x.qendo@gmail.com>,
-        Taras Kondratiuk <takondra@cisco.com>,
-        Daniel Walker <danielwa@cisco.com>,
-        Vinayak Menon <vinmenon@codeaurora.org>,
-        Ruslan Ruslichenko <rruslich@cisco.com>, kernel-team@fb.com
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 25 Jul 2018 20:19:36 -0400
+Received: from mga05.intel.com ([192.55.52.43]:9640 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731437AbeGZATg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Jul 2018 20:19:36 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Jul 2018 16:05:43 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,402,1526367600"; 
+   d="scan'208";a="59829809"
+Received: from unknown (HELO localhost.lm.intel.com) ([10.232.117.43])
+  by orsmga008.jf.intel.com with ESMTP; 25 Jul 2018 16:05:42 -0700
+From:   Jon Derrick <jonathan.derrick@intel.com>
+To:     Bjorn Helgaas <helgaas@kernel.org>
+Cc:     <linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Keith Busch <keith.busch@intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Sinan Kaya <okaya@codeaurora.org>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        Stephen Bates <sbates@raithlin.com>,
+        Jon Derrick <jonathan.derrick@intel.com>
+Subject: [PATCH] PCI: Equalize hotplug memory for non/occupied slots
+Date:   Wed, 25 Jul 2018 17:02:59 -0600
+Message-Id: <1532559779-3542-1-git-send-email-jonathan.derrick@intel.com>
+X-Mailer: git-send-email 1.8.3.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 17, 2018 at 7:23 AM, Michal Hocko <mhocko@kernel.org> wrote:
-> On Tue 17-07-18 07:13:52, Daniel Drake wrote:
->> On Tue, Jul 17, 2018 at 6:25 AM, Michal Hocko <mhocko@kernel.org> wrote:
->> > Yes this is really unfortunate. One thing that could help would be to
->> > consider a trashing level during the reclaim (get_scan_count) to simply
->> > forget about LRUs which are constantly refaulting pages back. We already
->> > have the infrastructure for that. We just need to plumb it in.
->>
->> Can you go into a bit more detail about that infrastructure and how we
->> might detect which pages are being constantly refaulted? I'm
->> interested in spending a few hours on this topic to see if I can come
->> up with anything.
->
-> mm/workingset.c allows for tracking when an actual page got evicted.
-> workingset_refault tells us whether a give filemap fault is a recent
-> refault and activates the page if that is the case. So what you need is
-> to note how many refaulted pages we have on the active LRU list. If that
-> is a large part of the list and if the inactive list is really small
-> then we know we are trashing.
+Currently, a hotplug bridge will be given hpmemsize additional memory if
+available, in order to satisfy any future hotplug allocation
+requirements.
 
-Thanks for the guidance. So this sounds like it is something that
-should be done on a timer (or on some other condition?), check the
-state of the active LRU list as described and if things are bad then
-invoke the OOM killer?
+These calculations don't consider the current memory size of the hotplug
+bridge/slot, so hotplug bridges/slots which have downstream devices will
+get their current allocation in addition to the hpmemsize value.
 
-I'm having trouble linking that idea to your original suggestion:
+This makes for possibly undesirable results with a mix of unoccupied and
+occupied slots (ex, with hpmemsize=2M):
 
-> One thing that could help would be to consider a trashing level during the reclaim
-> (get_scan_count) to simply forget about LRUs which are constantly refaulting
-> pages back.
+02:03.0 PCI bridge: <-- Occupied
+	Memory behind bridge: d6200000-d64fffff [size=3M]
+02:04.0 PCI bridge: <-- Unoccupied
+	Memory behind bridge: d6500000-d66fffff [size=2M]
 
-which I interpret to mean that the  for_each_evictable_lru loop in
-get_scan_count should skip over constantly-refaulty LRUs rather than
-add them to nr[] and lru_pages, which I assume would then cause direct
-reclaim to fail when we are thrashing, leading to OOM kill?
+This change considers the current allocation size when using the
+hpmemsize parameter to make the reservations predictable for the mix of
+unoccupied and occupied slots:
 
-Are these two different ideas, or am I just misunderstanding something basic?
+02:03.0 PCI bridge: <-- Occupied
+	Memory behind bridge: d6200000-d63fffff [size=2M]
+02:04.0 PCI bridge: <-- Unoccupied
+	Memory behind bridge: d6400000-d65fffff [size=2M]
 
-That confusion aside, studying the code to understand how I can
-determine if a page is being constantly refaulted or not, I see that
-the well documented condition for this (in workingset_refault) is:
+Signed-off-by: Jon Derrick <jonathan.derrick@intel.com>
+---
+Original RFC here:
+https://patchwork.ozlabs.org/patch/945374/
 
-  (refault - eviction) & EVICTION_MASK <= active_file
+I split this bit out from the RFC while awaiting the pci string handling
+enhancements to handle per-device settings
 
-refault and active_file are just values from the lruvec which seems
-easily accessible. However the eviction value is taken at the point of
-page eviction, and it is then stored in the shadow entries stored in
-the page cache for pages that have been evicted, but the shadow entry
-is then lost when the page is reactivated.
+Changed from RFC is a simpler algo
 
-The suggestion(s) seem to revolve around checking if currently-active
-pages are refaulting a lot, and I am still not clear on how to
-determine that, given that the shadow/eviction information was lost at
-the point when those active pages were refaulted.
+ drivers/pci/setup-bus.c | 13 ++++++-------
+ 1 file changed, 6 insertions(+), 7 deletions(-)
 
+diff --git a/drivers/pci/setup-bus.c b/drivers/pci/setup-bus.c
+index 79b1824..5ae39e6 100644
+--- a/drivers/pci/setup-bus.c
++++ b/drivers/pci/setup-bus.c
+@@ -831,7 +831,8 @@ static resource_size_t calculate_iosize(resource_size_t size,
+ 
+ static resource_size_t calculate_memsize(resource_size_t size,
+ 		resource_size_t min_size,
+-		resource_size_t size1,
++		resource_size_t add_size,
++		resource_size_t children_add_size,
+ 		resource_size_t old_size,
+ 		resource_size_t align)
+ {
+@@ -841,7 +842,7 @@ static resource_size_t calculate_memsize(resource_size_t size,
+ 		old_size = 0;
+ 	if (size < old_size)
+ 		size = old_size;
+-	size = ALIGN(size + size1, align);
++	size = ALIGN(max(size, add_size) + children_add_size, align);
+ 	return size;
+ }
+ 
+@@ -1079,12 +1080,10 @@ static int pbus_size_mem(struct pci_bus *bus, unsigned long mask,
+ 
+ 	min_align = calculate_mem_align(aligns, max_order);
+ 	min_align = max(min_align, window_alignment(bus, b_res->flags));
+-	size0 = calculate_memsize(size, min_size, 0, resource_size(b_res), min_align);
++	size0 = calculate_memsize(size, min_size, 0, 0, resource_size(b_res), min_align);
+ 	add_align = max(min_align, add_align);
+-	if (children_add_size > add_size)
+-		add_size = children_add_size;
+-	size1 = (!realloc_head || (realloc_head && !add_size)) ? size0 :
+-		calculate_memsize(size, min_size, add_size,
++	size1 = (!realloc_head || (realloc_head && !add_size && !children_add_size)) ? size0 :
++		calculate_memsize(size, min_size, add_size, children_add_size,
+ 				resource_size(b_res), add_align);
+ 	if (!size0 && !size1) {
+ 		if (b_res->start || b_res->end)
+-- 
+1.8.3.1
 
-BTW feel free to drop this thread if you are busy, or delay your
-response to a convenient time. I'm new to this area and probably
-making silly mistakes, and not yet convinced that I'll be able to see
-it through.
-
-Daniel
