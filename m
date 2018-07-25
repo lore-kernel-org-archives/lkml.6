@@ -2,96 +2,106 @@ Return-Path: <SRS0=S+WB=KJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA78EC67790
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 22:20:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1005DC6778F
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 22:20:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9025320671
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 22:20:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9025320671
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id BF37B20673
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 22:20:20 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="NpQf+GWX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BF37B20673
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731475AbeGYXdv (ORCPT
+        id S1731545AbeGYXd7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 19:33:51 -0400
-Received: from mga04.intel.com ([192.55.52.120]:39236 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731259AbeGYXdv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Jul 2018 19:33:51 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Jul 2018 15:20:08 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,402,1526367600"; 
-   d="scan'208";a="57177188"
-Received: from romley-ivt3.sc.intel.com ([172.25.110.60])
-  by fmsmga007.fm.intel.com with ESMTP; 25 Jul 2018 15:20:04 -0700
-Date:   Wed, 25 Jul 2018 15:18:44 -0700
-From:   Fenghua Yu <fenghua.yu@intel.com>
-To:     Andy Lutomirski <luto@kernel.org>
-Cc:     Fenghua Yu <fenghua.yu@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, H Peter Anvin <hpa@zytor.com>,
-        Ashok Raj <ashok.raj@intel.com>,
-        Alan Cox <alan@linux.intel.com>,
-        Ravi V Shankar <ravi.v.shankar@intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        x86 <x86@kernel.org>, Hongjiu Lu <hongjiu.lu@intel.com>
-Subject: Re: [PATCH 5/7] x86/vdso: Add vDSO functions for direct store
- instructions
-Message-ID: <20180725221844.GC245659@romley-ivt3.sc.intel.com>
-References: <1532350557-98388-1-git-send-email-fenghua.yu@intel.com>
- <1532350557-98388-6-git-send-email-fenghua.yu@intel.com>
- <10870309-993a-0abc-635a-92c05bbad140@kernel.org>
- <20180724034205.GA245659@romley-ivt3.sc.intel.com>
- <CALCETrX6oiYMvhsnttSFLuSSdOdG3+SyM0PQvBEVHHqZMXZGsQ@mail.gmail.com>
+        Wed, 25 Jul 2018 19:33:59 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:45131 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731259AbeGYXd6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Jul 2018 19:33:58 -0400
+Received: by mail-lj1-f193.google.com with SMTP id q5-v6so8005196ljh.12
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Jul 2018 15:20:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=7iSybzDmIqLwKWBZIaRGtwBnUI0SFEpnPkyOYs5pykE=;
+        b=NpQf+GWXXK6A8g4hvNaMO77KZUShNZrpXvya9BEjx4W9Bp8E6yvLDO4D3Kt7mbpVs2
+         UpGnXAr2zfsGthrUKo/xig8Vd6FGLgxMkencGTXhAlLOZgdLqdgil0NRN+Z0tcyUP2kp
+         kv9rjOTIacfJ5dIGCN7nlwE0+/Ul8yEl0Hj1Q=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=7iSybzDmIqLwKWBZIaRGtwBnUI0SFEpnPkyOYs5pykE=;
+        b=bXvS7CVwKMs4p1khj9J/9YzVbmZyKJYtZVbtcneAE3AxmiGE2hy09D7Ge2lXJavfK8
+         CUmqodixVyI2WT8Il0PfSr3bkQyxMYU/P5YJU3+IfvGBxQtuI7sROkM69lfS5cVSoKkV
+         lwzuoeUpqLldM+g/3opWT0XC3YtNDjS3NluK1/cAGz0sBUqVplVIQtWWsCyIjoTwCiO4
+         ThNan4Ar50VQI2G3aYFwgi/SKnhav2HqL6rndc+g6APop1jjDp0gKlNqr6j9WdLKKw7T
+         gFDMbvRUPUv45l5OEc7pB3aJHOP01vEclyg7G+xL5GelCGYkc4J3mw98a6vRhQeXPWME
+         QCrw==
+X-Gm-Message-State: AOUpUlHQPROQPeZjswzHxoGcrqsWLKFOUifJTGcGycNLqJ/vWgMVQiUE
+        ZZKTPB4QF7B8PSJafvj7eGAtCQ==
+X-Google-Smtp-Source: AAOMgpcyO3LkViD5PxJIbAGzJuVPnaxPgUqekls78VbeF+CWC74Ell95wIaEK9GWGf/V2+WSq2gIYQ==
+X-Received: by 2002:a2e:1609:: with SMTP id w9-v6mr16348435ljd.120.1532557213929;
+        Wed, 25 Jul 2018 15:20:13 -0700 (PDT)
+Received: from localhost (c-2c3d70d5.07-21-73746f28.bbcust.telenor.se. [213.112.61.44])
+        by smtp.gmail.com with ESMTPSA id b87-v6sm2355529lfh.33.2018.07.25.15.20.13
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 25 Jul 2018 15:20:13 -0700 (PDT)
+From:   Anders Roxell <anders.roxell@linaro.org>
+To:     davem@davemloft.net, santosh.shilimkar@oracle.com,
+        ka-cheong.poon@oracle.com
+Cc:     netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
+        rds-devel@oss.oracle.com, linux-kernel@vger.kernel.org,
+        Anders Roxell <anders.roxell@linaro.org>
+Subject: [PATCH] net/rds/Kconfig: RDS should depend on IPV6
+Date:   Thu, 26 Jul 2018 00:20:08 +0200
+Message-Id: <20180725222008.32186-1-anders.roxell@linaro.org>
+X-Mailer: git-send-email 2.18.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CALCETrX6oiYMvhsnttSFLuSSdOdG3+SyM0PQvBEVHHqZMXZGsQ@mail.gmail.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 23, 2018 at 10:27:34PM -0700, Andy Lutomirski wrote:
-> On Mon, Jul 23, 2018 at 8:42 PM, Fenghua Yu <fenghua.yu@intel.com> wrote:
-> > On Mon, Jul 23, 2018 at 06:48:00PM -0700, Andy Lutomirski wrote:
-> >> On 07/23/2018 05:55 AM, Fenghua Yu wrote:
-> >> >The instructions can be implemented in intrinsic functions in future
-> >> >GCC. But the vDSO interfaces are available to user without the
-> >> I'm not convinced that any of this belongs in the vDSO at all.  You could
-> >> just add AT_HWCAP (or AT_HWCAP2) flags for the new instructions. Or user
-> >
-> > Thomas asked to use vDSO. Please see the discussion thread:
-> > https://lkml.org/lkml/2018/6/19/316
-> 
-> I think he meant that, if these helpers belong in the kernel at all,
-> then they belong in the vDSO.  But I think they mostly don't belong in
-> the kernel.
+Build error, implicit declaration of function __inet6_ehashfn shows up
+When RDS is enabled but not IPV6.
+net/rds/connection.c: In function ‘rds_conn_bucket’:
+net/rds/connection.c:67:9: error: implicit declaration of function ‘__inet6_ehashfn’; did you mean ‘__inet_ehashfn’? [-Werror=implicit-function-declaration]
+  hash = __inet6_ehashfn(lhash, 0, fhash, 0, rds_hash_secret);
+         ^~~~~~~~~~~~~~~
+         __inet_ehashfn
 
-I think both you and Thomas are right. I misunderstood Thomas's comments.
+Current code adds IPV6 as a depends on in config RDS.
 
-I will remove the APIs/functions from next version of patch set. They
-don't belong to kernel and will be implemented in either GCC or glibc.
+Fixes: eee2fa6ab322 ("rds: Changing IP address internal representation to struct in6_addr")
+Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
+---
+ net/rds/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-GCC8 already implemented movdiri and movdir64b instruction intrinsics.
-GCC9 will implement user wait instruction intrinsics.
-If user wants to use those instinsics now, this GCC link has them:
-https://gcc.gnu.org/git/?p=gcc.git;a=summary
+diff --git a/net/rds/Kconfig b/net/rds/Kconfig
+index 41f75563b54b..607128f10bcd 100644
+--- a/net/rds/Kconfig
++++ b/net/rds/Kconfig
+@@ -1,7 +1,7 @@
+ 
+ config RDS
+ 	tristate "The RDS Protocol"
+-	depends on INET
++	depends on INET && CONFIG_IPV6
+ 	---help---
+ 	  The RDS (Reliable Datagram Sockets) protocol provides reliable,
+ 	  sequenced delivery of datagrams over Infiniband or TCP.
+-- 
+2.18.0
 
-If user wants to use the intrinsics in native code, the user needs to
-check availability of the features (i.e. movdiri, movdir64b, waitpkg)
-by running cpuid or a glibc interface that is going to be available in
-newer glibc.
-
-Thank you for  your comments!
-
--Fenghua
