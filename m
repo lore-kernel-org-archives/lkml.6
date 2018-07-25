@@ -2,127 +2,98 @@ Return-Path: <SRS0=S+WB=KJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05B57C67790
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 07:35:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47B2CC6778F
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 07:36:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B201020671
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 07:35:34 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="V/Bs8aMf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B201020671
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+	by mail.kernel.org (Postfix) with ESMTP id 0705620671
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 07:36:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0705620671
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728527AbeGYIp4 (ORCPT
+        id S1728546AbeGYIqu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 04:45:56 -0400
-Received: from mail-it0-f66.google.com ([209.85.214.66]:34574 "EHLO
-        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728421AbeGYIp4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Jul 2018 04:45:56 -0400
-Received: by mail-it0-f66.google.com with SMTP id d70-v6so16978052ith.1
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Jul 2018 00:35:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=YKv+O+ZFPBruswx5V99r6fXrNuFwUUi43U/mIJQ2v28=;
-        b=V/Bs8aMfDd9BvZDqqn4Pf4brxOJJ5S7jUQXXJJLzFOY9M0GlUcSmnVk5GLZVH1yxB9
-         vaMcjX+qppuU9ZwgmWV0dIei3E1TpPXI+rK1yoMYjwrTnuV8oftKmY4DY/+na1fcGv+1
-         3B8098arCF9QQI4twrAwsBOUNQkJjSWIjac2EvHwfe2ksdKX1NK2N+iwX7Hjzgvz4ZyH
-         P5+fQW5WctFvXQMn34fyXzustpP+yxjGjAImi0l65/dFxil+85oBCi5qyySL1fu9JqQJ
-         /cJ68V37TscIFTrd+zS0PM1T3aYQhIRl4h8Z5YPa9VrNGQQ7y7grGbQFARgqiLtWqH86
-         H1FA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=YKv+O+ZFPBruswx5V99r6fXrNuFwUUi43U/mIJQ2v28=;
-        b=ngF6wF+VlZOcTmOzM1xvPXcEMUuAZEPw4TWoUMVVzDNHYKuCa1RcOXpmDhspXCbOnt
-         ZRwwJAwia36OLa7EBO6u22t+jTIFAT4obwNJq7rkijGZX8gH7UsHZ3kogpiaML5MtrMv
-         qppmaSiuIHjg6ImhqVVdIF+u/Ufsyb4FleNeUV+suOLsjRiFSmfcxwsihl6txijzpaf5
-         ybTqv9BiOlOovFB3eJaF/CyIQzen1SttwgzWM3fX9x/d5lLJoHo3Hb79lmg9Dt1w0Bcq
-         T1X5FBM4bE0UJFTeXZ7DquNK11akEr4LOh2ndIuDfHCdFrMjHnk+UFfCFizwDy21Pm45
-         tK7g==
-X-Gm-Message-State: AOUpUlETXEU1eETw3uEJFtP1sDzZ0LrpIC1fJYgtoobYkWV5PP4Yjdgm
-        d9/nfJnxD/UozLsDGeXlPd0LFg/MGd9TP4xDbIB1KA==
-X-Google-Smtp-Source: AAOMgpcCSgdDY4amSWSvFCcEirHuSBRV+4CfIubefpt7K0mi8a8bx9gJuTeC3dBrXDur3l7jYUPOpP7JWvk4xcZHlJQ=
-X-Received: by 2002:a24:5e0b:: with SMTP id h11-v6mr5345823itb.80.1532504131411;
- Wed, 25 Jul 2018 00:35:31 -0700 (PDT)
+        Wed, 25 Jul 2018 04:46:50 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:54097 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728407AbeGYIqu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Jul 2018 04:46:50 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 736ED207A8; Wed, 25 Jul 2018 09:36:23 +0200 (CEST)
+Received: from dell-desktop.home (AAubervilliers-681-1-78-122.w90-88.abo.wanadoo.fr [90.88.20.122])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 2BAA020618;
+        Wed, 25 Jul 2018 09:36:23 +0200 (CEST)
+From:   =?UTF-8?q?Myl=C3=A8ne=20Josserand?= <mylene.josserand@bootlin.com>
+To:     dmitry.torokhov@gmail.com, robh+dt@kernel.org,
+        mark.rutland@arm.com, maxime.ripard@bootlin.com, wens@csie.org
+Cc:     linux-input@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        thomas.petazzoni@bootlin.com, mylene.josserand@bootlin.com
+Subject: [PATCH v4 0/3] sun8i-a83t: Add touchscreen support on TBS A711
+Date:   Wed, 25 Jul 2018 09:34:07 +0200
+Message-Id: <20180725073410.730-1-mylene.josserand@bootlin.com>
+X-Mailer: git-send-email 2.11.0
 MIME-Version: 1.0
-Received: by 2002:a5e:9402:0:0:0:0:0 with HTTP; Wed, 25 Jul 2018 00:35:30
- -0700 (PDT)
-In-Reply-To: <1532488822-5622-2-git-send-email-alanx.chiang@intel.com>
-References: <1532488822-5622-1-git-send-email-alanx.chiang@intel.com> <1532488822-5622-2-git-send-email-alanx.chiang@intel.com>
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-Date:   Wed, 25 Jul 2018 09:35:30 +0200
-Message-ID: <CAMRc=MdHAU8Y==hhhV6L7o1-J9LfTUZrDMYCLm+rASpagFMNmQ@mail.gmail.com>
-Subject: Re: [RESEND PATCH v4 1/2] dt-bindings: at24: Add address-width property
-To:     "Chiang, AlanX" <alanx.chiang@intel.com>
-Cc:     linux-i2c <linux-i2c@vger.kernel.org>,
-        "Yeh, Andy" <andy.yeh@intel.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        "Shevchenko, Andriy" <andriy.shevchenko@intel.com>,
-        Rajmohan Mani <rajmohan.mani@intel.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        tfiga@chromium.org, jcliang@chromium.org,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        "Robert P. J. Day" <rpjday@crashcourse.ca>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-07-25 5:20 GMT+02:00  <alanx.chiang@intel.com>:
-> From: Alan Chiang <alanx.chiang@intel.com>
->
-> Currently the only way to use a variant of a supported model with
-> a different address with a different address width is to define a
+Hello everyone,
 
-There's some copy-paste problem here. I fixed it.
+This is a V4 of the patch series that adds touchscreen support
+(FocalTech EDT-FT5x06 Polytouch) for TBS A711 (Allwinner sun8i-a83t SoC)
+and add regulator support for this touchscreen.
+Based on last master of linux-input tree.
 
-> new compatible string and the corresponding chip data structure.
->
-> Provide a flexible way to specify the size of the address pointer
-> by defining a new property: address-width.
->
-> Signed-off-by: Alan Chiang <alanx.chiang@intel.com>
-> Signed-off-by: Andy Yeh <andy.yeh@intel.com>
-> Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-> Reviewed-by: Rob Herring <robh@kernel.org>
-> ---
->  Documentation/devicetree/bindings/eeprom/at24.txt | 2 ++
->  1 file changed, 2 insertions(+)
->
-> diff --git a/Documentation/devicetree/bindings/eeprom/at24.txt b/Documentation/devicetree/bindings/eeprom/at24.txt
-> index 61d833a..aededdb 100644
-> --- a/Documentation/devicetree/bindings/eeprom/at24.txt
-> +++ b/Documentation/devicetree/bindings/eeprom/at24.txt
-> @@ -72,6 +72,8 @@ Optional properties:
->
->    - wp-gpios: GPIO to which the write-protect pin of the chip is connected.
->
-> +  - address-width: number of address bits (one of 8, 16).
-> +
->  Example:
->
->  eeprom@52 {
-> --
-> 2.7.4
->
+Changes since v3:
+   - Created a new function to disable regulator via
+   devm_add_action_or_reset (Dmitry Torokhov's review)
+   - Moved regulator_enable/disable functions in device_may_wakeup
+   guard (Ondřej Jirman and Dmitry Torokhov's reviews)
+   - Added Rob Herring Reviewed-by on patch 01 (sorry again)
+Changes since v2:
+   - Removed the check if regulator is NULL (Dmitry Torokhov's review)
+   - Added EPROBE_DEFER error not to print a error message (Lothar Waßmann's review)
+   - Added set wake/reset on suspend/resume.
+Changes since v1:
+   - Removed patches 01 and 02 as Chen-Yu Tsai sent a similar patch:
+   https://patchwork.kernel.org/patch/10111431/
+   and it is merged on last next-20171222.
+   (See commit f066f46ce5a5 "ARM: dts: sun8i: a83t: Add I2C device nodes and pinmux settings")
+   - Updated regulator according to Dmitry Torokhov's review: removed "optional"
+   suffix while retrieving the regulator, renamed it into "vcc" instead of
+   "power" and added bindings documentation.
+   - Updated device tree according to Maxime Ripard's review: remove the
+   label and rename the node.
+   - Squashed patch 03 with patch 05 to add I2C0 and touchscreen's node
+   in one patch (see patch 02).
 
-Applied both to for-next.
+Patch 01: Add support for regulator in the FocalTech touchscreen driver
+because A711 tablet is using a regulator to power-up the touchscreen.
+Patch 02: Add a set wake/reset values on resume and suspend.
+Patch 03: Add i2c0 and touchscreen's node for A711 TBS tablet.
 
-Bart
+Thank you in advance for any review.
+Best regards,
+Mylène
+
+Mylène Josserand (3):
+  Input: edt-ft5x06 - Add support for regulator
+  Input: edt-ft5x06 - Set wake/reset values on resume/suspend
+  arm: dts: sun8i: a83t: a711: Add touchscreen node
+
+ .../bindings/input/touchscreen/edt-ft5x06.txt      |  1 +
+ arch/arm/boot/dts/sun8i-a83t-tbs-a711.dts          | 16 +++++++
+ drivers/input/touchscreen/edt-ft5x06.c             | 55 ++++++++++++++++++++++
+ 3 files changed, 72 insertions(+)
+
+-- 
+2.11.0
+
