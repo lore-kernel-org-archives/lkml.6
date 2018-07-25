@@ -2,176 +2,136 @@ Return-Path: <SRS0=S+WB=KJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D7B6C67790
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 20:45:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 820DDC67790
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 20:46:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3E04920671
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 20:45:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3E04920671
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by mail.kernel.org (Postfix) with ESMTP id 3747720671
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 20:46:06 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="pKyhAlD2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3747720671
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=fb.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731458AbeGYV7M (ORCPT
+        id S1731478AbeGYV70 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 17:59:12 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:37621 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730857AbeGYV7M (ORCPT
+        Wed, 25 Jul 2018 17:59:26 -0400
+Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:36622 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1730535AbeGYV70 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Jul 2018 17:59:12 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w6PKjbN3500705
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Wed, 25 Jul 2018 13:45:37 -0700
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w6PKjbeZ500702;
-        Wed, 25 Jul 2018 13:45:37 -0700
-Date:   Wed, 25 Jul 2018 13:45:37 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Sandipan Das <tipbot@zytor.com>
-Message-ID: <tip-9068533e4f470daf2b0f29c71d865990acd8826e@git.kernel.org>
-Cc:     tglx@linutronix.de, sandipan@linux.ibm.com, jolsa@redhat.com,
-        mingo@kernel.org, ravi.bangoria@linux.ibm.com, acme@redhat.com,
-        hpa@zytor.com, linux-kernel@vger.kernel.org,
-        ravi.bangoria@linux.vnet.ibm.com, naveen.n.rao@linux.vnet.ibm.com,
-        maynard@us.ibm.com, sukadev@linux.vnet.ibm.com
-Reply-To: linux-kernel@vger.kernel.org, ravi.bangoria@linux.vnet.ibm.com,
-          maynard@us.ibm.com, sukadev@linux.vnet.ibm.com,
-          naveen.n.rao@linux.vnet.ibm.com, jolsa@redhat.com,
-          mingo@kernel.org, tglx@linutronix.de, sandipan@linux.ibm.com,
-          hpa@zytor.com, ravi.bangoria@linux.ibm.com, acme@redhat.com
-In-Reply-To: <66e848a7bdf2d43b39210a705ff6d828a0865661.1530724939.git.sandipan@linux.ibm.com>
-References: <66e848a7bdf2d43b39210a705ff6d828a0865661.1530724939.git.sandipan@linux.ibm.com>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf powerpc: Fix callchain ip filtering when
- return address is in a register
-Git-Commit-ID: 9068533e4f470daf2b0f29c71d865990acd8826e
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Wed, 25 Jul 2018 17:59:26 -0400
+Received: from pps.filterd (m0001255.ppops.net [127.0.0.1])
+        by mx0b-00082601.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w6PKW9Vw009175;
+        Wed, 25 Jul 2018 13:45:41 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=date : from : to : cc :
+ subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=facebook; bh=jkoO+Wn4bz9nDHhKw3QPQlLOUpKqqyrRso/v/jQibIY=;
+ b=pKyhAlD2HMbjMj0B9ikFPVRYuL+Whnhx4RvGIi3kMWyIxzzlts0hJvbEy+nURYAaQanW
+ EBdoePTCEL5V6tjyX3w8W57CFf/erFMVndVD+Rt6biJ03QYFU479cfpVRKklfEh03y+b
+ 6hKgq/O/JII6r+NaR4ZxfJT/AVcwv1iEykw= 
+Received: from mail.thefacebook.com ([199.201.64.23])
+        by mx0b-00082601.pphosted.com with ESMTP id 2kf057r277-1
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Wed, 25 Jul 2018 13:45:40 -0700
+Received: from kafai-mbp.dhcp.thefacebook.com (192.168.52.123) by
+ mail.TheFacebook.com (192.168.16.18) with Microsoft SMTP Server (TLS) id
+ 14.3.361.1; Wed, 25 Jul 2018 13:45:38 -0700
+Date:   Wed, 25 Jul 2018 13:45:38 -0700
+From:   Martin KaFai Lau <kafai@fb.com>
+To:     Taeung Song <treeze.taeung@gmail.com>
+CC:     Daniel Borkmann <daniel@iogearbox.net>,
+        Alexei Starovoitov <ast@kernel.org>, <netdev@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] samples/bpf: Add BTF build flags to Makefile
+Message-ID: <20180725204538.is5aidet4qwbvlg4@kafai-mbp.dhcp.thefacebook.com>
+References: <20180725163039.2838-1-treeze.taeung@gmail.com>
+ <20180725203844.ighlqmfw6227rhby@kafai-mbp.dhcp.thefacebook.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
+In-Reply-To: <20180725203844.ighlqmfw6227rhby@kafai-mbp.dhcp.thefacebook.com>
+User-Agent: NeoMutt/20180512
+X-Originating-IP: [192.168.52.123]
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-25_04:,,
+ signatures=0
+X-Proofpoint-Spam-Reason: safe
+X-FB-Internal: Safe
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  9068533e4f470daf2b0f29c71d865990acd8826e
-Gitweb:     https://git.kernel.org/tip/9068533e4f470daf2b0f29c71d865990acd8826e
-Author:     Sandipan Das <sandipan@linux.ibm.com>
-AuthorDate: Tue, 10 Jul 2018 19:28:14 +0530
-Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Tue, 24 Jul 2018 14:50:44 -0300
+On Wed, Jul 25, 2018 at 01:38:44PM -0700, Martin KaFai Lau wrote:
+> On Thu, Jul 26, 2018 at 01:30:39AM +0900, Taeung Song wrote:
+> > To smoothly test BTF supported binary on samples/bpf,
+> > let samples/bpf/Makefile probe llc, pahole and
+> > llvm-objcopy for BPF support and use them
+> > like tools/testing/selftests/bpf/Makefile
+> > changed from the commit c0fa1b6c3efc ("bpf: btf:
+> >  Add BTF tests")
+> > 
+> > Cc: Martin KaFai Lau <kafai@fb.com>
+> > Signed-off-by: Taeung Song <treeze.taeung@gmail.com>
+> Thanks for the patch. LGTM.
+> 
+> Acked-by: Martin KaFai Lau <kafai@fb.com>
+and it should go to bpf-next (Please use the proper tag in the
+Subject, thanks!).
 
-perf powerpc: Fix callchain ip filtering when return address is in a register
-
-For powerpc64, perf will filter out the second entry in the callchain,
-i.e. the LR value, if the return address of the function corresponding
-to the probed location has already been saved on its caller's stack.
-
-The state of the return address is determined using debug information.
-At any point within a function, if the return address is already saved
-somewhere, a DWARF expression can tell us about its location. If the
-return address in still in LR only, no DWARF expression would exist.
-
-Typically, the instructions in a function's prologue first copy the LR
-value to R0 and then pushes R0 on to the stack. If LR has already been
-copied to R0 but R0 is yet to be pushed to the stack, we can still get a
-DWARF expression that says that the return address is in R0. This is
-indicating that getting a DWARF expression for the return address does
-not guarantee the fact that it has already been saved on the stack.
-
-This can be observed on a powerpc64le system running Fedora 27 as shown
-below.
-
-  # objdump -d /usr/lib64/libc-2.26.so | less
-  ...
-  000000000015af20 <inet_pton>:
-    15af20:       0b 00 4c 3c     addis   r2,r12,11
-    15af24:       e0 c1 42 38     addi    r2,r2,-15904
-    15af28:       a6 02 08 7c     mflr    r0
-    15af2c:       f0 ff c1 fb     std     r30,-16(r1)
-    15af30:       f8 ff e1 fb     std     r31,-8(r1)
-    15af34:       78 1b 7f 7c     mr      r31,r3
-    15af38:       78 23 83 7c     mr      r3,r4
-    15af3c:       78 2b be 7c     mr      r30,r5
-    15af40:       10 00 01 f8     std     r0,16(r1)
-    15af44:       c1 ff 21 f8     stdu    r1,-64(r1)
-    15af48:       28 00 81 f8     std     r4,40(r1)
-  ...
-
-  # readelf --debug-dump=frames-interp /usr/lib64/libc-2.26.so | less
-  ...
-  00027024 0000000000000024 00027028 FDE cie=00000000 pc=000000000015af20..000000000015af88
-     LOC           CFA      r30   r31   ra
-  000000000015af20 r1+0     u     u     u
-  000000000015af34 r1+0     c-16  c-8   r0
-  000000000015af48 r1+64    c-16  c-8   c+16
-  000000000015af5c r1+0     c-16  c-8   c+16
-  000000000015af78 r1+0     u     u
-  ...
-
-  # perf probe -x /usr/lib64/libc-2.26.so -a inet_pton+0x18
-  # perf record -e probe_libc:inet_pton -g ping -6 -c 1 ::1
-  # perf script
-
-Before:
-
-  ping  2829 [005] 512917.460174: probe_libc:inet_pton: (7fff7e2baf38)
-              7fff7e2baf38 __GI___inet_pton+0x18 (/usr/lib64/libc-2.26.so)
-              7fff7e2705b4 getaddrinfo+0x164 (/usr/lib64/libc-2.26.so)
-                 12f152d70 _init+0xbfc (/usr/bin/ping)
-              7fff7e1836a0 generic_start_main.isra.0+0x140 (/usr/lib64/libc-2.26.so)
-              7fff7e183898 __libc_start_main+0xb8 (/usr/lib64/libc-2.26.so)
-                         0 [unknown] ([unknown])
-
-After:
-
-  ping  2829 [005] 512917.460174: probe_libc:inet_pton: (7fff7e2baf38)
-              7fff7e2baf38 __GI___inet_pton+0x18 (/usr/lib64/libc-2.26.so)
-              7fff7e26fa54 gaih_inet.constprop.7+0xf44 (/usr/lib64/libc-2.26.so)
-              7fff7e2705b4 getaddrinfo+0x164 (/usr/lib64/libc-2.26.so)
-                 12f152d70 _init+0xbfc (/usr/bin/ping)
-              7fff7e1836a0 generic_start_main.isra.0+0x140 (/usr/lib64/libc-2.26.so)
-              7fff7e183898 __libc_start_main+0xb8 (/usr/lib64/libc-2.26.so)
-                         0 [unknown] ([unknown])
-
-Reported-by: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-Signed-off-by: Sandipan Das <sandipan@linux.ibm.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Maynard Johnson <maynard@us.ibm.com>
-Cc: Naveen N. Rao <naveen.n.rao@linux.vnet.ibm.com>
-Cc: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
-Cc: Sukadev Bhattiprolu <sukadev@linux.vnet.ibm.com>
-Link: http://lkml.kernel.org/r/66e848a7bdf2d43b39210a705ff6d828a0865661.1530724939.git.sandipan@linux.ibm.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/perf/arch/powerpc/util/skip-callchain-idx.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
-
-diff --git a/tools/perf/arch/powerpc/util/skip-callchain-idx.c b/tools/perf/arch/powerpc/util/skip-callchain-idx.c
-index 264fc0158100..7c6eeb4633fe 100644
---- a/tools/perf/arch/powerpc/util/skip-callchain-idx.c
-+++ b/tools/perf/arch/powerpc/util/skip-callchain-idx.c
-@@ -58,9 +58,13 @@ static int check_return_reg(int ra_regno, Dwarf_Frame *frame)
- 	}
- 
- 	/*
--	 * Check if return address is on the stack.
-+	 * Check if return address is on the stack. If return address
-+	 * is in a register (typically R0), it is yet to be saved on
-+	 * the stack.
- 	 */
--	if (nops != 0 || ops != NULL)
-+	if ((nops != 0 || ops != NULL) &&
-+		!(nops == 1 && ops[0].atom == DW_OP_regx &&
-+			ops[0].number2 == 0 && ops[0].offset == 0))
- 		return 0;
- 
- 	/*
+> 
+> > ---
+> >  samples/bpf/Makefile | 21 ++++++++++++++++++++-
+> >  1 file changed, 20 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/samples/bpf/Makefile b/samples/bpf/Makefile
+> > index 1303af10e54d..e079266360a3 100644
+> > --- a/samples/bpf/Makefile
+> > +++ b/samples/bpf/Makefile
+> > @@ -191,6 +191,8 @@ HOSTLOADLIBES_xdpsock		+= -pthread
+> >  #  make samples/bpf/ LLC=~/git/llvm/build/bin/llc CLANG=~/git/llvm/build/bin/clang
+> >  LLC ?= llc
+> >  CLANG ?= clang
+> > +LLVM_OBJCOPY ?= llvm-objcopy
+> > +BTF_PAHOLE ?= pahole
+> >  
+> >  # Detect that we're cross compiling and use the cross compiler
+> >  ifdef CROSS_COMPILE
+> > @@ -198,6 +200,20 @@ HOSTCC = $(CROSS_COMPILE)gcc
+> >  CLANG_ARCH_ARGS = -target $(ARCH)
+> >  endif
+> >  
+> > +BTF_LLC_PROBE := $(shell $(LLC) -march=bpf -mattr=help 2>&1 | grep dwarfris)
+> > +BTF_PAHOLE_PROBE := $(shell $(BTF_PAHOLE) --help 2>&1 | grep BTF)
+> > +BTF_OBJCOPY_PROBE := $(shell $(LLVM_OBJCOPY) --help 2>&1 | grep -i 'usage.*llvm')
+> > +
+> > +ifneq ($(BTF_LLC_PROBE),)
+> > +ifneq ($(BTF_PAHOLE_PROBE),)
+> > +ifneq ($(BTF_OBJCOPY_PROBE),)
+> > +	EXTRA_CFLAGS += -g
+> > +	LLC_FLAGS += -mattr=dwarfris
+> > +	DWARF2BTF = y
+> > +endif
+> > +endif
+> > +endif
+> > +
+> >  # Trick to allow make to be run from this directory
+> >  all:
+> >  	$(MAKE) -C ../../ $(CURDIR)/ BPF_SAMPLES_PATH=$(CURDIR)
+> > @@ -256,4 +272,7 @@ $(obj)/%.o: $(src)/%.c
+> >  		-Wno-gnu-variable-sized-type-not-at-end \
+> >  		-Wno-address-of-packed-member -Wno-tautological-compare \
+> >  		-Wno-unknown-warning-option $(CLANG_ARCH_ARGS) \
+> > -		-O2 -emit-llvm -c $< -o -| $(LLC) -march=bpf -filetype=obj -o $@
+> > +		-O2 -emit-llvm -c $< -o -| $(LLC) -march=bpf $(LLC_FLAGS) -filetype=obj -o $@
+> > +ifeq ($(DWARF2BTF),y)
+> > +	$(BTF_PAHOLE) -J $@
+> > +endif
+> > -- 
+> > 2.17.1
+> > 
