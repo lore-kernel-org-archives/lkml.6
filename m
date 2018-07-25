@@ -2,166 +2,125 @@ Return-Path: <SRS0=S+WB=KJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22E47C6778F
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 15:12:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B08AC6778F
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 15:16:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C308A20891
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 15:12:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9633C20891
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 15:16:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=contabo.de header.i=@contabo.de header.b="Bj02kjgf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C308A20891
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=contabo.de
+	dkim=pass (1024-bit key) header.d=xilinx.onmicrosoft.com header.i=@xilinx.onmicrosoft.com header.b="wIx1QV91"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9633C20891
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xilinx.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728568AbeGYQYW (ORCPT
+        id S1728570AbeGYQ2q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 12:24:22 -0400
-Received: from mail.contabo.com ([91.205.175.50]:54355 "EHLO mail.contabo.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728505AbeGYQYW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Jul 2018 12:24:22 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=contabo.de;
-         s=default; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:MIME-Version
-        :Date:Message-ID:From:References:Cc:To:Subject:Sender:Reply-To:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=FdtZ7UrMQafjP/yUL0pmqdGfURrz6ktW9ExEteFxtIc=; b=Bj02kjgfXvxGDFZyUkEQzsVF8S
-        8m0mBi2iWjJy/HDEDSsL0xyIFDoGCSO22MsPt5vytrvBd5SykOKJSQ2hgY44QPegL1XzXe4JQkddV
-        S6553kveMXA2OI4a7kajCpPl0MR93H5b8fvc02ltTwBSRPnjT6tkJjGEMNQJ463C22dE95jNo+zyR
-        +Twb5bBML6ZU36e5oS/C+BoS4vTORCKsO9KvH0BMo3ipSJtKcHNxRgWnKorZKNGb4WTICqGUPG8xI
-        tLuDzxpzJ0ZfdVka36YGfK0bc1DNr53d9qxrEinAoKKNHpwIMLf1WR+BzI3otfLRGM8ZxydrTHGCm
-        PqUJYLfw==;
-Received: from [178.238.239.246] (port=42318 helo=[192.168.178.123])
-        by mail.contabo.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.91)
-        (envelope-from <tino.lehnig@contabo.de>)
-        id 1fiLSX-00082t-HC; Wed, 25 Jul 2018 17:12:13 +0200
-Subject: Re: Zram writeback feature unstable with heavy swap utilization -
- BUG: Bad page state in process...
-To:     Minchan Kim <minchan@kernel.org>
-Cc:     ngupta@vflare.org, linux-kernel@vger.kernel.org,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-References: <0516ae2d-b0fd-92c5-aa92-112ba7bd32fc@contabo.de>
- <20180724010342.GA195675@rodete-desktop-imager.corp.google.com>
- <d4f4b5a1-9e31-375d-0599-b6d8b0ebc9df@contabo.de>
- <20180725132126.GA2893@rodete-laptop-imager.corp.google.com>
-From:   Tino Lehnig <tino.lehnig@contabo.de>
-Message-ID: <d07348bb-3102-30f0-d138-de23449e23df@contabo.de>
-Date:   Wed, 25 Jul 2018 17:12:13 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <20180725132126.GA2893@rodete-laptop-imager.corp.google.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+        Wed, 25 Jul 2018 12:28:46 -0400
+Received: from mail-eopbgr710042.outbound.protection.outlook.com ([40.107.71.42]:41861
+        "EHLO NAM05-BY2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728419AbeGYQ2q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Jul 2018 12:28:46 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=xilinx.onmicrosoft.com; s=selector1-xilinx-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=3e1FK4gdHekyvJo/cLqaolvWzHMfhRh1QhWdxi3ck8Q=;
+ b=wIx1QV91eBiYqXjqPgoEcq/lTBhfsTtyqQw4/gblghi3duaPrfZfFXHLggxl/hv5enPCSR5JsHdrrZ115xejFgPPbhnNBYxCZGtFEmlYY3LejAD0cQlWyUlRwYWpW+aW10UN3UKmS52WuFDg05kt3nU2jJPk8MqQh59pbPuDO78=
+Received: from MWHPR02MB2816.namprd02.prod.outlook.com (10.175.50.14) by
+ MWHPR02MB3342.namprd02.prod.outlook.com (10.164.187.154) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.973.20; Wed, 25 Jul 2018 15:14:55 +0000
+Received: from MWHPR02MB2816.namprd02.prod.outlook.com
+ ([fe80::8453:d61e:5ced:a726]) by MWHPR02MB2816.namprd02.prod.outlook.com
+ ([fe80::8453:d61e:5ced:a726%3]) with mapi id 15.20.0995.014; Wed, 25 Jul 2018
+ 15:14:55 +0000
+From:   Anurag Kumar Vulisha <anuragku@xilinx.com>
+To:     Andy Shevchenko <andy.shevchenko@gmail.com>
+CC:     Felipe Balbi <balbi@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "v.anuragkumar@gmail.com" <v.anuragkumar@gmail.com>,
+        USB <linux-usb@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH 4/8] usb: dwc3: implement stream transfer timeout
+Thread-Topic: [PATCH 4/8] usb: dwc3: implement stream transfer timeout
+Thread-Index: AQHUJA3sROLEOOfQMEemCHeBIrzYkaSgCeIAgAAA61A=
+Date:   Wed, 25 Jul 2018 15:14:55 +0000
+Message-ID: <MWHPR02MB2816A41E9C145BC8D89F834AA7540@MWHPR02MB2816.namprd02.prod.outlook.com>
+References: <1532519491-19502-1-git-send-email-anurag.kumar.vulisha@xilinx.com>
+ <1532519491-19502-5-git-send-email-anurag.kumar.vulisha@xilinx.com>
+ <CAHp75VfM8h9CKXO9bfmF74fcLW68Rs+1514Je=o1jOFd52Uf7A@mail.gmail.com>
+In-Reply-To: <CAHp75VfM8h9CKXO9bfmF74fcLW68Rs+1514Je=o1jOFd52Uf7A@mail.gmail.com>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - mail.contabo.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - contabo.de
-X-Get-Message-Sender-Via: mail.contabo.com: authenticated_id: tino.lehnig@contabo.de
-X-Authenticated-Sender: mail.contabo.com: tino.lehnig@contabo.de
+X-MS-Has-Attach: 
+X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=anuragku@xilinx.com; 
+x-originating-ip: [182.72.145.30]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;MWHPR02MB3342;6:Bp0Xa0mJALjcX2vBpfNUTwHPlEFSabYfpc8+gKfyHQdGS1G/Ih4jvlKUyJCSiiDfe62DzHJddRVj+fLFXh+8g0pCNWLpAlGAYYTpDBc0gpavQu9PEzy1SxkvB2bq54Wsbrugl/yYMDJvyJ9ZAY5+3Jg054XtYp68gbA7KD6wKayCk+uqUIrlZqlqofWGL93OsEPYyh2HIifcETyGeKm0pdKaIrOO0dVd2eOLbNWqTsRAU/3/1mWbdZzZVNWmddfeEmMjzW1tr2IqGGEiUH9ndK19pM+4FKHh8Hzc6kuUuOGisGl+2xBHaHYStuJIIQF+kanixvR9z+KxO4WCOrOxkqNDL2p1JO2HuoopHa3CS0vGh4BbW5tR6fyQIlp94TVAPSiPu1k6plAzqE+qaST/te7yx6xGUpT14592rUQGVqyUEYcuWHdiMIj3orEtCEzVeHgXyYJl92w02vWE9EkBSQ==;5:FEPwkjE4e/iApqRRXTB4aWXWSyvPUOpfzel/Akd6ReqwxH6/sCcnJDThyyomacfs8mwwDDLOlmofszsYn3ym7/g1EbEf1DoAgCpJ6lDeasL+EOoN6+CEdNdpWWlagzGxSoKuzi4CZppUtXT/6TocGXXsDwD5V1a4WX+D+wCFRIo=;7:2otz0HrrSLstQGtl9CICBBuG+3Z2q6y3+ClXuqsTT09VaBBGgYqZCM7iCiPwwdyp1V44rflLaUJQtdhgDGQLEI4UNgMhWcX04zlyGfCa4wwp0xcUYLInEGQ94JADS1Z6SE7M/rflhmohZoP2HaBNwhtLKNPpiH2GRjsjbKinFZjHJOsZi02tDIGuZIxhJ7Qg4UPrnZ/3mAV06i86UHvbgsnlTPKK5reUr6GC2YapUUntTQHirLiL3ykmB34ZZ0+L
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: e65937e1-e89b-41a9-667c-08d5f24160dd
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(5600073)(711020)(4618075)(4534165)(7168020)(4627221)(201703031133081)(201702281549075)(8990107)(2017052603328)(7153060)(7193020);SRVR:MWHPR02MB3342;
+x-ms-traffictypediagnostic: MWHPR02MB3342:
+x-ld-processed: 657af505-d5df-48d0-8300-c31994686c5c,ExtAddr
+x-microsoft-antispam-prvs: <MWHPR02MB33428481716DA1C4C61DCC53A7540@MWHPR02MB3342.namprd02.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(9452136761055)(85827821059158)(192813158149592);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3002001)(3231311)(944501410)(52105095)(93006095)(93001095)(10201501046)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123564045)(20161123558120)(20161123562045)(6072148)(201708071742011)(7699016);SRVR:MWHPR02MB3342;BCL:0;PCL:0;RULEID:;SRVR:MWHPR02MB3342;
+x-forefront-prvs: 0744CFB5E8
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(39860400002)(346002)(396003)(136003)(376002)(199004)(189003)(13464003)(8676002)(4326008)(54906003)(99286004)(5250100002)(6116002)(7736002)(305945005)(229853002)(74316002)(39060400002)(478600001)(33656002)(81166006)(81156014)(3846002)(97736004)(55236004)(186003)(86362001)(6916009)(105586002)(5660300001)(26005)(316002)(66066001)(106356001)(102836004)(53936002)(2906002)(476003)(256004)(11346002)(6436002)(55016002)(14454004)(446003)(6506007)(25786009)(9686003)(2900100001)(7696005)(68736007)(6246003)(486006)(76176011)(8936002);DIR:OUT;SFP:1101;SCL:1;SRVR:MWHPR02MB3342;H:MWHPR02MB2816.namprd02.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: xilinx.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: JnEmTV9c9yajycF8aFLyO6ycsmDbU96w8Pt/C9tg/0AHWxFEtJxJkS/KH4nqvYla2dxB24MTvfMPTwb5NOb9Aht2D4FYlLMdtduRUKqEmDWXAygAvwXNx5CsuUSDwUyyFH7Z862EaRPlKpfyT/NQmnkIpUy9lhzaE+/g0PgQ+5RIIggOKnxIFmMStfBuHMADmXlhFP1PaYca2ekUZiS6QyYtHd5UiVsAb2fxP5PEUkvvb0rohm3widLBnIF8MonHWZ5NY8mwEEEO8qx0g1BPb9N679ir8z8PHQ0SkF9E0jpNKbbiYADgm0qdGpzLCKgB6oHSjmV54cxfRl8gzeNpilWHQOtRN4FWe9q1QWT+y80=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-OriginatorOrg: xilinx.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e65937e1-e89b-41a9-667c-08d5f24160dd
+X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Jul 2018 15:14:55.2349
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 657af505-d5df-48d0-8300-c31994686c5c
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR02MB3342
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-On 07/25/2018 03:21 PM, Minchan Kim wrote:
-> It would be much helpful if you could check more versions with git-bisect.
-
-I started bisecting today, but my results are not conclusive yet. It is 
-certain that the problem started with 4.15 though. I have not 
-encountered the bug message in 4.15-rc1 so far, but the kvm processes 
-always became unresponsive after hitting swap and could not be killed 
-there. I saw the same behavior in rc2, rc3, and other builds in between, 
-but the bad state bug would only trigger occasionally there. The 
-behavior in 4.15.18 is the same as in newer kernels.
-
-> I also want to reproduce it.
-> 
-> Today, I downloaded one window iso and execute it as cdrom with my owned
-> compiled kernel on KVM but I couldn't reproduce.
-> I also tested some heavy swap workload(kernel build with multiple CPU
-> on small memory) but I failed to reproduce, too.
-> 
-> Please could you told me your method more detail?
-
-I found that running Windows in KVM really is the only reliable method, 
-maybe because the zero pages are easily compressible. There is actually 
-not a lot of disk utilization on the backing device when running this test.
-
-My operating system is a minimal install of Debian 9. I took the kernel 
-configuration from the default Debian kernel and built my own kernel 
-with "make oldconfig" leaving all settings at their defaults. The only 
-thing I changed in the configuration was enabling the zram writeback 
-feature.
-
-All my tests were done on bare-metal hardware with Xeon processors and 
-lots of RAM. I encounter the bug quite quickly, but it still takes 
-several GBs of swap usage. Below is my /proc/meminfo with enough KVM 
-instances running (3 in my case) to trigger the bug on my test machine.
-
-I will also try to reproduce the problem on some different hardware next.
-
---
-
-MemTotal:       264033384 kB
-MemFree:         1232968 kB
-MemAvailable:          0 kB
-Buffers:            1152 kB
-Cached:             5036 kB
-SwapCached:        49200 kB
-Active:         249955744 kB
-Inactive:        5096148 kB
-Active(anon):   249953396 kB
-Inactive(anon):  5093084 kB
-Active(file):       2348 kB
-Inactive(file):     3064 kB
-Unevictable:           0 kB
-Mlocked:               0 kB
-SwapTotal:      1073741820 kB
-SwapFree:       938603260 kB
-Dirty:                68 kB
-Writeback:             0 kB
-AnonPages:      255007752 kB
-Mapped:             4708 kB
-Shmem:              1212 kB
-Slab:              88500 kB
-SReclaimable:      16096 kB
-SUnreclaim:        72404 kB
-KernelStack:        5040 kB
-PageTables:       765560 kB
-NFS_Unstable:          0 kB
-Bounce:                0 kB
-WritebackTmp:          0 kB
-CommitLimit:    1205758512 kB
-Committed_AS:   403586176 kB
-VmallocTotal:   34359738367 kB
-VmallocUsed:           0 kB
-VmallocChunk:          0 kB
-HardwareCorrupted:     0 kB
-AnonHugePages:  254799872 kB
-ShmemHugePages:        0 kB
-ShmemPmdMapped:        0 kB
-HugePages_Total:       0
-HugePages_Free:        0
-HugePages_Rsvd:        0
-HugePages_Surp:        0
-Hugepagesize:       2048 kB
-DirectMap4k:       75136 kB
-DirectMap2M:    10295296 kB
-DirectMap1G:    260046848 kB
-
--- 
-Kind regards,
-
-Tino Lehnig
+SGkgQW5keSwNCg0KVGhhbmtzIGZvciB5b3VyIHJldmlldyBjb21tZW50cywgcGxlYXNlIGZpbmQg
+bXkgY29tbWVudHMgaW5saW5lIA0KDQo+LS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj5Gcm9t
+OiBBbmR5IFNoZXZjaGVua28gW21haWx0bzphbmR5LnNoZXZjaGVua29AZ21haWwuY29tXQ0KPlNl
+bnQ6IFdlZG5lc2RheSwgSnVseSAyNSwgMjAxOCA4OjM2IFBNDQo+VG86IEFudXJhZyBLdW1hciBW
+dWxpc2hhIDxhbnVyYWdrdUB4aWxpbnguY29tPg0KPkNjOiBGZWxpcGUgQmFsYmkgPGJhbGJpQGtl
+cm5lbC5vcmc+OyBHcmVnIEtyb2FoLUhhcnRtYW4NCj48Z3JlZ2toQGxpbnV4Zm91bmRhdGlvbi5v
+cmc+OyB2LmFudXJhZ2t1bWFyQGdtYWlsLmNvbTsgVVNCIDxsaW51eC0NCj51c2JAdmdlci5rZXJu
+ZWwub3JnPjsgTGludXggS2VybmVsIE1haWxpbmcgTGlzdCA8bGludXgta2VybmVsQHZnZXIua2Vy
+bmVsLm9yZz4NCj5TdWJqZWN0OiBSZTogW1BBVENIIDQvOF0gdXNiOiBkd2MzOiBpbXBsZW1lbnQg
+c3RyZWFtIHRyYW5zZmVyIHRpbWVvdXQNCj4NCj5PbiBXZWQsIEp1bCAyNSwgMjAxOCBhdCAyOjUx
+IFBNLCBBbnVyYWcgS3VtYXIgVnVsaXNoYQ0KPjxhbnVyYWcua3VtYXIudnVsaXNoYUB4aWxpbngu
+Y29tPiB3cm90ZToNCj4+IEFjY29yZGluZyB0byBkd2MzIGRhdGFib29rIHdoZW4gc3RyZWFtcyBh
+cmUgdXNlZCwgaXQgbWF5IGJlIHBvc3NpYmxlDQo+PiBmb3IgdGhlIGhvc3QgYW5kIGRldmljZSBi
+ZWNvbWUgb3V0IG9mIHN5bmMsIHdoZXJlIGRldmljZSBtYXkgd2FpdCBmb3INCj4+IGhvc3QgdG8g
+aXNzdWUgcHJpbWUgdHJhbnNjYXRpb24gYW5kIGhvc3QgbWF5IHdhaXQgZm9yIGRldmljZSB0byBp
+c3N1ZQ0KPj4gZXJkeS4gVG8gYXZvaWQgc3VjaCBkZWFkbG9jaywgdGltZW91dCBuZWVkcyB0byBi
+ZSBpbXBsZW1lbnRlZC4gQWZ0ZXINCj4+IHRpbWVvdXQgb2NjdXJzLCBkZXZpY2Ugd2lsbCBmaXJz
+dCBzdG9wIHRyYW5zZmVyIGFuZCByZXN0YXJ0IHRoZQ0KPj4gdHJhbnNmZXIgYWdhaW4uIFRoaXMg
+cGF0Y2ggZG9lcyB0aGUgc2FtZS4NCj4NCj4+ICsvKg0KPj4gKyAqIFRpbWVvdXQgdmFsdWUgaW4g
+bXNlY3MgdXNlZCBieSBzdHJlYW1fdGltZW91dF90aW1lciB3aGVuIHN0cmVhbXMNCj4+ICthcmUg
+ZW5hYmxlZCAgKi8NCj4+ICsjZGVmaW5lIFNUUkVBTV9USU1FT1VUICAgICAgICAgNTANCj4NCj5Q
+ZXJoYXBzLCBTVFJFQU1fVElNRU9VVF9NUyA1MA0KPg0KPkR1bm5vIGFib3V0IHRoaXMgZHJpdmVy
+LCBidXQgaXQncyBhIHVzdWFsIHByYWN0aWNlIHRvIGhlbHAgcmVhZGVyIHdpdGggdW5kZXJzdGFu
+ZGluZw0KPmNvZGUgb24gdGhlIGZpcnN0IGdsYW5jZS4NCj4NCg0KU2luY2UgSSBoYXZlIG1lbnRp
+b25lZCAibXNlY3MiIGluIGNvbW1lbnQgYWJvdmUgZGVzY3JpYmluZyB0aGUgU1RSRUFNX1RJTUVP
+VVQsDQp0aG91Z2h0IGl0IHdvdWxkIHN1ZmZpY2UuIEJ1dCBpZiB5b3UgZmVlbCBJIHNob3VsZCBj
+aGFuZ2UgaXQsIEkgIHdpbGwgZml4IGl0IGluIHYyDQoNClRoYW5rcywNCkFudXJhZyBLdW1hciBW
+dWxpc2hhDQogDQo+LS0NCj5XaXRoIEJlc3QgUmVnYXJkcywNCj5BbmR5IFNoZXZjaGVua28NCg==
