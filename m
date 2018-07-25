@@ -2,114 +2,161 @@ Return-Path: <SRS0=S+WB=KJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=0.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_SBL,URIBL_SBL_A autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30044C6778F
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 19:38:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83127C67790
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 19:40:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DDEC020844
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 19:38:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C8B3220671
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 19:40:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PWe3f8te"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DDEC020844
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="EriKDrSM";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="QIsoyUxq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C8B3220671
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730965AbeGYUve (ORCPT
+        id S1730400AbeGYUxf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 16:51:34 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:53211 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730642AbeGYUvd (ORCPT
+        Wed, 25 Jul 2018 16:53:35 -0400
+Received: from mail-yb0-f196.google.com ([209.85.213.196]:39937 "EHLO
+        mail-yb0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729836AbeGYUxf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Jul 2018 16:51:33 -0400
-Received: by mail-wm0-f66.google.com with SMTP id o11-v6so7140584wmh.2
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Jul 2018 12:38:26 -0700 (PDT)
+        Wed, 25 Jul 2018 16:53:35 -0400
+Received: by mail-yb0-f196.google.com with SMTP id y11-v6so3447849ybm.7
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Jul 2018 12:40:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=0OgM9TKvElmrUkoCowceIsQvVrdAh7fLPGxhEmy/En0=;
-        b=PWe3f8teYQ4YvWorPRc5CmJplPC+ApnhgZeszdMCRBcsWSL6I+dw+SSS6dKGxSwLPq
-         eIWDz9tl3RJEfTZLEFXLQBEqDZ6hYf9ipKNfUck0hYNHemAZqYm9bhgpqeghRYZMsnAO
-         Gd9FKp3wrCKL9DUjIvKhre2SK2Eutqa/r4LclBipRLoklHD7LZO79TldzSBZj4RidzdL
-         ExYesD7+Yv/hBaSig6jeeRheBJBIaum2VfJyGUXOG1yaKCW4rHJmBaJOtDWyJHbyqRuG
-         GKIlkAIm2r0WVRZl+pmHd2jkV9qKO0WRr/FBwStCxLFDwam05T7AguwvQmlZ4PfF8vwI
-         1m3g==
+        d=google.com; s=20161025;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=s8iR1YNJ+sDOGvPnN2kr9+lQORIhLJWI/Wdhe7t2yaA=;
+        b=EriKDrSMCuMG1FVCSKMBljlpB2ZNnMb7+ibbdn8m9WvL4RIHF67pw22SQSNLVvn4sI
+         yfGUdODtvN0LJa9YtbWqmeSTnmrVBtAN7ngKBMiWjxQVY58GYZDvjwkF1U0jMb/88hhk
+         sCBPJ7wCNKvhF8dfS5j7isvad0pk/dfYrPzpFYASZz0PpdP9oVz0swJuNx51DY0q/+Pp
+         7eLSiTXnoJdHuS+EtMzYsZaWRpiEzFzEXeaFlMsXZPbCEs0By6Ncs1G9q4oVsXIqaYi1
+         efvdZlyxB+T8K1VEqgMrbvxi/C/PLhjjB04rlGwE6xJfluAy9ItmEp4duV5QL21NbpRw
+         fsCg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=s8iR1YNJ+sDOGvPnN2kr9+lQORIhLJWI/Wdhe7t2yaA=;
+        b=QIsoyUxqYQ68LbrM7jS7T3ZjYe7FNuaTFKTkgS/h/rwtJzvItR69w8Ia65hIZiyXFc
+         fGeHCRKebGhOSf2JaNs3fjFEGH+SpzHDyTJEbKpwNnNe/CAEZW+nwxi8tDzQmauswDqi
+         oZhN2+aZnl+qJoMjZK3IIAVrwl5kC1BQLUOOY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=0OgM9TKvElmrUkoCowceIsQvVrdAh7fLPGxhEmy/En0=;
-        b=ZO+LktIV2YTeB3jgbQxfOMaObC9OopURDQ/c0aIPIoXqLbqxm36W4qW5wG2v5NDrsX
-         6MbyjJuCLvRtu4wcNL/Kd43p2BtvPmtt4q8CcfidnpStXMCB04sbCmC/VFI3KKnXf5qD
-         Vca9a4susXYc+Ma77EZV+eavJzdQ95BSWyH002YjByHtWG/RUJlWiZHRaVj/yiI7oLrJ
-         RLyoVRqIDxPeh++DeSMhZUz4/X0V7wu847NWDZi+I+Kp+Non/puw61ZOA3BtZNgHvYRC
-         VxkVaqY0VB8JcKXcQxP3TdpKouq8Xje+3ORnHl8qSoSrV0M0qNORua56duDM4PmNuYNl
-         HIpw==
-X-Gm-Message-State: AOUpUlG7dy+3p1Dc1t6yde6tTk/S5+3NChd4cNNDsTI1PtVEOaUmpvsP
-        G+4WCmQEbTQxN1kZo9k9mMs=
-X-Google-Smtp-Source: AAOMgpeXiCra310i10GE2XWKAzkqwM4FdMPcZY+TkzerpjXfgtcSOXfyojkC+bB7ZqkwY90sugDEdg==
-X-Received: by 2002:a1c:9290:: with SMTP id u138-v6mr5804262wmd.52.1532547505848;
-        Wed, 25 Jul 2018 12:38:25 -0700 (PDT)
-Received: from localhost.localdomain ([2a02:8108:85c0:57c8:32db:916d:97a2:c4eb])
-        by smtp.gmail.com with ESMTPSA id t186-v6sm3752729wmf.14.2018.07.25.12.38.24
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 25 Jul 2018 12:38:25 -0700 (PDT)
-From:   Michael Straube <straube.linux@gmail.com>
-To:     gregkh@linuxfoundation.org
-Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
-        Michael Straube <straube.linux@gmail.com>
-Subject: [PATCH 4/4] staging: rtl8188eu: remove unused rtw_get_oper_choffset()
-Date:   Wed, 25 Jul 2018 21:37:58 +0200
-Message-Id: <20180725193758.1219-4-straube.linux@gmail.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180725193758.1219-1-straube.linux@gmail.com>
-References: <20180725193758.1219-1-straube.linux@gmail.com>
+        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
+         :date:message-id:subject:to:cc;
+        bh=s8iR1YNJ+sDOGvPnN2kr9+lQORIhLJWI/Wdhe7t2yaA=;
+        b=JuGjwPuDcCFfAhGmOp5bgoDjsYwV2FeyighWKbHuJXXODL+wx3bqFrkeYeKnwX1L/R
+         jlel+28dgQwmlMZXiJ5VCyHo2gByDAIGqFF3lPpzY1GoggekfR6QDnfYPzIDNDO0nOjy
+         Nj4MyvpShMDPjHkwZ5f1q8f4Yzn72Izu6Wuv+h31LixoRuFPNWZjAUtQkEw58SG1w8q5
+         tCydJNus7/CwPTK3WoAq278gu9TiU4vQ/t6BBmZK4W1VYAiU1SBon2+t+R9fWj35nKu8
+         2K/kmIomGzvs6anIjamPt7cktSjCmi92qpNHqJ4gXVt/a1McOvcAynTQDvMJ1zU7QQ3h
+         7fvQ==
+X-Gm-Message-State: AOUpUlGzqG+EiB7awz/PLa1GAXABv8pdhGl+DVN3SMAk0uh34QJxbEFU
+        GAuZ9s/X32vWxY3JtFGtozpmgWQwt6mymLYnUFX/dw==
+X-Google-Smtp-Source: AAOMgpeV3WYfJM/pvdL+j0p5kArPwWWmQ20DfHM7GF8VRfmomkX/oS1/yzPGDN/OG508zuVT7mxmHKqnZu10toUgWNM=
+X-Received: by 2002:a25:b219:: with SMTP id i25-v6mr12857885ybj.112.1532547627305;
+ Wed, 25 Jul 2018 12:40:27 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:a25:6602:0:0:0:0:0 with HTTP; Wed, 25 Jul 2018 12:40:26
+ -0700 (PDT)
+In-Reply-To: <20180724092403.332125ff@mschwideX1>
+References: <CA+55aFzMheDA-2z=MdGgJrz-REcrknb+4OEvRKaJipm+x6xEhw@mail.gmail.com>
+ <20180723204617.GA14487@roeck-us.net> <CA+55aFyuaEGGksOxv3aAp0THYkAapap-JY65A0A81S0qUE0S+g@mail.gmail.com>
+ <20180723212330.GA7441@roeck-us.net> <CA+55aFw3tRe70mUgV70oi6xBwSLx0h_supRGoNUHgrcSGxUgeg@mail.gmail.com>
+ <20180724081845.1cc4c9d8@mschwideX1> <25151348-ce12-f754-876c-8b39b23d16a1@de.ibm.com>
+ <20180724092403.332125ff@mschwideX1>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Wed, 25 Jul 2018 12:40:26 -0700
+X-Google-Sender-Auth: -Zzhxz-cHyBqFbtZiua5wiFE5EU
+Message-ID: <CAGXu5jJKFoCHvFxT-kc-O=fCUa3CKrErXUspxMfGNTAHAithOw@mail.gmail.com>
+Subject: Re: Linux 4.18-rc6
+To:     Martin Schwidefsky <schwidefsky@de.ibm.com>
+Cc:     Christian Borntraeger <borntraeger@de.ibm.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        David Miller <davem@davemloft.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The function rtw_get_oper_choffset() is never used, so remove it.
-Discovered by cppcheck.
+On Tue, Jul 24, 2018 at 12:24 AM, Martin Schwidefsky
+<schwidefsky@de.ibm.com> wrote:
+> On Tue, 24 Jul 2018 09:15:58 +0200
+> Christian Borntraeger <borntraeger@de.ibm.com> wrote:
+>
+>> On 07/24/2018 08:18 AM, Martin Schwidefsky wrote:
+>> > On Mon, 23 Jul 2018 16:17:22 -0700
+>> > Linus Torvalds <torvalds@linux-foundation.org> wrote:
+>> >
+>> >> On Mon, Jul 23, 2018 at 2:23 PM Guenter Roeck <linux@roeck-us.net> wrote:
+>> >>>
+>> >>>>
+>> >>>> Martin - can we just remove the
+>> >>>>
+>> >>>>          select HAVE_GCC_PLUGINS
+>> >>>>
+>> >>>> from the s390 Kconfig file (or perhaps add "if BROKEN" or something to
+>> >>>> disable it).
+>> >>>>
+>> >>>> Because if it's not getting fixed, it shouldn't be exposed.
+>> >>>>
+>> >>> The problem only affects 4.18 - the code has been rearranged in -next.
+>> >>> Only, in my builders, I can't disable a flag for individual releases,
+>> >>> so I just disabled it completely for s390.
+>> >>
+>> >> Well, I'm not going to release a 4.18 with a known problem, so in 4.18
+>> >> this *will* be disabled if it's not fixed.
+>> >>
+>> >> The fact that it might be fixed in linux-next is entirely immaterial
+>> >> to the release of 4.18.
+>> >
+>> > Ok, if gcc with the plugins and an allmodconfig is considered to be
+>> > important enough to warrant a fix, it can be pulled from here:
+>> >
+>> > git://git.kernel.org/pub/scm/linux/kernel/git/s390/linux.git for-linus
+>> >
+>> > Martin Schwidefsky (1):
+>> >       s390: disable gcc plugins
+>> >
+>> > Once that is in I will create another patch to undo this one and place
+>> > it after the early boot rework.
+>>
+>> On the list a different fix was proposed about 2 weeks ago,
 
-Signed-off-by: Michael Straube <straube.linux@gmail.com>
----
- drivers/staging/rtl8188eu/core/rtw_wlan_util.c   | 5 -----
- drivers/staging/rtl8188eu/include/rtw_mlme_ext.h | 1 -
- 2 files changed, 6 deletions(-)
+https://lkml.kernel.org/r/CAGXu5jKyESyPD1MyM7BrVFPKDY9+HqRCpXcKG5ikCZwdGZLaSw@mail.gmail.com
 
-diff --git a/drivers/staging/rtl8188eu/core/rtw_wlan_util.c b/drivers/staging/rtl8188eu/core/rtw_wlan_util.c
-index ab97fcdd6481..0fe35e141926 100644
---- a/drivers/staging/rtl8188eu/core/rtw_wlan_util.c
-+++ b/drivers/staging/rtl8188eu/core/rtw_wlan_util.c
-@@ -303,11 +303,6 @@ inline void rtw_set_oper_bw(struct adapter *adapter, u8 bw)
- 	adapter->mlmeextpriv.oper_bwmode = bw;
- }
- 
--inline u8 rtw_get_oper_choffset(struct adapter *adapter)
--{
--	return adapter->mlmeextpriv.oper_ch_offset;
--}
--
- inline void rtw_set_oper_choffset(struct adapter *adapter, u8 offset)
- {
- 	adapter->mlmeextpriv.oper_ch_offset = offset;
-diff --git a/drivers/staging/rtl8188eu/include/rtw_mlme_ext.h b/drivers/staging/rtl8188eu/include/rtw_mlme_ext.h
-index 50051a1b0655..c072e1e25d61 100644
---- a/drivers/staging/rtl8188eu/include/rtw_mlme_ext.h
-+++ b/drivers/staging/rtl8188eu/include/rtw_mlme_ext.h
-@@ -471,7 +471,6 @@ void Set_MSR(struct adapter *padapter, u8 type);
- u8 rtw_get_oper_ch(struct adapter *adapter);
- void rtw_set_oper_ch(struct adapter *adapter, u8 ch);
- void rtw_set_oper_bw(struct adapter *adapter, u8 bw);
--u8 rtw_get_oper_choffset(struct adapter *adapter);
- void rtw_set_oper_choffset(struct adapter *adapter, u8 offset);
- 
- void set_channel_bwmode(struct adapter *padapter, unsigned char channel,
+>>
+>> something like
+>>
+>> CFLAGS_als.o += $(DISABLE_LATENT_ENTROPY_PLUGIN)
+>>
+>> and I prefer that. Because your patch disables all gcc plugins.
+>
+> This change would cause trouble with patch dependencies as als.c is moved
+> to a different directory. I would prefer to disable all gcc plugins for
+> 4.18.
+
+I don't understand why not just add it to the Makefile. For -next and
+4.19, just drop the line again once you merge with 4.18? A CFLAGS_*.o
+entry for a file that doesn't exist should be harmless...
+
+Of course, if no one is actually using the gcc plugins on s390, then
+okay, disabling them isn't a problem. :) But since it's been working
+on s390 since 4.15, it seems weird to turn all of them off just for
+4.18 when a trivial fix is available.
+
+-Kees
+
 -- 
-2.18.0
-
+Kees Cook
+Pixel Security
