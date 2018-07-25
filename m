@@ -6,49 +6,48 @@ X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EFD2C6778F
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 18:00:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A890C6778F
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 18:00:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CD64A20891
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 18:00:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CD1BA20894
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 18:00:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="pVonz29X"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CD64A20891
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="sWeNuO7S"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CD1BA20894
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730471AbeGYTNQ (ORCPT
+        id S1730555AbeGYTNU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 15:13:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42370 "EHLO mail.kernel.org"
+        Wed, 25 Jul 2018 15:13:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42456 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729367AbeGYTNP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Jul 2018 15:13:15 -0400
+        id S1729367AbeGYTNU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Jul 2018 15:13:20 -0400
 Received: from jouet.infradead.org (189-94-96-116.3g.claro.net.br [189.94.96.116])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5F75120852;
-        Wed, 25 Jul 2018 18:00:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A256A2088E;
+        Wed, 25 Jul 2018 18:00:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1532541629;
-        bh=97NTsB2c3HZVLlMf7XFDB8dchsZRIMNe7RQN0aNetgs=;
+        s=default; t=1532541634;
+        bh=/iZxqnAKbx0ZEKxnFej3BvyZn8B4ZVaQEaufDpEEnxc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=pVonz29XbkIeKFHAMZt8/nOlNfEwmnsL5I432S0zSmqacF2IUmKzo4+3nqfwbQWPA
-         iFU/0bbG3NDXgZr7rhvi0RvkcF5tsbqhrT3UG02qIGiA3jFaabwcKDLzXTmzv4Q1Ek
-         HJsuYgo61z5iTEyoV5YNNREWcZDRJImivlV5wk84=
+        b=sWeNuO7S7W9v3A3Kw0sKzd0Vj3PhOHisyfE+ODwPY5E7s19YitUsMKjLzKmABoHF8
+         GAVWtuzSafzRMWyN/dV23DgA+beYcXV1vBM5gBcwBhhlEBv3ewVgMB85Xnh1aRpmjH
+         twMbC0/jp13/KZyIykXltFgLZl25TLlhVux95XbA=
 From:   Arnaldo Carvalho de Melo <acme@kernel.org>
 To:     Ingo Molnar <mingo@kernel.org>
 Cc:     Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
         linux-perf-users@vger.kernel.org,
-        Alexey Budankov <alexey.budankov@linux.intel.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Andi Kleen <ak@linux.intel.com>, Jiri Olsa <jolsa@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        David Ahern <dsahern@gmail.com>, Jiri Olsa <jolsa@kernel.org>,
         Namhyung Kim <namhyung@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 01/27] perf tests: Check that complex event name is parsed correctly
-Date:   Wed, 25 Jul 2018 14:59:35 -0300
-Message-Id: <20180725180001.15108-2-acme@kernel.org>
+        Wang Nan <wangnan0@huawei.com>
+Subject: [PATCH 02/27] perf hists: Clarify callchain disabling when available
+Date:   Wed, 25 Jul 2018 14:59:36 -0300
+Message-Id: <20180725180001.15108-3-acme@kernel.org>
 X-Mailer: git-send-email 2.14.4
 In-Reply-To: <20180725180001.15108-1-acme@kernel.org>
 References: <20180725180001.15108-1-acme@kernel.org>
@@ -57,111 +56,147 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alexey Budankov <alexey.budankov@linux.intel.com>
+From: Arnaldo Carvalho de Melo <acme@redhat.com>
 
-Extend regression testing to cover case of complex event names enabled
-by the cset f92da71280fb ("perf record: Enable arbitrary event names
-thru name= modifier").
+We want to allow having mixed events with/without callchains, not
+using a global flag to show callchains, but allowing supressing
+callchains when they are present.
 
-Testing it:
+So invert the logic of the last parameter to hists__fprint() to
+that effect.
 
-  # perf test
-   1: vmlinux symtab matches kallsyms                       : Skip
-   2: Detect openat syscall event                           : Ok
-   3: Detect openat syscall event on all cpus               : Ok
-   4: Read samples using the mmap interface                 : Ok
-   5: Test data source output                               : Ok
-   6: Parse event definition strings                        : Ok		<===!
-   7: Simple expression parser                              : Ok
-...
-
-Committer testing:
-
-  # perf test "event definition"
-   6: Parse event definition strings                        : Ok
-  # perf test -v 6 2> /tmp/before
-  # perf test -v 6 2> /tmp/after
-  # diff -u /tmp/before /tmp/after
-  --- /tmp/before	2018-06-19 10:50:21.485572638 -0300
-  +++ /tmp/after	2018-06-19 10:50:40.886572896 -0300
-  @@ -1,6 +1,6 @@
-    6: Parse event definition strings                        :
-   --- start ---
-  -test child forked, pid 24259
-  +test child forked, pid 24904
-   running test 0 'syscalls:sys_enter_openat'Using CPUID GenuineIntel-6-3D
-   registering plugin: /root/.traceevent/plugins/plugin_kvm.so
-   registering plugin: /root/.traceevent/plugins/plugin_hrtimer.so
-  @@ -136,9 +136,11 @@
-   running test 50 '4:0x6530160/name=numpmu/'
-   running test 51 'L1-dcache-misses/name=cachepmu/'
-   running test 52 'intel_pt//u'
-  +running test 53 'cycles/name='COMPLEX_CYCLES_NAME:orig=cycles,desc=chip-clock-ticks'/Duk'
-   running test 0 'cpu/config=10,config1,config2=3,period=1000/u'
-   running test 1 'cpu/config=1,name=krava/u,cpu/config=2/u'
-   running test 2 'cpu/config=1,call-graph=fp,time,period=100000/,cpu/config=2,call-graph=no,time=0,period=2000/'
-  +running test 3 'cpu/name='COMPLEX_CYCLES_NAME:orig=cycles,desc=chip-clock-ticks',period=0x1,event=0x2,umask=0x3/ukp'
-   el-capacity -> cpu/event=0x54,umask=0x2/
-   el-conflict -> cpu/event=0x54,umask=0x1/
-   el-start -> cpu/event=0xc8,umask=0x1/
-  #
-
-Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
-Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: David Ahern <dsahern@gmail.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
 Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Link: http://lkml.kernel.org/r/ad30b774-219b-7b80-c610-4e9e298cf8a7@linux.intel.com
+Cc: Wang Nan <wangnan0@huawei.com>
+Link: https://lkml.kernel.org/n/tip-ohqyisr6qge79qa95ojslptx@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/tests/parse-events.c | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+ tools/perf/builtin-c2c.c    | 4 ++--
+ tools/perf/builtin-diff.c   | 2 +-
+ tools/perf/builtin-report.c | 4 ++--
+ tools/perf/builtin-top.c    | 2 +-
+ tools/perf/ui/stdio/hist.c  | 8 ++++----
+ tools/perf/util/hist.h      | 2 +-
+ 6 files changed, 11 insertions(+), 11 deletions(-)
 
-diff --git a/tools/perf/tests/parse-events.c b/tools/perf/tests/parse-events.c
-index 61211918bfba..a36313daec4e 100644
---- a/tools/perf/tests/parse-events.c
-+++ b/tools/perf/tests/parse-events.c
-@@ -1322,6 +1322,14 @@ static int test__intel_pt(struct perf_evlist *evlist)
- 	return 0;
+diff --git a/tools/perf/builtin-c2c.c b/tools/perf/builtin-c2c.c
+index 6a8738f7ead3..f2ea85ee573f 100644
+--- a/tools/perf/builtin-c2c.c
++++ b/tools/perf/builtin-c2c.c
+@@ -2193,7 +2193,7 @@ static void print_cacheline(struct c2c_hists *c2c_hists,
+ 	fprintf(out, "%s\n", bf);
+ 	fprintf(out, "  -------------------------------------------------------------\n");
+ 
+-	hists__fprintf(&c2c_hists->hists, false, 0, 0, 0, out, true);
++	hists__fprintf(&c2c_hists->hists, false, 0, 0, 0, out, false);
  }
  
-+static int test__checkevent_complex_name(struct perf_evlist *evlist)
-+{
-+	struct perf_evsel *evsel = perf_evlist__first(evlist);
-+
-+	TEST_ASSERT_VAL("wrong complex name parsing", strcmp(evsel->name, "COMPLEX_CYCLES_NAME:orig=cycles,desc=chip-clock-ticks") == 0);
-+	return 0;
-+}
-+
- static int count_tracepoints(void)
+ static void print_pareto(FILE *out)
+@@ -2268,7 +2268,7 @@ static void perf_c2c__hists_fprintf(FILE *out, struct perf_session *session)
+ 	fprintf(out, "=================================================\n");
+ 	fprintf(out, "#\n");
+ 
+-	hists__fprintf(&c2c.hists.hists, true, 0, 0, 0, stdout, false);
++	hists__fprintf(&c2c.hists.hists, true, 0, 0, 0, stdout, true);
+ 
+ 	fprintf(out, "\n");
+ 	fprintf(out, "=================================================\n");
+diff --git a/tools/perf/builtin-diff.c b/tools/perf/builtin-diff.c
+index d660cb7b222b..39db2ee32d48 100644
+--- a/tools/perf/builtin-diff.c
++++ b/tools/perf/builtin-diff.c
+@@ -696,7 +696,7 @@ static void hists__process(struct hists *hists)
+ 	hists__output_resort(hists, NULL);
+ 
+ 	hists__fprintf(hists, !quiet, 0, 0, 0, stdout,
+-		       symbol_conf.use_callchain);
++		       !symbol_conf.use_callchain);
+ }
+ 
+ static void data__fprintf(void)
+diff --git a/tools/perf/builtin-report.c b/tools/perf/builtin-report.c
+index c04dc7b53797..02f7a3c27761 100644
+--- a/tools/perf/builtin-report.c
++++ b/tools/perf/builtin-report.c
+@@ -478,8 +478,8 @@ static int perf_evlist__tty_browse_hists(struct perf_evlist *evlist,
+ 
+ 		hists__fprintf_nr_sample_events(hists, rep, evname, stdout);
+ 		hists__fprintf(hists, !quiet, 0, 0, rep->min_percent, stdout,
+-			       symbol_conf.use_callchain ||
+-			       symbol_conf.show_branchflag_count);
++			       !(symbol_conf.use_callchain ||
++			         symbol_conf.show_branchflag_count));
+ 		fprintf(stdout, "\n\n");
+ 	}
+ 
+diff --git a/tools/perf/builtin-top.c b/tools/perf/builtin-top.c
+index ffdc2769ff9f..d21d8751e749 100644
+--- a/tools/perf/builtin-top.c
++++ b/tools/perf/builtin-top.c
+@@ -307,7 +307,7 @@ static void perf_top__print_sym_table(struct perf_top *top)
+ 	hists__output_recalc_col_len(hists, top->print_entries - printed);
+ 	putchar('\n');
+ 	hists__fprintf(hists, false, top->print_entries - printed, win_width,
+-		       top->min_percent, stdout, symbol_conf.use_callchain);
++		       top->min_percent, stdout, !symbol_conf.use_callchain);
+ }
+ 
+ static void prompt_integer(int *target, const char *msg)
+diff --git a/tools/perf/ui/stdio/hist.c b/tools/perf/ui/stdio/hist.c
+index 69b7a28f7a1c..74c4ae1f0a05 100644
+--- a/tools/perf/ui/stdio/hist.c
++++ b/tools/perf/ui/stdio/hist.c
+@@ -529,7 +529,7 @@ static int hist_entry__hierarchy_fprintf(struct hist_entry *he,
+ 
+ static int hist_entry__fprintf(struct hist_entry *he, size_t size,
+ 			       char *bf, size_t bfsz, FILE *fp,
+-			       bool use_callchain)
++			       bool ignore_callchains)
  {
- 	struct dirent *events_ent;
-@@ -1658,6 +1666,11 @@ static struct evlist_test test__events[] = {
- 		.check = test__intel_pt,
- 		.id    = 52,
- 	},
-+	{
-+		.name  = "cycles/name='COMPLEX_CYCLES_NAME:orig=cycles,desc=chip-clock-ticks'/Duk",
-+		.check = test__checkevent_complex_name,
-+		.id    = 53
-+	}
- };
+ 	int ret;
+ 	int callchain_ret = 0;
+@@ -550,7 +550,7 @@ static int hist_entry__fprintf(struct hist_entry *he, size_t size,
  
- static struct evlist_test test__events_pmu[] = {
-@@ -1676,6 +1689,11 @@ static struct evlist_test test__events_pmu[] = {
- 		.check = test__checkevent_pmu_partial_time_callgraph,
- 		.id    = 2,
- 	},
-+	{
-+		.name  = "cpu/name='COMPLEX_CYCLES_NAME:orig=cycles,desc=chip-clock-ticks',period=0x1,event=0x2,umask=0x3/ukp",
-+		.check = test__checkevent_complex_name,
-+		.id    = 3,
-+	}
- };
+ 	ret = fprintf(fp, "%s\n", bf);
  
- struct terms_test {
+-	if (hist_entry__has_callchains(he) && use_callchain)
++	if (hist_entry__has_callchains(he) && !ignore_callchains)
+ 		callchain_ret = hist_entry_callchain__fprintf(he, total_period,
+ 							      0, fp);
+ 
+@@ -755,7 +755,7 @@ int hists__fprintf_headers(struct hists *hists, FILE *fp)
+ 
+ size_t hists__fprintf(struct hists *hists, bool show_header, int max_rows,
+ 		      int max_cols, float min_pcnt, FILE *fp,
+-		      bool use_callchain)
++		      bool ignore_callchains)
+ {
+ 	struct rb_node *nd;
+ 	size_t ret = 0;
+@@ -799,7 +799,7 @@ size_t hists__fprintf(struct hists *hists, bool show_header, int max_rows,
+ 		if (percent < min_pcnt)
+ 			continue;
+ 
+-		ret += hist_entry__fprintf(h, max_cols, line, linesz, fp, use_callchain);
++		ret += hist_entry__fprintf(h, max_cols, line, linesz, fp, ignore_callchains);
+ 
+ 		if (max_rows && ++nr_rows >= max_rows)
+ 			break;
+diff --git a/tools/perf/util/hist.h b/tools/perf/util/hist.h
+index 73049f7f0f60..3badd7f1e1b8 100644
+--- a/tools/perf/util/hist.h
++++ b/tools/perf/util/hist.h
+@@ -181,7 +181,7 @@ size_t events_stats__fprintf(struct events_stats *stats, FILE *fp);
+ 
+ size_t hists__fprintf(struct hists *hists, bool show_header, int max_rows,
+ 		      int max_cols, float min_pcnt, FILE *fp,
+-		      bool use_callchain);
++		      bool ignore_callchains);
+ size_t perf_evlist__fprintf_nr_events(struct perf_evlist *evlist, FILE *fp);
+ 
+ void hists__filter_by_dso(struct hists *hists);
 -- 
 2.14.4
 
