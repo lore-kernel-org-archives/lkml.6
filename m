@@ -2,119 +2,172 @@ Return-Path: <SRS0=S+WB=KJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5483FC6778F
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 11:40:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 750D0C67790
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 11:44:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 01E8020882
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 11:40:41 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=goldelico.com header.i=@goldelico.com header.b="Uvo4GFM0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 01E8020882
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goldelico.com
+	by mail.kernel.org (Postfix) with ESMTP id 3039320843
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 11:44:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3039320843
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728937AbeGYMv4 (ORCPT
+        id S1728902AbeGYMzW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 08:51:56 -0400
-Received: from mo4-p01-ob.smtp.rzone.de ([85.215.255.52]:11030 "EHLO
-        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728739AbeGYMvz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Jul 2018 08:51:55 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1532518836;
-        s=strato-dkim-0002; d=goldelico.com;
-        h=To:References:Message-Id:Cc:Date:In-Reply-To:From:Subject:
-        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
-        bh=nBjKI0xQGq17aJqlzDAgTKQHivw5kw5UiM2r1HRHmek=;
-        b=Uvo4GFM0sdXVdWvJLykM7racejaoaewhO3wGWCkG/7fdAyZ12DE9Sbju5VzYp/YBqw
-        ZwjAUAfrEFj+z7k6VsInZwAfRtnexPpguVs9sawk5w/kVZIw1FuiZxBGlcGmoFKCK7OJ
-        3OrPR2X/Mgc8I+SlJPuhC4k9dKXttFvyGBWgEDObRr7BU8v/89dvuFjCLxWJxhByCrCs
-        3c/1nJsxklmV/j6Z4a9h3RiyGFiVGBc2LZHconjZqoLZn4PYuGVWrtgTZxDV6dl6OyRj
-        X+FcBco3I39MC25llHJ2cFq/SyTpm1GufZZrmspMoNbszFdbkgjOsxLBnvOKdNzlDDYm
-        JmLQ==
-X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMgPgp8VKxflSZ1P34KBj4Qpw87Wiuc1qET/2Lw=="
-X-RZG-CLASS-ID: mo00
-Received: from imac.fritz.box
-        by smtp.strato.de (RZmta 43.13 DYNA|AUTH)
-        with ESMTPSA id 6047f4u6PBeYfBs
-        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
-        (Client did not present a certificate);
-        Wed, 25 Jul 2018 13:40:34 +0200 (CEST)
-Subject: Re: [PATCH 04/32] ARM: dts: omap3-gta04: fixes for tvout / venc
-Mime-Version: 1.0 (Mac OS X Mail 9.3 \(3124\))
-Content-Type: multipart/signed; boundary="Apple-Mail=_B017C245-8EDD-407D-AF80-B4EC89087852"; protocol="application/pgp-signature"; micalg=pgp-sha256
-X-Pgp-Agent: GPGMail
-From:   "H. Nikolaus Schaller" <hns@goldelico.com>
-In-Reply-To: <20180725103750.4yltpfswd52fpw63@earth.universe>
-Date:   Wed, 25 Jul 2018 13:40:32 +0200
-Cc:     Marek Belisko <marek@goldelico.com>,
-        =?utf-8?Q?Beno=C3=AEt_Cousson?= <bcousson@baylibre.com>,
-        Tony Lindgren <tony@atomide.com>,
+        Wed, 25 Jul 2018 08:55:22 -0400
+Received: from mga03.intel.com ([134.134.136.65]:12223 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728390AbeGYMzW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Jul 2018 08:55:22 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Jul 2018 04:44:03 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,401,1526367600"; 
+   d="scan'208";a="70183250"
+Received: from paasikivi.fi.intel.com ([10.237.72.42])
+  by fmsmga002.fm.intel.com with ESMTP; 25 Jul 2018 04:43:45 -0700
+Received: by paasikivi.fi.intel.com (Postfix, from userid 1000)
+        id C9B84204DA; Wed, 25 Jul 2018 14:43:44 +0300 (EEST)
+Date:   Wed, 25 Jul 2018 14:43:44 +0300
+From:   Sakari Ailus <sakari.ailus@linux.intel.com>
+To:     Yong <yong.deng@magewell.com>
+Cc:     Sakari Ailus <sakari.ailus@iki.fi>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        linux-omap@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, letux-kernel@openphoenux.org
-Message-Id: <1E64094B-7037-4409-A9EA-81648F8F51B4@goldelico.com>
-References: <cover.1532501910.git.hns@goldelico.com> <73e5b1fd4cc27e3148c6bc2e8f8281f3996ccf68.1532501910.git.hns@goldelico.com> <20180725103750.4yltpfswd52fpw63@earth.universe>
-To:     Sebastian Reichel <sebastian.reichel@collabora.co.uk>
-X-Mailer: Apple Mail (2.3124)
+        Chen-Yu Tsai <wens@csie.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>,
+        Jacob Chen <jacob-chen@iotwrt.com>,
+        Yannick Fertre <yannick.fertre@st.com>,
+        Thierry Reding <treding@nvidia.com>,
+        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
+        Todor Tomov <todor.tomov@linaro.org>,
+        linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-sunxi@googlegroups.com
+Subject: Re: [PATCH v10 2/2] media: V3s: Add support for Allwinner CSI.
+Message-ID: <20180725114344.eyra7g52xwagqkcv@paasikivi.fi.intel.com>
+References: <1525417745-37964-1-git-send-email-yong.deng@magewell.com>
+ <20180626110821.wkal6fcnoncsze6y@valkosipuli.retiisi.org.uk>
+ <20180705154802.03604f156709be11892b19c0@magewell.com>
+ <20180718095513.4cm77g2iuilvfmd6@paasikivi.fi.intel.com>
+ <20180725184224.cab5172f8558162cc74bde9e@magewell.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180725184224.cab5172f8558162cc74bde9e@magewell.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Yong,
 
---Apple-Mail=_B017C245-8EDD-407D-AF80-B4EC89087852
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain;
-	charset=us-ascii
+On Wed, Jul 25, 2018 at 06:42:24PM +0800, Yong wrote:
+> Hi Sakari,
+> 
+> On Wed, 18 Jul 2018 12:55:14 +0300
+> Sakari Ailus <sakari.ailus@linux.intel.com> wrote:
+> 
+> > Hi Yong,
+> > 
+> > On Thu, Jul 05, 2018 at 03:48:02PM +0800, Yong wrote:
+> > > > > +
+> > > > > +/* -----------------------------------------------------------------------------
+> > > > > + * Media Operations
+> > > > > + */
+> > > > > +static int sun6i_video_formats_init(struct sun6i_video *video,
+> > > > > +				    const struct media_pad *remote)
+> > > > > +{
+> > > > > +	struct v4l2_subdev_mbus_code_enum mbus_code = { 0 };
+> > > > > +	struct sun6i_csi *csi = video->csi;
+> > > > > +	struct v4l2_format format;
+> > > > > +	struct v4l2_subdev *subdev;
+> > > > > +	u32 pad;
+> > > > > +	const u32 *pixformats;
+> > > > > +	int pixformat_count = 0;
+> > > > > +	u32 subdev_codes[32]; /* subdev format codes, 32 should be enough */
+> > > > > +	int codes_count = 0;
+> > > > > +	int num_fmts = 0;
+> > > > > +	int i, j;
+> > > > > +
+> > > > > +	pad = remote->index;
+> > > > > +	subdev = media_entity_to_v4l2_subdev(remote->entity);
+> > > > > +	if (subdev == NULL)
+> > > > > +		return -ENXIO;
+> > > > > +
+> > > > > +	/* Get supported pixformats of CSI */
+> > > > > +	pixformat_count = sun6i_csi_get_supported_pixformats(csi, &pixformats);
+> > > > > +	if (pixformat_count <= 0)
+> > > > > +		return -ENXIO;
+> > > > > +
+> > > > > +	/* Get subdev formats codes */
+> > > > > +	mbus_code.pad = pad;
+> > > > > +	mbus_code.which = V4L2_SUBDEV_FORMAT_ACTIVE;
+> > > > > +	while (!v4l2_subdev_call(subdev, pad, enum_mbus_code, NULL,
+> > > > > +				 &mbus_code)) {
+> > > > 
+> > > > The formats supported by the external sub-device may depend on horizontal
+> > > > and vertical flipping. You shouldn't assume any particular configuration
+> > > > here: instead, bridge drivers generally just need to make sure the formats
+> > > > match in link validation when streaming is started. At least the CSI-2
+> > > > receiver driver and the DMA engine driver (video device) should check the
+> > > > configuration is valid. See e.g. the IPU3 driver:
+> > > > drivers/media/pci/intel/ipu3/ipu3-cio2.c .
+> > > 
+> > > Can mbus_code be added dynamically ?
+> > > The code here only enum the mbus code and get the possible supported
+> > > pairs of pixformat and mbus by SoC. Not try to check if the formats
+> > > (width height ...) is valid or not. The formats validation will be 
+> > > in link validation when streaming is started as per your advise. 
+> > 
+> > The formats that can be enumerated from the sensor here are those settable
+> > using SUBDEV_S_FMT. The enumeration will change on raw sensors if you use
+> > the flipping controls. As the bridge driver implements MC as well as subdev
+> > APIs, generally the sensor configuration is out of scope of this driver
+> > since it's directly configured from the user space.
+> > 
+> > Just check that the pipeline is valid before starting streaming in your
+> > driver.
+> 
+> Sorry. I am still confused.
+> As the CSI driver does not enum the formats supported by sensor.
+> How to get a valid format if I do not want to open the subdev? 
 
+For MC-enabled drivers that expose the pipeline, the user is responsible
+for configuring the pipeline.
 
-> Am 25.07.2018 um 12:37 schrieb Sebastian Reichel =
-<sebastian.reichel@collabora.co.uk>:
->=20
-> Hi,
->=20
-> On Wed, Jul 25, 2018 at 08:58:36AM +0200, H. Nikolaus Schaller wrote:
->> 			port@1 {
->> -				reg =3D <1>;
->> +				reg =3D <0>;
->=20
-> You should also update the node name.
+There are bridge drivers that do not expose the pipeline but that will
+exclude the use of e.g. some sensor drivers with those bridge drivers.
 
-AH, indeed. Thanks for your eagle's eyes :)
+> Many applications still only open /dev/video*.
 
-BR,
-Nikolaus
+That's true, and this is indeed a known gap:
 
+<URL:https://www.spinics.net/lists/linux-media/msg137668.html>
 
---Apple-Mail=_B017C245-8EDD-407D-AF80-B4EC89087852
-Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment;
-	filename=signature.asc
-Content-Type: application/pgp-signature;
-	name=signature.asc
-Content-Description: Message signed with OpenPGP using GPGMail
+So in other words, there is no solution for that issue right now, but this
+is in no way specific to your driver, and it is known that this needs to be
+addressed.
 
------BEGIN PGP SIGNATURE-----
+-- 
+Kind regards,
 
-iQIcBAEBCAAGBQJbWGGxAAoJEIl79TGLgAm6CYwP/j4Nm4zbRcm/+Fjhr/VpH0kL
-81ZrYN0MQ1i1YUGuRtmXgtbhewe5Pm9ZaXZmRVlTW3LO4cM6WTEZyEyAyRznL1r3
-Yi4wBjzse1YXDVcSMlI6jPBKZT7DPaF16Ak7UcQYWL89z/3awMOOJR6ni1JVXceJ
-WNmEzuKzOCy+Jr82/oTrbdzemCr+r9nLOLA7fNvlLiV6oF99jzPi/U7k7ZevdZZm
-VJ99M83vg5fbr4Qv+DzJICbpDd5bko+ZwGeRyMeeQ1WmyYIuZzDvc1B1TYaFN1MW
-47LZmJNxgLMTICDs9/q3NMiaYEh6H5TEK3fN/zPzUoRYngEl1ekZdNHudY4CR/9W
-2HcUOo3dJdt3noQbduaFvt7rjLxVyDfI6f8izC+sIrUFHKySQKkVtkC80iidh3Wk
-ubvQGt+FExKgao6mXDVVj6ZghmpynSw8KPf6k8THkap/K01DPo+QUbnhoax8AhZC
-ZIR7y+9GRu6S48uo/CpfvpzpvEzKPiowIXladLqTs8q4PK0XzYs8nTj2NYKf9faf
-4lyswMkJnZHvkx029jVYNVMVIn4WJMzkf22zcjHh5OXvLZ1Bv2Z/dgiI2Xaaql3h
-UjsfRKGFAlCRN26pDfgkwz4bYQPk+Eh2BGkOaVI8JvHL04Hxkp1Pt6KCsnq2gwdw
-Hm3mDB7es7V9vKZChiw9
-=FDD3
------END PGP SIGNATURE-----
-
---Apple-Mail=_B017C245-8EDD-407D-AF80-B4EC89087852--
+Sakari Ailus
+sakari.ailus@linux.intel.com
