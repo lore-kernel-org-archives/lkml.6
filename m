@@ -2,100 +2,122 @@ Return-Path: <SRS0=S+WB=KJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77083C67790
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 13:27:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 816F3C6778F
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 13:28:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 27F0C20890
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 13:27:51 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="catCZb7L"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 27F0C20890
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 458BE20843
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 13:28:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 458BE20843
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729043AbeGYOj3 (ORCPT
+        id S1729101AbeGYOjy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 10:39:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37626 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728358AbeGYOj3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Jul 2018 10:39:29 -0400
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 67F4320893;
-        Wed, 25 Jul 2018 13:27:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1532525268;
-        bh=4dshf+C7gcGIGamhmNQZV5GgiKbAAwQ8ii3Poo6QE9E=;
-        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
-        b=catCZb7Ll9MYNEkcqrfMkcOBIiA6UFaWVbsNsyg5GjhYxbDvBQyUTpukor1NWPyM4
-         3eJSCBN3tCAR+KsULcKIYC7w/ngDMDPPgsH8qR/0m9Xb8hExHQphAXlCXlTk4g8KAm
-         bCXZCltV4HC6G3a7e7Xy6AQx9U5rCQZnP0Y4UDNg=
-Received: by mail-wr1-f51.google.com with SMTP id a3-v6so7429131wrt.2;
-        Wed, 25 Jul 2018 06:27:48 -0700 (PDT)
-X-Gm-Message-State: AOUpUlHsLCuUBSA/VEuQm0hInjxivZ9r55/wfQYINzAH3XMuPuA1gewJ
-        2nsq2FD+ATLl/CgTeC5U7b7W+Sd/MdpPRaipDQg=
-X-Google-Smtp-Source: AAOMgpfbXMWeDmcu2bcfm7/4KB9bD9N1HwJEWJT/jo8eBDVWkfIAjajdD9CWLJmTCReY2OZakttqGbB5G5t2M1QwwMo=
-X-Received: by 2002:adf:9d81:: with SMTP id p1-v6mr15091319wre.12.1532525266943;
- Wed, 25 Jul 2018 06:27:46 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:adf:9141:0:0:0:0:0 with HTTP; Wed, 25 Jul 2018 06:27:46
- -0700 (PDT)
-In-Reply-To: <784782B0-A387-4D3B-A517-E85D851162B8@oracle.com>
-References: <CAJKOXPd2rntNOpU1quR9Zm_J22+=pEaj4ZTC_tdZ0zcRYUciFg@mail.gmail.com>
- <CAPKp9uZ79ybkv7dMpcy2GQ9L+rWk+vdExQ48diWWQPOUdDQtSQ@mail.gmail.com>
- <CAJKOXPfX0CytKcYDaDAYYuCQjk-mcGjFRHfZco-wPQsc4G1agA@mail.gmail.com>
- <BCD39D7E-EEEC-4EB9-824E-63323C333C88@oracle.com> <CAJKOXPcw-i99_U-Ltuuf6w-WRK7V4gNqVSYkCMGFEXQG2DL2XQ@mail.gmail.com>
- <CAJKOXPf7V1z4pNZ2RsjkJmaVAgk34_rPOtQOc7J5KRMSRemrdg@mail.gmail.com>
- <082848F5-6360-4523-BA95-601777E17CF2@oracle.com> <CAJKOXPe4uqOZGd_zb_Mqq4Fspu63LHZky86O4tPaD3BZNCBS6w@mail.gmail.com>
- <6AAC5897-8762-4209-8718-67291B87AA00@oracle.com> <d617f8a85c3414230cd755fe0e4470c0f8bd17ff.camel@hammerspace.com>
- <26995E49-E8DD-421D-BABF-9E672B9383BD@oracle.com> <30a1455b6817361f8228c022628aef5cdee70c3e.camel@hammerspace.com>
- <784782B0-A387-4D3B-A517-E85D851162B8@oracle.com>
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-Date:   Wed, 25 Jul 2018 15:27:46 +0200
-X-Gmail-Original-Message-ID: <CAJKOXPfMiaGP9xqPcOQMs+a4RKvhK03v51e5r3GaUiFs0G=61Q@mail.gmail.com>
-Message-ID: <CAJKOXPfMiaGP9xqPcOQMs+a4RKvhK03v51e5r3GaUiFs0G=61Q@mail.gmail.com>
-Subject: Re: [BUG BISECT] NFSv4 client fails on Flush Journal to Persistent Storage
-To:     Chuck Lever <chuck.lever@oracle.com>
-Cc:     Trond Myklebust <trondmy@hammerspace.com>,
-        "sudeep.holla@arm.com" <sudeep.holla@arm.com>,
-        Trond Myklebust <trond.myklebust@primarydata.com>,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        "J. Bruce Fields" <bfields@fieldses.org>,
-        Jeff Layton <jlayton@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>, linux-nfs@vger.kernel.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "linux-samsung-soc@vger.kernel.org" 
-        <linux-samsung-soc@vger.kernel.org>
+        Wed, 25 Jul 2018 10:39:54 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:52169 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728379AbeGYOjx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Jul 2018 10:39:53 -0400
+Received: from lupine.hi.pengutronix.de ([2001:67c:670:100:3ad5:47ff:feaf:1a17] helo=lupine)
+        by metis.ext.pengutronix.de with esmtp (Exim 4.89)
+        (envelope-from <p.zabel@pengutronix.de>)
+        id 1fiJpr-0004Zx-Ns; Wed, 25 Jul 2018 15:28:11 +0200
+Message-ID: <1532525286.4879.5.camel@pengutronix.de>
+Subject: Re: [PATCH 0/2] Document memory-to-memory video codec interfaces
+From:   Philipp Zabel <p.zabel@pengutronix.de>
+To:     Tomasz Figa <tfiga@chromium.org>, linux-media@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org,
+        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Pawel Osciak <posciak@chromium.org>,
+        Alexandre Courbot <acourbot@chromium.org>, kamil@wypas.org,
+        a.hajda@samsung.com, Kyungmin Park <kyungmin.park@samsung.com>,
+        jtp.park@samsung.com,
+        Tiffany Lin =?UTF-8?Q?=28=E6=9E=97=E6=85=A7=E7=8F=8A=29?= 
+        <tiffany.lin@mediatek.com>,
+        Andrew-CT Chen =?UTF-8?Q?=28=E9=99=B3=E6=99=BA=E8=BF=AA=29?= 
+        <andrew-ct.chen@mediatek.com>, todor.tomov@linaro.org,
+        nicolas@ndufresne.ca,
+        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Dave Stevenson <dave.stevenson@raspberrypi.org>,
+        ezequiel@collabora.com
+Date:   Wed, 25 Jul 2018 15:28:06 +0200
+In-Reply-To: <20180724140621.59624-1-tfiga@chromium.org>
+References: <20180724140621.59624-1-tfiga@chromium.org>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6-1+deb9u1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2001:67c:670:100:3ad5:47ff:feaf:1a17
+X-SA-Exim-Mail-From: p.zabel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 18 June 2018 at 18:20, Chuck Lever <chuck.lever@oracle.com> wrote:
+Hi Tomasz,
+
+On Tue, 2018-07-24 at 23:06 +0900, Tomasz Figa wrote:
+> This series attempts to add the documentation of what was discussed
+> during Media Workshops at LinuxCon Europe 2012 in Barcelona and then
+> later Embedded Linux Conference Europe 2014 in Düsseldorf and then
+> eventually written down by Pawel Osciak and tweaked a bit by Chrome OS
+> video team (but mostly in a cosmetic way or making the document more
+> precise), during the several years of Chrome OS using the APIs in
+> production.
+> 
+> Note that most, if not all, of the API is already implemented in
+> existing mainline drivers, such as s5p-mfc or mtk-vcodec. Intention of
+> this series is just to formalize what we already have.
 >
-> The extra serialization appears to have a reproducible performance
-> impact on RDMA, which no longer takes the reserve_lock when allocating
-> a slot.
->
-> I could put an xprt_alloc_xid call in xprt_alloc_slot, but that would
-> only work for socket-based transports. Would it be OK if RDMA had its
-> own XID allocation mechanism?
+> It is an initial conversion from Google Docs to RST, so formatting is
+> likely to need some further polishing. It is also the first time for me
+> to create such long RST documention. I could not find any other instance
+> of similar userspace sequence specifications among our Media documents,
+> so I mostly followed what was there in the source. Feel free to suggest
+> a better format.
+> 
+> Much of credits should go to Pawel Osciak, for writing most of the
+> original text of the initial RFC.
+> 
+> Changes since RFC:
+> (https://lore.kernel.org/patchwork/project/lkml/list/?series=348588)
+>  - The number of changes is too big to list them all here. Thanks to
+>    a huge number of very useful comments from everyone (Philipp, Hans,
+>    Nicolas, Dave, Stanimir, Alexandre) we should have the interfaces much
+>    more specified now. The issues collected since previous revisions and
+>    answers leading to this revision are listed below.
 
-Hi,
+Thanks a lot for the update, and especially for the nice Q&A summary of
+the discussions so far.
 
-On recent next the issue appeared again. My boards with NFSv4 root
-timeout on 80% of boots. This time my NFS server is faster - Pi3 B+
-:).
+[...]
+> Decoder issues
+> 
+[...]
+>   How should ENUM_FRAMESIZES be affected by profiles and levels?
+> 
+>   Answer: Not in current specification - the logic is too complicated and
+>   it might make more sense to actually handle this in user space.  (In
+>   theory, level implies supported frame sizes + other factors.)
 
-Is this know? Should I start long bisect or maybe you can point me to
-possible causes?
+For decoding I think it makes more sense to let the hardware decode them
+from the stream and present them as read-only controls, such as:
 
-Best regards,
-Krzysztof
+42a68012e67c ("media: coda: add read-only h.264 decoder profile/level
+controls")
+
+if possible. For encoding, the coda firmware determines level from
+bitrate and coded resolution, itself, so I agree not making this part of
+the spec is a good idea for now.
+
+regards
+Philipp
