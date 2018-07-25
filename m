@@ -2,150 +2,111 @@ Return-Path: <SRS0=S+WB=KJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3870C6778F
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 01:18:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 015B9C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 01:19:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 740FE20856
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 01:18:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 740FE20856
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 91FD120856
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 01:19:57 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="R02dLmt8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 91FD120856
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388616AbeGYC16 (ORCPT
+        id S2388572AbeGYC3F (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 22:27:58 -0400
-Received: from mga09.intel.com ([134.134.136.24]:10073 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388485AbeGYC16 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 22:27:58 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Jul 2018 18:18:47 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,399,1526367600"; 
-   d="scan'208";a="74233089"
-Received: from blu2-desk2.ccr.corp.intel.com (HELO [10.0.2.15]) ([10.239.13.1])
-  by fmsmga004.fm.intel.com with ESMTP; 24 Jul 2018 18:18:25 -0700
-Subject: Re: [RFC PATCH 01/10] iommu/vt-d: Get iommu device for a mediated
- device
-To:     Alex Williamson <alex.williamson@redhat.com>
-References: <1532239773-15325-1-git-send-email-baolu.lu@linux.intel.com>
- <1532239773-15325-2-git-send-email-baolu.lu@linux.intel.com>
- <20180724125056.4ae477c9@t450s.home>
-Cc:     Joerg Roedel <joro@8bytes.org>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Kirti Wankhede <kwankhede@nvidia.com>, ashok.raj@intel.com,
-        sanjay.k.kumar@intel.com, jacob.jun.pan@intel.com,
-        kevin.tian@intel.com, yi.l.liu@intel.com, yi.y.sun@intel.com,
-        peterx@redhat.com, iommu@lists.linux-foundation.org,
-        kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jacob Pan <jacob.jun.pan@linux.intel.com>
-From:   Lu Baolu <baolu.lu@linux.intel.com>
-Message-ID: <5B57CFDD.1070505@linux.intel.com>
-Date:   Wed, 25 Jul 2018 09:18:21 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:38.0) Gecko/20100101
- Thunderbird/38.5.1
+        Tue, 24 Jul 2018 22:29:05 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:39502 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388420AbeGYC3F (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Jul 2018 22:29:05 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w6P1JH9O154095
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Jul 2018 01:19:53 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=mime-version :
+ references : in-reply-to : from : date : message-id : subject : to : cc :
+ content-type; s=corp-2018-07-02;
+ bh=31x20a6kd5ukTj3NWOTNexqTl8nWWBmSCyUfbXPtzqg=;
+ b=R02dLmt8SmUGuyMMXUEECDQQijK0xHp2XB7ObmZBOBIe0g+ip3WoTxjWb+vaVt1hclfS
+ RNqXALAmXF3A5Va35aA/PmCc2jFxeOq5Djgkxw9Sp810j3+exg1HSj328EyTNF56e2hC
+ Qxpzo6HztBnoqwYxTJwlKOPncMOYjafg2MWqmGQufgKamNs1m4QP3dSrq6hjp8k4F3m3
+ qtVS3AwpsUV9AMcW4hXmNwFEpd2Rk1O5uL3M11jy4UqPiE8nez4ueqiZTxaeBuOMchoU
+ izFJTUo1RQZNvP2Z01JpGRM3zZbYrsQpr+ojM7Gibv7uqu5GMJXYaAUonBsj5AMBUUmd JQ== 
+Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
+        by userp2120.oracle.com with ESMTP id 2kbwfpuby5-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK)
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Jul 2018 01:19:53 +0000
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w6P1JqhB018290
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK)
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Jul 2018 01:19:52 GMT
+Received: from abhmp0005.oracle.com (abhmp0005.oracle.com [141.146.116.11])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w6P1JqiJ030691
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Jul 2018 01:19:52 GMT
+Received: from mail-oi0-f42.google.com (/209.85.218.42)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 24 Jul 2018 18:19:52 -0700
+Received: by mail-oi0-f42.google.com with SMTP id d189-v6so10979841oib.6
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Jul 2018 18:19:52 -0700 (PDT)
+X-Gm-Message-State: AOUpUlGy5Ygh/xHmBjE4pEKcjzgIxUKZhn7uq0KG6ZW4wkfMdoKjAGZQ
+        J/52vl9h3W1lMUkOu0pPl71yzIU51ysLjn7mC4c=
+X-Google-Smtp-Source: AAOMgpdMTX7uW4G5i47bfXKR3TuxdOGY3B541duayW0ZeKMqJbApW2L8woLJuqruZdYVYuIhaeMMF5hp0B+2kM8TqEc=
+X-Received: by 2002:aca:da88:: with SMTP id r130-v6mr1294196oig.163.1532481592122;
+ Tue, 24 Jul 2018 18:19:52 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20180724125056.4ae477c9@t450s.home>
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+References: <20180724235520.10200-1-pasha.tatashin@oracle.com>
+ <20180724235520.10200-3-pasha.tatashin@oracle.com> <20180724181218.13a1ed1d7a3e9a37e35707a9@linux-foundation.org>
+In-Reply-To: <20180724181218.13a1ed1d7a3e9a37e35707a9@linux-foundation.org>
+From:   Pavel Tatashin <pasha.tatashin@oracle.com>
+Date:   Tue, 24 Jul 2018 21:19:11 -0400
+X-Gmail-Original-Message-ID: <CAGM2reb9CLpq1cqPLVqYXEfUqBtCt4V0OL_F=CKCyJXqV88NcQ@mail.gmail.com>
+Message-ID: <CAGM2reb9CLpq1cqPLVqYXEfUqBtCt4V0OL_F=CKCyJXqV88NcQ@mail.gmail.com>
+Subject: Re: [PATCH 2/3] mm: calculate deferred pages after skipping mirrored memory
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Steven Sistare <steven.sistare@oracle.com>,
+        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        kirill.shutemov@linux.intel.com, Michal Hocko <mhocko@suse.com>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        dan.j.williams@intel.com, jack@suse.cz, jglisse@redhat.com,
+        Souptick Joarder <jrdr.linux@gmail.com>, bhe@redhat.com,
+        gregkh@linuxfoundation.org, Vlastimil Babka <vbabka@suse.cz>,
+        Wei Yang <richard.weiyang@gmail.com>, dave.hansen@intel.com,
+        rientjes@google.com, mingo@kernel.org,
+        osalvador@techadventures.net, abdhalee@linux.vnet.ibm.com,
+        mpe@ellerman.id.au
+Content-Type: text/plain; charset="UTF-8"
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8964 signatures=668706
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=1 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=782
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1806210000 definitions=main-1807250012
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Alex,
-
-On 07/25/2018 02:50 AM, Alex Williamson wrote:
-> On Sun, 22 Jul 2018 14:09:24 +0800
-> Lu Baolu <baolu.lu@linux.intel.com> wrote:
+On Tue, Jul 24, 2018 at 9:12 PM Andrew Morton <akpm@linux-foundation.org> wrote:
 >
->> This patch adds the support to get the iommu device for a mediated
->> device. The assumption is that each mediated device is a minimal
->> assignable set of a physical PCI device. Hence, we should use the
->> iommu device of the parent PCI device to manage the translation.
-> Hmm, is this absolutely a valid assumption?  I'm afraid there's an
-> assumption throughout this series that the only way an mdev device
-> could be interacting with the IOMMU is via S-IOV, but we could choose
-> today to make an mdev wrapper for any device, which might provide basic
-> RID granularity to the IOMMU.  So if I make an mdev wrapper for a PF
-> such that I can implement migration for that device, is it valid for
-> the IOMMU driver to flag me as an mdev device and base mappings on my
-> parent device? 
+> On Tue, 24 Jul 2018 19:55:19 -0400 Pavel Tatashin <pasha.tatashin@oracle.com> wrote:
+>
+> > update_defer_init() should be called only when struct page is about to be
+> > initialized. Because it counts number of initialized struct pages, but
+> > there we may skip struct pages if there is some mirrored memory.
+>
+> What are the runtime effects of this error?
 
-You are right. We should not make it SIOV centric. Let me look into the
-patches and identify/fix the unreasonable assumptions.
+I found this bug by reading the code. The effect is that fewer than
+expected struct pages are initialized early in boot, and it is
+possible that in some corner cases we may fail to boot when mirrored
+pages are used. The deferred on demand code should somewhat mitigate
+this. But, this still brings some inconsistencies compared to when
+booting without mirrored pages, so it is better to fix.
 
->  Perhaps in this patch we can assume that the parent of
-> such an mdev device would be the PF backing it and that results in the
-> correct drhd,
-
-Okay.
-
->  but in the next patch we start imposing the assumption
-> that because the device is an mdev, the only valid association is via
-> pasid, which I'd say is incorrect.
-
-You are right. I will find and fix it.
-
->  
->> Cc: Ashok Raj <ashok.raj@intel.com>
->> Cc: Jacob Pan <jacob.jun.pan@linux.intel.com>
->> Cc: Kevin Tian <kevin.tian@intel.com>
->> Cc: Liu Yi L <yi.l.liu@intel.com>
->> Signed-off-by: Sanjay Kumar <sanjay.k.kumar@intel.com>
->> Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
->> ---
->>  drivers/iommu/intel-iommu.c |  6 ++++++
->>  drivers/iommu/intel-pasid.h | 16 ++++++++++++++++
->>  2 files changed, 22 insertions(+)
->>
->> diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
->> index 7d198ea..fc3ac1c 100644
->> --- a/drivers/iommu/intel-iommu.c
->> +++ b/drivers/iommu/intel-iommu.c
->> @@ -767,6 +767,12 @@ static struct intel_iommu *device_to_iommu(struct device *dev, u8 *bus, u8 *devf
->>  	if (iommu_dummy(dev))
->>  		return NULL;
->>  
->> +	if (dev_is_mdev(dev)) {
->> +		dev = dev_mdev_parent(dev);
->> +		if (WARN_ON(!dev_is_pci(dev)))
->> +			return NULL;
->> +	}
->> +
->>  	if (dev_is_pci(dev)) {
->>  		struct pci_dev *pf_pdev;
->>  
->> diff --git a/drivers/iommu/intel-pasid.h b/drivers/iommu/intel-pasid.h
->> index 518df72..46cde66 100644
->> --- a/drivers/iommu/intel-pasid.h
->> +++ b/drivers/iommu/intel-pasid.h
->> @@ -35,6 +35,22 @@ struct pasid_table {
->>  	struct list_head	dev;		/* device list */
->>  };
->>  
->> +static inline bool dev_is_mdev(struct device *dev)
->> +{
->> +	if (!dev)
->> +		return false;
->> +
->> +	return !strcmp(dev->bus->name, "mdev");
->> +}
-> I assume we're not using mdev_bus_type because mdev is a loadable
-> module and that symbol doesn't exist in this statically loaded driver,
-
-Yes.
-
-> but strcmp is a pretty ugly alternative.  Could we use symbol_get() so
-> that we can use mdev_bus_type?  Thanks,
-
-Sure.
-
-Best regards,
-Lu Baolu
+Pavel
