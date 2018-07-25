@@ -7,61 +7,61 @@ X-Spam-Status: No, score=-10.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	T_DKIMWL_WL_MED,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F5C0C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 00:51:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36E7DC28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 00:51:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 491EF20844
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 00:51:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E320620844
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 00:51:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="M83IDU4E"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 491EF20844
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="q/t9q3fl"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E320620844
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388529AbeGYCAy (ORCPT
+        id S2388553AbeGYCA6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 22:00:54 -0400
-Received: from mail-qt0-f202.google.com ([209.85.216.202]:40387 "EHLO
-        mail-qt0-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388420AbeGYCAy (ORCPT
+        Tue, 24 Jul 2018 22:00:58 -0400
+Received: from mail-vk0-f74.google.com ([209.85.213.74]:55728 "EHLO
+        mail-vk0-f74.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388420AbeGYCA6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 22:00:54 -0400
-Received: by mail-qt0-f202.google.com with SMTP id 13-v6so4660395qtt.7
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Jul 2018 17:51:49 -0700 (PDT)
+        Tue, 24 Jul 2018 22:00:58 -0400
+Received: by mail-vk0-f74.google.com with SMTP id j80-v6so2242745vke.22
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Jul 2018 17:51:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=mime-version:date:in-reply-to:message-id:references:subject:from:to
          :cc;
-        bh=ViKdSNtwNvF4IrGWzd1FVPCshvJStAz4kdtAw+u39EM=;
-        b=M83IDU4EH22kMToY93S7bV1Dwaiec2hGZml87+qgKLKPKhqj5WVE0F39f1SbCbJK36
-         9yBNZGNAca0kU4TXR/kyhjjqgxN+HdVowf7dY/GVtuIvKidmlc1WRakQhkLcjXCmgqlU
-         cbfimP7lZhwWgvV02ggPatPETKnp7017Q/Ta+0UO8CvpE656CuTYP09Tgqv5laoCdVO8
-         uy1nAoHs3sWPQTQOlb5QONn0Qc7UviGeM5Yccek8uaPXpZos+EsK2Qj8ilE/ggaFQE86
-         vBcoOEnNZ5tp8r1k5OK7+5YGIc1Re4dm1jICIUVZ9/cMsz3Nhkx4gNJ9TrrigZPiW4C3
-         Fibg==
+        bh=44jEWQQm/T28mqKlZG7Ef2B9v8tnrCRDO/QbziHOkyU=;
+        b=q/t9q3fl42QlVHVu57sUSd19zYH4fdWN4pBnLBMQX28Erop+5DBGWptd2brPQvPPcs
+         9OKBdJjAGA1cvdgtruB1Y75Olup203NE+GU3PoBYKSQU2wAv0mXXDib77jbowqe31jZi
+         x3XtdLapKL1G9wKrA8iGYOnoA8p3nh/gYdH2e5cKj8J9Gaj+4IKzJHNScIS6840qqRG2
+         9/JAM2S9qurfnvV3eFdFdRlyKxrrq0v1mZEo0rM2pKIvOgoaL6MznJzs9VAQvrmgG/d3
+         bO2DaCWnklaZQj0oSj47Gi6lsfjQYQBQSOMeukrYGJrMl1yjsk6d2VMNVxPETKJVfmn6
+         6mQw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:date:in-reply-to:message-id
          :references:subject:from:to:cc;
-        bh=ViKdSNtwNvF4IrGWzd1FVPCshvJStAz4kdtAw+u39EM=;
-        b=V38bpD4jn0n6WZFaGSO2K+AVcDbJqGElaBi9lirKIka5V043RkEG3bmScpme6ef/y4
-         fGWrNprVl9qyi0kGbRsw1UNDmHYfPNderREbdJBBdGeF6WxXu3u8s0KC7BDmErj4xYFw
-         3bIhg+hpnhVSiE4Ndg3CTakSEr9v2wjJcJdQ6Ikp1JHd+8z2aMylHkwZuKGt0nfw8kBz
-         S7+X1Jzh9R1cuWVY7cuWTobxchB3s3HeIW0UWRrmXIimCdbCN3AxsDQ6soqYMZoSv2VY
-         q6mLR/7w9S2u6F57g9CN4BS9Dv3TFeFyqrOFktRlya8Tvon87l5EZLxwlF5dxG+v7f7w
-         x4IQ==
-X-Gm-Message-State: AOUpUlFEHHgomd3OI1fZcnenhZ86MwAGZ9JA8vsvlSOYxmSrUxp1cD1p
-        xEz7YBMQ9hbMN6E3ff0lyolNY7iF
-X-Google-Smtp-Source: AAOMgpdKps6/+clibeuNK8NlVJqRmqSsSPRQ80o1xsbKStWP2L7hdPOOpv9uRclRONsWyiucMXk6v6uq
+        bh=44jEWQQm/T28mqKlZG7Ef2B9v8tnrCRDO/QbziHOkyU=;
+        b=J97UxsLsVuF4HLmozIP2auS/ce7QIPT9GO4aCYACz4xq5xPednqwREVepgE1NPstWs
+         TgsIscB4idPEsNCMXTviBY/2peOxdPJl/JN2YuISMgZN4WNqRhwhi0wv7fTEL8mrmxAp
+         tbyM3mN4+Pk6wmrXdCnoL6zyw0znOOmGq1iMJMrpr7FceFJakcSys6XglJcEQIMzVygc
+         0ducgF202/+DKReW/OC1YJ8RriWfMQbb7CCzvThx3M0l+tB0HE+rcexaAwY0qQlpKr7Y
+         XOjnls5I191nPfXvj3eJvC3Hz7Hz2Zv72O/r61TxoRVglooXQrQpz3qA2fili5S+C4hN
+         Ujbw==
+X-Gm-Message-State: AOUpUlH5MXR9o7gWxwdz30bROw167eZU4Lb4Jv15W608O7Ga6bn2rcF2
+        ZWy1NrBX9Jma3eAH9BZ5MjevI2Ts
+X-Google-Smtp-Source: AAOMgpcVPxMYUHQBGIOTpJFA4Y/X7RZi4xYzCZXzspp2aevWISOgUfsQDe2f4uMDcCtumSF4Ej3ngs9G
 MIME-Version: 1.0
-X-Received: by 2002:a0c:be06:: with SMTP id k6-v6mr10384613qvg.56.1532479908967;
- Tue, 24 Jul 2018 17:51:48 -0700 (PDT)
-Date:   Tue, 24 Jul 2018 17:51:32 -0700
+X-Received: by 2002:a1f:b42:: with SMTP id 63-v6mr9735544vkl.24.1532479912445;
+ Tue, 24 Jul 2018 17:51:52 -0700 (PDT)
+Date:   Tue, 24 Jul 2018 17:51:33 -0700
 In-Reply-To: <20180725005133.107823-1-rkir@google.com>
-Message-Id: <20180725005133.107823-2-rkir@google.com>
+Message-Id: <20180725005133.107823-3-rkir@google.com>
 References: <20180725005133.107823-1-rkir@google.com>
 X-Mailer: git-send-email 2.18.0.233.g985f88cf7e-goog
-Subject: [PATCH v2 2/3] tty: Make constants to be enums instead of #define in goldfish.c
+Subject: [PATCH v2 3/3] tty: Replace goldfish_tty_line_count with a #define
 From:   rkir@google.com
 To:     gregkh@linuxfoundation.org
 Cc:     linux-kernel@vger.kernel.org, Roman Kiryanov <rkir@google.com>
@@ -73,53 +73,69 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Roman Kiryanov <rkir@google.com>
 
-enums produce better compilation errors than defines.
+The driver never mutates this variable - no benefits of
+keeping it mutable.
 
 Signed-off-by: Roman Kiryanov <rkir@google.com>
 ---
 Changes in v2:
- - Added the enum types (goldfish_tty_reg and goldfish_tty_cmd).
+ - Replaced "const u32" with "#define".
 
- drivers/tty/goldfish.c | 24 ++++++++++++++----------
- 1 file changed, 14 insertions(+), 10 deletions(-)
+ drivers/tty/goldfish.c | 11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
 
 diff --git a/drivers/tty/goldfish.c b/drivers/tty/goldfish.c
-index a92fcb2b0002..173383f2a4c1 100644
+index 173383f2a4c1..eb88db4f243c 100644
 --- a/drivers/tty/goldfish.c
 +++ b/drivers/tty/goldfish.c
-@@ -19,18 +19,22 @@
- #include <linux/serial_core.h>
+@@ -49,10 +49,11 @@ struct goldfish_tty {
  
- /* Goldfish tty register's offsets */
--#define	GOLDFISH_TTY_REG_BYTES_READY	0x04
--#define	GOLDFISH_TTY_REG_CMD		0x08
--#define	GOLDFISH_TTY_REG_DATA_PTR	0x10
--#define	GOLDFISH_TTY_REG_DATA_LEN	0x14
--#define	GOLDFISH_TTY_REG_DATA_PTR_HIGH	0x18
--#define	GOLDFISH_TTY_REG_VERSION	0x20
-+enum goldfish_tty_reg {
-+	GOLDFISH_TTY_REG_BYTES_READY	= 0x04,
-+	GOLDFISH_TTY_REG_CMD		= 0x08,
-+	GOLDFISH_TTY_REG_DATA_PTR	= 0x10,
-+	GOLDFISH_TTY_REG_DATA_LEN	= 0x14,
-+	GOLDFISH_TTY_REG_DATA_PTR_HIGH	= 0x18,
-+	GOLDFISH_TTY_REG_VERSION	= 0x20,
-+};
+ static DEFINE_MUTEX(goldfish_tty_lock);
+ static struct tty_driver *goldfish_tty_driver;
+-static u32 goldfish_tty_line_count = 8;
+ static u32 goldfish_tty_current_line_count;
+ static struct goldfish_tty *goldfish_ttys;
  
- /* Goldfish tty commands */
--#define	GOLDFISH_TTY_CMD_INT_DISABLE	0
--#define	GOLDFISH_TTY_CMD_INT_ENABLE	1
--#define	GOLDFISH_TTY_CMD_WRITE_BUFFER	2
--#define	GOLDFISH_TTY_CMD_READ_BUFFER	3
-+enum goldfish_tty_cmd {
-+	GOLDFISH_TTY_CMD_INT_DISABLE	= 0,
-+	GOLDFISH_TTY_CMD_INT_ENABLE	= 1,
-+	GOLDFISH_TTY_CMD_WRITE_BUFFER	= 2,
-+	GOLDFISH_TTY_CMD_READ_BUFFER	= 3,
-+};
++#define GOLDFISH_TTY_LINE_COUNT 8
++
+ static void do_rw_io(struct goldfish_tty *qtty,
+ 		     unsigned long address,
+ 		     unsigned int count,
+@@ -225,7 +226,7 @@ static struct tty_driver *goldfish_tty_console_device(struct console *c,
  
- struct goldfish_tty {
- 	struct tty_port port;
+ static int goldfish_tty_console_setup(struct console *co, char *options)
+ {
+-	if ((unsigned int)co->index >= goldfish_tty_line_count)
++	if ((unsigned int)co->index >= GOLDFISH_TTY_LINE_COUNT)
+ 		return -ENODEV;
+ 	if (!goldfish_ttys[co->index].base)
+ 		return -ENODEV;
+@@ -251,14 +252,14 @@ static int goldfish_tty_create_driver(void)
+ 	int ret;
+ 	struct tty_driver *tty;
+ 
+-	goldfish_ttys = kcalloc(goldfish_tty_line_count,
++	goldfish_ttys = kcalloc(GOLDFISH_TTY_LINE_COUNT,
+ 				sizeof(*goldfish_ttys),
+ 				GFP_KERNEL);
+ 	if (goldfish_ttys == NULL) {
+ 		ret = -ENOMEM;
+ 		goto err_alloc_goldfish_ttys_failed;
+ 	}
+-	tty = alloc_tty_driver(goldfish_tty_line_count);
++	tty = alloc_tty_driver(GOLDFISH_TTY_LINE_COUNT);
+ 	if (tty == NULL) {
+ 		ret = -ENOMEM;
+ 		goto err_alloc_tty_driver_failed;
+@@ -333,7 +334,7 @@ static int goldfish_tty_probe(struct platform_device *pdev)
+ 	else
+ 		line = pdev->id;
+ 
+-	if (line >= goldfish_tty_line_count) {
++	if (line >= GOLDFISH_TTY_LINE_COUNT) {
+ 		pr_err("goldfish_tty: Reached maximum tty number of %d.\n",
+ 		       goldfish_tty_current_line_count);
+ 		ret = -ENOMEM;
 -- 
 2.18.0.233.g985f88cf7e-goog
 
