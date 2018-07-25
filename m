@@ -2,115 +2,174 @@ Return-Path: <SRS0=S+WB=KJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE14EC6778F
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 14:28:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CB50C6778F
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 14:28:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 69DB22088E
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 14:28:10 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="GxxB33XO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 69DB22088E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id CA6D620852
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 14:28:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA6D620852
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729363AbeGYPkD (ORCPT
+        id S1729182AbeGYPk2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 11:40:03 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:39033 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728370AbeGYPkD (ORCPT
+        Wed, 25 Jul 2018 11:40:28 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:40343 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728051AbeGYPk2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Jul 2018 11:40:03 -0400
-Received: by mail-wm0-f68.google.com with SMTP id h20-v6so6200818wmb.4
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Jul 2018 07:28:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=CPxlBjp9IJJj6SZNOZXY2s4FyyZaG0r+B7Dvp6lfg5w=;
-        b=GxxB33XOBqTnuMHkXS2VMnZIVvqhHS59wcU0IGCzL+qX5Lunl7M/2tU2hXvjEXRiwr
-         sGOjyDI7zzC9UZbDROD3/XITzgZEIboIqNuhCIJpquF4MbkSUjgsE6tM6m6syPs2id7y
-         bMYPURH4VCvltpX0VKyM4mqx/Gc/Nd3JMGXGgrYJEP8OhRyEn6aqdnxZcWweyCPw8Jug
-         KS2LB1eQAlI48kr3Y7dzZ+fZVBUPgrjcUWuD4gt15FoEEpx89I/R81HHmBSdDVm4kQ5k
-         +Nv+iuWsxfFD3Hfs6Xb3nSo/poHQOmuep5Df8zvw7KZG9sI8yQBhLHETdrFVD8fleJRn
-         nMjA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=CPxlBjp9IJJj6SZNOZXY2s4FyyZaG0r+B7Dvp6lfg5w=;
-        b=RqdUfhsqi+b/uLFxi6GPkY4Jiv5y8kcm+S7KKfTsNJOcmKSICNJkhmHZv4ij/gCAy7
-         ICibL13JUT5nCjzZ7/jsjtwtmQCPAE+VlElKA7UnZlcfvmI/3VSYwxj/oio0uT5aFvWV
-         +acORmuOtuNNeuVOqOkOJf/VpURKFxh40UwXltXE5SGMjLLoZaTu+P7a+5YqDW/C/dlo
-         TWSYE+HrceMyQKQGl9ZF1omi5LtXBRqfa86pos2shOuiJQqNzEU6SxL8TqV4efp3nMTX
-         8kj9hfxGwb8Gk8oyJD/nOf7iQCUhhF6HcI5g5IhjTJNeaE4WRS6ZzVjlqpwqwSR3rDF1
-         9vNA==
-X-Gm-Message-State: AOUpUlH+sXnu4pbCtti2t11NFYcKz0LDG+LgZUzPBdnd29IjjdNGUF9F
-        kaJV/uM1l+9eJGSHvACIXZLHchwL7jKGM2GYL2JSTA==
-X-Google-Smtp-Source: AAOMgpf2SM24lp97xiqEe20C2s9zCGJU3kzndotS9TAvb0++FJ2Azr7+Z3Qgbkuoim2+95FzA9gF3Prl8+o5Ukwjns0=
-X-Received: by 2002:a1c:91c7:: with SMTP id t190-v6mr5017723wmd.2.1532528885996;
- Wed, 25 Jul 2018 07:28:05 -0700 (PDT)
+        Wed, 25 Jul 2018 11:40:28 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w6PES8Ng402435
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Wed, 25 Jul 2018 07:28:08 -0700
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w6PES8kb402432;
+        Wed, 25 Jul 2018 07:28:08 -0700
+Date:   Wed, 25 Jul 2018 07:28:08 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Srikar Dronamraju <tipbot@zytor.com>
+Message-ID: <tip-0ad4e3dfe6cf3f207e61cbd8e3e4a943f8c1ad20@git.kernel.org>
+Cc:     srikar@linux.vnet.ibm.com, peterz@infradead.org,
+        linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        hpa@zytor.com, riel@surriel.com, tglx@linutronix.de,
+        mingo@kernel.org, mgorman@techsingularity.net
+Reply-To: tglx@linutronix.de, riel@surriel.com, mingo@kernel.org,
+          mgorman@techsingularity.net, linux-kernel@vger.kernel.org,
+          torvalds@linux-foundation.org, hpa@zytor.com,
+          srikar@linux.vnet.ibm.com, peterz@infradead.org
+In-Reply-To: <1529514181-9842-10-git-send-email-srikar@linux.vnet.ibm.com>
+References: <1529514181-9842-10-git-send-email-srikar@linux.vnet.ibm.com>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:sched/core] sched/numa: Modify migrate_swap() to accept
+ additional parameters
+Git-Commit-ID: 0ad4e3dfe6cf3f207e61cbd8e3e4a943f8c1ad20
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-References: <20180724224635.143944-1-shakeelb@google.com> <CAOm-9arFu63A9YJ6yVtm6_LdtbRKZg1Q3dz8WugdkBBQfoOWYw@mail.gmail.com>
-In-Reply-To: <CAOm-9arFu63A9YJ6yVtm6_LdtbRKZg1Q3dz8WugdkBBQfoOWYw@mail.gmail.com>
-From:   Shakeel Butt <shakeelb@google.com>
-Date:   Wed, 25 Jul 2018 07:27:50 -0700
-Message-ID: <CALvZod7Fqj_pJ2sn+XiDsoDX4jBLM22iGUrB9PeJXg+8S5xExQ@mail.gmail.com>
-Subject: Re: [PATCH] memcg: reduce memcg tree traversals for stats collection
-To:     bmerry@ska.ac.za
-Cc:     Johannes Weiner <hannes@cmpxchg.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        Greg Thelen <gthelen@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Cgroups <cgroups@vger.kernel.org>, Linux MM <linux-mm@kvack.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 25, 2018 at 4:26 AM Bruce Merry <bmerry@ska.ac.za> wrote:
->
-> On 25 July 2018 at 00:46, Shakeel Butt <shakeelb@google.com> wrote:
-> > I ran a simple benchmark which reads the root_mem_cgroup's stat file
-> > 1000 times in the presense of 2500 memcgs on cgroup-v1. The results are:
-> >
-> > Without the patch:
-> > $ time ./read-root-stat-1000-times
-> >
-> > real    0m1.663s
-> > user    0m0.000s
-> > sys     0m1.660s
-> >
-> > With the patch:
-> > $ time ./read-root-stat-1000-times
-> >
-> > real    0m0.468s
-> > user    0m0.000s
-> > sys     0m0.467s
->
-> Thanks for cc'ing me. I've tried this patch using my test case and the
-> results are interesting. With the patch applied, running my script
-> only generates about 8000 new cgroups, compared to 40,000 before -
-> presumably because the optimisation has altered the timing.
->
-> On the other hand, if I run the script 5 times to generate 40000
-> zombie cgroups, the time to get stats for the root cgroup (cgroup-v1)
-> is almost unchanged at around 18ms (was 20ms, but there were slightly
-> more cgroups as well), compared to the almost 4x speedup you're seeing
-> in your test.
->
+Commit-ID:  0ad4e3dfe6cf3f207e61cbd8e3e4a943f8c1ad20
+Gitweb:     https://git.kernel.org/tip/0ad4e3dfe6cf3f207e61cbd8e3e4a943f8c1ad20
+Author:     Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+AuthorDate: Wed, 20 Jun 2018 22:32:50 +0530
+Committer:  Ingo Molnar <mingo@kernel.org>
+CommitDate: Wed, 25 Jul 2018 11:41:07 +0200
 
-Hi Bruce, I think your script is trying to create zombies, so, the
-experiments after that script will be non-deterministic. Why not just
-create 40k cgroups ,no need for zombies, and the see how much this
-patch affects reading stats.
+sched/numa: Modify migrate_swap() to accept additional parameters
 
-Shakeel
+There are checks in migrate_swap_stop() that check if the task/CPU
+combination is as per migrate_swap_arg before migrating.
+
+However atleast one of the two tasks to be swapped by migrate_swap() could
+have migrated to a completely different CPU before updating the
+migrate_swap_arg. The new CPU where the task is currently running could
+be a different node too. If the task has migrated, numa balancer might
+end up placing a task in a wrong node.  Instead of achieving node
+consolidation, it may end up spreading the load across nodes.
+
+To avoid that pass the CPUs as additional parameters.
+
+While here, place migrate_swap under CONFIG_NUMA_BALANCING.
+
+Running SPECjbb2005 on a 4 node machine and comparing bops/JVM
+JVMS  LAST_PATCH  WITH_PATCH  %CHANGE
+16    25377.3     25226.6     -0.59
+1     72287       73326       1.437
+
+Signed-off-by: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Reviewed-by: Rik van Riel <riel@surriel.com>
+Acked-by: Mel Gorman <mgorman@techsingularity.net>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Link: http://lkml.kernel.org/r/1529514181-9842-10-git-send-email-srikar@linux.vnet.ibm.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+---
+ kernel/sched/core.c  | 9 ++++++---
+ kernel/sched/fair.c  | 3 ++-
+ kernel/sched/sched.h | 3 ++-
+ 3 files changed, 10 insertions(+), 5 deletions(-)
+
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index 2bc391a574e6..deafa9fe602b 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -1176,6 +1176,7 @@ void set_task_cpu(struct task_struct *p, unsigned int new_cpu)
+ 	__set_task_cpu(p, new_cpu);
+ }
+ 
++#ifdef CONFIG_NUMA_BALANCING
+ static void __migrate_swap_task(struct task_struct *p, int cpu)
+ {
+ 	if (task_on_rq_queued(p)) {
+@@ -1257,16 +1258,17 @@ unlock:
+ /*
+  * Cross migrate two tasks
+  */
+-int migrate_swap(struct task_struct *cur, struct task_struct *p)
++int migrate_swap(struct task_struct *cur, struct task_struct *p,
++		int target_cpu, int curr_cpu)
+ {
+ 	struct migration_swap_arg arg;
+ 	int ret = -EINVAL;
+ 
+ 	arg = (struct migration_swap_arg){
+ 		.src_task = cur,
+-		.src_cpu = task_cpu(cur),
++		.src_cpu = curr_cpu,
+ 		.dst_task = p,
+-		.dst_cpu = task_cpu(p),
++		.dst_cpu = target_cpu,
+ 	};
+ 
+ 	if (arg.src_cpu == arg.dst_cpu)
+@@ -1291,6 +1293,7 @@ int migrate_swap(struct task_struct *cur, struct task_struct *p)
+ out:
+ 	return ret;
+ }
++#endif /* CONFIG_NUMA_BALANCING */
+ 
+ /*
+  * wait_task_inactive - wait for a thread to unschedule.
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index 4ac60b296d96..7b4eddec3ccc 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -1848,7 +1848,8 @@ static int task_numa_migrate(struct task_struct *p)
+ 		return ret;
+ 	}
+ 
+-	ret = migrate_swap(p, env.best_task);
++	ret = migrate_swap(p, env.best_task, env.best_cpu, env.src_cpu);
++
+ 	if (ret != 0)
+ 		trace_sched_stick_numa(p, env.src_cpu, task_cpu(env.best_task));
+ 	put_task_struct(env.best_task);
+diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
+index 614170d9b1aa..4a2e8cae63c4 100644
+--- a/kernel/sched/sched.h
++++ b/kernel/sched/sched.h
+@@ -1099,7 +1099,8 @@ enum numa_faults_stats {
+ };
+ extern void sched_setnuma(struct task_struct *p, int node);
+ extern int migrate_task_to(struct task_struct *p, int cpu);
+-extern int migrate_swap(struct task_struct *, struct task_struct *);
++extern int migrate_swap(struct task_struct *p, struct task_struct *t,
++			int cpu, int scpu);
+ extern void init_numa_balancing(unsigned long clone_flags, struct task_struct *p);
+ #else
+ static inline void
