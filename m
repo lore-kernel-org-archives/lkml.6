@@ -5,77 +5,74 @@ X-Spam-Level:
 X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
 	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11EDDC67790
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 16:02:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EAEC0C6778F
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 16:04:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BB42020852
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 16:02:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BB42020852
+	by mail.kernel.org (Postfix) with ESMTP id A39BF20852
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 16:04:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A39BF20852
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729510AbeGYROn (ORCPT
+        id S1729184AbeGYRQ3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 13:14:43 -0400
-Received: from mail-it0-f66.google.com ([209.85.214.66]:54544 "EHLO
+        Wed, 25 Jul 2018 13:16:29 -0400
+Received: from mail-it0-f66.google.com ([209.85.214.66]:36652 "EHLO
         mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728600AbeGYROn (ORCPT
+        with ESMTP id S1728591AbeGYRQ3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Jul 2018 13:14:43 -0400
-Received: by mail-it0-f66.google.com with SMTP id s7-v6so9409862itb.4;
-        Wed, 25 Jul 2018 09:02:25 -0700 (PDT)
+        Wed, 25 Jul 2018 13:16:29 -0400
+Received: by mail-it0-f66.google.com with SMTP id p81-v6so9392129itp.1;
+        Wed, 25 Jul 2018 09:04:10 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=72B/WctQ8yigRW9oPwK3IwErAExvALF5lKkmW+DitzA=;
-        b=A4LLayNiEYwZdAtMadhmXk73eOJsa/Ev+BZUGKD1qtI/OtrfPAQloYaeINqc5CFyLU
-         7EXXgt3DIPxfmtPA/KXR8miwvsBXG3Qh6PGbOFqysBtfhsqpXH3PU+v1O+CuKVOYxUUW
-         /E3s6bmIs00C9oYNsjZqA686PvFqyxXLFY0a3NBqpuvVdmxPCD9RWqRj6vXquHqR4JJ2
-         itHkmrR4yUtngZA12lhuSjwWcR8KxYED5ZFyBKp2BhaCpoCzgZA674jZR95OthylLuD/
-         PAiadK8dziZpPV+tW+CtRfLp0TRPVcsSPwuFl20tAdctGl+K7Ff1Tnt5wpsWh0rdgW/Q
-         sw1A==
-X-Gm-Message-State: AOUpUlEwxlqBpDGf16bbmVpE0ABuJ2zKELLUQ81AFunMRw/dIROOb1Wl
-        Kmg/i6c6VjLYupQsBZIqNQ==
-X-Google-Smtp-Source: AAOMgpe5C+7xiiWfN5UJUTZdjhmT9fvOYjr2DMsie5h7cXrg0AmCt9W9iP3sJV7v7N+CnBn/Te1JkA==
-X-Received: by 2002:a24:c2c2:: with SMTP id i185-v6mr7030573itg.76.1532534544882;
-        Wed, 25 Jul 2018 09:02:24 -0700 (PDT)
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=oeRGLOJ6sUYRQdG0hQtbtFiyYvrK3+lhe2pdw2PfEmk=;
+        b=TPC0qEuwZcy+XMXYJ80opZisQmLpjARqIA8I1CWtyBWB8smikjWDUNsMOsruAgEIx6
+         oSb5YNKVGWPakDcR3zxYw9g7BpYJi75jWS4c94DB2/KYZNEX7TR+7vwom8yR7JSDfCC6
+         RtiTp+yMIL9aaSO57fuzeeczLkiyYVeF8rY6AoXxXyUv5fBZz9GP+A8GBLEE5uU2bO/O
+         OIWB9Tzh/7C5jGMNaoVH3kXJMvKoIU3WEJKWTIjXSiE7AdErXbGYlOpgiDsJISsAzahy
+         PHaxsaZ7vh4g9UVWNiebXEFEinjRw771rRj/hx3+cq6sJNe8w+LqBGjw/SShLUX02x99
+         84AA==
+X-Gm-Message-State: AOUpUlGs/rZksh1DFeI1dcTh67QIZU7vH6yl7Zz4MUzjRHvxDLQGEhmh
+        Z4I69vcRWLL6Wxp7tRZrqD1IoOc=
+X-Google-Smtp-Source: AAOMgpdcANkAkHVjXfKTVDZ7E1QK1eg9BjV3gewJvEt1G3jXI1E7NwGjplybx8KHPhNKtBwKiV6wKg==
+X-Received: by 2002:a24:b71a:: with SMTP id h26-v6mr6829667itf.37.1532534650556;
+        Wed, 25 Jul 2018 09:04:10 -0700 (PDT)
 Received: from localhost ([24.51.61.72])
-        by smtp.gmail.com with ESMTPSA id b90-v6sm4073914itd.18.2018.07.25.09.02.24
+        by smtp.gmail.com with ESMTPSA id t64-v6sm2847335ita.13.2018.07.25.09.04.09
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 25 Jul 2018 09:02:24 -0700 (PDT)
-Date:   Wed, 25 Jul 2018 10:02:23 -0600
+        Wed, 25 Jul 2018 09:04:10 -0700 (PDT)
+Date:   Wed, 25 Jul 2018 10:04:09 -0600
 From:   Rob Herring <robh@kernel.org>
-To:     =?utf-8?B?UGF3ZcWC?= Chmiel <pawel.mikolaj.chmiel@gmail.com>
-Cc:     nick@shmanahar.org, dmitry.torokhov@gmail.com,
-        mark.rutland@arm.com, nicolas.ferre@microchip.com,
-        alexandre.belloni@bootlin.com, linux-input@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] Input: atmel_mxt_ts: Document optional voltage
- regulators
-Message-ID: <20180725160223.GA19907@rob-hp-laptop>
-References: <1531851386-17840-1-git-send-email-pawel.mikolaj.chmiel@gmail.com>
- <1531851386-17840-3-git-send-email-pawel.mikolaj.chmiel@gmail.com>
+To:     Jisheng Zhang <Jisheng.Zhang@synaptics.com>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+Subject: Re: [PATCH v2 1/2] dt-binding: pinctrl: berlin: document AS370 SoC
+ pinctrl
+Message-ID: <20180725160409.GA20922@rob-hp-laptop>
+References: <20180718135613.1c559b9c@xhacker.debian>
+ <20180718135709.35128a54@xhacker.debian>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1531851386-17840-3-git-send-email-pawel.mikolaj.chmiel@gmail.com>
+In-Reply-To: <20180718135709.35128a54@xhacker.debian>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 17, 2018 at 08:16:26PM +0200, Paweł Chmiel wrote:
-> Document new optional voltage regulators, which can be used
-> to power down/up touchscreen.
+On Wed, Jul 18, 2018 at 01:57:09PM +0800, Jisheng Zhang wrote:
+> Add as370 to existing berlin pinctrl device tree binding.
 > 
-> Signed-off-by: Paweł Chmiel <pawel.mikolaj.chmiel@gmail.com>
+> Signed-off-by: Jisheng Zhang <Jisheng.Zhang@synaptics.com>
 > ---
->  Documentation/devicetree/bindings/input/atmel,maxtouch.txt | 8 ++++++++
->  1 file changed, 8 insertions(+)
+>  Documentation/devicetree/bindings/pinctrl/berlin,pinctrl.txt | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
 
 Reviewed-by: Rob Herring <robh@kernel.org>
