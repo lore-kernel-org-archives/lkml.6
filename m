@@ -2,105 +2,381 @@ Return-Path: <SRS0=S+WB=KJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_MED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29E28C67790
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 17:55:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A77E6C67790
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 17:55:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E2BF720843
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 17:55:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E2BF720843
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 4F00C20843
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 17:55:57 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Ing10iUd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F00C20843
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730034AbeGYTIH (ORCPT
+        id S1730141AbeGYTIj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 15:08:07 -0400
-Received: from mail-io0-f195.google.com ([209.85.223.195]:46760 "EHLO
-        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729187AbeGYTIH (ORCPT
+        Wed, 25 Jul 2018 15:08:39 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:39872 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729341AbeGYTIi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Jul 2018 15:08:07 -0400
-Received: by mail-io0-f195.google.com with SMTP id i18-v6so7027135ioj.13;
-        Wed, 25 Jul 2018 10:55:23 -0700 (PDT)
+        Wed, 25 Jul 2018 15:08:38 -0400
+Received: by mail-wm0-f66.google.com with SMTP id h20-v6so6826807wmb.4
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Jul 2018 10:55:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=P/Bq8cEbIpimuyXLO+LkxZIZFQImb6Hqo+h7HbI6ROM=;
+        b=Ing10iUdacHpWTpIkqXI6SMyi94K4k6RdULPdNwpL0fMoZ5NQkusdwZnKFAMMhWmH8
+         GkS5UMoDDULdoTTsD0rBvmC1HCGpQ4XyPsPhR6gFTYhEvSfsvSf/uTEP0eIyVQ4cpudV
+         6UKX9Xj+JeIyQxhoTOn/E0kQJCqP4mWklMNXJD9IHCkZpi7RdrO5/Mdyl28ZjzeChA3i
+         7wrsSK9i6dsKY6h/pfWTbQl65h8yURHeyc1aUUIek8k7jfxcoSP7p7S9YPk3tPOqpz12
+         eLgwd5aOwHBlcn11LxVg+U4Eiuhd/EkonfPX5i1S2JATx7DH/OhfYH1NTyFJRzVLIjIL
+         6EnA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=y62fstzq9Kr6GqQPMn+o0NULfUM1KpXOKn60iz1+JgM=;
-        b=DaX1Awl50xjStPpRcPBFIFU45IxlvMReUgUJYAu5Hs1Tl0yVIZCfQRkEwgcEQb0srU
-         ovadghPjJPH5p3fQfLd4Pf5DDpvF0FjVX1dUcJCkzzHJe9CDxByUitNMlesU1gs9SX2h
-         tCuWGzl1MT08zm+4Sp/onAE0zf011KdvAFzp+71b/q5UCtM8Nf/LEQiz1pgPvVCiuAB1
-         zzsej2Hrzj+NqY3LQ3MCkk9J0f2Di5ipm6EgprwwpaHEfvlZuJQophHhZDgQZVPECbHP
-         9n1I3uQRYuwQxgeQj3xbl0UWlUrbgQaLDEAL09hUC31k1OiGwEMTtXPlqArXr8ipEw/K
-         pY+w==
-X-Gm-Message-State: AOUpUlEQYpbK5bukiZyVtBzNm4cMs+tCCthIfnuYVcXx22EO2YH4V79Q
-        tPCPIrGPCWKJRapiio40pG27d5xOYw==
-X-Google-Smtp-Source: AAOMgpe3xgTXRJXeaYTCEBJisDmT8PC0RRDOcpbbv4Ul+BFweW1dj3kdyLTSCJXuC8bMLKUmlgfhcg==
-X-Received: by 2002:a6b:d611:: with SMTP id w17-v6mr18145177ioa.216.1532541323136;
-        Wed, 25 Jul 2018 10:55:23 -0700 (PDT)
-Received: from localhost ([24.51.61.72])
-        by smtp.gmail.com with ESMTPSA id b27-v6sm105533itd.2.2018.07.25.10.55.22
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 25 Jul 2018 10:55:22 -0700 (PDT)
-Date:   Wed, 25 Jul 2018 11:55:22 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Vijay Viswanath <vviswana@codeaurora.org>
-Cc:     adrian.hunter@intel.com, ulf.hansson@linaro.org,
-        mark.rutland@arm.com, linux-mmc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, shawn.lin@rock-chips.com,
-        linux-arm-msm@vger.kernel.org, georgi.djakov@linaro.org,
-        devicetree@vger.kernel.org, asutoshd@codeaurora.org,
-        stummala@codeaurora.org, venkatg@codeaurora.org,
-        jeremymc@redhat.com, bjorn.andersson@linaro.org,
-        riteshh@codeaurora.org, vbadigan@codeaurora.org,
-        evgreen@chromium.org, dianders@google.com, sayalil@codeaurora.org
-Subject: Re: [PATCH V1 2/3] Documentation: sdhci-msm: Add entries for passing
- load values
-Message-ID: <20180725175522.GA10185@rob-hp-laptop>
-References: <1532083566-43215-1-git-send-email-vviswana@codeaurora.org>
- <1532083566-43215-3-git-send-email-vviswana@codeaurora.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=P/Bq8cEbIpimuyXLO+LkxZIZFQImb6Hqo+h7HbI6ROM=;
+        b=B58HaflCasth0mquApB3ntB38DWNhVETYUwWEbWHyEk4sdtIka2YsgSoctfmI8fOH2
+         3nuompo+MboLWV+LY87jQfnh+GY/PnR03IZqA/gQVmkgsFJMGr/T1owlqydbdAKR3SpO
+         5zOo3CzMW+VBOH62dPLVIoGuVPUHsBPNn60ug+8Ir6u9Hd89bpqDOGExfPGnpLRXKKN1
+         fzmq/B9PuCIEAYHo7Pni1dxe1qjUNidF+Ii4Fk82c+6gEOacPzsBb20cL8BEyXmdQRpM
+         wYTXwZiBibt+hQOf50Gwtm2vKGvgiq1ywrh6FufRmtAcV/4/bqp6C2xcGuwlVtcv03Qu
+         JrWw==
+X-Gm-Message-State: AOUpUlEKLeiSP8njXJErYR7G7EVjauRtGT3eX40cJn0k/PWeIdCUpJL1
+        yzixJf8M8B4ub7+sXd4/f4IolK+GqRPhfHa06cGUAg==
+X-Google-Smtp-Source: AAOMgpc+z6dESte41+mpXh17yYGwaXumwd1upR6ztnD8yeLnMJHzM5VQaIB47QUPh0Ub1CqmKMf7tdoy0VK37Y+kqc4=
+X-Received: by 2002:a1c:f306:: with SMTP id q6-v6mr5230210wmq.111.1532541351860;
+ Wed, 25 Jul 2018 10:55:51 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1532083566-43215-3-git-send-email-vviswana@codeaurora.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <20180724210923.GA20168@bombadil.infradead.org>
+ <20180725023728.44630-1-cannonmatthews@google.com> <20180725125741.GL28386@dhcp22.suse.cz>
+In-Reply-To: <20180725125741.GL28386@dhcp22.suse.cz>
+From:   Cannon Matthews <cannonmatthews@google.com>
+Date:   Wed, 25 Jul 2018 10:55:40 -0700
+Message-ID: <CAJfu=UcVygNivApyumjTBn897yZmU=VD3WGuPioRDDrkej1XKw@mail.gmail.com>
+Subject: Re: [PATCH v2] RFC: clear 1G pages with streaming stores on x86
+To:     mhocko@kernel.org
+Cc:     mike.kravetz@oracle.com, akpm@linux-foundation.org,
+        willy@infradead.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org,
+        Andres Lagar-Cavilla <andreslc@google.com>,
+        Salman Qazi <sqazi@google.com>, Paul Turner <pjt@google.com>,
+        David Matlack <dmatlack@google.com>,
+        Peter Feiner <pfeiner@google.com>,
+        Alain Trinh <nullptr@google.com>, ying.huang@intel.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 20, 2018 at 04:16:05PM +0530, Vijay Viswanath wrote:
-> The load a particular sdhc controller should request from a regulator
-> is device specific and hence each device should individually vote for
-> the required load.
+On Wed, Jul 25, 2018 at 5:57 AM Michal Hocko <mhocko@kernel.org> wrote:
+>
+> [Cc Huang]
+> On Tue 24-07-18 19:37:28, Cannon Matthews wrote:
+> > Reimplement clear_gigantic_page() to clear gigabytes pages using the
+> > non-temporal streaming store instructions that bypass the cache
+> > (movnti), since an entire 1GiB region will not fit in the cache anyway.
+> >
+> > Doing an mlock() on a 512GiB 1G-hugetlb region previously would take on
+> > average 134 seconds, about 260ms/GiB which is quite slow. Using `movnti`
+> > and optimizing the control flow over the constituent small pages, this
+> > can be improved roughly by a factor of 3-4x, with the 512GiB mlock()
+> > taking only 34 seconds on average, or 67ms/GiB.
+> >
+> > The assembly code for the __clear_page_nt routine is more or less
+> > taken directly from the output of gcc with -O3 for this function with
+> > some tweaks to support arbitrary sizes and moving memory barriers:
+> >
+> > void clear_page_nt_64i (void *page)
+> > {
+> >   for (int i = 0; i < GiB /sizeof(long long int); ++i)
+> >     {
+> >       _mm_stream_si64 (((long long int*)page) + i, 0);
+> >     }
+> >   sfence();
+> > }
+> >
+> > In general I would love to hear any thoughts and feedback on this
+> > approach and any ways it could be improved.
+>
+> Well, I like it. In fact 2MB pages are in a similar situation even
+> though they fit into the cache so the problem is not that pressing.
+> Anyway if you are a standard DB wokrload which simply preallocates large
+> hugetlb shared files then it would help. Huang has gone a different
+> direction c79b57e462b5 ("mm: hugetlb: clear target sub-page last when
+> clearing huge page") and I was asking about using the mechanism you are
+> proposing back then http://lkml.kernel.org/r/20170821115235.GD25956@dhcp22.suse.cz
+> I've got an explanation http://lkml.kernel.org/r/87h8x0whfs.fsf@yhuang-dev.intel.com
+> which hasn't really satisfied me but I didn't really want to block the
+> obvious optimization. The similar approach has been proposed for GB
+> pages IIRC but I do not see it in linux-next so I am not sure what
+> happened with it.
+>
+> Is there any reason to use a different scheme for GB an 2MB pages? Why
+> don't we settle with movnti for both? The first access will be a miss
+> but I am not really sure it matters all that much.
+>
+My only hesitation is that while the benefits of doing it faster seem
+obvious at a
+1GiB granularity, things become more subtle at 2M, and they are used much
+more frequently, where negative impacts from this approach could outweigh.
 
-"dt-bindings: mmc: ..." for the subject.
+Not that that is actually the case, but I am not familiar enough to be
+confident
+proposing that, especially when it gets into the stuff in that
+response you liked
+about synchronous RAM loads and such.
 
-> 
-> Signed-off-by: Vijay Viswanath <vviswana@codeaurora.org>
-> ---
->  Documentation/devicetree/bindings/mmc/sdhci-msm.txt | 6 ++++++
->  1 file changed, 6 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/mmc/sdhci-msm.txt b/Documentation/devicetree/bindings/mmc/sdhci-msm.txt
-> index 502b3b8..ee34f28 100644
-> --- a/Documentation/devicetree/bindings/mmc/sdhci-msm.txt
-> +++ b/Documentation/devicetree/bindings/mmc/sdhci-msm.txt
-> @@ -26,6 +26,11 @@ Required properties:
->  	"cal"	- reference clock for RCLK delay calibration (optional)
->  	"sleep"	- sleep clock for RCLK delay calibration (optional)
->  
-> +Optional properties:
-> +- <supply>-current-level - specifies load levels for supply during BUS_ON
-> +			and BUS_OFF states in power irq. Should be specified in
-> +			pairs (lpm, hpm), for BUS_OFF and BUS_ON respectively.
-> +			Units uA.
+With the right benchmarking we could
+certainly motivate it one way or the other, but I wouldn't know where
+to begin to
+do so in a robust enough way.
 
-This should probably be a common regulator property (or maybe one exists 
-already).
+For the first access being a miss, there is the suggestion that Robert
+Elliot had
+above of doing a normal caching store on the sub-page that contains the faulting
+address, as an optimization to avoid that. Perhaps that would be enough.
 
-It is missing vendor prefix and unit suffix as-is.
-
-Rob
+> Keeping the rest of the email for reference
+>
+> > Some specific questions:
+> >
+> > - What is the appropriate method for defining an arch specific
+> > implementation like this, is the #ifndef code sufficient, and did stuff
+> > land in appropriate files?
+> >
+> > - Are there any obvious pitfalls or caveats that have not been
+> > considered? In particular the iterator over mem_map_next() seemed like a
+> > no-op on x86, but looked like it could be important in certain
+> > configurations or architectures I am not familiar with.
+> >
+> > - Is there anything that could be improved about the assembly code? I
+> > originally wrote it in C and don't have much experience hand writing x86
+> > asm, which seems riddled with optimization pitfalls.
+> >
+> > - Is the highmem codepath really necessary? would 1GiB pages really be
+> > of much use on a highmem system? We recently removed some other parts of
+> > the code that support HIGHMEM for gigantic pages (see:
+> > http://lkml.kernel.org/r/20180711195913.1294-1-mike.kravetz@oracle.com)
+> > so this seems like a logical continuation.
+> >
+> > - The calls to cond_resched() have been reduced from between every 4k
+> > page to every 64, as between all of the 256K page seemed overly
+> > frequent.  Does this seem like an appropriate frequency? On an idle
+> > system with many spare CPUs it get's rescheduled typically once or twice
+> > out of the 4096 times it calls cond_resched(), which seems like it is
+> > maybe the right amount, but more insight from a scheduling/latency point
+> > of view would be helpful. See the "Tested:" section below for some more data.
+> >
+> > - Any other thoughts on the change overall and ways that this could
+> > be made more generally useful, and designed to be easily extensible to
+> > other platforms with non-temporal instructions and 1G pages, or any
+> > additional pitfalls I have not thought to consider.
+> >
+> > Tested:
+> >       Time to `mlock()` a 512GiB region on broadwell CPU
+> >                               AVG time (s)    % imp.  ms/page
+> >       clear_page_erms         133.584         -       261
+> >       clear_page_nt           34.154          74.43%  67
+> >
+> > For a more in depth look at how the frequency we call cond_resched() affects
+> > the time this takes, I tested both on an idle system, and a system running
+> > `stress -c N` program to overcommit CPU to ~115%, and ran 10 replications of
+> > the 512GiB mlock test.
+> >
+> > Unfortunately there wasn't as clear of a pattern as I had hoped. On an
+> > otherwise idle system there is no substantive difference different values of
+> > PAGES_BETWEEN_RESCHED.
+> >
+> > On a stressed system, there appears to be a pattern, that resembles something
+> > of a bell curve: constantly offering to yield, or never yielding until the end
+> > produces the fastest results, but yielding infrequently increases latency to a
+> > slight degree.
+> >
+> > That being said, it's not clear this is actually a significant difference, the
+> > std deviation is occasionally quite high, and perhaps a larger sample set would
+> > be more informative. From looking at the log messages indicating the number of
+> > times cond_resched() returned 1, there wasn't that much variance, with it
+> > usually being 1 or 2 when idle, and only increasing to ~4-7 when stressed.
+> >
+> >
+> >       PAGES_BETWEEN_RESCHED   state   AVG     stddev
+> >       1       4 KiB           idle    36.086  1.920
+> >       16      64 KiB          idle    34.797  1.702
+> >       32      128 KiB         idle    35.104  1.752
+> >       64      256 KiB         idle    34.468  0.661
+> >       512     2048 KiB        idle    36.427  0.946
+> >       2048    8192 KiB        idle    34.988  2.406
+> >       262144  1048576 KiB     idle    36.792  0.193
+> >       infin   512 GiB         idle    38.817  0.238  [causes softlockup]
+> >       1       4 KiB           stress  55.562  0.661
+> >       16      64 KiB          stress  57.509  0.248
+> >       32      128 KiB         stress  69.265  3.913
+> >       64      256 KiB         stress  70.217  4.534
+> >       512     2048 KiB        stress  68.474  1.708
+> >       2048    8192 KiB        stress  70.806  1.068
+> >       262144  1048576 KiB     stress  55.217  1.184
+> >       infin   512 GiB         stress  55.062  0.291  [causes softlockup]
+> >
+> > Signed-off-by: Cannon Matthews <cannonmatthews@google.com>
+> > ---
+> >
+> > v2:
+> >  - Removed question about SSE2 Availability.
+> >  - Changed #ifndef symbol to match function
+> >  - removed spurious newlines
+> >  - Expanded Tested: field to include additional timings for different sizes
+> >    between cond_resched().
+> >
+> >  arch/x86/include/asm/page_64.h     |  5 +++++
+> >  arch/x86/lib/Makefile              |  2 +-
+> >  arch/x86/lib/clear_gigantic_page.c | 29 +++++++++++++++++++++++++++++
+> >  arch/x86/lib/clear_page_64.S       | 20 ++++++++++++++++++++
+> >  include/linux/mm.h                 |  3 +++
+> >  mm/memory.c                        |  4 +++-
+> >  6 files changed, 61 insertions(+), 2 deletions(-)
+> >  create mode 100644 arch/x86/lib/clear_gigantic_page.c
+> >
+> > diff --git a/arch/x86/include/asm/page_64.h b/arch/x86/include/asm/page_64.h
+> > index 939b1cff4a7b..177196d6abc7 100644
+> > --- a/arch/x86/include/asm/page_64.h
+> > +++ b/arch/x86/include/asm/page_64.h
+> > @@ -56,6 +56,11 @@ static inline void clear_page(void *page)
+> >
+> >  void copy_page(void *to, void *from);
+> >
+> > +#ifndef __clear_page_nt
+> > +void __clear_page_nt(void *page, u64 page_size);
+> > +#define __clear_page_nt __clear_page_nt
+> > +#endif  /* __clear_page_nt */
+> > +
+> >  #endif       /* !__ASSEMBLY__ */
+> >
+> >  #ifdef CONFIG_X86_VSYSCALL_EMULATION
+> > diff --git a/arch/x86/lib/Makefile b/arch/x86/lib/Makefile
+> > index 25a972c61b0a..4ba395234088 100644
+> > --- a/arch/x86/lib/Makefile
+> > +++ b/arch/x86/lib/Makefile
+> > @@ -44,7 +44,7 @@ endif
+> >  else
+> >          obj-y += iomap_copy_64.o
+> >          lib-y += csum-partial_64.o csum-copy_64.o csum-wrappers_64.o
+> > -        lib-y += clear_page_64.o copy_page_64.o
+> > +        lib-y += clear_page_64.o copy_page_64.o clear_gigantic_page.o
+> >          lib-y += memmove_64.o memset_64.o
+> >          lib-y += copy_user_64.o
+> >       lib-y += cmpxchg16b_emu.o
+> > diff --git a/arch/x86/lib/clear_gigantic_page.c b/arch/x86/lib/clear_gigantic_page.c
+> > new file mode 100644
+> > index 000000000000..0d51e38b5be0
+> > --- /dev/null
+> > +++ b/arch/x86/lib/clear_gigantic_page.c
+> > @@ -0,0 +1,29 @@
+> > +#include <asm/page.h>
+> > +
+> > +#include <linux/kernel.h>
+> > +#include <linux/mm.h>
+> > +#include <linux/sched.h>
+> > +
+> > +#if defined(CONFIG_TRANSPARENT_HUGEPAGE) || defined(CONFIG_HUGETLBFS)
+> > +#define PAGES_BETWEEN_RESCHED 64
+> > +void clear_gigantic_page(struct page *page,
+> > +                             unsigned long addr,
+> > +                             unsigned int pages_per_huge_page)
+> > +{
+> > +     int i;
+> > +     void *dest = page_to_virt(page);
+> > +     int resched_count = 0;
+> > +
+> > +     BUG_ON(pages_per_huge_page % PAGES_BETWEEN_RESCHED != 0);
+> > +     BUG_ON(!dest);
+> > +
+> > +     for (i = 0; i < pages_per_huge_page; i += PAGES_BETWEEN_RESCHED) {
+> > +             __clear_page_nt(dest + (i * PAGE_SIZE),
+> > +                             PAGES_BETWEEN_RESCHED * PAGE_SIZE);
+> > +             resched_count += cond_resched();
+> > +     }
+> > +     /* __clear_page_nt requrires and `sfence` barrier. */
+> > +     wmb();
+> > +     pr_debug("clear_gigantic_page: rescheduled %d times\n", resched_count);
+> > +}
+> > +#endif
+> > diff --git a/arch/x86/lib/clear_page_64.S b/arch/x86/lib/clear_page_64.S
+> > index 88acd349911b..81a39804ac72 100644
+> > --- a/arch/x86/lib/clear_page_64.S
+> > +++ b/arch/x86/lib/clear_page_64.S
+> > @@ -49,3 +49,23 @@ ENTRY(clear_page_erms)
+> >       ret
+> >  ENDPROC(clear_page_erms)
+> >  EXPORT_SYMBOL_GPL(clear_page_erms)
+> > +
+> > +/*
+> > + * Zero memory using non temporal stores, bypassing the cache.
+> > + * Requires an `sfence` (wmb()) afterwards.
+> > + * %rdi - destination.
+> > + * %rsi - page size. Must be 64 bit aligned.
+> > +*/
+> > +ENTRY(__clear_page_nt)
+> > +     leaq    (%rdi,%rsi), %rdx
+> > +     xorl    %eax, %eax
+> > +     .p2align 4,,10
+> > +     .p2align 3
+> > +.L2:
+> > +     movnti  %rax, (%rdi)
+> > +     addq    $8, %rdi
+> > +     cmpq    %rdx, %rdi
+> > +     jne     .L2
+> > +     ret
+> > +ENDPROC(__clear_page_nt)
+> > +EXPORT_SYMBOL(__clear_page_nt)
+> > diff --git a/include/linux/mm.h b/include/linux/mm.h
+> > index a0fbb9ffe380..d10ac4e7ef6a 100644
+> > --- a/include/linux/mm.h
+> > +++ b/include/linux/mm.h
+> > @@ -2729,6 +2729,9 @@ enum mf_action_page_type {
+> >  };
+> >
+> >  #if defined(CONFIG_TRANSPARENT_HUGEPAGE) || defined(CONFIG_HUGETLBFS)
+> > +extern void clear_gigantic_page(struct page *page,
+> > +                      unsigned long addr,
+> > +                      unsigned int pages_per_huge_page);
+> >  extern void clear_huge_page(struct page *page,
+> >                           unsigned long addr_hint,
+> >                           unsigned int pages_per_huge_page);
+> > diff --git a/mm/memory.c b/mm/memory.c
+> > index 7206a634270b..e43a3a446380 100644
+> > --- a/mm/memory.c
+> > +++ b/mm/memory.c
+> > @@ -4568,7 +4568,8 @@ EXPORT_SYMBOL(__might_fault);
+> >  #endif
+> >
+> >  #if defined(CONFIG_TRANSPARENT_HUGEPAGE) || defined(CONFIG_HUGETLBFS)
+> > -static void clear_gigantic_page(struct page *page,
+> > +#ifndef __clear_page_nt
+> > +void clear_gigantic_page(struct page *page,
+> >                               unsigned long addr,
+> >                               unsigned int pages_per_huge_page)
+> >  {
+> > @@ -4582,6 +4583,7 @@ static void clear_gigantic_page(struct page *page,
+> >               clear_user_highpage(p, addr + i * PAGE_SIZE);
+> >       }
+> >  }
+> > +#endif  /* __clear_page_nt */
+> >  void clear_huge_page(struct page *page,
+> >                    unsigned long addr_hint, unsigned int pages_per_huge_page)
+> >  {
+> > --
+> > 2.18.0.233.g985f88cf7e-goog
+>
+> --
+> Michal Hocko
+> SUSE Labs
