@@ -2,101 +2,128 @@ Return-Path: <SRS0=S+WB=KJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C4FEC6778F
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 15:16:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA319C6778F
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 15:19:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DCEB920891
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 15:16:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DCEB920891
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 3C21420852
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 15:19:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C21420852
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728607AbeGYQ2t (ORCPT
+        id S1728561AbeGYQbT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 12:28:49 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:40500 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728573AbeGYQ2t (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Jul 2018 12:28:49 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E60A618A;
-        Wed, 25 Jul 2018 08:16:41 -0700 (PDT)
-Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id B2BF53F575;
-        Wed, 25 Jul 2018 08:16:41 -0700 (PDT)
-Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
-        id A691E1AE0A03; Wed, 25 Jul 2018 16:16:41 +0100 (BST)
-Date:   Wed, 25 Jul 2018 16:16:41 +0100
-From:   Will Deacon <will.deacon@arm.com>
-To:     =?iso-8859-1?Q?J=2E_Agust=EDn_Vega-Fr=EDas?= 
-        <agustin.vega.frias@gmail.com>
-Cc:     Agustin Vega-Frias <agustinv@codeaurora.org>,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-acpi@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
-        Jeremy Linton <jeremy.linton@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Phani Pabba <pabba@codeaurora.org>,
-        Richard Ruigrok <rruigrok@codeaurora.org>,
-        Vijaya Kilari <vkilari@codeaurora.org>,
-        Jeff Hugo <jhugo@codeaurora.org>,
-        Rahul Ramasubramanian <rahulr@codeaurora.org>
-Subject: Re: [RFC V4 0/3] arm_pmu: acpi: variant support and QCOM Falkor
- extensions
-Message-ID: <20180725151641.GC6866@arm.com>
-References: <1530822201-5890-1-git-send-email-agustinv@codeaurora.org>
- <20180713153318.GB3049@arm.com>
- <CAGbRU0QLSpNEtcryuPPZE98zAo7peEmcDqcQiLi1zO6cfKML2A@mail.gmail.com>
+        Wed, 25 Jul 2018 12:31:19 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:47472 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728341AbeGYQbS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Jul 2018 12:31:18 -0400
+Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w6PFJAD5102975
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Jul 2018 11:19:10 -0400
+Received: from e16.ny.us.ibm.com (e16.ny.us.ibm.com [129.33.205.206])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2ketx2j6aa-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Jul 2018 11:19:10 -0400
+Received: from localhost
+        by e16.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <gromero@linux.vnet.ibm.com>;
+        Wed, 25 Jul 2018 11:19:09 -0400
+Received: from b01cxnp23034.gho.pok.ibm.com (9.57.198.29)
+        by e16.ny.us.ibm.com (146.89.104.203) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 25 Jul 2018 11:19:05 -0400
+Received: from b01ledav004.gho.pok.ibm.com (b01ledav004.gho.pok.ibm.com [9.57.199.109])
+        by b01cxnp23034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w6PFJ48o9109962
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 25 Jul 2018 15:19:04 GMT
+Received: from b01ledav004.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 5EEA8112064;
+        Wed, 25 Jul 2018 11:18:50 -0400 (EDT)
+Received: from b01ledav004.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 18D5A112061;
+        Wed, 25 Jul 2018 11:18:47 -0400 (EDT)
+Received: from oc6336877782.ibm.com (unknown [9.80.203.19])
+        by b01ledav004.gho.pok.ibm.com (Postfix) with ESMTP;
+        Wed, 25 Jul 2018 11:18:46 -0400 (EDT)
+Subject: Re: [PATCH 6/7] powerpc/traps: Print signal name for unhandled
+ signals
+To:     Murilo Opsfelder Araujo <muriloo@linux.ibm.com>,
+        linux-kernel@vger.kernel.org
+Cc:     Michael Neuling <mikey@neuling.org>,
+        Simon Guo <wei.guo.simon@gmail.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Paul Mackerras <paulus@samba.org>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        Andrew Donnellan <andrew.donnellan@au1.ibm.com>,
+        "Alastair D'Silva" <alastair@d-silva.org>,
+        Sukadev Bhattiprolu <sukadev@linux.vnet.ibm.com>,
+        linuxppc-dev@lists.ozlabs.org, Cyril Bur <cyrilbur@gmail.com>,
+        "Tobin C . Harding" <me@tobin.cc>
+References: <20180724192720.32417-1-muriloo@linux.ibm.com>
+ <20180724192720.32417-7-muriloo@linux.ibm.com>
+From:   Gustavo Romero <gromero@linux.vnet.ibm.com>
+Date:   Wed, 25 Jul 2018 12:19:00 -0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAGbRU0QLSpNEtcryuPPZE98zAo7peEmcDqcQiLi1zO6cfKML2A@mail.gmail.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <20180724192720.32417-7-muriloo@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 18072515-0072-0000-0000-00000385A31B
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009425; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000266; SDB=6.01065968; UDB=6.00547619; IPR=6.00843828;
+ MB=3.00022318; MTD=3.00000008; XFM=3.00000015; UTC=2018-07-25 15:19:08
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18072515-0073-0000-0000-000048D74CAD
+Message-Id: <0364bdc4-ddf9-85de-1128-8fc8791d63dd@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-25_03:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=829 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1806210000 definitions=main-1807250164
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Jul 15, 2018 at 03:35:45PM -0500, J. Agustín Vega-Frías wrote:
-> On Fri, Jul 13, 2018 at 10:33 AM, Will Deacon <will.deacon@arm.com> wrote:
-> > I'm mostly ok with this approach, but I have a concern with the way in which
-> > the sysfs interface for carving up the config fields is implemented. If this
-> > is intended to be a strict extension to the armv8 pmu architecture, then I
-> > don't think you should be overriding the attr_groups entirely. Rather, you
-> > should be taking the attr_groups from pmuv3 and then extending them in a way
-> > which avoids overlapping field allocations by construction.
-> >
-> > As it stands, you already have an overlap between the pcc bit and the
-> > chained counter bit which Suzuki has implemented and it will be very easy to
-> > introduce API breakage if we don't enforce this as part of the design.
-> >
-> > Will
-> 
-> FYI, I left Qualcomm on July 6, one of my former colleagues will submit
-> new iterations of this series. I will continue to comment on this and future
-> patchsets as a courtesy to my former colleagues and the community.
-> 
-> Thanks for pointing out the sysfs issue. My suggestion on how to address it is:
-> 
-> 1. Reserve config and config1 for architectural format attributes and
->    config2 for extension format attributes.
-> 2. Add a struct attribute ** parameter to the extension init function so
->    extensions can return the new attributes.
-> 3. The extension framework code in arm_pmu_acpi.c can then allocate a new
->    attribute array to contain the base and extension attributes and ensure
->    all the new attributes are on config2.
-> 
-> Though a more elaborate approach can be implemented to find conflicts in
-> bit usage within config fields, it would require much more code for a
-> relatively simple problem. Thoughts?
+Hi Murilo,
 
-As long as you're happy to live inside config2, that sounds sensible to me.
+LGTM.
 
-Will
+Just a comment:
+
+On 07/24/2018 04:27 PM, Murilo Opsfelder Araujo wrote:
+> This adds a human-readable name in the unhandled signal message.
+> 
+> Before this patch, a page fault looked like:
+> 
+>      Jul 11 16:04:11 localhost kernel: pandafault[6303]: unhandled signal 11 at 00000000100007d0 nip 000000001000061c lr 00007fff93c55100 code 2 in pandafault[10000000+10000]
+> 
+> After this patch, a page fault looks like:
+> 
+>      Jul 11 18:14:48 localhost kernel: pandafault[6352]: segfault (11) at 000000013a2a09f8 nip 000000013a2a086c lr 00007fffb63e5100 code 2 in pandafault[13a2a0000+10000]
+
+I _really_ don't want to bikeshed here, but I vouch for keeping the
+"unhandled" word before the signal name, like:
+
+[...] pandafault[6352]: unhandled segfault (11) at 000000013a2a09f8 nip [...]
+
+because the issue reported here is really that we got a segfault _and_
+there was no handler to catch it.
+
+But feel free to wait for additional comments to decide it.
+
+
+Cheers,
+Gustavo
+
