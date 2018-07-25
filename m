@@ -2,111 +2,130 @@ Return-Path: <SRS0=S+WB=KJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 015B9C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 01:19:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F6ECC6778F
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 01:20:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 91FD120856
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 01:19:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 292E520856
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 01:20:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="R02dLmt8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 91FD120856
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y4g5X+Ty"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 292E520856
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388572AbeGYC3F (ORCPT
+        id S2388600AbeGYC3o (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 22:29:05 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:39502 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388420AbeGYC3F (ORCPT
+        Tue, 24 Jul 2018 22:29:44 -0400
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:42776 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388420AbeGYC3n (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 22:29:05 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w6P1JH9O154095
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Jul 2018 01:19:53 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=mime-version :
- references : in-reply-to : from : date : message-id : subject : to : cc :
- content-type; s=corp-2018-07-02;
- bh=31x20a6kd5ukTj3NWOTNexqTl8nWWBmSCyUfbXPtzqg=;
- b=R02dLmt8SmUGuyMMXUEECDQQijK0xHp2XB7ObmZBOBIe0g+ip3WoTxjWb+vaVt1hclfS
- RNqXALAmXF3A5Va35aA/PmCc2jFxeOq5Djgkxw9Sp810j3+exg1HSj328EyTNF56e2hC
- Qxpzo6HztBnoqwYxTJwlKOPncMOYjafg2MWqmGQufgKamNs1m4QP3dSrq6hjp8k4F3m3
- qtVS3AwpsUV9AMcW4hXmNwFEpd2Rk1O5uL3M11jy4UqPiE8nez4ueqiZTxaeBuOMchoU
- izFJTUo1RQZNvP2Z01JpGRM3zZbYrsQpr+ojM7Gibv7uqu5GMJXYaAUonBsj5AMBUUmd JQ== 
-Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
-        by userp2120.oracle.com with ESMTP id 2kbwfpuby5-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK)
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Jul 2018 01:19:53 +0000
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w6P1JqhB018290
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK)
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Jul 2018 01:19:52 GMT
-Received: from abhmp0005.oracle.com (abhmp0005.oracle.com [141.146.116.11])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w6P1JqiJ030691
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Jul 2018 01:19:52 GMT
-Received: from mail-oi0-f42.google.com (/209.85.218.42)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 24 Jul 2018 18:19:52 -0700
-Received: by mail-oi0-f42.google.com with SMTP id d189-v6so10979841oib.6
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Jul 2018 18:19:52 -0700 (PDT)
-X-Gm-Message-State: AOUpUlGy5Ygh/xHmBjE4pEKcjzgIxUKZhn7uq0KG6ZW4wkfMdoKjAGZQ
-        J/52vl9h3W1lMUkOu0pPl71yzIU51ysLjn7mC4c=
-X-Google-Smtp-Source: AAOMgpdMTX7uW4G5i47bfXKR3TuxdOGY3B541duayW0ZeKMqJbApW2L8woLJuqruZdYVYuIhaeMMF5hp0B+2kM8TqEc=
-X-Received: by 2002:aca:da88:: with SMTP id r130-v6mr1294196oig.163.1532481592122;
- Tue, 24 Jul 2018 18:19:52 -0700 (PDT)
+        Tue, 24 Jul 2018 22:29:43 -0400
+Received: by mail-ed1-f68.google.com with SMTP id r4-v6so5714048edp.9;
+        Tue, 24 Jul 2018 18:20:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=9dkMIfzMFxDG7ymfXEy9AaeD536y4PEikiOZOFf+8W0=;
+        b=Y4g5X+TyfX/KwzWF1WyJZFF9WCBwBW1xa15QaArEXE4QcN7NLzg2efM6HWHbWYm0Me
+         hzUPQciXvGwGL3SJIdgqpHhoa903P+84vw//7nE2NZgJxJQtvsl+Oo9qIg6Z5DizTs44
+         JXfIo3DbAZaBVvZTNJ5IJeRZRbUdpr9b/3GO9Tc9EQ9eNFCX7Hv7rhwZxGi4hzC2Edsg
+         VqIot9S/dgwzTCS13VY0hENzqccGyNJm/ziCzbZGPLow1/T3iZs6x84LcNJW3ub0cOau
+         NG27ZY35ILpXkJH8EG2dXCxJspTgVjGu6fC7rfKg9Gce7tnnv2aZt0Ctq6yYGEWXCXrA
+         hkoA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=9dkMIfzMFxDG7ymfXEy9AaeD536y4PEikiOZOFf+8W0=;
+        b=FUymgCoAtlIKJVP0Y6U8YSiSvGPtGmQA+k3uwgZzaWEoSrGT0tz4OT6UYlOUjaasfp
+         QgytJKoYjzzOeB/MQqDHRNXpFAX/xQQo2H18mLj9vlotdYsjGoKXXOytSkGHdoLd9M8q
+         kEiWnK2+ARnwUvTiyzclyncMI+9cpxbBzesGFYn8xOzS4LEl9raZ7sUeuCWbZPaYvfLk
+         Aw8iWRipF5CB/6z18ANJnx8VI6L5xYgO/RgyV27JyI9QD7ZOTFS6KpSRShRMkQRWo0nv
+         ltbL9x/4PdwHKvVdd31ZFvPLSEOyrBWfybXi/SBl5dSTq7ujNpqeViQcwaW7L1hoW4c6
+         NJcg==
+X-Gm-Message-State: AOUpUlGOr/X9/bpual/P1qTkFYpDXRkNYsZRH5MCMlpijl27LdABdQ+b
+        jrbLCv0p77IvUK2NyYOYKZd08fkb
+X-Google-Smtp-Source: AAOMgpdgaAwn+ievUuOej/DrDa42z7ZT5UZB3bRvf45bWjszBvU9T9pvVbY6SNezrLrcix08/rAfGA==
+X-Received: by 2002:a50:8cd1:: with SMTP id r17-v6mr21046882edr.113.1532481631773;
+        Tue, 24 Jul 2018 18:20:31 -0700 (PDT)
+Received: from dimapc.localnet (109-252-90-13.nat.spd-mgts.ru. [109.252.90.13])
+        by smtp.gmail.com with ESMTPSA id i63-v6sm5874287edi.16.2018.07.24.18.20.30
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 24 Jul 2018 18:20:30 -0700 (PDT)
+From:   Dmitry Osipenko <digetx@gmail.com>
+To:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Cc:     Hans Verkuil <hverkuil@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-tegra@vger.kernel.org, linux-media@vger.kernel.org,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1] media: staging: tegra-vde: Replace debug messages with trace points
+Date:   Wed, 25 Jul 2018 04:20:29 +0300
+Message-ID: <1779889.gZoAajBteF@dimapc>
+In-Reply-To: <20180724213733.6c8b6b4b@coco.lan>
+References: <20180707162049.20407-1-digetx@gmail.com> <3929419.8vW2TRoUPb@dimapc> <20180724213733.6c8b6b4b@coco.lan>
 MIME-Version: 1.0
-References: <20180724235520.10200-1-pasha.tatashin@oracle.com>
- <20180724235520.10200-3-pasha.tatashin@oracle.com> <20180724181218.13a1ed1d7a3e9a37e35707a9@linux-foundation.org>
-In-Reply-To: <20180724181218.13a1ed1d7a3e9a37e35707a9@linux-foundation.org>
-From:   Pavel Tatashin <pasha.tatashin@oracle.com>
-Date:   Tue, 24 Jul 2018 21:19:11 -0400
-X-Gmail-Original-Message-ID: <CAGM2reb9CLpq1cqPLVqYXEfUqBtCt4V0OL_F=CKCyJXqV88NcQ@mail.gmail.com>
-Message-ID: <CAGM2reb9CLpq1cqPLVqYXEfUqBtCt4V0OL_F=CKCyJXqV88NcQ@mail.gmail.com>
-Subject: Re: [PATCH 2/3] mm: calculate deferred pages after skipping mirrored memory
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Steven Sistare <steven.sistare@oracle.com>,
-        Daniel Jordan <daniel.m.jordan@oracle.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        kirill.shutemov@linux.intel.com, Michal Hocko <mhocko@suse.com>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        dan.j.williams@intel.com, jack@suse.cz, jglisse@redhat.com,
-        Souptick Joarder <jrdr.linux@gmail.com>, bhe@redhat.com,
-        gregkh@linuxfoundation.org, Vlastimil Babka <vbabka@suse.cz>,
-        Wei Yang <richard.weiyang@gmail.com>, dave.hansen@intel.com,
-        rientjes@google.com, mingo@kernel.org,
-        osalvador@techadventures.net, abdhalee@linux.vnet.ibm.com,
-        mpe@ellerman.id.au
-Content-Type: text/plain; charset="UTF-8"
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8964 signatures=668706
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=1 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=782
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1806210000 definitions=main-1807250012
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 24, 2018 at 9:12 PM Andrew Morton <akpm@linux-foundation.org> wrote:
->
-> On Tue, 24 Jul 2018 19:55:19 -0400 Pavel Tatashin <pasha.tatashin@oracle.com> wrote:
->
-> > update_defer_init() should be called only when struct page is about to be
-> > initialized. Because it counts number of initialized struct pages, but
-> > there we may skip struct pages if there is some mirrored memory.
->
-> What are the runtime effects of this error?
+On Wednesday, 25 July 2018 03:37:33 MSK Mauro Carvalho Chehab wrote:
+> Em Wed, 25 Jul 2018 01:38:37 +0300
+> 
+> Dmitry Osipenko <digetx@gmail.com> escreveu:
+> > On Wednesday, 25 July 2018 01:06:52 MSK Mauro Carvalho Chehab wrote:
+> > > Em Sat,  7 Jul 2018 19:20:49 +0300
+> > > 
+> > > Dmitry Osipenko <digetx@gmail.com> escreveu:
+> > > > Trace points are much more efficient than debug messages for extensive
+> > > > tracing and could be conveniently enabled / disabled dynamically,
+> > > > hence
+> > > > let's replace debug messages with the trace points.
+> > > 
+> > > This patch require some work:
+> > > 
+> > > $ make ARCH=i386  CF=-D__CHECK_ENDIAN__ CONFIG_DEBUG_SECTION_MISMATCH=y
+> > > C=1
+> > > W=1 CHECK='compile_checks' M=drivers/staging/media
+> > > 
+> > > ./include/linux/slab.h:631:13: error: undefined identifier
+> > > '__builtin_mul_overflow' ./include/linux/slab.h:631:13: warning: call
+> > > with
+> > > no type!
+> > > fixdep: error opening file: drivers/staging/media/tegra-vde/trace.h: No
+> > > such file or directory
+> > > 
+> >   CHECK   drivers/staging/media/tegra-vde/tegra-vde.c
+> > 
+> > /bin/sh: compile_checks: command not found
+> > 
+> > Upstream kernel doesn't have "compile_checks" script and I can't find it
+> > anywhere else.
+> 
+> This is just a call for smatch/sparse:
+> 
+> #!/bin/bash
+> /devel/smatch/smatch -p=kernel $@
+> # This is too pedantic and produce lots of false-positives
+> #/devel/smatch/smatch --two-passes -- -p=kernel $@
+> /devel/sparse/sparse $@
+> 
+> However, the problem here is that you're doing a 64 bits division.
+> That causes compilation to break with 32 bits. you need to use
+> do_div & friends.
 
-I found this bug by reading the code. The effect is that fewer than
-expected struct pages are initialized early in boot, and it is
-possible that in some corner cases we may fail to boot when mirrored
-pages are used. The deferred on demand code should somewhat mitigate
-this. But, this still brings some inconsistencies compared to when
-booting without mirrored pages, so it is better to fix.
+The tegra-vde driver code is fine, it is a known issue with the kernels 
+checker [0]. Unfortunately the patch for the checker haven't been applied yet.
 
-Pavel
+[0] https://www.spinics.net/lists/kernel/msg2824058.html
+
+
