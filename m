@@ -3,75 +3,99 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A0B5C67790
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 16:05:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B100C67790
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 16:06:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B65DF20852
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 16:05:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B65DF20852
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id BF88220852
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 16:06:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BF88220852
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729256AbeGYRRt (ORCPT
+        id S1729353AbeGYRSa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 13:17:49 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:45044 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728600AbeGYRRt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Jul 2018 13:17:49 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 5B10A8185331;
-        Wed, 25 Jul 2018 16:05:30 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.34.27.30])
-        by smtp.corp.redhat.com (Postfix) with SMTP id DE6F32026D68;
-        Wed, 25 Jul 2018 16:05:28 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-        oleg@redhat.com; Wed, 25 Jul 2018 18:05:30 +0200 (CEST)
-Date:   Wed, 25 Jul 2018 18:05:28 +0200
-From:   Oleg Nesterov <oleg@redhat.com>
-To:     "Eric W. Biederman" <ebiederm@xmission.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Wed, 25 Jul 2018 13:18:30 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:41508 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728600AbeGYRSa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Jul 2018 13:18:30 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3EB1C80D;
+        Wed, 25 Jul 2018 09:06:11 -0700 (PDT)
+Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 0EED13F575;
+        Wed, 25 Jul 2018 09:06:11 -0700 (PDT)
+Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
+        id 0E19F1AE1110; Wed, 25 Jul 2018 17:06:10 +0100 (BST)
+Date:   Wed, 25 Jul 2018 17:06:10 +0100
+From:   Will Deacon <will.deacon@arm.com>
+To:     Johannes Weiner <hannes@cmpxchg.org>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Mike Galbraith <efault@gmx.de>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        kernel-team@fb.com, Linux-MM <linux-mm@kvack.org>,
+        Vinayak Menon <vinmenon@codeaurora.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Tejun Heo <tj@kernel.org>, cgroups@vger.kernel.org,
         Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, Wen Yang <wen.yang99@zte.com.cn>,
-        majiang <ma.jiang@zte.com.cn>
-Subject: Re: [PATCH 00/20] PIDTYPE_TGID removal of fork restarts
-Message-ID: <20180725160527.GA21007@redhat.com>
-References: <87sh4so5jv.fsf@xmission.com>
- <20180709145726.GA26149@redhat.com>
- <877em4nxo0.fsf@xmission.com>
- <CA+55aFwq90_KeRUesktap7L_4Hp3gatKZ28RYw1jXBYeOqUoeA@mail.gmail.com>
- <87lgakm4ol.fsf@xmission.com>
- <CA+55aFz1XFvOgJySKVNQD9VS4hys0J7rozxqd3s5ND0z80tfVw@mail.gmail.com>
- <20180710134639.GA2453@redhat.com>
- <CA+55aFxcjSYAj-CZFEuDwiwZyMg+prV_jeP_Vuh06RJA0BboSw@mail.gmail.com>
- <877em2jxyr.fsf_-_@xmission.com>
- <87efft5ncd.fsf_-_@xmission.com>
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Christopher Lameter <cl@linux.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH 02/10] mm: workingset: tell cache transitions from
+ workingset thrashing
+Message-ID: <20180725160610.GD6866@arm.com>
+References: <20180712172942.10094-1-hannes@cmpxchg.org>
+ <20180712172942.10094-3-hannes@cmpxchg.org>
+ <CAK8P3a3Nsmt54-ed_gWNev3CBS6_Sv5QGOw4G0sY4ZXOi1R4_Q@mail.gmail.com>
+ <20180723152323.GA3699@cmpxchg.org>
+ <CAK8P3a15K-TXYuFX-ZsJiroqA1GWX2XS4ioZSjcjJYgh1b_xSA@mail.gmail.com>
+ <20180723162735.GA5980@cmpxchg.org>
+ <20180724150448.GA25412@arm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <87efft5ncd.fsf_-_@xmission.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Wed, 25 Jul 2018 16:05:30 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Wed, 25 Jul 2018 16:05:30 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'oleg@redhat.com' RCPT:''
+In-Reply-To: <20180724150448.GA25412@arm.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/23, Eric W. Biederman wrote:
->
->       signal: Add calculate_sigpending()
->       fork: Have new threads join on-going signal group stops
->       signal: Don't restart fork when signals come in.
+On Tue, Jul 24, 2018 at 04:04:48PM +0100, Will Deacon wrote:
+> On Mon, Jul 23, 2018 at 12:27:35PM -0400, Johannes Weiner wrote:
+> > On Mon, Jul 23, 2018 at 05:35:35PM +0200, Arnd Bergmann wrote:
+> > > On Mon, Jul 23, 2018 at 5:23 PM, Johannes Weiner <hannes@cmpxchg.org> wrote:
+> > > > diff --git a/arch/arm64/mm/init.c b/arch/arm64/mm/init.c
+> > > > index 1b18b4722420..72c9b6778b0a 100644
+> > > > --- a/arch/arm64/mm/init.c
+> > > > +++ b/arch/arm64/mm/init.c
+> > > > @@ -611,11 +611,13 @@ void __init mem_init(void)
+> > > >         BUILD_BUG_ON(TASK_SIZE_32                       > TASK_SIZE_64);
+> > > >  #endif
+> > > >
+> > > > +#ifndef CONFIG_SPARSEMEM_VMEMMAP
+> > > >         /*
+> > > 
+> > > I tested it on two broken configurations, and found that you have
+> > > a typo here, it should be 'ifdef', not 'ifndef'. With that change, it
+> > > seems to build fine.
+> > > 
+> > > Tested-by: Arnd Bergmann <arnd@arndb.de>
+> > 
+> > Thanks for testing it, I don't have a cross-compile toolchain set up.
+> > 
+> > ---
+> 
+> Thanks Arnd, Johannes. I can pick this up for -rc7 via the arm64 tree,
+> unless it's already queued elsewhere?
 
-Oh, I need to re-read these patches tomorrow. I have some concerns, but perhaps
-I am wrong. Will write another email tomorrow.
+I've pushed this to the arm64 for-next/fixes branch heading for -rc7.
 
-Oleg.
-
+Will
