@@ -6,50 +6,48 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 74BB4C6778F
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 14:34:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C18A9C67790
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 14:34:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 37B2420852
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 14:34:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 37B2420852
+	by mail.kernel.org (Postfix) with ESMTP id 81D8B20852
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 14:34:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 81D8B20852
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729417AbeGYPqV (ORCPT
+        id S1729470AbeGYPq1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 11:46:21 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:34661 "EHLO
+        Wed, 25 Jul 2018 11:46:27 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:58323 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729087AbeGYPqU (ORCPT
+        with ESMTP id S1729047AbeGYPq0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Jul 2018 11:46:20 -0400
+        Wed, 25 Jul 2018 11:46:26 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w6PEVtHQ402949
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w6PEY3ga403319
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Wed, 25 Jul 2018 07:31:55 -0700
+        Wed, 25 Jul 2018 07:34:03 -0700
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w6PEVtUh402946;
-        Wed, 25 Jul 2018 07:31:55 -0700
-Date:   Wed, 25 Jul 2018 07:31:55 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w6PEY32x403316;
+        Wed, 25 Jul 2018 07:34:03 -0700
+Date:   Wed, 25 Jul 2018 07:34:03 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Kan Liang <tipbot@zytor.com>
-Message-ID: <tip-3196234039155a33c80e52d7aa41a29dce9a5c51@git.kernel.org>
-Cc:     torvalds@linux-foundation.org, peterz@infradead.org,
-        tglx@linutronix.de, hpa@zytor.com, acme@redhat.com,
-        vincent.weaver@maine.edu, alexander.shishkin@linux.intel.com,
-        jolsa@redhat.com, mingo@kernel.org, eranian@google.com,
-        kan.liang@linux.intel.com, linux-kernel@vger.kernel.org
-Reply-To: torvalds@linux-foundation.org, hpa@zytor.com, acme@redhat.com,
-          vincent.weaver@maine.edu, peterz@infradead.org,
-          tglx@linutronix.de, eranian@google.com,
-          kan.liang@linux.intel.com, alexander.shishkin@linux.intel.com,
-          jolsa@redhat.com, mingo@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20180309021542.11374-1-kan.liang@linux.intel.com>
-References: <20180309021542.11374-1-kan.liang@linux.intel.com>
+From:   tip-bot for Mark Rutland <tipbot@zytor.com>
+Message-ID: <tip-00d5551cc4eec0fc39c3871c25c613553acfb866@git.kernel.org>
+Cc:     boqun.feng@gmail.com, tglx@linutronix.de,
+        linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        mark.rutland@arm.com, will.deacon@arm.com, peterz@infradead.org,
+        mingo@kernel.org, dvyukov@google.com, hpa@zytor.com
+Reply-To: mark.rutland@arm.com, torvalds@linux-foundation.org,
+          linux-kernel@vger.kernel.org, tglx@linutronix.de,
+          boqun.feng@gmail.com, will.deacon@arm.com, peterz@infradead.org,
+          hpa@zytor.com, mingo@kernel.org, dvyukov@google.com
+In-Reply-To: <20180716113017.3909-3-mark.rutland@arm.com>
+References: <20180716113017.3909-3-mark.rutland@arm.com>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf/x86/intel: Introduce PMU flag for Extended
- PEBS
-Git-Commit-ID: 3196234039155a33c80e52d7aa41a29dce9a5c51
+Subject: [tip:locking/core] locking/atomics/x86: Reduce arch_cmpxchg64*()
+ instrumentation
+Git-Commit-ID: 00d5551cc4eec0fc39c3871c25c613553acfb866
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -63,71 +61,74 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  3196234039155a33c80e52d7aa41a29dce9a5c51
-Gitweb:     https://git.kernel.org/tip/3196234039155a33c80e52d7aa41a29dce9a5c51
-Author:     Kan Liang <kan.liang@linux.intel.com>
-AuthorDate: Thu, 8 Mar 2018 18:15:39 -0800
+Commit-ID:  00d5551cc4eec0fc39c3871c25c613553acfb866
+Gitweb:     https://git.kernel.org/tip/00d5551cc4eec0fc39c3871c25c613553acfb866
+Author:     Mark Rutland <mark.rutland@arm.com>
+AuthorDate: Mon, 16 Jul 2018 12:30:07 +0100
 Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Wed, 25 Jul 2018 11:50:49 +0200
+CommitDate: Wed, 25 Jul 2018 11:53:58 +0200
 
-perf/x86/intel: Introduce PMU flag for Extended PEBS
+locking/atomics/x86: Reduce arch_cmpxchg64*() instrumentation
 
-The Extended PEBS feature, introduced in the Goldmont Plus
-microarchitecture, supports all events as "Extended PEBS".
+Currently x86's arch_cmpxchg64() and arch_cmpxchg64_local() are
+instrumented twice, as they call into instrumented atomics rather than
+their arch_ equivalents.
 
-Introduce flag PMU_FL_PEBS_ALL to indicate the platforms which support
-extended PEBS.
+A call to cmpxchg64() results in:
 
-To support all events, it needs to support all constraints for PEBS. To
-avoid duplicating all the constraints in the PEBS table, making the PEBS
-code search the normal constraints too.
+  cmpxchg64()
+    kasan_check_write()
+    arch_cmpxchg64()
+      cmpxchg()
+        kasan_check_write()
+        arch_cmpxchg()
 
-Based-on-code-from: Andi Kleen <ak@linux.intel.com>
-Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
+Let's fix this up and call the arch_ equivalents, resulting in:
+
+  cmpxchg64()
+    kasan_check_write()
+    arch_cmpxchg64()
+      arch_cmpxchg()
+
+Signed-off-by: Mark Rutland <mark.rutland@arm.com>
+Acked-by: Thomas Gleixner <tglx@linutronix.de>
+Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Acked-by: Will Deacon <will.deacon@arm.com>
+Cc: Boqun Feng <boqun.feng@gmail.com>
+Cc: Dmitry Vyukov <dvyukov@google.com>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Stephane Eranian <eranian@google.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Vince Weaver <vincent.weaver@maine.edu>
-Cc: acme@kernel.org
-Link: http://lkml.kernel.org/r/20180309021542.11374-1-kan.liang@linux.intel.com
+Cc: andy.shevchenko@gmail.com
+Cc: arnd@arndb.de
+Cc: aryabinin@virtuozzo.com
+Cc: catalin.marinas@arm.com
+Cc: glider@google.com
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: parri.andrea@gmail.com
+Cc: peter@hurleysoftware.com
+Link: http://lkml.kernel.org/r/20180716113017.3909-3-mark.rutland@arm.com
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- arch/x86/events/intel/ds.c   | 7 +++++++
- arch/x86/events/perf_event.h | 1 +
- 2 files changed, 8 insertions(+)
+ arch/x86/include/asm/cmpxchg_64.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/x86/events/intel/ds.c b/arch/x86/events/intel/ds.c
-index 8dbba77e0518..9fd9cb1d2cc8 100644
---- a/arch/x86/events/intel/ds.c
-+++ b/arch/x86/events/intel/ds.c
-@@ -871,6 +871,13 @@ struct event_constraint *intel_pebs_constraints(struct perf_event *event)
- 		}
- 	}
+diff --git a/arch/x86/include/asm/cmpxchg_64.h b/arch/x86/include/asm/cmpxchg_64.h
+index bfca3b346c74..072e5459fe2f 100644
+--- a/arch/x86/include/asm/cmpxchg_64.h
++++ b/arch/x86/include/asm/cmpxchg_64.h
+@@ -10,13 +10,13 @@ static inline void set_64bit(volatile u64 *ptr, u64 val)
+ #define arch_cmpxchg64(ptr, o, n)					\
+ ({									\
+ 	BUILD_BUG_ON(sizeof(*(ptr)) != 8);				\
+-	cmpxchg((ptr), (o), (n));					\
++	arch_cmpxchg((ptr), (o), (n));					\
+ })
  
-+	/*
-+	 * Extended PEBS support
-+	 * Makes the PEBS code search the normal constraints.
-+	 */
-+	if (x86_pmu.flags & PMU_FL_PEBS_ALL)
-+		return NULL;
-+
- 	return &emptyconstraint;
- }
+ #define arch_cmpxchg64_local(ptr, o, n)					\
+ ({									\
+ 	BUILD_BUG_ON(sizeof(*(ptr)) != 8);				\
+-	cmpxchg_local((ptr), (o), (n));					\
++	arch_cmpxchg_local((ptr), (o), (n));				\
+ })
  
-diff --git a/arch/x86/events/perf_event.h b/arch/x86/events/perf_event.h
-index 2430398befd8..156286335351 100644
---- a/arch/x86/events/perf_event.h
-+++ b/arch/x86/events/perf_event.h
-@@ -673,6 +673,7 @@ do {									\
- #define PMU_FL_HAS_RSP_1	0x2 /* has 2 equivalent offcore_rsp regs   */
- #define PMU_FL_EXCL_CNTRS	0x4 /* has exclusive counter requirements  */
- #define PMU_FL_EXCL_ENABLED	0x8 /* exclusive counter active */
-+#define PMU_FL_PEBS_ALL		0x10 /* all events are valid PEBS events */
- 
- #define EVENT_VAR(_id)  event_attr_##_id
- #define EVENT_PTR(_id) &event_attr_##_id.attr.attr
+ #define system_has_cmpxchg_double() boot_cpu_has(X86_FEATURE_CX16)
