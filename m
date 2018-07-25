@@ -2,136 +2,139 @@ Return-Path: <SRS0=S+WB=KJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 820DDC67790
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 20:46:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88406C67790
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 20:46:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3747720671
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 20:46:06 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="pKyhAlD2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3747720671
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=fb.com
+	by mail.kernel.org (Postfix) with ESMTP id 3CE4620843
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 20:46:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3CE4620843
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731478AbeGYV70 (ORCPT
+        id S1731490AbeGYV7p (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 17:59:26 -0400
-Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:36622 "EHLO
-        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1730535AbeGYV70 (ORCPT
+        Wed, 25 Jul 2018 17:59:45 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:49825 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730535AbeGYV7p (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Jul 2018 17:59:26 -0400
-Received: from pps.filterd (m0001255.ppops.net [127.0.0.1])
-        by mx0b-00082601.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w6PKW9Vw009175;
-        Wed, 25 Jul 2018 13:45:41 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=date : from : to : cc :
- subject : message-id : references : mime-version : content-type :
- in-reply-to; s=facebook; bh=jkoO+Wn4bz9nDHhKw3QPQlLOUpKqqyrRso/v/jQibIY=;
- b=pKyhAlD2HMbjMj0B9ikFPVRYuL+Whnhx4RvGIi3kMWyIxzzlts0hJvbEy+nURYAaQanW
- EBdoePTCEL5V6tjyX3w8W57CFf/erFMVndVD+Rt6biJ03QYFU479cfpVRKklfEh03y+b
- 6hKgq/O/JII6r+NaR4ZxfJT/AVcwv1iEykw= 
-Received: from mail.thefacebook.com ([199.201.64.23])
-        by mx0b-00082601.pphosted.com with ESMTP id 2kf057r277-1
-        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Wed, 25 Jul 2018 13:45:40 -0700
-Received: from kafai-mbp.dhcp.thefacebook.com (192.168.52.123) by
- mail.TheFacebook.com (192.168.16.18) with Microsoft SMTP Server (TLS) id
- 14.3.361.1; Wed, 25 Jul 2018 13:45:38 -0700
-Date:   Wed, 25 Jul 2018 13:45:38 -0700
-From:   Martin KaFai Lau <kafai@fb.com>
-To:     Taeung Song <treeze.taeung@gmail.com>
-CC:     Daniel Borkmann <daniel@iogearbox.net>,
-        Alexei Starovoitov <ast@kernel.org>, <netdev@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] samples/bpf: Add BTF build flags to Makefile
-Message-ID: <20180725204538.is5aidet4qwbvlg4@kafai-mbp.dhcp.thefacebook.com>
-References: <20180725163039.2838-1-treeze.taeung@gmail.com>
- <20180725203844.ighlqmfw6227rhby@kafai-mbp.dhcp.thefacebook.com>
+        Wed, 25 Jul 2018 17:59:45 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w6PKkAhf500774
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Wed, 25 Jul 2018 13:46:10 -0700
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w6PKkAMA500768;
+        Wed, 25 Jul 2018 13:46:10 -0700
+Date:   Wed, 25 Jul 2018 13:46:10 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Sandipan Das <tipbot@zytor.com>
+Message-ID: <tip-3eae52f842329a95f8549124079518231c0daba8@git.kernel.org>
+Cc:     mingo@kernel.org, sandipan@linux.ibm.com, acme@redhat.com,
+        linux-kernel@vger.kernel.org, jolsa@redhat.com,
+        ravi.bangoria@linux.vnet.ibm.com, sukadev@linux.vnet.ibm.com,
+        naveen.n.rao@linux.vnet.ibm.com, maynard@us.ibm.com,
+        tglx@linutronix.de, kim.phillips@arm.com, hpa@zytor.com
+Reply-To: maynard@us.ibm.com, tglx@linutronix.de, kim.phillips@arm.com,
+          hpa@zytor.com, mingo@kernel.org, sandipan@linux.ibm.com,
+          acme@redhat.com, linux-kernel@vger.kernel.org, jolsa@redhat.com,
+          sukadev@linux.vnet.ibm.com, ravi.bangoria@linux.vnet.ibm.com,
+          naveen.n.rao@linux.vnet.ibm.com
+In-Reply-To: <49621ec5f37109f0655e5a8c32287ad68d85a1e5.1530724939.git.sandipan@linux.ibm.com>
+References: <49621ec5f37109f0655e5a8c32287ad68d85a1e5.1530724939.git.sandipan@linux.ibm.com>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:perf/core] perf tests: Fix record+probe_libc_inet_pton.sh for
+ powerpc64
+Git-Commit-ID: 3eae52f842329a95f8549124079518231c0daba8
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
-In-Reply-To: <20180725203844.ighlqmfw6227rhby@kafai-mbp.dhcp.thefacebook.com>
-User-Agent: NeoMutt/20180512
-X-Originating-IP: [192.168.52.123]
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-25_04:,,
- signatures=0
-X-Proofpoint-Spam-Reason: safe
-X-FB-Internal: Safe
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 25, 2018 at 01:38:44PM -0700, Martin KaFai Lau wrote:
-> On Thu, Jul 26, 2018 at 01:30:39AM +0900, Taeung Song wrote:
-> > To smoothly test BTF supported binary on samples/bpf,
-> > let samples/bpf/Makefile probe llc, pahole and
-> > llvm-objcopy for BPF support and use them
-> > like tools/testing/selftests/bpf/Makefile
-> > changed from the commit c0fa1b6c3efc ("bpf: btf:
-> >  Add BTF tests")
-> > 
-> > Cc: Martin KaFai Lau <kafai@fb.com>
-> > Signed-off-by: Taeung Song <treeze.taeung@gmail.com>
-> Thanks for the patch. LGTM.
-> 
-> Acked-by: Martin KaFai Lau <kafai@fb.com>
-and it should go to bpf-next (Please use the proper tag in the
-Subject, thanks!).
+Commit-ID:  3eae52f842329a95f8549124079518231c0daba8
+Gitweb:     https://git.kernel.org/tip/3eae52f842329a95f8549124079518231c0daba8
+Author:     Sandipan Das <sandipan@linux.ibm.com>
+AuthorDate: Tue, 10 Jul 2018 19:28:15 +0530
+Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
+CommitDate: Tue, 24 Jul 2018 14:51:37 -0300
 
-> 
-> > ---
-> >  samples/bpf/Makefile | 21 ++++++++++++++++++++-
-> >  1 file changed, 20 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/samples/bpf/Makefile b/samples/bpf/Makefile
-> > index 1303af10e54d..e079266360a3 100644
-> > --- a/samples/bpf/Makefile
-> > +++ b/samples/bpf/Makefile
-> > @@ -191,6 +191,8 @@ HOSTLOADLIBES_xdpsock		+= -pthread
-> >  #  make samples/bpf/ LLC=~/git/llvm/build/bin/llc CLANG=~/git/llvm/build/bin/clang
-> >  LLC ?= llc
-> >  CLANG ?= clang
-> > +LLVM_OBJCOPY ?= llvm-objcopy
-> > +BTF_PAHOLE ?= pahole
-> >  
-> >  # Detect that we're cross compiling and use the cross compiler
-> >  ifdef CROSS_COMPILE
-> > @@ -198,6 +200,20 @@ HOSTCC = $(CROSS_COMPILE)gcc
-> >  CLANG_ARCH_ARGS = -target $(ARCH)
-> >  endif
-> >  
-> > +BTF_LLC_PROBE := $(shell $(LLC) -march=bpf -mattr=help 2>&1 | grep dwarfris)
-> > +BTF_PAHOLE_PROBE := $(shell $(BTF_PAHOLE) --help 2>&1 | grep BTF)
-> > +BTF_OBJCOPY_PROBE := $(shell $(LLVM_OBJCOPY) --help 2>&1 | grep -i 'usage.*llvm')
-> > +
-> > +ifneq ($(BTF_LLC_PROBE),)
-> > +ifneq ($(BTF_PAHOLE_PROBE),)
-> > +ifneq ($(BTF_OBJCOPY_PROBE),)
-> > +	EXTRA_CFLAGS += -g
-> > +	LLC_FLAGS += -mattr=dwarfris
-> > +	DWARF2BTF = y
-> > +endif
-> > +endif
-> > +endif
-> > +
-> >  # Trick to allow make to be run from this directory
-> >  all:
-> >  	$(MAKE) -C ../../ $(CURDIR)/ BPF_SAMPLES_PATH=$(CURDIR)
-> > @@ -256,4 +272,7 @@ $(obj)/%.o: $(src)/%.c
-> >  		-Wno-gnu-variable-sized-type-not-at-end \
-> >  		-Wno-address-of-packed-member -Wno-tautological-compare \
-> >  		-Wno-unknown-warning-option $(CLANG_ARCH_ARGS) \
-> > -		-O2 -emit-llvm -c $< -o -| $(LLC) -march=bpf -filetype=obj -o $@
-> > +		-O2 -emit-llvm -c $< -o -| $(LLC) -march=bpf $(LLC_FLAGS) -filetype=obj -o $@
-> > +ifeq ($(DWARF2BTF),y)
-> > +	$(BTF_PAHOLE) -J $@
-> > +endif
-> > -- 
-> > 2.17.1
-> > 
+perf tests: Fix record+probe_libc_inet_pton.sh for powerpc64
+
+For powerpc64, this test currently fails due to a mismatch in the
+expected output.
+
+This can be observed on a powerpc64le system running Fedora 27 as shown
+below.
+
+  # perf test -v "probe libc's inet_pton & backtrace it with ping"
+
+Before:
+
+  62: probe libc's inet_pton & backtrace it with ping       :
+  --- start ---
+  test child forked, pid 23948
+  ping 23965 [003] 71136.075084: probe_libc:inet_pton: (7fff996aaf28)
+  7fff996aaf28 __GI___inet_pton+0x8 (/usr/lib64/libc-2.26.so)
+  7fff9965fa54 gaih_inet.constprop.7+0xf44 (/usr/lib64/libc-2.26.so)
+  FAIL: expected backtrace entry 2 "getaddrinfo\+0x[[:xdigit:]]+[[:space:]]\(/usr/lib64/libc-2.26.so\)$" got "7fff9965fa54 gaih_inet.constprop.7+0xf44 (/usr/lib64/libc-2.26.so)"
+  test child finished with -1
+  ---- end ----
+  probe libc's inet_pton & backtrace it with ping: FAILED!
+
+After:
+
+  62: probe libc's inet_pton & backtrace it with ping       :
+  --- start ---
+  test child forked, pid 24638
+  ping 24655 [001] 71208.525396: probe_libc:inet_pton: (7fffa245af28)
+  7fffa245af28 __GI___inet_pton+0x8 (/usr/lib64/libc-2.26.so)
+  7fffa240fa54 gaih_inet.constprop.7+0xf44 (/usr/lib64/libc-2.26.so)
+  7fffa24105b4 getaddrinfo+0x164 (/usr/lib64/libc-2.26.so)
+  138d52d70 main+0x3e0 (/usr/bin/ping)
+  test child finished with 0
+  ---- end ----
+  probe libc's inet_pton & backtrace it with ping: Ok
+
+Signed-off-by: Sandipan Das <sandipan@linux.ibm.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Kim Phillips <kim.phillips@arm.com>
+Cc: Maynard Johnson <maynard@us.ibm.com>
+Cc: Naveen N. Rao <naveen.n.rao@linux.vnet.ibm.com>
+Cc: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
+Cc: Sukadev Bhattiprolu <sukadev@linux.vnet.ibm.com>
+Fixes: e07d585e2454 ("perf tests: Switch trace+probe_libc_inet_pton to use record")
+Link: http://lkml.kernel.org/r/49621ec5f37109f0655e5a8c32287ad68d85a1e5.1530724939.git.sandipan@linux.ibm.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/perf/tests/shell/record+probe_libc_inet_pton.sh | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/tools/perf/tests/shell/record+probe_libc_inet_pton.sh b/tools/perf/tests/shell/record+probe_libc_inet_pton.sh
+index 94e513e62b34..1220e5e052bb 100755
+--- a/tools/perf/tests/shell/record+probe_libc_inet_pton.sh
++++ b/tools/perf/tests/shell/record+probe_libc_inet_pton.sh
+@@ -26,6 +26,12 @@ trace_libc_inet_pton_backtrace() {
+ 		echo "(__GI_)?getaddrinfo\+0x[[:xdigit:]]+[[:space:]]\($libc|inlined\)$" >> $expected
+ 		echo "main\+0x[[:xdigit:]]+[[:space:]]\(.*/bin/ping.*\)$" >> $expected
+ 		;;
++	ppc64|ppc64le)
++		eventattr='max-stack=4'
++		echo "gaih_inet.*\+0x[[:xdigit:]]+[[:space:]]\($libc\)$" >> $expected
++		echo "getaddrinfo\+0x[[:xdigit:]]+[[:space:]]\($libc\)$" >> $expected
++		echo ".*\+0x[[:xdigit:]]+[[:space:]]\(.*/bin/ping.*\)$" >> $expected
++		;;
+ 	*)
+ 		eventattr='max-stack=3'
+ 		echo "getaddrinfo\+0x[[:xdigit:]]+[[:space:]]\($libc\)$" >> $expected
