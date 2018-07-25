@@ -5,119 +5,69 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 816F3C6778F
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 13:28:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76E6CC67790
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 13:31:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 458BE20843
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 13:28:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 458BE20843
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 31C1320843
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 13:31:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 31C1320843
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729101AbeGYOjy (ORCPT
+        id S1729029AbeGYOnH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 10:39:54 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:52169 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728379AbeGYOjx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Jul 2018 10:39:53 -0400
-Received: from lupine.hi.pengutronix.de ([2001:67c:670:100:3ad5:47ff:feaf:1a17] helo=lupine)
-        by metis.ext.pengutronix.de with esmtp (Exim 4.89)
-        (envelope-from <p.zabel@pengutronix.de>)
-        id 1fiJpr-0004Zx-Ns; Wed, 25 Jul 2018 15:28:11 +0200
-Message-ID: <1532525286.4879.5.camel@pengutronix.de>
-Subject: Re: [PATCH 0/2] Document memory-to-memory video codec interfaces
-From:   Philipp Zabel <p.zabel@pengutronix.de>
-To:     Tomasz Figa <tfiga@chromium.org>, linux-media@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org,
-        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Pawel Osciak <posciak@chromium.org>,
-        Alexandre Courbot <acourbot@chromium.org>, kamil@wypas.org,
-        a.hajda@samsung.com, Kyungmin Park <kyungmin.park@samsung.com>,
-        jtp.park@samsung.com,
-        Tiffany Lin =?UTF-8?Q?=28=E6=9E=97=E6=85=A7=E7=8F=8A=29?= 
-        <tiffany.lin@mediatek.com>,
-        Andrew-CT Chen =?UTF-8?Q?=28=E9=99=B3=E6=99=BA=E8=BF=AA=29?= 
-        <andrew-ct.chen@mediatek.com>, todor.tomov@linaro.org,
-        nicolas@ndufresne.ca,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Dave Stevenson <dave.stevenson@raspberrypi.org>,
-        ezequiel@collabora.com
-Date:   Wed, 25 Jul 2018 15:28:06 +0200
-In-Reply-To: <20180724140621.59624-1-tfiga@chromium.org>
-References: <20180724140621.59624-1-tfiga@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6-1+deb9u1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2001:67c:670:100:3ad5:47ff:feaf:1a17
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+        Wed, 25 Jul 2018 10:43:07 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:50582 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728425AbeGYOnG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Jul 2018 10:43:06 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 04AA77721D;
+        Wed, 25 Jul 2018 13:31:25 +0000 (UTC)
+Received: from redhat.com (ovpn-121-228.rdu2.redhat.com [10.10.121.228])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 1429110FFE4D;
+        Wed, 25 Jul 2018 13:31:15 +0000 (UTC)
+Date:   Wed, 25 Jul 2018 16:31:08 +0300
+From:   "Michael S. Tsirkin" <mst@redhat.com>
+To:     Anshuman Khandual <khandual@linux.vnet.ibm.com>
+Cc:     virtualization@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        aik@ozlabs.ru, robh@kernel.org, joe@perches.com,
+        elfring@users.sourceforge.net, david@gibson.dropbear.id.au,
+        jasowang@redhat.com, benh@kernel.crashing.org, mpe@ellerman.id.au,
+        hch@infradead.org, linuxram@us.ibm.com, haren@linux.vnet.ibm.com,
+        paulus@samba.org, srikar@linux.vnet.ibm.com
+Subject: Re: [RFC 4/4] virtio: Add platform specific DMA API translation for
+ virito devices
+Message-ID: <20180725162951-mutt-send-email-mst@kernel.org>
+References: <20180720035941.6844-1-khandual@linux.vnet.ibm.com>
+ <20180720035941.6844-5-khandual@linux.vnet.ibm.com>
+ <20180720160550-mutt-send-email-mst@kernel.org>
+ <3dd36d8e-3bc8-91ba-cf6d-939495439d2c@linux.vnet.ibm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3dd36d8e-3bc8-91ba-cf6d-939495439d2c@linux.vnet.ibm.com>
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Wed, 25 Jul 2018 13:31:25 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Wed, 25 Jul 2018 13:31:25 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'mst@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Tomasz,
+On Mon, Jul 23, 2018 at 07:46:09AM +0530, Anshuman Khandual wrote:
+> There is a redundant definition of virtio_has_iommu_quirk in the tools
+> directory (tools/virtio/linux/virtio_config.h) which does not seem to
+> be used any where. I guess that can be removed without problem.
 
-On Tue, 2018-07-24 at 23:06 +0900, Tomasz Figa wrote:
-> This series attempts to add the documentation of what was discussed
-> during Media Workshops at LinuxCon Europe 2012 in Barcelona and then
-> later Embedded Linux Conference Europe 2014 in Düsseldorf and then
-> eventually written down by Pawel Osciak and tweaked a bit by Chrome OS
-> video team (but mostly in a cosmetic way or making the document more
-> precise), during the several years of Chrome OS using the APIs in
-> production.
-> 
-> Note that most, if not all, of the API is already implemented in
-> existing mainline drivers, such as s5p-mfc or mtk-vcodec. Intention of
-> this series is just to formalize what we already have.
->
-> It is an initial conversion from Google Docs to RST, so formatting is
-> likely to need some further polishing. It is also the first time for me
-> to create such long RST documention. I could not find any other instance
-> of similar userspace sequence specifications among our Media documents,
-> so I mostly followed what was there in the source. Feel free to suggest
-> a better format.
-> 
-> Much of credits should go to Pawel Osciak, for writing most of the
-> original text of the initial RFC.
-> 
-> Changes since RFC:
-> (https://lore.kernel.org/patchwork/project/lkml/list/?series=348588)
->  - The number of changes is too big to list them all here. Thanks to
->    a huge number of very useful comments from everyone (Philipp, Hans,
->    Nicolas, Dave, Stanimir, Alexandre) we should have the interfaces much
->    more specified now. The issues collected since previous revisions and
->    answers leading to this revision are listed below.
+It's there just to make tools/virtio build.
+Try
+	make -C tools/virtio/
+In fact I see there's a missing definition for
+dma_rmb/dma_wmb there, I'll post a patch.
 
-Thanks a lot for the update, and especially for the nice Q&A summary of
-the discussions so far.
-
-[...]
-> Decoder issues
-> 
-[...]
->   How should ENUM_FRAMESIZES be affected by profiles and levels?
-> 
->   Answer: Not in current specification - the logic is too complicated and
->   it might make more sense to actually handle this in user space.  (In
->   theory, level implies supported frame sizes + other factors.)
-
-For decoding I think it makes more sense to let the hardware decode them
-from the stream and present them as read-only controls, such as:
-
-42a68012e67c ("media: coda: add read-only h.264 decoder profile/level
-controls")
-
-if possible. For encoding, the coda firmware determines level from
-bitrate and coded resolution, itself, so I agree not making this part of
-the spec is a good idea for now.
-
-regards
-Philipp
+-- 
+MST
