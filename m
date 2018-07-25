@@ -2,126 +2,208 @@ Return-Path: <SRS0=S+WB=KJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.4 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9791C6778F
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 13:31:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 436C2C67790
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 13:33:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6E71C20843
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 13:31:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6E71C20843
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id E612720843
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 13:33:02 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RyM7hVFM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E612720843
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729073AbeGYOnf (ORCPT
+        id S1729107AbeGYOom (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 10:43:35 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:50654 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728452AbeGYOnf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Jul 2018 10:43:35 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 984E977888;
-        Wed, 25 Jul 2018 13:31:52 +0000 (UTC)
-Received: from [10.36.112.67] (ovpn-112-67.ams2.redhat.com [10.36.112.67])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 953D710FFE4D;
-        Wed, 25 Jul 2018 13:31:49 +0000 (UTC)
-Subject: Re: [PATCH v2 6/6] KVM: nVMX: optimize prepare_vmcs02{,_full} for
- Enlightened VMCS case
-To:     Vitaly Kuznetsov <vkuznets@redhat.com>
-Cc:     kvm@vger.kernel.org,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Roman Kagan <rkagan@virtuozzo.com>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        "Michael Kelley (EOSG)" <Michael.H.Kelley@microsoft.com>,
-        Mohammed Gamal <mmorsy@redhat.com>,
-        Cathy Avery <cavery@redhat.com>, linux-kernel@vger.kernel.org,
-        Jim Mattson <jmattson@google.com>,
-        Liran Alon <liran.alon@oracle.com>
-References: <20180621123046.29606-1-vkuznets@redhat.com>
- <20180621123046.29606-7-vkuznets@redhat.com>
- <a826fd88-0199-8e7b-ebfc-290e936b5efc@redhat.com>
- <87va93pv6w.fsf@vitty.brq.redhat.com>
- <46052d1e-9ee1-8cee-3f7c-cf27b1cd0373@redhat.com>
- <87in53pjgv.fsf@vitty.brq.redhat.com>
- <f464b4fa-19d0-6b8b-5afe-d491b1eee08a@redhat.com>
- <87effrphu3.fsf@vitty.brq.redhat.com>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <2ed3d00b-bc99-2e2d-3a23-a86de767bfec@redhat.com>
-Date:   Wed, 25 Jul 2018 15:31:47 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Wed, 25 Jul 2018 10:44:42 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:44987 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728988AbeGYOom (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Jul 2018 10:44:42 -0400
+Received: by mail-pg1-f195.google.com with SMTP id r1-v6so5338320pgp.11;
+        Wed, 25 Jul 2018 06:33:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=zMLbQuHcxze5O2A5oalAB7Nkdck5JfWqAwfcpghdtcc=;
+        b=RyM7hVFMcjA/4VCUU/ppeDzl/Vl1fTJBci0dcF6VOBhHAqWAPlAiV1KIsxPhG1gQsJ
+         7OzV8NEJJAVk2yIyJ3Nj+a1/vuQI3OTkzdH2GlOf9apoomnGmJq5n8/O/kaDwawVIxEW
+         iGGhNpDIyRRJXs7AgMFdcur2Dmh21ARxumCRn13Lz+1yuN3SY5OLxCoU0qu+2mOAflej
+         6/6ROlC6x/Zr+SXWC0qnFRh+Q5mCCySPK7bVKmbaLdiC+asdlvIFoAX/ukjYW2eY8XoX
+         lWroIsAMGdQKXFtz14zbQ04z7OeyWtFKQPvic8bghuRK50Fi1QXlJRtJgFEcRIddz6Ms
+         icVQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=zMLbQuHcxze5O2A5oalAB7Nkdck5JfWqAwfcpghdtcc=;
+        b=acazlGvU2OlbxOn5q+QzpnSvalrL94VbecG80nqn4TsHr7jiEb1o384I8V5qth1hkt
+         RXzz1DFylu521eQj19J8yvVd5BpsAomSHw6uuIMOpWXiHB6uxEVLUi36zXYEgfoTy7in
+         WSlyBleJJXM5MD2d+aumgBAVhttqys4dY42RMUF4qsuJgOss1rbLimUaalfhPcWrrceH
+         EeLqGBjqJt11gHm+j9fERoBRaVcS1JhwASjgC9fn8jkQkH+gLHS1IFRfBO4TOV327x9L
+         W7rk17ToZOwwAM7VxOQ6Yqr+GURrF5V9SRPWVQ2H0FPY5YbINkJrGOl+Gmjzc1+lpEbM
+         7YAw==
+X-Gm-Message-State: AOUpUlEvG84qQrzQBFb1Ttr0DpHgl9W2X4pbd7lGfmSwIr1bebUWZk2a
+        wMWAvCkTWXGmGLGX4Q/UPnWI/SSd
+X-Google-Smtp-Source: AAOMgpf0MpVEbyUPAduoD7bCsgYIpqjOWz5vgzsg3AMnZ/pxm6aP2qApCrdnL1+0n54fuimP3Ujqlw==
+X-Received: by 2002:a63:f713:: with SMTP id x19-v6mr20596908pgh.233.1532525579982;
+        Wed, 25 Jul 2018 06:32:59 -0700 (PDT)
+Received: from localhost (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
+        by smtp.gmail.com with ESMTPSA id u71-v6sm38041673pfk.174.2018.07.25.06.32.58
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 25 Jul 2018 06:32:59 -0700 (PDT)
+Date:   Wed, 25 Jul 2018 06:32:57 -0700
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: linux-next: Tree for Jul 25
+Message-ID: <20180725133257.GA29961@roeck-us.net>
+References: <20180725164408.371c73fb@canb.auug.org.au>
 MIME-Version: 1.0
-In-Reply-To: <87effrphu3.fsf@vitty.brq.redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Wed, 25 Jul 2018 13:31:52 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Wed, 25 Jul 2018 13:31:52 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'pbonzini@redhat.com' RCPT:''
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180725164408.371c73fb@canb.auug.org.au>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 25/07/2018 15:26, Vitaly Kuznetsov wrote:
-> Doing it in nested_vmx_handle_enlightened_vmptrld() is even better: we
-> can simplify copy_enlightened_to_vmcs12() too!
+On Wed, Jul 25, 2018 at 04:44:08PM +1000, Stephen Rothwell wrote:
+> Hi all,
+> 
+> Changes since 20180724:
+> 
+> Dropped trees: xarray, ida (complex conflicts)
+> 
+> The xarray tree still had its complex conflicts against the nvdimm tree
+> so I have dropped it again for today (along with the ida tree that is
+> built on top of it).
+> 
+> The akpm-current tree still had its build failure for which I reverted
+> a commit.
+> 
+> Non-merge commits (relative to Linus' tree): 8119
+>  7489 files changed, 334256 insertions(+), 150745 deletions(-)
+> 
+> ----------------------------------------------------------------------------
+> 
 
-Yes, that's true!
+Build results:
+	total: 134 pass: 125 fail: 9
+Failed builds: 
+	alpha:allmodconfig 
+	arm:axm55xx_defconfig
+	arm:keystone_defconfig
+	parisc:allmodconfig 
+	s390:allmodconfig 
+	sparc32:allmodconfig 
+	sparc64:allmodconfig 
+	unicore32:defconfig 
+	unicore32:allnoconfig 
+Qemu test results:
+	total: 172 pass: 172 fail: 0
 
-> The other place where we set dirty_vmcs12 is the newly introduced
-> vmx_set_nested_state() but I think I'm going to add support for eVMCS
-> there later and just return something like -ENOTSUPP for now. Too many
-> people work on nested simultaneously :-)
+---
+alpha:allmodconfig, parisc:allmodconfig, sparc64:allmodconfig:
 
-Hmm, I think that means you have to put the clean fields in the
-vmx_nested struct.  Then it's really easy in vmx_set_nested_state to
-clear all the clean bits.  Touching memory in vmx_set_nested_state is...
-*puts on sunglasses* a touchy subject (see comment in kvm/queue's
-enter_vmx_non_root_mode).
+drivers/mtd/nand/raw/s3c2410.c: In function 's3c2410_nand_read_buf':
+drivers/mtd/nand/raw/s3c2410.c:674:2: error:
+	implicit declaration of function 'readsb'; did you mean 'readb'?
+drivers/mtd/nand/raw/s3c2410.c: In function 's3c2440_nand_read_buf':
+drivers/mtd/nand/raw/s3c2410.c:681:2: error:
+	implicit declaration of function 'readsl'; did you mean 'readl'?
+drivers/mtd/nand/raw/s3c2410.c: In function 's3c2410_nand_write_buf':
+drivers/mtd/nand/raw/s3c2410.c:696:2: error:
+	implicit declaration of function 'writesb'; did you mean 'writeb'?
+drivers/mtd/nand/raw/s3c2410.c: In function 's3c2440_nand_write_buf':
+drivers/mtd/nand/raw/s3c2410.c:704:2: error:
+	implicit declaration of function 'writesl'; did you mean 'writel'
 
-Thanks,
+---
+arm:axm55xx_defconfig, arm:keystone_defconfig:
 
-Paolo
+mm/memory.c: In function 'tlb_remove_table_smp_sync':
+mm/memory.c:339:2: error:
+	implicit declaration of function 'tlb_flush_remove_tables_local'; did you mean 'tlb_remove_table'?
+mm/memory.c: In function 'tlb_table_flush':
+mm/memory.c:372:2: error:
+	implicit declaration of function 'tlb_flush_remove_tables'; did you mean 'tlb_remove_table'?
+
+---
+s390:allmodconfig:
+
+drivers/fsi/fsi-master-ast-cf.c:440:13: error: conflicting types for 'dump_trace'
+ static void dump_trace(struct fsi_master_acf *master)
+              ^~~~~~~~~~
+In file included from include/linux/mutex.h:19:0,
+	from include/linux/kernfs.h:13,
+	from include/linux/sysfs.h:16,
+	from include/linux/kobject.h:20,
+	from include/linux/device.h:16,
+	from drivers/fsi/fsi-master-ast-cf.c:9:
+arch/s390/include/asm/processor.h:216:6: note:
+	previous declaration of 'dump_trace' was here
+void dump_trace(dump_trace_func_t func, void *data,
+
+---
+sparc32:allmodconfig:
+
+arch/sparc/kernel/head_32.o: In function `current_pc':
+arch/sparc/kernel/.tmp_head_32.o:(.head.text+0x5040): relocation truncated to fit: R_SPARC_WDISP22 against `.init.text'
+arch/sparc/kernel/head_32.o: In function `halt_notsup':
+arch/sparc/kernel/.tmp_head_32.o:(.head.text+0x5100): relocation truncated to fit: R_SPARC_WDISP22 against `.init.text'
+arch/sparc/kernel/head_32.o: In function `leon_init':
+arch/sparc/kernel/.tmp_head_32.o:(.init.text+0xa4): relocation truncated to fit: R_SPARC_WDISP22 against symbol `leon_smp_cpu_startup' defined in .text section
+in arch/sparc/kernel/trampoline_32.o
+arch/sparc/kernel/process_32.o:(.fixup+0x4): relocation truncated to fit: R_SPARC_WDISP22 against `.text'
+arch/sparc/kernel/process_32.o:(.fixup+0xc): relocation truncated to fit: R_SPARC_WDISP22 against `.text'
+arch/sparc/kernel/signal_32.o:(.fixup+0x0): relocation truncated to fit: R_SPARC_WDISP22 against `.text'
+arch/sparc/kernel/signal_32.o:(.fixup+0x8): relocation truncated to fit: R_SPARC_WDISP22 against `.text'
+arch/sparc/kernel/signal_32.o:(.fixup+0x10): relocation truncated to fit: R_SPARC_WDISP22 against `.text'
+arch/sparc/kernel/signal_32.o:(.fixup+0x18): relocation truncated to fit: R_SPARC_WDISP22 against `.text'
+arch/sparc/kernel/signal_32.o:(.fixup+0x20): relocation truncated to fit: R_SPARC_WDISP22 against `.text'
+arch/sparc/kernel/signal_32.o:(.fixup+0x28): additional relocation overflows omitted from the output
+
+---
+unicore32:defconfig, unicore32:allnoconfig:
+
+In file included from include/linux/mm.h:17,
+                 from arch/unicore32/kernel/asm-offsets.c:17:
+include/linux/mm_types.h:497: error:
+	flexible array member in otherwise empty struct
+
+---
+From qemu log for arm:integratorcp:integrator_defconfig:
+
+Console: colour dummy device 80x30
+------------[ cut here ]------------
+WARNING: CPU: 0 PID: 0 at kernel/time/sched_clock.c:180
+sched_clock_register+0x44/0x278
+Modules linked in:
+CPU: 0 PID: 0 Comm: swapper Not tainted 4.18.0-rc6-next-20180725 #1
+Hardware name: ARM Integrator/CP (Device Tree)
+[<c0010cb4>] (unwind_backtrace) from [<c000dc24>] (show_stack+0x10/0x18)
+[<c000dc24>] (show_stack) from [<c03ff6d4>] (dump_stack+0x18/0x24)
+[<c03ff6d4>] (dump_stack) from [<c001a000>] (__warn+0xc8/0xf0)
+[<c001a000>] (__warn) from [<c001a13c>] (warn_slowpath_null+0x3c/0x4c)
+[<c001a13c>] (warn_slowpath_null) from [<c052367c>] (sched_clock_register+0x44/0x278)
+[<c052367c>] (sched_clock_register) from [<c05238d8>] (generic_sched_clock_init+0x28/0x88)
+[<c05238d8>] (generic_sched_clock_init) from [<c0521a00>] (sched_clock_init+0x54/0x74)
+[<c0521a00>] (sched_clock_init) from [<c0519c18>] (start_kernel+0x310/0x3e4)
+[<c0519c18>] (start_kernel) from [<00000000>] (  (null))
+---[ end trace 08080eb81afa002c ]---
+
+---
+
+Complete daily logs are available at http://kerneltests.org/builders.
+
+Guenter
