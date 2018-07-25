@@ -5,74 +5,85 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C4C3C67790
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 19:31:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78148C6778F
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 19:35:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BC4E8204EC
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 19:31:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BC4E8204EC
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 2A279205F4
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 19:35:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2A279205F4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730400AbeGYUob convert rfc822-to-8bit (ORCPT
+        id S1730178AbeGYUsV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 16:44:31 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:60710 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729524AbeGYUob (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Jul 2018 16:44:31 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 897C540241C1;
-        Wed, 25 Jul 2018 19:31:25 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-116.rdu2.redhat.com [10.10.120.116])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 96B882166BA3;
-        Wed, 25 Jul 2018 19:31:24 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <CA+55aFwvKerkzigZmm0zrUTnsqDpJs0XBtX72Ltmek+_ic-KmA@mail.gmail.com>
-References: <CA+55aFwvKerkzigZmm0zrUTnsqDpJs0XBtX72Ltmek+_ic-KmA@mail.gmail.com> <7828.1532527332@warthog.procyon.org.uk> <CA+55aFy2v3OW+mmSDF4MPWW673WsJEdQef3LChWg5k9=_k9ggg@mail.gmail.com> <25183.1532542685@warthog.procyon.org.uk>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     dhowells@redhat.com, kiran.modukuri@gmail.com,
-        linux-cachefs@redhat.com,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [GIT PULL] fscache and cachefiles fixes
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <1054.1532547084.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: 8BIT
-Date:   Wed, 25 Jul 2018 20:31:24 +0100
-Message-ID: <1055.1532547084@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Wed, 25 Jul 2018 19:31:25 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Wed, 25 Jul 2018 19:31:25 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'dhowells@redhat.com' RCPT:''
+        Wed, 25 Jul 2018 16:48:21 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:55296 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729213AbeGYUsV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Jul 2018 16:48:21 -0400
+Received: from localhost.localdomain (c-24-4-125-7.hsd1.ca.comcast.net [24.4.125.7])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id AB701CE5;
+        Wed, 25 Jul 2018 19:35:14 +0000 (UTC)
+Date:   Wed, 25 Jul 2018 12:35:13 -0700
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     Davidlohr Bueso <dave@stgolabs.net>
+Cc:     jbaron@akamai.com, viro@zeniv.linux.org.uk,
+        linux-kernel@vger.kernel.org, Davidlohr Bueso <dbueso@suse.de>
+Subject: Re: [PATCH -next] fs/epoll: simply CONFIG_NET_RX_BUSY_POLL ifdefery
+Message-Id: <20180725123513.5f36a6b787d06c8066a24ade@linux-foundation.org>
+In-Reply-To: <20180725185620.11020-1-dave@stgolabs.net>
+References: <20180725185620.11020-1-dave@stgolabs.net>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Okay, I posted four patches on 5th July:
+On Wed, 25 Jul 2018 11:56:20 -0700 Davidlohr Bueso <dave@stgolabs.net> wrote:
 
-	https://lore.kernel.org/lkml/153080826773.5496.7106875523806885716.stgit@warthog.procyon.org.uk/
+> ... 'tis easier on the eye.
 
-These five patches are the same aggregate changes, just with the first patch
-split and a description composed for both parts:
+true, but.
 
-	warthog>git diff fscache-fixes-20180705  fscache-fixes-20180725
-	warthog>
+> +#else
+> +#define ep_busy_loop(ep, nonblock)		do { } while (0)
+> +#define ep_reset_busy_poll_napi_id(ep)		do { } while (0)
+> +#define ep_set_busy_poll_napi_id(epi)		do { } while (0)
+> +
+> +#endif /* CONFIG_NET_RX_BUSY_POLL */
 
-The patch series as a whole got tested by Scott Mayhew whilst seeing if they
-cured a bug he was looking at:
+inlines are preferred.  Because macros are fugly and can cause
+unused-var warnings when the stub versions are used.
 
-	https://marc.info/?l=linux-nfs&m=153191593807248&w=2
+This?
 
-I've also ported them to RHEL-7 where they've undergone some automated testing
-with iozone.
+--- a/fs/eventpoll.c~fs-epoll-simply-config_net_rx_busy_poll-ifdefery-fix
++++ a/fs/eventpoll.c
+@@ -449,9 +449,18 @@ static inline void ep_set_busy_poll_napi
+ }
+ 
+ #else
+-#define ep_busy_loop(ep, nonblock)		do { } while (0)
+-#define ep_reset_busy_poll_napi_id(ep)		do { } while (0)
+-#define ep_set_busy_poll_napi_id(epi)		do { } while (0)
++
++static inline void ep_busy_loop(struct eventpoll *ep, int nonblock)
++{
++}
++
++static inline void ep_reset_busy_poll_napi_id(struct eventpoll *ep)
++{
++}
++
++static inline void ep_set_busy_poll_napi_id(struct epitem *epi)
++{
++}
+ 
+ #endif /* CONFIG_NET_RX_BUSY_POLL */
+ 
+_
 
-David
