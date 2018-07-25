@@ -2,94 +2,151 @@ Return-Path: <SRS0=S+WB=KJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9030C6778F
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 19:53:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88681C6778F
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 19:57:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9C0A520844
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 19:53:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9C0A520844
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+	by mail.kernel.org (Postfix) with ESMTP id 3CE3C20844
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 19:57:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3CE3C20844
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730969AbeGYVGe (ORCPT
+        id S1730337AbeGYVKq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 17:06:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37756 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729335AbeGYVGe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Jul 2018 17:06:34 -0400
-Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5A4C020844;
-        Wed, 25 Jul 2018 19:53:23 +0000 (UTC)
-Date:   Wed, 25 Jul 2018 15:53:21 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Masami Hiramatsu <mhiramat@kernel.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Tom Zanussi <tom.zanussi@linux.intel.com>,
-        Hiraku Toyooka <hiraku.toyooka@cybertrust.co.jp>,
-        Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH] tracing: Fix double free of event_trigger_data
-Message-ID: <20180725155321.3e677387@gandalf.local.home>
-In-Reply-To: <20180725152904.11edde2b@gandalf.local.home>
-References: <20180725085740.5e7efaa1@gandalf.local.home>
-        <20180726004349.e71303133ff8e095a1a1499e@kernel.org>
-        <20180725124008.7008e586@gandalf.local.home>
-        <20180725152904.11edde2b@gandalf.local.home>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Wed, 25 Jul 2018 17:10:46 -0400
+Received: from mail-io0-f195.google.com ([209.85.223.195]:34617 "EHLO
+        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729366AbeGYVKq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Jul 2018 17:10:46 -0400
+Received: by mail-io0-f195.google.com with SMTP id l7-v6so7345632ioj.1;
+        Wed, 25 Jul 2018 12:57:34 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=SKg6rV06V0lTYNlPN8MJq1T7lX7jMbiEBsfVo8gw/Ag=;
+        b=UBkglX13rIqS//tROrnfnl4VnhWoBdBvIWEzYgmtUMIIj1wH5tyMN7UQAVlU1SwQXN
+         EYP2+pj9Vee3Hnkkral8ts9YB3nOb7ZFY4uAa0zXfGAAhAWGuIlydXG71oO87CNuIkt7
+         zc0wz0Ikp0FWBkfMOzIGJXW89HxJaamgRCd1QAjNOmuT3HojFiUn8zr4xqXY0ogotdWN
+         iieU6L5IMT6oNuFmMxSz8pl0h5gqEEcZhCqKqpBMPvWtMLKU3WeUZr5dGiIFtX1sJ2bw
+         Q+mDXHBKqOYcDf7B1xvZ5eHPKe92VryLN4byWcoL/Ws36IZGcKH8NahCSOY+sbJ1Fmpp
+         FwmQ==
+X-Gm-Message-State: AOUpUlHCz4XKMQW4D6M8keFV2IYPOivqz7OjhFU4E6ltyytbf+bQKS+m
+        rDMSxm3hG8ejPqTMM8mQYQ==
+X-Google-Smtp-Source: AAOMgpfG+gCtu1DbjKtLufe5+sEv63uLPjMi0uFqRavAY0EmR1DBQ0vWAeu10r+aoJdg/INBnMD8wQ==
+X-Received: by 2002:a6b:2a05:: with SMTP id q5-v6mr18498890ioq.13.1532548654332;
+        Wed, 25 Jul 2018 12:57:34 -0700 (PDT)
+Received: from localhost ([24.51.61.72])
+        by smtp.gmail.com with ESMTPSA id z71-v6sm12403735ioz.34.2018.07.25.12.57.33
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 25 Jul 2018 12:57:33 -0700 (PDT)
+Date:   Wed, 25 Jul 2018 13:57:33 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Vitor soares <Vitor.Soares@synopsys.com>
+Cc:     boris.brezillon@bootlin.com, wsa@the-dreams.de,
+        linux-i2c@vger.kernel.org, corbet@lwn.net,
+        linux-doc@vger.kernel.org, gregkh@linuxfoundation.org,
+        arnd@arndb.de, psroka@cadence.com, agolec@cadence.com,
+        adouglas@cadence.com, bfolta@cadence.com, dkos@cadence.com,
+        alicja@cadence.com, cwronka@cadence.com, sureshp@cadence.com,
+        rafalc@cadence.com, thomas.petazzoni@bootlin.com, nm@ti.com,
+        pawel.moll@arm.com, mark.rutland@arm.com,
+        ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        geert@linux-m68k.org, linus.walleij@linaro.org,
+        Xiang.Lin@synaptics.com, linux-gpio@vger.kernel.org,
+        nsekhar@ti.com, pgaj@cadence.com, peda@axentia.se,
+        Joao.Pinto@synopsys.com
+Subject: Re: [PATCH 2/3] dt-bindings: i3c: Document Synopsys DesignWare I3C
+ master bindings
+Message-ID: <20180725195733.GA14450@rob-hp-laptop>
+References: <1532120272-17157-1-git-send-email-soares@synopsys.com>
+ <1532120272-17157-3-git-send-email-soares@synopsys.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1532120272-17157-3-git-send-email-soares@synopsys.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 25 Jul 2018 15:29:04 -0400
-Steven Rostedt <rostedt@goodmis.org> wrote:
+On Fri, Jul 20, 2018 at 09:57:51PM +0100, Vitor soares wrote:
+> This patch document Synopsys DesignWare I3C master DT bindings.
+> 
+> Signed-off-by: Vitor soares <soares@synopsys.com>
+> ---
+>  .../devicetree/bindings/i3c/snps,dw-i3c-master.txt | 43 ++++++++++++++++++++++
+>  1 file changed, 43 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/i3c/snps,dw-i3c-master.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/i3c/snps,dw-i3c-master.txt b/Documentation/devicetree/bindings/i3c/snps,dw-i3c-master.txt
+> new file mode 100644
+> index 0000000..7f5c8b0
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/i3c/snps,dw-i3c-master.txt
+> @@ -0,0 +1,43 @@
+> +Bindings for Synopsys DesignWare I3C master block
+> +=================================================
+> +
+> +Required properties:
+> +--------------------
+> +- compatible: shall be "snps,dw-i3c-master"
 
-> Nope, this doesn't work. It's a little more complex than the other one.
-> I'll just leave it, and fix the reg code for 4.19.
+Only one version and no version number?
 
-I take this back. Looks like it just needs to be handled slightly
-differently. Thoughts?
+... and an SoC specific compatible string.
 
--- Steve
+> +- clocks: shall reference the core_clk
+> +- clock-names: shall contain "core_clk"
 
-diff --git a/kernel/trace/trace_events_trigger.c b/kernel/trace/trace_events_trigger.c
-index d18ec0e58be2..5dea177cef53 100644
---- a/kernel/trace/trace_events_trigger.c
-+++ b/kernel/trace/trace_events_trigger.c
-@@ -1420,6 +1420,9 @@ int event_enable_trigger_func(struct event_command *cmd_ops,
- 		goto out;
- 	}
- 
-+	/* Up the trigger_data count to make sure nothing frees it on failure */
-+	event_trigger_init(trigger_ops, trigger_data);
-+
- 	if (trigger) {
- 		number = strsep(&trigger, ":");
- 
-@@ -1470,6 +1473,7 @@ int event_enable_trigger_func(struct event_command *cmd_ops,
- 		goto out_disable;
- 	/* Just return zero, not the number of enabled functions */
- 	ret = 0;
-+	event_trigger_free(trigger_ops, trigger_data);
-  out:
- 	return ret;
- 
-@@ -1480,7 +1484,7 @@ int event_enable_trigger_func(struct event_command *cmd_ops,
-  out_free:
- 	if (cmd_ops->set_filter)
- 		cmd_ops->set_filter(NULL, trigger_data, NULL);
--	kfree(trigger_data);
-+	event_trigger_free(trigger_ops, trigger_data);
- 	kfree(enable_data);
- 	goto out;
- }
+"_clk" is redundant and *-names with a single entry is kind of 
+pointless.
+
+> +- interrupts: the interrupt line connected to this I3C master
+> +- reg:  Offset and length of I3C master registers
+> +
+> +Mandatory properties defined by the generic binding (see
+> +Documentation/devicetree/bindings/i3c/i3c.txt for more details):
+> +
+> +- #address-cells: shall be set to 3
+> +- #size-cells: shall be set to 0
+> +
+> +Optional properties defined by the generic binding (see
+> +Documentation/devicetree/bindings/i3c/i3c.txt for more details):
+> +
+> +- i2c-scl-hz
+> +- i3c-scl-hz
+> +
+> +I3C device connected on the bus follow the generic description (see
+> +Documentation/devicetree/bindings/i3c/i3c.txt for more details).
+> +
+> +Example:
+> +
+> +	i3c-master@0x2000 {
+
+Drop the '0x'
+
+> +		compatible = "snps,dw-i3c-master";
+> +		#address-cells = <3>;
+> +		#size-cells = <0>;
+> +		reg = <0x02000 0x1000>;
+> +		interrupts = <0>;
+> +		clocks = <&i3cclk>;
+> +		clock-names = "core_clk";
+> +
+> +		eeprom@0x57{
+> +			compatible = "atmel,24c01";
+> +			reg = < 0x57 0x80000010 0x0>;
+> +			pagesize = <0x8>;
+> +		};
+> +	};
+> -- 
+> 2.7.4
+> 
+> 
