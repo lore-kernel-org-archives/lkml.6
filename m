@@ -6,58 +6,58 @@ X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CE86C67790
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 09:36:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC870C67790
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 09:36:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1C6CD20671
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 09:36:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8CA4A20671
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 09:36:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Y80spTcu"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C6CD20671
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="C5VASHuf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8CA4A20671
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728751AbeGYKqv (ORCPT
+        id S1728770AbeGYKrN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 06:46:51 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:37883 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728674AbeGYKqv (ORCPT
+        Wed, 25 Jul 2018 06:47:13 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:41683 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728654AbeGYKrN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Jul 2018 06:46:51 -0400
-Received: by mail-wm0-f67.google.com with SMTP id n11-v6so5286000wmc.2
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Jul 2018 02:35:59 -0700 (PDT)
+        Wed, 25 Jul 2018 06:47:13 -0400
+Received: by mail-wr1-f67.google.com with SMTP id j5-v6so6711548wrr.8
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Jul 2018 02:36:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=806iHYh3bmw03kK6hn1fb7nl1ZtzrIEssj6Cc2wmOJM=;
-        b=Y80spTcuX2S3BV5bGDT5wHn/5PjnJDsawIODnCadAlkVBm2GxUUHgorIflxKPQdEOT
-         rq8Tf0D5IGZ/O2rtvt7csAJDVMNPjCqgtWkXd/QtAq19LCpSJe1kZ2+zbrAD/yGNBLNU
-         EeYNVOEFjLIrfz7xdaVQzlcWk/aHA8vX42Bp4=
+        bh=TfR+R+amuMSxn48RnRmG3QIVCpybhTJV/4qALbVuA3k=;
+        b=C5VASHufXKMypCiajPF0Fjb68UcZot4nUJ7PxbHi4xg0htaoHfSccauO6FGtmRdL1m
+         2UcgzWaWP4X440zG92UoLIK6PVisGuO9EnNl4J9O+dCZNhA1g1uJRsqCivgZPjO/208i
+         uCLatUwF7AbmBy8GClwAfYYKsPLtYggNYMB/I=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=806iHYh3bmw03kK6hn1fb7nl1ZtzrIEssj6Cc2wmOJM=;
-        b=kP96furI41X70gScyoQgbxaNuuVzYtMYZHB/WBproIwcDNq2QJyBZ/4zAnnYFaZ+FQ
-         vT18WtbZDWipPbmhO6x+fU5HqdbXQdVqRiL0WMBICxrLAxrSdDdHWyazXs0yceCy5l5c
-         JPuSxX8pLZtBD8+ULTGF2CIjqIG6COjeilN+EdDxelnXAsstKDDuiROIVyj76yg576lH
-         os0upu0epA9h2AHBNRXNqi5kw/mjCPnrTWYhQXPrcRXefANOmZ8fg9k/HIaQoFgyP+wu
-         JXXP3dC8/toY2JG+K3x68m012dYqc+ERtmR3a4QfLiTIPtvqCsArvegQxYufJvhYnIZY
-         eA6Q==
-X-Gm-Message-State: AOUpUlH/BI43xoEgEaCvx+RoMssRB/lshY7RcqKmA8aAoWERPf9Asn4b
-        7NdyRmbbHpn0foMaYuSQ7uDzRA==
-X-Google-Smtp-Source: AAOMgpeN5lcA0I9KejKfSTT0vtxx6K50ptOO0fncI1kK1e6nY422sPrMp3p8aEUHfd9NKWGQh33KlA==
-X-Received: by 2002:a1c:3a8f:: with SMTP id h137-v6mr4270411wma.72.1532511358587;
-        Wed, 25 Jul 2018 02:35:58 -0700 (PDT)
+        bh=TfR+R+amuMSxn48RnRmG3QIVCpybhTJV/4qALbVuA3k=;
+        b=lSjfnq9je8XYAqkkGFwV5HtrL1yFEwCUi4E4lE1uczyjhkznw/8/2Nare0YmcreE+x
+         IbXYeZtVqOHJ7gttqSaa+TYLhK1l5Se2n5R9OKfMTnIst8G5t95Ja2jMwlVVS2bVgAny
+         M+sXyzYos9c3VrO8HwjbP1j+exZbhTicBltqwkieQmCoEQ/BXEqDKYhFn9FLByu0CpAT
+         5lyOljCP/kvjb+kH0lFVsdLW9twejdPlTGL+1X2KpVFLau0j7lZb/4e71rRguGQUow44
+         onVWBUy2iPsFoWQGufIKh1z5BdiJOzVpHM3VrPIjXnkRKnLJVvQLupagzF8ykXZB6SMJ
+         RDHg==
+X-Gm-Message-State: AOUpUlGOcmKx8iC5NOT0UkWlrZ08g5iLqN0/7/Y01uTjaotFZPWmRzaM
+        X93Si7xqJyknU+wPe/ZCPfECzg==
+X-Google-Smtp-Source: AAOMgpc39+R9ojNU9B6QTk+ve+RYRulvFNLmnbAdia+HDIROqiIBH1hOFYzlN4qZKIE79gnCga5CDg==
+X-Received: by 2002:adf:ac2d:: with SMTP id v42-v6mr14127979wrc.142.1532511380351;
+        Wed, 25 Jul 2018 02:36:20 -0700 (PDT)
 Received: from [192.168.27.209] ([37.157.136.206])
-        by smtp.googlemail.com with ESMTPSA id i205-v6sm6502457wmf.30.2018.07.25.02.35.57
+        by smtp.googlemail.com with ESMTPSA id w204-v6sm6574915wmw.5.2018.07.25.02.36.18
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 25 Jul 2018 02:35:58 -0700 (PDT)
-Subject: Re: [PATCH v3 2/4] venus: firmware: move load firmware in a separate
- function
+        Wed, 25 Jul 2018 02:36:19 -0700 (PDT)
+Subject: Re: [PATCH v3 3/4] venus: firmware: add no TZ boot and shutdown
+ routine
 To:     Vikash Garodia <vgarodia@codeaurora.org>, hverkuil@xs4all.nl,
         mchehab@kernel.org, robh@kernel.org, mark.rutland@arm.com,
         andy.gross@linaro.org, arnd@arndb.de, bjorn.andersson@linaro.org
@@ -65,14 +65,14 @@ Cc:     linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
         devicetree@vger.kernel.org, acourbot@chromium.org
 References: <1530731212-30474-1-git-send-email-vgarodia@codeaurora.org>
- <1530731212-30474-3-git-send-email-vgarodia@codeaurora.org>
+ <1530731212-30474-4-git-send-email-vgarodia@codeaurora.org>
 From:   Stanimir Varbanov <stanimir.varbanov@linaro.org>
-Message-ID: <b5ecaa26-2f3b-9a2e-d496-7f9b35e3f761@linaro.org>
-Date:   Wed, 25 Jul 2018 12:35:56 +0300
+Message-ID: <4727000d-96ef-2dc5-50df-6bdadcaa156e@linaro.org>
+Date:   Wed, 25 Jul 2018 12:36:18 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <1530731212-30474-3-git-send-email-vgarodia@codeaurora.org>
+In-Reply-To: <1530731212-30474-4-git-send-email-vgarodia@codeaurora.org>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -84,181 +84,252 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 Hi Vikash,
 
 On 07/04/2018 10:06 PM, Vikash Garodia wrote:
-> Separate firmware loading part into a new function.
-
-I cannot apply this patch in order to test the series.
-
+> Video hardware is mainly comprised of vcodec subsystem and video
+> control subsystem. Video control has ARM9 which executes the video
+> firmware instructions whereas vcodec does the video frame processing.
+> This change adds support to load the video firmware and bring ARM9
+> out of reset for platforms which does not have trustzone.
 > 
 > Signed-off-by: Vikash Garodia <vgarodia@codeaurora.org>
 > ---
->  drivers/media/platform/qcom/venus/core.c     |  4 +-
->  drivers/media/platform/qcom/venus/firmware.c | 58 +++++++++++++++++-----------
+>  drivers/media/platform/qcom/venus/core.c     |  6 +-
+>  drivers/media/platform/qcom/venus/core.h     |  5 ++
+>  drivers/media/platform/qcom/venus/firmware.c | 93 ++++++++++++++++++++++++++--
 >  drivers/media/platform/qcom/venus/firmware.h |  2 +-
->  3 files changed, 39 insertions(+), 25 deletions(-)
+>  4 files changed, 98 insertions(+), 8 deletions(-)
 > 
 > diff --git a/drivers/media/platform/qcom/venus/core.c b/drivers/media/platform/qcom/venus/core.c
-> index bb6add9..75b9785 100644
+> index 75b9785..393994e 100644
 > --- a/drivers/media/platform/qcom/venus/core.c
 > +++ b/drivers/media/platform/qcom/venus/core.c
-> @@ -84,7 +84,7 @@ static void venus_sys_error_handler(struct work_struct *work)
+> @@ -76,7 +76,7 @@ static void venus_sys_error_handler(struct work_struct *work)
+>  	hfi_core_deinit(core, true);
+>  	hfi_destroy(core);
+>  	mutex_lock(&core->lock);
+> -	venus_shutdown(core->dev);
+> +	venus_shutdown(core);
 >  
->  	pm_runtime_get_sync(core->dev);
+>  	pm_runtime_put_sync(core->dev);
 >  
-> -	ret |= venus_boot(core->dev, core->res->fwname);
-> +	ret |= venus_boot(core);
+> @@ -323,7 +323,7 @@ static int venus_probe(struct platform_device *pdev)
+>  err_core_deinit:
+>  	hfi_core_deinit(core, false);
+>  err_venus_shutdown:
+> -	venus_shutdown(dev);
+> +	venus_shutdown(core);
+>  err_runtime_disable:
+>  	pm_runtime_set_suspended(dev);
+>  	pm_runtime_disable(dev);
+> @@ -344,7 +344,7 @@ static int venus_remove(struct platform_device *pdev)
+>  	WARN_ON(ret);
 >  
->  	ret |= hfi_core_resume(core, true);
+>  	hfi_destroy(core);
+> -	venus_shutdown(dev);
+> +	venus_shutdown(core);
+>  	of_platform_depopulate(dev);
 >  
-> @@ -284,7 +284,7 @@ static int venus_probe(struct platform_device *pdev)
->  	if (ret < 0)
->  		goto err_runtime_disable;
+>  	pm_runtime_put_sync(dev);
+> diff --git a/drivers/media/platform/qcom/venus/core.h b/drivers/media/platform/qcom/venus/core.h
+> index eb5ee66..abe4ddf 100644
+> --- a/drivers/media/platform/qcom/venus/core.h
+> +++ b/drivers/media/platform/qcom/venus/core.h
+> @@ -81,6 +81,10 @@ struct venus_caps {
+>  	bool valid;	/* used only for Venus v1xx */
+>  };
 >  
-> -	ret = venus_boot(dev, core->res->fwname);
-> +	ret = venus_boot(core);
->  	if (ret)
->  		goto err_runtime_disable;
->  
+> +struct video_firmware {
+> +	struct device *dev;
+> +	struct iommu_domain *iommu_domain;
+> +};
+
+add an empty line here
+
+>  /**
+>   * struct venus_core - holds core parameters valid for all instances
+>   *
+> @@ -129,6 +133,7 @@ struct venus_core {
+>  	struct device *dev;
+>  	struct device *dev_dec;
+>  	struct device *dev_enc;
+> +	struct video_firmware fw;
+>  	bool no_tz;
+>  	struct mutex lock;
+>  	struct list_head instances;
 > diff --git a/drivers/media/platform/qcom/venus/firmware.c b/drivers/media/platform/qcom/venus/firmware.c
-> index 3968553d..6d6cca4 100644
+> index 6d6cca4..2a98d9e 100644
 > --- a/drivers/media/platform/qcom/venus/firmware.c
 > +++ b/drivers/media/platform/qcom/venus/firmware.c
-> @@ -63,40 +63,37 @@ int venus_set_hw_state(struct venus_core *core, bool resume)
->  }
->  EXPORT_SYMBOL_GPL(venus_set_hw_state);
+> @@ -12,8 +12,10 @@
+>   *
+>   */
 >  
-> -int venus_boot(struct device *dev, const char *fwname)
-> +static int venus_load_fw(struct venus_core *core, const char *fwname,
-> +		phys_addr_t *mem_phys, size_t *mem_size)
+> +#include <linux/platform_device.h>
+>  #include <linux/device.h>
+>  #include <linux/firmware.h>
+> +#include <linux/iommu.h>
+>  #include <linux/kernel.h>
+>  #include <linux/io.h>
+>  #include <linux/of.h>
+> @@ -27,7 +29,8 @@
+>  #include "hfi_venus_io.h"
+>  
+>  #define VENUS_PAS_ID			9
+> -#define VENUS_FW_MEM_SIZE		(6 * SZ_1M)
+> +#define VENUS_FW_MEM_SIZE		(5 * SZ_1M)
 
-the next function argument on new line should be just below open brace
+This change should be subject to a separate patch.
 
+> +#define VENUS_FW_START_ADDR		0x0
+>  
+>  static void venus_reset_cpu(struct venus_core *core)
 >  {
->  	const struct firmware *mdt;
->  	struct device_node *node;
-> -	phys_addr_t mem_phys;
-> +	struct device *dev;
->  	struct resource r;
->  	ssize_t fw_size;
-> -	size_t mem_size;
->  	void *mem_va;
->  	int ret;
->  
-> -	if (!IS_ENABLED(CONFIG_QCOM_MDT_LOADER) || !qcom_scm_is_available())
-> -		return -EPROBE_DEFER;
-> -
-> +	dev = core->dev;
->  	node = of_parse_phandle(dev->of_node, "memory-region", 0);
->  	if (!node) {
->  		dev_err(dev, "no memory-region specified\n");
->  		return -EINVAL;
->  	}
-> -
-
-please don't delete above blank line
-
->  	ret = of_address_to_resource(node, 0, &r);
->  	if (ret)
->  		return ret;
->  
-> -	mem_phys = r.start;
-> -	mem_size = resource_size(&r);
-> +	*mem_phys = r.start;
-> +	*mem_size = resource_size(&r);
->  
-> -	if (mem_size < VENUS_FW_MEM_SIZE)
-> +	if (*mem_size < VENUS_FW_MEM_SIZE)
->  		return -EINVAL;
->  
-> -	mem_va = memremap(r.start, mem_size, MEMREMAP_WC);
-> +	mem_va = memremap(r.start, *mem_size, MEMREMAP_WC);
->  	if (!mem_va) {
->  		dev_err(dev, "unable to map memory region: %pa+%zx\n",
-> -			&r.start, mem_size);
-> +			&r.start, *mem_size);
->  		return -ENOMEM;
->  	}
->  
-> @@ -110,24 +107,41 @@ int venus_boot(struct device *dev, const char *fwname)
->  		release_firmware(mdt);
->  		goto err_unmap;
->  	}
-> -
-> -	ret = qcom_mdt_load(dev, mdt, fwname, VENUS_PAS_ID, mem_va, mem_phys,
-> -			    mem_size);
-> +	if (core->no_tz)
-> +		ret = qcom_mdt_load_no_init(dev, mdt, fwname, VENUS_PAS_ID,
-> +				mem_va, *mem_phys, *mem_size, NULL);
-
-indentation is wrong see the original code
-
-> +	else
-> +		ret = qcom_mdt_load(dev, mdt, fwname, VENUS_PAS_ID, mem_va,
-> +				*mem_phys, *mem_size);
-
-indentation again
-
->  
->  	release_firmware(mdt);
->  
-> -	if (ret)
-> -		goto err_unmap;
-> -
-> -	ret = qcom_scm_pas_auth_and_reset(VENUS_PAS_ID);
-> -	if (ret)
-> -		goto err_unmap;
-> -
->  err_unmap:
->  	memunmap(mem_va);
+> @@ -121,6 +124,76 @@ static int venus_load_fw(struct venus_core *core, const char *fwname,
 >  	return ret;
 >  }
 >  
-> +int venus_boot(struct venus_core *core)
+> +int venus_boot_noTZ(struct venus_core *core, phys_addr_t mem_phys,
+> +							size_t mem_size)
+
+please use lowercase for function names and correct the size_t mem_size
+indentation.
+
 > +{
-> +	phys_addr_t mem_phys;
-> +	size_t mem_size;
-> +	int ret;
+> +	struct iommu_domain *iommu;
+
+s/iommu/iommu_dom ?
+
 > +	struct device *dev;
-
-please order declarations from longer to shorter.
-
+> +	int ret;
 > +
-> +	if (!IS_ENABLED(CONFIG_QCOM_MDT_LOADER))
+> +	if (!core->fw.dev)
 > +		return -EPROBE_DEFER;
+> +
+> +	dev = core->fw.dev;
 
-the original venus_boot was checking for || !qcom_scm_is_available() why
-is that removed? It was done on purpose.
+you could make this initialization in declaration and check for !dev
+above in the if statement.
 
 > +
-> +	dev = core->dev;
-
-this could be done when dev is declared.
-
-> +
-> +	ret = venus_load_fw(core, core->res->fwname, &mem_phys, &mem_size);
-> +	if (ret) {
-> +		dev_err(dev, "fail to load video firmware\n");
-> +		return -EINVAL;
+> +	iommu = iommu_domain_alloc(&platform_bus_type);
+> +	if (!iommu) {
+> +		dev_err(dev, "Failed to allocate iommu domain\n");
+> +		return -ENOMEM;
 > +	}
 > +
-> +	return qcom_scm_pas_auth_and_reset(VENUS_PAS_ID);
+> +	ret = iommu_attach_device(iommu, dev);
+> +	if (ret) {
+> +		dev_err(dev, "could not attach device\n");
+> +		goto err_attach;
+> +	}
+> +
+> +	ret = iommu_map(iommu, VENUS_FW_START_ADDR, mem_phys, mem_size,
+> +			IOMMU_READ|IOMMU_WRITE|IOMMU_PRIV);
+
+spaces between IOMMU_xxx
+
+> +	if (ret) {
+> +		dev_err(dev, "could not map video firmware region\n");
+> +		goto err_map;
+> +	}
+
+add blank line here
+
+> +	core->fw.iommu_domain = iommu;
+> +	venus_reset_cpu(core);
+> +
+> +	return 0;
+> +
+> +err_map:
+> +	iommu_detach_device(iommu, dev);
+> +err_attach:
+> +	iommu_domain_free(iommu);
+> +	return ret;
 > +}
 > +
->  int venus_shutdown(struct device *dev)
+> +int venus_shutdown_noTZ(struct venus_core *core)
+
+s/noTZ/notz
+
+> +{
+> +	struct iommu_domain *iommu;
+> +	size_t unmapped = 0;
+> +	u32 reg;
+> +	struct device *dev = core->fw.dev;
+> +	void __iomem *reg_base = core->base;
+> +
+> +	/* Assert the reset to ARM9 */
+> +	reg = readl_relaxed(reg_base + WRAPPER_A9SS_SW_RESET);
+> +	reg |= BIT(4);
+
+can we have a define for bit 4, probably where we defined
+WRAPPER_A9SS_SW_RESET register.
+
+> +	writel_relaxed(reg, reg_base + WRAPPER_A9SS_SW_RESET);
+> +
+> +	/* Make sure reset is asserted before the mapping is removed */
+> +	mb();
+
+mb() is used for compiler barrier as far as I know, isn't better to just
+read the register and keep the comment?
+
+> +
+> +	iommu = core->fw.iommu_domain;
+> +
+> +	unmapped = iommu_unmap(iommu, VENUS_FW_START_ADDR, VENUS_FW_MEM_SIZE);
+> +	if (unmapped != VENUS_FW_MEM_SIZE)
+> +		dev_err(dev, "failed to unmap firmware\n");
+> +
+> +	iommu_detach_device(iommu, dev);
+> +	iommu_domain_free(iommu);
+> +
+> +	return 0;
+> +}
+> +
+>  int venus_boot(struct venus_core *core)
 >  {
->  	return qcom_scm_pas_shutdown(VENUS_PAS_ID);
+>  	phys_addr_t mem_phys;
+> @@ -139,10 +212,22 @@ int venus_boot(struct venus_core *core)
+>  		return -EINVAL;
+>  	}
+>  
+> -	return qcom_scm_pas_auth_and_reset(VENUS_PAS_ID);
+> +	if (core->no_tz)
+> +		ret = venus_boot_noTZ(core, mem_phys, mem_size);
+> +	else
+> +		ret = qcom_scm_pas_auth_and_reset(VENUS_PAS_ID);
+> +
+> +	return ret;
+>  }
+>  
+> -int venus_shutdown(struct device *dev)
+> +int venus_shutdown(struct venus_core *core)
+>  {
+> -	return qcom_scm_pas_shutdown(VENUS_PAS_ID);
+> +	int ret = 0;
+
+no need to initialize to 0
+
+> +
+> +	if (core->no_tz)
+> +		ret = venus_shutdown_noTZ(core);
+> +	else
+> +		ret = qcom_scm_pas_shutdown(VENUS_PAS_ID);
+> +
+> +	return ret;
+>  }
 > diff --git a/drivers/media/platform/qcom/venus/firmware.h b/drivers/media/platform/qcom/venus/firmware.h
-> index ff2e70e..36a5fc2 100644
+> index 36a5fc2..92736d6 100644
 > --- a/drivers/media/platform/qcom/venus/firmware.h
 > +++ b/drivers/media/platform/qcom/venus/firmware.h
-> @@ -16,7 +16,7 @@
->  
+> @@ -17,7 +17,7 @@
 >  struct device;
 >  
-> -int venus_boot(struct device *dev, const char *fwname);
-> +int venus_boot(struct venus_core *core);
->  int venus_shutdown(struct device *dev);
+>  int venus_boot(struct venus_core *core);
+> -int venus_shutdown(struct device *dev);
+> +int venus_shutdown(struct venus_core *core);
 >  int venus_set_hw_state(struct venus_core *core, bool suspend);
 >  
+>  #endif
 > 
 
 -- 
