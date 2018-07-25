@@ -3,55 +3,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19813C67790
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 18:00:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B265CC67790
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 18:00:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BF96D2088E
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 18:00:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6F9C020833
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 18:00:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ov1zL8Z4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BF96D2088E
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="gS98BdT/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6F9C020833
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730939AbeGYTNd (ORCPT
+        id S1731124AbeGYTNi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 15:13:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42616 "EHLO mail.kernel.org"
+        Wed, 25 Jul 2018 15:13:38 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42670 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729885AbeGYTNc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Jul 2018 15:13:32 -0400
+        id S1729885AbeGYTNi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Jul 2018 15:13:38 -0400
 Received: from jouet.infradead.org (189-94-96-116.3g.claro.net.br [189.94.96.116])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EC06C20833;
-        Wed, 25 Jul 2018 18:00:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 12A1E20852;
+        Wed, 25 Jul 2018 18:00:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1532541647;
-        bh=ppmIxlNOnW1PVQKGK3DbtHWZMJUw0wXV/Jl4Rr/6cfc=;
+        s=default; t=1532541652;
+        bh=wfJAaYPoBAJhyNw09B8YsVB2PfMazpBY0GcZG40hgM4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Ov1zL8Z41hEJDCixcQMTM3hvsr4Smpc6OKD/jc1HjGLbmv8dIL7AFUfO+2PDYKSKM
-         3Zbc2ZxnCU1so1EIgAfkXZKRx2fhL+Z02kXJy0bemdKVw5JbvWtOwlId/Nuzy2jiPA
-         hemGTJ6Fkx9jIW2GjLoXNvt4mQ1W+KCi0QsSg/tw=
+        b=gS98BdT/+0kRf8xDx70WYsdbkcQVjqOtMJmVhWkIjl/jKXdGJbmWro9tGy6qlKqAu
+         7ctWtmnsSwcZElATZzd9sp8M1MxBBRdtarhB76hT4jnPPEQSR1qJyWh4+R7Vfct4Si
+         fhyViuv7+rUBPx4iXXtdEifTG8gf886/6pjspKzk=
 From:   Arnaldo Carvalho de Melo <acme@kernel.org>
 To:     Ingo Molnar <mingo@kernel.org>
 Cc:     Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-perf-users@vger.kernel.org, Leo Yan <leo.yan@linaro.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Kim Phillips <kim.phillips@arm.com>,
-        Mike Leach <mike.leach@linaro.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Robert Walker <robert.walker@arm.com>,
-        linux-arm-kernel@lists.infradead.org,
+        linux-perf-users@vger.kernel.org,
+        Thomas Richter <tmricht@linux.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Hendrik Brueckner <brueckner@linux.vnet.ibm.com>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
         Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 04/27] perf cs-etm: Bail out immediately for instruction sample failure
-Date:   Wed, 25 Jul 2018 14:59:38 -0300
-Message-Id: <20180725180001.15108-5-acme@kernel.org>
+Subject: [PATCH 05/27] Revert "perf list: Add s390 support for detailed/verbose PMU event description"
+Date:   Wed, 25 Jul 2018 14:59:39 -0300
+Message-Id: <20180725180001.15108-6-acme@kernel.org>
 X-Mailer: git-send-email 2.14.4
 In-Reply-To: <20180725180001.15108-1-acme@kernel.org>
 References: <20180725180001.15108-1-acme@kernel.org>
@@ -60,42 +56,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Leo Yan <leo.yan@linaro.org>
+From: Thomas Richter <tmricht@linux.ibm.com>
 
-If the instruction sample failure has happened, it isn't necessary to
-execute to the end of the function cs_etm__flush().  This commit is to
-bail out immediately and return the error code.
+This reverts commit 038586c34301578e538f6c5aa79ca82bce1b9152.
 
-Signed-off-by: Leo Yan <leo.yan@linaro.org>
-Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Kim Phillips <kim.phillips@arm.com>
-Cc: Mike Leach <mike.leach@linaro.org>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Robert Walker <robert.walker@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org
-Link: http://lkml.kernel.org/r/1529298599-3876-3-git-send-email-leo.yan@linaro.org
+Fix the support of detailed/verbose PMU event description by using the
+"Unit": keyword in the json files to address event names refering to the
+/sys/devices/cpum_[cs]f devices.
+
+Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
+Reviewed-by: Hendrik Brueckner <brueckner@linux.ibm.com>
+Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
+Cc: Hendrik Brueckner <brueckner@linux.vnet.ibm.com>
+Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Link: http://lkml.kernel.org/r/20180621080452.61012-1-tmricht@linux.ibm.com
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/util/cs-etm.c | 3 +++
- 1 file changed, 3 insertions(+)
+ tools/perf/util/pmu.c | 6 ------
+ 1 file changed, 6 deletions(-)
 
-diff --git a/tools/perf/util/cs-etm.c b/tools/perf/util/cs-etm.c
-index 822ba915d144..8b2c099e750a 100644
---- a/tools/perf/util/cs-etm.c
-+++ b/tools/perf/util/cs-etm.c
-@@ -939,6 +939,9 @@ static int cs_etm__flush(struct cs_etm_queue *etmq)
- 		err = cs_etm__synth_instruction_sample(
- 			etmq, addr,
- 			etmq->period_instructions);
-+		if (err)
-+			return err;
-+
- 		etmq->period_instructions = 0;
+diff --git a/tools/perf/util/pmu.c b/tools/perf/util/pmu.c
+index 3ba6a1742f91..afd68524ffa9 100644
+--- a/tools/perf/util/pmu.c
++++ b/tools/perf/util/pmu.c
+@@ -652,12 +652,6 @@ static int is_arm_pmu_core(const char *name)
+ 	if (stat(path, &st) == 0)
+ 		return 1;
  
- 		/*
+-	/* Look for cpu sysfs (specific to s390) */
+-	scnprintf(path, PATH_MAX, "%s/bus/event_source/devices/%s",
+-		  sysfs, name);
+-	if (stat(path, &st) == 0 && !strncmp(name, "cpum_", 5))
+-		return 1;
+-
+ 	return 0;
+ }
+ 
 -- 
 2.14.4
 
