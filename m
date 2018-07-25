@@ -2,80 +2,127 @@ Return-Path: <SRS0=S+WB=KJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45AC6C67790
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 14:28:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56554C6778F
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 14:28:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 09DDD2088E
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 14:28:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 09DDD2088E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
+	by mail.kernel.org (Postfix) with ESMTP id 107E820852
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 14:28:45 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="e2PB94Pu"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 107E820852
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729375AbeGYPkc (ORCPT
+        id S1729447AbeGYPki (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 11:40:32 -0400
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:13772 "EHLO
-        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729133AbeGYPkb (ORCPT
+        Wed, 25 Jul 2018 11:40:38 -0400
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:56129 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728051AbeGYPkc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Jul 2018 11:40:31 -0400
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1, AES128-SHA)
-        id <B5b5889150000>; Wed, 25 Jul 2018 07:28:37 -0700
-Received: from HQMAIL101.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Wed, 25 Jul 2018 07:28:31 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Wed, 25 Jul 2018 07:28:31 -0700
-Received: from dhcp-10-21-25-168 (10.21.25.201) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Wed, 25 Jul
- 2018 14:28:32 +0000
-Date:   Wed, 25 Jul 2018 17:28:26 +0300
-From:   Aapo Vienamo <avienamo@nvidia.com>
-To:     Peter Geis <pgwipeout@gmail.com>
-CC:     Ulf Hansson <ulf.hansson@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        "Adrian Hunter" <adrian.hunter@intel.com>,
-        Mikko Perttunen <mperttunen@nvidia.com>,
-        <linux-mmc@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 00/10] Update the pad autocal procedure
-Message-ID: <20180725172826.2658feb5@dhcp-10-21-25-168>
-In-Reply-To: <f41a905c-5364-14a5-122b-09cbd1efa2f9@gmail.com>
-References: <1532442591-5640-1-git-send-email-avienamo@nvidia.com>
-        <f41a905c-5364-14a5-122b-09cbd1efa2f9@gmail.com>
-X-NVConfidentiality: public
-MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.21.25.201]
-X-ClientProxiedBy: UKMAIL102.nvidia.com (10.26.138.15) To HQMAIL101.nvidia.com
- (172.20.187.10)
+        Wed, 25 Jul 2018 11:40:32 -0400
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20180725142833euoutp02557fdfded07974c2a0b1114e054193d4~Eou1x-xP_2941529415euoutp02N;
+        Wed, 25 Jul 2018 14:28:33 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20180725142833euoutp02557fdfded07974c2a0b1114e054193d4~Eou1x-xP_2941529415euoutp02N
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1532528913;
+        bh=uJ8Q8IYA18tcHATpJyYqZ67EcEWFrvGILwYYq4hEA1c=;
+        h=From:To:Cc:Subject:Date:In-reply-to:References:From;
+        b=e2PB94PurP0r6VAg3HcZHp3hoZ+GiajifjS18VnDDZO6h5HcaBG42exb5DQt5pFxb
+         ORKUX50OmwwB9n3zwWxXc0MmOIwcqAEhDnRewHI/pR35BJPmQmQtWornrI9sdC03y7
+         j/hhuoI0SA9zTWUqtN+ohdiWJOieNL6SYHC9+1bk=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20180725142833eucas1p256d4fc15dd26254294d356fab1c63d3b~Eou1cWCdi1251812518eucas1p2q;
+        Wed, 25 Jul 2018 14:28:33 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges2new.samsung.com (EUCPMTA) with SMTP id BB.87.05751.119885B5; Wed, 25
+        Jul 2018 15:28:33 +0100 (BST)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20180725142832eucas1p26a8b5a1226b1043d57332b70ba5caaa0~Eou0340Kc1696216962eucas1p2i;
+        Wed, 25 Jul 2018 14:28:32 +0000 (GMT)
+X-AuditID: cbfec7f4-c2dff70000001677-13-5b588911fea7
+Received: from eusync1.samsung.com ( [203.254.199.211]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id CE.0B.04178.019885B5; Wed, 25
+        Jul 2018 15:28:32 +0100 (BST)
+Received: from amdc3058.localnet ([106.120.53.102]) by eusync1.samsung.com
+        (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5
+        2014)) with ESMTPA id <0PCF00BJYEVKIO50@eusync1.samsung.com>; Wed, 25 Jul
+        2018 15:28:32 +0100 (BST)
+From:   Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To:     "J, KEERTHY" <j-keerthy@ti.com>
+Cc:     Eduardo Valentin <edubezval@gmail.com>,
+        Zhang Rui <rui.zhang@intel.com>, linux-pm@vger.kernel.org,
+        linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 04/14] thermal: ti-soc-thermal: cleanup COUNTER feature
+ handling for OMAP5
+Date:   Wed, 25 Jul 2018 16:28:32 +0200
+Message-id: <3308752.XLZtalhOvD@amdc3058>
+User-Agent: KMail/4.13.3 (Linux/3.13.0-96-generic; KDE/4.13.3; x86_64; ; )
+In-reply-to: <51799355-1a39-7f2f-6a20-a1718b9e0a64@ti.com>
+MIME-version: 1.0
+Content-transfer-encoding: 7Bit
+Content-type: text/plain; charset="us-ascii"
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrOIsWRmVeSWpSXmKPExsWy7djPc7qCnRHRBh1zhS3mX7nGanFqexOT
+        xeVdc9gsZi/pZ7H43HuE0eLJwz42BzaPnbPusnss3vOSyeP4je1MHp83yQWwRHHZpKTmZJal
+        FunbJXBlzLu0m63gNUvFtl/r2BsYPzJ3MXJySAiYSHQv+8XaxcjFISSwglFi5azrLBDOZ0aJ
+        GZs2MMFU3Vu4iwkisYxR4uSke1AtvxkltnTsZwOpYhOwkpjYvooRxBYRUJZ4sLSBFcRmFljM
+        KNHfyw1iCwskSOyYcAFsKouAqsTB9mdg9bwCmhLXXveB3SQq4CWxZV87WA0n0MzXSxawQ9QI
+        SvyYfI8FYqa8xL79U6Hm60icPbaOEeQgCYEVbBIfN/0EauAAclwknh4TgPhAWOLV8S3sELaM
+        RGfHQSaI+umMEm9+LWWBcNYzSqw5cwzqZ2uJw8cvQm3gk5i0bTozxFBeiY42IYgSD4mNU1eB
+        HS0k0M0kMfWNxwRGmVlIbp2F5NZZSG5dwMi8ilE8tbQ4Nz212CgvtVyvODG3uDQvXS85P3cT
+        IzD6T/87/mUH464/SYcYBTgYlXh4P9qFRwuxJpYVV+YeYpTgYFYS4XU5DBTiTUmsrEotyo8v
+        Ks1JLT7EKM3BoiTOK+0TES0kkJ5YkpqdmlqQWgSTZeLglGpgZNBU8y442/C9Znnqx9e/f0VM
+        mqso31ir0hViu9P8itlq6SuzZt65e/TAemEn/o/8BaIvXqx4XZ3h89TTRkqKZ3PgCcO2pZaW
+        LLNzG9dvfGPzqzZIbY1bDNsM1+22a5ftfXFB3E3gWsC9iXOfnbghdfX3j2uHX5VsfCib+LPY
+        K1+UKTB14ZLrSkosxRmJhlrMRcWJAMkigeT6AgAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrOLMWRmVeSWpSXmKPExsVy+t/xy7oCnRHRBgdvW1jMv3KN1eLU9iYm
+        i8u75rBZzF7Sz2LxufcIo8WTh31sDmweO2fdZfdYvOclk8fxG9uZPD5vkgtgieKySUnNySxL
+        LdK3S+DKmHdpN1vBa5aKbb/WsTcwfmTuYuTkkBAwkbi3cBdTFyMXh5DAEkaJVa9PsUA4fxkl
+        mnsXMYJUsQlYSUxsXwVmiwgoSzxY2sAKUsQssJhR4tuCP6wgCWGBBIkdEy4wgdgsAqoSB9uf
+        gTXwCmhKXHvdB7ZOVMBLYsu+drAaTqChr5csYIfYtp1R4uDqpSwQDYISPybfA7OZBeQl9u2f
+        ygpha0ms33mcaQIj/ywkZbOQlM1CUraAkXkVo0hqaXFuem6xoV5xYm5xaV66XnJ+7iZGYPBu
+        O/Zz8w7GSxuDDzEKcDAq8fB6OIZHC7EmlhVX5h5ilOBgVhLhdTkMFOJNSaysSi3Kjy8qzUkt
+        PsQozcGiJM573qAySkggPbEkNTs1tSC1CCbLxMEp1cAY3LV9dz4fR+PtaXFOT5pTbmQ3ts5j
+        NlTnfHFNZfezG7OKcgLLVrDE88wuWNC0piy2cvX9ozo6t5S5vya8nXT7WbWJtFKV3IerHIt/
+        F6XZ/Lnk/nppYwhX3Fb1ZuGonu1BLHvl78xb/33PKsFzP7SfTPilLMy2p3r5uQN/Ff8td1a9
+        8db0xz9LJZbijERDLeai4kQAjXrACVoCAAA=
+X-CMS-MailID: 20180725142832eucas1p26a8b5a1226b1043d57332b70ba5caaa0
+X-Msg-Generator: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20180725142832eucas1p26a8b5a1226b1043d57332b70ba5caaa0
+References: <1526298141-14045-1-git-send-email-b.zolnierkie@samsung.com>
+        <1526298141-14045-5-git-send-email-b.zolnierkie@samsung.com>
+        <51799355-1a39-7f2f-6a20-a1718b9e0a64@ti.com>
+        <CGME20180725142832eucas1p26a8b5a1226b1043d57332b70ba5caaa0@eucas1p2.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 25 Jul 2018 08:06:18 -0400
-Peter Geis <pgwipeout@gmail.com> wrote:
-
-> On 07/24/2018 10:29 AM, Aapo Vienamo wrote:
-> > Aapo Vienamo (10):
+On Wednesday, July 11, 2018 09:08:29 AM J, KEERTHY wrote:
+> 
+> On 5/14/2018 5:12 PM, Bartlomiej Zolnierkiewicz wrote:
+> > OMAP5 sensors don't claim COUNTER feature support (they use
+> > COUNTER_DELAY feature instead) so there is no need to set fields
+> > of struct temp_sensor_registers which are only used for COUNTER
+> > feature.
 > > 
-> >    mmc: tegra: Enable pad calibration on Tegra210 and Tegra186  
+> > There should be no functional changes caused by this patch.
 > 
-> Good Morning,
-> 
-> You seem to be missing patch 10/10.
-> Checked 
-> https://lore.kernel.org/patchwork/project/lkml/list/?series=360525 to be 
-> sure.
+> Acked-by: Keerthy <j-keerthy@ti.com>
 
-Missing patch sent. Thanks for pointing that out.
+Thank you! Could you please also review/verify patches 5-14?
 
- -Aapo
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
+
