@@ -2,132 +2,125 @@ Return-Path: <SRS0=S+WB=KJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66706C67790
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 13:06:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD0B8C67790
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 13:07:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1137620852
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 13:06:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5DB2820852
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 13:07:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="G0ClC0yf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1137620852
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MUSothco"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5DB2820852
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729032AbeGYOSK (ORCPT
+        id S1729091AbeGYOTC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 10:18:10 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:36122 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728966AbeGYOSK (ORCPT
+        Wed, 25 Jul 2018 10:19:02 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:33775 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728927AbeGYOTC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Jul 2018 10:18:10 -0400
-Received: by mail-wm0-f68.google.com with SMTP id s14-v6so5987397wmc.1
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Jul 2018 06:06:32 -0700 (PDT)
+        Wed, 25 Jul 2018 10:19:02 -0400
+Received: by mail-pf1-f193.google.com with SMTP id b17-v6so1753493pfi.0;
+        Wed, 25 Jul 2018 06:07:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=gcsClBRRiXUqYDPGcBQWWMk+E+cwvJgq+KRYvdlkbbM=;
-        b=G0ClC0yfI21W1l7mJb9iFXkFoUD1YpbXLHKZ028h6wLHbfidTttV5Nml7kSeXIwQ7O
-         hNhbp9R0KjTuPMlbVtwU8eIWbnepmH4ow7t4nSgU/B8z5xEOkekT2shiuXvUcBx8vCnn
-         QnqIQOiPI6M1kQSw8lxC2isH7aTCk7xpdqm3s=
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=C4q2bG+uix1L0g40LFcxQdc8z2a4Mz/bpvjhD03gNBE=;
+        b=MUSothco94eLD0/sQC0cKqLjqxrs15wNkbczonRGtZaoOLN33S2iOYoD7KYuVGzWog
+         pHfm2BYCdZb72TOtDVaio8u6dxADyQmrGW5P2iVhOe2M1Vq7Q3U6kKFKo5N3bjTYZka2
+         C0v5qFw4ZR+AMkXHIZxvO9Uet2CwMYq5EdEm0fvOvqoR8o5Tj5tFBfVXEIOjF0lvmcXy
+         mqCt1z9efGBdpEbrl5l498lO2ZYCIO58ZIgc5rpa3XzBnoYQdFtBUda0mEjKjWDsuovH
+         XuoBK+exmGSLF1NFioohG8ZDt0eltB4TJktoDE3KOHIZlfmiaIARMPBgZM1mqcxqTKrk
+         TjHg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=gcsClBRRiXUqYDPGcBQWWMk+E+cwvJgq+KRYvdlkbbM=;
-        b=j/+YgY/iZB9cMQ9wCWARF8nTjH95QUaAjxAZFP5z816BPQiSJzk/LyYEZZ9x7j8DIG
-         8gBaR2NLxPX8PKt8lhAB+OvKiICAqKhAhRiufkEuBjMHfuuiHRMnirjfOaRhP7w8ayXE
-         wp+rcX35Op6ntlIa4sR4cgwy8asyBbIh3QniQLN0L8xXbrJ+q26jvY7fhQTvKKEpWCs0
-         iEcVATY2KyNg9laFwIQKF3MIt1oozO8raNJKxtqFBk5vl402jjJ6ZiO5q2Y+LeZq5r6P
-         tlejrSILhrJ2JQ9XYKd3O6sNyujvw1/wRR8BW5IvLsxCSYtw8vdSzZuEp21rJdxon2oO
-         NFKQ==
-X-Gm-Message-State: AOUpUlFiIwyN1dU8LuO6qyiFsHkl/x7pgxqDSVUAGBtpHLOBj/rZbQaf
-        9BHD/6X/ltHU8TbGOKGcxfIxC4nmclg=
-X-Google-Smtp-Source: AAOMgpcCThHSbo4ONew0dh5vZ+5mZXlIXE/ErP9133gBHwmloWPRVXfE5JIa84CGJ4LkaJWx+sUS5w==
-X-Received: by 2002:a1c:369c:: with SMTP id y28-v6mr4491370wmh.34.1532523992070;
-        Wed, 25 Jul 2018 06:06:32 -0700 (PDT)
-Received: from [192.168.27.197] ([37.157.136.206])
-        by smtp.gmail.com with ESMTPSA id i205-v6sm7176147wmf.30.2018.07.25.06.06.30
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=C4q2bG+uix1L0g40LFcxQdc8z2a4Mz/bpvjhD03gNBE=;
+        b=RMRvDSQnWC9U/j4a/7NTltci7ghAqfatiFoibkZWmAv4WpPk7WPR4a1bL4enwtROv4
+         xX4kvh+4r4xWavkRuHeBxJnvUbdx8O0s/QEwGJggG+65L9Q5wzGOXnNp1pjmw5XSA+f8
+         xQJ4KKHEjmfF6MImTd4aVI3uNRsEv00krVgCizWQ5i8X0ziSYwpLYVUv5+MtaWsMPQu/
+         CeW1eFwQ2I9RGmVv374RZHV1/HBlH3pRkv50pkko+urWh2NYgvHIR348vHnX9HGZmZN1
+         6RlusM3MR2dNiLcJpVMDH+Me3g3KjvRXbNBllfDZxHL3NSDncFW3InYABaXWZe608j6x
+         v8Qg==
+X-Gm-Message-State: AOUpUlFT9GuVekS5ZqTfYFjfY7o9zs+UON65k5uomGMhM40+DtOjG+cu
+        4NCRiAeqZvIisEPZHMOhS2BJuws+BvY=
+X-Google-Smtp-Source: AAOMgpdxnqxtv3eo0Nhzvli1yQb3WluQ8eVAGvyOohAQ1zMg2ZbgRVZA18ef6dXSS7fKh16gXFCzEg==
+X-Received: by 2002:a62:aa02:: with SMTP id e2-v6mr21866149pff.211.1532524045694;
+        Wed, 25 Jul 2018 06:07:25 -0700 (PDT)
+Received: from bogon.didichuxing.com ([168.63.150.120])
+        by smtp.gmail.com with ESMTPSA id z4-v6sm25887696pfl.11.2018.07.25.06.07.23
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 25 Jul 2018 06:06:31 -0700 (PDT)
-Subject: Re: [PATCH v3 35/35] media: v4l2-ioctl: Add format descriptions for
- packed Bayer raw14 pixel formats
-To:     Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc:     mchehab@kernel.org, hans.verkuil@cisco.com,
-        laurent.pinchart+renesas@ideasonboard.com,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <1532343772-27382-1-git-send-email-todor.tomov@linaro.org>
- <1532343772-27382-36-git-send-email-todor.tomov@linaro.org>
- <20180724125243.jigwhde5rmifctyd@paasikivi.fi.intel.com>
-From:   Todor Tomov <todor.tomov@linaro.org>
-Message-ID: <82cc13db-fb95-384c-1ba1-7608def83722@linaro.org>
-Date:   Wed, 25 Jul 2018 16:06:30 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <20180724125243.jigwhde5rmifctyd@paasikivi.fi.intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Wed, 25 Jul 2018 06:07:24 -0700 (PDT)
+From:   Yafang Shao <laoar.shao@gmail.com>
+To:     davem@davemloft.net, edumazet@google.com
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Yafang Shao <laoar.shao@gmail.com>
+Subject: [PATCH net-next] tcp: add SNMP counter for the number of packets pruned from ofo queue
+Date:   Wed, 25 Jul 2018 21:06:50 +0800
+Message-Id: <1532524010-11855-1-git-send-email-laoar.shao@gmail.com>
+X-Mailer: git-send-email 1.8.3.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Sakari,
+LINUX_MIB_OFOPRUNED is used to count how many times ofo queue is pruned,
+but sometimes we want to know how many packets are pruned from this queue,
+that could help us to track the dropped packets.
 
-Thanks for review.
+As LINUX_MIB_OFOPRUNED is a useful event for us, so I introduce a new
+SNMP counter LINUX_MIB_OFOPRUNEDROP, which could be showed in netstat as
+OfoPruneDrop.
 
-On 24.07.2018 15:52, Sakari Ailus wrote:
-> Hi Todor,
-> 
-> On Mon, Jul 23, 2018 at 02:02:52PM +0300, Todor Tomov wrote:
->> This removes warning "Unknown pixelformat" for the following formats:
->>         V4L2_PIX_FMT_SBGGR14P
->>         V4L2_PIX_FMT_SGBRG14P
->>         V4L2_PIX_FMT_SGRBG14P
->>         V4L2_PIX_FMT_SRGGB14P
->>
->> CC: Sakari Ailus <sakari.ailus@linux.intel.com>
->> Signed-off-by: Todor Tomov <todor.tomov@linaro.org>
->> ---
->>  drivers/media/v4l2-core/v4l2-ioctl.c | 4 ++++
->>  1 file changed, 4 insertions(+)
->>
->> diff --git a/drivers/media/v4l2-core/v4l2-ioctl.c b/drivers/media/v4l2-core/v4l2-ioctl.c
->> index 2e3b1f0..e8f7c89 100644
->> --- a/drivers/media/v4l2-core/v4l2-ioctl.c
->> +++ b/drivers/media/v4l2-core/v4l2-ioctl.c
->> @@ -1260,6 +1260,10 @@ static void v4l_fill_fmtdesc(struct v4l2_fmtdesc *fmt)
->>  	case V4L2_PIX_FMT_SGBRG12P:	descr = "12-bit Bayer GBGB/RGRG Packed"; break;
->>  	case V4L2_PIX_FMT_SGRBG12P:	descr = "12-bit Bayer GRGR/BGBG Packed"; break;
->>  	case V4L2_PIX_FMT_SRGGB12P:	descr = "12-bit Bayer RGRG/GBGB Packed"; break;
->> +	case V4L2_PIX_FMT_SBGGR14P:	descr = "14-bit Bayer BGBG/GRGR Packed"; break;
->> +	case V4L2_PIX_FMT_SGBRG14P:	descr = "14-bit Bayer GBGB/RGRG Packed"; break;
->> +	case V4L2_PIX_FMT_SGRBG14P:	descr = "14-bit Bayer GRGR/BGBG Packed"; break;
->> +	case V4L2_PIX_FMT_SRGGB14P:	descr = "14-bit Bayer RGRG/GBGB Packed"; break;
->>  	case V4L2_PIX_FMT_SBGGR16:	descr = "16-bit Bayer BGBG/GRGR"; break;
->>  	case V4L2_PIX_FMT_SGBRG16:	descr = "16-bit Bayer GBGB/RGRG"; break;
->>  	case V4L2_PIX_FMT_SGRBG16:	descr = "16-bit Bayer GRGR/BGBG"; break;
-> 
-> You could merge this to the patch that adds the format definitions. Or:
+Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
+---
+ include/uapi/linux/snmp.h | 1 +
+ net/ipv4/proc.c           | 1 +
+ net/ipv4/tcp_input.c      | 1 +
+ 3 files changed, 3 insertions(+)
 
-Yes. I think we are going to have v4 so I will merge it with the patch which adds
-the format definitions.
-
-> 
-> Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-> 
-> And preferrably move it to earlier in the patchset where new formats are
-> added.
-> 
-
+diff --git a/include/uapi/linux/snmp.h b/include/uapi/linux/snmp.h
+index e5ebc83..c996fba 100644
+--- a/include/uapi/linux/snmp.h
++++ b/include/uapi/linux/snmp.h
+@@ -172,6 +172,7 @@ enum
+ 	LINUX_MIB_PRUNECALLED,			/* PruneCalled */
+ 	LINUX_MIB_RCVPRUNED,			/* RcvPruned */
+ 	LINUX_MIB_OFOPRUNED,			/* OfoPruned */
++	LINUX_MIB_OFOPRUNEDROP,			/* OfoPruneDrop */
+ 	LINUX_MIB_OUTOFWINDOWICMPS,		/* OutOfWindowIcmps */
+ 	LINUX_MIB_LOCKDROPPEDICMPS,		/* LockDroppedIcmps */
+ 	LINUX_MIB_ARPFILTER,			/* ArpFilter */
+diff --git a/net/ipv4/proc.c b/net/ipv4/proc.c
+index b46e4cf..c718295 100644
+--- a/net/ipv4/proc.c
++++ b/net/ipv4/proc.c
+@@ -180,6 +180,7 @@ static int sockstat_seq_show(struct seq_file *seq, void *v)
+ 	SNMP_MIB_ITEM("PruneCalled", LINUX_MIB_PRUNECALLED),
+ 	SNMP_MIB_ITEM("RcvPruned", LINUX_MIB_RCVPRUNED),
+ 	SNMP_MIB_ITEM("OfoPruned", LINUX_MIB_OFOPRUNED),
++	SNMP_MIB_ITEM("OfoPruneDrop", LINUX_MIB_OFOPRUNEDROP),
+ 	SNMP_MIB_ITEM("OutOfWindowIcmps", LINUX_MIB_OUTOFWINDOWICMPS),
+ 	SNMP_MIB_ITEM("LockDroppedIcmps", LINUX_MIB_LOCKDROPPEDICMPS),
+ 	SNMP_MIB_ITEM("ArpFilter", LINUX_MIB_ARPFILTER),
+diff --git a/net/ipv4/tcp_input.c b/net/ipv4/tcp_input.c
+index 91dbb9a..5267121 100644
+--- a/net/ipv4/tcp_input.c
++++ b/net/ipv4/tcp_input.c
+@@ -4980,6 +4980,7 @@ static bool tcp_prune_ofo_queue(struct sock *sk)
+ 	do {
+ 		prev = rb_prev(node);
+ 		rb_erase(node, &tp->out_of_order_queue);
++		NET_INC_STATS(sock_net(sk), LINUX_MIB_OFOPRUNEDROP);
+ 		tcp_drop(sk, rb_to_skb(node));
+ 		sk_mem_reclaim(sk);
+ 		if (atomic_read(&sk->sk_rmem_alloc) <= sk->sk_rcvbuf &&
 -- 
-Best regards,
-Todor Tomov
+1.8.3.1
+
