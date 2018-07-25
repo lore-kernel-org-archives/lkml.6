@@ -2,130 +2,110 @@ Return-Path: <SRS0=S+WB=KJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA638C67790
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 02:06:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D615C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 02:13:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9EB4620883
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 02:06:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9EB4620883
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 107FB20844
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 02:13:36 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="V4AXN/vb";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="V4AXN/vb"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 107FB20844
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388501AbeGYDQJ (ORCPT
+        id S2388512AbeGYDWT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 23:16:09 -0400
-Received: from mga05.intel.com ([192.55.52.43]:47049 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388461AbeGYDQI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 23:16:08 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Jul 2018 19:06:49 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,400,1526367600"; 
-   d="scan'208";a="67299639"
-Received: from blu2-desk2.ccr.corp.intel.com (HELO [10.0.2.15]) ([10.239.13.1])
-  by FMSMGA003.fm.intel.com with ESMTP; 24 Jul 2018 19:06:44 -0700
-Subject: Re: [RFC PATCH 03/10] iommu/vt-d: Allocate groups for mediated
- devices
-To:     Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
-        "Liu, Yi L" <yi.l.liu@intel.com>, Joerg Roedel <joro@8bytes.org>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Kirti Wankhede <kwankhede@nvidia.com>
-References: <1532239773-15325-1-git-send-email-baolu.lu@linux.intel.com>
- <1532239773-15325-4-git-send-email-baolu.lu@linux.intel.com>
- <A2975661238FB949B60364EF0F2C257439CA143E@SHSMSX104.ccr.corp.intel.com>
- <5B568D5B.5050606@linux.intel.com>
- <ccf6890a-30c6-770b-4299-8cabfdc32f2b@arm.com>
-Cc:     "Raj, Ashok" <ashok.raj@intel.com>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "Kumar, Sanjay K" <sanjay.k.kumar@intel.com>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Sun, Yi Y" <yi.y.sun@intel.com>,
-        "Pan, Jacob jun" <jacob.jun.pan@intel.com>,
-        "Tian, Kevin" <kevin.tian@intel.com>
-From:   Lu Baolu <baolu.lu@linux.intel.com>
-Message-ID: <5B57DB30.6070306@linux.intel.com>
-Date:   Wed, 25 Jul 2018 10:06:40 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:38.0) Gecko/20100101
- Thunderbird/38.5.1
+        Tue, 24 Jul 2018 23:22:19 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:55610 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388472AbeGYDWT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Jul 2018 23:22:19 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id EA05A60B62; Wed, 25 Jul 2018 02:12:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1532484777;
+        bh=dzNv+tT+RRl7deAxm/0RQ+DmYdgGN6G4D4ZgY9N+PqU=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=V4AXN/vb3x7aHsj4CiiIjGBzZH5Wlq4FdfIgv+QTGo3rHzOHsYJtn4qWXvm7rozuA
+         9O4BjuSS604E68hJqO3DP8GxGSFL0E8lJn2jnjn0io1VIgmL0aJsr2AcM+fwpCc0X6
+         gAkz/lTIl/SDjcMHw7nDxRiWTPsXjPBUkYP99Esw=
+Received: from codeaurora.org (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: rkuo@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id DBCE56021A;
+        Wed, 25 Jul 2018 02:12:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1532484777;
+        bh=dzNv+tT+RRl7deAxm/0RQ+DmYdgGN6G4D4ZgY9N+PqU=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=V4AXN/vb3x7aHsj4CiiIjGBzZH5Wlq4FdfIgv+QTGo3rHzOHsYJtn4qWXvm7rozuA
+         9O4BjuSS604E68hJqO3DP8GxGSFL0E8lJn2jnjn0io1VIgmL0aJsr2AcM+fwpCc0X6
+         gAkz/lTIl/SDjcMHw7nDxRiWTPsXjPBUkYP99Esw=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org DBCE56021A
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rkuo@codeaurora.org
+Date:   Tue, 24 Jul 2018 21:12:55 -0500
+From:   Richard Kuo <rkuo@codeaurora.org>
+To:     Mike Rapoport <rppt@linux.vnet.ibm.com>
+Cc:     Michal Hocko <mhocko@kernel.org>, linux-hexagon@vger.kernel.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] hexagon: switch to NO_BOOTMEM
+Message-ID: <20180725021255.GF12771@codeaurora.org>
+References: <1531726998-10971-1-git-send-email-rppt@linux.vnet.ibm.com>
+ <20180723212339.GA12771@codeaurora.org>
+ <20180724054704.GA16933@rapoport-lnx>
 MIME-Version: 1.0
-In-Reply-To: <ccf6890a-30c6-770b-4299-8cabfdc32f2b@arm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180724054704.GA16933@rapoport-lnx>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jean,
+On Tue, Jul 24, 2018 at 08:47:04AM +0300, Mike Rapoport wrote:
+> On Mon, Jul 23, 2018 at 04:23:39PM -0500, Richard Kuo wrote:
+> > 
+> > On Mon, Jul 16, 2018 at 10:43:18AM +0300, Mike Rapoport wrote:
+> > > This patch adds registration of the system memory with memblock, eliminates
+> > > bootmem initialization and converts early memory reservations from bootmem
+> > > to memblock.
+> > > 
+> > > Signed-off-by: Mike Rapoport <rppt@linux.vnet.ibm.com>
+> > 
+> > Sorry for the delay, and thanks for this patch.
+> > 
+> > I think the first memblock_reserve should use ARCH_PFN_OFFSET instead of
+> > PHYS_OFFSET.
+> 
+> memblock_reserve gets physical address rather than a pfn.
+> 
+> If I read arch/hexagon/include/asm/mem-layout.h correctly, the PHYS_OFFSET
+> *is* the physical address of the RAM and ARCH_PFN_OFFSET is the first pfn:
+> 
+> #define PHYS_PFN_OFFSET	(PHYS_OFFSET >> PAGE_SHIFT)
+> #define ARCH_PFN_OFFSET	PHYS_PFN_OFFSET
+> 
+> Did I miss something?
 
-Pull Kevin in. Not sure why he was removed from cc list.
+Sorry, I should have been more clear.  In the size calculation, it's
+subtracting the unshifted PHYS_OFFSET from the start page number, which
+I'm pretty sure is wrong.
 
-On 07/24/2018 07:30 PM, Jean-Philippe Brucker wrote:
-> Hi Baolu,
->
-> On 24/07/18 03:22, Lu Baolu wrote:
->> Hi,
->>
->> On 07/23/2018 12:44 PM, Liu, Yi L wrote:
->>>> From: Lu Baolu [mailto:baolu.lu@linux.intel.com]
->>>> Sent: Sunday, July 22, 2018 2:09 PM
->>>>
->>>> With the Intel IOMMU supporting PASID granularity isolation and protection, a
->>>> mediated device could be isolated and protected by an IOMMU unit. We need to
->>>> allocate a new group instead of a PCI group.
->>> Existing vfio mdev framework also allocates an iommu group for mediate device.
->>>
->>> mdev_probe()
->>>   |_ mdev_attach_iommu()
->>>        |_ iommu_group_alloc()
->> When external components ask iommu to allocate a group for a device,
->> it will call pci_device_group in Intel IOMMU driver's @device_group
->> callback. In another word, current Intel IOMMU driver doesn't aware
->> the mediated device and treat all devices as PCI ones. This patch
->> extends the @device_group call back to make it aware of a mediated
->> device.
-> I agree that allocating two groups for an mdev seems strange, and in my
-> opinion we shouldn't export the notion of mdev to IOMMU drivers.
-> Otherwise each driver will have to add its own "dev_is_mdev()" special
-> cases, which will get messy in the long run. Besides, the macro is
-> currently private, and to be exported it should be wrapped in
-> symbol_get/put(mdev_bus_type).
 
-I agree with you.
+Thanks,
+Richard Kuo
 
-It should be better if we can make it in a driver agnostic way.
 
->
-> There is another way: as we're planning to add a generic pasid_alloc()
-> function to the IOMMU API, the mdev module itself could allocate a
-> default PASID for each mdev by calling pasid_alloc() on the mdev's
-> parent, and then do map()/unmap() with that PASID. This way we don't
-> have to add IOMMU ops to the mdev bus, everything can still be done
-> using the ops of the parent. And IOMMU drivers "only" have to implement
-> PASID ops, which will be reused by drivers other than mdev.
-
-A quick question when I thinking about this is how to allocate a domain
-for the mediated device who uses the default pasid for DMA transactions?
-
-Best regards,
-Lu Baolu
-
->
-> The allocated PASID also needs to be installed into the parent device.
-> If the mdev module knows the PASID, we can do that by adding
-> set_pasid(mdev, pasid) and clear_pasid(mdev, pasid) operations to
-> mdev_parent_ops.
->
-> Thanks,
-> Jean
->
->
-
+-- 
+Employee of Qualcomm Innovation Center, Inc.
+Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum, 
+a Linux Foundation Collaborative Project
