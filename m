@@ -2,122 +2,79 @@ Return-Path: <SRS0=S+WB=KJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7ECCDC6778F
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 23:34:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2921C6778F
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 23:35:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 300BC20685
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 23:34:17 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=osandov-com.20150623.gappssmtp.com header.i=@osandov-com.20150623.gappssmtp.com header.b="pDIhWlVX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 300BC20685
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=osandov.com
+	by mail.kernel.org (Postfix) with ESMTP id 5F4EC20685
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 23:35:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5F4EC20685
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zte.com.cn
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731814AbeGZAsN (ORCPT
+        id S1731799AbeGZAtu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 20:48:13 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:42570 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731325AbeGZAsN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Jul 2018 20:48:13 -0400
-Received: by mail-pg1-f196.google.com with SMTP id y4-v6so6276759pgp.9
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Jul 2018 16:34:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=osandov-com.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=UbcnQ9ngTeOsn/XRP5L+38RrQ6GGaLD1Bg00W9uD32U=;
-        b=pDIhWlVX0tipzauoLAUbBZJNYMFhab8OWfAlmUDWwkAg49tvJh3XC00goQlbSl1HxC
-         A9CqEkrGm+RIrb0J13YB+AgwiWdPaSraADNwcC/c3bVF7jvSbvp7fql4RKsDK/FOjgpi
-         DrSOCBHxFwSs3N4HzG+hiNTODZwZm0aB3YWhI8mdsMNJ/fRQab3AdUHTWHB21S6XKC3/
-         68v57ZDnVto9QGeKIEaQkDkk9nS5It6ltKYy4G/NkoyPpbPVwuY9j1XFb10zGVgxK7C+
-         wYoRDY1fhGjCAahpWTax+09Wk2VK+B1wvxBWboPazi/OanFGKHTd1hpqkUtSr2lbA/zy
-         T9DA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=UbcnQ9ngTeOsn/XRP5L+38RrQ6GGaLD1Bg00W9uD32U=;
-        b=WRezFH5OwE61Z8Eay2Y2cos63BZSZiKfdzaBJeipX7HLbgx18aYHbEFVZinbzoMsZ7
-         QSGC9e5aA80weJ8iK9Wh7W6517JFwVuPFpsnd2ggLyatFnSHfs81XS+qbE4PHBgeekXl
-         X9qVn4DiWur8o8iEtjbKHHVxaHy/p88GxVUPo4H+FEGQ/+g+/5SYkqcHLtGxbUkrannx
-         AK+436Wo+LpmoZAKp3xejiPzxbu3oa7LFdnVVh1TsiGxgBVsr+9WHp4qNA30UE/dOjkz
-         okLMri/3uqMSjtOtGXzTKV4fBilwiRKO3MIT33LxG1WNaWYKHezIG1HOefCLDlu6JtPq
-         9hVw==
-X-Gm-Message-State: AOUpUlHjv2C4Jlah/sX/Qt7CT9HnYlpDcEGex/p4vxqnp/Vwbo5fFjX2
-        bl4NKndYoMAbFIg98PA+NT3WVQ==
-X-Google-Smtp-Source: AAOMgpcJpHUSINZZIofs40FG/ptFPY0zX/wn/hbPZU8+1w/izMG+Gz5Ly5DpUU7dTokF09NwZU8ExQ==
-X-Received: by 2002:a63:743:: with SMTP id 64-v6mr22972379pgh.216.1532561653496;
-        Wed, 25 Jul 2018 16:34:13 -0700 (PDT)
-Received: from vader ([2620:10d:c090:180::1:8d38])
-        by smtp.gmail.com with ESMTPSA id v6-v6sm27124640pfa.28.2018.07.25.16.34.12
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 25 Jul 2018 16:34:12 -0700 (PDT)
-Date:   Wed, 25 Jul 2018 16:34:11 -0700
-From:   Omar Sandoval <osandov@osandov.com>
-To:     Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Eric Biederman <ebiederm@xmission.com>,
-        James Morse <james.morse@arm.com>,
-        Bhupesh Sharma <bhsharma@redhat.com>, kernel-team@fb.com
-Subject: Re: [PATCH v3 5/8] proc/kcore: hold lock during read
-Message-ID: <20180725233411.GF16847@vader>
-References: <cover.1531953780.git.osandov@fb.com>
- <d7cfbc1e8a76616f3b699eaff9df0a2730380534.1531953780.git.osandov@fb.com>
- <7f905293-5c30-f001-987f-03caf8f36737@I-love.SAKURA.ne.jp>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <7f905293-5c30-f001-987f-03caf8f36737@I-love.SAKURA.ne.jp>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Wed, 25 Jul 2018 20:49:50 -0400
+Received: from mxhk.zte.com.cn ([63.217.80.70]:40768 "EHLO mxhk.zte.com.cn"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731370AbeGZAtu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Jul 2018 20:49:50 -0400
+Received: from mse01.zte.com.cn (unknown [10.30.3.20])
+        by Forcepoint Email with ESMTPS id 692E0F515ED87F742BD2;
+        Thu, 26 Jul 2018 07:35:48 +0800 (CST)
+Received: from notes_smtp.zte.com.cn ([10.30.1.239])
+        by mse01.zte.com.cn with ESMTP id w6PNZiaC088258;
+        Thu, 26 Jul 2018 07:35:44 +0800 (GMT-8)
+        (envelope-from jiang.biao2@zte.com.cn)
+Received: from localhost.localdomain ([10.75.10.200])
+          by szsmtp06.zte.com.cn (Lotus Domino Release 8.5.3FP6)
+          with ESMTP id 2018072607354961-1838980 ;
+          Thu, 26 Jul 2018 07:35:49 +0800 
+From:   Jiang Biao <jiang.biao2@zte.com.cn>
+To:     akpm@linux-foundation.org, mhocko@suse.com, hannes@cmpxchg.org,
+        hillf.zj@alibaba-inc.com, minchan@kernel.org, ying.huang@intel.com,
+        mgorman@techsingularity.net
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        jiang.biao2@zte.com.cn, zhong.weidong@zte.com.cn
+Subject: [PATCH] mm/vmscan: fix page_freeze_refs in comment.
+Date:   Thu, 26 Jul 2018 07:34:17 +0800
+Message-Id: <1532561657-98783-1-git-send-email-jiang.biao2@zte.com.cn>
+X-Mailer: git-send-email 1.8.3.1
+X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
+ 21, 2013) at 2018-07-26 07:35:49,
+        Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
+ 2018-07-26 07:35:32,
+        Serialize complete at 2018-07-26 07:35:32
+X-MAIL: mse01.zte.com.cn w6PNZiaC088258
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 25, 2018 at 12:11:26AM +0900, Tetsuo Handa wrote:
-> On 2018/07/19 7:58, Omar Sandoval wrote:
-> > From: Omar Sandoval <osandov@fb.com>
-> > 
-> > Now that we're using an rwsem, we can hold it during the entirety of
-> > read_kcore() and have a common return path. This is preparation for the
-> > next change.
-> > 
-> > Signed-off-by: Omar Sandoval <osandov@fb.com>
-> > ---
-> >  fs/proc/kcore.c | 70 ++++++++++++++++++++++++++++---------------------
-> >  1 file changed, 40 insertions(+), 30 deletions(-)
-> > 
-> > diff --git a/fs/proc/kcore.c b/fs/proc/kcore.c
-> > index 95aa988c5b5d..e317ac890871 100644
-> > --- a/fs/proc/kcore.c
-> > +++ b/fs/proc/kcore.c
-> > @@ -440,19 +440,18 @@ static ssize_t
-> >  read_kcore(struct file *file, char __user *buffer, size_t buflen, loff_t *fpos)
-> >  {
-> >  	char *buf = file->private_data;
-> > -	ssize_t acc = 0;
-> >  	size_t size, tsz;
-> >  	size_t elf_buflen;
-> >  	int nphdr;
-> >  	unsigned long start;
-> > +	size_t orig_buflen = buflen;
-> > +	int ret = 0;
-> >  
-> >  	down_read(&kclist_lock);
-> 
-> (...snipped...)
-> 
-> > +out:
-> > +	up_write(&kclist_lock);
-> 
-> Oops. This needs to be up_read().
+page_freeze_refs has already been relplaced by page_ref_freeze, but
+it is not modified in the comment.
 
-Yeah, thanks, I'll fix this and rerun my tests with lockdep.
+Signed-off-by: Jiang Biao <jiang.biao2@zte.com.cn>
+---
+ mm/vmscan.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/mm/vmscan.c b/mm/vmscan.c
+index 03822f8..d29e207 100644
+--- a/mm/vmscan.c
++++ b/mm/vmscan.c
+@@ -744,7 +744,7 @@ static int __remove_mapping(struct address_space *mapping, struct page *page,
+ 		refcount = 2;
+ 	if (!page_ref_freeze(page, refcount))
+ 		goto cannot_free;
+-	/* note: atomic_cmpxchg in page_freeze_refs provides the smp_rmb */
++	/* note: atomic_cmpxchg in page_refs_freeze provides the smp_rmb */
+ 	if (unlikely(PageDirty(page))) {
+ 		page_ref_unfreeze(page, refcount);
+ 		goto cannot_free;
+-- 
+2.7.4
+
