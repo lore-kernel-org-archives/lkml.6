@@ -7,107 +7,98 @@ X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF0EBC67790
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 18:56:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF847C6778F
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 19:00:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 969E0204EC
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 18:56:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7729620844
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 19:00:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="M5e7x0XS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 969E0204EC
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gmLhCcAQ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7729620844
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730661AbeGYUJr (ORCPT
+        id S1730337AbeGYUN2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 16:09:47 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:34672 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729354AbeGYUJr (ORCPT
+        Wed, 25 Jul 2018 16:13:28 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:50523 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729354AbeGYUN2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Jul 2018 16:09:47 -0400
-Received: by mail-wr1-f68.google.com with SMTP id c13-v6so8379673wrt.1;
-        Wed, 25 Jul 2018 11:56:48 -0700 (PDT)
+        Wed, 25 Jul 2018 16:13:28 -0400
+Received: by mail-wm0-f68.google.com with SMTP id s12-v6so3788899wmc.0;
+        Wed, 25 Jul 2018 12:00:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id;
-        bh=oJxrfVe1uDDH5M0hxVnH68FAhp+MBnBnp10Zrsvodyc=;
-        b=M5e7x0XSdxNqjnmN6LUMXooAsU8zhICc4RvskDgSRAeGhqgpveZtGpzzZcRewaGGh7
-         Xu3O1zr7cQdm/qDe+Jwl3uOIfHjEO+VEwheM0Edjzof9O+LPA7GZw+4GdoW9wMAueiUt
-         h5ldmLRR1qAShaDjLwAHYd5Iu10Lv7EYPdsE2AITeG62jjmQ6Sy1gof9/rmsUpKuTs7B
-         yCzNtzt2V0lb5CK7ElS3dRbB9Je/P8vv6GustaCWYJ72WuSMSaOtYNEfvIAfFsqVeo2v
-         CWsgtc08YBaUqufdRvs5Q4ZP9UXEPY/mvON2IikeiHghJbDQd3NlrinQTEauMSURz9rl
-         2Ypg==
+        bh=O5IhaNKKHCy5sgqF9CPRQ7cLxpnYhl/t9aW/DjTeM6E=;
+        b=gmLhCcAQK7LeuBHW+TxgBg2jCjeFEJeh6W2Uydk/urqyZN1NtJ96rAPADvLpoMNNnP
+         q68Q8i9CzUQ1F3Rz2qMBsQ2UJ558yOaTMeQfZggW+Np5gNBAanKNjxhY79m8y2bLItPW
+         xQ+lxcFER1NuilSs2peOgbJ2liOM9jI7BnWQ10j4a+8E1zoGMK3Zi+dfqiLipq/OFKaI
+         Cfo3R+S11jBHjeow6hjtP5mkZbdXD2Uh2OjWGDH3FBEuiN/oUiKD+LO8wHvUrbbLUy3c
+         fnGGLQH4vqdoHqQJm7TG25SaU7RV2I9bxl90v/kpEM92xLe2UmPrXd06K/NtMKiPWmen
+         abfg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=oJxrfVe1uDDH5M0hxVnH68FAhp+MBnBnp10Zrsvodyc=;
-        b=WGyEVUAFbAUeUHhGWhEcy9y4YQ3tZelTQ5FhKY72x185dszmGniUnMfp6rTQhsukIl
-         o7qyqc1ISwOJBe2aSDSHmKKjBxbg02G8SYDU/NjnNaP27bFEiXHqmLqtQzvLUnEVCpQS
-         tD1i/pbsAVwcrXHeTL5r+w9XXY7leQG8FbPOUotKz2mtCurrVYzTVmSYvtAgAuXfaskS
-         FM6ahRZ7rMdpaThPkU8/BsgPeZsXfx7HCz3WBmcdyODP6cyy7toza79gqQxhtKcsGzlo
-         jGIicthu2GaAie67tduFyjPmBkWw0WlCzm6G4qC3Msy9k/VaODZOwxoLF1uDlOKNtbhp
-         9pSQ==
-X-Gm-Message-State: AOUpUlH71ftnVcpuXktGWctw6W/2N/7SK+4Gsf1Sv6SxqPs8Z6kkpbj3
-        033qn09z3v4yQ6H7nFgLA64=
-X-Google-Smtp-Source: AAOMgpeP6bEs334X1wkS5Nt/Qol6vIeWWDseyaJfDhAgRpjC9zufH0Y57tsyBCp4pb9wi9WUe90D4w==
-X-Received: by 2002:adf:fc86:: with SMTP id g6-v6mr15061829wrr.216.1532545007954;
-        Wed, 25 Jul 2018 11:56:47 -0700 (PDT)
+        bh=O5IhaNKKHCy5sgqF9CPRQ7cLxpnYhl/t9aW/DjTeM6E=;
+        b=i6kKLNMhou0Pevr7fMygx+WQ0zx2odyfPUTSl5WhkCgqPiMLS5zU3CSeoh/fXZGIRa
+         CRz8gD4Yw6mTTFG27eMkyzT/1fgTqZvqXeUFeiEBp79sSCwZEtRe7lAFfzYIauqeJlqD
+         I8UM7FQ177MELdMUzp9PXPUYyudWsp5rLhYPTz09vJgiY8YrestH3R2SjbzueckC8QMU
+         3OqMTIebo5QLa9jEOeiaETgNMy6Oa2B4x76nnb9GMUQicu5qVXQ19tDUVjJIAoZKzLpe
+         tcUw1DZ3hsOGYohnSu0LrnenZ4YoGfSRdc9v0B7Jv+OaK4AnxfiHrXP0OTZjDvda3Aj1
+         bu6A==
+X-Gm-Message-State: AOUpUlE9xlcWUeNNDBLBJg4aNsAIVfTdl6AYj+74G7ZdGD718gE9OA6r
+        J+FHAo1dij4Cp2up+VxAeOA=
+X-Google-Smtp-Source: AAOMgperQOfAe25E4oPOgmRukgIxJIdFK1+1ddhtqk6YR/S8Om0NmgDPbfUZGhswZX//eGDkok497w==
+X-Received: by 2002:a1c:1c52:: with SMTP id c79-v6mr5168575wmc.147.1532545228117;
+        Wed, 25 Jul 2018 12:00:28 -0700 (PDT)
 Received: from euri.wifirst.net (eth-west-pareq2-46-193-2-21.wb.wifirst.net. [46.193.2.21])
-        by smtp.googlemail.com with ESMTPSA id w8-v6sm14912243wrp.72.2018.07.25.11.56.46
+        by smtp.googlemail.com with ESMTPSA id j131-v6sm6841597wmb.25.2018.07.25.12.00.26
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 25 Jul 2018 11:56:47 -0700 (PDT)
+        Wed, 25 Jul 2018 12:00:27 -0700 (PDT)
 From:   Varsha Rao <rvarsha016@gmail.com>
 To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>,
         Nicholas Mc Guire <der.herr@hofr.at>,
-        Arend van Spriel <arend.vanspriel@broadcom.com>,
-        Franky Lin <franky.lin@broadcom.com>,
-        Hante Meuleman <hante.meuleman@broadcom.com>,
-        Chi-Hsien Lin <chi-hsien.lin@cypress.com>,
-        Wright Feng <wright.feng@cypress.com>,
+        Solomon Peachy <pizza@shaftnet.org>,
         Kalle Valo <kvalo@codeaurora.org>,
         "David S. Miller" <davem@davemloft.net>,
-        linux-wireless@vger.kernel.org,
-        brcm80211-dev-list.pdl@broadcom.com,
-        brcm80211-dev-list@cypress.com, netdev@vger.kernel.org,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
         linux-kernel@vger.kernel.org
 Cc:     Varsha Rao <rvarsha016@gmail.com>
-Subject: [PATCH] net: wireless: brcmsmac: Remove extra parentheses
-Date:   Wed, 25 Jul 2018 20:56:22 +0200
-Message-Id: <20180725185625.4220-1-rvarsha016@gmail.com>
+Subject: [PATCH] net: wireless: cw1200: Remove extra parentheses
+Date:   Wed, 25 Jul 2018 21:00:07 +0200
+Message-Id: <20180725190011.4317-1-rvarsha016@gmail.com>
 X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove the unnecessary parentheses to fix the clang warning of
-extraneous parentheses.
+Remove unnecessary parentheses to fix the extraneous parentheses clang
+warning.
 
 Signed-off-by: Varsha Rao <rvarsha016@gmail.com>
 ---
- drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c | 4 ++--
+ drivers/net/wireless/st/cw1200/txrx.c | 4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c b/drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c
-index 1a187557982e..4deba3075083 100644
---- a/drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c
-+++ b/drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c
-@@ -25453,12 +25453,12 @@ void wlc_phy_cal_perical_nphy_run(struct brcms_phy *pi, u8 caltype)
- 			(pi->cal_type_override ==
- 			 PHY_PERICAL_FULL) ? true : false;
- 
--	if ((pi->mphase_cal_phase_id > MPHASE_CAL_STATE_INIT)) {
-+	if (pi->mphase_cal_phase_id > MPHASE_CAL_STATE_INIT) {
- 		if (pi->nphy_txiqlocal_chanspec != pi->radio_chanspec)
- 			wlc_phy_cal_perical_mphase_restart(pi);
- 	}
- 
--	if ((pi->mphase_cal_phase_id == MPHASE_CAL_STATE_RXCAL))
-+	if (pi->mphase_cal_phase_id == MPHASE_CAL_STATE_RXCAL)
- 		wlapi_bmac_write_shm(pi->sh->physhim, M_CTS_DURATION, 10000);
- 
- 	wlapi_suspend_mac_and_wait(pi->sh->physhim);
+diff --git a/drivers/net/wireless/st/cw1200/txrx.c b/drivers/net/wireless/st/cw1200/txrx.c
+index f7b1b0062db3..8c800ef23159 100644
+--- a/drivers/net/wireless/st/cw1200/txrx.c
++++ b/drivers/net/wireless/st/cw1200/txrx.c
+@@ -624,9 +624,9 @@ cw1200_tx_h_bt(struct cw1200_common *priv,
+ 			priority = WSM_EPTA_PRIORITY_ACTION;
+ 		else if (ieee80211_is_mgmt(t->hdr->frame_control))
+ 			priority = WSM_EPTA_PRIORITY_MGT;
+-		else if ((wsm->queue_id == WSM_QUEUE_VOICE))
++		else if (wsm->queue_id == WSM_QUEUE_VOICE)
+ 			priority = WSM_EPTA_PRIORITY_VOICE;
+-		else if ((wsm->queue_id == WSM_QUEUE_VIDEO))
++		else if (wsm->queue_id == WSM_QUEUE_VIDEO)
+ 			priority = WSM_EPTA_PRIORITY_VIDEO;
+ 		else
+ 			priority = WSM_EPTA_PRIORITY_DATA;
 -- 
 2.17.0
 
