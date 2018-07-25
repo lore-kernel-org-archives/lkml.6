@@ -6,33 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EE8EC67790
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 16:41:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38D09C67790
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 16:41:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C5F9B20852
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 16:40:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C5F9B20852
+	by mail.kernel.org (Postfix) with ESMTP id CD6EF20852
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 16:41:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CD6EF20852
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731418AbeGYRxT (ORCPT
+        id S1731433AbeGYRxe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 13:53:19 -0400
-Received: from ns.mm-sol.com ([37.157.136.199]:35648 "EHLO extserv.mm-sol.com"
+        Wed, 25 Jul 2018 13:53:34 -0400
+Received: from ns.mm-sol.com ([37.157.136.199]:35609 "EHLO extserv.mm-sol.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730239AbeGYRv1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1729820AbeGYRv1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 25 Jul 2018 13:51:27 -0400
 Received: from mms-0439.qualcomm.mm-sol.com (unknown [37.157.136.206])
-        by extserv.mm-sol.com (Postfix) with ESMTPSA id A38E2CD6D;
+        by extserv.mm-sol.com (Postfix) with ESMTPSA id 2F934CD61;
         Wed, 25 Jul 2018 19:38:54 +0300 (EEST)
 From:   Todor Tomov <todor.tomov@linaro.org>
 To:     mchehab@kernel.org, sakari.ailus@linux.intel.com,
         hans.verkuil@cisco.com, laurent.pinchart+renesas@ideasonboard.com,
         linux-media@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, Todor Tomov <todor.tomov@linaro.org>
-Subject: [PATCH v4 27/34] media: camss: vfe: Different format support on source pad
-Date:   Wed, 25 Jul 2018 19:38:36 +0300
-Message-Id: <1532536723-19062-28-git-send-email-todor.tomov@linaro.org>
+Cc:     linux-kernel@vger.kernel.org, Todor Tomov <todor.tomov@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org
+Subject: [PATCH v4 15/34] media: dt-bindings: media: qcom,camss: Fix whitespaces
+Date:   Wed, 25 Jul 2018 19:38:24 +0300
+Message-Id: <1532536723-19062-16-git-send-email-todor.tomov@linaro.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1532536723-19062-1-git-send-email-todor.tomov@linaro.org>
 References: <1532536723-19062-1-git-send-email-todor.tomov@linaro.org>
@@ -41,230 +43,137 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Rework the format selection on the source pad. Make the format
-on the source pad selectable amongst a list of formats. This
-list can be different for each sink pad format.
+Use tabs.
 
+CC: Rob Herring <robh+dt@kernel.org>
+CC: Mark Rutland <mark.rutland@arm.com>
+CC: devicetree@vger.kernel.org
 Signed-off-by: Todor Tomov <todor.tomov@linaro.org>
+Reviewed-by: Rob Herring <robh@kernel.org>
 ---
- drivers/media/platform/qcom/camss/camss-vfe.c | 172 ++++++++++++++++++++------
- 1 file changed, 135 insertions(+), 37 deletions(-)
+ .../devicetree/bindings/media/qcom,camss.txt       | 92 +++++++++++-----------
+ 1 file changed, 46 insertions(+), 46 deletions(-)
 
-diff --git a/drivers/media/platform/qcom/camss/camss-vfe.c b/drivers/media/platform/qcom/camss/camss-vfe.c
-index c27097c..dc353d6 100644
---- a/drivers/media/platform/qcom/camss/camss-vfe.c
-+++ b/drivers/media/platform/qcom/camss/camss-vfe.c
-@@ -124,6 +124,131 @@ static u8 vfe_get_bpp(const struct vfe_format *formats,
- 	return formats[0].bpp;
- }
+diff --git a/Documentation/devicetree/bindings/media/qcom,camss.txt b/Documentation/devicetree/bindings/media/qcom,camss.txt
+index 032e8ed..e938eb0 100644
+--- a/Documentation/devicetree/bindings/media/qcom,camss.txt
++++ b/Documentation/devicetree/bindings/media/qcom,camss.txt
+@@ -53,25 +53,25 @@ Qualcomm Camera Subsystem
+ 	Usage: required
+ 	Value type: <stringlist>
+ 	Definition: Should contain the following entries:
+-                - "top_ahb"
+-                - "ispif_ahb"
+-                - "csiphy0_timer"
+-                - "csiphy1_timer"
+-                - "csi0_ahb"
+-                - "csi0"
+-                - "csi0_phy"
+-                - "csi0_pix"
+-                - "csi0_rdi"
+-                - "csi1_ahb"
+-                - "csi1"
+-                - "csi1_phy"
+-                - "csi1_pix"
+-                - "csi1_rdi"
+-                - "ahb"
+-                - "vfe0"
+-                - "csi_vfe0"
+-                - "vfe_ahb"
+-                - "vfe_axi"
++		- "top_ahb"
++		- "ispif_ahb"
++		- "csiphy0_timer"
++		- "csiphy1_timer"
++		- "csi0_ahb"
++		- "csi0"
++		- "csi0_phy"
++		- "csi0_pix"
++		- "csi0_rdi"
++		- "csi1_ahb"
++		- "csi1"
++		- "csi1_phy"
++		- "csi1_pix"
++		- "csi1_rdi"
++		- "ahb"
++		- "vfe0"
++		- "csi_vfe0"
++		- "vfe_ahb"
++		- "vfe_axi"
+ - vdda-supply:
+ 	Usage: required
+ 	Value type: <phandle>
+@@ -95,17 +95,17 @@ Qualcomm Camera Subsystem
+ 		- clock-lanes:
+ 			Usage: required
+ 			Value type: <u32>
+-                        Definition: The physical clock lane index. The value
+-                                    must always be <1> as the physical clock
+-                                    lane is lane 1.
++			Definition: The physical clock lane index. The value
++				    must always be <1> as the physical clock
++				    lane is lane 1.
+ 		- data-lanes:
+ 			Usage: required
+ 			Value type: <prop-encoded-array>
+-                        Definition: An array of physical data lanes indexes.
+-                                    Position of an entry determines the logical
+-                                    lane number, while the value of an entry
+-                                    indicates physical lane index. Lane swapping
+-                                    is supported.
++			Definition: An array of physical data lanes indexes.
++				    Position of an entry determines the logical
++				    lane number, while the value of an entry
++				    indicates physical lane index. Lane swapping
++				    is supported.
  
-+static u32 vfe_find_code(u32 *code, unsigned int n_code,
-+			 unsigned int index, u32 req_code)
-+{
-+	int i;
-+
-+	if (!req_code && (index >= n_code))
-+		return 0;
-+
-+	for (i = 0; i < n_code; i++)
-+		if (req_code) {
-+			if (req_code == code[i])
-+				return req_code;
-+		} else {
-+			if (i == index)
-+				return code[i];
-+		}
-+
-+	return code[0];
-+}
-+
-+static u32 vfe_src_pad_code(struct vfe_line *line, u32 sink_code,
-+			    unsigned int index, u32 src_req_code)
-+{
-+	struct vfe_device *vfe = to_vfe(line);
-+
-+	if (vfe->camss->version == CAMSS_8x16)
-+		switch (sink_code) {
-+		case MEDIA_BUS_FMT_YUYV8_2X8:
-+		{
-+			u32 src_code[] = {
-+				MEDIA_BUS_FMT_YUYV8_2X8,
-+				MEDIA_BUS_FMT_YUYV8_1_5X8,
-+			};
-+
-+			return vfe_find_code(src_code, ARRAY_SIZE(src_code),
-+					     index, src_req_code);
-+		}
-+		case MEDIA_BUS_FMT_YVYU8_2X8:
-+		{
-+			u32 src_code[] = {
-+				MEDIA_BUS_FMT_YVYU8_2X8,
-+				MEDIA_BUS_FMT_YVYU8_1_5X8,
-+			};
-+
-+			return vfe_find_code(src_code, ARRAY_SIZE(src_code),
-+					     index, src_req_code);
-+		}
-+		case MEDIA_BUS_FMT_UYVY8_2X8:
-+		{
-+			u32 src_code[] = {
-+				MEDIA_BUS_FMT_UYVY8_2X8,
-+				MEDIA_BUS_FMT_UYVY8_1_5X8,
-+			};
-+
-+			return vfe_find_code(src_code, ARRAY_SIZE(src_code),
-+					     index, src_req_code);
-+		}
-+		case MEDIA_BUS_FMT_VYUY8_2X8:
-+		{
-+			u32 src_code[] = {
-+				MEDIA_BUS_FMT_VYUY8_2X8,
-+				MEDIA_BUS_FMT_VYUY8_1_5X8,
-+			};
-+
-+			return vfe_find_code(src_code, ARRAY_SIZE(src_code),
-+					     index, src_req_code);
-+		}
-+		default:
-+			if (index > 0)
-+				return 0;
-+
-+			return sink_code;
-+		}
-+	else if (vfe->camss->version == CAMSS_8x96)
-+		switch (sink_code) {
-+		case MEDIA_BUS_FMT_YUYV8_2X8:
-+		{
-+			u32 src_code[] = {
-+				MEDIA_BUS_FMT_YUYV8_2X8,
-+				MEDIA_BUS_FMT_YUYV8_1_5X8,
-+			};
-+
-+			return vfe_find_code(src_code, ARRAY_SIZE(src_code),
-+					     index, src_req_code);
-+		}
-+		case MEDIA_BUS_FMT_YVYU8_2X8:
-+		{
-+			u32 src_code[] = {
-+				MEDIA_BUS_FMT_YVYU8_2X8,
-+				MEDIA_BUS_FMT_YVYU8_1_5X8,
-+			};
-+
-+			return vfe_find_code(src_code, ARRAY_SIZE(src_code),
-+					     index, src_req_code);
-+		}
-+		case MEDIA_BUS_FMT_UYVY8_2X8:
-+		{
-+			u32 src_code[] = {
-+				MEDIA_BUS_FMT_UYVY8_2X8,
-+				MEDIA_BUS_FMT_UYVY8_1_5X8,
-+			};
-+
-+			return vfe_find_code(src_code, ARRAY_SIZE(src_code),
-+					     index, src_req_code);
-+		}
-+		case MEDIA_BUS_FMT_VYUY8_2X8:
-+		{
-+			u32 src_code[] = {
-+				MEDIA_BUS_FMT_VYUY8_2X8,
-+				MEDIA_BUS_FMT_VYUY8_1_5X8,
-+			};
-+
-+			return vfe_find_code(src_code, ARRAY_SIZE(src_code),
-+					     index, src_req_code);
-+		}
-+		default:
-+			if (index > 0)
-+				return 0;
-+
-+			return sink_code;
-+		}
-+	else
-+		return 0;
-+}
-+
- /*
-  * vfe_reset - Trigger reset on VFE module and wait to complete
-  * @vfe: VFE device
-@@ -1388,11 +1513,11 @@ static void vfe_try_format(struct vfe_line *line,
+ * An Example
  
- 	case MSM_VFE_PAD_SRC:
- 		/* Set and return a format same as sink pad */
--
- 		code = fmt->code;
- 
--		*fmt = *__vfe_get_format(line, cfg, MSM_VFE_PAD_SINK,
--					 which);
-+		*fmt = *__vfe_get_format(line, cfg, MSM_VFE_PAD_SINK, which);
-+
-+		fmt->code = vfe_src_pad_code(line, fmt->code, 0, code);
- 
- 		if (line->id == VFE_LINE_PIX) {
- 			struct v4l2_rect *rect;
-@@ -1401,34 +1526,6 @@ static void vfe_try_format(struct vfe_line *line,
- 
- 			fmt->width = rect->width;
- 			fmt->height = rect->height;
--
--			switch (fmt->code) {
--			case MEDIA_BUS_FMT_YUYV8_2X8:
--				if (code == MEDIA_BUS_FMT_YUYV8_1_5X8)
--					fmt->code = MEDIA_BUS_FMT_YUYV8_1_5X8;
--				else
--					fmt->code = MEDIA_BUS_FMT_YUYV8_2X8;
--				break;
--			case MEDIA_BUS_FMT_YVYU8_2X8:
--				if (code == MEDIA_BUS_FMT_YVYU8_1_5X8)
--					fmt->code = MEDIA_BUS_FMT_YVYU8_1_5X8;
--				else
--					fmt->code = MEDIA_BUS_FMT_YVYU8_2X8;
--				break;
--			case MEDIA_BUS_FMT_UYVY8_2X8:
--			default:
--				if (code == MEDIA_BUS_FMT_UYVY8_1_5X8)
--					fmt->code = MEDIA_BUS_FMT_UYVY8_1_5X8;
--				else
--					fmt->code = MEDIA_BUS_FMT_UYVY8_2X8;
--				break;
--			case MEDIA_BUS_FMT_VYUY8_2X8:
--				if (code == MEDIA_BUS_FMT_VYUY8_1_5X8)
--					fmt->code = MEDIA_BUS_FMT_VYUY8_1_5X8;
--				else
--					fmt->code = MEDIA_BUS_FMT_VYUY8_2X8;
--				break;
--			}
- 		}
- 
- 		break;
-@@ -1532,7 +1629,6 @@ static int vfe_enum_mbus_code(struct v4l2_subdev *sd,
- 			      struct v4l2_subdev_mbus_code_enum *code)
- {
- 	struct vfe_line *line = v4l2_get_subdevdata(sd);
--	struct v4l2_mbus_framefmt *format;
- 
- 	if (code->pad == MSM_VFE_PAD_SINK) {
- 		if (code->index >= line->nformats)
-@@ -1540,13 +1636,15 @@ static int vfe_enum_mbus_code(struct v4l2_subdev *sd,
- 
- 		code->code = line->formats[code->index].code;
- 	} else {
--		if (code->index > 0)
--			return -EINVAL;
-+		struct v4l2_mbus_framefmt *sink_fmt;
- 
--		format = __vfe_get_format(line, cfg, MSM_VFE_PAD_SINK,
--					  code->which);
-+		sink_fmt = __vfe_get_format(line, cfg, MSM_VFE_PAD_SINK,
-+					    code->which);
- 
--		code->code = format->code;
-+		code->code = vfe_src_pad_code(line, sink_fmt->code,
-+					      code->index, 0);
-+		if (!code->code)
-+			return -EINVAL;
- 	}
- 
- 	return 0;
+@@ -161,25 +161,25 @@ Qualcomm Camera Subsystem
+ 			<&gcc GCC_CAMSS_CSI_VFE0_CLK>,
+ 			<&gcc GCC_CAMSS_VFE_AHB_CLK>,
+ 			<&gcc GCC_CAMSS_VFE_AXI_CLK>;
+-                clock-names = "top_ahb",
+-                        "ispif_ahb",
+-                        "csiphy0_timer",
+-                        "csiphy1_timer",
+-                        "csi0_ahb",
+-                        "csi0",
+-                        "csi0_phy",
+-                        "csi0_pix",
+-                        "csi0_rdi",
+-                        "csi1_ahb",
+-                        "csi1",
+-                        "csi1_phy",
+-                        "csi1_pix",
+-                        "csi1_rdi",
+-                        "ahb",
+-                        "vfe0",
+-                        "csi_vfe0",
+-                        "vfe_ahb",
+-                        "vfe_axi";
++		clock-names = "top_ahb",
++			"ispif_ahb",
++			"csiphy0_timer",
++			"csiphy1_timer",
++			"csi0_ahb",
++			"csi0",
++			"csi0_phy",
++			"csi0_pix",
++			"csi0_rdi",
++			"csi1_ahb",
++			"csi1",
++			"csi1_phy",
++			"csi1_pix",
++			"csi1_rdi",
++			"ahb",
++			"vfe0",
++			"csi_vfe0",
++			"vfe_ahb",
++			"vfe_axi";
+ 		vdda-supply = <&pm8916_l2>;
+ 		iommus = <&apps_iommu 3>;
+ 		ports {
 -- 
 2.7.4
 
