@@ -2,87 +2,88 @@ Return-Path: <SRS0=S+WB=KJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BDD1FC67790
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 17:28:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54434C67790
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 17:28:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 686E020852
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 17:28:14 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="eHYcJ9H3"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 686E020852
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 0F8F420843
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 17:28:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0F8F420843
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729378AbeGYSku (ORCPT
+        id S1729839AbeGYSlP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 14:40:50 -0400
-Received: from mail-io0-f195.google.com ([209.85.223.195]:34970 "EHLO
-        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729072AbeGYSkt (ORCPT
+        Wed, 25 Jul 2018 14:41:15 -0400
+Received: from mail-it0-f68.google.com ([209.85.214.68]:33051 "EHLO
+        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729072AbeGYSlP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Jul 2018 14:40:49 -0400
-Received: by mail-io0-f195.google.com with SMTP id w11-v6so6995836iob.2
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Jul 2018 10:28:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=I/n4tus6ra8XaDtlo2xNAYjaTu0fc9dSx4SV3M/Ztks=;
-        b=eHYcJ9H3ss03j+7GkO69FroVmIzyYqmkpZxL32VMf4DjW9+gt9Xk5NNHitWfEapPae
-         FqSEA918bTusn8lgwd8eSfQsT6PjMJNvSboQBQCxv16vQRXNrxP4idIZAT4OCMff+muj
-         zn1P31YUHZscgYQ43g9YZVGYSNnALgV6y77IU=
+        Wed, 25 Jul 2018 14:41:15 -0400
+Received: by mail-it0-f68.google.com with SMTP id d16-v6so144307itj.0;
+        Wed, 25 Jul 2018 10:28:37 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=I/n4tus6ra8XaDtlo2xNAYjaTu0fc9dSx4SV3M/Ztks=;
-        b=lpde/Ja7hc7WvTblSVsaI6ZmNsMwr0/LAm4WyCVJS+0ZVae+9Cp/1e7HwMBRS96exT
-         99muRnfe4xUHRTAoS17YW2j5kdj2xoDY8BMWqyNaxFV8R2R34YItNMjacJeG9p9v5B7Z
-         XmgLxJ05zYB4ftaryqJiarKPgKVVTdS/uOfg5sk9nK8hzVFd7dARPmWIh347Xcov9VZT
-         uGpV0SCzPBdU32XS/pEUthcuTut9y4rVeIToENp3105eOR7EqEgqb3Ev2S9/gRkFuK3G
-         vLoiJIHYHyUtfWUzJa3X420OrHiPGniTUrHEfowqo/gD51A4CPCy4poESOAvOVxB8EHM
-         ZjJQ==
-X-Gm-Message-State: AOUpUlHl7gc+Vo2zIwf4Xb/Us4nYiGrFtGD+cIo2SrrXWJJDaq/rOl2r
-        4UbK2zdJ8Nvq4oZE5OXZm5qS1/T9xUJDKqiv4R0=
-X-Google-Smtp-Source: AAOMgpdPrq27g94yvNMl7c77JDoUFLuhzFNT5B7vgOSFTaM18gUABQpCJoW8e20dWghKO3U/zAUNE2+ynn8l11moD7I=
-X-Received: by 2002:a6b:1502:: with SMTP id 2-v6mr18681420iov.203.1532539691222;
- Wed, 25 Jul 2018 10:28:11 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=VZ/3ZcZv4Pw98euhzz71HBLA3BQxEFJJldG9tQUiGrE=;
+        b=Oq5/p9VOm8sz3iQDNTwR1LjKh4SMzcDSjoZELUVa6lhdb7NyN5rfn8lfIj7XQQ1/2V
+         +ezhkTJQVsqFcMad3+GdNCEcLJn5qX6TTo+c8jJkT7TBjWwlXuqnmOaGaaNCJMYRgNUH
+         p3kwi3N5hJK1BvB7gVXdT/PWTNJADrvmhYIKPVha5QGGS78Tg7a34EoqORGk10FiS7r0
+         JFUYM9DAK5akkKXoNT5Bjnrg01ssngZuy0nFGApHs4hylpkk5wEH6fxz7jQwLZUtbH0D
+         DaHKt7iCMXUVDqTJ9o+A5LlsFBQitkzUal/pXsPAFFGo3ofmNYWZ2MAvHOKTQqckI7cN
+         9ZjQ==
+X-Gm-Message-State: AOUpUlGXqGHNaLhrRWKfzthrJnHAzE4LXPYkfY1WEU2abMsXb/OjtbzZ
+        l68NqCVfEIsVrSV+PCmf6g==
+X-Google-Smtp-Source: AAOMgpdlD0ZmAraBJetO72/HMYreOL+qSSWZ2I3CVJXv1foF6BtyeFSEuK2gr2mGU9UHevvQ4pUP3w==
+X-Received: by 2002:a24:97cd:: with SMTP id k196-v6mr6647324ite.93.1532539716562;
+        Wed, 25 Jul 2018 10:28:36 -0700 (PDT)
+Received: from localhost ([24.51.61.72])
+        by smtp.gmail.com with ESMTPSA id n127-v6sm2867818itn.7.2018.07.25.10.28.35
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 25 Jul 2018 10:28:36 -0700 (PDT)
+Date:   Wed, 25 Jul 2018 11:28:35 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Marcel Ziswiler <marcel@ziswiler.com>
+Cc:     devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-gpio@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>
+Subject: Re: [PATCH v2] pinctrl: tegra: fix spelling in devicetree binding
+ document
+Message-ID: <20180725172835.GA15950@rob-hp-laptop>
+References: <20180720082258.1590-1-marcel@ziswiler.com>
 MIME-Version: 1.0
-References: <nycvar.YFH.7.76.1807242147560.997@cbobk.fhfr.pm>
-In-Reply-To: <nycvar.YFH.7.76.1807242147560.997@cbobk.fhfr.pm>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Wed, 25 Jul 2018 10:28:00 -0700
-Message-ID: <CA+55aFz+5e3-YudC1a0YPx-dUN5YjHxQKF=ROPv9J2N-6b1ZDw@mail.gmail.com>
-Subject: Re: [PATCH] x86/bugs: protect against userspace-userspace spectreRSB
-To:     Jiri Kosina <jikos@kernel.org>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Borislav Petkov <bp@suse.de>,
-        David Woodhouse <dwmw@amazon.co.uk>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "the arch/x86 maintainers" <x86@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180720082258.1590-1-marcel@ziswiler.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 24, 2018 at 12:53 PM Jiri Kosina <jikos@kernel.org> wrote:
->
-> Mitigate userspace-userspace attacks by always unconditionally filling RSB on
-> context switch when generic spectrev2 mitigation has been enabled.
+On Fri, Jul 20, 2018 at 10:22:57AM +0200, Marcel Ziswiler wrote:
+> From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+> 
+> This fixes a spelling mistake.
+> 
+> Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+> 
+> ---
+> 
+> Changes in v2:
+> - Also fix up the one in nvidia,tegra210-pinmux.txt as suggested by Jon.
+> 
+>  Documentation/devicetree/bindings/pinctrl/nvidia,tegra124-pinmux.txt | 2 +-
+>  Documentation/devicetree/bindings/pinctrl/nvidia,tegra210-pinmux.txt | 2 +-
+>  2 files changed, 2 insertions(+), 2 deletions(-)
 
-Shouldn't this also do something like
+Applied.
 
-     x86_spec_ctrl_base |= x86_spec_ctrl_mask & SPEC_CTRL_STIBP;
-
-if we have HT enabled?
-
-              Linus
+Rob
