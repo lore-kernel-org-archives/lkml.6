@@ -2,100 +2,80 @@ Return-Path: <SRS0=S+WB=KJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB412C6778F
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 08:12:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F40B9C6778F
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 08:13:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9638220671
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 08:12:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9638220671
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-mips.org
+	by mail.kernel.org (Postfix) with ESMTP id B3CB320671
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 08:13:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B3CB320671
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728631AbeGYJX1 (ORCPT
+        id S1728659AbeGYJXm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 05:23:27 -0400
-Received: from eddie.linux-mips.org ([148.251.95.138]:41362 "EHLO
-        cvs.linux-mips.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728357AbeGYJX1 (ORCPT
+        Wed, 25 Jul 2018 05:23:42 -0400
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:10285 "EHLO
+        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728551AbeGYJXm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Jul 2018 05:23:27 -0400
-Received: (from localhost user: 'ladis' uid#1021 fake: STDIN
-        (ladis@eddie.linux-mips.org)) by eddie.linux-mips.org
-        id S23991808AbeGYIMxBmdxg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org> + 2 others);
-        Wed, 25 Jul 2018 10:12:53 +0200
-Date:   Wed, 25 Jul 2018 10:12:51 +0200
-From:   Ladislav Michl <ladis@linux-mips.org>
-To:     "H. Nikolaus Schaller" <hns@goldelico.com>
-Cc:     Marek Belisko <marek@goldelico.com>,
-        =?iso-8859-2?Q?Beno=EEt?= Cousson <bcousson@baylibre.com>,
-        Tony Lindgren <tony@atomide.com>,
+        Wed, 25 Jul 2018 05:23:42 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1, AES128-SHA)
+        id <B5b5831170000>; Wed, 25 Jul 2018 01:13:11 -0700
+Received: from HQMAIL101.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Wed, 25 Jul 2018 01:13:08 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Wed, 25 Jul 2018 01:13:08 -0700
+Received: from dhcp-10-21-25-168 (10.21.25.201) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Wed, 25 Jul
+ 2018 08:13:05 +0000
+Date:   Wed, 25 Jul 2018 11:12:59 +0300
+From:   Aapo Vienamo <avienamo@nvidia.com>
+To:     Mikko Perttunen <cyndis@kapsi.fi>
+CC:     Ulf Hansson <ulf.hansson@linaro.org>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        linux-omap@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, letux-kernel@openphoenux.org
-Subject: Re: [PATCH 20/32] ARM: dts: omap3-gta04: add devconf0 setup for
- mcbsp1 clock pins
-Message-ID: <20180725081251.GC7467@lenoch>
-References: <cover.1532501910.git.hns@goldelico.com>
- <5dbe024d9465eab668ba9aac3732ded225859e6f.1532501910.git.hns@goldelico.com>
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        "Adrian Hunter" <adrian.hunter@intel.com>,
+        Mikko Perttunen <mperttunen@nvidia.com>,
+        <linux-mmc@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 7/7] arm64: dts: tegra210-p2597: Remove no-1-8-v from
+ sdmmc1
+Message-ID: <20180725111259.223970b5@dhcp-10-21-25-168>
+In-Reply-To: <8946636e-5da7-baf1-5390-669f7442e6ff@kapsi.fi>
+References: <1532090746-15863-1-git-send-email-avienamo@nvidia.com>
+        <1532090746-15863-8-git-send-email-avienamo@nvidia.com>
+        <8946636e-5da7-baf1-5390-669f7442e6ff@kapsi.fi>
+X-NVConfidentiality: public
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5dbe024d9465eab668ba9aac3732ded225859e6f.1532501910.git.hns@goldelico.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.21.25.201]
+X-ClientProxiedBy: UKMAIL101.nvidia.com (10.26.138.13) To HQMAIL101.nvidia.com
+ (172.20.187.10)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 25, 2018 at 08:58:52AM +0200, H. Nikolaus Schaller wrote:
-> McBSP1 needs sepcial "pinctrl" for the clocks.
+On Wed, 25 Jul 2018 09:58:37 +0300
+Mikko Perttunen <cyndis@kapsi.fi> wrote:
 
-Nit: "special" perhaps?
+> Looks like patch 6 will probably cause tegra-sdhci to start advertising 
+> faster modes (see " if (!IS_ERR(host->mmc->supply.vqmmc))" in 
+> sdhci-tegra.c). With that patch and this, will the SDHCI core start to 
+> try putting us into these higher modes? Clearly that won't work yet 
+> before the upcoming patches.
 
-> Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
-> ---
->  arch/arm/boot/dts/omap3-gta04.dtsi | 18 ++++++++++++++++++
->  1 file changed, 18 insertions(+)
-> 
-> diff --git a/arch/arm/boot/dts/omap3-gta04.dtsi b/arch/arm/boot/dts/omap3-gta04.dtsi
-> index 935a2a707737..f6abdef556c1 100644
-> --- a/arch/arm/boot/dts/omap3-gta04.dtsi
-> +++ b/arch/arm/boot/dts/omap3-gta04.dtsi
-> @@ -187,6 +187,24 @@
->  		reset-gpios = <&tca6507 0 GPIO_ACTIVE_LOW>;	/* W2CBW003 reset through tca6507 */
->  	};
->  
-> +	/* devconf0 setup for mcbsp1 clock pins */
-> +	pinmux_mcbsp1@48002274 {
-> +		compatible = "pinctrl-single";
-> +		reg = <0x48002274 4>;   /* CONTROL_DEVCONF0 */
-> +		#address-cells = <1>;
-> +		#size-cells = <0>;
-> +		pinctrl-single,bit-per-mux;
-> +		pinctrl-single,register-width = <32>;
-> +		pinctrl-single,function-mask = <0x7>;	/* MCBSP1 CLK pinmux */
-> +		#pinctrl-cells = <2>;
-> +		pinctrl-names = "default";
-> +		pinctrl-0 = <&mcbsp1_devconf0_pins>;
-> +		mcbsp1_devconf0_pins: pinmux_mcbsp1_devconf0_pins {
-> +			/*                   offset bits mask */
-> +			pinctrl-single,bits = <0x00 0x08 0x1c>;	/* set MCBSP1_CLKR */
-> +		};
-> +	};
-> +
->  	/* devconf1 setup for tvout pins */
->  	pinmux_tv_out@480022d8 {
->  		compatible = "pinctrl-single";
-> -- 
-> 2.12.2
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-omap" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+The SDHCI core won't do that yet at this point. The host capability bits
+for the higher speed modes are currently masked by tegra_sdhci_reset()
+in sdhci-tegra. The modes are unmasked in another patch after everything
+that's required to support the modes has been implemented.
+
+ -Aapo
