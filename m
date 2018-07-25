@@ -2,103 +2,194 @@ Return-Path: <SRS0=S+WB=KJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH autolearn=ham
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81680C67790
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 16:40:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4773FC6778F
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 16:40:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 21A0D20882
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 16:40:39 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="TEQueQZG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 21A0D20882
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 0A06320852
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 16:40:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0A06320852
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731411AbeGYRxE (ORCPT
+        id S1731436AbeGYRxT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 13:53:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55006 "EHLO mail.kernel.org"
+        Wed, 25 Jul 2018 13:53:19 -0400
+Received: from ns.mm-sol.com ([37.157.136.199]:35574 "EHLO extserv.mm-sol.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729847AbeGYRxC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Jul 2018 13:53:02 -0400
-Received: from localhost (unknown [104.132.1.75])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2D5BA20882;
-        Wed, 25 Jul 2018 16:40:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1532536835;
-        bh=MgQIODeStXmnNf7VPafA43Qiw9AtESaoWbHgJnE8Amo=;
-        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
-        b=TEQueQZGIEOzOI53Q6O6CtUVO9bBMj1swUM6NQtBgatvwJJ8EQsxgVo1twOXFfW6C
-         fP0Fz+3nqwvD/qqQrBy30oqdGuN09kc6A/OfRuhcfvH3hBQhrODeqKBbzBFBmPBtfq
-         KBtfM1qFmUjkliItdV7ZmwwFx7OZyNYTqXhFvIoI=
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-To:     Rajan Vaja <rajan.vaja@xilinx.com>, mturquette@baylibre.com
-From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <1531833420-27175-1-git-send-email-rajan.vaja@xilinx.com>
-Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Rajan Vaja <rajan.vaja@xilinx.com>
-References: <1531833420-27175-1-git-send-email-rajan.vaja@xilinx.com>
-Message-ID: <153253683456.48062.11538822357721957211@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: [PATCH] clk: clk-fixed-factor: Clear OF_POPULATED flag in case of failure
-Date:   Wed, 25 Jul 2018 09:40:34 -0700
+        id S1729836AbeGYRv1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Jul 2018 13:51:27 -0400
+Received: from mms-0439.qualcomm.mm-sol.com (unknown [37.157.136.206])
+        by extserv.mm-sol.com (Postfix) with ESMTPSA id 6BB3FCD68;
+        Wed, 25 Jul 2018 19:38:54 +0300 (EEST)
+From:   Todor Tomov <todor.tomov@linaro.org>
+To:     mchehab@kernel.org, sakari.ailus@linux.intel.com,
+        hans.verkuil@cisco.com, laurent.pinchart+renesas@ideasonboard.com,
+        linux-media@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, Todor Tomov <todor.tomov@linaro.org>
+Subject: [PATCH v4 22/34] media: camss: csid: Add support for 8x96
+Date:   Wed, 25 Jul 2018 19:38:31 +0300
+Message-Id: <1532536723-19062-23-git-send-email-todor.tomov@linaro.org>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1532536723-19062-1-git-send-email-todor.tomov@linaro.org>
+References: <1532536723-19062-1-git-send-email-todor.tomov@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Rajan Vaja (2018-07-17 06:17:00)
-> Fixed factor clock has two initializations at of_clk_init() time
-> and during platform driver probe. Before of_clk_init() call,
-> node is marked as populated and so its probe never gets called.
-> =
+CSID hardware modules on 8x16 and 8x96 are similar. There is no
+need to duplicate the code by adding separate versions. Just
+update the register macros to return the correct register
+addresses.
 
-> During of_clk_init() fixed factor clock registration may fail if
-> any of its parent clock is not registered. In this case, it doesn't
-> get chance to retry registration from probe. Clear OF_POPULATED
-> flag if fixed factor clock registration fails so that clock
-> registration is attempted again from probe.
-> =
+Signed-off-by: Todor Tomov <todor.tomov@linaro.org>
+---
+ drivers/media/platform/qcom/camss/camss-csid.c | 60 ++++++++++++++++----------
+ 1 file changed, 37 insertions(+), 23 deletions(-)
 
-> Signed-off-by: Rajan Vaja <rajan.vaja@xilinx.com>
-> ---
->  drivers/clk/clk-fixed-factor.c | 9 ++++++++-
->  1 file changed, 8 insertions(+), 1 deletion(-)
-> =
-
-> diff --git a/drivers/clk/clk-fixed-factor.c b/drivers/clk/clk-fixed-facto=
-r.c
-> index d72ef2d..f3ae4ff 100644
-> --- a/drivers/clk/clk-fixed-factor.c
-> +++ b/drivers/clk/clk-fixed-factor.c
-> @@ -177,8 +177,15 @@ static struct clk *_of_fixed_factor_clk_setup(struct=
- device_node *node)
-> =
-
->         clk =3D clk_register_fixed_factor(NULL, clk_name, parent_name, fl=
-ags,
->                                         mult, div);
-> -       if (IS_ERR(clk))
-> +       if (IS_ERR(clk)) {
-> +               /*
-> +                * If parent clock is not registered, registration would =
-fail.
-> +                * Clear OF_POPULATED flag so that clock registration can=
- be
-> +                * attempted again from probe function.
-> +                */
-> +               of_node_clear_flag(node, OF_POPULATED);
->                 return clk;
-> +       }
-
-BTW, this patch was seriously mangled for me so I had to apply it by
-hand. Please be more careful next time and consider using something like
-git-send-email and git-format-patch to send patches.
+diff --git a/drivers/media/platform/qcom/camss/camss-csid.c b/drivers/media/platform/qcom/camss/camss-csid.c
+index 3ba087f..915835e 100644
+--- a/drivers/media/platform/qcom/camss/camss-csid.c
++++ b/drivers/media/platform/qcom/camss/camss-csid.c
+@@ -27,21 +27,26 @@
+ #define CAMSS_CSID_HW_VERSION		0x0
+ #define CAMSS_CSID_CORE_CTRL_0		0x004
+ #define CAMSS_CSID_CORE_CTRL_1		0x008
+-#define CAMSS_CSID_RST_CMD		0x00c
+-#define CAMSS_CSID_CID_LUT_VC_n(n)	(0x010 + 0x4 * (n))
+-#define CAMSS_CSID_CID_n_CFG(n)		(0x020 + 0x4 * (n))
+-#define CAMSS_CSID_IRQ_CLEAR_CMD	0x060
+-#define CAMSS_CSID_IRQ_MASK		0x064
+-#define CAMSS_CSID_IRQ_STATUS		0x068
+-#define CAMSS_CSID_TG_CTRL		0x0a0
++#define CAMSS_CSID_RST_CMD(v)		((v) == CAMSS_8x16 ? 0x00c : 0x010)
++#define CAMSS_CSID_CID_LUT_VC_n(v, n)	\
++			(((v) == CAMSS_8x16 ? 0x010 : 0x014) + 0x4 * (n))
++#define CAMSS_CSID_CID_n_CFG(v, n)	\
++			(((v) == CAMSS_8x16 ? 0x020 : 0x024) + 0x4 * (n))
++#define CAMSS_CSID_IRQ_CLEAR_CMD(v)	((v) == CAMSS_8x16 ? 0x060 : 0x064)
++#define CAMSS_CSID_IRQ_MASK(v)		((v) == CAMSS_8x16 ? 0x064 : 0x068)
++#define CAMSS_CSID_IRQ_STATUS(v)	((v) == CAMSS_8x16 ? 0x068 : 0x06c)
++#define CAMSS_CSID_TG_CTRL(v)		((v) == CAMSS_8x16 ? 0x0a0 : 0x0a8)
+ #define CAMSS_CSID_TG_CTRL_DISABLE	0xa06436
+ #define CAMSS_CSID_TG_CTRL_ENABLE	0xa06437
+-#define CAMSS_CSID_TG_VC_CFG		0x0a4
++#define CAMSS_CSID_TG_VC_CFG(v)		((v) == CAMSS_8x16 ? 0x0a4 : 0x0ac)
+ #define CAMSS_CSID_TG_VC_CFG_H_BLANKING		0x3ff
+ #define CAMSS_CSID_TG_VC_CFG_V_BLANKING		0x7f
+-#define CAMSS_CSID_TG_DT_n_CGG_0(n)	(0x0ac + 0xc * (n))
+-#define CAMSS_CSID_TG_DT_n_CGG_1(n)	(0x0b0 + 0xc * (n))
+-#define CAMSS_CSID_TG_DT_n_CGG_2(n)	(0x0b4 + 0xc * (n))
++#define CAMSS_CSID_TG_DT_n_CGG_0(v, n)	\
++			(((v) == CAMSS_8x16 ? 0x0ac : 0x0b4) + 0xc * (n))
++#define CAMSS_CSID_TG_DT_n_CGG_1(v, n)	\
++			(((v) == CAMSS_8x16 ? 0x0b0 : 0x0b8) + 0xc * (n))
++#define CAMSS_CSID_TG_DT_n_CGG_2(v, n)	\
++			(((v) == CAMSS_8x16 ? 0x0b4 : 0x0bc) + 0xc * (n))
+ 
+ #define DATA_TYPE_EMBEDDED_DATA_8BIT	0x12
+ #define DATA_TYPE_YUV422_8BIT		0x1e
+@@ -203,10 +208,11 @@ static const struct csid_fmts *csid_get_fmt_entry(u32 code)
+ static irqreturn_t csid_isr(int irq, void *dev)
+ {
+ 	struct csid_device *csid = dev;
++	enum camss_version ver = csid->camss->version;
+ 	u32 value;
+ 
+-	value = readl_relaxed(csid->base + CAMSS_CSID_IRQ_STATUS);
+-	writel_relaxed(value, csid->base + CAMSS_CSID_IRQ_CLEAR_CMD);
++	value = readl_relaxed(csid->base + CAMSS_CSID_IRQ_STATUS(ver));
++	writel_relaxed(value, csid->base + CAMSS_CSID_IRQ_CLEAR_CMD(ver));
+ 
+ 	if ((value >> 11) & 0x1)
+ 		complete(&csid->reset_complete);
+@@ -289,7 +295,8 @@ static int csid_reset(struct csid_device *csid)
+ 
+ 	reinit_completion(&csid->reset_complete);
+ 
+-	writel_relaxed(0x7fff, csid->base + CAMSS_CSID_RST_CMD);
++	writel_relaxed(0x7fff, csid->base +
++		       CAMSS_CSID_RST_CMD(csid->camss->version));
+ 
+ 	time = wait_for_completion_timeout(&csid->reset_complete,
+ 		msecs_to_jiffies(CSID_RESET_TIMEOUT_MS));
+@@ -377,6 +384,7 @@ static int csid_set_stream(struct v4l2_subdev *sd, int enable)
+ {
+ 	struct csid_device *csid = v4l2_get_subdevdata(sd);
+ 	struct csid_testgen_config *tg = &csid->testgen;
++	enum camss_version ver = csid->camss->version;
+ 	u32 val;
+ 
+ 	if (enable) {
+@@ -409,13 +417,14 @@ static int csid_set_stream(struct v4l2_subdev *sd, int enable)
+ 			/* 1:0 VC */
+ 			val = ((CAMSS_CSID_TG_VC_CFG_V_BLANKING & 0xff) << 24) |
+ 			      ((CAMSS_CSID_TG_VC_CFG_H_BLANKING & 0x7ff) << 13);
+-			writel_relaxed(val, csid->base + CAMSS_CSID_TG_VC_CFG);
++			writel_relaxed(val, csid->base +
++				       CAMSS_CSID_TG_VC_CFG(ver));
+ 
+ 			/* 28:16 bytes per lines, 12:0 num of lines */
+ 			val = ((num_bytes_per_line & 0x1fff) << 16) |
+ 			      (num_lines & 0x1fff);
+ 			writel_relaxed(val, csid->base +
+-				       CAMSS_CSID_TG_DT_n_CGG_0(0));
++				       CAMSS_CSID_TG_DT_n_CGG_0(ver, 0));
+ 
+ 			dt = csid_get_fmt_entry(
+ 				csid->fmt[MSM_CSID_PAD_SRC].code)->data_type;
+@@ -423,12 +432,12 @@ static int csid_set_stream(struct v4l2_subdev *sd, int enable)
+ 			/* 5:0 data type */
+ 			val = dt;
+ 			writel_relaxed(val, csid->base +
+-				       CAMSS_CSID_TG_DT_n_CGG_1(0));
++				       CAMSS_CSID_TG_DT_n_CGG_1(ver, 0));
+ 
+ 			/* 2:0 output test pattern */
+ 			val = tg->payload_mode;
+ 			writel_relaxed(val, csid->base +
+-				       CAMSS_CSID_TG_DT_n_CGG_2(0));
++				       CAMSS_CSID_TG_DT_n_CGG_2(ver, 0));
+ 
+ 			df = csid_get_fmt_entry(
+ 				csid->fmt[MSM_CSID_PAD_SRC].code)->decode_format;
+@@ -457,22 +466,27 @@ static int csid_set_stream(struct v4l2_subdev *sd, int enable)
+ 
+ 		dt_shift = (cid % 4) * 8;
+ 
+-		val = readl_relaxed(csid->base + CAMSS_CSID_CID_LUT_VC_n(vc));
++		val = readl_relaxed(csid->base +
++				    CAMSS_CSID_CID_LUT_VC_n(ver, vc));
+ 		val &= ~(0xff << dt_shift);
+ 		val |= dt << dt_shift;
+-		writel_relaxed(val, csid->base + CAMSS_CSID_CID_LUT_VC_n(vc));
++		writel_relaxed(val, csid->base +
++			       CAMSS_CSID_CID_LUT_VC_n(ver, vc));
+ 
+ 		val = (df << 4) | 0x3;
+-		writel_relaxed(val, csid->base + CAMSS_CSID_CID_n_CFG(cid));
++		writel_relaxed(val, csid->base +
++			       CAMSS_CSID_CID_n_CFG(ver, cid));
+ 
+ 		if (tg->enabled) {
+ 			val = CAMSS_CSID_TG_CTRL_ENABLE;
+-			writel_relaxed(val, csid->base + CAMSS_CSID_TG_CTRL);
++			writel_relaxed(val, csid->base +
++				       CAMSS_CSID_TG_CTRL(ver));
+ 		}
+ 	} else {
+ 		if (tg->enabled) {
+ 			val = CAMSS_CSID_TG_CTRL_DISABLE;
+-			writel_relaxed(val, csid->base + CAMSS_CSID_TG_CTRL);
++			writel_relaxed(val, csid->base +
++				       CAMSS_CSID_TG_CTRL(ver));
+ 		}
+ 	}
+ 
+-- 
+2.7.4
 
