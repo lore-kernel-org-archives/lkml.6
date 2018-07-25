@@ -2,739 +2,211 @@ Return-Path: <SRS0=S+WB=KJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39D83C6778F
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 09:04:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95568C67790
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 09:05:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ADA112064D
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 09:04:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ADA112064D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 47E0F2064D
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 09:05:18 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=bidouilliste.com header.i=@bidouilliste.com header.b="X+dNQ91T"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 47E0F2064D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bidouilliste.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728629AbeGYKPV (ORCPT
+        id S1728659AbeGYKQA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 06:15:21 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:9719 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728567AbeGYKPV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Jul 2018 06:15:21 -0400
-Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id D8ECA663CB3B3;
-        Wed, 25 Jul 2018 17:04:30 +0800 (CST)
-Received: from [127.0.0.1] (10.177.29.68) by DGGEMS403-HUB.china.huawei.com
- (10.3.19.203) with Microsoft SMTP Server id 14.3.382.0; Wed, 25 Jul 2018
- 17:04:31 +0800
-Message-ID: <5B583D19.4000409@huawei.com>
-Date:   Wed, 25 Jul 2018 17:04:25 +0800
-From:   zhong jiang <zhongjiang@huawei.com>
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:12.0) Gecko/20120428 Thunderbird/12.0.1
-MIME-Version: 1.0
-To:     Laurent Dufour <ldufour@linux.vnet.ibm.com>
-CC:     <akpm@linux-foundation.org>, <mhocko@kernel.org>,
-        <peterz@infradead.org>, <kirill@shutemov.name>,
-        <ak@linux.intel.com>, <dave@stgolabs.net>, <jack@suse.cz>,
-        Matthew Wilcox <willy@infradead.org>,
-        <khandual@linux.vnet.ibm.com>, <aneesh.kumar@linux.vnet.ibm.com>,
-        <benh@kernel.crashing.org>, <mpe@ellerman.id.au>,
-        <paulus@samba.org>, "Thomas Gleixner" <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, <hpa@zytor.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        <sergey.senozhatsky.work@gmail.com>,
-        "Andrea Arcangeli" <aarcange@redhat.com>,
-        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-        <kemi.wang@intel.com>, Daniel Jordan <daniel.m.jordan@oracle.com>,
-        David Rientjes <rientjes@google.com>,
-        "Jerome Glisse" <jglisse@redhat.com>,
-        Ganesh Mahendran <opensource.ganesh@gmail.com>,
-        Minchan Kim <minchan@kernel.org>,
-        Punit Agrawal <punitagrawal@gmail.com>,
-        vinayak menon <vinayakm.list@gmail.com>,
-        Yang Shi <yang.shi@linux.alibaba.com>,
-        <linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
-        <haren@linux.vnet.ibm.com>, <npiggin@gmail.com>,
-        <bsingharora@gmail.com>, <paulmck@linux.vnet.ibm.com>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        <linuxppc-dev@lists.ozlabs.org>, <x86@kernel.org>
-Subject: Re: [PATCH v11 19/26] mm: provide speculative fault infrastructure
-References: <1526555193-7242-1-git-send-email-ldufour@linux.vnet.ibm.com> <1526555193-7242-20-git-send-email-ldufour@linux.vnet.ibm.com> <5B573715.5070201@huawei.com> <3ec16be6-ce2a-99af-4805-e00a59bad677@linux.vnet.ibm.com>
-In-Reply-To: <3ec16be6-ce2a-99af-4805-e00a59bad677@linux.vnet.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.177.29.68]
-X-CFilter-Loop: Reflected
+        Wed, 25 Jul 2018 06:16:00 -0400
+Received: from mail.blih.net ([212.83.177.182]:61455 "EHLO mail.blih.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728567AbeGYKQA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Jul 2018 06:16:00 -0400
+Received: from mail.blih.net (mail.blih.net [212.83.177.182])
+        by mail.blih.net (OpenSMTPD) with ESMTP id 4e33ceb6;
+        Wed, 25 Jul 2018 11:05:13 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=bidouilliste.com; h=date
+        :from:to:cc:subject:message-id:in-reply-to:references
+        :mime-version:content-type:content-transfer-encoding; s=mail;
+         bh=8MQEnb0psQc2U5Xpk2jD5cQmU6E=; b=X+dNQ91TNESZ/i7VNtHRwEQQ6fBt
+        YpNszKK5oNuhM6k90Hj2N399ZG4VEQ/qHl3hrcbxtaqU3e+r/6tgyK8hfgnnFjlV
+        bBf72oMiXIAWekZiv/XmCpIG13EeR/RDbdBC7TXHFJFEaY5jrc3XSejXssovVdZ6
+        SoJETf5Nwm15Dgs=
+DomainKey-Signature: a=rsa-sha1; c=nofws; d=bidouilliste.com; h=date
+        :from:to:cc:subject:message-id:in-reply-to:references
+        :mime-version:content-type:content-transfer-encoding; q=dns; s=
+        mail; b=gQXuXHg7LQiyfPZnfrZVJjW6P/D39HdbNISp+yoIJVz2MmV+hmOxlZ1D
+        RGkOZm2AWhlxY/nskBg3lv8eB3Avkc3Wxe7zkuTroKdo1yEzsDLg0td9rDF7F/dL
+        Zpi50y46QFSnZ9oDdTk9CGh6izhrAYuCcbLEHQaozo0EbqQF02g=
+Received: from skull.home.blih.net (ip-9.net-89-3-105.rev.numericable.fr [89.3.105.9])
+        by mail.blih.net (OpenSMTPD) with ESMTPSA id a496a339
+        TLS version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO;
+        Wed, 25 Jul 2018 11:05:12 +0200 (CEST)
+Date:   Wed, 25 Jul 2018 11:05:12 +0200
+From:   Emmanuel Vadot <manu@bidouilliste.com>
+To:     Paul Kocialkowski <contact@paulk.fr>
+Cc:     embed3d@gmail.com, Kyle Evans <kevans@freebsd.org>,
+        icenowy@aosc.io, Mark Rutland <mark.rutland@arm.com>,
+        sean@mess.org, linux-iio@vger.kernel.org,
+        linux-sunxi <linux-sunxi@googlegroups.com>,
+        clabbe.montjoie@gmail.com, pmeerw@pmeerw.net, lee.jones@linaro.org,
+        lars@metafoo.de, edu.molinas@gmail.com,
+        Russell King <linux@armlinux.org.uk>, krzk@kernel.org,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>, hans.verkuil@cisco.com,
+        rask@formelder.dk, devicetree <devicetree@vger.kernel.org>,
+        mchehab@kernel.org, Rob Herring <robh+dt@kernel.org>,
+        singhalsimran0@gmail.com,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        quentin.schulz@free-electrons.com, knaack.h@gmx.de,
+        davem@davemloft.net, jic23@kernel.org
+Subject: Re: [linux-sunxi] Re: [PATCH v2 14/16] arm: dts: sun8i: h3: enable
+ H3 sid controller
+Message-Id: <20180725110512.b6fb81be76f66b07942e5af0@bidouilliste.com>
+In-Reply-To: <39b1eef01c2ed32f09ef30439c4f4297de009898.camel@paulk.fr>
+References: <20180128232919.12639-1-embed3d@gmail.com>
+        <20180128232919.12639-15-embed3d@gmail.com>
+        <20180129095200.attg7cgvpifpchtn@flea.lan>
+        <470ec61e-8b08-5193-ede1-01d02b2c865e@gmail.com>
+        <CACNAnaGVSbk7czb+mcGTx1C=YwCWe1qqHQDQe9+PNifwEXovMw@mail.gmail.com>
+        <F1D7126A-B6ED-4A83-A941-5F39CED472CE@aosc.io>
+        <CACNAnaFMKDmvAUXJngKHWkeGLfjsgn5hhJszNk7Sg4BU98Oafw@mail.gmail.com>
+        <0ab29bf0-b069-338e-f312-e533656fa0b6@gmail.com>
+        <39b1eef01c2ed32f09ef30439c4f4297de009898.camel@paulk.fr>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.32; amd64-portbld-freebsd12.0)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/7/25 0:10, Laurent Dufour wrote:
->
-> On 24/07/2018 16:26, zhong jiang wrote:
->> On 2018/5/17 19:06, Laurent Dufour wrote:
->>> From: Peter Zijlstra <peterz@infradead.org>
->>>
->>> Provide infrastructure to do a speculative fault (not holding
->>> mmap_sem).
->>>
->>> The not holding of mmap_sem means we can race against VMA
->>> change/removal and page-table destruction. We use the SRCU VMA freeing
->>> to keep the VMA around. We use the VMA seqcount to detect change
->>> (including umapping / page-table deletion) and we use gup_fast() style
->>> page-table walking to deal with page-table races.
->>>
->>> Once we've obtained the page and are ready to update the PTE, we
->>> validate if the state we started the fault with is still valid, if
->>> not, we'll fail the fault with VM_FAULT_RETRY, otherwise we update the
->>> PTE and we're done.
->>>
->>> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
->>>
->>> [Manage the newly introduced pte_spinlock() for speculative page
->>>  fault to fail if the VMA is touched in our back]
->>> [Rename vma_is_dead() to vma_has_changed() and declare it here]
->>> [Fetch p4d and pud]
->>> [Set vmd.sequence in __handle_mm_fault()]
->>> [Abort speculative path when handle_userfault() has to be called]
->>> [Add additional VMA's flags checks in handle_speculative_fault()]
->>> [Clear FAULT_FLAG_ALLOW_RETRY in handle_speculative_fault()]
->>> [Don't set vmf->pte and vmf->ptl if pte_map_lock() failed]
->>> [Remove warning comment about waiting for !seq&1 since we don't want
->>>  to wait]
->>> [Remove warning about no huge page support, mention it explictly]
->>> [Don't call do_fault() in the speculative path as __do_fault() calls
->>>  vma->vm_ops->fault() which may want to release mmap_sem]
->>> [Only vm_fault pointer argument for vma_has_changed()]
->>> [Fix check against huge page, calling pmd_trans_huge()]
->>> [Use READ_ONCE() when reading VMA's fields in the speculative path]
->>> [Explicitly check for __HAVE_ARCH_PTE_SPECIAL as we can't support for
->>>  processing done in vm_normal_page()]
->>> [Check that vma->anon_vma is already set when starting the speculative
->>>  path]
->>> [Check for memory policy as we can't support MPOL_INTERLEAVE case due to
->>>  the processing done in mpol_misplaced()]
->>> [Don't support VMA growing up or down]
->>> [Move check on vm_sequence just before calling handle_pte_fault()]
->>> [Don't build SPF services if !CONFIG_SPECULATIVE_PAGE_FAULT]
->>> [Add mem cgroup oom check]
->>> [Use READ_ONCE to access p*d entries]
->>> [Replace deprecated ACCESS_ONCE() by READ_ONCE() in vma_has_changed()]
->>> [Don't fetch pte again in handle_pte_fault() when running the speculative
->>>  path]
->>> [Check PMD against concurrent collapsing operation]
->>> [Try spin lock the pte during the speculative path to avoid deadlock with
->>>  other CPU's invalidating the TLB and requiring this CPU to catch the
->>>  inter processor's interrupt]
->>> [Move define of FAULT_FLAG_SPECULATIVE here]
->>> [Introduce __handle_speculative_fault() and add a check against
->>>  mm->mm_users in handle_speculative_fault() defined in mm.h]
->>> Signed-off-by: Laurent Dufour <ldufour@linux.vnet.ibm.com>
->>> ---
->>>  include/linux/hugetlb_inline.h |   2 +-
->>>  include/linux/mm.h             |  30 ++++
->>>  include/linux/pagemap.h        |   4 +-
->>>  mm/internal.h                  |  16 +-
->>>  mm/memory.c                    | 340 ++++++++++++++++++++++++++++++++++++++++-
->>>  5 files changed, 385 insertions(+), 7 deletions(-)
->>>
->>> diff --git a/include/linux/hugetlb_inline.h b/include/linux/hugetlb_inline.h
->>> index 0660a03d37d9..9e25283d6fc9 100644
->>> --- a/include/linux/hugetlb_inline.h
->>> +++ b/include/linux/hugetlb_inline.h
->>> @@ -8,7 +8,7 @@
->>>  
->>>  static inline bool is_vm_hugetlb_page(struct vm_area_struct *vma)
->>>  {
->>> -	return !!(vma->vm_flags & VM_HUGETLB);
->>> +	return !!(READ_ONCE(vma->vm_flags) & VM_HUGETLB);
->>>  }
->>>  
->>>  #else
->>> diff --git a/include/linux/mm.h b/include/linux/mm.h
->>> index 05cbba70104b..31acf98a7d92 100644
->>> --- a/include/linux/mm.h
->>> +++ b/include/linux/mm.h
->>> @@ -315,6 +315,7 @@ extern pgprot_t protection_map[16];
->>>  #define FAULT_FLAG_USER		0x40	/* The fault originated in userspace */
->>>  #define FAULT_FLAG_REMOTE	0x80	/* faulting for non current tsk/mm */
->>>  #define FAULT_FLAG_INSTRUCTION  0x100	/* The fault was during an instruction fetch */
->>> +#define FAULT_FLAG_SPECULATIVE	0x200	/* Speculative fault, not holding mmap_sem */
->>>  
->>>  #define FAULT_FLAG_TRACE \
->>>  	{ FAULT_FLAG_WRITE,		"WRITE" }, \
->>> @@ -343,6 +344,10 @@ struct vm_fault {
->>>  	gfp_t gfp_mask;			/* gfp mask to be used for allocations */
->>>  	pgoff_t pgoff;			/* Logical page offset based on vma */
->>>  	unsigned long address;		/* Faulting virtual address */
->>> +#ifdef CONFIG_SPECULATIVE_PAGE_FAULT
->>> +	unsigned int sequence;
->>> +	pmd_t orig_pmd;			/* value of PMD at the time of fault */
->>> +#endif
->>>  	pmd_t *pmd;			/* Pointer to pmd entry matching
->>>  					 * the 'address' */
->>>  	pud_t *pud;			/* Pointer to pud entry matching
->>> @@ -1415,6 +1420,31 @@ int invalidate_inode_page(struct page *page);
->>>  #ifdef CONFIG_MMU
->>>  extern int handle_mm_fault(struct vm_area_struct *vma, unsigned long address,
->>>  		unsigned int flags);
->>> +
->>> +#ifdef CONFIG_SPECULATIVE_PAGE_FAULT
->>> +extern int __handle_speculative_fault(struct mm_struct *mm,
->>> +				      unsigned long address,
->>> +				      unsigned int flags);
->>> +static inline int handle_speculative_fault(struct mm_struct *mm,
->>> +					   unsigned long address,
->>> +					   unsigned int flags)
->>> +{
->>> +	/*
->>> +	 * Try speculative page fault for multithreaded user space task only.
->>> +	 */
->>> +	if (!(flags & FAULT_FLAG_USER) || atomic_read(&mm->mm_users) == 1)
->>> +		return VM_FAULT_RETRY;
->>> +	return __handle_speculative_fault(mm, address, flags);
->>> +}
->>> +#else
->>> +static inline int handle_speculative_fault(struct mm_struct *mm,
->>> +					   unsigned long address,
->>> +					   unsigned int flags)
->>> +{
->>> +	return VM_FAULT_RETRY;
->>> +}
->>> +#endif /* CONFIG_SPECULATIVE_PAGE_FAULT */
->>> +
->>>  extern int fixup_user_fault(struct task_struct *tsk, struct mm_struct *mm,
->>>  			    unsigned long address, unsigned int fault_flags,
->>>  			    bool *unlocked);
->>> diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
->>> index b1bd2186e6d2..6e2aa4e79af7 100644
->>> --- a/include/linux/pagemap.h
->>> +++ b/include/linux/pagemap.h
->>> @@ -456,8 +456,8 @@ static inline pgoff_t linear_page_index(struct vm_area_struct *vma,
->>>  	pgoff_t pgoff;
->>>  	if (unlikely(is_vm_hugetlb_page(vma)))
->>>  		return linear_hugepage_index(vma, address);
->>> -	pgoff = (address - vma->vm_start) >> PAGE_SHIFT;
->>> -	pgoff += vma->vm_pgoff;
->>> +	pgoff = (address - READ_ONCE(vma->vm_start)) >> PAGE_SHIFT;
->>> +	pgoff += READ_ONCE(vma->vm_pgoff);
->>>  	return pgoff;
->>>  }
->>>  
->>> diff --git a/mm/internal.h b/mm/internal.h
->>> index fb2667b20f0a..10b188c87fa4 100644
->>> --- a/mm/internal.h
->>> +++ b/mm/internal.h
->>> @@ -44,7 +44,21 @@ int do_swap_page(struct vm_fault *vmf);
->>>  extern struct vm_area_struct *get_vma(struct mm_struct *mm,
->>>  				      unsigned long addr);
->>>  extern void put_vma(struct vm_area_struct *vma);
->>> -#endif
->>> +
->>> +static inline bool vma_has_changed(struct vm_fault *vmf)
->>> +{
->>> +	int ret = RB_EMPTY_NODE(&vmf->vma->vm_rb);
->>> +	unsigned int seq = READ_ONCE(vmf->vma->vm_sequence.sequence);
->>> +
->>> +	/*
->>> +	 * Matches both the wmb in write_seqlock_{begin,end}() and
->>> +	 * the wmb in vma_rb_erase().
->>> +	 */
->>> +	smp_rmb();
->>> +
->>> +	return ret || seq != vmf->sequence;
->>> +}
->>> +#endif /* CONFIG_SPECULATIVE_PAGE_FAULT */
->>>  
->>>  void free_pgtables(struct mmu_gather *tlb, struct vm_area_struct *start_vma,
->>>  		unsigned long floor, unsigned long ceiling);
->>> diff --git a/mm/memory.c b/mm/memory.c
->>> index ab32b0b4bd69..7bbbb8c7b9cd 100644
->>> --- a/mm/memory.c
->>> +++ b/mm/memory.c
->>> @@ -769,7 +769,8 @@ static void print_bad_pte(struct vm_area_struct *vma, unsigned long addr,
->>>  	if (page)
->>>  		dump_page(page, "bad pte");
->>>  	pr_alert("addr:%p vm_flags:%08lx anon_vma:%p mapping:%p index:%lx\n",
->>> -		 (void *)addr, vma->vm_flags, vma->anon_vma, mapping, index);
->>> +		 (void *)addr, READ_ONCE(vma->vm_flags), vma->anon_vma,
->>> +		 mapping, index);
->>>  	pr_alert("file:%pD fault:%pf mmap:%pf readpage:%pf\n",
->>>  		 vma->vm_file,
->>>  		 vma->vm_ops ? vma->vm_ops->fault : NULL,
->>> @@ -2306,6 +2307,118 @@ int apply_to_page_range(struct mm_struct *mm, unsigned long addr,
->>>  }
->>>  EXPORT_SYMBOL_GPL(apply_to_page_range);
->>>  
->>> +#ifdef CONFIG_SPECULATIVE_PAGE_FAULT
->>> +static bool pte_spinlock(struct vm_fault *vmf)
->>> +{
->>> +	bool ret = false;
->>> +#ifdef CONFIG_TRANSPARENT_HUGEPAGE
->>> +	pmd_t pmdval;
->>> +#endif
->>> +
->>> +	/* Check if vma is still valid */
->>> +	if (!(vmf->flags & FAULT_FLAG_SPECULATIVE)) {
->>> +		vmf->ptl = pte_lockptr(vmf->vma->vm_mm, vmf->pmd);
->>> +		spin_lock(vmf->ptl);
->>> +		return true;
->>> +	}
->>> +
->>> +again:
->>> +	local_irq_disable();
->>> +	if (vma_has_changed(vmf))
->>> +		goto out;
->>> +
->>> +#ifdef CONFIG_TRANSPARENT_HUGEPAGE
->>> +	/*
->>> +	 * We check if the pmd value is still the same to ensure that there
->>> +	 * is not a huge collapse operation in progress in our back.
->>> +	 */
->>> +	pmdval = READ_ONCE(*vmf->pmd);
->>> +	if (!pmd_same(pmdval, vmf->orig_pmd))
->>> +		goto out;
->>> +#endif
->>> +
->>> +	vmf->ptl = pte_lockptr(vmf->vma->vm_mm, vmf->pmd);
->>> +	if (unlikely(!spin_trylock(vmf->ptl))) {
->>> +		local_irq_enable();
->>> +		goto again;
->>> +	}
->>> +
->>> +	if (vma_has_changed(vmf)) {
->>> +		spin_unlock(vmf->ptl);
->>> +		goto out;
->>> +	}
->>> +
->>> +	ret = true;
->>> +out:
->>> +	local_irq_enable();
->>> +	return ret;
->>> +}
->>> +
->>> +static bool pte_map_lock(struct vm_fault *vmf)
->>> +{
->>> +	bool ret = false;
->>> +	pte_t *pte;
->>> +	spinlock_t *ptl;
->>> +#ifdef CONFIG_TRANSPARENT_HUGEPAGE
->>> +	pmd_t pmdval;
->>> +#endif
->>> +
->>> +	if (!(vmf->flags & FAULT_FLAG_SPECULATIVE)) {
->>> +		vmf->pte = pte_offset_map_lock(vmf->vma->vm_mm, vmf->pmd,
->>> +					       vmf->address, &vmf->ptl);
->>> +		return true;
->>> +	}
->>> +
->>> +	/*
->>> +	 * The first vma_has_changed() guarantees the page-tables are still
->>> +	 * valid, having IRQs disabled ensures they stay around, hence the
->>> +	 * second vma_has_changed() to make sure they are still valid once
->>> +	 * we've got the lock. After that a concurrent zap_pte_range() will
->>> +	 * block on the PTL and thus we're safe.
->>> +	 */
->>> +again:
->>> +	local_irq_disable();
->>> +	if (vma_has_changed(vmf))
->>> +		goto out;
->>> +
->>> +#ifdef CONFIG_TRANSPARENT_HUGEPAGE
->>> +	/*
->>> +	 * We check if the pmd value is still the same to ensure that there
->>> +	 * is not a huge collapse operation in progress in our back.
->>> +	 */
->>> +	pmdval = READ_ONCE(*vmf->pmd);
->>> +	if (!pmd_same(pmdval, vmf->orig_pmd))
->>> +		goto out;
->>> +#endif
->>> +
->>> +	/*
->>> +	 * Same as pte_offset_map_lock() except that we call
->>> +	 * spin_trylock() in place of spin_lock() to avoid race with
->>> +	 * unmap path which may have the lock and wait for this CPU
->>> +	 * to invalidate TLB but this CPU has irq disabled.
->>> +	 * Since we are in a speculative patch, accept it could fail
->>> +	 */
->>> +	ptl = pte_lockptr(vmf->vma->vm_mm, vmf->pmd);
->>> +	pte = pte_offset_map(vmf->pmd, vmf->address);
->>> +	if (unlikely(!spin_trylock(ptl))) {
->>> +		pte_unmap(pte);
->>> +		local_irq_enable();
->>> +		goto again;
->>> +	}
->>> +
->>> +	if (vma_has_changed(vmf)) {
->>> +		pte_unmap_unlock(pte, ptl);
->>> +		goto out;
->>> +	}
->>> +
->>> +	vmf->pte = pte;
->>> +	vmf->ptl = ptl;
->>> +	ret = true;
->>> +out:
->>> +	local_irq_enable();
->>> +	return ret;
->>> +}
->>> +#else
->>>  static inline bool pte_spinlock(struct vm_fault *vmf)
->>>  {
->>>  	vmf->ptl = pte_lockptr(vmf->vma->vm_mm, vmf->pmd);
->>> @@ -2319,6 +2432,7 @@ static inline bool pte_map_lock(struct vm_fault *vmf)
->>>  				       vmf->address, &vmf->ptl);
->>>  	return true;
->>>  }
->>> +#endif /* CONFIG_SPECULATIVE_PAGE_FAULT */
->>>  
->>>  /*
->>>   * handle_pte_fault chooses page fault handler according to an entry which was
->>> @@ -3208,6 +3322,14 @@ static int do_anonymous_page(struct vm_fault *vmf)
->>>  		ret = check_stable_address_space(vma->vm_mm);
->>>  		if (ret)
->>>  			goto unlock;
->>> +		/*
->>> +		 * Don't call the userfaultfd during the speculative path.
->>> +		 * We already checked for the VMA to not be managed through
->>> +		 * userfaultfd, but it may be set in our back once we have lock
->>> +		 * the pte. In such a case we can ignore it this time.
->>> +		 */
->>> +		if (vmf->flags & FAULT_FLAG_SPECULATIVE)
->>> +			goto setpte;
->>>  		/* Deliver the page fault to userland, check inside PT lock */
->>>  		if (userfaultfd_missing(vma)) {
->>>  			pte_unmap_unlock(vmf->pte, vmf->ptl);
->>> @@ -3249,7 +3371,7 @@ static int do_anonymous_page(struct vm_fault *vmf)
->>>  		goto unlock_and_release;
->>>  
->>>  	/* Deliver the page fault to userland, check inside PT lock */
->>> -	if (userfaultfd_missing(vma)) {
->>> +	if (!(vmf->flags & FAULT_FLAG_SPECULATIVE) && userfaultfd_missing(vma)) {
->>>  		pte_unmap_unlock(vmf->pte, vmf->ptl);
->>>  		mem_cgroup_cancel_charge(page, memcg, false);
->>>  		put_page(page);
->>> @@ -3994,13 +4116,22 @@ static int handle_pte_fault(struct vm_fault *vmf)
->>>  
->>>  	if (unlikely(pmd_none(*vmf->pmd))) {
->>>  		/*
->>> +		 * In the case of the speculative page fault handler we abort
->>> +		 * the speculative path immediately as the pmd is probably
->>> +		 * in the way to be converted in a huge one. We will try
->>> +		 * again holding the mmap_sem (which implies that the collapse
->>> +		 * operation is done).
->>> +		 */
->>> +		if (vmf->flags & FAULT_FLAG_SPECULATIVE)
->>> +			return VM_FAULT_RETRY;
->>> +		/*
->>>  		 * Leave __pte_alloc() until later: because vm_ops->fault may
->>>  		 * want to allocate huge page, and if we expose page table
->>>  		 * for an instant, it will be difficult to retract from
->>>  		 * concurrent faults and from rmap lookups.
->>>  		 */
->>>  		vmf->pte = NULL;
->>> -	} else {
->>> +	} else if (!(vmf->flags & FAULT_FLAG_SPECULATIVE)) {
->>>  		/* See comment in pte_alloc_one_map() */
->>>  		if (pmd_devmap_trans_unstable(vmf->pmd))
->>>  			return 0;
->>> @@ -4009,6 +4140,9 @@ static int handle_pte_fault(struct vm_fault *vmf)
->>>  		 * pmd from under us anymore at this point because we hold the
->>>  		 * mmap_sem read mode and khugepaged takes it in write mode.
->>>  		 * So now it's safe to run pte_offset_map().
->>> +		 * This is not applicable to the speculative page fault handler
->>> +		 * but in that case, the pte is fetched earlier in
->>> +		 * handle_speculative_fault().
->>>  		 */
->>>  		vmf->pte = pte_offset_map(vmf->pmd, vmf->address);
->>>  		vmf->orig_pte = *vmf->pte;
->>> @@ -4031,6 +4165,8 @@ static int handle_pte_fault(struct vm_fault *vmf)
->>>  	if (!vmf->pte) {
->>>  		if (vma_is_anonymous(vmf->vma))
->>>  			return do_anonymous_page(vmf);
->>> +		else if (vmf->flags & FAULT_FLAG_SPECULATIVE)
->>> +			return VM_FAULT_RETRY;
->>>  		else
->>>  			return do_fault(vmf);
->>>  	}
->>> @@ -4128,6 +4264,9 @@ static int __handle_mm_fault(struct vm_area_struct *vma, unsigned long address,
->>>  	vmf.pmd = pmd_alloc(mm, vmf.pud, address);
->>>  	if (!vmf.pmd)
->>>  		return VM_FAULT_OOM;
->>> +#ifdef CONFIG_SPECULATIVE_PAGE_FAULT
->>> +	vmf.sequence = raw_read_seqcount(&vma->vm_sequence);
->>> +#endif
->>>  	if (pmd_none(*vmf.pmd) && transparent_hugepage_enabled(vma)) {
->>>  		ret = create_huge_pmd(&vmf);
->>>  		if (!(ret & VM_FAULT_FALLBACK))
->>> @@ -4161,6 +4300,201 @@ static int __handle_mm_fault(struct vm_area_struct *vma, unsigned long address,
->>>  	return handle_pte_fault(&vmf);
->>>  }
->>>  
->>> +#ifdef CONFIG_SPECULATIVE_PAGE_FAULT
->>> +/*
->>> + * Tries to handle the page fault in a speculative way, without grabbing the
->>> + * mmap_sem.
->>> + */
->>> +int __handle_speculative_fault(struct mm_struct *mm, unsigned long address,
->>> +			       unsigned int flags)
->>> +{
->>> +	struct vm_fault vmf = {
->>> +		.address = address,
->>> +	};
->>> +	pgd_t *pgd, pgdval;
->>> +	p4d_t *p4d, p4dval;
->>> +	pud_t pudval;
->>> +	int seq, ret = VM_FAULT_RETRY;
->>> +	struct vm_area_struct *vma;
->>> +#ifdef CONFIG_NUMA
->>> +	struct mempolicy *pol;
->>> +#endif
->>> +
->>> +	/* Clear flags that may lead to release the mmap_sem to retry */
->>> +	flags &= ~(FAULT_FLAG_ALLOW_RETRY|FAULT_FLAG_KILLABLE);
->>> +	flags |= FAULT_FLAG_SPECULATIVE;
->>> +
->>> +	vma = get_vma(mm, address);
->>> +	if (!vma)
->>> +		return ret;
->>> +
->>> +	seq = raw_read_seqcount(&vma->vm_sequence); /* rmb <-> seqlock,vma_rb_erase() */
->>> +	if (seq & 1)
->>> +		goto out_put;
->>> +
->>> +	/*
->>> +	 * Can't call vm_ops service has we don't know what they would do
->>> +	 * with the VMA.
->>> +	 * This include huge page from hugetlbfs.
->>> +	 */
->>> +	if (vma->vm_ops)
->>> +		goto out_put;
->>> +
->>   Hi   Laurent
->>    
->>    I think that most of pagefault will leave here.   Is there any case  need to skip ?
->>   I have tested the following  patch, it work well.
-> Hi Zhong,
->
-> Well this will allow file mapping to be handle in a speculative way, but that's
-> a bit dangerous today as there is no guaranty that the vm_ops.vm_fault()
-> operation will be fair.
->
-> In the case of the anonymous file mapping that's often not a problem, depending
-> on the underlying file system, but there are so many cases to check and this is
-> hard to say this can be done in a speculative way as is.
- This patch say that spf just handle anonyous page. but I find that do_swap_page
- also maybe release the mmap_sem without FAULT_FLAG_RETRY_NOWAIT. why is it safe
- to handle the case. I think that the case is similar to file page. Maybe I miss
- something else.
+On Tue, 24 Jul 2018 19:19:54 +0200
+Paul Kocialkowski <contact@paulk.fr> wrote:
 
- I test the patches and find just only 18% of the pagefault will enter into the
- speculative page fault during a process startup. As I had said. most of pagefault
- will be handled by ops->fault. I do not know the data you had posted is how to get.
- 
-
- Thanks
- zhong jiang
-> The huge work to do is to double check that all the code called by
-> vm_ops.fault() is not dealing with the mmap_sem, which could be handled using
-> FAULT_FLAG_RETRY_NOWAIT, and care is also needed about the resources that code
-> is managing as it may assume that it is under the protection of the mmap_sem in
-> read mode, and that can be done implicitly.
->
+> Hi,
+>=20
+> Le vendredi 20 avril 2018 =E0 11:35 +0200, Philipp Rossak a =E9crit :
+> > Hi Kyle,
+> >=20
+> > I'm already working on a Version 3 of this patch series. Right now this=
+=20
+> > slowed down since I'm very busy and the ToDo-List is still very long.
+> >=20
+> > My plan is to send out a version during this release cycle.
+> >=20
+> > If you need it right now feel free to submit patches!
+>=20
+> I just came around this patch while testing SID support for H3, that is
+> not enabled in the dts at this point despite driver support.
+>=20
+> Maxime, would it make sense to merge this patch as-is, without support
+> for the thermal calibration section, since the two aspects seem rather
+> independent (and some other SoCs also have a SID node without linkage
+> for thermal support anyway)?
+>=20
 > Cheers,
-> Laurent.
->
->> diff --git a/mm/memory.c b/mm/memory.c
->> index 936128b..9bc1545 100644
->>  @@ -3893,8 +3898,6 @@ static int handle_pte_fault(struct fault_env *fe)
->>         if (!fe->pte) {
->>                 if (vma_is_anonymous(fe->vma))
->>                         return do_anonymous_page(fe);
->> -               else if (fe->flags & FAULT_FLAG_SPECULATIVE)
->> -                       return VM_FAULT_RETRY;
->>                 else
->>                         return do_fault(fe);
->>         }
->> @@ -4026,20 +4029,11 @@ int __handle_speculative_fault(struct mm_struct *mm, unsigned long address,
->>                 goto out_put;
->>         }
->>         /*
->> -        * Can't call vm_ops service has we don't know what they would do
->> -        * with the VMA.
->> -        * This include huge page from hugetlbfs.
->> -        */
->> -       if (vma->vm_ops) {
->> -               trace_spf_vma_notsup(_RET_IP_, vma, address);
->> -               goto out_put;
->> -       }
->>
->>
->> Thanks
->> zhong jiang
->>> +	/*
->>> +	 * __anon_vma_prepare() requires the mmap_sem to be held
->>> +	 * because vm_next and vm_prev must be safe. This can't be guaranteed
->>> +	 * in the speculative path.
->>> +	 */
->>> +	if (unlikely(!vma->anon_vma))
->>> +		goto out_put;
->>> +
->>> +	vmf.vma_flags = READ_ONCE(vma->vm_flags);
->>> +	vmf.vma_page_prot = READ_ONCE(vma->vm_page_prot);
->>> +
->>> +	/* Can't call userland page fault handler in the speculative path */
->>> +	if (unlikely(vmf.vma_flags & VM_UFFD_MISSING))
->>> +		goto out_put;
->>> +
->>> +	if (vmf.vma_flags & VM_GROWSDOWN || vmf.vma_flags & VM_GROWSUP)
->>> +		/*
->>> +		 * This could be detected by the check address against VMA's
->>> +		 * boundaries but we want to trace it as not supported instead
->>> +		 * of changed.
->>> +		 */
->>> +		goto out_put;
->>> +
->>> +	if (address < READ_ONCE(vma->vm_start)
->>> +	    || READ_ONCE(vma->vm_end) <= address)
->>> +		goto out_put;
->>> +
->>> +	if (!arch_vma_access_permitted(vma, flags & FAULT_FLAG_WRITE,
->>> +				       flags & FAULT_FLAG_INSTRUCTION,
->>> +				       flags & FAULT_FLAG_REMOTE)) {
->>> +		ret = VM_FAULT_SIGSEGV;
->>> +		goto out_put;
->>> +	}
->>> +
->>> +	/* This is one is required to check that the VMA has write access set */
->>> +	if (flags & FAULT_FLAG_WRITE) {
->>> +		if (unlikely(!(vmf.vma_flags & VM_WRITE))) {
->>> +			ret = VM_FAULT_SIGSEGV;
->>> +			goto out_put;
->>> +		}
->>> +	} else if (unlikely(!(vmf.vma_flags & (VM_READ|VM_EXEC|VM_WRITE)))) {
->>> +		ret = VM_FAULT_SIGSEGV;
->>> +		goto out_put;
->>> +	}
->>> +
->>> +#ifdef CONFIG_NUMA
->>> +	/*
->>> +	 * MPOL_INTERLEAVE implies additional checks in
->>> +	 * mpol_misplaced() which are not compatible with the
->>> +	 *speculative page fault processing.
->>> +	 */
->>> +	pol = __get_vma_policy(vma, address);
->>> +	if (!pol)
->>> +		pol = get_task_policy(current);
->>> +	if (pol && pol->mode == MPOL_INTERLEAVE)
->>> +		goto out_put;
->>> +#endif
->>> +
->>> +	/*
->>> +	 * Do a speculative lookup of the PTE entry.
->>> +	 */
->>> +	local_irq_disable();
->>> +	pgd = pgd_offset(mm, address);
->>> +	pgdval = READ_ONCE(*pgd);
->>> +	if (pgd_none(pgdval) || unlikely(pgd_bad(pgdval)))
->>> +		goto out_walk;
->>> +
->>> +	p4d = p4d_offset(pgd, address);
->>> +	p4dval = READ_ONCE(*p4d);
->>> +	if (p4d_none(p4dval) || unlikely(p4d_bad(p4dval)))
->>> +		goto out_walk;
->>> +
->>> +	vmf.pud = pud_offset(p4d, address);
->>> +	pudval = READ_ONCE(*vmf.pud);
->>> +	if (pud_none(pudval) || unlikely(pud_bad(pudval)))
->>> +		goto out_walk;
->>> +
->>> +	/* Huge pages at PUD level are not supported. */
->>> +	if (unlikely(pud_trans_huge(pudval)))
->>> +		goto out_walk;
->>> +
->>> +	vmf.pmd = pmd_offset(vmf.pud, address);
->>> +	vmf.orig_pmd = READ_ONCE(*vmf.pmd);
->>> +	/*
->>> +	 * pmd_none could mean that a hugepage collapse is in progress
->>> +	 * in our back as collapse_huge_page() mark it before
->>> +	 * invalidating the pte (which is done once the IPI is catched
->>> +	 * by all CPU and we have interrupt disabled).
->>> +	 * For this reason we cannot handle THP in a speculative way since we
->>> +	 * can't safely indentify an in progress collapse operation done in our
->>> +	 * back on that PMD.
->>> +	 * Regarding the order of the following checks, see comment in
->>> +	 * pmd_devmap_trans_unstable()
->>> +	 */
->>> +	if (unlikely(pmd_devmap(vmf.orig_pmd) ||
->>> +		     pmd_none(vmf.orig_pmd) || pmd_trans_huge(vmf.orig_pmd) ||
->>> +		     is_swap_pmd(vmf.orig_pmd)))
->>> +		goto out_walk;
->>> +
->>> +	/*
->>> +	 * The above does not allocate/instantiate page-tables because doing so
->>> +	 * would lead to the possibility of instantiating page-tables after
->>> +	 * free_pgtables() -- and consequently leaking them.
->>> +	 *
->>> +	 * The result is that we take at least one !speculative fault per PMD
->>> +	 * in order to instantiate it.
->>> +	 */
->>> +
->>> +	vmf.pte = pte_offset_map(vmf.pmd, address);
->>> +	vmf.orig_pte = READ_ONCE(*vmf.pte);
->>> +	barrier(); /* See comment in handle_pte_fault() */
->>> +	if (pte_none(vmf.orig_pte)) {
->>> +		pte_unmap(vmf.pte);
->>> +		vmf.pte = NULL;
->>> +	}
->>> +
->>> +	vmf.vma = vma;
->>> +	vmf.pgoff = linear_page_index(vma, address);
->>> +	vmf.gfp_mask = __get_fault_gfp_mask(vma);
->>> +	vmf.sequence = seq;
->>> +	vmf.flags = flags;
->>> +
->>> +	local_irq_enable();
->>> +
->>> +	/*
->>> +	 * We need to re-validate the VMA after checking the bounds, otherwise
->>> +	 * we might have a false positive on the bounds.
->>> +	 */
->>> +	if (read_seqcount_retry(&vma->vm_sequence, seq))
->>> +		goto out_put;
->>> +
->>> +	mem_cgroup_oom_enable();
->>> +	ret = handle_pte_fault(&vmf);
->>> +	mem_cgroup_oom_disable();
->>> +
->>> +	put_vma(vma);
->>> +
->>> +	/*
->>> +	 * The task may have entered a memcg OOM situation but
->>> +	 * if the allocation error was handled gracefully (no
->>> +	 * VM_FAULT_OOM), there is no need to kill anything.
->>> +	 * Just clean up the OOM state peacefully.
->>> +	 */
->>> +	if (task_in_memcg_oom(current) && !(ret & VM_FAULT_OOM))
->>> +		mem_cgroup_oom_synchronize(false);
->>> +	return ret;
->>> +
->>> +out_walk:
->>> +	local_irq_enable();
->>> +out_put:
->>> +	put_vma(vma);
->>> +	return ret;
->>> +}
->>> +#endif /* CONFIG_SPECULATIVE_PAGE_FAULT */
->>> +
->>>  /*
->>>   * By the time we get here, we already hold the mm semaphore
->>>   *
->>
->
-> .
->
+>=20
+> Paul
+
+ Hello Paul,
+
+ I've sent a serie yesterday for SID on A64/H3/H5.
+ https://patchwork.kernel.org/project/linux-arm-kernel/list/?series=3D761
+
+ Cheers,
+
+> > Philipp
+> >=20
+> > On 19.04.2018 17:19, Kyle Evans wrote:
+> > > On Thu, Apr 19, 2018 at 10:13 AM, Icenowy Zheng <icenowy@aosc.io> wro=
+te:
+> > > >=20
+> > > >=20
+> > > > ? 2018?4?19? GMT+08:00 ??11:11:22, Kyle Evans <kevans@freebsd.org> =
+??:
+> > > > > On Mon, Jan 29, 2018 at 6:03 AM, Philipp Rossak <embed3d@gmail.co=
+m>
+> > > > > wrote:
+> > > > > >=20
+> > > > > >=20
+> > > > > > On 29.01.2018 10:52, Maxime Ripard wrote:
+> > > > > > >=20
+> > > > > > > On Mon, Jan 29, 2018 at 12:29:17AM +0100, Philipp Rossak wrot=
+e:
+> > > > > > > >=20
+> > > > > > > > This patch enables the the sid controller in the H3. It can=
+ be used
+> > > > > > > > for thermal calibration data.
+> > > > > > > >=20
+> > > > > > > > Signed-off-by: Philipp Rossak <embed3d@gmail.com>
+> > > > > > > > ---
+> > > > > > > >    arch/arm/boot/dts/sun8i-h3.dtsi | 7 +++++++
+> > > > > > > >    1 file changed, 7 insertions(+)
+> > > > > > > >=20
+> > > > > > > > diff --git a/arch/arm/boot/dts/sun8i-h3.dtsi
+> > > > > > > > b/arch/arm/boot/dts/sun8i-h3.dtsi
+> > > > > > > > index 3f83f6a27c74..9bb5cc29fec5 100644
+> > > > > > > > --- a/arch/arm/boot/dts/sun8i-h3.dtsi
+> > > > > > > > +++ b/arch/arm/boot/dts/sun8i-h3.dtsi
+> > > > > > > > @@ -72,6 +72,13 @@
+> > > > > > > >                  };
+> > > > > > > >          };
+> > > > > > > >    +     soc {
+> > > > > > > > +               sid: eeprom@1c14000 {
+> > > > > > > > +                       compatible =3D "allwinner,sun8i-h3-=
+sid";
+> > > > > > > > +                       reg =3D <0x01c14000 0x400>;
+> > > > > > > > +               };
+> > > > > > > > +       };
+> > > > > > > > +
+> > > > > > >=20
+> > > > > > >=20
+> > > > > > > Shouldn't you also use a nvmem-cells property to the THS node?
+> > > > > > >=20
+> > > > > > > Maxime
+> > > > > > >=20
+> > > > > >=20
+> > > > > > Oh seems like I forgot that.
+> > > > > > As related to the wiki [1] this should be 64 bit wide at the ad=
+dress
+> > > > >=20
+> > > > > 0x34. I
+> > > > > > will add that in the next version.
+> > > > > >=20
+> > > > > >=20
+> > > > > > [1]: http://linux-sunxi.org/SID_Register_Guide#eFUSE
+> > > > > >=20
+> > > > > > Thanks,
+> > > > > > Philipp
+> > > > > >=20
+> > > > >=20
+> > > > > Hi,
+> > > > >=20
+> > > > > Any chance this will see a v3 soon? I'm kind of interested in sid=
+ node
+> > > > > for h3. =3D)
+> > > >=20
+> > > > This patch is independent and can be easily sent out
+> > > > by its own.
+> > > >=20
+> > >=20
+> > > Right- I had considered doing so, but wanted to make sure I wasn't
+> > > going to collide with this series if a v3 is imminent.
+> > >=20
+> >=20
+> >=20
+> --=20
+> Developer of free digital technology and hardware support.
+>=20
+> Website: https://www.paulk.fr/
+> Coding blog: https://code.paulk.fr/
+> Git repositories: https://git.paulk.fr/ https://git.code.paulk.fr/
 
 
+--=20
+Emmanuel Vadot <manu@bidouilliste.com> <manu@freebsd.org>
