@@ -2,101 +2,83 @@ Return-Path: <SRS0=S+WB=KJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC816C6778F
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 23:22:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB479C67790
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 23:23:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 911E720833
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 23:22:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9383020844
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 23:23:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="Dxs3PkJC";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="WllO5pdt"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 911E720833
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="j3HZD34J"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9383020844
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731735AbeGZAgJ (ORCPT
+        id S1731740AbeGZAhB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 20:36:09 -0400
-Received: from mail-vk0-f66.google.com ([209.85.213.66]:33558 "EHLO
-        mail-vk0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731584AbeGZAgI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Jul 2018 20:36:08 -0400
-Received: by mail-vk0-f66.google.com with SMTP id y70-v6so4657369vkc.0
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Jul 2018 16:22:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=4kVwTB8IZ6V1aNaWOFfmCp2xA+Vf2dAJQj610ioZ+fc=;
-        b=Dxs3PkJCS1iwOvMMkTGY1l5eXVxWdABQenSBv3isjKIg1Yx9F8QzuTXmG0bRc9KPOP
-         Fg2OrZx8bamfOlSmep04Ep08n9N3FbAzoe0k4I7z0996tohw4SZdpTllHuuS07vDzUfk
-         UB5WoAfzc3D9UqhIzF7YyK0hAxL2A+9U8NrlsSs18Nts0Al+lTu7OqQbONKIhgLYVYcL
-         GljRmgxuuQRk4Bc+BUxn9fsKdO15BjxpzEjO2WPqYM+NlAIrIuv93ffRtTg/5M55NaKn
-         ZyxsAjkHRSgYP4OndJaW9FaqaX3myAtzmN1/GwmWNLtUKCmsbO2tI+tWhJRrGqvDJ88F
-         3shg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=4kVwTB8IZ6V1aNaWOFfmCp2xA+Vf2dAJQj610ioZ+fc=;
-        b=WllO5pdt+NWJ7hvcSJwivU7YDUrTxq25PGrKLzO7fAVDkuwhzgS+gTwW1w5xhhZuxD
-         3yzgPMIFON75EpQWlTnr3d4SziXGl1suzwGQWhHNRIB3RA2/nSd1e2jEnYX0XuTUvuPJ
-         kZQkUbl5ggX7TyhcJvk7yABYfSFxu5Hb6MZ9Q=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
-         :date:message-id:subject:to:cc;
-        bh=4kVwTB8IZ6V1aNaWOFfmCp2xA+Vf2dAJQj610ioZ+fc=;
-        b=bqN8tvH8Nvje6CADQskBhWI38ycRKemlln5jeZtavZiX285gbcyykI4hzOlYydr85m
-         S8U7LEA3As+bcADRtd8xWtenpqWISDpoMnS/vQPsO58NW4ls348BYL6WWEDFUDlMIHM1
-         GCc5OagZ2+6WUyRnVRiNR84//kVK8Q+pxc3i5w4mJXWWeud4XBs2j8a0eeZQUBafrA+R
-         +A7ME5aJP+I5GCp9G8YldwtkmmKPJ8aCsMuNZf1Kpy5Bu0m5e06Mo9w1ciIBV8vOx7Ok
-         VZvVrCe6srFx39jkhb1GVtEmqeay8YXQIzPeyaFM6KWC4gvSLQ3sjTsuVwPmaRjlBSZS
-         Ht6w==
-X-Gm-Message-State: AOUpUlHsRoWfwgWoVkp2ZvTOWl23KIx1/KNCc2vap3go8nTJTtH2iIv2
-        l74u8KgbyUqrmkV7RsgfpaWB4EQnDwNPN4hNHL+dnA==
-X-Google-Smtp-Source: AAOMgpedv9Tyc7VAqBd1XLfcMqhaBANLJpktQtYpbpf2s4CHGljpSQeEaKi2iowMr4Fmt9fn4IktVqjbI+C5zmoIhLk=
-X-Received: by 2002:a1f:ebc7:: with SMTP id j190-v6mr14505071vkh.114.1532560932079;
- Wed, 25 Jul 2018 16:22:12 -0700 (PDT)
+        Wed, 25 Jul 2018 20:37:01 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57012 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731431AbeGZAhB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Jul 2018 20:37:01 -0400
+Received: from localhost (unknown [104.132.1.75])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0F66120833;
+        Wed, 25 Jul 2018 23:23:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1532560985;
+        bh=Esat033kCywSxZnojg81rFZZjLXzwAxkVuGCTfGybao=;
+        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
+        b=j3HZD34JdRkMW5JWJPt3Eol8MDlUsKWvFW/M4ZvuZopOVtKx8eu+Zs9IB08Pz3m0A
+         HzRUJBg+qTHxbmSSoq1B69RW9pKKyMPuiw2f2x09Hi3zrD9fpZSZuENWJfUi7PG51s
+         U+fpdV0gEPcT4u4fkzyc43fWPFIyDUU2QFxF9C68=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Received: by 2002:a1f:cd5:0:0:0:0:0 with HTTP; Wed, 25 Jul 2018 16:22:11 -0700 (PDT)
-In-Reply-To: <20180724235130.58592-1-mka@chromium.org>
-References: <20180724235130.58592-1-mka@chromium.org>
-From:   Doug Anderson <dianders@chromium.org>
-Date:   Wed, 25 Jul 2018 16:22:11 -0700
-X-Google-Sender-Auth: SLBEuCETY3MNcvI5yzhU_z6EBiA
-Message-ID: <CAD=FV=WDtb_kpF261GgGjG-2-yo0HHySkdrWWqsNMyLOZZ+W3A@mail.gmail.com>
-Subject: Re: [PATCH] dt-bindings: thermal: qcom-spmi-temp-alarm: Fix
- documentation of 'reg'
-To:     Matthias Kaehlcke <mka@chromium.org>
-Cc:     Zhang Rui <rui.zhang@intel.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, linux-pm@vger.kernel.org,
-        devicetree@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org
+From:   Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <1532075856-1723-1-git-send-email-yamada.masahiro@socionext.com>
+Cc:     Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-kernel@vger.kernel.org,
+        Jassi Brar <jaswinder.singh@linaro.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        linux-arm-kernel@lists.infradead.org
+References: <1532075856-1723-1-git-send-email-yamada.masahiro@socionext.com>
+Message-ID: <153256098433.48062.7081577175619627994@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.7
+Subject: Re: [PATCH 1/2] clk: uniphier: add NAND 200MHz clock
+Date:   Wed, 25 Jul 2018 16:23:04 -0700
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Quoting Masahiro Yamada (2018-07-20 01:37:35)
+> The Denali NAND controller IP needs three clocks:
+> =
 
-On Tue, Jul 24, 2018 at 4:51 PM, Matthias Kaehlcke <mka@chromium.org> wrote:
-> The documentation claims that the 'reg' property consists of two values,
-> the SPMI address and the length of the controller's registers. However
-> the SPMI bus to which it is added specifies "#size-cells = <0>;". Remove
-> the controller register length from the documentation of the field and the
-> example.
->
-> Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
+>  - clk: controller core clock
+> =
+
+>  - clk_x: bus interface clock
+> =
+
+>  - ecc_clk: clock at which ECC circuitry is run
+> =
+
+> Currently, only the first one (50MHz) is provided.  The rest of the
+> two clock ports must be connected to the 200MHz clock line.  Add this.
+> =
+
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 > ---
->  .../devicetree/bindings/thermal/qcom-spmi-temp-alarm.txt     | 5 ++---
->  1 file changed, 2 insertions(+), 3 deletions(-)
 
-Reviewed-by: Douglas Anderson <dianders@chromium.org>
+Applied to clk-next
+
