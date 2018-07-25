@@ -2,102 +2,104 @@ Return-Path: <SRS0=S+WB=KJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH autolearn=ham
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9D02C6778F
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 14:00:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74E5BC6778F
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 14:00:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 58D6420891
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 14:00:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2D74220891
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 14:00:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="tBIpMfol"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 58D6420891
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q49117aV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D74220891
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728496AbeGYPMX (ORCPT
+        id S1729079AbeGYPMa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 11:12:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47298 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727691AbeGYPMW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Jul 2018 11:12:22 -0400
-Received: from mail-qt0-f181.google.com (mail-qt0-f181.google.com [209.85.216.181])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 708E720894;
-        Wed, 25 Jul 2018 14:00:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1532527233;
-        bh=J7IHpihLSFjCP2dOoYEM4IMZyLjWC/7EFDXuaoNqKUo=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=tBIpMfoljBYJ6CsqILuU3LgBk36B4leGYc46HkT4EtVfLCs2MMhkx5Rd8X1Jv5m38
-         pXKheySiI7qa4Z4Sr3fGwtlGu8I6XfZSJ7fMoGiZLDTdJb5oKhvh4Qw4a/Xh5W2okz
-         8AJDA6NN/YoaQiRdqbDc+GBWEAREQeR36wU/NKnI=
-Received: by mail-qt0-f181.google.com with SMTP id d4-v6so7667166qtn.13;
-        Wed, 25 Jul 2018 07:00:33 -0700 (PDT)
-X-Gm-Message-State: AOUpUlH0B7X20zMBan+8sRa8OF0L4VsYhIUbEKPljHCrg6h2W2Pg25AT
-        QhoVba9Ocq81jnF3JKHKBQ7FHCKLC82d3bn3yA==
-X-Google-Smtp-Source: AAOMgpd9ouRFiAUN4vSYD6CgIyf1yCTgBMKUPAwJ2JZRQPMz7Oa5En7V93SxNm2xCCYuU98HbF2jBSUa2pzVijQ7Fcg=
-X-Received: by 2002:a0c:e9ce:: with SMTP id q14-v6mr19317872qvo.106.1532527232618;
- Wed, 25 Jul 2018 07:00:32 -0700 (PDT)
+        Wed, 25 Jul 2018 11:12:30 -0400
+Received: from mail-it0-f66.google.com ([209.85.214.66]:50738 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727691AbeGYPMa (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Jul 2018 11:12:30 -0400
+Received: by mail-it0-f66.google.com with SMTP id w16-v6so8843245ita.0;
+        Wed, 25 Jul 2018 07:00:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=t4H7ug6QZVQHe3q/PjpQQd4vsvLIkqw5HkOQBtNrQuE=;
+        b=Q49117aVkFubRJ+NplrFcp8HCPjh2ft07+S5cyiuPCeRWldcnrqtN6fUQWxwN0NAhZ
+         eunwz+jTlOJrr537MlE5osVrIvqSDz8bvEAPoTYdsbBtP+fHT7ilZTEYfVLraQ1/rqVp
+         8PP5DwjsqX5mIHZyuK3sH0mMnRQyUpi6ma3p7orv3i2Qn02S1Oa4CmoNyGdy4n7RNmVO
+         WdPQXQPNyjPfBB6/NICfvrD6tfVzrWlmqvi7OsQBFAeFypyqfo2almhfamtpnbG279Wf
+         iWrMgMAR+LgSc2xy87CDb1dMMrDA4T8IIv7QMtXlb5VB4MTW0fBaqCCjLnAXfKhSKz9b
+         MaiQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=t4H7ug6QZVQHe3q/PjpQQd4vsvLIkqw5HkOQBtNrQuE=;
+        b=Mv38wXVK2lcfq3bSdBA0sKoC645X0vikBc5qkTf9UVOpzV+VbVgtTtIt4HMP4GvVQx
+         H+aqk+jlCHlREevHv/m6O5Difen0GwPdEFhEMznP9f4pgcD+vR60atAt/37sThiL6V0w
+         ZFTHi4vH/3JKEzTbaA+DoovzE9jqyMh9Q8doem0vd/s69Ni6aJgDbJItfsSamGSy/HbQ
+         DTlDynyzx9Dfz47xrLbmt8LHqJbIZ3WfCxDrXWPYDZiWkq8Mvs1N9lV278TGI5iENdxm
+         ycCIsNV0w8AWZT3Vax2k+6fTyUHQkgnly6IBWrj7b9o+YlObtscQ7UlZH4kdSSeTifyK
+         yGLg==
+X-Gm-Message-State: AOUpUlECuDjJeT/Je9HSPWia38aifVPBOAJPkvX/xJwasTjRmZM4fx/2
+        qSTI/ATRrD4CFepekYNUZe4ojNLYS7L9mohGmFY=
+X-Google-Smtp-Source: AAOMgpfu7z1JVh2/OAmZJsgIXjRYYvHZGlQrQsX1a9JV3+LnWprk8gh3y6PC+LysKpOzgAMISeYj7tWREZXk4Q3b9ic=
+X-Received: by 2002:a02:45cd:: with SMTP id o74-v6mr18678826jad.43.1532527238236;
+ Wed, 25 Jul 2018 07:00:38 -0700 (PDT)
 MIME-Version: 1.0
-References: <1531745857-5561-1-git-send-email-alexandre.torgue@st.com>
- <1531745857-5561-2-git-send-email-alexandre.torgue@st.com>
- <20180720163515.GA16515@rob-hp-laptop> <ed56c8d3-f354-d311-8407-66268bcdf7a6@st.com>
-In-Reply-To: <ed56c8d3-f354-d311-8407-66268bcdf7a6@st.com>
-From:   Rob Herring <robh@kernel.org>
-Date:   Wed, 25 Jul 2018 08:00:20 -0600
-X-Gmail-Original-Message-ID: <CAL_Jsq+awnVr0qOtyMRYJzDON6k0c-G+bqLYz+WL5LNpigKhpg@mail.gmail.com>
-Message-ID: <CAL_Jsq+awnVr0qOtyMRYJzDON6k0c-G+bqLYz+WL5LNpigKhpg@mail.gmail.com>
-Subject: Re: [PATCH 1/2] pinctrl: stm32: fix bank io port number
-To:     Alexandre Torgue <alexandre.torgue@st.com>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>, devicetree@vger.kernel.org,
-        Amelie Delaunay <amelie.delaunay@st.com>
+Received: by 2002:a6b:7a47:0:0:0:0:0 with HTTP; Wed, 25 Jul 2018 06:59:57
+ -0700 (PDT)
+In-Reply-To: <096a8a2f-ea32-2107-b2af-c246450cc3b9@gmail.com>
+References: <1532524010-11855-1-git-send-email-laoar.shao@gmail.com>
+ <047bc12f-9eb5-e512-10c5-6334c494c77e@gmail.com> <CALOAHbCC=oWgzcA=VhkXq0rVLBa5_TvtbKtTqESGrgxvYTtH6w@mail.gmail.com>
+ <096a8a2f-ea32-2107-b2af-c246450cc3b9@gmail.com>
+From:   Yafang Shao <laoar.shao@gmail.com>
+Date:   Wed, 25 Jul 2018 21:59:57 +0800
+Message-ID: <CALOAHbASvcEdudqpit-c=RRZ8xVD+G+0jU-ynp9PsH4_mU7xjw@mail.gmail.com>
+Subject: Re: [PATCH net-next] tcp: add SNMP counter for the number of packets
+ pruned from ofo queue
+To:     Eric Dumazet <eric.dumazet@gmail.com>
+Cc:     David Miller <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        netdev <netdev@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 24, 2018 at 10:07 AM Alexandre Torgue
-<alexandre.torgue@st.com> wrote:
+On Wed, Jul 25, 2018 at 9:55 PM, Eric Dumazet <eric.dumazet@gmail.com> wrote:
 >
-> Hi Rob
 >
-> On 07/20/2018 06:35 PM, Rob Herring wrote:
-> > On Mon, Jul 16, 2018 at 02:57:36PM +0200, Alexandre Torgue wrote:
-> >> In case the exti line is not in line with the bank number (that is the case
-> >> when there is an hole between two banks, for example GPIOK and then GPIOZ),
-> >> use "st,bank-ioport" DT property to get the right exti line.
-> >>
-> >> Signed-off-by: Amelie Delaunay <amelie.delaunay@st.com>
-> >> Signed-off-by: Alexandre Torgue <alexandre.torgue@st.com>
-> >>
-> >> diff --git a/Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl.txt
-> >> index 9a06e1f..60c678a 100644
-> >> --- a/Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl.txt
-> >> +++ b/Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl.txt
-> >> @@ -55,6 +55,8 @@ Optional properties:
-> >>      NOTE: If "gpio-ranges" is used for a gpio controller, all gpio-controller
-> >>      have to use a "gpio-ranges" entry.
-> >>      More details in Documentation/devicetree/bindings/gpio/gpio.txt.
-> >> + - st,bank-ioport: should correspond to the EXTI IOport selection (EXTI line
-> >> +   used to select GPIOs as interrupts).
-> >
-> > ioport sounds like something else. Perhaps '-exti-line'?
+> On 07/25/2018 06:40 AM, Yafang Shao wrote:
 >
-> IOport is actually what is described in our datasheet. I could change it
-> to -exti-line but I would prefer to match with the datasheet.
+>>
+>> Because we want to know why packets were dropped.
+>> If that could be show in netstat, we could easily find that it is
+>> dropped due to ofo prune.
+>
+>
+> We have a counter already for these events : LINUX_MIB_OFOPRUNED
+>
+> You want to add another counter tracking number of _skbs_,
+> which has no precise value for user,
+> given each skb can contain a variable number of _packets_.
+>
 
-Okay.
+Got it.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+But with LINUX_MIB_OFOPRUNED, we only know  tcp_prune_ofo_queue is
+called, but have no idea how many skbs are dropped.
+
+Thanks
+Yafang
