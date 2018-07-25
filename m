@@ -2,106 +2,96 @@ Return-Path: <SRS0=S+WB=KJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C740BC67790
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 20:23:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EB40C67790
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 20:27:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 700BC20671
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 20:23:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3943720852
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 20:27:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=android.com header.i=@android.com header.b="OyI/Csku"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 700BC20671
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=android.com
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="iwMxYEc0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3943720852
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730965AbeGYVgZ (ORCPT
+        id S1731122AbeGYVkQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 17:36:25 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:34408 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730536AbeGYVgY (ORCPT
+        Wed, 25 Jul 2018 17:40:16 -0400
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:45248 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730520AbeGYVkQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Jul 2018 17:36:24 -0400
-Received: by mail-pg1-f193.google.com with SMTP id y5-v6so6026021pgv.1
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Jul 2018 13:23:08 -0700 (PDT)
+        Wed, 25 Jul 2018 17:40:16 -0400
+Received: by mail-lf1-f65.google.com with SMTP id j143-v6so6305887lfj.12
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Jul 2018 13:26:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=android.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=nAABX7W6PQGGU6ZsqFpQQ8x5ujIgnZZlTVmnLpKI244=;
-        b=OyI/CskuF9BCWXcsrVrJgX5+XInuoEEF4rINIkXYfVZCIOCmThGsnvFiwjyrC1f+4E
-         zY17jBuK45s5URzJIxskmQ3hh+fAh/ClZSJXv49MbrdoWNDf7PFYvsgJOWZiW36iIpIu
-         Nztj2yAL9fhH/6MmePrMB/bNgf+bLzvMaV4Ng5Go7orPZL39XlIU7990U0l5aO5ZZnAY
-         NqaAgG+Qxqo65j7hnCC3Zww0pznnAwhTrjzXYy3lt1xfOm3G2AmOIpDjRRrkp+iatSKu
-         IzUuw0346mdB8XZAQ5iwxcpgxIQ3lMk9pVD9CXQdqi4D/UGBmzuAu1ETvMIa3xkm4iPz
-         p1ZA==
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=75YQRk6vcCLpvtCq/6FeIHRLGNVumWQexVkdw3cOu/k=;
+        b=iwMxYEc0C9lSBRr0Qcjh5QW5gusYu0lQh3kA88sA+SVW35FWgotjjBQRj+cKzRhYyC
+         SGfuD7Psl4sVH+EFMH3foCtk/RB3IkfQuxlBNO9uWirBtzwfXjf0iDIbl/leqzCodPVT
+         9xA1dXfzSFvPh0LAVyv7eE2V4+6sktsjedipc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=nAABX7W6PQGGU6ZsqFpQQ8x5ujIgnZZlTVmnLpKI244=;
-        b=j1N8QNA7v3Lt+kUvK3ACqprA8Gnd52kT8ZAtppd22RQ37NC6SBBucEsaiRbdcBt0Nf
-         npuzTbz9Cy0WEd3YyoIUJtL7xgYDgDgmDM26DUy1VcchtqB6Yf09qrqHc6aj6Y6hIEZD
-         356nqz/lBuvxJNEU3yPNu4ETj8HB3QtYcrwHBjalOMMAq8JMxH0UvyFkLp50NThjQx9s
-         e2ze456W+NX031EPjIaXglgIH2j1TvFweiL+anyD+4+Io0syspcMjdmJhp5NGzbosG0k
-         sWZYhrp6lFPtVKgbTFgmuZfn4f7CG6YOHthBc4HIjIoTwkibpLMhZElZUYGYKsmhV/CE
-         MkeA==
-X-Gm-Message-State: AOUpUlFJOBPwSc4fYp3TToK/UO7b0x/Y60mR/hByU42ZG8XC2L9LSZ+/
-        2JgJ32vCYXPfB1JiRtTYYLWuh8tf/m8=
-X-Google-Smtp-Source: AAOMgpd1WMo3qAdyIHmGOn1gns4AvY6WCcv4mgf5sat4qAGRKprhi/yVF+xro1UaPam0dfbUilmHMw==
-X-Received: by 2002:a63:6849:: with SMTP id d70-v6mr21332490pgc.7.1532550187347;
-        Wed, 25 Jul 2018 13:23:07 -0700 (PDT)
-Received: from nebulus.mtv.corp.google.com ([2620:0:1000:1611:8fc3:703d:7635:5997])
-        by smtp.gmail.com with ESMTPSA id q25-v6sm31155574pfk.96.2018.07.25.13.23.06
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=75YQRk6vcCLpvtCq/6FeIHRLGNVumWQexVkdw3cOu/k=;
+        b=DJacOmX6gdJMuwOFtpFKjGVbGpBYY0vSXytpgGitu8rDkwKYoOT6x7gSj1vS3/cMnX
+         FQ2p2FsVZNcLCrTW14fRnbetE25iTVtsQW32doHMDa33OdkKz+JvydhJJtg000cAy+3G
+         zQlqkRWrMukaibmOWijJ5b+PeWdZ27TvAnWoYL1VozArK6V4gk0JXj9Jrxr1n5+VV18I
+         dBtsd5ltjhxGDLpBxS/3cQsoTklicxZEYvl8oJXU7w70rjYciWLP1ZSuq81Hq20aemQI
+         bGn07hNW0rKJk/7RUpN5+XL7xLNw1tX/zd/10Xmj8osVgs/W3p6hHtbF8LVribzE1jqc
+         yvrg==
+X-Gm-Message-State: AOUpUlFO0/E7lolu4rNb6Q077nzEHqJt0x2AMERZNwryCs7fIcR1g0XV
+        IFFhXDe/zjyXvRAVSDYny8gXAaD0F4U=
+X-Google-Smtp-Source: AAOMgpc30pVQX+myBRPvFpB+MvIdfJyy368EUHdZId3qZ71h9Hr/5NKMFMnerR4lcw+fmJPwFgchNg==
+X-Received: by 2002:a19:a685:: with SMTP id p127-v6mr14424642lfe.4.1532550417305;
+        Wed, 25 Jul 2018 13:26:57 -0700 (PDT)
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com. [209.85.167.48])
+        by smtp.gmail.com with ESMTPSA id f3-v6sm2345861lfc.30.2018.07.25.13.26.55
+        for <linux-kernel@vger.kernel.org>
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 25 Jul 2018 13:23:06 -0700 (PDT)
-From:   Mark Salyzyn <salyzyn@android.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Nick Desaulniers <ndesaulniers@google.com>,
-        Mark Salyzyn <salyzyn@android.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ingo Molnar <mingo@redhat.com>, kernel-team@android.com,
-        stable@vger.kernel.org
-Subject: [PATCH] tracing: do not leak kernel addresses
-Date:   Wed, 25 Jul 2018 13:22:36 -0700
-Message-Id: <20180725202238.165314-1-salyzyn@android.com>
-X-Mailer: git-send-email 2.18.0.233.g985f88cf7e-goog
+        Wed, 25 Jul 2018 13:26:55 -0700 (PDT)
+Received: by mail-lf1-f48.google.com with SMTP id f135-v6so4608891lfg.10
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Jul 2018 13:26:55 -0700 (PDT)
+X-Received: by 2002:a19:f70d:: with SMTP id z13-v6mr13410732lfe.33.1532550415054;
+ Wed, 25 Jul 2018 13:26:55 -0700 (PDT)
+MIME-Version: 1.0
+References: <20180619083647.10116-1-cang@codeaurora.org> <20180619083647.10116-2-cang@codeaurora.org>
+ <CAFp+6iHxu2GYAn8ftDuHfE1Hj=aQvd6Rum9zjEe-G1WHsAkZuw@mail.gmail.com>
+In-Reply-To: <CAFp+6iHxu2GYAn8ftDuHfE1Hj=aQvd6Rum9zjEe-G1WHsAkZuw@mail.gmail.com>
+From:   Evan Green <evgreen@chromium.org>
+Date:   Wed, 25 Jul 2018 13:26:18 -0700
+X-Gmail-Original-Message-ID: <CAE=gft5m_upt4hhPf3ZbCm99usoaW_OXibxM2XzFEgvwLmjnKQ@mail.gmail.com>
+Message-ID: <CAE=gft5m_upt4hhPf3ZbCm99usoaW_OXibxM2XzFEgvwLmjnKQ@mail.gmail.com>
+Subject: Re: [PATCH v7 1/4] phy: Update PHY power control sequence
+To:     vivek.gautam@codeaurora.org
+Cc:     cang@codeaurora.org, subhashj@codeaurora.org,
+        asutoshd@codeaurora.org, Manu Gautam <mgautam@codeaurora.org>,
+        kishon@ti.com, robh+dt@kernel.org, mark.rutland@arm.com,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nick Desaulniers <ndesaulniers@google.com>
+On Mon, Jul 2, 2018 at 10:00 AM Vivek Gautam
+<vivek.gautam@codeaurora.org> wrote:
+>
+> On Tue, Jun 19, 2018 at 2:06 PM, Can Guo <cang@codeaurora.org> wrote:
+> > All PHYs should be powered on before register configuration starts. And
+> > only PCIe PHYs need an extra power control before deasserts reset state.
+> >
+> > Signed-off-by: Can Guo <cang@codeaurora.org>
+> > ---
+> >  drivers/phy/qualcomm/phy-qcom-qmp.c | 19 ++++++++++++-------
+> >  1 file changed, 12 insertions(+), 7 deletions(-)
+> >
 
-Switch from 0x%lx to 0x%pK to print the kernel addresses.
-
-Fixes: CVE-2017-0630
-Signed-off-by: Mark Salyzyn <salyzyn@android.com>
-Cc: Nick Desaulniers <ndesaulniers@google.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: <kernel-team@android.com>
-Cc: <stable@vger.kernel.org> # 3.18, 4.4, 4.9, 4.14
-Cc: <linux-kernel@vger.kernel.org>
-
----
- kernel/trace/trace_printk.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/kernel/trace/trace_printk.c b/kernel/trace/trace_printk.c
-index ad1d6164e946..93698023baf1 100644
---- a/kernel/trace/trace_printk.c
-+++ b/kernel/trace/trace_printk.c
-@@ -304,7 +304,7 @@ static int t_show(struct seq_file *m, void *v)
- 	if (!*fmt)
- 		return 0;
- 
--	seq_printf(m, "0x%lx : \"", *(unsigned long *)fmt);
-+	seq_printf(m, "0x%pK : \"", *(unsigned long *)fmt);
- 
- 	/*
- 	 * Tabs and new lines need to be converted.
--- 
-2.18.0.233.g985f88cf7e-goog
-
+Reviewed-by: Evan Green <evgreen@chromium.org>
