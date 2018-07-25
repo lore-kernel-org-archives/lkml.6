@@ -3,48 +3,54 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3CDCC6778F
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 17:57:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D4ABC6778F
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 17:57:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A683620843
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 17:57:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A683620843
+	by mail.kernel.org (Postfix) with ESMTP id 1A9F320843
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 17:57:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1A9F320843
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730197AbeGYTJy (ORCPT
+        id S1730326AbeGYTJ6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 15:09:54 -0400
-Received: from mga07.intel.com ([134.134.136.100]:12902 "EHLO mga07.intel.com"
+        Wed, 25 Jul 2018 15:09:58 -0400
+Received: from mga09.intel.com ([134.134.136.24]:37432 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728913AbeGYTJy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Jul 2018 15:09:54 -0400
-X-Amp-Result: UNSCANNABLE
+        id S1728913AbeGYTJ5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Jul 2018 15:09:57 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Jul 2018 10:57:09 -0700
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Jul 2018 10:57:13 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.51,401,1526367600"; 
-   d="scan'208";a="59434509"
+   d="scan'208";a="248314284"
 Received: from bee.sh.intel.com (HELO bee) ([10.239.97.14])
-  by orsmga007.jf.intel.com with ESMTP; 25 Jul 2018 10:57:08 -0700
+  by fmsmga005.fm.intel.com with ESMTP; 25 Jul 2018 10:57:10 -0700
 Received: from kbuild by bee with local (Exim 4.84_2)
         (envelope-from <lkp@intel.com>)
-        id 1fiO27-000M5G-Ou; Thu, 26 Jul 2018 01:57:07 +0800
-Date:   Thu, 26 Jul 2018 01:56:59 +0800
-From:   kbuild test robot <lkp@intel.com>
+        id 1fiO2A-000MKa-4u; Thu, 26 Jul 2018 01:57:10 +0800
+Date:   Thu, 26 Jul 2018 01:57:00 +0800
+From:   kbuild test robot <fengguang.wu@intel.com>
 To:     Mauro Carvalho Chehab <m.chehab@samsung.com>
 Cc:     kbuild-all@01.org, linux-kernel@vger.kernel.org,
-        linux-media@vger.kernel.org
-Subject: drivers/video/fbdev/omap2/omapfb/omapfb-main.c:290:9-10: WARNING:
- return of 0/1 in function 'cmp_var_to_colormode' with return type bool
-Message-ID: <201807260144.q4WK2PMA%fengguang.wu@intel.com>
+        linux-media@vger.kernel.org,
+        Tomi Valkeinen <tomi.valkeinen@ti.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Arnd Bergmann <arnd@arndb.de>, linux-omap@vger.kernel.org,
+        linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org
+Subject: [PATCH] media: omap2: omapfb: fix ifnullfree.cocci warnings
+Message-ID: <20180725175700.GA83136@lkp-sb05.lkp.intel.com>
+References: <201807260144.q4WK2PMA%fengguang.wu@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <201807260144.q4WK2PMA%fengguang.wu@intel.com>
 User-Agent: Mutt/1.5.23 (2014-03-12)
 X-SA-Exim-Connect-IP: <locally generated>
 X-SA-Exim-Mail-From: lkp@intel.com
@@ -54,23 +60,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   9981b4fb8684883dcc0daf088891ff32260b9794
-commit: 7378f1149884b183631c6c16c0f1c62bcd7d759d media: omap2: omapfb: allow building it with COMPILE_TEST
-date:   3 months ago
+From: kbuild test robot <fengguang.wu@intel.com>
 
+drivers/video/fbdev/omap2/omapfb/dss/core.c:141:2-26: WARNING: NULL check before some freeing functions is not needed.
 
-coccinelle warnings: (new ones prefixed by >>)
+ NULL check before some freeing functions is not needed.
 
->> drivers/video/fbdev/omap2/omapfb/omapfb-main.c:290:9-10: WARNING: return of 0/1 in function 'cmp_var_to_colormode' with return type bool
---
->> drivers/video/fbdev/omap2/omapfb/dss/dss_features.c:895:2-5: WARNING: Use BUG_ON instead of if condition followed by BUG.
-   Please make sure the condition has no side effects (see conditional BUG_ON definition in include/asm-generic/bug.h)
---
->> drivers/video/fbdev/omap2/omapfb/dss/core.c:141:2-26: WARNING: NULL check before some freeing functions is not needed.
+ Based on checkpatch warning
+ "kfree(NULL) is safe this check is probably not required"
+ and kfreeaddr.cocci by Julia Lawall.
 
-Please review and possibly fold the followup patch.
+Generated by: scripts/coccinelle/free/ifnullfree.cocci
 
+Fixes: 7378f1149884 ("media: omap2: omapfb: allow building it with COMPILE_TEST")
+Signed-off-by: kbuild test robot <fengguang.wu@intel.com>
 ---
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+
+Please take the patch only if it's a positive warning. Thanks!
+
+ core.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+--- a/drivers/video/fbdev/omap2/omapfb/dss/core.c
++++ b/drivers/video/fbdev/omap2/omapfb/dss/core.c
+@@ -137,8 +137,7 @@ static int dss_initialize_debugfs(void)
+ 
+ static void dss_uninitialize_debugfs(void)
+ {
+-	if (dss_debugfs_dir)
+-		debugfs_remove_recursive(dss_debugfs_dir);
++	debugfs_remove_recursive(dss_debugfs_dir);
+ }
+ 
+ int dss_debugfs_create_file(const char *name, void (*write)(struct seq_file *))
