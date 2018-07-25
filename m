@@ -2,160 +2,99 @@ Return-Path: <SRS0=S+WB=KJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE76DC67790
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 15:49:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9768C6778F
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 15:50:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 69BB9204EC
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 15:49:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 69BB9204EC
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
+	by mail.kernel.org (Postfix) with ESMTP id 6471F20833
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 15:50:28 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="bOQHQPUN"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6471F20833
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729247AbeGYRBp convert rfc822-to-8bit (ORCPT
+        id S1728746AbeGYRCl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 13:01:45 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:32278 "EHLO pegase1.c-s.fr"
+        Wed, 25 Jul 2018 13:02:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42568 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728568AbeGYRBp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Jul 2018 13:01:45 -0400
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 41bKRD5PCMz9ty7H;
-        Wed, 25 Jul 2018 17:49:28 +0200 (CEST)
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id kISTIzbL2iAP; Wed, 25 Jul 2018 17:49:28 +0200 (CEST)
-Received: from vm-hermes.si.c-s.fr (vm-hermes.si.c-s.fr [192.168.25.253])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 41bKRD4khlz9ty76;
-        Wed, 25 Jul 2018 17:49:28 +0200 (CEST)
-Received: by vm-hermes.si.c-s.fr (Postfix, from userid 33)
-        id 968508A8; Wed, 25 Jul 2018 17:49:27 +0200 (CEST)
-Received: from 37.173.118.119 ([37.173.118.119]) by messagerie.si.c-s.fr
- (Horde Framework) with HTTP; Wed, 25 Jul 2018 17:49:27 +0200
-Date:   Wed, 25 Jul 2018 17:49:27 +0200
-Message-ID: <20180725174927.Horde.Sfg4oyTmcaLgHIJr3Gf-oQ1@messagerie.si.c-s.fr>
-From:   LEROY Christophe <christophe.leroy@c-s.fr>
-To:     Murilo Opsfelder Araujo <muriloo@linux.ibm.com>
-Cc:     linuxppc-dev@lists.ozlabs.org, "Tobin C . Harding" <me@tobin.cc>,
-        Sukadev Bhattiprolu <sukadev@linux.vnet.ibm.com>,
-        Simon Guo <wei.guo.simon@gmail.com>,
-        Paul Mackerras <paulus@samba.org>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Michael Neuling <mikey@neuling.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        Cyril Bur <cyrilbur@gmail.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Balbir Singh <bsingharora@gmail.com>,
-        Andrew Donnellan <andrew.donnellan@au1.ibm.com>,
-        Alastair D'Silva <alastair@d-silva.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 6/7] powerpc/traps: Print signal name for unhandled
- signals
-References: <20180724192720.32417-1-muriloo@linux.ibm.com>
- <20180724192720.32417-7-muriloo@linux.ibm.com>
-In-Reply-To: <20180724192720.32417-7-muriloo@linux.ibm.com>
-User-Agent: Internet Messaging Program (IMP) H5 (6.2.3)
-Content-Type: text/plain; charset=UTF-8; format=flowed; DelSp=Yes
+        id S1728528AbeGYRCk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Jul 2018 13:02:40 -0400
+Received: from [192.168.0.101] (unknown [180.111.133.216])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 25E6D204EC;
+        Wed, 25 Jul 2018 15:50:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1532533825;
+        bh=iYQ0w9NLp0AD9xCRlE/K8Th1RwgC9mD1Whmr6fGJyXE=;
+        h=Subject:To:References:From:Date:In-Reply-To:From;
+        b=bOQHQPUN5hIsXjBtLtrHKxOnMvKrR6fH5pIvamyOiDTDl/GFc7Sv6+6dNX4rtDyhj
+         ntiNK9MOz0wXO4xm/3YZ3Z4sY8aPd+mxkFW90OuEmzWY9oWhc0pp0dWuBIaPKy43Qy
+         7mnBIyuVS29ajIj0+dFrEEtbf8kY7P/HIpHNOGuA=
+Subject: Re: [f2fs-dev] [PATCH] f2fs: avoid fi->i_gc_rwsem[WRITE] lock in
+ f2fs_gc
+To:     Jaegeuk Kim <jaegeuk@kernel.org>, linux-kernel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net
+References: <20180725032228.63492-1-jaegeuk@kernel.org>
+From:   Chao Yu <chao@kernel.org>
+Message-ID: <76daeb43-ee9d-3747-7b35-8de0c8228edc@kernel.org>
+Date:   Wed, 25 Jul 2018 23:50:17 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Disposition: inline
-Content-Transfer-Encoding: 8BIT
+In-Reply-To: <20180725032228.63492-1-jaegeuk@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Murilo Opsfelder Araujo <muriloo@linux.ibm.com> a écrit :
+On 2018/7/25 11:22, Jaegeuk Kim wrote:
+> The f2fs_gc() called by f2fs_balance_fs() requires to be called outside of
+> fi->i_gc_rwsem[WRITE], since f2fs_gc() can try to grab it in a loop.
 
-> This adds a human-readable name in the unhandled signal message.
->
-> Before this patch, a page fault looked like:
->
->     Jul 11 16:04:11 localhost kernel: pandafault[6303]: unhandled  
-> signal 11 at 00000000100007d0 nip 000000001000061c lr  
-> 00007fff93c55100 code 2 in pandafault[10000000+10000]
->
-> After this patch, a page fault looks like:
->
->     Jul 11 18:14:48 localhost kernel: pandafault[6352]: segfault  
-> (11) at 000000013a2a09f8 nip 000000013a2a086c lr 00007fffb63e5100  
-> code 2 in pandafault[13a2a0000+10000]
->
-> Signed-off-by: Murilo Opsfelder Araujo <muriloo@linux.ibm.com>
+It seems there are other paths having the same issue, how about fixing all of
+them in this patch?
+
+Thanks,
+
+> 
+> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 > ---
->  arch/powerpc/kernel/traps.c | 43 +++++++++++++++++++++++++++++++++----
->  1 file changed, 39 insertions(+), 4 deletions(-)
->
-> diff --git a/arch/powerpc/kernel/traps.c b/arch/powerpc/kernel/traps.c
-> index e6c43ef9fb50..e55ee639d010 100644
-> --- a/arch/powerpc/kernel/traps.c
-> +++ b/arch/powerpc/kernel/traps.c
-> @@ -96,6 +96,41 @@ EXPORT_SYMBOL(__debugger_fault_handler);
->  #define TM_DEBUG(x...) do { } while(0)
->  #endif
->
-> +static const char *signames[SIGRTMIN + 1] = {
-> +	"UNKNOWN",
-> +	"SIGHUP",			// 1
-> +	"SIGINT",			// 2
-> +	"SIGQUIT",			// 3
-> +	"SIGILL",			// 4
-> +	"unhandled trap",		// 5 = SIGTRAP
-> +	"SIGABRT",			// 6 = SIGIOT
-> +	"bus error",			// 7 = SIGBUS
-> +	"floating point exception",	// 8 = SIGFPE
-> +	"illegal instruction",		// 9 = SIGILL
-> +	"SIGUSR1",			// 10
-> +	"segfault",			// 11 = SIGSEGV
-> +	"SIGUSR2",			// 12
-> +	"SIGPIPE",			// 13
-> +	"SIGALRM",			// 14
-> +	"SIGTERM",			// 15
-> +	"SIGSTKFLT",			// 16
-> +	"SIGCHLD",			// 17
-> +	"SIGCONT",			// 18
-> +	"SIGSTOP",			// 19
-> +	"SIGTSTP",			// 20
-> +	"SIGTTIN",			// 21
-> +	"SIGTTOU",			// 22
-> +	"SIGURG",			// 23
-> +	"SIGXCPU",			// 24
-> +	"SIGXFSZ",			// 25
-> +	"SIGVTALRM",			// 26
-> +	"SIGPROF",			// 27
-> +	"SIGWINCH",			// 28
-> +	"SIGIO",			// 29 = SIGPOLL = SIGLOST
-> +	"SIGPWR",			// 30
-> +	"SIGSYS",			// 31 = SIGUNUSED
-> +};
+>  fs/f2fs/file.c    | 2 ++
+>  fs/f2fs/segment.c | 1 -
+>  2 files changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+> index 84293423f830..3a5c35fa0603 100644
+> --- a/fs/f2fs/file.c
+> +++ b/fs/f2fs/file.c
+> @@ -1754,6 +1754,8 @@ static int f2fs_ioc_commit_atomic_write(struct file *filp)
+>  	if (ret)
+>  		return ret;
+>  
+> +	f2fs_balance_fs(F2FS_I_SB(inode), true);
 > +
->  /*
->   * Trap & Exception support
->   */
-> @@ -314,10 +349,10 @@ static void show_signal_msg(int signr, struct  
-> pt_regs *regs, int code,
->  	if (!unhandled_signal(current, signr))
->  		return;
->
-> -	pr_info("%s[%d]: unhandled signal %d at "REG_FMT \
-> -		" nip "REG_FMT" lr "REG_FMT" code %x",
-> -		current->comm, current->pid, signr, addr,
-> -		regs->nip, regs->link, code);
-> +	pr_info("%s[%d]: %s (%d) at "REG_FMT" nip "REG_FMT \
-> +		" lr "REG_FMT" code %x",
-> +		current->comm, current->pid, signames[signr],
-> +		signr, addr, regs->nip, regs->link, code);
-
-Are we sure that signr is always within the limits of the table ?
-
-Christophe
->
->  	print_vma_addr(KERN_CONT " in ", regs->nip);
->
-> --
-> 2.17.1
-
-
+>  	inode_lock(inode);
+>  
+>  	down_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
+> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+> index d28fa03a115f..17354089b4ab 100644
+> --- a/fs/f2fs/segment.c
+> +++ b/fs/f2fs/segment.c
+> @@ -445,7 +445,6 @@ int f2fs_commit_inmem_pages(struct inode *inode)
+>  	struct f2fs_inode_info *fi = F2FS_I(inode);
+>  	int err;
+>  
+> -	f2fs_balance_fs(sbi, true);
+>  	f2fs_lock_op(sbi);
+>  
+>  	set_inode_flag(inode, FI_ATOMIC_COMMIT);
+> 
