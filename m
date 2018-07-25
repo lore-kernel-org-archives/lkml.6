@@ -6,69 +6,79 @@ X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DF4FC67790
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 20:33:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1C97C67790
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 20:33:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 20E0720671
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 20:33:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8876220671
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 20:33:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="afT/Sjkx"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 20E0720671
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="sopwaHrG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8876220671
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731268AbeGYVqj (ORCPT
+        id S1731304AbeGYVqn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 17:46:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45232 "EHLO mail.kernel.org"
+        Wed, 25 Jul 2018 17:46:43 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45350 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730305AbeGYVqi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Jul 2018 17:46:38 -0400
-Received: from localhost (unknown [104.132.1.75])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1731270AbeGYVqn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Jul 2018 17:46:43 -0400
+Received: from [10.82.11.241] (unknown [131.107.174.113])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D06FF20844;
-        Wed, 25 Jul 2018 20:33:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0BF0F20882;
+        Wed, 25 Jul 2018 20:33:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1532550799;
-        bh=BaWtRWU+Yd8nt5ZbC5jhPWuFBn5ocu5Q3gl0zuLeX8A=;
-        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
-        b=afT/Sjkx+1ZrWpX5eNPD+F0KkHcG/7u4//WwUxBqhyR+eghxShjxudPb35vNSZnVQ
-         f2qQfv4wJ3NU1dN6v1UEhSnir39/h+KoAPCnreSiAvsz+NkxRTyeCkdc3K0WoIZrQ2
-         k5DVLixCJiTlB1TxxQ/GNp8kzE10rqUM1Lbqkq3w=
-Content-Type: text/plain; charset="utf-8"
+        s=default; t=1532550804;
+        bh=Bwypo21a6fUJsRcl7nYlbn28qSONz3wP0EIngUGuP+I=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=sopwaHrGn9+XpeBYFWtG/ZfCOLqLlnwpYir6DhIu343CJekwONGbYfNcw72UZQCT0
+         Ch5amELl4AsRWfkY91wO91cwheFkiz5WckucMUOUJucQJStHtEfJ9PIE+aWfYj7UpT
+         oGub0H7cfd6k4tnllfInzdUv/32LPOGxCwH/r5jY=
+Subject: Re: [PATCH v1 0/4] PCI: Remove unnecessary includes of
+ <linux/pci-aspm.h>
+To:     Bjorn Helgaas <helgaas@kernel.org>, linux-pci@vger.kernel.org
+Cc:     Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        Johannes Berg <johannes.berg@intel.com>,
+        Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
+        Luca Coelho <luciano.coelho@intel.com>,
+        ath9k-devel@qca.qualcomm.com, linuxwifi@intel.com,
+        intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org
+References: <153254813164.92573.10755585465477668768.stgit@bhelgaas-glaptop.roam.corp.google.com>
+From:   Sinan Kaya <okaya@kernel.org>
+Message-ID: <43748afd-712a-48e5-97a9-0b6046f575b3@kernel.org>
+Date:   Wed, 25 Jul 2018 13:33:23 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-To:     Nicholas Mc Guire <hofrat@osadl.org>,
-        Shawn Guo <shawnguo@kernel.org>
-From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <1531500004-23175-1-git-send-email-hofrat@osadl.org>
-Cc:     Bai Ping <ping.bai@nxp.com>, Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Nicholas Mc Guire <hofrat@osadl.org>
-References: <1531500004-23175-1-git-send-email-hofrat@osadl.org>
-Message-ID: <153255079923.48062.1152946611739352576@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: [PATCH] clk: imx6sll: fix missing of_node_put()
-Date:   Wed, 25 Jul 2018 13:33:19 -0700
+In-Reply-To: <153254813164.92573.10755585465477668768.stgit@bhelgaas-glaptop.roam.corp.google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Nicholas Mc Guire (2018-07-13 09:40:04)
-> of_find_compatible_node() is returning a device node with refcount
-> incremented and must be explicitly decremented after the last use
-> which is right after the us in of_iomap() here.
-> =
-
-> Signed-off-by: Nicholas Mc Guire <hofrat@osadl.org>
-> Fixes: commit 4a5f720b6542 ("clk: imx: add clock driver for imx6sll")
+On 7/25/2018 12:52 PM, Bjorn Helgaas wrote:
+> emove includes of <linux/pci-aspm.h> from files that don't need
+> it.  I'll apply all these via the PCI tree unless there's objection.
+> 
 > ---
+> 
+> Bjorn Helgaas (4):
+>        igb: Remove unnecessary include of <linux/pci-aspm.h>
+>        ath9k: Remove unnecessary include of <linux/pci-aspm.h>
+>        iwlwifi: Remove unnecessary include of <linux/pci-aspm.h>
+>        PCI: Remove unnecessary include of <linux/pci-aspm.h>
 
-Applied to clk-next
+Thanks.
 
+Reviewed-by: Sinan Kaya <okaya@kernel.org>
+
+Is it possible to kill that file altogether? I haven't looked who is
+using outside of pci directory.
