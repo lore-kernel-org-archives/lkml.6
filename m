@@ -2,101 +2,109 @@ Return-Path: <SRS0=S+WB=KJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A46E2C6778F
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 06:21:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E2B6C6778F
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 06:23:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 542BB20890
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 06:21:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B91CC20890
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 06:23:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="sbexxuKY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 542BB20890
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kW+3Kbdj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B91CC20890
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728505AbeGYHbO (ORCPT
+        id S1728390AbeGYHdP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 03:31:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60870 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728182AbeGYHbN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Jul 2018 03:31:13 -0400
-Received: from localhost (unknown [104.132.1.75])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7890A20671;
-        Wed, 25 Jul 2018 06:21:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1532499664;
-        bh=ebZ/fkv+ldar5Tj3LjQqmqTe+9AKDymjNmDKaPZyGLA=;
-        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
-        b=sbexxuKYx8hzVmVoHBxImdklizsKXHCidORWxRq4dN7p7O/S8k/Vz6wBSXwgOTe5U
-         eRuiBiKRUGmmS/3WBTX5ZfXY1YlJa4K33Z7sj7G6kIk6TcGWySvJs0mk6HEYnvIY91
-         88p2ZpQFZ1ACClnwXBhho2r9GeCTcCP5ZYXRYjEc=
-Content-Type: text/plain; charset="utf-8"
+        Wed, 25 Jul 2018 03:33:15 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:39305 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727988AbeGYHdP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Jul 2018 03:33:15 -0400
+Received: by mail-pg1-f196.google.com with SMTP id g2-v6so4576762pgs.6;
+        Tue, 24 Jul 2018 23:23:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=b4kVYucLO65RflcuuxS7nMmaGT7KXkhvyRlBN1W21eg=;
+        b=kW+3KbdjaNa47u5URRQUqCreUWBkQ0FA2vyXorUctGuvaAuFtN3otUoaYalVVwawC4
+         BewWHQw+IAPmxfsttqgA/ykX2I9IekMLRFM/9uMArNmc3Tox06QCiYhnB9VKg/obOKBs
+         ltTzEfnvHjQvUtE3DM3JThyclZPQt/fiRw75i5Dn0+iQrYoieY+831V5fr1LvRHPpGSB
+         QgqkTMl9Dp5/kdxyOT1c5gzyb9r5GJ9H9rGbL7ZeR9elIEzPTAZj3C2zKPAD93P43BpL
+         GfEXY6TFGfQc4tPRSE5ZCsmQCEWT5c63idihZnznJATgk3CqSp9H0lcsV13XTSAsD4a2
+         ii6g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=b4kVYucLO65RflcuuxS7nMmaGT7KXkhvyRlBN1W21eg=;
+        b=jxlzv2JX5w+stGslMd/digqovDDMqlcZ/OgCsWYQ1ekA/DTyziWc997tpf50uz8yUO
+         x6ZFIy5kzoexDC+ET62cqQjzBiT6L0QiooA3snmTDx1WeCPYzMFaHMTmHu80hBSMwAKc
+         0V4Z3IfQSUZZ7SUACp2onLyTLg8QVJSNAb6GES3osVgJm3tWxJiQhMhbZGytCikuDc65
+         BqDxTteMEv0/4TZ8duQfyzrpTPKbViiHMeWCIpUkt6GOISA1SzNSBVx9b40PlbQ2vGS4
+         +LMhqGyBcLNgT6VElWqH+wotxxoz3WR8Bbl4JMOksrXb1+r6RwFNpbf6xOBngaTP+rXT
+         O9dQ==
+X-Gm-Message-State: AOUpUlFjsfKXac6vrOQKDkZxtLDl51UOnl1QtPuZYFjPqJTlasAVdMLR
+        EozKCqHIyOXXkLZl6lxpcMWgZpgjzTM=
+X-Google-Smtp-Source: AAOMgpcMeLE3ADk1x/Ro7PD29MA88OS5gAyOIiYFOHi3Wo8aVBrhfr4luKZAr50QHNPy8HQB6JNY/A==
+X-Received: by 2002:a62:6eca:: with SMTP id j193-v6mr20951534pfc.256.1532499785459;
+        Tue, 24 Jul 2018 23:23:05 -0700 (PDT)
+Received: from localhost.localdomain ([203.205.141.40])
+        by smtp.gmail.com with ESMTPSA id b12-v6sm19518505pfe.148.2018.07.24.23.23.00
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 24 Jul 2018 23:23:04 -0700 (PDT)
+Subject: Re: [PATCH] KVM/MMU: Combine flushing remote tlb in mmu_set_spte()
+To:     Paolo Bonzini <pbonzini@redhat.com>,
+        Tianyu Lan <Tianyu.Lan@microsoft.com>
+Cc:     "rkrcmar@redhat.com" <rkrcmar@redhat.com>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "hpa@zytor.com" <hpa@zytor.com>, "x86@kernel.org" <x86@kernel.org>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Xiao Guangrong <guangrong.xiao@linux.intel.com>,
+        Junaid Shahid <junaids@google.com>
+References: <1532420205-29930-1-git-send-email-Tianyu.Lan@microsoft.com>
+ <1aaaecab-0e18-f504-5465-06db9d852cc5@redhat.com>
+From:   Xiao Guangrong <xiaoguangrong.eric@gmail.com>
+Message-ID: <56751e17-a271-1a73-026b-838e6b739420@gmail.com>
+Date:   Wed, 25 Jul 2018 14:22:54 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-To:     Edgar Bernardi Righi <edgar.righi@lsitec.org.br>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <CADHB5bAns1PmTvq=fG8Rc2S6orEh7wf5XYAGQONTKMsoYv-UTg@mail.gmail.com>
-Cc:     mark.rutland@arm.com, support@cubietech.com,
-        Laisa Costa - LSI-TEC <laisa.costa@lsitec.org.br>,
-        linux@cubietech.com, darren@cubietech.com,
-        =?utf-8?q?Guilherme_G=2E_Sim=C3=B5es?= 
-        <guilherme.simoes@lsitec.org.br>, catalin.marinas@arm.com,
-        Michael Turquette <mturquette@baylibre.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>, mkzuffo@lsi.usp.br,
-        linux@armlinux.org.uk, will.deacon@arm.com,
-        jeff.chen@actions-semi.com, robh+dt@kernel.org,
-        thomas liau <thomas.liau@actions-semi.com>,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        pn@denx.de, =?utf-8?q?Andreas_F=C3=A4rber?= <afaerber@suse.de>,
-        Jon maddog Hall <jon.maddog.hall@gmail.com>,
-        mp-cs@actions-semi.com
-References: <CADHB5bAns1PmTvq=fG8Rc2S6orEh7wf5XYAGQONTKMsoYv-UTg@mail.gmail.com>
-Message-ID: <153249966379.48062.8866967540355341765@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: [PATCH v1 01/04] clk: actions: Add Actions Semi S500 SoC clock support
-Date:   Tue, 24 Jul 2018 23:21:03 -0700
+In-Reply-To: <1aaaecab-0e18-f504-5465-06db9d852cc5@redhat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Edgar Bernardi Righi (2018-07-18 08:32:34)
-> Add Actions Semi S500 SoC clock support.
-> Basic clock support for S500 SoC was implemented using the Actions
-> Semi Owl clock driver.
-> Tested on a Lemaker Guitar board.
-> =
 
-> This patch depends on patch "[PATCH v6 1/5] clk: actions: Add missing
-> REGMAP_MMIO dependency" by Saravanan Sekar.
-> This patch depends on patch "[PATCH] clk: actions: Add custom delay
-> option to Actions Semi OWL pll clock driver" by Edgar Bernardi Righi.
 
-The depends list can be left out of the commit text and go below a
-triple dash '---' after the sign-off chain.
+On 07/24/2018 10:35 PM, Paolo Bonzini wrote:
+> On 24/07/2018 10:17, Tianyu Lan wrote:
+>> mmu_set_spte() flushes remote tlbs for drop_parent_pte/drop_spte()
+>> and set_spte() separately. This may introduce redundant flush. This
+>> patch is to combine these flushes and check flush request after
+>> calling set_spte().
+>>
+>> Signed-off-by: Lan Tianyu <Tianyu.Lan@microsoft.com>
+> 
+> Looks good, but I'd like a second opinion.  Guangrong, Junaid, can you
+> review this?
+> 
 
-> =
+It looks good to me.
 
-> File(s) created: "/drivers/clk/actions/owl-s500.c"
-> File(s) updated: "/drivers/clk/actions/Makefile", "/drivers/clk/actions/K=
-config"
+Reviewed-by: Xiao Guangrong <xiaoguangrong@tencent.com>
 
-Please remove these "Files created" messages from your patches.
-Preferably use git to format your patches before sending too, but using
-diff is OK too I guess.
-
-> =
-
-> Signed-off-by: Edgar Bernardi Righi <edgar.righi@lsitec.org.br>
-> =
-
-> diff -uprN -X vanilla/Documentation/dontdiff
-> vanilla/drivers/clk/actions/Kconfig linux/drivers/clk/actions/Kconfig
+BTW, the @intel box is not accessible to me now. ;)
