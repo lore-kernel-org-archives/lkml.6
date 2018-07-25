@@ -6,211 +6,924 @@ X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9565C6778F
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 09:41:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A95FC67790
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 09:41:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AF64120685
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 09:41:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AF64120685
+	by mail.kernel.org (Postfix) with ESMTP id CB83120685
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 09:41:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CB83120685
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728937AbeGYKwZ (ORCPT
+        id S1728954AbeGYKw2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 06:52:25 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:43284 "EHLO
+        Wed, 25 Jul 2018 06:52:28 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:43328 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728644AbeGYKwY (ORCPT
+        with ESMTP id S1728644AbeGYKw1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Jul 2018 06:52:24 -0400
+        Wed, 25 Jul 2018 06:52:27 -0400
 Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 62C53CC3;
-        Wed, 25 Jul 2018 09:41:18 +0000 (UTC)
-Date:   Wed, 25 Jul 2018 11:41:16 +0200
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 247DBCD5;
+        Wed, 25 Jul 2018 09:41:23 +0000 (UTC)
+Date:   Wed, 25 Jul 2018 11:41:21 +0200
 From:   Greg KH <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org,
         Andrew Morton <akpm@linux-foundation.org>,
         torvalds@linux-foundation.org, stable@vger.kernel.org
 Cc:     lwn@lwn.net, Jiri Slaby <jslaby@suse.cz>
-Subject: Linux 4.9.115
-Message-ID: <20180725094116.GA25314@kroah.com>
+Subject: Re: Linux 4.9.115
+Message-ID: <20180725094121.GB25314@kroah.com>
+References: <20180725094116.GA25314@kroah.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="YiEDa0DAkWCtVeE4"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20180725094116.GA25314@kroah.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
---YiEDa0DAkWCtVeE4
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-I'm announcing the release of the 4.9.115 kernel.
-
-All users of the 4.9 kernel series must upgrade.
-
-The updated 4.9.y git tree can be found at:
-	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git linu=
-x-4.9.y
-and can be browsed at the normal kernel.org git web browser:
-	http://git.kernel.org/?p=3Dlinux/kernel/git/stable/linux-stable.git;a=3Dsu=
-mmary
-
-thanks,
-
-greg k-h
-
-------------
-
- Makefile                                   |    2 -
- arch/arc/configs/axs101_defconfig          |    1=20
- arch/arc/configs/axs103_defconfig          |    1=20
- arch/arc/configs/axs103_smp_defconfig      |    1=20
- arch/arc/configs/nsim_700_defconfig        |    1=20
- arch/arc/configs/nsim_hs_defconfig         |    1=20
- arch/arc/configs/nsim_hs_smp_defconfig     |    1=20
- arch/arc/configs/nsimosci_defconfig        |    1=20
- arch/arc/configs/nsimosci_hs_defconfig     |    1=20
- arch/arc/configs/nsimosci_hs_smp_defconfig |    1=20
- arch/arc/include/asm/page.h                |    2 -
- arch/arc/include/asm/pgtable.h             |    2 -
- arch/x86/include/asm/apm.h                 |    6 ----
- arch/x86/kernel/apm_32.c                   |    5 +++
- arch/x86/kernel/cpu/mcheck/mce.c           |    3 --
- block/blk-core.c                           |    9 ++----
- drivers/gpu/drm/i915/i915_irq.c            |   32 +++++++++++++++++++++--
- drivers/net/ethernet/broadcom/tg3.c        |    9 ++++++
- drivers/net/phy/phy_device.c               |    7 +----
- drivers/net/usb/asix_devices.c             |    4 ++
- drivers/net/usb/qmi_wwan.c                 |    1=20
- drivers/ptp/ptp_chardev.c                  |    1=20
- drivers/usb/host/xhci.c                    |   40 ++++++++++++++++++++++++=
-++---
- drivers/usb/host/xhci.h                    |    4 ++
- drivers/vfio/pci/vfio_pci.c                |    4 ++
- fs/fat/inode.c                             |   20 +++++++++-----
- include/linux/skbuff.h                     |   10 +++----
- include/net/ipv6.h                         |    2 -
- lib/rhashtable.c                           |   17 +++++++-----
- mm/huge_memory.c                           |    2 +
- mm/memcontrol.c                            |    2 -
- net/core/gen_stats.c                       |   16 ++++++++++-
- net/core/skbuff.c                          |    1=20
- net/ipv4/fib_frontend.c                    |    1=20
- net/ipv4/sysctl_net_ipv4.c                 |    5 ++-
- net/ipv4/tcp.c                             |    3 --
- net/sunrpc/xprtrdma/rpc_rdma.c             |    2 -
- sound/core/rawmidi.c                       |   20 ++++++++++----
- virt/kvm/eventfd.c                         |    6 +++-
- 39 files changed, 175 insertions(+), 72 deletions(-)
-
-Alan Jenkins (1):
-      block: do not use interruptible wait anywhere
-
-Alexander Couzens (1):
-      net: usb: asix: replace mii_nway_restart in resume path
-
-Alexey Brodkin (2):
-      ARC: Fix CONFIG_SWAP
-      ARC: configs: Remove CONFIG_INITRAMFS_SOURCE from defconfigs
-
-Chuck Lever (1):
-      xprtrdma: Return -ENOBUFS when no pages are available
-
-Colin Ian King (1):
-      ipv6: fix useless rol32 call on hash
-
-David Ahern (1):
-      net/ipv4: Set oif in fib_compute_spec_dst
-
-Davidlohr Bueso (1):
-      lib/rhashtable: consider param->min_size when setting initial table s=
-ize
-
-Dewet Thibaut (1):
-      x86/MCE: Remove min interval polling limitation
-
-Greg Kroah-Hartman (1):
-      Linux 4.9.115
-
-Gustavo A. R. Silva (2):
-      vfio/pci: Fix potential Spectre v1
-      ptp: fix missing break in switch
-
-Heiner Kallweit (1):
-      net: phy: fix flag masking in __set_phy_supported
-
-Hugh Dickins (1):
-      mm/huge_memory.c: fix data loss when splitting a file pmd
-
-Jing Xia (1):
-      mm: memcg: fix use after free in mem_cgroup_iter()
-
-Lan Tianyu (1):
-      KVM/Eventfd: Avoid crash when assign and deassign specific eventfd in=
- parallel.
-
-Lorenzo Colitti (1):
-      net: diag: Don't double-free TCP_NEW_SYN_RECV sockets in tcp_abort
-
-Matevz Vucnik (1):
-      qmi_wwan: add support for Quectel EG91
-
-Mathias Nyman (1):
-      xhci: Fix perceived dead host due to runtime suspend race with event =
-handler
-
-OGAWA Hirofumi (1):
-      fat: fix memory allocation failure handling of match_strdup()
-
-Sanjeev Bansal (1):
-      tg3: Add higher cpu clock for 5762.
-
-Stefano Brivio (2):
-      net: Don't copy pfmemalloc flag in __copy_skb_header()
-      skbuff: Unconditionally copy pfmemalloc in __skb_clone()
-
-Takashi Iwai (1):
-      ALSA: rawmidi: Change resized buffers atomically
-
-Toke H=F8iland-J=F8rgensen (1):
-      gen_stats: Fix netlink stats dumping in the presence of padding
-
-Tyler Hicks (1):
-      ipv4: Return EINVAL when ping_group_range sysctl doesn't map to user =
-ns
-
-Ville Syrj=E4l=E4 (2):
-      x86/apm: Don't access __preempt_count with zeroed fs
-      drm/i915: Fix hotplug irq ack on i965/g4x
-
-Vineet Gupta (1):
-      ARC: mm: allow mprotect to make stack mappings executable
-
-
---YiEDa0DAkWCtVeE4
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEZH8oZUiU471FcZm+ONu9yGCSaT4FAltYRbkACgkQONu9yGCS
-aT4y2xAAkIZ8U27E5Kt1BA1USXyOzBXcBS9jpa5BtD/AYC8RG2EhbU0EWZKO1P8o
-otFkKBpKyUSvqdmtH3Piq5seHFajxr8yJZwXCcveNJZzh1LKvXwxmWBPHcSNHea5
-raiGdVCaxMbkDEVMHtE04DQVZWZBN2TdYU8iaOIGvRT012Z5hIMbkqE+uKsLjWvx
-PikSlGsT2an7kNJ4SFjpRnRyYIHWe3+4DrkQGd6O+HSbFZRTK71UcsLQwr9w+RHp
-rXmUAxBR49Ip7F9HxBVFeRy7BjwLXcd7qydXfQXAfDGoDWlAJ8vyXJI1muAdekFk
-RECRWrZnDiz8kyp0tu6l+rk3uRsQ2tclX+lbETdvU0AybyoQMsHjWYkcqjGSS2vU
-O3vxAl/VQI1O8Gzwz5SV5EFirwddhU+cydMxle5xla9tuL4GetUZ9D4gndeNQKhQ
-j8wsZyZt0KRI8qdCoIV5RDUwxgOIsVmNu5gOjBJCoRxEFFJ4QkHGHbSKunZMNtBq
-i4Hrk4HCsNXe1lCIBtW8mU/Yw3hI7g8uAT2KqfOi8fqjOdaVx71LGtoEO2jlNuNu
-oVcM+vmSCcvT6PH3GYg3a0aGQOnluv9SY9eiOa/T9BVr2onq0YY3k4Y5x6DH3uKR
-HZzwOGeawDpTpq/Z3HIhzExYND6lr4LA2qotCLiAlm3iWaUeoHY=
-=IhBN
------END PGP SIGNATURE-----
-
---YiEDa0DAkWCtVeE4--
+diff --git a/Makefile b/Makefile
+index f4cd42c9b940..889c58e39928 100644
+--- a/Makefile
++++ b/Makefile
+@@ -1,6 +1,6 @@
+ VERSION = 4
+ PATCHLEVEL = 9
+-SUBLEVEL = 114
++SUBLEVEL = 115
+ EXTRAVERSION =
+ NAME = Roaring Lionus
+ 
+diff --git a/arch/arc/configs/axs101_defconfig b/arch/arc/configs/axs101_defconfig
+index 0a0eaf09aac7..5367fe36b69d 100644
+--- a/arch/arc/configs/axs101_defconfig
++++ b/arch/arc/configs/axs101_defconfig
+@@ -11,7 +11,6 @@ CONFIG_NAMESPACES=y
+ # CONFIG_UTS_NS is not set
+ # CONFIG_PID_NS is not set
+ CONFIG_BLK_DEV_INITRD=y
+-CONFIG_INITRAMFS_SOURCE="../arc_initramfs/"
+ CONFIG_EMBEDDED=y
+ CONFIG_PERF_EVENTS=y
+ # CONFIG_VM_EVENT_COUNTERS is not set
+diff --git a/arch/arc/configs/axs103_defconfig b/arch/arc/configs/axs103_defconfig
+index 2233f5777a71..d40fad485982 100644
+--- a/arch/arc/configs/axs103_defconfig
++++ b/arch/arc/configs/axs103_defconfig
+@@ -11,7 +11,6 @@ CONFIG_NAMESPACES=y
+ # CONFIG_UTS_NS is not set
+ # CONFIG_PID_NS is not set
+ CONFIG_BLK_DEV_INITRD=y
+-CONFIG_INITRAMFS_SOURCE="../../arc_initramfs_hs/"
+ CONFIG_EMBEDDED=y
+ CONFIG_PERF_EVENTS=y
+ # CONFIG_VM_EVENT_COUNTERS is not set
+diff --git a/arch/arc/configs/axs103_smp_defconfig b/arch/arc/configs/axs103_smp_defconfig
+index 110874705085..06cbd27ef860 100644
+--- a/arch/arc/configs/axs103_smp_defconfig
++++ b/arch/arc/configs/axs103_smp_defconfig
+@@ -11,7 +11,6 @@ CONFIG_NAMESPACES=y
+ # CONFIG_UTS_NS is not set
+ # CONFIG_PID_NS is not set
+ CONFIG_BLK_DEV_INITRD=y
+-CONFIG_INITRAMFS_SOURCE="../../arc_initramfs_hs/"
+ CONFIG_EMBEDDED=y
+ CONFIG_PERF_EVENTS=y
+ # CONFIG_VM_EVENT_COUNTERS is not set
+diff --git a/arch/arc/configs/nsim_700_defconfig b/arch/arc/configs/nsim_700_defconfig
+index b0066a749d4c..df609fce999b 100644
+--- a/arch/arc/configs/nsim_700_defconfig
++++ b/arch/arc/configs/nsim_700_defconfig
+@@ -11,7 +11,6 @@ CONFIG_NAMESPACES=y
+ # CONFIG_UTS_NS is not set
+ # CONFIG_PID_NS is not set
+ CONFIG_BLK_DEV_INITRD=y
+-CONFIG_INITRAMFS_SOURCE="../arc_initramfs/"
+ CONFIG_KALLSYMS_ALL=y
+ CONFIG_EMBEDDED=y
+ CONFIG_PERF_EVENTS=y
+diff --git a/arch/arc/configs/nsim_hs_defconfig b/arch/arc/configs/nsim_hs_defconfig
+index ebe9ebb92933..1dbb661b4c86 100644
+--- a/arch/arc/configs/nsim_hs_defconfig
++++ b/arch/arc/configs/nsim_hs_defconfig
+@@ -11,7 +11,6 @@ CONFIG_NAMESPACES=y
+ # CONFIG_UTS_NS is not set
+ # CONFIG_PID_NS is not set
+ CONFIG_BLK_DEV_INITRD=y
+-CONFIG_INITRAMFS_SOURCE="../../arc_initramfs_hs/"
+ CONFIG_KALLSYMS_ALL=y
+ CONFIG_EMBEDDED=y
+ CONFIG_PERF_EVENTS=y
+diff --git a/arch/arc/configs/nsim_hs_smp_defconfig b/arch/arc/configs/nsim_hs_smp_defconfig
+index 4bde43278be6..cb36a69e5ed1 100644
+--- a/arch/arc/configs/nsim_hs_smp_defconfig
++++ b/arch/arc/configs/nsim_hs_smp_defconfig
+@@ -9,7 +9,6 @@ CONFIG_NAMESPACES=y
+ # CONFIG_UTS_NS is not set
+ # CONFIG_PID_NS is not set
+ CONFIG_BLK_DEV_INITRD=y
+-CONFIG_INITRAMFS_SOURCE="../arc_initramfs_hs/"
+ CONFIG_KALLSYMS_ALL=y
+ CONFIG_EMBEDDED=y
+ CONFIG_PERF_EVENTS=y
+diff --git a/arch/arc/configs/nsimosci_defconfig b/arch/arc/configs/nsimosci_defconfig
+index f6fb3d26557e..5680daa65471 100644
+--- a/arch/arc/configs/nsimosci_defconfig
++++ b/arch/arc/configs/nsimosci_defconfig
+@@ -11,7 +11,6 @@ CONFIG_NAMESPACES=y
+ # CONFIG_UTS_NS is not set
+ # CONFIG_PID_NS is not set
+ CONFIG_BLK_DEV_INITRD=y
+-CONFIG_INITRAMFS_SOURCE="../arc_initramfs/"
+ CONFIG_KALLSYMS_ALL=y
+ CONFIG_EMBEDDED=y
+ CONFIG_PERF_EVENTS=y
+diff --git a/arch/arc/configs/nsimosci_hs_defconfig b/arch/arc/configs/nsimosci_hs_defconfig
+index b9f0fe00044b..87decc491c58 100644
+--- a/arch/arc/configs/nsimosci_hs_defconfig
++++ b/arch/arc/configs/nsimosci_hs_defconfig
+@@ -11,7 +11,6 @@ CONFIG_NAMESPACES=y
+ # CONFIG_UTS_NS is not set
+ # CONFIG_PID_NS is not set
+ CONFIG_BLK_DEV_INITRD=y
+-CONFIG_INITRAMFS_SOURCE="../arc_initramfs_hs/"
+ CONFIG_KALLSYMS_ALL=y
+ CONFIG_EMBEDDED=y
+ CONFIG_PERF_EVENTS=y
+diff --git a/arch/arc/configs/nsimosci_hs_smp_defconfig b/arch/arc/configs/nsimosci_hs_smp_defconfig
+index 6da71ba253a9..4d14684dc74a 100644
+--- a/arch/arc/configs/nsimosci_hs_smp_defconfig
++++ b/arch/arc/configs/nsimosci_hs_smp_defconfig
+@@ -9,7 +9,6 @@ CONFIG_IKCONFIG_PROC=y
+ # CONFIG_UTS_NS is not set
+ # CONFIG_PID_NS is not set
+ CONFIG_BLK_DEV_INITRD=y
+-CONFIG_INITRAMFS_SOURCE="../arc_initramfs_hs/"
+ CONFIG_PERF_EVENTS=y
+ # CONFIG_COMPAT_BRK is not set
+ CONFIG_KPROBES=y
+diff --git a/arch/arc/include/asm/page.h b/arch/arc/include/asm/page.h
+index 296c3426a6ad..ffb5f33475f1 100644
+--- a/arch/arc/include/asm/page.h
++++ b/arch/arc/include/asm/page.h
+@@ -105,7 +105,7 @@ typedef pte_t * pgtable_t;
+ #define virt_addr_valid(kaddr)  pfn_valid(virt_to_pfn(kaddr))
+ 
+ /* Default Permissions for stack/heaps pages (Non Executable) */
+-#define VM_DATA_DEFAULT_FLAGS   (VM_READ | VM_WRITE | VM_MAYREAD | VM_MAYWRITE)
++#define VM_DATA_DEFAULT_FLAGS   (VM_READ | VM_WRITE | VM_MAYREAD | VM_MAYWRITE | VM_MAYEXEC)
+ 
+ #define WANT_PAGE_VIRTUAL   1
+ 
+diff --git a/arch/arc/include/asm/pgtable.h b/arch/arc/include/asm/pgtable.h
+index e94ca72b974e..c10f5cb203e6 100644
+--- a/arch/arc/include/asm/pgtable.h
++++ b/arch/arc/include/asm/pgtable.h
+@@ -378,7 +378,7 @@ void update_mmu_cache(struct vm_area_struct *vma, unsigned long address,
+ 
+ /* Decode a PTE containing swap "identifier "into constituents */
+ #define __swp_type(pte_lookalike)	(((pte_lookalike).val) & 0x1f)
+-#define __swp_offset(pte_lookalike)	((pte_lookalike).val << 13)
++#define __swp_offset(pte_lookalike)	((pte_lookalike).val >> 13)
+ 
+ /* NOPs, to keep generic kernel happy */
+ #define __pte_to_swp_entry(pte)	((swp_entry_t) { pte_val(pte) })
+diff --git a/arch/x86/include/asm/apm.h b/arch/x86/include/asm/apm.h
+index 46e40aeae446..93eebc636c76 100644
+--- a/arch/x86/include/asm/apm.h
++++ b/arch/x86/include/asm/apm.h
+@@ -6,8 +6,6 @@
+ #ifndef _ASM_X86_MACH_DEFAULT_APM_H
+ #define _ASM_X86_MACH_DEFAULT_APM_H
+ 
+-#include <asm/nospec-branch.h>
+-
+ #ifdef APM_ZERO_SEGS
+ #	define APM_DO_ZERO_SEGS \
+ 		"pushl %%ds\n\t" \
+@@ -33,7 +31,6 @@ static inline void apm_bios_call_asm(u32 func, u32 ebx_in, u32 ecx_in,
+ 	 * N.B. We do NOT need a cld after the BIOS call
+ 	 * because we always save and restore the flags.
+ 	 */
+-	firmware_restrict_branch_speculation_start();
+ 	__asm__ __volatile__(APM_DO_ZERO_SEGS
+ 		"pushl %%edi\n\t"
+ 		"pushl %%ebp\n\t"
+@@ -46,7 +43,6 @@ static inline void apm_bios_call_asm(u32 func, u32 ebx_in, u32 ecx_in,
+ 		  "=S" (*esi)
+ 		: "a" (func), "b" (ebx_in), "c" (ecx_in)
+ 		: "memory", "cc");
+-	firmware_restrict_branch_speculation_end();
+ }
+ 
+ static inline bool apm_bios_call_simple_asm(u32 func, u32 ebx_in,
+@@ -59,7 +55,6 @@ static inline bool apm_bios_call_simple_asm(u32 func, u32 ebx_in,
+ 	 * N.B. We do NOT need a cld after the BIOS call
+ 	 * because we always save and restore the flags.
+ 	 */
+-	firmware_restrict_branch_speculation_start();
+ 	__asm__ __volatile__(APM_DO_ZERO_SEGS
+ 		"pushl %%edi\n\t"
+ 		"pushl %%ebp\n\t"
+@@ -72,7 +67,6 @@ static inline bool apm_bios_call_simple_asm(u32 func, u32 ebx_in,
+ 		  "=S" (si)
+ 		: "a" (func), "b" (ebx_in), "c" (ecx_in)
+ 		: "memory", "cc");
+-	firmware_restrict_branch_speculation_end();
+ 	return error;
+ }
+ 
+diff --git a/arch/x86/kernel/apm_32.c b/arch/x86/kernel/apm_32.c
+index 51287cd90bf6..313a85a7b222 100644
+--- a/arch/x86/kernel/apm_32.c
++++ b/arch/x86/kernel/apm_32.c
+@@ -239,6 +239,7 @@
+ #include <asm/olpc.h>
+ #include <asm/paravirt.h>
+ #include <asm/reboot.h>
++#include <asm/nospec-branch.h>
+ 
+ #if defined(CONFIG_APM_DISPLAY_BLANK) && defined(CONFIG_VT)
+ extern int (*console_blank_hook)(int);
+@@ -613,11 +614,13 @@ static long __apm_bios_call(void *_call)
+ 	gdt[0x40 / 8] = bad_bios_desc;
+ 
+ 	apm_irq_save(flags);
++	firmware_restrict_branch_speculation_start();
+ 	APM_DO_SAVE_SEGS;
+ 	apm_bios_call_asm(call->func, call->ebx, call->ecx,
+ 			  &call->eax, &call->ebx, &call->ecx, &call->edx,
+ 			  &call->esi);
+ 	APM_DO_RESTORE_SEGS;
++	firmware_restrict_branch_speculation_end();
+ 	apm_irq_restore(flags);
+ 	gdt[0x40 / 8] = save_desc_40;
+ 	put_cpu();
+@@ -689,10 +692,12 @@ static long __apm_bios_call_simple(void *_call)
+ 	gdt[0x40 / 8] = bad_bios_desc;
+ 
+ 	apm_irq_save(flags);
++	firmware_restrict_branch_speculation_start();
+ 	APM_DO_SAVE_SEGS;
+ 	error = apm_bios_call_simple_asm(call->func, call->ebx, call->ecx,
+ 					 &call->eax);
+ 	APM_DO_RESTORE_SEGS;
++	firmware_restrict_branch_speculation_end();
+ 	apm_irq_restore(flags);
+ 	gdt[0x40 / 8] = save_desc_40;
+ 	put_cpu();
+diff --git a/arch/x86/kernel/cpu/mcheck/mce.c b/arch/x86/kernel/cpu/mcheck/mce.c
+index c49e146d4332..7e6163c9d434 100644
+--- a/arch/x86/kernel/cpu/mcheck/mce.c
++++ b/arch/x86/kernel/cpu/mcheck/mce.c
+@@ -2397,9 +2397,6 @@ static ssize_t store_int_with_restart(struct device *s,
+ 	if (check_interval == old_check_interval)
+ 		return ret;
+ 
+-	if (check_interval < 1)
+-		check_interval = 1;
+-
+ 	mutex_lock(&mce_sysfs_mutex);
+ 	mce_restart();
+ 	mutex_unlock(&mce_sysfs_mutex);
+diff --git a/block/blk-core.c b/block/blk-core.c
+index 23daf40be371..77b99bf16c83 100644
+--- a/block/blk-core.c
++++ b/block/blk-core.c
+@@ -652,7 +652,6 @@ EXPORT_SYMBOL(blk_alloc_queue);
+ int blk_queue_enter(struct request_queue *q, bool nowait)
+ {
+ 	while (true) {
+-		int ret;
+ 
+ 		if (percpu_ref_tryget_live(&q->q_usage_counter))
+ 			return 0;
+@@ -660,13 +659,11 @@ int blk_queue_enter(struct request_queue *q, bool nowait)
+ 		if (nowait)
+ 			return -EBUSY;
+ 
+-		ret = wait_event_interruptible(q->mq_freeze_wq,
+-				!atomic_read(&q->mq_freeze_depth) ||
+-				blk_queue_dying(q));
++		wait_event(q->mq_freeze_wq,
++			   !atomic_read(&q->mq_freeze_depth) ||
++			   blk_queue_dying(q));
+ 		if (blk_queue_dying(q))
+ 			return -ENODEV;
+-		if (ret)
+-			return ret;
+ 	}
+ }
+ 
+diff --git a/drivers/gpu/drm/i915/i915_irq.c b/drivers/gpu/drm/i915/i915_irq.c
+index 02908e37c228..279d1e021421 100644
+--- a/drivers/gpu/drm/i915/i915_irq.c
++++ b/drivers/gpu/drm/i915/i915_irq.c
+@@ -1684,10 +1684,38 @@ static void valleyview_pipestat_irq_handler(struct drm_i915_private *dev_priv,
+ 
+ static u32 i9xx_hpd_irq_ack(struct drm_i915_private *dev_priv)
+ {
+-	u32 hotplug_status = I915_READ(PORT_HOTPLUG_STAT);
++	u32 hotplug_status = 0, hotplug_status_mask;
++	int i;
++
++	if (IS_G4X(dev_priv) ||
++	    IS_VALLEYVIEW(dev_priv) || IS_CHERRYVIEW(dev_priv))
++		hotplug_status_mask = HOTPLUG_INT_STATUS_G4X |
++			DP_AUX_CHANNEL_MASK_INT_STATUS_G4X;
++	else
++		hotplug_status_mask = HOTPLUG_INT_STATUS_I915;
+ 
+-	if (hotplug_status)
++	/*
++	 * We absolutely have to clear all the pending interrupt
++	 * bits in PORT_HOTPLUG_STAT. Otherwise the ISR port
++	 * interrupt bit won't have an edge, and the i965/g4x
++	 * edge triggered IIR will not notice that an interrupt
++	 * is still pending. We can't use PORT_HOTPLUG_EN to
++	 * guarantee the edge as the act of toggling the enable
++	 * bits can itself generate a new hotplug interrupt :(
++	 */
++	for (i = 0; i < 10; i++) {
++		u32 tmp = I915_READ(PORT_HOTPLUG_STAT) & hotplug_status_mask;
++
++		if (tmp == 0)
++			return hotplug_status;
++
++		hotplug_status |= tmp;
+ 		I915_WRITE(PORT_HOTPLUG_STAT, hotplug_status);
++	}
++
++	WARN_ONCE(1,
++		  "PORT_HOTPLUG_STAT did not clear (0x%08x)\n",
++		  I915_READ(PORT_HOTPLUG_STAT));
+ 
+ 	return hotplug_status;
+ }
+diff --git a/drivers/net/ethernet/broadcom/tg3.c b/drivers/net/ethernet/broadcom/tg3.c
+index 4ffbe850d746..6250989c83d8 100644
+--- a/drivers/net/ethernet/broadcom/tg3.c
++++ b/drivers/net/ethernet/broadcom/tg3.c
+@@ -9276,6 +9276,15 @@ static int tg3_chip_reset(struct tg3 *tp)
+ 
+ 	tg3_restore_clk(tp);
+ 
++	/* Increase the core clock speed to fix tx timeout issue for 5762
++	 * with 100Mbps link speed.
++	 */
++	if (tg3_asic_rev(tp) == ASIC_REV_5762) {
++		val = tr32(TG3_CPMU_CLCK_ORIDE_ENABLE);
++		tw32(TG3_CPMU_CLCK_ORIDE_ENABLE, val |
++		     TG3_CPMU_MAC_ORIDE_ENABLE);
++	}
++
+ 	/* Reprobe ASF enable state.  */
+ 	tg3_flag_clear(tp, ENABLE_ASF);
+ 	tp->phy_flags &= ~(TG3_PHYFLG_1G_ON_VAUX_OK |
+diff --git a/drivers/net/phy/phy_device.c b/drivers/net/phy/phy_device.c
+index bf02f8e4648a..b131e555d3c2 100644
+--- a/drivers/net/phy/phy_device.c
++++ b/drivers/net/phy/phy_device.c
+@@ -1579,11 +1579,8 @@ static int gen10g_resume(struct phy_device *phydev)
+ 
+ static int __set_phy_supported(struct phy_device *phydev, u32 max_speed)
+ {
+-	/* The default values for phydev->supported are provided by the PHY
+-	 * driver "features" member, we want to reset to sane defaults first
+-	 * before supporting higher speeds.
+-	 */
+-	phydev->supported &= PHY_DEFAULT_FEATURES;
++	phydev->supported &= ~(PHY_1000BT_FEATURES | PHY_100BT_FEATURES |
++			       PHY_10BT_FEATURES);
+ 
+ 	switch (max_speed) {
+ 	default:
+diff --git a/drivers/net/usb/asix_devices.c b/drivers/net/usb/asix_devices.c
+index 32e9ec8f1521..5be6b67492d5 100644
+--- a/drivers/net/usb/asix_devices.c
++++ b/drivers/net/usb/asix_devices.c
+@@ -640,10 +640,12 @@ static void ax88772_restore_phy(struct usbnet *dev)
+ 				     priv->presvd_phy_advertise);
+ 
+ 		/* Restore BMCR */
++		if (priv->presvd_phy_bmcr & BMCR_ANENABLE)
++			priv->presvd_phy_bmcr |= BMCR_ANRESTART;
++
+ 		asix_mdio_write_nopm(dev->net, dev->mii.phy_id, MII_BMCR,
+ 				     priv->presvd_phy_bmcr);
+ 
+-		mii_nway_restart(&dev->mii);
+ 		priv->presvd_phy_advertise = 0;
+ 		priv->presvd_phy_bmcr = 0;
+ 	}
+diff --git a/drivers/net/usb/qmi_wwan.c b/drivers/net/usb/qmi_wwan.c
+index 6d654d65f8a0..31a6d87b61b2 100644
+--- a/drivers/net/usb/qmi_wwan.c
++++ b/drivers/net/usb/qmi_wwan.c
+@@ -953,6 +953,7 @@ static const struct usb_device_id products[] = {
+ 	{QMI_FIXED_INTF(0x1e0e, 0x9001, 5)},	/* SIMCom 7230E */
+ 	{QMI_QUIRK_SET_DTR(0x2c7c, 0x0125, 4)},	/* Quectel EC25, EC20 R2.0  Mini PCIe */
+ 	{QMI_QUIRK_SET_DTR(0x2c7c, 0x0121, 4)},	/* Quectel EC21 Mini PCIe */
++	{QMI_QUIRK_SET_DTR(0x2c7c, 0x0191, 4)},	/* Quectel EG91 */
+ 	{QMI_FIXED_INTF(0x2c7c, 0x0296, 4)},	/* Quectel BG96 */
+ 	{QMI_QUIRK_SET_DTR(0x2c7c, 0x0306, 4)},	/* Quectel EP06 Mini PCIe */
+ 
+diff --git a/drivers/ptp/ptp_chardev.c b/drivers/ptp/ptp_chardev.c
+index 58a97d420572..51364621f77c 100644
+--- a/drivers/ptp/ptp_chardev.c
++++ b/drivers/ptp/ptp_chardev.c
+@@ -89,6 +89,7 @@ int ptp_set_pinfunc(struct ptp_clock *ptp, unsigned int pin,
+ 	case PTP_PF_PHYSYNC:
+ 		if (chan != 0)
+ 			return -EINVAL;
++		break;
+ 	default:
+ 		return -EINVAL;
+ 	}
+diff --git a/drivers/usb/host/xhci.c b/drivers/usb/host/xhci.c
+index a7d239f5fc5f..81f25213cb41 100644
+--- a/drivers/usb/host/xhci.c
++++ b/drivers/usb/host/xhci.c
+@@ -891,6 +891,41 @@ static void xhci_disable_port_wake_on_bits(struct xhci_hcd *xhci)
+ 	spin_unlock_irqrestore(&xhci->lock, flags);
+ }
+ 
++static bool xhci_pending_portevent(struct xhci_hcd *xhci)
++{
++	__le32 __iomem		**port_array;
++	int			port_index;
++	u32			status;
++	u32			portsc;
++
++	status = readl(&xhci->op_regs->status);
++	if (status & STS_EINT)
++		return true;
++	/*
++	 * Checking STS_EINT is not enough as there is a lag between a change
++	 * bit being set and the Port Status Change Event that it generated
++	 * being written to the Event Ring. See note in xhci 1.1 section 4.19.2.
++	 */
++
++	port_index = xhci->num_usb2_ports;
++	port_array = xhci->usb2_ports;
++	while (port_index--) {
++		portsc = readl(port_array[port_index]);
++		if (portsc & PORT_CHANGE_MASK ||
++		    (portsc & PORT_PLS_MASK) == XDEV_RESUME)
++			return true;
++	}
++	port_index = xhci->num_usb3_ports;
++	port_array = xhci->usb3_ports;
++	while (port_index--) {
++		portsc = readl(port_array[port_index]);
++		if (portsc & PORT_CHANGE_MASK ||
++		    (portsc & PORT_PLS_MASK) == XDEV_RESUME)
++			return true;
++	}
++	return false;
++}
++
+ /*
+  * Stop HC (not bus-specific)
+  *
+@@ -987,7 +1022,7 @@ EXPORT_SYMBOL_GPL(xhci_suspend);
+  */
+ int xhci_resume(struct xhci_hcd *xhci, bool hibernated)
+ {
+-	u32			command, temp = 0, status;
++	u32			command, temp = 0;
+ 	struct usb_hcd		*hcd = xhci_to_hcd(xhci);
+ 	struct usb_hcd		*secondary_hcd;
+ 	int			retval = 0;
+@@ -1109,8 +1144,7 @@ int xhci_resume(struct xhci_hcd *xhci, bool hibernated)
+  done:
+ 	if (retval == 0) {
+ 		/* Resume root hubs only when have pending events. */
+-		status = readl(&xhci->op_regs->status);
+-		if (status & STS_EINT) {
++		if (xhci_pending_portevent(xhci)) {
+ 			usb_hcd_resume_root_hub(xhci->shared_hcd);
+ 			usb_hcd_resume_root_hub(hcd);
+ 		}
+diff --git a/drivers/usb/host/xhci.h b/drivers/usb/host/xhci.h
+index 836398ade58d..b9181281aa9e 100644
+--- a/drivers/usb/host/xhci.h
++++ b/drivers/usb/host/xhci.h
+@@ -385,6 +385,10 @@ struct xhci_op_regs {
+ #define PORT_PLC	(1 << 22)
+ /* port configure error change - port failed to configure its link partner */
+ #define PORT_CEC	(1 << 23)
++#define PORT_CHANGE_MASK	(PORT_CSC | PORT_PEC | PORT_WRC | PORT_OCC | \
++				 PORT_RC | PORT_PLC | PORT_CEC)
++
++
+ /* Cold Attach Status - xHC can set this bit to report device attached during
+  * Sx state. Warm port reset should be perfomed to clear this bit and move port
+  * to connected state.
+diff --git a/drivers/vfio/pci/vfio_pci.c b/drivers/vfio/pci/vfio_pci.c
+index 43559bed7822..7338e43faa17 100644
+--- a/drivers/vfio/pci/vfio_pci.c
++++ b/drivers/vfio/pci/vfio_pci.c
+@@ -28,6 +28,7 @@
+ #include <linux/uaccess.h>
+ #include <linux/vfio.h>
+ #include <linux/vgaarb.h>
++#include <linux/nospec.h>
+ 
+ #include "vfio_pci_private.h"
+ 
+@@ -755,6 +756,9 @@ static long vfio_pci_ioctl(void *device_data,
+ 			if (info.index >=
+ 			    VFIO_PCI_NUM_REGIONS + vdev->num_regions)
+ 				return -EINVAL;
++			info.index = array_index_nospec(info.index,
++							VFIO_PCI_NUM_REGIONS +
++							vdev->num_regions);
+ 
+ 			i = info.index - VFIO_PCI_NUM_REGIONS;
+ 
+diff --git a/fs/fat/inode.c b/fs/fat/inode.c
+index a2c05f2ada6d..88720011a6eb 100644
+--- a/fs/fat/inode.c
++++ b/fs/fat/inode.c
+@@ -696,13 +696,21 @@ static void fat_set_state(struct super_block *sb,
+ 	brelse(bh);
+ }
+ 
++static void fat_reset_iocharset(struct fat_mount_options *opts)
++{
++	if (opts->iocharset != fat_default_iocharset) {
++		/* Note: opts->iocharset can be NULL here */
++		kfree(opts->iocharset);
++		opts->iocharset = fat_default_iocharset;
++	}
++}
++
+ static void delayed_free(struct rcu_head *p)
+ {
+ 	struct msdos_sb_info *sbi = container_of(p, struct msdos_sb_info, rcu);
+ 	unload_nls(sbi->nls_disk);
+ 	unload_nls(sbi->nls_io);
+-	if (sbi->options.iocharset != fat_default_iocharset)
+-		kfree(sbi->options.iocharset);
++	fat_reset_iocharset(&sbi->options);
+ 	kfree(sbi);
+ }
+ 
+@@ -1117,7 +1125,7 @@ static int parse_options(struct super_block *sb, char *options, int is_vfat,
+ 	opts->fs_fmask = opts->fs_dmask = current_umask();
+ 	opts->allow_utime = -1;
+ 	opts->codepage = fat_default_codepage;
+-	opts->iocharset = fat_default_iocharset;
++	fat_reset_iocharset(opts);
+ 	if (is_vfat) {
+ 		opts->shortname = VFAT_SFN_DISPLAY_WINNT|VFAT_SFN_CREATE_WIN95;
+ 		opts->rodir = 0;
+@@ -1274,8 +1282,7 @@ static int parse_options(struct super_block *sb, char *options, int is_vfat,
+ 
+ 		/* vfat specific */
+ 		case Opt_charset:
+-			if (opts->iocharset != fat_default_iocharset)
+-				kfree(opts->iocharset);
++			fat_reset_iocharset(opts);
+ 			iocharset = match_strdup(&args[0]);
+ 			if (!iocharset)
+ 				return -ENOMEM;
+@@ -1866,8 +1873,7 @@ int fat_fill_super(struct super_block *sb, void *data, int silent, int isvfat,
+ 		iput(fat_inode);
+ 	unload_nls(sbi->nls_io);
+ 	unload_nls(sbi->nls_disk);
+-	if (sbi->options.iocharset != fat_default_iocharset)
+-		kfree(sbi->options.iocharset);
++	fat_reset_iocharset(&sbi->options);
+ 	sb->s_fs_info = NULL;
+ 	kfree(sbi);
+ 	return error;
+diff --git a/include/linux/skbuff.h b/include/linux/skbuff.h
+index 1b3a2f95503d..b048d3d3b327 100644
+--- a/include/linux/skbuff.h
++++ b/include/linux/skbuff.h
+@@ -602,6 +602,7 @@ static inline bool skb_mstamp_after(const struct skb_mstamp *t1,
+  *	@hash: the packet hash
+  *	@queue_mapping: Queue mapping for multiqueue devices
+  *	@xmit_more: More SKBs are pending for this queue
++ *	@pfmemalloc: skbuff was allocated from PFMEMALLOC reserves
+  *	@ndisc_nodetype: router type (from link layer)
+  *	@ooo_okay: allow the mapping of a socket to a queue to be changed
+  *	@l4_hash: indicate hash is a canonical 4-tuple hash over transport
+@@ -692,7 +693,7 @@ struct sk_buff {
+ 				peeked:1,
+ 				head_frag:1,
+ 				xmit_more:1,
+-				__unused:1; /* one bit hole */
++				pfmemalloc:1;
+ 	kmemcheck_bitfield_end(flags1);
+ 
+ 	/* fields enclosed in headers_start/headers_end are copied
+@@ -712,19 +713,18 @@ struct sk_buff {
+ 
+ 	__u8			__pkt_type_offset[0];
+ 	__u8			pkt_type:3;
+-	__u8			pfmemalloc:1;
+ 	__u8			ignore_df:1;
+ 	__u8			nfctinfo:3;
+-
+ 	__u8			nf_trace:1;
++
+ 	__u8			ip_summed:2;
+ 	__u8			ooo_okay:1;
+ 	__u8			l4_hash:1;
+ 	__u8			sw_hash:1;
+ 	__u8			wifi_acked_valid:1;
+ 	__u8			wifi_acked:1;
+-
+ 	__u8			no_fcs:1;
++
+ 	/* Indicates the inner headers are valid in the skbuff. */
+ 	__u8			encapsulation:1;
+ 	__u8			encap_hdr_csum:1;
+@@ -732,11 +732,11 @@ struct sk_buff {
+ 	__u8			csum_complete_sw:1;
+ 	__u8			csum_level:2;
+ 	__u8			csum_bad:1;
+-
+ #ifdef CONFIG_IPV6_NDISC_NODETYPE
+ 	__u8			ndisc_nodetype:2;
+ #endif
+ 	__u8			ipvs_property:1;
++
+ 	__u8			inner_protocol_type:1;
+ 	__u8			remcsum_offload:1;
+ #ifdef CONFIG_NET_SWITCHDEV
+diff --git a/include/net/ipv6.h b/include/net/ipv6.h
+index e64210c98c2b..407087d686a7 100644
+--- a/include/net/ipv6.h
++++ b/include/net/ipv6.h
+@@ -794,7 +794,7 @@ static inline __be32 ip6_make_flowlabel(struct net *net, struct sk_buff *skb,
+ 	 * to minimize possbility that any useful information to an
+ 	 * attacker is leaked. Only lower 20 bits are relevant.
+ 	 */
+-	rol32(hash, 16);
++	hash = rol32(hash, 16);
+ 
+ 	flowlabel = (__force __be32)hash & IPV6_FLOWLABEL_MASK;
+ 
+diff --git a/lib/rhashtable.c b/lib/rhashtable.c
+index 895961c53385..101dac085c62 100644
+--- a/lib/rhashtable.c
++++ b/lib/rhashtable.c
+@@ -783,8 +783,16 @@ EXPORT_SYMBOL_GPL(rhashtable_walk_stop);
+ 
+ static size_t rounded_hashtable_size(const struct rhashtable_params *params)
+ {
+-	return max(roundup_pow_of_two(params->nelem_hint * 4 / 3),
+-		   (unsigned long)params->min_size);
++	size_t retsize;
++
++	if (params->nelem_hint)
++		retsize = max(roundup_pow_of_two(params->nelem_hint * 4 / 3),
++			      (unsigned long)params->min_size);
++	else
++		retsize = max(HASH_DEFAULT_SIZE,
++			      (unsigned long)params->min_size);
++
++	return retsize;
+ }
+ 
+ static u32 rhashtable_jhash2(const void *key, u32 length, u32 seed)
+@@ -841,8 +849,6 @@ int rhashtable_init(struct rhashtable *ht,
+ 	struct bucket_table *tbl;
+ 	size_t size;
+ 
+-	size = HASH_DEFAULT_SIZE;
+-
+ 	if ((!params->key_len && !params->obj_hashfn) ||
+ 	    (params->obj_hashfn && !params->obj_cmpfn))
+ 		return -EINVAL;
+@@ -869,8 +875,7 @@ int rhashtable_init(struct rhashtable *ht,
+ 
+ 	ht->p.min_size = max(ht->p.min_size, HASH_MIN_SIZE);
+ 
+-	if (params->nelem_hint)
+-		size = rounded_hashtable_size(&ht->p);
++	size = rounded_hashtable_size(&ht->p);
+ 
+ 	/* The maximum (not average) chain length grows with the
+ 	 * size of the hash table, at a rate of (log N)/(log log N).
+diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+index 724372866e67..9efe88ef9702 100644
+--- a/mm/huge_memory.c
++++ b/mm/huge_memory.c
+@@ -1642,6 +1642,8 @@ static void __split_huge_pmd_locked(struct vm_area_struct *vma, pmd_t *pmd,
+ 		if (vma_is_dax(vma))
+ 			return;
+ 		page = pmd_page(_pmd);
++		if (!PageDirty(page) && pmd_dirty(_pmd))
++			set_page_dirty(page);
+ 		if (!PageReferenced(page) && pmd_young(_pmd))
+ 			SetPageReferenced(page);
+ 		page_remove_rmap(page, true);
+diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+index 50088150fc17..349f4a8e3c4f 100644
+--- a/mm/memcontrol.c
++++ b/mm/memcontrol.c
+@@ -895,7 +895,7 @@ static void invalidate_reclaim_iterators(struct mem_cgroup *dead_memcg)
+ 	int nid;
+ 	int i;
+ 
+-	while ((memcg = parent_mem_cgroup(memcg))) {
++	for (; memcg; memcg = parent_mem_cgroup(memcg)) {
+ 		for_each_node(nid) {
+ 			mz = mem_cgroup_nodeinfo(memcg, nid);
+ 			for (i = 0; i <= DEF_PRIORITY; i++) {
+diff --git a/net/core/gen_stats.c b/net/core/gen_stats.c
+index 508e051304fb..18f17e1e5762 100644
+--- a/net/core/gen_stats.c
++++ b/net/core/gen_stats.c
+@@ -77,8 +77,20 @@ gnet_stats_start_copy_compat(struct sk_buff *skb, int type, int tc_stats_type,
+ 		d->lock = lock;
+ 		spin_lock_bh(lock);
+ 	}
+-	if (d->tail)
+-		return gnet_stats_copy(d, type, NULL, 0, padattr);
++	if (d->tail) {
++		int ret = gnet_stats_copy(d, type, NULL, 0, padattr);
++
++		/* The initial attribute added in gnet_stats_copy() may be
++		 * preceded by a padding attribute, in which case d->tail will
++		 * end up pointing at the padding instead of the real attribute.
++		 * Fix this so gnet_stats_finish_copy() adjusts the length of
++		 * the right attribute.
++		 */
++		if (ret == 0 && d->tail->nla_type == padattr)
++			d->tail = (struct nlattr *)((char *)d->tail +
++						    NLA_ALIGN(d->tail->nla_len));
++		return ret;
++	}
+ 
+ 	return 0;
+ }
+diff --git a/net/core/skbuff.c b/net/core/skbuff.c
+index 9f697b00158d..8cae7aa4a4ec 100644
+--- a/net/core/skbuff.c
++++ b/net/core/skbuff.c
+@@ -904,6 +904,7 @@ static struct sk_buff *__skb_clone(struct sk_buff *n, struct sk_buff *skb)
+ 	n->cloned = 1;
+ 	n->nohdr = 0;
+ 	n->peeked = 0;
++	C(pfmemalloc);
+ 	n->destructor = NULL;
+ 	C(tail);
+ 	C(end);
+diff --git a/net/ipv4/fib_frontend.c b/net/ipv4/fib_frontend.c
+index ffae472e250a..7bdd89354db5 100644
+--- a/net/ipv4/fib_frontend.c
++++ b/net/ipv4/fib_frontend.c
+@@ -290,6 +290,7 @@ __be32 fib_compute_spec_dst(struct sk_buff *skb)
+ 	if (!ipv4_is_zeronet(ip_hdr(skb)->saddr)) {
+ 		struct flowi4 fl4 = {
+ 			.flowi4_iif = LOOPBACK_IFINDEX,
++			.flowi4_oif = l3mdev_master_ifindex_rcu(dev),
+ 			.daddr = ip_hdr(skb)->saddr,
+ 			.flowi4_tos = RT_TOS(ip_hdr(skb)->tos),
+ 			.flowi4_scope = scope,
+diff --git a/net/ipv4/sysctl_net_ipv4.c b/net/ipv4/sysctl_net_ipv4.c
+index 51a0039cb318..024ab833557d 100644
+--- a/net/ipv4/sysctl_net_ipv4.c
++++ b/net/ipv4/sysctl_net_ipv4.c
+@@ -140,8 +140,9 @@ static int ipv4_ping_group_range(struct ctl_table *table, int write,
+ 	if (write && ret == 0) {
+ 		low = make_kgid(user_ns, urange[0]);
+ 		high = make_kgid(user_ns, urange[1]);
+-		if (!gid_valid(low) || !gid_valid(high) ||
+-		    (urange[1] < urange[0]) || gid_lt(high, low)) {
++		if (!gid_valid(low) || !gid_valid(high))
++			return -EINVAL;
++		if (urange[1] < urange[0] || gid_lt(high, low)) {
+ 			low = make_kgid(&init_user_ns, 1);
+ 			high = make_kgid(&init_user_ns, 0);
+ 		}
+diff --git a/net/ipv4/tcp.c b/net/ipv4/tcp.c
+index 84ffebf0192d..8f15eae3325b 100644
+--- a/net/ipv4/tcp.c
++++ b/net/ipv4/tcp.c
+@@ -3238,8 +3238,7 @@ int tcp_abort(struct sock *sk, int err)
+ 			struct request_sock *req = inet_reqsk(sk);
+ 
+ 			local_bh_disable();
+-			inet_csk_reqsk_queue_drop_and_put(req->rsk_listener,
+-							  req);
++			inet_csk_reqsk_queue_drop(req->rsk_listener, req);
+ 			local_bh_enable();
+ 			return 0;
+ 		}
+diff --git a/net/sunrpc/xprtrdma/rpc_rdma.c b/net/sunrpc/xprtrdma/rpc_rdma.c
+index f57c9f0ab8f9..0287734f126f 100644
+--- a/net/sunrpc/xprtrdma/rpc_rdma.c
++++ b/net/sunrpc/xprtrdma/rpc_rdma.c
+@@ -229,7 +229,7 @@ rpcrdma_convert_iovs(struct rpcrdma_xprt *r_xprt, struct xdr_buf *xdrbuf,
+ 			/* alloc the pagelist for receiving buffer */
+ 			ppages[p] = alloc_page(GFP_ATOMIC);
+ 			if (!ppages[p])
+-				return -EAGAIN;
++				return -ENOBUFS;
+ 		}
+ 		seg[n].mr_page = ppages[p];
+ 		seg[n].mr_offset = (void *)(unsigned long) page_base;
+diff --git a/sound/core/rawmidi.c b/sound/core/rawmidi.c
+index 16f8124b1150..59111cadaec2 100644
+--- a/sound/core/rawmidi.c
++++ b/sound/core/rawmidi.c
+@@ -635,7 +635,7 @@ static int snd_rawmidi_info_select_user(struct snd_card *card,
+ int snd_rawmidi_output_params(struct snd_rawmidi_substream *substream,
+ 			      struct snd_rawmidi_params * params)
+ {
+-	char *newbuf;
++	char *newbuf, *oldbuf;
+ 	struct snd_rawmidi_runtime *runtime = substream->runtime;
+ 	
+ 	if (substream->append && substream->use_count > 1)
+@@ -648,13 +648,17 @@ int snd_rawmidi_output_params(struct snd_rawmidi_substream *substream,
+ 		return -EINVAL;
+ 	}
+ 	if (params->buffer_size != runtime->buffer_size) {
+-		newbuf = krealloc(runtime->buffer, params->buffer_size,
+-				  GFP_KERNEL);
++		newbuf = kmalloc(params->buffer_size, GFP_KERNEL);
+ 		if (!newbuf)
+ 			return -ENOMEM;
++		spin_lock_irq(&runtime->lock);
++		oldbuf = runtime->buffer;
+ 		runtime->buffer = newbuf;
+ 		runtime->buffer_size = params->buffer_size;
+ 		runtime->avail = runtime->buffer_size;
++		runtime->appl_ptr = runtime->hw_ptr = 0;
++		spin_unlock_irq(&runtime->lock);
++		kfree(oldbuf);
+ 	}
+ 	runtime->avail_min = params->avail_min;
+ 	substream->active_sensing = !params->no_active_sensing;
+@@ -665,7 +669,7 @@ EXPORT_SYMBOL(snd_rawmidi_output_params);
+ int snd_rawmidi_input_params(struct snd_rawmidi_substream *substream,
+ 			     struct snd_rawmidi_params * params)
+ {
+-	char *newbuf;
++	char *newbuf, *oldbuf;
+ 	struct snd_rawmidi_runtime *runtime = substream->runtime;
+ 
+ 	snd_rawmidi_drain_input(substream);
+@@ -676,12 +680,16 @@ int snd_rawmidi_input_params(struct snd_rawmidi_substream *substream,
+ 		return -EINVAL;
+ 	}
+ 	if (params->buffer_size != runtime->buffer_size) {
+-		newbuf = krealloc(runtime->buffer, params->buffer_size,
+-				  GFP_KERNEL);
++		newbuf = kmalloc(params->buffer_size, GFP_KERNEL);
+ 		if (!newbuf)
+ 			return -ENOMEM;
++		spin_lock_irq(&runtime->lock);
++		oldbuf = runtime->buffer;
+ 		runtime->buffer = newbuf;
+ 		runtime->buffer_size = params->buffer_size;
++		runtime->appl_ptr = runtime->hw_ptr = 0;
++		spin_unlock_irq(&runtime->lock);
++		kfree(oldbuf);
+ 	}
+ 	runtime->avail_min = params->avail_min;
+ 	return 0;
+diff --git a/virt/kvm/eventfd.c b/virt/kvm/eventfd.c
+index 4d28a9ddbee0..3f24eb1e8554 100644
+--- a/virt/kvm/eventfd.c
++++ b/virt/kvm/eventfd.c
+@@ -119,8 +119,12 @@ irqfd_shutdown(struct work_struct *work)
+ {
+ 	struct kvm_kernel_irqfd *irqfd =
+ 		container_of(work, struct kvm_kernel_irqfd, shutdown);
++	struct kvm *kvm = irqfd->kvm;
+ 	u64 cnt;
+ 
++	/* Make sure irqfd has been initalized in assign path. */
++	synchronize_srcu(&kvm->irq_srcu);
++
+ 	/*
+ 	 * Synchronize with the wait-queue and unhook ourselves to prevent
+ 	 * further events.
+@@ -387,7 +391,6 @@ kvm_irqfd_assign(struct kvm *kvm, struct kvm_irqfd *args)
+ 
+ 	idx = srcu_read_lock(&kvm->irq_srcu);
+ 	irqfd_update(kvm, irqfd);
+-	srcu_read_unlock(&kvm->irq_srcu, idx);
+ 
+ 	list_add_tail(&irqfd->list, &kvm->irqfds.items);
+ 
+@@ -421,6 +424,7 @@ kvm_irqfd_assign(struct kvm *kvm, struct kvm_irqfd *args)
+ 	}
+ #endif
+ 
++	srcu_read_unlock(&kvm->irq_srcu, idx);
+ 	return 0;
+ 
+ fail:
