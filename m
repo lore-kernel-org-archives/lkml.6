@@ -3,118 +3,92 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 969FEC28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 02:41:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9276AC28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 02:41:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 52FA720856
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 02:41:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 52FA720856
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
+	by mail.kernel.org (Postfix) with ESMTP id 47E2720883
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 02:41:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 47E2720883
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388541AbeGYDub (ORCPT
+        id S2388547AbeGYDvU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 23:50:31 -0400
-Received: from mailgw01.mediatek.com ([210.61.82.183]:24743 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S2388420AbeGYDub (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 23:50:31 -0400
-X-UUID: eed5b49cfb8f4c0b9ff3d9cd36235ed4-20180725
-Received: from mtkcas08.mediatek.inc [(172.21.101.126)] by mailgw01.mediatek.com
-        (envelope-from <ck.hu@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 1842499235; Wed, 25 Jul 2018 10:40:57 +0800
-Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
- mtkmbs01n2.mediatek.inc (172.21.101.79) with Microsoft SMTP Server (TLS) id
- 15.0.1210.3; Wed, 25 Jul 2018 10:40:55 +0800
-Received: from [172.21.77.4] (172.21.77.4) by MTKCAS06.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
- Transport; Wed, 25 Jul 2018 10:40:55 +0800
-Message-ID: <1532486454.9280.12.camel@mtksdaap41>
-Subject: Re: [PATCH v1 06/15] drm/mediatek: add memory mode for RDMA
-From:   CK Hu <ck.hu@mediatek.com>
-To:     Stu Hsieh <stu.hsieh@mediatek.com>
-CC:     Philipp Zabel <p.zabel@pengutronix.de>,
-        David Airlie <airlied@linux.ie>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        <dri-devel@lists.freedesktop.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <srv_heupstream@mediatek.com>
-Date:   Wed, 25 Jul 2018 10:40:54 +0800
-In-Reply-To: <1532420235-22268-7-git-send-email-stu.hsieh@mediatek.com>
-References: <1532420235-22268-1-git-send-email-stu.hsieh@mediatek.com>
-         <1532420235-22268-7-git-send-email-stu.hsieh@mediatek.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.10.4-0ubuntu2 
+        Tue, 24 Jul 2018 23:51:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52356 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388464AbeGYDvU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Jul 2018 23:51:20 -0400
+Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id BFA6920856;
+        Wed, 25 Jul 2018 02:41:51 +0000 (UTC)
+Date:   Tue, 24 Jul 2018 22:41:49 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Masami Hiramatsu <mhiramat@kernel.org>
+Cc:     Tom Zanussi <tom.zanussi@linux.intel.com>,
+        Ingo Molnar <mingo@redhat.com>, Shuah Khan <shuah@kernel.org>,
+        Hiraku Toyooka <hiraku.toyooka@cybertrust.co.jp>,
+        linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH 1/3] [BUGFIX] tracing: Fix double free of
+ event_trigger_data
+Message-ID: <20180724224149.0767fd13@gandalf.local.home>
+In-Reply-To: <20180725101653.09e095092a4bb77e6fc558df@kernel.org>
+References: <153149923649.11274.14970833360963898112.stgit@devbox>
+        <153149926702.11274.12489440326560729788.stgit@devbox>
+        <20180723221006.60cc7aa9@vmware.local.home>
+        <20180725000909.6c8b2f3881ee75c4f6bd466b@kernel.org>
+        <20180724164959.3cbc1422@gandalf.local.home>
+        <20180724173008.454cdf10@gandalf.local.home>
+        <20180724191331.738eb819@gandalf.local.home>
+        <20180725101653.09e095092a4bb77e6fc558df@kernel.org>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi, Stu:
+On Wed, 25 Jul 2018 10:16:53 +0900
+Masami Hiramatsu <mhiramat@kernel.org> wrote:
 
-On Tue, 2018-07-24 at 16:17 +0800, Stu Hsieh wrote:
-> This patch add memory mode for RDMA
+> Hm, as far as I can see, when register_trigger() returns >= 0, it already
+> calls ->init the trigger_data. This means its refcount++, and in that
+> case, below patch will miss to free the trigger_data.
+> How about below for tentative fix?
 > 
-> If use RDMA to read data from memory, it should set memory mode to RDMA
-> 
-> Signed-off-by: Stu Hsieh <stu.hsieh@mediatek.com>
-> ---
->  drivers/gpu/drm/mediatek/mtk_disp_rdma.c | 16 +++++++++++++++-
->  1 file changed, 15 insertions(+), 1 deletion(-)
-> 
+> 	if (!ret) {
+> 		ret = -ENOENT;
+> 		/* We have to forcibly free the trigger_data */
+> 		goto out_free;
+> 	} else if (ret > 0)
+> 		ret = 0;
 
-[...]
+Or better yet, match it properly:
 
->  static inline struct mtk_disp_rdma *comp_to_rdma(struct mtk_ddp_comp *comp)
-> @@ -111,7 +116,8 @@ static void mtk_rdma_start(struct mtk_ddp_comp *comp)
->  
->  static void mtk_rdma_stop(struct mtk_ddp_comp *comp)
->  {
-> -	rdma_update_bits(comp, DISP_REG_RDMA_GLOBAL_CON, RDMA_ENGINE_EN, 0);
-> +	writel(RDMA_SOFT_RESET, comp->regs + DISP_REG_RDMA_GLOBAL_CON);
-> +	writel(0, comp->regs + DISP_REG_RDMA_GLOBAL_CON);
+out_reg:
+	/* Up the trigger_data count to make sure reg doesn't free it on failure */
+	event_trigger_init(trigger_ops, trigger_data);
+	ret = cmd_ops->reg(glob, trigger_ops, trigger_data, file);
+	/*
+	 * The above returns on success the # of functions enabled,
+	 * but if it didn't find any functions it returns zero.
+	 * Consider no functions a failure too.
+	 */
+	if (!ret) {
+		cmd_ops->unreg(glob, trigger_ops, trigger_data, file);
+		ret = -ENOENT;
+	} else if (ret > 0)
+		ret = 0;
 
-Without reset, what happen to dram mode? Why direct link mode need not
-this reset?
+	/* Down the counter of trigger_data or free it if not used anymore */
+	event_trigger_free(trigger_ops, trigger_data);
+ out:
+	return ret;
 
->  }
->  
->  static void mtk_rdma_config(struct mtk_ddp_comp *comp, unsigned int width,
-> @@ -121,10 +127,18 @@ static void mtk_rdma_config(struct mtk_ddp_comp *comp, unsigned int width,
->  	unsigned int threshold;
->  	unsigned int reg;
->  	struct mtk_disp_rdma *rdma = comp_to_rdma(comp);
-> +	bool *rdma_memory_mode = comp->comp_mode;
->  
->  	rdma_update_bits(comp, DISP_REG_RDMA_SIZE_CON_0, 0xfff, width);
->  	rdma_update_bits(comp, DISP_REG_RDMA_SIZE_CON_1, 0xfffff, height);
->  
-> +	if (*rdma_memory_mode == true) {
-> +		rdma_update_bits(comp, DISP_REG_RDMA_SIZE_CON_0, 0xff0000,
-> +				 MATRIX_INT_MTX_SEL_DEFAULT);
-> +		rdma_update_bits(comp, DISP_REG_RDMA_GLOBAL_CON,
-> +				 RDMA_MODE_MEMORY, RDMA_MODE_MEMORY);
-> +	}
-> +
-
-I would like this to be a kind of 'layer' config. In some SoC, one layer
-of OVL could switch to direct link input or dram input. So I think it's
-better to move this setting into some layer interface.
-
-Regards,
-CK
-
->  	/*
->  	 * Enable FIFO underflow since DSI and DPI can't be blocked.
->  	 * Keep the FIFO pseudo size reset default of 8 KiB. Set the
-
-
+-- Steve
