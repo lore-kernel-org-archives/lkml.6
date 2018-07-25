@@ -2,147 +2,112 @@ Return-Path: <SRS0=S+WB=KJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C99EFC6778F
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 22:09:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC358C67790
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 22:16:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 73BDB20852
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 22:09:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 59CDA20671
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 22:16:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="uYIENqwM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 73BDB20852
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cL7rttPA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 59CDA20671
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731426AbeGYXWm (ORCPT
+        id S1731417AbeGYXah (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 19:22:42 -0400
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:41986 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731259AbeGYXWl (ORCPT
+        Wed, 25 Jul 2018 19:30:37 -0400
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:38975 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729182AbeGYXah (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Jul 2018 19:22:41 -0400
-Received: from dflxv15.itg.ti.com ([128.247.5.124])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id w6PM8vPR053528;
-        Wed, 25 Jul 2018 17:08:57 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1532556537;
-        bh=lAZfQ4jqXPUAcGQrW9+/fWptYBZbr6cDK3WE114G/fQ=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=uYIENqwMEsz15iylJzG64tLVGKfC6NXvHCb5x6KB6FSZ/uXFXKhrL7MJG6NQ0gK0F
-         d9qHke5zU1ImRm2vHtk5Ovh5VemZz0spS3Ko1aUYbngIKrYqVuOcXyq3szJVe/MSuN
-         +AipTiHQn251ne6nP4VLYFM08RZJCd+tAyrPNr4Q=
-Received: from DFLE104.ent.ti.com (dfle104.ent.ti.com [10.64.6.25])
-        by dflxv15.itg.ti.com (8.14.3/8.13.8) with ESMTP id w6PM8uTi012561;
-        Wed, 25 Jul 2018 17:08:56 -0500
-Received: from DFLE105.ent.ti.com (10.64.6.26) by DFLE104.ent.ti.com
- (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Wed, 25
- Jul 2018 17:08:56 -0500
-Received: from dlep32.itg.ti.com (157.170.170.100) by DFLE105.ent.ti.com
- (10.64.6.26) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
- Wed, 25 Jul 2018 17:08:56 -0500
-Received: from [128.247.58.153] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id w6PM8uEv006331;
-        Wed, 25 Jul 2018 17:08:56 -0500
-Subject: Re: [PATCH v2 1/1] remoteproc: correct rproc_free_vring() to avoid
- invalid kernel paging
-To:     Loic Pallardy <loic.pallardy@st.com>, <bjorn.andersson@linaro.org>,
-        <ohad@wizery.com>
-CC:     <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <arnaud.pouliquen@st.com>, <benjamin.gaignard@linaro.org>
-References: <1530863212-16584-1-git-send-email-loic.pallardy@st.com>
-From:   Suman Anna <s-anna@ti.com>
-Message-ID: <ee64ddf7-e9c6-0b77-8a4e-44f77d264fe0@ti.com>
-Date:   Wed, 25 Jul 2018 17:08:56 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <1530863212-16584-1-git-send-email-loic.pallardy@st.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+        Wed, 25 Jul 2018 19:30:37 -0400
+Received: by mail-ed1-f68.google.com with SMTP id h4-v6so20986edi.6
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Jul 2018 15:16:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=4NMRDrMhaZzJ/NUeiE3JKT22C2v/LUJeqU24eXpt5UY=;
+        b=cL7rttPAn0an7uaM6K9w2V9HHJTQW2ZpDUHcGUmlUCbqtqvc20VMmAySKzYr+2fCkU
+         H6bZd12GHgRsdpU6ZnZ90cJwqEy7klNTWmde4T+wAIZCrT5F8e7LMByCgi1oUaUU3OO+
+         WeeWs+V2jpeNC/ffr9VeSpMOnKPNBSnVhdvPgHLdxSYV+WVKuOXp149Ico0WLdrF40qy
+         SCp5ae7vB2J3HGiS2qCrcRiO/2B5R6WFs4yBCkaMA+Mp/liJZJjArk/Ka6svX1xyakFO
+         amudukLplt2m4pOoQRO+ydOXzeWCvFJxL/CmvIZZabuADMqIJikMr1PNrPVsgTbsQ6QQ
+         y2pA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=4NMRDrMhaZzJ/NUeiE3JKT22C2v/LUJeqU24eXpt5UY=;
+        b=koYRdI6Y9CgHRWH4zmQWHmKt4jr9xzI13b7sU6rDtrRIErmgom3Lb4adF1OMVCEZB4
+         2+eel6qD29ma/fV/yJfwQRFxaYFPMaYK09kWmybQ4TYYLutpyNXlBbKUeOQUFrX4K3ss
+         EBg2eVFWcOKM+rfhvXLAkB71CRVXQtGTuZg+hoM5b2QBisr2mKTmd8mtdudptcbE4woN
+         6mmNx/e7E0WrQKNPpqMp/YAzT1IpUdVZyBcFZWLg5CR7cqmdra810dQjhPkFk+lxMUmF
+         8oF5Y4tJQstq/v/zLKV2rVBcA6egknVMhzA1VElP/lPber4VsMMyojOiCr2+jPpCWPCd
+         YkGw==
+X-Gm-Message-State: AOUpUlEYNxosTIJx7yQmpAGuRgEdINkYjbvnW6XeB1+yBQsL/p/Bl++V
+        LlO8BUvyjK5E/RP5nyaQnvcTl83j
+X-Google-Smtp-Source: AAOMgpdAdq6L9mvOP91/2Lkcidbkbxm6MqWnT48ddq17ziLqFnCsDBa03n2z2U8gPhGNu4MhJpT1jw==
+X-Received: by 2002:a50:8c06:: with SMTP id p6-v6mr23989888edp.282.1532557013052;
+        Wed, 25 Jul 2018 15:16:53 -0700 (PDT)
+Received: from localhost.localdomain ([109.77.251.113])
+        by smtp.gmail.com with ESMTPSA id i63-v6sm6808814edi.16.2018.07.25.15.16.51
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 25 Jul 2018 15:16:52 -0700 (PDT)
+From:   John Whitmore <johnfwhitmore@gmail.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     devel@driverdev.osuosl.org, gregkh@linuxfoundation.org,
+        pombredanne@nexb.com, kstewart@linuxfoundation.org,
+        tglx@linutronix.de, John Whitmore <johnfwhitmore@gmail.com>
+Subject: [PATCH 00/10] staging:rtl8192u: Coding style - r819xU_cmdpkt.h
+Date:   Wed, 25 Jul 2018 23:16:20 +0100
+Message-Id: <20180725221630.28595-1-johnfwhitmore@gmail.com>
+X-Mailer: git-send-email 2.18.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Loic,
+This series of patches contain purely simple coding style changes.
 
-On 07/06/2018 02:46 AM, Loic Pallardy wrote:
-> If rproc_start() failed, rproc_resource_cleanup() is called to clean
-> debugfs entries, then associated iommu mappings, carveouts and vdev.
-> Issue occurs when rproc_free_vring() is trying to reset vring resource
-> table entry.
-> At this time, table_ptr is pointing on loaded resource table and carveouts
-> already released, so access to loaded resource table is generating a kernel
-> paging error:
+I considered renaming the struct cmpk_set_cfg_t as it is never actually
+used. Following its definition however it is used in a #define:
 
-Are you using a device specific CMA pool or carveout, and if so, where
-the pool is? If not, where is the default CMA pool? I am trying to
-reproduce the issue on my platform with the start failure as you
-suggested, but haven't seen it so far. That said, I have seen the exact
-same crash when using HighMEM CMA pools on my downstream kernel when
-stopping the processor, and the root cause is essentially the same as
-what you summarized here. The issue was present with LowMem pools as
-well, but got masked because of the kernel linear mapping.
+#define		cmpk_query_cfg_t	cmpk_set_cfg_t
 
-> 
-> [   12.696535] Unable to handle kernel paging request at virtual address f0f357cc
-> [   12.696540] pgd = (ptrval)
-> [   12.696542] [f0f357cc] *pgd=6d2d0811, *pte=00000000, *ppte=00000000
-> [   12.696558] Internal error: Oops: 807 [#1] SMP ARM
-> [   12.696563] Modules linked in: rpmsg_core v4l2_mem2mem videobuf2_dma_contig sti_drm v4l2_common vida
-> [   12.696598] CPU: 1 PID: 48 Comm: kworker/1:1 Tainted: G        W         4.18.0-rc2-00018-g3170fdd-8
-> [   12.696602] Hardware name: STi SoC with Flattened Device Tree
-> [   12.696625] Workqueue: events request_firmware_work_func
-> [   12.696659] PC is at rproc_free_vring+0x84/0xbc [remoteproc]
-> [   12.696667] LR is at rproc_free_vring+0x70/0xbc [remoteproc]
-> 
-> This patch proposes to simply remove reset of resource table vring entries,
-> as firmware and resource table are reloaded at each rproc boot.
-> rproc_trigger_recovery() not impacted as resources not touched during recovery
-> procedure.
+So whilst the struct cmpk_set_cfg_t is never used, cmpk_query_cfg_t is.
+I left it because the comments described this.
 
-And error recovery doesn't work for me after the rproc_start, stop got
-introduced.
+I was also tempted to remove comments at the end of lines pushing the
+lines over 80 character length. The comments are at the end of sizeof
+operators which explicitly state the size. I'm not sure much is gained
+by the comment, but I left them in:
 
-regards
-Suman
+#define ...     sizeof(struct cmpk_txfb_t)	  /* 20 */
+#define	...     sizeof(struct cmpk_set_cfg_t)     /* 16 */
 
-> 
-> Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
-> ---
-> Changes from V1: typo fixes in commit message
-> 
->  drivers/remoteproc/remoteproc_core.c | 6 ------
->  1 file changed, 6 deletions(-)
-> 
-> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-> index a9609d9..9a8b47c 100644
-> --- a/drivers/remoteproc/remoteproc_core.c
-> +++ b/drivers/remoteproc/remoteproc_core.c
-> @@ -289,16 +289,10 @@ void rproc_free_vring(struct rproc_vring *rvring)
->  {
->  	int size = PAGE_ALIGN(vring_size(rvring->len, rvring->align));
->  	struct rproc *rproc = rvring->rvdev->rproc;
-> -	int idx = rvring->rvdev->vring - rvring;
-> -	struct fw_rsc_vdev *rsc;
->  
->  	dma_free_coherent(rproc->dev.parent, size, rvring->va, rvring->dma);
->  	idr_remove(&rproc->notifyids, rvring->notifyid);
->  
-> -	/* reset resource entry info */
-> -	rsc = (void *)rproc->table_ptr + rvring->rvdev->rsc_offset;
-> -	rsc->vring[idx].da = 0;
-> -	rsc->vring[idx].notifyid = -1;
->  }
->  
->  static int rproc_vdev_do_probe(struct rproc_subdev *subdev)
-> 
+
+*** BLURB HERE ***
+
+John Whitmore (10):
+  staging:rtl8192u: Remove typedef of struct cmpk_txfb_t - Style
+  staging:rtl8192u: Remove unused CMPK_TX_SET_CONFIG_SIZE - Style
+  staging:rtl8192u: Rename bit definition ISR_TxBcnOk - Style
+  staging:rtl8192u: Removed unused CMPK_RX_DBG_MSG_SIZE - Style
+  staging:rtl8192u: Rename ISR_TxBcnErr bit definition - Style
+  staging:rtl8192u: Rename ISR_BcnTimerIntr - Style
+  staging:rtl8192u: Remove multiple blank lines - Style
+  staging:rtl8192u: Correct spelling in comments - style
+  staging:rtl8192u: Remove typedef of struct cmpk_intr_sta_t - Style
+  staging:rtl8192u: Remove typedef from struct cmpk_set_cfg_t - Style
+
+ drivers/staging/rtl8192u/r819xU_cmdpkt.c | 22 ++++++++---------
+ drivers/staging/rtl8192u/r819xU_cmdpkt.h | 31 ++++++++++--------------
+ 2 files changed, 24 insertions(+), 29 deletions(-)
+
+-- 
+2.18.0
 
