@@ -2,143 +2,72 @@ Return-Path: <SRS0=S+WB=KJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 334A4C6778F
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 12:26:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D41F2C67790
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 12:27:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DF48720844
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 12:26:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DF48720844
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=microchip.com
+	by mail.kernel.org (Postfix) with ESMTP id 9645620844
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 12:27:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9645620844
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728990AbeGYNiJ (ORCPT
+        id S1729026AbeGYNic (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 09:38:09 -0400
-Received: from esa3.microchip.iphmx.com ([68.232.153.233]:36724 "EHLO
-        esa3.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728791AbeGYNiJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Jul 2018 09:38:09 -0400
-X-IronPort-AV: E=Sophos;i="5.51,401,1526367600"; 
-   d="scan'208";a="16771207"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa3.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 25 Jul 2018 05:26:41 -0700
-Received: from [10.159.245.163] (10.10.76.4) by chn-sv-exch03.mchp-main.com
- (10.10.76.49) with Microsoft SMTP Server id 14.3.352.0; Wed, 25 Jul 2018
- 05:26:40 -0700
-Subject: Re: [PATCH 1/3] mtd: spi-nor: add Global Block Unlock support
-To:     Tudor Ambarus <tudor.ambarus@microchip.com>,
-        <marek.vasut@gmail.com>, <dwmw2@infradead.org>,
-        <computersforpeace@gmail.com>, <boris.brezillon@bootlin.com>,
-        <richard@nod.at>
-CC:     <linux-mtd@lists.infradead.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <anuragku@xilinx.com>,
-        <nicolas.ferre@microchip.com>
-References: <20180717162831.17947-1-tudor.ambarus@microchip.com>
-From:   Cyrille Pitchen <cyrille.pitchen@microchip.com>
-Message-ID: <8e0ff8be-34d1-7de9-6120-a067540a75d2@microchip.com>
-Date:   Wed, 25 Jul 2018 14:26:36 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <20180717162831.17947-1-tudor.ambarus@microchip.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        Wed, 25 Jul 2018 09:38:32 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:33570 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728791AbeGYNic (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Jul 2018 09:38:32 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id D0940208FF; Wed, 25 Jul 2018 14:27:01 +0200 (CEST)
+Received: from localhost.localdomain (unknown [80.255.6.130])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 4FFE8207AD;
+        Wed, 25 Jul 2018 14:26:51 +0200 (CEST)
+From:   Quentin Schulz <quentin.schulz@bootlin.com>
+To:     alexandre.belloni@bootlin.com, robh+dt@kernel.org,
+        mark.rutland@arm.com, linus.walleij@linaro.org
+Cc:     ralf@linux-mips.org, paul.burton@mips.com, jhogan@kernel.org,
+        linux-gpio@vger.kernel.org, linux-mips@linux-mips.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        thomas.petazzoni@bootlin.com,
+        Quentin Schulz <quentin.schulz@bootlin.com>
+Subject: [PATCH 1/2] MIPS: mscc: ocelot: add interrupt controller properties to GPIO controller
+Date:   Wed, 25 Jul 2018 14:26:20 +0200
+Message-Id: <20180725122621.31713-1-quentin.schulz@bootlin.com>
+X-Mailer: git-send-email 2.14.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Tudor,
+The GPIO controller also serves as an interrupt controller for events
+on the GPIO it handles.
 
-Le 17/07/2018 à 18:28, Tudor Ambarus a écrit :
-> We can't determine this purely by manufacturer type and it's not
-> autodetectable by anything like SFDP, so make a new flag for it:
-> UNLOCK_GLOBAL_BLOCK.
-> 
-> Note that the Global Block Unlock command has different names
-> depending on the manufacturer, but always the same command value:
-> 0x98. Macronix's MX25U12835F names it Gang Block Unlock,
-> Winbound's W25Q128FV names it Global Block Unlock and
-> Microchip's SST26VF064B names it Global Block Protection Unlock.
-> 
-> Based on initial work done by Anurag Kumar Vulisha:
-> https://patchwork.kernel.org/patch/7611271/
-> 
-> Signed-off-by: Tudor Ambarus <tudor.ambarus@microchip.com>
+An interrupt occurs whenever a GPIO line has changed.
 
-Reviewed-by: Cyrille Pitchen <cyrille.pitchen@microchip.com>
+Signed-off-by: Quentin Schulz <quentin.schulz@bootlin.com>
+---
+ arch/mips/boot/dts/mscc/ocelot.dtsi | 3 +++
+ 1 file changed, 3 insertions(+)
 
-Best regards,
+diff --git a/arch/mips/boot/dts/mscc/ocelot.dtsi b/arch/mips/boot/dts/mscc/ocelot.dtsi
+index d7f0e3551500..afe8fc9011ea 100644
+--- a/arch/mips/boot/dts/mscc/ocelot.dtsi
++++ b/arch/mips/boot/dts/mscc/ocelot.dtsi
+@@ -168,6 +168,9 @@
+ 			gpio-controller;
+ 			#gpio-cells = <2>;
+ 			gpio-ranges = <&gpio 0 0 22>;
++			interrupt-controller;
++			interrupts = <13>;
++			#interrupt-cells = <2>;
+ 
+ 			uart_pins: uart-pins {
+ 				pins = "GPIO_6", "GPIO_7";
+-- 
+2.14.1
 
-Cyrille
-> ---
->  drivers/mtd/spi-nor/spi-nor.c | 21 +++++++++++++++++++++
->  include/linux/mtd/spi-nor.h   |  1 +
->  2 files changed, 22 insertions(+)
-> 
-> diff --git a/drivers/mtd/spi-nor/spi-nor.c b/drivers/mtd/spi-nor/spi-nor.c
-> index d9c368c..6648251 100644
-> --- a/drivers/mtd/spi-nor/spi-nor.c
-> +++ b/drivers/mtd/spi-nor/spi-nor.c
-> @@ -89,6 +89,7 @@ struct flash_info {
->  #define NO_CHIP_ERASE		BIT(12) /* Chip does not support chip erase */
->  #define SPI_NOR_SKIP_SFDP	BIT(13)	/* Skip parsing of SFDP tables */
->  #define USE_CLSR		BIT(14)	/* use CLSR command */
-> +#define UNLOCK_GLOBAL_BLOCK	BIT(15)	/* Unlock global block protection */
->  
->  	int	(*quad_enable)(struct spi_nor *nor);
->  };
-> @@ -2730,6 +2731,17 @@ static int spi_nor_setup(struct spi_nor *nor, const struct flash_info *info,
->  	return 0;
->  }
->  
-> +static int spi_nor_unlock_global_block_protection(struct spi_nor *nor)
-> +{
-> +	int ret;
-> +
-> +	write_enable(nor);
-> +	ret = nor->write_reg(nor, SPINOR_OP_GBULK, NULL, 0);
-> +	if (ret < 0)
-> +		return ret;
-> +	return spi_nor_wait_till_ready(nor);
-> +}
-> +
->  static int spi_nor_init(struct spi_nor *nor)
->  {
->  	int err;
-> @@ -2747,6 +2759,15 @@ static int spi_nor_init(struct spi_nor *nor)
->  		spi_nor_wait_till_ready(nor);
->  	}
->  
-> +	if (nor->info->flags & UNLOCK_GLOBAL_BLOCK) {
-> +		err = spi_nor_unlock_global_block_protection(nor);
-> +		if (err) {
-> +			dev_err(nor->dev,
-> +				"Cannot unlock the global block protection\n");
-> +			return err;
-> +		}
-> +	}
-> +
->  	if (nor->quad_enable) {
->  		err = nor->quad_enable(nor);
->  		if (err) {
-> diff --git a/include/linux/mtd/spi-nor.h b/include/linux/mtd/spi-nor.h
-> index e60da0d..e8dd11d 100644
-> --- a/include/linux/mtd/spi-nor.h
-> +++ b/include/linux/mtd/spi-nor.h
-> @@ -64,6 +64,7 @@
->  #define SPINOR_OP_CLFSR		0x50	/* Clear flag status register */
->  #define SPINOR_OP_RDEAR		0xc8	/* Read Extended Address Register */
->  #define SPINOR_OP_WREAR		0xc5	/* Write Extended Address Register */
-> +#define SPINOR_OP_GBULK		0x98	/* Global Block Unlock Protection */
->  
->  /* 4-byte address opcodes - used on Spansion and some Macronix flashes. */
->  #define SPINOR_OP_READ_4B	0x13	/* Read data bytes (low frequency) */
-> 
