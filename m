@@ -2,167 +2,557 @@ Return-Path: <SRS0=S+WB=KJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CEA8C67790
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 16:40:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3860C67790
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 16:40:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 203A020852
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 16:40:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 203A020852
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+	by mail.kernel.org (Postfix) with ESMTP id 5AC0920852
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 16:40:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5AC0920852
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731398AbeGYRwj (ORCPT
+        id S1731362AbeGYRwd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 13:52:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54712 "EHLO mail.kernel.org"
+        Wed, 25 Jul 2018 13:52:33 -0400
+Received: from ns.mm-sol.com ([37.157.136.199]:35612 "EHLO extserv.mm-sol.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730065AbeGYRwi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Jul 2018 13:52:38 -0400
-Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1E23D20882;
-        Wed, 25 Jul 2018 16:40:10 +0000 (UTC)
-Date:   Wed, 25 Jul 2018 12:40:08 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Masami Hiramatsu <mhiramat@kernel.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Tom Zanussi <tom.zanussi@linux.intel.com>,
-        Hiraku Toyooka <hiraku.toyooka@cybertrust.co.jp>,
-        Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH] tracing: Fix double free of event_trigger_data
-Message-ID: <20180725124008.7008e586@gandalf.local.home>
-In-Reply-To: <20180726004349.e71303133ff8e095a1a1499e@kernel.org>
-References: <20180725085740.5e7efaa1@gandalf.local.home>
-        <20180726004349.e71303133ff8e095a1a1499e@kernel.org>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1729882AbeGYRv3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Jul 2018 13:51:29 -0400
+Received: from mms-0439.qualcomm.mm-sol.com (unknown [37.157.136.206])
+        by extserv.mm-sol.com (Postfix) with ESMTPSA id 584ABCD65;
+        Wed, 25 Jul 2018 19:38:54 +0300 (EEST)
+From:   Todor Tomov <todor.tomov@linaro.org>
+To:     mchehab@kernel.org, sakari.ailus@linux.intel.com,
+        hans.verkuil@cisco.com, laurent.pinchart+renesas@ideasonboard.com,
+        linux-media@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, Todor Tomov <todor.tomov@linaro.org>
+Subject: [PATCH v4 19/34] media: camss: csiphy: Split to hardware dependent and independent parts
+Date:   Wed, 25 Jul 2018 19:38:28 +0300
+Message-Id: <1532536723-19062-20-git-send-email-todor.tomov@linaro.org>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1532536723-19062-1-git-send-email-todor.tomov@linaro.org>
+References: <1532536723-19062-1-git-send-email-todor.tomov@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 26 Jul 2018 00:43:49 +0900
-Masami Hiramatsu <mhiramat@kernel.org> wrote:
+This will allow to add support for different hardware.
 
-> On Wed, 25 Jul 2018 08:57:40 -0400
-> Steven Rostedt <rostedt@goodmis.org> wrote:
-> 
-> > From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
-> > 
-> > Running the following:
-> > 
-> >  # cd /sys/kernel/debug/tracing
-> >  # echo 500000 > buffer_size_kb
-> > [ Or some other number that takes up most of memory ]
-> >  # echo snapshot > events/sched/sched_switch/trigger
-> > 
-> > Triggers the following bug:
-> > 
-> >  ------------[ cut here ]------------
-> >  kernel BUG at mm/slub.c:296!
-> >  invalid opcode: 0000 [#1] SMP DEBUG_PAGEALLOC PTI
-> >  CPU: 6 PID: 6878 Comm: bash Not tainted 4.18.0-rc6-test+ #1066
-> >  Hardware name: Hewlett-Packard HP Compaq Pro 6300 SFF/339A, BIOS K01 v03.03 07/14/2016
-> >  RIP: 0010:kfree+0x16c/0x180
-> >  Code: 05 41 0f b6 72 51 5b 5d 41 5c 4c 89 d7 e9 ac b3 f8 ff 48 89 d9 48 89 da 41 b8 01 00 00 00 5b 5d 41 5c 4c 89 d6 e9 f4 f3 ff ff <0f> 0b 0f 0b 48 8b 3d d9 d8 f9 00 e9 c1 fe ff ff 0f 1f 40 00 0f 1f
-> >  RSP: 0018:ffffb654436d3d88 EFLAGS: 00010246
-> >  RAX: ffff91a9d50f3d80 RBX: ffff91a9d50f3d80 RCX: ffff91a9d50f3d80
-> >  RDX: 00000000000006a4 RSI: ffff91a9de5a60e0 RDI: ffff91a9d9803500
-> >  RBP: ffffffff8d267c80 R08: 00000000000260e0 R09: ffffffff8c1a56be
-> >  R10: fffff0d404543cc0 R11: 0000000000000389 R12: ffffffff8c1a56be
-> >  R13: ffff91a9d9930e18 R14: ffff91a98c0c2890 R15: ffffffff8d267d00
-> >  FS:  00007f363ea64700(0000) GS:ffff91a9de580000(0000) knlGS:0000000000000000
-> >  CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> >  CR2: 000055c1cacc8e10 CR3: 00000000d9b46003 CR4: 00000000001606e0
-> >  Call Trace:
-> >   event_trigger_callback+0xee/0x1d0
-> >   event_trigger_write+0xfc/0x1a0
-> >   __vfs_write+0x33/0x190
-> >   ? handle_mm_fault+0x115/0x230
-> >   ? _cond_resched+0x16/0x40
-> >   vfs_write+0xb0/0x190
-> >   ksys_write+0x52/0xc0
-> >   do_syscall_64+0x5a/0x160
-> >   entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> >  RIP: 0033:0x7f363e16ab50
-> >  Code: 73 01 c3 48 8b 0d 38 83 2c 00 f7 d8 64 89 01 48 83 c8 ff c3 66 0f 1f 44 00 00 83 3d 79 db 2c 00 00 75 10 b8 01 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 31 c3 48 83 ec 08 e8 1e e3 01 00 48 89 04 24
-> >  RSP: 002b:00007fff9a4c6378 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
-> >  RAX: ffffffffffffffda RBX: 0000000000000009 RCX: 00007f363e16ab50
-> >  RDX: 0000000000000009 RSI: 000055c1cacc8e10 RDI: 0000000000000001
-> >  RBP: 000055c1cacc8e10 R08: 00007f363e435740 R09: 00007f363ea64700
-> >  R10: 0000000000000073 R11: 0000000000000246 R12: 0000000000000009
-> >  R13: 0000000000000001 R14: 00007f363e4345e0 R15: 00007f363e4303c0
-> >  Modules linked in: ip6table_filter ip6_tables snd_hda_codec_hdmi snd_hda_codec_realtek snd_hda_codec_generic snd_hda_intel snd_hda_codec snd_hwdep snd_hda_core snd_seq snd_seq_device i915 snd_pcm snd_timer i2c_i801 snd soundcore i2c_algo_bit drm_kms_helper
-> > 86_pkg_temp_thermal video kvm_intel kvm irqbypass wmi e1000e
-> >  ---[ end trace d301afa879ddfa25 ]---
-> > 
-> > The cause is because the register_snapshot_trigger() call failed to
-> > allocate the snapshot buffer, and then called unregister_trigger()
-> > which freed the data that was passed to it. Then on return to the
-> > function that called register_snapshot_trigger(), as it sees it
-> > failed to register, it frees the trigger_data again and causes
-> > a double free.
-> > 
-> > By calling event_trigger_init() on the trigger_data (which only ups
-> > the reference counter for it), and then event_trigger_free() afterward,
-> > the trigger_data would not get freed by the registering trigger function
-> > as it would only up and lower the ref count for it. If the register
-> > trigger function fails, then the event_trigger_free() called after it
-> > will free the trigger data normally.
-> > 
-> > Link: http://lkml.kernel.org/r/20180724191331.738eb819@gandalf.local.home
-> >   
-> 
-> Looks good to me.
-> 
-> Reviewed-by: Masami Hiramatsu <mhiramat@kernel.org>
-> 
+Signed-off-by: Todor Tomov <todor.tomov@linaro.org>
+---
+ drivers/media/platform/qcom/camss/Makefile         |   1 +
+ .../platform/qcom/camss/camss-csiphy-2ph-1-0.c     | 173 +++++++++++++++++++++
+ drivers/media/platform/qcom/camss/camss-csiphy.c   | 171 +++-----------------
+ drivers/media/platform/qcom/camss/camss-csiphy.h   |  17 ++
+ 4 files changed, 214 insertions(+), 148 deletions(-)
+ create mode 100644 drivers/media/platform/qcom/camss/camss-csiphy-2ph-1-0.c
 
-
-Hmm, looks to me that event_enable_trigger_func() suffers the same
-issue. Perhaps we should add this patch too:
-
--- Steve
-
-diff --git a/kernel/trace/trace_events_trigger.c b/kernel/trace/trace_events_trigger.c
-index d18ec0e58be2..2681d917f896 100644
---- a/kernel/trace/trace_events_trigger.c
-+++ b/kernel/trace/trace_events_trigger.c
-@@ -1457,6 +1457,10 @@ int event_enable_trigger_func(struct event_command *cmd_ops,
- 	ret = trace_event_enable_disable(event_enable_file, 1, 1);
- 	if (ret < 0)
- 		goto out_put;
+diff --git a/drivers/media/platform/qcom/camss/Makefile b/drivers/media/platform/qcom/camss/Makefile
+index 3c4024f..0446b24 100644
+--- a/drivers/media/platform/qcom/camss/Makefile
++++ b/drivers/media/platform/qcom/camss/Makefile
+@@ -3,6 +3,7 @@
+ qcom-camss-objs += \
+ 		camss.o \
+ 		camss-csid.o \
++		camss-csiphy-2ph-1-0.o \
+ 		camss-csiphy.o \
+ 		camss-ispif.o \
+ 		camss-vfe.o \
+diff --git a/drivers/media/platform/qcom/camss/camss-csiphy-2ph-1-0.c b/drivers/media/platform/qcom/camss/camss-csiphy-2ph-1-0.c
+new file mode 100644
+index 0000000..7325906
+--- /dev/null
++++ b/drivers/media/platform/qcom/camss/camss-csiphy-2ph-1-0.c
+@@ -0,0 +1,173 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * camss-csiphy-2ph-1-0.c
++ *
++ * Qualcomm MSM Camera Subsystem - CSIPHY Module 2phase v1.0
++ *
++ * Copyright (c) 2011-2015, The Linux Foundation. All rights reserved.
++ * Copyright (C) 2016-2018 Linaro Ltd.
++ */
 +
-+	/* Up the trigger_data count to make sure reg doesn't free it on failure */
-+	event_trigger_init(trigger_ops, trigger_data);
++#include "camss-csiphy.h"
 +
- 	ret = cmd_ops->reg(glob, trigger_ops, trigger_data, file);
- 	/*
- 	 * The above returns on success the # of functions enabled,
-@@ -1464,12 +1468,13 @@ int event_enable_trigger_func(struct event_command *cmd_ops,
- 	 * Consider no functions a failure too.
- 	 */
- 	if (!ret) {
-+		cmd_ops->unreg(glob, trigger_ops, trigger_data, file);
- 		ret = -ENOENT;
--		goto out_disable;
--	} else if (ret < 0)
--		goto out_disable;
--	/* Just return zero, not the number of enabled functions */
--	ret = 0;
-+	} else if (ret > 0)
-+		ret = 0;
++#include <linux/delay.h>
++#include <linux/interrupt.h>
 +
-+	/* Down the counter of trigger_data or free it if not used anymore */
-+	event_trigger_free(trigger_ops, trigger_data);
-  out:
- 	return ret;
++#define CAMSS_CSI_PHY_LNn_CFG2(n)		(0x004 + 0x40 * (n))
++#define CAMSS_CSI_PHY_LNn_CFG3(n)		(0x008 + 0x40 * (n))
++#define CAMSS_CSI_PHY_GLBL_RESET		0x140
++#define CAMSS_CSI_PHY_GLBL_PWR_CFG		0x144
++#define CAMSS_CSI_PHY_GLBL_IRQ_CMD		0x164
++#define CAMSS_CSI_PHY_HW_VERSION		0x188
++#define CAMSS_CSI_PHY_INTERRUPT_STATUSn(n)	(0x18c + 0x4 * (n))
++#define CAMSS_CSI_PHY_INTERRUPT_MASKn(n)	(0x1ac + 0x4 * (n))
++#define CAMSS_CSI_PHY_INTERRUPT_CLEARn(n)	(0x1cc + 0x4 * (n))
++#define CAMSS_CSI_PHY_GLBL_T_INIT_CFG0		0x1ec
++#define CAMSS_CSI_PHY_T_WAKEUP_CFG0		0x1f4
++
++static void csiphy_hw_version_read(struct csiphy_device *csiphy,
++				   struct device *dev)
++{
++	u8 hw_version = readl_relaxed(csiphy->base +
++				      CAMSS_CSI_PHY_HW_VERSION);
++
++	dev_dbg(dev, "CSIPHY HW Version = 0x%02x\n", hw_version);
++}
++
++/*
++ * csiphy_reset - Perform software reset on CSIPHY module
++ * @csiphy: CSIPHY device
++ */
++static void csiphy_reset(struct csiphy_device *csiphy)
++{
++	writel_relaxed(0x1, csiphy->base + CAMSS_CSI_PHY_GLBL_RESET);
++	usleep_range(5000, 8000);
++	writel_relaxed(0x0, csiphy->base + CAMSS_CSI_PHY_GLBL_RESET);
++}
++
++/*
++ * csiphy_settle_cnt_calc - Calculate settle count value
++ *
++ * Helper function to calculate settle count value. This is
++ * based on the CSI2 T_hs_settle parameter which in turn
++ * is calculated based on the CSI2 transmitter pixel clock
++ * frequency.
++ *
++ * Return settle count value or 0 if the CSI2 pixel clock
++ * frequency is not available
++ */
++static u8 csiphy_settle_cnt_calc(u32 pixel_clock, u8 bpp, u8 num_lanes,
++				 u32 timer_clk_rate)
++{
++	u32 mipi_clock; /* Hz */
++	u32 ui; /* ps */
++	u32 timer_period; /* ps */
++	u32 t_hs_prepare_max; /* ps */
++	u32 t_hs_prepare_zero_min; /* ps */
++	u32 t_hs_settle; /* ps */
++	u8 settle_cnt;
++
++	mipi_clock = pixel_clock * bpp / (2 * num_lanes);
++	ui = div_u64(1000000000000LL, mipi_clock);
++	ui /= 2;
++	t_hs_prepare_max = 85000 + 6 * ui;
++	t_hs_prepare_zero_min = 145000 + 10 * ui;
++	t_hs_settle = (t_hs_prepare_max + t_hs_prepare_zero_min) / 2;
++
++	timer_period = div_u64(1000000000000LL, timer_clk_rate);
++	settle_cnt = t_hs_settle / timer_period - 1;
++
++	return settle_cnt;
++}
++
++static void csiphy_lanes_enable(struct csiphy_device *csiphy,
++				struct csiphy_config *cfg,
++				u32 pixel_clock, u8 bpp, u8 lane_mask)
++{
++	struct csiphy_lanes_cfg *c = &cfg->csi2->lane_cfg;
++	u8 settle_cnt;
++	u8 val;
++	int i = 0;
++
++	settle_cnt = csiphy_settle_cnt_calc(pixel_clock, bpp, c->num_data,
++					    csiphy->timer_clk_rate);
++
++	writel_relaxed(0x1, csiphy->base +
++		       CAMSS_CSI_PHY_GLBL_T_INIT_CFG0);
++	writel_relaxed(0x1, csiphy->base +
++		       CAMSS_CSI_PHY_T_WAKEUP_CFG0);
++
++	val = 0x1;
++	val |= lane_mask << 1;
++	writel_relaxed(val, csiphy->base + CAMSS_CSI_PHY_GLBL_PWR_CFG);
++
++	val = cfg->combo_mode << 4;
++	writel_relaxed(val, csiphy->base + CAMSS_CSI_PHY_GLBL_RESET);
++
++	while (lane_mask) {
++		if (lane_mask & 0x1) {
++			writel_relaxed(0x10, csiphy->base +
++				       CAMSS_CSI_PHY_LNn_CFG2(i));
++			writel_relaxed(settle_cnt, csiphy->base +
++				       CAMSS_CSI_PHY_LNn_CFG3(i));
++			writel_relaxed(0x3f, csiphy->base +
++				       CAMSS_CSI_PHY_INTERRUPT_MASKn(i));
++			writel_relaxed(0x3f, csiphy->base +
++				       CAMSS_CSI_PHY_INTERRUPT_CLEARn(i));
++		}
++
++		lane_mask >>= 1;
++		i++;
++	}
++}
++
++static void csiphy_lanes_disable(struct csiphy_device *csiphy, u8 lane_mask)
++{
++	int i = 0;
++
++	while (lane_mask) {
++		if (lane_mask & 0x1)
++			writel_relaxed(0x0, csiphy->base +
++				       CAMSS_CSI_PHY_LNn_CFG2(i));
++
++		lane_mask >>= 1;
++		i++;
++	}
++
++	writel_relaxed(0x0, csiphy->base + CAMSS_CSI_PHY_GLBL_PWR_CFG);
++}
++
++/*
++ * csiphy_isr - CSIPHY module interrupt handler
++ * @irq: Interrupt line
++ * @dev: CSIPHY device
++ *
++ * Return IRQ_HANDLED on success
++ */
++static irqreturn_t csiphy_isr(int irq, void *dev)
++{
++	struct csiphy_device *csiphy = dev;
++	u8 i;
++
++	for (i = 0; i < 8; i++) {
++		u8 val = readl_relaxed(csiphy->base +
++				       CAMSS_CSI_PHY_INTERRUPT_STATUSn(i));
++		writel_relaxed(val, csiphy->base +
++			       CAMSS_CSI_PHY_INTERRUPT_CLEARn(i));
++		writel_relaxed(0x1, csiphy->base + CAMSS_CSI_PHY_GLBL_IRQ_CMD);
++		writel_relaxed(0x0, csiphy->base + CAMSS_CSI_PHY_GLBL_IRQ_CMD);
++		writel_relaxed(0x0, csiphy->base +
++			       CAMSS_CSI_PHY_INTERRUPT_CLEARn(i));
++	}
++
++	return IRQ_HANDLED;
++}
++
++const struct csiphy_hw_ops csiphy_ops_2ph_1_0 = {
++	.hw_version_read = csiphy_hw_version_read,
++	.reset = csiphy_reset,
++	.lanes_enable = csiphy_lanes_enable,
++	.lanes_disable = csiphy_lanes_disable,
++	.isr = csiphy_isr,
++};
++
+diff --git a/drivers/media/platform/qcom/camss/camss-csiphy.c b/drivers/media/platform/qcom/camss/camss-csiphy.c
+index 4aeaedb..8d10e85 100644
+--- a/drivers/media/platform/qcom/camss/camss-csiphy.c
++++ b/drivers/media/platform/qcom/camss/camss-csiphy.c
+@@ -23,18 +23,6 @@
  
+ #define MSM_CSIPHY_NAME "msm_csiphy"
+ 
+-#define CAMSS_CSI_PHY_LNn_CFG2(n)		(0x004 + 0x40 * (n))
+-#define CAMSS_CSI_PHY_LNn_CFG3(n)		(0x008 + 0x40 * (n))
+-#define CAMSS_CSI_PHY_GLBL_RESET		0x140
+-#define CAMSS_CSI_PHY_GLBL_PWR_CFG		0x144
+-#define CAMSS_CSI_PHY_GLBL_IRQ_CMD		0x164
+-#define CAMSS_CSI_PHY_HW_VERSION		0x188
+-#define CAMSS_CSI_PHY_INTERRUPT_STATUSn(n)	(0x18c + 0x4 * (n))
+-#define CAMSS_CSI_PHY_INTERRUPT_MASKn(n)	(0x1ac + 0x4 * (n))
+-#define CAMSS_CSI_PHY_INTERRUPT_CLEARn(n)	(0x1cc + 0x4 * (n))
+-#define CAMSS_CSI_PHY_GLBL_T_INIT_CFG0		0x1ec
+-#define CAMSS_CSI_PHY_T_WAKEUP_CFG0		0x1f4
+-
+ static const struct {
+ 	u32 code;
+ 	u8 bpp;
+@@ -125,32 +113,6 @@ static u8 csiphy_get_bpp(u32 code)
+ }
+ 
+ /*
+- * csiphy_isr - CSIPHY module interrupt handler
+- * @irq: Interrupt line
+- * @dev: CSIPHY device
+- *
+- * Return IRQ_HANDLED on success
+- */
+-static irqreturn_t csiphy_isr(int irq, void *dev)
+-{
+-	struct csiphy_device *csiphy = dev;
+-	u8 i;
+-
+-	for (i = 0; i < 8; i++) {
+-		u8 val = readl_relaxed(csiphy->base +
+-				       CAMSS_CSI_PHY_INTERRUPT_STATUSn(i));
+-		writel_relaxed(val, csiphy->base +
+-			       CAMSS_CSI_PHY_INTERRUPT_CLEARn(i));
+-		writel_relaxed(0x1, csiphy->base + CAMSS_CSI_PHY_GLBL_IRQ_CMD);
+-		writel_relaxed(0x0, csiphy->base + CAMSS_CSI_PHY_GLBL_IRQ_CMD);
+-		writel_relaxed(0x0, csiphy->base +
+-			       CAMSS_CSI_PHY_INTERRUPT_CLEARn(i));
+-	}
+-
+-	return IRQ_HANDLED;
+-}
+-
+-/*
+  * csiphy_set_clock_rates - Calculate and set clock rates on CSIPHY module
+  * @csiphy: CSIPHY device
+  */
+@@ -215,17 +177,6 @@ static int csiphy_set_clock_rates(struct csiphy_device *csiphy)
+ }
+ 
+ /*
+- * csiphy_reset - Perform software reset on CSIPHY module
+- * @csiphy: CSIPHY device
+- */
+-static void csiphy_reset(struct csiphy_device *csiphy)
+-{
+-	writel_relaxed(0x1, csiphy->base + CAMSS_CSI_PHY_GLBL_RESET);
+-	usleep_range(5000, 8000);
+-	writel_relaxed(0x0, csiphy->base + CAMSS_CSI_PHY_GLBL_RESET);
+-}
+-
+-/*
+  * csiphy_set_power - Power on/off CSIPHY module
+  * @sd: CSIPHY V4L2 subdevice
+  * @on: Requested power state
+@@ -238,7 +189,6 @@ static int csiphy_set_power(struct v4l2_subdev *sd, int on)
+ 	struct device *dev = csiphy->camss->dev;
+ 
+ 	if (on) {
+-		u8 hw_version;
+ 		int ret;
+ 
+ 		ret = pm_runtime_get_sync(dev);
+@@ -259,11 +209,9 @@ static int csiphy_set_power(struct v4l2_subdev *sd, int on)
+ 
+ 		enable_irq(csiphy->irq);
+ 
+-		csiphy_reset(csiphy);
++		csiphy->ops->reset(csiphy);
+ 
+-		hw_version = readl_relaxed(csiphy->base +
+-					   CAMSS_CSI_PHY_HW_VERSION);
+-		dev_dbg(dev, "CSIPHY HW Version = 0x%02x\n", hw_version);
++		csiphy->ops->hw_version_read(csiphy, dev);
+ 	} else {
+ 		disable_irq(csiphy->irq);
+ 
+@@ -295,77 +243,34 @@ static u8 csiphy_get_lane_mask(struct csiphy_lanes_cfg *lane_cfg)
+ }
+ 
+ /*
+- * csiphy_settle_cnt_calc - Calculate settle count value
++ * csiphy_stream_on - Enable streaming on CSIPHY module
+  * @csiphy: CSIPHY device
+  *
+- * Helper function to calculate settle count value. This is
+- * based on the CSI2 T_hs_settle parameter which in turn
+- * is calculated based on the CSI2 transmitter pixel clock
+- * frequency.
++ * Helper function to enable streaming on CSIPHY module.
++ * Main configuration of CSIPHY module is also done here.
+  *
+- * Return settle count value or 0 if the CSI2 pixel clock
+- * frequency is not available
++ * Return 0 on success or a negative error code otherwise
+  */
+-static u8 csiphy_settle_cnt_calc(struct csiphy_device *csiphy)
++static int csiphy_stream_on(struct csiphy_device *csiphy)
+ {
+-	u8 bpp = csiphy_get_bpp(
+-			csiphy->fmt[MSM_CSIPHY_PAD_SINK].code);
+-	u8 num_lanes = csiphy->cfg.csi2->lane_cfg.num_data;
+-	u32 pixel_clock; /* Hz */
+-	u32 mipi_clock; /* Hz */
+-	u32 ui; /* ps */
+-	u32 timer_period; /* ps */
+-	u32 t_hs_prepare_max; /* ps */
+-	u32 t_hs_prepare_zero_min; /* ps */
+-	u32 t_hs_settle; /* ps */
+-	u8 settle_cnt;
++	struct csiphy_config *cfg = &csiphy->cfg;
++	u32 pixel_clock;
++	u8 lane_mask = csiphy_get_lane_mask(&cfg->csi2->lane_cfg);
++	u8 bpp = csiphy_get_bpp(csiphy->fmt[MSM_CSIPHY_PAD_SINK].code);
++	u8 val;
+ 	int ret;
+ 
+ 	ret = camss_get_pixel_clock(&csiphy->subdev.entity, &pixel_clock);
+ 	if (ret) {
+ 		dev_err(csiphy->camss->dev,
+ 			"Cannot get CSI2 transmitter's pixel clock\n");
+-		return 0;
++		return -EINVAL;
+ 	}
+ 	if (!pixel_clock) {
+ 		dev_err(csiphy->camss->dev,
+ 			"Got pixel clock == 0, cannot continue\n");
+-		return 0;
+-	}
+-
+-	mipi_clock = pixel_clock * bpp / (2 * num_lanes);
+-	ui = div_u64(1000000000000LL, mipi_clock);
+-	ui /= 2;
+-	t_hs_prepare_max = 85000 + 6 * ui;
+-	t_hs_prepare_zero_min = 145000 + 10 * ui;
+-	t_hs_settle = (t_hs_prepare_max + t_hs_prepare_zero_min) / 2;
+-
+-	timer_period = div_u64(1000000000000LL, csiphy->timer_clk_rate);
+-	settle_cnt = t_hs_settle / timer_period - 1;
+-
+-	return settle_cnt;
+-}
+-
+-/*
+- * csiphy_stream_on - Enable streaming on CSIPHY module
+- * @csiphy: CSIPHY device
+- *
+- * Helper function to enable streaming on CSIPHY module.
+- * Main configuration of CSIPHY module is also done here.
+- *
+- * Return 0 on success or a negative error code otherwise
+- */
+-static int csiphy_stream_on(struct csiphy_device *csiphy)
+-{
+-	struct csiphy_config *cfg = &csiphy->cfg;
+-	u8 lane_mask = csiphy_get_lane_mask(&cfg->csi2->lane_cfg);
+-	u8 settle_cnt;
+-	u8 val;
+-	int i = 0;
+-
+-	settle_cnt = csiphy_settle_cnt_calc(csiphy);
+-	if (!settle_cnt)
+ 		return -EINVAL;
++	}
+ 
+ 	val = readl_relaxed(csiphy->base_clk_mux);
+ 	if (cfg->combo_mode && (lane_mask & 0x18) == 0x18) {
+@@ -378,33 +283,7 @@ static int csiphy_stream_on(struct csiphy_device *csiphy)
+ 	writel_relaxed(val, csiphy->base_clk_mux);
+ 	wmb();
+ 
+-	writel_relaxed(0x1, csiphy->base +
+-		       CAMSS_CSI_PHY_GLBL_T_INIT_CFG0);
+-	writel_relaxed(0x1, csiphy->base +
+-		       CAMSS_CSI_PHY_T_WAKEUP_CFG0);
+-
+-	val = 0x1;
+-	val |= lane_mask << 1;
+-	writel_relaxed(val, csiphy->base + CAMSS_CSI_PHY_GLBL_PWR_CFG);
+-
+-	val = cfg->combo_mode << 4;
+-	writel_relaxed(val, csiphy->base + CAMSS_CSI_PHY_GLBL_RESET);
+-
+-	while (lane_mask) {
+-		if (lane_mask & 0x1) {
+-			writel_relaxed(0x10, csiphy->base +
+-				       CAMSS_CSI_PHY_LNn_CFG2(i));
+-			writel_relaxed(settle_cnt, csiphy->base +
+-				       CAMSS_CSI_PHY_LNn_CFG3(i));
+-			writel_relaxed(0x3f, csiphy->base +
+-				       CAMSS_CSI_PHY_INTERRUPT_MASKn(i));
+-			writel_relaxed(0x3f, csiphy->base +
+-				       CAMSS_CSI_PHY_INTERRUPT_CLEARn(i));
+-		}
+-
+-		lane_mask >>= 1;
+-		i++;
+-	}
++	csiphy->ops->lanes_enable(csiphy, cfg, pixel_clock, bpp, lane_mask);
+ 
+ 	return 0;
+ }
+@@ -418,18 +297,8 @@ static int csiphy_stream_on(struct csiphy_device *csiphy)
+ static void csiphy_stream_off(struct csiphy_device *csiphy)
+ {
+ 	u8 lane_mask = csiphy_get_lane_mask(&csiphy->cfg.csi2->lane_cfg);
+-	int i = 0;
+ 
+-	while (lane_mask) {
+-		if (lane_mask & 0x1)
+-			writel_relaxed(0x0, csiphy->base +
+-				       CAMSS_CSI_PHY_LNn_CFG2(i));
+-
+-		lane_mask >>= 1;
+-		i++;
+-	}
+-
+-	writel_relaxed(0x0, csiphy->base + CAMSS_CSI_PHY_GLBL_PWR_CFG);
++	csiphy->ops->lanes_disable(csiphy, lane_mask);
+ }
+ 
+ 
+@@ -696,6 +565,11 @@ int msm_csiphy_subdev_init(struct camss *camss,
+ 	csiphy->id = id;
+ 	csiphy->cfg.combo_mode = 0;
+ 
++	if (camss->version == CAMSS_8x16)
++		csiphy->ops = &csiphy_ops_2ph_1_0;
++	else
++		return -EINVAL;
++
+ 	/* Memory */
+ 
+ 	r = platform_get_resource_byname(pdev, IORESOURCE_MEM, res->reg[0]);
+@@ -724,7 +598,8 @@ int msm_csiphy_subdev_init(struct camss *camss,
+ 	csiphy->irq = r->start;
+ 	snprintf(csiphy->irq_name, sizeof(csiphy->irq_name), "%s_%s%d",
+ 		 dev_name(dev), MSM_CSIPHY_NAME, csiphy->id);
+-	ret = devm_request_irq(dev, csiphy->irq, csiphy_isr,
++
++	ret = devm_request_irq(dev, csiphy->irq, csiphy->ops->isr,
+ 			       IRQF_TRIGGER_RISING, csiphy->irq_name, csiphy);
+ 	if (ret < 0) {
+ 		dev_err(dev, "request_irq failed: %d\n", ret);
+diff --git a/drivers/media/platform/qcom/camss/camss-csiphy.h b/drivers/media/platform/qcom/camss/camss-csiphy.h
+index 728dfef..edad941 100644
+--- a/drivers/media/platform/qcom/camss/camss-csiphy.h
++++ b/drivers/media/platform/qcom/camss/camss-csiphy.h
+@@ -11,6 +11,7 @@
+ #define QC_MSM_CAMSS_CSIPHY_H
+ 
+ #include <linux/clk.h>
++#include <linux/interrupt.h>
+ #include <media/media-entity.h>
+ #include <media/v4l2-device.h>
+ #include <media/v4l2-mediabus.h>
+@@ -41,6 +42,19 @@ struct csiphy_config {
+ 	struct csiphy_csi2_cfg *csi2;
+ };
+ 
++struct csiphy_device;
++
++struct csiphy_hw_ops {
++	void (*hw_version_read)(struct csiphy_device *csiphy,
++				struct device *dev);
++	void (*reset)(struct csiphy_device *csiphy);
++	void (*lanes_enable)(struct csiphy_device *csiphy,
++			     struct csiphy_config *cfg,
++			     u32 pixel_clock, u8 bpp, u8 lane_mask);
++	void (*lanes_disable)(struct csiphy_device *csiphy, u8 lane_mask);
++	irqreturn_t (*isr)(int irq, void *dev);
++};
++
+ struct csiphy_device {
+ 	struct camss *camss;
+ 	u8 id;
+@@ -55,6 +69,7 @@ struct csiphy_device {
+ 	u32 timer_clk_rate;
+ 	struct csiphy_config cfg;
+ 	struct v4l2_mbus_framefmt fmt[MSM_CSIPHY_PADS_NUM];
++	const struct csiphy_hw_ops *ops;
+ };
+ 
+ struct resources;
+@@ -68,4 +83,6 @@ int msm_csiphy_register_entity(struct csiphy_device *csiphy,
+ 
+ void msm_csiphy_unregister_entity(struct csiphy_device *csiphy);
+ 
++extern const struct csiphy_hw_ops csiphy_ops_2ph_1_0;
++
+ #endif /* QC_MSM_CAMSS_CSIPHY_H */
+-- 
+2.7.4
+
