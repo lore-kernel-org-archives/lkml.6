@@ -2,147 +2,187 @@ Return-Path: <SRS0=S+WB=KJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E81EDC28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 00:34:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CEE3C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 00:37:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 93D5320856
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 00:34:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1461520844
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 00:37:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=wavesemi.onmicrosoft.com header.i=@wavesemi.onmicrosoft.com header.b="bpXmgHiD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 93D5320856
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mips.com
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="A07xrtrN"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1461520844
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388585AbeGYBnh (ORCPT
+        id S2388531AbeGYBqB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 21:43:37 -0400
-Received: from mail-by2nam01on0092.outbound.protection.outlook.com ([104.47.34.92]:19485
-        "EHLO NAM01-BY2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2388441AbeGYBng (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 21:43:36 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=wavesemi.onmicrosoft.com; s=selector1-wavecomp-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=JLfXF7WZwq4rz00dCCrZNbIKvMc2gH1Et0Wf/Ylt7/M=;
- b=bpXmgHiDj0dIC/IB4SOkfOBXnGbxJ5mQLNWDDFb1p3t/b1Zc2h1woiplNv4WB9ifmK/T+ZLiEjfB9vJaWAGboQ4ZDykH6jdb72UzZzyxAhFoi3CcFItNk0EuY9sd7RicSfyFc9eqzqGUjMTZcn0qvHS3CbjXZPGP7yTxYuYR4aM=
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=pburton@wavecomp.com; 
-Received: from localhost (4.16.204.77) by
- BN7PR08MB4932.namprd08.prod.outlook.com (2603:10b6:408:28::18) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.973.16; Wed, 25 Jul 2018 00:34:32 +0000
-Date:   Tue, 24 Jul 2018 17:34:29 -0700
-From:   Paul Burton <paul.burton@mips.com>
-To:     Alexandre Ghiti <alex@ghiti.fr>
-Cc:     linux@armlinux.org.uk, catalin.marinas@arm.com,
-        will.deacon@arm.com, tony.luck@intel.com, fenghua.yu@intel.com,
-        ralf@linux-mips.org, jhogan@kernel.org, jejb@parisc-linux.org,
-        deller@gmx.de, benh@kernel.crashing.org, paulus@samba.org,
-        mpe@ellerman.id.au, ysato@users.sourceforge.jp, dalias@libc.org,
-        davem@davemloft.net, tglx@linutronix.de, mingo@redhat.com,
-        hpa@zytor.com, x86@kernel.org, arnd@arndb.de,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-ia64@vger.kernel.org, linux-mips@linux-mips.org,
-        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
-        linux-arch@vger.kernel.org,
-        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>
-Subject: Re: [PATCH v4 00/11] hugetlb: Factorize hugetlb architecture
- primitives
-Message-ID: <20180725003428.jsklz7pj4m7lj3m4@pburton-laptop>
-References: <20180705110716.3919-1-alex@ghiti.fr>
+        Tue, 24 Jul 2018 21:46:01 -0400
+Received: from aserp2130.oracle.com ([141.146.126.79]:59226 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388473AbeGYBqB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Jul 2018 21:46:01 -0400
+Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
+        by aserp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w6P0YcmW152557;
+        Wed, 25 Jul 2018 00:36:58 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=mime-version :
+ references : in-reply-to : from : date : message-id : subject : to : cc :
+ content-type; s=corp-2018-07-02;
+ bh=/E+ukspvPx4ueqD4ZULSOYVSmkNbzbC8N5M7Xmb4Jak=;
+ b=A07xrtrNSFEVdV1jXaFu0JHaUzQ5WUprI3CutOTYztdYoB8ENs98Si4EN8pWkSQUQwhW
+ XvQnGE/Q8Es9uc/HWTyMZsVb4C8N3Oi5GnkhEh0k4B7FfUD/Wqwmq2TER/16N3S0fY2R
+ hZeg/+oHw8vJ+7EA+8rhRL1Hh41PdUMdeNsWiddbXEEMQvVSXwwu83a3EoD8xF0x4i+K
+ w2vgUyzW9F7/35qaGGMS7SC6nkn0w2dFJAH3NkIehuXz/MEQKjD77/kqrvgKSfXAm6GT
+ NhenXL6F8NQoB2SmjOjUjNS/ACK/tXtdbwkoxnait8Rh3e4xsJUn7iVT7NzvxaU5lWBc Wg== 
+Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
+        by aserp2130.oracle.com with ESMTP id 2kbtbcueur-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 25 Jul 2018 00:36:58 +0000
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w6P0avlt017549
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 25 Jul 2018 00:36:57 GMT
+Received: from abhmp0002.oracle.com (abhmp0002.oracle.com [141.146.116.8])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w6P0avoN009196;
+        Wed, 25 Jul 2018 00:36:57 GMT
+Received: from mail-oi0-f44.google.com (/209.85.218.44)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 24 Jul 2018 17:36:57 -0700
+Received: by mail-oi0-f44.google.com with SMTP id k81-v6so10839462oib.4;
+        Tue, 24 Jul 2018 17:36:57 -0700 (PDT)
+X-Gm-Message-State: AOUpUlHswg9qOoo/vO9Z8dGIWTc3Nhbg29d4zTDPiAldZU73GFGRYc7A
+        mWmDrm0xmwTq3ZEKjT9weAYiIvXMGaNYVFF3W/c=
+X-Google-Smtp-Source: AAOMgpdr3XUSD17M2rB/cTlItWG65mjKh9vA3zICLzpU5wnZCNNeAoBtwLQwmKKzgkR1NrPzufFu+iWdnBoVVYDMcgA=
+X-Received: by 2002:aca:3bc2:: with SMTP id i185-v6mr1274720oia.156.1532479017220;
+ Tue, 24 Jul 2018 17:36:57 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180705110716.3919-1-alex@ghiti.fr>
-User-Agent: NeoMutt/20180716
-X-Originating-IP: [4.16.204.77]
-X-ClientProxiedBy: CY4PR19CA0027.namprd19.prod.outlook.com
- (2603:10b6:903:103::13) To BN7PR08MB4932.namprd08.prod.outlook.com
- (2603:10b6:408:28::18)
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 01fb5f52-30fa-4e62-feb6-08d5f1c6641f
-X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(5600073)(711020)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(2017052603328)(7153060)(7193020);SRVR:BN7PR08MB4932;
-X-Microsoft-Exchange-Diagnostics: 1;BN7PR08MB4932;3:0f443Ub5m/RZKwAx64ZMGzyvjvGXzt6voB1AcPTJxVgmx/zp5G1ZVKkmYQZMlDINB9p40gQbe/qeGwpPHhRzWYQxQt9JWqeI6nffXz7hZ/NkvY6zp8MpbQIVWiDP25htRjZs0i0cNTpyp3O3Tf52STrSwheBzA6kx7qx0vMuOW77+yjwpZC12Fl7Httiqi2OQh60LtXGqKhnWlTEnT7xzq4LUT6Ta/JB0QZyr01o80+RRPhKckPXHCL3zHH5Flw/;25:4AR6Pm1/pIOqUBSDID7+eqy7jILsWVBxhYb0yJE+WMFckUPVZ32d6/ovPwj4ITjwD3XKQ/naf/DLzObT6GJch7zud2ehfdzsqmqKV8UtbayV18iFeWrNLreD3P9kUQs7PW2Ed/zxgS/7s9DlNKJuG4azCymoiq9J3W3N0q4iu3mrKtvGKIXyRl1S6eBg5h2xZx8Lo2VxAoiTJu8cSRcAfhA33CCC7cxeyNl0wPyrFat+xV3ub3QyTG3wxzC/IIWl61ZL3hzycQHuyRfJ30UrPvDJ5vgOQ4VdZkeu1ZPCdl36Hu5UD7aRH6dvBWeBKeWvWtsCyE9PT8pBAiFHQRbwlQ==;31:gN93pqNAlJ55JqJ+ik7/9V1mGWcF20dzwiyhco0x/zjdRaPhKHvjAmUiXR1W02eAr8LJ0zoCaMFHhnymNMKWJDESQUAPLdcEP+OmkrFuzP67vz3plMfJgFyfmqMUBnrH8qS2zlzJGleIzzJxUIoEcQSvAQaN4ArqladycmitG9J79u/Wa5Wfp0ECgxNiQoPUMqwtwniypKCX8fkKfO0RNkO5oYGDrWjFG7NqTG/Ydd4=
-X-MS-TrafficTypeDiagnostic: BN7PR08MB4932:
-X-Microsoft-Exchange-Diagnostics: 1;BN7PR08MB4932;20:q6LKqlxqUxCOSgncPrgGUQqQlD0tbykcp0acG8So1TwSTQr5aWchmghCc3SbFcfF/hxecLtdmi2z5Gu29b97+G2YsaWVnTO8wXErzA0twVc8s3bpc5fLrtCCEoM707qWCLcWOoOul7wvgbV3+Yd90Ki15vG/t3krGgVd+44JxMbpnaNRCTkc2IOGwOmBPYa+pbcc5WmjKZgMaTWhSPqeKNxyNzSG8KFj3B/G7XEMOO6lrsNqSxdi/tB7U9yHzlBh;4:BA/ouI43UD8iBWYeccxTRCxOD3i1OA4LCiTVOvisXK6IMM4GdWA928b7LbPuWsxVK/RwKGau5ioCYQjs6jyLGEAPT7PseXZV4Tt0fYX4xkrYxFpJJi+DoJ6RkXMoSX4V0FQZttRNgNn8y98EvkQy4j76SNQuqFNl5t+35oTWb3IEkWtgHLctCu21Cko5wH3wN+j7Ta3+Y6MLQH5GnqyaWITH5L7/ww+3D2Rgz5aEP6UrS7lh44bZbEb8vOoOJtC1mMRIhq+12GI3i5deu+FAcQ==
-X-Microsoft-Antispam-PRVS: <BN7PR08MB4932207425E72FA779B2051EC1540@BN7PR08MB4932.namprd08.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:;
-X-MS-Exchange-SenderADCheck: 1
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(3231311)(944501410)(52105095)(93006095)(10201501046)(3002001)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123560045)(20161123562045)(20161123564045)(6072148)(201708071742011)(7699016);SRVR:BN7PR08MB4932;BCL:0;PCL:0;RULEID:;SRVR:BN7PR08MB4932;
-X-Forefront-PRVS: 0744CFB5E8
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(6069001)(7916004)(346002)(376002)(366004)(39840400004)(136003)(396003)(189003)(199004)(7416002)(50466002)(7736002)(76506005)(105586002)(58126008)(16586007)(81166006)(478600001)(52116002)(6496006)(316002)(305945005)(47776003)(76176011)(66066001)(26005)(54906003)(33896004)(386003)(16526019)(7406005)(229853002)(8676002)(186003)(53936002)(81156014)(6246003)(106356001)(25786009)(6916009)(8936002)(33716001)(2906002)(23726003)(9686003)(1076002)(3846002)(956004)(6666003)(97736004)(68736007)(4326008)(6116002)(446003)(476003)(5660300001)(14444005)(486006)(6486002)(44832011)(11346002)(42882007);DIR:OUT;SFP:1102;SCL:1;SRVR:BN7PR08MB4932;H:localhost;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-Received-SPF: None (protection.outlook.com: wavecomp.com does not designate
- permitted sender hosts)
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;BN7PR08MB4932;23:ykWb0C/AZifqLurPLgdiB9kTDnuxwzRZFAnTJZ0uJ?=
- =?us-ascii?Q?Ppms2DDzR6SGY6QeeOycT7edNq8qRtyTTNBxlYBdclA2wRN2JnkdL73rpU5N?=
- =?us-ascii?Q?TAab/SHx5REKpQhUuluuACB6NEbVNZekRmb+23L1AK4T3638ofA6OrYpofpY?=
- =?us-ascii?Q?taNm7WW41t/qLggZY+gmJybFDevPwl0H6yFxaJqOXJ/b8F2W4wRdSHM/VTkr?=
- =?us-ascii?Q?2JE0TwEmSHWdrNGbiMyRp+5mELxYmsksj2dfBY/10eYQEugmydKlcyYoOKka?=
- =?us-ascii?Q?by3QzzZhqaOBZClnhoz+PIrN/xFdFy8n7zT3Nq7AIIDqZ7oV6WmKbtMom+wb?=
- =?us-ascii?Q?1CXKfxBiktM6vo0fwYXWZLAt0Tl8D7Ge92k6ENeLvbsXwSiiX8hHUqcDDWAg?=
- =?us-ascii?Q?TOHZbUubi7XzF9hkUzjEEufJnMyVllY9J2vlRt948x4NYfOUjCejPSw9jzjW?=
- =?us-ascii?Q?R7b8og6C2kmCSeWHMW4tEMV6inUwZC6z0joR/Q8zFF3qHZv354HZFQEGBpvl?=
- =?us-ascii?Q?xkCBHUZwB+h5AW+Wjdjyzeg/qeFRSox+KLxvtBA7cIlR1OjcJrGRISMQJyqU?=
- =?us-ascii?Q?e07RvP8fgfK0mjixbz/RWLYjus2ehVhpdtlxmtO7knO9d6sJjWvTCroMA+O+?=
- =?us-ascii?Q?Yn9Bt/14ZgIm3vCiaLsnH+cBvD4pyh9qJ0DvMNd1/5xoj7ttThnRO7WlzKvd?=
- =?us-ascii?Q?jMvQKGHz2zh6H4Xk5Hzrfd80eJq6OD5tlWHbhMBk3OhqPckfaEhPoZOoIfVQ?=
- =?us-ascii?Q?yIvPedDPJwD0bPImfgE7XISqIY74D0xCOxlEjWfo+IfwnnMf9qe67EaPtse6?=
- =?us-ascii?Q?Y7cwuYr2PpoQr2dfbbH+uRFd9XV3HhxT4Nu8EmKzWfe+Fmn695llSMN/wokF?=
- =?us-ascii?Q?W+nw1rjinoTRDGiELSOCm9xOIWsSMeGw4FHsGDyG2L+VkeFW2EtG9HDjgRQq?=
- =?us-ascii?Q?h5xMPlRjbTjtc05YaAMePH+jyeFZ36C7Bdpl+qze4unA0HCpp2XZP1D/qHBe?=
- =?us-ascii?Q?++E5NCeLEGASlleuhEoqb5mzOn+9PaYqx+WthKIMHyRhgM774xxRFsYSHp1W?=
- =?us-ascii?Q?wIkvIdKz5k+w2VjemXY/Xk6fIHYAEUaoFS6z55i55a0OY6rxPberpJfH8uod?=
- =?us-ascii?Q?HZeHnRTx/0lrcikA+hlaUpbzGY4nJbdTV6RrCtNYopYE06qz/kLQJoRhvcq7?=
- =?us-ascii?Q?ff3aDcl4CDbvtYD5AZjHqtOPUwMGISZYlSihqCKCU7y7fodwmhv++Cdj1QBw?=
- =?us-ascii?Q?gkB5aMVW6WOQoK5FA0FGLWeMfZFbmu3syajJY1xj3X2RM2oRJAbQa9niWmqs?=
- =?us-ascii?Q?O/rzfjOMFzuEcKO0mYMPoBrqBTmwsQ0WqYv0tg7gB1scdTHHAyWwcWjN/+mg?=
- =?us-ascii?Q?JwQYw=3D=3D?=
-X-Microsoft-Antispam-Message-Info: +5YB1DRk88IY9SbJV3lgLNZTNElE94zMFbaZu8n16Dpesj6oyPM7CKmh/XRn0sI+cXNW0ZvcBxLOHgYDHCTAH0hy2c49wmDr1YQxv3QbX8XiULbZKzrqvvefdVTDHKGwc8cXA5z3i+R6poECWDYetD5MsqUiyeeZ2GEErhy5eJzpT0agLnfAev/R9EET0kOUsib5Feen+OIrnPXLNzjVnsp0oDsiQPifL9/Ny5eVLNEnTFMPFzjMd18kV1J0F5zpvvSMTu/KH2FV55yAsgfXiLrGHT+D+rlmlhp9CKChNDMgf1CYkPM7pu3khKQok6n3DhtGVyOm/zaCS9G0S+iARKJ7NjhixRCIjMsRPSnrh4A=
-X-Microsoft-Exchange-Diagnostics: 1;BN7PR08MB4932;6:c0410fq5yUiqNK85dbEuLO/zpj6NEeigf+AFB4t8+EGyfnadIYAm25z2sSp33+MoZ/uFzv54AqVKjO6mPh78gEa0Gl203BuIPFshOF9RbLN579CRc3FlcZ9NHO8mGgb3I3lmpmZrAztHuqZviBVNDIrlI7pSBjg0/BU6/o+aauy3zgYqyy2+Qu+5rAgmKYIMeW2hG4sCeh4rF2yMIQcehpIxbbwA7t/JNuKU1hPpisUlTZ8Dv4Zv29U/+rhIn5HKGA2WOgl6zQYQHeYKUTGzuG5UMlUGR4+C0meP0GKMrwTbBAw2ZAcxX0Vhwjp0MtHqjb3YvNuQb9wGv1fyrs/dXwZFrXtUjGQWhu1gU/+Gowo52iIXm8h1mzpHM110mI4ngDC5BCAjhAyWOw5SgWngcqALrDP+27e04yUKkzGdm3T+1aGlWugQSWbxyBw6a6Dg3ypzJrMO4UjGJ5TfGVh3Eg==;5:bvpOPu+nmcPW/B8Y2XgVTCZ7x0Fxb3VaSpk/0zgF3s97R2ec/itJjDanboIpHsJmxh3Ju6BOGZBizFqV7XdfR0vRgDd0170Pa/CPR5C5tx6AEITNFpfxpOoxYD2U7DbjRHxu59HBJp52f1oTVl91le0Fo4ggIzaF3zUrRCnZpZs=;7:qsbrhbh2hlaVz27iF1pahCd7FloVJRhonEg52BvTX6NKSRlqOiPpJVv7vVDt5NofTlerS9FNik7/mR2dJUX5Lyxf/Ib3JSmy/feyXu3objTlG9Qll/AwTq5iepmusjKbIXDDfNA27Xms0Ac1RJaw8srApb0fNdv7j+wwV28gBVwTHY65Xn/WgDyl1XNVJkGAtiabYSrQas58I8+y/QqRJFwNZ/dlS48fj0Lc9vZ+VAs+1oAhj608yTZWtohX2Tn6
-SpamDiagnosticOutput: 1:99
-SpamDiagnosticMetadata: NSPM
-X-OriginatorOrg: mips.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Jul 2018 00:34:32.6488 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 01fb5f52-30fa-4e62-feb6-08d5f1c6641f
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 463607d3-1db3-40a0-8a29-970c56230104
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN7PR08MB4932
+References: <20180719205545.16512-24-pasha.tatashin@oracle.com>
+ <tip-857baa87b6422bcfb84ed3631d6839920cb5b09d@git.kernel.org>
+ <20180724195215.GA22496@roeck-us.net> <CAGM2reayvBs8rs6yHZYV9SvPz-tsNG_Ux8ypHguLLagiS2SkuA@mail.gmail.com>
+In-Reply-To: <CAGM2reayvBs8rs6yHZYV9SvPz-tsNG_Ux8ypHguLLagiS2SkuA@mail.gmail.com>
+From:   Pavel Tatashin <pasha.tatashin@oracle.com>
+Date:   Tue, 24 Jul 2018 20:36:21 -0400
+X-Gmail-Original-Message-ID: <CAGM2rebX7dq_ejNuSotV_0gJZY6pqro-KteXz9zzhDkjtSxaOw@mail.gmail.com>
+Message-ID: <CAGM2rebX7dq_ejNuSotV_0gJZY6pqro-KteXz9zzhDkjtSxaOw@mail.gmail.com>
+Subject: Re: [tip:x86/timers] sched/clock: Enable sched clock early
+To:     Guenter Roeck <linux@roeck-us.net>
+Cc:     LKML <linux-kernel@vger.kernel.org>, mingo@kernel.org,
+        tglx@linutronix.de, hpa@zytor.com,
+        linux-tip-commits@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8964 signatures=668706
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1806210000 definitions=main-1807250004
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Alexandre,
+On Tue, Jul 24, 2018 at 4:22 PM Pavel Tatashin
+<pasha.tatashin@oracle.com> wrote:
+>
+> On Tue, Jul 24, 2018 at 3:54 PM Guenter Roeck <linux@roeck-us.net> wrote:
+> >
+> > Hi,
+> >
+> > On Thu, Jul 19, 2018 at 03:33:21PM -0700, tip-bot for Pavel Tatashin wrote:
+> > > Commit-ID:  857baa87b6422bcfb84ed3631d6839920cb5b09d
+> > > Gitweb:     https://git.kernel.org/tip/857baa87b6422bcfb84ed3631d6839920cb5b09d
+> > > Author:     Pavel Tatashin <pasha.tatashin@oracle.com>
+> > > AuthorDate: Thu, 19 Jul 2018 16:55:42 -0400
+> > > Committer:  Thomas Gleixner <tglx@linutronix.de>
+> > > CommitDate: Fri, 20 Jul 2018 00:02:43 +0200
+> > >
+> > > sched/clock: Enable sched clock early
+> > >
+> > > Allow sched_clock() to be used before schec_clock_init() is called.  This
+> > > provides a way to get early boot timestamps on machines with unstable
+> > > clocks.
+> > >
+> >
+> > This patch causes a regression when running a qemu emulation with
+> > arm:integratorcp.
+>
+> Thank you for the report. I will study it.
+>
+> >
+> > ...
+> > Console: colour dummy device 80x30
+> > ------------[ cut here ]------------
+> > WARNING: CPU: 0 PID: 0 at kernel/time/sched_clock.c:180
+> > sched_clock_register+0x44/0x278
+> > Modules linked in:
+> > CPU: 0 PID: 0 Comm: swapper Not tainted 4.18.0-rc6-next-20180724 #1
+> > Hardware name: ARM Integrator/CP (Device Tree)
+> > [<c0010cb4>] (unwind_backtrace) from [<c000dc24>] (show_stack+0x10/0x18)
+> > [<c000dc24>] (show_stack) from [<c03ffb94>] (dump_stack+0x18/0x24)
+> > [<c03ffb94>] (dump_stack) from [<c001a000>] (__warn+0xc8/0xf0)
+> > [<c001a000>] (__warn) from [<c001a13c>] (warn_slowpath_null+0x3c/0x4c)
+> > [<c001a13c>] (warn_slowpath_null) from [<c052367c>] (sched_clock_register+0x44/0x278)
+> > [<c052367c>] (sched_clock_register) from [<c05238d8>] (generic_sched_clock_init+0x28/0x88)
+> > [<c05238d8>] (generic_sched_clock_init) from [<c0521a00>] (sched_clock_init+0x54/0x74)
+> > [<c0521a00>] (sched_clock_init) from [<c0519c18>] (start_kernel+0x310/0x3e4)
+> > [<c0519c18>] (start_kernel) from [<00000000>] (  (null))
+> > ---[ end trace 08080eb81afa002c ]---
+> > sched_clock: 32 bits at 100 Hz, resolution 10000000ns, wraps every 21474836475000000ns
+> > ...
+> >
+> > A complete boot log is available at
+> > http://kerneltests.org/builders/qemu-arm-next/builds/979/steps/qemubuildcommand/logs/stdio
+> >
+> > Unfortunately, reverting the patch results in conflicts, so I am unable
+> > to confirm that it is the only culprit.
+> >
+> > From the context and from looking into the patch, it appears that this
+> > can happen in any system if CONFIG_HAVE_UNSTABLE_SCHED_CLOCK is not
+> > enabled.
 
-On Thu, Jul 05, 2018 at 11:07:05AM +0000, Alexandre Ghiti wrote:
-> In order to reduce copy/paste of functions across architectures and then
-> make riscv hugetlb port (and future ports) simpler and smaller, this
-> patchset intends to factorize the numerous hugetlb primitives that are
-> defined across all the architectures.
-> 
-> Except for prepare_hugepage_range, this patchset moves the versions that
-> are just pass-through to standard pte primitives into
-> asm-generic/hugetlb.h by using the same #ifdef semantic that can be
-> found in asm-generic/pgtable.h, i.e. __HAVE_ARCH_***.
-> 
-> s390 architecture has not been tackled in this serie since it does not
-> use asm-generic/hugetlb.h at all.
-> powerpc could be factorized a bit more (cf huge_ptep_set_wrprotect).
-> 
-> This patchset has been compiled on x86 only. 
+Do you have a complete config, and also qemu args that were used? I
+have tried defconfig arm, and run in qemu, could not reproduce the
+problem.
 
-For MIPS these look good - I don't see any issues & they pass a build
-test (using cavium_octeon_defconfig which enables huge pages), so:
+Thank you,
+Pavel
 
-    Acked-by: Paul Burton <paul.burton@mips.com> # MIPS parts
-
-Thanks,
-    Paul
+> >
+> > Bisect log is attached.
+> >
+> > Guenter
+> >
+> > ---
+> > # bad: [3946cd385042069ec57d3f04240def53b4eed7e5] Add linux-next specific files for 20180724
+> > # good: [d72e90f33aa4709ebecc5005562f52335e106a60] Linux 4.18-rc6
+> > git bisect start 'HEAD' 'v4.18-rc6'
+> > # good: [f5fa891e325acf096c0f79e1d1b922002e251e5a] Merge remote-tracking branch 'crypto/master'
+> > git bisect good f5fa891e325acf096c0f79e1d1b922002e251e5a
+> > # good: [cb6471f6bcfdacbeef9c23ba9dac00e67bd3c3a4] Merge remote-tracking branch 'spi/for-next'
+> > git bisect good cb6471f6bcfdacbeef9c23ba9dac00e67bd3c3a4
+> > # bad: [6b5bfa57bf4553d051be65d85d021465041406d8] Merge remote-tracking branch 'char-misc/char-misc-next'
+> > git bisect bad 6b5bfa57bf4553d051be65d85d021465041406d8
+> > # bad: [675a67e9ef3c041999f412cb75418d2b0def3854] Merge remote-tracking branch 'rcu/rcu/next'
+> > git bisect bad 675a67e9ef3c041999f412cb75418d2b0def3854
+> > # good: [e78b01a51131f25fc2d881bc43001575c129069c] Merge branch 'perf/core'
+> > git bisect good e78b01a51131f25fc2d881bc43001575c129069c
+> > # good: [4e581bce514f4107ce84525f0f75f89c92b4140e] Merge branch 'x86/cpu'
+> > git bisect good 4e581bce514f4107ce84525f0f75f89c92b4140e
+> > # good: [20fa22e90e54e2d21cace7ba083598531670f7cf] Merge branch 'x86/pti'
+> > git bisect good 20fa22e90e54e2d21cace7ba083598531670f7cf
+> > # good: [4763f03d3d186ce8a1125844790152d76804ad60] x86/tsc: Use TSC as sched clock early
+> > git bisect good 4763f03d3d186ce8a1125844790152d76804ad60
+> > # good: [5f9ef44c7d1c59d0eda1d86e31d981bdffe2a725] tools/memory-model: Rename litmus tests to comply to norm7
+> > git bisect good 5f9ef44c7d1c59d0eda1d86e31d981bdffe2a725
+> > # bad: [fc3d25e1c8f6a9232530db02a1072033e22e0fe3] Merge branch 'x86/timers'
+> > git bisect bad fc3d25e1c8f6a9232530db02a1072033e22e0fe3
+> > # bad: [46457ea464f5341d1f9dad8dd213805d45f7f117] sched/clock: Use static key for sched_clock_running
+> > git bisect bad 46457ea464f5341d1f9dad8dd213805d45f7f117
+> > # bad: [857baa87b6422bcfb84ed3631d6839920cb5b09d] sched/clock: Enable sched clock early
+> > git bisect bad 857baa87b6422bcfb84ed3631d6839920cb5b09d
+> > # good: [5d2a4e91a541cb04d20d11602f0f9340291322ac] sched/clock: Move sched clock initialization and merge with generic clock
+> > git bisect good 5d2a4e91a541cb04d20d11602f0f9340291322ac
+> > # first bad commit: [857baa87b6422bcfb84ed3631d6839920cb5b09d] sched/clock: Enable sched clock early
