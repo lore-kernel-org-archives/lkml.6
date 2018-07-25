@@ -2,165 +2,87 @@ Return-Path: <SRS0=S+WB=KJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50934C6778F
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 08:16:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D59CBC67790
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 08:17:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0038320671
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 08:16:38 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=goldelico.com header.i=@goldelico.com header.b="bkkQ7o6e"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0038320671
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goldelico.com
+	by mail.kernel.org (Postfix) with ESMTP id 987A6205C9
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 08:17:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 987A6205C9
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728613AbeGYJ1K (ORCPT
+        id S1728670AbeGYJ1j (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 05:27:10 -0400
-Received: from mo4-p01-ob.smtp.rzone.de ([81.169.146.165]:34833 "EHLO
-        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728560AbeGYJ1J (ORCPT
+        Wed, 25 Jul 2018 05:27:39 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:38818 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728620AbeGYJ1i (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Jul 2018 05:27:09 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1532506594;
-        s=strato-dkim-0002; d=goldelico.com;
-        h=To:References:Message-Id:Cc:Date:In-Reply-To:From:Subject:
-        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
-        bh=o0t7+EDG/CqGjkfH6F74zQCj37vF19tZ8mE1Ni3CEVk=;
-        b=bkkQ7o6eIRN3n5HRpph5HhhAj9JLwTkWAT4xQOXLXT6NQnyEVt32C64fIc5OVTBQZL
-        5O79A0kIFjzHiRO/Jq8VdEGDsIQQROwMVKIHFalb4hsNHH1Ew3/LcjNI++Sne3j86qPn
-        bMmZ0qz9LVHpgGFGMA/owEjCtVOowZfECsregAt41ZkfWGtEK4SMHY1teJZQhqFc9DNM
-        48Sdv4/7iUKlK/QFXDG/5Bn7HWeTy/oh9gnALhBE9MT6geoLLZUADdcSj44Cb02Up4SF
-        o2ryJs0t+hq7Q9GMnU3t86zqKby9daaB3OTG+0vsJJgiqTxPV5WKX3fo8egTPm2h9osJ
-        MAtg==
-X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMgPgp8VKxflSZ1P34KBj4Qpw87Wiuc1qET/2Lw=="
-X-RZG-CLASS-ID: mo00
-Received: from mbp-13-nikolaus.fritz.box
-        by smtp.strato.de (RZmta 43.13 DYNA|AUTH)
-        with ESMTPSA id 6047f4u6P8GQdVf
-        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
-        (Client did not present a certificate);
-        Wed, 25 Jul 2018 10:16:26 +0200 (CEST)
+        Wed, 25 Jul 2018 05:27:38 -0400
+Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C8B52B78;
+        Wed, 25 Jul 2018 08:17:03 +0000 (UTC)
+Date:   Wed, 25 Jul 2018 10:17:01 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc:     Andreas Noever <andreas.noever@gmail.com>,
+        Michael Jamet <michael.jamet@intel.com>,
+        Yehezkel Bernat <YehezkelShB@gmail.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 6/7] thunderbolt: Add support for runtime PM
+Message-ID: <20180725081701.GA16930@kroah.com>
+References: <20180725080321.35746-1-mika.westerberg@linux.intel.com>
+ <20180725080321.35746-7-mika.westerberg@linux.intel.com>
+MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 9.3 \(3124\))
-Subject: Re: [PATCH 10/32] ARM: dts: omap3-gta04: update gpmc NAND setup
-From:   "H. Nikolaus Schaller" <hns@goldelico.com>
-In-Reply-To: <20180725081058.GB7467@lenoch>
-Date:   Wed, 25 Jul 2018 10:16:28 +0200
-Cc:     Marek Belisko <marek@goldelico.com>,
-        =?utf-8?Q?Beno=C3=AEt_Cousson?= <bcousson@baylibre.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-omap@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, letux-kernel@openphoenux.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <1E7B727D-1AED-4B00-AD2C-CF9FC562E53D@goldelico.com>
-References: <cover.1532501910.git.hns@goldelico.com> <effe8969751cde3a3cd7993aa66c839493af9dd1.1532501910.git.hns@goldelico.com> <20180725081058.GB7467@lenoch>
-To:     Ladislav Michl <ladis@linux-mips.org>
-X-Mailer: Apple Mail (2.3124)
+Content-Disposition: inline
+In-Reply-To: <20180725080321.35746-7-mika.westerberg@linux.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Wed, Jul 25, 2018 at 11:03:20AM +0300, Mika Westerberg wrote:
+> When Thunderbolt host controller is set to RTD3 mode (Runtime D3) it is
+> present all the time. Because of this it is important to runtime suspend
+> the controller whenever possible. In case of ICM we have following rules
+> which all needs to be true before the host controller can be put to D3:
+> 
+>   - The controller firmware reports to support RTD3
+>   - All the connected devices announce support for RTD3
+>   - There is no active XDomain connection
+> 
+> Implement this using standard Linux runtime PM APIs so that when all the
+> children devices are runtime suspended, the Thunderbolt host controller
+> PCI device is runtime suspended as well. The ICM firmware then starts
+> powering down power domains towards RTD3 but it can prevent this if it
+> detects that there is an active Display Port stream (this is not visible
+> to the software, though).
+> 
+> The Thunderbolt host controller will be runtime resumed either when
+> there is a remote wake event (device is connected or disconnected), or
+> when there is access from userspace that requires hardware access.
+> 
+> Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+> ---
+>  drivers/thunderbolt/domain.c  |  42 +++++++++++-
+>  drivers/thunderbolt/icm.c     | 119 ++++++++++++++++++++++++++++++----
+>  drivers/thunderbolt/nhi.c     |  38 ++++++++++-
+>  drivers/thunderbolt/switch.c  |  65 +++++++++++++++++--
+>  drivers/thunderbolt/tb.h      |  10 +++
+>  drivers/thunderbolt/tb_msgs.h |   4 ++
+>  drivers/thunderbolt/xdomain.c |  18 +++++
+>  7 files changed, 276 insertions(+), 20 deletions(-)
 
-> Am 25.07.2018 um 10:10 schrieb Ladislav Michl <ladis@linux-mips.org>:
->=20
-> On Wed, Jul 25, 2018 at 08:58:42AM +0200, H. Nikolaus Schaller wrote:
->> to better match omap3-beagle.dts (which was the basis
->> of designing the GTA04).
->>=20
->> Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
->> ---
->> arch/arm/boot/dts/omap3-gta04.dtsi | 14 +++++++-------
->> 1 file changed, 7 insertions(+), 7 deletions(-)
->>=20
->> diff --git a/arch/arm/boot/dts/omap3-gta04.dtsi =
-b/arch/arm/boot/dts/omap3-gta04.dtsi
->> index 03fe404cbf56..9568e0c4d4bf 100644
->> --- a/arch/arm/boot/dts/omap3-gta04.dtsi
->> +++ b/arch/arm/boot/dts/omap3-gta04.dtsi
->> @@ -616,27 +616,27 @@
->> 		interrupt-parent =3D <&gpmc>;
->> 		interrupts =3D <0 IRQ_TYPE_NONE>, /* fifoevent */
->> 			     <1 IRQ_TYPE_NONE>;	/* termcount */
->> +		ti,nand-ecc-opt =3D "ham1";
->> +		rb-gpios =3D <&gpmc 0 GPIO_ACTIVE_HIGH>; /* gpmc_wait0 =
-*/
->> 		nand-bus-width =3D <16>;
->> -		ti,nand-ecc-opt =3D "bch8";
->=20
-> You are using weeker ECC scheme just to be compatible with another =
-machine?
 
-No not another machine. The GTA04 uses the same SoC and NAND chip as the =
-BeagleBoard,
-so you can imagine GTA04 being a BeagleBoard + a lot of other things.
+This patch did not apply to my tree at all, what branch did you make it
+against?
 
-The key reason is to change the ecc scheme is to be compatible with the =
-U-Boot used.
+I've applied the others here, thanks.
 
-BootROM can only handle ham1 for the MLO. And there is no nand-ecc-opt
-for each partition. So we either can't mix ECC schemes if we want to be =
-able
-to read/write MLO as the first partition from kernel.
-
-> So now you cannot boot already deployed filesystem...
-
-No. We always used ham1 and bch8 wasn't working at all here. Therefore =
-nobody
-did use upstream kernel for NAND yet...
-
-> Also is it enough for
-> NAND chip used?
-
-Well, the chip is recommended to use bch8 but BootROM imposes above =
-mentioned limits.
-
-BR,
-Nikolaus
-
->=20
-> 	ladis
->=20
->> +		#address-cells =3D <1>;
->> +		#size-cells =3D <1>;
->>=20
->> -		gpmc,sync-clk-ps =3D <0>;
->> +		gpmc,device-width =3D <2>;
->> 		gpmc,cs-on-ns =3D <0>;
->> 		gpmc,cs-rd-off-ns =3D <44>;
->> 		gpmc,cs-wr-off-ns =3D <44>;
->> 		gpmc,adv-on-ns =3D <6>;
->> 		gpmc,adv-rd-off-ns =3D <34>;
->> 		gpmc,adv-wr-off-ns =3D <44>;
->> -		gpmc,we-off-ns =3D <40>;
->> 		gpmc,oe-off-ns =3D <54>;
->> +		gpmc,we-off-ns =3D <40>;
->> 		gpmc,access-ns =3D <64>;
->> 		gpmc,rd-cycle-ns =3D <82>;
->> 		gpmc,wr-cycle-ns =3D <82>;
->> 		gpmc,wr-access-ns =3D <40>;
->> 		gpmc,wr-data-mux-bus-ns =3D <0>;
->> -		gpmc,device-width =3D <2>;
->> -
->> -		#address-cells =3D <1>;
->> -		#size-cells =3D <1>;
->> +		gpmc,sync-clk-ps =3D <0>;
->>=20
->> 		x-loader@0 {
->> 			label =3D "X-Loader";
->> --=20
->> 2.12.2
->>=20
->> --
->> To unsubscribe from this list: send the line "unsubscribe linux-omap" =
-in
->> the body of a message to majordomo@vger.kernel.org
->> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-
+greg k-h
