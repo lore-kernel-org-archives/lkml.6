@@ -2,128 +2,127 @@ Return-Path: <SRS0=S+WB=KJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 206B8C6778F
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 02:44:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1106C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 02:46:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D9E8F20895
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 02:44:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D9E8F20895
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 61AAB20895
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 02:46:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 61AAB20895
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zte.com.cn
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388572AbeGYDx7 (ORCPT
+        id S2388529AbeGYD4P (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 23:53:59 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:49018 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727646AbeGYDx7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 23:53:59 -0400
-Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w6P2hXui047861
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Jul 2018 22:44:30 -0400
-Received: from e35.co.us.ibm.com (e35.co.us.ibm.com [32.97.110.153])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2kedmnc5wn-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Jul 2018 22:44:28 -0400
-Received: from localhost
-        by e35.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <bauerman@linux.ibm.com>;
-        Tue, 24 Jul 2018 20:44:27 -0600
-Received: from b03cxnp08028.gho.boulder.ibm.com (9.17.130.20)
-        by e35.co.us.ibm.com (192.168.1.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 24 Jul 2018 20:44:25 -0600
-Received: from b03ledav004.gho.boulder.ibm.com (b03ledav004.gho.boulder.ibm.com [9.17.130.235])
-        by b03cxnp08028.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w6P2iOfO8782230
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 24 Jul 2018 19:44:24 -0700
-Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 86BEF7805F;
-        Tue, 24 Jul 2018 20:44:24 -0600 (MDT)
-Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 8CA0C7805E;
-        Tue, 24 Jul 2018 20:44:22 -0600 (MDT)
-Received: from morokweng.localdomain.com (unknown [9.85.159.138])
-        by b03ledav004.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Tue, 24 Jul 2018 20:44:22 -0600 (MDT)
-From:   Thiago Jung Bauermann <bauerman@linux.ibm.com>
-To:     linux-kselftest@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, Shuah Khan <shuah@kernel.org>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Prakash Sangappa <prakash.sangappa@oracle.com>,
-        Thiago Jung Bauermann <bauerman@linux.ibm.com>
-Subject: [PATCH 3/3] userfaultfd: selftest: Report XFAIL if shmem doesn't support zeropage
-Date:   Tue, 24 Jul 2018 23:42:09 -0300
-X-Mailer: git-send-email 2.14.4
-In-Reply-To: <20180725024209.32586-1-bauerman@linux.ibm.com>
-References: <20180725024209.32586-1-bauerman@linux.ibm.com>
-X-TM-AS-GCONF: 00
-x-cbid: 18072502-0012-0000-0000-00001690D8E5
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009424; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000266; SDB=6.01065718; UDB=6.00547467; IPR=6.00843576;
- MB=3.00022308; MTD=3.00000008; XFM=3.00000015; UTC=2018-07-25 02:44:27
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18072502-0013-0000-0000-000053CAC391
-Message-Id: <20180725024209.32586-4-bauerman@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-24_07:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1806210000 definitions=main-1807250027
+        Tue, 24 Jul 2018 23:56:15 -0400
+Received: from mx7.zte.com.cn ([202.103.147.169]:52200 "EHLO mxct.zte.com.cn"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727353AbeGYD4O (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Jul 2018 23:56:14 -0400
+Received: from mse02.zte.com.cn (unknown [10.30.3.21])
+        by Forcepoint Email with ESMTPS id 86726BF581E6D4A530D4;
+        Wed, 25 Jul 2018 10:46:43 +0800 (CST)
+Received: from kjyxapp01.zte.com.cn ([10.30.12.200])
+        by mse02.zte.com.cn with SMTP id w6P2kao9079092;
+        Wed, 25 Jul 2018 10:46:36 +0800 (GMT-8)
+        (envelope-from tan.hu@zte.com.cn)
+Received: from mapi (kjyxapp01[null])
+        by mapi (Zmail) with MAPI id mid16;
+        Wed, 25 Jul 2018 10:46:37 +0800 (CST)
+Date:   Wed, 25 Jul 2018 10:46:37 +0800 (CST)
+X-Zmail-TransId: 2b035b57e48d7cebdf18
+X-Mailer: Zmail v1.0
+Message-ID: <201807251046372965178@zte.com.cn>
+In-Reply-To: <alpine.LFD.2.20.1807242216100.3314@ja.home.ssi.bg>
+References: 1532419953-5517-1-git-send-email-tan.hu@zte.com.cn,alpine.LFD.2.20.1807242216100.3314@ja.home.ssi.bg
+Mime-Version: 1.0
+From:   <tan.hu@zte.com.cn>
+To:     <ja@ssi.bg>
+Cc:     <wensong@linux-vs.org>, <horms@verge.net.au>,
+        <pablo@netfilter.org>, <kadlec@blackhole.kfki.hu>, <fw@strlen.de>,
+        <davem@davemloft.net>, <netdev@vger.kernel.org>,
+        <lvs-devel@vger.kernel.org>, <netfilter-devel@vger.kernel.org>,
+        <coreteam@netfilter.org>, <linux-kernel@vger.kernel.org>,
+        <zhong.weidong@zte.com.cn>, <jiang.biao2@zte.com.cn>
+Subject: =?UTF-8?B?UmU6IFJlOiBbUEFUQ0hdIGlwdnM6IGZpeCByYWNlIGJldHdlZW4gaXBfdnNfY29ubl9uZXcoKSBhbmRpcF92c19kZWxfZGVzdCgp?=
+Content-Type: multipart/mixed;
+        boundary="=====_001_next====="
+X-MAIL: mse02.zte.com.cn w6P2kao9079092
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If userfaultfd runs on a system that doesn't support UFFDIO_ZEROPAGE for
-shared memory, it currently ends with error code 1 which indicates test
-failure:
 
-  # ./userfaultfd shmem 10 10
-  nr_pages: 160, nr_pages_per_cpu: 80
-  bounces: 9, mode: rnd poll, unexpected missing ioctl for anon memory
-  # echo $?
-  1
 
-This is a real failure, but expected so signal that to the test harness:
+--=====_001_next=====
+Content-Type: multipart/alternative;
+	boundary="=====_003_next====="
 
-  # ./userfaultfd shmem 10 10
-  nr_pages: 160, nr_pages_per_cpu: 80
-  bounces: 9, mode: rnd poll, UFFDIO_ZEROPAGE unsupported in shmem VMAs
-  # echo $?
-  2
 
-Signed-off-by: Thiago Jung Bauermann <bauerman@linux.ibm.com>
----
- tools/testing/selftests/vm/userfaultfd.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+--=====_003_next=====
+Content-Type: text/plain;
+	charset="UTF-8"
+Content-Transfer-Encoding: base64
 
-diff --git a/tools/testing/selftests/vm/userfaultfd.c b/tools/testing/selftests/vm/userfaultfd.c
-index bc9ec38fbc34..686fe96f617f 100644
---- a/tools/testing/selftests/vm/userfaultfd.c
-+++ b/tools/testing/selftests/vm/userfaultfd.c
-@@ -1115,6 +1115,14 @@ static int userfaultfd_stress(void)
- 		expected_ioctls = uffd_test_ops->expected_ioctls;
- 		if ((uffdio_register.ioctls & expected_ioctls) !=
- 		    expected_ioctls) {
-+			if (test_type == TEST_SHMEM &&
-+			    (uffdio_register.ioctls & expected_ioctls) ==
-+			    UFFD_API_RANGE_IOCTLS_BASIC) {
-+				fprintf(stderr,
-+					"UFFDIO_ZEROPAGE unsupported in shmem VMAs\n");
-+				return KSFT_XFAIL;
-+			}
-+
- 			fprintf(stderr,
- 				"unexpected missing ioctl for anon memory\n");
- 			return 1;
+VGhhbmtzIGZvciB5b3VyIHJldmlld2luZywgSSBoYXZlIHNlbnQgcGF0Y2gtdjIsIHBsZWFzZSBj
+aGVjayBpdC4KCj4gSGVsbG8sCj4gCj4gT24gVHVlLCAyNCBKdWwgMjAxOCwgVGFuIEh1IHdyb3Rl
+Ogo+IAo+ID4gV2UgY2FtZSBhY3Jvc3MgaW5maW5pdGUgbG9vcCBpbiBpcHZzIHdoZW4gdXNpbmcg
+aXB2cyBpbiBkb2NrZXIKPiA+IGVudi4KPiA+Cj4gPiBXaGVuIGlwdnMgcmVjZWl2ZXMgbmV3IHBh
+Y2tldHMgYW5kIGNhbm5vdCBmaW5kIGFuIGlwdnMgY29ubmVjdGlvbiwKPiA+IGl0IHdpbGwgY3Jl
+YXRlIGEgbmV3IGNvbm5lY3Rpb24sIHRoZW4gaWYgdGhlIGRlc3QgaXMgdW5hdmFpbGFibGUKPiA+
+IChpLmUuIElQX1ZTX0RFU1RfRl9BVkFJTEFCTEUpLCB0aGUgcGFja2V0IHdpbGwgYmUgZHJvcHBl
+ZCBzbGllbnRseS4KPiA+Cj4gPiBCdXQgaWYgdGhlIGRyb3BwZWQgcGFja2V0IGlzIHRoZSBmaXJz
+dCBwYWNrZXQgb2YgdGhpcyBjb25uZWN0aW9uLAo+ID4gdGhlIGNvbm5lY3Rpb24gY29udHJvbCB0
+aW1lciBuZXZlciBoYXMgYSBjaGFuY2UgdG8gc3RhcnQgYW5kIHRoZQo+ID4gaXB2cyBjb25uZWN0
+aW9uIGNhbm5vdCBiZSByZWxlYXNlZC4gVGhpcyB3aWxsIGxlYWQgdG8gbWVtb3J5IGxlYWssIG9y
+Cj4gPiBpbmZpbml0ZSBsb29wIGluIGNsZWFudXBfbmV0KCkgd2hlbiBuZXQgbmFtZXNwYWNlIGlz
+IHJlbGVhc2VkIGxpa2UKPiA+IHRoaXM6Cj4gPgo+ID4gaXBfdnNfY29ubl9uZXRfY2xlYW51cCBh
+dCBmZmZmZmZmZmEwYTlmMzFhIFtpcF92c10KPiA+IF9faXBfdnNfY2xlYW51cCBhdCBmZmZmZmZm
+ZmEwYTlmNjBhIFtpcF92c10KPiA+IG9wc19leGl0X2xpc3QgYXQgZmZmZmZmZmY4MTU2N2E0OQo+
+ID4gY2xlYW51cF9uZXQgYXQgZmZmZmZmZmY4MTU2OGI0MAo+ID4gcHJvY2Vzc19vbmVfd29yayBh
+dCBmZmZmZmZmZjgxMGE4NTFiCj4gPiB3b3JrZXJfdGhyZWFkIGF0IGZmZmZmZmZmODEwYTkzNTYK
+PiA+IGt0aHJlYWQgYXQgZmZmZmZmZmY4MTBiMGI2Zgo+ID4gcmV0X2Zyb21fZm9yayBhdCBmZmZm
+ZmZmZjgxNjk3YTE4Cj4gPgo+ID4gcmFjZSBjb25kaXRpb246Cj4gPiBDUFUxIENQVTIKPiA+IGlw
+X3ZzX2luKCkKPiA+IGlwX3ZzX2Nvbm5fbmV3KCkKPiA+IGlwX3ZzX2RlbF9kZXN0KCkKPiA+IF9f
+aXBfdnNfdW5saW5rX2Rlc3QoKQo+ID4gfklQX1ZTX0RFU1RfRl9BVkFJTEFCTEUKPiA+IGNwLT5k
+ZXN0ICYmICFJUF9WU19ERVNUX0ZfQVZBSUxBQkxFCj4gPiBfX2lwX3ZzX2Nvbm5fcHV0Cj4gPiAu
+Li4KPiA+IGNsZWFudXBfbmV0IC0tLT4gaW5maW5pdGUgbG9vcGluZwo+ID4KPiA+IEZpeCB0aGlz
+IGJ5IGNoZWNraW5nIHdoZXRoZXIgdGhlIHRpbWVyIGFscmVhZHkgc3RhcnRlZC4KPiAKPiBMb29r
+cyBsaWtlIGFuIG9sZCBidWcuLi4KPiAKPiA+Cj4gPiBTaWduZWQtb2ZmLWJ5OiBUYW4gSHUgPHRh
+bi5odUB6dGUuY29tLmNuPgo+ID4gUmV2aWV3ZWQtYnk6IEppYW5nIEJpYW8gPGppYW5nLmJpYW8y
+QHp0ZS5jb20uY24+Cj4gPiAtLS0KPiA+IG5ldC9uZXRmaWx0ZXIvaXB2cy9pcF92c19jb3JlLmMg
+fCAxMCArKysrKysrLS0tCj4gPiAxIGZpbGUgY2hhbmdlZCwgNyBpbnNlcnRpb25zKCspLCAzIGRl
+bGV0aW9ucygtKQo+ID4KPiA+IGRpZmYgLS1naXQgYS9uZXQvbmV0ZmlsdGVyL2lwdnMvaXBfdnNf
+Y29yZS5jIGIvbmV0L25ldGZpbHRlci9pcHZzL2lwX3ZzX2NvcmUuYwo+ID4gaW5kZXggMDY3OWRk
+MS4uY2E5ZTdjYyAxMDA2NDQKPiA+IC0tLSBhL25ldC9uZXRmaWx0ZXIvaXB2cy9pcF92c19jb3Jl
+LmMKPiA+ICsrKyBiL25ldC9uZXRmaWx0ZXIvaXB2cy9pcF92c19jb3JlLmMKPiA+IEBAIC0xOTcy
+LDEzICsxOTcyLDE3IEBAIHN0YXRpYyBpbnQgaXBfdnNfaW5faWNtcF92NihzdHJ1Y3QgbmV0bnNf
+aXB2cyAqaXB2cywgc3RydWN0IHNrX2J1ZmYgKnNrYiwKPiA+IGlmIChjcC0+ZGVzdCAmJiAhKGNw
+LT5kZXN0LT5mbGFncyAmIElQX1ZTX0RFU1RfRl9BVkFJTEFCTEUpKSB7Cj4gPiAvKiB0aGUgZGVz
+dGluYXRpb24gc2VydmVyIGlzIG5vdCBhdmFpbGFibGUgKi8KPiAKPiBBZGQ6IHUzMiBmbGFncyA9
+IGNwLT5mbGFnczsKPiAKPiA+Cj4gPiArIC8qIHdoZW4gdGltZXIgYWxyZWFkeSBzdGFydGVkLCBz
+aWxlbnRseSBkcm9wIHRoZSBwYWNrZXQuKi8KPiA+ICsgaWYgKHRpbWVyX3BlbmRpbmcoJmNwLT50
+aW1lcikpCj4gPiArIF9faXBfdnNfY29ubl9wdXQoY3ApOwo+ID4gKyBlbHNlCj4gPiArIGlwX3Zz
+X2Nvbm5fcHV0KGNwKTsKPiAKPiBXaGVuIGlwX3ZzX2Nvbm5fcHV0IGlzIGNhbGxlZCBmb3IgSVBf
+VlNfQ09OTl9GX09ORV9QQUNLRVQKPiBpdCBpcyBwb3NzaWJsZSB0byBjYWxsIGlwX3ZzX2Nvbm5f
+ZXhwaXJlIGFuZCB0byBmcmVlIGNwIHdpdGgKPiBpcF92c19jb25uX3JjdV9mcmVlIGltbWVkaWF0
+ZWx5LiBXaGF0IHdlIGNhbiBkbyBpcyB0byBhdm9pZCB0aGUKPiBpcF92c19jb25uX2V4cGlyZV9u
+b3cgY2FsbCBpbiBzdWNoIGNhc2UgYnkgcmVhZGluZyB0aGUgZmxhZ3MKPiBlYXJseSAoYXMgYWJv
+dmUpIGFuZCBhZGRpbmcgdGhlIG5lZWRlZCBjaGVjayAoYXMgYmVsb3cpLgo+IAo+ID4gKwo+ID4g
+aWYgKHN5c2N0bF9leHBpcmVfbm9kZXN0X2Nvbm4oaXB2cykpIHsKPiAKPiBBZGQgIShmbGFncyAm
+IElQX1ZTX0NPTk5fRl9PTkVfUEFDS0VUKSBjaGVjayBpbiBhYm92ZSAnaWYnLgo+IAo+ID4gLyog
+dHJ5IHRvIGV4cGlyZSB0aGUgY29ubmVjdGlvbiBpbW1lZGlhdGVseSAqLwo+ID4gaXBfdnNfY29u
+bl9leHBpcmVfbm93KGNwKTsKPiA+IH0KPiA+IC0gLyogZG9uJ3QgcmVzdGFydCBpdHMgdGltZXIs
+IGFuZCBzaWxlbnRseQo+ID4gLSBkcm9wIHRoZSBwYWNrZXQuICovCj4gPiAtIF9faXBfdnNfY29u
+bl9wdXQoY3ApOwo+ID4gKwo+ID4gcmV0dXJuIE5GX0RST1A7Cj4gPiB9Cj4gPgo+IAo+IFJlZ2Fy
+ZHM=
+
+
+--=====_003_next=====--
+
+--=====_001_next=====--
 
