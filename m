@@ -2,152 +2,128 @@ Return-Path: <SRS0=S+WB=KJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F32BAC6778F
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 18:13:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD5F2C6778F
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 18:13:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9FB5320833
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 18:13:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8947420844
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 18:13:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=permerror (0-bit key) header.d=wdc.com header.i=@wdc.com header.b="o4BslouZ";
-	dkim=pass (1024-bit key) header.d=sharedspace.onmicrosoft.com header.i=@sharedspace.onmicrosoft.com header.b="KLA00tM5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9FB5320833
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=wdc.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g3JHWrCW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8947420844
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730303AbeGYTZx (ORCPT
+        id S1730555AbeGYT0W (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 15:25:53 -0400
-Received: from esa2.hgst.iphmx.com ([68.232.143.124]:45766 "EHLO
-        esa2.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729514AbeGYTZx (ORCPT
+        Wed, 25 Jul 2018 15:26:22 -0400
+Received: from mail-io0-f195.google.com ([209.85.223.195]:35639 "EHLO
+        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729514AbeGYT0W (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Jul 2018 15:25:53 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1532542923; x=1564078923;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-id:content-transfer-encoding:
-   mime-version;
-  bh=K8MbWoLWqIDG6vwJHvXcFxNWI83uHWt88nSOabb8vQU=;
-  b=o4BslouZNmVBx96fN0xdBDBMyks4afGCVymaiXcGVnKinYChuQLMfITF
-   ErgahSQnPj/JOn9ssCn62xjs+YGCSaYaGl84vs0zr7GhUWCHtgvjFHd5T
-   37oZ7tWBzV3jZTclXt0LYQrlX3wAujchELsOYz6OMJSjiRmWbHl0VHzwu
-   bcEi8Gr9HQgw1iPJ7eqKqtLKqVUe05dok8urI5rpXE9ayoMn3SJg1dyVl
-   itLM9zBHFinWhzjbGmurI0EGVIHpUkFkhDJH5Tf+pz5vonxXHSpAuYFrr
-   PCwRDwX6Zm557a+FBoOIHuTQlc/CwonkZZ2AIkfEMnvjc0S83Wh9JuvK0
-   w==;
-X-IronPort-AV: E=Sophos;i="5.51,401,1526313600"; 
-   d="scan'208";a="182126521"
-Received: from mail-bl2nam02lp0080.outbound.protection.outlook.com (HELO NAM02-BL2-obe.outbound.protection.outlook.com) ([207.46.163.80])
-  by ob1.hgst.iphmx.com with ESMTP; 26 Jul 2018 02:22:00 +0800
+        Wed, 25 Jul 2018 15:26:22 -0400
+Received: by mail-io0-f195.google.com with SMTP id w11-v6so7106304iob.2;
+        Wed, 25 Jul 2018 11:13:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=sharedspace.onmicrosoft.com; s=selector1-wdc-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=YFJxO/BQ4d9uWZERaRt9R+9TkFXX4TmyD/GFRMUm/hE=;
- b=KLA00tM5M4tzNJM4qJjlsqK+ce9+1qPENpr2VGkVgGXbL0rveyGjrDx3TCZzwjvVzr4Y9L6xEPdb0cksW/O1lUpzqvip5FTcy4Ed5lRRJXDFM0NSt78KFklm4JKnvdek6ef9Knxb6Rn6beUWALXT2e7hoc+jN5V0X2JOtLaCpyk=
-Received: from MWHPR04MB1198.namprd04.prod.outlook.com (10.173.48.151) by
- MWHPR04MB0944.namprd04.prod.outlook.com (10.174.174.154) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.952.21; Wed, 25 Jul 2018 18:13:02 +0000
-Received: from MWHPR04MB1198.namprd04.prod.outlook.com
- ([fe80::29a0:6668:ccc3:c397]) by MWHPR04MB1198.namprd04.prod.outlook.com
- ([fe80::29a0:6668:ccc3:c397%3]) with mapi id 15.20.0973.022; Wed, 25 Jul 2018
- 18:13:02 +0000
-From:   Bart Van Assche <Bart.VanAssche@wdc.com>
-To:     "ps@pks.im" <ps@pks.im>, "axboe@kernel.dk" <axboe@kernel.dk>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "ming.lei@redhat.com" <ming.lei@redhat.com>
-Subject: Re: [PATCH] block: fix NPE when resuming SCSI devices using blk-mq
-Thread-Topic: [PATCH] block: fix NPE when resuming SCSI devices using blk-mq
-Thread-Index: AQHUGq56yXYBAcJcykKCTi0snJ4SPaSgUOAA
-Date:   Wed, 25 Jul 2018 18:13:02 +0000
-Message-ID: <fda284b59b2401d3d44a1343f809b98a8ae69be7.camel@wdc.com>
-References: <b712b87a509dc64619a3aec7c673935ed09be5de.1531488173.git.ps@pks.im>
-In-Reply-To: <b712b87a509dc64619a3aec7c673935ed09be5de.1531488173.git.ps@pks.im>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Bart.VanAssche@wdc.com; 
-x-originating-ip: [199.255.44.174]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;MWHPR04MB0944;7:svgipxt4+eN1hUGDHBRYKTJbFEF9sffxERoLau18t+APNMoPCtRVmIj3ehpP3puHls2soZ+9S31qk0Xg/bjf3XSNa/otNrMKfcIugyos8kDQhdNq869uw9/qsi6ny/4Syk+D8dHr8TVfAiMehLB1Klcb/27xT3agfn+b+r28ZoHpV/39ee17lVoUfQRf+8MiKy5Q1QpTJehAZ1EIuk8ubDZXrSIkQ9t1ICmfN8vyYLIHzpXMUo+un7bIeNgJB3GQ;20:jgm8kQsvDmMP3pMtYYhKNXrKZLU0Kdgh5VNNCEPBvOjji+GX4VzlmQDUdA+HuBr4Zx5In9SUVOAY8K+GxFVu41PanyhiXfQ8oCvfaxXRRK2RWJvO5X58WZuv3JK8DzlDdl6YuhSTjqWl2ic6lzzWZuxavLYq86AF29s1EE+iSQE=
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: cacea4e1-ac55-4fa2-6248-08d5f25a42bb
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600073)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:MWHPR04MB0944;
-x-ms-traffictypediagnostic: MWHPR04MB0944:
-wdcipoutbound: EOP-TRUE
-x-microsoft-antispam-prvs: <MWHPR04MB0944672EE600455ABC98A74398540@MWHPR04MB0944.namprd04.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:;
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(5005006)(8121501046)(3231311)(944501410)(52105095)(3002001)(10201501046)(93006095)(93001095)(6055026)(149027)(150027)(6041310)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123562045)(20161123558120)(6072148)(201708071742011)(7699016);SRVR:MWHPR04MB0944;BCL:0;PCL:0;RULEID:;SRVR:MWHPR04MB0944;
-x-forefront-prvs: 0744CFB5E8
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(39860400002)(136003)(366004)(346002)(396003)(189003)(51234002)(199004)(6512007)(81156014)(8676002)(81166006)(2906002)(14454004)(72206003)(4326008)(76176011)(54906003)(229853002)(5250100002)(14444005)(6246003)(2900100001)(66066001)(86362001)(486006)(53936002)(68736007)(316002)(110136005)(2616005)(7736002)(186003)(26005)(6506007)(105586002)(118296001)(97736004)(11346002)(6486002)(25786009)(478600001)(8936002)(6116002)(2501003)(99286004)(6436002)(102836004)(476003)(106356001)(3846002)(305945005)(256004)(36756003)(5660300001)(446003);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR04MB0944;H:MWHPR04MB1198.namprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-x-microsoft-antispam-message-info: QN/iCR6TOdl0Gg/GKeQf1IID0TdKy0SmQBoywFjrobdUzG7ZMNzsUcBSNrBXYUimW0YiV/Z7vV9NVKqMFhtAqkHkBUy5P/VVyg/EzlEU3rZ6ejobeNMASdyhZVOBL69dhNNbp58Wb4pc/lh9STZRpeYRLdY6640gB/tJTWL8kIs0Fjfxtg+L+EWG5mnHbhzno0EHazz4oUYcza6hOWwLSL5hYBPr1slvJ0lIfOpNe6riSiQfyG56NcMSsxHcW0irkZ7X2HXmRud7jHAKfM9WOKtTe72kbG1BRFlGTNnwXJo7SQIT+rfvjvPM9fCWf1nVOIpv+lZx8YcrS/RunrPCy8qqnIeaNwD+rkSSxNr9CZo=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-7"
-Content-ID: <EE6549A875588F4488F95DD0808F11EC@namprd04.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=VW582KrGB6yEvf/lwW6bEIySdRkbggnQEBsDyIVGqSM=;
+        b=g3JHWrCWNY1XucoVHS5kzq+dycNQ+47jxBPcWDpmMlduPgjlIqjRwPqewgRum+3owU
+         sMXDSRkKa7sZN96XJTiX/5ww7m0GmjGC9Os8wU9s4LQKQEdGn6Lz7IXGqjj1f9acnM2b
+         otNZBf0zZBz77Uu2cN5L/+H3XATgD4WjNUPUwCOsHQe2O9Sr+CDi2Z6A9f5uUgflx7Y7
+         LEvUzcy2k3xhqPPXhAHgiWs0RqefZBSmNgkVweL8Wv0V88vVEtPyRTldY4l836HLMpiR
+         dHw+J3DxonZjmjXSEP2d8+0FGJNGrRwjIaANQBBayQbXJcWRKzY1dbFrKQKt9dA0yiWn
+         cKjg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=VW582KrGB6yEvf/lwW6bEIySdRkbggnQEBsDyIVGqSM=;
+        b=eZQbn8PpiD0ZsNF8UOZbXhtsZxWLx7ZG/dUxEMbNk3W/WFlI3gCBtuHssbUtA1eKY2
+         Wq8CTFsrUcJOzZdQ7mh6SR2ndeCwVGp9x/qHAJ+U/SkS8w7cvV03bIB7WmeGQchoR+pv
+         fYUntCXeYXlvN4kcTY7j+3vqDbi5gDtcwK6euvtis8Q1W4nmOfDZ9uZUHGZnoBSLD/bA
+         mJNWocvetKg63GKQkJs6qa5HfDM2twcjWS918gLSmaTM9CsKc4Z5bFeOxnTMbMJoxwnI
+         BA5KgWvjwOIfjrKU3psvvSDVWKZ8tQm/TQiIiUUg7oqgv/hEK5zhBd8z2oKULtaxgDm4
+         b1zQ==
+X-Gm-Message-State: AOUpUlFPpPOFSO2po5Quh37JCMMuA2e5bQ0o28il2LfQlsk0owuvT1D4
+        aQvkUHYcMacRo9+KQTUVBesUectC
+X-Google-Smtp-Source: AAOMgpenBt+KXFH6Y7qzVcgNSINHFljDuoKZNa8CZIwPvy629qkFY4jIloWpFzxkk3ifRcxLWUYQiQ==
+X-Received: by 2002:a6b:9e91:: with SMTP id h139-v6mr17754978ioe.185.1532542412828;
+        Wed, 25 Jul 2018 11:13:32 -0700 (PDT)
+Received: from dsa-mb.local ([2601:282:800:fd80:e4d8:8895:822a:720a])
+        by smtp.googlemail.com with ESMTPSA id g26-v6sm137929iti.0.2018.07.25.11.13.30
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 25 Jul 2018 11:13:31 -0700 (PDT)
+Subject: Re: [PATCH RFC/RFT net-next 00/17] net: Convert neighbor tables to
+ per-namespace
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     Cong Wang <xiyou.wangcong@gmail.com>,
+        David Miller <davem@davemloft.net>,
+        Linux Kernel Network Developers <netdev@vger.kernel.org>,
+        nikita.leshchenko@oracle.com,
+        Roopa Prabhu <roopa@cumulusnetworks.com>,
+        Stephen Hemminger <stephen@networkplumber.org>,
+        Ido Schimmel <idosch@mellanox.com>,
+        Jiri Pirko <jiri@mellanox.com>,
+        Saeed Mahameed <saeedm@mellanox.com>,
+        Alexander Aring <alex.aring@gmail.com>,
+        linux-wpan@vger.kernel.org,
+        NetFilter <netfilter-devel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+References: <1a3f59a9-0ba5-c83f-16a6-f9550a84f693@gmail.com>
+ <CAM_iQpWabZorkMNswyfHyS4KT=f_bgMtK8K35=84uah6Kfqxew@mail.gmail.com>
+ <1a27e301-3275-b349-a2f8-afdfdc02f04f@gmail.com>
+ <20180718.125938.2271502580775162784.davem@davemloft.net>
+ <28c30574-391c-b4bd-c337-51d3040d901a@gmail.com>
+ <CAM_iQpW4-JkZY7jXx0Q1b907hQ85UOL1eXv2YHwSukb5L=apUg@mail.gmail.com>
+ <5021d874-8e99-6eba-f24b-4257c62d4457@gmail.com>
+ <CAM_iQpUc-H2kZCBevePs6g-8qKyJkUhdd1ZDSQgYsCG0ChfC2w@mail.gmail.com>
+ <87muufze8w.fsf@xmission.com>
+ <4b03b5f6-87ce-9ff2-7c14-598beebd8fb8@gmail.com>
+ <87zhyfw70m.fsf@xmission.com>
+From:   David Ahern <dsahern@gmail.com>
+Message-ID: <dacc9322-fd5a-dfeb-e4f1-7a288fb79886@gmail.com>
+Date:   Wed, 25 Jul 2018 12:13:30 -0600
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:52.0)
+ Gecko/20100101 Thunderbird/52.9.1
 MIME-Version: 1.0
-X-OriginatorOrg: wdc.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: cacea4e1-ac55-4fa2-6248-08d5f25a42bb
-X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Jul 2018 18:13:02.2254
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR04MB0944
+In-Reply-To: <87zhyfw70m.fsf@xmission.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2018-07-13 at 15:29 +-0200, Patrick Steinhardt wrote:
-+AD4- When power management for SCSI is enabled and if a device uses blk-mq=
-,
-+AD4- it is possible to trigger a +AGA-NULL+AGA- pointer exception when res=
-uming that
-+AD4- device. The NPE is triggered when trying to dereference the +AGA-requ=
-est+AF8-fn+AGA-
-+AD4- function pointer of the device's +AGA-request+AF8-queue+AGA-:
-+AD4-=20
-+AD4-     +AF8AXw-blk+AF8-run+AF8-queue+AF8-uncond:470
-+AD4-     +AF8AXw-blk+AF8-run+AF8-queue:490
-+AD4-     blk+AF8-post+AF8-runtime+AF8-resume:3889
-+AD4-     sdev+AF8-runtime+AF8-resume:263
-+AD4-     scsi+AF8-runtime+AF8-resume:275
-+AD4-=20
-+AD4- When the SCSI device is being allocated by +AGA-scsi+AF8-alloc+AF8-sd=
-ev+AGA-, the
-+AD4- device's request queue will either be initialized via
-+AD4- +AGA-scsi+AF8-mq+AF8-alloc+AF8-queue+AGA- or +AGA-scsi+AF8-old+AF8-al=
-loc+AF8-queue+AGA-. But the +AGA-request+AF8-fn+AGA-
-+AD4- member of the request queue is in fact only being set in
-+AD4- +AGA-scsi+AF8-old+AF8-alloc+AF8-queue+AGA-, which will then later cau=
-se the mentioned NPE.
-+AD4-=20
-+AD4- Fix the issue by checking whether the +AGA-request+AF8-fn+AGA- is set=
- in
-+AD4- +AGAAXwBf-blk+AF8-run+AF8-queue+AF8-uncond+AGA-. In case it is unset,=
- we'll silently return and
-+AD4- not try to invoke the callback, thus fixing the NPE.
+On 7/25/18 11:38 AM, Eric W. Biederman wrote:
+> 
+> Absolutely NOT.  Global thresholds are exactly correct given the fact
+> you are running on a single kernel.
+> 
+> Memory is not free (Even though we are swimming in enough of it memory
+> rarely matters).  One of the few remaining challenges is for containers
+> is finding was to limit resources in such a way that one application
+> does not mess things up for another container during ordinary usage.
+> 
+> It looks like the neighbour tables absolutely are that kind of problem,
+> because the artificial limits are too strict.   Completely giving up on
+> limits does not seem right approach either.  We need to fix the limits
+> we have (perhaps making them go away entirely), not just apply a
+> band-aid.  Let's get to the bottom of this and make the system better.
 
-Which kernel version are you using? Can you check whether the following two
-commits are in your kernel tree?
+Eric: yes, they all share the global resource of memory and there should
+be limits on how many entries a remote entity can create.
 
-+ACo- 4fd41a8552af (+ACI-SCSI: Fix NULL pointer dereference in runtime PM+A=
-CIAOw- December
-  2015).
-+ACo- 765e40b675a9 (+ACI-block: disable runtime-pm for blk-mq+ACIAOw- July =
-2017).
-
-Thanks,
-
-Bart.
+Network namespaces can provide a separation such that one namespace does
+not disrupt networking in another. It is absolutely appropriate to do
+so. Your rigid stance is inconsistent given the basic meaning of a
+network namespace and the parallels to this same problem -- bridges,
+vxlans, and ip fragments. Only neighbor tables are not per-device or per
+namespace; your insistence on global limits is missing the mark and wrong.
