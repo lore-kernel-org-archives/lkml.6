@@ -3,39 +3,39 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 536FAC6778F
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 18:01:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33D6CC67790
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 18:02:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 070D420893
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 18:01:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DB1F72088E
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 18:02:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="tYL9Vf0F"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 070D420893
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="tFCdjSJn"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DB1F72088E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731465AbeGYTOl (ORCPT
+        id S1731480AbeGYTOq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 15:14:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43300 "EHLO mail.kernel.org"
+        Wed, 25 Jul 2018 15:14:46 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43408 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729486AbeGYTOk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Jul 2018 15:14:40 -0400
+        id S1729367AbeGYTOq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Jul 2018 15:14:46 -0400
 Received: from jouet.infradead.org (189-94-96-116.3g.claro.net.br [189.94.96.116])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1E5712088E;
-        Wed, 25 Jul 2018 18:01:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0A8D920852;
+        Wed, 25 Jul 2018 18:01:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1532541714;
-        bh=JIIKughPrHIDXqtjxAC2SMHnI4vPEAte5OxDHJLSq00=;
+        s=default; t=1532541720;
+        bh=5Tt66/uVgsK0Z7CWtKsJepCE4MBSg0b8En87fzcq0ms=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tYL9Vf0FrM6BDv+tZlvOXqV7qG+Xf8mvYHQ3MsdiH2KTzpA9d6iKVipSwlTFUc2kO
-         9fahCMhDpy0Qdz2LaluNSEl+ZPecCpfUNuqSZ0Ca+F0FNAP84pEjLPUiAqQ3ZuNLrg
-         RtRwJPjatyRtVzgpGdcN67ROQaEHL5aeBzYSpYT0=
+        b=tFCdjSJnMHAyK29mQWbJZ9GWZFl5+7X4zoz2ADMCnbvu/ALfGbTWucqPvUrkBbKn4
+         2epGLzY7U0sTXYW91Akdv8OGBIuSq3BpqVZIb4Vo+qwXntlbXHkMEX3RT1gteE1YPY
+         Q9mCzAgZXA502DWMJ6L0+qOrX22glSppEftjn4M0=
 From:   Arnaldo Carvalho de Melo <acme@kernel.org>
 To:     Ingo Molnar <mingo@kernel.org>
 Cc:     Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
@@ -49,9 +49,9 @@ Cc:     Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
         Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>,
         Thomas Richter <tmricht@linux.vnet.ibm.com>,
         Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 17/27] perf arm64: Generate system call table from asm/unistd.h
-Date:   Wed, 25 Jul 2018 14:59:51 -0300
-Message-Id: <20180725180001.15108-18-acme@kernel.org>
+Subject: [PATCH 18/27] perf trace arm64: Use generated syscall table
+Date:   Wed, 25 Jul 2018 14:59:52 -0300
+Message-Id: <20180725180001.15108-19-acme@kernel.org>
 X-Mailer: git-send-email 2.14.4
 In-Reply-To: <20180725180001.15108-1-acme@kernel.org>
 References: <20180725180001.15108-1-acme@kernel.org>
@@ -65,61 +65,13 @@ From: Kim Phillips <kim.phillips@arm.com>
 This should speed up accessing new system calls introduced with the
 kernel rather than waiting for libaudit updates to include them.
 
-Using the existing other arch scripts resulted in this error:
-
-  tools/perf/arch/arm64/entry/syscalls//mksyscalltbl: 25: printf: __NR3264_ftruncate: expected numeric value
-
-because, unlike other arches, asm-generic's unistd.h does things like:
-
-  #define __NR_ftruncate __NR3264_ftruncate
-
-Turning the scripts printf's %d into a %s resulted in this in the
-generated syscalls.c file:
-
-    static const char *syscalltbl_arm64[] = {
-            [__NR3264_ftruncate] = "ftruncate",
-
-So we use the host C compiler to fold the macros, and print them out
-from within a temporary C program, in order to get the correct output:
-
-    static const char *syscalltbl_arm64[] = {
-            [46] = "ftruncate",
-
-Committer notes:
-
-Testing this with a container with an old toolchain breaks because it
-ends up using the system's /usr/include/asm-generic/unistd.h, included
-from tools/arch/arm64/include/uapi/asm/unistd.h when what is desired is
-for it to include tools/include/uapi/asm-generic/unistd.h.
-
-Since all that tools/arch/arm64/include/uapi/asm/unistd.h is to set a
-define and then include asm-generic/unistd.h, do that directly and use
-tools/include/uapi/asm-generic/unistd.h as the file to get the syscall
-definitions to expand.
-
-Testing it:
-
-   tools/perf/arch/arm64/entry/syscalls/mksyscalltbl /gcc-linaro-5.4.1-2017.05-x86_64_aarch64-linux-gnu/bin/aarch64-linux-gnu-gcc gcc tools/include/uapi/asm-generic/unistd.h
-
-Now works and generates in the syscall string table.
-
-Before it ended up as:
-
-  $ tools/perf/arch/arm64/entry/syscalls/mksyscalltbl /gcc-linaro-5.4.1-2017.05-x86_64_aarch64-linux-gnu/bin/aarch64-linux-gnu-gcc gcc tools/arch/arm64/include/uapi/asm/unistd.h
-  static const char *syscalltbl_arm64[] = {
-  <stdin>: In function 'main':
-  <stdin>:257:38: error: '__NR_getrandom' undeclared (first use in this function)
-  <stdin>:257:38: note: each undeclared identifier is reported only once for each function it appears in
-  <stdin>:258:41: error: '__NR_memfd_create' undeclared (first use in this function)
-  <stdin>:259:32: error: '__NR_bpf' undeclared (first use in this function)
-  <stdin>:260:37: error: '__NR_execveat' undeclared (first use in this function)
-  tools/perf/arch/arm64/entry/syscalls/mksyscalltbl: 47: tools/perf/arch/arm64/entry/syscalls/mksyscalltbl: /tmp/create-table-60liya: Permission denied
-  };
-  $
+It also enables users to specify wildcards, for example, perf trace -e
+'open*', just like was already possible on x86, s390, and powerpc, which
+means arm64 can now pass the "Check open filename arg using perf trace +
+vfs_getname" test.
 
 Signed-off-by: Kim Phillips <kim.phillips@arm.com>
 Reviewed-by: Hendrik Brueckner <brueckner@linux.ibm.com>
-Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
 Cc: Jiri Olsa <jolsa@redhat.com>
 Cc: Michael Ellerman <mpe@ellerman.id.au>
@@ -127,111 +79,41 @@ Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
 Cc: Thomas Richter <tmricht@linux.vnet.ibm.com>
-Link: http://lkml.kernel.org/r/20180706163443.22626f5e9e10e5bab5e5c662@arm.com
+Link: http://lkml.kernel.org/r/20180706163454.f714b9ab49ecc8566a0b3565@arm.com
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/arch/arm64/Makefile                    | 21 ++++++++
- tools/perf/arch/arm64/entry/syscalls/mksyscalltbl | 62 +++++++++++++++++++++++
- 2 files changed, 83 insertions(+)
- create mode 100755 tools/perf/arch/arm64/entry/syscalls/mksyscalltbl
+ tools/perf/Makefile.config   | 2 ++
+ tools/perf/util/syscalltbl.c | 4 ++++
+ 2 files changed, 6 insertions(+)
 
-diff --git a/tools/perf/arch/arm64/Makefile b/tools/perf/arch/arm64/Makefile
-index 91de4860faad..f013b115dc86 100644
---- a/tools/perf/arch/arm64/Makefile
-+++ b/tools/perf/arch/arm64/Makefile
-@@ -4,3 +4,24 @@ PERF_HAVE_DWARF_REGS := 1
+diff --git a/tools/perf/Makefile.config b/tools/perf/Makefile.config
+index f5a3b402589e..d3318f99006c 100644
+--- a/tools/perf/Makefile.config
++++ b/tools/perf/Makefile.config
+@@ -54,6 +54,8 @@ endif
+ 
+ ifeq ($(SRCARCH),arm64)
+   NO_PERF_REGS := 0
++  NO_SYSCALL_TABLE := 0
++  CFLAGS += -I$(OUTPUT)arch/arm64/include/generated
+   LIBUNWIND_LIBS = -lunwind -lunwind-aarch64
  endif
- PERF_HAVE_JITDUMP := 1
- PERF_HAVE_ARCH_REGS_QUERY_REGISTER_OFFSET := 1
-+
-+#
-+# Syscall table generation for perf
-+#
-+
-+out    := $(OUTPUT)arch/arm64/include/generated/asm
-+header := $(out)/syscalls.c
-+sysdef := $(srctree)/tools/include/uapi/asm-generic/unistd.h
-+sysprf := $(srctree)/tools/perf/arch/arm64/entry/syscalls/
-+systbl := $(sysprf)/mksyscalltbl
-+
-+# Create output directory if not already present
-+_dummy := $(shell [ -d '$(out)' ] || mkdir -p '$(out)')
-+
-+$(header): $(sysdef) $(systbl)
-+	$(Q)$(SHELL) '$(systbl)' '$(CC)' '$(HOSTCC)' $(sysdef) > $@
-+
-+clean::
-+	$(call QUIET_CLEAN, arm64) $(RM) $(header)
-+
-+archheaders: $(header)
-diff --git a/tools/perf/arch/arm64/entry/syscalls/mksyscalltbl b/tools/perf/arch/arm64/entry/syscalls/mksyscalltbl
-new file mode 100755
-index 000000000000..52e197317d3e
---- /dev/null
-+++ b/tools/perf/arch/arm64/entry/syscalls/mksyscalltbl
-@@ -0,0 +1,62 @@
-+#!/bin/sh
-+# SPDX-License-Identifier: GPL-2.0
-+#
-+# Generate system call table for perf. Derived from
-+# powerpc script.
-+#
-+# Copyright IBM Corp. 2017
-+# Author(s):  Hendrik Brueckner <brueckner@linux.vnet.ibm.com>
-+# Changed by: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
-+# Changed by: Kim Phillips <kim.phillips@arm.com>
-+
-+gcc=$1
-+hostcc=$2
-+input=$3
-+
-+if ! test -r $input; then
-+	echo "Could not read input file" >&2
-+	exit 1
-+fi
-+
-+create_table_from_c()
-+{
-+	local sc nr last_sc
-+
-+	create_table_exe=`mktemp /tmp/create-table-XXXXXX`
-+
-+	{
-+
-+	cat <<-_EoHEADER
-+		#include <stdio.h>
-+		#define __ARCH_WANT_RENAMEAT
-+		#include "$input"
-+		int main(int argc, char *argv[])
-+		{
-+	_EoHEADER
-+
-+	while read sc nr; do
-+		printf "%s\n" "	printf(\"\\t[%d] = \\\"$sc\\\",\\n\", __NR_$sc);"
-+		last_sc=$sc
-+	done
-+
-+	printf "%s\n" "	printf(\"#define SYSCALLTBL_ARM64_MAX_ID %d\\n\", __NR_$last_sc);"
-+	printf "}\n"
-+
-+	} | $hostcc -o $create_table_exe -x c -
-+
-+	$create_table_exe
-+
-+	rm -f $create_table_exe
-+}
-+
-+create_table()
-+{
-+	echo "static const char *syscalltbl_arm64[] = {"
-+	create_table_from_c
-+	echo "};"
-+}
-+
-+$gcc -E -dM -x c  $input	       \
-+	|sed -ne 's/^#define __NR_//p' \
-+	|sort -t' ' -k2 -nu	       \
-+	|create_table
+ 
+diff --git a/tools/perf/util/syscalltbl.c b/tools/perf/util/syscalltbl.c
+index 0ee7f568d60c..3393d7ee9401 100644
+--- a/tools/perf/util/syscalltbl.c
++++ b/tools/perf/util/syscalltbl.c
+@@ -38,6 +38,10 @@ static const char **syscalltbl_native = syscalltbl_powerpc_64;
+ #include <asm/syscalls_32.c>
+ const int syscalltbl_native_max_id = SYSCALLTBL_POWERPC_32_MAX_ID;
+ static const char **syscalltbl_native = syscalltbl_powerpc_32;
++#elif defined(__aarch64__)
++#include <asm/syscalls.c>
++const int syscalltbl_native_max_id = SYSCALLTBL_ARM64_MAX_ID;
++static const char **syscalltbl_native = syscalltbl_arm64;
+ #endif
+ 
+ struct syscall {
 -- 
 2.14.4
 
