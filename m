@@ -1,113 +1,109 @@
 Return-Path: <SRS0=S+WB=KJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: *
-X-Spam-Status: No, score=1.3 required=3.0 tests=DKIM_SIGNED,FSL_HELO_FAKE,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 459C5C67790
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 10:10:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6AF7C6778F
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 10:18:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E3C5620882
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 10:09:59 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c+eaOBnm"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E3C5620882
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 79D9720843
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 10:18:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 79D9720843
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728760AbeGYLU5 (ORCPT
+        id S1728765AbeGYL3F (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 07:20:57 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:54378 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728222AbeGYLU5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Jul 2018 07:20:57 -0400
-Received: by mail-wm0-f68.google.com with SMTP id c14-v6so5449829wmb.4
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Jul 2018 03:09:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=8fJy2UUZNWsTBrVloKGgVpp74fGwGR5ql/tcxDE0tVw=;
-        b=c+eaOBnmn0OA+DhSLp26WQ8eS5ZSYLvp3pPrdHTkmDidhjoZCKtB/j1GDjlGZD+R8M
-         2XCZ6ceX8Bub4N5+PDC7M+gn2MMEK77V+KSgd7OgMybY7UGy4UrkZwCrCyajLVypK+6q
-         ucMNQ3hrGiLYH1B2iNscR9a7JG9HAf8lAEviVLhb59B3bIe46rdgTpyJvqKgZjxr443S
-         gD/Au3ks1Ic4hlqUYxxRugs7V8eJKuSyiW94BeIl1t/Uy9sfLdE33D8ptgzHMgSHLgQz
-         O2al3t5NQbCHtYTgyxFJIN5xdtQt4YbwcOgYJa1tyFDcuc1yHtUVJwRdj2MVKGcF+3f8
-         NPqw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition
-         :content-transfer-encoding:in-reply-to:user-agent;
-        bh=8fJy2UUZNWsTBrVloKGgVpp74fGwGR5ql/tcxDE0tVw=;
-        b=COzKs2R8T/X44zrZ6SbducoTrKTehwGhbD5wXda/LwJ5wtev3cG9RBDjEB1NNLYmEj
-         TlcBQ60FIdoOo7e7k2QkLGfFtuWepvDw3yDAEMWpRf7W6F/0UTOe5ydV6R7LXI96XPRz
-         mCFt0s8BxwRdNAQl3hFolM7eSkpKChtFlx00AtCpbpndp7+CQam8H9QXCy/05evhjWf/
-         YYtH6C29z+Vy3BddLK5MiYYmK7RYDyKas5ZTnoxT7E4HAMkDznm87GI0FgPE3bzvmYeT
-         Q9zfHLAR+1hS768vyBXX7HvaGTz/gPAdJWfxr83079ALmb4wmBRdlaHxnTkFipszJCPD
-         vApA==
-X-Gm-Message-State: AOUpUlE5R+ypeJw04OZSoEPxViW0DruoEMU0/BllS1s3nAQE8NgdMIwD
-        X1XQZx0hTSLq4Wtd+c7bc4s=
-X-Google-Smtp-Source: AAOMgpc+KrxbuMela5MaUCJFbfxQmlEct3JaHz9IGyXAI5/owaQTFGqn3dNpmNhrwOxdVsBoyD5L9Q==
-X-Received: by 2002:a1c:ad42:: with SMTP id w63-v6mr4538024wme.100.1532513395797;
-        Wed, 25 Jul 2018 03:09:55 -0700 (PDT)
-Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
-        by smtp.gmail.com with ESMTPSA id 64-v6sm13693456wrj.50.2018.07.25.03.09.54
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 25 Jul 2018 03:09:55 -0700 (PDT)
-Date:   Wed, 25 Jul 2018 12:09:53 +0200
-From:   Ingo Molnar <mingo@kernel.org>
-To:     Anders Roxell <anders.roxell@linaro.org>
-Cc:     riel@surriel.com, peterz@infradead.org, songliubraving@fb.com,
-        linux@armlinux.org.uk, dave.hansen@intel.com, x86@kernel.org,
+        Wed, 25 Jul 2018 07:29:05 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:58976 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728708AbeGYL3E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Jul 2018 07:29:04 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id B238F20798; Wed, 25 Jul 2018 12:18:01 +0200 (CEST)
+Received: from localhost (unknown [80.255.6.130])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 6F3782072C;
+        Wed, 25 Jul 2018 12:17:51 +0200 (CEST)
+Date:   Wed, 25 Jul 2018 12:17:51 +0200
+From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     linux-kbuild@vger.kernel.org, Sam Ravnborg <sam@ravnborg.org>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Russell King <linux@armlinux.org.uk>,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] arm: asm/tlb.h: Fix build error implicit func declaration
-Message-ID: <20180725100953.GA26481@gmail.com>
-References: <20180725095557.19668-1-anders.roxell@linaro.org>
+Subject: Re: [PATCH 1/2] ARM: at91: remove unused duplicated filechk_offsets
+Message-ID: <20180725101751.GB3539@piout.net>
+References: <1532495771-10255-1-git-send-email-yamada.masahiro@socionext.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180725095557.19668-1-anders.roxell@linaro.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <1532495771-10255-1-git-send-email-yamada.masahiro@socionext.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-* Anders Roxell <anders.roxell@linaro.org> wrote:
-
-> Building on arm 32 with LPAE enabled we don't include asm-generic/tlb.h,
-> where we have tlb_flush_remove_tables_local and tlb_flush_remove_tables
-> defined.
-> mm/memory.c: In function ‘tlb_remove_table_smp_sync’:
-> mm/memory.c:339:2: error: implicit declaration of function ‘tlb_flush_remove_tables_local’; did you mean ‘tlb_remove_table’? [-Werror=implicit-function-declaration]
->   tlb_flush_remove_tables_local(mm);
->   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->   tlb_remove_table
-> mm/memory.c: In function ‘tlb_table_flush’:
-> mm/memory.c:372:2: error: implicit declaration of function ‘tlb_flush_remove_tables’; did you mean ‘tlb_remove_table’? [-Werror=implicit-function-declaration]
->   tlb_flush_remove_tables(tlb->mm);
->   ^~~~~~~~~~~~~~~~~~~~~~~
->   tlb_remove_table
+On 25/07/2018 14:16:10+0900, Masahiro Yamada wrote:
+> The filechk_offsets in arch/arm/mach-at91/Makefile is never
+> used because it is always overridden by the equivalent one in
+> scripts/Makefile.lib
 > 
-> To fix this issue we define them in arm 32's specific asm/tlb.h file.
-> 
-> Fixes: 2ff6ddf19c0e ("x86/mm/tlb: Leave lazy TLB mode at page table free time")
-> Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Acked-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+
 > ---
 > 
-> Ingo, would it make sense for you to pick it up into the x86 tree since
-> that contains the bug ?
+> I will queue this to my kbuild tree.
+> 
+> 
+>  arch/arm/mach-at91/Makefile | 25 -------------------------
+>  1 file changed, 25 deletions(-)
+> 
+> diff --git a/arch/arm/mach-at91/Makefile b/arch/arm/mach-at91/Makefile
+> index 4ea93c9..7415f18 100644
+> --- a/arch/arm/mach-at91/Makefile
+> +++ b/arch/arm/mach-at91/Makefile
+> @@ -19,31 +19,6 @@ ifeq ($(CONFIG_PM_DEBUG),y)
+>  CFLAGS_pm.o += -DDEBUG
+>  endif
+>  
+> -# Default sed regexp - multiline due to syntax constraints
+> -define sed-y
+> -	"/^->/{s:->#\(.*\):/* \1 */:; \
+> -	s:^->\([^ ]*\) [\$$#]*\([-0-9]*\) \(.*\):#define \1 \2 /* \3 */:; \
+> -	s:^->\([^ ]*\) [\$$#]*\([^ ]*\) \(.*\):#define \1 \2 /* \3 */:; \
+> -	s:->::; p;}"
+> -endef
+> -
+> -# Use filechk to avoid rebuilds when a header changes, but the resulting file
+> -# does not
+> -define filechk_offsets
+> -	(set -e; \
+> -	 echo "#ifndef $2"; \
+> -	 echo "#define $2"; \
+> -	 echo "/*"; \
+> -	 echo " * DO NOT MODIFY."; \
+> -	 echo " *"; \
+> -	 echo " * This file was generated by Kbuild"; \
+> -	 echo " */"; \
+> -	 echo ""; \
+> -	 sed -ne $(sed-y); \
+> -	 echo ""; \
+> -	 echo "#endif" )
+> -endef
+> -
+>  arch/arm/mach-at91/pm_data-offsets.s: arch/arm/mach-at91/pm_data-offsets.c
+>  	$(call if_changed_dep,cc_s_c)
+>  
+> -- 
+> 2.7.4
+> 
 
-Done and sorry about that! Will push your fix out to -next as well ASAP.
-
-Thanks,
-
-	Ingo
+-- 
+Alexandre Belloni, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
