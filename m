@@ -6,47 +6,49 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A51BC67790
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 14:25:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10B88C6778F
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 14:26:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0617520843
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 14:25:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0617520843
+	by mail.kernel.org (Postfix) with ESMTP id B278F20843
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 14:26:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B278F20843
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729204AbeGYPhn (ORCPT
+        id S1729242AbeGYPiQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 11:37:43 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:55739 "EHLO
+        Wed, 25 Jul 2018 11:38:16 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:49143 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727881AbeGYPhn (ORCPT
+        with ESMTP id S1728986AbeGYPiQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Jul 2018 11:37:43 -0400
+        Wed, 25 Jul 2018 11:38:16 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w6PEPP41402072
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w6PEPwZ8402112
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Wed, 25 Jul 2018 07:25:25 -0700
+        Wed, 25 Jul 2018 07:25:58 -0700
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w6PEPPXC402069;
-        Wed, 25 Jul 2018 07:25:25 -0700
-Date:   Wed, 25 Jul 2018 07:25:25 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w6PEPwLq402109;
+        Wed, 25 Jul 2018 07:25:58 -0700
+Date:   Wed, 25 Jul 2018 07:25:58 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for Srikar Dronamraju <tipbot@zytor.com>
-Message-ID: <tip-8cd45eee43bd46b933158b25aa7c742e0f3e811f@git.kernel.org>
-Cc:     peterz@infradead.org, tglx@linutronix.de,
-        linux-kernel@vger.kernel.org, riel@surriel.com,
-        torvalds@linux-foundation.org, srikar@linux.vnet.ibm.com,
-        mingo@kernel.org, hpa@zytor.com, mgorman@techsingularity.net
-Reply-To: peterz@infradead.org, tglx@linutronix.de,
-          linux-kernel@vger.kernel.org, riel@surriel.com,
-          torvalds@linux-foundation.org, srikar@linux.vnet.ibm.com,
-          mingo@kernel.org, hpa@zytor.com, mgorman@techsingularity.net
-In-Reply-To: <1529514181-9842-5-git-send-email-srikar@linux.vnet.ibm.com>
-References: <1529514181-9842-5-git-send-email-srikar@linux.vnet.ibm.com>
+Message-ID: <tip-f03bb6760b8e5e2bcecc88d2a2ef41c09adcab39@git.kernel.org>
+Cc:     mingo@kernel.org, torvalds@linux-foundation.org,
+        tglx@linutronix.de, mgorman@techsingularity.net,
+        srikar@linux.vnet.ibm.com, peterz@infradead.org, riel@surriel.com,
+        hpa@zytor.com, linux-kernel@vger.kernel.org
+Reply-To: hpa@zytor.com, linux-kernel@vger.kernel.org,
+          peterz@infradead.org, riel@surriel.com,
+          torvalds@linux-foundation.org, tglx@linutronix.de,
+          mgorman@techsingularity.net, srikar@linux.vnet.ibm.com,
+          mingo@kernel.org
+In-Reply-To: <1529514181-9842-6-git-send-email-srikar@linux.vnet.ibm.com>
+References: <1529514181-9842-6-git-send-email-srikar@linux.vnet.ibm.com>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:sched/core] sched/numa: Set preferred_node based on best_cpu
-Git-Commit-ID: 8cd45eee43bd46b933158b25aa7c742e0f3e811f
+Subject: [tip:sched/core] sched/numa: Use task faults only if numa_group is
+ not yet set up
+Git-Commit-ID: f03bb6760b8e5e2bcecc88d2a2ef41c09adcab39
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -60,80 +62,67 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  8cd45eee43bd46b933158b25aa7c742e0f3e811f
-Gitweb:     https://git.kernel.org/tip/8cd45eee43bd46b933158b25aa7c742e0f3e811f
+Commit-ID:  f03bb6760b8e5e2bcecc88d2a2ef41c09adcab39
+Gitweb:     https://git.kernel.org/tip/f03bb6760b8e5e2bcecc88d2a2ef41c09adcab39
 Author:     Srikar Dronamraju <srikar@linux.vnet.ibm.com>
-AuthorDate: Wed, 20 Jun 2018 22:32:45 +0530
+AuthorDate: Wed, 20 Jun 2018 22:32:46 +0530
 Committer:  Ingo Molnar <mingo@kernel.org>
 CommitDate: Wed, 25 Jul 2018 11:41:06 +0200
 
-sched/numa: Set preferred_node based on best_cpu
+sched/numa: Use task faults only if numa_group is not yet set up
 
-Currently preferred node is set to dst_nid which is the last node in the
-iteration whose group weight or task weight is greater than the current
-node. However it doesn't guarantee that dst_nid has the numa capacity
-to move. It also doesn't guarantee that dst_nid has the best_cpu which
-is the CPU/node ideal for node migration.
+When numa_group faults are available, task_numa_placement only uses
+numa_group faults to evaluate preferred node. However it still accounts
+task faults and even evaluates the preferred node just based on task
+faults just to discard it in favour of preferred node chosen on the
+basis of numa_group.
 
-Lets consider faults on a 4 node system with group weight numbers
-in different nodes being in 0 < 1 < 2 < 3 proportion. Consider the task
-is running on 3 and 0 is its preferred node but its capacity is full.
-Consider nodes 1, 2 and 3 have capacity. Then the task should be
-migrated to node 1. Currently the task gets moved to node 2. env.dst_nid
-points to the last node whose faults were greater than current node.
-
-Modify to set the preferred node based of best_cpu. Earlier setting
-preferred node was skipped if nr_active_nodes is 1. This could result in
-the task being moved out of the preferred node to a random node during
-regular load balancing.
-
-Also while modifying task_numa_migrate(), use sched_setnuma to set
-preferred node. This ensures out numa accounting is correct.
+Instead use task faults only if numa_group is not set.
 
 Running SPECjbb2005 on a 4 node machine and comparing bops/JVM
 JVMS  LAST_PATCH  WITH_PATCH  %CHANGE
-16    25122.9     25549.6     1.698
-1     73850       73190       -0.89
+16    25549.6     25215.7     -1.30
+1     73190       72107       -1.47
 
 Running SPECjbb2005 on a 16 node machine and comparing bops/JVM
 JVMS  LAST_PATCH  WITH_PATCH  %CHANGE
-8     105930      113437      7.08676
-1     178624      196130      9.80047
+8     113437      113372      -0.05
+1     196130      177403      -9.54
 
 (numbers from v1 based on v4.17-rc5)
 Testcase       Time:         Min         Max         Avg      StdDev
-numa01.sh      Real:      435.78      653.81      534.58       83.20
-numa01.sh       Sys:      121.93      187.18      145.90       23.47
-numa01.sh      User:    37082.81    51402.80    43647.60     5409.75
-numa02.sh      Real:       60.64       61.63       61.19        0.40
-numa02.sh       Sys:       14.72       25.68       19.06        4.03
-numa02.sh      User:     5210.95     5266.69     5233.30       20.82
-numa03.sh      Real:      746.51      808.24      780.36       23.88
-numa03.sh       Sys:       97.26      108.48      105.07        4.28
-numa03.sh      User:    58956.30    61397.05    60162.95     1050.82
-numa04.sh      Real:      465.97      519.27      484.81       19.62
-numa04.sh       Sys:      304.43      359.08      334.68       20.64
-numa04.sh      User:    37544.16    41186.15    39262.44     1314.91
-numa05.sh      Real:      411.57      457.20      433.29       16.58
-numa05.sh       Sys:      230.05      435.48      339.95       67.58
-numa05.sh      User:    33325.54    36896.31    35637.84     1222.64
+numa01.sh      Real:      506.35      794.46      599.06      104.26
+numa01.sh       Sys:      150.37      223.56      195.99       24.94
+numa01.sh      User:    43450.69    61752.04    49281.50     6635.33
+numa02.sh      Real:       60.33       62.40       61.31        0.90
+numa02.sh       Sys:       18.12       31.66       24.28        5.89
+numa02.sh      User:     5203.91     5325.32     5260.29       49.98
+numa03.sh      Real:      696.47      853.62      745.80       57.28
+numa03.sh       Sys:       85.68      123.71       97.89       13.48
+numa03.sh      User:    55978.45    66418.63    59254.94     3737.97
+numa04.sh      Real:      444.05      514.83      497.06       26.85
+numa04.sh       Sys:      230.39      375.79      316.23       48.58
+numa04.sh      User:    35403.12    41004.10    39720.80     2163.08
+numa05.sh      Real:      423.09      460.41      439.57       13.92
+numa05.sh       Sys:      287.38      480.15      369.37       68.52
+numa05.sh      User:    34732.12    38016.80    36255.85     1070.51
 
 Testcase       Time:         Min         Max         Avg      StdDev 	 %Change
-numa01.sh      Real:      506.35      794.46      599.06      104.26 	 -10.76%
-numa01.sh       Sys:      150.37      223.56      195.99       24.94 	 -25.55%
-numa01.sh      User:    43450.69    61752.04    49281.50     6635.33 	 -11.43%
-numa02.sh      Real:       60.33       62.40       61.31        0.90 	 -0.195%
-numa02.sh       Sys:       18.12       31.66       24.28        5.89 	 -21.49%
-numa02.sh      User:     5203.91     5325.32     5260.29       49.98 	 -0.513%
-numa03.sh      Real:      696.47      853.62      745.80       57.28 	 4.6339%
-numa03.sh       Sys:       85.68      123.71       97.89       13.48 	 7.3347%
-numa03.sh      User:    55978.45    66418.63    59254.94     3737.97 	 1.5323%
-numa04.sh      Real:      444.05      514.83      497.06       26.85 	 -2.464%
-numa04.sh       Sys:      230.39      375.79      316.23       48.58 	 5.8343%
-numa04.sh      User:    35403.12    41004.10    39720.80     2163.08 	 -1.153%
-numa05.sh      Real:      423.09      460.41      439.57       13.92 	 -1.428%
-numa05.sh       Sys:      287.38      480.15      369.37       68.52 	 -7.964%
-numa05.sh      User:    34732.12    38016.80    36255.85     1070.51 	 -1.704%
+numa01.sh      Real:      478.45      565.90      515.11       30.87 	 16.29%
+numa01.sh       Sys:      207.79      271.04      232.94       21.33 	 -15.8%
+numa01.sh      User:    39763.93    47303.12    43210.73     2644.86 	 14.04%
+numa02.sh      Real:       60.00       61.46       60.78        0.49 	 0.871%
+numa02.sh       Sys:       15.71       25.31       20.69        3.42 	 17.35%
+numa02.sh      User:     5175.92     5265.86     5235.97       32.82 	 0.464%
+numa03.sh      Real:      776.42      834.85      806.01       23.22 	 -7.47%
+numa03.sh       Sys:      114.43      128.75      121.65        5.49 	 -19.5%
+numa03.sh      User:    60773.93    64855.25    62616.91     1576.39 	 -5.36%
+numa04.sh      Real:      456.93      511.95      482.91       20.88 	 2.930%
+numa04.sh       Sys:      178.09      460.89      356.86       94.58 	 -11.3%
+numa04.sh      User:    36312.09    42553.24    39623.21     2247.96 	 0.246%
+numa05.sh      Real:      393.98      493.48      436.61       35.59 	 0.677%
+numa05.sh       Sys:      164.49      329.15      265.87       61.78 	 38.92%
+numa05.sh      User:    33182.65    36654.53    35074.51     1187.71 	 3.368%
 
 Signed-off-by: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
@@ -142,41 +131,56 @@ Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Rik van Riel <riel@surriel.com>
 Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: http://lkml.kernel.org/r/1529514181-9842-5-git-send-email-srikar@linux.vnet.ibm.com
+Link: http://lkml.kernel.org/r/1529514181-9842-6-git-send-email-srikar@linux.vnet.ibm.com
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- kernel/sched/fair.c | 10 ++++------
- 1 file changed, 4 insertions(+), 6 deletions(-)
+ kernel/sched/fair.c | 20 ++++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
 
 diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 226837960ec0..0532195c38d0 100644
+index 0532195c38d0..a10c4f8f47e8 100644
 --- a/kernel/sched/fair.c
 +++ b/kernel/sched/fair.c
-@@ -1765,7 +1765,7 @@ static int task_numa_migrate(struct task_struct *p)
- 	 * elsewhere, so there is no point in (re)trying.
- 	 */
- 	if (unlikely(!sd)) {
--		p->numa_preferred_nid = task_node(p);
-+		sched_setnuma(p, task_node(p));
- 		return -EINVAL;
- 	}
+@@ -2110,8 +2110,8 @@ static int preferred_group_nid(struct task_struct *p, int nid)
  
-@@ -1824,15 +1824,13 @@ static int task_numa_migrate(struct task_struct *p)
- 	 * trying for a better one later. Do not set the preferred node here.
- 	 */
- 	if (p->numa_group) {
--		struct numa_group *ng = p->numa_group;
+ static void task_numa_placement(struct task_struct *p)
+ {
+-	int seq, nid, max_nid = -1, max_group_nid = -1;
+-	unsigned long max_faults = 0, max_group_faults = 0;
++	int seq, nid, max_nid = -1;
++	unsigned long max_faults = 0;
+ 	unsigned long fault_types[2] = { 0, 0 };
+ 	unsigned long total_faults;
+ 	u64 runtime, period;
+@@ -2190,15 +2190,15 @@ static void task_numa_placement(struct task_struct *p)
+ 			}
+ 		}
+ 
+-		if (faults > max_faults) {
+-			max_faults = faults;
++		if (!p->numa_group) {
++			if (faults > max_faults) {
++				max_faults = faults;
++				max_nid = nid;
++			}
++		} else if (group_faults > max_faults) {
++			max_faults = group_faults;
+ 			max_nid = nid;
+ 		}
 -
- 		if (env.best_cpu == -1)
- 			nid = env.src_nid;
- 		else
--			nid = env.dst_nid;
-+			nid = cpu_to_node(env.best_cpu);
- 
--		if (ng->active_nodes > 1 && numa_is_active_node(env.dst_nid, ng))
--			sched_setnuma(p, env.dst_nid);
-+		if (nid != p->numa_preferred_nid)
-+			sched_setnuma(p, nid);
+-		if (group_faults > max_group_faults) {
+-			max_group_faults = group_faults;
+-			max_group_nid = nid;
+-		}
  	}
  
- 	/* No better CPU than the current one was found. */
+ 	update_task_scan_period(p, fault_types[0], fault_types[1]);
+@@ -2206,7 +2206,7 @@ static void task_numa_placement(struct task_struct *p)
+ 	if (p->numa_group) {
+ 		numa_group_count_active_nodes(p->numa_group);
+ 		spin_unlock_irq(group_lock);
+-		max_nid = preferred_group_nid(p, max_group_nid);
++		max_nid = preferred_group_nid(p, max_nid);
+ 	}
+ 
+ 	if (max_faults) {
