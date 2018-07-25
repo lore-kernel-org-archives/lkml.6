@@ -6,63 +6,112 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20519C67790
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 05:53:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 634CAC67790
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 05:54:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D25DD20852
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 05:53:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D25DD20852
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=iogearbox.net
+	by mail.kernel.org (Postfix) with ESMTP id D5CF820852
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 05:54:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D5CF820852
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ssi.bg
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728553AbeGYHDv (ORCPT
+        id S1728573AbeGYHEP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 03:03:51 -0400
-Received: from www62.your-server.de ([213.133.104.62]:44192 "EHLO
-        www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727985AbeGYHDv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Jul 2018 03:03:51 -0400
-Received: from [78.46.172.2] (helo=sslproxy05.your-server.de)
-        by www62.your-server.de with esmtpsa (TLSv1.2:DHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.85_2)
-        (envelope-from <daniel@iogearbox.net>)
-        id 1fiCk2-0007z2-7M; Wed, 25 Jul 2018 07:53:42 +0200
-Received: from [2601:647:4601:b6c5::9c2f] (helo=localhost.localdomain)
-        by sslproxy05.your-server.de with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.89)
-        (envelope-from <daniel@iogearbox.net>)
-        id 1fiCk1-000Hgp-Iy; Wed, 25 Jul 2018 07:53:42 +0200
-Subject: Re: [PATCH v2] bpf: Add Python 3 support to selftests scripts for bpf
-To:     Jeremy Cline <jcline@redhat.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Shuah Khan <shuah@kernel.org>
-Cc:     Lawrence Brakmo <brakmo@fb.com>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
-References: <20180724195334.13965-1-jcline@redhat.com>
-From:   Daniel Borkmann <daniel@iogearbox.net>
-Message-ID: <9f26bdd3-080f-2bd2-78cb-cd9c66d390c4@iogearbox.net>
-Date:   Wed, 25 Jul 2018 07:53:34 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.3.0
+        Wed, 25 Jul 2018 03:04:15 -0400
+Received: from ja.ssi.bg ([178.16.129.10]:60856 "EHLO ja.ssi.bg"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727985AbeGYHEO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Jul 2018 03:04:14 -0400
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+        by ja.ssi.bg (8.15.2/8.15.2) with ESMTP id w6P5rhSV003122;
+        Wed, 25 Jul 2018 08:53:43 +0300
+Date:   Wed, 25 Jul 2018 08:53:43 +0300 (EEST)
+From:   Julian Anastasov <ja@ssi.bg>
+To:     Tan Hu <tan.hu@zte.com.cn>
+cc:     wensong@linux-vs.org, horms@verge.net.au, pablo@netfilter.org,
+        kadlec@blackhole.kfki.hu, fw@strlen.de, davem@davemloft.net,
+        netdev@vger.kernel.org, lvs-devel@vger.kernel.org,
+        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
+        linux-kernel@vger.kernel.org, zhong.weidong@zte.com.cn,
+        jiang.biao2@zte.com.cn
+Subject: Re: [PATCH v2] ipvs: fix race between ip_vs_conn_new() and
+ ip_vs_del_dest()
+In-Reply-To: <1532486980-17844-1-git-send-email-tan.hu@zte.com.cn>
+Message-ID: <alpine.LFD.2.20.1807250849100.2794@ja.home.ssi.bg>
+References: <1532486980-17844-1-git-send-email-tan.hu@zte.com.cn>
+User-Agent: Alpine 2.20 (LFD 67 2015-01-07)
 MIME-Version: 1.0
-In-Reply-To: <20180724195334.13965-1-jcline@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Authenticated-Sender: daniel@iogearbox.net
-X-Virus-Scanned: Clear (ClamAV 0.100.0/24780/Wed Jul 25 02:42:30 2018)
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/24/2018 09:53 PM, Jeremy Cline wrote:
-> Adjust tcp_client.py and tcp_server.py to work with Python 3 by using
-> the print function, marking string literals as bytes, and using the
-> newer exception syntax. This should be functionally equivalent and
-> supports Python 3+.
-> 
-> Signed-off-by: Jeremy Cline <jcline@redhat.com>
 
-Applied to bpf-next, thanks Jeremy!
+	Hello,
+
+On Wed, 25 Jul 2018, Tan Hu wrote:
+
+> We came across infinite loop in ipvs when using ipvs in docker
+> env.
+> 
+> When ipvs receives new packets and cannot find an ipvs connection,
+> it will create a new connection, then if the dest is unavailable
+> (i.e. IP_VS_DEST_F_AVAILABLE), the packet will be dropped sliently.
+> 
+> But if the dropped packet is the first packet of this connection,
+> the connection control timer never has a chance to start and the
+> ipvs connection cannot be released. This will lead to memory leak, or
+> infinite loop in cleanup_net() when net namespace is released like
+> this:
+> 
+>     ip_vs_conn_net_cleanup at ffffffffa0a9f31a [ip_vs]
+>     __ip_vs_cleanup at ffffffffa0a9f60a [ip_vs]
+>     ops_exit_list at ffffffff81567a49
+>     cleanup_net at ffffffff81568b40
+>     process_one_work at ffffffff810a851b
+>     worker_thread at ffffffff810a9356
+>     kthread at ffffffff810b0b6f
+>     ret_from_fork at ffffffff81697a18
+> 
+> race condition:
+>     CPU1                           CPU2
+>     ip_vs_in()
+>       ip_vs_conn_new()
+>                                    ip_vs_del_dest()
+>                                      __ip_vs_unlink_dest()
+>                                        ~IP_VS_DEST_F_AVAILABLE
+>       cp->dest && !IP_VS_DEST_F_AVAILABLE
+>       __ip_vs_conn_put
+>     ...
+>     cleanup_net  ---> infinite looping
+> 
+> Fix this by checking whether the timer already started.
+> 
+> Signed-off-by: Tan Hu <tan.hu@zte.com.cn>
+> Reviewed-by: Jiang Biao <jiang.biao2@zte.com.cn>
+> ---
+> v2: fix use-after-free in CONN_ONE_PACKET case suggested by Julian Anastasov
+> 
+>  net/netfilter/ipvs/ip_vs_core.c | 15 +++++++++++----
+>  1 file changed, 11 insertions(+), 4 deletions(-)
+> 
+> diff --git a/net/netfilter/ipvs/ip_vs_core.c b/net/netfilter/ipvs/ip_vs_core.c
+> index 0679dd1..a17104f 100644
+> --- a/net/netfilter/ipvs/ip_vs_core.c
+> +++ b/net/netfilter/ipvs/ip_vs_core.c
+> @@ -1972,13 +1972,20 @@ static int ip_vs_in_icmp_v6(struct netns_ipvs *ipvs, struct sk_buff *skb,
+>  	if (cp->dest && !(cp->dest->flags & IP_VS_DEST_F_AVAILABLE)) {
+>  		/* the destination server is not available */
+>  
+> -		if (sysctl_expire_nodest_conn(ipvs)) {
+> +		__u32 flags = cp->flags; 
+
+	Ops, now scripts/checkpatch.pl --strict /tmp/file.patch
+is complaining about extra trailing space in above line.
+You can also remove the empty line above the new code...
+
+Regards
+
+--
+Julian Anastasov <ja@ssi.bg>
