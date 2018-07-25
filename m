@@ -6,33 +6,33 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3F27C6778F
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 16:42:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F396C67790
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 16:42:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 74E9E20852
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 16:42:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 74E9E20852
+	by mail.kernel.org (Postfix) with ESMTP id B469420852
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 16:42:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B469420852
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731376AbeGYRyh (ORCPT
+        id S1731472AbeGYRyp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 13:54:37 -0400
-Received: from ns.mm-sol.com ([37.157.136.199]:35574 "EHLO extserv.mm-sol.com"
+        Wed, 25 Jul 2018 13:54:45 -0400
+Received: from ns.mm-sol.com ([37.157.136.199]:35591 "EHLO extserv.mm-sol.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729369AbeGYRvY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1729379AbeGYRvY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 25 Jul 2018 13:51:24 -0400
 Received: from mms-0439.qualcomm.mm-sol.com (unknown [37.157.136.206])
-        by extserv.mm-sol.com (Postfix) with ESMTPSA id CA16FCD57;
+        by extserv.mm-sol.com (Postfix) with ESMTPSA id F2BAFCD5B;
         Wed, 25 Jul 2018 19:38:53 +0300 (EEST)
 From:   Todor Tomov <todor.tomov@linaro.org>
 To:     mchehab@kernel.org, sakari.ailus@linux.intel.com,
         hans.verkuil@cisco.com, laurent.pinchart+renesas@ideasonboard.com,
         linux-media@vger.kernel.org
 Cc:     linux-kernel@vger.kernel.org, Todor Tomov <todor.tomov@linaro.org>
-Subject: [PATCH v4 05/34] media: camss: Use SPDX license headers
-Date:   Wed, 25 Jul 2018 19:38:14 +0300
-Message-Id: <1532536723-19062-6-git-send-email-todor.tomov@linaro.org>
+Subject: [PATCH v4 09/34] media: camss: Unify the clock names
+Date:   Wed, 25 Jul 2018 19:38:18 +0300
+Message-Id: <1532536723-19062-10-git-send-email-todor.tomov@linaro.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1532536723-19062-1-git-send-email-todor.tomov@linaro.org>
 References: <1532536723-19062-1-git-send-email-todor.tomov@linaro.org>
@@ -41,324 +41,84 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use SPDX license headers for all files of the Qualcomm CAMSS driver.
+Use more logical clock names - similar to the names in documentation.
+This will allow better handling of the clocks in the driver when support
+for more hardware versions is added - equivalent clocks on different
+hardware versions will have the same name.
 
 Signed-off-by: Todor Tomov <todor.tomov@linaro.org>
 ---
- drivers/media/platform/qcom/camss/camss-csid.c   | 10 +---------
- drivers/media/platform/qcom/camss/camss-csid.h   | 10 +---------
- drivers/media/platform/qcom/camss/camss-csiphy.c | 10 +---------
- drivers/media/platform/qcom/camss/camss-csiphy.h | 10 +---------
- drivers/media/platform/qcom/camss/camss-ispif.c  | 10 +---------
- drivers/media/platform/qcom/camss/camss-ispif.h  | 10 +---------
- drivers/media/platform/qcom/camss/camss-vfe.c    | 10 +---------
- drivers/media/platform/qcom/camss/camss-vfe.h    | 10 +---------
- drivers/media/platform/qcom/camss/camss-video.c  | 10 +---------
- drivers/media/platform/qcom/camss/camss-video.h  | 10 +---------
- drivers/media/platform/qcom/camss/camss.c        | 10 +---------
- drivers/media/platform/qcom/camss/camss.h        | 10 +---------
- 12 files changed, 12 insertions(+), 108 deletions(-)
+ drivers/media/platform/qcom/camss/camss.c | 20 ++++++++------------
+ 1 file changed, 8 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/media/platform/qcom/camss/camss-csid.c b/drivers/media/platform/qcom/camss/camss-csid.c
-index 39ea27b..c0fef17 100644
---- a/drivers/media/platform/qcom/camss/camss-csid.c
-+++ b/drivers/media/platform/qcom/camss/camss-csid.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * camss-csid.c
-  *
-@@ -5,15 +6,6 @@
-  *
-  * Copyright (c) 2011-2015, The Linux Foundation. All rights reserved.
-  * Copyright (C) 2015-2018 Linaro Ltd.
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 and
-- * only version 2 as published by the Free Software Foundation.
-- *
-- * This program is distributed in the hope that it will be useful,
-- * but WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- * GNU General Public License for more details.
-  */
- #include <linux/clk.h>
- #include <linux/completion.h>
-diff --git a/drivers/media/platform/qcom/camss/camss-csid.h b/drivers/media/platform/qcom/camss/camss-csid.h
-index 8012222..ae1d045 100644
---- a/drivers/media/platform/qcom/camss/camss-csid.h
-+++ b/drivers/media/platform/qcom/camss/camss-csid.h
-@@ -1,3 +1,4 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
- /*
-  * camss-csid.h
-  *
-@@ -5,15 +6,6 @@
-  *
-  * Copyright (c) 2011-2014, The Linux Foundation. All rights reserved.
-  * Copyright (C) 2015-2018 Linaro Ltd.
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 and
-- * only version 2 as published by the Free Software Foundation.
-- *
-- * This program is distributed in the hope that it will be useful,
-- * but WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- * GNU General Public License for more details.
-  */
- #ifndef QC_MSM_CAMSS_CSID_H
- #define QC_MSM_CAMSS_CSID_H
-diff --git a/drivers/media/platform/qcom/camss/camss-csiphy.c b/drivers/media/platform/qcom/camss/camss-csiphy.c
-index 642de25..b37e691 100644
---- a/drivers/media/platform/qcom/camss/camss-csiphy.c
-+++ b/drivers/media/platform/qcom/camss/camss-csiphy.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * camss-csiphy.c
-  *
-@@ -5,15 +6,6 @@
-  *
-  * Copyright (c) 2011-2015, The Linux Foundation. All rights reserved.
-  * Copyright (C) 2016-2018 Linaro Ltd.
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 and
-- * only version 2 as published by the Free Software Foundation.
-- *
-- * This program is distributed in the hope that it will be useful,
-- * but WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- * GNU General Public License for more details.
-  */
- #include <linux/clk.h>
- #include <linux/delay.h>
-diff --git a/drivers/media/platform/qcom/camss/camss-csiphy.h b/drivers/media/platform/qcom/camss/camss-csiphy.h
-index 9a42209..76fa239 100644
---- a/drivers/media/platform/qcom/camss/camss-csiphy.h
-+++ b/drivers/media/platform/qcom/camss/camss-csiphy.h
-@@ -1,3 +1,4 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
- /*
-  * camss-csiphy.h
-  *
-@@ -5,15 +6,6 @@
-  *
-  * Copyright (c) 2011-2015, The Linux Foundation. All rights reserved.
-  * Copyright (C) 2016-2018 Linaro Ltd.
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 and
-- * only version 2 as published by the Free Software Foundation.
-- *
-- * This program is distributed in the hope that it will be useful,
-- * but WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- * GNU General Public License for more details.
-  */
- #ifndef QC_MSM_CAMSS_CSIPHY_H
- #define QC_MSM_CAMSS_CSIPHY_H
-diff --git a/drivers/media/platform/qcom/camss/camss-ispif.c b/drivers/media/platform/qcom/camss/camss-ispif.c
-index 636d5e7..5ad719d 100644
---- a/drivers/media/platform/qcom/camss/camss-ispif.c
-+++ b/drivers/media/platform/qcom/camss/camss-ispif.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * camss-ispif.c
-  *
-@@ -5,15 +6,6 @@
-  *
-  * Copyright (c) 2013-2015, The Linux Foundation. All rights reserved.
-  * Copyright (C) 2015-2018 Linaro Ltd.
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 and
-- * only version 2 as published by the Free Software Foundation.
-- *
-- * This program is distributed in the hope that it will be useful,
-- * but WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- * GNU General Public License for more details.
-  */
- #include <linux/clk.h>
- #include <linux/completion.h>
-diff --git a/drivers/media/platform/qcom/camss/camss-ispif.h b/drivers/media/platform/qcom/camss/camss-ispif.h
-index c90e159..a5dfb4f 100644
---- a/drivers/media/platform/qcom/camss/camss-ispif.h
-+++ b/drivers/media/platform/qcom/camss/camss-ispif.h
-@@ -1,3 +1,4 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
- /*
-  * camss-ispif.h
-  *
-@@ -5,15 +6,6 @@
-  *
-  * Copyright (c) 2013-2014, The Linux Foundation. All rights reserved.
-  * Copyright (C) 2015-2018 Linaro Ltd.
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 and
-- * only version 2 as published by the Free Software Foundation.
-- *
-- * This program is distributed in the hope that it will be useful,
-- * but WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- * GNU General Public License for more details.
-  */
- #ifndef QC_MSM_CAMSS_ISPIF_H
- #define QC_MSM_CAMSS_ISPIF_H
-diff --git a/drivers/media/platform/qcom/camss/camss-vfe.c b/drivers/media/platform/qcom/camss/camss-vfe.c
-index 380b90b..256dc2d 100644
---- a/drivers/media/platform/qcom/camss/camss-vfe.c
-+++ b/drivers/media/platform/qcom/camss/camss-vfe.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * camss-vfe.c
-  *
-@@ -5,15 +6,6 @@
-  *
-  * Copyright (c) 2013-2015, The Linux Foundation. All rights reserved.
-  * Copyright (C) 2015-2018 Linaro Ltd.
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 and
-- * only version 2 as published by the Free Software Foundation.
-- *
-- * This program is distributed in the hope that it will be useful,
-- * but WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- * GNU General Public License for more details.
-  */
- #include <linux/clk.h>
- #include <linux/completion.h>
-diff --git a/drivers/media/platform/qcom/camss/camss-vfe.h b/drivers/media/platform/qcom/camss/camss-vfe.h
-index 5aa7407..6b4258d 100644
---- a/drivers/media/platform/qcom/camss/camss-vfe.h
-+++ b/drivers/media/platform/qcom/camss/camss-vfe.h
-@@ -1,3 +1,4 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
- /*
-  * camss-vfe.h
-  *
-@@ -5,15 +6,6 @@
-  *
-  * Copyright (c) 2013-2015, The Linux Foundation. All rights reserved.
-  * Copyright (C) 2015-2018 Linaro Ltd.
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 and
-- * only version 2 as published by the Free Software Foundation.
-- *
-- * This program is distributed in the hope that it will be useful,
-- * but WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- * GNU General Public License for more details.
-  */
- #ifndef QC_MSM_CAMSS_VFE_H
- #define QC_MSM_CAMSS_VFE_H
-diff --git a/drivers/media/platform/qcom/camss/camss-video.c b/drivers/media/platform/qcom/camss/camss-video.c
-index 0e7b842..16e74b2 100644
---- a/drivers/media/platform/qcom/camss/camss-video.c
-+++ b/drivers/media/platform/qcom/camss/camss-video.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * camss-video.c
-  *
-@@ -5,15 +6,6 @@
-  *
-  * Copyright (c) 2013-2015, The Linux Foundation. All rights reserved.
-  * Copyright (C) 2015-2018 Linaro Ltd.
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 and
-- * only version 2 as published by the Free Software Foundation.
-- *
-- * This program is distributed in the hope that it will be useful,
-- * but WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- * GNU General Public License for more details.
-  */
- #include <linux/slab.h>
- #include <media/media-entity.h>
-diff --git a/drivers/media/platform/qcom/camss/camss-video.h b/drivers/media/platform/qcom/camss/camss-video.h
-index 821c1ef..aa35e8c 100644
---- a/drivers/media/platform/qcom/camss/camss-video.h
-+++ b/drivers/media/platform/qcom/camss/camss-video.h
-@@ -1,3 +1,4 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
- /*
-  * camss-video.h
-  *
-@@ -5,15 +6,6 @@
-  *
-  * Copyright (c) 2013-2015, The Linux Foundation. All rights reserved.
-  * Copyright (C) 2015-2018 Linaro Ltd.
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 and
-- * only version 2 as published by the Free Software Foundation.
-- *
-- * This program is distributed in the hope that it will be useful,
-- * but WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- * GNU General Public License for more details.
-  */
- #ifndef QC_MSM_CAMSS_VIDEO_H
- #define QC_MSM_CAMSS_VIDEO_H
 diff --git a/drivers/media/platform/qcom/camss/camss.c b/drivers/media/platform/qcom/camss/camss.c
-index d1d27fc..45285eb 100644
+index abf6184..0b663e0 100644
 --- a/drivers/media/platform/qcom/camss/camss.c
 +++ b/drivers/media/platform/qcom/camss/camss.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * camss.c
-  *
-@@ -5,15 +6,6 @@
-  *
-  * Copyright (c) 2015, The Linux Foundation. All rights reserved.
-  * Copyright (C) 2015-2018 Linaro Ltd.
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 and
-- * only version 2 as published by the Free Software Foundation.
-- *
-- * This program is distributed in the hope that it will be useful,
-- * but WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- * GNU General Public License for more details.
-  */
- #include <linux/clk.h>
- #include <linux/media-bus-format.h>
-diff --git a/drivers/media/platform/qcom/camss/camss.h b/drivers/media/platform/qcom/camss/camss.h
-index 0e7cfe6..fb1c2f9 100644
---- a/drivers/media/platform/qcom/camss/camss.h
-+++ b/drivers/media/platform/qcom/camss/camss.h
-@@ -1,3 +1,4 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
- /*
-  * camss.h
-  *
-@@ -5,15 +6,6 @@
-  *
-  * Copyright (c) 2015, The Linux Foundation. All rights reserved.
-  * Copyright (C) 2015-2018 Linaro Ltd.
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 and
-- * only version 2 as published by the Free Software Foundation.
-- *
-- * This program is distributed in the hope that it will be useful,
-- * but WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- * GNU General Public License for more details.
-  */
- #ifndef QC_MSM_CAMSS_H
- #define QC_MSM_CAMSS_H
+@@ -32,8 +32,7 @@ static const struct resources csiphy_res[] = {
+ 	/* CSIPHY0 */
+ 	{
+ 		.regulator = { NULL },
+-		.clock = { "camss_top_ahb", "ispif_ahb",
+-			   "camss_ahb", "csiphy0_timer" },
++		.clock = { "top_ahb", "ispif_ahb", "ahb", "csiphy0_timer" },
+ 		.clock_rate = { { 0 },
+ 				{ 0 },
+ 				{ 0 },
+@@ -45,8 +44,7 @@ static const struct resources csiphy_res[] = {
+ 	/* CSIPHY1 */
+ 	{
+ 		.regulator = { NULL },
+-		.clock = { "camss_top_ahb", "ispif_ahb",
+-			   "camss_ahb", "csiphy1_timer" },
++		.clock = { "top_ahb", "ispif_ahb", "ahb", "csiphy1_timer" },
+ 		.clock_rate = { { 0 },
+ 				{ 0 },
+ 				{ 0 },
+@@ -60,8 +58,7 @@ static const struct resources csid_res[] = {
+ 	/* CSID0 */
+ 	{
+ 		.regulator = { "vdda" },
+-		.clock = { "camss_top_ahb", "ispif_ahb",
+-			   "csi0_ahb", "camss_ahb",
++		.clock = { "top_ahb", "ispif_ahb", "csi0_ahb", "ahb",
+ 			   "csi0", "csi0_phy", "csi0_pix", "csi0_rdi" },
+ 		.clock_rate = { { 0 },
+ 				{ 0 },
+@@ -78,8 +75,7 @@ static const struct resources csid_res[] = {
+ 	/* CSID1 */
+ 	{
+ 		.regulator = { "vdda" },
+-		.clock = { "camss_top_ahb", "ispif_ahb",
+-			   "csi1_ahb", "camss_ahb",
++		.clock = { "top_ahb", "ispif_ahb", "csi1_ahb", "ahb",
+ 			   "csi1", "csi1_phy", "csi1_pix", "csi1_rdi" },
+ 		.clock_rate = { { 0 },
+ 				{ 0 },
+@@ -96,10 +92,10 @@ static const struct resources csid_res[] = {
+ 
+ static const struct resources_ispif ispif_res = {
+ 	/* ISPIF */
+-	.clock = { "camss_top_ahb", "camss_ahb", "ispif_ahb",
++	.clock = { "top_ahb", "ahb", "ispif_ahb",
+ 		   "csi0", "csi0_pix", "csi0_rdi",
+ 		   "csi1", "csi1_pix", "csi1_rdi" },
+-	.clock_for_reset = { "camss_vfe_vfe", "camss_csi_vfe" },
++	.clock_for_reset = { "vfe0", "csi_vfe0" },
+ 	.reg = { "ispif", "csi_clk_mux" },
+ 	.interrupt = "ispif"
+ 
+@@ -108,8 +104,8 @@ static const struct resources_ispif ispif_res = {
+ static const struct resources vfe_res = {
+ 	/* VFE0 */
+ 	.regulator = { NULL },
+-	.clock = { "camss_top_ahb", "camss_vfe_vfe", "camss_csi_vfe",
+-		   "iface", "bus", "camss_ahb" },
++	.clock = { "top_ahb", "vfe0", "csi_vfe0",
++		   "vfe_ahb", "vfe_axi", "ahb" },
+ 	.clock_rate = { { 0 },
+ 			{ 50000000, 80000000, 100000000, 160000000,
+ 			  177780000, 200000000, 266670000, 320000000,
 -- 
 2.7.4
 
