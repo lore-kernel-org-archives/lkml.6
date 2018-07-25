@@ -2,268 +2,71 @@ Return-Path: <SRS0=S+WB=KJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0909EC67790
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 08:35:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66C10C6778F
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 08:35:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ADF6A20844
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 08:35:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ADF6A20844
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
+	by mail.kernel.org (Postfix) with ESMTP id 18F0E20844
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 08:35:39 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="sUQX6/xC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 18F0E20844
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728694AbeGYJqL (ORCPT
+        id S1728741AbeGYJqP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 05:46:11 -0400
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:11193 "EHLO
-        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728501AbeGYJqL (ORCPT
+        Wed, 25 Jul 2018 05:46:15 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:41614 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728501AbeGYJqO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Jul 2018 05:46:11 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1, AES128-SHA)
-        id <B5b5836570000>; Wed, 25 Jul 2018 01:35:35 -0700
-Received: from HQMAIL101.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Wed, 25 Jul 2018 01:35:32 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Wed, 25 Jul 2018 01:35:32 -0700
-Received: from dhcp-10-21-25-168 (10.21.25.201) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Wed, 25 Jul
- 2018 08:35:29 +0000
-Date:   Wed, 25 Jul 2018 11:35:24 +0300
-From:   Aapo Vienamo <avienamo@nvidia.com>
-To:     Mikko Perttunen <cyndis@kapsi.fi>
-CC:     Ulf Hansson <ulf.hansson@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        "Adrian Hunter" <adrian.hunter@intel.com>,
-        Mikko Perttunen <mperttunen@nvidia.com>,
-        <linux-mmc@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 2/7] mmc: tegra: Reconfigure pad voltages during voltage
- switching
-Message-ID: <20180725113524.7bc2623b@dhcp-10-21-25-168>
-In-Reply-To: <45dff1ef-c86e-0265-3386-fe95251b9130@kapsi.fi>
-References: <1532090746-15863-1-git-send-email-avienamo@nvidia.com>
-        <1532090746-15863-3-git-send-email-avienamo@nvidia.com>
-        <45dff1ef-c86e-0265-3386-fe95251b9130@kapsi.fi>
-X-NVConfidentiality: public
+        Wed, 25 Jul 2018 05:46:14 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=fYsu40eIhuD9dQmywF9XPRG0hMZiemlyizkikClGMzw=; b=sUQX6/xC6madhHnPjCZrebhl8
+        GHf//tnQFdsItQSloO9tTV6kf/OlU5gUufT0QhWQfw9KqVF6m/Avwg9kLm1Gl9n1XU8jduDfhQYRN
+        DOmUWD0F8j/2kjAbJnS8vGtL5KD4CrvI9znLZaEf7DNHiu0LjVXeWJIknuWK70LT7G0b7etVGcrb7
+        ngot0IFeEmwAJ6g/Ww/vXhtKvUdLHzy3qnlClY+PpYTdsZ3ReAtRRNYMc/CeSJl3XdJ3d/53kWBO7
+        CCYM3vQSjx2VR5T/UVhOlK79b2S+RLJ1mwh79rGYOLbz6P5JfJykj6zkrJgkEwm6c9m8j0g1B7z7z
+        ZNm7B1Imw==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fiFGf-0008MH-8M; Wed, 25 Jul 2018 08:35:34 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id BEB4720268339; Wed, 25 Jul 2018 10:35:30 +0200 (CEST)
+Date:   Wed, 25 Jul 2018 10:35:30 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     jiang.biao2@zte.com.cn
+Cc:     chen.lin130@zte.com.cn, mingo@redhat.com,
+        linux-kernel@vger.kernel.org, zhong.weidong@zte.com.cn,
+        tan.hu@zte.com.cn.cn, cheng.lin130@zte.com.cn, tan.hu@zte.com.cn
+Subject: Re: [PATCH] sched/numa: do not balance tasks onto isolated cpus
+Message-ID: <20180725083530.GT2494@hirez.programming.kicks-ass.net>
+References: <20180724090651.GK2494@hirez.programming.kicks-ass.net>
+ <201807250830037580322@zte.com.cn>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.21.25.201]
-X-ClientProxiedBy: UKMAIL102.nvidia.com (10.26.138.15) To HQMAIL101.nvidia.com
- (172.20.187.10)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <201807250830037580322@zte.com.cn>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 25 Jul 2018 09:41:05 +0300
-Mikko Perttunen <cyndis@kapsi.fi> wrote:
+On Wed, Jul 25, 2018 at 08:30:03AM +0800, jiang.biao2@zte.com.cn wrote:
+> I do find some(very few) Co-Authored-by in git logs, and we'll try to avoid
+> using that. Sometimes little patches may include much background work of
+> different people.:) 
 
-> On 20.07.2018 15:45, Aapo Vienamo wrote:
-> > Parse the pinctrl states from the device tree and implement pad voltage
-> > state reconfiguration in the mmc start_signal_voltage_switch() callback.
-> > This is done in the mmc callback because the order of pad
-> > reconfiguration and sdhci voltage switch depend on the voltage to which
-> > the transition occurs.
-> > 
-> > Add NVQUIRK_NEEDS_PAD_CONTROL and add set it for Tegra210 and Tegra186.
-> > 
-> > Signed-off-by: Aapo Vienamo <avienamo@nvidia.com>
-> > ---
-> >   drivers/mmc/host/sdhci-tegra.c | 91 +++++++++++++++++++++++++++++++++++++++---
-> >   1 file changed, 85 insertions(+), 6 deletions(-)
-> > 
-> > diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
-> > index ddf00166..f108c48 100644
-> > --- a/drivers/mmc/host/sdhci-tegra.c
-> > +++ b/drivers/mmc/host/sdhci-tegra.c
-> > @@ -21,6 +21,7 @@
-> >   #include <linux/io.h>
-> >   #include <linux/of.h>
-> >   #include <linux/of_device.h>
-> > +#include <linux/pinctrl/consumer.h>
-> >   #include <linux/reset.h>
-> >   #include <linux/mmc/card.h>
-> >   #include <linux/mmc/host.h>
-> > @@ -55,6 +56,7 @@
-> >   #define NVQUIRK_ENABLE_SDR104		BIT(4)
-> >   #define NVQUIRK_ENABLE_DDR50		BIT(5)
-> >   #define NVQUIRK_HAS_PADCALIB		BIT(6)
-> > +#define NVQUIRK_NEEDS_PAD_CONTROL	BIT(7)
-> >   
-> >   struct sdhci_tegra_soc_data {
-> >   	const struct sdhci_pltfm_data *pdata;
-> > @@ -66,8 +68,12 @@ struct sdhci_tegra {
-> >   	struct gpio_desc *power_gpio;
-> >   	bool ddr_signaling;
-> >   	bool pad_calib_required;
-> > +	bool pad_control_required;
-> >   
-> >   	struct reset_control *rst;
-> > +	struct pinctrl *pinctrl_sdmmc;
-> > +	struct pinctrl_state *pinctrl_state_3v3;
-> > +	struct pinctrl_state *pinctrl_state_1v8;
-> >   };
-> >   
-> >   static u16 tegra_sdhci_readw(struct sdhci_host *host, int reg)
-> > @@ -286,14 +292,80 @@ static int tegra_sdhci_execute_tuning(struct sdhci_host *host, u32 opcode)
-> >   	return mmc_send_tuning(host->mmc, opcode, NULL);
-> >   }
-> >   
-> > -static void tegra_sdhci_voltage_switch(struct sdhci_host *host)
-> > +static int tegra_sdhci_set_padctrl(struct sdhci_host *host, int voltage)
-> >   {
-> >   	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
-> >   	struct sdhci_tegra *tegra_host = sdhci_pltfm_priv(pltfm_host);
-> > -	const struct sdhci_tegra_soc_data *soc_data = tegra_host->soc_data;
-> > +	int ret;
-> > +
-> > +	if (!tegra_host->pad_control_required)
-> > +		return 0;
-> > +
-> > +	if (voltage == MMC_SIGNAL_VOLTAGE_180) {
-> > +		ret = pinctrl_select_state(tegra_host->pinctrl_sdmmc,
-> > +					   tegra_host->pinctrl_state_1v8);
-> > +		if (ret < 0)
-> > +			dev_err(mmc_dev(host->mmc),
-> > +				"setting 1.8V failed, ret: %d\n", ret);
-> > +	} else {
-> > +		ret = pinctrl_select_state(tegra_host->pinctrl_sdmmc,
-> > +					   tegra_host->pinctrl_state_3v3);
-> > +		if (ret < 0)
-> > +			dev_err(mmc_dev(host->mmc),
-> > +				"setting 3.3V failed, ret: %d\n", ret);
-> > +	}
-> >   
-> > -	if (soc_data->nvquirks & NVQUIRK_HAS_PADCALIB)
-> > -		tegra_host->pad_calib_required = true;
-> > +	return ret;
-> > +}
-> > +
-> > +static int sdhci_tegra_start_signal_voltage_switch(struct mmc_host *mmc,
-> > +						   struct mmc_ios *ios)
-> > +{
-> > +	struct sdhci_host *host = mmc_priv(mmc);
-> > +	int ret = 0;
-> > +
-> > +	if (ios->signal_voltage == MMC_SIGNAL_VOLTAGE_330) {
-> > +		ret = tegra_sdhci_set_padctrl(host, ios->signal_voltage);
-> > +		if (ret < 0)
-> > +			return ret;
-> > +		ret = sdhci_start_signal_voltage_switch(mmc, ios);
-> > +	} else if (ios->signal_voltage == MMC_SIGNAL_VOLTAGE_180) {
-> > +		ret = sdhci_start_signal_voltage_switch(mmc, ios);
-> > +		if (ret < 0)
-> > +			return ret;
-> > +		ret = tegra_sdhci_set_padctrl(host, ios->signal_voltage);
-> > +	}
-> > +
-> > +	return ret;
-> > +}
-> > +
-> > +static void tegra_sdhci_init_pinctrl_info(struct device *dev,
-> > +					  struct sdhci_tegra *tegra_host)
-> > +{
-> > +	tegra_host->pinctrl_sdmmc = devm_pinctrl_get(dev);
-> > +	if (IS_ERR_OR_NULL(tegra_host->pinctrl_sdmmc)) {  
-> 
-> Can this ever return NULL, considering ARCH_TEGRA selects PINCTRL? 
-> IS_ERR is probably better. Same for the two other checks in this function.
-> 
-> > +		dev_dbg(dev, "No pinctrl info, err: %ld\n",
-> > +			PTR_ERR(tegra_host->pinctrl_sdmmc));
-> > +		return;
-> > +	}
-> > +
-> > +	tegra_host->pinctrl_state_3v3 =
-> > +		pinctrl_lookup_state(tegra_host->pinctrl_sdmmc, "sdmmc-3v3");
-> > +	if (IS_ERR_OR_NULL(tegra_host->pinctrl_state_3v3)) {
-> > +		dev_err(dev, "Missing 3.3V pad state, err: %ld\n",
-> > +			PTR_ERR(tegra_host->pinctrl_state_3v3));
-> > +		return;
-> > +	}
-> > +
-> > +	tegra_host->pinctrl_state_1v8 =
-> > +		pinctrl_lookup_state(tegra_host->pinctrl_sdmmc, "sdmmc-1v8");
-> > +	if (IS_ERR_OR_NULL(tegra_host->pinctrl_state_1v8)) {
-> > +		dev_err(dev, "Missing 1.8V pad state, err: %ld\n",
-> > +			  PTR_ERR(tegra_host->pinctrl_state_3v3));
-> > +		return;
-> > +	}
-> > +
-> > +	tegra_host->pad_control_required = true; >   }
-> >   
-> >   static const struct sdhci_ops tegra_sdhci_ops = {
-> > @@ -305,7 +377,6 @@ static const struct sdhci_ops tegra_sdhci_ops = {
-> >   	.reset      = tegra_sdhci_reset,
-> >   	.platform_execute_tuning = tegra_sdhci_execute_tuning,
-> >   	.set_uhs_signaling = tegra_sdhci_set_uhs_signaling,
-> > -	.voltage_switch = tegra_sdhci_voltage_switch,
-> >   	.get_max_clock = tegra_sdhci_get_max_clock,
-> >   };
-> >   
-> > @@ -362,7 +433,6 @@ static const struct sdhci_ops tegra114_sdhci_ops = {
-> >   	.reset      = tegra_sdhci_reset,
-> >   	.platform_execute_tuning = tegra_sdhci_execute_tuning,
-> >   	.set_uhs_signaling = tegra_sdhci_set_uhs_signaling,
-> > -	.voltage_switch = tegra_sdhci_voltage_switch,
-> >   	.get_max_clock = tegra_sdhci_get_max_clock,
-> >   };
-> >   
-> > @@ -419,6 +489,7 @@ static const struct sdhci_pltfm_data sdhci_tegra210_pdata = {
-> >   
-> >   static const struct sdhci_tegra_soc_data soc_data_tegra210 = {
-> >   	.pdata = &sdhci_tegra210_pdata,
-> > +	.nvquirks = NVQUIRK_NEEDS_PAD_CONTROL,
-> >   };
-> >   
-> >   static const struct sdhci_pltfm_data sdhci_tegra186_pdata = {
-> > @@ -442,6 +513,7 @@ static const struct sdhci_pltfm_data sdhci_tegra186_pdata = {
-> >   
-> >   static const struct sdhci_tegra_soc_data soc_data_tegra186 = {
-> >   	.pdata = &sdhci_tegra186_pdata,
-> > +	.nvquirks = NVQUIRK_NEEDS_PAD_CONTROL,
-> >   };
-> >   
-> >   static const struct of_device_id sdhci_tegra_dt_match[] = {
-> > @@ -478,8 +550,15 @@ static int sdhci_tegra_probe(struct platform_device *pdev)
-> >   	tegra_host = sdhci_pltfm_priv(pltfm_host);
-> >   	tegra_host->ddr_signaling = false;
-> >   	tegra_host->pad_calib_required = false;
-> > +	tegra_host->pad_control_required = false;
-> >   	tegra_host->soc_data = soc_data;
-> >   
-> > +	if (soc_data->nvquirks & NVQUIRK_NEEDS_PAD_CONTROL) {
-> > +		host->mmc_host_ops.start_signal_voltage_switch =
-> > +			sdhci_tegra_start_signal_voltage_switch;
-> > +		tegra_sdhci_init_pinctrl_info(&pdev->dev, tegra_host);
-> > +	}
-> > +  
-> 
-> Do we know here if the controller is for eMMC or SD? If it's for SD we 
-> should probably print a warning if the pinctrl info is not available. 
-> Later we would also need to disable 1.8V modes if we fail to get the 
-> pinctrl info.
+I sometimes use Debugged-by: to attribute the sometimes significant work
+of actually finding what's wrong.
 
-As far as I can tell the controllers themselves are the same from the
-software interface standpoint regardless whether they are connected to
-an SD or eMMC device. The differences among the controllers arise from
-the way they are attached to rest of the SoC. The controllers which are
-hooked to an SD card slot are usually supplied from an adjustable
-regulator, whereas the regulator for eMMC controllers is fixed. Also
-the SD controllers have configurable pad voltages and the eMMC ones
-don't.
-
-The driver probably should check whether the regulator capabilities
-align with the available pinctrl configurations and act accordingly to
-avoid invalid configurations.
-
- -Aapo
