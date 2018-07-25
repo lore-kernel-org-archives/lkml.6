@@ -7,65 +7,65 @@ X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4469BC6778F
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 22:17:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 880ADC6778F
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 22:17:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EE69520673
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 22:17:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4042D20893
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 22:17:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Cy7359R5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EE69520673
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fs9Wcblu"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4042D20893
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731643AbeGYXau (ORCPT
+        id S1731661AbeGYXaw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 19:30:50 -0400
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:42585 "EHLO
+        Wed, 25 Jul 2018 19:30:52 -0400
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:43807 "EHLO
         mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731598AbeGYXat (ORCPT
+        with ESMTP id S1731617AbeGYXav (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Jul 2018 19:30:49 -0400
-Received: by mail-ed1-f67.google.com with SMTP id r4-v6so16703edp.9
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Jul 2018 15:17:06 -0700 (PDT)
+        Wed, 25 Jul 2018 19:30:51 -0400
+Received: by mail-ed1-f67.google.com with SMTP id b20-v6so15031edt.10
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Jul 2018 15:17:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=j8xKb5XtW11XVh6lkZBxudCzpTEFA6wlh+G+Jr9OPbs=;
-        b=Cy7359R5v7Z8bsqJ8rjlROEbvKRgMCLkxQ6PpHPSioPKyLIZBdlNYiB39nTcXTPebe
-         SSF9HMLrwlseevVNyzZ6les97rGrpYnhLUp9UFrk30AjdsoHLSYvMPVsUGG4idmgNlId
-         FZz2NIRA/UDq4KLFH9IMD12ntb/BBu4QUZ1k3Sc/n8vsXFXrFF184gjKAHk/La+Gn8ea
-         NTrN8oN2VgKhEE6bXn/mPkFZFpeZ7Cr66b0QW7OJb1d73baRjBMRY5kCgY8DXV+zC6JI
-         vGOMdYScNy23rRpPCHDFWl2QdZxbNkSgNsme3H96D2q6ZUbdYQE65LTVE9iqza8O/FK9
-         ORVg==
+        bh=GKEMaGFvO1tTV8N/M1wYzH1h/DJmppqgSA1l8dTapvc=;
+        b=fs9Wcblue57f54iZXudibv+c00tYIhnHaMB/xQXHcu+0gXiRVYbFTvvf5khuv/bfiS
+         75AztCIzu9rZ76oeUssINCCWEV7qMxxB3p/EEQpap5OCINbY7F4IbAVGoqOJl1lR17/P
+         ALLwbDJCQEuFzL+6APYqjTb8tXRQ5YAZ10+1vKSJ3SN5osk769i8QL583OVJ8LttxfGH
+         5hcozkQ35uIqys1NV7tJPWKiQWZnJO0EhmsSHExRAh/Qe5VrtHDOUZNbI0GKq4BLSsGT
+         Ua30wvwz9fP2By200VGGDhIe+TkoMjI14gLiDVemxLXpFwySE5dP4/U/Pgua+sQPv83M
+         q3SQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=j8xKb5XtW11XVh6lkZBxudCzpTEFA6wlh+G+Jr9OPbs=;
-        b=kd/r2LR/VHAFt2dvTYodHprUhPSGEoWcTMegpkLfgmr5rwcjgfOQ8wCaoImAEylLUc
-         mt3CwD1Vi4yXy3tijX9HvhIQNVJb2WsC2+IJ8eAzn/8jb/sFaJtCr5cnJrzQGj9PrWJJ
-         dRT96s9or4J+3Pbwbr+Efy60Zcx1LVznnl0kLDthqlbZ/gxun2uMAsBgWWCJ39/plrBD
-         looBw2fEQH4Jvo93pDPg7kHw00Y44VoVXKLx+lfm1Q21Q3eFbx/EIuqwYgqfuQGFYsgL
-         9d61OEhtUZKcK1AX6KkUsmLPDr4dR06xrW+6WODi7jan/s+auFBKwyrBFZStQwfWq8aZ
-         anWA==
-X-Gm-Message-State: AOUpUlHu0g8l6cD9fxinMSPgonAfpUALHjvPttYtm+/ka4f6oQ/mUlQ0
-        B9dCFXS8DAu21TyVrnaZS6qpS2D3
-X-Google-Smtp-Source: AAOMgpc21ix9Opzv6w/GTHMG8YlYwKdTtHV/Hy6wnk3oYQp46nmPFVs1WUW6FfT0uVN7UAf1Eu/UmQ==
-X-Received: by 2002:a50:cf81:: with SMTP id h1-v6mr25628855edk.35.1532557025547;
-        Wed, 25 Jul 2018 15:17:05 -0700 (PDT)
+        bh=GKEMaGFvO1tTV8N/M1wYzH1h/DJmppqgSA1l8dTapvc=;
+        b=VlEzyZ7wIbY33xxwwu0RRzvLO6b8CtNoWwzyNLCczl0SuQXLkl3E2HY64Hv1Iai5d8
+         SlnSc+6IjRBLkrGGI6vY/8XrChW9fqPIj+tn0kRIp+iKD2wp8qpz0k9Sf1EVyy356r1Q
+         g89NGFzohu3U7aGVPfmdWt6wlVaSTBUhD5pvR44Jkv80GU13HdPB9xQwkO25KjYpAXVQ
+         kqAwakhjhpnQEI6Z3uo5b3IUSaHG2KlaBZsrW/ImUczjAYW//xgIY+92uEgFrriWVwgP
+         0p5v1TDs3OA9sjdcqgaewjF8nz7QipfApsFzKNf+Fd66UUBNxCQP6Xv/XkCbfayj8Qtw
+         7iqA==
+X-Gm-Message-State: AOUpUlFKRjOSZD+nsWr5yAmjktbYs1ecvZcatIL9WNCq1w7h99KXLM3o
+        mIZ6QYdJUskK1QYwMKfNm9+aS54S
+X-Google-Smtp-Source: AAOMgpfCPSFDuProRLbqhlAKCvg8FLzd+lKJJUqxB7cNMaBF9io8AM2cPsAR7w/xO1hW6xrNTYok8w==
+X-Received: by 2002:a50:8345:: with SMTP id 63-v6mr5252308edh.5.1532557027137;
+        Wed, 25 Jul 2018 15:17:07 -0700 (PDT)
 Received: from localhost.localdomain ([109.77.251.113])
-        by smtp.gmail.com with ESMTPSA id i63-v6sm6808814edi.16.2018.07.25.15.17.04
+        by smtp.gmail.com with ESMTPSA id i63-v6sm6808814edi.16.2018.07.25.15.17.05
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 25 Jul 2018 15:17:04 -0700 (PDT)
+        Wed, 25 Jul 2018 15:17:06 -0700 (PDT)
 From:   John Whitmore <johnfwhitmore@gmail.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     devel@driverdev.osuosl.org, gregkh@linuxfoundation.org,
         pombredanne@nexb.com, kstewart@linuxfoundation.org,
         tglx@linutronix.de, John Whitmore <johnfwhitmore@gmail.com>
-Subject: [PATCH 07/10] staging:rtl8192u: Remove multiple blank lines - Style
-Date:   Wed, 25 Jul 2018 23:16:27 +0100
-Message-Id: <20180725221630.28595-8-johnfwhitmore@gmail.com>
+Subject: [PATCH 08/10] staging:rtl8192u: Correct spelling in comments - style
+Date:   Wed, 25 Jul 2018 23:16:28 +0100
+Message-Id: <20180725221630.28595-9-johnfwhitmore@gmail.com>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180725221630.28595-1-johnfwhitmore@gmail.com>
 References: <20180725221630.28595-1-johnfwhitmore@gmail.com>
@@ -74,40 +74,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove multiple blank lines, raise a checkpatch issue. This is purely
-a coding style change which should not impact runtime code execution.
+Correct the spelling of a number of comments, which caused a checkpatch
+issue. This is purely a coding style change which should have no impact
+on runtime code execution.
 
 Signed-off-by: John Whitmore <johnfwhitmore@gmail.com>
 ---
- drivers/staging/rtl8192u/r819xU_cmdpkt.h | 3 ---
- 1 file changed, 3 deletions(-)
+ drivers/staging/rtl8192u/r819xU_cmdpkt.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/staging/rtl8192u/r819xU_cmdpkt.h b/drivers/staging/rtl8192u/r819xU_cmdpkt.h
-index e9e0548ce96e..672c8db804e1 100644
+index 672c8db804e1..40edf96451e3 100644
 --- a/drivers/staging/rtl8192u/r819xU_cmdpkt.h
 +++ b/drivers/staging/rtl8192u/r819xU_cmdpkt.h
-@@ -12,7 +12,6 @@
- #define ISR_TX_BCN_ERR		BIT(26)		/* Transmit Beacon Error */
- #define ISR_BCN_TIMER_INTR	BIT(13)		/* Beacon Timer Interrupt */
+@@ -53,7 +53,7 @@ struct cmpk_txfb_t {
+ };
  
--
- /* Define element ID of command packet. */
- 
- /*------------------------------Define structure----------------------------*/
-@@ -63,7 +62,6 @@ typedef struct tag_cmd_pkt_interrupt_status {
- 	u32	interrupt_status;		/* Interrupt Status. */
- } cmpk_intr_sta_t;
- 
--
- /* 3. TX side: Set configuration packet. */
- typedef struct tag_cmd_pkt_set_configuration {
+ /* 2. RX side: Interrupt status packet. It includes Beacon State,
+- * Beacon Timer Interrupt and other useful informations in MAC ISR Reg.
++ * Beacon Timer Interrupt and other useful information in MAC ISR Reg.
+  */
+ typedef struct tag_cmd_pkt_interrupt_status {
  	u8	element_id;			/* Command packet type. */
-@@ -189,5 +187,4 @@ u32 cmpk_message_handle_rx(struct net_device *dev,
- rt_status SendTxCommandPacket(struct net_device *dev,
- 			      void *pData, u32 DataLen);
+@@ -80,7 +80,7 @@ typedef struct tag_cmd_pkt_set_configuration {
+ 	u32	mask;
+ } cmpk_set_cfg_t;
  
--
- #endif
+-/* 4. Both side : TX/RX query configuraton packet. The query structure is the
++/* 4. Both side : TX/RX query configuration packet. The query structure is the
+  *    same as set configuration.
+  */
+ #define		cmpk_query_cfg_t	cmpk_set_cfg_t
 -- 
 2.18.0
 
