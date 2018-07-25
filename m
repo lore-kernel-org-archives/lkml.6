@@ -2,146 +2,165 @@ Return-Path: <SRS0=S+WB=KJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37782C67790
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 14:19:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A82F9C67790
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 14:19:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EC43F20890
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 14:19:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EC43F20890
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 6DAB320843
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 14:19:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6DAB320843
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729153AbeGYPaz (ORCPT
+        id S1729157AbeGYPbi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 11:30:55 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:53384 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728378AbeGYPay (ORCPT
+        Wed, 25 Jul 2018 11:31:38 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:43019 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728119AbeGYPbi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Jul 2018 11:30:54 -0400
-Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w6PEFdLM121492
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Jul 2018 10:19:01 -0400
-Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2kersr0cpg-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Jul 2018 10:18:58 -0400
-Received: from localhost
-        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <rppt@linux.vnet.ibm.com>;
-        Wed, 25 Jul 2018 15:18:54 +0100
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
-        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 25 Jul 2018 15:18:52 +0100
-Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w6PEIpKW37028084
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 25 Jul 2018 14:18:51 GMT
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id BC9144C059;
-        Wed, 25 Jul 2018 17:19:06 +0100 (BST)
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 382A14C050;
-        Wed, 25 Jul 2018 17:19:06 +0100 (BST)
-Received: from rapoport-lnx (unknown [9.148.8.110])
-        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Wed, 25 Jul 2018 17:19:06 +0100 (BST)
-Date:   Wed, 25 Jul 2018 17:18:49 +0300
-From:   Mike Rapoport <rppt@linux.vnet.ibm.com>
-To:     Thiago Jung Bauermann <bauerman@linux.ibm.com>
-Cc:     linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Shuah Khan <shuah@kernel.org>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Prakash Sangappa <prakash.sangappa@oracle.com>
-Subject: Re: [PATCH 3/3] userfaultfd: selftest: Report XFAIL if shmem doesn't
- support zeropage
-References: <20180725024209.32586-1-bauerman@linux.ibm.com>
- <20180725024209.32586-4-bauerman@linux.ibm.com>
+        Wed, 25 Jul 2018 11:31:38 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w6PEJ1Cx399782
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Wed, 25 Jul 2018 07:19:01 -0700
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w6PEIxnP399779;
+        Wed, 25 Jul 2018 07:18:59 -0700
+Date:   Wed, 25 Jul 2018 07:18:59 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Peter Rosin <tipbot@zytor.com>
+Message-ID: <tip-62cedf3e60af03e47849fe2bd6a03ec179422a8a@git.kernel.org>
+Cc:     tglx@linutronix.de, linux-kernel@vger.kernel.org, peda@axentia.se,
+        mingo@kernel.org, gregkh@linuxfoundation.org, will.deacon@arm.com,
+        wsa@the-dreams.de, deepadinamani@google.com, dave@stgolabs.net,
+        peterz@infradead.org, torvalds@linux-foundation.org,
+        jsperbeck@google.com, hpa@zytor.com, dpf@google.com,
+        pombredanne@nexb.com
+Reply-To: wsa@the-dreams.de, will.deacon@arm.com,
+          gregkh@linuxfoundation.org, mingo@kernel.org, peda@axentia.se,
+          linux-kernel@vger.kernel.org, tglx@linutronix.de, dpf@google.com,
+          pombredanne@nexb.com, hpa@zytor.com, jsperbeck@google.com,
+          torvalds@linux-foundation.org, peterz@infradead.org,
+          dave@stgolabs.net, deepadinamani@google.com
+In-Reply-To: <20180720083914.1950-2-peda@axentia.se>
+References: <20180720083914.1950-2-peda@axentia.se>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:locking/urgent] locking/rtmutex: Allow specifying a subclass
+ for nested locking
+Git-Commit-ID: 62cedf3e60af03e47849fe2bd6a03ec179422a8a
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
-In-Reply-To: <20180725024209.32586-4-bauerman@linux.ibm.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-TM-AS-GCONF: 00
-x-cbid: 18072514-0016-0000-0000-000001EB4B74
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18072514-0017-0000-0000-000032402F72
-Message-Id: <20180725141849.GE25188@rapoport-lnx>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-25_03:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1806210000 definitions=main-1807250154
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Commit-ID:  62cedf3e60af03e47849fe2bd6a03ec179422a8a
+Gitweb:     https://git.kernel.org/tip/62cedf3e60af03e47849fe2bd6a03ec179422a8a
+Author:     Peter Rosin <peda@axentia.se>
+AuthorDate: Fri, 20 Jul 2018 10:39:13 +0200
+Committer:  Ingo Molnar <mingo@kernel.org>
+CommitDate: Wed, 25 Jul 2018 11:22:19 +0200
 
-On Tue, Jul 24, 2018 at 11:42:09PM -0300, Thiago Jung Bauermann wrote:
-> If userfaultfd runs on a system that doesn't support UFFDIO_ZEROPAGE for
-> shared memory, it currently ends with error code 1 which indicates test
-> failure:
-> 
->   # ./userfaultfd shmem 10 10
->   nr_pages: 160, nr_pages_per_cpu: 80
->   bounces: 9, mode: rnd poll, unexpected missing ioctl for anon memory
->   # echo $?
->   1
-> 
-> This is a real failure, but expected so signal that to the test harness:
+locking/rtmutex: Allow specifying a subclass for nested locking
 
-I don't think its a real failure. If the kernel does not support
-UFFDIO_ZEROPAGE for shared memory the userfaultfd_zeropage_test can be
-simply skipped.
+Needed for annotating rt_mutex locks.
+
+Tested-by: John Sperbeck <jsperbeck@google.com>
+Signed-off-by: Peter Rosin <peda@axentia.se>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: Davidlohr Bueso <dave@stgolabs.net>
+Cc: Deepa Dinamani <deepadinamani@google.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Chang <dpf@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Philippe Ombredanne <pombredanne@nexb.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Will Deacon <will.deacon@arm.com>
+Cc: Wolfram Sang <wsa@the-dreams.de>
+Link: http://lkml.kernel.org/r/20180720083914.1950-2-peda@axentia.se
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+---
+ include/linux/rtmutex.h  |  7 +++++++
+ kernel/locking/rtmutex.c | 29 +++++++++++++++++++++++++----
+ 2 files changed, 32 insertions(+), 4 deletions(-)
+
+diff --git a/include/linux/rtmutex.h b/include/linux/rtmutex.h
+index 1b92a28dd672..6fd615a0eea9 100644
+--- a/include/linux/rtmutex.h
++++ b/include/linux/rtmutex.h
+@@ -106,7 +106,14 @@ static inline int rt_mutex_is_locked(struct rt_mutex *lock)
+ extern void __rt_mutex_init(struct rt_mutex *lock, const char *name, struct lock_class_key *key);
+ extern void rt_mutex_destroy(struct rt_mutex *lock);
  
->   # ./userfaultfd shmem 10 10
->   nr_pages: 160, nr_pages_per_cpu: 80
->   bounces: 9, mode: rnd poll, UFFDIO_ZEROPAGE unsupported in shmem VMAs
->   # echo $?
->   2
-> 
-> Signed-off-by: Thiago Jung Bauermann <bauerman@linux.ibm.com>
-> ---
->  tools/testing/selftests/vm/userfaultfd.c | 8 ++++++++
->  1 file changed, 8 insertions(+)
-> 
-> diff --git a/tools/testing/selftests/vm/userfaultfd.c b/tools/testing/selftests/vm/userfaultfd.c
-> index bc9ec38fbc34..686fe96f617f 100644
-> --- a/tools/testing/selftests/vm/userfaultfd.c
-> +++ b/tools/testing/selftests/vm/userfaultfd.c
-> @@ -1115,6 +1115,14 @@ static int userfaultfd_stress(void)
->  		expected_ioctls = uffd_test_ops->expected_ioctls;
->  		if ((uffdio_register.ioctls & expected_ioctls) !=
->  		    expected_ioctls) {
-> +			if (test_type == TEST_SHMEM &&
-> +			    (uffdio_register.ioctls & expected_ioctls) ==
-> +			    UFFD_API_RANGE_IOCTLS_BASIC) {
-> +				fprintf(stderr,
-> +					"UFFDIO_ZEROPAGE unsupported in shmem VMAs\n");
-> +				return KSFT_XFAIL;
-> +			}
-> +
-
-By all means, this check should be moved to userfaultfd_zeropage_test().
-Ideally, we should call here ksft_test_result_skip() and simply return from
-the function.
-
-
-
->  			fprintf(stderr,
->  				"unexpected missing ioctl for anon memory\n");
->  			return 1;
-
--- 
-Sincerely yours,
-Mike.
-
++#ifdef CONFIG_DEBUG_LOCK_ALLOC
++extern void rt_mutex_lock_nested(struct rt_mutex *lock, unsigned int subclass);
++#define rt_mutex_lock(lock) rt_mutex_lock_nested(lock, 0)
++#else
+ extern void rt_mutex_lock(struct rt_mutex *lock);
++#define rt_mutex_lock_nested(lock, subclass) rt_mutex_lock(lock)
++#endif
++
+ extern int rt_mutex_lock_interruptible(struct rt_mutex *lock);
+ extern int rt_mutex_timed_lock(struct rt_mutex *lock,
+ 			       struct hrtimer_sleeper *timeout);
+diff --git a/kernel/locking/rtmutex.c b/kernel/locking/rtmutex.c
+index 4f014be7a4b8..2823d4163a37 100644
+--- a/kernel/locking/rtmutex.c
++++ b/kernel/locking/rtmutex.c
+@@ -1465,6 +1465,29 @@ rt_mutex_fastunlock(struct rt_mutex *lock,
+ 		rt_mutex_postunlock(&wake_q);
+ }
+ 
++static inline void __rt_mutex_lock(struct rt_mutex *lock, unsigned int subclass)
++{
++	might_sleep();
++
++	mutex_acquire(&lock->dep_map, subclass, 0, _RET_IP_);
++	rt_mutex_fastlock(lock, TASK_UNINTERRUPTIBLE, rt_mutex_slowlock);
++}
++
++#ifdef CONFIG_DEBUG_LOCK_ALLOC
++/**
++ * rt_mutex_lock_nested - lock a rt_mutex
++ *
++ * @lock: the rt_mutex to be locked
++ * @subclass: the lockdep subclass
++ */
++void __sched rt_mutex_lock_nested(struct rt_mutex *lock, unsigned int subclass)
++{
++	__rt_mutex_lock(lock, subclass);
++}
++EXPORT_SYMBOL_GPL(rt_mutex_lock_nested);
++#endif
++
++#ifndef CONFIG_DEBUG_LOCK_ALLOC
+ /**
+  * rt_mutex_lock - lock a rt_mutex
+  *
+@@ -1472,12 +1495,10 @@ rt_mutex_fastunlock(struct rt_mutex *lock,
+  */
+ void __sched rt_mutex_lock(struct rt_mutex *lock)
+ {
+-	might_sleep();
+-
+-	mutex_acquire(&lock->dep_map, 0, 0, _RET_IP_);
+-	rt_mutex_fastlock(lock, TASK_UNINTERRUPTIBLE, rt_mutex_slowlock);
++	__rt_mutex_lock(lock, 0);
+ }
+ EXPORT_SYMBOL_GPL(rt_mutex_lock);
++#endif
+ 
+ /**
+  * rt_mutex_lock_interruptible - lock a rt_mutex interruptible
