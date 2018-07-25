@@ -2,125 +2,107 @@ Return-Path: <SRS0=S+WB=KJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D134AC6778F
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 17:08:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18FA3C6778F
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 17:11:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7575220833
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 17:08:11 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="mfLVhCjU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7575220833
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id BA15A20891
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 17:11:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA15A20891
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729162AbeGYSUn (ORCPT
+        id S1729216AbeGYSYD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 14:20:43 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33782 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728557AbeGYSUn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Jul 2018 14:20:43 -0400
-Received: from swboyd.mtv.corp.google.com (unknown [104.132.1.75])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        Wed, 25 Jul 2018 14:24:03 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:60940 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728771AbeGYSYC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Jul 2018 14:24:02 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BFBD320833;
-        Wed, 25 Jul 2018 17:08:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1532538488;
-        bh=LVBXrFAsNyO6G9QbeyXaCGMEG/R+o/JiwmmClLylLsY=;
-        h=From:To:Cc:Subject:Date:From;
-        b=mfLVhCjU7/y5A8NpUqzslLrCLOQSNdpBgE5HLABbLVPCjfkGMEb7RGB2KFh3oYOJB
-         lDkAD6FOhWnTC6syuIJWYYBb+ieqh8u/ek3YmBHYSWZe8fkQDszEFBuQoVeAak/JBa
-         +i+2ZE5yDObmyvifY9fMQs0IYWxreygVBT9PqxgM=
-From:   sboyd@kernel.org
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] clk fixes for v4.18-rc6
-Date:   Wed, 25 Jul 2018 10:08:07 -0700
-Message-Id: <20180725170807.12780-1-sboyd@kernel.org>
-X-Mailer: git-send-email 2.18.0.233.g985f88cf7e-goog
+        by mx1.redhat.com (Postfix) with ESMTPS id 729A47D84D;
+        Wed, 25 Jul 2018 17:11:27 +0000 (UTC)
+Received: from treble (ovpn-120-113.rdu2.redhat.com [10.10.120.113])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 3D2902026D6B;
+        Wed, 25 Jul 2018 17:11:26 +0000 (UTC)
+Date:   Wed, 25 Jul 2018 12:11:24 -0500
+From:   Josh Poimboeuf <jpoimboe@redhat.com>
+To:     Jiri Kosina <jikos@kernel.org>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Borislav Petkov <bp@suse.de>,
+        David Woodhouse <dwmw@amazon.co.uk>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Tim Chen <tim.c.chen@linux.intel.com>,
+        linux-kernel@vger.kernel.org, x86@kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [PATCH] x86/bugs: protect against userspace-userspace spectreRSB
+Message-ID: <20180725171124.kklnori7tf56ngeu@treble>
+References: <nycvar.YFH.7.76.1807242147560.997@cbobk.fhfr.pm>
+ <20180725134512.uquatm2neqr5jy7b@treble>
+ <nycvar.YFH.7.76.1807251547550.997@cbobk.fhfr.pm>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <nycvar.YFH.7.76.1807251547550.997@cbobk.fhfr.pm>
+User-Agent: NeoMutt/20180323
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Wed, 25 Jul 2018 17:11:27 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Wed, 25 Jul 2018 17:11:27 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jpoimboe@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Stephen Boyd <sboyd@kernel.org>
+On Wed, Jul 25, 2018 at 03:50:44PM +0200, Jiri Kosina wrote:
+> On Wed, 25 Jul 2018, Josh Poimboeuf wrote:
+> 
+> > > The article "Spectre Returns! Speculation Attacks using the Return Stack
+> > > Buffer" [1] describes two new (sub-)variants of spectrev2-like attack,
+> > > making use solely of the RSB contents even on CPUs that don't fallback to
+> > > BTB on RSB underflow (Skylake+).
+> > > 
+> > > Mitigate userspace-userspace attacks by always unconditionally filling RSB on
+> > > context switch when generic spectrev2 mitigation has been enabled.
+> > > 
+> > > [1] https://arxiv.org/pdf/1807.07940.pdf
+> > > 
+> > > Signed-off-by: Jiri Kosina <jkosina@suse.cz>
+> > 
+> > While I generally agree with this patch, isn't it odd that we would do
+> > RSB filling on every context switch, but almost never do IBPB?
+> 
+> Yeah, I have actually been wondering exactly the same, but that's what we 
+> have been doing so far on SKL+, so I didn't really want to mix this aspect 
+> in.
+> 
+> I actually believe that in the name of consistency we should've been doing 
+> the RSB fills under the same conditions we're issuing IBPB even on SKL+; I 
+> can resend a patch that re-adjusts that, if that's the consensus.
 
-The following changes since commit 9cc63791fad6d2624878c93f3415da77780e68a7:
+True, in theory it might make more sense to only fill RSB when doing an
+IBPB.  But given the current state of almost never doing IBPB, that
+would be pointless.  RSB is cheap enough that we should just do it
+unconditionally on context switch.
 
-  Merge branch 'clk-fix-imx6ul-defs' into clk-fixes (2018-06-29 11:40:29 -0700)
+BTW, I've heard that IBPB actually flushes RSB, though I haven't seen
+that officially documented anywhere.  Not that it matters given the
+current IBPB code.
 
-are available in the Git repository at:
+BTW^2, there was some discussion a few months back about offloading the
+"when to IBPB" decision to security modules, though I don't think I've
+ever seen official patches for that.
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-fixes-for-linus
+All that said, this patch is fine until if/when the IBPB strategy gets
+figured out.  RSB filling is cheap.
 
-for you to fetch changes up to 565b9937f44d5ab7956339b6c105c03471ce3243:
-
-  clk: aspeed: Support HPLL strapping on ast2400 (2018-07-11 09:34:25 -0700)
-
-----------------------------------------------------------------
-One more round of updates for problems seen this -rc series. Drivers fixes
-are:
-
- - Amlogic Meson audio divider fix and CPU clk critical marking
-
- - Qualcomm multimedia GDSC marked as 'always on' to keep display working
-
- - Aspeed fixes for critical clks, resets causing clks to stay disabled, and
-   an incorrect HPLL frequency calculation
-
- - Marvell Armada 3700 cpu clks would undervolt when switching from low
-   frequencies to high frequencies because the voltage didn't stabilize in
-   time so now we switch to an intermediate frequency
-
-Plus we have a core framework thinko that messed up the debugfs flag
-printing logic to make it not very useful.
-
-----------------------------------------------------------------
-Benjamin Herrenschmidt (1):
-      clk: aspeed: Treat a gate in reset as disabled
-
-Geert Uytterhoeven (1):
-      clk: Really show symbolic clock flags in debugfs
-
-Gregory CLEMENT (1):
-      clk: mvebu: armada-37xx-periph: Fix switching CPU rate from 300Mhz to 1.2GHz
-
-Jerome Brunet (1):
-      clk: meson: audio-divider is one based
-
-Joel Stanley (2):
-      clk: aspeed: Mark bclk (PCIe) and dclk (VGA) as critical
-      clk: aspeed: Support HPLL strapping on ast2400
-
-Neil Armstrong (1):
-      clk: meson-gxbb: set fclk_div2 as CLK_IS_CRITICAL
-
-Stephen Boyd (1):
-      Merge tag 'meson-clk-fixes-4.18-1' of https://github.com/BayLibre/clk-meson into clk-fixes
-
-Vinod Koul (1):
-      clk: qcom: gcc-msm8996: Disable halt check on UFS tx clock
-
-Vivek Gautam (1):
-      clk/mmcc-msm8996: Make mmagic_bimc_gdsc ALWAYS_ON
-
- drivers/clk/clk-aspeed.c               | 59 +++++++++++++++++++++++++---------
- drivers/clk/clk.c                      |  3 +-
- drivers/clk/meson/clk-audio-divider.c  |  2 +-
- drivers/clk/meson/gxbb.c               |  1 +
- drivers/clk/mvebu/armada-37xx-periph.c | 38 ++++++++++++++++++++++
- drivers/clk/qcom/gcc-msm8996.c         |  1 +
- drivers/clk/qcom/mmcc-msm8996.c        |  1 +
- 7 files changed, 87 insertions(+), 18 deletions(-)
+Reviewed-by: Josh Poimboeuf <jpoimboe@redhat.com>
 
 -- 
-Sent by a computer through tubes
+Josh
