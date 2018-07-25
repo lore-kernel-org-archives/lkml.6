@@ -2,80 +2,79 @@ Return-Path: <SRS0=S+WB=KJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AAAEFC6778F
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 15:24:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8381FC67790
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 15:25:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 544B620852
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 15:24:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 544B620852
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 425172089E
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 15:25:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 425172089E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728890AbeGYQgy (ORCPT
+        id S1728705AbeGYQhk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 12:36:54 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:39599 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728436AbeGYQgy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Jul 2018 12:36:54 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 34CFB2098C; Wed, 25 Jul 2018 17:24:44 +0200 (CEST)
-Received: from bbrezillon (AAubervilliers-681-1-78-122.w90-88.abo.wanadoo.fr [90.88.20.122])
-        by mail.bootlin.com (Postfix) with ESMTPSA id C9D4C207B3;
-        Wed, 25 Jul 2018 17:24:21 +0200 (CEST)
-Date:   Wed, 25 Jul 2018 17:24:22 +0200
-From:   Boris Brezillon <boris.brezillon@bootlin.com>
-To:     Miquel Raynal <miquel.raynal@bootlin.com>
-Cc:     Richard Weinberger <richard@nod.at>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Josh Wu <rainyfeeling@outlook.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>
-Subject: Re: [PATCH] MAINTAINERS: drop Wenyou Yang from Atmel NAND driver
- support
-Message-ID: <20180725172422.42783449@bbrezillon>
-In-Reply-To: <20180725145628.6625-1-miquel.raynal@bootlin.com>
-References: <20180725145628.6625-1-miquel.raynal@bootlin.com>
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Wed, 25 Jul 2018 12:37:40 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:57213 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728528AbeGYQhk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Jul 2018 12:37:40 -0400
+Received: from 1-161-144-158.dynamic-ip.hinet.net ([1.161.144.158] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
+        (Exim 4.76)
+        (envelope-from <kai.heng.feng@canonical.com>)
+        id 1fiLfL-00011h-CI; Wed, 25 Jul 2018 15:25:27 +0000
+From:   Kai-Heng Feng <kai.heng.feng@canonical.com>
+To:     arnd@arndb.de, gregkh@linuxfoundation.org
+Cc:     ulf.hansson@linaro.org, stern@rowland.harvard.edu,
+        bauer.chen@realtek.com, ricky_wu@realtek.com,
+        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+        Kai-Heng Feng <kai.heng.feng@canonical.com>
+Subject: [PATCH 0/5 v3] Keep rtsx_usb suspended when there's no card
+Date:   Wed, 25 Jul 2018 23:25:10 +0800
+Message-Id: <20180725152515.1833-1-kai.heng.feng@canonical.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 25 Jul 2018 16:56:28 +0200
-Miquel Raynal <miquel.raynal@bootlin.com> wrote:
+Hi,
 
-> Mails to wenyou.yang@microchip.com are not deliverable.
-> Drop him as Microchip/Atmel NAND controller driver maintainer.
-> 
-> Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
+This is based on Ulf's work [1] [2].
 
-Acked-by: Boris Brezillon <boris.brezillon@bootlin.com>
+This patch series can keep rtsx_usb suspended, to save ~0.5W on Intel
+platforms and ~1.5W on AMD platforms.
 
-> ---
->  MAINTAINERS | 1 -
->  1 file changed, 1 deletion(-)
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 07d1576fc766..1e7bbd5843f1 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -9345,7 +9345,6 @@ F:	drivers/media/platform/atmel/atmel-isc-regs.h
->  F:	devicetree/bindings/media/atmel-isc.txt
->  
->  MICROCHIP / ATMEL NAND DRIVER
-> -M:	Wenyou Yang <wenyou.yang@microchip.com>
->  M:	Josh Wu <rainyfeeling@outlook.com>
->  L:	linux-mtd@lists.infradead.org
->  S:	Supported
+[1] https://patchwork.kernel.org/patch/10440583/
+[2] https://patchwork.kernel.org/patch/10445725/
+
+Kai-Heng Feng (5):
+  misc: rtsx_usb: Use USB remote wakeup signaling for card insertion
+    detection
+  memstick: Prevent memstick host from getting runtime suspended during
+    card detection
+  memstick: rtsx_usb_ms: Use ms_dev() helper
+  memstick: rtsx_usb_ms: Support runtime power management
+  misc: rtsx_usb: / memstick: rtsx_usb_ms: Avoid long delay before
+    system suspend
+--
+v3: Skip parent device check in rtsx_usb_resume_child() .
+    Remove dev_dbg() if it only prints function name.
+    Use ms_dev() helper at more places.
+    Remove const qualifier for UNIVERSAL_DEV_PM_OPS.
+
+v2: Resend to linux-usb and LKML.
+
+ drivers/memstick/core/memstick.c    |   4 +
+ drivers/memstick/host/rtsx_usb_ms.c | 148 +++++++++++++++-------------
+ drivers/misc/cardreader/rtsx_usb.c  |   9 ++
+ 3 files changed, 91 insertions(+), 70 deletions(-)
+
+-- 
+2.17.1
 
