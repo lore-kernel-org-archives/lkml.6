@@ -2,44 +2,55 @@ Return-Path: <SRS0=S+WB=KJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE09EC6778F
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 15:43:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C631C67790
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 15:43:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 66DFF20893
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 15:43:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 66DFF20893
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+	by mail.kernel.org (Postfix) with ESMTP id 34A42204EC
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 15:43:55 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="W7L/vlDA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 34A42204EC
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729008AbeGYQzU (ORCPT
+        id S1728749AbeGYQ4G (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 12:55:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40736 "EHLO mail.kernel.org"
+        Wed, 25 Jul 2018 12:56:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40978 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728436AbeGYQzT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Jul 2018 12:55:19 -0400
-Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
+        id S1728514AbeGYQ4G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Jul 2018 12:56:06 -0400
+Received: from devbox (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1973020843;
-        Wed, 25 Jul 2018 15:43:06 +0000 (UTC)
-Date:   Wed, 25 Jul 2018 11:43:04 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Josh Poimboeuf <jpoimboe@redhat.com>
-Cc:     Artem Savkov <asavkov@redhat.com>,
+        by mail.kernel.org (Postfix) with ESMTPSA id 275A9204EC;
+        Wed, 25 Jul 2018 15:43:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1532533432;
+        bh=+08Rc3HMS+YHTANuyojHDQyJZ8GI4/On8E3V9glFCuY=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=W7L/vlDARLVNjogljNA0XZs/oWwATPflzXg5IU8NjrWcuvZi44to/zP2oGRJMhbPl
+         rXEjuBW7A7r+FJ5quPkfxFR2KIJu31lLa8Jr+uiW15io3CGLIsLZgM7jndjE+6fgST
+         fbnqeoUOGmkY5fGpF9W1eWuYuYgVp/fcKK0pit+s=
+Date:   Thu, 26 Jul 2018 00:43:49 +0900
+From:   Masami Hiramatsu <mhiramat@kernel.org>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
         Masami Hiramatsu <mhiramat@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] tracing/kprobes: Fix trace_probe flags on
- enable_trace_kprobe() failure
-Message-ID: <20180725114304.6a5207af@gandalf.local.home>
-In-Reply-To: <20180725150226.5jdhtj4j7bdp4ddu@treble>
-References: <20180725142038.4765-1-asavkov@redhat.com>
-        <20180725150226.5jdhtj4j7bdp4ddu@treble>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
+        Tom Zanussi <tom.zanussi@linux.intel.com>,
+        Hiraku Toyooka <hiraku.toyooka@cybertrust.co.jp>,
+        Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [PATCH] tracing: Fix double free of event_trigger_data
+Message-Id: <20180726004349.e71303133ff8e095a1a1499e@kernel.org>
+In-Reply-To: <20180725085740.5e7efaa1@gandalf.local.home>
+References: <20180725085740.5e7efaa1@gandalf.local.home>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
+Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -47,23 +58,124 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 25 Jul 2018 10:35:57 -0500
-Josh Poimboeuf <jpoimboe@redhat.com> wrote:
+On Wed, 25 Jul 2018 08:57:40 -0400
+Steven Rostedt <rostedt@goodmis.org> wrote:
 
-> On Wed, Jul 25, 2018 at 04:20:38PM +0200, Artem Savkov wrote:
-> > If enable_trace_kprobe fails to enable the probe in enable_k(ret)probe
-> > it returns an error, but does not unset the tp flags it set previously.
-> > This results in a probe being considered enabled and failures like being
-> > unable to remove the probe through kprobe_events file since probes_open()
-> > expects every probe to be disabled.
-> > 
-> > Signed-off-by: Artem Savkov <asavkov@redhat.com>  
+> From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
 > 
-> Reviewed-by: Josh Poimboeuf <jpoimboe@redhat.com>
+> Running the following:
+> 
+>  # cd /sys/kernel/debug/tracing
+>  # echo 500000 > buffer_size_kb
+> [ Or some other number that takes up most of memory ]
+>  # echo snapshot > events/sched/sched_switch/trigger
+> 
+> Triggers the following bug:
+> 
+>  ------------[ cut here ]------------
+>  kernel BUG at mm/slub.c:296!
+>  invalid opcode: 0000 [#1] SMP DEBUG_PAGEALLOC PTI
+>  CPU: 6 PID: 6878 Comm: bash Not tainted 4.18.0-rc6-test+ #1066
+>  Hardware name: Hewlett-Packard HP Compaq Pro 6300 SFF/339A, BIOS K01 v03.03 07/14/2016
+>  RIP: 0010:kfree+0x16c/0x180
+>  Code: 05 41 0f b6 72 51 5b 5d 41 5c 4c 89 d7 e9 ac b3 f8 ff 48 89 d9 48 89 da 41 b8 01 00 00 00 5b 5d 41 5c 4c 89 d6 e9 f4 f3 ff ff <0f> 0b 0f 0b 48 8b 3d d9 d8 f9 00 e9 c1 fe ff ff 0f 1f 40 00 0f 1f
+>  RSP: 0018:ffffb654436d3d88 EFLAGS: 00010246
+>  RAX: ffff91a9d50f3d80 RBX: ffff91a9d50f3d80 RCX: ffff91a9d50f3d80
+>  RDX: 00000000000006a4 RSI: ffff91a9de5a60e0 RDI: ffff91a9d9803500
+>  RBP: ffffffff8d267c80 R08: 00000000000260e0 R09: ffffffff8c1a56be
+>  R10: fffff0d404543cc0 R11: 0000000000000389 R12: ffffffff8c1a56be
+>  R13: ffff91a9d9930e18 R14: ffff91a98c0c2890 R15: ffffffff8d267d00
+>  FS:  00007f363ea64700(0000) GS:ffff91a9de580000(0000) knlGS:0000000000000000
+>  CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>  CR2: 000055c1cacc8e10 CR3: 00000000d9b46003 CR4: 00000000001606e0
+>  Call Trace:
+>   event_trigger_callback+0xee/0x1d0
+>   event_trigger_write+0xfc/0x1a0
+>   __vfs_write+0x33/0x190
+>   ? handle_mm_fault+0x115/0x230
+>   ? _cond_resched+0x16/0x40
+>   vfs_write+0xb0/0x190
+>   ksys_write+0x52/0xc0
+>   do_syscall_64+0x5a/0x160
+>   entry_SYSCALL_64_after_hwframe+0x49/0xbe
+>  RIP: 0033:0x7f363e16ab50
+>  Code: 73 01 c3 48 8b 0d 38 83 2c 00 f7 d8 64 89 01 48 83 c8 ff c3 66 0f 1f 44 00 00 83 3d 79 db 2c 00 00 75 10 b8 01 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 31 c3 48 83 ec 08 e8 1e e3 01 00 48 89 04 24
+>  RSP: 002b:00007fff9a4c6378 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
+>  RAX: ffffffffffffffda RBX: 0000000000000009 RCX: 00007f363e16ab50
+>  RDX: 0000000000000009 RSI: 000055c1cacc8e10 RDI: 0000000000000001
+>  RBP: 000055c1cacc8e10 R08: 00007f363e435740 R09: 00007f363ea64700
+>  R10: 0000000000000073 R11: 0000000000000246 R12: 0000000000000009
+>  R13: 0000000000000001 R14: 00007f363e4345e0 R15: 00007f363e4303c0
+>  Modules linked in: ip6table_filter ip6_tables snd_hda_codec_hdmi snd_hda_codec_realtek snd_hda_codec_generic snd_hda_intel snd_hda_codec snd_hwdep snd_hda_core snd_seq snd_seq_device i915 snd_pcm snd_timer i2c_i801 snd soundcore i2c_algo_bit drm_kms_helper
+> 86_pkg_temp_thermal video kvm_intel kvm irqbypass wmi e1000e
+>  ---[ end trace d301afa879ddfa25 ]---
+> 
+> The cause is because the register_snapshot_trigger() call failed to
+> allocate the snapshot buffer, and then called unregister_trigger()
+> which freed the data that was passed to it. Then on return to the
+> function that called register_snapshot_trigger(), as it sees it
+> failed to register, it frees the trigger_data again and causes
+> a double free.
+> 
+> By calling event_trigger_init() on the trigger_data (which only ups
+> the reference counter for it), and then event_trigger_free() afterward,
+> the trigger_data would not get freed by the registering trigger function
+> as it would only up and lower the ref count for it. If the register
+> trigger function fails, then the event_trigger_free() called after it
+> will free the trigger data normally.
+> 
+> Link: http://lkml.kernel.org/r/20180724191331.738eb819@gandalf.local.home
 > 
 
-Thanks Josh!
+Looks good to me.
 
-Queued up and currently being tested.
+Reviewed-by: Masami Hiramatsu <mhiramat@kernel.org>
 
--- Steve
+Thanks!
+
+> Cc: stable@vger.kerne.org
+> Fixes: 93e31ffbf417 ("tracing: Add 'snapshot' event trigger command")
+> Reported-by: Masami Hiramatsu <mhiramat@kernel.org>
+> Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+> ---
+>  kernel/trace/trace_events_trigger.c | 12 ++++++++----
+>  1 file changed, 8 insertions(+), 4 deletions(-)
+> 
+> diff --git a/kernel/trace/trace_events_trigger.c b/kernel/trace/trace_events_trigger.c
+> index d18249683682..d18ec0e58be2 100644
+> --- a/kernel/trace/trace_events_trigger.c
+> +++ b/kernel/trace/trace_events_trigger.c
+> @@ -679,6 +679,8 @@ event_trigger_callback(struct event_command *cmd_ops,
+>  		goto out_free;
+>  
+>   out_reg:
+> +	/* Up the trigger_data count to make sure reg doesn't free it on failure */
+> +	event_trigger_init(trigger_ops, trigger_data);
+>  	ret = cmd_ops->reg(glob, trigger_ops, trigger_data, file);
+>  	/*
+>  	 * The above returns on success the # of functions enabled,
+> @@ -686,11 +688,13 @@ event_trigger_callback(struct event_command *cmd_ops,
+>  	 * Consider no functions a failure too.
+>  	 */
+>  	if (!ret) {
+> +		cmd_ops->unreg(glob, trigger_ops, trigger_data, file);
+>  		ret = -ENOENT;
+> -		goto out_free;
+> -	} else if (ret < 0)
+> -		goto out_free;
+> -	ret = 0;
+> +	} else if (ret > 0)
+> +		ret = 0;
+> +
+> +	/* Down the counter of trigger_data or free it if not used anymore */
+> +	event_trigger_free(trigger_ops, trigger_data);
+>   out:
+>  	return ret;
+>  
+> -- 
+> 2.13.6
+> 
+
+
+-- 
+Masami Hiramatsu <mhiramat@kernel.org>
