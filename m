@@ -2,156 +2,456 @@ Return-Path: <SRS0=S+WB=KJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED423C6778F
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 15:54:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B569CC6778F
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 15:55:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AEDBE204EC
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 15:54:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AEDBE204EC
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 4AD0C20833
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 15:55:18 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="J9K6LX/R"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4AD0C20833
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729197AbeGYRGs (ORCPT
+        id S1729292AbeGYRHb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 13:06:48 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:41230 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728568AbeGYRGs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Jul 2018 13:06:48 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 29D9780D;
-        Wed, 25 Jul 2018 08:54:32 -0700 (PDT)
-Received: from e103592.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 59D8A3F575;
-        Wed, 25 Jul 2018 08:54:30 -0700 (PDT)
-Date:   Wed, 25 Jul 2018 16:54:27 +0100
-From:   Dave Martin <Dave.Martin@arm.com>
-To:     Will Deacon <will.deacon@arm.com>
-Cc:     linux-kernel@vger.kernel.org, arnd@arndb.de, oleg@redhat.com,
-        linux@dominikbrodowski.net, viro@zeniv.linux.org.uk,
-        akpm@linux-foundation.org, steve.mcintyre@arm.com,
-        linux-arm-kernel@lists.infradead.org, ebiederm@xmission.com
-Subject: Re: [PATCH 1/2] signal: Introduce COMPAT_SIGMINSTKSZ for use in
- compat_sys_sigaltstack
-Message-ID: <20180725155427.GR4240@e103592.cambridge.arm.com>
-References: <1532526312-26993-1-git-send-email-will.deacon@arm.com>
- <1532526312-26993-2-git-send-email-will.deacon@arm.com>
+        Wed, 25 Jul 2018 13:07:31 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43566 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728568AbeGYRHb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Jul 2018 13:07:31 -0400
+Received: from linux-8ccs (nat.nue.novell.com [195.135.221.2])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4994E204EC;
+        Wed, 25 Jul 2018 15:55:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1532534113;
+        bh=SlLmjWCnqm+mwUTDv70NWSATtphmsRZPOwM7OoSvTNk=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=J9K6LX/R4vdfxII8309Hn2IfuxGAqqY+I1KbCHVMDwyhtuQjZNJiQMk9swc3cF3m7
+         +svdH2C+TH99omb7XMNidiiEihWC4VEezMt3nSxGGhmlHB9lDxZNoMo/rG7eEVAdyg
+         ideH9UyviM9Bbvwyy9XK950A/QMspW6gkYSl8kis=
+Date:   Wed, 25 Jul 2018 17:55:07 +0200
+From:   Jessica Yu <jeyu@kernel.org>
+To:     Martijn Coenen <maco@android.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Oliver Neukum <oneukum@suse.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Sam Ravnborg <sam@ravnborg.org>, linux-kbuild@vger.kernel.org,
+        linux-m68k <linux-m68k@lists.linux-m68k.org>,
+        USB list <linux-usb@vger.kernel.org>,
+        USB Storage list <usb-storage@lists.one-eyed-alien.net>,
+        linux-scsi@vger.kernel.org,
+        Linux-Arch <linux-arch@vger.kernel.org>,
+        Martijn Coenen <maco@google.com>,
+        Sandeep Patil <sspatil@google.com>,
+        Iliyan Malchev <malchev@google.com>,
+        Joel Fernandes <joelaf@google.com>,
+        Lucas De Marchi <lucas.de.marchi@gmail.com>
+Subject: Re: [PATCH 2/6] module: add support for symbol namespaces.
+Message-ID: <20180725155507.umb5oatduquxwlmt@linux-8ccs>
+References: <20180716122125.175792-1-maco@android.com>
+ <20180716122125.175792-3-maco@android.com>
+ <CAB0TPYEOVHcFGFLTjVvk7R0VSgSnXZRi1PjSYXONJSjqd4NewQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=us-ascii; format=flowed
 Content-Disposition: inline
-In-Reply-To: <1532526312-26993-2-git-send-email-will.deacon@arm.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <CAB0TPYEOVHcFGFLTjVvk7R0VSgSnXZRi1PjSYXONJSjqd4NewQ@mail.gmail.com>
+X-OS:   Linux linux-8ccs 4.12.14-lp150.11-default x86_64
+User-Agent: NeoMutt/20170912 (1.9.0)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 25, 2018 at 02:45:11PM +0100, Will Deacon wrote:
-> The sigaltstack(2) system call fails with -ENOMEM if the new alternative
-> signal stack is found to be smaller than SIGMINSTKSZ. On architectures
-> such as arm64, where the native value for SIGMINSTKSZ is larger than
-> the compat value, this can result in an unexpected error being reported
-> to a compat task. See, for example:
-> 
->   https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=904385
-> 
-> This patch fixes the problem by extending do_sigaltstack to take the
-> minimum signal stack size as an additional parameter, allowing the
-> native and compat system call entry code to pass in their respective
-> values. COMPAT_SIGMINSTKSZ is just defined as SIGMINSTKSZ if it has not
-> been defined by the architecture.
-> 
-> Cc: Arnd Bergmann <arnd@arndb.de>
-> Cc: Dominik Brodowski <linux@dominikbrodowski.net>
-> Cc: "Eric W. Biederman" <ebiederm@xmission.com>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: Al Viro <viro@zeniv.linux.org.uk>
-> Cc: Oleg Nesterov <oleg@redhat.com>
-> Reported-by: Steve McIntyre <steve.mcintyre@arm.com>
-> Signed-off-by: Will Deacon <will.deacon@arm.com>
-> ---
->  include/linux/compat.h |  3 +++
->  kernel/signal.c        | 14 +++++++++-----
->  2 files changed, 12 insertions(+), 5 deletions(-)
-> 
-> diff --git a/include/linux/compat.h b/include/linux/compat.h
-> index c68acc47da57..47041c7fed28 100644
-> --- a/include/linux/compat.h
-> +++ b/include/linux/compat.h
-> @@ -103,6 +103,9 @@ typedef struct compat_sigaltstack {
->  	compat_size_t			ss_size;
->  } compat_stack_t;
->  #endif
-> +#ifndef COMPAT_MINSIGSTKSZ
-> +#define COMPAT_MINSIGSTKSZ	MINSIGSTKSZ
-> +#endif
->  
->  #define compat_jiffies_to_clock_t(x)	\
->  		(((unsigned long)(x) * COMPAT_USER_HZ) / HZ)
-> diff --git a/kernel/signal.c b/kernel/signal.c
-> index 8d8a940422a8..41a5dd2df27d 100644
-> --- a/kernel/signal.c
-> +++ b/kernel/signal.c
-> @@ -3417,7 +3417,8 @@ int do_sigaction(int sig, struct k_sigaction *act, struct k_sigaction *oact)
->  }
->  
->  static int
-> -do_sigaltstack (const stack_t *ss, stack_t *oss, unsigned long sp)
-> +do_sigaltstack (const stack_t *ss, stack_t *oss, unsigned long sp,
-> +		size_t min_ss_size)
->  {
->  	struct task_struct *t = current;
->  
-> @@ -3447,7 +3448,7 @@ do_sigaltstack (const stack_t *ss, stack_t *oss, unsigned long sp)
->  			ss_size = 0;
->  			ss_sp = NULL;
->  		} else {
-> -			if (unlikely(ss_size < MINSIGSTKSZ))
-> +			if (unlikely(ss_size < min_ss_size))
->  				return -ENOMEM;
->  		}
->  
-> @@ -3465,7 +3466,8 @@ SYSCALL_DEFINE2(sigaltstack,const stack_t __user *,uss, stack_t __user *,uoss)
->  	if (uss && copy_from_user(&new, uss, sizeof(stack_t)))
->  		return -EFAULT;
->  	err = do_sigaltstack(uss ? &new : NULL, uoss ? &old : NULL,
-> -			      current_user_stack_pointer());
-> +			      current_user_stack_pointer(),
-> +			      MINSIGSTKSZ);
->  	if (!err && uoss && copy_to_user(uoss, &old, sizeof(stack_t)))
->  		err = -EFAULT;
->  	return err;
-> @@ -3476,7 +3478,8 @@ int restore_altstack(const stack_t __user *uss)
->  	stack_t new;
->  	if (copy_from_user(&new, uss, sizeof(stack_t)))
->  		return -EFAULT;
-> -	(void)do_sigaltstack(&new, NULL, current_user_stack_pointer());
-> +	(void)do_sigaltstack(&new, NULL, current_user_stack_pointer(),
-> +			     MINSIGSTKSZ);
++++ Martijn Coenen [24/07/18 09:56 +0200]:
+>I did find an issue with my approach:
+>
+>On Mon, Jul 16, 2018 at 2:21 PM, Martijn Coenen <maco@android.com> wrote:
+>> The ELF symbols are renamed to include the namespace with an asm label;
+>> for example, symbol 'usb_stor_suspend' in namespace USB_STORAGE becomes
+>> 'usb_stor_suspend.USB_STORAGE'.  This allows modpost to do namespace
+>> checking, without having to go through all the effort of parsing ELF and
+>> reloction records just to get to the struct kernel_symbols.
+>
+>depmod doesn't like this: if namespaced symbols are built-in to the
+>kernel, they will appear as 'symbol.NS' in the symbol table, whereas
+>modules using those symbols just depend on 'symbol'. This will cause
+>depmod to warn about unknown symbols. I didn't find this previously
+>because all the exports/imports I tested were done from modules
+>themselves.
+>
+>One way to deal with it is to change depmod, but it looks like it
+>hasn't been changed in ages, and it would also introduce a dependency
+>on userspaces to update it to avoid these warnings. So, we'd have to
+>encode the symbol namespace information in another way for modpost to
+>use. I could just write a separate post-processing tool (much like
+>genksyms), or perhaps encode the information in a discardable section.
+>Any other suggestions welcome.
 
-Why can't this fail?
+This seems to be because depmod uses System.map as a source for kernel
+symbols and scans for only the ones prefixed with "__ksymtab" to find
+the exported ones - and those happen to use the '.' to mark the
+namespace it belongs to. It strips that prefix and uses the remainder
+as the actual symbol name. To fix that it'd have to strip the
+namespace suffix in the symbol name as well.
 
-If this fails here we silently go wrong, but...
+Just scanning the depmod source code, it seems really trivial to just
+have depmod accommodate the new symbol name format. Adding Lucas (kmod
+maintainer) to CC.
 
->  	/* squash all but EFAULT for now */
->  	return 0;
->  }
-> @@ -3510,7 +3513,8 @@ static int do_compat_sigaltstack(const compat_stack_t __user *uss_ptr,
->  		uss.ss_size = uss32.ss_size;
->  	}
->  	ret = do_sigaltstack(uss_ptr ? &uss : NULL, &uoss,
-> -			     compat_user_stack_pointer());
-> +			     compat_user_stack_pointer(),
-> +			     COMPAT_MINSIGSTKSZ);
+Thanks,
 
-If this fails on arm64, we seem to SEGV (see compat_sys_rt_sigreturn()).
+Jessica
 
-This patch doesn't introduce this inconsistency, this might be a good
-opportunity to clean it up.
-
-Cheers
----Dave
+>
+>>
+>> On x86_64 I saw no difference in binary size (compression), but at
+>> runtime this will require a word of memory per export to hold the
+>> namespace. An alternative could be to store namespaced symbols in their
+>> own section and use a separate 'struct namespaced_kernel_symbol' for
+>> that section, at the cost of making the module loader more complex.
+>>
+>> Signed-off-by: Martijn Coenen <maco@android.com>
+>> ---
+>>  include/asm-generic/export.h |  2 +-
+>>  include/linux/export.h       | 83 +++++++++++++++++++++++++++---------
+>>  include/linux/module.h       | 13 ++++++
+>>  kernel/module.c              | 79 ++++++++++++++++++++++++++++++++++
+>>  4 files changed, 156 insertions(+), 21 deletions(-)
+>>
+>> diff --git a/include/asm-generic/export.h b/include/asm-generic/export.h
+>> index 68efb950a918..4c3d1afb702f 100644
+>> --- a/include/asm-generic/export.h
+>> +++ b/include/asm-generic/export.h
+>> @@ -29,7 +29,7 @@
+>>         .section ___ksymtab\sec+\name,"a"
+>>         .balign KSYM_ALIGN
+>>  __ksymtab_\name:
+>> -       __put \val, __kstrtab_\name
+>> +       __put \val, __kstrtab_\name, 0
+>>         .previous
+>>         .section __ksymtab_strings,"a"
+>>  __kstrtab_\name:
+>> diff --git a/include/linux/export.h b/include/linux/export.h
+>> index ad6b8e697b27..9f6e70eeb85f 100644
+>> --- a/include/linux/export.h
+>> +++ b/include/linux/export.h
+>> @@ -22,6 +22,11 @@ struct kernel_symbol
+>>  {
+>>         unsigned long value;
+>>         const char *name;
+>> +       const char *namespace;
+>> +};
+>> +
+>> +struct namespace_import {
+>> +       const char *namespace;
+>>  };
+>>
+>>  #ifdef MODULE
+>> @@ -54,18 +59,28 @@ extern struct module __this_module;
+>>  #define __CRC_SYMBOL(sym, sec)
+>>  #endif
+>>
+>> +#define NS_SEPARATOR "."
+>> +
+>> +#define MODULE_IMPORT_NS(ns)                                           \
+>> +       static const struct namespace_import __knsimport_##ns           \
+>> +       asm("__knsimport_" #ns)                                         \
+>> +       __attribute__((section("__knsimport"), used))                   \
+>> +       = { #ns }
+>> +
+>>  /* For every exported symbol, place a struct in the __ksymtab section */
+>> -#define ___EXPORT_SYMBOL(sym, sec)                                     \
+>> +#define ___EXPORT_SYMBOL(sym, sec, ns, nspost, nspost2)                        \
+>>         extern typeof(sym) sym;                                         \
+>>         __CRC_SYMBOL(sym, sec)                                          \
+>> -       static const char __kstrtab_##sym[]                             \
+>> +       static const char __kstrtab_##sym##nspost[]                     \
+>>         __attribute__((section("__ksymtab_strings"), aligned(1)))       \
+>>         = #sym;                                                         \
+>> -       static const struct kernel_symbol __ksymtab_##sym               \
+>> +       static const struct kernel_symbol __ksymtab_##sym##nspost       \
+>> +       asm("__ksymtab_" #sym nspost2)                                  \
+>>         __used                                                          \
+>> -       __attribute__((section("___ksymtab" sec "+" #sym), used))       \
+>> +       __attribute__((section("___ksymtab" sec "+" #sym #nspost)))     \
+>> +       __attribute__((used))                                           \
+>>         __attribute__((aligned(sizeof(void *))))                        \
+>> -       = { (unsigned long)&sym, __kstrtab_##sym }
+>> +       = { (unsigned long)&sym, __kstrtab_##sym##nspost, ns }
+>>
+>>  #if defined(__KSYM_DEPS__)
+>>
+>> @@ -76,52 +91,80 @@ extern struct module __this_module;
+>>   * system filters out from the preprocessor output (see ksym_dep_filter
+>>   * in scripts/Kbuild.include).
+>>   */
+>> -#define __EXPORT_SYMBOL(sym, sec)      === __KSYM_##sym ===
+>> +#define __EXPORT_SYMBOL(sym, sec, ns, nspost, nspost2) === __KSYM_##sym ===
+>>
+>>  #elif defined(CONFIG_TRIM_UNUSED_KSYMS)
+>>
+>>  #include <generated/autoksyms.h>
+>>
+>> -#define __EXPORT_SYMBOL(sym, sec)                              \
+>> -       __cond_export_sym(sym, sec, __is_defined(__KSYM_##sym))
+>> -#define __cond_export_sym(sym, sec, conf)                      \
+>> -       ___cond_export_sym(sym, sec, conf)
+>> -#define ___cond_export_sym(sym, sec, enabled)                  \
+>> -       __cond_export_sym_##enabled(sym, sec)
+>> -#define __cond_export_sym_1(sym, sec) ___EXPORT_SYMBOL(sym, sec)
+>> -#define __cond_export_sym_0(sym, sec) /* nothing */
+>> +#define __EXPORT_SYMBOL(sym, sec, ns, nspost, nspost2)                 \
+>> +       __cond_export_sym(sym, sec, ns, nspost, nspost2,                \
+>> +                         __is_defined(__KSYM_##sym))
+>> +#define __cond_export_sym(sym, sec, ns, nspost, nspost2, conf)         \
+>> +       ___cond_export_sym(sym, sec, ns, nspost, nspost2, conf)
+>> +#define ___cond_export_sym(sym, sec, ns, nspost, nspost2, enabled)     \
+>> +       __cond_export_sym_##enabled(sym, sec, ns, nspost, nspost2)
+>> +#define __cond_export_sym_1(sym, sec, ns, nspost, nspost2)             \
+>> +       ___EXPORT_SYMBOL(sym, sec, ns, nspost, nspost2)
+>> +#define __cond_export_sym_0(sym, sec, ns, nspost, nspost2) /* nothing */
+>>
+>>  #else
+>>  #define __EXPORT_SYMBOL ___EXPORT_SYMBOL
+>>  #endif
+>>
+>>  #define EXPORT_SYMBOL(sym)                                     \
+>> -       __EXPORT_SYMBOL(sym, "")
+>> +       __EXPORT_SYMBOL(sym, "", NULL, ,)
+>>
+>>  #define EXPORT_SYMBOL_GPL(sym)                                 \
+>> -       __EXPORT_SYMBOL(sym, "_gpl")
+>> +       __EXPORT_SYMBOL(sym, "_gpl", NULL, ,)
+>>
+>>  #define EXPORT_SYMBOL_GPL_FUTURE(sym)                          \
+>> -       __EXPORT_SYMBOL(sym, "_gpl_future")
+>> +       __EXPORT_SYMBOL(sym, "_gpl_future", NULL, ,)
+>> +
+>> +#define EXPORT_SYMBOL_NS(sym, ns)                               \
+>> +       __EXPORT_SYMBOL(sym, "", #ns, __##ns, NS_SEPARATOR #ns)
+>> +
+>> +#define EXPORT_SYMBOL_NS_GPL(sym, ns)                               \
+>> +       __EXPORT_SYMBOL(sym, "_gpl", #ns, __##ns, NS_SEPARATOR #ns)
+>>
+>>  #ifdef CONFIG_UNUSED_SYMBOLS
+>> -#define EXPORT_UNUSED_SYMBOL(sym) __EXPORT_SYMBOL(sym, "_unused")
+>> -#define EXPORT_UNUSED_SYMBOL_GPL(sym) __EXPORT_SYMBOL(sym, "_unused_gpl")
+>> +#define EXPORT_UNUSED_SYMBOL(sym) __EXPORT_SYMBOL(sym, "_unused", , ,)
+>> +#define EXPORT_UNUSED_SYMBOL_GPL(sym) __EXPORT_SYMBOL(sym, "_unused_gpl", , ,)
+>>  #else
+>>  #define EXPORT_UNUSED_SYMBOL(sym)
+>>  #define EXPORT_UNUSED_SYMBOL_GPL(sym)
+>>  #endif
+>>
+>> -#endif /* __GENKSYMS__ */
+>> +#endif /* __KERNEL__ && !__GENKSYMS__ */
+>> +
+>> +#if defined(__GENKSYMS__)
+>> +/*
+>> + * When we're running genksyms, ignore the namespace and make the _NS
+>> + * variants look like the normal ones. There are two reasons for this:
+>> + * 1) In the normal definition of EXPORT_SYMBOL_NS, the 'ns' macro
+>> + *    argument is itself not expanded because it's always tokenized or
+>> + *    concatenated; but when running genksyms, a blank definition of the
+>> + *    macro does allow the argument to be expanded; if a namespace
+>> + *    happens to collide with a #define, this can cause issues.
+>> + * 2) There's no need to modify genksyms to deal with the _NS variants
+>> + */
+>> +#define EXPORT_SYMBOL_NS(sym, ns)                              \
+>> +       EXPORT_SYMBOL(sym)
+>> +#define EXPORT_SYMBOL_NS_GPL(sym, ns)                          \
+>> +       EXPORT_SYMBOL_GPL(sym)
+>> +#endif
+>>
+>>  #else /* !CONFIG_MODULES... */
+>>
+>>  #define EXPORT_SYMBOL(sym)
+>> +#define EXPORT_SYMBOL_NS(sym, ns)
+>> +#define EXPORT_SYMBOL_NS_GPL(sym, ns)
+>>  #define EXPORT_SYMBOL_GPL(sym)
+>>  #define EXPORT_SYMBOL_GPL_FUTURE(sym)
+>>  #define EXPORT_UNUSED_SYMBOL(sym)
+>>  #define EXPORT_UNUSED_SYMBOL_GPL(sym)
+>>
+>> +#define MODULE_IMPORT_NS(ns)
+>>  #endif /* CONFIG_MODULES */
+>>  #endif /* !__ASSEMBLY__ */
+>>
+>> diff --git a/include/linux/module.h b/include/linux/module.h
+>> index d44df9b2c131..afab4e8fa188 100644
+>> --- a/include/linux/module.h
+>> +++ b/include/linux/module.h
+>> @@ -268,6 +268,12 @@ void *__symbol_get(const char *symbol);
+>>  void *__symbol_get_gpl(const char *symbol);
+>>  #define symbol_get(x) ((typeof(&x))(__symbol_get(VMLINUX_SYMBOL_STR(x))))
+>>
+>> +/* namespace dependencies of the module */
+>> +struct module_ns_dep {
+>> +       struct list_head ns_dep;
+>> +       const char *namespace;
+>> +};
+>> +
+>>  /* modules using other modules: kdb wants to see this. */
+>>  struct module_use {
+>>         struct list_head source_list;
+>> @@ -359,6 +365,13 @@ struct module {
+>>         const struct kernel_symbol *gpl_syms;
+>>         const s32 *gpl_crcs;
+>>
+>> +       /* Namespace imports */
+>> +       unsigned int num_ns_imports;
+>> +       const struct namespace_import *ns_imports;
+>> +
+>> +       /* Namespace dependencies */
+>> +       struct list_head ns_dependencies;
+>> +
+>>  #ifdef CONFIG_UNUSED_SYMBOLS
+>>         /* unused exported symbols. */
+>>         const struct kernel_symbol *unused_syms;
+>> diff --git a/kernel/module.c b/kernel/module.c
+>> index f475f30eed8c..63de0fe849f9 100644
+>> --- a/kernel/module.c
+>> +++ b/kernel/module.c
+>> @@ -1166,6 +1166,51 @@ static inline int module_unload_init(struct module *mod)
+>>  }
+>>  #endif /* CONFIG_MODULE_UNLOAD */
+>>
+>> +static bool module_has_ns_dependency(struct module *mod, const char *ns)
+>> +{
+>> +       struct module_ns_dep *ns_dep;
+>> +
+>> +       list_for_each_entry(ns_dep, &mod->ns_dependencies, ns_dep) {
+>> +               if (strcmp(ns_dep->namespace, ns) == 0)
+>> +                       return true;
+>> +       }
+>> +
+>> +       return false;
+>> +}
+>> +
+>> +static int add_module_ns_dependency(struct module *mod, const char *ns)
+>> +{
+>> +       struct module_ns_dep *ns_dep;
+>> +
+>> +       if (module_has_ns_dependency(mod, ns))
+>> +               return 0;
+>> +
+>> +       ns_dep = kmalloc(sizeof(*ns_dep), GFP_ATOMIC);
+>> +       if (!ns_dep)
+>> +               return -ENOMEM;
+>> +
+>> +       ns_dep->namespace = ns;
+>> +
+>> +       list_add(&ns_dep->ns_dep, &mod->ns_dependencies);
+>> +
+>> +       return 0;
+>> +}
+>> +
+>> +static bool module_imports_ns(struct module *mod, const char *ns)
+>> +{
+>> +       size_t i;
+>> +
+>> +       if (!ns)
+>> +               return true;
+>> +
+>> +       for (i = 0; i < mod->num_ns_imports; ++i) {
+>> +               if (!strcmp(mod->ns_imports[i].namespace, ns))
+>> +                       return true;
+>> +       }
+>> +
+>> +       return false;
+>> +}
+>> +
+>>  static size_t module_flags_taint(struct module *mod, char *buf)
+>>  {
+>>         size_t l = 0;
+>> @@ -1415,6 +1460,18 @@ static const struct kernel_symbol *resolve_symbol(struct module *mod,
+>>                 goto getname;
+>>         }
+>>
+>> +       /*
+>> +        * We can't yet verify that the module actually imports this
+>> +        * namespace, because the imports themselves are only available
+>> +        * after processing the symbol table and doing relocation; so
+>> +        * instead just record the dependency and check later.
+>> +        */
+>> +       if (sym->namespace) {
+>> +               err = add_module_ns_dependency(mod, sym->namespace);
+>> +               if (err)
+>> +                       sym = ERR_PTR(err);
+>> +       }
+>> +
+>>  getname:
+>>         /* We must make copy under the lock if we failed to get ref. */
+>>         strncpy(ownername, module_name(owner), MODULE_NAME_LEN);
+>> @@ -3061,6 +3118,11 @@ static int find_module_sections(struct module *mod, struct load_info *info)
+>>                                      sizeof(*mod->gpl_syms),
+>>                                      &mod->num_gpl_syms);
+>>         mod->gpl_crcs = section_addr(info, "__kcrctab_gpl");
+>> +
+>> +       mod->ns_imports = section_objs(info, "__knsimport",
+>> +                                      sizeof(*mod->ns_imports),
+>> +                                      &mod->num_ns_imports);
+>> +
+>>         mod->gpl_future_syms = section_objs(info,
+>>                                             "__ksymtab_gpl_future",
+>>                                             sizeof(*mod->gpl_future_syms),
+>> @@ -3381,6 +3443,19 @@ static int post_relocation(struct module *mod, const struct load_info *info)
+>>         return module_finalize(info->hdr, info->sechdrs, mod);
+>>  }
+>>
+>> +static void verify_namespace_dependencies(struct module *mod)
+>> +{
+>> +       struct module_ns_dep *ns_dep;
+>> +
+>> +       list_for_each_entry(ns_dep, &mod->ns_dependencies, ns_dep) {
+>> +               if (!module_imports_ns(mod, ns_dep->namespace)) {
+>> +                       pr_warn("%s: module uses symbols from namespace %s,"
+>> +                               " but does not import it.\n",
+>> +                               mod->name, ns_dep->namespace);
+>> +               }
+>> +       }
+>> +}
+>> +
+>>  /* Is this module of this name done loading?  No locks held. */
+>>  static bool finished_loading(const char *name)
+>>  {
+>> @@ -3682,6 +3757,8 @@ static int load_module(struct load_info *info, const char __user *uargs,
+>>         if (err)
+>>                 goto free_module;
+>>
+>> +       INIT_LIST_HEAD(&mod->ns_dependencies);
+>> +
+>>  #ifdef CONFIG_MODULE_SIG
+>>         mod->sig_ok = info->sig_ok;
+>>         if (!mod->sig_ok) {
+>> @@ -3730,6 +3807,8 @@ static int load_module(struct load_info *info, const char __user *uargs,
+>>         if (err < 0)
+>>                 goto free_modinfo;
+>>
+>> +       verify_namespace_dependencies(mod);
+>> +
+>>         flush_module_icache(mod);
+>>
+>>         /* Now copy in args */
+>> --
+>> 2.18.0.203.gfac676dfb9-goog
+>>
