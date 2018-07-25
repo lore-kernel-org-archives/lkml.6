@@ -2,97 +2,105 @@ Return-Path: <SRS0=S+WB=KJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CEBEFC6778F
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 17:23:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D020C6778F
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 17:23:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 81C4F2089C
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 17:23:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 81C4F2089C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id DDF7720852
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 17:23:39 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m8tawwFP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DDF7720852
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729352AbeGYSfz (ORCPT
+        id S1729450AbeGYSgO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 14:35:55 -0400
-Received: from mga05.intel.com ([192.55.52.43]:58085 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728741AbeGYSfz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Jul 2018 14:35:55 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Jul 2018 10:23:18 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,401,1526367600"; 
-   d="scan'208";a="59425294"
-Received: from theros.lm.intel.com (HELO linux.intel.com) ([10.232.112.164])
-  by orsmga007.jf.intel.com with ESMTP; 25 Jul 2018 10:23:16 -0700
-Date:   Wed, 25 Jul 2018 11:23:16 -0600
-From:   Ross Zwisler <ross.zwisler@linux.intel.com>
-To:     Huaisheng Ye <yehs2007@zoho.com>
-Cc:     linux-nvdimm@lists.01.org, dan.j.williams@intel.com,
-        ross.zwisler@linux.intel.com, willy@infradead.org,
-        vishal.l.verma@intel.com, dave.jiang@intel.com,
-        schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
-        viro@zeniv.linux.org.uk, martin.petersen@oracle.com,
-        axboe@kernel.dk, gregkh@linuxfoundation.org,
-        bart.vanassche@wdc.com, jack@suse.cz, agk@redhat.com,
-        snitzer@redhat.com, dm-devel@redhat.com,
-        linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, chengnt@lenovo.com, colyli@suse.de,
-        Huaisheng Ye <yehs1@lenovo.com>
-Subject: Re: [PATCH v2 0/6] kaddr and pfn can be NULL to ->direct_access()
-Message-ID: <20180725172316.GA12896@linux.intel.com>
-Mail-Followup-To: Ross Zwisler <ross.zwisler@linux.intel.com>,
-        Huaisheng Ye <yehs2007@zoho.com>, linux-nvdimm@lists.01.org,
-        dan.j.williams@intel.com, willy@infradead.org,
-        vishal.l.verma@intel.com, dave.jiang@intel.com,
-        schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
-        viro@zeniv.linux.org.uk, martin.petersen@oracle.com,
-        axboe@kernel.dk, gregkh@linuxfoundation.org, bart.vanassche@wdc.com,
-        jack@suse.cz, agk@redhat.com, snitzer@redhat.com,
-        dm-devel@redhat.com, linux-kernel@vger.kernel.org,
-        linux-s390@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        chengnt@lenovo.com, colyli@suse.de, Huaisheng Ye <yehs1@lenovo.com>
-References: <20180725162849.8320-1-yehs2007@zoho.com>
+        Wed, 25 Jul 2018 14:36:14 -0400
+Received: from mail-pf1-f172.google.com ([209.85.210.172]:44074 "EHLO
+        mail-pf1-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728741AbeGYSgO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Jul 2018 14:36:14 -0400
+Received: by mail-pf1-f172.google.com with SMTP id k21-v6so1942484pff.11;
+        Wed, 25 Jul 2018 10:23:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=to:cc:from:subject:message-id:date:user-agent:mime-version
+         :content-language:content-transfer-encoding;
+        bh=VmU7+L904IvlaG7fqi5iWeqPyvadF/3l/1qlDzvJTYk=;
+        b=m8tawwFPNtOBThLRSjh/WurPTzyTrYuOATdMBlPPTXEZyV6wvhvo1zcUFWHq3bGazY
+         8QCtqvyH9Es+xGHXQbTAgO9EECqy23dIu5Mx4IcFyprFDFpiV6dKgg9pbg29TFUWlCHk
+         Y6chOOuhrKUqBSNNPGUoasXPsEdVjQQut4zqERodBZdhl9EHpgDHQsjul/hzcGGgKUiF
+         cQEvCizpS8t/tVgkrp/YCp73ZXW9OwOOzDq49Rm7GoyRdHL4ugTlWIxvS7HkLyHiK13g
+         9SndqWzlhqhAeW4Y0flJeg02boGAg+md1I1CfsCFi0oECY0ILjEZPQsqCuPynTcu+22r
+         tyhw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:to:cc:from:subject:message-id:date:user-agent
+         :mime-version:content-language:content-transfer-encoding;
+        bh=VmU7+L904IvlaG7fqi5iWeqPyvadF/3l/1qlDzvJTYk=;
+        b=T7Wd6Z4QUmSElbX0i1QJj40kjrF7CYvZXp1gwAtrwNjjy/cmwokSgqr1UW1RHGD6rj
+         JZ17jJxI8Es8eX5Rh1SW2TJw7W81U1+Q0oh2zy1VPLtFFo/GTWJSfhUCkSeFwy6s+HFd
+         cL28q8hOQ6+KGkg2vMjQPOF3/Qtq64ezdph60ZuC+uQwOdHtM5q6Liayj4oKvGQL/iCY
+         NCR/x3pXSgejwYzUttg1wBBgNtDIZrGUdEcBQrKEsO92/pc2xaUxOg1NAM2+BSutsFmu
+         HlLhUXhIwQOLohKNQsE96BbGGnRjoptZJBPsrD0L/li6iA05BkiL5NAFa5niDdYbPHrJ
+         1ehw==
+X-Gm-Message-State: AOUpUlEAGKD2QIZ/++NDEP3drqg87hB4YzbX5r8rptKz3cZTGix+VhI1
+        z6fJnISkHQsekJK/n4cZInrlKlcs
+X-Google-Smtp-Source: AAOMgpeFfujakYwek/X+UFdXmMI3ZiWorkne9IGWPT6Auyd1DgSOKUloMmdxPvCf4IGsvV6mpfd3/Q==
+X-Received: by 2002:a63:41c6:: with SMTP id o189-v6mr21787885pga.323.1532539416737;
+        Wed, 25 Jul 2018 10:23:36 -0700 (PDT)
+Received: from [192.168.0.77] ([211.196.191.92])
+        by smtp.gmail.com with ESMTPSA id q28-v6sm27447092pfg.144.2018.07.25.10.23.33
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 25 Jul 2018 10:23:35 -0700 (PDT)
+To:     Daniel Borkmann <daniel@iogearbox.net>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Martin KaFai Lau <kafai@fb.com>
+Cc:     Arnaldo Carvalho de Melo <acme@redhat.com>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+From:   Taeung Song <treeze.taeung@gmail.com>
+Subject: [Question] bpf: about a new 'tools/bpf/bpf_dwarf2btf'
+Message-ID: <47cfb90e-a9f4-8127-2b89-0e20d9fda2f0@gmail.com>
+Date:   Thu, 26 Jul 2018 02:23:32 +0900
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180725162849.8320-1-yehs2007@zoho.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 26, 2018 at 12:28:43AM +0800, Huaisheng Ye wrote:
-> From: Huaisheng Ye <yehs1@lenovo.com>
-> 
-> Changes since v1 [1]:
-> * Involve the previous patches for pfn can be NULL.
-> * Reword the patch descriptions according to Christian's comment.
-> * According to Ross's suggestion, replace local pointer dummy_addr
->   with NULL within md/dm-writecache for direct_access.
-> 
-> [1]: https://lkml.org/lkml/2018/7/24/199
-> 
-> Some functions within fs/dax, dax/super and md/dm-writecache don't
-> need to get local pointer kaddr or variable pfn from direct_access.
-> Assigning NULL to kaddr or pfn to ->direct_access() is more
-> straightforward and simple than offering a useless local pointer or
-> variable.
-> 
-> So all ->direct_access() need to check the validity of pointer kaddr
-> and pfn for NULL assignment. If either of them is equal to NULL, that
-> is to say callers may have no need for kaddr or pfn, so this series of
-> patch are prepared for allowing them to pass in NULL instead of having
-> to pass in a local pointer or variable that they then just throw away.
+Hi,
 
-Looks good.  For the series:
+Building bpf programs with .BTF section,
+I thought it'd be better to convert dwarf info to .BTF by
+a new tool such as 'tools/bpf/bpf_dwarf2btf' instead of pahole
+in the future.
 
-Reviewed-by: Ross Zwisler <ross.zwisler@linux.intel.com>
+Currently for bpf binary that have .BTF section,
+we need to use pahole from https://github.com/iamkafai/pahole/tree/btf
+with the command line such as "pahole -J bpf_prog.o".
+
+I think it is great but if implementing new 'bpf_dwarf2btf'
+(dwarf parsing + btf encoder code written by Martin KaFai Lau on
+the pahole project i.e. btf.h, btf_encoder.c, btf_encoder.h, libbtf.c, 
+libbtf.h),
+BPF developers would more easily use functionalities based on BTF.
+
+What do you think about this ? Do you think this is needed ?
+Or, already implementing something like this ?
+
+If it is needed, I want to try to make 'tools/bpf/bpf_dwarf2btf'
+based on the pahole code. I'd appreciate it, if you reply to this
+
+Thanks,
+Taeung
