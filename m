@@ -2,132 +2,96 @@ Return-Path: <SRS0=S+WB=KJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CA7DC67790
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 22:17:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA78EC67790
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 22:20:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CACE720673
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 22:17:15 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="rMV3kH/j"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CACE720673
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 9025320671
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 22:20:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9025320671
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731696AbeGYXaz (ORCPT
+        id S1731475AbeGYXdv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 19:30:55 -0400
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:35958 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731617AbeGYXaz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Jul 2018 19:30:55 -0400
-Received: by mail-ed1-f65.google.com with SMTP id k15-v6so28482edr.3
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Jul 2018 15:17:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=+D1/LWgltXse19FfncCVMpwiR7LIyNjrHRDdon8VIzs=;
-        b=rMV3kH/j2Jl0qRyMXvktJScbSyXiCuS8XLubqUUk7hJ3YurvYo8kHwCfnSs/Kr0WFF
-         encNXuoOZmQAfErbrenAyrSaHrqIvTscnfcCvhnjnKn1QMdMjlOiJJMLcb2PoGI8mQal
-         SaYjONrnhrILuRbPzkzqgwfLOpPAClQmV3jkb2cN6iBOu8waqTlr0jlu3OM+/dA2wZrI
-         kX6KQ0gXZNgzZQopQUQApQvGGPHcwLhVNpMv9L2ms9u4b7sEculrAQdVJsxinJg7xpAC
-         PZWbRyryI2FUbYxkdOIV2hRZWk11BMxUyoi4lk7Qd9qbO3bDNNPdCkUoaI3ukXPvekyF
-         iQkw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=+D1/LWgltXse19FfncCVMpwiR7LIyNjrHRDdon8VIzs=;
-        b=Mip7PBqLfnS00b25VQstmfKteVWKsAIc6luKtF/jL+ri3mALvnWzLwbIdKpqoIpErR
-         WPlyHxPGikXum0QXa1uc69XbEs/qNLElqP2xNQm4KnEdNYQM5bcNK409YKwdAbf25jqT
-         whVDJcjLlca9hNGBItbMRFOa3TIwPmpQDEyMSMrb13/CbRtEHrWDyCEPJQ54E3fc/DX8
-         OXfMIbA6R3OjOc70G8mipAxA63xnP++LqDJvPxV2FL1Tjg+n6KXeuZXw+6MQW5h/s59q
-         A3J/Z66vtGaQukyGBat95A9s0Y2SRLCLLIwMI5nsmIIhpMppXthic9bfGR6gBv7rRiC/
-         GKDw==
-X-Gm-Message-State: AOUpUlEp8fy7IBei27BG3BpqAXl1tU2iopxxdBRror3LMawJIheGpqKN
-        XyJEsN82PAhqUpEDbgLCZd8Cqonr
-X-Google-Smtp-Source: AAOMgpdbO1r5YMEmADYQPMyCwa/s0xOQmNRF/im9FN4JddZ+Q9R+lbiAbiSMXyd58eQ5dwg6yCD/FQ==
-X-Received: by 2002:a50:8b25:: with SMTP id l34-v6mr23931661edl.265.1532557030635;
-        Wed, 25 Jul 2018 15:17:10 -0700 (PDT)
-Received: from localhost.localdomain ([109.77.251.113])
-        by smtp.gmail.com with ESMTPSA id i63-v6sm6808814edi.16.2018.07.25.15.17.09
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 25 Jul 2018 15:17:09 -0700 (PDT)
-From:   John Whitmore <johnfwhitmore@gmail.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     devel@driverdev.osuosl.org, gregkh@linuxfoundation.org,
-        pombredanne@nexb.com, kstewart@linuxfoundation.org,
-        tglx@linutronix.de, John Whitmore <johnfwhitmore@gmail.com>
-Subject: [PATCH 10/10] staging:rtl8192u: Remove typedef from struct cmpk_set_cfg_t - Style
-Date:   Wed, 25 Jul 2018 23:16:30 +0100
-Message-Id: <20180725221630.28595-11-johnfwhitmore@gmail.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180725221630.28595-1-johnfwhitmore@gmail.com>
-References: <20180725221630.28595-1-johnfwhitmore@gmail.com>
+        Wed, 25 Jul 2018 19:33:51 -0400
+Received: from mga04.intel.com ([192.55.52.120]:39236 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731259AbeGYXdv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Jul 2018 19:33:51 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Jul 2018 15:20:08 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,402,1526367600"; 
+   d="scan'208";a="57177188"
+Received: from romley-ivt3.sc.intel.com ([172.25.110.60])
+  by fmsmga007.fm.intel.com with ESMTP; 25 Jul 2018 15:20:04 -0700
+Date:   Wed, 25 Jul 2018 15:18:44 -0700
+From:   Fenghua Yu <fenghua.yu@intel.com>
+To:     Andy Lutomirski <luto@kernel.org>
+Cc:     Fenghua Yu <fenghua.yu@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, H Peter Anvin <hpa@zytor.com>,
+        Ashok Raj <ashok.raj@intel.com>,
+        Alan Cox <alan@linux.intel.com>,
+        Ravi V Shankar <ravi.v.shankar@intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        x86 <x86@kernel.org>, Hongjiu Lu <hongjiu.lu@intel.com>
+Subject: Re: [PATCH 5/7] x86/vdso: Add vDSO functions for direct store
+ instructions
+Message-ID: <20180725221844.GC245659@romley-ivt3.sc.intel.com>
+References: <1532350557-98388-1-git-send-email-fenghua.yu@intel.com>
+ <1532350557-98388-6-git-send-email-fenghua.yu@intel.com>
+ <10870309-993a-0abc-635a-92c05bbad140@kernel.org>
+ <20180724034205.GA245659@romley-ivt3.sc.intel.com>
+ <CALCETrX6oiYMvhsnttSFLuSSdOdG3+SyM0PQvBEVHHqZMXZGsQ@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CALCETrX6oiYMvhsnttSFLuSSdOdG3+SyM0PQvBEVHHqZMXZGsQ@mail.gmail.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove the typedef from struct cmpk_set_cfg_t. This change clears the
-checkpatch issue with defining new types. The change is purely a coding
-style change which should have no impact on runtime code execution.
+On Mon, Jul 23, 2018 at 10:27:34PM -0700, Andy Lutomirski wrote:
+> On Mon, Jul 23, 2018 at 8:42 PM, Fenghua Yu <fenghua.yu@intel.com> wrote:
+> > On Mon, Jul 23, 2018 at 06:48:00PM -0700, Andy Lutomirski wrote:
+> >> On 07/23/2018 05:55 AM, Fenghua Yu wrote:
+> >> >The instructions can be implemented in intrinsic functions in future
+> >> >GCC. But the vDSO interfaces are available to user without the
+> >> I'm not convinced that any of this belongs in the vDSO at all.  You could
+> >> just add AT_HWCAP (or AT_HWCAP2) flags for the new instructions. Or user
+> >
+> > Thomas asked to use vDSO. Please see the discussion thread:
+> > https://lkml.org/lkml/2018/6/19/316
+> 
+> I think he meant that, if these helpers belong in the kernel at all,
+> then they belong in the vDSO.  But I think they mostly don't belong in
+> the kernel.
 
-Signed-off-by: John Whitmore <johnfwhitmore@gmail.com>
----
- drivers/staging/rtl8192u/r819xU_cmdpkt.c | 2 +-
- drivers/staging/rtl8192u/r819xU_cmdpkt.h | 6 +++---
- 2 files changed, 4 insertions(+), 4 deletions(-)
+I think both you and Thomas are right. I misunderstood Thomas's comments.
 
-diff --git a/drivers/staging/rtl8192u/r819xU_cmdpkt.c b/drivers/staging/rtl8192u/r819xU_cmdpkt.c
-index 1f33353bc135..490ee399169b 100644
---- a/drivers/staging/rtl8192u/r819xU_cmdpkt.c
-+++ b/drivers/staging/rtl8192u/r819xU_cmdpkt.c
-@@ -288,7 +288,7 @@ static void cmpk_handle_interrupt_status(struct net_device *dev, u8 *pmsg)
-  */
- static void cmpk_handle_query_config_rx(struct net_device *dev, u8 *pmsg)
- {
--	cmpk_query_cfg_t	rx_query_cfg;
-+	struct cmpk_query_cfg_t	rx_query_cfg;
- 
- 	/* 1. Extract TX feedback info from RFD to temp structure buffer. */
- 	/* It seems that FW use big endian(MIPS) and DRV use little endian in
-diff --git a/drivers/staging/rtl8192u/r819xU_cmdpkt.h b/drivers/staging/rtl8192u/r819xU_cmdpkt.h
-index 7854530f4745..17d28244cb36 100644
---- a/drivers/staging/rtl8192u/r819xU_cmdpkt.h
-+++ b/drivers/staging/rtl8192u/r819xU_cmdpkt.h
-@@ -3,7 +3,7 @@
- #define R819XUSB_CMDPKT_H
- /* Different command packet have dedicated message length and definition. */
- #define		CMPK_RX_TX_FB_SIZE		sizeof(struct cmpk_txfb_t)	/* 20 */
--#define		CMPK_BOTH_QUERY_CONFIG_SIZE	sizeof(cmpk_set_cfg_t)	/* 16 */
-+#define		CMPK_BOTH_QUERY_CONFIG_SIZE	sizeof(struct cmpk_set_cfg_t)	/* 16 */
- #define		CMPK_RX_TX_STS_SIZE		sizeof(cmpk_tx_status_t)
- #define		CMPK_TX_RAHIS_SIZE		sizeof(cmpk_tx_rahis_t)
- 
-@@ -63,7 +63,7 @@ struct cmpk_intr_sta_t {
- };
- 
- /* 3. TX side: Set configuration packet. */
--typedef struct tag_cmd_pkt_set_configuration {
-+struct cmpk_set_cfg_t {
- 	u8	element_id;			/* Command packet type. */
- 	u8	length;				/* Command packet length. */
- 	u16	reserve1;
-@@ -78,7 +78,7 @@ typedef struct tag_cmd_pkt_set_configuration {
- 	u8	cfg_offset;
- 	u32	value;
- 	u32	mask;
--} cmpk_set_cfg_t;
-+};
- 
- /* 4. Both side : TX/RX query configuration packet. The query structure is the
-  *    same as set configuration.
--- 
-2.18.0
+I will remove the APIs/functions from next version of patch set. They
+don't belong to kernel and will be implemented in either GCC or glibc.
 
+GCC8 already implemented movdiri and movdir64b instruction intrinsics.
+GCC9 will implement user wait instruction intrinsics.
+If user wants to use those instinsics now, this GCC link has them:
+https://gcc.gnu.org/git/?p=gcc.git;a=summary
+
+If user wants to use the intrinsics in native code, the user needs to
+check availability of the features (i.e. movdiri, movdir64b, waitpkg)
+by running cpuid or a glibc interface that is going to be available in
+newer glibc.
+
+Thank you for  your comments!
+
+-Fenghua
