@@ -3,50 +3,54 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C090AC6778F
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 20:53:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A97A4C67790
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 20:53:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6E18520671
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 20:53:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6E18520671
+	by mail.kernel.org (Postfix) with ESMTP id 5482920843
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 20:53:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5482920843
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731459AbeGYWG6 (ORCPT
+        id S1731486AbeGYWHA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 18:06:58 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:50113 "EHLO
+        Wed, 25 Jul 2018 18:07:00 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:43097 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730643AbeGYWG5 (ORCPT
+        with ESMTP id S1730643AbeGYWG7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Jul 2018 18:06:57 -0400
+        Wed, 25 Jul 2018 18:06:59 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w6PKrCHf501829
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w6PKq7NF501675
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Wed, 25 Jul 2018 13:53:12 -0700
+        Wed, 25 Jul 2018 13:52:07 -0700
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w6PKrCnB501824;
-        Wed, 25 Jul 2018 13:53:12 -0700
-Date:   Wed, 25 Jul 2018 13:53:12 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w6PKq7SG501672;
+        Wed, 25 Jul 2018 13:52:07 -0700
+Date:   Wed, 25 Jul 2018 13:52:07 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for Jiri Olsa <tipbot@zytor.com>
-Message-ID: <tip-0aa802a79469a86ebe143019144cd4df8ae852e4@git.kernel.org>
-Cc:     acme@redhat.com, namhyung@kernel.org, tglx@linutronix.de,
-        hpa@zytor.com, dsahern@gmail.com, jolsa@kernel.org,
-        mingo@kernel.org, alexander.shishkin@linux.intel.com,
-        peterz@infradead.org, ak@linux.intel.com,
-        linux-kernel@vger.kernel.org
-Reply-To: linux-kernel@vger.kernel.org, tglx@linutronix.de, hpa@zytor.com,
-          acme@redhat.com, namhyung@kernel.org, mingo@kernel.org,
-          alexander.shishkin@linux.intel.com, jolsa@kernel.org,
-          dsahern@gmail.com, ak@linux.intel.com, peterz@infradead.org
-In-Reply-To: <20180720110036.32251-2-jolsa@kernel.org>
-References: <20180720110036.32251-2-jolsa@kernel.org>
+Message-ID: <tip-46b3722cc7765582354488da633aafffcb138458@git.kernel.org>
+Cc:     mingo@kernel.org, namhyung@kernel.org, wangnan0@huawei.com,
+        jolsa@redhat.com, alexander.shishkin@linux.intel.com,
+        jolsa@kernel.org, peterz@infradead.org, ak@linux.intel.com,
+        kan.liang@linux.intel.com, tglx@linutronix.de, hpa@zytor.com,
+        linux-kernel@vger.kernel.org, lukasz.odzioba@intel.com,
+        acme@redhat.com, dsahern@gmail.com
+Reply-To: mingo@kernel.org, namhyung@kernel.org, wangnan0@huawei.com,
+          alexander.shishkin@linux.intel.com, jolsa@redhat.com,
+          jolsa@kernel.org, peterz@infradead.org, ak@linux.intel.com,
+          kan.liang@linux.intel.com, tglx@linutronix.de, hpa@zytor.com,
+          linux-kernel@vger.kernel.org, lukasz.odzioba@intel.com,
+          dsahern@gmail.com, acme@redhat.com
+In-Reply-To: <20180720101740.GA27176@krava>
+References: <20180720101740.GA27176@krava>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf stat: Get rid of extra clock display function
-Git-Commit-ID: 0aa802a79469a86ebe143019144cd4df8ae852e4
+Subject: [tip:perf/core] perf tools: Fix struct comm_str removal crash
+Git-Commit-ID: 46b3722cc7765582354488da633aafffcb138458
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -60,212 +64,128 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  0aa802a79469a86ebe143019144cd4df8ae852e4
-Gitweb:     https://git.kernel.org/tip/0aa802a79469a86ebe143019144cd4df8ae852e4
-Author:     Jiri Olsa <jolsa@kernel.org>
-AuthorDate: Fri, 20 Jul 2018 13:00:34 +0200
+Commit-ID:  46b3722cc7765582354488da633aafffcb138458
+Gitweb:     https://git.kernel.org/tip/46b3722cc7765582354488da633aafffcb138458
+Author:     Jiri Olsa <jolsa@redhat.com>
+AuthorDate: Fri, 20 Jul 2018 12:17:40 +0200
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Tue, 24 Jul 2018 14:54:58 -0300
+CommitDate: Tue, 24 Jul 2018 14:54:03 -0300
 
-perf stat: Get rid of extra clock display function
+perf tools: Fix struct comm_str removal crash
 
-There's no reason to have separate function to display clock events.
-It's only purpose was to convert the nanosecond value into microseconds.
-We do that now in generic code, if the unit and scale values are
-properly set, which this patch do for clock events.
+We occasionaly hit following assert failure in 'perf top', when processing the
+/proc info in multiple threads.
 
-The output differs in the unit field being displayed in its columns
-rather than having it added as a suffix of the event name. Plus the
-value is rounded into 2 decimal numbers as for any other event.
+  perf: ...include/linux/refcount.h:109: refcount_inc:
+        Assertion `!(!refcount_inc_not_zero(r))' failed.
 
-Before:
+The gdb backtrace looks like this:
 
-  # perf stat  -e cpu-clock,task-clock -C 0 sleep 3
+  [Switching to Thread 0x7ffff11ba700 (LWP 13749)]
+  0x00007ffff50839fb in raise () from /lib64/libc.so.6
+  (gdb)
+  #0  0x00007ffff50839fb in raise () from /lib64/libc.so.6
+  #1  0x00007ffff5085800 in abort () from /lib64/libc.so.6
+  #2  0x00007ffff507c0da in __assert_fail_base () from /lib64/libc.so.6
+  #3  0x00007ffff507c152 in __assert_fail () from /lib64/libc.so.6
+  #4  0x0000000000535373 in refcount_inc (r=0x7fffdc009be0)
+      at ...include/linux/refcount.h:109
+  #5  0x00000000005354f1 in comm_str__get (cs=0x7fffdc009bc0)
+      at util/comm.c:24
+  #6  0x00000000005356bd in __comm_str__findnew (str=0x7fffd000b260 ":2",
+      root=0xbed5c0 <comm_str_root>) at util/comm.c:72
+  #7  0x000000000053579e in comm_str__findnew (str=0x7fffd000b260 ":2",
+      root=0xbed5c0 <comm_str_root>) at util/comm.c:95
+  #8  0x000000000053582e in comm__new (str=0x7fffd000b260 ":2",
+      timestamp=0, exec=false) at util/comm.c:111
+  #9  0x00000000005363bc in thread__new (pid=2, tid=2) at util/thread.c:57
+  #10 0x0000000000523da0 in ____machine__findnew_thread (machine=0xbfde38,
+      threads=0xbfdf28, pid=2, tid=2, create=true) at util/machine.c:457
+  #11 0x0000000000523eb4 in __machine__findnew_thread (machine=0xbfde38,
+  ...
 
-   Performance counter stats for 'CPU(s) 0':
+The failing assertion is this one:
 
-       3001.123137      cpu-clock (msec)          #    1.000 CPUs utilized
-       3001.133250      task-clock (msec)         #    1.000 CPUs utilized
+  REFCOUNT_WARN(!refcount_inc_not_zero(r), ...
 
-       3.001159813 seconds time elapsed
+The problem is that we keep global comm_str_root list, which
+is accessed by multiple threads during the 'perf top' startup
+and following 2 paths can race:
 
-Now:
+  thread 1:
+    ...
+    thread__new
+      comm__new
+        comm_str__findnew
+          down_write(&comm_str_lock);
+          __comm_str__findnew
+            comm_str__get
 
-  # perf stat  -e cpu-clock,task-clock -C 0 sleep 3
+  thread 2:
+    ...
+    comm__override or comm__free
+      comm_str__put
+        refcount_dec_and_test
+          down_write(&comm_str_lock);
+          rb_erase(&cs->rb_node, &comm_str_root);
 
-   Performance counter stats for 'CPU(s) 0':
+Because thread 2 first decrements the refcnt and only after then it removes the
+struct comm_str from the list, the thread 1 can find this object on the list
+with refcnt equls to 0 and hit the assert.
 
-          3,001.05 msec cpu-clock                 #    1.000 CPUs utilized
-          3,001.05 msec task-clock                #    1.000 CPUs utilized
-
-       3.001077794 seconds time elapsed
-
-There's a small difference in csv output, as we now output the unit
-field, which was empty before. It's in the proper spot, so there's no
-compatibility issue.
-
-Before:
-
-  # perf stat  -e cpu-clock,task-clock -C 0 -x, sleep 3
-  3001.065177,,cpu-clock,3001064187,100.00,1.000,CPUs utilized
-  3001.077085,,task-clock,3001077085,100.00,1.000,CPUs utilized
-
-  # perf stat  -e cpu-clock,task-clock -C 0 -x, sleep 3
-  3000.80,msec,cpu-clock,3000799026,100.00,1.000,CPUs utilized
-  3000.80,msec,task-clock,3000799550,100.00,1.000,CPUs utilized
-
-Add perf_evsel__is_clock to replace nsec_counter.
+This patch fixes the thread 1 __comm_str__findnew path, by ignoring objects
+that already dropped the refcnt to 0. For the rest of the objects we take the
+refcnt before comparing its name and release it afterwards with comm_str__put,
+which can also release the object completely.
 
 Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Acked-by: Namhyung Kim <namhyung@kernel.org>
 Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
 Cc: Andi Kleen <ak@linux.intel.com>
 Cc: David Ahern <dsahern@gmail.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Kan Liang <kan.liang@linux.intel.com>
+Cc: Lukasz Odzioba <lukasz.odzioba@intel.com>
 Cc: Peter Zijlstra <peterz@infradead.org>
-Link: http://lkml.kernel.org/r/20180720110036.32251-2-jolsa@kernel.org
+Cc: Wang Nan <wangnan0@huawei.com>
+Cc: kernel-team@lge.com
+Link: http://lkml.kernel.org/r/20180720101740.GA27176@krava
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/builtin-stat.c     | 48 ++-----------------------------------------
- tools/perf/util/evsel.c       | 11 ++++++++++
- tools/perf/util/evsel.h       |  6 ++++++
- tools/perf/util/stat-shadow.c |  5 ++---
- 4 files changed, 21 insertions(+), 49 deletions(-)
+ tools/perf/util/comm.c | 16 +++++++++++-----
+ 1 file changed, 11 insertions(+), 5 deletions(-)
 
-diff --git a/tools/perf/builtin-stat.c b/tools/perf/builtin-stat.c
-index dfd13d6e2931..d097b5b47eb8 100644
---- a/tools/perf/builtin-stat.c
-+++ b/tools/perf/builtin-stat.c
-@@ -296,18 +296,6 @@ static int create_perf_stat_counter(struct perf_evsel *evsel)
- 	return perf_evsel__open_per_thread(evsel, evsel_list->threads);
- }
+diff --git a/tools/perf/util/comm.c b/tools/perf/util/comm.c
+index 7798a2cc8a86..31279a7bd919 100644
+--- a/tools/perf/util/comm.c
++++ b/tools/perf/util/comm.c
+@@ -20,9 +20,10 @@ static struct rw_semaphore comm_str_lock = {.lock = PTHREAD_RWLOCK_INITIALIZER,}
  
--/*
-- * Does the counter have nsecs as a unit?
-- */
--static inline int nsec_counter(struct perf_evsel *evsel)
--{
--	if (perf_evsel__match(evsel, SOFTWARE, SW_CPU_CLOCK) ||
--	    perf_evsel__match(evsel, SOFTWARE, SW_TASK_CLOCK))
--		return 1;
--
--	return 0;
--}
--
- static int process_synthesized_event(struct perf_tool *tool __maybe_unused,
- 				     union perf_event *event,
- 				     struct perf_sample *sample __maybe_unused,
-@@ -1058,34 +1046,6 @@ static void print_metric_header(void *ctx, const char *color __maybe_unused,
- 		fprintf(os->fh, "%*s ", metric_only_len, unit);
- }
- 
--static void nsec_printout(int id, int nr, struct perf_evsel *evsel, double avg)
--{
--	FILE *output = stat_config.output;
--	double msecs = avg / NSEC_PER_MSEC;
--	const char *fmt_v, *fmt_n;
--	char name[25];
--
--	fmt_v = csv_output ? "%.6f%s" : "%18.6f%s";
--	fmt_n = csv_output ? "%s" : "%-25s";
--
--	aggr_printout(evsel, id, nr);
--
--	scnprintf(name, sizeof(name), "%s%s",
--		  perf_evsel__name(evsel), csv_output ? "" : " (msec)");
--
--	fprintf(output, fmt_v, msecs, csv_sep);
--
--	if (csv_output)
--		fprintf(output, "%s%s", evsel->unit, csv_sep);
--	else
--		fprintf(output, "%-*s%s", unit_width, evsel->unit, csv_sep);
--
--	fprintf(output, fmt_n, name);
--
--	if (evsel->cgrp)
--		fprintf(output, "%s%s", csv_sep, evsel->cgrp->name);
--}
--
- static int first_shadow_cpu(struct perf_evsel *evsel, int id)
+ static struct comm_str *comm_str__get(struct comm_str *cs)
  {
- 	int i;
-@@ -1241,11 +1201,7 @@ static void printout(int id, int nr, struct perf_evsel *counter, double uval,
- 		return;
- 	}
+-	if (cs)
+-		refcount_inc(&cs->refcnt);
+-	return cs;
++	if (cs && refcount_inc_not_zero(&cs->refcnt))
++		return cs;
++
++	return NULL;
+ }
  
--	if (metric_only)
--		/* nothing */;
--	else if (nsec_counter(counter))
--		nsec_printout(id, nr, counter, uval);
--	else
-+	if (!metric_only)
- 		abs_printout(id, nr, counter, uval);
+ static void comm_str__put(struct comm_str *cs)
+@@ -67,9 +68,14 @@ struct comm_str *__comm_str__findnew(const char *str, struct rb_root *root)
+ 		parent = *p;
+ 		iter = rb_entry(parent, struct comm_str, rb_node);
  
- 	out.print_metric = pm;
-@@ -1331,7 +1287,7 @@ static void collect_all_aliases(struct perf_evsel *counter,
- 		    alias->scale != counter->scale ||
- 		    alias->cgrp != counter->cgrp ||
- 		    strcmp(alias->unit, counter->unit) ||
--		    nsec_counter(alias) != nsec_counter(counter))
-+		    perf_evsel__is_clock(alias) != perf_evsel__is_clock(counter))
- 			break;
- 		alias->merged_stat = true;
- 		cb(alias, data, false);
-diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
-index 94fce4f537e9..5285da0417c5 100644
---- a/tools/perf/util/evsel.c
-+++ b/tools/perf/util/evsel.c
-@@ -260,6 +260,17 @@ struct perf_evsel *perf_evsel__new_idx(struct perf_event_attr *attr, int idx)
- 		evsel->attr.sample_period = 1;
- 	}
- 
-+	if (perf_evsel__is_clock(evsel)) {
 +		/*
-+		 * The evsel->unit points to static alias->unit
-+		 * so it's ok to use static string in here.
++		 * If we race with comm_str__put, iter->refcnt is 0
++		 * and it will be removed within comm_str__put call
++		 * shortly, ignore it in this search.
 +		 */
-+		static const char *unit = "msec";
-+
-+		evsel->unit = unit;
-+		evsel->scale = 1e-6;
-+	}
-+
- 	return evsel;
- }
+ 		cmp = strcmp(str, iter->str);
+-		if (!cmp)
+-			return comm_str__get(iter);
++		if (!cmp && comm_str__get(iter))
++			return iter;
  
-diff --git a/tools/perf/util/evsel.h b/tools/perf/util/evsel.h
-index 890babf9ce86..973c03167947 100644
---- a/tools/perf/util/evsel.h
-+++ b/tools/perf/util/evsel.h
-@@ -405,6 +405,12 @@ static inline bool perf_evsel__is_bpf_output(struct perf_evsel *evsel)
- 	return perf_evsel__match(evsel, SOFTWARE, SW_BPF_OUTPUT);
- }
- 
-+static inline bool perf_evsel__is_clock(struct perf_evsel *evsel)
-+{
-+	return perf_evsel__match(evsel, SOFTWARE, SW_CPU_CLOCK) ||
-+	       perf_evsel__match(evsel, SOFTWARE, SW_TASK_CLOCK);
-+}
-+
- struct perf_attr_details {
- 	bool freq;
- 	bool verbose;
-diff --git a/tools/perf/util/stat-shadow.c b/tools/perf/util/stat-shadow.c
-index 594d14a02b67..99990f5f2512 100644
---- a/tools/perf/util/stat-shadow.c
-+++ b/tools/perf/util/stat-shadow.c
-@@ -913,11 +913,10 @@ void perf_stat__print_shadow_stats(struct perf_evsel *evsel,
- 			ratio = total / avg;
- 
- 		print_metric(ctxp, NULL, "%8.0f", "cycles / elision", ratio);
--	} else if (perf_evsel__match(evsel, SOFTWARE, SW_TASK_CLOCK) ||
--		   perf_evsel__match(evsel, SOFTWARE, SW_CPU_CLOCK)) {
-+	} else if (perf_evsel__is_clock(evsel)) {
- 		if ((ratio = avg_stats(&walltime_nsecs_stats)) != 0)
- 			print_metric(ctxp, NULL, "%8.3f", "CPUs utilized",
--				     avg / ratio);
-+				     avg / (ratio * evsel->scale));
- 		else
- 			print_metric(ctxp, NULL, NULL, "CPUs utilized", 0);
- 	} else if (perf_stat_evsel__is(evsel, TOPDOWN_FETCH_BUBBLES)) {
+ 		if (cmp < 0)
+ 			p = &(*p)->rb_left;
