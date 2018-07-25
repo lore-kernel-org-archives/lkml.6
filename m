@@ -2,137 +2,150 @@ Return-Path: <SRS0=S+WB=KJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BC27C6778F
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 14:27:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E434FC6778F
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 14:27:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CC74820843
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 14:27:12 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="t4cVxvwi"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CC74820843
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
+	by mail.kernel.org (Postfix) with ESMTP id 99E5C2088E
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 14:27:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 99E5C2088E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729288AbeGYPjG (ORCPT
+        id S1729143AbeGYPjY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 11:39:06 -0400
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:38616 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728667AbeGYPjG (ORCPT
+        Wed, 25 Jul 2018 11:39:24 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:41137 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728535AbeGYPjY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Jul 2018 11:39:06 -0400
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20180725142708euoutp01a57a9c0d13d2bc84837bdc5403bbfe66~EotmJD2mo0950309503euoutp01k;
-        Wed, 25 Jul 2018 14:27:08 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20180725142708euoutp01a57a9c0d13d2bc84837bdc5403bbfe66~EotmJD2mo0950309503euoutp01k
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1532528828;
-        bh=lhsEa4pns/IX4JqxjoFVIIeHM3y5YMt6Y4uatPnM6Gg=;
-        h=From:To:Cc:Subject:Date:In-reply-to:References:From;
-        b=t4cVxvwiXrI5eWqo08LkGlw6PHUKs6ZBB9xETcHm3XkePD0E9gfuhtLibaOBzocw2
-         Ftiplyl+vUCgHKtAC3b9jj12K+VQY+xcGhUJQG6SCQmSEsscn6TkkrEqVRSXHOQQwt
-         BhtNpmuXouPXXNy8TkNLSa9D76c7u7+l/5HyP68g=
-Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20180725142708eucas1p2862bd49a90c48819589b432c1a71c19f~Eotl1Cast1219612196eucas1p2M;
-        Wed, 25 Jul 2018 14:27:08 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges3new.samsung.com (EUCPMTA) with SMTP id 50.BD.61560.BB8885B5; Wed, 25
-        Jul 2018 15:27:07 +0100 (BST)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20180725142707eucas1p25bf4bc7b63babc0732db13ae9a79d983~EotlIYFCy2848328483eucas1p2S;
-        Wed, 25 Jul 2018 14:27:07 +0000 (GMT)
-X-AuditID: cbfec7f5-207ff7000002f078-62-5b5888bb0f5e
-Received: from eusync1.samsung.com ( [203.254.199.211]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id 99.DA.04178.BB8885B5; Wed, 25
-        Jul 2018 15:27:07 +0100 (BST)
-Received: from amdc3058.localnet ([106.120.53.102]) by eusync1.samsung.com
-        (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5
-        2014)) with ESMTPA id <0PCF00AU2ET71J60@eusync1.samsung.com>; Wed, 25 Jul
-        2018 15:27:07 +0100 (BST)
-From:   Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-To:     "J, KEERTHY" <j-keerthy@ti.com>
-Cc:     Eduardo Valentin <edubezval@gmail.com>,
-        Zhang Rui <rui.zhang@intel.com>, linux-pm@vger.kernel.org,
-        linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 01/14] thermal: ti-soc-thermal: fix TALERT IRQ handling
- for DRA752
-Date:   Wed, 25 Jul 2018 16:27:06 +0200
-Message-id: <2243156.HcYyxvpmOE@amdc3058>
-User-Agent: KMail/4.13.3 (Linux/3.13.0-96-generic; KDE/4.13.3; x86_64; ; )
-In-reply-to: <fd458da1-75d6-84ed-838a-0495045fad77@ti.com>
-MIME-version: 1.0
-Content-transfer-encoding: 7Bit
-Content-type: text/plain; charset="us-ascii"
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrBIsWRmVeSWpSXmKPExsWy7djPc7q7OyKiDY7d17GYf+Uaq8Wp7U1M
-        Fpd3zWGzmL2kn8Xic+8RRosnD/vYHNg8ds66y+6xeM9LJo/jN7YzeXzeJBfAEsVlk5Kak1mW
-        WqRvl8CV8fHmNJaCcxwVxzf8YW1g/MHWxcjBISFgIrFgXnwXIxeHkMAKRomba++xQzifGSUa
-        l65l7WLkBCu68PgwG0RiGaPE+Y47jBDOb0aJK6d6WUCq2ASsJCa2r2IEsUUElCUeLG0A62YW
-        WMwo0d/LDWILC0RITG/8zwxiswioSvQ8ms4GYvMKaEq8P/gALC4q4CWxZV87E4jNCTSzqes8
-        M0SNoMSPyfdYIGbKS+zbPxVqvo7E2WPrwA6SEFjBJnHz7zJ2iLNdJC7OXA5lC0u8Or4FypaR
-        6Ow4yATRMJ1R4s2vpSwQznpGiTVnjjFBVFlLHD5+EWoFn8SkbdOZISHGK9HRJgRR4iHxZtVH
-        JkhQdDNJfNmwjm0Co8wsJNfOQnLtLCTXLmBkXsUonlpanJueWmycl1quV5yYW1yal66XnJ+7
-        iREY/6f/Hf+6g3Hfn6RDjAIcjEo8vB/swqOFWBPLiitzDzFKcDArifC6HAYK8aYkVlalFuXH
-        F5XmpBYfYpTmYFES55X2iYgWEkhPLEnNTk0tSC2CyTJxcEo1MNZ9NHY6YFl7/FZ3b9lHR3tz
-        wWqhv04M56vzNjFFzplzgPVY0uci8yfVX7RPh4av3LLous2NhOru3n1X7V9VXg1P/6E6+fCR
-        1o97MpKMzMO5OcM1kpc0aNnJfMnbyadhoF4eyCzn2LNkb5rQDNflIdkzRR7Or9zA8LFi+8HH
-        0444L9HrWXNIVomlOCPRUIu5qDgRAH9Mu7H7AgAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrKLMWRmVeSWpSXmKPExsVy+t/xy7q7OyKiDdZd4LOYf+Uaq8Wp7U1M
-        Fpd3zWGzmL2kn8Xic+8RRosnD/vYHNg8ds66y+6xeM9LJo/jN7YzeXzeJBfAEsVlk5Kak1mW
-        WqRvl8CV8fHmNJaCcxwVxzf8YW1g/MHWxcjJISFgInHh8WEwW0hgCaPE51UCXYxcQPZfRokb
-        JxexgiTYBKwkJravYgSxRQSUJR4sbWAFKWIWWMwo8W3BH7AiYYEIiVXfJ7CA2CwCqhI9j6aD
-        TeUV0JR4f/ABM4gtKuAlsWVfOxOIzQk0tKnrPDPE5u2MEsc7UiHqBSV+TL4HNodZQF5i3/6p
-        rBC2lsT6nceZJjDyz0JSNgtJ2SwkZQsYmVcxiqSWFuem5xYb6hUn5haX5qXrJefnbmIEBu62
-        Yz8372C8tDH4EKMAB6MSD6+HY3i0EGtiWXFl7iFGCQ5mJRFel8NAId6UxMqq1KL8+KLSnNTi
-        Q4zSHCxK4rznDSqjhATSE0tSs1NTC1KLYLJMHJxSDYyViXVHU//6XLy1QUXaX/hBbaewG6Pe
-        zHXSy0rf77nK6fTL8F3k6bRmz2X8i/J4FfcdOZAb2JH9Iy8yZkryyaV755hfXhy+9lWUQkrZ
-        222tWU75vYVLe27McGNWiCvL7LL4/7NHbuZtC8d5KaEbnm8JUtt9/mH7p93uRT/3Jd7uZgl4
-        tWDJ7CAlluKMREMt5qLiRADv0q1MWAIAAA==
-X-CMS-MailID: 20180725142707eucas1p25bf4bc7b63babc0732db13ae9a79d983
-X-Msg-Generator: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20180725142707eucas1p25bf4bc7b63babc0732db13ae9a79d983
-References: <1526298141-14045-1-git-send-email-b.zolnierkie@samsung.com>
-        <1526298141-14045-2-git-send-email-b.zolnierkie@samsung.com>
-        <fd458da1-75d6-84ed-838a-0495045fad77@ti.com>
-        <CGME20180725142707eucas1p25bf4bc7b63babc0732db13ae9a79d983@eucas1p2.samsung.com>
+        Wed, 25 Jul 2018 11:39:24 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w6PER1WO402184
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Wed, 25 Jul 2018 07:27:01 -0700
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w6PER11W402181;
+        Wed, 25 Jul 2018 07:27:01 -0700
+Date:   Wed, 25 Jul 2018 07:27:01 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Srikar Dronamraju <tipbot@zytor.com>
+Message-ID: <tip-0ee7e74dc0dc64d9900751d03c5c22dfdd173fb8@git.kernel.org>
+Cc:     torvalds@linux-foundation.org, hpa@zytor.com,
+        mgorman@techsingularity.net, srikar@linux.vnet.ibm.com,
+        riel@surriel.com, tglx@linutronix.de, mingo@kernel.org,
+        peterz@infradead.org, linux-kernel@vger.kernel.org
+Reply-To: mgorman@techsingularity.net, srikar@linux.vnet.ibm.com,
+          hpa@zytor.com, torvalds@linux-foundation.org,
+          linux-kernel@vger.kernel.org, peterz@infradead.org,
+          mingo@kernel.org, tglx@linutronix.de, riel@surriel.com
+In-Reply-To: <1529514181-9842-8-git-send-email-srikar@linux.vnet.ibm.com>
+References: <1529514181-9842-8-git-send-email-srikar@linux.vnet.ibm.com>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:sched/core] sched/numa: Skip nodes that are at 'hoplimit'
+Git-Commit-ID: 0ee7e74dc0dc64d9900751d03c5c22dfdd173fb8
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wednesday, July 11, 2018 07:49:41 AM J, KEERTHY wrote:
-> 
-> On 5/14/2018 5:12 PM, Bartlomiej Zolnierkiewicz wrote:
-> > .report_temperature is not set in dra752_data which
-> > results in temperature updates not being propagated by
-> > ti_bandgap_talert_irq_handler() (it doesn't make much
-> > sense to handle TALERT IRQ without reporting temperature
-> > updates to the thermal core). Fix it.
-> 
-> ATM no one is using TALERT as the thermal software polls on the 
-> temperature. No real benefit from TALERT.
-> 
-> TALERT is set at different temperature and software polling thresholds 
-> come from Device tree and i believe its best for software to go by 
-> polling and then act on trip points.
+Commit-ID:  0ee7e74dc0dc64d9900751d03c5c22dfdd173fb8
+Gitweb:     https://git.kernel.org/tip/0ee7e74dc0dc64d9900751d03c5c22dfdd173fb8
+Author:     Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+AuthorDate: Wed, 20 Jun 2018 22:32:48 +0530
+Committer:  Ingo Molnar <mingo@kernel.org>
+CommitDate: Wed, 25 Jul 2018 11:41:07 +0200
 
-Could you please explain what do you mean by "no one is using
-TALERT"?
+sched/numa: Skip nodes that are at 'hoplimit'
 
-The code in ti_bandgap_probe() sets TALERT thresholds and requests
-IRQ if the TI_BANDGAP_FEATURE_TALERT feature flag is set (and this
-flag is set in omap4460_data, omap4470_data, omap5430_data and
-dra752_data).
+When comparing two nodes at a distance of 'hoplimit', we should consider
+nodes only up to 'hoplimit'. Currently we also consider nodes at 'oplimit'
+distance too. Hence two nodes at a distance of 'hoplimit' will have same
+groupweight. Fix this by skipping nodes at hoplimit.
 
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
+Running SPECjbb2005 on a 4 node machine and comparing bops/JVM
+JVMS  LAST_PATCH  WITH_PATCH  %CHANGE
+16    25375.3     25308.6     -0.26
+1     72617       72964       0.477
 
+Running SPECjbb2005 on a 16 node machine and comparing bops/JVM
+JVMS  LAST_PATCH  WITH_PATCH  %CHANGE
+8     113372      108750      -4.07684
+1     177403      183115      3.21979
+
+(numbers from v1 based on v4.17-rc5)
+Testcase       Time:         Min         Max         Avg      StdDev
+numa01.sh      Real:      478.45      565.90      515.11       30.87
+numa01.sh       Sys:      207.79      271.04      232.94       21.33
+numa01.sh      User:    39763.93    47303.12    43210.73     2644.86
+numa02.sh      Real:       60.00       61.46       60.78        0.49
+numa02.sh       Sys:       15.71       25.31       20.69        3.42
+numa02.sh      User:     5175.92     5265.86     5235.97       32.82
+numa03.sh      Real:      776.42      834.85      806.01       23.22
+numa03.sh       Sys:      114.43      128.75      121.65        5.49
+numa03.sh      User:    60773.93    64855.25    62616.91     1576.39
+numa04.sh      Real:      456.93      511.95      482.91       20.88
+numa04.sh       Sys:      178.09      460.89      356.86       94.58
+numa04.sh      User:    36312.09    42553.24    39623.21     2247.96
+numa05.sh      Real:      393.98      493.48      436.61       35.59
+numa05.sh       Sys:      164.49      329.15      265.87       61.78
+numa05.sh      User:    33182.65    36654.53    35074.51     1187.71
+
+Testcase       Time:         Min         Max         Avg      StdDev 	 %Change
+numa01.sh      Real:      414.64      819.20      556.08      147.70 	 -7.36%
+numa01.sh       Sys:       77.52      205.04      139.40       52.05 	 67.10%
+numa01.sh      User:    37043.24    61757.88    45517.48     9290.38 	 -5.06%
+numa02.sh      Real:       60.80       63.32       61.63        0.88 	 -1.37%
+numa02.sh       Sys:       17.35       39.37       25.71        7.33 	 -19.5%
+numa02.sh      User:     5213.79     5374.73     5268.90       55.09 	 -0.62%
+numa03.sh      Real:      780.09      948.64      831.43       63.02 	 -3.05%
+numa03.sh       Sys:      104.96      136.92      116.31       11.34 	 4.591%
+numa03.sh      User:    60465.42    73339.78    64368.03     4700.14 	 -2.72%
+numa04.sh      Real:      412.60      681.92      521.29       96.64 	 -7.36%
+numa04.sh       Sys:      210.32      314.10      251.77       37.71 	 41.74%
+numa04.sh      User:    34026.38    45581.20    38534.49     4198.53 	 2.825%
+numa05.sh      Real:      394.79      439.63      411.35       16.87 	 6.140%
+numa05.sh       Sys:      238.32      330.09      292.31       38.32 	 -9.04%
+numa05.sh      User:    33456.45    34876.07    34138.62      609.45 	 2.741%
+
+While there is a regression with this change, this change is needed from a
+correctness perspective. Also it helps consolidation as seen from perf bench
+output.
+
+Signed-off-by: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Reviewed-by: Rik van Riel <riel@surriel.com>
+Acked-by: Mel Gorman <mgorman@techsingularity.net>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Link: http://lkml.kernel.org/r/1529514181-9842-8-git-send-email-srikar@linux.vnet.ibm.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+---
+ kernel/sched/fair.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index a10c4f8f47e8..e5f39e8dfe53 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -1312,7 +1312,7 @@ static unsigned long score_nearby_nodes(struct task_struct *p, int nid,
+ 		 * of each group. Skip other nodes.
+ 		 */
+ 		if (sched_numa_topology_type == NUMA_BACKPLANE &&
+-					dist > maxdist)
++					dist >= maxdist)
+ 			continue;
+ 
+ 		/* Add up the faults from nearby nodes. */
