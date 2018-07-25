@@ -2,114 +2,103 @@ Return-Path: <SRS0=S+WB=KJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 111BCC6778F
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 13:44:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92A30C6778F
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 13:44:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B9AF020852
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 13:44:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B9AF020852
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 48C7E20852
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 13:44:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 48C7E20852
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=jmondi.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729105AbeGYO4D (ORCPT
+        id S1729153AbeGYO43 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 10:56:03 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:38958 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728452AbeGYO4D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Jul 2018 10:56:03 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2C0C915A2;
-        Wed, 25 Jul 2018 06:44:18 -0700 (PDT)
-Received: from [10.4.12.117] (e107460-lin.Emea.Arm.com [10.4.12.117])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 514A23F6A8;
-        Wed, 25 Jul 2018 06:44:12 -0700 (PDT)
-Subject: Re: [PATCH v4 13/17] khwasan: add hooks implementation
-To:     Andrey Konovalov <andreyknvl@google.com>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Alexander Potapenko <glider@google.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Christoph Lameter <cl@linux.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Dave Martin <dave.martin@arm.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Paul Lawrence <paullawrence@google.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        kasan-dev@googlegroups.com, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-sparse@vger.kernel.org, linux-mm@kvack.org,
-        linux-kbuild@vger.kernel.org
-Cc:     Chintan Pandya <cpandya@codeaurora.org>,
-        Jacob Bramley <Jacob.Bramley@arm.com>,
-        Jann Horn <jannh@google.com>,
-        Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
-        Lee Smith <Lee.Smith@arm.com>,
-        Kostya Serebryany <kcc@google.com>,
-        Mark Brand <markbrand@google.com>,
-        Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
-        Evgeniy Stepanov <eugenis@google.com>
-References: <cover.1530018818.git.andreyknvl@google.com>
- <a2a93370d43ec85b02abaf8d007a15b464212221.1530018818.git.andreyknvl@google.com>
-From:   "Vincenzo Frascino@Foss" <vincenzo.frascino@arm.com>
-Message-ID: <09cb5553-d84a-0e62-5174-315c14b88833@arm.com>
-Date:   Wed, 25 Jul 2018 14:44:10 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <a2a93370d43ec85b02abaf8d007a15b464212221.1530018818.git.andreyknvl@google.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+        Wed, 25 Jul 2018 10:56:29 -0400
+Received: from relay6-d.mail.gandi.net ([217.70.183.198]:53195 "EHLO
+        relay6-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728452AbeGYO43 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Jul 2018 10:56:29 -0400
+X-Originating-IP: 2.224.242.101
+Received: from w540.lan (2-224-242-101.ip172.fastwebnet.it [2.224.242.101])
+        (Authenticated sender: jacopo@jmondi.org)
+        by relay6-d.mail.gandi.net (Postfix) with ESMTPSA id D3BAEC0019;
+        Wed, 25 Jul 2018 13:44:39 +0000 (UTC)
+From:   Jacopo Mondi <jacopo@jmondi.org>
+To:     mchehab@kernel.org, sakari.ailus@iki.fi,
+        kieran.bingham@ideasonboard.com
+Cc:     Jacopo Mondi <jacopo@jmondi.org>, linux-media@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: [v2 0/2] media: i2c: mt9v111 sensor driver
+Date:   Wed, 25 Jul 2018 15:44:29 +0200
+Message-Id: <1532526271-19639-1-git-send-email-jacopo@jmondi.org>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/26/2018 02:15 PM, Andrey Konovalov wrote:
+Hello,
+   this is a sensor level driver for Aptina MT9V111.
 
-> @@ -325,18 +341,41 @@ void kasan_init_slab_obj(struct kmem_cache *cache, const void *object)
->   
->   void *kasan_slab_alloc(struct kmem_cache *cache, void *object, gfp_t flags)
->   {
-> -	return kasan_kmalloc(cache, object, cache->object_size, flags);
-> +	object = kasan_kmalloc(cache, object, cache->object_size, flags);
-> +	if (IS_ENABLED(CONFIG_KASAN_HW) && unlikely(cache->ctor)) {
-> +		/*
-> +		 * Cache constructor might use object's pointer value to
-> +		 * initialize some of its fields.
-> +		 */
-> +		cache->ctor(object);
->
-This seams breaking the kmem_cache_create() contract: "The @ctor is run 
-when new pages are allocated by the cache." 
-(https://elixir.bootlin.com/linux/v3.7/source/mm/slab_common.c#L83)
+Compared to v1 the biggest difference is that now auto-exposure and
+auto-white-balancing are exposed through the v4l2-ctrl framework, and can be
+activated/deactivated by the user.
 
-Since there might be preexisting code relying on it, this could lead to 
-global side effects. Did you verify that this is not the case?
+For this reason, while auto-exposure algorithm still controls the frame rate in
+low light conditions, the driver now enables it by default and let the user
+disable it to more precisely control the framerate.
 
-Another concern is performance related if we consider this solution 
-suitable for "near-production", since with the current implementation 
-you call the ctor (where present) on an object multiple times and this 
-ends up memsetting and repopulating the memory every time (i.e. inode.c: 
-inode_init_once). Do you know what is the performance impact?
+(Most of the) comments from Sakari and Kieran have been addressed, see changelog
+for a more precise list.
 
--- 
-Regards,
-Vincenzo
+Tested VGA, QVGA QQVGA resolutions at 5, 10, 15 and 30 frame per second.
+
+v4l2-compliance fails on some tests, and I've not been able to identify what's
+wrong with the driver. Copy of the failures reported here below:
+
+fail: v4l2-test-subdevs.cpp(69): doioctl(node, VIDIOC_SUBDEV_ENUM_FRAME_INTERVAL, &fie) != EINVAL
+fail: v4l2-test-subdevs.cpp(180): ret && ret != ENOTTY
+fail: v4l2-test-subdevs.cpp(248): ret && ret != ENOTTY
+test Active VIDIOC_SUBDEV_ENUM_MBUS_CODE/FRAME_SIZE/FRAME_INTERVAL: FAIL
+
+I've found no mention of ENOTTY to be reported by enum_frame_interval in the
+documentation, but apparently v4l2-compliance checks for that.
+
+v1: https://lkml.org/lkml/2018/6/11/467
+
+Thanks
+   j
+
+v1 -> v2:
+- Addressed syntax mistakes pointed out by Kieran
+- Drop spinlock around address space change
+- Extend mutex to cover frame rate and format get/set operations
+- Add controls for auto-exposure and auto-white-balancing
+- Move MAINTAINERS modifications to bindings patch
+- Fix resolution in bindings document
+- Drop dependency on OF
+- Drop subdev 'open' function in favour of pad operation init_cfg and use a
+  default configuration to initialize the sensor
+- Turn off power if sensor identification fails
+
+Jacopo Mondi (2):
+  dt-bindings: media: i2c: Document MT9V111 bindings
+  media: i2c: Add driver for Aptina MT9V111
+
+ .../bindings/media/i2c/aptina,mt9v111.txt          |   46 +
+ MAINTAINERS                                        |    8 +
+ drivers/media/i2c/Kconfig                          |   11 +
+ drivers/media/i2c/Makefile                         |    1 +
+ drivers/media/i2c/mt9v111.c                        | 1299 ++++++++++++++++++++
+ 5 files changed, 1365 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/media/i2c/aptina,mt9v111.txt
+ create mode 100644 drivers/media/i2c/mt9v111.c
+
+--
+2.7.4
 
