@@ -6,49 +6,49 @@ X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A894C6778F
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 09:37:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95B59C6778F
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 09:37:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EA0AF2088E
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 09:37:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 415BA20671
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 09:37:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="pmDkVcUH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EA0AF2088E
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="tO73A4LX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 415BA20671
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728909AbeGYKsI (ORCPT
+        id S1728849AbeGYKsA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 06:48:08 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:43182 "EHLO
+        Wed, 25 Jul 2018 06:48:00 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:42812 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728768AbeGYKsG (ORCPT
+        with ESMTP id S1728600AbeGYKr7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Jul 2018 06:48:06 -0400
+        Wed, 25 Jul 2018 06:47:59 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=References:In-Reply-To:Message-Id:
         Date:Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
         List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=zw790fIsPJb4zF8WntNv/1o2cuZq1bliXkE2Dn8ZPGs=; b=pmDkVcUHyN/cvT8kZYE8+oel9
-        ZZuoKobFEvq6MfMO9999RxoR+gbhrlnIkOQRsNjVTxm/No9b1QclLLOlAo9kfP70HEhM0LftM1PvX
-        qwhlUwAY4icW9avGjVqSdIeuRk8rnoyN/Hr6SQhrvfQrtwwOyZ+hHpgMlbksYxXNRK6At8WiimJ2X
-        oP29p2kjDyX398Ih+vs969C+Afj3ED2u0YIEOoQNmHpP5CeKvoVCilaBYm2QSg8USeeg+pv39Qzpx
-        RviaNO1GBpdljEdavLKib8i9ohKn3r0FXZnAfe6hNSkHGsBRVe1TpgGv3qsuubXpRZIi0NPEiGHHT
-        6fMXj+kQw==;
+         bh=HB3Nzw62Go+iT3Fn+VGKT/KImHQ1FIRkQ9d+R8PHQFA=; b=tO73A4LXE9IBpXdMsn9TnxJ5f
+        aEAc8kwS2reZjoQyuUUnMmNsj1l4DrAauzjK4VMBHKKdagO1kTb10lghId7hVIJHyLUKAGU3zITvZ
+        KXhZQkWf7IWQ01it2aZQQY2YqnLAsz41+7O0WeXBYjhyQmCbecHF1fo4UfVM1h1dqfoWT0h1yPgwf
+        u1rFiRy9ESYLVnighuiWkx/aiujZH9YTpcywCt5NX8blouxWRRmEuh6M9oCLLiIocisje9aGxZFzm
+        SrxnqZRri9BO89R68SmBPA3GWNY9e0IHgdQukaHDobTdqazT4/xhre7Fr+slcY4FOMxFcxOjGkTnL
+        x3FuI1D/A==;
 Received: from [91.112.108.175] (helo=localhost)
         by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fiGEK-0005MZ-2f; Wed, 25 Jul 2018 09:37:12 +0000
+        id 1fiGEA-0005Gu-R1; Wed, 25 Jul 2018 09:37:03 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     tglx@linutronix.de, palmer@sifive.com, jason@lakedaemon.net,
         marc.zyngier@arm.com, robh+dt@kernel.org, mark.rutland@arm.com
 Cc:     devicetree@vger.kernel.org, aou@eecs.berkeley.edu,
         linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
         shorne@gmail.com, Palmer Dabbelt <palmer@dabbelt.com>
-Subject: [PATCH 6/6] dt-bindings: interrupt-controller: RISC-V PLIC documentation
-Date:   Wed, 25 Jul 2018 11:36:49 +0200
-Message-Id: <20180725093649.32332-7-hch@lst.de>
+Subject: [PATCH 3/6] irqchip: RISC-V Local Interrupt Controller Driver
+Date:   Wed, 25 Jul 2018 11:36:46 +0200
+Message-Id: <20180725093649.32332-4-hch@lst.de>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180725093649.32332-1-hch@lst.de>
 References: <20180725093649.32332-1-hch@lst.de>
@@ -60,81 +60,247 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Palmer Dabbelt <palmer@dabbelt.com>
 
-This patch adds documentation for the platform-level interrupt
-controller (PLIC) found in all RISC-V systems.  This interrupt
-controller routes interrupts from all the devices in the system to each
-hart-local interrupt controller.
-
-Note: the DTS bindings for the PLIC aren't set in stone yet, as we might
-want to change how we're specifying holes in the hart list.
+This patch adds a driver that manages the local interrupts on each
+RISC-V hart, as specifiec by the RISC-V supervisor level ISA manual.
+The local interrupt controller manages software interrupts, timer
+interrupts, and hardware interrupts (which are routed via the
+platform level interrupt controller).  Per-hart local interrupt
+controllers are found on all RISC-V systems.
 
 Signed-off-by: Palmer Dabbelt <palmer@dabbelt.com>
+[hch: Kconfig simplifications, various cleanups]
+Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- .../interrupt-controller/riscv,plic0.txt      | 55 +++++++++++++++++++
- 1 file changed, 55 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/interrupt-controller/riscv,plic0.txt
+ drivers/irqchip/Kconfig          |   4 +
+ drivers/irqchip/Makefile         |   1 +
+ drivers/irqchip/irq-riscv-intc.c | 197 +++++++++++++++++++++++++++++++
+ 3 files changed, 202 insertions(+)
+ create mode 100644 drivers/irqchip/irq-riscv-intc.c
 
-diff --git a/Documentation/devicetree/bindings/interrupt-controller/riscv,plic0.txt b/Documentation/devicetree/bindings/interrupt-controller/riscv,plic0.txt
+diff --git a/drivers/irqchip/Kconfig b/drivers/irqchip/Kconfig
+index e9233db16e03..8460fdcecc2c 100644
+--- a/drivers/irqchip/Kconfig
++++ b/drivers/irqchip/Kconfig
+@@ -372,3 +372,7 @@ config QCOM_PDC
+ 	  IRQs for Qualcomm Technologies Inc (QTI) mobile chips.
+ 
+ endmenu
++
++config RISCV_INTC
++	def_bool y
++	depends on RISCV
+diff --git a/drivers/irqchip/Makefile b/drivers/irqchip/Makefile
+index 15f268f646bf..74e333cc274c 100644
+--- a/drivers/irqchip/Makefile
++++ b/drivers/irqchip/Makefile
+@@ -87,3 +87,4 @@ obj-$(CONFIG_MESON_IRQ_GPIO)		+= irq-meson-gpio.o
+ obj-$(CONFIG_GOLDFISH_PIC) 		+= irq-goldfish-pic.o
+ obj-$(CONFIG_NDS32)			+= irq-ativic32.o
+ obj-$(CONFIG_QCOM_PDC)			+= qcom-pdc.o
++obj-$(CONFIG_RISCV_INTC)		+= irq-riscv-intc.o
+diff --git a/drivers/irqchip/irq-riscv-intc.c b/drivers/irqchip/irq-riscv-intc.c
 new file mode 100644
-index 000000000000..99cd359dbd43
+index 000000000000..883efaa154b8
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/interrupt-controller/riscv,plic0.txt
-@@ -0,0 +1,55 @@
-+RISC-V Platform-Level Interrupt Controller (PLIC)
-+-------------------------------------------------
++++ b/drivers/irqchip/irq-riscv-intc.c
+@@ -0,0 +1,197 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright (C) 2012 Regents of the University of California
++ * Copyright (C) 2017 SiFive
++ */
++#include <linux/irq.h>
++#include <linux/irqchip.h>
++#include <linux/irqdomain.h>
++#include <linux/interrupt.h>
++#include <linux/of.h>
++#include <linux/smp.h>
++#include <asm/sbi.h>
 +
-+The RISC-V supervisor ISA specification allows for the presence of a
-+platform-level interrupt controller (PLIC).   The PLIC connects all external
-+interrupts in the system to all hart contexts in the system, via the external
-+interrupt source in each hart's hart-local interrupt controller (HLIC).  A hart
-+context is a privilege mode in a hardware execution thread.  For example, in
-+an 4 core system with 2-way SMT, you have 8 harts and probably at least two
-+privilege modes per hart; machine mode and supervisor mode.
++#define NR_RISCV_IRQS (8 * sizeof(uintptr_t))
 +
-+Each interrupt can be enabled on per-context basis. Any context can claim
-+a pending enabled interrupt and then release it once it has been handled.
++/*
++ * Possible interrupt causes:
++ */
++#define INTERRUPT_CAUSE_SOFTWARE    1
++#define INTERRUPT_CAUSE_TIMER       5
++#define INTERRUPT_CAUSE_EXTERNAL    9
 +
-+Each interrupt has a configurable priority. Higher priority interrupts are
-+serviced firs. Each context can specify a priority threshold. Interrupts
-+with priority below this threshold will not cause the PLIC to raise its
-+interrupt line leading to the context.
++/*
++ * The high order bit of the trap cause register is always set for
++ * interrupts, which allows us to differentiate them from exceptions
++ * quickly.  The INTERRUPT_CAUSE_* macros don't contain that bit, so we
++ * need to mask it off.
++ */
++#define INTERRUPT_CAUSE_MASK	(1UL << (NR_RISCV_IRQS - 1))
 +
-+While the PLIC supports both edge-triggered and level-triggered interrupts,
-+interrupt handlers are oblivious to this distinction and therefor it is not
-+specific in the PLIC device-tree binding.
++struct riscv_irq_data {
++	struct irq_chip		chip;
++	struct irq_domain	*domain;
++	int			hart;
++	char			name[20];
++};
 +
-+While the RISC-V ISA doesn't specify a memory layout for the PLIC, the
-+"riscv,plic0" device is a concrete implementation of the PLIC that contains a
-+specific memory layout.  More details about the memory layout of the
-+"riscv,plic0" device can be found as a comment in the device driver, or as part
-+of the SiFive U5 Coreplex Series Manual (page 22 of the PDF of version 1.0)
-+<https://www.sifive.com/documentation/coreplex/u5-coreplex-series-manual/>
++static DEFINE_PER_CPU(struct riscv_irq_data, riscv_irq_data);
 +
-+Required properties:
-+- compatible : "riscv,plic0"
-+- #address-cells : should be <0>
-+- #interrupt-cells : should be <1>
-+- interrupt-controller : Identifies the node as an interrupt controller
-+- reg : Should contain 1 register range (address and length)
-+- interrupts-extended : Specifies which contexts are connected to the PLIC,
-+  with "-1" specifying that a context is not present.
++static void riscv_intc_irq(struct pt_regs *regs)
++{
++	struct pt_regs *old_regs = set_irq_regs(regs);
++	unsigned long cause = csr_read(scause);
++	struct irq_domain *domain;
 +
-+Example:
++	WARN_ON((cause & INTERRUPT_CAUSE_MASK) == 0);
++	cause &= ~INTERRUPT_CAUSE_MASK;
 +
-+	plic: interrupt-controller@c000000 {
-+		#address-cells = <0>;
-+		#interrupt-cells = <1>;
-+		compatible = "riscv,plic0";
-+		interrupt-controller;
-+		interrupts-extended = <
-+			&cpu0-intc 11
-+			&cpu1-intc 11 &cpu1-intc 9
-+			&cpu2-intc 11 &cpu2-intc 9
-+			&cpu3-intc 11 &cpu3-intc 9
-+			&cpu4-intc 11 &cpu4-intc 9>;
-+		reg = <0xc000000 0x4000000>;
-+		riscv,ndev = <10>;
-+	};
++	irq_enter();
++
++	/*
++	 * There are three classes of interrupt: timer, software, and
++	 * external devices.  We dispatch between them here.  External
++	 * device interrupts use the generic IRQ mechanisms.
++	 */
++	switch (cause) {
++	case INTERRUPT_CAUSE_TIMER:
++		riscv_timer_interrupt();
++		break;
++	case INTERRUPT_CAUSE_SOFTWARE:
++		riscv_software_interrupt();
++		break;
++	default:
++		domain = per_cpu(riscv_irq_data, smp_processor_id()).domain;
++		generic_handle_irq(irq_find_mapping(domain, cause));
++		break;
++	}
++
++	irq_exit();
++	set_irq_regs(old_regs);
++}
++
++static int riscv_irqdomain_map(struct irq_domain *d, unsigned int irq,
++			       irq_hw_number_t hwirq)
++{
++	struct riscv_irq_data *data = d->host_data;
++
++	irq_set_chip_and_handler(irq, &data->chip, handle_simple_irq);
++	irq_set_chip_data(irq, data);
++	irq_set_noprobe(irq);
++	irq_set_affinity(irq, cpumask_of(data->hart));
++	return 0;
++}
++
++static const struct irq_domain_ops riscv_irqdomain_ops = {
++	.map	= riscv_irqdomain_map,
++	.xlate	= irq_domain_xlate_onecell,
++};
++
++/*
++ * On RISC-V systems local interrupts are masked or unmasked by writing the SIE
++ * (Supervisor Interrupt Enable) CSR.  As CSRs can only be written on the local
++ * hart, these functions can only be called on the hart that corresponds to the
++ * IRQ chip.  They are only called internally to this module, so they BUG_ON if
++ * this condition is violated rather than attempting to handle the error by
++ * forwarding to the target hart, as that's already expected to have been done.
++ */
++static void riscv_irq_mask(struct irq_data *d)
++{
++	struct riscv_irq_data *data = irq_data_get_irq_chip_data(d);
++
++	BUG_ON(smp_processor_id() != data->hart);
++	csr_clear(sie, 1 << d->hwirq);
++}
++
++static void riscv_irq_unmask(struct irq_data *d)
++{
++	struct riscv_irq_data *data = irq_data_get_irq_chip_data(d);
++
++	BUG_ON(smp_processor_id() != data->hart);
++	csr_set(sie, 1 << d->hwirq);
++}
++
++/* Callbacks for twiddling SIE on another hart. */
++static void riscv_irq_enable_helper(void *d)
++{
++	riscv_irq_unmask(d);
++}
++
++static void riscv_irq_disable_helper(void *d)
++{
++	riscv_irq_mask(d);
++}
++
++static void riscv_remote_ctrl(unsigned int cpu, void (*fn)(void *d),
++			      struct irq_data *data)
++{
++	smp_call_function_single(cpu, fn, data, true);
++}
++
++static void riscv_irq_enable(struct irq_data *d)
++{
++	struct riscv_irq_data *data = irq_data_get_irq_chip_data(d);
++
++	/*
++	 * It's only possible to write SIE on the current hart.  This jumps
++	 * over to the target hart if it's not the current one.  It's invalid
++	 * to write SIE on a hart that's not currently running.
++	 */
++	if (data->hart == smp_processor_id())
++		riscv_irq_unmask(d);
++	else if (cpu_online(data->hart))
++		riscv_remote_ctrl(data->hart, riscv_irq_enable_helper, d);
++	else
++		WARN_ON_ONCE(1);
++}
++
++static void riscv_irq_disable(struct irq_data *d)
++{
++	struct riscv_irq_data *data = irq_data_get_irq_chip_data(d);
++
++	/*
++	 * It's only possible to write SIE on the current hart.  This jumps
++	 * over to the target hart if it's not the current one.  It's invalid
++	 * to write SIE on a hart that's not currently running.
++	 */
++	if (data->hart == smp_processor_id())
++		riscv_irq_mask(d);
++	else if (cpu_online(data->hart))
++		riscv_remote_ctrl(data->hart, riscv_irq_disable_helper, d);
++	else
++		WARN_ON_ONCE(1);
++}
++
++static int __init riscv_intc_init(struct device_node *node,
++				  struct device_node *parent)
++{
++	struct riscv_irq_data *data;
++	int hart;
++
++	hart = riscv_of_processor_hart(node->parent);
++	if (hart < 0)
++		return -EIO;
++
++	data = &per_cpu(riscv_irq_data, hart);
++	snprintf(data->name, sizeof(data->name), "riscv,cpu_intc,%d", hart);
++	data->hart = hart;
++	data->chip.name = data->name;
++	data->chip.irq_mask = riscv_irq_mask;
++	data->chip.irq_unmask = riscv_irq_unmask;
++	data->chip.irq_enable = riscv_irq_enable;
++	data->chip.irq_disable = riscv_irq_disable;
++	data->domain = irq_domain_add_linear(node, NR_RISCV_IRQS,
++			&riscv_irqdomain_ops, data);
++	if (!data->domain)
++		goto error_add_linear;
++
++	set_handle_irq(&riscv_intc_irq);
++	pr_info("%s: %lu local interrupts mapped\n", data->name, NR_RISCV_IRQS);
++	return 0;
++
++error_add_linear:
++	pr_warn("%s: unable to add IRQ domain\n", data->name);
++	return -ENXIO;
++}
++
++IRQCHIP_DECLARE(riscv, "riscv,cpu-intc", riscv_intc_init);
 -- 
 2.18.0
 
