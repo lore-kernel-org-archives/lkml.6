@@ -2,70 +2,215 @@ Return-Path: <SRS0=S+WB=KJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 250F8C6778F
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 09:41:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9565C6778F
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 09:41:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C702820685
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 09:41:31 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="sBDQQALO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C702820685
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
+	by mail.kernel.org (Postfix) with ESMTP id AF64120685
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 09:41:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AF64120685
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728901AbeGYKwV (ORCPT
+        id S1728937AbeGYKwZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 06:52:21 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:43490 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728644AbeGYKvu (ORCPT
+        Wed, 25 Jul 2018 06:52:25 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:43284 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728644AbeGYKwY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Jul 2018 06:51:50 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Message-Id:Date:Subject:Cc:To:From:
-        Sender:Reply-To:MIME-Version:Content-Type:Content-Transfer-Encoding:
-        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=RLXnBM3MeBE6DBrtM6F7yfb8k8+qGnJs7MIIuPo/FuM=; b=sBDQQALO8fSiTKO245VW3Cx8D
-        HQOASz/ILhSc23hidwU4zv0y8wuJjvW4Co/83TEecxmttSWjBzB/cPgaxjdqy9h4IeyE3aeN1PyRY
-        ChsU1kj/Yh5fspzkVCDR/JjfNcwDaqgMR/QwE9dxwxcrNeuf/io/ShupJmW8hi7ZwNHHmnXbNkRhW
-        vlhXChPep4DGngXS3Hq4XIsg6LExX89JvbZi1goP0oBFeTKkjMXRN+o+PHIGyy4sywGnBocm7a2Av
-        +QWCPxnFg/Rd/Xe/gPdjzDbApjVJQeTGswK/Q0mLUrQThSB1tU/jQTaOpT3xQ4LIlO/YTcJZRj3HP
-        AK+2vGFLQ==;
-Received: from [91.112.108.175] (helo=localhost)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fiGHm-0007SR-QF; Wed, 25 Jul 2018 09:40:47 +0000
-From:   Christoph Hellwig <hch@lst.de>
-To:     Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rich Felker <dalias@libc.org>
-Cc:     Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-        linux-sh@vger.kernel.org, iommu@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org
-Subject: use the generic dma-noncoherent code for sh V3
-Date:   Wed, 25 Jul 2018 11:40:38 +0200
-Message-Id: <20180725094043.32443-1-hch@lst.de>
-X-Mailer: git-send-email 2.18.0
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+        Wed, 25 Jul 2018 06:52:24 -0400
+Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 62C53CC3;
+        Wed, 25 Jul 2018 09:41:18 +0000 (UTC)
+Date:   Wed, 25 Jul 2018 11:41:16 +0200
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        torvalds@linux-foundation.org, stable@vger.kernel.org
+Cc:     lwn@lwn.net, Jiri Slaby <jslaby@suse.cz>
+Subject: Linux 4.9.115
+Message-ID: <20180725094116.GA25314@kroah.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="YiEDa0DAkWCtVeE4"
+Content-Disposition: inline
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi all,
 
-can you review these patches to switch sh to use the generic
-dma-noncoherent code?  All the requirements are in mainline already
-and we've switched various architectures over to it already.
+--YiEDa0DAkWCtVeE4
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Changes since V2:
- - drop a now obsolete export
+I'm announcing the release of the 4.9.115 kernel.
 
-Changes since V1:
- - fixed two stupid compile errors and verified them using a local
-   cross toolchain instead of the 0day buildbot
+All users of the 4.9 kernel series must upgrade.
+
+The updated 4.9.y git tree can be found at:
+	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git linu=
+x-4.9.y
+and can be browsed at the normal kernel.org git web browser:
+	http://git.kernel.org/?p=3Dlinux/kernel/git/stable/linux-stable.git;a=3Dsu=
+mmary
+
+thanks,
+
+greg k-h
+
+------------
+
+ Makefile                                   |    2 -
+ arch/arc/configs/axs101_defconfig          |    1=20
+ arch/arc/configs/axs103_defconfig          |    1=20
+ arch/arc/configs/axs103_smp_defconfig      |    1=20
+ arch/arc/configs/nsim_700_defconfig        |    1=20
+ arch/arc/configs/nsim_hs_defconfig         |    1=20
+ arch/arc/configs/nsim_hs_smp_defconfig     |    1=20
+ arch/arc/configs/nsimosci_defconfig        |    1=20
+ arch/arc/configs/nsimosci_hs_defconfig     |    1=20
+ arch/arc/configs/nsimosci_hs_smp_defconfig |    1=20
+ arch/arc/include/asm/page.h                |    2 -
+ arch/arc/include/asm/pgtable.h             |    2 -
+ arch/x86/include/asm/apm.h                 |    6 ----
+ arch/x86/kernel/apm_32.c                   |    5 +++
+ arch/x86/kernel/cpu/mcheck/mce.c           |    3 --
+ block/blk-core.c                           |    9 ++----
+ drivers/gpu/drm/i915/i915_irq.c            |   32 +++++++++++++++++++++--
+ drivers/net/ethernet/broadcom/tg3.c        |    9 ++++++
+ drivers/net/phy/phy_device.c               |    7 +----
+ drivers/net/usb/asix_devices.c             |    4 ++
+ drivers/net/usb/qmi_wwan.c                 |    1=20
+ drivers/ptp/ptp_chardev.c                  |    1=20
+ drivers/usb/host/xhci.c                    |   40 ++++++++++++++++++++++++=
+++---
+ drivers/usb/host/xhci.h                    |    4 ++
+ drivers/vfio/pci/vfio_pci.c                |    4 ++
+ fs/fat/inode.c                             |   20 +++++++++-----
+ include/linux/skbuff.h                     |   10 +++----
+ include/net/ipv6.h                         |    2 -
+ lib/rhashtable.c                           |   17 +++++++-----
+ mm/huge_memory.c                           |    2 +
+ mm/memcontrol.c                            |    2 -
+ net/core/gen_stats.c                       |   16 ++++++++++-
+ net/core/skbuff.c                          |    1=20
+ net/ipv4/fib_frontend.c                    |    1=20
+ net/ipv4/sysctl_net_ipv4.c                 |    5 ++-
+ net/ipv4/tcp.c                             |    3 --
+ net/sunrpc/xprtrdma/rpc_rdma.c             |    2 -
+ sound/core/rawmidi.c                       |   20 ++++++++++----
+ virt/kvm/eventfd.c                         |    6 +++-
+ 39 files changed, 175 insertions(+), 72 deletions(-)
+
+Alan Jenkins (1):
+      block: do not use interruptible wait anywhere
+
+Alexander Couzens (1):
+      net: usb: asix: replace mii_nway_restart in resume path
+
+Alexey Brodkin (2):
+      ARC: Fix CONFIG_SWAP
+      ARC: configs: Remove CONFIG_INITRAMFS_SOURCE from defconfigs
+
+Chuck Lever (1):
+      xprtrdma: Return -ENOBUFS when no pages are available
+
+Colin Ian King (1):
+      ipv6: fix useless rol32 call on hash
+
+David Ahern (1):
+      net/ipv4: Set oif in fib_compute_spec_dst
+
+Davidlohr Bueso (1):
+      lib/rhashtable: consider param->min_size when setting initial table s=
+ize
+
+Dewet Thibaut (1):
+      x86/MCE: Remove min interval polling limitation
+
+Greg Kroah-Hartman (1):
+      Linux 4.9.115
+
+Gustavo A. R. Silva (2):
+      vfio/pci: Fix potential Spectre v1
+      ptp: fix missing break in switch
+
+Heiner Kallweit (1):
+      net: phy: fix flag masking in __set_phy_supported
+
+Hugh Dickins (1):
+      mm/huge_memory.c: fix data loss when splitting a file pmd
+
+Jing Xia (1):
+      mm: memcg: fix use after free in mem_cgroup_iter()
+
+Lan Tianyu (1):
+      KVM/Eventfd: Avoid crash when assign and deassign specific eventfd in=
+ parallel.
+
+Lorenzo Colitti (1):
+      net: diag: Don't double-free TCP_NEW_SYN_RECV sockets in tcp_abort
+
+Matevz Vucnik (1):
+      qmi_wwan: add support for Quectel EG91
+
+Mathias Nyman (1):
+      xhci: Fix perceived dead host due to runtime suspend race with event =
+handler
+
+OGAWA Hirofumi (1):
+      fat: fix memory allocation failure handling of match_strdup()
+
+Sanjeev Bansal (1):
+      tg3: Add higher cpu clock for 5762.
+
+Stefano Brivio (2):
+      net: Don't copy pfmemalloc flag in __copy_skb_header()
+      skbuff: Unconditionally copy pfmemalloc in __skb_clone()
+
+Takashi Iwai (1):
+      ALSA: rawmidi: Change resized buffers atomically
+
+Toke H=F8iland-J=F8rgensen (1):
+      gen_stats: Fix netlink stats dumping in the presence of padding
+
+Tyler Hicks (1):
+      ipv4: Return EINVAL when ping_group_range sysctl doesn't map to user =
+ns
+
+Ville Syrj=E4l=E4 (2):
+      x86/apm: Don't access __preempt_count with zeroed fs
+      drm/i915: Fix hotplug irq ack on i965/g4x
+
+Vineet Gupta (1):
+      ARC: mm: allow mprotect to make stack mappings executable
+
+
+--YiEDa0DAkWCtVeE4
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEZH8oZUiU471FcZm+ONu9yGCSaT4FAltYRbkACgkQONu9yGCS
+aT4y2xAAkIZ8U27E5Kt1BA1USXyOzBXcBS9jpa5BtD/AYC8RG2EhbU0EWZKO1P8o
+otFkKBpKyUSvqdmtH3Piq5seHFajxr8yJZwXCcveNJZzh1LKvXwxmWBPHcSNHea5
+raiGdVCaxMbkDEVMHtE04DQVZWZBN2TdYU8iaOIGvRT012Z5hIMbkqE+uKsLjWvx
+PikSlGsT2an7kNJ4SFjpRnRyYIHWe3+4DrkQGd6O+HSbFZRTK71UcsLQwr9w+RHp
+rXmUAxBR49Ip7F9HxBVFeRy7BjwLXcd7qydXfQXAfDGoDWlAJ8vyXJI1muAdekFk
+RECRWrZnDiz8kyp0tu6l+rk3uRsQ2tclX+lbETdvU0AybyoQMsHjWYkcqjGSS2vU
+O3vxAl/VQI1O8Gzwz5SV5EFirwddhU+cydMxle5xla9tuL4GetUZ9D4gndeNQKhQ
+j8wsZyZt0KRI8qdCoIV5RDUwxgOIsVmNu5gOjBJCoRxEFFJ4QkHGHbSKunZMNtBq
+i4Hrk4HCsNXe1lCIBtW8mU/Yw3hI7g8uAT2KqfOi8fqjOdaVx71LGtoEO2jlNuNu
+oVcM+vmSCcvT6PH3GYg3a0aGQOnluv9SY9eiOa/T9BVr2onq0YY3k4Y5x6DH3uKR
+HZzwOGeawDpTpq/Z3HIhzExYND6lr4LA2qotCLiAlm3iWaUeoHY=
+=IhBN
+-----END PGP SIGNATURE-----
+
+--YiEDa0DAkWCtVeE4--
