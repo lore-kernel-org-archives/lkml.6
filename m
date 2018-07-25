@@ -2,151 +2,217 @@ Return-Path: <SRS0=S+WB=KJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88681C6778F
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 19:57:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55DA8C67790
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 19:57:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3CE3C20844
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 19:57:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3CE3C20844
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 0A85920852
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 19:57:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0A85920852
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730337AbeGYVKq (ORCPT
+        id S1730468AbeGYVK4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 17:10:46 -0400
-Received: from mail-io0-f195.google.com ([209.85.223.195]:34617 "EHLO
-        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729366AbeGYVKq (ORCPT
+        Wed, 25 Jul 2018 17:10:56 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:46985 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729366AbeGYVK4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Jul 2018 17:10:46 -0400
-Received: by mail-io0-f195.google.com with SMTP id l7-v6so7345632ioj.1;
-        Wed, 25 Jul 2018 12:57:34 -0700 (PDT)
+        Wed, 25 Jul 2018 17:10:56 -0400
+Received: by mail-lj1-f195.google.com with SMTP id 203-v6so7705550ljj.13
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Jul 2018 12:57:44 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=SKg6rV06V0lTYNlPN8MJq1T7lX7jMbiEBsfVo8gw/Ag=;
-        b=UBkglX13rIqS//tROrnfnl4VnhWoBdBvIWEzYgmtUMIIj1wH5tyMN7UQAVlU1SwQXN
-         EYP2+pj9Vee3Hnkkral8ts9YB3nOb7ZFY4uAa0zXfGAAhAWGuIlydXG71oO87CNuIkt7
-         zc0wz0Ikp0FWBkfMOzIGJXW89HxJaamgRCd1QAjNOmuT3HojFiUn8zr4xqXY0ogotdWN
-         iieU6L5IMT6oNuFmMxSz8pl0h5gqEEcZhCqKqpBMPvWtMLKU3WeUZr5dGiIFtX1sJ2bw
-         Q+mDXHBKqOYcDf7B1xvZ5eHPKe92VryLN4byWcoL/Ws36IZGcKH8NahCSOY+sbJ1Fmpp
-         FwmQ==
-X-Gm-Message-State: AOUpUlHCz4XKMQW4D6M8keFV2IYPOivqz7OjhFU4E6ltyytbf+bQKS+m
-        rDMSxm3hG8ejPqTMM8mQYQ==
-X-Google-Smtp-Source: AAOMgpfG+gCtu1DbjKtLufe5+sEv63uLPjMi0uFqRavAY0EmR1DBQ0vWAeu10r+aoJdg/INBnMD8wQ==
-X-Received: by 2002:a6b:2a05:: with SMTP id q5-v6mr18498890ioq.13.1532548654332;
-        Wed, 25 Jul 2018 12:57:34 -0700 (PDT)
-Received: from localhost ([24.51.61.72])
-        by smtp.gmail.com with ESMTPSA id z71-v6sm12403735ioz.34.2018.07.25.12.57.33
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 25 Jul 2018 12:57:33 -0700 (PDT)
-Date:   Wed, 25 Jul 2018 13:57:33 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Vitor soares <Vitor.Soares@synopsys.com>
-Cc:     boris.brezillon@bootlin.com, wsa@the-dreams.de,
-        linux-i2c@vger.kernel.org, corbet@lwn.net,
-        linux-doc@vger.kernel.org, gregkh@linuxfoundation.org,
-        arnd@arndb.de, psroka@cadence.com, agolec@cadence.com,
-        adouglas@cadence.com, bfolta@cadence.com, dkos@cadence.com,
-        alicja@cadence.com, cwronka@cadence.com, sureshp@cadence.com,
-        rafalc@cadence.com, thomas.petazzoni@bootlin.com, nm@ti.com,
-        pawel.moll@arm.com, mark.rutland@arm.com,
-        ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        geert@linux-m68k.org, linus.walleij@linaro.org,
-        Xiang.Lin@synaptics.com, linux-gpio@vger.kernel.org,
-        nsekhar@ti.com, pgaj@cadence.com, peda@axentia.se,
-        Joao.Pinto@synopsys.com
-Subject: Re: [PATCH 2/3] dt-bindings: i3c: Document Synopsys DesignWare I3C
- master bindings
-Message-ID: <20180725195733.GA14450@rob-hp-laptop>
-References: <1532120272-17157-1-git-send-email-soares@synopsys.com>
- <1532120272-17157-3-git-send-email-soares@synopsys.com>
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=ZnyVhMnjQ9csP7PYxV6MEMFN9O1jEC27W6pJFE9lcaw=;
+        b=ZaJpLkhuiCMEt1arqLJ12t/cNAqIepAkIZTG+RJOjjtP2LGsYAQTbMl3WL0aLty94n
+         ZFAsxoJB7JAErklui1Zrm2LQQIXme7ujRl9SSyhElZVAHDlNJXTq+sRSzym0W47qQdK6
+         1Yg4xePpJAjJCey+JexDf81FSoG5TkVubLapYmpXwBM+6O2BI3OKx1HUf0/vp72SE3Fp
+         xDiYLS1G2N2DYvJrrWaNJGyKRpRwRWI4iu7MwzqX6xfpnVeF1wt0baa1sP+zuThJbcAX
+         P7YispveWCcsOMUMS+7Yqsd9fU38mUwElG3LdTWbqj4/YTgACilLfvUe4ojRXDCX1Oyx
+         Fjyg==
+X-Gm-Message-State: AOUpUlG84DEtOTUZICChYB1ydkvhGFrQBigP06enjbvnS/pRaBi676wB
+        YaQLbrDvAkggd3xCIRDlXPU42DqH4NSHBrAUyrxjWQ==
+X-Google-Smtp-Source: AAOMgpeI2ciBq+DLU6KbKiAk0vrP+48+kTaHIbx2qPhYWk2ZUTVxwqzhLF0cEGL6N1DIhmt0rhmE5me+G9lK9Yfj6o4=
+X-Received: by 2002:a2e:4557:: with SMTP id s84-v6mr15981493lja.47.1532548663318;
+ Wed, 25 Jul 2018 12:57:43 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1532120272-17157-3-git-send-email-soares@synopsys.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Received: by 2002:a2e:81a:0:0:0:0:0 with HTTP; Wed, 25 Jul 2018 12:57:42 -0700 (PDT)
+In-Reply-To: <9c4d7c8d-3f0b-ff2f-68e8-03638a5fe2a4@arm.com>
+References: <1531949864-27447-1-git-send-email-bhsharma@redhat.com>
+ <d8959ca1-65a1-f59c-bfc4-b048c75add26@arm.com> <CACi5LpOa-BMRSTShS019DDv7MoxNfpnnsqjwR3z13GZC49NrSA@mail.gmail.com>
+ <9c4d7c8d-3f0b-ff2f-68e8-03638a5fe2a4@arm.com>
+From:   Bhupesh Sharma <bhsharma@redhat.com>
+Date:   Thu, 26 Jul 2018 01:27:42 +0530
+Message-ID: <CACi5LpM9sc+c1M_dAEL9z+Sw6t0Wi1CsQ=M4E1nbQ4RRnkysRw@mail.gmail.com>
+Subject: Re: [PATCH] arm64, kaslr: export offset in VMCOREINFO ELF notes
+To:     James Morse <james.morse@arm.com>
+Cc:     linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        kexec mailing list <kexec@lists.infradead.org>,
+        Bhupesh SHARMA <bhupesh.linux@gmail.com>,
+        AKASHI Takahiro <takahiro.akashi@linaro.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        linux-mips@linux-mips.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 20, 2018 at 09:57:51PM +0100, Vitor soares wrote:
-> This patch document Synopsys DesignWare I3C master DT bindings.
-> 
-> Signed-off-by: Vitor soares <soares@synopsys.com>
-> ---
->  .../devicetree/bindings/i3c/snps,dw-i3c-master.txt | 43 ++++++++++++++++++++++
->  1 file changed, 43 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/i3c/snps,dw-i3c-master.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/i3c/snps,dw-i3c-master.txt b/Documentation/devicetree/bindings/i3c/snps,dw-i3c-master.txt
-> new file mode 100644
-> index 0000000..7f5c8b0
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/i3c/snps,dw-i3c-master.txt
-> @@ -0,0 +1,43 @@
-> +Bindings for Synopsys DesignWare I3C master block
-> +=================================================
-> +
-> +Required properties:
-> +--------------------
-> +- compatible: shall be "snps,dw-i3c-master"
+Hello James,
 
-Only one version and no version number?
+On Mon, Jul 23, 2018 at 10:35 PM, James Morse <james.morse@arm.com> wrote:
+> Hi Bhupesh,
+>
+> (CC: +mips list, looks like mips is missing vmcore's KERNELOFFSET too.
+> Start of this thread: https://lkml.org/lkml/2018/7/18/951 )
 
-... and an SoC specific compatible string.
+Yes, but the current upstream makedumpfile doesn't seem to contain
+mips specific support (please see
+<git://git.code.sf.net/p/makedumpfile/code> for details), so I am not
+sure they need the 'KERNELOFFSET=' supported in kernel as they are
+probably not using it in the user-space.
 
-> +- clocks: shall reference the core_clk
-> +- clock-names: shall contain "core_clk"
+If someone from the mips list can help suggest if my understanding is
+correct it would be great. Just as a side note, I don't have access to
+mips hardware, so I will be happy to update the v2 to add mips kernel
+bits as well, in case someone is willing to give it a try on their
+mips hardware.
 
-"_clk" is redundant and *-names with a single entry is kind of 
-pointless.
+> On 19/07/18 15:55, Bhupesh Sharma wrote:
+>> On Thu, Jul 19, 2018 at 5:01 PM, James Morse <james.morse@arm.com> wrote:
+>>> On 18/07/18 22:37, Bhupesh Sharma wrote:
+>>>> Include KASLR offset in VMCOREINFO ELF notes to assist in debugging.
+>>>>
+>>>> makedumpfile user-space utility will need fixup to use this KASLR offset
+>>>> to work with cases where we need to find a way to translate symbol
+>>>> address from vmlinux to kernel run time address in case of KASLR boot on
+>>>> arm64.
+>>>
+>>> You need the kernel VA for a symbol. Isn't this what kallsyms is for?
+>>> | root@frikadeller:~# cat /proc/kallsyms | grep swapper_pg_dir
+>>> | ffff5404610d0000 B swapper_pg_dir
+>
+>> Its already used by other archs like x86_64.
+>> Its just that we are enabling this feature for arm64 now that the
+>> KASLR boot cases are more widely seen on arm64 boards (as newer EFI
+>> firmware implementations are available which support EFI_RNG_PROTOCOL
+>> and hence KASLR boot).
+>>
+>> And we want existing user-space application(s) to work similarly on
+>> arm64 distributions as they work historically on other archs like
+>> x86_64 (in most cases the user-space user is not even aware, if he is
+>> developing for or using an underlying hardware which is arm64 or
+>> x86_64)
+>
+> Aha, so its ABI. This is the information that should be in the commit message as
+> it describes why this patch should be merged.
 
-> +- interrupts: the interrupt line connected to this I3C master
-> +- reg:  Offset and length of I3C master registers
-> +
-> +Mandatory properties defined by the generic binding (see
-> +Documentation/devicetree/bindings/i3c/i3c.txt for more details):
-> +
-> +- #address-cells: shall be set to 3
-> +- #size-cells: shall be set to 0
-> +
-> +Optional properties defined by the generic binding (see
-> +Documentation/devicetree/bindings/i3c/i3c.txt for more details):
-> +
-> +- i2c-scl-hz
-> +- i3c-scl-hz
-> +
-> +I3C device connected on the bus follow the generic description (see
-> +Documentation/devicetree/bindings/i3c/i3c.txt for more details).
-> +
-> +Example:
-> +
-> +	i3c-master@0x2000 {
+Sure, will add the description in the commit message of v2.
 
-Drop the '0x'
+> ... Ideally core code would do this, that way this information won't be missed
+> when an architecture adds KASLR support.
+>
+> But mips has CONFIG_RANDOMIZE_BASE, and doesn't provide kaslr_offset(),
+> and x86 always provides this value, not just if CONFIG_RANDOMIZE_BASE is
+> selected. I can't see a way to do this without touching all three architectures.
+> (we can try and tidy it up once its clear whether mips needs this too)
 
-> +		compatible = "snps,dw-i3c-master";
-> +		#address-cells = <3>;
-> +		#size-cells = <0>;
-> +		reg = <0x02000 0x1000>;
-> +		interrupts = <0>;
-> +		clocks = <&i3cclk>;
-> +		clock-names = "core_clk";
-> +
-> +		eeprom@0x57{
-> +			compatible = "atmel,24c01";
-> +			reg = < 0x57 0x80000010 0x0>;
-> +			pagesize = <0x8>;
-> +		};
-> +	};
-> -- 
-> 2.7.4
-> 
-> 
+Yes, I checked internally at Red Hat and no use-cases for mips
+surfaced for this feature. So, if someone from the mips list can help
+clarify, it will help me re-write the v2 accordingly.
+
+> I think the patch is fine, but could you re-post it with a commit message that
+> describes that vmcore parsing in user-space already expects this value in the
+> notes. We're providing it for portability of those existing tools with x86.
+
+Sure.
+
+>>> I picked swapper_pg_dir, but you could use any of the vmcore:SYMBOL() addresses
+>>> to work out this offset. (you should expect the kernel to rename these symbols
+>>> at a whim).
+>>>
+>>
+>> Perhaps you missed what the above makedumpfile command was doing, so
+>> let me summarize again:
+>
+> Yes, I glossed over it, all that seemed relevant is you are trying to find the
+> kernel-va of a symbol from the value in the vmlinux.
+
+Yes, that's correct.
+
+>
+>> as it breaks the
+>> existing user-space use-cases and the .conf file can be user-defined
+>> (and hence he can pick any symbol/functions
+>
+> My suggestion was you can calculate the offset between the link-time and
+> run-time address from information you already have. You just need one of each.
+> This would be better as its independent of how the kernel does the relocation.
+>
+> But, this is irrelevant as 'KERNELOFFSET=' is already an ABI string.
+
+Indeed. We would like to have ABI strings similar across archs.
+
+>> which might not even be present in 'kallsyms').
+>
+> Eh? How can that happen? I thought even modules had their symbols added to kallsyms.
+
+Sorry, when I re-read my reply, I think I did not explain it better in
+terms of the distribution use-cases we usually encounter. Let me try
+again:
+
+One of the reason is that existing user-space implementations (for
+archs like x86_64), historically use 'vmlinux' for filtering of
+symbols from 'vmcore'.
+
+Usually when an end-user uses a distribution kernel on their hardware
+and face issues with it, they share the 'vmcore' (crash dump) and
+'vmlinux' with the distribution provider. 'vmlinux' can be used by
+utilities like gdb/crash-utility to debug the reason for kernel crash.
+
+Let's assume, even if the user manages to save the 'kallsyms' on some
+external media (e.g. usb stick) when the kernel crashed, since the
+symbol addresses in 'kallsyms' change on each boot (as KASLR
+randomizes the same), so we cannot use 'KERNELOFFSET=' to calculate
+kaslr offset to the symbols reliably.
+
+For example, let me share the following values of a real use-case:
+
+Let's saw we are looking to find and erase the symbol 'jiffies' from
+the vmcore, using (1) - vmlinux and (2) - kallsyms:
+
+(1) vmlinux - Address of 'jiffies' -> 0xffff000009291980
+(2) kallsyms - Address of 'jiffies' -> 0xffff4ce385291980 (value seen
+during the boot when primary kernel crashed)
+
+In this particular boot, makedumpfile reports 'kaslr_offset' as 0x2934e3000000
+So, if we use:
+(1) vmlinux - We calculate Address of 'jiffies' as ->
+0xffff000009291980 + 0x2934e3000000 = 0xFFFF2934EC291980
+(2) kallsyms - We calculate Address of 'jiffies' as ->
+0xffff4ce385291980 + 0x2934e3000000 = 0xFFFF761868291980
+
+When we check the 'vmcore' we can see that the address of 'jiffies' is
+indeed 0xFFFF2934EC291980 and not 0xFFFF761868291980:
+
+crash> sym jiffies
+ffff2934ec291980 (D) jiffies
+
+Since, the address of 'jiffies' pointed to by 'kallsyms' will change
+on every boot, its probably not a good source for such user-space
+use-cases.
+
+Will send out a v2 shortly (after waiting for some inputs from the mips guys).
+
+Thanks,
+Bhupesh
