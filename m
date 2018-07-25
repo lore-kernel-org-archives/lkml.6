@@ -2,100 +2,108 @@ Return-Path: <SRS0=S+WB=KJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C860BC67790
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 18:53:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8065C6778F
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 18:56:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6F07120833
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 18:53:22 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="t0A/ZhIo"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6F07120833
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 60C2D204EC
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 18:56:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 60C2D204EC
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=stgolabs.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731168AbeGYUGR (ORCPT
+        id S1730136AbeGYUJa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 16:06:17 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:54158 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729213AbeGYUGQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Jul 2018 16:06:16 -0400
-Received: by mail-wm0-f65.google.com with SMTP id s9-v6so7078131wmh.3;
-        Wed, 25 Jul 2018 11:53:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=T2XmLz4t7bJY8qwNpH6u+IO0Q4CPhV2M+ECjf20HV8w=;
-        b=t0A/ZhIos3bHLy4735EXMJX6WSm1+4LTbjEOb9Cyqcuk2hgwp2BRdh+kpXitErOGsg
-         vutgXM/LWxCQql1rloNjMFIN/i6xi0iv6UrWWj7d+s45W+guuSpv5UjhQYnsAF26Xxlk
-         KMzf8VD3Kvx5JdGBgu89KpZRUucibFg9XB0kvODeXOVhg7qgYIrhWT0Kremd7Q3zDHl+
-         eb5igBU0lMkSpVyuElkAnreeM3MxfLnaCn2L9P9FDrNYY5F+gyUu5kU/s2XIlEvepLlW
-         NbC2zgHXAo1BPumw+MUZzYSqMaWSzSdpfuvq6bVVZenrlEbLp4A1IaGQX275IMd2kfZQ
-         tRDg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=T2XmLz4t7bJY8qwNpH6u+IO0Q4CPhV2M+ECjf20HV8w=;
-        b=WEfITpUBsuvFRCsz6UnurfPPDzp2RSAmbHdviq8ClDOtYLytEs6ektO0H6IKpT5MUH
-         hqpLrqtvfDx8dhPrU+YjvSsGAii2Z70A5Vy+Ms8X6Nz5hUzg7uRuqX6oFqadYtRwp3Qd
-         SXvWP2l8PnTH4+vDYm6Sky3QOJCGcQBb9wOEoFuqswxSy/LOKqqDZvEXEfONmF5QL+bo
-         A9slQZFupvWY2OeC9DhAM22f/Hapa/fbrnU9WC6RkUqwlkIjQfdg04R1o1e447MOsgIm
-         rPwVAumMMS+KCRGk/TSzMXRuBEgyzZ3HNl4zgOazbqk1B/drC73s0/r21YVSANN26M4F
-         ChRw==
-X-Gm-Message-State: AOUpUlF55ZoIvQKW6MsJbD5UiZu40luH3LPn0zX4FtT/H4AYthvKoqU/
-        XZHpkEJtizUraG5tjUKh+Ug=
-X-Google-Smtp-Source: AAOMgpc6blNR7imDk8LBGL1bxdzQ2psQBJb1M+VrvcRJbLUM7yQcfUSP5ORnVXNR2RwX+A2rLp6duQ==
-X-Received: by 2002:a1c:82c8:: with SMTP id e191-v6mr5008152wmd.35.1532544798374;
-        Wed, 25 Jul 2018 11:53:18 -0700 (PDT)
-Received: from euri.wifirst.net (eth-west-pareq2-46-193-2-21.wb.wifirst.net. [46.193.2.21])
-        by smtp.googlemail.com with ESMTPSA id e204-v6sm4928475wma.8.2018.07.25.11.53.17
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 25 Jul 2018 11:53:17 -0700 (PDT)
-From:   Varsha Rao <rvarsha016@gmail.com>
-To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>,
-        Nicholas Mc Guire <der.herr@hofr.at>,
-        QCA ath9k Development <ath9k-devel@qca.qualcomm.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     Varsha Rao <rvarsha016@gmail.com>
-Subject: [PATCH] net: wireless: ath9k: Remove unnecessary parentheses
-Date:   Wed, 25 Jul 2018 20:53:03 +0200
-Message-Id: <20180725185305.4118-1-rvarsha016@gmail.com>
-X-Mailer: git-send-email 2.17.0
+        Wed, 25 Jul 2018 16:09:30 -0400
+Received: from smtp2.provo.novell.com ([137.65.250.81]:50946 "EHLO
+        smtp2.provo.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729354AbeGYUJa (ORCPT
+        <rfc822;groupwise-linux-kernel@vger.kernel.org:0:0>);
+        Wed, 25 Jul 2018 16:09:30 -0400
+Received: from linux-r8p5.suse.de (prv-ext-foundry1int.gns.novell.com [137.65.251.240])
+        by smtp2.provo.novell.com with ESMTP (TLS encrypted); Wed, 25 Jul 2018 12:56:27 -0600
+From:   Davidlohr Bueso <dave@stgolabs.net>
+To:     akpm@linux-foundation.org
+Cc:     jbaron@akamai.com, viro@zeniv.linux.org.uk,
+        linux-kernel@vger.kernel.org, dave@stgolabs.net,
+        Davidlohr Bueso <dbueso@suse.de>
+Subject: [PATCH -next] fs/epoll: simply CONFIG_NET_RX_BUSY_POLL ifdefery
+Date:   Wed, 25 Jul 2018 11:56:20 -0700
+Message-Id: <20180725185620.11020-1-dave@stgolabs.net>
+X-Mailer: git-send-email 2.16.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove extra parentheses to fix the clang warning of extraneous
-parentheses.
+... 'tis easier on the eye.
 
-Signed-off-by: Varsha Rao <rvarsha016@gmail.com>
+Signed-off-by: Davidlohr Bueso <dbueso@suse.de>
 ---
- drivers/net/wireless/ath/ath9k/debug_sta.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/eventpoll.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/net/wireless/ath/ath9k/debug_sta.c b/drivers/net/wireless/ath/ath9k/debug_sta.c
-index a6f45f1bb5bb..ed8b77a74630 100644
---- a/drivers/net/wireless/ath/ath9k/debug_sta.c
-+++ b/drivers/net/wireless/ath/ath9k/debug_sta.c
-@@ -116,7 +116,7 @@ void ath_debug_rate_stats(struct ath_softc *sc,
- 		if (rxs->rate_idx >= ARRAY_SIZE(rstats->ht_stats))
- 			goto exit;
+diff --git a/fs/eventpoll.c b/fs/eventpoll.c
+index 1b1abc461fc0..0ab82d0d4e02 100644
+--- a/fs/eventpoll.c
++++ b/fs/eventpoll.c
+@@ -391,7 +391,6 @@ static bool ep_busy_loop_end(void *p, unsigned long start_time)
  
--		if ((rxs->bw == RATE_INFO_BW_40))
-+		if (rxs->bw == RATE_INFO_BW_40)
- 			rstats->ht_stats[rxs->rate_idx].ht40_cnt++;
- 		else
- 			rstats->ht_stats[rxs->rate_idx].ht20_cnt++;
+ 	return ep_events_available(ep) || busy_loop_timeout(start_time);
+ }
+-#endif /* CONFIG_NET_RX_BUSY_POLL */
+ 
+ /*
+  * Busy poll if globally on and supporting sockets found && no events,
+@@ -401,20 +400,16 @@ static bool ep_busy_loop_end(void *p, unsigned long start_time)
+  */
+ static void ep_busy_loop(struct eventpoll *ep, int nonblock)
+ {
+-#ifdef CONFIG_NET_RX_BUSY_POLL
+ 	unsigned int napi_id = READ_ONCE(ep->napi_id);
+ 
+ 	if ((napi_id >= MIN_NAPI_ID) && net_busy_loop_on())
+ 		napi_busy_loop(napi_id, nonblock ? NULL : ep_busy_loop_end, ep);
+-#endif
+ }
+ 
+ static inline void ep_reset_busy_poll_napi_id(struct eventpoll *ep)
+ {
+-#ifdef CONFIG_NET_RX_BUSY_POLL
+ 	if (ep->napi_id)
+ 		ep->napi_id = 0;
+-#endif
+ }
+ 
+ /*
+@@ -422,7 +417,6 @@ static inline void ep_reset_busy_poll_napi_id(struct eventpoll *ep)
+  */
+ static inline void ep_set_busy_poll_napi_id(struct epitem *epi)
+ {
+-#ifdef CONFIG_NET_RX_BUSY_POLL
+ 	struct eventpoll *ep;
+ 	unsigned int napi_id;
+ 	struct socket *sock;
+@@ -452,9 +446,15 @@ static inline void ep_set_busy_poll_napi_id(struct epitem *epi)
+ 
+ 	/* record NAPI ID for use in next busy poll */
+ 	ep->napi_id = napi_id;
+-#endif
+ }
+ 
++#else
++#define ep_busy_loop(ep, nonblock)		do { } while (0)
++#define ep_reset_busy_poll_napi_id(ep)		do { } while (0)
++#define ep_set_busy_poll_napi_id(epi)		do { } while (0)
++
++#endif /* CONFIG_NET_RX_BUSY_POLL */
++
+ /**
+  * ep_call_nested - Perform a bound (possibly) nested call, by checking
+  *                  that the recursion limit is not exceeded, and that
 -- 
-2.17.0
+2.16.4
 
