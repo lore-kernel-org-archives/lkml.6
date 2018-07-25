@@ -6,81 +6,77 @@ X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4768C6778F
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 23:25:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A969FC6778F
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 23:26:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 72A7820833
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 23:25:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5995520833
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 23:26:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="HvhVMqFL";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="LeHe5Mfp"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 72A7820833
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="YGlQakAK";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="N3lno7Xk"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5995520833
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731787AbeGZAjI (ORCPT
+        id S1731798AbeGZAj6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 20:39:08 -0400
-Received: from mail-ua0-f195.google.com ([209.85.217.195]:44850 "EHLO
-        mail-ua0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731401AbeGZAjH (ORCPT
+        Wed, 25 Jul 2018 20:39:58 -0400
+Received: from mail-ua0-f196.google.com ([209.85.217.196]:34596 "EHLO
+        mail-ua0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731603AbeGZAj5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Jul 2018 20:39:07 -0400
-Received: by mail-ua0-f195.google.com with SMTP id k25-v6so6196789uao.11
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Jul 2018 16:25:11 -0700 (PDT)
+        Wed, 25 Jul 2018 20:39:57 -0400
+Received: by mail-ua0-f196.google.com with SMTP id r10-v6so6205849uao.1
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Jul 2018 16:26:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc:content-transfer-encoding;
-        bh=fEnrshrcyRFKFn5tq0Gixa/dOugjjsLUO399Bf7wjsw=;
-        b=HvhVMqFLe48NH5J+vHIHwqADHSjhDqxOvpwcsTI1UmsPqrPzENKBz/e7AhF3znw8hO
-         qbBBrkM4EZYXaDXGa7d7z5K0Z/0uzuIgnFFLwQCbnkETxDv0qEcQGgaH26r1PoVwC+AC
-         t5LwKqTwtzO6capazoX9hTPGjCeT9Vv7lef3c2jxT4DWDBiZjgUZrgErUwg82ck2ax70
-         PF73N/HwSS9jxYzZ/YSYSQn9V/1d8eAj0Qy9P26+eTq/jrAh/bfVy98WQC8YNUQHlNDk
-         DrBXYX2btqtADxCOytNB4FARB0W9cZiqYPG2CHohz5GZSL3VaoLaMEvX8Q2NDMNL41DX
-         NkIA==
+         :subject:to:cc;
+        bh=66YPE/WuIOIkR1qo4wTLmMa0pCgKLWZEjeg75EMeYH4=;
+        b=YGlQakAK31eKZLozBFGXWVJChVsJAN7L7Plju9sy8J/R2Q/Gqwoh4A4sWOrTq2UlC4
+         Brqvre/lz/CgOjAjYjKIKXNwahDO78W93QzC7L2pPEDc0BZRGNMaq7D2+Na4txQNfKdu
+         hL0tuBclaIH035WXvhiLHWLgRI+A2Xcj1GrMb8e9AvCsUVTFgZMDxVdBocxCSUQ7kuEr
+         g7XMly08QZxJf1T3P9kuK+BqMB9plth3LaGwGoGVty3Cr9ziAhrI+mIygiY1ySrkT+cC
+         rhoNSETWQOvPt8GVI+YiFfwUxiaP2OkL7hLbiros9aTNA84lhqthY0eY0hTCXAHPEeY9
+         s58g==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc:content-transfer-encoding;
-        bh=fEnrshrcyRFKFn5tq0Gixa/dOugjjsLUO399Bf7wjsw=;
-        b=LeHe5MfpguzT+FXGakLTrCqq77YYJNUJeAuVppOjM4gUza3NhQTm63SQntCCj+RwKE
-         2vq7VJVxJc4tsSPYk/aU6D8N/6I7sdyojKavveMFhD6lSkBxdZfwz+yXTCe7cUHpCeY3
-         9E86qm3ItpLY5bmLSPuj8PWZYgmH5GQIFVxwA=
+         :subject:to:cc;
+        bh=66YPE/WuIOIkR1qo4wTLmMa0pCgKLWZEjeg75EMeYH4=;
+        b=N3lno7XksRo4tP7bNvint6wQlM5SwfuxH8VwX84mIXjp79GX0/CVjqjVceICYnlCtx
+         /ZebchsdH25a7fiWw5CVX/eQfebPGA18gGRY8r3H+FqifnPHfl1DxCWpbS0BQBt3/6BP
+         4MxGMDZkPpWMznBaHS3O4ZsbZKBf9ZyoSy/rc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
-         :date:message-id:subject:to:cc:content-transfer-encoding;
-        bh=fEnrshrcyRFKFn5tq0Gixa/dOugjjsLUO399Bf7wjsw=;
-        b=VRx7IacyTgfyRGmxVMJ0baE4CqyMNaDeI1/GkudrdNkvCo2pXsJjsejPvpDDFw64d4
-         oN0t3lV0OxDzckHgVuuf8tz/B649yUKAjuUgHTYouzOhWvy3fJXQ43KLA6G1JKsYQO0q
-         pj8PmiTnkDaD0AmlXY5wEpX0rH2XIsNdVFqHqicOM7tA74spgGAoaejXXoFbrzmNfU41
-         bWAdm04NzZS43MH4WEVHLW1D2i/tR+4vF34nYqR7Tm0YZy1ziwV0wfuaFa0ofrggu2kD
-         E/MPTLvnRlMGrFcwbIrJVfJNOw0ggDsrP/Ha/dX4fbZMmymY0kfNC8JcD/fS+1P+Vtfs
-         JICg==
-X-Gm-Message-State: AOUpUlHnAcpkK7VfMIL3kde8zrOt6fiQtsrDZz2Qp4zW7n3sCkt5m5D4
-        UsbP/rL8ghae/HHgwXoYYt4T+zc9FAcLJ2+o44xfRw==
-X-Google-Smtp-Source: AAOMgpd6Hij2GNxxYHrwRReWlYsEegdmo8WWt1x8E9DQ5+MYSbwOYe0oKuECcub+ITRG6qCfYMoWK7IWLC549+gPWv8=
-X-Received: by 2002:a9f:3b69:: with SMTP id j41-v6mr15349738uah.37.1532561110492;
- Wed, 25 Jul 2018 16:25:10 -0700 (PDT)
+         :date:message-id:subject:to:cc;
+        bh=66YPE/WuIOIkR1qo4wTLmMa0pCgKLWZEjeg75EMeYH4=;
+        b=CQOxwHI0ulaoTmQzZWWCrkQjBmeBaOyLV6wndbcd+35kR/YzhOijYnGI5un1IFFI3k
+         eNTxMj7DdAdA70/kFTBEj1VTlD+Ct4Ge1l+Rr9GftHCRNcZIHdF5sC9scaQqLa5Id2nP
+         PSD65TslA+1Q0x/mo/ZsXhqoyiZH2Bo5vtwt9K0rpRY1jQgwXddlbKFN7M55KqJr19tx
+         4MH53MwE3bNQEZ+4P1KtBF2QURvzd/BQmdWbHX7r3hAltssAUJw2jOSsOeBJybMjvSSf
+         yFhTj7gx0H9n+BF8JEtXHD8e21hpmiLeiSTExpB6/do2Wma1ESpKmnnme8Nj9YMcezuO
+         JSXw==
+X-Gm-Message-State: AOUpUlHR1nqZh0cWuvZ8nuPqb7YmT2ulQSgP7dywiN9ezJkXygV/Q42I
+        RvdAWSGj1NtZzANt6F9FImEKnm9qr87gejV/UfoaeQ==
+X-Google-Smtp-Source: AAOMgpdQdMxMRf3jVuKsWwborjSDuuvc1z+pbNpof9pYlbBhW/QzdSoDUM44yJvAonY6GFegGwJGF96qUVMcFjOfwz8=
+X-Received: by 2002:ab0:47e3:: with SMTP id w35-v6mr16245385uac.20.1532561159948;
+ Wed, 25 Jul 2018 16:25:59 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a1f:cd5:0:0:0:0:0 with HTTP; Wed, 25 Jul 2018 16:25:09 -0700 (PDT)
-In-Reply-To: <20180724235035.58146-1-mka@chromium.org>
-References: <20180724235035.58146-1-mka@chromium.org>
+Received: by 2002:a1f:cd5:0:0:0:0:0 with HTTP; Wed, 25 Jul 2018 16:25:59 -0700 (PDT)
+In-Reply-To: <20180724235636.60357-1-mka@chromium.org>
+References: <20180724235636.60357-1-mka@chromium.org>
 From:   Doug Anderson <dianders@chromium.org>
-Date:   Wed, 25 Jul 2018 16:25:09 -0700
-X-Google-Sender-Auth: DZs6jxv_hj1BiR-m7GlrXNTGyXo
-Message-ID: <CAD=FV=W9cpLt2EQwyTDyZyFiueV2yrLO_SLXOFcS09P_wGYnLw@mail.gmail.com>
-Subject: Re: [PATCH] dt-bindings: thermal: qcom-spmi-temp-alarm: Improve
- thermal zone in example
+Date:   Wed, 25 Jul 2018 16:25:59 -0700
+X-Google-Sender-Auth: _5rAeAejcFKJMLtdVqJ7NpON2Lk
+Message-ID: <CAD=FV=UrbDtXnzvOimAmB8hn-ys3gbv6EHRqCdtbCpXKbFcoHQ@mail.gmail.com>
+Subject: Re: [PATCH] thermal: qcom-spmi: Delete unused field 'prev_stage'
 To:     Matthias Kaehlcke <mka@chromium.org>
 Cc:     Zhang Rui <rui.zhang@intel.com>,
         Eduardo Valentin <edubezval@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, linux-pm@vger.kernel.org,
-        devicetree@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+        linux-pm@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -88,32 +84,12 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Hi,
 
-On Tue, Jul 24, 2018 at 4:50 PM, Matthias Kaehlcke <mka@chromium.org> wrote=
-:
-> The current example for a thermal zone isn't very useful as reference
-> since it would result in a hardware shutdown at 145=C2=B0C, instead of
-> allowing the system to try to shutdown gracefully. Without an ADC
-> channel a maximum of two trip points is useful in practice for this
-> sensor, with temperatures corresponding to the stage 1 and stage 2
-> 'hardware trip points'. A critical trip point at stage 2 may allow the
-> system to shutdown before a hardware shutdown at stage 3 kicks in. It
-> should be noted though that by default the chip performs a 'partial
-> shutdown' when the temperature reaches stage 2, which may prevent an
-> orderly shutdown. The 'partial shutdown' can be disabled by software.
+On Tue, Jul 24, 2018 at 4:56 PM, Matthias Kaehlcke <mka@chromium.org> wrote:
+> The field 'prev_stage' in struct qpnp_tm_chip is not used, remove it.
 >
 > Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
 > ---
->  .../bindings/thermal/qcom-spmi-temp-alarm.txt         | 11 +++--------
->  1 file changed, 3 insertions(+), 8 deletions(-)
-
-Assuming your patch to disable the partial shutdown lands, then:
+>  drivers/thermal/qcom-spmi-temp-alarm.c | 1 -
+>  1 file changed, 1 deletion(-)
 
 Reviewed-by: Douglas Anderson <dianders@chromium.org>
-
-...if that patch doesn't land (or if someone disagrees with me and
-thinks we need an extra property to disable the partial shutdown) then
-we would need the example to be different.  Because of that, maybe
-this should be appended to the end of your series which includes the
-patch to disable partial shutdown?
-
--Doug
