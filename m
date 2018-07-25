@@ -2,128 +2,152 @@ Return-Path: <SRS0=S+WB=KJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1126EC67790
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 22:56:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A59E3C6778F
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 22:57:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AC5D320843
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 22:56:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 589B820685
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 22:57:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="MmbLcFJS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AC5D320843
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (2048-bit key) header.d=endlessm-com.20150623.gappssmtp.com header.i=@endlessm-com.20150623.gappssmtp.com header.b="QHB7+/Nd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 589B820685
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=endlessm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731734AbeGZAJ5 (ORCPT
+        id S1731753AbeGZALT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 20:09:57 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:46648 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731534AbeGZAJ5 (ORCPT
+        Wed, 25 Jul 2018 20:11:19 -0400
+Received: from mail-oi0-f68.google.com ([209.85.218.68]:38612 "EHLO
+        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731702AbeGZALS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Jul 2018 20:09:57 -0400
-Received: by mail-pg1-f193.google.com with SMTP id p23-v6so6220749pgv.13
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Jul 2018 15:56:06 -0700 (PDT)
+        Wed, 25 Jul 2018 20:11:18 -0400
+Received: by mail-oi0-f68.google.com with SMTP id v8-v6so16867616oie.5
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Jul 2018 15:57:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=wDKjzkPhtv3Vsj1tPZsn2Uyr1PgRiq2fnKr5O1DV66M=;
-        b=MmbLcFJSKLSqZI//VZ4SvYyInO3YjTdNHivqBdZ+uvrRfbhsCJ7xXPr2EzBTSq7Pij
-         /WviGG4HQKB9fbfZZUREjgXy9uAtaBfprSQQ05puWZKaW4/l9oYHAmOoOkWUnUWUS4HA
-         B5uR1xJtrnmlC0i3Qa4rA0IuEItBQZmti1Q0I=
+        d=endlessm-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=4DFenC4IFmeOdLYVoPIkOsKOkd0Rud+Nhk9jcHit5Ow=;
+        b=QHB7+/Ndxu3QCw2GdN/va8neKfG5lCRDMW6v7xZbET6WvCJK3fJdJJGxqZYAFESPmy
+         loTmu7jnHGiaJIicvwOqtxiP/TvhABO6NirqnyJw0K9yTgu5zwIp/SVxJH4DZ1m18Ria
+         H3ivSNcsAjb0gy0oQz2hRkaPHw+NCFsvGUo+sX6M3ylZ58Ukn2g3iPvXoqzDZ7AaJCKI
+         LCgLRSFtSpxlruwi/9kpMKx95mllddXdtqZQUiRIGxddEJi0O6i1bm6EMajUhhZfs3AT
+         x2PYBvrXvvzS/gh2ej9DpBpw4DsqdnQjkO09RpxT2Shbrfurp6DPrRP30ibds148PL4m
+         vVmA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=wDKjzkPhtv3Vsj1tPZsn2Uyr1PgRiq2fnKr5O1DV66M=;
-        b=fB8WL150UR0VklHkiuGkowVSgLb5lPcHWGkiiwiFJ+kLGfSs8+oxzi6eLgYoHQrRsI
-         BBQfraM6YPNeCEITIzN2NFCsN+vyVxjdcmHmHX6L2lJeYw4tRihS1oIh+qerb1mMq3iX
-         8eqoo6tEtufrgFn31Zv17hQSyZccqCbLXOScVAqyvpO1+hLekX6O6p0Wa7ENFe2h86Rm
-         KJMo2zKX5DjKlKiBOTp/bBQ+/AQcj5z3sbjwtAFf8EUH9AojRgHonqwXq/0YEV81Wa+3
-         RWWrj5fqLvmi8MiHK+GK+Mr80SRsNXRx/PBNgZMoAgBkaNczSmKBtssVNpw3YwPj/iBa
-         4n6g==
-X-Gm-Message-State: AOUpUlHwxvgXjFyfSCddzb2bHaMn9dEpqla5KGhvuuouCYyxBL22G+ox
-        T0vulo1Ap92vSpPbDoF0bGABvw==
-X-Google-Smtp-Source: AAOMgpfeg6V6uUDSdn91iCSyOJSWmAJYOIIXpzgeVdohR8dYf4o4VmxJQr4d8GzFpeoUTai3/7qeUQ==
-X-Received: by 2002:a62:d41a:: with SMTP id a26-v6mr403437pfh.142.1532559366620;
-        Wed, 25 Jul 2018 15:56:06 -0700 (PDT)
-Received: from localhost ([2620:0:1000:1501:8e2d:4727:1211:622])
-        by smtp.gmail.com with ESMTPSA id 65-v6sm23091463pfq.81.2018.07.25.15.56.06
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 25 Jul 2018 15:56:06 -0700 (PDT)
-Date:   Wed, 25 Jul 2018 15:56:05 -0700
-From:   Matthias Kaehlcke <mka@chromium.org>
-To:     Amit Kucheria <amit.kucheria@linaro.org>
-Cc:     linux-kernel@vger.kernel.org, rnayak@codeaurora.org,
-        linux-arm-msm@vger.kernel.org, bjorn.andersson@linaro.org,
-        edubezval@gmail.com, smohanad@codeaurora.org,
-        andy.gross@linaro.org, dianders@chromium.org,
-        Zhang Rui <rui.zhang@intel.com>, linux-pm@vger.kernel.org
-Subject: Re: [PATCH v1 2/3] thermal: tsens: switch from of_iomap() to
- devm_ioremap_resource()
-Message-ID: <20180725225605.GS129942@google.com>
-References: <cover.1531898088.git.amit.kucheria@linaro.org>
- <4dd9f01c2b5d6988c5329062c25ae61747b42a32.1531898088.git.amit.kucheria@linaro.org>
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=4DFenC4IFmeOdLYVoPIkOsKOkd0Rud+Nhk9jcHit5Ow=;
+        b=dhys2w2oL5iyHDyBFX1+4t9tILuPeKaS/W1BPPDBMUN0GLHmvGWS4E9ThpZYXHc/Ic
+         fJJRkVYe0j21uopTOHi8w6SFsU2nco2BrO1/tetOrx8to+Xc3Cm6F5ge6DPywbQkIx+a
+         sfda57wgRl/LBXiMRVO1ba73njQzLRDzwlFCZj1nJTj3j9S+Bkh8xqzQT6qqWGY0LMMk
+         G8t0K/vlhf9nt/Dvh0VC2STCeJ1Rt9p0GVXkzMOKP9FbrzlufVGK+h+v7Pfn1vCu/KA6
+         yk+eucbDBqIHFuodngeHYpBXlCKxY5KMLWvfTMJx4/djADr/eejzDPdO5y7+fbBNC2JA
+         XZ0Q==
+X-Gm-Message-State: AOUpUlEGglhZZz8OjVBSsCzbyoIPwRn/2mTr+mkrQ1l4nFinuTlgABeD
+        MnFqKe0TF08k+l02/SukeZ50zh+DQcgd73jYZyfUuw==
+X-Google-Smtp-Source: AAOMgpcaeXlHDswzC/hso0vu3LPkrPG4R7OxlyyVquHiAMhQwsmbUzp2q8mIu4F2JFfasOB1xhv9KgVmUJ6o7yDiqCk=
+X-Received: by 2002:aca:b355:: with SMTP id c82-v6mr5779202oif.9.1532559446803;
+ Wed, 25 Jul 2018 15:57:26 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <4dd9f01c2b5d6988c5329062c25ae61747b42a32.1531898088.git.amit.kucheria@linaro.org>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Received: by 2002:a9d:3e18:0:0:0:0:0 with HTTP; Wed, 25 Jul 2018 15:57:26
+ -0700 (PDT)
+In-Reply-To: <20180717122327.GG7193@dhcp22.suse.cz>
+References: <20180712172942.10094-1-hannes@cmpxchg.org> <20180716155745.10368-1-drake@endlessm.com>
+ <20180717112515.GE7193@dhcp22.suse.cz> <CAD8Lp45W00ga-P-nb6iytgSGW4xwSzmaTHA87DOvSotN0S2edw@mail.gmail.com>
+ <20180717122327.GG7193@dhcp22.suse.cz>
+From:   Daniel Drake <drake@endlessm.com>
+Date:   Wed, 25 Jul 2018 17:57:26 -0500
+Message-ID: <CAD8Lp44P2X5BNj14QjJBiv-_MxdVTP2UPQk3pX5iX4NEL46zwA@mail.gmail.com>
+Subject: Re: [PATCH 0/10] psi: pressure stall information for CPU, memory, and
+ IO v2
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     hannes@cmpxchg.org, Linux Kernel <linux-kernel@vger.kernel.org>,
+        linux-mm@kvack.org, cgroups@vger.kernel.org,
+        Linux Upstreaming Team <linux@endlessm.com>,
+        linux-block@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Andrew Morton <akpm@linuxfoundation.org>,
+        Tejun Heo <tj@kernel.org>,
+        Balbir Singh <bsingharora@gmail.com>,
+        Mike Galbraith <efault@gmx.de>,
+        Oliver Yang <yangoliver@me.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        xxx xxx <x.qendo@gmail.com>,
+        Taras Kondratiuk <takondra@cisco.com>,
+        Daniel Walker <danielwa@cisco.com>,
+        Vinayak Menon <vinmenon@codeaurora.org>,
+        Ruslan Ruslichenko <rruslich@cisco.com>, kernel-team@fb.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 18, 2018 at 12:55:02PM +0530, Amit Kucheria wrote:
-> devm_ioremap_resources() automatically requests resources (so that the I/O
-> region shows up in /proc/iomem) and devm_ wrappers do better error handling
-> and unmapping of the I/O region when needed.
-> 
-> Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
-> ---
->  drivers/thermal/qcom/tsens-common.c | 13 +++++++------
->  1 file changed, 7 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/thermal/qcom/tsens-common.c b/drivers/thermal/qcom/tsens-common.c
-> index 25e7f24..6207d8d 100644
-> --- a/drivers/thermal/qcom/tsens-common.c
-> +++ b/drivers/thermal/qcom/tsens-common.c
-> @@ -127,13 +127,11 @@ static const struct regmap_config tsens_config = {
->  int __init init_common(struct tsens_device *tmdev)
->  {
->  	void __iomem *base;
-> +	struct resource *res;
->  	struct platform_device *op = of_find_device_by_node(tmdev->dev->of_node);
->  
->  	if (!op)
->  		return -EINVAL;
-> -	base = of_iomap(tmdev->dev->of_node, 0);
-> -	if (!base)
-> -		return -EINVAL;
->  
->  	/* The driver only uses the TM register address space for now */
->  	if (op->num_resources > 1) {
-> @@ -143,11 +141,14 @@ int __init init_common(struct tsens_device *tmdev)
->  		tmdev->tm_offset = 0x1000;
->  	}
->  
-> +	res = platform_get_resource(op, IORESOURCE_MEM, 0);
-> +	base = devm_ioremap_resource(&op->dev, res);
-> +	if (IS_ERR(base))
-> +		return PTR_ERR(base);
-> +
->  	tmdev->map = devm_regmap_init_mmio(tmdev->dev, base, &tsens_config);
-> -	if (IS_ERR(tmdev->map)) {
-> -		iounmap(base);
-> +	if (IS_ERR(tmdev->map))
->  		return PTR_ERR(tmdev->map);
-> -	}
->  
->  	return 0;
->  }
+On Tue, Jul 17, 2018 at 7:23 AM, Michal Hocko <mhocko@kernel.org> wrote:
+> On Tue 17-07-18 07:13:52, Daniel Drake wrote:
+>> On Tue, Jul 17, 2018 at 6:25 AM, Michal Hocko <mhocko@kernel.org> wrote:
+>> > Yes this is really unfortunate. One thing that could help would be to
+>> > consider a trashing level during the reclaim (get_scan_count) to simply
+>> > forget about LRUs which are constantly refaulting pages back. We already
+>> > have the infrastructure for that. We just need to plumb it in.
+>>
+>> Can you go into a bit more detail about that infrastructure and how we
+>> might detect which pages are being constantly refaulted? I'm
+>> interested in spending a few hours on this topic to see if I can come
+>> up with anything.
+>
+> mm/workingset.c allows for tracking when an actual page got evicted.
+> workingset_refault tells us whether a give filemap fault is a recent
+> refault and activates the page if that is the case. So what you need is
+> to note how many refaulted pages we have on the active LRU list. If that
+> is a large part of the list and if the inactive list is really small
+> then we know we are trashing.
 
-Reviewed-by: Matthias Kaehlcke <mka@chromium.org>
+Thanks for the guidance. So this sounds like it is something that
+should be done on a timer (or on some other condition?), check the
+state of the active LRU list as described and if things are bad then
+invoke the OOM killer?
+
+I'm having trouble linking that idea to your original suggestion:
+
+> One thing that could help would be to consider a trashing level during the reclaim
+> (get_scan_count) to simply forget about LRUs which are constantly refaulting
+> pages back.
+
+which I interpret to mean that the  for_each_evictable_lru loop in
+get_scan_count should skip over constantly-refaulty LRUs rather than
+add them to nr[] and lru_pages, which I assume would then cause direct
+reclaim to fail when we are thrashing, leading to OOM kill?
+
+Are these two different ideas, or am I just misunderstanding something basic?
+
+That confusion aside, studying the code to understand how I can
+determine if a page is being constantly refaulted or not, I see that
+the well documented condition for this (in workingset_refault) is:
+
+  (refault - eviction) & EVICTION_MASK <= active_file
+
+refault and active_file are just values from the lruvec which seems
+easily accessible. However the eviction value is taken at the point of
+page eviction, and it is then stored in the shadow entries stored in
+the page cache for pages that have been evicted, but the shadow entry
+is then lost when the page is reactivated.
+
+The suggestion(s) seem to revolve around checking if currently-active
+pages are refaulting a lot, and I am still not clear on how to
+determine that, given that the shadow/eviction information was lost at
+the point when those active pages were refaulted.
+
+
+BTW feel free to drop this thread if you are busy, or delay your
+response to a convenient time. I'm new to this area and probably
+making silly mistakes, and not yet convinced that I'll be able to see
+it through.
+
+Daniel
