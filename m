@@ -2,89 +2,92 @@ Return-Path: <SRS0=S+WB=KJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F436C6778F
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 21:16:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 875F6C67790
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 21:19:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ACA7420843
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 21:16:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ACA7420843
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 34B9020852
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 21:19:12 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="p5NcvWf2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 34B9020852
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731392AbeGYWaQ (ORCPT
+        id S1731400AbeGYWck (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 18:30:16 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:54398 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731248AbeGYWaP (ORCPT
+        Wed, 25 Jul 2018 18:32:40 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:50876 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731248AbeGYWck (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Jul 2018 18:30:15 -0400
-Received: from localhost.localdomain (c-24-4-125-7.hsd1.ca.comcast.net [24.4.125.7])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 461A4DC5;
-        Wed, 25 Jul 2018 21:16:44 +0000 (UTC)
-Date:   Wed, 25 Jul 2018 14:16:43 -0700
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     "zhaowuyun@wingtech.com" <zhaowuyun@wingtech.com>
-Cc:     mgorman <mgorman@techsingularity.net>,
-        minchan <minchan@kernel.org>, vinmenon <vinmenon@codeaurora.org>,
-        mhocko <mhocko@suse.com>, hannes <hannes@cmpxchg.org>,
-        "hillf.zj" <hillf.zj@alibaba-inc.com>,
-        linux-mm <linux-mm@kvack.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Hugh Dickins <hughd@google.com>
-Subject: Re: [PATCH] [PATCH] mm: disable preemption before swapcache_free
-Message-Id: <20180725141643.6d9ba86a9698bc2580836618@linux-foundation.org>
-In-Reply-To: <2018072514375722198958@wingtech.com>
-References: <2018072514375722198958@wingtech.com>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        Wed, 25 Jul 2018 18:32:40 -0400
+Received: by mail-wm0-f66.google.com with SMTP id s12-v6so4108956wmc.0
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Jul 2018 14:19:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=message-id:subject:from:to:cc:date:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=YTfTDA5ZOyUhIzQSKMnXLsYvzI4PLDQiCShlg/fmV/U=;
+        b=p5NcvWf2tCNFmBFoKx69JJuBHGKc5p5EvjEdybmKHv+AxQn2GwEeVy2DmW7QjhPin+
+         2uzrMJktykoRIr3igWNeqtygq+J773ml1gucnP3DsNxCvirRzG7GcIoDvB2VbL1soX7E
+         zTWpB6vrXH/ASgpRBgf8TbOBmNI43pmtCNyOACP/nDzF6nCiSIEwH9i981q+ttw3awpY
+         6oVfoOHcSfy3QPQjIfsRq36crx5scDoft8MfjvKOsl+zYv+I2u7L+l6Q3V5ecizeLwDa
+         tpSuS/KnZAKqQ+WCugLRQ6Lu0lV9UwW++IfeV+2LY+8gFz2gy/l1D0xhaqxLbUwP5e6l
+         1Plg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=YTfTDA5ZOyUhIzQSKMnXLsYvzI4PLDQiCShlg/fmV/U=;
+        b=Wzh/Eaph6tcGqPQAu2oa8vzfxPT8mfUfjlqHQsXWhfXM+qJJLARFwnVpcqaKHPAFVB
+         riXhLhMtwez3XRx1HnVejQBhx4oOuLH2gqsLP0TFd13ZB1owd24EqQTjhv+Y3uvaokrk
+         /qfL9LX3aP5VvMfyP8xah+8UsWmnKQEHVXZUZjvMzMXks9VNi2JWlWfHY7g2F/YffFJT
+         tYnP3ZIXvmOBuqTIw1751cDxvZJPtqIbA+IyachmGxE9TrRWdnOwFACHau+pPO4UPiaL
+         /Km6yqJ4murBBzcy0ScTFbZaiqV8eW8P79MNsbVusePTwJ6WPWn4ABYnx9OIL7ucqUP5
+         vYUA==
+X-Gm-Message-State: AOUpUlEM3Gimo09w4/VtRUFmnfryLGeg/xN/jhcU5S2XlvGpA/1+snPI
+        ac7KP5/WUFagJErfPkSVoo4Eyg==
+X-Google-Smtp-Source: AAOMgpcvhmwK37chQlwMM7SXjFe3hKMamA9H8QDjsfSK0fZbMfyMwLr8ZbfoWisfk6VfaCbf5E6LUw==
+X-Received: by 2002:a1c:ea17:: with SMTP id i23-v6mr5744581wmh.29.1532553548290;
+        Wed, 25 Jul 2018 14:19:08 -0700 (PDT)
+Received: from boomer (cag06-3-82-243-161-21.fbx.proxad.net. [82.243.161.21])
+        by smtp.gmail.com with ESMTPSA id e133-v6sm10228865wma.33.2018.07.25.14.19.07
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 25 Jul 2018 14:19:07 -0700 (PDT)
+Message-ID: <705e31bf0d978b7d356b2f077179ab0e3db6f092.camel@baylibre.com>
+Subject: Re: [PATCH 00/14] arm64: dts: meson-axg: add audio support
+From:   jbrunet@baylibre.com
+To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc:     khilman@baylibre.com, carlo@caione.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, p.zabel@pengutronix.de,
+        linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org
+Date:   Wed, 25 Jul 2018 23:19:05 +0200
+In-Reply-To: <CAFBinCBh-b=ie4hBMWdHG8KoLQ7qiRfo8vXfJ1PRcN4UPtg+uA@mail.gmail.com>
+References: <20180724125238.14567-1-jbrunet@baylibre.com>
+         <CAFBinCBh-b=ie4hBMWdHG8KoLQ7qiRfo8vXfJ1PRcN4UPtg+uA@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.4 (3.28.4-1.fc28) 
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 25 Jul 2018 14:37:58 +0800 "zhaowuyun@wingtech.com" <zhaowuyun@wingtech.com> wrote:
+On Wed, 2018-07-25 at 21:11 +0200, Martin Blumenstingl wrote:
+> nit-pick: one patch uses "arm64: dts: meson-axg: s400" in the subject
+> while other patches that are touching the s400 board aren't
+> if you have to re-send this series: can you please use the "arm64:
+> dts: meson-axg: s400:" prefix for all patches touching the s400 board?
 
-> From: zhaowuyun <zhaowuyun@wingtech.com>
->  
-> issue is that there are two processes A and B, A is kworker/u16:8
-> normal priority, B is AudioTrack, RT priority, they are on the
-> same CPU 3.
->  
-> The task A preempted by task B in the moment
-> after __delete_from_swap_cache(page) and before swapcache_free(swap).
->  
-> The task B does __read_swap_cache_async in the do {} while loop, it
-> will never find the page from swapper_space because the page is removed
-> by the task A, and it will never sucessfully in swapcache_prepare because
-> the entry is EEXIST.
->  
-> The task B then stuck in the loop infinitely because it is a RT task,
-> no one can preempt it.
->  
-> so need to disable preemption until the swapcache_free executed.
+hum, do we really have such rule, or do you think we should add one ?
+Kevin, do you have opinion ?
 
-Yes, right, sorry, I must have merged cbab0e4eec299 in my sleep. 
-cond_resched() is a no-op in the presence of realtime policy threads
-and using to attempt to yield to a different thread it in this fashion
-is broken.
-
-Disabling preemption on the other side of the race should fix things,
-but it's using a bandaid to plug the leakage from the earlier bandaid. 
-The proper way to coordinate threads is to use a sleeping lock, such
-as a mutex, or some other wait/wakeup mechanism.
-
-And once that's done, we can hopefully eliminate the do loop from
-__read_swap_cache_async().  That also services ENOMEM from
-radix_tree_insert(), but __add_to_swap_cache() appears to handle that
-OK and we shouldn't just loop around retrying the insert and the
-radix_tree_preload() should ensure that radix_tree_insert() never fails
-anyway.  Unless we're calling __read_swap_cache_async() with screwy
-gfp_flags from somewhere.
-
+Not that I really mind either way, but prefixes rules are usually there to help
+maintainer filter the patches. Will such rule help in any way ?
 
