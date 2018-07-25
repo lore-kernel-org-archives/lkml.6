@@ -2,116 +2,90 @@ Return-Path: <SRS0=S+WB=KJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 041F9C67790
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 19:11:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5498FC67790
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 19:13:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A2C7D20882
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 19:11:37 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="kmbgqxIR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A2C7D20882
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=googlemail.com
+	by mail.kernel.org (Postfix) with ESMTP id 0D4C720844
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 19:13:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0D4C720844
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730208AbeGYUYg (ORCPT
+        id S1730292AbeGYU0K (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 16:24:36 -0400
-Received: from mail-oi0-f65.google.com ([209.85.218.65]:46389 "EHLO
-        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729187AbeGYUYf (ORCPT
+        Wed, 25 Jul 2018 16:26:10 -0400
+Received: from mail-it0-f68.google.com ([209.85.214.68]:56118 "EHLO
+        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729370AbeGYU0K (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Jul 2018 16:24:35 -0400
-Received: by mail-oi0-f65.google.com with SMTP id y207-v6so15817908oie.13;
-        Wed, 25 Jul 2018 12:11:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=1Z7zZ2yxHRaCvZUdCS+kl0SYhgebxF7kwkeYgiQh5NU=;
-        b=kmbgqxIRp6KOijzsjLa2ZZ0YkFcqtVYRPVNbEeRUgcTMbfbNnAMuLFfhea8yv9Pmq+
-         /wdsEvWz+z7cLqqBsq6RjMl8WdwzJn3RafS+/0N67Dc1LbyPYadFnbhDHY1+0iKWeaoH
-         dVj2WX3TVA4Eu0X9rtq+ebMB5E0uoCEtyQfum9J5j8VzddPAG2RerZYu0qFWkJo4TFvA
-         0fzvxSMuV29fWYJUMM58+4SBZCYTO79jEDtCUDKhYI3tgx5k9PqxWNGBZy03JmBcMz/Y
-         rOzfJr9SuZ4qqxRavHnNb9SmcnzOhmlQolx9jHiakksHGkAW7RIOds2UiM/Jt69J6dP4
-         PHuA==
+        Wed, 25 Jul 2018 16:26:10 -0400
+Received: by mail-it0-f68.google.com with SMTP id 16-v6so10254779itl.5;
+        Wed, 25 Jul 2018 12:13:09 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=1Z7zZ2yxHRaCvZUdCS+kl0SYhgebxF7kwkeYgiQh5NU=;
-        b=lHPtlgWmqkfzURPkfBXTQTnj3Yg2G9qKWRdRG8BKG9cS5tabhOuzk0ANgJV94+N8c2
-         3mFf3qwsyCju7UobD579C2igjEHFp/w+8VNg6Q+BSsZQClBeVJR6ovIOwNCJNy1boJmN
-         3fJ2owc1zP6H2CtNpo0M0h51aLcm8mX/fQythFhUJCmvBJDqK/uQ7DOX12B/kGt1Vd4c
-         KDhNlRduDlR7SqmVu1dJNj4E+QBnXoy1xhc9kPfEetYMygKdU3Ki/dKfb49klLinOH2T
-         u4ISlOLPU3nikgH77LW2fUXDIZ5A5JYF+h3s4YSAiU+dNKUfvjUHFakA8W/r9uqFoF8L
-         WVHQ==
-X-Gm-Message-State: AOUpUlEPL3pqWn122LhvQ6oHzLNn67cuHnOfYAPRee2kLvhMUr5mrmhD
-        DS6gzLJcVwcipj1br3x9vfrT3WEn62IbqUrZp0s=
-X-Google-Smtp-Source: AAOMgpeQWyEGSdZWZPz8wNoniQ7OQY60kQMVLW+B3kkQKGsYOKu48CBf0idQNc1lT3EGnETdGGJ6Lc73WQlcWmkjdgY=
-X-Received: by 2002:aca:c70f:: with SMTP id x15-v6mr4816541oif.97.1532545894573;
- Wed, 25 Jul 2018 12:11:34 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Gus1AnFJTbrTLsYvp6XQonogMjOwTeYNcXfplE0R/mM=;
+        b=aCaAUrk0/Gr0IbCGFvA3VQ72KcVn5mnnPLn8ChSDEzBhUdDFOEXvd37pqLsDaZwQIT
+         reTEH1VlzNnAHxYFMpXWezg1UnHgS45jqsWKEpD2oNn8wkmZKtnemMapF+s65PqevWcC
+         wbUKIbQPWz2/T+uK1abwgBh28r+gWYmaqOVhXDKK5UDSv7FkMu9QQ6wuaseaMHYVT5DP
+         3242GSa4f17OFeTkp+uflUTnAxYDXQMtl+9l2xCAviCIfcU9WZeyOUde03IKu7EUvWMb
+         ao3zyo9ocd1W8Cg7H53W4jM/21jc0AnnShPFMF59lDJOfkx09dlcOTX7oOkfSNeqnbJz
+         djcQ==
+X-Gm-Message-State: AOUpUlGVLBH3fuo0x40ZIqFCW+8p8d1cw8jsc3Z20vpjP0uzuSn1fFG8
+        WdZ5P6vcd8W6qGxrpUOXMTgYsVOCrg==
+X-Google-Smtp-Source: AAOMgpdl90UkQsKZiAVDuF0Cc8GF51FoL1tlOgaJ2y4O7AKPbxDdwXDcralZLPihrDxyLt41Pw1mlA==
+X-Received: by 2002:a02:5e42:: with SMTP id h63-v6mr20932451jab.117.1532545988764;
+        Wed, 25 Jul 2018 12:13:08 -0700 (PDT)
+Received: from localhost ([24.51.61.72])
+        by smtp.gmail.com with ESMTPSA id z14-v6sm4682842iob.68.2018.07.25.12.13.07
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 25 Jul 2018 12:13:08 -0700 (PDT)
+Date:   Wed, 25 Jul 2018 13:13:07 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH] dt-bindings: clock: samsung: Add SPDX license identifiers
+Message-ID: <20180725191307.GA32217@rob-hp-laptop>
+References: <20180718200216.6389-1-krzk@kernel.org>
 MIME-Version: 1.0
-References: <20180724125238.14567-1-jbrunet@baylibre.com>
-In-Reply-To: <20180724125238.14567-1-jbrunet@baylibre.com>
-From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date:   Wed, 25 Jul 2018 21:11:23 +0200
-Message-ID: <CAFBinCBh-b=ie4hBMWdHG8KoLQ7qiRfo8vXfJ1PRcN4UPtg+uA@mail.gmail.com>
-Subject: Re: [PATCH 00/14] arm64: dts: meson-axg: add audio support
-To:     jbrunet@baylibre.com
-Cc:     khilman@baylibre.com, carlo@caione.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, p.zabel@pengutronix.de,
-        linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180718200216.6389-1-krzk@kernel.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jerome,
+On Wed, Jul 18, 2018 at 10:02:16PM +0200, Krzysztof Kozlowski wrote:
+> Replace GPL license statements with SPDX license identifiers (GPL-2.0).
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> ---
+>  include/dt-bindings/clock/exynos3250.h            | 5 +----
+>  include/dt-bindings/clock/exynos4.h               | 7 ++-----
+>  include/dt-bindings/clock/exynos5250.h            | 7 ++-----
+>  include/dt-bindings/clock/exynos5260-clk.h        | 7 ++-----
+>  include/dt-bindings/clock/exynos5410.h            | 7 ++-----
+>  include/dt-bindings/clock/exynos5420.h            | 7 ++-----
+>  include/dt-bindings/clock/exynos5433.h            | 5 +----
+>  include/dt-bindings/clock/exynos7-clk.h           | 7 ++-----
+>  include/dt-bindings/clock/s3c2410.h               | 5 +----
+>  include/dt-bindings/clock/s3c2412.h               | 5 +----
+>  include/dt-bindings/clock/s3c2443.h               | 5 +----
+>  include/dt-bindings/clock/samsung,s2mps11.h       | 5 +----
+>  include/dt-bindings/clock/samsung,s3c64xx-clock.h | 7 ++-----
+>  13 files changed, 20 insertions(+), 59 deletions(-)
 
-On Tue, Jul 24, 2018 at 2:53 PM Jerome Brunet <jbrunet@baylibre.com> wrote:
->
-> The main purpose of this patchset is to add the audio devices on amlogic's
-> AXG SoCs.
->
-> Some codecs require some power supplies. This is why the 3 first patches
-> deal with the S400 power supplies, even if some are not related to audio.
->
-> In term of dependency, apart from the clock bindings you have already
-> pulled for your second PR to arm-soc, this patchset requires the ARB
-> reset bindings [0] for patch 5. I don't know if Philip can make it
-> available somewhere ?
->
-> Of course, if the dependencies make this patchset too complicated to
-> merge in this cycle, I'll resubmit once the next rc1 is out.
->
-> Jerome Brunet (14):
->   arm64: dts: meson-axg: improve power supplies description
->   arm64: dts: meson-axg: add vcc 5v regulator on the s400
->   arm64: dts: meson-axg: add usb power regulator
->   arm64: dts: meson-axg: add audio arb reset controller
->   arm64: dts: meson-axg: add audio fifos
->   arm64: dts: meson-axg: add spdifout
->   arm64: dts: meson-axg: add tdmin formatters
->   arm64: dts: meson-axg: add tdmout formatters
->   arm64: dts: meson-axg: add tdm interfaces
->   arm64: dts: meson-axg: add linein codec
->   arm64: dts: meson-axg: add lineout codec
->   arm64: dts: meson-axg: add spdif-dit codec
->   arm64: dts: meson-axg: s400: enable audio devices
->   arm64: dts: meson-axg: add s400 sound card
-nit-pick: one patch uses "arm64: dts: meson-axg: s400" in the subject
-while other patches that are touching the s400 board aren't
-if you have to re-send this series: can you please use the "arm64:
-dts: meson-axg: s400:" prefix for all patches touching the s400 board?
-
-
-Thank you!
-Regards
-Martin
+Reviewed-by: Rob Herring <robh@kernel.org>
