@@ -5,49 +5,37 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AA75C6778F
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 21:30:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35F60C67790
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 21:30:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 51DAC20671
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 21:30:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 51DAC20671
+	by mail.kernel.org (Postfix) with ESMTP id E433920843
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 21:30:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E433920843
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731386AbeGYWno (ORCPT
+        id S1731452AbeGYWoV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 18:43:44 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:58074 "EHLO
+        Wed, 25 Jul 2018 18:44:21 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:58078 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731174AbeGYWno (ORCPT
+        with ESMTP id S1731316AbeGYWoV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Jul 2018 18:43:44 -0400
+        Wed, 25 Jul 2018 18:44:21 -0400
 Received: from localhost.localdomain (c-24-4-125-7.hsd1.ca.comcast.net [24.4.125.7])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id DF877BBF;
-        Wed, 25 Jul 2018 21:30:08 +0000 (UTC)
-Date:   Wed, 25 Jul 2018 14:30:07 -0700
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D8A15BBF;
+        Wed, 25 Jul 2018 21:30:47 +0000 (UTC)
+Date:   Wed, 25 Jul 2018 14:30:46 -0700
 From:   Andrew Morton <akpm@linux-foundation.org>
-To:     Pavel Tatashin <pasha.tatashin@oracle.com>
-Cc:     Steven Sistare <steven.sistare@oracle.com>,
-        Daniel Jordan <daniel.m.jordan@oracle.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        kirill.shutemov@linux.intel.com, Michal Hocko <mhocko@suse.com>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        dan.j.williams@intel.com, jack@suse.cz, jglisse@redhat.com,
-        Souptick Joarder <jrdr.linux@gmail.com>, bhe@redhat.com,
-        gregkh@linuxfoundation.org, Vlastimil Babka <vbabka@suse.cz>,
-        Wei Yang <richard.weiyang@gmail.com>, dave.hansen@intel.com,
-        rientjes@google.com, mingo@kernel.org,
-        osalvador@techadventures.net, abdhalee@linux.vnet.ibm.com,
-        mpe@ellerman.id.au
-Subject: Re: [PATCH 2/3] mm: calculate deferred pages after skipping
- mirrored memory
-Message-Id: <20180725143007.25d5bff352872aba90ca731b@linux-foundation.org>
-In-Reply-To: <CAGM2reb4vT59uUkMkJVBx9-GEYQs287oTG08aRwKtjfJ1BVrjA@mail.gmail.com>
-References: <20180724235520.10200-1-pasha.tatashin@oracle.com>
-        <20180724235520.10200-3-pasha.tatashin@oracle.com>
-        <20180724183142.d20798b43fd1215f6165649c@linux-foundation.org>
-        <CAGM2reb4vT59uUkMkJVBx9-GEYQs287oTG08aRwKtjfJ1BVrjA@mail.gmail.com>
+To:     Davidlohr Bueso <dave@stgolabs.net>
+Cc:     jbaron@akamai.com, viro@zeniv.linux.org.uk,
+        linux-kernel@vger.kernel.org, Davidlohr Bueso <dbueso@suse.de>
+Subject: Re: [PATCH -next] fs/epoll: simply CONFIG_NET_RX_BUSY_POLL ifdefery
+Message-Id: <20180725143046.74ee1238493e3b4aef57e72e@linux-foundation.org>
+In-Reply-To: <20180725200633.c36cdaf4ymgscump@linux-r8p5>
+References: <20180725185620.11020-1-dave@stgolabs.net>
+        <20180725123513.5f36a6b787d06c8066a24ade@linux-foundation.org>
+        <20180725200633.c36cdaf4ymgscump@linux-r8p5>
 X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
@@ -57,60 +45,22 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 24 Jul 2018 21:46:25 -0400 Pavel Tatashin <pasha.tatashin@oracle.com> wrote:
+On Wed, 25 Jul 2018 13:06:33 -0700 Davidlohr Bueso <dave@stgolabs.net> wrote:
 
-> > > +static inline bool defer_init(int nid, unsigned long pfn, unsigned long end_pfn)
-> > >  {
-> > > +     static unsigned long prev_end_pfn, nr_initialised;
+> >> +#else
+> >> +#define ep_busy_loop(ep, nonblock)		do { } while (0)
+> >> +#define ep_reset_busy_poll_napi_id(ep)		do { } while (0)
+> >> +#define ep_set_busy_poll_napi_id(epi)		do { } while (0)
+> >> +
+> >> +#endif /* CONFIG_NET_RX_BUSY_POLL */
 > >
-> > So answer me quick, what happens with a static variable in an inlined
-> > function?  Is there one copy kernel-wide?  One copy per invocation
-> > site?  One copy per compilation unit?
-> >
-> > Well I didn't know so I wrote a little test.  One copy per compilation
-> > unit (.o file), it appears.
-> >
-> > It's OK in this case because the function is in .c (and has only one
-> > call site).  But if someone moves it into a header and uses it from a
-> > different .c file, they have problems.
-> >
-> > So it's dangerous, and poor practice.  I'll make this non-static
-> > __meminit.
+> >inlines are preferred.  Because macros are fugly and can cause
+> >unused-var warnings when the stub versions are used.
 > 
-> I agree, it should not be moved to header it is dangerous.
+> Fair enough.
 > 
-> But, on the other hand this is a hot-path. memmap_init_zone() might
-> need to go through billions of struct pages early in boot, and I did
-> not want us to waste time on function calls. With defer_init() this is
-> not a problem, because if CONFIG_DEFERRED_STRUCT_PAGE_INIT is set
-> memmap_init_zone() won't have much work to do, but for
-> overlap_memmap_init() this is a problem, especially because I expect
-> compiler to optimize the pfn dereference usage in inline function.
-
-Well.  The compiler will just go and inline defer_init() anwyay - it
-has a single callsite and is in the same __meminint section as its
-calling function.  My gcc-7.2.0 does this.  Marking it noninline
-__meminit is basically syntactic fluff designed to encourage people to
-think twice.
-
-> >
-> > --- a/mm/page_alloc.c~mm-calculate-deferred-pages-after-skipping-mirrored-memory-fix
-> > +++ a/mm/page_alloc.c
-> > @@ -309,7 +309,8 @@ static inline bool __meminit early_page_
-> >   * Returns true when the remaining initialisation should be deferred until
-> >   * later in the boot cycle when it can be parallelised.
-> >   */
-> > -static inline bool defer_init(int nid, unsigned long pfn, unsigned long end_pfn)
-> > +static bool __meminit
-> > +defer_init(int nid, unsigned long pfn, unsigned long end_pfn)
-> >  {
-> >         static unsigned long prev_end_pfn, nr_initialised;
-> >
-> >
-> > Also, what locking protects these statics?  Our knowledge that this
-> > code is single-threaded, presumably?
+> >This?
 > 
-> Correct, this is called only from "context == MEMMAP_EARLY", way
-> before smp_init().
+> Do you want me to send a v2 or will you fold in the below?
 
-Might be worth a little comment to put readers minds at ease.
+I queued both patches.
