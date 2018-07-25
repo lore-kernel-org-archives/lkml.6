@@ -2,207 +2,371 @@ Return-Path: <SRS0=cBqk=QM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.9 required=3.0 tests=DATE_IN_PAST_96_XX,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25740C282CB
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 15:24:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D34D3C282CB
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 15:24:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E4F03217F9
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 15:24:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9F9562083B
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 15:24:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729835AbfBEPYt (ORCPT
+        id S1729802AbfBEPYs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 5 Feb 2019 10:24:49 -0500
-Received: from mail.steuer-voss.de ([85.183.69.95]:60574 "EHLO
+        Tue, 5 Feb 2019 10:24:48 -0500
+Received: from mail.steuer-voss.de ([85.183.69.95]:60572 "EHLO
         mail.steuer-voss.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729428AbfBEPYs (ORCPT
+        with ESMTP id S1729232AbfBEPYs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 5 Feb 2019 10:24:48 -0500
+X-Greylist: delayed 460 seconds by postgrey-1.27 at vger.kernel.org; Tue, 05 Feb 2019 10:24:47 EST
 X-Virus-Scanned: Debian amavisd-new at mail.steuer-voss.de
 Received: by mail.steuer-voss.de (Postfix, from userid 1000)
-        id D90784BBDF; Tue,  5 Feb 2019 16:17:02 +0100 (CET)
-Message-Id: <3230ace6f820fccadb51097ae9ba9f5ee247d79b.1549379326.git.nikolaus.voss@loewensteinmedical.de>
-In-Reply-To: <c1638e5c06be365ad205e4717fd9f226cd1983a2.1549379326.git.nikolaus.voss@loewensteinmedical.de>
-References: <c1638e5c06be365ad205e4717fd9f226cd1983a2.1549379326.git.nikolaus.voss@loewensteinmedical.de>
+        id BBD9D4CF0C; Tue,  5 Feb 2019 16:17:02 +0100 (CET)
+Message-Id: <c1638e5c06be365ad205e4717fd9f226cd1983a2.1549379326.git.nikolaus.voss@loewensteinmedical.de>
 From:   Nikolaus Voss <nv@vosn.de>
 To:     Michael Hennerich <michael.hennerich@analog.com>,
         Linus Walleij <linus.walleij@linaro.org>
 Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
         Nikolaus Voss <nikolaus.voss@loewensteinmedical.de>
-Date:   Tue, 5 Feb 2019 14:31:11 +0100
-Subject: [PATCH 2/2] drivers/gpio/gpio-adp5588.c: switch to events system
+Date:   Wed, 25 Jul 2018 10:43:57 +0200
+Subject: [PATCH 1/2] drivers/gpio/gpio-adp5588.c: add device tree support
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Interupts were generated using GPIN interrupts of
-ADP5588. These interrupts have two important limitations:
-1. Interrupts can only be generated for either rising or
-   falling edges but not both.
-2. Interrupts are reasserted as long as the interrupt condition
-   persists (i.e. high or low level on that GPIN). This generates
-   lots of interrupts unless the event is very short.
-
-To overcome this, ADP5588 provides an event system which queues
-up to 10 events in a buffer. GPIN events are queued whenever the
-GPIN is asserted or deasserted. This makes it possible to support
-generating GPIN interrupts for both edges and to generate only one
-interrupt per state change.
-Thus it is possible to chain the gpio-keys driver for some GPIOs.
+Make platform data optional and add DT id table.
+Switch to dynamically mapped GPIOs and IRQs if not provided
+via platform data.
 
 Signed-off-by: Nikolaus Voss <nikolaus.voss@loewensteinmedical.de>
 ---
- drivers/gpio/gpio-adp5588.c | 85 ++++++++++++++-----------------------
- 1 file changed, 32 insertions(+), 53 deletions(-)
+ drivers/gpio/gpio-adp5588.c | 151 ++++++++++++++++--------------------
+ 1 file changed, 68 insertions(+), 83 deletions(-)
 
 diff --git a/drivers/gpio/gpio-adp5588.c b/drivers/gpio/gpio-adp5588.c
-index 0a8cfccba818..6583a3787035 100644
+index da9781a2ef4a..0a8cfccba818 100644
 --- a/drivers/gpio/gpio-adp5588.c
 +++ b/drivers/gpio/gpio-adp5588.c
-@@ -36,12 +36,11 @@ struct adp5588_gpio {
+@@ -15,6 +15,7 @@
+ #include <linux/gpio/driver.h>
+ #include <linux/interrupt.h>
+ #include <linux/irq.h>
++#include <linux/of_device.h>
+ 
+ #include <linux/platform_data/adp5588.h>
+ 
+@@ -33,8 +34,6 @@ struct adp5588_gpio {
+ 	struct mutex lock;	/* protect cached dir, dat_out */
+ 	/* protect serialized access to the interrupt controller bus */
  	struct mutex irq_lock;
+-	unsigned gpio_start;
+-	unsigned irq_base;
  	uint8_t dat_out[3];
  	uint8_t dir[3];
--	uint8_t int_lvl[3];
-+	uint8_t int_lvl_low[3];
-+	uint8_t int_lvl_high[3];
- 	uint8_t int_en[3];
- 	uint8_t irq_mask[3];
--	uint8_t irq_stat[3];
- 	uint8_t int_input_en[3];
--	uint8_t int_lvl_cached[3];
- };
+ 	uint8_t int_lvl[3];
+@@ -148,16 +147,11 @@ static int adp5588_gpio_direction_output(struct gpio_chip *chip,
+ }
  
- static int adp5588_gpio_read(struct i2c_client *client, u8 reg)
-@@ -180,15 +179,9 @@ static void adp5588_irq_bus_sync_unlock(struct irq_data *d)
- 			mutex_unlock(&dev->lock);
- 		}
- 
--		if (dev->int_lvl_cached[i] != dev->int_lvl[i]) {
--			dev->int_lvl_cached[i] = dev->int_lvl[i];
--			adp5588_gpio_write(dev->client, GPIO_INT_LVL1 + i,
--					   dev->int_lvl[i]);
--		}
+ #ifdef CONFIG_GPIO_ADP5588_IRQ
+-static int adp5588_gpio_to_irq(struct gpio_chip *chip, unsigned off)
+-{
+-	struct adp5588_gpio *dev = gpiochip_get_data(chip);
 -
- 		if (dev->int_en[i] ^ dev->irq_mask[i]) {
- 			dev->int_en[i] = dev->irq_mask[i];
--			adp5588_gpio_write(dev->client, GPIO_INT_EN1 + i,
-+			adp5588_gpio_write(dev->client, GPI_EM1 + i,
- 					   dev->int_en[i]);
- 		}
- 	}
-@@ -219,21 +212,17 @@ static int adp5588_irq_set_type(struct irq_data *d, unsigned int type)
- 	uint16_t gpio = d->hwirq;
+-	return dev->irq_base + off;
+-}
+ 
+ static void adp5588_irq_bus_lock(struct irq_data *d)
+ {
+-	struct adp5588_gpio *dev = irq_data_get_irq_chip_data(d);
++	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
++	struct adp5588_gpio *dev = gpiochip_get_data(gc);
+ 
+ 	mutex_lock(&dev->irq_lock);
+ }
+@@ -172,7 +166,8 @@ static void adp5588_irq_bus_lock(struct irq_data *d)
+ 
+ static void adp5588_irq_bus_sync_unlock(struct irq_data *d)
+ {
+-	struct adp5588_gpio *dev = irq_data_get_irq_chip_data(d);
++	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
++	struct adp5588_gpio *dev = gpiochip_get_data(gc);
+ 	int i;
+ 
+ 	for (i = 0; i <= ADP5588_BANK(ADP5588_MAXGPIO); i++) {
+@@ -203,24 +198,25 @@ static void adp5588_irq_bus_sync_unlock(struct irq_data *d)
+ 
+ static void adp5588_irq_mask(struct irq_data *d)
+ {
+-	struct adp5588_gpio *dev = irq_data_get_irq_chip_data(d);
+-	unsigned gpio = d->irq - dev->irq_base;
++	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
++	struct adp5588_gpio *dev = gpiochip_get_data(gc);
+ 
+-	dev->irq_mask[ADP5588_BANK(gpio)] &= ~ADP5588_BIT(gpio);
++	dev->irq_mask[ADP5588_BANK(d->hwirq)] &= ~ADP5588_BIT(d->hwirq);
+ }
+ 
+ static void adp5588_irq_unmask(struct irq_data *d)
+ {
+-	struct adp5588_gpio *dev = irq_data_get_irq_chip_data(d);
+-	unsigned gpio = d->irq - dev->irq_base;
++	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
++	struct adp5588_gpio *dev = gpiochip_get_data(gc);
+ 
+-	dev->irq_mask[ADP5588_BANK(gpio)] |= ADP5588_BIT(gpio);
++	dev->irq_mask[ADP5588_BANK(d->hwirq)] |= ADP5588_BIT(d->hwirq);
+ }
+ 
+ static int adp5588_irq_set_type(struct irq_data *d, unsigned int type)
+ {
+-	struct adp5588_gpio *dev = irq_data_get_irq_chip_data(d);
+-	uint16_t gpio = d->irq - dev->irq_base;
++	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
++	struct adp5588_gpio *dev = gpiochip_get_data(gc);
++	uint16_t gpio = d->hwirq;
  	unsigned bank, bit;
  
--	if ((type & IRQ_TYPE_EDGE_BOTH)) {
--		dev_err(&dev->client->dev, "irq %d: unsupported type %d\n",
--			d->irq, type);
--		return -EINVAL;
--	}
+ 	if ((type & IRQ_TYPE_EDGE_BOTH)) {
+@@ -281,10 +277,11 @@ static irqreturn_t adp5588_irq_handler(int irq, void *devid)
+ 
+ 			while (pending) {
+ 				if (pending & (1 << bit)) {
+-					handle_nested_irq(dev->irq_base +
+-							  (bank << 3) + bit);
++					handle_nested_irq(
++						irq_find_mapping(
++						   dev->gpio_chip.irq.domain,
++						   (bank << 3) + bit));
+ 					pending &= ~(1 << bit);
 -
- 	bank = ADP5588_BANK(gpio);
- 	bit = ADP5588_BIT(gpio);
- 
--	if (type & IRQ_TYPE_LEVEL_HIGH)
--		dev->int_lvl[bank] |= bit;
--	else if (type & IRQ_TYPE_LEVEL_LOW)
--		dev->int_lvl[bank] &= ~bit;
--	else
--		return -EINVAL;
-+	dev->int_lvl_low[bank] &= ~bit;
-+	dev->int_lvl_high[bank] &= ~bit;
-+
-+	if (type & IRQ_TYPE_EDGE_BOTH || type & IRQ_TYPE_LEVEL_HIGH)
-+		dev->int_lvl_high[bank] |= bit;
-+
-+	if (type & IRQ_TYPE_EDGE_BOTH || type & IRQ_TYPE_LEVEL_LOW)
-+		dev->int_lvl_low[bank] |= bit;
- 
- 	dev->int_input_en[bank] |= bit;
- 
-@@ -249,41 +238,32 @@ static struct irq_chip adp5588_irq_chip = {
- 	.irq_set_type		= adp5588_irq_set_type,
- };
- 
--static int adp5588_gpio_read_intstat(struct i2c_client *client, u8 *buf)
--{
--	int ret = i2c_smbus_read_i2c_block_data(client, GPIO_INT_STAT1, 3, buf);
--
--	if (ret < 0)
--		dev_err(&client->dev, "Read INT_STAT Error\n");
--
--	return ret;
--}
--
- static irqreturn_t adp5588_irq_handler(int irq, void *devid)
- {
- 	struct adp5588_gpio *dev = devid;
--	unsigned status, bank, bit, pending;
--	int ret;
--	status = adp5588_gpio_read(dev->client, INT_STAT);
-+	int status = adp5588_gpio_read(dev->client, INT_STAT);
- 
--	if (status & ADP5588_GPI_INT) {
--		ret = adp5588_gpio_read_intstat(dev->client, dev->irq_stat);
--		if (ret < 0)
--			memset(dev->irq_stat, 0, ARRAY_SIZE(dev->irq_stat));
-+	if (status & ADP5588_KE_INT) {
-+		int ev_cnt = adp5588_gpio_read(dev->client, KEY_LCK_EC_STAT);
- 
--		for (bank = 0, bit = 0; bank <= ADP5588_BANK(ADP5588_MAXGPIO);
--			bank++, bit = 0) {
--			pending = dev->irq_stat[bank] & dev->irq_mask[bank];
-+		if (ev_cnt > 0) {
-+			int i;
- 
--			while (pending) {
--				if (pending & (1 << bit)) {
--					handle_nested_irq(
--						irq_find_mapping(
--						   dev->gpio_chip.irq.domain,
--						   (bank << 3) + bit));
--					pending &= ~(1 << bit);
--				}
--				bit++;
-+			for (i = 0; i < (ev_cnt & ADP5588_KEC); i++) {
-+				int key = adp5588_gpio_read(dev->client,
-+							    Key_EVENTA + i);
-+				/* GPIN events begin at 97,
-+				 * bit 7 indicates logic level
-+				 */
-+				int gpio = (key & 0x7f) - 97;
-+				int lvl = key & (1 << 7);
-+				int bank = ADP5588_BANK(gpio);
-+				int bit = ADP5588_BIT(gpio);
-+
-+				if ((lvl && dev->int_lvl_high[bank] & bit) ||
-+				    (!lvl && dev->int_lvl_low[bank] & bit))
-+					handle_nested_irq(irq_find_mapping(
-+					      dev->gpio_chip.irq.domain, gpio));
+ 				}
+ 				bit++;
  			}
- 		}
- 	}
-@@ -303,7 +283,6 @@ static int adp5588_irq_setup(struct adp5588_gpio *dev)
+@@ -299,53 +296,43 @@ static irqreturn_t adp5588_irq_handler(int irq, void *devid)
+ static int adp5588_irq_setup(struct adp5588_gpio *dev)
+ {
+ 	struct i2c_client *client = dev->client;
++	int ret;
+ 	struct adp5588_gpio_platform_data *pdata =
+ 			dev_get_platdata(&client->dev);
+-	unsigned gpio;
+-	int ret;
++	int irq_base = pdata ? pdata->irq_base : 0;
  
  	adp5588_gpio_write(client, CFG, ADP5588_AUTO_INC);
  	adp5588_gpio_write(client, INT_STAT, -1); /* status is W1C */
--	adp5588_gpio_read_intstat(client, dev->irq_stat); /* read to clear */
+ 	adp5588_gpio_read_intstat(client, dev->irq_stat); /* read to clear */
  
+-	dev->irq_base = pdata->irq_base;
  	mutex_init(&dev->irq_lock);
  
-@@ -330,7 +309,7 @@ static int adp5588_irq_setup(struct adp5588_gpio *dev)
- 				    client->irq);
+-	for (gpio = 0; gpio < dev->gpio_chip.ngpio; gpio++) {
+-		int irq = gpio + dev->irq_base;
+-		irq_set_chip_data(irq, dev);
+-		irq_set_chip_and_handler(irq, &adp5588_irq_chip,
+-					 handle_level_irq);
+-		irq_set_nested_thread(irq, 1);
+-		irq_modify_status(irq, IRQ_NOREQUEST, IRQ_NOPROBE);
+-	}
+-
+-	ret = request_threaded_irq(client->irq,
+-				   NULL,
+-				   adp5588_irq_handler,
+-				   IRQF_TRIGGER_FALLING | IRQF_ONESHOT,
+-				   dev_name(&client->dev), dev);
++	ret = devm_request_threaded_irq(&client->dev, client->irq,
++					NULL, adp5588_irq_handler, IRQF_ONESHOT
++					| IRQF_TRIGGER_FALLING | IRQF_SHARED,
++					dev_name(&client->dev), dev);
+ 	if (ret) {
+ 		dev_err(&client->dev, "failed to request irq %d\n",
+ 			client->irq);
+-		goto out;
++		return ret;
+ 	}
++	ret = gpiochip_irqchip_add_nested(&dev->gpio_chip,
++					  &adp5588_irq_chip, irq_base,
++					  handle_simple_irq,
++					  IRQ_TYPE_NONE);
++	if (ret) {
++		dev_err(&client->dev,
++			"could not connect irqchip to gpiochip\n");
++		return ret;
++	}
++	gpiochip_set_nested_irqchip(&dev->gpio_chip,
++				    &adp5588_irq_chip,
++				    client->irq);
  
+-	dev->gpio_chip.to_irq = adp5588_gpio_to_irq;
  	adp5588_gpio_write(client, CFG,
--		ADP5588_AUTO_INC | ADP5588_INT_CFG | ADP5588_GPI_INT);
-+		ADP5588_AUTO_INC | ADP5588_INT_CFG | ADP5588_KE_IEN);
+ 		ADP5588_AUTO_INC | ADP5588_INT_CFG | ADP5588_GPI_INT);
  
  	return 0;
+-
+-out:
+-	dev->irq_base = 0;
+-	return ret;
+-}
+-
+-static void adp5588_irq_teardown(struct adp5588_gpio *dev)
+-{
+-	if (dev->irq_base)
+-		free_irq(dev->client->irq, dev);
  }
+ 
+ #else
+@@ -357,24 +344,16 @@ static int adp5588_irq_setup(struct adp5588_gpio *dev)
+ 	return 0;
+ }
+ 
+-static void adp5588_irq_teardown(struct adp5588_gpio *dev)
+-{
+-}
+ #endif /* CONFIG_GPIO_ADP5588_IRQ */
+ 
+-static int adp5588_gpio_probe(struct i2c_client *client,
+-					const struct i2c_device_id *id)
++static int adp5588_gpio_probe(struct i2c_client *client)
+ {
+ 	struct adp5588_gpio_platform_data *pdata =
+ 			dev_get_platdata(&client->dev);
+ 	struct adp5588_gpio *dev;
+ 	struct gpio_chip *gc;
+ 	int ret, i, revid;
+-
+-	if (!pdata) {
+-		dev_err(&client->dev, "missing platform data\n");
+-		return -ENODEV;
+-	}
++	unsigned int pullup_dis_mask = 0;
+ 
+ 	if (!i2c_check_functionality(client->adapter,
+ 					I2C_FUNC_SMBUS_BYTE_DATA)) {
+@@ -394,18 +373,24 @@ static int adp5588_gpio_probe(struct i2c_client *client,
+ 	gc->get = adp5588_gpio_get_value;
+ 	gc->set = adp5588_gpio_set_value;
+ 	gc->can_sleep = true;
++	gc->base = -1;
++	gc->parent = &client->dev;
++
++	if (pdata) {
++		gc->base = pdata->gpio_start;
++		gc->names = pdata->names;
++		pullup_dis_mask = pdata->pullup_dis_mask;
++	}
+ 
+-	gc->base = pdata->gpio_start;
+ 	gc->ngpio = ADP5588_MAXGPIO;
+ 	gc->label = client->name;
+ 	gc->owner = THIS_MODULE;
+-	gc->names = pdata->names;
+ 
+ 	mutex_init(&dev->lock);
+ 
+ 	ret = adp5588_gpio_read(dev->client, DEV_ID);
+ 	if (ret < 0)
+-		goto err;
++		return ret;
+ 
+ 	revid = ret & ADP5588_DEVICE_ID_MASK;
+ 
+@@ -414,30 +399,27 @@ static int adp5588_gpio_probe(struct i2c_client *client,
+ 		dev->dir[i] = adp5588_gpio_read(client, GPIO_DIR1 + i);
+ 		ret |= adp5588_gpio_write(client, KP_GPIO1 + i, 0);
+ 		ret |= adp5588_gpio_write(client, GPIO_PULL1 + i,
+-				(pdata->pullup_dis_mask >> (8 * i)) & 0xFF);
++				(pullup_dis_mask >> (8 * i)) & 0xFF);
+ 		ret |= adp5588_gpio_write(client, GPIO_INT_EN1 + i, 0);
+ 		if (ret)
+-			goto err;
++			return ret;
+ 	}
+ 
+-	if (pdata->irq_base) {
++	if (client->irq) {
+ 		if (WA_DELAYED_READOUT_REVID(revid)) {
+ 			dev_warn(&client->dev, "GPIO int not supported\n");
+ 		} else {
+ 			ret = adp5588_irq_setup(dev);
+ 			if (ret)
+-				goto err;
++				return ret;
+ 		}
+ 	}
+ 
+ 	ret = devm_gpiochip_add_data(&client->dev, &dev->gpio_chip, dev);
+ 	if (ret)
+-		goto err_irq;
++		return ret;
+ 
+-	dev_info(&client->dev, "IRQ Base: %d Rev.: %d\n",
+-			pdata->irq_base, revid);
+-
+-	if (pdata->setup) {
++	if (pdata && pdata->setup) {
+ 		ret = pdata->setup(client, gc->base, gc->ngpio, pdata->context);
+ 		if (ret < 0)
+ 			dev_warn(&client->dev, "setup failed, %d\n", ret);
+@@ -446,11 +428,6 @@ static int adp5588_gpio_probe(struct i2c_client *client,
+ 	i2c_set_clientdata(client, dev);
+ 
+ 	return 0;
+-
+-err_irq:
+-	adp5588_irq_teardown(dev);
+-err:
+-	return ret;
+ }
+ 
+ static int adp5588_gpio_remove(struct i2c_client *client)
+@@ -460,7 +437,7 @@ static int adp5588_gpio_remove(struct i2c_client *client)
+ 	struct adp5588_gpio *dev = i2c_get_clientdata(client);
+ 	int ret;
+ 
+-	if (pdata->teardown) {
++	if (pdata && pdata->teardown) {
+ 		ret = pdata->teardown(client,
+ 				      dev->gpio_chip.base, dev->gpio_chip.ngpio,
+ 				      pdata->context);
+@@ -470,7 +447,7 @@ static int adp5588_gpio_remove(struct i2c_client *client)
+ 		}
+ 	}
+ 
+-	if (dev->irq_base)
++	if (dev->client->irq)
+ 		free_irq(dev->client->irq, dev);
+ 
+ 	return 0;
+@@ -480,14 +457,22 @@ static const struct i2c_device_id adp5588_gpio_id[] = {
+ 	{DRV_NAME, 0},
+ 	{}
+ };
+-
+ MODULE_DEVICE_TABLE(i2c, adp5588_gpio_id);
+ 
++#ifdef CONFIG_OF
++static const struct of_device_id adp5588_gpio_of_id[] = {
++	{ .compatible = "adi," DRV_NAME, },
++	{},
++};
++MODULE_DEVICE_TABLE(of, adp5588_gpio_of_id);
++#endif
++
+ static struct i2c_driver adp5588_gpio_driver = {
+ 	.driver = {
+-		   .name = DRV_NAME,
+-		   },
+-	.probe = adp5588_gpio_probe,
++		.name = DRV_NAME,
++		.of_match_table = of_match_ptr(adp5588_gpio_of_id),
++	},
++	.probe_new = adp5588_gpio_probe,
+ 	.remove = adp5588_gpio_remove,
+ 	.id_table = adp5588_gpio_id,
+ };
 -- 
 2.17.1
 
