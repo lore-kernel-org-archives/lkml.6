@@ -2,192 +2,226 @@ Return-Path: <SRS0=S+WB=KJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2C0AC67790
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 16:34:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D0FDC67790
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 16:36:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 768AF20852
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 16:34:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E7C58205C9
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 16:36:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="vYOWDogn"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 768AF20852
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HDb8+8qx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E7C58205C9
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729143AbeGYRqx (ORCPT
+        id S1729174AbeGYRse (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 13:46:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52586 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728694AbeGYRqx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Jul 2018 13:46:53 -0400
-Received: from mail-yw0-f182.google.com (mail-yw0-f182.google.com [209.85.161.182])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5722720852;
-        Wed, 25 Jul 2018 16:34:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1532536466;
-        bh=JWYuIpckcl1hQfAfk2lsVYXc/nJOjgvy6VEC10XmCuo=;
-        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
-        b=vYOWDogn2pKPG/ZM8gxgit99gmGOhbVFzY7cP9bEVyg8lIW/QSBbI4ifDqJN7lWoe
-         l7AMRoM9yXPknUr0AAMoAH5008rQPZUw1Bh7AVbVbbqsEYfHW/Z5BkVNpvgP7mVawH
-         mytKIeT7O4fAHE1u5qfCUVUQDQxotePhnCM6CcjY=
-Received: by mail-yw0-f182.google.com with SMTP id l189-v6so3077386ywb.10;
-        Wed, 25 Jul 2018 09:34:26 -0700 (PDT)
-X-Gm-Message-State: AOUpUlHnpm2GwE+knNRVujdjQc1ahEahuXU4ikosVQjz97WU7QfO487w
-        sHuPu30Iec2JaOU1X84mKmL4/MtRKTH7EDi2Fjo=
-X-Google-Smtp-Source: AAOMgpf3oIqnArJpHjK5fXQTMw/VcEgPPSNrpTDpxb794/V8fgrAq0a67iaRYUP7cELqj/+Zawd40r7iHfyg0pmytiI=
-X-Received: by 2002:a81:a348:: with SMTP id a69-v6mr11382764ywh.142.1532536465512;
- Wed, 25 Jul 2018 09:34:25 -0700 (PDT)
+        Wed, 25 Jul 2018 13:48:34 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:37889 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728633AbeGYRse (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Jul 2018 13:48:34 -0400
+Received: by mail-pg1-f194.google.com with SMTP id k3-v6so5665750pgq.5;
+        Wed, 25 Jul 2018 09:36:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=uRW9tXOESlyDOols04phrpGyAxDfY+aDQxt9u7DKkN4=;
+        b=HDb8+8qxQEUa66llF4VFYoo1h1dIfOe5KvwL8sG//6lQJaQz4lzrqvn5PFBULam425
+         lnfzC4ugm/9MGKgmOxLrytEwhcffIpV3j7dAsYcUvWnPcsLYusdJCxJhULTKoXV0JoxB
+         9VTuUKaQM4cR18OzgEdD+UWBhdfvNj0PYp8Ct5sxBTkthEpixZ54V1NTow4dffDz+Lqg
+         ZuNImc4OrjuOeX3mxFC9OuiPxa8PYZE3AC551gqBJMD/JtWJ6wz7372/JqLW5jiXDZ1l
+         CEzEtK4ZAsSGmlPMGLqxr1JSE/0zEgiFA6cSQdQpXWQfP7Xpzm1isFAfg8zL/dVGqMWf
+         O45A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=uRW9tXOESlyDOols04phrpGyAxDfY+aDQxt9u7DKkN4=;
+        b=GnhdaDlXomyRCXeeu/4rFrR4WVCcDn4E5ety8WZ9oNGESNcj22iCaHWVJ0qs5wHTEl
+         O/tI3ZzRFAKUEkuSLoGTyZGoMaMRDnKlTNTLIGig1olj28Hz+ltbWEjDjyMeI/WHaa6d
+         ULwu76Pch7BhqdVvBFuc1iJyDaoiVQ+o/lmCIqfPwbOVs6IV81e85Jbrd0uUfsw85Me+
+         GF5wYfsgRzpVme16spbxIh8eGtyE8xYDgARwFszkz8T/MkLZoxafznnQHnKqcBLKu6Gk
+         ppgWocijYmL4O1LLUxCcsFyoRPckE89oFgUPmPNxgcFOKzKGkynIBvzUdwI/ehwlchCs
+         W/tg==
+X-Gm-Message-State: AOUpUlGR9PaPMRwb50QcxMty+3K8fLOuH5OP5Utuao+SHrdaq4j1zwYC
+        vgJ96REwTyr1kfgP/2x9yk8=
+X-Google-Smtp-Source: AAOMgpcM/zq5gWgt7oQfXSkJCdCOnABQWw7mdpZ6pOp7DvLkEHb2AgsWfREjqzVm7OXQfIuaL4T12A==
+X-Received: by 2002:a63:a919:: with SMTP id u25-v6mr21843546pge.211.1532536566873;
+        Wed, 25 Jul 2018 09:36:06 -0700 (PDT)
+Received: from localhost (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
+        by smtp.gmail.com with ESMTPSA id u2-v6sm20675668pfn.59.2018.07.25.09.36.05
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 25 Jul 2018 09:36:06 -0700 (PDT)
+Date:   Wed, 25 Jul 2018 09:36:04 -0700
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Eddie James <eajames@linux.vnet.ibm.com>
+Cc:     linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-doc@vger.kernel.org,
+        gregkh@linuxfoundation.org, benh@kernel.crashing.org,
+        jdelvare@suse.com, mark.rutland@arm.com, openbmc@lists.ozlabs.org,
+        robh+dt@kernel.org, joel@jms.id.au
+Subject: Re: [PATCH v4 2/9] Documentation: hwmon: Add OCC documentation
+Message-ID: <20180725163604.GA21332@roeck-us.net>
+References: <1531342898-15790-1-git-send-email-eajames@linux.vnet.ibm.com>
+ <1531342898-15790-3-git-send-email-eajames@linux.vnet.ibm.com>
 MIME-Version: 1.0
-Received: by 2002:a25:8182:0:0:0:0:0 with HTTP; Wed, 25 Jul 2018 09:33:44
- -0700 (PDT)
-In-Reply-To: <CANk1AXRewvAAxRi=kmCNL3CEki9ODk7LvLS6q8Hd64JRanyfew@mail.gmail.com>
-References: <5553262.evi6GU8epL@pcbe13614> <CANk1AXRewvAAxRi=kmCNL3CEki9ODk7LvLS6q8Hd64JRanyfew@mail.gmail.com>
-From:   Alan Tull <atull@kernel.org>
-Date:   Wed, 25 Jul 2018 11:33:44 -0500
-X-Gmail-Original-Message-ID: <CANk1AXRYAPMgvFo-oLEz0-WwUstTvKD5f0_5NkvKzEO3K1=f2Q@mail.gmail.com>
-Message-ID: <CANk1AXRYAPMgvFo-oLEz0-WwUstTvKD5f0_5NkvKzEO3K1=f2Q@mail.gmail.com>
-Subject: Re: fpga: fpga_mgr_free usage
-To:     federico.vaga@cern.ch
-Cc:     linux-fpga@vger.kernel.org,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1531342898-15790-3-git-send-email-eajames@linux.vnet.ibm.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 11, 2018 at 10:59 AM, Alan Tull <atull@kernel.org> wrote:
-> On Wed, Jul 11, 2018 at 7:38 AM, Federico Vaga <federico.vaga@cern.ch> wrote:
->
-> Hi Federico,
->
->> Hi Alan,
->>
->> I have another point that I would like to discuss. It is about the
->> usage of 'fpga_mgr_free()' which does not look like consistent.
->>
->> This function, according to the current implementation, can be used by
->> an FPGA manager user and it is used by the FPGA manager itself on
->> device release. This means that the user can only use this function if
->> fpga_mgr_register() fails (to clean up), otherwise the user must NOT
->> use this function, otherwise we most likely get an oops (NULL or
->> invalid pointer). The example here is correct, this is what we should
->> do:
->>
->> https://www.kernel.org/doc/html/latest/driver-api/fpga/fpga-mgr.html
->>
->> But I suggest to document it better or prevent this type of mistakes
->> from happening. Following a couple of proposals
->>
->> ------
->> 1.
->> Document it better. This is easy, in the fpga_mgr_free() kernel-doc
->> comment we explain that the use of this function must be limited to
->> clean up the memory on a registration failure. If an FPGA manager has
->> been successfully registered then it will be freed by the framework
->> itself.
+On Wed, Jul 11, 2018 at 04:01:31PM -0500, Eddie James wrote:
+> Document the hwmon interface for the OCC.
+> 
+> Signed-off-by: Eddie James <eajames@linux.vnet.ibm.com>
+> ---
+>  Documentation/hwmon/occ | 73 +++++++++++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 73 insertions(+)
+>  create mode 100644 Documentation/hwmon/occ
+> 
+> diff --git a/Documentation/hwmon/occ b/Documentation/hwmon/occ
+> new file mode 100644
+> index 0000000..465fa1a
+> --- /dev/null
+> +++ b/Documentation/hwmon/occ
+> @@ -0,0 +1,73 @@
+> +Kernel driver occ-hwmon
+> +=======================
+> +
+> +Supported chips:
+> +  * POWER8
+> +  * POWER9
+> +
+> +Author: Eddie James <eajames@linux.vnet.ibm.com>
+> +
+> +Description
+> +-----------
+> +
+> +This driver supports hardware monitoring for the On-Chip Controller (OCC)
+> +embedded on POWER processors. The OCC is a device that collects and aggregates
+> +sensor data from the processor and the system. The OCC can provide the raw
+> +sensor data as well as perform thermal and power management on the system.
+> +
+> +The P8 version of this driver is a client driver of I2C. It may be probed
+> +manually if an "ibm,p8-occ-hwmon" compatible device is found under the
+> +appropriate I2C bus node in the device-tree.
+> +
+> +The P9 version of this driver is a client driver of the FSI-based OCC driver.
+> +It will be probed automatically by the FSI-based OCC driver.
+> +
+> +Sysfs entries
+> +-------------
+> +
+> +The following attributes are supported. All attributes are read-only unless
+> +specified.
+> +
+> +temp[1-n]_label		OCC sensor id.
+> +temp[1-n]_input		Measured temperature in millidegrees C.
+> +[with temperature sensor version 2+]
+> +    temp[1-n]_fru_type		Given FRU (Field Replaceable Unit) type.
 
-As I was researching this, I remembered why I implemented it this way.
-  See below for that explanation.
+What is this ? An integer ? A string ?
 
-It looks like I'm going to switch to option 1 here and add more
-documentation for both fpga_mgr_free() and fpga_mgr_unregister().
-Note that fpga_mgr_unregister() already says that that it frees the
-manager, and the usage example already does the right thing, but I'll
-add more words to really beat the message in.
+> +    temp[1-n]_fault		Temperature sensor fault.
+> +
+> +freq[1-n]_label		OCC sensor id.
+> +freq[1-n]_input		Measured frequency.
 
->>
->> But still, this does not prevent an oops from happening.
->> ------
->> 2.
->> Remove the fpga_mgr_free() from fpga_mgr_dev_release() and ask the
->> user to free the manager when necessary.
->>
->> This makes the usage consistent: the user creates and destroy its own
->> objects. This is also consistent with our other discussion where we
->> said, among the other things, that the module that uses the FPGA
->> manager can the owner of the fpga_manager data structure.
->
-> You're not the first to complain about this.  I think I'll err on the
-> side of consistency and implement your option 2 here.
->
-> Alan
+What does that have to do with hardware monitoring, and what exactly does it
+measure ? AC voltage frequency ? Frequency of rainstorms in the surrounding
+area ?
 
-If you write a class or create a device, the kernel wants a release
-function and will give a warning if you leave it out.  The warning is
-"Device 'fpga0' does not have a release() function, it is broken and
-must be fixed." and comes from drivers/base/core.c.
+> +
+> +power[1-n]_label	OCC sensor id.
+> +power[1-n]_input	Measured power in microwatts.
+> +power[1-n]_update_tag	Number of 250us samples represented in accumulator.
 
-I will add some more documentation to make it clear that once a a
-mgr/bridge/region has been registered, the cleanup will be handled
-automatically when the device goes away.  Until the
-fpga_(mgr|bridge|region)_register succeeds, the caller still needs to
-do cleanup.
+update_tag to represent number of samples ? Odd choice for
+an attribute name. Why not "_samples" ? Also, if each sample
+represents a specific amount of time, why not report a time ?
 
-I did find one bug while looking at this.  I'll post some patches.
+> +power[1-n]_accumulator	Accumulation of 250us power readings.
 
-Full message was:
-root@cyclone5:~# rmmod socfpga
-[   48.206235] fpga_manager fpga0: fpga_mgr_unregister Altera SOCFPGA
-FPGA Manager
-[   48.213677] ------------[ cut here ]------------
-[   48.218312] WARNING: CPU: 1 PID: 1369 at
-/home/atull/repos/linux-socfpga/drivers/base/core.c:895
-device_release+0x9c/0xa0
-[   48.229293] Device 'fpga0' does not have a release() function, it
-is broken and must be fixed.
-[   48.237904] Modules linked in: socfpga(-) altera_hps2fpga fpga_mgr
-fpga_bridge [last unloaded: fpga_region]
-[   48.247659] CPU: 1 PID: 1369 Comm: rmmod Not tainted
-4.18.0-rc5-next-20180717-00012-ge5f548e-dirty #3
-[   48.256843] Hardware name: Altera SOCFPGA
-[   48.260858] [<c01137ac>] (unwind_backtrace) from [<c010dc04>]
-(show_stack+0x20/0x24)
-[   48.268582] [<c010dc04>] (show_stack) from [<c07d448c>]
-(dump_stack+0x8c/0xa0)
-[   48.275786] [<c07d448c>] (dump_stack) from [<c0123bc0>] (__warn+0x104/0x11c)
-[   48.282810] [<c0123bc0>] (__warn) from [<c0123c2c>]
-(warn_slowpath_fmt+0x54/0x70)
-[   48.290269] [<c0123c2c>] (warn_slowpath_fmt) from [<c052c9cc>]
-(device_release+0x9c/0xa0)
-[   48.298418] [<c052c9cc>] (device_release) from [<c07d904c>]
-(kobject_put+0xa8/0xe0)
-[   48.306047] [<c07d904c>] (kobject_put) from [<c052ec3c>]
-(device_unregister+0x2c/0x30)
-[   48.313939] [<c052ec3c>] (device_unregister) from [<bf01262c>]
-(fpga_mgr_unregister+0x58/0x74 [fpga_mgr])
-[   48.323475] [<bf01262c>] (fpga_mgr_unregister [fpga_mgr]) from
-[<bf02b01c>] (socfpga_fpga_remove+0x1c/0x24 [socfpga])
-[   48.334047] [<bf02b01c>] (socfpga_fpga_remove [socfpga]) from
-[<c0534be8>] (platform_drv_remove+0x34/0x4c)
-[   48.343664] [<c0534be8>] (platform_drv_remove) from [<c0532f64>]
-(device_release_driver_internal+0x180/0x230)
-[   48.353538] [<c0532f64>] (device_release_driver_internal) from
-[<c0533090>] (driver_detach+0x58/0xa0)
-[   48.362720] [<c0533090>] (driver_detach) from [<c0531bf8>]
-(bus_remove_driver+0x5c/0xb4)
-[   48.370781] [<c0531bf8>] (bus_remove_driver) from [<c0533a70>]
-(driver_unregister+0x38/0x58)
-[   48.379186] [<c0533a70>] (driver_unregister) from [<c0534cd0>]
-(platform_driver_unregister+0x1c/0x20)
-[   48.388370] [<c0534cd0>] (platform_driver_unregister) from
-[<bf02b688>] (socfpga_fpga_driver_exit+0x18/0x990 [socfpga])
-[   48.399113] [<bf02b688>] (socfpga_fpga_driver_exit [socfpga]) from
-[<c01ad948>] (sys_delete_module+0x1a0/0x1f0)
-[   48.409164] [<c01ad948>] (sys_delete_module) from [<c0101000>]
-(ret_fast_syscall+0x0/0x54)
-[   48.417391] Exception stack(0xee6dbfa8 to 0xee6dbff0)
-[   48.422424] bfa0:                   0001dce0 beba4be0 0001dd1c
-00000800 0000000a 80080000
-[   48.430568] bfc0: 0001dce0 beba4be0 00000000 00000081 0001c22c
-00000000 00000001 beba4dcc
-[   48.438708] bfe0: b6ecdd00 beba4b9c 00012b43 b6ecdd0c
-[   48.443773] ---[ end trace bcf003ed0f464330 ]---
+There is no explanation of "accumulation". Is this the energy ?
+If so, why not use energy attributes ? And what is the unit of
+this measurement ?
 
-Alan
+> +[with power sensor version 2+]
+> +    power[1-n]_function_id	Identifies what the power reading is for.
+
+String ? Number ? Slot index ?  Bitmap ? And why isn't that reported
+in the label ? After all, that is what the label is supposed to be
+used for.
+
+> +    power[1-n]_apss_channel	Indicates APSS channel.
+> +
+
+Does that provide any value to the user ?
+
+> +[power version 0xa0 only]
+> +power1_id			OCC sensor id.
+
+This is inconsistent with the other attributes and even with itself.
+
+> +power[1-n]_label		Sensor type, "system", "proc", "vdd", or "vdn".
+> +power[1-n]_input		Most recent power reading in microwatts.
+
+Overall I am left with no idea what
+	_id
+	_label
+	_function_id
+	_apps_channel
+are and how they relate to each other, except that it all looks quite
+inconsistent. You might want to consider merging all those attributes into
+the label in some consistent way.
+
+> +power[1-n]_update_tag		Number of samples in the accumulator.
+> +power[1-n]_accumulator		Accumulation of power readings.
+
+Same as above.
+
+> +[with sensor type "system" and "proc" only]
+> +    power[1-n]_update_time	Time in us that the power value is read.
+> +
+> +caps1_current		Current OCC power cap in watts.
+> +caps1_reading		Current system output power in watts.
+> +caps1_norm		Power cap without redundant power.
+> +caps1_max		Maximum power cap.
+
+Why do those have to be non-standard attributes ? Please explain why you can not
+use power[1-n]_cap attributes.
+
+> +[caps version 1 and 2 only]
+> +    caps1_min		Minimum power cap.
+> +[caps version 3+]
+> +    caps1_min_hard		Hard minimum cap that can be set and held.
+> +    caps1_min_soft		Soft minimum cap below hard, not guaranteed.
+> +caps1_user		The powercap specified by the user. Will be 0 if no
+> +			user powercap exists. This attribute is read-write.
+> +[caps version 1+]
+> +    caps1_user_source	Indicates how the user power limit was set.
+> +
+> +extn[1-n]_label		ASCII id or sensor id.
+> +extn[1-n]_flags		Indicates type of label attribute.
+> +extn[1-n]_input		Data.
+
+Great non-explanation.
+
+Not reviewing the series further. I am sure I asked that each non-standard
+attribute is explained. There is neither an explanation why the attributes
+are needed nor, in many cases, why non-standard attributes were chosen
+instead of standard ones. On top of that, the non-standard attributes are
+not even documented properly, leaving the reader wondering not only why
+they are needed, but what they are used for in the first place.
+
+Guenter
