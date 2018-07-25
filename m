@@ -2,174 +2,106 @@ Return-Path: <SRS0=S+WB=KJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9F46C67790
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 13:35:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38EF2C6778F
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 13:38:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7342520843
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 13:35:51 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Shq3/FAj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7342520843
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id E1FD920882
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 13:38:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E1FD920882
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729112AbeGYOrb (ORCPT
+        id S1729056AbeGYOuS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 10:47:31 -0400
-Received: from mail-yw0-f194.google.com ([209.85.161.194]:39014 "EHLO
-        mail-yw0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728993AbeGYOrb (ORCPT
+        Wed, 25 Jul 2018 10:50:18 -0400
+Received: from gateway31.websitewelcome.com ([192.185.143.47]:15324 "EHLO
+        gateway31.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728529AbeGYOuR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Jul 2018 10:47:31 -0400
-Received: by mail-yw0-f194.google.com with SMTP id r184-v6so2853057ywg.6
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Jul 2018 06:35:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=xoDt6cy2T5WyyNkUfyTtgcdzdSwDUsDnlAppuiyTyiY=;
-        b=Shq3/FAjlmNXU0EEcCKXRv02AJZHlr4h79/F2LfGKVXqgMVvmBFBHVc8kSJpRL/xSg
-         XJTCUyswZAkqD+/aK2Xu6DvwtFmyNeN0h54s7haHEmQv/Gw9Nm+Y28o7BYgXef8quvyI
-         B79+NBuYFyVtbKrOTQb9ViITyKENrr9axrjFs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=xoDt6cy2T5WyyNkUfyTtgcdzdSwDUsDnlAppuiyTyiY=;
-        b=j4v2g1PtWtWfkoLX1qF01W2peZg5ngPMlDT+0+eBqoUirGm0pChXC6KwBNU/rl12wx
-         8tFC9CgXK/WFihDsoCn29x/I6Beiu566EaMsaJ5tu2Z5OiTIA3buiwXR7kbnM0SkZ+4R
-         bHHPf869EPDP22n7ZEI+AjJ/r1XuOAjJKlDVIJhZAVE0pDRkF4oOLBsnoHArcONJ1oxo
-         WB/ycvR0+vDySd9YjB/bXWDvX+LuUPNM5W51ymkAtB5E7Q476DVgT3Ym86xI8dJHFgVt
-         4iimbtKeo5Aab86/mr+pND0RQzCcTD3Xb7GtCBCPC2Z9239gfO87GGu1DjfVagJLPEgr
-         ca8g==
-X-Gm-Message-State: AOUpUlE0EUIYgtTvDV3VIrmCCJd328dJgXSuPKVb8PP2h1GlxVPY1Dku
-        SGuqRRScNeMUzE2K4t0CTy7lvWMRZH1Jbw==
-X-Google-Smtp-Source: AAOMgpdGZY90SyM7cCmabOCVSuOpTvpAt5NpfcFv2ejwJi12ZW4qQnfbtvxrrswwAmljnPCT+cXhbQ==
-X-Received: by 2002:a81:4990:: with SMTP id w138-v6mr10755180ywa.372.1532525747633;
-        Wed, 25 Jul 2018 06:35:47 -0700 (PDT)
-Received: from mail-yb0-f169.google.com (mail-yb0-f169.google.com. [209.85.213.169])
-        by smtp.gmail.com with ESMTPSA id r69-v6sm6818828ywh.44.2018.07.25.06.35.46
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 25 Jul 2018 06:35:46 -0700 (PDT)
-Received: by mail-yb0-f169.google.com with SMTP id e84-v6so2986481ybb.0
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Jul 2018 06:35:46 -0700 (PDT)
-X-Received: by 2002:a25:207:: with SMTP id 7-v6mr11378997ybc.7.1532525745776;
- Wed, 25 Jul 2018 06:35:45 -0700 (PDT)
+        Wed, 25 Jul 2018 10:50:17 -0400
+Received: from cm10.websitewelcome.com (cm10.websitewelcome.com [100.42.49.4])
+        by gateway31.websitewelcome.com (Postfix) with ESMTP id 6575410894
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Jul 2018 08:38:34 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id iJzuf4HgUBcCXiJzufhtql; Wed, 25 Jul 2018 08:38:34 -0500
+X-Authority-Reason: nr=8
+Received: from [189.250.102.68] (port=38786 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1fiJzu-004Agd-0X; Wed, 25 Jul 2018 08:38:34 -0500
+Date:   Wed, 25 Jul 2018 08:38:32 -0500
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        linux-kernel@vger.kernel.org
+Cc:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH] fsi: master-ast-cf: Fix memory leak
+Message-ID: <20180725133832.GA20837@embeddedor.com>
 MIME-Version: 1.0
-References: <20180724140621.59624-1-tfiga@chromium.org> <1532525286.4879.5.camel@pengutronix.de>
-In-Reply-To: <1532525286.4879.5.camel@pengutronix.de>
-From:   Tomasz Figa <tfiga@chromium.org>
-Date:   Wed, 25 Jul 2018 22:35:34 +0900
-X-Gmail-Original-Message-ID: <CAAFQd5DJXucCFGUadNUiEboWLGrFF330KX9a4xJPONv6J4yidg@mail.gmail.com>
-Message-ID: <CAAFQd5DJXucCFGUadNUiEboWLGrFF330KX9a4xJPONv6J4yidg@mail.gmail.com>
-Subject: Re: [PATCH 0/2] Document memory-to-memory video codec interfaces
-To:     Philipp Zabel <p.zabel@pengutronix.de>
-Cc:     Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Pawel Osciak <posciak@chromium.org>,
-        Alexandre Courbot <acourbot@chromium.org>, kamil@wypas.org,
-        a.hajda@samsung.com, Kyungmin Park <kyungmin.park@samsung.com>,
-        jtp.park@samsung.com,
-        =?UTF-8?B?VGlmZmFueSBMaW4gKOael+aFp+ePiik=?= 
-        <tiffany.lin@mediatek.com>,
-        =?UTF-8?B?QW5kcmV3LUNUIENoZW4gKOmZs+aZuui/qik=?= 
-        <andrew-ct.chen@mediatek.com>, todor.tomov@linaro.org,
-        nicolas@ndufresne.ca,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        dave.stevenson@raspberrypi.org,
-        Ezequiel Garcia <ezequiel@collabora.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.102.68
+X-Source-L: No
+X-Exim-ID: 1fiJzu-004Agd-0X
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [189.250.102.68]:38786
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 2
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Philipp,
+In case memory resources for *fw* were allocated, release them
+before return.
 
-On Wed, Jul 25, 2018 at 10:28 PM Philipp Zabel <p.zabel@pengutronix.de> wro=
-te:
->
-> Hi Tomasz,
->
-> On Tue, 2018-07-24 at 23:06 +0900, Tomasz Figa wrote:
-> > This series attempts to add the documentation of what was discussed
-> > during Media Workshops at LinuxCon Europe 2012 in Barcelona and then
-> > later Embedded Linux Conference Europe 2014 in D=C3=BCsseldorf and then
-> > eventually written down by Pawel Osciak and tweaked a bit by Chrome OS
-> > video team (but mostly in a cosmetic way or making the document more
-> > precise), during the several years of Chrome OS using the APIs in
-> > production.
-> >
-> > Note that most, if not all, of the API is already implemented in
-> > existing mainline drivers, such as s5p-mfc or mtk-vcodec. Intention of
-> > this series is just to formalize what we already have.
-> >
-> > It is an initial conversion from Google Docs to RST, so formatting is
-> > likely to need some further polishing. It is also the first time for me
-> > to create such long RST documention. I could not find any other instanc=
-e
-> > of similar userspace sequence specifications among our Media documents,
-> > so I mostly followed what was there in the source. Feel free to suggest
-> > a better format.
-> >
-> > Much of credits should go to Pawel Osciak, for writing most of the
-> > original text of the initial RFC.
-> >
-> > Changes since RFC:
-> > (https://lore.kernel.org/patchwork/project/lkml/list/?series=3D348588)
-> >  - The number of changes is too big to list them all here. Thanks to
-> >    a huge number of very useful comments from everyone (Philipp, Hans,
-> >    Nicolas, Dave, Stanimir, Alexandre) we should have the interfaces mu=
-ch
-> >    more specified now. The issues collected since previous revisions an=
-d
-> >    answers leading to this revision are listed below.
->
-> Thanks a lot for the update, and especially for the nice Q&A summary of
-> the discussions so far.
->
-> [...]
-> > Decoder issues
-> >
-> [...]
-> >   How should ENUM_FRAMESIZES be affected by profiles and levels?
-> >
-> >   Answer: Not in current specification - the logic is too complicated a=
-nd
-> >   it might make more sense to actually handle this in user space.  (In
-> >   theory, level implies supported frame sizes + other factors.)
->
-> For decoding I think it makes more sense to let the hardware decode them
-> from the stream and present them as read-only controls, such as:
->
-> 42a68012e67c ("media: coda: add read-only h.264 decoder profile/level
-> controls")
+Addresses-Coverity-ID: 1472044 ("Resource leak")
+Fixes: 6a794a27daca ("fsi: master-ast-cf: Add new FSI master using Aspeed ColdFire")
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ drivers/fsi/fsi-master-ast-cf.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-To clarify, this point is only about the effect on ENUM_FRAMESIZES.
-Profile and level controls are mentioned in capabilities enumeration,
-but it may make sense to add optional steps of querying them in
-Initialization sequence.
+diff --git a/drivers/fsi/fsi-master-ast-cf.c b/drivers/fsi/fsi-master-ast-cf.c
+index c4a3557..e39a4630 100644
+--- a/drivers/fsi/fsi-master-ast-cf.c
++++ b/drivers/fsi/fsi-master-ast-cf.c
+@@ -861,7 +861,8 @@ static int load_copro_firmware(struct fsi_master_acf *master)
+ 	if (sig != wanted_sig) {
+ 		dev_err(master->dev, "Failed to locate image sig %04x in FW blob\n",
+ 			wanted_sig);
+-		return -ENODEV;
++		rc = -ENODEV;
++		goto release_fw;
+ 	}
+ 	if (size > master->cf_mem_size) {
+ 		dev_err(master->dev, "FW size (%zd) bigger than memory reserve (%zd)\n",
+@@ -870,8 +871,9 @@ static int load_copro_firmware(struct fsi_master_acf *master)
+ 	} else {
+ 		memcpy_toio(master->cf_mem, data, size);
+ 	}
+-	release_firmware(fw);
+ 
++release_fw:
++	release_firmware(fw);
+ 	return rc;
+ }
+ 
+-- 
+2.7.4
 
->
-> if possible. For encoding, the coda firmware determines level from
-> bitrate and coded resolution, itself, so I agree not making this part of
-> the spec is a good idea for now.
-
-Encoder controls are driver-specific in general, since the encoding
-capabilities vary a lot, so I decided to just briefly mention the
-general idea of encoding parameters in "Encoding parameter changes"
-section. It could be a good idea to add a reference to the MPEG
-control documentation there, though.
-
-Best regards,
-Tomasz
