@@ -2,148 +2,190 @@ Return-Path: <SRS0=S+WB=KJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 979EFC6778F
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 12:38:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 141A2C67790
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 12:39:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4215C20895
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 12:38:37 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="pZ8nn61j"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4215C20895
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id C7A6520843
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 12:39:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C7A6520843
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729013AbeGYNuG (ORCPT
+        id S1729054AbeGYNun (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 09:50:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57382 "EHLO mail.kernel.org"
+        Wed, 25 Jul 2018 09:50:43 -0400
+Received: from mga04.intel.com ([192.55.52.120]:10757 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728863AbeGYNuG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Jul 2018 09:50:06 -0400
-Received: from localhost (unknown [122.178.229.117])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C16B620894;
-        Wed, 25 Jul 2018 12:38:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1532522314;
-        bh=fBXOginqq4qlGAfn+SPO2ngJXbLyvIH4JFJF+Fq3t0I=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=pZ8nn61j3gnO6fhT3fduefxZEkgRRx8YGXQPp/QX99OtZiMUrozS8J8uCKipwkhFK
-         Nucf/NBJGO4HPu1S0YBfe2dmJk+14xi1IegNFiUIjjaGTs4VlLdv8HDSS2lgJCdg2q
-         w73Var4rEhHL+HTF2mK/9crrkuseOiYvTKC1trQY=
-Date:   Wed, 25 Jul 2018 18:08:26 +0530
-From:   Vinod <vkoul@kernel.org>
-To:     Huang Shijie <sjhuang@iluvatar.ai>
-Cc:     corbet@lwn.net, dan.j.williams@intel.com, robh@kernel.org,
-        linux-doc@vger.kernel.org, dmaengine@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] dmaengine: add a new helper dmam_async_device_register
-Message-ID: <20180725123826.GT3661@vkoul-mobl>
-References: <20180725054645.9723-1-sjhuang@iluvatar.ai>
+        id S1728667AbeGYNun (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Jul 2018 09:50:43 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Jul 2018 05:39:12 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,401,1526367600"; 
+   d="scan'208";a="57769477"
+Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.168]) ([10.237.72.168])
+  by fmsmga008.fm.intel.com with ESMTP; 25 Jul 2018 05:39:07 -0700
+Subject: Re: [PATCH V1 1/3] mmc: sdhci: Allow platform controlled voltage
+ switching
+To:     Vijay Viswanath <vviswana@codeaurora.org>, ulf.hansson@linaro.org,
+        robh+dt@kernel.org, mark.rutland@arm.com
+Cc:     linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        shawn.lin@rock-chips.com, linux-arm-msm@vger.kernel.org,
+        georgi.djakov@linaro.org, devicetree@vger.kernel.org,
+        asutoshd@codeaurora.org, stummala@codeaurora.org,
+        venkatg@codeaurora.org, jeremymc@redhat.com,
+        bjorn.andersson@linaro.org, riteshh@codeaurora.org,
+        vbadigan@codeaurora.org, evgreen@chromium.org, dianders@google.com,
+        sayalil@codeaurora.org, rampraka@codeaurora.org
+References: <1532083566-43215-1-git-send-email-vviswana@codeaurora.org>
+ <1532083566-43215-2-git-send-email-vviswana@codeaurora.org>
+ <33e12e51-4b96-032f-845f-7910d654018c@intel.com>
+ <42ee57f7-8a99-b815-12db-2727ed67872b@codeaurora.org>
+From:   Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+Message-ID: <e38df741-72dd-9e0e-2be3-22d4e516304c@intel.com>
+Date:   Wed, 25 Jul 2018 15:37:29 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180725054645.9723-1-sjhuang@iluvatar.ai>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <42ee57f7-8a99-b815-12db-2727ed67872b@codeaurora.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 25-07-18, 13:46, Huang Shijie wrote:
-> This patch adds the dmam_async_device_register for DMA code.
-> Use the Devres to call the release for the DMA engine driver.
+On 25/07/18 15:23, Vijay Viswanath wrote:
+> Hi Adrian,
+> 
+> 
+> On 7/25/2018 5:23 PM, Adrian Hunter wrote:
+>> On 20/07/18 13:46, Vijay Viswanath wrote:
+>>> Some controllers can have internal mechanism to inform the SW that it
+>>> is ready for voltage switching. For such controllers, changing voltage
+>>> before the HW is ready can result in various issues.
+>>>
+>>> During setup/cleanup of host, check whether regulator enable/disable
+>>> was already done by platform driver.
+>>>
+>>> Signed-off-by: Vijay Viswanath <vviswana@codeaurora.org>
+>>> ---
+>>>   drivers/mmc/host/sdhci.c | 21 ++++++++++++++++-----
+>>>   1 file changed, 16 insertions(+), 5 deletions(-)
+>>>
+>>> diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
+>>> index 1c828e0..494a1e2 100644
+>>> --- a/drivers/mmc/host/sdhci.c
+>>> +++ b/drivers/mmc/host/sdhci.c
+>>> @@ -3472,6 +3472,7 @@ int sdhci_setup_host(struct sdhci_host *host)
+>>>       unsigned int override_timeout_clk;
+>>>       u32 max_clk;
+>>>       int ret;
+>>> +    bool enable_vqmmc = false;
+>>>         WARN_ON(host == NULL);
+>>>       if (host == NULL)
+>>> @@ -3485,7 +3486,12 @@ int sdhci_setup_host(struct sdhci_host *host)
+>>>        * the host can take the appropriate action if regulators are not
+>>>        * available.
+>>>        */
+>>> -    ret = mmc_regulator_get_supply(mmc);
+>>> +    if (!mmc->supply.vmmc) {
+>>> +        ret = mmc_regulator_get_supply(mmc);
+>>> +        enable_vqmmc  = true;
+>>> +    } else {
+>>> +        ret = 0;
+>>> +    }
+>>>       if (ret)
+>>>           return ret;
+>>
+>> Why not
+>>
+>>     if (!mmc->supply.vmmc) {
+>>         ret = mmc_regulator_get_supply(mmc);
+>>           if (ret)
+>>                return ret;
+>>         enable_vqmmc  = true;
+>>     }
+>>
+> 
+> looks neater. Will do.
+> 
+>>>   @@ -3736,7 +3742,10 @@ int sdhci_setup_host(struct sdhci_host *host)
+>>>         /* If vqmmc regulator and no 1.8V signalling, then there's no UHS */
+>>>       if (!IS_ERR(mmc->supply.vqmmc)) {
+>>> -        ret = regulator_enable(mmc->supply.vqmmc);
+>>> +        if (enable_vqmmc)
+>>> +            ret = regulator_enable(mmc->supply.vqmmc);
+>>
+>> Please introduce host->vqmmc_enabled = !ret;
+>>
+> 
+> Any reason to introduce vqmmc_enabled variable in sdhci_host structure ? We
+> can get around with a local variable and using regulator_is_enabled API.
 
-no users?
+regulator_enable() uses reference counting, so we have to use
+regulator_disable() exactly the same number of times that we use
+regulator_enable().
 
 > 
-> Signed-off-by: Huang Shijie <sjhuang@iluvatar.ai>
-> ---
->  Documentation/driver-model/devres.txt |  1 +
->  drivers/dma/dmaengine.c               | 35 +++++++++++++++++++++++++++
->  include/linux/dmaengine.h             |  1 +
->  3 files changed, 37 insertions(+)
+>>> +        else
+>>> +            ret = 0;
+>>>           if (!regulator_is_supported_voltage(mmc->supply.vqmmc, 1700000,
+>>>                               1950000))
+>>>               host->caps1 &= ~(SDHCI_SUPPORT_SDR104 |
+>>> @@ -3984,7 +3993,7 @@ int sdhci_setup_host(struct sdhci_host *host)
+>>>       return 0;
+>>>     unreg:
+>>> -    if (!IS_ERR(mmc->supply.vqmmc))
+>>> +    if (!IS_ERR(mmc->supply.vqmmc) && enable_vqmmc)
+>>
+>> And just make this
+>>
+>>     if (host->vqmmc_enabled)
+>>
+>>>           regulator_disable(mmc->supply.vqmmc);
+>>>   undma:
+>>>       if (host->align_buffer)
+>>> @@ -4002,7 +4011,8 @@ void sdhci_cleanup_host(struct sdhci_host *host)
+>>>   {
+>>>       struct mmc_host *mmc = host->mmc;
+>>>   -    if (!IS_ERR(mmc->supply.vqmmc))
+>>> +    if (!IS_ERR(mmc->supply.vqmmc) &&
+>>> +            (regulator_is_enabled(mmc->supply.vqmmc) > 0))
+>>
+>>     if (host->vqmmc_enabled)
+>>
+>>>           regulator_disable(mmc->supply.vqmmc);
+>>>         if (host->align_buffer)
+>>> @@ -4135,7 +4145,8 @@ void sdhci_remove_host(struct sdhci_host *host, int
+>>> dead)
+>>>         tasklet_kill(&host->finish_tasklet);
+>>>   -    if (!IS_ERR(mmc->supply.vqmmc))
+>>> +    if (!IS_ERR(mmc->supply.vqmmc) &&
+>>> +            (regulator_is_enabled(mmc->supply.vqmmc) > 0))
+>>
+>>     if (host->vqmmc_enabled)
+>>
+>>>           regulator_disable(mmc->supply.vqmmc);
+>>>         if (host->align_buffer)
+>>>
+>>
+>> -- 
+>> To unsubscribe from this list: send the line "unsubscribe linux-mmc" in
+>> the body of a message to majordomo@vger.kernel.org
+>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>>
 > 
-> diff --git a/Documentation/driver-model/devres.txt b/Documentation/driver-model/devres.txt
-> index a3e8bceb5f19..26c6de621446 100644
-> --- a/Documentation/driver-model/devres.txt
-> +++ b/Documentation/driver-model/devres.txt
-> @@ -240,6 +240,7 @@ CLOCK
->    devm_of_clk_add_hw_provider()
->  
->  DMA
-> +  dmam_async_device_register()
+> Thanks,
+> Vijay
+> 
 
-can we name it dmaengine_async_device_register, not to confuse with dma APIs
-
->    dmam_alloc_coherent()
->    dmam_alloc_attrs()
->    dmam_declare_coherent_memory()
-> diff --git a/drivers/dma/dmaengine.c b/drivers/dma/dmaengine.c
-> index 84ac38dbdb65..2477af0bdfc7 100644
-> --- a/drivers/dma/dmaengine.c
-> +++ b/drivers/dma/dmaengine.c
-> @@ -1135,6 +1135,41 @@ void dma_async_device_unregister(struct dma_device *device)
->  }
->  EXPORT_SYMBOL(dma_async_device_unregister);
->  
-> +static void dmam_device_release(struct device *dev, void *res)
-> +{
-> +	struct dma_device *device;
-> +
-> +	device = *(struct dma_device **)res;
-> +	dma_async_device_unregister(device);
-> +}
-> +
-> +/**
-> + * dmam_async_device_register - registers DMA devices found
-> + * @device: &dma_device
-> + *
-> + * The operation is managed and will be undone on driver detach.
-> + */
-> +int dmam_async_device_register(struct dma_device *device)
-> +{
-> +	void *p;
-> +	int ret;
-> +
-> +	p = devres_alloc(dmam_device_release, sizeof(void *), GFP_KERNEL);
-> +	if (!p)
-> +		return -ENOMEM;
-> +
-> +	ret = dma_async_device_register(device);
-> +	if (!ret) {
-> +		*(struct dma_device **)p = device;
-> +		devres_add(device->dev, p);
-> +	} else {
-> +		devres_free(p);
-> +	}
-> +
-> +	return ret;
-> +}
-> +EXPORT_SYMBOL(dmam_async_device_register);
-> +
->  struct dmaengine_unmap_pool {
->  	struct kmem_cache *cache;
->  	const char *name;
-> diff --git a/include/linux/dmaengine.h b/include/linux/dmaengine.h
-> index c8c3a7a93802..b98bced0b98e 100644
-> --- a/include/linux/dmaengine.h
-> +++ b/include/linux/dmaengine.h
-> @@ -1406,6 +1406,7 @@ static inline int dmaengine_desc_free(struct dma_async_tx_descriptor *desc)
->  /* --- DMA device --- */
->  
->  int dma_async_device_register(struct dma_device *device);
-> +int dmam_async_device_register(struct dma_device *device);
->  void dma_async_device_unregister(struct dma_device *device);
->  void dma_run_dependencies(struct dma_async_tx_descriptor *tx);
->  struct dma_chan *dma_get_slave_channel(struct dma_chan *chan);
-> -- 
-> 2.17.1
-
--- 
-~Vinod
