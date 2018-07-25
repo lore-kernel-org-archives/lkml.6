@@ -2,135 +2,181 @@ Return-Path: <SRS0=S+WB=KJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9733C6778F
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 02:17:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32084C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 02:21:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 72D7C20844
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 02:17:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 72D7C20844
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id CDFBF20844
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 02:21:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CDFBF20844
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388508AbeGYD02 (ORCPT
+        id S2388506AbeGYDav (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 23:26:28 -0400
-Received: from mga09.intel.com ([134.134.136.24]:8185 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727646AbeGYD01 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 23:26:27 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Jul 2018 19:16:03 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,400,1526367600"; 
-   d="scan'208";a="75233304"
-Received: from fmsmsx105.amr.corp.intel.com ([10.18.124.203])
-  by fmsmga001.fm.intel.com with ESMTP; 24 Jul 2018 19:16:03 -0700
-Received: from shsmsx103.ccr.corp.intel.com (10.239.4.69) by
- FMSMSX105.amr.corp.intel.com (10.18.124.203) with Microsoft SMTP Server (TLS)
- id 14.3.319.2; Tue, 24 Jul 2018 19:16:02 -0700
-Received: from shsmsx101.ccr.corp.intel.com ([169.254.1.57]) by
- SHSMSX103.ccr.corp.intel.com ([169.254.4.100]) with mapi id 14.03.0319.002;
- Wed, 25 Jul 2018 10:16:01 +0800
-From:   "Tian, Kevin" <kevin.tian@intel.com>
-To:     Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
-        Lu Baolu <baolu.lu@linux.intel.com>,
-        "Liu, Yi L" <yi.l.liu@intel.com>, Joerg Roedel <joro@8bytes.org>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Kirti Wankhede <kwankhede@nvidia.com>
-CC:     "Raj, Ashok" <ashok.raj@intel.com>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "Kumar, Sanjay K" <sanjay.k.kumar@intel.com>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Sun, Yi Y" <yi.y.sun@intel.com>,
-        "Pan, Jacob jun" <jacob.jun.pan@intel.com>
-Subject: RE: [RFC PATCH 03/10] iommu/vt-d: Allocate groups for mediated
- devices
-Thread-Topic: [RFC PATCH 03/10] iommu/vt-d: Allocate groups for mediated
- devices
-Thread-Index: AQHUIYLU0u0k0vB4lUGhJp9aIAl9hqSbto0AgAFqm4CAAJkvgIABd3Xw
-Date:   Wed, 25 Jul 2018 02:16:00 +0000
-Message-ID: <AADFC41AFE54684AB9EE6CBC0274A5D19127FB94@SHSMSX101.ccr.corp.intel.com>
-References: <1532239773-15325-1-git-send-email-baolu.lu@linux.intel.com>
- <1532239773-15325-4-git-send-email-baolu.lu@linux.intel.com>
- <A2975661238FB949B60364EF0F2C257439CA143E@SHSMSX104.ccr.corp.intel.com>
- <5B568D5B.5050606@linux.intel.com>
- <ccf6890a-30c6-770b-4299-8cabfdc32f2b@arm.com>
-In-Reply-To: <ccf6890a-30c6-770b-4299-8cabfdc32f2b@arm.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ctpclassification: CTP_NT
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiZDYzZTdmMGItZGFhMi00Mjk4LTg4OWYtNzViN2ZlYWNlOThmIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiVFRocnNxelZqWkJmd2kwYkdneFwvT3k0ZkRKbE5CUHJHK2tVSW5KOVh0eG41RHN1NTBXVVV3RE9leVZvRUdPS1UifQ==
-dlp-product: dlpe-windows
-dlp-version: 11.0.400.15
-dlp-reaction: no-action
-x-originating-ip: [10.239.127.40]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Tue, 24 Jul 2018 23:30:51 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:35148 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727646AbeGYDav (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Jul 2018 23:30:51 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id E9251805A530;
+        Wed, 25 Jul 2018 02:21:26 +0000 (UTC)
+Received: from localhost (ovpn-8-17.pek2.redhat.com [10.72.8.17])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 0863310C1E;
+        Wed, 25 Jul 2018 02:21:18 +0000 (UTC)
+Date:   Wed, 25 Jul 2018 10:21:15 +0800
+From:   Baoquan He <bhe@redhat.com>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     linux-kernel@vger.kernel.org, robh+dt@kernel.org,
+        dan.j.williams@intel.com, nicolas.pitre@linaro.org,
+        josh@joshtriplett.org, fengguang.wu@intel.com, bp@suse.de,
+        andy.shevchenko@gmail.com, patrik.r.jakobsson@gmail.com,
+        airlied@linux.ie, kys@microsoft.com, haiyangz@microsoft.com,
+        sthemmin@microsoft.com, dmitry.torokhov@gmail.com,
+        frowand.list@gmail.com, keith.busch@intel.com,
+        jonathan.derrick@intel.com, lorenzo.pieralisi@arm.com,
+        bhelgaas@google.com, tglx@linutronix.de, brijesh.singh@amd.com,
+        jglisse@redhat.com, thomas.lendacky@amd.com,
+        gregkh@linuxfoundation.org, baiyaowei@cmss.chinamobile.com,
+        richard.weiyang@gmail.com, devel@linuxdriverproject.org,
+        linux-input@vger.kernel.org, linux-nvdimm@lists.01.org,
+        devicetree@vger.kernel.org, linux-pci@vger.kernel.org,
+        ebiederm@xmission.com, vgoyal@redhat.com, dyoung@redhat.com,
+        yinghai@kernel.org, monstr@monstr.eu, davem@davemloft.net,
+        chris@zankel.net, jcmvbkbc@gmail.com, gustavo@padovan.org,
+        maarten.lankhorst@linux.intel.com, seanpaul@chromium.org,
+        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        kexec@lists.infradead.org
+Subject: Re: [PATCH v7 4/4] kexec_file: Load kernel at top of system RAM if
+ required
+Message-ID: <20180725022115.GH6480@MiWiFi-R3L-srv>
+References: <20180718024944.577-1-bhe@redhat.com>
+ <20180718024944.577-5-bhe@redhat.com>
+ <20180718153326.b795e9ea7835432a56cd7011@linux-foundation.org>
+ <20180719151753.GB7147@localhost.localdomain>
+ <20180719124444.c893712cca2e6f2649d1bc0d@linux-foundation.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180719124444.c893712cca2e6f2649d1bc0d@linux-foundation.org>
+User-Agent: Mutt/1.9.1 (2017-09-22)
+X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Wed, 25 Jul 2018 02:21:27 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Wed, 25 Jul 2018 02:21:27 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'bhe@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PiBGcm9tOiBKZWFuLVBoaWxpcHBlIEJydWNrZXINCj4gU2VudDogVHVlc2RheSwgSnVseSAyNCwg
-MjAxOCA3OjMxIFBNDQo+IA0KPiBIaSBCYW9sdSwNCj4gDQo+IE9uIDI0LzA3LzE4IDAzOjIyLCBM
-dSBCYW9sdSB3cm90ZToNCj4gPiBIaSwNCj4gPg0KPiA+IE9uIDA3LzIzLzIwMTggMTI6NDQgUE0s
-IExpdSwgWWkgTCB3cm90ZToNCj4gPj4+IEZyb206IEx1IEJhb2x1IFttYWlsdG86YmFvbHUubHVA
-bGludXguaW50ZWwuY29tXQ0KPiA+Pj4gU2VudDogU3VuZGF5LCBKdWx5IDIyLCAyMDE4IDI6MDkg
-UE0NCj4gPj4+DQo+ID4+PiBXaXRoIHRoZSBJbnRlbCBJT01NVSBzdXBwb3J0aW5nIFBBU0lEIGdy
-YW51bGFyaXR5IGlzb2xhdGlvbiBhbmQNCj4gcHJvdGVjdGlvbiwgYQ0KPiA+Pj4gbWVkaWF0ZWQg
-ZGV2aWNlIGNvdWxkIGJlIGlzb2xhdGVkIGFuZCBwcm90ZWN0ZWQgYnkgYW4gSU9NTVUgdW5pdC4N
-Cj4gV2UgbmVlZCB0bw0KPiA+Pj4gYWxsb2NhdGUgYSBuZXcgZ3JvdXAgaW5zdGVhZCBvZiBhIFBD
-SSBncm91cC4NCj4gPj4gRXhpc3RpbmcgdmZpbyBtZGV2IGZyYW1ld29yayBhbHNvIGFsbG9jYXRl
-cyBhbiBpb21tdSBncm91cCBmb3INCj4gbWVkaWF0ZSBkZXZpY2UuDQo+ID4+DQo+ID4+IG1kZXZf
-cHJvYmUoKQ0KPiA+PiAgIHxfIG1kZXZfYXR0YWNoX2lvbW11KCkNCj4gPj4gICAgICAgIHxfIGlv
-bW11X2dyb3VwX2FsbG9jKCkNCj4gPg0KPiA+IFdoZW4gZXh0ZXJuYWwgY29tcG9uZW50cyBhc2sg
-aW9tbXUgdG8gYWxsb2NhdGUgYSBncm91cCBmb3IgYSBkZXZpY2UsDQo+ID4gaXQgd2lsbCBjYWxs
-IHBjaV9kZXZpY2VfZ3JvdXAgaW4gSW50ZWwgSU9NTVUgZHJpdmVyJ3MgQGRldmljZV9ncm91cA0K
-PiA+IGNhbGxiYWNrLiBJbiBhbm90aGVyIHdvcmQsIGN1cnJlbnQgSW50ZWwgSU9NTVUgZHJpdmVy
-IGRvZXNuJ3QgYXdhcmUNCj4gPiB0aGUgbWVkaWF0ZWQgZGV2aWNlIGFuZCB0cmVhdCBhbGwgZGV2
-aWNlcyBhcyBQQ0kgb25lcy4gVGhpcyBwYXRjaA0KPiA+IGV4dGVuZHMgdGhlIEBkZXZpY2VfZ3Jv
-dXAgY2FsbCBiYWNrIHRvIG1ha2UgaXQgYXdhcmUgb2YgYSBtZWRpYXRlZA0KPiA+IGRldmljZS4N
-Cj4gDQo+IEkgYWdyZWUgdGhhdCBhbGxvY2F0aW5nIHR3byBncm91cHMgZm9yIGFuIG1kZXYgc2Vl
-bXMgc3RyYW5nZSwgYW5kIGluIG15DQo+IG9waW5pb24gd2Ugc2hvdWxkbid0IGV4cG9ydCB0aGUg
-bm90aW9uIG9mIG1kZXYgdG8gSU9NTVUgZHJpdmVycy4NCj4gT3RoZXJ3aXNlIGVhY2ggZHJpdmVy
-IHdpbGwgaGF2ZSB0byBhZGQgaXRzIG93biAiZGV2X2lzX21kZXYoKSIgc3BlY2lhbA0KPiBjYXNl
-cywgd2hpY2ggd2lsbCBnZXQgbWVzc3kgaW4gdGhlIGxvbmcgcnVuLiBCZXNpZGVzLCB0aGUgbWFj
-cm8gaXMNCj4gY3VycmVudGx5IHByaXZhdGUsIGFuZCB0byBiZSBleHBvcnRlZCBpdCBzaG91bGQg
-YmUgd3JhcHBlZCBpbg0KPiBzeW1ib2xfZ2V0L3B1dChtZGV2X2J1c190eXBlKS4NCg0KVGhlcmUg
-aXMgb25seSBvbmUgZ3JvdXAgcGVyIG1kZXYsIGJ1dCBJIGFncmVlIHRoYXQgYXZvaWRpbmcgbWRl
-dg0KYXdhcmVuZXNzIGluIElPTU1VIGRyaXZlciBpcyBkZWZpbml0ZWx5IGdvb2QuLi4gV2UgZGlk
-bid0IGZpbmQgYQ0KZ29vZCB3YXkgYmVmb3JlLCB3aGljaCBpcyB3aHkgY3VycmVudCBSRkMgd2Fz
-IGltcGxlbWVudGVkIHRoYXQgDQp3YXkuDQoNCj4gDQo+IFRoZXJlIGlzIGFub3RoZXIgd2F5OiBh
-cyB3ZSdyZSBwbGFubmluZyB0byBhZGQgYSBnZW5lcmljIHBhc2lkX2FsbG9jKCkNCj4gZnVuY3Rp
-b24gdG8gdGhlIElPTU1VIEFQSSwgdGhlIG1kZXYgbW9kdWxlIGl0c2VsZiBjb3VsZCBhbGxvY2F0
-ZSBhDQo+IGRlZmF1bHQgUEFTSUQgZm9yIGVhY2ggbWRldiBieSBjYWxsaW5nIHBhc2lkX2FsbG9j
-KCkgb24gdGhlIG1kZXYncw0KPiBwYXJlbnQsIGFuZCB0aGVuIGRvIG1hcCgpL3VubWFwKCkgd2l0
-aCB0aGF0IFBBU0lELiBUaGlzIHdheSB3ZSBkb24ndA0KPiBoYXZlIHRvIGFkZCBJT01NVSBvcHMg
-dG8gdGhlIG1kZXYgYnVzLCBldmVyeXRoaW5nIGNhbiBzdGlsbCBiZSBkb25lDQo+IHVzaW5nIHRo
-ZSBvcHMgb2YgdGhlIHBhcmVudC4gQW5kIElPTU1VIGRyaXZlcnMgIm9ubHkiIGhhdmUgdG8gaW1w
-bGVtZW50DQo+IFBBU0lEIG9wcywgd2hpY2ggd2lsbCBiZSByZXVzZWQgYnkgZHJpdmVycyBvdGhl
-ciB0aGFuIG1kZXYuDQoNCnllcywgUEFTSUQgaXMgbW9yZSBnZW5lcmFsIGFic3RyYWN0aW9uIHRo
-YW4gbWRldi4gSG93ZXZlciB0aGVyZSBpcw0Kb25lIHByb2JsZW0uIFBsZWFzZSBub3RlIHdpdGgg
-bmV3IHNjYWxhYmxlIG1vZGUgbm93IFBBU0lEIGlzIG5vdA0KdXNlZCBqdXN0IGZvciBTVkEuIFlv
-dSBjYW4gZG8gMXN0LWxldmVsLCAybmQtbGV2ZWwgYW5kIG5lc3RlZCBpbiBQQVNJRA0KZ3JhbnVs
-YXJpdHksIG1lYW5pbmcgZWFjaCBQQVNJRCBjYW4gYmUgYm91bmQgdG8gYW4gdW5pcXVlIGlvbW11
-DQpkb21haW4uIEhvd2V2ZXIgdG9kYXkgSU9NTVUgZHJpdmVyIGFsbG93cyBvbmx5IG9uZSBpb21t
-dV9kb21haW4gDQpwZXIgZGV2aWNlLiBJZiB3ZSBzaW1wbHkgaW5zdGFsbCBhbGxvY2F0ZWQgUEFT
-SUQgdG8gcGFyZW50IGRldmljZSwgd2UgDQpzaG91bGQgYWxzbyByZW1vdmUgdGhhdCBpb21tdV9k
-b21haW4gbGltaXRhdGlvbi4gSXMgaXQgdGhlIHdheSB0aGF0DQp3ZSB3YW50IHRvIHB1cnN1ZT8N
-Cg0KbWRldiBhdm9pZHMgc3VjaCBwcm9ibGVtIGFzIGl0IGludHJvZHVjZXMgYSBzZXBhcmF0ZSBk
-ZXZpY2UuLi4NCg0KPiANCj4gVGhlIGFsbG9jYXRlZCBQQVNJRCBhbHNvIG5lZWRzIHRvIGJlIGlu
-c3RhbGxlZCBpbnRvIHRoZSBwYXJlbnQgZGV2aWNlLg0KPiBJZiB0aGUgbWRldiBtb2R1bGUga25v
-d3MgdGhlIFBBU0lELCB3ZSBjYW4gZG8gdGhhdCBieSBhZGRpbmcNCj4gc2V0X3Bhc2lkKG1kZXYs
-IHBhc2lkKSBhbmQgY2xlYXJfcGFzaWQobWRldiwgcGFzaWQpIG9wZXJhdGlvbnMgdG8NCj4gbWRl
-dl9wYXJlbnRfb3BzLg0KPiANCg0KVGhhbmtzDQpLZXZpbg0K
+Hi Andrew,
+
+On 07/19/18 at 12:44pm, Andrew Morton wrote:
+> On Thu, 19 Jul 2018 23:17:53 +0800 Baoquan He <bhe@redhat.com> wrote:
+> > > As far as I can tell, the above is the whole reason for the patchset,
+> > > yes?  To avoid confusing users.
+> > 
+> > 
+> > In fact, it's not just trying to avoid confusing users. Kexec loading
+> > and kexec_file loading are just do the same thing in essence. Just we
+> > need do kernel image verification on uefi system, have to port kexec
+> > loading code to kernel. 
+> > 
+> > Kexec has been a formal feature in our distro, and customers owning
+> > those kind of very large machine can make use of this feature to speed
+> > up the reboot process. On uefi machine, the kexec_file loading will
+> > search place to put kernel under 4G from top to down. As we know, the
+> > 1st 4G space is DMA32 ZONE, dma, pci mmcfg, bios etc all try to consume
+> > it. It may have possibility to not be able to find a usable space for
+> > kernel/initrd. From the top down of the whole memory space, we don't
+> > have this worry. 
+> > 
+> > And at the first post, I just posted below with AKASHI's
+> > walk_system_ram_res_rev() version. Later you suggested to use
+> > list_head to link child sibling of resource, see what the code change
+> > looks like.
+> > http://lkml.kernel.org/r/20180322033722.9279-1-bhe@redhat.com
+> > 
+> > Then I posted v2
+> > http://lkml.kernel.org/r/20180408024724.16812-1-bhe@redhat.com
+> > Rob Herring mentioned that other components which has this tree struct
+> > have planned to do the same thing, replacing the singly linked list with
+> > list_head to link resource child sibling. Just quote Rob's words as
+> > below. I think this could be another reason.
+> > 
+> > ~~~~~ From Rob
+> > The DT struct device_node also has the same tree structure with
+> > parent, child, sibling pointers and converting to list_head had been
+> > on the todo list for a while. ACPI also has some tree walking
+> > functions (drivers/acpi/acpica/pstree.c). Perhaps there should be a
+> > common tree struct and helpers defined either on top of list_head or a
+> > ~~~~~
+> > new struct if that saves some size.
+> 
+> Please let's get all this into the changelogs?
+
+Sorry for late reply because of some urgent customer hotplug issues.
+
+I am rewriting all change logs, and cover letter. Then found I was wrong
+about the 2nd reason. The current kexec_file_load calls
+kexec_locate_mem_hole() to go through all system RAM region, if one
+region is larger than the size of kernel or initrd, it will search a
+position in that region from top to down. Since kexec will jump to 2nd
+kernel and don't need to care the 1st kernel's data, we can always find
+a usable space to load kexec kernel/initrd under 4G.
+
+So the only reason for this patch is keeping consistent with kexec_load
+and avoid confusion.
+
+And since x86 5-level paging mode has been added, we have another issue
+for top-down searching in the whole system RAM. That is we support
+dynamic 4-level to 5-level changing. Namely a kernel compiled with
+5-level support, we can add 'no5lvl' to force 4-level. Then jumping from
+a 5-level kernel to 4-level kernel, e.g we load kernel at the top of
+system RAM in 5-level paging mode which might be bigger than 64TB, then
+try to jump to 4-level kernel with the upper limit of 64TB. For this
+case, we need add limit for kexec kernel loading if in 5-level kernel.
+
+All this mess makes me hesitate to choose a deligate method. Maybe I
+should drop this patchset.
+
+> 
+> > > 
+> > > Is that sufficient?  Can we instead simplify their lives by providing
+> > > better documentation or informative printks or better Kconfig text,
+> > > etc?
+> > > 
+> > > And who *are* the people who are performing this configuration?  Random
+> > > system administrators?  Linux distro engineers?  If the latter then
+> > > they presumably aren't easily confused!
+> > 
+> > Kexec was invented for kernel developer to speed up their kernel
+> > rebooting. Now high end sever admin, kernel developer and QE are also
+> > keen to use it to reboot large box for faster feature testing, bug
+> > debugging. Kernel dev could know this well, about kernel loading
+> > position, admin or QE might not be aware of it very well. 
+> > 
+> > > 
+> > > In other words, I'm trying to understand how much benefit this patchset
+> > > will provide to our users as a whole.
+> > 
+> > Understood. The list_head replacing patch truly involes too many code
+> > changes, it's risky. I am willing to try any idea from reviewers, won't
+> > persuit they have to be accepted finally. If don't have a try, we don't
+> > know what it looks like, and what impact it may have. I am fine to take
+> > AKASHI's simple version of walk_system_ram_res_rev() to lower risk, even
+> > though it could be a little bit low efficient.
+> 
+> The larger patch produces a better result.  We can handle it ;)
+
+For this issue, if we stop changing the kexec top down searching code,
+I am not sure if we should post this replacing with list_head patches
+separately.
+
+Thanks
+Baoquan
