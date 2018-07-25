@@ -2,207 +2,739 @@ Return-Path: <SRS0=S+WB=KJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=0.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD020C67790
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 09:01:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39D83C6778F
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 09:04:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4CA972064D
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 09:01:59 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amdcloud.onmicrosoft.com header.i=@amdcloud.onmicrosoft.com header.b="eAAd4HLO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4CA972064D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amd.com
+	by mail.kernel.org (Postfix) with ESMTP id ADA112064D
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 09:04:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ADA112064D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728672AbeGYKMk (ORCPT
+        id S1728629AbeGYKPV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 06:12:40 -0400
-Received: from mail-eopbgr700059.outbound.protection.outlook.com ([40.107.70.59]:3392
-        "EHLO NAM04-SN1-obe.outbound.protection.outlook.com"
+        Wed, 25 Jul 2018 06:15:21 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:9719 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728222AbeGYKMk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Jul 2018 06:12:40 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=amdcloud.onmicrosoft.com; s=selector1-amd-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=CYubvhcD0H5/SeQYg8iWu6YTEqc+a1LI+zNSVlbfgOU=;
- b=eAAd4HLOUSTNzzvHgVdkiXjnveM847r0+Q6J2T6JHOCuo294e6Ymg0LkDdm0VkmJQRWivQgjAarcwT6t+uW1KDnRz6aCHn11TeQ49vi+lCEC2g4jbyMitDMsfYgTulVVD4Ht19NGVpxWmP2Nr1L5QotnD2aSoELM3j9Lo182N9I=
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=Akshu.Agrawal@amd.com; 
-Received: from akshu-HP-EliteBook-745-G2.amd.com (202.56.249.162) by
- SN1PR12MB2368.namprd12.prod.outlook.com (2603:10b6:802:25::21) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.973.16; Wed, 25 Jul 2018 09:01:37 +0000
-From:   Akshu Agrawal <akshu.agrawal@amd.com>
-Cc:     djkurtz@chromium.org, akshu.agrawal@amd.com,
-        Alexander.Deucher@amd.com,
-        Adam Thomson <Adam.Thomson.Opensource@diasemi.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        "Mukunda, Vijendar" <Vijendar.Mukunda@amd.com>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Wei Yongjun <weiyongjun1@huawei.com>,
-        alsa-devel@alsa-project.org (moderated list:SOUND - SOC LAYER / DYNAMIC
-        AUDIO POWER MANAGEM...), linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v2] ASoC: AMD: Add a fix voltage regulator for DA7219 and ADAU7002
-Date:   Wed, 25 Jul 2018 17:00:59 +0800
-Message-Id: <1532509274-8280-1-git-send-email-akshu.agrawal@amd.com>
-X-Mailer: git-send-email 1.9.1
+        id S1728567AbeGYKPV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Jul 2018 06:15:21 -0400
+Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id D8ECA663CB3B3;
+        Wed, 25 Jul 2018 17:04:30 +0800 (CST)
+Received: from [127.0.0.1] (10.177.29.68) by DGGEMS403-HUB.china.huawei.com
+ (10.3.19.203) with Microsoft SMTP Server id 14.3.382.0; Wed, 25 Jul 2018
+ 17:04:31 +0800
+Message-ID: <5B583D19.4000409@huawei.com>
+Date:   Wed, 25 Jul 2018 17:04:25 +0800
+From:   zhong jiang <zhongjiang@huawei.com>
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:12.0) Gecko/20120428 Thunderbird/12.0.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [202.56.249.162]
-X-ClientProxiedBy: MA1PR01CA0087.INDPRD01.PROD.OUTLOOK.COM (2603:1096:a00::27)
- To SN1PR12MB2368.namprd12.prod.outlook.com (2603:10b6:802:25::21)
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 3ad6909d-c2a4-4774-df8c-08d5f20d421c
-X-MS-Office365-Filtering-HT: Tenant
-X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(5600073)(711020)(4618075)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(2017052603328)(7153060)(7193020);SRVR:SN1PR12MB2368;
-X-Microsoft-Exchange-Diagnostics: 1;SN1PR12MB2368;3:40iOVdacaASA7A7XUfg16JIyGw3sMmJt/7qP5d25VxDTLVn9SsD9OZwejy/Z2HaNHaTKNgEUEk6yVlEwNiLfE65KmR0KasZ78wU/0BlAH25dhvHmiWsDH8x/8gs2SKVPFGgaI4C/EEG6SCmiL+PeS/oIhZ/27VXmhe/gng9RCVw15f+z8NgUBUvPbrRVtQli0BobAVjpxJBAYlphn2JH7mgzVXsQhEF98xIWx7weP+Xj4Hkj0/ZuPKrNSnvCyHU3;25:X11znaapdsIMeGeFVPOp2L4qaR/MJfabko8L24Js6o1FGnM/gzbBFXTCFFP6Bum58Pudt+zZWf97KDwsCneUb5EvkR1T8MVFEj86fdmXb3GhNQcn98rJQOT8hpb86HqtFfFEpueYDNIvY2zVwujfbfCEbMsv5hrG/Nw8aLabb+/3WPSKmCEk2BrRzwwGBJp5lyP6MpHIZ31ustT92k+2exGl1j6SVyfKGiJZ6Ff8LbmnUfFeT3LGd6Z1neQwSwVotr4JQ5ue/ybsXyVgEWlZnrPVLfXr92yWgvtksWqgElfKPq6G2ZgBMUHX/IPJknRfZZdeqPF57RR6ncwXYBT/kA==;31:EZx2ftP0ihqGt0f1rEDsfCDeWbqzlMmS6EZrjiy//xGl0ZatiTeeBwN/Aoz25Jc6uy9KtMXdFDTvo7aqs34n/IgOm3h4mHxHBti6CnC9IHSYYMu9d23yDUtVSxhNLFulp8VwuCij5oYREtqwA2MmhTHf32zV1F7FPJv4uL1QzuHQ3a3etyrhqCnvsbrLrnRVmRvXvxXTSeRtdR/nuzh9OuT0T2G9HDUG/2rBV54uKso=
-X-MS-TrafficTypeDiagnostic: SN1PR12MB2368:
-X-Microsoft-Exchange-Diagnostics: 1;SN1PR12MB2368;20:vf3Gnz41Fygev8fvoXIvNoTD5G7y7lgrwu9nWRErgantMw7O2H9O0NSJ6zbsp2DC+R9lGAG6VODBZwpCZ+DkXp9bMzm5SuTddIwuycHcPMPNgSl7tufzg4M0LnwwwdTWJHMlSBYFRTTgUEwKOZQRT+vqaOwohSiZ/uc5Dvw+y3MiKG+Qz5QN3uRRpvoacGFmX5g5Myv+20FIq3T92lC8tXg8YBHXOfL95noxXCRcftEzXn8JSxyDzJ2vxW77PhB6uYdkbnf4iXTAcJX9kPdhcXK5S8zmQ/zjCx1L4DvYO8Ur6I/EJGs6JCD6xhlH68XAZexMnmQjGbIQAJyylrPjkOEmwBLj5tocKcE0qPeHJA7xeOIyQn9putvMRJXQEy9zvcDhorXYNU14u9f9ijIKGiiyw0mrIwPrjJO16cEc6kvIa0eVwGtHmmzOgf2wO5RvaTKFTfOYQR8u9FrVYj4jHscavl5aSUUGOflsp0kp6UE4fJgmhAU19PkgC+9JntW5;4:s59g4AWL7ETkj4sxYP1Z1WcVtCJb8+y0VMlZjgbgYel4ZNvOagR8bcG0kvyTv9pbnMUK0UosBkcwN/cLKxxC9Yk/mloIS86IgvD8EemDp03i0VlcfXWEjOriFkTtuxZj5cgFpBi2oI0dJTAts6Pt15llexJwQ8ic/fTNJHvkswUeW/a4BXx7Cle3LpYyT1qRxnYyZVKin25JKQXK1y3cwnmfCwei+TFp7qAdIWjL/FTdjS8pK5j2G1f1WTXoGUf580WFY+GrzSDwbZz4dqrIc4CWdfO4393nJJQP+xltwN1EWqk4Ox3V3uf0tNzjnLfy
-X-Microsoft-Antispam-PRVS: <SN1PR12MB23689747B20D81DA259F14C3F8540@SN1PR12MB2368.namprd12.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:(767451399110);
-X-MS-Exchange-SenderADCheck: 1
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3002001)(10201501046)(3231311)(944501410)(52105095)(93006095)(93001095)(6055026)(149027)(150027)(6041310)(20161123564045)(20161123560045)(20161123558120)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011)(7699016);SRVR:SN1PR12MB2368;BCL:0;PCL:0;RULEID:;SRVR:SN1PR12MB2368;
-X-Forefront-PRVS: 0744CFB5E8
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(396003)(346002)(376002)(366004)(136003)(39860400002)(199004)(189003)(186003)(66066001)(26005)(386003)(1671002)(50466002)(81156014)(81166006)(68736007)(53936002)(16586007)(7416002)(54906003)(316002)(48376002)(105586002)(7696005)(52116002)(51416003)(8936002)(53416004)(97736004)(4326008)(109986005)(50226002)(2906002)(3846002)(72206003)(36756003)(6116002)(39060400002)(8676002)(6486002)(106356001)(47776003)(7736002)(16526019)(478600001)(6666003)(44832011)(2616005)(305945005)(486006)(476003)(956004)(86362001)(25786009)(5660300001)(266003);DIR:OUT;SFP:1101;SCL:1;SRVR:SN1PR12MB2368;H:akshu-HP-EliteBook-745-G2.amd.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-Received-SPF: None (protection.outlook.com: amd.com does not designate
- permitted sender hosts)
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;SN1PR12MB2368;23:k512v4sZf6rhY642M/QQ6g2uDHwqOetrb7nWTPVev?=
- =?us-ascii?Q?wsvxLjIhDnz3wIgpmyQpkFWMqycVIzAu4o0WlgUdqhKc+vdaABj4Jxe2ImuM?=
- =?us-ascii?Q?jwJnU8xHorpTMQJBpZvNOQcFl8jfBntOMzEsskT0cFF83Rc4KL/8pHls37V3?=
- =?us-ascii?Q?jrVOoAiledg4k+DwMzIGL/EdgUF6gR5Vyx0yFRQhOpsoYEQHIcig/o9CHOT8?=
- =?us-ascii?Q?YYGaHfVMocVWw0yiBIkP4QNU7ptjar3LNvnfW9w4Cx9SYb+JzNYqgb4cTIvk?=
- =?us-ascii?Q?Oq7QIdWwFP8DvDHBI29GhPWfJoAW3TsrcjBSF0fWZ0FV+Xi/p6qbXlmpK19J?=
- =?us-ascii?Q?+20Ld0Zf5lez3hEIRW2ebRUwPtX0tIbqTH/Miv81B7N2NWtdj9UDilyVYDlL?=
- =?us-ascii?Q?9zPffYF50aZKU2UFByXV3p1nUBdJNx5iOHaKbRYzsQST7WQEdMaykqE5AjRS?=
- =?us-ascii?Q?wYdg2tov3laC/fn3Sg8vIMhUqNrCLBmYS4i0lgxI+MWTgvEH2wafMwiD72Bd?=
- =?us-ascii?Q?SomyBi6udH5RTrAKQ1ITCCo6snpkiPTjh7mE5fQRYLNvT9/cAhtTATef5nGJ?=
- =?us-ascii?Q?MqoksNwoNnOjxt8hIBKtxaCjtNmFy0wLuyvDISm3reFMa79lm8A3j4mXJug4?=
- =?us-ascii?Q?AzdilJq38BmmUE17ZWvOBvLFwNpd362crncewVg4u6E3D3f2DLB4tj7XLC1j?=
- =?us-ascii?Q?H919lVkOTz3onlVae1KEvnHHSH5fqypLP/wLDh4iqUFr9EBZlW4mkDdzpELP?=
- =?us-ascii?Q?GgB5BHnWn5MtxyEWRlYEQ5yP8CYQPxQqtRoQ+ZlHTw7Kyc6yKmmnIBCAtU56?=
- =?us-ascii?Q?i+17Jv+wxDybPePUvZRcr25DOHDKntgOUWviFEOUiv+r1hZ7BQp8ze7qi2Zv?=
- =?us-ascii?Q?jpsRnuD8/x78gOou7PEhYsr2bbEma+k6REowBcQaFQL7UpFbDW+m5dOFdcTl?=
- =?us-ascii?Q?eit/BZl6pXI9z1nEhmFLIGRVizerqoNRYnU2PYliE//bRIDmWSRMcX0c9F8x?=
- =?us-ascii?Q?aJH95Yoh87WHRsWMKyY+JmxBoVGGv+wIn6ssyyvFl3rUTkqA4UHlAtvdurV4?=
- =?us-ascii?Q?tu2NlwXmAYIvbyFyqiCcorIVvWpV6cSLri6Jz6sbmGh4CUW6qh3DcIjqVEfe?=
- =?us-ascii?Q?C4V1pWR/kt1YO868FXJUhfxgCvQIVDzjG2Snc7X06sa4dDVtfxFY4s2yAFDA?=
- =?us-ascii?Q?vdu7zKx+kCveIx9gucf0oQIQK5Vd5ZEcKPpKid4fwiMkz6IaE+tYML8AtHvE?=
- =?us-ascii?Q?w3gnh+nr/sVdWr/fdHTEKL+9gCQ+1rjSYEF0Uac?=
-X-Microsoft-Antispam-Message-Info: Bx7muRIMyCx5QxnQpy74CCVbdq3fcAYdJmbV7fpCIhCuNCK4ZgqazYp1gOc6bpN8RwqgUAhtlNI0/I3RZWYEg0iJpqJ8ZoncxGMDl5QfVoaSyK6t5AD9fVCAO8qrgZnMbToWryyvAfVntBOugoQoIffwYwahBhDAWrGv33zkQ+axwcxq/0Ujo8VlAWUWwvweQclD2dLo0dM/7DEVL0Ov3uOFUQuUuEQFj165WziL/CXxljcEERk/PXzbXz/oisvEkAwmJlEkiaSqsnawkkzlum8IqIvD0YIibxDuYWDZ2jAQv4NSX3mX+KL0cks3j+N5K/vuvVn4jY/ARGuwdm1QjaP+JJ4wqRwyVYf4NHOwjvQ=
-X-Microsoft-Exchange-Diagnostics: 1;SN1PR12MB2368;6:JsuQmjuXGUOb948S0kXJeIVH5KGlOYlVOaET3Bi7nQivxL1LvXGD0ZdT+f7rGYFdkZqeUvABtcS/0a39dmHJCjjEauRjey3IM1YEWB+eSLThFAlHtQZtmEbAU5A9Rcbm2/2A0lXyPyIYUmrU7DSaEijTCalEUQK4hKlpSb24sCGWOPgaWaCWbJY4tmILr5VEIyqkwmf+q4xzh3+8tJDiyAZEFxZtwbrzaYMA7oBJY5yOHlDCW5JuqzSxZBscJT4Br36VMst6BHJ87t43+KlcrXQKL//mfCdq2fNkjNEYN1HwTA4NtbaiK5cnS7e0qR6mFqxIJZyx+PajGsz+Zday3jnd30nu0G9xSPhBuGRpgb/0LriugqsmAmw3C9Mefe2hjj2M6Yh0sFpC8PNoGwJG7/U/rBODJefeGCTxMHdQd2nZjfFRFLvZgULdiCfM4VKyrLDjusI9W0fNFnHD8iBCsQ==;5:P4quU8vLr1YP0jhBCggEtNOWVkzZJ+v+XERPmsO+imLLN0hAqfMNZ1yMmEGxYToc41JoXWS31LjvYGZufJsptEzHGhiWAa9w9q7qzG3GWw0G6pEL8vAAzRb76yns3vC6dD8jnHRU9fif2zeEdi6j+i9E6BSdLSrz/baoecIQLo8=;7:CmrsylDxRcrw1TUwFAQjyhBzRJDb1SarCGOwQcDu7EKMV2qL0antLkpni30xgzHN0FzH4wAKHP72I2LuafpNRmvDVz5GwfzwwnN5BEhxNhnl2bCMNkwNaaWqTNxNZf7wYCjmd1t0Ujzgwer+9BbT/VW6wTcYeit49wCgknhMVFLQn0s/T3gCQS1iDCbzKoYwaDOBtpzPqUDJwVwv8WSAEnsq0qceGkIFRd13mnYHlHEwcmEizJJ8iTo06QLdgObi
-SpamDiagnosticOutput: 1:99
-SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;SN1PR12MB2368;20:PS23cs+P4iZzZLlUhbiQQT38Ju3l7Jhtr+cGutrbPdyTqJARASfMFVIK9lwy8HzvHbvnQNufXxjAOAyfcUeKOQkUR5b5k2n42utv76xJ9DadFc189xzTPR/jwrUVOJCFdP6EP/xkmaQdy5AC75c++MwNuVm7u/Q9B0tKwTHTDHdIkdCxpwRkILHMXqktsHqtKQGBuB13hLecMSbn+2XN1fCy6I8ACfGFn0rdY4tT4oYu3ImAIPvx8nz4q6G/kbKc
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Jul 2018 09:01:37.3445 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3ad6909d-c2a4-4774-df8c-08d5f20d421c
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN1PR12MB2368
-To:     unlisted-recipients:; (no To-header on input)
+To:     Laurent Dufour <ldufour@linux.vnet.ibm.com>
+CC:     <akpm@linux-foundation.org>, <mhocko@kernel.org>,
+        <peterz@infradead.org>, <kirill@shutemov.name>,
+        <ak@linux.intel.com>, <dave@stgolabs.net>, <jack@suse.cz>,
+        Matthew Wilcox <willy@infradead.org>,
+        <khandual@linux.vnet.ibm.com>, <aneesh.kumar@linux.vnet.ibm.com>,
+        <benh@kernel.crashing.org>, <mpe@ellerman.id.au>,
+        <paulus@samba.org>, "Thomas Gleixner" <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, <hpa@zytor.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        <sergey.senozhatsky.work@gmail.com>,
+        "Andrea Arcangeli" <aarcange@redhat.com>,
+        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+        <kemi.wang@intel.com>, Daniel Jordan <daniel.m.jordan@oracle.com>,
+        David Rientjes <rientjes@google.com>,
+        "Jerome Glisse" <jglisse@redhat.com>,
+        Ganesh Mahendran <opensource.ganesh@gmail.com>,
+        Minchan Kim <minchan@kernel.org>,
+        Punit Agrawal <punitagrawal@gmail.com>,
+        vinayak menon <vinayakm.list@gmail.com>,
+        Yang Shi <yang.shi@linux.alibaba.com>,
+        <linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
+        <haren@linux.vnet.ibm.com>, <npiggin@gmail.com>,
+        <bsingharora@gmail.com>, <paulmck@linux.vnet.ibm.com>,
+        Tim Chen <tim.c.chen@linux.intel.com>,
+        <linuxppc-dev@lists.ozlabs.org>, <x86@kernel.org>
+Subject: Re: [PATCH v11 19/26] mm: provide speculative fault infrastructure
+References: <1526555193-7242-1-git-send-email-ldufour@linux.vnet.ibm.com> <1526555193-7242-20-git-send-email-ldufour@linux.vnet.ibm.com> <5B573715.5070201@huawei.com> <3ec16be6-ce2a-99af-4805-e00a59bad677@linux.vnet.ibm.com>
+In-Reply-To: <3ec16be6-ce2a-99af-4805-e00a59bad677@linux.vnet.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.177.29.68]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-DA7219 for our platform need to be configured for 1.8V.
-Hence, we add a volatge regulator with supplies
-of 1.8V in the machine driver.
+On 2018/7/25 0:10, Laurent Dufour wrote:
+>
+> On 24/07/2018 16:26, zhong jiang wrote:
+>> On 2018/5/17 19:06, Laurent Dufour wrote:
+>>> From: Peter Zijlstra <peterz@infradead.org>
+>>>
+>>> Provide infrastructure to do a speculative fault (not holding
+>>> mmap_sem).
+>>>
+>>> The not holding of mmap_sem means we can race against VMA
+>>> change/removal and page-table destruction. We use the SRCU VMA freeing
+>>> to keep the VMA around. We use the VMA seqcount to detect change
+>>> (including umapping / page-table deletion) and we use gup_fast() style
+>>> page-table walking to deal with page-table races.
+>>>
+>>> Once we've obtained the page and are ready to update the PTE, we
+>>> validate if the state we started the fault with is still valid, if
+>>> not, we'll fail the fault with VM_FAULT_RETRY, otherwise we update the
+>>> PTE and we're done.
+>>>
+>>> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+>>>
+>>> [Manage the newly introduced pte_spinlock() for speculative page
+>>>  fault to fail if the VMA is touched in our back]
+>>> [Rename vma_is_dead() to vma_has_changed() and declare it here]
+>>> [Fetch p4d and pud]
+>>> [Set vmd.sequence in __handle_mm_fault()]
+>>> [Abort speculative path when handle_userfault() has to be called]
+>>> [Add additional VMA's flags checks in handle_speculative_fault()]
+>>> [Clear FAULT_FLAG_ALLOW_RETRY in handle_speculative_fault()]
+>>> [Don't set vmf->pte and vmf->ptl if pte_map_lock() failed]
+>>> [Remove warning comment about waiting for !seq&1 since we don't want
+>>>  to wait]
+>>> [Remove warning about no huge page support, mention it explictly]
+>>> [Don't call do_fault() in the speculative path as __do_fault() calls
+>>>  vma->vm_ops->fault() which may want to release mmap_sem]
+>>> [Only vm_fault pointer argument for vma_has_changed()]
+>>> [Fix check against huge page, calling pmd_trans_huge()]
+>>> [Use READ_ONCE() when reading VMA's fields in the speculative path]
+>>> [Explicitly check for __HAVE_ARCH_PTE_SPECIAL as we can't support for
+>>>  processing done in vm_normal_page()]
+>>> [Check that vma->anon_vma is already set when starting the speculative
+>>>  path]
+>>> [Check for memory policy as we can't support MPOL_INTERLEAVE case due to
+>>>  the processing done in mpol_misplaced()]
+>>> [Don't support VMA growing up or down]
+>>> [Move check on vm_sequence just before calling handle_pte_fault()]
+>>> [Don't build SPF services if !CONFIG_SPECULATIVE_PAGE_FAULT]
+>>> [Add mem cgroup oom check]
+>>> [Use READ_ONCE to access p*d entries]
+>>> [Replace deprecated ACCESS_ONCE() by READ_ONCE() in vma_has_changed()]
+>>> [Don't fetch pte again in handle_pte_fault() when running the speculative
+>>>  path]
+>>> [Check PMD against concurrent collapsing operation]
+>>> [Try spin lock the pte during the speculative path to avoid deadlock with
+>>>  other CPU's invalidating the TLB and requiring this CPU to catch the
+>>>  inter processor's interrupt]
+>>> [Move define of FAULT_FLAG_SPECULATIVE here]
+>>> [Introduce __handle_speculative_fault() and add a check against
+>>>  mm->mm_users in handle_speculative_fault() defined in mm.h]
+>>> Signed-off-by: Laurent Dufour <ldufour@linux.vnet.ibm.com>
+>>> ---
+>>>  include/linux/hugetlb_inline.h |   2 +-
+>>>  include/linux/mm.h             |  30 ++++
+>>>  include/linux/pagemap.h        |   4 +-
+>>>  mm/internal.h                  |  16 +-
+>>>  mm/memory.c                    | 340 ++++++++++++++++++++++++++++++++++++++++-
+>>>  5 files changed, 385 insertions(+), 7 deletions(-)
+>>>
+>>> diff --git a/include/linux/hugetlb_inline.h b/include/linux/hugetlb_inline.h
+>>> index 0660a03d37d9..9e25283d6fc9 100644
+>>> --- a/include/linux/hugetlb_inline.h
+>>> +++ b/include/linux/hugetlb_inline.h
+>>> @@ -8,7 +8,7 @@
+>>>  
+>>>  static inline bool is_vm_hugetlb_page(struct vm_area_struct *vma)
+>>>  {
+>>> -	return !!(vma->vm_flags & VM_HUGETLB);
+>>> +	return !!(READ_ONCE(vma->vm_flags) & VM_HUGETLB);
+>>>  }
+>>>  
+>>>  #else
+>>> diff --git a/include/linux/mm.h b/include/linux/mm.h
+>>> index 05cbba70104b..31acf98a7d92 100644
+>>> --- a/include/linux/mm.h
+>>> +++ b/include/linux/mm.h
+>>> @@ -315,6 +315,7 @@ extern pgprot_t protection_map[16];
+>>>  #define FAULT_FLAG_USER		0x40	/* The fault originated in userspace */
+>>>  #define FAULT_FLAG_REMOTE	0x80	/* faulting for non current tsk/mm */
+>>>  #define FAULT_FLAG_INSTRUCTION  0x100	/* The fault was during an instruction fetch */
+>>> +#define FAULT_FLAG_SPECULATIVE	0x200	/* Speculative fault, not holding mmap_sem */
+>>>  
+>>>  #define FAULT_FLAG_TRACE \
+>>>  	{ FAULT_FLAG_WRITE,		"WRITE" }, \
+>>> @@ -343,6 +344,10 @@ struct vm_fault {
+>>>  	gfp_t gfp_mask;			/* gfp mask to be used for allocations */
+>>>  	pgoff_t pgoff;			/* Logical page offset based on vma */
+>>>  	unsigned long address;		/* Faulting virtual address */
+>>> +#ifdef CONFIG_SPECULATIVE_PAGE_FAULT
+>>> +	unsigned int sequence;
+>>> +	pmd_t orig_pmd;			/* value of PMD at the time of fault */
+>>> +#endif
+>>>  	pmd_t *pmd;			/* Pointer to pmd entry matching
+>>>  					 * the 'address' */
+>>>  	pud_t *pud;			/* Pointer to pud entry matching
+>>> @@ -1415,6 +1420,31 @@ int invalidate_inode_page(struct page *page);
+>>>  #ifdef CONFIG_MMU
+>>>  extern int handle_mm_fault(struct vm_area_struct *vma, unsigned long address,
+>>>  		unsigned int flags);
+>>> +
+>>> +#ifdef CONFIG_SPECULATIVE_PAGE_FAULT
+>>> +extern int __handle_speculative_fault(struct mm_struct *mm,
+>>> +				      unsigned long address,
+>>> +				      unsigned int flags);
+>>> +static inline int handle_speculative_fault(struct mm_struct *mm,
+>>> +					   unsigned long address,
+>>> +					   unsigned int flags)
+>>> +{
+>>> +	/*
+>>> +	 * Try speculative page fault for multithreaded user space task only.
+>>> +	 */
+>>> +	if (!(flags & FAULT_FLAG_USER) || atomic_read(&mm->mm_users) == 1)
+>>> +		return VM_FAULT_RETRY;
+>>> +	return __handle_speculative_fault(mm, address, flags);
+>>> +}
+>>> +#else
+>>> +static inline int handle_speculative_fault(struct mm_struct *mm,
+>>> +					   unsigned long address,
+>>> +					   unsigned int flags)
+>>> +{
+>>> +	return VM_FAULT_RETRY;
+>>> +}
+>>> +#endif /* CONFIG_SPECULATIVE_PAGE_FAULT */
+>>> +
+>>>  extern int fixup_user_fault(struct task_struct *tsk, struct mm_struct *mm,
+>>>  			    unsigned long address, unsigned int fault_flags,
+>>>  			    bool *unlocked);
+>>> diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
+>>> index b1bd2186e6d2..6e2aa4e79af7 100644
+>>> --- a/include/linux/pagemap.h
+>>> +++ b/include/linux/pagemap.h
+>>> @@ -456,8 +456,8 @@ static inline pgoff_t linear_page_index(struct vm_area_struct *vma,
+>>>  	pgoff_t pgoff;
+>>>  	if (unlikely(is_vm_hugetlb_page(vma)))
+>>>  		return linear_hugepage_index(vma, address);
+>>> -	pgoff = (address - vma->vm_start) >> PAGE_SHIFT;
+>>> -	pgoff += vma->vm_pgoff;
+>>> +	pgoff = (address - READ_ONCE(vma->vm_start)) >> PAGE_SHIFT;
+>>> +	pgoff += READ_ONCE(vma->vm_pgoff);
+>>>  	return pgoff;
+>>>  }
+>>>  
+>>> diff --git a/mm/internal.h b/mm/internal.h
+>>> index fb2667b20f0a..10b188c87fa4 100644
+>>> --- a/mm/internal.h
+>>> +++ b/mm/internal.h
+>>> @@ -44,7 +44,21 @@ int do_swap_page(struct vm_fault *vmf);
+>>>  extern struct vm_area_struct *get_vma(struct mm_struct *mm,
+>>>  				      unsigned long addr);
+>>>  extern void put_vma(struct vm_area_struct *vma);
+>>> -#endif
+>>> +
+>>> +static inline bool vma_has_changed(struct vm_fault *vmf)
+>>> +{
+>>> +	int ret = RB_EMPTY_NODE(&vmf->vma->vm_rb);
+>>> +	unsigned int seq = READ_ONCE(vmf->vma->vm_sequence.sequence);
+>>> +
+>>> +	/*
+>>> +	 * Matches both the wmb in write_seqlock_{begin,end}() and
+>>> +	 * the wmb in vma_rb_erase().
+>>> +	 */
+>>> +	smp_rmb();
+>>> +
+>>> +	return ret || seq != vmf->sequence;
+>>> +}
+>>> +#endif /* CONFIG_SPECULATIVE_PAGE_FAULT */
+>>>  
+>>>  void free_pgtables(struct mmu_gather *tlb, struct vm_area_struct *start_vma,
+>>>  		unsigned long floor, unsigned long ceiling);
+>>> diff --git a/mm/memory.c b/mm/memory.c
+>>> index ab32b0b4bd69..7bbbb8c7b9cd 100644
+>>> --- a/mm/memory.c
+>>> +++ b/mm/memory.c
+>>> @@ -769,7 +769,8 @@ static void print_bad_pte(struct vm_area_struct *vma, unsigned long addr,
+>>>  	if (page)
+>>>  		dump_page(page, "bad pte");
+>>>  	pr_alert("addr:%p vm_flags:%08lx anon_vma:%p mapping:%p index:%lx\n",
+>>> -		 (void *)addr, vma->vm_flags, vma->anon_vma, mapping, index);
+>>> +		 (void *)addr, READ_ONCE(vma->vm_flags), vma->anon_vma,
+>>> +		 mapping, index);
+>>>  	pr_alert("file:%pD fault:%pf mmap:%pf readpage:%pf\n",
+>>>  		 vma->vm_file,
+>>>  		 vma->vm_ops ? vma->vm_ops->fault : NULL,
+>>> @@ -2306,6 +2307,118 @@ int apply_to_page_range(struct mm_struct *mm, unsigned long addr,
+>>>  }
+>>>  EXPORT_SYMBOL_GPL(apply_to_page_range);
+>>>  
+>>> +#ifdef CONFIG_SPECULATIVE_PAGE_FAULT
+>>> +static bool pte_spinlock(struct vm_fault *vmf)
+>>> +{
+>>> +	bool ret = false;
+>>> +#ifdef CONFIG_TRANSPARENT_HUGEPAGE
+>>> +	pmd_t pmdval;
+>>> +#endif
+>>> +
+>>> +	/* Check if vma is still valid */
+>>> +	if (!(vmf->flags & FAULT_FLAG_SPECULATIVE)) {
+>>> +		vmf->ptl = pte_lockptr(vmf->vma->vm_mm, vmf->pmd);
+>>> +		spin_lock(vmf->ptl);
+>>> +		return true;
+>>> +	}
+>>> +
+>>> +again:
+>>> +	local_irq_disable();
+>>> +	if (vma_has_changed(vmf))
+>>> +		goto out;
+>>> +
+>>> +#ifdef CONFIG_TRANSPARENT_HUGEPAGE
+>>> +	/*
+>>> +	 * We check if the pmd value is still the same to ensure that there
+>>> +	 * is not a huge collapse operation in progress in our back.
+>>> +	 */
+>>> +	pmdval = READ_ONCE(*vmf->pmd);
+>>> +	if (!pmd_same(pmdval, vmf->orig_pmd))
+>>> +		goto out;
+>>> +#endif
+>>> +
+>>> +	vmf->ptl = pte_lockptr(vmf->vma->vm_mm, vmf->pmd);
+>>> +	if (unlikely(!spin_trylock(vmf->ptl))) {
+>>> +		local_irq_enable();
+>>> +		goto again;
+>>> +	}
+>>> +
+>>> +	if (vma_has_changed(vmf)) {
+>>> +		spin_unlock(vmf->ptl);
+>>> +		goto out;
+>>> +	}
+>>> +
+>>> +	ret = true;
+>>> +out:
+>>> +	local_irq_enable();
+>>> +	return ret;
+>>> +}
+>>> +
+>>> +static bool pte_map_lock(struct vm_fault *vmf)
+>>> +{
+>>> +	bool ret = false;
+>>> +	pte_t *pte;
+>>> +	spinlock_t *ptl;
+>>> +#ifdef CONFIG_TRANSPARENT_HUGEPAGE
+>>> +	pmd_t pmdval;
+>>> +#endif
+>>> +
+>>> +	if (!(vmf->flags & FAULT_FLAG_SPECULATIVE)) {
+>>> +		vmf->pte = pte_offset_map_lock(vmf->vma->vm_mm, vmf->pmd,
+>>> +					       vmf->address, &vmf->ptl);
+>>> +		return true;
+>>> +	}
+>>> +
+>>> +	/*
+>>> +	 * The first vma_has_changed() guarantees the page-tables are still
+>>> +	 * valid, having IRQs disabled ensures they stay around, hence the
+>>> +	 * second vma_has_changed() to make sure they are still valid once
+>>> +	 * we've got the lock. After that a concurrent zap_pte_range() will
+>>> +	 * block on the PTL and thus we're safe.
+>>> +	 */
+>>> +again:
+>>> +	local_irq_disable();
+>>> +	if (vma_has_changed(vmf))
+>>> +		goto out;
+>>> +
+>>> +#ifdef CONFIG_TRANSPARENT_HUGEPAGE
+>>> +	/*
+>>> +	 * We check if the pmd value is still the same to ensure that there
+>>> +	 * is not a huge collapse operation in progress in our back.
+>>> +	 */
+>>> +	pmdval = READ_ONCE(*vmf->pmd);
+>>> +	if (!pmd_same(pmdval, vmf->orig_pmd))
+>>> +		goto out;
+>>> +#endif
+>>> +
+>>> +	/*
+>>> +	 * Same as pte_offset_map_lock() except that we call
+>>> +	 * spin_trylock() in place of spin_lock() to avoid race with
+>>> +	 * unmap path which may have the lock and wait for this CPU
+>>> +	 * to invalidate TLB but this CPU has irq disabled.
+>>> +	 * Since we are in a speculative patch, accept it could fail
+>>> +	 */
+>>> +	ptl = pte_lockptr(vmf->vma->vm_mm, vmf->pmd);
+>>> +	pte = pte_offset_map(vmf->pmd, vmf->address);
+>>> +	if (unlikely(!spin_trylock(ptl))) {
+>>> +		pte_unmap(pte);
+>>> +		local_irq_enable();
+>>> +		goto again;
+>>> +	}
+>>> +
+>>> +	if (vma_has_changed(vmf)) {
+>>> +		pte_unmap_unlock(pte, ptl);
+>>> +		goto out;
+>>> +	}
+>>> +
+>>> +	vmf->pte = pte;
+>>> +	vmf->ptl = ptl;
+>>> +	ret = true;
+>>> +out:
+>>> +	local_irq_enable();
+>>> +	return ret;
+>>> +}
+>>> +#else
+>>>  static inline bool pte_spinlock(struct vm_fault *vmf)
+>>>  {
+>>>  	vmf->ptl = pte_lockptr(vmf->vma->vm_mm, vmf->pmd);
+>>> @@ -2319,6 +2432,7 @@ static inline bool pte_map_lock(struct vm_fault *vmf)
+>>>  				       vmf->address, &vmf->ptl);
+>>>  	return true;
+>>>  }
+>>> +#endif /* CONFIG_SPECULATIVE_PAGE_FAULT */
+>>>  
+>>>  /*
+>>>   * handle_pte_fault chooses page fault handler according to an entry which was
+>>> @@ -3208,6 +3322,14 @@ static int do_anonymous_page(struct vm_fault *vmf)
+>>>  		ret = check_stable_address_space(vma->vm_mm);
+>>>  		if (ret)
+>>>  			goto unlock;
+>>> +		/*
+>>> +		 * Don't call the userfaultfd during the speculative path.
+>>> +		 * We already checked for the VMA to not be managed through
+>>> +		 * userfaultfd, but it may be set in our back once we have lock
+>>> +		 * the pte. In such a case we can ignore it this time.
+>>> +		 */
+>>> +		if (vmf->flags & FAULT_FLAG_SPECULATIVE)
+>>> +			goto setpte;
+>>>  		/* Deliver the page fault to userland, check inside PT lock */
+>>>  		if (userfaultfd_missing(vma)) {
+>>>  			pte_unmap_unlock(vmf->pte, vmf->ptl);
+>>> @@ -3249,7 +3371,7 @@ static int do_anonymous_page(struct vm_fault *vmf)
+>>>  		goto unlock_and_release;
+>>>  
+>>>  	/* Deliver the page fault to userland, check inside PT lock */
+>>> -	if (userfaultfd_missing(vma)) {
+>>> +	if (!(vmf->flags & FAULT_FLAG_SPECULATIVE) && userfaultfd_missing(vma)) {
+>>>  		pte_unmap_unlock(vmf->pte, vmf->ptl);
+>>>  		mem_cgroup_cancel_charge(page, memcg, false);
+>>>  		put_page(page);
+>>> @@ -3994,13 +4116,22 @@ static int handle_pte_fault(struct vm_fault *vmf)
+>>>  
+>>>  	if (unlikely(pmd_none(*vmf->pmd))) {
+>>>  		/*
+>>> +		 * In the case of the speculative page fault handler we abort
+>>> +		 * the speculative path immediately as the pmd is probably
+>>> +		 * in the way to be converted in a huge one. We will try
+>>> +		 * again holding the mmap_sem (which implies that the collapse
+>>> +		 * operation is done).
+>>> +		 */
+>>> +		if (vmf->flags & FAULT_FLAG_SPECULATIVE)
+>>> +			return VM_FAULT_RETRY;
+>>> +		/*
+>>>  		 * Leave __pte_alloc() until later: because vm_ops->fault may
+>>>  		 * want to allocate huge page, and if we expose page table
+>>>  		 * for an instant, it will be difficult to retract from
+>>>  		 * concurrent faults and from rmap lookups.
+>>>  		 */
+>>>  		vmf->pte = NULL;
+>>> -	} else {
+>>> +	} else if (!(vmf->flags & FAULT_FLAG_SPECULATIVE)) {
+>>>  		/* See comment in pte_alloc_one_map() */
+>>>  		if (pmd_devmap_trans_unstable(vmf->pmd))
+>>>  			return 0;
+>>> @@ -4009,6 +4140,9 @@ static int handle_pte_fault(struct vm_fault *vmf)
+>>>  		 * pmd from under us anymore at this point because we hold the
+>>>  		 * mmap_sem read mode and khugepaged takes it in write mode.
+>>>  		 * So now it's safe to run pte_offset_map().
+>>> +		 * This is not applicable to the speculative page fault handler
+>>> +		 * but in that case, the pte is fetched earlier in
+>>> +		 * handle_speculative_fault().
+>>>  		 */
+>>>  		vmf->pte = pte_offset_map(vmf->pmd, vmf->address);
+>>>  		vmf->orig_pte = *vmf->pte;
+>>> @@ -4031,6 +4165,8 @@ static int handle_pte_fault(struct vm_fault *vmf)
+>>>  	if (!vmf->pte) {
+>>>  		if (vma_is_anonymous(vmf->vma))
+>>>  			return do_anonymous_page(vmf);
+>>> +		else if (vmf->flags & FAULT_FLAG_SPECULATIVE)
+>>> +			return VM_FAULT_RETRY;
+>>>  		else
+>>>  			return do_fault(vmf);
+>>>  	}
+>>> @@ -4128,6 +4264,9 @@ static int __handle_mm_fault(struct vm_area_struct *vma, unsigned long address,
+>>>  	vmf.pmd = pmd_alloc(mm, vmf.pud, address);
+>>>  	if (!vmf.pmd)
+>>>  		return VM_FAULT_OOM;
+>>> +#ifdef CONFIG_SPECULATIVE_PAGE_FAULT
+>>> +	vmf.sequence = raw_read_seqcount(&vma->vm_sequence);
+>>> +#endif
+>>>  	if (pmd_none(*vmf.pmd) && transparent_hugepage_enabled(vma)) {
+>>>  		ret = create_huge_pmd(&vmf);
+>>>  		if (!(ret & VM_FAULT_FALLBACK))
+>>> @@ -4161,6 +4300,201 @@ static int __handle_mm_fault(struct vm_area_struct *vma, unsigned long address,
+>>>  	return handle_pte_fault(&vmf);
+>>>  }
+>>>  
+>>> +#ifdef CONFIG_SPECULATIVE_PAGE_FAULT
+>>> +/*
+>>> + * Tries to handle the page fault in a speculative way, without grabbing the
+>>> + * mmap_sem.
+>>> + */
+>>> +int __handle_speculative_fault(struct mm_struct *mm, unsigned long address,
+>>> +			       unsigned int flags)
+>>> +{
+>>> +	struct vm_fault vmf = {
+>>> +		.address = address,
+>>> +	};
+>>> +	pgd_t *pgd, pgdval;
+>>> +	p4d_t *p4d, p4dval;
+>>> +	pud_t pudval;
+>>> +	int seq, ret = VM_FAULT_RETRY;
+>>> +	struct vm_area_struct *vma;
+>>> +#ifdef CONFIG_NUMA
+>>> +	struct mempolicy *pol;
+>>> +#endif
+>>> +
+>>> +	/* Clear flags that may lead to release the mmap_sem to retry */
+>>> +	flags &= ~(FAULT_FLAG_ALLOW_RETRY|FAULT_FLAG_KILLABLE);
+>>> +	flags |= FAULT_FLAG_SPECULATIVE;
+>>> +
+>>> +	vma = get_vma(mm, address);
+>>> +	if (!vma)
+>>> +		return ret;
+>>> +
+>>> +	seq = raw_read_seqcount(&vma->vm_sequence); /* rmb <-> seqlock,vma_rb_erase() */
+>>> +	if (seq & 1)
+>>> +		goto out_put;
+>>> +
+>>> +	/*
+>>> +	 * Can't call vm_ops service has we don't know what they would do
+>>> +	 * with the VMA.
+>>> +	 * This include huge page from hugetlbfs.
+>>> +	 */
+>>> +	if (vma->vm_ops)
+>>> +		goto out_put;
+>>> +
+>>   Hi   Laurent
+>>    
+>>    I think that most of pagefault will leave here.   Is there any case  need to skip ?
+>>   I have tested the following  patch, it work well.
+> Hi Zhong,
+>
+> Well this will allow file mapping to be handle in a speculative way, but that's
+> a bit dangerous today as there is no guaranty that the vm_ops.vm_fault()
+> operation will be fair.
+>
+> In the case of the anonymous file mapping that's often not a problem, depending
+> on the underlying file system, but there are so many cases to check and this is
+> hard to say this can be done in a speculative way as is.
+ This patch say that spf just handle anonyous page. but I find that do_swap_page
+ also maybe release the mmap_sem without FAULT_FLAG_RETRY_NOWAIT. why is it safe
+ to handle the case. I think that the case is similar to file page. Maybe I miss
+ something else.
 
-Signed-off-by: Adam Thomson <Adam.Thomson.Opensource@diasemi.com>
-Signed-off-by: Akshu Agrawal <akshu.agrawal@amd.com>
----
- sound/soc/amd/Kconfig                |  1 +
- sound/soc/amd/acp-da7219-max98357a.c | 43 ++++++++++++++++++++++++++++++++++++
- 2 files changed, 44 insertions(+)
+ I test the patches and find just only 18% of the pagefault will enter into the
+ speculative page fault during a process startup. As I had said. most of pagefault
+ will be handled by ops->fault. I do not know the data you had posted is how to get.
+ 
 
-diff --git a/sound/soc/amd/Kconfig b/sound/soc/amd/Kconfig
-index 6cbf9cf..58c1dcb 100644
---- a/sound/soc/amd/Kconfig
-+++ b/sound/soc/amd/Kconfig
-@@ -8,6 +8,7 @@ config SND_SOC_AMD_CZ_DA7219MX98357_MACH
- 	select SND_SOC_DA7219
- 	select SND_SOC_MAX98357A
- 	select SND_SOC_ADAU7002
-+	select REGULATOR
- 	depends on SND_SOC_AMD_ACP && I2C
- 	help
- 	 This option enables machine driver for DA7219 and MAX9835.
-diff --git a/sound/soc/amd/acp-da7219-max98357a.c b/sound/soc/amd/acp-da7219-max98357a.c
-index f42606e..cd3cf6e 100644
---- a/sound/soc/amd/acp-da7219-max98357a.c
-+++ b/sound/soc/amd/acp-da7219-max98357a.c
-@@ -32,6 +32,8 @@
- #include <linux/clk.h>
- #include <linux/gpio.h>
- #include <linux/module.h>
-+#include <linux/regulator/machine.h>
-+#include <linux/regulator/driver.h>
- #include <linux/i2c.h>
- #include <linux/input.h>
- #include <linux/acpi.h>
-@@ -320,11 +322,52 @@ static void cz_dmic_shutdown(struct snd_pcm_substream *substream)
- 	.num_controls = ARRAY_SIZE(cz_mc_controls),
- };
- 
-+static struct regulator_consumer_supply acp_da7219_supplies[] = {
-+	REGULATOR_SUPPLY("VDD", "i2c-DLGS7219:00"),
-+	REGULATOR_SUPPLY("VDDMIC", "i2c-DLGS7219:00"),
-+	REGULATOR_SUPPLY("VDDIO", "i2c-DLGS7219:00"),
-+	REGULATOR_SUPPLY("IOVDD", "ADAU7002:00"),
-+};
-+
-+static struct regulator_init_data acp_da7219_data = {
-+	.constraints = {
-+		.always_on = 1,
-+	},
-+	.num_consumer_supplies = ARRAY_SIZE(acp_da7219_supplies),
-+	.consumer_supplies = acp_da7219_supplies,
-+};
-+
-+static struct regulator_config acp_da7219_cfg = {
-+	.init_data = &acp_da7219_data,
-+};
-+
-+static struct regulator_ops acp_da7219_ops = {
-+};
-+
-+static struct regulator_desc acp_da7219_desc = {
-+	.name = "reg-fixed-1.8V",
-+	.type = REGULATOR_VOLTAGE,
-+	.owner = THIS_MODULE,
-+	.ops = &acp_da7219_ops,
-+	.fixed_uV = 1800000, /* 1.8V */
-+	.n_voltages = 1,
-+};
-+
- static int cz_probe(struct platform_device *pdev)
- {
- 	int ret;
- 	struct snd_soc_card *card;
- 	struct acp_platform_info *machine;
-+	struct regulator_dev *rdev;
-+
-+	acp_da7219_cfg.dev = &pdev->dev;
-+	rdev = devm_regulator_register(&pdev->dev, &acp_da7219_desc,
-+				       &acp_da7219_cfg);
-+	if (IS_ERR(rdev)) {
-+		dev_err(&pdev->dev, "Failed to register regulator: %d\n",
-+			ret);
-+		return -EINVAL;
-+	}
- 
- 	machine = devm_kzalloc(&pdev->dev, sizeof(struct acp_platform_info),
- 			       GFP_KERNEL);
--- 
-1.9.1
+ Thanks
+ zhong jiang
+> The huge work to do is to double check that all the code called by
+> vm_ops.fault() is not dealing with the mmap_sem, which could be handled using
+> FAULT_FLAG_RETRY_NOWAIT, and care is also needed about the resources that code
+> is managing as it may assume that it is under the protection of the mmap_sem in
+> read mode, and that can be done implicitly.
+>
+> Cheers,
+> Laurent.
+>
+>> diff --git a/mm/memory.c b/mm/memory.c
+>> index 936128b..9bc1545 100644
+>>  @@ -3893,8 +3898,6 @@ static int handle_pte_fault(struct fault_env *fe)
+>>         if (!fe->pte) {
+>>                 if (vma_is_anonymous(fe->vma))
+>>                         return do_anonymous_page(fe);
+>> -               else if (fe->flags & FAULT_FLAG_SPECULATIVE)
+>> -                       return VM_FAULT_RETRY;
+>>                 else
+>>                         return do_fault(fe);
+>>         }
+>> @@ -4026,20 +4029,11 @@ int __handle_speculative_fault(struct mm_struct *mm, unsigned long address,
+>>                 goto out_put;
+>>         }
+>>         /*
+>> -        * Can't call vm_ops service has we don't know what they would do
+>> -        * with the VMA.
+>> -        * This include huge page from hugetlbfs.
+>> -        */
+>> -       if (vma->vm_ops) {
+>> -               trace_spf_vma_notsup(_RET_IP_, vma, address);
+>> -               goto out_put;
+>> -       }
+>>
+>>
+>> Thanks
+>> zhong jiang
+>>> +	/*
+>>> +	 * __anon_vma_prepare() requires the mmap_sem to be held
+>>> +	 * because vm_next and vm_prev must be safe. This can't be guaranteed
+>>> +	 * in the speculative path.
+>>> +	 */
+>>> +	if (unlikely(!vma->anon_vma))
+>>> +		goto out_put;
+>>> +
+>>> +	vmf.vma_flags = READ_ONCE(vma->vm_flags);
+>>> +	vmf.vma_page_prot = READ_ONCE(vma->vm_page_prot);
+>>> +
+>>> +	/* Can't call userland page fault handler in the speculative path */
+>>> +	if (unlikely(vmf.vma_flags & VM_UFFD_MISSING))
+>>> +		goto out_put;
+>>> +
+>>> +	if (vmf.vma_flags & VM_GROWSDOWN || vmf.vma_flags & VM_GROWSUP)
+>>> +		/*
+>>> +		 * This could be detected by the check address against VMA's
+>>> +		 * boundaries but we want to trace it as not supported instead
+>>> +		 * of changed.
+>>> +		 */
+>>> +		goto out_put;
+>>> +
+>>> +	if (address < READ_ONCE(vma->vm_start)
+>>> +	    || READ_ONCE(vma->vm_end) <= address)
+>>> +		goto out_put;
+>>> +
+>>> +	if (!arch_vma_access_permitted(vma, flags & FAULT_FLAG_WRITE,
+>>> +				       flags & FAULT_FLAG_INSTRUCTION,
+>>> +				       flags & FAULT_FLAG_REMOTE)) {
+>>> +		ret = VM_FAULT_SIGSEGV;
+>>> +		goto out_put;
+>>> +	}
+>>> +
+>>> +	/* This is one is required to check that the VMA has write access set */
+>>> +	if (flags & FAULT_FLAG_WRITE) {
+>>> +		if (unlikely(!(vmf.vma_flags & VM_WRITE))) {
+>>> +			ret = VM_FAULT_SIGSEGV;
+>>> +			goto out_put;
+>>> +		}
+>>> +	} else if (unlikely(!(vmf.vma_flags & (VM_READ|VM_EXEC|VM_WRITE)))) {
+>>> +		ret = VM_FAULT_SIGSEGV;
+>>> +		goto out_put;
+>>> +	}
+>>> +
+>>> +#ifdef CONFIG_NUMA
+>>> +	/*
+>>> +	 * MPOL_INTERLEAVE implies additional checks in
+>>> +	 * mpol_misplaced() which are not compatible with the
+>>> +	 *speculative page fault processing.
+>>> +	 */
+>>> +	pol = __get_vma_policy(vma, address);
+>>> +	if (!pol)
+>>> +		pol = get_task_policy(current);
+>>> +	if (pol && pol->mode == MPOL_INTERLEAVE)
+>>> +		goto out_put;
+>>> +#endif
+>>> +
+>>> +	/*
+>>> +	 * Do a speculative lookup of the PTE entry.
+>>> +	 */
+>>> +	local_irq_disable();
+>>> +	pgd = pgd_offset(mm, address);
+>>> +	pgdval = READ_ONCE(*pgd);
+>>> +	if (pgd_none(pgdval) || unlikely(pgd_bad(pgdval)))
+>>> +		goto out_walk;
+>>> +
+>>> +	p4d = p4d_offset(pgd, address);
+>>> +	p4dval = READ_ONCE(*p4d);
+>>> +	if (p4d_none(p4dval) || unlikely(p4d_bad(p4dval)))
+>>> +		goto out_walk;
+>>> +
+>>> +	vmf.pud = pud_offset(p4d, address);
+>>> +	pudval = READ_ONCE(*vmf.pud);
+>>> +	if (pud_none(pudval) || unlikely(pud_bad(pudval)))
+>>> +		goto out_walk;
+>>> +
+>>> +	/* Huge pages at PUD level are not supported. */
+>>> +	if (unlikely(pud_trans_huge(pudval)))
+>>> +		goto out_walk;
+>>> +
+>>> +	vmf.pmd = pmd_offset(vmf.pud, address);
+>>> +	vmf.orig_pmd = READ_ONCE(*vmf.pmd);
+>>> +	/*
+>>> +	 * pmd_none could mean that a hugepage collapse is in progress
+>>> +	 * in our back as collapse_huge_page() mark it before
+>>> +	 * invalidating the pte (which is done once the IPI is catched
+>>> +	 * by all CPU and we have interrupt disabled).
+>>> +	 * For this reason we cannot handle THP in a speculative way since we
+>>> +	 * can't safely indentify an in progress collapse operation done in our
+>>> +	 * back on that PMD.
+>>> +	 * Regarding the order of the following checks, see comment in
+>>> +	 * pmd_devmap_trans_unstable()
+>>> +	 */
+>>> +	if (unlikely(pmd_devmap(vmf.orig_pmd) ||
+>>> +		     pmd_none(vmf.orig_pmd) || pmd_trans_huge(vmf.orig_pmd) ||
+>>> +		     is_swap_pmd(vmf.orig_pmd)))
+>>> +		goto out_walk;
+>>> +
+>>> +	/*
+>>> +	 * The above does not allocate/instantiate page-tables because doing so
+>>> +	 * would lead to the possibility of instantiating page-tables after
+>>> +	 * free_pgtables() -- and consequently leaking them.
+>>> +	 *
+>>> +	 * The result is that we take at least one !speculative fault per PMD
+>>> +	 * in order to instantiate it.
+>>> +	 */
+>>> +
+>>> +	vmf.pte = pte_offset_map(vmf.pmd, address);
+>>> +	vmf.orig_pte = READ_ONCE(*vmf.pte);
+>>> +	barrier(); /* See comment in handle_pte_fault() */
+>>> +	if (pte_none(vmf.orig_pte)) {
+>>> +		pte_unmap(vmf.pte);
+>>> +		vmf.pte = NULL;
+>>> +	}
+>>> +
+>>> +	vmf.vma = vma;
+>>> +	vmf.pgoff = linear_page_index(vma, address);
+>>> +	vmf.gfp_mask = __get_fault_gfp_mask(vma);
+>>> +	vmf.sequence = seq;
+>>> +	vmf.flags = flags;
+>>> +
+>>> +	local_irq_enable();
+>>> +
+>>> +	/*
+>>> +	 * We need to re-validate the VMA after checking the bounds, otherwise
+>>> +	 * we might have a false positive on the bounds.
+>>> +	 */
+>>> +	if (read_seqcount_retry(&vma->vm_sequence, seq))
+>>> +		goto out_put;
+>>> +
+>>> +	mem_cgroup_oom_enable();
+>>> +	ret = handle_pte_fault(&vmf);
+>>> +	mem_cgroup_oom_disable();
+>>> +
+>>> +	put_vma(vma);
+>>> +
+>>> +	/*
+>>> +	 * The task may have entered a memcg OOM situation but
+>>> +	 * if the allocation error was handled gracefully (no
+>>> +	 * VM_FAULT_OOM), there is no need to kill anything.
+>>> +	 * Just clean up the OOM state peacefully.
+>>> +	 */
+>>> +	if (task_in_memcg_oom(current) && !(ret & VM_FAULT_OOM))
+>>> +		mem_cgroup_oom_synchronize(false);
+>>> +	return ret;
+>>> +
+>>> +out_walk:
+>>> +	local_irq_enable();
+>>> +out_put:
+>>> +	put_vma(vma);
+>>> +	return ret;
+>>> +}
+>>> +#endif /* CONFIG_SPECULATIVE_PAGE_FAULT */
+>>> +
+>>>  /*
+>>>   * By the time we get here, we already hold the mm semaphore
+>>>   *
+>>
+>
+> .
+>
+
 
