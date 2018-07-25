@@ -2,94 +2,127 @@ Return-Path: <SRS0=S+WB=KJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DC0CC6778F
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 07:34:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05B57C67790
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 07:35:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B731920671
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 07:34:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B731920671
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zte.com.cn
+	by mail.kernel.org (Postfix) with ESMTP id B201020671
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 07:35:34 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="V/Bs8aMf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B201020671
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728500AbeGYIom (ORCPT
+        id S1728527AbeGYIp4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 04:44:42 -0400
-Received: from out1.zte.com.cn ([202.103.147.172]:47028 "EHLO mxct.zte.com.cn"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728360AbeGYIom (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Jul 2018 04:44:42 -0400
-X-Greylist: delayed 960 seconds by postgrey-1.27 at vger.kernel.org; Wed, 25 Jul 2018 04:44:38 EDT
-Received: from mse01.zte.com.cn (unknown [10.30.3.20])
-        by Forcepoint Email with ESMTPS id EA495FC2ED22AC70BA5F;
-        Wed, 25 Jul 2018 15:18:15 +0800 (CST)
-Received: from notes_smtp.zte.com.cn ([10.30.1.239])
-        by mse01.zte.com.cn with ESMTP id w6P7I1MW093067;
-        Wed, 25 Jul 2018 15:18:01 +0800 (GMT-8)
-        (envelope-from yang.yi@zte.com.cn)
-Received: from localhost.localdomain ([10.75.10.200])
-          by szsmtp06.zte.com.cn (Lotus Domino Release 8.5.3FP6)
-          with ESMTP id 2018072515180718-1721888 ;
-          Wed, 25 Jul 2018 15:18:07 +0800 
-From:   Yang Yi <yang.yi@zte.com.cn>
-To:     ralf@linux-mips.org, jhogan@kernel.org
-Cc:     linux-kernel@vger.kernel.org, liu.hailong6@zte.com.cn,
-        zhong.weidong@zte.com.cn, jiang.biao2@zte.com.cn,
-        Yang Yi <yang.yi@zte.com.cn>
-Subject: [PATCH] mips/mm/mmap: fix the wrong return value from  syscall mmap() on mips architecture
-Date:   Wed, 25 Jul 2018 15:16:27 +0800
-Message-Id: <1532502987-97496-1-git-send-email-yang.yi@zte.com.cn>
-X-Mailer: git-send-email 1.8.3.1
-X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
- 21, 2013) at 2018-07-25 15:18:07,
-        Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
- 2018-07-25 15:17:53,
-        Serialize complete at 2018-07-25 15:17:53
-X-MAIL: mse01.zte.com.cn w6P7I1MW093067
+        Wed, 25 Jul 2018 04:45:56 -0400
+Received: from mail-it0-f66.google.com ([209.85.214.66]:34574 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728421AbeGYIp4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Jul 2018 04:45:56 -0400
+Received: by mail-it0-f66.google.com with SMTP id d70-v6so16978052ith.1
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Jul 2018 00:35:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=YKv+O+ZFPBruswx5V99r6fXrNuFwUUi43U/mIJQ2v28=;
+        b=V/Bs8aMfDd9BvZDqqn4Pf4brxOJJ5S7jUQXXJJLzFOY9M0GlUcSmnVk5GLZVH1yxB9
+         vaMcjX+qppuU9ZwgmWV0dIei3E1TpPXI+rK1yoMYjwrTnuV8oftKmY4DY/+na1fcGv+1
+         3B8098arCF9QQI4twrAwsBOUNQkJjSWIjac2EvHwfe2ksdKX1NK2N+iwX7Hjzgvz4ZyH
+         P5+fQW5WctFvXQMn34fyXzustpP+yxjGjAImi0l65/dFxil+85oBCi5qyySL1fu9JqQJ
+         /cJ68V37TscIFTrd+zS0PM1T3aYQhIRl4h8Z5YPa9VrNGQQ7y7grGbQFARgqiLtWqH86
+         H1FA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=YKv+O+ZFPBruswx5V99r6fXrNuFwUUi43U/mIJQ2v28=;
+        b=ngF6wF+VlZOcTmOzM1xvPXcEMUuAZEPw4TWoUMVVzDNHYKuCa1RcOXpmDhspXCbOnt
+         ZRwwJAwia36OLa7EBO6u22t+jTIFAT4obwNJq7rkijGZX8gH7UsHZ3kogpiaML5MtrMv
+         qppmaSiuIHjg6ImhqVVdIF+u/Ufsyb4FleNeUV+suOLsjRiFSmfcxwsihl6txijzpaf5
+         ybTqv9BiOlOovFB3eJaF/CyIQzen1SttwgzWM3fX9x/d5lLJoHo3Hb79lmg9Dt1w0Bcq
+         T1X5FBM4bE0UJFTeXZ7DquNK11akEr4LOh2ndIuDfHCdFrMjHnk+UFfCFizwDy21Pm45
+         tK7g==
+X-Gm-Message-State: AOUpUlETXEU1eETw3uEJFtP1sDzZ0LrpIC1fJYgtoobYkWV5PP4Yjdgm
+        d9/nfJnxD/UozLsDGeXlPd0LFg/MGd9TP4xDbIB1KA==
+X-Google-Smtp-Source: AAOMgpcCSgdDY4amSWSvFCcEirHuSBRV+4CfIubefpt7K0mi8a8bx9gJuTeC3dBrXDur3l7jYUPOpP7JWvk4xcZHlJQ=
+X-Received: by 2002:a24:5e0b:: with SMTP id h11-v6mr5345823itb.80.1532504131411;
+ Wed, 25 Jul 2018 00:35:31 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:a5e:9402:0:0:0:0:0 with HTTP; Wed, 25 Jul 2018 00:35:30
+ -0700 (PDT)
+In-Reply-To: <1532488822-5622-2-git-send-email-alanx.chiang@intel.com>
+References: <1532488822-5622-1-git-send-email-alanx.chiang@intel.com> <1532488822-5622-2-git-send-email-alanx.chiang@intel.com>
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+Date:   Wed, 25 Jul 2018 09:35:30 +0200
+Message-ID: <CAMRc=MdHAU8Y==hhhV6L7o1-J9LfTUZrDMYCLm+rASpagFMNmQ@mail.gmail.com>
+Subject: Re: [RESEND PATCH v4 1/2] dt-bindings: at24: Add address-width property
+To:     "Chiang, AlanX" <alanx.chiang@intel.com>
+Cc:     linux-i2c <linux-i2c@vger.kernel.org>,
+        "Yeh, Andy" <andy.yeh@intel.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        "Shevchenko, Andriy" <andriy.shevchenko@intel.com>,
+        Rajmohan Mani <rajmohan.mani@intel.com>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        tfiga@chromium.org, jcliang@chromium.org,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        "Robert P. J. Day" <rpjday@crashcourse.ca>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-According to the latest POSIX standard defined in IEEE Std 1003.1-2017,
-the errno should be set to ENOMEM instead of EINVAL when mmap into 
-high region address which exceeds the address boundary of a process.
+2018-07-25 5:20 GMT+02:00  <alanx.chiang@intel.com>:
+> From: Alan Chiang <alanx.chiang@intel.com>
+>
+> Currently the only way to use a variant of a supported model with
+> a different address with a different address width is to define a
 
-The corresponding description of IEEE Std 1003.1-2017 is as follows:
+There's some copy-paste problem here. I fixed it.
 
-ERRORS
-	The mmap() function shall fail if:
-	......
-	[ENOMEM]
-		MAP_FIXED was specified, and the range [addr,addr+len) 
-		exceeds that allowed for the address space of a process; 
-		or, if MAP_FIXED was not specified and there is insufficient
-		room in the address space to effect the mapping.
-	......
-		
-Signed-off-by: Yang Yi <yang.yi@zte.com.cn>
-Signed-off-by: Hailong Liu <liu.hailong6@zte.com.cn>
-Reviewed-by: Jiang Biao <jiang.biao2@zte.com.cn>
----
- arch/mips/mm/mmap.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> new compatible string and the corresponding chip data structure.
+>
+> Provide a flexible way to specify the size of the address pointer
+> by defining a new property: address-width.
+>
+> Signed-off-by: Alan Chiang <alanx.chiang@intel.com>
+> Signed-off-by: Andy Yeh <andy.yeh@intel.com>
+> Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+> Reviewed-by: Rob Herring <robh@kernel.org>
+> ---
+>  Documentation/devicetree/bindings/eeprom/at24.txt | 2 ++
+>  1 file changed, 2 insertions(+)
+>
+> diff --git a/Documentation/devicetree/bindings/eeprom/at24.txt b/Documentation/devicetree/bindings/eeprom/at24.txt
+> index 61d833a..aededdb 100644
+> --- a/Documentation/devicetree/bindings/eeprom/at24.txt
+> +++ b/Documentation/devicetree/bindings/eeprom/at24.txt
+> @@ -72,6 +72,8 @@ Optional properties:
+>
+>    - wp-gpios: GPIO to which the write-protect pin of the chip is connected.
+>
+> +  - address-width: number of address bits (one of 8, 16).
+> +
+>  Example:
+>
+>  eeprom@52 {
+> --
+> 2.7.4
+>
 
-diff --git a/arch/mips/mm/mmap.c b/arch/mips/mm/mmap.c
-index 2f616eb..c47059c 100755
---- a/arch/mips/mm/mmap.c
-+++ b/arch/mips/mm/mmap.c
-@@ -69,7 +69,7 @@ static unsigned long arch_get_unmapped_area_common(struct file *filp,
- 	if (flags & MAP_FIXED) {
- 		/* Even MAP_FIXED mappings must reside within TASK_SIZE */
- 		if (TASK_SIZE - len < addr)
--			return -EINVAL;
-+			return -ENOMEM;
+Applied both to for-next.
 
- 		/*
- 		 * We do not accept a shared mapping if it would violate
---
-2.1.0.GIT
-
+Bart
