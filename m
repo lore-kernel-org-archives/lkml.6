@@ -2,205 +2,69 @@ Return-Path: <SRS0=S+WB=KJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 876C4C67790
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 08:20:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B5B4C6778F
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 08:21:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4D747205C9
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 08:20:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D747205C9
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-mips.org
+	by mail.kernel.org (Postfix) with ESMTP id 5FBAF205C9
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 08:21:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5FBAF205C9
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728731AbeGYJav (ORCPT
+        id S1728743AbeGYJbh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 05:30:51 -0400
-Received: from eddie.linux-mips.org ([148.251.95.138]:42070 "EHLO
-        cvs.linux-mips.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728573AbeGYJav (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Jul 2018 05:30:51 -0400
-Received: (from localhost user: 'ladis' uid#1021 fake: STDIN
-        (ladis@eddie.linux-mips.org)) by eddie.linux-mips.org
-        id S23991808AbeGYIUOfhFyg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org> + 2 others);
-        Wed, 25 Jul 2018 10:20:14 +0200
-Date:   Wed, 25 Jul 2018 10:20:13 +0200
-From:   Ladislav Michl <ladis@linux-mips.org>
-To:     "H. Nikolaus Schaller" <hns@goldelico.com>
-Cc:     Marek Belisko <marek@goldelico.com>,
-        =?iso-8859-2?Q?Beno=EEt?= Cousson <bcousson@baylibre.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-omap@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, letux-kernel@openphoenux.org
-Subject: Re: [PATCH 32/32] ARM: dts: omap3-gta04a5one: define GTA04A5 variant
- with OneNAND
-Message-ID: <20180725082013.GD7467@lenoch>
-References: <cover.1532501910.git.hns@goldelico.com>
- <51523efb93cd30a233d5c41918d5a08b2231647e.1532501910.git.hns@goldelico.com>
+        Wed, 25 Jul 2018 05:31:37 -0400
+Received: from mx2.suse.de ([195.135.220.15]:57740 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728572AbeGYJbh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Jul 2018 05:31:37 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 7DA85AD95;
+        Wed, 25 Jul 2018 08:21:01 +0000 (UTC)
+Date:   Wed, 25 Jul 2018 10:21:00 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     "zhaowuyun@wingtech.com" <zhaowuyun@wingtech.com>
+Cc:     mgorman <mgorman@techsingularity.net>,
+        akpm <akpm@linux-foundation.org>, minchan <minchan@kernel.org>,
+        vinmenon <vinmenon@codeaurora.org>, hannes <hannes@cmpxchg.org>,
+        "hillf.zj" <hillf.zj@alibaba-inc.com>,
+        linux-mm <linux-mm@kvack.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Subject: Re: Re: [PATCH] [PATCH] mm: disable preemption before swapcache_free
+Message-ID: <20180725082100.GV28386@dhcp22.suse.cz>
+References: <2018072514375722198958@wingtech.com>
+ <20180725074009.GU28386@dhcp22.suse.cz>
+ <2018072515575576668668@wingtech.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <51523efb93cd30a233d5c41918d5a08b2231647e.1532501910.git.hns@goldelico.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <2018072515575576668668@wingtech.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 25, 2018 at 08:59:04AM +0200, H. Nikolaus Schaller wrote:
-> GTA04A5 has been produced with MCP chips either with
->  512MB RAM +  512MB NAND
->  512MB RAM + 1024MB NAND
-> 1024MB RAM +  512MB OneNAND
-> 
-> RAM setup is done by U-Boot (MLO/SPL) but OneNAND needs
-> a different setup of the GPMC. So we need to derive a
-> DTB variant that modifies the gpmc and nand setup.
+[Please do not top post - thank you]
+[CC Hugh - the original patch was http://lkml.kernel.org/r/2018072514375722198958@wingtech.com]
 
-Just a suggestion... This way your user needs to know which variant is dealing
-with. It is similar situation as with IGEPv2 with cames with various setup
-either with NAND or OneNAND. Both NAND and OneNAND nodes are present in DTB
-and enabled by U-Boot approriately. So single U-Boot binary and DTB is enough
-to deal with all variants.
+On Wed 25-07-18 15:57:55, zhaowuyun@wingtech.com wrote:
+> That is a BUG we found in mm/vmscan.c at KERNEL VERSION 4.9.82
 
-	ladis
+The code is quite similar in the current tree as well.
 
-> Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
-> ---
->  arch/arm/boot/dts/omap3-gta04a5one.dts | 114 +++++++++++++++++++++++++++++++++
->  1 file changed, 114 insertions(+)
->  create mode 100644 arch/arm/boot/dts/omap3-gta04a5one.dts
-> 
-> diff --git a/arch/arm/boot/dts/omap3-gta04a5one.dts b/arch/arm/boot/dts/omap3-gta04a5one.dts
-> new file mode 100644
-> index 000000000000..9b7bbdc344b3
-> --- /dev/null
-> +++ b/arch/arm/boot/dts/omap3-gta04a5one.dts
-> @@ -0,0 +1,114 @@
-> +/*
-> + * Copyright (C) 2014-18 H. Nikolaus Schaller <hns@goldelico.com>
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License version 2 as
-> + * published by the Free Software Foundation.
-> + */
-> +
-> +#include "omap3-gta04a5.dts"
-> +
-> +&omap3_pmx_core {
-> +	model = "Goldelico GTA04A5/Letux 2804 with OneNAND";
-> +
-> +	gpmc_pins: pinmux_gpmc_pins {
-> +		pinctrl-single,pins = <
-> +
-> +			/* address lines */
-> +			OMAP3_CORE1_IOPAD(0x207a, PIN_OUTPUT | MUX_MODE0)       /* gpmc_a1.gpmc_a1 */
-> +			OMAP3_CORE1_IOPAD(0x207c, PIN_OUTPUT | MUX_MODE0)       /* gpmc_a2.gpmc_a2 */
-> +			OMAP3_CORE1_IOPAD(0x207e, PIN_OUTPUT | MUX_MODE0)       /* gpmc_a3.gpmc_a3 */
-> +
-> +			/* data lines, gpmc_d0..d7 not muxable according to TRM */
-> +			OMAP3_CORE1_IOPAD(0x209e, PIN_INPUT | MUX_MODE0)        /* gpmc_d8.gpmc_d8 */
-> +			OMAP3_CORE1_IOPAD(0x20a0, PIN_INPUT | MUX_MODE0)        /* gpmc_d9.gpmc_d9 */
-> +			OMAP3_CORE1_IOPAD(0x20a2, PIN_INPUT | MUX_MODE0)        /* gpmc_d10.gpmc_d10 */
-> +			OMAP3_CORE1_IOPAD(0x20a4, PIN_INPUT | MUX_MODE0)        /* gpmc_d11.gpmc_d11 */
-> +			OMAP3_CORE1_IOPAD(0x20a6, PIN_INPUT | MUX_MODE0)        /* gpmc_d12.gpmc_d12 */
-> +			OMAP3_CORE1_IOPAD(0x20a8, PIN_INPUT | MUX_MODE0)        /* gpmc_d13.gpmc_d13 */
-> +			OMAP3_CORE1_IOPAD(0x20aa, PIN_INPUT | MUX_MODE0)        /* gpmc_d14.gpmc_d14 */
-> +			OMAP3_CORE1_IOPAD(0x20ac, PIN_INPUT | MUX_MODE0)        /* gpmc_d15.gpmc_d15 */
-> +
-> +			/*
-> +			 * gpmc_ncs0, gpmc_nadv_ale, gpmc_noe, gpmc_nwe, gpmc_wait0 not muxable
-> +			 * according to TRM. OneNAND seems to require PIN_INPUT on clock.
-> +			 */
-> +			OMAP3_CORE1_IOPAD(0x20b0, PIN_OUTPUT | MUX_MODE0)       /* gpmc_ncs1.gpmc_ncs1 */
-> +			OMAP3_CORE1_IOPAD(0x20be, PIN_INPUT | MUX_MODE0)        /* gpmc_clk.gpmc_clk */
-> +		>;
-> +	};
-> +};
-> +
-> +&gpmc {
-> +	/* switch inherited setup to OneNAND */
-> +
-> +	ranges = <0 0 0x04000000 0x1000000>;	/* CS0: 16MB for OneNAND */
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&gpmc_pins>;
-> +
-> +	/delete-node/ nand@0,0;
-> +
-> +	onenand@0,0 {
-> +
-> +		#address-cells = <1>;
-> +		#size-cells = <1>;
-> +		compatible = "ti,omap2-onenand";
-> +		reg = <0 0 0x20000>;	/* CS0, offset 0, IO size 128K */
-> +
-> +		gpmc,sync-read;
-> +		gpmc,sync-write;
-> +		gpmc,burst-length = <16>;
-> +		gpmc,burst-read;
-> +		gpmc,burst-wrap;
-> +		gpmc,burst-write;
-> +		gpmc,device-width = <2>;
-> +		gpmc,mux-add-data = <2>;
-> +		gpmc,cs-on-ns = <0>;
-> +		gpmc,cs-rd-off-ns = <87>;
-> +		gpmc,cs-wr-off-ns = <87>;
-> +		gpmc,adv-on-ns = <0>;
-> +		gpmc,adv-rd-off-ns = <10>;
-> +		gpmc,adv-wr-off-ns = <10>;
-> +		gpmc,oe-on-ns = <15>;
-> +		gpmc,oe-off-ns = <87>;
-> +		gpmc,we-on-ns = <0>;
-> +		gpmc,we-off-ns = <87>;
-> +		gpmc,rd-cycle-ns = <112>;
-> +		gpmc,wr-cycle-ns = <112>;
-> +		gpmc,access-ns = <81>;
-> +		gpmc,page-burst-access-ns = <15>;
-> +		gpmc,bus-turnaround-ns = <0>;
-> +		gpmc,cycle2cycle-delay-ns = <0>;
-> +		gpmc,wait-monitoring-ns = <0>;
-> +		gpmc,clk-activation-ns = <5>;
-> +		gpmc,wr-data-mux-bus-ns = <30>;
-> +		gpmc,wr-access-ns = <81>;
-> +		gpmc,sync-clk-ps = <15000>;
-> +
-> +		x-loader@0 {
-> +			label = "X-Loader";
-> +			reg = <0 0x80000>;
-> +		};
-> +
-> +		bootloaders@80000 {
-> +			label = "U-Boot";
-> +			reg = <0x80000 0x1c0000>;
-> +		};
-> +
-> +		bootloaders_env@240000 {
-> +			label = "U-Boot Env";
-> +			reg = <0x240000 0x40000>;
-> +		};
-> +
-> +		kernel@280000 {
-> +			label = "Kernel";
-> +			reg = <0x280000 0x600000>;
-> +		};
-> +
-> +		filesystem@880000 {
-> +			label = "File System";
-> +			reg = <0x880000 0>;	/* 0 = MTDPART_SIZ_FULL */
-> +		};
-> +
-> +	};
-> +};
-> -- 
-> 2.12.2
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-omap" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> Sumary is TASK A (normal priority) doing __remove_mapping page preempted by TASK B (RT priority) doing __read_swap_cache_async,
+> the TASK A preempted before swapcache_free, left SWAP_HAS_CACHE flag in the swap cache,
+> the TASK B which doing __read_swap_cache_async, will not success at swapcache_prepare(entry) because the swap cache was exist, then it will loop forever because it is a RT thread...
+> the spin lock unlocked before swapcache_free, so disable preemption until swapcache_free executed ...
+
+OK, I see your point now. I have missed the lock is dropped before
+swapcache_free. How can preemption disabling prevent this race to happen
+while the code is preempted by an IRQ?
+-- 
+Michal Hocko
+SUSE Labs
