@@ -2,60 +2,96 @@ Return-Path: <SRS0=S+WB=KJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9F36C67790
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 21:02:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB407C67790
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 21:03:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5892420882
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 21:02:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5892420882
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
+	by mail.kernel.org (Postfix) with ESMTP id 5DE3720844
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 21:03:27 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="SmEGADeP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5DE3720844
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731340AbeGYWPb (ORCPT
+        id S1731299AbeGYWQw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 18:15:31 -0400
-Received: from shards.monkeyblade.net ([23.128.96.9]:55980 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730370AbeGYWPb (ORCPT
+        Wed, 25 Jul 2018 18:16:52 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:42002 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730427AbeGYWQw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Jul 2018 18:15:31 -0400
-Received: from localhost (unknown [172.58.43.97])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id D33B1122FE543;
-        Wed, 25 Jul 2018 14:02:01 -0700 (PDT)
-Date:   Wed, 25 Jul 2018 14:01:54 -0700 (PDT)
-Message-Id: <20180725.140154.1401102419515041292.davem@davemloft.net>
-To:     dann.frazier@canonical.com
-Cc:     aviad.krawczyk@huawei.com, zhaochen6@huawei.com,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] hinic: Link the logical network device to the pci
- device in sysfs
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <20180723225540.GA6905@xps13.dannf>
-References: <20180723225540.GA6905@xps13.dannf>
-X-Mailer: Mew version 6.7 on Emacs 26 / Mule 6.0 (HANACHIRUSATO)
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Wed, 25 Jul 2018 14:02:03 -0700 (PDT)
+        Wed, 25 Jul 2018 18:16:52 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:To:From:Date:Sender:Reply-To:Cc:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=VGtxcG7lsJBcExeoFplRIFyOm6dKmsyJIenTOK3x3BY=; b=SmEGADePDMqYu6m/moyeC0coa
+        htLEmm+I3bFzgQQnh7Nuz2/5f5oup4UQyBuz05qn8yB+uUJ2zWsCD8BTdY5/mB/YxSYvGAuyo61tF
+        XXzBoeiZ59P2SfhyPCXNlS//CTJgaiytoHI5h9uxvtxEwLdnfuZS/V8vWWl0fpugDfhRBVmDPFWBg
+        cah3ABlQMnKJBWbBjSOMesQEiVr/p+1m8EF/0ShrS5a2Eie4O5IByMJHgV/8PBvTIBucoqzGEGO0O
+        1Ujzdv2hmzmbvVOXRBjh8iNYtTpGdsP2j8QEx8G3Y4ij/2DjBrlOih81QPUj0kDRQs8a0DBM0ek+6
+        qF12xKkuw==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fiQwN-0002LA-Me; Wed, 25 Jul 2018 21:03:23 +0000
+Date:   Wed, 25 Jul 2018 14:03:23 -0700
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Ross Zwisler <ross.zwisler@linux.intel.com>, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jan Kara <jack@suse.cz>, Jeff Layton <jlayton@redhat.com>,
+        Lukas Czerner <lczerner@redhat.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Goldwyn Rodrigues <rgoldwyn@suse.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Ryusuke Konishi <konishi.ryusuke@lab.ntt.co.jp>,
+        linux-nilfs@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>,
+        Chao Yu <yuchao0@huawei.com>,
+        linux-f2fs-devel@lists.sourceforge.net
+Subject: Re: [PATCH v14 00/74] Convert page cache to XArray
+Message-ID: <20180725210323.GB1366@bombadil.infradead.org>
+References: <20180617020052.4759-1-willy@infradead.org>
+ <20180619031257.GA12527@linux.intel.com>
+ <20180619092230.GA1438@bombadil.infradead.org>
+ <20180619164037.GA6679@linux.intel.com>
+ <20180619171638.GE1438@bombadil.infradead.org>
+ <20180627110529.GA19606@bombadil.infradead.org>
+ <20180627194438.GA20774@linux.intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180627194438.GA20774@linux.intel.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: dann frazier <dann.frazier@canonical.com>
-Date: Mon, 23 Jul 2018 16:55:40 -0600
-
-> Otherwise interfaces get exposed under /sys/devices/virtual, which
-> doesn't give udev the context it needs for PCI-based predictable
-> interface names.
+On Wed, Jun 27, 2018 at 01:44:38PM -0600, Ross Zwisler wrote:
+> On Wed, Jun 27, 2018 at 04:05:29AM -0700, Matthew Wilcox wrote:
+> > On Tue, Jun 19, 2018 at 10:16:38AM -0700, Matthew Wilcox wrote:
+> > > I think I see a bug.  No idea if it's the one you're hitting ;-)
+> > > 
+> > > I had been intending to not use the 'entry' to decide whether we were
+> > > waiting on a 2MB or 4kB page, but rather the xas.  I shelved that idea,
+> > > but not before dropping the DAX_PMD flag being passed from the PMD
+> > > pagefault caller.  So if I put that back ...
+> > 
+> > Did you get a chance to test this?
 > 
-> Signed-off-by: dann frazier <dann.frazier@canonical.com>
+> With this patch it doesn't deadlock, but the test dies with a SIGBUS and we
+> hit a WARN_ON in the DAX code:
+> 
+> WARNING: CPU: 5 PID: 1678 at fs/dax.c:226 get_unlocked_entry+0xf7/0x120
+> 
+> I don't have a lot of time this week to debug further.  The quickest path to
+> victory is probably for you to get this reproducing in your test setup.  Does
+> XFS + DAX + generic/340 pass for you?
 
-Applied, thank you.
+I now have generic/340 passing.  I've pushed a new version to
+git://git.infradead.org/users/willy/linux-dax.git xarray
+
