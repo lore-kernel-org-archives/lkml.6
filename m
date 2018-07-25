@@ -6,48 +6,52 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EEED7C6778F
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 14:21:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EDE0DC6778F
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 14:22:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ACE3520843
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 14:21:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ACE3520843
+	by mail.kernel.org (Postfix) with ESMTP id A458520843
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 14:22:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A458520843
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729378AbeGYPdY (ORCPT
+        id S1729113AbeGYPeH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 11:33:24 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:58063 "EHLO
+        Wed, 25 Jul 2018 11:34:07 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:48971 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727881AbeGYPdX (ORCPT
+        with ESMTP id S1727881AbeGYPeH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Jul 2018 11:33:23 -0400
+        Wed, 25 Jul 2018 11:34:07 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w6PELAle400159
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w6PELfNU400200
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Wed, 25 Jul 2018 07:21:10 -0700
+        Wed, 25 Jul 2018 07:21:42 -0700
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w6PEL91X400156;
-        Wed, 25 Jul 2018 07:21:09 -0700
-Date:   Wed, 25 Jul 2018 07:21:09 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w6PELemX400197;
+        Wed, 25 Jul 2018 07:21:40 -0700
+Date:   Wed, 25 Jul 2018 07:21:40 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   "tip-bot for Isaac J. Manjarres" <tipbot@zytor.com>
-Message-ID: <tip-2610e88946632afb78aa58e61f11368ac4c0af7b@git.kernel.org>
-Cc:     psodagud@codeaurora.org, linux-kernel@vger.kernel.org,
-        tglx@linutronix.de, hpa@zytor.com, mingo@kernel.org,
-        isaacm@codeaurora.org, torvalds@linux-foundation.org,
-        pkondeti@codeaurora.org, peterz@infradead.org
-Reply-To: mingo@kernel.org, isaacm@codeaurora.org, hpa@zytor.com,
-          pkondeti@codeaurora.org, torvalds@linux-foundation.org,
-          peterz@infradead.org, psodagud@codeaurora.org,
-          tglx@linutronix.de, linux-kernel@vger.kernel.org
-In-Reply-To: <1531856129-9871-1-git-send-email-isaacm@codeaurora.org>
-References: <1531856129-9871-1-git-send-email-isaacm@codeaurora.org>
+From:   tip-bot for Daniel Bristot de Oliveira <tipbot@zytor.com>
+Message-ID: <tip-840d719604b0925ca23dde95f1767e4528668369@git.kernel.org>
+Cc:     daniel.casini@santannapisa.it, tglx@linutronix.de,
+        rostedt@goodmis.org, tommaso.cucinotta@santannapisa.it,
+        juri.lelli@redhat.com, peterz@infradead.org, hpa@zytor.com,
+        linux-kernel@vger.kernel.org, mingo@kernel.org, bristot@redhat.com,
+        williams@redhat.com, torvalds@linux-foundation.org,
+        luca.abeni@santannapisa.it
+Reply-To: mingo@kernel.org, bristot@redhat.com, hpa@zytor.com,
+          linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+          luca.abeni@santannapisa.it, williams@redhat.com,
+          daniel.casini@santannapisa.it, peterz@infradead.org,
+          juri.lelli@redhat.com, tglx@linutronix.de,
+          tommaso.cucinotta@santannapisa.it, rostedt@goodmis.org
+In-Reply-To: <ca31d073a4788acf0684a8b255f14fea775ccf20.1532077269.git.bristot@redhat.com>
+References: <ca31d073a4788acf0684a8b255f14fea775ccf20.1532077269.git.bristot@redhat.com>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:sched/core] stop_machine: Disable preemption after queueing
- stopper threads
-Git-Commit-ID: 2610e88946632afb78aa58e61f11368ac4c0af7b
+Subject: [tip:sched/core] sched/deadline: Update rq_clock of later_rq when
+ pushing a task
+Git-Commit-ID: 840d719604b0925ca23dde95f1767e4528668369
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -61,94 +65,98 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  2610e88946632afb78aa58e61f11368ac4c0af7b
-Gitweb:     https://git.kernel.org/tip/2610e88946632afb78aa58e61f11368ac4c0af7b
-Author:     Isaac J. Manjarres <isaacm@codeaurora.org>
-AuthorDate: Tue, 17 Jul 2018 12:35:29 -0700
+Commit-ID:  840d719604b0925ca23dde95f1767e4528668369
+Gitweb:     https://git.kernel.org/tip/840d719604b0925ca23dde95f1767e4528668369
+Author:     Daniel Bristot de Oliveira <bristot@redhat.com>
+AuthorDate: Fri, 20 Jul 2018 11:16:30 +0200
 Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Wed, 25 Jul 2018 11:25:08 +0200
+CommitDate: Wed, 25 Jul 2018 11:29:08 +0200
 
-stop_machine: Disable preemption after queueing stopper threads
+sched/deadline: Update rq_clock of later_rq when pushing a task
 
-This commit:
+Daniel Casini got this warn while running a DL task here at RetisLab:
 
-  9fb8d5dc4b64 ("stop_machine, Disable preemption when waking two stopper threads")
+  [  461.137582] ------------[ cut here ]------------
+  [  461.137583] rq->clock_update_flags < RQCF_ACT_SKIP
+  [  461.137599] WARNING: CPU: 4 PID: 2354 at kernel/sched/sched.h:967 assert_clock_updated.isra.32.part.33+0x17/0x20
+      [a ton of modules]
+  [  461.137646] CPU: 4 PID: 2354 Comm: label_image Not tainted 4.18.0-rc4+ #3
+  [  461.137647] Hardware name: ASUS All Series/Z87-K, BIOS 0801 09/02/2013
+  [  461.137649] RIP: 0010:assert_clock_updated.isra.32.part.33+0x17/0x20
+  [  461.137649] Code: ff 48 89 83 08 09 00 00 eb c6 66 0f 1f 84 00 00 00 00 00 55 48 c7 c7 98 7a 6c a5 c6 05 bc 0d 54 01 01 48 89 e5 e8 a9 84 fb ff <0f> 0b 5d c3 0f 1f 44 00 00 0f 1f 44 00 00 83 7e 60 01 74 0a 48 3b
+  [  461.137673] RSP: 0018:ffffa77e08cafc68 EFLAGS: 00010082
+  [  461.137674] RAX: 0000000000000000 RBX: ffff8b3fc1702d80 RCX: 0000000000000006
+  [  461.137674] RDX: 0000000000000007 RSI: 0000000000000096 RDI: ffff8b3fded164b0
+  [  461.137675] RBP: ffffa77e08cafc68 R08: 0000000000000026 R09: 0000000000000339
+  [  461.137676] R10: ffff8b3fd060d410 R11: 0000000000000026 R12: ffffffffa4e14e20
+  [  461.137677] R13: ffff8b3fdec22940 R14: ffff8b3fc1702da0 R15: ffff8b3fdec22940
+  [  461.137678] FS:  00007efe43ee5700(0000) GS:ffff8b3fded00000(0000) knlGS:0000000000000000
+  [  461.137679] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+  [  461.137680] CR2: 00007efe30000010 CR3: 0000000301744003 CR4: 00000000001606e0
+  [  461.137680] Call Trace:
+  [  461.137684]  push_dl_task.part.46+0x3bc/0x460
+  [  461.137686]  task_woken_dl+0x60/0x80
+  [  461.137689]  ttwu_do_wakeup+0x4f/0x150
+  [  461.137690]  ttwu_do_activate+0x77/0x80
+  [  461.137692]  try_to_wake_up+0x1d6/0x4c0
+  [  461.137693]  wake_up_q+0x32/0x70
+  [  461.137696]  do_futex+0x7e7/0xb50
+  [  461.137698]  __x64_sys_futex+0x8b/0x180
+  [  461.137701]  do_syscall_64+0x5a/0x110
+  [  461.137703]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+  [  461.137705] RIP: 0033:0x7efe4918ca26
+  [  461.137705] Code: 00 00 00 74 17 49 8b 48 20 44 8b 59 10 41 83 e3 30 41 83 fb 20 74 1e be 85 00 00 00 41 ba 01 00 00 00 41 b9 01 00 00 04 0f 05 <48> 3d 01 f0 ff ff 73 1f 31 c0 c3 be 8c 00 00 00 49 89 c8 4d 31 d2
+  [  461.137738] RSP: 002b:00007efe43ee4928 EFLAGS: 00000283 ORIG_RAX: 00000000000000ca
+  [  461.137739] RAX: ffffffffffffffda RBX: 0000000005094df0 RCX: 00007efe4918ca26
+  [  461.137740] RDX: 0000000000000001 RSI: 0000000000000085 RDI: 0000000005094e24
+  [  461.137741] RBP: 00007efe43ee49c0 R08: 0000000005094e20 R09: 0000000004000001
+  [  461.137741] R10: 0000000000000001 R11: 0000000000000283 R12: 0000000000000000
+  [  461.137742] R13: 0000000005094df8 R14: 0000000000000001 R15: 0000000000448a10
+  [  461.137743] ---[ end trace 187df4cad2bf7649 ]---
 
-does not fully address the race condition that can occur
-as follows:
+This warning happened in the push_dl_task(), because
+__add_running_bw()->cpufreq_update_util() is getting the rq_clock of
+the later_rq before its update, which takes place at activate_task().
+The fix then is to update the rq_clock before calling add_running_bw().
 
-On one CPU, call it CPU 3, thread 1 invokes
-cpu_stop_queue_two_works(2, 3,...), and the execution is such
-that thread 1 queues the works for migration/2 and migration/3,
-and is preempted after releasing the locks for migration/2 and
-migration/3, but before waking the threads.
+To avoid double rq_clock_update() call, we set ENQUEUE_NOCLOCK flag to
+activate_task().
 
-Then, On CPU 2, a kworker, call it thread 2, is running,
-and it invokes cpu_stop_queue_two_works(1, 2,...), such that
-thread 2 queues the works for migration/1 and migration/2.
-Meanwhile, on CPU 3, thread 1 resumes execution, and wakes
-migration/2 and migration/3. This means that when CPU 2
-releases the locks for migration/1 and migration/2, but before
-it wakes those threads, it can be preempted by migration/2.
-
-If thread 2 is preempted by migration/2, then migration/2 will
-execute the first work item successfully, since migration/3
-was woken up by CPU 3, but when it goes to execute the second
-work item, it disables preemption, calls multi_cpu_stop(),
-and thus, CPU 2 will wait forever for migration/1, which should
-have been woken up by thread 2. However migration/1 cannot be
-woken up by thread 2, since it is a kworker, so it is affine to
-CPU 2, but CPU 2 is running migration/2 with preemption
-disabled, so thread 2 will never run.
-
-Disable preemption after queueing works for stopper threads
-to ensure that the operation of queueing the works and waking
-the stopper threads is atomic.
-
-Co-Developed-by: Prasad Sodagudi <psodagud@codeaurora.org>
-Co-Developed-by: Pavankumar Kondeti <pkondeti@codeaurora.org>
-Signed-off-by: Isaac J. Manjarres <isaacm@codeaurora.org>
-Signed-off-by: Prasad Sodagudi <psodagud@codeaurora.org>
-Signed-off-by: Pavankumar Kondeti <pkondeti@codeaurora.org>
+Reported-by: Daniel Casini <daniel.casini@santannapisa.it>
+Signed-off-by: Daniel Bristot de Oliveira <bristot@redhat.com>
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Acked-by: Juri Lelli <juri.lelli@redhat.com>
+Cc: Clark Williams <williams@redhat.com>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Luca Abeni <luca.abeni@santannapisa.it>
 Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Steven Rostedt <rostedt@goodmis.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: bigeasy@linutronix.de
-Cc: gregkh@linuxfoundation.org
-Cc: matt@codeblueprint.co.uk
-Fixes: 9fb8d5dc4b64 ("stop_machine, Disable preemption when waking two stopper threads")
-Link: http://lkml.kernel.org/r/1531856129-9871-1-git-send-email-isaacm@codeaurora.org
+Cc: Tommaso Cucinotta <tommaso.cucinotta@santannapisa.it>
+Fixes: e0367b12674b sched/deadline: Move CPU frequency selection triggering points
+Link: http://lkml.kernel.org/r/ca31d073a4788acf0684a8b255f14fea775ccf20.1532077269.git.bristot@redhat.com
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- kernel/stop_machine.c | 10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
+ kernel/sched/deadline.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
-diff --git a/kernel/stop_machine.c b/kernel/stop_machine.c
-index 1ff523dae6e2..e190d1ef3a23 100644
---- a/kernel/stop_machine.c
-+++ b/kernel/stop_machine.c
-@@ -260,6 +260,15 @@ retry:
- 	err = 0;
- 	__cpu_stop_queue_work(stopper1, work1, &wakeq);
- 	__cpu_stop_queue_work(stopper2, work2, &wakeq);
+diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
+index 10c7b51c0d1f..b5fbdde6afa9 100644
+--- a/kernel/sched/deadline.c
++++ b/kernel/sched/deadline.c
+@@ -2090,8 +2090,14 @@ retry:
+ 	sub_rq_bw(&next_task->dl, &rq->dl);
+ 	set_task_cpu(next_task, later_rq->cpu);
+ 	add_rq_bw(&next_task->dl, &later_rq->dl);
++
 +	/*
-+	 * The waking up of stopper threads has to happen
-+	 * in the same scheduling context as the queueing.
-+	 * Otherwise, there is a possibility of one of the
-+	 * above stoppers being woken up by another CPU,
-+	 * and preempting us. This will cause us to n ot
-+	 * wake up the other stopper forever.
++	 * Update the later_rq clock here, because the clock is used
++	 * by the cpufreq_update_util() inside __add_running_bw().
 +	 */
-+	preempt_disable();
- unlock:
- 	raw_spin_unlock(&stopper2->lock);
- 	raw_spin_unlock_irq(&stopper1->lock);
-@@ -271,7 +280,6 @@ unlock:
- 	}
++	update_rq_clock(later_rq);
+ 	add_running_bw(&next_task->dl, &later_rq->dl);
+-	activate_task(later_rq, next_task, 0);
++	activate_task(later_rq, next_task, ENQUEUE_NOCLOCK);
+ 	ret = 1;
  
- 	if (!err) {
--		preempt_disable();
- 		wake_up_q(&wakeq);
- 		preempt_enable();
- 	}
+ 	resched_curr(later_rq);
