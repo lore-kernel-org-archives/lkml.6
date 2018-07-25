@@ -2,92 +2,100 @@ Return-Path: <SRS0=S+WB=KJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 875F6C67790
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 21:19:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15269C6778F
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 21:21:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 34B9020852
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 21:19:12 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="p5NcvWf2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 34B9020852
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+	by mail.kernel.org (Postfix) with ESMTP id BA74120843
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 21:21:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA74120843
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731400AbeGYWck (ORCPT
+        id S1731358AbeGYWer (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 18:32:40 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:50876 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731248AbeGYWck (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Jul 2018 18:32:40 -0400
-Received: by mail-wm0-f66.google.com with SMTP id s12-v6so4108956wmc.0
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Jul 2018 14:19:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=message-id:subject:from:to:cc:date:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=YTfTDA5ZOyUhIzQSKMnXLsYvzI4PLDQiCShlg/fmV/U=;
-        b=p5NcvWf2tCNFmBFoKx69JJuBHGKc5p5EvjEdybmKHv+AxQn2GwEeVy2DmW7QjhPin+
-         2uzrMJktykoRIr3igWNeqtygq+J773ml1gucnP3DsNxCvirRzG7GcIoDvB2VbL1soX7E
-         zTWpB6vrXH/ASgpRBgf8TbOBmNI43pmtCNyOACP/nDzF6nCiSIEwH9i981q+ttw3awpY
-         6oVfoOHcSfy3QPQjIfsRq36crx5scDoft8MfjvKOsl+zYv+I2u7L+l6Q3V5ecizeLwDa
-         tpSuS/KnZAKqQ+WCugLRQ6Lu0lV9UwW++IfeV+2LY+8gFz2gy/l1D0xhaqxLbUwP5e6l
-         1Plg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=YTfTDA5ZOyUhIzQSKMnXLsYvzI4PLDQiCShlg/fmV/U=;
-        b=Wzh/Eaph6tcGqPQAu2oa8vzfxPT8mfUfjlqHQsXWhfXM+qJJLARFwnVpcqaKHPAFVB
-         riXhLhMtwez3XRx1HnVejQBhx4oOuLH2gqsLP0TFd13ZB1owd24EqQTjhv+Y3uvaokrk
-         /qfL9LX3aP5VvMfyP8xah+8UsWmnKQEHVXZUZjvMzMXks9VNi2JWlWfHY7g2F/YffFJT
-         tYnP3ZIXvmOBuqTIw1751cDxvZJPtqIbA+IyachmGxE9TrRWdnOwFACHau+pPO4UPiaL
-         /Km6yqJ4murBBzcy0ScTFbZaiqV8eW8P79MNsbVusePTwJ6WPWn4ABYnx9OIL7ucqUP5
-         vYUA==
-X-Gm-Message-State: AOUpUlEM3Gimo09w4/VtRUFmnfryLGeg/xN/jhcU5S2XlvGpA/1+snPI
-        ac7KP5/WUFagJErfPkSVoo4Eyg==
-X-Google-Smtp-Source: AAOMgpcvhmwK37chQlwMM7SXjFe3hKMamA9H8QDjsfSK0fZbMfyMwLr8ZbfoWisfk6VfaCbf5E6LUw==
-X-Received: by 2002:a1c:ea17:: with SMTP id i23-v6mr5744581wmh.29.1532553548290;
-        Wed, 25 Jul 2018 14:19:08 -0700 (PDT)
-Received: from boomer (cag06-3-82-243-161-21.fbx.proxad.net. [82.243.161.21])
-        by smtp.gmail.com with ESMTPSA id e133-v6sm10228865wma.33.2018.07.25.14.19.07
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 25 Jul 2018 14:19:07 -0700 (PDT)
-Message-ID: <705e31bf0d978b7d356b2f077179ab0e3db6f092.camel@baylibre.com>
-Subject: Re: [PATCH 00/14] arm64: dts: meson-axg: add audio support
-From:   jbrunet@baylibre.com
-To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc:     khilman@baylibre.com, carlo@caione.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, p.zabel@pengutronix.de,
-        linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org
-Date:   Wed, 25 Jul 2018 23:19:05 +0200
-In-Reply-To: <CAFBinCBh-b=ie4hBMWdHG8KoLQ7qiRfo8vXfJ1PRcN4UPtg+uA@mail.gmail.com>
-References: <20180724125238.14567-1-jbrunet@baylibre.com>
-         <CAFBinCBh-b=ie4hBMWdHG8KoLQ7qiRfo8vXfJ1PRcN4UPtg+uA@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.4 (3.28.4-1.fc28) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Wed, 25 Jul 2018 18:34:47 -0400
+Received: from mga14.intel.com ([192.55.52.115]:33248 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731243AbeGYWer (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Jul 2018 18:34:47 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Jul 2018 14:21:16 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,402,1526367600"; 
+   d="scan'208";a="75931220"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orsmga001.jf.intel.com with ESMTP; 25 Jul 2018 14:21:14 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1000)
+        id D915EF3; Thu, 26 Jul 2018 00:21:22 +0300 (EEST)
+Date:   Thu, 26 Jul 2018 00:21:22 +0300
+From:   "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+To:     Dmitry Malkin <d.malkin@real-time-systems.com>
+Cc:     linux-x86_64@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org
+Subject: Re: 4.17.x won't boot due to "x86/boot/compressed/64: Handle 5-level
+ paging boot if kernel is above 4G"
+Message-ID: <20180725212122.f2m3cfiqb4az3cb7@black.fi.intel.com>
+References: <f1fb3e5e-f18a-9f89-84c5-1dc73e08ceef@real-time-systems.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <f1fb3e5e-f18a-9f89-84c5-1dc73e08ceef@real-time-systems.com>
+User-Agent: NeoMutt/20170714-126-deb55f (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2018-07-25 at 21:11 +0200, Martin Blumenstingl wrote:
-> nit-pick: one patch uses "arm64: dts: meson-axg: s400" in the subject
-> while other patches that are touching the s400 board aren't
-> if you have to re-send this series: can you please use the "arm64:
-> dts: meson-axg: s400:" prefix for all patches touching the s400 board?
+On Wed, Jul 25, 2018 at 05:26:02PM +0000, Dmitry Malkin wrote:
+> there may be some other reasons which may cause undefined behavior (reboot
+> for example):
+> 
+> in arch/x86/boot/compressed/pgtable_64.c in function paging_prepare():
+> 
+> 1. structure "paging_config" allocated on stack without setting default
+> value for flag "l5_required":
+> >>struct paging_config paging_config = {};
+> l5_required is set only if CONFIG_X86_5LEVEL is defined
 
-hum, do we really have such rule, or do you think we should add one ?
-Kevin, do you have opinion ?
+Hm? C99 initializer zeros the structure.
 
-Not that I really mind either way, but prefixes rules are usually there to help
-maintainer filter the patches. Will such rule help in any way ?
+> 2. reading from memory which may be reserved in case of EFI systems:
+> >>    ebda_start = *(unsigned short *)0x40e << 4;
+> >>    bios_start = *(unsigned short *)0x413 << 10;
+> Also, on EFI system without CSM it will results in all zeros. Which will
+> place trampoline_start to 0x9d000. And it also may be reserved memory. In
+> fact I have such system and it is causes instant reboot (when code starts
+> copying to "trampoline_start").
 
+Could you show dmesg from such system?
+
+> 3. paging_prepare(void) returns "struct paging_config". Copy by value. Is it
+> really specified by ABI or GCC itself that the second field (which is flag
+> "l5_required") will go to RDX register?
+
+https://github.com/hjl-tools/x86-psABI/wiki/x86-64-psABI-1.0.pdf
+
+3.2.3 Parameter Passing
+
+...
+
+Returning of Values
+The returning of values is done according to the following algorithm:
+
+...
+
+3.  If the class is INTEGER, the next available register of the sequence
+%rax, %rdx is used.
+
+-- 
+ Kirill A. Shutemov
