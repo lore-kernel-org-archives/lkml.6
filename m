@@ -5,133 +5,65 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB434C67790
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 15:42:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A9F6C67790
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 15:42:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 547D920843
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 15:42:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 547D920843
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
+	by mail.kernel.org (Postfix) with ESMTP id AD3A420843
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 15:42:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AD3A420843
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728653AbeGYQyn convert rfc822-to-8bit (ORCPT
+        id S1728793AbeGYQyt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 12:54:43 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:8367 "EHLO pegase1.c-s.fr"
+        Wed, 25 Jul 2018 12:54:49 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40618 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728436AbeGYQyn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Jul 2018 12:54:43 -0400
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 41bKH9273sz9ty7H;
-        Wed, 25 Jul 2018 17:42:29 +0200 (CEST)
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id 4ikm6VBsBF6w; Wed, 25 Jul 2018 17:42:29 +0200 (CEST)
-Received: from vm-hermes.si.c-s.fr (vm-hermes.si.c-s.fr [192.168.25.253])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 41bKH91Ym5z9ty76;
-        Wed, 25 Jul 2018 17:42:29 +0200 (CEST)
-Received: by vm-hermes.si.c-s.fr (Postfix, from userid 33)
-        id 1E352781; Wed, 25 Jul 2018 17:42:28 +0200 (CEST)
-Received: from 37.173.118.119 ([37.173.118.119]) by messagerie.si.c-s.fr
- (Horde Framework) with HTTP; Wed, 25 Jul 2018 17:42:28 +0200
-Date:   Wed, 25 Jul 2018 17:42:28 +0200
-Message-ID: <20180725174228.Horde.-PsCOyKHj9skAHIMbqyLDg1@messagerie.si.c-s.fr>
-From:   LEROY Christophe <christophe.leroy@c-s.fr>
-To:     Murilo Opsfelder Araujo <muriloo@linux.ibm.com>
-Cc:     linuxppc-dev@lists.ozlabs.org, "Tobin C . Harding" <me@tobin.cc>,
-        Sukadev Bhattiprolu <sukadev@linux.vnet.ibm.com>,
-        Simon Guo <wei.guo.simon@gmail.com>,
-        Paul Mackerras <paulus@samba.org>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Michael Neuling <mikey@neuling.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        Cyril Bur <cyrilbur@gmail.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Balbir Singh <bsingharora@gmail.com>,
-        Andrew Donnellan <andrew.donnellan@au1.ibm.com>,
-        Alastair D'Silva <alastair@d-silva.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/7] powerpc/traps: Return early in show_signal_msg()
-References: <20180724192720.32417-1-muriloo@linux.ibm.com>
- <20180724192720.32417-3-muriloo@linux.ibm.com>
-In-Reply-To: <20180724192720.32417-3-muriloo@linux.ibm.com>
-User-Agent: Internet Messaging Program (IMP) H5 (6.2.3)
-Content-Type: text/plain; charset=UTF-8; format=flowed; DelSp=Yes
+        id S1728436AbeGYQyt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Jul 2018 12:54:49 -0400
+Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id E272520843;
+        Wed, 25 Jul 2018 15:42:35 +0000 (UTC)
+Date:   Wed, 25 Jul 2018 11:42:34 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Masami Hiramatsu <mhiramat@kernel.org>
+Cc:     Artem Savkov <asavkov@redhat.com>, Ingo Molnar <mingo@redhat.com>,
+        linux-kernel@vger.kernel.org, Josh Poimboeuf <jpoimboe@redhat.com>
+Subject: Re: [PATCH v2] tracing/kprobes: Fix trace_probe flags on
+ enable_trace_kprobe() failure
+Message-ID: <20180725114234.5b8b7860@gandalf.local.home>
+In-Reply-To: <20180726004113.d578f6e6a2fa59adf1efb4ea@kernel.org>
+References: <20180725142038.4765-1-asavkov@redhat.com>
+        <20180726004113.d578f6e6a2fa59adf1efb4ea@kernel.org>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Disposition: inline
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Murilo Opsfelder Araujo <muriloo@linux.ibm.com> a écrit :
+On Thu, 26 Jul 2018 00:41:13 +0900
+Masami Hiramatsu <mhiramat@kernel.org> wrote:
 
-> Modify logic of show_signal_msg() to return early, if possible.  Replace
-> printk_ratelimited() by printk() and a default rate limit burst to limit
-> displaying unhandled signals messages.
+> On Wed, 25 Jul 2018 16:20:38 +0200
+> Artem Savkov <asavkov@redhat.com> wrote:
+> 
+> > If enable_trace_kprobe fails to enable the probe in enable_k(ret)probe
+> > it returns an error, but does not unset the tp flags it set previously.
+> > This results in a probe being considered enabled and failures like being
+> > unable to remove the probe through kprobe_events file since probes_open()
+> > expects every probe to be disabled.
+> >   
+> 
+> Looks good to me.
+> 
+> Acked-by: Masami Hiramatsu <mhiramat@kernel.org>
 
-Can you explain more the benefits of this change ?
+Thanks Masami,
 
-Christophe
-
->
-> Signed-off-by: Murilo Opsfelder Araujo <muriloo@linux.ibm.com>
-> ---
->  arch/powerpc/kernel/traps.c | 21 +++++++++++++++------
->  1 file changed, 15 insertions(+), 6 deletions(-)
->
-> diff --git a/arch/powerpc/kernel/traps.c b/arch/powerpc/kernel/traps.c
-> index cbd3dc365193..4faab4705774 100644
-> --- a/arch/powerpc/kernel/traps.c
-> +++ b/arch/powerpc/kernel/traps.c
-> @@ -301,6 +301,13 @@ void user_single_step_siginfo(struct task_struct *tsk,
->  	info->si_addr = (void __user *)regs->nip;
->  }
->
-> +static bool show_unhandled_signals_ratelimited(void)
-> +{
-> +	static DEFINE_RATELIMIT_STATE(rs, DEFAULT_RATELIMIT_INTERVAL,
-> +				      DEFAULT_RATELIMIT_BURST);
-> +	return show_unhandled_signals && __ratelimit(&rs);
-> +}
-> +
->  static void show_signal_msg(int signr, struct pt_regs *regs, int code,
->  			    unsigned long addr)
->  {
-> @@ -309,11 +316,12 @@ static void show_signal_msg(int signr, struct  
-> pt_regs *regs, int code,
->  	const char fmt64[] = KERN_INFO "%s[%d]: unhandled signal %d " \
->  		"at %016lx nip %016lx lr %016lx code %x\n";
->
-> -	if (show_unhandled_signals && unhandled_signal(current, signr)) {
-> -		printk_ratelimited(regs->msr & MSR_64BIT ? fmt64 : fmt32,
-> -				   current->comm, current->pid, signr,
-> -				   addr, regs->nip, regs->link, code);
-> -	}
-> +	if (!unhandled_signal(current, signr))
-> +		return;
-> +
-> +	printk(regs->msr & MSR_64BIT ? fmt64 : fmt32,
-> +	       current->comm, current->pid, signr,
-> +	       addr, regs->nip, regs->link, code);
->  }
->
->  void _exception_pkey(int signr, struct pt_regs *regs, int code,
-> @@ -326,7 +334,8 @@ void _exception_pkey(int signr, struct pt_regs  
-> *regs, int code,
->  		return;
->  	}
->
-> -	show_signal_msg(signr, regs, code, addr);
-> +	if (show_unhandled_signals_ratelimited())
-> +		show_signal_msg(signr, regs, code, addr);
->
->  	if (arch_irqs_disabled() && !arch_irq_disabled_regs(regs))
->  		local_irq_enable();
-> --
-> 2.17.1
-
+-- Steve
 
