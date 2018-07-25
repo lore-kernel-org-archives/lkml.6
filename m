@@ -2,167 +2,118 @@ Return-Path: <SRS0=S+WB=KJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=0.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DFAEBC67790
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 09:23:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55667C67790
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 09:27:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9759A20844
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 09:23:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9759A20844
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alien8.de
+	by mail.kernel.org (Postfix) with ESMTP id 069EB20882
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 09:27:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 069EB20882
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728663AbeGYKdx (ORCPT
+        id S1728657AbeGYKif (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 06:33:53 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:41800 "EHLO mail.skyhub.de"
+        Wed, 25 Jul 2018 06:38:35 -0400
+Received: from foss.arm.com ([217.140.101.70]:34854 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728632AbeGYKdw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Jul 2018 06:33:52 -0400
-X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
-Received: from mail.skyhub.de ([127.0.0.1])
-        by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id USzqQeWCuLEg; Wed, 25 Jul 2018 11:23:03 +0200 (CEST)
-Received: from nazgul.tnic (77-85-109-49.ip.btc-net.bg [77.85.109.49])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 14FB01EC00E4;
-        Wed, 25 Jul 2018 11:23:03 +0200 (CEST)
-Date:   Wed, 25 Jul 2018 11:22:58 +0200
-From:   Borislav Petkov <bp@alien8.de>
-To:     Masayoshi Mizuma <msys.mizuma@gmail.com>
-Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Tony Luck <tony.luck@intel.com>,
-        Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>
-Subject: Re: [PATCH v2] EDAC, sb_edac: Add support for systems with segmented
- PCI buses
-Message-ID: <20180725092258.GA14113@nazgul.tnic>
-References: <20180724190213.26359-1-msys.mizuma@gmail.com>
+        id S1728222AbeGYKif (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Jul 2018 06:38:35 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 82C9480D;
+        Wed, 25 Jul 2018 02:27:45 -0700 (PDT)
+Received: from [10.37.10.30] (unknown [10.37.10.30])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B4B7E3F237;
+        Wed, 25 Jul 2018 02:27:43 -0700 (PDT)
+Subject: Re: [PATCH] arm64: Check for errata before evaluating cpu features
+To:     Dave Martin <Dave.Martin@arm.com>
+Cc:     Dirk Mueller <dmueller@suse.com>,
+        linux-arm-kernel@lists.infradead.org,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        linux-kernel@vger.kernel.org, Alex Graf <agraf@suse.de>
+References: <20180725083504.25836-1-dmueller@suse.com>
+ <aea2daa9-40ef-2066-0da9-0770c3c50dfb@arm.com>
+ <20180725085604.GB4240@e103592.cambridge.arm.com>
+From:   Suzuki K Poulose <suzuki.poulose@arm.com>
+Message-ID: <3d26391a-afbe-621e-90d0-80c4dbc4e2f6@arm.com>
+Date:   Wed, 25 Jul 2018 10:28:17 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20180724190213.26359-1-msys.mizuma@gmail.com>
-User-Agent: Mutt/1.6.0 (2016-04-01)
+In-Reply-To: <20180725085604.GB4240@e103592.cambridge.arm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 24, 2018 at 03:02:13PM -0400, Masayoshi Mizuma wrote:
-> [*] KASAN report is as follows.
 
-That KASAN report is an arbitrary side-effect from the missing segmented
-support so I ripped it out from the commit message and ended up
-committing this:
+Dave,
 
----
-From: Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>
-Date: Tue, 24 Jul 2018 15:02:13 -0400
-Subject: [PATCH] EDAC, sb_edac: Add support for systems with segmented PCI buses
+On 07/25/2018 09:56 AM, Dave Martin wrote:
+> On Wed, Jul 25, 2018 at 09:51:53AM +0100, Suzuki K Poulose wrote:
+>> On 07/25/2018 09:35 AM, Dirk Mueller wrote:
+>>> Since commit d3aec8a28be3b8 ("arm64: capabilities: Restrict KPTI
+>>> detection to boot-time CPUs") we rely on errata flags being already
+>>> populated during feature enumeration. The order of errata and
+>>> features was flipped as part of commit ed478b3f9e4a ("arm64:
+>>> capabilities: Group handling of features and errata workarounds").
+>>>
+>>> Return to the orginal order of errata and feature evaluation to
+>>> ensure errata flags are present during feature evaluation.
+>>>
+>>> Fixes: d3aec8a28be3b8 ("arm64: capabilities: Restrict KPTI
+>>> detection to boot-time CPUs")
+>>> CC: Suzuki K Poulose <suzuki.poulose@arm.com>
+>>> CC: Marc Zyngier <marc.zyngier@arm.com>
+>>> Signed-off-by: Dirk Mueller <dmueller@suse.com>
+>>
+>> It would be good to add "Fixes: ed478b3f9e4a" (instead), just to make
+>> sure this gets fixed everywhere the original problem appears.
+>>
 
-Extend the driver to check whether segment number and bus number matches
-when deciding how to group memory controller PCI devices to CPU sockets.
+> 
+> I forget why these were originally reordered in ed478b3f9e4a.
+> Was there any real reason for it?
 
-Signed-off-by: Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>
-Reviewed-by: Tony Luck <tony.luck@intel.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: linux-edac <linux-edac@vger.kernel.org>
-Link: http://lkml.kernel.org/r/20180724190213.26359-1-msys.mizuma@gmail.com
-[ Cleanup commit message. ]
-Signed-off-by: Borislav Petkov <bp@suse.de>
----
- drivers/edac/sb_edac.c | 17 ++++++++++++-----
- 1 file changed, 12 insertions(+), 5 deletions(-)
+No, there was no real reason for it. We have always detected the cpu
+local errata first and all features were system wide. So that ensured
+that the errata are detected before features. With the introduction
+of cpu local features, it was a random order until we realised this
+issue.
 
-diff --git a/drivers/edac/sb_edac.c b/drivers/edac/sb_edac.c
-index 4a89c8093307..07726fb00321 100644
---- a/drivers/edac/sb_edac.c
-+++ b/drivers/edac/sb_edac.c
-@@ -352,6 +352,7 @@ struct pci_id_table {
- 
- struct sbridge_dev {
- 	struct list_head	list;
-+	int			seg;
- 	u8			bus, mc;
- 	u8			node_id, source_id;
- 	struct pci_dev		**pdev;
-@@ -729,7 +730,8 @@ static inline int numcol(u32 mtr)
- 	return 1 << cols;
- }
- 
--static struct sbridge_dev *get_sbridge_dev(u8 bus, enum domain dom, int multi_bus,
-+static struct sbridge_dev *get_sbridge_dev(int seg, u8 bus, enum domain dom,
-+					   int multi_bus,
- 					   struct sbridge_dev *prev)
- {
- 	struct sbridge_dev *sbridge_dev;
-@@ -747,14 +749,15 @@ static struct sbridge_dev *get_sbridge_dev(u8 bus, enum domain dom, int multi_bu
- 				      : sbridge_edac_list.next, struct sbridge_dev, list);
- 
- 	list_for_each_entry_from(sbridge_dev, &sbridge_edac_list, list) {
--		if (sbridge_dev->bus == bus && (dom == SOCK || dom == sbridge_dev->dom))
-+		if ((sbridge_dev->seg == seg) && (sbridge_dev->bus == bus) &&
-+				(dom == SOCK || dom == sbridge_dev->dom))
- 			return sbridge_dev;
- 	}
- 
- 	return NULL;
- }
- 
--static struct sbridge_dev *alloc_sbridge_dev(u8 bus, enum domain dom,
-+static struct sbridge_dev *alloc_sbridge_dev(int seg, u8 bus, enum domain dom,
- 					     const struct pci_id_table *table)
- {
- 	struct sbridge_dev *sbridge_dev;
-@@ -771,6 +774,7 @@ static struct sbridge_dev *alloc_sbridge_dev(u8 bus, enum domain dom,
- 		return NULL;
- 	}
- 
-+	sbridge_dev->seg = seg;
- 	sbridge_dev->bus = bus;
- 	sbridge_dev->dom = dom;
- 	sbridge_dev->n_devs = table->n_devs_per_imc;
-@@ -2246,6 +2250,7 @@ static int sbridge_get_onedevice(struct pci_dev **prev,
- 	struct sbridge_dev *sbridge_dev = NULL;
- 	const struct pci_id_descr *dev_descr = &table->descr[devno];
- 	struct pci_dev *pdev = NULL;
-+	int seg = 0;
- 	u8 bus = 0;
- 	int i = 0;
- 
-@@ -2276,10 +2281,12 @@ static int sbridge_get_onedevice(struct pci_dev **prev,
- 		/* End of list, leave */
- 		return -ENODEV;
- 	}
-+	seg = pci_domain_nr(pdev->bus);
- 	bus = pdev->bus->number;
- 
- next_imc:
--	sbridge_dev = get_sbridge_dev(bus, dev_descr->dom, multi_bus, sbridge_dev);
-+	sbridge_dev = get_sbridge_dev(seg, bus, dev_descr->dom,
-+				      multi_bus, sbridge_dev);
- 	if (!sbridge_dev) {
- 		/* If the HA1 wasn't found, don't create EDAC second memory controller */
- 		if (dev_descr->dom == IMC1 && devno != 1) {
-@@ -2292,7 +2299,7 @@ static int sbridge_get_onedevice(struct pci_dev **prev,
- 		if (dev_descr->dom == SOCK)
- 			goto out_imc;
- 
--		sbridge_dev = alloc_sbridge_dev(bus, dev_descr->dom, table);
-+		sbridge_dev = alloc_sbridge_dev(seg, bus, dev_descr->dom, table);
- 		if (!sbridge_dev) {
- 			pci_dev_put(pdev);
- 			return -ENOMEM;
--- 
-2.14.0.rc0
+That said, this exposes a problem with the current infrastructure
+where, if there are local capabilities that depend on other local
+capabilities. On a heterogeneous system, there is no guarantee on the
+order in which the CPUs turn up and thus detect the capabilities. In
+this case, this patch wouldn't work if we were dealing with a
+heterogeneous system.
 
--- 
-Regards/Gruss,
-    Boris.
+The solution would be to use cpu local and system wide versions
+of the same capability and use the cpu-local capabilities to
+decide the system capability.
 
-ECO tip #101: Trim your mails when you reply.
---
+i.e, here KPTI needs two caps :
+
+a) CPU_NEEDS_KPTI - Local CPU capability to detect the local CPU
+which needs KPTRI
+
+b) SYSTEM_NEEDS_KPTI - System wide capability, which can be turned
+on iff we have CPU_NEEDS_KPTI && !CAVIUM_ERRATA.
+
+> 
+> I also notice in that commit that after the detection pass, we set
+> things up (in update_cpu_capabilities(), enable_cpu_capabilities()) in
+> the order errata, features.  Does this matter for anything?
+
+None that I am aware of. But logically that sounds like a better option.
+
+
+Suzuki
