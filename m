@@ -2,140 +2,219 @@ Return-Path: <SRS0=S+WB=KJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 525C8C6778F
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 20:51:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF162C67790
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 20:52:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0DB6620671
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 20:51:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0DB6620671
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 5E64820671
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 20:52:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E64820671
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731361AbeGYWEn (ORCPT
+        id S1731292AbeGYWFW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 18:04:43 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:58276 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1730484AbeGYWEn (ORCPT
+        Wed, 25 Jul 2018 18:05:22 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:45149 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730337AbeGYWFW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Jul 2018 18:04:43 -0400
-Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w6PKmdiX098109
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Jul 2018 16:51:18 -0400
-Received: from e14.ny.us.ibm.com (e14.ny.us.ibm.com [129.33.205.204])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2kexfvcvjb-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Jul 2018 16:51:17 -0400
-Received: from localhost
-        by e14.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <muriloo@linux.ibm.com>;
-        Wed, 25 Jul 2018 16:51:17 -0400
-Received: from b01cxnp22036.gho.pok.ibm.com (9.57.198.26)
-        by e14.ny.us.ibm.com (146.89.104.201) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 25 Jul 2018 16:51:12 -0400
-Received: from b01ledav006.gho.pok.ibm.com (b01ledav006.gho.pok.ibm.com [9.57.199.111])
-        by b01cxnp22036.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w6PKpBG15112106
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 25 Jul 2018 20:51:11 GMT
-Received: from b01ledav006.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id C032DAC059;
-        Wed, 25 Jul 2018 16:51:55 -0400 (EDT)
-Received: from b01ledav006.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id F2E76AC05E;
-        Wed, 25 Jul 2018 16:51:54 -0400 (EDT)
-Received: from localhost (unknown [9.85.190.157])
-        by b01ledav006.gho.pok.ibm.com (Postfix) with ESMTPS;
-        Wed, 25 Jul 2018 16:51:54 -0400 (EDT)
-Date:   Wed, 25 Jul 2018 17:51:08 -0300
-From:   Murilo Opsfelder Araujo <muriloo@linux.ibm.com>
-To:     LEROY Christophe <christophe.leroy@c-s.fr>
-Cc:     linuxppc-dev@lists.ozlabs.org, "Tobin C . Harding" <me@tobin.cc>,
-        Sukadev Bhattiprolu <sukadev@linux.vnet.ibm.com>,
-        Simon Guo <wei.guo.simon@gmail.com>,
-        Paul Mackerras <paulus@samba.org>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Michael Neuling <mikey@neuling.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        Cyril Bur <cyrilbur@gmail.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Balbir Singh <bsingharora@gmail.com>,
-        Andrew Donnellan <andrew.donnellan@au1.ibm.com>,
-        "Alastair D'Silva" <alastair@d-silva.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 7/7] powerpc/traps: Show instructions on exceptions
-References: <20180724192720.32417-1-muriloo@linux.ibm.com>
- <20180724192720.32417-8-muriloo@linux.ibm.com>
- <20180725180134.Horde.BdhyE2b-TXhoVB7W8bsBhg1@messagerie.si.c-s.fr>
+        Wed, 25 Jul 2018 18:05:22 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w6PKpZud501584
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Wed, 25 Jul 2018 13:51:35 -0700
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w6PKpYNn501581;
+        Wed, 25 Jul 2018 13:51:34 -0700
+Date:   Wed, 25 Jul 2018 13:51:34 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Jiri Olsa <tipbot@zytor.com>
+Message-ID: <tip-b57334b9453949bf81281321d14d86d60aee6fde@git.kernel.org>
+Cc:     tglx@linutronix.de, ak@linux.intel.com, peterz@infradead.org,
+        lukasz.odzioba@intel.com, dsahern@gmail.com, acme@redhat.com,
+        jolsa@kernel.org, mingo@kernel.org, namhyung@kernel.org,
+        wangnan0@huawei.com, alexander.shishkin@linux.intel.com,
+        kan.liang@linux.intel.com, linux-kernel@vger.kernel.org,
+        hpa@zytor.com
+Reply-To: ak@linux.intel.com, peterz@infradead.org,
+          lukasz.odzioba@intel.com, dsahern@gmail.com, tglx@linutronix.de,
+          jolsa@kernel.org, acme@redhat.com, mingo@kernel.org,
+          namhyung@kernel.org, kan.liang@linux.intel.com,
+          alexander.shishkin@linux.intel.com, wangnan0@huawei.com,
+          hpa@zytor.com, linux-kernel@vger.kernel.org
+In-Reply-To: <20180719143345.12963-4-jolsa@kernel.org>
+References: <20180719143345.12963-4-jolsa@kernel.org>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:perf/core] perf machine: Use last_match threads cache only in
+ single thread mode
+Git-Commit-ID: b57334b9453949bf81281321d14d86d60aee6fde
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180725180134.Horde.BdhyE2b-TXhoVB7W8bsBhg1@messagerie.si.c-s.fr>
-User-Agent: Mutt/1.10.0 (2018-05-17)
-X-TM-AS-GCONF: 00
-x-cbid: 18072520-0052-0000-0000-0000031371B8
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009427; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000266; SDB=6.01066079; UDB=6.00547685; IPR=6.00843939;
- MB=3.00022324; MTD=3.00000008; XFM=3.00000015; UTC=2018-07-25 20:51:16
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18072520-0053-0000-0000-00005D7D8D6C
-Message-Id: <20180725205108.GE23643@kermit-br-ibm-com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-25_04:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1806210000 definitions=main-1807250216
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi, Christophe.
+Commit-ID:  b57334b9453949bf81281321d14d86d60aee6fde
+Gitweb:     https://git.kernel.org/tip/b57334b9453949bf81281321d14d86d60aee6fde
+Author:     Jiri Olsa <jolsa@kernel.org>
+AuthorDate: Thu, 19 Jul 2018 16:33:44 +0200
+Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
+CommitDate: Tue, 24 Jul 2018 14:53:52 -0300
 
-On Wed, Jul 25, 2018 at 06:01:34PM +0200, LEROY Christophe wrote:
-> Murilo Opsfelder Araujo <muriloo@linux.ibm.com> a écrit :
-> 
-> > Move show_instructions() declaration to arch/powerpc/include/asm/stacktrace.h
-> > and include asm/stracktrace.h in arch/powerpc/kernel/process.c, which
-> > contains
-> > the implementation.
-> > 
-> > Modify show_instructions() not to call __kernel_text_address(), allowing
-> > userspace instruction dump.  probe_kernel_address(), which returns -EFAULT if
-> > something goes wrong, is still being called.
-> > 
-> > Call show_instructions() in arch/powerpc/kernel/traps.c to dump
-> > instructions at
-> > faulty location, useful to debugging.
-> 
-> Shouldn't this part be in a second patch ?
+perf machine: Use last_match threads cache only in single thread mode
 
-Makes sense.  Perhaps I should split this patch in two: one to remove
-__kernel_text_address() check in show_instructions(), and another to
-call show_instructions() in show_signal_msg().
+There's an issue with using threads::last_match in multithread mode
+which is enabled during the perf top synthesize. It might crash with
+following assertion:
 
-> Wouldn't it be better to also see regs in addition if we want to use this to
-> understand what happened ?
-> So you could call show_regs() instead of show_instructions() ?
+  perf: ...include/linux/refcount.h:109: refcount_inc:
+        Assertion `!(!refcount_inc_not_zero(r))' failed.
 
-I see that show_regs() prints more information and calls
-show_instructions() at the end if in privileged state.
+The gdb backtrace looks like this:
 
-I'm not sure about which situations we might want to call show_regs() -
-and display a bunch of information - or just dump instructions for some
-signals.
+  0x00007ffff50839fb in raise () from /lib64/libc.so.6
+  (gdb)
+  #0  0x00007ffff50839fb in raise () from /lib64/libc.so.6
+  #1  0x00007ffff5085800 in abort () from /lib64/libc.so.6
+  #2  0x00007ffff507c0da in __assert_fail_base () from /lib64/libc.so.6
+  #3  0x00007ffff507c152 in __assert_fail () from /lib64/libc.so.6
+  #4  0x0000000000535ff9 in refcount_inc (r=0x7fffe8009a70)
+      at ...include/linux/refcount.h:109
+  #5  0x0000000000536771 in thread__get (thread=0x7fffe8009a40)
+      at util/thread.c:115
+  #6  0x0000000000523cd0 in ____machine__findnew_thread (machine=0xbfde38,
+      threads=0xbfdf28, pid=2, tid=2, create=true) at util/machine.c:432
+  #7  0x0000000000523eb4 in __machine__findnew_thread (machine=0xbfde38,
+      pid=2, tid=2) at util/machine.c:489
+  #8  0x0000000000523f24 in machine__findnew_thread (machine=0xbfde38,
+      pid=2, tid=2) at util/machine.c:499
+  #9  0x0000000000526fbe in machine__process_fork_event (machine=0xbfde38,
+  ...
 
-Isn't calling show_regs() in this case considered overkill?
+The failing assertion is this one:
 
-Cheers
-Murilo
+  REFCOUNT_WARN(!refcount_inc_not_zero(r), ...
 
+the problem is that we don't serialize access to threads::last_match.
+We serialize the access to the threads tree, but we don't care how's
+threads::last_match being accessed. Both locked/unlocked paths use
+that data and can set it. In multithreaded mode we can end up with
+invalid object in thread__get call, like in following paths race:
+
+  thread 1
+    ...
+    machine__findnew_thread
+      down_write(&threads->lock);
+      __machine__findnew_thread
+        ____machine__findnew_thread
+          th = threads->last_match;
+          if (th->tid == tid) {
+            thread__get
+
+  thread 2
+    ...
+    machine__find_thread
+      down_read(&threads->lock);
+      __machine__findnew_thread
+        ____machine__findnew_thread
+          th = threads->last_match;
+          if (th->tid == tid) {
+            thread__get
+
+  thread 3
+    ...
+    machine__process_fork_event
+      machine__remove_thread
+        __machine__remove_thread
+          threads->last_match = NULL
+          thread__put
+      thread__put
+
+Thread 1 and 2 might got stale last_match, before thread 3 clears
+it. Thread 1 and 2 then race with thread 3's thread__put and they
+might trigger the refcnt == 0 assertion above.
+
+The patch is disabling the last_match cache for multiple thread
+mode. It was originally meant for single thread scenarios, where
+it's common to have multiple sequential searches of the same
+thread.
+
+In multithread mode this does not make sense, because top's threads
+processes different /proc entries and so the 'struct threads' object
+is queried for various threads. Moreover we'd need to add more locks
+to make it work.
+
+Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: David Ahern <dsahern@gmail.com>
+Cc: Kan Liang <kan.liang@linux.intel.com>
+Cc: Lukasz Odzioba <lukasz.odzioba@intel.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Wang Nan <wangnan0@huawei.com>
+Link: http://lkml.kernel.org/r/20180719143345.12963-4-jolsa@kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/perf/util/machine.c | 25 ++++++++++++++++++++++---
+ 1 file changed, 22 insertions(+), 3 deletions(-)
+
+diff --git a/tools/perf/util/machine.c b/tools/perf/util/machine.c
+index 8992fcf42257..b300a3973448 100644
+--- a/tools/perf/util/machine.c
++++ b/tools/perf/util/machine.c
+@@ -413,8 +413,8 @@ out_err:
+  * the full rbtree:
+  */
+ static struct thread*
+-threads__get_last_match(struct threads *threads, struct machine *machine,
+-			int pid, int tid)
++__threads__get_last_match(struct threads *threads, struct machine *machine,
++			  int pid, int tid)
+ {
+ 	struct thread *th;
+ 
+@@ -431,12 +431,31 @@ threads__get_last_match(struct threads *threads, struct machine *machine,
+ 	return NULL;
+ }
+ 
++static struct thread*
++threads__get_last_match(struct threads *threads, struct machine *machine,
++			int pid, int tid)
++{
++	struct thread *th = NULL;
++
++	if (perf_singlethreaded)
++		th = __threads__get_last_match(threads, machine, pid, tid);
++
++	return th;
++}
++
+ static void
+-threads__set_last_match(struct threads *threads, struct thread *th)
++__threads__set_last_match(struct threads *threads, struct thread *th)
+ {
+ 	threads->last_match = th;
+ }
+ 
++static void
++threads__set_last_match(struct threads *threads, struct thread *th)
++{
++	if (perf_singlethreaded)
++		__threads__set_last_match(threads, th);
++}
++
+ /*
+  * Caller must eventually drop thread->refcnt returned with a successful
+  * lookup/new thread inserted.
