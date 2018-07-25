@@ -2,139 +2,104 @@ Return-Path: <SRS0=S+WB=KJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BCC85C6778F
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 13:00:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5679EC6778F
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 13:03:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6C82420844
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 13:00:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C82420844
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id EFF2B20852
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 13:03:05 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="kzLURPZg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EFF2B20852
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728993AbeGYOMb (ORCPT
+        id S1729092AbeGYOOi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 10:12:31 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:38390 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728476AbeGYOMb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Jul 2018 10:12:31 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 86D9380D;
-        Wed, 25 Jul 2018 06:00:55 -0700 (PDT)
-Received: from [10.4.12.131] (e110467-lin.emea.arm.com [10.4.12.131])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id EDCE03F237;
-        Wed, 25 Jul 2018 06:00:51 -0700 (PDT)
-Subject: Re: [PATCH 1/7 v6] Documentation: fsl-mc: add iommu-map device-tree
- binding for fsl-mc bus
-To:     Nipun Gupta <nipun.gupta@nxp.com>, will.deacon@arm.com,
-        robh+dt@kernel.org, robh@kernel.org, mark.rutland@arm.com,
-        catalin.marinas@arm.com, gregkh@linuxfoundation.org,
-        laurentiu.tudor@nxp.com, bhelgaas@google.com, hch@lst.de
-Cc:     joro@8bytes.org, m.szyprowski@samsung.com, shawnguo@kernel.org,
-        frowand.list@gmail.com, iommu@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linuxppc-dev@lists.ozlabs.org, linux-pci@vger.kernel.org,
-        bharat.bhushan@nxp.com, stuyoder@gmail.com, leoyang.li@nxp.com
-References: <1531135103-10699-1-git-send-email-nipun.gupta@nxp.com>
- <1531135103-10699-2-git-send-email-nipun.gupta@nxp.com>
-From:   Robin Murphy <robin.murphy@arm.com>
-Message-ID: <c4989dc1-4f18-a30a-75a5-843b6be3b44e@arm.com>
-Date:   Wed, 25 Jul 2018 14:00:50 +0100
+        Wed, 25 Jul 2018 10:14:38 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:37037 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728941AbeGYOOi (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Jul 2018 10:14:38 -0400
+Received: by mail-wr1-f67.google.com with SMTP id q10-v6so7338020wrd.4
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Jul 2018 06:03:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=z7ROy7xdIdPah1kTMmidVYAanE4QWBdp+HfElnZwYhM=;
+        b=kzLURPZgN/Kch9p6rsjfsuDUAaX8C6oDBYJlBqBh+I1gasveC/ySEb4LUcTWCcGVal
+         fIo2A6cF7DyQbv2GJipxgfGDFkovSI+kF6GWIt9GArcT+MgJR7CYHvkJIf0ohSMYu51w
+         JbO5s5WDNU7neAg8XfbG97cIJN6nKx5DOrAIc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=z7ROy7xdIdPah1kTMmidVYAanE4QWBdp+HfElnZwYhM=;
+        b=ilAqiRtl00ECCXOqvg87g6sMx3PxNg/EGZA6KZlfo4gdtJRKQG70USzNwQppVGnZp+
+         MXDjkhFS0q1Nfo2b6NrgjtdfQAv+SKEzbEKXUNcMWqHvrU7+UVvPjJLIOGNQtdu/0dzD
+         yRZ18qfAbacsRufXiGQYP7tRcN0CbKint8mpx/8HfMnuZ8NfnED2g7UZapPJU0QtUpGJ
+         /BslNOAkxCpCo2bOB97kiJtCEm/AL1MI89KY0ZapEiB4ob2xtvjAkWB/ylsbisNDRnOD
+         Uzcrxtaw+ronhHBJvQi932IRVG2nkqJNkv/zGe9Tv77zFP/Bpf9wYNtEU0XF+iu1juyc
+         7bxg==
+X-Gm-Message-State: AOUpUlHs1PeSIaJrHa0oR4oNB6F4dcTPOXNYB2C/1Nn5taKDiE6AolaX
+        JHXFD4ITU0tJJ+iKJyDqezTk838BkD4=
+X-Google-Smtp-Source: AAOMgpezCX0jlLXLeqos7DI9jA313HzHiHMmaV/N6mvcSyrbEtX1TZtApr0HCi5E7CDBzw48TjIX/w==
+X-Received: by 2002:adf:9b11:: with SMTP id b17-v6mr14411245wrc.119.1532523781484;
+        Wed, 25 Jul 2018 06:03:01 -0700 (PDT)
+Received: from [192.168.27.197] ([37.157.136.206])
+        by smtp.gmail.com with ESMTPSA id o4-v6sm3433876wmo.20.2018.07.25.06.03.00
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 25 Jul 2018 06:03:00 -0700 (PDT)
+Subject: Re: [PATCH v3 17/35] media: camss: Add 8x96 resources
+To:     Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc:     mchehab@kernel.org, hans.verkuil@cisco.com,
+        laurent.pinchart+renesas@ideasonboard.com,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1532343772-27382-1-git-send-email-todor.tomov@linaro.org>
+ <1532343772-27382-18-git-send-email-todor.tomov@linaro.org>
+ <20180724122154.nkb3px4tlzalhfit@paasikivi.fi.intel.com>
+From:   Todor Tomov <todor.tomov@linaro.org>
+Message-ID: <6914034b-9871-eca6-fa4c-86f97e76b8b8@linaro.org>
+Date:   Wed, 25 Jul 2018 16:02:57 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <1531135103-10699-2-git-send-email-nipun.gupta@nxp.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
+In-Reply-To: <20180724122154.nkb3px4tlzalhfit@paasikivi.fi.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/07/18 12:18, Nipun Gupta wrote:
-> The existing IOMMU bindings cannot be used to specify the relationship
-> between fsl-mc devices and IOMMUs. This patch adds a generic binding for
-> mapping fsl-mc devices to IOMMUs, using iommu-map property.
-
-No more nits from me :)
-
-Acked-by: Robin Murphy <robin.murphy@arm.com>
-
-> Signed-off-by: Nipun Gupta <nipun.gupta@nxp.com>
-> Reviewed-by: Rob Herring <robh@kernel.org>
-> ---
->   .../devicetree/bindings/misc/fsl,qoriq-mc.txt      | 39 ++++++++++++++++++++++
->   1 file changed, 39 insertions(+)
+On 24.07.2018 15:21, Sakari Ailus wrote:
+> Hi Todor,
 > 
-> diff --git a/Documentation/devicetree/bindings/misc/fsl,qoriq-mc.txt b/Documentation/devicetree/bindings/misc/fsl,qoriq-mc.txt
-> index 6611a7c..01fdc33 100644
-> --- a/Documentation/devicetree/bindings/misc/fsl,qoriq-mc.txt
-> +++ b/Documentation/devicetree/bindings/misc/fsl,qoriq-mc.txt
-> @@ -9,6 +9,25 @@ blocks that can be used to create functional hardware objects/devices
->   such as network interfaces, crypto accelerator instances, L2 switches,
->   etc.
->   
-> +For an overview of the DPAA2 architecture and fsl-mc bus see:
-> +Documentation/networking/dpaa2/overview.rst
-> +
-> +As described in the above overview, all DPAA2 objects in a DPRC share the
-> +same hardware "isolation context" and a 10-bit value called an ICID
-> +(isolation context id) is expressed by the hardware to identify
-> +the requester.
-> +
-> +The generic 'iommus' property is insufficient to describe the relationship
-> +between ICIDs and IOMMUs, so an iommu-map property is used to define
-> +the set of possible ICIDs under a root DPRC and how they map to
-> +an IOMMU.
-> +
-> +For generic IOMMU bindings, see
-> +Documentation/devicetree/bindings/iommu/iommu.txt.
-> +
-> +For arm-smmu binding, see:
-> +Documentation/devicetree/bindings/iommu/arm,smmu.txt.
-> +
->   Required properties:
->   
->       - compatible
-> @@ -88,14 +107,34 @@ Sub-nodes:
->                 Value type: <phandle>
->                 Definition: Specifies the phandle to the PHY device node associated
->                             with the this dpmac.
-> +Optional properties:
-> +
-> +- iommu-map: Maps an ICID to an IOMMU and associated iommu-specifier
-> +  data.
-> +
-> +  The property is an arbitrary number of tuples of
-> +  (icid-base,iommu,iommu-base,length).
-> +
-> +  Any ICID i in the interval [icid-base, icid-base + length) is
-> +  associated with the listed IOMMU, with the iommu-specifier
-> +  (i - icid-base + iommu-base).
->   
->   Example:
->   
-> +        smmu: iommu@5000000 {
-> +               compatible = "arm,mmu-500";
-> +               #iommu-cells = <1>;
-> +               stream-match-mask = <0x7C00>;
-> +               ...
-> +        };
-> +
->           fsl_mc: fsl-mc@80c000000 {
->                   compatible = "fsl,qoriq-mc";
->                   reg = <0x00000008 0x0c000000 0 0x40>,    /* MC portal base */
->                         <0x00000000 0x08340000 0 0x40000>; /* MC control reg */
->                   msi-parent = <&its>;
-> +                /* define map for ICIDs 23-64 */
-> +                iommu-map = <23 &smmu 23 41>;
->                   #address-cells = <3>;
->                   #size-cells = <1>;
->   
+> On Mon, Jul 23, 2018 at 02:02:34PM +0300, Todor Tomov wrote:
+> ...
+>> @@ -61,7 +59,8 @@ struct ispif_device {
+>>  	struct mutex power_lock;
+>>  	struct ispif_intf_cmd_reg intf_cmd[MSM_ISPIF_VFE_NUM];
+>>  	struct mutex config_lock;
+>> -	struct ispif_line line[MSM_ISPIF_LINE_NUM];
+>> +	int line_num;
 > 
+> unsigned int?
+
+Yes, thanks :)
+
+> 
+> I guess if there are only such changes then a patch on top of the current
+> set might be more practical than a new version of the entire set.
+> 
+
+-- 
+Best regards,
+Todor Tomov
