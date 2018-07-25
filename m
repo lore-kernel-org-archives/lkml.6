@@ -2,63 +2,147 @@ Return-Path: <SRS0=S+WB=KJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BCE4BC6778F
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 05:52:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37457C67790
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 05:53:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7D31C20852
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 05:52:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7D31C20852
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=iogearbox.net
+	by mail.kernel.org (Postfix) with ESMTP id E28DD20852
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 05:52:59 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=iluvatar.ai header.i=@iluvatar.ai header.b="GL3J1QqO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E28DD20852
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=iluvatar.ai
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728509AbeGYHCw (ORCPT
+        id S1728537AbeGYHDB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 03:02:52 -0400
-Received: from www62.your-server.de ([213.133.104.62]:44107 "EHLO
-        www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727735AbeGYHCw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Jul 2018 03:02:52 -0400
-Received: from [78.46.172.2] (helo=sslproxy05.your-server.de)
-        by www62.your-server.de with esmtpsa (TLSv1.2:DHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.85_2)
-        (envelope-from <daniel@iogearbox.net>)
-        id 1fiCj5-0007w6-O5; Wed, 25 Jul 2018 07:52:43 +0200
-Received: from [2601:647:4601:b6c5::9c2f] (helo=localhost.localdomain)
-        by sslproxy05.your-server.de with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.89)
-        (envelope-from <daniel@iogearbox.net>)
-        id 1fiCj5-000DAk-7Z; Wed, 25 Jul 2018 07:52:43 +0200
-Subject: Re: [PATCH bpf-next] samples/bpf: xdpsock: order memory on AArch64
-To:     Brian Brooks <brian.brooks@linaro.org>, ast@kernel.org,
-        bjorn.topel@intel.com, magnus.karlsson@intel.com
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20180724133337.20175-1-brian.brooks@linaro.org>
-From:   Daniel Borkmann <daniel@iogearbox.net>
-Message-ID: <8ee462c0-3202-9416-4998-bfde2bbea5b3@iogearbox.net>
-Date:   Wed, 25 Jul 2018 07:52:36 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.3.0
-MIME-Version: 1.0
-In-Reply-To: <20180724133337.20175-1-brian.brooks@linaro.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Authenticated-Sender: daniel@iogearbox.net
-X-Virus-Scanned: Clear (ClamAV 0.100.0/24780/Wed Jul 25 02:42:30 2018)
+        Wed, 25 Jul 2018 03:03:01 -0400
+Received: from mail.iluvatar.ai ([58.213.90.100]:54187 "EHLO mail.iluvatar.ai"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727735AbeGYHDB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Jul 2018 03:03:01 -0400
+X-Greylist: delayed 348 seconds by postgrey-1.27 at vger.kernel.org; Wed, 25 Jul 2018 03:02:57 EDT
+Received: from localhost (localhost [127.0.0.1])
+        by mail.iluvatar.ai (Postfix) with ESMTP id A703813DD7058;
+        Wed, 25 Jul 2018 13:50:43 +0800 (CST)
+Received: from mail.iluvatar.ai ([127.0.0.1])
+        by localhost (mail.iluvatar.ai [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id bO7Uxzy5EBRM; Wed, 25 Jul 2018 13:50:43 +0800 (CST)
+Received: from localhost (localhost [127.0.0.1])
+        by mail.iluvatar.ai (Postfix) with ESMTP id E987913DD7057;
+        Wed, 25 Jul 2018 13:50:42 +0800 (CST)
+DKIM-Filter: OpenDKIM Filter v2.9.2 mail.iluvatar.ai E987913DD7057
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iluvatar.ai;
+        s=809B2F8E-810B-11E8-86FD-A0A654EEFFEB; t=1532497843;
+        bh=I7qxXPMh0Ztmk69OPZfQOO+RfUlKhwCtU08BPafJrQw=;
+        h=From:To:Subject:Date:Message-Id;
+        b=GL3J1QqO29bHG4BwTmPtA86NlLIH5PESJSPnlIEK8k3WyaICArBN0blYYoChIYdeP
+         1utk4/xII8R+wI8TahPPzZz8u2FIqeYLVS0jOneK8N55fiGSqTd95tR7+g3KspswNh
+         TfMLbk6u2k9BwxMQ1Bgi+Vb2WD8GSizl/OC5FUqs=
+X-Virus-Scanned: amavisd-new at iluvatar.ai
+Received: from mail.iluvatar.ai ([127.0.0.1])
+        by localhost (mail.iluvatar.ai [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id snZ_IPtrycN9; Wed, 25 Jul 2018 13:50:42 +0800 (CST)
+Received: from localhost.localdomain (unknown [180.166.124.10])
+        by mail.iluvatar.ai (Postfix) with ESMTPSA id 5645613DD7052;
+        Wed, 25 Jul 2018 13:50:42 +0800 (CST)
+From:   Huang Shijie <sjhuang@iluvatar.ai>
+To:     vkoul@kernel.org
+Cc:     corbet@lwn.net, dan.j.williams@intel.com, robh@kernel.org,
+        linux-doc@vger.kernel.org, dmaengine@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Huang Shijie <sjhuang@iluvatar.ai>
+Subject: [PATCH] dmaengine: add a new helper dmam_async_device_register
+Date:   Wed, 25 Jul 2018 13:46:45 +0800
+Message-Id: <20180725054645.9723-1-sjhuang@iluvatar.ai>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/24/2018 03:33 PM, Brian Brooks wrote:
-> Signed-off-by: Brian Brooks <brian.brooks@linaro.org>
+This patch adds the dmam_async_device_register for DMA code.
+Use the Devres to call the release for the DMA engine driver.
 
-Please respin with proper commit message instead of empty one.
+Signed-off-by: Huang Shijie <sjhuang@iluvatar.ai>
+---
+ Documentation/driver-model/devres.txt |  1 +
+ drivers/dma/dmaengine.c               | 35 +++++++++++++++++++++++++++
+ include/linux/dmaengine.h             |  1 +
+ 3 files changed, 37 insertions(+)
 
-Thanks,
-Daniel
+diff --git a/Documentation/driver-model/devres.txt b/Documentation/driver-model/devres.txt
+index a3e8bceb5f19..26c6de621446 100644
+--- a/Documentation/driver-model/devres.txt
++++ b/Documentation/driver-model/devres.txt
+@@ -240,6 +240,7 @@ CLOCK
+   devm_of_clk_add_hw_provider()
+ 
+ DMA
++  dmam_async_device_register()
+   dmam_alloc_coherent()
+   dmam_alloc_attrs()
+   dmam_declare_coherent_memory()
+diff --git a/drivers/dma/dmaengine.c b/drivers/dma/dmaengine.c
+index 84ac38dbdb65..2477af0bdfc7 100644
+--- a/drivers/dma/dmaengine.c
++++ b/drivers/dma/dmaengine.c
+@@ -1135,6 +1135,41 @@ void dma_async_device_unregister(struct dma_device *device)
+ }
+ EXPORT_SYMBOL(dma_async_device_unregister);
+ 
++static void dmam_device_release(struct device *dev, void *res)
++{
++	struct dma_device *device;
++
++	device = *(struct dma_device **)res;
++	dma_async_device_unregister(device);
++}
++
++/**
++ * dmam_async_device_register - registers DMA devices found
++ * @device: &dma_device
++ *
++ * The operation is managed and will be undone on driver detach.
++ */
++int dmam_async_device_register(struct dma_device *device)
++{
++	void *p;
++	int ret;
++
++	p = devres_alloc(dmam_device_release, sizeof(void *), GFP_KERNEL);
++	if (!p)
++		return -ENOMEM;
++
++	ret = dma_async_device_register(device);
++	if (!ret) {
++		*(struct dma_device **)p = device;
++		devres_add(device->dev, p);
++	} else {
++		devres_free(p);
++	}
++
++	return ret;
++}
++EXPORT_SYMBOL(dmam_async_device_register);
++
+ struct dmaengine_unmap_pool {
+ 	struct kmem_cache *cache;
+ 	const char *name;
+diff --git a/include/linux/dmaengine.h b/include/linux/dmaengine.h
+index c8c3a7a93802..b98bced0b98e 100644
+--- a/include/linux/dmaengine.h
++++ b/include/linux/dmaengine.h
+@@ -1406,6 +1406,7 @@ static inline int dmaengine_desc_free(struct dma_async_tx_descriptor *desc)
+ /* --- DMA device --- */
+ 
+ int dma_async_device_register(struct dma_device *device);
++int dmam_async_device_register(struct dma_device *device);
+ void dma_async_device_unregister(struct dma_device *device);
+ void dma_run_dependencies(struct dma_async_tx_descriptor *tx);
+ struct dma_chan *dma_get_slave_channel(struct dma_chan *chan);
+-- 
+2.17.1
+
