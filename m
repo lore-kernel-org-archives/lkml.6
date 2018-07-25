@@ -6,31 +6,31 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A90EC67790
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 06:59:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08C09C67790
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 06:59:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0084520852
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 06:59:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0084520852
+	by mail.kernel.org (Postfix) with ESMTP id BFDB120852
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 06:59:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BFDB120852
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goldelico.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728710AbeGYIJf (ORCPT
+        id S1728893AbeGYIJk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 04:09:35 -0400
-Received: from mo4-p02-ob.smtp.rzone.de ([85.215.255.80]:36297 "EHLO
-        mo4-p02-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728580AbeGYIJc (ORCPT
+        Wed, 25 Jul 2018 04:09:40 -0400
+Received: from mo4-p04-ob.smtp.rzone.de ([81.169.146.178]:19914 "EHLO
+        mo4-p04-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728763AbeGYIJj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Jul 2018 04:09:32 -0400
+        Wed, 25 Jul 2018 04:09:39 -0400
 X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMhflhwDubTJ9o12DNO4Ij0pB1ZSLA74="
 X-RZG-CLASS-ID: mo00
 Received: from iMac.fritz.box
         by smtp.strato.de (RZmta 43.13 DYNA|AUTH)
-        with ESMTPSA id 6047f4u6P6x6d5R
+        with ESMTPSA id 6047f4u6P6xEd5p
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
         (Client did not present a certificate);
-        Wed, 25 Jul 2018 08:59:06 +0200 (CEST)
+        Wed, 25 Jul 2018 08:59:14 +0200 (CEST)
 From:   "H. Nikolaus Schaller" <hns@goldelico.com>
 To:     Marek Belisko <marek@goldelico.com>,
         =?UTF-8?q?Beno=C3=AEt=20Cousson?= <bcousson@baylibre.com>,
@@ -40,9 +40,9 @@ To:     Marek Belisko <marek@goldelico.com>,
 Cc:     linux-omap@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, letux-kernel@openphoenux.org,
         "H. Nikolaus Schaller" <hns@goldelico.com>
-Subject: [PATCH 04/32] ARM: dts: omap3-gta04: fixes for tvout / venc
-Date:   Wed, 25 Jul 2018 08:58:36 +0200
-Message-Id: <73e5b1fd4cc27e3148c6bc2e8f8281f3996ccf68.1532501910.git.hns@goldelico.com>
+Subject: [PATCH 26/32] ARM: dts: omap3-gta04a5: fix whitepsace and tab style
+Date:   Wed, 25 Jul 2018 08:58:58 +0200
+Message-Id: <15b5859a7fdca885d44f078112cca8561eba6170.1532501910.git.hns@goldelico.com>
 X-Mailer: git-send-email 2.12.2
 In-Reply-To: <cover.1532501910.git.hns@goldelico.com>
 References: <cover.1532501910.git.hns@goldelico.com>
@@ -53,65 +53,25 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* fix connector compatibility (composite)
-* add comment for gpio1 23
-* fix port reg number
-* add proper #address-cells
-* we use only one venc_out channel
-* fix invert-polarity for the VENC since we have an inverting OPA362 Amplifier
+in node sound / property ti,jack-det-gpio.
 
 Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
 ---
- arch/arm/boot/dts/omap3-gta04.dtsi | 12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
+ arch/arm/boot/dts/omap3-gta04a5.dts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/omap3-gta04.dtsi b/arch/arm/boot/dts/omap3-gta04.dtsi
-index 2db670e2a4bd..fa887743860e 100644
---- a/arch/arm/boot/dts/omap3-gta04.dtsi
-+++ b/arch/arm/boot/dts/omap3-gta04.dtsi
-@@ -131,7 +131,7 @@
+diff --git a/arch/arm/boot/dts/omap3-gta04a5.dts b/arch/arm/boot/dts/omap3-gta04a5.dts
+index c01b4715fb83..d408eb05cdfa 100644
+--- a/arch/arm/boot/dts/omap3-gta04a5.dts
++++ b/arch/arm/boot/dts/omap3-gta04a5.dts
+@@ -12,6 +12,6 @@
+ 	model = "Goldelico GTA04A5/Letux 2804";
+ 
+ 	sound {
+-		ti,jack-det-gpio = <&twl_gpio 2 GPIO_ACTIVE_HIGH>;    /* GTA04A5 only */
++		ti,jack-det-gpio = <&twl_gpio 2 GPIO_ACTIVE_HIGH>;	/* GTA04A5 only */
  	};
- 
- 	tv0: connector {
--		compatible = "svideo-connector";
-+		compatible = "composite-video-connector";
- 		label = "tv";
- 
- 		port {
-@@ -143,7 +143,7 @@
- 
- 	tv_amp: opa362 {
- 		compatible = "ti,opa362";
--		enable-gpios = <&gpio1 23 GPIO_ACTIVE_HIGH>;
-+		enable-gpios = <&gpio1 23 GPIO_ACTIVE_HIGH>;	/* GPIO_23 to enable video out amplifier */
- 
- 		ports {
- 			#address-cells = <1>;
-@@ -157,7 +157,7 @@
- 			};
- 
- 			port@1 {
--				reg = <1>;
-+				reg = <0>;
- 				opa_out: endpoint {
- 					remote-endpoint = <&tv_connector_in>;
- 				};
-@@ -551,10 +551,14 @@
- 
- 	vdda-supply = <&vdac>;
- 
-+	#address-cells = <1>;
-+	#size-cells = <0>;
-+
- 	port {
-+		reg = <0>;
- 		venc_out: endpoint {
- 			remote-endpoint = <&opa_in>;
--			ti,channels = <2>;
-+			ti,channels = <1>;
- 			ti,invert-polarity;
- 		};
- 	};
+ };
 -- 
 2.12.2
 
