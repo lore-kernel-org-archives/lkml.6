@@ -2,97 +2,117 @@ Return-Path: <SRS0=S+WB=KJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A25A1C67790
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 19:37:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E70DCC67790
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 19:38:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5767120844
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 19:37:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 99C80205F4
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 19:38:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B3m/Gxoq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5767120844
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iFSTeeUq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 99C80205F4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730427AbeGYUuc (ORCPT
+        id S1730471AbeGYUv1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 16:50:32 -0400
-Received: from mail-qk0-f196.google.com ([209.85.220.196]:40409 "EHLO
-        mail-qk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729213AbeGYUub (ORCPT
+        Wed, 25 Jul 2018 16:51:27 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:53205 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729213AbeGYUv0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Jul 2018 16:50:31 -0400
-Received: by mail-qk0-f196.google.com with SMTP id c126-v6so5685617qkd.7
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Jul 2018 12:37:25 -0700 (PDT)
+        Wed, 25 Jul 2018 16:51:26 -0400
+Received: by mail-wm0-f67.google.com with SMTP id o11-v6so7140310wmh.2
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Jul 2018 12:38:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=Cao8UrpPD1Dzvu6TaTYSFEwPGBJSHO5JvVMo+dDBR/s=;
-        b=B3m/GxoqTh2YFDtu1+vaCAmXJxenmI8x+eNq+TbZ4AoBfdEthOT+KDcOUMunR5smQ8
-         Q0ZEIb1PogzV5fb6nzNEqMHrp555ttO6hv+r9XgDflyAYnxESWWM6HvAZwsrhMGvDKd0
-         rPrPk8ip5qK2pWhxPqtH7sIuGWyjgUJbTw5JWF1QDl4nlnj+3SiA2M6M3K2UD6tS273u
-         nfbsA99x2YMojD/kxOsWWC8nLsH/ymBW9xJ1PIWuQiKnAci3wI1Kd4gdab5F9Be1BBum
-         cqISVdqI5l8MuScGxt5RdXx35XntqEQfOjckQ9WWAd1KjFbEokXUJBXQL7+JcT0oNee9
-         Jp8g==
+        h=from:to:cc:subject:date:message-id;
+        bh=JTbcJMIiu9zOEKn72f4f6I/MkVpWPVhWtwgZ3SK+t4Y=;
+        b=iFSTeeUqmkdkrk1ExhV/q9p0pd9jROnJ91Q9Ym8jU8JyvZ0onIdGPwSCt0n7ccyFjH
+         kWu/65Hp37kJE5+subJ6L9Nnkqj8UceVombicdrneQtLJcDEhWcEqw8eb25k06pprc6h
+         KME95QZqqFmbMX96McHEVBrAtuTFus5vyJ8y22zZ0Rhx+ltYaSmi3gGE4XslbKsfNtmy
+         c5aLeFibnZeyoYTd0wob+0K3jfeovZqb++IWPwqJJ5+uFB6B67A/eooR4ucWE0JN74Zc
+         /lvRf46s0HJlC8j/A2q32NJxPhMpXXPniBkAHytgv7HJ2dufsNbBzI8HfKP4e+MAi20f
+         XPQQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
-         :date:message-id:subject:to:cc;
-        bh=Cao8UrpPD1Dzvu6TaTYSFEwPGBJSHO5JvVMo+dDBR/s=;
-        b=dfZ5RZJAjlsSyToIPGlkQw2UeT4oXKI5AsuJoEcUOvJQXJAoh+OmjyGloQ2YrimJHx
-         GbfJtUvKFdCjvokcS5A8ncymJCe6hDm8d5bAoTa2c+5Y/A8oC4JTUa5BGL1BqxnigStR
-         8Mg9wmU/JYhrZExdMkNC/wVPQRKwgvgEiEVb6AnnlkwHrvAcZE1Crl9k07/qYd02RXI7
-         qiJJ4NifSsplK/CEGc4nQEL1SJLfZ8yFu1kvJhDqvzH+CxkJ3cjP/AKB2SLO6o5qtOMu
-         1ZqejMZnPAIx5h7B3pV8BYN05AVSH/gksv4nqNpqD+iyKcjMtguYIhVcgpIN/e3k2zB6
-         R/2w==
-X-Gm-Message-State: AOUpUlG0EBEm5p0OoKDOTRVRPpM1jgZV+9WHVvOmqaiZhICORwsfZwdB
-        aPI+Z068mfozenEVnqgQN4/uT7355LBPlyz+o18=
-X-Google-Smtp-Source: AAOMgpcBMvLsWW50wJcgx18gohtS+qBDouDURpIS2gDE2c1qhH2KSU+8A6u6pwUiZcOiP8RjEjLPFuYhLmw56CEE23M=
-X-Received: by 2002:a37:5b47:: with SMTP id p68-v6mr3348695qkb.202.1532547444994;
- Wed, 25 Jul 2018 12:37:24 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a0c:967d:0:0:0:0:0 with HTTP; Wed, 25 Jul 2018 12:37:24
- -0700 (PDT)
-In-Reply-To: <08f5d7dd-a271-4cef-4cf3-950c4c251c91@kernel.org>
-References: <20180724093509.1637386-1-arnd@arndb.de> <08f5d7dd-a271-4cef-4cf3-950c4c251c91@kernel.org>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Wed, 25 Jul 2018 21:37:24 +0200
-X-Google-Sender-Auth: jJseq6jeCi2Ur_Qel4pjHgzU-sI
-Message-ID: <CAK8P3a0DTCOtLLKRx6Z41fnweJyB8+J1zjEcpf9oQvMrj82-DA@mail.gmail.com>
-Subject: Re: [f2fs-dev] [PATCH] f2fs: fix 32-bit format string warning
-To:     Chao Yu <chao@kernel.org>
-Cc:     Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>,
-        "Linux F2FS DEV, Mailing List" 
-        <linux-f2fs-devel@lists.sourceforge.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Eric Biggers <ebiggers@google.com>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=JTbcJMIiu9zOEKn72f4f6I/MkVpWPVhWtwgZ3SK+t4Y=;
+        b=sObi2H898OEv6Mq/VEpxw9AIc08y086uuHZMQMXKWDzEJDEvLS/WbP+lvwtALgmarL
+         xWvszSkB8baRbv1Tfo4KQff/R4ZgGPx2ykAFwrRqTGguZGfwwBvM1MdEK3MIkWCoqKP3
+         ZkAt9jfld2zRv9E0Kf/yf0Tw5RzwVGunh50koZr93jGo2JK8265ki33PpMnwdsAvMqNS
+         aPqxeByvWelGRmbXi9glDKcKSmk1zWX44gMVM/+PFkh15/46a7hy7dO0NkB1O8KEdK0k
+         u6kvXyAd3YaHAlPA+coUa3M+1+UpwmBiMbvMtG3mxKrg1EN3upqxwl0CZVDYsm5Uu2Sv
+         Lw5g==
+X-Gm-Message-State: AOUpUlEAFY+aGRk2cqku7fPbX0cUOQagf4L5mhQtk/ZIDl3nGQeyb3CV
+        UB2F1bV85oYWmbfgFarIhoA=
+X-Google-Smtp-Source: AAOMgpesn9jQ1t/ZRK8BhPHMkn/2RQ7MqiX6g9uXFAjHNHGorm6I2+xrTIDFrTtPEWAe+uKlEWYuzg==
+X-Received: by 2002:a1c:8f50:: with SMTP id r77-v6mr5687898wmd.44.1532547499104;
+        Wed, 25 Jul 2018 12:38:19 -0700 (PDT)
+Received: from localhost.localdomain ([2a02:8108:85c0:57c8:32db:916d:97a2:c4eb])
+        by smtp.gmail.com with ESMTPSA id t186-v6sm3752729wmf.14.2018.07.25.12.38.18
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 25 Jul 2018 12:38:18 -0700 (PDT)
+From:   Michael Straube <straube.linux@gmail.com>
+To:     gregkh@linuxfoundation.org
+Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
+        Michael Straube <straube.linux@gmail.com>
+Subject: [PATCH 1/4] staging: rtl8188eu: remove unused ODM_RASupport_Init()
+Date:   Wed, 25 Jul 2018 21:37:55 +0200
+Message-Id: <20180725193758.1219-1-straube.linux@gmail.com>
+X-Mailer: git-send-email 2.18.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 25, 2018 at 5:21 PM, Chao Yu <chao@kernel.org> wrote:
-> On 2018/7/24 17:34, Arnd Bergmann wrote:
->> On 32-bit targets, size_t is often 'unsigned int', so printing it as %lu
->> causes a warning:
->>
->> fs/f2fs/inode.c: In function 'sanity_check_inode':
->> fs/f2fs/inode.c:247:4: error: format '%lu' expects argument of type 'long unsigned int', but argument 7 has type 'unsigned int' [-Werror=format=]
->>
->> The correct format string is %zu.
->>
->> Fixes: ba3a252d3367 ("f2fs: fix to do sanity check with i_extra_isize")
->> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
->
-> I noticed the issue, thank you for fixing it, but original buggy patch has not
-> been upstreamed yet, how about merging this fix into origial patch, if you don't
-> mind?
+The function ODM_RASupport_Init() is never used, so remove it.
+Discovered by cppcheck.
 
-Yes, please do that.
+Signed-off-by: Michael Straube <straube.linux@gmail.com>
+---
+ drivers/staging/rtl8188eu/hal/hal8188e_rate_adaptive.c | 10 ----------
+ .../staging/rtl8188eu/include/hal8188e_rate_adaptive.h |  2 --
+ 2 files changed, 12 deletions(-)
 
-      Arnd
+diff --git a/drivers/staging/rtl8188eu/hal/hal8188e_rate_adaptive.c b/drivers/staging/rtl8188eu/hal/hal8188e_rate_adaptive.c
+index bbb981c6bcec..464c11710398 100644
+--- a/drivers/staging/rtl8188eu/hal/hal8188e_rate_adaptive.c
++++ b/drivers/staging/rtl8188eu/hal/hal8188e_rate_adaptive.c
+@@ -542,16 +542,6 @@ odm_RATxRPTTimerSetting(
+ 	ODM_RT_TRACE(dm_odm, ODM_COMP_RATE_ADAPTIVE, ODM_DBG_TRACE, (" <===== odm_RATxRPTTimerSetting()\n"));
+ }
+ 
+-void
+-ODM_RASupport_Init(
+-		struct odm_dm_struct *dm_odm
+-	)
+-{
+-	ODM_RT_TRACE(dm_odm, ODM_COMP_RATE_ADAPTIVE, ODM_DBG_LOUD, ("=====>ODM_RASupport_Init()\n"));
+-
+-	dm_odm->RaSupport88E = true;
+-}
+-
+ int ODM_RAInfo_Init(struct odm_dm_struct *dm_odm, u8 macid)
+ {
+ 	struct odm_ra_info *pRaInfo = &dm_odm->RAInfo[macid];
+diff --git a/drivers/staging/rtl8188eu/include/hal8188e_rate_adaptive.h b/drivers/staging/rtl8188eu/include/hal8188e_rate_adaptive.h
+index 96ebda93b4ee..5b59c25e4c8a 100644
+--- a/drivers/staging/rtl8188eu/include/hal8188e_rate_adaptive.h
++++ b/drivers/staging/rtl8188eu/include/hal8188e_rate_adaptive.h
+@@ -49,8 +49,6 @@
+ 
+ /*  End rate adaptive define */
+ 
+-void ODM_RASupport_Init(struct odm_dm_struct *dm_odm);
+-
+ int ODM_RAInfo_Init_all(struct odm_dm_struct *dm_odm);
+ 
+ int ODM_RAInfo_Init(struct odm_dm_struct *dm_odm, u8 MacID);
+-- 
+2.18.0
+
