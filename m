@@ -6,33 +6,33 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2501AC6778F
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 08:03:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6A52C67790
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 08:03:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C195A2088E
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 08:03:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C195A2088E
+	by mail.kernel.org (Postfix) with ESMTP id A25042064D
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 08:03:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A25042064D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728737AbeGYJN6 (ORCPT
+        id S1728708AbeGYJN5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 05:13:58 -0400
-Received: from mga17.intel.com ([192.55.52.151]:41232 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728677AbeGYJN5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 25 Jul 2018 05:13:57 -0400
+Received: from mga01.intel.com ([192.55.52.88]:40581 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728505AbeGYJNu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Jul 2018 05:13:50 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Jul 2018 01:03:15 -0700
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Jul 2018 01:03:19 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.51,400,1526367600"; 
-   d="scan'208";a="59298536"
+   d="scan'208";a="70119348"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by orsmga007.jf.intel.com with ESMTP; 25 Jul 2018 01:03:13 -0700
+  by fmsmga002.fm.intel.com with ESMTP; 25 Jul 2018 01:03:16 -0700
 Received: by black.fi.intel.com (Postfix, from userid 1001)
-        id 2D453BA; Wed, 25 Jul 2018 11:03:21 +0300 (EEST)
+        id 700D52BC; Wed, 25 Jul 2018 11:03:22 +0300 (EEST)
 From:   Mika Westerberg <mika.westerberg@linux.intel.com>
 To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc:     Andreas Noever <andreas.noever@gmail.com>,
@@ -40,61 +40,92 @@ Cc:     Andreas Noever <andreas.noever@gmail.com>,
         Yehezkel Bernat <YehezkelShB@gmail.com>,
         Mika Westerberg <mika.westerberg@linux.intel.com>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 0/7] thunderbolt: Changes for v4.19 merge window
-Date:   Wed, 25 Jul 2018 11:03:14 +0300
-Message-Id: <20180725080321.35746-1-mika.westerberg@linux.intel.com>
+Subject: [PATCH 5/7] thunderbolt: Use correct ICM commands in system suspend
+Date:   Wed, 25 Jul 2018 11:03:19 +0300
+Message-Id: <20180725080321.35746-6-mika.westerberg@linux.intel.com>
 X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20180725080321.35746-1-mika.westerberg@linux.intel.com>
+References: <20180725080321.35746-1-mika.westerberg@linux.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Greg,
+The correct way to put the ICM into suspend state is to send it
+NHI_MAILBOX_DRV_UNLOADS mailbox command. NHI_MAILBOX_SAVE_DEVS is not
+needed on Intel Titan Ridge so we can skip it.
 
-Please pull Thunderbolt changes for v4.19 merge window.
+Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+---
+ drivers/thunderbolt/icm.c | 18 +++++++++++++-----
+ 1 file changed, 13 insertions(+), 5 deletions(-)
 
-This adds runtime PM support for the Thunderbolt driver to save energy
-in recent systems where the controller is present all the time. In
-addition there is a fix for a typo in variable name and a removal of an
-unused variable.
-
-I've included individual patches as well.
-
-The following changes since commit 7daf201d7fe8334e2d2364d4e8ed3394ec9af819:
-
-  Linux 4.18-rc2 (2018-06-24 20:54:29 +0800)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/westeri/thunderbolt.git tags/thunderbolt-for-v4.19
-
-for you to fetch changes up to 33a7231d8ebbc4a4e05adcbc7ac053ad20dbc054:
-
-  thunderbolt: Remove redundant variable 'approved' (2018-07-15 09:40:25 +0300)
-
-Colin Ian King (1):
-  thunderbolt: Remove redundant variable 'approved'
-
-Mika Westerberg (5):
-  thunderbolt: Use 64-bit DMA mask if supported by the platform
-  thunderbolt: Do not unnecessarily call ICM get route
-  thunderbolt: No need to take tb->lock in domain suspend/complete
-  thunderbolt: Use correct ICM commands in system suspend
-  thunderbolt: Add support for runtime PM
-
-Nathan Ciobanu (1):
-  thunderbolt: Fix small typo in variable name
-
- drivers/thunderbolt/domain.c  |  55 ++++++++---
- drivers/thunderbolt/icm.c     | 174 ++++++++++++++++++++++++++++------
- drivers/thunderbolt/nhi.c     |  46 ++++++++-
- drivers/thunderbolt/switch.c  |  65 ++++++++++++-
- drivers/thunderbolt/tb.h      |  10 ++
- drivers/thunderbolt/tb_msgs.h |   4 +
- drivers/thunderbolt/tb_regs.h |   2 +-
- drivers/thunderbolt/xdomain.c |  18 ++++
- 8 files changed, 324 insertions(+), 50 deletions(-)
-
+diff --git a/drivers/thunderbolt/icm.c b/drivers/thunderbolt/icm.c
+index ad4eeaa59b16..5ed3f8a31b0a 100644
+--- a/drivers/thunderbolt/icm.c
++++ b/drivers/thunderbolt/icm.c
+@@ -60,6 +60,7 @@
+  * @is_supported: Checks if we can support ICM on this controller
+  * @get_mode: Read and return the ICM firmware mode (optional)
+  * @get_route: Find a route string for given switch
++ * @save_devices: Ask ICM to save devices to ACL when suspending (optional)
+  * @driver_ready: Send driver ready message to ICM
+  * @device_connected: Handle device connected ICM message
+  * @device_disconnected: Handle device disconnected ICM message
+@@ -76,6 +77,7 @@ struct icm {
+ 	bool (*is_supported)(struct tb *tb);
+ 	int (*get_mode)(struct tb *tb);
+ 	int (*get_route)(struct tb *tb, u8 link, u8 depth, u64 *route);
++	void (*save_devices)(struct tb *tb);
+ 	int (*driver_ready)(struct tb *tb,
+ 			    enum tb_security_level *security_level,
+ 			    size_t *nboot_acl);
+@@ -258,6 +260,11 @@ static int icm_fr_get_route(struct tb *tb, u8 link, u8 depth, u64 *route)
+ 	return ret;
+ }
+ 
++static void icm_fr_save_devices(struct tb *tb)
++{
++	nhi_mailbox_cmd(tb->nhi, NHI_MAILBOX_SAVE_DEVS, 0);
++}
++
+ static int
+ icm_fr_driver_ready(struct tb *tb, enum tb_security_level *security_level,
+ 		    size_t *nboot_acl)
+@@ -1665,13 +1672,12 @@ static int icm_driver_ready(struct tb *tb)
+ 
+ static int icm_suspend(struct tb *tb)
+ {
+-	int ret;
++	struct icm *icm = tb_priv(tb);
+ 
+-	ret = nhi_mailbox_cmd(tb->nhi, NHI_MAILBOX_SAVE_DEVS, 0);
+-	if (ret)
+-		tb_info(tb, "Ignoring mailbox command error (%d) in %s\n",
+-			ret, __func__);
++	if (icm->save_devices)
++		icm->save_devices(tb);
+ 
++	nhi_mailbox_cmd(tb->nhi, NHI_MAILBOX_DRV_UNLOADS, 0);
+ 	return 0;
+ }
+ 
+@@ -1879,6 +1885,7 @@ struct tb *icm_probe(struct tb_nhi *nhi)
+ 	case PCI_DEVICE_ID_INTEL_FALCON_RIDGE_4C_NHI:
+ 		icm->is_supported = icm_fr_is_supported;
+ 		icm->get_route = icm_fr_get_route;
++		icm->save_devices = icm_fr_save_devices;
+ 		icm->driver_ready = icm_fr_driver_ready;
+ 		icm->device_connected = icm_fr_device_connected;
+ 		icm->device_disconnected = icm_fr_device_disconnected;
+@@ -1896,6 +1903,7 @@ struct tb *icm_probe(struct tb_nhi *nhi)
+ 		icm->is_supported = icm_ar_is_supported;
+ 		icm->get_mode = icm_ar_get_mode;
+ 		icm->get_route = icm_ar_get_route;
++		icm->save_devices = icm_fr_save_devices;
+ 		icm->driver_ready = icm_ar_driver_ready;
+ 		icm->device_connected = icm_fr_device_connected;
+ 		icm->device_disconnected = icm_fr_device_disconnected;
 -- 
 2.18.0
 
