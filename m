@@ -2,112 +2,134 @@ Return-Path: <SRS0=S+WB=KJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6FF2C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 01:16:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD3C7C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 01:16:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7964E20856
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 01:16:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8CB0220883
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 01:16:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="Cw6ib6FI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7964E20856
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="tfMwwEnV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8CB0220883
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388665AbeGYC0A (ORCPT
+        id S2388679AbeGYC0G (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 22:26:00 -0400
-Received: from ozlabs.org ([203.11.71.1]:40497 "EHLO ozlabs.org"
+        Tue, 24 Jul 2018 22:26:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38926 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388569AbeGYC0A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 22:26:00 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        id S2388534AbeGYC0G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Jul 2018 22:26:06 -0400
+Received: from devbox (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 41Zy4J1Nw3z9s0R;
-        Wed, 25 Jul 2018 11:16:48 +1000 (AEST)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1532481408;
-        bh=UQqt5SqqYN3A7clz0SHa2UKyOBM9oHxn+cZLkJYXC98=;
+        by mail.kernel.org (Postfix) with ESMTPSA id 4CE2A20893;
+        Wed, 25 Jul 2018 01:16:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1532481416;
+        bh=8jsm3x+4AMDhBpr2odJLzRortzo+22o+RUvtYhI3ZE0=;
         h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=Cw6ib6FIS44OO3Um2UXbUGgg/pODi3sGTdV6s4CnD7dd/eNCOTf+Vb6zxC+MsSfwl
-         cKD83JtaYoM2aMEHfDHQRGkGjJ1aGtuqQ8l4emdQCAHdKBwXP2EeoS8o7b0bAweEe2
-         n2KvCUtth/jniWmDqxVJUdIXIZtELI2/sISynQkbrtLaBSlPMFiaebHrTgduwDa2Sf
-         WSPPQMvPexexOyCl7FrJjcPyaI1wVpc6HWDROq0b759eHD/5/j/Hw3ADcu2+GgLRsb
-         oIXylm2aepXypPpDhm/zbvHFKyWdQJ0+immI2odNiDLcp5C3iRecgyyk/+GHQfvpQo
-         rFQQqKVISm7BA==
-Date:   Wed, 25 Jul 2018 11:16:41 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Andreas =?UTF-8?B?R3LDvG5iYWNoZXI=?= 
-        <andreas.gruenbacher@gmail.com>
-Cc:     Steven Whitehouse <swhiteho@redhat.com>,
-        Bob Peterson <rpeterso@redhat.com>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Andreas Gruenbacher <agruenba@redhat.com>
-Subject: Re: linux-next: Signed-off-by missing for commit in the gfs2 tree
-Message-ID: <20180725111514.14951d78@canb.auug.org.au>
-In-Reply-To: <CAHpGcM+WkOKkd+GLMiTWsvnLA_daY_5pBfSQp_KYoPVcRQQHGg@mail.gmail.com>
-References: <20180725080130.314f62bb@canb.auug.org.au>
-        <CAHpGcM+WkOKkd+GLMiTWsvnLA_daY_5pBfSQp_KYoPVcRQQHGg@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/9+GW7cuk9ae9H_Au9Ppa+XY"; protocol="application/pgp-signature"
+        b=tfMwwEnVbGHNXzKeVnzzsNweZG0/2ZxxO/PIg1E63RyG49UyWWkZRFxI1dROjDr3p
+         6jZRQfgn36cYfTixFScZgUkUuaIeMicvZirwUmVxA+GxHwfrNQZiiCMuOrEYaHwPeR
+         a+KXxf4+odkzULNmeXJ20sy4CslzX342/hauOzgY=
+Date:   Wed, 25 Jul 2018 10:16:53 +0900
+From:   Masami Hiramatsu <mhiramat@kernel.org>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     Tom Zanussi <tom.zanussi@linux.intel.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Ingo Molnar <mingo@redhat.com>, Shuah Khan <shuah@kernel.org>,
+        Hiraku Toyooka <hiraku.toyooka@cybertrust.co.jp>,
+        linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH 1/3] [BUGFIX] tracing: Fix double free of
+ event_trigger_data
+Message-Id: <20180725101653.09e095092a4bb77e6fc558df@kernel.org>
+In-Reply-To: <20180724191331.738eb819@gandalf.local.home>
+References: <153149923649.11274.14970833360963898112.stgit@devbox>
+        <153149926702.11274.12489440326560729788.stgit@devbox>
+        <20180723221006.60cc7aa9@vmware.local.home>
+        <20180725000909.6c8b2f3881ee75c4f6bd466b@kernel.org>
+        <20180724164959.3cbc1422@gandalf.local.home>
+        <20180724173008.454cdf10@gandalf.local.home>
+        <20180724191331.738eb819@gandalf.local.home>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/9+GW7cuk9ae9H_Au9Ppa+XY
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+On Tue, 24 Jul 2018 19:13:31 -0400
+Steven Rostedt <rostedt@goodmis.org> wrote:
 
-Hi Andreas,
+> On Tue, 24 Jul 2018 17:30:08 -0400
+> Steven Rostedt <rostedt@goodmis.org> wrote:
+> 
+> > I don't see where ->reg() would return anything but 1 on success. Maybe
+> > I'm missing something. I'll look some more, but I'm thinking of changing
+> > ->reg() to return zero on all success, and negative on all errors and  
+> > just check those results.
+> 
+> Yeah, I'm going to make these changes. That is, all struct
+> event_command .reg functions will return negative on error, and
+> zero or positive on everything else. All the checks are going to be
+> only for the negative value.
+> 
+> But for the bug fix itself, I believe this should do it. Masami, what
+> do you think?
 
-On Wed, 25 Jul 2018 00:23:22 +0200 Andreas Gr=C3=BCnbacher <andreas.gruenba=
-cher@gmail.com> wrote:
->
-> 2018-07-25 0:01 GMT+02:00 Stephen Rothwell <sfr@canb.auug.org.au>:
-> > Hi all,
-> >
-> > Commit
-> >
-> >   b6fbc2f6a686 ("GFS2: Fix recovery issues for spectators")
-> >
-> > is missing a Signed-off-by from its committer.  It was rebased. =20
->=20
-> thanks, I've fixed it now but this is getting rather annoying -- and
-> it must happen to others as well. Do you happen to have git hooks that
-> prevent this from happening?
+Hm, as far as I can see, when register_trigger() returns >= 0, it already
+calls ->init the trigger_data. This means its refcount++, and in that
+case, below patch will miss to free the trigger_data.
+How about below for tentative fix?
 
-No, but I don't rebase stuff (that matters) ;-)  I think that someone
-did write a hook, but can't remember who, sorry.
+	if (!ret) {
+		ret = -ENOENT;
+		/* We have to forcibly free the trigger_data */
+		goto out_free;
+	} else if (ret > 0)
+		ret = 0;
 
-What I have is a script that I run over each new set of commits I fetch
-that checks these things.
+Thank you,
 
---=20
-Cheers,
-Stephen Rothwell
+> 
+> -- Steve
+> 
+> diff --git a/kernel/trace/trace_events_trigger.c b/kernel/trace/trace_events_trigger.c
+> index d18249683682..8771a27ca60f 100644
+> --- a/kernel/trace/trace_events_trigger.c
+> +++ b/kernel/trace/trace_events_trigger.c
+> @@ -679,6 +679,8 @@ event_trigger_callback(struct event_command *cmd_ops,
+>  		goto out_free;
+>  
+>   out_reg:
+> +	/* Up the trigger_data count to make sure reg doesn't free it on failure */
+> +	event_trigger_init(trigger_ops, trigger_data);
+>  	ret = cmd_ops->reg(glob, trigger_ops, trigger_data, file);
+>  	/*
+>  	 * The above returns on success the # of functions enabled,
+> @@ -687,10 +689,11 @@ event_trigger_callback(struct event_command *cmd_ops,
+>  	 */
+>  	if (!ret) {
+>  		ret = -ENOENT;
+> -		goto out_free;
+> -	} else if (ret < 0)
+> -		goto out_free;
+> -	ret = 0;
+> +	} else if (ret > 0)
+> +		ret = 0;
+> +
+> +	/* Down the counter of trigger_data or free it if not used anymore */
+> +	event_trigger_free(trigger_ops, trigger_data);
+>   out:
+>  	return ret;
+>  
 
---Sig_/9+GW7cuk9ae9H_Au9Ppa+XY
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltXz3kACgkQAVBC80lX
-0Gw3dwf8CQD3KNnshB88ALbaJJH/5/p52FFqf4xhG7iif4MqgsC7+IAgUdLM399a
-D48euC28HfLiijRTv03RJeBNxuy04jcRRheqEU0Kd2ghQR64H/trRelao4npt0ZX
-g21IVGyoEZOOa5dcE9fnhFY0MT0lCS0MCMrWdiuAHk6r2desbxCJyUT52OSZmc2B
-O2HpmGDRVAWswNd0a53JAK8wTOpovx5M7EFmOXhvCQ5Qy6j1WYbvfVV5T7xSAAcW
-EYHz2E5vrdntcrJ4fDv3hxeGuqkkCdtlJcZC/ljgX1ZHrsPOi+1moiUqe09a2yN3
-a6Tilx+Uktk6diSH4/7RUy5ibivHhg==
-=9SgH
------END PGP SIGNATURE-----
-
---Sig_/9+GW7cuk9ae9H_Au9Ppa+XY--
+-- 
+Masami Hiramatsu <mhiramat@kernel.org>
