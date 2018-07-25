@@ -2,89 +2,126 @@ Return-Path: <SRS0=S+WB=KJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 842F4C6778F
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 20:50:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 770C1C6778F
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 20:50:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3824E20671
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 20:50:04 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="KRwM2L9F"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3824E20671
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 3671420671
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 20:50:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3671420671
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731389AbeGYWD0 (ORCPT
+        id S1731394AbeGYWDq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 18:03:26 -0400
-Received: from mail-it0-f65.google.com ([209.85.214.65]:52813 "EHLO
-        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730427AbeGYWD0 (ORCPT
+        Wed, 25 Jul 2018 18:03:46 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:60993 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730606AbeGYWDq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Jul 2018 18:03:26 -0400
-Received: by mail-it0-f65.google.com with SMTP id p4-v6so10704973itf.2
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Jul 2018 13:50:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=bhagvDnGS+A/L8Ajan431u+vZptqzIAy0TUZk5e/SvI=;
-        b=KRwM2L9FSzxDJhZN8UeYp/I17OpOiSmaaJfPQkr9OW1oDaFw+E6S9fjK1UTNxVnlbq
-         AhvPmAQT6WstVOSOhUrW516zWhX1YUm7r5aIG1ejUXuB+Lf5f+YVub3CaB//fjn7FMRw
-         hDzd/8aWR0qtDl0sULq20gm6fiTLc2XNZfoT8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=bhagvDnGS+A/L8Ajan431u+vZptqzIAy0TUZk5e/SvI=;
-        b=aRwEiB1rRknU+FokZmhg1IMZy4FqNvPNUSEqdOj2apq/U7GXo6fW+EcEkgGiTMm/Ew
-         3XuWo+eMCThzAgn7bVxpJqhJv2ohFWR9Z+FmaqtDMFthTeqaCcDLhphAYOllcP1b3RsG
-         kRwpkippz2sXHAJ3wOUmHCIRJ5HSiZ/VK9VG0Ut0eJ066x83m7lY9afH5yEL3WXCSfUA
-         Y9YBGuzYA+dfkuHozWGF9Xk2FeJsnE2g8JbIh7amHp2qnxChn5GeEvm+gGW6IVp/73UZ
-         g+yhQM4xaXGkDt+uKulneGXAL2GrLRVvBd+fX9kN0i9RUWW++sfg8bZNacQieaHMgl0t
-         bwuw==
-X-Gm-Message-State: AOUpUlG3meo9XeOA2iFVAolvO32cpCF146xq48rhloHvUn2Qdcj9nuBq
-        tp/wh+AihW7kR0/+zT8jCR83BdSaNP5TStrGEVsVBMcy
-X-Google-Smtp-Source: AAOMgpfSXuiFDpFK+hofHy5iUSJbKut6xpqNi6iH38YjIFJeZAnUEJpDHNNmlVZNSGOrVJO6L2uc2u0ERxmB0wBlpZQ=
-X-Received: by 2002:a24:2c49:: with SMTP id i70-v6mr7811245iti.135.1532551801768;
- Wed, 25 Jul 2018 13:50:01 -0700 (PDT)
+        Wed, 25 Jul 2018 18:03:46 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w6PKmsBl501154
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Wed, 25 Jul 2018 13:48:54 -0700
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w6PKmr5P501151;
+        Wed, 25 Jul 2018 13:48:53 -0700
+Date:   Wed, 25 Jul 2018 13:48:53 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Kim Phillips <tipbot@zytor.com>
+Message-ID: <tip-a7f660d6576a5f4504c8ab4f4956bba03d48bf52@git.kernel.org>
+Cc:     ravi.bangoria@linux.vnet.ibm.com, mingo@kernel.org,
+        brueckner@linux.ibm.com, tglx@linutronix.de, namhyung@kernel.org,
+        jolsa@redhat.com, tmricht@linux.vnet.ibm.com, kim.phillips@arm.com,
+        linux-kernel@vger.kernel.org, hpa@zytor.com, peterz@infradead.org,
+        mpe@ellerman.id.au, acme@redhat.com,
+        alexander.shishkin@linux.intel.com
+Reply-To: mpe@ellerman.id.au, peterz@infradead.org, hpa@zytor.com,
+          alexander.shishkin@linux.intel.com, acme@redhat.com,
+          tglx@linutronix.de, mingo@kernel.org, brueckner@linux.ibm.com,
+          ravi.bangoria@linux.vnet.ibm.com, linux-kernel@vger.kernel.org,
+          kim.phillips@arm.com, tmricht@linux.vnet.ibm.com,
+          jolsa@redhat.com, namhyung@kernel.org
+In-Reply-To: <20180706163454.f714b9ab49ecc8566a0b3565@arm.com>
+References: <20180706163454.f714b9ab49ecc8566a0b3565@arm.com>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:perf/core] perf trace arm64: Use generated syscall table
+Git-Commit-ID: a7f660d6576a5f4504c8ab4f4956bba03d48bf52
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-References: <20180725161852.6963-1-krzk@kernel.org>
-In-Reply-To: <20180725161852.6963-1-krzk@kernel.org>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Wed, 25 Jul 2018 22:49:50 +0200
-Message-ID: <CACRpkdaDsVdQDZzZBdAznE96WRovOGu9pTio7Ez=fA-T1hvQTA@mail.gmail.com>
-Subject: Re: [GIT PULL] pinctrl: samsung: Stuff for v4.19
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     Tomasz Figa <tomasz.figa@gmail.com>, snawrocki@kernel.org,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 25, 2018 at 6:19 PM Krzysztof Kozlowski <krzk@kernel.org> wrote:
+Commit-ID:  a7f660d6576a5f4504c8ab4f4956bba03d48bf52
+Gitweb:     https://git.kernel.org/tip/a7f660d6576a5f4504c8ab4f4956bba03d48bf52
+Author:     Kim Phillips <kim.phillips@arm.com>
+AuthorDate: Fri, 6 Jul 2018 16:34:54 -0500
+Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
+CommitDate: Tue, 24 Jul 2018 14:53:01 -0300
 
-> The following changes since commit ce397d215ccd07b8ae3f71db689aedb85d56ab40:
->
->   Linux 4.18-rc1 (2018-06-17 08:04:49 +0900)
->
-> are available in the git repository at:
->
->   https://git.kernel.org/pub/scm/linux/kernel/git/pinctrl/samsung.git tags/samsung-pinctrl-4.19
->
-> for you to fetch changes up to b3793159249bb091efce4b1515ce18cdfc4c6e41:
->
->   dt-bindings: pinctrl: samsung: Add SPDX license identifier (2018-07-24 21:59:17 +0200)
+perf trace arm64: Use generated syscall table
 
-Pulled to my devel branch for v4.19, thanks!
+This should speed up accessing new system calls introduced with the
+kernel rather than waiting for libaudit updates to include them.
 
-Yours,
-Linus Walleij
+It also enables users to specify wildcards, for example, perf trace -e
+'open*', just like was already possible on x86, s390, and powerpc, which
+means arm64 can now pass the "Check open filename arg using perf trace +
+vfs_getname" test.
+
+Signed-off-by: Kim Phillips <kim.phillips@arm.com>
+Reviewed-by: Hendrik Brueckner <brueckner@linux.ibm.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Michael Ellerman <mpe@ellerman.id.au>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
+Cc: Thomas Richter <tmricht@linux.vnet.ibm.com>
+Link: http://lkml.kernel.org/r/20180706163454.f714b9ab49ecc8566a0b3565@arm.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/perf/Makefile.config   | 2 ++
+ tools/perf/util/syscalltbl.c | 4 ++++
+ 2 files changed, 6 insertions(+)
+
+diff --git a/tools/perf/Makefile.config b/tools/perf/Makefile.config
+index f5a3b402589e..d3318f99006c 100644
+--- a/tools/perf/Makefile.config
++++ b/tools/perf/Makefile.config
+@@ -54,6 +54,8 @@ endif
+ 
+ ifeq ($(SRCARCH),arm64)
+   NO_PERF_REGS := 0
++  NO_SYSCALL_TABLE := 0
++  CFLAGS += -I$(OUTPUT)arch/arm64/include/generated
+   LIBUNWIND_LIBS = -lunwind -lunwind-aarch64
+ endif
+ 
+diff --git a/tools/perf/util/syscalltbl.c b/tools/perf/util/syscalltbl.c
+index 0ee7f568d60c..3393d7ee9401 100644
+--- a/tools/perf/util/syscalltbl.c
++++ b/tools/perf/util/syscalltbl.c
+@@ -38,6 +38,10 @@ static const char **syscalltbl_native = syscalltbl_powerpc_64;
+ #include <asm/syscalls_32.c>
+ const int syscalltbl_native_max_id = SYSCALLTBL_POWERPC_32_MAX_ID;
+ static const char **syscalltbl_native = syscalltbl_powerpc_32;
++#elif defined(__aarch64__)
++#include <asm/syscalls.c>
++const int syscalltbl_native_max_id = SYSCALLTBL_ARM64_MAX_ID;
++static const char **syscalltbl_native = syscalltbl_arm64;
+ #endif
+ 
+ struct syscall {
