@@ -2,114 +2,104 @@ Return-Path: <SRS0=S+WB=KJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CBACC67790
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 21:26:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8D04C67790
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 21:26:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DC98C20843
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 21:26:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 92A0120843
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 21:26:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="YsPYG2ud"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DC98C20843
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sifive.com
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="hrYhXO8H"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 92A0120843
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=googlemail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731414AbeGYWkM (ORCPT
+        id S1731328AbeGYWkL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 18:40:12 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:44467 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730594AbeGYWkM (ORCPT
+        Wed, 25 Jul 2018 18:40:11 -0400
+Received: from mail-oi0-f68.google.com ([209.85.218.68]:41283 "EHLO
+        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730594AbeGYWkL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Jul 2018 18:40:12 -0400
-Received: by mail-pg1-f193.google.com with SMTP id r1-v6so6108060pgp.11
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Jul 2018 14:26:40 -0700 (PDT)
+        Wed, 25 Jul 2018 18:40:11 -0400
+Received: by mail-oi0-f68.google.com with SMTP id k12-v6so16496813oiw.8;
+        Wed, 25 Jul 2018 14:26:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google;
-        h=date:subject:in-reply-to:cc:from:to:message-id:mime-version
-         :content-transfer-encoding;
-        bh=08iLNokAyjC2I2z1h9DcFHTtSS1TtAzf6pbSsoMioBM=;
-        b=YsPYG2udCQpbqMjzznUpGnAOwqA/grPpYheB0wXoOtbEtqMr6pZ9DYUwcnuOgM9Wja
-         o2ABO30MrHU/VPTSab8AWWdl6gnO0/gLIL3K9L4lviOnU2wC3yVC7U51imBZhGA6zyt7
-         YczrY9NhvNGgnHzxKoimUJiP9IXVfePuyTudtnegXPuFCX56NXu4T5caypSz/VCBPepr
-         YiJ80+Z7GRbWQA1trxQ+F0+X1DMRW9L6UkFSDHn7aMXZujLGXbuBUivQlb8yaOUNDqTS
-         AMDMGnKvDvbxCnwobgNcTn05W3oyFOYd3B3wh6Qa64YaaozMOVwcu8Z7parkIvDuqtsn
-         r+9A==
+        d=googlemail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Y+xx+GA1LTeImInLahpdvMqNOJw73OSxBvE5dyNakVU=;
+        b=hrYhXO8H+jWfTrL3QVUp8g5CbWrDmFdGWMQ5bXMSCfJ8vnITRhxRFvV7f25YpIn8Bt
+         P7sZxVxP9PyhVIJJGsRNekT6jia+D5kN5d2wkP/rfc5torzRLweuENEBO9RqPiakzjc0
+         fq8vSjqd9AGJcTVxHQ/tP8PMApt5r2VNNbm/TRmI8gYQbPK8K/l+h1ykF0HV62AfGVri
+         1MYUto0esr6dbxQWHGnrjTbFwdlZbGVIL4v+KAKBuDEb+NWY+qzK00A/njmuJ/0yoi7y
+         VzgJd0Oqnn+p2D7H7UTZjuVU+ssc9oh+d7eVZ2aMndcFZDICv6SZeAKmfax6xvyaEqE5
+         gtYA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:subject:in-reply-to:cc:from:to:message-id
-         :mime-version:content-transfer-encoding;
-        bh=08iLNokAyjC2I2z1h9DcFHTtSS1TtAzf6pbSsoMioBM=;
-        b=GtIlvRmpConrKpid7E+A+3UFh356lXuGmgiWzQ2qaW2NxxCRBddxiLVEvhCG379y7+
-         l1KzY9PeldHwJHtF7y/+n+T7V/1vDdQzAU9iEysuhiLKge4ukWeJ8KbiT6oL0E67k3hL
-         oOYBJq522kY2ruacdWSboFqNfwUPXModd65tWTGqm07tY0oes+z22Q/qnJ8N9fHXo/TK
-         7+n/jKL0ygaymbkrLf52el5ubV+o9WEQPzZkelwDkNtmbbaXiiaUgaHaS3dtvFdO5P02
-         gZkUayczTtkQI4guVaCzMIcQ8LZmA9gbImVfFrCcBbQvqCWz8Nk29S2B1b9Bd0pffMoo
-         gLoQ==
-X-Gm-Message-State: AOUpUlEzVI2Ea3a25uDIA+LL/2vFsgYxgx355Ar/sBP4ek7g4KHWlYNr
-        WoFW6hEhrhMNHZ2vP4+GvPBX5w==
-X-Google-Smtp-Source: AAOMgpf785dIkLz51LI+N49QGsY/H53uwuOMHwJwLPTeEvE4doV/L767t78x1PC1alcvEJyHHJ/WaQ==
-X-Received: by 2002:a63:7d48:: with SMTP id m8-v6mr22365548pgn.0.1532553999664;
-        Wed, 25 Jul 2018 14:26:39 -0700 (PDT)
-Received: from localhost (96-90-200-139-static.hfc.comcastbusiness.net. [96.90.200.139])
-        by smtp.gmail.com with ESMTPSA id f6-v6sm24000226pgf.52.2018.07.25.14.26.38
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 25 Jul 2018 14:26:38 -0700 (PDT)
-Date:   Wed, 25 Jul 2018 14:26:38 -0700 (PDT)
-X-Google-Original-Date: Wed, 25 Jul 2018 14:25:55 PDT (-0700)
-Subject:     Re: RISC-V irqchip drivers
-In-Reply-To: <20180725093649.32332-1-hch@lst.de>
-CC:     tglx@linutronix.de, jason@lakedaemon.net, marc.zyngier@arm.com,
-        robh+dt@kernel.org, mark.rutland@arm.com,
-        devicetree@vger.kernel.org, aou@eecs.berkeley.edu,
-        linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
-        shorne@gmail.com
-From:   Palmer Dabbelt <palmer@sifive.com>
-To:     Christoph Hellwig <hch@lst.de>
-Message-ID: <mhng-670ecc27-6fdd-491b-8db4-4ce8f93bfb94@palmer-si-x1c4>
-Mime-Version: 1.0 (MHng)
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Y+xx+GA1LTeImInLahpdvMqNOJw73OSxBvE5dyNakVU=;
+        b=jgzHb8YjUv9AJco9aKVXcmouRXKwxVBBQ6ZofEvQYuO6OuophjqtkG1IoBU1a0sLCD
+         j6e6GGuc1R5lFQ8gnOvF52fCmM/G1aSKkq6pzXtYOmjgBEgpYwJ66AN6sjpZlS+deYB4
+         mVA7Y5qWhD3Xg5nFr2sI7KJonI718/YP1KU6BuGd2oa6bR6eLz0Zd4Gc3AW3o5aj5FT4
+         ciU1DcwJp6MIlDEysyK8MxkPk2jZzA4J2Q+2RTAtnvB/yrVwzokmaQErBrKkHB54uw9m
+         cv5cpjgk5EEoC+pCSDbBTbG6toXAx4ksrnaosUYBajUAZZWb8aJSQFYPP46bBvJarRBk
+         13Ag==
+X-Gm-Message-State: AOUpUlG3pv1QmYK/DkaFMhBoUS/3rexAHM2tP55PBC+xvLurydKbqxzO
+        rIh60s7kQm6hTmQJh8TnsTw59pcMso7ihruIhBM=
+X-Google-Smtp-Source: AAOMgpcJ16TSsqXfUoOy7HVVsvJNAFDozr9qnbKhtEyPkcyd1N6tg1JdYMnrUTvE4ub0OzsfRc/wjWOxPQZ1DRMuSBY=
+X-Received: by 2002:aca:5b0b:: with SMTP id p11-v6mr5560960oib.116.1532553998814;
+ Wed, 25 Jul 2018 14:26:38 -0700 (PDT)
+MIME-Version: 1.0
+References: <20180724125238.14567-1-jbrunet@baylibre.com> <CAFBinCBh-b=ie4hBMWdHG8KoLQ7qiRfo8vXfJ1PRcN4UPtg+uA@mail.gmail.com>
+ <705e31bf0d978b7d356b2f077179ab0e3db6f092.camel@baylibre.com>
+In-Reply-To: <705e31bf0d978b7d356b2f077179ab0e3db6f092.camel@baylibre.com>
+From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Date:   Wed, 25 Jul 2018 23:26:27 +0200
+Message-ID: <CAFBinCB_fULnmrpyzNwnfAiL9QGco_6QW957Wroj8o6ZhNwmWA@mail.gmail.com>
+Subject: Re: [PATCH 00/14] arm64: dts: meson-axg: add audio support
+To:     jbrunet@baylibre.com
+Cc:     khilman@baylibre.com, carlo@caione.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, p.zabel@pengutronix.de,
+        linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 25 Jul 2018 02:36:43 PDT (-0700), Christoph Hellwig wrote:
-> The RISC-V ISA mandantes the presence of a simple, per-hart (hardware
-> thread) interrupt controller availiable to supervisor mode.  In addition
-> the RISC-V specification contains the definition of a programmable
-> interrupt controller that is present on all current RISC-V cores (at
-> least as far as a I know).
->
-> This series adds both of them.  For the per-hart controller this series
-> tries to address all comments vs the last posting from Palmr in June,
-> and for the PLIC it has a lot of cleanups which I think should address
-> all outstanding comments, but it has been a while since it was last
-> posted.
->
-> Without these irqchip drivers the RISC-V port in mainline is rather
-> useless as it can't boot on any SOC or emulator.  With it it still is
-> almost as useless as a clocksource driver is still missing, but at least
-> we're only a patch or two away from a booting system, and the
-> clocksource  driver will need the per-hart interrupt driver to work as
-> well.
->
-> Palmer: I assume you are ok with me pushing this forward.  If not I'll
-> happily drop this series.
+Hi Jerome,
 
-Thanks for taking this over, and sorry I've dropped the ball a bit here -- 
-there's just a bit too much to do!
+On Wed, Jul 25, 2018 at 11:19 PM <jbrunet@baylibre.com> wrote:
+>
+> On Wed, 2018-07-25 at 21:11 +0200, Martin Blumenstingl wrote:
+> > nit-pick: one patch uses "arm64: dts: meson-axg: s400" in the subject
+> > while other patches that are touching the s400 board aren't
+> > if you have to re-send this series: can you please use the "arm64:
+> > dts: meson-axg: s400:" prefix for all patches touching the s400 board?
+>
+> hum, do we really have such rule, or do you think we should add one ?
+looking at the git history in arch/arm64/boot/dts/amlogic: it seems
+that we don't have a rule yet, even though some (some of
+your's/Neil's/my) patches were using that naming schema in the past
 
-> A git tree with the patches in this series, the missing clocksource
-> driver a few pending patches to allow booting a RISC-V kernel in qemu
-> is available here:
+> Kevin, do you have opinion ?
 >
->     git://git.infradead.org/users/hch/riscv.git riscv-linux-4.18
->
-> Gitweb:
->
->     http://git.infradead.org/users/hch/riscv.git/shortlog/refs/heads/riscv-linux-4.18
+> Not that I really mind either way, but prefixes rules are usually there to help
+> maintainer filter the patches. Will such rule help in any way ?
+maybe it's just a problem of a false initial impression
+I read "arm64: dts: meson-axg: add usb power regulator" in the
+cover-letter and came to the conclusion that this patch must be wrong
+since meson-axg.dtsi should not have any regulators (unless they're
+built into the SoC). only when looking at the patch itself I realized
+that it's fine because it patches the s400.dts
+
+
+Regards
+Martin
