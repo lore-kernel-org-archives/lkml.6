@@ -2,112 +2,120 @@ Return-Path: <SRS0=S+WB=KJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59E92C67790
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 22:28:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E395EC6778F
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 22:29:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 04C3F20833
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 22:28:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9B80120833
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 22:29:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=tobin.cc header.i=@tobin.cc header.b="L5yJ9/Q0";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Tpsjm2g3"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 04C3F20833
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=tobin.cc
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="a+5WB2np"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B80120833
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731521AbeGYXmO (ORCPT
+        id S1731566AbeGYXmt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 19:42:14 -0400
-Received: from wout2-smtp.messagingengine.com ([64.147.123.25]:34475 "EHLO
-        wout2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1731174AbeGYXmO (ORCPT
+        Wed, 25 Jul 2018 19:42:49 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:33608 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731174AbeGYXms (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Jul 2018 19:42:14 -0400
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-        by mailout.west.internal (Postfix) with ESMTP id 0EE7A2AF;
-        Wed, 25 Jul 2018 18:28:27 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute5.internal (MEProxy); Wed, 25 Jul 2018 18:28:28 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tobin.cc; h=cc
-        :content-type:date:from:in-reply-to:message-id:mime-version
-        :references:subject:to:x-me-sender:x-me-sender:x-sasl-enc; s=
-        fm3; bh=DHpOAX0LkWOMs1WvzcdbLUQdxf3lKncdRF1j0JE14g0=; b=L5yJ9/Q0
-        77sWAFHPzSHV+Jkl/UaRUU54WGX2+3PzplV1i+12Nn0uiRYcnorQEh45jzIbDnVm
-        HqMxH0iyQKpidIhTr+OZg//EXEg54CdGRsSVNN2VNRubErlJgXCldYPJJ2lRpJg6
-        HlMYYYdn1VvlO/Mcjnz+rVdDYE7jW3fMgUVsNQeb82QLEvaVoVBliWthF9OtOikC
-        ehmiDCHu7rTw5Gp/rHRQyeN7v5GSBDiyzx8CZFk4GdJYHFJrjY85z8AFkf4p0ib2
-        5C6EHAZm2nRV8EKJrp1kfY7UvBhUGfl86lWQ6gV7yIVZDrBzrSS9f8dyYvWyG0/h
-        8nf5vho6hV4KKg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-sender
-        :x-me-sender:x-sasl-enc; s=fm3; bh=DHpOAX0LkWOMs1WvzcdbLUQdxf3lK
-        ncdRF1j0JE14g0=; b=Tpsjm2g3d80gsLnRV4EIY5ReLH7ykGJgP3mwwF99SkplT
-        82NQeyuJ3FM2K7FhLDPIQSM+q9u+foWrwAzOW3zXlYaZ104BSLoN7MNkgA+X6WOr
-        2U1Fp4r2hdmQdPC7jMjOjQQakdYNh55O4SGdmKhFWpAxx5fL6eUwfY/wLloKK35x
-        X9Z7NIRMP0neTn3DCvKodf2kfn9E6YKh1wPBKAiIcWnyLfL/3TUYcKfbl4YDuMVh
-        dbrJMVo+BYD55LbOiSyFzG6ReuNypJo0oV9ajIt769bIFXpjaNcTwGhmm7rryASb
-        UsuPoQLsBD29IDJu2/N3gXYlSc0MSmMOnOcz6ch6w==
-X-ME-Proxy: <xmx:i_lYW4upJXtpmK6uM-Ih3X6syRCyHs4Q1XKO0kPw3b9mPWAOvTJ4zQ>
-    <xmx:i_lYW9tc_YnmWUdkanRTfFBuiWNK6iUcSAlLI0ZcBTzUTJQgVKx6Hw>
-    <xmx:i_lYW5qbDuSNaxdXgBKII9p3K8GgXZpoGnO94AXZaAJybV1zmvQPMA>
-    <xmx:i_lYW864VrM5O0pVOzkLkWq2aKUWl7n5AXzcG5UfLbicv8NX7qNsug>
-    <xmx:i_lYW-rHpco0yTFA0h1f6uqRpYzrUFolm2jz9K4qfFrRN9A9AHeECg>
-    <xmx:i_lYW5QZSC1pjVgiNpT1d6qVwAMqxzVS0lYDiWLVv2K8bUnPH4CA1A>
-X-ME-Sender: <xms:i_lYW4QyOvxDsoLUXN8hjA-o6SN4tjktQGzaoPNJNnWMFfBvqLEkcg>
-Received: from localhost (ppp121-44-239-245.bras2.syd2.internode.on.net [121.44.239.245])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 85374E450E;
-        Wed, 25 Jul 2018 18:28:26 -0400 (EDT)
-Date:   Thu, 26 Jul 2018 08:28:23 +1000
-From:   "Tobin C. Harding" <me@tobin.cc>
-To:     Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc:     Jonathan Corbet <corbet@lwn.net>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        linux-doc@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/4] docs: bpf: Rename README.rst to index.rst
-Message-ID: <20180725222823.GD6067@eros>
-References: <20180725022926.8993-1-me@tobin.cc>
- <20180725022926.8993-2-me@tobin.cc>
- <0141716c-e909-1429-68fe-6da71d4c6677@cogentembedded.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0141716c-e909-1429-68fe-6da71d4c6677@cogentembedded.com>
-X-Mailer: Mutt 1.9.4 (2018-02-28)
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        Wed, 25 Jul 2018 19:42:48 -0400
+Received: by mail-pg1-f195.google.com with SMTP id r5-v6so6204744pgv.0
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Jul 2018 15:29:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=qAC1H26pnQ6DxbqqPc4rsGCCCFylb2IBm7i3FTClGSc=;
+        b=a+5WB2npiwKYJpsN+hCT2pUeEBWNn8W7KvuMGf56aBZBOu4r1/zvSK7JoeQB/1gb9h
+         2GMXKXgJ1tIu6SiCQWqTq9ew4y/Ea94Tl2LCuuVnhqEtJDA5/fuQ/vnRGZ2nZSEgJL1B
+         wy5xS8CgvDSqMwCm3BQa8pSTQvcexdiYadjK0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=qAC1H26pnQ6DxbqqPc4rsGCCCFylb2IBm7i3FTClGSc=;
+        b=XoafZhtI8gBLBd38ORToN2zcn2f5NuwOOcDWbV28z8Ak5iYQjjhBvEbF/xAT100Ng6
+         wu+8ll050+3ve/nChPsN7GuICllVtWFKoE/OK24dcqfxFAxngdHwhMQX6jvBhGbtx+mb
+         g4QQz8A8FvjZY/qkU4WEpI7yVnOQfMYTbiJ/i2O3p+RTTW5Dij4Fdvm9BB0r0v0uQXEa
+         x9dZCbaoDFaUCQEfTT1ff9tbVn46KJRnwMJJjHiblMcsHjFSV5wkvgi6xYMZ+zU7ZWDu
+         CGU74uZPnsOpXkp6ZrK59FP6sp7LjDlgMup6ZHcuAAoXf0iiWemcFuYE3qKxJOmOU3lU
+         XtGg==
+X-Gm-Message-State: AOUpUlHkf2QJR+ymO3oyg58LEhZiPi5SbngvzrKqQDzN2Z/rr5tSBxNz
+        o7oj7IABgkaGKpdkvHOeVY/eI3Cr4E2wZQ==
+X-Google-Smtp-Source: AAOMgpfBed5mmY46fMmCaQyNoECdqM7g48G9Ka/zbOGuawf6UN9g0mHU+m+1UQkVZybu3Aqj2JTMKQ==
+X-Received: by 2002:a62:15c8:: with SMTP id 191-v6mr23636162pfv.194.1532557743212;
+        Wed, 25 Jul 2018 15:29:03 -0700 (PDT)
+Received: from swboyd.mtv.corp.google.com ([2620:0:1000:1511:d30e:62c6:f82c:ff40])
+        by smtp.gmail.com with ESMTPSA id o21-v6sm23839234pfa.54.2018.07.25.15.29.02
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 25 Jul 2018 15:29:02 -0700 (PDT)
+From:   Stephen Boyd <swboyd@chromium.org>
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Doug Anderson <dianders@chromium.org>
+Subject: [PATCH v2 0/3] pinctrl: msm interrupt and muxing fixes
+Date:   Wed, 25 Jul 2018 15:28:57 -0700
+Message-Id: <20180725222900.33231-1-swboyd@chromium.org>
+X-Mailer: git-send-email 2.18.0.233.g985f88cf7e-goog
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 25, 2018 at 12:29:10PM +0300, Sergei Shtylyov wrote:
-> Hello!
-> 
-> On 7/25/2018 5:29 AM, Tobin C. Harding wrote:
-> 
-> > Recently bpf/ docs were converted to us RST format.  'README.rst' was
-> 
->    s/us/use/?
+Here's a collection of pinctrl fixes for the qcom driver that
+make things a little smoother for DT writers while also fixing
+a problem seen with level triggered interrupts.
 
-Thanks for the review Sergei, will fix and re-spin.
+The first patch fixes an issue where we always see one extra level
+triggered interrupt when the interrupt triggers. The second and third
+patches make things nice for DT writers so they don't have to explicitly
+mux out pins as 'GPIO' function and as 'input' instead of output so that
+interrupts work properly and also makes sure that a gpio is muxed out
+properly to 'GPIO' function when a gpio is requested by gpiod_request()
+and friends.
 
-> > created but in order to fit in with the Sphinx build system this file
-> > should be named 'index.rst'.  Rename file, fixes to integrate into Sphinx
-> > build system in following patches.
-> > 
-> > docs: Rename Documentation/bpf/README.rst to Documentation/bpf/index.rst
-> > 
-> > Signed-off-by: Tobin C. Harding <me@tobin.cc>
-> [...]
-> 
-> MBR, Sergei
+The discussion never really completed on the previous thread so I'm just
+resending these patches to restart the conversation. In the cases
+where a driver needs to do both pinctrl muxing for some non-gpio
+function and also GPIO control they'll need to explicitly mux the pins
+at the right time. If we force them to mux the pins into the function
+mode after requesting the GPIO at boot then we'll be better off because
+it will force the code to mux out the function or GPIO explicitly all
+the time.
 
-What does MBR stand for please (not master boot record I'm guessing)?
+We will have a case in the near future where the UART driver will want
+to mux the RX pin into GPIO mode so it can get a wakeup interrupt during
+suspend path and then swizzle the pin back into QUP/UART mode when the
+wakeup interrupt isn't necessary anymore. In this case, I imagine the
+driver will request the pin as an interrupt during probe, that will
+convert the GPIO into an irq and mux it out as a GPIO function input
+pin, disable that IRQ because it's only needed at suspend time, and then
+need to explicitly mux the device into "UART" mode before finishing
+driver probe. Then when it goes into suspend, it will need to remux the
+pin as a GPIO function input pin, enable the irq, and wait for wakeup.
+On resume, it will disable the irq and remux the pin as "UART" mode.
 
+Changes from v1:
+ * Squashed the raw status bit part into the same write in unmask path
+   based on suggestion from Doug Andersson
 
-	Tobin
+Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Doug Anderson <dianders@chromium.org>
+
+Stephen Boyd (3):
+  pinctrl: msm: Really mask level interrupts to prevent latching
+  pinctrl: msm: Mux out gpio function with gpio_request()
+  pinctrl: msm: Configure interrupts as input and gpio mode
+
+ drivers/pinctrl/qcom/pinctrl-msm.c | 67 ++++++++++++++++++++++++++++++
+ 1 file changed, 67 insertions(+)
+
+-- 
+Sent by a computer through tubes
+
