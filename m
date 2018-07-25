@@ -2,89 +2,109 @@ Return-Path: <SRS0=S+WB=KJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71F7FC67790
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 18:13:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6ACC5C67790
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 18:15:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2BE5E20844
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 18:13:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 27E8F20844
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 18:15:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="c/tixwMO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2BE5E20844
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="iutxEYln"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 27E8F20844
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730844AbeGYT03 (ORCPT
+        id S1730197AbeGYT2I (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 15:26:29 -0400
-Received: from mail-io0-f193.google.com ([209.85.223.193]:42971 "EHLO
-        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729514AbeGYT03 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Jul 2018 15:26:29 -0400
-Received: by mail-io0-f193.google.com with SMTP id g11-v6so7083780ioq.9;
-        Wed, 25 Jul 2018 11:13:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=EJfPYIUitzDEOFFDAhvH29C6FZdUQAykPUPLbfxU76w=;
-        b=c/tixwMOxq28ElmYXHpzvYt5b/T4t1ORZzac+B5Blymq2VN6m5IWq+J3/nEc6lfVm6
-         mA5ebuCLaXGoMx/su9R5DZAEmPqgXjKLwgzy0Kvm9OWp6DHG6Kzm+J/V/yWtSVYbW/6l
-         CjUeXv9KVVYf6FeSC1dG7at5rwoNfbpF0mqTo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=EJfPYIUitzDEOFFDAhvH29C6FZdUQAykPUPLbfxU76w=;
-        b=CoWlntvcaq2sc2Ry4mkXrsjPSTh/8YFnGZOQbVZvQnDEd/nHwzNUDMjMLqYR9NuHky
-         h9oCGDr+B5llp/nDpLP2hespD/1mO2NUPTw5YFsgKYjY/lfgqjXDiStoJDec8jRERpHF
-         NmIB+WhJLspaNmXzEZL2NBOcNON28j0oW3ZHEWSHRB/PCjudPT/3B5KyfDliqxI5kC9r
-         uAy6zpR4RRIapVGrxSTZQak1taRXMMctDu14eIT+wTJGa/jY+2jJDU8McPGmCeYuN9/f
-         juGEBhjCx19raaNuQyh/VhHLR3vUIi5GqwC2vB9PrtNYu4q3ylyeCI4n4piyJ/4rQ01d
-         7ISQ==
-X-Gm-Message-State: AOUpUlFcNiwAF1LTFKL5Sp1nNLQphMp3nr+Th7LnAEsDN2I78fQVEYOZ
-        immG9biQHJics2UqHyVIiCa4S/vZwEhuW4y/5oQ=
-X-Google-Smtp-Source: AAOMgpdVloB/g7xx4mEfxMoslSVlRbEsdvOhs1d+cyuqZ+F0qZPx8FsRO0bYs8N3Y1ihssOu/JZuQNq02xR2EnePefU=
-X-Received: by 2002:a6b:f612:: with SMTP id n18-v6mr18731861ioh.259.1532542419968;
- Wed, 25 Jul 2018 11:13:39 -0700 (PDT)
-MIME-Version: 1.0
-References: <7828.1532527332@warthog.procyon.org.uk>
-In-Reply-To: <7828.1532527332@warthog.procyon.org.uk>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Wed, 25 Jul 2018 11:13:29 -0700
-Message-ID: <CA+55aFy2v3OW+mmSDF4MPWW673WsJEdQef3LChWg5k9=_k9ggg@mail.gmail.com>
-Subject: Re: [GIT PULL] fscache and cachefiles fixes
-To:     David Howells <dhowells@redhat.com>
-Cc:     kiran.modukuri@gmail.com, linux-cachefs@redhat.com,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 25 Jul 2018 15:28:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46278 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729367AbeGYT2I (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Jul 2018 15:28:08 -0400
+Received: from localhost.localdomain (unknown [192.55.54.58])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8E5D220893;
+        Wed, 25 Jul 2018 18:15:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1532542519;
+        bh=2rsjs1XTo17y7tXZ7z32CB+LMIjxYQA3SyqO+W/tAMY=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=iutxEYlnkRlXb+z7Skgz1epL5/wSWQWoAt69OjUFV1DOIsuuofHs8rB8YBBXWfsdy
+         quo3LIHNohs2sQYCZ1Ai65/GUpDGZzOuxElxuN20cDGzK8bPKX9ZryJFGOruZXaUK9
+         INM1E/Ns0Mu69DuEWsX4k/SaBu0Rbn0LfcrSsdI4=
+From:   Alan Tull <atull@kernel.org>
+To:     Moritz Fischer <mdf@kernel.org>
+Cc:     Alan Tull <atull@kernel.org>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Federico Vaga <federico.vaga@cern.ch>,
+        linux-kernel@vger.kernel.org, linux-fpga@vger.kernel.org
+Subject: [PATCH 2/2] fpga: do not access region struct after fpga_region_unregister
+Date:   Wed, 25 Jul 2018 13:15:14 -0500
+Message-Id: <20180725181514.3501-2-atull@kernel.org>
+X-Mailer: git-send-email 2.16.2
+In-Reply-To: <20180725181514.3501-1-atull@kernel.org>
+References: <20180725181514.3501-1-atull@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 25, 2018 at 7:02 AM David Howells <dhowells@redhat.com> wrote:
->
-> Can you pull these fixes for fscache and cachefiles please?
+The FPGA region class's dev_release handles freeing the struct
+fpga_region when fpga_region_unregister() unregisters the device.  A
+couple drivers were accessing the region struct after it had been
+freed.  Save off the pointer to the mgr before the region struct gets
+freed.
 
-I've pulled them, but I'm not happy about it. They are all *very* new.
+Signed-off-by: Alan Tull <atull@kernel.org>
+---
+ drivers/fpga/dfl-fme-region.c | 4 +++-
+ drivers/fpga/of-fpga-region.c | 3 ++-
+ 2 files changed, 5 insertions(+), 2 deletions(-)
 
-Why do they have commit times literally *minutes* before your email to
-ask me to pull?
+diff --git a/drivers/fpga/dfl-fme-region.c b/drivers/fpga/dfl-fme-region.c
+index 0b7e19c..51a5ac2 100644
+--- a/drivers/fpga/dfl-fme-region.c
++++ b/drivers/fpga/dfl-fme-region.c
+@@ -14,6 +14,7 @@
+  */
+ 
+ #include <linux/module.h>
++#include <linux/fpga/fpga-mgr.h>
+ #include <linux/fpga/fpga-region.h>
+ 
+ #include "dfl-fme-pr.h"
+@@ -66,9 +67,10 @@ static int fme_region_probe(struct platform_device *pdev)
+ static int fme_region_remove(struct platform_device *pdev)
+ {
+ 	struct fpga_region *region = dev_get_drvdata(&pdev->dev);
++	struct fpga_manager *mgr = region->mgr;
+ 
+ 	fpga_region_unregister(region);
+-	fpga_mgr_put(region->mgr);
++	fpga_mgr_put(mgr);
+ 
+ 	return 0;
+ }
+diff --git a/drivers/fpga/of-fpga-region.c b/drivers/fpga/of-fpga-region.c
+index 35fabb8..052a134 100644
+--- a/drivers/fpga/of-fpga-region.c
++++ b/drivers/fpga/of-fpga-region.c
+@@ -437,9 +437,10 @@ static int of_fpga_region_probe(struct platform_device *pdev)
+ static int of_fpga_region_remove(struct platform_device *pdev)
+ {
+ 	struct fpga_region *region = platform_get_drvdata(pdev);
++	struct fpga_manager *mgr = region->mgr;
+ 
+ 	fpga_region_unregister(region);
+-	fpga_mgr_put(region->mgr);
++	fpga_mgr_put(mgr);
+ 
+ 	return 0;
+ }
+-- 
+2.7.4
 
-What kind of testing have these gotten?
-
-Seriously, if I get a pull request with commits this new, I want to
-have an *explanation*. The explanation could be "I use quilt, and this
-underwent lots of testing outside of git", but the explanation should
-be there!
-
-I took them because they look simple enough, but that still leaves me grumpy.
-
-                   Linus
