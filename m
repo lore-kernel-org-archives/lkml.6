@@ -2,81 +2,80 @@ Return-Path: <SRS0=S+WB=KJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F34DC6778F
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 08:53:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E6D0C67790
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 08:54:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A31542064D
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 08:53:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A31542064D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zte.com.cn
+	by mail.kernel.org (Postfix) with ESMTP id 460702064D
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 08:54:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 460702064D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728600AbeGYKEI (ORCPT
+        id S1728647AbeGYKFb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 06:04:08 -0400
-Received: from mxhk.zte.com.cn ([63.217.80.70]:48066 "EHLO mxhk.zte.com.cn"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728126AbeGYKEI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Jul 2018 06:04:08 -0400
-Received: from mse02.zte.com.cn (unknown [10.30.3.21])
-        by Forcepoint Email with ESMTPS id 6A62BF16043945722516;
-        Wed, 25 Jul 2018 16:53:24 +0800 (CST)
-Received: from kjyxapp05.zte.com.cn ([10.30.12.204])
-        by mse02.zte.com.cn with SMTP id w6P8qWL7020883;
-        Wed, 25 Jul 2018 16:52:55 +0800 (GMT-8)
-        (envelope-from jiang.biao2@zte.com.cn)
-Received: from mapi (kjyxapp04[null])
-        by mapi (Zmail) with MAPI id mid14;
-        Wed, 25 Jul 2018 16:52:57 +0800 (CST)
-Date:   Wed, 25 Jul 2018 16:52:57 +0800 (CST)
-X-Zmail-TransId: 2b065b583a69134e045f
-X-Mailer: Zmail v1.0
-Message-ID: <201807251652579888109@zte.com.cn>
-In-Reply-To: <20180725083530.GT2494@hirez.programming.kicks-ass.net>
-References: 20180724090651.GK2494@hirez.programming.kicks-ass.net,20180725083530.GT2494@hirez.programming.kicks-ass.net
-Mime-Version: 1.0
-From:   <jiang.biao2@zte.com.cn>
-To:     <peterz@infradead.org>
-Cc:     <chen.lin130@zte.com.cn>, <mingo@redhat.com>,
-        <linux-kernel@vger.kernel.org>, <zhong.weidong@zte.com.cn>,
-        <tan.hu@zte.com.cn.cn>, <cheng.lin130@zte.com.cn>,
-        <tan.hu@zte.com.cn>
-Subject: =?UTF-8?B?UmU6IFtQQVRDSF0gc2NoZWQvbnVtYTogZG8gbm90IGJhbGFuY2UgdGFza3Mgb250byBpc29sYXRlZCBjcHVz?=
-Content-Type: multipart/mixed;
-        boundary="=====_001_next====="
-X-MAIL: mse02.zte.com.cn w6P8qWL7020883
+        Wed, 25 Jul 2018 06:05:31 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:9718 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728126AbeGYKFa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Jul 2018 06:05:30 -0400
+Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 3FABF3187C066;
+        Wed, 25 Jul 2018 16:54:45 +0800 (CST)
+Received: from localhost (10.177.31.96) by DGGEMS407-HUB.china.huawei.com
+ (10.3.19.207) with Microsoft SMTP Server id 14.3.382.0; Wed, 25 Jul 2018
+ 16:54:40 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <davem@davemloft.net>, <steffen.klassert@secunet.com>,
+        <herbert@gondor.apana.org.au>
+CC:     <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
+        YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH ipsec-next] xfrm: fix 'passing zero to ERR_PTR()' warning
+Date:   Wed, 25 Jul 2018 16:54:33 +0800
+Message-ID: <20180725085433.18756-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.177.31.96]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Fix a static code checker warning:
 
+  net/xfrm/xfrm_policy.c:1836 xfrm_resolve_and_create_bundle() warn: passing zero to 'ERR_PTR'
 
---=====_001_next=====
-Content-Type: multipart/alternative;
-	boundary="=====_003_next====="
+xfrm_tmpl_resolve return 0 just means no xdst found, return NULL
+instead of passing zero to ERR_PTR.
 
+Fixes: d809ec895505 ("xfrm: do not assume that template resolving always returns xfrms")
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ net/xfrm/xfrm_policy.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
---=====_003_next=====
-Content-Type: text/plain;
-	charset="UTF-8"
-Content-Transfer-Encoding: base64
+diff --git a/net/xfrm/xfrm_policy.c b/net/xfrm/xfrm_policy.c
+index 5f48251..4adbeb2 100644
+--- a/net/xfrm/xfrm_policy.c
++++ b/net/xfrm/xfrm_policy.c
+@@ -1831,7 +1831,10 @@ xfrm_resolve_and_create_bundle(struct xfrm_policy **pols, int num_pols,
+ 	/* Try to instantiate a bundle */
+ 	err = xfrm_tmpl_resolve(pols, num_pols, fl, xfrm, family);
+ 	if (err <= 0) {
+-		if (err != 0 && err != -EAGAIN)
++		if (err == 0)
++			return NULL;
++
++		if (err != -EAGAIN)
+ 			XFRM_INC_STATS(net, LINUX_MIB_XFRMOUTPOLERROR);
+ 		return ERR_PTR(err);
+ 	}
+-- 
+2.7.0
 
-PiBPbiBXZWQsIEp1bCAyNSwgMjAxOCBhdCAwODozMDowM0FNICswODAwLCBqaWFuZy5iaWFvMkB6
-dGUuY29tLmNuIHdyb3RlOgo+PiBJIGRvIGZpbmQgc29tZSh2ZXJ5IGZldykgQ28tQXV0aG9yZWQt
-YnkgaW4gZ2l0IGxvZ3MsIGFuZCB3ZSdsbCB0cnkgdG8gYXZvaWQKPj4gdXNpbmcgdGhhdC4gU29t
-ZXRpbWVzIGxpdHRsZSBwYXRjaGVzIG1heSBpbmNsdWRlIG11Y2ggYmFja2dyb3VuZCB3b3JrIG9m
-Cj4+IGRpZmZlcmVudCBwZW9wbGUuOikKPgo+IEkgc29tZXRpbWVzIHVzZSBEZWJ1Z2dlZC1ieTog
-dG8gYXR0cmlidXRlIHRoZSBzb21ldGltZXMgc2lnbmlmaWNhbnQgd29yawo+IG9mIGFjdHVhbGx5
-IGZpbmRpbmcgd2hhdCdzIHdyb25nLgpUaGF0IHNlZW1zIGEgbmljZSB3YXkuIFRoYW5rcyBhIGxv
-dCBmb3IgeW91ciBhZHZpY2UuCgpKaWFuZywKUmVnYXJkcw==
-
-
---=====_003_next=====--
-
---=====_001_next=====--
 
