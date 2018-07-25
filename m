@@ -2,77 +2,76 @@ Return-Path: <SRS0=S+WB=KJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EAEC0C6778F
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 16:04:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A0B5C67790
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 16:05:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A39BF20852
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 16:04:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A39BF20852
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id B65DF20852
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 16:05:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B65DF20852
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729184AbeGYRQ3 (ORCPT
+        id S1729256AbeGYRRt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 13:16:29 -0400
-Received: from mail-it0-f66.google.com ([209.85.214.66]:36652 "EHLO
-        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728591AbeGYRQ3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Jul 2018 13:16:29 -0400
-Received: by mail-it0-f66.google.com with SMTP id p81-v6so9392129itp.1;
-        Wed, 25 Jul 2018 09:04:10 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=oeRGLOJ6sUYRQdG0hQtbtFiyYvrK3+lhe2pdw2PfEmk=;
-        b=TPC0qEuwZcy+XMXYJ80opZisQmLpjARqIA8I1CWtyBWB8smikjWDUNsMOsruAgEIx6
-         oSb5YNKVGWPakDcR3zxYw9g7BpYJi75jWS4c94DB2/KYZNEX7TR+7vwom8yR7JSDfCC6
-         RtiTp+yMIL9aaSO57fuzeeczLkiyYVeF8rY6AoXxXyUv5fBZz9GP+A8GBLEE5uU2bO/O
-         OIWB9Tzh/7C5jGMNaoVH3kXJMvKoIU3WEJKWTIjXSiE7AdErXbGYlOpgiDsJISsAzahy
-         PHaxsaZ7vh4g9UVWNiebXEFEinjRw771rRj/hx3+cq6sJNe8w+LqBGjw/SShLUX02x99
-         84AA==
-X-Gm-Message-State: AOUpUlGs/rZksh1DFeI1dcTh67QIZU7vH6yl7Zz4MUzjRHvxDLQGEhmh
-        Z4I69vcRWLL6Wxp7tRZrqD1IoOc=
-X-Google-Smtp-Source: AAOMgpdcANkAkHVjXfKTVDZ7E1QK1eg9BjV3gewJvEt1G3jXI1E7NwGjplybx8KHPhNKtBwKiV6wKg==
-X-Received: by 2002:a24:b71a:: with SMTP id h26-v6mr6829667itf.37.1532534650556;
-        Wed, 25 Jul 2018 09:04:10 -0700 (PDT)
-Received: from localhost ([24.51.61.72])
-        by smtp.gmail.com with ESMTPSA id t64-v6sm2847335ita.13.2018.07.25.09.04.09
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 25 Jul 2018 09:04:10 -0700 (PDT)
-Date:   Wed, 25 Jul 2018 10:04:09 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Jisheng Zhang <Jisheng.Zhang@synaptics.com>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-Subject: Re: [PATCH v2 1/2] dt-binding: pinctrl: berlin: document AS370 SoC
- pinctrl
-Message-ID: <20180725160409.GA20922@rob-hp-laptop>
-References: <20180718135613.1c559b9c@xhacker.debian>
- <20180718135709.35128a54@xhacker.debian>
+        Wed, 25 Jul 2018 13:17:49 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:45044 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728600AbeGYRRt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Jul 2018 13:17:49 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 5B10A8185331;
+        Wed, 25 Jul 2018 16:05:30 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.34.27.30])
+        by smtp.corp.redhat.com (Postfix) with SMTP id DE6F32026D68;
+        Wed, 25 Jul 2018 16:05:28 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+        oleg@redhat.com; Wed, 25 Jul 2018 18:05:30 +0200 (CEST)
+Date:   Wed, 25 Jul 2018 18:05:28 +0200
+From:   Oleg Nesterov <oleg@redhat.com>
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, Wen Yang <wen.yang99@zte.com.cn>,
+        majiang <ma.jiang@zte.com.cn>
+Subject: Re: [PATCH 00/20] PIDTYPE_TGID removal of fork restarts
+Message-ID: <20180725160527.GA21007@redhat.com>
+References: <87sh4so5jv.fsf@xmission.com>
+ <20180709145726.GA26149@redhat.com>
+ <877em4nxo0.fsf@xmission.com>
+ <CA+55aFwq90_KeRUesktap7L_4Hp3gatKZ28RYw1jXBYeOqUoeA@mail.gmail.com>
+ <87lgakm4ol.fsf@xmission.com>
+ <CA+55aFz1XFvOgJySKVNQD9VS4hys0J7rozxqd3s5ND0z80tfVw@mail.gmail.com>
+ <20180710134639.GA2453@redhat.com>
+ <CA+55aFxcjSYAj-CZFEuDwiwZyMg+prV_jeP_Vuh06RJA0BboSw@mail.gmail.com>
+ <877em2jxyr.fsf_-_@xmission.com>
+ <87efft5ncd.fsf_-_@xmission.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180718135709.35128a54@xhacker.debian>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <87efft5ncd.fsf_-_@xmission.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Wed, 25 Jul 2018 16:05:30 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Wed, 25 Jul 2018 16:05:30 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'oleg@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 18, 2018 at 01:57:09PM +0800, Jisheng Zhang wrote:
-> Add as370 to existing berlin pinctrl device tree binding.
-> 
-> Signed-off-by: Jisheng Zhang <Jisheng.Zhang@synaptics.com>
-> ---
->  Documentation/devicetree/bindings/pinctrl/berlin,pinctrl.txt | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
+On 07/23, Eric W. Biederman wrote:
+>
+>       signal: Add calculate_sigpending()
+>       fork: Have new threads join on-going signal group stops
+>       signal: Don't restart fork when signals come in.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Oh, I need to re-read these patches tomorrow. I have some concerns, but perhaps
+I am wrong. Will write another email tomorrow.
+
+Oleg.
+
