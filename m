@@ -2,93 +2,241 @@ Return-Path: <SRS0=S+WB=KJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31E9BC67790
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 16:37:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 738A4C67790
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 16:38:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DD635205C9
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 16:37:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD635205C9
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 2A99320899
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 16:38:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2A99320899
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729202AbeGYRtx (ORCPT
+        id S1729354AbeGYRvW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 13:49:53 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:41946 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728633AbeGYRtx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Jul 2018 13:49:53 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id EDD6080D;
-        Wed, 25 Jul 2018 09:37:26 -0700 (PDT)
-Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id BEBBA3F575;
-        Wed, 25 Jul 2018 09:37:26 -0700 (PDT)
-Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
-        id BBF9A1AE1110; Wed, 25 Jul 2018 17:37:26 +0100 (BST)
-Date:   Wed, 25 Jul 2018 17:37:26 +0100
-From:   Will Deacon <will.deacon@arm.com>
-To:     Dave Martin <Dave.Martin@arm.com>
-Cc:     linux-kernel@vger.kernel.org, arnd@arndb.de, oleg@redhat.com,
-        linux@dominikbrodowski.net, viro@zeniv.linux.org.uk,
-        akpm@linux-foundation.org, steve.mcintyre@arm.com,
-        linux-arm-kernel@lists.infradead.org, ebiederm@xmission.com
-Subject: Re: [PATCH 1/2] signal: Introduce COMPAT_SIGMINSTKSZ for use in
- compat_sys_sigaltstack
-Message-ID: <20180725163726.GE6866@arm.com>
-References: <1532526312-26993-1-git-send-email-will.deacon@arm.com>
- <1532526312-26993-2-git-send-email-will.deacon@arm.com>
- <20180725155427.GR4240@e103592.cambridge.arm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180725155427.GR4240@e103592.cambridge.arm.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+        Wed, 25 Jul 2018 13:51:22 -0400
+Received: from ns.mm-sol.com ([37.157.136.199]:35491 "EHLO extserv.mm-sol.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729121AbeGYRvW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Jul 2018 13:51:22 -0400
+Received: from mms-0439.qualcomm.mm-sol.com (unknown [37.157.136.206])
+        by extserv.mm-sol.com (Postfix) with ESMTPSA id A911BCD52;
+        Wed, 25 Jul 2018 19:38:53 +0300 (EEST)
+From:   Todor Tomov <todor.tomov@linaro.org>
+To:     mchehab@kernel.org, sakari.ailus@linux.intel.com,
+        hans.verkuil@cisco.com, laurent.pinchart+renesas@ideasonboard.com,
+        linux-media@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, Todor Tomov <todor.tomov@linaro.org>
+Subject: [PATCH v4 01/34] doc-rst: Add packed Bayer raw14 pixel formats
+Date:   Wed, 25 Jul 2018 19:38:10 +0300
+Message-Id: <1532536723-19062-2-git-send-email-todor.tomov@linaro.org>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1532536723-19062-1-git-send-email-todor.tomov@linaro.org>
+References: <1532536723-19062-1-git-send-email-todor.tomov@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 25, 2018 at 04:54:27PM +0100, Dave Martin wrote:
-> On Wed, Jul 25, 2018 at 02:45:11PM +0100, Will Deacon wrote:
-> > @@ -3476,7 +3478,8 @@ int restore_altstack(const stack_t __user *uss)
-> >  	stack_t new;
-> >  	if (copy_from_user(&new, uss, sizeof(stack_t)))
-> >  		return -EFAULT;
-> > -	(void)do_sigaltstack(&new, NULL, current_user_stack_pointer());
-> > +	(void)do_sigaltstack(&new, NULL, current_user_stack_pointer(),
-> > +			     MINSIGSTKSZ);
-> 
-> Why can't this fail?
-> 
-> If this fails here we silently go wrong, but...
-> 
-> >  	/* squash all but EFAULT for now */
-> >  	return 0;
-> >  }
-> > @@ -3510,7 +3513,8 @@ static int do_compat_sigaltstack(const compat_stack_t __user *uss_ptr,
-> >  		uss.ss_size = uss32.ss_size;
-> >  	}
-> >  	ret = do_sigaltstack(uss_ptr ? &uss : NULL, &uoss,
-> > -			     compat_user_stack_pointer());
-> > +			     compat_user_stack_pointer(),
-> > +			     COMPAT_MINSIGSTKSZ);
-> 
-> If this fails on arm64, we seem to SEGV (see compat_sys_rt_sigreturn()).
-> 
-> This patch doesn't introduce this inconsistency, this might be a good
-> opportunity to clean it up.
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
 
-I don't think there's an inconsistency here -- both restore_altstack and
-compat_restore_altstack suppress all non--EFAULT errors (remember that uoss
-is NULL in both cases, so the copy_from_user() immediately before the
-do_sigaltstack() call for the native path is all we care about). I think the
-behaviour is: on a sigreturn, if you set the altstack to be an unmapped
-address then you get a SEGV, otherwise if you make it invalid in some other
-way (e.g. too small) then it's ignored and the old altstack remains intact.
+These formats are compressed 14-bit raw bayer formats with four different
+pixel orders. They are similar to 10-bit variants. The formats added by
+this patch are
 
-Will
+	V4L2_PIX_FMT_SBGGR14P
+	V4L2_PIX_FMT_SGBRG14P
+	V4L2_PIX_FMT_SGRBG14P
+	V4L2_PIX_FMT_SRGGB14P
+
+Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+Acked-by: Hans Verkuil <hans.verkuil@cisco.com>
+Signed-off-by: Todor Tomov <todor.tomov@linaro.org>
+---
+ Documentation/media/uapi/v4l/pixfmt-rgb.rst      |   1 +
+ Documentation/media/uapi/v4l/pixfmt-srggb14p.rst | 127 +++++++++++++++++++++++
+ drivers/media/v4l2-core/v4l2-ioctl.c             |   4 +
+ include/uapi/linux/videodev2.h                   |   5 +
+ 4 files changed, 137 insertions(+)
+ create mode 100644 Documentation/media/uapi/v4l/pixfmt-srggb14p.rst
+
+diff --git a/Documentation/media/uapi/v4l/pixfmt-rgb.rst b/Documentation/media/uapi/v4l/pixfmt-rgb.rst
+index cf2ef7d..1f9a7e3 100644
+--- a/Documentation/media/uapi/v4l/pixfmt-rgb.rst
++++ b/Documentation/media/uapi/v4l/pixfmt-rgb.rst
+@@ -19,4 +19,5 @@ RGB Formats
+     pixfmt-srggb10-ipu3
+     pixfmt-srggb12
+     pixfmt-srggb12p
++    pixfmt-srggb14p
+     pixfmt-srggb16
+diff --git a/Documentation/media/uapi/v4l/pixfmt-srggb14p.rst b/Documentation/media/uapi/v4l/pixfmt-srggb14p.rst
+new file mode 100644
+index 0000000..88d20c0
+--- /dev/null
++++ b/Documentation/media/uapi/v4l/pixfmt-srggb14p.rst
+@@ -0,0 +1,127 @@
++.. -*- coding: utf-8; mode: rst -*-
++
++.. _V4L2-PIX-FMT-SRGGB14P:
++.. _v4l2-pix-fmt-sbggr14p:
++.. _v4l2-pix-fmt-sgbrg14p:
++.. _v4l2-pix-fmt-sgrbg14p:
++
++*******************************************************************************************************************************
++V4L2_PIX_FMT_SRGGB14P ('pRCC'), V4L2_PIX_FMT_SGRBG14P ('pgCC'), V4L2_PIX_FMT_SGBRG14P ('pGCC'), V4L2_PIX_FMT_SBGGR14P ('pBCC'),
++*******************************************************************************************************************************
++
++*man V4L2_PIX_FMT_SRGGB14P(2)*
++
++V4L2_PIX_FMT_SGRBG14P
++V4L2_PIX_FMT_SGBRG14P
++V4L2_PIX_FMT_SBGGR14P
++14-bit packed Bayer formats
++
++
++Description
++===========
++
++These four pixel formats are packed raw sRGB / Bayer formats with 14
++bits per colour. Every four consecutive samples are packed into seven
++bytes. Each of the first four bytes contain the eight high order bits
++of the pixels, and the three following bytes contains the six least
++significants bits of each pixel, in the same order.
++
++Each n-pixel row contains n/2 green samples and n/2 blue or red samples,
++with alternating green-red and green-blue rows. They are conventionally
++described as GRGR... BGBG..., RGRG... GBGB..., etc. Below is an example
++of one of these formats:
++
++**Byte Order.**
++Each cell is one byte.
++
++
++
++.. flat-table::
++    :header-rows:  0
++    :stub-columns: 0
++    :widths:       2 1 1 1 1 1 1 1
++
++
++    -  .. row 1
++
++       -  start + 0:
++
++       -  B\ :sub:`00high`
++
++       -  G\ :sub:`01high`
++
++       -  B\ :sub:`02high`
++
++       -  G\ :sub:`03high`
++
++       -  G\ :sub:`01low bits 1--0`\ (bits 7--6)
++	  B\ :sub:`00low bits 5--0`\ (bits 5--0)
++
++       -  R\ :sub:`02low bits 3--0`\ (bits 7--4)
++	  G\ :sub:`01low bits 5--2`\ (bits 3--0)
++
++       -  G\ :sub:`03low bits 5--0`\ (bits 7--2)
++	  R\ :sub:`02low bits 5--4`\ (bits 1--0)
++
++    -  .. row 2
++
++       -  start + 7:
++
++       -  G\ :sub:`00high`
++
++       -  R\ :sub:`01high`
++
++       -  G\ :sub:`02high`
++
++       -  R\ :sub:`03high`
++
++       -  R\ :sub:`01low bits 1--0`\ (bits 7--6)
++	  G\ :sub:`00low bits 5--0`\ (bits 5--0)
++
++       -  G\ :sub:`02low bits 3--0`\ (bits 7--4)
++	  R\ :sub:`01low bits 5--2`\ (bits 3--0)
++
++       -  R\ :sub:`03low bits 5--0`\ (bits 7--2)
++	  G\ :sub:`02low bits 5--4`\ (bits 1--0)
++
++    -  .. row 3
++
++       -  start + 14
++
++       -  B\ :sub:`20high`
++
++       -  G\ :sub:`21high`
++
++       -  B\ :sub:`22high`
++
++       -  G\ :sub:`23high`
++
++       -  G\ :sub:`21low bits 1--0`\ (bits 7--6)
++	  B\ :sub:`20low bits 5--0`\ (bits 5--0)
++
++       -  R\ :sub:`22low bits 3--0`\ (bits 7--4)
++	  G\ :sub:`21low bits 5--2`\ (bits 3--0)
++
++       -  G\ :sub:`23low bits 5--0`\ (bits 7--2)
++	  R\ :sub:`22low bits 5--4`\ (bits 1--0)
++
++    -  .. row 4
++
++       -  start + 21
++
++       -  G\ :sub:`30high`
++
++       -  R\ :sub:`31high`
++
++       -  G\ :sub:`32high`
++
++       -  R\ :sub:`33high`
++
++       -  R\ :sub:`31low bits 1--0`\ (bits 7--6)
++	  G\ :sub:`30low bits 5--0`\ (bits 5--0)
++
++       -  G\ :sub:`32low bits 3--0`\ (bits 7--4)
++	  R\ :sub:`31low bits 5--2`\ (bits 3--0)
++
++       -  R\ :sub:`33low bits 5--0`\ (bits 7--2)
++	  G\ :sub:`32low bits 5--4`\ (bits 1--0)
+diff --git a/drivers/media/v4l2-core/v4l2-ioctl.c b/drivers/media/v4l2-core/v4l2-ioctl.c
+index 0167056..04e1231 100644
+--- a/drivers/media/v4l2-core/v4l2-ioctl.c
++++ b/drivers/media/v4l2-core/v4l2-ioctl.c
+@@ -1259,6 +1259,10 @@ static void v4l_fill_fmtdesc(struct v4l2_fmtdesc *fmt)
+ 	case V4L2_PIX_FMT_SGBRG12P:	descr = "12-bit Bayer GBGB/RGRG Packed"; break;
+ 	case V4L2_PIX_FMT_SGRBG12P:	descr = "12-bit Bayer GRGR/BGBG Packed"; break;
+ 	case V4L2_PIX_FMT_SRGGB12P:	descr = "12-bit Bayer RGRG/GBGB Packed"; break;
++	case V4L2_PIX_FMT_SBGGR14P:	descr = "14-bit Bayer BGBG/GRGR Packed"; break;
++	case V4L2_PIX_FMT_SGBRG14P:	descr = "14-bit Bayer GBGB/RGRG Packed"; break;
++	case V4L2_PIX_FMT_SGRBG14P:	descr = "14-bit Bayer GRGR/BGBG Packed"; break;
++	case V4L2_PIX_FMT_SRGGB14P:	descr = "14-bit Bayer RGRG/GBGB Packed"; break;
+ 	case V4L2_PIX_FMT_SBGGR16:	descr = "16-bit Bayer BGBG/GRGR"; break;
+ 	case V4L2_PIX_FMT_SGBRG16:	descr = "16-bit Bayer GBGB/RGRG"; break;
+ 	case V4L2_PIX_FMT_SGRBG16:	descr = "16-bit Bayer GRGR/BGBG"; break;
+diff --git a/include/uapi/linux/videodev2.h b/include/uapi/linux/videodev2.h
+index 600877b..a15e03b 100644
+--- a/include/uapi/linux/videodev2.h
++++ b/include/uapi/linux/videodev2.h
+@@ -609,6 +609,11 @@ struct v4l2_pix_format {
+ #define V4L2_PIX_FMT_SGBRG12P v4l2_fourcc('p', 'G', 'C', 'C')
+ #define V4L2_PIX_FMT_SGRBG12P v4l2_fourcc('p', 'g', 'C', 'C')
+ #define V4L2_PIX_FMT_SRGGB12P v4l2_fourcc('p', 'R', 'C', 'C')
++	/* 14bit raw bayer packed, 7 bytes for every 4 pixels */
++#define V4L2_PIX_FMT_SBGGR14P v4l2_fourcc('p', 'B', 'E', 'E')
++#define V4L2_PIX_FMT_SGBRG14P v4l2_fourcc('p', 'G', 'E', 'E')
++#define V4L2_PIX_FMT_SGRBG14P v4l2_fourcc('p', 'g', 'E', 'E')
++#define V4L2_PIX_FMT_SRGGB14P v4l2_fourcc('p', 'R', 'E', 'E')
+ #define V4L2_PIX_FMT_SBGGR16 v4l2_fourcc('B', 'Y', 'R', '2') /* 16  BGBG.. GRGR.. */
+ #define V4L2_PIX_FMT_SGBRG16 v4l2_fourcc('G', 'B', '1', '6') /* 16  GBGB.. RGRG.. */
+ #define V4L2_PIX_FMT_SGRBG16 v4l2_fourcc('G', 'R', '1', '6') /* 16  GRGR.. BGBG.. */
+-- 
+2.7.4
+
