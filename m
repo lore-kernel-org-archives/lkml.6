@@ -2,134 +2,96 @@ Return-Path: <SRS0=S+WB=KJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA4A5C6778F
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 07:13:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71972C6778F
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 07:13:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 496D820844
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 07:13:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 496D820844
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zte.com.cn
+	by mail.kernel.org (Postfix) with ESMTP id 0604620844
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 07:13:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0604620844
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728656AbeGYIXs (ORCPT
+        id S1728693AbeGYIYG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 04:23:48 -0400
-Received: from mxhk.zte.com.cn ([63.217.80.70]:38604 "EHLO mxhk.zte.com.cn"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728461AbeGYIXs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Jul 2018 04:23:48 -0400
-Received: from mse01.zte.com.cn (unknown [10.30.3.20])
-        by Forcepoint Email with ESMTPS id 1EC133B1AAE6C44CBA1C;
-        Wed, 25 Jul 2018 15:13:25 +0800 (CST)
-Received: from notes_smtp.zte.com.cn ([10.30.1.239])
-        by mse01.zte.com.cn with ESMTP id w6P7DHso086004;
-        Wed, 25 Jul 2018 15:13:17 +0800 (GMT-8)
-        (envelope-from tan.hu@zte.com.cn)
-Received: from localhost.localdomain ([10.75.9.60])
-          by szsmtp06.zte.com.cn (Lotus Domino Release 8.5.3FP6)
-          with ESMTP id 2018072515132332-1720483 ;
-          Wed, 25 Jul 2018 15:13:23 +0800 
-From:   Tan Hu <tan.hu@zte.com.cn>
-To:     wensong@linux-vs.org, horms@verge.net.au, ja@ssi.bg,
-        pablo@netfilter.org, kadlec@blackhole.kfki.hu, fw@strlen.de,
-        davem@davemloft.net
-Cc:     netdev@vger.kernel.org, lvs-devel@vger.kernel.org,
-        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
-        linux-kernel@vger.kernel.org, zhong.weidong@zte.com.cn,
-        jiang.biao2@zte.com.cn
-Subject: [PATCH v3] ipvs: fix race between ip_vs_conn_new() and ip_vs_del_dest()
-Date:   Wed, 25 Jul 2018 15:23:07 +0800
-Message-Id: <1532503387-3800-1-git-send-email-tan.hu@zte.com.cn>
-X-Mailer: git-send-email 1.8.3.1
-X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
- 21, 2013) at 2018-07-25 15:13:23,
-        Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
- 2018-07-25 15:13:10,
-        Serialize complete at 2018-07-25 15:13:10
-X-MAIL: mse01.zte.com.cn w6P7DHso086004
+        Wed, 25 Jul 2018 04:24:06 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:10120 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728658AbeGYIYG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Jul 2018 04:24:06 -0400
+Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id D38A383753B3E;
+        Wed, 25 Jul 2018 15:13:42 +0800 (CST)
+Received: from [127.0.0.1] (10.177.31.96) by DGGEMS408-HUB.china.huawei.com
+ (10.3.19.208) with Microsoft SMTP Server id 14.3.382.0; Wed, 25 Jul 2018
+ 15:13:36 +0800
+Subject: Re: [PATCH v2] ARM: dma-mapping: always clear allocated buffers
+To:     <linux@armlinux.org.uk>, <matthias.bgg@gmail.com>,
+        <vladimir.murzin@arm.com>
+References: <20180725070706.19576-1-yuehaibing@huawei.com>
+CC:     <linux-kernel@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <akpm@linux-foundation.org>, <iamjoonsoo.kim@lge.com>,
+        <robin.murphy@arm.com>, <treding@nvidia.com>,
+        <zhongjiang@huawei.com>, <sean.wang@mediatek.com>,
+        Christoph Hellwig <hch@infradead.org>
+From:   YueHaibing <yuehaibing@huawei.com>
+Message-ID: <a7723548-b6d9-318a-49d8-71081c594db2@huawei.com>
+Date:   Wed, 25 Jul 2018 15:13:34 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.2.0
+MIME-Version: 1.0
+In-Reply-To: <20180725070706.19576-1-yuehaibing@huawei.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.177.31.96]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We came across infinite loop in ipvs when using ipvs in docker
-env.
++CC  Christoph Hellwig <hch@infradead.org>
 
-When ipvs receives new packets and cannot find an ipvs connection,
-it will create a new connection, then if the dest is unavailable
-(i.e. IP_VS_DEST_F_AVAILABLE), the packet will be dropped sliently.
-
-But if the dropped packet is the first packet of this connection,
-the connection control timer never has a chance to start and the
-ipvs connection cannot be released. This will lead to memory leak, or
-infinite loop in cleanup_net() when net namespace is released like
-this:
-
-    ip_vs_conn_net_cleanup at ffffffffa0a9f31a [ip_vs]
-    __ip_vs_cleanup at ffffffffa0a9f60a [ip_vs]
-    ops_exit_list at ffffffff81567a49
-    cleanup_net at ffffffff81568b40
-    process_one_work at ffffffff810a851b
-    worker_thread at ffffffff810a9356
-    kthread at ffffffff810b0b6f
-    ret_from_fork at ffffffff81697a18
-
-race condition:
-    CPU1                           CPU2
-    ip_vs_in()
-      ip_vs_conn_new()
-                                   ip_vs_del_dest()
-                                     __ip_vs_unlink_dest()
-                                       ~IP_VS_DEST_F_AVAILABLE
-      cp->dest && !IP_VS_DEST_F_AVAILABLE
-      __ip_vs_conn_put
-    ...
-    cleanup_net  ---> infinite looping
-
-Fix this by checking whether the timer already started.
-
-Signed-off-by: Tan Hu <tan.hu@zte.com.cn>
-Reviewed-by: Jiang Biao <jiang.biao2@zte.com.cn>
----
-v2: fix use-after-free in CONN_ONE_PACKET case suggested by Julian Anastasov
-v3: remove trailing whitespace for patch checking 
-
- net/netfilter/ipvs/ip_vs_core.c | 15 +++++++++++----
- 1 file changed, 11 insertions(+), 4 deletions(-)
-
-diff --git a/net/netfilter/ipvs/ip_vs_core.c b/net/netfilter/ipvs/ip_vs_core.c
-index 0679dd1..a17104f 100644
---- a/net/netfilter/ipvs/ip_vs_core.c
-+++ b/net/netfilter/ipvs/ip_vs_core.c
-@@ -1972,13 +1972,20 @@ static int ip_vs_in_icmp_v6(struct netns_ipvs *ipvs, struct sk_buff *skb,
- 	if (cp->dest && !(cp->dest->flags & IP_VS_DEST_F_AVAILABLE)) {
- 		/* the destination server is not available */
-
--		if (sysctl_expire_nodest_conn(ipvs)) {
-+		__u32 flags = cp->flags;
-+
-+		/* when timer already started, silently drop the packet.*/
-+		if (timer_pending(&cp->timer))
-+			__ip_vs_conn_put(cp);
-+		else
-+			ip_vs_conn_put(cp);
-+
-+		if (sysctl_expire_nodest_conn(ipvs) &&
-+		    !(flags & IP_VS_CONN_F_ONE_PACKET)) {
- 			/* try to expire the connection immediately */
- 			ip_vs_conn_expire_now(cp);
- 		}
--		/* don't restart its timer, and silently
--		   drop the packet. */
--		__ip_vs_conn_put(cp);
-+
- 		return NF_DROP;
- 	}
-
---
-1.8.3.1
+On 2018/7/25 15:07, YueHaibing wrote:
+> Sean Wang reported dma_zalloc_coherent doesn't work as expect on his
+> armv7,the allocated mem is not zeroed.The reason is __alloc_from_pool
+> doesn't honor __GFP_ZERO.
+> 
+> As commit 6829e274a623 ("arm64: dma-mapping: always clear allocated buffers")
+> has pointed out,buffers allocated by dma_alloc_coherent() are always zeroed
+> on most architectures. some drivers rely on this 'feature'. Allocated buffer
+> might be also exposed to userspace with dma_mmap() call,so clearing it is
+> desired from security point of view to avoid exposing random memory to userspace.
+> 
+> This patch unifies dma_alloc_coherent() behavior on ARM architecture with other
+> implementations by unconditionally zeroing allocated buffer.Also to fix
+> dma_zalloc_coherent behavior.
+> 
+> Reported-by: Sean Wang <sean.wang@mediatek.com>
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+> Reviewed-by: zhong jiang <zhongjiang@huawei.com>
+> ---
+> v2: reference more argument from arm64 commit as Christoph suggested
+> ---
+>  arch/arm/mm/dma-mapping.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/arch/arm/mm/dma-mapping.c b/arch/arm/mm/dma-mapping.c
+> index 6656647..cf5882f 100644
+> --- a/arch/arm/mm/dma-mapping.c
+> +++ b/arch/arm/mm/dma-mapping.c
+> @@ -564,6 +564,7 @@ static void *__alloc_from_pool(size_t size, struct page **ret_page)
+>  
+>  		*ret_page = phys_to_page(phys);
+>  		ptr = (void *)val;
+> +		memset(ptr, 0, size);
+>  	}
+>  
+>  	return ptr;
+> 
 
