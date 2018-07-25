@@ -2,149 +2,87 @@ Return-Path: <SRS0=S+WB=KJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
 	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45197C6778F
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 17:43:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0835C6778F
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 17:43:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0485720833
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 17:43:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0485720833
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 7705120833
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 17:43:58 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=thunk.org header.i=@thunk.org header.b="L9VvyvmL"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7705120833
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mit.edu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729496AbeGYS4N (ORCPT
+        id S1729847AbeGYS4h (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 14:56:13 -0400
-Received: from mail-it0-f65.google.com ([209.85.214.65]:33866 "EHLO
-        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728913AbeGYS4N (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Jul 2018 14:56:13 -0400
-Received: by mail-it0-f65.google.com with SMTP id d70-v6so173458ith.1;
-        Wed, 25 Jul 2018 10:43:32 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Co1uVhQcAIA6+uW9qeJuz8WQG2UdhfdSXjPOvVCJ3Ck=;
-        b=XpHE6eyjvcb/cmnnb+tXGiGrViIY07lxQs+bDGlqBX1pxnyiPUDgmyXLIGNu29OUml
-         AW2xWYqEsVk55G06bnIERUHt3Vgz0QyPi67GYFuH7IUsrD5OYdpkEDgRcLm0SLINWeJP
-         uy8Zw2Kn+GCJaGn1WCn4/xg+knB8TttrE5x1dEC6zEpcz5HAIf4XVutmi/JGSYBV45Ma
-         5ePnpAcV06sb7T0igNf2ou02qXZg3Ts8PqxSRSOskKtz/vmknf2IFZrQdBFjdNGoDbE3
-         XQIgYJXqpJSFwmyvejpLkit59JYb3lhftew+D/Vr55OFjgf3kzDxhcOLuGabQ7Jjfw0y
-         55dQ==
-X-Gm-Message-State: AOUpUlHEglQQlNqkxwWNSu8g9+mAJUt8Dg838q5thRUBEM8cCE9Y42ZV
-        XCVokXx/QIgQVgIMpH73eg==
-X-Google-Smtp-Source: AAOMgpcewPFJD/s7LJj8wH/6pL9ySdMiggH17/346A/5uidGlGN2Y6lybFLzQYvBQ/A3PrATZRkXww==
-X-Received: by 2002:a02:9c54:: with SMTP id h20-v6mr20968086jal.49.1532540611775;
-        Wed, 25 Jul 2018 10:43:31 -0700 (PDT)
-Received: from localhost ([24.51.61.72])
-        by smtp.gmail.com with ESMTPSA id u12-v6sm3024171ita.1.2018.07.25.10.43.30
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 25 Jul 2018 10:43:31 -0700 (PDT)
-Date:   Wed, 25 Jul 2018 11:43:30 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Damian Kos <dkos@cadence.com>
-Cc:     David Airlie <airlied@linux.ie>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Archit Taneja <architt@codeaurora.org>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Gustavo Padovan <gustavo@padovan.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Sean Paul <seanpaul@chromium.org>,
-        Sandy Huang <hjc@rock-chips.com>,
-        Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>,
-        Quentin Schulz <quentin.schulz@bootlin.com>,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, pgaj@cadence.com,
-        ltyrala@cadence.com, stelford@cadence.com
-Subject: Re: [PATCH v2 4/5] dt-bindings: drm/bridge Document Cadence MHDP
- DPI/DP bridge bindings
-Message-ID: <20180725174330.GA31540@rob-hp-laptop>
-References: <1532430824-23477-1-git-send-email-dkos@cadence.com>
- <1532430824-23477-5-git-send-email-dkos@cadence.com>
+        Wed, 25 Jul 2018 14:56:37 -0400
+Received: from imap.thunk.org ([74.207.234.97]:55884 "EHLO imap.thunk.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729341AbeGYS4h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Jul 2018 14:56:37 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=thunk.org;
+         s=ef5046eb; h=In-Reply-To:Content-Transfer-Encoding:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=Rve/0iIARHKCCUbVt5kuC37KcraSFdg1F/Wz/TLgPGo=; b=L9VvyvmLrQVUgO1P/kRQPuSUnh
+        yyhV943ddjZLjDt3AN/Gb0/AcIyQq+WHMRoxCsHUfIkHzZn3ye6K97lyHGElYpIDFzlN4WP7m0liF
+        fnRnf6bXvvgps7Yoe42hh5Lnk0j4QXKab85+VU+vNfJGvPFhMJ8f4Eaq07BZdPOCK/TA=;
+Received: from root (helo=callcc.thunk.org)
+        by imap.thunk.org with local-esmtp (Exim 4.89)
+        (envelope-from <tytso@thunk.org>)
+        id 1fiNpL-00026c-Fh; Wed, 25 Jul 2018 17:43:55 +0000
+Received: by callcc.thunk.org (Postfix, from userid 15806)
+        id CFA577A5985; Wed, 25 Jul 2018 13:43:17 -0400 (EDT)
+Date:   Wed, 25 Jul 2018 13:43:17 -0400
+From:   "Theodore Y. Ts'o" <tytso@mit.edu>
+To:     =?utf-8?B?5byg5a6B?= <zhangn1985@gmail.com>
+Cc:     linux-kernel@vger.kernel.org
+Subject: Re: no public email address excluding Gmail
+Message-ID: <20180725174317.GB11473@thunk.org>
+Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
+        =?utf-8?B?5byg5a6B?= <zhangn1985@gmail.com>,
+        linux-kernel@vger.kernel.org
+References: <CAC2xsYKxv_4-n19LwuoR=RJL_yP+zSqn6+HFpQyVtrsqmyv7OA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <1532430824-23477-5-git-send-email-dkos@cadence.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAC2xsYKxv_4-n19LwuoR=RJL_yP+zSqn6+HFpQyVtrsqmyv7OA@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: tytso@thunk.org
+X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 24, 2018 at 12:13:35PM +0100, Damian Kos wrote:
-> From: Quentin Schulz <quentin.schulz@bootlin.com>
+On Wed, Jul 25, 2018 at 03:25:07PM +0800, 张宁 wrote:
+> Hi, everyone
 > 
-> Signed-off-by: Damian Kos <dkos@cadence.com>
-> ---
->  .../bindings/display/bridge/cdns,mhdp.txt     | 43 +++++++++++++++++++
->  1 file changed, 43 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/display/bridge/cdns,mhdp.txt
+> I notice each developer in this email list has a company email address
+> or Gmail, or maybe selfhosted email.
 > 
-> diff --git a/Documentation/devicetree/bindings/display/bridge/cdns,mhdp.txt b/Documentation/devicetree/bindings/display/bridge/cdns,mhdp.txt
-> new file mode 100644
-> index 000000000000..dc7be7590048
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/display/bridge/cdns,mhdp.txt
-> @@ -0,0 +1,43 @@
-> +Cadence MHDP bridge
-> +==========================
-> +
-> +The Cadence MHDP bridge is a DPI to DP bridge.
-> +
-> +Required properties:
-> +- compatible: should be "cdns,mhdp8546",
-> +- reg: physical base address and length of the controller's registers,
-> +- clocks: DP bridge clock, it's used by the IP to know how to translate
-> +	a number of clock cycles into a time (which is used to comply
-> +	with DP standard timings and delays),
-> +
-> +Required subnodes:
-> +- ports: Ports as described in Documentation/devictree/bindings/graph.txt
-> +	Port 0 - input port representing the VGA bridge input
-> +	Port 1 - output port representing the VGA bridge output
+> last night I have tried my outlook.com, yahoo.com, QQ.com email, all
+> of them are rejected by mechine.
 
-VGA?
+There are a number of reasons why e-mail to the mailing list might
+have gotten rejected by the mailer.  The most common reason is if you
+forgot to disable HTML --- the vger mailer requires text-only e-mails,
+since the use of HTML mail is most commonly SPAM.
 
-> +
-> +Example:
-> +
-> +	mhdp: dp-bridge@f0fb000000 {
-> +		compatible = "cdns,mhdp8546";
-> +		reg = <0xf0 0xfb000000 0x0 0x1000000>;
-> +		clocks = <&mhdp_clock>;
-> +
-> +		ports {
-> +			#address-cells = <1>;
-> +			#size-cells = <0>;
-> +
-> +			port@0 {
-> +				reg = <0>;
-> +				vga_bridge_input: endpoint {
-> +					remote-endpoint = <&xxx_dpi_output>;
-> +				};
-> +			};
-> +
-> +			port@1 {
-> +				reg = <1>;
-> +				vga_bridge_output: endpoint {
-> +					remote-endpoint = <&xxx_vga_connector_input>;
+You may want to take a look at some of these web pages:
 
-vga?
+https://www.kernel.org/doc/html/latest/process/submitting-patches.html
+https://www.kernel.org/doc/html/latest/process/email-clients.html#email-clients
 
-> +				};
-> +			};
-> +		};
-> +	};
-> -- 
-> 2.17.1
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe devicetree" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Good luck!
+
+					- Ted
+					曹子德
