@@ -2,73 +2,96 @@ Return-Path: <SRS0=S+WB=KJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD0D6C67790
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 18:00:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2CF4C6778F
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 18:00:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9200A20833
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 18:00:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9200A20833
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rowland.harvard.edu
+	by mail.kernel.org (Postfix) with ESMTP id 8B0A720852
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 18:00:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B0A720852
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729939AbeGYTMn (ORCPT
+        id S1730206AbeGYTMv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 15:12:43 -0400
-Received: from iolanthe.rowland.org ([192.131.102.54]:37464 "HELO
-        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with SMTP id S1729367AbeGYTMn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Jul 2018 15:12:43 -0400
-Received: (qmail 4939 invoked by uid 2102); 25 Jul 2018 13:59:58 -0400
-Received: from localhost (sendmail-bs@127.0.0.1)
-  by localhost with SMTP; 25 Jul 2018 13:59:58 -0400
-Date:   Wed, 25 Jul 2018 13:59:58 -0400 (EDT)
-From:   Alan Stern <stern@rowland.harvard.edu>
-X-X-Sender: stern@iolanthe.rowland.org
-To:     Kai-Heng Feng <kai.heng.feng@canonical.com>
-cc:     arnd@arndb.de, <gregkh@linuxfoundation.org>,
-        <ulf.hansson@linaro.org>, <bauer.chen@realtek.com>,
-        <ricky_wu@realtek.com>, <linux-kernel@vger.kernel.org>,
-        <linux-usb@vger.kernel.org>
-Subject: Re: [PATCH 4/5] memstick: rtsx_usb_ms: Support runtime power management
-In-Reply-To: <20180725152515.1833-5-kai.heng.feng@canonical.com>
-Message-ID: <Pine.LNX.4.44L0.1807251357000.1467-100000@iolanthe.rowland.org>
+        Wed, 25 Jul 2018 15:12:51 -0400
+Received: from mga03.intel.com ([134.134.136.65]:30139 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729367AbeGYTMv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Jul 2018 15:12:51 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Jul 2018 11:00:05 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,401,1526367600"; 
+   d="scan'208";a="74466575"
+Received: from bee.sh.intel.com (HELO bee) ([10.239.97.14])
+  by fmsmga004.fm.intel.com with ESMTP; 25 Jul 2018 10:57:07 -0700
+Received: from kbuild by bee with local (Exim 4.84_2)
+        (envelope-from <lkp@intel.com>)
+        id 1fiO26-000Ltt-Fi; Thu, 26 Jul 2018 01:57:06 +0800
+Date:   Thu, 26 Jul 2018 01:57:00 +0800
+From:   kbuild test robot <fengguang.wu@intel.com>
+To:     Mauro Carvalho Chehab <m.chehab@samsung.com>
+Cc:     kbuild-all@01.org, linux-kernel@vger.kernel.org,
+        linux-media@vger.kernel.org,
+        Tomi Valkeinen <tomi.valkeinen@ti.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        linux-omap@vger.kernel.org, linux-fbdev@vger.kernel.org,
+        dri-devel@lists.freedesktop.org
+Subject: [PATCH] media: omap2: omapfb: fix bugon.cocci warnings
+Message-ID: <20180725175700.GA82595@lkp-sb05.lkp.intel.com>
+References: <201807260144.q4WK2PMA%fengguang.wu@intel.com>
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <201807260144.q4WK2PMA%fengguang.wu@intel.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: lkp@intel.com
+X-SA-Exim-Scanned: No (on bee); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 25 Jul 2018, Kai-Heng Feng wrote:
+From: kbuild test robot <fengguang.wu@intel.com>
 
-> In order to let host's parent device, rtsx_usb, to use USB remote wake
-> up signaling to do card detection, it needs to be suspended. Hence it's
-> necessary to add runtime PM support for the memstick host.
-> 
-> To keep memstick host stays suspended when it's not in use, convert the
-> card detection function from kthread to delayed_work, which can be
-> scheduled when the host is resumed and can be canceled when the host is
-> suspended.
-> 
-> Use an idle function check if there's no card and the power mode is
-> MEMSTICK_POWER_OFF. If both criteria are met, put the device to suspend.
-> 
-> Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
+drivers/video/fbdev/omap2/omapfb/dss/dss_features.c:895:2-5: WARNING: Use BUG_ON instead of if condition followed by BUG.
+Please make sure the condition has no side effects (see conditional BUG_ON definition in include/asm-generic/bug.h)
 
-I'm not familiar enough with this driver to comment on specific
-instances, but you should carefully go through the code and make sure
-that you use pm_runtime_get_noresume() and pm_runtime_put_noidle()
-correctly.
+ Use BUG_ON instead of a if condition followed by BUG.
 
-The basic idea is to use these when you know beforehand that the device
-is already at full power (for _get_noresume) and the usage count will
-not go to 0 (for _put_noidle).  If you aren't certain of these
-requirements then you should call pm_runtime_get_sync() and
-pm_runtime_put().
+Semantic patch information:
+ This makes an effort to find cases where BUG() follows an if
+ condition on an expression and replaces the if condition and BUG()
+ with a BUG_ON having the conditional expression of the if statement
+ as argument.
 
-Alan Stern
+Generated by: scripts/coccinelle/misc/bugon.cocci
 
+Fixes: 7378f1149884 ("media: omap2: omapfb: allow building it with COMPILE_TEST")
+Signed-off-by: kbuild test robot <fengguang.wu@intel.com>
+---
+
+Please take the patch only if it's a positive warning. Thanks!
+
+ dss_features.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+--- a/drivers/video/fbdev/omap2/omapfb/dss/dss_features.c
++++ b/drivers/video/fbdev/omap2/omapfb/dss/dss_features.c
+@@ -891,8 +891,7 @@ bool dss_has_feature(enum dss_feat_id id
+ 
+ void dss_feat_get_reg_field(enum dss_feat_reg_field id, u8 *start, u8 *end)
+ {
+-	if (id >= omap_current_dss_features->num_reg_fields)
+-		BUG();
++	BUG_ON(id >= omap_current_dss_features->num_reg_fields);
+ 
+ 	*start = omap_current_dss_features->reg_fields[id].start;
+ 	*end = omap_current_dss_features->reg_fields[id].end;
