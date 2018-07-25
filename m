@@ -2,59 +2,70 @@ Return-Path: <SRS0=S+WB=KJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DBFDC67790
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 07:40:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D49FC67790
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 07:42:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C39B32088E
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 07:40:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C39B32088E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 372DD20882
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 07:42:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 372DD20882
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728666AbeGYIvT (ORCPT
+        id S1728527AbeGYIwh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 04:51:19 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:36152 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728357AbeGYIvT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Jul 2018 04:51:19 -0400
-Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 2A2D7720;
-        Wed, 25 Jul 2018 07:40:53 +0000 (UTC)
-Date:   Wed, 25 Jul 2018 09:40:48 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Georgios Tsotsos <tsotsos@gmail.com>
-Cc:     devel@driverdev.osuosl.org, James Hogan <jhogan@kernel.org>,
-        linux-kernel@vger.kernel.org, Aaro Koskinen <aaro.koskinen@iki.fi>
-Subject: Re: [PATCH 1/4] Staging: octeon-usb: Adds SPDX License Identifier
-Message-ID: <20180725074048.GD21472@kroah.com>
-References: <20180724222212.8742-1-tsotsos@gmail.com>
- <20180724222212.8742-2-tsotsos@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180724222212.8742-2-tsotsos@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Wed, 25 Jul 2018 04:52:37 -0400
+Received: from mx2.suse.de ([195.135.220.15]:50234 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728441AbeGYIwh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Jul 2018 04:52:37 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 970B9ADEF;
+        Wed, 25 Jul 2018 07:42:09 +0000 (UTC)
+From:   Juergen Gross <jgross@suse.com>
+To:     linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
+        xen-devel@lists.xenproject.org
+Cc:     konrad.wilk@oracle.com, roger.pau@citrix.com,
+        Juergen Gross <jgross@suse.com>
+Subject: [PATCH] xen/blkfront: remove unused macros
+Date:   Wed, 25 Jul 2018 09:42:07 +0200
+Message-Id: <20180725074207.6808-1-jgross@suse.com>
+X-Mailer: git-send-email 2.13.7
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 25, 2018 at 01:22:08AM +0300, Georgios Tsotsos wrote:
-> Signed-off-by: Georgios Tsotsos <tsotsos@gmail.com>
-> ---
->  drivers/staging/octeon-usb/octeon-hcd.c | 1 +
->  1 file changed, 1 insertion(+)
+Remove some macros not used anywhere.
 
-Again, no changelog :(
+Signed-off-by: Juergen Gross <jgross@suse.com>
+---
+ drivers/block/xen-blkfront.c | 5 -----
+ 1 file changed, 5 deletions(-)
 
-Please fix this series up and resend.
+diff --git a/drivers/block/xen-blkfront.c b/drivers/block/xen-blkfront.c
+index b5cedccb5d7d..94300dbe358b 100644
+--- a/drivers/block/xen-blkfront.c
++++ b/drivers/block/xen-blkfront.c
+@@ -251,14 +251,9 @@ static DEFINE_SPINLOCK(minor_lock);
+ #define GRANTS_PER_INDIRECT_FRAME \
+ 	(XEN_PAGE_SIZE / sizeof(struct blkif_request_segment))
+ 
+-#define PSEGS_PER_INDIRECT_FRAME	\
+-	(GRANTS_INDIRECT_FRAME / GRANTS_PSEGS)
+-
+ #define INDIRECT_GREFS(_grants)		\
+ 	DIV_ROUND_UP(_grants, GRANTS_PER_INDIRECT_FRAME)
+ 
+-#define GREFS(_psegs)	((_psegs) * GRANTS_PER_PSEG)
+-
+ static int blkfront_setup_indirect(struct blkfront_ring_info *rinfo);
+ static void blkfront_gather_backend_features(struct blkfront_info *info);
+ static int negotiate_mq(struct blkfront_info *info);
+-- 
+2.13.7
 
-thanks,
-
-greg k-h
