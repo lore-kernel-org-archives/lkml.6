@@ -6,60 +6,60 @@ X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15EEBC6778F
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 02:30:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76695C6778F
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 02:30:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B74C820852
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 02:30:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 326D320852
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 02:30:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=tobin.cc header.i=@tobin.cc header.b="IWObyHm3";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="W03Zt8de"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B74C820852
+	dkim=pass (2048-bit key) header.d=tobin.cc header.i=@tobin.cc header.b="Y5+srSPK";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Rt2Xx56Y"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 326D320852
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=tobin.cc
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388545AbeGYDjc (ORCPT
+        id S2388574AbeGYDjf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 23:39:32 -0400
-Received: from out1-smtp.messagingengine.com ([66.111.4.25]:34445 "EHLO
+        Tue, 24 Jul 2018 23:39:35 -0400
+Received: from out1-smtp.messagingengine.com ([66.111.4.25]:49549 "EHLO
         out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2388446AbeGYDjb (ORCPT
+        by vger.kernel.org with ESMTP id S2388446AbeGYDje (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 23:39:31 -0400
+        Tue, 24 Jul 2018 23:39:34 -0400
 Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-        by mailout.nyi.internal (Postfix) with ESMTP id 0967321CEC;
-        Tue, 24 Jul 2018 22:30:06 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute5.internal (MEProxy); Tue, 24 Jul 2018 22:30:06 -0400
+        by mailout.nyi.internal (Postfix) with ESMTP id 4DA7021AE8;
+        Tue, 24 Jul 2018 22:30:09 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute5.internal (MEProxy); Tue, 24 Jul 2018 22:30:09 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tobin.cc; h=cc
         :date:from:in-reply-to:message-id:references:subject:to
-        :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=Pdqg+bsNhCBjTZG1X
-        ZolszNuUd1LmLWnXJntJhJgE4U=; b=IWObyHm3nYf92kE/cmLCSpbRBHtTI0xfD
-        ACB5RG97McuURnOvmX55WqafyE0f5vpa9WK/LShd7ekTr1tUCbz6z2dhtaKK8Q3y
-        E8hXHoqAHg1hG6hb2bHyrARlv1IhB4e/+e5CyTWU8LHli8BzkdbFVnOoCun4F5o/
-        f1K5GbGfvEMhEiTncvNSA7bZV1wfORZ+Wvmq/GXWphUXeIekpUMCQfnKMfL3mRyI
-        711ZBHGP2zyfmXVFyHm27RZ2Va+tLVpQtQizgC8b+GF87b+O6zYy3po5aaq1bGeS
-        jgM4IqaU9BD/M30EgrQvpq80nSOqVzXjmXMsGBBflkentbNarG0wA==
+        :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=8CcVBe7nFKx9jFKrb
+        3lbH2vnLoc9LpA98dmP29qOWeA=; b=Y5+srSPKJtIwPARv4KdA01VtQThK4OioH
+        18AcQ9KI8G07TwayVsx4uJN29hbiEB7cFLh187rNb7HLQ/nzJmNWNL8FkYxSGLf7
+        rYGmO+dTncbs6XHju6LFOZYMB+QEeM9JEtvzvEzoDbgFEgZgKuIY3JDgSpBMHr/x
+        aPCBmdG74aJ5T0+aNROYj9A8LLp2pLCEPe1hPtQF36ezkNp8L0DLDAjbq6gEkV0X
+        Z7lqi2IBDt2goiXAxhIc02qxF2dzQ5sGJvrPv+A7D21d2jdItbbMwXhxgJ0YMtmu
+        J3DJ2cS1mvj4wIsx1TVUqaqjOfVtUZGLaWA9SUL+G8k66dVD27tig==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
         messagingengine.com; h=cc:date:from:in-reply-to:message-id
         :references:subject:to:x-me-sender:x-me-sender:x-sasl-enc; s=
-        fm3; bh=Pdqg+bsNhCBjTZG1XZolszNuUd1LmLWnXJntJhJgE4U=; b=W03Zt8de
-        0wsbq3KZ0d1CbHrmw9hZpzyGmFFLpSzhdxImKXMWGc83q46yJyG7uVtsNS0ahVgy
-        tHowlz2c5RUZiCjtjzQqvZ9pns53A4TrfLl41jWaYL4MKHy3jCK+N9d238rEuJGt
-        5iAYztcPCHhGJBEOS131bxPS40gnHeWAb+y7EMvj3Ds3G7vtvrIvOXvOuNcZK7HT
-        Y4553BrAvKFZYhma5v/GehZNLc070/qdJ8YQLufhtUrbY9ve4JN151zMBvhz5I2H
-        pTrqKyvDGMmpKYLnOUpEL2fa63SbxP5Q76Ym3vtsxT2YDjhBjOiVv97TPAjzts9b
-        ZqswpFmh3G5syA==
-X-ME-Proxy: <xmx:reBXWzpO0tsL5mqD04Oc-iE-UQrmZLGJssjeKX_vEt0a_SxkcZvOTQ>
-    <xmx:reBXW6ko2Id8bkbSnCD3uAA6AWc6GR84iuXrOn-_dmXwqu9ZfBGHwg>
-    <xmx:reBXW71DRorlNXuwLJa2x14DVhvgloM0Sl_bTJEqGk_bhXERu7GbHw>
-    <xmx:reBXW_QzQYEcG9_mHGaIo1dL0untwv09cZBhHk_VVA2non98iYlJ2g>
-    <xmx:reBXW8xUGPuf9ub1fnzkK1E6K-hIi_QWru2kR9am9bOn_kePq5h_VA>
-    <xmx:reBXW6U-sFsy-f-yzWh3nebtXq-bPX1T6IRuNLoq2UEiKfgWOW7xnw>
-X-ME-Sender: <xms:reBXW31lBU96RC6xqEQABQ2bB3jtFAPjgl4wIBhu5GKs_suKoOYeLw>
+        fm3; bh=8CcVBe7nFKx9jFKrb3lbH2vnLoc9LpA98dmP29qOWeA=; b=Rt2Xx56Y
+        mD3cZLpZoMPOhzde7edPPLgdOpHTqqFmLj9c+sGkYoWObHFdSa6cE4hmusHzAPG+
+        kvZ5rkyoxfhrtvrcQsgpGxdmSUgokByEyWplxyukqyBybIUoqApv0afuW9/I/Ou4
+        tHiP9tUTVPl/bv51Qz/1lS5YUZOKVSq2QHdrfNfUPU1ZB0tcIMv/GVnEubVpONsA
+        GazhSMc3UOzmqJoTH5pqRkGvDYrxcYa1uyqkfH76EUVx+HTzfqatB/5yzccnQirL
+        Mtw8Vfi3nMGM5YcrvkeribFvXkHLlv+xXF6q+9zbaOW+Nite4hVwEiXkklM6dY/w
+        x6SvJukuU3WhRQ==
+X-ME-Proxy: <xmx:seBXWzim1XOdnGl-BEqi2jfenD83lfX5qZuysjIfhXuexDX_FHTTLQ>
+    <xmx:seBXW7m8_9ZUyRzrs_sriyygm0GivlnZ44399haBIdi4CNTnRr8Y8Q>
+    <xmx:seBXWzEt-ITFFn2c830GPkGZ_hwmItJgsvPbOQpFpYFSmV0s_hW6vw>
+    <xmx:seBXW1M3wr9tyZlFs8WN5Or5WA6pRBEkqyCLyKIzvXxZ1KL1BVP-PA>
+    <xmx:seBXWysxFnb7zyJXWM0jKdUMvFVzkLgt2gy7P_DEWZ0hI2oHMMS3BA>
+    <xmx:seBXW60uYqIBne6Vsj0z8R17x17zNgsDjavZHX836lKOjglqdC9zXg>
+X-ME-Sender: <xms:seBXW4WANq-Af1k9PCo9d0KMhxTl53EVd0uTTm0gGAwN8LYD5T1RsA>
 Received: from localhost (ppp121-44-239-245.bras2.syd2.internode.on.net [121.44.239.245])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 952701026A;
-        Tue, 24 Jul 2018 22:30:04 -0400 (EDT)
+        by mail.messagingengine.com (Postfix) with ESMTPA id 68253E450E;
+        Tue, 24 Jul 2018 22:30:08 -0400 (EDT)
 From:   "Tobin C. Harding" <me@tobin.cc>
 To:     Jonathan Corbet <corbet@lwn.net>
 Cc:     "Tobin C. Harding" <me@tobin.cc>,
@@ -67,9 +67,9 @@ Cc:     "Tobin C. Harding" <me@tobin.cc>,
         Daniel Borkmann <daniel@iogearbox.net>,
         linux-doc@vger.kernel.org, netdev@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 2/4] docs: bpf: Add toctree to index
-Date:   Wed, 25 Jul 2018 12:29:24 +1000
-Message-Id: <20180725022926.8993-3-me@tobin.cc>
+Subject: [PATCH 3/4] docs: Add bpf/index to top level index
+Date:   Wed, 25 Jul 2018 12:29:25 +1000
+Message-Id: <20180725022926.8993-4-me@tobin.cc>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180725022926.8993-1-me@tobin.cc>
 References: <20180725022926.8993-1-me@tobin.cc>
@@ -78,40 +78,31 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Recently bpf/ docs were converted to us RST format.  bp/index.rst was
-created out of README but toctree was not added to include files within
-Documentation/bpf/
+Recently bpf docs were converted to RST format.  The new files were not
+added to the top level toctree.  This causes build system to emit a
+warning of type
 
-Add toctree to Documentation/bpf/index.rst
+	WARNING: document isn't included in any toctree
+
+Add bpf/index.rst to Documentation/index.rst
 
 Signed-off-by: Tobin C. Harding <me@tobin.cc>
 ---
- Documentation/bpf/index.rst | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ Documentation/index.rst | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/Documentation/bpf/index.rst b/Documentation/bpf/index.rst
-index b9a80c9e9392..ab2ff13a809b 100644
---- a/Documentation/bpf/index.rst
-+++ b/Documentation/bpf/index.rst
-@@ -22,14 +22,14 @@ Frequently asked questions (FAQ)
+diff --git a/Documentation/index.rst b/Documentation/index.rst
+index 5d310d960f82..24339a9c2ef8 100644
+--- a/Documentation/index.rst
++++ b/Documentation/index.rst
+@@ -92,6 +92,7 @@ needed).
+    crypto/index
+    filesystems/index
+    vm/index
++   bpf/index
  
- Two sets of Questions and Answers (Q&A) are maintained.
- 
--* QA for common questions about BPF see: bpf_design_QA_
-+.. toctree::
-+   :maxdepth: 1
- 
--* QA for developers interacting with BPF subsystem: bpf_devel_QA_
-+   bpf_design_QA
-+   bpf_devel_QA
- 
- 
- .. Links:
--.. _bpf_design_QA: bpf_design_QA.rst
--.. _bpf_devel_QA:  bpf_devel_QA.rst
- .. _Documentation/networking/filter.txt: ../networking/filter.txt
- .. _man-pages: https://www.kernel.org/doc/man-pages/
- .. _bpf(2): http://man7.org/linux/man-pages/man2/bpf.2.html
+ Architecture-specific documentation
+ -----------------------------------
 -- 
 2.17.1
 
