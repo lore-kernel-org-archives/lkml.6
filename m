@@ -2,148 +2,141 @@ Return-Path: <SRS0=S+WB=KJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A60A0C6778F
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 13:12:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 544A8C6778F
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 13:17:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 53FD220852
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 13:12:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EFDA42088E
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 13:17:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="p91YA/ff"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 53FD220852
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SSFB4xpL"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EFDA42088E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729067AbeGYOXw (ORCPT
+        id S1729026AbeGYO30 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 10:23:52 -0400
-Received: from mail-qt0-f195.google.com ([209.85.216.195]:43251 "EHLO
-        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728927AbeGYOXv (ORCPT
+        Wed, 25 Jul 2018 10:29:26 -0400
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:44950 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728476AbeGYO30 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Jul 2018 10:23:51 -0400
-Received: by mail-qt0-f195.google.com with SMTP id f18-v6so7500795qtp.10;
-        Wed, 25 Jul 2018 06:12:12 -0700 (PDT)
+        Wed, 25 Jul 2018 10:29:26 -0400
+Received: by mail-pl0-f66.google.com with SMTP id m16-v6so3289941pls.11
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Jul 2018 06:17:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=jGj9s/g4GLrYFxbyFC0AOyW5LdQ4r/aEycEFCxeJLCA=;
-        b=p91YA/ffQah5rkSeyKFZKx9fc6ktMNTr0YNmrP28/YNzCzKBjaG61wEJlB1Rf/TG61
-         2cNcBiFfBCb4uAb6PmBjRiuoGGMGPCSXnHoZV5xfJ42a0PADtWhUjvekZNQw53y51ZQd
-         RyfKjOfA0K4rpBOummR/j41wqxVV0zmODY4KQNZmDOh9PQevwQNMXdkCMwEYiis7kHVZ
-         jRHRwsLjQgFQfAAif7OHcddeuu9Zb892fgc2t6bWU6Z8asv1nEkmLvAreSkWW57p98t+
-         RFiUIaHioQLZjHlRVmh6FdgrZdtwtMfFoRZ5atNWfeXrDQpc+K96STXafuRPUsH2eQhy
-         J2nQ==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=niJb2veS3MeGNKE6rC0w8/XDdjdsqnSK/SWHduEDlbA=;
+        b=SSFB4xpL3pG8nl0iFP38XJ8hZkkeoVOqgvE9J64eAuay4XurASx9AUbBImdKf8ptul
+         S8aIYIkoEhSS0C0r3/OikIVyNzCsnxFjj8d5ZIE83mWzsbNqLHrbNmTIy/spluzQtJ3v
+         RSbxOSxy4msCfoLLQTXjNfHRiPRrl+2XF/eq1dHV1L1CAOpJX3Bj6PSTMNY9LuTExGok
+         gZ70R2io3Bawg7ALCXHoxwm/cwjD/13BLRFsX8p+8vhzKgP1jD4MScRaVeLsvOegps5b
+         QdN5lDTAi2MME6FYOMY0wP6pVdfPgvmeGl0+4m39W3gq+F9bEARyBjtJ59xCNafkOqiB
+         CEbw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
-         :date:message-id:subject:to:cc;
-        bh=jGj9s/g4GLrYFxbyFC0AOyW5LdQ4r/aEycEFCxeJLCA=;
-        b=rx55sPjs7jEIjQcxKO3x3xf+Dp/qVEPHltQMsvcvj/UYTLugwrM2UApKJ8O5kHj3yw
-         l5NHnxt6MxfCZNCP4XnE//zIxSq4ySjI8DpFzqdRJVp1xLBUO0nwZCYXEHA4GPmrdBOJ
-         nqRcRlSy7TLYzQvJIwc0vzmdGy6g33K/cdGdMrKOwk498jYN44TBFAd9HlzeT4rVEqAp
-         cV0wM/kk8FJpGnzf76ySzRTg8OJlIvBenFhYDBA0rORJuXvB8PD8OufNGLEnSlJHYdw6
-         /u8zgsJoawOIke6Zwt37o1SMH+FH5mucty7dm4Tzk/Xn7SFXMNAU9zIChZH+jHdIT0x2
-         pYUg==
-X-Gm-Message-State: AOUpUlHhrb3UzipLCf/i/U+hkCkd1C87+1g7UV65f3scMQkcQgDoLR/H
-        9gWmdX1J9Z9LduufZChWkypf9FPKOHlcRm3zGY7VV4J8
-X-Google-Smtp-Source: AAOMgpf7yNY8m1agev6T6pHKQDblZweWXtwEGnDGISP2wYUG3YKqyDkchlcMwe1ZhrWEYFX+A/Gqx+yDpIdFhZcYk5M=
-X-Received: by 2002:ac8:3676:: with SMTP id n51-v6mr20403800qtb.163.1532524332155;
- Wed, 25 Jul 2018 06:12:12 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=niJb2veS3MeGNKE6rC0w8/XDdjdsqnSK/SWHduEDlbA=;
+        b=fLW/0u/iXuQDLFpuzoHLPLBZ0610Y/NDhobH6Ug816zPk4gIdg1gPjDFXkolH3ivub
+         QbDDCM+HdM6Hq0GtdiawRfxkfDZcVT7xUf6L+tCvta3IF2OWF7dyGhTzuP80ShvcAm/S
+         JFJo4ALHlJWEwVieBOhIfzaEQVen6Fskku1QnMvgFT69rhpmXg+Q6FI4h2doxVtIFH+F
+         RbH9jFvD6zfAJseDRx9j+AoX+1nyjPy2WBAIoh3tyFnawHHmSJHJQcw9mwPFTnK8hRSJ
+         Oz5bNgx0GObIzqBhYIMOoq+9jHIyU8dpVlO4JPf3pSo58guCK4pA/vVVTQIxTymYP4KT
+         K+Hw==
+X-Gm-Message-State: AOUpUlG/z+3eu/xHOD3D6nCRDhhTboeMYRJ5YifqnXEoC4GmWDJtO21/
+        LQ9aVhi1idProAIC4jZGKkA=
+X-Google-Smtp-Source: AAOMgpe91SXYnYI0mTEWzYo4WyKShMeUiX48y7qRo0fYfG55GbmQTlAzMOEGBOg/RJGIcxoXudf1Bw==
+X-Received: by 2002:a17:902:561:: with SMTP id 88-v6mr20898726plf.320.1532524667202;
+        Wed, 25 Jul 2018 06:17:47 -0700 (PDT)
+Received: from smtp.gmail.com ([140.113.169.102])
+        by smtp.gmail.com with ESMTPSA id m4-v6sm10440606pgn.82.2018.07.25.06.17.44
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 25 Jul 2018 06:17:46 -0700 (PDT)
+Date:   Wed, 25 Jul 2018 10:17:42 -0300
+From:   Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
+To:     Souptick Joarder <jrdr.linux@gmail.com>
+Cc:     willy@infradead.org, airlied@linux.ie, daniel.vetter@ffwll.ch,
+        gustavo.padovan@collabora.com, hamohammed.sa@gmail.com,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] gpu/drm/vkms: Use new return type vm_fault_t
+Message-ID: <20180725131742.knj2udm5aydxqrkg@smtp.gmail.com>
+References: <20180723170418.GA6417@jordon-HP-15-Notebook-PC>
 MIME-Version: 1.0
-Received: by 2002:a0c:967d:0:0:0:0:0 with HTTP; Wed, 25 Jul 2018 06:12:11
- -0700 (PDT)
-In-Reply-To: <20180724175531.75276cf4e539124aa9e27177@linux-foundation.org>
-References: <20180724111600.4158975-1-arnd@arndb.de> <20180724140010.e24a9964fd340afe2d98a994@linux-foundation.org>
- <aa39b6d15f44555cb79d5ebdef74aeab19003d6a.camel@perches.com> <20180724175531.75276cf4e539124aa9e27177@linux-foundation.org>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Wed, 25 Jul 2018 15:12:11 +0200
-X-Google-Sender-Auth: OoKVbvWVbmSl4jK_VaAj-vDRpNA
-Message-ID: <CAK8P3a3tOuP1FVS7oD1UhO5s4C+fLkL8VT3eCpRnSxBZxKzf6A@mail.gmail.com>
-Subject: Re: [PATCH 1/4] treewide: convert ISO_8859-1 text comments to utf-8
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Joe Perches <joe@perches.com>,
-        Samuel Ortiz <sameo@linux.intel.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Rob Herring <robh+dt@kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Jonathan Cameron <jic23@kernel.org>,
-        linux-wireless <linux-wireless@vger.kernel.org>,
-        Networking <netdev@vger.kernel.org>,
-        DTML <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
-        <linux-crypto@vger.kernel.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        linux-iio@vger.kernel.org,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        lvs-devel@vger.kernel.org, netfilter-devel@vger.kernel.org,
-        coreteam@netfilter.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180723170418.GA6417@jordon-HP-15-Notebook-PC>
+User-Agent: NeoMutt/20180622
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-tools/perf/tests/.gitignore:
-                            LLVM byte-codes, uncompressed
-On Wed, Jul 25, 2018 at 2:55 AM, Andrew Morton
-<akpm@linux-foundation.org> wrote:
-> On Tue, 24 Jul 2018 17:13:20 -0700 Joe Perches <joe@perches.com> wrote:
->
->> On Tue, 2018-07-24 at 14:00 -0700, Andrew Morton wrote:
->> > On Tue, 24 Jul 2018 13:13:25 +0200 Arnd Bergmann <arnd@arndb.de> wrote:
->> > > Almost all files in the kernel are either plain text or UTF-8
->> > > encoded. A couple however are ISO_8859-1, usually just a few
->> > > characters in a C comments, for historic reasons.
->> > > This converts them all to UTF-8 for consistency.
->> []
->> > Will we be getting a checkpatch rule to keep things this way?
->>
->> How would that be done?
->
-> I'm using this, seems to work.
->
->         if ! file $p | grep -q -P ", ASCII text|, UTF-8 Unicode text"
->         then
->                 echo $p: weird charset
->         fi
+Hi,
 
-There are a couple of files that my version of 'find' incorrectly identified as
-something completely different, like:
+Thanks for the patch,
 
-Documentation/devicetree/bindings/pinctrl/pinctrl-sx150x.txt:
-            SemOne archive data
-Documentation/devicetree/bindings/rtc/epson,rtc7301.txt:
-            Microsoft Document Imaging Format
-Documentation/filesystems/nfs/pnfs-block-server.txt:
-            PPMN archive data
-arch/arm/boot/dts/bcm283x-rpi-usb-host.dtsi:
-        Sendmail frozen configuration  - version = "host";
-Documentation/networking/segmentation-offloads.txt:
-        StuffIt Deluxe Segment (data) : gmentation Offloads in the
-Linux Networking Stack
-arch/sparc/include/asm/visasm.h:                              SAS 7+
-arch/xtensa/kernel/setup.c:                                         ,
-init=0x454c, stat=0x090a, dev=0x2009, bas=0x2020
-drivers/cpufreq/powernow-k8.c:
-TI-XX Graphing Calculator (FLASH)
-tools/testing/selftests/net/forwarding/tc_shblocks.sh:
-                            Minix filesystem, V2 (big endian)
-tools/perf/tests/.gitignore:
-                            LLVM byte-codes, uncompressed
+I reviewed and tested it; everything is fine. I only suggest removing
+the "gpu" part from the patch title (i.e., "drm/vkms: Use new return
+type vm_fault_t").
 
-All of the above seem to be valid ASCII or UTF-8 files, so the check
-above will lead
-to false-positives, but it may be good enough as they are the
-exception, and may be
-bugs in 'file'.
-
-Not sure if we need to worry about 'file' not being installed.
-
-       Arnd
+On 07/23, Souptick Joarder wrote:
+> Use new return type vm_fault_t for fault handler.
+> 
+> Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
+> ---
+>  drivers/gpu/drm/vkms/vkms_drv.h | 2 +-
+>  drivers/gpu/drm/vkms/vkms_gem.c | 5 ++---
+>  2 files changed, 3 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/vkms/vkms_drv.h b/drivers/gpu/drm/vkms/vkms_drv.h
+> index 07be29f..d5d04a8 100644
+> --- a/drivers/gpu/drm/vkms/vkms_drv.h
+> +++ b/drivers/gpu/drm/vkms/vkms_drv.h
+> @@ -65,7 +65,7 @@ struct drm_gem_object *vkms_gem_create(struct drm_device *dev,
+>  				       u32 *handle,
+>  				       u64 size);
+>  
+> -int vkms_gem_fault(struct vm_fault *vmf);
+> +vm_fault_t vkms_gem_fault(struct vm_fault *vmf);
+>  
+>  int vkms_dumb_create(struct drm_file *file, struct drm_device *dev,
+>  		     struct drm_mode_create_dumb *args);
+> diff --git a/drivers/gpu/drm/vkms/vkms_gem.c b/drivers/gpu/drm/vkms/vkms_gem.c
+> index c7e3836..62e05dc 100644
+> --- a/drivers/gpu/drm/vkms/vkms_gem.c
+> +++ b/drivers/gpu/drm/vkms/vkms_gem.c
+> @@ -43,14 +43,14 @@ void vkms_gem_free_object(struct drm_gem_object *obj)
+>  	kfree(gem);
+>  }
+>  
+> -int vkms_gem_fault(struct vm_fault *vmf)
+> +vm_fault_t vkms_gem_fault(struct vm_fault *vmf)
+>  {
+>  	struct vm_area_struct *vma = vmf->vma;
+>  	struct vkms_gem_object *obj = vma->vm_private_data;
+>  	unsigned long vaddr = vmf->address;
+>  	pgoff_t page_offset;
+>  	loff_t num_pages;
+> -	int ret;
+> +	vm_fault_t ret = VM_FAULT_SIGBUS;
+>  
+>  	page_offset = (vaddr - vma->vm_start) >> PAGE_SHIFT;
+>  	num_pages = DIV_ROUND_UP(obj->gem.size, PAGE_SIZE);
+> @@ -58,7 +58,6 @@ int vkms_gem_fault(struct vm_fault *vmf)
+>  	if (page_offset > num_pages)
+>  		return VM_FAULT_SIGBUS;
+>  
+> -	ret = -ENOENT;
+>  	mutex_lock(&obj->pages_lock);
+>  	if (obj->pages) {
+>  		get_page(obj->pages[page_offset]);
+> -- 
+> 1.9.1
+> 
