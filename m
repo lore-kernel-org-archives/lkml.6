@@ -2,132 +2,134 @@ Return-Path: <SRS0=S+WB=KJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 672E5C6778F
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 07:11:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA4A5C6778F
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 07:13:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1E4CE20844
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 07:11:41 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kapsi.fi header.i=@kapsi.fi header.b="0vypqJPW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E4CE20844
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kapsi.fi
+	by mail.kernel.org (Postfix) with ESMTP id 496D820844
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 07:13:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 496D820844
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zte.com.cn
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728648AbeGYIV6 (ORCPT
+        id S1728656AbeGYIXs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 04:21:58 -0400
-Received: from mail.kapsi.fi ([91.232.154.25]:39621 "EHLO mail.kapsi.fi"
+        Wed, 25 Jul 2018 04:23:48 -0400
+Received: from mxhk.zte.com.cn ([63.217.80.70]:38604 "EHLO mxhk.zte.com.cn"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728496AbeGYIV6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Jul 2018 04:21:58 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
-         s=20161220; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
-        MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender:Reply-To:
-        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=L7nAIy1ib05GTXhgTIWU79BablvQZMfRO6Y3INS3ddg=; b=0vypqJPW4mbY21Ea7l7QjcX/xZ
-        Y3kTZCNaUn2BW+SV7delyOaPSlzPj59qWxargtByLzAW1+EvQb+u0SWXFQEtYcbp2cTi1ORkogLqc
-        9J56LB3THe6T3ZoJMP2ZeVyDiGuBRLNAXNviIfcGZNRk/UmpOvpOHrQhfCCGiL8zf7blKL+BV0Kbo
-        NhJsb2//5hpuQuYLdNsAPCeenFBrNfbbPT3OUBzZXt2WClo7EwW3KPfgiaJTLoGIT8mvBfFMrwrEw
-        YIO9I5p84tSDvQP096kWzdUS3KwrDLLnXEv8EWJ1uL6+ilmfan95yNbC2acyxthvh2x4OTckecyh8
-        SSUpGpzw==;
-Received: from [193.209.96.43] (helo=[10.21.26.144])
-        by mail.kapsi.fi with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.89)
-        (envelope-from <cyndis@kapsi.fi>)
-        id 1fiDxO-0003Fc-DL; Wed, 25 Jul 2018 10:11:34 +0300
-Subject: Re: [PATCH 03/10] mmc: tegra: Power on the calibration pad
-To:     Aapo Vienamo <avienamo@nvidia.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Mikko Perttunen <mperttunen@nvidia.com>
-Cc:     linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <1532442591-5640-1-git-send-email-avienamo@nvidia.com>
- <1532442865-6391-1-git-send-email-avienamo@nvidia.com>
- <1532442865-6391-2-git-send-email-avienamo@nvidia.com>
-From:   Mikko Perttunen <cyndis@kapsi.fi>
-Message-ID: <3a364a72-1052-b0c8-35f5-2987c2c2784c@kapsi.fi>
-Date:   Wed, 25 Jul 2018 10:11:34 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <1532442865-6391-2-git-send-email-avienamo@nvidia.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 193.209.96.43
-X-SA-Exim-Mail-From: cyndis@kapsi.fi
-X-SA-Exim-Scanned: No (on mail.kapsi.fi); SAEximRunCond expanded to false
+        id S1728461AbeGYIXs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Jul 2018 04:23:48 -0400
+Received: from mse01.zte.com.cn (unknown [10.30.3.20])
+        by Forcepoint Email with ESMTPS id 1EC133B1AAE6C44CBA1C;
+        Wed, 25 Jul 2018 15:13:25 +0800 (CST)
+Received: from notes_smtp.zte.com.cn ([10.30.1.239])
+        by mse01.zte.com.cn with ESMTP id w6P7DHso086004;
+        Wed, 25 Jul 2018 15:13:17 +0800 (GMT-8)
+        (envelope-from tan.hu@zte.com.cn)
+Received: from localhost.localdomain ([10.75.9.60])
+          by szsmtp06.zte.com.cn (Lotus Domino Release 8.5.3FP6)
+          with ESMTP id 2018072515132332-1720483 ;
+          Wed, 25 Jul 2018 15:13:23 +0800 
+From:   Tan Hu <tan.hu@zte.com.cn>
+To:     wensong@linux-vs.org, horms@verge.net.au, ja@ssi.bg,
+        pablo@netfilter.org, kadlec@blackhole.kfki.hu, fw@strlen.de,
+        davem@davemloft.net
+Cc:     netdev@vger.kernel.org, lvs-devel@vger.kernel.org,
+        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
+        linux-kernel@vger.kernel.org, zhong.weidong@zte.com.cn,
+        jiang.biao2@zte.com.cn
+Subject: [PATCH v3] ipvs: fix race between ip_vs_conn_new() and ip_vs_del_dest()
+Date:   Wed, 25 Jul 2018 15:23:07 +0800
+Message-Id: <1532503387-3800-1-git-send-email-tan.hu@zte.com.cn>
+X-Mailer: git-send-email 1.8.3.1
+X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
+ 21, 2013) at 2018-07-25 15:13:23,
+        Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
+ 2018-07-25 15:13:10,
+        Serialize complete at 2018-07-25 15:13:10
+X-MAIL: mse01.zte.com.cn w6P7DHso086004
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Reviewed-by: Mikko Perttunen <mperttunen@nvidia.com>
+We came across infinite loop in ipvs when using ipvs in docker
+env.
 
-On 24.07.2018 17:34, Aapo Vienamo wrote:
-> Automatic pad drive strength calibration is performed on a separate pad
-> identical to the ones used for driving the actual bus. Power on the
-> calibration pad during the calibration procedure and power it off
-> afterwards to save power.
-> 
-> Signed-off-by: Aapo Vienamo <avienamo@nvidia.com>
-> ---
->   drivers/mmc/host/sdhci-tegra.c | 21 +++++++++++++++++++++
->   1 file changed, 21 insertions(+)
-> 
-> diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
-> index 6008e2f..61067b7 100644
-> --- a/drivers/mmc/host/sdhci-tegra.c
-> +++ b/drivers/mmc/host/sdhci-tegra.c
-> @@ -209,11 +209,30 @@ static void tegra_sdhci_reset(struct sdhci_host *host, u8 mask)
->   	tegra_host->ddr_signaling = false;
->   }
->   
-> +static void tegra_sdhci_configure_cal_pad(struct sdhci_host *host, bool enable)
-> +{
-> +	u32 reg;
-> +
-> +	/*
-> +	 * Enable or disable the additional I/O pad used by the drive strength
-> +	 * calibration process.
-> +	 */
-> +	reg = sdhci_readl(host, SDHCI_TEGRA_SDMEM_COMP_PADCTRL);
-> +	if (enable)
-> +		reg |= SDHCI_TEGRA_PAD_E_INPUT_OR_E_PWRD;
-> +	else
-> +		reg &= ~SDHCI_TEGRA_PAD_E_INPUT_OR_E_PWRD;
-> +	sdhci_writel(host, reg, SDHCI_TEGRA_SDMEM_COMP_PADCTRL);
-> +	udelay(1);
-> +}
-> +
->   static void tegra_sdhci_pad_autocalib(struct sdhci_host *host)
->   {
->   	unsigned timeout = 10;
->   	u32 reg;
->   
-> +	tegra_sdhci_configure_cal_pad(host, true);
-> +
->   	reg = sdhci_readl(host, SDHCI_TEGRA_AUTO_CAL_CONFIG);
->   	reg |= SDHCI_AUTO_CAL_ENABLE | SDHCI_AUTO_CAL_START;
->   	sdhci_writel(host, reg, SDHCI_TEGRA_AUTO_CAL_CONFIG);
-> @@ -227,6 +246,8 @@ static void tegra_sdhci_pad_autocalib(struct sdhci_host *host)
->   		timeout--;
->   	} while (timeout);
->   
-> +	tegra_sdhci_configure_cal_pad(host, false);
-> +
->   	if (timeout == 0)
->   		dev_err(mmc_dev(host->mmc), "Pad autocal timed out\n");
->   }
-> 
+When ipvs receives new packets and cannot find an ipvs connection,
+it will create a new connection, then if the dest is unavailable
+(i.e. IP_VS_DEST_F_AVAILABLE), the packet will be dropped sliently.
+
+But if the dropped packet is the first packet of this connection,
+the connection control timer never has a chance to start and the
+ipvs connection cannot be released. This will lead to memory leak, or
+infinite loop in cleanup_net() when net namespace is released like
+this:
+
+    ip_vs_conn_net_cleanup at ffffffffa0a9f31a [ip_vs]
+    __ip_vs_cleanup at ffffffffa0a9f60a [ip_vs]
+    ops_exit_list at ffffffff81567a49
+    cleanup_net at ffffffff81568b40
+    process_one_work at ffffffff810a851b
+    worker_thread at ffffffff810a9356
+    kthread at ffffffff810b0b6f
+    ret_from_fork at ffffffff81697a18
+
+race condition:
+    CPU1                           CPU2
+    ip_vs_in()
+      ip_vs_conn_new()
+                                   ip_vs_del_dest()
+                                     __ip_vs_unlink_dest()
+                                       ~IP_VS_DEST_F_AVAILABLE
+      cp->dest && !IP_VS_DEST_F_AVAILABLE
+      __ip_vs_conn_put
+    ...
+    cleanup_net  ---> infinite looping
+
+Fix this by checking whether the timer already started.
+
+Signed-off-by: Tan Hu <tan.hu@zte.com.cn>
+Reviewed-by: Jiang Biao <jiang.biao2@zte.com.cn>
+---
+v2: fix use-after-free in CONN_ONE_PACKET case suggested by Julian Anastasov
+v3: remove trailing whitespace for patch checking 
+
+ net/netfilter/ipvs/ip_vs_core.c | 15 +++++++++++----
+ 1 file changed, 11 insertions(+), 4 deletions(-)
+
+diff --git a/net/netfilter/ipvs/ip_vs_core.c b/net/netfilter/ipvs/ip_vs_core.c
+index 0679dd1..a17104f 100644
+--- a/net/netfilter/ipvs/ip_vs_core.c
++++ b/net/netfilter/ipvs/ip_vs_core.c
+@@ -1972,13 +1972,20 @@ static int ip_vs_in_icmp_v6(struct netns_ipvs *ipvs, struct sk_buff *skb,
+ 	if (cp->dest && !(cp->dest->flags & IP_VS_DEST_F_AVAILABLE)) {
+ 		/* the destination server is not available */
+
+-		if (sysctl_expire_nodest_conn(ipvs)) {
++		__u32 flags = cp->flags;
++
++		/* when timer already started, silently drop the packet.*/
++		if (timer_pending(&cp->timer))
++			__ip_vs_conn_put(cp);
++		else
++			ip_vs_conn_put(cp);
++
++		if (sysctl_expire_nodest_conn(ipvs) &&
++		    !(flags & IP_VS_CONN_F_ONE_PACKET)) {
+ 			/* try to expire the connection immediately */
+ 			ip_vs_conn_expire_now(cp);
+ 		}
+-		/* don't restart its timer, and silently
+-		   drop the packet. */
+-		__ip_vs_conn_put(cp);
++
+ 		return NF_DROP;
+ 	}
+
+--
+1.8.3.1
+
