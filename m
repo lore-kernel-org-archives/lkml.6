@@ -6,124 +6,155 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC6E4C6778F
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 03:59:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6CD7C6778F
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 04:02:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 78EB720852
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 03:59:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 78EB720852
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 5CC1F20852
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 04:02:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5CC1F20852
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=t-chip.com.cn
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728316AbeGYFIl (ORCPT
+        id S1727729AbeGYFMA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 01:08:41 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:58812 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726773AbeGYFIk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Jul 2018 01:08:40 -0400
-Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 8FB647DEC78D5;
-        Wed, 25 Jul 2018 11:58:53 +0800 (CST)
-Received: from [10.177.253.249] (10.177.253.249) by smtp.huawei.com
- (10.3.19.203) with Microsoft SMTP Server id 14.3.382.0; Wed, 25 Jul 2018
- 11:58:53 +0800
-Subject: Re: [PATCH] fs/9p/xattr.c: catch the error of p9_client_clunk when
- setting xattr failed
-To:     Dominique Martinet <asmadeus@codewreck.org>
-References: <5B57EACC.2060900@huawei.com> <20180725033200.GA29865@nautica>
-CC:     "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "Eric Van Hensbergen" <ericvh@gmail.com>,
-        Ron Minnich <rminnich@sandia.gov>,
-        "Latchesar Ionkov" <lucho@ionkov.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        <v9fs-developer@lists.sourceforge.net>, <groug@kaod.org>
-From:   piaojun <piaojun@huawei.com>
-Message-ID: <5B57F564.9070604@huawei.com>
-Date:   Wed, 25 Jul 2018 11:58:28 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:38.0) Gecko/20100101
- Thunderbird/38.2.0
+        Wed, 25 Jul 2018 01:12:00 -0400
+Received: from regular1.263xmail.com ([211.150.99.137]:34058 "EHLO
+        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726950AbeGYFMA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Jul 2018 01:12:00 -0400
+Received: from djw?t-chip.com.cn (unknown [192.168.167.225])
+        by regular1.263xmail.com (Postfix) with ESMTP id 6D1581EB;
+        Wed, 25 Jul 2018 12:02:13 +0800 (CST)
+X-263anti-spam: KSV:0;
+X-MAIL-GRAY: 0
+X-MAIL-DELIVERY: 1
+X-KSVirus-check: 0
+X-ABS-CHECKED: 4
+Received: from localhost (localhost [127.0.0.1])
+        by smtp.263.net (Postfix) with ESMTPA id 6DB673C8;
+        Wed, 25 Jul 2018 12:02:06 +0800 (CST)
+X-IP-DOMAINF: 1
+X-RL-SENDER: djw@t-chip.com.cn
+X-FST-TO: eballetbo@gmail.com
+X-SENDER-IP: 59.33.103.255
+X-LOGIN-NAME: djw@t-chip.com.cn
+X-UNIQUE-TAG: <75037282b54d7b2b28123fe5b4418632>
+X-ATTACHMENT-NUM: 0
+X-SENDER: djw@t-chip.com.cn
+X-DNS-TYPE: 7
+Received: from localhost (255.103.33.59.broad.zs.gd.dynamic.163data.com.cn [59.33.103.255])
+        by smtp.263.net (Postfix) whith ESMTP id 9001MJF9H3;
+        Wed, 25 Jul 2018 12:02:09 +0800 (CST)
+From:   djw@t-chip.com.cn
+To:     Enric Balletbo Serra <eballetbo@gmail.com>
+Cc:     Heiko =?utf-8?Q?St=C3=BCbner?= <heiko@sntech.de>,
+        djw@t-chip.com.cn, Mark Rutland <mark.rutland@arm.com>,
+        "devicetree\@vger.kernel.org" <devicetree@vger.kernel.org>,
+        zxf@t-chip.com.cn, Masahiro Yamada <yamada.masahiro@socionext.com>,
+        ezequiel@collabora.com, xypron.glpk@gmx.de,
+        Shawn Lin <shawn.lin@rock-chips.com>,
+        Brian Norris <briannorris@chromium.org>,
+        Will Deacon <will.deacon@arm.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        "open list\:ARM\/Rockchip SoC..." 
+        <linux-rockchip@lists.infradead.org>, jacob-chen@iotwrt.com,
+        klaus.goger@theobroma-systems.com, jagan@amarulasolutions.com,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        jay.xu@rock-chips.com,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH v0] arm64: dts: rockchip: add support for ROC-RK3399-PC board
+References: <1532161826-2537-1-git-send-email-djw@t-chip.com.cn>
+        <139327780.KNaNigg5Hs@phil>
+        <CAFqH_52baP9yt35yfAdU5wk8DiK67_etPALsmb5K1JPmnW_kqQ@mail.gmail.com>
+Date:   Wed, 25 Jul 2018 12:01:43 +0800
+In-Reply-To: <CAFqH_52baP9yt35yfAdU5wk8DiK67_etPALsmb5K1JPmnW_kqQ@mail.gmail.com>
+        (Enric Balletbo Serra's message of "Tue, 24 Jul 2018 11:53:40 +0200")
+Message-ID: <87effsgdzs.fsf@archiso.i-did-not-set--mail-host-address--so-tickle-me>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-In-Reply-To: <20180725033200.GA29865@nautica>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.177.253.249]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Dominique,
+Enric Balletbo Serra <eballetbo@gmail.com> writes:
 
-On 2018/7/25 11:32, Dominique Martinet wrote:
-> piaojun wrote on Wed, Jul 25, 2018:
->> In my testing, v9fs_fid_xattr_set will return successfully even if the
->> backend ext4 filesystem has no space to store xattr key-value. That will
->> cause inconsistent behavior between front end and back end. The reason is
->> that lsetxattr will be triggered by p9_client_clunk, and unfortunately we
->> did not catch the error. This patch will catch the error to notify upper
->> caller.
+> Hi Levin,
+>
+> Missatge de Heiko Stuebner <heiko@sntech.de> del dia dt., 24 de jul.
+> 2018 a les 11:29:
 >>
->> p9_client_clunk (in 9p)
->>   p9_client_rpc(clnt, P9_TCLUNK, "d", fid->fid);
->>     v9fs_clunk (in qemu)
->>       put_fid
->>         free_fid
->>           v9fs_xattr_fid_clunk
->>             v9fs_co_lsetxattr
->>               s->ops->lsetxattr
->>                 ext4_xattr_user_set (in host ext4 filesystem)
+>> Hi Levin,
 >>
->> Signed-off-by: Jun Piao <piaojun@huawei.com>
-> 
-> Good catch!
-> 
-> LGTM on its own but see comment below for further error checking.
-> Please let me know if you want to do this in a v2 or submit a separate
-> patch altogether, I can pick this one up as it is.
-> 
->> ---
->>  fs/9p/xattr.c | 6 ++++--
->>  1 file changed, 4 insertions(+), 2 deletions(-)
+>> Am Samstag, 21. Juli 2018, 10:30:26 CEST schrieb djw@t-chip.com.cn:
+>> > From: Levin Du <djw@t-chip.com.cn>
+>> >
+>> > ROC-RK3399-PC is the first power efficient 4GB DDR4 single board
 >>
->> diff --git a/fs/9p/xattr.c b/fs/9p/xattr.c
->> index f329eee..352abc3 100644
->> --- a/fs/9p/xattr.c
->> +++ b/fs/9p/xattr.c
->> @@ -105,7 +105,7 @@ int v9fs_fid_xattr_set(struct p9_fid *fid, const char *name,
->>  {
->>  	struct kvec kvec = {.iov_base = (void *)value, .iov_len = value_len};
->>  	struct iov_iter from;
->> -	int retval;
->> +	int retval, err;
+>> maybe "is a power efficient" instead of "the first" ;-)
 >>
->>  	iov_iter_kvec(&from, WRITE | ITER_KVEC, &kvec, 1, value_len);
+>> [...]
 >>
->> @@ -126,7 +126,9 @@ int v9fs_fid_xattr_set(struct p9_fid *fid, const char *name,
->>  			 retval);
->>  	else
->>  		p9_client_write(fid, 0, &from, &retval);
-> 
-> I'm not sure what to do about this but it's also possible for
-> p9_client_write to not write the full length without setting and error.
-> 
-> We should probably compare the return value of p9_client_write and
-> value_len to detect short writes and return an error in this case.
-> 
-It looks like we could identify short writes error from the *err. If no
-error case breaks the while loop, the total equal to the whole data len.
+>> > diff --git a/arch/arm64/boot/dts/rockchip/rk3399-roc-pc.dts b/arch/arm64/boot/dts/rockchip/rk3399-roc-pc.dts
+>> > new file mode 100644
+>> > index 0000000..207f2e3
+>> > --- /dev/null
+>> > +++ b/arch/arm64/boot/dts/rockchip/rk3399-roc-pc.dts
+>> > @@ -0,0 +1,717 @@
+>> > +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+>> > +/*
+>> > + * Copyright (c) 2017 T-Chip Intelligent Technology Co., Ltd
+>> > + */
+>> > +
+>> > +/dts-v1/;
+>> > +#include <dt-bindings/pwm/pwm.h>
+>> > +#include "rk3399.dtsi"
+>> > +#include "rk3399-opp.dtsi"
+>> > +
+>> > +/ {
+>> > +     model = "Firefly ROC-RK3399-PC Board";
+>> > +     compatible = "firefly,roc-rk3399-pc", "rockchip,rk3399";
+>> > +
+>> > +     chosen {
+>> > +             bootargs = "earlycon=uart8250,mmio32,0xff1a0000 swiotlb=1";
+>>
+>> I don't think we want to hard-code linux bootargs in the generic devicetree
+>>
+>> > +             stdout-path = "serial2:1500000n8";
+>> > +     };
+>> > +
+>> > +     backlight: backlight {
+>> > +             compatible = "pwm-backlight";
+>> > +             enable-gpios = <&gpio1 RK_PB5 GPIO_ACTIVE_HIGH>;
+>> > +             pwms = <&pwm0 0 25000 0>;
+>> > +             brightness-levels = <
+>> > +                       0   1   2   3   4   5   6   7
+>>
+>> As Rob noted in the px30 evb patch, there is now a property helping
+>> to drop these long lists of brightness levels, see
+>> https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/?id=1e5e7cc794b5a332c23216dade0a2e937d694b7f
+>
+> Adding to the Heiko information. Did you try to just remove brightness-levels?
+> Without this property, the driver computes a default table with the
+> brightness levels filled with the numbers provided by the CIE 1931
+> algorithm. That algorithm is used to dim a led for human perception.
+>
+> Note that the patches needed did not land yet, are in linux-next, and
+> you will also be interested in apply this patch [1].
+>
+> [1] https://lkml.org/lkml/2018/7/24/116
+>
+>
+> Best regards,
+>  Enric
+>
 
-Thanks,
-Jun
+Thanks you for the note, Enric. I'll test that later.
 
->> -	p9_client_clunk(fid);
->> +	err = p9_client_clunk(fid);
->> +	if (!retval && err)
->> +		retval = err;
->>  	return retval;
->>  }
->>
->> -- 
-> .
-> 
+Regards,
+Levin
+
