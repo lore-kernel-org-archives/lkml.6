@@ -2,117 +2,143 @@ Return-Path: <SRS0=S+WB=KJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9ED02C67790
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 12:24:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 334A4C6778F
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 12:26:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6074220844
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 12:24:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6074220844
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id DF48720844
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 12:26:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DF48720844
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=microchip.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729056AbeGYNfl (ORCPT
+        id S1728990AbeGYNiJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 09:35:41 -0400
-Received: from mga03.intel.com ([134.134.136.65]:13767 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728757AbeGYNfl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Jul 2018 09:35:41 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Jul 2018 05:24:14 -0700
-X-ExtLoop1: 1
+        Wed, 25 Jul 2018 09:38:09 -0400
+Received: from esa3.microchip.iphmx.com ([68.232.153.233]:36724 "EHLO
+        esa3.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728791AbeGYNiJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Jul 2018 09:38:09 -0400
 X-IronPort-AV: E=Sophos;i="5.51,401,1526367600"; 
-   d="scan'208";a="59351807"
-Received: from paasikivi.fi.intel.com ([10.237.72.42])
-  by orsmga007.jf.intel.com with ESMTP; 25 Jul 2018 05:24:12 -0700
-Received: by paasikivi.fi.intel.com (Postfix, from userid 1000)
-        id 56908204DA; Wed, 25 Jul 2018 15:24:11 +0300 (EEST)
-Date:   Wed, 25 Jul 2018 15:24:11 +0300
-From:   Sakari Ailus <sakari.ailus@linux.intel.com>
-To:     Todor Tomov <todor.tomov@linaro.org>
-Cc:     mchehab@kernel.org, hans.verkuil@cisco.com,
-        laurent.pinchart+renesas@ideasonboard.com,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 18/35] media: camss: Add basic runtime PM support
-Message-ID: <20180725122411.bgemjrp577lfmje4@paasikivi.fi.intel.com>
-References: <1532343772-27382-1-git-send-email-todor.tomov@linaro.org>
- <1532343772-27382-19-git-send-email-todor.tomov@linaro.org>
- <20180724124916.iyanzu3nux35cudg@paasikivi.fi.intel.com>
- <096a3fb4-01b8-3096-116f-8562cfb8b6b8@linaro.org>
+   d="scan'208";a="16771207"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa3.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 25 Jul 2018 05:26:41 -0700
+Received: from [10.159.245.163] (10.10.76.4) by chn-sv-exch03.mchp-main.com
+ (10.10.76.49) with Microsoft SMTP Server id 14.3.352.0; Wed, 25 Jul 2018
+ 05:26:40 -0700
+Subject: Re: [PATCH 1/3] mtd: spi-nor: add Global Block Unlock support
+To:     Tudor Ambarus <tudor.ambarus@microchip.com>,
+        <marek.vasut@gmail.com>, <dwmw2@infradead.org>,
+        <computersforpeace@gmail.com>, <boris.brezillon@bootlin.com>,
+        <richard@nod.at>
+CC:     <linux-mtd@lists.infradead.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <anuragku@xilinx.com>,
+        <nicolas.ferre@microchip.com>
+References: <20180717162831.17947-1-tudor.ambarus@microchip.com>
+From:   Cyrille Pitchen <cyrille.pitchen@microchip.com>
+Message-ID: <8e0ff8be-34d1-7de9-6120-a067540a75d2@microchip.com>
+Date:   Wed, 25 Jul 2018 14:26:36 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <096a3fb4-01b8-3096-116f-8562cfb8b6b8@linaro.org>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <20180717162831.17947-1-tudor.ambarus@microchip.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Todor,
+Hi Tudor,
 
-On Wed, Jul 25, 2018 at 01:01:31PM +0300, Todor Tomov wrote:
-> Hi Sakari,
+Le 17/07/2018 à 18:28, Tudor Ambarus a écrit :
+> We can't determine this purely by manufacturer type and it's not
+> autodetectable by anything like SFDP, so make a new flag for it:
+> UNLOCK_GLOBAL_BLOCK.
 > 
-> Thank you for review.
+> Note that the Global Block Unlock command has different names
+> depending on the manufacturer, but always the same command value:
+> 0x98. Macronix's MX25U12835F names it Gang Block Unlock,
+> Winbound's W25Q128FV names it Global Block Unlock and
+> Microchip's SST26VF064B names it Global Block Protection Unlock.
 > 
-> On 24.07.2018 15:49, Sakari Ailus wrote:
-> > Hi Todor,
-> > 
-> > On Mon, Jul 23, 2018 at 02:02:35PM +0300, Todor Tomov wrote:
-> >> There is a PM domain for each of the VFE hardware modules. Add
-> >> support for basic runtime PM support to be able to control the
-> >> PM domains. When a PM domain needs to be powered on - a device
-> >> link is created. When a PM domain needs to be powered off -
-> >> its device link is removed. This allows separate and
-> >> independent control of the PM domains.
-> >>
-> >> Suspend/Resume is still not supported.
-> >>
-> >> Signed-off-by: Todor Tomov <todor.tomov@linaro.org>
-> >> ---
-> >>  drivers/media/platform/qcom/camss/camss-csid.c   |  4 ++
-> >>  drivers/media/platform/qcom/camss/camss-csiphy.c |  5 ++
-> >>  drivers/media/platform/qcom/camss/camss-ispif.c  | 19 ++++++-
-> >>  drivers/media/platform/qcom/camss/camss-vfe.c    | 13 +++++
-> >>  drivers/media/platform/qcom/camss/camss.c        | 63 ++++++++++++++++++++++++
-> >>  drivers/media/platform/qcom/camss/camss.h        | 11 +++++
-> >>  6 files changed, 113 insertions(+), 2 deletions(-)
-> >>
-> >> diff --git a/drivers/media/platform/qcom/camss/camss-csid.c b/drivers/media/platform/qcom/camss/camss-csid.c
-> >> index 627ef44..ea2b0ba 100644
-> >> --- a/drivers/media/platform/qcom/camss/camss-csid.c
-> >> +++ b/drivers/media/platform/qcom/camss/camss-csid.c
-> >> @@ -13,6 +13,7 @@
-> >>  #include <linux/kernel.h>
-> >>  #include <linux/of.h>
-> >>  #include <linux/platform_device.h>
-> >> +#include <linux/pm_runtime.h>
-> >>  #include <linux/regulator/consumer.h>
-> >>  #include <media/media-entity.h>
-> >>  #include <media/v4l2-device.h>
-> >> @@ -316,6 +317,8 @@ static int csid_set_power(struct v4l2_subdev *sd, int on)
-> >>  	if (on) {
-> >>  		u32 hw_version;
-> >>  
-> >> +		pm_runtime_get_sync(dev);
-> >> +
-> >>  		ret = regulator_enable(csid->vdda);
-> > 
-> > Shouldn't the regulator be enabled in the runtime_resume callback instead?
+> Based on initial work done by Anurag Kumar Vulisha:
+> https://patchwork.kernel.org/patch/7611271/
 > 
-> Ideally - yes, but it becomes more complex (different pipelines are possible
-> and we have only one callback) so (at least for now) I have left it as it is
-> and stated in the commit message that suspend/resume is still not supported.
+> Signed-off-by: Tudor Ambarus <tudor.ambarus@microchip.com>
 
-Ack.
+Reviewed-by: Cyrille Pitchen <cyrille.pitchen@microchip.com>
 
--- 
-Sakari Ailus
-sakari.ailus@linux.intel.com
+Best regards,
+
+Cyrille
+> ---
+>  drivers/mtd/spi-nor/spi-nor.c | 21 +++++++++++++++++++++
+>  include/linux/mtd/spi-nor.h   |  1 +
+>  2 files changed, 22 insertions(+)
+> 
+> diff --git a/drivers/mtd/spi-nor/spi-nor.c b/drivers/mtd/spi-nor/spi-nor.c
+> index d9c368c..6648251 100644
+> --- a/drivers/mtd/spi-nor/spi-nor.c
+> +++ b/drivers/mtd/spi-nor/spi-nor.c
+> @@ -89,6 +89,7 @@ struct flash_info {
+>  #define NO_CHIP_ERASE		BIT(12) /* Chip does not support chip erase */
+>  #define SPI_NOR_SKIP_SFDP	BIT(13)	/* Skip parsing of SFDP tables */
+>  #define USE_CLSR		BIT(14)	/* use CLSR command */
+> +#define UNLOCK_GLOBAL_BLOCK	BIT(15)	/* Unlock global block protection */
+>  
+>  	int	(*quad_enable)(struct spi_nor *nor);
+>  };
+> @@ -2730,6 +2731,17 @@ static int spi_nor_setup(struct spi_nor *nor, const struct flash_info *info,
+>  	return 0;
+>  }
+>  
+> +static int spi_nor_unlock_global_block_protection(struct spi_nor *nor)
+> +{
+> +	int ret;
+> +
+> +	write_enable(nor);
+> +	ret = nor->write_reg(nor, SPINOR_OP_GBULK, NULL, 0);
+> +	if (ret < 0)
+> +		return ret;
+> +	return spi_nor_wait_till_ready(nor);
+> +}
+> +
+>  static int spi_nor_init(struct spi_nor *nor)
+>  {
+>  	int err;
+> @@ -2747,6 +2759,15 @@ static int spi_nor_init(struct spi_nor *nor)
+>  		spi_nor_wait_till_ready(nor);
+>  	}
+>  
+> +	if (nor->info->flags & UNLOCK_GLOBAL_BLOCK) {
+> +		err = spi_nor_unlock_global_block_protection(nor);
+> +		if (err) {
+> +			dev_err(nor->dev,
+> +				"Cannot unlock the global block protection\n");
+> +			return err;
+> +		}
+> +	}
+> +
+>  	if (nor->quad_enable) {
+>  		err = nor->quad_enable(nor);
+>  		if (err) {
+> diff --git a/include/linux/mtd/spi-nor.h b/include/linux/mtd/spi-nor.h
+> index e60da0d..e8dd11d 100644
+> --- a/include/linux/mtd/spi-nor.h
+> +++ b/include/linux/mtd/spi-nor.h
+> @@ -64,6 +64,7 @@
+>  #define SPINOR_OP_CLFSR		0x50	/* Clear flag status register */
+>  #define SPINOR_OP_RDEAR		0xc8	/* Read Extended Address Register */
+>  #define SPINOR_OP_WREAR		0xc5	/* Write Extended Address Register */
+> +#define SPINOR_OP_GBULK		0x98	/* Global Block Unlock Protection */
+>  
+>  /* 4-byte address opcodes - used on Spansion and some Macronix flashes. */
+>  #define SPINOR_OP_READ_4B	0x13	/* Read data bytes (low frequency) */
+> 
