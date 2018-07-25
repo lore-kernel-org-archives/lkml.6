@@ -2,105 +2,84 @@ Return-Path: <SRS0=S+WB=KJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37479C67790
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 06:37:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61F2AC67790
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 06:40:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D47FE20671
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 06:37:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 09A4A20671
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 06:40:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="tgxEYkGn"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D47FE20671
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="fI6Xy0U1";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="d3Z7g53U"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 09A4A20671
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728452AbeGYHrL (ORCPT
+        id S1728441AbeGYHuU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 03:47:11 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:41441 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728237AbeGYHrL (ORCPT
+        Wed, 25 Jul 2018 03:50:20 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:33582 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728218AbeGYHuU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Jul 2018 03:47:11 -0400
-Received: by mail-pg1-f196.google.com with SMTP id z8-v6so4595611pgu.8;
-        Tue, 24 Jul 2018 23:36:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=AOOv9K0ocbdGQgb1yuxUzPITfwkwtnPD9ssYJK7oDoY=;
-        b=tgxEYkGnIU3A+txij1ieusSIPD0ft9YnrGIMXYu9iUhdf0NnRVEcgqqhAC35e1cR9+
-         HR3cMhJVb5JhghKhm5PTe8dpcMewnas9YZCDvyGqLACaUqaPTc+XSdqPR4qziLMhpUa2
-         gXI0y0oO1DuPchXYmRFph9w0bdwjnlttNZBgxF4BGN3wv1ioUmZCNA8Ric6gfeZ2nLCo
-         0AfDgTHJOyNNp/2C9GK6HlPfntxFb1+mDae5D1i5kZbgnkpAW3FaFIf1Fnu5gUdO+fTr
-         WRIOgQagw9pGjfHOLNo08orY/prtu90GQUlt0aLtHDaTrZCXMcFUj4MgHslP4wj6FAQ+
-         KJyQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=AOOv9K0ocbdGQgb1yuxUzPITfwkwtnPD9ssYJK7oDoY=;
-        b=B8MI6nWCUqWWvwySJ71Q/YQ8pbGwHuUyD/RNSgMttnKSFNhXWQgMrLPFao4EzJ5t59
-         1Qwdq6TeFHe7X4Nul5IRw8bqv9T5/47FltVCAXxMOERFeoCzJgy8ZdkCvM8e34O4VD7c
-         5osIs2+SGHX0xtJkDicZcIDiKi0ggG6EXbqKX9tlIk1zuu4MU47i9MZEZwHcfZd8lElH
-         SD6XZIhVQ3XRuMgHV7NIMP39jNtcsNAxPEvVbRzUyGGYimCoEZzeF60HixWq1pLpqU2k
-         PK0NWtlDTQtFvPzbrMGxnik+AN++cx0SIlH0r8y5wZ+GIAcMfRLJCo7BvAuPTL9ltUEo
-         0WLg==
-X-Gm-Message-State: AOUpUlGXy2Wp91rDlEGPj9E2uYT5C5a1zvPHuLJeWe/HxbVn8BlaL1p9
-        BmxCREz81q429EstfyC6RszGzMT1
-X-Google-Smtp-Source: AAOMgpdyTljfx7x4OFB9ch+1i92+CQ2/zST9jtmnFW0iQCjrB61+cpJ9vU6DN3XyYQz7QOW7QWEOaw==
-X-Received: by 2002:a63:b40e:: with SMTP id s14-v6mr19477442pgf.9.1532500619156;
-        Tue, 24 Jul 2018 23:36:59 -0700 (PDT)
-Received: from localhost.localdomain ([211.196.191.92])
-        by smtp.gmail.com with ESMTPSA id q28-v6sm24631594pfg.144.2018.07.24.23.36.56
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 24 Jul 2018 23:36:58 -0700 (PDT)
-From:   Taeung Song <treeze.taeung@gmail.com>
-To:     Daniel Borkmann <daniel@iogearbox.net>,
-        Alexei Starovoitov <ast@kernel.org>
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 bpf-next] tools/bpftool: ignore build products
-Date:   Wed, 25 Jul 2018 15:36:51 +0900
-Message-Id: <20180725063651.19743-1-treeze.taeung@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Wed, 25 Jul 2018 03:50:20 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 4B2DE60594; Wed, 25 Jul 2018 06:40:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1532500808;
+        bh=IUO17NPH3NG91HkK9VjhQsc58Yay2qajmsCN8FW8QaI=;
+        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
+        b=fI6Xy0U1onkeJE1YfCPc5H002VASwTC5RV58scN4X6nsZgXJFD2AMi88bAN0GARln
+         ERYJTJordOBRbq4cAP5+Mr4vG5qhuxQUrpfAiJm/XcrJIwmtrnvVX4pA+JPXbmeeW5
+         1pP3Cf5qvs8DqCACDLqfUFYAAtUiJ5okcCapPI3M=
+Received: from x230.qca.qualcomm.com (88-114-240-52.elisa-laajakaista.fi [88.114.240.52])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: kvalo@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 5503460594;
+        Wed, 25 Jul 2018 06:40:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1532500807;
+        bh=IUO17NPH3NG91HkK9VjhQsc58Yay2qajmsCN8FW8QaI=;
+        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
+        b=d3Z7g53U/RnTISwJT5Hm8yWK2HU8OykShKtqqbWYd5gDUQue9SiO7iuxacYMAktBk
+         AfiZodIFmgthbJyj5Gg+YfhhLWLuMc2I5QsfHCahXkgJqelCOtM8kOhNcmgOLqCxP9
+         M1b9NBgoXg66p2SP7QRr5twcyoEOFy3SlKH2sJYw=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 5503460594
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
+From:   Kalle Valo <kvalo@codeaurora.org>
+To:     "H. Nikolaus Schaller" <hns@goldelico.com>
+Cc:     Arnd Bergmann <arnd@arndb.de>, "Reizer\, Eyal" <eyalr@ti.com>,
+        Kees Cook <keescook@chromium.org>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, letux-kernel@openphoenux.org,
+        kernel@pyra-handheld.com
+Subject: Re: [PATCH] drivers: net: wlcore: remove duplicate \n for some warnings
+References: <af660348ade58fd33396d2dca432536d2ac85cf7.1532498079.git.hns@goldelico.com>
+Date:   Wed, 25 Jul 2018 09:40:02 +0300
+In-Reply-To: <af660348ade58fd33396d2dca432536d2ac85cf7.1532498079.git.hns@goldelico.com>
+        (H. Nikolaus Schaller's message of "Wed, 25 Jul 2018 07:55:04 +0200")
+Message-ID: <87lg9zyg1p.fsf@codeaurora.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-For untracked things of tools/bpf, add this.
+"H. Nikolaus Schaller" <hns@goldelico.com> writes:
 
-Reviewed-by: Jakub Kicinski <jakub.kicinski@netronome.com>
-Signed-off-by: Taeung Song <treeze.taeung@gmail.com>
----
- tools/bpf/.gitignore         | 5 +++++
- tools/bpf/bpftool/.gitignore | 2 ++
- 2 files changed, 7 insertions(+)
- create mode 100644 tools/bpf/.gitignore
+> wl1271_warning() already appends a \n to the format,
+> so adding one to the warning string gives empty lines in the log.
+>
+> Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
 
-diff --git a/tools/bpf/.gitignore b/tools/bpf/.gitignore
-new file mode 100644
-index 000000000000..dfe2bd5a4b95
---- /dev/null
-+++ b/tools/bpf/.gitignore
-@@ -0,0 +1,5 @@
-+FEATURE-DUMP.bpf
-+bpf_asm
-+bpf_dbg
-+bpf_exp.yacc.*
-+bpf_jit_disasm
-diff --git a/tools/bpf/bpftool/.gitignore b/tools/bpf/bpftool/.gitignore
-index d7e678c2d396..67167e44b726 100644
---- a/tools/bpf/bpftool/.gitignore
-+++ b/tools/bpf/bpftool/.gitignore
-@@ -1,3 +1,5 @@
- *.d
- bpftool
-+bpftool*.8
-+bpf-helpers.*
- FEATURE-DUMP.bpftool
+"drivers: net:" in the title is unnecessary, but I can remove that.
+
 -- 
-2.17.1
-
+Kalle Valo
