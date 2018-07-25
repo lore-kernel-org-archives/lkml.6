@@ -2,139 +2,157 @@ Return-Path: <SRS0=S+WB=KJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F5DEC6778F
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 17:25:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12C25C67790
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 17:26:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 273BD20882
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 17:25:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BFBCD2088E
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 17:26:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="U+O8qaZ9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 273BD20882
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=micronovasrl.com header.i=@micronovasrl.com header.b="l6nVF+8X"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BFBCD2088E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=micronovasrl.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729369AbeGYShu (ORCPT
+        id S1729496AbeGYSiz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 14:37:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36930 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729027AbeGYSht (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Jul 2018 14:37:49 -0400
-Received: from mail-qt0-f179.google.com (mail-qt0-f179.google.com [209.85.216.179])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C6FA120882;
-        Wed, 25 Jul 2018 17:25:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1532539511;
-        bh=yPcgiuO34klavLXlURoLMItDduQc+7e1KLdxuVUFkuw=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=U+O8qaZ9MHUFyYD8GetAtQQjBAe9WXkhdeSCuhTara7aLEuHYweKgKL6NAYNUUcxS
-         jhsbimzKQ5bldQMoeVEYu/aHnTSG1yWdrnb9t0KkBNZ648lW6OZA4dtohw2/rwC+mO
-         r8k/y+a2z3SzwATB7yrNIb8CRcTUIAzQ4s2dEUaU=
-Received: by mail-qt0-f179.google.com with SMTP id d4-v6so8394622qtn.13;
-        Wed, 25 Jul 2018 10:25:11 -0700 (PDT)
-X-Gm-Message-State: AOUpUlFf1vwvVhkVoHL1/IL8qgIwKRXBmAKMARDdXXM7Tp/Qv0obsOJD
-        zWflTRU5AWTMfY3c/7uSuhm9eF9v5qrOM4OPtA==
-X-Google-Smtp-Source: AAOMgpeoPksRaHbuRpZQrMIOk/sOfH1RLlVb9Fr+o0UNfYqI9Rqf0Ci4WvImKA8frWGlfBgr9Poq5JSLsEfl77GcfJ0=
-X-Received: by 2002:ac8:96b:: with SMTP id z40-v6mr21501665qth.362.1532539510879;
- Wed, 25 Jul 2018 10:25:10 -0700 (PDT)
-MIME-Version: 1.0
-References: <1531997715-6767-1-git-send-email-suzuki.poulose@arm.com>
- <1531997715-6767-10-git-send-email-suzuki.poulose@arm.com>
- <20180725160939.GA24323@rob-hp-laptop> <e96b9bda-8a58-a817-5580-7771af7c9e28@arm.com>
-In-Reply-To: <e96b9bda-8a58-a817-5580-7771af7c9e28@arm.com>
-From:   Rob Herring <robh@kernel.org>
-Date:   Wed, 25 Jul 2018 11:24:59 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqKhiA=Yr3gWhxaQxT56NUai77Lg5iVfQUaTtBW=a5-kFQ@mail.gmail.com>
-Message-ID: <CAL_JsqKhiA=Yr3gWhxaQxT56NUai77Lg5iVfQUaTtBW=a5-kFQ@mail.gmail.com>
-Subject: Re: [PATCH v2 09/10] coresight: Cleanup coresight DT bindings
-To:     Suzuki K Poulose <suzuki.poulose@arm.com>
-Cc:     "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Frank Rowand <frowand.list@gmail.com>,
-        devicetree@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
-        Matt Sealey <matt.sealey@arm.com>,
-        Charles Garcia-Tobin <charles.garcia-tobin@arm.com>,
-        coresight@lists.linaro.org, John Horley <john.horley@arm.com>,
-        Mike Leach <mike.leach@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 25 Jul 2018 14:38:55 -0400
+Received: from mail.micronovasrl.com ([212.103.203.10]:37928 "EHLO
+        mail.micronovasrl.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728841AbeGYSiz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Jul 2018 14:38:55 -0400
+Received: from mail.micronovasrl.com (mail.micronovasrl.com [127.0.0.1])
+        by mail.micronovasrl.com (Postfix) with ESMTP id 7B1AAB008F3
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Jul 2018 19:26:17 +0200 (CEST)
+Authentication-Results: mail.micronovasrl.com (amavisd-new); dkim=pass
+        reason="pass (just generated, assumed good)" header.d=micronovasrl.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=micronovasrl.com;
+         h=references:in-reply-to:x-mailer:message-id:date:date:subject
+        :subject:to:from:from; s=dkim; t=1532539577; x=1533403578; bh=qe
+        31YqFxT3xR2/x5Z+7smUqFTcNFpQfXYEb/Fm+3N1Y=; b=l6nVF+8XsCWHh0tzic
+        tck28K3yj3lhHKsPZlHI7Lw8sFm7Y/gTLB7NlFqCizrF8SsyHlrdhLsRpT+k/dtw
+        Ob4biLV1ylZCe/t8wYmwKd8mumnFXfg9n2MoiPyHinJjF9mwFGT27H/KfTSg0S+6
+        FIxnf8Rh0/mQPVbfZy2DFYdVA=
+X-Virus-Scanned: Debian amavisd-new at mail.micronovasrl.com
+Received: from mail.micronovasrl.com ([127.0.0.1])
+        by mail.micronovasrl.com (mail.micronovasrl.com [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id 3afwx1vml44I for <linux-kernel@vger.kernel.org>;
+        Wed, 25 Jul 2018 19:26:17 +0200 (CEST)
+Received: from ubuntu.localdomain (62-11-51-166.dialup.tiscali.it [62.11.51.166])
+        by mail.micronovasrl.com (Postfix) with ESMTPSA id B7BF4B00749;
+        Wed, 25 Jul 2018 19:26:15 +0200 (CEST)
+From:   Giulio Benetti <giulio.benetti@micronovasrl.com>
+To:     alexandre.belloni@bootlin.com
+Cc:     a.zummo@towertech.it, andy.shevchenko@gmail.com, robh@kernel.org,
+        linux-rtc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Giulio Benetti <giulio.benetti@micronovasrl.com>
+Subject: [PATCH v11 2/4] rtc: ds1307: support m41t11 variant
+Date:   Wed, 25 Jul 2018 19:26:03 +0200
+Message-Id: <20180725172605.108040-2-giulio.benetti@micronovasrl.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180725172605.108040-1-giulio.benetti@micronovasrl.com>
+References: <20180725172605.108040-1-giulio.benetti@micronovasrl.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 25, 2018 at 10:13 AM Suzuki K Poulose
-<suzuki.poulose@arm.com> wrote:
->
-> On 07/25/2018 05:09 PM, Rob Herring wrote:
-> > On Thu, Jul 19, 2018 at 11:55:13AM +0100, Suzuki K Poulose wrote:
-> >> The coresight drivers relied on default bindings for graph
-> >> in DT, while reusing the "reg" field of the "ports" to indicate
-> >> the actual hardware port number for the connections. This can
-> >> cause duplicate ports with same addresses, but different
-> >> direction. However, with the rules getting stricter w.r.t to the
-> >> address mismatch with the label, it is no longer possible to use
-> >> the port address field for the hardware port number.
-> >>
-> >> This patch introduces new DT binding rules for coresight
-> >> components, based on the same generic DT graph bindings, but
-> >> avoiding the address duplication.
-> >>
-> >> - All output ports must be specified under a child node with
-> >>    name "out-ports".
-> >> - All input ports must be specified under a childe node with
-> >>    name "in-ports".
-> >> - Port address should match the hardware port number.
-> >>
-> >> The support for legacy bindings is retained, with a warning.
-> >>
-> >> Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
-> >> Cc: Sudeep Holla <sudeep.holla@arm.com>
-> >> Cc: Rob Herring <robh@kernel.org>
-> >> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-> >> ---
-> >>   .../devicetree/bindings/arm/coresight.txt          | 91 ++++++++++----------
-> >>   drivers/hwtracing/coresight/of_coresight.c         | 97 +++++++++++++++++++---
-> >>   2 files changed, 129 insertions(+), 59 deletions(-)
-> >>
-> >> diff --git a/Documentation/devicetree/bindings/arm/coresight.txt b/Documentation/devicetree/bindings/arm/coresight.txt
-> >> index 8e21512..f39d2c6 100644
-> >> --- a/Documentation/devicetree/bindings/arm/coresight.txt
-> >> +++ b/Documentation/devicetree/bindings/arm/coresight.txt
-> >> @@ -104,19 +104,9 @@ The connections must be described via generic DT graph bindings as described
-> >>   by the "bindings/graph.txt", where each "port" along with an "endpoint"
-> >>   component represents a hardware port and the connection.
-> >>
-> >> -Since it is possible to have multiple connections for any coresight component
-> >> -with a specific direction of data flow, each connection must define the
-> >> -following properties to uniquely identify the connection details.
-> >> -
-> >> - * Direction of the data flow w.r.t the component :
-> >> -   Each input port must have the following property defined at the "endpoint"
-> >> -   for the port.
-> >> -    "slave-mode"
-> >> -
-> >> - * Hardware Port number at the component:
-> >> -     -  The hardware port number is assumed to be the address of the "port"
-> >> -         component.
-> >> -
-> >
-> > Why do you add this in the previous patch and then remove it here?
->
-> The only use case I can think of it is for someone to look back on the
-> legacy bindings, which were never documented. I could skip the parts
-> that are being removed.
+The m41t11 variant is very similar to the already supported m41t00 and
+m41t0, but it has also 56 bytes of NVRAM.
 
-Yeah, I'd just remove it. Finding the text that exists for 1 commit is
-a little hard. Now that we've discussed it here, googling for it will
-be easier.
+Add it to driver taking into account NVRAM section.
 
-Rob
+Signed-off-by: Giulio Benetti <giulio.benetti@micronovasrl.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+---
+ .../devicetree/bindings/rtc/rtc-ds1307.txt         |  1 +
+ drivers/rtc/rtc-ds1307.c                           | 14 ++++++++++++++
+ 2 files changed, 15 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/rtc/rtc-ds1307.txt b/Documentation/devicetree/bindings/rtc/rtc-ds1307.txt
+index d28d6e7f6ae8..ce6469c1a516 100644
+--- a/Documentation/devicetree/bindings/rtc/rtc-ds1307.txt
++++ b/Documentation/devicetree/bindings/rtc/rtc-ds1307.txt
+@@ -13,6 +13,7 @@ Required properties:
+ 	"maxim,ds3231",
+ 	"st,m41t0",
+ 	"st,m41t00",
++	"st,m41t11",
+ 	"microchip,mcp7940x",
+ 	"microchip,mcp7941x",
+ 	"pericom,pt7c4338",
+diff --git a/drivers/rtc/rtc-ds1307.c b/drivers/rtc/rtc-ds1307.c
+index aa4a161bae98..0162a600ff1b 100644
+--- a/drivers/rtc/rtc-ds1307.c
++++ b/drivers/rtc/rtc-ds1307.c
+@@ -44,6 +44,7 @@ enum ds_type {
+ 	ds_3231,
+ 	m41t0,
+ 	m41t00,
++	m41t11,
+ 	mcp794xx,
+ 	rx_8025,
+ 	rx_8130,
+@@ -227,6 +228,11 @@ static const struct chip_desc chips[last_ds_type] = {
+ 		.irq_handler = rx8130_irq,
+ 		.rtc_ops = &rx8130_rtc_ops,
+ 	},
++	[m41t11] = {
++		/* this is battery backed SRAM */
++		.nvram_offset	= 8,
++		.nvram_size	= 56,
++	},
+ 	[mcp794xx] = {
+ 		.alarm		= 1,
+ 		/* this is battery backed SRAM */
+@@ -249,6 +255,7 @@ static const struct i2c_device_id ds1307_id[] = {
+ 	{ "ds3231", ds_3231 },
+ 	{ "m41t0", m41t0 },
+ 	{ "m41t00", m41t00 },
++	{ "m41t11", m41t11 },
+ 	{ "mcp7940x", mcp794xx },
+ 	{ "mcp7941x", mcp794xx },
+ 	{ "pt7c4338", ds_1307 },
+@@ -305,6 +312,10 @@ static const struct of_device_id ds1307_of_match[] = {
+ 		.compatible = "st,m41t00",
+ 		.data = (void *)m41t00
+ 	},
++	{
++		.compatible = "st,m41t11",
++		.data = (void *)m41t11
++	},
+ 	{
+ 		.compatible = "microchip,mcp7940x",
+ 		.data = (void *)mcp794xx
+@@ -347,6 +358,7 @@ static const struct acpi_device_id ds1307_acpi_ids[] = {
+ 	{ .id = "DS3231", .driver_data = ds_3231 },
+ 	{ .id = "M41T0", .driver_data = m41t0 },
+ 	{ .id = "M41T00", .driver_data = m41t00 },
++	{ .id = "M41T11", .driver_data = m41t11 },
+ 	{ .id = "MCP7940X", .driver_data = mcp794xx },
+ 	{ .id = "MCP7941X", .driver_data = mcp794xx },
+ 	{ .id = "PT7C4338", .driver_data = ds_1307 },
+@@ -1576,6 +1588,7 @@ static int ds1307_probe(struct i2c_client *client,
+ 	case ds_1307:
+ 	case m41t0:
+ 	case m41t00:
++	case m41t11:
+ 		/* clock halted?  turn it on, so clock can tick. */
+ 		if (tmp & DS1307_BIT_CH) {
+ 			regmap_write(ds1307->regmap, DS1307_REG_SECS, 0);
+@@ -1641,6 +1654,7 @@ static int ds1307_probe(struct i2c_client *client,
+ 	case ds_1340:
+ 	case m41t0:
+ 	case m41t00:
++	case m41t11:
+ 		/*
+ 		 * NOTE: ignores century bits; fix before deploying
+ 		 * systems that will run through year 2100.
+-- 
+2.17.1
+
