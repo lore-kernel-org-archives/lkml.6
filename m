@@ -2,159 +2,115 @@ Return-Path: <SRS0=S+WB=KJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 317D9C6778F
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 14:35:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3614FC6778F
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 14:35:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E4C7E2088E
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 14:35:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E4C7E2088E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by mail.kernel.org (Postfix) with ESMTP id BD54B20852
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 14:35:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BD54B20852
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729366AbeGYPrc (ORCPT
+        id S1729490AbeGYPrm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 11:47:32 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:58225 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728490AbeGYPrc (ORCPT
+        Wed, 25 Jul 2018 11:47:42 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:59204 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728490AbeGYPrm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Jul 2018 11:47:32 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w6PEZ8Eb403411
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Wed, 25 Jul 2018 07:35:08 -0700
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w6PEZ7WH403408;
-        Wed, 25 Jul 2018 07:35:07 -0700
-Date:   Wed, 25 Jul 2018 07:35:07 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Mark Rutland <tipbot@zytor.com>
-Message-ID: <tip-f9881cc43b118efc6f82fef2d121166113ee9f8e@git.kernel.org>
-Cc:     mingo@kernel.org, linux-kernel@vger.kernel.org,
-        peterz@infradead.org, boqun.feng@gmail.com,
-        torvalds@linux-foundation.org, hpa@zytor.com, mark.rutland@arm.com,
-        will.deacon@arm.com, dvyukov@google.com, tglx@linutronix.de
-Reply-To: hpa@zytor.com, mark.rutland@arm.com,
-          torvalds@linux-foundation.org, peterz@infradead.org,
-          boqun.feng@gmail.com, mingo@kernel.org,
-          linux-kernel@vger.kernel.org, tglx@linutronix.de,
-          dvyukov@google.com, will.deacon@arm.com
-In-Reply-To: <20180716113017.3909-5-mark.rutland@arm.com>
-References: <20180716113017.3909-5-mark.rutland@arm.com>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:locking/core] locking/atomics: Instrument xchg()
-Git-Commit-ID: f9881cc43b118efc6f82fef2d121166113ee9f8e
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+        Wed, 25 Jul 2018 11:47:42 -0400
+Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w6PEXxfo127591
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Jul 2018 10:35:43 -0400
+Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2kest6mg2e-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Jul 2018 10:35:43 -0400
+Received: from localhost
+        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <ubraun@linux.ibm.com>;
+        Wed, 25 Jul 2018 15:35:41 +0100
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
+        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 25 Jul 2018 15:35:40 +0100
+Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w6PEZcig9896050
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 25 Jul 2018 14:35:38 GMT
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 883A811C058;
+        Wed, 25 Jul 2018 17:35:52 +0100 (BST)
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 377CF11C054;
+        Wed, 25 Jul 2018 17:35:52 +0100 (BST)
+Received: from tuxmaker.boeblingen.de.ibm.com (unknown [9.152.85.9])
+        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Wed, 25 Jul 2018 17:35:52 +0100 (BST)
+From:   Ursula Braun <ubraun@linux.ibm.com>
+To:     davem@davemloft.net
+Cc:     netdev@vger.kernel.org, linux-s390@vger.kernel.org,
+        schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
+        raspl@linux.ibm.com, linux-kernel@vger.kernel.org
+Subject: [PATCH net-next 0/4] net/smc: patches 2018-07-25
+Date:   Wed, 25 Jul 2018 16:35:29 +0200
+X-Mailer: git-send-email 2.16.4
+X-TM-AS-GCONF: 00
+x-cbid: 18072514-0016-0000-0000-000001EB4D2E
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18072514-0017-0000-0000-000032403156
+Message-Id: <20180725143533.7082-1-ubraun@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-25_03:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=957 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1806210000 definitions=main-1807250157
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  f9881cc43b118efc6f82fef2d121166113ee9f8e
-Gitweb:     https://git.kernel.org/tip/f9881cc43b118efc6f82fef2d121166113ee9f8e
-Author:     Mark Rutland <mark.rutland@arm.com>
-AuthorDate: Mon, 16 Jul 2018 12:30:09 +0100
-Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Wed, 25 Jul 2018 11:53:59 +0200
+Dave,
 
-locking/atomics: Instrument xchg()
+here are 4 more patches for SMC: The first one is just a small
+code cleanup in preparation for patch 2. Patch 2 switches to the
+use of the vlan-gid for VLAN traffic. Patch 3 improves diagnosis
+when creating SMC connections. Patch 4 improves synchronization
+between local and remote link groups.
 
-While we instrument all of the (non-relaxed) atomic_*() functions and
-cmpxchg(), we missed xchg().
+Thanks, Ursula
 
-Let's add instrumentation for xchg(), fixing up x86 to implement
-arch_xchg().
+Karsten Graul (2):
+  net/smc: provide fallback reason code
+  net/smc: improve delete link processing
 
-Signed-off-by: Mark Rutland <mark.rutland@arm.com>
-Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Acked-by: Will Deacon <will.deacon@arm.com>
-Cc: Boqun Feng <boqun.feng@gmail.com>
-Cc: Dmitry Vyukov <dvyukov@google.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: andy.shevchenko@gmail.com
-Cc: arnd@arndb.de
-Cc: aryabinin@virtuozzo.com
-Cc: catalin.marinas@arm.com
-Cc: glider@google.com
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: parri.andrea@gmail.com
-Cc: peter@hurleysoftware.com
-Link: http://lkml.kernel.org/r/20180716113017.3909-5-mark.rutland@arm.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
----
- arch/x86/include/asm/atomic.h             | 2 +-
- arch/x86/include/asm/atomic64_64.h        | 2 +-
- arch/x86/include/asm/cmpxchg.h            | 2 +-
- include/asm-generic/atomic-instrumented.h | 7 +++++++
- 4 files changed, 10 insertions(+), 3 deletions(-)
+Ursula Braun (2):
+  net/smc: fewer parameters for smc_llc_send_confirm_link()
+  net/smc: use correct vlan gid of RoCE device
 
-diff --git a/arch/x86/include/asm/atomic.h b/arch/x86/include/asm/atomic.h
-index 823fd2f320cf..b143717b92b3 100644
---- a/arch/x86/include/asm/atomic.h
-+++ b/arch/x86/include/asm/atomic.h
-@@ -202,7 +202,7 @@ static __always_inline bool arch_atomic_try_cmpxchg(atomic_t *v, int *old, int n
- 
- static inline int arch_atomic_xchg(atomic_t *v, int new)
- {
--	return xchg(&v->counter, new);
-+	return arch_xchg(&v->counter, new);
- }
- 
- static inline void arch_atomic_and(int i, atomic_t *v)
-diff --git a/arch/x86/include/asm/atomic64_64.h b/arch/x86/include/asm/atomic64_64.h
-index 849f1c566a11..4343d9b4f30e 100644
---- a/arch/x86/include/asm/atomic64_64.h
-+++ b/arch/x86/include/asm/atomic64_64.h
-@@ -188,7 +188,7 @@ static __always_inline bool arch_atomic64_try_cmpxchg(atomic64_t *v, s64 *old, l
- 
- static inline long arch_atomic64_xchg(atomic64_t *v, long new)
- {
--	return xchg(&v->counter, new);
-+	return arch_xchg(&v->counter, new);
- }
- 
- static inline void arch_atomic64_and(long i, atomic64_t *v)
-diff --git a/arch/x86/include/asm/cmpxchg.h b/arch/x86/include/asm/cmpxchg.h
-index e3efd8a06066..a55d79b233d3 100644
---- a/arch/x86/include/asm/cmpxchg.h
-+++ b/arch/x86/include/asm/cmpxchg.h
-@@ -75,7 +75,7 @@ extern void __add_wrong_size(void)
-  * use "asm volatile" and "memory" clobbers to prevent gcc from moving
-  * information around.
-  */
--#define xchg(ptr, v)	__xchg_op((ptr), (v), xchg, "")
-+#define arch_xchg(ptr, v)	__xchg_op((ptr), (v), xchg, "")
- 
- /*
-  * Atomic compare and exchange.  Compare OLD with MEM, if identical,
-diff --git a/include/asm-generic/atomic-instrumented.h b/include/asm-generic/atomic-instrumented.h
-index c7c3e4cdd942..53481b6eacdf 100644
---- a/include/asm-generic/atomic-instrumented.h
-+++ b/include/asm-generic/atomic-instrumented.h
-@@ -408,6 +408,13 @@ static __always_inline bool atomic64_add_negative(s64 i, atomic64_t *v)
- }
- #endif
- 
-+#define xchg(ptr, new)							\
-+({									\
-+	typeof(ptr) __ai_ptr = (ptr);					\
-+	kasan_check_write(__ai_ptr, sizeof(*__ai_ptr));			\
-+	arch_xchg(__ai_ptr, (new));					\
-+})
-+
- #define cmpxchg(ptr, old, new)						\
- ({									\
- 	typeof(ptr) __ai_ptr = (ptr);					\
+ include/uapi/linux/smc_diag.h |  6 +++
+ net/smc/af_smc.c              | 86 ++++++++++++++++++++++---------------------
+ net/smc/smc.h                 |  2 +
+ net/smc/smc_clc.c             | 16 ++++----
+ net/smc/smc_clc.h             | 20 ++++++----
+ net/smc/smc_core.c            | 84 +++++++++++++++++++++++-------------------
+ net/smc/smc_core.h            |  9 +++--
+ net/smc/smc_diag.c            |  8 +++-
+ net/smc/smc_ib.c              | 41 ++++++++++++++++++---
+ net/smc/smc_ib.h              |  3 +-
+ net/smc/smc_llc.c             | 50 +++++++++++++------------
+ net/smc/smc_llc.h             |  7 ++--
+ net/smc/smc_pnet.c            | 30 ++++++++++-----
+ net/smc/smc_pnet.h            |  3 +-
+ net/smc/smc_wr.c              |  7 +---
+ 15 files changed, 228 insertions(+), 144 deletions(-)
+
+-- 
+2.16.4
+
