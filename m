@@ -3,36 +3,36 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 738A4C67790
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 16:38:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98A25C6778F
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 16:39:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2A99320899
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 16:38:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2A99320899
+	by mail.kernel.org (Postfix) with ESMTP id 5D76D208B2
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 16:39:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D76D208B2
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729354AbeGYRvW (ORCPT
+        id S1730366AbeGYRv1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 13:51:22 -0400
-Received: from ns.mm-sol.com ([37.157.136.199]:35491 "EHLO extserv.mm-sol.com"
+        Wed, 25 Jul 2018 13:51:27 -0400
+Received: from ns.mm-sol.com ([37.157.136.199]:35576 "EHLO extserv.mm-sol.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729121AbeGYRvW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Jul 2018 13:51:22 -0400
+        id S1728653AbeGYRv0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Jul 2018 13:51:26 -0400
 Received: from mms-0439.qualcomm.mm-sol.com (unknown [37.157.136.206])
-        by extserv.mm-sol.com (Postfix) with ESMTPSA id A911BCD52;
-        Wed, 25 Jul 2018 19:38:53 +0300 (EEST)
+        by extserv.mm-sol.com (Postfix) with ESMTPSA id 1EDC8CD5F;
+        Wed, 25 Jul 2018 19:38:54 +0300 (EEST)
 From:   Todor Tomov <todor.tomov@linaro.org>
 To:     mchehab@kernel.org, sakari.ailus@linux.intel.com,
         hans.verkuil@cisco.com, laurent.pinchart+renesas@ideasonboard.com,
         linux-media@vger.kernel.org
 Cc:     linux-kernel@vger.kernel.org, Todor Tomov <todor.tomov@linaro.org>
-Subject: [PATCH v4 01/34] doc-rst: Add packed Bayer raw14 pixel formats
-Date:   Wed, 25 Jul 2018 19:38:10 +0300
-Message-Id: <1532536723-19062-2-git-send-email-todor.tomov@linaro.org>
+Subject: [PATCH v4 13/34] media: camss: vfe: Get line pointer as container of video_out
+Date:   Wed, 25 Jul 2018 19:38:22 +0300
+Message-Id: <1532536723-19062-14-git-send-email-todor.tomov@linaro.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1532536723-19062-1-git-send-email-todor.tomov@linaro.org>
 References: <1532536723-19062-1-git-send-email-todor.tomov@linaro.org>
@@ -41,202 +41,83 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
+Simplify getting of the line pointer by using the container_of
+macro instead of traversing media controller links.
 
-These formats are compressed 14-bit raw bayer formats with four different
-pixel orders. They are similar to 10-bit variants. The formats added by
-this patch are
-
-	V4L2_PIX_FMT_SBGGR14P
-	V4L2_PIX_FMT_SGBRG14P
-	V4L2_PIX_FMT_SGRBG14P
-	V4L2_PIX_FMT_SRGGB14P
-
-Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-Acked-by: Hans Verkuil <hans.verkuil@cisco.com>
 Signed-off-by: Todor Tomov <todor.tomov@linaro.org>
 ---
- Documentation/media/uapi/v4l/pixfmt-rgb.rst      |   1 +
- Documentation/media/uapi/v4l/pixfmt-srggb14p.rst | 127 +++++++++++++++++++++++
- drivers/media/v4l2-core/v4l2-ioctl.c             |   4 +
- include/uapi/linux/videodev2.h                   |   5 +
- 4 files changed, 137 insertions(+)
- create mode 100644 Documentation/media/uapi/v4l/pixfmt-srggb14p.rst
+ drivers/media/platform/qcom/camss/camss-vfe.c | 38 +++------------------------
+ 1 file changed, 4 insertions(+), 34 deletions(-)
 
-diff --git a/Documentation/media/uapi/v4l/pixfmt-rgb.rst b/Documentation/media/uapi/v4l/pixfmt-rgb.rst
-index cf2ef7d..1f9a7e3 100644
---- a/Documentation/media/uapi/v4l/pixfmt-rgb.rst
-+++ b/Documentation/media/uapi/v4l/pixfmt-rgb.rst
-@@ -19,4 +19,5 @@ RGB Formats
-     pixfmt-srggb10-ipu3
-     pixfmt-srggb12
-     pixfmt-srggb12p
-+    pixfmt-srggb14p
-     pixfmt-srggb16
-diff --git a/Documentation/media/uapi/v4l/pixfmt-srggb14p.rst b/Documentation/media/uapi/v4l/pixfmt-srggb14p.rst
-new file mode 100644
-index 0000000..88d20c0
---- /dev/null
-+++ b/Documentation/media/uapi/v4l/pixfmt-srggb14p.rst
-@@ -0,0 +1,127 @@
-+.. -*- coding: utf-8; mode: rst -*-
-+
-+.. _V4L2-PIX-FMT-SRGGB14P:
-+.. _v4l2-pix-fmt-sbggr14p:
-+.. _v4l2-pix-fmt-sgbrg14p:
-+.. _v4l2-pix-fmt-sgrbg14p:
-+
-+*******************************************************************************************************************************
-+V4L2_PIX_FMT_SRGGB14P ('pRCC'), V4L2_PIX_FMT_SGRBG14P ('pgCC'), V4L2_PIX_FMT_SGBRG14P ('pGCC'), V4L2_PIX_FMT_SBGGR14P ('pBCC'),
-+*******************************************************************************************************************************
-+
-+*man V4L2_PIX_FMT_SRGGB14P(2)*
-+
-+V4L2_PIX_FMT_SGRBG14P
-+V4L2_PIX_FMT_SGBRG14P
-+V4L2_PIX_FMT_SBGGR14P
-+14-bit packed Bayer formats
-+
-+
-+Description
-+===========
-+
-+These four pixel formats are packed raw sRGB / Bayer formats with 14
-+bits per colour. Every four consecutive samples are packed into seven
-+bytes. Each of the first four bytes contain the eight high order bits
-+of the pixels, and the three following bytes contains the six least
-+significants bits of each pixel, in the same order.
-+
-+Each n-pixel row contains n/2 green samples and n/2 blue or red samples,
-+with alternating green-red and green-blue rows. They are conventionally
-+described as GRGR... BGBG..., RGRG... GBGB..., etc. Below is an example
-+of one of these formats:
-+
-+**Byte Order.**
-+Each cell is one byte.
-+
-+
-+
-+.. flat-table::
-+    :header-rows:  0
-+    :stub-columns: 0
-+    :widths:       2 1 1 1 1 1 1 1
-+
-+
-+    -  .. row 1
-+
-+       -  start + 0:
-+
-+       -  B\ :sub:`00high`
-+
-+       -  G\ :sub:`01high`
-+
-+       -  B\ :sub:`02high`
-+
-+       -  G\ :sub:`03high`
-+
-+       -  G\ :sub:`01low bits 1--0`\ (bits 7--6)
-+	  B\ :sub:`00low bits 5--0`\ (bits 5--0)
-+
-+       -  R\ :sub:`02low bits 3--0`\ (bits 7--4)
-+	  G\ :sub:`01low bits 5--2`\ (bits 3--0)
-+
-+       -  G\ :sub:`03low bits 5--0`\ (bits 7--2)
-+	  R\ :sub:`02low bits 5--4`\ (bits 1--0)
-+
-+    -  .. row 2
-+
-+       -  start + 7:
-+
-+       -  G\ :sub:`00high`
-+
-+       -  R\ :sub:`01high`
-+
-+       -  G\ :sub:`02high`
-+
-+       -  R\ :sub:`03high`
-+
-+       -  R\ :sub:`01low bits 1--0`\ (bits 7--6)
-+	  G\ :sub:`00low bits 5--0`\ (bits 5--0)
-+
-+       -  G\ :sub:`02low bits 3--0`\ (bits 7--4)
-+	  R\ :sub:`01low bits 5--2`\ (bits 3--0)
-+
-+       -  R\ :sub:`03low bits 5--0`\ (bits 7--2)
-+	  G\ :sub:`02low bits 5--4`\ (bits 1--0)
-+
-+    -  .. row 3
-+
-+       -  start + 14
-+
-+       -  B\ :sub:`20high`
-+
-+       -  G\ :sub:`21high`
-+
-+       -  B\ :sub:`22high`
-+
-+       -  G\ :sub:`23high`
-+
-+       -  G\ :sub:`21low bits 1--0`\ (bits 7--6)
-+	  B\ :sub:`20low bits 5--0`\ (bits 5--0)
-+
-+       -  R\ :sub:`22low bits 3--0`\ (bits 7--4)
-+	  G\ :sub:`21low bits 5--2`\ (bits 3--0)
-+
-+       -  G\ :sub:`23low bits 5--0`\ (bits 7--2)
-+	  R\ :sub:`22low bits 5--4`\ (bits 1--0)
-+
-+    -  .. row 4
-+
-+       -  start + 21
-+
-+       -  G\ :sub:`30high`
-+
-+       -  R\ :sub:`31high`
-+
-+       -  G\ :sub:`32high`
-+
-+       -  R\ :sub:`33high`
-+
-+       -  R\ :sub:`31low bits 1--0`\ (bits 7--6)
-+	  G\ :sub:`30low bits 5--0`\ (bits 5--0)
-+
-+       -  G\ :sub:`32low bits 3--0`\ (bits 7--4)
-+	  R\ :sub:`31low bits 5--2`\ (bits 3--0)
-+
-+       -  R\ :sub:`33low bits 5--0`\ (bits 7--2)
-+	  G\ :sub:`32low bits 5--4`\ (bits 1--0)
-diff --git a/drivers/media/v4l2-core/v4l2-ioctl.c b/drivers/media/v4l2-core/v4l2-ioctl.c
-index 0167056..04e1231 100644
---- a/drivers/media/v4l2-core/v4l2-ioctl.c
-+++ b/drivers/media/v4l2-core/v4l2-ioctl.c
-@@ -1259,6 +1259,10 @@ static void v4l_fill_fmtdesc(struct v4l2_fmtdesc *fmt)
- 	case V4L2_PIX_FMT_SGBRG12P:	descr = "12-bit Bayer GBGB/RGRG Packed"; break;
- 	case V4L2_PIX_FMT_SGRBG12P:	descr = "12-bit Bayer GRGR/BGBG Packed"; break;
- 	case V4L2_PIX_FMT_SRGGB12P:	descr = "12-bit Bayer RGRG/GBGB Packed"; break;
-+	case V4L2_PIX_FMT_SBGGR14P:	descr = "14-bit Bayer BGBG/GRGR Packed"; break;
-+	case V4L2_PIX_FMT_SGBRG14P:	descr = "14-bit Bayer GBGB/RGRG Packed"; break;
-+	case V4L2_PIX_FMT_SGRBG14P:	descr = "14-bit Bayer GRGR/BGBG Packed"; break;
-+	case V4L2_PIX_FMT_SRGGB14P:	descr = "14-bit Bayer RGRG/GBGB Packed"; break;
- 	case V4L2_PIX_FMT_SBGGR16:	descr = "16-bit Bayer BGBG/GRGR"; break;
- 	case V4L2_PIX_FMT_SGBRG16:	descr = "16-bit Bayer GBGB/RGRG"; break;
- 	case V4L2_PIX_FMT_SGRBG16:	descr = "16-bit Bayer GRGR/BGBG"; break;
-diff --git a/include/uapi/linux/videodev2.h b/include/uapi/linux/videodev2.h
-index 600877b..a15e03b 100644
---- a/include/uapi/linux/videodev2.h
-+++ b/include/uapi/linux/videodev2.h
-@@ -609,6 +609,11 @@ struct v4l2_pix_format {
- #define V4L2_PIX_FMT_SGBRG12P v4l2_fourcc('p', 'G', 'C', 'C')
- #define V4L2_PIX_FMT_SGRBG12P v4l2_fourcc('p', 'g', 'C', 'C')
- #define V4L2_PIX_FMT_SRGGB12P v4l2_fourcc('p', 'R', 'C', 'C')
-+	/* 14bit raw bayer packed, 7 bytes for every 4 pixels */
-+#define V4L2_PIX_FMT_SBGGR14P v4l2_fourcc('p', 'B', 'E', 'E')
-+#define V4L2_PIX_FMT_SGBRG14P v4l2_fourcc('p', 'G', 'E', 'E')
-+#define V4L2_PIX_FMT_SGRBG14P v4l2_fourcc('p', 'g', 'E', 'E')
-+#define V4L2_PIX_FMT_SRGGB14P v4l2_fourcc('p', 'R', 'E', 'E')
- #define V4L2_PIX_FMT_SBGGR16 v4l2_fourcc('B', 'Y', 'R', '2') /* 16  BGBG.. GRGR.. */
- #define V4L2_PIX_FMT_SGBRG16 v4l2_fourcc('G', 'B', '1', '6') /* 16  GBGB.. RGRG.. */
- #define V4L2_PIX_FMT_SGRBG16 v4l2_fourcc('G', 'R', '1', '6') /* 16  GRGR.. BGBG.. */
+diff --git a/drivers/media/platform/qcom/camss/camss-vfe.c b/drivers/media/platform/qcom/camss/camss-vfe.c
+index 51ad3f8..77167f1 100644
+--- a/drivers/media/platform/qcom/camss/camss-vfe.c
++++ b/drivers/media/platform/qcom/camss/camss-vfe.c
+@@ -2038,26 +2038,6 @@ static void vfe_put(struct vfe_device *vfe)
+ }
+ 
+ /*
+- * vfe_video_pad_to_line - Get pointer to VFE line by media pad
+- * @pad: Media pad
+- *
+- * Return pointer to vfe line structure
+- */
+-static struct vfe_line *vfe_video_pad_to_line(struct media_pad *pad)
+-{
+-	struct media_pad *vfe_pad;
+-	struct v4l2_subdev *subdev;
+-
+-	vfe_pad = media_entity_remote_pad(pad);
+-	if (vfe_pad == NULL)
+-		return NULL;
+-
+-	subdev = media_entity_to_v4l2_subdev(vfe_pad->entity);
+-
+-	return container_of(subdev, struct vfe_line, subdev);
+-}
+-
+-/*
+  * vfe_queue_buffer - Add empty buffer
+  * @vid: Video device structure
+  * @buf: Buffer to be enqueued
+@@ -2070,16 +2050,11 @@ static struct vfe_line *vfe_video_pad_to_line(struct media_pad *pad)
+ static int vfe_queue_buffer(struct camss_video *vid,
+ 			    struct camss_buffer *buf)
+ {
+-	struct vfe_device *vfe = &vid->camss->vfe;
+-	struct vfe_line *line;
++	struct vfe_line *line = container_of(vid, struct vfe_line, video_out);
++	struct vfe_device *vfe = to_vfe(line);
+ 	struct vfe_output *output;
+ 	unsigned long flags;
+ 
+-	line = vfe_video_pad_to_line(&vid->pad);
+-	if (!line) {
+-		dev_err(to_device(vfe), "Can not queue buffer\n");
+-		return -1;
+-	}
+ 	output = &line->output;
+ 
+ 	spin_lock_irqsave(&vfe->output_lock, flags);
+@@ -2104,16 +2079,11 @@ static int vfe_queue_buffer(struct camss_video *vid,
+ static int vfe_flush_buffers(struct camss_video *vid,
+ 			     enum vb2_buffer_state state)
+ {
+-	struct vfe_device *vfe = &vid->camss->vfe;
+-	struct vfe_line *line;
++	struct vfe_line *line = container_of(vid, struct vfe_line, video_out);
++	struct vfe_device *vfe = to_vfe(line);
+ 	struct vfe_output *output;
+ 	unsigned long flags;
+ 
+-	line = vfe_video_pad_to_line(&vid->pad);
+-	if (!line) {
+-		dev_err(to_device(vfe),	"Can not flush buffers\n");
+-		return -1;
+-	}
+ 	output = &line->output;
+ 
+ 	spin_lock_irqsave(&vfe->output_lock, flags);
 -- 
 2.7.4
 
