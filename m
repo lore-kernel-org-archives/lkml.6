@@ -2,187 +2,148 @@ Return-Path: <SRS0=S+WB=KJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE405C67790
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 18:01:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E1D9C6778F
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 18:01:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 77C3020852
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 18:01:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2B17D20894
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 18:01:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="zmJVMap8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 77C3020852
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="XoE/qzaf";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="bJCCKZV7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2B17D20894
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731419AbeGYTO2 (ORCPT
+        id S1731444AbeGYTOf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 15:14:28 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43194 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729171AbeGYTO2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Jul 2018 15:14:28 -0400
-Received: from jouet.infradead.org (189-94-96-116.3g.claro.net.br [189.94.96.116])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E483120852;
-        Wed, 25 Jul 2018 18:01:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1532541702;
-        bh=25gbRCK1XYN5jAhME7sXqBHy1GlB135DXo9za8Jz9Hc=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=zmJVMap8LHJ62nBXPWZcJPXlGqA8fxp55BraYk8hC1xxpBU/AvL8D8b5pPbE0PXIP
-         TbQbLBKmFHjQLlz0N7TcU+BhAh0QPEo5Msrx1oFJI37sL9jQQ67nweTVRawmr/Q7UZ
-         5okaeedXWEPkbsXa29q44VWRKQ5rNDJ3EUow7Pd4=
-From:   Arnaldo Carvalho de Melo <acme@kernel.org>
-To:     Ingo Molnar <mingo@kernel.org>
-Cc:     Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-perf-users@vger.kernel.org,
-        Sandipan Das <sandipan@linux.ibm.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Kim Phillips <kim.phillips@arm.com>,
-        "Naveen N . Rao" <naveen.n.rao@linux.vnet.ibm.com>,
-        Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 15/27] perf tests: Fix record+probe_libc_inet_pton.sh when event exists
-Date:   Wed, 25 Jul 2018 14:59:49 -0300
-Message-Id: <20180725180001.15108-16-acme@kernel.org>
-X-Mailer: git-send-email 2.14.4
-In-Reply-To: <20180725180001.15108-1-acme@kernel.org>
-References: <20180725180001.15108-1-acme@kernel.org>
+        Wed, 25 Jul 2018 15:14:35 -0400
+Received: from mail-yb0-f194.google.com ([209.85.213.194]:38112 "EHLO
+        mail-yb0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731423AbeGYTOe (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Jul 2018 15:14:34 -0400
+Received: by mail-yb0-f194.google.com with SMTP id i9-v6so3330382ybo.5
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Jul 2018 11:01:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=fwR1XnrNrE05jj+kaIvmoHGONzrLMLUSe2XCu49/tSU=;
+        b=XoE/qzafc9enyyuoE9/oDxiSAHmn0IfTU4sYveYkZpXEy77WIwM+dTVULfI5DCdkui
+         3eeZmOovw/qYQot1xQurFAKyd6lfrBiY5B6ySS9Sd3nXrBiS4JOeEx5wTRBWNWy3mBjE
+         nH3zcn23b5xK/yGFk0HJXRQpeaVle9XhkkYH3xs/GmFurs21TgDMPLcqnWZYbhI8ONEs
+         08CZIwQ/USOFGlc2UJ/lV7HQ3FxRzwFLtj7eBlzLnYTvAlb5fWxaRHy+Uerr3IxJdsyn
+         lctsnq0ihhK+oOIUBz6X84v3OdYmxGcyLJRXtQlcZSPmrOXihqnaSGgemv0PjNbyUWVL
+         RBIQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=fwR1XnrNrE05jj+kaIvmoHGONzrLMLUSe2XCu49/tSU=;
+        b=bJCCKZV7doU6vrsXi/q7oCCK4xX2oIJxv+ozw0KprS/l2hz5usWrx/gYBcd1cpd2Zw
+         KBN+LlDaFDLHU0ZPNPJz1tBFa+JrQKxV9EQzg54gpYDalkVexuGu+yAOROy08fLL8XdB
+         5tHaQWbeTmk7hEUjB6WsVq8fQ86bnhNLhLHjQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
+         :date:message-id:subject:to:cc;
+        bh=fwR1XnrNrE05jj+kaIvmoHGONzrLMLUSe2XCu49/tSU=;
+        b=q0QL7xM/yVhvm3+//6D7kScd+AL3hG5FyTfaoPq3jIwzVTwmjegBigZcf4yaoPrjDV
+         QWcr+gDnVMbWg6Mk/VdGEeBSbqLgqUlb+CGIrUdq/MNKcQPfO7FcJLgh/UyvQ8UCIqKv
+         eptVtuwM5W5I92wVD1ArjEogGsISkcQTIAU/orNsKlSbMN5y991bnVOzeQ9OjLFXKE6W
+         MAG2PmQuiNh1CRQBfwOIpgY4aEXTpy/2NghoLOlFpqsbRTGi5Wu23x1wGrvK/Dt/roMP
+         HysJebeWqeLkx2UUFOord5XTGosKo3/nHqhENM2AS5vpwHfBuNBm2OqrRvxew9XjQFZc
+         9TBQ==
+X-Gm-Message-State: AOUpUlFtbzFVwOSRn4iyHDODR0AdkPADVDnD9+m0vcaRBk7DqeQuzNRh
+        rS5qMiu0CbkPvAjZ2hLnaWG4wx2K1RkfJdRWoU3b5A==
+X-Google-Smtp-Source: AAOMgpfy2Ewai5yZ1ixV/KUibmh/RU0tAbkEmdYKvk6CTBoDlAHJuNskFZ5TQbokDOb5OxKPHu98+D0tGNLnwj0zwLs=
+X-Received: by 2002:a25:ce8e:: with SMTP id x136-v6mr11877726ybe.118.1532541707948;
+ Wed, 25 Jul 2018 11:01:47 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:a25:6602:0:0:0:0:0 with HTTP; Wed, 25 Jul 2018 11:01:47
+ -0700 (PDT)
+In-Reply-To: <CAJZ5v0gVDotjufLKUW0YuQu2vA4fmU_gqia=ZA4DocW4XHxx0w@mail.gmail.com>
+References: <20180724164936.37477-1-keescook@chromium.org> <20180724164936.37477-11-keescook@chromium.org>
+ <CAJZ5v0gVDotjufLKUW0YuQu2vA4fmU_gqia=ZA4DocW4XHxx0w@mail.gmail.com>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Wed, 25 Jul 2018 11:01:47 -0700
+X-Google-Sender-Auth: 3JWb0S7OUNBTdxQSmmr9a9nCs_0
+Message-ID: <CAGXu5j+NPCc2hq5x7JUwgKYvY6zKN28YdtHbHVapnpgC3GwCsg@mail.gmail.com>
+Subject: Re: [PATCH v6 10/18] x86/power/64: Remove VLA usage
+To:     "Rafael J. Wysocki" <rafael@kernel.org>
+Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Eric Biggers <ebiggers@google.com>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Alasdair Kergon <agk@redhat.com>,
+        Rabin Vincent <rabinv@axis.com>,
+        Tim Chen <tim.c.chen@linux.intel.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Pavel Machek <pavel@ucw.cz>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        Philipp Reisner <philipp.reisner@linbit.com>,
+        Lars Ellenberg <lars.ellenberg@linbit.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        Giovanni Cabiddu <giovanni.cabiddu@intel.com>,
+        Mike Snitzer <snitzer@redhat.com>,
+        Paul Mackerras <paulus@samba.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        David Howells <dhowells@redhat.com>,
+        Johannes Berg <johannes@sipsolutions.net>,
+        Tudor-Dan Ambarus <tudor.ambarus@microchip.com>,
+        Jia-Ju Bai <baijiaju1990@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        David Woodhouse <dwmw@amazon.co.uk>,
+        Will Deacon <will.deacon@arm.com>,
+        device-mapper development <dm-devel@redhat.com>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        linux-crypto <linux-crypto@vger.kernel.org>,
+        drbd-dev@lists.linbit.com,
+        linux-block <linux-block@vger.kernel.org>, qat-linux@intel.com,
+        linux-ppp@vger.kernel.org, netdev <netdev@vger.kernel.org>,
+        "open list:ANDROID DRIVERS" <devel@driverdev.osuosl.org>,
+        linux-afs@lists.infradead.org,
+        "open list:NETWORKING DRIVERS (WIRELESS)" 
+        <linux-wireless@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sandipan Das <sandipan@linux.ibm.com>
+On Wed, Jul 25, 2018 at 4:32 AM, Rafael J. Wysocki <rafael@kernel.org> wrote:
+> On Tue, Jul 24, 2018 at 6:49 PM, Kees Cook <keescook@chromium.org> wrote:
+>> In the quest to remove all stack VLA usage from the kernel[1], this
+>> removes the discouraged use of AHASH_REQUEST_ON_STACK by switching to
+>> shash directly and allocating the descriptor in heap memory (which should
+>> be fine: the tfm has already been allocated there too).
+>>
+>> [1] https://lkml.kernel.org/r/CA+55aFzCG-zNmZwX4A2FQpadafLfEzK6CC=qPXydAacU1RqZWA@mail.gmail.com
+>>
+>> Signed-off-by: Kees Cook <keescook@chromium.org>
+>> Acked-by: Pavel Machek <pavel@ucw.cz>
+>
+> I think I can queue this up if there are no objections from others.
+>
+> Do you want me to do that?
 
-If the event 'probe_libc:inet_pton' already exists, this test fails and
-deletes the existing event before exiting. This will then pass for any
-subsequent executions.
+Sure thing. It looks like the other stand-alone patches like this one
+are getting taken into the non-crypto trees, so that's fine.
 
-Instead of skipping to deleting the existing event because of failing to
-add a new event, a duplicate event is now created and the script
-continues with the usual checks. Only the new duplicate event that is
-created at the beginning of the test is deleted as a part of the
-cleanups in the end. All existing events remain as it is.
+Thanks!
 
-This can be observed on a powerpc64 system running Fedora 27 as shown
-below.
+-Kees
 
-  # perf probe -x /usr/lib64/power8/libc-2.26.so -a inet_pton
-
-  Added new event:
-    probe_libc:inet_pton (on inet_pton in /usr/lib64/power8/libc-2.26.so)
-
-Before:
-
-  # perf test -v "probe libc's inet_pton & backtrace it with ping"
-
-  62: probe libc's inet_pton & backtrace it with ping       :
-  --- start ---
-  test child forked, pid 21302
-  test child finished with -1
-  ---- end ----
-  probe libc's inet_pton & backtrace it with ping: FAILED!
-
-  # perf probe --list
-
-After:
-
-  # perf test -v "probe libc's inet_pton & backtrace it with ping"
-
-  62: probe libc's inet_pton & backtrace it with ping       :
-  --- start ---
-  test child forked, pid 21490
-  ping 21513 [035] 39357.565561: probe_libc:inet_pton_1: (7fffa4c623b0)
-  7fffa4c623b0 __GI___inet_pton+0x0 (/usr/lib64/power8/libc-2.26.so)
-  7fffa4c190dc gaih_inet.constprop.7+0xf4c (/usr/lib64/power8/libc-2.26.so)
-  7fffa4c19c4c getaddrinfo+0x15c (/usr/lib64/power8/libc-2.26.so)
-  111d93c20 main+0x3e0 (/usr/bin/ping)
-  test child finished with 0
-  ---- end ----
-  probe libc's inet_pton & backtrace it with ping: Ok
-
-  # perf probe --list
-
-    probe_libc:inet_pton (on __inet_pton@resolv/inet_pton.c in /usr/lib64/power8/libc-2.26.so)
-
-Signed-off-by: Sandipan Das <sandipan@linux.ibm.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Kim Phillips <kim.phillips@arm.com>
-Cc: Naveen N. Rao <naveen.n.rao@linux.vnet.ibm.com>
-Cc: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
-Link: http://lkml.kernel.org/r/e11fecff96e6cf4c65cdbd9012463513d7b8356c.1530724939.git.sandipan@linux.ibm.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- .../tests/shell/record+probe_libc_inet_pton.sh     | 28 ++++++++++++++++++----
- 1 file changed, 24 insertions(+), 4 deletions(-)
-
-diff --git a/tools/perf/tests/shell/record+probe_libc_inet_pton.sh b/tools/perf/tests/shell/record+probe_libc_inet_pton.sh
-index 0502a9e04c79..3013ac8f83d0 100755
---- a/tools/perf/tests/shell/record+probe_libc_inet_pton.sh
-+++ b/tools/perf/tests/shell/record+probe_libc_inet_pton.sh
-@@ -13,11 +13,24 @@
- libc=$(grep -w libc /proc/self/maps | head -1 | sed -r 's/.*[[:space:]](\/.*)/\1/g')
- nm -Dg $libc 2>/dev/null | fgrep -q inet_pton || exit 254
- 
-+event_pattern='probe_libc:inet_pton(\_[[:digit:]]+)?'
-+
-+add_libc_inet_pton_event() {
-+
-+	event_name=$(perf probe -f -x $libc -a inet_pton 2>&1 | tail -n +2 | head -n -5 | \
-+			grep -P -o "$event_pattern(?=[[:space:]]\(on inet_pton in $libc\))")
-+
-+	if [ $? -ne 0 -o -z "$event_name" ] ; then
-+		printf "FAIL: could not add event\n"
-+		return 1
-+	fi
-+}
-+
- trace_libc_inet_pton_backtrace() {
- 
- 	expected=`mktemp -u /tmp/expected.XXX`
- 
--	echo "ping[][0-9 \.:]+probe_libc:inet_pton: \([[:xdigit:]]+\)" > $expected
-+	echo "ping[][0-9 \.:]+$event_name: \([[:xdigit:]]+\)" > $expected
- 	echo ".*inet_pton\+0x[[:xdigit:]]+[[:space:]]\($libc|inlined\)$" >> $expected
- 	case "$(uname -m)" in
- 	s390x)
-@@ -41,7 +54,7 @@ trace_libc_inet_pton_backtrace() {
- 
- 	perf_data=`mktemp -u /tmp/perf.data.XXX`
- 	perf_script=`mktemp -u /tmp/perf.script.XXX`
--	perf record -e probe_libc:inet_pton/$eventattr/ -o $perf_data ping -6 -c 1 ::1 > /dev/null 2>&1
-+	perf record -e $event_name/$eventattr/ -o $perf_data ping -6 -c 1 ::1 > /dev/null 2>&1
- 	perf script -i $perf_data > $perf_script
- 
- 	exec 3<$perf_script
-@@ -62,13 +75,20 @@ trace_libc_inet_pton_backtrace() {
- 	# even if the perf script output does not match.
- }
- 
-+delete_libc_inet_pton_event() {
-+
-+	if [ -n "$event_name" ] ; then
-+		perf probe -q -d $event_name
-+	fi
-+}
-+
- # Check for IPv6 interface existence
- ip a sh lo | fgrep -q inet6 || exit 2
- 
- skip_if_no_perf_probe && \
--perf probe -q $libc inet_pton && \
-+add_libc_inet_pton_event && \
- trace_libc_inet_pton_backtrace
- err=$?
- rm -f ${perf_data} ${perf_script} ${expected}
--perf probe -q -d probe_libc:inet_pton
-+delete_libc_inet_pton_event
- exit $err
 -- 
-2.14.4
-
+Kees Cook
+Pixel Security
