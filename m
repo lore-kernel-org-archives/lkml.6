@@ -2,90 +2,141 @@ Return-Path: <SRS0=S+WB=KJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5498FC67790
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 19:13:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83920C6778F
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 19:13:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0D4C720844
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 19:13:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0D4C720844
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 4648B20882
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 19:13:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4648B20882
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ssi.bg
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730292AbeGYU0K (ORCPT
+        id S1730435AbeGYU0Z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 16:26:10 -0400
-Received: from mail-it0-f68.google.com ([209.85.214.68]:56118 "EHLO
-        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729370AbeGYU0K (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Jul 2018 16:26:10 -0400
-Received: by mail-it0-f68.google.com with SMTP id 16-v6so10254779itl.5;
-        Wed, 25 Jul 2018 12:13:09 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Gus1AnFJTbrTLsYvp6XQonogMjOwTeYNcXfplE0R/mM=;
-        b=aCaAUrk0/Gr0IbCGFvA3VQ72KcVn5mnnPLn8ChSDEzBhUdDFOEXvd37pqLsDaZwQIT
-         reTEH1VlzNnAHxYFMpXWezg1UnHgS45jqsWKEpD2oNn8wkmZKtnemMapF+s65PqevWcC
-         wbUKIbQPWz2/T+uK1abwgBh28r+gWYmaqOVhXDKK5UDSv7FkMu9QQ6wuaseaMHYVT5DP
-         3242GSa4f17OFeTkp+uflUTnAxYDXQMtl+9l2xCAviCIfcU9WZeyOUde03IKu7EUvWMb
-         ao3zyo9ocd1W8Cg7H53W4jM/21jc0AnnShPFMF59lDJOfkx09dlcOTX7oOkfSNeqnbJz
-         djcQ==
-X-Gm-Message-State: AOUpUlGVLBH3fuo0x40ZIqFCW+8p8d1cw8jsc3Z20vpjP0uzuSn1fFG8
-        WdZ5P6vcd8W6qGxrpUOXMTgYsVOCrg==
-X-Google-Smtp-Source: AAOMgpdl90UkQsKZiAVDuF0Cc8GF51FoL1tlOgaJ2y4O7AKPbxDdwXDcralZLPihrDxyLt41Pw1mlA==
-X-Received: by 2002:a02:5e42:: with SMTP id h63-v6mr20932451jab.117.1532545988764;
-        Wed, 25 Jul 2018 12:13:08 -0700 (PDT)
-Received: from localhost ([24.51.61.72])
-        by smtp.gmail.com with ESMTPSA id z14-v6sm4682842iob.68.2018.07.25.12.13.07
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 25 Jul 2018 12:13:08 -0700 (PDT)
-Date:   Wed, 25 Jul 2018 13:13:07 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH] dt-bindings: clock: samsung: Add SPDX license identifiers
-Message-ID: <20180725191307.GA32217@rob-hp-laptop>
-References: <20180718200216.6389-1-krzk@kernel.org>
+        Wed, 25 Jul 2018 16:26:25 -0400
+Received: from ja.ssi.bg ([178.16.129.10]:47304 "EHLO ja.ssi.bg"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729202AbeGYU0Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Jul 2018 16:26:25 -0400
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+        by ja.ssi.bg (8.15.2/8.15.2) with ESMTP id w6PJCmhP003426;
+        Wed, 25 Jul 2018 22:12:50 +0300
+Date:   Wed, 25 Jul 2018 22:12:48 +0300 (EEST)
+From:   Julian Anastasov <ja@ssi.bg>
+To:     Tan Hu <tan.hu@zte.com.cn>
+cc:     wensong@linux-vs.org, horms@verge.net.au, pablo@netfilter.org,
+        kadlec@blackhole.kfki.hu, fw@strlen.de, davem@davemloft.net,
+        netdev@vger.kernel.org, lvs-devel@vger.kernel.org,
+        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
+        linux-kernel@vger.kernel.org, zhong.weidong@zte.com.cn,
+        jiang.biao2@zte.com.cn
+Subject: Re: [PATCH v3] ipvs: fix race between ip_vs_conn_new() and
+ ip_vs_del_dest()
+In-Reply-To: <1532503387-3800-1-git-send-email-tan.hu@zte.com.cn>
+Message-ID: <alpine.LFD.2.20.1807252208320.2437@ja.home.ssi.bg>
+References: <1532503387-3800-1-git-send-email-tan.hu@zte.com.cn>
+User-Agent: Alpine 2.20 (LFD 67 2015-01-07)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180718200216.6389-1-krzk@kernel.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 18, 2018 at 10:02:16PM +0200, Krzysztof Kozlowski wrote:
-> Replace GPL license statements with SPDX license identifiers (GPL-2.0).
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> ---
->  include/dt-bindings/clock/exynos3250.h            | 5 +----
->  include/dt-bindings/clock/exynos4.h               | 7 ++-----
->  include/dt-bindings/clock/exynos5250.h            | 7 ++-----
->  include/dt-bindings/clock/exynos5260-clk.h        | 7 ++-----
->  include/dt-bindings/clock/exynos5410.h            | 7 ++-----
->  include/dt-bindings/clock/exynos5420.h            | 7 ++-----
->  include/dt-bindings/clock/exynos5433.h            | 5 +----
->  include/dt-bindings/clock/exynos7-clk.h           | 7 ++-----
->  include/dt-bindings/clock/s3c2410.h               | 5 +----
->  include/dt-bindings/clock/s3c2412.h               | 5 +----
->  include/dt-bindings/clock/s3c2443.h               | 5 +----
->  include/dt-bindings/clock/samsung,s2mps11.h       | 5 +----
->  include/dt-bindings/clock/samsung,s3c64xx-clock.h | 7 ++-----
->  13 files changed, 20 insertions(+), 59 deletions(-)
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+	Hello,
+
+On Wed, 25 Jul 2018, Tan Hu wrote:
+
+> We came across infinite loop in ipvs when using ipvs in docker
+> env.
+> 
+> When ipvs receives new packets and cannot find an ipvs connection,
+> it will create a new connection, then if the dest is unavailable
+> (i.e. IP_VS_DEST_F_AVAILABLE), the packet will be dropped sliently.
+> 
+> But if the dropped packet is the first packet of this connection,
+> the connection control timer never has a chance to start and the
+> ipvs connection cannot be released. This will lead to memory leak, or
+> infinite loop in cleanup_net() when net namespace is released like
+> this:
+> 
+>     ip_vs_conn_net_cleanup at ffffffffa0a9f31a [ip_vs]
+>     __ip_vs_cleanup at ffffffffa0a9f60a [ip_vs]
+>     ops_exit_list at ffffffff81567a49
+>     cleanup_net at ffffffff81568b40
+>     process_one_work at ffffffff810a851b
+>     worker_thread at ffffffff810a9356
+>     kthread at ffffffff810b0b6f
+>     ret_from_fork at ffffffff81697a18
+> 
+> race condition:
+>     CPU1                           CPU2
+>     ip_vs_in()
+>       ip_vs_conn_new()
+>                                    ip_vs_del_dest()
+>                                      __ip_vs_unlink_dest()
+>                                        ~IP_VS_DEST_F_AVAILABLE
+>       cp->dest && !IP_VS_DEST_F_AVAILABLE
+>       __ip_vs_conn_put
+>     ...
+>     cleanup_net  ---> infinite looping
+> 
+> Fix this by checking whether the timer already started.
+> 
+> Signed-off-by: Tan Hu <tan.hu@zte.com.cn>
+> Reviewed-by: Jiang Biao <jiang.biao2@zte.com.cn>
+
+	v3 looks good to me,
+
+Acked-by: Julian Anastasov <ja@ssi.bg>
+
+	Simon and Pablo, this can be applied to ipvs/nf tree...
+
+> ---
+> v2: fix use-after-free in CONN_ONE_PACKET case suggested by Julian Anastasov
+> v3: remove trailing whitespace for patch checking 
+> 
+>  net/netfilter/ipvs/ip_vs_core.c | 15 +++++++++++----
+>  1 file changed, 11 insertions(+), 4 deletions(-)
+> 
+> diff --git a/net/netfilter/ipvs/ip_vs_core.c b/net/netfilter/ipvs/ip_vs_core.c
+> index 0679dd1..a17104f 100644
+> --- a/net/netfilter/ipvs/ip_vs_core.c
+> +++ b/net/netfilter/ipvs/ip_vs_core.c
+> @@ -1972,13 +1972,20 @@ static int ip_vs_in_icmp_v6(struct netns_ipvs *ipvs, struct sk_buff *skb,
+>  	if (cp->dest && !(cp->dest->flags & IP_VS_DEST_F_AVAILABLE)) {
+>  		/* the destination server is not available */
+> 
+> -		if (sysctl_expire_nodest_conn(ipvs)) {
+> +		__u32 flags = cp->flags;
+> +
+> +		/* when timer already started, silently drop the packet.*/
+> +		if (timer_pending(&cp->timer))
+> +			__ip_vs_conn_put(cp);
+> +		else
+> +			ip_vs_conn_put(cp);
+> +
+> +		if (sysctl_expire_nodest_conn(ipvs) &&
+> +		    !(flags & IP_VS_CONN_F_ONE_PACKET)) {
+>  			/* try to expire the connection immediately */
+>  			ip_vs_conn_expire_now(cp);
+>  		}
+> -		/* don't restart its timer, and silently
+> -		   drop the packet. */
+> -		__ip_vs_conn_put(cp);
+> +
+>  		return NF_DROP;
+>  	}
+> 
+> --
+> 1.8.3.1
+
+Regards
+
+--
+Julian Anastasov <ja@ssi.bg>
