@@ -2,98 +2,119 @@ Return-Path: <SRS0=S+WB=KJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20686C67790
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 11:38:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5483FC6778F
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 11:40:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C47ED2088E
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 11:38:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 01E8020882
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 11:40:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="fMRhy6gj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C47ED2088E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=goldelico.com header.i=@goldelico.com header.b="Uvo4GFM0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 01E8020882
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goldelico.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729044AbeGYMtk (ORCPT
+        id S1728937AbeGYMv4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 08:49:40 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:39588 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729022AbeGYMtj (ORCPT
+        Wed, 25 Jul 2018 08:51:56 -0400
+Received: from mo4-p01-ob.smtp.rzone.de ([85.215.255.52]:11030 "EHLO
+        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728739AbeGYMvz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Jul 2018 08:49:39 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=References:In-Reply-To:Message-Id:
-        Date:Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=g1XJc4NMMKruBuBefALJIyJ4oWcJvLNZ3oMaHkEybYA=; b=fMRhy6gjMwQxHMPeRGkIaVAtq
-        BujM9X4Ss07k0gaTfDL994lgNsN4YJV+0CSmWLpoa4lJymJrxXS5d+hWg8BalAJOuk7xjASgS7At4
-        k8LkpT7E5ysF6S/3MHw9XfskPuT1qdS/8BFz8dVqIEl2U2wYFwPzIMb1hcqD64H1AicHbyCfu4TF8
-        D8zpFqOtSbZchyTWVFmEqQfLKj4d6h+u3bNMGIswaq2903qW3v6iWUu9BZrAzkil2LfNNyxi+/zJ5
-        SAvFd0FjA8Dq0wPd+ebwCWhHZcbPJ7/XH5Tj+Xk9V/GQohzfKWL7zL0FB+Cg49CxGXyITwwDTsV6p
-        mu2D5VaUQ==;
-Received: from clnet-p19-102.ikbnet.co.at ([83.175.77.102] helo=localhost)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fiI7Z-0006pE-Nj; Wed, 25 Jul 2018 11:38:22 +0000
-From:   Christoph Hellwig <hch@lst.de>
-To:     Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Cc:     iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 6/6] swiotlb: respect DMA_ATTR_NO_WARN in __swiotlb_map_page
-Date:   Wed, 25 Jul 2018 13:38:02 +0200
-Message-Id: <20180725113802.18943-7-hch@lst.de>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180725113802.18943-1-hch@lst.de>
-References: <20180725113802.18943-1-hch@lst.de>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+        Wed, 25 Jul 2018 08:51:55 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1532518836;
+        s=strato-dkim-0002; d=goldelico.com;
+        h=To:References:Message-Id:Cc:Date:In-Reply-To:From:Subject:
+        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
+        bh=nBjKI0xQGq17aJqlzDAgTKQHivw5kw5UiM2r1HRHmek=;
+        b=Uvo4GFM0sdXVdWvJLykM7racejaoaewhO3wGWCkG/7fdAyZ12DE9Sbju5VzYp/YBqw
+        ZwjAUAfrEFj+z7k6VsInZwAfRtnexPpguVs9sawk5w/kVZIw1FuiZxBGlcGmoFKCK7OJ
+        3OrPR2X/Mgc8I+SlJPuhC4k9dKXttFvyGBWgEDObRr7BU8v/89dvuFjCLxWJxhByCrCs
+        3c/1nJsxklmV/j6Z4a9h3RiyGFiVGBc2LZHconjZqoLZn4PYuGVWrtgTZxDV6dl6OyRj
+        X+FcBco3I39MC25llHJ2cFq/SyTpm1GufZZrmspMoNbszFdbkgjOsxLBnvOKdNzlDDYm
+        JmLQ==
+X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMgPgp8VKxflSZ1P34KBj4Qpw87Wiuc1qET/2Lw=="
+X-RZG-CLASS-ID: mo00
+Received: from imac.fritz.box
+        by smtp.strato.de (RZmta 43.13 DYNA|AUTH)
+        with ESMTPSA id 6047f4u6PBeYfBs
+        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
+        (Client did not present a certificate);
+        Wed, 25 Jul 2018 13:40:34 +0200 (CEST)
+Subject: Re: [PATCH 04/32] ARM: dts: omap3-gta04: fixes for tvout / venc
+Mime-Version: 1.0 (Mac OS X Mail 9.3 \(3124\))
+Content-Type: multipart/signed; boundary="Apple-Mail=_B017C245-8EDD-407D-AF80-B4EC89087852"; protocol="application/pgp-signature"; micalg=pgp-sha256
+X-Pgp-Agent: GPGMail
+From:   "H. Nikolaus Schaller" <hns@goldelico.com>
+In-Reply-To: <20180725103750.4yltpfswd52fpw63@earth.universe>
+Date:   Wed, 25 Jul 2018 13:40:32 +0200
+Cc:     Marek Belisko <marek@goldelico.com>,
+        =?utf-8?Q?Beno=C3=AEt_Cousson?= <bcousson@baylibre.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-omap@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, letux-kernel@openphoenux.org
+Message-Id: <1E64094B-7037-4409-A9EA-81648F8F51B4@goldelico.com>
+References: <cover.1532501910.git.hns@goldelico.com> <73e5b1fd4cc27e3148c6bc2e8f8281f3996ccf68.1532501910.git.hns@goldelico.com> <20180725103750.4yltpfswd52fpw63@earth.universe>
+To:     Sebastian Reichel <sebastian.reichel@collabora.co.uk>
+X-Mailer: Apple Mail (2.3124)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
----
- kernel/dma/swiotlb.c | 15 ++++++++++-----
- 1 file changed, 10 insertions(+), 5 deletions(-)
 
-diff --git a/kernel/dma/swiotlb.c b/kernel/dma/swiotlb.c
-index 8ca0964ebf3a..5c3db7c89e0f 100644
---- a/kernel/dma/swiotlb.c
-+++ b/kernel/dma/swiotlb.c
-@@ -606,8 +606,11 @@ __swiotlb_map_page(struct device *dev, phys_addr_t phys, size_t size,
- 
- 	switch (swiotlb_force) {
- 	case SWIOTLB_NO_FORCE:
--		dev_warn_ratelimited(dev,
--			"swiotlb: force disabled for address %pa\n", &phys);
-+		if (!(attrs & DMA_ATTR_NO_WARN)) {
-+			dev_warn_ratelimited(dev,
-+				"swiotlb: force disabled for address %pa\n",
-+				&phys);
-+		}
- 		return -EOPNOTSUPP;
- 	case SWIOTLB_NORMAL:
- 		/* can we address the memory directly? */
-@@ -627,10 +630,12 @@ __swiotlb_map_page(struct device *dev, phys_addr_t phys, size_t size,
- 	/* Ensure that the address returned is DMA'ble */
- 	*dma_addr = __phys_to_dma(dev, map_addr);
- 	if (unlikely(!dma_capable(dev, *dma_addr, size))) {
--		dev_err_ratelimited(dev,
--			"DMA: swiotlb buffer not addressable.\n");
-+		if (!(attrs & DMA_ATTR_NO_WARN)) {
-+			dev_err_ratelimited(dev,
-+				"DMA: swiotlb buffer not addressable.\n");
-+		}
- 		swiotlb_tbl_unmap_single(dev, map_addr, size, dir,
--			attrs | DMA_ATTR_SKIP_CPU_SYNC);
-+				attrs | DMA_ATTR_SKIP_CPU_SYNC);
- 		return -EINVAL;
- 	}
- 	return 0;
--- 
-2.18.0
+--Apple-Mail=_B017C245-8EDD-407D-AF80-B4EC89087852
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain;
+	charset=us-ascii
 
+
+> Am 25.07.2018 um 12:37 schrieb Sebastian Reichel =
+<sebastian.reichel@collabora.co.uk>:
+>=20
+> Hi,
+>=20
+> On Wed, Jul 25, 2018 at 08:58:36AM +0200, H. Nikolaus Schaller wrote:
+>> 			port@1 {
+>> -				reg =3D <1>;
+>> +				reg =3D <0>;
+>=20
+> You should also update the node name.
+
+AH, indeed. Thanks for your eagle's eyes :)
+
+BR,
+Nikolaus
+
+
+--Apple-Mail=_B017C245-8EDD-407D-AF80-B4EC89087852
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment;
+	filename=signature.asc
+Content-Type: application/pgp-signature;
+	name=signature.asc
+Content-Description: Message signed with OpenPGP using GPGMail
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAEBCAAGBQJbWGGxAAoJEIl79TGLgAm6CYwP/j4Nm4zbRcm/+Fjhr/VpH0kL
+81ZrYN0MQ1i1YUGuRtmXgtbhewe5Pm9ZaXZmRVlTW3LO4cM6WTEZyEyAyRznL1r3
+Yi4wBjzse1YXDVcSMlI6jPBKZT7DPaF16Ak7UcQYWL89z/3awMOOJR6ni1JVXceJ
+WNmEzuKzOCy+Jr82/oTrbdzemCr+r9nLOLA7fNvlLiV6oF99jzPi/U7k7ZevdZZm
+VJ99M83vg5fbr4Qv+DzJICbpDd5bko+ZwGeRyMeeQ1WmyYIuZzDvc1B1TYaFN1MW
+47LZmJNxgLMTICDs9/q3NMiaYEh6H5TEK3fN/zPzUoRYngEl1ekZdNHudY4CR/9W
+2HcUOo3dJdt3noQbduaFvt7rjLxVyDfI6f8izC+sIrUFHKySQKkVtkC80iidh3Wk
+ubvQGt+FExKgao6mXDVVj6ZghmpynSw8KPf6k8THkap/K01DPo+QUbnhoax8AhZC
+ZIR7y+9GRu6S48uo/CpfvpzpvEzKPiowIXladLqTs8q4PK0XzYs8nTj2NYKf9faf
+4lyswMkJnZHvkx029jVYNVMVIn4WJMzkf22zcjHh5OXvLZ1Bv2Z/dgiI2Xaaql3h
+UjsfRKGFAlCRN26pDfgkwz4bYQPk+Eh2BGkOaVI8JvHL04Hxkp1Pt6KCsnq2gwdw
+Hm3mDB7es7V9vKZChiw9
+=FDD3
+-----END PGP SIGNATURE-----
+
+--Apple-Mail=_B017C245-8EDD-407D-AF80-B4EC89087852--
