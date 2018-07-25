@@ -6,121 +6,146 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6507DC28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 01:18:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3870C6778F
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 01:18:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 17CA720856
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 01:18:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 17CA720856
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 740FE20856
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 01:18:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 740FE20856
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388564AbeGYC1N (ORCPT
+        id S2388616AbeGYC16 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 22:27:13 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:32776 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388485AbeGYC1N (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 22:27:13 -0400
-Received: from localhost.localdomain (c-24-4-125-7.hsd1.ca.comcast.net [24.4.125.7])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 80415DC0;
-        Wed, 25 Jul 2018 01:18:02 +0000 (UTC)
-Date:   Tue, 24 Jul 2018 18:18:00 -0700
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     Pavel Tatashin <pasha.tatashin@oracle.com>
-Cc:     steven.sistare@oracle.com, daniel.m.jordan@oracle.com,
-        linux-kernel@vger.kernel.org, kirill.shutemov@linux.intel.com,
-        mhocko@suse.com, linux-mm@kvack.org, dan.j.williams@intel.com,
-        jack@suse.cz, jglisse@redhat.com, jrdr.linux@gmail.com,
-        bhe@redhat.com, gregkh@linuxfoundation.org, vbabka@suse.cz,
-        richard.weiyang@gmail.com, dave.hansen@intel.com,
-        rientjes@google.com, mingo@kernel.org,
-        osalvador@techadventures.net, abdhalee@linux.vnet.ibm.com,
-        mpe@ellerman.id.au
-Subject: Re: [PATCH 3/3] mm: move mirrored memory specific code outside of
- memmap_init_zone
-Message-Id: <20180724181800.3f25fdf8bcf0d8fd05ea1f43@linux-foundation.org>
-In-Reply-To: <20180724235520.10200-4-pasha.tatashin@oracle.com>
-References: <20180724235520.10200-1-pasha.tatashin@oracle.com>
-        <20180724235520.10200-4-pasha.tatashin@oracle.com>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        Tue, 24 Jul 2018 22:27:58 -0400
+Received: from mga09.intel.com ([134.134.136.24]:10073 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388485AbeGYC16 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Jul 2018 22:27:58 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Jul 2018 18:18:47 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,399,1526367600"; 
+   d="scan'208";a="74233089"
+Received: from blu2-desk2.ccr.corp.intel.com (HELO [10.0.2.15]) ([10.239.13.1])
+  by fmsmga004.fm.intel.com with ESMTP; 24 Jul 2018 18:18:25 -0700
+Subject: Re: [RFC PATCH 01/10] iommu/vt-d: Get iommu device for a mediated
+ device
+To:     Alex Williamson <alex.williamson@redhat.com>
+References: <1532239773-15325-1-git-send-email-baolu.lu@linux.intel.com>
+ <1532239773-15325-2-git-send-email-baolu.lu@linux.intel.com>
+ <20180724125056.4ae477c9@t450s.home>
+Cc:     Joerg Roedel <joro@8bytes.org>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Kirti Wankhede <kwankhede@nvidia.com>, ashok.raj@intel.com,
+        sanjay.k.kumar@intel.com, jacob.jun.pan@intel.com,
+        kevin.tian@intel.com, yi.l.liu@intel.com, yi.y.sun@intel.com,
+        peterx@redhat.com, iommu@lists.linux-foundation.org,
+        kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jacob Pan <jacob.jun.pan@linux.intel.com>
+From:   Lu Baolu <baolu.lu@linux.intel.com>
+Message-ID: <5B57CFDD.1070505@linux.intel.com>
+Date:   Wed, 25 Jul 2018 09:18:21 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:38.0) Gecko/20100101
+ Thunderbird/38.5.1
+MIME-Version: 1.0
+In-Reply-To: <20180724125056.4ae477c9@t450s.home>
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 24 Jul 2018 19:55:20 -0400 Pavel Tatashin <pasha.tatashin@oracle.com> wrote:
+Hi Alex,
 
-> memmap_init_zone, is getting complex, because it is called from different
-> contexts: hotplug, and during boot, and also because it must handle some
-> architecture quirks. One of them is mirroed memory.
-> 
-> Move the code that decides whether to skip mirrored memory outside of
-> memmap_init_zone, into a separate function.
+On 07/25/2018 02:50 AM, Alex Williamson wrote:
+> On Sun, 22 Jul 2018 14:09:24 +0800
+> Lu Baolu <baolu.lu@linux.intel.com> wrote:
+>
+>> This patch adds the support to get the iommu device for a mediated
+>> device. The assumption is that each mediated device is a minimal
+>> assignable set of a physical PCI device. Hence, we should use the
+>> iommu device of the parent PCI device to manage the translation.
+> Hmm, is this absolutely a valid assumption?  I'm afraid there's an
+> assumption throughout this series that the only way an mdev device
+> could be interacting with the IOMMU is via S-IOV, but we could choose
+> today to make an mdev wrapper for any device, which might provide basic
+> RID granularity to the IOMMU.  So if I make an mdev wrapper for a PF
+> such that I can implement migration for that device, is it valid for
+> the IOMMU driver to flag me as an mdev device and base mappings on my
+> parent device? 
 
-Conflicts a bit with the page_alloc.c hunk from
-http://ozlabs.org/~akpm/mmots/broken-out/mm-page_alloc-remain-memblock_next_valid_pfn-on-arm-arm64.patch.  Please check my fixup:
+You are right. We should not make it SIOV centric. Let me look into the
+patches and identify/fix the unreasonable assumptions.
 
-void __meminit memmap_init_zone(unsigned long size, int nid, unsigned long zone,
-		unsigned long start_pfn, enum memmap_context context,
-		struct vmem_altmap *altmap)
-{
-	unsigned long pfn, end_pfn = start_pfn + size;
-	struct page *page;
+>  Perhaps in this patch we can assume that the parent of
+> such an mdev device would be the PF backing it and that results in the
+> correct drhd,
 
-	if (highest_memmap_pfn < end_pfn - 1)
-		highest_memmap_pfn = end_pfn - 1;
+Okay.
 
-	/*
-	 * Honor reservation requested by the driver for this ZONE_DEVICE
-	 * memory
-	 */
-	if (altmap && start_pfn == altmap->base_pfn)
-		start_pfn += altmap->reserve;
+>  but in the next patch we start imposing the assumption
+> that because the device is an mdev, the only valid association is via
+> pasid, which I'd say is incorrect.
 
-	for (pfn = start_pfn; pfn < end_pfn; pfn++) {
-		/*
-		 * There can be holes in boot-time mem_map[]s handed to this
-		 * function.  They do not exist on hotplugged memory.
-		 */
-		if (context == MEMMAP_EARLY) {
-			if (!early_pfn_valid(pfn)) {
-				pfn = next_valid_pfn(pfn) - 1;
-				continue;
-			}
-			if (!early_pfn_in_nid(pfn, nid))
-				continue;
-			if (overlap_memmap_init(zone, &pfn))
-				continue;
-			if (defer_init(nid, pfn, end_pfn))
-				break;
-		}
+You are right. I will find and fix it.
 
-		page = pfn_to_page(pfn);
-		__init_single_page(page, pfn, zone, nid);
-		if (context == MEMMAP_HOTPLUG)
-			SetPageReserved(page);
+>  
+>> Cc: Ashok Raj <ashok.raj@intel.com>
+>> Cc: Jacob Pan <jacob.jun.pan@linux.intel.com>
+>> Cc: Kevin Tian <kevin.tian@intel.com>
+>> Cc: Liu Yi L <yi.l.liu@intel.com>
+>> Signed-off-by: Sanjay Kumar <sanjay.k.kumar@intel.com>
+>> Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
+>> ---
+>>  drivers/iommu/intel-iommu.c |  6 ++++++
+>>  drivers/iommu/intel-pasid.h | 16 ++++++++++++++++
+>>  2 files changed, 22 insertions(+)
+>>
+>> diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
+>> index 7d198ea..fc3ac1c 100644
+>> --- a/drivers/iommu/intel-iommu.c
+>> +++ b/drivers/iommu/intel-iommu.c
+>> @@ -767,6 +767,12 @@ static struct intel_iommu *device_to_iommu(struct device *dev, u8 *bus, u8 *devf
+>>  	if (iommu_dummy(dev))
+>>  		return NULL;
+>>  
+>> +	if (dev_is_mdev(dev)) {
+>> +		dev = dev_mdev_parent(dev);
+>> +		if (WARN_ON(!dev_is_pci(dev)))
+>> +			return NULL;
+>> +	}
+>> +
+>>  	if (dev_is_pci(dev)) {
+>>  		struct pci_dev *pf_pdev;
+>>  
+>> diff --git a/drivers/iommu/intel-pasid.h b/drivers/iommu/intel-pasid.h
+>> index 518df72..46cde66 100644
+>> --- a/drivers/iommu/intel-pasid.h
+>> +++ b/drivers/iommu/intel-pasid.h
+>> @@ -35,6 +35,22 @@ struct pasid_table {
+>>  	struct list_head	dev;		/* device list */
+>>  };
+>>  
+>> +static inline bool dev_is_mdev(struct device *dev)
+>> +{
+>> +	if (!dev)
+>> +		return false;
+>> +
+>> +	return !strcmp(dev->bus->name, "mdev");
+>> +}
+> I assume we're not using mdev_bus_type because mdev is a loadable
+> module and that symbol doesn't exist in this statically loaded driver,
 
-		/*
-		 * Mark the block movable so that blocks are reserved for
-		 * movable at startup. This will force kernel allocations
-		 * to reserve their blocks rather than leaking throughout
-		 * the address space during boot when many long-lived
-		 * kernel allocations are made.
-		 *
-		 * bitmap is created for zone's valid pfn range. but memmap
-		 * can be created for invalid pages (for alignment)
-		 * check here not to call set_pageblock_migratetype() against
-		 * pfn out of zone.
-		 */
-		if (!(pfn & (pageblock_nr_pages - 1))) {
-			set_pageblock_migratetype(page, MIGRATE_MOVABLE);
-			cond_resched();
-		}
-	}
-}
+Yes.
 
+> but strcmp is a pretty ugly alternative.  Could we use symbol_get() so
+> that we can use mdev_bus_type?  Thanks,
+
+Sure.
+
+Best regards,
+Lu Baolu
