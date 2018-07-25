@@ -2,144 +2,89 @@ Return-Path: <SRS0=S+WB=KJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA089C6778F
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 15:26:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FAE7C6778F
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 15:27:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6125520891
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 15:26:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6125520891
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+	by mail.kernel.org (Postfix) with ESMTP id DE0BC20852
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 15:27:47 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="blEnRgQA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DE0BC20852
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728851AbeGYQid (ORCPT
+        id S1728746AbeGYQjz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 12:38:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37918 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728436AbeGYQid (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Jul 2018 12:38:33 -0400
-Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B6A7620852;
-        Wed, 25 Jul 2018 15:26:21 +0000 (UTC)
-Date:   Wed, 25 Jul 2018 11:26:19 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Snild Dolkow <snild@sony.com>
-Cc:     <linux-kernel@vger.kernel.org>,
-        Peter Enderborg <peter.enderborg@sony.com>,
-        Yoshitaka Seto <yoshitaka.seto@sony.com>,
-        Oleksiy Avramchenko <oleksiy.avramchenko@sony.com>,
-        KOSAKI Motohiro <kosaki.motohiro@jp.fujitsu.com>,
-        John Stultz <john.stultz@linaro.org>,
-        Ingo Molnar <mingo@kernel.org>, Jens Axboe <axboe@kernel.dk>,
-        Tejun Heo <tj@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH v2] kthread, tracing: Don't expose half-written comm
- when creating kthreads
-Message-ID: <20180725112619.00b629cd@gandalf.local.home>
-In-Reply-To: <20180724151213.12511-1-snild@sony.com>
-References: <20180724151213.12511-1-snild@sony.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Wed, 25 Jul 2018 12:39:55 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:35042 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728436AbeGYQjz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Jul 2018 12:39:55 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w6PFNdOh171140;
+        Wed, 25 Jul 2018 15:27:32 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2018-07-02;
+ bh=58tkg3WyrisZMa0y69re/Yopb27hA6C9YptAv71Z8vc=;
+ b=blEnRgQAdJMUgUp66TBboMJW1Mx1DDqiCtDSrFyJIerTmgmAUgZqISfTbNnAhWNDTLIh
+ oDNZto9Rm/1n1D9FjQfC4lvE3Jr6MS7PIYWxXroIsqsKVqGgyB8wptVI432+N5JCO8Um
+ 27/g8SiStLK2MY2swiHIBvG234N68QDPEMj3jnWRYLoB5WG1iWwUJSRTch8Pk4ex2n8G
+ IVqAt0pbmmvtEeKIVBfUcYQ/tPLnwrGRWZaWIkOvVuCbl+F/FqoFPRGRVRqL27eqgah4
+ WSEYnjyNXgP+SKUfQS2SvBpbA3N20Eo/HUi5LTSZwwbt6TNLRuWlYl3zVWHjm3xxOIMq uw== 
+Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
+        by userp2120.oracle.com with ESMTP id 2kbwfpwx95-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 25 Jul 2018 15:27:32 +0000
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w6PFRVO8007160
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 25 Jul 2018 15:27:31 GMT
+Received: from abhmp0019.oracle.com (abhmp0019.oracle.com [141.146.116.25])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w6PFRVbc019293;
+        Wed, 25 Jul 2018 15:27:31 GMT
+Received: from oracle.com (/10.39.227.239)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 25 Jul 2018 08:27:31 -0700
+Date:   Wed, 25 Jul 2018 11:27:25 -0400
+From:   Sowmini Varadhan <sowmini.varadhan@oracle.com>
+To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Cc:     Ka-Cheong Poon <ka-cheong.poon@oracle.com>,
+        Santosh Shilimkar <santosh.shilimkar@oracle.com>,
+        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
+        linux-rdma@vger.kernel.org, rds-devel@oss.oracle.com,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] rds: send: Fix dead code in rds_sendmsg
+Message-ID: <20180725152725.GD8870@oracle.com>
+References: <20180725152227.GA26303@embeddedor.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180725152227.GA26303@embeddedor.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8964 signatures=668706
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=840
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1806210000 definitions=main-1807250165
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 24 Jul 2018 17:12:13 +0200
-Snild Dolkow <snild@sony.com> wrote:
-
-> There is a window for racing when printing directly to task->comm,
-> allowing other threads to see a non-terminated string. The vsnprintf
-> function fills the buffer, counts the truncated chars, then finally
-> writes the \0 at the end.
+On (07/25/18 10:22), Gustavo A. R. Silva wrote:
+> Currently, code at label *out* is unreachable. Fix this by updating
+> variable *ret* with -EINVAL, so the jump to *out* can be properly
+> executed instead of directly returning from function.
 > 
-> 	creator                     other
-> 	vsnprintf:
-> 	  fill (not terminated)
-> 	  count the rest            trace_sched_waking(p):
-> 	  ...                         memcpy(comm, p->comm, TASK_COMM_LEN)
-> 	  write \0
-> 
-> The consequences depend on how 'other' uses the string. In our case,
-> it was copied into the tracing system's saved cmdlines, a buffer of
-> adjacent TASK_COMM_LEN-byte buffers (note the 'n' where 0 should be):
-> 
-> 	crash-arm64> x/1024s savedcmd->saved_cmdlines | grep 'evenk'
-> 	0xffffffd5b3818640:     "irq/497-pwr_evenkworker/u16:12"
-> 
-> ...and a strcpy out of there would cause stack corruption:
-> 
-> 	[224761.522292] Kernel panic - not syncing: stack-protector:
-> 	    Kernel stack is corrupted in: ffffff9bf9783c78
-> 
-> 	crash-arm64> kbt | grep 'comm\|trace_print_context'
-> 	#6  0xffffff9bf9783c78 in trace_print_context+0x18c(+396)
-> 	      comm (char [16]) =  "irq/497-pwr_even"
-> 
-> 	crash-arm64> rd 0xffffffd4d0e17d14 8
-> 	ffffffd4d0e17d14:  2f71726900000000 5f7277702d373934   ....irq/497-pwr_
-> 	ffffffd4d0e17d24:  726f776b6e657665 3a3631752f72656b   evenkworker/u16:
-> 	ffffffd4d0e17d34:  f9780248ff003231 cede60e0ffffff9b   12..H.x......`..
-> 	ffffffd4d0e17d44:  cede60c8ffffffd4 00000fffffffffd4   .....`..........
-> 
-> The workaround in e09e28671 (use strlcpy in __trace_find_cmdline) was
-> likely needed because of this same bug.
-> 
-> Solved by vsnprintf:ing to a local buffer, then using set_task_comm().
-> This way, there won't be a window where comm is not terminated.
-> 
+> Addresses-Coverity-ID: 1472059 ("Structurally dead code")
+> Fixes: 1e2b44e78eea ("rds: Enable RDS IPv6 support")
+> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 
-Should add:
-
-Cc: stable@vger.kernel.org
-
-And it is a bug from beginning of git. But it wasn't really until
-tracing came along that can trigger it. Thus:
-
-Fixes: bc0c38d139ec7 ("ftrace: latency tracer infrastructure")
-
-> Signed-off-by: Snild Dolkow <snild@sony.com>
-
-Reviewed-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-
-Now the question is, who will take this in their tree?
-
-I can, unless someone else wants it. But I wont without another
-Acked-by.
-
--- Steve
-
-> ---
->  kernel/kthread.c | 8 +++++++-
->  1 file changed, 7 insertions(+), 1 deletion(-)
-> 
-> diff --git a/kernel/kthread.c b/kernel/kthread.c
-> index 481951bf091d..1a481ae12dec 100644
-> --- a/kernel/kthread.c
-> +++ b/kernel/kthread.c
-> @@ -319,8 +319,14 @@ struct task_struct *__kthread_create_on_node(int (*threadfn)(void *data),
->  	task = create->result;
->  	if (!IS_ERR(task)) {
->  		static const struct sched_param param = { .sched_priority = 0 };
-> +		char name[TASK_COMM_LEN];
->  
-> -		vsnprintf(task->comm, sizeof(task->comm), namefmt, args);
-> +		/*
-> +		 * task is already visible to other tasks, so updating
-> +		 * COMM must be protected.
-> +		 */
-> +		vsnprintf(name, sizeof(name), namefmt, args);
-> +		set_task_comm(task, name);
->  		/*
->  		 * root may have changed our (kthreadd's) priority or CPU mask.
->  		 * The kernel thread should not inherit these properties.
-
+Acked-by: Sowmini Varadhan <sowmini.varadhan@oracle.com>
