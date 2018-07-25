@@ -2,156 +2,126 @@ Return-Path: <SRS0=S+WB=KJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36B0BC67790
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 20:27:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC0FEC6778F
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 20:31:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D9B0620852
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 20:27:16 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="bvV00rYY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D9B0620852
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	by mail.kernel.org (Postfix) with ESMTP id 8211F20671
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 20:31:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8211F20671
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731248AbeGYVkc (ORCPT
+        id S1730965AbeGYVpF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 17:40:32 -0400
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:59444 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730536AbeGYVkc (ORCPT
+        Wed, 25 Jul 2018 17:45:05 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:40184 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729529AbeGYVpE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Jul 2018 17:40:32 -0400
-Received: from dflxv15.itg.ti.com ([128.247.5.124])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id w6PKRAr1018025;
-        Wed, 25 Jul 2018 15:27:10 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1532550430;
-        bh=DAQEMApjfH+/47sZA7yp1eU6RoqPHuwR+IkemIvvo4o=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=bvV00rYYM/h16lfLkC8KwY+T1pcj+1UW5PtuJ+v2wXqhIlbey31Y0FwDI0G1cjTZ7
-         Sm+okQnPium5rEAbX3rmQu9eAkjxztLNVQW5DszXYxoGV8+IirDRamCMlNSwaNgGgm
-         7NaG5Uvwl4WAG/mt45AEi6jeudoEvKpUIrmwK98k=
-Received: from DLEE113.ent.ti.com (dlee113.ent.ti.com [157.170.170.24])
-        by dflxv15.itg.ti.com (8.14.3/8.13.8) with ESMTP id w6PKRA7R009059;
-        Wed, 25 Jul 2018 15:27:10 -0500
-Received: from DLEE112.ent.ti.com (157.170.170.23) by DLEE113.ent.ti.com
- (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Wed, 25
- Jul 2018 15:27:09 -0500
-Received: from dlep32.itg.ti.com (157.170.170.100) by DLEE112.ent.ti.com
- (157.170.170.23) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
- Wed, 25 Jul 2018 15:27:09 -0500
-Received: from [128.247.58.153] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id w6PKR9qm026396;
-        Wed, 25 Jul 2018 15:27:09 -0500
-Subject: Re: [PATCH 1/1] remoteproc: replace "%p" with "%pK"
-To:     Loic Pallardy <loic.pallardy@st.com>, <bjorn.andersson@linaro.org>,
-        <ohad@wizery.com>
-CC:     <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <arnaud.pouliquen@st.com>, <benjamin.gaignard@linaro.org>
-References: <1530880707-29333-1-git-send-email-loic.pallardy@st.com>
-From:   Suman Anna <s-anna@ti.com>
-Message-ID: <4ca468d8-046e-b7ee-1505-f7d0e85c5101@ti.com>
-Date:   Wed, 25 Jul 2018 15:27:09 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Wed, 25 Jul 2018 17:45:04 -0400
+Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w6PKNtTh041394
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Jul 2018 16:31:45 -0400
+Received: from e14.ny.us.ibm.com (e14.ny.us.ibm.com [129.33.205.204])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2key1bjgfq-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Jul 2018 16:31:45 -0400
+Received: from localhost
+        by e14.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <muriloo@linux.ibm.com>;
+        Wed, 25 Jul 2018 16:31:43 -0400
+Received: from b01cxnp22034.gho.pok.ibm.com (9.57.198.24)
+        by e14.ny.us.ibm.com (146.89.104.201) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 25 Jul 2018 16:31:39 -0400
+Received: from b01ledav006.gho.pok.ibm.com (b01ledav006.gho.pok.ibm.com [9.57.199.111])
+        by b01cxnp22034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w6PKVdZF8061322
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 25 Jul 2018 20:31:39 GMT
+Received: from b01ledav006.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 8D258AC059;
+        Wed, 25 Jul 2018 16:32:22 -0400 (EDT)
+Received: from b01ledav006.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id C3F57AC05E;
+        Wed, 25 Jul 2018 16:32:21 -0400 (EDT)
+Received: from localhost (unknown [9.85.190.157])
+        by b01ledav006.gho.pok.ibm.com (Postfix) with ESMTPS;
+        Wed, 25 Jul 2018 16:32:21 -0400 (EDT)
+Date:   Wed, 25 Jul 2018 17:31:35 -0300
+From:   Murilo Opsfelder Araujo <muriloo@linux.ibm.com>
+To:     LEROY Christophe <christophe.leroy@c-s.fr>
+Cc:     linuxppc-dev@lists.ozlabs.org, "Tobin C . Harding" <me@tobin.cc>,
+        Sukadev Bhattiprolu <sukadev@linux.vnet.ibm.com>,
+        Simon Guo <wei.guo.simon@gmail.com>,
+        Paul Mackerras <paulus@samba.org>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Michael Neuling <mikey@neuling.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        Cyril Bur <cyrilbur@gmail.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Balbir Singh <bsingharora@gmail.com>,
+        Andrew Donnellan <andrew.donnellan@au1.ibm.com>,
+        "Alastair D'Silva" <alastair@d-silva.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/7] powerpc/traps: Return early in show_signal_msg()
+References: <20180724192720.32417-1-muriloo@linux.ibm.com>
+ <20180724192720.32417-3-muriloo@linux.ibm.com>
+ <20180725174228.Horde.-PsCOyKHj9skAHIMbqyLDg1@messagerie.si.c-s.fr>
 MIME-Version: 1.0
-In-Reply-To: <1530880707-29333-1-git-send-email-loic.pallardy@st.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180725174228.Horde.-PsCOyKHj9skAHIMbqyLDg1@messagerie.si.c-s.fr>
+User-Agent: Mutt/1.10.0 (2018-05-17)
+X-TM-AS-GCONF: 00
+x-cbid: 18072520-0052-0000-0000-00000313706B
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009426; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000266; SDB=6.01066073; UDB=6.00547681; IPR=6.00843932;
+ MB=3.00022324; MTD=3.00000008; XFM=3.00000015; UTC=2018-07-25 20:31:42
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18072520-0053-0000-0000-00005D7D84AF
+Message-Id: <20180725203135.GD23643@kermit-br-ibm-com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-25_04:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1806210000 definitions=main-1807250213
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/06/2018 07:38 AM, Loic Pallardy wrote:
-> The format specifier "%p" can leak kernel addresses.
-> Use "%pK" instead.
-> 
-> This patch proposes changes for remoteproc core only.
-> 
-> Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
+Hi, Christophe.
 
-Acked-by: Suman Anna <s-anna@ti.com>
+On Wed, Jul 25, 2018 at 05:42:28PM +0200, LEROY Christophe wrote:
+> Murilo Opsfelder Araujo <muriloo@linux.ibm.com> a écrit :
+> 
+> > Modify logic of show_signal_msg() to return early, if possible.  Replace
+> > printk_ratelimited() by printk() and a default rate limit burst to limit
+> > displaying unhandled signals messages.
+> 
+> Can you explain more the benefits of this change ?
 
-> ---
->  drivers/remoteproc/remoteproc_core.c    | 6 +++---
->  drivers/remoteproc/remoteproc_debugfs.c | 4 ++--
->  drivers/remoteproc/remoteproc_virtio.c  | 2 +-
->  3 files changed, 6 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-> index a9609d9..c597f0c 100644
-> --- a/drivers/remoteproc/remoteproc_core.c
-> +++ b/drivers/remoteproc/remoteproc_core.c
-> @@ -241,7 +241,7 @@ int rproc_alloc_vring(struct rproc_vdev *rvdev, int i)
->  	if (notifyid > rproc->max_notifyid)
->  		rproc->max_notifyid = notifyid;
->  
-> -	dev_dbg(dev, "vring%d: va %p dma %pad size 0x%x idr %d\n",
-> +	dev_dbg(dev, "vring%d: va %pK dma %pad size 0x%x idr %d\n",
->  		i, va, &dma, size, notifyid);
->  
->  	rvring->va = va;
-> @@ -497,7 +497,7 @@ static int rproc_handle_trace(struct rproc *rproc, struct fw_rsc_trace *rsc,
->  
->  	rproc->num_traces++;
->  
-> -	dev_dbg(dev, "%s added: va %p, da 0x%x, len 0x%x\n",
-> +	dev_dbg(dev, "%s added: va %pK, da 0x%x, len 0x%x\n",
->  		name, ptr, rsc->da, rsc->len);
->  
->  	return 0;
-> @@ -635,7 +635,7 @@ static int rproc_handle_carveout(struct rproc *rproc,
->  		goto free_carv;
->  	}
->  
-> -	dev_dbg(dev, "carveout va %p, dma %pad, len 0x%x\n",
-> +	dev_dbg(dev, "carveout va %pK, dma %pad, len 0x%x\n",
->  		va, &dma, rsc->len);
->  
->  	/*
-> diff --git a/drivers/remoteproc/remoteproc_debugfs.c b/drivers/remoteproc/remoteproc_debugfs.c
-> index a204883..a5c29f2 100644
-> --- a/drivers/remoteproc/remoteproc_debugfs.c
-> +++ b/drivers/remoteproc/remoteproc_debugfs.c
-> @@ -231,7 +231,7 @@ static int rproc_rsc_table_show(struct seq_file *seq, void *p)
->  			}
->  			break;
->  		default:
-> -			seq_printf(seq, "Unknown resource type found: %d [hdr: %p]\n",
-> +			seq_printf(seq, "Unknown resource type found: %d [hdr: %pK]\n",
->  				   hdr->type, hdr);
->  			break;
->  		}
-> @@ -260,7 +260,7 @@ static int rproc_carveouts_show(struct seq_file *seq, void *p)
->  
->  	list_for_each_entry(carveout, &rproc->carveouts, node) {
->  		seq_puts(seq, "Carveout memory entry:\n");
-> -		seq_printf(seq, "\tVirtual address: %p\n", carveout->va);
-> +		seq_printf(seq, "\tVirtual address: %pK\n", carveout->va);
->  		seq_printf(seq, "\tDMA address: %pad\n", &carveout->dma);
->  		seq_printf(seq, "\tDevice address: 0x%x\n", carveout->da);
->  		seq_printf(seq, "\tLength: 0x%x Bytes\n\n", carveout->len);
-> diff --git a/drivers/remoteproc/remoteproc_virtio.c b/drivers/remoteproc/remoteproc_virtio.c
-> index b0633fd..bbecd44 100644
-> --- a/drivers/remoteproc/remoteproc_virtio.c
-> +++ b/drivers/remoteproc/remoteproc_virtio.c
-> @@ -96,7 +96,7 @@ static struct virtqueue *rp_find_vq(struct virtio_device *vdev,
->  	size = vring_size(len, rvring->align);
->  	memset(addr, 0, size);
->  
-> -	dev_dbg(dev, "vring%d: va %p qsz %d notifyid %d\n",
-> +	dev_dbg(dev, "vring%d: va %pK qsz %d notifyid %d\n",
->  		id, addr, len, rvring->notifyid);
->  
->  	/*
-> 
+Mainly is to improve readability of the function.
+
+The conditions to display the message were coupled together in one
+single `if` statement.
+
+Besides that, patch 5/7 adds a call to print_vma_addr(), which is not
+aware of any rate limit - it simply calls printk().
+
+So splitting out the rate limit check outside show_signal_msg() makes it
+easier to the caller decide if it wants to respect a printk rate limit
+or not.
+
+Cheers
+Murilo
 
