@@ -2,109 +2,128 @@ Return-Path: <SRS0=S+WB=KJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5EBBC6778F
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 22:31:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E200DC67790
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 22:32:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6496B20833
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 22:31:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 93C8020833
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 22:32:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=tobin.cc header.i=@tobin.cc header.b="OJkhnxqN";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="OBxg95sj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6496B20833
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=tobin.cc
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="diCrkIN8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 93C8020833
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731603AbeGYXpZ (ORCPT
+        id S1731655AbeGYXp4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 19:45:25 -0400
-Received: from wout2-smtp.messagingengine.com ([64.147.123.25]:45793 "EHLO
-        wout2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1731174AbeGYXpY (ORCPT
+        Wed, 25 Jul 2018 19:45:56 -0400
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:39242 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731605AbeGYXpz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Jul 2018 19:45:24 -0400
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-        by mailout.west.internal (Postfix) with ESMTP id 532D12A6;
-        Wed, 25 Jul 2018 18:31:38 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute5.internal (MEProxy); Wed, 25 Jul 2018 18:31:38 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tobin.cc; h=cc
-        :content-type:date:from:in-reply-to:message-id:mime-version
-        :references:subject:to:x-me-sender:x-me-sender:x-sasl-enc; s=
-        fm3; bh=YSVJe6pHvZOo02PXOPyxpWSpCeK8JSyEq9/wvgIZOeg=; b=OJkhnxqN
-        SqK+DX8PLgEMFFu2IcfqduRICoWbp8j6B/EpIbSsBzxki5MXJKO5S0U34O7toOQ3
-        9v3v1RoRm5dwlG3bju87YnkrZmmvujXZu3dBaCiEQhQY9UaIYAVPOkXQKcWSSJ1m
-        IYQVMAy7hPUCjdLeDqJG7oDy3vONO48jYDOe4SyK+g1b+G2AcVqkDQCRWNyGxZ+H
-        42VPbUYAiJLJHGnrQbv1ocjvLqGCN/P2ddB+7heUPogfC8TKjCEJULaVIZ946lfN
-        XG4B0tUyYCzYPpaoAHN1Sbl4ORZazlW94L5Mx+JZBdYnnRrQsHXKKxAe6QgMY5xH
-        MV3m69J9QYbF7w==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-sender
-        :x-me-sender:x-sasl-enc; s=fm3; bh=YSVJe6pHvZOo02PXOPyxpWSpCeK8J
-        SyEq9/wvgIZOeg=; b=OBxg95sjR2d0uqrFFBb5jA9Kz6U8/0tMHn3dCcjCEXb4f
-        SIrizL3q6HFBOyphH6L40azHzBaaO0r43Fe0J+LJhMX3A1leUjCsV2+DBgUXizHy
-        if6nyD0uNR59ZTf//yZ1QAN4WKXufvNi1soprpY0xKd5iNNW7qvbw3HW893adRVs
-        Z6nsJwBRbnTJVouuz5Fu5coNxJ+JmLxW5QwdbbIze5iQqkK7uFCfeqnFKO+grsd/
-        ZnUqB934bkG+saOuHpr+h8d+kIyT2/kZpSiNu0GScJ1C8XzR9EamU9QcbU7zqqKf
-        QxOf5iUXkJFmtJ7vo4n6NtyjXSmEjurY73HGyjysA==
-X-ME-Proxy: <xmx:SfpYW_r8OZRngVZZgBq_DsA9LzD9PaQR8OkOfH4ZEhghBYZMOdeyfg>
-    <xmx:SfpYWxm42W1oMsCEV4PVHOq3Bt5I1CWn3GRVe9QfPg4AspZZtAK_9Q>
-    <xmx:SfpYWygggIN6t9uuspfz1UOPnUMZXfhpHpq3G3eHjmeTeSKiTNH9rg>
-    <xmx:SfpYW7Y9XfMsBBwus7MPf97zQaBW3144fKJxI_2SXTe7KqqF6FytBQ>
-    <xmx:SfpYW4sM25836KeQXIqe5DbqmJJ37Oqz-UxBRTddFnDZb7-tc5e9VA>
-    <xmx:SfpYW7VSdpPxNbXLchWnNyUpwCyB8WfIvuDKbc9rlz0Lfi72KWFW9A>
-X-ME-Sender: <xms:SfpYW3TOuBcox7k2Np9e4X1MnNZrapZhlGEMGElvRdQellnFH-N_QQ>
-Received: from localhost (ppp121-44-239-245.bras2.syd2.internode.on.net [121.44.239.245])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 8E0B010261;
-        Wed, 25 Jul 2018 18:31:36 -0400 (EDT)
-Date:   Thu, 26 Jul 2018 08:31:33 +1000
-From:   "Tobin C. Harding" <me@tobin.cc>
-To:     Jonathan Corbet <corbet@lwn.net>
-Cc:     "David S. Miller" <davem@davemloft.net>, linux-doc@vger.kernel.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next 0/2] docs: net: Convert netdev-FAQ to RST
-Message-ID: <20180725223133.GE6067@eros>
-References: <20180725025005.14332-1-me@tobin.cc>
- <20180725032810.GA6067@eros>
- <20180725081415.373bde37@lwn.net>
+        Wed, 25 Jul 2018 19:45:55 -0400
+Received: from dlelxv90.itg.ti.com ([172.17.2.17])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id w6PMW6RS039157;
+        Wed, 25 Jul 2018 17:32:06 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1532557926;
+        bh=WP2+soeYI/gcryaOB2EXC4K7qCoDg2lFJEeGWfNJSO0=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=diCrkIN8o+wEplrlSudqEDFdqMNHGrubEG2QQK366zzckp5ZxkhG7r5gYdZPHe6OE
+         RzFTf+jqyyGVt6kOrYOnwbuKR/XlMrWBrksQKFDM3uT9NGpA9lH2We63WalBjQnX7g
+         adtIHi/FdmyKuhRqX0drQU1umiu8dAqZPnoBgFC8=
+Received: from DFLE115.ent.ti.com (dfle115.ent.ti.com [10.64.6.36])
+        by dlelxv90.itg.ti.com (8.14.3/8.13.8) with ESMTP id w6PMW6Nr008864;
+        Wed, 25 Jul 2018 17:32:06 -0500
+Received: from DFLE109.ent.ti.com (10.64.6.30) by DFLE115.ent.ti.com
+ (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Wed, 25
+ Jul 2018 17:32:06 -0500
+Received: from dflp32.itg.ti.com (10.64.6.15) by DFLE109.ent.ti.com
+ (10.64.6.30) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
+ Wed, 25 Jul 2018 17:32:06 -0500
+Received: from [128.247.58.153] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dflp32.itg.ti.com (8.14.3/8.13.8) with ESMTP id w6PMW6dm005490;
+        Wed, 25 Jul 2018 17:32:06 -0500
+Subject: Re: [PATCH 1/1] rpmsg: virtio_rpmsg_bus: Fix rpmsg_remove() release
+ order
+To:     Loic Pallardy <loic.pallardy@st.com>, <bjorn.andersson@linaro.org>,
+        <ohad@wizery.com>
+CC:     <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <arnaud.pouliquen@st.com>, <benjamin.gaignard@linaro.org>
+References: <1532552826-30003-1-git-send-email-loic.pallardy@st.com>
+From:   Suman Anna <s-anna@ti.com>
+Message-ID: <d9b7192b-2fc7-664f-d9a5-b90c8644b991@ti.com>
+Date:   Wed, 25 Jul 2018 17:32:06 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180725081415.373bde37@lwn.net>
-X-Mailer: Mutt 1.9.4 (2018-02-28)
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <1532552826-30003-1-git-send-email-loic.pallardy@st.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 25, 2018 at 08:14:15AM -0600, Jonathan Corbet wrote:
-> On Wed, 25 Jul 2018 13:28:10 +1000
-> "Tobin C. Harding" <me@tobin.cc> wrote:
+Hi Loic,
+
+On 07/25/2018 04:07 PM, Loic Pallardy wrote:
+> In rpmsg_remove() procedure, children are removed then Name
+> Service announcement endpoint is destroyed and device released.
 > 
-> > Since I've already botched it can I ask for guidance here.  The problem
-> > is updating the links means making changes that will cause merge
-> > conflicts if they go through net-dev tree (since most references are in
-> > Documentation/*.rst).  But we can't go through docs tree either since
-> > that could lead to merge conflicts later as well.
+> Issue with current implementation is if a NS announcement
+> creation request is ongoing (received before virtio reset),
+> child device could be created after children removing.
+> In that case rpmsg_remove() is freeing rpmsg_virtio_bus,
+> leading to an inconsistent state.
 > 
-> Merge conflicts are a way of life in Documentation/ - everybody messes
-> with it.  They are usually pretty easy to resolve.
+> This patch is destroying NS announcement service endpoint before
+> removing children to guarantee that list of child devices is
+> fixed and all of them will be correctly removed before cleaning
+> resources.
+
+I do not think this is the right fix for the problem you explained.
+The removal of rpmsg devices can actually invoke the announce_destroy
+in the rpmsg_dev_remove().
+
+regards
+Suman
+
 > 
-> I only see a handful of references to netdev-FAQ.txt in the tree; I would
-> suggest just making the change and being done with it.  There shouldn't be
-> any need to do a more complicated dance than that.
+> fixes: bcabbccabffe ("rpmsg: Split off generic tail of create_channel()")
+> 
+> Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
+> ---
+>  drivers/rpmsg/virtio_rpmsg_bus.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
+> index 664f957..f5d481f 100644
+> --- a/drivers/rpmsg/virtio_rpmsg_bus.c
+> +++ b/drivers/rpmsg/virtio_rpmsg_bus.c
+> @@ -1004,13 +1004,13 @@ static void rpmsg_remove(struct virtio_device *vdev)
+>  
+>  	vdev->config->reset(vdev);
+>  
+> +	if (vrp->ns_ept)
+> +		__rpmsg_destroy_ept(vrp, vrp->ns_ept);
+> +
+>  	ret = device_for_each_child(&vdev->dev, NULL, rpmsg_remove_device);
+>  	if (ret)
+>  		dev_warn(&vdev->dev, "can't remove rpmsg device: %d\n", ret);
+>  
+> -	if (vrp->ns_ept)
+> -		__rpmsg_destroy_ept(vrp, vrp->ns_ept);
+> -
+>  	idr_destroy(&vrp->endpoints);
+>  
+>  	vdev->config->del_vqs(vrp->vdev);
+> 
 
-Ok, I'll re-spin with all references fixed.
-
-> And to answer your other question, yes of course it's fine (and expected)
-> for this to go through Dave's tree.
-
-And accept abuse for all merge conflicts in person at Plumbers in November :)
-
-Thanks,
-Tobin.
