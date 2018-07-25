@@ -2,96 +2,110 @@ Return-Path: <SRS0=S+WB=KJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 644DCC6778F
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 03:29:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FDE6C67790
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 03:32:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 11B2620883
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 03:29:54 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="KTxhmuOX";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="KTxhmuOX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 11B2620883
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id 0277A20856
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 03:32:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0277A20856
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codewreck.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727985AbeGYEj3 (ORCPT
+        id S1728106AbeGYEl4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 00:39:29 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:44044 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725904AbeGYEj2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Jul 2018 00:39:28 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id E86B260B62; Wed, 25 Jul 2018 03:29:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1532489390;
-        bh=IK0gPKQ/dW1M+CNv0yfWCs4m7A4BaTgHR+y2d/zDsb4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=KTxhmuOXhCjBpwxQI/ST++zlJX7ifBnPJCRqqo3T7Q3nr8O2gKRm36Wgec6GObEbq
-         QiM6YNbTyz4aqZASMiyneVvRIlMLXhXrxUBjBBwliCL9+ntk88tWOGIN5ny6jeNLjP
-         5H2pHJdo0xdEaTjtbHB0FJf7eTce334Lbb9VCeTQ=
-Received: from codeaurora.org (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: rkuo@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id E4FFA605A4;
-        Wed, 25 Jul 2018 03:29:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1532489390;
-        bh=IK0gPKQ/dW1M+CNv0yfWCs4m7A4BaTgHR+y2d/zDsb4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=KTxhmuOXhCjBpwxQI/ST++zlJX7ifBnPJCRqqo3T7Q3nr8O2gKRm36Wgec6GObEbq
-         QiM6YNbTyz4aqZASMiyneVvRIlMLXhXrxUBjBBwliCL9+ntk88tWOGIN5ny6jeNLjP
-         5H2pHJdo0xdEaTjtbHB0FJf7eTce334Lbb9VCeTQ=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E4FFA605A4
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rkuo@codeaurora.org
-Date:   Tue, 24 Jul 2018 22:29:48 -0500
-From:   Richard Kuo <rkuo@codeaurora.org>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     linux-hexagon@vger.kernel.org, iommu@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/3] hexagon: remove the sync_single_for_cpu DMA operation
-Message-ID: <20180725032948.GG12771@codeaurora.org>
-References: <20180719125635.824-1-hch@lst.de>
- <20180719125635.824-2-hch@lst.de>
+        Wed, 25 Jul 2018 00:41:56 -0400
+Received: from nautica.notk.org ([91.121.71.147]:51309 "EHLO nautica.notk.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726878AbeGYElz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Jul 2018 00:41:55 -0400
+Received: by nautica.notk.org (Postfix, from userid 1001)
+        id 87AC8C009; Wed, 25 Jul 2018 05:32:15 +0200 (CEST)
+Date:   Wed, 25 Jul 2018 05:32:00 +0200
+From:   Dominique Martinet <asmadeus@codewreck.org>
+To:     piaojun <piaojun@huawei.com>
+Cc:     "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        Eric Van Hensbergen <ericvh@gmail.com>,
+        Ron Minnich <rminnich@sandia.gov>,
+        Latchesar Ionkov <lucho@ionkov.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        v9fs-developer@lists.sourceforge.net, groug@kaod.org
+Subject: Re: [PATCH] fs/9p/xattr.c: catch the error of p9_client_clunk when
+ setting xattr failed
+Message-ID: <20180725033200.GA29865@nautica>
+References: <5B57EACC.2060900@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20180719125635.824-2-hch@lst.de>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <5B57EACC.2060900@huawei.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 19, 2018 at 05:56:33AM -0700, Christoph Hellwig wrote:
-> hexagon does all the required cache maintainance at dma map time, and none
-> at unmap time.  It thus has to implement sync_single_for_device to match
-> the map cace for buffer reuse, but there is no point in doing another
-> invalidation in the sync_single_cpu_case, which in terms of cache
-> maintainance is equivalent to the unmap case.
+piaojun wrote on Wed, Jul 25, 2018:
+> In my testing, v9fs_fid_xattr_set will return successfully even if the
+> backend ext4 filesystem has no space to store xattr key-value. That will
+> cause inconsistent behavior between front end and back end. The reason is
+> that lsetxattr will be triggered by p9_client_clunk, and unfortunately we
+> did not catch the error. This patch will catch the error to notify upper
+> caller.
 > 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> p9_client_clunk (in 9p)
+>   p9_client_rpc(clnt, P9_TCLUNK, "d", fid->fid);
+>     v9fs_clunk (in qemu)
+>       put_fid
+>         free_fid
+>           v9fs_xattr_fid_clunk
+>             v9fs_co_lsetxattr
+>               s->ops->lsetxattr
+>                 ext4_xattr_user_set (in host ext4 filesystem)
+> 
+> Signed-off-by: Jun Piao <piaojun@huawei.com>
+
+Good catch!
+
+LGTM on its own but see comment below for further error checking.
+Please let me know if you want to do this in a v2 or submit a separate
+patch altogether, I can pick this one up as it is.
+
 > ---
->  arch/hexagon/kernel/dma.c | 8 --------
->  1 file changed, 8 deletions(-)
+>  fs/9p/xattr.c | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
 > 
+> diff --git a/fs/9p/xattr.c b/fs/9p/xattr.c
+> index f329eee..352abc3 100644
+> --- a/fs/9p/xattr.c
+> +++ b/fs/9p/xattr.c
+> @@ -105,7 +105,7 @@ int v9fs_fid_xattr_set(struct p9_fid *fid, const char *name,
+>  {
+>  	struct kvec kvec = {.iov_base = (void *)value, .iov_len = value_len};
+>  	struct iov_iter from;
+> -	int retval;
+> +	int retval, err;
+> 
+>  	iov_iter_kvec(&from, WRITE | ITER_KVEC, &kvec, 1, value_len);
+> 
+> @@ -126,7 +126,9 @@ int v9fs_fid_xattr_set(struct p9_fid *fid, const char *name,
+>  			 retval);
+>  	else
+>  		p9_client_write(fid, 0, &from, &retval);
 
-Patch series looks good.  Definitely appreciate the cleanup.
+I'm not sure what to do about this but it's also possible for
+p9_client_write to not write the full length without setting and error.
 
-I can take it through my tree, or if not:
+We should probably compare the return value of p9_client_write and
+value_len to detect short writes and return an error in this case.
 
-Acked-by: Richard Kuo <rkuo@codeaurora.org>
-
-Thanks!
-
--- 
-Employee of Qualcomm Innovation Center, Inc.
-Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum, 
-a Linux Foundation Collaborative Project
+> -	p9_client_clunk(fid);
+> +	err = p9_client_clunk(fid);
+> +	if (!retval && err)
+> +		retval = err;
+>  	return retval;
+>  }
+> 
+> -- 
