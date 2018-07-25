@@ -3,54 +3,52 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 770C1C6778F
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 20:50:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DBF25ECDE5F
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 20:50:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3671420671
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 20:50:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3671420671
+	by mail.kernel.org (Postfix) with ESMTP id 9EA5D20671
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 20:50:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9EA5D20671
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731394AbeGYWDq (ORCPT
+        id S1731438AbeGYWDr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 18:03:46 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:60993 "EHLO
+        Wed, 25 Jul 2018 18:03:47 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:37773 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730606AbeGYWDq (ORCPT
+        with ESMTP id S1730606AbeGYWDr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Jul 2018 18:03:46 -0400
+        Wed, 25 Jul 2018 18:03:47 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w6PKmsBl501154
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w6PKnxId501223
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Wed, 25 Jul 2018 13:48:54 -0700
+        Wed, 25 Jul 2018 13:49:59 -0700
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w6PKmr5P501151;
-        Wed, 25 Jul 2018 13:48:53 -0700
-Date:   Wed, 25 Jul 2018 13:48:53 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w6PKnxTN501220;
+        Wed, 25 Jul 2018 13:49:59 -0700
+Date:   Wed, 25 Jul 2018 13:49:59 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Kim Phillips <tipbot@zytor.com>
-Message-ID: <tip-a7f660d6576a5f4504c8ab4f4956bba03d48bf52@git.kernel.org>
-Cc:     ravi.bangoria@linux.vnet.ibm.com, mingo@kernel.org,
-        brueckner@linux.ibm.com, tglx@linutronix.de, namhyung@kernel.org,
-        jolsa@redhat.com, tmricht@linux.vnet.ibm.com, kim.phillips@arm.com,
-        linux-kernel@vger.kernel.org, hpa@zytor.com, peterz@infradead.org,
-        mpe@ellerman.id.au, acme@redhat.com,
-        alexander.shishkin@linux.intel.com
-Reply-To: mpe@ellerman.id.au, peterz@infradead.org, hpa@zytor.com,
-          alexander.shishkin@linux.intel.com, acme@redhat.com,
-          tglx@linutronix.de, mingo@kernel.org, brueckner@linux.ibm.com,
-          ravi.bangoria@linux.vnet.ibm.com, linux-kernel@vger.kernel.org,
-          kim.phillips@arm.com, tmricht@linux.vnet.ibm.com,
-          jolsa@redhat.com, namhyung@kernel.org
-In-Reply-To: <20180706163454.f714b9ab49ecc8566a0b3565@arm.com>
-References: <20180706163454.f714b9ab49ecc8566a0b3565@arm.com>
+From:   tip-bot for Jiri Olsa <tipbot@zytor.com>
+Message-ID: <tip-e8fedff1cc729fd227924305152ccc6f580e8c83@git.kernel.org>
+Cc:     mingo@kernel.org, alexander.shishkin@linux.intel.com,
+        peterz@infradead.org, hpa@zytor.com, eranian@google.com,
+        jolsa@kernel.org, tglx@linutronix.de, linux-kernel@vger.kernel.org,
+        dsahern@gmail.com, acme@redhat.com, namhyung@kernel.org,
+        davidcc@google.com
+Reply-To: mingo@kernel.org, alexander.shishkin@linux.intel.com,
+          peterz@infradead.org, eranian@google.com, hpa@zytor.com,
+          jolsa@kernel.org, tglx@linutronix.de,
+          linux-kernel@vger.kernel.org, dsahern@gmail.com, acme@redhat.com,
+          namhyung@kernel.org, davidcc@google.com
+In-Reply-To: <20180712135202.14774-1-jolsa@kernel.org>
+References: <20180712135202.14774-1-jolsa@kernel.org>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf trace arm64: Use generated syscall table
-Git-Commit-ID: a7f660d6576a5f4504c8ab4f4956bba03d48bf52
+Subject: [tip:perf/core] perf tools: Synthesize GROUP_DESC feature in pipe
+ mode
+Git-Commit-ID: e8fedff1cc729fd227924305152ccc6f580e8c83
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -64,64 +62,68 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  a7f660d6576a5f4504c8ab4f4956bba03d48bf52
-Gitweb:     https://git.kernel.org/tip/a7f660d6576a5f4504c8ab4f4956bba03d48bf52
-Author:     Kim Phillips <kim.phillips@arm.com>
-AuthorDate: Fri, 6 Jul 2018 16:34:54 -0500
+Commit-ID:  e8fedff1cc729fd227924305152ccc6f580e8c83
+Gitweb:     https://git.kernel.org/tip/e8fedff1cc729fd227924305152ccc6f580e8c83
+Author:     Jiri Olsa <jolsa@kernel.org>
+AuthorDate: Thu, 12 Jul 2018 15:52:02 +0200
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Tue, 24 Jul 2018 14:53:01 -0300
+CommitDate: Tue, 24 Jul 2018 14:53:20 -0300
 
-perf trace arm64: Use generated syscall table
+perf tools: Synthesize GROUP_DESC feature in pipe mode
 
-This should speed up accessing new system calls introduced with the
-kernel rather than waiting for libaudit updates to include them.
+Stephan reported, that pipe mode does not carry the group information
+and thus the piped report won't display the grouped output for following
+command:
 
-It also enables users to specify wildcards, for example, perf trace -e
-'open*', just like was already possible on x86, s390, and powerpc, which
-means arm64 can now pass the "Check open filename arg using perf trace +
-vfs_getname" test.
+  # perf record -e '{cycles,instructions,branches}' -a sleep 4 | perf report
 
-Signed-off-by: Kim Phillips <kim.phillips@arm.com>
-Reviewed-by: Hendrik Brueckner <brueckner@linux.ibm.com>
+It has no idea about the group setup, so it will display events
+separately:
+
+  # Overhead  Command          Shared Object             ...
+  # ........  ...............  .......................
+  #
+       6.71%  swapper          [kernel.kallsyms]
+       2.28%  offlineimap      libpython2.7.so.1.0
+       0.78%  perf             [kernel.kallsyms]
+  ...
+
+Fix GROUP_DESC feature record to be synthesized in pipe mode, so the
+report output is grouped if there are groups defined in record:
+
+  #                 Overhead  Command          Shared    ...
+  # ........................  ...............  .......
+  #
+       7.57%   0.16%   0.30%  swapper          [kernel
+       1.87%   3.15%   2.46%  offlineimap      libpyth
+       1.33%   0.00%   0.00%  perf             [kernel
+  ...
+
+Reported-by: Stephane Eranian <eranian@google.com>
+Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Tested-by: Stephane Eranian <eranian@google.com>
 Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Michael Ellerman <mpe@ellerman.id.au>
+Cc: David Ahern <dsahern@gmail.com>
+Cc: David Carrillo-Cisneros <davidcc@google.com>
 Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
-Cc: Thomas Richter <tmricht@linux.vnet.ibm.com>
-Link: http://lkml.kernel.org/r/20180706163454.f714b9ab49ecc8566a0b3565@arm.com
+Link: http://lkml.kernel.org/r/20180712135202.14774-1-jolsa@kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/Makefile.config   | 2 ++
- tools/perf/util/syscalltbl.c | 4 ++++
- 2 files changed, 6 insertions(+)
+ tools/perf/util/header.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/tools/perf/Makefile.config b/tools/perf/Makefile.config
-index f5a3b402589e..d3318f99006c 100644
---- a/tools/perf/Makefile.config
-+++ b/tools/perf/Makefile.config
-@@ -54,6 +54,8 @@ endif
- 
- ifeq ($(SRCARCH),arm64)
-   NO_PERF_REGS := 0
-+  NO_SYSCALL_TABLE := 0
-+  CFLAGS += -I$(OUTPUT)arch/arm64/include/generated
-   LIBUNWIND_LIBS = -lunwind -lunwind-aarch64
- endif
- 
-diff --git a/tools/perf/util/syscalltbl.c b/tools/perf/util/syscalltbl.c
-index 0ee7f568d60c..3393d7ee9401 100644
---- a/tools/perf/util/syscalltbl.c
-+++ b/tools/perf/util/syscalltbl.c
-@@ -38,6 +38,10 @@ static const char **syscalltbl_native = syscalltbl_powerpc_64;
- #include <asm/syscalls_32.c>
- const int syscalltbl_native_max_id = SYSCALLTBL_POWERPC_32_MAX_ID;
- static const char **syscalltbl_native = syscalltbl_powerpc_32;
-+#elif defined(__aarch64__)
-+#include <asm/syscalls.c>
-+const int syscalltbl_native_max_id = SYSCALLTBL_ARM64_MAX_ID;
-+static const char **syscalltbl_native = syscalltbl_arm64;
- #endif
- 
- struct syscall {
+diff --git a/tools/perf/util/header.c b/tools/perf/util/header.c
+index 653ff65aa2c3..5af58aac91ad 100644
+--- a/tools/perf/util/header.c
++++ b/tools/perf/util/header.c
+@@ -2587,7 +2587,7 @@ static const struct feature_ops feat_ops[HEADER_LAST_FEATURE] = {
+ 	FEAT_OPR(NUMA_TOPOLOGY,	numa_topology,	true),
+ 	FEAT_OPN(BRANCH_STACK,	branch_stack,	false),
+ 	FEAT_OPR(PMU_MAPPINGS,	pmu_mappings,	false),
+-	FEAT_OPN(GROUP_DESC,	group_desc,	false),
++	FEAT_OPR(GROUP_DESC,	group_desc,	false),
+ 	FEAT_OPN(AUXTRACE,	auxtrace,	false),
+ 	FEAT_OPN(STAT,		stat,		false),
+ 	FEAT_OPN(CACHE,		cache,		true),
