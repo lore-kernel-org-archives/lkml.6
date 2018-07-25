@@ -2,93 +2,92 @@ Return-Path: <SRS0=S+WB=KJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CCC2FC6778F
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 16:24:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45DDCC6778F
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 16:25:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 753E020852
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 16:24:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EDFB420833
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 16:25:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="yI3/axgr"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 753E020852
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="BRoSbmQ1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EDFB420833
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729170AbeGYRgi (ORCPT
+        id S1729216AbeGYRh0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 13:36:38 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50482 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728542AbeGYRgc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Jul 2018 13:36:32 -0400
-Received: from localhost.localdomain (xdsl-188-155-58-14.adslplus.ch [188.155.58.14])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 733F420891;
-        Wed, 25 Jul 2018 16:24:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1532535850;
-        bh=He4b6slkT3vxHcc6mvTwXYYrCHVAkNQKDDYcg2w2nOM=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=yI3/axgrD1QIlfdUdat03BI+e0Z+AyApz3B9TM49NRVd/ZtexhMmFaW7VYrfdxfYs
-         /X9E4evKeX9exfnGzwLiC6EwMrzTfFsrzG5Bps36PgwEQngMnOOzXMg9xoYzmIzsZm
-         QSse/cPXB9GWqrqk+adCE/NJK+YsdW0Upecly8jo=
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>,
-        arm@kernel.org
-Cc:     Krzysztof Kozlowski <krzk@kernel.org>,
-        Kukjin Kim <kgene@kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [GIT PULL 3/3] ARM: samsung: Mach/soc for v4.19
-Date:   Wed, 25 Jul 2018 18:23:40 +0200
-Message-Id: <20180725162340.7488-3-krzk@kernel.org>
-X-Mailer: git-send-email 2.14.1
-In-Reply-To: <20180725162340.7488-1-krzk@kernel.org>
-References: <20180725162340.7488-1-krzk@kernel.org>
+        Wed, 25 Jul 2018 13:37:26 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:58410 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728542AbeGYRh0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Jul 2018 13:37:26 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=KynVh9tgaRQz6dfjYE4CpaWTnCUN4wnzc69m/8amncQ=; b=BRoSbmQ1PykSI3TAch7wQWwDU
+        8MYx3IdBlKg17DLhzSYtyMF9TMNTJY35oS9CB2QgVxv3Pr+jxRCa4Mn/SR9K9N5m7ZSpFjq/F1DuY
+        oNZDBQeFm3dlStLQakdSlnZzTigU+WGfdf1BpkpLLAAMPDGoH/dAtPM5f3CFiPi9LCwhU=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1fiMau-0006kK-4v; Wed, 25 Jul 2018 16:24:56 +0000
+Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
+        id C30931123B08; Wed, 25 Jul 2018 17:24:55 +0100 (BST)
+Date:   Wed, 25 Jul 2018 17:24:55 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc:     lee.jones@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        lgirdwood@gmail.com, tiwai@suse.com, bgoswami@codeaurora.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        vkoul@kernel.org, alsa-devel@alsa-project.org
+Subject: Re: [PATCH 12/12] ASoC: apq8096: Add support to Analog audio via
+ WCD9335 slim
+Message-ID: <20180725162455.GC6315@sirena.org.uk>
+References: <20180723155410.9494-1-srinivas.kandagatla@linaro.org>
+ <20180723155410.9494-13-srinivas.kandagatla@linaro.org>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="NKoe5XOeduwbEQHU"
+Content-Disposition: inline
+In-Reply-To: <20180723155410.9494-13-srinivas.kandagatla@linaro.org>
+X-Cookie: You may be recognized soon.  Hide.
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
 
-Rebased on v4.18-rc2, because at v4.18-rc1 the NFS root boot, which I use at my
-testing setup (https://krzk.eu), was broken.
+--NKoe5XOeduwbEQHU
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Best regards,
-Krzysztof
+On Mon, Jul 23, 2018 at 04:54:10PM +0100, Srinivas Kandagatla wrote:
+> This patch adds support Analog audio via WCD9335 Codec connected via SLIMBus.
+> Tested it on DB820c.
 
+This looks good as do the other patches I didn't explicitly comment on.
 
-The following changes since commit 7daf201d7fe8334e2d2364d4e8ed3394ec9af819:
+--NKoe5XOeduwbEQHU
+Content-Type: application/pgp-signature; name="signature.asc"
 
-  Linux 4.18-rc2 (2018-06-24 20:54:29 +0800)
+-----BEGIN PGP SIGNATURE-----
 
-are available in the git repository at:
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAltYpFcACgkQJNaLcl1U
+h9AYRQf+MlUMS9lvwVmMrSYMa3FS+HFCLO01K7ckUMy9KOIoYIzpEnhXlK7NN2dH
+aIjGIBNJcYBrKlzQTg859xt9XX2LE+lnxwVPIF7lPz/czeIPsYkCdg28GtzEDF0q
+RGK1yc6yBoNjIOpQtpu7KSdGlz08Ve3YcfOqZvT3CLyvHqwol8ath8MJuBKOsIu5
+susi5HEu9xeLH4/MSviqja5VDmaqQGIMes7mlJPa99GrjWWNCbrabv1MVc3JGwzF
+4qgv+xS8wjnQxvXRY6hWQGBOK0wMRHaECdLVS2aZZ1Qjrp86TGFSvsHnIWcK83Kh
+gcaNIBmlVZxTmUgObR4oCrXErF8I8w==
+=uYAY
+-----END PGP SIGNATURE-----
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-soc-4.19
-
-for you to fetch changes up to cd4806911cee3901bc2b5eb95603cf1958720b57:
-
-  ARM: exynos: Clear global variable on init error path (2018-07-24 18:52:14 +0200)
-
-----------------------------------------------------------------
-Samsung mach/soc changes for v4.19
-
-Minor cleanups and fixes.
-
-----------------------------------------------------------------
-Denis Efremov (1):
-      ARM: s3c24xx: Fix typo in guard macro of s3c2412.h
-
-Krzysztof Kozlowski (2):
-      ARM: exynos: Remove outdated maintainer information
-      ARM: exynos: Clear global variable on init error path
-
- arch/arm/mach-exynos/exynos.c                | 2 --
- arch/arm/mach-exynos/suspend.c               | 1 +
- arch/arm/mach-s3c24xx/include/mach/s3c2412.h | 2 +-
- 3 files changed, 2 insertions(+), 3 deletions(-)
+--NKoe5XOeduwbEQHU--
