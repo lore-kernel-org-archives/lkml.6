@@ -2,123 +2,148 @@ Return-Path: <SRS0=S+WB=KJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4F83C67790
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 12:35:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 979EFC6778F
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 12:38:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 861EC20893
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 12:35:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 861EC20893
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=i-love.sakura.ne.jp
+	by mail.kernel.org (Postfix) with ESMTP id 4215C20895
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 12:38:37 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="pZ8nn61j"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4215C20895
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729088AbeGYNrB (ORCPT
+        id S1729013AbeGYNuG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 09:47:01 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:58956 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728492AbeGYNrB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Jul 2018 09:47:01 -0400
-Received: from fsav302.sakura.ne.jp (fsav302.sakura.ne.jp [153.120.85.133])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id w6PCZEEi036206;
-        Wed, 25 Jul 2018 21:35:14 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav302.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav302.sakura.ne.jp);
- Wed, 25 Jul 2018 21:35:14 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav302.sakura.ne.jp)
-Received: from [192.168.1.8] (softbank126074194044.bbtec.net [126.74.194.44])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id w6PCZEaV036203
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
-        Wed, 25 Jul 2018 21:35:14 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Subject: Re: [PATCH v2] n_tty: Protect tty->disc_data using refcount.
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     jslaby@suse.com,
-        syzbot <syzbot+3aa9784721dfb90e984d@syzkaller.appspotmail.com>,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-References: <001a113ed31a122ced0568cc6be1@google.com>
- <db45a090-593d-23d2-e6b2-ede5b308f02f@I-love.SAKURA.ne.jp>
- <35d649ce-0c22-f839-aa4d-19733bf31a9c@I-love.SAKURA.ne.jp>
- <83fdde07-2f8e-8d20-30a2-a8f0804a5044@I-love.SAKURA.ne.jp>
- <8e83cd9a-e28c-a9f4-5f47-98f2046a5dfb@I-love.SAKURA.ne.jp>
- <20180725080630.GA17932@kroah.com>
-From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Message-ID: <e3a051f9-18b5-a8e9-e42c-67bbd00eda88@i-love.sakura.ne.jp>
-Date:   Wed, 25 Jul 2018 21:35:10 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Wed, 25 Jul 2018 09:50:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57382 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728863AbeGYNuG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Jul 2018 09:50:06 -0400
+Received: from localhost (unknown [122.178.229.117])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id C16B620894;
+        Wed, 25 Jul 2018 12:38:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1532522314;
+        bh=fBXOginqq4qlGAfn+SPO2ngJXbLyvIH4JFJF+Fq3t0I=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=pZ8nn61j3gnO6fhT3fduefxZEkgRRx8YGXQPp/QX99OtZiMUrozS8J8uCKipwkhFK
+         Nucf/NBJGO4HPu1S0YBfe2dmJk+14xi1IegNFiUIjjaGTs4VlLdv8HDSS2lgJCdg2q
+         w73Var4rEhHL+HTF2mK/9crrkuseOiYvTKC1trQY=
+Date:   Wed, 25 Jul 2018 18:08:26 +0530
+From:   Vinod <vkoul@kernel.org>
+To:     Huang Shijie <sjhuang@iluvatar.ai>
+Cc:     corbet@lwn.net, dan.j.williams@intel.com, robh@kernel.org,
+        linux-doc@vger.kernel.org, dmaengine@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] dmaengine: add a new helper dmam_async_device_register
+Message-ID: <20180725123826.GT3661@vkoul-mobl>
+References: <20180725054645.9723-1-sjhuang@iluvatar.ai>
 MIME-Version: 1.0
-In-Reply-To: <20180725080630.GA17932@kroah.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180725054645.9723-1-sjhuang@iluvatar.ai>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/07/25 17:06, Greg KH wrote:
-> On Wed, Jul 25, 2018 at 12:22:16AM +0900, Tetsuo Handa wrote:
->> >From 118c64e86641a97d44dec39e313a95b12d9bc3b2 Mon Sep 17 00:00:00 2001
->> From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
->> Date: Wed, 25 Jul 2018 00:15:18 +0900
->> Subject: [PATCH v2] n_tty: Protect tty->disc_data using refcount.
->>
->> syzbot is reporting NULL pointer dereference at n_tty_set_termios() [1].
->> This is because ioctl(TIOCVHANGUP) versus ioctl(TCSETS) can race.
->>
->> Since we don't want to introduce new locking dependency, this patch
->> converts "struct n_tty_data *ldata = tty->disc_data;" in individual
->> function into a function argument which follows "struct tty *", and
->> holds tty->disc_data at each "struct tty_ldisc_ops" hook using refcount
->> in order to ensure that memory which contains "struct n_tty_data" will
->> not be released while processing individual function.
->>
->> [1] https://syzkaller.appspot.com/bug?id=1e850009fca0b64ce49dc16499bda4f7de0ab1a5
->>
->> Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
->> ---
->>  drivers/tty/n_tty.c | 511 ++++++++++++++++++++++++++++++++--------------------
->>  1 file changed, 314 insertions(+), 197 deletions(-)
+On 25-07-18, 13:46, Huang Shijie wrote:
+> This patch adds the dmam_async_device_register for DMA code.
+> Use the Devres to call the release for the DMA engine driver.
+
+no users?
+
 > 
-> What changed from v1?  I haven't had the chance to review your first
-> patch, sorry, it's still in my queue.  I was hoping that someone else
-> would help out with that as well :)
+> Signed-off-by: Huang Shijie <sjhuang@iluvatar.ai>
+> ---
+>  Documentation/driver-model/devres.txt |  1 +
+>  drivers/dma/dmaengine.c               | 35 +++++++++++++++++++++++++++
+>  include/linux/dmaengine.h             |  1 +
+>  3 files changed, 37 insertions(+)
 > 
+> diff --git a/Documentation/driver-model/devres.txt b/Documentation/driver-model/devres.txt
+> index a3e8bceb5f19..26c6de621446 100644
+> --- a/Documentation/driver-model/devres.txt
+> +++ b/Documentation/driver-model/devres.txt
+> @@ -240,6 +240,7 @@ CLOCK
+>    devm_of_clk_add_hw_provider()
+>  
+>  DMA
+> +  dmam_async_device_register()
 
-Just added a check in case I overlooked a subtle race condition that
-n_tty_close() is _somehow_ called twice.
+can we name it dmaengine_async_device_register, not to confuse with dma APIs
 
-  25,26c20,21
-  <  1 file changed, 308 insertions(+), 195 deletions(-)
-  >  1 file changed, 314 insertions(+), 197 deletions(-)
-  872,873c867,869
-  <       struct n_tty_data *ldata = tty->disc_data;
-  > -     struct n_tty_data *ldata = tty->disc_data;
-  > +     struct n_tty_data *ldata = xchg(&tty->disc_data, NULL);
-  >
-  878,879c874,880
-  <       tty->disc_data = NULL;
-  < +     put_n_tty(ldata);
-  > -     tty->disc_data = NULL;
-  > +     /*
-  > +      * The xchg() above and this NULL test are rather paranoid checks.
-  > +      * Caller should not allow calling close() twice.
-  > +      */
-  > +     if (ldata)
-  > +             put_n_tty(ldata);
-  1194c1195
-  < +     if (!ldata) /* What value is most appropriate for this case? */
-  > +     if (!ldata)
+>    dmam_alloc_coherent()
+>    dmam_alloc_attrs()
+>    dmam_declare_coherent_memory()
+> diff --git a/drivers/dma/dmaengine.c b/drivers/dma/dmaengine.c
+> index 84ac38dbdb65..2477af0bdfc7 100644
+> --- a/drivers/dma/dmaengine.c
+> +++ b/drivers/dma/dmaengine.c
+> @@ -1135,6 +1135,41 @@ void dma_async_device_unregister(struct dma_device *device)
+>  }
+>  EXPORT_SYMBOL(dma_async_device_unregister);
+>  
+> +static void dmam_device_release(struct device *dev, void *res)
+> +{
+> +	struct dma_device *device;
+> +
+> +	device = *(struct dma_device **)res;
+> +	dma_async_device_unregister(device);
+> +}
+> +
+> +/**
+> + * dmam_async_device_register - registers DMA devices found
+> + * @device: &dma_device
+> + *
+> + * The operation is managed and will be undone on driver detach.
+> + */
+> +int dmam_async_device_register(struct dma_device *device)
+> +{
+> +	void *p;
+> +	int ret;
+> +
+> +	p = devres_alloc(dmam_device_release, sizeof(void *), GFP_KERNEL);
+> +	if (!p)
+> +		return -ENOMEM;
+> +
+> +	ret = dma_async_device_register(device);
+> +	if (!ret) {
+> +		*(struct dma_device **)p = device;
+> +		devres_add(device->dev, p);
+> +	} else {
+> +		devres_free(p);
+> +	}
+> +
+> +	return ret;
+> +}
+> +EXPORT_SYMBOL(dmam_async_device_register);
+> +
+>  struct dmaengine_unmap_pool {
+>  	struct kmem_cache *cache;
+>  	const char *name;
+> diff --git a/include/linux/dmaengine.h b/include/linux/dmaengine.h
+> index c8c3a7a93802..b98bced0b98e 100644
+> --- a/include/linux/dmaengine.h
+> +++ b/include/linux/dmaengine.h
+> @@ -1406,6 +1406,7 @@ static inline int dmaengine_desc_free(struct dma_async_tx_descriptor *desc)
+>  /* --- DMA device --- */
+>  
+>  int dma_async_device_register(struct dma_device *device);
+> +int dmam_async_device_register(struct dma_device *device);
+>  void dma_async_device_unregister(struct dma_device *device);
+>  void dma_run_dependencies(struct dma_async_tx_descriptor *tx);
+>  struct dma_chan *dma_get_slave_channel(struct dma_chan *chan);
+> -- 
+> 2.17.1
 
-If n_tty_close() is _somehow_ called twice, v1 patch will trigger NULL
-pointer dereference. If you are sure that n_tty_close() is never called
-twice, you can ignore v2.
+-- 
+~Vinod
