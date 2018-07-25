@@ -2,90 +2,111 @@ Return-Path: <SRS0=S+WB=KJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BA82C6778F
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 21:28:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 022D7C67790
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 21:28:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4C24D20843
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 21:28:31 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="i8P2kKvv"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4C24D20843
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+	by mail.kernel.org (Postfix) with ESMTP id A655A20671
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 21:28:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A655A20671
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731470AbeGYWmC (ORCPT
+        id S1731492AbeGYWm3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 18:42:02 -0400
-Received: from ozlabs.org ([203.11.71.1]:41985 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731279AbeGYWmB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Jul 2018 18:42:01 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 41bSyM2lgSz9s1R;
-        Thu, 26 Jul 2018 07:28:27 +1000 (AEST)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1532554107;
-        bh=FNZFtjooGOLSLxXzJntzjFMUyxf16pvs2JRejqVsCs0=;
-        h=Date:From:To:Cc:Subject:From;
-        b=i8P2kKvv6zWOV1M6q6iaJhAyWcW91XP9VYZ0yZrwODwxVmIbNQzIGF0xOTgSFNPI7
-         uj6KwAmDUf9twTYB1BBxRiIeqUOZsim4di/lG6DVVehb9n2DN9qJHSkcuACjH3MT7z
-         wdYCkjW17zkqpc64QvQXZh5Z0FQ4iVHeax4kiDCjRyd6RpIA9xVGH4k/3GohMPvy6V
-         StARGl0e3O+kjESx9PCDDQN5WF7ZD37uw1jQIdF7Q2PEZFG/AXN5tJFAD58zHZluvd
-         EQncUQZYLsPJ3xa+PAPFPpDUMxWPRSWtrY0y53DPRjNyBg99dK97fjlqPD6cNI29Xk
-         Mz5GLGNiuucrQ==
-Date:   Thu, 26 Jul 2018 07:28:14 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: linux-next: Signed-off-by missing for commit in the xarray tree
-Message-ID: <20180726072814.6c93b595@canb.auug.org.au>
+        Wed, 25 Jul 2018 18:42:29 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:47189 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731174AbeGYWm3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Jul 2018 18:42:29 -0400
+Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
+        id 57C64805A4; Wed, 25 Jul 2018 23:28:54 +0200 (CEST)
+Date:   Wed, 25 Jul 2018 23:28:53 +0200
+From:   Pavel Machek <pavel@ucw.cz>
+To:     Michael Nazzareno Trimarchi <michael@amarulasolutions.com>
+Cc:     kernel list <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Linux OMAP Mailing List <linux-omap@vger.kernel.org>,
+        Tony Lindgren <tony@atomide.com>,
+        Sebastian Reichel <sre@kernel.org>, nekit1000@gmail.com,
+        mpartap@gmx.net, Merlijn Wajer <merlijn@wizzup.org>
+Subject: Re: Droid 4: suspend to RAM?
+Message-ID: <20180725212853.GA1965@amd>
+References: <20180725200205.GA29594@amd>
+ <CAOf5uwkyPoDT8TZe9V24p+nQMiee9XfD=943xwx0ThGi9_cPng@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/Vm_6vJYZTTbayswZvaOkfr/"; protocol="application/pgp-signature"
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="J2SCkAp4GZ/dPZZf"
+Content-Disposition: inline
+In-Reply-To: <CAOf5uwkyPoDT8TZe9V24p+nQMiee9XfD=943xwx0ThGi9_cPng@mail.gmail.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/Vm_6vJYZTTbayswZvaOkfr/
-Content-Type: text/plain; charset=US-ASCII
+
+--J2SCkAp4GZ/dPZZf
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Matthew,
+HI!
+> >
+> > I have two big problems with droid 4. #1 is that it lost 2 SMS.. and I
+> > have no idea why. Second is power consumption -- it seems to be rather
+>=20
+> Depend how do you set the SMS buffering using CNMI if I remember. Modem
+> has 1024bytes of memory most of the time that can buffer more then 1 sms.
+> Modem rise a irq when they receive a call or sms, or you an use the seria=
+l but
+> omap family can loose the first char coming from the serial so you can lo=
+st the
+> sms because parsing fail
 
-Commits
+I am using USB connection to the modem. And yes, I'm using rather
+strange CNMI settings (but other did not work).
 
-  890e537e2b42 ("filesystem-dax: Introduce dax_lock_mapping_entry()")
-  aaf149902c79 ("filesystem-dax: Set page->index")
+> > high even before modem (and thus USB) is enabled.
+> >
+> > Interestingly, CyanogenMod and Jolla seem to have higher power
+> > consumption than stock operating system.
+> >
+> > (My Linux can survive for 10 hours, stock system could survive for 4
+> > days if I'm not mistaken).
+> >
+> > I thought I would experiment with suspend to RAM.. and it indeed
+> > seemed to suspend ok, but I could not wake it up. Do I need to set up
+> > wakeup with button somehow? Is suspend to RAM required for good power
+> > consumption?
+>=20
+> Sorry but pm subsystem has debug mode that you can test in a easy way.
+> You can even wakeup by any rtc alarm easily.
 
-are missing a Signed-off-by from their committers.
+Yes, that is how it works on PC (but there power button works,
+too). Is it expected to work on Droid in v4.18?
 
+Thanks,
+									Pavel
 --=20
-Cheers,
-Stephen Rothwell
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
 
---Sig_/Vm_6vJYZTTbayswZvaOkfr/
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+--J2SCkAp4GZ/dPZZf
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltY624ACgkQAVBC80lX
-0Gy3wQgAoDOpjXXtT0fQe7X5GJZuSDcVlhJJUEXr+WQPx6lwI2f71RFahRs0qSmf
-E1tIsWT4SLL1XSKSf+aLcX4rDeWHh02HSHzVcssxOPDlOgvWthu8Qv1f+v5IcaNH
-2EDma2C2vD0l2Zl1QDGBFyHxR/kIaD/qXr6wBQcB05u8oRqsvM6OegTlfXB5mfy0
-6O97fKxQgLzE+xkrZMQ4b9HNio+jT7fsL9AGJ94GkGI2BzthgCL4ySpJWXQsi05c
-GJLYO1p2QSlzUIxze3EeGq7uLMk6iEoXpbNhJcc8i122LLBZGf9dId8+r8jBdtti
-Hdx3C/E99aexCkCTGcaiUdCNkjeoww==
-=4p+l
+iEYEARECAAYFAltY65UACgkQMOfwapXb+vLsHgCdEcDohCkc0PQimfLiCHnIuZ9g
+QvcAoIVHdtGFRae5ZVW0TyD3Fq4RBcUm
+=M3Ge
 -----END PGP SIGNATURE-----
 
---Sig_/Vm_6vJYZTTbayswZvaOkfr/--
+--J2SCkAp4GZ/dPZZf--
