@@ -1,212 +1,228 @@
 Return-Path: <SRS0=S+WB=KJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: *
-X-Spam-Status: No, score=1.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FSL_HELO_FAKE,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EDAD2C6778F
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 19:04:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29BCEC67790
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 19:06:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8DEA420844
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 19:04:41 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CTaAzCHk"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8DEA420844
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id D848F20844
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 19:06:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D848F20844
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730186AbeGYURi (ORCPT
+        id S1729490AbeGYUTU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 16:17:38 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:41564 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729213AbeGYURi (ORCPT
+        Wed, 25 Jul 2018 16:19:20 -0400
+Received: from mail-it0-f67.google.com ([209.85.214.67]:54815 "EHLO
+        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729184AbeGYUTU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Jul 2018 16:17:38 -0400
-Received: by mail-lj1-f194.google.com with SMTP id y17-v6so7600208ljy.8;
-        Wed, 25 Jul 2018 12:04:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=MIREDpTtSJqXJVcEurieseFPP0NbThQkhytIVKp4ATk=;
-        b=CTaAzCHkM/Crcs9n0jmTgQi5ZkXelk4kna33TfPyNWz/ZeX+0jmo0YS31q6+Efi7Mp
-         zb/hYI0S9rFgLd9c/wkr+AOYL85h678UkJ+USVgLHHaba2cVDhSY6/NimaLuaPLkevS1
-         AAghgpqoRIQOjQTvwSvAeUpuvCpVL7qsgEltbC8ftw5TlTb+ffDpRZ76+KNNK9azCsaI
-         yJGCDlQJ6yFJxWVCIfuLlCXzNfXCpvD2DeCUrR/+84yjm2tIxqW5aJz0jSqlHlTRV2Qt
-         5G7xyJNWtyRRbMDU9Y4ximiWco3uzup5OWYAM3MfxZQpT7+7NeVeuUbQ1ealHgU0WcEf
-         5Bxg==
+        Wed, 25 Jul 2018 16:19:20 -0400
+Received: by mail-it0-f67.google.com with SMTP id s7-v6so10239313itb.4;
+        Wed, 25 Jul 2018 12:06:20 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=MIREDpTtSJqXJVcEurieseFPP0NbThQkhytIVKp4ATk=;
-        b=FeLSi2sTpuK3+BSviuufujDA3256eKmSy/fF/oJmK5A6H7zjk8VplT8iXFFE3am3yp
-         zPBsyg765D4mTG93y0LWdNr5H7Cu3yBA6BgDbqC2Pt0x7K0AiWnFFekkLRNj0SqAd5nr
-         YAq8v83Ctg6bf7VcNXgR9V2un1fBJfgVS75+zkLynQ8VP1tO7NGxhr3wk+XOsn453SGv
-         qNMPBwC6aROP7fQDlM6kLqePkFgVZUWVAHbvaYdJT7iV1EZ7+AKO6FuhBNfTruldqAY9
-         MRraZfgSs+s1SsDQxg0NEb9d7r8GpIcwWGzf3VqNZySq8+K9CpRzoazIVh+L8fdjLp9r
-         s/Gw==
-X-Gm-Message-State: AOUpUlHx2qNpkVj8q+ou+iG0LTejt4iDXk0kPhxqHigQyAj2X9aOtMIJ
-        yVP6FiIC4QlKRu8LIQJX2uc=
-X-Google-Smtp-Source: AAOMgpfH4rYND+795ec5biRPuKG17Guvd6ooAOx4dDO4A5DinvFcvPBIKmY1Tv/gTt/5BNuRuPycRQ==
-X-Received: by 2002:a2e:8514:: with SMTP id j20-v6mr6948215lji.10.1532545476381;
-        Wed, 25 Jul 2018 12:04:36 -0700 (PDT)
-Received: from gmail.com (c-2ec2f9f0-74736162.cust.telenor.se. [46.194.249.240])
-        by smtp.gmail.com with ESMTPSA id w12-v6sm2935728ljw.60.2018.07.25.12.04.34
+        bh=bLkOjKFAsB/Kd7L/84C6cQds0WNLqyJ990WIB2yJkRY=;
+        b=i1HqrRfaWjiZ7s51av7wT0E5YH+fH1Pnhl53IL933p3x23v+2YSM6v285nEjc9Bc0q
+         6R/Vid66DC+3XxuhoqsSyo5uitPiTZdXkHH+cFNUI+IXkklOzP4LxsXeZae04oMA1J4R
+         dGWBjGcGDSS4IlSmcIN/UJA5ucpUCh5GXCAKsXBp+lESZdFpCawlCFGpUzZjhHcSVyKb
+         xI3u6ZMV3TnZT4Ju0ltLKFiwxefbGzL6QQJZz2rsez+f9GmtsMkKwe+xIyiiw7MMdzqO
+         krBMJ6coHc4KhqnmOsgzb0Rf+FJ3/LTl8FSdmkAv42E+Uu9Zfpp3cAWsHFIQdsYxEEcR
+         UJCw==
+X-Gm-Message-State: AOUpUlFH91hoW/xA3SY3leVX/Czim2LIQGT0IbU4LaiHNY5ZC5vnmg3D
+        AZE1RQio9ZZlr01/UqmTQw==
+X-Google-Smtp-Source: AAOMgpdIasY3uvKjnCadcoyn4L3gtZfopv2PtQgrPCw011lT5wPhMjjlWwI8dpv+T70OZB6Pt7mNPg==
+X-Received: by 2002:a24:c106:: with SMTP id e6-v6mr7324812itg.126.1532545580440;
+        Wed, 25 Jul 2018 12:06:20 -0700 (PDT)
+Received: from localhost ([24.51.61.72])
+        by smtp.gmail.com with ESMTPSA id b90-v6sm4603146itd.18.2018.07.25.12.06.19
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 25 Jul 2018 12:04:35 -0700 (PDT)
-Date:   Wed, 25 Jul 2018 21:04:41 +0200
-From:   Marcus Folkesson <marcus.folkesson@gmail.com>
-To:     Rob Herring <robh@kernel.org>
-Cc:     Kent Gustavsson <kent@minoris.se>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Mark Rutland <mark.rutland@arm.com>, linux-iio@vger.kernel.org,
+        Wed, 25 Jul 2018 12:06:19 -0700 (PDT)
+Date:   Wed, 25 Jul 2018 13:06:19 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Jerome Brunet <jbrunet@baylibre.com>
+Cc:     Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Carlo Caione <carlo@caione.org>, alsa-devel@alsa-project.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH v2 2/3] dt-bindings: iio: adc: add bindings for mcp3911
-Message-ID: <20180725190441.GA3373@gmail.com>
-References: <20180724183004.20279-1-marcus.folkesson@gmail.com>
- <20180724183004.20279-2-marcus.folkesson@gmail.com>
- <20180725175117.GA825@rob-hp-laptop>
+        linux-amlogic@lists.infradead.org
+Subject: Re: [PATCH 14/15] ASoC: meson: add axg sound card DT binding
+ documentation
+Message-ID: <20180725190619.GA20234@rob-hp-laptop>
+References: <20180717153643.8806-1-jbrunet@baylibre.com>
+ <20180717153643.8806-18-jbrunet@baylibre.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="dDRMvlgZJXvWKvBx"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180725175117.GA825@rob-hp-laptop>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <20180717153643.8806-18-jbrunet@baylibre.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, Jul 17, 2018 at 05:36:41PM +0200, Jerome Brunet wrote:
+> Add the DT binding documentation for axg sound card
 
---dDRMvlgZJXvWKvBx
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I see Mark already applied, but...
 
-Hello Rob,
+> 
+> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+> ---
+>  .../bindings/sound/amlogic,axg-sound-card.txt      | 124 +++++++++++++++++++++
+>  1 file changed, 124 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/sound/amlogic,axg-sound-card.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/sound/amlogic,axg-sound-card.txt b/Documentation/devicetree/bindings/sound/amlogic,axg-sound-card.txt
+> new file mode 100644
+> index 000000000000..39e005da0407
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/sound/amlogic,axg-sound-card.txt
+> @@ -0,0 +1,124 @@
+> +Amlogic AXG sound card:
+> +
+> +Required properties:
+> +
+> +- compatible: "amlogic,axg-sound-card"
+> +- amlogic,name : User specified audio sound card name, one string
 
-Thank you for the review.
+Just using "model" for new bindings.
 
-On Wed, Jul 25, 2018 at 11:51:17AM -0600, Rob Herring wrote:
-> On Tue, Jul 24, 2018 at 08:30:03PM +0200, Marcus Folkesson wrote:
-> > MCP3911 is a dual channel Analog Front End (AFE) containing two
-> > synchronous sampling delta-sigma Analog-to-Digital Converters (ADC).
-> >=20
-> > Signed-off-by: Marcus Folkesson <marcus.folkesson@gmail.com>
-> > Signed-off-by: Kent Gustavsson <kent@minoris.se>
-> > ---
-> >=20
-> > Notes:
-> >     v2:
-> >     	- drop channel width
-> >     	- drop `external_vref`
-> >     	- replace `external-clock` with proper clock bindings
-> >=20
-> >  .../devicetree/bindings/iio/adc/mcp3911.txt        | 28 ++++++++++++++=
-++++++++
-> >  1 file changed, 28 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/iio/adc/mcp3911.t=
-xt
-> >=20
-> > diff --git a/Documentation/devicetree/bindings/iio/adc/mcp3911.txt b/Do=
-cumentation/devicetree/bindings/iio/adc/mcp3911.txt
-> > new file mode 100644
-> > index 000000000000..af5472f51a84
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/iio/adc/mcp3911.txt
-> > @@ -0,0 +1,28 @@
-> > +* Microchip MCP3911 Dual channel analog front end (ADC)
-> > +
-> > +Required properties:
-> > + - compatible: Should be "microchip,mcp3911"
-> > + - reg: SPI chip select number for the device
-> > +
-> > +Recommended properties:
-> > + - spi-max-frequency: Definition as per
-> > +	 Documentation/devicetree/bindings/spi/spi-bus.txt.
-> > +	 Max frequency for this chip is 20MHz.
-> > +
-> > +Optional properties:
-> > + - device-addr: Device address when multiple MCP3911 chips are present=
- on the
-> > +	same SPI bus. Valid values are 0-3. Defaults to 0.
->=20
-> Isn't this the reg value?
->=20
+> +
+> +Optional properties:
+> +
+> +- amlogic,aux-devs : List of phandles pointing to auxiliary devices
+> +- amlogic,widgets : Please refer to widgets.txt.
+> +- amlogic,routing : A list of the connections between audio components.
 
-The reg value defines which chip select the chip hangs on.
-The chip has support to connect up to four chips on the same SPI bus,
-including the same chip select signal.
+audio-routing IIRC
 
-The chips are separated by the device-addr as it is part of the
-communication protocol.
+> +
+> +Subnodes:
+> +
+> +- amlogic,dai-link: Container for dai-link level properties and the
+> +		    CODEC sub-nodes. There should be at least one (and
+> +		    probably) subnode of this type.
 
-When reading the description for device-addr, I agree that it fits well
-for the reg property as well..
+Just 'dai-link'
 
-
-> > + - vref-supply: Phandle to the external reference voltage supply.
-> > + - clocks: Phandle and clock identifier (see clock-names)
-> > + - clock-names: "adc_clk" for the ADC (sampling) clock
->=20
-> Datasheet calls this clki (or mclk internally). Or just drop clock-names=
-=20
-> as it is pointless=20
-> when there is only 1 clock.=20
-
-I will drop the clock-names, thanks!
-
->=20
-> Also DR handling as an IRQ is missing.
-
-I have considered using the DR signal, but as we not support buffering
-yet I did not see any point in using it.
-
-=46rom the datasheet, section 7.1 ::
-
-	These registers [channel registers] are latched when an
-	ADC read communication occurs. When a data ready
-	event occurs during a read communication, the most
-	current ADC data is also latched to avoid data
-	corruption issues. The three bytes of each channel are
-	updated synchronously at a DRCLK rate. The three
-	bytes can be accessed separately if needed but are
-	refreshed synchronously.
-
-So it should be safe to read the values independently of the DR signal.
-Or maybe I'm missing something.
-
-
-Best regards
-Marcus Folkesson
-
---dDRMvlgZJXvWKvBx
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEBVGi6LZstU1kwSxliIBOb1ldUjIFAltYycQACgkQiIBOb1ld
-UjJHZw/8CMIIsAbrC+kAnKC22Si3zdJ0wI2utMTjCdlmdRwDSKxUdw1kNM0+vlDR
-Er66pJ6okfPp1Y7+kXTYa8QKcoXwAp6+wIeCoAGRZ1gP6ZeK2IPIED0d/tPa62xO
-4f/Z68+P936iQp1avmY0ncgu2JtGIxmQDC+wa1aPqATgMm/RGrGjnDJnU9NCNAHx
-l3JhP/4Gd0WCZOfZu+UaAF1tU4ZCbr/FR3u8XVOJeg6c7cnMA7YeUtGnjv1pi7du
-Yqy2mPLqdVdux3SwXZ60UzZ06G+AgswkOvGcVcNHPTn4fawkrbeZ0staPd2FkGCn
-LTQ07nnGc717C6O16axSqmnC1Bk/tzFXQYazruhTQ3pJ+I0fzLovdUN0rBHnSJ/e
-jzqGcDKRTp41XiNaUHGo1GgCILxoSvCMWT8Ja5zNW2Zmn38jK8cqv4wA/sqVAUXj
-2K8HMmL3GNNy5IysRKSnofWc5347u76cF2SowwsXz0CH9lT2qkk7p7Fdy+pFEJVl
-6nGrzY5+MS0MJwkFb7iWDiC6rBA5Saw5xOo5ZECvMv0u9v0oo6i9qOQhpyS4Ezdl
-Rqt3CXEfkZhebNA+Mekqafie832Z6U3Ai8Gri6ZNjdEPxzEppRufovvXmI8CB1xT
-v3+tzULwxbJ1blSUhzp9kfJECzcK1ia9yCHpbCCw0EIDUqxgwes=
-=xhv2
------END PGP SIGNATURE-----
-
---dDRMvlgZJXvWKvBx--
+> +
+> +Required dai-link properties:
+> +
+> +- sound-dai: phandle and port of the CPU DAI.
+> +
+> +Required TDM Backend dai-link properties:
+> +- dai-format : CPU/CODEC common audio format
+> +
+> +Optional TDM Backend dai-link properties:
+> +- dai-tdm-slot-rx-mask-{0,1,2,3}: Receive direction slot masks
+> +- dai-tdm-slot-tx-mask-{0,1,2,3}: Transmit direction slot masks
+> +				  When omitted, mask is assumed to have to no
+> +				  slots. A valid must have at one slot, so at
+> +				  least one these mask should be provided with
+> +				  an enabled slot.
+> +- dai-tdm-slot-num : Please refer to tdm-slot.txt.
+> +		     If omitted, slot number is set to accommodate the largest
+> +		     mask provided.
+> +- dai-tdm-slot-width : Please refer to tdm-slot.txt. default to 32 if omitted.
+> +- mclk-fs : Multiplication factor between stream rate and mclk
+> +
+> +Backend dai-link subnodes:
+> +
+> +- codec: dai-link representing backend links should have at least one subnode.
+> +	 One subnode for each codec of the dai-link.
+> +	 dai-link representing frontend links have no codec, therefore have no
+> +	 subnodes
+> +
+> +Required codec subnodes properties:
+> +
+> +- sound-dai: phandle and port of the CODEC DAI.
+> +
+> +Optional codec subnodes properties:
+> +
+> +- dai-tdm-slot-tx-mask : Please refer to tdm-slot.txt.
+> +- dai-tdm-slot-rx-mask : Please refer to tdm-slot.txt.
+> +
+> +Example:
+> +
+> +sound {
+> +	compatible = "amlogic,axg-sound-card";
+> +	amlogic,name = "AXG-S420";
+> +	amlogic,aux-devs = <&tdmin_a>, <&tdmout_c>;
+> +	amlogic,widgets = "Line", "Lineout",
+> +			  "Line", "Linein",
+> +			  "Speaker", "Speaker1 Left",
+> +			  "Speaker", "Speaker1 Right";
+> +			  "Speaker", "Speaker2 Left",
+> +			  "Speaker", "Speaker2 Right";
+> +	amlogic,routing = "TDMOUT_C IN 0", "FRDDR_A OUT 2",
+> +			  "SPDIFOUT IN 0", "FRDDR_A OUT 3",
+> +			  "TDM_C Playback", "TDMOUT_C OUT",
+> +			  "TDMIN_A IN 2", "TDM_C Capture",
+> +			  "TDMIN_A IN 5", "TDM_C Loopback",
+> +			  "TODDR_A IN 0", "TDMIN_A OUT",
+> +			  "Lineout", "Lineout AOUTL",
+> +			  "Lineout", "Lineout AOUTR",
+> +			  "Speaker1 Left", "SPK1 OUT_A",
+> +			  "Speaker2 Left", "SPK2 OUT_A",
+> +			  "Speaker1 Right", "SPK1 OUT_B",
+> +			  "Speaker2 Right", "SPK2 OUT_B",
+> +			  "Linein AINL", "Linein",
+> +			  "Linein AINR", "Linein";
+> +
+> +	amlogic,dai-link@0 {
+> +		sound-dai = <&frddr_a>;
+> +	};
+> +
+> +	amlogic,dai-link@1 {
+> +		sound-dai = <&toddr_a>;
+> +	};
+> +
+> +	amlogic,dai-link@2 {
+> +		sound-dai = <&tdmif_c>;
+> +		dai-format = "i2s";
+> +		dai-tdm-slot-tx-mask-2 = <1 1>;
+> +		dai-tdm-slot-tx-mask-3 = <1 1>;
+> +		dai-tdm-slot-rx-mask-1 = <1 1>;
+> +		mclk-fs = <256>;
+> +
+> +		codec@0 {
+> +			sound-dai = <&lineout>;
+> +		};
+> +
+> +		codec@1 {
+> +			sound-dai = <&speaker_amp1>;
+> +		};
+> +
+> +		codec@2 {
+> +			sound-dai = <&speaker_amp2>;
+> +		};
+> +
+> +		codec@3 {
+> +			sound-dai = <&linein>;
+> +		};
+> +
+> +	};
+> +
+> +	amlogic,dai-link@4 {
+> +		sound-dai = <&spdifout>;
+> +
+> +		codec {
+> +			sound-dai = <&spdif_dit>;
+> +		};
+> +	};
+> +};
+> -- 
+> 2.14.4
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe devicetree" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
