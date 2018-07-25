@@ -1,83 +1,162 @@
-Return-Path: <SRS0=hTZH=KI=vger.kernel.org=linux-kernel-owner@kernel.org>
+Return-Path: <SRS0=S+WB=KJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1D9FC6778F
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 23:56:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2422FC28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 00:02:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6321C20880
-	for <linux-kernel@archiver.kernel.org>; Tue, 24 Jul 2018 23:56:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6321C20880
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id C1E1920882
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 00:02:52 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="HTRjsyy0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C1E1920882
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388578AbeGYBFn (ORCPT
+        id S2388517AbeGYBLL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 24 Jul 2018 21:05:43 -0400
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:39861 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388447AbeGYBFn (ORCPT
+        Tue, 24 Jul 2018 21:11:11 -0400
+Received: from smtprelay.synopsys.com ([198.182.47.9]:48502 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388457AbeGYBLL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Jul 2018 21:05:43 -0400
-Received: by mail-pl0-f67.google.com with SMTP id m1-v6so2440410plt.6
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Jul 2018 16:56:48 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=yUQ6ZBSSjkTy86/Cz5L8DDuSY21Psh4pSHnGi5L6q84=;
-        b=A3pulVrRGBP6uCfROZMJ5moPHztWIAxTf03bG1Sc+XiNKBFabvbf7xSKPdaNO1Avl9
-         jWUAboGAkkmuGaEQh3HOWQvXR8wx5yJGqmrkjkhJJDbxKmUWZzbO0uP8pb5o853zoMb6
-         t9mbK7+fgvD9IRDyjdqK/r8rOegZJFdcFc0X/woR3WVp4mZ44apTMOFVCIa6ZyXrFfsO
-         DWzsPC+gD+LmVOb/Jak6KY7HbhFY/pASO2kVdAFb8HdejqIAmB40GetNuX6g0ZhiIWMe
-         kTgpWo1G9R8OsM4eXUxWWNqKIawz1TE576LcYch3MF7N+AFbLRaAR3AAa78c8/vi1n05
-         YlVg==
-X-Gm-Message-State: AOUpUlH2T5iXFBYCeypVGNrwQzSXm45xR4zVuBFy37FnDMy0KcZdDXzx
-        jh4vG//lSVEf3BEDK+yLFk2V3A==
-X-Google-Smtp-Source: AAOMgpcx/wuMd+7LY4OaKkQuyoMfu/QXYH34tpSkmsvRLdqmzig+S2gWDfplih3UHhkmIGwgxE5kdg==
-X-Received: by 2002:a17:902:184:: with SMTP id b4-v6mr19070231plb.340.1532476607636;
-        Tue, 24 Jul 2018 16:56:47 -0700 (PDT)
-Received: from mka.mtv.corp.google.com ([2620:0:1000:1501:8e2d:4727:1211:622])
-        by smtp.gmail.com with ESMTPSA id f67-v6sm21817559pfe.75.2018.07.24.16.56.46
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 24 Jul 2018 16:56:47 -0700 (PDT)
-From:   Matthias Kaehlcke <mka@chromium.org>
-To:     Zhang Rui <rui.zhang@intel.com>,
-        Eduardo Valentin <edubezval@gmail.com>
-Cc:     linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Douglas Anderson <dianders@chromium.org>,
-        Matthias Kaehlcke <mka@chromium.org>
-Subject: [PATCH] thermal: qcom-spmi: Delete unused field 'prev_stage'
-Date:   Tue, 24 Jul 2018 16:56:36 -0700
-Message-Id: <20180724235636.60357-1-mka@chromium.org>
-X-Mailer: git-send-email 2.18.0.233.g985f88cf7e-goog
+        Tue, 24 Jul 2018 21:11:11 -0400
+Received: from mailhost.synopsys.com (mailhost3.synopsys.com [10.12.238.238])
+        by smtprelay.synopsys.com (Postfix) with ESMTP id 09DF624E0940;
+        Tue, 24 Jul 2018 17:02:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1532476935; bh=pg8nDZhYyL2rZG3mGT/4G3NIOioFwibUgvKU5g1EN54=;
+        h=From:To:CC:Subject:Date:References:From;
+        b=HTRjsyy0fUMXXHIcCKZV2dqJ8Py/foMwMLIQ+w6CcqxvZwbDEG7P6NdGKpETtfWQu
+         ovuFID134VcMEFgXQp6xLgRxgqq04aVhu517VjsAUGQbmh1WfIhqM6lmz9E6y7LAiM
+         isBa0UidvXWpt0A3TqSXo9CcHiq2Dh2r8jA/LpSarJoqAIDHlorN50l5lGft8aewDf
+         lzL8lYetwYofBI+Y25spfgqJ0dRCww6xW6eaK6lGgeaa7cXOqDLoF+DgvWXUzAfFJf
+         k2x/abJ1hbm8Pl4Mqfs7pBKVxJ3/jJbT52+XDGtxboKwfWYe3/3kevQltmo6bu3JhB
+         JCKzK7wnm3W9g==
+Received: from US01WXQAHTC1.internal.synopsys.com (us01wxqahtc1.internal.synopsys.com [10.12.238.230])
+        by mailhost.synopsys.com (Postfix) with ESMTP id E78533D82;
+        Tue, 24 Jul 2018 17:02:14 -0700 (PDT)
+Received: from us01wembx1.internal.synopsys.com ([169.254.1.253]) by
+ US01WXQAHTC1.internal.synopsys.com ([::1]) with mapi id 14.03.0361.001; Tue,
+ 24 Jul 2018 17:02:14 -0700
+From:   Vineet Gupta <Vineet.Gupta1@synopsys.com>
+To:     Randy Dunlap <rd.dunlab@gmail.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+CC:     Randy Dunlap <rdunlap@infradead.org>,
+        "linux-snps-arc@lists.infradead.org" 
+        <linux-snps-arc@lists.infradead.org>
+Subject: Re: [PATCH 2/4] arc: fix type warnings in arc/mm/cache.c
+Thread-Topic: [PATCH 2/4] arc: fix type warnings in arc/mm/cache.c
+Thread-Index: AQHUI49pAsd59NGrBUKprDU844LxcQ==
+Date:   Wed, 25 Jul 2018 00:02:13 +0000
+Message-ID: <C2D7FE5348E1B147BCA15975FBA23075012B0839C0@us01wembx1.internal.synopsys.com>
+References: <20180724204622.2366-1-rd.dunlab@gmail.com>
+ <20180724204622.2366-3-rd.dunlab@gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.144.199.104]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The field 'prev_stage' in struct qpnp_tm_chip is not used, remove it.
-
-Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
----
- drivers/thermal/qcom-spmi-temp-alarm.c | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/drivers/thermal/qcom-spmi-temp-alarm.c b/drivers/thermal/qcom-spmi-temp-alarm.c
-index ad4f3a8d6560..964d35e32027 100644
---- a/drivers/thermal/qcom-spmi-temp-alarm.c
-+++ b/drivers/thermal/qcom-spmi-temp-alarm.c
-@@ -67,7 +67,6 @@ struct qpnp_tm_chip {
- 	long				temp;
- 	unsigned int			thresh;
- 	unsigned int			stage;
--	unsigned int			prev_stage;
- 	unsigned int			base;
- 	struct iio_channel		*adc;
- };
--- 
-2.18.0.233.g985f88cf7e-goog
-
+On 07/24/2018 01:46 PM, Randy Dunlap wrote:=0A=
+> From: Randy Dunlap <rdunlap@infradead.org>=0A=
+>=0A=
+> ../arch/arc/mm/cache.c: In function 'flush_anon_page':=0A=
+> ../arch/arc/mm/cache.c:1062:55: warning: passing argument 2 of '__flush_d=
+cache_page' makes integer from pointer without a cast [-Wint-conversion]=0A=
+>   __flush_dcache_page((phys_addr_t)page_address(page), page_address(page)=
+);=0A=
+>                                                        ^~~~~~~~~~~~~~~~~~=
+=0A=
+> ../arch/arc/mm/cache.c:1013:59: note: expected 'long unsigned int' but ar=
+gument is of type 'void *'=0A=
+>  void __flush_dcache_page(phys_addr_t paddr, unsigned long vaddr)=0A=
+>                                              ~~~~~~~~~~~~~~^~~~~=0A=
+>=0A=
+> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>=0A=
+> Cc: Vineet Gupta <vgupta@synopsys.com>=0A=
+> Cc: Ofer Levi <oferle@mellanox.com>=0A=
+> Cc: linux-snps-arc@lists.infradead.org=0A=
+> ---=0A=
+>  arch/arc/mm/cache.c |   11 ++++++-----=0A=
+>  1 file changed, 6 insertions(+), 5 deletions(-)=0A=
+>=0A=
+> --- linux-next-20180723.orig/arch/arc/mm/cache.c=0A=
+> +++ linux-next-20180723/arch/arc/mm/cache.c=0A=
+> @@ -1038,7 +1038,7 @@ void flush_cache_mm(struct mm_struct *mm=0A=
+>  void flush_cache_page(struct vm_area_struct *vma, unsigned long u_vaddr,=
+=0A=
+>  		      unsigned long pfn)=0A=
+>  {=0A=
+> -	unsigned int paddr =3D pfn << PAGE_SHIFT;=0A=
+> +	phys_addr_t paddr =3D pfn << PAGE_SHIFT;=0A=
+>  =0A=
+>  	u_vaddr &=3D PAGE_MASK;=0A=
+>  =0A=
+> @@ -1058,8 +1058,9 @@ void flush_anon_page(struct vm_area_stru=0A=
+>  		     unsigned long u_vaddr)=0A=
+>  {=0A=
+>  	/* TBD: do we really need to clear the kernel mapping */=0A=
+> -	__flush_dcache_page(page_address(page), u_vaddr);=0A=
+> -	__flush_dcache_page(page_address(page), page_address(page));=0A=
+> +	__flush_dcache_page((phys_addr_t)page_address(page), u_vaddr);=0A=
+> +	__flush_dcache_page((phys_addr_t)page_address(page),=0A=
+> +			    (phys_addr_t)page_address(page));=0A=
+=0A=
+CONFIG_ARC_CACHE_VIPT_ALIASING is a total bitrot and I'm considering removi=
+ng it=0A=
+as no sane systems should use it. There's none which I know are using it.=
+=0A=
+But for now this will do.=0A=
+=0A=
+=0A=
+>  =0A=
+>  }=0A=
+>  =0A=
+> @@ -1084,7 +1085,7 @@ void copy_user_highpage(struct page *to,=0A=
+>  	 * addr_not_cache_congruent() is 0=0A=
+>  	 */=0A=
+>  	if (page_mapcount(from) && addr_not_cache_congruent(kfrom, u_vaddr)) {=
+=0A=
+> -		__flush_dcache_page((unsigned long)kfrom, u_vaddr);=0A=
+> +		__flush_dcache_page((phys_addr_t)kfrom, u_vaddr);=0A=
+=0A=
+Was this needed really ? I can't seem to trigger any warnings here.=0A=
+All of this (original code before your change) is technically incorrect due=
+ to the=0A=
+combination of CONFIG_ARC_CACHE_VIPT_ALIASING and CONFIG_HIGHMEM. @kfrom is=
+=0A=
+returned by kmap_atomic() and in highmem regime it could be a kernel virtua=
+l=0A=
+address, so calling the low level cache flush interface with a kvaddr, pret=
+ending=0A=
+it is paddr (whethe runsigned long or phys_addr_t) is just not right. This=
+=0A=
+combinations needs to be disallowed from Kconfig !=0A=
+=0A=
+>  		clean_src_k_mappings =3D 1;=0A=
+>  	}=0A=
+>  =0A=
+> @@ -1105,7 +1106,7 @@ void copy_user_highpage(struct page *to,=0A=
+>  	 * sync the kernel mapping back to physical page=0A=
+>  	 */=0A=
+>  	if (clean_src_k_mappings) {=0A=
+> -		__flush_dcache_page((unsigned long)kfrom, (unsigned long)kfrom);=0A=
+> +		__flush_dcache_page((phys_addr_t)kfrom, (unsigned long)kfrom);=0A=
+>  		set_bit(PG_dc_clean, &from->flags);=0A=
+>  	} else {=0A=
+>  		clear_bit(PG_dc_clean, &from->flags);=0A=
+>=0A=
+=0A=
+Ditto !=0A=
