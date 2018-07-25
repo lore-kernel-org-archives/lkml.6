@@ -2,116 +2,85 @@ Return-Path: <SRS0=S+WB=KJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 634CAC67790
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 05:54:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 348CBC6778F
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 05:55:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D5CF820852
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 05:54:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D5CF820852
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ssi.bg
+	by mail.kernel.org (Postfix) with ESMTP id 851D620852
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 05:55:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 851D620852
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goldelico.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728573AbeGYHEP (ORCPT
+        id S1728504AbeGYHFW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 03:04:15 -0400
-Received: from ja.ssi.bg ([178.16.129.10]:60856 "EHLO ja.ssi.bg"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727985AbeGYHEO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Jul 2018 03:04:14 -0400
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-        by ja.ssi.bg (8.15.2/8.15.2) with ESMTP id w6P5rhSV003122;
-        Wed, 25 Jul 2018 08:53:43 +0300
-Date:   Wed, 25 Jul 2018 08:53:43 +0300 (EEST)
-From:   Julian Anastasov <ja@ssi.bg>
-To:     Tan Hu <tan.hu@zte.com.cn>
-cc:     wensong@linux-vs.org, horms@verge.net.au, pablo@netfilter.org,
-        kadlec@blackhole.kfki.hu, fw@strlen.de, davem@davemloft.net,
-        netdev@vger.kernel.org, lvs-devel@vger.kernel.org,
-        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
-        linux-kernel@vger.kernel.org, zhong.weidong@zte.com.cn,
-        jiang.biao2@zte.com.cn
-Subject: Re: [PATCH v2] ipvs: fix race between ip_vs_conn_new() and
- ip_vs_del_dest()
-In-Reply-To: <1532486980-17844-1-git-send-email-tan.hu@zte.com.cn>
-Message-ID: <alpine.LFD.2.20.1807250849100.2794@ja.home.ssi.bg>
-References: <1532486980-17844-1-git-send-email-tan.hu@zte.com.cn>
-User-Agent: Alpine 2.20 (LFD 67 2015-01-07)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        Wed, 25 Jul 2018 03:05:22 -0400
+Received: from mo4-p01-ob.smtp.rzone.de ([85.215.255.52]:16507 "EHLO
+        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728325AbeGYHFW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Jul 2018 03:05:22 -0400
+X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMhflhwDubTJ9o12DNO4Ij0pB1ZSLA74="
+X-RZG-CLASS-ID: mo00
+Received: from iMac.fritz.box
+        by smtp.strato.de (RZmta 43.13 DYNA|AUTH)
+        with ESMTPSA id 6047f4u6P5t5cop
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
+        (Client did not present a certificate);
+        Wed, 25 Jul 2018 07:55:05 +0200 (CEST)
+From:   "H. Nikolaus Schaller" <hns@goldelico.com>
+To:     Kalle Valo <kvalo@codeaurora.org>, Arnd Bergmann <arnd@arndb.de>,
+        "Reizer, Eyal" <eyalr@ti.com>, Kees Cook <keescook@chromium.org>,
+        "H. Nikolaus Schaller" <hns@goldelico.com>
+Cc:     linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, letux-kernel@openphoenux.org,
+        kernel@pyra-handheld.com
+Subject: [PATCH] drivers: net: wlcore: remove duplicate \n for some warnings
+Date:   Wed, 25 Jul 2018 07:55:04 +0200
+Message-Id: <af660348ade58fd33396d2dca432536d2ac85cf7.1532498079.git.hns@goldelico.com>
+X-Mailer: git-send-email 2.12.2
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+wl1271_warning() already appends a \n to the format,
+so adding one to the warning string gives empty lines in the log.
 
-	Hello,
+Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
+---
+ drivers/net/wireless/ti/wlcore/main.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-On Wed, 25 Jul 2018, Tan Hu wrote:
+diff --git a/drivers/net/wireless/ti/wlcore/main.c b/drivers/net/wireless/ti/wlcore/main.c
+index 3a51ab116e79..ab34d41487d3 100644
+--- a/drivers/net/wireless/ti/wlcore/main.c
++++ b/drivers/net/wireless/ti/wlcore/main.c
+@@ -6065,16 +6065,16 @@ static int wl1271_register_hw(struct wl1271 *wl)
+ 	}
+ 
+ 	if (oui_addr == 0xdeadbe && nic_addr == 0xef0000) {
+-		wl1271_warning("Detected unconfigured mac address in nvs, derive from fuse instead.\n");
++		wl1271_warning("Detected unconfigured mac address in nvs, derive from fuse instead.");
+ 		if (!strcmp(pdev_data->family->name, "wl18xx")) {
+-			wl1271_warning("This default nvs file can be removed from the file system\n");
++			wl1271_warning("This default nvs file can be removed from the file system");
+ 		} else {
+-			wl1271_warning("Your device performance is not optimized.\n");
+-			wl1271_warning("Please use the calibrator tool to configure your device.\n");
++			wl1271_warning("Your device performance is not optimized.");
++			wl1271_warning("Please use the calibrator tool to configure your device.");
+ 		}
+ 
+ 		if (wl->fuse_oui_addr == 0 && wl->fuse_nic_addr == 0) {
+-			wl1271_warning("Fuse mac address is zero. using random mac\n");
++			wl1271_warning("Fuse mac address is zero. using random mac");
+ 			/* Use TI oui and a random nic */
+ 			oui_addr = WLCORE_TI_OUI_ADDRESS;
+ 			nic_addr = get_random_int();
+-- 
+2.12.2
 
-> We came across infinite loop in ipvs when using ipvs in docker
-> env.
-> 
-> When ipvs receives new packets and cannot find an ipvs connection,
-> it will create a new connection, then if the dest is unavailable
-> (i.e. IP_VS_DEST_F_AVAILABLE), the packet will be dropped sliently.
-> 
-> But if the dropped packet is the first packet of this connection,
-> the connection control timer never has a chance to start and the
-> ipvs connection cannot be released. This will lead to memory leak, or
-> infinite loop in cleanup_net() when net namespace is released like
-> this:
-> 
->     ip_vs_conn_net_cleanup at ffffffffa0a9f31a [ip_vs]
->     __ip_vs_cleanup at ffffffffa0a9f60a [ip_vs]
->     ops_exit_list at ffffffff81567a49
->     cleanup_net at ffffffff81568b40
->     process_one_work at ffffffff810a851b
->     worker_thread at ffffffff810a9356
->     kthread at ffffffff810b0b6f
->     ret_from_fork at ffffffff81697a18
-> 
-> race condition:
->     CPU1                           CPU2
->     ip_vs_in()
->       ip_vs_conn_new()
->                                    ip_vs_del_dest()
->                                      __ip_vs_unlink_dest()
->                                        ~IP_VS_DEST_F_AVAILABLE
->       cp->dest && !IP_VS_DEST_F_AVAILABLE
->       __ip_vs_conn_put
->     ...
->     cleanup_net  ---> infinite looping
-> 
-> Fix this by checking whether the timer already started.
-> 
-> Signed-off-by: Tan Hu <tan.hu@zte.com.cn>
-> Reviewed-by: Jiang Biao <jiang.biao2@zte.com.cn>
-> ---
-> v2: fix use-after-free in CONN_ONE_PACKET case suggested by Julian Anastasov
-> 
->  net/netfilter/ipvs/ip_vs_core.c | 15 +++++++++++----
->  1 file changed, 11 insertions(+), 4 deletions(-)
-> 
-> diff --git a/net/netfilter/ipvs/ip_vs_core.c b/net/netfilter/ipvs/ip_vs_core.c
-> index 0679dd1..a17104f 100644
-> --- a/net/netfilter/ipvs/ip_vs_core.c
-> +++ b/net/netfilter/ipvs/ip_vs_core.c
-> @@ -1972,13 +1972,20 @@ static int ip_vs_in_icmp_v6(struct netns_ipvs *ipvs, struct sk_buff *skb,
->  	if (cp->dest && !(cp->dest->flags & IP_VS_DEST_F_AVAILABLE)) {
->  		/* the destination server is not available */
->  
-> -		if (sysctl_expire_nodest_conn(ipvs)) {
-> +		__u32 flags = cp->flags; 
-
-	Ops, now scripts/checkpatch.pl --strict /tmp/file.patch
-is complaining about extra trailing space in above line.
-You can also remove the empty line above the new code...
-
-Regards
-
---
-Julian Anastasov <ja@ssi.bg>
