@@ -2,160 +2,93 @@ Return-Path: <SRS0=S+WB=KJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 595F1C6778F
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 16:43:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4013EC6778F
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 16:43:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1E4212088E
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 16:43:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E4212088E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id D8EF720882
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 16:43:53 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="M8ggOWh6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D8EF720882
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729290AbeGYRvV (ORCPT
+        id S1729821AbeGYR4U (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 13:51:21 -0400
-Received: from ns.mm-sol.com ([37.157.136.199]:35495 "EHLO extserv.mm-sol.com"
+        Wed, 25 Jul 2018 13:56:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56778 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728933AbeGYRvV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Jul 2018 13:51:21 -0400
-Received: from mms-0439.qualcomm.mm-sol.com (unknown [37.157.136.206])
-        by extserv.mm-sol.com (Postfix) with ESMTPSA id AEFF5CD54;
-        Wed, 25 Jul 2018 19:38:53 +0300 (EEST)
-From:   Todor Tomov <todor.tomov@linaro.org>
-To:     mchehab@kernel.org, sakari.ailus@linux.intel.com,
-        hans.verkuil@cisco.com, laurent.pinchart+renesas@ideasonboard.com,
-        linux-media@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, Todor Tomov <todor.tomov@linaro.org>
-Subject: [PATCH v4 02/34] media: v4l: Add new 2X8 10-bit grayscale media bus code
-Date:   Wed, 25 Jul 2018 19:38:11 +0300
-Message-Id: <1532536723-19062-3-git-send-email-todor.tomov@linaro.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1532536723-19062-1-git-send-email-todor.tomov@linaro.org>
-References: <1532536723-19062-1-git-send-email-todor.tomov@linaro.org>
+        id S1728913AbeGYR4T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Jul 2018 13:56:19 -0400
+Received: from localhost (unknown [104.132.1.75])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id E56FA20843;
+        Wed, 25 Jul 2018 16:43:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1532537031;
+        bh=thUy1/GRVFbLt0CQ6g42h2OZwDGBiaGP/iF0Iy7bPEI=;
+        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
+        b=M8ggOWh638AT6II5398+qj4Qjw8yAQU/2Wk1aRp2tZ7ukPwlGgaT8qILfOulDkHEa
+         xNsGrHrgwgSMcWm6jh/Kfpx1B/Rm6nUYbZ7u2mYfI4NFTCnewh5/NDDjJOd/QPVwy9
+         5Kik3aGyY9Eam7m0DRCPkcUGqCfv2kjpHhtEXF6M=
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+To:     Gregory CLEMENT <gregory.clement@bootlin.com>,
+        Mike Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+From:   Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <20180713102726.1950-1-gregory.clement@bootlin.com>
+Cc:     Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Gregory CLEMENT <gregory.clement@bootlin.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        linux-arm-kernel@lists.infradead.org,
+        Antoine Tenart <antoine.tenart@bootlin.com>,
+        =?utf-8?q?Miqu=C3=A8l_Raynal?= <miquel.raynal@bootlin.com>,
+        Maxime Chevallier <maxime.chevallier@bootlin.com>,
+        Nadav Haklai <nadavh@marvell.com>,
+        Victor Gu <xigu@marvell.com>, Marcin Wojtas <mw@semihalf.com>,
+        Wilson Ding <dingwei@marvell.com>,
+        Hua Jing <jinghua@marvell.com>,
+        Neta Zur Hershkovits <neta@marvell.com>,
+        Ken Ma <make@marvell.com>
+References: <20180713102726.1950-1-gregory.clement@bootlin.com>
+Message-ID: <153253703023.48062.216865546147364380@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.7
+Subject: Re: [PATCH] clk: mvebu: armada-37xx-periph: Fix wrong return value in
+ get_parent
+Date:   Wed, 25 Jul 2018 09:43:50 -0700
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The code will be called MEDIA_BUS_FMT_Y10_2X8_PADHI_LE.
-It is similar to MEDIA_BUS_FMT_SBGGR10_2X8_PADHI_LE
-but MEDIA_BUS_FMT_Y10_2X8_PADHI_LE describes grayscale
-data.
+Quoting Gregory CLEMENT (2018-07-13 03:27:26)
+> The return value of the get_parent operation is a u8, whereas a -EINVAL
+> was returned. This wrong value was return if the value was bigger that
+> the number of parent but this case was already handled by the core.
+> =
 
-Signed-off-by: Todor Tomov <todor.tomov@linaro.org>
----
- Documentation/media/uapi/v4l/subdev-formats.rst | 72 +++++++++++++++++++++++++
- include/uapi/linux/media-bus-format.h           |  3 +-
- 2 files changed, 74 insertions(+), 1 deletion(-)
+> So we can just remove this chunk of code to fix the issue.
+> =
 
-diff --git a/Documentation/media/uapi/v4l/subdev-formats.rst b/Documentation/media/uapi/v4l/subdev-formats.rst
-index a4739f7..8e73fcf 100644
---- a/Documentation/media/uapi/v4l/subdev-formats.rst
-+++ b/Documentation/media/uapi/v4l/subdev-formats.rst
-@@ -4318,6 +4318,78 @@ the following codes.
-       - y\ :sub:`2`
-       - y\ :sub:`1`
-       - y\ :sub:`0`
-+    * .. _MEDIA-BUS-FMT-Y10-2X8-PADHI_LE:
-+
-+      - MEDIA_BUS_FMT_Y10_2X8_PADHI_LE
-+      - 0x202c
-+      -
-+      -
-+      -
-+      -
-+      -
-+      -
-+      -
-+      -
-+      -
-+      -
-+      -
-+      -
-+      -
-+      -
-+      -
-+      -
-+      -
-+      -
-+      -
-+      -
-+      -
-+      -
-+      -
-+      -
-+      -
-+      - y\ :sub:`7`
-+      - y\ :sub:`6`
-+      - y\ :sub:`5`
-+      - y\ :sub:`4`
-+      - y\ :sub:`3`
-+      - y\ :sub:`2`
-+      - y\ :sub:`1`
-+      - y\ :sub:`0`
-+    * -
-+      -
-+      -
-+      -
-+      -
-+      -
-+      -
-+      -
-+      -
-+      -
-+      -
-+      -
-+      -
-+      -
-+      -
-+      -
-+      -
-+      -
-+      -
-+      -
-+      -
-+      -
-+      -
-+      -
-+      -
-+      -
-+      -
-+      - 0
-+      - 0
-+      - 0
-+      - 0
-+      - 0
-+      - 0
-+      - y\ :sub:`9`
-+      - y\ :sub:`8`
-     * .. _MEDIA-BUS-FMT-UYVY10-2X10:
- 
-       - MEDIA_BUS_FMT_UYVY10_2X10
-diff --git a/include/uapi/linux/media-bus-format.h b/include/uapi/linux/media-bus-format.h
-index 9e35117..d6a5a3b 100644
---- a/include/uapi/linux/media-bus-format.h
-+++ b/include/uapi/linux/media-bus-format.h
-@@ -62,7 +62,7 @@
- #define MEDIA_BUS_FMT_RGB121212_1X36		0x1019
- #define MEDIA_BUS_FMT_RGB161616_1X48		0x101a
- 
--/* YUV (including grey) - next is	0x202c */
-+/* YUV (including grey) - next is	0x202d */
- #define MEDIA_BUS_FMT_Y8_1X8			0x2001
- #define MEDIA_BUS_FMT_UV8_1X8			0x2015
- #define MEDIA_BUS_FMT_UYVY8_1_5X8		0x2002
-@@ -74,6 +74,7 @@
- #define MEDIA_BUS_FMT_YUYV8_2X8			0x2008
- #define MEDIA_BUS_FMT_YVYU8_2X8			0x2009
- #define MEDIA_BUS_FMT_Y10_1X10			0x200a
-+#define MEDIA_BUS_FMT_Y10_2X8_PADHI_LE		0x202c
- #define MEDIA_BUS_FMT_UYVY10_2X10		0x2018
- #define MEDIA_BUS_FMT_VYUY10_2X10		0x2019
- #define MEDIA_BUS_FMT_YUYV10_2X10		0x200b
--- 
-2.7.4
+> Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+> Fixes: 9818a7a4fd10 ("clk: mvebu: armada-37xx-periph: prepare cpu clk to
+> be used with DVFS")
+> Signed-off-by: Gregory CLEMENT <gregory.clement@bootlin.com>
+> ---
+
+Applied to clk-next
+
+This is actually a good point I've never considered. We should go fix
+all the drivers that return a negative value to return a number that's
+greater than the number of clks that are the parents and then we can
+still get 'errors' from this clk_op.
 
