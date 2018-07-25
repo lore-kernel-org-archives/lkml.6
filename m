@@ -2,91 +2,118 @@ Return-Path: <SRS0=S+WB=KJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F3DFC6778F
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 14:13:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 269EBC6778F
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 14:14:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 462C62088E
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 14:13:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 462C62088E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id D14AF20843
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 14:14:08 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="aPHkag17"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D14AF20843
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729121AbeGYPZI (ORCPT
+        id S1729216AbeGYPZ6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 11:25:08 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:52994 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727946AbeGYPZI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Jul 2018 11:25:08 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        Wed, 25 Jul 2018 11:25:58 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49654 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728608AbeGYPZ6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Jul 2018 11:25:58 -0400
+Received: from devbox (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 55A4777886;
-        Wed, 25 Jul 2018 14:13:16 +0000 (UTC)
-Received: from vitty.brq.redhat.com.redhat.com (unknown [10.40.205.21])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 3D7F410F1BE0;
-        Wed, 25 Jul 2018 14:13:12 +0000 (UTC)
-From:   Vitaly Kuznetsov <vkuznets@redhat.com>
-To:     Paolo Bonzini <pbonzini@redhat.com>
-Cc:     kvm@vger.kernel.org,
-        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Roman Kagan <rkagan@virtuozzo.com>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        "Michael Kelley \(EOSG\)" <Michael.H.Kelley@microsoft.com>,
-        Mohammed Gamal <mmorsy@redhat.com>,
-        Cathy Avery <cavery@redhat.com>, linux-kernel@vger.kernel.org,
-        Jim Mattson <jmattson@google.com>,
-        Liran Alon <liran.alon@oracle.com>
-Subject: Re: [PATCH v2 6/6] KVM: nVMX: optimize prepare_vmcs02{,_full} for Enlightened VMCS case
-References: <20180621123046.29606-1-vkuznets@redhat.com>
-        <20180621123046.29606-7-vkuznets@redhat.com>
-        <a826fd88-0199-8e7b-ebfc-290e936b5efc@redhat.com>
-        <87va93pv6w.fsf@vitty.brq.redhat.com>
-        <46052d1e-9ee1-8cee-3f7c-cf27b1cd0373@redhat.com>
-        <87in53pjgv.fsf@vitty.brq.redhat.com>
-        <f464b4fa-19d0-6b8b-5afe-d491b1eee08a@redhat.com>
-        <87effrphu3.fsf@vitty.brq.redhat.com>
-        <2ed3d00b-bc99-2e2d-3a23-a86de767bfec@redhat.com>
-Date:   Wed, 25 Jul 2018 16:13:12 +0200
-In-Reply-To: <2ed3d00b-bc99-2e2d-3a23-a86de767bfec@redhat.com> (Paolo
-        Bonzini's message of "Wed, 25 Jul 2018 15:31:47 +0200")
-Message-ID: <87a7qfpfnr.fsf@vitty.brq.redhat.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Wed, 25 Jul 2018 14:13:16 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Wed, 25 Jul 2018 14:13:16 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'vkuznets@redhat.com' RCPT:''
+        by mail.kernel.org (Postfix) with ESMTPSA id 5A1D120843;
+        Wed, 25 Jul 2018 14:14:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1532528046;
+        bh=IsArdNKx9qLUg3zCYe5+tgSxzAOsxWouKewk9UZgGb4=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=aPHkag173/tIGR2JRNBj1oyai0bYHyY/DTHm2tL2rf5ouEx9xNGChArMtcH+zILRT
+         /gOzMiCGKbo5mDufs+9rbVWfuj0522bN8V3LoqUDnHhIoyST/fCjAEwMeIeUYipmta
+         srdThTU3uig46+g4+USYNdjZgDjxPLcObOXdtfN8=
+Date:   Wed, 25 Jul 2018 23:14:02 +0900
+From:   Masami Hiramatsu <mhiramat@kernel.org>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     Tom Zanussi <tom.zanussi@linux.intel.com>,
+        Ingo Molnar <mingo@redhat.com>, Shuah Khan <shuah@kernel.org>,
+        Hiraku Toyooka <hiraku.toyooka@cybertrust.co.jp>,
+        linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH 1/3] [BUGFIX] tracing: Fix double free of
+ event_trigger_data
+Message-Id: <20180725231402.1f9d8754cee6b35b7dee7b3c@kernel.org>
+In-Reply-To: <20180724224149.0767fd13@gandalf.local.home>
+References: <153149923649.11274.14970833360963898112.stgit@devbox>
+        <153149926702.11274.12489440326560729788.stgit@devbox>
+        <20180723221006.60cc7aa9@vmware.local.home>
+        <20180725000909.6c8b2f3881ee75c4f6bd466b@kernel.org>
+        <20180724164959.3cbc1422@gandalf.local.home>
+        <20180724173008.454cdf10@gandalf.local.home>
+        <20180724191331.738eb819@gandalf.local.home>
+        <20180725101653.09e095092a4bb77e6fc558df@kernel.org>
+        <20180724224149.0767fd13@gandalf.local.home>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Paolo Bonzini <pbonzini@redhat.com> writes:
+On Tue, 24 Jul 2018 22:41:49 -0400
+Steven Rostedt <rostedt@goodmis.org> wrote:
 
-> On 25/07/2018 15:26, Vitaly Kuznetsov wrote:
->
->> The other place where we set dirty_vmcs12 is the newly introduced
->> vmx_set_nested_state() but I think I'm going to add support for eVMCS
->> there later and just return something like -ENOTSUPP for now. Too many
->> people work on nested simultaneously :-)
->
-> Hmm, I think that means you have to put the clean fields in the
-> vmx_nested struct.  Then it's really easy in vmx_set_nested_state to
-> clear all the clean bits.  Touching memory in vmx_set_nested_state is...
-> *puts on sunglasses* a touchy subject (see comment in kvm/queue's
-> enter_vmx_non_root_mode).
->
+> On Wed, 25 Jul 2018 10:16:53 +0900
+> Masami Hiramatsu <mhiramat@kernel.org> wrote:
+> 
+> > Hm, as far as I can see, when register_trigger() returns >= 0, it already
+> > calls ->init the trigger_data. This means its refcount++, and in that
+> > case, below patch will miss to free the trigger_data.
+> > How about below for tentative fix?
+> > 
+> > 	if (!ret) {
+> > 		ret = -ENOENT;
+> > 		/* We have to forcibly free the trigger_data */
+> > 		goto out_free;
+> > 	} else if (ret > 0)
+> > 		ret = 0;
+> 
+> Or better yet, match it properly:
 
-Not only clean fields, in case we can't touch memory in
-vmx_set_nested_state I guess we'll need to cache the whole eVMCS, just
-like we save cached_shadow_vmcs12. Anyway, let's eat the elephant one
-bite at a time :-)
+OK, this looks good to me :)
+
+Reviewed-by: Masami Hiramatsu <mhiramat@kernel.org>
+
+Thanks!
+
+> 
+> out_reg:
+> 	/* Up the trigger_data count to make sure reg doesn't free it on failure */
+> 	event_trigger_init(trigger_ops, trigger_data);
+> 	ret = cmd_ops->reg(glob, trigger_ops, trigger_data, file);
+> 	/*
+> 	 * The above returns on success the # of functions enabled,
+> 	 * but if it didn't find any functions it returns zero.
+> 	 * Consider no functions a failure too.
+> 	 */
+> 	if (!ret) {
+> 		cmd_ops->unreg(glob, trigger_ops, trigger_data, file);
+> 		ret = -ENOENT;
+> 	} else if (ret > 0)
+> 		ret = 0;
+> 
+> 	/* Down the counter of trigger_data or free it if not used anymore */
+> 	event_trigger_free(trigger_ops, trigger_data);
+>  out:
+> 	return ret;
+> 
+> -- Steve
+
 
 -- 
-  Vitaly
+Masami Hiramatsu <mhiramat@kernel.org>
