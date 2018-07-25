@@ -6,116 +6,149 @@ X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E395EC6778F
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 22:29:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BBE6BC6778F
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 22:29:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9B80120833
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 22:29:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6511B20833
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 22:29:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="a+5WB2np"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B80120833
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="d5waiVkt"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6511B20833
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731566AbeGYXmt (ORCPT
+        id S1731612AbeGYXmv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 19:42:49 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:33608 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731174AbeGYXms (ORCPT
+        Wed, 25 Jul 2018 19:42:51 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:35502 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731576AbeGYXmt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Jul 2018 19:42:48 -0400
-Received: by mail-pg1-f195.google.com with SMTP id r5-v6so6204744pgv.0
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Jul 2018 15:29:03 -0700 (PDT)
+        Wed, 25 Jul 2018 19:42:49 -0400
+Received: by mail-pg1-f196.google.com with SMTP id e6-v6so6202652pgv.2
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Jul 2018 15:29:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=qAC1H26pnQ6DxbqqPc4rsGCCCFylb2IBm7i3FTClGSc=;
-        b=a+5WB2npiwKYJpsN+hCT2pUeEBWNn8W7KvuMGf56aBZBOu4r1/zvSK7JoeQB/1gb9h
-         2GMXKXgJ1tIu6SiCQWqTq9ew4y/Ea94Tl2LCuuVnhqEtJDA5/fuQ/vnRGZ2nZSEgJL1B
-         wy5xS8CgvDSqMwCm3BQa8pSTQvcexdiYadjK0=
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=Ink+Zn8JKKzqrmjhPVKUxo0wTebG1Ak/9NW4SCv+NEs=;
+        b=d5waiVktb7Skwo+wZNY5Gu3m9T6CTmlCMM1asro2WMbqNmst/sXeI5axBsr3BRpBFM
+         7k4V4/j/7gIrAqRKTsFsnZaviZ/v2SY8CBSIOanvpeUNOka7HopjreorUONwHhx0BSRa
+         V6nNctLVYwWXCi0h8ksFE1aF386LzWzz0fJro=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=qAC1H26pnQ6DxbqqPc4rsGCCCFylb2IBm7i3FTClGSc=;
-        b=XoafZhtI8gBLBd38ORToN2zcn2f5NuwOOcDWbV28z8Ak5iYQjjhBvEbF/xAT100Ng6
-         wu+8ll050+3ve/nChPsN7GuICllVtWFKoE/OK24dcqfxFAxngdHwhMQX6jvBhGbtx+mb
-         g4QQz8A8FvjZY/qkU4WEpI7yVnOQfMYTbiJ/i2O3p+RTTW5Dij4Fdvm9BB0r0v0uQXEa
-         x9dZCbaoDFaUCQEfTT1ff9tbVn46KJRnwMJJjHiblMcsHjFSV5wkvgi6xYMZ+zU7ZWDu
-         CGU74uZPnsOpXkp6ZrK59FP6sp7LjDlgMup6ZHcuAAoXf0iiWemcFuYE3qKxJOmOU3lU
-         XtGg==
-X-Gm-Message-State: AOUpUlHkf2QJR+ymO3oyg58LEhZiPi5SbngvzrKqQDzN2Z/rr5tSBxNz
-        o7oj7IABgkaGKpdkvHOeVY/eI3Cr4E2wZQ==
-X-Google-Smtp-Source: AAOMgpfBed5mmY46fMmCaQyNoECdqM7g48G9Ka/zbOGuawf6UN9g0mHU+m+1UQkVZybu3Aqj2JTMKQ==
-X-Received: by 2002:a62:15c8:: with SMTP id 191-v6mr23636162pfv.194.1532557743212;
-        Wed, 25 Jul 2018 15:29:03 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=Ink+Zn8JKKzqrmjhPVKUxo0wTebG1Ak/9NW4SCv+NEs=;
+        b=M2HV8pv4DQ+BO/GaZY/4Y70KZDelZEyn7b/fKDnUPgUORJCyJ6hF7yYtxuPA5lPS1D
+         Ad+zF56zIDJJ9lnhX9QEvvrAk6jt50IZul6JqHa9XSQj6iYBh/v0K/AzK6hcPkZVwATY
+         umJST7s3PDgVSCditMJwOmT66v7bu7Sj45Z8jHbH2FCDwL7rGsc6M28nAYXN7YH9DAYy
+         8beiJCKfKSTYNeu7TSEBI/T+2bcApf9zIop90sp92CHyxn2x5T1jGD+g3Fd2eZku472J
+         NgvHUjXF2FUxVp1aRrMfs3doPeA/LGjHGRTOyzA2tJpTSs32i4sKCKTdly59FawYNj8B
+         oeVw==
+X-Gm-Message-State: AOUpUlHUvF/kFnvK8bQe4+oWIhzcEeBxwiXQgm8WNFIqp4QW5badfjRB
+        5XEv6Tf5JlNgx1e5z25effxWwHgV9zFCLw==
+X-Google-Smtp-Source: AAOMgpfrezkXI2QKska/+IpXiR8SnBknmM6lpJPDhofAwAKPOJUysXllMOIDO48GEoEOj33pIPZogw==
+X-Received: by 2002:a62:669b:: with SMTP id s27-v6mr21979355pfj.224.1532557744045;
+        Wed, 25 Jul 2018 15:29:04 -0700 (PDT)
 Received: from swboyd.mtv.corp.google.com ([2620:0:1000:1511:d30e:62c6:f82c:ff40])
-        by smtp.gmail.com with ESMTPSA id o21-v6sm23839234pfa.54.2018.07.25.15.29.02
+        by smtp.gmail.com with ESMTPSA id o21-v6sm23839234pfa.54.2018.07.25.15.29.03
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 25 Jul 2018 15:29:02 -0700 (PDT)
+        Wed, 25 Jul 2018 15:29:03 -0700 (PDT)
 From:   Stephen Boyd <swboyd@chromium.org>
 To:     Linus Walleij <linus.walleij@linaro.org>
 Cc:     linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
         linux-arm-msm@vger.kernel.org,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
         Doug Anderson <dianders@chromium.org>
-Subject: [PATCH v2 0/3] pinctrl: msm interrupt and muxing fixes
-Date:   Wed, 25 Jul 2018 15:28:57 -0700
-Message-Id: <20180725222900.33231-1-swboyd@chromium.org>
+Subject: [PATCH v2 1/3] pinctrl: msm: Really mask level interrupts to prevent latching
+Date:   Wed, 25 Jul 2018 15:28:58 -0700
+Message-Id: <20180725222900.33231-2-swboyd@chromium.org>
 X-Mailer: git-send-email 2.18.0.233.g985f88cf7e-goog
+In-Reply-To: <20180725222900.33231-1-swboyd@chromium.org>
+References: <20180725222900.33231-1-swboyd@chromium.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Here's a collection of pinctrl fixes for the qcom driver that
-make things a little smoother for DT writers while also fixing
-a problem seen with level triggered interrupts.
+The interrupt controller hardware in this pin controller has two status
+enable bits. The first "normal" status enable bit enables or disables
+the summary interrupt line being raised when a gpio interrupt triggers
+and the "raw" status enable bit allows or prevents the hardware from
+latching an interrupt into the status register for a gpio interrupt.
+Currently we just toggle the "normal" status enable bit in the mask and
+unmask ops so that the summary irq interrupt going to the CPU's
+interrupt controller doesn't trigger for the masked gpio interrupt.
 
-The first patch fixes an issue where we always see one extra level
-triggered interrupt when the interrupt triggers. The second and third
-patches make things nice for DT writers so they don't have to explicitly
-mux out pins as 'GPIO' function and as 'input' instead of output so that
-interrupts work properly and also makes sure that a gpio is muxed out
-properly to 'GPIO' function when a gpio is requested by gpiod_request()
-and friends.
+For a level triggered interrupt, the flow would be as follows: the pin
+controller sees the interrupt, latches the status into the status
+register, raises the summary irq to the CPU, summary irq handler runs
+and calls handle_level_irq(), handle_level_irq() masks and acks the gpio
+interrupt, the interrupt handler runs, and finally unmask the interrupt.
+When the interrupt handler completes, we expect that the interrupt line
+level will go back to the deasserted state so the genirq code can unmask
+the interrupt without it triggering again.
 
-The discussion never really completed on the previous thread so I'm just
-resending these patches to restart the conversation. In the cases
-where a driver needs to do both pinctrl muxing for some non-gpio
-function and also GPIO control they'll need to explicitly mux the pins
-at the right time. If we force them to mux the pins into the function
-mode after requesting the GPIO at boot then we'll be better off because
-it will force the code to mux out the function or GPIO explicitly all
-the time.
+If we only mask the interrupt by clearing the "normal" status enable bit
+then we'll ack the interrupt but it will continue to show up as pending
+in the status register because the raw status bit is enabled, the
+hardware hasn't deasserted the line, and thus the asserted state latches
+into the status register again. When the hardware deasserts the
+interrupt the pin controller still thinks there is a pending unserviced
+level interrupt because it latched it earlier. This behavior causes
+software to see an extra interrupt for level type interrupts each time
+the interrupt is handled.
 
-We will have a case in the near future where the UART driver will want
-to mux the RX pin into GPIO mode so it can get a wakeup interrupt during
-suspend path and then swizzle the pin back into QUP/UART mode when the
-wakeup interrupt isn't necessary anymore. In this case, I imagine the
-driver will request the pin as an interrupt during probe, that will
-convert the GPIO into an irq and mux it out as a GPIO function input
-pin, disable that IRQ because it's only needed at suspend time, and then
-need to explicitly mux the device into "UART" mode before finishing
-driver probe. Then when it goes into suspend, it will need to remux the
-pin as a GPIO function input pin, enable the irq, and wait for wakeup.
-On resume, it will disable the irq and remux the pin as "UART" mode.
-
-Changes from v1:
- * Squashed the raw status bit part into the same write in unmask path
-   based on suggestion from Doug Andersson
+Let's fix this by clearing the raw status enable bit for level type
+interrupts so that the hardware stops latching the status of the
+interrupt after we ack it. We don't do this for edge type interrupts
+because it seems that toggling the raw status enable bit for edge type
+interrupts causes spurious edge interrupts.
 
 Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
 Cc: Doug Anderson <dianders@chromium.org>
+Signed-off-by: Stephen Boyd <swboyd@chromium.org>
+---
 
-Stephen Boyd (3):
-  pinctrl: msm: Really mask level interrupts to prevent latching
-  pinctrl: msm: Mux out gpio function with gpio_request()
-  pinctrl: msm: Configure interrupts as input and gpio mode
+Changes from v1:
+ - Squashed raw_status_bit write into same write on unmask (Doug
+   Andersson)
 
- drivers/pinctrl/qcom/pinctrl-msm.c | 67 ++++++++++++++++++++++++++++++
- 1 file changed, 67 insertions(+)
+ drivers/pinctrl/qcom/pinctrl-msm.c | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
+diff --git a/drivers/pinctrl/qcom/pinctrl-msm.c b/drivers/pinctrl/qcom/pinctrl-msm.c
+index 2155a30c282b..3970dc599092 100644
+--- a/drivers/pinctrl/qcom/pinctrl-msm.c
++++ b/drivers/pinctrl/qcom/pinctrl-msm.c
+@@ -634,6 +634,19 @@ static void msm_gpio_irq_mask(struct irq_data *d)
+ 	raw_spin_lock_irqsave(&pctrl->lock, flags);
+ 
+ 	val = readl(pctrl->regs + g->intr_cfg_reg);
++	/*
++	 * Leaving the RAW_STATUS_EN bit enabled causes level interrupts that
++	 * are still asserted to re-latch after we ack them. Clear the raw
++	 * status enable bit too so the interrupt can't even latch into the
++	 * hardware while it's masked, but only do this for level interrupts
++	 * because edge interrupts have a problem with the raw status bit
++	 * toggling and causing spurious interrupts.
++	 */
++	if (irqd_get_trigger_type(d) & IRQ_TYPE_LEVEL_MASK) {
++		val &= ~BIT(g->intr_raw_status_bit);
++		writel(val, pctrl->regs + g->intr_cfg_reg);
++	}
++
+ 	val &= ~BIT(g->intr_enable_bit);
+ 	writel(val, pctrl->regs + g->intr_cfg_reg);
+ 
+@@ -655,6 +668,7 @@ static void msm_gpio_irq_unmask(struct irq_data *d)
+ 	raw_spin_lock_irqsave(&pctrl->lock, flags);
+ 
+ 	val = readl(pctrl->regs + g->intr_cfg_reg);
++	val |= BIT(g->intr_raw_status_bit);
+ 	val |= BIT(g->intr_enable_bit);
+ 	writel(val, pctrl->regs + g->intr_cfg_reg);
+ 
 -- 
 Sent by a computer through tubes
 
