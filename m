@@ -2,131 +2,94 @@ Return-Path: <SRS0=S+WB=KJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54DC7C6778F
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 16:30:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA469C6778F
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 16:31:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0635020852
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 16:30:53 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="S0Pb9XlB"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0635020852
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 88C6720852
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 16:31:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 88C6720852
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730068AbeGYRnP (ORCPT
+        id S1730097AbeGYRn1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 13:43:15 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:38382 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728694AbeGYRnO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Jul 2018 13:43:14 -0400
-Received: by mail-pg1-f193.google.com with SMTP id k3-v6so5657139pgq.5;
-        Wed, 25 Jul 2018 09:30:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=EcCkkK5jsnvFBGgi1WS8CaoabYsER2v4TZV/naQNXK4=;
-        b=S0Pb9XlByRTtgm406hIySBhJUA6F5gwnSzkKfoIyl1kP0ZqUmmPfbt8mlhVFkas4As
-         iDV+Pacwks5VG9tI+j/qbXEBdaFLUSAwWLxpmKqzo7/jSaswCqQDjcJsspiro3fbzRZM
-         Fsoet+I024LIeGREd0g7vmiIflRi8f29TRsdHOVzQNgr5rjFxciq/lCYK8ZHN2dgKSvV
-         mv5WDzSsrj3lMqzTTIM+rxBAnRSImqvkdxGtw222gP6wliCtfuHIxcz1/U58au9/sg/2
-         MuENdc94BZSGXAKSbmw4AGs+2y6VbW7oWYVyJYQIsZlqJflFvTPeHQQA7FavWA78WIUx
-         BI5A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=EcCkkK5jsnvFBGgi1WS8CaoabYsER2v4TZV/naQNXK4=;
-        b=DbP8nxsMhVb9FJFWrtiIqqbYTIqYqY/6dttzQ8PSSvYNWzN/irqxCWbFxwky7tCoAz
-         /yBJhs7JhYfNd+3CArdP9Pi9A9FvpBfDM3NTgAuvVMx0cFycxC2XYL/RD3Qd8Rh0R6pC
-         vT+7+UvlyGwwbYlb38o8oVghePCM+WMY0CxPtxLl2wSN/UKURkaSo8mUB0LoG+yPz3dV
-         FnzVhQ8bHOqfI4aWhaV0ms4XouNvcdZ9Qa2uPvCvQhvlSvS7VoGF34qSyhFZo76kkVIl
-         zqqcM5DqSz5cTBZA5EQ/j7NUP0zlEXsoL9PnB4w2ZniwVI2KktKpmD1yPH8gjBhxHJL9
-         ldow==
-X-Gm-Message-State: AOUpUlG6GnX8WOQNhm03jvKrLbXDPKe5P8YYfPIRUCD2D4h2eX2rUTbX
-        o8abcX2k3iytTGfOWiavUHA=
-X-Google-Smtp-Source: AAOMgpfNYFaZ/qfWS/+7BLmJmJNbG0yXYtZox0lQxS7I5rVXQvAcjNAiMTUKaGHm8XEmb6ZKMTOBBA==
-X-Received: by 2002:a63:5463:: with SMTP id e35-v6mr21537049pgm.115.1532536249640;
-        Wed, 25 Jul 2018 09:30:49 -0700 (PDT)
-Received: from localhost.localdomain ([211.196.191.92])
-        by smtp.gmail.com with ESMTPSA id 14-v6sm25294764pft.93.2018.07.25.09.30.46
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 25 Jul 2018 09:30:48 -0700 (PDT)
-From:   Taeung Song <treeze.taeung@gmail.com>
-To:     Daniel Borkmann <daniel@iogearbox.net>,
-        Alexei Starovoitov <ast@kernel.org>
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Martin KaFai Lau <kafai@fb.com>
-Subject: [PATCH] samples/bpf: Add BTF build flags to Makefile
-Date:   Thu, 26 Jul 2018 01:30:39 +0900
-Message-Id: <20180725163039.2838-1-treeze.taeung@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Wed, 25 Jul 2018 13:43:27 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:55546 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728637AbeGYRn1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Jul 2018 13:43:27 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 1BAE540241C8;
+        Wed, 25 Jul 2018 16:31:02 +0000 (UTC)
+Received: from vitty.brq.redhat.com (unknown [10.40.205.21])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 365CF2166BA3;
+        Wed, 25 Jul 2018 16:30:59 +0000 (UTC)
+From:   Vitaly Kuznetsov <vkuznets@redhat.com>
+To:     kvm@vger.kernel.org
+Cc:     Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
+        Roman Kagan <rkagan@virtuozzo.com>,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        "Michael Kelley (EOSG)" <Michael.H.Kelley@microsoft.com>,
+        Mohammed Gamal <mmorsy@redhat.com>,
+        Cathy Avery <cavery@redhat.com>, linux-kernel@vger.kernel.org,
+        Jim Mattson <jmattson@google.com>,
+        Liran Alon <liran.alon@oracle.com>
+Subject: [PATCH v3 0/6] KVM: nVMX: Enlightened VMCS for Hyper-V on KVM
+Date:   Wed, 25 Jul 2018 18:30:51 +0200
+Message-Id: <20180725163057.13948-1-vkuznets@redhat.com>
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Wed, 25 Jul 2018 16:31:02 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Wed, 25 Jul 2018 16:31:02 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'vkuznets@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-To smoothly test BTF supported binary on samples/bpf,
-let samples/bpf/Makefile probe llc, pahole and
-llvm-objcopy for BPF support and use them
-like tools/testing/selftests/bpf/Makefile
-changed from the commit c0fa1b6c3efc ("bpf: btf:
- Add BTF tests")
+Changes since v2:
+- Rebase to the current kvm/queue.
+- Simplify clean fields check in prepare_vmcs02{,_full} and
+  copy_enlightened_to_vmcs12() by resetting the clean fields mask in
+  nested_vmx_handle_enlightened_vmptrld() when we switch from one L2 guest
+  to another [Paolo Bonzini]
+- Cope with the newly introduced vmx_get_nested_state() by returning
+  -ENOTSUPP when eVMCS is in use. We'll do proper nested state save/restore
+  later.
 
-Cc: Martin KaFai Lau <kafai@fb.com>
-Signed-off-by: Taeung Song <treeze.taeung@gmail.com>
----
- samples/bpf/Makefile | 21 ++++++++++++++++++++-
- 1 file changed, 20 insertions(+), 1 deletion(-)
+Description:
 
-diff --git a/samples/bpf/Makefile b/samples/bpf/Makefile
-index 1303af10e54d..e079266360a3 100644
---- a/samples/bpf/Makefile
-+++ b/samples/bpf/Makefile
-@@ -191,6 +191,8 @@ HOSTLOADLIBES_xdpsock		+= -pthread
- #  make samples/bpf/ LLC=~/git/llvm/build/bin/llc CLANG=~/git/llvm/build/bin/clang
- LLC ?= llc
- CLANG ?= clang
-+LLVM_OBJCOPY ?= llvm-objcopy
-+BTF_PAHOLE ?= pahole
- 
- # Detect that we're cross compiling and use the cross compiler
- ifdef CROSS_COMPILE
-@@ -198,6 +200,20 @@ HOSTCC = $(CROSS_COMPILE)gcc
- CLANG_ARCH_ARGS = -target $(ARCH)
- endif
- 
-+BTF_LLC_PROBE := $(shell $(LLC) -march=bpf -mattr=help 2>&1 | grep dwarfris)
-+BTF_PAHOLE_PROBE := $(shell $(BTF_PAHOLE) --help 2>&1 | grep BTF)
-+BTF_OBJCOPY_PROBE := $(shell $(LLVM_OBJCOPY) --help 2>&1 | grep -i 'usage.*llvm')
-+
-+ifneq ($(BTF_LLC_PROBE),)
-+ifneq ($(BTF_PAHOLE_PROBE),)
-+ifneq ($(BTF_OBJCOPY_PROBE),)
-+	EXTRA_CFLAGS += -g
-+	LLC_FLAGS += -mattr=dwarfris
-+	DWARF2BTF = y
-+endif
-+endif
-+endif
-+
- # Trick to allow make to be run from this directory
- all:
- 	$(MAKE) -C ../../ $(CURDIR)/ BPF_SAMPLES_PATH=$(CURDIR)
-@@ -256,4 +272,7 @@ $(obj)/%.o: $(src)/%.c
- 		-Wno-gnu-variable-sized-type-not-at-end \
- 		-Wno-address-of-packed-member -Wno-tautological-compare \
- 		-Wno-unknown-warning-option $(CLANG_ARCH_ARGS) \
--		-O2 -emit-llvm -c $< -o -| $(LLC) -march=bpf -filetype=obj -o $@
-+		-O2 -emit-llvm -c $< -o -| $(LLC) -march=bpf $(LLC_FLAGS) -filetype=obj -o $@
-+ifeq ($(DWARF2BTF),y)
-+	$(BTF_PAHOLE) -J $@
-+endif
+This is an initial implementation of Enlightened VMCS for nested Hyper-V on
+KVM. Using it helps to spare 1500 cpu cycles for nested vmexit (tight cpuid
+loop in WS2016 with Hyper-V role on KVM: 15200 cycles -> 13700 cycles).
+
+Ladi Prosek (1):
+  KVM: hyperv: define VP assist page helpers
+
+Vitaly Kuznetsov (5):
+  KVM: VMX: refactor evmcs_sanitize_exec_ctrls()
+  KVM: nVMX: add KVM_CAP_HYPERV_ENLIGHTENED_VMCS capability
+  KVM: nVMX: add enlightened VMCS state
+  KVM: nVMX: implement enlightened VMPTRLD and VMCLEAR
+  KVM: nVMX: optimize prepare_vmcs02{,_full} for Enlightened VMCS case
+
+ arch/x86/include/asm/kvm_host.h |   3 +
+ arch/x86/kvm/hyperv.c           |  23 +-
+ arch/x86/kvm/hyperv.h           |   4 +
+ arch/x86/kvm/lapic.c            |   4 +-
+ arch/x86/kvm/lapic.h            |   2 +-
+ arch/x86/kvm/svm.c              |   9 +
+ arch/x86/kvm/vmx.c              | 824 +++++++++++++++++++++++++++++++++-------
+ arch/x86/kvm/x86.c              |  17 +-
+ include/uapi/linux/kvm.h        |   1 +
+ 9 files changed, 737 insertions(+), 150 deletions(-)
+
 -- 
-2.17.1
+2.14.4
 
