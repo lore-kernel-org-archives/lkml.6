@@ -3,30 +3,30 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FAF6C6778F
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 16:25:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20D4EC67790
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 16:25:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 28D2F20852
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 16:25:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 28D2F20852
+	by mail.kernel.org (Postfix) with ESMTP id CB98520852
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 16:25:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CB98520852
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lucaceresoli.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729295AbeGYRhk (ORCPT
+        id S1729367AbeGYRhn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 13:37:40 -0400
-Received: from srv-hp10-72.netsons.net ([94.141.22.72]:35769 "EHLO
+        Wed, 25 Jul 2018 13:37:43 -0400
+Received: from srv-hp10-72.netsons.net ([94.141.22.72]:37526 "EHLO
         srv-hp10-72.netsons.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729112AbeGYRhk (ORCPT
+        with ESMTP id S1728694AbeGYRhl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Jul 2018 13:37:40 -0400
+        Wed, 25 Jul 2018 13:37:41 -0400
 Received: from [109.168.11.45] (port=49130 helo=pc-ceresoli.dev.aim)
         by srv-hp10.netsons.net with esmtpa (Exim 4.91)
         (envelope-from <luca@lucaceresoli.net>)
-        id 1fiMbB-00A9qR-8j; Wed, 25 Jul 2018 18:25:13 +0200
+        id 1fiMbB-00A9qR-H8; Wed, 25 Jul 2018 18:25:13 +0200
 From:   Luca Ceresoli <luca@lucaceresoli.net>
 To:     linux-media@vger.kernel.org
 Cc:     Luca Ceresoli <luca@lucaceresoli.net>,
@@ -34,10 +34,12 @@ Cc:     Luca Ceresoli <luca@lucaceresoli.net>,
         Leon Luo <leonl@leopardimaging.com>,
         Mauro Carvalho Chehab <mchehab@kernel.org>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v6 0/2] media: imx274: cleanups, improvements and SELECTION API support
-Date:   Wed, 25 Jul 2018 18:24:53 +0200
-Message-Id: <20180725162455.31381-1-luca@lucaceresoli.net>
+Subject: [PATCH v6 1/2] media: imx274: use regmap_bulk_write to write multybyte registers
+Date:   Wed, 25 Jul 2018 18:24:54 +0200
+Message-Id: <20180725162455.31381-2-luca@lucaceresoli.net>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180725162455.31381-1-luca@lucaceresoli.net>
+References: <20180725162455.31381-1-luca@lucaceresoli.net>
 X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
 X-AntiAbuse: Primary Hostname - srv-hp10.netsons.net
 X-AntiAbuse: Original Domain - vger.kernel.org
@@ -53,40 +55,220 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Currently 2-bytes and 3-bytes registers are set by very similar
+functions doing the needed shift & mask manipulation, followed by very
+similar for loops setting one byte at a time over I2C.
 
-this patchset introduces cropping support for the Sony IMX274 sensor
-using the SELECTION API.
+Replace all of this code by a unique helper function that calls
+regmap_bulk_write(), which has two advantages:
+ - sets all the bytes in a unique I2C transaction
+ - removes lots of now unused code.
 
-Changes since v5 are only minor fixes and cleanups.
+Signed-off-by: Luca Ceresoli <luca@lucaceresoli.net>
+Cc: Sakari Ailus <sakari.ailus@linux.intel.com>
 
-Patch 1 introduces a helper to greatly simplify the code to write a
-multibyte register.
+---
+Changed v5 -> v6:
+ - fix warning on debug print on 32-bit machines (reported by the
+   kbuild test robot)
+ - fix line above 80 chars
 
-Patch 2 implements the set_selection pad operation for cropping
-(V4L2_SEL_TGT_CROP) and binning (V4L2_SEL_TGT_COMPOSE).
+Changed v4 -> v5:
+ - completely replace the former patch adding prepare_regs() by
+   directly calling regmap_bulk_write() (Sakari)
 
-Usage examples:
+Changed v3 -> v4: nothing
 
- * Capture the entire 4K area, downscaled to 1080p with 2:1 binning:
-   media-ctl -V '"IMX274":0[crop:(0,0)/3840x2160]'
-   media-ctl -V '"IMX274":0[compose:(0,0)/1920x1080]'
+Changed v2 -> v3:
+ - minor reformatting in prepare_reg() documentation
 
- * Capture the central 1080p area (no binning):
-   media-ctl -V '"IMX274":0[crop:(960,540)/1920x1080]'
-   (this also sets the compose and fmt rects to 1920x1080)
+Changed v1 -> v2:
+ - add "media: " prefix to commit message
+---
+ drivers/media/i2c/imx274.c | 102 ++++++++++++++-----------------------
+ 1 file changed, 39 insertions(+), 63 deletions(-)
 
-Regards,
-Luca
-
-
-Luca Ceresoli (2):
-  media: imx274: use regmap_bulk_write to write multybyte registers
-  media: imx274: add cropping support via SELECTION API
-
- drivers/media/i2c/imx274.c | 566 +++++++++++++++++++++++++++----------
- 1 file changed, 412 insertions(+), 154 deletions(-)
-
+diff --git a/drivers/media/i2c/imx274.c b/drivers/media/i2c/imx274.c
+index edca63eaea9b..093c4587832a 100644
+--- a/drivers/media/i2c/imx274.c
++++ b/drivers/media/i2c/imx274.c
+@@ -690,6 +690,35 @@ static inline int imx274_write_reg(struct stimx274 *priv, u16 addr, u8 val)
+ 	return err;
+ }
+ 
++/**
++ * Write a multibyte register.
++ *
++ * Uses a bulk write where possible.
++ *
++ * @priv: Pointer to device structure
++ * @addr: Address of the LSB register.  Other registers must be
++ *        consecutive, least-to-most significant.
++ * @val: Value to be written to the register (cpu endianness)
++ * @nbytes: Number of bits to write (range: [1..3])
++ */
++static int imx274_write_mbreg(struct stimx274 *priv, u16 addr, u32 val,
++			      size_t nbytes)
++{
++	__le32 val_le = cpu_to_le32(val);
++	int err;
++
++	err = regmap_bulk_write(priv->regmap, addr, &val_le, nbytes);
++	if (err)
++		dev_err(&priv->client->dev,
++			"%s : i2c bulk write failed, %x = %x (%zu bytes)\n",
++			__func__, addr, val, nbytes);
++	else
++		dev_dbg(&priv->client->dev,
++			"%s : addr 0x%x, val=0x%x (%zu bytes)\n",
++			__func__, addr, val, nbytes);
++	return err;
++}
++
+ /*
+  * Set mode registers to start stream.
+  * @priv: Pointer to device structure
+@@ -1163,15 +1192,6 @@ static int imx274_set_digital_gain(struct stimx274 *priv, u32 dgain)
+ 				reg_val & IMX274_MASK_LSB_4_BITS);
+ }
+ 
+-static inline void imx274_calculate_gain_regs(struct reg_8 regs[2], u16 gain)
+-{
+-	regs->addr = IMX274_ANALOG_GAIN_ADDR_MSB;
+-	regs->val = (gain >> IMX274_SHIFT_8_BITS) & IMX274_MASK_LSB_3_BITS;
+-
+-	(regs + 1)->addr = IMX274_ANALOG_GAIN_ADDR_LSB;
+-	(regs + 1)->val = (gain) & IMX274_MASK_LSB_8_BITS;
+-}
+-
+ /*
+  * imx274_set_gain - Function called when setting gain
+  * @priv: Pointer to device structure
+@@ -1185,10 +1205,8 @@ static inline void imx274_calculate_gain_regs(struct reg_8 regs[2], u16 gain)
+  */
+ static int imx274_set_gain(struct stimx274 *priv, struct v4l2_ctrl *ctrl)
+ {
+-	struct reg_8 reg_list[2];
+ 	int err;
+ 	u32 gain, analog_gain, digital_gain, gain_reg;
+-	int i;
+ 
+ 	gain = (u32)(ctrl->val);
+ 
+@@ -1229,14 +1247,10 @@ static int imx274_set_gain(struct stimx274 *priv, struct v4l2_ctrl *ctrl)
+ 	if (gain_reg > IMX274_GAIN_REG_MAX)
+ 		gain_reg = IMX274_GAIN_REG_MAX;
+ 
+-	imx274_calculate_gain_regs(reg_list, (u16)gain_reg);
+-
+-	for (i = 0; i < ARRAY_SIZE(reg_list); i++) {
+-		err = imx274_write_reg(priv, reg_list[i].addr,
+-				       reg_list[i].val);
+-		if (err)
+-			goto fail;
+-	}
++	err = imx274_write_mbreg(priv, IMX274_ANALOG_GAIN_ADDR_LSB, gain_reg,
++				 2);
++	if (err)
++		goto fail;
+ 
+ 	if (IMX274_GAIN_CONST - gain_reg == 0) {
+ 		err = -EINVAL;
+@@ -1258,16 +1272,6 @@ static int imx274_set_gain(struct stimx274 *priv, struct v4l2_ctrl *ctrl)
+ 	return err;
+ }
+ 
+-static inline void imx274_calculate_coarse_time_regs(struct reg_8 regs[2],
+-						     u32 coarse_time)
+-{
+-	regs->addr = IMX274_SHR_REG_MSB;
+-	regs->val = (coarse_time >> IMX274_SHIFT_8_BITS)
+-			& IMX274_MASK_LSB_8_BITS;
+-	(regs + 1)->addr = IMX274_SHR_REG_LSB;
+-	(regs + 1)->val = (coarse_time) & IMX274_MASK_LSB_8_BITS;
+-}
+-
+ /*
+  * imx274_set_coarse_time - Function called when setting SHR value
+  * @priv: Pointer to device structure
+@@ -1279,10 +1283,8 @@ static inline void imx274_calculate_coarse_time_regs(struct reg_8 regs[2],
+  */
+ static int imx274_set_coarse_time(struct stimx274 *priv, u32 *val)
+ {
+-	struct reg_8 reg_list[2];
+ 	int err;
+ 	u32 coarse_time, frame_length;
+-	int i;
+ 
+ 	coarse_time = *val;
+ 
+@@ -1291,16 +1293,9 @@ static int imx274_set_coarse_time(struct stimx274 *priv, u32 *val)
+ 	if (err)
+ 		goto fail;
+ 
+-	/* prepare SHR registers */
+-	imx274_calculate_coarse_time_regs(reg_list, coarse_time);
+-
+-	/* write to SHR registers */
+-	for (i = 0; i < ARRAY_SIZE(reg_list); i++) {
+-		err = imx274_write_reg(priv, reg_list[i].addr,
+-				       reg_list[i].val);
+-		if (err)
+-			goto fail;
+-	}
++	err = imx274_write_mbreg(priv, IMX274_SHR_REG_LSB, coarse_time, 2);
++	if (err)
++		goto fail;
+ 
+ 	*val = frame_length - coarse_time;
+ 	return 0;
+@@ -1429,19 +1424,6 @@ static int imx274_set_test_pattern(struct stimx274 *priv, int val)
+ 	return err;
+ }
+ 
+-static inline void imx274_calculate_frame_length_regs(struct reg_8 regs[3],
+-						      u32 frame_length)
+-{
+-	regs->addr = IMX274_VMAX_REG_1;
+-	regs->val = (frame_length >> IMX274_SHIFT_16_BITS)
+-			& IMX274_MASK_LSB_4_BITS;
+-	(regs + 1)->addr = IMX274_VMAX_REG_2;
+-	(regs + 1)->val = (frame_length >> IMX274_SHIFT_8_BITS)
+-			& IMX274_MASK_LSB_8_BITS;
+-	(regs + 2)->addr = IMX274_VMAX_REG_3;
+-	(regs + 2)->val = (frame_length) & IMX274_MASK_LSB_8_BITS;
+-}
+-
+ /*
+  * imx274_set_frame_length - Function called when setting frame length
+  * @priv: Pointer to device structure
+@@ -1453,23 +1435,17 @@ static inline void imx274_calculate_frame_length_regs(struct reg_8 regs[3],
+  */
+ static int imx274_set_frame_length(struct stimx274 *priv, u32 val)
+ {
+-	struct reg_8 reg_list[3];
+ 	int err;
+ 	u32 frame_length;
+-	int i;
+ 
+ 	dev_dbg(&priv->client->dev, "%s : input length = %d\n",
+ 		__func__, val);
+ 
+ 	frame_length = (u32)val;
+ 
+-	imx274_calculate_frame_length_regs(reg_list, frame_length);
+-	for (i = 0; i < ARRAY_SIZE(reg_list); i++) {
+-		err = imx274_write_reg(priv, reg_list[i].addr,
+-				       reg_list[i].val);
+-		if (err)
+-			goto fail;
+-	}
++	err = imx274_write_mbreg(priv, IMX274_VMAX_REG_3, frame_length, 3);
++	if (err)
++		goto fail;
+ 
+ 	return 0;
+ 
 -- 
 2.17.1
 
