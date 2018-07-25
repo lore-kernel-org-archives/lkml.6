@@ -5,46 +5,46 @@ X-Spam-Level:
 X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
 	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF0D4C6778F
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 17:38:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3056C6778F
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 17:39:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 85EB320843
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 17:38:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 85EB320843
+	by mail.kernel.org (Postfix) with ESMTP id B67BE20843
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 17:39:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B67BE20843
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729898AbeGYSvH (ORCPT
+        id S1730048AbeGYSwN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 14:51:07 -0400
-Received: from mail-it0-f67.google.com ([209.85.214.67]:36747 "EHLO
-        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729337AbeGYSvG (ORCPT
+        Wed, 25 Jul 2018 14:52:13 -0400
+Received: from mail-it0-f66.google.com ([209.85.214.66]:54822 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729352AbeGYSwM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Jul 2018 14:51:06 -0400
-Received: by mail-it0-f67.google.com with SMTP id p81-v6so9796392itp.1;
-        Wed, 25 Jul 2018 10:38:25 -0700 (PDT)
+        Wed, 25 Jul 2018 14:52:12 -0400
+Received: by mail-it0-f66.google.com with SMTP id s7-v6so9848320itb.4;
+        Wed, 25 Jul 2018 10:39:32 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=0ZYNMraE45yoayfKYmMKBMwB0niswFTtF5Y8itzeSi0=;
-        b=Ji5RD48Ll/rx0HGpEEwAnyQpwsYX98DheTPGFtHoRXhHwm0hrObblbXD6lOfR1LB1A
-         A6rmAC4Ss4ZkYZaxrH/tYjHzM+xnQXCcoBoM6tEBl6ENMGJ8l1NlV1yWBYRaJmQQyw92
-         0uEQXnyp3iXpBYZmYDjWu1Cnt5OLXRVIOATfqbxJF1839crdT80BX/iOv0+NkMItCncQ
-         b4X2i//iRduHsFv672Dnhy4BFprvC85YRCbEVKlW/1nxRSRYPsIY/gT5J86bWZR7dp8e
-         mhqQIepPVM11dnv6+883rOHeYC/VNpr9xDqIe85LEumvoWj/oSgGIWSDtG1I7/S78LGQ
-         IUtA==
-X-Gm-Message-State: AOUpUlHqbk10DTc81Vm8NvUNUdcqIoemR/DNE5CCfQQa9FxgvrArpE/C
-        +478br4tdOibpe9Wy+I8PQ==
-X-Google-Smtp-Source: AAOMgpdv8lSSZUcYvXXakDTlYd0rPLHtfUckWMVeY1osoOY9FM+ZcaYKwwy1gZhMyG5/ub05B6BZAw==
-X-Received: by 2002:a02:3f25:: with SMTP id d37-v6mr19614972jaa.109.1532540305155;
-        Wed, 25 Jul 2018 10:38:25 -0700 (PDT)
+        bh=n057FR7GqMfsgAiyBsMQA+aX/NItQQR2Pbi8cPuqOdM=;
+        b=aaCDCJMKl0LrN8p9FBhvDu46uUuIrcPe+a2GsGaCDLiR45JmDVSIOe4pCeBQxKAzQW
+         UMX1RFeM+yy3WrriTNDCY9zOgQSmUnKKAtAN+CRpzJjRgeUzEsBRNUgD9YBbnJGNAWKp
+         XUsWYIEkzIlPp8ugNBdjSY+wpbn24NBUhHUa1OC7NiVe18cGuIImjn4cN3DUFJ2Fzeu7
+         ++5agKAKUdQNxbP2emGi/xa932mRPxZLU/I40yJu2JuqCSwNMb9TxkN2XzPO6pWMloOg
+         /ejlZFZKhUVNni0d2brGf5X5e5e6hUlVqZtxVJuFIIh7Fxyug0Gi5FRnQ1hnJ2HmMvN6
+         YCZg==
+X-Gm-Message-State: AOUpUlEvQfrgt43APOfTKCJTZmpBqqY2BRBS3n55AlvuMPYAMvW0HEeu
+        oEIHH1q8C1TZqM/sqPKneg==
+X-Google-Smtp-Source: AAOMgpeG4pSY78HmblXPhez3Dr3ejlAjYCAcyZCJsugtymXdo6kxOYTNr2e9T8IOX6tMqYiBTrN0nA==
+X-Received: by 2002:a24:7414:: with SMTP id o20-v6mr7137375itc.116.1532540371845;
+        Wed, 25 Jul 2018 10:39:31 -0700 (PDT)
 Received: from localhost ([24.51.61.72])
-        by smtp.gmail.com with ESMTPSA id v82-v6sm1502735iod.14.2018.07.25.10.38.24
+        by smtp.gmail.com with ESMTPSA id d134-v6sm4592558iog.84.2018.07.25.10.39.31
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 25 Jul 2018 10:38:24 -0700 (PDT)
-Date:   Wed, 25 Jul 2018 11:38:23 -0600
+        Wed, 25 Jul 2018 10:39:31 -0700 (PDT)
+Date:   Wed, 25 Jul 2018 11:39:30 -0600
 From:   Rob Herring <robh@kernel.org>
 To:     Krzysztof Kozlowski <krzk@kernel.org>
 Cc:     Tomasz Figa <tomasz.figa@gmail.com>,
@@ -62,45 +62,36 @@ Cc:     Tomasz Figa <tomasz.figa@gmail.com>,
         Chanwoo Choi <cw00.choi@samsung.com>,
         Alim Akhtar <alim.akhtar@samsung.com>,
         Pankaj Dubey <pankaj.dubey@samsung.com>
-Subject: Re: [RFT v2 03/10] pinctrl: samsung: Document hidden requirement
- about one external wakeup
-Message-ID: <20180725173823.GA25530@rob-hp-laptop>
+Subject: Re: [RFT v2 04/10] pinctrl: samsung: Add dedicated compatible for
+ S5Pv210 wakeup interrupts
+Message-ID: <20180725173930.GA27860@rob-hp-laptop>
 References: <20180723175302.22535-1-krzk@kernel.org>
- <20180723175302.22535-4-krzk@kernel.org>
+ <20180723175302.22535-5-krzk@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180723175302.22535-4-krzk@kernel.org>
+In-Reply-To: <20180723175302.22535-5-krzk@kernel.org>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 23, 2018 at 07:52:55PM +0200, Krzysztof Kozlowski wrote:
-> Hardware (S5Pv210 and all Exynos SoCs) provides only 32 external
-> interrupts which can wakeup device from deep sleep modes.  On S5Pv210
-> these are gph0-gph3.  On all Exynos designs these are gpx0-gpx3.
-> There is only one 32-bit register for controlling the external wakeup
-> interrupt mask (masking and unmasking waking capability of these
-> interrupts).
-> 
-> This lead to implementation in pinctrl driver and machine code which was
-> using static memory for storing the mask value and not caring about
-> multiple devices of pin controller... because only one pin controller
-> device will be handling this.
-> 
-> Since each pin controller node in Device Tree maps onto one device, this
-> corresponds to hidden assumption in parsing the Device Tree: external
-> wakeup interrupts can be defined only once.  Make this assumption an
-> explicit requirement.
+On Mon, Jul 23, 2018 at 07:52:56PM +0200, Krzysztof Kozlowski wrote:
+> The S5Pv210 external wakeup interrupts differ from Exynos therefore
+> separate compatible is needed.  Duplicate existing flavor specific data
+> from exynos4210_wkup_irq_chip and add new compatible for S5Pv210.
+> At this point this new compatible does not bring anything new and works
+> exactly as existing "samsung,exynos4210-wakeup-eint".
 > 
 > Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 > Cc: Tomasz Figa <tomasz.figa@gmail.com>
 > Cc: Sylwester Nawrocki <snawrocki@kernel.org>
 > Acked-by: Tomasz Figa <tomasz.figa@gmail.com>
 > ---
->  Documentation/devicetree/bindings/pinctrl/samsung-pinctrl.txt | 9 +++++++--
->  1 file changed, 7 insertions(+), 2 deletions(-)
+>  .../devicetree/bindings/pinctrl/samsung-pinctrl.txt    |  2 ++
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Acked-by: Rob Herring <robh@kernel.org>
+
+>  drivers/pinctrl/samsung/pinctrl-exynos.c               | 18 ++++++++++++++++++
+>  2 files changed, 20 insertions(+)
