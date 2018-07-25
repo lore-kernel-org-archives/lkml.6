@@ -5,96 +5,74 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04BAFC6778F
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 19:29:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C4C3C67790
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 19:31:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BD60220893
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 19:29:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BD60220893
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+	by mail.kernel.org (Postfix) with ESMTP id BC4E8204EC
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 19:31:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BC4E8204EC
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730298AbeGYUmL (ORCPT
+        id S1730400AbeGYUob convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 16:42:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33478 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730068AbeGYUmL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Jul 2018 16:42:11 -0400
-Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Wed, 25 Jul 2018 16:44:31 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:60710 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729524AbeGYUob (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Jul 2018 16:44:31 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CA988204EC;
-        Wed, 25 Jul 2018 19:29:05 +0000 (UTC)
-Date:   Wed, 25 Jul 2018 15:29:04 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Masami Hiramatsu <mhiramat@kernel.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Tom Zanussi <tom.zanussi@linux.intel.com>,
-        Hiraku Toyooka <hiraku.toyooka@cybertrust.co.jp>,
-        Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH] tracing: Fix double free of event_trigger_data
-Message-ID: <20180725152904.11edde2b@gandalf.local.home>
-In-Reply-To: <20180725124008.7008e586@gandalf.local.home>
-References: <20180725085740.5e7efaa1@gandalf.local.home>
-        <20180726004349.e71303133ff8e095a1a1499e@kernel.org>
-        <20180725124008.7008e586@gandalf.local.home>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        by mx1.redhat.com (Postfix) with ESMTPS id 897C540241C1;
+        Wed, 25 Jul 2018 19:31:25 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-116.rdu2.redhat.com [10.10.120.116])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 96B882166BA3;
+        Wed, 25 Jul 2018 19:31:24 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <CA+55aFwvKerkzigZmm0zrUTnsqDpJs0XBtX72Ltmek+_ic-KmA@mail.gmail.com>
+References: <CA+55aFwvKerkzigZmm0zrUTnsqDpJs0XBtX72Ltmek+_ic-KmA@mail.gmail.com> <7828.1532527332@warthog.procyon.org.uk> <CA+55aFy2v3OW+mmSDF4MPWW673WsJEdQef3LChWg5k9=_k9ggg@mail.gmail.com> <25183.1532542685@warthog.procyon.org.uk>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     dhowells@redhat.com, kiran.modukuri@gmail.com,
+        linux-cachefs@redhat.com,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [GIT PULL] fscache and cachefiles fixes
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <1054.1532547084.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: 8BIT
+Date:   Wed, 25 Jul 2018 20:31:24 +0100
+Message-ID: <1055.1532547084@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Wed, 25 Jul 2018 19:31:25 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Wed, 25 Jul 2018 19:31:25 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'dhowells@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 25 Jul 2018 12:40:08 -0400
-Steven Rostedt <rostedt@goodmis.org> wrote:
+Okay, I posted four patches on 5th July:
 
-> Hmm, looks to me that event_enable_trigger_func() suffers the same
-> issue. Perhaps we should add this patch too:
-> 
-> -- Steve
-> 
-> diff --git a/kernel/trace/trace_events_trigger.c b/kernel/trace/trace_events_trigger.c
-> index d18ec0e58be2..2681d917f896 100644
-> --- a/kernel/trace/trace_events_trigger.c
-> +++ b/kernel/trace/trace_events_trigger.c
-> @@ -1457,6 +1457,10 @@ int event_enable_trigger_func(struct event_command *cmd_ops,
->  	ret = trace_event_enable_disable(event_enable_file, 1, 1);
->  	if (ret < 0)
->  		goto out_put;
-> +
-> +	/* Up the trigger_data count to make sure reg doesn't free it on failure */
-> +	event_trigger_init(trigger_ops, trigger_data);
-> +
->  	ret = cmd_ops->reg(glob, trigger_ops, trigger_data, file);
->  	/*
->  	 * The above returns on success the # of functions enabled,
-> @@ -1464,12 +1468,13 @@ int event_enable_trigger_func(struct event_command *cmd_ops,
->  	 * Consider no functions a failure too.
->  	 */
->  	if (!ret) {
-> +		cmd_ops->unreg(glob, trigger_ops, trigger_data, file);
->  		ret = -ENOENT;
-> -		goto out_disable;
-> -	} else if (ret < 0)
-> -		goto out_disable;
-> -	/* Just return zero, not the number of enabled functions */
-> -	ret = 0;
-> +	} else if (ret > 0)
-> +		ret = 0;
-> +
-> +	/* Down the counter of trigger_data or free it if not used anymore */
-> +	event_trigger_free(trigger_ops, trigger_data);
+	https://lore.kernel.org/lkml/153080826773.5496.7106875523806885716.stgit@warthog.procyon.org.uk/
 
-Nope, this doesn't work. It's a little more complex than the other one.
-I'll just leave it, and fix the reg code for 4.19.
+These five patches are the same aggregate changes, just with the first patch
+split and a description composed for both parts:
 
--- Steve
+	warthog>git diff fscache-fixes-20180705  fscache-fixes-20180725
+	warthog>
 
->   out:
->  	return ret;
->  
+The patch series as a whole got tested by Scott Mayhew whilst seeing if they
+cured a bug he was looking at:
 
+	https://marc.info/?l=linux-nfs&m=153191593807248&w=2
+
+I've also ported them to RHEL-7 where they've undergone some automated testing
+with iozone.
+
+David
