@@ -2,94 +2,160 @@ Return-Path: <SRS0=S+WB=KJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E63FC6778F
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 05:11:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9492C6778F
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 05:18:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1338920844
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 05:11:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1338920844
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
+	by mail.kernel.org (Postfix) with ESMTP id 645D620844
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 05:18:18 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="zF8CJD0o"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 645D620844
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728331AbeGYGUz (ORCPT
+        id S1728268AbeGYG2M (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 02:20:55 -0400
-Received: from mailgw01.mediatek.com ([210.61.82.183]:57775 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727985AbeGYGUz (ORCPT
+        Wed, 25 Jul 2018 02:28:12 -0400
+Received: from conuserg-08.nifty.com ([210.131.2.75]:28719 "EHLO
+        conuserg-08.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727753AbeGYG2M (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Jul 2018 02:20:55 -0400
-X-UUID: 728162505ef24b359af9c7e587459f26-20180725
-Received: from mtkexhb02.mediatek.inc [(172.21.101.103)] by mailgw01.mediatek.com
-        (envelope-from <ck.hu@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 1015021427; Wed, 25 Jul 2018 13:10:48 +0800
-Received: from mtkcas07.mediatek.inc (172.21.101.84) by
- mtkmbs03n2.mediatek.inc (172.21.101.182) with Microsoft SMTP Server (TLS) id
- 15.0.1210.3; Wed, 25 Jul 2018 13:10:46 +0800
-Received: from [172.21.77.4] (172.21.77.4) by mtkcas07.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
- Transport; Wed, 25 Jul 2018 13:10:46 +0800
-Message-ID: <1532495445.9280.22.camel@mtksdaap41>
-Subject: Re: [PATCH v1 14/15] drm/mediatek: fixed the error value for add
- DSI1 in mutex
-From:   CK Hu <ck.hu@mediatek.com>
-To:     Stu Hsieh <stu.hsieh@mediatek.com>
-CC:     Philipp Zabel <p.zabel@pengutronix.de>,
-        David Airlie <airlied@linux.ie>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        <dri-devel@lists.freedesktop.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <srv_heupstream@mediatek.com>
-Date:   Wed, 25 Jul 2018 13:10:45 +0800
-In-Reply-To: <1532420235-22268-15-git-send-email-stu.hsieh@mediatek.com>
-References: <1532420235-22268-1-git-send-email-stu.hsieh@mediatek.com>
-         <1532420235-22268-15-git-send-email-stu.hsieh@mediatek.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.10.4-0ubuntu2 
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-MTK:  N
+        Wed, 25 Jul 2018 02:28:12 -0400
+Received: from pug.e01.socionext.com (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
+        by conuserg-08.nifty.com with ESMTP id w6P5Gs8I018750;
+        Wed, 25 Jul 2018 14:16:55 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-08.nifty.com w6P5Gs8I018750
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1532495816;
+        bh=s8GyG+1gOk1oIIEW6Ve60Hw/YCvJwi+om/gh+CBcOWc=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=zF8CJD0o5DRHJoSUgoL6FnAUaW5sBhK8lEnXpEVCCkmX5fabkJ/qJr9l6gCiZx9q6
+         u0htOgo1C91rWuICrSZd3uUlo55C80CpfZD+2paRZMW41rREjjHFlvGElX1tcbhBY+
+         9RbDszAX2AVKTiT+Enep6tNga0SYhdgLh1p6SIt5tYhDi4dCplHhZZxJs4wmWMeUsj
+         if4wETihFKNexwy5TdcAM+V9YmzVglt5ZrFPBBmppsMOSeSG36Enx/JyXMpFealmgl
+         4iJr54BOCu68l9jBpjOb+VnB9zbahWh3scdLEe5op2X2m5Cz/iZ/qMPjWmMGqX/xHy
+         +HelxWXRk/wWw==
+X-Nifty-SrcIP: [153.142.97.92]
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+To:     linux-kbuild@vger.kernel.org
+Cc:     Sam Ravnborg <sam@ravnborg.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        linux-s390@vger.kernel.org,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        linux-um@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Michal Marek <michal.lkml@markovi.net>,
+        Richard Weinberger <richard@nod.at>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Jeff Dike <jdike@addtoit.com>,
+        Hendrik Brueckner <brueckner@linux.vnet.ibm.com>
+Subject: [PATCH 2/2] kbuild: do not redirect the first prerequisite for filechk
+Date:   Wed, 25 Jul 2018 14:16:11 +0900
+Message-Id: <1532495771-10255-2-git-send-email-yamada.masahiro@socionext.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1532495771-10255-1-git-send-email-yamada.masahiro@socionext.com>
+References: <1532495771-10255-1-git-send-email-yamada.masahiro@socionext.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi, Stu:
+Currently, filechk unconditionally opens the first prerequisite and
+redirects it as the stdin of a filechk_* rule.  Hence, every target
+using $(call filechk,...) must list something as the first prerequisite
+even if it is unneeded.
 
+'< $<' is actually unneeded in most cases.  Each rule can explicitly
+adds it if necessary.
 
-On Tue, 2018-07-24 at 16:17 +0800, Stu Hsieh wrote:
-> This patch fixed the error value for add DSI1 in mutex
-> 
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
 
-English is not my mother language, but should it be 'fix' rather than
-'fixed'?
+ Makefile                           | 2 +-
+ arch/s390/kernel/syscalls/Makefile | 6 +++---
+ arch/um/Makefile                   | 2 +-
+ scripts/Kbuild.include             | 2 +-
+ scripts/Makefile.lib               | 2 +-
+ 5 files changed, 7 insertions(+), 7 deletions(-)
 
-Regards,
-CK
-
-> Signed-off-by: Stu Hsieh <stu.hsieh@mediatek.com>
-> ---
->  drivers/gpu/drm/mediatek/mtk_drm_ddp.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/mediatek/mtk_drm_ddp.c b/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
-> index 3239f22785fd..ac047fdb1a2b 100644
-> --- a/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
-> +++ b/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
-> @@ -437,7 +437,7 @@ void mtk_disp_mutex_add_comp(struct mtk_disp_mutex *mutex,
->  		reg = MUTEX_SOF_DSI0;
->  		break;
->  	case DDP_COMPONENT_DSI1:
-> -		reg = MUTEX_SOF_DSI0;
-> +		reg = MUTEX_SOF_DSI1;
->  		break;
->  	case DDP_COMPONENT_DSI2:
->  		reg = MUTEX_SOF_DSI2;
-
+diff --git a/Makefile b/Makefile
+index 67d9d20..af863f1 100644
+--- a/Makefile
++++ b/Makefile
+@@ -1116,7 +1116,7 @@ define filechk_version.h
+ 	echo '#define KERNEL_VERSION(a,b,c) (((a) << 16) + ((b) << 8) + (c))';)
+ endef
+ 
+-$(version_h): $(srctree)/Makefile FORCE
++$(version_h): FORCE
+ 	$(call filechk,version.h)
+ 	$(Q)rm -f $(old_version_h)
+ 
+diff --git a/arch/s390/kernel/syscalls/Makefile b/arch/s390/kernel/syscalls/Makefile
+index 8ff96c0..4d929ed 100644
+--- a/arch/s390/kernel/syscalls/Makefile
++++ b/arch/s390/kernel/syscalls/Makefile
+@@ -25,15 +25,15 @@ _dummy := $(shell [ -d '$(uapi)' ] || mkdir -p '$(uapi)') \
+ 	  $(shell [ -d '$(kapi)' ] || mkdir -p '$(kapi)')
+ 
+ define filechk_syshdr
+-	$(CONFIG_SHELL) '$(systbl)' -H -a $(syshdr_abi_$(basetarget)) -f "$2"
++	$(CONFIG_SHELL) '$(systbl)' -H -a $(syshdr_abi_$(basetarget)) -f "$2" < $<
+ endef
+ 
+ define filechk_sysnr
+-	$(CONFIG_SHELL) '$(systbl)' -N -a $(sysnr_abi_$(basetarget))
++	$(CONFIG_SHELL) '$(systbl)' -N -a $(sysnr_abi_$(basetarget)) < $<
+ endef
+ 
+ define filechk_syscalls
+-	$(CONFIG_SHELL) '$(systbl)' -S
++	$(CONFIG_SHELL) '$(systbl)' -S < $<
+ endef
+ 
+ syshdr_abi_unistd_32 := common,32
+diff --git a/arch/um/Makefile b/arch/um/Makefile
+index e54dda8..8c35261 100644
+--- a/arch/um/Makefile
++++ b/arch/um/Makefile
+@@ -169,7 +169,7 @@ define filechk_gen-asm-offsets
+          echo " *"; \
+          echo " */"; \
+          echo ""; \
+-         sed -ne "/^->/{s:^->\([^ ]*\) [\$$#]*\([^ ]*\) \(.*\):#define \1 \2 /* \3 */:; s:->::; p;}"; \
++         sed -ne "/^->/{s:^->\([^ ]*\) [\$$#]*\([^ ]*\) \(.*\):#define \1 \2 /* \3 */:; s:->::; p;}" < $<; \
+          echo ""; )
+ endef
+ 
+diff --git a/scripts/Kbuild.include b/scripts/Kbuild.include
+index 86321f0..0bee89c 100644
+--- a/scripts/Kbuild.include
++++ b/scripts/Kbuild.include
+@@ -56,7 +56,7 @@ kecho := $($(quiet)kecho)
+ define filechk
+ 	$(Q)set -e;				\
+ 	mkdir -p $(dir $@);			\
+-	$(filechk_$(1)) < $< > $@.tmp;		\
++	$(filechk_$(1)) > $@.tmp;		\
+ 	if [ -r $@ ] && cmp -s $@ $@.tmp; then	\
+ 		rm -f $@.tmp;			\
+ 	else					\
+diff --git a/scripts/Makefile.lib b/scripts/Makefile.lib
+index 1bb594f..4b2f89f 100644
+--- a/scripts/Makefile.lib
++++ b/scripts/Makefile.lib
+@@ -416,7 +416,7 @@ define filechk_offsets
+ 	 echo " * This file was generated by Kbuild"; \
+ 	 echo " */"; \
+ 	 echo ""; \
+-	 sed -ne $(sed-offsets); \
++	 sed -ne $(sed-offsets) < $<; \
+ 	 echo ""; \
+ 	 echo "#endif" )
+ endef
+-- 
+2.7.4
 
