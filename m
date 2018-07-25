@@ -2,111 +2,160 @@ Return-Path: <SRS0=S+WB=KJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 571D5C6778F
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 14:02:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E64B6C6778F
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 14:05:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1491820882
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 14:02:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1491820882
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 929AA20890
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 14:05:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 929AA20890
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729090AbeGYPOD convert rfc822-to-8bit (ORCPT
+        id S1728490AbeGYPRL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 11:14:03 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:52406 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727691AbeGYPOD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Jul 2018 11:14:03 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id BD549B5C2;
-        Wed, 25 Jul 2018 14:02:13 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-116.rdu2.redhat.com [10.10.120.116])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id CA8D420180EB;
-        Wed, 25 Jul 2018 14:02:12 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-To:     torvalds@linux-foundation.org
-cc:     dhowells@redhat.com, kiran.modukuri@gmail.com,
-        linux-cachefs@redhat.com, linux-fsdevel@vger.kernel.org,
-        linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] fscache and cachefiles fixes
+        Wed, 25 Jul 2018 11:17:11 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:50602 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727504AbeGYPRL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Jul 2018 11:17:11 -0400
+Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w6PDxD4Z120001
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Jul 2018 10:05:20 -0400
+Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2kes105h5s-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Jul 2018 10:05:16 -0400
+Received: from localhost
+        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <rppt@linux.vnet.ibm.com>;
+        Wed, 25 Jul 2018 14:59:48 +0100
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
+        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 25 Jul 2018 14:59:45 +0100
+Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w6PDxis044236816
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 25 Jul 2018 13:59:44 GMT
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id E961A4C044;
+        Wed, 25 Jul 2018 16:59:59 +0100 (BST)
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 5EB994C040;
+        Wed, 25 Jul 2018 16:59:59 +0100 (BST)
+Received: from rapoport-lnx (unknown [9.148.8.110])
+        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Wed, 25 Jul 2018 16:59:59 +0100 (BST)
+Date:   Wed, 25 Jul 2018 16:59:42 +0300
+From:   Mike Rapoport <rppt@linux.vnet.ibm.com>
+To:     Thiago Jung Bauermann <bauerman@linux.ibm.com>
+Cc:     linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Shuah Khan <shuah@kernel.org>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Prakash Sangappa <prakash.sangappa@oracle.com>
+Subject: Re: [PATCH 1/3] userfaultfd: selftest: Fix checking of
+ userfaultfd_open() result
+References: <20180725024209.32586-1-bauerman@linux.ibm.com>
+ <20180725024209.32586-2-bauerman@linux.ibm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <7827.1532527332.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: 8BIT
-Date:   Wed, 25 Jul 2018 15:02:12 +0100
-Message-ID: <7828.1532527332@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Wed, 25 Jul 2018 14:02:13 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Wed, 25 Jul 2018 14:02:13 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'dhowells@redhat.com' RCPT:''
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180725024209.32586-2-bauerman@linux.ibm.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-TM-AS-GCONF: 00
+x-cbid: 18072513-0020-0000-0000-000002AB02A5
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18072513-0021-0000-0000-000020F79CED
+Message-Id: <20180725135942.GC25188@rapoport-lnx>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-25_03:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1806210000 definitions=main-1807250151
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+Hi,
 
-Can you pull these fixes for fscache and cachefiles please?
+On Tue, Jul 24, 2018 at 11:42:07PM -0300, Thiago Jung Bauermann wrote:
+> If the userfaultfd test is run on a kernel with CONFIG_USERFAULTFD=n, it
+> will report that the system call is not available yet go ahead and continue
+> anyway:
+> 
+>   # ./userfaultfd anon 30 1
+>   nr_pages: 480, nr_pages_per_cpu: 120
+>   userfaultfd syscall not available in this kernel
+>   bounces: 0, mode:, register failure
+> 
+> This is because userfaultfd_open() returns 0 on success and 1 on error but
+> all callers assume that it returns < 0 on error.
+> 
+> Since the convention of the test as a whole is the one used by
+> userfault_open(), fix its callers instead. Now the test behaves correctly:
+> 
+>   # ./userfaultfd anon 30 1
+>   nr_pages: 480, nr_pages_per_cpu: 120
+>   userfaultfd syscall not available in this kernel
+> 
+> Signed-off-by: Thiago Jung Bauermann <bauerman@linux.ibm.com>
 
-There are five:
+It seems that this patch is superseded by the second patch in this series.
 
- (1) Allow cancelled operations to be queued so they can be cleaned up.
+> ---
+>  tools/testing/selftests/vm/userfaultfd.c | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+> 
+> diff --git a/tools/testing/selftests/vm/userfaultfd.c b/tools/testing/selftests/vm/userfaultfd.c
+> index 7b8171e3128a..e4099afe7557 100644
+> --- a/tools/testing/selftests/vm/userfaultfd.c
+> +++ b/tools/testing/selftests/vm/userfaultfd.c
+> @@ -859,7 +859,7 @@ static int userfaultfd_zeropage_test(void)
+>  	if (uffd_test_ops->release_pages(area_dst))
+>  		return 1;
+> 
+> -	if (userfaultfd_open(0) < 0)
+> +	if (userfaultfd_open(0))
+>  		return 1;
+>  	uffdio_register.range.start = (unsigned long) area_dst;
+>  	uffdio_register.range.len = nr_pages * page_size;
+> @@ -902,7 +902,7 @@ static int userfaultfd_events_test(void)
+> 
+>  	features = UFFD_FEATURE_EVENT_FORK | UFFD_FEATURE_EVENT_REMAP |
+>  		UFFD_FEATURE_EVENT_REMOVE;
+> -	if (userfaultfd_open(features) < 0)
+> +	if (userfaultfd_open(features))
+>  		return 1;
+>  	fcntl(uffd, F_SETFL, uffd_flags | O_NONBLOCK);
+> 
+> @@ -961,7 +961,7 @@ static int userfaultfd_sig_test(void)
+>  		return 1;
+> 
+>  	features = UFFD_FEATURE_EVENT_FORK|UFFD_FEATURE_SIGBUS;
+> -	if (userfaultfd_open(features) < 0)
+> +	if (userfaultfd_open(features))
+>  		return 1;
+>  	fcntl(uffd, F_SETFL, uffd_flags | O_NONBLOCK);
+> 
+> @@ -1027,7 +1027,7 @@ static int userfaultfd_stress(void)
+>  	if (!area_dst)
+>  		return 1;
+> 
+> -	if (userfaultfd_open(0) < 0)
+> +	if (userfaultfd_open(0))
+>  		return 1;
+> 
+>  	count_verify = malloc(nr_pages * sizeof(unsigned long long));
 
- (2) Fix a refcounting bug in the monitoring of reads on backend files
-     whereby a race can occur between monitor objects being listed for work,
-     the work processing being queued and the work processor running and
-     destroying the monitor objects.
-
- (3) Fix a ref overput in object attachment, whereby a tentatively
-     considered object is put in error handling without first being 'got'.
-
- (4) Fix a missing clear of the CACHEFILES_OBJECT_ACTIVE flag whereby an
-     assertion occurs when we retry because it seems the object is now
-     active.
-
- (5) Wait rather BUG'ing on an object collision in the depths of cachefiles
-     as the active object should be being cleaned up - also depends on (4).
-
-David
----
-The following changes since commit fc36def997cfd6cbff3eda4f82853a5c311c5466:
-
-  mm: teach dump_page() to correctly output poisoned struct pages (2018-07-03 17:32:19 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git tags/fscache-fixes-20180725
-
-for you to fetch changes up to c2412ac45a8f8f1cd582723c1a139608694d410d:
-
-  cachefiles: Wait rather than BUG'ing on "Unexpected object collision" (2018-07-25 14:49:00 +0100)
-
-----------------------------------------------------------------
-fscache fixes
-
-----------------------------------------------------------------
-Kiran Kumar Modukuri (5):
-      fscache: Allow cancelled operations to be enqueued
-      cachefiles: Fix refcounting bug in backing-file read monitoring
-      fscache: Fix reference overput in fscache_attach_object() error handling
-      cachefiles: Fix missing clear of the CACHEFILES_OBJECT_ACTIVE flag
-      cachefiles: Wait rather than BUG'ing on "Unexpected object collision"
-
- fs/cachefiles/bind.c   |  3 ++-
- fs/cachefiles/namei.c  |  3 +--
- fs/cachefiles/rdwr.c   | 17 ++++++++++++-----
- fs/fscache/cache.c     |  2 +-
- fs/fscache/cookie.c    |  7 ++++---
- fs/fscache/object.c    |  1 +
- fs/fscache/operation.c |  6 ++++--
- 7 files changed, 25 insertions(+), 14 deletions(-)
+-- 
+Sincerely yours,
+Mike.
 
