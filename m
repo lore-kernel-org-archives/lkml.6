@@ -2,84 +2,76 @@ Return-Path: <SRS0=S+WB=KJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02B75C6778F
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 12:32:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 843A8C6778F
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 12:32:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A4D1F20893
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 12:32:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A4D1F20893
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 3CA9D20893
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 12:32:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3CA9D20893
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729121AbeGYNnp (ORCPT
+        id S1729171AbeGYNoI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 09:43:45 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:33764 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728492AbeGYNnp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Jul 2018 09:43:45 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 9E0DA20876; Wed, 25 Jul 2018 14:32:14 +0200 (CEST)
-Received: from localhost (unknown [80.255.6.130])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 651FA2072F;
-        Wed, 25 Jul 2018 14:32:04 +0200 (CEST)
-Date:   Wed, 25 Jul 2018 14:32:04 +0200
-From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
-To:     Quentin Schulz <quentin.schulz@bootlin.com>
-Cc:     robh+dt@kernel.org, mark.rutland@arm.com, ralf@linux-mips.org,
-        paul.burton@mips.com, jhogan@kernel.org, linux-mips@linux-mips.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        thomas.petazzoni@bootlin.com
-Subject: Re: [PATCH] MIPS: mscc: ocelot: fix length of memory address space
- for MIIM
-Message-ID: <20180725123204.GD3539@piout.net>
-References: <20180725122132.31187-1-quentin.schulz@bootlin.com>
+        Wed, 25 Jul 2018 09:44:08 -0400
+Received: from mx2.suse.de ([195.135.220.15]:52232 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728725AbeGYNoI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Jul 2018 09:44:08 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id C688BAFA6;
+        Wed, 25 Jul 2018 12:32:37 +0000 (UTC)
+Date:   Wed, 25 Jul 2018 14:32:37 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Bruce Merry <bmerry@ska.ac.za>
+Cc:     Shakeel Butt <shakeelb@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux MM <linux-mm@kvack.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>
+Subject: Re: Showing /sys/fs/cgroup/memory/memory.stat very slow on some
+ machines
+Message-ID: <20180725123237.GI28386@dhcp22.suse.cz>
+References: <CAOm-9arwY3VLUx5189JAR9J7B=Miad9nQjjet_VNdT3i+J+5FA@mail.gmail.com>
+ <20180717212307.d6803a3b0bbfeb32479c1e26@linux-foundation.org>
+ <20180718104230.GC1431@dhcp22.suse.cz>
+ <CAOm-9aqeKZ7+Jvhc5DxEEzbk4T0iQx8gZ=O1vy6YXnbOkncFsg@mail.gmail.com>
+ <CALvZod7_vPwqyLBxiecZtREEeY4hioCGnZWVhQx9wVdM8CFcog@mail.gmail.com>
+ <CAOm-9aprLokqi6awMvi0NbkriZBpmvnBA81QhOoHnK7ZEA96fw@mail.gmail.com>
+ <CALvZod4ag02N6QPwRQCYv663hj05Z6vtrK8=XEE6uWHQCL4yRw@mail.gmail.com>
+ <CAOm-9arxtTwNxXzmb8nN+N_UtjiuH0XkpkVPFHpi3EOYXvZYVA@mail.gmail.com>
+ <CAOm-9aqYLExQZUvfk9ucCoSPoaA67D6ncEDR2+UZBMLhv4-r_A@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180725122132.31187-1-quentin.schulz@bootlin.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <CAOm-9aqYLExQZUvfk9ucCoSPoaA67D6ncEDR2+UZBMLhv4-r_A@mail.gmail.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 25/07/2018 14:21:32+0200, Quentin Schulz wrote:
-> The length of memory address space for MIIM0 is from 0x7107009c to
-> 0x710700bf included which is 36 bytes long in decimal, or 0x24 bytes in
-> hexadecimal and not 0x36.
-> 
-> Fixes: 49b031690abe ("MIPS: mscc: Add switch to ocelot")
-> 
-> Signed-off-by: Quentin Schulz <quentin.schulz@bootlin.com>
-Acked-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+On Tue 24-07-18 12:05:35, Bruce Merry wrote:
+[...]
+> I've also added some code to memcg_stat_show to report the number of
+> cgroups in the hierarchy (iterations in for_each_mem_cgroup_tree).
+> Running the script increases it from ~700 to ~41000. The script
+> iterates 250,000 times, so only some fraction of the cgroups become
+> zombies.
 
-> ---
->  arch/mips/boot/dts/mscc/ocelot.dtsi | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/arch/mips/boot/dts/mscc/ocelot.dtsi b/arch/mips/boot/dts/mscc/ocelot.dtsi
-> index 4f33dbc67348..7096915f26e0 100644
-> --- a/arch/mips/boot/dts/mscc/ocelot.dtsi
-> +++ b/arch/mips/boot/dts/mscc/ocelot.dtsi
-> @@ -184,7 +184,7 @@
->  			#address-cells = <1>;
->  			#size-cells = <0>;
->  			compatible = "mscc,ocelot-miim";
-> -			reg = <0x107009c 0x36>, <0x10700f0 0x8>;
-> +			reg = <0x107009c 0x24>, <0x10700f0 0x8>;
->  			interrupts = <14>;
->  			status = "disabled";
->  
-> -- 
-> 2.14.1
-> 
+So this is definitely "too many zombies" to delay the collecting of
+cumulative stats. Maybe we need to limit the number of zombies and
+reclaim them more actively. I have seen Shakeel has posted something but
+it looked more on the accounting side from a quick glance.
+
+I can see you are using cgroup v1 so your workaround would be to
+memory.force_empty before you remove the group.
 
 -- 
-Alexandre Belloni, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Michal Hocko
+SUSE Labs
