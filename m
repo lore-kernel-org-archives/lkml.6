@@ -2,74 +2,78 @@ Return-Path: <SRS0=S+WB=KJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B534C6778F
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 19:06:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ABFA1C67790
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 19:09:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4C2E320844
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 19:06:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4C2E320844
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=iogearbox.net
+	by mail.kernel.org (Postfix) with ESMTP id 6404120844
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 19:09:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6404120844
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729923AbeGYUTi (ORCPT
+        id S1729836AbeGYUWc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 16:19:38 -0400
-Received: from www62.your-server.de ([213.133.104.62]:49976 "EHLO
-        www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729150AbeGYUTi (ORCPT
+        Wed, 25 Jul 2018 16:22:32 -0400
+Received: from mail-it0-f65.google.com ([209.85.214.65]:53935 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729187AbeGYUWc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Jul 2018 16:19:38 -0400
-Received: from [78.46.172.3] (helo=sslproxy06.your-server.de)
-        by www62.your-server.de with esmtpsa (TLSv1.2:DHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.85_2)
-        (envelope-from <daniel@iogearbox.net>)
-        id 1fiP7K-0007eM-HK; Wed, 25 Jul 2018 21:06:34 +0200
-Received: from [99.0.85.34] (helo=localhost.localdomain)
-        by sslproxy06.your-server.de with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.89)
-        (envelope-from <daniel@iogearbox.net>)
-        id 1fiP7K-000UDO-7Z; Wed, 25 Jul 2018 21:06:34 +0200
-Subject: Re: pahole + BTF was: Re: [Question] bpf: about a new
- 'tools/bpf/bpf_dwarf2btf'
-To:     Taeung Song <treeze.taeung@gmail.com>,
-        Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
-Cc:     Alexei Starovoitov <ast@kernel.org>,
-        Martin KaFai Lau <kafai@fb.com>, netdev@vger.kernel.org,
-        Thomas Girard <thomas.g.girard@free.fr>,
-        Martin Cermak <mcermak@redhat.com>,
-        linux-kernel@vger.kernel.org, acme@kernel.org
-References: <47cfb90e-a9f4-8127-2b89-0e20d9fda2f0@gmail.com>
- <20180725175231.GA2121@redhat.com>
- <35663517-26e1-c2a2-1554-5dd90be2747f@gmail.com>
-From:   Daniel Borkmann <daniel@iogearbox.net>
-Message-ID: <bc71a1d6-584c-0227-b972-4b2511c0546c@iogearbox.net>
-Date:   Wed, 25 Jul 2018 21:06:30 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.3.0
+        Wed, 25 Jul 2018 16:22:32 -0400
+Received: by mail-it0-f65.google.com with SMTP id 72-v6so10252974itw.3;
+        Wed, 25 Jul 2018 12:09:32 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=YNi2CoT+YJmkW/WdGVF5eOwy/gh3AFH+KB8FqTITHVI=;
+        b=dgKRGB+yD/3eYVSSdFotuRy0wHEmYIIackfABZHJk1E/9Qsj7gKHmVc9H+Z99b4ILR
+         YFlzD/G/zudFGkxzyDgBb+qX5hDxaGakTbzHhgz69sdw6Tzc1F1RnjT6Z3491uRtQE/4
+         +KvL3rz3nV/SuvJtE1kn/azj9z+ByiobKcLfMhYCM4W1gOeTg09HEFGhW0KFHeHyJfOR
+         9RbnN32NKuSzotpADpomFBkjK+rL59/TVeoz/xPVJauAh60qNJanN1EfhNB+e+y33uAf
+         FBobgwNq0H57kXqnbuv/ypR1sr2xpT/U/KWF8EQ42YJ89E4CKcrzbY2k1WGN+6KYKLL7
+         ecZw==
+X-Gm-Message-State: AOUpUlGkryCpFsbUk1oO+/vE7RetkNeu02X0q3s4btiOpyauqKccCoN8
+        ldnmxbANS9I6Z4mQVgfE9A==
+X-Google-Smtp-Source: AAOMgpfIw8b1pbGo6NAHOXjyLr3gwF5Be//LnHPTM2cWspd4WyVecPtYZ/S/tcNHIrNN7DEiA4yn2g==
+X-Received: by 2002:a24:9cc7:: with SMTP id b190-v6mr7660370ite.118.1532545772060;
+        Wed, 25 Jul 2018 12:09:32 -0700 (PDT)
+Received: from localhost ([24.51.61.72])
+        by smtp.gmail.com with ESMTPSA id j126-v6sm963258ioe.17.2018.07.25.12.09.31
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 25 Jul 2018 12:09:31 -0700 (PDT)
+Date:   Wed, 25 Jul 2018 13:09:30 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc:     Stephen Boyd <sboyd@kernel.org>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 08/16] dt-bindings: clk: at91: Document new PMC binding
+Message-ID: <20180725190930.GA27482@rob-hp-laptop>
+References: <20180717222757.10253-1-alexandre.belloni@bootlin.com>
+ <20180717222757.10253-9-alexandre.belloni@bootlin.com>
 MIME-Version: 1.0
-In-Reply-To: <35663517-26e1-c2a2-1554-5dd90be2747f@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Authenticated-Sender: daniel@iogearbox.net
-X-Virus-Scanned: Clear (ClamAV 0.100.0/24782/Wed Jul 25 18:44:42 2018)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180717222757.10253-9-alexandre.belloni@bootlin.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/25/2018 08:27 PM, Taeung Song wrote:
-> On 07/26/2018 02:52 AM, Arnaldo Carvalho de Melo wrote:
-[...]
->> BTW, Daniel, I just pushed to pahole's main repository at:
->>
->>    git://git.kernel.org/pub/scm/devel/pahole/pahole.git
->>
->> with the Martin's BTF patch, so no need to pull from the github one,
->> I'll tag v1.12 and announce the release so that distro package
->> maintainers can update their packages.
+On Wed, Jul 18, 2018 at 12:27:49AM +0200, Alexandre Belloni wrote:
+> Document the new PMC binding with only one PMC node for all the PMC clocks
+> instead of one node per clock as this proved to be problematic.
+> 
+> Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+> ---
+>  .../devicetree/bindings/clock/at91-clock.txt  | 523 +-----------------
+>  1 file changed, 21 insertions(+), 502 deletions(-)
 
-Awesome, thanks so much Arnaldo!
+Reviewed-by: Rob Herring <robh@kernel.org>
