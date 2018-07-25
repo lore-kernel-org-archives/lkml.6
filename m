@@ -2,214 +2,148 @@ Return-Path: <SRS0=S+WB=KJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17191C67790
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 09:08:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EAFAEC6778F
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 09:12:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AD33D2064D
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 09:08:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9805720890
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 09:12:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=goldelico.com header.i=@goldelico.com header.b="OGf2h2tH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AD33D2064D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goldelico.com
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="hYBrnSLz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9805720890
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728650AbeGYKT0 (ORCPT
+        id S1728670AbeGYKXI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 06:19:26 -0400
-Received: from mo4-p02-ob.smtp.rzone.de ([85.215.255.81]:22704 "EHLO
-        mo4-p02-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728597AbeGYKT0 (ORCPT
+        Wed, 25 Jul 2018 06:23:08 -0400
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:41398 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728619AbeGYKXH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Jul 2018 06:19:26 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1532509717;
-        s=strato-dkim-0002; d=goldelico.com;
-        h=To:References:Message-Id:Cc:Date:In-Reply-To:From:Subject:
-        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
-        bh=bB9tpBaxbsFUG2vCDXGAnPDY1rrYpILHl2Fc261/Mwc=;
-        b=OGf2h2tH2QWPGbOHAAgS9ZykS4+C+f07oHLZ4q3ccPL3cAZGwLsPy6w/QCtj/nY3wd
-        lrCPZJww2JJQ8HECmgHbA5D5UocFarGl9Zym13K9PeKERzszJTn20KakNq8NYqUND28j
-        RmLo9mMj63Q0gOoksc9NaxkdazJ26qFgS+9kdK1nNd5fyfcAarIN35Gbdib8cLapIJX6
-        m+xfS8dZoV3+oYprNutL24Up4uqjpBI3OJwrpHcjfwh35vuUmcDb5YmF0j3a0H1UoVKE
-        S5LH6BtCkz9bCg5zaBINheJvHOwaKRsamT7ltu8r+y5ZDFOypnc/BlNChw1tPJPU0GnA
-        QqTw==
-X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMgPgp8VKxflSZ1P34KBj4Qpw87Wiuc1qET/2Lw=="
-X-RZG-CLASS-ID: mo00
-Received: from mbp-13-nikolaus.fritz.box
-        by smtp.strato.de (RZmta 43.13 DYNA|AUTH)
-        with ESMTPSA id 6047f4u6P98ae39
-        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
-        (Client did not present a certificate);
-        Wed, 25 Jul 2018 11:08:36 +0200 (CEST)
-Content-Type: text/plain; charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 9.3 \(3124\))
-Subject: Re: [PATCH 10/32] ARM: dts: omap3-gta04: update gpmc NAND setup
-From:   "H. Nikolaus Schaller" <hns@goldelico.com>
-In-Reply-To: <20180725082810.GA8303@lenoch>
-Date:   Wed, 25 Jul 2018 11:08:38 +0200
-Cc:     Marek Belisko <marek@goldelico.com>,
-        =?utf-8?Q?Beno=C3=AEt_Cousson?= <bcousson@baylibre.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-omap@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, letux-kernel@openphoenux.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <D3257490-7688-4F4E-896F-1ADD1B3A3DD8@goldelico.com>
-References: <cover.1532501910.git.hns@goldelico.com> <effe8969751cde3a3cd7993aa66c839493af9dd1.1532501910.git.hns@goldelico.com> <20180725081058.GB7467@lenoch> <1E7B727D-1AED-4B00-AD2C-CF9FC562E53D@goldelico.com> <20180725082810.GA8303@lenoch>
-To:     Ladislav Michl <ladis@linux-mips.org>
-X-Mailer: Apple Mail (2.3124)
+        Wed, 25 Jul 2018 06:23:07 -0400
+Received: by mail-pl0-f65.google.com with SMTP id w8-v6so3027423ply.8
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Jul 2018 02:12:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=BFuqaqx6n586KjnMkNGhA15MtbnEZS/yag2dYBNfJbI=;
+        b=hYBrnSLz23/9TFOAYLieXCFHZGg8WiWcl9KW6gwAU0zl2rDZIM09MEBpNVAjj9ncvc
+         vnHyn6aScykM8U/i/aM5hUNPxxYxGXz3k2wCQJN514x8oyVjPmeoTgJMK8EV5reTTb1Q
+         hukGhkgUtw2qaBBUqYRY5ciAJVpMxq20Fu6P31zlEus4sbGz2XFGrMCj1QKrQDQqLfvj
+         IBSyWiU+GRqAdX77xaUNuTkrGqqqfT44yrhPPDIetdARrNuVKUShce+ukIBfU7udC09g
+         xoKjsjE8NB/IKDWs5v1DABkCjuixqiVj2xwavDGu07iesPMh6NLDVrUguPBHmmcTJ6+d
+         CVdA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=BFuqaqx6n586KjnMkNGhA15MtbnEZS/yag2dYBNfJbI=;
+        b=GX5t1j8g8AMWGQPTyKvSyIZ0RYs4WVb68CvB58WKcfWMTrnn3qm8KG9IikekWA/l1d
+         hHxnsoCe/t4QnbUzlkE1OWtUjhJ9JYtsB/viz1dI2B7Z858IEw1S1JLP6BgGvjitcbKb
+         50fzOmXfyscnNsk1KR+SopHq1C86cLzaIMDDjqdgluzCGHdDEGoURWr9Pgl8+yBimCBg
+         eHJUWfkTrbUJXSMmwILiCMi6mWX4HnoMtflr0Ee7Y5wF7+jqPaHihb8XJxCy3on0MmuX
+         4Ado2J+EWItwA4fJeQBZEqH4XD875R254Dj72mqQM3BhN1COMT9oUaNM84Tufu4i85S1
+         E0jA==
+X-Gm-Message-State: AOUpUlELSoPjJZdjt3Zjb/AV08x/1Jpn/VuARUBBi9+vowVGFs4OsieJ
+        nTcOJOlm4PuZ/8IT0+7QzgJ9hKhqt/R6AGquRHECdg==
+X-Google-Smtp-Source: AAOMgpc3OthpgD2T93/nSsDf0bXczQg/eAN9KV/zpwiUi0sBTCQ9tiik4NiVJyKAvd0jtT2UTHVTbxlPkeiAtE2fE28=
+X-Received: by 2002:a17:902:d710:: with SMTP id w16-v6mr20315527ply.93.1532509941039;
+ Wed, 25 Jul 2018 02:12:21 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:a17:90a:ac14:0:0:0:0 with HTTP; Wed, 25 Jul 2018 02:12:00
+ -0700 (PDT)
+In-Reply-To: <CAJfpegtXhRmSTxEbvGZGUCORoxKvsjeJEfFtUEzGuC76ZE3rmA@mail.gmail.com>
+References: <000000000000bc17b60571a60434@google.com> <CACT4Y+bKU8f4jVENYHX=fzNVd95A4vce2F=UCV12paVNFv-LNg@mail.gmail.com>
+ <CAJfpegsKWGZ4LVeQXrrCr47+Bch4yfOWcWMFSniQsRzjRof=RQ@mail.gmail.com>
+ <CACT4Y+ZbRi=0kRiR-j-SkngsB_QuALfnOX5nGF4agQD-weFsew@mail.gmail.com>
+ <CAJfpegs0by5OJ7iqtg6L3T1w2RrFRiU6yRufVNbt=tNpJCbf2A@mail.gmail.com>
+ <CACT4Y+bSnJjtgeLdusj6czbH8080XfRs2b8L0V4R0TAixqxX6Q@mail.gmail.com>
+ <CAJfpegvYHYUMdo14J_of10rmg0krjd_eiATJ3D4+XqaNys9bqQ@mail.gmail.com>
+ <CACT4Y+Y2ec4-ywG+FWocir6XXkwt-11qD+SAFwswtG2Ng6BS4A@mail.gmail.com>
+ <CAJfpeguni8JReXKXU_yUFqBfHav1-JFHfHzhxc=kaXu3ME6Qsw@mail.gmail.com>
+ <CACT4Y+YiGEX7_naGDTDNWCKnjQAisYrmBOYNejasfidaCRP7xA@mail.gmail.com> <CAJfpegtXhRmSTxEbvGZGUCORoxKvsjeJEfFtUEzGuC76ZE3rmA@mail.gmail.com>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Wed, 25 Jul 2018 11:12:00 +0200
+Message-ID: <CACT4Y+ZZ_v6izsiCGym=r+MiRmxaFE=eH54dz7t0BOQ7VxTNiw@mail.gmail.com>
+Subject: Re: INFO: task hung in fuse_reverse_inval_entry
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        syzbot <syzbot+bb6d800770577a083f8c@syzkaller.appspotmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, Jul 24, 2018 at 5:17 PM, Miklos Szeredi <miklos@szeredi.hu> wrote:
+>>>>> Biggest conceptual problem: your definition of fuse-server is weak.
+>>>>> Take the following example: process A is holding the fuse device fd
+>>>>> and is forwarding requests and replies to/from process B via a pipe.
+>>>>> So basically A is just a proxy that does nothing interesting, the
+>>>>> "real" server is B.  But according to your definition B is not a
+>>>>> server, only A is.
+>>>>
+>>>> I proposed to abort fuse conn when all fuse device fd's are "killed"
+>>>> (all processes having the fd opened are killed). So if _only_ process
+>>>> B is killed, then, yes, it will still hang. However if A is killed or
+>>>> both A and B (say, process group, everything inside of pid namespace,
+>>>> etc) then the deadlock will be autoresolved without human
+>>>> intervention.
+>>>
+>>> Okay, so you're saying:
+>>>
+>>> 1) when process gets SIGKILL and is uninterruptible sleep mark process as doomed
+>>> 2) for a particular fuse instance find set of fuse device fd
+>>> references that are in non-doomed tasks; if there are none then abort
+>>> fuse instance
+>>>
+>>> Right?
+>>
+>>
+>> Yes, something like this.
+>> Perhaps checking for "uninterruptible sleep" is excessive. If it has
+>> SIGKILL pending it's pretty much doomed already. This info should be
+>> already available for tasks.
+>> Not saying that it's better, but what I described was the other way
+>> around: when a task killed it drops a reference to all opened fuse
+>> fds, when the last fd is dropped, the connection can be aborted.
+>
+> struct task_struct {
+> [...]
+>     struct files_struct        *files;
+> [...]
+> };
+>
+> struct files_struct {
+> [...]
+>     struct fdtable __rcu *fdt;
+> [...]
+> };
+>
+> struct fdtable {
+> [...]
+>     struct file __rcu **fd;      /* current fd array */
+> [...]
+> };
+>
+> So there we have an array of pointers to struct files.  Suppose we'd
+> magically be able to find files that point to fuse devices upon
+> receiving SIGKILL, what would we do with them?  We can't close them:
+> other tasks might still be pointing to the same files_struct.
+>
+> We could do a global search for non-doomed tasks referencing the same
+> fuse device, but I have no clue how we'd go about doing that without
+> racing with forks, fd sending, etc...
 
-> Am 25.07.2018 um 10:28 schrieb Ladislav Michl <ladis@linux-mips.org>:
->=20
-> On Wed, Jul 25, 2018 at 10:16:28AM +0200, H. Nikolaus Schaller wrote:
->> Hi,
->>=20
->>> Am 25.07.2018 um 10:10 schrieb Ladislav Michl =
-<ladis@linux-mips.org>:
->>>=20
->>> On Wed, Jul 25, 2018 at 08:58:42AM +0200, H. Nikolaus Schaller =
-wrote:
->>>> to better match omap3-beagle.dts (which was the basis
->>>> of designing the GTA04).
->>>>=20
->>>> Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
->>>> ---
->>>> arch/arm/boot/dts/omap3-gta04.dtsi | 14 +++++++-------
->>>> 1 file changed, 7 insertions(+), 7 deletions(-)
->>>>=20
->>>> diff --git a/arch/arm/boot/dts/omap3-gta04.dtsi =
-b/arch/arm/boot/dts/omap3-gta04.dtsi
->>>> index 03fe404cbf56..9568e0c4d4bf 100644
->>>> --- a/arch/arm/boot/dts/omap3-gta04.dtsi
->>>> +++ b/arch/arm/boot/dts/omap3-gta04.dtsi
->>>> @@ -616,27 +616,27 @@
->>>> 		interrupt-parent =3D <&gpmc>;
->>>> 		interrupts =3D <0 IRQ_TYPE_NONE>, /* fifoevent */
->>>> 			     <1 IRQ_TYPE_NONE>;	/* termcount */
->>>> +		ti,nand-ecc-opt =3D "ham1";
->>>> +		rb-gpios =3D <&gpmc 0 GPIO_ACTIVE_HIGH>; /* gpmc_wait0 =
-*/
->>>> 		nand-bus-width =3D <16>;
->>>> -		ti,nand-ecc-opt =3D "bch8";
->>>=20
->>> You are using weeker ECC scheme just to be compatible with another =
-machine?
->>=20
->> No not another machine. The GTA04 uses the same SoC and NAND chip as =
-the BeagleBoard,
->> so you can imagine GTA04 being a BeagleBoard + a lot of other things.
->>=20
->> The key reason is to change the ecc scheme is to be compatible with =
-the U-Boot used.
->>=20
->> BootROM can only handle ham1 for the MLO. And there is no =
-nand-ecc-opt
->> for each partition. So we either can't mix ECC schemes if we want to =
-be able
->> to read/write MLO as the first partition from kernel.
->>=20
->>> So now you cannot boot already deployed filesystem...
->>=20
->> No. We always used ham1 and bch8 wasn't working at all here. =
-Therefore nobody
->> did use upstream kernel for NAND yet...
->>=20
->>> Also is it enough for
->>> NAND chip used?
->>=20
->> Well, the chip is recommended to use bch8 but BootROM imposes above =
-mentioned limits.
->=20
-> Then common way to handle such a situation is to use 1bit hamming for =
-MLO and BCH8 for
-> the rest. You will end with corrupted filesystem with ham1 which I'd =
-consider very
-> unfortunate.
->=20
-> (I know there were endless discussions how to handle this situation. =
-It is already
-> solved in U-Boot and for updating MLO from Linux I'm using writeloader =
-tool)
 
-Never heard of this tool, but we haven't followed this discussion for =
-years since
-we never had problems with "ham1-everywhere". What I am not completely =
-sure is if
-ubifs is using its own ECC scheme or not. If it is (like I assume), the =
-user-space
-partition is independent of this setting and we just have discussion for =
-MLO/U-Boot
-and kernel partitions.
+Good questions for which I don't have answers.
 
-So I think it boils down to the question if
-a) upstream should do a suboptimal thing, but be compatible to the =
-current vendor kernel and u-boot
-b) upstream should do the right thing, but stay incompatible
-
-Result of b) would e.g. a stock Debian kernel will not be able to read =
-or write the partitions of a device
-created with vendor kernel.
-
-And even worse, it is not clear if users will want to erase and reflash =
-the NAND to match what kernel.org defines if they have a running system.
-
-This makes me believe that a) is still better for practical reasons, =
-even if technically worse.
-
-BR,
-Nikolaus
-
->=20
-> 	ladis
->=20
->> BR,
->> Nikolaus
->>=20
->>>=20
->>> 	ladis
->>>=20
->>>> +		#address-cells =3D <1>;
->>>> +		#size-cells =3D <1>;
->>>>=20
->>>> -		gpmc,sync-clk-ps =3D <0>;
->>>> +		gpmc,device-width =3D <2>;
->>>> 		gpmc,cs-on-ns =3D <0>;
->>>> 		gpmc,cs-rd-off-ns =3D <44>;
->>>> 		gpmc,cs-wr-off-ns =3D <44>;
->>>> 		gpmc,adv-on-ns =3D <6>;
->>>> 		gpmc,adv-rd-off-ns =3D <34>;
->>>> 		gpmc,adv-wr-off-ns =3D <44>;
->>>> -		gpmc,we-off-ns =3D <40>;
->>>> 		gpmc,oe-off-ns =3D <54>;
->>>> +		gpmc,we-off-ns =3D <40>;
->>>> 		gpmc,access-ns =3D <64>;
->>>> 		gpmc,rd-cycle-ns =3D <82>;
->>>> 		gpmc,wr-cycle-ns =3D <82>;
->>>> 		gpmc,wr-access-ns =3D <40>;
->>>> 		gpmc,wr-data-mux-bus-ns =3D <0>;
->>>> -		gpmc,device-width =3D <2>;
->>>> -
->>>> -		#address-cells =3D <1>;
->>>> -		#size-cells =3D <1>;
->>>> +		gpmc,sync-clk-ps =3D <0>;
->>>>=20
->>>> 		x-loader@0 {
->>>> 			label =3D "X-Loader";
->>>> --=20
->>>> 2.12.2
->>>>=20
->>>> --
->>>> To unsubscribe from this list: send the line "unsubscribe =
-linux-omap" in
->>>> the body of a message to majordomo@vger.kernel.org
->>>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-
+Maybe more waits in fuse need to be interruptible? E.g. request_wait_answer?
