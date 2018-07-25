@@ -2,131 +2,171 @@ Return-Path: <SRS0=S+WB=KJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ECD95C67790
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 14:32:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61881C67790
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 14:32:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A841320852
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 14:32:19 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="dU4pLrpC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A841320852
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	by mail.kernel.org (Postfix) with ESMTP id 2608720852
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 14:32:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2608720852
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729244AbeGYPoO (ORCPT
+        id S1729298AbeGYPox (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 11:44:14 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:52818 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728051AbeGYPoO (ORCPT
+        Wed, 25 Jul 2018 11:44:53 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:40083 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728051AbeGYPox (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Jul 2018 11:44:14 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w6PETSNf123498;
-        Wed, 25 Jul 2018 14:32:02 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=content-type :
- mime-version : subject : from : in-reply-to : date : cc :
- content-transfer-encoding : message-id : references : to;
- s=corp-2018-07-02; bh=ROkCH+V4/ZdcmBUDbKLUHlUvEC8hwH7DPOfvR1ybh2Y=;
- b=dU4pLrpCSa/vDAUgDo3K+Ljhet3+0BNuUj9jeeFejkEtl3Sfcsxe9rx73vs75kgxdT64
- v5OfGMD/00UnvIBIOa6ngaAmYOhKg+MijoBHcyhpcejYWkzSiAzAg43Rnq0J3wJt19jq
- v9oU8yYqM754sjOZ9XLEQxMcqzI/pIpUu1VJZWIOcgk5NRb7LXCHwhG/RCZqFXFD9Qwg
- xMWfBl+FgFV5F/Snd+PANT5X33+295l7J8+Dc+9Q6LwxFLjINZHwq74SERv5F5dvJqs3
- NhwJzD7eVZYbex5/bEvEEHFFdemJoLZ/sMoEi6TlGAaCj+FqMKX9VqCnCDZePoO5d5/e UA== 
-Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
-        by userp2130.oracle.com with ESMTP id 2kbv8t5pjw-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 25 Jul 2018 14:32:02 +0000
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w6PEW1Af001198
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 25 Jul 2018 14:32:01 GMT
-Received: from abhmp0001.oracle.com (abhmp0001.oracle.com [141.146.116.7])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w6PEVvOW015686;
-        Wed, 25 Jul 2018 14:31:57 GMT
-Received: from anon-dhcp-171.1015granger.net (/68.61.232.219)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 25 Jul 2018 07:31:57 -0700
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 11.5 \(3445.9.1\))
-Subject: Re: [BUG BISECT] NFSv4 client fails on Flush Journal to Persistent
- Storage
-From:   Chuck Lever <chuck.lever@oracle.com>
-In-Reply-To: <CAJKOXPfMiaGP9xqPcOQMs+a4RKvhK03v51e5r3GaUiFs0G=61Q@mail.gmail.com>
-Date:   Wed, 25 Jul 2018 10:31:54 -0400
-Cc:     Trond Myklebust <trondmy@hammerspace.com>,
-        "sudeep.holla@arm.com" <sudeep.holla@arm.com>,
-        Trond Myklebust <trond.myklebust@primarydata.com>,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        Bruce Fields <bfields@fieldses.org>,
-        Jeff Layton <jlayton@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "linux-samsung-soc@vger.kernel.org" 
-        <linux-samsung-soc@vger.kernel.org>
-Content-Transfer-Encoding: 7bit
-Message-Id: <9B9E1627-AC2E-4A0C-AB6E-5815876A59AB@oracle.com>
-References: <CAJKOXPd2rntNOpU1quR9Zm_J22+=pEaj4ZTC_tdZ0zcRYUciFg@mail.gmail.com>
- <CAPKp9uZ79ybkv7dMpcy2GQ9L+rWk+vdExQ48diWWQPOUdDQtSQ@mail.gmail.com>
- <CAJKOXPfX0CytKcYDaDAYYuCQjk-mcGjFRHfZco-wPQsc4G1agA@mail.gmail.com>
- <BCD39D7E-EEEC-4EB9-824E-63323C333C88@oracle.com>
- <CAJKOXPcw-i99_U-Ltuuf6w-WRK7V4gNqVSYkCMGFEXQG2DL2XQ@mail.gmail.com>
- <CAJKOXPf7V1z4pNZ2RsjkJmaVAgk34_rPOtQOc7J5KRMSRemrdg@mail.gmail.com>
- <082848F5-6360-4523-BA95-601777E17CF2@oracle.com>
- <CAJKOXPe4uqOZGd_zb_Mqq4Fspu63LHZky86O4tPaD3BZNCBS6w@mail.gmail.com>
- <6AAC5897-8762-4209-8718-67291B87AA00@oracle.com>
- <d617f8a85c3414230cd755fe0e4470c0f8bd17ff.camel@hammerspace.com>
- <26995E49-E8DD-421D-BABF-9E672B9383BD@oracle.com>
- <30a1455b6817361f8228c022628aef5cdee70c3e.camel@hammerspace.com>
- <784782B0-A387-4D3B-A517-E85D851162B8@oracle.com>
- <CAJKOXPfMiaGP9xqPcOQMs+a4RKvhK03v51e5r3GaUiFs0G=61Q@mail.gmail.com>
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-X-Mailer: Apple Mail (2.3445.9.1)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8964 signatures=668706
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=847
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1806210000 definitions=main-1807250156
+        Wed, 25 Jul 2018 11:44:53 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w6PEWSkI402999
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Wed, 25 Jul 2018 07:32:28 -0700
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w6PEWSmu402996;
+        Wed, 25 Jul 2018 07:32:28 -0700
+Date:   Wed, 25 Jul 2018 07:32:28 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Kan Liang <tipbot@zytor.com>
+Message-ID: <tip-4f08b6255adb1e379b4fcc8d304ec1263d465677@git.kernel.org>
+Cc:     torvalds@linux-foundation.org, tglx@linutronix.de, acme@redhat.com,
+        jolsa@redhat.com, kan.liang@linux.intel.com,
+        vincent.weaver@maine.edu, peterz@infradead.org,
+        linux-kernel@vger.kernel.org, mingo@kernel.org,
+        alexander.shishkin@linux.intel.com, hpa@zytor.com,
+        eranian@google.com
+Reply-To: linux-kernel@vger.kernel.org, peterz@infradead.org,
+          mingo@kernel.org, hpa@zytor.com,
+          alexander.shishkin@linux.intel.com, eranian@google.com,
+          torvalds@linux-foundation.org, tglx@linutronix.de,
+          acme@redhat.com, kan.liang@linux.intel.com,
+          vincent.weaver@maine.edu, jolsa@redhat.com
+In-Reply-To: <20180309021542.11374-2-kan.liang@linux.intel.com>
+References: <20180309021542.11374-2-kan.liang@linux.intel.com>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:perf/core] perf/x86/intel: Support PEBS on fixed counters
+Git-Commit-ID: 4f08b6255adb1e379b4fcc8d304ec1263d465677
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Commit-ID:  4f08b6255adb1e379b4fcc8d304ec1263d465677
+Gitweb:     https://git.kernel.org/tip/4f08b6255adb1e379b4fcc8d304ec1263d465677
+Author:     Kan Liang <kan.liang@linux.intel.com>
+AuthorDate: Thu, 8 Mar 2018 18:15:40 -0800
+Committer:  Ingo Molnar <mingo@kernel.org>
+CommitDate: Wed, 25 Jul 2018 11:50:50 +0200
 
+perf/x86/intel: Support PEBS on fixed counters
 
-> On Jul 25, 2018, at 9:27 AM, Krzysztof Kozlowski <krzk@kernel.org> wrote:
-> 
-> On 18 June 2018 at 18:20, Chuck Lever <chuck.lever@oracle.com> wrote:
->> 
->> The extra serialization appears to have a reproducible performance
->> impact on RDMA, which no longer takes the reserve_lock when allocating
->> a slot.
->> 
->> I could put an xprt_alloc_xid call in xprt_alloc_slot, but that would
->> only work for socket-based transports. Would it be OK if RDMA had its
->> own XID allocation mechanism?
-> 
-> Hi,
-> 
-> On recent next the issue appeared again. My boards with NFSv4 root
-> timeout on 80% of boots. This time my NFS server is faster - Pi3 B+
-> :).
-> 
-> Is this know? Should I start long bisect or maybe you can point me to
-> possible causes?
+The Extended PEBS feature supports PEBS on fixed-function performance
+counters as well as all four general purpose counters.
 
-Hi Krzysztof, I don't know of any recent changes. Bisecting would be
-a good place to start.
+It has to change the order of PEBS and fixed counter enabling to make
+sure PEBS is enabled for the fixed counters.
 
+The change of the order doesn't impact the behavior of current code on
+other platforms which don't support extended PEBS.
+Because there is no dependency among those enable/disable functions.
 
---
-Chuck Lever
+Don't enable IRQ generation (0x8) for MSR_ARCH_PERFMON_FIXED_CTR_CTRL.
+The PEBS ucode will handle the interrupt generation.
 
+Based-on-code-from: Andi Kleen <ak@linux.intel.com>
+Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Stephane Eranian <eranian@google.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Vince Weaver <vincent.weaver@maine.edu>
+Cc: acme@kernel.org
+Link: http://lkml.kernel.org/r/20180309021542.11374-2-kan.liang@linux.intel.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+---
+ arch/x86/events/intel/core.c | 24 +++++++++++++-----------
+ 1 file changed, 13 insertions(+), 11 deletions(-)
 
-
+diff --git a/arch/x86/events/intel/core.c b/arch/x86/events/intel/core.c
+index 86f0c15dcc2d..d5a3124605f5 100644
+--- a/arch/x86/events/intel/core.c
++++ b/arch/x86/events/intel/core.c
+@@ -2041,15 +2041,15 @@ static void intel_pmu_disable_event(struct perf_event *event)
+ 	cpuc->intel_ctrl_host_mask &= ~(1ull << hwc->idx);
+ 	cpuc->intel_cp_status &= ~(1ull << hwc->idx);
+ 
++	if (unlikely(event->attr.precise_ip))
++		intel_pmu_pebs_disable(event);
++
+ 	if (unlikely(hwc->config_base == MSR_ARCH_PERFMON_FIXED_CTR_CTRL)) {
+ 		intel_pmu_disable_fixed(hwc);
+ 		return;
+ 	}
+ 
+ 	x86_pmu_disable_event(event);
+-
+-	if (unlikely(event->attr.precise_ip))
+-		intel_pmu_pebs_disable(event);
+ }
+ 
+ static void intel_pmu_del_event(struct perf_event *event)
+@@ -2068,17 +2068,19 @@ static void intel_pmu_read_event(struct perf_event *event)
+ 		x86_perf_event_update(event);
+ }
+ 
+-static void intel_pmu_enable_fixed(struct hw_perf_event *hwc)
++static void intel_pmu_enable_fixed(struct perf_event *event)
+ {
++	struct hw_perf_event *hwc = &event->hw;
+ 	int idx = hwc->idx - INTEL_PMC_IDX_FIXED;
+-	u64 ctrl_val, bits, mask;
++	u64 ctrl_val, mask, bits = 0;
+ 
+ 	/*
+-	 * Enable IRQ generation (0x8),
++	 * Enable IRQ generation (0x8), if not PEBS,
+ 	 * and enable ring-3 counting (0x2) and ring-0 counting (0x1)
+ 	 * if requested:
+ 	 */
+-	bits = 0x8ULL;
++	if (!event->attr.precise_ip)
++		bits |= 0x8;
+ 	if (hwc->config & ARCH_PERFMON_EVENTSEL_USR)
+ 		bits |= 0x2;
+ 	if (hwc->config & ARCH_PERFMON_EVENTSEL_OS)
+@@ -2120,14 +2122,14 @@ static void intel_pmu_enable_event(struct perf_event *event)
+ 	if (unlikely(event_is_checkpointed(event)))
+ 		cpuc->intel_cp_status |= (1ull << hwc->idx);
+ 
++	if (unlikely(event->attr.precise_ip))
++		intel_pmu_pebs_enable(event);
++
+ 	if (unlikely(hwc->config_base == MSR_ARCH_PERFMON_FIXED_CTR_CTRL)) {
+-		intel_pmu_enable_fixed(hwc);
++		intel_pmu_enable_fixed(event);
+ 		return;
+ 	}
+ 
+-	if (unlikely(event->attr.precise_ip))
+-		intel_pmu_pebs_enable(event);
+-
+ 	__x86_pmu_enable_event(hwc, ARCH_PERFMON_EVENTSEL_ENABLE);
+ }
+ 
