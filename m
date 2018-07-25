@@ -2,97 +2,217 @@ Return-Path: <SRS0=S+WB=KJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AAADAC6778F
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 17:33:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B1C4C67790
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 17:38:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6195520843
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 17:33:55 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="OOOYGbU8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6195520843
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	by mail.kernel.org (Postfix) with ESMTP id B260920843
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 17:38:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B260920843
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xmission.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729429AbeGYSqc (ORCPT
+        id S1729514AbeGYSvD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 14:46:32 -0400
-Received: from mail-io0-f196.google.com ([209.85.223.196]:33746 "EHLO
-        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729195AbeGYSqc (ORCPT
+        Wed, 25 Jul 2018 14:51:03 -0400
+Received: from out02.mta.xmission.com ([166.70.13.232]:59395 "EHLO
+        out02.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729337AbeGYSvD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Jul 2018 14:46:32 -0400
-Received: by mail-io0-f196.google.com with SMTP id z20-v6so7011961iol.0
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Jul 2018 10:33:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=zdgp2iY6KpwnbVZRZQ/kUXPPBAhZqjnyWnhn2NF7H0k=;
-        b=OOOYGbU8QZJBW8DyoUS1cFWOsNkQsFkeo8SppHnRYmPyc2sjcTHKJt4kybmH6GxOVc
-         G2lhlYaGOFDSZh+3ajjGe7syyrooOEOt5n+kqXI/MjXtaESLxn6xPSYZ6EOmDs0HAwpR
-         1MAlOxo5IWTQc/3+HVJz3vuxP15AC5QD6Pv9c=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=zdgp2iY6KpwnbVZRZQ/kUXPPBAhZqjnyWnhn2NF7H0k=;
-        b=OuEm3A0Vs10xKPEQXDiLoxjG08TRoIpkCaGSdabN2gxvOKVuAJOCJogLocsRHe8DwH
-         lAF8wUa2hNM7QF0w8s+sQ3AqIGZ32I90s39vx6VNO3cAPCtBfjMDqEwLBRNr0DFUXaJp
-         qEtTJe/HhKdz/3h1temA2bp8NDIg1/192/p2P7TkIbx5p1fliCcfypOoayqf0YuJxhKZ
-         /8QJZFoh+cALiHrXZCnSFJ5NZmcyo6VcF0JqR8mrSBdN1REpA+Zd0+VvtHSf7WsNNoRW
-         PVsaFOw/QLdh7orH7mZjTHhE6xvRdhoeMzF78m9bCtw66RNP8rHSzB+Zb+LgJMPUqReE
-         +ZwA==
-X-Gm-Message-State: AOUpUlEu5RxsGXIXSD2FBlDqRXXiXw4JGCQuXdnMCFgdzC1FoMxShlUu
-        jUHSmoDIRIcqH9gzichmPR44idI5SJj+9p1oBTw=
-X-Google-Smtp-Source: AAOMgpeikD0RjLzAcOBmkyanq9fDb17e77jkQZmxO27L/oHlwwroE1ReHgK3tS/noWMwOYo58DuMFJcwHwjtHbkQxd0=
-X-Received: by 2002:a6b:1502:: with SMTP id 2-v6mr18700396iov.203.1532540032406;
- Wed, 25 Jul 2018 10:33:52 -0700 (PDT)
+        Wed, 25 Jul 2018 14:51:03 -0400
+Received: from in02.mta.xmission.com ([166.70.13.52])
+        by out02.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1fiNjw-0006S4-OI; Wed, 25 Jul 2018 11:38:20 -0600
+Received: from [97.119.167.31] (helo=x220.xmission.com)
+        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1fiNjh-0006gU-7k; Wed, 25 Jul 2018 11:38:20 -0600
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     David Ahern <dsahern@gmail.com>
+Cc:     Cong Wang <xiyou.wangcong@gmail.com>,
+        David Miller <davem@davemloft.net>,
+        Linux Kernel Network Developers <netdev@vger.kernel.org>,
+        nikita.leshchenko@oracle.com,
+        Roopa Prabhu <roopa@cumulusnetworks.com>,
+        Stephen Hemminger <stephen@networkplumber.org>,
+        Ido Schimmel <idosch@mellanox.com>,
+        Jiri Pirko <jiri@mellanox.com>,
+        Saeed Mahameed <saeedm@mellanox.com>,
+        Alexander Aring <alex.aring@gmail.com>,
+        linux-wpan@vger.kernel.org,
+        NetFilter <netfilter-devel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+References: <1a3f59a9-0ba5-c83f-16a6-f9550a84f693@gmail.com>
+        <CAM_iQpWabZorkMNswyfHyS4KT=f_bgMtK8K35=84uah6Kfqxew@mail.gmail.com>
+        <1a27e301-3275-b349-a2f8-afdfdc02f04f@gmail.com>
+        <20180718.125938.2271502580775162784.davem@davemloft.net>
+        <28c30574-391c-b4bd-c337-51d3040d901a@gmail.com>
+        <CAM_iQpW4-JkZY7jXx0Q1b907hQ85UOL1eXv2YHwSukb5L=apUg@mail.gmail.com>
+        <5021d874-8e99-6eba-f24b-4257c62d4457@gmail.com>
+        <CAM_iQpUc-H2kZCBevePs6g-8qKyJkUhdd1ZDSQgYsCG0ChfC2w@mail.gmail.com>
+        <87muufze8w.fsf@xmission.com>
+        <4b03b5f6-87ce-9ff2-7c14-598beebd8fb8@gmail.com>
+Date:   Wed, 25 Jul 2018 12:38:01 -0500
+In-Reply-To: <4b03b5f6-87ce-9ff2-7c14-598beebd8fb8@gmail.com> (David Ahern's
+        message of "Wed, 25 Jul 2018 08:06:10 -0600")
+Message-ID: <87zhyfw70m.fsf@xmission.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
 MIME-Version: 1.0
-References: <20180724121139.62570-1-kirill.shutemov@linux.intel.com>
- <20180724121139.62570-2-kirill.shutemov@linux.intel.com> <20180724130308.bbd46afc3703af4c5e1d6868@linux-foundation.org>
- <CA+55aFz1Vj3b2w-nOBdV5=WwsCYhSBprjPjGog6=_=q75Z5Z-w@mail.gmail.com>
- <20180724134158.676dfa7a4da16adbab3b851c@linux-foundation.org> <20180725123924.g2yvgie2iz2txmek@kshutemo-mobl1>
-In-Reply-To: <20180725123924.g2yvgie2iz2txmek@kshutemo-mobl1>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Wed, 25 Jul 2018 10:33:41 -0700
-Message-ID: <CA+55aFyAo5DK2hLbFF2qg8FY0qFUaYJZNyS2wYhrSm=HfVvsWA@mail.gmail.com>
-Subject: Re: [PATCHv3 1/3] mm: Introduce vma_init()
-To:     "Kirill A. Shutemov" <kirill@shutemov.name>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        linux-mm <linux-mm@kvack.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-XM-SPF: eid=1fiNjh-0006gU-7k;;;mid=<87zhyfw70m.fsf@xmission.com>;;;hst=in02.mta.xmission.com;;;ip=97.119.167.31;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX19cmKYb78zOmX0ScL5RJ/ALOgA8mSq3RFU=
+X-SA-Exim-Connect-IP: 97.119.167.31
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+Subject: Re: [PATCH RFC/RFT net-next 00/17] net: Convert neighbor tables to per-namespace
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 25, 2018 at 5:39 AM Kirill A. Shutemov <kirill@shutemov.name> wrote:
+David Ahern <dsahern@gmail.com> writes:
+
+> On 7/25/18 6:33 AM, Eric W. Biederman wrote:
+>> Cong Wang <xiyou.wangcong@gmail.com> writes:
+>> 
+>>> On Tue, Jul 24, 2018 at 8:14 AM David Ahern <dsahern@gmail.com> wrote:
+>>>>
+>>>> On 7/19/18 11:12 AM, Cong Wang wrote:
+>>>>> On Thu, Jul 19, 2018 at 9:16 AM David Ahern <dsahern@gmail.com> wrote:
+>>>>>>
+>>>>>> Chatting with Nikolay about this and he brought up a good corollary - ip
+>>>>>> fragmentation. It really is a similar problem in that memory is consumed
+>>>>>> as a result of packets received from an external entity. The ipfrag
+>>>>>> sysctls are per namespace with a limit that non-init_net namespaces can
+>>>>>> not set high_thresh > the current value of init_net. Potential memory
+>>>>>> consumed by fragments scales with the number of namespaces which is the
+>>>>>> primary concern with making neighbor tables per namespace.
+>>>>>
+>>>>> Nothing new, already discussed:
+>>>>> https://marc.info/?l=linux-netdev&m=140391416215988&w=2
+>>>>>
+>>>>> :)
+>>>>>
+>>>>
+>>>> Neighbor tables, bridge fdbs, vxlan fdbs and ip fragments all consume
+>>>> local memory resources due to received packets. bridge and vxlan fdb's
+>>>> are fairly straightforward analogs to neighbor entries; they are per
+>>>> device with no limits on the number of entries. Fragments have memory
+>>>> limits per namespace. So neighbor tables are the only ones with this
+>>>> strict limitation and concern on memory consumption.
+>>>>
+>>>> I get the impression there is no longer a strong resistance against
+>>>> moving the tables to per namespace, but deciding what is the right
+>>>> approach to handle backwards compatibility. Correct? Changing the
+>>>> accounting is inevitably going to be noticeable to some use case(s), but
+>>>> with sysctl settings it is a simple runtime update once the user knows
+>>>> to make the change.
+>>>
+>>> This question definitely should go to Eric Biederman who was against
+>>> my proposal.
+>>>
+>>> Let's add Eric into CC.
+>> 
+>> Given that the entries are per device and the devices are per-namespace,
+>> semantically neighbours are already kept in a per-namespace manner.  So
+>> this is all about making the code not honoring global resource limits.
+>> Making the code not honor gc_thresh3.
+>> 
+>> Skimming through the code today the default for gc_thresh3 is 1024.
+>> Which means that we limit the neighbour tables to 1024 entries per
+>> protocol type.
+>> 
+>> There are some pretty compelling reasons especially with ipv4 to keep
+>> the subnet size down.  Arp storms are a real thing.
+>> 
+>> I don't know off the top of my head what the reasons for limiting the
+>> neighbour table sizes.  I would be much more comfortable with a patchset
+>> like this if we did some research and figured out the reasons why
+>> we have a global limit.  Then changed the code to remove those limits.
+>> 
+>> When the limits are gone.  When the code can support large subnets
+>> without tuning.  We we don't have to worry about someone scanning an all
+>> addresses in an ipv6 subnet and causing a DOS on working machines.
+>> I think it is completely appropriate to look to see if something per
+>> network namespace needs to happen.
+>> 
+>> So please let's address the limits, not the fact that some specific
+>> corner case ran into them.
+>> 
+>> If we are going to neuter gc_thresh3 let's go as far as removing it
+>> entirely.  If we are going to make the neighbour table per something
+>> let's make it per network device.  If we can afford the multiple hash
+>> tables then a hash table per device is better.   Perhaps we want to move
+>> to rhash tables while we look at this, instead of an old hand grown
+>> version of resizable hash table.
 >
-> There are few more:
+> Given the uses cases with increasing number of devices (> 10,000),
+> per-device tables will have more problems than per namespace - in
+> reference to your concern in the last paragraph below.
 >
-> arch/arm64/include/asm/tlb.h:   struct vm_area_struct vma = { .vm_mm = tlb->mm, };
-> arch/arm64/mm/hugetlbpage.c:    struct vm_area_struct vma = { .vm_mm = mm };
-> arch/arm64/mm/hugetlbpage.c:    struct vm_area_struct vma = { .vm_mm = mm };
+>> 
+>> Unless I misread something all your patchset did is reshuffle code and
+>> data structures so that gc_thresh3 does not apply accross namespaces.
+>> That does not feel like it really fixes anything.  That just lies to
+>> people.
+>
+> This patch set fixes the lie that network namespaces provide complete
+> isolation when in fact one namespace can evict neighbor entries from
+> another. An arp storm you are concerned about in one namespace impacts
+> all containers.
 
-We probably do not care. These are not "real" vma's and are never used
-as such. They are literally just fake vmas for the "flush_tlb()"
-machinery, which won't ever really cause any VM activity and will just
-call back to the architecture TLB flushing routines.
+Network namespaces can not provide complete isolation.  They share the
+same kernel and they do not dedicate resources to each other.
+Namespaces in general are about the names.  They are about sharing a
+machine efficiently.
 
-They initialize vm_mm exactly because that's how the mm is passed down
-to the tlb flushing (we pass the whole vma because some architectures
-than have special flags in vm_flags too that can affect how the TLB
-gets flushed - ie "only flush ITLB if it's an execute-only vma" etc).
+I humbly suggest that anyone who wants ``complete'' isolation to use vm
+at the very least.
 
-Using "vma_init()" on them is only confusing, I think.
+I do think the limits on the neighbour table are quite likely too
+strict.  We should be able to relax them and continue to have a
+networking stack that works for everyone.
 
-                 Linus
+> It starts by removing the proliferation of open coded references to
+> arp_tbl and nd_tbl, moving them behind the existing neigh_find_table.
+> From there (patches 14-16) it makes the tables per-namespace and hence
+> makes the gc_thresh parameters which are per-table now
+> per-table-per-namespace.
+>
+> So it removes the global thresholds because the global ones are just
+> wrong given the meaning of a network namespace and provides the more
+> appropriate per-namespace limits.
+
+Absolutely NOT.  Global thresholds are exactly correct given the fact
+you are running on a single kernel.
+
+Memory is not free (Even though we are swimming in enough of it memory
+rarely matters).  One of the few remaining challenges is for containers
+is finding was to limit resources in such a way that one application
+does not mess things up for another container during ordinary usage.
+
+It looks like the neighbour tables absolutely are that kind of problem,
+because the artificial limits are too strict.   Completely giving up on
+limits does not seem right approach either.  We need to fix the limits
+we have (perhaps making them go away entirely), not just apply a
+band-aid.  Let's get to the bottom of this and make the system better.
+
+>> Further unless I misread something you are increasing the number of
+>> timers to 3 per namespace.  If I create create a thousand network
+>> namespaces that feels like it will hurt system performance overall.
+>
+> It seems to me the timers are per neighbor entry not table. The per
+> table ones are for proxies.
+
+It seems I misread that bit when I was refreshing my memory on what
+everything is doing.  If we can already have 1024 timers that makes
+timers not a concern.
+
+Eric
+
