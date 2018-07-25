@@ -2,160 +2,84 @@ Return-Path: <SRS0=S+WB=KJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E64B6C6778F
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 14:05:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 295DBC6778F
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 14:05:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 929AA20890
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 14:05:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 929AA20890
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id BFE4120882
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 14:05:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BFE4120882
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728490AbeGYPRL (ORCPT
+        id S1728815AbeGYPRe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 11:17:11 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:50602 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727504AbeGYPRL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Jul 2018 11:17:11 -0400
-Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w6PDxD4Z120001
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Jul 2018 10:05:20 -0400
-Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2kes105h5s-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Jul 2018 10:05:16 -0400
-Received: from localhost
-        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <rppt@linux.vnet.ibm.com>;
-        Wed, 25 Jul 2018 14:59:48 +0100
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
-        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 25 Jul 2018 14:59:45 +0100
-Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w6PDxis044236816
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 25 Jul 2018 13:59:44 GMT
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id E961A4C044;
-        Wed, 25 Jul 2018 16:59:59 +0100 (BST)
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 5EB994C040;
-        Wed, 25 Jul 2018 16:59:59 +0100 (BST)
-Received: from rapoport-lnx (unknown [9.148.8.110])
-        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Wed, 25 Jul 2018 16:59:59 +0100 (BST)
-Date:   Wed, 25 Jul 2018 16:59:42 +0300
-From:   Mike Rapoport <rppt@linux.vnet.ibm.com>
-To:     Thiago Jung Bauermann <bauerman@linux.ibm.com>
-Cc:     linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Shuah Khan <shuah@kernel.org>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Prakash Sangappa <prakash.sangappa@oracle.com>
-Subject: Re: [PATCH 1/3] userfaultfd: selftest: Fix checking of
- userfaultfd_open() result
-References: <20180725024209.32586-1-bauerman@linux.ibm.com>
- <20180725024209.32586-2-bauerman@linux.ibm.com>
+        Wed, 25 Jul 2018 11:17:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47890 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728243AbeGYPRe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Jul 2018 11:17:34 -0400
+Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id F3B2F20882;
+        Wed, 25 Jul 2018 14:05:43 +0000 (UTC)
+Date:   Wed, 25 Jul 2018 10:05:41 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Josh Poimboeuf <jpoimboe@redhat.com>
+Cc:     Artem Savkov <asavkov@redhat.com>, Ingo Molnar <mingo@redhat.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] kprobes: fix trace_probe flags in enable_trace_kprobe
+Message-ID: <20180725100541.36f27954@gandalf.local.home>
+In-Reply-To: <20180725135632.zmjq7cuqc7eshpsh@treble>
+References: <20180725102826.8300-1-asavkov@redhat.com>
+        <20180725135632.zmjq7cuqc7eshpsh@treble>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180725024209.32586-2-bauerman@linux.ibm.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-TM-AS-GCONF: 00
-x-cbid: 18072513-0020-0000-0000-000002AB02A5
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18072513-0021-0000-0000-000020F79CED
-Message-Id: <20180725135942.GC25188@rapoport-lnx>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-25_03:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1806210000 definitions=main-1807250151
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Wed, 25 Jul 2018 08:56:32 -0500
+Josh Poimboeuf <jpoimboe@redhat.com> wrote:
 
-On Tue, Jul 24, 2018 at 11:42:07PM -0300, Thiago Jung Bauermann wrote:
-> If the userfaultfd test is run on a kernel with CONFIG_USERFAULTFD=n, it
-> will report that the system call is not available yet go ahead and continue
-> anyway:
+> On Wed, Jul 25, 2018 at 12:28:26PM +0200, Artem Savkov wrote:
+> > If enable_trace_kprobe fails to enable the probe in enable_k(ret)probe
+> > it returns an error, but does not unset the tp flags it set previosly.  
 > 
->   # ./userfaultfd anon 30 1
->   nr_pages: 480, nr_pages_per_cpu: 120
->   userfaultfd syscall not available in this kernel
->   bounces: 0, mode:, register failure
-> 
-> This is because userfaultfd_open() returns 0 on success and 1 on error but
-> all callers assume that it returns < 0 on error.
-> 
-> Since the convention of the test as a whole is the one used by
-> userfault_open(), fix its callers instead. Now the test behaves correctly:
-> 
->   # ./userfaultfd anon 30 1
->   nr_pages: 480, nr_pages_per_cpu: 120
->   userfaultfd syscall not available in this kernel
-> 
-> Signed-off-by: Thiago Jung Bauermann <bauerman@linux.ibm.com>
+> "previously"
 
-It seems that this patch is superseded by the second patch in this series.
+I tentatively added this to my queue. I updated the subject as:
 
-> ---
->  tools/testing/selftests/vm/userfaultfd.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/tools/testing/selftests/vm/userfaultfd.c b/tools/testing/selftests/vm/userfaultfd.c
-> index 7b8171e3128a..e4099afe7557 100644
-> --- a/tools/testing/selftests/vm/userfaultfd.c
-> +++ b/tools/testing/selftests/vm/userfaultfd.c
-> @@ -859,7 +859,7 @@ static int userfaultfd_zeropage_test(void)
->  	if (uffd_test_ops->release_pages(area_dst))
->  		return 1;
-> 
-> -	if (userfaultfd_open(0) < 0)
-> +	if (userfaultfd_open(0))
->  		return 1;
->  	uffdio_register.range.start = (unsigned long) area_dst;
->  	uffdio_register.range.len = nr_pages * page_size;
-> @@ -902,7 +902,7 @@ static int userfaultfd_events_test(void)
-> 
->  	features = UFFD_FEATURE_EVENT_FORK | UFFD_FEATURE_EVENT_REMAP |
->  		UFFD_FEATURE_EVENT_REMOVE;
-> -	if (userfaultfd_open(features) < 0)
-> +	if (userfaultfd_open(features))
->  		return 1;
->  	fcntl(uffd, F_SETFL, uffd_flags | O_NONBLOCK);
-> 
-> @@ -961,7 +961,7 @@ static int userfaultfd_sig_test(void)
->  		return 1;
-> 
->  	features = UFFD_FEATURE_EVENT_FORK|UFFD_FEATURE_SIGBUS;
-> -	if (userfaultfd_open(features) < 0)
-> +	if (userfaultfd_open(features))
->  		return 1;
->  	fcntl(uffd, F_SETFL, uffd_flags | O_NONBLOCK);
-> 
-> @@ -1027,7 +1027,7 @@ static int userfaultfd_stress(void)
->  	if (!area_dst)
->  		return 1;
-> 
-> -	if (userfaultfd_open(0) < 0)
-> +	if (userfaultfd_open(0))
->  		return 1;
-> 
->  	count_verify = malloc(nr_pages * sizeof(unsigned long long));
+ tracing/kprobes: Fix trace_probe flags on enable_trace_kprobe() failure
 
--- 
-Sincerely yours,
-Mike.
+But yeah, that needs to be fixed.
 
+> 
+> > @@ -424,6 +423,16 @@ enable_trace_kprobe(struct trace_kprobe *tk, struct trace_event_file *file)
+> >  		else
+> >  			ret = enable_kprobe(&tk->rp.kp);
+> >  	}
+> > +
+> > +	if (ret) {
+> > +		if (file) {
+> > +			list_del(&link->list);  
+> 
+> Should this be list_del_rcu(), since it was added to the list with
+> list_add_tail_rcu()?
+> 
+
+Good catch. Yes, that should be list_del_rcu().
+
+Artem,
+
+Can you send a v2 with the changes.
+
+Thanks,
+
+-- Steve
