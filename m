@@ -2,116 +2,93 @@ Return-Path: <SRS0=S+WB=KJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E2318C67790
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 18:23:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C8C8C6778F
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 18:23:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9F94220844
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 18:23:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EF53B20852
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 18:23:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QXaDXuYY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F94220844
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="M9PPKpLi"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EF53B20852
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731279AbeGYTgC (ORCPT
+        id S1731307AbeGYTgH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 15:36:02 -0400
-Received: from mail-it0-f65.google.com ([209.85.214.65]:39981 "EHLO
-        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729187AbeGYTgC (ORCPT
+        Wed, 25 Jul 2018 15:36:07 -0400
+Received: from mail-io0-f196.google.com ([209.85.223.196]:36478 "EHLO
+        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729187AbeGYTgG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Jul 2018 15:36:02 -0400
-Received: by mail-it0-f65.google.com with SMTP id h23-v6so9956006ita.5;
-        Wed, 25 Jul 2018 11:23:10 -0700 (PDT)
+        Wed, 25 Jul 2018 15:36:06 -0400
+Received: by mail-io0-f196.google.com with SMTP id r15-v6so7117467ioa.3;
+        Wed, 25 Jul 2018 11:23:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=UIw9i0w7/bpMofUHMUcJ5iZbklnKmitbL36cVwEDF5o=;
-        b=QXaDXuYYYuk86QKqDNWUdWbcQ4VtlUy4Rpn1gejIErkv2dYVRv5Amqs5A/QZ8qaxb2
-         smH3O1DqG2vzJVjpcjCHQRcilA7U9q21kFdYzhvVlhpFc+VbSKucAvOpdMWZIedgiTHA
-         pRAYhRWSwbQPbecaWONbIYTQZKzl+hyse2VoLHwsVefurm9ELraic8aoG+0Xuw8807UM
-         6AVhuwNnM7OSwbtiG4A/gTH9qUh6cwcW45jrlGghB6WQhBfWV42uwNjfsZ/kjHB7SnMc
-         83ntKSLQjmzAQQYNJ+z7G1FnbG49Kwuz9mUWIim359Mf5RPGekP3nm9gglzRIIpR0JdA
-         GOGg==
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=waMkm8qu4qiwQ8g0dtVft2jRB7R+CjCYLVpbw++3Go0=;
+        b=M9PPKpLid+fthco/DrtgmgonNxXm+jA3vvEX6LuTO85nBZ4nhHOOTyJGnlFMeSeMD/
+         m/eYPzlCU77+TubWpDVXQfwhdNy3AnmobMP43+hM6sogJECB1t5RfaHdSsCqebm9VMWM
+         DEcCZzJrLHYyoIPJHgKjit+StDe7XEzFg9vp8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=UIw9i0w7/bpMofUHMUcJ5iZbklnKmitbL36cVwEDF5o=;
-        b=VSXH3wXv7xGh4mQIiS4fDSv7zkGevx/iohwIVaH2JfhzvJ9sIiKl3wYkhlbq/J3q4s
-         3q4YVdkqt/it7kaTzDXnf+g9zxaykPU2+MI7HOf5o/bdJrFSfkFTE8Yv2mIPy5OBCxsy
-         JtVYCeA5kk8f9+PvANhPc9JbP7SxpG6Mf4K/oTuW560EXqqiH40uzc8pH5z8B3LfV5Wj
-         Smxq3O2ZPwgIyHNEFVYrBnaXJRLcnXsi/gQVTQLnRUU7QzUVun6XeixLzcM0qpbuuqHn
-         qrxON/TcIckP6I1Chr/PXuoofhTzoeFCWiMvgd9TaCFuPDLhDqrOIL0mCSm1K/dUXxvk
-         5U1Q==
-X-Gm-Message-State: AOUpUlFqVp3/80U2ge5Y+mm6QRS2H5EN9NShwHbFjdYrUEsyVc+WlSAy
-        Z9blWSfdnFl0TzmOFuTlmrSAKyPW
-X-Google-Smtp-Source: AAOMgpckoeklR3B1cDikLKjOJTNNTHwMET/hvVnBb9ZAIJJaVDLRTXSD6tX5YPnm2CiqAagTuxbXGA==
-X-Received: by 2002:a02:b687:: with SMTP id i7-v6mr20915835jam.55.1532542989926;
-        Wed, 25 Jul 2018 11:23:09 -0700 (PDT)
-Received: from dsa-mb.local ([2601:282:800:fd80:e4d8:8895:822a:720a])
-        by smtp.googlemail.com with ESMTPSA id 203-v6sm3023983itv.32.2018.07.25.11.23.08
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 25 Jul 2018 11:23:08 -0700 (PDT)
-Subject: Re: [PATCH RFC/RFT net-next 00/17] net: Convert neighbor tables to
- per-namespace
-To:     David Miller <davem@davemloft.net>
-Cc:     xiyou.wangcong@gmail.com, netdev@vger.kernel.org,
-        nikita.leshchenko@oracle.com, roopa@cumulusnetworks.com,
-        stephen@networkplumber.org, idosch@mellanox.com, jiri@mellanox.com,
-        saeedm@mellanox.com, alex.aring@gmail.com,
-        linux-wpan@vger.kernel.org, netfilter-devel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <28c30574-391c-b4bd-c337-51d3040d901a@gmail.com>
- <CAM_iQpW4-JkZY7jXx0Q1b907hQ85UOL1eXv2YHwSukb5L=apUg@mail.gmail.com>
- <5021d874-8e99-6eba-f24b-4257c62d4457@gmail.com>
- <20180724.101405.797730329231867648.davem@davemloft.net>
-From:   David Ahern <dsahern@gmail.com>
-Message-ID: <36c41b45-ed97-1207-1b5e-32d3423b5567@gmail.com>
-Date:   Wed, 25 Jul 2018 12:23:07 -0600
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:52.0)
- Gecko/20100101 Thunderbird/52.9.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=waMkm8qu4qiwQ8g0dtVft2jRB7R+CjCYLVpbw++3Go0=;
+        b=oFKa2SQpabLHjWid26+H3GvxASFbhuwzFkJFzB8j/heibX4iqoClSJc5sZMewwN8EB
+         op6BRm6UC/r/ULGblxZ5DAKrC7Ip3C7NBkLsSfpeT4TgzlFqaVN+PHJAqoKMcJK7yysh
+         KVWwH7MTd9IohDdnX5Ll2UjeuVMW3hhd6OgA0QRpoNuQQeE9g39VJc0hOkSM5vSVNmDh
+         GkTgjEH3vorb8SG8aD7sFiciOV4VqVY8DzkE0SMjVJnfP8vxVoQRpxPY+AFSHV/ZDtTP
+         DdvNKIoOjU2n1zeHqZjFCd5+G9/9Sviftke5zKpGzmFUEfIhVDtpMvSCf0GiBC5XUQAh
+         CgHg==
+X-Gm-Message-State: AOUpUlHKo/5clnw8qwBKvS/SJkdAipRBF5lxbcH4LHdDbMCXEEu/YRFr
+        yWye0Q/KSkrJtZvO2+pe9Y5nX+I+XdeLUJjD11Q=
+X-Google-Smtp-Source: AAOMgpfWinhUeU6C8kFCMXX9CEFb1Lpvz0YTuAKEeqPAQKQ0scScpc/mWW8MuPY1b3c0TndvwDByPlEgwZg2Iqh6Yao=
+X-Received: by 2002:a6b:1502:: with SMTP id 2-v6mr18854792iov.203.1532542994330;
+ Wed, 25 Jul 2018 11:23:14 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20180724.101405.797730329231867648.davem@davemloft.net>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <7828.1532527332@warthog.procyon.org.uk> <CA+55aFy2v3OW+mmSDF4MPWW673WsJEdQef3LChWg5k9=_k9ggg@mail.gmail.com>
+ <25183.1532542685@warthog.procyon.org.uk>
+In-Reply-To: <25183.1532542685@warthog.procyon.org.uk>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Wed, 25 Jul 2018 11:23:03 -0700
+Message-ID: <CA+55aFwvKerkzigZmm0zrUTnsqDpJs0XBtX72Ltmek+_ic-KmA@mail.gmail.com>
+Subject: Re: [GIT PULL] fscache and cachefiles fixes
+To:     David Howells <dhowells@redhat.com>
+Cc:     kiran.modukuri@gmail.com, linux-cachefs@redhat.com,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 7/24/18 11:14 AM, David Miller wrote:
-> From: David Ahern <dsahern@gmail.com>
-> Date: Tue, 24 Jul 2018 09:14:01 -0600
-> 
->> I get the impression there is no longer a strong resistance against
->> moving the tables to per namespace, but deciding what is the right
->> approach to handle backwards compatibility. Correct? Changing the
->> accounting is inevitably going to be noticeable to some use case(s), but
->> with sysctl settings it is a simple runtime update once the user knows
->> to make the change.
->>
->> neighbor entries round up to 512 byte allocations, so with the current
->> gc_thresh defaults (128/512/1024) 512k can be consumed. Using those
->> limits per namespace seems high which is why I suggested a per-namespace
->> default of (16/32/64) which amounts to 32k per namespace limit by
->> default. Open to other suggestions as well.
-> 
-> No objection from me about going to per-ns neigh tables.
-> 
-> About the defaults, I wonder if we can scale them to the amount of
-> memory given to the ns or something like that?  I bet this will better
-> match the intended use of the ns.
-> 
+On Wed, Jul 25, 2018 at 11:18 AM David Howells <dhowells@redhat.com> wrote:
+>
+> Linus Torvalds <torvalds@linux-foundation.org> wrote:
+>
+> > Why do they have commit times literally *minutes* before your email to
+> > ask me to pull?
+>
+> I split the first patch into two because it had two more-or-less independent
+> changes and it made it easier to describe them separately.
 
-Not sure how to do that. I am not aware of memory allocations to a
-network namespace. As I understand it containers use cgroups to control
-memory use, but I am not aware of any direct ties to namespace.
+This didn't explain the background before that happened.
+
+I really want the warm and fuzzies about things, and when I see
+something being changed just minutes before, something like
+
+  "I did a rebase becasue XYZ, but this was around in linux-next for a
+week before that without problems"
+
+tells me not only why the times are so recent, but also tells me that
+I really shouldn't worry because so-and-so.
+
+                  Linus
