@@ -2,152 +2,110 @@ Return-Path: <SRS0=S+WB=KJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_MUTT
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4ED47C67790
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 08:28:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03219C67790
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 08:29:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0802820843
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 08:28:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0802820843
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-mips.org
+	by mail.kernel.org (Postfix) with ESMTP id AB71720843
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 08:29:20 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="HVDo6XPo";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="HVDo6XPo"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AB71720843
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728663AbeGYJiv (ORCPT
+        id S1728733AbeGYJjy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 05:38:51 -0400
-Received: from eddie.linux-mips.org ([148.251.95.138]:42466 "EHLO
-        cvs.linux-mips.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728357AbeGYJiv (ORCPT
+        Wed, 25 Jul 2018 05:39:54 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:46658 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728222AbeGYJjx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Jul 2018 05:38:51 -0400
-Received: (from localhost user: 'ladis' uid#1021 fake: STDIN
-        (ladis@eddie.linux-mips.org)) by eddie.linux-mips.org
-        id S23991808AbeGYI2LxGeKp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org> + 2 others);
-        Wed, 25 Jul 2018 10:28:11 +0200
-Date:   Wed, 25 Jul 2018 10:28:10 +0200
-From:   Ladislav Michl <ladis@linux-mips.org>
-To:     "H. Nikolaus Schaller" <hns@goldelico.com>
-Cc:     Marek Belisko <marek@goldelico.com>,
-        =?iso-8859-2?Q?Beno=EEt?= Cousson <bcousson@baylibre.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-omap@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, letux-kernel@openphoenux.org
-Subject: Re: [PATCH 10/32] ARM: dts: omap3-gta04: update gpmc NAND setup
-Message-ID: <20180725082810.GA8303@lenoch>
-References: <cover.1532501910.git.hns@goldelico.com>
- <effe8969751cde3a3cd7993aa66c839493af9dd1.1532501910.git.hns@goldelico.com>
- <20180725081058.GB7467@lenoch>
- <1E7B727D-1AED-4B00-AD2C-CF9FC562E53D@goldelico.com>
+        Wed, 25 Jul 2018 05:39:53 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id E12C760B73; Wed, 25 Jul 2018 08:29:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1532507356;
+        bh=nvdbsYkc5fMIMw//dqUzmWMoBMax6XztzkUA4pXVuFs=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=HVDo6XPoatOZZJgJQXblZR4/B4OC/A4cZ4W2aLHRFebcR+94OhJWXjypM2vLTBKku
+         zBidV3yKX/vbjnHU3r718VLZPH90+XKlTTyYTX3zebWzU5lduhuyHu68NvmLLytcKD
+         27yVE5odhnuGCxSHeEnF0UDnu5c0DaGZB35r99/w=
+Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by smtp.codeaurora.org (Postfix) with ESMTP id 6275960B19;
+        Wed, 25 Jul 2018 08:29:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1532507356;
+        bh=nvdbsYkc5fMIMw//dqUzmWMoBMax6XztzkUA4pXVuFs=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=HVDo6XPoatOZZJgJQXblZR4/B4OC/A4cZ4W2aLHRFebcR+94OhJWXjypM2vLTBKku
+         zBidV3yKX/vbjnHU3r718VLZPH90+XKlTTyYTX3zebWzU5lduhuyHu68NvmLLytcKD
+         27yVE5odhnuGCxSHeEnF0UDnu5c0DaGZB35r99/w=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1E7B727D-1AED-4B00-AD2C-CF9FC562E53D@goldelico.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Wed, 25 Jul 2018 13:59:16 +0530
+From:   poza@codeaurora.org
+To:     Sinan Kaya <okaya@kernel.org>
+Cc:     Bjorn Helgaas <helgaas@kernel.org>, Lukas Wunner <lukas@wunner.de>,
+        linux-pci@vger.kernel.org,
+        open list <linux-kernel@vger.kernel.org>,
+        Keith Busch <keith.busch@intel.com>,
+        linux-arm-msm@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH V5 3/3] PCI: Mask and unmask hotplug interrupts during
+ reset
+In-Reply-To: <d34eb5da-0ae1-d455-93e2-2432ec7931ea@kernel.org>
+References: <CAK9iUCM=zWexWow9TwkRfO186Hwr5WyGy0NHZF1vtXn3wbbZGQ@mail.gmail.com>
+ <12fc8de5-ff03-cb00-52cb-25a43c71d03a@codeaurora.org>
+ <20180708171418.GA11476@wunner.de>
+ <CAK9iUCMcic5mzGiT20KNxgwPo6AuajHFsoj7GOjSht5SwrQevg@mail.gmail.com>
+ <20180709160008.GA1490@wunner.de>
+ <CAK9iUCMMVR114msKiMHu7ik0VK8T5j=LAYAKsEkdnocTqkdMjQ@mail.gmail.com>
+ <20180720200123.GS128988@bhelgaas-glaptop.roam.corp.google.com>
+ <2febe688-f973-5ff5-f61d-0451ad7d36ae@kernel.org>
+ <d34eb5da-0ae1-d455-93e2-2432ec7931ea@kernel.org>
+Message-ID: <5cdaf58f3c848b2a5097484cd703acae@codeaurora.org>
+X-Sender: poza@codeaurora.org
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 25, 2018 at 10:16:28AM +0200, H. Nikolaus Schaller wrote:
-> Hi,
+On 2018-07-21 11:37, Sinan Kaya wrote:
+> On 7/20/2018 7:58 PM, Sinan Kaya wrote:
+>> We need to figure out how to gracefully return inside hotplug driver
+>> if link down happened and there is an error pending.
 > 
-> > Am 25.07.2018 um 10:10 schrieb Ladislav Michl <ladis@linux-mips.org>:
-> > 
-> > On Wed, Jul 25, 2018 at 08:58:42AM +0200, H. Nikolaus Schaller wrote:
-> >> to better match omap3-beagle.dts (which was the basis
-> >> of designing the GTA04).
-> >> 
-> >> Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
-> >> ---
-> >> arch/arm/boot/dts/omap3-gta04.dtsi | 14 +++++++-------
-> >> 1 file changed, 7 insertions(+), 7 deletions(-)
-> >> 
-> >> diff --git a/arch/arm/boot/dts/omap3-gta04.dtsi b/arch/arm/boot/dts/omap3-gta04.dtsi
-> >> index 03fe404cbf56..9568e0c4d4bf 100644
-> >> --- a/arch/arm/boot/dts/omap3-gta04.dtsi
-> >> +++ b/arch/arm/boot/dts/omap3-gta04.dtsi
-> >> @@ -616,27 +616,27 @@
-> >> 		interrupt-parent = <&gpmc>;
-> >> 		interrupts = <0 IRQ_TYPE_NONE>, /* fifoevent */
-> >> 			     <1 IRQ_TYPE_NONE>;	/* termcount */
-> >> +		ti,nand-ecc-opt = "ham1";
-> >> +		rb-gpios = <&gpmc 0 GPIO_ACTIVE_HIGH>; /* gpmc_wait0 */
-> >> 		nand-bus-width = <16>;
-> >> -		ti,nand-ecc-opt = "bch8";
-> > 
-> > You are using weeker ECC scheme just to be compatible with another machine?
+> How about adding the following into the hotplug ISR?
 > 
-> No not another machine. The GTA04 uses the same SoC and NAND chip as the BeagleBoard,
-> so you can imagine GTA04 being a BeagleBoard + a lot of other things.
-> 
-> The key reason is to change the ecc scheme is to be compatible with the U-Boot used.
-> 
-> BootROM can only handle ham1 for the MLO. And there is no nand-ecc-opt
-> for each partition. So we either can't mix ECC schemes if we want to be able
-> to read/write MLO as the first partition from kernel.
-> 
-> > So now you cannot boot already deployed filesystem...
-> 
-> No. We always used ham1 and bch8 wasn't working at all here. Therefore nobody
-> did use upstream kernel for NAND yet...
-> 
-> > Also is it enough for
-> > NAND chip used?
-> 
-> Well, the chip is recommended to use bch8 but BootROM imposes above mentioned limits.
+> 1. check if firmware first is disabled
+> 2. check if there is a fatal error pending in the device_status 
+> register
+> of the PCI Express capability on the root port.
+> 3. bail out from hotplug routine if this is the case.
+> 4. otherwise, existing behavior.
 
-Then common way to handle such a situation is to use 1bit hamming for MLO and BCH8 for
-the rest. You will end with corrupted filesystem with ham1 which I'd consider very
-unfortunate.
+This makes sense.
 
-(I know there were endless discussions how to handle this situation. It is already
-solved in U-Boot and for updating MLO from Linux I'm using writeloader tool)
+from Lukas's text
 
-	ladis
+"
+The user may turn the slot on/off via sysfs.  If an Attention Button
+is present, the user may also press that button to turn the slot on/off
+after 5 seconds.  Either way, it may cause pciehp's IRQ thread to run
+concurrently to a reset initiated by the AER driver, independently of
+any events signalled by the slot.
+"
 
-> BR,
-> Nikolaus
-> 
-> > 
-> > 	ladis
-> > 
-> >> +		#address-cells = <1>;
-> >> +		#size-cells = <1>;
-> >> 
-> >> -		gpmc,sync-clk-ps = <0>;
-> >> +		gpmc,device-width = <2>;
-> >> 		gpmc,cs-on-ns = <0>;
-> >> 		gpmc,cs-rd-off-ns = <44>;
-> >> 		gpmc,cs-wr-off-ns = <44>;
-> >> 		gpmc,adv-on-ns = <6>;
-> >> 		gpmc,adv-rd-off-ns = <34>;
-> >> 		gpmc,adv-wr-off-ns = <44>;
-> >> -		gpmc,we-off-ns = <40>;
-> >> 		gpmc,oe-off-ns = <54>;
-> >> +		gpmc,we-off-ns = <40>;
-> >> 		gpmc,access-ns = <64>;
-> >> 		gpmc,rd-cycle-ns = <82>;
-> >> 		gpmc,wr-cycle-ns = <82>;
-> >> 		gpmc,wr-access-ns = <40>;
-> >> 		gpmc,wr-data-mux-bus-ns = <0>;
-> >> -		gpmc,device-width = <2>;
-> >> -
-> >> -		#address-cells = <1>;
-> >> -		#size-cells = <1>;
-> >> +		gpmc,sync-clk-ps = <0>;
-> >> 
-> >> 		x-loader@0 {
-> >> 			label = "X-Loader";
-> >> -- 
-> >> 2.12.2
-> >> 
-> >> --
-> >> To unsubscribe from this list: send the line "unsubscribe linux-omap" in
-> >> the body of a message to majordomo@vger.kernel.org
-> >> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+so if device gets removed and re-enumerated other than hotplug ISR,
+or any other similar path has to take care of checking ERR_FATAL status.
+
+Regards,
+Oza.
