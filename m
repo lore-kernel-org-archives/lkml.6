@@ -2,200 +2,122 @@ Return-Path: <SRS0=S+WB=KJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AAE18C6778F
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 23:32:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7ECCDC6778F
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 23:34:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 691DD20685
-	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 23:32:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 691DD20685
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 300BC20685
+	for <linux-kernel@archiver.kernel.org>; Wed, 25 Jul 2018 23:34:17 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=osandov-com.20150623.gappssmtp.com header.i=@osandov-com.20150623.gappssmtp.com header.b="pDIhWlVX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 300BC20685
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=osandov.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731866AbeGZAqW (ORCPT
+        id S1731814AbeGZAsN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 20:46:22 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:59458 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1731852AbeGZAqU (ORCPT
+        Wed, 25 Jul 2018 20:48:13 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:42570 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731325AbeGZAsN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Jul 2018 20:46:20 -0400
-Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w6PNTU9T095361
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Jul 2018 19:32:22 -0400
-Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2kf1a7b5tv-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Jul 2018 19:32:21 -0400
-Received: from localhost
-        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <erichte@linux.vnet.ibm.com>;
-        Thu, 26 Jul 2018 00:32:20 +0100
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
-        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 26 Jul 2018 00:32:15 +0100
-Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w6PNWEDd42991802
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 25 Jul 2018 23:32:14 GMT
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 24862AE04D;
-        Thu, 26 Jul 2018 02:32:22 +0100 (BST)
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id C4E2AAE045;
-        Thu, 26 Jul 2018 02:32:20 +0100 (BST)
-Received: from yorha.ibmmodules.com (unknown [9.80.225.100])
-        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Thu, 26 Jul 2018 02:32:20 +0100 (BST)
-From:   Eric Richter <erichte@linux.vnet.ibm.com>
-To:     linux-integrity <linux-integrity@vger.kernel.org>
-Cc:     linux-security-module <linux-security-module@vger.kernel.org>,
-        linux-efi <linux-efi@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        David Howells <dhowells@redhat.com>,
-        Seth Forshee <seth.forshee@canonical.com>,
-        Justin Forbes <jforbes@redhat.com>,
-        Eric Richter <erichte@linux.vnet.ibm.com>
-Subject: [PATCH 4/4] x86/ima: define arch_get_ima_policy() for x86
-Date:   Wed, 25 Jul 2018 18:32:00 -0500
-X-Mailer: git-send-email 2.14.4
-In-Reply-To: <20180725233200.761-1-erichte@linux.vnet.ibm.com>
-References: <20180725233200.761-1-erichte@linux.vnet.ibm.com>
-X-TM-AS-GCONF: 00
-x-cbid: 18072523-0012-0000-0000-0000028ED4F4
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18072523-0013-0000-0000-000020C0BE99
-Message-Id: <20180725233200.761-5-erichte@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-25_06:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1806210000 definitions=main-1807250240
+        Wed, 25 Jul 2018 20:48:13 -0400
+Received: by mail-pg1-f196.google.com with SMTP id y4-v6so6276759pgp.9
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Jul 2018 16:34:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=osandov-com.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=UbcnQ9ngTeOsn/XRP5L+38RrQ6GGaLD1Bg00W9uD32U=;
+        b=pDIhWlVX0tipzauoLAUbBZJNYMFhab8OWfAlmUDWwkAg49tvJh3XC00goQlbSl1HxC
+         A9CqEkrGm+RIrb0J13YB+AgwiWdPaSraADNwcC/c3bVF7jvSbvp7fql4RKsDK/FOjgpi
+         DrSOCBHxFwSs3N4HzG+hiNTODZwZm0aB3YWhI8mdsMNJ/fRQab3AdUHTWHB21S6XKC3/
+         68v57ZDnVto9QGeKIEaQkDkk9nS5It6ltKYy4G/NkoyPpbPVwuY9j1XFb10zGVgxK7C+
+         wYoRDY1fhGjCAahpWTax+09Wk2VK+B1wvxBWboPazi/OanFGKHTd1hpqkUtSr2lbA/zy
+         T9DA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=UbcnQ9ngTeOsn/XRP5L+38RrQ6GGaLD1Bg00W9uD32U=;
+        b=WRezFH5OwE61Z8Eay2Y2cos63BZSZiKfdzaBJeipX7HLbgx18aYHbEFVZinbzoMsZ7
+         QSGC9e5aA80weJ8iK9Wh7W6517JFwVuPFpsnd2ggLyatFnSHfs81XS+qbE4PHBgeekXl
+         X9qVn4DiWur8o8iEtjbKHHVxaHy/p88GxVUPo4H+FEGQ/+g+/5SYkqcHLtGxbUkrannx
+         AK+436Wo+LpmoZAKp3xejiPzxbu3oa7LFdnVVh1TsiGxgBVsr+9WHp4qNA30UE/dOjkz
+         okLMri/3uqMSjtOtGXzTKV4fBilwiRKO3MIT33LxG1WNaWYKHezIG1HOefCLDlu6JtPq
+         9hVw==
+X-Gm-Message-State: AOUpUlHjv2C4Jlah/sX/Qt7CT9HnYlpDcEGex/p4vxqnp/Vwbo5fFjX2
+        bl4NKndYoMAbFIg98PA+NT3WVQ==
+X-Google-Smtp-Source: AAOMgpcJpHUSINZZIofs40FG/ptFPY0zX/wn/hbPZU8+1w/izMG+Gz5Ly5DpUU7dTokF09NwZU8ExQ==
+X-Received: by 2002:a63:743:: with SMTP id 64-v6mr22972379pgh.216.1532561653496;
+        Wed, 25 Jul 2018 16:34:13 -0700 (PDT)
+Received: from vader ([2620:10d:c090:180::1:8d38])
+        by smtp.gmail.com with ESMTPSA id v6-v6sm27124640pfa.28.2018.07.25.16.34.12
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 25 Jul 2018 16:34:12 -0700 (PDT)
+Date:   Wed, 25 Jul 2018 16:34:11 -0700
+From:   Omar Sandoval <osandov@osandov.com>
+To:     Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Eric Biederman <ebiederm@xmission.com>,
+        James Morse <james.morse@arm.com>,
+        Bhupesh Sharma <bhsharma@redhat.com>, kernel-team@fb.com
+Subject: Re: [PATCH v3 5/8] proc/kcore: hold lock during read
+Message-ID: <20180725233411.GF16847@vader>
+References: <cover.1531953780.git.osandov@fb.com>
+ <d7cfbc1e8a76616f3b699eaff9df0a2730380534.1531953780.git.osandov@fb.com>
+ <7f905293-5c30-f001-987f-03caf8f36737@I-love.SAKURA.ne.jp>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <7f905293-5c30-f001-987f-03caf8f36737@I-love.SAKURA.ne.jp>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch implements an example arch-specific IMA policy for x86 to enable
-measurement and appraisal of any kernel images loaded for kexec, and
-disables the kexec_load syscall.
+On Wed, Jul 25, 2018 at 12:11:26AM +0900, Tetsuo Handa wrote:
+> On 2018/07/19 7:58, Omar Sandoval wrote:
+> > From: Omar Sandoval <osandov@fb.com>
+> > 
+> > Now that we're using an rwsem, we can hold it during the entirety of
+> > read_kcore() and have a common return path. This is preparation for the
+> > next change.
+> > 
+> > Signed-off-by: Omar Sandoval <osandov@fb.com>
+> > ---
+> >  fs/proc/kcore.c | 70 ++++++++++++++++++++++++++++---------------------
+> >  1 file changed, 40 insertions(+), 30 deletions(-)
+> > 
+> > diff --git a/fs/proc/kcore.c b/fs/proc/kcore.c
+> > index 95aa988c5b5d..e317ac890871 100644
+> > --- a/fs/proc/kcore.c
+> > +++ b/fs/proc/kcore.c
+> > @@ -440,19 +440,18 @@ static ssize_t
+> >  read_kcore(struct file *file, char __user *buffer, size_t buflen, loff_t *fpos)
+> >  {
+> >  	char *buf = file->private_data;
+> > -	ssize_t acc = 0;
+> >  	size_t size, tsz;
+> >  	size_t elf_buflen;
+> >  	int nphdr;
+> >  	unsigned long start;
+> > +	size_t orig_buflen = buflen;
+> > +	int ret = 0;
+> >  
+> >  	down_read(&kclist_lock);
+> 
+> (...snipped...)
+> 
+> > +out:
+> > +	up_write(&kclist_lock);
+> 
+> Oops. This needs to be up_read().
 
-To avoid conflicting with the existing CONFIG_KERNEL_VERIFY_SIG option, the
-policy only "appraises" the target image on kexec_load. Without this, the
-target kexec image would have to be verified by both the above option as
-well as by IMA appraisal.
-
-Since signature verification for kexec_load is not possible via appraisal
-(or VERIFY_SIG), this results in a failure and thus effectively prevents
-the kexec_load syscall from succeeding when set.
-
-Signed-off-by: Eric Richter <erichte@linux.vnet.ibm.com>
----
- arch/x86/kernel/Makefile       |  2 ++
- arch/x86/kernel/ima_arch.c     | 27 +++++++++++++++++++++++++++
- include/linux/ima.h            |  8 ++++++++
- security/integrity/ima/Kconfig |  8 ++++++++
- 4 files changed, 45 insertions(+)
- create mode 100644 arch/x86/kernel/ima_arch.c
-
-diff --git a/arch/x86/kernel/Makefile b/arch/x86/kernel/Makefile
-index 02d6f5cf4e7..f3e1d76ed9b 100644
---- a/arch/x86/kernel/Makefile
-+++ b/arch/x86/kernel/Makefile
-@@ -149,3 +149,5 @@ ifeq ($(CONFIG_X86_64),y)
- 	obj-$(CONFIG_MMCONF_FAM10H)	+= mmconf-fam10h_64.o
- 	obj-y				+= vsmp_64.o
- endif
-+
-+obj-$(CONFIG_IMA_ARCH_POLICY) += ima_arch.o
-diff --git a/arch/x86/kernel/ima_arch.c b/arch/x86/kernel/ima_arch.c
-new file mode 100644
-index 00000000000..5eb10e29db0
---- /dev/null
-+++ b/arch/x86/kernel/ima_arch.c
-@@ -0,0 +1,27 @@
-+/* SPDX-License-Identifier: GPL-2.0+ */
-+/*
-+ * Copyright (C) 2018 IBM Corporation
-+ */
-+#include <linux/efi.h>
-+#include <linux/ima.h>
-+
-+extern struct boot_params boot_params;
-+
-+/* arch rules for audit and user mode */
-+static const char * const sb_arch_rules[] = {
-+#ifdef CONFIG_KEXEC_VERIFY_SIG
-+	"appraise func=KEXEC_ORIG_KERNEL_CHECK appraise_type=imasig",
-+#else
-+	"appraise func=KEXEC_KERNEL_CHECK appraise_type=imasig",
-+#endif /* CONFIG_KEXEC_VERIFY_SIG */
-+	"measure func=KEXEC_KERNEL_CHECK",
-+	NULL
-+};
-+
-+const char * const *arch_get_ima_policy(void)
-+{
-+	if (efi_enabled(EFI_BOOT) &&
-+	    (boot_params.secure_boot == efi_secureboot_mode_enabled))
-+		return sb_arch_rules;
-+	return NULL;
-+}
-diff --git a/include/linux/ima.h b/include/linux/ima.h
-index 7fd272f0b1f..495fa290b14 100644
---- a/include/linux/ima.h
-+++ b/include/linux/ima.h
-@@ -30,10 +30,14 @@ extern void ima_post_path_mknod(struct dentry *dentry);
- extern void ima_add_kexec_buffer(struct kimage *image);
- #endif
- 
-+#if defined(CONFIG_IMA_ARCH_POLICY) && defined(CONFIG_X86)
-+extern const char * const *arch_get_ima_policy(void);
-+#else
- static inline const char * const *arch_get_ima_policy(void)
- {
- 	return NULL;
- }
-+#endif
- 
- #else
- static inline int ima_bprm_check(struct linux_binprm *bprm)
-@@ -77,6 +81,10 @@ static inline void ima_post_path_mknod(struct dentry *dentry)
- 	return;
- }
- 
-+static inline const char * const *arch_get_ima_policy(void)
-+{
-+	return NULL;
-+}
- #endif /* CONFIG_IMA */
- 
- #ifndef CONFIG_IMA_KEXEC
-diff --git a/security/integrity/ima/Kconfig b/security/integrity/ima/Kconfig
-index 13b446328dd..18de132bbda 100644
---- a/security/integrity/ima/Kconfig
-+++ b/security/integrity/ima/Kconfig
-@@ -157,6 +157,14 @@ config IMA_APPRAISE
- 	  <http://linux-ima.sourceforge.net>
- 	  If unsure, say N.
- 
-+config IMA_ARCH_POLICY
-+	bool "Enable loading an IMA architecture specific policy"
-+	depends on IMA_APPRAISE && INTEGRITY_ASYMMETRIC_KEYS
-+	default n
-+	help
-+	  This option enables loading an IMA architecture specific policy
-+	  based on run time secure boot flags.
-+
- config IMA_APPRAISE_BUILD_POLICY
- 	bool "IMA build time configured policy rules"
- 	depends on IMA_APPRAISE && INTEGRITY_ASYMMETRIC_KEYS
--- 
-2.14.4
-
+Yeah, thanks, I'll fix this and rerun my tests with lockdep.
