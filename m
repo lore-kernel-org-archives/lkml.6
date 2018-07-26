@@ -2,111 +2,98 @@ Return-Path: <SRS0=7Z+k=KK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 694B6C67790
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 01:21:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF2F0C67790
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 01:27:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0A65920846
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 01:21:23 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=iluvatar.ai header.i=@iluvatar.ai header.b="aPGs/5sI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0A65920846
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=iluvatar.ai
+	by mail.kernel.org (Postfix) with ESMTP id 6E96E20846
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 01:27:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6E96E20846
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728649AbeGZCfl (ORCPT
+        id S1728629AbeGZClY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 22:35:41 -0400
-Received: from mail.iluvatar.ai ([58.213.90.100]:60761 "EHLO mail.iluvatar.ai"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728407AbeGZCfl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Jul 2018 22:35:41 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by mail.iluvatar.ai (Postfix) with ESMTP id 86B10142524AA;
-        Thu, 26 Jul 2018 09:25:00 +0800 (CST)
-Received: from mail.iluvatar.ai ([127.0.0.1])
-        by localhost (mail.iluvatar.ai [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id jCEasJCKXR1R; Thu, 26 Jul 2018 09:25:00 +0800 (CST)
-Received: from localhost (localhost [127.0.0.1])
-        by mail.iluvatar.ai (Postfix) with ESMTP id DD560142524AD;
-        Thu, 26 Jul 2018 09:24:59 +0800 (CST)
-DKIM-Filter: OpenDKIM Filter v2.9.2 mail.iluvatar.ai DD560142524AD
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iluvatar.ai;
-        s=809B2F8E-810B-11E8-86FD-A0A654EEFFEB; t=1532568299;
-        bh=WmUcy9IfN26EvjoY86jVSxOXEhqPEY2DtyLWA3v+7g4=;
-        h=Subject:To:From:Message-ID:Date:MIME-Version:Content-Type:
-         Content-Transfer-Encoding;
-        b=aPGs/5sI3wHNUKEwZPn6Kjgou45GdEoT41bLeiIdq5MSFS9bCLd137eCwMPeRqoby
-         mmnR5Q9qfC1fsT3VCJbtTMJN1LZ3Tjvs1o7PYx6b7btgyLk612GfpnY+STtBuMdJzL
-         irq2OiHXonxQVtMT3qNWuaNcuZvlMdXOWal5mEQA=
-X-Virus-Scanned: amavisd-new at iluvatar.ai
-Received: from mail.iluvatar.ai ([127.0.0.1])
-        by localhost (mail.iluvatar.ai [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id M3TymsYfXiqt; Thu, 26 Jul 2018 09:24:59 +0800 (CST)
-Received: from [192.168.128.73] (unknown [180.166.124.10])
-        by mail.iluvatar.ai (Postfix) with ESMTPSA id 8FD1D142524AA;
-        Thu, 26 Jul 2018 09:24:59 +0800 (CST)
-Subject: Re: [PATCH] dmaengine: add a new helper dmam_async_device_register
-To:     Vinod <vkoul@kernel.org>
-Cc:     corbet@lwn.net, dan.j.williams@intel.com, robh@kernel.org,
-        linux-doc@vger.kernel.org, dmaengine@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20180725054645.9723-1-sjhuang@iluvatar.ai>
- <20180725123826.GT3661@vkoul-mobl>
-From:   Huang Shijie <sjhuang@iluvatar.ai>
-Message-ID: <452f2991-241b-1f0f-efad-9c7e37814c5e@iluvatar.ai>
-Date:   Thu, 26 Jul 2018 09:21:17 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <20180725123826.GT3661@vkoul-mobl>
-Content-Type: text/plain; charset=gbk; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
+        Wed, 25 Jul 2018 22:41:24 -0400
+Received: from smtprelay0210.hostedemail.com ([216.40.44.210]:46443 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728523AbeGZClY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Jul 2018 22:41:24 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay06.hostedemail.com (Postfix) with ESMTP id C893118021DA9;
+        Thu, 26 Jul 2018 01:27:02 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-HE-Tag: mine37_3d5a5cb248031
+X-Filterd-Recvd-Size: 2394
+Received: from XPS-9350.home (unknown [47.151.153.53])
+        (Authenticated sender: joe@perches.com)
+        by omf10.hostedemail.com (Postfix) with ESMTPA;
+        Thu, 26 Jul 2018 01:27:01 +0000 (UTC)
+Message-ID: <2a56b48632fe8982735769b52aafe721b29b1bcf.camel@perches.com>
+Subject: Re: [PATCH v1] checkpatch: check for #if 0/#if 1
+From:   Joe Perches <joe@perches.com>
+To:     Prakruthi Deepak Heragu <pheragu@codeaurora.org>, apw@canonical.com
+Cc:     linux-kernel@vger.kernel.org, ckadabi@codeaurora.org,
+        tsoni@codeaurora.org, bryanh@codeaurora.org,
+        Abhijeet Dharmapurikar <adharmap@codeaurora.org>
+Date:   Wed, 25 Jul 2018 18:27:00 -0700
+In-Reply-To: <1532560446-15827-1-git-send-email-pheragu@codeaurora.org>
+References: <1532560446-15827-1-git-send-email-pheragu@codeaurora.org>
+Content-Type: text/plain; charset="ISO-8859-1"
+X-Mailer: Evolution 3.28.1-2 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Vinod,
+On Wed, 2018-07-25 at 16:14 -0700, Prakruthi Deepak Heragu wrote:
+> The #if 0 or #if 1 is used to toggle features. Warn if #if 0 or #if 1
+> is present and suggest that they can be removed.
+> 
+> Signed-off-by: Abhijeet Dharmapurikar <adharmap@codeaurora.org>
+> Signed-off-by: Prakruthi Deepak Heragu <pheragu@codeaurora.org>
+> ---
+> Changes in v1:
+> - Rephrase the warning message to fit in a single line without 
+>   80 column limit
+> 
+>  scripts/checkpatch.pl | 11 ++++++++---
+>  1 file changed, 8 insertions(+), 3 deletions(-)
+> 
+> diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
+> index 3394ed8..72513c2 100755
+> --- a/scripts/checkpatch.pl
+> +++ b/scripts/checkpatch.pl
+> @@ -5383,9 +5383,14 @@ sub process {
+>  
+>  # warn about #if 0
+>  		if ($line =~ /^.\s*\#\s*if\s+0\b/) {
+> -			CHK("REDUNDANT_CODE",
+> -			    "if this code is redundant consider removing it\n" .
+> -				$herecurr);
+> +			WARN("IF_0",
+> +			     "Consider removing the #if 0 and its #endif\n".  $herecurr);
 
+No, this wording is not correct at all.
 
-=D4=DA 2018=C4=EA07=D4=C225=C8=D5 20:38, Vinod =D0=B4=B5=C0:
-> On 25-07-18, 13:46, Huang Shijie wrote:
->> This patch adds the dmam_async_device_register for DMA code.
->> Use the Devres to call the release for the DMA engine driver.
-> no users?
-I can add some new users if you want.
-I will add an extra patch for it.
+The entire block, i.e.: 'this code' should be considered
+to be removed, not just the #if 0 and its #endif.
 
->
->> Signed-off-by: Huang Shijie <sjhuang@iluvatar.ai>
->> ---
->>   Documentation/driver-model/devres.txt |  1 +
->>   drivers/dma/dmaengine.c               | 35 +++++++++++++++++++++++++=
-++
->>   include/linux/dmaengine.h             |  1 +
->>   3 files changed, 37 insertions(+)
->>
->> diff --git a/Documentation/driver-model/devres.txt b/Documentation/dri=
-ver-model/devres.txt
->> index a3e8bceb5f19..26c6de621446 100644
->> --- a/Documentation/driver-model/devres.txt
->> +++ b/Documentation/driver-model/devres.txt
->> @@ -240,6 +240,7 @@ CLOCK
->>     devm_of_clk_add_hw_provider()
->>  =20
->>   DMA
->> +  dmam_async_device_register()
-> can we name it dmaengine_async_device_register, not to confuse with dma=
- APIs
-ok.
-If no one objects the dmaengine_async_device_register().
-I will use it in the next version.
+For #if 1 code, then just the #if 1 and the #endif should
+be removed.
 
-Thanks
-Huang Shijie
-
+> +		}
+> +
+> +# warn about #if 1
+> +		if ($line =~ /^.\s*\#\s*if\s+1\b/) {
+> +			WARN("IF_1",
+> +			     "Consider removing the #if 1 and its #endif\n".  $herecurr);
+>  		}
+>  
+>  # check for needless "if (<foo>) fn(<foo>)" uses
