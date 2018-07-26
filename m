@@ -2,139 +2,119 @@ Return-Path: <SRS0=7Z+k=KK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DBC6CC6778F
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 07:02:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DEA1C6778F
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 07:03:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9D83B20846
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 07:02:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9D83B20846
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
+	by mail.kernel.org (Postfix) with ESMTP id BF06920846
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 07:03:55 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="GBiY2IwI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BF06920846
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728925AbeGZIRa convert rfc822-to-8bit (ORCPT
+        id S1728792AbeGZITS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 26 Jul 2018 04:17:30 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:41748 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728816AbeGZIR3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Jul 2018 04:17:29 -0400
-Received: from mail-pg1-f198.google.com ([209.85.215.198])
-        by youngberry.canonical.com with esmtps (TLS1.0:RSA_AES_128_CBC_SHA1:16)
-        (Exim 4.76)
-        (envelope-from <kai.heng.feng@canonical.com>)
-        id 1fiaHj-0005Ok-8I
-        for linux-kernel@vger.kernel.org; Thu, 26 Jul 2018 07:02:03 +0000
-Received: by mail-pg1-f198.google.com with SMTP id x2-v6so512551pgp.4
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Jul 2018 00:02:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=c2UXz0IhWiLlFua9siw3rlSGA+FRy/fwFDck+MvGCxs=;
-        b=nW7X2SJyDPJWVrIyNc21qs2YMOtMKiX34BqeMIV8q1QRJEfwKEH3f7ji3S0HArdxTB
-         UaBXOjtq/BgUd9V1wS/SUh3T1nSVfbJlT6cLe7PZ0BXGbzwUj/ZnIW2YF3McDoZN5UA8
-         u/goNq+OGeDmUtHmandBwy7S+lVMRGqJAJ27k2mxGiZ0cIsPIdpc1uOHUbtTfzgQpJDx
-         N2oy8r/F7Cs1oLc3BozUEx14NJ4UeifPBB2TCw1k9zcrW2zysCfsLY1QZpKupJSviv+f
-         fAWfN5M8RfjVbF8vZWd3yzt3j9aAVngxGrypZv/v9+VP3LLAbUM6rIPgYerisfZJJax+
-         SqTA==
-X-Gm-Message-State: AOUpUlF++MojwWcn3fR8AOFXL6y8095ToSkFoJzXbhcNYN2csYmehvLT
-        NIvZY/Y824y3vb43qTY7byjBnUZhW9Xw2uooewMhUJTH9suVsQzgEHNNaq1L14tNYAwgB1UAWaH
-        VQCX6ZFcw//Jh7LCUNggfG/QRaGI1ndmNV2zOnl9CWQ==
-X-Received: by 2002:a63:d401:: with SMTP id a1-v6mr776012pgh.414.1532588521933;
-        Thu, 26 Jul 2018 00:02:01 -0700 (PDT)
-X-Google-Smtp-Source: AAOMgpfe6Fs2JBQHfxHrDVwc0LS/hqABiDkYrWQ76H2z/84pCZm+JQ3o31AzkBioB18Nb+HGF7FPTA==
-X-Received: by 2002:a63:d401:: with SMTP id a1-v6mr775985pgh.414.1532588521629;
-        Thu, 26 Jul 2018 00:02:01 -0700 (PDT)
-Received: from [192.168.20.35] (1-161-137-98.dynamic-ip.hinet.net. [1.161.137.98])
-        by smtp.gmail.com with ESMTPSA id w2-v6sm996926pge.44.2018.07.26.00.01.59
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 26 Jul 2018 00:02:01 -0700 (PDT)
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 11.5 \(3445.9.1\))
-Subject: Re: [PATCH 2/5] memstick: Prevent memstick host from getting runtime
- suspended during card detection
-From:   Kai-Heng Feng <kai.heng.feng@canonical.com>
-In-Reply-To: <Pine.LNX.4.44L0.1807251353550.1467-100000@iolanthe.rowland.org>
-Date:   Thu, 26 Jul 2018 15:01:56 +0800
-Cc:     arnd@arndb.de, gregkh@linuxfoundation.org, ulf.hansson@linaro.org,
-        bauer.chen@realtek.com, ricky_wu@realtek.com,
-        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org
-Content-Transfer-Encoding: 8BIT
-Message-Id: <10942DC1-3F18-4A87-A662-B8CD073FFA14@canonical.com>
-References: <Pine.LNX.4.44L0.1807251353550.1467-100000@iolanthe.rowland.org>
-To:     Alan Stern <stern@rowland.harvard.edu>
-X-Mailer: Apple Mail (2.3445.9.1)
+        Thu, 26 Jul 2018 04:19:18 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50974 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726978AbeGZITR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Jul 2018 04:19:17 -0400
+Received: from mail-wm0-f48.google.com (mail-wm0-f48.google.com [74.125.82.48])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 83EC420846;
+        Thu, 26 Jul 2018 07:03:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1532588632;
+        bh=zhhMs6A9+u3ACO8rbpZKOocdPcfJLgNhJ2BakJGRyVI=;
+        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
+        b=GBiY2IwIFXa7nCyG9G9gp2zXh91M5iGxDlUeTbwmtRnWv01lDDJiLCyF93DHfBpxv
+         AMY1r/IqmusL6J9toXxdjV2JqGEPPPUMply6k84SvFn8QcLzR54UmbL4KO5cEjOM9o
+         MKZktLKTXZyob82v+jUZSh+4gxbVE8fdX+qpqSps=
+Received: by mail-wm0-f48.google.com with SMTP id s12-v6so849963wmc.0;
+        Thu, 26 Jul 2018 00:03:52 -0700 (PDT)
+X-Gm-Message-State: AOUpUlFqaBINXkFNvsHXbuKDB2hWgzRFCLifbMWikxTEkM/kOWHa16ty
+        UAK2TTHLJUu19IqsNUFRBoO+GxAvNHAp7JwsjOk=
+X-Google-Smtp-Source: AAOMgpfUAHVouzOKzfOwm1ea/Z3405OIvzvgcUvT2l3N5qzeNlP1CnrpQGYRYSmG53Y7PO7+o2tDO4RZxOgQDjccifg=
+X-Received: by 2002:a1c:9550:: with SMTP id x77-v6mr642145wmd.135.1532588631024;
+ Thu, 26 Jul 2018 00:03:51 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:adf:9141:0:0:0:0:0 with HTTP; Thu, 26 Jul 2018 00:03:50
+ -0700 (PDT)
+In-Reply-To: <20180725194630.10414-5-angus@akkea.ca>
+References: <CAJKOXPczJWdNugbHiLRQv1krUFhZH=muix3M9R2LUT5=4zypYA@mail.gmail.com>
+ <20180725194630.10414-1-angus@akkea.ca> <20180725194630.10414-5-angus@akkea.ca>
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+Date:   Thu, 26 Jul 2018 09:03:50 +0200
+X-Gmail-Original-Message-ID: <CAJKOXPc1amTiPKNU02OruOpw+GA6DrZgv1+HhqZ14OZYpA2-YA@mail.gmail.com>
+Message-ID: <CAJKOXPc1amTiPKNU02OruOpw+GA6DrZgv1+HhqZ14OZYpA2-YA@mail.gmail.com>
+Subject: Re: [PATCH v2 4/4] power: bq25890_charger.c: Read back the current
+ battery voltage
+To:     "Angus Ainslie (Purism)" <angus@akkea.ca>
+Cc:     angus.ainslie@puri.sm, Sebastian Reichel <sre@kernel.org>,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 25 July 2018 at 21:46, Angus Ainslie (Purism) <angus@akkea.ca> wrote:
+> The part has the capability of reading the current battery voltage
+>
+> Signed-off-by: Angus Ainslie (Purism) <angus@akkea.ca>
+> ---
+>  drivers/power/supply/bq25890_charger.c | 15 +++++++++++++++
+>  1 file changed, 15 insertions(+)
+>
+> diff --git a/drivers/power/supply/bq25890_charger.c b/drivers/power/supply/bq25890_charger.c
+> index f4cf2987996b..60ccd6c2b7ad 100644
+> --- a/drivers/power/supply/bq25890_charger.c
+> +++ b/drivers/power/supply/bq25890_charger.c
+> @@ -464,6 +464,20 @@ static int bq25890_power_supply_get_property(struct power_supply *psy,
+>                 val->intval = bq25890_find_val(bq->init_data.iterm, TBL_ITERM);
+>                 break;
+>
+> +       case POWER_SUPPLY_PROP_VOLTAGE_NOW:
+> +               if (!state.online) {
+> +                       val->intval = 0;
+> +                       break;
+> +               }
 
+You use state from cached value (from last interrupt) but the voltage
+is read directly from registers. The driver follows this convention in
+few other places so maybe it is okay. It depends how accurately the
+interrupts are generated - on every change? IOW, is always guaranteed
+that state will be consistent with values read below?
 
-> On 2018Jul26, at 01:56, Alan Stern <stern@rowland.harvard.edu> wrote:
-> 
-> On Wed, 25 Jul 2018, Kai-Heng Feng wrote:
-> 
->> We can use MEMSTICK_POWER_{ON,OFF} along with pm_runtime_{get,put}
->> helpers to let memstick host support runtime pm.
->> 
->> There's a small window between memstick_detect_change() and its queued
->> work, memstick_check(). In this window the rpm count may go down to zero
->> before the memstick host powers on, so the host can be inadvertently
->> suspended.
->> 
->> Increment rpm count before calling memstick_check(), and decrement rpm
->> count afterward, as now we are sure the memstick host should be
->> suspended or not.
->> 
->> Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
->> ---
->> drivers/memstick/core/memstick.c | 4 ++++
->> 1 file changed, 4 insertions(+)
->> 
->> diff --git a/drivers/memstick/core/memstick.c b/drivers/memstick/core/memstick.c
->> index 76382c858c35..944fe0c93fa7 100644
->> --- a/drivers/memstick/core/memstick.c
->> +++ b/drivers/memstick/core/memstick.c
->> @@ -18,6 +18,7 @@
->> #include <linux/delay.h>
->> #include <linux/slab.h>
->> #include <linux/module.h>
->> +#include <linux/pm_runtime.h>
->> 
->> #define DRIVER_NAME "memstick"
->> 
->> @@ -209,6 +210,7 @@ static int memstick_dummy_check(struct memstick_dev *card)
->>  */
->> void memstick_detect_change(struct memstick_host *host)
->> {
->> +	pm_runtime_get_noresume(host->dev.parent);
->> 	queue_work(workqueue, &host->media_checker);
->> }
->> EXPORT_SYMBOL(memstick_detect_change);
->> @@ -479,6 +481,8 @@ static void memstick_check(struct work_struct *work)
->> 		host->set_param(host, MEMSTICK_POWER, MEMSTICK_POWER_OFF);
->> 
->> 	mutex_unlock(&host->lock);
->> +
->> +	pm_runtime_put_noidle(host->dev.parent);
->> 	dev_dbg(&host->dev, "memstick_check finished\n");
->> }
-> 
-> This should be pm_runtime_put(), not _put_noidle().  The reason is
-> because if this call causes the PM runtime usage count to drop to 0,
-> you do want the device to go into runtime suspend.
+Best regards,
+Krzysztof
 
-Will update in next version, thanks!
-
-Kai-Heng
-
-> 
-> Alan Stern
-
+> +
+> +               ret = bq25890_field_read(bq, F_SYSV); /* read measured value */
+> +               if (ret < 0)
+> +                       return ret;
+> +
+> +               /* converted_val = 2.304V + ADC_val * 20mV (table 10.3.15) */
+> +               val->intval = 2304000 + ret * 20000;
+> +               break;
+> +
+>         default:
+>                 return -EINVAL;
+>         }
+> @@ -672,6 +686,7 @@ static enum power_supply_property bq25890_power_supply_props[] = {
+>         POWER_SUPPLY_PROP_CONSTANT_CHARGE_VOLTAGE,
+>         POWER_SUPPLY_PROP_CONSTANT_CHARGE_VOLTAGE_MAX,
+>         POWER_SUPPLY_PROP_CHARGE_TERM_CURRENT,
+> +       POWER_SUPPLY_PROP_VOLTAGE_NOW,
+>  };
+>
+>  static char *bq25890_charger_supplied_to[] = {
+> --
+> 2.17.1
+>
