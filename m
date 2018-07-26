@@ -3,116 +3,195 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AEEA5C6778F
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 15:13:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE4FCC28CF6
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 15:14:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 720B12083F
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 15:13:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 720B12083F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xmission.com
+	by mail.kernel.org (Postfix) with ESMTP id A9A3F2064D
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 15:14:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A9A3F2064D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731701AbeGZQah (ORCPT
+        id S1731721AbeGZQbS convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 26 Jul 2018 12:30:37 -0400
-Received: from out03.mta.xmission.com ([166.70.13.233]:42861 "EHLO
-        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729801AbeGZQah (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Jul 2018 12:30:37 -0400
-Received: from in02.mta.xmission.com ([166.70.13.52])
-        by out03.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1fihx9-0002DJ-0r; Thu, 26 Jul 2018 09:13:19 -0600
-Received: from [97.119.167.31] (helo=x220.xmission.com)
-        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1fihx6-0004LP-N4; Thu, 26 Jul 2018 09:13:18 -0600
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     Oleg Nesterov <oleg@redhat.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, Wen Yang <wen.yang99@zte.com.cn>,
-        majiang <ma.jiang@zte.com.cn>
-References: <87efft5ncd.fsf_-_@xmission.com>
-        <20180724032419.20231-18-ebiederm@xmission.com>
-        <20180726132050.GA32718@redhat.com>
-Date:   Thu, 26 Jul 2018 10:13:12 -0500
-In-Reply-To: <20180726132050.GA32718@redhat.com> (Oleg Nesterov's message of
-        "Thu, 26 Jul 2018 15:20:50 +0200")
-Message-ID: <87tvom58tz.fsf@xmission.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
+        Thu, 26 Jul 2018 12:31:18 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:5196 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729801AbeGZQbS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Jul 2018 12:31:18 -0400
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 41bwbm5rqVz9tvPy;
+        Thu, 26 Jul 2018 17:13:56 +0200 (CEST)
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id lZx6amBsL99K; Thu, 26 Jul 2018 17:13:56 +0200 (CEST)
+Received: from vm-hermes.si.c-s.fr (vm-hermes.si.c-s.fr [192.168.25.253])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 41bwbm50yjz9tvPZ;
+        Thu, 26 Jul 2018 17:13:56 +0200 (CEST)
+Received: by vm-hermes.si.c-s.fr (Postfix, from userid 33)
+        id 79DD760A; Thu, 26 Jul 2018 17:13:55 +0200 (CEST)
+Received: from 37.173.173.60 ([37.173.173.60]) by messagerie.si.c-s.fr
+ (Horde Framework) with HTTP; Thu, 26 Jul 2018 17:13:55 +0200
+Date:   Thu, 26 Jul 2018 17:13:55 +0200
+Message-ID: <20180726171355.Horde.KlFUG9wXmbRDCiyhk5bHsw8@messagerie.si.c-s.fr>
+From:   LEROY Christophe <christophe.leroy@c-s.fr>
+To:     Alex Ghiti <alex@ghiti.fr>
+Cc:     Mike Kravetz <mike.kravetz@oracle.com>, davem@davemloft.net,
+        linuxppc-dev@lists.ozlabs.org,
+        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
+        paul.burton@mips.com, ralf@linux-mips.org,
+        linux-kernel@vger.kernel.org, linux-parisc@vger.kernel.org,
+        tony.luck@intel.com, linux-arm-kernel@lists.infradead.org,
+        tglx@linutronix.de, arnd@arndb.de, fenghua.yu@intel.com,
+        jhogan@kernel.org, catalin.marinas@arm.com, mingo@redhat.com,
+        linux@armlinux.org.uk, x86@kernel.org, deller@gmx.de,
+        ysato@users.sourceforge.jp, linux-arch@vger.kernel.org,
+        sparclinux@vger.kernel.org, hpa@zytor.com, paulus@samba.org,
+        jejb@parisc-linux.org, will.deacon@arm.com,
+        linux-sh@vger.kernel.org, linux-ia64@vger.kernel.org,
+        dalias@libc.org, linux-mips@linux-mips.org,
+        Michal Hocko <mhocko@kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Subject: Re: [PATCH v4 00/11] hugetlb: Factorize hugetlb architecture
+ primitives
+References: <20180705110716.3919-1-alex@ghiti.fr>
+ <20180709141621.GD22297@dhcp22.suse.cz>
+ <2173685f-7f85-7acb-4685-2383210c5fa2@ghiti.fr>
+ <87d0vehx16.fsf@concordia.ellerman.id.au>
+ <67aba0f0-c0d4-b06f-5fbc-f4d113ce5033@ghiti.fr>
+In-Reply-To: <67aba0f0-c0d4-b06f-5fbc-f4d113ce5033@ghiti.fr>
+User-Agent: Internet Messaging Program (IMP) H5 (6.2.3)
+Content-Type: text/plain; charset=UTF-8; format=flowed; DelSp=Yes
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1fihx6-0004LP-N4;;;mid=<87tvom58tz.fsf@xmission.com>;;;hst=in02.mta.xmission.com;;;ip=97.119.167.31;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX18vq8n2SkROnH8GMyJYcQe3gHaVwE/Wdnc=
-X-SA-Exim-Connect-IP: 97.119.167.31
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-Subject: Re: [PATCH 18/20] signal: Add calculate_sigpending()
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
+Content-Disposition: inline
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Oleg Nesterov <oleg@redhat.com> writes:
+Alex Ghiti <alex@ghiti.fr> a écrit :
 
-> On 07/23, Eric W. Biederman wrote:
+> Hi everyone,
+>
+> This is the result of the build for all arches tackled in this  
+> series rebased on 4.18-rc6:
+>
+> arm:
+>         versatile_defconfig: without huge page OK
+>         keystone_defconfig: with huge page OK
+> arm64:
+>         defconfig: with huge page OK
+> ia64:
+>         generic_defconfig: with huge page OK
+> mips:
+>         Paul Burton tested cavium octeon with huge page OK
+> parisc:
+>         generic-64bit_defconfig: with huge page does not link
+>         generic-64bit_defconfig: without huge page does not link
+>         BUT not because of this series, any feedback welcome.
+> powerpc:
+>         ppc64_defconfig: without huge page OK
+>         ppc64_defconfig: with huge page OK
+
+Can you also test ppc32 both with and without hugepage (mpc885_ads_defconfig)
+
+Thanks
+Christophe
+
+> sh:
+>         dreamcast_defconfig: with huge page OK
+> sparc:
+>         sparc32_defconfig: without huge page OK
+> sparc64:
+>         sparc64_defconfig: with huge page OK
+> x86:
+>         with huge page OK
+>
+> Alex
+>
+> On 07/23/2018 02:00 PM, Michael Ellerman wrote:
+>> Alex Ghiti <alex@ghiti.fr> writes:
 >>
->> --- a/kernel/fork.c
->> +++ b/kernel/fork.c
->> @@ -1988,6 +1988,7 @@ static __latent_entropy struct task_struct *copy_process(
->>  					  &p->signal->thread_head);
->>  		}
->>  		attach_pid(p, PIDTYPE_PID);
->> +		calculate_sigpending(p);
->
-> In theory this looks racy if !CLONE_SIGHAND, please see below
->
->> +void calculate_sigpending(struct task_struct *new)
->> +{
->> +	/* Have any signals or users of TIF_SIGPENDING been delayed
->> +	 * until after fork?
->> +	 */
->> +	bool pending = (new->jobctl & JOBCTL_PENDING_MASK) ||
->> +		PENDING(&new->pending, &new->blocked) ||
->> +		PENDING(&new->signal->shared_pending, &new->blocked) ||
->> +		freezing(new) || klp_patch_pending(new);
->
-> note that we do not hold new->sighand->siglock, but this "new" task is already
-> visible to find_task_by_vpid/etc; so a new signal can come right after
-> this check,
+>>> Does anyone have any suggestion about those patches ?
+>> Cross compiling it for some non-x86 arches would be a good start :)
+>>
+>> There are cross compilers available here:
+>>
+>>   https://mirrors.edge.kernel.org/pub/tools/crosstool/
+>>
+>>
+>> cheers
+>>
+>>> On 07/09/2018 02:16 PM, Michal Hocko wrote:
+>>>> [CC hugetlb guys -  
+>>>> http://lkml.kernel.org/r/20180705110716.3919-1-alex@ghiti.fr]
+>>>>
+>>>> On Thu 05-07-18 11:07:05, Alexandre Ghiti wrote:
+>>>>> In order to reduce copy/paste of functions across architectures and then
+>>>>> make riscv hugetlb port (and future ports) simpler and smaller, this
+>>>>> patchset intends to factorize the numerous hugetlb primitives that are
+>>>>> defined across all the architectures.
+>>>>>
+>>>>> Except for prepare_hugepage_range, this patchset moves the versions that
+>>>>> are just pass-through to standard pte primitives into
+>>>>> asm-generic/hugetlb.h by using the same #ifdef semantic that can be
+>>>>> found in asm-generic/pgtable.h, i.e. __HAVE_ARCH_***.
+>>>>>
+>>>>> s390 architecture has not been tackled in this serie since it does not
+>>>>> use asm-generic/hugetlb.h at all.
+>>>>> powerpc could be factorized a bit more (cf huge_ptep_set_wrprotect).
+>>>>>
+>>>>> This patchset has been compiled on x86 only.
+>>>>>
+>>>>> Changelog:
+>>>>>
+>>>>> v4:
+>>>>>    Fix powerpc build error due to misplacing of #include
+>>>>>    <asm-generic/hugetlb.h> outside of #ifdef CONFIG_HUGETLB_PAGE, as
+>>>>>    pointed by Christophe Leroy.
+>>>>>
+>>>>> v1, v2, v3:
+>>>>>    Same version, just problems with email provider and misuse of
+>>>>>    --batch-size option of git send-email
+>>>>>
+>>>>> Alexandre Ghiti (11):
+>>>>>    hugetlb: Harmonize hugetlb.h arch specific defines with pgtable.h
+>>>>>    hugetlb: Introduce generic version of hugetlb_free_pgd_range
+>>>>>    hugetlb: Introduce generic version of set_huge_pte_at
+>>>>>    hugetlb: Introduce generic version of huge_ptep_get_and_clear
+>>>>>    hugetlb: Introduce generic version of huge_ptep_clear_flush
+>>>>>    hugetlb: Introduce generic version of huge_pte_none
+>>>>>    hugetlb: Introduce generic version of huge_pte_wrprotect
+>>>>>    hugetlb: Introduce generic version of prepare_hugepage_range
+>>>>>    hugetlb: Introduce generic version of huge_ptep_set_wrprotect
+>>>>>    hugetlb: Introduce generic version of huge_ptep_set_access_flags
+>>>>>    hugetlb: Introduce generic version of huge_ptep_get
+>>>>>
+>>>>>   arch/arm/include/asm/hugetlb-3level.h        | 32 +---------
+>>>>>   arch/arm/include/asm/hugetlb.h               | 33 +----------
+>>>>>   arch/arm64/include/asm/hugetlb.h             | 39 +++---------
+>>>>>   arch/ia64/include/asm/hugetlb.h              | 47 ++-------------
+>>>>>   arch/mips/include/asm/hugetlb.h              | 40 +++----------
+>>>>>   arch/parisc/include/asm/hugetlb.h            | 33 +++--------
+>>>>>   arch/powerpc/include/asm/book3s/32/pgtable.h |  2 +
+>>>>>   arch/powerpc/include/asm/book3s/64/pgtable.h |  1 +
+>>>>>   arch/powerpc/include/asm/hugetlb.h           | 43 ++------------
+>>>>>   arch/powerpc/include/asm/nohash/32/pgtable.h |  2 +
+>>>>>   arch/powerpc/include/asm/nohash/64/pgtable.h |  1 +
+>>>>>   arch/sh/include/asm/hugetlb.h                | 54 ++---------------
+>>>>>   arch/sparc/include/asm/hugetlb.h             | 40 +++----------
+>>>>>   arch/x86/include/asm/hugetlb.h               | 72  
+>>>>> +----------------------
+>>>>>   include/asm-generic/hugetlb.h                | 88  
+>>>>> +++++++++++++++++++++++++++-
+>>>>>   15 files changed, 143 insertions(+), 384 deletions(-)
+>>>>>
+>>>>> -- 
+>>>>> 2.16.2
 
-Good point.  The localtion of the call to calculate_sigpending is wrong.
-
->> +	update_tsk_thread_flag(new, TIF_SIGPENDING, pending);
->
-> and then update_tsk_thread_flag() can wrongly clear TIF_SIGPENDING.
->
-> Easy to fix, but perhaps we can simply add recalc_sigpending() into
-> schedule_tail() ? It already does more than just finish_task_switch/etc.
->
-> This way we do not need the new helper (which btw can only be used by
-> copy_process).
-
-The problem I have with reusing recalc_sigpending is that it does not
-set TIF_SIGPENDING if (freezing || klp_patch_pending).
-
-There is obviously synergy between these two cases, I just have not
-figured out how to take advantage of it yet.
-
-> Note also that either way you can remove set_tsk_thread_flag(TIF_SIGPENDING)
-> from ptrace_init_task().
-
-Interesting.  Yes we can remove TIF_SIGPENDING from that case because
-ptrace_init_task sets jobctl or queues a pending signal.  I like
-that synergy.  I like not being able to miss setting TIF_SIGPENDING
-during fork.
-
-Eric
 
