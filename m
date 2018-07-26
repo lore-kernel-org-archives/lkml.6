@@ -2,136 +2,155 @@ Return-Path: <SRS0=7Z+k=KK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EEB92C28CF6
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 16:11:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 869A3C28CF6
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 16:13:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8829720857
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 16:11:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8829720857
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+	by mail.kernel.org (Postfix) with ESMTP id 3F71220846
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 16:13:15 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="S1quFqqQ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3F71220846
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732034AbeGZR3Z (ORCPT
+        id S1732045AbeGZRan (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 26 Jul 2018 13:29:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46668 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731801AbeGZR3Y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Jul 2018 13:29:24 -0400
-Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id ACF3220846;
-        Thu, 26 Jul 2018 16:11:53 +0000 (UTC)
-Date:   Thu, 26 Jul 2018 12:11:52 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     LKML <linux-kernel@vger.kernel.org>
-Cc:     Masami Hiramatsu <mhiramat@kernel.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Artem Savkov <asavkov@redhat.com>
-Subject: [PATCH] tracing/kprobes: Simplify the logic of
- enable_trace_kprobe()
-Message-ID: <20180726121152.4dd54330@gandalf.local.home>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Thu, 26 Jul 2018 13:30:43 -0400
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:34841 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731851AbeGZRan (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Jul 2018 13:30:43 -0400
+Received: by mail-pl0-f67.google.com with SMTP id w3-v6so1034978plq.2
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Jul 2018 09:13:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=1hIK/H5MmOewLypG4apEZ7USzZzkjTyf2gMX6rCPwg8=;
+        b=S1quFqqQwN9Y8yzOHH+zQStJ7RTNc3fW4RrQMoK2Fs1NrdwGs7Jd1fpCs6towNMfQn
+         j+tTxx8VVxbR7yaJMqWS3N0Zf+G1yCyLI7bi7EfWi3/8rlBIeRGVgYYqxsgEqEIQr9Yo
+         iWWvHgjJFQCEImNVXKhdGt60b/TxYOVs+CI2U=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=1hIK/H5MmOewLypG4apEZ7USzZzkjTyf2gMX6rCPwg8=;
+        b=en0M7Xa0U22gAt6LTOplM6UZ66Xr4bzBdL9hHwejugxz96LMo1nFAMJ8xh04VElX66
+         gO+RHqdX5yqcdSyXUgFvy4Mc2SkLjWIUxI+7BsWjIKenaHX0TDtxQuJrtb/4uup6muYR
+         zBWS1k8OR/68VOlmbB6GJwMq3z6A9G7al0dfmTa/TXcgXEs3i3V9h04fiwLO9G0KG/hx
+         uymXkXmjiPM0/8MOmolijLoMJNWf58ZahbkS6R99ERCaLITM4N793cRfh8ShjiEyaDGe
+         f/cLZbkrVvFYjlw4yTO5hBE34HlgfQ9JeRD8vqGCkTV/CQpVYZ0bJn+lsIZ3PFp3JLpD
+         7YyQ==
+X-Gm-Message-State: AOUpUlHt+TkCrnskOmCm3ARIteJEerqeeGYcNDAeKk2G4R6fPdQLSY59
+        rrVR/WLAH5ll8o83bze21LShIcfvXS0=
+X-Google-Smtp-Source: AAOMgpe/Bk+ka+Qop4DZ33Q7NLBWGEruhbgKer2iWYtRNc7WdFhZXLNPQGICF+fUo0rJBLuy7IWLcw==
+X-Received: by 2002:a17:902:2f43:: with SMTP id s61-v6mr2515728plb.274.1532621592456;
+        Thu, 26 Jul 2018 09:13:12 -0700 (PDT)
+Received: from tuxbook-pro (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id h24-v6sm3644737pfk.113.2018.07.26.09.13.11
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 26 Jul 2018 09:13:11 -0700 (PDT)
+Date:   Thu, 26 Jul 2018 09:16:20 -0700
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Amit Kucheria <amit.kucheria@linaro.org>
+Cc:     linux-kernel@vger.kernel.org, rnayak@codeaurora.org,
+        linux-arm-msm@vger.kernel.org, edubezval@gmail.com,
+        smohanad@codeaurora.org, andy.gross@linaro.org,
+        dianders@chromium.org, mka@chromium.org,
+        Zhang Rui <rui.zhang@intel.com>, linux-pm@vger.kernel.org
+Subject: Re: [PATCH v2 1/3] thermal: tsens: Rename variable
+Message-ID: <20180726161620.GA5450@tuxbook-pro>
+References: <cover.1532600791.git.amit.kucheria@linaro.org>
+ <5160b58d1d14b87b84ea49adc804afbefb792c34.1532600791.git.amit.kucheria@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5160b58d1d14b87b84ea49adc804afbefb792c34.1532600791.git.amit.kucheria@linaro.org>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu 26 Jul 03:33 PDT 2018, Amit Kucheria wrote:
 
-[ Note this is applied on top of the other patch to quiet gcc ]
+> We're actually reading the temperature from the status register. Fix the
+> variable name to reflect that.
+> 
+> Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
+> Reviewed-by: Matthias Kaehlcke <mka@chromium.org>
 
-From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 
-The function enable_trace_kprobe() performs slightly differently if the file
-parameter is passed in as NULL on non-NULL. Instead of checking file twice,
-move the code between the two tests into a static inline helper function to
-make the code easier to follow.
+Regards,
+Bjorn
 
-Link: http://lkml.kernel.org/r/20180725224728.7b1d5db2@vmware.local.home
-
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
----
- kernel/trace/trace_kprobe.c | 42 ++++++++++++++++++++++++------------------
- 1 file changed, 24 insertions(+), 18 deletions(-)
-
-diff --git a/kernel/trace/trace_kprobe.c b/kernel/trace/trace_kprobe.c
-index 6b71860f3998..1dec0855a59a 100644
---- a/kernel/trace/trace_kprobe.c
-+++ b/kernel/trace/trace_kprobe.c
-@@ -393,6 +393,20 @@ static struct trace_kprobe *find_trace_kprobe(const char *event,
- 	return NULL;
- }
- 
-+static inline int enable_probe(struct trace_kprobe *tk)
-+{
-+	int ret = 0;
-+
-+	if (trace_probe_is_registered(&tk->tp) && !trace_kprobe_has_gone(tk)) {
-+		if (trace_kprobe_is_return(tk))
-+			ret = enable_kretprobe(&tk->rp);
-+		else
-+			ret = enable_kprobe(&tk->rp.kp);
-+	}
-+
-+	return ret;
-+}
-+
- /*
-  * Enable trace_probe
-  * if the file is NULL, enable "perf" handler, or enable "trace" handler.
-@@ -400,7 +414,7 @@ static struct trace_kprobe *find_trace_kprobe(const char *event,
- static int
- enable_trace_kprobe(struct trace_kprobe *tk, struct trace_event_file *file)
- {
--	struct event_file_link *link = NULL;
-+	struct event_file_link *link;
- 	int ret = 0;
- 
- 	if (file) {
-@@ -414,26 +428,18 @@ enable_trace_kprobe(struct trace_kprobe *tk, struct trace_event_file *file)
- 		list_add_tail_rcu(&link->list, &tk->tp.files);
- 
- 		tk->tp.flags |= TP_FLAG_TRACE;
--	} else
--		tk->tp.flags |= TP_FLAG_PROFILE;
--
--	if (trace_probe_is_registered(&tk->tp) && !trace_kprobe_has_gone(tk)) {
--		if (trace_kprobe_is_return(tk))
--			ret = enable_kretprobe(&tk->rp);
--		else
--			ret = enable_kprobe(&tk->rp.kp);
--	}
--
--	if (ret) {
--		if (file) {
--			/* Notice the if is true on not WARN() */
--			if (!WARN_ON_ONCE(!link))
--				list_del_rcu(&link->list);
-+		ret = enable_probe(tk);
-+		if (ret) {
-+			list_del_rcu(&link->list);
- 			kfree(link);
- 			tk->tp.flags &= ~TP_FLAG_TRACE;
--		} else {
--			tk->tp.flags &= ~TP_FLAG_PROFILE;
- 		}
-+
-+	} else {
-+		tk->tp.flags |= TP_FLAG_PROFILE;
-+		ret = enable_probe(tk);
-+		if (ret)
-+			tk->tp.flags &= ~TP_FLAG_PROFILE;
- 	}
-  out:
- 	return ret;
--- 
-2.13.6
-
+> ---
+>  drivers/thermal/qcom/tsens-common.c |  6 +++---
+>  drivers/thermal/qcom/tsens-v2.c     | 10 +++++-----
+>  2 files changed, 8 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/thermal/qcom/tsens-common.c b/drivers/thermal/qcom/tsens-common.c
+> index c22dc18c7c65..25e7f247b027 100644
+> --- a/drivers/thermal/qcom/tsens-common.c
+> +++ b/drivers/thermal/qcom/tsens-common.c
+> @@ -104,11 +104,11 @@ int get_temp_common(struct tsens_device *tmdev, int id, int *temp)
+>  {
+>  	struct tsens_sensor *s = &tmdev->sensor[id];
+>  	u32 code;
+> -	unsigned int sensor_addr;
+> +	unsigned int status_reg;
+>  	int last_temp = 0, ret;
+>  
+> -	sensor_addr = S0_ST_ADDR + s->hw_id * SN_ADDR_OFFSET;
+> -	ret = regmap_read(tmdev->map, sensor_addr, &code);
+> +	status_reg = S0_ST_ADDR + s->hw_id * SN_ADDR_OFFSET;
+> +	ret = regmap_read(tmdev->map, status_reg, &code);
+>  	if (ret)
+>  		return ret;
+>  	last_temp = code & SN_ST_TEMP_MASK;
+> diff --git a/drivers/thermal/qcom/tsens-v2.c b/drivers/thermal/qcom/tsens-v2.c
+> index f40150fd7eae..908e3dcb2d5c 100644
+> --- a/drivers/thermal/qcom/tsens-v2.c
+> +++ b/drivers/thermal/qcom/tsens-v2.c
+> @@ -16,11 +16,11 @@ static int get_temp_tsens_v2(struct tsens_device *tmdev, int id, int *temp)
+>  {
+>  	struct tsens_sensor *s = &tmdev->sensor[id];
+>  	u32 code;
+> -	unsigned int sensor_addr;
+> +	unsigned int status_reg;
+>  	int last_temp = 0, last_temp2 = 0, last_temp3 = 0, ret;
+>  
+> -	sensor_addr = tmdev->tm_offset + STATUS_OFFSET + s->hw_id * 4;
+> -	ret = regmap_read(tmdev->map, sensor_addr, &code);
+> +	status_reg = tmdev->tm_offset + STATUS_OFFSET + s->hw_id * 4;
+> +	ret = regmap_read(tmdev->map, status_reg, &code);
+>  	if (ret)
+>  		return ret;
+>  	last_temp = code & LAST_TEMP_MASK;
+> @@ -28,7 +28,7 @@ static int get_temp_tsens_v2(struct tsens_device *tmdev, int id, int *temp)
+>  		goto done;
+>  
+>  	/* Try a second time */
+> -	ret = regmap_read(tmdev->map, sensor_addr, &code);
+> +	ret = regmap_read(tmdev->map, status_reg, &code);
+>  	if (ret)
+>  		return ret;
+>  	if (code & STATUS_VALID_BIT) {
+> @@ -39,7 +39,7 @@ static int get_temp_tsens_v2(struct tsens_device *tmdev, int id, int *temp)
+>  	}
+>  
+>  	/* Try a third/last time */
+> -	ret = regmap_read(tmdev->map, sensor_addr, &code);
+> +	ret = regmap_read(tmdev->map, status_reg, &code);
+>  	if (ret)
+>  		return ret;
+>  	if (code & STATUS_VALID_BIT) {
+> -- 
+> 2.17.GIT
+> 
