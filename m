@@ -2,91 +2,118 @@ Return-Path: <SRS0=7Z+k=KK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 702E7C28CF6
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 11:08:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03C1EC28CF6
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 11:11:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2C29E20883
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 11:08:53 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="MmCFWUrl"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2C29E20883
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
+	by mail.kernel.org (Postfix) with ESMTP id ACEDB20685
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 11:11:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ACEDB20685
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729405AbeGZMZK (ORCPT
+        id S1729342AbeGZM1u (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 26 Jul 2018 08:25:10 -0400
-Received: from us01smtprelay-2.synopsys.com ([198.182.47.9]:56583 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729074AbeGZMZK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Jul 2018 08:25:10 -0400
-Received: from mailhost.synopsys.com (mailhost1.synopsys.com [10.12.238.239])
-        by smtprelay.synopsys.com (Postfix) with ESMTP id 95D6424E1260;
-        Thu, 26 Jul 2018 04:08:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1532603329; bh=KMtM9l4/iOD6HkzJItyrJuwiy2ZLwIaDJEQTEhwJPMw=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MmCFWUrlJhMvx4RHaz6cBBkKRZXQl718tr0IninDSpsxEqlfG1Q1J4KR39kW3oDlx
-         Qujx9vkpaIbTdyOmlgVOUISKxIoRB+jsCJdltQ3N96QoPWR9/E1DcEew/0QXdXYi+4
-         Zhbo1vRSLdOuAnDCgHG1wvu09Jzz9S7oi0nDQF0RAWmh1HZoVGGxm5FzpIl4EyigN1
-         SJSEg8b2EXQJor8QJu92mikaxkkngWZqXmhx5LzFrhalneInRFQFpS+cHe0ZJQZc3t
-         hEN9bNwLrMWQeU6w4LxhdwKmT38bwMFHxbl0QXsV3JDQ3o+ydQ8fEWOek0A/9INYir
-         1krPNGRcTR57g==
-Received: from paltsev-e7480.internal.synopsys.com (paltsev-e7480.internal.synopsys.com [10.121.8.86])
-        by mailhost.synopsys.com (Postfix) with ESMTP id EA25352D0;
-        Thu, 26 Jul 2018 04:08:47 -0700 (PDT)
-From:   Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
-To:     linux-snps-arc@lists.infradead.org
-Cc:     linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-        Vineet Gupta <Vineet.Gupta1@synopsys.com>,
-        Alexey Brodkin <Alexey.Brodkin@synopsys.com>,
-        Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
-Subject: [PATCH 2/2] ARC: add SMP_CACHE_BYTES value validate
-Date:   Thu, 26 Jul 2018 14:08:39 +0300
-Message-Id: <20180726110839.1915-2-Eugeniy.Paltsev@synopsys.com>
-X-Mailer: git-send-email 2.14.4
-In-Reply-To: <20180726110839.1915-1-Eugeniy.Paltsev@synopsys.com>
-References: <20180726110839.1915-1-Eugeniy.Paltsev@synopsys.com>
+        Thu, 26 Jul 2018 08:27:50 -0400
+Received: from mga11.intel.com ([192.55.52.93]:56332 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729031AbeGZM1u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Jul 2018 08:27:50 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Jul 2018 04:11:29 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,404,1526367600"; 
+   d="asc'?scan'208";a="248536824"
+Received: from pipin.fi.intel.com (HELO localhost) ([10.237.68.37])
+  by fmsmga005.fm.intel.com with ESMTP; 26 Jul 2018 04:11:26 -0700
+From:   Felipe Balbi <balbi@kernel.org>
+To:     Xidong Wang <wangxidong_97@163.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Johan Hovold <johan@kernel.org>,
+        Michal Nazarewicz <mina86@mina86.com>,
+        Vincent Pelletier <plr.vincent@gmail.com>
+Cc:     wangxidong_97@163.com, linux-usb@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/1] usb:gadget:function:fix memory leak
+In-Reply-To: <1532344186-30505-1-git-send-email-wangxidong_97@163.com>
+References: <1532344186-30505-1-git-send-email-wangxidong_97@163.com>
+Date:   Thu, 26 Jul 2018 14:08:09 +0300
+Message-ID: <87fu061ch2.fsf@linux.intel.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; boundary="=-=-=";
+        micalg=pgp-sha512; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Check that SMP_CACHE_BYTES (and hence ARCH_DMA_MINALIGN) is larger
-or equal to any cache line length by comparing it with values
-previously read from ARC cache BCR registers.
+--=-=-=
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
----
- arch/arc/mm/cache.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
 
-diff --git a/arch/arc/mm/cache.c b/arch/arc/mm/cache.c
-index 9dbe645ee127..b95365e1253a 100644
---- a/arch/arc/mm/cache.c
-+++ b/arch/arc/mm/cache.c
-@@ -1246,6 +1246,16 @@ void __init arc_cache_init_master(void)
- 		}
- 	}
- 
-+	/*
-+	 * Check that SMP_CACHE_BYTES (and hence ARCH_DMA_MINALIGN) is larger
-+	 * or equal to any cache line length.
-+	 */
-+	BUILD_BUG_ON_MSG(L1_CACHE_BYTES > SMP_CACHE_BYTES,
-+			 "SMP_CACHE_BYTES must be >= any cache line length");
-+	if (is_isa_arcv2() && (l2_line_sz > SMP_CACHE_BYTES))
-+		panic("L2 Cache line [%d] > kernel Config [%d]\n",
-+		      l2_line_sz, SMP_CACHE_BYTES);
-+
- 	/* Note that SLC disable not formally supported till HS 3.0 */
- 	if (is_isa_arcv2() && l2_line_sz && !slc_enable)
- 		arc_slc_disable();
--- 
-2.14.4
+hi,
 
+Xidong Wang <wangxidong_97@163.com> writes:
+> In function f_audio_set_alt(), the memory allocated by
+> usb_ep_alloc_request() is not released on the error path
+> that req->buf, which holds the return value of kzalloc(),
+> is NULL. This will result in a memory leak bug.
+>
+> Signed-off-by: Xidong Wang <wangxidong_97@163.com>
+> ---
+>  drivers/usb/gadget/function/f_uac1_legacy.c | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/usb/gadget/function/f_uac1_legacy.c b/drivers/usb/ga=
+dget/function/f_uac1_legacy.c
+> index 24c086b..2fcdade 100644
+> --- a/drivers/usb/gadget/function/f_uac1_legacy.c
+> +++ b/drivers/usb/gadget/function/f_uac1_legacy.c
+> @@ -630,8 +630,11 @@ static int f_audio_set_alt(struct usb_function *f, u=
+nsigned intf, unsigned alt)
+>  							ERROR(cdev,
+>  							"%s queue req: %d\n",
+>  							out_ep->name, err);
+> -					} else
+> +					} else {
+> +						usb_ep_free_request(
+> +							out_ep, req);
+>  						err =3D -ENOMEM;
+> +					}
+
+I feel like this hunk has been ping ponging between having
+usb_ep_free_request() and not having it because completion callback will
+call usb_ep_free_request() or something along those lines.
+
+Can we get a final solution that solves all cases and doesn't introduce
+other bugs?
+
+=2D-=20
+balbi
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEElLzh7wn96CXwjh2IzL64meEamQYFAltZq5kACgkQzL64meEa
+mQbMPQ/+JMoKRBXYMh8ZQdgYRUkYM47HJzhCxgg6cOkGTLLmv73INF7e3m38kK5C
+bE9/LJLHzLZtuJs2mG2WbPHWEVQC1JXjTwm9frroz+XwNk1Jm1ZbN+d2Hio6TZQd
+GA0mkoavUnfdO+MQipG394KNnb4qdbRgfyY/eGRJm+Pqf0OzFcXKR0wZSyEzWpmU
+Zb18eRIr+TeD1R3O0JrXtrl2iGds7Ue9EdCVtj90Yu/Lsx/SMb+tmp8wL6235Vvs
+I74quqH2YqU8KKxRZW0Mc5F7r1WNjxMOEjNN1OKL/LikdL0RzhaJE4lmqmezQBp2
+xiOceBJPzGVqLB8X9svPVX02UZocimr92/fIB9FTjN/cmkg3IiyMz0GqNSODtufF
+89iENMIk9bCuuxTOM/zERbvYDA0m0UEV/QhjZxVCSOn/BaRAf4IsIUEVyzUNhq0V
+f6f7Yw4aLjXa0m+2HG5Bcu1rH18JH1WMgHi1ltLUYucnWXvM3W5sOztKXMhouDRm
+wax2HMdMmVxQeawNES0+KTMBbwtntmmD8GgLSK7w4gg/ciQxWTC4c83N21taPP8Q
+CWlKcXefuwT1HTErT83l6O/uhriNGjoym0xutO49F4ilBu/TtX/AR1xBkkVNagg6
+lXxjKatFDpdsVXKfJOyNCro6kKxzqaBop45z6YpFbz3hLcUq4iE=
+=DHiW
+-----END PGP SIGNATURE-----
+--=-=-=--
