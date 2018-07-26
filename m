@@ -2,118 +2,117 @@ Return-Path: <SRS0=7Z+k=KK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BBC7C28CF6
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 08:46:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 724B3C28CF6
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 08:48:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C0B002083F
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 08:46:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2179A2083F
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 08:48:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="1turvFTc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C0B002083F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="vIP8Bwnm"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2179A2083F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729231AbeGZKCU (ORCPT
+        id S1728998AbeGZKEF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 26 Jul 2018 06:02:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40868 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728827AbeGZKCU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Jul 2018 06:02:20 -0400
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 44C1120899;
-        Thu, 26 Jul 2018 08:46:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1532594790;
-        bh=ZPxEN8+KgSgCtyiilwStLAA/ddI0gqh5RTK6cdIxO0o=;
-        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
-        b=1turvFTcT2joYNrIs7BmFPhE4gqtOSo239ojjnvlIeqx/9vyBazPqcrKsg3n+P5X4
-         w+9VndL2J7AfSAUbxX5lND4vv30xYgAcTfSn8wlfZ5nH/s+EwSn/qa/Tjums8GwCiP
-         tqL/TDOp7f5PuglU4qi5i5h/fJlL9SjN97ubc56s=
-Received: by mail-wr1-f50.google.com with SMTP id j5-v6so862878wrr.8;
-        Thu, 26 Jul 2018 01:46:30 -0700 (PDT)
-X-Gm-Message-State: AOUpUlGk+6NYutiAGzLi+do1zQWz9dob96o3q1bMUM0QZ7mbIkSyLep0
-        JiDcEcDD7oa6S2EetrMSvj7EKgyNAMbeTK8OvLw=
-X-Google-Smtp-Source: AAOMgpdYoDqubdBbWWYaZeU7p+0YpwEWKKdM69FP0XVXlGj/CLAl7oLAHeWor10UAMu74L9la8hlAiYrDR2mDCMnajY=
-X-Received: by 2002:adf:9d81:: with SMTP id p1-v6mr874721wre.12.1532594788710;
- Thu, 26 Jul 2018 01:46:28 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:adf:9141:0:0:0:0:0 with HTTP; Thu, 26 Jul 2018 01:46:28
- -0700 (PDT)
-In-Reply-To: <9B9E1627-AC2E-4A0C-AB6E-5815876A59AB@oracle.com>
-References: <CAJKOXPd2rntNOpU1quR9Zm_J22+=pEaj4ZTC_tdZ0zcRYUciFg@mail.gmail.com>
- <CAPKp9uZ79ybkv7dMpcy2GQ9L+rWk+vdExQ48diWWQPOUdDQtSQ@mail.gmail.com>
- <CAJKOXPfX0CytKcYDaDAYYuCQjk-mcGjFRHfZco-wPQsc4G1agA@mail.gmail.com>
- <BCD39D7E-EEEC-4EB9-824E-63323C333C88@oracle.com> <CAJKOXPcw-i99_U-Ltuuf6w-WRK7V4gNqVSYkCMGFEXQG2DL2XQ@mail.gmail.com>
- <CAJKOXPf7V1z4pNZ2RsjkJmaVAgk34_rPOtQOc7J5KRMSRemrdg@mail.gmail.com>
- <082848F5-6360-4523-BA95-601777E17CF2@oracle.com> <CAJKOXPe4uqOZGd_zb_Mqq4Fspu63LHZky86O4tPaD3BZNCBS6w@mail.gmail.com>
- <6AAC5897-8762-4209-8718-67291B87AA00@oracle.com> <d617f8a85c3414230cd755fe0e4470c0f8bd17ff.camel@hammerspace.com>
- <26995E49-E8DD-421D-BABF-9E672B9383BD@oracle.com> <30a1455b6817361f8228c022628aef5cdee70c3e.camel@hammerspace.com>
- <784782B0-A387-4D3B-A517-E85D851162B8@oracle.com> <CAJKOXPfMiaGP9xqPcOQMs+a4RKvhK03v51e5r3GaUiFs0G=61Q@mail.gmail.com>
- <9B9E1627-AC2E-4A0C-AB6E-5815876A59AB@oracle.com>
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-Date:   Thu, 26 Jul 2018 10:46:28 +0200
-X-Gmail-Original-Message-ID: <CAJKOXPejStfaQdtUwh33v+aC7KpamoLkix3nitbHrDRx4QAR6g@mail.gmail.com>
-Message-ID: <CAJKOXPejStfaQdtUwh33v+aC7KpamoLkix3nitbHrDRx4QAR6g@mail.gmail.com>
-Subject: Re: [BUG BISECT] NFSv4 client fails on Flush Journal to Persistent Storage
-To:     Chuck Lever <chuck.lever@oracle.com>
-Cc:     Trond Myklebust <trondmy@hammerspace.com>,
-        "sudeep.holla@arm.com" <sudeep.holla@arm.com>,
-        Trond Myklebust <trond.myklebust@primarydata.com>,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        Bruce Fields <bfields@fieldses.org>,
-        Jeff Layton <jlayton@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "linux-samsung-soc@vger.kernel.org" 
-        <linux-samsung-soc@vger.kernel.org>
+        Thu, 26 Jul 2018 06:04:05 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:37958 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728827AbeGZKEF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Jul 2018 06:04:05 -0400
+Received: by mail-wm0-f66.google.com with SMTP id t25-v6so1136913wmi.3
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Jul 2018 01:48:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=message-id:subject:from:to:cc:date:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=KoJ2I3DC32SYhrBKLVnfySpcMC8X5ZJXhAPeDfTegZ0=;
+        b=vIP8BwnmHHkkrEgCvyhNT7G493oUFXd1ZUm9NOBe8CwKR32wtDRR6VGLx/uP5Mc0Sn
+         1uywz60pi7LXaLjxQiNA3DzRXJN5jsiIEDJNxzVEEsu0rO/7pLXsq/9ZnHeL5TUfZjkc
+         qLRNv32uVQI8wD1Lxw2O+720XutkkP+lAPFfoiLjmSBnvTZckR31W4eAR0tZCWndDTeM
+         ZxaZ3ssA7Av3maz8uomMv36BzDP/hH06CCbhHOxj6bS63mRyqJk6GdhpV6SllnNxzo+Z
+         gFUpuh86EHEP5GEZ97x8gx4mg4lIZDgkvQ3PTL0x2Z7nLt7q+kRJOM3opzu4AzvP/BfC
+         G+5A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=KoJ2I3DC32SYhrBKLVnfySpcMC8X5ZJXhAPeDfTegZ0=;
+        b=rlShfhc44FKTxhaKdQYH/C+WPHmfqsD+zCwpLVUuRcwbREI4h9fYvi9pu/Ug6EmT2T
+         yc8YQBjZtXCEhpbUeOYKjrPJNev7xxTvt+pTUvXZFV/o+ZYM/HwObzRFxOyQk8wnk2ru
+         6x6y2iEti0BidiP1tqM82e9vzalunF0vqsvX6MWpRyPunIWjR2qwFD3FKYh9zgFlT0QB
+         HEtjUA4bt/rXjAGv4enxaoEgCCxtGa194smbAxg7kTxgkwd1yHsrEINweUQaqInGTMrk
+         2zbl3wMEmoXYGyv+44DomRWkbyCxeyf2f0yan+cuZ+Jtvmm4Qz/Hr4qeIFi3hwfwpkfk
+         61Cg==
+X-Gm-Message-State: AOUpUlGUfZpGctD0D9e84zym2t3RkP6/fM0HXItFcUVYjpwovnr1aXbl
+        eV7rt2njxJCUq4YMumoNtgxoOw==
+X-Google-Smtp-Source: AAOMgpdYsNb+RoY2CKdglRfaQzjEp7fGI0cSRKzzb2JK1UexRTyXOXSAUf1tV5rUFbeyqvSU/p6S5Q==
+X-Received: by 2002:a1c:4004:: with SMTP id n4-v6mr889565wma.83.1532594894652;
+        Thu, 26 Jul 2018 01:48:14 -0700 (PDT)
+Received: from boomer ([90.63.244.31])
+        by smtp.gmail.com with ESMTPSA id w204-v6sm1439450wmw.5.2018.07.26.01.48.13
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 26 Jul 2018 01:48:14 -0700 (PDT)
+Message-ID: <190f2749c6e65fddcd2fd17ebdb45be5a434b869.camel@baylibre.com>
+Subject: Re: [PATCH 3/3] clk: meson: clk-pll: drop hard-coded rates from pll
+ tables
+From:   jbrunet@baylibre.com
+To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc:     Neil Armstrong <narmstrong@baylibre.com>,
+        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, khilman@baylibre.com
+Date:   Thu, 26 Jul 2018 10:48:12 +0200
+In-Reply-To: <CAFBinCD3i5pRzSp4Sx5349p_2XQfdCNguxU-gU1tD_asFu6YjA@mail.gmail.com>
+References: <20180717095617.12240-1-jbrunet@baylibre.com>
+         <20180717095617.12240-4-jbrunet@baylibre.com>
+         <d4e5e35a-39e0-fe27-8d27-387c5312ca32@baylibre.com>
+         <CAFBinCBc_cFD2ACiSHVuRrXaqSyDnkJb2rem1_k2jwved=QXVw@mail.gmail.com>
+         <1532206010.26720.84.camel@baylibre.com>
+         <CAFBinCD3i5pRzSp4Sx5349p_2XQfdCNguxU-gU1tD_asFu6YjA@mail.gmail.com>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.4 (3.28.4-1.fc28) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 25 July 2018 at 16:31, Chuck Lever <chuck.lever@oracle.com> wrote:
->
->
->> On Jul 25, 2018, at 9:27 AM, Krzysztof Kozlowski <krzk@kernel.org> wrote:
->>
->> On 18 June 2018 at 18:20, Chuck Lever <chuck.lever@oracle.com> wrote:
->>>
->>> The extra serialization appears to have a reproducible performance
->>> impact on RDMA, which no longer takes the reserve_lock when allocating
->>> a slot.
->>>
->>> I could put an xprt_alloc_xid call in xprt_alloc_slot, but that would
->>> only work for socket-based transports. Would it be OK if RDMA had its
->>> own XID allocation mechanism?
->>
->> Hi,
->>
->> On recent next the issue appeared again. My boards with NFSv4 root
->> timeout on 80% of boots. This time my NFS server is faster - Pi3 B+
->> :).
->>
->> Is this know? Should I start long bisect or maybe you can point me to
->> possible causes?
->
-> Hi Krzysztof, I don't know of any recent changes. Bisecting would be
-> a good place to start.
+On Sat, 2018-07-21 at 23:34 +0200, Martin Blumenstingl wrote:
+> On Sat, Jul 21, 2018 at 10:46 PM Jerome Brunet <jbrunet@baylibre.com> wrote:
+> > 
+> > On Sat, 2018-07-21 at 22:16 +0200, Martin Blumenstingl wrote:
+> > > > We could even add ranges instead of table when we know the PLL supports a well-known continuous dividers range.
+> > > 
+> > > I had a look at the sys_pll settings on Meson8b, here's what
+> > > Meson8/Meson8b/Meson8m2 support for sys_pll:
+> > > - 50..74
+> > > - 76
+> > > - 78
+> > > - 80
+> > > - 82
+> > > - 84
+> > > - 86
+> > > - 88
+> > > - 90
+> > > - 92
+> > > - 94
+> > > - 96
+> > > - 98
+> > 
+> > Are those values with the same predivider (n) value ?
+> 
+> yes, all are using n = 1
 
-Hi,
+The table proposed in this patch keeps things the way they were before the
+change. We could extend the table with these values in a follow up patch.
 
-That was my mistake because of missing part of NFS server
-configuration on new board. I tested again recent releases and current
-linux-next and everything works fine.
+If those value are with n=1, then I would guess that odd values from 75 to 97
+work as well. 
 
-Sorry for the noise.
 
-Best regards,
-Krzysztof
