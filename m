@@ -5,42 +5,40 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93570C6778F
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 00:25:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C804C6778F
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 00:26:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3B01220685
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 00:25:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3B01220685
+	by mail.kernel.org (Postfix) with ESMTP id 3747E20685
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 00:26:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3747E20685
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728501AbeGZBjh (ORCPT
+        id S1728542AbeGZBk2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 21:39:37 -0400
-Received: from gateway30.websitewelcome.com ([192.185.151.58]:43739 "EHLO
-        gateway30.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728358AbeGZBjh (ORCPT
+        Wed, 25 Jul 2018 21:40:28 -0400
+Received: from gateway20.websitewelcome.com ([192.185.53.25]:16889 "EHLO
+        gateway20.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727776AbeGZBk2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Jul 2018 21:39:37 -0400
+        Wed, 25 Jul 2018 21:40:28 -0400
 Received: from cm15.websitewelcome.com (cm15.websitewelcome.com [100.42.49.9])
-        by gateway30.websitewelcome.com (Postfix) with ESMTP id C34A644A7
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Jul 2018 19:25:27 -0500 (CDT)
+        by gateway20.websitewelcome.com (Postfix) with ESMTP id 49A4C400C81DF
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Jul 2018 19:26:18 -0500 (CDT)
 Received: from gator4166.hostgator.com ([108.167.133.22])
         by cmsmtp with SMTP
-        id iU5ifZX1kbXuJiU5pfg2my; Wed, 25 Jul 2018 19:25:27 -0500
+        id iU6YfZa1nbXuJiU6gfg5kJ; Wed, 25 Jul 2018 19:26:17 -0500
 X-Authority-Reason: nr=8
-Received: from [189.250.102.187] (port=47786 helo=[192.168.1.71])
+Received: from [189.250.102.187] (port=47800 helo=[192.168.1.71])
         by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
         (Exim 4.91)
         (envelope-from <gustavo@embeddedor.com>)
-        id 1fiU5h-000mlt-T1; Wed, 25 Jul 2018 19:25:14 -0500
-Subject: Re: [PATCH] reset: hisilicon: fix potential NULL pointer dereference
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Jiancheng Xue <xuejiancheng@hisilicon.com>,
-        Michael Turquette <mturquette@baylibre.com>
-Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20180719015845.GA10768@embeddedor.com>
- <153256235859.48062.6895683993866147909@swboyd.mtv.corp.google.com>
+        id 1fiU6Y-000nCT-Ke; Wed, 25 Jul 2018 19:26:06 -0500
+Subject: Re: [PATCH] fsi: master-ast-cf: Fix memory leak
+To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        linux-kernel@vger.kernel.org
+References: <20180725133832.GA20837@embeddedor.com>
+ <8fb34eab67d3c594fd49690a25c5c8072105417d.camel@kernel.crashing.org>
 From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=gustavo@embeddedor.com; keydata=
@@ -86,12 +84,12 @@ Autocrypt: addr=gustavo@embeddedor.com; keydata=
  YJWH93PN+ZUh6i6Rd2U/i8jH5WvzR57UeWxE4P8bQc0hNGrUsHQH6bpHV2lbuhDdqo+cM9eh
  GZEO3+gCDFmKrjspZjkJbB5Gadzvts5fcWGOXEvuT8uQSvl+vEL0g6vczsyPBtqoBLa9SNrS
  VtSixD1uOgytAP7RWS474w==
-Message-ID: <0d7972a9-a874-f94f-aafc-7067d561fafb@embeddedor.com>
-Date:   Wed, 25 Jul 2018 19:25:07 -0500
+Message-ID: <41c0844f-4fb1-c2df-a8c3-6ad49cb8be15@embeddedor.com>
+Date:   Wed, 25 Jul 2018 19:26:05 -0500
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <153256235859.48062.6895683993866147909@swboyd.mtv.corp.google.com>
+In-Reply-To: <8fb34eab67d3c594fd49690a25c5c8072105417d.camel@kernel.crashing.org>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -103,13 +101,13 @@ X-AntiAbuse: Sender Address Domain - embeddedor.com
 X-BWhitelist: no
 X-Source-IP: 189.250.102.187
 X-Source-L: No
-X-Exim-ID: 1fiU5h-000mlt-T1
+X-Exim-ID: 1fiU6Y-000nCT-Ke
 X-Source: 
 X-Source-Args: 
 X-Source-Dir: 
-X-Source-Sender: ([192.168.1.71]) [189.250.102.187]:47786
+X-Source-Sender: ([192.168.1.71]) [189.250.102.187]:47800
 X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 5
+X-Email-Count: 7
 X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
 X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
@@ -117,49 +115,25 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Stephen,
 
-On 07/25/2018 06:45 PM, Stephen Boyd wrote:
-> Quoting Gustavo A. R. Silva (2018-07-18 18:58:45)
->> There is a potential execution path in which function
->> platform_get_resource() returns NULL. If this happens,
->> we will end up having a NULL pointer dereference.
+
+On 07/25/2018 06:45 PM, Benjamin Herrenschmidt wrote:
+> On Wed, 2018-07-25 at 08:38 -0500, Gustavo A. R. Silva wrote:
+>> In case memory resources for *fw* were allocated, release them
+>> before return.
 >>
->> Fix this by adding asanity check in order to avoid a
->> NULL pointer dereference.
->>
->> This code was detected with the help of Coccinelle.
->>
->> Cc: stable@vger.kernel.org
->> Fixes: 97b7129cd2af ("reset: hisilicon: change the definition of hisi_reset_init")
+>> Addresses-Coverity-ID: 1472044 ("Resource leak")
+>> Fixes: 6a794a27daca ("fsi: master-ast-cf: Add new FSI master using Aspeed ColdFire")
 >> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
->> ---
->>  drivers/clk/hisilicon/reset.c | 3 +++
->>  1 file changed, 3 insertions(+)
->>
->> diff --git a/drivers/clk/hisilicon/reset.c b/drivers/clk/hisilicon/reset.c
->> index 2a5015c..5dfb48b 100644
->> --- a/drivers/clk/hisilicon/reset.c
->> +++ b/drivers/clk/hisilicon/reset.c
->> @@ -109,6 +109,9 @@ struct hisi_reset_controller *hisi_reset_init(struct platform_device *pdev)
->>                 return NULL;
->>  
->>         res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
->> +       if (!res)
->> +               return NULL;
->> +
->>         rstc->membase = devm_ioremap(&pdev->dev,
->>                                 res->start, resource_size(res));
 > 
-> Why can't we use devm_ioremap_resource() here instead?
+> Thanks Gustavo !
 > 
 
-You're right. I think we can perfectly use devm_ioremap_resource here and remove the null check.
+Glad to help. :)
 
-I'll send patch for this shortly.
+> I'll apply before I send my next pull request to Greg !
+> 
 
 Thanks
 --
 Gustavo
-
-
