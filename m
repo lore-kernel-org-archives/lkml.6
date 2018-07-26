@@ -2,109 +2,91 @@ Return-Path: <SRS0=7Z+k=KK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 159B7C28CF6
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 09:28:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD8ADC28CF6
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 09:28:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BEF1C2064D
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 09:28:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BEF1C2064D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	by mail.kernel.org (Postfix) with ESMTP id 7A6442064D
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 09:28:22 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="dCP1zEGy"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7A6442064D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729045AbeGZKoP (ORCPT
+        id S1729177AbeGZKoT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 26 Jul 2018 06:44:15 -0400
-Received: from mail-ua0-f195.google.com ([209.85.217.195]:41874 "EHLO
-        mail-ua0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728504AbeGZKoP (ORCPT
+        Thu, 26 Jul 2018 06:44:19 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:40680 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728688AbeGZKoS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Jul 2018 06:44:15 -0400
-Received: by mail-ua0-f195.google.com with SMTP id t14-v6so638783uao.8;
-        Thu, 26 Jul 2018 02:28:16 -0700 (PDT)
+        Thu, 26 Jul 2018 06:44:18 -0400
+Received: by mail-pg1-f193.google.com with SMTP id x5-v6so790013pgp.7
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Jul 2018 02:28:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=NoFDYHcbVaj1tOogJjEarKpuJ6WsCYKtNVsiPLendDE=;
+        b=dCP1zEGyeRmSFbFI9AF+c5WGm/d92Tz1IAf/WSxy5IhpJL+Y+QrThk04eBRVnGV6A8
+         BsqWZKhpLeh6x/XzRwV1/QBZOS6D2nUvVC6/rGrGyg3lcvHhOMMxwbFPV6UO6lo1MUsK
+         IOT2Y1kquu8E8BCvtFkC/qbBI92rVpI/x+yjY86VchMJN/BUgT8P9UaXc9xq73RPHAnD
+         3I6uzAppTD1zp0kcLDTPnxhpCeepttRFsfO+Rghl6Y1wP2S/B30hwefGIJXzUNvFy1yf
+         N3zAZ0ueZY5haxpaUstN9+vP+bP8O1+1WFfahNAKPg0GH4N50VJU7qUB8JJ+PHSynAhh
+         /P4Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
          :message-id:subject:to:cc;
-        bh=7hcen07q/AogxYhU47MbvqScCxdALLBWJ1zIesvZ2+M=;
-        b=YqIdJiOdAXiD0JhkAtTKhkWFa4IvSm5UC5wIucjgr0PuCmlcyd3XOz6RQ+BaZY5zyT
-         HiLYxlLel8C58FHyfGstBjkYWQPubxMmInr3a3IhFlsicdjNIg/y8PACfHidvb3ohXsl
-         /zzl7xe7indmXbL8nAtrybzy7nveDChgrsfLZ4Pd48Hc2dUoSagcTEx0V44yyx+degml
-         oA+ojl3F2gR0bIUmxkw13KfsIRH5kkUXMPBWXshs8bMJvlQmCDWHuA5rqcSxX4rqcU7R
-         iEabDtd9DkOWJ3fIE57C3sTbV5H1Q0vXUunJs7AW/I50VRv6O5PMKEib2Lzk3MbqYru0
-         m/KA==
-X-Gm-Message-State: AOUpUlG+n/YvDy9phAA57S01wmaVL5ZBWI/n/IS0JDXaBr1zhGFZszJm
-        u0hVu4q3vzJh2iXy+VgbQWRIPoJukqzmgRR8gEs=
-X-Google-Smtp-Source: AAOMgpfxlc3DfLwe8BY0ZutAVz5yteLtHtWQITQSoGJmp7U/aDuIqrU07uh1+XClg/0XhV6OcUacp6DW/b8FIzeIVnk=
-X-Received: by 2002:ab0:5b57:: with SMTP id v23-v6mr769356uae.72.1532597296074;
- Thu, 26 Jul 2018 02:28:16 -0700 (PDT)
+        bh=NoFDYHcbVaj1tOogJjEarKpuJ6WsCYKtNVsiPLendDE=;
+        b=uLFCpzU4D3WQcvI8E74o3oo+t+DgosK+9Yforf+DaK+RxImJ9kW7ZJTKBVMlFT56zU
+         zqm/uclFyNsVXEdZ0sKnlGBnjWOk1+Kdsd1smlDed8BjhWdcs3zlXT+66+Q/euOonpw2
+         7lCHakKRDRh3n0NOUy5LESqpX+BmwjsejKta0+tIlpF+s1PcGTIRaiqfq2w6m6oejqrc
+         nx7ektJLgn2Nslm4bomBmd68T31NOfwIELM8pYBPkfKdk2oi1Ys5z3wWNZu+Cu8KM+jW
+         tlOwdDeGNQ762MIF+mLMj/uA3IYQJvWx9rNiAmoNeaadNCd6by/zNojD/Zk9UQ4kKzHi
+         c4Dw==
+X-Gm-Message-State: AOUpUlHLeN/VYNVyTw6dmbSvUaSb4a0YzZThg/+QXzD/zxuusVTj29Pc
+        bl7t5huxvTah94wkykk/hp72T8PPWRSufkT9tV1cQQ==
+X-Google-Smtp-Source: AAOMgpek9Cfc14F9+ueY08vVdqyLkP+qjF+/1InIqKfIdzlTljYO4ywforKm9SkGJ+93tQi9AAL/HQ7dZb8LbsawC3E=
+X-Received: by 2002:a62:3184:: with SMTP id x126-v6mr1314811pfx.49.1532597299881;
+ Thu, 26 Jul 2018 02:28:19 -0700 (PDT)
 MIME-Version: 1.0
-References: <1532575736-20138-1-git-send-email-yamada.masahiro@socionext.com>
- <1532575736-20138-2-git-send-email-yamada.masahiro@socionext.com>
- <CAMuHMdUnYiLYO4hX3x6X7EZ8HnnOHXCPEUOXzPVJc=6s7VF+bQ@mail.gmail.com> <CAK7LNAT9nHCnq90tgomDnwF6RwSa9BGTnxqzgvVwqy-QBy+qxQ@mail.gmail.com>
-In-Reply-To: <CAK7LNAT9nHCnq90tgomDnwF6RwSa9BGTnxqzgvVwqy-QBy+qxQ@mail.gmail.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Thu, 26 Jul 2018 11:28:04 +0200
-Message-ID: <CAMuHMdX3zaeXsw799xnWKcZdVjP3r_n=NM-ihXzuSbnU5xF5jw@mail.gmail.com>
-Subject: Re: [PATCH 1/2] mmc: tmio: rename files and CONFIG options to have
- the same prefix
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Linux MMC List <linux-mmc@vger.kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Received: by 2002:a17:90a:ac14:0:0:0:0 with HTTP; Thu, 26 Jul 2018 02:27:59
+ -0700 (PDT)
+In-Reply-To: <20180726081727.GA6699@nautica>
+References: <20180726081049.10527-1-tomasbortoli@gmail.com> <20180726081727.GA6699@nautica>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Thu, 26 Jul 2018 11:27:59 +0200
+Message-ID: <CACT4Y+ark+0EYSZaOX-qDKpOkyfLgSO9CkidZzx=xkUuhpr65A@mail.gmail.com>
+Subject: Re: [PATCH] 9p: fix NULL pointer dereferences
+To:     Dominique Martinet <asmadeus@codewreck.org>
+Cc:     Tomas Bortoli <tomasbortoli@gmail.com>,
+        David Miller <davem@davemloft.net>,
+        v9fs-developer@lists.sourceforge.net,
+        netdev <netdev@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        syzkaller <syzkaller@googlegroups.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Yamada-san,
-
-On Thu, Jul 26, 2018 at 11:15 AM Masahiro Yamada
-<yamada.masahiro@socionext.com> wrote:
-> 2018-07-26 17:25 GMT+09:00 Geert Uytterhoeven <geert@linux-m68k.org>:
-> > On Thu, Jul 26, 2018 at 5:33 AM Masahiro Yamada
-> > <yamada.masahiro@socionext.com> wrote:
-> >> This commit renames files as follows:
-> >>
-> >>   tmio_mmc_core.c              -> tmio_mmc.c
-> >>   tmio_mmc.c                   -> tmio_mmc_original.c
-> >>   renesas_sdhi_core.c          -> tmio_mmc_sdhi.c
-> >>   renesas_sdhi.h               -> tmio_mmc_sdhi.h
-> >>   renesas_sdhi_internal_dmac.c -> tmio_mmc_sdhi_internal_dmac.c
-> >>   renesas_sdhi_sys_dmac.c      -> tmio_mmc_sdhi_sys_dmac.c
-> >
-> > I have mixed feelings about the last two renames, especially about the last
-> > one: SYS-DMAC is very Renesas-specific, as it's a separate IP block in
-> > Renesas SoCs.
-
-> > 2. Are there other SoCs using an external DMAC?
+On Thu, Jul 26, 2018 at 10:17 AM, Dominique Martinet
+<asmadeus@codewreck.org> wrote:
+> Tomas Bortoli wrote on Thu, Jul 26, 2018:
+>> In p9_fd_create_tcp() and p9_fd_create_unix() it is possible to get
+>> a NULL value in the addr parameter. Return -EINVAL in such cases.
 >
-> Yes.  Some old SoCs in UniPhier SoC family rely on
-> the external DMAC, like renesas_sdhi_sys_dmac.c
+> Let's refuse that at much higher level, like v9fs_mount() in
+> fs/9p/vfs_super.c
 >
-> >    Is the interface to the external DMAC similar?
-> >    If yes, perhaps it should be renamed to tmio_mmc_sdhi_external_dmac.c?
->
-> "sdhi" is already Renesas-specific name, isn't it?
+> I can't think of any valid reason for dev_name to be NULL, it's the
+> target IP or virtio handle.
 
-Right, I'm mixing up SDHI and SDHC.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+But I think trans=fd allows NULL addr today, no?
