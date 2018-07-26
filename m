@@ -2,119 +2,135 @@ Return-Path: <SRS0=7Z+k=KK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04D2FC28CF6
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 18:41:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DDADC6778F
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 18:42:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AF8F720671
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 18:41:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 452B020671
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 18:42:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="WdfGxrtW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AF8F720671
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="arOTTObm"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 452B020671
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731431AbeGZT7E (ORCPT
+        id S1731343AbeGZUAx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 26 Jul 2018 15:59:04 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:38151 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730392AbeGZT7D (ORCPT
+        Thu, 26 Jul 2018 16:00:53 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:45694 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728207AbeGZUAx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Jul 2018 15:59:03 -0400
-Received: by mail-pg1-f193.google.com with SMTP id k3-v6so1681763pgq.5
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Jul 2018 11:40:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=yk5e62ysGPUJo7nY3lUkpM1H+ez4pnW8tmDHWTGtWMQ=;
-        b=WdfGxrtWzfTHVCzUFnsSBg+y0K+op8YAdyApbgQnzmA7bEfJiiGvffIeEw8t3VEnt8
-         UtUKXyYEqeI+rw64JEK5Ff8F1IQxJeO0YuxleM+SrJOokfFgWiPN4gVtNAecpckeIYGM
-         d8AHTdtaPEZGPe1AYLyrnUHILhPuV2ILGHkWQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=yk5e62ysGPUJo7nY3lUkpM1H+ez4pnW8tmDHWTGtWMQ=;
-        b=IFlaNeXQF3/NIrN7EKi0AtA3J6tndbnooHOtz4khty9UA1xVlyzRgNHcf8Qw4p8fgT
-         N141ityVBD/MplqwswAiTj4UVJrU9xWiPm13Gb0NXzvfcgcgZLUou/bIO3fLtyARARuK
-         Ke4jPfqu62D3v6yOlu3CJKfh8RqFa6eJq+7H6jGdQqG2bGBURpGeRPjqdK+dxOHYiNg1
-         dySiVQoT4KYn4HWCpVFlOJfNQNrwJ3ItKCvs02mUOZ/gskAlZCmBwrT92S0LQq869IJa
-         G8L1IkzKE7c5a0f4wvVyvmBDjJ8GrJmhqG4kE0Hrf+QGhIo+EInGOG+MLxTWdJG5KRNw
-         bjaw==
-X-Gm-Message-State: AOUpUlF5e/QCLlyot6m+x6O1KjQSBYuqQY/8stee1MrTsIFfyQbhN4bW
-        3IxkJY8+AMAo0kxSPI/r9/2I
-X-Google-Smtp-Source: AAOMgpcoPnf7WjmjmBZFdWeDUMWwRMN4EJ0sD9Eu1sIbyKHE0HwN6bN3rEZIuo09R9Fyf1na2hRUCw==
-X-Received: by 2002:a62:da07:: with SMTP id c7-v6mr3272916pfh.106.1532630458951;
-        Thu, 26 Jul 2018 11:40:58 -0700 (PDT)
-Received: from Mani-XPS-13-9360 ([2409:4072:628e:aef6:6d51:3501:dada:e06d])
-        by smtp.gmail.com with ESMTPSA id h24-v6sm4097947pfk.113.2018.07.26.11.40.51
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 26 Jul 2018 11:40:58 -0700 (PDT)
-Date:   Fri, 27 Jul 2018 00:10:48 +0530
-From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To:     Saravanan Sekar <sravanhome@gmail.com>
-Cc:     linus.walleij@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        afaerber@suse.de, catalin.marinas@arm.com, will.deacon@arm.com,
-        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        pn@denx.de, mp-cs@actions-semi.com, jeff.chen@actions-semi.com,
-        thomas.liau@actions-semi.com, linux@cubietech.com
-Subject: Re: [PATCH 5/5] arm64: dts: actions: Add pinctrl node for Actions
- Semi S700
-Message-ID: <20180726184048.GG5220@Mani-XPS-13-9360>
-References: <20180722163601.28346-1-sravanhome@gmail.com>
- <20180722163601.28346-6-sravanhome@gmail.com>
+        Thu, 26 Jul 2018 16:00:53 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w6QIdPtT087581;
+        Thu, 26 Jul 2018 18:41:04 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=XksFvEa4qtN6dX3cv826jX28nJp5tgiVyhdQqP1EueM=;
+ b=arOTTObm5bU3L7FnFPFAi+k0mxMFlt2lVFdtVv8b3qrMbrvy7mvaGhKpmuYAxsj+JKdF
+ Lw2Ztan3cRSDB3Cs+VdDRXFYG3GJl+yQNUBefXDLQjwb7mcGFaXPokajon1iv1qjF7r4
+ DTInn7eSQ84is/jO+3WowudpwGLokKR/OvKEwUtFQQMFVMrxRfwjZczTGdyN8nNTS/BJ
+ NLtp32zDFJpiArJO/DduVUy8l5uMyyM6YGr+A+wYd/Tefl2wy0+SgrTAlH6LeqdIX6SX
+ 0iUfep4eYFpp30hQXjDhVtXA5pusUegFUlDcdgZUq0FImSQCU9OdaZofjPKe0BMjYVgO wQ== 
+Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
+        by userp2130.oracle.com with ESMTP id 2kbv8tcd2e-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 26 Jul 2018 18:41:04 +0000
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w6QIf145018153
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 26 Jul 2018 18:41:02 GMT
+Received: from abhmp0012.oracle.com (abhmp0012.oracle.com [141.146.116.18])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w6QIeqIB023467;
+        Thu, 26 Jul 2018 18:40:53 GMT
+Received: from [192.168.1.164] (/50.38.38.67)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 26 Jul 2018 11:40:51 -0700
+Subject: Re: [PATCH v4 01/11] hugetlb: Harmonize hugetlb.h arch specific
+ defines with pgtable.h
+To:     Alexandre Ghiti <alex@ghiti.fr>, linux@armlinux.org.uk,
+        catalin.marinas@arm.com, will.deacon@arm.com, tony.luck@intel.com,
+        fenghua.yu@intel.com, ralf@linux-mips.org, paul.burton@mips.com,
+        jhogan@kernel.org, jejb@parisc-linux.org, deller@gmx.de,
+        benh@kernel.crashing.org, paulus@samba.org, mpe@ellerman.id.au,
+        ysato@users.sourceforge.jp, dalias@libc.org, davem@davemloft.net,
+        tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
+        x86@kernel.org, arnd@arndb.de,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-ia64@vger.kernel.org, linux-mips@linux-mips.org,
+        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
+        linux-arch@vger.kernel.org
+References: <20180705110716.3919-1-alex@ghiti.fr>
+ <20180705110716.3919-2-alex@ghiti.fr>
+From:   Mike Kravetz <mike.kravetz@oracle.com>
+Message-ID: <1f95fdc7-378b-9c2a-15ae-da78578a27bf@oracle.com>
+Date:   Thu, 26 Jul 2018 11:40:49 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180722163601.28346-6-sravanhome@gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20180705110716.3919-2-alex@ghiti.fr>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8965 signatures=668706
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=997
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1806210000 definitions=main-1807260191
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-On Sun, Jul 22, 2018 at 06:36:01PM +0200, Saravanan Sekar wrote:
-> Add pinctrl nodes for Actions Semi S700 SoC
+On 07/05/2018 04:07 AM, Alexandre Ghiti wrote:
+> asm-generic/hugetlb.h proposes generic implementations of hugetlb
+> related functions: use __HAVE_ARCH_HUGE* defines in order to make arch
+> specific implementations of hugetlb functions consistent with pgtable.h
+> scheme.
 > 
-> Signed-off-by: Parthiban Nallathambi <pn@denx.de>
-> Signed-off-by: Saravanan Sekar <sravanhome@gmail.com>
+
+Reviewed-by: Mike Kravetz <mike.kravetz@oracle.com>
+-- 
+Mike Kravetz
+
+> Signed-off-by: Alexandre Ghiti <alex@ghiti.fr>
 > ---
->  arch/arm64/boot/dts/actions/s700.dtsi | 6 ++++++
->  1 file changed, 6 insertions(+)
+>  arch/arm64/include/asm/hugetlb.h | 2 +-
+>  include/asm-generic/hugetlb.h    | 2 +-
+>  2 files changed, 2 insertions(+), 2 deletions(-)
 > 
-> diff --git a/arch/arm64/boot/dts/actions/s700.dtsi b/arch/arm64/boot/dts/actions/s700.dtsi
-> index 59d29e4ca404..88edac21e03f 100644
-> --- a/arch/arm64/boot/dts/actions/s700.dtsi
-> +++ b/arch/arm64/boot/dts/actions/s700.dtsi
-> @@ -179,5 +179,11 @@
->  			interrupts = <GIC_SPI 11 IRQ_TYPE_LEVEL_HIGH>;
->  			interrupt-names = "timer1";
->  		};
-> +
-> +		pinctrl: pinctrl@e01b0000 {
-> +			compatible = "actions,s700-pinctrl";
-> +			reg = <0x0 0xe01b0000 0x0 0x1000>;
-> +			clocks = <&cmu CLK_GPIO>;
-> +		};
-
-Driver/binding/dts are inconsistent. Driver seems to support pinctrl +
-gpio + irq but there is no gpio/irq property in dts patch.
-
-Please correct it.
-
-Thanks,
-Mani
-
->  	};
->  };
-> -- 
-> 2.18.0
+> diff --git a/arch/arm64/include/asm/hugetlb.h b/arch/arm64/include/asm/hugetlb.h
+> index e73f68569624..3fcf14663dfa 100644
+> --- a/arch/arm64/include/asm/hugetlb.h
+> +++ b/arch/arm64/include/asm/hugetlb.h
+> @@ -81,9 +81,9 @@ extern void huge_ptep_set_wrprotect(struct mm_struct *mm,
+>  				    unsigned long addr, pte_t *ptep);
+>  extern void huge_ptep_clear_flush(struct vm_area_struct *vma,
+>  				  unsigned long addr, pte_t *ptep);
+> +#define __HAVE_ARCH_HUGE_PTE_CLEAR
+>  extern void huge_pte_clear(struct mm_struct *mm, unsigned long addr,
+>  			   pte_t *ptep, unsigned long sz);
+> -#define huge_pte_clear huge_pte_clear
+>  extern void set_huge_swap_pte_at(struct mm_struct *mm, unsigned long addr,
+>  				 pte_t *ptep, pte_t pte, unsigned long sz);
+>  #define set_huge_swap_pte_at set_huge_swap_pte_at
+> diff --git a/include/asm-generic/hugetlb.h b/include/asm-generic/hugetlb.h
+> index 9d0cde8ab716..3da7cff52360 100644
+> --- a/include/asm-generic/hugetlb.h
+> +++ b/include/asm-generic/hugetlb.h
+> @@ -32,7 +32,7 @@ static inline pte_t huge_pte_modify(pte_t pte, pgprot_t newprot)
+>  	return pte_modify(pte, newprot);
+>  }
+>  
+> -#ifndef huge_pte_clear
+> +#ifndef __HAVE_ARCH_HUGE_PTE_CLEAR
+>  static inline void huge_pte_clear(struct mm_struct *mm, unsigned long addr,
+>  		    pte_t *ptep, unsigned long sz)
+>  {
 > 
