@@ -6,45 +6,45 @@ X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16F56C28CF6
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 05:54:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57054C28CF6
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 05:54:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BB8E82083F
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 05:54:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 020642083F
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 05:54:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ayzi1uHC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BB8E82083F
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="YwvR5OUh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 020642083F
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728774AbeGZHJa (ORCPT
+        id S1728804AbeGZHJ5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 26 Jul 2018 03:09:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41932 "EHLO mail.kernel.org"
+        Thu, 26 Jul 2018 03:09:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41998 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726621AbeGZHJ3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Jul 2018 03:09:29 -0400
+        id S1725973AbeGZHJ5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Jul 2018 03:09:57 -0400
 Received: from localhost.localdomain (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5D71120673;
-        Thu, 26 Jul 2018 05:54:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AA5EF20673;
+        Thu, 26 Jul 2018 05:54:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1532584458;
-        bh=eHwI0ng+pmHI7r/Ggdmu5fRAJLJoFCrBnflPkF8v0WY=;
+        s=default; t=1532584486;
+        bh=4zaIMSVVNCi9yAKoiNscAPuhM6jhSQ6xbwdzSe00xE0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ayzi1uHC/NMYVAtXFH6tWRYGkV7Po7zd5ALKsX1g+y1/TbV5vbKl06F85rgDSY/dE
-         CUMomyxGQ1jETTiAtmBUMAHHqUPVJH4UmPrnPAFyKIqGJSNzwyu5vz0pnvY1oRvTUs
-         YY0ASQ2o1lP9H1sic84bAWAFN6Nk+E6BFYiUhuH8=
+        b=YwvR5OUhf9Bg/66Ylom+WJ8ABoa9SPPYl7yzXU4zGCuihFgjoIXZRFto2WipzeN4a
+         55V/hCnjW+7rmoRLtrxjejonKsnq6TBWQdEzmw3+6wXXJlXgoU7i7PRw0LA04Hrg97
+         kTjajjAWoSRyZNZRfZxE5zxYzuV0w0dlIUkzwb+g=
 From:   Masami Hiramatsu <mhiramat@kernel.org>
 To:     rostedt@goodmis.org,
         Francis Deslauriers <francis.deslauriers@efficios.com>,
         peterz@infradead.org
 Cc:     mhiramat@kernel.org, mathieu.desnoyers@efficios.com,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v2 2/3] selftest/ftrace: Move kprobe selftest function to separate compile unit
-Date:   Thu, 26 Jul 2018 14:53:55 +0900
-Message-Id: <153258443533.11602.8446454305778389593.stgit@devbox>
+Subject: [PATCH v2 3/3] selftests/ftrace: Fix kprobe string testcase to not probe notrace function
+Date:   Thu, 26 Jul 2018 14:54:23 +0900
+Message-Id: <153258446365.11602.5245508133014563916.stgit@devbox>
 X-Mailer: git-send-email 2.13.6
 In-Reply-To: <153258437722.11602.12405835083073480618.stgit@devbox>
 References: <153258437722.11602.12405835083073480618.stgit@devbox>
@@ -57,96 +57,76 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Francis Deslauriers <francis.deslauriers@efficios.com>
+Fix kprobe string argument testcase to not probe notrace
+function. Instead, it probes tracefs function which must
+be available with ftrace.
 
-Move selftest function to its own compile unit so it can be compiled
-with the ftrace cflags (CC_FLAGS_FTRACE) allowing it to be probed
-during the ftrace startup tests.
-
-Signed-off-by: Francis Deslauriers <francis.deslauriers@efficios.com>
-Acked-by: Masami Hiramatsu <mhiramat@kernel.org>
+Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
 ---
- kernel/trace/Makefile                |    5 +++++
- kernel/trace/trace_kprobe.c          |   12 +-----------
- kernel/trace/trace_kprobe_selftest.c |   10 ++++++++++
- kernel/trace/trace_kprobe_selftest.h |    7 +++++++
- 4 files changed, 23 insertions(+), 11 deletions(-)
- create mode 100644 kernel/trace/trace_kprobe_selftest.c
- create mode 100644 kernel/trace/trace_kprobe_selftest.h
+ .../ftrace/test.d/kprobe/kprobe_args_string.tc     |   30 ++++++++------------
+ 1 file changed, 12 insertions(+), 18 deletions(-)
 
-diff --git a/kernel/trace/Makefile b/kernel/trace/Makefile
-index e2538c7638d4..e38771eccb2f 100644
---- a/kernel/trace/Makefile
-+++ b/kernel/trace/Makefile
-@@ -13,6 +13,11 @@ obj-y += trace_selftest_dynamic.o
- endif
- endif
+diff --git a/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_args_string.tc b/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_args_string.tc
+index a0002563e9ee..1ad70cdaf442 100644
+--- a/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_args_string.tc
++++ b/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_args_string.tc
+@@ -9,28 +9,22 @@ echo > kprobe_events
  
-+ifdef CONFIG_FTRACE_STARTUP_TEST
-+CFLAGS_trace_kprobe_selftest.o = $(CC_FLAGS_FTRACE)
-+obj-$(CONFIG_KPROBE_EVENTS) += trace_kprobe_selftest.o
-+endif
-+
- # If unlikely tracing is enabled, do not trace these files
- ifdef CONFIG_TRACING_BRANCHES
- KBUILD_CFLAGS += -DDISABLE_BRANCH_PROFILING
-diff --git a/kernel/trace/trace_kprobe.c b/kernel/trace/trace_kprobe.c
-index 1f1b4d712a7e..859f7c310a00 100644
---- a/kernel/trace/trace_kprobe.c
-+++ b/kernel/trace/trace_kprobe.c
-@@ -23,6 +23,7 @@
- #include <linux/rculist.h>
- #include <linux/error-injection.h>
+ case `uname -m` in
+ x86_64)
+-  ARG2=%si
+-  OFFS=8
++  ARG1=%di
+ ;;
+ i[3456]86)
+-  ARG2=%cx
+-  OFFS=4
++  ARG1=%ax
+ ;;
+ aarch64)
+-  ARG2=%x1
+-  OFFS=8
++  ARG1=%x0
+ ;;
+ arm*)
+-  ARG2=%r1
+-  OFFS=4
++  ARG1=%r0
+ ;;
+ ppc64*)
+-  ARG2=%r4
+-  OFFS=8
++  ARG1=%r3
+ ;;
+ ppc*)
+-  ARG2=%r4
+-  OFFS=4
++  ARG1=%r3
+ ;;
+ *)
+   echo "Please implement other architecture here"
+@@ -38,17 +32,17 @@ ppc*)
+ esac
  
-+#include "trace_kprobe_selftest.h"
- #include "trace_probe.h"
+ : "Test get argument (1)"
+-echo "p:testprobe create_trace_kprobe arg1=+0(+0(${ARG2})):string" > kprobe_events
++echo "p:testprobe tracefs_create_dir arg1=+0(${ARG1}):string" > kprobe_events
+ echo 1 > events/kprobes/testprobe/enable
+-! echo test >> kprobe_events
+-tail -n 1 trace | grep -qe "testprobe.* arg1=\"test\""
++echo "p:test _do_fork" >> kprobe_events
++grep -qe "testprobe.* arg1=\"test\"" trace
  
- #define KPROBE_EVENT_SYSTEM "kprobes"
-@@ -1573,17 +1574,6 @@ fs_initcall(init_kprobe_trace);
+ echo 0 > events/kprobes/testprobe/enable
+ : "Test get argument (2)"
+-echo "p:testprobe create_trace_kprobe arg1=+0(+0(${ARG2})):string arg2=+0(+${OFFS}(${ARG2})):string" > kprobe_events
++echo "p:testprobe tracefs_create_dir arg1=+0(${ARG1}):string arg2=+0(${ARG1}):string" > kprobe_events
+ echo 1 > events/kprobes/testprobe/enable
+-! echo test1 test2 >> kprobe_events
+-tail -n 1 trace | grep -qe "testprobe.* arg1=\"test1\" arg2=\"test2\""
++echo "p:test _do_fork" >> kprobe_events
++grep -qe "testprobe.* arg1=\"test\" arg2=\"test\"" trace
  
- 
- #ifdef CONFIG_FTRACE_STARTUP_TEST
--/*
-- * The "__used" keeps gcc from removing the function symbol
-- * from the kallsyms table. 'noinline' makes sure that there
-- * isn't an inlined version used by the test method below
-- */
--static __used __init noinline int
--kprobe_trace_selftest_target(int a1, int a2, int a3, int a4, int a5, int a6)
--{
--	return a1 + a2 + a3 + a4 + a5 + a6;
--}
--
- static __init struct trace_event_file *
- find_trace_probe_file(struct trace_kprobe *tk, struct trace_array *tr)
- {
-diff --git a/kernel/trace/trace_kprobe_selftest.c b/kernel/trace/trace_kprobe_selftest.c
-new file mode 100644
-index 000000000000..16548ee4c8c6
---- /dev/null
-+++ b/kernel/trace/trace_kprobe_selftest.c
-@@ -0,0 +1,10 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Function used during the kprobe self test. This function is in a separate
-+ * compile unit so it can be compile with CC_FLAGS_FTRACE to ensure that it
-+ * can be probed by the selftests.
-+ */
-+int kprobe_trace_selftest_target(int a1, int a2, int a3, int a4, int a5, int a6)
-+{
-+	return a1 + a2 + a3 + a4 + a5 + a6;
-+}
-diff --git a/kernel/trace/trace_kprobe_selftest.h b/kernel/trace/trace_kprobe_selftest.h
-new file mode 100644
-index 000000000000..4e10ec41c013
---- /dev/null
-+++ b/kernel/trace/trace_kprobe_selftest.h
-@@ -0,0 +1,7 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Function used during the kprobe self test. This function is in a separate
-+ * compile unit so it can be compile with CC_FLAGS_FTRACE to ensure that it
-+ * can be probed by the selftests.
-+ */
-+int kprobe_trace_selftest_target(int a1, int a2, int a3, int a4, int a5, int a6);
+ echo 0 > events/enable
+ echo > kprobe_events
 
