@@ -2,124 +2,159 @@ Return-Path: <SRS0=7Z+k=KK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2BEEC6778F
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 03:49:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56F9CC28CF6
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 03:57:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0085A20883
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 03:49:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EBED320891
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 03:57:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="wPq+CKvg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0085A20883
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=alliedtelesis.co.nz
+	dkim=pass (2048-bit key) header.d=runbox.com header.i=@runbox.com header.b="krXtVxbp"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EBED320891
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=runbox.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728365AbeGZFDw (ORCPT
+        id S1727976AbeGZFMF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 26 Jul 2018 01:03:52 -0400
-Received: from gate2.alliedtelesis.co.nz ([202.36.163.20]:42521 "EHLO
-        gate2.alliedtelesis.co.nz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725859AbeGZFDw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Jul 2018 01:03:52 -0400
-Received: from mmarshal3.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id 6FB548365F;
-        Thu, 26 Jul 2018 15:49:03 +1200 (NZST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
-        s=mail; t=1532576943;
-        bh=98jP5YHVHAjqI3Oq91Op9KVY+xbxTdaiIWi2O+5j7QA=;
-        h=From:To:Cc:Subject:Date;
-        b=wPq+CKvg7x5mjoAe8PyLRRx2G3q/Z69IzR4MbnhkEjNLMW9P+SU6JT1vL03SeR4tc
-         QbTQ0ysguSV8IZzcXX0OaQlVlwa/+mFo5uLUiTwC6kaibZwosu408D6TEtmNmpJ++d
-         Gshu/yUldZICag3Wil1dtsu3K67JpXgtIGvvTWVA=
-Received: from smtp (Not Verified[10.32.16.33]) by mmarshal3.atlnz.lc with Trustwave SEG (v7,5,8,10121)
-        id <B5b5944af0000>; Thu, 26 Jul 2018 15:49:03 +1200
-Received: from chrisp-dl.ws.atlnz.lc (chrisp-dl.ws.atlnz.lc [10.33.22.30])
-        by smtp (Postfix) with ESMTP id 6481B13ED1C;
-        Thu, 26 Jul 2018 15:49:04 +1200 (NZST)
-Received: by chrisp-dl.ws.atlnz.lc (Postfix, from userid 1030)
-        id 04CEA1E262C; Thu, 26 Jul 2018 15:49:02 +1200 (NZST)
-From:   Chris Packham <chris.packham@alliedtelesis.co.nz>
-To:     jason@lakedaemon.net, andrew@lunn.ch, gregory.clement@bootlin.com,
-        sebastian.hesselbarth@gmail.com, linux@armlinux.org.uk,
-        ylefloch@online.net
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Chris Packham <chris.packham@alliedtelesis.co.nz>
-Subject: [PATCH v5] ARM: mvebu: use dt_fixup to provide fallback for enable-method
-Date:   Thu, 26 Jul 2018 15:48:56 +1200
-Message-Id: <20180726034856.20743-1-chris.packham@alliedtelesis.co.nz>
-X-Mailer: git-send-email 2.18.0
+        Thu, 26 Jul 2018 01:12:05 -0400
+Received: from aibo.runbox.com ([91.220.196.211]:47576 "EHLO aibo.runbox.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725782AbeGZFMF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Jul 2018 01:12:05 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=runbox.com;
+         s=rbselector1; h=References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From;
+         bh=eFj8LP/eX8tJKM8GfNYDflcRqf/cD7t38qwhUB9BaGw=; b=krXtVxbpnEtgaB4jPntuuyBlg
+        x2mNPXWSMW6rG9Hp1l8dOwqA2P711k0w/7oyRuvIYJllKovbQt+QSVHJlaVv8IEc24eAY4X5lyRhY
+        0+tU9HDaKy1QhBcoK6tnrXzu/cylzv8X+9T0ScQxDD3LcY7ttajqqmhXmLhfMbK3TZ0ramaUJrrxx
+        ae4y4IsS0kvBpHai07kh5FD0056xslMtkazrzCGjprsq+wNADPXQF5PbApwNvlAWD+sQHDWL0l9tV
+        rnxspfDvfcAxydIE6B3SBd2U41qUTP0tVbXGGp8/eojQQ6oT9fm8jS0unPu+OiJxkDTcplWM1ppvi
+        C6i3HN7PA==;
+Received: from [10.9.9.210] (helo=mailfront10.runbox.com)
+        by mailtransmit02.runbox with esmtp (Exim 4.86_2)
+        (envelope-from <m.v.b@runbox.com>)
+        id 1fiXOn-0000jv-Tt; Thu, 26 Jul 2018 05:57:10 +0200
+Received: by mailfront10.runbox.com with esmtpsa  (uid:769847 )  (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.82)
+        id 1fiXOl-0007Rb-BQ; Thu, 26 Jul 2018 05:57:07 +0200
+From:   "M. Vefa Bicakci" <m.v.b@runbox.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        "M . Vefa Bicakci" <m.v.b@runbox.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Juergen Gross <jgross@suse.com>,
+        xen-devel@lists.xenproject.org, x86@kernel.org,
+        stable@vger.kernel.org
+Subject: [PATCH v3] xen/pv: Call get_cpu_address_sizes to set x86_virt/phys_bits
+Date:   Wed, 25 Jul 2018 23:56:56 -0400
+Message-Id: <20180726035656.6088-1-m.v.b@runbox.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180724124547.32562-1-m.v.b@runbox.com>
+References: <20180724124547.32562-1-m.v.b@runbox.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We need to maintain backwards compatibility with device trees that don't
-define an enable method. At the same time we want the device tree to be
-able to specify an enable-method and have it stick.
+Commit d94a155c59c9 ("x86/cpu: Prevent cpuinfo_x86::x86_phys_bits
+adjustment corruption") has moved the query and calculation of the
+x86_virt_bits and x86_phys_bits fields of the cpuinfo_x86 struct
+from the get_cpu_cap function to a new function named
+get_cpu_address_sizes.
 
-Previously by having smp assigned in the DT_MACHINE definition this
-would be picked up by setup_arch() and override whatever
-arm_dt_init_cpu_maps() had configured. Now we move the initial
-assignment of default smp_ops to a dt_fixup and let
-arm_dt_init_cpu_maps() override that if the device tree defines an
-enable-method.
+One of the call sites related to Xen PV VMs was unfortunately missed
+in the aforementioned commit. This prevents successful boot-up of
+kernel versions 4.17 and up in Xen PV VMs if CONFIG_DEBUG_VIRTUAL
+is enabled, due to the following code path:
 
-Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
+  enlighten_pv.c::xen_start_kernel
+    mmu_pv.c::xen_reserve_special_pages
+      page.h::__pa
+        physaddr.c::__phys_addr
+          physaddr.h::phys_addr_valid
+
+phys_addr_valid uses boot_cpu_data.x86_phys_bits to validate physical
+addresses. boot_cpu_data.x86_phys_bits is no longer populated before
+the call to xen_reserve_special_pages due to the aforementioned commit
+though, so the validation performed by phys_addr_valid fails, which
+causes __phys_addr to trigger a BUG, preventing boot-up.
+
+Signed-off-by: M. Vefa Bicakci <m.v.b@runbox.com>
+Reviewed-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Juergen Gross <jgross@suse.com>
+Cc: xen-devel@lists.xenproject.org
+Cc: x86@kernel.org
+Cc: stable@vger.kernel.org # for v4.17 and up
+Fixes: d94a155c59c9 ("x86/cpu: Prevent cpuinfo_x86::x86_phys_bits adjustment corruption")
+
 ---
-Pervious versions
 
-v1: http://lists.infradead.org/pipermail/linux-arm-kernel/2014-November/300182.html
-v2: http://lists.infradead.org/pipermail/linux-arm-kernel/2014-November/300480.html
-v3: http://lists.infradead.org/pipermail/linux-arm-kernel/2014-November/302945.html
-v4: http://lists.infradead.org/pipermail/linux-arm-kernel/2014-November/303899.html
+Changes since v1:
+- Move the call to get_cpu_address_sizes below the call to
+  x86_configure_nx.
+- Amend the commit message to describe why PV VMs do not boot up
+  successfully when CONFIG_DEBUG_VIRTUAL is enabled.
 
-Changes since v4:
-- drop "RFC"
+Changes since v2:
+- Add a Reviewed-by tag to note Boris Ostrovsky's code review.
+- Rebase onto next-20180725.
+---
+ arch/x86/kernel/cpu/common.c | 2 +-
+ arch/x86/kernel/cpu/cpu.h    | 1 +
+ arch/x86/xen/enlighten_pv.c  | 3 +++
+ 3 files changed, 5 insertions(+), 1 deletion(-)
 
- arch/arm/mach-mvebu/board-v7.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
-
-diff --git a/arch/arm/mach-mvebu/board-v7.c b/arch/arm/mach-mvebu/board-v7.c
-index ccca95173e17..5bbde5e5258e 100644
---- a/arch/arm/mach-mvebu/board-v7.c
-+++ b/arch/arm/mach-mvebu/board-v7.c
-@@ -145,6 +145,11 @@ static void __init mvebu_dt_init(void)
- 		i2c_quirk();
+diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
+index f73fa6f6d85e..dd282482de09 100644
+--- a/arch/x86/kernel/cpu/common.c
++++ b/arch/x86/kernel/cpu/common.c
+@@ -911,7 +911,7 @@ void get_cpu_cap(struct cpuinfo_x86 *c)
+ 	apply_forced_caps(c);
  }
  
-+static void __init armada_370_xp_dt_fixup(void)
-+{
-+	smp_set_ops(smp_ops(armada_xp_smp_ops));
-+}
-+
- static const char * const armada_370_xp_dt_compat[] __initconst = {
- 	"marvell,armada-370-xp",
- 	NULL,
-@@ -153,17 +158,12 @@ static const char * const armada_370_xp_dt_compat[] __initconst = {
- DT_MACHINE_START(ARMADA_370_XP_DT, "Marvell Armada 370/XP (Device Tree)")
- 	.l2c_aux_val	= 0,
- 	.l2c_aux_mask	= ~0,
--/*
-- * The following field (.smp) is still needed to ensure backward
-- * compatibility with old Device Trees that were not specifying the
-- * cpus enable-method property.
-- */
--	.smp		= smp_ops(armada_xp_smp_ops),
- 	.init_machine	= mvebu_dt_init,
- 	.init_irq       = mvebu_init_irq,
- 	.restart	= mvebu_restart,
- 	.reserve        = mvebu_memblock_reserve,
- 	.dt_compat	= armada_370_xp_dt_compat,
-+	.dt_fixup	= armada_370_xp_dt_fixup,
- MACHINE_END
+-static void get_cpu_address_sizes(struct cpuinfo_x86 *c)
++void get_cpu_address_sizes(struct cpuinfo_x86 *c)
+ {
+ 	u32 eax, ebx, ecx, edx;
  
- static const char * const armada_375_dt_compat[] __initconst = {
+diff --git a/arch/x86/kernel/cpu/cpu.h b/arch/x86/kernel/cpu/cpu.h
+index 38216f678fc3..12a5f0cec0b2 100644
+--- a/arch/x86/kernel/cpu/cpu.h
++++ b/arch/x86/kernel/cpu/cpu.h
+@@ -46,6 +46,7 @@ extern const struct cpu_dev *const __x86_cpu_dev_start[],
+ 			    *const __x86_cpu_dev_end[];
+ 
+ extern void get_cpu_cap(struct cpuinfo_x86 *c);
++extern void get_cpu_address_sizes(struct cpuinfo_x86 *c);
+ extern void cpu_detect_cache_sizes(struct cpuinfo_x86 *c);
+ extern void init_scattered_cpuid_features(struct cpuinfo_x86 *c);
+ extern u32 get_scattered_cpuid_leaf(unsigned int level,
+diff --git a/arch/x86/xen/enlighten_pv.c b/arch/x86/xen/enlighten_pv.c
+index 105a57d73701..ee3b00c7acda 100644
+--- a/arch/x86/xen/enlighten_pv.c
++++ b/arch/x86/xen/enlighten_pv.c
+@@ -1256,6 +1256,9 @@ asmlinkage __visible void __init xen_start_kernel(void)
+ 	get_cpu_cap(&boot_cpu_data);
+ 	x86_configure_nx();
+ 
++	/* Determine virtual and physical address sizes */
++	get_cpu_address_sizes(&boot_cpu_data);
++
+ 	/* Let's presume PV guests always boot on vCPU with id 0. */
+ 	per_cpu(xen_vcpu_id, 0) = 0;
+ 
 -- 
-2.18.0
+2.17.1
 
