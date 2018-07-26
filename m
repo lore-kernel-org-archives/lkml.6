@@ -6,111 +6,110 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E39BC6778F
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 12:55:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85517C6778F
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 12:55:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1646B2083F
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 12:55:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1646B2083F
+	by mail.kernel.org (Postfix) with ESMTP id 40C0620846
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 12:55:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 40C0620846
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730036AbeGZOLn (ORCPT
+        id S1730197AbeGZOLq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 26 Jul 2018 10:11:43 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:54952 "EHLO
+        Thu, 26 Jul 2018 10:11:46 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:54966 "EHLO
         foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729506AbeGZOLn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Jul 2018 10:11:43 -0400
+        id S1729506AbeGZOLp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Jul 2018 10:11:45 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4430815A2;
-        Thu, 26 Jul 2018 05:54:59 -0700 (PDT)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D625D15B2;
+        Thu, 26 Jul 2018 05:55:00 -0700 (PDT)
 Received: from en101.Emea.Arm.com (en101.Emea.Arm.com [10.4.13.23])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id E3A303F6A8;
-        Thu, 26 Jul 2018 05:54:57 -0700 (PDT)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 81B073F6A8;
+        Thu, 26 Jul 2018 05:54:59 -0700 (PDT)
 From:   Suzuki K Poulose <suzuki.poulose@arm.com>
 To:     linux-arm-kernel@lists.infradead.org
 Cc:     linux-kernel@vger.kernel.org, mathieu.poirier@linaro.org,
         mike.leach@linaro.org, robert.walker@arm.com,
         coresight@lists.linaro.org,
         Suzuki K Poulose <suzuki.poulose@arm.com>
-Subject: [PATCH v3 00/13] coresight: perf: Support for TMC ETR backend
-Date:   Thu, 26 Jul 2018 13:54:38 +0100
-Message-Id: <1532609691-16863-1-git-send-email-suzuki.poulose@arm.com>
+Subject: [PATCH v3 01/13] coresight: Fix handling of sinks
+Date:   Thu, 26 Jul 2018 13:54:39 +0100
+Message-Id: <1532609691-16863-2-git-send-email-suzuki.poulose@arm.com>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1532609691-16863-1-git-send-email-suzuki.poulose@arm.com>
+References: <1532609691-16863-1-git-send-email-suzuki.poulose@arm.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This series adds the support for using the tmc-etr in perf mode for
-storing the trace to system RAM. The ETR uses a separate buffer (double
-buffering) for storing the trace. This is copied back to the ring buffer
-when the event is stopped. We try to match the ETR buffer to the larger
-of perf ring buffer or the size configured for the ETR via sysfs. This
-allows tuning the buffer size to prevent overflows and loosing trace
-data, as we don't have overflow interrupt support (yet).
+The coresight components could be operated either in sysfs mode or in perf
+mode. For some of the components, the mode of operation doesn't matter as
+they simply relay the data to the next component in the trace path. But for
+sinks, they need to be able to provide the trace data back to the user.
+Thus we need to make sure that "mode" is handled appropriately. e.g,
+the sysfs mode could have multiple sources driving the trace data, while
+perf mode doesn't allow sharing the sink.
 
-Applies on coresight/next
+The coresight_enable_sink() however doesn't really allow this check to
+trigger as it skips the "enable_sink" callback if the component is
+already enabled, irrespective of the mode. This could cause mixing
+of data from different modes or even same mode (in perf), if the
+sources are different. Also, if we fail to enable the sink while
+enabling a path (where sink is the first component enabled),
+we could end up in disabling the components in the "entire"
+path which were not enabled in this trial, causing disruptions
+in the existing trace paths.
 
-Changes since v2:
- - Split hotplug lock cleanup from per-cpu path management
- - Add support for tracing on hotplugged CPUs (based on patch by Mathieu)
- - Fix handling of perf mode in etb10 driver
- - Fix CS_UNLOCK() typo in ETR perf driver
- - Rename call backs from tmc_etr_<op>_perf_buffer => tmc_<op>_etr_buffer
-   to be consistent with ETF driver
- - Modify the commit description for removing set_buffer call back.
+Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
+Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+---
+ drivers/hwtracing/coresight/coresight.c | 22 +++++++++++++++-------
+ 1 file changed, 15 insertions(+), 7 deletions(-)
 
-Changes since v1 :
- - Fix path for each CPU where the event might be recorded.
- - Handle errors in enabling source
- - Remove set_buffer callback to avoid complicating the error handling.
- - Fix a bug in handling sysfs mode specific buffers
-
-Changes since [0] :
- - Drop buffer rotation logic for etr-buf
- - Do not use perf ring buffer. (Add support later)
- - Fix handling of sink, preventing mixed modes of operation.
-
-[0] - TMC ETR perf support
- - http://lists.infradead.org/pipermail/linux-arm-kernel/2018-May/574875.html
-
-
-Suzuki K Poulose (13):
-  coresight: Fix handling of sinks
-  coresight: etb10: Fix handling of perf mode
-  coresight: perf: Fix per cpu path management
-  coresight: perf: Avoid unncessary CPU hotplug read lock
-  coresight: perf: Allow tracing on hotplugged CPUs
-  coresight: perf: Disable trace path upon source error
-  coresight: tmc-etr: Handle driver mode specific ETR buffers
-  coresight: tmc-etr: Relax collection of trace from sysfs mode
-  coresight: Convert driver messages to dev_dbg
-  coresight: perf: Remove reset_buffer call back for sinks
-  coresight: perf: Add helper to retrieve sink configuration
-  coresight: perf: Remove set_buffer call back
-  coresight: etm-perf: Add support for ETR backend
-
- .../coresight/coresight-dynamic-replicator.c       |   4 +-
- drivers/hwtracing/coresight/coresight-etb10.c      | 100 +++----
- drivers/hwtracing/coresight/coresight-etm-perf.c   | 134 +++++----
- drivers/hwtracing/coresight/coresight-etm-perf.h   |  26 ++
- drivers/hwtracing/coresight/coresight-etm3x.c      |   4 +-
- drivers/hwtracing/coresight/coresight-etm4x.c      |   4 +-
- drivers/hwtracing/coresight/coresight-funnel.c     |   4 +-
- drivers/hwtracing/coresight/coresight-priv.h       |   2 +-
- drivers/hwtracing/coresight/coresight-replicator.c |   4 +-
- drivers/hwtracing/coresight/coresight-stm.c        |   4 +-
- drivers/hwtracing/coresight/coresight-tmc-etf.c    |  94 +++---
- drivers/hwtracing/coresight/coresight-tmc-etr.c    | 327 ++++++++++++++++++---
- drivers/hwtracing/coresight/coresight-tmc.c        |   4 +-
- drivers/hwtracing/coresight/coresight-tmc.h        |   4 +
- drivers/hwtracing/coresight/coresight-tpiu.c       |   6 +-
- drivers/hwtracing/coresight/coresight.c            |  31 +-
- include/linux/coresight.h                          |  12 +-
- 17 files changed, 517 insertions(+), 247 deletions(-)
-
+diff --git a/drivers/hwtracing/coresight/coresight.c b/drivers/hwtracing/coresight/coresight.c
+index 3e07fd3..c0dabbd 100644
+--- a/drivers/hwtracing/coresight/coresight.c
++++ b/drivers/hwtracing/coresight/coresight.c
+@@ -132,12 +132,14 @@ static int coresight_enable_sink(struct coresight_device *csdev, u32 mode)
+ {
+ 	int ret;
+ 
+-	if (!csdev->enable) {
+-		if (sink_ops(csdev)->enable) {
+-			ret = sink_ops(csdev)->enable(csdev, mode);
+-			if (ret)
+-				return ret;
+-		}
++	/*
++	 * We need to make sure the "new" session is compatible with the
++	 * existing "mode" of operation.
++	 */
++	if (sink_ops(csdev)->enable) {
++		ret = sink_ops(csdev)->enable(csdev, mode);
++		if (ret)
++			return ret;
+ 		csdev->enable = true;
+ 	}
+ 
+@@ -339,8 +341,14 @@ int coresight_enable_path(struct list_head *path, u32 mode)
+ 		switch (type) {
+ 		case CORESIGHT_DEV_TYPE_SINK:
+ 			ret = coresight_enable_sink(csdev, mode);
++			/*
++			 * Sink is the first component turned on. If we
++			 * failed to enable the sink, there are no components
++			 * that need disabling. Disabling the path here
++			 * would mean we could disrupt an existing session.
++			 */
+ 			if (ret)
+-				goto err;
++				goto out;
+ 			break;
+ 		case CORESIGHT_DEV_TYPE_SOURCE:
+ 			/* sources are enabled from either sysFS or Perf */
 -- 
 2.7.4
 
