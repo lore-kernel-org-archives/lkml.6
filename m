@@ -2,127 +2,130 @@ Return-Path: <SRS0=7Z+k=KK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B510AC6778F
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 13:09:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F4FEC6778F
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 13:10:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7845B20685
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 13:09:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7845B20685
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id B8C9E20844
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 13:10:14 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="wnn8j3ax"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B8C9E20844
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730524AbeGZO0E (ORCPT
+        id S1730581AbeGZO1A (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 26 Jul 2018 10:26:04 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:52334 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729820AbeGZO0D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Jul 2018 10:26:03 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 7D129818B107;
-        Thu, 26 Jul 2018 13:09:13 +0000 (UTC)
-Received: from localhost (ovpn-8-16.pek2.redhat.com [10.72.8.16])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id AEE36111AF3C;
-        Thu, 26 Jul 2018 13:09:07 +0000 (UTC)
-Date:   Thu, 26 Jul 2018 21:09:04 +0800
-From:   Baoquan He <bhe@redhat.com>
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, robh+dt@kernel.org,
-        dan.j.williams@intel.com, nicolas.pitre@linaro.org,
-        josh@joshtriplett.org, fengguang.wu@intel.com, bp@suse.de,
-        andy.shevchenko@gmail.com, patrik.r.jakobsson@gmail.com,
-        airlied@linux.ie, kys@microsoft.com, haiyangz@microsoft.com,
-        sthemmin@microsoft.com, dmitry.torokhov@gmail.com,
-        frowand.list@gmail.com, keith.busch@intel.com,
-        jonathan.derrick@intel.com, lorenzo.pieralisi@arm.com,
-        bhelgaas@google.com, tglx@linutronix.de, brijesh.singh@amd.com,
-        jglisse@redhat.com, thomas.lendacky@amd.com,
-        gregkh@linuxfoundation.org, baiyaowei@cmss.chinamobile.com,
-        richard.weiyang@gmail.com, devel@linuxdriverproject.org,
-        linux-input@vger.kernel.org, linux-nvdimm@lists.01.org,
-        devicetree@vger.kernel.org, linux-pci@vger.kernel.org,
-        ebiederm@xmission.com, vgoyal@redhat.com, dyoung@redhat.com,
-        yinghai@kernel.org, monstr@monstr.eu, davem@davemloft.net,
-        chris@zankel.net, jcmvbkbc@gmail.com, gustavo@padovan.org,
-        maarten.lankhorst@linux.intel.com, seanpaul@chromium.org,
-        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        kexec@lists.infradead.org
-Subject: Re: [PATCH v7 4/4] kexec_file: Load kernel at top of system RAM if
- required
-Message-ID: <20180726130904.GL6480@MiWiFi-R3L-srv>
-References: <20180718024944.577-1-bhe@redhat.com>
- <20180718024944.577-5-bhe@redhat.com>
- <20180718153326.b795e9ea7835432a56cd7011@linux-foundation.org>
- <20180719151753.GB7147@localhost.localdomain>
- <20180723143443.GD18181@dhcp22.suse.cz>
- <20180725064813.GI6480@MiWiFi-R3L-srv>
- <20180726125957.GH28386@dhcp22.suse.cz>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180726125957.GH28386@dhcp22.suse.cz>
-User-Agent: Mutt/1.9.1 (2017-09-22)
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Thu, 26 Jul 2018 13:09:13 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Thu, 26 Jul 2018 13:09:13 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'bhe@redhat.com' RCPT:''
+        Thu, 26 Jul 2018 10:27:00 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:57986 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729820AbeGZO1A (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Jul 2018 10:27:00 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
+        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
+        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
+        List-Archive; bh=8VyZDXMXt83KYDgfescPh94aaZGKRVVsy/IBbLFkV+0=; b=wnn8j3axJfuH
+        wqkRC0EJZFrPVWYn2OQCXvkJ93X13Jp1azqztJxhP3n11F/mm7cSUjOr3ZqfcA8D1kJNFltWGW8M1
+        xgwfWSuyZz7l3Hpad2LMCG+iRj+C1aC5jYU+LjNtiJQnhvyX8x3er1C6WISeRHT5FclI7EmSoQbOp
+        7h8Yk=;
+Received: from 92.40.249.3.threembb.co.uk ([92.40.249.3] helo=finisterre.ee.mobilebroadband)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1fig1f-0007bs-JC; Thu, 26 Jul 2018 13:09:51 +0000
+Received: by finisterre.ee.mobilebroadband (Postfix, from userid 1000)
+        id 2C983440078; Thu, 26 Jul 2018 14:09:50 +0100 (BST)
+From:   Mark Brown <broonie@kernel.org>
+To:     Akshu Agrawal <akshu.agrawal@amd.com>
+Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Mark Brown <broonie@kernel.org>,
+        "moderated list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM..." 
+        <alsa-devel@alsa-project.org>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        open list <linux-kernel@vger.kernel.org>,
+        Takashi Iwai <tiwai@suse.com>,
+        Daniel Kurtz <djkurtz@chromium.org>,
+        Mark Brown <broonie@kernel.org>,
+        Wei Yongjun <weiyongjun1@huawei.com>,
+        "Mukunda, Vijendar" <Vijendar.Mukunda@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        akshu.agrawal@amd.com, alsa-devel@alsa-project.org
+Subject: Applied "ASoC: AMD: Fix build warning" to the asoc tree
+In-Reply-To:  <1532585060-26060-1-git-send-email-akshu.agrawal@amd.com>
+Message-Id: <20180726130950.2C983440078@finisterre.ee.mobilebroadband>
+Date:   Thu, 26 Jul 2018 14:09:50 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/26/18 at 02:59pm, Michal Hocko wrote:
-> On Wed 25-07-18 14:48:13, Baoquan He wrote:
-> > On 07/23/18 at 04:34pm, Michal Hocko wrote:
-> > > On Thu 19-07-18 23:17:53, Baoquan He wrote:
-> > > > Kexec has been a formal feature in our distro, and customers owning
-> > > > those kind of very large machine can make use of this feature to speed
-> > > > up the reboot process. On uefi machine, the kexec_file loading will
-> > > > search place to put kernel under 4G from top to down. As we know, the
-> > > > 1st 4G space is DMA32 ZONE, dma, pci mmcfg, bios etc all try to consume
-> > > > it. It may have possibility to not be able to find a usable space for
-> > > > kernel/initrd. From the top down of the whole memory space, we don't
-> > > > have this worry. 
-> > > 
-> > > I do not have the full context here but let me note that you should be
-> > > careful when doing top-down reservation because you can easily get into
-> > > hotplugable memory and break the hotremove usecase. We even warn when
-> > > this is done. See memblock_find_in_range_node
-> > 
-> > Kexec read kernel/initrd file into buffer, just search usable positions
-> > for them to do the later copying. You can see below struct kexec_segment, 
-> > for the old kexec_load, kernel/initrd are read into user space buffer,
-> > the @buf stores the user space buffer address, @mem stores the position
-> > where kernel/initrd will be put. In kernel, it calls
-> > kimage_load_normal_segment() to copy user space buffer to intermediate
-> > pages which are allocated with flag GFP_KERNEL. These intermediate pages
-> > are recorded as entries, later when user execute "kexec -e" to trigger
-> > kexec jumping, it will do the final copying from the intermediate pages
-> > to the real destination pages which @mem pointed. Because we can't touch
-> > the existed data in 1st kernel when do kexec kernel loading. With my
-> > understanding, GFP_KERNEL will make those intermediate pages be
-> > allocated inside immovable area, it won't impact hotplugging. But the
-> > @mem we searched in the whole system RAM might be lost along with
-> > hotplug. Hence we need do kexec kernel again when hotplug event is
-> > detected.
-> 
-> I am not sure I am following. If @mem is placed at movable node then the
-> memory hotremove simply won't work, because we are seeing reserved pages
-> and do not know what to do about them. They are not migrateable.
-> Allocating intermediate pages from other nodes doesn't really help.
+The patch
 
-OK, I forgot the 2nd kernel which kexec jump into. It won't impact hotremove
-in 1st kernel, it does impact the kernel which kexec jump into if kernel
-is at top of system RAM and the top RAM is in movable node.
+   ASoC: AMD: Fix build warning
 
-> 
-> The memblock code warns exactly for that reason.
-> -- 
-> Michal Hocko
-> SUSE Labs
+has been applied to the asoc tree at
+
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From 7699676081ded2e149e798f9205f1f089aa3a6bc Mon Sep 17 00:00:00 2001
+From: Akshu Agrawal <akshu.agrawal@amd.com>
+Date: Thu, 26 Jul 2018 14:04:08 +0800
+Subject: [PATCH] ASoC: AMD: Fix build warning
+
+Fixes
+sound/soc/amd/acp-da7219-max98357a.c: In function 'cz_probe':
+sound/soc/amd/acp-da7219-max98357a.c:367:3: warning: 'ret' may
+be used uninitialized in this function [-Wmaybe-uninitialized]
+   dev_err(&pdev->dev, "Failed to register regulator: %d\n",
+ret);
+
+Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Signed-off-by: Akshu Agrawal <akshu.agrawal@amd.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ sound/soc/amd/acp-da7219-max98357a.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/sound/soc/amd/acp-da7219-max98357a.c b/sound/soc/amd/acp-da7219-max98357a.c
+index cd3cf6e691a9..8e3275a96a82 100644
+--- a/sound/soc/amd/acp-da7219-max98357a.c
++++ b/sound/soc/amd/acp-da7219-max98357a.c
+@@ -365,7 +365,7 @@ static int cz_probe(struct platform_device *pdev)
+ 				       &acp_da7219_cfg);
+ 	if (IS_ERR(rdev)) {
+ 		dev_err(&pdev->dev, "Failed to register regulator: %d\n",
+-			ret);
++			(int)PTR_ERR(rdev));
+ 		return -EINVAL;
+ 	}
+ 
+-- 
+2.18.0
+
