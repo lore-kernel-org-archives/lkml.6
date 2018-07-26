@@ -2,117 +2,113 @@ Return-Path: <SRS0=7Z+k=KK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23A0CC28CF6
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 09:13:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4719EC6778F
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 09:13:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BD35D20846
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 09:13:02 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="Grev2y/o"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BD35D20846
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=szeredi.hu
+	by mail.kernel.org (Postfix) with ESMTP id 0C0FD2064D
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 09:13:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0C0FD2064D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729053AbeGZK2z (ORCPT
+        id S1729155AbeGZK3n (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 26 Jul 2018 06:28:55 -0400
-Received: from mail-oi0-f67.google.com ([209.85.218.67]:37438 "EHLO
-        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728690AbeGZK2y (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Jul 2018 06:28:54 -0400
-Received: by mail-oi0-f67.google.com with SMTP id k81-v6so1717587oib.4
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Jul 2018 02:13:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=wgkDB5feRXNC5Soq1tGPC03sJitTi8zmsSbhym3idY0=;
-        b=Grev2y/opSG6xbf7Xa4Gxut63kmCKcw0WV3sd1d+Ec1Bl1FtHZn9ZGTXLvBC1eICkP
-         u1drlfljtV34XzfdRAyXGOu/YtO/MyuECl8SxZ9CWgl3zZsO/WXUY6c+1MwXnHWnTT/A
-         9SIHXUu3YGgYWKwkyVdLzN4OtFEirvz/4GXEA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=wgkDB5feRXNC5Soq1tGPC03sJitTi8zmsSbhym3idY0=;
-        b=XJE6Pjs7ExVL+wt77BkfTb5lo77JLP7jvFaqjl9D+yqboSNodL/4zN2hcBhKSXnfKG
-         T90KyNu52njMyTj35JuMoe1evcUmWTzCzE7oR+5pfagPmVHwyb7fjEJPYiBAoPVyo6O7
-         Av2QJQJCl5o6n6NLnUafTK+tOJ+x0qXbrfY0gZMpee2kXEwGBIFdF32wgLqfF7FGFdJB
-         39cU14X6gltmwvF12t5oE2loEiLQnacxW5VeQMUHXv1DleFutYBbUiLDd6nWMBg7dnL6
-         knoaz39o/WCU7B7my37LIYiOigZTxSUlgQuuyLCPefuktCUSo7LkFC0fXfm2mW9YN5+S
-         lDRg==
-X-Gm-Message-State: AOUpUlHt3iMI6djI4/v7mrGACKGE1a9G/spEtaEO2JjSi7N/HwO/2b7D
-        50KqUlwE3/Aq4hcHO2t0PUQqWAm7H6Js0Katj+WAYQ==
-X-Google-Smtp-Source: AAOMgpf/Nh3T2ZYspfl6Ala3DZkXlqt4+NGnbam+XXOTp5nOO7WCRsVyC4i3DB/pGd1fyWwNVbTWgGAkUYyao2S5ST4=
-X-Received: by 2002:aca:d04b:: with SMTP id h72-v6mr1033922oig.17.1532596380011;
- Thu, 26 Jul 2018 02:13:00 -0700 (PDT)
+        Thu, 26 Jul 2018 06:29:43 -0400
+Received: from verein.lst.de ([213.95.11.211]:35518 "EHLO newverein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728600AbeGZK3n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Jul 2018 06:29:43 -0400
+Received: by newverein.lst.de (Postfix, from userid 2407)
+        id 1B68D68D64; Thu, 26 Jul 2018 11:17:32 +0200 (CEST)
+Date:   Thu, 26 Jul 2018 11:17:32 +0200
+From:   Christoph Hellwig <hch@lst.de>
+To:     Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+Cc:     linux-snps-arc@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-arch@vger.kernel.org,
+        Vineet Gupta <Vineet.Gupta1@synopsys.com>,
+        Alexey Brodkin <Alexey.Brodkin@synopsys.com>, hch@lst.de
+Subject: Re: [PATCH 3/4] ARC: refactor arch/arc/mm/dma.c
+Message-ID: <20180726091731.GC24209@lst.de>
+References: <20180724101001.31965-1-Eugeniy.Paltsev@synopsys.com> <20180724101001.31965-4-Eugeniy.Paltsev@synopsys.com>
 MIME-Version: 1.0
-Received: by 2002:a9d:113c:0:0:0:0:0 with HTTP; Thu, 26 Jul 2018 02:12:59
- -0700 (PDT)
-X-Originating-IP: [212.96.48.140]
-In-Reply-To: <CAJfpegvp8xEJc2-MkQvS-HEhtTAt-sZb1VvDPPUx1c+FdqcjEg@mail.gmail.com>
-References: <000000000000bc17b60571a60434@google.com> <CACT4Y+bKU8f4jVENYHX=fzNVd95A4vce2F=UCV12paVNFv-LNg@mail.gmail.com>
- <CAJfpegsKWGZ4LVeQXrrCr47+Bch4yfOWcWMFSniQsRzjRof=RQ@mail.gmail.com>
- <CACT4Y+ZbRi=0kRiR-j-SkngsB_QuALfnOX5nGF4agQD-weFsew@mail.gmail.com>
- <CAJfpegs0by5OJ7iqtg6L3T1w2RrFRiU6yRufVNbt=tNpJCbf2A@mail.gmail.com>
- <CACT4Y+bSnJjtgeLdusj6czbH8080XfRs2b8L0V4R0TAixqxX6Q@mail.gmail.com>
- <CAJfpegvYHYUMdo14J_of10rmg0krjd_eiATJ3D4+XqaNys9bqQ@mail.gmail.com>
- <CACT4Y+Y2ec4-ywG+FWocir6XXkwt-11qD+SAFwswtG2Ng6BS4A@mail.gmail.com>
- <CAJfpeguni8JReXKXU_yUFqBfHav1-JFHfHzhxc=kaXu3ME6Qsw@mail.gmail.com>
- <CACT4Y+YiGEX7_naGDTDNWCKnjQAisYrmBOYNejasfidaCRP7xA@mail.gmail.com>
- <CAJfpegtXhRmSTxEbvGZGUCORoxKvsjeJEfFtUEzGuC76ZE3rmA@mail.gmail.com>
- <CACT4Y+ZZ_v6izsiCGym=r+MiRmxaFE=eH54dz7t0BOQ7VxTNiw@mail.gmail.com> <CAJfpegvp8xEJc2-MkQvS-HEhtTAt-sZb1VvDPPUx1c+FdqcjEg@mail.gmail.com>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Thu, 26 Jul 2018 11:12:59 +0200
-Message-ID: <CAJfpegsbfRSYtjVGtGjik=1UNnh=T1AmBjpvNU3G382FxD-sNQ@mail.gmail.com>
-Subject: Re: INFO: task hung in fuse_reverse_inval_entry
-To:     Dmitry Vyukov <dvyukov@google.com>
-Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        syzbot <syzbot+bb6d800770577a083f8c@syzkaller.appspotmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180724101001.31965-4-Eugeniy.Paltsev@synopsys.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 26, 2018 at 10:44 AM, Miklos Szeredi <miklos@szeredi.hu> wrote:
-> On Wed, Jul 25, 2018 at 11:12 AM, Dmitry Vyukov <dvyukov@google.com> wrote:
->> On Tue, Jul 24, 2018 at 5:17 PM, Miklos Szeredi <miklos@szeredi.hu> wrote:
+On Tue, Jul 24, 2018 at 01:10:00PM +0300, Eugeniy Paltsev wrote:
+> Refactoring, no functional change intended.
 
->> Maybe more waits in fuse need to be interruptible? E.g. request_wait_answer?
->
-> That's an interesting aspect.  Making request_wait_answer always be
-> killable would help with the issue you raise (killing set of processes
-> taking part in deadlock should resolve deadlock), but it breaks
-> another aspect of the interface.
->
-> Namely that userspace filesystems expect some serialization from
-> kernel when performing operations.  If we allow killing of a process
-> in the middle of an fs operation, then that serialization is no longer
-> there, which can break the server.
->
-> One solution to that is to duplicate all locking in the server
-> (libfuse normally), but it would not solve the issue for legacy
-> libfuse or legacy non-libfuse servers.  It would also be difficult to
-> test.  Also it doesn't solve the problem of killing the server, as
-> that alone doesn't resolve the deadlock.
+Might be worth explaining a bit why you are refactoring it (i.e. what is the
+benefit).
 
-Umm, we can actually do better.   Duplicate all vfs locking in the
-fuse kernel implementation: when killing a task that has an
-outstanding request, return immediately (which results in releasing
-the VFS level lock and hence the deadlock) but hold onto our own lock
-until the reply from the userspace server comes back.
+> 
+> Signed-off-by: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+> ---
+>  arch/arc/mm/dma.c | 28 ++++++++++------------------
+>  1 file changed, 10 insertions(+), 18 deletions(-)
+> 
+> diff --git a/arch/arc/mm/dma.c b/arch/arc/mm/dma.c
+> index b693818cd8e5..46584c7c2858 100644
+> --- a/arch/arc/mm/dma.c
+> +++ b/arch/arc/mm/dma.c
+> @@ -27,30 +27,24 @@ void *arch_dma_alloc(struct device *dev, size_t size, dma_addr_t *dma_handle,
+>  	struct page *page;
+>  	phys_addr_t paddr;
+>  	void *kvaddr;
+> -	int need_coh = 1, need_kvaddr = 0;
+> +	bool need_coh = !(attrs & DMA_ATTR_NON_CONSISTENT);
+>  
+>  	page = alloc_pages(gfp, order);
+>  	if (!page)
+>  		return NULL;
+>  
+>  	/* This is linear addr (0x8000_0000 based) */
+>  	paddr = page_to_phys(page);
+>  
+>  	*dma_handle = paddr;
+>  
+> +	/*
+> +	 * - A coherent buffer needs MMU mapping to enforce non-cachability
+> +	 * - A highmem page needs a virtual handle (hence MMU mapping)
+> +	 *   independent of cachability.
+> +	 * kvaddr is kernel Virtual address (0x7000_0000 based)
+> +	 */
+> +	if (PageHighMem(page) || need_coh) {
 
-Need to think about the details; this might not be easy to do this
-properly.   Notably memory management locks (page->lock, mmap_sem,
-etc) are notoriously tricky.
+dma_alloc_attrs clears __GFP_HIGHMEM from the passed in gfp mask, so
+you'll never get a highmem page here.
 
-Thanks,
-MIklos
+That also means you can merge this conditional with the one for the cache
+writeback and invalidation and kill the need_coh flag entirely.
+
+>  		kvaddr = ioremap_nocache(paddr, size);
+>  		if (kvaddr == NULL) {
+>  			__free_pages(page, order);
+> @@ -81,11 +75,9 @@ void arch_dma_free(struct device *dev, size_t size, void *vaddr,
+>  {
+>  	phys_addr_t paddr = dma_handle;
+>  	struct page *page = virt_to_page(paddr);
+> -	int is_non_coh = 1;
+> -
+> -	is_non_coh = (attrs & DMA_ATTR_NON_CONSISTENT);
+> +	bool is_coh = !(attrs & DMA_ATTR_NON_CONSISTENT);
+>  
+> -	if (PageHighMem(page) || !is_non_coh)
+> +	if (PageHighMem(page) || is_coh)
+>  		iounmap((void __force __iomem *)vaddr);
+>  
+
+Same here.
+
+Also if you clean this up it would be great to take the per-device pfn offset
+into account, even if that isn't used anywhere on arc yet, that is call
+phys_to_dma and dma_to_phys to convert to an from the dma address.
