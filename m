@@ -2,102 +2,115 @@ Return-Path: <SRS0=7Z+k=KK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72FABC28CF6
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 12:52:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E39BC6778F
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 12:55:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2DA652083F
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 12:52:27 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="W1RYI7+t"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2DA652083F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 1646B2083F
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 12:55:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1646B2083F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730162AbeGZOJI (ORCPT
+        id S1730036AbeGZOLn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 26 Jul 2018 10:09:08 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:33304 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729915AbeGZOJI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Jul 2018 10:09:08 -0400
-Received: by mail-wm0-f65.google.com with SMTP id r24-v6so2055952wmh.0
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Jul 2018 05:52:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=nZkdPL5YMew1zbk1juE6ODfYbAKD2+CDx4te/Au6EHQ=;
-        b=W1RYI7+tttAkS/2Emf53D8eUmKoGotVfbJn66/0aYQ16dPsLAqEtW6zVvhSelhyE+Z
-         qvUugl6deg8ffN9/+YGVbRe35muWS4Y+FvZCVNRs5J7ji6VcisAJwH8Ksh6kxulO7MSj
-         kLDMqXgyL/WP8nz7+/B89P1cXF+ofTgir66EE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=nZkdPL5YMew1zbk1juE6ODfYbAKD2+CDx4te/Au6EHQ=;
-        b=IzffZpWzaIVXvAAp4N2gKthZZsCodAKQirGUyg83v8SCgA86RrOomnYj9waUci00Us
-         vbhQY3VORtHhE4m9Gnj8ixy2g2qqMnKxdjbv2AJ6RoHuucf1k0etPYEyquD3lItku7+p
-         Q5q2NvIG57w17ad4xSJOLx7nqwuxDPdfhARGtAOSb2kp/XiGzqZenXDjLDXeyidCesry
-         pYtR6m9jkmpDU8OWmbOGQz9LasFB1sYDcLhrI5bksS1L1ffRlZM7mS3vuevr8fm8Suo9
-         DW5gLQ33CATs1/15K0kc9flRVmAthNhDkQ+DQAyMnjt95EAuGjN98Jl5RP51Gk2cf0bv
-         VNlA==
-X-Gm-Message-State: AOUpUlEMSXMYNoMo+Z8qg6pQ2BmCkhpvIMecL3E2ZF/414cYrtuikXNi
-        LIM0LXMFqYvBWxHiz/atnPa7lg==
-X-Google-Smtp-Source: AAOMgpcqlN5zcwWNb287dneCMnD91gIN1zIIuqXoNaWjsVeI9+p6nB2i8ORch5qxye7Kp7B3+EMYAg==
-X-Received: by 2002:a1c:6d94:: with SMTP id b20-v6mr1568047wmi.28.1532609543845;
-        Thu, 26 Jul 2018 05:52:23 -0700 (PDT)
-Received: from [100.125.208.68] (193.84.136.77.rev.sfr.net. [77.136.84.193])
-        by smtp.gmail.com with ESMTPSA id w204-v6sm2221522wmw.5.2018.07.26.05.52.22
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 26 Jul 2018 05:52:23 -0700 (PDT)
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (1.0)
-Subject: Re: [PATCH RT] rtc: Disable RTC_DRV_EFI on RT
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-X-Mailer: iPhone Mail (15F79)
-In-Reply-To: <20180726124613.xgmidioqd4mcqpiw@linutronix.de>
-Date:   Thu, 26 Jul 2018 14:52:21 +0200
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        linux-rt-users@vger.kernel.org,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        linux-efi <linux-efi@vger.kernel.org>,
-        Anna-Maria Gleixner <anna-maria@linutronix.de>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <8640BE46-B141-44F9-BD92-58A21A2B0EA7@linaro.org>
-References: <20180726090449.hfvtey3ruzzhzdaz@linutronix.de> <CAKv+Gu_+t_VwY3xDq3nWbnOTfzBc6OtQeRD2GKsseO2uK-uruw@mail.gmail.com> <20180726121504.ba35z3j3wsesryy3@linutronix.de> <5052E25B-9942-40C1-BD53-86E3D7014557@linaro.org> <20180726124613.xgmidioqd4mcqpiw@linutronix.de>
-To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+        Thu, 26 Jul 2018 10:11:43 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:54952 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729506AbeGZOLn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Jul 2018 10:11:43 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4430815A2;
+        Thu, 26 Jul 2018 05:54:59 -0700 (PDT)
+Received: from en101.Emea.Arm.com (en101.Emea.Arm.com [10.4.13.23])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id E3A303F6A8;
+        Thu, 26 Jul 2018 05:54:57 -0700 (PDT)
+From:   Suzuki K Poulose <suzuki.poulose@arm.com>
+To:     linux-arm-kernel@lists.infradead.org
+Cc:     linux-kernel@vger.kernel.org, mathieu.poirier@linaro.org,
+        mike.leach@linaro.org, robert.walker@arm.com,
+        coresight@lists.linaro.org,
+        Suzuki K Poulose <suzuki.poulose@arm.com>
+Subject: [PATCH v3 00/13] coresight: perf: Support for TMC ETR backend
+Date:   Thu, 26 Jul 2018 13:54:38 +0100
+Message-Id: <1532609691-16863-1-git-send-email-suzuki.poulose@arm.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+This series adds the support for using the tmc-etr in perf mode for
+storing the trace to system RAM. The ETR uses a separate buffer (double
+buffering) for storing the trace. This is copied back to the ring buffer
+when the event is stopped. We try to match the ETR buffer to the larger
+of perf ring buffer or the size configured for the ETR via sysfs. This
+allows tuning the buffer size to prevent overflows and loosing trace
+data, as we don't have overflow interrupt support (yet).
+
+Applies on coresight/next
+
+Changes since v2:
+ - Split hotplug lock cleanup from per-cpu path management
+ - Add support for tracing on hotplugged CPUs (based on patch by Mathieu)
+ - Fix handling of perf mode in etb10 driver
+ - Fix CS_UNLOCK() typo in ETR perf driver
+ - Rename call backs from tmc_etr_<op>_perf_buffer => tmc_<op>_etr_buffer
+   to be consistent with ETF driver
+ - Modify the commit description for removing set_buffer call back.
+
+Changes since v1 :
+ - Fix path for each CPU where the event might be recorded.
+ - Handle errors in enabling source
+ - Remove set_buffer callback to avoid complicating the error handling.
+ - Fix a bug in handling sysfs mode specific buffers
+
+Changes since [0] :
+ - Drop buffer rotation logic for etr-buf
+ - Do not use perf ring buffer. (Add support later)
+ - Fix handling of sink, preventing mixed modes of operation.
+
+[0] - TMC ETR perf support
+ - http://lists.infradead.org/pipermail/linux-arm-kernel/2018-May/574875.html
 
 
-> On 26 Jul 2018, at 14:46, Sebastian Andrzej Siewior <bigeasy@linutronix.de=
-> wrote:
->=20
->> On 2018-07-26 14:26:25 [+0200], Ard Biesheuvel wrote:
->> What i mean is whatever you end up with if you pass efi=3Dnoruntime to th=
-e kernel.
-> ah. So I wouldn't have to patch this, just document it. That might work.
->=20
+Suzuki K Poulose (13):
+  coresight: Fix handling of sinks
+  coresight: etb10: Fix handling of perf mode
+  coresight: perf: Fix per cpu path management
+  coresight: perf: Avoid unncessary CPU hotplug read lock
+  coresight: perf: Allow tracing on hotplugged CPUs
+  coresight: perf: Disable trace path upon source error
+  coresight: tmc-etr: Handle driver mode specific ETR buffers
+  coresight: tmc-etr: Relax collection of trace from sysfs mode
+  coresight: Convert driver messages to dev_dbg
+  coresight: perf: Remove reset_buffer call back for sinks
+  coresight: perf: Add helper to retrieve sink configuration
+  coresight: perf: Remove set_buffer call back
+  coresight: etm-perf: Add support for ETR backend
 
-We could also make it the default on -rt, but not disable it entirely, so th=
-at efi=3Druntime can be used to re-enable it.
+ .../coresight/coresight-dynamic-replicator.c       |   4 +-
+ drivers/hwtracing/coresight/coresight-etb10.c      | 100 +++----
+ drivers/hwtracing/coresight/coresight-etm-perf.c   | 134 +++++----
+ drivers/hwtracing/coresight/coresight-etm-perf.h   |  26 ++
+ drivers/hwtracing/coresight/coresight-etm3x.c      |   4 +-
+ drivers/hwtracing/coresight/coresight-etm4x.c      |   4 +-
+ drivers/hwtracing/coresight/coresight-funnel.c     |   4 +-
+ drivers/hwtracing/coresight/coresight-priv.h       |   2 +-
+ drivers/hwtracing/coresight/coresight-replicator.c |   4 +-
+ drivers/hwtracing/coresight/coresight-stm.c        |   4 +-
+ drivers/hwtracing/coresight/coresight-tmc-etf.c    |  94 +++---
+ drivers/hwtracing/coresight/coresight-tmc-etr.c    | 327 ++++++++++++++++++---
+ drivers/hwtracing/coresight/coresight-tmc.c        |   4 +-
+ drivers/hwtracing/coresight/coresight-tmc.h        |   4 +
+ drivers/hwtracing/coresight/coresight-tpiu.c       |   6 +-
+ drivers/hwtracing/coresight/coresight.c            |  31 +-
+ include/linux/coresight.h                          |  12 +-
+ 17 files changed, 517 insertions(+), 247 deletions(-)
 
+-- 
+2.7.4
 
->> But as i mentioned before, you may also lose the ability to reboot/shut d=
-own your system this way. Can you please double check?
->=20
-> I checked before posting the patch. psci is used instead (on softiron
-> here, have nothing else). psci_sys_poweroff() works.
->=20
-> Sebastian
