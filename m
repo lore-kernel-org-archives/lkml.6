@@ -6,277 +6,256 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91FABC28CF6
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 12:28:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0AE9C6778F
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 12:28:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2FD6720894
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 12:28:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2FD6720894
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
+	by mail.kernel.org (Postfix) with ESMTP id 7C2FB20685
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 12:28:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7C2FB20685
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731283AbeGZNoq (ORCPT
+        id S1731740AbeGZNpF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 26 Jul 2018 09:44:46 -0400
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:16407 "EHLO
-        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731010AbeGZNn6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Jul 2018 09:43:58 -0400
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1, AES128-SHA)
-        id <B5b59be1f0000>; Thu, 26 Jul 2018 05:27:11 -0700
-Received: from HQMAIL106.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Thu, 26 Jul 2018 05:27:15 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Thu, 26 Jul 2018 05:27:15 -0700
-Received: from HQMAIL106.nvidia.com (172.18.146.12) by HQMAIL106.nvidia.com
- (172.18.146.12) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Thu, 26 Jul
- 2018 12:27:19 +0000
-Received: from hqnvemgw01.nvidia.com (172.20.150.20) by HQMAIL106.nvidia.com
- (172.18.146.12) with Microsoft SMTP Server (TLS) id 15.0.1347.2 via Frontend
- Transport; Thu, 26 Jul 2018 12:27:19 +0000
-Received: from dhcp-10-21-25-168.Nvidia.com (Not Verified[10.21.25.201]) by hqnvemgw01.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5b59be240000>; Thu, 26 Jul 2018 05:27:19 -0700
-From:   Aapo Vienamo <avienamo@nvidia.com>
-To:     Ulf Hansson <ulf.hansson@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Mikko Perttunen <mperttunen@nvidia.com>
-CC:     <linux-mmc@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Aapo Vienamo <avienamo@nvidia.com>
-Subject: [PATCH v2 06/10] mmc: tegra: Program pad autocal offsets from dt
-Date:   Thu, 26 Jul 2018 15:26:52 +0300
-Message-ID: <1532608016-14319-7-git-send-email-avienamo@nvidia.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1532608016-14319-1-git-send-email-avienamo@nvidia.com>
-References: <1532608016-14319-1-git-send-email-avienamo@nvidia.com>
-X-NVConfidentiality: public
+        Thu, 26 Jul 2018 09:45:05 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:10136 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729915AbeGZNpF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Jul 2018 09:45:05 -0400
+Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id BDF9B7B6C94E9;
+        Thu, 26 Jul 2018 20:28:22 +0800 (CST)
+Received: from szvp000100637.huawei.com (10.162.55.131) by smtp.huawei.com
+ (10.3.19.208) with Microsoft SMTP Server (TLS) id 14.3.382.0; Thu, 26 Jul
+ 2018 20:28:15 +0800
+From:   Gao Xiang <gaoxiang25@huawei.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        <devel@driverdev.osuosl.org>
+CC:     <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-erofs@lists.ozlabs.org>, <yuchao0@huawei.com>,
+        <miaoxie@huawei.com>, <weidu.du@huawei.com>, <hsiangkao@aol.com>,
+        <chao@kernel.org>, Gao Xiang <gaoxiang25@huawei.com>
+Subject: [PATCH 21/25] staging: erofs: introduce erofs shrinker
+Date:   Thu, 26 Jul 2018 20:22:04 +0800
+Message-ID: <1532607728-103372-22-git-send-email-gaoxiang25@huawei.com>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1532607728-103372-1-git-send-email-gaoxiang25@huawei.com>
+References: <1527764767-22190-1-git-send-email-gaoxiang25@huawei.com>
+ <1532607728-103372-1-git-send-email-gaoxiang25@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain
+X-Originating-IP: [10.162.55.131]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Parse the pad drive strength calibration offsets from the device tree.
-Program the calibration offsets in accordance with the current signaling
-mode.
+This patch adds a dedicated shrinker targeting to free unneeded
+memory consumed by a number of erofs in-memory data structures.
 
-Signed-off-by: Aapo Vienamo <avienamo@nvidia.com>
+Like F2FS and UBIFS, it also adds:
+  - sbi->umount_mutex to avoid races on shrinker and put_super
+  - sbi->shrinker_run_no to not revisit recently scaned objects
+
+Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
 ---
- drivers/mmc/host/sdhci-tegra.c | 152 ++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 151 insertions(+), 1 deletion(-)
+ drivers/staging/erofs/internal.h |  7 ++++
+ drivers/staging/erofs/super.c    | 15 +++++++
+ drivers/staging/erofs/utils.c    | 85 +++++++++++++++++++++++++++++++++++++---
+ 3 files changed, 101 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
-index 79ecdd0..295ae7a 100644
---- a/drivers/mmc/host/sdhci-tegra.c
-+++ b/drivers/mmc/host/sdhci-tegra.c
-@@ -49,6 +49,7 @@
- #define SDHCI_TEGRA_AUTO_CAL_CONFIG			0x1e4
- #define SDHCI_AUTO_CAL_START				BIT(31)
- #define SDHCI_AUTO_CAL_ENABLE				BIT(29)
-+#define SDHCI_AUTO_CAL_PDPU_OFFSET_MASK			0x0000ffff
+diff --git a/drivers/staging/erofs/internal.h b/drivers/staging/erofs/internal.h
+index 18e7b9c..42455f0 100644
+--- a/drivers/staging/erofs/internal.h
++++ b/drivers/staging/erofs/internal.h
+@@ -66,6 +66,7 @@ struct erofs_fault_info {
+ struct erofs_sb_info {
+ 	/* list for all registered superblocks, mainly for shrinker */
+ 	struct list_head list;
++	struct mutex umount_mutex;
  
- #define SDHCI_TEGRA_SDMEM_COMP_PADCTRL			0x1e0
- #define SDHCI_TEGRA_SDMEM_COMP_PADCTRL_VREF_SEL_MASK	0x0000000f
-@@ -72,6 +73,22 @@ struct sdhci_tegra_soc_data {
- 	u32 nvquirks;
- };
+ 	u32 blocks;
+ 	u32 meta_blkaddr;
+@@ -93,6 +94,7 @@ struct erofs_sb_info {
+ 	char *dev_name;
  
-+/* Magic pull up and pull down pad calibration offsets */
-+struct sdhci_tegra_autocal_offsets {
-+	u32 pull_up_3v3;
-+	u32 pull_down_3v3;
-+	u32 pull_up_3v3_timeout;
-+	u32 pull_down_3v3_timeout;
-+	u32 pull_up_1v8;
-+	u32 pull_down_1v8;
-+	u32 pull_up_1v8_timeout;
-+	u32 pull_down_1v8_timeout;
-+	u32 pull_up_sdr104;
-+	u32 pull_down_sdr104;
-+	u32 pull_up_hs400;
-+	u32 pull_down_hs400;
+ 	unsigned int mount_opt;
++	unsigned int shrinker_run_no;
+ 
+ #ifdef CONFIG_EROFS_FAULT_INJECTION
+ 	struct erofs_fault_info fault_info;	/* For fault injection */
+@@ -416,6 +418,11 @@ static inline void erofs_vunmap(const void *mem, unsigned int count)
+ extern void erofs_register_super(struct super_block *sb);
+ extern void erofs_unregister_super(struct super_block *sb);
+ 
++extern unsigned long erofs_shrink_count(struct shrinker *shrink,
++	struct shrink_control *sc);
++extern unsigned long erofs_shrink_scan(struct shrinker *shrink,
++	struct shrink_control *sc);
++
+ #ifndef lru_to_page
+ #define lru_to_page(head) (list_entry((head)->prev, struct page, lru))
+ #endif
+diff --git a/drivers/staging/erofs/super.c b/drivers/staging/erofs/super.c
+index f455d71..ef85884 100644
+--- a/drivers/staging/erofs/super.c
++++ b/drivers/staging/erofs/super.c
+@@ -375,7 +375,9 @@ static void erofs_put_super(struct super_block *sb)
+ 	infoln("unmounted for %s", sbi->dev_name);
+ 	__putname(sbi->dev_name);
+ 
++	mutex_lock(&sbi->umount_mutex);
+ 	erofs_unregister_super(sb);
++	mutex_unlock(&sbi->umount_mutex);
+ 
+ 	kfree(sbi);
+ 	sb->s_fs_info = NULL;
+@@ -415,6 +417,12 @@ static void erofs_kill_sb(struct super_block *sb)
+ 	kill_block_super(sb);
+ }
+ 
++static struct shrinker erofs_shrinker_info = {
++	.scan_objects = erofs_shrink_scan,
++	.count_objects = erofs_shrink_count,
++	.seeks = DEFAULT_SEEKS,
 +};
 +
- struct sdhci_tegra {
- 	const struct sdhci_tegra_soc_data *soc_data;
- 	struct gpio_desc *power_gpio;
-@@ -84,6 +101,8 @@ struct sdhci_tegra {
- 	struct pinctrl *pinctrl_sdmmc;
- 	struct pinctrl_state *pinctrl_state_3v3;
- 	struct pinctrl_state *pinctrl_state_1v8;
-+
-+	struct sdhci_tegra_autocal_offsets autocal_offsets;
- };
+ static struct file_system_type erofs_fs_type = {
+ 	.owner          = THIS_MODULE,
+ 	.name           = "erofs",
+@@ -435,6 +443,10 @@ static int __init erofs_module_init(void)
+ 	if (err)
+ 		goto icache_err;
  
- static u16 tegra_sdhci_readw(struct sdhci_host *host, int reg)
-@@ -280,12 +299,45 @@ static bool tegra_sdhci_configure_card_clk(struct sdhci_host *host, bool enable)
- 	return orig_enabled;
- }
++	err = register_shrinker(&erofs_shrinker_info);
++	if (err)
++		goto shrinker_err;
++
+ 	err = register_filesystem(&erofs_fs_type);
+ 	if (err)
+ 		goto fs_err;
+@@ -443,6 +455,8 @@ static int __init erofs_module_init(void)
+ 	return 0;
  
-+static void tegra_sdhci_set_pad_autocal_offset(struct sdhci_host *host,
-+					       u16 pdpu)
-+{
-+	u32 reg;
-+
-+	reg = sdhci_readl(host, SDHCI_TEGRA_AUTO_CAL_CONFIG);
-+	reg &= ~SDHCI_AUTO_CAL_PDPU_OFFSET_MASK;
-+	reg |= pdpu;
-+	sdhci_writel(host, reg, SDHCI_TEGRA_AUTO_CAL_CONFIG);
-+}
-+
- static void tegra_sdhci_pad_autocalib(struct sdhci_host *host)
+ fs_err:
++	unregister_shrinker(&erofs_shrinker_info);
++shrinker_err:
+ 	erofs_exit_inode_cache();
+ icache_err:
+ 	return err;
+@@ -451,6 +465,7 @@ static int __init erofs_module_init(void)
+ static void __exit erofs_module_exit(void)
  {
-+	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
-+	struct sdhci_tegra *tegra_host = sdhci_pltfm_priv(pltfm_host);
-+	struct sdhci_tegra_autocal_offsets offsets =
-+			tegra_host->autocal_offsets;
-+	struct mmc_ios *ios = &host->mmc->ios;
- 	bool card_clk_enabled;
-+	u16 pdpu;
- 	u32 reg;
- 	int ret;
- 
-+	switch (ios->timing) {
-+	case MMC_TIMING_UHS_SDR104:
-+		pdpu = offsets.pull_down_sdr104 << 8 | offsets.pull_up_sdr104;
-+		break;
-+	case MMC_TIMING_MMC_HS400:
-+		pdpu = offsets.pull_down_hs400 << 8 | offsets.pull_up_hs400;
-+		break;
-+	default:
-+		if (ios->signal_voltage == MMC_SIGNAL_VOLTAGE_180)
-+			pdpu = offsets.pull_down_1v8 << 8 | offsets.pull_up_1v8;
-+		else
-+			pdpu = offsets.pull_down_3v3 << 8 | offsets.pull_up_3v3;
-+	}
-+
-+	tegra_sdhci_set_pad_autocal_offset(host, pdpu);
-+
- 	card_clk_enabled = tegra_sdhci_configure_card_clk(host, false);
- 
- 	tegra_sdhci_configure_cal_pad(host, true);
-@@ -303,8 +355,104 @@ static void tegra_sdhci_pad_autocalib(struct sdhci_host *host)
- 
- 	tegra_sdhci_configure_card_clk(host, card_clk_enabled);
- 
--	if (ret)
-+	if (ret) {
- 		dev_err(mmc_dev(host->mmc), "Pad autocal timed out\n");
-+
-+		if (ios->signal_voltage == MMC_SIGNAL_VOLTAGE_180)
-+			pdpu = offsets.pull_down_1v8_timeout << 8 |
-+			       offsets.pull_up_1v8_timeout;
-+		else
-+			pdpu = offsets.pull_down_3v3_timeout << 8 |
-+			       offsets.pull_up_3v3_timeout;
-+
-+		/* Disable automatic calibration and use fixed offsets */
-+		reg = sdhci_readl(host, SDHCI_TEGRA_AUTO_CAL_CONFIG);
-+		reg &= ~SDHCI_AUTO_CAL_ENABLE;
-+		sdhci_writel(host, reg, SDHCI_TEGRA_AUTO_CAL_CONFIG);
-+
-+		tegra_sdhci_set_pad_autocal_offset(host, pdpu);
-+	}
-+}
-+
-+static void tegra_sdhci_parse_pad_autocal_dt(struct sdhci_host *host)
-+{
-+	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
-+	struct sdhci_tegra *tegra_host = sdhci_pltfm_priv(pltfm_host);
-+	struct sdhci_tegra_autocal_offsets *autocal =
-+			&tegra_host->autocal_offsets;
-+	int err;
-+
-+	err = device_property_read_u32(host->mmc->parent,
-+			"nvidia,pad-autocal-pull-up-offset-3v3",
-+			&autocal->pull_up_3v3);
-+	if (err)
-+		autocal->pull_up_3v3 = 0;
-+
-+	err = device_property_read_u32(host->mmc->parent,
-+			"nvidia,pad-autocal-pull-down-offset-3v3",
-+			&autocal->pull_down_3v3);
-+	if (err)
-+		autocal->pull_down_3v3 = 0;
-+
-+	err = device_property_read_u32(host->mmc->parent,
-+			"nvidia,pad-autocal-pull-up-offset-1v8",
-+			&autocal->pull_up_1v8);
-+	if (err)
-+		autocal->pull_up_1v8 = 0;
-+
-+	err = device_property_read_u32(host->mmc->parent,
-+			"nvidia,pad-autocal-pull-down-offset-1v8",
-+			&autocal->pull_down_1v8);
-+	if (err)
-+		autocal->pull_down_1v8 = 0;
-+
-+	err = device_property_read_u32(host->mmc->parent,
-+			"nvidia,pad-autocal-pull-up-offset-3v3-timeout",
-+			&autocal->pull_up_3v3);
-+	if (err)
-+		autocal->pull_up_3v3_timeout = 0;
-+
-+	err = device_property_read_u32(host->mmc->parent,
-+			"nvidia,pad-autocal-pull-down-offset-3v3-timeout",
-+			&autocal->pull_down_3v3);
-+	if (err)
-+		autocal->pull_down_3v3_timeout = 0;
-+
-+	err = device_property_read_u32(host->mmc->parent,
-+			"nvidia,pad-autocal-pull-up-offset-1v8-timeout",
-+			&autocal->pull_up_1v8);
-+	if (err)
-+		autocal->pull_up_1v8_timeout = 0;
-+
-+	err = device_property_read_u32(host->mmc->parent,
-+			"nvidia,pad-autocal-pull-down-offset-1v8-timeout",
-+			&autocal->pull_down_1v8);
-+	if (err)
-+		autocal->pull_down_1v8_timeout = 0;
-+
-+	err = device_property_read_u32(host->mmc->parent,
-+			"nvidia,pad-autocal-pull-up-offset-sdr104",
-+			&autocal->pull_up_sdr104);
-+	if (err)
-+		autocal->pull_up_sdr104 = autocal->pull_up_1v8;
-+
-+	err = device_property_read_u32(host->mmc->parent,
-+			"nvidia,pad-autocal-pull-down-offset-sdr104",
-+			&autocal->pull_down_sdr104);
-+	if (err)
-+		autocal->pull_down_sdr104 = autocal->pull_down_1v8;
-+
-+	err = device_property_read_u32(host->mmc->parent,
-+			"nvidia,pad-autocal-pull-up-offset-hs400",
-+			&autocal->pull_up_hs400);
-+	if (err)
-+		autocal->pull_up_hs400 = autocal->pull_up_1v8;
-+
-+	err = device_property_read_u32(host->mmc->parent,
-+			"nvidia,pad-autocal-pull-down-offset-hs400",
-+			&autocal->pull_down_hs400);
-+	if (err)
-+		autocal->pull_down_hs400 = autocal->pull_down_1v8;
+ 	unregister_filesystem(&erofs_fs_type);
++	unregister_shrinker(&erofs_shrinker_info);
+ 	erofs_exit_inode_cache();
+ 	infoln("successfully finalize erofs");
+ }
+diff --git a/drivers/staging/erofs/utils.c b/drivers/staging/erofs/utils.c
+index 6748def..c1d83ce 100644
+--- a/drivers/staging/erofs/utils.c
++++ b/drivers/staging/erofs/utils.c
+@@ -29,20 +29,93 @@ struct page *erofs_allocpage(struct list_head *pool, gfp_t gfp)
+ 	return page;
  }
  
- static void tegra_sdhci_set_clock(struct sdhci_host *host, unsigned int clock)
-@@ -670,6 +818,8 @@ static int sdhci_tegra_probe(struct platform_device *pdev)
- 	if (tegra_host->soc_data->nvquirks & NVQUIRK_ENABLE_DDR50)
- 		host->mmc->caps |= MMC_CAP_1_8V_DDR;
- 
-+	tegra_sdhci_parse_pad_autocal_dt(host);
+-static DEFINE_MUTEX(erofs_sb_list_lock);
 +
- 	tegra_host->power_gpio = devm_gpiod_get_optional(&pdev->dev, "power",
- 							 GPIOD_OUT_HIGH);
- 	if (IS_ERR(tegra_host->power_gpio)) {
++/* protected by 'erofs_sb_list_lock' */
++static unsigned int shrinker_run_no;
++
++/* protects the mounted 'erofs_sb_list' */
++static DEFINE_SPINLOCK(erofs_sb_list_lock);
+ static LIST_HEAD(erofs_sb_list);
+ 
++/* global shrink count (for all mounted EROFS instances) */
++static atomic_long_t erofs_global_shrink_cnt;
++
+ void erofs_register_super(struct super_block *sb)
+ {
+-	mutex_lock(&erofs_sb_list_lock);
+-	list_add(&EROFS_SB(sb)->list, &erofs_sb_list);
+-	mutex_unlock(&erofs_sb_list_lock);
++	struct erofs_sb_info *sbi = EROFS_SB(sb);
++
++	mutex_init(&sbi->umount_mutex);
++
++	spin_lock(&erofs_sb_list_lock);
++	list_add(&sbi->list, &erofs_sb_list);
++	spin_unlock(&erofs_sb_list_lock);
+ }
+ 
+ void erofs_unregister_super(struct super_block *sb)
+ {
+-	mutex_lock(&erofs_sb_list_lock);
++	spin_lock(&erofs_sb_list_lock);
+ 	list_del(&EROFS_SB(sb)->list);
+-	mutex_unlock(&erofs_sb_list_lock);
++	spin_unlock(&erofs_sb_list_lock);
++}
++
++unsigned long erofs_shrink_count(struct shrinker *shrink,
++				 struct shrink_control *sc)
++{
++	return atomic_long_read(&erofs_global_shrink_cnt);
++}
++
++unsigned long erofs_shrink_scan(struct shrinker *shrink,
++				struct shrink_control *sc)
++{
++	struct erofs_sb_info *sbi;
++	struct list_head *p;
++
++	unsigned long nr = sc->nr_to_scan;
++	unsigned int run_no;
++	unsigned long freed = 0;
++
++	spin_lock(&erofs_sb_list_lock);
++	do
++		run_no = ++shrinker_run_no;
++	while (run_no == 0);
++
++	/* Iterate over all mounted superblocks and try to shrink them */
++	p = erofs_sb_list.next;
++	while (p != &erofs_sb_list) {
++		sbi = list_entry(p, struct erofs_sb_info, list);
++
++		/*
++		 * We move the ones we do to the end of the list, so we stop
++		 * when we see one we have already done.
++		 */
++		if (sbi->shrinker_run_no == run_no)
++			break;
++
++		if (!mutex_trylock(&sbi->umount_mutex)) {
++			p = p->next;
++			continue;
++		}
++
++		spin_unlock(&erofs_sb_list_lock);
++		sbi->shrinker_run_no = run_no;
++
++		/* add scan handlers here */
++
++		spin_lock(&erofs_sb_list_lock);
++		/* Get the next list element before we move this one */
++		p = p->next;
++
++		/*
++		 * Move this one to the end of the list to provide some
++		 * fairness.
++		 */
++		list_move_tail(&sbi->list, &erofs_sb_list);
++		mutex_unlock(&sbi->umount_mutex);
++
++		if (freed >= nr)
++			break;
++	}
++	spin_unlock(&erofs_sb_list_lock);
++	return freed;
+ }
+ 
 -- 
-2.7.4
+1.9.1
 
