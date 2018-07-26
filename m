@@ -3,101 +3,401 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4077BC28CF6
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 11:03:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02DEBC28CF6
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 11:06:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EE46C20685
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 11:03:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EE46C20685
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 5D9B720883
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 11:06:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D9B720883
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729340AbeGZMTh (ORCPT
+        id S1729314AbeGZMWy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 26 Jul 2018 08:19:37 -0400
-Received: from mga04.intel.com ([192.55.52.120]:59018 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729045AbeGZMTh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Jul 2018 08:19:37 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Jul 2018 04:03:18 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,404,1526367600"; 
-   d="asc'?scan'208";a="76109553"
-Received: from pipin.fi.intel.com (HELO localhost) ([10.237.68.37])
-  by orsmga001.jf.intel.com with ESMTP; 26 Jul 2018 04:03:15 -0700
-From:   Felipe Balbi <felipe.balbi@linux.intel.com>
-To:     Douglas Anderson <dianders@chromium.org>, hminas@synopsys.com,
-        gregkh@linuxfoundation.org
-Cc:     Jerome Brunet <jbrunet@baylibre.com>,
-        Zhangfei Gao <zhangfei.gao@linaro.org>,
-        Stephen Warren <swarren@wwwdotorg.org>,
-        Bruno Herrera <bruherrera@gmail.com>,
-        Douglas Anderson <dianders@chromium.org>,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFT PATCH 0/4] usb: dwc2: Turn on uframe sched everywhere
-In-Reply-To: <20180706162154.196345-1-dianders@chromium.org>
-References: <20180706162154.196345-1-dianders@chromium.org>
-Date:   Thu, 26 Jul 2018 13:59:58 +0300
-Message-ID: <87o9eu1cup.fsf@linux.intel.com>
+        Thu, 26 Jul 2018 08:22:54 -0400
+Received: from www262.sakura.ne.jp ([202.181.97.72]:16594 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729074AbeGZMWy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Jul 2018 08:22:54 -0400
+Received: from fsav103.sakura.ne.jp (fsav103.sakura.ne.jp [27.133.134.230])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id w6QB6WVQ016680;
+        Thu, 26 Jul 2018 20:06:32 +0900 (JST)
+        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav103.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav103.sakura.ne.jp);
+ Thu, 26 Jul 2018 20:06:32 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav103.sakura.ne.jp)
+Received: from [192.168.1.8] (softbank126074194044.bbtec.net [126.74.194.44])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id w6QB6RXd016603
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
+        Thu, 26 Jul 2018 20:06:32 +0900 (JST)
+        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+To:     Michal Hocko <mhocko@suse.com>, Roman Gushchin <guro@fb.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        David Rientjes <rientjes@google.com>,
+        Tejun Heo <tj@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-mm <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>
+From:   Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Subject: [PATCH] mm,page_alloc: PF_WQ_WORKER threads must sleep at
+ should_reclaim_retry().
+Message-ID: <ca3da8b8-1bb5-c302-b190-fa6cebab58ca@I-love.SAKURA.ne.jp>
+Date:   Thu, 26 Jul 2018 20:06:24 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-        micalg=pgp-sha512; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+Before applying "an OOM lockup mitigation patch", I want to apply this
+"another OOM lockup avoidance" patch.
 
-Douglas Anderson <dianders@chromium.org> writes:
+Complete log is at http://I-love.SAKURA.ne.jp/tmp/serial-20180726.txt.xz
+(which was captured with
 
-> While looking at a dwc2 recently, I noticed that some platforms still
-> have the uframe scheduler off.  As far as I know, nothing good can
-> come out of having the uframe scheduler off.  Let's turn it on
-> everywhere.  Assuming this all works out then some time in the future
-> we can gut all the old code that handles the old non-uframe scheduler
-> and make everything simpler.
->
-> NOTE: I don't have access to any of the platforms that I'm changing
-> here, so I'm hoping to see a Tested-by from those on the list.
->
->
-> Douglas Anderson (4):
->   usb: dwc2: Turn on uframe_sched on "bcm" platforms
->   usb: dwc2: Turn on uframe_sched on "his" platforms
->   usb: dwc2: Turn on uframe_sched on "amlogic" platforms
->   usb: dwc2: Turn on uframe_sched on "stm32f4x9_fsotg" platforms
+  --- a/mm/oom_kill.c
+  +++ b/mm/oom_kill.c
+  @@ -1071,6 +1071,12 @@ bool out_of_memory(struct oom_control *oc)
+   {
+   	unsigned long freed = 0;
+   	bool delay = false; /* if set, delay next allocation attempt */
+  +	static unsigned long last_warned;
+  +	if (!last_warned || time_after(jiffies, last_warned + 10 * HZ)) {
+  +		pr_warn("%s(%d) gfp_mask=%#x(%pGg), order=%d\n", current->comm,
+  +			current->pid, oc->gfp_mask, &oc->gfp_mask, oc->order);
+  +		last_warned = jiffies;
+  +	}
+   
+   	oc->constraint = CONSTRAINT_NONE;
+   	if (oom_killer_disabled)
 
-care to resend without RFT prefix and with collected acks, tested-bys, etc?
+in order to demonstrate that the GFP_NOIO allocation from disk_events_workfn() is
+calling out_of_memory() rather than by error failing to give up direct reclaim).
 
-=2D-=20
-balbi
+[  258.619119] kworker/0:0(5) gfp_mask=0x600000(GFP_NOIO), order=0
+[  268.622732] kworker/0:0(5) gfp_mask=0x600000(GFP_NOIO), order=0
+[  278.635344] kworker/0:0(5) gfp_mask=0x600000(GFP_NOIO), order=0
+[  288.639360] kworker/0:0(5) gfp_mask=0x600000(GFP_NOIO), order=0
+[  298.642715] kworker/0:0(5) gfp_mask=0x600000(GFP_NOIO), order=0
+[  308.527975] sysrq: SysRq : Show Memory
+[  308.529713] Mem-Info:
+[  308.530930] active_anon:855844 inactive_anon:2123 isolated_anon:0
+[  308.530930]  active_file:7 inactive_file:12 isolated_file:0
+[  308.530930]  unevictable:0 dirty:0 writeback:0 unstable:0
+[  308.530930]  slab_reclaimable:3444 slab_unreclaimable:23008
+[  308.530930]  mapped:1743 shmem:2272 pagetables:3991 bounce:0
+[  308.530930]  free:21206 free_pcp:165 free_cma:0
+[  308.542309] Node 0 active_anon:3423376kB inactive_anon:8492kB active_file:28kB inactive_file:48kB unevictable:0kB isolated(anon):0kB isolated(file):0kB mapped:6972kB dirty:0kB writeback:0kB shmem:9088kB shmem_thp: 0kB shmem_pmdmapped: 0kB anon_thp: 3227648kB writeback_tmp:0kB unstable:0kB all_unreclaimable? yes
+[  308.550495] Node 0 DMA free:14712kB min:288kB low:360kB high:432kB active_anon:1128kB inactive_anon:0kB active_file:0kB inactive_file:0kB unevictable:0kB writepending:0kB present:15960kB managed:15876kB mlocked:0kB kernel_stack:0kB pagetables:4kB bounce:0kB free_pcp:0kB local_pcp:0kB free_cma:0kB
+[  308.558420] lowmem_reserve[]: 0 2717 3607 3607
+[  308.560197] Node 0 DMA32 free:53860kB min:50684kB low:63352kB high:76020kB active_anon:2727108kB inactive_anon:0kB active_file:0kB inactive_file:0kB unevictable:0kB writepending:0kB present:3129152kB managed:2782536kB mlocked:0kB kernel_stack:0kB pagetables:4kB bounce:0kB free_pcp:0kB local_pcp:0kB free_cma:0kB
+[  308.568640] lowmem_reserve[]: 0 0 890 890
+[  308.570396] Node 0 Normal free:16252kB min:16608kB low:20760kB high:24912kB active_anon:694864kB inactive_anon:8492kB active_file:44kB inactive_file:0kB unevictable:0kB writepending:0kB present:1048576kB managed:911820kB mlocked:0kB kernel_stack:8080kB pagetables:15956kB bounce:0kB free_pcp:660kB local_pcp:660kB free_cma:0kB
+[  308.580075] lowmem_reserve[]: 0 0 0 0
+[  308.581827] Node 0 DMA: 0*4kB 1*8kB (M) 1*16kB (M) 1*32kB (U) 1*64kB (U) 2*128kB (UM) 2*256kB (UM) 1*512kB (M) 1*1024kB (U) 0*2048kB 3*4096kB (M) = 14712kB
+[  308.586271] Node 0 DMA32: 5*4kB (UM) 3*8kB (U) 5*16kB (U) 5*32kB (U) 5*64kB (U) 2*128kB (UM) 2*256kB (UM) 7*512kB (M) 4*1024kB (M) 2*2048kB (UM) 10*4096kB (UM) = 54108kB
+[  308.591900] Node 0 Normal: 13*4kB (UM) 5*8kB (UM) 2*16kB (U) 74*32kB (UME) 23*64kB (UME) 6*128kB (UME) 5*256kB (U) 2*512kB (UM) 9*1024kB (M) 0*2048kB 0*4096kB = 16252kB
+[  308.597637] Node 0 hugepages_total=0 hugepages_free=0 hugepages_surp=0 hugepages_size=2048kB
+[  308.600764] 2273 total pagecache pages
+[  308.602712] 0 pages in swap cache
+[  308.604532] Swap cache stats: add 0, delete 0, find 0/0
+[  308.606843] Free swap  = 0kB
+[  308.608632] Total swap = 0kB
+[  308.610357] 1048422 pages RAM
+[  308.612153] 0 pages HighMem/MovableOnly
+[  308.614173] 120864 pages reserved
+[  308.615994] 0 pages cma reserved
+[  308.617811] 0 pages hwpoisoned
+[  308.527975] sysrq: SysRq : Show Memory
+[  308.529713] Mem-Info:
+[  308.530930] active_anon:855844 inactive_anon:2123 isolated_anon:0
+[  308.530930]  active_file:7 inactive_file:12 isolated_file:0
+[  308.530930]  unevictable:0 dirty:0 writeback:0 unstable:0
+[  308.530930]  slab_reclaimable:3444 slab_unreclaimable:23008
+[  308.530930]  mapped:1743 shmem:2272 pagetables:3991 bounce:0
+[  308.530930]  free:21206 free_pcp:165 free_cma:0
+[  308.542309] Node 0 active_anon:3423376kB inactive_anon:8492kB active_file:28kB inactive_file:48kB unevictable:0kB isolated(anon):0kB isolated(file):0kB mapped:6972kB dirty:0kB writeback:0kB shmem:9088kB shmem_thp: 0kB shmem_pmdmapped: 0kB anon_thp: 3227648kB writeback_tmp:0kB unstable:0kB all_unreclaimable? yes
+[  308.550495] Node 0 DMA free:14712kB min:288kB low:360kB high:432kB active_anon:1128kB inactive_anon:0kB active_file:0kB inactive_file:0kB unevictable:0kB writepending:0kB present:15960kB managed:15876kB mlocked:0kB kernel_stack:0kB pagetables:4kB bounce:0kB free_pcp:0kB local_pcp:0kB free_cma:0kB
+[  308.558420] lowmem_reserve[]: 0 2717 3607 3607
+[  308.560197] Node 0 DMA32 free:53860kB min:50684kB low:63352kB high:76020kB active_anon:2727108kB inactive_anon:0kB active_file:0kB inactive_file:0kB unevictable:0kB writepending:0kB present:3129152kB managed:2782536kB mlocked:0kB kernel_stack:0kB pagetables:4kB bounce:0kB free_pcp:0kB local_pcp:0kB free_cma:0kB
+[  308.568640] lowmem_reserve[]: 0 0 890 890
+[  308.570396] Node 0 Normal free:16252kB min:16608kB low:20760kB high:24912kB active_anon:694864kB inactive_anon:8492kB active_file:44kB inactive_file:0kB unevictable:0kB writepending:0kB present:1048576kB managed:911820kB mlocked:0kB kernel_stack:8080kB pagetables:15956kB bounce:0kB free_pcp:660kB local_pcp:660kB free_cma:0kB
+[  308.580075] lowmem_reserve[]: 0 0 0 0
+[  308.581827] Node 0 DMA: 0*4kB 1*8kB (M) 1*16kB (M) 1*32kB (U) 1*64kB (U) 2*128kB (UM) 2*256kB (UM) 1*512kB (M) 1*1024kB (U) 0*2048kB 3*4096kB (M) = 14712kB
+[  308.586271] Node 0 DMA32: 5*4kB (UM) 3*8kB (U) 5*16kB (U) 5*32kB (U) 5*64kB (U) 2*128kB (UM) 2*256kB (UM) 7*512kB (M) 4*1024kB (M) 2*2048kB (UM) 10*4096kB (UM) = 54108kB
+[  308.591900] Node 0 Normal: 13*4kB (UM) 5*8kB (UM) 2*16kB (U) 74*32kB (UME) 23*64kB (UME) 6*128kB (UME) 5*256kB (U) 2*512kB (UM) 9*1024kB (M) 0*2048kB 0*4096kB = 16252kB
+[  308.597637] Node 0 hugepages_total=0 hugepages_free=0 hugepages_surp=0 hugepages_size=2048kB
+[  308.600764] 2273 total pagecache pages
+[  308.602712] 0 pages in swap cache
+[  308.604532] Swap cache stats: add 0, delete 0, find 0/0
+[  308.606843] Free swap  = 0kB
+[  308.608632] Total swap = 0kB
+[  308.610357] 1048422 pages RAM
+[  308.612153] 0 pages HighMem/MovableOnly
+[  308.614173] 120864 pages reserved
+[  308.615994] 0 pages cma reserved
+[  308.617811] 0 pages hwpoisoned
 
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
+[  310.383005] kworker/0:0     R  running task    13504     5      2 0x80000000
+[  310.385328] Workqueue: events_freezable_power_ disk_events_workfn
+[  310.387578] Call Trace:
+[  310.475050]  ? shrink_node+0xca/0x460
+[  310.476614]  shrink_node+0xca/0x460
+[  310.478129]  do_try_to_free_pages+0xcb/0x380
+[  310.479848]  try_to_free_pages+0xbb/0xf0
+[  310.481481]  __alloc_pages_slowpath+0x3c1/0xc50
+[  310.483332]  __alloc_pages_nodemask+0x2a6/0x2c0
+[  310.485130]  bio_copy_kern+0xcd/0x200
+[  310.486710]  blk_rq_map_kern+0xb6/0x130
+[  310.488317]  scsi_execute+0x64/0x250
+[  310.489859]  sr_check_events+0x9a/0x2b0 [sr_mod]
+[  310.491669]  ? __mutex_unlock_slowpath+0x46/0x2b0
+[  310.493581]  cdrom_check_events+0xf/0x30 [cdrom]
+[  310.495435]  sr_block_check_events+0x7c/0xb0 [sr_mod]
+[  310.497434]  disk_check_events+0x5e/0x150
+[  310.499172]  process_one_work+0x290/0x4a0
+[  310.500878]  ? process_one_work+0x227/0x4a0
+[  310.502591]  worker_thread+0x28/0x3d0
+[  310.504184]  ? process_one_work+0x4a0/0x4a0
+[  310.505916]  kthread+0x107/0x120
+[  310.507384]  ? kthread_create_worker_on_cpu+0x70/0x70
+[  310.509333]  ret_from_fork+0x24/0x30
 
------BEGIN PGP SIGNATURE-----
+[  324.960731] Showing busy workqueues and worker pools:
+[  324.962577] workqueue events: flags=0x0
+[  324.964137]   pwq 0: cpus=0 node=0 flags=0x0 nice=0 active=13/256
+[  324.966231]     pending: vmw_fb_dirty_flush [vmwgfx], vmstat_shepherd, vmpressure_work_fn, free_work, mmdrop_async_fn, mmdrop_async_fn, mmdrop_async_fn, mmdrop_async_fn, e1000_watchdog [e1000], mmdrop_async_fn, mmdrop_async_fn, check_corruption, console_callback
+[  324.973425] workqueue events_freezable: flags=0x4
+[  324.975247]   pwq 0: cpus=0 node=0 flags=0x0 nice=0 active=1/256
+[  324.977393]     pending: vmballoon_work [vmw_balloon]
+[  324.979310] workqueue events_power_efficient: flags=0x80
+[  324.981298]   pwq 0: cpus=0 node=0 flags=0x0 nice=0 active=5/256
+[  324.983543]     pending: gc_worker [nf_conntrack], fb_flashcursor, neigh_periodic_work, neigh_periodic_work, check_lifetime
+[  324.987240] workqueue events_freezable_power_: flags=0x84
+[  324.989292]   pwq 0: cpus=0 node=0 flags=0x0 nice=0 active=1/256
+[  324.991482]     in-flight: 5:disk_events_workfn
+[  324.993371] workqueue mm_percpu_wq: flags=0x8
+[  324.995167]   pwq 0: cpus=0 node=0 flags=0x0 nice=0 active=2/256
+[  324.997363]     pending: vmstat_update, drain_local_pages_wq BAR(498)
+[  324.999977] workqueue ipv6_addrconf: flags=0x40008
+[  325.001899]   pwq 0: cpus=0 node=0 flags=0x0 nice=0 active=1/1
+[  325.004092]     pending: addrconf_verify_work
+[  325.005911] workqueue mpt_poll_0: flags=0x8
+[  325.007686]   pwq 0: cpus=0 node=0 flags=0x0 nice=0 active=1/256
+[  325.009914]     pending: mpt_fault_reset_work [mptbase]
+[  325.012044] workqueue xfs-cil/sda1: flags=0xc
+[  325.013897]   pwq 0: cpus=0 node=0 flags=0x0 nice=0 active=1/256
+[  325.016190]     pending: xlog_cil_push_work [xfs] BAR(2344)
+[  325.018354] workqueue xfs-reclaim/sda1: flags=0xc
+[  325.020293]   pwq 0: cpus=0 node=0 flags=0x0 nice=0 active=1/256
+[  325.022549]     pending: xfs_reclaim_worker [xfs]
+[  325.024540] workqueue xfs-sync/sda1: flags=0x4
+[  325.026425]   pwq 0: cpus=0 node=0 flags=0x0 nice=0 active=1/256
+[  325.028691]     pending: xfs_log_worker [xfs]
+[  325.030546] pool 0: cpus=0 node=0 flags=0x0 nice=0 hung=189s workers=4 idle: 977 65 13
 
-iQIzBAEBCgAdFiEElLzh7wn96CXwjh2IzL64meEamQYFAltZqa4ACgkQzL64meEa
-mQa0gg//bbcpCO9hwWkUxJDkr4oKiklNAG9s0eh5CL5jpIKn8UD6WmfhK2jJCqmz
-3CMRYzAhtjPvbfEusKqy9cEBa1cTksrrpIrOKy56n77Xu9Ml/6F7jLzfzvG1m60l
-gskLhw4FOh4nzh1x5rGNiDaJRQWllYzMIzXlrjQKnqktq1UCfsSmlSfSqbaj9/nJ
-h7WRn5ID18EUmwp6pCMQJOKh2mPYTFNB3TiYogHKMjaTwq3yhFNYj4Hv6M7BATVJ
-pon8U50JP1uKu+d0n8/CacegIUDyHfajMIE+hfMMFefgIUVL8AHYn4N6r8b+GRHz
-CDeuQZ/2W2UiDab/ZNXkx46rAczVm4tTCEij+2+4OUigowgUjMKMwaf7tZSNF7P0
-W0FhijYWQPtxezkbqdWqrFpGAnSEXJJEXmtJKbe4GfKpRQ8bzfW1aCFAd65efQqA
-7ZBz6ZfsvZOCntCSnVluqDesJouoTD+KujT/EIP8jdqCN/LpuOyL381QejqnP4+/
-uuL5iQWgPkMz4p59iQytAkdMQjs7X4HthV54eGFTRbuIg+kODDGffwIUP5pP0AQ1
-s2q7ZOP8Bdd85aWGZ5Ctq4YuskQVJEaA1o4PsqpYJj+10qplX5IRq5UfYOY4NEzW
-KClqxCdWi2MV4dAH/AiTk52wLW/RNxlwZ5Rq/YLow8XrKa5BIz0=
-=Pvj8
------END PGP SIGNATURE-----
---=-=-=--
+[  427.593034] sysrq: SysRq : Show Memory
+[  427.594680] Mem-Info:
+[  427.595882] active_anon:855844 inactive_anon:2123 isolated_anon:0
+[  427.595882]  active_file:7 inactive_file:12 isolated_file:0
+[  427.595882]  unevictable:0 dirty:0 writeback:0 unstable:0
+[  427.595882]  slab_reclaimable:3444 slab_unreclaimable:22960
+[  427.595882]  mapped:1743 shmem:2272 pagetables:3991 bounce:0
+[  427.595882]  free:21254 free_pcp:165 free_cma:0
+[  427.607487] Node 0 active_anon:3423376kB inactive_anon:8492kB active_file:28kB inactive_file:48kB unevictable:0kB isolated(anon):0kB isolated(file):0kB mapped:6972kB dirty:0kB writeback:0kB shmem:9088kB shmem_thp: 0kB shmem_pmdmapped: 0kB anon_thp: 3227648kB writeback_tmp:0kB unstable:0kB all_unreclaimable? yes
+[  427.615694] Node 0 DMA free:14712kB min:288kB low:360kB high:432kB active_anon:1128kB inactive_anon:0kB active_file:0kB inactive_file:0kB unevictable:0kB writepending:0kB present:15960kB managed:15876kB mlocked:0kB kernel_stack:0kB pagetables:4kB bounce:0kB free_pcp:0kB local_pcp:0kB free_cma:0kB
+[  427.623632] lowmem_reserve[]: 0 2717 3607 3607
+[  427.625423] Node 0 DMA32 free:53860kB min:50684kB low:63352kB high:76020kB active_anon:2727108kB inactive_anon:0kB active_file:0kB inactive_file:0kB unevictable:0kB writepending:0kB present:3129152kB managed:2782536kB mlocked:0kB kernel_stack:0kB pagetables:4kB bounce:0kB free_pcp:0kB local_pcp:0kB free_cma:0kB
+[  427.634066] lowmem_reserve[]: 0 0 890 890
+[  427.635829] Node 0 Normal free:16444kB min:16608kB low:20760kB high:24912kB active_anon:694864kB inactive_anon:8492kB active_file:44kB inactive_file:0kB unevictable:0kB writepending:0kB present:1048576kB managed:911820kB mlocked:0kB kernel_stack:7444kB pagetables:15956kB bounce:0kB free_pcp:660kB local_pcp:660kB free_cma:0kB
+[  427.645560] lowmem_reserve[]: 0 0 0 0
+[  427.647320] Node 0 DMA: 0*4kB 1*8kB (M) 1*16kB (M) 1*32kB (U) 1*64kB (U) 2*128kB (UM) 2*256kB (UM) 1*512kB (M) 1*1024kB (U) 0*2048kB 3*4096kB (M) = 14712kB
+[  427.651757] Node 0 DMA32: 5*4kB (UM) 3*8kB (U) 5*16kB (U) 5*32kB (U) 5*64kB (U) 2*128kB (UM) 2*256kB (UM) 7*512kB (M) 4*1024kB (M) 2*2048kB (UM) 10*4096kB (UM) = 54108kB
+[  427.657428] Node 0 Normal: 13*4kB (UM) 5*8kB (UM) 2*16kB (U) 81*32kB (UME) 23*64kB (UME) 6*128kB (UME) 5*256kB (U) 2*512kB (UM) 9*1024kB (M) 0*2048kB 0*4096kB = 16476kB
+[  427.663144] Node 0 hugepages_total=0 hugepages_free=0 hugepages_surp=0 hugepages_size=2048kB
+[  427.666283] 2273 total pagecache pages
+[  427.668249] 0 pages in swap cache
+[  427.670085] Swap cache stats: add 0, delete 0, find 0/0
+[  427.672416] Free swap  = 0kB
+[  427.674256] Total swap = 0kB
+[  427.676011] 1048422 pages RAM
+[  427.677746] 0 pages HighMem/MovableOnly
+[  427.679704] 120864 pages reserved
+[  427.681526] 0 pages cma reserved
+[  427.683371] 0 pages hwpoisoned
+
+[  430.083584] kworker/0:0     R  running task    13504     5      2 0x80000000
+[  430.085990] Workqueue: events_freezable_power_ disk_events_workfn
+[  430.088175] Call Trace:
+[  430.175214]  ? shrink_slab+0x240/0x2c0
+[  430.176861]  shrink_node+0xe3/0x460
+[  430.178402]  do_try_to_free_pages+0xcb/0x380
+[  430.180110]  try_to_free_pages+0xbb/0xf0
+[  430.181733]  __alloc_pages_slowpath+0x3c1/0xc50
+[  430.183516]  __alloc_pages_nodemask+0x2a6/0x2c0
+[  430.185292]  bio_copy_kern+0xcd/0x200
+[  430.186847]  blk_rq_map_kern+0xb6/0x130
+[  430.188475]  scsi_execute+0x64/0x250
+[  430.190027]  sr_check_events+0x9a/0x2b0 [sr_mod]
+[  430.191844]  ? __mutex_unlock_slowpath+0x46/0x2b0
+[  430.193668]  cdrom_check_events+0xf/0x30 [cdrom]
+[  430.195466]  sr_block_check_events+0x7c/0xb0 [sr_mod]
+[  430.197383]  disk_check_events+0x5e/0x150
+[  430.199038]  process_one_work+0x290/0x4a0
+[  430.200712]  ? process_one_work+0x227/0x4a0
+[  430.202413]  worker_thread+0x28/0x3d0
+[  430.204003]  ? process_one_work+0x4a0/0x4a0
+[  430.205757]  kthread+0x107/0x120
+[  430.207282]  ? kthread_create_worker_on_cpu+0x70/0x70
+[  430.209345]  ret_from_fork+0x24/0x30
+
+[  444.206334] Showing busy workqueues and worker pools:
+[  444.208472] workqueue events: flags=0x0
+[  444.210193]   pwq 0: cpus=0 node=0 flags=0x0 nice=0 active=15/256
+[  444.212389]     pending: vmw_fb_dirty_flush [vmwgfx], vmstat_shepherd, vmpressure_work_fn, free_work, mmdrop_async_fn, mmdrop_async_fn, mmdrop_async_fn, mmdrop_async_fn, e1000_watchdog [e1000], mmdrop_async_fn, mmdrop_async_fn, check_corruption, console_callback, sysrq_reinject_alt_sysrq, moom_callback
+[  444.220547] workqueue events_freezable: flags=0x4
+[  444.222562]   pwq 0: cpus=0 node=0 flags=0x0 nice=0 active=1/256
+[  444.224852]     pending: vmballoon_work [vmw_balloon]
+[  444.227022] workqueue events_power_efficient: flags=0x80
+[  444.229103]   pwq 0: cpus=0 node=0 flags=0x0 nice=0 active=5/256
+[  444.231271]     pending: gc_worker [nf_conntrack], fb_flashcursor, neigh_periodic_work, neigh_periodic_work, check_lifetime
+[  444.234824] workqueue events_freezable_power_: flags=0x84
+[  444.236937]   pwq 0: cpus=0 node=0 flags=0x0 nice=0 active=1/256
+[  444.239138]     in-flight: 5:disk_events_workfn
+[  444.241022] workqueue mm_percpu_wq: flags=0x8
+[  444.242829]   pwq 0: cpus=0 node=0 flags=0x0 nice=0 active=2/256
+[  444.245057]     pending: vmstat_update, drain_local_pages_wq BAR(498)
+[  444.247646] workqueue ipv6_addrconf: flags=0x40008
+[  444.249582]   pwq 0: cpus=0 node=0 flags=0x0 nice=0 active=1/1
+[  444.251784]     pending: addrconf_verify_work
+[  444.253620] workqueue mpt_poll_0: flags=0x8
+[  444.255427]   pwq 0: cpus=0 node=0 flags=0x0 nice=0 active=1/256
+[  444.257666]     pending: mpt_fault_reset_work [mptbase]
+[  444.259800] workqueue xfs-cil/sda1: flags=0xc
+[  444.261646]   pwq 0: cpus=0 node=0 flags=0x0 nice=0 active=1/256
+[  444.263903]     pending: xlog_cil_push_work [xfs] BAR(2344)
+[  444.266101] workqueue xfs-reclaim/sda1: flags=0xc
+[  444.268104]   pwq 0: cpus=0 node=0 flags=0x0 nice=0 active=1/256
+[  444.270454]     pending: xfs_reclaim_worker [xfs]
+[  444.272425] workqueue xfs-eofblocks/sda1: flags=0xc
+[  444.274432]   pwq 0: cpus=0 node=0 flags=0x0 nice=0 active=1/256
+[  444.276729]     pending: xfs_eofblocks_worker [xfs]
+[  444.278739] workqueue xfs-sync/sda1: flags=0x4
+[  444.280641]   pwq 0: cpus=0 node=0 flags=0x0 nice=0 active=1/256
+[  444.282967]     pending: xfs_log_worker [xfs]
+[  444.285195] pool 0: cpus=0 node=0 flags=0x0 nice=0 hung=309s workers=3 idle: 977 65
+
+Since the patch shown below was suggested by Michal Hocko at
+https://marc.info/?l=linux-mm&m=152723708623015 , it is from Michal Hocko.
+
+From cd8095242de13ace61eefca0c3d6f2a5a7b40032 Mon Sep 17 00:00:00 2001
+From: Michal Hocko <mhocko@suse.com>
+Date: Thu, 26 Jul 2018 14:40:03 +0900
+Subject: [PATCH] mm,page_alloc: PF_WQ_WORKER threads must sleep at should_reclaim_retry().
+
+Tetsuo Handa has reported that it is possible to bypass the short sleep
+for PF_WQ_WORKER threads which was introduced by commit 373ccbe5927034b5
+("mm, vmstat: allow WQ concurrency to discover memory reclaim doesn't make
+any progress") and moved by commit ede37713737834d9 ("mm: throttle on IO
+only when there are too many dirty and writeback pages") and lock up the
+system if OOM.
+
+This is because we are implicitly counting on falling back to
+schedule_timeout_uninterruptible() in __alloc_pages_may_oom() when
+schedule_timeout_uninterruptible() in should_reclaim_retry() was not
+called due to __zone_watermark_ok() == false.
+
+However, schedule_timeout_uninterruptible() in __alloc_pages_may_oom() is
+not called if all allocating threads but a PF_WQ_WORKER thread got stuck at
+__GFP_FS direct reclaim, for mutex_trylock(&oom_lock) by that PF_WQ_WORKER
+thread succeeds and out_of_memory() remains no-op unless that PF_WQ_WORKER
+thread is doing __GFP_FS allocation. Tetsuo is observing that GFP_NOIO
+allocation request from disk_events_workfn() is preventing other pending
+works from starting.
+
+Since should_reclaim_retry() should be a natural reschedule point,
+let's do the short sleep for PF_WQ_WORKER threads unconditionally
+in order to guarantee that other pending works are started.
+
+Reported-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Signed-off-by: Michal Hocko <mhocko@suse.com>
+Cc: Roman Gushchin <guro@fb.com>
+Cc: Johannes Weiner <hannes@cmpxchg.org>
+Cc: Vladimir Davydov <vdavydov.dev@gmail.com>
+Cc: David Rientjes <rientjes@google.com>
+Cc: Tejun Heo <tj@kernel.org>
+---
+ mm/page_alloc.c | 34 ++++++++++++++++++----------------
+ 1 file changed, 18 insertions(+), 16 deletions(-)
+
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index a790ef4..0c2c0a2 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -3922,6 +3922,7 @@ bool gfp_pfmemalloc_allowed(gfp_t gfp_mask)
+ {
+ 	struct zone *zone;
+ 	struct zoneref *z;
++	bool ret = false;
+ 
+ 	/*
+ 	 * Costly allocations might have made a progress but this doesn't mean
+@@ -3985,25 +3986,26 @@ bool gfp_pfmemalloc_allowed(gfp_t gfp_mask)
+ 				}
+ 			}
+ 
+-			/*
+-			 * Memory allocation/reclaim might be called from a WQ
+-			 * context and the current implementation of the WQ
+-			 * concurrency control doesn't recognize that
+-			 * a particular WQ is congested if the worker thread is
+-			 * looping without ever sleeping. Therefore we have to
+-			 * do a short sleep here rather than calling
+-			 * cond_resched().
+-			 */
+-			if (current->flags & PF_WQ_WORKER)
+-				schedule_timeout_uninterruptible(1);
+-			else
+-				cond_resched();
+-
+-			return true;
++			ret = true;
++			goto out;
+ 		}
+ 	}
+ 
+-	return false;
++out:
++	/*
++	 * Memory allocation/reclaim might be called from a WQ
++	 * context and the current implementation of the WQ
++	 * concurrency control doesn't recognize that
++	 * a particular WQ is congested if the worker thread is
++	 * looping without ever sleeping. Therefore we have to
++	 * do a short sleep here rather than calling
++	 * cond_resched().
++	 */
++	if (current->flags & PF_WQ_WORKER)
++		schedule_timeout_uninterruptible(1);
++	else
++		cond_resched();
++	return ret;
+ }
+ 
+ static inline bool
+-- 
+1.8.3.1
+
