@@ -2,152 +2,99 @@ Return-Path: <SRS0=7Z+k=KK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56591C28CF6
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 07:55:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03428C28CF6
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 07:57:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0AEE02088E
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 07:55:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A4C4F2088E
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 07:57:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=agner.ch header.i=@agner.ch header.b="FOH3e5Ir"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0AEE02088E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=agner.ch
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="cE25OJcU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A4C4F2088E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728816AbeGZJK4 (ORCPT
+        id S1728935AbeGZJM7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 26 Jul 2018 05:10:56 -0400
-Received: from mail.kmu-office.ch ([178.209.48.109]:53810 "EHLO
-        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727790AbeGZJK4 (ORCPT
+        Thu, 26 Jul 2018 05:12:59 -0400
+Received: from mail-oi0-f66.google.com ([209.85.218.66]:34668 "EHLO
+        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728600AbeGZJM7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Jul 2018 05:10:56 -0400
-Received: from webmail.kmu-office.ch (unknown [IPv6:2a02:418:6a02::a3])
-        by mail.kmu-office.ch (Postfix) with ESMTPSA id B45415C06D3;
-        Thu, 26 Jul 2018 09:55:16 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=agner.ch; s=dkim;
-        t=1532591716;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=X0YXUnHZOhT8QBodmQ8THjsw/D1H/MDjXL2W1tCmpEM=;
-        b=FOH3e5Ir60kkZSjW2pV8fAeLcp+kip/RHfcv/F6N5WY3/xJAR1YAA7LcpkAtQMoTgKjDBq
-        ioR7N+zqXWxPNqs+luwQ5TnWF4T57jFfLWr0pyfZ0yQErO/kiWa0KhYA5bMyAIwNqvWTjH
-        g7/AL+BKajH5SaC3y2h89CK4emFsqVQ=
+        Thu, 26 Jul 2018 05:12:59 -0400
+Received: by mail-oi0-f66.google.com with SMTP id 13-v6so1402382ois.1
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Jul 2018 00:57:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=a5WHBMbUJdRJ3x5qS98+TfZeKXF/7wPResP0zcgSx4w=;
+        b=cE25OJcU+NR0+IOnc+ejlq/n4pMJGjGXusWVrMchxazYAem8jRBHjjep7oCFEXSJqW
+         yQXTg04ioEXVBSyDa+7AUmaT7JbYCLBSisGYKeXiGveuToIbMMXfWt4udCvJ5pQ4FjYj
+         AYh06LDU0sWCkp0o/TldFXcmx+j00gIbrQ7E4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=a5WHBMbUJdRJ3x5qS98+TfZeKXF/7wPResP0zcgSx4w=;
+        b=ruuSzcZ6SB9oEpXKaIEdaMHcZWAce7mD9cImiXh0PrWuJfRGsgD1QVR3+OtKf5dLJS
+         QqsdguS5s6RNRF8+xRH73EIsQLcpBBwGtWShloSJOhVUauQlJFve/diXH1JE+wSpyS6o
+         Nxjr7xnNz7K95aj7AErj1dVZNlWy16lXKAr1aQSynz7yVNMPT+Qaaan3Y0QBU4iGJ+oq
+         aqQ2NttJaTcTXZiF4QsX9Js7L9NOeudw9tay3X8wXL8tyBzxLKZPKxjHaKbvjrxksJKN
+         5pUkQc1DABV923L0pSJYk/WhC19OoHruin5EM6iYw25/zZ6C84F9sLGO1Po2OgI2ko1c
+         MK9Q==
+X-Gm-Message-State: AOUpUlF/xwiooHLz+/rrs8V94sayMsW6/e48fP+Pr892PGGqiLVEp7kw
+        BurBJPaePtvZA1gCuLXpqSjHIbskJ+x2Hts2wjotJw==
+X-Google-Smtp-Source: AAOMgpfO1Vv1gykZcGWHshcEazoWdi5Ta7BI0f3OH8Nfrv/8DX4AZQ+3lDVkxU8p501QvJSXXjQDBxruk5WielN3lrI=
+X-Received: by 2002:aca:cdc2:: with SMTP id d185-v6mr959953oig.350.1532591841932;
+ Thu, 26 Jul 2018 00:57:21 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Date:   Thu, 26 Jul 2018 09:55:16 +0200
-From:   Stefan Agner <stefan@agner.ch>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Marcel Ziswiler <marcel@ziswiler.com>,
-        Peter Geis <pgwipeout@gmail.com>, linux-kernel@vger.kernel.org,
-        linux-tegra@vger.kernel.org,
-        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, linux-tegra-owner@vger.kernel.org
-Subject: Re: [PATCH] clk: tegra: probe deferral error reporting
-In-Reply-To: <153259028259.48062.10565668407094066922@swboyd.mtv.corp.google.com>
-References: <20180720075422.26563-1-marcel@ziswiler.com>
- <153256109511.48062.12389268791907553857@swboyd.mtv.corp.google.com>
- <b202fe11-108f-c62c-bb6d-9e3a7de5a964@gmail.com>
- <153259028259.48062.10565668407094066922@swboyd.mtv.corp.google.com>
-Message-ID: <13595e6b8bfb364023648297cad7da1b@agner.ch>
-X-Sender: stefan@agner.ch
-User-Agent: Roundcube Webmail/1.3.4
-X-Spamd-Result: default: False [-0.10 / 15.00];
-         TO_MATCH_ENVRCPT_ALL(0.00)[];
-         MID_RHS_MATCH_FROM(0.00)[];
-         RCPT_COUNT_TWELVE(0.00)[13];
-         TAGGED_RCPT(0.00)[];
-         MIME_GOOD(-0.10)[text/plain];
-         FROM_HAS_DN(0.00)[];
-         FROM_EQ_ENVFROM(0.00)[];
-         DKIM_SIGNED(0.00)[];
-         TO_DN_SOME(0.00)[];
-         RCVD_COUNT_ZERO(0.00)[0];
-         RCVD_TLS_ALL(0.00)[];
-         ARC_NA(0.00)[]
+Received: by 2002:a9d:237a:0:0:0:0:0 with HTTP; Thu, 26 Jul 2018 00:57:21
+ -0700 (PDT)
+In-Reply-To: <20180726065208.yalawbgabym3evzy@localhost>
+References: <2531014d066e61063b3d7906e6df55caa028e17c.1531881619.git.baolin.wang@linaro.org>
+ <20180726065208.yalawbgabym3evzy@localhost>
+From:   Baolin Wang <baolin.wang@linaro.org>
+Date:   Thu, 26 Jul 2018 15:57:21 +0800
+Message-ID: <CAMz4kuJ7e45xDe=aBc-m9dQczu+hdVH-SHCjnFSRmdjs-5BPZg@mail.gmail.com>
+Subject: Re: [PATCH 1/5] arm64: dts: sprd: Add SC27XX breathing light
+ controller device
+To:     Olof Johansson <olof@lixom.net>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        DTML <devicetree@vger.kernel.org>, arm@kernel.org,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Mark Brown <broonie@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 26.07.2018 09:31, Stephen Boyd wrote:
-> Quoting Peter Geis (2018-07-25 16:42:34)
->> On 7/25/2018 7:24 PM, Stephen Boyd wrote:
->> > Quoting Marcel Ziswiler (2018-07-20 00:54:22)
->> >> From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
->> >>
->> >> Actually report the error code from devm_regulator_get() which may as
->> >> well just be a probe deferral.
->> >>
->> >> Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
->> >>
->> >> ---
->> >>
->> >>   drivers/clk/tegra/clk-dfll.c | 5 +++--
->> >>   1 file changed, 3 insertions(+), 2 deletions(-)
->> >>
->> >> diff --git a/drivers/clk/tegra/clk-dfll.c b/drivers/clk/tegra/clk-dfll.c
->> >> index 48ee43734e05..b2123084e175 100644
->> >> --- a/drivers/clk/tegra/clk-dfll.c
->> >> +++ b/drivers/clk/tegra/clk-dfll.c
->> >> @@ -1609,8 +1609,9 @@ int tegra_dfll_register(struct platform_device *pdev,
->> >>
->> >>          td->vdd_reg = devm_regulator_get(td->dev, "vdd-cpu");
->> >>          if (IS_ERR(td->vdd_reg)) {
->> >> -               dev_err(td->dev, "couldn't get vdd_cpu regulator\n");
->> >> -               return PTR_ERR(td->vdd_reg);
->> >> +               ret = PTR_ERR(td->vdd_reg);
->> >> +               dev_err(td->dev, "couldn't get vdd_cpu regulator: %d\n", ret);
->> >
->> > Do you want to know that a probe defer is happening? Usually patches are
->> > sent to make that error path silent.
->> >
+Hi Olof,
+
+On 26 July 2018 at 14:52, Olof Johansson <olof@lixom.net> wrote:
+> On Mon, Jul 23, 2018 at 02:10:16PM +0800, Baolin Wang wrote:
+>> The SC27xx breathing light controller can support 3 outputs:
+>> red LED, green LED and blue LED.
 >>
->> Just asking as the newbie here, but shouldn't probe deferral be
->> regulated to dev_debug?
->> Then pass any other error code as dev_err.
-> 
-> Yes probe defer should be relegated to debug level prints. Or really, we
-> should introduce a more complicated system to make debugging probe defer
-> errors simpler by informing us which driver is probe defering on what
-> resource by putting debug prints in each framework that returns probe
-> defer errors instead of updating each driver that uses these frameworks
-> and thinks it needs to print errors in these cases. And hide all that
-> behind some kernel commandline parameter and/or Kconfig option that lets
-> us turn the prints off all the time if we're not developing drivers or
-> testing things.
+>> Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
+>
+> Applied 1-5, thanks. If you send a series like this, feel free to send a cover
+> letter as well, to let us know what you want done to them. I'm presuming you
+> wanted them applied in this case.
 
-Afaict, that is already there in:
-drivers/base/dd.c:really_probe()
+Sure, I will add one cover letter next time. Thanks.
 
-So I suggest to just silence the EPROBE_DEFER case, e.g.\
-
-
-	if (IS_ERR(td->vdd_reg)) {
-		ret = PTR_ERR(td->vdd_reg);
-		if (ret != -EPROBE_DEFER)
-			dev_err(td->dev, "couldn't get vdd_cpu regulator: %d\n", ret);
-
-		return ret;
-	}
-
---
-Stefan
-
-
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-tegra" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+-- 
+Baolin Wang
+Best Regards
