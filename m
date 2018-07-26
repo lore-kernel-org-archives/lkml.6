@@ -2,151 +2,109 @@ Return-Path: <SRS0=7Z+k=KK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28303C6778F
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 08:07:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15358C28CF6
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 08:11:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D17182083F
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 08:07:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B3DE22088E
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 08:11:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="rGY0bEbC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D17182083F
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FqgdJ3Ou"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B3DE22088E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729074AbeGZJXN (ORCPT
+        id S1728966AbeGZJ0k (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 26 Jul 2018 05:23:13 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:38082 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727790AbeGZJXM (ORCPT
+        Thu, 26 Jul 2018 05:26:40 -0400
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:45442 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727951AbeGZJ0j (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Jul 2018 05:23:12 -0400
-Received: by mail-lj1-f196.google.com with SMTP id p6-v6so713987ljc.5
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Jul 2018 01:07:32 -0700 (PDT)
+        Thu, 26 Jul 2018 05:26:39 -0400
+Received: by mail-lf1-f68.google.com with SMTP id j143-v6so574527lfj.12;
+        Thu, 26 Jul 2018 01:10:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=mz3VZmOItD1/GUj8UaM9it317ha8HmzvsMXhcVg2YmA=;
-        b=rGY0bEbCll8ABIBPRPg6XO2t6gkgU7Zk2+kpX46KrOlK1ydZ4Bjvbnb4aXHd7lRX4B
-         dcQ7ayhiv4rDYZjmnytN/zipBaOsSZF+YJ7JzaaEvQEHMxVWcAtB/BKFhZmLkvZrsXfC
-         peEC4ciXlLg+or5ZVvwkflRLaE0WipvYooU/3koJF0/hFvubjvm/7SgpoO/OTaWS1VM2
-         Chg5Mrtgl9EvVlZH3LoaIhRB5UHbH4iFSjEl+bHB3Zb2ccfvUdB0naqKDrub63iiEmOz
-         wSCh4MAQmf1gKRkesp3B5EMdOykKg3sjJHlE4yns8xmZ1pAyO3JYpregaLM7ckoslQCK
-         nodA==
+        h=from:to:cc:subject:date:message-id;
+        bh=Rrp/68miJgWjpJ7zFFkV6Im+RbF3YAJllr/nxUM+/A4=;
+        b=FqgdJ3Oucm2jDyMh5wOSojqZ5zt0oyg9iBlZl7M5xdtPcqEz3IHEFpiV7XIYFGazbY
+         kP4f+pyPpLKmTztpeLLIYSkMhJe/WyUShCAlSRDiYllQZjjXjkm4El8oEAZCNBg8lo0J
+         p2PnuDhUN4gvhcg14CGCeVVXfSKRVPpwcqoP8XRvDb09mF7+tG/mo0XlCQ7SoMnhX7Ll
+         H/9juZT93xul4RV7wWJUF6/qxd/Kvdqxdnv0Z/8Dx1ppADGD3V2GwQZzy05sphXf6gGC
+         gy6goQbOXiTJYrICcPFGjujub5xgZgRXHeg7Ms0Q6H/CiiK0/JCRR1/My/AtBe9DLDQx
+         XVGA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=mz3VZmOItD1/GUj8UaM9it317ha8HmzvsMXhcVg2YmA=;
-        b=kPFskZtJQ+zt48ZNYIeC59EeNLpUC+t20OkrY5riPewwohi2G7qjpOE4LX3SFtXo/v
-         PPi3LZJZKg3+/IVpeaD7E3t3nFfSE7bT3l5DKybwb0HTFp158c4h7hUp7NbVVE5c+uEC
-         HHIpyQk/jHnQlpisytoj5ALn37lbuylIF7xGUMwovAfH45Rh3DwsKD3CI5sJNw7mg/Lm
-         VKxQvpnZEhq1NIVbcFG6nQU9UUUphacjI4h/BNAWgAxXx48WhdJWxEHsprTmnWmZTzHE
-         lfI89AL0NQeXLsBIm4rOL/98NOUEMbyn1k0IUtO6C3gz5bOmzQJ7603Q2nWaU/Vbgd97
-         gN8g==
-X-Gm-Message-State: AOUpUlHopmMb6JdXt56rlj8EcGzAU23UveYiDAfyffec8+agIff/+W8k
-        3EpSQ6KOoI07HDXVWZVvIUIZ/Ojyo/riJCpC4lg=
-X-Google-Smtp-Source: AAOMgpdPvCUtVeqbLkq6iyxw3etxvH5BnRSOTILUd3N5bzfwhr9GaZvLCk8CJJRMCuZTDqdkzFCoB+P6v9hZlZsA7Kc=
-X-Received: by 2002:a2e:4186:: with SMTP id d6-v6mr785896ljf.36.1532592451834;
- Thu, 26 Jul 2018 01:07:31 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a19:2b14:0:0:0:0:0 with HTTP; Thu, 26 Jul 2018 01:07:31
- -0700 (PDT)
-In-Reply-To: <20180719160426.GA21958@jordon-HP-15-Notebook-PC>
-References: <20180719160426.GA21958@jordon-HP-15-Notebook-PC>
-From:   Souptick Joarder <jrdr.linux@gmail.com>
-Date:   Thu, 26 Jul 2018 13:37:31 +0530
-Message-ID: <CAFqt6zY_KUx0RgRiuTt6x6xmtfwD=iR8xR6665eZYmKmXKgDNA@mail.gmail.com>
-Subject: Re: [PATCH] gpu/drm/hisilicon: Convert drm_atomic_helper_suspend/resume()
-To:     z.liuxinliang@hisilicon.com, Zou Rongrong <zourongrong@gmail.com>,
-        kong.kongxinwei@hisilicon.com, puck.chen@hisilicon.com,
-        airlied@linux.ie, noralf@tronnes.org,
-        Souptick Joarder <jrdr.linux@gmail.com>,
-        Sean Paul <seanpaul@chromium.org>
-Cc:     dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        Ajit Linux <ajitn.linux@gmail.com>,
-        Sabyasachi Gupta <sabyasachi.linux@gmail.com>,
-        Brajeswar Ghosh <brajeswar.linux@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=Rrp/68miJgWjpJ7zFFkV6Im+RbF3YAJllr/nxUM+/A4=;
+        b=Q6A4zggc2WkSkD8vijbUL1cWjEEXvG+o43aYLNmz4VlXWvOQfcbEssc2jWx0e0zrOA
+         7Srf06DQnzItDjQf9ZV8fZE7qeAvQUQOhYfbXiXto5kozidaMFb/zKy+owZSRKVYKQGP
+         cjGoT33uFe4ZReU/pEo5ETMPlhhuPT4g7MZSxb4D1NBR7nDyi6fh9LXt4kbZ6lr8MJDM
+         ZX9cOYejZB6p8fcpzE3Q126jbfiQsbEr6pgIWdYbP2pEVB3e6P+s8Xh5SZhozLA0tcT6
+         M/nrswfFsOaWBe9H/z+WkWsEYdYOIqmchmrsT+zxNdHUNQv9olT4gHYNGyTs0tm+Bjk0
+         mMaw==
+X-Gm-Message-State: AOUpUlFYsgVmAH2TmAbavlSV829tqvzetaUL+z39x6RUPY8l5X0sy9fq
+        su/3r7mjlxBevFoiyZRcaGs=
+X-Google-Smtp-Source: AAOMgpfdpNK/dsLzDH2XBMJggZgMgAfif7wi4SS18XJmQeMkGkBHzdA9LmD1n6ijr1qbXOrh/Mc4yg==
+X-Received: by 2002:a19:5509:: with SMTP id n9-v6mr700755lfe.133.1532592657908;
+        Thu, 26 Jul 2018 01:10:57 -0700 (PDT)
+Received: from debian-tom.lan ([2001:2012:22e:1b00:f2e2:9015:9262:3fde])
+        by smtp.gmail.com with ESMTPSA id x2-v6sm114186ljx.64.2018.07.26.01.10.55
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 26 Jul 2018 01:10:56 -0700 (PDT)
+From:   Tomas Bortoli <tomasbortoli@gmail.com>
+To:     ericvh@gmail.com, rminnich@sandia.gov, lucho@ionkov.net
+Cc:     asmadeus@codewreck.org, davem@davemloft.net,
+        v9fs-developer@lists.sourceforge.net, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller@googlegroups.com,
+        Tomas Bortoli <tomasbortoli@gmail.com>
+Subject: [PATCH] 9p: fix NULL pointer dereferences
+Date:   Thu, 26 Jul 2018 10:10:49 +0200
+Message-Id: <20180726081049.10527-1-tomasbortoli@gmail.com>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 19, 2018 at 9:34 PM, Souptick Joarder <jrdr.linux@gmail.com> wrote:
-> convert drm_atomic_helper_suspend/resume() to use
-> drm_mode_config_helper_suspend/resume().
->
-> Fixed one sparse warning by making hibmc_drm_interrupt
-> static.
->
-> Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
-> Signed-off-by: Ajit Negi <ajitn.linux@gmail.com>
-> ---
+In p9_fd_create_tcp() and p9_fd_create_unix() it is possible to get
+a NULL value in the addr parameter. Return -EINVAL in such cases.
 
-Any comment on this patch ?
+Signed-off-by: Tomas Bortoli <tomasbortoli@gmail.com>
+Reported-by: syzbot+1a262da37d3bead15c39@syzkaller.appspotmail.com
+---
+ net/9p/trans_fd.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
->  drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c | 24 ++++++++----------------
->  1 file changed, 8 insertions(+), 16 deletions(-)
->
-> diff --git a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c
-> index d4f6f1f..2261676 100644
-> --- a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c
-> +++ b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c
-> @@ -37,7 +37,7 @@
->         .llseek         = no_llseek,
->  };
->
-> -irqreturn_t hibmc_drm_interrupt(int irq, void *arg)
-> +static irqreturn_t hibmc_drm_interrupt(int irq, void *arg)
->  {
->         struct drm_device *dev = (struct drm_device *)arg;
->         struct hibmc_drm_private *priv =
-> @@ -74,30 +74,22 @@ static int __maybe_unused hibmc_pm_suspend(struct device *dev)
->  {
->         struct pci_dev *pdev = to_pci_dev(dev);
->         struct drm_device *drm_dev = pci_get_drvdata(pdev);
-> -       struct hibmc_drm_private *priv = drm_dev->dev_private;
-> -
-> -       drm_kms_helper_poll_disable(drm_dev);
-> -       priv->suspend_state = drm_atomic_helper_suspend(drm_dev);
-> -       if (IS_ERR(priv->suspend_state)) {
-> -               DRM_ERROR("drm_atomic_helper_suspend failed: %ld\n",
-> -                         PTR_ERR(priv->suspend_state));
-> -               drm_kms_helper_poll_enable(drm_dev);
-> -               return PTR_ERR(priv->suspend_state);
-> -       }
-> +       int ret = 0;
->
-> -       return 0;
-> +       ret = drm_mode_config_helper_suspend(drm_dev);
-> +
-> +       return ret;
->  }
->
->  static int  __maybe_unused hibmc_pm_resume(struct device *dev)
->  {
->         struct pci_dev *pdev = to_pci_dev(dev);
->         struct drm_device *drm_dev = pci_get_drvdata(pdev);
-> -       struct hibmc_drm_private *priv = drm_dev->dev_private;
-> +       int ret = 0;
->
-> -       drm_atomic_helper_resume(drm_dev, priv->suspend_state);
-> -       drm_kms_helper_poll_enable(drm_dev);
-> +       ret = drm_mode_config_helper_resume(drm_dev);
->
-> -       return 0;
-> +       return ret;
->  }
->
->  static const struct dev_pm_ops hibmc_pm_ops = {
-> --
-> 1.9.1
->
+diff --git a/net/9p/trans_fd.c b/net/9p/trans_fd.c
+index 964260265b13..ecfceb659d0c 100644
+--- a/net/9p/trans_fd.c
++++ b/net/9p/trans_fd.c
+@@ -941,6 +941,9 @@ p9_fd_create_tcp(struct p9_client *client, const char *addr, char *args)
+ 	struct sockaddr_in sin_server;
+ 	struct p9_fd_opts opts;
+ 
++	if (addr == NULL)
++		return -EINVAL;
++
+ 	err = parse_opts(args, &opts);
+ 	if (err < 0)
+ 		return err;
+@@ -995,6 +998,9 @@ p9_fd_create_unix(struct p9_client *client, const char *addr, char *args)
+ 
+ 	csocket = NULL;
+ 
++	if (addr == NULL)
++		return -EINVAL;
++
+ 	if (strlen(addr) >= UNIX_PATH_MAX) {
+ 		pr_err("%s (%d): address too long: %s\n",
+ 		       __func__, task_pid_nr(current), addr);
+-- 
+2.11.0
+
