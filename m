@@ -2,115 +2,151 @@ Return-Path: <SRS0=7Z+k=KK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99FA1C28CF6
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 08:07:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28303C6778F
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 08:07:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4B80820883
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 08:07:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D17182083F
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 08:07:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=agner.ch header.i=@agner.ch header.b="d6W807w9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4B80820883
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=agner.ch
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="rGY0bEbC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D17182083F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729029AbeGZJWu (ORCPT
+        id S1729074AbeGZJXN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 26 Jul 2018 05:22:50 -0400
-Received: from mail.kmu-office.ch ([178.209.48.109]:53910 "EHLO
-        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727790AbeGZJWu (ORCPT
+        Thu, 26 Jul 2018 05:23:13 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:38082 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727790AbeGZJXM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Jul 2018 05:22:50 -0400
-Received: from webmail.kmu-office.ch (unknown [IPv6:2a02:418:6a02::a3])
-        by mail.kmu-office.ch (Postfix) with ESMTPSA id 2B2685C19DE;
-        Thu, 26 Jul 2018 10:07:09 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=agner.ch; s=dkim;
-        t=1532592429;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=j+W2ubora6+e/KcFqpbdC93jmGEjYd7Bq07F3xdSkow=;
-        b=d6W807w9ggbx/FZPjyRZfqmvBbyGnYosRQLnoKAhXl8cJ8K4SlXRqKFhE00+tb0L7Nwgg6
-        py5Q8j1/8gYDcwEyXXeU6T42fIhvWGoJfTMchGc/tLmurN2Rxx4Q0HG2wQnYrZbvVHQdc3
-        6ZugKCZnAvlVSivGF2tgb4ys4aMipdY=
+        Thu, 26 Jul 2018 05:23:12 -0400
+Received: by mail-lj1-f196.google.com with SMTP id p6-v6so713987ljc.5
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Jul 2018 01:07:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=mz3VZmOItD1/GUj8UaM9it317ha8HmzvsMXhcVg2YmA=;
+        b=rGY0bEbCll8ABIBPRPg6XO2t6gkgU7Zk2+kpX46KrOlK1ydZ4Bjvbnb4aXHd7lRX4B
+         dcQ7ayhiv4rDYZjmnytN/zipBaOsSZF+YJ7JzaaEvQEHMxVWcAtB/BKFhZmLkvZrsXfC
+         peEC4ciXlLg+or5ZVvwkflRLaE0WipvYooU/3koJF0/hFvubjvm/7SgpoO/OTaWS1VM2
+         Chg5Mrtgl9EvVlZH3LoaIhRB5UHbH4iFSjEl+bHB3Zb2ccfvUdB0naqKDrub63iiEmOz
+         wSCh4MAQmf1gKRkesp3B5EMdOykKg3sjJHlE4yns8xmZ1pAyO3JYpregaLM7ckoslQCK
+         nodA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=mz3VZmOItD1/GUj8UaM9it317ha8HmzvsMXhcVg2YmA=;
+        b=kPFskZtJQ+zt48ZNYIeC59EeNLpUC+t20OkrY5riPewwohi2G7qjpOE4LX3SFtXo/v
+         PPi3LZJZKg3+/IVpeaD7E3t3nFfSE7bT3l5DKybwb0HTFp158c4h7hUp7NbVVE5c+uEC
+         HHIpyQk/jHnQlpisytoj5ALn37lbuylIF7xGUMwovAfH45Rh3DwsKD3CI5sJNw7mg/Lm
+         VKxQvpnZEhq1NIVbcFG6nQU9UUUphacjI4h/BNAWgAxXx48WhdJWxEHsprTmnWmZTzHE
+         lfI89AL0NQeXLsBIm4rOL/98NOUEMbyn1k0IUtO6C3gz5bOmzQJ7603Q2nWaU/Vbgd97
+         gN8g==
+X-Gm-Message-State: AOUpUlHopmMb6JdXt56rlj8EcGzAU23UveYiDAfyffec8+agIff/+W8k
+        3EpSQ6KOoI07HDXVWZVvIUIZ/Ojyo/riJCpC4lg=
+X-Google-Smtp-Source: AAOMgpdPvCUtVeqbLkq6iyxw3etxvH5BnRSOTILUd3N5bzfwhr9GaZvLCk8CJJRMCuZTDqdkzFCoB+P6v9hZlZsA7Kc=
+X-Received: by 2002:a2e:4186:: with SMTP id d6-v6mr785896ljf.36.1532592451834;
+ Thu, 26 Jul 2018 01:07:31 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Date:   Thu, 26 Jul 2018 10:07:09 +0200
-From:   Stefan Agner <stefan@agner.ch>
-To:     Marcel Ziswiler <marcel@ziswiler.com>
-Cc:     devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-tegra-owner@vger.kernel.org
-Subject: Re: [PATCH 13/26] ARM: tegra: colibri_t30: use proper irq-gpio for
- stmpe811
-In-Reply-To: <20180723123658.980-14-marcel@ziswiler.com>
-References: <20180723123658.980-1-marcel@ziswiler.com>
- <20180723123658.980-14-marcel@ziswiler.com>
-Message-ID: <844bac7c4e00a014f5e5b857e38a47bf@agner.ch>
-X-Sender: stefan@agner.ch
-User-Agent: Roundcube Webmail/1.3.4
-X-Spamd-Result: default: False [-1.60 / 15.00];
-         TO_MATCH_ENVRCPT_ALL(0.00)[];
-         MID_RHS_MATCH_FROM(0.00)[];
-         SUSPICIOUS_RECIPS(1.50)[];
-         TAGGED_RCPT(0.00)[dt];
-         MIME_GOOD(-0.10)[text/plain];
-         FROM_HAS_DN(0.00)[];
-         RCPT_COUNT_SEVEN(0.00)[10];
-         FROM_EQ_ENVFROM(0.00)[];
-         DKIM_SIGNED(0.00)[];
-         TO_DN_SOME(0.00)[];
-         RCVD_COUNT_ZERO(0.00)[0];
-         RCVD_TLS_ALL(0.00)[];
-         BAYES_HAM(-3.00)[100.00%];
-         ARC_NA(0.00)[]
+Received: by 2002:a19:2b14:0:0:0:0:0 with HTTP; Thu, 26 Jul 2018 01:07:31
+ -0700 (PDT)
+In-Reply-To: <20180719160426.GA21958@jordon-HP-15-Notebook-PC>
+References: <20180719160426.GA21958@jordon-HP-15-Notebook-PC>
+From:   Souptick Joarder <jrdr.linux@gmail.com>
+Date:   Thu, 26 Jul 2018 13:37:31 +0530
+Message-ID: <CAFqt6zY_KUx0RgRiuTt6x6xmtfwD=iR8xR6665eZYmKmXKgDNA@mail.gmail.com>
+Subject: Re: [PATCH] gpu/drm/hisilicon: Convert drm_atomic_helper_suspend/resume()
+To:     z.liuxinliang@hisilicon.com, Zou Rongrong <zourongrong@gmail.com>,
+        kong.kongxinwei@hisilicon.com, puck.chen@hisilicon.com,
+        airlied@linux.ie, noralf@tronnes.org,
+        Souptick Joarder <jrdr.linux@gmail.com>,
+        Sean Paul <seanpaul@chromium.org>
+Cc:     dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        Ajit Linux <ajitn.linux@gmail.com>,
+        Sabyasachi Gupta <sabyasachi.linux@gmail.com>,
+        Brajeswar Ghosh <brajeswar.linux@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 23.07.2018 14:36, Marcel Ziswiler wrote:
-> From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
-> 
-> Use proper irq-gpio for stmpe811 touch controller.
-
-I don't think this change is necessary, interrupts/interrupt-parent
-specification seems to be supported by the driver as well.
-
---
-Stefan
-
-> 
-> Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
-> 
+On Thu, Jul 19, 2018 at 9:34 PM, Souptick Joarder <jrdr.linux@gmail.com> wrote:
+> convert drm_atomic_helper_suspend/resume() to use
+> drm_mode_config_helper_suspend/resume().
+>
+> Fixed one sparse warning by making hibmc_drm_interrupt
+> static.
+>
+> Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
+> Signed-off-by: Ajit Negi <ajitn.linux@gmail.com>
 > ---
-> 
->  arch/arm/boot/dts/tegra30-colibri.dtsi | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/arch/arm/boot/dts/tegra30-colibri.dtsi
-> b/arch/arm/boot/dts/tegra30-colibri.dtsi
-> index c80b9bf44752..ace72a53186a 100644
-> --- a/arch/arm/boot/dts/tegra30-colibri.dtsi
-> +++ b/arch/arm/boot/dts/tegra30-colibri.dtsi
-> @@ -836,8 +836,7 @@
->  		stmpe811@41 {
->  			compatible = "st,stmpe811";
->  			reg = <0x41>;
-> -			interrupts = <TEGRA_GPIO(V, 0) IRQ_TYPE_LEVEL_LOW>;
-> -			interrupt-parent = <&gpio>;
-> +			irq-gpio = <&gpio TEGRA_GPIO(V, 0) IRQ_TYPE_LEVEL_LOW>;
->  			interrupt-controller;
->  			id = <0>;
->  			blocks = <0x5>;
+
+Any comment on this patch ?
+
+>  drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c | 24 ++++++++----------------
+>  1 file changed, 8 insertions(+), 16 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c
+> index d4f6f1f..2261676 100644
+> --- a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c
+> +++ b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c
+> @@ -37,7 +37,7 @@
+>         .llseek         = no_llseek,
+>  };
+>
+> -irqreturn_t hibmc_drm_interrupt(int irq, void *arg)
+> +static irqreturn_t hibmc_drm_interrupt(int irq, void *arg)
+>  {
+>         struct drm_device *dev = (struct drm_device *)arg;
+>         struct hibmc_drm_private *priv =
+> @@ -74,30 +74,22 @@ static int __maybe_unused hibmc_pm_suspend(struct device *dev)
+>  {
+>         struct pci_dev *pdev = to_pci_dev(dev);
+>         struct drm_device *drm_dev = pci_get_drvdata(pdev);
+> -       struct hibmc_drm_private *priv = drm_dev->dev_private;
+> -
+> -       drm_kms_helper_poll_disable(drm_dev);
+> -       priv->suspend_state = drm_atomic_helper_suspend(drm_dev);
+> -       if (IS_ERR(priv->suspend_state)) {
+> -               DRM_ERROR("drm_atomic_helper_suspend failed: %ld\n",
+> -                         PTR_ERR(priv->suspend_state));
+> -               drm_kms_helper_poll_enable(drm_dev);
+> -               return PTR_ERR(priv->suspend_state);
+> -       }
+> +       int ret = 0;
+>
+> -       return 0;
+> +       ret = drm_mode_config_helper_suspend(drm_dev);
+> +
+> +       return ret;
+>  }
+>
+>  static int  __maybe_unused hibmc_pm_resume(struct device *dev)
+>  {
+>         struct pci_dev *pdev = to_pci_dev(dev);
+>         struct drm_device *drm_dev = pci_get_drvdata(pdev);
+> -       struct hibmc_drm_private *priv = drm_dev->dev_private;
+> +       int ret = 0;
+>
+> -       drm_atomic_helper_resume(drm_dev, priv->suspend_state);
+> -       drm_kms_helper_poll_enable(drm_dev);
+> +       ret = drm_mode_config_helper_resume(drm_dev);
+>
+> -       return 0;
+> +       return ret;
+>  }
+>
+>  static const struct dev_pm_ops hibmc_pm_ops = {
+> --
+> 1.9.1
+>
