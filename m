@@ -2,316 +2,137 @@ Return-Path: <SRS0=7Z+k=KK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B93EC6778F
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 13:56:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51512C28CF6
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 13:58:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1092320673
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 13:56:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1092320673
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 0A0F020673
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 13:58:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0A0F020673
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730379AbeGZPNs (ORCPT
+        id S1730392AbeGZPPv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 26 Jul 2018 11:13:48 -0400
-Received: from mx2.suse.de ([195.135.220.15]:55748 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729511AbeGZPNs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Jul 2018 11:13:48 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 5CD3EAEC9;
-        Thu, 26 Jul 2018 13:56:46 +0000 (UTC)
-Date:   Thu, 26 Jul 2018 15:56:45 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Shakeel Butt <shakeelb@google.com>
-Cc:     Johannes Weiner <hannes@cmpxchg.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        Greg Thelen <gthelen@google.com>,
-        Bruce Merry <bmerry@ska.ac.za>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
-        linux-mm@kvack.org
-Subject: Re: [PATCH] memcg: reduce memcg tree traversals for stats collection
-Message-ID: <20180726135645.GL28386@dhcp22.suse.cz>
-References: <20180724224635.143944-1-shakeelb@google.com>
+        Thu, 26 Jul 2018 11:15:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50086 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729506AbeGZPPv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Jul 2018 11:15:51 -0400
+Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0971F20673;
+        Thu, 26 Jul 2018 13:58:49 +0000 (UTC)
+Date:   Thu, 26 Jul 2018 09:58:48 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Snild Dolkow <snild@sony.com>
+Cc:     <akpm@linux-foundation.org>, <axboe@kernel.dk>,
+        <gregkh@linuxfoundation.org>, <john.stultz@linaro.org>,
+        <kosaki.motohiro@jp.fujitsu.com>, <linux-kernel@vger.kernel.org>,
+        <mingo@kernel.org>, <oleksiy.avramchenko@sony.com>,
+        <peter.enderborg@sony.com>, <tj@kernel.org>,
+        <torvalds@linux-foundation.org>, <yoshitaka.seto@sony.com>,
+        <stable@vger.kernel.org>
+Subject: Re: [PATCH] kthread, tracing: Don't expose half-written comm when
+ creating kthreads
+Message-ID: <20180726095848.61865443@gandalf.local.home>
+In-Reply-To: <20180726071539.188015-1-snild@sony.com>
+References: <20180725112619.00b629cd@gandalf.local.home>
+        <20180726071539.188015-1-snild@sony.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180724224635.143944-1-shakeelb@google.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 24-07-18 15:46:35, Shakeel Butt wrote:
-> Currently cgroup-v1's memcg_stat_show traverses the memcg tree ~17 times
-> to collect the stats while cgroup-v2's memory_stat_show traverses the
-> memcg tree thrice. On a large machine, a couple thousand memcgs is very
-> normal and if the churn is high and memcgs stick around during to
-> several reasons, tens of thousands of nodes in memcg tree can exist.
-> This patch has refactored and shared the stat collection code between
-> cgroup-v1 and cgroup-v2 and has reduced the tree traversal to just one.
-> 
-> I ran a simple benchmark which reads the root_mem_cgroup's stat file
-> 1000 times in the presense of 2500 memcgs on cgroup-v1. The results are:
-> 
-> Without the patch:
-> $ time ./read-root-stat-1000-times
-> 
-> real    0m1.663s
-> user    0m0.000s
-> sys     0m1.660s
-> 
-> With the patch:
-> $ time ./read-root-stat-1000-times
-> 
-> real    0m0.468s
-> user    0m0.000s
-> sys     0m0.467s
 
-The code is not the nicest one and accumulated_stats could really see
-some comment explaining v1 vs. v2 differences but other than that this
-makes sense. Especially with many zombies we can have.
+Thanks for sending this.
 
-> Signed-off-by: Shakeel Butt <shakeelb@google.com>
+Unless someone else has an issue with this, I'll just take it in my
+tree. I'm currently running a bunch of commits through my tests for
+this current rc cycle. I'll add this to the bunch.
 
-Acked-by: Michal Hocko <mhocko@suse.com>
+I still would like to have another ack from somebody.
 
+-- Steve
+
+
+On Thu, 26 Jul 2018 09:15:39 +0200
+Snild Dolkow <snild@sony.com> wrote:
+
+> There is a window for racing when printing directly to task->comm,
+> allowing other threads to see a non-terminated string. The vsnprintf
+> function fills the buffer, counts the truncated chars, then finally
+> writes the \0 at the end.
+> 
+> 	creator                     other
+> 	vsnprintf:
+> 	  fill (not terminated)
+> 	  count the rest            trace_sched_waking(p):
+> 	  ...                         memcpy(comm, p->comm, TASK_COMM_LEN)
+> 	  write \0
+> 
+> The consequences depend on how 'other' uses the string. In our case,
+> it was copied into the tracing system's saved cmdlines, a buffer of
+> adjacent TASK_COMM_LEN-byte buffers (note the 'n' where 0 should be):
+> 
+> 	crash-arm64> x/1024s savedcmd->saved_cmdlines | grep 'evenk'
+> 	0xffffffd5b3818640:     "irq/497-pwr_evenkworker/u16:12"
+> 
+> ...and a strcpy out of there would cause stack corruption:
+> 
+> 	[224761.522292] Kernel panic - not syncing: stack-protector:
+> 	    Kernel stack is corrupted in: ffffff9bf9783c78
+> 
+> 	crash-arm64> kbt | grep 'comm\|trace_print_context'
+> 	#6  0xffffff9bf9783c78 in trace_print_context+0x18c(+396)
+> 	      comm (char [16]) =  "irq/497-pwr_even"
+> 
+> 	crash-arm64> rd 0xffffffd4d0e17d14 8
+> 	ffffffd4d0e17d14:  2f71726900000000 5f7277702d373934   ....irq/497-pwr_
+> 	ffffffd4d0e17d24:  726f776b6e657665 3a3631752f72656b   evenkworker/u16:
+> 	ffffffd4d0e17d34:  f9780248ff003231 cede60e0ffffff9b   12..H.x......`..
+> 	ffffffd4d0e17d44:  cede60c8ffffffd4 00000fffffffffd4   .....`..........
+> 
+> The workaround in e09e28671 (use strlcpy in __trace_find_cmdline) was
+> likely needed because of this same bug.
+> 
+> Solved by vsnprintf:ing to a local buffer, then using set_task_comm().
+> This way, there won't be a window where comm is not terminated.
+> 
+> Cc: stable@vger.kernel.org
+> Fixes: bc0c38d139ec7 ("ftrace: latency tracer infrastructure")
+> Reviewed-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+> Signed-off-by: Snild Dolkow <snild@sony.com>
 > ---
->  mm/memcontrol.c | 150 +++++++++++++++++++++++-------------------------
->  1 file changed, 73 insertions(+), 77 deletions(-)
+>  kernel/kthread.c | 8 +++++++-
+>  1 file changed, 7 insertions(+), 1 deletion(-)
 > 
-> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-> index a5869b9d5194..d90993ef1d7d 100644
-> --- a/mm/memcontrol.c
-> +++ b/mm/memcontrol.c
-> @@ -3122,29 +3122,34 @@ static int mem_cgroup_hierarchy_write(struct cgroup_subsys_state *css,
->  	return retval;
->  }
+> diff --git a/kernel/kthread.c b/kernel/kthread.c
+> index 481951bf091d..1a481ae12dec 100644
+> --- a/kernel/kthread.c
+> +++ b/kernel/kthread.c
+> @@ -319,8 +319,14 @@ struct task_struct *__kthread_create_on_node(int (*threadfn)(void *data),
+>  	task = create->result;
+>  	if (!IS_ERR(task)) {
+>  		static const struct sched_param param = { .sched_priority = 0 };
+> +		char name[TASK_COMM_LEN];
 >  
-> -static void tree_stat(struct mem_cgroup *memcg, unsigned long *stat)
-> -{
-> -	struct mem_cgroup *iter;
-> -	int i;
-> -
-> -	memset(stat, 0, sizeof(*stat) * MEMCG_NR_STAT);
-> -
-> -	for_each_mem_cgroup_tree(iter, memcg) {
-> -		for (i = 0; i < MEMCG_NR_STAT; i++)
-> -			stat[i] += memcg_page_state(iter, i);
-> -	}
-> -}
-> +struct accumulated_stats {
-> +	unsigned long stat[MEMCG_NR_STAT];
-> +	unsigned long events[NR_VM_EVENT_ITEMS];
-> +	unsigned long lru_pages[NR_LRU_LISTS];
-> +	const unsigned int *stats_array;
-> +	const unsigned int *events_array;
-> +	int stats_size;
-> +	int events_size;
-> +};
->  
-> -static void tree_events(struct mem_cgroup *memcg, unsigned long *events)
-> +static void accumulate_memcg_tree(struct mem_cgroup *memcg,
-> +				  struct accumulated_stats *acc)
->  {
-> -	struct mem_cgroup *iter;
-> +	struct mem_cgroup *mi;
->  	int i;
->  
-> -	memset(events, 0, sizeof(*events) * NR_VM_EVENT_ITEMS);
-> +	for_each_mem_cgroup_tree(mi, memcg) {
-> +		for (i = 0; i < acc->stats_size; i++)
-> +			acc->stat[i] += memcg_page_state(mi,
-> +				acc->stats_array ? acc->stats_array[i] : i);
->  
-> -	for_each_mem_cgroup_tree(iter, memcg) {
-> -		for (i = 0; i < NR_VM_EVENT_ITEMS; i++)
-> -			events[i] += memcg_sum_events(iter, i);
-> +		for (i = 0; i < acc->events_size; i++)
-> +			acc->events[i] += memcg_sum_events(mi,
-> +				acc->events_array ? acc->events_array[i] : i);
-> +
-> +		for (i = 0; i < NR_LRU_LISTS; i++)
-> +			acc->lru_pages[i] +=
-> +				mem_cgroup_nr_lru_pages(mi, BIT(i));
->  	}
->  }
->  
-> @@ -3555,6 +3560,7 @@ static int memcg_stat_show(struct seq_file *m, void *v)
->  	unsigned long memory, memsw;
->  	struct mem_cgroup *mi;
->  	unsigned int i;
-> +	struct accumulated_stats acc;
->  
->  	BUILD_BUG_ON(ARRAY_SIZE(memcg1_stat_names) != ARRAY_SIZE(memcg1_stats));
->  	BUILD_BUG_ON(ARRAY_SIZE(mem_cgroup_lru_names) != NR_LRU_LISTS);
-> @@ -3587,32 +3593,27 @@ static int memcg_stat_show(struct seq_file *m, void *v)
->  		seq_printf(m, "hierarchical_memsw_limit %llu\n",
->  			   (u64)memsw * PAGE_SIZE);
->  
-> -	for (i = 0; i < ARRAY_SIZE(memcg1_stats); i++) {
-> -		unsigned long long val = 0;
-> +	memset(&acc, 0, sizeof(acc));
-> +	acc.stats_size = ARRAY_SIZE(memcg1_stats);
-> +	acc.stats_array = memcg1_stats;
-> +	acc.events_size = ARRAY_SIZE(memcg1_events);
-> +	acc.events_array = memcg1_events;
-> +	accumulate_memcg_tree(memcg, &acc);
->  
-> +	for (i = 0; i < ARRAY_SIZE(memcg1_stats); i++) {
->  		if (memcg1_stats[i] == MEMCG_SWAP && !do_memsw_account())
->  			continue;
-> -		for_each_mem_cgroup_tree(mi, memcg)
-> -			val += memcg_page_state(mi, memcg1_stats[i]) *
-> -			PAGE_SIZE;
-> -		seq_printf(m, "total_%s %llu\n", memcg1_stat_names[i], val);
-> +		seq_printf(m, "total_%s %llu\n", memcg1_stat_names[i],
-> +			   (u64)acc.stat[i] * PAGE_SIZE);
->  	}
->  
-> -	for (i = 0; i < ARRAY_SIZE(memcg1_events); i++) {
-> -		unsigned long long val = 0;
-> -
-> -		for_each_mem_cgroup_tree(mi, memcg)
-> -			val += memcg_sum_events(mi, memcg1_events[i]);
-> -		seq_printf(m, "total_%s %llu\n", memcg1_event_names[i], val);
-> -	}
-> -
-> -	for (i = 0; i < NR_LRU_LISTS; i++) {
-> -		unsigned long long val = 0;
-> +	for (i = 0; i < ARRAY_SIZE(memcg1_events); i++)
-> +		seq_printf(m, "total_%s %llu\n", memcg1_event_names[i],
-> +			   (u64)acc.events[i]);
->  
-> -		for_each_mem_cgroup_tree(mi, memcg)
-> -			val += mem_cgroup_nr_lru_pages(mi, BIT(i)) * PAGE_SIZE;
-> -		seq_printf(m, "total_%s %llu\n", mem_cgroup_lru_names[i], val);
-> -	}
-> +	for (i = 0; i < NR_LRU_LISTS; i++)
-> +		seq_printf(m, "total_%s %llu\n", mem_cgroup_lru_names[i],
-> +			   (u64)acc.lru_pages[i] * PAGE_SIZE);
->  
->  #ifdef CONFIG_DEBUG_VM
->  	{
-> @@ -5737,8 +5738,7 @@ static int memory_events_show(struct seq_file *m, void *v)
->  static int memory_stat_show(struct seq_file *m, void *v)
->  {
->  	struct mem_cgroup *memcg = mem_cgroup_from_css(seq_css(m));
-> -	unsigned long stat[MEMCG_NR_STAT];
-> -	unsigned long events[NR_VM_EVENT_ITEMS];
-> +	struct accumulated_stats acc;
->  	int i;
->  
->  	/*
-> @@ -5752,66 +5752,62 @@ static int memory_stat_show(struct seq_file *m, void *v)
->  	 * Current memory state:
->  	 */
->  
-> -	tree_stat(memcg, stat);
-> -	tree_events(memcg, events);
-> +	memset(&acc, 0, sizeof(acc));
-> +	acc.stats_size = MEMCG_NR_STAT;
-> +	acc.events_size = NR_VM_EVENT_ITEMS;
-> +	accumulate_memcg_tree(memcg, &acc);
->  
->  	seq_printf(m, "anon %llu\n",
-> -		   (u64)stat[MEMCG_RSS] * PAGE_SIZE);
-> +		   (u64)acc.stat[MEMCG_RSS] * PAGE_SIZE);
->  	seq_printf(m, "file %llu\n",
-> -		   (u64)stat[MEMCG_CACHE] * PAGE_SIZE);
-> +		   (u64)acc.stat[MEMCG_CACHE] * PAGE_SIZE);
->  	seq_printf(m, "kernel_stack %llu\n",
-> -		   (u64)stat[MEMCG_KERNEL_STACK_KB] * 1024);
-> +		   (u64)acc.stat[MEMCG_KERNEL_STACK_KB] * 1024);
->  	seq_printf(m, "slab %llu\n",
-> -		   (u64)(stat[NR_SLAB_RECLAIMABLE] +
-> -			 stat[NR_SLAB_UNRECLAIMABLE]) * PAGE_SIZE);
-> +		   (u64)(acc.stat[NR_SLAB_RECLAIMABLE] +
-> +			 acc.stat[NR_SLAB_UNRECLAIMABLE]) * PAGE_SIZE);
->  	seq_printf(m, "sock %llu\n",
-> -		   (u64)stat[MEMCG_SOCK] * PAGE_SIZE);
-> +		   (u64)acc.stat[MEMCG_SOCK] * PAGE_SIZE);
->  
->  	seq_printf(m, "shmem %llu\n",
-> -		   (u64)stat[NR_SHMEM] * PAGE_SIZE);
-> +		   (u64)acc.stat[NR_SHMEM] * PAGE_SIZE);
->  	seq_printf(m, "file_mapped %llu\n",
-> -		   (u64)stat[NR_FILE_MAPPED] * PAGE_SIZE);
-> +		   (u64)acc.stat[NR_FILE_MAPPED] * PAGE_SIZE);
->  	seq_printf(m, "file_dirty %llu\n",
-> -		   (u64)stat[NR_FILE_DIRTY] * PAGE_SIZE);
-> +		   (u64)acc.stat[NR_FILE_DIRTY] * PAGE_SIZE);
->  	seq_printf(m, "file_writeback %llu\n",
-> -		   (u64)stat[NR_WRITEBACK] * PAGE_SIZE);
-> +		   (u64)acc.stat[NR_WRITEBACK] * PAGE_SIZE);
->  
-> -	for (i = 0; i < NR_LRU_LISTS; i++) {
-> -		struct mem_cgroup *mi;
-> -		unsigned long val = 0;
-> -
-> -		for_each_mem_cgroup_tree(mi, memcg)
-> -			val += mem_cgroup_nr_lru_pages(mi, BIT(i));
-> -		seq_printf(m, "%s %llu\n",
-> -			   mem_cgroup_lru_names[i], (u64)val * PAGE_SIZE);
-> -	}
-> +	for (i = 0; i < NR_LRU_LISTS; i++)
-> +		seq_printf(m, "%s %llu\n", mem_cgroup_lru_names[i],
-> +			   (u64)acc.lru_pages[i] * PAGE_SIZE);
->  
->  	seq_printf(m, "slab_reclaimable %llu\n",
-> -		   (u64)stat[NR_SLAB_RECLAIMABLE] * PAGE_SIZE);
-> +		   (u64)acc.stat[NR_SLAB_RECLAIMABLE] * PAGE_SIZE);
->  	seq_printf(m, "slab_unreclaimable %llu\n",
-> -		   (u64)stat[NR_SLAB_UNRECLAIMABLE] * PAGE_SIZE);
-> +		   (u64)acc.stat[NR_SLAB_UNRECLAIMABLE] * PAGE_SIZE);
->  
->  	/* Accumulated memory events */
->  
-> -	seq_printf(m, "pgfault %lu\n", events[PGFAULT]);
-> -	seq_printf(m, "pgmajfault %lu\n", events[PGMAJFAULT]);
-> +	seq_printf(m, "pgfault %lu\n", acc.events[PGFAULT]);
-> +	seq_printf(m, "pgmajfault %lu\n", acc.events[PGMAJFAULT]);
->  
-> -	seq_printf(m, "pgrefill %lu\n", events[PGREFILL]);
-> -	seq_printf(m, "pgscan %lu\n", events[PGSCAN_KSWAPD] +
-> -		   events[PGSCAN_DIRECT]);
-> -	seq_printf(m, "pgsteal %lu\n", events[PGSTEAL_KSWAPD] +
-> -		   events[PGSTEAL_DIRECT]);
-> -	seq_printf(m, "pgactivate %lu\n", events[PGACTIVATE]);
-> -	seq_printf(m, "pgdeactivate %lu\n", events[PGDEACTIVATE]);
-> -	seq_printf(m, "pglazyfree %lu\n", events[PGLAZYFREE]);
-> -	seq_printf(m, "pglazyfreed %lu\n", events[PGLAZYFREED]);
-> +	seq_printf(m, "pgrefill %lu\n", acc.events[PGREFILL]);
-> +	seq_printf(m, "pgscan %lu\n", acc.events[PGSCAN_KSWAPD] +
-> +		   acc.events[PGSCAN_DIRECT]);
-> +	seq_printf(m, "pgsteal %lu\n", acc.events[PGSTEAL_KSWAPD] +
-> +		   acc.events[PGSTEAL_DIRECT]);
-> +	seq_printf(m, "pgactivate %lu\n", acc.events[PGACTIVATE]);
-> +	seq_printf(m, "pgdeactivate %lu\n", acc.events[PGDEACTIVATE]);
-> +	seq_printf(m, "pglazyfree %lu\n", acc.events[PGLAZYFREE]);
-> +	seq_printf(m, "pglazyfreed %lu\n", acc.events[PGLAZYFREED]);
->  
->  	seq_printf(m, "workingset_refault %lu\n",
-> -		   stat[WORKINGSET_REFAULT]);
-> +		   acc.stat[WORKINGSET_REFAULT]);
->  	seq_printf(m, "workingset_activate %lu\n",
-> -		   stat[WORKINGSET_ACTIVATE]);
-> +		   acc.stat[WORKINGSET_ACTIVATE]);
->  	seq_printf(m, "workingset_nodereclaim %lu\n",
-> -		   stat[WORKINGSET_NODERECLAIM]);
-> +		   acc.stat[WORKINGSET_NODERECLAIM]);
->  
->  	return 0;
->  }
-> -- 
-> 2.18.0.233.g985f88cf7e-goog
+> -		vsnprintf(task->comm, sizeof(task->comm), namefmt, args);
+> +		/*
+> +		 * task is already visible to other tasks, so updating
+> +		 * COMM must be protected.
+> +		 */
+> +		vsnprintf(name, sizeof(name), namefmt, args);
+> +		set_task_comm(task, name);
+>  		/*
+>  		 * root may have changed our (kthreadd's) priority or CPU mask.
+>  		 * The kernel thread should not inherit these properties.
 
--- 
-Michal Hocko
-SUSE Labs
