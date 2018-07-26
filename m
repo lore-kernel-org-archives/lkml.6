@@ -2,112 +2,106 @@ Return-Path: <SRS0=7Z+k=KK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D965BC67790
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 00:40:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EA6DC67790
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 00:41:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8CB9020846
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 00:40:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 23A8F20882
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 00:41:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="HnyssPl0";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="gYJbWdzU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8CB9020846
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="eho9tWlg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 23A8F20882
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728563AbeGZBy7 (ORCPT
+        id S1728615AbeGZBzV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 21:54:59 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:34170 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728449AbeGZBy7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Jul 2018 21:54:59 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 113CA60D50; Thu, 26 Jul 2018 00:40:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1532565647;
-        bh=dRmfo4JXlTJZyHOPf7dZqprOBP37lKoV+qPGyAffKsg=;
+        Wed, 25 Jul 2018 21:55:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39236 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728449AbeGZBzV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Jul 2018 21:55:21 -0400
+Received: from devbox (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6E37420846;
+        Thu, 26 Jul 2018 00:41:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1532565669;
+        bh=YIntXCC2jObea/TJjPOS+yKumScbe0KBFS57HMShnLQ=;
         h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=HnyssPl0U7xOArPZE6i3ZvSdIxRUo/kW3Mv44c3AsBHU7IcsR/WbbLhGPs7I4XpL+
-         HiZEUd5rrnVlewQQ+LsDyf5X5YgXhD3YZRka68XUbKElrhfTjTYQpB+ynhPY5JTBcz
-         ZRk2uSxSO8kjVHor5wszExffI3R2HjyAaLBnndNQ=
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by smtp.codeaurora.org (Postfix) with ESMTP id F413960D37;
-        Thu, 26 Jul 2018 00:40:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1532565646;
-        bh=dRmfo4JXlTJZyHOPf7dZqprOBP37lKoV+qPGyAffKsg=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=gYJbWdzUogsGWvtFVnB2AwG9Q2vlDdsiUvKLzLdjQM0GmzqJ3cE5/XH//luu9jzVe
-         jKFo8AVL/u+3iKMTWnGTTBbNgPOucdgQqojQvgPE08R2Gk744y6Hl2ESneLIIupECS
-         HAGnjqMCNVnRh6IAbDTcpA4FGsYo9ljyrXiE8KlM=
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
+        b=eho9tWlgI2lVd17CF6aIe5b3CmQ6xeCADisAZZPMhWcZ0DbLQS04rdbZpggicbdsU
+         +jlte7ce9dvrvMZP5QkSZjyPsgVNe6AfNh0/IE1Nnl2fQRHS+Uw5T/iGBWkaK6Nfc4
+         eUUiJhSFCA8RMJuy4brmsio7kcy9Q6IYf3rr7aAk=
+Date:   Thu, 26 Jul 2018 09:41:06 +0900
+From:   Masami Hiramatsu <mhiramat@kernel.org>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     Francis Deslauriers <francis.deslauriers@efficios.com>,
+        peterz@infradead.org, mathieu.desnoyers@efficios.com,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] tracing: kprobes: Prohibit probing on notrace
+ functions
+Message-Id: <20180726094106.1e8db6e2df788de20e696566@kernel.org>
+In-Reply-To: <20180713081803.1b78ebbc@gandalf.local.home>
+References: <1500044315-9508-3-git-send-email-francis.deslauriers@efficios.com>
+        <1531418053-21414-1-git-send-email-francis.deslauriers@efficios.com>
+        <1531418053-21414-2-git-send-email-francis.deslauriers@efficios.com>
+        <20180713115301.532ab1484e8b0befd90782d0@kernel.org>
+        <20180713081803.1b78ebbc@gandalf.local.home>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Date:   Wed, 25 Jul 2018 17:40:45 -0700
-From:   pheragu@codeaurora.org
-To:     Joe Perches <joe@perches.com>
-Cc:     Apw <apw@canonical.com>,
-        Linux Kernel <linux-kernel@vger.kernel.org>,
-        Bryanh <bryanh@codeaurora.org>, Ckadabi <ckadabi@codeaurora.org>,
-        Tsoni <tsoni@codeaurora.org>
-Subject: Re: Reminder to review a few patches sent two weeks ago
-In-Reply-To: <612de3c34f4986ac3ee6040af200a0e179acdcbd.camel@perches.com>
-References: <e531d3a7a9db2e8d06da01cab2ad090d@codeaurora.org>
- <612de3c34f4986ac3ee6040af200a0e179acdcbd.camel@perches.com>
-Message-ID: <2263042da44fae7cae949ac383c41964@codeaurora.org>
-X-Sender: pheragu@codeaurora.org
-User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-07-24 17:33, Joe Perches wrote:
-> On Tue, 2018-07-24 at 14:56 -0700, pheragu@codeaurora.org wrote:
->> A reminder to review a few patches I had sent last week. Below are the
->> links for the patches.
->> 
->> https://lkml.org/lkml/2018/7/5/798
-> 
-> I have no fundamental object to this one, but
-> the 80 column use is unnecessary and should be
-> coalesced before it can be applied.
-> 
-> Perhaps:
-> 
-> # warn about #if 1
-> 		if ($line =~ /^.\s*\#\s*if\s+1\b/) {
-> 			WARN("IF_1",
-> 			     "Consider removing the #if 1 and its #endif\n" .  $herecurr);
->  		}
-> 
->> http://lists-archives.com/linux-kernel/29168320-checkpatch-check-for-invalid-return-codes.html
-> 
-> This one has I think too many existing uses of
-> things like "return -1;"
-> 
-> $ git grep -P "return\s*\-\d+\s*;" | wc -l
-> 9929
-> 
-> How many of these are actually appropriate?
-> 
-I did go through a few of the files which return -1 in their functions,
-I observed that most of them were inappropriate and there was a case
-where actually the use of return -1 was 
-incorrect(kernel/arch/ia64/mm/contig.c
-in the function find_bootmap_location()). We could actually catch such 
-errors
-from now on if we use this patch.
+On Fri, 13 Jul 2018 08:18:03 -0400
+Steven Rostedt <rostedt@goodmis.org> wrote:
 
-> Also, no space is required between return and -1
-> by c90 and this should use $Int so it should be:
+> On Fri, 13 Jul 2018 11:53:01 +0900
+> Masami Hiramatsu <mhiramat@kernel.org> wrote:
 > 
-> 	if ($line =~ /\breturn\s*\-\$Int\s*;/) {
+> > On Thu, 12 Jul 2018 13:54:12 -0400
+> > Francis Deslauriers <francis.deslauriers@efficios.com> wrote:
+> > 
+> > > From: Masami Hiramatsu <mhiramat@kernel.org>
+> > > 
+> > > Prohibit kprobe-events probing on notrace function.
+> > > Since probing on the notrace function can cause recursive
+> > > event call. In most case those are just skipped, but
+> > > in some case it falls into infinite recursive call.  
+> > 
+> > BTW, I'm considering to add an option to allow putting
+> > kprobes on notrace function - just for debugging 
+> > ftrace by kprobes. That is "developer only" option
+> > so generally it should be disabled, but for debugging
+> > the ftrace, we still need it. Or should I introduce
+> > another kprobes module for debugging it?
 > 
-> etc...
+> No, I think the former is better (to add an option to allow putting
+> kprobes on notrace functions). By default we let people protect
+> themselves. But if then provide a switch that lets you do things that
+> might let you shoot yourself in the foot.
+
+I'm adding CONFIG_KPROBE_EVENTS_ON_NOTRACE kconfig which allows
+kprobes on notrace function. I think we don't need to make it
+online switchable, since it is only good for ftrace developers.
+
+Thank you,
+
+> 
+> BTW, I'm now leaving on vacation. I'll be back on the 23rd and will be
+> looking for patches that I should be pulling in then.
+> 
+> Thanks!
+> 
+> -- Steve
+
+
+-- 
+Masami Hiramatsu <mhiramat@kernel.org>
