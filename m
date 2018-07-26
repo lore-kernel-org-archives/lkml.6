@@ -2,931 +2,187 @@ Return-Path: <SRS0=7Z+k=KK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B6DDECDFB8
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 23:51:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA097C28CF6
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 23:51:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DC50620857
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 23:51:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 62CF120857
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 23:51:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="KuHvjDH3"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DC50620857
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=joelfernandes.org
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="WmblPu4A"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 62CF120857
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732091AbeG0BKO (ORCPT
+        id S1732110AbeG0BLA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 26 Jul 2018 21:10:14 -0400
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:42971 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731629AbeG0BKN (ORCPT
+        Thu, 26 Jul 2018 21:11:00 -0400
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:50646 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731726AbeG0BK7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Jul 2018 21:10:13 -0400
-Received: by mail-pl0-f65.google.com with SMTP id z7-v6so1488813plo.9
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Jul 2018 16:51:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=joelfernandes.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=oK+pplVin71lfEyaJlqNIxgulOr7tRsCjSmMiyWAGIw=;
-        b=KuHvjDH3/mqbZYSI0bboSIkTRo3aW8AHOx3QKqzi0il+8QspjHOTuTKBPjo7v0wt6v
-         hxwtkasedMfnWyn7WGGSnxYBmYSsIzLIzDRVLG+7xQQeIv/fQpH8yh7z1n+/eJJc0ZB6
-         TDToLw7ww0iaYof4gReH4843HzTaWivkkoiGE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=oK+pplVin71lfEyaJlqNIxgulOr7tRsCjSmMiyWAGIw=;
-        b=ryVjdwuZEs4Rq18l/36yd6wQk4QGRCHgLWVHAJQw2CVvu62OrsUWpPIkCp0wexQXtz
-         MKtdChhx6wGG36/qfGjC7DDMy3k1ZSwD0qXUpFUmqVE3aDwayCKtZnUcN1p54C0pX5q0
-         R1xm2ByX9wpu+F9TWW0okcdi1YA6KHgSE0U9bLgqkRIZFiiNhOOaMX6wWARZHOpV3rGL
-         r38qqTKBM4t/dL2pM7OOxWDBnHbVj1Q+/P7XY1M6h3/DeSaqGRzJIOltWHapsLqkbMwF
-         UW8qUJJtPPbRFjZbJGjfdnWaoL3ucYU8h/2YBo/sT1Ip0/z94JcOlPjKjJbCxbt984vt
-         7Uzw==
-X-Gm-Message-State: AOUpUlHh4l0E8yTJum1igU4TCo+DOMyK65B0bM4/S33Nlqbhwfo32iIt
-        Rip1uypIcVsMys27xl81L776Y1fav1A=
-X-Google-Smtp-Source: AAOMgpdtJha1e+iWNXj9/U5B9sTwITeGMit2cx753rkFagzrw5bl/Jut9yAN6w5FlMPCZo5Ma0eyug==
-X-Received: by 2002:a17:902:820e:: with SMTP id x14-v6mr3801461pln.218.1532649064470;
-        Thu, 26 Jul 2018 16:51:04 -0700 (PDT)
-Received: from joelaf.mtv.corp.google.com ([2620:0:1000:1600:3122:ea9c:d178:eb])
-        by smtp.gmail.com with ESMTPSA id t76-v6sm3818840pfe.109.2018.07.26.16.51.03
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 26 Jul 2018 16:51:03 -0700 (PDT)
-From:   Joel Fernandes <joel@joelfernandes.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     kernel-team@android.com,
-        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Byungchul Park <byungchul.park@lge.com>,
-        Erick Reyes <erickreyes@google.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Julia Cartwright <julia@ni.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Paul McKenney <paulmck@linux.vnet.ibm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Thomas Glexiner <tglx@linutronix.de>,
-        Todd Kjos <tkjos@google.com>,
-        Tom Zanussi <tom.zanussi@linux.intel.com>,
-        Will Deacon <will.deacon@arm.com>
-Subject: [PATCH v11 3/3] tracing: Centralize preemptirq tracepoints and unify their usage
-Date:   Thu, 26 Jul 2018 16:50:44 -0700
-Message-Id: <20180726235044.10195-4-joel@joelfernandes.org>
-X-Mailer: git-send-email 2.18.0.345.g5c9ce644c3-goog
-In-Reply-To: <20180726235044.10195-1-joel@joelfernandes.org>
-References: <20180726235044.10195-1-joel@joelfernandes.org>
+        Thu, 26 Jul 2018 21:10:59 -0400
+Received: from dflxv15.itg.ti.com ([128.247.5.124])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id w6QNpn6T029096;
+        Thu, 26 Jul 2018 18:51:49 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1532649109;
+        bh=HYg35fqdeMdmJ8bw9fCRi9BqMDSGHA6iTny+de1kspw=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=WmblPu4AV4jpgu7VkwZ78yp9Wg1YXa40DdC4ESQOU1656Ve2r+Zbeg6AzmG/H4vpQ
+         SEfKYZYlL/sVWCzPw2WqtDx9IRioC3dstVUalSz/XJdKanRw6FMXDddaO4is+hd5dg
+         x4rMGkc+f22SqKMp2NxE67lIOzVy4of3LymVminM=
+Received: from DFLE105.ent.ti.com (dfle105.ent.ti.com [10.64.6.26])
+        by dflxv15.itg.ti.com (8.14.3/8.13.8) with ESMTP id w6QNpmlu005594;
+        Thu, 26 Jul 2018 18:51:49 -0500
+Received: from DFLE114.ent.ti.com (10.64.6.35) by DFLE105.ent.ti.com
+ (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Thu, 26
+ Jul 2018 18:51:48 -0500
+Received: from dflp33.itg.ti.com (10.64.6.16) by DFLE114.ent.ti.com
+ (10.64.6.35) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
+ Thu, 26 Jul 2018 18:51:48 -0500
+Received: from [128.247.58.153] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dflp33.itg.ti.com (8.14.3/8.13.8) with ESMTP id w6QNplnf025657;
+        Thu, 26 Jul 2018 18:51:47 -0500
+Subject: Re: [PATCH v2 1/1] remoteproc: correct rproc_free_vring() to avoid
+ invalid kernel paging
+To:     Loic PALLARDY <loic.pallardy@st.com>,
+        "bjorn.andersson@linaro.org" <bjorn.andersson@linaro.org>,
+        "ohad@wizery.com" <ohad@wizery.com>
+CC:     "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Arnaud POULIQUEN <arnaud.pouliquen@st.com>,
+        "benjamin.gaignard@linaro.org" <benjamin.gaignard@linaro.org>
+References: <1530863212-16584-1-git-send-email-loic.pallardy@st.com>
+ <ee64ddf7-e9c6-0b77-8a4e-44f77d264fe0@ti.com>
+ <8e943f4d2a1b4e10a8a0756c737d53a8@SFHDAG7NODE2.st.com>
+From:   Suman Anna <s-anna@ti.com>
+Message-ID: <56aeb569-cd4d-3769-fdad-ee3d4dbdc19b@ti.com>
+Date:   Thu, 26 Jul 2018 18:51:47 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <8e943f4d2a1b4e10a8a0756c737d53a8@SFHDAG7NODE2.st.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Joel Fernandes (Google)" <joel@joelfernandes.org>
+Hi Loic,
 
-This patch detaches the preemptirq tracepoints from the tracers and
-keeps it separate.
+On 07/26/2018 02:48 AM, Loic PALLARDY wrote:
+> Hi Suman,
+>>
+>> Hi Loic,
+>>
+>> On 07/06/2018 02:46 AM, Loic Pallardy wrote:
+>>> If rproc_start() failed, rproc_resource_cleanup() is called to clean
+>>> debugfs entries, then associated iommu mappings, carveouts and vdev.
+>>> Issue occurs when rproc_free_vring() is trying to reset vring resource
+>>> table entry.
+>>> At this time, table_ptr is pointing on loaded resource table and carveouts
+>>> already released, so access to loaded resource table is generating a kernel
+>>> paging error:
+>>
+>> Are you using a device specific CMA pool or carveout, and if so, where
+>> the pool is? If not, where is the default CMA pool? I am trying to
+>> reproduce the issue on my platform with the start failure as you
+>> suggested, but haven't seen it so far. That said, I have seen the exact
+>> same crash when using HighMEM CMA pools on my downstream kernel
+>> when
+>> stopping the processor, and the root cause is essentially the same as
+>> what you summarized here. The issue was present with LowMem pools as
+>> well, but got masked because of the kernel linear mapping.
+> 
+> I have a carveout declared in firmware resource table for co-processor code and data, and st driver has a specific 
+> reserved memory region to fit fix address space requested by co-processor.
+> So CPU access to code and loaded resource table area is granted thanks to allocation done by rproc_handle_carveout().
 
-Advantages:
-* Lockdep and irqsoff event can now run in parallel since they no longer
-have their own calls.
+Where are the vrings getting allocated from?
 
-* This unifies the usecase of adding hooks to an irqsoff and irqson
-event, and a preemptoff and preempton event.
-  3 users of the events exist:
-  - Lockdep
-  - irqsoff and preemptoff tracers
-  - irqs and preempt trace events
+In anycase, I prefer that we should actually reset the table_ptr in
+rproc_start() in failure cases (undo the operation essentially) as we
+don't call rproc_stop() in those cases. This will result in symmetric
+code. We already have the reset handled in rproc_stop() added recently
+in commit 0a8b81cb2e41 ("remoteproc: Reset table_ptr on stop"). Let me
+know what you think, I can send a quick patch.
 
-The unification cleans up several ifdefs and makes the code in preempt
-tracer and irqsoff tracers simpler. It gets rid of all the horrific
-ifdeferry around PROVE_LOCKING and makes configuration of the different
-users of the tracepoints more easy and understandable. It also gets rid
-of the time_* function calls from the lockdep hooks used to call into
-the preemptirq tracer which is not needed anymore. The negative delta in
-lines of code in this patch is quite large too.
+regards
+Suman
 
-In the patch we introduce a new CONFIG option PREEMPTIRQ_TRACEPOINTS
-as a single point for registering probes onto the tracepoints. With
-this,
-the web of config options for preempt/irq toggle tracepoints and its
-users becomes:
-
- PREEMPT_TRACER   PREEMPTIRQ_EVENTS  IRQSOFF_TRACER PROVE_LOCKING
-       |                 |     \         |           |
-       \    (selects)    /      \        \ (selects) /
-      TRACE_PREEMPT_TOGGLE       ----> TRACE_IRQFLAGS
-                      \                  /
-                       \ (depends on)   /
-                     PREEMPTIRQ_TRACEPOINTS
-
-One note, I have to check for lockdep recursion in the code that calls
-the trace events API and bail out if we're in lockdep recursion
-protection to prevent something like the following case: a spin_lock is
-taken. Then lockdep_acquired is called.  That does a raw_local_irq_save
-and then sets lockdep_recursion, and then calls __lockdep_acquired. In
-this function, a call to get_lock_stats happens which calls
-preempt_disable, which calls trace IRQS off somewhere which enters my
-tracepoint code and sets the tracing_irq_cpu flag to prevent recursion.
-This flag is then never cleared causing lockdep paths to never be
-entered and thus causing splats and other bad things.
-
-Other than the performance tests mentioned in the previous patch, I also
-ran the locking API test suite. I verified that all tests cases are
-passing.
-
-I also injected issues by not registering lockdep probes onto the
-tracepoints and I see failures to confirm that the probes are indeed
-working.
-
-This series + lockdep probes not registered (just to inject errors):
-[    0.000000]      hard-irqs-on + irq-safe-A/21:  ok  |  ok  |  ok  |
-[    0.000000]      soft-irqs-on + irq-safe-A/21:  ok  |  ok  |  ok  |
-[    0.000000]        sirq-safe-A => hirqs-on/12:FAILED|FAILED|  ok  |
-[    0.000000]        sirq-safe-A => hirqs-on/21:FAILED|FAILED|  ok  |
-[    0.000000]          hard-safe-A + irqs-on/12:FAILED|FAILED|  ok  |
-[    0.000000]          soft-safe-A + irqs-on/12:FAILED|FAILED|  ok  |
-[    0.000000]          hard-safe-A + irqs-on/21:FAILED|FAILED|  ok  |
-[    0.000000]          soft-safe-A + irqs-on/21:FAILED|FAILED|  ok  |
-[    0.000000]     hard-safe-A + unsafe-B #1/123:  ok  |  ok  |  ok  |
-[    0.000000]     soft-safe-A + unsafe-B #1/123:  ok  |  ok  |  ok  |
-
-With this series + lockdep probes registered, all locking tests pass:
-
-[    0.000000]      hard-irqs-on + irq-safe-A/21:  ok  |  ok  |  ok  |
-[    0.000000]      soft-irqs-on + irq-safe-A/21:  ok  |  ok  |  ok  |
-[    0.000000]        sirq-safe-A => hirqs-on/12:  ok  |  ok  |  ok  |
-[    0.000000]        sirq-safe-A => hirqs-on/21:  ok  |  ok  |  ok  |
-[    0.000000]          hard-safe-A + irqs-on/12:  ok  |  ok  |  ok  |
-[    0.000000]          soft-safe-A + irqs-on/12:  ok  |  ok  |  ok  |
-[    0.000000]          hard-safe-A + irqs-on/21:  ok  |  ok  |  ok  |
-[    0.000000]          soft-safe-A + irqs-on/21:  ok  |  ok  |  ok  |
-[    0.000000]     hard-safe-A + unsafe-B #1/123:  ok  |  ok  |  ok  |
-[    0.000000]     soft-safe-A + unsafe-B #1/123:  ok  |  ok  |  ok  |
-
-Reviewed-by: Namhyung Kim <namhyung@kernel.org>
-Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
----
- include/linux/ftrace.h            |  11 +-
- include/linux/irqflags.h          |  11 +-
- include/linux/lockdep.h           |   8 +-
- include/linux/preempt.h           |   2 +-
- include/trace/events/preemptirq.h |  23 +--
- init/main.c                       |   5 +-
- kernel/locking/lockdep.c          |  35 ++---
- kernel/sched/core.c               |   2 +-
- kernel/trace/Kconfig              |  22 ++-
- kernel/trace/Makefile             |   2 +-
- kernel/trace/trace_irqsoff.c      | 231 ++++++++----------------------
- kernel/trace/trace_preemptirq.c   |  72 ++++++++++
- 12 files changed, 195 insertions(+), 229 deletions(-)
- create mode 100644 kernel/trace/trace_preemptirq.c
-
-diff --git a/include/linux/ftrace.h b/include/linux/ftrace.h
-index 8154f4920fcb..f32e3c81407e 100644
---- a/include/linux/ftrace.h
-+++ b/include/linux/ftrace.h
-@@ -709,16 +709,7 @@ static inline unsigned long get_lock_parent_ip(void)
- 	return CALLER_ADDR2;
- }
- 
--#ifdef CONFIG_IRQSOFF_TRACER
--  extern void time_hardirqs_on(unsigned long a0, unsigned long a1);
--  extern void time_hardirqs_off(unsigned long a0, unsigned long a1);
--#else
--  static inline void time_hardirqs_on(unsigned long a0, unsigned long a1) { }
--  static inline void time_hardirqs_off(unsigned long a0, unsigned long a1) { }
--#endif
--
--#if defined(CONFIG_PREEMPT_TRACER) || \
--	(defined(CONFIG_DEBUG_PREEMPT) && defined(CONFIG_PREEMPTIRQ_EVENTS))
-+#ifdef CONFIG_TRACE_PREEMPT_TOGGLE
-   extern void trace_preempt_on(unsigned long a0, unsigned long a1);
-   extern void trace_preempt_off(unsigned long a0, unsigned long a1);
- #else
-diff --git a/include/linux/irqflags.h b/include/linux/irqflags.h
-index 9700f00bbc04..50edb9cbbd26 100644
---- a/include/linux/irqflags.h
-+++ b/include/linux/irqflags.h
-@@ -15,9 +15,16 @@
- #include <linux/typecheck.h>
- #include <asm/irqflags.h>
- 
--#ifdef CONFIG_TRACE_IRQFLAGS
-+/* Currently trace_softirqs_on/off is used only by lockdep */
-+#ifdef CONFIG_PROVE_LOCKING
-   extern void trace_softirqs_on(unsigned long ip);
-   extern void trace_softirqs_off(unsigned long ip);
-+#else
-+# define trace_softirqs_on(ip)	do { } while (0)
-+# define trace_softirqs_off(ip)	do { } while (0)
-+#endif
-+
-+#ifdef CONFIG_TRACE_IRQFLAGS
-   extern void trace_hardirqs_on(void);
-   extern void trace_hardirqs_off(void);
- # define trace_hardirq_context(p)	((p)->hardirq_context)
-@@ -43,8 +50,6 @@ do {						\
- #else
- # define trace_hardirqs_on()		do { } while (0)
- # define trace_hardirqs_off()		do { } while (0)
--# define trace_softirqs_on(ip)		do { } while (0)
--# define trace_softirqs_off(ip)		do { } while (0)
- # define trace_hardirq_context(p)	0
- # define trace_softirq_context(p)	0
- # define trace_hardirqs_enabled(p)	0
-diff --git a/include/linux/lockdep.h b/include/linux/lockdep.h
-index 6fc77d4dbdcd..a8113357ceeb 100644
---- a/include/linux/lockdep.h
-+++ b/include/linux/lockdep.h
-@@ -266,7 +266,8 @@ struct held_lock {
- /*
-  * Initialization, self-test and debugging-output methods:
-  */
--extern void lockdep_info(void);
-+extern void lockdep_init(void);
-+extern void lockdep_init_early(void);
- extern void lockdep_reset(void);
- extern void lockdep_reset_lock(struct lockdep_map *lock);
- extern void lockdep_free_key_range(void *start, unsigned long size);
-@@ -406,7 +407,8 @@ static inline void lockdep_on(void)
- # define lock_downgrade(l, i)			do { } while (0)
- # define lock_set_class(l, n, k, s, i)		do { } while (0)
- # define lock_set_subclass(l, s, i)		do { } while (0)
--# define lockdep_info()				do { } while (0)
-+# define lockdep_init()				do { } while (0)
-+# define lockdep_init_early()			do { } while (0)
- # define lockdep_init_map(lock, name, key, sub) \
- 		do { (void)(name); (void)(key); } while (0)
- # define lockdep_set_class(lock, key)		do { (void)(key); } while (0)
-@@ -532,7 +534,7 @@ do {								\
- 
- #endif /* CONFIG_LOCKDEP */
- 
--#ifdef CONFIG_TRACE_IRQFLAGS
-+#ifdef CONFIG_PROVE_LOCKING
- extern void print_irqtrace_events(struct task_struct *curr);
- #else
- static inline void print_irqtrace_events(struct task_struct *curr)
-diff --git a/include/linux/preempt.h b/include/linux/preempt.h
-index 5bd3f151da78..c01813c3fbe9 100644
---- a/include/linux/preempt.h
-+++ b/include/linux/preempt.h
-@@ -150,7 +150,7 @@
-  */
- #define in_atomic_preempt_off() (preempt_count() != PREEMPT_DISABLE_OFFSET)
- 
--#if defined(CONFIG_DEBUG_PREEMPT) || defined(CONFIG_PREEMPT_TRACER)
-+#if defined(CONFIG_DEBUG_PREEMPT) || defined(CONFIG_TRACE_PREEMPT_TOGGLE)
- extern void preempt_count_add(int val);
- extern void preempt_count_sub(int val);
- #define preempt_count_dec_and_test() \
-diff --git a/include/trace/events/preemptirq.h b/include/trace/events/preemptirq.h
-index 9c4eb33c5a1d..9a0d4ceeb166 100644
---- a/include/trace/events/preemptirq.h
-+++ b/include/trace/events/preemptirq.h
-@@ -1,4 +1,4 @@
--#ifdef CONFIG_PREEMPTIRQ_EVENTS
-+#ifdef CONFIG_PREEMPTIRQ_TRACEPOINTS
- 
- #undef TRACE_SYSTEM
- #define TRACE_SYSTEM preemptirq
-@@ -32,7 +32,7 @@ DECLARE_EVENT_CLASS(preemptirq_template,
- 		  (void *)((unsigned long)(_stext) + __entry->parent_offs))
- );
- 
--#ifndef CONFIG_PROVE_LOCKING
-+#ifdef CONFIG_TRACE_IRQFLAGS
- DEFINE_EVENT(preemptirq_template, irq_disable,
- 	     TP_PROTO(unsigned long ip, unsigned long parent_ip),
- 	     TP_ARGS(ip, parent_ip));
-@@ -40,9 +40,14 @@ DEFINE_EVENT(preemptirq_template, irq_disable,
- DEFINE_EVENT(preemptirq_template, irq_enable,
- 	     TP_PROTO(unsigned long ip, unsigned long parent_ip),
- 	     TP_ARGS(ip, parent_ip));
-+#else
-+#define trace_irq_enable(...)
-+#define trace_irq_disable(...)
-+#define trace_irq_enable_rcuidle(...)
-+#define trace_irq_disable_rcuidle(...)
- #endif
- 
--#ifdef CONFIG_DEBUG_PREEMPT
-+#ifdef CONFIG_TRACE_PREEMPT_TOGGLE
- DEFINE_EVENT(preemptirq_template, preempt_disable,
- 	     TP_PROTO(unsigned long ip, unsigned long parent_ip),
- 	     TP_ARGS(ip, parent_ip));
-@@ -50,22 +55,22 @@ DEFINE_EVENT(preemptirq_template, preempt_disable,
- DEFINE_EVENT(preemptirq_template, preempt_enable,
- 	     TP_PROTO(unsigned long ip, unsigned long parent_ip),
- 	     TP_ARGS(ip, parent_ip));
-+#else
-+#define trace_preempt_enable(...)
-+#define trace_preempt_disable(...)
-+#define trace_preempt_enable_rcuidle(...)
-+#define trace_preempt_disable_rcuidle(...)
- #endif
- 
- #endif /* _TRACE_PREEMPTIRQ_H */
- 
- #include <trace/define_trace.h>
- 
--#endif /* !CONFIG_PREEMPTIRQ_EVENTS */
--
--#if !defined(CONFIG_PREEMPTIRQ_EVENTS) || defined(CONFIG_PROVE_LOCKING)
-+#else /* !CONFIG_PREEMPTIRQ_TRACEPOINTS */
- #define trace_irq_enable(...)
- #define trace_irq_disable(...)
- #define trace_irq_enable_rcuidle(...)
- #define trace_irq_disable_rcuidle(...)
--#endif
--
--#if !defined(CONFIG_PREEMPTIRQ_EVENTS) || !defined(CONFIG_DEBUG_PREEMPT)
- #define trace_preempt_enable(...)
- #define trace_preempt_disable(...)
- #define trace_preempt_enable_rcuidle(...)
-diff --git a/init/main.c b/init/main.c
-index 3b4ada11ed52..44fe43be84c1 100644
---- a/init/main.c
-+++ b/init/main.c
-@@ -648,6 +648,9 @@ asmlinkage __visible void __init start_kernel(void)
- 	profile_init();
- 	call_function_init();
- 	WARN(!irqs_disabled(), "Interrupts were enabled early\n");
-+
-+	lockdep_init_early();
-+
- 	early_boot_irqs_disabled = false;
- 	local_irq_enable();
- 
-@@ -663,7 +666,7 @@ asmlinkage __visible void __init start_kernel(void)
- 		panic("Too many boot %s vars at `%s'", panic_later,
- 		      panic_param);
- 
--	lockdep_info();
-+	lockdep_init();
- 
- 	/*
- 	 * Need to run this when irqs are enabled, because it wants
-diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
-index 8f5ce0048d15..a6a6b7eb4b82 100644
---- a/kernel/locking/lockdep.c
-+++ b/kernel/locking/lockdep.c
-@@ -55,6 +55,7 @@
- 
- #include "lockdep_internals.h"
- 
-+#include <trace/events/preemptirq.h>
- #define CREATE_TRACE_POINTS
- #include <trace/events/lock.h>
- 
-@@ -2839,10 +2840,9 @@ static void __trace_hardirqs_on_caller(unsigned long ip)
- 	debug_atomic_inc(hardirqs_on_events);
- }
- 
--__visible void trace_hardirqs_on_caller(unsigned long ip)
-+static void lockdep_hardirqs_on(void *none, unsigned long ignore,
-+				unsigned long ip)
- {
--	time_hardirqs_on(CALLER_ADDR0, ip);
--
- 	if (unlikely(!debug_locks || current->lockdep_recursion))
- 		return;
- 
-@@ -2881,23 +2881,15 @@ __visible void trace_hardirqs_on_caller(unsigned long ip)
- 	__trace_hardirqs_on_caller(ip);
- 	current->lockdep_recursion = 0;
- }
--EXPORT_SYMBOL(trace_hardirqs_on_caller);
--
--void trace_hardirqs_on(void)
--{
--	trace_hardirqs_on_caller(CALLER_ADDR0);
--}
--EXPORT_SYMBOL(trace_hardirqs_on);
- 
- /*
-  * Hardirqs were disabled:
-  */
--__visible void trace_hardirqs_off_caller(unsigned long ip)
-+static void lockdep_hardirqs_off(void *none, unsigned long ignore,
-+				 unsigned long ip)
- {
- 	struct task_struct *curr = current;
- 
--	time_hardirqs_off(CALLER_ADDR0, ip);
--
- 	if (unlikely(!debug_locks || current->lockdep_recursion))
- 		return;
- 
-@@ -2919,13 +2911,6 @@ __visible void trace_hardirqs_off_caller(unsigned long ip)
- 	} else
- 		debug_atomic_inc(redundant_hardirqs_off);
- }
--EXPORT_SYMBOL(trace_hardirqs_off_caller);
--
--void trace_hardirqs_off(void)
--{
--	trace_hardirqs_off_caller(CALLER_ADDR0);
--}
--EXPORT_SYMBOL(trace_hardirqs_off);
- 
- /*
-  * Softirqs will be enabled:
-@@ -4330,7 +4315,15 @@ void lockdep_reset_lock(struct lockdep_map *lock)
- 	raw_local_irq_restore(flags);
- }
- 
--void __init lockdep_info(void)
-+void __init lockdep_init_early(void)
-+{
-+#ifdef CONFIG_PROVE_LOCKING
-+	register_trace_prio_irq_disable(lockdep_hardirqs_off, NULL, INT_MAX);
-+	register_trace_prio_irq_enable(lockdep_hardirqs_on, NULL, INT_MIN);
-+#endif
-+}
-+
-+void __init lockdep_init(void)
- {
- 	printk("Lock dependency validator: Copyright (c) 2006 Red Hat, Inc., Ingo Molnar\n");
- 
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index 78d8facba456..4c956f6849ec 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -3192,7 +3192,7 @@ static inline void sched_tick_stop(int cpu) { }
- #endif
- 
- #if defined(CONFIG_PREEMPT) && (defined(CONFIG_DEBUG_PREEMPT) || \
--				defined(CONFIG_PREEMPT_TRACER))
-+				defined(CONFIG_TRACE_PREEMPT_TOGGLE))
- /*
-  * If the value passed in is equal to the current preempt count
-  * then we just disabled preemption. Start timing the latency.
-diff --git a/kernel/trace/Kconfig b/kernel/trace/Kconfig
-index e15fadbe5dfb..eb5ab6b511e2 100644
---- a/kernel/trace/Kconfig
-+++ b/kernel/trace/Kconfig
-@@ -82,6 +82,15 @@ config RING_BUFFER_ALLOW_SWAP
- 	 Allow the use of ring_buffer_swap_cpu.
- 	 Adds a very slight overhead to tracing when enabled.
- 
-+config PREEMPTIRQ_TRACEPOINTS
-+	bool
-+	depends on TRACE_PREEMPT_TOGGLE || TRACE_IRQFLAGS
-+	select TRACING
-+	default y
-+	help
-+	  Create preempt/irq toggle tracepoints if needed, so that other parts
-+	  of the kernel can use them to generate or add hooks to them.
-+
- # All tracer options should select GENERIC_TRACER. For those options that are
- # enabled by all tracers (context switch and event tracer) they select TRACING.
- # This allows those options to appear when no other tracer is selected. But the
-@@ -155,18 +164,20 @@ config FUNCTION_GRAPH_TRACER
- 	  the return value. This is done by setting the current return
- 	  address on the current task structure into a stack of calls.
- 
-+config TRACE_PREEMPT_TOGGLE
-+	bool
-+	help
-+	  Enables hooks which will be called when preemption is first disabled,
-+	  and last enabled.
- 
- config PREEMPTIRQ_EVENTS
- 	bool "Enable trace events for preempt and irq disable/enable"
- 	select TRACE_IRQFLAGS
--	depends on DEBUG_PREEMPT || !PROVE_LOCKING
--	depends on TRACING
-+	select TRACE_PREEMPT_TOGGLE if PREEMPT
-+	select GENERIC_TRACER
- 	default n
- 	help
- 	  Enable tracing of disable and enable events for preemption and irqs.
--	  For tracing preempt disable/enable events, DEBUG_PREEMPT must be
--	  enabled. For tracing irq disable/enable events, PROVE_LOCKING must
--	  be disabled.
- 
- config IRQSOFF_TRACER
- 	bool "Interrupts-off Latency Tracer"
-@@ -203,6 +214,7 @@ config PREEMPT_TRACER
- 	select RING_BUFFER_ALLOW_SWAP
- 	select TRACER_SNAPSHOT
- 	select TRACER_SNAPSHOT_PER_CPU_SWAP
-+	select TRACE_PREEMPT_TOGGLE
- 	help
- 	  This option measures the time spent in preemption-off critical
- 	  sections, with microsecond accuracy.
-diff --git a/kernel/trace/Makefile b/kernel/trace/Makefile
-index 31c6b524c260..b916db076561 100644
---- a/kernel/trace/Makefile
-+++ b/kernel/trace/Makefile
-@@ -36,7 +36,7 @@ obj-$(CONFIG_TRACING_MAP) += tracing_map.o
- obj-$(CONFIG_PREEMPTIRQ_DELAY_TEST) += preemptirq_delay_test.o
- obj-$(CONFIG_CONTEXT_SWITCH_TRACER) += trace_sched_switch.o
- obj-$(CONFIG_FUNCTION_TRACER) += trace_functions.o
--obj-$(CONFIG_PREEMPTIRQ_EVENTS) += trace_irqsoff.o
-+obj-$(CONFIG_PREEMPTIRQ_TRACEPOINTS) += trace_preemptirq.o
- obj-$(CONFIG_IRQSOFF_TRACER) += trace_irqsoff.o
- obj-$(CONFIG_PREEMPT_TRACER) += trace_irqsoff.o
- obj-$(CONFIG_SCHED_TRACER) += trace_sched_wakeup.o
-diff --git a/kernel/trace/trace_irqsoff.c b/kernel/trace/trace_irqsoff.c
-index f8daa754cce2..770cd30cda40 100644
---- a/kernel/trace/trace_irqsoff.c
-+++ b/kernel/trace/trace_irqsoff.c
-@@ -16,7 +16,6 @@
- 
- #include "trace.h"
- 
--#define CREATE_TRACE_POINTS
- #include <trace/events/preemptirq.h>
- 
- #if defined(CONFIG_IRQSOFF_TRACER) || defined(CONFIG_PREEMPT_TRACER)
-@@ -450,66 +449,6 @@ void stop_critical_timings(void)
- }
- EXPORT_SYMBOL_GPL(stop_critical_timings);
- 
--#ifdef CONFIG_IRQSOFF_TRACER
--#ifdef CONFIG_PROVE_LOCKING
--void time_hardirqs_on(unsigned long a0, unsigned long a1)
--{
--	if (!preempt_trace() && irq_trace())
--		stop_critical_timing(a0, a1);
--}
--
--void time_hardirqs_off(unsigned long a0, unsigned long a1)
--{
--	if (!preempt_trace() && irq_trace())
--		start_critical_timing(a0, a1);
--}
--
--#else /* !CONFIG_PROVE_LOCKING */
--
--/*
-- * We are only interested in hardirq on/off events:
-- */
--static inline void tracer_hardirqs_on(void)
--{
--	if (!preempt_trace() && irq_trace())
--		stop_critical_timing(CALLER_ADDR0, CALLER_ADDR1);
--}
--
--static inline void tracer_hardirqs_off(void)
--{
--	if (!preempt_trace() && irq_trace())
--		start_critical_timing(CALLER_ADDR0, CALLER_ADDR1);
--}
--
--static inline void tracer_hardirqs_on_caller(unsigned long caller_addr)
--{
--	if (!preempt_trace() && irq_trace())
--		stop_critical_timing(CALLER_ADDR0, caller_addr);
--}
--
--static inline void tracer_hardirqs_off_caller(unsigned long caller_addr)
--{
--	if (!preempt_trace() && irq_trace())
--		start_critical_timing(CALLER_ADDR0, caller_addr);
--}
--
--#endif /* CONFIG_PROVE_LOCKING */
--#endif /*  CONFIG_IRQSOFF_TRACER */
--
--#ifdef CONFIG_PREEMPT_TRACER
--static inline void tracer_preempt_on(unsigned long a0, unsigned long a1)
--{
--	if (preempt_trace() && !irq_trace())
--		stop_critical_timing(a0, a1);
--}
--
--static inline void tracer_preempt_off(unsigned long a0, unsigned long a1)
--{
--	if (preempt_trace() && !irq_trace())
--		start_critical_timing(a0, a1);
--}
--#endif /* CONFIG_PREEMPT_TRACER */
--
- #ifdef CONFIG_FUNCTION_TRACER
- static bool function_enabled;
- 
-@@ -659,15 +598,34 @@ static void irqsoff_tracer_stop(struct trace_array *tr)
- }
- 
- #ifdef CONFIG_IRQSOFF_TRACER
-+/*
-+ * We are only interested in hardirq on/off events:
-+ */
-+static void tracer_hardirqs_on(void *none, unsigned long a0, unsigned long a1)
-+{
-+	if (!preempt_trace() && irq_trace())
-+		stop_critical_timing(a0, a1);
-+}
-+
-+static void tracer_hardirqs_off(void *none, unsigned long a0, unsigned long a1)
-+{
-+	if (!preempt_trace() && irq_trace())
-+		start_critical_timing(a0, a1);
-+}
-+
- static int irqsoff_tracer_init(struct trace_array *tr)
- {
- 	trace_type = TRACER_IRQS_OFF;
- 
-+	register_trace_irq_disable(tracer_hardirqs_off, NULL);
-+	register_trace_irq_enable(tracer_hardirqs_on, NULL);
- 	return __irqsoff_tracer_init(tr);
- }
- 
- static void irqsoff_tracer_reset(struct trace_array *tr)
- {
-+	unregister_trace_irq_disable(tracer_hardirqs_off, NULL);
-+	unregister_trace_irq_enable(tracer_hardirqs_on, NULL);
- 	__irqsoff_tracer_reset(tr);
- }
- 
-@@ -690,21 +648,34 @@ static struct tracer irqsoff_tracer __read_mostly =
- 	.allow_instances = true,
- 	.use_max_tr	= true,
- };
--# define register_irqsoff(trace) register_tracer(&trace)
--#else
--# define register_irqsoff(trace) do { } while (0)
--#endif
-+#endif /*  CONFIG_IRQSOFF_TRACER */
- 
- #ifdef CONFIG_PREEMPT_TRACER
-+static void tracer_preempt_on(void *none, unsigned long a0, unsigned long a1)
-+{
-+	if (preempt_trace() && !irq_trace())
-+		stop_critical_timing(a0, a1);
-+}
-+
-+static void tracer_preempt_off(void *none, unsigned long a0, unsigned long a1)
-+{
-+	if (preempt_trace() && !irq_trace())
-+		start_critical_timing(a0, a1);
-+}
-+
- static int preemptoff_tracer_init(struct trace_array *tr)
- {
- 	trace_type = TRACER_PREEMPT_OFF;
- 
-+	register_trace_preempt_disable(tracer_preempt_off, NULL);
-+	register_trace_preempt_enable(tracer_preempt_on, NULL);
- 	return __irqsoff_tracer_init(tr);
- }
- 
- static void preemptoff_tracer_reset(struct trace_array *tr)
- {
-+	unregister_trace_preempt_disable(tracer_preempt_off, NULL);
-+	unregister_trace_preempt_enable(tracer_preempt_on, NULL);
- 	__irqsoff_tracer_reset(tr);
- }
- 
-@@ -727,23 +698,29 @@ static struct tracer preemptoff_tracer __read_mostly =
- 	.allow_instances = true,
- 	.use_max_tr	= true,
- };
--# define register_preemptoff(trace) register_tracer(&trace)
--#else
--# define register_preemptoff(trace) do { } while (0)
--#endif
-+#endif /* CONFIG_PREEMPT_TRACER */
- 
--#if defined(CONFIG_IRQSOFF_TRACER) && \
--	defined(CONFIG_PREEMPT_TRACER)
-+#if defined(CONFIG_IRQSOFF_TRACER) && defined(CONFIG_PREEMPT_TRACER)
- 
- static int preemptirqsoff_tracer_init(struct trace_array *tr)
- {
- 	trace_type = TRACER_IRQS_OFF | TRACER_PREEMPT_OFF;
- 
-+	register_trace_irq_disable(tracer_hardirqs_off, NULL);
-+	register_trace_irq_enable(tracer_hardirqs_on, NULL);
-+	register_trace_preempt_disable(tracer_preempt_off, NULL);
-+	register_trace_preempt_enable(tracer_preempt_on, NULL);
-+
- 	return __irqsoff_tracer_init(tr);
- }
- 
- static void preemptirqsoff_tracer_reset(struct trace_array *tr)
- {
-+	unregister_trace_irq_disable(tracer_hardirqs_off, NULL);
-+	unregister_trace_irq_enable(tracer_hardirqs_on, NULL);
-+	unregister_trace_preempt_disable(tracer_preempt_off, NULL);
-+	unregister_trace_preempt_enable(tracer_preempt_on, NULL);
-+
- 	__irqsoff_tracer_reset(tr);
- }
- 
-@@ -766,115 +743,21 @@ static struct tracer preemptirqsoff_tracer __read_mostly =
- 	.allow_instances = true,
- 	.use_max_tr	= true,
- };
--
--# define register_preemptirqsoff(trace) register_tracer(&trace)
--#else
--# define register_preemptirqsoff(trace) do { } while (0)
- #endif
- 
- __init static int init_irqsoff_tracer(void)
- {
--	register_irqsoff(irqsoff_tracer);
--	register_preemptoff(preemptoff_tracer);
--	register_preemptirqsoff(preemptirqsoff_tracer);
--
--	return 0;
--}
--core_initcall(init_irqsoff_tracer);
--#endif /* IRQSOFF_TRACER || PREEMPTOFF_TRACER */
--
--#ifndef CONFIG_IRQSOFF_TRACER
--static inline void tracer_hardirqs_on(void) { }
--static inline void tracer_hardirqs_off(void) { }
--static inline void tracer_hardirqs_on_caller(unsigned long caller_addr) { }
--static inline void tracer_hardirqs_off_caller(unsigned long caller_addr) { }
-+#ifdef CONFIG_IRQSOFF_TRACER
-+	register_tracer(&irqsoff_tracer);
- #endif
--
--#ifndef CONFIG_PREEMPT_TRACER
--static inline void tracer_preempt_on(unsigned long a0, unsigned long a1) { }
--static inline void tracer_preempt_off(unsigned long a0, unsigned long a1) { }
-+#ifdef CONFIG_PREEMPT_TRACER
-+	register_tracer(&preemptoff_tracer);
- #endif
--
--#if defined(CONFIG_TRACE_IRQFLAGS) && !defined(CONFIG_PROVE_LOCKING)
--/* Per-cpu variable to prevent redundant calls when IRQs already off */
--static DEFINE_PER_CPU(int, tracing_irq_cpu);
--
--void trace_hardirqs_on(void)
--{
--	if (!this_cpu_read(tracing_irq_cpu))
--		return;
--
--	trace_irq_enable_rcuidle(CALLER_ADDR0, CALLER_ADDR1);
--	tracer_hardirqs_on();
--
--	this_cpu_write(tracing_irq_cpu, 0);
--}
--EXPORT_SYMBOL(trace_hardirqs_on);
--
--void trace_hardirqs_off(void)
--{
--	if (this_cpu_read(tracing_irq_cpu))
--		return;
--
--	this_cpu_write(tracing_irq_cpu, 1);
--
--	trace_irq_disable_rcuidle(CALLER_ADDR0, CALLER_ADDR1);
--	tracer_hardirqs_off();
--}
--EXPORT_SYMBOL(trace_hardirqs_off);
--
--__visible void trace_hardirqs_on_caller(unsigned long caller_addr)
--{
--	if (!this_cpu_read(tracing_irq_cpu))
--		return;
--
--	trace_irq_enable_rcuidle(CALLER_ADDR0, caller_addr);
--	tracer_hardirqs_on_caller(caller_addr);
--
--	this_cpu_write(tracing_irq_cpu, 0);
--}
--EXPORT_SYMBOL(trace_hardirqs_on_caller);
--
--__visible void trace_hardirqs_off_caller(unsigned long caller_addr)
--{
--	if (this_cpu_read(tracing_irq_cpu))
--		return;
--
--	this_cpu_write(tracing_irq_cpu, 1);
--
--	trace_irq_disable_rcuidle(CALLER_ADDR0, caller_addr);
--	tracer_hardirqs_off_caller(caller_addr);
--}
--EXPORT_SYMBOL(trace_hardirqs_off_caller);
--
--/*
-- * Stubs:
-- */
--
--void trace_softirqs_on(unsigned long ip)
--{
--}
--
--void trace_softirqs_off(unsigned long ip)
--{
--}
--
--inline void print_irqtrace_events(struct task_struct *curr)
--{
--}
-+#if defined(CONFIG_IRQSOFF_TRACER) && defined(CONFIG_PREEMPT_TRACER)
-+	register_tracer(&preemptirqsoff_tracer);
- #endif
- 
--#if defined(CONFIG_PREEMPT_TRACER) || \
--	(defined(CONFIG_DEBUG_PREEMPT) && defined(CONFIG_PREEMPTIRQ_EVENTS))
--void trace_preempt_on(unsigned long a0, unsigned long a1)
--{
--	trace_preempt_enable_rcuidle(a0, a1);
--	tracer_preempt_on(a0, a1);
--}
--
--void trace_preempt_off(unsigned long a0, unsigned long a1)
--{
--	trace_preempt_disable_rcuidle(a0, a1);
--	tracer_preempt_off(a0, a1);
-+	return 0;
- }
--#endif
-+core_initcall(init_irqsoff_tracer);
-+#endif /* IRQSOFF_TRACER || PREEMPTOFF_TRACER */
-diff --git a/kernel/trace/trace_preemptirq.c b/kernel/trace/trace_preemptirq.c
-new file mode 100644
-index 000000000000..e76b78bf258e
---- /dev/null
-+++ b/kernel/trace/trace_preemptirq.c
-@@ -0,0 +1,72 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * preemptoff and irqoff tracepoints
-+ *
-+ * Copyright (C) Joel Fernandes (Google) <joel@joelfernandes.org>
-+ */
-+
-+#include <linux/kallsyms.h>
-+#include <linux/uaccess.h>
-+#include <linux/module.h>
-+#include <linux/ftrace.h>
-+
-+#define CREATE_TRACE_POINTS
-+#include <trace/events/preemptirq.h>
-+
-+#ifdef CONFIG_TRACE_IRQFLAGS
-+/* Per-cpu variable to prevent redundant calls when IRQs already off */
-+static DEFINE_PER_CPU(int, tracing_irq_cpu);
-+
-+void trace_hardirqs_on(void)
-+{
-+	if (!this_cpu_read(tracing_irq_cpu))
-+		return;
-+
-+	trace_irq_enable_rcuidle(CALLER_ADDR0, CALLER_ADDR1);
-+	this_cpu_write(tracing_irq_cpu, 0);
-+}
-+EXPORT_SYMBOL(trace_hardirqs_on);
-+
-+void trace_hardirqs_off(void)
-+{
-+	if (this_cpu_read(tracing_irq_cpu))
-+		return;
-+
-+	this_cpu_write(tracing_irq_cpu, 1);
-+	trace_irq_disable_rcuidle(CALLER_ADDR0, CALLER_ADDR1);
-+}
-+EXPORT_SYMBOL(trace_hardirqs_off);
-+
-+__visible void trace_hardirqs_on_caller(unsigned long caller_addr)
-+{
-+	if (!this_cpu_read(tracing_irq_cpu))
-+		return;
-+
-+	trace_irq_enable_rcuidle(CALLER_ADDR0, caller_addr);
-+	this_cpu_write(tracing_irq_cpu, 0);
-+}
-+EXPORT_SYMBOL(trace_hardirqs_on_caller);
-+
-+__visible void trace_hardirqs_off_caller(unsigned long caller_addr)
-+{
-+	if (this_cpu_read(tracing_irq_cpu))
-+		return;
-+
-+	this_cpu_write(tracing_irq_cpu, 1);
-+	trace_irq_disable_rcuidle(CALLER_ADDR0, caller_addr);
-+}
-+EXPORT_SYMBOL(trace_hardirqs_off_caller);
-+#endif /* CONFIG_TRACE_IRQFLAGS */
-+
-+#ifdef CONFIG_TRACE_PREEMPT_TOGGLE
-+
-+void trace_preempt_on(unsigned long a0, unsigned long a1)
-+{
-+	trace_preempt_enable_rcuidle(a0, a1);
-+}
-+
-+void trace_preempt_off(unsigned long a0, unsigned long a1)
-+{
-+	trace_preempt_disable_rcuidle(a0, a1);
-+}
-+#endif
--- 
-2.18.0.345.g5c9ce644c3-goog
+> 
+>>
+>>>
+>>> [   12.696535] Unable to handle kernel paging request at virtual address
+>> f0f357cc
+>>> [   12.696540] pgd = (ptrval)
+>>> [   12.696542] [f0f357cc] *pgd=6d2d0811, *pte=00000000, *ppte=00000000
+>>> [   12.696558] Internal error: Oops: 807 [#1] SMP ARM
+>>> [   12.696563] Modules linked in: rpmsg_core v4l2_mem2mem
+>> videobuf2_dma_contig sti_drm v4l2_common vida
+>>> [   12.696598] CPU: 1 PID: 48 Comm: kworker/1:1 Tainted: G        W
+>> 4.18.0-rc2-00018-g3170fdd-8
+>>> [   12.696602] Hardware name: STi SoC with Flattened Device Tree
+>>> [   12.696625] Workqueue: events request_firmware_work_func
+>>> [   12.696659] PC is at rproc_free_vring+0x84/0xbc [remoteproc]
+>>> [   12.696667] LR is at rproc_free_vring+0x70/0xbc [remoteproc]
+>>>
+>>> This patch proposes to simply remove reset of resource table vring entries,
+>>> as firmware and resource table are reloaded at each rproc boot.
+>>> rproc_trigger_recovery() not impacted as resources not touched during
+>> recovery
+>>> procedure.
+>>
+>> And error recovery doesn't work for me after the rproc_start, stop got
+>> introduced.
+> Recovery no available on B2260, but I'll test it on another platform this week
+> 
+> Regards,
+> Loic
+>>
+>> regards
+>> Suman
+>>
+>>>
+>>> Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
+>>> ---
+>>> Changes from V1: typo fixes in commit message
+>>>
+>>>  drivers/remoteproc/remoteproc_core.c | 6 ------
+>>>  1 file changed, 6 deletions(-)
+>>>
+>>> diff --git a/drivers/remoteproc/remoteproc_core.c
+>> b/drivers/remoteproc/remoteproc_core.c
+>>> index a9609d9..9a8b47c 100644
+>>> --- a/drivers/remoteproc/remoteproc_core.c
+>>> +++ b/drivers/remoteproc/remoteproc_core.c
+>>> @@ -289,16 +289,10 @@ void rproc_free_vring(struct rproc_vring *rvring)
+>>>  {
+>>>  	int size = PAGE_ALIGN(vring_size(rvring->len, rvring->align));
+>>>  	struct rproc *rproc = rvring->rvdev->rproc;
+>>> -	int idx = rvring->rvdev->vring - rvring;
+>>> -	struct fw_rsc_vdev *rsc;
+>>>
+>>>  	dma_free_coherent(rproc->dev.parent, size, rvring->va, rvring-
+>>> dma);
+>>>  	idr_remove(&rproc->notifyids, rvring->notifyid);
+>>>
+>>> -	/* reset resource entry info */
+>>> -	rsc = (void *)rproc->table_ptr + rvring->rvdev->rsc_offset;
+>>> -	rsc->vring[idx].da = 0;
+>>> -	rsc->vring[idx].notifyid = -1;
+>>>  }
+>>>
+>>>  static int rproc_vdev_do_probe(struct rproc_subdev *subdev)
+>>>
+> 
 
