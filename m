@@ -2,178 +2,109 @@ Return-Path: <SRS0=7Z+k=KK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2419BC28CF6
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 17:13:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8C1FC6778F
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 17:14:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D3C2820647
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 17:13:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D3C2820647
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 777E120647
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 17:14:05 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="cP9rko6c";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="YtC8RdOj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 777E120647
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388625AbeGZSbg (ORCPT
+        id S2388644AbeGZSbr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 26 Jul 2018 14:31:36 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:37366 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730095AbeGZSbg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Jul 2018 14:31:36 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        Thu, 26 Jul 2018 14:31:47 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:55218 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730095AbeGZSbq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Jul 2018 14:31:46 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 904D0607B9; Thu, 26 Jul 2018 17:14:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1532625242;
+        bh=ZHJb8Jr1BxVCVwX4Qlk7PnqxLmowZsWG09QmBn6nBxg=;
+        h=From:To:Cc:Subject:Date:From;
+        b=cP9rko6c1OBBLYDfWDnBd19SUomVEJu12GU2PUNGZ+QwCUQTY7SeJeC18QUOrJVUG
+         6ulEC5ZX4i3YvSgKogd//HbBtGTTwT/REtAOFA6OS+ZQob1iI9jxL38TDcnD1BFCvr
+         tjJMQZOoRVwe8FhvrYXHLIV6iozjd4NWf1qsGxAY=
+Received: from pheragu-linux.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 307888011454;
-        Thu, 26 Jul 2018 17:13:51 +0000 (UTC)
-Received: from [10.10.121.247] (ovpn-121-247.rdu2.redhat.com [10.10.121.247])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 149342156701;
-        Thu, 26 Jul 2018 17:13:50 +0000 (UTC)
-Subject: Re: [PATCH 18/26] target/iscsi: Allocate session IDs from an IDA
-To:     Matthew Wilcox <willy@infradead.org>, linux-kernel@vger.kernel.org
-References: <20180621212835.5636-1-willy@infradead.org>
- <20180621212835.5636-19-willy@infradead.org> <5B59FB56.9090901@redhat.com>
-Cc:     "Nicholas A. Bellinger" <nab@linux-iscsi.org>,
-        Bart Van Assche <bart.vanassche@wdc.com>,
-        Hannes Reinecke <hare@suse.com>,
-        Kees Cook <keescook@chromium.org>,
-        Varun Prakash <varun@chelsio.com>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "David S. Miller" <davem@davemloft.net>,
-        Denys Vlasenko <dvlasenk@redhat.com>,
-        linux-scsi@vger.kernel.org, target-devel@vger.kernel.org
-From:   Mike Christie <mchristi@redhat.com>
-Message-ID: <5B5A014D.9060901@redhat.com>
-Date:   Thu, 26 Jul 2018 12:13:49 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:38.0) Gecko/20100101
- Thunderbird/38.6.0
-MIME-Version: 1.0
-In-Reply-To: <5B59FB56.9090901@redhat.com>
-Content-Type: multipart/mixed;
- boundary="------------080008070200070801020609"
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Thu, 26 Jul 2018 17:13:51 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Thu, 26 Jul 2018 17:13:51 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'mchristi@redhat.com' RCPT:''
+        (Authenticated sender: pheragu@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 4F27D60C1C;
+        Thu, 26 Jul 2018 17:14:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1532625241;
+        bh=ZHJb8Jr1BxVCVwX4Qlk7PnqxLmowZsWG09QmBn6nBxg=;
+        h=From:To:Cc:Subject:Date:From;
+        b=YtC8RdOj8ZO8Ev9t6SEWi4GOB/MMgd1e66GTadRagVGU98tdQfhmSIhq7TfAEJvm+
+         98fB2/YLs03S8eB4ND9v0HiE3Ft2Gd19fXVMNkOyT4XAEwqZHHAR3TBUS7zCKeVrwF
+         H7I/ag8TrrODu0Mto/TKHOSQZ6tI+KF66RUfXzYk=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 4F27D60C1C
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=pheragu@codeaurora.org
+From:   Prakruthi Deepak Heragu <pheragu@codeaurora.org>
+To:     apw@canonical.com, joe@perches.com
+Cc:     linux-kernel@vger.kernel.org, ckadabi@codeaurora.org,
+        tsoni@codeaurora.org, bryanh@codeaurora.org,
+        Abhijeet Dharmapurikar <adharmap@codeaurora.org>,
+        Prakruthi Deepak Heragu <pheragu@codeaurora.org>
+Subject: [PATCH v2] checkpatch: check for #if 0/#if 1
+Date:   Thu, 26 Jul 2018 10:13:38 -0700
+Message-Id: <1532625218-24321-1-git-send-email-pheragu@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is a multi-part message in MIME format.
---------------080008070200070801020609
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+The #if 0 or #if 1 is used to toggle features. Warn if #if 0 or #if 1
+is present and suggest that they can be removed.
 
-On 07/26/2018 11:48 AM, Mike Christie wrote:
-> So I am not sure what we want to do here for your patch since it is not
-> adding any new bugs. Just merge your patch now and I can send a fix for
-> the above bug over it?
-
-If we want to fix the bug first, then I made the attached patch and I
-can submit it.
-
---------------080008070200070801020609
-Content-Type: text/x-patch;
- name="0001-iscsi-target-fix-session-creation-failure-handling.patch"
-Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment;
- filename*0="0001-iscsi-target-fix-session-creation-failure-handling.patc";
- filename*1="h"
-
-From 80c495c3d7f4487c1b6f52f70e8ddc74dcb70794 Mon Sep 17 00:00:00 2001
-From: Mike Christie <mchristi@redhat.com>
-Date: Thu, 26 Jul 2018 12:06:07 -0500
-Subject: [PATCH] iscsi target: fix session creation failure handling
-
-The problem is that iscsi_login_zero_tsih_s1 sets conn->sess early in
-iscsi_login_set_conn_values. If the function fails later like when we
-alloc the idr it does kfree(sess) and leaves the conn->sess pointer set.
-iscsi_login_zero_tsih_s1 then returns -Exyz and we then call
-iscsi_target_login_sess_out and access the freed memory.
-
-This patch has iscsi_login_zero_tsih_s1 either completely setup the
-session or completely tear it down, so later in
-iscsi_target_login_sess_out we can just check for it being set to the
-connection.
+Signed-off-by: Abhijeet Dharmapurikar <adharmap@codeaurora.org>
+Signed-off-by: Prakruthi Deepak Heragu <pheragu@codeaurora.org>
 ---
- drivers/target/iscsi/iscsi_target_login.c | 35 ++++++++++++++++++-------------
- 1 file changed, 21 insertions(+), 14 deletions(-)
+Changes in v2:
+- Rephrase the warning for #if 0
 
-diff --git a/drivers/target/iscsi/iscsi_target_login.c b/drivers/target/iscsi/iscsi_target_login.c
-index 9950178..e20d811 100644
---- a/drivers/target/iscsi/iscsi_target_login.c
-+++ b/drivers/target/iscsi/iscsi_target_login.c
-@@ -348,8 +348,7 @@ static int iscsi_login_zero_tsih_s1(
- 		pr_err("idr_alloc() for sess_idr failed\n");
- 		iscsit_tx_login_rsp(conn, ISCSI_STATUS_CLS_TARGET_ERR,
- 				ISCSI_LOGIN_STATUS_NO_RESOURCES);
--		kfree(sess);
--		return -ENOMEM;
-+		goto free_sess;
- 	}
+Changes in v1:
+- Rephrase the warning message to fit in a single line without
+  80 column limit
+
+ scripts/checkpatch.pl | 11 ++++++++---
+ 1 file changed, 8 insertions(+), 3 deletions(-)
+
+diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
+index 3394ed8..1dfe83f 100755
+--- a/scripts/checkpatch.pl
++++ b/scripts/checkpatch.pl
+@@ -5383,9 +5383,14 @@ sub process {
  
- 	sess->creation_time = get_jiffies_64();
-@@ -365,20 +364,28 @@ static int iscsi_login_zero_tsih_s1(
- 				ISCSI_LOGIN_STATUS_NO_RESOURCES);
- 		pr_err("Unable to allocate memory for"
- 				" struct iscsi_sess_ops.\n");
--		kfree(sess);
--		return -ENOMEM;
-+		goto remove_idr;
- 	}
+ # warn about #if 0
+ 		if ($line =~ /^.\s*\#\s*if\s+0\b/) {
+-			CHK("REDUNDANT_CODE",
+-			    "if this code is redundant consider removing it\n" .
+-				$herecurr);
++			WARN("IF_0",
++			     "Consider removing the code enclosed by this #if 0 and its #endif\n".  $herecurr);
++		}
++
++# warn about #if 1
++		if ($line =~ /^.\s*\#\s*if\s+1\b/) {
++			WARN("IF_1",
++			     "Consider removing the #if 1 and its #endif\n".  $herecurr);
+ 		}
  
- 	sess->se_sess = transport_init_session(TARGET_PROT_NORMAL);
- 	if (IS_ERR(sess->se_sess)) {
- 		iscsit_tx_login_rsp(conn, ISCSI_STATUS_CLS_TARGET_ERR,
- 				ISCSI_LOGIN_STATUS_NO_RESOURCES);
--		kfree(sess->sess_ops);
--		kfree(sess);
--		return -ENOMEM;
-+		goto free_ops;
- 	}
- 
- 	return 0;
-+
-+free_ops:
-+	kfree(sess->sess_ops);
-+remove_idr:
-+	spin_lock_bh(&sess_idr_lock);
-+	idr_remove(&sess_idr, sess->session_index);
-+	spin_unlock_bh(&sess_idr_lock);
-+free_sess:
-+	kfree(sess);
-+	conn->sess = NULL;
-+	return -ENOMEM;
- }
- 
- static int iscsi_login_zero_tsih_s2(
-@@ -1161,13 +1168,13 @@ void iscsi_target_login_sess_out(struct iscsi_conn *conn,
- 				   ISCSI_LOGIN_STATUS_INIT_ERR);
- 	if (!zero_tsih || !conn->sess)
- 		goto old_sess_out;
--	if (conn->sess->se_sess)
--		transport_free_session(conn->sess->se_sess);
--	if (conn->sess->session_index != 0) {
--		spin_lock_bh(&sess_idr_lock);
--		idr_remove(&sess_idr, conn->sess->session_index);
--		spin_unlock_bh(&sess_idr_lock);
--	}
-+
-+	transport_free_session(conn->sess->se_sess);
-+
-+	spin_lock_bh(&sess_idr_lock);
-+	idr_remove(&sess_idr, conn->sess->session_index);
-+	spin_unlock_bh(&sess_idr_lock);
-+
- 	kfree(conn->sess->sess_ops);
- 	kfree(conn->sess);
- 	conn->sess = NULL;
+ # check for needless "if (<foo>) fn(<foo>)" uses
 -- 
-1.8.3.1
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
 
-
---------------080008070200070801020609--
