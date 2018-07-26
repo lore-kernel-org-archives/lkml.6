@@ -2,89 +2,91 @@ Return-Path: <SRS0=7Z+k=KK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69F04C28CF6
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 10:36:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4D79C28CF6
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 10:40:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2173E20846
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 10:36:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2173E20846
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 8A0F12088E
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 10:40:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8A0F12088E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729346AbeGZLxC (ORCPT
+        id S1729326AbeGZL5K (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 26 Jul 2018 07:53:02 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:55067 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729111AbeGZLxC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Jul 2018 07:53:02 -0400
-Received: from lupine.hi.pengutronix.de ([2001:67c:670:100:3ad5:47ff:feaf:1a17] helo=lupine)
-        by metis.ext.pengutronix.de with esmtp (Exim 4.89)
-        (envelope-from <p.zabel@pengutronix.de>)
-        id 1fiddV-00039m-2u; Thu, 26 Jul 2018 12:36:45 +0200
-Message-ID: <1532601401.4879.10.camel@pengutronix.de>
-Subject: Re: [PATCH 1/2] media: docs-rst: Document memory-to-memory video
- decoder interface
-From:   Philipp Zabel <p.zabel@pengutronix.de>
-To:     Tomasz Figa <tfiga@chromium.org>, Hans Verkuil <hverkuil@xs4all.nl>
-Cc:     Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Pawel Osciak <posciak@chromium.org>,
-        Alexandre Courbot <acourbot@chromium.org>, kamil@wypas.org,
-        a.hajda@samsung.com, Kyungmin Park <kyungmin.park@samsung.com>,
-        jtp.park@samsung.com,
-        Tiffany Lin =?UTF-8?Q?=28=E6=9E=97=E6=85=A7=E7=8F=8A=29?= 
-        <tiffany.lin@mediatek.com>,
-        Andrew-CT Chen =?UTF-8?Q?=28=E9=99=B3=E6=99=BA=E8=BF=AA=29?= 
-        <andrew-ct.chen@mediatek.com>, todor.tomov@linaro.org,
-        nicolas@ndufresne.ca,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        dave.stevenson@raspberrypi.org,
-        Ezequiel Garcia <ezequiel@collabora.com>
-Date:   Thu, 26 Jul 2018 12:36:41 +0200
-In-Reply-To: <CAAFQd5BgGEBmd8gNGc-qqtUtLo=Mh8U+TVTWRsKYMv1LmeBQMA@mail.gmail.com>
-References: <20180724140621.59624-1-tfiga@chromium.org>
-         <20180724140621.59624-2-tfiga@chromium.org>
-         <37a8faea-a226-2d52-36d4-f9df194623cc@xs4all.nl>
-         <CAAFQd5BgGEBmd8gNGc-qqtUtLo=Mh8U+TVTWRsKYMv1LmeBQMA@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6-1+deb9u1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 2001:67c:670:100:3ad5:47ff:feaf:1a17
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+        Thu, 26 Jul 2018 07:57:10 -0400
+Received: from mx2.suse.de ([195.135.220.15]:44790 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729177AbeGZL5K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Jul 2018 07:57:10 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id E2C8FAD73;
+        Thu, 26 Jul 2018 10:40:53 +0000 (UTC)
+From:   Nicolai Stange <nstange@suse.de>
+To:     Steven Rostedt <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@redhat.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Jiri Kosina <jikos@kernel.org>,
+        Miroslav Benes <mbenes@suse.cz>,
+        Petr Mladek <pmladek@suse.com>,
+        Nicolai Stange <nstange@suse.de>,
+        live-patching@vger.kernel.org, x86@kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [RFC PATCH 0/1] x86/ftrace: fix live patching vs. tracing race
+Date:   Thu, 26 Jul 2018 12:40:28 +0200
+Message-Id: <20180726104029.7736-1-nstange@suse.de>
+X-Mailer: git-send-email 2.13.7
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2018-07-26 at 19:20 +0900, Tomasz Figa wrote:
-[...]
-> > You might want to mention that if there are insufficient buffers, then
-> > VIDIOC_CREATE_BUFS can be used to add more buffers.
-> > 
-> 
-> This might be a bit tricky, since at least s5p-mfc and coda can only
-> work on a fixed buffer set and one would need to fully reinitialize
-> the decoding to add one more buffer, which would effectively be the
-> full resolution change sequence, as below, just with REQBUFS(0),
-> REQBUFS(N) replaced with CREATE_BUFS.
+Hi,
 
-The coda driver supports CREATE_BUFS on the decoder CAPTURE queue.
+if a user starts to trace a live patched function, its mcount call will get
+redirected from a trampoline to ftrace_regs_caller.
 
-The firmware indeed needs a fixed frame buffer set, but these buffers
-are internal only and in a coda specific tiling format. The content of
-finished internal buffers is copied / detiled into the external CAPTURE
-buffers, so those can be added at will.
+In preparation for that, ftrace on x86 first installs an int3 insn at that
+call site.
 
-regards
-Philipp
+ftrace_int3_handler() in turn simply skips over the mcount call insn,
+effectively reverting the livepatch for that function during
+ftrace_replace_code().
+
+This breaks KLP's consistency model.
+
+
+There are two possible options for fixing this:
+1.) At the ftrace level.
+2.) Search for a matching klp_ops from ftrace_int3_handler() and
+    handle the redirection if needed.
+
+Both have their drawbacks, hence the RFC mode for this patch implementing
+1.).
+
+The main disadvantage is that it doesn't work on 32 bits (c.f. the patch
+description), but for KLP this would be fine.
+
+OTOH, it keeps KLP specific code out of ftrace_int3_handler() and might
+perhaps be beneficial in other contexts as well.
+
+Thanks for your comments!
+
+Nicolai
+
+Nicolai Stange (1):
+  x86/ftrace: make ftrace_int3_handler() not to skip fops invocation
+
+ arch/x86/kernel/ftrace.c    | 48 ++++++++++++++++++++++++++++++++------
+ arch/x86/kernel/ftrace_64.S | 56 +++++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 97 insertions(+), 7 deletions(-)
+
+-- 
+2.13.7
+
