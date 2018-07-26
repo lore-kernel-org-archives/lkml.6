@@ -2,183 +2,128 @@ Return-Path: <SRS0=7Z+k=KK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8850CC6778F
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 09:15:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB49FC28CF6
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 09:15:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4C5B82088E
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 09:15:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4C5B82088E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=collabora.com
+	by mail.kernel.org (Postfix) with ESMTP id 9565A20891
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 09:15:56 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="jj6kPTEO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9565A20891
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729176AbeGZKbn (ORCPT
+        id S1729244AbeGZKbt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 26 Jul 2018 06:31:43 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:39884 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727799AbeGZKbm (ORCPT
+        Thu, 26 Jul 2018 06:31:49 -0400
+Received: from mail-it0-f67.google.com ([209.85.214.67]:34895 "EHLO
+        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727799AbeGZKbs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Jul 2018 06:31:42 -0400
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: eballetbo)
-        with ESMTPSA id 4171726048B
-From:   Enric Balletbo i Serra <enric.balletbo@collabora.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     kernel@collabora.com, cl@rock-chips.com, linux-pwm@vger.kernel.org,
-        linux-fbdev@vger.kernel.org,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        dri-devel@lists.freedesktop.org, Jingoo Han <jingoohan1@gmail.com>,
-        Lee Jones <lee.jones@linaro.org>
-Subject: [PATCH] backlight: pwm_bl: switch to using "atomic" PWM API
-Date:   Thu, 26 Jul 2018 11:15:34 +0200
-Message-Id: <20180726091534.27521-1-enric.balletbo@collabora.com>
-X-Mailer: git-send-email 2.18.0
+        Thu, 26 Jul 2018 06:31:48 -0400
+Received: by mail-it0-f67.google.com with SMTP id q20-v6so1744113ith.0
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Jul 2018 02:15:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=xI3oIN+spMs9Km7bR//dys3btu2eFjz6BLj3q2HDA24=;
+        b=jj6kPTEOFj3c/bLJMRx3nhB1V0phd3RLBMgnYHmBFu//N0NjSdJq5MXbL6cYTpJjuZ
+         pt3eNji+w2+rVhC9lZX4v2ZP8JNuO1EaHBfIKAwzE422CQIgC9c6/a7m58xjP6ZCKKle
+         YBDpR7+ODGPfk5GNLRFcqxD1R0GY1qmToew/I=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=xI3oIN+spMs9Km7bR//dys3btu2eFjz6BLj3q2HDA24=;
+        b=flWuGS44f8RBp0rxkwhAEwxGQAjcjdsChh1bgkPCj5uBvDXz1toXBiiH5kUPHD7SUx
+         KwUVP49MYzXAjLDt3VFhCW1s45P4ZzQ5fQljG4tgTul/4mjwcsw8dBDQltw+OyJrpxGv
+         MUHLHA/lRWBD7PMnVdM8JqKRW7o3r529PhqGGbJdRtker3wu7dEYS6ijS1RwCiZ3X5Ts
+         5p9EqN7llWxWCu99Iwzqdgau4O9Tj02/DFWnwDPSEr9BIULQ3iL2rogICyOcsgTnI8zJ
+         SBN40u+I5Wvo1sXaN7597dGqdI/JEI/PawzFkPN1wUUCSfrIVCDb73jFo9H6Ph5tY1e2
+         Uqvw==
+X-Gm-Message-State: AOUpUlFerrn4y2R9oOwY2Ihgmdh0CKIwHjEXB2b1UbK9yGeFgh4LYYAu
+        jK6utFWFcxbPQTCr9HwsQAeP4gtRmOfK0apeQhudIg==
+X-Google-Smtp-Source: AAOMgpeUyMIEoy4z46MoGmtzneDxGEyeYv/ndQ/n3sXkd4v8epbXys9dMoWu0UijD/gA9vCpXWobnbnbTonNL2B8FcY=
+X-Received: by 2002:a02:35a:: with SMTP id y87-v6mr1068114jad.2.1532596552943;
+ Thu, 26 Jul 2018 02:15:52 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:a6b:ac05:0:0:0:0:0 with HTTP; Thu, 26 Jul 2018 02:15:52
+ -0700 (PDT)
+In-Reply-To: <20180726090449.hfvtey3ruzzhzdaz@linutronix.de>
+References: <20180726090449.hfvtey3ruzzhzdaz@linutronix.de>
+From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date:   Thu, 26 Jul 2018 11:15:52 +0200
+Message-ID: <CAKv+Gu_+t_VwY3xDq3nWbnOTfzBc6OtQeRD2GKsseO2uK-uruw@mail.gmail.com>
+Subject: Re: [PATCH RT] rtc: Disable RTC_DRV_EFI on RT
+To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        linux-rt-users@vger.kernel.org,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        linux-efi <linux-efi@vger.kernel.org>,
+        Anna-Maria Gleixner <anna-maria@linutronix.de>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The "atomic" API allows us to configure PWM period and duty_cycle and
-enable it in one call.
+On 26 July 2018 at 11:04, Sebastian Andrzej Siewior
+<bigeasy@linutronix.de> wrote:
+> Based on measurements the EFI functions get_variable /
+> get_next_variable take up to 2us. The functions get_time, set_time take
+> around 10ms. Those 10ms are too much. Even one ms would be too much.
 
-The patch also moves the pwm_init_state just before any use of the
-pwm_state struct, this fixes a potential bug where pwm_get_state
-can be called before pwm_init_state.
+You cannot extrapolate from these numbers. If the lack of worst case
+guarantees on an EFI system is a problem for -rt, the only meaningful
+course of action is to disable EFI runtime services entirely.
 
-Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
----
+I think SetVariable() may be even worse than GetTime(), given that NOR
+flash updates may involve erasing blocks.
 
- drivers/video/backlight/pwm_bl.c | 48 ++++++++++++++++++++------------
- 1 file changed, 30 insertions(+), 18 deletions(-)
+> The funny part is that EFI is invoked with enabled interrupts.
+> According to my tracing I see the interrupt almost 10ms later which
+> indicates that EFI is disabling interrupts while doing its thing.
+>
 
-diff --git a/drivers/video/backlight/pwm_bl.c b/drivers/video/backlight/pwm_bl.c
-index bdfcc0a71db1..2c734d55d607 100644
---- a/drivers/video/backlight/pwm_bl.c
-+++ b/drivers/video/backlight/pwm_bl.c
-@@ -46,7 +46,8 @@ struct pwm_bl_data {
- 	void			(*exit)(struct device *);
- };
- 
--static void pwm_backlight_power_on(struct pwm_bl_data *pb, int brightness)
-+static void pwm_backlight_power_on(struct pwm_bl_data *pb,
-+				   struct pwm_state *state)
- {
- 	int err;
- 
-@@ -57,7 +58,8 @@ static void pwm_backlight_power_on(struct pwm_bl_data *pb, int brightness)
- 	if (err < 0)
- 		dev_err(pb->dev, "failed to enable power supply\n");
- 
--	pwm_enable(pb->pwm);
-+	state->enabled = true;
-+	pwm_apply_state(pb->pwm, state);
- 
- 	if (pb->post_pwm_on_delay)
- 		msleep(pb->post_pwm_on_delay);
-@@ -70,6 +72,8 @@ static void pwm_backlight_power_on(struct pwm_bl_data *pb, int brightness)
- 
- static void pwm_backlight_power_off(struct pwm_bl_data *pb)
- {
-+	struct pwm_state state;
-+
- 	if (!pb->enabled)
- 		return;
- 
-@@ -79,8 +83,11 @@ static void pwm_backlight_power_off(struct pwm_bl_data *pb)
- 	if (pb->pwm_off_delay)
- 		msleep(pb->pwm_off_delay);
- 
--	pwm_config(pb->pwm, 0, pb->period);
--	pwm_disable(pb->pwm);
-+	pwm_get_state(pb->pwm, &state);
-+	state.enabled = false;
-+	state.period = pb->period;
-+	state.duty_cycle = 0;
-+	pwm_apply_state(pb->pwm, &state);
- 
- 	regulator_disable(pb->power_supply);
- 	pb->enabled = false;
-@@ -106,6 +113,7 @@ static int pwm_backlight_update_status(struct backlight_device *bl)
- {
- 	struct pwm_bl_data *pb = bl_get_data(bl);
- 	int brightness = bl->props.brightness;
-+	struct pwm_state state;
- 	int duty_cycle;
- 
- 	if (bl->props.power != FB_BLANK_UNBLANK ||
-@@ -118,8 +126,13 @@ static int pwm_backlight_update_status(struct backlight_device *bl)
- 
- 	if (brightness > 0) {
- 		duty_cycle = compute_duty_cycle(pb, brightness);
--		pwm_config(pb->pwm, duty_cycle, pb->period);
--		pwm_backlight_power_on(pb, brightness);
-+		pwm_get_state(pb->pwm, &state);
-+		state.duty_cycle = duty_cycle;
-+		state.period = pb->period;
-+		if (!state.enabled)
-+			pwm_backlight_power_on(pb, &state);
-+		else
-+			pwm_apply_state(pb->pwm, &state);
- 	} else
- 		pwm_backlight_power_off(pb);
- 
-@@ -447,7 +460,6 @@ static int pwm_backlight_probe(struct platform_device *pdev)
- 	struct device_node *node = pdev->dev.of_node;
- 	struct pwm_bl_data *pb;
- 	struct pwm_state state;
--	struct pwm_args pargs;
- 	unsigned int i;
- 	int ret;
- 
-@@ -539,10 +551,17 @@ static int pwm_backlight_probe(struct platform_device *pdev)
- 
- 	dev_dbg(&pdev->dev, "got pwm for backlight\n");
- 
--	if (!data->levels) {
--		/* Get the PWM period (in nanoseconds) */
--		pwm_get_state(pb->pwm, &state);
-+	/* Sync up PWM state and ensure it is off. */
-+	pwm_init_state(pb->pwm, &state);
-+	state.enabled = false;
-+	ret = pwm_apply_state(pb->pwm, &state);
-+	if (ret) {
-+		dev_err(&pdev->dev, "failed to apply initial PWM state: %d\n",
-+			ret);
-+		goto err_alloc;
-+	}
- 
-+	if (!data->levels) {
- 		ret = pwm_backlight_brightness_default(&pdev->dev, data,
- 						       state.period);
- 		if (ret < 0) {
-@@ -559,20 +578,13 @@ static int pwm_backlight_probe(struct platform_device *pdev)
- 		pb->levels = data->levels;
- 	}
- 
--	/*
--	 * FIXME: pwm_apply_args() should be removed when switching to
--	 * the atomic PWM API.
--	 */
--	pwm_apply_args(pb->pwm);
--
- 	/*
- 	 * The DT case will set the pwm_period_ns field to 0 and store the
- 	 * period, parsed from the DT, in the PWM device. For the non-DT case,
- 	 * set the period from platform data if it has not already been set
- 	 * via the PWM lookup table.
- 	 */
--	pwm_get_args(pb->pwm, &pargs);
--	pb->period = pargs.period;
-+	pb->period = state.period;
- 	if (!pb->period && (data->pwm_period_ns > 0))
- 		pb->period = data->pwm_period_ns;
- 
--- 
-2.18.0
+Yes, and this is also highly implementation specific. Basing this kind
+of policy on a single implementation is not very wise imo.
 
+> This was observed on "EFI v2.60 by SoftIron Overdrive 1000". I don't say
+> that every EFI implementation does this but given that it has to access a
+> slow bus like I2C/SPI it is expected.
+>
+> Disable EFI's RTC driver on RT.
+>
+
+Other calls to GetTime() would still be permitted in this case, so
+this seems like a partial solution (although no other calls seem to
+exist atm)
+
+> Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+> ---
+>  drivers/rtc/Kconfig | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/rtc/Kconfig b/drivers/rtc/Kconfig
+> index a2ba5db36145..248d72711650 100644
+> --- a/drivers/rtc/Kconfig
+> +++ b/drivers/rtc/Kconfig
+> @@ -1087,7 +1087,7 @@ config RTC_DRV_DA9063
+>
+>  config RTC_DRV_EFI
+>         tristate "EFI RTC"
+> -       depends on EFI && !X86
+> +       depends on EFI && !X86 && !PREEMPT_RT_BASE
+>         help
+>           If you say yes here you will get support for the EFI
+>           Real Time Clock.
+> --
+> 2.18.0
+>
