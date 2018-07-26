@@ -2,101 +2,124 @@ Return-Path: <SRS0=7Z+k=KK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1034CC28CF6
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 03:47:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2BEEC6778F
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 03:49:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C8ABE20846
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 03:47:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C8ABE20846
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sympatico.ca
+	by mail.kernel.org (Postfix) with ESMTP id 0085A20883
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 03:49:08 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="wPq+CKvg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0085A20883
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=alliedtelesis.co.nz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728444AbeGZFCP (ORCPT
+        id S1728365AbeGZFDw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 26 Jul 2018 01:02:15 -0400
-Received: from belmont79srvr.owm.bell.net ([184.150.200.79]:38390 "EHLO
-        mtlfep01.bell.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726326AbeGZFCP (ORCPT
+        Thu, 26 Jul 2018 01:03:52 -0400
+Received: from gate2.alliedtelesis.co.nz ([202.36.163.20]:42521 "EHLO
+        gate2.alliedtelesis.co.nz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725859AbeGZFDw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Jul 2018 01:02:15 -0400
-Received: from bell.net mtlfep01 184.150.200.30 by mtlfep01.bell.net
-          with ESMTP
-          id <20180726034728.DDOP10498.mtlfep01.bell.net@mtlspm02.bell.net>
-          for <linux-kernel@vger.kernel.org>;
-          Wed, 25 Jul 2018 23:47:28 -0400
-Received: from arcusix ([67.71.42.39]) by mtlspm02.bell.net with ESMTP
-          id <20180726034728.TUSK6415.mtlspm02.bell.net@arcusix>;
-          Wed, 25 Jul 2018 23:47:28 -0400
-Message-ID: <0432580c68060ed979433a04416cc19307fc5511.camel@sympatico.ca>
-Subject: Re: [PATCH 0/3] PTI for x86-32 Fixes and Updates
-From:   "David H. Gutteridge" <dhgutteridge@sympatico.ca>
-To:     Joerg Roedel <jroedel@suse.de>
-Cc:     Joerg Roedel <joro@8bytes.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>,
-        "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Juergen Gross <jgross@suse.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Borislav Petkov <bp@alien8.de>, Jiri Kosina <jkosina@suse.cz>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Brian Gerst <brgerst@gmail.com>,
-        David Laight <David.Laight@aculab.com>,
-        Denys Vlasenko <dvlasenk@redhat.com>,
-        Eduardo Valentin <eduval@amazon.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Will Deacon <will.deacon@arm.com>, aliguori@amazon.com,
-        daniel.gruss@iaik.tugraz.at, hughd@google.com, keescook@google.com,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Waiman Long <llong@redhat.com>, Pavel Machek <pavel@ucw.cz>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>
-Date:   Wed, 25 Jul 2018 23:47:21 -0400
-In-Reply-To: <20180723072951.qesrz5pdnngtk455@suse.de>
-References: <1532103744-31902-1-git-send-email-joro@8bytes.org>
-         <14206a19d597881b2490eb3fea47ee97be17ca93.camel@sympatico.ca>
-         <20180723072951.qesrz5pdnngtk455@suse.de>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.4 (3.28.4-1.fc28) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Cloudmark-Analysis: v=2.2 cv=IaFoYSia c=1 sm=0 tr=0 a=/4BQ6POolEllGJf7n1YyrQ==:17 a=IkcTkHD0fZMA:10 a=R9QF1RCXAYgA:10 a=HtA15Fq3rhd34ZHif-8A:9 a=QEXdDO2ut3YA:10
+        Thu, 26 Jul 2018 01:03:52 -0400
+Received: from mmarshal3.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id 6FB548365F;
+        Thu, 26 Jul 2018 15:49:03 +1200 (NZST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
+        s=mail; t=1532576943;
+        bh=98jP5YHVHAjqI3Oq91Op9KVY+xbxTdaiIWi2O+5j7QA=;
+        h=From:To:Cc:Subject:Date;
+        b=wPq+CKvg7x5mjoAe8PyLRRx2G3q/Z69IzR4MbnhkEjNLMW9P+SU6JT1vL03SeR4tc
+         QbTQ0ysguSV8IZzcXX0OaQlVlwa/+mFo5uLUiTwC6kaibZwosu408D6TEtmNmpJ++d
+         Gshu/yUldZICag3Wil1dtsu3K67JpXgtIGvvTWVA=
+Received: from smtp (Not Verified[10.32.16.33]) by mmarshal3.atlnz.lc with Trustwave SEG (v7,5,8,10121)
+        id <B5b5944af0000>; Thu, 26 Jul 2018 15:49:03 +1200
+Received: from chrisp-dl.ws.atlnz.lc (chrisp-dl.ws.atlnz.lc [10.33.22.30])
+        by smtp (Postfix) with ESMTP id 6481B13ED1C;
+        Thu, 26 Jul 2018 15:49:04 +1200 (NZST)
+Received: by chrisp-dl.ws.atlnz.lc (Postfix, from userid 1030)
+        id 04CEA1E262C; Thu, 26 Jul 2018 15:49:02 +1200 (NZST)
+From:   Chris Packham <chris.packham@alliedtelesis.co.nz>
+To:     jason@lakedaemon.net, andrew@lunn.ch, gregory.clement@bootlin.com,
+        sebastian.hesselbarth@gmail.com, linux@armlinux.org.uk,
+        ylefloch@online.net
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Chris Packham <chris.packham@alliedtelesis.co.nz>
+Subject: [PATCH v5] ARM: mvebu: use dt_fixup to provide fallback for enable-method
+Date:   Thu, 26 Jul 2018 15:48:56 +1200
+Message-Id: <20180726034856.20743-1-chris.packham@alliedtelesis.co.nz>
+X-Mailer: git-send-email 2.18.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2018-07-23 at 09:29 +0200, Joerg Roedel wrote:
-> Hey David,
-> 
-> On Sun, Jul 22, 2018 at 11:49:00PM -0400, David H. Gutteridge wrote:
-> > Unfortunately, I can trigger a bug in KVM+QEMU with the Bochs VGA
-> > driver. (This is the same VM definition I shared with you in a PM
-> > back on Feb. 20th, except note that 4.18 kernels won't successfully
-> > boot with QEMU's IDE device, so I'm using SATA instead. That's a
-> > regression totally unrelated to your change sets, or to the general
-> > booting issue with 4.18 RC5, since it occurs in vanilla RC4 as
-> > well.)
-> 
-> Yes, this needs the fixes in the tip/x86/mm branch as well. Can you
-> that branch in and test again, please?
+We need to maintain backwards compatibility with device trees that don't
+define an enable method. At the same time we want the device tree to be
+able to specify an enable-method and have it stick.
 
-Sorry, I didn't realize I needed those changes, too. I've re-tested
-with those applied and haven't encountered any issues. I'm now
-re-testing again with your newer patch set from the 25th. No issues
-so far with those, either; I'll confirm in that email thread after
-the laptop has seen some more use.
+Previously by having smp assigned in the DT_MACHINE definition this
+would be picked up by setup_arch() and override whatever
+arm_dt_init_cpu_maps() had configured. Now we move the initial
+assignment of default smp_ops to a dt_fixup and let
+arm_dt_init_cpu_maps() override that if the device tree defines an
+enable-method.
 
-Dave
+Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
+---
+Pervious versions
 
+v1: http://lists.infradead.org/pipermail/linux-arm-kernel/2014-November/300182.html
+v2: http://lists.infradead.org/pipermail/linux-arm-kernel/2014-November/300480.html
+v3: http://lists.infradead.org/pipermail/linux-arm-kernel/2014-November/302945.html
+v4: http://lists.infradead.org/pipermail/linux-arm-kernel/2014-November/303899.html
+
+Changes since v4:
+- drop "RFC"
+
+ arch/arm/mach-mvebu/board-v7.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/arch/arm/mach-mvebu/board-v7.c b/arch/arm/mach-mvebu/board-v7.c
+index ccca95173e17..5bbde5e5258e 100644
+--- a/arch/arm/mach-mvebu/board-v7.c
++++ b/arch/arm/mach-mvebu/board-v7.c
+@@ -145,6 +145,11 @@ static void __init mvebu_dt_init(void)
+ 		i2c_quirk();
+ }
+ 
++static void __init armada_370_xp_dt_fixup(void)
++{
++	smp_set_ops(smp_ops(armada_xp_smp_ops));
++}
++
+ static const char * const armada_370_xp_dt_compat[] __initconst = {
+ 	"marvell,armada-370-xp",
+ 	NULL,
+@@ -153,17 +158,12 @@ static const char * const armada_370_xp_dt_compat[] __initconst = {
+ DT_MACHINE_START(ARMADA_370_XP_DT, "Marvell Armada 370/XP (Device Tree)")
+ 	.l2c_aux_val	= 0,
+ 	.l2c_aux_mask	= ~0,
+-/*
+- * The following field (.smp) is still needed to ensure backward
+- * compatibility with old Device Trees that were not specifying the
+- * cpus enable-method property.
+- */
+-	.smp		= smp_ops(armada_xp_smp_ops),
+ 	.init_machine	= mvebu_dt_init,
+ 	.init_irq       = mvebu_init_irq,
+ 	.restart	= mvebu_restart,
+ 	.reserve        = mvebu_memblock_reserve,
+ 	.dt_compat	= armada_370_xp_dt_compat,
++	.dt_fixup	= armada_370_xp_dt_fixup,
+ MACHINE_END
+ 
+ static const char * const armada_375_dt_compat[] __initconst = {
+-- 
+2.18.0
 
