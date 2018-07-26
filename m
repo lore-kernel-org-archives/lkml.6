@@ -2,76 +2,77 @@ Return-Path: <SRS0=7Z+k=KK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9524EC28CF6
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 15:22:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A15D3C6778F
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 15:22:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 44A1E20685
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 15:22:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 44A1E20685
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+	by mail.kernel.org (Postfix) with ESMTP id 4FFF82083F
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 15:22:58 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="0+JEHZmn"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4FFF82083F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731644AbeGZQkH (ORCPT
+        id S1731706AbeGZQkQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 26 Jul 2018 12:40:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34974 "EHLO mail.kernel.org"
+        Thu, 26 Jul 2018 12:40:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35044 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729801AbeGZQkH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Jul 2018 12:40:07 -0400
-Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
+        id S1729801AbeGZQkQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Jul 2018 12:40:16 -0400
+Received: from localhost (unknown [104.132.1.75])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B28A920685;
-        Thu, 26 Jul 2018 15:22:46 +0000 (UTC)
-Date:   Thu, 26 Jul 2018 11:22:45 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Mark Salyzyn <salyzyn@android.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Ingo Molnar <mingo@redhat.com>, kernel-team@android.com,
-        stable@vger.kernel.org
-Subject: Re: [PATCH] tracing: do not leak kernel addresses
-Message-ID: <20180726112245.3c1bf91d@gandalf.local.home>
-In-Reply-To: <11437c3e-5131-7190-c496-7b51eb7fcc2a@android.com>
-References: <20180725202238.165314-1-salyzyn@android.com>
-        <20180725210717.3b807191@vmware.local.home>
-        <11437c3e-5131-7190-c496-7b51eb7fcc2a@android.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7AE9020685;
+        Thu, 26 Jul 2018 15:22:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1532618576;
+        bh=eQcDptupJNWwsFC2GOlj7OJTNHhBn2vHZhVSyIrynDs=;
+        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
+        b=0+JEHZmnSFv2Ui0zRjgGazBPkohX/ZsbvE+YB6vqyXqEAkmLJ836utAs/yMhOpDeR
+         hwuPghSnXIhM7+dAoo3kG9QRmS63wEgzU1/B/aJEweEsMGxzZpfIN3SuxI8izrI+8n
+         zjAflvlH2gqv2AA22/j5JSWT1EA+BUwCOcTthrp0=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+To:     Ben Dooks <ben.dooks@codethink.co.uk>, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
+From:   Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <16564340083ea64de8c956ba65ea59f8@codethink.co.uk>
+Cc:     linux-kernel@lists.codethink.co.uk, jonathanh@nvidia.co,
+        pdeschrijver@nvidia.com, pgaikwad@nvidia.com,
+        thierry.reding@gmail.com
+References: <20180720134532.13148-1-ben.dooks@codethink.co.uk>
+ <16564340083ea64de8c956ba65ea59f8@codethink.co.uk>
+Message-ID: <153261857589.48062.4721112255504541100@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.7
+Subject: Re: [Linux-kernel] tegra clock updates and fixes
+Date:   Thu, 26 Jul 2018 08:22:55 -0700
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 26 Jul 2018 08:14:08 -0700
-Mark Salyzyn <salyzyn@android.com> wrote:
+Quoting Ben Dooks (2018-07-26 06:32:29)
+> On 2018-07-20 14:45, Ben Dooks wrote:
+> > Hi, this is a set of clock updates and fixes we did when developing
+> > the tegra20/tegra30 auto support. The audio change is due to using
+> > the tegra in clock-slave mode (this hasn't been done before)
+> > =
 
-> Thank you Steve, much appreciated feedback, I have asked the security 
-> developers to keep this in mind and come up with a correct fix.
-> 
-> The correct fix that meets your guidelines would _not_ be suitable for 
-> stable due to the invasiveness it sounds, only for the latest will such 
-> a rework make sense. As such, the fix proposed in this patch is the only 
-> one that meets the bar for stable patch simplicity, and merely(!) needs 
-> to state that if the fix is taken, perf and trace are broken.
-> 
-> Posting this patch publicly on the lists, that may never be applied, may 
-> be the limit of our responsibility for a fix to stable kernel releases, 
-> to be optionally applied by vendors concerned with this CVE criteria?
->
+> > We have also implemented the clock reset status callback as it is
+> > used by some of the driver work we did.
+> =
 
-The patch breaks the code it touches. It makes it useless. If you want
-something for stable, add a command line parameter that just disables
-the creation of that file. Otherwise you will break usespace and that
-will be a definitely NAK from Linus, and for stable itself. This is a
-very minor security issue, and does not justify breaking userspace
-applications. I would be very upset if a new stable release broke both
-perf and trace-cmd's ability to read certain trace events.
+> Is it possible to look at applying the bits of the series that are
+> not currently under discussion? If so should I post a smaller series?
+> =
 
--- Steve
+
+Just send it again please. I'd prefer to see some reviewed-by tags from
+Nvidia folks on bits that are good to merge.
+
