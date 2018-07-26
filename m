@@ -2,93 +2,89 @@ Return-Path: <SRS0=7Z+k=KK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C850C28CF6
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 06:25:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5785AC28CF6
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 06:34:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5D78620894
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 06:25:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D78620894
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=nod.at
+	by mail.kernel.org (Postfix) with ESMTP id DA60820846
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 06:34:40 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=contabo.de header.i=@contabo.de header.b="0F4MucxB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DA60820846
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=contabo.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728497AbeGZHlE (ORCPT
+        id S1728584AbeGZHt5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 26 Jul 2018 03:41:04 -0400
-Received: from lithops.sigma-star.at ([195.201.40.130]:41240 "EHLO
-        lithops.sigma-star.at" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725941AbeGZHlE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Jul 2018 03:41:04 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by lithops.sigma-star.at (Postfix) with ESMTP id 8345D609F825;
-        Thu, 26 Jul 2018 08:25:44 +0200 (CEST)
-Received: from lithops.sigma-star.at ([127.0.0.1])
-        by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id BmWB_g7agBx0; Thu, 26 Jul 2018 08:25:44 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-        by lithops.sigma-star.at (Postfix) with ESMTP id 2CF0E609F828;
-        Thu, 26 Jul 2018 08:25:44 +0200 (CEST)
-Received: from lithops.sigma-star.at ([127.0.0.1])
-        by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id tMXL6F6t-lm2; Thu, 26 Jul 2018 08:25:44 +0200 (CEST)
-Received: from blindfold.localnet (089144206220.atnat0015.highway.bob.at [89.144.206.220])
-        by lithops.sigma-star.at (Postfix) with ESMTPSA id 02C5E609F825;
-        Thu, 26 Jul 2018 08:25:44 +0200 (CEST)
-From:   Richard Weinberger <richard@nod.at>
-To:     Ben Hutchings <ben.hutchings@codethink.co.uk>
-Cc:     martin bayern <Martinbayern@outlook.com>, stable@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 4.4 15/47] ubi: fastmap: Correctly handle interrupted erasures in EBA
-Date:   Thu, 26 Jul 2018 08:25:36 +0200
-Message-ID: <2465050.YMUAORSpTR@blindfold>
-In-Reply-To: <1532571174.21552.47.camel@codethink.co.uk>
-References: <20180710182337.047502999@linuxfoundation.org> <20180710182337.780349008@linuxfoundation.org> <1532571174.21552.47.camel@codethink.co.uk>
+        Thu, 26 Jul 2018 03:49:57 -0400
+Received: from mail.contabo.com ([91.205.175.50]:60490 "EHLO mail.contabo.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726430AbeGZHt4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Jul 2018 03:49:56 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=contabo.de;
+         s=default; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:MIME-Version
+        :Date:Message-ID:From:References:Cc:To:Subject:Sender:Reply-To:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=T463keRGKLfgwzudii1gCgUhx96wr1PclApmb5EFS9U=; b=0F4MucxBinCPP2ccISE1aelWoS
+        ba56G6F4Z6/S7uZhps7xaCHw3OCcLiZPL1shw4h2QHbsn7rznKJTiZTYJZjyFXTpwl/y1kp1mZzJe
+        jUH3P6i89XR8O6ev53mosgJrBPp6Y1AO4S/yp7PaPs5nWfJRTtjfnQURtTjSfqjHDsX4onGF9sSWW
+        H96FlDX3Tb6SyCP/gCVCCMC6xX1HbUFq7yfrdenCzGADT0dMw9YosDoTgQV2vOq6BlnrcY4kX2s6s
+        v+qbLotW4Pz+drWuSWER8z5QGoOTZXJTQc6lxM+ba0T0HpJjMHnJs8E/QZiEU9oN8QNr4xPmlEXpJ
+        n3NkNQfA==;
+Received: from [178.238.239.246] (port=7490 helo=[192.168.178.123])
+        by mail.contabo.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.91)
+        (envelope-from <tino.lehnig@contabo.de>)
+        id 1fiZrA-0003XH-G6; Thu, 26 Jul 2018 08:34:36 +0200
+Subject: Re: Zram writeback feature unstable with heavy swap utilization -
+ BUG: Bad page state in process...
+To:     Minchan Kim <minchan@kernel.org>
+Cc:     ngupta@vflare.org, linux-kernel@vger.kernel.org,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+References: <0516ae2d-b0fd-92c5-aa92-112ba7bd32fc@contabo.de>
+ <20180724010342.GA195675@rodete-desktop-imager.corp.google.com>
+ <d4f4b5a1-9e31-375d-0599-b6d8b0ebc9df@contabo.de>
+ <20180725132126.GA2893@rodete-laptop-imager.corp.google.com>
+ <d07348bb-3102-30f0-d138-de23449e23df@contabo.de>
+ <20180726020351.GA221405@rodete-desktop-imager.corp.google.com>
+ <1684cefc-c920-d53c-8d2d-c32da213a045@contabo.de>
+ <20180726062106.GB221405@rodete-desktop-imager.corp.google.com>
+From:   Tino Lehnig <tino.lehnig@contabo.de>
+Message-ID: <ae04a49d-7d28-2717-daaf-369668ffe0cc@contabo.de>
+Date:   Thu, 26 Jul 2018 08:34:36 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <20180726062106.GB221405@rodete-desktop-imager.corp.google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - mail.contabo.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - contabo.de
+X-Get-Message-Sender-Via: mail.contabo.com: authenticated_id: tino.lehnig@contabo.de
+X-Authenticated-Sender: mail.contabo.com: tino.lehnig@contabo.de
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Ben,
+On 07/26/2018 08:21 AM, Minchan Kim wrote:
+> That means you could reproduce it without writeback feature?
+> If so, it would be more reasoanble to check [0bcac06f27d75, skip swapcache for swapin of synchronous device]
 
-Am Donnerstag, 26. Juli 2018, 04:12:54 CEST schrieb Ben Hutchings:
-> On Tue, 2018-07-10 at 20:24 +0200, Greg Kroah-Hartman wrote:
-> > 4.4-stable review patch.  If anyone has any objections, please let me 
-know.
-> > 
-> > ------------------
-> > 
-> > From: Richard Weinberger <richard@nod.at>
-> > 
-> > commit 781932375ffc6411713ee0926ccae8596ed0261c upstream.
-> > 
-> > Fastmap cannot track the LEB unmap operation, therefore it can
-> > happen that after an interrupted erasure the mapping still looks
-> > good from Fastmap's point of view, while reading from the PEB will
-> > cause an ECC error and confuses the upper layer.
-> > 
-> > Instead of teaching users of UBI how to deal with that, we read back
-> > the VID header and check for errors. If the PEB is empty or shows ECC
-> > errors we fixup the mapping and schedule the PEB for erasure.
-> [...]
-> 
-> Isn't there a risk here, that a read error leads to erasing data that
-> might be recoverable if the read is retried?
+No, the bug only occurs with a backing device. The writeback feature is 
+enabled in the default Ubuntu kernel configuration.
 
-Well, read error means that already something went very wrong. At other places
-in UBI wo also don't retry reading headers and consider it as fatal when we 
-are unable to read it.
-We could also read the EC header, but what do we gain from that?
-If the VID header is not readable we cannot check fastmap either.
+-- 
+Kind regards,
 
-What case exactly do you have in mind?
-
-Thanks,
-//richard
+Tino Lehnig
