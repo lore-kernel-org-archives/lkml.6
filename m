@@ -2,127 +2,96 @@ Return-Path: <SRS0=7Z+k=KK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 036D9C28CF6
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 07:09:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6C40C6778F
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 07:09:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 849A020894
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 07:09:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 849A020894
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=st.com
+	by mail.kernel.org (Postfix) with ESMTP id 8F3EA20894
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 07:09:23 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="UMEk6Ttf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F3EA20894
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729017AbeGZIYo (ORCPT
+        id S1729045AbeGZIYr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 26 Jul 2018 04:24:44 -0400
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:54241 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726560AbeGZIYn (ORCPT
+        Thu, 26 Jul 2018 04:24:47 -0400
+Received: from mail-yw0-f196.google.com ([209.85.161.196]:35271 "EHLO
+        mail-yw0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729023AbeGZIYq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Jul 2018 04:24:43 -0400
-Received: from pps.filterd (m0046668.ppops.net [127.0.0.1])
-        by mx07-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id w6Q6xIj9005394;
-        Thu, 26 Jul 2018 09:09:14 +0200
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 2kbt9xf8fe-1
-        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Thu, 26 Jul 2018 09:09:14 +0200
-Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 0166E3A;
-        Thu, 26 Jul 2018 07:09:13 +0000 (GMT)
-Received: from Webmail-eu.st.com (sfhdag3node3.st.com [10.75.127.9])
-        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id A3273274D;
-        Thu, 26 Jul 2018 07:09:13 +0000 (GMT)
-Received: from SFHDAG7NODE2.st.com (10.75.127.20) by SFHDAG3NODE3.st.com
- (10.75.127.9) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Thu, 26 Jul
- 2018 09:09:13 +0200
-Received: from SFHDAG7NODE2.st.com ([fe80::d548:6a8f:2ca4:2090]) by
- SFHDAG7NODE2.st.com ([fe80::d548:6a8f:2ca4:2090%20]) with mapi id
- 15.00.1347.000; Thu, 26 Jul 2018 09:09:13 +0200
-From:   Loic PALLARDY <loic.pallardy@st.com>
-To:     Suman Anna <s-anna@ti.com>,
-        "bjorn.andersson@linaro.org" <bjorn.andersson@linaro.org>,
-        "ohad@wizery.com" <ohad@wizery.com>
-CC:     "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Arnaud POULIQUEN" <arnaud.pouliquen@st.com>,
-        "benjamin.gaignard@linaro.org" <benjamin.gaignard@linaro.org>
-Subject: RE: [PATCH 1/1] rpmsg: virtio_rpmsg_bus: Fix rpmsg_remove() release
- order
-Thread-Topic: [PATCH 1/1] rpmsg: virtio_rpmsg_bus: Fix rpmsg_remove() release
- order
-Thread-Index: AQHUJFt/s/sahtCVQEG8l9qPPXI3kKSgZGMAgACupBA=
-Date:   Thu, 26 Jul 2018 07:09:13 +0000
-Message-ID: <41d5058358014bbd8ab4329ecb5355f6@SFHDAG7NODE2.st.com>
-References: <1532552826-30003-1-git-send-email-loic.pallardy@st.com>
- <d9b7192b-2fc7-664f-d9a5-b90c8644b991@ti.com>
-In-Reply-To: <d9b7192b-2fc7-664f-d9a5-b90c8644b991@ti.com>
-Accept-Language: fr-FR, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.75.127.51]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Thu, 26 Jul 2018 04:24:46 -0400
+Received: by mail-yw0-f196.google.com with SMTP id t18-v6so238598ywg.2
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Jul 2018 00:09:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=QnUsbFjwywv40AGaNsaI+HjIW5szJuzhEPrhH3PAbP4=;
+        b=UMEk6Ttf8yQnUj2wEambtMuepoSxzK7sC5QU1GPTXy1vK8zSki5s2N2ZpV4rtiQgP1
+         h4f6/82L1Lb1z9pblLtxgyl16m9bNOIEV7mhbqeu7LsQYnQvjLAHHwFKcsUh3UhyPvbE
+         KKlqdhHEEoVatkL4EjFOuojGgZj4T7PJVW7AA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=QnUsbFjwywv40AGaNsaI+HjIW5szJuzhEPrhH3PAbP4=;
+        b=Cbmt1ktMrkmzZpPELhqg8QkxOK/rFk0EaIbmEQ1HJg3L4zRtjriiLEajAkT4lua5Xs
+         FqMPRj8Vd5c184nqVbYiUkrQQajS0o2pgXL/VAVTvd9EsIIrNflazkpwtVkLlDDLrKpL
+         lwVVW4fuDQ2/HMXT8T9f7VFYzZzqPp1s54ZcVnfRNzT1hAB6ZEgXE0wej583LH4qoF0g
+         SbcUkI2pFegtMIYbf1DBmYXuAPHp67T60RPsj8W1wreYumMujnDZJWWogTOWYckrrtXD
+         HnGo3aiR2XudQ9GNnEZ3GhYtctUO+exFYMn8LCp/fKlK1DcZQtKrjA16DaUGz6BoEs97
+         L1Ag==
+X-Gm-Message-State: AOUpUlHWcQf+UmgmyBcYZZ/+JXpPYlBKWdixq5t23tQED9mRH02IIGR5
+        OA0qFRRSzcQivoBCe7LTeE8/Eq04N/86drVd+6zTioEroXQ=
+X-Google-Smtp-Source: AAOMgpcXMAhmcOeOcwsDmjRqqGgw9uTaoX3aHtXmFrk+Pgwo8XBVti04JjazuHTv30lpb3oVRLrFI1ZNFoAas9i0igo=
+X-Received: by 2002:a81:ae66:: with SMTP id g38-v6mr338148ywk.74.1532588960134;
+ Thu, 26 Jul 2018 00:09:20 -0700 (PDT)
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-26_01:,,
- signatures=0
+References: <20180626153125.515-1-anders.roxell@linaro.org>
+In-Reply-To: <20180626153125.515-1-anders.roxell@linaro.org>
+From:   Anders Roxell <anders.roxell@linaro.org>
+Date:   Thu, 26 Jul 2018 09:09:09 +0200
+Message-ID: <CADYN=9JpBipFM81gW9jH_oc2bX=L0es=KoTAnCL70jUYtsKMoA@mail.gmail.com>
+Subject: Re: [PATCH] sh: configs: remove no longer needed config option
+To:     Yoshinori Sato <ysato@users.sourceforge.jp>, dalias@libc.org
+Cc:     linux-sh@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogU3VtYW4gQW5uYSA8cy1h
-bm5hQHRpLmNvbT4NCj4gU2VudDogVGh1cnNkYXksIEp1bHkgMjYsIDIwMTggMTI6MzIgQU0NCj4g
-VG86IExvaWMgUEFMTEFSRFkgPGxvaWMucGFsbGFyZHlAc3QuY29tPjsgYmpvcm4uYW5kZXJzc29u
-QGxpbmFyby5vcmc7DQo+IG9oYWRAd2l6ZXJ5LmNvbQ0KPiBDYzogbGludXgtcmVtb3RlcHJvY0B2
-Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc7DQo+IEFybmF1ZCBQ
-T1VMSVFVRU4gPGFybmF1ZC5wb3VsaXF1ZW5Ac3QuY29tPjsNCj4gYmVuamFtaW4uZ2FpZ25hcmRA
-bGluYXJvLm9yZw0KPiBTdWJqZWN0OiBSZTogW1BBVENIIDEvMV0gcnBtc2c6IHZpcnRpb19ycG1z
-Z19idXM6IEZpeCBycG1zZ19yZW1vdmUoKQ0KPiByZWxlYXNlIG9yZGVyDQo+IA0KPiBIaSBMb2lj
-LA0KPiANCj4gT24gMDcvMjUvMjAxOCAwNDowNyBQTSwgTG9pYyBQYWxsYXJkeSB3cm90ZToNCj4g
-PiBJbiBycG1zZ19yZW1vdmUoKSBwcm9jZWR1cmUsIGNoaWxkcmVuIGFyZSByZW1vdmVkIHRoZW4g
-TmFtZQ0KPiA+IFNlcnZpY2UgYW5ub3VuY2VtZW50IGVuZHBvaW50IGlzIGRlc3Ryb3llZCBhbmQg
-ZGV2aWNlIHJlbGVhc2VkLg0KPiA+DQo+ID4gSXNzdWUgd2l0aCBjdXJyZW50IGltcGxlbWVudGF0
-aW9uIGlzIGlmIGEgTlMgYW5ub3VuY2VtZW50DQo+ID4gY3JlYXRpb24gcmVxdWVzdCBpcyBvbmdv
-aW5nIChyZWNlaXZlZCBiZWZvcmUgdmlydGlvIHJlc2V0KSwNCj4gPiBjaGlsZCBkZXZpY2UgY291
-bGQgYmUgY3JlYXRlZCBhZnRlciBjaGlsZHJlbiByZW1vdmluZy4NCj4gPiBJbiB0aGF0IGNhc2Ug
-cnBtc2dfcmVtb3ZlKCkgaXMgZnJlZWluZyBycG1zZ192aXJ0aW9fYnVzLA0KPiA+IGxlYWRpbmcg
-dG8gYW4gaW5jb25zaXN0ZW50IHN0YXRlLg0KPiA+DQo+ID4gVGhpcyBwYXRjaCBpcyBkZXN0cm95
-aW5nIE5TIGFubm91bmNlbWVudCBzZXJ2aWNlIGVuZHBvaW50IGJlZm9yZQ0KPiA+IHJlbW92aW5n
-IGNoaWxkcmVuIHRvIGd1YXJhbnRlZSB0aGF0IGxpc3Qgb2YgY2hpbGQgZGV2aWNlcyBpcw0KPiA+
-IGZpeGVkIGFuZCBhbGwgb2YgdGhlbSB3aWxsIGJlIGNvcnJlY3RseSByZW1vdmVkIGJlZm9yZSBj
-bGVhbmluZw0KPiA+IHJlc291cmNlcy4NCj4gDQo+IEkgZG8gbm90IHRoaW5rIHRoaXMgaXMgdGhl
-IHJpZ2h0IGZpeCBmb3IgdGhlIHByb2JsZW0geW91IGV4cGxhaW5lZC4NCj4gVGhlIHJlbW92YWwg
-b2YgcnBtc2cgZGV2aWNlcyBjYW4gYWN0dWFsbHkgaW52b2tlIHRoZSBhbm5vdW5jZV9kZXN0cm95
-DQo+IGluIHRoZSBycG1zZ19kZXZfcmVtb3ZlKCkuDQoNClllcyBpdCB3YXMgb25lIG9mIG15IGlu
-dGVycm9nYXRpb24gY29ycmVjdGluZyBpdCBsaWtlIHRoYXQuIEJ1dCBhcyB2aXJ0aW8gbGluayBo
-YXMgYmVlbiBwdXQgaW4gcmVzZXQgc3RhdGUganVzdCBiZWZvcmUsIG5vIG1lc3NhZ2UgY291bGQg
-YmUgc2VudCB0byBjb3Byb2Nlc3Nvci4uLg0KT3RoZXIgcG9zc2libGUgY29ycmVjdGlvbiAobWF5
-YmUgbGVzcyBlbGVnYW50KSwga2VlcGluZyBjdXJyZW50IG9yZGVyLCBpcyB0byBpbnRyb2R1Y2Ug
-YSBycG1zZyBidXMgInN0YXR1cyIgdGhhdCB3aWxsIGJlIGNoZWNrZWQgYmVmb3JlIHJlZ2lzdGVy
-aW5nIG5ldyBkZXZpY2UuDQpBbnl3YXksIHdlIG5lZWQgdG8gcHJldmVudCBuZXcgcnBtc2cgZGV2
-aWNlIHJlZ2lzdGVyIGFmdGVyIGNoaWxkcmVuIHJlbW92YWwgdG8gYXZvaWQgb3JwaGFuIGRldmlj
-ZS4NCg0KUmVnYXJkcywNCkxvaWMNCj4gDQo+IHJlZ2FyZHMNCj4gU3VtYW4NCj4gDQo+ID4NCj4g
-PiBmaXhlczogYmNhYmJjY2FiZmZlICgicnBtc2c6IFNwbGl0IG9mZiBnZW5lcmljIHRhaWwgb2Yg
-Y3JlYXRlX2NoYW5uZWwoKSIpDQo+ID4NCj4gPiBTaWduZWQtb2ZmLWJ5OiBMb2ljIFBhbGxhcmR5
-IDxsb2ljLnBhbGxhcmR5QHN0LmNvbT4NCj4gPiAtLS0NCj4gPiAgZHJpdmVycy9ycG1zZy92aXJ0
-aW9fcnBtc2dfYnVzLmMgfCA2ICsrKy0tLQ0KPiA+ICAxIGZpbGUgY2hhbmdlZCwgMyBpbnNlcnRp
-b25zKCspLCAzIGRlbGV0aW9ucygtKQ0KPiA+DQo+ID4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvcnBt
-c2cvdmlydGlvX3JwbXNnX2J1cy5jDQo+IGIvZHJpdmVycy9ycG1zZy92aXJ0aW9fcnBtc2dfYnVz
-LmMNCj4gPiBpbmRleCA2NjRmOTU3Li5mNWQ0ODFmIDEwMDY0NA0KPiA+IC0tLSBhL2RyaXZlcnMv
-cnBtc2cvdmlydGlvX3JwbXNnX2J1cy5jDQo+ID4gKysrIGIvZHJpdmVycy9ycG1zZy92aXJ0aW9f
-cnBtc2dfYnVzLmMNCj4gPiBAQCAtMTAwNCwxMyArMTAwNCwxMyBAQCBzdGF0aWMgdm9pZCBycG1z
-Z19yZW1vdmUoc3RydWN0IHZpcnRpb19kZXZpY2UNCj4gKnZkZXYpDQo+ID4NCj4gPiAgCXZkZXYt
-PmNvbmZpZy0+cmVzZXQodmRldik7DQo+ID4NCj4gPiArCWlmICh2cnAtPm5zX2VwdCkNCj4gPiAr
-CQlfX3JwbXNnX2Rlc3Ryb3lfZXB0KHZycCwgdnJwLT5uc19lcHQpOw0KPiA+ICsNCj4gPiAgCXJl
-dCA9IGRldmljZV9mb3JfZWFjaF9jaGlsZCgmdmRldi0+ZGV2LCBOVUxMLA0KPiBycG1zZ19yZW1v
-dmVfZGV2aWNlKTsNCj4gPiAgCWlmIChyZXQpDQo+ID4gIAkJZGV2X3dhcm4oJnZkZXYtPmRldiwg
-ImNhbid0IHJlbW92ZSBycG1zZyBkZXZpY2U6ICVkXG4iLA0KPiByZXQpOw0KPiA+DQo+ID4gLQlp
-ZiAodnJwLT5uc19lcHQpDQo+ID4gLQkJX19ycG1zZ19kZXN0cm95X2VwdCh2cnAsIHZycC0+bnNf
-ZXB0KTsNCj4gPiAtDQo+ID4gIAlpZHJfZGVzdHJveSgmdnJwLT5lbmRwb2ludHMpOw0KPiA+DQo+
-ID4gIAl2ZGV2LT5jb25maWctPmRlbF92cXModnJwLT52ZGV2KTsNCj4gPg0KDQo=
+On Tue, 26 Jun 2018 at 17:31, Anders Roxell <anders.roxell@linaro.org> wrote:
+>
+> Since commit eedf265aa003 ("devpts: Make each mount of devpts an
+> independent filesystem.") CONFIG_DEVPTS_MULTIPLE_INSTANCES isn't needed
+> in the defconfig anymore.
+>
+> Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
+> ---
+>  arch/sh/configs/sh7785lcr_32bit_defconfig | 1 -
+>  1 file changed, 1 deletion(-)
+>
+> diff --git a/arch/sh/configs/sh7785lcr_32bit_defconfig b/arch/sh/configs/sh7785lcr_32bit_defconfig
+> index 2ddf5ca7094e..7aa78ced9ffa 100644
+> --- a/arch/sh/configs/sh7785lcr_32bit_defconfig
+> +++ b/arch/sh/configs/sh7785lcr_32bit_defconfig
+> @@ -72,7 +72,6 @@ CONFIG_VT_HW_CONSOLE_BINDING=y
+>  CONFIG_SERIAL_SH_SCI=y
+>  CONFIG_SERIAL_SH_SCI_NR_UARTS=6
+>  CONFIG_SERIAL_SH_SCI_CONSOLE=y
+> -CONFIG_DEVPTS_MULTIPLE_INSTANCES=y
+>  # CONFIG_LEGACY_PTYS is not set
+>  # CONFIG_HW_RANDOM is not set
+>  CONFIG_I2C=y
+> --
+> 2.18.0
+>
+
+Ping.
