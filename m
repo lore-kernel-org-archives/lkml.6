@@ -2,142 +2,119 @@ Return-Path: <SRS0=7Z+k=KK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE3D7C28CF6
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 21:32:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BADEC28CF6
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 21:38:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9D73520846
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 21:32:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9D73520846
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+	by mail.kernel.org (Postfix) with ESMTP id 019CE20846
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 21:38:20 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="BbbkrOl3"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 019CE20846
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731765AbeGZWuv (ORCPT
+        id S1731610AbeGZW4x (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 26 Jul 2018 18:50:51 -0400
-Received: from gateway32.websitewelcome.com ([192.185.145.187]:17439 "EHLO
-        gateway32.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1731521AbeGZWuv (ORCPT
+        Thu, 26 Jul 2018 18:56:53 -0400
+Received: from mail-it0-f65.google.com ([209.85.214.65]:36573 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730701AbeGZW4x (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Jul 2018 18:50:51 -0400
-Received: from cm11.websitewelcome.com (cm11.websitewelcome.com [100.42.49.5])
-        by gateway32.websitewelcome.com (Postfix) with ESMTP id 1E37F11682
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Jul 2018 16:32:10 -0500 (CDT)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id inrmfGMauRPojinrmfmjT6; Thu, 26 Jul 2018 16:32:10 -0500
-X-Authority-Reason: nr=8
-Received: from [189.250.102.187] (port=59320 helo=[192.168.1.71])
-        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1finrl-002V16-Lp; Thu, 26 Jul 2018 16:32:09 -0500
-Subject: Re: [PATCH] net: sched: cls_api: fix dead code in switch
-To:     David Miller <davem@davemloft.net>
-Cc:     jiri@mellanox.com, jhs@mojatatu.com, xiyou.wangcong@gmail.com,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20180725140724.GA23053@embeddedor.com>
- <20180726.141022.1379401977396818228.davem@davemloft.net>
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=gustavo@embeddedor.com; keydata=
- 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
- VtSixD1uOgytAP7RWS474w==
-Message-ID: <6021c3c3-dc4a-ec09-a0dc-23ff548fa9f1@embeddedor.com>
-Date:   Thu, 26 Jul 2018 16:32:01 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Thu, 26 Jul 2018 18:56:53 -0400
+Received: by mail-it0-f65.google.com with SMTP id p81-v6so4735851itp.1
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Jul 2018 14:38:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:organization:references:date:in-reply-to
+         :message-id:user-agent:mime-version;
+        bh=PSBPX7CaML4andwkgo8gxRGjI2EvdpddWXcO9glUro0=;
+        b=BbbkrOl3dQRmhzejkvop42/aXmS0AJhvFApiUlVMotUDItLk1vFKyGMCafi3bO76Nj
+         xqo5NeKUNB3syOTSHufykGmjF8NkRFRlRvdOaqYR6fgRfnfL05EGfHO5nkix3IFkmbhy
+         wUmRrJ/8n/NzQDolEZxyDiAHr1RJKw8XpPUDffSQ1bA5YVAPtkyFFP8n6X8eJv0eVPrS
+         3Lza5OKn7nJ6xYv1TalmFXFLIDyQ3o7YX8tr8CoGG1ag7L7c0hEnFloZZj6vdS2pXrYr
+         1UOPvV366XEbY3bjR4Ye087JSyX033+3F5x4P1b6UUNbxPTQOQfGtCzZNdfcX5lcS19r
+         i8hA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:organization:references:date
+         :in-reply-to:message-id:user-agent:mime-version;
+        bh=PSBPX7CaML4andwkgo8gxRGjI2EvdpddWXcO9glUro0=;
+        b=YCjieJyIkf3ugJNM4ht5XT+FSeatG6JF6eivpyZcBPBRDYCsY8EWaZrd2ry8MpdMDD
+         e8Xv/5LMc9Mmj8FIctNMCDtPunno5OX5av93j7IG88/FWu86YHkgzz4keq8ftgNVfq8a
+         cUX88if1D5qAPao52+itXFW5zHixoEnNN+GrdtPYbpbYdYlKBywLFPaZn8ErdD7AslgJ
+         52Hcy24HG8+Lu+OZ1JvTj3lMQjhANKa5fmV/VbwJ0rWBNgjgNR+dNiinuEWlc1bvpqrV
+         qy55dFzfO5DsCAJNnMrlzIKgDKLUFMfh5y+fVm4TmqanNQlAXiEuqGZphMXx0FDv3pxT
+         DaQg==
+X-Gm-Message-State: AOUpUlGuQRPSCyi7WK+sYWkBVcEB6vJk9bc9iNFN+Okglxh2GaVuG49C
+        p++E6jVd3lM0zlm6WkvFNaT1Og==
+X-Google-Smtp-Source: AAOMgpeF7ucoTBlii8crsHTmqgi026nA6mZHDQwW9+/d2kCyo8dPNxRhcR8nClnqRkg/Ugzm40g9CA==
+X-Received: by 2002:a24:17c7:: with SMTP id 190-v6mr3139209ith.99.1532641091195;
+        Thu, 26 Jul 2018 14:38:11 -0700 (PDT)
+Received: from localhost (c-24-118-241-30.hsd1.mn.comcast.net. [24.118.241.30])
+        by smtp.googlemail.com with ESMTPSA id m140-v6sm1368691itb.11.2018.07.26.14.38.10
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 26 Jul 2018 14:38:10 -0700 (PDT)
+From:   Kevin Hilman <khilman@baylibre.com>
+To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc:     jbrunet@baylibre.com, carlo@caione.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, p.zabel@pengutronix.de,
+        linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 00/14] arm64: dts: meson-axg: add audio support
+Organization: BayLibre
+References: <20180724125238.14567-1-jbrunet@baylibre.com>
+        <CAFBinCBh-b=ie4hBMWdHG8KoLQ7qiRfo8vXfJ1PRcN4UPtg+uA@mail.gmail.com>
+        <705e31bf0d978b7d356b2f077179ab0e3db6f092.camel@baylibre.com>
+        <CAFBinCB_fULnmrpyzNwnfAiL9QGco_6QW957Wroj8o6ZhNwmWA@mail.gmail.com>
+Date:   Thu, 26 Jul 2018 16:38:10 -0500
+In-Reply-To: <CAFBinCB_fULnmrpyzNwnfAiL9QGco_6QW957Wroj8o6ZhNwmWA@mail.gmail.com>
+        (Martin Blumenstingl's message of "Wed, 25 Jul 2018 23:26:27 +0200")
+Message-ID: <7hfu051xvh.fsf@baylibre.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.2 (gnu/linux)
 MIME-Version: 1.0
-In-Reply-To: <20180726.141022.1379401977396818228.davem@davemloft.net>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.102.187
-X-Source-L: No
-X-Exim-ID: 1finrl-002V16-Lp
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.1.71]) [189.250.102.187]:59320
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 6
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Martin Blumenstingl <martin.blumenstingl@googlemail.com> writes:
 
-
-On 07/26/2018 04:10 PM, David Miller wrote:
-> From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-> Date: Wed, 25 Jul 2018 09:07:24 -0500
-> 
->> Code at line 1850 is unreachable. Fix this by removing the break
->> statement above it, so the code for case RTM_GETCHAIN can be
->> properly executed.
+> Hi Jerome,
+>
+> On Wed, Jul 25, 2018 at 11:19 PM <jbrunet@baylibre.com> wrote:
 >>
->> Addresses-Coverity-ID: 1472050 ("Structurally dead code")
->> Fixes: 32a4f5ecd738 ("net: sched: introduce chain object to uapi")
->> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-> 
-> Applied, thanks.
-> 
-> Please use "[PATCH net-next] ..." in your subject lines to indirect
-> the tree that this change is relevant for and targetted to.
-> 
+>> On Wed, 2018-07-25 at 21:11 +0200, Martin Blumenstingl wrote:
+>> > nit-pick: one patch uses "arm64: dts: meson-axg: s400" in the subject
+>> > while other patches that are touching the s400 board aren't
+>> > if you have to re-send this series: can you please use the "arm64:
+>> > dts: meson-axg: s400:" prefix for all patches touching the s400 board?
+>>
+>> hum, do we really have such rule, or do you think we should add one ?
+> looking at the git history in arch/arm64/boot/dts/amlogic: it seems
+> that we don't have a rule yet, even though some (some of
+> your's/Neil's/my) patches were using that naming schema in the past
+>
+>> Kevin, do you have opinion ?
+>>
+>> Not that I really mind either way, but prefixes rules are usually there to help
+>> maintainer filter the patches. Will such rule help in any way ?
+> maybe it's just a problem of a false initial impression
+> I read "arm64: dts: meson-axg: add usb power regulator" in the
+> cover-letter and came to the conclusion that this patch must be wrong
+> since meson-axg.dtsi should not have any regulators (unless they're
+> built into the SoC). only when looking at the patch itself I realized
+> that it's fine because it patches the s400.dts
 
-Got it. Will do next time.
+I actually had the same first impression problem.  At first glance, it
+looks like all the patches are AXG-generic, and only the 2 that mention
+s400 apply to the board.
 
-Thanks
---
-Gustavo
+So, if this needs a respin, I'd prefer the board name where appropriate,
+but it's not something I'm going to be picky about.
+
+Kevin
