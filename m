@@ -2,231 +2,319 @@ Return-Path: <SRS0=7Z+k=KK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9639EECDFB8
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 10:16:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BBD90C28CF6
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 10:16:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4389E20671
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 10:16:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5593220671
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 10:16:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="DzQ4Hh00"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4389E20671
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=verdurent-com.20150623.gappssmtp.com header.i=@verdurent-com.20150623.gappssmtp.com header.b="nWOrE+n1";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="aUlzFu+5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5593220671
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729521AbeGZLcj (ORCPT
+        id S1729888AbeGZLco (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 26 Jul 2018 07:32:39 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:36094 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729031AbeGZLci (ORCPT
+        Thu, 26 Jul 2018 07:32:44 -0400
+Received: from mail-oi0-f68.google.com ([209.85.218.68]:46611 "EHLO
+        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729820AbeGZLcn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Jul 2018 07:32:38 -0400
-Received: by mail-wr1-f67.google.com with SMTP id h9-v6so1150401wro.3
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Jul 2018 03:16:27 -0700 (PDT)
+        Thu, 26 Jul 2018 07:32:43 -0400
+Received: by mail-oi0-f68.google.com with SMTP id y207-v6so1969756oie.13
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Jul 2018 03:16:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=verdurent-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=0m99Tm2vqHZakujjs4KkP+46MZPswUMdgw751HQKfCM=;
+        b=nWOrE+n1cXQgCmvQbG26vehKZVxcahJDjg3Ha417slJZuils/KpQ2hHNeUOsY4YHNF
+         QuqINOqRYskeIdGcCJLr7VV1YlQV+78ztnRnq5q7uBca3cgJasEx+gXADdSuK1M79aRr
+         DGaF2cKu71BOrwK2V1Xxo+uWYfGQ2WVdSgav2yaM+g7c0xC2QynOo0R9enSnBvEu8JW2
+         /1UPFx6FTbSAbGNz+dRJos+nysTRZ7Wl7zvmjDJxfdWTefjWc91eyjYGw1tQfWf0fcs9
+         cvn963j0AGQCsrmeOVcDRNJ+NIUcYF6gLtSc3VpFq92RlYjC7gCJtQsGJ24qXZyPtCTc
+         BTkQ==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=GkrEodfqJJ8aTUmNgXy4dk77JThB9rdS+3bHfRD7mVo=;
-        b=DzQ4Hh001XPzoeCUk+CQceEsyAYL5j0ou1m/1yNPw9UpF73LRVq7yxbFjtmH67D3g7
-         vWDP0Y754GJV6ouq5V25e/9cBhCVSD56X9Nf4fIo8KEm/t80SOMEVtbqUHhWAiB6PP/l
-         DqbNQWui2jGizvLiGXVq3f+JehzIF0QFdclY0=
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=0m99Tm2vqHZakujjs4KkP+46MZPswUMdgw751HQKfCM=;
+        b=aUlzFu+5BM38ONYVlDai2wwN1+ih+yOxs8MsWW9sC5ucx+8JcfMieX8yhws2v6iu0C
+         2UvLlzT6MsEA0ggykNsyKuHnsenuDxaFbWyzDSi/gKU7ofCXI8N53LeiL9cFN9k+eBHn
+         6yh/gcMpXXD94PV/o4cABtlh5wAhk04gG8bbk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=GkrEodfqJJ8aTUmNgXy4dk77JThB9rdS+3bHfRD7mVo=;
-        b=lEszjOb10j2FJ0AIxO8AGIhAcpQP9dnHiLRdOZzKsNDD+2LSiLtifKYO4MR+QBp4VA
-         VysDU+2r6cZbe7nYui5WWPTn5Ze1pvrC7+x+ZAkSl9xDlzQxqXPbSelVTi5jL1sJlY+a
-         BLNohC5gTQFRG51BsJ5n1/w/w3m73PRxHzl1ArP1CV9HJmIjKrrMMZ2w4hDfSQF+p1Db
-         jFeVpJ4r69pjcLxJQ5DBQu6rAouKV70H7F20hpu2BTbKpJABIXRc3nlMdnKcRQXzGSX9
-         95KZybmGQUYpIucv530gkViD0xj0WAv6Vjy2NjhfLhXuNkr9id6d4JIvtDwhz1m3GJoF
-         zxwg==
-X-Gm-Message-State: AOUpUlG0HvEOLVGMQArABau/YtNuFuoOBGR7C45uwqQRpS2bzZMbC5gd
-        JZKQgk0ZVDu3io8dfpZTuDJRtw==
-X-Google-Smtp-Source: AAOMgpfshqSVB+yt4B8TZBBkfRdnYb6qhzaljQui7ONDrjPQb1OApyF/BxrFIJiq6wjIdJ8UQ2Z2uw==
-X-Received: by 2002:adf:e584:: with SMTP id l4-v6mr1024964wrm.190.1532600186925;
-        Thu, 26 Jul 2018 03:16:26 -0700 (PDT)
-Received: from localhost.localdomain ([2a01:e35:879a:6cd0:35bd:fbdf:74b5:3f51])
-        by smtp.gmail.com with ESMTPSA id f6-v6sm957303wrp.30.2018.07.26.03.16.25
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Thu, 26 Jul 2018 03:16:26 -0700 (PDT)
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-To:     tglx@linutronix.de, mingo@kernel.org
-Cc:     linux-kernel@vger.kernel.org, stanley.chu@mediatek.com,
-        baolin.wang@linaro.org, Sudeep.Holla@arm.com,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        linux-arm-kernel@lists.infradead.org (moderated list:ARM/Mediatek SoC
-        support),
-        linux-mediatek@lists.infradead.org (moderated list:ARM/Mediatek SoC
-        support)
-Subject: [PATCH 6/7] clocksource/drivers/timer-mediatek: Add support for system timer
-Date:   Thu, 26 Jul 2018 12:15:29 +0200
-Message-Id: <1532600131-28168-6-git-send-email-daniel.lezcano@linaro.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1532600131-28168-1-git-send-email-daniel.lezcano@linaro.org>
-References: <014f94f9-54d4-1ee0-aa89-67ca5d221989@free.fr>
- <1532600131-28168-1-git-send-email-daniel.lezcano@linaro.org>
+        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
+         :date:message-id:subject:to:cc;
+        bh=0m99Tm2vqHZakujjs4KkP+46MZPswUMdgw751HQKfCM=;
+        b=W+pWIoENyJH3xQ2B807YyuitMNTasF/EA1m9DM+aM72uvBBxMPpIyD0wX4PhYVDRtj
+         dcdtSPL6QwINK+vkMiOci/EXqy9Rm1E9kAGP2Tf/AAU72pctetGs76hePbWAql9fsGwk
+         fQNucCoki/hLTgFGujtKk/tr19O34uAAPQZje15aDHnMdXKnlrQuBxlweDVA5D3MPuxp
+         RS929c2qHfD5OzYpK2Ciww1dIkDQHp3h+nVygzQd7nENbLedNF+Cjh8K/UdGBelilCFW
+         rTRbmcvbL7uflFJtNhcPISmvkGk3rXOTEUC/D225Z012RXyvdwmvTbgRGb/NfzZEIfYQ
+         xrtw==
+X-Gm-Message-State: AOUpUlE3pStCIV22bGgnfCFYWqd4LUAsogIIJCU3RWFjBUUs1XMrH4wO
+        TmKLywD3r5t1oSIe6QzrHcjaio1sKUySh5w8I7ePrw==
+X-Google-Smtp-Source: AAOMgpeVHhciThkVE96/OC2ZeX1OE1//+DBwm3inQWhE2jufvtsIjF6171Z6pvVRDeicBe2wZbv6wTpvBg5lP9nRV+E=
+X-Received: by 2002:aca:d44a:: with SMTP id l71-v6mr1326665oig.199.1532600193649;
+ Thu, 26 Jul 2018 03:16:33 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:a4a:3745:0:0:0:0:0 with HTTP; Thu, 26 Jul 2018 03:16:32
+ -0700 (PDT)
+In-Reply-To: <20180726004738.GU129942@google.com>
+References: <cover.1531899325.git.amit.kucheria@linaro.org>
+ <b3c25cedfa3a9b8a4b481e714992afe62b84ca3b.1531899325.git.amit.kucheria@linaro.org>
+ <20180726004738.GU129942@google.com>
+From:   Amit Kucheria <amit.kucheria@linaro.org>
+Date:   Thu, 26 Jul 2018 15:46:32 +0530
+X-Google-Sender-Auth: uIKg5Z5in7lFeAttWgRbTWyRohA
+Message-ID: <CAHLCerNc1J_W6as4AZsRvwdvgf-ovc17qPWNhj9J6CK8xJtkLg@mail.gmail.com>
+Subject: Re: [PATCH v1] arm64: dts: sdm845: enable tsens thermal zones
+To:     Matthias Kaehlcke <mka@chromium.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Andy Gross <andy.gross@linaro.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        David Brown <david.brown@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        lakml <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Stanley Chu <stanley.chu@mediatek.com>
+On Thu, Jul 26, 2018 at 6:17 AM, Matthias Kaehlcke <mka@chromium.org> wrote:
+> Hi Amit,
+>
+> On Wed, Jul 18, 2018 at 01:19:17PM +0530, Amit Kucheria wrote:
+>> One thermal zone per cpu is defined
+>>
+>> Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
+>> ---
+>>  arch/arm64/boot/dts/qcom/sdm845.dtsi | 170 +++++++++++++++++++++++++++++++++++
+>>  1 file changed, 170 insertions(+)
+>>
+>> diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
+>> index 01ff146..a75be7c 100644
+>> --- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
+>> +++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
+>> @@ -340,4 +340,174 @@
+>>                       };
+>>               };
+>>       };
+>> +
+>> +     thermal-zones {
+>> +             cpu0-thermal {
+>> +                     polling-delay-passive = <250>;
+>> +                     polling-delay = <1000>;
+>
+> In the context of the TSENS patches you mentioned that you are working
+> on interrupt support. Can the polling delays be removed once that is merged?
 
-This patch adds a new "System Timer" on the Mediatek SoCs.
+Yes, that'd be the idea.
 
-The System Timer is introduced as an always-on timer being
-clockevent device for tick-broadcasting.
+>
+>> +                     thermal-sensors = <&tsens0 1>;
+>> +
+>> +                     trips {
+>> +                             cpu_alert0: trip0 {
+>> +                                     temperature = <75000>;
+>> +                                     hysteresis = <2000>;
+>> +                                     type = "passive";
+>> +                             };
+>> +
+>> +                             cpu_crit0: trip1 {
+>> +                                     temperature = <110000>;
+>> +                                     hysteresis = <1000>;
+>> +                                     type = "critical";
+>> +                             };
+>> +                     };
+>> +             };
+>> +
+>> +             cpu1-thermal {
+>> +                     polling-delay-passive = <250>;
+>> +                     polling-delay = <1000>;
+>> +
+>> +                     thermal-sensors = <&tsens0 2>;
+>> +
+>> +                     trips {
+>> +                             cpu_alert1: trip0 {
+>> +                                     temperature = <75000>;
+>> +                                     hysteresis = <2000>;
+>> +                                     type = "passive";
+>> +                             };
+>> +
+>> +                             cpu_crit1: trip1 {
+>> +                                     temperature = <110000>;
+>> +                                     hysteresis = <1000>;
+>> +                                     type = "critical";
+>> +                             };
+>> +                     };
+>> +             };
+>> +
+>> +             cpu2-thermal {
+>> +                     polling-delay-passive = <250>;
+>> +                     polling-delay = <1000>;
+>> +
+>> +                     thermal-sensors = <&tsens0 3>;
+>> +
+>> +                     trips {
+>> +                             cpu_alert2: trip0 {
+>> +                                     temperature = <75000>;
+>> +                                     hysteresis = <2000>;
+>> +                                     type = "passive";
+>> +                             };
+>> +
+>> +                             cpu_crit2: trip1 {
+>> +                                     temperature = <110000>;
+>> +                                     hysteresis = <1000>;
+>> +                                     type = "critical";
+>> +                             };
+>> +                     };
+>> +             };
+>> +
+>> +             cpu3-thermal {
+>> +                     polling-delay-passive = <250>;
+>> +                     polling-delay = <1000>;
+>> +
+>> +                     thermal-sensors = <&tsens0 4>;
+>> +
+>> +                     trips {
+>> +                             cpu_alert3: trip0 {
+>> +                                     temperature = <75000>;
+>> +                                     hysteresis = <2000>;
+>> +                                     type = "passive";
+>> +                             };
+>> +
+>> +                             cpu_crit3: trip1 {
+>> +                                     temperature = <110000>;
+>> +                                     hysteresis = <1000>;
+>> +                                     type = "critical";
+>> +                             };
+>> +                     };
+>> +             };
+>> +
+>> +             cpu4-thermal {
+>> +                     polling-delay-passive = <250>;
+>> +                     polling-delay = <1000>;
+>> +
+>> +                     thermal-sensors = <&tsens0 7>;
+>> +
+>> +                     trips {
+>> +                             cpu_alert4: trip0 {
+>> +                                     temperature = <75000>;
+>> +                                     hysteresis = <2000>;
+>> +                                     type = "passive";
+>> +                             };
+>> +
+>> +                             cpu_crit4: trip1 {
+>> +                                     temperature = <110000>;
+>> +                                     hysteresis = <1000>;
+>> +                                     type = "critical";
+>> +                             };
+>> +                     };
+>> +             };
+>> +
+>> +             cpu5-thermal {
+>> +                     polling-delay-passive = <250>;
+>> +                     polling-delay = <1000>;
+>> +
+>> +                     thermal-sensors = <&tsens0 8>;
+>> +
+>> +                     trips {
+>> +                             cpu_alert5: trip0 {
+>> +                                     temperature = <75000>;
+>> +                                     hysteresis = <2000>;
+>> +                                     type = "passive";
+>> +                             };
+>> +
+>> +                             cpu_crit5: trip1 {
+>> +                                     temperature = <110000>;
+>> +                                     hysteresis = <1000>;
+>> +                                     type = "critical";
+>> +                             };
+>> +                     };
+>> +             };
+>> +
+>> +             cpu6-thermal {
+>> +                     polling-delay-passive = <250>;
+>> +                     polling-delay = <1000>;
+>> +
+>> +                     thermal-sensors = <&tsens0 9>;
+>> +
+>> +                     trips {
+>> +                             cpu_alert6: trip0 {
+>> +                                     temperature = <75000>;
+>> +                                     hysteresis = <2000>;
+>> +                                     type = "passive";
+>> +                             };
+>> +
+>> +                             cpu_crit6: trip1 {
+>> +                                     temperature = <110000>;
+>> +                                     hysteresis = <1000>;
+>> +                                     type = "critical";
+>> +                             };
+>> +                     };
+>> +             };
+>> +
+>> +             cpu7-thermal {
+>> +                     polling-delay-passive = <250>;
+>> +                     polling-delay = <1000>;
+>> +
+>> +                     thermal-sensors = <&tsens0 10>;
+>> +
+>> +                     trips {
+>> +                             cpu_alert7: trip0 {
+>> +                                     temperature = <75000>;
+>> +                                     hysteresis = <2000>;
+>> +                                     type = "passive";
+>> +                             };
+>> +
+>> +                             cpu_crit7: trip1 {
+>> +                                     temperature = <110000>;
+>> +                                     hysteresis = <1000>;
+>> +                                     type = "critical";
+>> +                             };
+>> +                     };
+>
+> Dumb DT question: the trip information is the same for all CPUs. Would
+> it be possible to have a single node and refer to it with a phandle?
 
-For clock, it is driven by 13 MHz system clock.
-The implementation uses the system clock with no clock
-source divider.
+There is some work to do that for cooling maps, not for the actual
+trip points though:
+https://lore.kernel.org/lkml/cover.1530766981.git.viresh.kumar@linaro.org/T/#u
 
-For interrupt, the clock event timer can be used by all cores.
+> I suppose the anwer is no and even if it was possible we probably
+> wouldn't want it, since it would complicate overriding settings for a
+> specific CPU (should that ever be needed ...) or cluster. Just wondering.
+>
+>> +             };
+>> +     };
+>>  };
+>
+> I don't have documentation to verify that the sensors and CPUs match,
+> but it is in line with what I've seen in some Android tree, so it
+> seems alright ;-)
+>
+> Reviewed-by: Matthias Kaehlcke <mka@chromium.org>
+> Tested-by: Matthias Kaehlcke <mka@chromium.org>
 
-Signed-off-by: Stanley Chu <stanley.chu@mediatek.com>
-Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
----
- drivers/clocksource/timer-mediatek.c | 104 ++++++++++++++++++++++++++++++++++-
- 1 file changed, 103 insertions(+), 1 deletion(-)
+Thanks Matthias.
 
-diff --git a/drivers/clocksource/timer-mediatek.c b/drivers/clocksource/timer-mediatek.c
-index e57c4d7..eb10321 100644
---- a/drivers/clocksource/timer-mediatek.c
-+++ b/drivers/clocksource/timer-mediatek.c
-@@ -56,8 +56,86 @@
- #define GPT_CNT_REG(val)        (0x08 + (0x10 * (val)))
- #define GPT_CMP_REG(val)        (0x0C + (0x10 * (val)))
- 
-+/* system timer */
-+#define SYST_BASE               (0x40)
-+
-+#define SYST_CON                (SYST_BASE + 0x0)
-+#define SYST_VAL                (SYST_BASE + 0x4)
-+
-+#define SYST_CON_REG(to)        (timer_of_base(to) + SYST_CON)
-+#define SYST_VAL_REG(to)        (timer_of_base(to) + SYST_VAL)
-+
-+/*
-+ * SYST_CON_EN: Clock enable. Shall be set to
-+ *   - Start timer countdown.
-+ *   - Allow timeout ticks being updated.
-+ *   - Allow changing interrupt functions.
-+ *
-+ * SYST_CON_IRQ_EN: Set to allow interrupt.
-+ *
-+ * SYST_CON_IRQ_CLR: Set to clear interrupt.
-+ */
-+#define SYST_CON_EN              BIT(0)
-+#define SYST_CON_IRQ_EN          BIT(1)
-+#define SYST_CON_IRQ_CLR         BIT(4)
-+
- static void __iomem *gpt_sched_reg __read_mostly;
- 
-+static void mtk_syst_ack_irq(struct timer_of *to)
-+{
-+	/* Clear and disable interrupt */
-+	writel(SYST_CON_IRQ_CLR | SYST_CON_EN, SYST_CON_REG(to));
-+}
-+
-+static irqreturn_t mtk_syst_handler(int irq, void *dev_id)
-+{
-+	struct clock_event_device *clkevt = dev_id;
-+	struct timer_of *to = to_timer_of(clkevt);
-+
-+	mtk_syst_ack_irq(to);
-+	clkevt->event_handler(clkevt);
-+
-+	return IRQ_HANDLED;
-+}
-+
-+static int mtk_syst_clkevt_next_event(unsigned long ticks,
-+				      struct clock_event_device *clkevt)
-+{
-+	struct timer_of *to = to_timer_of(clkevt);
-+
-+	/* Enable clock to allow timeout tick update later */
-+	writel(SYST_CON_EN, SYST_CON_REG(to));
-+
-+	/*
-+	 * Write new timeout ticks. Timer shall start countdown
-+	 * after timeout ticks are updated.
-+	 */
-+	writel(ticks, SYST_VAL_REG(to));
-+
-+	/* Enable interrupt */
-+	writel(SYST_CON_EN | SYST_CON_IRQ_EN, SYST_CON_REG(to));
-+
-+	return 0;
-+}
-+
-+static int mtk_syst_clkevt_shutdown(struct clock_event_device *clkevt)
-+{
-+	/* Disable timer */
-+	writel(0, SYST_CON_REG(to_timer_of(clkevt)));
-+
-+	return 0;
-+}
-+
-+static int mtk_syst_clkevt_resume(struct clock_event_device *clkevt)
-+{
-+	return mtk_syst_clkevt_shutdown(clkevt);
-+}
-+
-+static int mtk_syst_clkevt_oneshot(struct clock_event_device *clkevt)
-+{
-+	return 0;
-+}
-+
- static u64 notrace mtk_gpt_read_sched_clock(void)
- {
- 	return readl_relaxed(gpt_sched_reg);
-@@ -186,6 +264,30 @@ static struct timer_of to = {
- 	},
- };
- 
-+static int __init mtk_syst_init(struct device_node *node)
-+{
-+	int ret;
-+
-+	to.clkevt.features = CLOCK_EVT_FEAT_DYNIRQ | CLOCK_EVT_FEAT_ONESHOT;
-+	to.clkevt.set_state_shutdown = mtk_syst_clkevt_shutdown;
-+	to.clkevt.set_state_oneshot = mtk_syst_clkevt_oneshot;
-+	to.clkevt.tick_resume = mtk_syst_clkevt_resume;
-+	to.clkevt.set_next_event = mtk_syst_clkevt_next_event;
-+	to.of_irq.handler = mtk_syst_handler;
-+
-+	ret = timer_of_init(node, &to);
-+	if (ret)
-+		goto err;
-+
-+	clockevents_config_and_register(&to.clkevt, timer_of_rate(&to),
-+					TIMER_SYNC_TICKS, 0xffffffff);
-+
-+	return 0;
-+err:
-+	timer_of_cleanup(&to);
-+	return ret;
-+}
-+
- static int __init mtk_gpt_init(struct device_node *node)
- {
- 	int ret;
-@@ -218,9 +320,9 @@ static int __init mtk_gpt_init(struct device_node *node)
- 	mtk_gpt_enable_irq(&to, TIMER_CLK_EVT);
- 
- 	return 0;
--
- err:
- 	timer_of_cleanup(&to);
- 	return ret;
- }
- TIMER_OF_DECLARE(mtk_mt6577, "mediatek,mt6577-timer", mtk_gpt_init);
-+TIMER_OF_DECLARE(mtk_mt6765, "mediatek,mt6765-timer", mtk_syst_init);
--- 
-2.7.4
-
+Regards,
+Amit
