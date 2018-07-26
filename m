@@ -2,109 +2,111 @@ Return-Path: <SRS0=7Z+k=KK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A032C28CF6
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 09:54:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE180C6778F
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 09:55:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 41E8D20846
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 09:54:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9921C20846
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 09:55:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bBuJljZk"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 41E8D20846
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ikW4vcOz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9921C20846
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729326AbeGZLKW (ORCPT
+        id S1729342AbeGZLLF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 26 Jul 2018 07:10:22 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:38912 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729045AbeGZLKW (ORCPT
+        Thu, 26 Jul 2018 07:11:05 -0400
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:39310 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728899AbeGZLLF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Jul 2018 07:10:22 -0400
-Received: by mail-pg1-f194.google.com with SMTP id a11-v6so833662pgw.6;
-        Thu, 26 Jul 2018 02:54:18 -0700 (PDT)
+        Thu, 26 Jul 2018 07:11:05 -0400
+Received: by mail-pl0-f65.google.com with SMTP id m1-v6so601315plt.6
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Jul 2018 02:55:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=6eR6IonEitYZELSmgkCz8av8witgA2sFCyIwxjRL8WI=;
-        b=bBuJljZk8IjhpbPAmtOMThQCtloNh7KXbgbtHbv2V+OyWenz5evQfeX6gTDASz/dsp
-         fip6q82TPBjlcNd/0yZj2Pkd5o1LyfWsh/JsxdJAuljvW0xchOhJ8mi0nMhdmYsQCkgB
-         wUOTEWYQkZF5dCaqwbdcJRIkQU9rCkR0rvDeGpUOMiUE2jlEI80g/W/UEPLBiAueirpA
-         TryvoKFExpzWQ/21SMdzMb0hJl/HzD+ViZ4do3YznOlgSMEjMAPoTOprkwZwDewzth77
-         yGz28yYQNKUJHl3OsX/YKvwRGpJ5q9KA/aJUQFuIY7AfOGovAN66app3Y3TXphndaqCA
-         KV9A==
+        d=google.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=9nMhknhIfuD5vGUWbHq4oAU1nSJWeTVBGyl65/cSTFk=;
+        b=ikW4vcOzBKqgKn3+SFAfH7Im1enmmLZ76SwG8JX8oqU/U3MyzmfhxPRGj64wU9IjAJ
+         +pKGXtbLT+J/rWI6Vz2zUeQGRix285x8jCsiV5bWxa/weG7TCmzmTIFen3Ics3UEgo0+
+         iAG83VJ5+NZRdO1oJNgMDj6XTD6oePntvJbv8YzaaM6k4lxCZXHEUEvBQ7Rmc+Ub7xQl
+         DkkcJleruFpHxzTP6Vm4Bxry+95F9HG7M4YQf00/MPX2AaypDY0Mih281rp8/BvX4u7U
+         o7SA0PaDXirc1f7WIY5B8GTR5fgkXAEx18qhEf32iIKq0JvVgPzv7FDAy8z3bCjloLPO
+         QNXQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=6eR6IonEitYZELSmgkCz8av8witgA2sFCyIwxjRL8WI=;
-        b=lC6fb5rQsWMmZQCdN4DrjF1zIbutMcf7L7vUNHGk1RmdAs4qjWuEBgbuKYTIkMGj0t
-         gy8WybpomsEAO1Ne02vQEGfWZNlCRdhiau8b+N0juhgqz1RxHNa8NYg22fyQRxp30okK
-         VEZa35QbnDGe3ah1/6cXhL+7liLmSQnfvbmbqIiJAX9MU7qULzj851cNLsVTXpHrXVbk
-         1unQj5sz2mr9HmdLFYhc4paWoSVP3eKsh71Rik5vX30Bl7q7SUkhtTopo4AIXwjpiiwC
-         hO83e+SmqhyH1eTiE+6K7nhYLxqf60/EFIde2OBbESqRS8BXk5Drj9VT/2HMqJsoYmCG
-         y8/w==
-X-Gm-Message-State: AOUpUlFdawX91JshKn1SjWdF8qHzeR3v7cctCLY1oUWZlczn09reDWif
-        vJb9vzAz0qX2IkJGn6P3YP3YWskJ
-X-Google-Smtp-Source: AAOMgpf9kBVV3dqhtlCWeCkW2DB2Y2pZh8mKsBcTBufmlqkySbY5iS7akNo2t78588iKmLK43RofUA==
-X-Received: by 2002:a63:920c:: with SMTP id o12-v6mr1266664pgd.141.1532598857312;
-        Thu, 26 Jul 2018 02:54:17 -0700 (PDT)
-Received: from [192.168.0.77] ([211.196.191.92])
-        by smtp.gmail.com with ESMTPSA id y5-v6sm4506038pfj.169.2018.07.26.02.54.13
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 26 Jul 2018 02:54:16 -0700 (PDT)
-Subject: Re: [PATCH] samples/bpf: Add BTF build flags to Makefile
-To:     Martin KaFai Lau <kafai@fb.com>
-Cc:     Daniel Borkmann <daniel@iogearbox.net>,
-        Alexei Starovoitov <ast@kernel.org>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20180725163039.2838-1-treeze.taeung@gmail.com>
- <20180725203844.ighlqmfw6227rhby@kafai-mbp.dhcp.thefacebook.com>
- <20180725204538.is5aidet4qwbvlg4@kafai-mbp.dhcp.thefacebook.com>
-From:   Taeung Song <treeze.taeung@gmail.com>
-Message-ID: <9b9e83da-61b0-c0a5-4520-afcdda6549fd@gmail.com>
-Date:   Thu, 26 Jul 2018 18:54:11 +0900
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=9nMhknhIfuD5vGUWbHq4oAU1nSJWeTVBGyl65/cSTFk=;
+        b=U8fYbnAwaWuQtx9Izjiy7OuZaD7KT3qybW/4EZ+/MeL8vduzVjWDr4kBeXGn4qBEcn
+         PxDstLoRCroVWMqeFwuy4hoPg4uPlkU1C3QTnR4LReS7LFSApQcYnp9T0hHuyyMV+tNG
+         knHk45UQeeCeGRkl+Plf+Y3dpsuiiU5od09R8Bc62NEAIBRwZ9Y1+c5L1HYon8CVnbCq
+         S5kzVvYYS9g8iqdEn0GaNrGMhbA7RybIgj3pkP2ABCunLmW07+c/HHMaJFzEOYWzZLIu
+         oQ2456eVcRcHsi9dtLtmzh3wjzFwJoq65+J0XCTwH5dLmqeA5IJK8ZoPu2ljv+vuWl4z
+         f8kQ==
+X-Gm-Message-State: AOUpUlEA/xBwpkNrWZQKboi55uDaEMWWDq9dsn/4LdILeF2lCUztR6M+
+        MMW3lOHjJjZLD1gTJ2tdDsqeFr6D23MT6O8l+ZWCBg==
+X-Google-Smtp-Source: AAOMgpeN0jFhtzGFcrv9fvx11GcIz5o99Lch2jNBLFVS7bxbVCtdW35QNdYhL8IoLs8lqOPM9WSV2wW93CuDpFnRPs8=
+X-Received: by 2002:a17:902:b48c:: with SMTP id y12-v6mr1277259plr.97.1532598900312;
+ Thu, 26 Jul 2018 02:55:00 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20180725204538.is5aidet4qwbvlg4@kafai-mbp.dhcp.thefacebook.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Received: by 2002:a17:90a:ac14:0:0:0:0 with HTTP; Thu, 26 Jul 2018 02:54:39
+ -0700 (PDT)
+In-Reply-To: <20180726094849.GA18334@nautica>
+References: <20180726081049.10527-1-tomasbortoli@gmail.com>
+ <20180726081727.GA6699@nautica> <CACT4Y+ark+0EYSZaOX-qDKpOkyfLgSO9CkidZzx=xkUuhpr65A@mail.gmail.com>
+ <20180726094849.GA18334@nautica>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Thu, 26 Jul 2018 11:54:39 +0200
+Message-ID: <CACT4Y+Zk_d_Ea-oM0R4cRsdnXogq4S+MZMLHJiJuYzibUkanfA@mail.gmail.com>
+Subject: Re: [PATCH] 9p: fix NULL pointer dereferences
+To:     Dominique Martinet <asmadeus@codewreck.org>
+Cc:     Tomas Bortoli <tomasbortoli@gmail.com>,
+        David Miller <davem@davemloft.net>,
+        v9fs-developer@lists.sourceforge.net,
+        netdev <netdev@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        syzkaller <syzkaller@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 07/26/2018 05:45 AM, Martin KaFai Lau wrote:
-> On Wed, Jul 25, 2018 at 01:38:44PM -0700, Martin KaFai Lau wrote:
->> On Thu, Jul 26, 2018 at 01:30:39AM +0900, Taeung Song wrote:
->>> To smoothly test BTF supported binary on samples/bpf,
->>> let samples/bpf/Makefile probe llc, pahole and
->>> llvm-objcopy for BPF support and use them
->>> like tools/testing/selftests/bpf/Makefile
->>> changed from the commit c0fa1b6c3efc ("bpf: btf:
->>>   Add BTF tests")
->>>
->>> Cc: Martin KaFai Lau <kafai@fb.com>
->>> Signed-off-by: Taeung Song <treeze.taeung@gmail.com>
->> Thanks for the patch. LGTM.
+On Thu, Jul 26, 2018 at 11:48 AM, Dominique Martinet
+<asmadeus@codewreck.org> wrote:
+> Dmitry Vyukov wrote on Thu, Jul 26, 2018:
+>> > Let's refuse that at much higher level, like v9fs_mount() in
+>> > fs/9p/vfs_super.c
+>> >
+>> > I can't think of any valid reason for dev_name to be NULL, it's the
+>> > target IP or virtio handle.
 >>
->> Acked-by: Martin KaFai Lau <kafai@fb.com>
-> and it should go to bpf-next (Please use the proper tag in the
-> Subject, thanks!).
-> 
+>> But I think trans=fd allows NULL addr today, no?
+>
+> Ah, right, I read the patch too fast and read unix_create as fd_create,
+> I never realized there was a unix_create variant...
+>
+> fd legitimately doesn't need a name, you are correct.
+>
+> I'm really curious if anyone ever uses the unix/fd variants for "real"
+> stuff though! (not meaning syzbot isn't real, but I have yet to see
+> anything take advantage of this, even if I could imagine some fun
+> applications by piping the wmii libixp server socket.. and just crashed
+> my laptop trying because of the (fixed) trans put bug.. I have yet to
+> see anyone actually doing this)
 
-Yep, will change it ! :)
+I don't really know any real-world cases, but 9p over fd it looks like
+a kind of fuse, so perhaps somebody uses it this way.
+Also, fd allows to use something like sctp socket, and if I am not
+mistaken, trans=tcp can't even do ipv6 tcp (?).
 
-Thanks,
-Taeung
+
+> On the other hand, virtio, rdma and xen all have the same problem, so
+> Thomas, please fix them instead :)
