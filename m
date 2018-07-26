@@ -1,200 +1,264 @@
 Return-Path: <SRS0=7Z+k=KK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: **
-X-Spam-Status: No, score=2.2 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00370C67790
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 00:27:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F676C6778F
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 00:32:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AA34E20685
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 00:27:33 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HeLehfrf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA34E20685
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id F136C20846
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 00:32:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F136C20846
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728618AbeGZBll (ORCPT
+        id S1728503AbeGZBqm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 21:41:41 -0400
-Received: from mail-qt0-f195.google.com ([209.85.216.195]:42211 "EHLO
-        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728369AbeGZBlk (ORCPT
+        Wed, 25 Jul 2018 21:46:42 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:40470 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728358AbeGZBql (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Jul 2018 21:41:40 -0400
-Received: by mail-qt0-f195.google.com with SMTP id z8-v6so9536035qto.9;
-        Wed, 25 Jul 2018 17:27:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=8LyNqPMhVkjGBXPiqclf4eLP69u9ZY1td3zRHIRiNM4=;
-        b=HeLehfrfcDyCEPSJLboKpTnC4NjPY9FP9EILSdhLQ9XQn+QBqCeFdcZi0z0t5fQxYP
-         mqPmvYSoaM81e0d8Rmyt0X1hLamCf4Iy/adxKSIklv8b5SXxoIjuXc9Q9z+FxqKex1rL
-         bHEUnrrGr4gu4FYVAsdeV+XbIlr+yoy1RBtiWLn1fC2G4QvPCrtqlKiHvCq+wTAGlS2X
-         x7VtUEeEijZ2JP3DLQJOFboDRWbjdxt8BWfcIB1zB2uuKtP9Hf1rn2nt1hsgAMjD61M/
-         rHpJzwA9Qfa1PNmg+NfxSmQ//3SRTUmTkAD7OLNyRlojJR/7G/glBL4BhiCPWBp1HwzP
-         x7NA==
+        Wed, 25 Jul 2018 21:46:41 -0400
+Received: by mail-pg1-f196.google.com with SMTP id x5-v6so6364133pgp.7
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Jul 2018 17:32:31 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=8LyNqPMhVkjGBXPiqclf4eLP69u9ZY1td3zRHIRiNM4=;
-        b=nPj0np6ue0IfEuGF6o/c4rvFeruS2rClYgHM2BtzVrcEM5JqxDUP99raWLgfyM99fH
-         VsgAC7BaUyW4Ca9QwJ1Nx4H06iS/c40K20VOEDEplxw3jvmfSbO5nVNlIpG953y3oK3o
-         bsTL2jGb9j6XqxI9iQI0LmzQpcf4DdNqAgNRJ8p08qigexHXlxBibGfErCKiowLSouvG
-         8xYjIkEcwh11Rn4s6IZaet6iNRT9gkvDu6NRsm4y/ZaUIX5u4SJYEvqCDUhstpCSTrz2
-         mdHdcT/iJvWUuIs2bRQbyHn5+DGdN7W/wrBAWCeeodNDvmFcVLs/I5UHnpL4gszcN5FX
-         1i0Q==
-X-Gm-Message-State: AOUpUlGS3ArzvrXw+fWDNfvrS6XHVGrCs8M0qZ4o6BSJoRt1w5AisCOB
-        S1e0qMInwZaLrRGdTzrJ59aWzK8=
-X-Google-Smtp-Source: AAOMgpeN5qA62Xh6ELCUeTvGWu0FGqvT3r0w2a77mhJ7Baf1L26M3C+tB26M6KiNa7egNfSL/kYs7A==
-X-Received: by 2002:a0c:d6c3:: with SMTP id l3-v6mr4133351qvi.154.1532564850448;
-        Wed, 25 Jul 2018 17:27:30 -0700 (PDT)
-Received: from ?IPv6:2601:18f:600:d880:855d:545f:54f4:8e80? ([2601:18f:600:d880:855d:545f:54f4:8e80])
-        by smtp.gmail.com with ESMTPSA id g39-v6sm8881088qta.60.2018.07.25.17.27.29
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 25 Jul 2018 17:27:29 -0700 (PDT)
-Subject: Re: [PATCH v2] EDAC, sb_edac: Add support for systems with segmented
- PCI buses
-To:     bp@alien8.de
-Cc:     mchehab@kernel.org, linux-edac@vger.kernel.org,
-        linux-kernel@vger.kernel.org, tony.luck@intel.com,
-        m.mizuma@jp.fujitsu.com
-References: <20180724190213.26359-1-msys.mizuma@gmail.com>
- <20180725092258.GA14113@nazgul.tnic>
-From:   Masayoshi Mizuma <msys.mizuma@gmail.com>
-Message-ID: <27c2042a-7312-6954-bab9-c232c506aca1@gmail.com>
-Date:   Wed, 25 Jul 2018 20:27:31 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Nep9MsZgb1OCsJ6InF55HNIMdsVgPzPmOmT0jZ9vSKo=;
+        b=YxgaSD2aSm6h4QEkUkS3Zll5kGNoYs88BNijvgftqTJ4NK4/l/2I/ugc/9r1SL14gd
+         PW7z6GtOmhBucarg/hopCAksEy0Jwg1CnMIiqrz2hZ8DldMZhnu07TwUy2JWIWJ5JaRR
+         QFtw/jAH2LY9LfLl/FPEFe8aHNKUpImNG+/iBSPgEEEmz40xtnlg5DbISgtEokC7sF6F
+         eNEn8sXj2d3TTDHJKrxdz1dXG+/0+UZ/URVpuaRwUsJkXRPYlBnPKmYagswZVaI6kfP/
+         BQLibAKlzYztG6mFf3f/bpx9gExhSV8GVgDQTnHMhQTmvQktQGzgs/RxuM5aj6p/J2Xz
+         kVxQ==
+X-Gm-Message-State: AOUpUlEdIVxiXgwIYxS+qqOqIjl7Z7xLeGVwkseeAagxiPJuPicVTBdi
+        QclmsKGsP9IByvX4coSALQUjauSp
+X-Google-Smtp-Source: AAOMgpdcJYNebgH5cISj0KF1fDG/P4j7hzvQFwa3Kb9IecOzez1IvoROX9bMHIMsoliaj37ZqeiMEQ==
+X-Received: by 2002:a63:27c1:: with SMTP id n184-v6mr21848425pgn.29.1532565150519;
+        Wed, 25 Jul 2018 17:32:30 -0700 (PDT)
+Received: from garbanzo.do-not-panic.com (c-73-71-40-85.hsd1.ca.comcast.net. [73.71.40.85])
+        by smtp.gmail.com with ESMTPSA id c12-v6sm35904572pfl.20.2018.07.25.17.32.27
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 25 Jul 2018 17:32:29 -0700 (PDT)
+Received: by garbanzo.do-not-panic.com (sSMTP sendmail emulation); Wed, 25 Jul 2018 17:32:27 -0700
+Date:   Wed, 25 Jul 2018 17:32:27 -0700
+From:   Luis Chamberlain <mcgrof@kernel.org>
+To:     Rishabh Bhatnagar <rishabhb@codeaurora.org>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Rik van Riel <riel@surriel.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
+        ckadabi@codeaurora.org, tsoni@codeaurora.org,
+        Vikram Mulukutla <markivx@codeaurora.org>
+Subject: Re: [PATCH] firmware: Avoid caching firmware when FW_OPT_NOCACHE is
+ set
+Message-ID: <20180726003227.GD11574@garbanzo.do-not-panic.com>
+References: <1532035521-7917-1-git-send-email-rishabhb@codeaurora.org>
 MIME-Version: 1.0
-In-Reply-To: <20180725092258.GA14113@nazgul.tnic>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1532035521-7917-1-git-send-email-rishabhb@codeaurora.org>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Boris,
+On Thu, Jul 19, 2018 at 02:25:21PM -0700, Rishabh Bhatnagar wrote:
+> When calling request_firmware_into_buf(), we pass the FW_OPT_NOCACHE
+> flag with the intent of skipping the caching mechanism of the
+> firmware loader. Unfortunately, that doesn't work, because
+> alloc_lookup_fw_priv() isn't told to _not_ add the struct
+> firmware_buf to the firmware cache (fwc) list. So when we call
+> request_firmware_into_buf() the second time, we find the buffer in
+> the cache and return it immediately without reloading.
 
-On 07/25/2018 05:22 AM, Borislav Petkov wrote:
-> On Tue, Jul 24, 2018 at 03:02:13PM -0400, Masayoshi Mizuma wrote:
->> [*] KASAN report is as follows.
+The code in question is not dealing with the firmware cache though, it is
+batched requests. Unfortunately the code is not very clear given the
+structure used is the struct firmware_cache, however if you look
+carefully you will see there are two struct list_head used:
+
+struct firmware_cache {
+	/* firmware_buf instance will be added into the below list */
+	spinlock_t lock;
+	struct list_head head;
+	...
+#ifdef CONFIG_PM_SLEEP
+	/*
+	 * Names of firmware images which have been cached successfully
+	 * will be added into the below list so that device uncache
+	 * helper can trace which firmware images have been cached
+	 * before.
+	 */
+	spinlock_t name_lock;
+	struct list_head fw_names;
+	...
+};
+
+So the first struct list_head is used for batched firmware requests. It
+was the first patch of the work, it was introduced via commit one
+commit, while the actual firmware cache used for suspend/resume in
+another. Respectively they are commits:
+
+1f2b79599ee8f ("firmware loader: always let firmware_buf own the pages buffer")
+37276a51f803e ("firmware: introduce device_cache/uncache_fw_images")
+
+The ifdefery above clarifies this is a bit, however it is rather easy
+to fall into the trap to easily review this code and think they are the
+same thing.
+
+> This may break users of request_firmware_into_buf that are expecting
+> a fresh copy of the firmware to be reloaded into memory. 
+
+No, this is not the reason why this will break users of
+request_firmware_into_buf(), its because the call is by design
+using device driver specific memory, so as a matter of fact, it would
+actually be a security issue:
+
+*Any* kernel code which makes a request for the same firmware name, if
+the call is carefully timed, could end up getting a pointer to the device's
+own memory area used for this firmware, and since
+request_firmware_into_buf() was used, and since today's only driver
+using this is with IO memory this is a bigger issue.
+
+What you state above alludes that the issue is that we want a fresh
+copy, this has nothing to do with a copy, this is device driver specific
+memory.
+
+> The existing
+> copy may either be modified by drivers, remote processors or even
+> freed.
+
+This is *also* true, specially since the only single Qualcomm driver
+using this *also* uses IO memory. And this is a small example of why
+also LSMs *should* be abe to have knowledge when this type of memory is
+used.
+
+> Fix fw_lookup_and_allocate_buf to not add to the fwc list
+> if FW_OPT_NOCACHE is set, and also don't do the lookup in the list.
 > 
-> That KASAN report is an arbitrary side-effect from the missing segmented
-> support so I ripped it out from the commit message and ended up
-> committing this:
+> Fixes: 0e742e9271 ("firmware: provide infrastructure to make fw caching optional")
 
-Thank you so much!
+This commit does not exist, you made a typo, the last 1 should be a 5:
 
-- Masa
+0e742e9275
 
-> 
+NACK for a few reasons:
+
+a) The commit ID identified as it fixing is wrong
+b) The commit is not accurate as to the reason why this is an issue
+c) The commit does not ackowledge the severity of the issue
+d) I was hoping we can make the fix simpler
+
+As for c) and d) -- come to think of it, the fact that we didn't
+implement batched firmware requests with a const pointer instead
+means we have similar potential issues possible with othe kernel
+code also requesting the same firmware and potentially modifying
+it on the fly prior to a device processing it, therefore causing
+possibly unintended behaviour.
+
+So, initially I was inclined to just rip the batched firmware
+implementation completely for all callers. Unfortunately trying to do
+this revealed to me just how broken this was. For instance, the private
+buf kept around for the firmware when caching it is kept track by the
+using the above mentioned struct list head. This means that any firmware
+which intends to be used for firmware caching *must* also be added to
+the fw cache head list. And unfortunately the search for this entry is
+indexed by just the name. So uncache_firmnware() for instance uses
+lookup_fw_priv() and that in turn which just look for the first private
+buf with the associated firmware name. This means firmware which is
+cached assumes only one copy is kept around during suspend/resume cycle,
+and the batched firmware feature was collateral.
+
+So I don't think we can easily disable batched firmware requests
+without breaking caching, as such I think your patch in turn is
+what we need for now. Can you re-spin, fix the commit log with a
+proper explanation and commit ID it fixes?
+
+  Luis
+
+> Signed-off-by: Vikram Mulukutla <markivx@codeaurora.org>
+> Signed-off-by: Rishabh Bhatnagar <rishabhb@codeaurora.org>
 > ---
-> From: Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>
-> Date: Tue, 24 Jul 2018 15:02:13 -0400
-> Subject: [PATCH] EDAC, sb_edac: Add support for systems with segmented PCI buses
+>  drivers/base/firmware_loader/main.c | 30 ++++++++++++++++++------------
+>  1 file changed, 18 insertions(+), 12 deletions(-)
 > 
-> Extend the driver to check whether segment number and bus number matches
-> when deciding how to group memory controller PCI devices to CPU sockets.
-> 
-> Signed-off-by: Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>
-> Reviewed-by: Tony Luck <tony.luck@intel.com>
-> Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
-> Cc: linux-edac <linux-edac@vger.kernel.org>
-> Link: http://lkml.kernel.org/r/20180724190213.26359-1-msys.mizuma@gmail.com
-> [ Cleanup commit message. ]
-> Signed-off-by: Borislav Petkov <bp@suse.de>
-> ---
->  drivers/edac/sb_edac.c | 17 ++++++++++++-----
->  1 file changed, 12 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/edac/sb_edac.c b/drivers/edac/sb_edac.c
-> index 4a89c8093307..07726fb00321 100644
-> --- a/drivers/edac/sb_edac.c
-> +++ b/drivers/edac/sb_edac.c
-> @@ -352,6 +352,7 @@ struct pci_id_table {
->  
->  struct sbridge_dev {
->  	struct list_head	list;
-> +	int			seg;
->  	u8			bus, mc;
->  	u8			node_id, source_id;
->  	struct pci_dev		**pdev;
-> @@ -729,7 +730,8 @@ static inline int numcol(u32 mtr)
->  	return 1 << cols;
->  }
->  
-> -static struct sbridge_dev *get_sbridge_dev(u8 bus, enum domain dom, int multi_bus,
-> +static struct sbridge_dev *get_sbridge_dev(int seg, u8 bus, enum domain dom,
-> +					   int multi_bus,
->  					   struct sbridge_dev *prev)
+> diff --git a/drivers/base/firmware_loader/main.c b/drivers/base/firmware_loader/main.c
+> index 2e0c37a..db9038c0 100644
+> --- a/drivers/base/firmware_loader/main.c
+> +++ b/drivers/base/firmware_loader/main.c
+> @@ -210,21 +210,24 @@ static struct fw_priv *__lookup_fw_priv(const char *fw_name)
+>  static int alloc_lookup_fw_priv(const char *fw_name,
+>  				struct firmware_cache *fwc,
+>  				struct fw_priv **fw_priv, void *dbuf,
+> -				size_t size)
+> +				size_t size, enum fw_opt opt_flags)
 >  {
->  	struct sbridge_dev *sbridge_dev;
-> @@ -747,14 +749,15 @@ static struct sbridge_dev *get_sbridge_dev(u8 bus, enum domain dom, int multi_bu
->  				      : sbridge_edac_list.next, struct sbridge_dev, list);
+>  	struct fw_priv *tmp;
 >  
->  	list_for_each_entry_from(sbridge_dev, &sbridge_edac_list, list) {
-> -		if (sbridge_dev->bus == bus && (dom == SOCK || dom == sbridge_dev->dom))
-> +		if ((sbridge_dev->seg == seg) && (sbridge_dev->bus == bus) &&
-> +				(dom == SOCK || dom == sbridge_dev->dom))
->  			return sbridge_dev;
+>  	spin_lock(&fwc->lock);
+> -	tmp = __lookup_fw_priv(fw_name);
+> -	if (tmp) {
+> -		kref_get(&tmp->ref);
+> -		spin_unlock(&fwc->lock);
+> -		*fw_priv = tmp;
+> -		pr_debug("batched request - sharing the same struct fw_priv and lookup for multiple requests\n");
+> -		return 1;
+> +	if (!(opt_flags & FW_OPT_NOCACHE)) {
+> +		tmp = __lookup_fw_priv(fw_name);
+> +		if (tmp) {
+> +			kref_get(&tmp->ref);
+> +			spin_unlock(&fwc->lock);
+> +			*fw_priv = tmp;
+> +			pr_debug("batched request - sharing the same struct fw_priv and lookup for multiple requests\n");
+> +			return 1;
+> +		}
 >  	}
+> +
+>  	tmp = __allocate_fw_priv(fw_name, fwc, dbuf, size);
+> -	if (tmp)
+> +	if (tmp && !(opt_flags & FW_OPT_NOCACHE))
+>  		list_add(&tmp->list, &fwc->head);
+>  	spin_unlock(&fwc->lock);
 >  
->  	return NULL;
->  }
->  
-> -static struct sbridge_dev *alloc_sbridge_dev(u8 bus, enum domain dom,
-> +static struct sbridge_dev *alloc_sbridge_dev(int seg, u8 bus, enum domain dom,
->  					     const struct pci_id_table *table)
+> @@ -500,7 +503,8 @@ int assign_fw(struct firmware *fw, struct device *device,
+>   */
+>  static int
+>  _request_firmware_prepare(struct firmware **firmware_p, const char *name,
+> -			  struct device *device, void *dbuf, size_t size)
+> +			  struct device *device, void *dbuf, size_t size,
+> +			  enum fw_opt opt_flags)
 >  {
->  	struct sbridge_dev *sbridge_dev;
-> @@ -771,6 +774,7 @@ static struct sbridge_dev *alloc_sbridge_dev(u8 bus, enum domain dom,
->  		return NULL;
+>  	struct firmware *firmware;
+>  	struct fw_priv *fw_priv;
+> @@ -518,7 +522,8 @@ int assign_fw(struct firmware *fw, struct device *device,
+>  		return 0; /* assigned */
 >  	}
 >  
-> +	sbridge_dev->seg = seg;
->  	sbridge_dev->bus = bus;
->  	sbridge_dev->dom = dom;
->  	sbridge_dev->n_devs = table->n_devs_per_imc;
-> @@ -2246,6 +2250,7 @@ static int sbridge_get_onedevice(struct pci_dev **prev,
->  	struct sbridge_dev *sbridge_dev = NULL;
->  	const struct pci_id_descr *dev_descr = &table->descr[devno];
->  	struct pci_dev *pdev = NULL;
-> +	int seg = 0;
->  	u8 bus = 0;
->  	int i = 0;
+> -	ret = alloc_lookup_fw_priv(name, &fw_cache, &fw_priv, dbuf, size);
+> +	ret = alloc_lookup_fw_priv(name, &fw_cache, &fw_priv, dbuf, size,
+> +				  opt_flags);
 >  
-> @@ -2276,10 +2281,12 @@ static int sbridge_get_onedevice(struct pci_dev **prev,
->  		/* End of list, leave */
->  		return -ENODEV;
+>  	/*
+>  	 * bind with 'priv' now to avoid warning in failure path
+> @@ -578,7 +583,8 @@ static void fw_abort_batch_reqs(struct firmware *fw)
+>  		goto out;
 >  	}
-> +	seg = pci_domain_nr(pdev->bus);
->  	bus = pdev->bus->number;
 >  
->  next_imc:
-> -	sbridge_dev = get_sbridge_dev(bus, dev_descr->dom, multi_bus, sbridge_dev);
-> +	sbridge_dev = get_sbridge_dev(seg, bus, dev_descr->dom,
-> +				      multi_bus, sbridge_dev);
->  	if (!sbridge_dev) {
->  		/* If the HA1 wasn't found, don't create EDAC second memory controller */
->  		if (dev_descr->dom == IMC1 && devno != 1) {
-> @@ -2292,7 +2299,7 @@ static int sbridge_get_onedevice(struct pci_dev **prev,
->  		if (dev_descr->dom == SOCK)
->  			goto out_imc;
+> -	ret = _request_firmware_prepare(&fw, name, device, buf, size);
+> +	ret = _request_firmware_prepare(&fw, name, device, buf, size,
+> +					opt_flags);
+>  	if (ret <= 0) /* error or already assigned */
+>  		goto out;
 >  
-> -		sbridge_dev = alloc_sbridge_dev(bus, dev_descr->dom, table);
-> +		sbridge_dev = alloc_sbridge_dev(seg, bus, dev_descr->dom, table);
->  		if (!sbridge_dev) {
->  			pci_dev_put(pdev);
->  			return -ENOMEM;
+> -- 
+> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+> a Linux Foundation Collaborative Project
 > 
