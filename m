@@ -2,175 +2,83 @@ Return-Path: <SRS0=7Z+k=KK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 74888C28CF6
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 14:36:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46774C28CF6
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 14:37:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 294F020673
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 14:36:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 294F020673
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id F088120844
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 14:37:37 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="MEc2zvz8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F088120844
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731281AbeGZPxL (ORCPT
+        id S1730589AbeGZPyo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 26 Jul 2018 11:53:11 -0400
-Received: from foss.arm.com ([217.140.101.70]:57216 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729506AbeGZPxL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Jul 2018 11:53:11 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7332180D;
-        Thu, 26 Jul 2018 07:36:02 -0700 (PDT)
-Received: from [10.1.39.194] (desktop-vlo843j.cambridge.arm.com [10.1.39.194])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 094DD3F2EA;
-        Thu, 26 Jul 2018 07:36:00 -0700 (PDT)
-Subject: Re: [PATCH v3 4/6] iommu/io-pgtable-arm: add support for non-strict
- mode
-To:     "Leizhen (ThunderTown)" <thunder.leizhen@huawei.com>,
-        Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        iommu <iommu@lists.linux-foundation.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-References: <1531376312-2192-1-git-send-email-thunder.leizhen@huawei.com>
- <1531376312-2192-5-git-send-email-thunder.leizhen@huawei.com>
- <89cc2201-99ab-3f3b-a2d1-1766515d4375@arm.com> <5B597628.2020103@huawei.com>
-From:   Robin Murphy <robin.murphy@arm.com>
-Message-ID: <04239cfa-bcf2-a33a-e662-ebc75e66782b@arm.com>
-Date:   Thu, 26 Jul 2018 15:35:59 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <5B597628.2020103@huawei.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+        Thu, 26 Jul 2018 11:54:44 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:57260 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729506AbeGZPyo (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Jul 2018 11:54:44 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Message-Id:Date:Subject:Cc:To:From:
+        Sender:Reply-To:MIME-Version:Content-Type:Content-Transfer-Encoding:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=ocXrQec0oLhDiwtCXIb0Qh8KvflUULsfS4Yd+58q6mM=; b=MEc2zvz84QeRpTgqPHZBz20cv
+        gTrXXmFgUbgwN+j4wISYylhC3D7PsU7h+zxWoh4Ozw2kxh5xnxH4GvuMt7gr4XxIrnQCO+DknBFcD
+        o1CUSc62zWkHHOckQyxMLXYi2qPScwZd1Y1JsKlFU6ZILmobm/caki+Sc6r2kIlynV1eOKzB4AZk4
+        jHm0ulq6XdBqNtcUs7iGSJx5rGWTBwL1sIM/Gv9+ZaJDn3D+dtLlOssxtGW/QG7zWoPV9lNnoYJNH
+        6YZtXJX71XpgKAkRX3Za0XvWD/DMvFWNcO0djURKEID4zAvwjh5JRQcn2W65+d+eY4O+hBGKIh/J3
+        6PcQ00YrQ==;
+Received: from 213-225-8-157.nat.highway.a1.net ([213.225.8.157] helo=localhost)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fihOS-0005fm-Dg; Thu, 26 Jul 2018 14:37:29 +0000
+From:   Christoph Hellwig <hch@lst.de>
+To:     tglx@linutronix.de, palmer@sifive.com, jason@lakedaemon.net,
+        marc.zyngier@arm.com, robh+dt@kernel.org, mark.rutland@arm.com
+Cc:     anup@brainfault.org, atish.patra@wdc.com,
+        devicetree@vger.kernel.org, aou@eecs.berkeley.edu,
+        linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
+        shorne@gmail.com
+Subject: RFC: simplified RISC-V interrupt and clocksource handling
+Date:   Thu, 26 Jul 2018 16:37:14 +0200
+Message-Id: <20180726143723.16585-1-hch@lst.de>
+X-Mailer: git-send-email 2.18.0
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-07-26 8:20 AM, Leizhen (ThunderTown) wrote:
-> On 2018/7/25 6:25, Robin Murphy wrote:
->> On 2018-07-12 7:18 AM, Zhen Lei wrote:
->>> To support the non-strict mode, now we only tlbi and sync for the strict
->>> mode. But for the non-leaf case, always follow strict mode.
->>>
->>> Use the lowest bit of the iova parameter to pass the strict mode:
->>> 0, IOMMU_STRICT;
->>> 1, IOMMU_NON_STRICT;
->>> Treat 0 as IOMMU_STRICT, so that the unmap operation can compatible with
->>> other IOMMUs which still use strict mode.
->>>
->>> Signed-off-by: Zhen Lei <thunder.leizhen@huawei.com>
->>> ---
->>>    drivers/iommu/io-pgtable-arm.c | 23 ++++++++++++++---------
->>>    1 file changed, 14 insertions(+), 9 deletions(-)
->>>
->>> diff --git a/drivers/iommu/io-pgtable-arm.c b/drivers/iommu/io-pgtable-arm.c
->>> index 010a254..9234db3 100644
->>> --- a/drivers/iommu/io-pgtable-arm.c
->>> +++ b/drivers/iommu/io-pgtable-arm.c
->>> @@ -292,7 +292,7 @@ static void __arm_lpae_set_pte(arm_lpae_iopte *ptep, arm_lpae_iopte pte,
->>>      static size_t __arm_lpae_unmap(struct arm_lpae_io_pgtable *data,
->>>                       unsigned long iova, size_t size, int lvl,
->>> -                   arm_lpae_iopte *ptep);
->>> +                   arm_lpae_iopte *ptep, int strict);
->>>      static void __arm_lpae_init_pte(struct arm_lpae_io_pgtable *data,
->>>                    phys_addr_t paddr, arm_lpae_iopte prot,
->>> @@ -334,7 +334,7 @@ static int arm_lpae_init_pte(struct arm_lpae_io_pgtable *data,
->>>            size_t sz = ARM_LPAE_BLOCK_SIZE(lvl, data);
->>>              tblp = ptep - ARM_LPAE_LVL_IDX(iova, lvl, data);
->>> -        if (WARN_ON(__arm_lpae_unmap(data, iova, sz, lvl, tblp) != sz))
->>> +        if (WARN_ON(__arm_lpae_unmap(data, iova, sz, lvl, tblp, IOMMU_STRICT) != sz))
->>>                return -EINVAL;
->>>        }
->>>    @@ -531,7 +531,7 @@ static void arm_lpae_free_pgtable(struct io_pgtable *iop)
->>>    static size_t arm_lpae_split_blk_unmap(struct arm_lpae_io_pgtable *data,
->>>                           unsigned long iova, size_t size,
->>>                           arm_lpae_iopte blk_pte, int lvl,
->>> -                       arm_lpae_iopte *ptep)
->>> +                       arm_lpae_iopte *ptep, int strict)
->>
->> DMA code should never ever be splitting blocks anyway, and frankly the TLB maintenance here is dodgy enough (since we can't reasonably do break-before make as VMSA says we should) that I *really* don't want to introduce any possibility of making it more asynchronous. I'd much rather just hard-code the expectation of strict == true for this.
-> 
-> OK, I will hard-code strict=true for it.
-> 
-> But since it never ever be happened, why did not give a warning at the beginning?
+This series tries adds support for interrupt handling and timers
+for the RISC-V architecture.
 
-Because DMA code is not the only caller of iommu_map/unmap. It's 
-perfectly legal in the IOMMU API to partially unmap a previous mapping 
-such that a block entry needs to be split. The DMA API, however, is a 
-lot more constrined, and thus by construction the iommu-dma layer will 
-never generate a block-splitting iommu_unmap() except as a result of 
-illegal DMA API usage, and we obviously do not need to optimise for that 
-(you will get a warning about mismatched unmaps under dma-debug, but 
-it's a bit too expensive to police in the general case).
+The basic per-hart interrupt handling implemented by the scause
+and sie CSRs is extremely simple and implemented directly in
+arch/riscv/kernel/irq.c.  In addition there is a irqchip driver
+for the PLIC external interrupt controller, which is called through
+the set_handle_irq API, and a clocksource driver that gets its
+timer interrupt directly from the low-level interrupt handling.
 
-Robin.
+Compared to previous iterations this version does not try to use an
+irqchip driver for the low-level interrupt handling.  This saves
+a couple indirect calls and an additional read of the scause CSR
+in the hot path, makes the code much simpler and last but not least
+avoid the dependency on a device tree for a mandatory architectural
+feature.
 
->>>    {
->>>        struct io_pgtable_cfg *cfg = &data->iop.cfg;
->>>        arm_lpae_iopte pte, *tablep;
->>> @@ -576,15 +576,18 @@ static size_t arm_lpae_split_blk_unmap(struct arm_lpae_io_pgtable *data,
->>>        }
->>>          if (unmap_idx < 0)
->>> -        return __arm_lpae_unmap(data, iova, size, lvl, tablep);
->>> +        return __arm_lpae_unmap(data, iova, size, lvl, tablep, strict);
->>>          io_pgtable_tlb_add_flush(&data->iop, iova, size, size, true);
->>> +    if (!strict)
->>> +        io_pgtable_tlb_sync(&data->iop);
->>> +
->>>        return size;
->>>    }
->>>      static size_t __arm_lpae_unmap(struct arm_lpae_io_pgtable *data,
->>>                       unsigned long iova, size_t size, int lvl,
->>> -                   arm_lpae_iopte *ptep)
->>> +                   arm_lpae_iopte *ptep, int strict)
->>>    {
->>>        arm_lpae_iopte pte;
->>>        struct io_pgtable *iop = &data->iop;
->>> @@ -609,7 +612,7 @@ static size_t __arm_lpae_unmap(struct arm_lpae_io_pgtable *data,
->>>                io_pgtable_tlb_sync(iop);
->>>                ptep = iopte_deref(pte, data);
->>>                __arm_lpae_free_pgtable(data, lvl + 1, ptep);
->>> -        } else {
->>> +        } else if (strict) {
->>>                io_pgtable_tlb_add_flush(iop, iova, size, size, true);
->>>            }
->>>    @@ -620,25 +623,27 @@ static size_t __arm_lpae_unmap(struct arm_lpae_io_pgtable *data,
->>>             * minus the part we want to unmap
->>>             */
->>>            return arm_lpae_split_blk_unmap(data, iova, size, pte,
->>> -                        lvl + 1, ptep);
->>> +                        lvl + 1, ptep, strict);
->>>        }
->>>          /* Keep on walkin' */
->>>        ptep = iopte_deref(pte, data);
->>> -    return __arm_lpae_unmap(data, iova, size, lvl + 1, ptep);
->>> +    return __arm_lpae_unmap(data, iova, size, lvl + 1, ptep, strict);
->>>    }
->>>      static size_t arm_lpae_unmap(struct io_pgtable_ops *ops, unsigned long iova,
->>>                     size_t size)
->>>    {
->>> +    int strict = ((iova & IOMMU_STRICT_MODE_MASK) == IOMMU_STRICT);
->>>        struct arm_lpae_io_pgtable *data = io_pgtable_ops_to_data(ops);
->>>        arm_lpae_iopte *ptep = data->pgd;
->>>        int lvl = ARM_LPAE_START_LVL(data);
->>>    +    iova &= ~IOMMU_STRICT_MODE_MASK;
->>>        if (WARN_ON(iova >= (1ULL << data->iop.cfg.ias)))
->>>            return 0;
->>>    -    return __arm_lpae_unmap(data, iova, size, lvl, ptep);
->>> +    return __arm_lpae_unmap(data, iova, size, lvl, ptep, strict);
->>>    }
->>>      static phys_addr_t arm_lpae_iova_to_phys(struct io_pgtable_ops *ops,
->>>
->>
->> .
->>
-> 
+A git tree is available here (contains a few more patches before
+the ones in this series)
+
+    git://git.infradead.org/users/hch/riscv.git riscv-irq-simple
+
+Gitweb:
+
+    http://git.infradead.org/users/hch/riscv.git/shortlog/refs/heads/riscv-irq-simple
