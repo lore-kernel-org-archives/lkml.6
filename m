@@ -2,187 +2,325 @@ Return-Path: <SRS0=7Z+k=KK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EF2AC28CF6
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 18:11:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 174F1C28CF6
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 18:15:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 399882089C
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 18:11:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 399882089C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.alibaba.com
+	by mail.kernel.org (Postfix) with ESMTP id B211C2083F
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 18:15:17 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Tv8Jb1er"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B211C2083F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389081AbeGZT2z (ORCPT
+        id S1731322AbeGZTdM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 26 Jul 2018 15:28:55 -0400
-Received: from out30-130.freemail.mail.aliyun.com ([115.124.30.130]:33237 "EHLO
-        out30-130.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1731644AbeGZT2t (ORCPT
+        Thu, 26 Jul 2018 15:33:12 -0400
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:40229 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730728AbeGZTdM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Jul 2018 15:28:49 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R121e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e01422;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=8;SR=0;TI=SMTPD_---0T5ObfW8_1532628628;
-Received: from e19h19392.et15sqa.tbsite.net(mailfrom:yang.shi@linux.alibaba.com fp:SMTPD_---0T5ObfW8_1532628628)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Fri, 27 Jul 2018 02:10:35 +0800
-From:   Yang Shi <yang.shi@linux.alibaba.com>
-To:     mhocko@kernel.org, willy@infradead.org, ldufour@linux.vnet.ibm.com,
-        kirill@shutemov.name, akpm@linux-foundation.org
-Cc:     yang.shi@linux.alibaba.com, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: [RFC v6 PATCH 0/2] mm: zap pages with read mmap_sem in munmap for large mapping
-Date:   Fri, 27 Jul 2018 02:10:12 +0800
-Message-Id: <1532628614-111702-1-git-send-email-yang.shi@linux.alibaba.com>
-X-Mailer: git-send-email 1.8.3.1
+        Thu, 26 Jul 2018 15:33:12 -0400
+Received: by mail-pl0-f65.google.com with SMTP id s17-v6so1169196plp.7
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Jul 2018 11:15:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=ev3LOzmoyFMPlmx066OkXUoTkkL46xCKpZ9mtZC5VoA=;
+        b=Tv8Jb1er/I5SWa2Ssra6rgLu8dxaTK7sd8LHmgyZBSztvU/0Mj5wSKM9L1Jbwt69Yi
+         mGU3hwaioRVuKcyW9hr88nmgis/o3DKw6RArdTakjdiq+lrIyUY6o9drZlDwJcXOjhLe
+         QUjJ5wyApyqMmqdozHSWfJ/rd1fkm6mbbXdP4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=ev3LOzmoyFMPlmx066OkXUoTkkL46xCKpZ9mtZC5VoA=;
+        b=LvHBCDwJKPSJcfr1Hp+6Z7RKjNcwnlfoXTma2AcVpG4FfgC2Ia7Rd0iBJJ+TLbLVhF
+         y1kJnGpLdMvlqqgBYoR4p8rRwK0x0cLaKtmXfmDtg7gi8M676SE4ZmAESQ8/Ef6Z3Ay/
+         a+W7VwR7JadqeleWVBClxELgpcfuXWXn9w/cZakst6Kj4f162WonzJ390rpqpOl5EqVe
+         zFvZBCqGigA2OPQEfPXjYWoRdtE66cn1mDkWQcJulbWZ/wns+/4gOTiCjVUuHbQcEGmQ
+         /7LbOis7YfPm6nXuCBmX7kHBUNibadxdWp5ojoZyVqQoZaQ19x36u6J/ZgIGbGNjfk2H
+         evwQ==
+X-Gm-Message-State: AOUpUlF+EekW4T84sJQLAjjLT1CtBYx3TjmWE7bwjWLQB+ed4W3nb1B7
+        hyLVCFFPL/8ASOIC3yRwTdAh
+X-Google-Smtp-Source: AAOMgpery35rOZFAFrv7GMnAZ1l+enYf599lQH+9sCc/E9byRqmberHSTM/vlcqu2wVGQ7c/T9DIbg==
+X-Received: by 2002:a17:902:f83:: with SMTP id 3-v6mr2891910plz.282.1532628914763;
+        Thu, 26 Jul 2018 11:15:14 -0700 (PDT)
+Received: from Mani-XPS-13-9360 ([2409:4072:628e:aef6:6d51:3501:dada:e06d])
+        by smtp.gmail.com with ESMTPSA id r81-v6sm4589945pfa.18.2018.07.26.11.15.06
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 26 Jul 2018 11:15:14 -0700 (PDT)
+Date:   Thu, 26 Jul 2018 23:45:03 +0530
+From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To:     Saravanan Sekar <sravanhome@gmail.com>
+Cc:     linus.walleij@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        afaerber@suse.de, catalin.marinas@arm.com, will.deacon@arm.com,
+        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        pn@denx.de, mp-cs@actions-semi.com, jeff.chen@actions-semi.com,
+        thomas.liau@actions-semi.com, linux@cubietech.com
+Subject: Re: [PATCH 2/5] pinctrl: actions: define pad control configurtion to
+ SoC specific
+Message-ID: <20180726181503.GE5220@Mani-XPS-13-9360>
+References: <20180722163601.28346-1-sravanhome@gmail.com>
+ <20180722163601.28346-3-sravanhome@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180722163601.28346-3-sravanhome@gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi,
 
-Background:
-Recently, when we ran some vm scalability tests on machines with large memory,
-we ran into a couple of mmap_sem scalability issues when unmapping large memory
-space, please refer to https://lkml.org/lkml/2017/12/14/733 and
-https://lkml.org/lkml/2018/2/20/576.
+On Sun, Jul 22, 2018 at 06:35:58PM +0200, Saravanan Sekar wrote:
+> pad control for s900 and s700 are differs in number of
+> pull control configuraions
+> s900 has 4 pull controls - high impedence, pull up, pull down, repeater
+> s700, s500 has 2 pull controls - pull up and pull down
+> 
 
+You should clearly mention what the commit is actually doing.
 
-History:
-Then akpm suggested to unmap large mapping section by section and drop mmap_sem
-at a time to mitigate it (see https://lkml.org/lkml/2018/3/6/784).
+> Signed-off-by: Parthiban Nallathambi <pn@denx.de>
+> Signed-off-by: Saravanan Sekar <sravanhome@gmail.com>
+> ---
+>  drivers/pinctrl/actions/pinctrl-owl.c  | 64 ++++---------------------
+>  drivers/pinctrl/actions/pinctrl-owl.h  | 13 +++--
+>  drivers/pinctrl/actions/pinctrl-s900.c | 66 +++++++++++++++++++++++++-
+>  3 files changed, 79 insertions(+), 64 deletions(-)
+> 
+> diff --git a/drivers/pinctrl/actions/pinctrl-owl.c b/drivers/pinctrl/actions/pinctrl-owl.c
+> index b5c880b50bb3..f72da7aae4ff 100644
+> --- a/drivers/pinctrl/actions/pinctrl-owl.c
+> +++ b/drivers/pinctrl/actions/pinctrl-owl.c
+> @@ -242,60 +242,6 @@ static int owl_pad_pinconf_reg(const struct owl_padinfo *info,
+>  	return 0;
+>  }
+>  
+> -static int owl_pad_pinconf_arg2val(const struct owl_padinfo *info,
+> -				unsigned int param,
+> -				u32 *arg)
+> -{
+> -	switch (param) {
+> -	case PIN_CONFIG_BIAS_BUS_HOLD:
+> -		*arg = OWL_PINCONF_PULL_HOLD;
+> -		break;
+> -	case PIN_CONFIG_BIAS_HIGH_IMPEDANCE:
+> -		*arg = OWL_PINCONF_PULL_HIZ;
+> -		break;
+> -	case PIN_CONFIG_BIAS_PULL_DOWN:
+> -		*arg = OWL_PINCONF_PULL_DOWN;
+> -		break;
+> -	case PIN_CONFIG_BIAS_PULL_UP:
+> -		*arg = OWL_PINCONF_PULL_UP;
+> -		break;
+> -	case PIN_CONFIG_INPUT_SCHMITT_ENABLE:
+> -		*arg = (*arg >= 1 ? 1 : 0);
+> -		break;
+> -	default:
+> -		return -ENOTSUPP;
+> -	}
+> -
+> -	return 0;
+> -}
+> -
+> -static int owl_pad_pinconf_val2arg(const struct owl_padinfo *padinfo,
+> -				unsigned int param,
+> -				u32 *arg)
+> -{
+> -	switch (param) {
+> -	case PIN_CONFIG_BIAS_BUS_HOLD:
+> -		*arg = *arg == OWL_PINCONF_PULL_HOLD;
+> -		break;
+> -	case PIN_CONFIG_BIAS_HIGH_IMPEDANCE:
+> -		*arg = *arg == OWL_PINCONF_PULL_HIZ;
+> -		break;
+> -	case PIN_CONFIG_BIAS_PULL_DOWN:
+> -		*arg = *arg == OWL_PINCONF_PULL_DOWN;
+> -		break;
+> -	case PIN_CONFIG_BIAS_PULL_UP:
+> -		*arg = *arg == OWL_PINCONF_PULL_UP;
+> -		break;
+> -	case PIN_CONFIG_INPUT_SCHMITT_ENABLE:
+> -		*arg = *arg == 1;
+> -		break;
+> -	default:
+> -		return -ENOTSUPP;
+> -	}
+> -
+> -	return 0;
+> -}
+> -
+>  static int owl_pin_config_get(struct pinctrl_dev *pctrldev,
+>  				unsigned int pin,
+>  				unsigned long *config)
+> @@ -314,7 +260,10 @@ static int owl_pin_config_get(struct pinctrl_dev *pctrldev,
+>  
+>  	arg = owl_read_field(pctrl, reg, bit, width);
+>  
+> -	ret = owl_pad_pinconf_val2arg(info, param, &arg);
+> +	if (!pctrl->soc->padctl_val2arg)
+> +		return -ENOTSUPP;
+> +
+> +	ret = pctrl->soc->padctl_val2arg(info, param, &arg);
+>  	if (ret)
+>  		return ret;
+>  
+> @@ -345,7 +294,10 @@ static int owl_pin_config_set(struct pinctrl_dev *pctrldev,
+>  		if (ret)
+>  			return ret;
+>  
+> -		ret = owl_pad_pinconf_arg2val(info, param, &arg);
+> +		if (!pctrl->soc->padctl_arg2val)
+> +			return -ENOTSUPP;
+> +
+> +		ret = pctrl->soc->padctl_arg2val(info, param, &arg);
+>  		if (ret)
+>  			return ret;
+>  
+> diff --git a/drivers/pinctrl/actions/pinctrl-owl.h b/drivers/pinctrl/actions/pinctrl-owl.h
+> index 42635366e68f..669591c5400e 100644
+> --- a/drivers/pinctrl/actions/pinctrl-owl.h
+> +++ b/drivers/pinctrl/actions/pinctrl-owl.h
+> @@ -139,13 +139,6 @@
+>  		.st = &name##_st_conf,			\
+>  	}
+>  
+> -enum owl_pinconf_pull {
+> -	OWL_PINCONF_PULL_HIZ,
+> -	OWL_PINCONF_PULL_DOWN,
+> -	OWL_PINCONF_PULL_UP,
+> -	OWL_PINCONF_PULL_HOLD,
+> -};
+> -
 
-V1 patch series was submitted to the mailing list per Andrew's suggestion
-(see https://lkml.org/lkml/2018/3/20/786). Then I received a lot great feedback
-and suggestions.
+Why can't this be left here itself?
 
-Then this topic was discussed on LSFMM summit 2018. In the summit, Michal Hocko
-suggested (also in the v1 patches review) to try "two phases" approach. Zapping
-pages with read mmap_sem, then doing via cleanup with write mmap_sem (for
-discussion detail, see https://lwn.net/Articles/753269/)
+>  enum owl_pinconf_drv {
+>  	OWL_PINCONF_DRV_2MA,
+>  	OWL_PINCONF_DRV_4MA,
+> @@ -278,6 +271,12 @@ struct owl_pinctrl_soc_data {
+>  	unsigned int ngpios;
+>  	const struct owl_gpio_port *ports;
+>  	unsigned int nports;
+> +	int (*padctl_val2arg)(const struct owl_padinfo *padinfo,
+> +				unsigned int param,
+> +				u32 *arg);
+> +	int (*padctl_arg2val)(const struct owl_padinfo *info,
+> +				unsigned int param,
+> +				u32 *arg);
+>  };
+>  
+>  int owl_pinctrl_probe(struct platform_device *pdev,
+> diff --git a/drivers/pinctrl/actions/pinctrl-s900.c b/drivers/pinctrl/actions/pinctrl-s900.c
+> index baa2f4847418..dc7bdc1f5cde 100644
+> --- a/drivers/pinctrl/actions/pinctrl-s900.c
+> +++ b/drivers/pinctrl/actions/pinctrl-s900.c
+> @@ -13,6 +13,7 @@
+>  #include <linux/of.h>
+>  #include <linux/platform_device.h>
+>  #include <linux/pinctrl/pinctrl.h>
+> +#include <linux/pinctrl/pinconf-generic.h>
+>  #include "pinctrl-owl.h"
+>  
+>  /* Pinctrl registers offset */
+> @@ -1717,6 +1718,67 @@ static const struct owl_gpio_port s900_gpio_ports[] = {
+>  	OWL_GPIO_PORT(F, 0x00F0, 8, 0x0, 0x4, 0x8)
+>  };
+>  
+> +enum owl_pinconf_pull {
+> +	OWL_PINCONF_PULL_HIZ,
+> +	OWL_PINCONF_PULL_DOWN,
+> +	OWL_PINCONF_PULL_UP,
+> +	OWL_PINCONF_PULL_HOLD,
+> +};
+> +
+> +static int owl_pad_pinconf_s900_arg2val(const struct owl_padinfo *info,
+> +				unsigned int param,
+> +				u32 *arg)
 
+How about s900_pad_pinconf_arg2val?
 
-Approach:
-Zapping pages is the most time consuming part, according to the suggestion from
-Michal Hocko [1], zapping pages can be done with holding read mmap_sem, like
-what MADV_DONTNEED does. Then re-acquire write mmap_sem to cleanup vmas.
+> +{
+> +	switch (param) {
+> +	case PIN_CONFIG_BIAS_BUS_HOLD:
+> +		*arg = OWL_PINCONF_PULL_HOLD;
+> +		break;
+> +	case PIN_CONFIG_BIAS_HIGH_IMPEDANCE:
+> +		*arg = OWL_PINCONF_PULL_HIZ;
+> +		break;
+> +	case PIN_CONFIG_BIAS_PULL_DOWN:
+> +		*arg = OWL_PINCONF_PULL_DOWN;
+> +		break;
+> +	case PIN_CONFIG_BIAS_PULL_UP:
+> +		*arg = OWL_PINCONF_PULL_UP;
+> +		break;
+> +	case PIN_CONFIG_INPUT_SCHMITT_ENABLE:
+> +		*arg = (*arg >= 1 ? 1 : 0);
+> +		break;
+> +	default:
+> +		return -ENOTSUPP;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int owl_pad_pinconf_s900_val2arg(const struct owl_padinfo *padinfo,
+> +				unsigned int param,
+> +				u32 *arg)
 
-But, we can't call MADV_DONTNEED directly, since there are two major drawbacks:
-  * The unexpected state from PF if it wins the race in the middle of munmap.
-    It may return zero page, instead of the content or SIGSEGV.
-  * Can’t handle VM_LOCKED | VM_HUGETLB | VM_PFNMAP and uprobe mappings, which
-    is a showstopper from akpm
+How about s900_pad_pinconf_val2arg?
 
-But, some part may need write mmap_sem, for example, vma splitting. So,
-the design is as follows:
-        acquire write mmap_sem
-        lookup vmas (find and split vmas)
-        detach vmas
-        deal with special mappings
-        downgrade_write
+Thanks,
+Mani
 
-        zap pages
-        free page tables
-        release mmap_sem
-
-The vm events with read mmap_sem may come in during page zapping, but
-since vmas have been detached before, they, i.e. page fault, gup, etc,
-will not be able to find valid vma, then just return SIGSEGV or -EFAULT
-as expected.
-
-If the vma has VM_LOCKED | VM_HUGETLB | VM_PFNMAP or uprobe, they are
-considered as special mappings. They will be dealt with before zapping
-pages with write mmap_sem held. Basically, just update vm_flags.
-
-And, since they are also manipulated by unmap_single_vma() which is
-called by unmap_vma() with read mmap_sem held in this case, to
-prevent from updating vm_flags in read critical section, a new
-parameter, called "skip_flags" is added to unmap_region(), unmap_vmas()
-and unmap_single_vma(). If it is true, then just skip unmap those
-special mappings. Currently, the only place which pass true to this
-parameter is us.
-
-With this approach we don't have to re-acquire mmap_sem again to clean
-up vmas to avoid race window which might get the address space changed.
-
-And, since the lock acquire/release cost is managed to the minimum and
-almost as same as before, the optimization could be extended to any size
-of mapping without incuring significant penalty to small mappings.
-
-For the time being, just do this in munmap syscall path. Other vm_munmap() or
-do_munmap() call sites (i.e mmap, mremap, etc) remain intact for stability
-reason.
-
-Changelog:
-v5 -> v6:
-* Fixed the comments from Kirill and Laurent
-* Added Laurent's reviewed-by to patch 1/2. Thanks.
-
-v4 -> v5:
-* Detach vmas before zapping pages so that we don't have to use VM_DEAD to mark
-  a being unmapping vma since they have been detached from rbtree when zapping
-  pages. Per Kirill
-* Eliminate VM_DEAD stuff
-* With this change we don't have to re-acquire write mmap_sem to do cleanup.
-  So, we could eliminate a potential race window
-* Eliminate PUD_SIZE check, and extend this optimization to all size
-
-v3 -> v4:
-* Extend check_stable_address_space to check VM_DEAD as Michal suggested
-* Deal with vm_flags update of VM_LOCKED | VM_HUGETLB | VM_PFNMAP and uprobe
-  mappings with exclusive lock held. The actual unmapping is still done with read
-  mmap_sem to solve akpm's concern
-* Clean up vmas with calling do_munmap to prevent from race condition by not
-  carrying vmas as Kirill suggested
-* Extracted more common code
-* Solved some code cleanup comments from akpm
-* Dropped uprobe and arch specific code, now all the changes are mm only
-* Still keep PUD_SIZE threshold, if everyone thinks it is better to extend to all
-  sizes or smaller size, will remove it
-* Make this optimization 64 bit only explicitly per akpm's suggestion
-
-v2 -> v3:
-* Refactor do_munmap code to extract the common part per Peter's sugestion
-* Introduced VM_DEAD flag per Michal's suggestion. Just handled VM_DEAD in
-  x86's page fault handler for the time being. Other architectures will be covered
-  once the patch series is reviewed
-* Now lookup vma (find and split) and set VM_DEAD flag with write mmap_sem, then
-  zap mapping with read mmap_sem, then clean up pgtables and vmas with write
-  mmap_sem per Peter's suggestion
-
-v1 -> v2:
-* Re-implemented the code per the discussion on LSFMM summit
-
-
-Regression and performance data:
-Did the below regression test with setting thresh to 4K manually in the code:
-  * Full LTP
-  * Trinity (munmap/all vm syscalls)
-  * Stress-ng: mmap/mmapfork/mmapfixed/mmapaddr/mmapmany/vm
-  * mm-tests: kernbench, phpbench, sysbench-mariadb, will-it-scale
-  * vm-scalability
-
-With the patches, exclusive mmap_sem hold time when munmap a 80GB address
-space on a machine with 32 cores of E5-2680 @ 2.70GHz dropped to us level
-from second.
-
-munmap_test-15002 [008]   594.380138: funcgraph_entry: |  vm_munmap_zap_rlock() {
-munmap_test-15002 [008]   594.380146: funcgraph_entry:      !2485684 us |    unmap_region();
-munmap_test-15002 [008]   596.865836: funcgraph_exit:       !2485692 us |  }
-
-Here the excution time of unmap_region() is used to evaluate the time of
-holding read mmap_sem, then the remaining time is used with holding
-exclusive lock.
-
-Yang Shi (2):
-      mm: refactor do_munmap() to extract the common part
-      mm: mmap: zap pages with read mmap_sem in munmap
-
- include/linux/mm.h |   2 +-
- mm/memory.c        |  41 ++++++++++----
- mm/mmap.c          | 219 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++----------------
- 3 files changed, 205 insertions(+), 57 deletions(-)
+> +{
+> +	switch (param) {
+> +	case PIN_CONFIG_BIAS_BUS_HOLD:
+> +		*arg = *arg == OWL_PINCONF_PULL_HOLD;
+> +		break;
+> +	case PIN_CONFIG_BIAS_HIGH_IMPEDANCE:
+> +		*arg = *arg == OWL_PINCONF_PULL_HIZ;
+> +		break;
+> +	case PIN_CONFIG_BIAS_PULL_DOWN:
+> +		*arg = *arg == OWL_PINCONF_PULL_DOWN;
+> +		break;
+> +	case PIN_CONFIG_BIAS_PULL_UP:
+> +		*arg = *arg == OWL_PINCONF_PULL_UP;
+> +		break;
+> +	case PIN_CONFIG_INPUT_SCHMITT_ENABLE:
+> +		*arg = *arg == 1;
+> +		break;
+> +	default:
+> +		return -ENOTSUPP;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+>  static struct owl_pinctrl_soc_data s900_pinctrl_data = {
+>  	.padinfo = s900_padinfo,
+>  	.pins = (const struct pinctrl_pin_desc *)s900_pads,
+> @@ -1727,7 +1789,9 @@ static struct owl_pinctrl_soc_data s900_pinctrl_data = {
+>  	.ngroups = ARRAY_SIZE(s900_groups),
+>  	.ngpios = NUM_GPIOS,
+>  	.ports = s900_gpio_ports,
+> -	.nports = ARRAY_SIZE(s900_gpio_ports)
+> +	.nports = ARRAY_SIZE(s900_gpio_ports),
+> +	.padctl_arg2val = owl_pad_pinconf_s900_arg2val,
+> +	.padctl_val2arg = owl_pad_pinconf_s900_val2arg,
+>  };
+>  
+>  static int s900_pinctrl_probe(struct platform_device *pdev)
+> -- 
+> 2.18.0
+> 
