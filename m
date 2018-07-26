@@ -1,92 +1,473 @@
 Return-Path: <SRS0=7Z+k=KK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Level: **
+X-Spam-Status: No, score=2.1 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SORTED_RECIPS,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD8ADC28CF6
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 09:28:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0391C28CF6
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 09:29:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7A6442064D
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 09:28:22 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="dCP1zEGy"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7A6442064D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id 6DE702064D
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 09:29:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6DE702064D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729177AbeGZKoT (ORCPT
+        id S1729232AbeGZKpC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 26 Jul 2018 06:44:19 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:40680 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728688AbeGZKoS (ORCPT
+        Thu, 26 Jul 2018 06:45:02 -0400
+Received: from mail-io0-f199.google.com ([209.85.223.199]:40241 "EHLO
+        mail-io0-f199.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728692AbeGZKpC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Jul 2018 06:44:18 -0400
-Received: by mail-pg1-f193.google.com with SMTP id x5-v6so790013pgp.7
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Jul 2018 02:28:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=NoFDYHcbVaj1tOogJjEarKpuJ6WsCYKtNVsiPLendDE=;
-        b=dCP1zEGyeRmSFbFI9AF+c5WGm/d92Tz1IAf/WSxy5IhpJL+Y+QrThk04eBRVnGV6A8
-         BsqWZKhpLeh6x/XzRwV1/QBZOS6D2nUvVC6/rGrGyg3lcvHhOMMxwbFPV6UO6lo1MUsK
-         IOT2Y1kquu8E8BCvtFkC/qbBI92rVpI/x+yjY86VchMJN/BUgT8P9UaXc9xq73RPHAnD
-         3I6uzAppTD1zp0kcLDTPnxhpCeepttRFsfO+Rghl6Y1wP2S/B30hwefGIJXzUNvFy1yf
-         N3zAZ0ueZY5haxpaUstN9+vP+bP8O1+1WFfahNAKPg0GH4N50VJU7qUB8JJ+PHSynAhh
-         /P4Q==
+        Thu, 26 Jul 2018 06:45:02 -0400
+Received: by mail-io0-f199.google.com with SMTP id j18-v6so786556iog.7
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Jul 2018 02:29:03 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=NoFDYHcbVaj1tOogJjEarKpuJ6WsCYKtNVsiPLendDE=;
-        b=uLFCpzU4D3WQcvI8E74o3oo+t+DgosK+9Yforf+DaK+RxImJ9kW7ZJTKBVMlFT56zU
-         zqm/uclFyNsVXEdZ0sKnlGBnjWOk1+Kdsd1smlDed8BjhWdcs3zlXT+66+Q/euOonpw2
-         7lCHakKRDRh3n0NOUy5LESqpX+BmwjsejKta0+tIlpF+s1PcGTIRaiqfq2w6m6oejqrc
-         nx7ektJLgn2Nslm4bomBmd68T31NOfwIELM8pYBPkfKdk2oi1Ys5z3wWNZu+Cu8KM+jW
-         tlOwdDeGNQ762MIF+mLMj/uA3IYQJvWx9rNiAmoNeaadNCd6by/zNojD/Zk9UQ4kKzHi
-         c4Dw==
-X-Gm-Message-State: AOUpUlHLeN/VYNVyTw6dmbSvUaSb4a0YzZThg/+QXzD/zxuusVTj29Pc
-        bl7t5huxvTah94wkykk/hp72T8PPWRSufkT9tV1cQQ==
-X-Google-Smtp-Source: AAOMgpek9Cfc14F9+ueY08vVdqyLkP+qjF+/1InIqKfIdzlTljYO4ywforKm9SkGJ+93tQi9AAL/HQ7dZb8LbsawC3E=
-X-Received: by 2002:a62:3184:: with SMTP id x126-v6mr1314811pfx.49.1532597299881;
- Thu, 26 Jul 2018 02:28:19 -0700 (PDT)
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=ryJztdMdScYNjU69mBENTFKHXE/fMyDx4GIH8W/0Ym0=;
+        b=XtZ+wSMFELjPKL0RZy2uf/QsQkRzQvHP6wxzCNfLDtoSXEeFrTQbEH3+bpCjehggMq
+         teOe8J+THQJpYb0eNE2XDs5p9AawDl95kLNKFvPC9egDWNKKzc2cH0ZSoVsJ5nlRK3Ad
+         PvReB176LS8BiYiK5JaeaD5MtW1cJiYUhUfO0WhlZYXNQSCiIO0UIuW1PFrZROFTluF/
+         HNHt3zxK+aM/kdUfgPlZtOhs6cwZVEZG7FHnPQcDzt4jYHr97MBuRqxPWgxNynGg8sAm
+         /8lMMWxCark4/BC5V+21Uhrj0Wg5uxuv/KCR5XL3DGOH+kd31NKS1y+FsmeEF5Crwe3f
+         oFOw==
+X-Gm-Message-State: AOUpUlFGn31v4jHIYAJ52FLex4LgeGxnA+BouJSD994q3vxQR6RP2hPu
+        /23N20/8WLPgwgx/AeXBpww7LW8VgrGT7eMSpDqJtqvfVNW+
+X-Google-Smtp-Source: AAOMgpdhE3a7maZA7/YwxuUgBIJa0siDvWQ6juRpsXXAnZv4Asyh/TDFjwqRIquW96sa7uddBBHJfIkGAIkh+49Eq5ZBfliKHh8y
 MIME-Version: 1.0
-Received: by 2002:a17:90a:ac14:0:0:0:0 with HTTP; Thu, 26 Jul 2018 02:27:59
- -0700 (PDT)
-In-Reply-To: <20180726081727.GA6699@nautica>
-References: <20180726081049.10527-1-tomasbortoli@gmail.com> <20180726081727.GA6699@nautica>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Thu, 26 Jul 2018 11:27:59 +0200
-Message-ID: <CACT4Y+ark+0EYSZaOX-qDKpOkyfLgSO9CkidZzx=xkUuhpr65A@mail.gmail.com>
-Subject: Re: [PATCH] 9p: fix NULL pointer dereferences
-To:     Dominique Martinet <asmadeus@codewreck.org>
-Cc:     Tomas Bortoli <tomasbortoli@gmail.com>,
-        David Miller <davem@davemloft.net>,
-        v9fs-developer@lists.sourceforge.net,
-        netdev <netdev@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        syzkaller <syzkaller@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+X-Received: by 2002:a6b:3b48:: with SMTP id i69-v6mr417355ioa.64.1532597342904;
+ Thu, 26 Jul 2018 02:29:02 -0700 (PDT)
+Date:   Thu, 26 Jul 2018 02:29:02 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000352dc20571e3a0d8@google.com>
+Subject: net-next boot error
+From:   syzbot <syzbot+604f8271211546f5b3c7@syzkaller.appspotmail.com>
+To:     bp@suse.de, jbaron@akamai.com, jpoimboe@redhat.com,
+        linux-kernel@vger.kernel.org, marc.zyngier@arm.com,
+        mingo@kernel.org, pbonzini@redhat.com, peterz@infradead.org,
+        rostedt@goodmis.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 26, 2018 at 10:17 AM, Dominique Martinet
-<asmadeus@codewreck.org> wrote:
-> Tomas Bortoli wrote on Thu, Jul 26, 2018:
->> In p9_fd_create_tcp() and p9_fd_create_unix() it is possible to get
->> a NULL value in the addr parameter. Return -EINVAL in such cases.
->
-> Let's refuse that at much higher level, like v9fs_mount() in
-> fs/9p/vfs_super.c
->
-> I can't think of any valid reason for dev_name to be NULL, it's the
-> target IP or virtio handle.
+Hello,
 
-But I think trans=fd allows NULL addr today, no?
+syzbot found the following crash on:
+
+HEAD commit:    dc66fe43b7eb rds: send: Fix dead code in rds_sendmsg
+git tree:       net-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=127874c8400000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=f34ce142a9f5f0e8
+dashboard link: https://syzkaller.appspot.com/bug?extid=604f8271211546f5b3c7
+compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+
+Unfortunately, I don't have any reproducer for this crash yet.
+
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+604f8271211546f5b3c7@syzkaller.appspotmail.com
+
+possible deadlock in static_key_slow_incsd 0:0:1:0: [sda] Attached SCSI disk
+MACsec IEEE 802.1AE
+tun: Universal TUN/TAP device driver, 1.6
+
+============================================
+WARNING: possible recursive locking detected
+4.18.0-rc6+ #141 Not tainted
+--------------------------------------------
+swapper/0/1 is trying to acquire lock:
+(____ptrval____) (cpu_hotplug_lock.rw_sem){++++}, at:  
+static_key_slow_inc+0x12/0x30 kernel/jump_label.c:124
+
+but task is already holding lock:
+(____ptrval____) (cpu_hotplug_lock.rw_sem){++++}, at: get_online_cpus  
+include/linux/cpu.h:126 [inline]
+(____ptrval____) (cpu_hotplug_lock.rw_sem){++++}, at: init_vqs+0xe1a/0x1520  
+drivers/net/virtio_net.c:2777
+
+other info that might help us debug this:
+  Possible unsafe locking scenario:
+
+        CPU0
+        ----
+   lock(cpu_hotplug_lock.rw_sem);
+   lock(cpu_hotplug_lock.rw_sem);
+
+  *** DEADLOCK ***
+
+  May be due to missing lock nesting notation
+
+3 locks held by swapper/0/1:
+  #0: (____ptrval____) (&dev->mutex){....}, at: device_lock  
+include/linux/device.h:1134 [inline]
+  #0: (____ptrval____) (&dev->mutex){....}, at: __driver_attach+0x15f/0x2f0  
+drivers/base/dd.c:820
+  #1: (____ptrval____) (cpu_hotplug_lock.rw_sem){++++}, at: get_online_cpus  
+include/linux/cpu.h:126 [inline]
+  #1: (____ptrval____) (cpu_hotplug_lock.rw_sem){++++}, at:  
+init_vqs+0xe1a/0x1520 drivers/net/virtio_net.c:2777
+  #2: (____ptrval____) (xps_map_mutex){+.+.}, at:  
+__netif_set_xps_queue+0x243/0x23f0 net/core/dev.c:2278
+
+stack backtrace:
+CPU: 1 PID: 1 Comm: swapper/0 Not tainted 4.18.0-rc6+ #141
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x1c9/0x2b4 lib/dump_stack.c:113
+  print_deadlock_bug kernel/locking/lockdep.c:1765 [inline]
+  check_deadlock kernel/locking/lockdep.c:1809 [inline]
+  validate_chain kernel/locking/lockdep.c:2405 [inline]
+  __lock_acquire.cold.65+0x1fb/0x486 kernel/locking/lockdep.c:3435
+  lock_acquire+0x1e4/0x540 kernel/locking/lockdep.c:3924
+  percpu_down_read_preempt_disable include/linux/percpu-rwsem.h:36 [inline]
+  percpu_down_read include/linux/percpu-rwsem.h:59 [inline]
+  cpus_read_lock+0x43/0xa0 kernel/cpu.c:289
+  static_key_slow_inc+0x12/0x30 kernel/jump_label.c:124
+  __netif_set_xps_queue+0xaac/0x23f0 net/core/dev.c:2320
+  netif_set_xps_queue+0x26/0x30 net/core/dev.c:2455
+  virtnet_set_affinity+0x2ba/0x4b0 drivers/net/virtio_net.c:1944
+  init_vqs+0xe22/0x1520 drivers/net/virtio_net.c:2778
+  virtnet_probe+0x1092/0x2260 drivers/net/virtio_net.c:3016
+  virtio_dev_probe+0x592/0x942 drivers/virtio/virtio.c:245
+  really_probe drivers/base/dd.c:446 [inline]
+  driver_probe_device+0x6ad/0x970 drivers/base/dd.c:588
+  __driver_attach+0x28b/0x2f0 drivers/base/dd.c:822
+  bus_for_each_dev+0x15d/0x1f0 drivers/base/bus.c:311
+  driver_attach+0x3d/0x50 drivers/base/dd.c:841
+  bus_add_driver+0x4b2/0x600 drivers/base/bus.c:667
+  driver_register+0x1c8/0x320 drivers/base/driver.c:170
+  register_virtio_driver+0x79/0xd0 drivers/virtio/virtio.c:296
+  virtio_net_driver_init+0x8d/0xc9 drivers/net/virtio_net.c:3209
+  do_one_initcall+0x127/0x913 init/main.c:884
+  do_initcall_level init/main.c:952 [inline]
+  do_initcalls init/main.c:960 [inline]
+  do_basic_setup init/main.c:978 [inline]
+  kernel_init_freeable+0x49b/0x58e init/main.c:1135
+  kernel_init+0x11/0x1b3 init/main.c:1061
+  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:412
+vcan: Virtual CAN interface driver
+vxcan: Virtual CAN Tunnel driver
+slcan: serial line CAN interface driver
+slcan: 10 dynamic interface channels.
+CAN device driver interface
+enic: Cisco VIC Ethernet NIC Driver, ver 2.3.0.53
+e100: Intel(R) PRO/100 Network Driver, 3.5.24-k2-NAPI
+e100: Copyright(c) 1999-2006 Intel Corporation
+e1000: Intel(R) PRO/1000 Network Driver - version 7.3.21-k8-NAPI
+e1000: Copyright (c) 1999-2006 Intel Corporation.
+e1000e: Intel(R) PRO/1000 Network Driver - 3.2.6-k
+e1000e: Copyright(c) 1999 - 2015 Intel Corporation.
+sky2: driver version 1.30
+PPP generic driver version 2.4.2
+PPP BSD Compression module registered
+PPP Deflate Compression module registered
+PPP MPPE Compression module registered
+NET: Registered protocol family 24
+PPTP driver version 0.8.5
+mac80211_hwsim: initializing netlink
+ieee80211 phy0: Selected rate control algorithm 'minstrel_ht'
+ieee80211 phy1: Selected rate control algorithm 'minstrel_ht'
+usbcore: registered new interface driver asix
+usbcore: registered new interface driver ax88179_178a
+usbcore: registered new interface driver cdc_ether
+usbcore: registered new interface driver net1080
+usbcore: registered new interface driver cdc_subset
+usbcore: registered new interface driver zaurus
+usbcore: registered new interface driver cdc_ncm
+aoe: AoE v85 initialised.
+ehci_hcd: USB 2.0 'Enhanced' Host Controller (EHCI) Driver
+ehci-pci: EHCI PCI platform driver
+ohci_hcd: USB 1.1 'Open' Host Controller (OHCI) Driver
+ohci-pci: OHCI PCI platform driver
+uhci_hcd: USB Universal Host Controller Interface driver
+usbcore: registered new interface driver usblp
+usbcore: registered new interface driver usb-storage
+i8042: PNP: PS/2 Controller [PNP0303:KBD,PNP0f13:MOU] at 0x60,0x64 irq 1,12
+i8042: Warning: Keylock active
+serio: i8042 KBD port at 0x60,0x64 irq 1
+serio: i8042 AUX port at 0x60,0x64 irq 12
+mousedev: PS/2 mouse device common for all mice
+rtc_cmos 00:00: RTC can wake from S4
+rtc_cmos 00:00: registered as rtc0
+rtc_cmos 00:00: alarms up to one day, 114 bytes nvram
+i2c /dev entries driver
+piix4_smbus 0000:00:01.3: SMBus base address uninitialized - upgrade BIOS  
+or use force_addr=0xaddr
+i2c-parport-light: adapter type unspecified
+usbcore: registered new interface driver RobotFuzz Open Source InterFace,  
+OSIF
+usbcore: registered new interface driver i2c-tiny-usb
+device-mapper: ioctl: 4.39.0-ioctl (2018-04-03) initialised:  
+dm-devel@redhat.com
+device-mapper: raid: Loading target version 1.13.2
+usbcore: registered new interface driver btusb
+usnic_verbs: Cisco VIC (USNIC) Verbs Driver v1.0.3 (December 19, 2013)
+usnic_verbs:usnic_uiom_init:585:
+IOMMU required but not present or enabled.  USNIC QPs will not function w/o  
+enabling IOMMU
+usnic_verbs:usnic_ib_init:649:
+Unable to initalize umem with err -1
+iscsi: registered transport (iser)
+OPA Virtual Network Driver - v1.0
+hidraw: raw HID events driver (C) Jiri Kosina
+usbcore: registered new interface driver usbhid
+usbhid: USB HID core driver
+NET: Registered protocol family 40
+ashmem: initialized
+NET: Registered protocol family 26
+Mirror/redirect action on
+Simple TC action Loaded
+netem: version 1.3
+u32 classifier
+     Actions configured
+nf_conntrack_irc: failed to register helpers
+nf_conntrack_sane: failed to register helpers
+nf_conntrack_sip: failed to register helpers
+xt_time: kernel timezone is -0000
+IPVS: Registered protocols (TCP, UDP, SCTP, AH, ESP)
+IPVS: Connection hash table configured (size=4096, memory=64Kbytes)
+IPVS: ipvs loaded.
+IPVS: [rr] scheduler registered.
+IPVS: [wrr] scheduler registered.
+IPVS: [lc] scheduler registered.
+IPVS: [wlc] scheduler registered.
+IPVS: [fo] scheduler registered.
+IPVS: [ovf] scheduler registered.
+IPVS: [lblc] scheduler registered.
+IPVS: [lblcr] scheduler registered.
+IPVS: [dh] scheduler registered.
+IPVS: [sh] scheduler registered.
+IPVS: [mh] scheduler registered.
+IPVS: [sed] scheduler registered.
+IPVS: [nq] scheduler registered.
+IPVS: ftp: loaded support on port[0] = 21
+IPVS: [sip] pe registered.
+ipip: IPv4 and MPLS over IPv4 tunneling driver
+gre: GRE over IPv4 demultiplexor driver
+ip_gre: GRE over IPv4 tunneling driver
+IPv4 over IPsec tunneling driver
+ipt_CLUSTERIP: ClusterIP Version 0.8 loaded successfully
+Initializing XFRM netlink socket
+NET: Registered protocol family 10
+Segment Routing with IPv6
+mip6: Mobile IPv6
+sit: IPv6, IPv4 and MPLS over IPv4 tunneling driver
+ip6_gre: GRE over IPv6 tunneling driver
+bpfilter: Loaded bpfilter_umh pid 2080
+NET: Registered protocol family 15
+Bridge firewalling registered
+can: controller area network core (rev 20170425 abi 9)
+NET: Registered protocol family 29
+can: raw protocol (rev 20170425)
+can: broadcast manager protocol (rev 20170425 t)
+can: netlink gateway (rev 20170425) max_hops=1
+Bluetooth: RFCOMM TTY layer initialized
+Bluetooth: RFCOMM socket layer initialized
+Bluetooth: RFCOMM ver 1.11
+Bluetooth: BNEP (Ethernet Emulation) ver 1.3
+Bluetooth: BNEP filters: protocol multicast
+Bluetooth: BNEP socket layer initialized
+Bluetooth: HIDP (Human Interface Emulation) ver 1.2
+Bluetooth: HIDP socket layer initialized
+RPC: Registered rdma transport module.
+RPC: Registered rdma backchannel transport module.
+NET: Registered protocol family 41
+lec:lane_module_init: lec.c: initialized
+mpoa:atm_mpoa_init: mpc.c: initialized
+l2tp_core: L2TP core driver, V2.0
+l2tp_ppp: PPPoL2TP kernel driver, V2.0
+8021q: 802.1Q VLAN Support v1.8
+input: AT Translated Set 2 keyboard as  
+/devices/platform/i8042/serio0/input/input2
+DCCP: Activated CCID 2 (TCP-like)
+DCCP: Activated CCID 3 (TCP-Friendly Rate Control)
+sctp: Hash tables configured (bind 64/64)
+tipc: Activated (version 2.0.0)
+NET: Registered protocol family 30
+tipc: Started in single node mode
+NET: Registered protocol family 43
+9pnet: Installing 9P2000 support
+NET: Registered protocol family 36
+Key type dns_resolver registered
+Key type ceph registered
+libceph: loaded (mon/osd proto 15/24)
+openvswitch: Open vSwitch switching datapath
+mpls_gso: MPLS GSO support
+start plist test
+end plist test
+AVX2 version of gcm_enc/dec engaged.
+AES CTR mode by8 optimization enabled
+sched_clock: Marking stable (4559438359, 0)->(6126385605, -1566947246)
+registered taskstats version 1
+Loading compiled-in X.509 certificates
+zswap: default zpool zbud not available
+zswap: pool creation failed
+Btrfs loaded, crc32c=crc32c-intel
+Key type big_key registered
+Key type encrypted registered
+   Magic number: 10:317:168
+console [netcon0] enabled
+netconsole: network logging started
+gtp: GTP module loaded (pdp ctx size 104 bytes)
+rdma_rxe: loaded
+cfg80211: Loading compiled-in X.509 certificates for regulatory database
+cfg80211: Loaded X.509 cert 'sforshee: 00b28ddf47aef9cea7'
+platform regulatory.0: Direct firmware load for regulatory.db failed with  
+error -2
+cfg80211: failed to load regulatory.db
+ALSA device list:
+   #0: Dummy 1
+   #1: Loopback 1
+   #2: Virtual MIDI Card 1
+input: ImExPS/2 Generic Explorer Mouse as  
+/devices/platform/i8042/serio1/input/input4
+md: Waiting for all devices to be available before autodetect
+md: If you don't use raid, use raid=noautodetect
+md: Autodetecting RAID arrays.
+md: autorun ...
+md: ... autorun DONE.
+EXT4-fs (sda1): mounted filesystem with ordered data mode. Opts: (null)
+VFS: Mounted root (ext4 filesystem) readonly on device 8:1.
+devtmpfs: mounted
+Freeing unused kernel memory: 3900K
+Kernel memory protection disabled.
+SELinux:  Disabled at runtime.
+SELinux:  Unregistering netfilter hooks
+audit: type=1404 audit(1532588961.277:2): enforcing=0 old_enforcing=0  
+auid=4294967295 ses=4294967295 enabled=0 old-enabled=1 lsm=selinux res=1
+stty (2166) used greatest stack depth: 19664 bytes left
+EXT4-fs (sda1): re-mounted. Opts: (null)
+logsave (3615) used greatest stack depth: 17632 bytes left
+random: dd: uninitialized urandom read (512 bytes read)
+==================================================================
+BUG: KASAN: slab-out-of-bounds in virtnet_receive  
+drivers/net/virtio_net.c:1356 [inline]
+BUG: KASAN: slab-out-of-bounds in virtnet_poll+0x111a/0x1226  
+drivers/net/virtio_net.c:1421
+Read of size 8 at addr ffff8801cee08ff0 by task ip/3969
+
+CPU: 0 PID: 3969 Comm: ip Not tainted 4.18.0-rc6+ #141
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  <IRQ>
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x1c9/0x2b4 lib/dump_stack.c:113
+  print_address_description+0x6c/0x20b mm/kasan/report.c:256
+  kasan_report_error mm/kasan/report.c:354 [inline]
+  kasan_report.cold.7+0x242/0x2fe mm/kasan/report.c:412
+  __asan_report_load8_noabort+0x14/0x20 mm/kasan/report.c:433
+  virtnet_receive drivers/net/virtio_net.c:1356 [inline]
+  virtnet_poll+0x111a/0x1226 drivers/net/virtio_net.c:1421
+  napi_poll net/core/dev.c:6214 [inline]
+  net_rx_action+0x7a5/0x1920 net/core/dev.c:6280
+  __do_softirq+0x2e8/0xb17 kernel/softirq.c:292
+  do_softirq_own_stack+0x2a/0x40 arch/x86/entry/entry_64.S:1046
+  </IRQ>
+  do_softirq.part.18+0x155/0x1a0 kernel/softirq.c:336
+  do_softirq arch/x86/include/asm/preempt.h:23 [inline]
+  __local_bh_enable_ip+0x1ec/0x230 kernel/softirq.c:189
+  local_bh_enable include/linux/bottom_half.h:32 [inline]
+  virtnet_napi_enable+0x8c/0xb0 drivers/net/virtio_net.c:1264
+  virtnet_open+0x16d/0x4d0 drivers/net/virtio_net.c:1464
+  __dev_open+0x26d/0x410 net/core/dev.c:1392
+  __dev_change_flags+0x739/0x9c0 net/core/dev.c:7434
+  dev_change_flags+0x89/0x150 net/core/dev.c:7503
+  do_setlink+0xb16/0x3dd0 net/core/rtnetlink.c:2416
+  rtnl_newlink+0x138d/0x1d60 net/core/rtnetlink.c:3029
+  rtnetlink_rcv_msg+0x46e/0xc30 net/core/rtnetlink.c:4705
+  netlink_rcv_skb+0x172/0x440 net/netlink/af_netlink.c:2447
+  rtnetlink_rcv+0x1c/0x20 net/core/rtnetlink.c:4723
+  netlink_unicast_kernel net/netlink/af_netlink.c:1310 [inline]
+  netlink_unicast+0x5a0/0x760 net/netlink/af_netlink.c:1336
+  netlink_sendmsg+0xa18/0xfc0 net/netlink/af_netlink.c:1901
+  sock_sendmsg_nosec net/socket.c:641 [inline]
+  sock_sendmsg+0xd5/0x120 net/socket.c:651
+  ___sys_sendmsg+0x7fd/0x930 net/socket.c:2125
+  __sys_sendmsg+0x11d/0x290 net/socket.c:2163
+  __do_sys_sendmsg net/socket.c:2172 [inline]
+  __se_sys_sendmsg net/socket.c:2170 [inline]
+  __x64_sys_sendmsg+0x78/0xb0 net/socket.c:2170
+  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x7f318d594320
+Code: 02 48 83 c8 ff eb 8d 48 8b 05 14 7b 2a 00 f7 da 64 89 10 48 83 c8 ff  
+eb c9 90 83 3d d5 d2 2a 00 00 75 10 b8 2e 00 00 00 0f 05 <48> 3d 01 f0 ff  
+ff 73 31 c3 48 83 ec 08 e8 5e ba 00 00 48 89 04 24
+RSP: 002b:00007ffd985d8f38 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
+RAX: ffffffffffffffda RBX: 00007ffd985dd030 RCX: 00007f318d594320
+RDX: 0000000000000000 RSI: 00007ffd985d8f70 RDI: 0000000000000003
+RBP: 00007ffd985d8f70 R08: 0000000000000000 R09: 000000000000000f
+R10: 0000000000000000 R11: 0000000000000246 R12: 000000005b5973aa
+R13: 0000000000000000 R14: 00000000006395c0 R15: 00007ffd985dd808
+
+Allocated by task 1:
+  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
+  set_track mm/kasan/kasan.c:460 [inline]
+  kasan_kmalloc+0xc4/0xe0 mm/kasan/kasan.c:553
+  __do_kmalloc mm/slab.c:3718 [inline]
+  __kmalloc+0x14e/0x760 mm/slab.c:3727
+  kmalloc_array include/linux/slab.h:635 [inline]
+  kcalloc include/linux/slab.h:646 [inline]
+  virtnet_alloc_queues drivers/net/virtio_net.c:2731 [inline]
+  init_vqs+0x127/0x1520 drivers/net/virtio_net.c:2769
+  virtnet_probe+0x1092/0x2260 drivers/net/virtio_net.c:3016
+  virtio_dev_probe+0x592/0x942 drivers/virtio/virtio.c:245
+  really_probe drivers/base/dd.c:446 [inline]
+  driver_probe_device+0x6ad/0x970 drivers/base/dd.c:588
+  __driver_attach+0x28b/0x2f0 drivers/base/dd.c:822
+  bus_for_each_dev+0x15d/0x1f0 drivers/base/bus.c:311
+  driver_attach+0x3d/0x50 drivers/base/dd.c:841
+  bus_add_driver+0x4b2/0x600 drivers/base/bus.c:667
+  driver_register+0x1c8/0x320 drivers/base/driver.c:170
+  register_virtio_driver+0x79/0xd0 drivers/virtio/virtio.c:296
+  virtio_net_driver_init+0x8d/0xc9 drivers/net/virtio_net.c:3209
+  do_one_initcall+0x127/0x913 init/main.c:884
+  do_initcall_level init/main.c:952 [inline]
+  do_initcalls init/main.c:960 [inline]
+  do_basic_setup init/main.c:978 [inline]
+  kernel_init_freeable+0x49b/0x58e init/main.c:1135
+  kernel_init+0x11/0x1b3 init/main.c:1061
+  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:412
+
+Freed by task 0:
+(stack is not available)
+
+The buggy address belongs to the object at ffff8801cee08500
+  which belongs to the cache kmalloc-4096 of size 4096
+The buggy address is located 2800 bytes inside of
+  4096-byte region [ffff8801cee08500, ffff8801cee09500)
+The buggy address belongs to the page:
+page:ffffea00073b8200 count:1 mapcount:0 mapping:ffff8801dac00dc0 index:0x0  
+compound_mapcount: 0
+flags: 0x2fffc0000008100(slab|head)
+raw: 02fffc0000008100 ffffea00073b7d88 ffffea00073b8288 ffff8801dac00dc0
+raw: 0000000000000000 ffff8801cee08500 0000000100000001 0000000000000000
+page dumped because: kasan: bad access detected
+
+Memory state around the buggy address:
+  ffff8801cee08e80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+  ffff8801cee08f00: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+> ffff8801cee08f80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+                                                              ^
+  ffff8801cee09000: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+  ffff8801cee09080: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+==================================================================
+
+
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
+syzbot.
