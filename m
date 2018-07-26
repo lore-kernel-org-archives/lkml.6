@@ -6,47 +6,47 @@ X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75623C28CF6
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 06:46:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06B5CECDFB8
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 06:46:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 280AF20673
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 06:46:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BA47720673
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 06:46:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=iluvatar.ai header.i=@iluvatar.ai header.b="aJ3rGtpx"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 280AF20673
+	dkim=pass (1024-bit key) header.d=iluvatar.ai header.i=@iluvatar.ai header.b="RosgOxkc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA47720673
 Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=iluvatar.ai
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728767AbeGZICA (ORCPT
+        id S1728825AbeGZICA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Thu, 26 Jul 2018 04:02:00 -0400
-Received: from mail.iluvatar.ai ([58.213.90.100]:40311 "EHLO mail.iluvatar.ai"
+Received: from mail.iluvatar.ai ([58.213.90.100]:40310 "EHLO mail.iluvatar.ai"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728497AbeGZICA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1728509AbeGZICA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 26 Jul 2018 04:02:00 -0400
 Received: from localhost (localhost [127.0.0.1])
-        by mail.iluvatar.ai (Postfix) with ESMTP id 36C4713F10AA3;
+        by mail.iluvatar.ai (Postfix) with ESMTP id 3631713F10AA2;
         Thu, 26 Jul 2018 14:49:55 +0800 (CST)
 Received: from mail.iluvatar.ai ([127.0.0.1])
         by localhost (mail.iluvatar.ai [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id 8L0M31VXV11I; Thu, 26 Jul 2018 14:49:53 +0800 (CST)
+        with ESMTP id GlD__Xpd6ZEb; Thu, 26 Jul 2018 14:49:53 +0800 (CST)
 Received: from localhost (localhost [127.0.0.1])
-        by mail.iluvatar.ai (Postfix) with ESMTP id D8C0513F10A9D;
-        Thu, 26 Jul 2018 14:49:52 +0800 (CST)
-DKIM-Filter: OpenDKIM Filter v2.9.2 mail.iluvatar.ai D8C0513F10A9D
+        by mail.iluvatar.ai (Postfix) with ESMTP id 3019613F10A9A;
+        Thu, 26 Jul 2018 14:49:53 +0800 (CST)
+DKIM-Filter: OpenDKIM Filter v2.9.2 mail.iluvatar.ai 3019613F10A9A
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iluvatar.ai;
-        s=809B2F8E-810B-11E8-86FD-A0A654EEFFEB; t=1532587792;
-        bh=9ncMXsNDtn2OVUN0nxtTUS8bQ7wSv8wIMBnkQsgkcSg=;
+        s=809B2F8E-810B-11E8-86FD-A0A654EEFFEB; t=1532587793;
+        bh=D2exeT7BZ05pwWgEQQPRYgG26cRqCBnVhiH72cfH67o=;
         h=From:To:Subject:Date:Message-Id;
-        b=aJ3rGtpxTDSNnfB3jKZ1BrhLTXQXRdro/yHOWmaMXRcMqyhc8EIoMF9VyTQAyOrEh
-         OUDBgJjz4FhqRPLIUKeyO3QhSyKwWI1GnwrrXpil3OJ2J0ao4IAa3Cd9yATgCZl3k0
-         Z+uC/KXioeaiwBkb3YuQDFfrSoypsDNiuMcgvx9s=
+        b=RosgOxkcooGQogOIvCq4qnMyKNggAgkrYnBPldXqq0/6CrNn6IJE1+MhTHQ8dLtcu
+         k+45RvbePjUw91HZNo+cWNUb8VELdHgekNj01Nof1iyGQ89rHKAZYqaBKTvZIB7uQn
+         kbGn8mEoneWnGGfSsR3XTCKKawJFwceUtkfCTuA8=
 X-Virus-Scanned: amavisd-new at iluvatar.ai
 Received: from mail.iluvatar.ai ([127.0.0.1])
         by localhost (mail.iluvatar.ai [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id Ofndkpl4iUqi; Thu, 26 Jul 2018 14:49:52 +0800 (CST)
+        with ESMTP id 2WONsjbwb8sa; Thu, 26 Jul 2018 14:49:53 +0800 (CST)
 Received: from localhost.localdomain (unknown [180.166.124.10])
-        by mail.iluvatar.ai (Postfix) with ESMTPSA id 4BF6113F10A9A;
+        by mail.iluvatar.ai (Postfix) with ESMTPSA id AE8F113F10A9B;
         Thu, 26 Jul 2018 14:49:52 +0800 (CST)
 From:   Huang Shijie <sjhuang@iluvatar.ai>
 To:     vkoul@kernel.org
@@ -54,98 +54,60 @@ Cc:     corbet@lwn.net, dan.j.williams@intel.com, robh@kernel.org,
         linux-doc@vger.kernel.org, dmaengine@vger.kernel.org,
         linux-kernel@vger.kernel.org, ashutosh.dixit@intel.com,
         Huang Shijie <sjhuang@iluvatar.ai>
-Subject: [PATCH v2 1/2] dmaengine: add a new helper dmaenginem_async_device_register
-Date:   Thu, 26 Jul 2018 14:45:53 +0800
-Message-Id: <20180726064554.24975-1-sjhuang@iluvatar.ai>
+Subject: [PATCH v2 2/2] dmaengine: mic_x100_dma: use the new helper to simplify the code
+Date:   Thu, 26 Jul 2018 14:45:54 +0800
+Message-Id: <20180726064554.24975-2-sjhuang@iluvatar.ai>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180726064554.24975-1-sjhuang@iluvatar.ai>
+References: <20180726064554.24975-1-sjhuang@iluvatar.ai>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds the dmaenginem_async_device_register for DMA code.
-Use the Devres to call the release for the DMA engine driver.
+Use dmaenginem_async_device_register() to simplify the code:
+    remove the mic_dma_unregister_dma_device()
 
 Signed-off-by: Huang Shijie <sjhuang@iluvatar.ai>
 ---
-v1 --> v2:
-    change the name to dmaenginem_async_device_register().
+    Just add a user for the new helper.
 ---
- Documentation/driver-model/devres.txt |  1 +
- drivers/dma/dmaengine.c               | 35 +++++++++++++++++++++++++++
- include/linux/dmaengine.h             |  1 +
- 3 files changed, 37 insertions(+)
+ drivers/dma/mic_x100_dma.c | 8 +-------
+ 1 file changed, 1 insertion(+), 7 deletions(-)
 
-diff --git a/Documentation/driver-model/devres.txt b/Documentation/driver-model/devres.txt
-index a3e8bceb5f19..15720cd17958 100644
---- a/Documentation/driver-model/devres.txt
-+++ b/Documentation/driver-model/devres.txt
-@@ -240,6 +240,7 @@ CLOCK
-   devm_of_clk_add_hw_provider()
- 
- DMA
-+  dmaenginem_async_device_register()
-   dmam_alloc_coherent()
-   dmam_alloc_attrs()
-   dmam_declare_coherent_memory()
-diff --git a/drivers/dma/dmaengine.c b/drivers/dma/dmaengine.c
-index 84ac38dbdb65..fa6fdc5f2a04 100644
---- a/drivers/dma/dmaengine.c
-+++ b/drivers/dma/dmaengine.c
-@@ -1135,6 +1135,41 @@ void dma_async_device_unregister(struct dma_device *device)
+diff --git a/drivers/dma/mic_x100_dma.c b/drivers/dma/mic_x100_dma.c
+index 68dd79783b54..b76cb17d879c 100644
+--- a/drivers/dma/mic_x100_dma.c
++++ b/drivers/dma/mic_x100_dma.c
+@@ -470,11 +470,6 @@ static void mic_dma_chan_destroy(struct mic_dma_chan *ch)
+ 	mic_dma_chan_mask_intr(ch);
  }
- EXPORT_SYMBOL(dma_async_device_unregister);
  
-+static void dmam_device_release(struct device *dev, void *res)
-+{
-+	struct dma_device *device;
-+
-+	device = *(struct dma_device **)res;
-+	dma_async_device_unregister(device);
-+}
-+
-+/**
-+ * dmaenginem_async_device_register - registers DMA devices found
-+ * @device: &dma_device
-+ *
-+ * The operation is managed and will be undone on driver detach.
-+ */
-+int dmaenginem_async_device_register(struct dma_device *device)
-+{
-+	void *p;
-+	int ret;
-+
-+	p = devres_alloc(dmam_device_release, sizeof(void *), GFP_KERNEL);
-+	if (!p)
-+		return -ENOMEM;
-+
-+	ret = dma_async_device_register(device);
-+	if (!ret) {
-+		*(struct dma_device **)p = device;
-+		devres_add(device->dev, p);
-+	} else {
-+		devres_free(p);
-+	}
-+
-+	return ret;
-+}
-+EXPORT_SYMBOL(dmaenginem_async_device_register);
-+
- struct dmaengine_unmap_pool {
- 	struct kmem_cache *cache;
- 	const char *name;
-diff --git a/include/linux/dmaengine.h b/include/linux/dmaengine.h
-index c8c3a7a93802..d49ec5c31944 100644
---- a/include/linux/dmaengine.h
-+++ b/include/linux/dmaengine.h
-@@ -1406,6 +1406,7 @@ static inline int dmaengine_desc_free(struct dma_async_tx_descriptor *desc)
- /* --- DMA device --- */
+-static void mic_dma_unregister_dma_device(struct mic_dma_device *mic_dma_dev)
+-{
+-	dma_async_device_unregister(&mic_dma_dev->dma_dev);
+-}
+-
+ static int mic_dma_setup_irq(struct mic_dma_chan *ch)
+ {
+ 	ch->cookie =
+@@ -630,7 +625,7 @@ static int mic_dma_register_dma_device(struct mic_dma_device *mic_dma_dev,
+ 		list_add_tail(&mic_dma_dev->mic_ch[i].api_ch.device_node,
+ 			      &mic_dma_dev->dma_dev.channels);
+ 	}
+-	return dma_async_device_register(&mic_dma_dev->dma_dev);
++	return dmaenginem_async_device_register(&mic_dma_dev->dma_dev);
+ }
  
- int dma_async_device_register(struct dma_device *device);
-+int dmaenginem_async_device_register(struct dma_device *device);
- void dma_async_device_unregister(struct dma_device *device);
- void dma_run_dependencies(struct dma_async_tx_descriptor *tx);
- struct dma_chan *dma_get_slave_channel(struct dma_chan *chan);
+ /*
+@@ -678,7 +673,6 @@ static struct mic_dma_device *mic_dma_dev_reg(struct mbus_device *mbdev,
+ 
+ static void mic_dma_dev_unreg(struct mic_dma_device *mic_dma_dev)
+ {
+-	mic_dma_unregister_dma_device(mic_dma_dev);
+ 	mic_dma_uninit(mic_dma_dev);
+ 	kfree(mic_dma_dev);
+ }
 -- 
 2.17.1
 
