@@ -2,221 +2,172 @@ Return-Path: <SRS0=7Z+k=KK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D804C6778F
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 15:06:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F99EC28CF6
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 15:09:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 142EE2064D
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 15:06:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 142EE2064D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 025562083F
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 15:09:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 025562083F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730781AbeGZQXz (ORCPT
+        id S1731321AbeGZQ0h (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 26 Jul 2018 12:23:55 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:49872 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729894AbeGZQXy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Jul 2018 12:23:54 -0400
-Received: from bigeasy by Galois.linutronix.de with local (Exim 4.80)
-        (envelope-from <bigeasy@linutronix.de>)
-        id 1fihqc-0000uH-KX; Thu, 26 Jul 2018 17:06:34 +0200
-Date:   Thu, 26 Jul 2018 17:06:34 +0200
-From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     Dave Martin <Dave.Martin@arm.com>, linux-rt-users@vger.kernel.org,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Mike Galbraith <efault@gmx.de>,
-        Will Deacon <will.deacon@arm.com>,
-        linux-kernel@vger.kernel.org, tglx@linutronix.de,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH RT v3] arm64: fpsimd: use preemp_disable in addition to
- local_bh_disable()
-Message-ID: <20180726150634.cl3wccqur6qhle6p@linutronix.de>
-References: <20180522172115.fpqguqlsq6bavtxy@linutronix.de>
- <20180522132429.6f1dcf92@gandalf.local.home>
- <20180522173333.aawadhkcekzvrswp@linutronix.de>
- <20180711092555.268adf7f@gandalf.local.home>
- <20180711133157.bvrza5vmthu6lwjd@linutronix.de>
- <20180711093346.782af07a@gandalf.local.home>
- <20180713174937.5ddaqpylalcmc3jq@linutronix.de>
- <20180716151737.GO9486@e103592.cambridge.arm.com>
- <20180718091209.u76gzacanj5avhdl@linutronix.de>
- <20180724094623.37430032@gandalf.local.home>
+        Thu, 26 Jul 2018 12:26:37 -0400
+Received: from foss.arm.com ([217.140.101.70]:57892 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730083AbeGZQ0g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Jul 2018 12:26:36 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CF12D15A2;
+        Thu, 26 Jul 2018 08:09:19 -0700 (PDT)
+Received: from [10.4.13.35] (ostrya.emea.arm.com [10.4.13.35])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E62FF3F2EA;
+        Thu, 26 Jul 2018 08:09:17 -0700 (PDT)
+Subject: Re: [RFC PATCH 03/10] iommu/vt-d: Allocate groups for mediated
+ devices
+To:     "Tian, Kevin" <kevin.tian@intel.com>,
+        Lu Baolu <baolu.lu@linux.intel.com>,
+        "Liu, Yi L" <yi.l.liu@intel.com>, Joerg Roedel <joro@8bytes.org>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Kirti Wankhede <kwankhede@nvidia.com>
+Cc:     "Raj, Ashok" <ashok.raj@intel.com>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "Kumar, Sanjay K" <sanjay.k.kumar@intel.com>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Sun, Yi Y" <yi.y.sun@intel.com>,
+        "Pan, Jacob jun" <jacob.jun.pan@intel.com>
+References: <1532239773-15325-1-git-send-email-baolu.lu@linux.intel.com>
+ <1532239773-15325-4-git-send-email-baolu.lu@linux.intel.com>
+ <A2975661238FB949B60364EF0F2C257439CA143E@SHSMSX104.ccr.corp.intel.com>
+ <5B568D5B.5050606@linux.intel.com>
+ <ccf6890a-30c6-770b-4299-8cabfdc32f2b@arm.com>
+ <AADFC41AFE54684AB9EE6CBC0274A5D19127FB9E@SHSMSX101.ccr.corp.intel.com>
+ <AADFC41AFE54684AB9EE6CBC0274A5D19127FF05@SHSMSX101.ccr.corp.intel.com>
+ <a530c220-9bf1-05ec-5698-526ccbea127f@arm.com>
+ <AADFC41AFE54684AB9EE6CBC0274A5D1912826A4@SHSMSX101.ccr.corp.intel.com>
+From:   Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
+Message-ID: <7ac82074-0c75-e099-365a-73ba19949ab3@arm.com>
+Date:   Thu, 26 Jul 2018 16:09:07 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
+In-Reply-To: <AADFC41AFE54684AB9EE6CBC0274A5D1912826A4@SHSMSX101.ccr.corp.intel.com>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20180724094623.37430032@gandalf.local.home>
-User-Agent: NeoMutt/20180716
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In v4.16-RT I noticed a number of warnings from task_fpsimd_load(). The
-code disables BH and expects that it is not preemptible. On -RT the
-task remains preemptible but remains the same CPU. This may corrupt the
-content of the SIMD registers if the task is preempted during
-saving/restoring those registers.
+On 26/07/18 04:03, Tian, Kevin wrote:
+>> Whenever I come back to hierarchical IOMMU domains I reject it as too
+>> complicated, but maybe that is what we need. I find it difficult to
+>> reason about because domains currently represent both a collection of
+>> devices and a one or more address spaces. I proposed the io_mm thing to
+>> represent a single address space, and to avoid adding special cases to
+>> every function in the IOMMU subsystem that manipulates domains.
+> 
+> I suppose io_mm is still under iommu_domain, right? this is different
+> from hierarchical iommu domain concept...
 
-Add preempt_disable()/enable() to enfore the required semantic on -RT.
+Yes, my initial solution is io_mm attached to domains, but in the rest
+of the mail yesterday I tried to explore a way to replace io_mm with
+child domains instead. In my current patches, io_mm when used for
+private PASIDs is basically a lightweight child domain. I don't know
+which solution is best or if mdev-aware IOMMU is still preferable. For
+the moment I'll keep the private PASID proposal that uses io_mm, until
+we've thought a bit more about this.
 
-Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
----
-This should work. Compiling currently gcc-6 on the box to see what
-happens. Since the crypto disables preemption "frequently" and I don't
-expect or see anything to worry about.
+[...]
+>> It's a good abstraction, but I'm still concerned about other users of
+>> PASID-granular DMA isolation, for example GPU drivers wanting to improve
+>> isolation of DMA bufs, will want the same functionality without going
+>> through the vfio-mdev module.
+> 
+> for GPU I think you meant SVA. that one anyway needs its own 
+> interface as what we have been discussing in yours and Jacob's
+> series.
 
- arch/arm64/kernel/fpsimd.c |   30 ++++++++++++++++++++++++++++--
- 1 file changed, 28 insertions(+), 2 deletions(-)
+Actually I didn't mean SVA. People would like to allocate PASIDs in
+kernel drivers and do iommu_map/unmap on them, without binding process
+address spaces. Not counting hardware validation, I've actually seen
+more demand for private PASID management than for SVA.
 
---- a/arch/arm64/kernel/fpsimd.c
-+++ b/arch/arm64/kernel/fpsimd.c
-@@ -157,6 +157,15 @@ static void sve_free(struct task_struct
- 	__sve_free(task);
- }
- 
-+static void *sve_free_atomic(struct task_struct *task)
-+{
-+	void *sve_state = task->thread.sve_state;
-+
-+	WARN_ON(test_tsk_thread_flag(task, TIF_SVE));
-+
-+	task->thread.sve_state = NULL;
-+	return sve_state;
-+}
- 
- /* Offset of FFR in the SVE register dump */
- static size_t sve_ffr_offset(int vl)
-@@ -594,6 +603,7 @@ int sve_set_vector_length(struct task_st
- 	 * non-SVE thread.
- 	 */
- 	if (task == current) {
-+		preempt_disable();
- 		local_bh_disable();
- 
- 		task_fpsimd_save();
-@@ -604,8 +614,10 @@ int sve_set_vector_length(struct task_st
- 	if (test_and_clear_tsk_thread_flag(task, TIF_SVE))
- 		sve_to_fpsimd(task);
- 
--	if (task == current)
-+	if (task == current) {
- 		local_bh_enable();
-+		preempt_enable();
-+	}
- 
- 	/*
- 	 * Force reallocation of task SVE state to the correct size
-@@ -837,6 +849,7 @@ asmlinkage void do_sve_acc(unsigned int
- 
- 	sve_alloc(current);
- 
-+	preempt_disable();
- 	local_bh_disable();
- 
- 	task_fpsimd_save();
-@@ -850,6 +863,7 @@ asmlinkage void do_sve_acc(unsigned int
- 		WARN_ON(1); /* SVE access shouldn't have trapped */
- 
- 	local_bh_enable();
-+	preempt_enable();
- }
- 
- /*
-@@ -921,10 +935,12 @@ void fpsimd_thread_switch(struct task_st
- void fpsimd_flush_thread(void)
- {
- 	int vl, supported_vl;
-+	void *mem = NULL;
- 
- 	if (!system_supports_fpsimd())
- 		return;
- 
-+	preempt_disable();
- 	local_bh_disable();
- 
- 	memset(&current->thread.fpsimd_state, 0, sizeof(struct fpsimd_state));
-@@ -932,7 +948,7 @@ void fpsimd_flush_thread(void)
- 
- 	if (system_supports_sve()) {
- 		clear_thread_flag(TIF_SVE);
--		sve_free(current);
-+		mem = sve_free_atomic(current);
- 
- 		/*
- 		 * Reset the task vector length as required.
-@@ -968,6 +984,8 @@ void fpsimd_flush_thread(void)
- 	set_thread_flag(TIF_FOREIGN_FPSTATE);
- 
- 	local_bh_enable();
-+	preempt_enable();
-+	kfree(mem);
- }
- 
- /*
-@@ -979,9 +997,11 @@ void fpsimd_preserve_current_state(void)
- 	if (!system_supports_fpsimd())
- 		return;
- 
-+	preempt_disable();
- 	local_bh_disable();
- 	task_fpsimd_save();
- 	local_bh_enable();
-+	preempt_enable();
- }
- 
- /*
-@@ -1021,6 +1041,7 @@ void fpsimd_restore_current_state(void)
- 	if (!system_supports_fpsimd())
- 		return;
- 
-+	preempt_disable();
- 	local_bh_disable();
- 
- 	if (test_and_clear_thread_flag(TIF_FOREIGN_FPSTATE)) {
-@@ -1029,6 +1050,7 @@ void fpsimd_restore_current_state(void)
- 	}
- 
- 	local_bh_enable();
-+	preempt_enable();
- }
- 
- /*
-@@ -1041,6 +1063,7 @@ void fpsimd_update_current_state(struct
- 	if (!system_supports_fpsimd())
- 		return;
- 
-+	preempt_disable();
- 	local_bh_disable();
- 
- 	current->thread.fpsimd_state.user_fpsimd = *state;
-@@ -1053,6 +1076,7 @@ void fpsimd_update_current_state(struct
- 		fpsimd_bind_to_cpu();
- 
- 	local_bh_enable();
-+	preempt_enable();
- }
- 
- /*
-@@ -1115,6 +1139,7 @@ void kernel_neon_begin(void)
- 
- 	BUG_ON(!may_use_simd());
- 
-+	preempt_disable();
- 	local_bh_disable();
- 
- 	__this_cpu_write(kernel_neon_busy, true);
-@@ -1131,6 +1156,7 @@ void kernel_neon_begin(void)
- 	preempt_disable();
- 
- 	local_bh_enable();
-+	preempt_enable();
- }
- EXPORT_SYMBOL(kernel_neon_begin);
- 
+See for example the discussion on RFCv2 of SVA, or Jordan's series:
+https://www.spinics.net/lists/arm-kernel/msg611038.html
+https://lwn.net/Articles/747889/
+
+It would be good if mdev and non-mdev could reuse most of the same code
+for private PASID, whatever it turns out to be
+
+> Here mdev is orthogonal to a specific capability like SVA. It is 
+> sort of logical representation of subset resource of parent device,
+> on top of which we can enable IOMMU capabilities including SVA.
+> 
+> I'm not sure whether it is good to combine two requirements closely...
+> 
+>>
+>> The IOMMU operations we care about don't take a device handle, I think,
+>> just a domain. And VFIO itself only deals with domains when doing
+>> map/unmap. Maybe we could add this operation to the IOMMU subsystem:
+>>
+>> child_domain = domain_create_child(parent_dev, parent_domain)
+>>
+>> A child domain would be a smaller isolation granule, getting a PASID if
+>> that's what the IOMMU implements or another mechanism for 2). It is
+>> automatically attached to its parent's devices, so attach/detach
+>> operations wouldn't be necessary on the child.
+>>
+>> Depending on the underlying architecture the child domain can support
+>> map/unmap on a single stage, or map/unmap for 2nd level and
+>> bind_pgtable
+>> for 1st level.
+>>
+>> I'm not sure how this works for host SVA though. I think the
+>> sva_bind_dev() API could stay the same, but the internals will need
+>> to change.
+
+Thinking more about this, the SVA case seems a bit nasty. If we replaced
+io_mm with iommu_domain for SVA, a child domain would represent a single
+process address space, and therefore have multiple parent domains... Not
+sure we should go down that road. Maybe we should keep SVA separate, and
+keep io_mm to be a wrapper for mm_struct
+
+
+> hierarchical domain might be the right way to go, but let's do more
+> thinking on any corner cases. 
+> 
+> One open is whether iommu domain can fully carry all required 
+> attributes on mdev. Note today for physical device each vendor 
+> driver maintains a device structure for device specific info which 
+> may impact IOMMU setting (e.g. struct device_domain_info in 
+> intel-iommu, and struct arm_smmu_device in arm-smmu). If we 
+> want mdev to have a different attribute as its parent device, then 
+> new representation might be required. But honestly speaking I 
+> don't think it is a valid requirement now, since physically finally
+> it is still the IOMMU structure of parent device being configured,
+> so mdev should just inherit same attributes as parent. If the role 
+> of mdev representation in current RFC is just to connect iommu_
+> domain when hierarchical domain is missing, then we might 
+> instead just make the latter happen...
+
+Agreed, the mdev would inherit properties of its parent since physically
+the IOMMU sees DMA transactions coming from the parent
+
+> Let's think more on this direction. btw can you elaborate any 
+> other complexities when you evaluated this option earlier?
+
+I can't think of anything right now - my prototype worked well with
+iommu_sva_alloc_pasid, but the goal was mainly for me to understand mdev
+using a toy DMA engine, I didn't spend time thinking about corner cases.
+
+Thanks,
+Jean
