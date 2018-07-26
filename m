@@ -2,108 +2,147 @@ Return-Path: <SRS0=7Z+k=KK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_MED,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 107C4C28CF6
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 16:50:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01082C6778F
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 16:51:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B549B20647
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 16:50:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B549B20647
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id AB0B5205F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 16:51:13 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="WpmOdhdK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AB0B5205F4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388531AbeGZSIE (ORCPT
+        id S2388533AbeGZSIu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 26 Jul 2018 14:08:04 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:34604 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1731732AbeGZSIE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Jul 2018 14:08:04 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 6279B87927;
-        Thu, 26 Jul 2018 16:50:24 +0000 (UTC)
-Received: from [10.10.121.247] (ovpn-121-247.rdu2.redhat.com [10.10.121.247])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 70BBA2142F20;
-        Thu, 26 Jul 2018 16:50:23 +0000 (UTC)
-Subject: Re: [PATCH 18/26] target/iscsi: Allocate session IDs from an IDA
-To:     Matthew Wilcox <willy@infradead.org>, linux-kernel@vger.kernel.org
-References: <20180621212835.5636-1-willy@infradead.org>
- <20180621212835.5636-19-willy@infradead.org> <5B59FB56.9090901@redhat.com>
-Cc:     "Nicholas A. Bellinger" <nab@linux-iscsi.org>,
-        Bart Van Assche <bart.vanassche@wdc.com>,
-        Hannes Reinecke <hare@suse.com>,
-        Kees Cook <keescook@chromium.org>,
-        Varun Prakash <varun@chelsio.com>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "David S. Miller" <davem@davemloft.net>,
-        Denys Vlasenko <dvlasenk@redhat.com>,
-        linux-scsi@vger.kernel.org, target-devel@vger.kernel.org
-From:   Mike Christie <mchristi@redhat.com>
-Message-ID: <5B59FBCF.7080305@redhat.com>
-Date:   Thu, 26 Jul 2018 11:50:23 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:38.0) Gecko/20100101
- Thunderbird/38.6.0
+        Thu, 26 Jul 2018 14:08:50 -0400
+Received: from mail-vk0-f73.google.com ([209.85.213.73]:47247 "EHLO
+        mail-vk0-f73.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731732AbeGZSIt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Jul 2018 14:08:49 -0400
+Received: by mail-vk0-f73.google.com with SMTP id b63-v6so884691vkf.14
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Jul 2018 09:51:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:date:in-reply-to:message-id:references:subject:from:to
+         :cc;
+        bh=C14wB0B6Vjxk29Z+2i5VLR9Y7UfpstNpOXC4VFZGbDs=;
+        b=WpmOdhdKimotsnIn7qu88S/bXh50tUyRa/UrXkN1SxIBq7rhSBjyWP56conyvGP1NA
+         0MTLxFZcvHHT/H0wWhLo173QBJ5DQHmKW1zPJIuIXzy4JSxMB5VeDOyxugypKEXcbicn
+         2Q+f3kO3vCzpdLi9MVb+bcSNovg8QvKtHd/bxaj7UTJcTJw5ofxpOu1bLQR36h69Cswx
+         eNUZRAbUXx5N13GLwhRNKGazTRB42Th18BjFqD3EAWuxLqRMI0ytN4eWZBbs4wQw9dkZ
+         jAx/ZdDU7ohWDQk5yeeMdRnBwqPon6eXGWbDmpPgdc9OLuzLNM4tzrHgeDEEbm210+9H
+         5Ykg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:in-reply-to:message-id
+         :references:subject:from:to:cc;
+        bh=C14wB0B6Vjxk29Z+2i5VLR9Y7UfpstNpOXC4VFZGbDs=;
+        b=b5LICvc7gbZR9KCJqkjwbC9sGYwKCMBhAtLgnTihF/hgwIzIbf+0hR6/06GCZSHguG
+         uaJlDjq8Ro1060KABrDtcQtbPdVJYCMOWhOb4UyVuyNujATOFcGhqmNp9yNK/iP+/Qz5
+         tcckqQVto7cllDkUKlbdw67qJP10mLQjIzxGYyhmZBT8Rnui+gzjjnw5koZuVJ+Zp7LZ
+         xSXYEryVfL5n7rNAew69KmfTmHsKtjVEE0+otNp3Waen30azqnzQV902obx25Eh4eGg5
+         DyhCZBI+Hi8h08t2KnrE5mF9TvKkofJWeZ7MoVWItpQzCLDXoTufdfCWx+2ljXQ411Md
+         4d8g==
+X-Gm-Message-State: AOUpUlF7wvAUfEjFEPSpydA2IGtb5UFX65hLbHJINT6pt6zTYWLy3dpQ
+        WlNheGN71hzXSjJ3RVUtYFD8TP9mdUo=
+X-Google-Smtp-Source: AAOMgpdNJdcU9Ds7gSCX0NCCncSdph3QsewHYEaacbQvQiMGTn9wALs3ccPzdz+oxANTodaHvnId0z5cwAI=
 MIME-Version: 1.0
-In-Reply-To: <5B59FB56.9090901@redhat.com>
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Thu, 26 Jul 2018 16:50:24 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Thu, 26 Jul 2018 16:50:24 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'mchristi@redhat.com' RCPT:''
+X-Received: by 2002:a1f:9209:: with SMTP id u9-v6mr1245686vkd.73.1532623869478;
+ Thu, 26 Jul 2018 09:51:09 -0700 (PDT)
+Date:   Thu, 26 Jul 2018 09:51:05 -0700
+In-Reply-To: <20180716202301.GB160902@joelaf.mtv.corp.google.com>
+Message-Id: <20180726165105.8634-1-dancol@google.com>
+References: <20180716202301.GB160902@joelaf.mtv.corp.google.com>
+X-Mailer: git-send-email 2.18.0.233.g985f88cf7e-goog
+Subject: [PATCH v2] Add BPF_SYNCHRONIZE_MAPS bpf(2) command
+From:   Daniel Colascione <dancol@google.com>
+To:     joelaf@google.com
+Cc:     linux-kernel@vger.kernel.org, timmurray@google.com,
+        netdev@vger.kernel.org,
+        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+        Lorenzo Colitti <lorenzo@google.com>,
+        Chenbo Feng <fengc@google.com>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Alexei Starovoitov <ast@fb.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Daniel Colascione <dancol@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/26/2018 11:48 AM, Mike Christie wrote:
-> On 06/21/2018 04:28 PM, Matthew Wilcox wrote:
-> 
->> @@ -1163,11 +1157,9 @@ void iscsi_target_login_sess_out(struct iscsi_conn *conn,
->>  		goto old_sess_out;
->>  	if (conn->sess->se_sess)
->>  		transport_free_session(conn->sess->se_sess);
->> -	if (conn->sess->session_index != 0) {
->> -		spin_lock_bh(&sess_idr_lock);
->> -		idr_remove(&sess_idr, conn->sess->session_index);
->> -		spin_unlock_bh(&sess_idr_lock);
-> 
-> This code looks buggy. We will probably NULL pointer oops before we hit it.
+BPF_SYNCHRONIZE_MAPS waits for the release of any references to a BPF
+map made by a BPF program that is running at the time the
+BPF_SYNCHRONIZE_MAPS command is issued. The purpose of this command is
+to provide a means for userspace to replace a BPF map with another,
+newer version, then ensure that no component is still using the "old"
+map before manipulating the "old" map in some way.
 
-Sorry did not mean null pointer, but some crash due to accessing memory
-that was freed.
+Signed-off-by: Daniel Colascione <dancol@google.com>
+---
+ include/uapi/linux/bpf.h |  9 +++++++++
+ kernel/bpf/syscall.c     | 13 +++++++++++++
+ 2 files changed, 22 insertions(+)
 
-> 
-> It looks like the session_index check was supposed to detect when login
-> fails in the middle of doing login, so that code probably wanted to do:
-> 
-> idr_alloc(&sess_idr, NULL, 1, 0, GFP_NOWAIT);
-> 
-> The problem is that iscsi_login_zero_tsih_s1 sets conn->sess early in
-> iscsi_login_set_conn_values. If the function fails later like when we
-> alloc the idr it does kfree(sess) and leaves the conn->sess pointer set.
-> iscsi_login_zero_tsih_s1 then returns -Exyz and we then call
-> iscsi_target_login_sess_out and access the freed memory above.
-> 
-> So I am not sure what we want to do here for your patch since it is not
-> adding any new bugs. Just merge your patch now and I can send a fix for
-> the above bug over it?
-> 
-> 
->> -	}
->> +	/* Um, 0 is a valid ID.  I suppose we never free it? */
->> +	if (conn->sess->session_index != 0)
->> +		ida_free(&sess_ida, conn->sess->session_index);
->>  	kfree(conn->sess->sess_ops);
->>  	kfree(conn->sess);
->>  	conn->sess = NULL;
->>
-> 
+diff --git a/include/uapi/linux/bpf.h b/include/uapi/linux/bpf.h
+index b7db3261c62d..5b27e9117d3e 100644
+--- a/include/uapi/linux/bpf.h
++++ b/include/uapi/linux/bpf.h
+@@ -75,6 +75,14 @@ struct bpf_lpm_trie_key {
+ 	__u8	data[0];	/* Arbitrary size */
+ };
+ 
++/* BPF_SYNCHRONIZE_MAPS waits for the release of any references to a
++ * BPF map made by a BPF program that is running at the time the
++ * BPF_SYNCHRONIZE_MAPS command is issued. The purpose of this command
++ * is to provide a means for userspace to replace a BPF map with
++ * another, newer version, then ensure that no component is still
++ * using the "old" map before manipulating the "old" map in some way.
++ */
++
+ /* BPF syscall commands, see bpf(2) man-page for details. */
+ enum bpf_cmd {
+ 	BPF_MAP_CREATE,
+@@ -98,6 +106,7 @@ enum bpf_cmd {
+ 	BPF_BTF_LOAD,
+ 	BPF_BTF_GET_FD_BY_ID,
+ 	BPF_TASK_FD_QUERY,
++	BPF_SYNCHRONIZE_MAPS,
+ };
+ 
+ enum bpf_map_type {
+diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
+index a31a1ba0f8ea..8bbd1a5d01d1 100644
+--- a/kernel/bpf/syscall.c
++++ b/kernel/bpf/syscall.c
+@@ -2274,6 +2274,19 @@ SYSCALL_DEFINE3(bpf, int, cmd, union bpf_attr __user *, uattr, unsigned int, siz
+ 	if (sysctl_unprivileged_bpf_disabled && !capable(CAP_SYS_ADMIN))
+ 		return -EPERM;
+ 
++	if (cmd == BPF_SYNCHRONIZE_MAPS) {
++		if (uattr != NULL || size != 0)
++			return -EINVAL;
++		err = security_bpf(cmd, NULL, 0);
++		if (err < 0)
++			return err;
++		/* BPF programs always enter a critical section while
++		 * they have a map reference outstanding.
++		 */
++		synchronize_rcu();
++		return 0;
++	}
++
+ 	err = bpf_check_uarg_tail_zero(uattr, sizeof(attr), size);
+ 	if (err)
+ 		return err;
+-- 
+2.18.0.233.g985f88cf7e-goog
 
