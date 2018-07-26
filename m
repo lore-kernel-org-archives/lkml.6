@@ -6,42 +6,42 @@ X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
 	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F3EAC6778F
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 15:02:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55359C6778F
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 15:02:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2994C20857
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 15:02:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0224E20673
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 15:02:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="VLhElt92"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2994C20857
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="cStqWS5G"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0224E20673
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731429AbeGZQTV (ORCPT
+        id S1731613AbeGZQT2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 26 Jul 2018 12:19:21 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:48100 "EHLO
+        Thu, 26 Jul 2018 12:19:28 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:48300 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729801AbeGZQTV (ORCPT
+        with ESMTP id S1729801AbeGZQT2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Jul 2018 12:19:21 -0400
+        Thu, 26 Jul 2018 12:19:28 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=eUPX1AWkX1Ooypk2rr9kSi6nOMuC+J0hsovmlnnah+M=; b=VLhElt92zCbf
-        es5o1LHl/OFvLRGHFi+A5BhLDFWC2x8DaL77QzDFgQv7nhSyeKUQ3UiBIQ1BFTfPX1fdav5visi9U
-        qffs+EDUuxsDLqYUAEIM3TYpORZ3jqOQVKMzllm221vgz/Ig1pFHIAhUU2ELwSLnkJ7rX2SLF0Sex
-        jAtsw=;
+        List-Archive; bh=2C2gQcHN3fOS06C1IC7Cl91FW77bHaXxMSG/9RBbuhY=; b=cStqWS5GRLTt
+        46NVSSkuViEfJIhZZyHLjstuhk1AJ/1GhQktTLUvg5mYt2piJ/4eF/Q/dL16OsM9IhUr1YtOfP4Gh
+        5W09e8jAUPKrrmnFVUm//9negvXvj9I/UHNiLvNhAWtBEgW0DBwyoCspHpWhq8aduwCpBpKEkNNby
+        V6Sq8=;
 Received: from [2a00:23c4:5d8e:0:97c8:1971:bc17:6a1a] (helo=finisterre.ee.mobilebroadband)
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1fihm3-0007gp-Px; Thu, 26 Jul 2018 15:01:51 +0000
+        id 1fihmE-0007gz-1o; Thu, 26 Jul 2018 15:02:02 +0000
 Received: by finisterre.ee.mobilebroadband (Postfix, from userid 1000)
-        id 53568440078; Thu, 26 Jul 2018 16:01:51 +0100 (BST)
+        id 7CC5C440078; Thu, 26 Jul 2018 16:02:01 +0100 (BST)
 From:   Mark Brown <broonie@kernel.org>
 To:     Jerome Brunet <jbrunet@baylibre.com>
 Cc:     Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
@@ -51,10 +51,10 @@ Cc:     Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
         devicetree@vger.kernel.org, alsa-devel@alsa-project.org,
         linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
         alsa-devel@alsa-project.org
-Subject: Applied "ASoC: meson: update axg sound card bindings" to the asoc tree
-In-Reply-To:  <20180726124544.14740-3-jbrunet@baylibre.com>
-Message-Id: <20180726150151.53568440078@finisterre.ee.mobilebroadband>
-Date:   Thu, 26 Jul 2018 16:01:51 +0100 (BST)
+Subject: Applied "ASoC: meson: use IRQ_RETVAL in the fifo irq handler" to the asoc tree
+In-Reply-To:  <20180726124544.14740-2-jbrunet@baylibre.com>
+Message-Id: <20180726150201.7CC5C440078@finisterre.ee.mobilebroadband>
+Date:   Thu, 26 Jul 2018 16:02:01 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -62,7 +62,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: meson: update axg sound card bindings
+   ASoC: meson: use IRQ_RETVAL in the fifo irq handler
 
 has been applied to the asoc tree at
 
@@ -87,126 +87,33 @@ to this mail.
 Thanks,
 Mark
 
-From d9e81048127604fe6373fb76181fefcf218965f4 Mon Sep 17 00:00:00 2001
+From 036e4963bfb2d4513c30efd80e4bd50ff6c79e3e Mon Sep 17 00:00:00 2001
 From: Jerome Brunet <jbrunet@baylibre.com>
-Date: Thu, 26 Jul 2018 14:45:43 +0200
-Subject: [PATCH] ASoC: meson: update axg sound card bindings
+Date: Thu, 26 Jul 2018 14:45:42 +0200
+Subject: [PATCH] ASoC: meson: use IRQ_RETVAL in the fifo irq handler
 
-Remove the amlogic prefix in front of the generic properties and change
-the card 'name' property to 'model'
+Use IRQ_RETVAL instead of the open coded ternary operation.
 
-Suggested-by: Rob Herring <robh@kernel.org>
+Suggested-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- .../bindings/sound/amlogic,axg-sound-card.txt | 68 +++++++++----------
- 1 file changed, 34 insertions(+), 34 deletions(-)
+ sound/soc/meson/axg-fifo.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/sound/amlogic,axg-sound-card.txt b/Documentation/devicetree/bindings/sound/amlogic,axg-sound-card.txt
-index 39e005da0407..80b411296480 100644
---- a/Documentation/devicetree/bindings/sound/amlogic,axg-sound-card.txt
-+++ b/Documentation/devicetree/bindings/sound/amlogic,axg-sound-card.txt
-@@ -3,19 +3,19 @@ Amlogic AXG sound card:
- Required properties:
+diff --git a/sound/soc/meson/axg-fifo.c b/sound/soc/meson/axg-fifo.c
+index db367d85290f..30262550e37b 100644
+--- a/sound/soc/meson/axg-fifo.c
++++ b/sound/soc/meson/axg-fifo.c
+@@ -174,7 +174,7 @@ static irqreturn_t axg_fifo_pcm_irq_block(int irq, void *dev_id)
+ 	/* Ack irqs */
+ 	axg_fifo_ack_irq(fifo, status);
  
- - compatible: "amlogic,axg-sound-card"
--- amlogic,name : User specified audio sound card name, one string
-+- model : User specified audio sound card name, one string
+-	return !status ? IRQ_NONE : IRQ_HANDLED;
++	return IRQ_RETVAL(status);
+ }
  
- Optional properties:
- 
--- amlogic,aux-devs : List of phandles pointing to auxiliary devices
--- amlogic,widgets : Please refer to widgets.txt.
--- amlogic,routing : A list of the connections between audio components.
-+- audio-aux-devs : List of phandles pointing to auxiliary devices
-+- audio-widgets : Please refer to widgets.txt.
-+- audio-routing : A list of the connections between audio components.
- 
- Subnodes:
- 
--- amlogic,dai-link: Container for dai-link level properties and the
--		    CODEC sub-nodes. There should be at least one (and
--		    probably) subnode of this type.
-+- dai-link: Container for dai-link level properties and the CODEC
-+	    sub-nodes. There should be at least one (and probably more)
-+	    subnode of this type.
- 
- Required dai-link properties:
- 
-@@ -57,38 +57,38 @@ Example:
- 
- sound {
- 	compatible = "amlogic,axg-sound-card";
--	amlogic,name = "AXG-S420";
--	amlogic,aux-devs = <&tdmin_a>, <&tdmout_c>;
--	amlogic,widgets = "Line", "Lineout",
--			  "Line", "Linein",
--			  "Speaker", "Speaker1 Left",
--			  "Speaker", "Speaker1 Right";
--			  "Speaker", "Speaker2 Left",
--			  "Speaker", "Speaker2 Right";
--	amlogic,routing = "TDMOUT_C IN 0", "FRDDR_A OUT 2",
--			  "SPDIFOUT IN 0", "FRDDR_A OUT 3",
--			  "TDM_C Playback", "TDMOUT_C OUT",
--			  "TDMIN_A IN 2", "TDM_C Capture",
--			  "TDMIN_A IN 5", "TDM_C Loopback",
--			  "TODDR_A IN 0", "TDMIN_A OUT",
--			  "Lineout", "Lineout AOUTL",
--			  "Lineout", "Lineout AOUTR",
--			  "Speaker1 Left", "SPK1 OUT_A",
--			  "Speaker2 Left", "SPK2 OUT_A",
--			  "Speaker1 Right", "SPK1 OUT_B",
--			  "Speaker2 Right", "SPK2 OUT_B",
--			  "Linein AINL", "Linein",
--			  "Linein AINR", "Linein";
--
--	amlogic,dai-link@0 {
-+	model = "AXG-S420";
-+	audio-aux-devs = <&tdmin_a>, <&tdmout_c>;
-+	audio-widgets = "Line", "Lineout",
-+			"Line", "Linein",
-+			"Speaker", "Speaker1 Left",
-+			"Speaker", "Speaker1 Right";
-+			"Speaker", "Speaker2 Left",
-+			"Speaker", "Speaker2 Right";
-+	audio-routing = "TDMOUT_C IN 0", "FRDDR_A OUT 2",
-+			"SPDIFOUT IN 0", "FRDDR_A OUT 3",
-+			"TDM_C Playback", "TDMOUT_C OUT",
-+			"TDMIN_A IN 2", "TDM_C Capture",
-+			"TDMIN_A IN 5", "TDM_C Loopback",
-+			"TODDR_A IN 0", "TDMIN_A OUT",
-+			"Lineout", "Lineout AOUTL",
-+			"Lineout", "Lineout AOUTR",
-+			"Speaker1 Left", "SPK1 OUT_A",
-+			"Speaker2 Left", "SPK2 OUT_A",
-+			"Speaker1 Right", "SPK1 OUT_B",
-+			"Speaker2 Right", "SPK2 OUT_B",
-+			"Linein AINL", "Linein",
-+			"Linein AINR", "Linein";
-+
-+	dai-link@0 {
- 		sound-dai = <&frddr_a>;
- 	};
- 
--	amlogic,dai-link@1 {
-+	dai-link@1 {
- 		sound-dai = <&toddr_a>;
- 	};
- 
--	amlogic,dai-link@2 {
-+	dai-link@2 {
- 		sound-dai = <&tdmif_c>;
- 		dai-format = "i2s";
- 		dai-tdm-slot-tx-mask-2 = <1 1>;
-@@ -114,7 +114,7 @@ sound {
- 
- 	};
- 
--	amlogic,dai-link@4 {
-+	dai-link@3 {
- 		sound-dai = <&spdifout>;
- 
- 		codec {
+ static int axg_fifo_pcm_open(struct snd_pcm_substream *ss)
 -- 
 2.18.0
 
