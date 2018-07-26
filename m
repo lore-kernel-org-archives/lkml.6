@@ -2,467 +2,102 @@ Return-Path: <SRS0=7Z+k=KK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F93AC6778F
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 17:19:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE7BAC28CF6
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 17:19:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 48DF12083F
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 17:19:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 48DF12083F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=aosc.io
+	by mail.kernel.org (Postfix) with ESMTP id 951CC20647
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 17:19:28 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="vnOS1UOc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 951CC20647
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388843AbeGZSg7 (ORCPT
+        id S2388854AbeGZShL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 26 Jul 2018 14:36:59 -0400
-Received: from hermes.aosc.io ([199.195.250.187]:58400 "EHLO hermes.aosc.io"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730085AbeGZSg7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Jul 2018 14:36:59 -0400
-Received: from localhost (localhost [127.0.0.1]) (Authenticated sender: icenowy@aosc.io)
-        by hermes.aosc.io (Postfix) with ESMTPSA id 22ADF9FAEE;
-        Thu, 26 Jul 2018 17:18:59 +0000 (UTC)
-From:   Icenowy Zheng <icenowy@aosc.io>
-To:     Maxime Ripard <maxime.ripard@bootlin.com>,
-        Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-        Jagan Teki <jagan@amarulasolutions.com>,
-        Jernej Skrabec <jernej.skrabec@siol.net>
-Cc:     dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com,
-        Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH v3.1 10/10] arm64: dts: allwinner: a64: Enable HDMI output on A64 boards w/ HDMI
-Date:   Fri, 27 Jul 2018 01:12:57 +0800
-Message-Id: <20180726171257.6688-11-icenowy@aosc.io>
-In-Reply-To: <20180726171257.6688-1-icenowy@aosc.io>
-References: <20180726171257.6688-1-icenowy@aosc.io>
+        Thu, 26 Jul 2018 14:37:11 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:38550 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730085AbeGZShL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Jul 2018 14:37:11 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w6QHJ75Y027739
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Jul 2018 17:19:25 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=mime-version :
+ references : in-reply-to : from : date : message-id : subject : to : cc :
+ content-type; s=corp-2018-07-02;
+ bh=CEaYXm+XgcxY+5Gn8GAz42oEpnrWeOCO743XgToFKyw=;
+ b=vnOS1UOcz0khT9TBDiMVOQR1Ax/WL3K31TkwfToixbRjbWvjR/0MQBJ50VhYlAdSw1ed
+ jv+GzG9GJZPSfz5E7T1c5li9177Zf/xAymK1kb4OhvppwCEAtmbI7s9BHT+mFGqyaWRV
+ l8HCOthi+sMp4MovqlfakCerwnjngTSVjKyqa231RlVVZAk3zPuv3A/fHw8AoHdeWePS
+ vVVy6nuSmL1u/T7n6LtID1MjtNJTJvWLgOUkEqSnc50ws7XJxQbGInn06S4GVX3Phjqq
+ yzFeMFTBUSEr7+hj3mdUKJsKBO9fiVwsHMAv7IZgRuaJnbc9BqL0RREf4T93hqsSoiRe GA== 
+Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
+        by userp2120.oracle.com with ESMTP id 2kbwfq42am-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK)
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Jul 2018 17:19:25 +0000
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w6QHJNkv021297
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK)
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Jul 2018 17:19:23 GMT
+Received: from abhmp0012.oracle.com (abhmp0012.oracle.com [141.146.116.18])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w6QHJNt0009197
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Jul 2018 17:19:23 GMT
+Received: from mail-oi0-f46.google.com (/209.85.218.46)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 26 Jul 2018 10:19:23 -0700
+Received: by mail-oi0-f46.google.com with SMTP id k81-v6so4304753oib.4
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Jul 2018 10:19:23 -0700 (PDT)
+X-Gm-Message-State: AOUpUlEeXyV41T6JfzbHfPgFmo0BYW/TZwF9hmKXLjHYcIcxHd2lKEhs
+        m38eJcFqA4PQ88LXyaZPCeTvhVTIyNRN0q3VuDo=
+X-Google-Smtp-Source: AAOMgpd657icl0KgJcbAukoKGOm3AxSaHESwDqQAy0aaTnnns4MukHb0fOpFSA+S5Yu2J49THrvAibRmna8pZjrkAdE=
+X-Received: by 2002:aca:db09:: with SMTP id s9-v6mr3037422oig.339.1532625562767;
+ Thu, 26 Jul 2018 10:19:22 -0700 (PDT)
+MIME-Version: 1.0
+References: <20180725220144.11531-1-osalvador@techadventures.net>
+ <20180725220144.11531-3-osalvador@techadventures.net> <20180726080500.GX28386@dhcp22.suse.cz>
+ <20180726081215.GC22028@techadventures.net> <20180726151420.uigttpoclcka6h4h@xakep.localdomain>
+ <20180726164304.GP28386@dhcp22.suse.cz>
+In-Reply-To: <20180726164304.GP28386@dhcp22.suse.cz>
+From:   Pavel Tatashin <pasha.tatashin@oracle.com>
+Date:   Thu, 26 Jul 2018 13:18:46 -0400
+X-Gmail-Original-Message-ID: <CAGM2reatUAekg=e9FQM1-UVLOSBKb74-FYo7FcPqO_WaR7AmOQ@mail.gmail.com>
+Message-ID: <CAGM2reatUAekg=e9FQM1-UVLOSBKb74-FYo7FcPqO_WaR7AmOQ@mail.gmail.com>
+Subject: Re: [PATCH v3 2/5] mm: access zone->node via zone_to_nid() and zone_set_nid()
+To:     mhocko@kernel.org
+Cc:     osalvador@techadventures.net,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Vlastimil Babka <vbabka@suse.cz>, mgorman@techsingularity.net,
+        aaron.lu@intel.com, iamjoonsoo.kim@lge.com,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>, dan.j.williams@intel.com,
+        osalvador@suse.de
+Content-Type: text/plain; charset="UTF-8"
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8965 signatures=668706
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=3 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=739
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1806210000 definitions=main-1807260178
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jagan Teki <jagan@amarulasolutions.com>
+> > OpenGrok was used to find places where zone->node is accessed. A public one
+> > is available here: http://src.illumos.org/source/
+>
+> I assume that tool uses some pattern matching or similar so steps to use
+> the tool to get your results would be more helpful. This is basically
+> the same thing as coccinelle generated patches.
 
-Enable all necessary device tree nodes and add connector node to device
-trees for all supported A64 boards with HDMI.
+OpenGrok is very easy to use, it is source browser, similar to cscope
+except obviously you can't edit the browsed code. I could have used
+cscope just as well here.
 
-Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
-[Icenowy: squash all board patches altogether and change supply name]
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
----
-Changes in v3,1:
-- Squash all enablement patches altogether.
-- Change supply name to match DT binding & driver change.
-Changes for v3:
-- Enable all pipeline components
-Changes for v2:
-- none
-
- .../dts/allwinner/sun50i-a64-bananapi-m64.dts | 34 +++++++++++++++++++
- .../dts/allwinner/sun50i-a64-nanopi-a64.dts   | 34 +++++++++++++++++++
- .../dts/allwinner/sun50i-a64-olinuxino.dts    | 34 +++++++++++++++++++
- .../dts/allwinner/sun50i-a64-orangepi-win.dts | 34 +++++++++++++++++++
- .../boot/dts/allwinner/sun50i-a64-pine64.dts  | 34 +++++++++++++++++++
- .../allwinner/sun50i-a64-sopine-baseboard.dts | 34 +++++++++++++++++++
- 6 files changed, 204 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts
-index 094cfed13df9..0d8f5571d574 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts
-@@ -60,6 +60,17 @@
- 		stdout-path = "serial0:115200n8";
- 	};
- 
-+	connector {
-+		compatible = "hdmi-connector";
-+		type = "a";
-+
-+		port {
-+			hdmi_con_in: endpoint {
-+				remote-endpoint = <&hdmi_out_con>;
-+			};
-+		};
-+	};
-+
- 	leds {
- 		compatible = "gpio-leds";
- 
-@@ -86,6 +97,10 @@
- 	};
- };
- 
-+&de {
-+	status = "okay";
-+};
-+
- &ehci0 {
- 	status = "okay";
- };
-@@ -103,6 +118,17 @@
- 	status = "okay";
- };
- 
-+&hdmi {
-+	hdmi-supply = <&reg_dldo1>;
-+	status = "okay";
-+};
-+
-+&hdmi_out {
-+	hdmi_out_con: endpoint {
-+		remote-endpoint = <&hdmi_con_in>;
-+	};
-+};
-+
- &i2c1 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&i2c1_pins>;
-@@ -120,6 +146,10 @@
- 	};
- };
- 
-+&mixer1 {
-+	status = "okay";
-+};
-+
- &mmc0 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&mmc0_pins>;
-@@ -300,6 +330,10 @@
- 	vcc-hdmi-supply = <&reg_dldo1>;
- };
- 
-+&tcon1 {
-+	status = "okay";
-+};
-+
- &uart0 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&uart0_pins_a>;
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-nanopi-a64.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-nanopi-a64.dts
-index 98dbff19f5cc..2bcf02f46366 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-a64-nanopi-a64.dts
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-nanopi-a64.dts
-@@ -57,6 +57,21 @@
- 	chosen {
- 		stdout-path = "serial0:115200n8";
- 	};
-+
-+	connector {
-+		compatible = "hdmi-connector";
-+		type = "a";
-+
-+		port {
-+			hdmi_con_in: endpoint {
-+				remote-endpoint = <&hdmi_out_con>;
-+			};
-+		};
-+	};
-+};
-+
-+&de {
-+	status = "okay";
- };
- 
- &ehci0 {
-@@ -67,6 +82,17 @@
- 	status = "okay";
- };
- 
-+&hdmi {
-+	hdmi-supply = <&reg_dldo1>;
-+	status = "okay";
-+};
-+
-+&hdmi_out {
-+	hdmi_out_con: endpoint {
-+		remote-endpoint = <&hdmi_con_in>;
-+	};
-+};
-+
- /* i2c1 connected with gpio headers like pine64, bananapi */
- &i2c1 {
- 	pinctrl-names = "default";
-@@ -78,6 +104,10 @@
- 	bias-pull-up;
- };
- 
-+&mixer1 {
-+	status = "okay";
-+};
-+
- &mmc0 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&mmc0_pins>;
-@@ -199,6 +229,10 @@
- 	vcc-hdmi-supply = <&reg_dldo1>;
- };
- 
-+&tcon1 {
-+	status = "okay";
-+};
-+
- &uart0 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&uart0_pins_a>;
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-olinuxino.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-olinuxino.dts
-index 3f531393eaee..5445a7a1db51 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-a64-olinuxino.dts
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-olinuxino.dts
-@@ -58,12 +58,42 @@
- 		stdout-path = "serial0:115200n8";
- 	};
- 
-+	connector {
-+		compatible = "hdmi-connector";
-+		type = "a";
-+
-+		port {
-+			hdmi_con_in: endpoint {
-+				remote-endpoint = <&hdmi_out_con>;
-+			};
-+		};
-+	};
-+
- 	wifi_pwrseq: wifi_pwrseq {
- 		compatible = "mmc-pwrseq-simple";
- 		reset-gpios = <&r_pio 0 2 GPIO_ACTIVE_LOW>; /* PL2 */
- 	};
- };
- 
-+&de {
-+	status = "okay";
-+};
-+
-+&hdmi {
-+	hdmi-supply = <&reg_dldo1>;
-+	status = "okay";
-+};
-+
-+&hdmi_out {
-+	hdmi_out_con: endpoint {
-+		remote-endpoint = <&hdmi_con_in>;
-+	};
-+};
-+
-+&mixer1 {
-+	status = "okay";
-+};
-+
- &mmc0 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&mmc0_pins>;
-@@ -218,6 +248,10 @@
- 	vcc-hdmi-supply = <&reg_dldo1>;
- };
- 
-+&tcon1 {
-+	status = "okay";
-+};
-+
- &uart0 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&uart0_pins_a>;
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-orangepi-win.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-orangepi-win.dts
-index 1221764f5719..81a8f92c6c35 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-a64-orangepi-win.dts
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-orangepi-win.dts
-@@ -57,12 +57,42 @@
- 	chosen {
- 		stdout-path = "serial0:115200n8";
- 	};
-+
-+	connector {
-+		compatible = "hdmi-connector";
-+		type = "a";
-+
-+		port {
-+			hdmi_con_in: endpoint {
-+				remote-endpoint = <&hdmi_out_con>;
-+			};
-+		};
-+	};
-+};
-+
-+&de {
-+	status = "okay";
- };
- 
- &ehci1 {
- 	status = "okay";
- };
- 
-+&hdmi {
-+	hdmi-supply = <&reg_dldo1>;
-+	status = "okay";
-+};
-+
-+&hdmi_out {
-+	hdmi_out_con: endpoint {
-+		remote-endpoint = <&hdmi_con_in>;
-+	};
-+};
-+
-+&mixer1 {
-+	status = "okay";
-+};
-+
- &mmc0 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&mmc0_pins>;
-@@ -195,6 +225,10 @@
- 	vcc-hdmi-supply = <&reg_dldo1>;
- };
- 
-+&tcon1 {
-+	status = "okay";
-+};
-+
- &uart0 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&uart0_pins_a>;
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts
-index 1b9b92e541d2..1b972bade9f6 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts
-@@ -62,6 +62,21 @@
- 	chosen {
- 		stdout-path = "serial0:115200n8";
- 	};
-+
-+	connector {
-+		compatible = "hdmi-connector";
-+		type = "a";
-+
-+		port {
-+			hdmi_con_in: endpoint {
-+				remote-endpoint = <&hdmi_out_con>;
-+			};
-+		};
-+	};
-+};
-+
-+&de {
-+	status = "okay";
- };
- 
- &ehci0 {
-@@ -82,6 +97,17 @@
- 
- };
- 
-+&hdmi {
-+	hdmi-supply = <&reg_dldo1>;
-+	status = "okay";
-+};
-+
-+&hdmi_out {
-+	hdmi_out_con: endpoint {
-+		remote-endpoint = <&hdmi_con_in>;
-+	};
-+};
-+
- &i2c1 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&i2c1_pins>;
-@@ -99,6 +125,10 @@
- 	};
- };
- 
-+&mixer1 {
-+	status = "okay";
-+};
-+
- &mmc0 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&mmc0_pins>;
-@@ -238,6 +268,10 @@
- 	status = "disabled";
- };
- 
-+&tcon1 {
-+	status = "okay";
-+};
-+
- /* On Exp and Euler connectors */
- &uart0 {
- 	pinctrl-names = "default";
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-sopine-baseboard.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-sopine-baseboard.dts
-index c21f2331add6..eff44b069b1d 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-a64-sopine-baseboard.dts
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-sopine-baseboard.dts
-@@ -61,6 +61,17 @@
- 		stdout-path = "serial0:115200n8";
- 	};
- 
-+	connector {
-+		compatible = "hdmi-connector";
-+		type = "a";
-+
-+		port {
-+			hdmi_con_in: endpoint {
-+				remote-endpoint = <&hdmi_out_con>;
-+			};
-+		};
-+	};
-+
- 	reg_vcc1v8: vcc1v8 {
- 		compatible = "regulator-fixed";
- 		regulator-name = "vcc1v8";
-@@ -69,6 +80,10 @@
- 	};
- };
- 
-+&de {
-+	status = "okay";
-+};
-+
- &ehci0 {
- 	status = "okay";
- };
-@@ -86,6 +101,17 @@
- 	status = "okay";
- };
- 
-+&hdmi {
-+	hdmi-supply = <&reg_dldo1>;
-+	status = "okay";
-+};
-+
-+&hdmi_out {
-+	hdmi_out_con: endpoint {
-+		remote-endpoint = <&hdmi_con_in>;
-+	};
-+};
-+
- &mdio {
- 	ext_rgmii_phy: ethernet-phy@1 {
- 		compatible = "ethernet-phy-ieee802.3-c22";
-@@ -93,6 +119,10 @@
- 	};
- };
- 
-+&mixer1 {
-+	status = "okay";
-+};
-+
- &mmc2 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&mmc2_pins>;
-@@ -138,6 +168,10 @@
- 	vcc-hdmi-supply = <&reg_dldo1>;
- };
- 
-+&tcon1 {
-+	status = "okay";
-+};
-+
- &uart0 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&uart0_pins_a>;
--- 
-2.18.0
-
+Pavel
