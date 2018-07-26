@@ -4,59 +4,60 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6A7EC6778F
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 02:33:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7B72C67790
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 02:33:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6896820671
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 02:33:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7FDB220891
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 02:33:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=arista.com header.i=@arista.com header.b="U/6JC4Bn"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6896820671
+	dkim=pass (2048-bit key) header.d=arista.com header.i=@arista.com header.b="pB4lAQD8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7FDB220891
 Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=arista.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729118AbeGZDqc (ORCPT
+        id S1730247AbeGZDrz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 23:46:32 -0400
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:37667 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729068AbeGZDqb (ORCPT
+        Wed, 25 Jul 2018 23:47:55 -0400
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:46485 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729073AbeGZDqc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Jul 2018 23:46:31 -0400
-Received: by mail-ed1-f67.google.com with SMTP id b10-v6so337390eds.4
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Jul 2018 19:31:57 -0700 (PDT)
+        Wed, 25 Jul 2018 23:46:32 -0400
+Received: by mail-ed1-f68.google.com with SMTP id o8-v6so324079edt.13
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Jul 2018 19:31:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=arista.com; s=googlenew;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=z0/Zo1rLDSxi7qxt1pPuM8s6wHm2XpbvzzFP5iHNqfs=;
-        b=U/6JC4BnzxMboPkLVBVavLCIqOlvOVi2NLv6lzFswodbBBUZYel/XEfZqUJBhNyfWK
-         5CJSB75qCxbY3Tpn4PGgKpFzs1STR9wHNPGou+F+rcGztfTh6guwfsJnebPnXb4rkLh/
-         d3UdEWMl5uix0XCbpQ5mig3cLOXM75vctMYsudNH5KQMWzU34ijo58bj5VnqnkDYOmA2
-         WlVPQjOy+UyIRS0DNZFnoBTy67u9SnQ2gu/008KLpvlk+4fDT6gqj0emRa9zTS4kTXF2
-         zU1tLEaU3r7Ljn1frneRGc44aagVtu0pW4Yscw46Kk7Aq0kLVb4ciJk3lgeera6klzCA
-         IWwQ==
+        bh=96codcclVJ7Yuq6KI06GJPty5De03p58ccgEKnN1XJ4=;
+        b=pB4lAQD8JA52RQDlbyrz8G/lQpgXxOqiRByZKMh4bcudH47VT/QGXAIT19/EudhpfT
+         gOIGxY6gvszT5pq+r8LsOH78/mv2c4uXHceMInMcixVajDSUkd4LUHVR+42DmyiqZlie
+         +kLCeLd8Bw30aVJtDYrM5j6Qg9S2bmHN6L37PcS5+ck782wqJymFtoFPRVInw1qzwCl7
+         vAWZ3jGactZhFAO0ugquyunEsTBsFh8mpGxJERwyu8L/fHd81ge76xR5ESw+9ikuAuFK
+         bnJi694SmqJqiDCer/+OvpVRv6iZkMJFaWG0ulfKfTkZwhZLT7/ZENNa5Cpu0nNjQ2Oy
+         hObg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=z0/Zo1rLDSxi7qxt1pPuM8s6wHm2XpbvzzFP5iHNqfs=;
-        b=TWNz+lAF4413mNeYZ+GxCN8O5DVXYZeDU78shvQsIzIEOAf/cgYBCIVd8K8CY/6Yy9
-         fG1A+AzCul1mMHAYz/AV2i0AM2j+VQMluBzJycx3pl1cvAvi208OKZbS/MZ0mnemyLOr
-         IlYQ7sjGSEsgaUTbE/zOXjK30gpbYU1Ud4Ye1hee1wLnBMzV1tLMm8/deDtzCp9DnQqk
-         4zomY0ZoGb67mlt+VBlf7xaaQvN+nF1suLenW76XokNWczAHZiYnnnqlrQ2jzZga0oy7
-         0lRLh0U7ixUWyhTsgLE2+3gE/pfiRfK0tkOBWpcPjHTimNVOG3NvLN7KM/MQx9lx3SaM
-         +zlg==
-X-Gm-Message-State: AOUpUlFcccvdKrx0vVarBbuaJYPUeJpMu2Xv7Ai2AtyA7N4p3EsoxUMM
-        +ekW/U4vjCBz1eGWLpiMDHdgwHDhBjk=
-X-Google-Smtp-Source: AAOMgpdJUeteyxV2p3f5r7V72YCr2yyBTkotDSofFXL8V7KvkYz+YnP7JZsWEwv3Ql14rPaMgCHkmQ==
-X-Received: by 2002:a50:c251:: with SMTP id t17-v6mr513489edf.108.1532572316829;
-        Wed, 25 Jul 2018 19:31:56 -0700 (PDT)
+        bh=96codcclVJ7Yuq6KI06GJPty5De03p58ccgEKnN1XJ4=;
+        b=BYCHaQ2MmQxZq7Mm0A9AraVqwJCy45HHHOVacDM8OfP9/BVgSxXtT7Po9QiY+pwMVH
+         818EHyGHW8VUfMtf5D3KGKYvHUSXSvjEem4VhapPr97SBcJgfVv+rbuBPV1bmBZlSdVH
+         E27CJInMAw2eFjrZZ1DDsIbV/TEcIVv4RXoNgmUfDEMjIyPxkFGjDQYYy5Z2qP7rrZMK
+         9k0QBUWYmFB4aIN5cgIyHZX++FwbuowYoKxd2QZjU4UEdBrX4jehUbM9vyoaAE5UTlLm
+         Fg2dog/uTmbHFV/ipuOsNCpzAlJ9qIirJKv5f037IOjyMBpqt3+QEMCg1Rcaszafkhnn
+         lfrQ==
+X-Gm-Message-State: AOUpUlEeQMEqdp2iDeybxCFkBuYdKdGGWnZI5PFoKFwLFMwM5x7sXewc
+        461S4fJ88RoI6mszoXV6/VCwj6B9qYc=
+X-Google-Smtp-Source: AAOMgpf7wx//fxDQb+4YI//gmBWpATU4VE6MZfgBy4fa5UlhK1Ymm2ZgSgU+2BBnzxFSDgfocdGRsw==
+X-Received: by 2002:a50:a347:: with SMTP id 65-v6mr480252edn.299.1532572317784;
+        Wed, 25 Jul 2018 19:31:57 -0700 (PDT)
 Received: from dhcp.ire.aristanetworks.com ([217.173.96.166])
-        by smtp.gmail.com with ESMTPSA id x13-v6sm241024edx.17.2018.07.25.19.31.55
+        by smtp.gmail.com with ESMTPSA id x13-v6sm241024edx.17.2018.07.25.19.31.56
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 25 Jul 2018 19:31:56 -0700 (PDT)
+        Wed, 25 Jul 2018 19:31:57 -0700 (PDT)
 From:   Dmitry Safonov <dima@arista.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     Dmitry Safonov <dima@arista.com>,
@@ -64,9 +65,9 @@ Cc:     Dmitry Safonov <dima@arista.com>,
         Herbert Xu <herbert@gondor.apana.org.au>,
         Steffen Klassert <steffen.klassert@secunet.com>,
         Dmitry Safonov <0x7f454c46@gmail.com>, netdev@vger.kernel.org
-Subject: [PATCH 09/18] xfrm: Dump usersa_info in compat/native formats
-Date:   Thu, 26 Jul 2018 03:31:35 +0100
-Message-Id: <20180726023144.31066-10-dima@arista.com>
+Subject: [PATCH 10/18] xfrm: Send state notifications in compat format too
+Date:   Thu, 26 Jul 2018 03:31:36 +0100
+Message-Id: <20180726023144.31066-11-dima@arista.com>
 X-Mailer: git-send-email 2.13.6
 In-Reply-To: <20180726023144.31066-1-dima@arista.com>
 References: <20180726023144.31066-1-dima@arista.com>
@@ -75,8 +76,10 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Create xfrm_usersa_info in netlink messages in 32/64-bit UABI according
-to type of syscall used to dump xfrm state.
+Applications that used native bind() syscall are in XFRMNLGRP_SA, so
+send there xfrm_usersa_info messages (with 64-bit ABI). Compatible
+applications are added to kernel-hidden XFRMNLGRP_COMPAT_SA group, so
+send there xfrm_usersa_info messages_packed (with 32-bit ABI)
 
 Cc: "David S. Miller" <davem@davemloft.net>
 Cc: Herbert Xu <herbert@gondor.apana.org.au>
@@ -84,131 +87,96 @@ Cc: Steffen Klassert <steffen.klassert@secunet.com>
 Cc: netdev@vger.kernel.org
 Signed-off-by: Dmitry Safonov <dima@arista.com>
 ---
- net/xfrm/xfrm_user.c | 55 ++++++++++++++++++++++++++++++++++++++++------------
- 1 file changed, 43 insertions(+), 12 deletions(-)
+ net/xfrm/xfrm_user.c | 38 +++++++++++++++++++++++++++++---------
+ 1 file changed, 29 insertions(+), 9 deletions(-)
 
 diff --git a/net/xfrm/xfrm_user.c b/net/xfrm/xfrm_user.c
-index b123e788488f..63622264a3a9 100644
+index 63622264a3a9..230462077dc9 100644
 --- a/net/xfrm/xfrm_user.c
 +++ b/net/xfrm/xfrm_user.c
-@@ -799,9 +799,9 @@ static int xfrm_del_sa(struct sk_buff *skb, struct nlmsghdr *nlh,
+@@ -2856,18 +2856,24 @@ static inline unsigned int xfrm_sa_len(struct xfrm_state *x)
+ 	return l;
+ }
+ 
+-static int xfrm_notify_sa(struct xfrm_state *x, const struct km_event *c)
++static int __xfrm_notify_sa(struct xfrm_state *x,
++		const struct km_event *c, bool compat)
+ {
+ 	struct net *net = xs_net(x);
+-	struct xfrm_usersa_info *p;
+ 	struct xfrm_usersa_id *id;
+ 	struct nlmsghdr *nlh;
+ 	struct sk_buff *skb;
+ 	unsigned int len = xfrm_sa_len(x);
+-	unsigned int headlen;
++	unsigned int headlen, usersa_info_size;
++	void *usersa_info;
+ 	int err;
+ 
+-	headlen = sizeof(*p);
++	if (compat)
++		usersa_info_size = sizeof(struct xfrm_usersa_info_packed);
++	else
++		usersa_info_size = sizeof(struct xfrm_usersa_info);
++	headlen = usersa_info_size;
++
+ 	if (c->event == XFRM_MSG_DELSA) {
+ 		len += nla_total_size(headlen);
+ 		headlen = sizeof(*id);
+@@ -2884,7 +2890,7 @@ static int xfrm_notify_sa(struct xfrm_state *x, const struct km_event *c)
+ 	if (nlh == NULL)
+ 		goto out_free_skb;
+ 
+-	p = nlmsg_data(nlh);
++	usersa_info = nlmsg_data(nlh);
+ 	if (c->event == XFRM_MSG_DELSA) {
+ 		struct nlattr *attr;
+ 
+@@ -2895,26 +2901,40 @@ static int xfrm_notify_sa(struct xfrm_state *x, const struct km_event *c)
+ 		id->family = x->props.family;
+ 		id->proto = x->id.proto;
+ 
+-		attr = nla_reserve(skb, XFRMA_SA, sizeof(*p));
++		attr = nla_reserve(skb, XFRMA_SA, usersa_info_size);
+ 		err = -EMSGSIZE;
+ 		if (attr == NULL)
+ 			goto out_free_skb;
+ 
+-		p = nla_data(attr);
++		usersa_info = nla_data(attr);
+ 	}
+-	err = copy_to_user_state_extra(x, p, skb);
++
++	if (compat)
++		err = copy_to_user_state_extra(x, usersa_info, skb);
++	else
++		err = copy_to_user_state_extra_compat(x, usersa_info, skb);
+ 	if (err)
+ 		goto out_free_skb;
+ 
+ 	nlmsg_end(skb, nlh);
+ 
+-	return xfrm_nlmsg_multicast(net, skb, 0, XFRMNLGRP_SA);
++	return xfrm_nlmsg_multicast(net, skb, 0,
++			compat ? XFRMNLGRP_COMPAT_SA : XFRMNLGRP_SA);
+ 
+ out_free_skb:
+ 	kfree_skb(skb);
  	return err;
  }
  
--static void copy_to_user_state(struct xfrm_state *x, struct xfrm_usersa_info *p)
-+static void __copy_to_user_state(struct xfrm_state *x,
-+		struct xfrm_usersa_info_packed *p)
++static int xfrm_notify_sa(struct xfrm_state *x, const struct km_event *c)
++{
++	int ret = __xfrm_notify_sa(x, c, false);
++
++	if ((ret && ret != -ESRCH) || !IS_ENABLED(CONFIG_COMPAT))
++		return ret;
++	return __xfrm_notify_sa(x, c, true);
++}
++
+ static int xfrm_send_state_notify(struct xfrm_state *x, const struct km_event *c)
  {
--	memset(p, 0, sizeof(*p));
- 	memcpy(&p->id, &x->id, sizeof(p->id));
- 	memcpy(&p->sel, &x->sel, sizeof(p->sel));
- 	memcpy(&p->lft, &x->lft, sizeof(p->lft));
-@@ -818,11 +818,25 @@ static void copy_to_user_state(struct xfrm_state *x, struct xfrm_usersa_info *p)
- 	p->seq = x->km.seq;
- }
  
-+static void copy_to_user_state(struct xfrm_state *x, struct xfrm_usersa_info *p)
-+{
-+	memset(p, 0, sizeof(*p));
-+	__copy_to_user_state(x, (struct xfrm_usersa_info_packed *)p);
-+}
-+
-+static void copy_to_user_state_compat(struct xfrm_state *x,
-+		struct xfrm_usersa_info_packed *p)
-+{
-+	memset(p, 0, sizeof(*p));
-+	__copy_to_user_state(x, p);
-+}
-+
- struct xfrm_dump_info {
- 	struct sk_buff *in_skb;
- 	struct sk_buff *out_skb;
- 	u32 nlmsg_seq;
- 	u16 nlmsg_flags;
-+	bool compat_dump;
- };
- 
- static int copy_sec_ctx(struct xfrm_sec_ctx *s, struct sk_buff *skb)
-@@ -882,14 +896,10 @@ static int copy_to_user_auth(struct xfrm_algo_auth *auth, struct sk_buff *skb)
- }
- 
- /* Don't change this without updating xfrm_sa_len! */
--static int copy_to_user_state_extra(struct xfrm_state *x,
--				    struct xfrm_usersa_info *p,
--				    struct sk_buff *skb)
-+static int __copy_to_user_state_extra(struct xfrm_state *x, struct sk_buff *skb)
- {
- 	int ret = 0;
- 
--	copy_to_user_state(x, p);
--
- 	if (x->props.extra_flags) {
- 		ret = nla_put_u32(skb, XFRMA_SA_EXTRA_FLAGS,
- 				  x->props.extra_flags);
-@@ -968,23 +978,42 @@ static int copy_to_user_state_extra(struct xfrm_state *x,
- 	return ret;
- }
- 
-+static int copy_to_user_state_extra(struct xfrm_state *x,
-+		struct xfrm_usersa_info *p, struct sk_buff *skb)
-+{
-+	copy_to_user_state(x, p);
-+	return __copy_to_user_state_extra(x, skb);
-+}
-+
-+static int copy_to_user_state_extra_compat(struct xfrm_state *x,
-+		struct xfrm_usersa_info_packed *p, struct sk_buff *skb)
-+{
-+	copy_to_user_state_compat(x, p);
-+	return __copy_to_user_state_extra(x, skb);
-+}
-+
- static int dump_one_state(struct xfrm_state *x, int count, void *ptr)
- {
- 	struct xfrm_dump_info *sp = ptr;
- 	struct sk_buff *in_skb = sp->in_skb;
- 	struct sk_buff *skb = sp->out_skb;
--	struct xfrm_usersa_info *p;
- 	struct nlmsghdr *nlh;
-+	size_t msg_len;
- 	int err;
- 
-+	if (sp->compat_dump)
-+		msg_len = sizeof(struct xfrm_usersa_info_packed);
-+	else
-+		msg_len = sizeof(struct xfrm_usersa_info);
- 	nlh = nlmsg_put(skb, NETLINK_CB(in_skb).portid, sp->nlmsg_seq,
--			XFRM_MSG_NEWSA, sizeof(*p), sp->nlmsg_flags);
-+			XFRM_MSG_NEWSA, msg_len, sp->nlmsg_flags);
- 	if (nlh == NULL)
- 		return -EMSGSIZE;
- 
--	p = nlmsg_data(nlh);
--
--	err = copy_to_user_state_extra(x, p, skb);
-+	if (sp->compat_dump)
-+		err = copy_to_user_state_extra_compat(x, nlmsg_data(nlh), skb);
-+	else
-+		err = copy_to_user_state_extra(x, nlmsg_data(nlh), skb);
- 	if (err) {
- 		nlmsg_cancel(skb, nlh);
- 		return err;
-@@ -1018,6 +1047,7 @@ static int xfrm_dump_sa(struct sk_buff *skb, struct netlink_callback *cb)
- 	info.out_skb = skb;
- 	info.nlmsg_seq = cb->nlh->nlmsg_seq;
- 	info.nlmsg_flags = NLM_F_MULTI;
-+	info.compat_dump = in_compat_syscall();
- 
- 	if (!cb->args[0]) {
- 		struct nlattr *attrs[XFRMA_MAX+1];
-@@ -1064,6 +1094,7 @@ static struct sk_buff *xfrm_state_netlink(struct sk_buff *in_skb,
- 	info.out_skb = skb;
- 	info.nlmsg_seq = seq;
- 	info.nlmsg_flags = 0;
-+	info.compat_dump = in_compat_syscall();
- 
- 	err = dump_one_state(x, 0, &info);
- 	if (err) {
 -- 
 2.13.6
 
