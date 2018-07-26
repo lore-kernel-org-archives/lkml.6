@@ -6,90 +6,83 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BCC07C67790
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 01:14:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AE33C6778F
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 01:14:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 73CA520882
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 01:14:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 73CA520882
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+	by mail.kernel.org (Postfix) with ESMTP id E1AE620846
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 01:14:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E1AE620846
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=aosc.io
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728659AbeGZC2R (ORCPT
+        id S1728697AbeGZC3F (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 22:28:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43806 "EHLO mail.kernel.org"
+        Wed, 25 Jul 2018 22:29:05 -0400
+Received: from hermes.aosc.io ([199.195.250.187]:52534 "EHLO hermes.aosc.io"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728352AbeGZC2R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Jul 2018 22:28:17 -0400
-Received: from vmware.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1C0FB20846;
-        Thu, 26 Jul 2018 01:13:58 +0000 (UTC)
-Date:   Wed, 25 Jul 2018 21:13:56 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Masami Hiramatsu <mhiramat@kernel.org>
-Cc:     Francis Deslauriers <francis.deslauriers@efficios.com>,
-        peterz@infradead.org, mathieu.desnoyers@efficios.com,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] tracing: kprobes: Prohibit probing on notrace
- functions
-Message-ID: <20180725211356.725079e1@vmware.local.home>
-In-Reply-To: <20180726094106.1e8db6e2df788de20e696566@kernel.org>
-References: <1500044315-9508-3-git-send-email-francis.deslauriers@efficios.com>
-        <1531418053-21414-1-git-send-email-francis.deslauriers@efficios.com>
-        <1531418053-21414-2-git-send-email-francis.deslauriers@efficios.com>
-        <20180713115301.532ab1484e8b0befd90782d0@kernel.org>
-        <20180713081803.1b78ebbc@gandalf.local.home>
-        <20180726094106.1e8db6e2df788de20e696566@kernel.org>
-X-Mailer: Claws Mail 3.15.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1728528AbeGZC3E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Jul 2018 22:29:04 -0400
+Received: from localhost (localhost [127.0.0.1]) (Authenticated sender: icenowy@aosc.io)
+        by hermes.aosc.io (Postfix) with ESMTPSA id 0D83F9F929;
+        Thu, 26 Jul 2018 01:14:40 +0000 (UTC)
+Message-ID: <8520892860b672631ffc99f6318c2aeba251dc2e.camel@aosc.io>
+Subject: Re: [PATCH v2 1/3] dt-binding: mmc: sunxi: add H6 compatible (with
+ A64 fallback)
+From:   Icenowy Zheng <icenowy@aosc.io>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>
+Cc:     devicetree@vger.kernel.org, linux-mmc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com,
+        linux-arm-kernel@lists.infradead.org
+Date:   Thu, 26 Jul 2018 09:14:26 +0800
+In-Reply-To: <20180719042810.6546-2-icenowy@aosc.io>
+References: <20180719042810.6546-1-icenowy@aosc.io>
+         <20180719042810.6546-2-icenowy@aosc.io>
+Organization: Anthon Open-Source Community
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 26 Jul 2018 09:41:06 +0900
-Masami Hiramatsu <mhiramat@kernel.org> wrote:
-
-> On Fri, 13 Jul 2018 08:18:03 -0400
-> Steven Rostedt <rostedt@goodmis.org> wrote:
+在 2018-07-19四的 12:28 +0800，Icenowy Zheng写道：
+> The MMC controllers on H6 is similar to the ones on A64, but with
+> some
+> new features.
 > 
-> > On Fri, 13 Jul 2018 11:53:01 +0900
-> > Masami Hiramatsu <mhiramat@kernel.org> wrote:
-> >   
-> > > On Thu, 12 Jul 2018 13:54:12 -0400
-> > > Francis Deslauriers <francis.deslauriers@efficios.com> wrote:
-> > >   
-> > > > From: Masami Hiramatsu <mhiramat@kernel.org>
-> > > > 
-> > > > Prohibit kprobe-events probing on notrace function.
-> > > > Since probing on the notrace function can cause recursive
-> > > > event call. In most case those are just skipped, but
-> > > > in some case it falls into infinite recursive call.    
-> > > 
-> > > BTW, I'm considering to add an option to allow putting
-> > > kprobes on notrace function - just for debugging 
-> > > ftrace by kprobes. That is "developer only" option
-> > > so generally it should be disabled, but for debugging
-> > > the ftrace, we still need it. Or should I introduce
-> > > another kprobes module for debugging it?  
-> > 
-> > No, I think the former is better (to add an option to allow putting
-> > kprobes on notrace functions). By default we let people protect
-> > themselves. But if then provide a switch that lets you do things that
-> > might let you shoot yourself in the foot.  
+> Add compatible strings for them (with the A64 compatible strings as
+> fallback, in order to make them to work with A64 drivers).
 > 
-> I'm adding CONFIG_KPROBE_EVENTS_ON_NOTRACE kconfig which allows
-> kprobes on notrace function. I think we don't need to make it
-> online switchable, since it is only good for ftrace developers.
+> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+> ---
+> Changes in v2:
+> - Add A64 fallback.
 > 
+>  Documentation/devicetree/bindings/mmc/sunxi-mmc.txt | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/mmc/sunxi-mmc.txt
+> b/Documentation/devicetree/bindings/mmc/sunxi-mmc.txt
+> index 132e0007d7d6..e9cb3ec5e502 100644
+> --- a/Documentation/devicetree/bindings/mmc/sunxi-mmc.txt
+> +++ b/Documentation/devicetree/bindings/mmc/sunxi-mmc.txt
+> @@ -16,6 +16,8 @@ Required properties:
+>     * "allwinner,sun9i-a80-mmc"
+>     * "allwinner,sun50i-a64-emmc"
+>     * "allwinner,sun50i-a64-mmc"
+> +   * "allwinner,sun50i-h6-emmc", "allwinner.sun50i-a64-emmc"
+> +   * "allwinner,sun50i-h6-mmc", "allwinner.sun50i-a64-mmc"
 
-Works for me.
+BTW it seems that the driver performs quite bad on H6 when dealing it
+as an A64.
 
-Thanks!
+I get 1.5MB/s on a card, although the card can reach 20MB/s read speed
+(testing on BSP).
 
--- Steve
+>   - reg : mmc controller base registers
+>   - clocks : a list with 4 phandle + clock specifier pairs
+>   - clock-names : must contain "ahb", "mmc", "output" and "sample"
+
