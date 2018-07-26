@@ -3,272 +3,191 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B15EC6778F
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 01:18:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 292EFC6778F
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 01:19:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2160720846
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 01:18:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D3BDB20882
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 01:19:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=themaw.net header.i=@themaw.net header.b="bk6dGD0w";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="sbzrDRru"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2160720846
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=themaw.net
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="UosbZSuO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D3BDB20882
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728673AbeGZCdA (ORCPT
+        id S1728736AbeGZCdj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 22:33:00 -0400
-Received: from out1-smtp.messagingengine.com ([66.111.4.25]:56675 "EHLO
-        out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728411AbeGZCdA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Jul 2018 22:33:00 -0400
-Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
-        by mailout.nyi.internal (Postfix) with ESMTP id 0016021BBC;
-        Wed, 25 Jul 2018 21:18:39 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute1.internal (MEProxy); Wed, 25 Jul 2018 21:18:40 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=themaw.net; h=cc
-        :content-transfer-encoding:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-sender
-        :x-me-sender:x-sasl-enc; s=fm3; bh=ns9WZq2Pwf6QWlbkI8hRjKL8yUdeD
-        T17V6+CCte/utM=; b=bk6dGD0wj/q0r2EhTakN/m8lWx6w6OOF1zRVHvt0Nv31R
-        GRJOcfbN9qVMmUqLluG/jGTFdBT8rKBptSn0+CGrb/cuYw3kX2qN//f8P+NFFZpW
-        IG/OEr64tCr4u/gXgXykotjNB+kxz6EQ6UhWiEaXjLqck2yKWDEBwuFWELrK2fSO
-        GST4r0/QF4D8nFavdBgtIIlK3rUhF8eLHgowLuDJF/exEhnej7Ypzf3CeBEf7PR5
-        w3G5tCjApfjbXwzNoRZzFILv7qEKb/gG8zj8FryUPOOnTusy8yh9/VPzNaoiu3KB
-        3p9SYkh6T1Or+ZkVH5RMH99RucjJpYm1Jep+TnM7g==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:content-type
-        :date:from:in-reply-to:message-id:mime-version:references
-        :subject:to:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=ns9WZq
-        2Pwf6QWlbkI8hRjKL8yUdeDT17V6+CCte/utM=; b=sbzrDRruJp1dtP9V8pRv9M
-        ve9bdz8PNR1qzxUGGH073LQs7LSqV3IdLJi59t8auApboq/BaV5gpljhBx9LKWZ6
-        LOs6MSAcBg6eBj0u2yS9Kb+Y8DM5z4Avmq0PbYMrjiBN32DxkflTHSgkEfWSx31j
-        iiJ9eJ5cu+nErKqNME+9Gm8raN9SqalfYMqLIt7bSMz/w5G3/I/DWDodVhx3g4Nz
-        xxp9eiin0EPdoOjbAyglOln3bb5qhQ2aHG9bhK6HsOOK1k/MzsKdEMyek/i1qwNn
-        Z3S9B6f0D9khoJK1UfDKWEPvAyB2zVFimDSQyFhHmYAiTEaQcL7yl/jk2Q0ZECTQ
-        ==
-X-ME-Proxy: <xmx:byFZWx6C14nJkTIDWUWgDSH9ZKgMTk45LAE9svBsJbf-y_p-ASikZg>
-    <xmx:byFZW4iSMw0o2cJtxXx5RllUXAyhTLEChI4ExKd98Hbh4eO-emPPfg>
-    <xmx:byFZW1Jnv4kwGyA42z_CBN5QBOB4FikjFC7lLvraCni7QRv2KuSUxA>
-    <xmx:byFZW7ppGzxGNDJdEyWen--Mq7_rQcFVQePGpoqXzK7RQWXI3WF-3w>
-    <xmx:byFZW7ijJ35mAwU9nMyEDO7mPMMUd7XGGupCtuyN50CiGvcN0M_FAg>
-    <xmx:byFZW-4qZ5tN9A02VfHYkFF3D3DsnF9LkTqEs_CDfISQTa6f-tkM3w>
-X-ME-Sender: <xms:byFZW5AjKsk22Q8hKmHe2FIvDd4qYvVjodXP_VMSjYZNNbIZ1sHXlw>
-Received: from localhost (unknown [118.209.42.46])
-        by mail.messagingengine.com (Postfix) with ESMTPA id DEE4610261;
-        Wed, 25 Jul 2018 21:18:36 -0400 (EDT)
-Message-ID: <1532567914.2939.23.camel@themaw.net>
-Subject: Re: [RFC][PATCH 0/5] Mount, Filesystem and Keyrings notifications
-From:   Ian Kent <raven@themaw.net>
-To:     Casey Schaufler <casey@schaufler-ca.com>,
-        David Howells <dhowells@redhat.com>
-Cc:     viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Date:   Thu, 26 Jul 2018 09:18:34 +0800
-In-Reply-To: <55bb8ed3-59b4-ca6e-5741-a7d5e4489a7c@schaufler-ca.com>
-References: <675e5c24-36ef-4cc5-846c-1414c1195d85@schaufler-ca.com>
-         <153235954191.32640.5792167066538704794.stgit@warthog.procyon.org.uk>
-         <23894.1532448035@warthog.procyon.org.uk>
-         <04b05dbd-0aa4-7789-1314-52108246291a@schaufler-ca.com>
-         <1532497196.2688.65.camel@themaw.net>
-         <55bb8ed3-59b4-ca6e-5741-a7d5e4489a7c@schaufler-ca.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.6 (3.26.6-1.fc27) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Wed, 25 Jul 2018 22:33:39 -0400
+Received: from ozlabs.org ([203.11.71.1]:41653 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728411AbeGZCdj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Jul 2018 22:33:39 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 41bZ4h6vMXz9s0R;
+        Thu, 26 Jul 2018 11:19:16 +1000 (AEST)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1532567957;
+        bh=5HMG5738ZeX7NGsQqoLEV+FoUWOfqwPLTEvQ+sXLPw8=;
+        h=Date:From:To:Cc:Subject:From;
+        b=UosbZSuOe26XvKFQL6huhZc7YlMkKCve83zmaez3KMB3CK6Du3fujguDaarTsrn81
+         YMmSfpPMtMMrN1ONC+QuI7XdR0yDL0pT6GwnK7kkMVm/S/RRRm6T9EBR9sULvOG3UB
+         aP1cNGFz4qg3f6LrVIpK/jP2Y4dSGctrRSH4S6g9XH0fE+NU4ZlO0XCkbumae3JsUo
+         JNmhnNtHpKigQdxpI7fcXh+hoNWzXbI7KDQARWNTccBjGKd80wCyuYnjnnaFutYJum
+         sAbZCnKZ/FTGcBEyNUyGaETOoOyblKwgsfBnnPCPMDoFUhCB0n6LwaOSflTxtGkHfn
+         WlfabaLdtg5yg==
+Date:   Thu, 26 Jul 2018 11:19:16 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     David Miller <davem@davemloft.net>,
+        Networking <netdev@vger.kernel.org>
+Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Okash Khawaja <osk@fb.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Martin KaFai Lau <kafai@fb.com>
+Subject: linux-next: manual merge of the net-next tree with the bpf tree
+Message-ID: <20180726111916.47a47dbf@canb.auug.org.au>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/KrEKTqefwe2s5mJCS828dQR"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2018-07-25 at 08:48 -0700, Casey Schaufler wrote:
-> On 7/24/2018 10:39 PM, Ian Kent wrote:
-> > On Tue, 2018-07-24 at 11:57 -0700, Casey Schaufler wrote:
-> > > On 7/24/2018 9:00 AM, David Howells wrote:
-> > > > Casey Schaufler <casey@schaufler-ca.com> wrote:
-> > > > 
-> > > > > >  (1) Mount topology and reconfiguration change events.
-> > > > > 
-> > > > > With the possibility of unprivileged mounting you're going to have to
-> > > > > address access control on events.  If root in a user namespace mounts
-> > > > > a
-> > > > > filesystem you may have a case where the "real" user wouldn't want the
-> > > > > listener to receive a notification.
-> > > > 
-> > > > Can you clarify who the listener is in this case?
-> > > 
-> > > That would be anyone with a watchpoint set.
-> > 
-> > And that process would have had the privilege to do so ...
-> 
-> Which isn't the point. The access control isn't on the watchpoint,
-> it's on delivering the event to the watchpoint. The access control
-> needs to be based on the process that created the event and the
-> process receiving the event.
-> 
-> > 
-> > > > Note that mount topology events don't leak outside of the mount
-> > > > namespace
-> > > > they're generated in.
-> > > > 
-> > > > That said, if you, a random user, put a watchpoint on "/" you can see
-> > > > the
-> > > > mount events triggered by another random user in the same mount
-> > > > namespace.  I
-> > > > don't see a way to control this except by resorting to the LSM since
-> > > > UNIX
-> > > > doesn't have 'notify' permission bits.
-> > > 
-> > > I would call that a write operation from the process that triggered
-> > > the watchpoint to the one watching it. Like a signal. Signals have a
-> > > rudimentary DAC policy (write only to the same UID) that could be
-> > > your model.
-> > 
-> > I'm not sure signals are a good comparison.
-> 
-> In both cases you have one process sending information
-> to another. If you use killpg() instead of kill() you can
-> send to a number of processes without knowing them individually.
-> A process can chose what to do with (most) signals, including
-> ignore them.
+--Sig_/KrEKTqefwe2s5mJCS828dQR
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-I'm just saying that the analogy isn't quite the same.
+Hi all,
 
-In the this case notifications can't be just sent by a process,
-it's entirely controlled by the VFS so the notion of some process
-doing something out-off-band doesn't apply.
+Today's linux-next merge of the net-next tree got conflicts in:
 
-> 
-> > They can affect a process in significant ways whereas triggering
-> > a notification is less invasive so the security requirements
-> > should take that into consideration.
-> 
-> I'm looking at this from a security model viewpoint. If process
-> A sends information to process B that's a write operation with
-> A as the subject and B as the object. 
+  tools/lib/bpf/btf.c
+  tools/lib/bpf/btf.h
 
-Perhaps, but again there's no process A deciding to send something.
+between commits:
 
-It's the VFS saying to itself, I see this thing has changed, someone
-that had appropriate privilege asked me to tell it so ...
+  5b891af7fca1 ("bpf: Replace [u]int32_t and [u]int64_t in libbpf")
+  38d5d3b3d5db ("bpf: Introduce BPF_ANNOTATE_KV_PAIR")
 
-I may be wrong but there isn't a similar access control mechanism
-on the proc file system mount table (pseudo) files, only the usual
-access control on opening them and what is seen is based on the
-mount name space of the opening process.
+from the bpf tree and commit:
 
-This is also not quite as what we have here but it is similar.
+  92b57121ca79 ("bpf: btf: export btf types and name by offset from lib")
 
-> 
-> > But there is a problem here I think.
-> > 
-> > How about the case where a user name space is created or entered
-> > without a newly created mount name space and mounts and umounts
-> > are done, the user name space necessarily expects the table of
-> > mounts it sees to be up to date.
-> > 
-> > But, if the methods here are used by user space, say libmount
-> > was updated to use it, to gain the efficiency of not constantly
-> > re-reading the proc mount table then restrictions on notifications
-> > would mean the mount table seen in the user name space might not
-> > be updated and would no longer be correct.
-> 
-> Hey, I'm not the one saying that containers don't need/want kernel
-> manifestation. Of course you may have troubles with access consistency
-> if you go around changing the access control attributes with namespaces.
-> One of the problems with signals is that you can't chmod() your process
-> to allow signals from other specified users. If you don't design an
-> access control scheme into the watchpoint mechanism you aren't going to
-> be able to deal with situations like this.
+from the net-next tree.
 
-Don't get me wrong, I'm not criticizing your suggestion that
-some sort of security model is needed.
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
 
-I'm saying it's not straight forward to work out what's actually
-needed and, in thinking about it, I ended up described an additional
-potential problem that's not even (necessarily) security related.
+--=20
+Cheers,
+Stephen Rothwell
 
-> 
-> > The converse is more interesting, where the user name space does
-> > create or enter a new mount name space, then libmount would see ???,
-> > probably not the updated mount information ... unless it opens a
-> > new file handle to get mount update information ... a long running
-> > daemon that uses libmount and dispenses or uses mount information
-> > would very likely have a problem ...
-> > 
-> > The current proc file system method or providing the mount table
-> > forces a new file handle to be opened whenever getting the mount
-> > table so it always sees only the current mount name space mount
-> > table.
-> > 
-> > At the very least I need to think more about this ...
-> > 
-> > > > But for each event, I can associate an object label, derived from the
-> > > > source,
-> > > > and use f_cred on the notification queue to provide a subject label.
-> > > 
-> > > ... or UID or groups.
-> > > 
-> > > > > >  (2) Superblocks EIO, ENOSPC and EDQUOT events (not complete yet).
-> > > > > 
-> > > > > Here, too. If SELinux (for example) policy says you can't see
-> > > > > anything on a filesystem you shouldn't get notifications about
-> > > > > things that happen to that filesystem.
-> > > > 
-> > > > Yep.  Sounds like I need to refer that to the LSM as above.
-> > > > 
-> > > > It's a bit easier for specifically nominated sb sources since you might
-> > > > only
-> > > > need to do the check once at sb_notify() time.  If there's a general
-> > > > queue
-> > > > that all sbs contribute to, however, then things become more complicated
-> > > > as
-> > > > the checks have to be done at do-we-write-into-this-queue? time.
-> > > > 
-> > > > > >  (3) Key/keyring changes events
-> > > > > 
-> > > > > And again, I should only get notifications about keys and
-> > > > > keyrings I have access to.
-> > > > 
-> > > > Currently, you can only watch keys that grant you View permission, which
-> > > > might
-> > > > suffice.
-> > > 
-> > > That seems appropriate.
-> > > 
-> > > > > I expect that you intentionally left off
-> > > > > 
-> > > > >    (4) User injected events
-> > > > > 
-> > > > > at this point, but it's an obvious extension. That is going
-> > > > > to require access controls (remember kdbus) so I think you'd
-> > > > > do well to design them in now rather than have some security
-> > > > > module hack like me come along later and "fix" it. 
-> > > > 
-> > > > Yeah - the thought had occurred to me, but there needs to be some way to
-> > > > define a 'source' and a way to connect them.  Also, would you want a
-> > > > general
-> > > > source that anyone can contribute through, specific sources where you
-> > > > have
-> > > > to
-> > > > directly connect or namespace-restricted sources?
-> > > 
-> > > My guess is that the consensus would be "Yes" to all the above.
-> > > 
-> > > > David
-> > > > 
-> > 
-> > --
-> > To unsubscribe from this list: send the line "unsubscribe linux-security-
-> > module" in
-> > the body of a message to majordomo@vger.kernel.org
-> > More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> > 
-> 
-> 
+diff --cc tools/lib/bpf/btf.c
+index 2d270c560df3,03161be094b4..000000000000
+--- a/tools/lib/bpf/btf.c
++++ b/tools/lib/bpf/btf.c
+@@@ -269,9 -259,29 +266,29 @@@ __s64 btf__resolve_size(const struct bt
+  	return nelems * size;
+  }
+ =20
++ int btf__resolve_type(const struct btf *btf, __u32 type_id)
++ {
++ 	const struct btf_type *t;
++ 	int depth =3D 0;
++=20
++ 	t =3D btf__type_by_id(btf, type_id);
++ 	while (depth < MAX_RESOLVE_DEPTH &&
++ 	       !btf_type_is_void_or_null(t) &&
++ 	       IS_MODIFIER(BTF_INFO_KIND(t->info))) {
++ 		type_id =3D t->type;
++ 		t =3D btf__type_by_id(btf, type_id);
++ 		depth++;
++ 	}
++=20
++ 	if (depth =3D=3D MAX_RESOLVE_DEPTH || btf_type_is_void_or_null(t))
++ 		return -EINVAL;
++=20
++ 	return type_id;
++ }
++=20
+ -int32_t btf__find_by_name(const struct btf *btf, const char *type_name)
+ +__s32 btf__find_by_name(const struct btf *btf, const char *type_name)
+  {
+ -	uint32_t i;
+ +	__u32 i;
+ =20
+  	if (!strcmp(type_name, "void"))
+  		return 0;
+@@@ -368,3 -379,20 +385,11 @@@ int btf__fd(const struct btf *btf
+  {
+  	return btf->fd;
+  }
++=20
++ const char *btf__name_by_offset(const struct btf *btf, __u32 offset)
++ {
++ 	if (offset < btf->hdr->str_len)
++ 		return &btf->strings[offset];
++ 	else
++ 		return NULL;
++ }
+ -
+ -const struct btf_type *btf__type_by_id(const struct btf *btf,
+ -				       __u32 type_id)
+ -{
+ -	if (type_id > btf->nr_types)
+ -		return NULL;
+ -
+ -	return btf->types[type_id];
+ -}
+diff --cc tools/lib/bpf/btf.h
+index e2a09a155f84,24f361d99a5e..000000000000
+--- a/tools/lib/bpf/btf.h
++++ b/tools/lib/bpf/btf.h
+@@@ -15,10 -14,12 +15,12 @@@ typedef int (*btf_print_fn_t)(const cha
+  	__attribute__((format(printf, 1, 2)));
+ =20
+  void btf__free(struct btf *btf);
+ -struct btf *btf__new(uint8_t *data, uint32_t size, btf_print_fn_t err_log=
+);
+ -int32_t btf__find_by_name(const struct btf *btf, const char *type_name);
+ -int64_t btf__resolve_size(const struct btf *btf, uint32_t type_id);
+ +struct btf *btf__new(__u8 *data, __u32 size, btf_print_fn_t err_log);
+ +__s32 btf__find_by_name(const struct btf *btf, const char *type_name);
+- const struct btf_type *btf__type_by_id(const struct btf *btf, __u32 id);
+ +__s64 btf__resolve_size(const struct btf *btf, __u32 type_id);
++ int btf__resolve_type(const struct btf *btf, __u32 type_id);
+  int btf__fd(const struct btf *btf);
++ const char *btf__name_by_offset(const struct btf *btf, __u32 offset);
++ const struct btf_type *btf__type_by_id(const struct btf *btf, __u32 type_=
+id);
+ =20
+  #endif
+
+--Sig_/KrEKTqefwe2s5mJCS828dQR
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltZIZQACgkQAVBC80lX
+0Gx0agf/UmZXN8ro9LhVhmTDM8faWIx69l5Rhgsf2z2vELLgPnouZKt48qRhi8DY
+PW4iu2lj02sTqS36hVAdvUrBi8o93viDenHpWTIQZmhRpf3LOhOpG2iVn2+dAjT3
+/dnbXL8wv2bbUBlAmTgMvhzVRDus3pGiHBC1DmAhYJZEsxds52GvjTKBmz7OaogE
+nLj1BUGEfkVzVs1TzCX4luhDQ7BU/61KbPktTVAMMfWXsIBjMcuNIzZM7cO4tDvc
+CPOGyOzHLwtnZAxGUIdWmqkZF+YAnhUdySZcy50mvkk9cK36Cb8/mxBvjr7LvSYB
+6NfUKtDTloFK+0CTumLxb5BZWC6N2w==
+=yCKs
+-----END PGP SIGNATURE-----
+
+--Sig_/KrEKTqefwe2s5mJCS828dQR--
