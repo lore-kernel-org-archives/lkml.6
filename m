@@ -2,314 +2,227 @@ Return-Path: <SRS0=7Z+k=KK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=0.3 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4263AC28CF6
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 08:01:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 936B0C28CF6
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 08:05:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D4A612083F
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 08:01:19 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="FWuLPyOJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D4A612083F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 46A5B2083F
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 08:05:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 46A5B2083F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728974AbeGZJQ4 (ORCPT
+        id S1728946AbeGZJVK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 26 Jul 2018 05:16:56 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:35926 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728816AbeGZJQz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Jul 2018 05:16:55 -0400
-Received: by mail-pg1-f194.google.com with SMTP id s7-v6so650902pgv.3
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Jul 2018 01:01:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=7a2nSs85CjP2DqJyWgqcOzxKVYiJucIV5AWM2UPxnk0=;
-        b=FWuLPyOJmlLAfyAd4mRufs/NLjwcA83RqILcsDVrNQZxYjdL+rM0UVxaFJVzy6qISD
-         6CztKFEbV6gGL7qTkVl5ZzvHH8/Z69k/oFnoHX0iOSe20eOsfzDfuNpzg5OMTF29yesg
-         GkfDI70z5xsld1TNDd/tsRySzkzqY+weB2A2Q=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=7a2nSs85CjP2DqJyWgqcOzxKVYiJucIV5AWM2UPxnk0=;
-        b=X19abLl+lxt3r2o5ldPaXcF7GLJF2i67W/4cQSiBUyZkiuuf1+1q4O7dzo3kZix0NP
-         YtkY/C0BAC1vJk/laTu0V5+o85omccx1LxXKqr0KHwE2f5/9J/F8cma9nW0cKMjmyYKR
-         slw/3fswkTBlmMnoEExdmoHLYJ5NNkiEo2dp+MR0Fg3JdIsHql8023tWsGOE+tf7Dkkf
-         /4o0Hel2XDwJdO2pvUoP+5cYLA80VvVcHKGfgBgkC+kswIqots9sfrLY4RoveJ2bVoXc
-         L3h0OTla/Sq/z8cIniPZo4RORLZEn1k/tzhTNMFa4RNDmPyRUvXplZkM65RO8ncPiHsS
-         9mJw==
-X-Gm-Message-State: AOUpUlFoNshizdNxsieiT21gBqerqgYeNk0PYqHUx8Sbto+w87oPIUqg
-        dTBHX460x33Xbq8MhQH5+Zo/EQ==
-X-Google-Smtp-Source: AAOMgpcOAA37UWSOzarj/MP2J6rcxCxDCtmps6kV+45oApAfVlGryytyzDl+eInrOkMw050R+/C1Dg==
-X-Received: by 2002:a63:e145:: with SMTP id h5-v6mr934570pgk.286.1532592077055;
-        Thu, 26 Jul 2018 01:01:17 -0700 (PDT)
-Received: from baolinwangubtpc.spreadtrum.com ([117.18.48.102])
-        by smtp.gmail.com with ESMTPSA id f3-v6sm849627pgq.49.2018.07.26.01.01.14
-        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Thu, 26 Jul 2018 01:01:16 -0700 (PDT)
-From:   Baolin Wang <baolin.wang@linaro.org>
-To:     dan.j.williams@intel.com, vkoul@kernel.org
-Cc:     eric.long@spreadtrum.com, broonie@kernel.org,
-        baolin.wang@linaro.org, dmaengine@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] dmaengine: sprd: Support DMA link-list mode
-Date:   Thu, 26 Jul 2018 16:00:21 +0800
-Message-Id: <78730daa2eaa66fa8089f196a52b51ce62579d1f.1532591566.git.baolin.wang@linaro.org>
-X-Mailer: git-send-email 1.7.9.5
+        Thu, 26 Jul 2018 05:21:10 -0400
+Received: from mx2.suse.de ([195.135.220.15]:52374 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728675AbeGZJVK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Jul 2018 05:21:10 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 2DE1AAB99;
+        Thu, 26 Jul 2018 08:05:29 +0000 (UTC)
+Date:   Thu, 26 Jul 2018 10:05:00 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     osalvador@techadventures.net
+Cc:     akpm@linux-foundation.org, vbabka@suse.cz,
+        pasha.tatashin@oracle.com, mgorman@techsingularity.net,
+        aaron.lu@intel.com, iamjoonsoo.kim@lge.com, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, dan.j.williams@intel.com,
+        Oscar Salvador <osalvador@suse.de>
+Subject: Re: [PATCH v3 2/5] mm: access zone->node via zone_to_nid() and
+ zone_set_nid()
+Message-ID: <20180726080500.GX28386@dhcp22.suse.cz>
+References: <20180725220144.11531-1-osalvador@techadventures.net>
+ <20180725220144.11531-3-osalvador@techadventures.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180725220144.11531-3-osalvador@techadventures.net>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eric Long <eric.long@spreadtrum.com>
+On Thu 26-07-18 00:01:41, osalvador@techadventures.net wrote:
+> From: Pavel Tatashin <pasha.tatashin@oracle.com>
+> 
+> zone->node is configured only when CONFIG_NUMA=y, so it is a good idea to
+> have inline functions to access this field in order to avoid ifdef's in
+> c files.
+> 
+> Signed-off-by: Pavel Tatashin <pasha.tatashin@oracle.com>
+> Signed-off-by: Oscar Salvador <osalvador@suse.de>
+> Reviewed-by: Oscar Salvador <osalvador@suse.de>
 
-The Spreadtrum DMA can support the link-list transaction mode, which means
-DMA controller can do transaction one by one automatically once we linked
-these transaction by link-list register.
+My previous [1] question is not addressed in the changelog but I will
+not insist. If there is any reason to resubmit this then please
+consider.
 
-Signed-off-by: Eric Long <eric.long@spreadtrum.com>
-Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
----
- drivers/dma/sprd-dma.c       |   82 ++++++++++++++++++++++++++++++++++++++----
- include/linux/dma/sprd-dma.h |   69 +++++++++++++++++++++++++++++++++++
- 2 files changed, 144 insertions(+), 7 deletions(-)
+Acked-by: Michal Hocko <mhocko@suse.com>
 
-diff --git a/drivers/dma/sprd-dma.c b/drivers/dma/sprd-dma.c
-index 55df0d4..649bd2c 100644
---- a/drivers/dma/sprd-dma.c
-+++ b/drivers/dma/sprd-dma.c
-@@ -68,6 +68,7 @@
- 
- /* SPRD_DMA_CHN_CFG register definition */
- #define SPRD_DMA_CHN_EN			BIT(0)
-+#define SPRD_DMA_LINKLIST_EN		BIT(4)
- #define SPRD_DMA_WAIT_BDONE_OFFSET	24
- #define SPRD_DMA_DONOT_WAIT_BDONE	1
- 
-@@ -103,7 +104,7 @@
- #define SPRD_DMA_REQ_MODE_MASK		GENMASK(1, 0)
- #define SPRD_DMA_FIX_SEL_OFFSET		21
- #define SPRD_DMA_FIX_EN_OFFSET		20
--#define SPRD_DMA_LLIST_END_OFFSET	19
-+#define SPRD_DMA_LLIST_END		BIT(19)
- #define SPRD_DMA_FRG_LEN_MASK		GENMASK(16, 0)
- 
- /* SPRD_DMA_CHN_BLK_LEN register definition */
-@@ -164,6 +165,7 @@ struct sprd_dma_desc {
- struct sprd_dma_chn {
- 	struct virt_dma_chan	vc;
- 	void __iomem		*chn_base;
-+	struct sprd_dma_linklist	linklist;
- 	struct dma_slave_config	slave_cfg;
- 	u32			chn_num;
- 	u32			dev_id;
-@@ -582,7 +584,8 @@ static int sprd_dma_get_step(enum dma_slave_buswidth buswidth)
- }
- 
- static int sprd_dma_fill_desc(struct dma_chan *chan,
--			      struct sprd_dma_desc *sdesc,
-+			      struct sprd_dma_chn_hw *hw,
-+			      unsigned int sglen, int sg_index,
- 			      dma_addr_t src, dma_addr_t dst, u32 len,
- 			      enum dma_transfer_direction dir,
- 			      unsigned long flags,
-@@ -590,7 +593,6 @@ static int sprd_dma_fill_desc(struct dma_chan *chan,
- {
- 	struct sprd_dma_dev *sdev = to_sprd_dma_dev(chan);
- 	struct sprd_dma_chn *schan = to_sprd_dma_chan(chan);
--	struct sprd_dma_chn_hw *hw = &sdesc->chn_hw;
- 	u32 req_mode = (flags >> SPRD_DMA_REQ_SHIFT) & SPRD_DMA_REQ_MODE_MASK;
- 	u32 int_mode = flags & SPRD_DMA_INT_MASK;
- 	int src_datawidth, dst_datawidth, src_step, dst_step;
-@@ -670,12 +672,58 @@ static int sprd_dma_fill_desc(struct dma_chan *chan,
- 	temp |= (src_step & SPRD_DMA_TRSF_STEP_MASK) << SPRD_DMA_SRC_TRSF_STEP_OFFSET;
- 	hw->trsf_step = temp;
- 
-+	/* link-list configuration */
-+	if (schan->linklist.phy_addr) {
-+		if (sg_index == sglen - 1)
-+			hw->frg_len |= SPRD_DMA_LLIST_END;
-+
-+		hw->cfg |= SPRD_DMA_LINKLIST_EN;
-+		hw->llist_ptr = schan->linklist.phy_addr +
-+			((sg_index + 1) % sglen) * sizeof(*hw) +
-+			SPRD_DMA_CHN_SRC_ADDR;
-+	} else {
-+		hw->llist_ptr = 0;
-+	}
-+
- 	hw->frg_step = 0;
- 	hw->src_blk_step = 0;
- 	hw->des_blk_step = 0;
- 	return 0;
- }
- 
-+static int sprd_dma_fill_linklist_desc(struct dma_chan *chan,
-+				       unsigned int sglen, int sg_index,
-+				       dma_addr_t src, dma_addr_t dst, u32 len,
-+				       enum dma_transfer_direction dir,
-+				       unsigned long flags,
-+				       struct dma_slave_config *slave_cfg)
-+{
-+	struct sprd_dma_chn *schan = to_sprd_dma_chan(chan);
-+	struct sprd_dma_chn_hw *hw;
-+
-+	if (sglen < 2 || !schan->linklist.virt_addr)
-+		return -EINVAL;
-+
-+	hw = (struct sprd_dma_chn_hw *)(schan->linklist.virt_addr +
-+					sg_index * sizeof(*hw));
-+
-+	return sprd_dma_fill_desc(chan, hw, sglen, sg_index, src, dst, len, dir,
-+				  flags, slave_cfg);
-+}
-+
-+static int sprd_dma_fill_chn_desc(struct dma_chan *chan,
-+				  struct sprd_dma_desc *sdesc,
-+				  dma_addr_t src, dma_addr_t dst, u32 len,
-+				  enum dma_transfer_direction dir,
-+				  unsigned long flags,
-+				  struct dma_slave_config *slave_cfg)
-+{
-+	struct sprd_dma_chn_hw *hw = &sdesc->chn_hw;
-+
-+	return sprd_dma_fill_desc(chan, hw, 0, 0, src, dst, len, dir,
-+				  flags, slave_cfg);
-+}
-+
- static struct dma_async_tx_descriptor *
- sprd_dma_prep_dma_memcpy(struct dma_chan *chan, dma_addr_t dest, dma_addr_t src,
- 			 size_t len, unsigned long flags)
-@@ -744,10 +792,20 @@ static int sprd_dma_fill_desc(struct dma_chan *chan,
- 	u32 len = 0;
- 	int ret, i;
- 
--	/* TODO: now we only support one sg for each DMA configuration. */
--	if (!is_slave_direction(dir) || sglen > 1)
-+	if (!is_slave_direction(dir))
- 		return NULL;
- 
-+	if (context) {
-+		struct sprd_dma_linklist *ll_cfg =
-+			(struct sprd_dma_linklist *)context;
-+
-+		schan->linklist.phy_addr = ll_cfg->phy_addr;
-+		schan->linklist.virt_addr = ll_cfg->virt_addr;
-+	} else {
-+		schan->linklist.phy_addr = 0;
-+		schan->linklist.virt_addr = 0;
-+	}
-+
- 	sdesc = kzalloc(sizeof(*sdesc), GFP_NOWAIT);
- 	if (!sdesc)
- 		return NULL;
-@@ -762,10 +820,20 @@ static int sprd_dma_fill_desc(struct dma_chan *chan,
- 			src = slave_cfg->src_addr;
- 			dst = sg_dma_address(sg);
- 		}
-+
-+		if (sglen < 2)
-+			break;
-+
-+		ret = sprd_dma_fill_linklist_desc(chan, sglen, i, src, dst, len,
-+						  dir, flags, slave_cfg);
-+		if (ret) {
-+			kfree(sdesc);
-+			return NULL;
-+		}
- 	}
- 
--	ret = sprd_dma_fill_desc(chan, sdesc, src, dst, len, dir, flags,
--				 slave_cfg);
-+	ret = sprd_dma_fill_chn_desc(chan, sdesc, src, dst, len, dir, flags,
-+				     slave_cfg);
- 	if (ret) {
- 		kfree(sdesc);
- 		return NULL;
-diff --git a/include/linux/dma/sprd-dma.h b/include/linux/dma/sprd-dma.h
-index b0115e3..c51c705 100644
---- a/include/linux/dma/sprd-dma.h
-+++ b/include/linux/dma/sprd-dma.h
-@@ -58,4 +58,73 @@ enum sprd_dma_int_type {
- 	SPRD_DMA_CFGERR_INT,
- };
- 
-+/*
-+ * struct sprd_dma_linklist - DMA link-list address structure
-+ * @virt_addr: link-list virtual address to configure link-list node
-+ * @phy_addr: link-list physical address to link DMA transfer
-+ *
-+ * The Spreadtrum DMA controller supports the link-list mode, that means slaves
-+ * can supply several groups configurations (each configuration represents one
-+ * DMA transfer) saved in memory, and DMA controller will link these groups
-+ * configurations by writing the physical address of each configuration into the
-+ * link-list register.
-+ *
-+ * Just as shown below, the link-list pointer register will be pointed to the
-+ * phycial address of 'configuration 1', and the 'configuration 1' link-list
-+ * pointer will be pointed to 'configuration 2', and so on.
-+ * Once trigger the DMA transfer, the DMA controller will load 'configureation
-+ * 1' to its registers automatically, after 'configuration 1' transation is
-+ * done, DMA controller will load 'configuration 2' automatically, until all
-+ * DMA transactions are done.
-+ *
-+ * Note: The last link-list pointer should point to the physical address
-+ * of 'configuration 1', which can avoid DMA controller loads incorrect
-+ * configuration when the last configuration transaction is done.
-+ *
-+ *     DMA controller                    linklist memory
-+ * ======================             -----------------------
-+ *|                      |           |    configuration 1    |<---
-+ *|   DMA controller     |   ------->|                       |   |
-+ *|                      |   |       |                       |   |
-+ *|                      |   |       |                       |   |
-+ *|                      |   |       |                       |   |
-+ *| linklist pointer reg |----   ----|    linklist pointer   |   |
-+ * ======================        |    -----------------------    |
-+ *                               |                               |
-+ *                               |    -----------------------    |
-+ *                               |   |    configuration 2    |   |
-+ *                               --->|                       |   |
-+ *                                   |                       |   |
-+ *                                   |                       |   |
-+ *                                   |                       |   |
-+ *                               ----|    linklist pointer   |   |
-+ *                               |    -----------------------    |
-+ *                               |                               |
-+ *                               |    -----------------------    |
-+ *                               |   |    configuration 3    |   |
-+ *                               --->|                       |   |
-+ *                                   |                       |   |
-+ *                                   |           .           |   |
-+ *                                               .               |
-+ *                                               .               |
-+ *                                               .               |
-+ *                               |               .               |
-+ *                               |    -----------------------    |
-+ *                               |   |    configuration n    |   |
-+ *                               --->|                       |   |
-+ *                                   |                       |   |
-+ *                                   |                       |   |
-+ *                                   |                       |   |
-+ *                                   |    linklist pointer   |----
-+ *                                    -----------------------
-+ *
-+ * To support the link-list mode, DMA slaves should allocate one segment memory
-+ * from always-on IRAM or dma coherent memory to store these groups of DMA
-+ * configuration, and pass the virtual and physical addess to DMA controller.
-+ */
-+struct sprd_dma_linklist {
-+	unsigned long virt_addr;
-+	phys_addr_t phy_addr;
-+};
-+
- #endif
+[1] http://lkml.kernel.org/r/20180719134018.GB7193@dhcp22.suse.cz
+
+> ---
+>  include/linux/mm.h     |  9 ---------
+>  include/linux/mmzone.h | 26 ++++++++++++++++++++------
+>  mm/mempolicy.c         |  4 ++--
+>  mm/mm_init.c           |  9 ++-------
+>  mm/page_alloc.c        | 10 ++++------
+>  5 files changed, 28 insertions(+), 30 deletions(-)
+> 
+> diff --git a/include/linux/mm.h b/include/linux/mm.h
+> index 726e71475144..6954ad183159 100644
+> --- a/include/linux/mm.h
+> +++ b/include/linux/mm.h
+> @@ -940,15 +940,6 @@ static inline int page_zone_id(struct page *page)
+>  	return (page->flags >> ZONEID_PGSHIFT) & ZONEID_MASK;
+>  }
+>  
+> -static inline int zone_to_nid(struct zone *zone)
+> -{
+> -#ifdef CONFIG_NUMA
+> -	return zone->node;
+> -#else
+> -	return 0;
+> -#endif
+> -}
+> -
+>  #ifdef NODE_NOT_IN_PAGE_FLAGS
+>  extern int page_to_nid(const struct page *page);
+>  #else
+> diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
+> index ae1a034c3e2c..17fdff3bfb41 100644
+> --- a/include/linux/mmzone.h
+> +++ b/include/linux/mmzone.h
+> @@ -842,6 +842,25 @@ static inline bool populated_zone(struct zone *zone)
+>  	return zone->present_pages;
+>  }
+>  
+> +#ifdef CONFIG_NUMA
+> +static inline int zone_to_nid(struct zone *zone)
+> +{
+> +	return zone->node;
+> +}
+> +
+> +static inline void zone_set_nid(struct zone *zone, int nid)
+> +{
+> +	zone->node = nid;
+> +}
+> +#else
+> +static inline int zone_to_nid(struct zone *zone)
+> +{
+> +	return 0;
+> +}
+> +
+> +static inline void zone_set_nid(struct zone *zone, int nid) {}
+> +#endif
+> +
+>  extern int movable_zone;
+>  
+>  #ifdef CONFIG_HIGHMEM
+> @@ -957,12 +976,7 @@ static inline int zonelist_zone_idx(struct zoneref *zoneref)
+>  
+>  static inline int zonelist_node_idx(struct zoneref *zoneref)
+>  {
+> -#ifdef CONFIG_NUMA
+> -	/* zone_to_nid not available in this context */
+> -	return zoneref->zone->node;
+> -#else
+> -	return 0;
+> -#endif /* CONFIG_NUMA */
+> +	return zone_to_nid(zoneref->zone);
+>  }
+>  
+>  struct zoneref *__next_zones_zonelist(struct zoneref *z,
+> diff --git a/mm/mempolicy.c b/mm/mempolicy.c
+> index f0fcf70bcec7..8c1c09b3852a 100644
+> --- a/mm/mempolicy.c
+> +++ b/mm/mempolicy.c
+> @@ -1784,7 +1784,7 @@ unsigned int mempolicy_slab_node(void)
+>  		zonelist = &NODE_DATA(node)->node_zonelists[ZONELIST_FALLBACK];
+>  		z = first_zones_zonelist(zonelist, highest_zoneidx,
+>  							&policy->v.nodes);
+> -		return z->zone ? z->zone->node : node;
+> +		return z->zone ? zone_to_nid(z->zone) : node;
+>  	}
+>  
+>  	default:
+> @@ -2326,7 +2326,7 @@ int mpol_misplaced(struct page *page, struct vm_area_struct *vma, unsigned long
+>  				node_zonelist(numa_node_id(), GFP_HIGHUSER),
+>  				gfp_zone(GFP_HIGHUSER),
+>  				&pol->v.nodes);
+> -		polnid = z->zone->node;
+> +		polnid = zone_to_nid(z->zone);
+>  		break;
+>  
+>  	default:
+> diff --git a/mm/mm_init.c b/mm/mm_init.c
+> index 5b72266b4b03..6838a530789b 100644
+> --- a/mm/mm_init.c
+> +++ b/mm/mm_init.c
+> @@ -53,13 +53,8 @@ void __init mminit_verify_zonelist(void)
+>  				zone->name);
+>  
+>  			/* Iterate the zonelist */
+> -			for_each_zone_zonelist(zone, z, zonelist, zoneid) {
+> -#ifdef CONFIG_NUMA
+> -				pr_cont("%d:%s ", zone->node, zone->name);
+> -#else
+> -				pr_cont("0:%s ", zone->name);
+> -#endif /* CONFIG_NUMA */
+> -			}
+> +			for_each_zone_zonelist(zone, z, zonelist, zoneid)
+> +				pr_cont("%d:%s ", zone_to_nid(zone), zone->name);
+>  			pr_cont("\n");
+>  		}
+>  	}
+> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+> index 8a73305f7c55..10b754fba5fa 100644
+> --- a/mm/page_alloc.c
+> +++ b/mm/page_alloc.c
+> @@ -2909,10 +2909,10 @@ static inline void zone_statistics(struct zone *preferred_zone, struct zone *z)
+>  	if (!static_branch_likely(&vm_numa_stat_key))
+>  		return;
+>  
+> -	if (z->node != numa_node_id())
+> +	if (zone_to_nid(z) != numa_node_id())
+>  		local_stat = NUMA_OTHER;
+>  
+> -	if (z->node == preferred_zone->node)
+> +	if (zone_to_nid(z) == zone_to_nid(preferred_zone))
+>  		__inc_numa_state(z, NUMA_HIT);
+>  	else {
+>  		__inc_numa_state(z, NUMA_MISS);
+> @@ -5287,7 +5287,7 @@ int local_memory_node(int node)
+>  	z = first_zones_zonelist(node_zonelist(node, GFP_KERNEL),
+>  				   gfp_zone(GFP_KERNEL),
+>  				   NULL);
+> -	return z->zone->node;
+> +	return zone_to_nid(z->zone);
+>  }
+>  #endif
+>  
+> @@ -6311,9 +6311,7 @@ static void __paginginit free_area_init_core(struct pglist_data *pgdat)
+>  		 * And all highmem pages will be managed by the buddy system.
+>  		 */
+>  		zone->managed_pages = freesize;
+> -#ifdef CONFIG_NUMA
+> -		zone->node = nid;
+> -#endif
+> +		zone_set_nid(zone, nid);
+>  		zone->name = zone_names[j];
+>  		zone->zone_pgdat = pgdat;
+>  		spin_lock_init(&zone->lock);
+> -- 
+> 2.13.6
+> 
+
 -- 
-1.7.9.5
-
+Michal Hocko
+SUSE Labs
