@@ -2,161 +2,84 @@ Return-Path: <SRS0=7Z+k=KK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AAB36C28CF6
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 10:08:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23D8DC28CF6
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 10:11:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6346A20883
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 10:08:49 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BbZ8d2tZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6346A20883
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id CCA7620883
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 10:11:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CCA7620883
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729340AbeGZLYy (ORCPT
+        id S1729265AbeGZL2C (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 26 Jul 2018 07:24:54 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:45895 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728956AbeGZLYy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Jul 2018 07:24:54 -0400
-Received: by mail-pg1-f194.google.com with SMTP id f1-v6so851385pgq.12;
-        Thu, 26 Jul 2018 03:08:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=8YzYc/dt8BQ4jn+yNOHuOe5Y0bAOMSieMbzLtSJYvrk=;
-        b=BbZ8d2tZgmYv5ey2qUokuQoTxss4m+lOz8iXcM5NZrrUeCqp0g3nceWFd4iuHqeBZD
-         BdguLFQtF9cWfNms2qchfgPtu3M6S4K2dTheXjVKa6A+jop8xk6PAxeb489jEZjPLueD
-         vnzuYwu/HqvfY75uaACWVbTGT4OqLIMGdcYVg6aT8dW9JK2x4iQKBnhi0rfX0TX2mblr
-         QrFxdtNCaxADSgD9W3t+Br75pMY3wmf7XbWhaRkQShlFN7PHFtRMsqh6XWxRogiKVJjE
-         jXpaLV0JZJ2DPNNDj00bk9tIILTV0fqwe9Rsp6SJd63kphEvA3SWY4WRNJJCsxKwBZzf
-         Ka1w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=8YzYc/dt8BQ4jn+yNOHuOe5Y0bAOMSieMbzLtSJYvrk=;
-        b=HXN+n/9Xe+b40veA3Y90T1e116LiVq6fhaM49Zz+71pXIuwpsgwgbT9i9CE1wGnYKt
-         asKVCAs0rZD+oK2/PQM0aVRBMoiY1wS1nH41aEaqbjy1uMrp+VvPH8qbb5SOnx0bOBLs
-         QVqm1vjdPTotfYPL7Y/Ntwk6MyWdWZbVprhH3YdDjG5s50xwh3PWMgQjKjirAlTGDEZM
-         9JoJNIm72Df6JCqnYpZjA3+CU5qUZr39T6fbYZxK/m9OEhJj9+26apwPadDDFXD/ptqf
-         wZkkcsNLIrZ2/2d1gbSF+xnmbI00it17VHfnjbetTYdC9WcAfIHkNfZgPjJLJeM7m20V
-         +eqA==
-X-Gm-Message-State: AOUpUlHTsYxsnirwvu7j6+lVvMhu5gbGx8WeKsv6pW8QX4UqWEBcgmih
-        XLDtCDcgbjSolUIiql60RTk=
-X-Google-Smtp-Source: AAOMgpdixr8KynJZC4cAYp0YU1EaQvyVbD1yYgP8QdK6iAipikv7c8lX4ltHP720cmPBzJSUWjcojA==
-X-Received: by 2002:a63:91c8:: with SMTP id l191-v6mr1308683pge.180.1532599725885;
-        Thu, 26 Jul 2018 03:08:45 -0700 (PDT)
-Received: from [192.168.0.77] ([211.196.191.92])
-        by smtp.gmail.com with ESMTPSA id a15-v6sm1891463pfe.32.2018.07.26.03.08.42
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 26 Jul 2018 03:08:44 -0700 (PDT)
-Subject: Re: [PATCH] samples/bpf: Add BTF build flags to Makefile
-To:     Jakub Kicinski <jakub.kicinski@netronome.com>
-Cc:     Daniel Borkmann <daniel@iogearbox.net>,
-        Alexei Starovoitov <ast@kernel.org>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Martin KaFai Lau <kafai@fb.com>
-References: <20180725163039.2838-1-treeze.taeung@gmail.com>
- <20180725181603.69289f5d@cakuba.netronome.com>
-From:   Taeung Song <treeze.taeung@gmail.com>
-Message-ID: <67fd8ddc-088e-469a-d093-b92f637cab11@gmail.com>
-Date:   Thu, 26 Jul 2018 19:08:41 +0900
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Thu, 26 Jul 2018 07:28:02 -0400
+Received: from mga18.intel.com ([134.134.136.126]:19962 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729053AbeGZL2C (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Jul 2018 07:28:02 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Jul 2018 03:11:53 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,404,1526367600"; 
+   d="scan'208";a="67674979"
+Received: from unknown (HELO [10.239.13.97]) ([10.239.13.97])
+  by FMSMGA003.fm.intel.com with ESMTP; 26 Jul 2018 03:11:41 -0700
+Message-ID: <5B599F5F.2070705@intel.com>
+Date:   Thu, 26 Jul 2018 18:15:59 +0800
+From:   Wei Wang <wei.w.wang@intel.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:31.0) Gecko/20100101 Thunderbird/31.7.0
 MIME-Version: 1.0
-In-Reply-To: <20180725181603.69289f5d@cakuba.netronome.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+To:     Yury Norov <ynorov@caviumnetworks.com>
+CC:     linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
+        corbet@lwn.net, linux@rasmusvillemoes.dk, dgilbert@redhat.com,
+        Andy Shevchenko <andy.shevchenko@gmail.com>
+Subject: Re: [PATCH] linux/bitmap.h: fix BITMAP_LAST_WORD_MASK
+References: <1532592471-21177-1-git-send-email-wei.w.wang@intel.com> <20180726093728.GA9069@yury-thinkpad>
+In-Reply-To: <20180726093728.GA9069@yury-thinkpad>
+Content-Type: text/plain; charset=windows-1252; format=flowed
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 07/26/2018 05:37 PM, Yury Norov wrote:
+> On Thu, Jul 26, 2018 at 04:07:51PM +0800, Wei Wang wrote:
+>> The existing BITMAP_LAST_WORD_MASK macro returns 0xffffffff if nbits is
+>> 0. This patch changes the macro to return 0 when there is no bit needs to
+>> be masked.
+> I think this is intentional behavour. Previous version did return ~0UL
+> explicitly in this case. See patch 89c1e79eb3023 (linux/bitmap.h: improve
+> BITMAP_{LAST,FIRST}_WORD_MASK) from Rasmus.
+
+Yes, I saw that. But it seems confusing for the corner case that nbits=0 
+(no bits to mask), the macro returns with all the bits set.
 
 
-On 07/26/2018 10:16 AM, Jakub Kicinski wrote:
-> On Thu, 26 Jul 2018 01:30:39 +0900, Taeung Song wrote:
->> To smoothly test BTF supported binary on samples/bpf,
->> let samples/bpf/Makefile probe llc, pahole and
->> llvm-objcopy for BPF support and use them
->> like tools/testing/selftests/bpf/Makefile
->> changed from the commit c0fa1b6c3efc ("bpf: btf:
->>   Add BTF tests")
->>
->> Cc: Martin KaFai Lau <kafai@fb.com>
->> Signed-off-by: Taeung Song <treeze.taeung@gmail.com>
->> ---
->>   samples/bpf/Makefile | 21 ++++++++++++++++++++-
->>   1 file changed, 20 insertions(+), 1 deletion(-)
->>
->> diff --git a/samples/bpf/Makefile b/samples/bpf/Makefile
->> index 1303af10e54d..e079266360a3 100644
->> --- a/samples/bpf/Makefile
->> +++ b/samples/bpf/Makefile
->> @@ -191,6 +191,8 @@ HOSTLOADLIBES_xdpsock		+= -pthread
->>   #  make samples/bpf/ LLC=~/git/llvm/build/bin/llc CLANG=~/git/llvm/build/bin/clang
->>   LLC ?= llc
->>   CLANG ?= clang
->> +LLVM_OBJCOPY ?= llvm-objcopy
->> +BTF_PAHOLE ?= pahole
->>   
->>   # Detect that we're cross compiling and use the cross compiler
->>   ifdef CROSS_COMPILE
->> @@ -198,6 +200,20 @@ HOSTCC = $(CROSS_COMPILE)gcc
->>   CLANG_ARCH_ARGS = -target $(ARCH)
->>   endif
->>   
->> +BTF_LLC_PROBE := $(shell $(LLC) -march=bpf -mattr=help 2>&1 | grep dwarfris)
->> +BTF_PAHOLE_PROBE := $(shell $(BTF_PAHOLE) --help 2>&1 | grep BTF)
->> +BTF_OBJCOPY_PROBE := $(shell $(LLVM_OBJCOPY) --help 2>&1 | grep -i 'usage.*llvm')
->> +
->> +ifneq ($(BTF_LLC_PROBE),)
->> +ifneq ($(BTF_PAHOLE_PROBE),)
->> +ifneq ($(BTF_OBJCOPY_PROBE),)
-> 
-> Nice patch!  FWIW you could consider using $(and ...) here:
-> 
-> ifneq ($(and $(BTF_LLC_PROBE),$(BTF_PAHOLE_PROBE),$(BTF_OBJCOPY_PROBE)),)
-> 
-> https://www.gnu.org/software/make/manual/html_node/Conditional-Functions.html#Conditional-Functions
-> 
-> Not sure it's worth a respin..
-> 
+>
+> Introducing conditional branch would affect performance. All existing
+> code checks nbits for 0 before handling last word where needed
+> explicitly. So I think we'd better change nothing here.
 
-Hi Jakub,
+I think that didn't save the conditional branch essentially, because 
+it's just moved from inside this macro to the caller as you mentioned. 
+If callers missed the check for some reason and passed 0 to the macro, 
+they will get something unexpected.
 
-Thanks for reviewing this.
-I also think the conditional functions looks more tidy, will change it!
+Current callers like __bitmap_weight, __bitmap_equal, and others, they have
 
-Thanks,
-Taeung
+if (bits % BITS_PER_LONG)
+     w += hweight_long(bitmap[k] & BITMAP_LAST_WORD_MASK(bits));
 
->> +	EXTRA_CFLAGS += -g
->> +	LLC_FLAGS += -mattr=dwarfris
->> +	DWARF2BTF = y
->> +endif
->> +endif
->> +endif
->> +
->>   # Trick to allow make to be run from this directory
->>   all:
->>   	$(MAKE) -C ../../ $(CURDIR)/ BPF_SAMPLES_PATH=$(CURDIR)
->> @@ -256,4 +272,7 @@ $(obj)/%.o: $(src)/%.c
->>   		-Wno-gnu-variable-sized-type-not-at-end \
->>   		-Wno-address-of-packed-member -Wno-tautological-compare \
->>   		-Wno-unknown-warning-option $(CLANG_ARCH_ARGS) \
->> -		-O2 -emit-llvm -c $< -o -| $(LLC) -march=bpf -filetype=obj -o $@
->> +		-O2 -emit-llvm -c $< -o -| $(LLC) -march=bpf $(LLC_FLAGS) -filetype=obj -o $@
->> +ifeq ($(DWARF2BTF),y)
->> +	$(BTF_PAHOLE) -J $@
->> +endif
+we could remove the "if" check by "w += hweight_long(bitmap[k] & 
+BITMAP_LAST_WORD_MASK(bits % BITS_PER_LONG));" the branch is the same.
+
+
+Best,
+Wei
