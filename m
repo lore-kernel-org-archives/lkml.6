@@ -2,130 +2,135 @@ Return-Path: <SRS0=7Z+k=KK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70ED3C28CF6
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 15:27:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BEC5C28CF6
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 15:30:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2B68B20846
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 15:27:16 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="vH1MNyE5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2B68B20846
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id AF67820857
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 15:30:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AF67820857
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731764AbeGZQof (ORCPT
+        id S1731709AbeGZQrg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 26 Jul 2018 12:44:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36396 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730781AbeGZQof (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Jul 2018 12:44:35 -0400
-Received: from localhost (unknown [104.132.1.75])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6350520846;
-        Thu, 26 Jul 2018 15:27:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1532618833;
-        bh=7R9YMxSO6WlB/iiFO1ePU+BXvzSZX/1EKmuWBtjw3YM=;
-        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
-        b=vH1MNyE5Ez443ivzZC8ot159G0fKWYv8f68XaSzbgYBk2Gjh2lJnY/fL7IqjConEr
-         k2Q2N1gDyIdIax4DKqIIX30LkQHquloUEfYOErg35RbkQG9dXaanEaL5Y+m/DhO3/l
-         iqhfSqNqgQgvCXTLoqjUv2nuXcaxCeD5EFwE+G9c=
-Content-Type: text/plain; charset="utf-8"
+        Thu, 26 Jul 2018 12:47:36 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:40934 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1730179AbeGZQrg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Jul 2018 12:47:36 -0400
+Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w6QFU1YT136202
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Jul 2018 11:30:14 -0400
+Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2kfg292twy-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Jul 2018 11:30:11 -0400
+Received: from localhost
+        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <rppt@linux.vnet.ibm.com>;
+        Thu, 26 Jul 2018 16:29:44 +0100
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
+        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 26 Jul 2018 16:29:41 +0100
+Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w6QFTehY23396398
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 26 Jul 2018 15:29:40 GMT
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 3595DAE059;
+        Thu, 26 Jul 2018 18:29:47 +0100 (BST)
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id A5C9AAE04D;
+        Thu, 26 Jul 2018 18:29:46 +0100 (BST)
+Received: from rapoport-lnx (unknown [9.148.8.177])
+        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Thu, 26 Jul 2018 18:29:46 +0100 (BST)
+Date:   Thu, 26 Jul 2018 18:29:38 +0300
+From:   Mike Rapoport <rppt@linux.vnet.ibm.com>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Jonathan Corbet <corbet@lwn.net>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-doc@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 7/7] docs/core-api: mm-api: add section about GFP flags
+References: <1532607722-17079-1-git-send-email-rppt@linux.vnet.ibm.com>
+ <1532607722-17079-8-git-send-email-rppt@linux.vnet.ibm.com>
+ <20180726130106.GC3504@bombadil.infradead.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-To:     Rajan Vaja <RAJANV@xilinx.com>
-From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <CY1PR02MB2091CE50B9163419EB7D67EFB72B0@CY1PR02MB2091.namprd02.prod.outlook.com>
-Cc:     "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>
-References: <1531833420-27175-1-git-send-email-rajan.vaja@xilinx.com>
- <153253683456.48062.11538822357721957211@swboyd.mtv.corp.google.com>
- <CY1PR02MB2091CE50B9163419EB7D67EFB72B0@CY1PR02MB2091.namprd02.prod.outlook.com>
-Message-ID: <153261883266.48062.5136812490732432669@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: RE: [PATCH] clk: clk-fixed-factor: Clear OF_POPULATED flag in case of failure
-Date:   Thu, 26 Jul 2018 08:27:12 -0700
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180726130106.GC3504@bombadil.infradead.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-TM-AS-GCONF: 00
+x-cbid: 18072615-4275-0000-0000-0000029E62B0
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18072615-4276-0000-0000-000037A666CE
+Message-Id: <20180726152937.GG8477@rapoport-lnx>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-26_04:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1806210000 definitions=main-1807260161
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Rajan Vaja (2018-07-26 06:03:16)
-> Hi Stephen,
-> =
+On Thu, Jul 26, 2018 at 06:01:06AM -0700, Matthew Wilcox wrote:
+> On Thu, Jul 26, 2018 at 03:22:02PM +0300, Mike Rapoport wrote:
+> > +Memory Allocation Controls
+> > +==========================
+> 
+> Perhaps call this section "Memory Allocation Flags" instead?
+> 
+> > +Linux provides a variety of APIs for memory allocation from direct
+> > +calls to page allocator through slab caches and vmalloc to allocators
+> > +of compressed memory. Although these allocators have different
+> > +semantics and are used in different circumstances, they all share the
+> > +GFP (get free page) flags that control behavior of each allocation
+> > +request.
+> 
+> While this isn't /wrong/, I think it might not be the most useful way
+> of explaining what the GFP flags are to someone who's just come across
+> them in some remote part of the kernel.  How about this paragraph instead?
+> 
+>   Functions which need to allocate memory often use GFP flags to express
+>   how that memory should be allocated.  The GFP acronym stands for "get
+>   free pages", the underlying memory allocation function.  Not every GFP
+>   flag is allowed to every function which may allocate memory.  Most
+>   users will want to use a plain ``GFP_KERNEL`` or ``GFP_ATOMIC``.
+> 
+> > +.. kernel-doc:: include/linux/gfp.h
+> > +   :doc: Page mobility and placement hints
+> > +
+> > +.. kernel-doc:: include/linux/gfp.h
+> > +   :doc: Watermark modifiers
+> > +
+> > +.. kernel-doc:: include/linux/gfp.h
+> > +   :doc: Reclaim modifiers
+> > +
+> > +.. kernel-doc:: include/linux/gfp.h
+> > +   :doc: Common combinations
+> 
+> Would it make more sense to put 'common combinations' first?
 
-> > -----Original Message-----
-> > From: Stephen Boyd [mailto:sboyd@kernel.org]
-> > Sent: 25 July 2018 10:11 PM
-> > To: Rajan Vaja <RAJANV@xilinx.com>; mturquette@baylibre.com
-> > Cc: linux-clk@vger.kernel.org; linux-kernel@vger.kernel.org; Rajan Vaja
-> > <RAJANV@xilinx.com>
-> > Subject: Re: [PATCH] clk: clk-fixed-factor: Clear OF_POPULATED flag in =
-case of
-> > failure
-> > =
+Now I feel that "common combinations" is not really good name since not all
+of them are that common. The original "Useful ... combination" also does
+not seem right because use of some of these combinations is discouraged.
 
-> > Quoting Rajan Vaja (2018-07-17 06:17:00)
-> > > Fixed factor clock has two initializations at of_clk_init() time
-> > > and during platform driver probe. Before of_clk_init() call,
-> > > node is marked as populated and so its probe never gets called.
-> > >
-> > > During of_clk_init() fixed factor clock registration may fail if
-> > > any of its parent clock is not registered. In this case, it doesn't
-> > > get chance to retry registration from probe. Clear OF_POPULATED
-> > > flag if fixed factor clock registration fails so that clock
-> > > registration is attempted again from probe.
-> > >
-> > > Signed-off-by: Rajan Vaja <rajan.vaja@xilinx.com>
-> > > ---
-> > >  drivers/clk/clk-fixed-factor.c | 9 ++++++++-
-> > >  1 file changed, 8 insertions(+), 1 deletion(-)
-> > >
-> > > diff --git a/drivers/clk/clk-fixed-factor.c b/drivers/clk/clk-fixed-f=
-actor.c
-> > > index d72ef2d..f3ae4ff 100644
-> > > --- a/drivers/clk/clk-fixed-factor.c
-> > > +++ b/drivers/clk/clk-fixed-factor.c
-> > > @@ -177,8 +177,15 @@ static struct clk *_of_fixed_factor_clk_setup(st=
-ruct
-> > device_node *node)
-> > >
-> > >         clk =3D clk_register_fixed_factor(NULL, clk_name, parent_name=
-, flags,
-> > >                                         mult, div);
-> > > -       if (IS_ERR(clk))
-> > > +       if (IS_ERR(clk)) {
-> > > +               /*
-> > > +                * If parent clock is not registered, registration wo=
-uld fail.
-> > > +                * Clear OF_POPULATED flag so that clock registration=
- can be
-> > > +                * attempted again from probe function.
-> > > +                */
-> > > +               of_node_clear_flag(node, OF_POPULATED);
-> > >                 return clk;
-> > > +       }
-> > =
+That said, I think I'm going to change "common combinations" to "GPF flag
+combinations" (as the comments cover all the defined combinations) and
+leave it the last. 
 
-> > BTW, this patch was seriously mangled for me so I had to apply it by
-> > hand. Please be more careful next time and consider using something like
-> > git-send-email and git-format-patch to send patches.
-> [Rajan] I used git-send-email only and sent same way as I used to send ot=
-her patches. Not sure where was issue.
-> Sorry for the inconvenience.  =
-
-> =
-
-
-It must be your Outlook server messing things up. I see
-Content-Transfer-Encoding: quoted-printable in the headers, which
-probably caused my MUA to choke and line break things in the wrong
-place.
+-- 
+Sincerely yours,
+Mike.
 
