@@ -2,169 +2,133 @@ Return-Path: <SRS0=7Z+k=KK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 484A1C28CF6
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 14:32:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1009DC6778F
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 14:33:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DD9D32064D
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 14:32:22 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="oKTWNzmA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD9D32064D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id C79542064D
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 14:33:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C79542064D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730352AbeGZPt1 (ORCPT
+        id S1730768AbeGZPu0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 26 Jul 2018 11:49:27 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:43583 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729506AbeGZPt1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Jul 2018 11:49:27 -0400
-Received: by mail-lj1-f194.google.com with SMTP id r13-v6so1698061ljg.10;
-        Thu, 26 Jul 2018 07:32:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=SU5eRuLVTml3ZKWH+0TslSZVgtRRGgTFIluQ+I54fXc=;
-        b=oKTWNzmApUSaZn53Hz3oYuIMGmNic15VpWGtGLIFTDQM+gbhDXK0yk36CWeqBPU5e/
-         FOvZurUlc5uMsC4fy8nDSw+jEZwDMsyDYancMisNHVnWgeSBLrZKviFqCSnjI0Y31A9X
-         AlmHJDDTnZ5A14a18DWVN9+jTs49SVhZtwZ5OQxi1ucJ4MHLZ5VpbdxR2IugErGRDwVZ
-         6yCeyg6rBPV2h8lFesDcvs65GC9CKoiGX3ImLAXhz1inLkVMv8nf54hdkv1XjlN2nYKW
-         e4/jcXr7vLJEksEoEf/bP1O6pTQVXjiNPDQWAeItKunFRzBuwgso/Ka4g4vsGHnj8CnL
-         4hOw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=SU5eRuLVTml3ZKWH+0TslSZVgtRRGgTFIluQ+I54fXc=;
-        b=b2Pd/TCerrdqUDN3otXwH3UTsMWfDtBJu4IFhoQFJPFeMTbw0hjik8+5FRWEMnhXXN
-         BIF2234/7gH7NjDXxep6Bw5l8G0gtwGZhCV5eYj99//wFiRXo/WxnN2EgIaHxqCOdeVn
-         BnO7CcRxNl8lhB9CyBCPjl68THFC2lAdlo8MFzYkhVH94BJtMSDfpSZZ/YwIcTv94JyZ
-         M+V6Ybek/3PYlC1OU5N9JW4PqQ0di4wrwwN5sIlf0IFE5MS0Xqw8jSISBe43DpvHCpAQ
-         8BJfnXDcK+JTcQDuTxHRs/MVmKCdLvBvx1dEsckxTJnJJ5FwwhpZEtMF1cEJSbWmNIfU
-         zdOw==
-X-Gm-Message-State: AOUpUlEy16LwUydSCJmcmAYX02x+T1gZY+6lSIXsoSpVPkXqelKEonyz
-        9Ld6LuSZtWAcRDwH8NoG7Gw=
-X-Google-Smtp-Source: AAOMgpfTcHyGf++OaVkIGUU/FQG7XPkkQVZIpkU6Msnm/kpZZOKIZ3AxG9s+KK/wYcaszbwvWiOV6g==
-X-Received: by 2002:a2e:88d0:: with SMTP id a16-v6mr1855234ljk.63.1532615537088;
-        Thu, 26 Jul 2018 07:32:17 -0700 (PDT)
-Received: from ?IPv6:2001:2012:22e:1b00:f2e2:9015:9262:3fde? ([2001:2012:22e:1b00:f2e2:9015:9262:3fde])
-        by smtp.gmail.com with ESMTPSA id o203-v6sm200428lff.28.2018.07.26.07.32.15
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 26 Jul 2018 07:32:15 -0700 (PDT)
-Subject: Re: [PATCH] 9p: fix NULL pointer dereferences
-To:     Dominique Martinet <asmadeus@codewreck.org>
-Cc:     Dmitry Vyukov <dvyukov@google.com>,
-        David Miller <davem@davemloft.net>,
-        v9fs-developer@lists.sourceforge.net,
-        netdev <netdev@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        syzkaller <syzkaller@googlegroups.com>
-References: <20180726081049.10527-1-tomasbortoli@gmail.com>
- <20180726081727.GA6699@nautica>
- <CACT4Y+ark+0EYSZaOX-qDKpOkyfLgSO9CkidZzx=xkUuhpr65A@mail.gmail.com>
- <20180726094849.GA18334@nautica>
- <abbeafa2-9008-5749-aee5-b4a115d71af7@gmail.com>
- <20180726142109.GA4235@nautica>
-From:   Tomas Bortoli <tomasbortoli@gmail.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=tomasbortoli@gmail.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <baa7368f-e149-ef3d-cf10-4fcd16dce0e6@gmail.com>
-Date:   Thu, 26 Jul 2018 16:32:15 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Thu, 26 Jul 2018 11:50:26 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:59974 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729892AbeGZPuZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Jul 2018 11:50:25 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 31CE640216E3;
+        Thu, 26 Jul 2018 14:33:17 +0000 (UTC)
+Received: from madcap2.tricolour.ca (ovpn-112-17.rdu2.redhat.com [10.10.112.17])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id AC8252166BA3;
+        Thu, 26 Jul 2018 14:33:13 +0000 (UTC)
+Date:   Thu, 26 Jul 2018 10:30:16 -0400
+From:   Richard Guy Briggs <rgb@redhat.com>
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     cgroups@vger.kernel.org, containers@lists.linux-foundation.org,
+        linux-api@vger.kernel.org, linux-audit@redhat.com,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, ebiederm@xmission.com, luto@kernel.org,
+        jlayton@redhat.com, carlos@redhat.com, dhowells@redhat.com,
+        viro@zeniv.linux.org.uk, simo@redhat.com,
+        Eric Paris <eparis@parisplace.org>, serge@hallyn.com
+Subject: Re: [RFC PATCH ghak90 (was ghak32) V3 04/10] audit: add support for
+ non-syscall auxiliary records
+Message-ID: <20180726143016.uup5mnzi76uzlsqr@madcap2.tricolour.ca>
+References: <cover.1528304203.git.rgb@redhat.com>
+ <dcd3d6e27c4beb8aec11805faeb4de7013132bd7.1528304204.git.rgb@redhat.com>
+ <CAHC9VhRkH+UaZXfbsmfMsuCO7rQ48R5cBPU__00eG=pyO7AyCw@mail.gmail.com>
+ <20180724193725.k27la4ubg2g2n4qm@madcap2.tricolour.ca>
+ <CAHC9VhTX99Gqnv5SQbm1_3KON7g2R83qSt=bM3KJibDnORBXzQ@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20180726142109.GA4235@nautica>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHC9VhTX99Gqnv5SQbm1_3KON7g2R83qSt=bM3KJibDnORBXzQ@mail.gmail.com>
+User-Agent: NeoMutt/20180512
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Thu, 26 Jul 2018 14:33:17 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Thu, 26 Jul 2018 14:33:17 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'rgb@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/26/2018 04:21 PM, Dominique Martinet wrote:
-> Tomas Bortoli wrote on Thu, Jul 26, 2018:
->>> But I think trans=fd allows NULL addr today, no?
->>
->> How ?
+On 2018-07-24 17:57, Paul Moore wrote:
+> On Tue, Jul 24, 2018 at 3:40 PM Richard Guy Briggs <rgb@redhat.com> wrote:
+> > On 2018-07-20 18:14, Paul Moore wrote:
+> > > On Wed, Jun 6, 2018 at 1:01 PM Richard Guy Briggs <rgb@redhat.com> wrote:
+> > > > Standalone audit records have the timestamp and serial number generated
+> > > > on the fly and as such are unique, making them standalone.  This new
+> > > > function audit_alloc_local() generates a local audit context that will
+> > > > be used only for a standalone record and its auxiliary record(s).  The
+> > > > context is discarded immediately after the local associated records are
+> > > > produced.
+> > > >
+> > > > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+> > > > ---
+> > > >  include/linux/audit.h |  8 ++++++++
+> > > >  kernel/auditsc.c      | 25 +++++++++++++++++++++++--
+> > > >  2 files changed, 31 insertions(+), 2 deletions(-)
 > 
-> Just using the mount syscall with a NULL dev_name? I haven't checked
-> this syzcaller reproducer but it's probably what it does.
+> ...
 > 
-> p9_fd_create doesn't use 'addr' at all so it's safe to create a 9p mount
-> for trans=fd with no device name, as Dmitry pointed out
+> > > > +       struct audit_context *context;
+> > > > +
+> > > > +       if (!audit_ever_enabled)
+> > > > +               return NULL; /* Return if not auditing. */
+> > > > +
+> > > > +       context = audit_alloc_context(AUDIT_RECORD_CONTEXT);
+> > > > +       if (!context)
+> > > > +               return NULL;
+> > > > +       context->serial = audit_serial();
+> > > > +       context->ctime = current_kernel_time64();
+> > > > +       context->in_syscall = 1;
+> > >
+> > > Setting in_syscall is both interesting and a bit troubling, if for no
+> > > other reason than I expect most (all?) callers to be in an interrupt
+> > > context when audit_alloc_local() is called.  Setting in_syscall would
+> > > appear to be conceptually in this case.  Can you help explain why this
+> > > is the right thing to do, or necessary to ensure things are handled
+> > > correctly?
+> >
+> > I'll admit this is cheating a bit, but seemed harmless.  It is needed so
+> > that auditsc_get_stamp() from audit_get_stamp() from audit_log_start()
+> > doesn't bail on me without giving me its already assigned time and
+> > serial values rather than generating a new one.  I did look to see if
+> > there were any other undesireable side effects and found none, so I'm
+> > tmepted to rename the ->in_syscall to something a bit more helpful.  I
+> > could add a new audit_context structure member to make
+> > auditsc_get_stamp() co-operative, but this seems wasteful and
+> > unnecessary.
 > 
+> That's what I suspected.
+> 
+> Let's look into renaming the "in_syscall" field, it borderline
+> confusing now, and hijacking it for something which is very obviously
+> not "in syscall" is A Very Bad Thing.
 
-mmh, ok.
+Ok, looking more carefully, I'm not going to touch in_syscall, since it
+does more than I remember discovering when investigating why the
+existing stamp wasn't being used.  I don't want to change the existing
+behaviour.  I'll somewhat reluctantly grow the context struct and add a
+"local" boolean to it so that auditsc_get_stamp knows to use the
+existing stamp in both the in_syscall and local cases.
 
-> 
->>> On the other hand, virtio, rdma and xen all have the same problem, so
->>> Thomas, please fix them instead :)
->>
->> So just by patching v9fs_mount ?
-> 
-> If we want to preserve the current behaviour for trans=fd (and I don't
-> see why not) we just have to patch all the transports that use the
-> device, that is all .create functions but p9_fd_create()
-> 
-> Basically exactly what you did, just for a few more functions - I
-> apparently was a little bit too optimistic thinking we could share
-> this check.
-> 
+> paul moore
 
-Does v9fs_mount() knows the transport ahead? Because in that case it'd
-be possible to check if addr!=NULL && trans!=fd then return error
+- RGB
 
-Otherwise, patching all the .create, ok.
+--
+Richard Guy Briggs <rgb@redhat.com>
+Sr. S/W Engineer, Kernel Security, Base Operating Systems
+Remote, Ottawa, Red Hat Canada
+IRC: rgb, SunRaycer
+Voice: +1.647.777.2635, Internal: (81) 32635
