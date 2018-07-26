@@ -4,91 +4,89 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE318C6778F
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 10:30:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1569EC28CF6
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 10:33:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A171620846
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 10:30:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A9C7920846
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 10:33:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="jh8W5BE0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A171620846
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="XtihZ/8m"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A9C7920846
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729314AbeGZLqd (ORCPT
+        id S1729283AbeGZLti (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 26 Jul 2018 07:46:33 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:38892 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728792AbeGZLqc (ORCPT
+        Thu, 26 Jul 2018 07:49:38 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:40710 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729107AbeGZLti (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Jul 2018 07:46:32 -0400
-Received: by mail-wm0-f67.google.com with SMTP id t25-v6so1456701wmi.3
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Jul 2018 03:30:19 -0700 (PDT)
+        Thu, 26 Jul 2018 07:49:38 -0400
+Received: by mail-wr1-f66.google.com with SMTP id h15-v6so1188909wrs.7
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Jul 2018 03:33:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id;
-        bh=4D/WBkmTmuX1cf1oTrD2JH1iIO2FhrIAjX2y2A8MPL4=;
-        b=jh8W5BE0XycfXJt6trOsplm6UVTizEAvVmEnwgXq40Lb9IjFk/EZPGw7x7zgTTBca5
-         ejSyuPFv/q5Xiq6Rr0SOFsVKTBI3t6VC7sEI7J/pcrlrH9P59aV3basYp1H2Fkt3gKNr
-         GYNYAH6/iazTUMwj/be2liZpjckKWvEW8l/U0=
+        bh=DI/wSPD7F+AcJW70vQ+seGId4F7K4t/PGOtffhZLKfE=;
+        b=XtihZ/8mhmMsaTRuX1zP9Obyp8o6avRh+h8hI/m+sDi5c5sydUEIBRnl055JUVTJfD
+         9IvI5w43TUckrUUzF2iGQRHbC8kLqgN47z/9qtGXPaJsDmPwAI0SofAajlc7qPCxKyn3
+         wAOuvhjIPaEs27pnnT0DWS2msFhwdOqJ4DpDg=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=4D/WBkmTmuX1cf1oTrD2JH1iIO2FhrIAjX2y2A8MPL4=;
-        b=Rx1Ghodya3nfv8exZUKBVgTZVSBrJXAMJGSlUZVOWl9p5WcBtTVrUvhvhhnc4Nm52M
-         Q01udGfkFiGGR85LtTr5O+J+wnwOyaIWhwlygPU+WkEfJmUfBTl0dpVZYLUTflKXPUPW
-         66HRSi24cOjC6NhpkuH+wSv3hAUTwIg3WWfvm8Bc8F4rijQTt7G3Nh8P2qwnlb0Z6nsG
-         9LOIJwGsbYGBxl+Pz0z7u9XnP2k5HCMZz4DeuQYprMYFV3Sd8GQBNhSv/hGJTLJKE89s
-         +LXaUQgxehc9EZa6cQAorIGKFA1tnc5P2MwkTf44Cx4JtnhRsBJYfMvte7j82wpSPfJw
-         tCWg==
-X-Gm-Message-State: AOUpUlH/kR+7PG/NPCK4hX/cpUqtAOWui363iK/kwaJ+dH7YTL7bH/JZ
-        l0+Ue/wc/j+fLXt8gDqQHchAkQ==
-X-Google-Smtp-Source: AAOMgpfjUUGb/9USahlFqohoOkgx15beshBCzgkNKJGrEEo1MiDdCoF2G4J63W2RXGwtsaVoCWR0iQ==
-X-Received: by 2002:a1c:85cc:: with SMTP id h195-v6mr1128273wmd.110.1532601019045;
-        Thu, 26 Jul 2018 03:30:19 -0700 (PDT)
-Received: from localhost.localdomain ([2a01:e35:879a:6cd0:35bd:fbdf:74b5:3f51])
-        by smtp.gmail.com with ESMTPSA id l5-v6sm670112wrq.86.2018.07.26.03.30.17
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Thu, 26 Jul 2018 03:30:18 -0700 (PDT)
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-To:     rui.zhang@intel.com, edubezval@gmail.com
-Cc:     linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] MAINTAINERS: Add myself as designated reviewer for thermal
-Date:   Thu, 26 Jul 2018 12:29:40 +0200
-Message-Id: <1532600980-29357-1-git-send-email-daniel.lezcano@linaro.org>
-X-Mailer: git-send-email 2.7.4
+        bh=DI/wSPD7F+AcJW70vQ+seGId4F7K4t/PGOtffhZLKfE=;
+        b=fNaBHJeiUuV8S0QqnjgjYfmGYYFZ9yiL5oVD3LcH6V45Vk04PsuxkzCSykw+0P3IgE
+         kNtZi7D8V7NXj/QmX3MmLSuly8OpF9wk1UNQ8kipX+Lkm3cMFRC7d32Hrv8Px1MuM8Fk
+         +5JxIhBWVJhhc8G2zMtUmohq4ZHZ0vdI7K/NihQHa0s85LbY67DVXV/oAglJexujbZmt
+         6aK/ampuRcA9yMNsNbxM29v7EczB/jgMPfrI+UgnXf6Soxxxiks0QSTcbWsTYt68Empk
+         rcMcPvdVz2wcRoJLpgtSzlvzTywRd/RRZPHWQBqf139JfYsUnhxi7GyaBD5JhnXUqMTa
+         NUWg==
+X-Gm-Message-State: AOUpUlH+tl5TE5ORVcjWOesDBC5nP36egXGq4y0puuNEZ8jzyhjCBJDG
+        1bCyhmhIFJqxNsAUJAu2QtJYBW4P6Gg=
+X-Google-Smtp-Source: AAOMgpdU0G4Xke6uhadZ97I4II+wZG1sC2LDMJMUbDvjew4rBQv0vGQcppVR2RkKtxyAEkoNzHfuAQ==
+X-Received: by 2002:adf:f50e:: with SMTP id q14-v6mr1063747wro.241.1532601203947;
+        Thu, 26 Jul 2018 03:33:23 -0700 (PDT)
+Received: from localhost ([49.248.197.57])
+        by smtp.gmail.com with ESMTPSA id a11-v6sm739473wrr.81.2018.07.26.03.33.21
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 26 Jul 2018 03:33:23 -0700 (PDT)
+From:   Amit Kucheria <amit.kucheria@linaro.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     rnayak@codeaurora.org, linux-arm-msm@vger.kernel.org,
+        bjorn.andersson@linaro.org, edubezval@gmail.com,
+        smohanad@codeaurora.org, andy.gross@linaro.org,
+        dianders@chromium.org, mka@chromium.org, linux-pm@vger.kernel.org
+Subject: [PATCH v2 0/3] thermal: tsens: bugfixes, cleanups
+Date:   Thu, 26 Jul 2018 16:03:07 +0530
+Message-Id: <cover.1532600791.git.amit.kucheria@linaro.org>
+X-Mailer: git-send-email 2.17.GIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I would like to participate in the review process effort for the
-thermal framework, especially the SoC part.
+Here is another series of tsens-related bugfixes and cleanups to prepare
+for IRQ support, among other things. It applies on top of another series[1]
+that did some code consolidation to add support for sdm845.
 
-Instead of capturing emails with message filters, I would like to
-humbly add myself as reviewer so I can receive the patches directly in
-my INBOX and focus on their review.
+[1] https://lore.kernel.org/lkml/cover.1531895128.git.amit.kucheria@linaro.org/T/#t
 
-Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
----
- MAINTAINERS | 1 +
- 1 file changed, 1 insertion(+)
+Changes since v1:
+- Fixup a couple of typos
+- Add review tag
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 0fe4228..1890aad 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -14119,6 +14119,7 @@ F:	drivers/media/radio/radio-raremono.c
- THERMAL
- M:	Zhang Rui <rui.zhang@intel.com>
- M:	Eduardo Valentin <edubezval@gmail.com>
-+R:	Daniel Lezcano <daniel.lezcano@linaro.org>
- L:	linux-pm@vger.kernel.org
- T:	git git://git.kernel.org/pub/scm/linux/kernel/git/rzhang/linux.git
- T:	git git://git.kernel.org/pub/scm/linux/kernel/git/evalenti/linux-soc-thermal.git
+Amit Kucheria (3):
+  thermal: tsens: Rename variable
+  thermal: tsens: switch from of_iomap() to devm_ioremap_resource()
+  thermal: tsens: Fix negative temperature reporting
+
+ drivers/thermal/qcom/tsens-common.c | 19 ++++++++++---------
+ drivers/thermal/qcom/tsens-v2.c     | 23 ++++++++++-------------
+ 2 files changed, 20 insertions(+), 22 deletions(-)
+
 -- 
-2.7.4
+2.17.GIT
 
