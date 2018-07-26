@@ -2,130 +2,109 @@ Return-Path: <SRS0=7Z+k=KK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18D55C28CF6
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 05:02:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E75B6C6778F
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 05:02:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9F8DD20685
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 05:02:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 82E5120685
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 05:02:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="hyhZUEko"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F8DD20685
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	dkim=pass (2048-bit key) header.d=tobin.cc header.i=@tobin.cc header.b="rP/cC28D";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="mYbqnRX/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 82E5120685
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=tobin.cc
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728816AbeGZGR2 (ORCPT
+        id S1728924AbeGZGRe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 26 Jul 2018 02:17:28 -0400
-Received: from aserp2130.oracle.com ([141.146.126.79]:43082 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725903AbeGZGR1 (ORCPT
+        Thu, 26 Jul 2018 02:17:34 -0400
+Received: from out1-smtp.messagingengine.com ([66.111.4.25]:56835 "EHLO
+        out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726421AbeGZGRe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Jul 2018 02:17:27 -0400
-Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
-        by aserp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w6Q4xUAo076744;
-        Thu, 26 Jul 2018 05:02:24 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2018-07-02;
- bh=ecV5xDrBV8I7ZM/qGn8B0cprbMZROoQfZVzeyEgwm1o=;
- b=hyhZUEkoNHnf6qoVQZpiI4H9oFSk6lHi6aMplnfeZEgZbuuc8evoWudwLJSC1bO8ie4k
- q97UevA7D/NQh6SrYpXG7YA2C3Ynf2k0IzwgMCruV1FSjPFhsSLLTt50SqfcrY9YdaWO
- FWC7H5cmo/kckvL6etlZM1QuFOptdet7Un6RSAH1+L/It1qGCXiLJydZd5uKoRwXTsxH
- ll/GxRMZ54KkMNuoajLPFKJkSa5UnsuSauYOud8mtEINF52TwZjwfWlxTZsuKILDxxae
- oICKdbTOO5kHwv1yKJlcjIo4XIMPLQzE77VXOlz2zKo8N3xZVWa3TTh3YRm/LeTBqP6E gw== 
-Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
-        by aserp2130.oracle.com with ESMTP id 2kbtbd1fff-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 26 Jul 2018 05:02:24 +0000
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w6Q52Nuc013555
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 26 Jul 2018 05:02:24 GMT
-Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w6Q52Ntm019167;
-        Thu, 26 Jul 2018 05:02:23 GMT
-Received: from santoshs-mbp.lan (/69.181.241.203)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 25 Jul 2018 22:02:22 -0700
-Subject: Re: [PATCH] net/rds/Kconfig: RDS should depend on IPV6
-To:     Ka-Cheong Poon <ka-cheong.poon@oracle.com>,
-        Anders Roxell <anders.roxell@linaro.org>
-Cc:     davem@davemloft.net, netdev@vger.kernel.org,
-        linux-rdma@vger.kernel.org, rds-devel@oss.oracle.com,
+        Thu, 26 Jul 2018 02:17:34 -0400
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+        by mailout.nyi.internal (Postfix) with ESMTP id DC8F121DC0;
+        Thu, 26 Jul 2018 01:02:33 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute5.internal (MEProxy); Thu, 26 Jul 2018 01:02:33 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tobin.cc; h=cc
+        :date:from:message-id:subject:to:x-me-sender:x-me-sender
+        :x-sasl-enc; s=fm3; bh=YgNhRQCahx4NZfLqWiZpaVMOBiS+IZpdByUxgEHqy
+        L8=; b=rP/cC28D/4kck/54zavSXNQ0MD+PMITeIR0TIW8hZZORnve2dXIVtbaMP
+        m4MkVC0YoYdy9IQhguFuf/83qIMRt87Hm4ZwnMmxf6AnzDklusADRneabLmSB4+w
+        Mq0u/tvCSIIQXqFBCsKs8l/3td3RJT1ZXjoPfAkpDSjDlgNt5x5hTerv8RXSZUWT
+        TL6i3LmiLeMRnj+YVKSSNouGQGd61X1YHTJPVaUAe5BVGuaLMSs0uZUKO2DVPHLB
+        QDmRrBACWxkEFMB1m9plqp1zrrcs4pJMTu1k4G2yLrGJ1DJ7NTCqS3sSIcXMHtR6
+        oRDKLz6Sc615oJ0IuhAdxX240U4Cw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:date:from:message-id:subject:to
+        :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=YgNhRQCahx4NZfLqW
+        iZpaVMOBiS+IZpdByUxgEHqyL8=; b=mYbqnRX/ExwK9WrE6Spo7xfUe5rjPvNPZ
+        2uLHlMkXoh16uMcOeia37f42LstFfS7dCjV5FFKSYIkzHPzvSCsWv3f7DA2fesx/
+        KG8TgtqfoZKvm2dauGEaWpDbb6rQuiIS6uMzTfjH3+hGBFrEbC5613S6rlb4O6qH
+        JNL5cR3JoBKgdvZDI0bsdZS1Eogi/UIErcvphtOfNvmPQV4PlHZOvcqoL4n9cM6M
+        ui76cEBC4po6riisWaclkpSdwoyjtxUFh9TikRlygUcWhlvw9KnQ5TNTk3hEC7gi
+        H+TLF7DnMNCk7UnF8Ta3rpVkH3/LMeROuS2m7eb908tdVs2MmOGtA==
+X-ME-Proxy: <xmx:6VVZW2FOeo4ZNxAutZXD6KzXki5yw7yT325YHn3oNg5px_mH6WybOQ>
+    <xmx:6VVZW13DcMvdVRRJZJKt4ZYvQwqg7E4To1UHMIxlXJrz2pEhpZytsQ>
+    <xmx:6VVZW2_YQCRpJk3qYxu7o4wttJDxAV4rk1pdR1DpqFHl83gA8TAmkQ>
+    <xmx:6VVZWwEtyku-34BXH-BccyoKHdYt2e0RG68z2XbMvFEqX4rKFvjSGg>
+    <xmx:6VVZW0hNbxROkOZNtqHjBMF5Tsu5aISA4cni2SsW69ruwlut4ZA-4Q>
+    <xmx:6VVZW9AgKEiiM0ejpzSHK9ztQnAN5LQ1sobIj_7KWU0xB--88Yf8Sg>
+X-ME-Sender: <xms:6VVZW2SZ3m30gzYHE_bRdF2vxHedxyzu7zZ43MFwmFWjYMa6-PVIDA>
+Received: from localhost (ppp121-44-239-245.bras2.syd2.internode.on.net [121.44.239.245])
+        by mail.messagingengine.com (Postfix) with ESMTPA id B03D310268;
+        Thu, 26 Jul 2018 01:02:32 -0400 (EDT)
+From:   "Tobin C. Harding" <me@tobin.cc>
+To:     "David S. Miller" <davem@davemloft.net>
+Cc:     "Tobin C. Harding" <me@tobin.cc>, Jonathan Corbet <corbet@lwn.net>,
+        Edward Cree <ecree@solarflare.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        linux-doc@vger.kernel.org, netdev@vger.kernel.org,
         linux-kernel@vger.kernel.org
-References: <20180725222008.32186-1-anders.roxell@linaro.org>
- <cefa5c0b-7935-a6b5-1796-1d5a3da5dd87@oracle.com>
- <3e4b4c29-40f8-211b-62e3-c9411b2c0013@oracle.com>
-From:   "santosh.shilimkar@oracle.com" <santosh.shilimkar@oracle.com>
-Organization: Oracle Corporation
-Message-ID: <62dc735a-19ca-13ca-bd7e-3b591ffc132e@oracle.com>
-Date:   Wed, 25 Jul 2018 22:02:16 -0700
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:52.0)
- Gecko/20100101 Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <3e4b4c29-40f8-211b-62e3-c9411b2c0013@oracle.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8965 signatures=668706
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=998
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1806210000 definitions=main-1807260052
+Subject: [PATCH v2 net-next 0/3] docs: net: Convert netdev-FAQ to RST
+Date:   Thu, 26 Jul 2018 15:02:23 +1000
+Message-Id: <20180726050226.1980-1-me@tobin.cc>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 7/25/18 9:56 PM, Ka-Cheong Poon wrote:
-> On 07/26/2018 06:36 AM, Santosh Shilimkar wrote:
->> On 7/25/2018 3:20 PM, Anders Roxell wrote:
->>> Build error, implicit declaration of function __inet6_ehashfn shows up
->>> When RDS is enabled but not IPV6.
->>> net/rds/connection.c: In function ‘rds_conn_bucket’:
->>> net/rds/connection.c:67:9: error: implicit declaration of function 
->>> ‘__inet6_ehashfn’; did you mean ‘__inet_ehashfn’? 
->>> [-Werror=implicit-function-declaration]
->>>    hash = __inet6_ehashfn(lhash, 0, fhash, 0, rds_hash_secret);
->>>           ^~~~~~~~~~~~~~~
->>>           __inet_ehashfn
->>>
->>> Current code adds IPV6 as a depends on in config RDS.
->>>
->>> Fixes: eee2fa6ab322 ("rds: Changing IP address internal 
->>> representation to struct in6_addr")
->>> Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
->>> --- >>>   net/rds/Kconfig | 2 +-
->>>   1 file changed, 1 insertion(+), 1 deletion(-)
->>>
->>> diff --git a/net/rds/Kconfig b/net/rds/Kconfig
->>> index 41f75563b54b..607128f10bcd 100644
->>> --- a/net/rds/Kconfig
->>> +++ b/net/rds/Kconfig
->>> @@ -1,7 +1,7 @@
->>>   config RDS
->>>       tristate "The RDS Protocol"
->>> -    depends on INET
->>> +    depends on INET && CONFIG_IPV6
->> This should build without CONFIG_IPV6 too.
->>
->> Hi Ka-cheong,
->> Can you please loot at it ? I know you modified
->> lookup function to take always in6_addr now, but
->> probably hashing with '__inet_ehashfn' should
->> work too for non IPV6 address(s).
-> 
-> 
-> I guess for now, let's add this dependency first.  I
-> will do a follow up patch to remove this dependency.
-> 
-Sounds good to me.
+Hi Dave,
 
-FWIW,
-Acked-by: Santosh Shilimkar <santosh.shilimkar@oracle.com>
+Jon answered all the tree questions on v1 so if you will please take
+this through your tree that would be awesome.
+
+v2:
+ - Fix typo 'canonical_path_format' (thanks Edward) 
+ - Add patch fixing references netdev-FAQ
+
+thanks,
+Tobin.
+
+
+Tobin C. Harding (3):
+  docs: Add rest label the_canonical_patch_format
+  docs: net: Convert netdev-FAQ to restructured text
+  docs: Update references to netdev-FAQ
+
+ Documentation/bpf/bpf_devel_QA.rst            |  21 +-
+ Documentation/networking/00-INDEX             |   2 -
+ Documentation/networking/index.rst            |   1 +
+ Documentation/networking/netdev-FAQ.rst       | 259 ++++++++++++++++++
+ Documentation/networking/netdev-FAQ.txt       | 244 -----------------
+ Documentation/process/stable-kernel-rules.rst |   2 +-
+ Documentation/process/submitting-patches.rst  |   1 +
+ 7 files changed, 271 insertions(+), 259 deletions(-)
+ create mode 100644 Documentation/networking/netdev-FAQ.rst
+ delete mode 100644 Documentation/networking/netdev-FAQ.txt
+
+-- 
+2.17.1
 
