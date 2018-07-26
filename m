@@ -2,70 +2,112 @@ Return-Path: <SRS0=7Z+k=KK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E01F6C28CF6
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 19:21:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2EA8C28CF6
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 19:24:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A3FB520673
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 19:21:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A3FB520673
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=supermicro.com
+	by mail.kernel.org (Postfix) with ESMTP id 669D920671
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 19:24:53 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YPUy3bvl"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 669D920671
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731570AbeGZUjj (ORCPT
+        id S1730794AbeGZUnF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 26 Jul 2018 16:39:39 -0400
-Received: from mga.supermicro.com ([207.212.57.84]:39512 "EHLO
-        mga.supermicro.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730533AbeGZUjj (ORCPT
+        Thu, 26 Jul 2018 16:43:05 -0400
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:45249 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730292AbeGZUnF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Jul 2018 16:39:39 -0400
-Received: from pps.filterd (MGA.supermicro.com [127.0.0.1])
-        by MGA.supermicro.com (8.16.0.22/8.16.0.22) with SMTP id w6QJLN7x025258;
-        Thu, 26 Jul 2018 12:21:23 -0700
-Received: from ex2013-mbx1.supermicro.com ([10.2.1.36])
-        by MGA.supermicro.com with ESMTP id 2kc4esa19c-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
-        Thu, 26 Jul 2018 12:21:23 -0700
-Received: from [172.16.95.100] (10.2.0.41) by EX2013-MBX1.supermicro.com
- (10.2.1.36) with Microsoft SMTP Server (TLS) id 15.0.1236.3; Thu, 26 Jul 2018
- 12:20:26 -0700
-Subject: Re: [RFC] x86, tsc: Add kcmdline args for skipping tsc calibration
- sequences
-From:   patrickg <patrickg@supermicro.com>
-To:     "Brown, Len" <len.brown@intel.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     "mingo@kernel.org" <mingo@kernel.org>,
-        "Du, Alek" <alek.du@intel.com>,
-        "arjan@linux.intel.com" <arjan@linux.intel.com>,
-        "Tang, Feng" <feng.tang@intel.com>
-References: <fdf96605-a4a0-049b-51c9-1e68cc2a9b93@supermicro.com>
- <1A7043D5F58CCB44A599DFD55ED4C94849A1AACF@FMSMSX126.amr.corp.intel.com>
- <c7582a8c-8cc1-eff3-2452-a8d42d23fea1@supermicro.com>
- <cb798dcd-8cd6-8a92-9f6c-50bec0afe204@supermicro.com>
-Message-ID: <94bebaa1-992b-572b-0d24-e08037611358@supermicro.com>
-Date:   Thu, 26 Jul 2018 12:21:22 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <cb798dcd-8cd6-8a92-9f6c-50bec0afe204@supermicro.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.2.0.41]
-X-ClientProxiedBy: EX2013-CA1.supermicro.com (10.2.1.31) To
- EX2013-MBX1.supermicro.com (10.2.1.36)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-26_05:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=589
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1806210000 definitions=main-1807260198
+        Thu, 26 Jul 2018 16:43:05 -0400
+Received: by mail-ed1-f66.google.com with SMTP id s16-v6so2242871edq.12
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Jul 2018 12:24:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=Blv7OhELYJkulCVQLiUaiioCqq2vBeeJks8GG2nsQbU=;
+        b=YPUy3bvl4QA7Q3FezBl9x8neEmv7954m85nbGCK5LKYhiEO2Li+RYhIRlO198vcS2t
+         NvHmJFPy1TBfIVtzeXhGEzZ+Nw+oI3U3f7GzTk7I6wQSc3JiN6RagaRg8Vrz5XWb0tpj
+         DzEirH2RVe9/nK5Yvbs7rF4GA+iuPWALvJFRIe3TOkIjfJNEqUMKwK1FhT78cXBgsmtQ
+         lZ69V3VRTTMcdv+Y9T79N1HDrnDdXN+QD0lpdg3tZn4nS0Y72CXP0EJWlQ7OLT2Md2pw
+         fZ4SIByWh3WppeNIwXuYErkoK+HnB6xC+9dkX8t5ZV7yQzoeE74U62aqFxRyHQf9wqqs
+         NzTA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=Blv7OhELYJkulCVQLiUaiioCqq2vBeeJks8GG2nsQbU=;
+        b=d+BUSj/mOXcTNpVu4CY0Qrljl8nOJrnLNnP0CkLkulVJe6nsCgiVjNgZcdJJuSCPmG
+         AEQlkz+eTeG162z4WjJtxW2c4255XDskcIJRjm3Aux2urY6JzXxO8oxQ0Hhb6mzSU4pf
+         V+WfHnh9iQcD2eh5x7zH9/FAHxWIqxb9/FBC2QIAEimBncwceLYYXjxs0hEPOR2uaexY
+         cfQ0K3UM6b9smiscxtg1gwciqwH27VYbtdd8EP/tpsbS8Nf+Ls8QQMuQgA1JxN2xm66g
+         DAW+44XbBpFX/b/7dY7zAibnwxu2RXfqE1Ha2+wQnrZQfJFW+SMHV0u/54zfkOYyDz8w
+         e7qw==
+X-Gm-Message-State: AOUpUlFsyuwIZMkAeY6/EC8Hr8CUduuJLBnOJ9QbflfdjpKaXCRAqWc3
+        x7MyQy3AJ1dk+BT99U5qWbLzP4PX
+X-Google-Smtp-Source: AAOMgpfgXMqdthsi3joBa0smrUzQWh/JVOjZ0q9Hf61rlxEVt2mExDGBCe+0NxqnO/vaAsiUEl9R0A==
+X-Received: by 2002:a50:d2d7:: with SMTP id q23-v6mr4126885edg.183.1532633089355;
+        Thu, 26 Jul 2018 12:24:49 -0700 (PDT)
+Received: from localhost.localdomain ([109.76.149.40])
+        by smtp.gmail.com with ESMTPSA id m20-v6sm1100853eds.5.2018.07.26.12.24.47
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 26 Jul 2018 12:24:48 -0700 (PDT)
+From:   John Whitmore <johnfwhitmore@gmail.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     devel@driverdev.osuosl.org, gregkh@linuxfoundation.org,
+        John Whitmore <johnfwhitmore@gmail.com>
+Subject: [PATCH 00/16] staging:rtl8192u: Proxy Structures?
+Date:   Thu, 26 Jul 2018 20:24:10 +0100
+Message-Id: <20180726192426.31913-1-johnfwhitmore@gmail.com>
+X-Mailer: git-send-email 2.18.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-tsc_khz still zero with production CPU's, so it's reassigning tsc_khz to the cpuid-acquired cpu_khz value.
+This series of patches contains coding style changes.
+
+There is one type of change, proxy structures, which whilst not flagged
+by checkpatch, as an issue, I have changed. I can't see the purpose of
+defining a structure, in this case arrays, and then using a #define to
+name the structure something else.
+
+This may well be a pattern which I'm not familiar with, in which case
+the patches can be rejected, and I'll have learned something, but I thought
+I'd better explicitly mention it, as I'm assuming that there is not actual
+point to the practice.
+
+Apart from that all the rest are simple coding style changes.
+
+John Whitmore (16):
+  staging:rtl8192u: Rename SwChnlCmd - Style
+  staging:rtl8192u: Rename CmdID - Style
+  staging:rtl8192u: Rename Para1 > para_1 - Style
+  staging:rtl8192u: Rename Para2 to para_2 - style
+  staging:rtl8192u: Rename msDelay to ms_delay - Style
+  staging:rtl8192u: Remove proxy struct rtl819XMACPHY_Array_PG - Style
+  staging:rtl8192u: Remove proxy struct rtl819XPHY_REG_1T2RArray - Style
+  staging:rtl8192u: Remove proxy array rtl819XAGCTAB_Array - Style
+  staging:rtl8192u: Remove proxy rtl819XRadioA_Array - Style
+  staging:rtl8192u: Remove proxy rtl819XRadioB_Array - Style
+  staging:rtl8192u: Remove proxy rtl819XRadioC_Array - Style
+  staging:rtl8192u: Remove proxy rtl819XRadioD_Array - Style
+  staging:rtl8192u: Rename HW90_BLOCK_E - Style
+  staging:rtl8192u: Rename RF90_RADIO_PATH_E - Style
+  staging:rtl8192u: Remove repeated definitions - Style
+  staging:rtl8192u: Rename eRFPath - Style
+
+ drivers/staging/rtl8192u/r8190_rtl8256.c |  42 ++---
+ drivers/staging/rtl8192u/r8192U_core.c   |   4 +-
+ drivers/staging/rtl8192u/r819xU_phy.c    | 230 +++++++++++------------
+ drivers/staging/rtl8192u/r819xU_phy.h    |  42 ++---
+ 4 files changed, 147 insertions(+), 171 deletions(-)
+
+-- 
+2.18.0
+
