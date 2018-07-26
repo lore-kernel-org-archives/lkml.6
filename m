@@ -2,104 +2,133 @@ Return-Path: <SRS0=7Z+k=KK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DDF72C6778F
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 14:13:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70D8BC28CF6
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 14:14:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8CCE520647
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 14:13:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 05B9F2064D
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 14:14:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JBQEb/hz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8CCE520647
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="ELKUZomU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 05B9F2064D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730881AbeGZPa2 (ORCPT
+        id S1731047AbeGZPbG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 26 Jul 2018 11:30:28 -0400
-Received: from mail-oi0-f68.google.com ([209.85.218.68]:36070 "EHLO
-        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729506AbeGZPa2 (ORCPT
+        Thu, 26 Jul 2018 11:31:06 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:38654 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729506AbeGZPbF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Jul 2018 11:30:28 -0400
-Received: by mail-oi0-f68.google.com with SMTP id n21-v6so3189740oig.3;
-        Thu, 26 Jul 2018 07:13:25 -0700 (PDT)
+        Thu, 26 Jul 2018 11:31:05 -0400
+Received: by mail-wr1-f67.google.com with SMTP id v14-v6so1885068wro.5
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Jul 2018 07:14:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:sender:from:date:message-id:subject:to:cc;
-        bh=CGu+Y4mbflGjhZHtG6eiKdIh0yUHT1kmAAZF61PEAUg=;
-        b=JBQEb/hzyzqhLg1mayTs8DcTGx1AtDWq5/q8F8deW7vo3peihYg1GktSQD92j0xS8L
-         j4orz3douLSyavXEGliqxBBa9FIxVugCanRQYWBjIJFSSxtOCVa3//C4EUiFOyXkioGY
-         D2HCthAQ2Su3ixwaIyG2a7hNevTnoVCUqMMj03y/dTm//6dI6zUjLMQBwZH1qRHnkZjR
-         D2IihmhHiESKuLlAnrF95rS6aY21xIWYSLVlzJmXyOtYqn7cnlgo9Hy9O2fbG3/Jryse
-         Fgcg3jTgPRuQWCG5s+XML356C7bGZq9K6m9lTQ/kqwGPycbGDPsJjftS/l7OcaJjcMmc
-         neXA==
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id;
+        bh=q1bbeBlbA5yGzCz3LYX30EBNKRjem+abrzOXES8zWXI=;
+        b=ELKUZomUJ2W+Gkf92t2sb8t4JHUOvuFi2hXV1O60cjJvOt6f73EJtjj/+6WQetDynE
+         WhPB/bCR4V8Yfxv9fkFOOIROaZx1NjYfuo/wFbDwacuI6/K1Ku7mVaKLW/SG9q1NzIHm
+         MufFfhtUAQk8uDrXI0nSRQ3xX+bumZgz+1ly/3/iFhFCtlBjpL5geWKroA/xeYQqLqzm
+         hfpf/CVK+Bhbsp5OyaaJuE4wOzlkeYRlunZpPh59jBLL8bweNPNmaSwUgECfYteqFe4e
+         8NjG7f7GGOfdMlumUgQjlQueswxQ5EoDAmMiNLCetMv1d1CBZqW6tE5SCreiuZc507yq
+         sGbg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:from:date:message-id:subject
-         :to:cc;
-        bh=CGu+Y4mbflGjhZHtG6eiKdIh0yUHT1kmAAZF61PEAUg=;
-        b=cxxLEFrNv56F+MlJsUbIQE4wSm+mQUeJZ5FH9bcWYd1nf+TrYOsS8IVlwPkGwza8zH
-         f0BdLyIhR8xCy6kv9kxGuVA8eb0E6JuyG/fLl529cr9gE4VQ0ExtLahKSL0BTJybWSou
-         r8335N5v2K2YCO99WFmZfR4CuXgOObZpmwMuK5zxigOa7s7qtZDNS9F2zwzgM95Jxsf8
-         vHH5ypcjvyGzh1Jzjz+fagqus08TFev53OgS8MjCcBZ43NIdZbKquuSZUTUFO1ovQySw
-         krJUvwEoUXov9+RS1KuqFBqVIHn7HN1ClFuHUtIbGQzVL0Ek1XOqF7F6aeIqXeWN7vXj
-         0KUg==
-X-Gm-Message-State: AOUpUlGdMuhr3DVMNG6gwIE573gpvMjFN64Bk/bVPNYQapBJ/LxApuaG
-        W4W5NIYEeiGmhWg/yQEfDDa4+JrN0KJWzLU1WZU=
-X-Google-Smtp-Source: AAOMgpfF1AwmBID2WbEQWdTb7JD2kVntPaUms0p3wPdcDg+UCtwy01/VIu5mBQ4cNqve4VopCEYc78HRsgL0LacZxuw=
-X-Received: by 2002:aca:ecd0:: with SMTP id k199-v6mr2255581oih.227.1532614404963;
- Thu, 26 Jul 2018 07:13:24 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a9d:63d2:0:0:0:0:0 with HTTP; Thu, 26 Jul 2018 07:13:24
- -0700 (PDT)
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Thu, 26 Jul 2018 16:13:24 +0200
-X-Google-Sender-Auth: ZPD1LeIjU3RLaMqlIy1Xo1mtalo
-Message-ID: <CAJZ5v0i=npm4hTb6M2cC=mDOhvnhmcsFPEGywhfuHchi20uwmQ@mail.gmail.com>
-Subject: [GIT PULL] ACPI fix for v4.18-rc7
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=q1bbeBlbA5yGzCz3LYX30EBNKRjem+abrzOXES8zWXI=;
+        b=tug0hvX8mRXOnXd7CqSVWz33SC4p1sTwFIjNwyVkj7rOi8qaFjg4a2+3PZH/jxM8Bg
+         z6XG1Tb/A+oH+9uwFCyGNJj4C2wUsKO95xK4g9eQWoAvnCddqBhJIKw1COlh7v6w4Dyu
+         XzIzbXe6/YSfLvQ4w984BoQEraqsMdVcvB6/LkxsXi1azDGedXTD+Yi82r8x6Lh7iCC6
+         wohktz6npyMu2DvIXy6cUce39fx40P3RaZF/50YKfBGmFwUtQQvT2PMrL5IXIMMU8czr
+         Tx/5aU5k9PxTNmPH3xHNnsuKUWSNFeu4pqF2D9iUlRjx9W+fcjuud6FJvctTifld6VKx
+         ZDrQ==
+X-Gm-Message-State: AOUpUlF43VrbgGOl1D9R3WPrYfylLekF9hhwFVWst10frGzWsZr4XSmx
+        srRGqqP5HsGKM8tgUrEE6OCmOQ==
+X-Google-Smtp-Source: AAOMgpe93TLLgQwrspDx2cZNGsFdcQgZgKHP2X5DwtPFX+IvCEGOM5lASYCFgL6auT9Ok4MFbst98w==
+X-Received: by 2002:adf:b2a7:: with SMTP id g36-v6mr1725501wrd.218.1532614441450;
+        Thu, 26 Jul 2018 07:14:01 -0700 (PDT)
+Received: from bender.baylibre.local ([90.63.244.31])
+        by smtp.gmail.com with ESMTPSA id j9-v6sm3558062wrv.5.2018.07.26.07.14.00
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Thu, 26 Jul 2018 07:14:00 -0700 (PDT)
+From:   Neil Armstrong <narmstrong@baylibre.com>
+To:     khilman@baylibre.com
+Cc:     Neil Armstrong <narmstrong@baylibre.com>,
+        linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] arm64: dts: meson: Switch simple-mfd and syscon order
+Date:   Thu, 26 Jul 2018 16:13:58 +0200
+Message-Id: <1532614438-7207-1-git-send-email-narmstrong@baylibre.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+The order between "syscon" and "simple-mfd" is important because in these
+particular cases, the node needs to be first a "simple-mfd" to expose
+it's sub-nodes, and later on a "syscon" to permit other nodes to access
+this register space through the "syscon" mechanism.
 
-Please pull from the tag
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+---
+This also has a consequence for U-Boot since the U-Boot DM is much simpler
+and can only associate a single device to a node, thus here we want these
+nodes to be an mfd bus to be able to probe the sub-nodes.
 
- git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git \
- acpi-4.18-rc7
+ arch/arm64/boot/dts/amlogic/meson-axg.dtsi | 4 ++--
+ arch/arm64/boot/dts/amlogic/meson-gx.dtsi  | 4 ++--
+ 2 files changed, 4 insertions(+), 4 deletions(-)
 
-with top-most commit 73c2a01c52b657f4a0ead6c95f64c5279efbd000
+diff --git a/arch/arm64/boot/dts/amlogic/meson-axg.dtsi b/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
+index 6adc8d3..3f0de9d 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
++++ b/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
+@@ -342,7 +342,7 @@
+ 			ranges = <0x0 0x0 0x0 0xff63c000 0x0 0x1c00>;
+ 
+ 			sysctrl: system-controller@0 {
+-				compatible = "amlogic,meson-axg-hhi-sysctrl", "syscon", "simple-mfd";
++				compatible = "amlogic,meson-axg-hhi-sysctrl", "simple-mfd", "syscon";
+ 				reg = <0 0 0 0x400>;
+ 
+ 				clkc: clock-controller {
+@@ -1180,7 +1180,7 @@
+ 			ranges = <0x0 0x0 0x0 0xff800000 0x0 0x100000>;
+ 
+ 			sysctrl_AO: sys-ctrl@0 {
+-				compatible = "amlogic,meson-axg-ao-sysctrl", "syscon", "simple-mfd";
++				compatible = "amlogic,meson-axg-ao-sysctrl", "simple-mfd", "syscon";
+ 				reg =  <0x0 0x0 0x0 0x100>;
+ 
+ 				clkc_AO: clock-controller {
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gx.dtsi b/arch/arm64/boot/dts/amlogic/meson-gx.dtsi
+index b8dc4db..d88699f 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-gx.dtsi
++++ b/arch/arm64/boot/dts/amlogic/meson-gx.dtsi
+@@ -344,7 +344,7 @@
+ 			ranges = <0x0 0x0 0x0 0xc8100000 0x0 0x100000>;
+ 
+ 			sysctrl_AO: sys-ctrl@0 {
+-				compatible = "amlogic,meson-gx-ao-sysctrl", "syscon", "simple-mfd";
++				compatible = "amlogic,meson-gx-ao-sysctrl", "simple-mfd", "syscon";
+ 				reg =  <0x0 0x0 0x0 0x100>;
+ 
+ 				pwrc_vpu: power-controller-vpu {
+@@ -431,7 +431,7 @@
+ 			ranges = <0x0 0x0 0x0 0xc883c000 0x0 0x2000>;
+ 
+ 			sysctrl: system-controller@0 {
+-				compatible = "amlogic,meson-gx-hhi-sysctrl", "syscon", "simple-mfd";
++				compatible = "amlogic,meson-gx-hhi-sysctrl", "simple-mfd", "syscon";
+ 				reg = <0 0 0 0x400>;
+ 			};
+ 
+-- 
+2.7.4
 
- ACPICA: AML Parser: ignore dispatcher error status during table load
-
-on top of commit d72e90f33aa4709ebecc5005562f52335e106a60
-
- Linux 4.18-rc6
-
-to receive an ACPI fix for 4.18-rc7.
-
-This fixes a recent ACPICA regression causing the AML parser to get
-confused and fail in some situations involving incorrect AML in an
-ACPI table (Erik Schmauss).
-
-Thanks!
-
-
----------------
-
-Schmauss, Erik (1):
-      ACPICA: AML Parser: ignore dispatcher error status during table load
-
----------------
-
- drivers/acpi/acpica/psloop.c | 26 ++++++++++++++++++++++++++
- 1 file changed, 26 insertions(+)
