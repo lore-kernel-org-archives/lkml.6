@@ -6,31 +6,31 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E933BC6778F
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 16:26:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6EA6C28CF6
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 16:26:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9CAC22083F
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 16:26:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9CAC22083F
+	by mail.kernel.org (Postfix) with ESMTP id 82C392083F
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 16:26:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 82C392083F
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732994AbeGZRnp (ORCPT
+        id S1732099AbeGZRnD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 26 Jul 2018 13:43:45 -0400
-Received: from mga03.intel.com ([134.134.136.65]:54850 "EHLO mga03.intel.com"
+        Thu, 26 Jul 2018 13:43:03 -0400
+Received: from mga03.intel.com ([134.134.136.65]:54848 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732075AbeGZRnG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Jul 2018 13:43:06 -0400
+        id S1730250AbeGZRnC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Jul 2018 13:43:02 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Jul 2018 09:25:32 -0700
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Jul 2018 09:25:28 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.51,405,1526367600"; 
-   d="scan'208";a="76192052"
+   d="scan'208";a="76192031"
 Received: from marshy.an.intel.com ([10.122.105.159])
-  by orsmga001.jf.intel.com with ESMTP; 26 Jul 2018 09:25:31 -0700
+  by orsmga001.jf.intel.com with ESMTP; 26 Jul 2018 09:25:27 -0700
 From:   richard.gong@linux.intel.com
 To:     gregkh@linuxfoundation.org, catalin.marinas@arm.com,
         will.deacon@arm.com, dinguyen@kernel.org, robh+dt@kernel.org,
@@ -40,9 +40,9 @@ Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         devicetree@vger.kernel.org, linux-fpga@vger.kernel.org,
         linux-doc@vger.kernel.org, yves.vandervennet@linux.intel.com,
         richard.gong@intel.com, joyce.ooi@intel.com
-Subject: [PATCHv8 4/9] dt-bindings: fpga: add Stratix10 SoC FPGA manager binding
-Date:   Thu, 26 Jul 2018 11:27:21 -0500
-Message-Id: <1532622446-19663-5-git-send-email-richard.gong@linux.intel.com>
+Subject: [PATCHv8 1/9] dt-bindings, firmware: add Intel Stratix10 service layer binding
+Date:   Thu, 26 Jul 2018 11:27:18 -0500
+Message-Id: <1532622446-19663-2-git-send-email-richard.gong@linux.intel.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1532622446-19663-1-git-send-email-richard.gong@linux.intel.com>
 References: <1532622446-19663-1-git-send-email-richard.gong@linux.intel.com>
@@ -51,48 +51,89 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alan Tull <atull@kernel.org>
+From: Richard Gong <richard.gong@intel.com>
 
-Add a Device Tree binding for the Intel Stratix10 SoC FPGA manager.
+Add a device tree binding for the Intel Stratix10 service layer driver
 
-Signed-off-by: Alan Tull <atull@kernel.org>
 Signed-off-by: Richard Gong <richard.gong@intel.com>
+Signed-off-by: Alan Tull <atull@kernel.org>
 Reviewed-by: Rob Herring <robh@kernel.org>
+Acked-by: Moritz Fischer <mdf@kernel.org>
 ---
-v2: this patch is added in patch set version 2
-v3: change to put fpga_mgr node under firmware/svc node
-v4: s/fpga-mgr@0/fpga-mgr/ to remove unit_address
-    add Richard's signed-off-by
-v5: add Reviewed-by Rob Herring
-v6: no change
+v2: change to put service layer driver node under the firmware node
+    change compatible to "intel, stratix10-svc"
+v3: no change
+v4: add Rob's Reviewed-by
+v5: no change
+v6: add Moritz's Acked-by
 v7: no change
 v8: no change
 ---
- .../bindings/fpga/intel-stratix10-soc-fpga-mgr.txt      | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/fpga/intel-stratix10-soc-fpga-mgr.txt
+ .../bindings/firmware/intel,stratix10-svc.txt      | 57 ++++++++++++++++++++++
+ 1 file changed, 57 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/firmware/intel,stratix10-svc.txt
 
-diff --git a/Documentation/devicetree/bindings/fpga/intel-stratix10-soc-fpga-mgr.txt b/Documentation/devicetree/bindings/fpga/intel-stratix10-soc-fpga-mgr.txt
+diff --git a/Documentation/devicetree/bindings/firmware/intel,stratix10-svc.txt b/Documentation/devicetree/bindings/firmware/intel,stratix10-svc.txt
 new file mode 100644
-index 0000000..6e03f79
+index 0000000..1fa6606
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/fpga/intel-stratix10-soc-fpga-mgr.txt
-@@ -0,0 +1,17 @@
-+Intel Stratix10 SoC FPGA Manager
++++ b/Documentation/devicetree/bindings/firmware/intel,stratix10-svc.txt
+@@ -0,0 +1,57 @@
++Intel Service Layer Driver for Stratix10 SoC
++============================================
++Intel Stratix10 SoC is composed of a 64 bit quad-core ARM Cortex A53 hard
++processor system (HPS) and Secure Device Manager (SDM). When the FPGA is
++configured from HPS, there needs to be a way for HPS to notify SDM the
++location and size of the configuration data. Then SDM will get the
++configuration data from that location and perform the FPGA configuration.
++
++To meet the whole system security needs and support virtual machine requesting
++communication with SDM, only the secure world of software (EL3, Exception
++Layer 3) can interface with SDM. All software entities running on other
++exception layers must channel through the EL3 software whenever it needs
++service from SDM.
++
++Intel Stratix10 service layer driver, running at privileged exception level
++(EL1, Exception Layer 1), interfaces with the service providers and provides
++the services for FPGA configuration, QSPI, Crypto and warm reset. Service layer
++driver also manages secure monitor call (SMC) to communicate with secure monitor
++code running in EL3.
 +
 +Required properties:
-+The fpga_mgr node has the following mandatory property, must be located under
-+firmware/svc node.
++-------------------
++The svc node has the following mandatory properties, must be located under
++the firmware node.
 +
-+- compatible : should contain "intel,stratix10-soc-fpga-mgr"
++- compatible: "intel,stratix10-svc"
++- method: smc or hvc
++        smc - Secure Monitor Call
++        hvc - Hypervisor Call
++- memory-region:
++	phandle to the reserved memory node. See
++	Documentation/devicetree/bindings/reserved-memory/reserved-memory.txt
++	for details
 +
 +Example:
++-------
++
++	reserved-memory {
++                #address-cells = <2>;
++                #size-cells = <2>;
++                ranges;
++
++                service_reserved: svcbuffer@0 {
++                        compatible = "shared-dma-pool";
++                        reg = <0x0 0x0 0x0 0x1000000>;
++                        alignment = <0x1000>;
++                        no-map;
++                };
++        };
 +
 +	firmware {
 +		svc {
-+			fpga_mgr: fpga-mgr {
-+				compatible = "intel,stratix10-soc-fpga-mgr";
-+			};
++			compatible = "intel,stratix10-svc";
++			method = "smc";
++			memory-region = <&service_reserved>;
 +		};
 +	};
 -- 
