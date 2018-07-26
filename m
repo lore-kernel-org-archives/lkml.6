@@ -6,44 +6,40 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7898C28CF6
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 23:07:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C21B2C28CF6
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 23:07:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 52B7720857
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 23:07:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 52B7720857
+	by mail.kernel.org (Postfix) with ESMTP id 7329120857
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 23:07:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7329120857
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731985AbeG0AZu (ORCPT
+        id S1731586AbeG0A0O (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 26 Jul 2018 20:25:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34284 "EHLO mail.kernel.org"
+        Thu, 26 Jul 2018 20:26:14 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34212 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731933AbeG0AZu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1731823AbeG0AZu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 26 Jul 2018 20:25:50 -0400
 Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CEC3020899;
+        by mail.kernel.org (Postfix) with ESMTPSA id 31BD02088E;
         Thu, 26 Jul 2018 23:06:52 +0000 (UTC)
 Received: from rostedt by gandalf.local.home with local (Exim 4.91)
         (envelope-from <rostedt@goodmis.org>)
-        id 1fipLP-00069v-Ry; Thu, 26 Jul 2018 19:06:51 -0400
-Message-Id: <20180726230651.763688807@goodmis.org>
+        id 1fipLP-00068q-7t; Thu, 26 Jul 2018 19:06:51 -0400
+Message-Id: <20180726230651.135885335@goodmis.org>
 User-Agent: quilt/0.65
-Date:   Thu, 26 Jul 2018 19:06:10 -0400
+Date:   Thu, 26 Jul 2018 19:06:08 -0400
 From:   Steven Rostedt <rostedt@goodmis.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
         Ingo Molnar <mingo@kernel.org>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Tom Zanussi <tom.zanussi@linux.intel.com>,
-        Hiraku Toyooka <hiraku.toyooka@cybertrust.co.jp>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>, Shuah Khan <shuah@kernel.org>,
-        linux-kselftest@vger.kernel.org
-Subject: [PATCH 3/7] selftests/ftrace: Add snapshot and tracing_on test case
+        stable@vger.kerne.org, Masami Hiramatsu <mhiramat@kernel.org>
+Subject: [PATCH 1/7] tracing: Fix double free of event_trigger_data
 MIME-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-15
 Sender: linux-kernel-owner@vger.kernel.org
@@ -51,60 +47,111 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Masami Hiramatsu <mhiramat@kernel.org>
+From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
 
-Add a testcase for checking snapshot and tracing_on
-relationship. This ensures that the snapshotting doesn't
-affect current tracing on/off settings.
+Running the following:
 
-Link: http://lkml.kernel.org/r/153149932412.11274.15289227592627901488.stgit@devbox
+ # cd /sys/kernel/debug/tracing
+ # echo 500000 > buffer_size_kb
+[ Or some other number that takes up most of memory ]
+ # echo snapshot > events/sched/sched_switch/trigger
 
-Cc: Tom Zanussi <tom.zanussi@linux.intel.com>
-Cc: Hiraku Toyooka <hiraku.toyooka@cybertrust.co.jp>
-Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Shuah Khan <shuah@kernel.org>
-Cc: linux-kselftest@vger.kernel.org
+Triggers the following bug:
+
+ ------------[ cut here ]------------
+ kernel BUG at mm/slub.c:296!
+ invalid opcode: 0000 [#1] SMP DEBUG_PAGEALLOC PTI
+ CPU: 6 PID: 6878 Comm: bash Not tainted 4.18.0-rc6-test+ #1066
+ Hardware name: Hewlett-Packard HP Compaq Pro 6300 SFF/339A, BIOS K01 v03.03 07/14/2016
+ RIP: 0010:kfree+0x16c/0x180
+ Code: 05 41 0f b6 72 51 5b 5d 41 5c 4c 89 d7 e9 ac b3 f8 ff 48 89 d9 48 89 da 41 b8 01 00 00 00 5b 5d 41 5c 4c 89 d6 e9 f4 f3 ff ff <0f> 0b 0f 0b 48 8b 3d d9 d8 f9 00 e9 c1 fe ff ff 0f 1f 40 00 0f 1f
+ RSP: 0018:ffffb654436d3d88 EFLAGS: 00010246
+ RAX: ffff91a9d50f3d80 RBX: ffff91a9d50f3d80 RCX: ffff91a9d50f3d80
+ RDX: 00000000000006a4 RSI: ffff91a9de5a60e0 RDI: ffff91a9d9803500
+ RBP: ffffffff8d267c80 R08: 00000000000260e0 R09: ffffffff8c1a56be
+ R10: fffff0d404543cc0 R11: 0000000000000389 R12: ffffffff8c1a56be
+ R13: ffff91a9d9930e18 R14: ffff91a98c0c2890 R15: ffffffff8d267d00
+ FS:  00007f363ea64700(0000) GS:ffff91a9de580000(0000) knlGS:0000000000000000
+ CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+ CR2: 000055c1cacc8e10 CR3: 00000000d9b46003 CR4: 00000000001606e0
+ Call Trace:
+  event_trigger_callback+0xee/0x1d0
+  event_trigger_write+0xfc/0x1a0
+  __vfs_write+0x33/0x190
+  ? handle_mm_fault+0x115/0x230
+  ? _cond_resched+0x16/0x40
+  vfs_write+0xb0/0x190
+  ksys_write+0x52/0xc0
+  do_syscall_64+0x5a/0x160
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+ RIP: 0033:0x7f363e16ab50
+ Code: 73 01 c3 48 8b 0d 38 83 2c 00 f7 d8 64 89 01 48 83 c8 ff c3 66 0f 1f 44 00 00 83 3d 79 db 2c 00 00 75 10 b8 01 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 31 c3 48 83 ec 08 e8 1e e3 01 00 48 89 04 24
+ RSP: 002b:00007fff9a4c6378 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
+ RAX: ffffffffffffffda RBX: 0000000000000009 RCX: 00007f363e16ab50
+ RDX: 0000000000000009 RSI: 000055c1cacc8e10 RDI: 0000000000000001
+ RBP: 000055c1cacc8e10 R08: 00007f363e435740 R09: 00007f363ea64700
+ R10: 0000000000000073 R11: 0000000000000246 R12: 0000000000000009
+ R13: 0000000000000001 R14: 00007f363e4345e0 R15: 00007f363e4303c0
+ Modules linked in: ip6table_filter ip6_tables snd_hda_codec_hdmi snd_hda_codec_realtek snd_hda_codec_generic snd_hda_intel snd_hda_codec snd_hwdep snd_hda_core snd_seq snd_seq_device i915 snd_pcm snd_timer i2c_i801 snd soundcore i2c_algo_bit drm_kms_helper
+86_pkg_temp_thermal video kvm_intel kvm irqbypass wmi e1000e
+ ---[ end trace d301afa879ddfa25 ]---
+
+The cause is because the register_snapshot_trigger() call failed to
+allocate the snapshot buffer, and then called unregister_trigger()
+which freed the data that was passed to it. Then on return to the
+function that called register_snapshot_trigger(), as it sees it
+failed to register, it frees the trigger_data again and causes
+a double free.
+
+By calling event_trigger_init() on the trigger_data (which only ups
+the reference counter for it), and then event_trigger_free() afterward,
+the trigger_data would not get freed by the registering trigger function
+as it would only up and lower the ref count for it. If the register
+trigger function fails, then the event_trigger_free() called after it
+will free the trigger data normally.
+
+Link: http://lkml.kernel.org/r/20180724191331.738eb819@gandalf.local.home
+
+Cc: stable@vger.kerne.org
+Fixes: 93e31ffbf417 ("tracing: Add 'snapshot' event trigger command")
+Reported-by: Masami Hiramatsu <mhiramat@kernel.org>
+Reviewed-by: Masami Hiramatsu <mhiramat@kernel.org>
 Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 ---
- .../ftrace/test.d/00basic/snapshot.tc         | 28 +++++++++++++++++++
- 1 file changed, 28 insertions(+)
- create mode 100644 tools/testing/selftests/ftrace/test.d/00basic/snapshot.tc
+ kernel/trace/trace_events_trigger.c | 12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
 
-diff --git a/tools/testing/selftests/ftrace/test.d/00basic/snapshot.tc b/tools/testing/selftests/ftrace/test.d/00basic/snapshot.tc
-new file mode 100644
-index 000000000000..3b1f45e13a2e
---- /dev/null
-+++ b/tools/testing/selftests/ftrace/test.d/00basic/snapshot.tc
-@@ -0,0 +1,28 @@
-+#!/bin/sh
-+# description: Snapshot and tracing setting
-+# flags: instance
+diff --git a/kernel/trace/trace_events_trigger.c b/kernel/trace/trace_events_trigger.c
+index d18249683682..d18ec0e58be2 100644
+--- a/kernel/trace/trace_events_trigger.c
++++ b/kernel/trace/trace_events_trigger.c
+@@ -679,6 +679,8 @@ event_trigger_callback(struct event_command *cmd_ops,
+ 		goto out_free;
+ 
+  out_reg:
++	/* Up the trigger_data count to make sure reg doesn't free it on failure */
++	event_trigger_init(trigger_ops, trigger_data);
+ 	ret = cmd_ops->reg(glob, trigger_ops, trigger_data, file);
+ 	/*
+ 	 * The above returns on success the # of functions enabled,
+@@ -686,11 +688,13 @@ event_trigger_callback(struct event_command *cmd_ops,
+ 	 * Consider no functions a failure too.
+ 	 */
+ 	if (!ret) {
++		cmd_ops->unreg(glob, trigger_ops, trigger_data, file);
+ 		ret = -ENOENT;
+-		goto out_free;
+-	} else if (ret < 0)
+-		goto out_free;
+-	ret = 0;
++	} else if (ret > 0)
++		ret = 0;
 +
-+[ ! -f snapshot ] && exit_unsupported
-+
-+echo "Set tracing off"
-+echo 0 > tracing_on
-+
-+echo "Allocate and take a snapshot"
-+echo 1 > snapshot
-+
-+# Since trace buffer is empty, snapshot is also empty, but allocated
-+grep -q "Snapshot is allocated" snapshot
-+
-+echo "Ensure keep tracing off"
-+test `cat tracing_on` -eq 0
-+
-+echo "Set tracing on"
-+echo 1 > tracing_on
-+
-+echo "Take a snapshot again"
-+echo 1 > snapshot
-+
-+echo "Ensure keep tracing on"
-+test `cat tracing_on` -eq 1
-+
-+exit 0
++	/* Down the counter of trigger_data or free it if not used anymore */
++	event_trigger_free(trigger_ops, trigger_data);
+  out:
+ 	return ret;
+ 
 -- 
 2.17.1
 
