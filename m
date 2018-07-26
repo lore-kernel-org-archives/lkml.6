@@ -2,139 +2,204 @@ Return-Path: <SRS0=7Z+k=KK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BAD70C28CF6
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 08:36:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E90E0C28CF6
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 08:37:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 632AD2064D
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 08:36:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 632AD2064D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zte.com.cn
+	by mail.kernel.org (Postfix) with ESMTP id 9B76020891
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 08:37:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B76020891
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729139AbeGZJwD (ORCPT
+        id S1729044AbeGZJx2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 26 Jul 2018 05:52:03 -0400
-Received: from out1.zte.com.cn ([202.103.147.172]:33304 "EHLO mxct.zte.com.cn"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727951AbeGZJwD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Jul 2018 05:52:03 -0400
-X-Greylist: delayed 930 seconds by postgrey-1.27 at vger.kernel.org; Thu, 26 Jul 2018 05:52:01 EDT
-Received: from mse01.zte.com.cn (unknown [10.30.3.20])
-        by Forcepoint Email with ESMTPS id 37BE326C0F2AD2F28CCE;
-        Thu, 26 Jul 2018 16:20:45 +0800 (CST)
-Received: from notes_smtp.zte.com.cn ([10.30.1.239])
-        by mse01.zte.com.cn with ESMTP id w6Q8KREF069041;
-        Thu, 26 Jul 2018 16:20:27 +0800 (GMT-8)
-        (envelope-from cheng.lin130@zte.com.cn)
-Received: from localhost.localdomain ([10.75.10.200])
-          by szsmtp06.zte.com.cn (Lotus Domino Release 8.5.3FP6)
-          with ESMTP id 2018072616203476-1946370 ;
-          Thu, 26 Jul 2018 16:20:34 +0800 
-From:   Cheng Lin <cheng.lin130@zte.com.cn>
-To:     mingo@redhat.com, peterz@infradead.org
-Cc:     linux-kernel@vger.kernel.org, jiang.biao2@zte.com.cn,
-        zhong.weidong@zte.com.cn, tan.hu@zte.com.cn.cn,
-        Cheng Lin <cheng.lin130@zte.com.cn>
-Subject: [PATCH v2] sched/numa: do not balance tasks onto isolated cpus
-Date:   Thu, 26 Jul 2018 16:19:08 +0800
-Message-Id: <1532593148-106266-1-git-send-email-cheng.lin130@zte.com.cn>
-X-Mailer: git-send-email 1.8.3.1
-X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
- 21, 2013) at 2018-07-26 16:20:34,
-        Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
- 2018-07-26 16:20:15,
-        Serialize complete at 2018-07-26 16:20:15
-X-MAIL: mse01.zte.com.cn w6Q8KREF069041
+        Thu, 26 Jul 2018 05:53:28 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:36322 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727951AbeGZJx2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Jul 2018 05:53:28 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id C36A485627;
+        Thu, 26 Jul 2018 08:37:40 +0000 (UTC)
+Received: from [10.36.117.37] (ovpn-117-37.ams2.redhat.com [10.36.117.37])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 629F41C5A3;
+        Thu, 26 Jul 2018 08:37:34 +0000 (UTC)
+Subject: Re: [PATCH v1 0/2] mm/kdump: exclude reserved pages in dumps
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     Vlastimil Babka <vbabka@suse.cz>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Baoquan He <bhe@redhat.com>, Dave Young <dyoung@redhat.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Hari Bathini <hbathini@linux.vnet.ibm.com>,
+        Huang Ying <ying.huang@intel.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        =?UTF-8?Q?Marc-Andr=c3=a9_Lureau?= <marcandre.lureau@redhat.com>,
+        Matthew Wilcox <mawilcox@microsoft.com>,
+        Miles Chen <miles.chen@mediatek.com>,
+        Pavel Tatashin <pasha.tatashin@oracle.com>,
+        Petr Tesarik <ptesarik@suse.cz>
+References: <20180723123043.GD31229@dhcp22.suse.cz>
+ <8daae80c-871e-49b6-1cf1-1f0886d3935d@redhat.com>
+ <20180724072536.GB28386@dhcp22.suse.cz>
+ <8eb22489-fa6b-9825-bc63-07867a40d59b@redhat.com>
+ <20180724131343.GK28386@dhcp22.suse.cz>
+ <af5353ee-319e-17ec-3a39-df997a5adf43@redhat.com>
+ <20180724133530.GN28386@dhcp22.suse.cz>
+ <6c753cae-f8b6-5563-e5ba-7c1fefdeb74e@redhat.com>
+ <20180725135147.GN28386@dhcp22.suse.cz>
+ <344d5f15-c621-9973-561e-6ed96b29ea88@redhat.com>
+ <20180726082723.GB28386@dhcp22.suse.cz>
+From:   David Hildenbrand <david@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+ SE+xAvmumFBY
+Organization: Red Hat GmbH
+Message-ID: <60975612-9b91-65dd-03d8-579ba23a6c01@redhat.com>
+Date:   Thu, 26 Jul 2018 10:37:33 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <20180726082723.GB28386@dhcp22.suse.cz>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Thu, 26 Jul 2018 08:37:40 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Thu, 26 Jul 2018 08:37:40 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'david@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-By default, there is one sched domain covering all CPUs, including
-those isolated ones using "isolcpus=" boot parameter. However, the
-isolated CPUs will not participate in load balancing, and will not
-have tasks running on them unless explicitly assigning by CPU
-affinity.
+On 26.07.2018 10:27, Michal Hocko wrote:
+> On Wed 25-07-18 16:20:41, David Hildenbrand wrote:
+>> On 25.07.2018 15:51, Michal Hocko wrote:
+>>> On Tue 24-07-18 16:13:09, David Hildenbrand wrote:
+>>> [...]
+>>>> So I see right now:
+>>>>
+>>>> - Pg_reserved + e.g. new page type (or some other unique identifier in
+>>>>   combination with Pg_reserved)
+>>>>  -> Avoid reads of pages we know are offline
+>>>> - extend is_ram_page()
+>>>>  -> Fake zero memory for pages we know are offline
+>>>>
+>>>> Or even both (avoid reading and don't crash the kernel if it is being done).
+>>>
+>>> I really fail to see how that can work without kernel being aware of
+>>> PageOffline. What will/should happen if you run an old kdump tool on a
+>>> kernel with this partially offline memory?
+>>>
+>>
+>> New kernel with old dump tool:
+>>
+>> a) we have not fixed up is_ram_page()
+>>
+>> -> crash, as we access memory we shouldn't
+> 
+> this is not acceptable, right? You do not want to crash your crash
+> kernel ;)
 
-But, NUMA balancing has not taken *isolcpus(isolated cpus)* into 
-consideration. It may migrate tasks onto isolated cpus and the 
-migrated tasks will never escape from the isolated cpus, which will
-break the isolation provided by *isolcpus* boot parameter and 
-intrduce various problems. The typical scenario is,
+Well, the same can happen today with PageHWPoison. The "new" kernel will
+happily access such pages and crash as far as I understand (it has has
+no idea of the old struct pages). Of course, this is "less likely" than
+what I describe.
 
-When we wanna use the isolated CPUs in a cgroup, cpuset must include
-them(e.g. in container).In that case, task's CPU-affinity in the
-cgroup includes the isolated CPU by default; If we pin a task onto an
-isolated CPU or a CPU which on the same NUMA node with the isolated
-CPU, and if there is another task sharing memory with the pinned task,
-it will be migrated to the same NUMA node by NUMA-balancing for better
-performance. In this case, the isolated CPU maybe chosen as the target
-CPU.
+> 
+>> b) we have fixed up is_ram_page()
+>>
+>> -> We have a callback to check for applicable memory in the hypervisor
+>> whether the parts are accessible / online or not accessible / offline.
+>> (e.g. via a device driver that controls a certain memory region)
+>>
+>> -> Don't read, but fake a page full of 0
+>>
+>>
+>> So instead of the kernel being aware of it, it asks via is_ram_page()
+>> the hypervisor.
+> 
+> I am still confused why do we even care about hypervisor. What if
+> somebody wants to have partial memory hotplug on native OS?
 
-Although Load-balancing never migrate a task onto isolated CPU, 
-NUMA-balancing does not consider isolated CPU currently. This patch
-ensure NUMA balancing not to balance tasks onto isolated
+Good point I was ignoring so far (too much focusing on my use case I
+assume). So for these, we would have to catch illegal accesses and
 
-Signed-off-by: Cheng Lin <cheng.lin130@zte.com.cn>
-Reviewed-by: Tan Hu <tan.hu@zte.com.cn>
-Reviewed-by: Jiang Biao <jiang.biao2@zte.com.cn>
----
-v2: 
-* rework and retest on latest kernel
-* detail the scenario in the commit log
-* fix the SoB chain
+a) report them (-EINVAL / - EIO) as you said
+b) fake a zero page
 
- kernel/sched/core.c | 9 ++++++---
- kernel/sched/fair.c | 3 ++-
- 2 files changed, 8 insertions(+), 4 deletions(-)
+I assume catching illegal accesses should be possible. Might require
+some work across all architectures.
 
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index fe365c9..170a673 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -1302,10 +1302,12 @@ int migrate_swap(struct task_struct *cur, struct task_struct *p)
- 	if (!cpu_active(arg.src_cpu) || !cpu_active(arg.dst_cpu))
- 		goto out;
- 
--	if (!cpumask_test_cpu(arg.dst_cpu, &arg.src_task->cpus_allowed))
-+	if ((!cpumask_test_cpu(arg.dst_cpu, &arg.src_task->cpus_allowed))
-+		|| !housekeeping_test_cpu(arg.dst_cpu, HK_FLAG_DOMAIN))
- 		goto out;
- 
--	if (!cpumask_test_cpu(arg.src_cpu, &arg.dst_task->cpus_allowed))
-+	if ((!cpumask_test_cpu(arg.src_cpu, &arg.dst_task->cpus_allowed))
-+		|| !housekeeping_test_cpu(arg.src_cpu, HK_FLAG_DOMAIN))
- 		goto out;
- 
- 	trace_sched_swap_numa(cur, arg.src_cpu, p, arg.dst_cpu);
-@@ -5508,7 +5510,8 @@ int migrate_task_to(struct task_struct *p, int target_cpu)
- 	if (curr_cpu == target_cpu)
- 		return 0;
- 
--	if (!cpumask_test_cpu(target_cpu, &p->cpus_allowed))
-+	if ((!cpumask_test_cpu(target_cpu, &p->cpus_allowed))
-+		|| !housekeeping_test_cpu(target_cpu, HK_FLAG_DOMAIN))
- 		return -EINVAL;
- 
- 	/* TODO: This is not properly updating schedstats */
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 2f0a0be..1ea2953 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -1724,7 +1724,8 @@ static void task_numa_find_cpu(struct task_numa_env *env,
- 
- 	for_each_cpu(cpu, cpumask_of_node(env->dst_nid)) {
- 		/* Skip this CPU if the source task cannot migrate */
--		if (!cpumask_test_cpu(cpu, &env->p->cpus_allowed))
-+		if ((!cpumask_test_cpu(cpu, &env->p->cpus_allowed))
-+			|| !housekeeping_test_cpu(cpu, HK_FLAG_DOMAIN))
- 			continue;
- 
- 		env->dst_cpu = cpu;
+Still, dump tools should in addition not even try to read if possible.
+
+>  
+>> I don't think a) is a problem. AFAICS, we have to update makedumpfile
+>> for every new kernel. We can perform changes and update makedumpfile
+>> to be compatible with new dump tools.
+> 
+> Not really. You simply do not crash the kernel just because you are
+> trying to dump the already crashed kernel.
+> 
+>> E.g. remember SECTION_IS_ONLINE you introduced ? It broke dump
+>> tools and required
+> 
+> But has it crashed the kernel when reading the dump? If yes then the
+> whole dumping is fragile as hell...
+
+No, I think it simply didn't work. At least that's what I assume ;) I
+was rather saying that dump tools may have to be fixed up to work with a
+new kernel.
+
+
 -- 
-1.8.3.1
 
+Thanks,
+
+David / dhildenb
