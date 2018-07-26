@@ -2,78 +2,198 @@ Return-Path: <SRS0=7Z+k=KK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA2CBC28CF6
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 17:01:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56E0EC28CF6
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 17:02:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8490620671
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 17:01:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8490620671
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 0B49720671
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 17:02:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0B49720671
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388584AbeGZSTj (ORCPT
+        id S2388611AbeGZSTu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 26 Jul 2018 14:19:39 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:59850 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731864AbeGZSTj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Jul 2018 14:19:39 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 774D37A9;
-        Thu, 26 Jul 2018 10:01:57 -0700 (PDT)
-Received: from queper01-lin (queper01-lin.emea.arm.com [10.4.13.27])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 814123F575;
-        Thu, 26 Jul 2018 10:01:53 -0700 (PDT)
-Date:   Thu, 26 Jul 2018 18:01:48 +0100
-From:   Quentin Perret <quentin.perret@arm.com>
-To:     Valentin Schneider <valentin.schneider@arm.com>
-Cc:     peterz@infradead.org, rjw@rjwysocki.net,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        gregkh@linuxfoundation.org, mingo@redhat.com,
-        dietmar.eggemann@arm.com, morten.rasmussen@arm.com,
-        chris.redpath@arm.com, patrick.bellasi@arm.com,
-        vincent.guittot@linaro.org, thara.gopinath@linaro.org,
-        viresh.kumar@linaro.org, tkjos@google.com, joel@joelfernandes.org,
-        smuckle@google.com, adharmap@quicinc.com, skannan@quicinc.com,
-        pkondeti@codeaurora.org, juri.lelli@redhat.com,
-        edubezval@gmail.com, srinivas.pandruvada@linux.intel.com,
-        currojerez@riseup.net, javi.merino@kernel.org
-Subject: Re: [PATCH v5 06/14] sched/topology: Lowest energy aware balancing
- sched_domain level pointer
-Message-ID: <20180726170146.k5mx2px46blrdiqj@queper01-lin>
-References: <20180724122521.22109-1-quentin.perret@arm.com>
- <20180724122521.22109-7-quentin.perret@arm.com>
- <76777be2-0f70-ca54-21a8-5af77a47ea86@arm.com>
+        Thu, 26 Jul 2018 14:19:50 -0400
+Received: from relay3-d.mail.gandi.net ([217.70.183.195]:34735 "EHLO
+        relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731864AbeGZSTt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Jul 2018 14:19:49 -0400
+X-Originating-IP: 79.86.19.127
+Received: from [192.168.0.11] (127.19.86.79.rev.sfr.net [79.86.19.127])
+        (Authenticated sender: alex@ghiti.fr)
+        by relay3-d.mail.gandi.net (Postfix) with ESMTPSA id 3D88460011;
+        Thu, 26 Jul 2018 17:01:58 +0000 (UTC)
+Subject: Re: [PATCH v4 00/11] hugetlb: Factorize hugetlb architecture
+ primitives
+To:     Helge Deller <deller@gmx.de>
+Cc:     Michael Ellerman <mpe@ellerman.id.au>,
+        Michal Hocko <mhocko@kernel.org>, linux@armlinux.org.uk,
+        catalin.marinas@arm.com, will.deacon@arm.com, tony.luck@intel.com,
+        fenghua.yu@intel.com, ralf@linux-mips.org, paul.burton@mips.com,
+        jhogan@kernel.org, jejb@parisc-linux.org, benh@kernel.crashing.org,
+        paulus@samba.org, ysato@users.sourceforge.jp, dalias@libc.org,
+        davem@davemloft.net, tglx@linutronix.de, mingo@redhat.com,
+        hpa@zytor.com, x86@kernel.org, arnd@arndb.de,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-ia64@vger.kernel.org, linux-mips@linux-mips.org,
+        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
+        linux-arch@vger.kernel.org,
+        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>
+References: <20180705110716.3919-1-alex@ghiti.fr>
+ <20180709141621.GD22297@dhcp22.suse.cz>
+ <2173685f-7f85-7acb-4685-2383210c5fa2@ghiti.fr>
+ <87d0vehx16.fsf@concordia.ellerman.id.au>
+ <67aba0f0-c0d4-b06f-5fbc-f4d113ce5033@ghiti.fr>
+ <20180726125940.GA15033@ls3530>
+From:   Alex Ghiti <alex@ghiti.fr>
+Message-ID: <de188e2f-99ab-53fa-20df-4fec00a935e9@ghiti.fr>
+Date:   Thu, 26 Jul 2018 17:01:57 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <76777be2-0f70-ca54-21a8-5af77a47ea86@arm.com>
-User-Agent: NeoMutt/20171215
+In-Reply-To: <20180726125940.GA15033@ls3530>
+Content-Type: text/plain; charset=iso-8859-15; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: fr
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thursday 26 Jul 2018 at 17:00:50 (+0100), Valentin Schneider wrote:
-> > +DECLARE_PER_CPU(struct sched_domain *, sd_ea);
-> 
-> There's already the asym-packing shortcut which is making naming a bit more
-> tedious, but should that really be named energy-aware? IMO it's just the
-> lowest level at which we can see asymmetry, so perhaps it should be named
-> as such, i.e. something like sd_asym_capa (and perhaps rename the other one
-> as sd_asym_pack)?
+Hi Helge,
 
-So the 'sd_ea' name comes from the usage we do of this shortcut, and also
-because this is how the EAS shortcut has always been called, historically.
+Thanks for your tests.
+In case it can help you, this is what I get when I try to build 
+generic-64bit_defconfig (I truncated the output):
 
-But TBH, if nobody is against that, I don't mind changing the name at all.
-And maybe we should go for the longer names ? 'sd_asym_packing' and
-'sd_asym_cpucapacity' aren't that long, I think. And they're
-descriptive :-)
+...
 
-Thanks,
-Quentin
+  LD      vmlinux.o
+  MODPOST vmlinux.o
+hppa64-linux-ld: init/main.o(.text+0x98): cannot reach strreplace
+init/main.o: In function `initcall_blacklisted':
+init/.tmp_main.o:(.text+0x98): relocation truncated to fit: 
+R_PARISC_PCREL22F against symbol `strreplace' defined in .text section 
+in lib/string.o
+hppa64-linux-ld: init/main.o(.text+0xbc): cannot reach strcmp
+init/.tmp_main.o:(.text+0xbc): relocation truncated to fit: 
+R_PARISC_PCREL22F against symbol `strcmp' defined in .text section in 
+lib/string.o
+hppa64-linux-ld: init/main.o(.text+0x21c): cannot reach strcpy
+init/main.o: In function `do_one_initcall':
+(.text+0x21c): relocation truncated to fit: R_PARISC_PCREL22F against 
+symbol `strcpy' defined in .text section in lib/string.o
+hppa64-linux-ld: init/main.o(.text+0x250): cannot reach strlcat
+(.text+0x250): relocation truncated to fit: R_PARISC_PCREL22F against 
+symbol `strlcat' defined in .text section in lib/string.o
+hppa64-linux-ld: init/main.o(.init.text+0x1d4): cannot reach strcmp
+init/main.o: In function `do_early_param':
+init/.tmp_main.o:(.init.text+0x1d4): relocation truncated to fit: 
+R_PARISC_PCREL22F against symbol `strcmp' defined in .text section in 
+lib/string.o
+hppa64-linux-ld: init/main.o(.init.text+0x250): cannot reach strcmp
+init/.tmp_main.o:(.init.text+0x250): relocation truncated to fit: 
+R_PARISC_PCREL22F against symbol `strcmp' defined in .text section in 
+lib/string.o
+hppa64-linux-ld: init/main.o(.init.text+0x294): cannot reach strlen
+init/main.o: In function `repair_env_string':
+init/.tmp_main.o:(.init.text+0x294): relocation truncated to fit: 
+R_PARISC_PCREL22F against symbol `strlen' defined in .text section in 
+lib/string.o
+hppa64-linux-ld: init/main.o(.init.text+0x2f0): cannot reach strlen
+init/.tmp_main.o:(.init.text+0x2f0): relocation truncated to fit: 
+R_PARISC_PCREL22F against symbol `strlen' defined in .text section in 
+lib/string.o
+hppa64-linux-ld: init/main.o(.init.text+0x308): cannot reach memmove
+init/.tmp_main.o:(.init.text+0x308): relocation truncated to fit: 
+R_PARISC_PCREL22F against symbol `memmove' defined in .text section in 
+lib/string.o
+hppa64-linux-ld: init/main.o(.init.text+0x454): cannot reach strlen
+init/main.o: In function `unknown_bootoption':
+init/.tmp_main.o:(.init.text+0x454): relocation truncated to fit: 
+R_PARISC_PCREL22F against symbol `strlen' defined in .text section in 
+lib/string.o
+hppa64-linux-ld: init/main.o(.init.text+0x4dc): cannot reach strchr
+init/.tmp_main.o:(.init.text+0x4dc): additional relocation overflows 
+omitted from the output
+hppa64-linux-ld: init/main.o(.init.text+0x638): cannot reach strncmp
+hppa64-linux-ld: init/main.o(.init.text+0x694): cannot reach get_option
+hppa64-linux-ld: init/main.o(.init.text+0x744): cannot reach strsep
+hppa64-linux-ld: init/main.o(.init.text+0x798): cannot reach strlen
+hppa64-linux-ld: init/main.o(.init.text+0x7d0): cannot reach strcpy
+hppa64-linux-ld: init/main.o(.init.text+0x954): cannot reach strlcpy
+hppa64-linux-ld: init/main.o(.init.text+0xab8): cannot reach strlen
+hppa64-linux-ld: init/main.o(.init.text+0xafc): cannot reach strlen
+hppa64-linux-ld: init/main.o(.init.text+0xb40): cannot reach strlen
+hppa64-linux-ld: init/main.o(.init.text+0xb84): cannot reach strlen
+hppa64-linux-ld: init/main.o(.init.text+0xbd0): cannot reach strcpy
+hppa64-linux-ld: init/main.o(.init.text+0xbe8): cannot reach strcpy
+hppa64-linux-ld: init/main.o(.init.text+0xc3c): cannot reach 
+build_all_zonelists
+hppa64-linux-ld: init/main.o(.init.text+0x1200): cannot reach unknown
+hppa64-linux-ld: init/main.o(.init.text+0x1278): cannot reach 
+wait_for_completion
+hppa64-linux-ld: init/main.o(.init.text+0x12b0): cannot reach _raw_spin_lock
+hppa64-linux-ld: init/main.o(.init.text+0x147c): cannot reach strcpy
+hppa64-linux-ld: init/main.o(.ref.text+0x40): cannot reach kernel_thread
+hppa64-linux-ld: init/main.o(.ref.text+0x60): cannot reach 
+find_task_by_pid_ns
+hppa64-linux-ld: init/main.o(.ref.text+0x98): cannot reach 
+set_cpus_allowed_ptr
+hppa64-linux-ld: init/main.o(.ref.text+0xbc): cannot reach kernel_thread
+hppa64-linux-ld: init/main.o(.ref.text+0xd4): cannot reach 
+find_task_by_pid_ns
+hppa64-linux-ld: init/main.o(.ref.text+0x108): cannot reach complete
+hppa64-linux-ld: init/main.o(.ref.text+0x128): cannot reach 
+cpu_startup_entry
+hppa64-linux-ld: init/main.o(.ref.text+0x164): cannot reach unknown
+hppa64-linux-ld: init/main.o(.ref.text+0x174): cannot reach 
+async_synchronize_full
+hppa64-linux-ld: init/main.o(.ref.text+0x1a4): cannot reach 
+rcu_barrier_sched
+hppa64-linux-ld: init/main.o(.ref.text+0x1b4): cannot reach mark_rodata_ro
+hppa64-linux-ld: init/main.o(.ref.text+0x1d4): cannot reach 
+rcu_end_inkernel_boot
+hppa64-linux-ld: init/main.o(.ref.text+0x1f4): cannot reach unknown
+hppa64-linux-ld: init/main.o(.ref.text+0x218): cannot reach printk
+hppa64-linux-ld: init/main.o(.ref.text+0x238): cannot reach unknown
+hppa64-linux-ld: init/main.o(.ref.text+0x258): cannot reach panic
+hppa64-linux-ld: init/main.o(.ref.text+0x268): cannot reach printk
+hppa64-linux-ld: init/main.o(.ref.text+0x280): cannot reach unknown
+hppa64-linux-ld: init/main.o(.ref.text+0x29c): cannot reach unknown
+hppa64-linux-ld: init/main.o(.ref.text+0x2b8): cannot reach unknown
+hppa64-linux-ld: init/main.o(.ref.text+0x2d4): cannot reach unknown
+hppa64-linux-ld: init/main.o(.ref.text+0x2f0): cannot reach panic
+hppa64-linux-ld: init/do_mounts.o(.text+0x30): cannot reach strncasecmp
+hppa64-linux-ld: init/do_mounts.o(.text+0x158): cannot reach strncmp
+hppa64-linux-ld: init/do_mounts.o(.text+0x180): cannot reach strchr
+
+...
+
+
+On 07/26/2018 12:59 PM, Helge Deller wrote:
+> * Alex Ghiti <alex@ghiti.fr>:
+>> This is the result of the build for all arches tackled in this series
+>> rebased on 4.18-rc6:
+>> ...
+>> parisc:
+>>          generic-64bit_defconfig: with huge page does not link
+>>          generic-64bit_defconfig: without huge page does not link
+>>          BUT not because of this series, any feedback welcome.
+> Strange, but I will check that later....
+>
+> Anyway, I applied your v4-patch to my parisc64 tree, built the kernel,
+> started it and ran some hugetlb LTP testcases sucessfully.
+> So, please add:
+>
+> Tested-by: Helge Deller <deller@gmx.de> # parisc
+>
+> Helge
+
