@@ -2,109 +2,111 @@ Return-Path: <SRS0=7Z+k=KK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27CAAC6778F
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 20:49:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D744C28CF6
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 20:53:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D3A2420846
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 20:49:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D3A2420846
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+	by mail.kernel.org (Postfix) with ESMTP id 3204620846
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 20:53:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3204620846
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731343AbeGZWHq (ORCPT
+        id S1731394AbeGZWLn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 26 Jul 2018 18:07:46 -0400
-Received: from gateway36.websitewelcome.com ([192.185.193.119]:47674 "EHLO
-        gateway36.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730392AbeGZWHq (ORCPT
+        Thu, 26 Jul 2018 18:11:43 -0400
+Received: from smtprelay0006.hostedemail.com ([216.40.44.6]:40928 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1730392AbeGZWLn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Jul 2018 18:07:46 -0400
-Received: from cm17.websitewelcome.com (cm17.websitewelcome.com [100.42.49.20])
-        by gateway36.websitewelcome.com (Postfix) with ESMTP id F3EFD400C5D9C
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Jul 2018 14:51:20 -0500 (CDT)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id inCDfk0XwPvAdinCDfnbQv; Thu, 26 Jul 2018 15:49:13 -0500
-X-Authority-Reason: nr=8
-Received: from [189.250.102.187] (port=48780 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1finCC-002CJI-D9; Thu, 26 Jul 2018 15:49:12 -0500
-Date:   Thu, 26 Jul 2018 15:49:10 -0500
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>, Barry Song <baohua@kernel.org>
-Cc:     alsa-devel@alsa-project.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH] ASoC: sirf: Fix potential NULL pointer dereference
-Message-ID: <20180726204910.GA1635@embeddedor.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.102.187
-X-Source-L: No
-X-Exim-ID: 1finCC-002CJI-D9
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [189.250.102.187]:48780
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 8
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+        Thu, 26 Jul 2018 18:11:43 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay02.hostedemail.com (Postfix) with ESMTP id BC5AE2200F;
+        Thu, 26 Jul 2018 20:53:09 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-HE-Tag: doll59_3899590fed32b
+X-Filterd-Recvd-Size: 2898
+Received: from XPS-9350.home (unknown [47.151.153.53])
+        (Authenticated sender: joe@perches.com)
+        by omf08.hostedemail.com (Postfix) with ESMTPA;
+        Thu, 26 Jul 2018 20:53:08 +0000 (UTC)
+Message-ID: <84972e19138f1f8eafe74c6b5f1ad874f8525706.camel@perches.com>
+Subject: [PATCH] checkpatch: check for functions with 'passed by value'
+ structs or unions
+From:   Joe Perches <joe@perches.com>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Andy Whitcroft <apw@canonical.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Date:   Thu, 26 Jul 2018 13:53:07 -0700
+Content-Type: text/plain; charset="ISO-8859-1"
+X-Mailer: Evolution 3.28.1-2 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There is a potential execution path in which function
-platform_get_resource() returns NULL. If this happens,
-we will end up having a NULL pointer dereference.
+I was cc'd on a patch where structs were passed by value instead
+of using pointers to the structs.  This can cause defects when
+the called function modifies the 'passed by value' struct instead
+of the calling function's struct.
 
-Fix this by replacing devm_ioremap with devm_ioremap_resource,
-which has the NULL check and the memory region request.
+There are what seems to be some false positives for a few of the
+.h files in include/linux/... where the false positives are for
+very small structs where the indirection via a pointer might be
+slower than than the passed by value use.
 
-This code was detected with the help of Coccinelle.
-
-Cc: stable@vger.kernel.org
-Fixes: 2bd8d1d5cf89 ("ASoC: sirf: Add audio usp interface driver")
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+Signed-off-by: Joe Perches <joe@perches.com>
 ---
- sound/soc/sirf/sirf-usp.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+ scripts/checkpatch.pl | 22 +++++++++++++++++++---
+ 1 file changed, 19 insertions(+), 3 deletions(-)
 
-diff --git a/sound/soc/sirf/sirf-usp.c b/sound/soc/sirf/sirf-usp.c
-index 77e7dcf..d70fcd4 100644
---- a/sound/soc/sirf/sirf-usp.c
-+++ b/sound/soc/sirf/sirf-usp.c
-@@ -370,10 +370,9 @@ static int sirf_usp_pcm_probe(struct platform_device *pdev)
- 	platform_set_drvdata(pdev, usp);
+diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
+index 34e4683de7a3..7ce0ec9c0d19 100755
+--- a/scripts/checkpatch.pl
++++ b/scripts/checkpatch.pl
+@@ -6076,8 +6076,10 @@ sub process {
+ # check for function definitions
+ 		if ($perl_version_ok &&
+ 		    defined $stat &&
+-		    $stat =~ /^.\s*(?:$Storage\s+)?$Type\s*($Ident)\s*$balanced_parens\s*{/s) {
++		    $stat =~ /^.\s*(?:$Storage\s+)?$Type\s*($Ident)\s*$balanced_parens\s*([\{;])/s) {
+ 			$context_function = $1;
++			my $args = $2;
++			my $term = $3;
  
- 	mem_res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	base = devm_ioremap(&pdev->dev, mem_res->start,
--		resource_size(mem_res));
--	if (base == NULL)
--		return -ENOMEM;
-+	base = devm_ioremap_resource(&pdev->dev, mem_res);
-+	if (IS_ERR(base))
-+		return PTR_ERR(base);
- 	usp->regmap = devm_regmap_init_mmio(&pdev->dev, base,
- 					    &sirf_usp_regmap_config);
- 	if (IS_ERR(usp->regmap))
--- 
-2.7.4
-
+ # check for multiline function definition with misplaced open brace
+ 			my $ok = 0;
+@@ -6088,12 +6090,26 @@ sub process {
+ 				$herectx .=  $rl . "\n";
+ 				$ok = 1 if ($rl =~ /^[ \+]\{/);
+ 				$ok = 1 if ($rl =~ /\{/ && $n == 0);
+-				last if $rl =~ /^[ \+].*\{/;
++				last if ($rl =~ /^[ \+].*[\{;]/);
+ 			}
+-			if (!$ok) {
++			if (!$ok && $term eq '{') {
+ 				ERROR("OPEN_BRACE",
+ 				      "open brace '{' following function definitions go on the next line\n" . $herectx);
+ 			}
++
++# check for 'passed by value' uses of a struct or a union that might
++# be better 'passed by reference'
++
++			while ($args =~ /(?:$Storage\s+)?($Type)\s*($Ident(?:\s*\[\s*\])?)?\s*,?/g) {
++				my $type = trim($1);
++				my $ident = defined($2) ? trim($2) : "";
++				if ($type =~ /\b(?:union|struct)\b/ &&
++				    !($type =~ /(?:\*|\bconst|\])$/ ||
++				      $ident =~ /\]$/)) {
++					WARN("AGGREGATE_BY_VALUE",
++					     "Unusual 'passed by value' use of '$type'\n" . $herectx);
++				}
++			}
+ 		}
+ 
+ # checks for new __setup's
