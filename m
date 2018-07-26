@@ -2,123 +2,90 @@ Return-Path: <SRS0=7Z+k=KK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C9DAC28CF6
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 12:45:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F35DC28CF6
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 12:45:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D33D72083F
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 12:45:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D33D72083F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 4A95720844
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 12:45:53 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="xHWsQQyW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4A95720844
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730495AbeGZOBr (ORCPT
+        id S1730298AbeGZOCc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 26 Jul 2018 10:01:47 -0400
-Received: from mga12.intel.com ([192.55.52.136]:60113 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730135AbeGZOBr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Jul 2018 10:01:47 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Jul 2018 05:45:05 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,405,1526367600"; 
-   d="asc'?scan'208";a="249130991"
-Received: from pipin.fi.intel.com (HELO localhost) ([10.237.68.37])
-  by fmsmga006.fm.intel.com with ESMTP; 26 Jul 2018 05:45:00 -0700
-From:   Felipe Balbi <balbi@kernel.org>
-To:     Anurag Kumar Vulisha <anurag.kumar.vulisha@xilinx.com>,
-        gregkh@linuxfoundation.org
-Cc:     v.anuragkumar@gmail.com, linux-usb@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Anurag Kumar Vulisha <anurag.kumar.vulisha@xilinx.com>
-Subject: Re: [PATCH v2] usb: dwc3: core: Add quirk for enabling AutoRetry feature in the controller
-In-Reply-To: <1532608663-4091-1-git-send-email-anurag.kumar.vulisha@xilinx.com>
-References: <1532608663-4091-1-git-send-email-anurag.kumar.vulisha@xilinx.com>
-Date:   Thu, 26 Jul 2018 15:41:43 +0300
-Message-ID: <87va92yxrs.fsf@linux.intel.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-        micalg=pgp-sha512; protocol="application/pgp-signature"
+        Thu, 26 Jul 2018 10:02:32 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:33016 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729385AbeGZOCc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Jul 2018 10:02:32 -0400
+Received: by mail-wr1-f65.google.com with SMTP id g6-v6so1596858wrp.0
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Jul 2018 05:45:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id;
+        bh=3SUlYiaOGZ9DNx+9WIinv3apEkr5veTR81fDOvIirSw=;
+        b=xHWsQQyW9rRObA7sB6pQ3SWh6w7O1JWjb2Gi7TkLiqTtZCzngUyI1AS4lc97Cz4jyh
+         G3qxEBD7PDZ0Xorc+a/o3E3cAU1VqfFvyC+ciTuBgO7D/auShLfCGhqZBha7iL6EDJ8B
+         AM3RJ330VkqIT7OWw8vqk5vB8perWAD2gZUASCTn6yVLPNdjSY1qKCMqNaQvAZrFLxNG
+         i6zuXStzCw3T3CNBqPd3KH+zZ6JYr1I3h4yiUaAImSG+62ohxOUhLf06f2mhenHxPcTf
+         0h2Wre9+8CXc8/sLKioxhO+NbpzQqYJF3xkiAvWTKzX1jteRzsb1y+XcY+eJc3W21nYY
+         TbSg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=3SUlYiaOGZ9DNx+9WIinv3apEkr5veTR81fDOvIirSw=;
+        b=fGYrI8TP9Vq7BUyPWfJitt60Sj3nh1fPynSjdMRFLyfElBX2nv0vmEHRKAFlyfBEq6
+         3YmEOhx8JqWv/vwmPHjIOVyzlEmyNaUHfWgHoM+tyvowGKJkyXXUNZwhHSTmzPqFHKuo
+         j534LORckgl+3MfGK/oBIX2YJkYPQYtQndyfIyZedu933sKqORv3K236nKtW/Pbi8FVm
+         zY+Cwl8iF4LwWLN674b4B4A7HYbqtjbHRYBh1Yx/cJ9gUdX8FBB0sIfUTcYjvM+wNQtB
+         RNThUTqo7NEnvogThAHvUKW0YJQE+9zR6JHhigdSbogYo6yLnIfQq0M2EFw/2uvBe55w
+         zAlw==
+X-Gm-Message-State: AOUpUlGB/OAcsF3i3B6oUYN8IVqLK5QqWjoHFb5ZpJecuxLLij7VwnM0
+        /qDwi0DCPj9/zdwo8bA/6FZzIA==
+X-Google-Smtp-Source: AAOMgpfDSFryiFkiEvv6K0Mi+pa0ij6Tptr4U6dl4bYHnnbI5te6xi2Yu4U0ho6KxJ4ncsvg3/5QNw==
+X-Received: by 2002:adf:db41:: with SMTP id f1-v6mr1603863wrj.212.1532609149692;
+        Thu, 26 Jul 2018 05:45:49 -0700 (PDT)
+Received: from boomer.baylibre.local ([90.63.244.31])
+        by smtp.googlemail.com with ESMTPSA id m207-v6sm1867744wma.31.2018.07.26.05.45.48
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 26 Jul 2018 05:45:49 -0700 (PDT)
+From:   Jerome Brunet <jbrunet@baylibre.com>
+To:     Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Carlo Caione <carlo@caione.org>, Rob Herring <robh@kernel.org>
+Cc:     Jerome Brunet <jbrunet@baylibre.com>, alsa-devel@alsa-project.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-amlogic@lists.infradead.org
+Subject: [PATCH 0/3] ASoC: meson-axg: fifo and card fixup
+Date:   Thu, 26 Jul 2018 14:45:41 +0200
+Message-Id: <20180726124544.14740-1-jbrunet@baylibre.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+The purpose of this patchset is to solve the problems which have
+been raised since the initial axg sound support has been accepted.
 
+Jerome Brunet (3):
+  ASoC: meson: use IRQ_RETVAL in the fifo irq handler
+  ASoC: meson: update axg sound card bindings
+  ASoC: meson: align axg card driver with DT bindings documentation
 
-Hi,
+ .../bindings/sound/amlogic,axg-sound-card.txt | 68 +++++++++----------
+ sound/soc/meson/axg-card.c                    | 12 ++--
+ sound/soc/meson/axg-fifo.c                    |  2 +-
+ 3 files changed, 41 insertions(+), 41 deletions(-)
 
-Anurag Kumar Vulisha <anurag.kumar.vulisha@xilinx.com> writes:
-> By default when core sees any transaction error(CRC or overflow)
-> it replies with terminating retry ACK (Retry=3D1 and Nump =3D=3D 0).
-> Enabling this Auto Retry feature in controller, on seeing any
-> transaction errors makes the core to send a non-terminating ACK
-> transaction packet (that is, ACK TP with Retry=3D1 and Nump !=3D 0).
-> Doing so will give controller a chance to recover from the error
-> condition.
->
-> Signed-off-by: Anurag Kumar Vulisha <anurag.kumar.vulisha@xilinx.com>
-> ---
->  Changes in v2:
-> 	1. As suggested by Rob Herring & Felipe Balbi removed the
-> 	   quirk logic and setting the AutoRetry bits unconditionally
-> 	   for hostmode
-> ---
->  drivers/usb/dwc3/core.c | 14 ++++++++++++++
->  drivers/usb/dwc3/core.h |  3 +++
->  2 files changed, 17 insertions(+)
->
-> diff --git a/drivers/usb/dwc3/core.c b/drivers/usb/dwc3/core.c
-> index 1038075..478c8a6 100644
-> --- a/drivers/usb/dwc3/core.c
-> +++ b/drivers/usb/dwc3/core.c
-> @@ -883,6 +883,20 @@ static int dwc3_core_init(struct dwc3 *dwc)
->  		dwc3_writel(dwc->regs, DWC3_GUCTL1, reg);
->  	}
->=20=20
-> +	if (dwc->dr_mode =3D=3D USB_DR_MODE_HOST) {
+-- 
+2.17.1
 
-almost there. You also wanna check for dr_mode =3D=3D OTG. OTG
-configurations can switch between device and host mode at will.
-
-> +		reg =3D dwc3_readl(dwc->regs, DWC3_GUCTL);
-> +
-> +		/* Enable Auto retry Feature to make the controller operating in
-
-match the multi-line comment style already in this file:
-
-	/*
-         * Enable Auto ....
-
-=2D-=20
-balbi
-
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEElLzh7wn96CXwjh2IzL64meEamQYFAltZwYcACgkQzL64meEa
-mQZ/Lg/+MDJg6xsXXkHpcZLrMFu6bb2/c62RAQ3S4wlBNdB+endWIXb034swEC+S
-j8ATziCzQD1RbSyiyE4PK+0hNSQVhBHk42jsu0fQs3CJXdQwC6evcFX15iFxl/S6
-Z9nrUUmhWGE+wBcSiOSeeQTgZ17CBH7+oHmHWUQ8aLx3FnIv/WvauE+pL+qrtPLT
-BS6Lr7IudP+rRoTUOFXiHlsbneNkbfMBmyQlJ5ry5XZ8zU8hNEnqFDRK0huN9j1F
-vLkZNF+EKOOaoA7onFnzWDP7+751emjjC3QDbBeu+GIhfI+C34fmwwglyyUHGHH1
-9asy9NvJExOBfCSuVb8t3MGPBeC7MOyifW+WakqfZlibBwvxwGfFqMeVWWPcM1pg
-TbYW90kk1FiSvHDRlBvJ/KSr2riW0SpeNfagDVJPHFsGRpmIuaCF1uNS+1AdI+Hb
-PGg3CTEiJRnWkazgc16LlwunvbWGu/dEtdY2aJscTjW5DIEKSpZc9adID8AXl/Lr
-zPB3MT3Me2di0FmiLhV4Ylrkxc7jGFHZZZh/54ikhKZIGrvAF63/404X5Y6EmIxO
-v4JCrBLOTXm366BMntlv42fTV5xM4HWoq/qe9aePZJ8sJcfAjxMJ84U0fliBCDJC
-sCbpUjb7UPP+6ui4Jize2on6T/jn6F3G8DUL8KwFAIEwnYqmmA4=
-=tyh2
------END PGP SIGNATURE-----
---=-=-=--
