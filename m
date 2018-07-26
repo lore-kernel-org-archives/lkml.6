@@ -6,64 +6,64 @@ X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87CF9C28CF6
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 11:26:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B879DC6778F
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 11:26:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4391B20883
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 11:26:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5E42620883
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 11:26:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Hbm7upEH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4391B20883
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z6ALTYgr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E42620883
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729525AbeGZMnS (ORCPT
+        id S1729835AbeGZMnU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 26 Jul 2018 08:43:18 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:44110 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729107AbeGZMnR (ORCPT
+        Thu, 26 Jul 2018 08:43:20 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:36479 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729429AbeGZMnT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Jul 2018 08:43:17 -0400
-Received: by mail-wr1-f68.google.com with SMTP id r16-v6so1343104wrt.11;
-        Thu, 26 Jul 2018 04:26:52 -0700 (PDT)
+        Thu, 26 Jul 2018 08:43:19 -0400
+Received: by mail-wm0-f65.google.com with SMTP id s14-v6so1656485wmc.1;
+        Thu, 26 Jul 2018 04:26:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=sender:from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=akcDNKmORlo5rC65czF7FwKplqI1nFhh8rI+M2m9tU8=;
-        b=Hbm7upEHmMLkvCqFmBI3+HqEQvhD9b7fYCDRR3O7entAJPPVUMSYzVdfJzldh9d3Mn
-         MaiL2W18xQxuJ1CzjZ+T6c/4NwfNvh2+/Ssp1I/oagYu90F+hh8NmP/o0n+FDtRmiXfo
-         Cmu98lkvMuVQDIrwErjDzfZvBoTSHSFL8+UgWi7ZyQJNV1yh/rZpHC0Wm3y+E6WqmtDo
-         ZGpUpWnP6imF6KCx+V/Iu5jBjDTcZTBqWz885pDlHYKHvUbFoNFq5PkTkLCycMC2sx7f
-         3QeauGpcG8jAnBB26b0pqBoQVFNQlmBmD5EV8Er+fLt7O3+6Ol9eBOIM7vkGipJV2yEW
-         0TEQ==
+        bh=iWeOmZVtt+htEHtwsmyhDiaEzRk4x4q/73TcFnd6c28=;
+        b=Z6ALTYgrtrlNzq8eL7GQAUDBK7NyJ6c4wdl3qxD24pNBO7XEUbI5cZAq83zcNh49UK
+         PpUimkBpaqm4OgcefLQRxx6Q+EGZn9+wmFAX4sMzsdf87oQRwQhFtK7oW6Q0uZUJnoYk
+         CzyGYQku0kNYC5APo9WkBiNGCwdgWETxJCq4it/ftpsPtULzd8iJxIO2V3D70WdXWRtN
+         pemOZIero+ut9bBRfI7U2Rg8a9QYsDiu8xo+zjyabbMGDq34T9Je2wFxBbD2F08GX+F/
+         vw+yuqQmb1zVWsxClTURwESGXgbQit+i87xAHnvgxSa590Ik4WJw+1L/gw/lIP3QqAlC
+         UoDg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
          :in-reply-to:references;
-        bh=akcDNKmORlo5rC65czF7FwKplqI1nFhh8rI+M2m9tU8=;
-        b=H+9n/fhS7CDpGbpr5s1m3VLenmq7rkvhtIadmiQR0pkOICrwb/9bxV+pm6Gbge+UVi
-         lZrKL2wkaMAN3VfL2ZxtF5pwbV+gdWRMBgIM6tQU0WLHZZ/tRLCiEFX/1Lhm+TPEYv2/
-         bc3Nf9webtf1NPaVqzXFKqGE/w/iU31OAUxbe5gvXbthkQNkpPnKK+ijCCkCXmL2CEw0
-         /YxfzZR1Crow0Sg63bcXGpzQWNgVoasJhRbWyhP4t/0blyDx2FlCXjx7fRtvX0lMacK/
-         1Sd75R/hQrRVp61hkXz6mpHqS+c5olCold7a2cte2USW1mtA8tDhUtfZvtoaYbYDRs9X
-         /ECA==
-X-Gm-Message-State: AOUpUlE4N8ZMz3HEvumsYSKe1nMnje8juckO0wGO/YfztnfkpLyxKujy
-        lbwNgu0GiBgysni2tsyivGpo3kgY
-X-Google-Smtp-Source: AAOMgpfXxe6aF2b94FmW3yBuoa7C4wN14441diR+KW2VSjf8hLIHWwP/xIHZ9mvq/Xw28QPlMi5NQg==
-X-Received: by 2002:adf:aa0b:: with SMTP id p11-v6mr1231568wrd.220.1532604411900;
-        Thu, 26 Jul 2018 04:26:51 -0700 (PDT)
+        bh=iWeOmZVtt+htEHtwsmyhDiaEzRk4x4q/73TcFnd6c28=;
+        b=I5YHLpf2HQ03J7482dN+svGFbUWq5ugA8lvJsL8Dr5lbvWYrXmS57GmGzD0RpM1Co4
+         drBat8voXoctZsofw1bcCVl4vVse6PYZz/PQKIZvuODgVz6kqZLuC889jK/hft9LsZ9J
+         tTLY20USm2yP87GeHNk1SvivG+1jvyYmo4owqRE46kGJSQVZw6P3tDJRvfLh76bx2uio
+         KtmEKPcppgA4gITYznqiAcxPd5kT5VDR3oUdaAh8qC5Vc3rhi9QgMG5V4kqahKg9xBr9
+         kYjw0mQVjRXCqW0rAgV5yv9P7Zm3TORoRy0a1FHXmH1lbpV6QbNdlnlzJOphm1TuIJuC
+         2Dpg==
+X-Gm-Message-State: AOUpUlFrcltL8KfzTu0Sk5wiEQie67ln5+kGBZlrOS1L3KSjnLNFQTR0
+        F7zJQn79CJIT8VQE5fSKNkK90Ol2
+X-Google-Smtp-Source: AAOMgpeL2jHq6eHhTPCmMJyVoKtsIu18mvwevLOl7HvqR51Vfe0t9KWyK5b/mZMrU7V5nzjw2RD4xQ==
+X-Received: by 2002:a1c:b49:: with SMTP id 70-v6mr1349432wml.149.1532604413261;
+        Thu, 26 Jul 2018 04:26:53 -0700 (PDT)
 Received: from donizetti.lan (94-36-184-250.adsl-ull.clienti.tiscali.it. [94.36.184.250])
         by smtp.gmail.com with ESMTPSA id t70-v6sm1793683wmt.30.2018.07.26.04.26.51
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 26 Jul 2018 04:26:51 -0700 (PDT)
+        Thu, 26 Jul 2018 04:26:52 -0700 (PDT)
 From:   Paolo Bonzini <pbonzini@redhat.com>
 To:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org
 Cc:     KarimAllah Ahmed <karahmed@amazon.de>,
         Jim Mattson <jmattson@google.com>
-Subject: [PATCH 2/3] kvm: selftests: ensure vcpu file is released
-Date:   Thu, 26 Jul 2018 13:26:46 +0200
-Message-Id: <20180726112647.6272-3-pbonzini@redhat.com>
+Subject: [PATCH 3/3] kvm: selftests: add basic test for state save and restore
+Date:   Thu, 26 Jul 2018 13:26:47 +0200
+Message-Id: <20180726112647.6272-4-pbonzini@redhat.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180726112647.6272-1-pbonzini@redhat.com>
 References: <20180726112647.6272-1-pbonzini@redhat.com>
@@ -72,46 +72,330 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The selftests were not munmap-ing the kvm_run area from the vcpu file descriptor.
-The result was that kvm_vcpu_release was not called and a reference was left in the
-parent "struct kvm".  Ultimately this was visible in the upcoming state save/restore
-test as an error when KVM attempted to create a duplicate debugfs entry.
-
 Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 ---
- tools/testing/selftests/kvm/lib/kvm_util.c | 10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
+ tools/testing/selftests/kvm/Makefile          |   1 +
+ tools/testing/selftests/kvm/include/x86.h     |   4 +
+ tools/testing/selftests/kvm/lib/kvm_util.c    |   8 +-
+ .../selftests/kvm/lib/kvm_util_internal.h     |   1 +
+ tools/testing/selftests/kvm/lib/x86.c         | 118 +++++++++++++++++
+ tools/testing/selftests/kvm/state_test.c      | 123 ++++++++++++++++++
+ 6 files changed, 250 insertions(+), 5 deletions(-)
+ create mode 100644 tools/testing/selftests/kvm/state_test.c
 
+diff --git a/tools/testing/selftests/kvm/Makefile b/tools/testing/selftests/kvm/Makefile
+index 65bda4fb0ad6..dd0e5163f01f 100644
+--- a/tools/testing/selftests/kvm/Makefile
++++ b/tools/testing/selftests/kvm/Makefile
+@@ -10,6 +10,7 @@ TEST_GEN_PROGS_x86_64 = set_sregs_test
+ TEST_GEN_PROGS_x86_64 += sync_regs_test
+ TEST_GEN_PROGS_x86_64 += vmx_tsc_adjust_test
+ TEST_GEN_PROGS_x86_64 += cr4_cpuid_sync_test
++TEST_GEN_PROGS_x86_64 += state_test
+ 
+ TEST_GEN_PROGS += $(TEST_GEN_PROGS_$(UNAME_M))
+ LIBKVM += $(LIBKVM_$(UNAME_M))
+diff --git a/tools/testing/selftests/kvm/include/x86.h b/tools/testing/selftests/kvm/include/x86.h
+index 4a5b2c4c1a0f..f73480e09770 100644
+--- a/tools/testing/selftests/kvm/include/x86.h
++++ b/tools/testing/selftests/kvm/include/x86.h
+@@ -303,6 +303,10 @@ static inline unsigned long get_xmm(int n)
+ 	return 0;
+ }
+ 
++struct kvm_x86_state;
++struct kvm_x86_state *vcpu_save_state(struct kvm_vm *vm, uint32_t vcpuid);
++void vcpu_load_state(struct kvm_vm *vm, uint32_t vcpuid, struct kvm_x86_state *state);
++
+ /*
+  * Basic CPU control in CR0
+  */
 diff --git a/tools/testing/selftests/kvm/lib/kvm_util.c b/tools/testing/selftests/kvm/lib/kvm_util.c
-index 37e2a787d2fc..4930b1bdce62 100644
+index 4930b1bdce62..3fe259cd9eba 100644
 --- a/tools/testing/selftests/kvm/lib/kvm_util.c
 +++ b/tools/testing/selftests/kvm/lib/kvm_util.c
-@@ -238,8 +238,12 @@ struct vcpu *vcpu_find(struct kvm_vm *vm,
- static void vm_vcpu_rm(struct kvm_vm *vm, uint32_t vcpuid)
- {
- 	struct vcpu *vcpu = vcpu_find(vm, vcpuid);
-+	int ret;
+@@ -90,17 +90,15 @@ struct kvm_vm *vm_create(enum vm_guest_mode mode, uint64_t phy_pages, int perm)
+ 	TEST_ASSERT(vm != NULL, "Insufficent Memory");
  
--	int ret = close(vcpu->fd);
-+	ret = munmap(vcpu->state, sizeof(*vcpu->state));
-+	TEST_ASSERT(ret == 0, "munmap of VCPU fd failed, rc: %i "
-+		"errno: %i", ret, errno);
-+	close(vcpu->fd);
- 	TEST_ASSERT(ret == 0, "Close of VCPU fd failed, rc: %i "
- 		"errno: %i", ret, errno);
+ 	vm->mode = mode;
+-	kvm_fd = open(KVM_DEV_PATH, perm);
+-	if (kvm_fd < 0)
++	vm->kvm_fd = open(KVM_DEV_PATH, perm);
++	if (vm->kvm_fd < 0)
+ 		exit(KSFT_SKIP);
  
-@@ -295,6 +299,10 @@ void kvm_vm_free(struct kvm_vm *vmp)
- 	TEST_ASSERT(ret == 0, "Close of vm fd failed,\n"
- 		"  vmp->fd: %i rc: %i errno: %i", vmp->fd, ret, errno);
+ 	/* Create VM. */
+-	vm->fd = ioctl(kvm_fd, KVM_CREATE_VM, NULL);
++	vm->fd = ioctl(vm->kvm_fd, KVM_CREATE_VM, NULL);
+ 	TEST_ASSERT(vm->fd >= 0, "KVM_CREATE_VM ioctl failed, "
+ 		"rc: %i errno: %i", vm->fd, errno);
  
-+	close(vmp->kvm_fd);
-+	TEST_ASSERT(ret == 0, "Close of /dev/kvm fd failed,\n"
-+		"  vmp->kvm_fd: %i rc: %i errno: %i", vmp->kvm_fd, ret, errno);
-+
- 	/* Free the structure describing the VM. */
- 	free(vmp);
+-	close(kvm_fd);
+-
+ 	/* Setup mode specific traits. */
+ 	switch (vm->mode) {
+ 	case VM_MODE_FLAT48PG:
+diff --git a/tools/testing/selftests/kvm/lib/kvm_util_internal.h b/tools/testing/selftests/kvm/lib/kvm_util_internal.h
+index a0bd1980c81c..6ff6e10fb302 100644
+--- a/tools/testing/selftests/kvm/lib/kvm_util_internal.h
++++ b/tools/testing/selftests/kvm/lib/kvm_util_internal.h
+@@ -43,6 +43,7 @@ struct vcpu {
+ 
+ struct kvm_vm {
+ 	int mode;
++	int kvm_fd;
+ 	int fd;
+ 	unsigned int page_size;
+ 	unsigned int page_shift;
+diff --git a/tools/testing/selftests/kvm/lib/x86.c b/tools/testing/selftests/kvm/lib/x86.c
+index 2f17675f4275..0d2ea4815975 100644
+--- a/tools/testing/selftests/kvm/lib/x86.c
++++ b/tools/testing/selftests/kvm/lib/x86.c
+@@ -698,3 +698,115 @@ struct kvm_vm *vm_create_default(uint32_t vcpuid, void *guest_code)
+ 
+ 	return vm;
  }
++
++struct kvm_x86_state {
++	struct kvm_vcpu_events events;
++	struct kvm_mp_state mp_state;
++	struct kvm_regs regs;
++	struct kvm_xsave xsave;
++	struct kvm_xcrs xcrs;
++	struct kvm_sregs sregs;
++	struct kvm_debugregs debugregs;
++	struct kvm_msrs msrs;
++};
++
++static int kvm_get_num_msrs(struct kvm_vm *vm)
++{
++	struct kvm_msr_list nmsrs;
++	int r;
++
++	nmsrs.nmsrs = 0;
++	r = ioctl(vm->kvm_fd, KVM_GET_MSR_INDEX_LIST, &nmsrs);
++	TEST_ASSERT(r == -1 && errno == E2BIG, "Unexpected result from KVM_GET_MSR_INDEX_LIST probe, r: %i",
++		r);
++
++	return nmsrs.nmsrs;
++}
++
++struct kvm_x86_state *vcpu_save_state(struct kvm_vm *vm, uint32_t vcpuid)
++{
++	struct vcpu *vcpu = vcpu_find(vm, vcpuid);
++	struct kvm_msr_list *list;
++	struct kvm_x86_state *state;
++	int nmsrs, r, i;
++
++	nmsrs = kvm_get_num_msrs(vm);
++	list = malloc(sizeof(*list) + nmsrs * sizeof(list->indices[0]));
++	list->nmsrs = nmsrs;
++	r = ioctl(vm->kvm_fd, KVM_GET_MSR_INDEX_LIST, list);
++        TEST_ASSERT(r == 0, "Unexpected result from KVM_GET_MSR_INDEX_LIST, r: %i",
++                r);
++
++	state = malloc(sizeof(*state) + nmsrs * sizeof(state->msrs.entries[0]));
++	r = ioctl(vcpu->fd, KVM_GET_VCPU_EVENTS, &state->events);
++        TEST_ASSERT(r == 0, "Unexpected result from KVM_GET_VCPU_EVENTS, r: %i",
++                r);
++
++	r = ioctl(vcpu->fd, KVM_GET_MP_STATE, &state->mp_state);
++        TEST_ASSERT(r == 0, "Unexpected result from KVM_GET_MP_STATE, r: %i",
++                r);
++
++	r = ioctl(vcpu->fd, KVM_GET_REGS, &state->regs);
++        TEST_ASSERT(r == 0, "Unexpected result from KVM_GET_REGS, r: %i",
++                r);
++
++	r = ioctl(vcpu->fd, KVM_GET_XSAVE, &state->xsave);
++        TEST_ASSERT(r == 0, "Unexpected result from KVM_GET_XSAVE, r: %i",
++                r);
++
++	r = ioctl(vcpu->fd, KVM_GET_XCRS, &state->xcrs);
++        TEST_ASSERT(r == 0, "Unexpected result from KVM_GET_XCRS, r: %i",
++                r);
++
++	r = ioctl(vcpu->fd, KVM_GET_SREGS, &state->sregs);
++        TEST_ASSERT(r == 0, "Unexpected result from KVM_GET_SREGS, r: %i",
++                r);
++
++	state->msrs.nmsrs = nmsrs;
++	for (i = 0; i < nmsrs; i++)
++		state->msrs.entries[i].index = list->indices[i];
++	r = ioctl(vcpu->fd, KVM_GET_MSRS, &state->msrs);
++        TEST_ASSERT(r == nmsrs, "Unexpected result from KVM_GET_MSRS, r: %i (failed at %x)",
++                r, list->indices[r]);
++
++	r = ioctl(vcpu->fd, KVM_GET_DEBUGREGS, &state->debugregs);
++        TEST_ASSERT(r == 0, "Unexpected result from KVM_GET_DEBUGREGS, r: %i",
++                r);
++
++	free(list);
++	return state;
++}
++
++void vcpu_load_state(struct kvm_vm *vm, uint32_t vcpuid, struct kvm_x86_state *state)
++{
++	struct vcpu *vcpu = vcpu_find(vm, vcpuid);
++	int r;
++
++	r = ioctl(vcpu->fd, KVM_SET_XSAVE, &state->xsave);
++        TEST_ASSERT(r == 0, "Unexpected result from KVM_SET_XSAVE, r: %i",
++                r);
++
++	r = ioctl(vcpu->fd, KVM_SET_XCRS, &state->xcrs);
++        TEST_ASSERT(r == 0, "Unexpected result from KVM_SET_XCRS, r: %i",
++                r);
++
++	r = ioctl(vcpu->fd, KVM_SET_SREGS, &state->sregs);
++        TEST_ASSERT(r == 0, "Unexpected result from KVM_SET_SREGS, r: %i",
++                r);
++
++	r = ioctl(vcpu->fd, KVM_SET_MSRS, &state->msrs);
++        TEST_ASSERT(r == state->msrs.nmsrs, "Unexpected result from KVM_SET_MSRS, r: %i (failed at %x)",
++                r, state->msrs.entries[r].index);
++
++	r = ioctl(vcpu->fd, KVM_SET_VCPU_EVENTS, &state->events);
++        TEST_ASSERT(r == 0, "Unexpected result from KVM_SET_VCPU_EVENTS, r: %i",
++                r);
++
++	r = ioctl(vcpu->fd, KVM_SET_DEBUGREGS, &state->debugregs);
++        TEST_ASSERT(r == 0, "Unexpected result from KVM_SET_DEBUGREGS, r: %i",
++                r);
++
++	r = ioctl(vcpu->fd, KVM_SET_REGS, &state->regs);
++        TEST_ASSERT(r == 0, "Unexpected result from KVM_SET_REGS, r: %i",
++                r);
++}
+diff --git a/tools/testing/selftests/kvm/state_test.c b/tools/testing/selftests/kvm/state_test.c
+new file mode 100644
+index 000000000000..1da3d173902c
+--- /dev/null
++++ b/tools/testing/selftests/kvm/state_test.c
+@@ -0,0 +1,123 @@
++/*
++ * KVM_SET_SREGS tests
++ *
++ * Copyright (C) 2018, Google LLC.
++ *
++ * This work is licensed under the terms of the GNU GPL, version 2.
++ *
++ * This is a regression test for the bug fixed by the following commit:
++ * d3802286fa0f ("kvm: x86: Disallow illegal IA32_APIC_BASE MSR values")
++ *
++ * That bug allowed a user-mode program that called the KVM_SET_SREGS
++ * ioctl to put a VCPU's local APIC into an invalid state.
++ *
++ */
++#define _GNU_SOURCE /* for program_invocation_short_name */
++#include <fcntl.h>
++#include <stdio.h>
++#include <stdlib.h>
++#include <string.h>
++#include <sys/ioctl.h>
++
++#include "test_util.h"
++
++#include "kvm_util.h"
++#include "x86.h"
++
++#define VCPU_ID                  5
++#define PORT_HOST_SYNC 0x1000
++
++static void __exit_to_l0(uint16_t port, uint64_t arg0, uint64_t arg1)
++{
++	__asm__ __volatile__("in %[port], %%al"
++			     :
++			     : [port]"d"(port), "D"(arg0), "S"(arg1)
++		     	     : "rax");
++}
++
++#define exit_to_l0(_port, _arg0, _arg1) \
++	__exit_to_l0(_port, (uint64_t) (_arg0), (uint64_t) (_arg1))
++
++#define GUEST_ASSERT(_condition) do { \
++	if (!(_condition)) \
++		exit_to_l0(PORT_ABORT, "Failed guest assert: " #_condition, 0);\
++} while (0)
++
++void guest_code(void)
++{
++	int i;
++	for (i = 0;; i++) {
++		exit_to_l0(PORT_HOST_SYNC, "hello", i);
++	}
++}
++
++void bad_code(void)
++{
++	for (;;)
++		exit_to_l0(PORT_HOST_SYNC, "goodbye", 0xdeadbeef);
++}
++
++int main(int argc, char *argv[])
++{
++	struct kvm_regs regs1, regs2;
++	struct kvm_vm *vm;
++	struct kvm_run *run;
++	struct kvm_x86_state *state;
++	ulong creation_rsp;
++	int rc;
++
++	/* Create VM */
++	vm = vm_create_default(VCPU_ID, guest_code);
++	run = vcpu_state(vm, VCPU_ID);
++
++        vcpu_regs_get(vm, VCPU_ID, &regs1);
++	creation_rsp = regs1.rsp;
++
++	_vcpu_run(vm, VCPU_ID);
++	TEST_ASSERT(run->exit_reason == KVM_EXIT_IO,
++		    "Unexpected exit reason: %u (%s),\n",
++		    run->exit_reason,
++		    exit_reason_str(run->exit_reason));
++
++	memset(&regs1, 0, sizeof(regs1));
++        vcpu_regs_get(vm, VCPU_ID, &regs1);
++	TEST_ASSERT(!strcmp((const char *)regs1.rdi, "hello") &&
++		    regs1.rsi == 0, "Unexpected register values after vmexit; rdi: %lx rsi: %lx",
++		    (ulong) regs1.rdi, (ulong) regs1.rsi);
++
++	state = vcpu_save_state(vm, VCPU_ID);
++	kvm_vm_free(vm);
++
++	/* Restore state in VM.  */
++	vm = vm_create_default(VCPU_ID, bad_code);
++        vcpu_regs_get(vm, VCPU_ID, &regs2);
++
++	/* stack_vaddr should be the same, or something is nondeterministic
++	 * in VM state creation.  Check just to be safe.
++	 */
++	TEST_ASSERT(creation_rsp == regs2.rsp,
++		    "Mismatching stack_vaddr - first %lx, second %lx",
++		    (ulong) creation_rsp, (ulong) regs2.rsp);
++
++	vcpu_load_state(vm, VCPU_ID, state);
++	memset(&regs2, 0, sizeof(regs2));
++        vcpu_regs_get(vm, VCPU_ID, &regs2);
++	TEST_ASSERT(!memcmp(&regs1, &regs2, sizeof(regs2)),
++		    "Unexpected register values after vcpu_load_state; rdi: %lx rsi: %lx",
++		    (ulong) regs2.rdi, (ulong) regs2.rsi);
++
++	_vcpu_run(vm, VCPU_ID);
++	TEST_ASSERT(run->exit_reason == KVM_EXIT_IO,
++		    "Unexpected exit reason: %u (%s),\n",
++		    run->exit_reason,
++		    exit_reason_str(run->exit_reason));
++
++        vcpu_regs_get(vm, VCPU_ID, &regs2);
++	TEST_ASSERT(!strcmp((const char *)regs2.rdi, "hello") &&
++		    regs2.rsi == 1, "Unexpected register values after second vmexit; rdi: %lx rsi: %lx",
++		    (ulong) regs2.rdi, (ulong) regs2.rsi);
++
++
++	kvm_vm_free(vm);
++	free(state);
++}
 -- 
 2.17.1
-
 
