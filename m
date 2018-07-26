@@ -2,135 +2,189 @@ Return-Path: <SRS0=7Z+k=KK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BEC5C28CF6
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 15:30:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 793C1C28CF6
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 15:31:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AF67820857
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 15:30:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AF67820857
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 3E08520846
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 15:31:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3E08520846
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731709AbeGZQrg (ORCPT
+        id S1731769AbeGZQsT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 26 Jul 2018 12:47:36 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:40934 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1730179AbeGZQrg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Jul 2018 12:47:36 -0400
-Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w6QFU1YT136202
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Jul 2018 11:30:14 -0400
-Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2kfg292twy-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Jul 2018 11:30:11 -0400
-Received: from localhost
-        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <rppt@linux.vnet.ibm.com>;
-        Thu, 26 Jul 2018 16:29:44 +0100
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
-        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 26 Jul 2018 16:29:41 +0100
-Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w6QFTehY23396398
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 26 Jul 2018 15:29:40 GMT
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 3595DAE059;
-        Thu, 26 Jul 2018 18:29:47 +0100 (BST)
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id A5C9AAE04D;
-        Thu, 26 Jul 2018 18:29:46 +0100 (BST)
-Received: from rapoport-lnx (unknown [9.148.8.177])
-        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Thu, 26 Jul 2018 18:29:46 +0100 (BST)
-Date:   Thu, 26 Jul 2018 18:29:38 +0300
-From:   Mike Rapoport <rppt@linux.vnet.ibm.com>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Jonathan Corbet <corbet@lwn.net>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-doc@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 7/7] docs/core-api: mm-api: add section about GFP flags
-References: <1532607722-17079-1-git-send-email-rppt@linux.vnet.ibm.com>
- <1532607722-17079-8-git-send-email-rppt@linux.vnet.ibm.com>
- <20180726130106.GC3504@bombadil.infradead.org>
+        Thu, 26 Jul 2018 12:48:19 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:58236 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730179AbeGZQsT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Jul 2018 12:48:19 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 58ED515A2;
+        Thu, 26 Jul 2018 08:30:57 -0700 (PDT)
+Received: from [10.4.12.131] (e110467-lin.emea.arm.com [10.4.12.131])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C187B3F575;
+        Thu, 26 Jul 2018 08:30:54 -0700 (PDT)
+Subject: Re: [PATCH v13 1/4] iommu/arm-smmu: Add pm_runtime/sleep ops
+To:     Vivek Gautam <vivek.gautam@codeaurora.org>
+Cc:     Joerg Roedel <joro@8bytes.org>, robh+dt <robh+dt@kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Will Deacon <will.deacon@arm.com>,
+        "list@263.net:IOMMU DRIVERS" <iommu@lists.linux-foundation.org>,
+        Joerg Roedel <joro@8bytes.org>,
+        iommu@lists.linux-foundation.org,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Linux PM <linux-pm@vger.kernel.org>, sboyd@kernel.org,
+        Lukas Wunner <lukas@wunner.de>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        freedreno <freedreno@lists.freedesktop.org>
+References: <20180719101539.6104-1-vivek.gautam@codeaurora.org>
+ <20180719101539.6104-2-vivek.gautam@codeaurora.org>
+ <e17fdcb7-2632-753f-4e2e-f81bcded36f1@arm.com>
+ <CAFp+6iF1XzFn1QhWjatxE-1sue-EFS7wNmQ4OB=c3pf1VMLuMA@mail.gmail.com>
+ <CAFp+6iEYpM7w+pq0bG83vgjedqy4ZkQbUP9Bx=61TbEUN45OkA@mail.gmail.com>
+From:   Robin Murphy <robin.murphy@arm.com>
+Message-ID: <401d8509-b9ad-913b-334e-f4ac853472e3@arm.com>
+Date:   Thu, 26 Jul 2018 16:30:53 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180726130106.GC3504@bombadil.infradead.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-TM-AS-GCONF: 00
-x-cbid: 18072615-4275-0000-0000-0000029E62B0
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18072615-4276-0000-0000-000037A666CE
-Message-Id: <20180726152937.GG8477@rapoport-lnx>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-26_04:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1806210000 definitions=main-1807260161
+In-Reply-To: <CAFp+6iEYpM7w+pq0bG83vgjedqy4ZkQbUP9Bx=61TbEUN45OkA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 26, 2018 at 06:01:06AM -0700, Matthew Wilcox wrote:
-> On Thu, Jul 26, 2018 at 03:22:02PM +0300, Mike Rapoport wrote:
-> > +Memory Allocation Controls
-> > +==========================
+On 26/07/18 08:12, Vivek Gautam wrote:
+> On Wed, Jul 25, 2018 at 11:46 PM, Vivek Gautam
+> <vivek.gautam@codeaurora.org> wrote:
+>> On Tue, Jul 24, 2018 at 8:51 PM, Robin Murphy <robin.murphy@arm.com> wrote:
+>>> On 19/07/18 11:15, Vivek Gautam wrote:
+>>>>
+>>>> From: Sricharan R <sricharan@codeaurora.org>
+>>>>
+>>>> The smmu needs to be functional only when the respective
+>>>> master's using it are active. The device_link feature
+>>>> helps to track such functional dependencies, so that the
+>>>> iommu gets powered when the master device enables itself
+>>>> using pm_runtime. So by adapting the smmu driver for
+>>>> runtime pm, above said dependency can be addressed.
+>>>>
+>>>> This patch adds the pm runtime/sleep callbacks to the
+>>>> driver and also the functions to parse the smmu clocks
+>>>> from DT and enable them in resume/suspend.
+>>>>
+>>>> Also, while we enable the runtime pm add a pm sleep suspend
+>>>> callback that pushes devices to low power state by turning
+>>>> the clocks off in a system sleep.
+>>>> Also add corresponding clock enable path in resume callback.
+>>>>
+>>>> Signed-off-by: Sricharan R <sricharan@codeaurora.org>
+>>>> Signed-off-by: Archit Taneja <architt@codeaurora.org>
+>>>> [vivek: rework for clock and pm ops]
+>>>> Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
+>>>> Reviewed-by: Tomasz Figa <tfiga@chromium.org>
+>>>> ---
+>>>>
+>>>> Changes since v12:
+>>>>    - Added pm sleep .suspend callback. This disables the clocks.
+>>>>    - Added corresponding change to enable clocks in .resume
+>>>>     pm sleep callback.
+>>>>
+>>>>    drivers/iommu/arm-smmu.c | 75
+>>>> ++++++++++++++++++++++++++++++++++++++++++++++--
+>>>>    1 file changed, 73 insertions(+), 2 deletions(-)
+>>>>
+>>>> diff --git a/drivers/iommu/arm-smmu.c b/drivers/iommu/arm-smmu.c
+>>>> index c73cfce1ccc0..9138a6fffe04 100644
+>>>> --- a/drivers/iommu/arm-smmu.c
+>>>> +++ b/drivers/iommu/arm-smmu.c
 > 
-> Perhaps call this section "Memory Allocation Flags" instead?
+> [snip]
 > 
-> > +Linux provides a variety of APIs for memory allocation from direct
-> > +calls to page allocator through slab caches and vmalloc to allocators
-> > +of compressed memory. Although these allocators have different
-> > +semantics and are used in different circumstances, they all share the
-> > +GFP (get free page) flags that control behavior of each allocation
-> > +request.
-> 
-> While this isn't /wrong/, I think it might not be the most useful way
-> of explaining what the GFP flags are to someone who's just come across
-> them in some remote part of the kernel.  How about this paragraph instead?
-> 
->   Functions which need to allocate memory often use GFP flags to express
->   how that memory should be allocated.  The GFP acronym stands for "get
->   free pages", the underlying memory allocation function.  Not every GFP
->   flag is allowed to every function which may allocate memory.  Most
->   users will want to use a plain ``GFP_KERNEL`` or ``GFP_ATOMIC``.
-> 
-> > +.. kernel-doc:: include/linux/gfp.h
-> > +   :doc: Page mobility and placement hints
-> > +
-> > +.. kernel-doc:: include/linux/gfp.h
-> > +   :doc: Watermark modifiers
-> > +
-> > +.. kernel-doc:: include/linux/gfp.h
-> > +   :doc: Reclaim modifiers
-> > +
-> > +.. kernel-doc:: include/linux/gfp.h
-> > +   :doc: Common combinations
-> 
-> Would it make more sense to put 'common combinations' first?
+>>>> platform_device *pdev)
+>>>>          arm_smmu_device_remove(pdev);
+>>>>    }
+>>>>    +static int __maybe_unused arm_smmu_runtime_resume(struct device *dev)
+>>>> +{
+>>>> +       struct arm_smmu_device *smmu = dev_get_drvdata(dev);
+>>>> +
+>>>> +       return clk_bulk_enable(smmu->num_clks, smmu->clks);
+>>>
+>>>
+>>> If there's a power domain being automatically switched by genpd then we need
+>>> a reset here because we may have lost state entirely. Since I remembered the
+>>> otherwise-useless GPU SMMU on Juno is in a separate power domain, I gave it
+>>> a poking via sysfs with some debug stuff to dump sCR0 in these callbacks,
+>>> and the problem is clear:
+>>>
+>>> ...
+>>> [    4.625551] arm-smmu 2b400000.iommu: genpd_runtime_suspend()
+>>> [    4.631163] arm-smmu 2b400000.iommu: arm_smmu_runtime_suspend: 0x00201936
+>>> [    4.637897] arm-smmu 2b400000.iommu: suspend latency exceeded, 6733980 ns
+>>> [   21.566983] arm-smmu 2b400000.iommu: genpd_runtime_resume()
+>>> [   21.584796] arm-smmu 2b400000.iommu: arm_smmu_runtime_resume: 0x00220101
+>>> [   21.591452] arm-smmu 2b400000.iommu: resume latency exceeded, 6658020 ns
+>>> ...
+>>
+>> Qualcomm SoCs have retention enabled for SMMU registers so they don't
+>> lose state.
+>> ...
+>> [  256.013367] arm-smmu b40000.arm,smmu: arm_smmu_runtime_suspend
+>> SCR0 = 0x201e36
+>> [  256.013367]
+>> [  256.019160] arm-smmu b40000.arm,smmu: arm_smmu_runtime_resume
+>> SCR0 = 0x201e36
+>> [  256.019160]
+>> [  256.027368] arm-smmu b40000.arm,smmu: arm_smmu_runtime_suspend
+>> SCR0 = 0x201e36
+>> [  256.027368]
+>> [  256.036786] arm-smmu b40000.arm,smmu: arm_smmu_runtime_resume
+>> SCR0 = 0x201e36
+>> ...
+>>
+>> However after adding arm_smmu_device_reset() in runtime_resume() I observe
+>> some performance degradation when kill an instance of 'kmscube' and
+>> start it again.
+>> The launch time with arm_smmu_device_reset() in runtime_resume() change is
+>> more.
+>> Could this be because of frequent TLB invalidation and sync?
 
-Now I feel that "common combinations" is not really good name since not all
-of them are that common. The original "Useful ... combination" also does
-not seem right because use of some of these combinations is discouraged.
+Probably. Plus the reset procedure is a big chunk of MMIO accesses, 
+which for a non-trivial SMMU configuration probably isn't negligible in 
+itself. Unfortunately, unless you know for absolute certain that you 
+don't need to do that, you do.
 
-That said, I think I'm going to change "common combinations" to "GPF flag
-combinations" (as the comments cover all the defined combinations) and
-leave it the last. 
+> Some more information that i gathered.
+> On Qcom SoCs besides the registers retention, TCU invalidates TLB cache on
+> a CX power collapse exit, which is the system wide suspend case.
+> The arm-smmu software is not aware of this CX power collapse /
+> auto-invalidation.
+> 
+> So wouldn't doing an explicit TLB invalidations during runtime resume be
+> detrimental to performance?
 
--- 
-Sincerely yours,
-Mike.
+Indeed it would be, but resuming with TLBs full of random valid-looking 
+junk is even more so.
 
+> I have one more doubt here -
+> We do runtime power cycle around arm_smmu_map/unmap() too.
+> Now during map/unmap we selectively do TLB maintenance (either
+> tlb_sync or tlb_add_flush).
+> But with runtime pm we want to do TLBIALL*. Is that a problem?
+
+It's technically redundant to do both, true, but as we've covered in 
+previous rounds of discussion it's very difficult to know *which* one is 
+sufficient at any given time, so in order to make progress for now I 
+think we have to settle with doing both.
+
+Robin.
