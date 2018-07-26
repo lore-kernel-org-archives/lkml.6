@@ -3,160 +3,59 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 815F3C28CF6
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 23:13:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE44EC28CF6
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 23:16:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2EFFC20862
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 23:13:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2EFFC20862
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 82ABD20862
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 23:16:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 82ABD20862
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731724AbeG0Acv convert rfc822-to-8bit (ORCPT
+        id S1731800AbeG0Ae7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 26 Jul 2018 20:32:51 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:48615 "EHLO mail.bootlin.com"
+        Thu, 26 Jul 2018 20:34:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35280 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731231AbeG0Acu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Jul 2018 20:32:50 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 7C5C52082B; Fri, 27 Jul 2018 01:13:48 +0200 (CEST)
-Received: from xps13 (unknown [91.224.148.103])
-        by mail.bootlin.com (Postfix) with ESMTPSA id A99BE20618;
-        Fri, 27 Jul 2018 01:13:46 +0200 (CEST)
-Date:   Fri, 27 Jul 2018 01:13:46 +0200
-From:   Miquel Raynal <miquel.raynal@bootlin.com>
-To:     Boris Brezillon <boris.brezillon@bootlin.com>
-Cc:     Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Mans Rullgard <mans@mansr.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Stefan Agner <stefan@agner.ch>, linux-kernel@vger.kernel.org,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        linux-mtd@lists.infradead.org, Kamal Dasu <kdasu.kdev@gmail.com>,
-        Josh Wu <rainyfeeling@outlook.com>,
-        Marc Gonzalez <marc.w.gonzalez@free.fr>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        bcm-kernel-feedback-list@broadcom.com,
-        Sylvain Lemieux <slemieux.tyco@gmail.com>,
-        Wenyou Yang <wenyou.yang@microchip.com>,
-        Tudor Ambarus <Tudor.Ambarus@microchip.com>,
-        Vladimir Zapolskiy <vz@mleia.com>,
-        Harvey Hunt <harveyhuntnexus@gmail.com>,
-        linux-mediatek@lists.infradead.org,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Han Xu <han.xu@nxp.com>, Xiaolei Li <xiaolei.li@mediatek.com>,
-        linux-arm-kernel@lists.infradead.org,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Richard Weinberger <richard@nod.at>,
-        Brian Norris <computersforpeace@gmail.com>,
-        David Woodhouse <dwmw2@infradead.org>
-Subject: Re: [PATCH v4 27/35] mtd: rawnand: sm_common: convert driver to
- nand_scan_with_ids()
-Message-ID: <20180727011346.3931dbe9@xps13>
-In-Reply-To: <20180726210655.03eca681@bbrezillon>
-References: <20180720151527.16038-1-miquel.raynal@bootlin.com>
-        <20180720151527.16038-28-miquel.raynal@bootlin.com>
-        <20180722084432.61b579b1@bbrezillon>
-        <20180726210655.03eca681@bbrezillon>
-Organization: Bootlin
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        id S1731231AbeG0Ae7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Jul 2018 20:34:59 -0400
+Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 68AF120862;
+        Thu, 26 Jul 2018 23:15:59 +0000 (UTC)
+Date:   Thu, 26 Jul 2018 19:15:57 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        stable@vger.kernel.org, Masami Hiramatsu <mhiramat@kernel.org>
+Subject: Re: [PATCH 1/7] tracing: Fix double free of event_trigger_data
+Message-ID: <20180726191557.68071bc7@gandalf.local.home>
+In-Reply-To: <20180726230651.135885335@goodmis.org>
+References: <20180726230651.135885335@goodmis.org>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Boris,
+On Thu, 26 Jul 2018 19:06:08 -0400
+Steven Rostedt <rostedt@goodmis.org> wrote:
 
-Boris Brezillon <boris.brezillon@bootlin.com> wrote on Thu, 26 Jul 2018
-21:06:55 +0200:
-
-> On Sun, 22 Jul 2018 08:44:32 +0200
-> Boris Brezillon <boris.brezillon@bootlin.com> wrote:
+> From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
 > 
-> > On Fri, 20 Jul 2018 17:15:19 +0200
-> > Miquel Raynal <miquel.raynal@bootlin.com> wrote:
-> >   
-> > > Two helpers have been added to the core to make ECC-related
-> > > configuration between the detection phase and the final NAND scan. Use
-> > > these hooks and convert the driver to just use nand_scan_with_ids()
-> > > (alternative to nand_scan() for passing a flash IDs table) instead of
-> > > both nand_scan_ident() and nand_scan_tail().
-> > > 
-> > > Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>    
-> > 
-> > Reviewed-by: Boris Brezillon <boris.brezillon@bootlin.com>
-> >   
-> > > ---
-> > >  drivers/mtd/nand/raw/sm_common.c | 39 +++++++++++++++++++++++++--------------
-> > >  1 file changed, 25 insertions(+), 14 deletions(-)
-> > > 
-> > > diff --git a/drivers/mtd/nand/raw/sm_common.c b/drivers/mtd/nand/raw/sm_common.c
-> > > index 7f5044a79f01..d05e3f976a5e 100644
-> > > --- a/drivers/mtd/nand/raw/sm_common.c
-> > > +++ b/drivers/mtd/nand/raw/sm_common.c
-> > > @@ -160,19 +160,9 @@ static struct nand_flash_dev nand_xd_flash_ids[] = {
-> > >  	{NULL}
-> > >  };
-> > >  
-> > > -int sm_register_device(struct mtd_info *mtd, int smartmedia)
-> > > +static int sm_attach_chip(struct nand_chip *chip)
-> > >  {
-> > > -	struct nand_chip *chip = mtd_to_nand(mtd);
-> > > -	int ret;
-> > > -
-> > > -	chip->options |= NAND_SKIP_BBTSCAN;
-> > > -
-> > > -	/* Scan for card properties */
-> > > -	ret = nand_scan_ident(mtd, 1, smartmedia ?
-> > > -		nand_smartmedia_flash_ids : nand_xd_flash_ids);
-> > > -
-> > > -	if (ret)
-> > > -		return ret;
-> > > +	struct mtd_info *mtd = nand_to_mtd(chip);
-> > >  
-> > >  	/* Bad block marker position */
-> > >  	chip->badblockpos = 0x05;
-> > > @@ -187,12 +177,33 @@ int sm_register_device(struct mtd_info *mtd, int smartmedia)
-> > >  	else
-> > >  		return -ENODEV;
-> > >  
-> > > -	ret = nand_scan_tail(mtd);
-> > > +	return 0;
-> > > +}
-> > >  
-> > > +static const struct nand_controller_ops sm_controller_ops = {
-> > > +	.attach_chip = sm_attach_chip,
-> > > +};
-> > > +
-> > > +int sm_register_device(struct mtd_info *mtd, int smartmedia)
-> > > +{
-> > > +	struct nand_chip *chip = mtd_to_nand(mtd);
-> > > +	struct nand_flash_dev *flash_ids;
-> > > +	int ret;
-> > > +
-> > > +	chip->options |= NAND_SKIP_BBTSCAN;
-> > > +
-> > > +	/* Scan for card properties */
-> > > +	chip->dummy_controller.ops = &sm_controller_ops;
-> > > +	flash_ids = smartmedia ? nand_smartmedia_flash_ids : nand_xd_flash_ids;
-> > > +	ret = nand_scan_with_ids(mtd, 1, flash_ids);
-> > >  	if (ret)
-> > >  		return ret;
-> > >  
-> > > -	return mtd_device_register(mtd, NULL, 0);
-> > > +	ret = mtd_device_register(mtd, NULL, 0);
-> > > +	if (ret)
-> > > +		nand_release(mtd);  
+
 > 
-> Didn't notice that while reviewing, but it would have been better to
-> use nand_cleanup() and do this change separately.
+> Cc: stable@vger.kerne.org
 
-Indeed, will fix it.
+Ug, I had a typo here. :-/
 
-Miquèl
+-- Steve
