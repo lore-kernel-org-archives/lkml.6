@@ -5,58 +5,84 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD501C28CF6
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 16:31:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC644C28CF6
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 16:31:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 727882083F
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 16:31:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 727882083F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
+	by mail.kernel.org (Postfix) with ESMTP id 8C75E2083F
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 16:31:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C75E2083F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731936AbeGZRsh (ORCPT
+        id S1732077AbeGZRtO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 26 Jul 2018 13:48:37 -0400
-Received: from shards.monkeyblade.net ([23.128.96.9]:41942 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730030AbeGZRsg (ORCPT
+        Thu, 26 Jul 2018 13:49:14 -0400
+Received: from smtprelay0236.hostedemail.com ([216.40.44.236]:58331 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1731370AbeGZRtO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Jul 2018 13:48:36 -0400
-Received: from localhost (c-24-20-22-31.hsd1.or.comcast.net [24.20.22.31])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id BB70612DE65E2;
-        Thu, 26 Jul 2018 09:31:01 -0700 (PDT)
-Date:   Thu, 26 Jul 2018 09:30:57 -0700 (PDT)
-Message-Id: <20180726.093057.1929847552946394944.davem@davemloft.net>
-To:     tli012345@163.com
-Cc:     thomas.lendacky@amd.com, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, tangpengpeng@higon.com
-Subject: Re: [PATCH] net: fix amd-xgbe flow-control issue
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <20180726064516.56740-1-tli012345@163.com>
-References: <20180726064516.56740-1-tli012345@163.com>
-X-Mailer: Mew version 6.7 on Emacs 26 / Mule 6.0 (HANACHIRUSATO)
+        Thu, 26 Jul 2018 13:49:14 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay02.hostedemail.com (Postfix) with ESMTP id 784181B40E;
+        Thu, 26 Jul 2018 16:31:38 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-HE-Tag: foot21_657922b68f861
+X-Filterd-Recvd-Size: 2105
+Received: from XPS-9350.home (unknown [47.151.153.53])
+        (Authenticated sender: joe@perches.com)
+        by omf13.hostedemail.com (Postfix) with ESMTPA;
+        Thu, 26 Jul 2018 16:31:37 +0000 (UTC)
+Message-ID: <3b90173dc3a8ce12ef7f4896f05673140ac3b4d7.camel@perches.com>
+Subject: Re: [PATCH v2 3/3] Staging: octeon-usb: Breaks down
+ cvmx_usb_poll_channel().
+From:   Joe Perches <joe@perches.com>
+To:     Georgios Tsotsos <tsotsos@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     James Hogan <jhogan@kernel.org>,
+        Aaro Koskinen <aaro.koskinen@iki.fi>,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+Date:   Thu, 26 Jul 2018 09:31:35 -0700
+In-Reply-To: <4465097e58f6dbc0e19b9e945ac0b8eee5d98726.1532610629.git.tsotsos@gmail.com>
+References: <cover.1532610629.git.tsotsos@gmail.com>
+         <4465097e58f6dbc0e19b9e945ac0b8eee5d98726.1532610629.git.tsotsos@gmail.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+X-Mailer: Evolution 3.28.1-2 
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Thu, 26 Jul 2018 09:31:02 -0700 (PDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: tli012345@163.com
-Date: Thu, 26 Jul 2018 14:45:16 +0800
+On Thu, 2018-07-26 at 18:41 +0300, Georgios Tsotsos wrote:
+> In order to make this function more clear a new function created that controls
+> channels halt on no DMA mode.
+[]
+> diff --git a/drivers/staging/octeon-usb/octeon-hcd.c b/drivers/staging/octeon-usb/octeon-hcd.c
+[]
+> @@ -2585,6 +2585,52 @@ static void cvmx_usb_transfer_isoc(struct octeon_hcd *usb,
+>  	}
+>  }
+>  
+> +/**
+> + * Handles channels halt in non DMA mode
+> + * @usbc_hcchar: Host Channel-n Characteristics Register (HCCHAR)
+> + * @usbc_hcint:  Host Channel-n Interrupt Register
+> + * @usb:         USB device
+> + * @channel:     Channel to poll
+> + *
+> + * In non DMA mode the channels don't halt themselves. We need
+> + * to manually disable channels that are left running
+> + *
+> + * Returns: -1 on halt
+> + */
+> +static int cvmx_usb_dma_halt(union cvmx_usbcx_hccharx usbc_hcchar,
+> +			     union cvmx_usbcx_hcintx usbc_hcint,
 
-> From: tangpengpeng <tangpengpeng@higon.com>
-> 
-> If we enable or disable xgbe flow-control by ethtool ,
-> it does't work.Because the parameter is not properly
-> assigned,so we need to adjust the assignment order
-> of the parameters.
-> 
-> Signed-off-by: tangpengpeng <tangpengpeng@higon.com>
+It looks very suspect to pass unions on the stack.
 
-Applied with -fixes tag added and queued up for -stable.
+Are you sure these aren't used after this function
+is called?
+
+Likely these should be pointers to unions.
+
