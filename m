@@ -2,295 +2,210 @@ Return-Path: <SRS0=7Z+k=KK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FAD8C28CF6
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 07:25:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10E90C6778F
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 07:26:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3BD532083F
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 07:25:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A85F62083F
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 07:26:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="NyhgSpuP";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Hxetfhya"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3BD532083F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=pass (1024-bit key) header.d=cern.onmicrosoft.com header.i=@cern.onmicrosoft.com header.b="Vk0X5/Cv"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A85F62083F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cern.ch
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728899AbeGZIlE (ORCPT
+        id S1728943AbeGZImZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 26 Jul 2018 04:41:04 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:37742 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726326AbeGZIlE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Jul 2018 04:41:04 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 720F160B77; Thu, 26 Jul 2018 07:25:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1532589933;
-        bh=g5D9699AWGaKZ5SM6P0P6DAbbsimiJYaEh+fQttOU9o=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=NyhgSpuPFpAL5U8zYZfoGe96/wUHedmCNjv0Ius3FeKcDMrZkDAjFjeSytm7j3POk
-         n+1HLCBGppyi2MGtchDLg3CWBxv348nOoxw4Nn9HeyMe0LC6wWrDYNsBCs4cmyF5QZ
-         EdRIDXyA0/X91nCW4n7VEgt/WvboqQjxmhuhIKro=
-Received: from [192.168.0.227] (unknown [182.74.96.146])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: architt@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id D31A9607B9;
-        Thu, 26 Jul 2018 07:25:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1532589931;
-        bh=g5D9699AWGaKZ5SM6P0P6DAbbsimiJYaEh+fQttOU9o=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=HxetfhyaE0rju30SPIbCv+V959vcsnOSvMpVGIECEXp9u0kb8LSOFO1cMm3opNKuW
-         PLd13x/a6ZWltU86apD3LCSz7Zmxe5BNfx9OuRwry7K1bRuG6E+xlbqH7M1PFE9xjv
-         oBbUrag3J7HPehGAQ67sRc4TytrBE3p6E7Jwg4DU=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D31A9607B9
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=architt@codeaurora.org
-Subject: Re: [PATCH v2] drm/msm/display: negative x/y in cursor move
-To:     Carsten Behling <carsten.behling@googlemail.com>
-Cc:     Carsten Behling <carsten.behling@gmail.com>,
-        Rob Clark <robdclark@gmail.com>,
-        David Airlie <airlied@linux.ie>,
-        Sean Paul <seanpaul@chromium.org>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Steve Kowalik <steven@wedontsleep.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
-References: <201807170504.KBRX6Bew%fengguang.wu@intel.com>
- <20180716230314.3527-1-carsten.behling@gmail.com>
- <99e72f0c-e753-cff9-9a58-50d919d472a5@codeaurora.org>
- <CAPuGWB9oBN4U6OS8FLDQ1m6eO3n4mT-UG3QWHdjuM9XgSLG8iQ@mail.gmail.com>
-From:   Archit Taneja <architt@codeaurora.org>
-Message-ID: <1763b39b-9898-bf5a-9afc-32d8e753bbbc@codeaurora.org>
-Date:   Thu, 26 Jul 2018 12:55:24 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Thu, 26 Jul 2018 04:42:25 -0400
+Received: from mail-eopbgr10041.outbound.protection.outlook.com ([40.107.1.41]:18688
+        "EHLO EUR02-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726326AbeGZImY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Jul 2018 04:42:24 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cern.onmicrosoft.com;
+ s=selector1-cern-ch;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=f5IMUzNnw2JJ9Zg2FX4hsip+H9UgN2P3DoK382zSDmI=;
+ b=Vk0X5/CvmHPKqjtR00s2wtrDQd0AABAke+zVYaKLayuQm+h1oAy3IGDhtX6xJDOAylipw7X0XPxFHLrT+7qeSoOkKmMeB/TvhDupU8Z9Z9WC5BpbLZZtzPSWx70tkDuXo8GT7nPJq8A1SEowKhrm7QG+EpOYlsejC+b74lr7tSk=
+Received: from AM0PR06CA0040.eurprd06.prod.outlook.com (2603:10a6:208:aa::17)
+ by DB6PR0601MB2470.eurprd06.prod.outlook.com (2603:10a6:4:21::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.995.16; Thu, 26 Jul
+ 2018 07:26:49 +0000
+Received: from AM5EUR02FT024.eop-EUR02.prod.protection.outlook.com
+ (2a01:111:f400:7e1e::200) by AM0PR06CA0040.outlook.office365.com
+ (2603:10a6:208:aa::17) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.995.16 via Frontend
+ Transport; Thu, 26 Jul 2018 07:26:49 +0000
+Received-SPF: Pass (protection.outlook.com: domain of cern.ch designates
+ 188.184.36.46 as permitted sender) receiver=protection.outlook.com;
+ client-ip=188.184.36.46; helo=cernmxgwlb4.cern.ch;
+Received: from cernmxgwlb4.cern.ch (188.184.36.46) by
+ AM5EUR02FT024.mail.protection.outlook.com (10.152.8.126) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384_P384) id
+ 15.20.995.12 via Frontend Transport; Thu, 26 Jul 2018 07:26:47 +0000
+Received: from cernfe06.cern.ch (188.184.36.49) by cernmxgwlb4.cern.ch
+ (188.184.36.46) with Microsoft SMTP Server (TLS) id 14.3.399.0; Thu, 26 Jul
+ 2018 09:26:35 +0200
+Received: from pcbe13614.localnet (2001:1458:202:121::100:40) by smtp.cern.ch
+ (2001:1458:201:66::100:14) with Microsoft SMTP Server (TLS) id 14.3.399.0;
+ Thu, 26 Jul 2018 09:26:35 +0200
+From:   Federico Vaga <federico.vaga@cern.ch>
+To:     Alan Tull <atull@kernel.org>
+Reply-To: <federico.vaga@cern.ch>
+CC:     Moritz Fischer <mdf@kernel.org>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        <linux-kernel@vger.kernel.org>, <linux-fpga@vger.kernel.org>
+Subject: Re: [PATCH 1/2] fpga: Document when fpga_blah_free functions should be used
+Date:   Thu, 26 Jul 2018 09:26:33 +0200
+Message-ID: <3092191.aOBZP6MEga@pcbe13614>
+In-Reply-To: <20180725181514.3501-1-atull@kernel.org>
+References: <20180725181514.3501-1-atull@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <CAPuGWB9oBN4U6OS8FLDQ1m6eO3n4mT-UG3QWHdjuM9XgSLG8iQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
+X-Originating-IP: [2001:1458:202:121::100:40]
+X-EOPAttributedMessage: 0
+X-Forefront-Antispam-Report: CIP:188.184.36.46;IPV:NLI;CTRY:CH;EFV:NLI;SFV:NSPM;SFS:(10001)(10009020)(459900002);DIR:OUT;SFP:1101;SCL:1;SRVR:DB6PR0601MB2470;H:cernmxgwlb4.cern.ch;FPR:;SPF:None;LANG:en;
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 354ef03d-f6ab-4e22-9a2b-08d5f2c92698
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(5600073)(711020)(4608076)(5565046)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(2017052603328)(7153060)(7193020);SRVR:DB6PR0601MB2470;
+X-MS-TrafficTypeDiagnostic: DB6PR0601MB2470:
+X-Microsoft-Exchange-Diagnostics: 1;DB6PR0601MB2470;20:I2RUn71MF5+yw+kcjRZabPRgx9Qsr1mkjLNHb1UCHQmVMXnIsTIRrmPLR+WT0CSACf8wNl87flbfV38JwiqUrMQp9sO1whlRyHweslNQbsJtwTJUsCeKZuPwuH04ytZYg17fInDuL+RB6UZUbCFToh94oGVonlA7Q44HmJFwnboKdDJNnXmDnDaEsm8RssgM6595ZaUxQemK9UTyI3l4rzdDaAec5hhwomO2XLt2yCeAwCLyrtp8TETGDPv43iCadu77LrL5eqaFl7CYDIxejNPzFzXk8flJqrbxW5/W370rFgTyDnJOtMah8J9etYJyG48vQ5/xvVdvIJby4h1Nxiu6r1x6ywun5krCaxu8zn07S1Nl7oUnEgG+LHRaBLlU/ZdlSv6Uwhrtnjgr7NCQ3RTfQFk+EMZWNqAIGscFwtvO4lZWXonRyx2rBRSVve85XOEPyWs9BrJ2HVEkdw7JesGyYemVygTaiSByJFjDOx5zRiKADwQA8Nu2JqZcNHgJ;4:hO4yOSywMIJg40zoQGKaqTwmqoxKba3ymLfT1tzlQRwILR/4Z6e+7mBiyVgCbPWvJVp9zm20sQ0ty5W3qp9qPSEBqYMB+lvV+mf/Rp7tfraNxe09YCpDslm+M/FL5mjOHnX46ysRoNphXF/ygH7CDruOdAM9SRKmByaqk91vkJQRx2prFS8jf5Sjtcji6vfe8cmL/V15xumqv0JCzjpO8fg1EIpg4jW2q3GdQGaFhDguAOGRa5POgaQOqYQkdpp2uFSKRwhNffF7EdbvWjrxf+oLR1DQXeG6+kqQBQ2tyxHHIyl/b4wyHeSKzNXvETkl
+X-Microsoft-Antispam-PRVS: <DB6PR0601MB24702BE288CEC95C69C9A7D5EF2B0@DB6PR0601MB2470.eurprd06.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:(85827821059158);
+X-MS-Exchange-SenderADCheck: 1
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231311)(7700054)(944501410)(52105095)(93006095)(93004095)(3002001)(10201501046)(149027)(150027)(6041310)(201703131423095)(201702281529075)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123564045)(20161123560045)(20161123562045)(6072148)(201708071742011)(7699016)(7701012);SRVR:DB6PR0601MB2470;BCL:0;PCL:0;RULEID:;SRVR:DB6PR0601MB2470;
+X-Forefront-PRVS: 07459438AA
+X-Microsoft-Exchange-Diagnostics: 1;DB6PR0601MB2470;23:+6EdNBBjAB1ZdUZNvMKwUTNpER72fHhwbpFUzlIy4DVfZqGDJGe3altkkwF/w3Ue9eu1wyxySfkA42MfAqtrQX/pZSWIZ/oX66+lm85ErjlW6YZnxIMvAt1lOV/9qUtRCdLRr6UGG5Es9Fktk+fj41NQ2gZpSKFu8vBurEFChu3aQjXbD7g4w93Lnv88PuEI;6:eWdEJ4LQUZcxpJihuChtkCDNDOfXpL1fMEHnFTR4EqCh0j+JlbPPwBEhNESkqa8oTto4Lj9NX7PYxhEvj6HjFcxgKI88eAo7U552/ucsL2waKGIG2nGEUT2e7jHyn/Daxl70JmPBeZ2YwxnBYCbK9wRfEDStV7RJP87t8e5xJBDE3HZD8kh7gdwcMHlsFrQ5nT+7ZFYLOCijCikdhgMHYvB9FNiGBzr0cSQox+yvoxw/opQ5E7GaimXiEt3Vp7C5uAownix6Y0HXaez+jDBLpFujDhsRoFbdc7zFeBtM3N2h1VxJJyFPXijaoPs73afad+PtTBSExwI2R8/QIHA5yoSjbIFH/10w7jSECtQemejMK0xMer3zV4iB3AB4awjhD5vPgN4nOE44Aq87aTOZjmh/wrtqwr/es2PVNGVu2d/jLITdKmzJqewCrYLWOqUQYShcp93ahhD8UT4/FVbcWbzjCoGWt0Oyz/NL54Asr2zJU2d5ri3eEgkDlNi9AW20;5:T0aH0Vvd38/mO93KeTKBxmTRHV0hEcPXFGdZHVQckXX6uVv3xutBM2IpVBwYI1EISmwA2BnRcAR4exdyxfKJ0YMuO/n/yDDn7LbrlUPYJqE8oH75MRgFd9pH6fnozKivzZWjge7XIzePmyRxxeTiV5bGkUK8b21hIB2Hxqk7SGU=
+X-Microsoft-Antispam-Message-Info: sTaO/MuS5rL2KMWSJQvBXielymWVVuK3GAr3aauOtjiJBiKx/dr2xyT/mkfKexoQZyL6uAMtdIeOeKv0M34Vng2xQlYBkMD2SEi4OCNy7UEz/sgt7fTdEgNDFlUlM7fjE5sRXkfrQUcTmNc+c8GjWTI3kZ4pp/2yRn647nSGZyFZ7ko9Xaq+T54PqE+UUKU/ph0PiUSP3rT46+KlTDvdMkPGYyUzLmjUCWatB4trnRuKagylcQMyReFEXHUkB6yVwTPxurloX+TtvgT/BbZ9XWvQy95UxJ0bisZKIvNqromlhSS6bhfWnpKfYdvTG3Ty4Ylyi/r5Ogkwi4oTY1t/RELKHqQqAs7/9ymiPQ+riafvd061ae9AWW61NOlE7r4EFU3VImhB8I0+mFiH1hWKq06KSMDTEea1MrMe2xjSQUOvmFdXMiZJshUDbN/MPMp5DsEwPTfzFVrPQXhV3XL1LJgn/RbfbQ86NXraohIh0CY=
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-Microsoft-Exchange-Diagnostics: 1;DB6PR0601MB2470;7:OUsGHVEFqnnILjUf07hnwIPSSorRIrzldhXUNoX9gAipMPQTDez4DzBwRcCvaRK69YX6iuZPpZtSfeqBbdsl36lh5HTwjtMII3ukmKOzR/DGW6xV9+4fCsMMYTuKkwo+NL1+Cbi81ccLf9AAWB0KmfkrncEYGfjjAZyTUNYtcECqJL+FUx/zrHs8ihl3EcjDg6RjqxEo7yQuLYQOGL5ArOSnEOYv4NPQF11KleDX0N/jgbupBGk2eW/ymj1XpR/D
+X-OriginatorOrg: cern.ch
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Jul 2018 07:26:47.4395
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 354ef03d-f6ab-4e22-9a2b-08d5f2c92698
+X-MS-Exchange-CrossTenant-Id: c80d3499-4a40-4a8c-986e-abce017d6b19
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=c80d3499-4a40-4a8c-986e-abce017d6b19;Ip=[188.184.36.46];Helo=[cernmxgwlb4.cern.ch]
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB6PR0601MB2470
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Alan,
+
+have you considered the possibility of having something like devm_fpga_[mgr|
+bridge|region]_[create|free]() ? Like this, it will be obvious that 'struct 
+fpga_mgr' will be released automatically without reading any comment (but the 
+comment is still good), and you use devm_*_free() only to handle error 
+conditions. 
+
+On Wednesday, July 25, 2018 8:15:13 PM CEST Alan Tull wrote:
+> Clarify when fpga_(mgr|bridge|region)_free functions should be used.
+> The class's dev_release will handle cleanup when the device is released
+> so once the mgr/brige/region has been successfully registered, it
+> would be a bug to call fpga_(mgr|bridge|region)_free.
+> 
+> Signed-off-by: Alan Tull <atull@kernel.org>
+> Suggested-by: Florian Fainelli <f.fainelli@gmail.com>
+> Suggested-by: Federico Vaga <federico.vaga@cern.ch>
+> ---
+>  drivers/fpga/fpga-bridge.c | 10 +++++++++-
+>  drivers/fpga/fpga-mgr.c    | 10 +++++++++-
+>  drivers/fpga/fpga-region.c | 10 +++++++++-
+>  3 files changed, 27 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/fpga/fpga-bridge.c b/drivers/fpga/fpga-bridge.c
+> index 24b8f98..528d2149 100644
+> --- a/drivers/fpga/fpga-bridge.c
+> +++ b/drivers/fpga/fpga-bridge.c
+> @@ -379,7 +379,11 @@ EXPORT_SYMBOL_GPL(fpga_bridge_create);
+> 
+>  /**
+>   * fpga_bridge_free - free a fpga bridge and its id
+> - * @bridge:	FPGA bridge struct created by fpga_bridge_create
+> + * @bridge:	FPGA bridge struct created by fpga_bridge_create()
+> + *
+> + * Free a FPGA bridge.  This function should only be called for
+> + * freeing a bridge that has not been registered yet (such as in error
+> + * paths in a probe function).
+>   */
+>  void fpga_bridge_free(struct fpga_bridge *bridge)
+>  {
+> @@ -414,6 +418,10 @@ EXPORT_SYMBOL_GPL(fpga_bridge_register);
+>  /**
+>   * fpga_bridge_unregister - unregister and free a fpga bridge
+>   * @bridge:	FPGA bridge struct created by fpga_bridge_create
+> + *
+> + * Unregister the bridge device.  The class's dev_release will handle
+> + * freeing the bridge struct when the device is released so don't
+> + * call fpga_bridge_free() after calling fpga_bridge_unregister().
+>   */
+>  void fpga_bridge_unregister(struct fpga_bridge *bridge)
+>  {
+> diff --git a/drivers/fpga/fpga-mgr.c b/drivers/fpga/fpga-mgr.c
+> index a41b07e..9632cbd 100644
+> --- a/drivers/fpga/fpga-mgr.c
+> +++ b/drivers/fpga/fpga-mgr.c
+> @@ -619,7 +619,11 @@ EXPORT_SYMBOL_GPL(fpga_mgr_create);
+> 
+>  /**
+>   * fpga_mgr_free - deallocate a FPGA manager
+> - * @mgr:	fpga manager struct created by fpga_mgr_create
+> + * @mgr:	fpga manager struct created by fpga_mgr_create()
+> + *
+> + * Free a FPGA manager struct.  This function should only be called
+> + * for freeing a manager that has not been registered yet (such as in
+> + * error paths in a probe function).
+>   */
+>  void fpga_mgr_free(struct fpga_manager *mgr)
+>  {
+> @@ -663,6 +667,10 @@ EXPORT_SYMBOL_GPL(fpga_mgr_register);
+>  /**
+>   * fpga_mgr_unregister - unregister and free a FPGA manager
+>   * @mgr:	fpga manager struct
+> + *
+> + * Unregister the manager device.  The class's dev_release will handle
+> + * freeing the manager struct when the device is released so don't
+> + * call fpga_mgr_free() after calling fpga_mgr_unregister().
+>   */
+>  void fpga_mgr_unregister(struct fpga_manager *mgr)
+>  {
+> diff --git a/drivers/fpga/fpga-region.c b/drivers/fpga/fpga-region.c
+> index 0d65220..7335fa9 100644
+> --- a/drivers/fpga/fpga-region.c
+> +++ b/drivers/fpga/fpga-region.c
+> @@ -231,7 +231,11 @@ EXPORT_SYMBOL_GPL(fpga_region_create);
+> 
+>  /**
+>   * fpga_region_free - free a struct fpga_region
+> - * @region: FPGA region created by fpga_region_create
+> + * @region:  FPGA region created by fpga_region_create()
+> + *
+> + * Free a FPGA region struct.  This function should only be called for
+> + * freeing a region that has not been registered yet (such as in error
+> + * paths in a probe function).
+>   */
+>  void fpga_region_free(struct fpga_region *region)
+>  {
+> @@ -255,6 +259,10 @@ EXPORT_SYMBOL_GPL(fpga_region_register);
+>  /**
+>   * fpga_region_unregister - unregister and free a FPGA region
+>   * @region: FPGA region
+> + *
+> + * Unregister the region device.  The class's dev_release will handle
+> + * freeing the region so don't call fpga_region_free() after calling
+> + * fpga_region_unregister().
+>   */
+>  void fpga_region_unregister(struct fpga_region *region)
+>  {
 
 
-On Wednesday 25 July 2018 08:40 PM, Carsten Behling wrote:
-> Hi,
-> 
->> Thanks for the patch. Could you tell how to reproduce this issue
->> on a db410c?
->  >
->> I was playing with xrandr's --rotate and --reflect options to get
->> a rotated output, but wasn't able to generate negative x/y
->> co-ordinates. I'm using linaro's debian userspace, running lxqt.
-> 
-> I used Yocto Rocko from 96Boards
-> 
-> https://github.com/96boards/oe-rpb-manifest/tree/rocko
-> 
-> MACHINE=dragonboard-410c
-> DISTRO=rpb
-> 
-> rpb-desktop-image
-> 
-> Connect HDMI monitor and USB mouse, then
-> 
-> 1.) Just boot. Wait for X-Server up.
-> 2.) From my serial console:
->       DISPLAY=:0.0 xrandr -o 2
-> 3.) Try to move the mouse to the upper (the rotated lower) border.
-> 
-> Interesting to know that your debian user space is ok. The yocto X11 
-> configuration is very basic.
-> There may be a X11 configuration or extension that does the trick on Debian.
 
-Thanks, I'll give this a try.
 
-The patch looks good, anyway. Rob's queued it for msm-next.
-
-Archit
-
-> 
-> Therefore, I asked the X11 people where to fix:
-> 
-> https://www.spinics.net/lists/xorg/msg58969.html
-> 
-> Best regards
-> -Carsten
-> 
-> 
-> 2018-07-24 19:33 GMT+02:00 Archit Taneja <architt@codeaurora.org 
-> <mailto:architt@codeaurora.org>>:
-> 
->     Hi,
-> 
->     On Tuesday 17 July 2018 04:33 AM, Carsten Behling wrote:
-> 
->         modesetting X11 driver may provide negative x/y cordinates in
->         mdp5_crtc_cursor_move call when rotation is enabled.
-> 
->         Cursor buffer can overlap down to its negative width/height.
-> 
->         ROI has to be recalculated for negative x/y indicating using the
->         lower/right corner of the cursor buffer and hotspot must be set
->         in MDP5_LM_CURSOR_XY_SRC_Y MDP5_LM_CURSOR_XY_SRC_X.
-> 
-> 
->     Thanks for the patch. Could you tell how to reproduce this issue
->     on a db410c?
-> 
->     I was playing with xrandr's --rotate and --reflect options to get
->     a rotated output, but wasn't able to generate negative x/y
->     co-ordinates. I'm using linaro's debian userspace, running lxqt.
-> 
->     Thanks,
->     Archit
-> 
-> 
-> 
->         Signed-off-by: Carsten Behling <carsten.behling@gmail.com
->         <mailto:carsten.behling@gmail.com>>
->         ---
->         Changes in v2:
->         - fixed format specifier in debug message
-> 
->            drivers/gpu/drm/msm/disp/mdp5/mdp5_crtc.c | 51
->         ++++++++++++++++++++++++++-----
->            1 file changed, 43 insertions(+), 8 deletions(-)
-> 
->         diff --git a/drivers/gpu/drm/msm/disp/mdp5/mdp5_crtc.c
->         b/drivers/gpu/drm/msm/disp/mdp5/mdp5_crtc.c
->         index 10271359789e..a7f4a6688fec 100644
->         --- a/drivers/gpu/drm/msm/disp/mdp5/mdp5_crtc.c
->         +++ b/drivers/gpu/drm/msm/disp/mdp5/mdp5_crtc.c
->         @@ -65,7 +65,7 @@ struct mdp5_crtc {
->                          struct drm_gem_object *scanout_bo;
->                          uint64_t iova;
->                          uint32_t width, height;
->         -               uint32_t x, y;
->         +               int x, y;
->                  } cursor;
->            };
->            #define to_mdp5_crtc(x) container_of(x, struct mdp5_crtc, base)
->         @@ -760,20 +760,31 @@ static void get_roi(struct drm_crtc *crtc,
->         uint32_t *roi_w, uint32_t *roi_h)
->                   * Cursor Region Of Interest (ROI) is a plane read from
->         cursor
->                   * buffer to render. The ROI region is determined by
->         the visibility of
->                   * the cursor point. In the default Cursor image the
->         cursor point will
->         -        * be at the top left of the cursor image, unless it is
->         specified
->         -        * otherwise using hotspot feature.
->         +        * be at the top left of the cursor image.
->                   *
->         +        * Without rotation:
->                   * If the cursor point reaches the right (xres - x <
->         cursor.width) or
->                   * bottom (yres - y < cursor.height) boundary of the
->         screen, then ROI
->                   * width and ROI height need to be evaluated to crop
->         the cursor image
->                   * accordingly.
->                   * (xres-x) will be new cursor width when x > (xres -
->         cursor.width)
->                   * (yres-y) will be new cursor height when y > (yres -
->         cursor.height)
->         +        *
->         +        * With rotation:
->         +        * We get negative x and/or y coordinates.
->         +        * (cursor.width - abs(x)) will be new cursor width when
->         x < 0
->         +        * (cursor.height - abs(y)) will be new cursor width
->         when y < 0
->                   */
->         -       *roi_w = min(mdp5_crtc->cursor.width, xres -
->         +       if (mdp5_crtc->cursor.x >= 0)
->         +               *roi_w = min(mdp5_crtc->cursor.width, xres -
->                                  mdp5_crtc->cursor.x);
->         -       *roi_h = min(mdp5_crtc->cursor.height, yres -
->         +       else
->         +               *roi_w = mdp5_crtc->cursor.width -
->         abs(mdp5_crtc->cursor.x);
->         +       if (mdp5_crtc->cursor.y >= 0)
->         +               *roi_h = min(mdp5_crtc->cursor.height, yres -
->                                  mdp5_crtc->cursor.y);
->         +       else
->         +               *roi_h = mdp5_crtc->cursor.height -
->         abs(mdp5_crtc->cursor.y);
->            }
->              static void mdp5_crtc_restore_cursor(struct drm_crtc *crtc)
->         @@ -783,7 +794,7 @@ static void mdp5_crtc_restore_cursor(struct
->         drm_crtc *crtc)
->                  struct mdp5_kms *mdp5_kms = get_kms(crtc);
->                  const enum mdp5_cursor_alpha cur_alpha =
->         CURSOR_ALPHA_PER_PIXEL;
->                  uint32_t blendcfg, stride;
->         -       uint32_t x, y, width, height;
->         +       uint32_t x, y, src_x, src_y, width, height;
->                  uint32_t roi_w, roi_h;
->                  int lm;
->            @@ -800,6 +811,26 @@ static void
->         mdp5_crtc_restore_cursor(struct drm_crtc *crtc)
->                  get_roi(crtc, &roi_w, &roi_h);
->            +     /* If cusror buffer overlaps due to rotation on the
->         +        * upper or left screen border the pixel offset inside
->         +        * the cursor buffer of the ROI is the positive overlap
->         +        * distance.
->         +        */
->         +       if (mdp5_crtc->cursor.x < 0) {
->         +               src_x = abs(mdp5_crtc->cursor.x);
->         +               x = 0;
->         +       } else {
->         +               src_x = 0;
->         +       }
->         +       if (mdp5_crtc->cursor.y < 0) {
->         +               src_y = abs(mdp5_crtc->cursor.y);
->         +               y = 0;
->         +       } else {
->         +               src_y = 0;
->         +       }
->         +       DBG("%s: x=%u, y=%u roi_w=%u roi_h=%u src_x=%u src_y=%u",
->         +               crtc->name, x, y, roi_w, roi_h, src_x, src_y);
->         +
->                  mdp5_write(mdp5_kms, REG_MDP5_LM_CURSOR_STRIDE(lm),
->         stride);
->                  mdp5_write(mdp5_kms, REG_MDP5_LM_CURSOR_FORMAT(lm),
->                                 
->         MDP5_LM_CURSOR_FORMAT_FORMAT(CURSOR_FMT_ARGB8888));
->         @@ -812,6 +843,9 @@ static void mdp5_crtc_restore_cursor(struct
->         drm_crtc *crtc)
->                  mdp5_write(mdp5_kms, REG_MDP5_LM_CURSOR_START_XY(lm),
->                                  MDP5_LM_CURSOR_START_XY_Y_START(y) |
->                                  MDP5_LM_CURSOR_START_XY_X_START(x));
->         +       mdp5_write(mdp5_kms, REG_MDP5_LM_CURSOR_XY(lm),
->         +                       MDP5_LM_CURSOR_XY_SRC_Y(src_y) |
->         +                       MDP5_LM_CURSOR_XY_SRC_X(src_x));
->                  mdp5_write(mdp5_kms, REG_MDP5_LM_CURSOR_BASE_ADDR(lm),
->                                  mdp5_crtc->cursor.iova);
->            @@ -932,8 +966,9 @@ static int mdp5_crtc_cursor_move(struct
->         drm_crtc *crtc, int x, int y)
->                  if (unlikely(!crtc->state->enable))
->                          return 0;
->            -     mdp5_crtc->cursor.x = x = max(x, 0);
->         -       mdp5_crtc->cursor.y = y = max(y, 0);
->         +       /* accept negative x/y coordinates up to maximum cursor
->         overlap */
->         +       mdp5_crtc->cursor.x = x = max(x,
->         -(int)mdp5_crtc->cursor.width);
->         +       mdp5_crtc->cursor.y = y = max(y,
->         -(int)mdp5_crtc->cursor.height);
->                  get_roi(crtc, &roi_w, &roi_h);
-> 
-> 
