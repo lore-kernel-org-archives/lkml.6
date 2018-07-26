@@ -2,87 +2,124 @@ Return-Path: <SRS0=7Z+k=KK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8519C28CF6
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 13:30:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86CBEC28CF6
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 13:30:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5ED112083F
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 13:30:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5ED112083F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 3E1B82083F
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 13:30:26 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="W4fu8WTZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3E1B82083F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730489AbeGZOqu (ORCPT
+        id S1730640AbeGZOrQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 26 Jul 2018 10:46:50 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:55806 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730175AbeGZOqu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Jul 2018 10:46:50 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D4D7915A2;
-        Thu, 26 Jul 2018 06:29:57 -0700 (PDT)
-Received: from [10.4.12.116] (e107155-lin.emea.arm.com [10.4.12.116])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 636043F6A8;
-        Thu, 26 Jul 2018 06:29:56 -0700 (PDT)
-Cc:     Sudeep Holla <sudeep.holla@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Will Wong <WILLW@xilinx.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        linux-kernel@vger.kernel.org,
-        Florian Fainelli <f.fainelli@gmail.com>
-Subject: Re: [PATCH v2] firmware/psci: add support for SYSTEM_RESET2
-To:     Michal Simek <michal.simek@xilinx.com>,
-        linux-arm-kernel@lists.infradead.org
-References: <1525186288-536-1-git-send-email-sudeep.holla@arm.com>
- <1525257003-8608-1-git-send-email-sudeep.holla@arm.com>
- <34a420e1-9d2a-b838-dce2-71de408043da@xilinx.com>
- <3e7235c7-d2c2-29f6-6bec-ae21cb841731@arm.com>
- <0fce3ee6-873e-154f-b61e-546d9da338df@xilinx.com>
- <8b08583c-121f-347a-700a-17b5d7784309@arm.com>
- <d2eaaf6d-01f9-2daa-ea1f-3396e3b93104@xilinx.com>
-From:   Sudeep Holla <sudeep.holla@arm.com>
-Organization: ARM
-Message-ID: <74f80458-2d04-c161-c82d-55739e46e661@arm.com>
-Date:   Thu, 26 Jul 2018 14:29:54 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <d2eaaf6d-01f9-2daa-ea1f-3396e3b93104@xilinx.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Thu, 26 Jul 2018 10:47:16 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:44462 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729511AbeGZOrQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Jul 2018 10:47:16 -0400
+Received: by mail-wr1-f68.google.com with SMTP id r16-v6so1726240wrt.11
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Jul 2018 06:30:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :in-reply-to:references;
+        bh=Scv+hQSoks3G9Y3kToV0CbIak8eCUDDsZEQWewEXN/I=;
+        b=W4fu8WTZR01i0cc6MxK15SD5NlJnpqeGOREwlaH7EAvI4fwLEIU/9yWWINQ70hIB2a
+         wJJOxz7Ttq1Rs7p2x/EN9+vHpDxDOkG0fJSftv5bffnKo1AqyxmmKMA/Ejm2uEJVv+yb
+         tJh338BD6lDPajoqzzol72VuzmDrqC/7FVEXYMwGqmOtOPs3jGlDDmHldmdY7ys30Lqw
+         XaMfdrmL3X9LV77Wg3bJBxREZ8TftKElM6VcQDZ3J6HwzR5CzJwm59bABSCo4p3LFrxA
+         KCFU1LIzP2W3366gUtLjGA/zp84+wCGvmw/KcftR/bPFzvNFRVh4jR198xjzFB+Y4Sor
+         KEpw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:in-reply-to:references;
+        bh=Scv+hQSoks3G9Y3kToV0CbIak8eCUDDsZEQWewEXN/I=;
+        b=n/0fJ2sAcAWuO7loD4Faz9A4Phz2SezzHigwSJq05xzOh3Zmw9FOlGLbLMN3h9JBGw
+         F9zV/zLum/+LMxIg0wrk7LxS31h7Q3yombgxyABsUoMNU8pktI3ExApPQpZlBS5mBEf+
+         SBoeXkBwWn2OVRrybDQKBBMkMve0GtLpvsiduEsSq8r8fKT/m5DoJfOgOGElwaBKbYIn
+         EadLJYXgMvqOreJt4r/JHQtILfkE9FsM6pWbWqLq3X5R1WPc5raoxo7i6jsAL8H7uIQX
+         IsBz7kAPC4f3HnE7gi+Rs2ZZXn+37fIuhcX/hUoXjSdrY0rUYcbCAcpvnS8nngVGbYCT
+         8Pgw==
+X-Gm-Message-State: AOUpUlEMKAlQRj72Zr4yruHKAq32rQLILhM4oXB6wzoAxwCpWBzjXc/9
+        b2wFp0L4oguppcjdKYXNUiwqYsolk4k=
+X-Google-Smtp-Source: AAOMgpcJnJ/MrBZxTWwccq5ulqXB2BwruCSxa1SsWPvOSPvjyzBIY7BZIBVgEIosIbkiLX7DrcTARA==
+X-Received: by 2002:adf:c08c:: with SMTP id d12-v6mr1547605wrf.268.1532611822373;
+        Thu, 26 Jul 2018 06:30:22 -0700 (PDT)
+Received: from we.local (ppp-2-87-92-87.home.otenet.gr. [2.87.92.87])
+        by smtp.gmail.com with ESMTPSA id r12-v6sm1265773wmc.27.2018.07.26.06.30.21
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 26 Jul 2018 06:30:21 -0700 (PDT)
+Received: from localhost (localhost [127.0.0.1])
+        by we.local (Postfix) with ESMTP id 6AFCB6408C6;
+        Thu, 26 Jul 2018 16:30:20 +0300 (EEST)
+X-Virus-Scanned: amavisd-new at local
+X-Amavis-Alert: BAD HEADER SECTION, Duplicate header field: "References"
+Received: from we.local ([127.0.0.1])
+        by localhost (we.local [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id Klv1U6SID2l8; Thu, 26 Jul 2018 16:30:19 +0300 (EEST)
+Received: by we.local (Postfix, from userid 1000)
+        id E580F6407E7; Thu, 26 Jul 2018 16:30:18 +0300 (EEST)
+From:   Georgios Tsotsos <tsotsos@gmail.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Georgios Tsotsos <tsotsos@gmail.com>, linux-kernel@vger.kernel.org
+Subject: [PATCH 1/3] Staging: octeon-usb: Adding SPDX license identifier
+Date:   Thu, 26 Jul 2018 16:30:07 +0300
+Message-Id: <27ef6e7b67d4bbe0480bda81504c24b6305aa72b.1532610629.git.tsotsos@gmail.com>
+X-Mailer: git-send-email 2.16.4
+In-Reply-To: <cover.1532610629.git.tsotsos@gmail.com>
+References: <cover.1532610629.git.tsotsos@gmail.com>
+In-Reply-To: <cover.1532610629.git.tsotsos@gmail.com>
+References: <cover.1532610629.git.tsotsos@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Michal,
+Adding appropriate SPDX-License-Identifier (GPL-2) that were missing
+from code, header and make files.
 
-Sorry somehow missed this email.
+Signed-off-by: Georgios Tsotsos <tsotsos@gmail.com>
+---
+ drivers/staging/octeon-usb/Makefile     | 1 +
+ drivers/staging/octeon-usb/octeon-hcd.c | 1 +
+ drivers/staging/octeon-usb/octeon-hcd.h | 1 +
+ 3 files changed, 3 insertions(+)
 
-On 19/07/18 11:47, Michal Simek wrote:
-> On 9.7.2018 15:21, Sudeep Holla wrote:
-
-[...]
-
->>
->> I think with efi_reboot, if user execute the command "reboot warm", it
->> will set REBOOT_WARM. I was thinking something similar for psci too. I
->> can drop REBOOT_SOFT if that's not correct.
-> 
-> Have you found more details about efi_reboot and passing information in
-> case of reboot warm?
-> 
-
-I was just referring to drivers/firmware/efi/reboot.c- function efi_reboot.
-
-Anyways the function reboot_setup in kernel/reboot.c sets the reboot
-mode parsing the string passed by the user(e.g.: warm, cold, hard, gpio,
-soft,..etc it just scans the first character TBH)
-
+diff --git a/drivers/staging/octeon-usb/Makefile b/drivers/staging/octeon-usb/Makefile
+index 5588be395f2a..9873a0130ad5 100644
+--- a/drivers/staging/octeon-usb/Makefile
++++ b/drivers/staging/octeon-usb/Makefile
+@@ -1 +1,2 @@
++# SPDX-License-Identifier: GPL-2.0
+ obj-${CONFIG_OCTEON_USB} := octeon-hcd.o
+diff --git a/drivers/staging/octeon-usb/octeon-hcd.c b/drivers/staging/octeon-usb/octeon-hcd.c
+index cded30f145aa..cff5e790b196 100644
+--- a/drivers/staging/octeon-usb/octeon-hcd.c
++++ b/drivers/staging/octeon-usb/octeon-hcd.c
+@@ -1,3 +1,4 @@
++// SPDX-License-Identifier: GPL-2.0
+ /*
+  * This file is subject to the terms and conditions of the GNU General Public
+  * License.  See the file "COPYING" in the main directory of this archive
+diff --git a/drivers/staging/octeon-usb/octeon-hcd.h b/drivers/staging/octeon-usb/octeon-hcd.h
+index 3353aefe662e..769c36cf6614 100644
+--- a/drivers/staging/octeon-usb/octeon-hcd.h
++++ b/drivers/staging/octeon-usb/octeon-hcd.h
+@@ -1,3 +1,4 @@
++/* SPDX-License-Identifier: GPL-2.0 */
+ /*
+  * Octeon HCD hardware register definitions.
+  *
 -- 
-Regards,
-Sudeep
+2.16.4
+
