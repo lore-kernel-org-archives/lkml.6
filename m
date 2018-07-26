@@ -2,118 +2,221 @@ Return-Path: <SRS0=7Z+k=KK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55359C6778F
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 15:02:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D804C6778F
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 15:06:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0224E20673
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 15:02:16 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="cStqWS5G"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0224E20673
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 142EE2064D
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 15:06:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 142EE2064D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731613AbeGZQT2 (ORCPT
+        id S1730781AbeGZQXz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 26 Jul 2018 12:19:28 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:48300 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729801AbeGZQT2 (ORCPT
+        Thu, 26 Jul 2018 12:23:55 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:49872 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729894AbeGZQXy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Jul 2018 12:19:28 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
-        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
-        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=2C2gQcHN3fOS06C1IC7Cl91FW77bHaXxMSG/9RBbuhY=; b=cStqWS5GRLTt
-        46NVSSkuViEfJIhZZyHLjstuhk1AJ/1GhQktTLUvg5mYt2piJ/4eF/Q/dL16OsM9IhUr1YtOfP4Gh
-        5W09e8jAUPKrrmnFVUm//9negvXvj9I/UHNiLvNhAWtBEgW0DBwyoCspHpWhq8aduwCpBpKEkNNby
-        V6Sq8=;
-Received: from [2a00:23c4:5d8e:0:97c8:1971:bc17:6a1a] (helo=finisterre.ee.mobilebroadband)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1fihmE-0007gz-1o; Thu, 26 Jul 2018 15:02:02 +0000
-Received: by finisterre.ee.mobilebroadband (Postfix, from userid 1000)
-        id 7CC5C440078; Thu, 26 Jul 2018 16:02:01 +0100 (BST)
-From:   Mark Brown <broonie@kernel.org>
-To:     Jerome Brunet <jbrunet@baylibre.com>
-Cc:     Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Carlo Caione <carlo@caione.org>, Rob Herring <robh@kernel.org>,
-        devicetree@vger.kernel.org, alsa-devel@alsa-project.org,
-        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
-        alsa-devel@alsa-project.org
-Subject: Applied "ASoC: meson: use IRQ_RETVAL in the fifo irq handler" to the asoc tree
-In-Reply-To:  <20180726124544.14740-2-jbrunet@baylibre.com>
-Message-Id: <20180726150201.7CC5C440078@finisterre.ee.mobilebroadband>
-Date:   Thu, 26 Jul 2018 16:02:01 +0100 (BST)
+        Thu, 26 Jul 2018 12:23:54 -0400
+Received: from bigeasy by Galois.linutronix.de with local (Exim 4.80)
+        (envelope-from <bigeasy@linutronix.de>)
+        id 1fihqc-0000uH-KX; Thu, 26 Jul 2018 17:06:34 +0200
+Date:   Thu, 26 Jul 2018 17:06:34 +0200
+From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     Dave Martin <Dave.Martin@arm.com>, linux-rt-users@vger.kernel.org,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Mike Galbraith <efault@gmx.de>,
+        Will Deacon <will.deacon@arm.com>,
+        linux-kernel@vger.kernel.org, tglx@linutronix.de,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH RT v3] arm64: fpsimd: use preemp_disable in addition to
+ local_bh_disable()
+Message-ID: <20180726150634.cl3wccqur6qhle6p@linutronix.de>
+References: <20180522172115.fpqguqlsq6bavtxy@linutronix.de>
+ <20180522132429.6f1dcf92@gandalf.local.home>
+ <20180522173333.aawadhkcekzvrswp@linutronix.de>
+ <20180711092555.268adf7f@gandalf.local.home>
+ <20180711133157.bvrza5vmthu6lwjd@linutronix.de>
+ <20180711093346.782af07a@gandalf.local.home>
+ <20180713174937.5ddaqpylalcmc3jq@linutronix.de>
+ <20180716151737.GO9486@e103592.cambridge.arm.com>
+ <20180718091209.u76gzacanj5avhdl@linutronix.de>
+ <20180724094623.37430032@gandalf.local.home>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20180724094623.37430032@gandalf.local.home>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch
+In v4.16-RT I noticed a number of warnings from task_fpsimd_load(). The
+code disables BH and expects that it is not preemptible. On -RT the
+task remains preemptible but remains the same CPU. This may corrupt the
+content of the SIMD registers if the task is preempted during
+saving/restoring those registers.
 
-   ASoC: meson: use IRQ_RETVAL in the fifo irq handler
+Add preempt_disable()/enable() to enfore the required semantic on -RT.
 
-has been applied to the asoc tree at
-
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From 036e4963bfb2d4513c30efd80e4bd50ff6c79e3e Mon Sep 17 00:00:00 2001
-From: Jerome Brunet <jbrunet@baylibre.com>
-Date: Thu, 26 Jul 2018 14:45:42 +0200
-Subject: [PATCH] ASoC: meson: use IRQ_RETVAL in the fifo irq handler
-
-Use IRQ_RETVAL instead of the open coded ternary operation.
-
-Suggested-by: Takashi Iwai <tiwai@suse.de>
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 ---
- sound/soc/meson/axg-fifo.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+This should work. Compiling currently gcc-6 on the box to see what
+happens. Since the crypto disables preemption "frequently" and I don't
+expect or see anything to worry about.
 
-diff --git a/sound/soc/meson/axg-fifo.c b/sound/soc/meson/axg-fifo.c
-index db367d85290f..30262550e37b 100644
---- a/sound/soc/meson/axg-fifo.c
-+++ b/sound/soc/meson/axg-fifo.c
-@@ -174,7 +174,7 @@ static irqreturn_t axg_fifo_pcm_irq_block(int irq, void *dev_id)
- 	/* Ack irqs */
- 	axg_fifo_ack_irq(fifo, status);
- 
--	return !status ? IRQ_NONE : IRQ_HANDLED;
-+	return IRQ_RETVAL(status);
+ arch/arm64/kernel/fpsimd.c |   30 ++++++++++++++++++++++++++++--
+ 1 file changed, 28 insertions(+), 2 deletions(-)
+
+--- a/arch/arm64/kernel/fpsimd.c
++++ b/arch/arm64/kernel/fpsimd.c
+@@ -157,6 +157,15 @@ static void sve_free(struct task_struct
+ 	__sve_free(task);
  }
  
- static int axg_fifo_pcm_open(struct snd_pcm_substream *ss)
--- 
-2.18.0
-
++static void *sve_free_atomic(struct task_struct *task)
++{
++	void *sve_state = task->thread.sve_state;
++
++	WARN_ON(test_tsk_thread_flag(task, TIF_SVE));
++
++	task->thread.sve_state = NULL;
++	return sve_state;
++}
+ 
+ /* Offset of FFR in the SVE register dump */
+ static size_t sve_ffr_offset(int vl)
+@@ -594,6 +603,7 @@ int sve_set_vector_length(struct task_st
+ 	 * non-SVE thread.
+ 	 */
+ 	if (task == current) {
++		preempt_disable();
+ 		local_bh_disable();
+ 
+ 		task_fpsimd_save();
+@@ -604,8 +614,10 @@ int sve_set_vector_length(struct task_st
+ 	if (test_and_clear_tsk_thread_flag(task, TIF_SVE))
+ 		sve_to_fpsimd(task);
+ 
+-	if (task == current)
++	if (task == current) {
+ 		local_bh_enable();
++		preempt_enable();
++	}
+ 
+ 	/*
+ 	 * Force reallocation of task SVE state to the correct size
+@@ -837,6 +849,7 @@ asmlinkage void do_sve_acc(unsigned int
+ 
+ 	sve_alloc(current);
+ 
++	preempt_disable();
+ 	local_bh_disable();
+ 
+ 	task_fpsimd_save();
+@@ -850,6 +863,7 @@ asmlinkage void do_sve_acc(unsigned int
+ 		WARN_ON(1); /* SVE access shouldn't have trapped */
+ 
+ 	local_bh_enable();
++	preempt_enable();
+ }
+ 
+ /*
+@@ -921,10 +935,12 @@ void fpsimd_thread_switch(struct task_st
+ void fpsimd_flush_thread(void)
+ {
+ 	int vl, supported_vl;
++	void *mem = NULL;
+ 
+ 	if (!system_supports_fpsimd())
+ 		return;
+ 
++	preempt_disable();
+ 	local_bh_disable();
+ 
+ 	memset(&current->thread.fpsimd_state, 0, sizeof(struct fpsimd_state));
+@@ -932,7 +948,7 @@ void fpsimd_flush_thread(void)
+ 
+ 	if (system_supports_sve()) {
+ 		clear_thread_flag(TIF_SVE);
+-		sve_free(current);
++		mem = sve_free_atomic(current);
+ 
+ 		/*
+ 		 * Reset the task vector length as required.
+@@ -968,6 +984,8 @@ void fpsimd_flush_thread(void)
+ 	set_thread_flag(TIF_FOREIGN_FPSTATE);
+ 
+ 	local_bh_enable();
++	preempt_enable();
++	kfree(mem);
+ }
+ 
+ /*
+@@ -979,9 +997,11 @@ void fpsimd_preserve_current_state(void)
+ 	if (!system_supports_fpsimd())
+ 		return;
+ 
++	preempt_disable();
+ 	local_bh_disable();
+ 	task_fpsimd_save();
+ 	local_bh_enable();
++	preempt_enable();
+ }
+ 
+ /*
+@@ -1021,6 +1041,7 @@ void fpsimd_restore_current_state(void)
+ 	if (!system_supports_fpsimd())
+ 		return;
+ 
++	preempt_disable();
+ 	local_bh_disable();
+ 
+ 	if (test_and_clear_thread_flag(TIF_FOREIGN_FPSTATE)) {
+@@ -1029,6 +1050,7 @@ void fpsimd_restore_current_state(void)
+ 	}
+ 
+ 	local_bh_enable();
++	preempt_enable();
+ }
+ 
+ /*
+@@ -1041,6 +1063,7 @@ void fpsimd_update_current_state(struct
+ 	if (!system_supports_fpsimd())
+ 		return;
+ 
++	preempt_disable();
+ 	local_bh_disable();
+ 
+ 	current->thread.fpsimd_state.user_fpsimd = *state;
+@@ -1053,6 +1076,7 @@ void fpsimd_update_current_state(struct
+ 		fpsimd_bind_to_cpu();
+ 
+ 	local_bh_enable();
++	preempt_enable();
+ }
+ 
+ /*
+@@ -1115,6 +1139,7 @@ void kernel_neon_begin(void)
+ 
+ 	BUG_ON(!may_use_simd());
+ 
++	preempt_disable();
+ 	local_bh_disable();
+ 
+ 	__this_cpu_write(kernel_neon_busy, true);
+@@ -1131,6 +1156,7 @@ void kernel_neon_begin(void)
+ 	preempt_disable();
+ 
+ 	local_bh_enable();
++	preempt_enable();
+ }
+ EXPORT_SYMBOL(kernel_neon_begin);
+ 
