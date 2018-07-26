@@ -2,170 +2,144 @@ Return-Path: <SRS0=7Z+k=KK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72646C28CF6
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 06:01:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E073BC28CF6
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 06:04:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E19B52089A
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 06:01:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E19B52089A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=de.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 7662220673
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 06:04:48 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WfB0fz3T"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7662220673
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727790AbeGZHQQ convert rfc822-to-8bit (ORCPT
+        id S1728146AbeGZHT7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 26 Jul 2018 03:16:16 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:35084 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726037AbeGZHQQ (ORCPT
+        Thu, 26 Jul 2018 03:19:59 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:41208 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726292AbeGZHT7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Jul 2018 03:16:16 -0400
-Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w6Q5xhm5107171
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Jul 2018 02:01:03 -0400
-Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2kf4098tus-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Jul 2018 02:01:03 -0400
-Received: from localhost
-        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <schwidefsky@de.ibm.com>;
-        Thu, 26 Jul 2018 07:01:00 +0100
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
-        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 26 Jul 2018 07:00:57 +0100
-Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w6Q60uVv37683326
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 26 Jul 2018 06:00:56 GMT
-Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 3DEFA52050;
-        Thu, 26 Jul 2018 09:01:10 +0100 (BST)
-Received: from mschwideX1 (unknown [9.145.19.180])
-        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id 062645204F;
-        Thu, 26 Jul 2018 09:01:09 +0100 (BST)
-Date:   Thu, 26 Jul 2018 08:00:54 +0200
-From:   Martin Schwidefsky <schwidefsky@de.ibm.com>
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Christian Borntraeger <borntraeger@de.ibm.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        David Miller <davem@davemloft.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: Linux 4.18-rc6
-In-Reply-To: <CAGXu5jJKFoCHvFxT-kc-O=fCUa3CKrErXUspxMfGNTAHAithOw@mail.gmail.com>
-References: <CA+55aFzMheDA-2z=MdGgJrz-REcrknb+4OEvRKaJipm+x6xEhw@mail.gmail.com>
-        <20180723204617.GA14487@roeck-us.net>
-        <CA+55aFyuaEGGksOxv3aAp0THYkAapap-JY65A0A81S0qUE0S+g@mail.gmail.com>
-        <20180723212330.GA7441@roeck-us.net>
-        <CA+55aFw3tRe70mUgV70oi6xBwSLx0h_supRGoNUHgrcSGxUgeg@mail.gmail.com>
-        <20180724081845.1cc4c9d8@mschwideX1>
-        <25151348-ce12-f754-876c-8b39b23d16a1@de.ibm.com>
-        <20180724092403.332125ff@mschwideX1>
-        <CAGXu5jJKFoCHvFxT-kc-O=fCUa3CKrErXUspxMfGNTAHAithOw@mail.gmail.com>
-X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
-X-TM-AS-GCONF: 00
-x-cbid: 18072606-4275-0000-0000-0000029E23E5
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18072606-4276-0000-0000-000037A62504
-Message-Id: <20180726080054.6682272e@mschwideX1>
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 8BIT
+        Thu, 26 Jul 2018 03:19:59 -0400
+Received: by mail-pg1-f196.google.com with SMTP id z8-v6so449332pgu.8;
+        Wed, 25 Jul 2018 23:04:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=WYF+YMfquKObGVOwAGLMpemKA36i2iEw/LCMKNMP48g=;
+        b=WfB0fz3TlFEBNk2iQkGGFLYlY0dugUEFZ9XnljtB3pI+LzJd+8q19wEWj+W53pYZfP
+         OtgxAl8EB7R6vINKMtSlPGN0Ul0G6o+hZS58o+qPCEV4QQ91tGPMVgGC3BaRO5QK7bA3
+         NzQyqj1t3aXySXS7+zmv69Zbs8NVAou27GWeqyqiyFo//fOBPSKvIFTWV0lFqFgOVPEt
+         noTLNCBL61fiu1IWmYietO2uaKWhC8Up7ryxiTu5nIQhx1FJE0IBkRmdELp5fsh8CJfn
+         HwZ1mvrd0wI/4oEPGQDTPboNwiiWIM6xIhf0G6laFbzSzU6WkPIwlCPiGOfSNiJaam8x
+         3reQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=WYF+YMfquKObGVOwAGLMpemKA36i2iEw/LCMKNMP48g=;
+        b=lZ7P5rtKaT93IlIQ/9kiDWNE9TSbPgAUY79h9tKZ9bZrr3eWMGJYnLJ3SkyYvE7eiv
+         F6Ny7DmFOUzqEOzSYyj45k+IhwvFp56CHgHKE1W1mND+zuPBSi9xQ00Vj38SdG+vwLrF
+         eX429Vp52qN87OFTa9h1sE2c/XoJHtif2LbF/EbdCtTA22okpaCs6xTfeqFUjQdb8KQp
+         DcpQ8Hk/6eLeatv/3/sP0YPWy5LyMSqWGipl0EoQBgxKiNiXQg8GRweHh5gZYlyuuhhW
+         /4AiixmcygV1Tqb6zVGSuMpoPUpkk92xPpc0F8478FzgBg2FfA+4Dzh9U2DDDMCMAz2X
+         T/+Q==
+X-Gm-Message-State: AOUpUlHhyy5gLxN++Dr1kUsNuDbMm9OUvkEQj7hxNrOVPg51PAKL9/dv
+        ytPJ7X8oPpTdckR8ZRcwN1A=
+X-Google-Smtp-Source: AAOMgpc2/5Svceg7H6UK8ahZKST7ENGnrZBuHisZ9A1+ao4tu6CDoQLVNFW6IfZPcU5tTnoETAHVYg==
+X-Received: by 2002:a63:1722:: with SMTP id x34-v6mr652256pgl.268.1532585085303;
+        Wed, 25 Jul 2018 23:04:45 -0700 (PDT)
+Received: from [192.168.0.77] ([211.196.191.92])
+        by smtp.gmail.com with ESMTPSA id p8-v6sm751569pfk.186.2018.07.25.23.04.39
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 25 Jul 2018 23:04:44 -0700 (PDT)
+Subject: Re: pahole + BTF was: Re: [Question] bpf: about a new
+ 'tools/bpf/bpf_dwarf2btf'
+To:     Daniel Borkmann <daniel@iogearbox.net>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
+Cc:     Alexei Starovoitov <ast@kernel.org>, netdev@vger.kernel.org,
+        Thomas Girard <thomas.g.girard@free.fr>,
+        Martin Cermak <mcermak@redhat.com>,
+        linux-kernel@vger.kernel.org, acme@kernel.org
+References: <47cfb90e-a9f4-8127-2b89-0e20d9fda2f0@gmail.com>
+ <20180725175231.GA2121@redhat.com>
+ <35663517-26e1-c2a2-1554-5dd90be2747f@gmail.com>
+ <592c6325-23d0-771b-cc28-6a66842a1265@gmail.com>
+ <20180725201122.h7ostqw3qtfvz7sn@kafai-mbp.dhcp.thefacebook.com>
+ <96728b5e-8e41-a1df-be63-becbd9606307@iogearbox.net>
+From:   Taeung Song <treeze.taeung@gmail.com>
+Message-ID: <bcabe9a0-df3d-d57a-92aa-63267b3b7dd5@gmail.com>
+Date:   Thu, 26 Jul 2018 15:04:37 +0900
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-26_01:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1806210000 definitions=main-1807260064
+In-Reply-To: <96728b5e-8e41-a1df-be63-becbd9606307@iogearbox.net>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 25 Jul 2018 12:40:26 -0700
-Kees Cook <keescook@chromium.org> wrote:
 
-> On Tue, Jul 24, 2018 at 12:24 AM, Martin Schwidefsky
-> <schwidefsky@de.ibm.com> wrote:
-> > On Tue, 24 Jul 2018 09:15:58 +0200
-> > Christian Borntraeger <borntraeger@de.ibm.com> wrote:
-> >  
-> >> On 07/24/2018 08:18 AM, Martin Schwidefsky wrote:  
-> >> > On Mon, 23 Jul 2018 16:17:22 -0700
-> >> > Linus Torvalds <torvalds@linux-foundation.org> wrote:
-> >> >  
-> >> >> On Mon, Jul 23, 2018 at 2:23 PM Guenter Roeck <linux@roeck-us.net> wrote:  
-> >> >>>  
-> >> >>>>
-> >> >>>> Martin - can we just remove the
-> >> >>>>
-> >> >>>>          select HAVE_GCC_PLUGINS
-> >> >>>>
-> >> >>>> from the s390 Kconfig file (or perhaps add "if BROKEN" or something to
-> >> >>>> disable it).
-> >> >>>>
-> >> >>>> Because if it's not getting fixed, it shouldn't be exposed.
-> >> >>>>  
-> >> >>> The problem only affects 4.18 - the code has been rearranged in -next.
-> >> >>> Only, in my builders, I can't disable a flag for individual releases,
-> >> >>> so I just disabled it completely for s390.  
-> >> >>
-> >> >> Well, I'm not going to release a 4.18 with a known problem, so in 4.18
-> >> >> this *will* be disabled if it's not fixed.
-> >> >>
-> >> >> The fact that it might be fixed in linux-next is entirely immaterial
-> >> >> to the release of 4.18.  
-> >> >
-> >> > Ok, if gcc with the plugins and an allmodconfig is considered to be
-> >> > important enough to warrant a fix, it can be pulled from here:
-> >> >
-> >> > git://git.kernel.org/pub/scm/linux/kernel/git/s390/linux.git for-linus
-> >> >
-> >> > Martin Schwidefsky (1):
-> >> >       s390: disable gcc plugins
-> >> >
-> >> > Once that is in I will create another patch to undo this one and place
-> >> > it after the early boot rework.  
-> >>
-> >> On the list a different fix was proposed about 2 weeks ago,  
+
+On 07/26/2018 09:26 AM, Daniel Borkmann wrote:
+> On 07/25/2018 10:11 PM, Martin KaFai Lau wrote:
+>> On Thu, Jul 26, 2018 at 04:21:31AM +0900, Taeung Song wrote:
+>>> On 07/26/2018 03:27 AM, Taeung Song wrote:
+>>>> On 07/26/2018 02:52 AM, Arnaldo Carvalho de Melo wrote:
+>>>>> Em Thu, Jul 26, 2018 at 02:23:32AM +0900, Taeung Song escreveu:
+>>>>>> Hi,
+>>>>>>
+>>>>>> Building bpf programs with .BTF section,
+>>>>>> I thought it'd be better to convert dwarf info to .BTF by
+>>>>>> a new tool such as 'tools/bpf/bpf_dwarf2btf' instead of pahole
+>>>>>> in the future.
+>>>>>> Currently for bpf binary that have .BTF section,
+>>>>>> we need to use pahole from https://github.com/iamkafai/pahole/tree/btf
+>>>>>> with the command line such as "pahole -J bpf_prog.o".
+>>>>>> I think it is great but if implementing new 'bpf_dwarf2btf'
+>>>>>> (dwarf parsing + btf encoder code written by Martin KaFai Lau on
+>>>>>> the pahole project i.e. btf.h, btf_encoder.c, btf_encoder.h,
+>>>>>> libbtf.c, libbtf.h),
+>>>>>> BPF developers would more easily use functionalities based on BTF.
+>>>>>
+>>>>> What would be easier exactly? Not having to install a package but build
+>>>>> it from the kernel sources?
+>>>>>
+>>>>> Many kernel developers already have pahole installed for other uses, so
+>>>>> no need to install anything.
+>>>>
+>>>> Understood, but I think there are many non-kernel developers
+>>>> developing BPF programs and they mightn't have or use pahole.
+>>>>
+>>>> So, if providing the 'dwarf2btf' feature on tools/bpf or tools/bpf/bpftool,
+>>>> non-kernel developers can also more easily build bpf prog with .BPF, no ?
+>> Some quick thoughts,
+>> IMO, I suspect if it is in the distro's pahole package,  it should be easy
+>> enough for kernel and non kernel developer to install.
+>> BTF usage is still evolving,  we might re-evaluate going forward but at this
+>> point I think leveraging pahole's existing capability is a good option.
 > 
-> https://lkml.kernel.org/r/CAGXu5jKyESyPD1MyM7BrVFPKDY9+HqRCpXcKG5ikCZwdGZLaSw@mail.gmail.com
+> Agree, if there will be a future use-case where pahole might not be well-fitting,
+> we could add it to bpftool then so I wouldn't rule it out, but for the functionality
+> right now it seems good to reuse it. Presumably BPF developers have it installed
+> anyway to inspect struct padding from BPF obj files.
 > 
-> >>
-> >> something like
-> >>
-> >> CFLAGS_als.o += $(DISABLE_LATENT_ENTROPY_PLUGIN)
-> >>
-> >> and I prefer that. Because your patch disables all gcc plugins.  
-> >
-> > This change would cause trouble with patch dependencies as als.c is moved
-> > to a different directory. I would prefer to disable all gcc plugins for
-> > 4.18.  
+> Thanks,
+> Daniel
 > 
-> I don't understand why not just add it to the Makefile. For -next and
-> 4.19, just drop the line again once you merge with 4.18? A CFLAGS_*.o
-> entry for a file that doesn't exist should be harmless...
-> 
-> Of course, if no one is actually using the gcc plugins on s390, then
-> okay, disabling them isn't a problem. :) But since it's been working
-> on s390 since 4.15, it seems weird to turn all of them off just for
-> 4.18 when a trivial fix is available.
 
-The gcc plugins have not in wide-spread use, it is no problem to just
-disable them all. The advantage doing the fixing with the Kconfig file
-is that I avoid a merge conflict with the current features branch.
-And I do not want to rebase that branch this late in the -rcs just
-because of this problem.
+OK, I got it, thanks for answering my question so detailedly
 
--- 
-blue skies,
-   Martin.
-
-"Reality continues to ruin my life." - Calvin.
-
+Thanks,
+Taeung
