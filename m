@@ -2,206 +2,183 @@ Return-Path: <SRS0=7Z+k=KK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-2.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48D8AC6778F
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 09:15:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8850CC6778F
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 09:15:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E84B820891
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 09:15:21 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="gk9Pu4wj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E84B820891
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	by mail.kernel.org (Postfix) with ESMTP id 4C5B82088E
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 09:15:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4C5B82088E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=collabora.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729029AbeGZKbP (ORCPT
+        id S1729176AbeGZKbn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 26 Jul 2018 06:31:15 -0400
-Received: from conssluserg-02.nifty.com ([210.131.2.81]:53084 "EHLO
-        conssluserg-02.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727799AbeGZKbO (ORCPT
+        Thu, 26 Jul 2018 06:31:43 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:39884 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727799AbeGZKbm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Jul 2018 06:31:14 -0400
-X-Greylist: delayed 20685 seconds by postgrey-1.27 at vger.kernel.org; Thu, 26 Jul 2018 06:31:13 EDT
-Received: from mail-vk0-f53.google.com (mail-vk0-f53.google.com [209.85.213.53]) (authenticated)
-        by conssluserg-02.nifty.com with ESMTP id w6Q9FDrf019385;
-        Thu, 26 Jul 2018 18:15:13 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-02.nifty.com w6Q9FDrf019385
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1532596514;
-        bh=pv175VuLlus08+eA3yavVzHXVXo+9O0kn1waT0Utwpg=;
-        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
-        b=gk9Pu4wjL7Xhqmk+jCa8rO4ccR9i4FEcI9DCey92FbYjmRWhbcyb124nAToTLHifN
-         6sji8gXiH+AmAFjsbOUfk98/fA0zceSL0W8oIfa0ZO/fntrZwhi2qtwxYMGg64ZxTQ
-         XX/NLN7dFByW6aw97RCD7GQnjrkNKAmXHBzGBJkpwpkhyn36esLx4mpaPS9lszYmD8
-         Rbb81Xc5X5cGbAcrobicmT0Fs7tdqYMsMfsKSLW9mn7PuRsR7FMhFe2t9G5c30HxBh
-         5ZtaSagGD2/5nKfCT2aDCg8mnFlI5Ee+Dm9ky0UyLDYAi6DM0wZBl0mOL5rzAI4KZu
-         fAmtUDpaDMbog==
-X-Nifty-SrcIP: [209.85.213.53]
-Received: by mail-vk0-f53.google.com with SMTP id s17-v6so451595vke.10;
-        Thu, 26 Jul 2018 02:15:13 -0700 (PDT)
-X-Gm-Message-State: AOUpUlGsvF22DfvAbmo/gk/2g1wSqGPrEeHf6PnO4KmKBi8pVWw1Yy5e
-        v4VTHJr/5b+lx9TQd5HXKJ03bkF3kAteQZJRYgY=
-X-Google-Smtp-Source: AAOMgpdlyA5zXcYeA0lUeTimaYYyl24jDRMUF++m4FBc4sCmdk2Qpbn4++wUxQmmt0w5Cz1giMRUi2fvtKZW2HQhVP0=
-X-Received: by 2002:a1f:5347:: with SMTP id h68-v6mr662954vkb.141.1532596512729;
- Thu, 26 Jul 2018 02:15:12 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:ab0:7289:0:0:0:0:0 with HTTP; Thu, 26 Jul 2018 02:14:32
- -0700 (PDT)
-In-Reply-To: <CAMuHMdUnYiLYO4hX3x6X7EZ8HnnOHXCPEUOXzPVJc=6s7VF+bQ@mail.gmail.com>
-References: <1532575736-20138-1-git-send-email-yamada.masahiro@socionext.com>
- <1532575736-20138-2-git-send-email-yamada.masahiro@socionext.com> <CAMuHMdUnYiLYO4hX3x6X7EZ8HnnOHXCPEUOXzPVJc=6s7VF+bQ@mail.gmail.com>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Thu, 26 Jul 2018 18:14:32 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAT9nHCnq90tgomDnwF6RwSa9BGTnxqzgvVwqy-QBy+qxQ@mail.gmail.com>
-Message-ID: <CAK7LNAT9nHCnq90tgomDnwF6RwSa9BGTnxqzgvVwqy-QBy+qxQ@mail.gmail.com>
-Subject: Re: [PATCH 1/2] mmc: tmio: rename files and CONFIG options to have
- the same prefix
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Linux MMC List <linux-mmc@vger.kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Thu, 26 Jul 2018 06:31:42 -0400
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: eballetbo)
+        with ESMTPSA id 4171726048B
+From:   Enric Balletbo i Serra <enric.balletbo@collabora.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     kernel@collabora.com, cl@rock-chips.com, linux-pwm@vger.kernel.org,
+        linux-fbdev@vger.kernel.org,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        dri-devel@lists.freedesktop.org, Jingoo Han <jingoohan1@gmail.com>,
+        Lee Jones <lee.jones@linaro.org>
+Subject: [PATCH] backlight: pwm_bl: switch to using "atomic" PWM API
+Date:   Thu, 26 Jul 2018 11:15:34 +0200
+Message-Id: <20180726091534.27521-1-enric.balletbo@collabora.com>
+X-Mailer: git-send-email 2.18.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Geert,
+The "atomic" API allows us to configure PWM period and duty_cycle and
+enable it in one call.
 
+The patch also moves the pwm_init_state just before any use of the
+pwm_state struct, this fixes a potential bug where pwm_get_state
+can be called before pwm_init_state.
 
-2018-07-26 17:25 GMT+09:00 Geert Uytterhoeven <geert@linux-m68k.org>:
-> Hi Yamada-san,
->
-> On Thu, Jul 26, 2018 at 5:33 AM Masahiro Yamada
-> <yamada.masahiro@socionext.com> wrote:
->> As commit b6147490e6aa ("mmc: tmio: split core functionality, DMA and
->> MFD glue") said, these MMC controllers use the IP from Panasonic.
->>
->> TMIO (Toshiba Mobile IO) MMC was the first upstreamed user of this IP.
->> The common driver code was split and expanded as 'tmio-mmc-core', then
->> it become historical misnomer since 'tmio' is not the name of this IP.
->>
->> I pointed out this [1], and suggested to re-organize the names in the
->> form of:
->>
->>   <IP-name>.c            (common code for this IP)
->>   <IP-name>_tmio.c       (Toshiba Mobile IO)
->>   <IP-name>_sdhi.c       (Renesas SDHI)
->>   <IP-name>_uniphier.c   (Socionext UniPhier)
->>
->> The <IP-name> in my mind was 'mnsd' because names of Panasonic chips
->> are prefixed with 'MN'.
->>
->> This is the naming scheme as we see in dw_mmc* and sdhci-*.
->>
->> In the discussion with Wolfram Sang, my suggestion was rejected
->> because it implied drastic function renaming, which is too invasive.
->>
->> Ulf Hansson was still happy with file renaming to clarify the
->> relationship between variants.  So, the accepted solution was:
->>
->>  - Make 'tmio_mmc' the _right_ core name
->>  - Align all variant files with the same prefix.
->>  - Do not rename functions
->>
->> This commit renames files as follows:
->>
->>   tmio_mmc_core.c              -> tmio_mmc.c
->>   tmio_mmc.c                   -> tmio_mmc_original.c
->>   renesas_sdhi_core.c          -> tmio_mmc_sdhi.c
->>   renesas_sdhi.h               -> tmio_mmc_sdhi.h
->>   renesas_sdhi_internal_dmac.c -> tmio_mmc_sdhi_internal_dmac.c
->>   renesas_sdhi_sys_dmac.c      -> tmio_mmc_sdhi_sys_dmac.c
->
-> I have mixed feelings about the last two renames, especially about the last
-> one: SYS-DMAC is very Renesas-specific, as it's a separate IP block in
-> Renesas SoCs.
-> 1. Are there other SoCs using the same internal DMAC?
+Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+---
 
-Probably no.
+ drivers/video/backlight/pwm_bl.c | 48 ++++++++++++++++++++------------
+ 1 file changed, 30 insertions(+), 18 deletions(-)
 
-The original IP from Panasonic did not contain any internal DMA engine.
-
-renesas_sdhi_internal_dmac.c is probably
-the Resansas' own extension.
-
-
-Panasonic also implemented a different internal DMA engine
-(Socionext inherited the RTL from Panasonic).
-
-This is completely different from the Renesas' implementation.
-
-
-
->    If not, perhaps the "renesas" should be kept in the driver name?
-
-
-I do not mind that, but the file name would be very long
-"tmio_mmc_renesas_sdhi_internal_dmac.c"
-
-Or, do you mean "tmio_mmc_renesas_internal_dmac.c" ?
-
-
-
-> 2. Are there other SoCs using an external DMAC?
-
-
-Yes.  Some old SoCs in UniPhier SoC family rely on
-the external DMAC, like renesas_sdhi_sys_dmac.c
-
-
->    Is the interface to the external DMAC similar?
->    If yes, perhaps it should be renamed to tmio_mmc_sdhi_external_dmac.c?
-
-
-"sdhi" is already Renesas-specific name, isn't it?
-
-I really do not care, "sys" or "external"
-It is up to renesas folks .
-
-
->    If not, perhaps the "renesas" should be kept in the driver name?
-
-
-I am not quite sure, but this is less Renesas-specific
-since renesas_sdhi_sys_dmac.c is just a software abstraction layer.
-The real driver code is under drivers/dma/.
-
-The difference is, in my case, TX and RX share a single DMA channel.
-
-
-Thanks.
-
-
-
-> Thanks!
->
-> Gr{oetje,eeting}s,
->
->                         Geert
->
-> --
-> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
->
-> In personal conversations with technical people, I call myself a hacker. But
-> when I'm talking to journalists I just say "programmer" or something like that.
->                                 -- Linus Torvalds
-> --
-> To unsubscribe from this list: send the line "unsubscribe devicetree" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-
-
-
+diff --git a/drivers/video/backlight/pwm_bl.c b/drivers/video/backlight/pwm_bl.c
+index bdfcc0a71db1..2c734d55d607 100644
+--- a/drivers/video/backlight/pwm_bl.c
++++ b/drivers/video/backlight/pwm_bl.c
+@@ -46,7 +46,8 @@ struct pwm_bl_data {
+ 	void			(*exit)(struct device *);
+ };
+ 
+-static void pwm_backlight_power_on(struct pwm_bl_data *pb, int brightness)
++static void pwm_backlight_power_on(struct pwm_bl_data *pb,
++				   struct pwm_state *state)
+ {
+ 	int err;
+ 
+@@ -57,7 +58,8 @@ static void pwm_backlight_power_on(struct pwm_bl_data *pb, int brightness)
+ 	if (err < 0)
+ 		dev_err(pb->dev, "failed to enable power supply\n");
+ 
+-	pwm_enable(pb->pwm);
++	state->enabled = true;
++	pwm_apply_state(pb->pwm, state);
+ 
+ 	if (pb->post_pwm_on_delay)
+ 		msleep(pb->post_pwm_on_delay);
+@@ -70,6 +72,8 @@ static void pwm_backlight_power_on(struct pwm_bl_data *pb, int brightness)
+ 
+ static void pwm_backlight_power_off(struct pwm_bl_data *pb)
+ {
++	struct pwm_state state;
++
+ 	if (!pb->enabled)
+ 		return;
+ 
+@@ -79,8 +83,11 @@ static void pwm_backlight_power_off(struct pwm_bl_data *pb)
+ 	if (pb->pwm_off_delay)
+ 		msleep(pb->pwm_off_delay);
+ 
+-	pwm_config(pb->pwm, 0, pb->period);
+-	pwm_disable(pb->pwm);
++	pwm_get_state(pb->pwm, &state);
++	state.enabled = false;
++	state.period = pb->period;
++	state.duty_cycle = 0;
++	pwm_apply_state(pb->pwm, &state);
+ 
+ 	regulator_disable(pb->power_supply);
+ 	pb->enabled = false;
+@@ -106,6 +113,7 @@ static int pwm_backlight_update_status(struct backlight_device *bl)
+ {
+ 	struct pwm_bl_data *pb = bl_get_data(bl);
+ 	int brightness = bl->props.brightness;
++	struct pwm_state state;
+ 	int duty_cycle;
+ 
+ 	if (bl->props.power != FB_BLANK_UNBLANK ||
+@@ -118,8 +126,13 @@ static int pwm_backlight_update_status(struct backlight_device *bl)
+ 
+ 	if (brightness > 0) {
+ 		duty_cycle = compute_duty_cycle(pb, brightness);
+-		pwm_config(pb->pwm, duty_cycle, pb->period);
+-		pwm_backlight_power_on(pb, brightness);
++		pwm_get_state(pb->pwm, &state);
++		state.duty_cycle = duty_cycle;
++		state.period = pb->period;
++		if (!state.enabled)
++			pwm_backlight_power_on(pb, &state);
++		else
++			pwm_apply_state(pb->pwm, &state);
+ 	} else
+ 		pwm_backlight_power_off(pb);
+ 
+@@ -447,7 +460,6 @@ static int pwm_backlight_probe(struct platform_device *pdev)
+ 	struct device_node *node = pdev->dev.of_node;
+ 	struct pwm_bl_data *pb;
+ 	struct pwm_state state;
+-	struct pwm_args pargs;
+ 	unsigned int i;
+ 	int ret;
+ 
+@@ -539,10 +551,17 @@ static int pwm_backlight_probe(struct platform_device *pdev)
+ 
+ 	dev_dbg(&pdev->dev, "got pwm for backlight\n");
+ 
+-	if (!data->levels) {
+-		/* Get the PWM period (in nanoseconds) */
+-		pwm_get_state(pb->pwm, &state);
++	/* Sync up PWM state and ensure it is off. */
++	pwm_init_state(pb->pwm, &state);
++	state.enabled = false;
++	ret = pwm_apply_state(pb->pwm, &state);
++	if (ret) {
++		dev_err(&pdev->dev, "failed to apply initial PWM state: %d\n",
++			ret);
++		goto err_alloc;
++	}
+ 
++	if (!data->levels) {
+ 		ret = pwm_backlight_brightness_default(&pdev->dev, data,
+ 						       state.period);
+ 		if (ret < 0) {
+@@ -559,20 +578,13 @@ static int pwm_backlight_probe(struct platform_device *pdev)
+ 		pb->levels = data->levels;
+ 	}
+ 
+-	/*
+-	 * FIXME: pwm_apply_args() should be removed when switching to
+-	 * the atomic PWM API.
+-	 */
+-	pwm_apply_args(pb->pwm);
+-
+ 	/*
+ 	 * The DT case will set the pwm_period_ns field to 0 and store the
+ 	 * period, parsed from the DT, in the PWM device. For the non-DT case,
+ 	 * set the period from platform data if it has not already been set
+ 	 * via the PWM lookup table.
+ 	 */
+-	pwm_get_args(pb->pwm, &pargs);
+-	pb->period = pargs.period;
++	pb->period = state.period;
+ 	if (!pb->period && (data->pwm_period_ns > 0))
+ 		pb->period = data->pwm_period_ns;
+ 
 -- 
-Best Regards
-Masahiro Yamada
+2.18.0
+
