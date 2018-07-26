@@ -2,78 +2,104 @@ Return-Path: <SRS0=7Z+k=KK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 308DBC6778F
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 14:21:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D744C28CF6
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 14:23:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C579D2064D
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 14:21:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C579D2064D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codewreck.org
+	by mail.kernel.org (Postfix) with ESMTP id 4158820685
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 14:23:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4158820685
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731429AbeGZPia (ORCPT
+        id S1731007AbeGZPk0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 26 Jul 2018 11:38:30 -0400
-Received: from nautica.notk.org ([91.121.71.147]:45680 "EHLO nautica.notk.org"
+        Thu, 26 Jul 2018 11:40:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54192 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730352AbeGZPia (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Jul 2018 11:38:30 -0400
-Received: by nautica.notk.org (Postfix, from userid 1001)
-        id 0FB13C009; Thu, 26 Jul 2018 16:21:24 +0200 (CEST)
-Date:   Thu, 26 Jul 2018 16:21:09 +0200
-From:   Dominique Martinet <asmadeus@codewreck.org>
-To:     Tomas Bortoli <tomasbortoli@gmail.com>
-Cc:     Dmitry Vyukov <dvyukov@google.com>,
-        David Miller <davem@davemloft.net>,
-        v9fs-developer@lists.sourceforge.net,
-        netdev <netdev@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        syzkaller <syzkaller@googlegroups.com>
-Subject: Re: [PATCH] 9p: fix NULL pointer dereferences
-Message-ID: <20180726142109.GA4235@nautica>
-References: <20180726081049.10527-1-tomasbortoli@gmail.com>
- <20180726081727.GA6699@nautica>
- <CACT4Y+ark+0EYSZaOX-qDKpOkyfLgSO9CkidZzx=xkUuhpr65A@mail.gmail.com>
- <20180726094849.GA18334@nautica>
- <abbeafa2-9008-5749-aee5-b4a115d71af7@gmail.com>
+        id S1730095AbeGZPk0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Jul 2018 11:40:26 -0400
+Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id EC20F2064D;
+        Thu, 26 Jul 2018 14:23:18 +0000 (UTC)
+Date:   Thu, 26 Jul 2018 10:23:17 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Nicolai Stange <nstange@suse.de>
+Cc:     Ingo Molnar <mingo@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Jiri Kosina <jikos@kernel.org>,
+        Miroslav Benes <mbenes@suse.cz>,
+        Petr Mladek <pmladek@suse.com>, live-patching@vger.kernel.org,
+        x86@kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH 0/1] x86/ftrace: fix live patching vs. tracing race
+Message-ID: <20180726102317.550c986d@gandalf.local.home>
+In-Reply-To: <20180726104029.7736-1-nstange@suse.de>
+References: <20180726104029.7736-1-nstange@suse.de>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <abbeafa2-9008-5749-aee5-b4a115d71af7@gmail.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Tomas Bortoli wrote on Thu, Jul 26, 2018:
->> But I think trans=fd allows NULL addr today, no?
+On Thu, 26 Jul 2018 12:40:28 +0200
+Nicolai Stange <nstange@suse.de> wrote:
+
+> Hi,
 > 
-> How ?
-
-Just using the mount syscall with a NULL dev_name? I haven't checked
-this syzcaller reproducer but it's probably what it does.
-
-p9_fd_create doesn't use 'addr' at all so it's safe to create a 9p mount
-for trans=fd with no device name, as Dmitry pointed out
-
-
-> > On the other hand, virtio, rdma and xen all have the same problem, so
-> > Thomas, please fix them instead :)
+> if a user starts to trace a live patched function, its mcount call will get
+> redirected from a trampoline to ftrace_regs_caller.
 > 
-> So just by patching v9fs_mount ?
+> In preparation for that, ftrace on x86 first installs an int3 insn at that
+> call site.
+> 
+> ftrace_int3_handler() in turn simply skips over the mcount call insn,
+> effectively reverting the livepatch for that function during
+> ftrace_replace_code().
+> 
+> This breaks KLP's consistency model.
+> 
+> 
+> There are two possible options for fixing this:
+> 1.) At the ftrace level.
+> 2.) Search for a matching klp_ops from ftrace_int3_handler() and
+>     handle the redirection if needed.
+> 
+> Both have their drawbacks, hence the RFC mode for this patch implementing
+> 1.).
+> 
+> The main disadvantage is that it doesn't work on 32 bits (c.f. the patch
+> description), but for KLP this would be fine.
+> 
+> OTOH, it keeps KLP specific code out of ftrace_int3_handler() and might
+> perhaps be beneficial in other contexts as well.
+> 
+> Thanks for your comments!
 
-If we want to preserve the current behaviour for trans=fd (and I don't
-see why not) we just have to patch all the transports that use the
-device, that is all .create functions but p9_fd_create()
+Thanks, I need to revisit this code. I have ideas that would fix this
+problem and improve the live patching code generally.
 
-Basically exactly what you did, just for a few more functions - I
-apparently was a little bit too optimistic thinking we could share
-this check.
+I'm hoping to get to this within the next month.
 
--- 
-Dominique
+-- Steve
+
+> 
+> Nicolai
+> 
+> Nicolai Stange (1):
+>   x86/ftrace: make ftrace_int3_handler() not to skip fops invocation
+> 
+>  arch/x86/kernel/ftrace.c    | 48 ++++++++++++++++++++++++++++++++------
+>  arch/x86/kernel/ftrace_64.S | 56 +++++++++++++++++++++++++++++++++++++++++++++
+>  2 files changed, 97 insertions(+), 7 deletions(-)
+> 
+
