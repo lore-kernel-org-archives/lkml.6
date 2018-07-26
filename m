@@ -2,202 +2,173 @@ Return-Path: <SRS0=7Z+k=KK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E35EC67790
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 02:34:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 84665C6778F
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 02:35:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 065D120891
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 02:34:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 30C8D204EC
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 02:35:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=arista.com header.i=@arista.com header.b="hN9zRJJz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 065D120891
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=arista.com
+	dkim=pass (1024-bit key) header.d=xilinx.onmicrosoft.com header.i=@xilinx.onmicrosoft.com header.b="X98lSmlE"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 30C8D204EC
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xilinx.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728890AbeGZDqW (ORCPT
+        id S1729042AbeGZDt7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 23:46:22 -0400
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:33032 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728666AbeGZDqU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Jul 2018 23:46:20 -0400
-Received: by mail-ed1-f66.google.com with SMTP id x5-v6so342494edr.0
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Jul 2018 19:31:47 -0700 (PDT)
+        Wed, 25 Jul 2018 23:49:59 -0400
+Received: from mail-eopbgr720083.outbound.protection.outlook.com ([40.107.72.83]:37920
+        "EHLO NAM05-CO1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728746AbeGZDt7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Jul 2018 23:49:59 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=arista.com; s=googlenew;
-        h=from:to:cc:subject:date:message-id;
-        bh=8OwQ3Xmo1Hyis0oZJnVT5F94c0nQypAJgT8vpiaO930=;
-        b=hN9zRJJzzazAxEhgBRJFBv/9TRVWJ5RIYN0RH/rSIyi2s+QAAAK2HsbOHtylF1iUjD
-         1KdfmPK+S6w2L/BaX+pBo28CSf7vFyPevWjrt9yoD9ZWf5CVDUQ/RDRVdymO+FWt8hEZ
-         o8Ntqz7pUWLA3nqNqfZEpIRYdY2Y6wZ4n/yLjLr4/J1oabH+AOO8tswHp1gcgBG4Aigu
-         6d058PbuJQ20oPzBtnEvMePSPV7oY7b77F2IZ87aeAMJ8KsFfGtChwB/i3/rLuv+WvYR
-         0Cd+84SAEfa9+zUlF5562/IJMAyL8nHMaMxV+Etq2VbQifGxz1YUR7AB5oTao6B1Hl7a
-         LFvQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=8OwQ3Xmo1Hyis0oZJnVT5F94c0nQypAJgT8vpiaO930=;
-        b=RC9iukpDEy5KjmMHJoSiNPKH2f+AEHJd5twXBRywsbbz3kOqvqMJSsKjXCcxexC88x
-         yo3XqAjKN5JdT6GuXi0gltkBlp/UyVmrrNp/RwLrRn6h4wyIWCUmoDCrAlDtXqwk+xa0
-         Dea9Y4q8NsVh33n/M3unVgZ5jtgAXh86+0iPR+Paf5o9ojTniCJDEPg0Pznh1edgu48f
-         XPJjRUqq/gzi0dI/LWQXHwSXeI6VGRXmz6AL8H25RE4gjG0J79n8iCHwd9VdEluddRXt
-         aSw4hC5+vyuMek3PoDb8uBFcb26kvytZFAEm9KDYEC3Ots12cNrFCJfwA0K/+T6KtJmn
-         OFsw==
-X-Gm-Message-State: AOUpUlEwK2iDhmwFb68n9T7G7JDuHmBT6blHQ2rsYFt30rcG0hRFkuJv
-        XajTFvzkbQ5AeUxGRj3vAgsqaM6PBAUn7A==
-X-Google-Smtp-Source: AAOMgpdsUQxJ8qlbsqC5Uty4W1hRZjrpkWC+d94aGQ+iEh72MiEYVJ7f0VQS/9G0emFG0vwPKOZESQ==
-X-Received: by 2002:a50:9818:: with SMTP id g24-v6mr518405edb.174.1532572306254;
-        Wed, 25 Jul 2018 19:31:46 -0700 (PDT)
-Received: from dhcp.ire.aristanetworks.com ([217.173.96.166])
-        by smtp.gmail.com with ESMTPSA id x13-v6sm241024edx.17.2018.07.25.19.31.44
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 25 Jul 2018 19:31:45 -0700 (PDT)
-From:   Dmitry Safonov <dima@arista.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Dmitry Safonov <dima@arista.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Steffen Klassert <steffen.klassert@secunet.com>,
-        Dmitry Safonov <0x7f454c46@gmail.com>, netdev@vger.kernel.org,
-        Andy Lutomirski <luto@kernel.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-        John Stultz <john.stultz@linaro.org>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
-        linux-efi@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Shuah Khan <shuah@kernel.org>, linux-kselftest@vger.kernel.org,
-        Eric Paris <eparis@redhat.com>,
-        Florian Westphal <fw@strlen.de>,
-        Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
-        Paul Moore <paul@paul-moore.com>, coreteam@netfilter.org,
-        linux-audit@redhat.com, netfilter-devel@vger.kernel.org,
-        Fan Du <fan.du@intel.com>
-Subject: [PATCH 00/18] xfrm: Add compat layer
-Date:   Thu, 26 Jul 2018 03:31:26 +0100
-Message-Id: <20180726023144.31066-1-dima@arista.com>
-X-Mailer: git-send-email 2.13.6
+ d=xilinx.onmicrosoft.com; s=selector1-xilinx-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=4O0F0ZqQJlBV8tFFzE/83a7klzsoWgEFnHmKPJ8mQ/0=;
+ b=X98lSmlECn78d14dPf5k6W+4UHLxx77YH1eN23qKgI9N4FCQJDoffqO1b5bHMO3HsxvBZMw8hvZPWqbvQPZkcVeDAyOLPoNNKZJz9jNgZ0o/G/k1o+uRqAH4kmuQf5Hri+VhRyBjUqIwkn2+9Tb1tQIjGc8bQ7gaMzQ8UnReSns=
+Received: from MWHPR02MB2816.namprd02.prod.outlook.com (10.175.50.14) by
+ MWHPR02MB2191.namprd02.prod.outlook.com (10.168.243.9) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.973.21; Thu, 26 Jul 2018 02:35:16 +0000
+Received: from MWHPR02MB2816.namprd02.prod.outlook.com
+ ([fe80::8453:d61e:5ced:a726]) by MWHPR02MB2816.namprd02.prod.outlook.com
+ ([fe80::8453:d61e:5ced:a726%3]) with mapi id 15.20.0995.014; Thu, 26 Jul 2018
+ 02:35:16 +0000
+From:   Anurag Kumar Vulisha <anuragku@xilinx.com>
+To:     Rob Herring <robh@kernel.org>
+CC:     "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "balbi@kernel.org" <balbi@kernel.org>,
+        "v.anuragkumar@gmail.com" <v.anuragkumar@gmail.com>,
+        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH] usb: dwc3: core: Add quirk for enabling AutoRetry feature
+ in the controller
+Thread-Topic: [PATCH] usb: dwc3: core: Add quirk for enabling AutoRetry
+ feature in the controller
+Thread-Index: AQHUIN2h2dmt05eMckmpM4FUm2VKGKSgY1yAgABpkrA=
+Date:   Thu, 26 Jul 2018 02:35:16 +0000
+Message-ID: <MWHPR02MB2816DDEAE84716F88B08EB46A72B0@MWHPR02MB2816.namprd02.prod.outlook.com>
+References: <1532168920-3269-1-git-send-email-anurag.kumar.vulisha@xilinx.com>
+ <20180725200325.GA21007@rob-hp-laptop>
+In-Reply-To: <20180725200325.GA21007@rob-hp-laptop>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=anuragku@xilinx.com; 
+x-originating-ip: [182.18.177.170]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;MWHPR02MB2191;6:H0+gk+dkB3V9A3a1YLICAeTYCnsNBkbdCZ5udlZztr/QrmG8mESYYvhKzGYmJoIA2vhBi6H9p6ZVxi9Gpuhr2P5T8mWbMUMQfUXKJ8pfvtF2n63QU8ydHK+wWdfvbj2/FtJrENwPY+4YSeLAMrXUgI+7FtY67JpfRyqUfe3gy7qrqw75J8aAoJh6m4oZRA1WEZPj8Sop8wdr3SFNpzlSmRZ6QI0KaN0oR7HJXgl+0ifnd5KM0n2AD8oX4pX3mpznkfoiWsqQJ1Z2e369+ROa2GxXvtWQDUhuAuKh9Ij0ZMFUNv3rjs2q2MLD3c3H9a7hFVGuVbtujdxqjvF3ayIN+bliQBXGKWOIQDz/f89oK6sFlmid6HD+PyhVSuzdARd5IByvu10UOiAVepC1jLG6tpMcqd6szv9rPIHd/T9Xb5Q4TX2exIQRi1JnS3AK9E8M7sAL149C28AFhekcxaDa8w==;5:PLNeDB/8WWFQITBKAbdDu4qHEmzMUj/cLPIOYujkbc4OXjVN8lmP1Vl7+OmFNNOA8F8d2MO8k3vZ5dqqSXfsx+7wXcVf2LoUoNfEyE7/O5ffKhTJzjHpHsl726jEa/tOl1V52+L2BotZzF9LpibzqXQgnXeiCDyBU+lBRyIv3Pg=;7:cMpUJf2zkDf+fEuTMsaIFN2cxdTPASaYGiWR10IXUszd9Us26ZW8zzPpiGRjuO9ARKfYwpqa3dB9JWfrEiawMa6VSpwPDUrTawYX8JZM1irCnNcRk76hphW1NYTkItyzZEw6MckWCSZT+qJkK9YoLERO6iKmpjGpNl8jWN7y+q8PDZgpfY8fB4nuINdT+dd3bYz92LQA/jLiPohFXKUQYF9OllROlPI4h1n6sa9izthJAYCJVmHX67CIXF/eGH6S
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: 977edd8a-bb09-4f8f-7abf-08d5f2a06c54
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(5600073)(711020)(4618075)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(2017052603328)(7153060)(7193020);SRVR:MWHPR02MB2191;
+x-ms-traffictypediagnostic: MWHPR02MB2191:
+x-ld-processed: 657af505-d5df-48d0-8300-c31994686c5c,ExtAddr
+x-microsoft-antispam-prvs: <MWHPR02MB2191FE861CA920D5C12BFF0AA72B0@MWHPR02MB2191.namprd02.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(180628864354917)(9452136761055)(85827821059158)(192813158149592);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3002001)(3231311)(944501410)(52105095)(93006095)(93001095)(10201501046)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123564045)(20161123560045)(20161123562045)(6072148)(201708071742011)(7699016);SRVR:MWHPR02MB2191;BCL:0;PCL:0;RULEID:;SRVR:MWHPR02MB2191;
+x-forefront-prvs: 07459438AA
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(376002)(346002)(366004)(39860400002)(396003)(53474002)(13464003)(199004)(189003)(76176011)(81156014)(8676002)(6506007)(102836004)(446003)(97736004)(105586002)(7696005)(11346002)(106356001)(81166006)(53936002)(68736007)(7736002)(5250100002)(6116002)(305945005)(186003)(3846002)(26005)(66066001)(4326008)(39060400002)(551934003)(86362001)(74316002)(6246003)(25786009)(5660300001)(2900100001)(316002)(229853002)(6916009)(6436002)(14454004)(33656002)(55016002)(9686003)(99286004)(486006)(8936002)(476003)(2906002)(478600001)(256004)(54906003);DIR:OUT;SFP:1101;SCL:1;SRVR:MWHPR02MB2191;H:MWHPR02MB2816.namprd02.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: xilinx.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: lxvd7pmIs0ckojJLVmx039j2ulrTcrnw5tUHgTzmY8917JzW+T6rYJuZ4BH2c3C1hx2k7Tv7UQcCNAuKs+T6JaYj5GgxZbHE6ZSUdYlqWx2Y4IpYOg8VkBLnmo3EqVzzohl4d7FUMmcd6IOJbZDp1Noruy2JVuYvBsc5yJj3MNucnpiqnwVQJK1hBYEqGqg7FQRbj5aK194y+h4RWAWCZGMTAP8Xn1/x5q5Ud17fqMpd3PAFNngbA5B238u4PKZH0I8fI3REDjZkEbh/H/cIUmFc6lqb0vWXBuDc2BKHm8Fgs7MdKa/QUxoo7UZdsA0S3sR1NDIgCsweUrMXrfMJOoi2rn3fm4cA5L87rYaWwkc=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: xilinx.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 977edd8a-bb09-4f8f-7abf-08d5f2a06c54
+X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Jul 2018 02:35:16.7987
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 657af505-d5df-48d0-8300-c31994686c5c
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR02MB2191
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Due to some historical mistake, xfrm User ABI differ between native and
-compatible applications. The difference is in structures paddings and in
-the result in the size of netlink messages.
-As it's already visible ABI, it cannot be adjusted by packing structures.
+Hi Rob,
 
-Possibility for compatible application to manage xfrm tunnels was
-disabled by: the commmit 19d7df69fdb2 ("xfrm: Refuse to insert 32 bit
-userspace socket policies on 64 bit systems") and the commit 74005991b78a
-("xfrm: Do not parse 32bits compiled xfrm netlink msg on 64bits host").
+Thanks for your comments, please see my comments inline
 
-By some wonderful reasons and brilliant architecture decisions for
-creating userspace, on Arista switches we still use 32-bit userspace
-with 64-bit kernel. There is slow movement to full 64-bit build, but
-it's not yet here. As the switches need support for ipsec tunnels, the
-local kernel has reverted mentioned patches that disable xfrm for
-compat apps. On the top of that there is a bunch of disgraceful hacks
-in userspace to work around the size check for netlink messages
-and all that jazz.
+>-----Original Message-----
+>From: Rob Herring [mailto:robh@kernel.org]
+>Sent: Thursday, July 26, 2018 1:33 AM
+>To: Anurag Kumar Vulisha <anuragku@xilinx.com>
+>Cc: gregkh@linuxfoundation.org; mark.rutland@arm.com; balbi@kernel.org;
+>v.anuragkumar@gmail.com; linux-usb@vger.kernel.org; devicetree@vger.kernel=
+.org;
+>linux-kernel@vger.kernel.org
+>Subject: Re: [PATCH] usb: dwc3: core: Add quirk for enabling AutoRetry fea=
+ture in the
+>controller
+>
+>On Sat, Jul 21, 2018 at 03:58:40PM +0530, Anurag Kumar Vulisha wrote:
+>> By default when core sees any transaction error(CRC or overflow)
+>> it replies with terminating retry ACK (Retry=3D1 and Nump =3D=3D 0).
+>> Enabling this Auto Retry feature in controller, on seeing any
+>> transaction errors makes the core to send an non-terminating ACK
+>> transaction packet (that is, ACK TP with Retry=3D1 and Nump !=3D 0).
+>> Doing so will give controller a chance to recover from the error
+>> condition.
+>>
+>> Signed-off-by: Anurag Kumar Vulisha <anurag.kumar.vulisha@xilinx.com>
+>> ---
+>>  Documentation/devicetree/bindings/usb/dwc3.txt |  5 +++++
+>>  drivers/usb/dwc3/core.c                        | 16 ++++++++++++++++
+>>  drivers/usb/dwc3/core.h                        |  6 ++++++
+>>  3 files changed, 27 insertions(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/usb/dwc3.txt
+>b/Documentation/devicetree/bindings/usb/dwc3.txt
+>> index 7f13ebe..2ba2bc2 100644
+>> --- a/Documentation/devicetree/bindings/usb/dwc3.txt
+>> +++ b/Documentation/devicetree/bindings/usb/dwc3.txt
+>> @@ -94,6 +94,11 @@ Optional properties:
+>>  			this and tx-thr-num-pkt-prd to a valid, non-zero value
+>>  			1-16 (DWC_usb31 programming guide section 1.2.3) to
+>>  			enable periodic ESS TX threshold.
+>> + - snps,enable_auto_retry: Set to enable Auto retry Feature to make the
+>
+>s/_/-/
+Sorry, I am not able to understand what needs to fixed here. Please help me=
+ in
+understanding, so that I can fix it in v2.
+>
+>> +			controller operating in Host mode on seeing transaction
+>> +			errors(CRC errors or internal overrun scenerios) on IN
+>> +			transfers to reply to the device with a non-terminating
+>> +			retry ACK (i.e, an ACK TP with Retry=3D1 & Nump !=3D 0)
+>
+>Seems like the property is unnecessary. When would you not want this
+>retry behavior? Why not just enable unconditionally in the driver?
+>
+There is no harm in adding this fix always but I think this Retry feature s=
+hould be added
+depending on the user and type of the application. For example, applying th=
+is feature in
+a streaming application where isochronous transfers  are used might end up =
+in retrying
+in failed packet until timeout happens, this might reduce the performance. =
+And there may
+be cases where the user want to know when the transfer error occurred. Enab=
+ling this feature
+always will fail in both the above mentioned cases. Because of this reason =
+added this quirk,
+so that user can decide when to apply and not. Please correct me if I am wr=
+ong=20
 
-It looks like, we're not the only desirable users of compatible xfrm,
-there were a couple of attempts to make it work:
-https://lkml.org/lkml/2017/1/20/733
-https://patchwork.ozlabs.org/patch/44600/
-http://netdev.vger.kernel.narkive.com/2Gesykj6/patch-net-next-xfrm-correctly-parse-netlink-msg-from-32bits-ip-command-on-64bits-host
-
-All the discussions end in the conclusion that xfrm should have a full
-compatible layer to correctly work with 32-bit applications on 64-bit
-kernels:
-https://lkml.org/lkml/2017/1/23/413
-https://patchwork.ozlabs.org/patch/433279/
-
-In some recent lkml discussion, Linus said that it's worth to fix this
-problem and not giving people an excuse to stay on 32-bit kernel:
-https://lkml.org/lkml/2018/2/13/752
-
-So, here I add a compatible layer to xfrm.
-As xfrm uses netlink notifications, kernel should send them in ABI
-format that an application will parse. The proposed solution is
-to save the ABI of bind() syscall. The realization detail is
-to create kernel-hidden, non visible to userspace netlink groups
-for compat applications.
-
-The first two patches simplify ifdeffery, and while I've already submitted
-them a while ago, I'm resending them for completeness:
-https://lore.kernel.org/lkml/20180717005004.25984-1-dima@arista.com/T/#u
-
-There is also an exhaustive selftest for ipsec tunnels and to check
-that kernel parses correctly the structures those differ in size.
-It doesn't depend on any library and compat version can be easy
-build with: make CFLAGS=-m32 net/ipsec
-
-Cc: "David S. Miller" <davem@davemloft.net>
-Cc: Herbert Xu <herbert@gondor.apana.org.au>
-Cc: Steffen Klassert <steffen.klassert@secunet.com>
-Cc: Dmitry Safonov <0x7f454c46@gmail.com>
-Cc: netdev@vger.kernel.org
-
-Dmitry Safonov (18):
-  x86/compat: Adjust in_compat_syscall() to generic code under !COMPAT
-  compat: Cleanup in_compat_syscall() callers
-  selftest/net/xfrm: Add test for ipsec tunnel
-  net/xfrm: Add _packed types for compat users
-  net/xfrm: Parse userspi_info{,_packed} depending on syscall
-  netlink: Do not subscribe to non-existent groups
-  netlink: Pass groups pointer to .bind()
-  xfrm: Add in-kernel groups for compat notifications
-  xfrm: Dump usersa_info in compat/native formats
-  xfrm: Send state notifications in compat format too
-  xfrm: Add compat support for xfrm_user_expire messages
-  xfrm: Add compat support for xfrm_userpolicy_info messages
-  xfrm: Add compat support for xfrm_user_acquire messages
-  xfrm: Add compat support for xfrm_user_polexpire messages
-  xfrm: Check compat acquire listeners in xfrm_is_alive()
-  xfrm: Notify compat listeners about policy flush
-  xfrm: Notify compat listeners about state flush
-  xfrm: Enable compat syscalls
-
- MAINTAINERS                            |    1 +
- arch/x86/include/asm/compat.h          |    9 +-
- arch/x86/include/asm/ftrace.h          |    4 +-
- arch/x86/kernel/process_64.c           |    4 +-
- arch/x86/kernel/sys_x86_64.c           |   11 +-
- arch/x86/mm/hugetlbpage.c              |    4 +-
- arch/x86/mm/mmap.c                     |    2 +-
- drivers/firmware/efi/efivars.c         |   16 +-
- include/linux/compat.h                 |    4 +-
- include/linux/netlink.h                |    2 +-
- include/net/xfrm.h                     |   14 -
- kernel/audit.c                         |    2 +-
- kernel/time/time.c                     |    2 +-
- net/core/rtnetlink.c                   |   14 +-
- net/core/sock_diag.c                   |   25 +-
- net/netfilter/nfnetlink.c              |   24 +-
- net/netlink/af_netlink.c               |   28 +-
- net/netlink/af_netlink.h               |    4 +-
- net/netlink/genetlink.c                |   26 +-
- net/xfrm/xfrm_state.c                  |    5 -
- net/xfrm/xfrm_user.c                   |  690 ++++++++---
- tools/testing/selftests/net/.gitignore |    1 +
- tools/testing/selftests/net/Makefile   |    1 +
- tools/testing/selftests/net/ipsec.c    | 1987 ++++++++++++++++++++++++++++++++
- 24 files changed, 2612 insertions(+), 268 deletions(-)
- create mode 100644 tools/testing/selftests/net/ipsec.c
-
--- 
-2.13.6
-
+Thanks,
+Anurag Kumar Vulisha
