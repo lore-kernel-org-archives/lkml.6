@@ -2,86 +2,183 @@ Return-Path: <SRS0=7Z+k=KK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75D9CC6778F
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 15:12:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6494C6778F
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 15:12:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2B22D20857
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 15:12:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2B22D20857
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 5BCB72064D
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 15:12:29 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KlEdJUeT"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5BCB72064D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731536AbeGZQ3X (ORCPT
+        id S1731693AbeGZQ3o (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 26 Jul 2018 12:29:23 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:57240 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729923AbeGZQ3X (ORCPT
+        Thu, 26 Jul 2018 12:29:44 -0400
+Received: from mail-qt0-f194.google.com ([209.85.216.194]:41064 "EHLO
+        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729923AbeGZQ3o (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Jul 2018 12:29:23 -0400
-Received: from localhost (unknown [62.119.166.9])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0AC1ACE8;
-        Thu, 26 Jul 2018 15:12:05 +0000 (UTC)
-Date:   Thu, 26 Jul 2018 17:12:02 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Lyude Paul <lyude@redhat.com>
-Cc:     bskeggs@redhat.com, stable@vger.kernel.org,
-        David Airlie <airlied@linux.ie>,
-        dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] drm/nouveau: Set DRIVER_ATOMIC cap earlier to fix debugfs
-Message-ID: <20180726151202.GE27305@kroah.com>
-References: <153227752119282@kroah.com>
- <20180723171322.9677-1-lyude@redhat.com>
+        Thu, 26 Jul 2018 12:29:44 -0400
+Received: by mail-qt0-f194.google.com with SMTP id e19-v6so1880273qtp.8;
+        Thu, 26 Jul 2018 08:12:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=3P0LrC/H2rDXehh9YBobksQfHOLq3sLwcW8yhCbsXR8=;
+        b=KlEdJUeTl+BM+nPJIwe0TtHxGRV74OgsgCy/M7EoAYy2Y0dDIRSZ7rCV6BkTcxpo/F
+         wMtlia2Tjr4VLWUsfh4lOd3XcZm5NoueeTKAzrb9+AAkkoTOTiGjVth4wWhLkeiNmNpY
+         lepoX4hyg8X26ld3A7hWP5w5RVvxLdoYEcqQFlvkgpmaQcqUew5Ki0f7eTMuKXarj8Fh
+         4+4hmTXkDtdywguoECMrd1AOG25fZpVfYpO0Y7N6DM3qCESeKy2mHhK0SDRCXqHaM9Ez
+         4wzD7HZDWGKrRWFmxR3T96h+FQ1CBqhNKn8zIS8JqevF2A+CukcgI6WUZn/ncKaAptlC
+         QszQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=3P0LrC/H2rDXehh9YBobksQfHOLq3sLwcW8yhCbsXR8=;
+        b=AUiyET9IsjPxIhQpl7ZlPux1bHzzL2/qyGza0fNVnLkDLcuZK7MmUqtrVElnK0bpAW
+         BcAodzIeCifkBKN0eQYqF3oKjdggnbUroPhWmohBIWDrFhVHwv/MdgpWAkf/Z+9/w9xZ
+         hDan8EJtQFvArUptDJABzdrGdSaNL1MkPNorlIOX1mqOEkrJVWSfAUBhIKr3/ZjRKTcm
+         9iwW7KS9FD3RDGsAPo/lPdn4+MpN23O6PalA97JaKJIzcZ5i5A9pFxENurD1J/CCdbQM
+         SKI+YlzioTZzl+gbZa214DoSpNP9ZaiFPpIj6AJl1KzXYhInQ7p+pzKperjitRLG2B5f
+         Sygg==
+X-Gm-Message-State: AOUpUlHl8X2F9c8cIaXh7iRM740Zti8X3XU/GziQKs2rXsFuaMv5kxAX
+        qNj/lgZC3XObwiBpsnbRz6Awmiwfixk=
+X-Google-Smtp-Source: AAOMgpfzvfLzX7Yn0NRt8U3qnbCAyne6+Afzeiet445tW3yKLAc9atOAPZxUjBOUWIKcMMzLNYkrrg==
+X-Received: by 2002:aed:3b3c:: with SMTP id p57-v6mr2244782qte.153.1532617945747;
+        Thu, 26 Jul 2018 08:12:25 -0700 (PDT)
+Received: from [192.168.44.96] (42.sub-174-226-17.myvzw.com. [174.226.17.42])
+        by smtp.gmail.com with ESMTPSA id i32-v6sm895474qtb.21.2018.07.26.08.12.24
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 26 Jul 2018 08:12:25 -0700 (PDT)
+Subject: Re: [PATCH 3/3] mmc: tegra: prevent ACMD23 on Tegra 3
+To:     Stefan Agner <stefan@agner.ch>
+Cc:     adrian.hunter@intel.com, ulf.hansson@linaro.org,
+        thierry.reding@gmail.com, jonathanh@nvidia.com,
+        marcel.ziswiler@toradex.com, linux-mmc@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20180712073904.4705-1-stefan@agner.ch>
+ <20180712073904.4705-3-stefan@agner.ch>
+ <430c718d-9ede-d47a-44c0-b8e47e297720@gmail.com>
+ <1553c44e99b96a813af129d1c4169222@agner.ch>
+From:   Peter Geis <pgwipeout@gmail.com>
+Message-ID: <553f9ed6-8f7c-775b-d731-fd9732f74b07@gmail.com>
+Date:   Thu, 26 Jul 2018 11:12:23 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180723171322.9677-1-lyude@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <1553c44e99b96a813af129d1c4169222@agner.ch>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 23, 2018 at 01:13:20PM -0400, Lyude Paul wrote:
-> commit eb493fbc150f4a28151ae1ee84f24395989f3600 upstream
+On 07/26/2018 10:47 AM, Stefan Agner wrote:
+> On 26.07.2018 15:56, Peter Geis wrote:
+>> On 07/12/2018 03:39 AM, Stefan Agner wrote:
+>>> It seems that SD3.0 advertisement needs to be set for higher eMMC
+>>> speed modes (namely DDR52) as well. The TRM states that the SD3.0
+>>> advertisement bit should be set for all controller instances, even
+>>> for those not supporting UHS-I mode...
+>>>
+>>> When specifying vqmmc-supply as a fixed 1.8V regulator on a Tegra
+>>> SD/MMC instance which is connected to a eMMC device, the stack
+>>> enables SD3.0. However, enabling it has consequences: If SDHCI 3.0
+>>> support is advertised the stack enables Auto-CMD23. Unfortunately
+>>> Auto-CMD23 seems not to work well with Tegra 3 currently. It leads
+>>> to regular warnings:
+>>>     mmc2: Got command interrupt 0x00010000 even though no command operation was in progress.
+>>>
+>>> It is not entirely clear why those errors happens. It seems that
+>>> a Linux 3.1 based downstream kernel which has Auto-CMD23 support
+>>> does not show those warnings.
+>>>
+>>> Use quirk SDHCI_QUIRK2_ACMD23_BROKEN to prevent Auto-CMD23 being
+>>> used for now. With this the eMMC works stable on high-speed mode
+>>> while still announcing SD3.0.
+>>>
+>>> This allows to use mmc-ddr-1_8v to enables DDR52 mode. In DDR52
+>>> mode read speed improves from about 42MiB/s to 72MiB/s on an
+>>> Apalis T30.
+>>>
+>>> Signed-off-by: Stefan Agner <stefan@agner.ch>
+>>> ---
+>>>    drivers/mmc/host/sdhci-tegra.c | 10 +++++++++-
+>>>    1 file changed, 9 insertions(+), 1 deletion(-)
+>>>
+>>> diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
+>>> index 888a1ad511db..11c0b2069c7c 100644
+>>> --- a/drivers/mmc/host/sdhci-tegra.c
+>>> +++ b/drivers/mmc/host/sdhci-tegra.c
+>>> @@ -336,7 +336,15 @@ static const struct sdhci_pltfm_data sdhci_tegra30_pdata = {
+>>>    		  SDHCI_QUIRK_BROKEN_ADMA_ZEROLEN_DESC |
+>>>    		  SDHCI_QUIRK_CAP_CLOCK_BASE_BROKEN,
+>>>    	.quirks2 = SDHCI_QUIRK2_PRESET_VALUE_BROKEN |
+>>> -		   SDHCI_QUIRK2_BROKEN_HS200,
+>>> +		   SDHCI_QUIRK2_BROKEN_HS200 |
+>>> +		   /*
+>>> +		    * Auto-CMD23 leads to "Got command interrupt 0x00010000 even
+>>> +		    * though no command operation was in progress."
+>>> +		    *
+>>> +		    * The exact reason is unknown, as the same hardware seems
+>>> +		    * to support Auto CMD23 on a downstream 3.1 kernel.
+>>> +		    */
+>>> +		   SDHCI_QUIRK2_ACMD23_BROKEN,
+>>>    	.ops  = &tegra_sdhci_ops,
+>>>    };
+>>>
+>>
+>> I finally got around to testing this on the Ouya (Tegra 3).
 > 
-> Currently nouveau doesn't actually expose the state debugfs file that's
-> usually provided for any modesetting driver that supports atomic, even
-> if nouveau is loaded with atomic=1. This is due to the fact that the
-> standard debugfs files that DRM creates for atomic drivers is called
-> when drm_get_pci_dev() is called from nouveau_drm.c. This happens well
-> before we've initialized the display core, which is currently
-> responsible for setting the DRIVER_ATOMIC cap.
+> Thanks for testing!
 > 
-> So, move the atomic option into nouveau_drm.c and just add the
-> DRIVER_ATOMIC cap whenever it's enabled on the kernel commandline. This
-> shouldn't cause any actual issues, as the atomic ioctl will still fail
-> as expected even if the display core doesn't disable it until later in
-> the init sequence. This also provides the added benefit of being able to
-> use the state debugfs file to check the current display state even if
-> clients aren't allowed to modify it through anything other than the
-> legacy ioctls.
+>>
+>> I found that the "Got command interrupt 0x00010000 even though no
+>> command operation was in progress." error occurred when the interface
+>> is unstable.
+>> I've had a lot of problems with sdmmc4 stability on the Ouya above 34
+>> Mhz, probably due to the fact that they are using the internal cmd and
+>> clock pull-up resistors, against the TRM's instruction.
+>> At 39Mhz, I saw the error this patch corrects.
+>> With the patch, the error went away, but the interface is still
+>> unstable under load.
 > 
-> Additionally, disable the DRIVER_ATOMIC cap in nv04's display core, as
-> this was already disabled there previously.
+> How does this instability manifest exactly?
 > 
-> Signed-off-by: Lyude Paul <lyude@redhat.com>
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Ben Skeggs <bskeggs@redhat.com>
-> ---
->  drivers/gpu/drm/nouveau/dispnv04/disp.c | 3 +++
->  drivers/gpu/drm/nouveau/nouveau_drm.c   | 7 +++++++
->  drivers/gpu/drm/nouveau/nv50_display.c  | 6 ------
->  3 files changed, 10 insertions(+), 6 deletions(-)
 
-Please give me a hint as to what kernel versions you want the patches to
-be applied to, otherwise I just have to guess :)
+At the very edge of stability, you see write errors under heavy load.
+As clock rate increases, the write errors occur more frequently.
+At a certain point, you start getting read errors.
+Following that you get constant io errors during card probing.
+Eventually the emmc will fail to initialize, with errors 87 or 110.
 
-thanks,
+I've been tweaking the pull up/down values to try and improve the 
+stability, but without access to anything but the TRM it's a lot of 
+trial and error.
 
-greg k-h
+>>
+>> Lowering down to 32Mhz, without the patch there are no errors.
+> 
+> So the patch does not make it less stable right?
+> 
+
+No, it did not affect stability.
+Although I'd conduct some performance testing to check for degradation.
+Of course I'm nowhere near the limits of the controller, so it is 
+doubtful I'd see a hit.
+
+> --
+> Stefan
+> 
