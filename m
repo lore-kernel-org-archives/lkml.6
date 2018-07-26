@@ -2,199 +2,278 @@ Return-Path: <SRS0=7Z+k=KK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C262C28CF6
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 18:27:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE034C28CF6
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 18:34:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A368A2083F
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 18:27:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A368A2083F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
+	by mail.kernel.org (Postfix) with ESMTP id 75F112083F
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 18:34:26 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="h4P/zW1d"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 75F112083F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731719AbeGZTpz (ORCPT
+        id S1731465AbeGZTwG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 26 Jul 2018 15:45:55 -0400
-Received: from smtprelay0082.hostedemail.com ([216.40.44.82]:49674 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1730095AbeGZTpz (ORCPT
+        Thu, 26 Jul 2018 15:52:06 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:37634 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730452AbeGZTwG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Jul 2018 15:45:55 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay05.hostedemail.com (Postfix) with ESMTP id 8D59B1807F308;
-        Thu, 26 Jul 2018 18:27:54 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-HE-Tag: mask95_61ba8c5090b07
-X-Filterd-Recvd-Size: 6204
-Received: from XPS-9350.home (unknown [47.151.153.53])
-        (Authenticated sender: joe@perches.com)
-        by omf07.hostedemail.com (Postfix) with ESMTPA;
-        Thu, 26 Jul 2018 18:27:51 +0000 (UTC)
-Message-ID: <1236369d28b2f1f5389ff652c4eb89e699e6481e.camel@perches.com>
-Subject: [RFC PATCH] checkpatch: check for function calls with struct or
- union on stack
-From:   Joe Perches <joe@perches.com>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Andy Whitcroft <apw@canonical.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Date:   Thu, 26 Jul 2018 11:27:50 -0700
-Content-Type: text/plain; charset="ISO-8859-1"
-X-Mailer: Evolution 3.28.1-2 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Thu, 26 Jul 2018 15:52:06 -0400
+Received: by mail-pf1-f196.google.com with SMTP id a26-v6so860056pfo.4
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Jul 2018 11:34:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=3+T7ScKrXnlhaiJU3UuZs1r421ybz0wgT+nrcjRtyN4=;
+        b=h4P/zW1dQk1RjjpyTp614NVGi4E07tbgvpQLSbvFNaGQIKPWFUTf4uGO2bt+2lYlwh
+         W1K3SS8QmOPGq92v+07AGcuqN7IoJ+r6PucmXhvHrcgZoqvon9rv9pr9En0CRsT9UtMy
+         bL5AUSB/Pv3VnqBtCEh/Zx5i4Vm9WAVV/VVEA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=3+T7ScKrXnlhaiJU3UuZs1r421ybz0wgT+nrcjRtyN4=;
+        b=fJSP4d+Csc0fASoeAEoZVvto5qEQvwSOsJywKE0O7AacMZ1qwCqIRHlGbd/UfL65sq
+         aKGHEf0SgabiXJ9axVqfTxQ3rTyvHNCeu1bd5/yWpkm7INmwpUCyvSX4HpAryeunrVIF
+         cA+O4y7GnAfP1UnAc66bqjwrU7EnDih9d9UjQtZAwR/QeWZP9nK/Atz+bL5bI03xPt5/
+         ojDtpFLdgT7aQhvg93M+9ALQhbNSrs6W8CwMnMx5vPrG8o0j6e0EVxPkAbN1LjKZvt0u
+         mHrWhr+jEJBcKu0e50tTD7rGblt82BKwygOKr4pBAyQuNZXwkvy+DkhOV9olloSE2ZBk
+         KxsA==
+X-Gm-Message-State: AOUpUlFRXkSjTIxA/eC92wo/Y7rdF+00F80lD+BMw/FgdtE+fT7tjVFw
+        RzcW6qbnSwIQ/3EcyTIcgSSN
+X-Google-Smtp-Source: AAOMgpcXt/P9rqrpc9dBmn/SErMDtvHIGy6PCXRcDqADMy0XK3WUoTa6flvHQy9v+PbEHLUr9dMbaQ==
+X-Received: by 2002:a63:c80e:: with SMTP id z14-v6mr2909753pgg.77.1532630043502;
+        Thu, 26 Jul 2018 11:34:03 -0700 (PDT)
+Received: from Mani-XPS-13-9360 ([2409:4072:628e:aef6:6d51:3501:dada:e06d])
+        by smtp.gmail.com with ESMTPSA id r11-v6sm3093800pgn.62.2018.07.26.11.33.55
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 26 Jul 2018 11:34:02 -0700 (PDT)
+Date:   Fri, 27 Jul 2018 00:03:52 +0530
+From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To:     Saravanan Sekar <sravanhome@gmail.com>
+Cc:     linus.walleij@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        afaerber@suse.de, catalin.marinas@arm.com, will.deacon@arm.com,
+        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        pn@denx.de, mp-cs@actions-semi.com, jeff.chen@actions-semi.com,
+        thomas.liau@actions-semi.com, linux@cubietech.com
+Subject: Re: [PATCH 3/5] dt-bindings: pinctrl: Add bindings for Actions Semi
+ S700 SoC
+Message-ID: <20180726183352.GF5220@Mani-XPS-13-9360>
+References: <20180722163601.28346-1-sravanhome@gmail.com>
+ <20180722163601.28346-4-sravanhome@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180722163601.28346-4-sravanhome@gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I was cc'd on a patch where structs were used on stack instead
-of using pointers to the structs.  This can cause defects when
-the calling function modifies the stack struct instead of the
-calling function's struct.
+Hi,
 
-Possible patch below, but it may be overkill for the number of
-instances
-where this is actually an issue.
+On Sun, Jul 22, 2018 at 06:35:59PM +0200, Saravanan Sekar wrote:
+> Add pinctrl and pio bindings for Actions Semi S700 SoC.
+> 
+> Signed-off-by: Parthiban Nallathambi <pn@denx.de>
+> Signed-off-by: Saravanan Sekar <sravanhome@gmail.com>
+> ---
+>  .../bindings/pinctrl/actions,s700-pinctrl.txt | 162 ++++++++++++++++++
+>  1 file changed, 162 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/pinctrl/actions,s700-pinctrl.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/pinctrl/actions,s700-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/actions,s700-pinctrl.txt
+> new file mode 100644
+> index 000000000000..0a1245f7a81b
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/pinctrl/actions,s700-pinctrl.txt
+> @@ -0,0 +1,162 @@
+> +Actions Semi S700 Pin Controller
+> +
+> +This binding describes the pin controller found in the S700 SoC.
+> +
+> +Required Properties:
+> +
+> +- compatible:   Should be "actions,s700-pinctrl"
+> +- reg:          Should contain the register base address and size of
+> +		the pin controller.
+> +- clocks:       phandle of the clock feeding the pin controller
+> +- gpio-controller: Marks the device node as a GPIO controller.
+> +- gpio-ranges: Specifies the mapping between gpio controller and
+> +               pin-controller pins.
+> +- #gpio-cells: Should be two. The first cell is the gpio pin number
+> +		and the second cell is used for optional parameters.
+> +- interrupt-controller: Marks the device node as an interrupt controller.
+> +- #interrupt-cells: Specifies the number of cells needed to encode an
+> +		interrupt.  Shall be set to 2.  The first cell
+> +		defines the interrupt number, the second encodes
+> +		the trigger flags described in
+> +		bindings/interrupt-controller/interrupts.txt
+> +
+> +Please refer to pinctrl-bindings.txt in this directory for details of the
+> +common pinctrl bindings used by client devices, including the meaning of the
+> +phrase "pin configuration node".
+> +
+> +The pin configuration nodes act as a container for an arbitrary number of
+> +subnodes. Each of these subnodes represents some desired configuration for a
+> +pin, a group, or a list of pins or groups. This configuration can include the
+> +mux function to select on those group(s), and various pin configuration
+> +parameters, such as pull-up, drive strength, etc.
+> +
+> +PIN CONFIGURATION NODES:
+> +
+> +The name of each subnode is not important; all subnodes should be enumerated
+> +and processed purely based on their content.
+> +
+> +Each subnode only affects those parameters that are explicitly listed. In
+> +other words, a subnode that lists a mux function but no pin configuration
+> +parameters implies no information about any pin configuration parameters.
+> +Similarly, a pin subnode that describes a pullup parameter implies no
+> +information about e.g. the mux function.
+> +
+> +Pinmux functions are available only for the pin groups while pinconf
+> +parameters are available for both pin groups and individual pins.
+> +
+> +The following generic properties as defined in pinctrl-bindings.txt are valid
+> +to specify in a pin configuration subnode:
+> +
+> +Required Properties:
+> +
+> +- pins:		An array of strings, each string containing the name of a pin.
+> +		These pins are used for selecting the pull control and schmitt
+> +		trigger parameters. The following are the list of pins
+> +		available:
+> +
+> +		eth_txd0, eth_txd1, eth_txd2, eth_txd3, eth_txen, eth_rxer,
+> +		eth_crs_dv, eth_rxd1, eth_rxd0, eth_rxd2, eth_rxd3, eth_ref_clk,
+> +		eth_mdc, eth_mdio, sirq0, sirq1, sirq2, i2s_d0, i2s_bclk0,
+> +		i2s_lrclk0, i2s_mclk0, i2s_d1, i2s_bclk1, i2s_lrclk1, i2s_mclk1,
+> +		pcm1_in, pcm1_clk, pcm1_sync, pcm1_out, ks_in0, ks_in1, ks_in2,
+> +		ks_in3, ks_out0, ks_out1, ks_out2, lvds_oep, lvds_oen, lvds_odp,
+> +		lvds_odn, lvds_ocp, lvds_ocn, lvds_obp, lvds_obn, lvds_oap,
+> +		lvds_oan, lvds_eep, lvds_een, lvds_edp, lvds_edn, lvds_ecp,
+> +		lvds_ecn, lvds_ebp, lvds_ebn, lvds_eap, lvds_ean, lcd0_d18,
+> +		lcd0_d2, dsi_dp3, dsi_dn3, dsi_dp1, dsi_dn1, dsi_cp, dsi_cn,
+> +		dsi_dp0, dsi_dn0, dsi_dp2, dsi_dn2, sd0_d0, sd0_d1, sd0_d2,
+> +		sd0_d3, sd1_d0, sd1_d1, sd1_d2, sd1_d3, sd0_cmd, sd0_clk,
+> +		sd1_cmd, sd1_clk, spi0_ss, spi0_miso, uart0_rx, uart0_tx,
+> +		uart2_rx, uart2_tx, uart2_rtsb, uart2_ctsb, uart3_rx, uart3_tx,
+> +		uart3_rtsb, uart3_ctsb, i2c0_sclk, i2c0_sdata, i2c1_sclk,
+> +		i2c1_sdata, i2c2_sdata, csi_dn0, csi_dp0, csi_dn1, csi_dp1,
+> +		csi_cn, csi_cp, csi_dn2, csi_dp2, csi_dn3, csi_dp3,
+> +		sensor0_pclk, sensor0_ckout, dnand_d0, dnand_d1, dnand_d2,
+> +		dnand_d3, dnand_d4, dnand_d5, dnand_d6, dnand_d7, dnand_wrb,
+> +		dnand_rdb, dnand_rdbn, dnand_dqs, dnand_dqsn, dnand_rb0,
+> +		dnand_ale, dnand_cle, dnand_ceb0, dnand_ceb1, dnand_ceb2,
+> +		dnand_ceb3, porb, clko_25m, bsel, pkg0, pkg1, pkg2, pkg3
+> +
+> +- groups:       An array of strings, each string containing the name of a pin
+> +                group. These pin groups are used for selecting the pinmux
+> +                functions.
+> +		rgmii_txd23_mfp, rgmii_rxd2_mfp, rgmii_rxd3_mfp, lcd0_d18_mfp,
+> +		rgmii_txd01_mfp, rgmii_txd0_mfp, rgmii_txd1_mfp, rgmii_txen_mfp,
+> +		rgmii_rxen_mfp, rgmii_rxd1_mfp, rgmii_rxd0_mfp, rgmii_ref_clk_mfp,
+> +		i2s_d0_mfp, i2s_pcm1_mfp, i2s0_pcm0_mfp, i2s1_pcm0_mfp,
+> +		i2s_d1_mfp, ks_in2_mfp, ks_in1_mfp, ks_in0_mfp, ks_in3_mfp,
+> +		ks_out0_mfp, ks_out1_mfp, ks_out2_mfp, lvds_o_pn_mfp, dsi_dn0_mfp,
+> +		dsi_dp2_mfp, lcd0_d2_mfp, dsi_dp3_mfp, dsi_dn3_mfp, dsi_dp0_mfp,
+> +		lvds_ee_pn_mfp, uart2_rx_tx_mfp, spi0_i2c_pcm_mfp, dsi_dnp1_cp_d2_mfp,
+> +		dsi_dnp1_cp_d17_mfp, lvds_e_pn_mfp, dsi_dn2_mfp, uart2_rtsb_mfp,
+> +		uart2_ctsb_mfp, uart3_rtsb_mfp, uart3_ctsb_mfp, sd0_d0_mfp, sd0_d1_mfp,
+> +		sd0_d2_d3_mfp, sd1_d0_d3_mfp, sd0_cmd_mfp, sd0_clk_mfp, sd1_cmd_mfp,
+> +		uart0_rx_mfp, clko_25m_mfp, csi_cn_cp_mfp, sens0_ckout_mfp, uart0_tx_mfp,
+> +		i2c0_mfp, csi_dn_dp_mfp, sen0_pclk_mfp, pcm1_in_mfp, pcm1_clk_mfp,
+> +		pcm1_sync_mfp, pcm1_out_mfp, dnand_data_wr_mfp, dnand_acle_ce0_mfp,
+> +		nand_ceb2_mfp, nand_ceb3_mfp
+> +
+> +		These pin groups are used for selecting the drive strength
+> +		parameters.
+> +
+> +		sirq_drv, rgmii_txd23_drv, rgmii_rxd23_drv, rgmii_txd01_txen_drv,
+> +		rgmii_rxer_drv, rgmii_crs_drv, rgmii_rxd10_drv, rgmii_ref_clk_drv,
+> +		smi_mdc_mdio_drv, i2s_d0_drv, i2s_bclk0_drv, i2s3_drv, i2s13_drv,
+> +		pcm1_drv, ks_in_drv, ks_out_drv, lvds_all_drv, lcd_d18_d2_drv,
+> +		dsi_all_drv, sd0_d0_d3_drv, sd0_cmd_drv, sd0_clk_drv, spi0_all_drv,
+> +		uart0_rx_drv, uart0_tx_drv, uart2_all_drv, i2c0_all_drv, i2c12_all_drv,
+> +		sens0_pclk_drv, sens0_ckout_drv, uart3_all_drv
+> +
+> +- function:	An array of strings, each string containing the name of the
+> +		pinmux functions. These functions can only be selected by
+> +		the corresponding pin groups. The following are the list of
+> +		pinmux functions available:
+> +
+> +		NOR, ETH_RGMII, ETH_SGMII, SPI0, SPI1, SPI2, SPI3, SENS0, SENS1,
+> +		UART0, UART1, UART2, UART3, UART4, UART5, UART6, I2S0, I2S1,
+> +		PCM1, PCM0, KS, JTAG, PWM0, PWM1, PWM2, PWM3, PWM4, PWM5, P0,
+> +		SD0, SD1, SD2, I2C0, I2C1, I2C2, I2C3, DSI, LVDS, USB30,
+> +		CLKO_25M, MIPI_CSI, NAND, SPDIF, SIRQ0, SIRQ1, SIRQ2, BT, LCD0,
+> +		MAX
+> +
 
-Thoughts?
+Why the function names are in caps?
 
-There are what seems to be some false positives for a few of the
-.h files in include/linux/... where the false positives are for
-very small structs where the indirection via a pointer might be
-slower than than the stack use.
+> +Optional Properties:
+> +
+> +- bias-pull-down: No arguments. The specified pins should be configured as
+> +		pull down.
+> +- bias-pull-up:   No arguments. The specified pins should be configured as
+> +		pull up.
+> +- input-schmitt-enable: No arguments: Enable schmitt trigger for the specified
+> +		pins
 
-For instance: (some duplicates removed)
+Does S700 support this functionality?
 
-$ git ls-files -- "include/linux/*.h" | \
-  while read file ; do  ./scripts/checkpatch.pl -f --types=aggregate_on_stack $file --no-summary --quiet; done
-WARNING: Unusual use of 'struct bvec_iter' on stack
-#520: FILE: include/linux/bio.h:520:
-+void zero_fill_bio_iter(struct bio *bio, struct bvec_iter iter);
+> +- input-schmitt-disable: No arguments: Disable schmitt trigger for the specified
+> +		pins
 
-WARNING: Unusual use of 'struct fd' on stack
-#433: FILE: include/linux/bpf.h:433:
-+struct bpf_map *__bpf_map_get(struct fd f);
+Ditto.
 
-WARNING: Unusual use of 'struct ceph_vino' on stack
-#465: FILE: include/linux/ceph/osd_client.h:465:
-+extern struct ceph_osd_request *ceph_osdc_new_request(struct ceph_osd_client *,
-+				      struct ceph_file_layout *layout,
-+				      struct ceph_vino vino,
-+				      u64 offset, u64 *len,
-+				      unsigned int which, int num_ops,
-+				      int opcode, int flags,
-+				      struct ceph_snap_context *snapc,
-+				      u32 truncate_seq, u64 truncate_size,
-+				      bool use_mempool);
-[]
-WARNING: Unusual use of 'union extcon_property_value' on stack
-#63: FILE: include/linux/extcon-provider.h:63:
-+extern int extcon_set_property(struct extcon_dev *edev, unsigned int id,
-+				unsigned int prop,
-+				union extcon_property_value prop_val);
-[]
-WARNING: Unusual use of 'struct ppa_addr' on stack
-#528: FILE: include/linux/lightnvm.h:528:
-+extern int nvm_get_chunk_meta(struct nvm_tgt_dev *tgt_dev,
-+			      struct nvm_chk_meta *meta, struct ppa_addr ppa,
-+			      int nchks);
-[]
-WARNING: Unusual use of 'struct pin_cookie' on stack
-#367: FILE: include/linux/lockdep.h:367:
-+extern void lock_repin_lock(struct lockdep_map *lock, struct pin_cookie);
-[]
-WARNING: Unusual use of 'struct kqid' on stack
-#77: FILE: include/linux/quota.h:77:
-+extern bool qid_eq(struct kqid left, struct kqid right);
-[]
-WARNING: Unusual use of 'struct reg_field' on stack
-#1051: FILE: include/linux/regmap.h:1051:
-+struct regmap_field *devm_regmap_field_alloc(struct device *dev,
-+		struct regmap *regmap, struct reg_field reg_field);
+> +- drive-strength: Integer. Selects the drive strength for the specified
+> +		pins in mA.
+> +		Valid values are:
+> +		<2>
+> +		<4>
+> +		<8>
+> +		<12>
+> +
+> +Example:
+> +
+> +	pinctrl: pinctrl@e01b0000 {
+> +		compatible = "actions,s700-pinctrl";
+> +		reg = <0x0 0xe01b0000 0x0 0x1000>;
+> +		clocks = <&cmu CLK_GPIO>;
+> +		gpio-controller;
+> +		gpio-ranges = <&pinctrl 0 0 136>;
+> +		#gpio-cells = <2>;
+> +		interrupt-controller;
+> +		#interrupt-cells = <2>;
+> +
 
-WARNING: Unusual use of 'struct rpmsg_channel_info' on stack
-#121: FILE: include/linux/rpmsg.h:121:
-+struct rpmsg_endpoint *rpmsg_create_ept(struct rpmsg_device *,
-+					rpmsg_rx_cb_t cb, void *priv,
-+					struct rpmsg_channel_info chinfo);
+No interrupts property?
 
-WARNING: Unusual use of 'struct rtc_time' on stack
-#26: FILE: include/linux/rtc.h:26:
-+ktime_t rtc_tm_to_ktime(struct rtc_time tm);
+Thanks,
+Mani
 
-WARNING: Unusual use of 'struct timespec64' on stack
-#193: FILE: include/linux/rtc.h:193:
-+extern int rtc_set_ntp_time(struct timespec64 now, unsigned long *target_nsec);
-[]
-WARNING: Unusual use of 'struct tnum' on stack
-#25: FILE: include/linux/tnum.h:25:
-+struct tnum tnum_lshift(struct tnum a, u8 shift);
-[]
-WARNING: Unusual use of 'struct vring' on stack
-#81: FILE: include/linux/virtio_ring.h:81:
-+struct virtqueue *__vring_new_virtqueue(unsigned int index,
-+					struct vring vring,
-+					struct virtio_device *vdev,
-+					bool weak_barriers,
-+					bool ctx,
-+					bool (*notify)(struct virtqueue *),
-+					void (*callback)(struct virtqueue *),
-+					const char *name);
-
-WARNING: Unusual use of 'struct vmci_handle' on stack
-#39: FILE: include/linux/vmw_vmci_api.h:39:
-+int vmci_datagram_destroy_handle(struct vmci_handle handle);
-
----
-
- scripts/checkpatch.pl | 21 ++++++++++++++++++---
- 1 file changed, 18 insertions(+), 3 deletions(-)
-
-diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
-index 34e4683de7a3..6ec86d8a4983 100755
---- a/scripts/checkpatch.pl
-+++ b/scripts/checkpatch.pl
-@@ -6076,8 +6076,10 @@ sub process {
- # check for function definitions
- 		if ($perl_version_ok &&
- 		    defined $stat &&
--		    $stat =~ /^.\s*(?:$Storage\s+)?$Type\s*($Ident)\s*$balanced_parens\s*{/s) {
-+		    $stat =~ /^.\s*(?:$Storage\s+)?$Type\s*($Ident)\s*$balanced_parens\s*([\{;])/s) {
- 			$context_function = $1;
-+			my $args = $2;
-+			my $term = $3;
- 
- # check for multiline function definition with misplaced open brace
- 			my $ok = 0;
-@@ -6088,12 +6090,25 @@ sub process {
- 				$herectx .=  $rl . "\n";
- 				$ok = 1 if ($rl =~ /^[ \+]\{/);
- 				$ok = 1 if ($rl =~ /\{/ && $n == 0);
--				last if $rl =~ /^[ \+].*\{/;
-+				last if ($rl =~ /^[ \+].*[\{;]/);
- 			}
--			if (!$ok) {
-+			if (!$ok || $term eq '{') {
- 				ERROR("OPEN_BRACE",
- 				      "open brace '{' following function definitions go on the next line\n" . $herectx);
- 			}
-+
-+# check for struct or union uses on stack that might use struct or union *
-+
-+			while ($args =~ /(?:$Storage\s+)?($Type)\s*($Ident(?:\s*\[\s*\])?)?\s*,?/g) {
-+				my $type = trim($1);
-+				my $ident = defined($2) ? trim($2) : "";
-+				if ($type =~ /(?:union|struct)/ &&
-+				    !($type =~ /(?:\*|\bconst|\])$/ ||
-+				      $ident =~ /\]$/)) {
-+					WARN("AGGREGATE_ON_STACK",
-+					     "Unusual use of '$type' on stack\n" . $herectx);
-+				}
-+			}
- 		}
- 
- # checks for new __setup's
-
+> +		uart3-default: uart3-default {
+> +			pinmux {
+> +				groups = "uart3_rtsb_mfp", "uart3_ctsb_mfp";
+> +				function = "uart3";
+> +			};
+> +			pinconf {
+> +				groups = "uart3_all_drv";
+> +				drive-strength = <2>;
+> +			};
+> +		};
+> +	};
+> -- 
+> 2.18.0
+> 
