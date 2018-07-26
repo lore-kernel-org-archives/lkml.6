@@ -2,147 +2,129 @@ Return-Path: <SRS0=7Z+k=KK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=ham
+	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01082C6778F
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 16:51:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DBC7FC28CF6
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 16:52:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AB0B5205F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 16:51:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 92EE9205F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 16:52:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="WpmOdhdK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AB0B5205F4
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="DtLHxLmE"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 92EE9205F4
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388533AbeGZSIu (ORCPT
+        id S2388547AbeGZSKD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 26 Jul 2018 14:08:50 -0400
-Received: from mail-vk0-f73.google.com ([209.85.213.73]:47247 "EHLO
-        mail-vk0-f73.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731732AbeGZSIt (ORCPT
+        Thu, 26 Jul 2018 14:10:03 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:33155 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731732AbeGZSKC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Jul 2018 14:08:49 -0400
-Received: by mail-vk0-f73.google.com with SMTP id b63-v6so884691vkf.14
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Jul 2018 09:51:10 -0700 (PDT)
+        Thu, 26 Jul 2018 14:10:02 -0400
+Received: by mail-pg1-f195.google.com with SMTP id r5-v6so1527582pgv.0
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Jul 2018 09:52:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
-        h=mime-version:date:in-reply-to:message-id:references:subject:from:to
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=C14wB0B6Vjxk29Z+2i5VLR9Y7UfpstNpOXC4VFZGbDs=;
-        b=WpmOdhdKimotsnIn7qu88S/bXh50tUyRa/UrXkN1SxIBq7rhSBjyWP56conyvGP1NA
-         0MTLxFZcvHHT/H0wWhLo173QBJ5DQHmKW1zPJIuIXzy4JSxMB5VeDOyxugypKEXcbicn
-         2Q+f3kO3vCzpdLi9MVb+bcSNovg8QvKtHd/bxaj7UTJcTJw5ofxpOu1bLQR36h69Cswx
-         eNUZRAbUXx5N13GLwhRNKGazTRB42Th18BjFqD3EAWuxLqRMI0ytN4eWZBbs4wQw9dkZ
-         jAx/ZdDU7ohWDQk5yeeMdRnBwqPon6eXGWbDmpPgdc9OLuzLNM4tzrHgeDEEbm210+9H
-         5Ykg==
+        bh=OwjGkkxbzIP3HexbpYWjbsytD7jTgi6TvX7HC75ZQGM=;
+        b=DtLHxLmElBlcfwEwuaSpo9caDt4xhiuuRQOmd7/NwJtHYPgRUnhSJWnRFpspAasXZs
+         S3t3EwAjfFMfzXiO5N1pyLe9NF10p7Ho8mMzrH3+dJg7XTuhXjy4lf0QUqSYubME+M2X
+         e06lEEtOer/R7b91V38pBllBYXqCt2uDi+6Pfcdn6oSvESg5q7v9GK4abEHHrggEDWFu
+         uDT9HIJYflHvbzmF1DkvlA5WdcPbq9SgjYuLxgiinkbJxEVWwz0l7beTfrGkFGFjvTiK
+         aG5j2vUXa94cUKOEkFEHUOxVwWbXH6aJfrDA+8HI41ER5cydlCpsebWfkjI6VSQrnLMw
+         IyGw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:in-reply-to:message-id
-         :references:subject:from:to:cc;
-        bh=C14wB0B6Vjxk29Z+2i5VLR9Y7UfpstNpOXC4VFZGbDs=;
-        b=b5LICvc7gbZR9KCJqkjwbC9sGYwKCMBhAtLgnTihF/hgwIzIbf+0hR6/06GCZSHguG
-         uaJlDjq8Ro1060KABrDtcQtbPdVJYCMOWhOb4UyVuyNujATOFcGhqmNp9yNK/iP+/Qz5
-         tcckqQVto7cllDkUKlbdw67qJP10mLQjIzxGYyhmZBT8Rnui+gzjjnw5koZuVJ+Zp7LZ
-         xSXYEryVfL5n7rNAew69KmfTmHsKtjVEE0+otNp3Waen30azqnzQV902obx25Eh4eGg5
-         DyhCZBI+Hi8h08t2KnrE5mF9TvKkofJWeZ7MoVWItpQzCLDXoTufdfCWx+2ljXQ411Md
-         4d8g==
-X-Gm-Message-State: AOUpUlF7wvAUfEjFEPSpydA2IGtb5UFX65hLbHJINT6pt6zTYWLy3dpQ
-        WlNheGN71hzXSjJ3RVUtYFD8TP9mdUo=
-X-Google-Smtp-Source: AAOMgpdNJdcU9Ds7gSCX0NCCncSdph3QsewHYEaacbQvQiMGTn9wALs3ccPzdz+oxANTodaHvnId0z5cwAI=
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=OwjGkkxbzIP3HexbpYWjbsytD7jTgi6TvX7HC75ZQGM=;
+        b=YRCsA1SXzd+tkDZW/i/L8kox/cAAu3QDTHv/19sKJ2XtCIE6vDtnMXJE7JQbVpQ32j
+         XTMuajYCs3F1Zs8+CjtzbsSJCWUGhSa3XvwCv+m4w+SEWQ0Y4vEwdclJGqISniFkI/BH
+         u4+lfVn1Eo0AdrKJMKGlDM01oRzYZ/o3aZBsGanZ5BE9JqOOElcVrCYgSyK8B8pG0tAP
+         R9tTjuasA5PA725qLfUxC5baL6GSBI3sFsV94gWcVoQhu8H5RlQUH1dcayW1vJHzVIFe
+         mrGpRR4JpubcC5GgVyWcO9eNlFjyMblbHg1X5kTxpSeAK9MiAHFaCa0WHQ/7BgykpYux
+         zNew==
+X-Gm-Message-State: AOUpUlEkJKT3Kuf/g1dP8rxl4P6qI/5o/T7Vr77WT8mHKhKQb7w9GVss
+        RtgoaX6r5lRunqaJyGDPrJH+B6n2UTSLdfQTOIkedA==
+X-Google-Smtp-Source: AAOMgpfDGG2sfNsIrrW7iHX+kjn158MEcgbUJ066j0HN95WA72JMHaSdT6Cf9sgIPgB+DcCZZUv7A2a37oljuWdJrKQ=
+X-Received: by 2002:a63:195e:: with SMTP id 30-v6mr2664542pgz.192.1532623942398;
+ Thu, 26 Jul 2018 09:52:22 -0700 (PDT)
 MIME-Version: 1.0
-X-Received: by 2002:a1f:9209:: with SMTP id u9-v6mr1245686vkd.73.1532623869478;
- Thu, 26 Jul 2018 09:51:09 -0700 (PDT)
-Date:   Thu, 26 Jul 2018 09:51:05 -0700
-In-Reply-To: <20180716202301.GB160902@joelaf.mtv.corp.google.com>
-Message-Id: <20180726165105.8634-1-dancol@google.com>
-References: <20180716202301.GB160902@joelaf.mtv.corp.google.com>
-X-Mailer: git-send-email 2.18.0.233.g985f88cf7e-goog
-Subject: [PATCH v2] Add BPF_SYNCHRONIZE_MAPS bpf(2) command
-From:   Daniel Colascione <dancol@google.com>
-To:     joelaf@google.com
-Cc:     linux-kernel@vger.kernel.org, timmurray@google.com,
-        netdev@vger.kernel.org,
-        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-        Lorenzo Colitti <lorenzo@google.com>,
-        Chenbo Feng <fengc@google.com>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Alexei Starovoitov <ast@fb.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Daniel Colascione <dancol@google.com>
+References: <20180725202238.165314-1-salyzyn@android.com> <20180725210717.3b807191@vmware.local.home>
+ <11437c3e-5131-7190-c496-7b51eb7fcc2a@android.com> <20180726153153.GA8327@kroah.com>
+In-Reply-To: <20180726153153.GA8327@kroah.com>
+From:   Nick Desaulniers <ndesaulniers@google.com>
+Date:   Thu, 26 Jul 2018 09:52:11 -0700
+Message-ID: <CAKwvOdk9s+=kUwcPGQzZNxR7eOGAiiasAyWhZxgKom4_6h+oxA@mail.gmail.com>
+Subject: Re: [PATCH] tracing: do not leak kernel addresses
+To:     greg@kroah.com, Kees Cook <keescook@google.com>
+Cc:     salyzyn@android.com, rostedt@goodmis.org,
+        LKML <linux-kernel@vger.kernel.org>, mingo@redhat.com,
+        kernel-team@android.com, stable@vger.kernel.org,
+        kernel-hardening@lists.openwall.com
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-BPF_SYNCHRONIZE_MAPS waits for the release of any references to a BPF
-map made by a BPF program that is running at the time the
-BPF_SYNCHRONIZE_MAPS command is issued. The purpose of this command is
-to provide a means for userspace to replace a BPF map with another,
-newer version, then ensure that no component is still using the "old"
-map before manipulating the "old" map in some way.
+On Thu, Jul 26, 2018 at 8:32 AM Greg KH <greg@kroah.com> wrote:
+>
+> On Thu, Jul 26, 2018 at 08:14:08AM -0700, Mark Salyzyn wrote:
+> > On 07/25/2018 06:07 PM, Steven Rostedt wrote:
+> > > On Wed, 25 Jul 2018 13:22:36 -0700
+> > > Mark Salyzyn <salyzyn@android.com> wrote:
+> > >
+> > > > From: Nick Desaulniers <ndesaulniers@google.com>
+> > > >
+> > > > Switch from 0x%lx to 0x%pK to print the kernel addresses.
+> > > >
+> > > > Fixes: CVE-2017-0630
+> > > Wait!!!! This breaks perf and trace-cmd! They require this to be able
+> > > to print various strings in trace events. This file is root read only,
+> > > as the CVE says.
+> > >
+> > > NAK for this fix. Come up with something that doesn't break perf and
+> > > trace-cmd. That will not be trivial, as the format is stored in the
+> > > ring buffer with an address, then referenced directly. It also handles
+> > > trace_printk() functions that simply point to the string format itself.
+> > >
+> > > A fix would require having a pointer be the same that is referenced
+> > > inside the kernel as well as in this file. Maybe make the format string
+> > > placed in a location that doesn't leak where the rest of the kernel
+> > > exists?
+> > >
+> > > -- Steve
+> > Thank you Steve, much appreciated feedback, I have asked the security
+> > developers to keep this in mind and come up with a correct fix.
+> >
+> > The correct fix that meets your guidelines would _not_ be suitable for
+> > stable due to the invasiveness it sounds, only for the latest will such a
+> > rework make sense. As such, the fix proposed in this patch is the only one
+> > that meets the bar for stable patch simplicity, and merely(!) needs to state
+> > that if the fix is taken, perf and trace are broken.
+>
+> Why would I take something for the stable trees that does not match what
+> is upstream?  It feels to me that this CVE is just invalid.  Yes, root
+> can read the kernel address, does that mean it is a problem?  Only if
+> you allow unprotected users to run with root privileges :)
+>
+> What exactly is the problem here in the current kernel that you are
+> trying to solve?
 
-Signed-off-by: Daniel Colascione <dancol@google.com>
----
- include/uapi/linux/bpf.h |  9 +++++++++
- kernel/bpf/syscall.c     | 13 +++++++++++++
- 2 files changed, 22 insertions(+)
+See the section "Kernel addresses" in
+Documentation/security/self-protection.  IIRC, the issue is that a
+process may have CAP_SYSLOG but not necessarily CAP_SYS_ADMIN (so it
+can read dmesg, but not necessarily issue a sysctl to change
+kptr_restrict), get compromised and used to leak kernel addresses,
+which can then be used to defeat KASLR.
 
-diff --git a/include/uapi/linux/bpf.h b/include/uapi/linux/bpf.h
-index b7db3261c62d..5b27e9117d3e 100644
---- a/include/uapi/linux/bpf.h
-+++ b/include/uapi/linux/bpf.h
-@@ -75,6 +75,14 @@ struct bpf_lpm_trie_key {
- 	__u8	data[0];	/* Arbitrary size */
- };
- 
-+/* BPF_SYNCHRONIZE_MAPS waits for the release of any references to a
-+ * BPF map made by a BPF program that is running at the time the
-+ * BPF_SYNCHRONIZE_MAPS command is issued. The purpose of this command
-+ * is to provide a means for userspace to replace a BPF map with
-+ * another, newer version, then ensure that no component is still
-+ * using the "old" map before manipulating the "old" map in some way.
-+ */
-+
- /* BPF syscall commands, see bpf(2) man-page for details. */
- enum bpf_cmd {
- 	BPF_MAP_CREATE,
-@@ -98,6 +106,7 @@ enum bpf_cmd {
- 	BPF_BTF_LOAD,
- 	BPF_BTF_GET_FD_BY_ID,
- 	BPF_TASK_FD_QUERY,
-+	BPF_SYNCHRONIZE_MAPS,
- };
- 
- enum bpf_map_type {
-diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
-index a31a1ba0f8ea..8bbd1a5d01d1 100644
---- a/kernel/bpf/syscall.c
-+++ b/kernel/bpf/syscall.c
-@@ -2274,6 +2274,19 @@ SYSCALL_DEFINE3(bpf, int, cmd, union bpf_attr __user *, uattr, unsigned int, siz
- 	if (sysctl_unprivileged_bpf_disabled && !capable(CAP_SYS_ADMIN))
- 		return -EPERM;
- 
-+	if (cmd == BPF_SYNCHRONIZE_MAPS) {
-+		if (uattr != NULL || size != 0)
-+			return -EINVAL;
-+		err = security_bpf(cmd, NULL, 0);
-+		if (err < 0)
-+			return err;
-+		/* BPF programs always enter a critical section while
-+		 * they have a map reference outstanding.
-+		 */
-+		synchronize_rcu();
-+		return 0;
-+	}
-+
- 	err = bpf_check_uarg_tail_zero(uattr, sizeof(attr), size);
- 	if (err)
- 		return err;
 -- 
-2.18.0.233.g985f88cf7e-goog
-
+Thanks,
+~Nick Desaulniers
