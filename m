@@ -6,25 +6,25 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52F69C28CF6
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 17:16:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C54DC28CF6
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 17:16:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 09DDF20647
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 17:16:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 09DDF20647
+	by mail.kernel.org (Postfix) with ESMTP id 5C0B620647
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 17:16:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5C0B620647
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=aosc.io
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388717AbeGZSdo (ORCPT
+        id S2388735AbeGZSef (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 26 Jul 2018 14:33:44 -0400
-Received: from hermes.aosc.io ([199.195.250.187]:58188 "EHLO hermes.aosc.io"
+        Thu, 26 Jul 2018 14:34:35 -0400
+Received: from hermes.aosc.io ([199.195.250.187]:58228 "EHLO hermes.aosc.io"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730095AbeGZSdo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Jul 2018 14:33:44 -0400
+        id S1731613AbeGZSef (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Jul 2018 14:34:35 -0400
 Received: from localhost (localhost [127.0.0.1]) (Authenticated sender: icenowy@aosc.io)
-        by hermes.aosc.io (Postfix) with ESMTPSA id B7D2F9FAED;
-        Thu, 26 Jul 2018 17:15:49 +0000 (UTC)
+        by hermes.aosc.io (Postfix) with ESMTPSA id 078719FAEE;
+        Thu, 26 Jul 2018 17:16:24 +0000 (UTC)
 From:   Icenowy Zheng <icenowy@aosc.io>
 To:     Maxime Ripard <maxime.ripard@bootlin.com>,
         Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
@@ -34,9 +34,9 @@ Cc:     dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com,
         Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH v3.1 05/10] dt-bindings: display: Add compatible for A64 HDMI
-Date:   Fri, 27 Jul 2018 01:12:52 +0800
-Message-Id: <20180726171257.6688-6-icenowy@aosc.io>
+Subject: [PATCH v3.1 06/10] dt-bindings: clock: sun50i-a64-ccu: Add PLL_VIDEO[0-1] macros
+Date:   Fri, 27 Jul 2018 01:12:53 +0800
+Message-Id: <20180726171257.6688-7-icenowy@aosc.io>
 In-Reply-To: <20180726171257.6688-1-icenowy@aosc.io>
 References: <20180726171257.6688-1-icenowy@aosc.io>
 Sender: linux-kernel-owner@vger.kernel.org
@@ -46,38 +46,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Jagan Teki <jagan@amarulasolutions.com>
 
-The HDMI controller on Allwinner A64 is similar on the one on
-H3/H5/A83T (although the PHY is different with A83T).
+Allwinner A64 has two clock parents PLL_VIDEO0 and PLL_VIDEO1.
 
-Add A64 compatible and append A83T compatible as fallback.
+Include these macros on dt-bindings so-that the same can be
+used while defining CCU clock phadles.
 
 Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
 Reviewed-by: Rob Herring <robh@kernel.org>
-[Icenowy: refactor commit log]
 Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
 ---
 Changes for v3.1:
-- Refactor commit log to make it more clear.
+- none
 Changes for v3:
 - collect Rob r-w-b tag
 Changes for v2:
-- Add fallback compatible
+- new patch
 
- Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt | 1 +
- 1 file changed, 1 insertion(+)
+ include/dt-bindings/clock/sun50i-a64-ccu.h | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-index 7b79c5e3dffc..fdb8fb29033f 100644
---- a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-+++ b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-@@ -78,6 +78,7 @@ Required properties:
+diff --git a/include/dt-bindings/clock/sun50i-a64-ccu.h b/include/dt-bindings/clock/sun50i-a64-ccu.h
+index d66432c6e675..d1d7d5b7d06a 100644
+--- a/include/dt-bindings/clock/sun50i-a64-ccu.h
++++ b/include/dt-bindings/clock/sun50i-a64-ccu.h
+@@ -43,7 +43,9 @@
+ #ifndef _DT_BINDINGS_CLK_SUN50I_A64_H_
+ #define _DT_BINDINGS_CLK_SUN50I_A64_H_
  
-   - compatible: value must be one of:
-     * "allwinner,sun8i-a83t-dw-hdmi"
-+    * "allwinner,sun50i-a64-dw-hdmi", "allwinner,sun8i-a83t-dw-hdmi"
-   - reg: base address and size of memory-mapped region
-   - reg-io-width: See dw_hdmi.txt. Shall be 1.
-   - interrupts: HDMI interrupt number
++#define CLK_PLL_VIDEO0		7
+ #define CLK_PLL_PERIPH0		11
++#define CLK_PLL_VIDEO1		15
+ 
+ #define CLK_BUS_MIPI_DSI	28
+ #define CLK_BUS_CE		29
 -- 
 2.18.0
 
