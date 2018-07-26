@@ -2,160 +2,208 @@ Return-Path: <SRS0=7Z+k=KK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D8CFC6778F
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 01:07:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2E0FC67790
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 01:12:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CDB7420685
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 01:07:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6682020685
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 01:12:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BTZDI6gP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CDB7420685
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="klgwmCy0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6682020685
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728637AbeGZCV5 (ORCPT
+        id S1728625AbeGZC0r (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 22:21:57 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:45811 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728292AbeGZCV5 (ORCPT
+        Wed, 25 Jul 2018 22:26:47 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:40226 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728501AbeGZC0r (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Jul 2018 22:21:57 -0400
-Received: by mail-pg1-f193.google.com with SMTP id f1-v6so14596pgq.12;
-        Wed, 25 Jul 2018 18:07:40 -0700 (PDT)
+        Wed, 25 Jul 2018 22:26:47 -0400
+Received: by mail-pf1-f195.google.com with SMTP id e13-v6so12599pff.7
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Jul 2018 18:12:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=ywLQPJZS0v12teFwlUPp7DbAsuqlLkl4NP6N1NUIKtI=;
-        b=BTZDI6gPlmJZb4X/f/ZXKG0R6lBpB+i93gTpiJG44Vt/VTLg2KwYdSDJSlQyGPT9A7
-         6IM3vAe1JisN43wFMncOnEcSWsuDgCVYM1wRHbh6b66DgPCC59ohj4c6Qv8KtrKMMoxL
-         KqNMLQX7FWz1OJUdY60Z9Zp2Xmvolc1n6UmRfd0zt93MVWslbO01KzYxpmZxK6vQvswK
-         lQnBL0W6JhxmGGOfHOQWKYOpA24j1e1WYbyxK9i0rKe0Ett9h3n2EAh9MRchuC61gUtH
-         LoTiikcs9zg0dZ+TE3nUI7Ez1gpUKrLG/ZzxgOkTDsVI2mACmCA7WAbwNWXRwefj4GsK
-         cm7A==
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=EkOwYUza1/c+KjRNiIHUce7SgfYo+v3LDMiCh48VO8I=;
+        b=klgwmCy05s968v3/BZjpQKjnscdKO7YN4f5NoYxRbXXuMYOMMEV5sJQf99Dcmm88kG
+         TvKBXGb9CENTyI8zVWvM67sMqKQ8APSglRqeQupLrXlPTXOnp9lXJErjKCPlcROAGkFl
+         Cw1J6NuQeUgnWApNTLrY+S3SiUjnFgkCYyTYA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=ywLQPJZS0v12teFwlUPp7DbAsuqlLkl4NP6N1NUIKtI=;
-        b=k3SuRyhHge9eTHLMJV3a9YNJRnn+lWsi5dA13xEBoEJQID5/IVy7dg+rAL6E4e36O/
-         7LIRoZhQXjqNtmB4CSRvETYSav/De1JIQOEEedDIKGE4yaWkmNrdXIxhuvLazlkmXxf+
-         kkUFxk0WI4UpKB5ZyMgD0sbWgEhp8hVdCp2fPsax8fXl4bAxYTHQK+mm8hgTwVeWQ1oK
-         1gfDdV0uyk1wQeXT1vcg1BBw83YHW48WmNwQfivV77Gfo7PNXWPRf95hrbJnbGbkCvcF
-         GtSs/HXdM31jScP20C0HXbca9B+Lahwc/OL+wIEOw+EeJPsxKTtYYCYcyFCQQAe7HNxr
-         s54g==
-X-Gm-Message-State: AOUpUlG07t7UBKUDqO63thbBnlq4kNYvf0CQDq+T1UaZOZdlUGnTY+60
-        1xVvUMI3PpeU8MBMLV+QXDPalmJZgzE=
-X-Google-Smtp-Source: AAOMgpdIdmXgZm4PDGG0HVHWuqqO4zvZVdAU9h/2tuUuoM5bDN80n7jyzTmvpDrzPUapFLnONbXTdg==
-X-Received: by 2002:a63:214f:: with SMTP id s15-v6mr22333482pgm.267.1532567260091;
-        Wed, 25 Jul 2018 18:07:40 -0700 (PDT)
-Received: from 8c8590bceeee.ant.amazon.com ([54.240.193.1])
-        by smtp.gmail.com with ESMTPSA id g63-v6sm22101545pfc.77.2018.07.25.18.07.34
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 25 Jul 2018 18:07:39 -0700 (PDT)
-Subject: Re: [PATCH 0/10] psi: pressure stall information for CPU, memory, and
- IO v2
-To:     Johannes Weiner <hannes@cmpxchg.org>
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Tejun Heo <tj@kernel.org>, surenb@google.com,
-        Vinayak Menon <vinmenon@codeaurora.org>,
-        Christoph Lameter <cl@linux.com>,
-        Mike Galbraith <efault@gmx.de>,
-        Shakeel Butt <shakeelb@google.com>,
-        linux-mm <linux-mm@kvack.org>, cgroups@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        kernel-team@fb.com
-References: <20180712172942.10094-1-hannes@cmpxchg.org>
- <CAKTCnzmt_CnfZMMdK9_-rBrL4kUmoE70nVbnE58CJp++FP0CCQ@mail.gmail.com>
- <20180724151519.GA11598@cmpxchg.org>
-From:   "Singh, Balbir" <bsingharora@gmail.com>
-Message-ID: <268c2b08-6c90-de2b-d693-1270bb186713@gmail.com>
-Date:   Thu, 26 Jul 2018 11:07:32 +1000
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
- Gecko/20100101 Thunderbird/52.9.1
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=EkOwYUza1/c+KjRNiIHUce7SgfYo+v3LDMiCh48VO8I=;
+        b=GVAHwcHjcCmpYTXceef+TDSpaf/y3ebmo7XbFeU36A61pNup0L+kG1sFcnpbY2PwA9
+         /ErjILdsaGQg9p/slJ13V0sX7eKvhD/ALflnGzwAtFhpv7KQxMBQDk9J1Pb793cS6P7m
+         fJAJGvrD7yu/BzqrCZAcOg73D2f7nEnPQ8SLXmQ/nfMIIA4AGHOUqoduI1B8fxNFz5CQ
+         stush2ZTmUFDoPvR0pDz/TEh3TmhG+xQklxZ5LUjcH1bzMBTzdi/bKCIKxYe42w2hZ1z
+         h6io7NmDYmFibBmIY5RIkV3IHAFj9B2yR6XakdpOJiAuBx/PJmoUqx5nQ4xU5W/YW27Y
+         uuSg==
+X-Gm-Message-State: AOUpUlEifu/WitXqkIc9U9/eBAHtDOyJn2Y5B8HJ3xuGHtP3zeuQZhS5
+        QZEYmLowoeKcSoM+BGtWtZIG9A==
+X-Google-Smtp-Source: AAOMgpdKv4xDGeH/LXONWsI7bJA7oEaU14WNRUWmkMSUPfcs4w+rcvLp1amguc7tJH73p41j2IfaPQ==
+X-Received: by 2002:a65:6143:: with SMTP id o3-v6mr23102875pgv.52.1532567549278;
+        Wed, 25 Jul 2018 18:12:29 -0700 (PDT)
+Received: from localhost ([2620:0:1000:1501:8e2d:4727:1211:622])
+        by smtp.gmail.com with ESMTPSA id b62-v6sm41246886pfm.97.2018.07.25.18.12.28
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 25 Jul 2018 18:12:28 -0700 (PDT)
+Date:   Wed, 25 Jul 2018 18:12:28 -0700
+From:   Matthias Kaehlcke <mka@chromium.org>
+To:     Doug Anderson <dianders@chromium.org>
+Cc:     Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>, devicetree@vger.kernel.org,
+        linux-pm@vger.kernel.org, David Collins <collinsd@codeaurora.org>,
+        Stephen Boyd <sboyd@kernel.org>
+Subject: Re: [PATCH v5 1/3] thermal: qcom-spmi: Use PMIC thermal stage 2 for
+ critical trip points
+Message-ID: <20180726011228.GV129942@google.com>
+References: <20180724234636.57137-1-mka@chromium.org>
+ <CAD=FV=VODGOE=qvJVeLGBs8xXQvbHZu7S9rqSpMY4AetUjd3fQ@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20180724151519.GA11598@cmpxchg.org>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAD=FV=VODGOE=qvJVeLGBs8xXQvbHZu7S9rqSpMY4AetUjd3fQ@mail.gmail.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Doug,
 
+On Wed, Jul 25, 2018 at 04:19:56PM -0700, Doug Anderson wrote:
 
-On 7/25/18 1:15 AM, Johannes Weiner wrote:
-> Hi Balbir,
+> On Tue, Jul 24, 2018 at 4:46 PM, Matthias Kaehlcke <mka@chromium.org> wrote:
+> > +static int qpnp_tm_update_critical_trip_temp(struct qpnp_tm_chip *chip,
+> > +                                            int temp)
+> > +{
+> > +       u8 reg;
+> > +       bool disable_s2_shutdown = false;
+> > +       int ret;
+> > +
+> > +       WARN_ON(!mutex_is_locked(&chip->lock));
+> > +
+> > +       /*
+> > +        * Default: S2 and S3 shutdown enabled, thresholds at
+> > +        * 105C/125C/145C, monitoring at 25Hz
+> > +        */
+> > +       reg = SHUTDOWN_CTRL1_RATE_25HZ;
+> > +
+> > +       if ((temp == THERMAL_TEMP_INVALID) ||
+> > +           (temp < STAGE2_THRESHOLD_MIN)) {
+> > +               chip->thresh = THRESH_MIN;
+> > +               goto skip;
+> > +       }
+> > +
+> > +       if (temp <= STAGE2_THRESHOLD_MAX) {
+> > +               chip->thresh = THRESH_MAX -
+> > +                       ((STAGE2_THRESHOLD_MAX - temp) /
+> > +                        TEMP_THRESH_STEP);
+> > +               disable_s2_shutdown = true;
+> > +       } else {
+> > +               chip->thresh = THRESH_MAX;
+> > +
+> > +               if (!IS_ERR(chip->adc))
+> > +                       disable_s2_shutdown = true;
+> > +               else
+> > +                       dev_warn(chip->dev,
+> > +                                "No ADC is configured and critical temperature is above the maximum stage 2 threshold of 140°C! Configuring stage 2 shutdown at 140°C.\n");
 > 
-> On Tue, Jul 24, 2018 at 07:14:02AM +1000, Balbir Singh wrote:
->> Does the mechanism scale? I am a little concerned about how frequently
->> this infrastructure is monitored/read/acted upon.
-> 
-> I expect most users to poll in the frequency ballpark of the running
-> averages (10s, 1m, 5m). Our OOMD defaults to 5s polling of the 10s
-> average; we collect the 1m average once per minute from our machines
-> and cgroups to log the system/workload health trends in our fleet.
-> 
-> Suren has been experimenting with adaptive polling down to the
-> millisecond range on Android.
-> 
+> Putting a non-ASCII character (the degree symbol) in your commit
+> message is one thing, but are you sure it's wise to put it in the
+> kernel logs?
 
-I think this is a bad way of doing things, polling only adds to overheads, there needs to be an event driven mechanism and the selection of the events need to happen in user space.
+A few other drivers also do this
+(drivers/gpu/drm/nouveau/nvkm/subdev/clk/base.c,
+drivers/macintosh/windfarm_pm121.c), however that doesn't mean it's a
+good idea. Will change to degC or C.
 
->> Why aren't existing mechanisms sufficient
+> > +       }
+> > +
+> > +skip:
+> > +       reg |= chip->thresh;
+> > +       if (disable_s2_shutdown)
+> > +               reg |= SHUTDOWN_CTRL1_OVERRIDE_S2;
+> > +
+> > +       ret = qpnp_tm_write(chip, QPNP_TM_REG_SHUTDOWN_CTRL1, reg);
+> > +       if (ret < 0)
+> > +               return ret;
+> > +
+> > +       return ret;
 > 
-> Our existing stuff gives a lot of indication when something *may* be
-> an issue, like the rate of page reclaim, the number of refaults, the
-> average number of active processes, one task waiting on a resource.
+> Simplify the above lines to:
 > 
-> But the real difference between an issue and a non-issue is how much
-> it affects your overall goal of making forward progress or reacting to
-> a request in time. And that's the only thing users really care
-> about. It doesn't matter whether my system is doing 2314 or 6723 page
-> refaults per minute, or scanned 8495 pages recently. I need to know
-> whether I'm losing 1% or 20% of my time on overcommitted memory.
-> 
-> Delayacct is time-based, so it's a step in the right direction, but it
-> doesn't aggregate tasks and CPUs into compound productivity states to
-> tell you if only parts of your workload are seeing delays (which is
-> often tolerable for the purpose of ensuring maximum HW utilization) or
-> your system overall is not making forward progress. That aggregation
-> isn't something you can do in userspace with polled delayacct data.
+> return qpnp_tm_write(chip, QPNP_TM_REG_SHUTDOWN_CTRL1, reg);
 
-By aggregation you mean cgroup aggregation?
+Ouch, my code is indeed dumb ...
 
+> > @@ -313,12 +441,7 @@ static int qpnp_tm_probe(struct platform_device *pdev)
+> >         if (ret < 0)
+> >                 return ret;
+> >
+> > -       chip->tz_dev = devm_thermal_zone_of_sensor_register(&pdev->dev, 0, chip,
+> > -                                                       &qpnp_tm_sensor_ops);
+> > -       if (IS_ERR(chip->tz_dev)) {
+> > -               dev_err(&pdev->dev, "failed to register sensor\n");
+> > -               return PTR_ERR(chip->tz_dev);
+> > -       }
+> > +       chip->initialized = true;
 > 
->> -- why is the avg delay calculation in the kernel?
-> 
-> For one, as per above, most users will probably be using the standard
-> averaging windows, and we already have this highly optimizd
-> infrastructure from the load average. I don't see why we shouldn't use
-> that instead of exporting an obscure number that requires most users
-> to have an additional library or copy-paste the loadavg code.
-> 
-> I also mentioned the OOM killer as a likely in-kernel user of the
-> pressure percentages to protect from memory livelocks out of the box,
-> in which case we have to do this calculation in the kernel anyway.
-> 
->> There is no talk about the overhead this introduces in general, may be
->> the details are in the patches. I'll read through them
-> 
-> I sent an email on benchmarks and overhead in one of the subthreads, I
-> will include that information in the cover letter in v3.
-> 
-> https://lore.kernel.org/lkml/20180718215644.GB2838@cmpxchg.org/
+> Should we add "thermal_zone_device_update(chip->tz_dev,
+> THERMAL_EVENT_UNSPECIFIED);" here
 
-Thanks, I'll take a look
+Seems reasonable, will do.
 
-Balbir Singh.
+> ...also: do we care about any type of locking for chip->initialized?
+> Technically we can be running on weakly ordered memory so if
+> qpnp_tm_update_temp_no_adc() is running on a different processor then
+> possibly it could still keep returning the default temperature for a
+> little while.  We could try to analyze whether there's some sort of
+> implicit barrier or we could add manual memory barriers, but generally
+> I try to avoid that and just do the simple locking...  What about just
+> setting chip-Initialized = true at the end of qpnp_tm_init() while the
+> mutex is still held?
+
+Thanks for pointing that out. I agree that we should keep things
+simple, chip->initialized to true at the end of qpnp_tm_init() sounds
+good to me.
+
+> I'd also love to hear from someone with more thermal framework
+> experience to make sure it's legit to return a default value if
+> someone calls us while we're initting.  It seems sane to me but nice
+> to confirm it's OK.
+
+An alternative could be to return THERMAL_TEMP_INVALID, however I
+don't see this handled outside of thermal_core.c, not sure if it could
+throw some other code off.
+
+Comments from thermal folks on either approach (or alternatives) are
+definitely welcome :)
+
+> Overall I like the idea of this patch so hopefully others do too.
+> Thanks for sending it out!
+
+Thanks for the review!
+
+Matthias
