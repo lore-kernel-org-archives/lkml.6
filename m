@@ -3,171 +3,228 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D34EBC28CF6
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 03:44:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE8E3C28CF6
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 03:46:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 788D920846
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 03:44:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 788D920846
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id A511320846
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 03:46:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A511320846
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727742AbeGZE71 (ORCPT
+        id S1727846AbeGZFBO convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 26 Jul 2018 00:59:27 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:10124 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725782AbeGZE71 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Jul 2018 00:59:27 -0400
-Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 5B3DA4DEF148A;
-        Thu, 26 Jul 2018 11:44:36 +0800 (CST)
-Received: from [127.0.0.1] (10.177.23.164) by DGGEMS405-HUB.china.huawei.com
- (10.3.19.205) with Microsoft SMTP Server id 14.3.382.0; Thu, 26 Jul 2018
- 11:44:26 +0800
-Subject: Re: [PATCH v3 0/6] add non-strict mode support for arm-smmu-v3
-To:     Robin Murphy <robin.murphy@arm.com>,
-        Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        "Joerg Roedel" <joro@8bytes.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        iommu <iommu@lists.linux-foundation.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        LinuxArm <linuxarm@huawei.com>
-References: <1531376312-2192-1-git-send-email-thunder.leizhen@huawei.com>
- <aace9ec9-a36a-79a8-98eb-bbedd06f11a4@arm.com>
-From:   "Leizhen (ThunderTown)" <thunder.leizhen@huawei.com>
-Message-ID: <5B594399.1080404@huawei.com>
-Date:   Thu, 26 Jul 2018 11:44:25 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:38.0) Gecko/20100101
- Thunderbird/38.5.1
-MIME-Version: 1.0
-In-Reply-To: <aace9ec9-a36a-79a8-98eb-bbedd06f11a4@arm.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.177.23.164]
-X-CFilter-Loop: Reflected
+        Thu, 26 Jul 2018 01:01:14 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:39592 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725859AbeGZFBO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Jul 2018 01:01:14 -0400
+Received: from mail-pf1-f200.google.com ([209.85.210.200])
+        by youngberry.canonical.com with esmtps (TLS1.0:RSA_AES_128_CBC_SHA1:16)
+        (Exim 4.76)
+        (envelope-from <kai.heng.feng@canonical.com>)
+        id 1fiXEQ-0003iH-70
+        for linux-kernel@vger.kernel.org; Thu, 26 Jul 2018 03:46:26 +0000
+Received: by mail-pf1-f200.google.com with SMTP id w14-v6so86091pfn.13
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Jul 2018 20:46:26 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=nggB7wVHxX+AuNGOwFTN6nzk85xTMhP+VemR3bucbUY=;
+        b=dhZgMsGJn8KWXKSEUhp1WXCusZpP80OpmBzct2pb4Fr1NLiTaXCm5O39OZmbgUu6rl
+         VfJ8eP0PIv6s5MRjZ3mMCgmpzXbslOYrV3eF65US8pDLTt81a26xHu7YB6WhspNfEjfe
+         sXIiuYYg6zqPONvCNYDW/LkLcEhu8puGit7JmoEiPwFK6aNB57QlJ57su7C8fCLnGRiw
+         9RYT9YV2JkRd5SL3V/KbB7zR1DnopyjeoN+FOjJViRTi8LK62wM1NecsfY9ekykcYUGg
+         2KL5L91kF4TEb3jFliUCU+IstmVLxtaiatzoWlKUBClsN2ELh28hP9snh/ggQ18rKaSp
+         LiaA==
+X-Gm-Message-State: AOUpUlH+qIv0OIlz4PphiPh4NQbWk2SEnlScXWoMWSe1d55cQk/N6heS
+        toGRfplPhgmHiHQv0IP7rkBrvp+sAEy0MZB87v3dG18LhBdNtdAMkByGGoVDmTNM/ZzOalATbLM
+        3zJzjG4OfJ+V2jnlRV0BBQSjTDpGWq7Puax0gPFEtbg==
+X-Received: by 2002:a63:b00f:: with SMTP id h15-v6mr327528pgf.442.1532576784874;
+        Wed, 25 Jul 2018 20:46:24 -0700 (PDT)
+X-Google-Smtp-Source: AAOMgpe8ffRsXodEGu2yBeZAWrb5nHbF3U3RfA6jmCdr6Yywi78eTTFVChWwsc+eE1tU4WYqwPAmww==
+X-Received: by 2002:a63:b00f:: with SMTP id h15-v6mr327502pgf.442.1532576784568;
+        Wed, 25 Jul 2018 20:46:24 -0700 (PDT)
+Received: from [192.168.20.35] (1-161-137-98.dynamic-ip.hinet.net. [1.161.137.98])
+        by smtp.gmail.com with ESMTPSA id n24-v6sm331419pfi.161.2018.07.25.20.46.21
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 25 Jul 2018 20:46:23 -0700 (PDT)
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 11.5 \(3445.9.1\))
+Subject: Re: [PATCH] ACPI / LPSS: Avoid PM quirks on suspend and resume from
+ S3
+From:   Kai-Heng Feng <kai.heng.feng@canonical.com>
+In-Reply-To: <1855125.Q8EGVqeZWv@aspire.rjw.lan>
+Date:   Thu, 26 Jul 2018 11:46:18 +0800
+Cc:     ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        P HeLiOn <perryhelionsemail@gmail.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Linux PM <linux-pm@vger.kernel.org>
+Content-Transfer-Encoding: 8BIT
+Message-Id: <68768884-983A-40EF-B7B4-F19AF4261879@canonical.com>
+References: <DEA1AE84-B0FD-481E-8E0D-788CD4EF59AE@canonical.com>
+ <ABABA247-9C33-4311-ADA5-D0D00B810C6C@canonical.com>
+ <4689933.j1ecWYeVj2@aspire.rjw.lan> <1855125.Q8EGVqeZWv@aspire.rjw.lan>
+To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>
+X-Mailer: Apple Mail (2.3445.9.1)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Rafael,
 
-
-On 2018/7/25 5:51, Robin Murphy wrote:
-> On 2018-07-12 7:18 AM, Zhen Lei wrote:
->> v2 -> v3:
->> Add a bootup option "iommu_strict_mode" to make the manager can choose which
->> mode to be used. The first 5 patches have not changed.
->> +    iommu_strict_mode=    [arm-smmu-v3]
->> +        0 - strict mode (default)
->> +        1 - non-strict mode
->>
->> v1 -> v2:
->> Use the lowest bit of the io_pgtable_ops.unmap's iova parameter to pass the strict mode:
->> 0, IOMMU_STRICT;
->> 1, IOMMU_NON_STRICT;
->> Treat 0 as IOMMU_STRICT, so that the unmap operation can compatible with
->> other IOMMUs which still use strict mode. In other words, this patch series
->> will not impact other IOMMU drivers. I tried add a new quirk IO_PGTABLE_QUIRK_NON_STRICT
->> in io_pgtable_cfg.quirks, but it can not pass the strict mode of the domain from SMMUv3
->> driver to io-pgtable module.
+> On 2018Jul24, at 18:36, Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
 > 
-> What exactly is the issue there? We don't have any problem with other quirks like NO_DMA, and as I said before, by the time we're allocating the io-pgtable in arm_smmu_domain_finalise() we already know everything there is to know about the domain.
-
-Because userspace can map/unamp and start devices to access memory through VFIO.
-So that, the attacker can:
-1. alloc memory
-2. map
-3. unmap
-4. free memory
-5. repeatedly accesssing the just freed memory base on the just unmapped iova,
-   this attack may success if the freed memory is reused by others and the mapping still staying in TLB
-
-But if only root user can use VFIO, this is an unnecessary worry. Then both normal and VFIO will use the
-same strict mode, so that the new quirk IO_PGTABLE_QUIRK_NON_STRICT can easily be applied.
-
+> On Tuesday, July 24, 2018 11:13:42 AM CEST Rafael J. Wysocki wrote:
+>> On Tuesday, July 24, 2018 10:46:09 AM CEST Kai Heng Feng wrote:
+>>> Hi Rafael,
+>>> 
+>>>> On Jun 13, 2018, at 7:17 PM, Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
+>>>> 
+>>>> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+>>>> 
+>>>> It is reported that commit a192aa923b66a (ACPI / LPSS: Consolidate
+>>>> runtime PM and system sleep handling) introduced a system suspend
+>>>> regression on some machines, but the only functional change made by
+>>>> it was to cause the PM quirks in the LPSS to also be used during
+>>>> system suspend and resume.  While that should always work for
+>>>> suspend-to-idle, it turns out to be problematic for S3
+>>>> (suspend-to-RAM).
+>>>> 
+>>>> To address that issue restore the previous S3 suspend and resume
+>>>> behavior of the LPSS to avoid applying PM quirks then.
+>>> 
+>>> The users reported that this patch does fix the S3 issue, but the S4 still  
+>>> fails.
+>>> 
+>>> Please refer to [1] for more for user's testing result.
+>>> 
+>>> [1] https://bugs.launchpad.net/ubuntu/+source/linux/+bug/1774950/comments/60
+>> 
+>> Please ask the users to test the patch below, then, on top of the $subject one.
 > 
->> Add a new member domain_non_strict in struct iommu_dma_cookie, this member will only be
->> initialized when the related domain and IOMMU driver support non-strict mode.
->>
->> v1:
->> In common, a IOMMU unmap operation follow the below steps:
->> 1. remove the mapping in page table of the specified iova range
->> 2. execute tlbi command to invalid the mapping which is cached in TLB
->> 3. wait for the above tlbi operation to be finished
->> 4. free the IOVA resource
->> 5. free the physical memory resource
->>
->> This maybe a problem when unmap is very frequently, the combination of tlbi
->> and wait operation will consume a lot of time. A feasible method is put off
->> tlbi and iova-free operation, when accumulating to a certain number or
->> reaching a specified time, execute only one tlbi_all command to clean up
->> TLB, then free the backup IOVAs. Mark as non-strict mode.
->>
->> But it must be noted that, although the mapping has already been removed in
->> the page table, it maybe still exist in TLB. And the freed physical memory
->> may also be reused for others. So a attacker can persistent access to memory
->> based on the just freed IOVA, to obtain sensible data or corrupt memory. So
->> the VFIO should always choose the strict mode.
->>
->> Some may consider put off physical memory free also, that will still follow
->> strict mode. But for the map_sg cases, the memory allocation is not controlled
->> by IOMMU APIs, so it is not enforceable.
->>
->> Fortunately, Intel and AMD have already applied the non-strict mode, and put
->> queue_iova() operation into the common file dma-iommu.c., and my work is based
->> on it. The difference is that arm-smmu-v3 driver will call IOMMU common APIs to
->> unmap, but Intel and AMD IOMMU drivers are not.
->>
->> Below is the performance data of strict vs non-strict for NVMe device:
->> Randomly Read  IOPS: 146K(strict) vs 573K(non-strict)
->> Randomly Write IOPS: 143K(strict) vs 513K(non-strict)
+> There was a mistake in the previous patch I posted, sorry about that.
 > 
-> How does that compare to passthrough performance? One thing I'm not entirely clear about is what the realistic use-case for this is - even if invalidation were infinitely fast, enabling translation still typically has a fair impact on overall system performance in terms of latency, power, memory bandwidth, etc., so I can't help wonder what devices exist today for which performance is critical and robustness* is unimportant, yet have crippled addressing capabilities such that they can't just use passthrough.
-I have no passthrough performance data yet, I will ask my team to do it. But we have tested the Global bypass:
-Randomly Read IOPS: 744K, and Randomly Write IOPS: is the same to non-strict.
+> Please test this one instead:
 
-I'm also not clear. But I think in most cases, the system does not need to run at full capacity, but the system
-should have that ability. For example, a system's daily load may only 30-50%, but the load may increase to 80%+
-on festival day.
+The result is positive, thanks!
 
-Passthrough is not enough to support VFIO, and virtualization need the later.
+Kai-Heng
 
 > 
-> Robin.
+> ---
+> drivers/acpi/acpi_lpss.c |   26 +++++++++++++++++---------
+> 1 file changed, 17 insertions(+), 9 deletions(-)
 > 
+> Index: linux-pm/drivers/acpi/acpi_lpss.c
+> ===================================================================
+> --- linux-pm.orig/drivers/acpi/acpi_lpss.c
+> +++ linux-pm/drivers/acpi/acpi_lpss.c
+> @@ -879,6 +879,7 @@ static void acpi_lpss_dismiss(struct dev
+> #define LPSS_GPIODEF0_DMA_LLP		BIT(13)
 > 
-> * I don't want to say "security" here, since I'm actually a lot less concerned about the theoretical malicious endpoint/wild write scenarios than the the much more straightforward malfunctioning device and/or buggy driver causing use-after-free style memory corruption. Also, I'm sick of the word "security"...
-
-OK，We really have no need to consider buggy devices.
-
+> static DEFINE_MUTEX(lpss_iosf_mutex);
+> +static bool lpss_iosf_d3_entered;
 > 
->>
->> Zhen Lei (6):
->>    iommu/arm-smmu-v3: fix the implementation of flush_iotlb_all hook
->>    iommu/dma: add support for non-strict mode
->>    iommu/amd: use default branch to deal with all non-supported
->>      capabilities
->>    iommu/io-pgtable-arm: add support for non-strict mode
->>    iommu/arm-smmu-v3: add support for non-strict mode
->>    iommu/arm-smmu-v3: add bootup option "iommu_strict_mode"
->>
->>   Documentation/admin-guide/kernel-parameters.txt | 12 +++++++
->>   drivers/iommu/amd_iommu.c                       |  4 +--
->>   drivers/iommu/arm-smmu-v3.c                     | 42 +++++++++++++++++++++++--
->>   drivers/iommu/dma-iommu.c                       | 25 +++++++++++++++
->>   drivers/iommu/io-pgtable-arm.c                  | 23 ++++++++------
->>   include/linux/iommu.h                           |  7 +++++
->>   6 files changed, 98 insertions(+), 15 deletions(-)
->>
+> static void lpss_iosf_enter_d3_state(void)
+> {
+> @@ -921,6 +922,9 @@ static void lpss_iosf_enter_d3_state(voi
 > 
-> .
+> 	iosf_mbi_modify(LPSS_IOSF_UNIT_LPIOEP, MBI_CR_WRITE,
+> 			LPSS_IOSF_GPIODEF0, value1, mask1);
+> +
+> +	lpss_iosf_d3_entered = true;
+> +
+> exit:
+> 	mutex_unlock(&lpss_iosf_mutex);
+> }
+> @@ -935,6 +939,11 @@ static void lpss_iosf_exit_d3_state(void
 > 
-
--- 
-Thanks!
-BestRegards
+> 	mutex_lock(&lpss_iosf_mutex);
+> 
+> +	if (!lpss_iosf_d3_entered)
+> +		goto exit;
+> +
+> +	lpss_iosf_d3_entered = false;
+> +
+> 	iosf_mbi_modify(LPSS_IOSF_UNIT_LPIOEP, MBI_CR_WRITE,
+> 			LPSS_IOSF_GPIODEF0, value1, mask1);
+> 
+> @@ -944,13 +953,13 @@ static void lpss_iosf_exit_d3_state(void
+> 	iosf_mbi_modify(LPSS_IOSF_UNIT_LPIO1, MBI_CFG_WRITE,
+> 			LPSS_IOSF_PMCSR, value2, mask2);
+> 
+> +exit:
+> 	mutex_unlock(&lpss_iosf_mutex);
+> }
+> 
+> -static int acpi_lpss_suspend(struct device *dev, bool runtime)
+> +static int acpi_lpss_suspend(struct device *dev, bool wakeup)
+> {
+> 	struct lpss_private_data *pdata = acpi_driver_data(ACPI_COMPANION(dev));
+> -	bool wakeup = runtime || device_may_wakeup(dev);
+> 	int ret;
+> 
+> 	if (pdata->dev_desc->flags & LPSS_SAVE_CTX)
+> @@ -963,14 +972,14 @@ static int acpi_lpss_suspend(struct devi
+> 	 * wrong status for devices being about to be powered off. See
+> 	 * lpss_iosf_enter_d3_state() for further information.
+> 	 */
+> -	if ((runtime || !pm_suspend_via_firmware()) &&
+> +	if (acpi_target_system_state() == ACPI_STATE_S0 &&
+> 	    lpss_quirks & LPSS_QUIRK_ALWAYS_POWER_ON && iosf_mbi_available())
+> 		lpss_iosf_enter_d3_state();
+> 
+> 	return ret;
+> }
+> 
+> -static int acpi_lpss_resume(struct device *dev, bool runtime)
+> +static int acpi_lpss_resume(struct device *dev)
+> {
+> 	struct lpss_private_data *pdata = acpi_driver_data(ACPI_COMPANION(dev));
+> 	int ret;
+> @@ -979,8 +988,7 @@ static int acpi_lpss_resume(struct devic
+> 	 * This call is kept first to be in symmetry with
+> 	 * acpi_lpss_runtime_suspend() one.
+> 	 */
+> -	if ((runtime || !pm_resume_via_firmware()) &&
+> -	    lpss_quirks & LPSS_QUIRK_ALWAYS_POWER_ON && iosf_mbi_available())
+> +	if (lpss_quirks & LPSS_QUIRK_ALWAYS_POWER_ON && iosf_mbi_available())
+> 		lpss_iosf_exit_d3_state();
+> 
+> 	ret = acpi_dev_resume(dev);
+> @@ -1004,12 +1012,12 @@ static int acpi_lpss_suspend_late(struct
+> 		return 0;
+> 
+> 	ret = pm_generic_suspend_late(dev);
+> -	return ret ? ret : acpi_lpss_suspend(dev, false);
+> +	return ret ? ret : acpi_lpss_suspend(dev, device_may_wakeup(dev));
+> }
+> 
+> static int acpi_lpss_resume_early(struct device *dev)
+> {
+> -	int ret = acpi_lpss_resume(dev, false);
+> +	int ret = acpi_lpss_resume(dev);
+> 
+> 	return ret ? ret : pm_generic_resume_early(dev);
+> }
+> @@ -1024,7 +1032,7 @@ static int acpi_lpss_runtime_suspend(str
+> 
+> static int acpi_lpss_runtime_resume(struct device *dev)
+> {
+> -	int ret = acpi_lpss_resume(dev, true);
+> +	int ret = acpi_lpss_resume(dev);
+> 
+> 	return ret ? ret : pm_generic_runtime_resume(dev);
+> }
 
