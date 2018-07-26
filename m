@@ -5,202 +5,99 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E4AEC28CF6
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 16:46:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E108EC6778F
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 16:48:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 344C520671
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 16:46:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 344C520671
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
+	by mail.kernel.org (Postfix) with ESMTP id A411320647
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 16:48:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A411320647
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388502AbeGZSET (ORCPT
+        id S2388525AbeGZSGD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 26 Jul 2018 14:04:19 -0400
-Received: from relay3-d.mail.gandi.net ([217.70.183.195]:40709 "EHLO
-        relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731291AbeGZSET (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Jul 2018 14:04:19 -0400
-X-Originating-IP: 79.86.19.127
-Received: from [192.168.0.11] (127.19.86.79.rev.sfr.net [79.86.19.127])
-        (Authenticated sender: alex@ghiti.fr)
-        by relay3-d.mail.gandi.net (Postfix) with ESMTPSA id 9F56C6000C;
-        Thu, 26 Jul 2018 16:46:22 +0000 (UTC)
-From:   Alex Ghiti <alex@ghiti.fr>
-To:     LEROY Christophe <christophe.leroy@c-s.fr>
-Cc:     Mike Kravetz <mike.kravetz@oracle.com>, davem@davemloft.net,
-        linuxppc-dev@lists.ozlabs.org,
-        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
-        paul.burton@mips.com, ralf@linux-mips.org,
-        linux-kernel@vger.kernel.org, linux-parisc@vger.kernel.org,
-        tony.luck@intel.com, linux-arm-kernel@lists.infradead.org,
-        tglx@linutronix.de, arnd@arndb.de, fenghua.yu@intel.com,
-        jhogan@kernel.org, catalin.marinas@arm.com, mingo@redhat.com,
-        linux@armlinux.org.uk, x86@kernel.org, deller@gmx.de,
-        ysato@users.sourceforge.jp, linux-arch@vger.kernel.org,
-        sparclinux@vger.kernel.org, hpa@zytor.com, paulus@samba.org,
-        jejb@parisc-linux.org, will.deacon@arm.com,
-        linux-sh@vger.kernel.org, linux-ia64@vger.kernel.org,
-        dalias@libc.org, linux-mips@linux-mips.org,
-        Michal Hocko <mhocko@kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Subject: Re: [PATCH v4 00/11] hugetlb: Factorize hugetlb architecture
- primitives
-References: <20180705110716.3919-1-alex@ghiti.fr>
- <20180709141621.GD22297@dhcp22.suse.cz>
- <2173685f-7f85-7acb-4685-2383210c5fa2@ghiti.fr>
- <87d0vehx16.fsf@concordia.ellerman.id.au>
- <67aba0f0-c0d4-b06f-5fbc-f4d113ce5033@ghiti.fr>
- <20180726171355.Horde.KlFUG9wXmbRDCiyhk5bHsw8@messagerie.si.c-s.fr>
-Message-ID: <58887adf-1852-4291-08aa-a1dd2007326b@ghiti.fr>
-Date:   Thu, 26 Jul 2018 16:46:20 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Thu, 26 Jul 2018 14:06:03 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:45204 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1731800AbeGZSGD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Jul 2018 14:06:03 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id BC82D4067F19;
+        Thu, 26 Jul 2018 16:48:23 +0000 (UTC)
+Received: from [10.10.121.247] (ovpn-121-247.rdu2.redhat.com [10.10.121.247])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 6C50B111DCF1;
+        Thu, 26 Jul 2018 16:48:22 +0000 (UTC)
+Subject: Re: [PATCH 18/26] target/iscsi: Allocate session IDs from an IDA
+To:     Matthew Wilcox <willy@infradead.org>, linux-kernel@vger.kernel.org
+References: <20180621212835.5636-1-willy@infradead.org>
+ <20180621212835.5636-19-willy@infradead.org>
+Cc:     "Nicholas A. Bellinger" <nab@linux-iscsi.org>,
+        Bart Van Assche <bart.vanassche@wdc.com>,
+        Hannes Reinecke <hare@suse.com>,
+        Kees Cook <keescook@chromium.org>,
+        Varun Prakash <varun@chelsio.com>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "David S. Miller" <davem@davemloft.net>,
+        Denys Vlasenko <dvlasenk@redhat.com>,
+        linux-scsi@vger.kernel.org, target-devel@vger.kernel.org
+From:   Mike Christie <mchristi@redhat.com>
+Message-ID: <5B59FB56.9090901@redhat.com>
+Date:   Thu, 26 Jul 2018 11:48:22 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:38.0) Gecko/20100101
+ Thunderbird/38.6.0
 MIME-Version: 1.0
-In-Reply-To: <20180726171355.Horde.KlFUG9wXmbRDCiyhk5bHsw8@messagerie.si.c-s.fr>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180621212835.5636-19-willy@infradead.org>
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Thu, 26 Jul 2018 16:48:23 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Thu, 26 Jul 2018 16:48:23 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'mchristi@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Christophe,
+On 06/21/2018 04:28 PM, Matthew Wilcox wrote:
 
-Sorry, I should have done it already: with and without huge page 
-activated, the build for mpc885_ads_defconfig is OK.
+> @@ -1163,11 +1157,9 @@ void iscsi_target_login_sess_out(struct iscsi_conn *conn,
+>  		goto old_sess_out;
+>  	if (conn->sess->se_sess)
+>  		transport_free_session(conn->sess->se_sess);
+> -	if (conn->sess->session_index != 0) {
+> -		spin_lock_bh(&sess_idr_lock);
+> -		idr_remove(&sess_idr, conn->sess->session_index);
+> -		spin_unlock_bh(&sess_idr_lock);
 
-Thanks,
+This code looks buggy. We will probably NULL pointer oops before we hit it.
 
-Alex
+It looks like the session_index check was supposed to detect when login
+fails in the middle of doing login, so that code probably wanted to do:
 
-On 07/26/2018 03:13 PM, LEROY Christophe wrote:
-> Alex Ghiti <alex@ghiti.fr> a écrit :
->
->> Hi everyone,
->>
->> This is the result of the build for all arches tackled in this series 
->> rebased on 4.18-rc6:
->>
->> arm:
->>         versatile_defconfig: without huge page OK
->>         keystone_defconfig: with huge page OK
->> arm64:
->>         defconfig: with huge page OK
->> ia64:
->>         generic_defconfig: with huge page OK
->> mips:
->>         Paul Burton tested cavium octeon with huge page OK
->> parisc:
->>         generic-64bit_defconfig: with huge page does not link
->>         generic-64bit_defconfig: without huge page does not link
->>         BUT not because of this series, any feedback welcome.
->> powerpc:
->>         ppc64_defconfig: without huge page OK
->>         ppc64_defconfig: with huge page OK
->
-> Can you also test ppc32 both with and without hugepage 
-> (mpc885_ads_defconfig)
->
-> Thanks
-> Christophe
->
->> sh:
->>         dreamcast_defconfig: with huge page OK
->> sparc:
->>         sparc32_defconfig: without huge page OK
->> sparc64:
->>         sparc64_defconfig: with huge page OK
->> x86:
->>         with huge page OK
->>
->> Alex
->>
->> On 07/23/2018 02:00 PM, Michael Ellerman wrote:
->>> Alex Ghiti <alex@ghiti.fr> writes:
->>>
->>>> Does anyone have any suggestion about those patches ?
->>> Cross compiling it for some non-x86 arches would be a good start :)
->>>
->>> There are cross compilers available here:
->>>
->>>   https://mirrors.edge.kernel.org/pub/tools/crosstool/
->>>
->>>
->>> cheers
->>>
->>>> On 07/09/2018 02:16 PM, Michal Hocko wrote:
->>>>> [CC hugetlb guys - 
->>>>> http://lkml.kernel.org/r/20180705110716.3919-1-alex@ghiti.fr]
->>>>>
->>>>> On Thu 05-07-18 11:07:05, Alexandre Ghiti wrote:
->>>>>> In order to reduce copy/paste of functions across architectures 
->>>>>> and then
->>>>>> make riscv hugetlb port (and future ports) simpler and smaller, this
->>>>>> patchset intends to factorize the numerous hugetlb primitives 
->>>>>> that are
->>>>>> defined across all the architectures.
->>>>>>
->>>>>> Except for prepare_hugepage_range, this patchset moves the 
->>>>>> versions that
->>>>>> are just pass-through to standard pte primitives into
->>>>>> asm-generic/hugetlb.h by using the same #ifdef semantic that can be
->>>>>> found in asm-generic/pgtable.h, i.e. __HAVE_ARCH_***.
->>>>>>
->>>>>> s390 architecture has not been tackled in this serie since it 
->>>>>> does not
->>>>>> use asm-generic/hugetlb.h at all.
->>>>>> powerpc could be factorized a bit more (cf huge_ptep_set_wrprotect).
->>>>>>
->>>>>> This patchset has been compiled on x86 only.
->>>>>>
->>>>>> Changelog:
->>>>>>
->>>>>> v4:
->>>>>>    Fix powerpc build error due to misplacing of #include
->>>>>>    <asm-generic/hugetlb.h> outside of #ifdef CONFIG_HUGETLB_PAGE, as
->>>>>>    pointed by Christophe Leroy.
->>>>>>
->>>>>> v1, v2, v3:
->>>>>>    Same version, just problems with email provider and misuse of
->>>>>>    --batch-size option of git send-email
->>>>>>
->>>>>> Alexandre Ghiti (11):
->>>>>>    hugetlb: Harmonize hugetlb.h arch specific defines with pgtable.h
->>>>>>    hugetlb: Introduce generic version of hugetlb_free_pgd_range
->>>>>>    hugetlb: Introduce generic version of set_huge_pte_at
->>>>>>    hugetlb: Introduce generic version of huge_ptep_get_and_clear
->>>>>>    hugetlb: Introduce generic version of huge_ptep_clear_flush
->>>>>>    hugetlb: Introduce generic version of huge_pte_none
->>>>>>    hugetlb: Introduce generic version of huge_pte_wrprotect
->>>>>>    hugetlb: Introduce generic version of prepare_hugepage_range
->>>>>>    hugetlb: Introduce generic version of huge_ptep_set_wrprotect
->>>>>>    hugetlb: Introduce generic version of huge_ptep_set_access_flags
->>>>>>    hugetlb: Introduce generic version of huge_ptep_get
->>>>>>
->>>>>>   arch/arm/include/asm/hugetlb-3level.h        | 32 +---------
->>>>>>   arch/arm/include/asm/hugetlb.h               | 33 +----------
->>>>>>   arch/arm64/include/asm/hugetlb.h             | 39 +++---------
->>>>>>   arch/ia64/include/asm/hugetlb.h              | 47 ++-------------
->>>>>>   arch/mips/include/asm/hugetlb.h              | 40 +++----------
->>>>>>   arch/parisc/include/asm/hugetlb.h            | 33 +++--------
->>>>>>   arch/powerpc/include/asm/book3s/32/pgtable.h |  2 +
->>>>>>   arch/powerpc/include/asm/book3s/64/pgtable.h |  1 +
->>>>>>   arch/powerpc/include/asm/hugetlb.h           | 43 ++------------
->>>>>>   arch/powerpc/include/asm/nohash/32/pgtable.h |  2 +
->>>>>>   arch/powerpc/include/asm/nohash/64/pgtable.h |  1 +
->>>>>>   arch/sh/include/asm/hugetlb.h                | 54 
->>>>>> ++---------------
->>>>>>   arch/sparc/include/asm/hugetlb.h             | 40 +++----------
->>>>>>   arch/x86/include/asm/hugetlb.h               | 72 
->>>>>> +----------------------
->>>>>>   include/asm-generic/hugetlb.h                | 88 
->>>>>> +++++++++++++++++++++++++++-
->>>>>>   15 files changed, 143 insertions(+), 384 deletions(-)
->>>>>>
->>>>>> -- 
->>>>>> 2.16.2
->
->
+idr_alloc(&sess_idr, NULL, 1, 0, GFP_NOWAIT);
+
+The problem is that iscsi_login_zero_tsih_s1 sets conn->sess early in
+iscsi_login_set_conn_values. If the function fails later like when we
+alloc the idr it does kfree(sess) and leaves the conn->sess pointer set.
+iscsi_login_zero_tsih_s1 then returns -Exyz and we then call
+iscsi_target_login_sess_out and access the freed memory above.
+
+So I am not sure what we want to do here for your patch since it is not
+adding any new bugs. Just merge your patch now and I can send a fix for
+the above bug over it?
+
+
+> -	}
+> +	/* Um, 0 is a valid ID.  I suppose we never free it? */
+> +	if (conn->sess->session_index != 0)
+> +		ida_free(&sess_ida, conn->sess->session_index);
+>  	kfree(conn->sess->sess_ops);
+>  	kfree(conn->sess);
+>  	conn->sess = NULL;
+> 
 
