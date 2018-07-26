@@ -2,183 +2,117 @@ Return-Path: <SRS0=7Z+k=KK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6494C6778F
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 15:12:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AEEA5C6778F
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 15:13:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5BCB72064D
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 15:12:29 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KlEdJUeT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5BCB72064D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 720B12083F
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 15:13:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 720B12083F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xmission.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731693AbeGZQ3o (ORCPT
+        id S1731701AbeGZQah (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 26 Jul 2018 12:29:44 -0400
-Received: from mail-qt0-f194.google.com ([209.85.216.194]:41064 "EHLO
-        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729923AbeGZQ3o (ORCPT
+        Thu, 26 Jul 2018 12:30:37 -0400
+Received: from out03.mta.xmission.com ([166.70.13.233]:42861 "EHLO
+        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729801AbeGZQah (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Jul 2018 12:29:44 -0400
-Received: by mail-qt0-f194.google.com with SMTP id e19-v6so1880273qtp.8;
-        Thu, 26 Jul 2018 08:12:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=3P0LrC/H2rDXehh9YBobksQfHOLq3sLwcW8yhCbsXR8=;
-        b=KlEdJUeTl+BM+nPJIwe0TtHxGRV74OgsgCy/M7EoAYy2Y0dDIRSZ7rCV6BkTcxpo/F
-         wMtlia2Tjr4VLWUsfh4lOd3XcZm5NoueeTKAzrb9+AAkkoTOTiGjVth4wWhLkeiNmNpY
-         lepoX4hyg8X26ld3A7hWP5w5RVvxLdoYEcqQFlvkgpmaQcqUew5Ki0f7eTMuKXarj8Fh
-         4+4hmTXkDtdywguoECMrd1AOG25fZpVfYpO0Y7N6DM3qCESeKy2mHhK0SDRCXqHaM9Ez
-         4wzD7HZDWGKrRWFmxR3T96h+FQ1CBqhNKn8zIS8JqevF2A+CukcgI6WUZn/ncKaAptlC
-         QszQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=3P0LrC/H2rDXehh9YBobksQfHOLq3sLwcW8yhCbsXR8=;
-        b=AUiyET9IsjPxIhQpl7ZlPux1bHzzL2/qyGza0fNVnLkDLcuZK7MmUqtrVElnK0bpAW
-         BcAodzIeCifkBKN0eQYqF3oKjdggnbUroPhWmohBIWDrFhVHwv/MdgpWAkf/Z+9/w9xZ
-         hDan8EJtQFvArUptDJABzdrGdSaNL1MkPNorlIOX1mqOEkrJVWSfAUBhIKr3/ZjRKTcm
-         9iwW7KS9FD3RDGsAPo/lPdn4+MpN23O6PalA97JaKJIzcZ5i5A9pFxENurD1J/CCdbQM
-         SKI+YlzioTZzl+gbZa214DoSpNP9ZaiFPpIj6AJl1KzXYhInQ7p+pzKperjitRLG2B5f
-         Sygg==
-X-Gm-Message-State: AOUpUlHl8X2F9c8cIaXh7iRM740Zti8X3XU/GziQKs2rXsFuaMv5kxAX
-        qNj/lgZC3XObwiBpsnbRz6Awmiwfixk=
-X-Google-Smtp-Source: AAOMgpfzvfLzX7Yn0NRt8U3qnbCAyne6+Afzeiet445tW3yKLAc9atOAPZxUjBOUWIKcMMzLNYkrrg==
-X-Received: by 2002:aed:3b3c:: with SMTP id p57-v6mr2244782qte.153.1532617945747;
-        Thu, 26 Jul 2018 08:12:25 -0700 (PDT)
-Received: from [192.168.44.96] (42.sub-174-226-17.myvzw.com. [174.226.17.42])
-        by smtp.gmail.com with ESMTPSA id i32-v6sm895474qtb.21.2018.07.26.08.12.24
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 26 Jul 2018 08:12:25 -0700 (PDT)
-Subject: Re: [PATCH 3/3] mmc: tegra: prevent ACMD23 on Tegra 3
-To:     Stefan Agner <stefan@agner.ch>
-Cc:     adrian.hunter@intel.com, ulf.hansson@linaro.org,
-        thierry.reding@gmail.com, jonathanh@nvidia.com,
-        marcel.ziswiler@toradex.com, linux-mmc@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20180712073904.4705-1-stefan@agner.ch>
- <20180712073904.4705-3-stefan@agner.ch>
- <430c718d-9ede-d47a-44c0-b8e47e297720@gmail.com>
- <1553c44e99b96a813af129d1c4169222@agner.ch>
-From:   Peter Geis <pgwipeout@gmail.com>
-Message-ID: <553f9ed6-8f7c-775b-d731-fd9732f74b07@gmail.com>
-Date:   Thu, 26 Jul 2018 11:12:23 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Thu, 26 Jul 2018 12:30:37 -0400
+Received: from in02.mta.xmission.com ([166.70.13.52])
+        by out03.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1fihx9-0002DJ-0r; Thu, 26 Jul 2018 09:13:19 -0600
+Received: from [97.119.167.31] (helo=x220.xmission.com)
+        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1fihx6-0004LP-N4; Thu, 26 Jul 2018 09:13:18 -0600
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     Oleg Nesterov <oleg@redhat.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, Wen Yang <wen.yang99@zte.com.cn>,
+        majiang <ma.jiang@zte.com.cn>
+References: <87efft5ncd.fsf_-_@xmission.com>
+        <20180724032419.20231-18-ebiederm@xmission.com>
+        <20180726132050.GA32718@redhat.com>
+Date:   Thu, 26 Jul 2018 10:13:12 -0500
+In-Reply-To: <20180726132050.GA32718@redhat.com> (Oleg Nesterov's message of
+        "Thu, 26 Jul 2018 15:20:50 +0200")
+Message-ID: <87tvom58tz.fsf@xmission.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
 MIME-Version: 1.0
-In-Reply-To: <1553c44e99b96a813af129d1c4169222@agner.ch>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-XM-SPF: eid=1fihx6-0004LP-N4;;;mid=<87tvom58tz.fsf@xmission.com>;;;hst=in02.mta.xmission.com;;;ip=97.119.167.31;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX18vq8n2SkROnH8GMyJYcQe3gHaVwE/Wdnc=
+X-SA-Exim-Connect-IP: 97.119.167.31
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+Subject: Re: [PATCH 18/20] signal: Add calculate_sigpending()
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/26/2018 10:47 AM, Stefan Agner wrote:
-> On 26.07.2018 15:56, Peter Geis wrote:
->> On 07/12/2018 03:39 AM, Stefan Agner wrote:
->>> It seems that SD3.0 advertisement needs to be set for higher eMMC
->>> speed modes (namely DDR52) as well. The TRM states that the SD3.0
->>> advertisement bit should be set for all controller instances, even
->>> for those not supporting UHS-I mode...
->>>
->>> When specifying vqmmc-supply as a fixed 1.8V regulator on a Tegra
->>> SD/MMC instance which is connected to a eMMC device, the stack
->>> enables SD3.0. However, enabling it has consequences: If SDHCI 3.0
->>> support is advertised the stack enables Auto-CMD23. Unfortunately
->>> Auto-CMD23 seems not to work well with Tegra 3 currently. It leads
->>> to regular warnings:
->>>     mmc2: Got command interrupt 0x00010000 even though no command operation was in progress.
->>>
->>> It is not entirely clear why those errors happens. It seems that
->>> a Linux 3.1 based downstream kernel which has Auto-CMD23 support
->>> does not show those warnings.
->>>
->>> Use quirk SDHCI_QUIRK2_ACMD23_BROKEN to prevent Auto-CMD23 being
->>> used for now. With this the eMMC works stable on high-speed mode
->>> while still announcing SD3.0.
->>>
->>> This allows to use mmc-ddr-1_8v to enables DDR52 mode. In DDR52
->>> mode read speed improves from about 42MiB/s to 72MiB/s on an
->>> Apalis T30.
->>>
->>> Signed-off-by: Stefan Agner <stefan@agner.ch>
->>> ---
->>>    drivers/mmc/host/sdhci-tegra.c | 10 +++++++++-
->>>    1 file changed, 9 insertions(+), 1 deletion(-)
->>>
->>> diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
->>> index 888a1ad511db..11c0b2069c7c 100644
->>> --- a/drivers/mmc/host/sdhci-tegra.c
->>> +++ b/drivers/mmc/host/sdhci-tegra.c
->>> @@ -336,7 +336,15 @@ static const struct sdhci_pltfm_data sdhci_tegra30_pdata = {
->>>    		  SDHCI_QUIRK_BROKEN_ADMA_ZEROLEN_DESC |
->>>    		  SDHCI_QUIRK_CAP_CLOCK_BASE_BROKEN,
->>>    	.quirks2 = SDHCI_QUIRK2_PRESET_VALUE_BROKEN |
->>> -		   SDHCI_QUIRK2_BROKEN_HS200,
->>> +		   SDHCI_QUIRK2_BROKEN_HS200 |
->>> +		   /*
->>> +		    * Auto-CMD23 leads to "Got command interrupt 0x00010000 even
->>> +		    * though no command operation was in progress."
->>> +		    *
->>> +		    * The exact reason is unknown, as the same hardware seems
->>> +		    * to support Auto CMD23 on a downstream 3.1 kernel.
->>> +		    */
->>> +		   SDHCI_QUIRK2_ACMD23_BROKEN,
->>>    	.ops  = &tegra_sdhci_ops,
->>>    };
->>>
+Oleg Nesterov <oleg@redhat.com> writes:
+
+> On 07/23, Eric W. Biederman wrote:
 >>
->> I finally got around to testing this on the Ouya (Tegra 3).
-> 
-> Thanks for testing!
-> 
->>
->> I found that the "Got command interrupt 0x00010000 even though no
->> command operation was in progress." error occurred when the interface
->> is unstable.
->> I've had a lot of problems with sdmmc4 stability on the Ouya above 34
->> Mhz, probably due to the fact that they are using the internal cmd and
->> clock pull-up resistors, against the TRM's instruction.
->> At 39Mhz, I saw the error this patch corrects.
->> With the patch, the error went away, but the interface is still
->> unstable under load.
-> 
-> How does this instability manifest exactly?
-> 
+>> --- a/kernel/fork.c
+>> +++ b/kernel/fork.c
+>> @@ -1988,6 +1988,7 @@ static __latent_entropy struct task_struct *copy_process(
+>>  					  &p->signal->thread_head);
+>>  		}
+>>  		attach_pid(p, PIDTYPE_PID);
+>> +		calculate_sigpending(p);
+>
+> In theory this looks racy if !CLONE_SIGHAND, please see below
+>
+>> +void calculate_sigpending(struct task_struct *new)
+>> +{
+>> +	/* Have any signals or users of TIF_SIGPENDING been delayed
+>> +	 * until after fork?
+>> +	 */
+>> +	bool pending = (new->jobctl & JOBCTL_PENDING_MASK) ||
+>> +		PENDING(&new->pending, &new->blocked) ||
+>> +		PENDING(&new->signal->shared_pending, &new->blocked) ||
+>> +		freezing(new) || klp_patch_pending(new);
+>
+> note that we do not hold new->sighand->siglock, but this "new" task is already
+> visible to find_task_by_vpid/etc; so a new signal can come right after
+> this check,
 
-At the very edge of stability, you see write errors under heavy load.
-As clock rate increases, the write errors occur more frequently.
-At a certain point, you start getting read errors.
-Following that you get constant io errors during card probing.
-Eventually the emmc will fail to initialize, with errors 87 or 110.
+Good point.  The localtion of the call to calculate_sigpending is wrong.
 
-I've been tweaking the pull up/down values to try and improve the 
-stability, but without access to anything but the TRM it's a lot of 
-trial and error.
+>> +	update_tsk_thread_flag(new, TIF_SIGPENDING, pending);
+>
+> and then update_tsk_thread_flag() can wrongly clear TIF_SIGPENDING.
+>
+> Easy to fix, but perhaps we can simply add recalc_sigpending() into
+> schedule_tail() ? It already does more than just finish_task_switch/etc.
+>
+> This way we do not need the new helper (which btw can only be used by
+> copy_process).
 
->>
->> Lowering down to 32Mhz, without the patch there are no errors.
-> 
-> So the patch does not make it less stable right?
-> 
+The problem I have with reusing recalc_sigpending is that it does not
+set TIF_SIGPENDING if (freezing || klp_patch_pending).
 
-No, it did not affect stability.
-Although I'd conduct some performance testing to check for degradation.
-Of course I'm nowhere near the limits of the controller, so it is 
-doubtful I'd see a hit.
+There is obviously synergy between these two cases, I just have not
+figured out how to take advantage of it yet.
 
-> --
-> Stefan
-> 
+> Note also that either way you can remove set_tsk_thread_flag(TIF_SIGPENDING)
+> from ptrace_init_task().
+
+Interesting.  Yes we can remove TIF_SIGPENDING from that case because
+ptrace_init_task sets jobctl or queues a pending signal.  I like
+that synergy.  I like not being able to miss setting TIF_SIGPENDING
+during fork.
+
+Eric
+
