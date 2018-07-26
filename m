@@ -2,111 +2,123 @@ Return-Path: <SRS0=7Z+k=KK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A1A4C28CF6
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 17:30:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7CA7C28CF6
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 17:32:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B18C32083F
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 17:30:43 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="Ag3Gi9hE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B18C32083F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
+	by mail.kernel.org (Postfix) with ESMTP id 7D8B12083F
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 17:32:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7D8B12083F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388975AbeGZSs3 (ORCPT
+        id S2388736AbeGZSuk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 26 Jul 2018 14:48:29 -0400
-Received: from smtprelay4.synopsys.com ([198.182.47.9]:35991 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388943AbeGZSs3 (ORCPT
+        Thu, 26 Jul 2018 14:50:40 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:55342 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1731409AbeGZSuk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Jul 2018 14:48:29 -0400
-Received: from mailhost.synopsys.com (mailhost1.synopsys.com [10.12.238.239])
-        by smtprelay.synopsys.com (Postfix) with ESMTP id B4A8724E099E;
-        Thu, 26 Jul 2018 10:30:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1532626241; bh=TxNEid0AFKmDem5SldxzomLOtFkM/sa8Tu6jMfesSqo=;
-        h=From:To:CC:Subject:Date:References:From;
-        b=Ag3Gi9hEqxutNmXxxSgz3+PBPZarA6uz5GYaU3VIw7W97bfwrgxUgSKQQPAbsrbnN
-         KFhhjbsSNr6KSW612KpSSNVGGM7TpS0dnAgyKDoNWcKrlTxUhnATYlGPJ9MmvK8j5V
-         prn4PRUlF0R9sWwGt8czIzFIXmrkFo976RMc3z1aZRk/5ZSVFOiYSZ2Yp45d5b3IHG
-         EEgcT+D3sC3S/7FqQAKl/oTQ4XTxlwfrUMMkjrcZPmR9qCusit20rVaUMpz207Ikii
-         n5gToT+CA7HsLCN5EYZhbHsuT7F2jkoX1WLa4rSjvwFmoS0Vc9KvPAgkrv1+88abSa
-         EnrB+Tk2zOX/w==
-Received: from US01WXQAHTC1.internal.synopsys.com (us01wxqahtc1.internal.synopsys.com [10.12.238.230])
-        by mailhost.synopsys.com (Postfix) with ESMTP id 9D7E65454;
-        Thu, 26 Jul 2018 10:30:41 -0700 (PDT)
-Received: from us01wembx1.internal.synopsys.com ([169.254.1.253]) by
- US01WXQAHTC1.internal.synopsys.com ([::1]) with mapi id 14.03.0361.001; Thu,
- 26 Jul 2018 10:30:41 -0700
-From:   Vineet Gupta <Vineet.Gupta1@synopsys.com>
-To:     Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
-        "linux-snps-arc@lists.infradead.org" 
-        <linux-snps-arc@lists.infradead.org>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
-        Alexey Brodkin <Alexey.Brodkin@synopsys.com>
-Subject: Re: [PATCH v2 2/2] ARC: add SMP_CACHE_BYTES value validate
-Thread-Topic: [PATCH v2 2/2] ARC: add SMP_CACHE_BYTES value validate
-Thread-Index: AQHUJOLHU42aJS7O/U622itMkljELg==
-Date:   Thu, 26 Jul 2018 17:30:40 +0000
-Message-ID: <C2D7FE5348E1B147BCA15975FBA23075012B08404E@us01wembx1.internal.synopsys.com>
-References: <20180726131544.3780-1-Eugeniy.Paltsev@synopsys.com>
- <20180726131544.3780-2-Eugeniy.Paltsev@synopsys.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.144.199.104]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-MIME-Version: 1.0
+        Thu, 26 Jul 2018 14:50:40 -0400
+Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w6QHSoN7015145
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Jul 2018 13:32:51 -0400
+Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2kfhj3bdw5-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Jul 2018 13:32:51 -0400
+Received: from localhost
+        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <rppt@linux.vnet.ibm.com>;
+        Thu, 26 Jul 2018 18:32:48 +0100
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
+        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 26 Jul 2018 18:32:44 +0100
+Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w6QHWh4j42074146
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 26 Jul 2018 17:32:43 GMT
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 527794C05E;
+        Thu, 26 Jul 2018 20:32:58 +0100 (BST)
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 83EE14C04E;
+        Thu, 26 Jul 2018 20:32:56 +0100 (BST)
+Received: from rapoport-lnx (unknown [9.148.204.214])
+        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Thu, 26 Jul 2018 20:32:56 +0100 (BST)
+Received: by rapoport-lnx (sSMTP sendmail emulation); Thu, 26 Jul 2018 20:32:41 +0300
+From:   Mike Rapoport <rppt@linux.vnet.ibm.com>
+To:     Jonathan Corbet <corbet@lwn.net>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        Michal Hocko <mhocko@kernel.org>, linux-doc@vger.kernel.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>
+Subject: [PATCH v3 0/7] memory management documentation updates
+Date:   Thu, 26 Jul 2018 20:32:33 +0300
+X-Mailer: git-send-email 2.7.4
+X-TM-AS-GCONF: 00
+x-cbid: 18072617-0012-0000-0000-0000028F3F08
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18072617-0013-0000-0000-000020C12DE8
+Message-Id: <1532626360-16650-1-git-send-email-rppt@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-26_04:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1806210000 definitions=main-1807260180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/26/2018 06:15 AM, Eugeniy Paltsev wrote:=0A=
-> Check that SMP_CACHE_BYTES (and hence ARCH_DMA_MINALIGN) is larger=0A=
-> or equal to any cache line length by comparing it with values=0A=
-> previously read from ARC cache BCR registers.=0A=
->=0A=
-> Signed-off-by: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>=0A=
-> ---=0A=
-> Changes v1->v2:=0A=
->  * None.=0A=
->=0A=
->  arch/arc/mm/cache.c | 10 ++++++++++=0A=
->  1 file changed, 10 insertions(+)=0A=
->=0A=
-> diff --git a/arch/arc/mm/cache.c b/arch/arc/mm/cache.c=0A=
-> index 9dbe645ee127..b95365e1253a 100644=0A=
-> --- a/arch/arc/mm/cache.c=0A=
-> +++ b/arch/arc/mm/cache.c=0A=
-> @@ -1246,6 +1246,16 @@ void __init arc_cache_init_master(void)=0A=
->  		}=0A=
->  	}=0A=
->  =0A=
-> +	/*=0A=
-> +	 * Check that SMP_CACHE_BYTES (and hence ARCH_DMA_MINALIGN) is larger=
-=0A=
-> +	 * or equal to any cache line length.=0A=
-> +	 */=0A=
-> +	BUILD_BUG_ON_MSG(L1_CACHE_BYTES > SMP_CACHE_BYTES,=0A=
-> +			 "SMP_CACHE_BYTES must be >=3D any cache line length");=0A=
-> +	if (is_isa_arcv2() && (l2_line_sz > SMP_CACHE_BYTES))=0A=
-> +		panic("L2 Cache line [%d] > kernel Config [%d]\n",=0A=
-> +		      l2_line_sz, SMP_CACHE_BYTES);=0A=
-> +=0A=
->  	/* Note that SLC disable not formally supported till HS 3.0 */=0A=
->  	if (is_isa_arcv2() && l2_line_sz && !slc_enable)=0A=
->  		arc_slc_disable();=0A=
-=0A=
-LGTM. Both applied.=0A=
-=0A=
-Thx,=0A=
--Vineet=0A=
+Hi,
+
+Here are several updates to the mm documentation.
+
+Aside from really minor changes in the first three patches, the updates
+are:
+
+* move the documentation of kstrdup and friends to "String Manipulation"
+  section
+* split memory management API into a separate .rst file
+* adjust formating of the GFP flags description and include it in the
+  reference documentation.
+
+v3 changes:
+* Use Matthew's wording of intro paragraph in the GFP flags section
+* Change "Common Combinations" to "Useful GFP flag combinations"
+
+v2 changes:
+* move get_user_pages_fast documentation to "User Space Memory Access" as
+  suggested by Matthew
+* more elaborate changelog for the fifth patch
+
+
+Mike Rapoport (7):
+  mm/util: make strndup_user description a kernel-doc comment
+  mm/util: add kernel-doc for kvfree
+  docs/core-api: kill trailing whitespace in kernel-api.rst
+  docs/core-api: move *{str,mem}dup* to "String Manipulation"
+  docs/core-api: split memory management API to a separate file
+  docs/mm: make GFP flags descriptions usable as kernel-doc
+  docs/core-api: mm-api: add section about GFP flags
+
+ Documentation/core-api/index.rst      |   1 +
+ Documentation/core-api/kernel-api.rst |  59 +------
+ Documentation/core-api/mm-api.rst     |  78 +++++++++
+ include/linux/gfp.h                   | 291 ++++++++++++++++++----------------
+ mm/util.c                             |   9 +-
+ 5 files changed, 245 insertions(+), 193 deletions(-)
+ create mode 100644 Documentation/core-api/mm-api.rst
+
+-- 
+2.7.4
+
