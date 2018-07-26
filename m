@@ -2,120 +2,131 @@ Return-Path: <SRS0=7Z+k=KK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5E5DC6778F
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 19:26:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37213C28CF6
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 19:26:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5CDF020671
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 19:26:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E33B420883
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 19:26:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="LIpvERgV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5CDF020671
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="edgnQQOg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E33B420883
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732138AbeGZUo1 (ORCPT
+        id S1732151AbeGZUof (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 26 Jul 2018 16:44:27 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:60600 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730269AbeGZUo0 (ORCPT
+        Thu, 26 Jul 2018 16:44:35 -0400
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:36830 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730292AbeGZUnM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Jul 2018 16:44:26 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Subject:Cc:To:
-        From:Date:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=PiZeAUHsj7tW6dYvJbze5h7e3H2oEqgoRu7sxIN5s9E=; b=LIpvERgVmOL9ogumzFBBkSOEv
-        6qhJqinX1INfSfb2pfdLlVYGzYb8bwlkvLwAFUm7wVMQ1K2XtVj0RObc4J+DaudjV+fCo6sYtqcNM
-        bcC7SmsCIhhp2lwfmtNEF+i5zHLc/l9Kzk7OYLtr8/xknhH8aaKSKZrmW/heVw4zljMdtKxuUZul+
-        KX0u35KpsW6FWYpz8YdChlirSxG/G6OicIczDCLBuHIS4G6Gsv/AV+DJPU70HXoCMC/k/kDBqHWFf
-        9Yxg48jaVvfTYkuZSBEYs8kswpXq5AuJ+X4m/c7HB3SWN18JIkUp+ONHtwj41ncUaoPv1HScPj7/I
-        Sb3WP6I6g==;
-Received: from [179.95.19.99] (helo=coco.lan)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1filtq-00086H-Vk; Thu, 26 Jul 2018 19:26:11 +0000
-Date:   Thu, 26 Jul 2018 16:26:07 -0300
-From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-To:     Ivan Bornyakov <brnkv.i1@gmail.com>
-Cc:     mchehab@kernel.org, linux-media@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] media: stv090x: fix if-else order
-Message-ID: <20180726162607.2de43b84@coco.lan>
-In-Reply-To: <20180601161221.24807-1-brnkv.i1@gmail.com>
-References: <20180601161221.24807-1-brnkv.i1@gmail.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Thu, 26 Jul 2018 16:43:12 -0400
+Received: by mail-ed1-f66.google.com with SMTP id k15-v6so2259055edr.3
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Jul 2018 12:24:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=10hT8P4zIFQztAKLP2YiYx+0Q+pInEEuUnM/ekxV95I=;
+        b=edgnQQOgXng9x7ncSPEYFejBRgiW4wP2XLI7ekaJ77QdROoSeDArD6mLNb+ZQkiF7b
+         fKHtRNbdOVY04wRRaGibF/oEzHLWtM73GBT+6cexZ5xOn8wlpZnOE/R3RJmWEKS2ri8l
+         sSxAiDOYDiqPZcxALZu4R/M+D53KTNWMr1FlrrXG30ZgcAm6O4AVIadI7CrMwXxv6ceV
+         2++QqhC0j8hYo9ZIuYuPeymtjvhvKOcNIWWwGg7zT569Xeh5vxWgkHRjCevUyemF93Tc
+         niizhnsXepLUyUp8n4oWszAkWpYoONz8nAQIC028+43F0fQRl74rAoVH09EgxSGEbvZd
+         eXQA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=10hT8P4zIFQztAKLP2YiYx+0Q+pInEEuUnM/ekxV95I=;
+        b=eq5foiX0GZ5Lv40OItILCfCwnZ//G7nydOTWcVXtpazPLNKWlsELazx9In5ZG7P7Ou
+         a0emxV4hni2ft9D7RHYI7LDnleGa48SuW4Y/EsBimbuIjGQ++6QIkRph2XkxQl1DddvG
+         IDAph5rIUHbvAblXqpsmBLx8i+Euv7w+ItOPbTm817DZE82TmqsTBitdJ7ht/7Um778V
+         isXTpDompdkIedpqMgfPp4kLdfzA9ojJYSlIvUyFgilC9bxpWMVElYjaiomyW0BTO4eh
+         6baN9u4aXk0anslwJsAdwOIerHWXDHilNVd8gvtSCNn0WA+luPdwPFVSv8K+7Dygp0nD
+         T0FA==
+X-Gm-Message-State: AOUpUlHsofxzBFLuCmqhRNAYrjAOa1p5pO2Buc2cmjUz1xHc9mNLwaT1
+        W5in3i9qU3Y8QJZG1eZ8yaUAecEK
+X-Google-Smtp-Source: AAOMgpfGNA/TtbD6R3b3sTB/Fltpak+k5r8QZaIqGWc438GA51ZHtqZRvxLo4iH2K29d9uIUCIj/CA==
+X-Received: by 2002:a50:a0a6:: with SMTP id 35-v6mr4102355edo.280.1532633096154;
+        Thu, 26 Jul 2018 12:24:56 -0700 (PDT)
+Received: from localhost.localdomain ([109.76.149.40])
+        by smtp.gmail.com with ESMTPSA id m20-v6sm1100853eds.5.2018.07.26.12.24.54
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 26 Jul 2018 12:24:55 -0700 (PDT)
+From:   John Whitmore <johnfwhitmore@gmail.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     devel@driverdev.osuosl.org, gregkh@linuxfoundation.org,
+        John Whitmore <johnfwhitmore@gmail.com>
+Subject: [PATCH 05/16] staging:rtl8192u: Rename msDelay to ms_delay - Style
+Date:   Thu, 26 Jul 2018 20:24:15 +0100
+Message-Id: <20180726192426.31913-6-johnfwhitmore@gmail.com>
+X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20180726192426.31913-1-johnfwhitmore@gmail.com>
+References: <20180726192426.31913-1-johnfwhitmore@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Fri,  1 Jun 2018 19:12:21 +0300
-Ivan Bornyakov <brnkv.i1@gmail.com> escreveu:
+Rename the member variable msDelay to ms_delay. This change clears the
+checkpatch issue with CamelCase naming. The change is purely a coding
+style change which should not impact runtime code execution.
 
-> There is this code:
-> 
-> 	if (v >= 0x20) {
-> 		...
-> 	} else if (v < 0x20) {
-> 		...
-> 	} else if (v > 0x30) {
-> 		/* this branch is impossible */
-> 	}
-> 
-> It would be sensibly for last branch to be on the top.
+Signed-off-by: John Whitmore <johnfwhitmore@gmail.com>
+---
+ drivers/staging/rtl8192u/r819xU_phy.c | 6 +++---
+ drivers/staging/rtl8192u/r819xU_phy.h | 2 +-
+ 2 files changed, 4 insertions(+), 4 deletions(-)
 
-Have you tested it and check at the datasheets if dev_ver > 0x30 makes
-sense?
+diff --git a/drivers/staging/rtl8192u/r819xU_phy.c b/drivers/staging/rtl8192u/r819xU_phy.c
+index 904cc8c1a83b..496f42b8f425 100644
+--- a/drivers/staging/rtl8192u/r819xU_phy.c
++++ b/drivers/staging/rtl8192u/r819xU_phy.c
+@@ -1247,7 +1247,7 @@ static u8 rtl8192_phy_SetSwChnlCmdArray(struct sw_chnl_cmd *CmdTable, u32 CmdTab
+ 	pCmd->cmd_id = CmdID;
+ 	pCmd->para_1 = Para1;
+ 	pCmd->para_2 = Para2;
+-	pCmd->msDelay = msDelay;
++	pCmd->ms_delay = msDelay;
+ 
+ 	return true;
+ }
+@@ -1365,7 +1365,7 @@ static u8 rtl8192_phy_SwChnlStepByStep(struct net_device *dev, u8 channel,
+ 
+ 		if (CurrentCmd->cmd_id == CMD_ID_END) {
+ 			if ((*stage) == 2) {
+-				(*delay) = CurrentCmd->msDelay;
++				(*delay) = CurrentCmd->ms_delay;
+ 				return true;
+ 			}
+ 			(*stage)++;
+@@ -1407,7 +1407,7 @@ static u8 rtl8192_phy_SwChnlStepByStep(struct net_device *dev, u8 channel,
+ 		break;
+ 	} while (true);
+ 
+-	(*delay) = CurrentCmd->msDelay;
++	(*delay) = CurrentCmd->ms_delay;
+ 	(*step)++;
+ 	return false;
+ }
+diff --git a/drivers/staging/rtl8192u/r819xU_phy.h b/drivers/staging/rtl8192u/r819xU_phy.h
+index 0d4c083ea718..d783e9c0dfd1 100644
+--- a/drivers/staging/rtl8192u/r819xU_phy.h
++++ b/drivers/staging/rtl8192u/r819xU_phy.h
+@@ -22,7 +22,7 @@ struct sw_chnl_cmd {
+ 	enum switch_chan_cmd_id	cmd_id;
+ 	u32		        para_1;
+ 	u32		        para_2;
+-	u32		        msDelay;
++	u32		        ms_delay;
+ } __packed;
+ 
+ extern u32 rtl819XMACPHY_Array_PG[];
+-- 
+2.18.0
 
-If not, I would prefer, instead, to remove the dead code, as this
-patch may cause regressions (adding a FIXME comment about this
-special case).
-
-> 
-> Signed-off-by: Ivan Bornyakov <brnkv.i1@gmail.com>
-> ---
->  drivers/media/dvb-frontends/stv090x.c | 10 +++++-----
->  1 file changed, 5 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/media/dvb-frontends/stv090x.c b/drivers/media/dvb-frontends/stv090x.c
-> index 9133f65d4623..d70eb311ebaf 100644
-> --- a/drivers/media/dvb-frontends/stv090x.c
-> +++ b/drivers/media/dvb-frontends/stv090x.c
-> @@ -4841,7 +4841,11 @@ static int stv090x_setup(struct dvb_frontend *fe)
->  	}
->  
->  	state->internal->dev_ver = stv090x_read_reg(state, STV090x_MID);
-> -	if (state->internal->dev_ver >= 0x20) {
-> +	if (state->internal->dev_ver > 0x30) {
-> +		/* we shouldn't bail out from here */
-> +		dprintk(FE_ERROR, 1, "INFO: Cut: 0x%02x probably incomplete support!",
-> +			state->internal->dev_ver);
-> +	} else if (state->internal->dev_ver >= 0x20) {
->  		if (stv090x_write_reg(state, STV090x_TSGENERAL, 0x0c) < 0)
->  			goto err;
->  
-> @@ -4857,10 +4861,6 @@ static int stv090x_setup(struct dvb_frontend *fe)
->  			state->internal->dev_ver);
->  
->  		goto err;
-> -	} else if (state->internal->dev_ver > 0x30) {
-> -		/* we shouldn't bail out from here */
-> -		dprintk(FE_ERROR, 1, "INFO: Cut: 0x%02x probably incomplete support!",
-> -			state->internal->dev_ver);
->  	}
->  
->  	/* ADC1 range */
-
-
-
-Thanks,
-Mauro
