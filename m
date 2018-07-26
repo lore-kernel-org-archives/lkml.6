@@ -2,149 +2,111 @@ Return-Path: <SRS0=7Z+k=KK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 767D9C28CF6
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 13:40:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BA7BC6778F
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 13:40:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2F8CA20685
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 13:40:02 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=brainfault-org.20150623.gappssmtp.com header.i=@brainfault-org.20150623.gappssmtp.com header.b="VIpmZKbe"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2F8CA20685
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org
+	by mail.kernel.org (Postfix) with ESMTP id DFE8720685
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 13:40:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DFE8720685
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730269AbeGZO4z (ORCPT
+        id S1730323AbeGZO5t (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 26 Jul 2018 10:56:55 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:52669 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729410AbeGZO4y (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Jul 2018 10:56:54 -0400
-Received: by mail-wm0-f67.google.com with SMTP id o11-v6so2007231wmh.2
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Jul 2018 06:39:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brainfault-org.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=xMOR2WgETuk+l/2ixv/ujp7dV1nCPPTj2a9vKUM2xeM=;
-        b=VIpmZKbeT2WlyE9bRV037mCWHY4sdxN6hB6wMUmtULH430dr4hX4Q5BOJ1M4mYZMFe
-         d3SujetVHGkddbyh0dDmOsjZM1BVd3JlUz5nJTV0NDl2im/363gutsglDWSp+s2gE+78
-         WiumUZ7u5pfGjRQN4JjbmuhEvWBWg85ERokTcBg3H/wGyzQvjdmNsAFGG9hoQgWx0+Si
-         QwvO9C/wpRlFHYv/eT23L4NmsX7GbzUTWYIpIUwsuj1w4w8k8EpckTSkhBUIdZVkZzQu
-         yWcgTu12cXKXvFZKy31K879rVMLdsiXGRzmkZEzOn2xt7wbWD4PazM4r90DKfosFvEBQ
-         WSVA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=xMOR2WgETuk+l/2ixv/ujp7dV1nCPPTj2a9vKUM2xeM=;
-        b=FS1aCDoNXLjkd6MfdnOdOX4wZfHTbhInkt/eTgEjHaFvVxaOpEA7EgJ/+eUEE7sAKD
-         D+ol5s8qyxpZ/4ij6LgG4PuZJZHB4W1UDWh3Mtnjso9Qd/cV2qeX4xLMztMhMCVxg6R4
-         p4s9fQMO4sF0QB6VNo6tAycwEykKpwL+bQ9KwUDgXoQ34dWs70iEhzgnlrwis0aABlmD
-         bvh4MdH3AxKXU3xXNcZNK3iW6Y9XZc16G/kQdDBaQrCnXx8+5AJ4zOTbJqfcw7BSZ/Q5
-         gsrzQzXxO52/kqNX/TN+ii5fYkVHRE9DeVxicgkVSxEQGN43cGytR0Kcud18WNLofnL2
-         1Rgw==
-X-Gm-Message-State: AOUpUlHaJtPPl4m8PP1Z83+MH3dh0ETbGQcyqbz8H/YL4AnshHqOk/DF
-        CggTa/CIFFav+Yd0nyvfhR7YNaVfh3mws713ZubnfHIfdhs=
-X-Google-Smtp-Source: AAOMgpfacN7wbw82rf4rlWvHD2hyu8uhQ+BHVcAG1zent5unyIk4bQpW4tEktML7dvH/ICNLTuU25WIadya2dE9iteU=
-X-Received: by 2002:a1c:8a04:: with SMTP id m4-v6mr1588088wmd.137.1532612397672;
- Thu, 26 Jul 2018 06:39:57 -0700 (PDT)
+        Thu, 26 Jul 2018 10:57:49 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:56178 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729506AbeGZO5t (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Jul 2018 10:57:49 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B6B5515A2;
+        Thu, 26 Jul 2018 06:40:53 -0700 (PDT)
+Received: from [10.4.12.81] (melchizedek.emea.arm.com [10.4.12.81])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 01A313F6A8;
+        Thu, 26 Jul 2018 06:40:50 -0700 (PDT)
+Subject: Re: [PATCH v12 16/16] arm64: kexec_file: add kaslr support
+To:     AKASHI Takahiro <takahiro.akashi@linaro.org>
+Cc:     catalin.marinas@arm.com, will.deacon@arm.com, dhowells@redhat.com,
+        vgoyal@redhat.com, herbert@gondor.apana.org.au,
+        davem@davemloft.net, dyoung@redhat.com, bhe@redhat.com,
+        arnd@arndb.de, schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
+        ard.biesheuvel@linaro.org, bhsharma@redhat.com,
+        kexec@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+References: <20180724065759.19186-1-takahiro.akashi@linaro.org>
+ <20180724065759.19186-17-takahiro.akashi@linaro.org>
+From:   James Morse <james.morse@arm.com>
+Message-ID: <50b31f17-fc85-aa72-06f5-d3b62060a91f@arm.com>
+Date:   Thu, 26 Jul 2018 14:40:49 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Received: by 2002:adf:9dd2:0:0:0:0:0 with HTTP; Thu, 26 Jul 2018 06:39:57
- -0700 (PDT)
-In-Reply-To: <20180726082706.GA22868@lst.de>
-References: <20180725093649.32332-1-hch@lst.de> <20180725093649.32332-4-hch@lst.de>
- <c3ccb953-cd75-4a37-636a-ca643602053a@arm.com> <20180725112457.GA24502@lst.de>
- <CAAhSdy31=D3jOgvrc+Td-TeKQMazPA-suFjOy9XwEuima1WdeA@mail.gmail.com> <20180726082706.GA22868@lst.de>
-From:   Anup Patel <anup@brainfault.org>
-Date:   Thu, 26 Jul 2018 19:09:57 +0530
-Message-ID: <CAAhSdy0JAmd=ma82yWTwQYMi2T-G8SLriV5tPyScWxOm8rCpjw@mail.gmail.com>
-Subject: Re: [PATCH 3/6] irqchip: RISC-V Local Interrupt Controller Driver
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Marc Zyngier <marc.zyngier@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>, palmer@sifive.com,
-        jason@lakedaemon.net, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org, aou@eecs.berkeley.edu,
-        "linux-kernel@vger.kernel.org List" <linux-kernel@vger.kernel.org>,
-        linux-riscv@lists.infradead.org, Stafford Horne <shorne@gmail.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180724065759.19186-17-takahiro.akashi@linaro.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 26, 2018 at 1:57 PM, Christoph Hellwig <hch@lst.de> wrote:
-> On Thu, Jul 26, 2018 at 09:08:00AM +0530, Anup Patel wrote:
->> Actually, RISCV HLIC and PLIC are very similar to RPi2 and RPi3 SOCs.
->>
->> On RPi2 and RPi3, we have per-CPU BCM2836 local intc and the global
->> interrupts are managed using BCM2835 intc. You should certainly have
->> a look a this drivers because these very simple compared to GICv2 and
->> GICv3 drivers.
->
-> Yes, using that model makes writing the per-cpu irq controller driver
-> trivial.  But retrofitting it into the device tree, where the existing
-> bootloader (bbl) assumes the old DT layout is a giant pain in the neck.
+Hi Akashi,
 
-This can also be taken care in HLIC driver probe function with something
-like below:
+On 24/07/18 07:57, AKASHI Takahiro wrote:
+> Adding "kaslr-seed" to dtb enables triggering kaslr, or kernel virtual
+> address randomization, at secondary kernel boot.
 
-if (parent)
-return 0;
+Hmm, there are three things that get moved by CONFIG_RANDOMIZE_BASE. The kernel
+physical placement when booted via the EFIstub, the kernel-text VAs and the
+location of memory in the linear-map region. Adding the kaslr-seed only does the
+last two.
 
-if (of_is_compatible(parent, "riscv,cpu")) {
-/*
-* Legacy DT binding so we have HLIC DT node
-* under each CPU DT node. To provide backwared
-* compatiblity we go forward for only one HLIC
-* DT node
-*/
-if (atomic_inc_return(&hlic_lottery) > 1)
-return 0;
-}
+This means the physical placement of the new kernel is predictable from
+/proc/iomem ... but this also tells you the physical placement of the current
+kernel, so I don't think this is a problem.
 
-In PLIC driver probe, register nested IRQ handler for only first two
-entries of interrupts-extended because it is HLIC IRQs are per-CPU. We
-can happily ignore other entries in interrupts-extended of Legacy DTS.
 
->
-> At the same time I'm still not conveninced RISC-V really needs a full
-> irqchip driver for the per-cpu interrupt 'controller' really is nothing
-> but 1 and a half architectural control registers:
->
->   - the scause register that contains the reason for an exception
->     (any exception including syscalls and page faults) for the entry
->     into supervisor mode.  This includes a bit to indicate interrupts,
->     and then logical interrupt reason, out of which only three are
->     interesting for supervisor mode (timer, software, external)
->   - the sie register that allows to to enable/disable each of the above
->     causes individually
+> We always do this as it will have no harm on kaslr-incapable kernel.
 
-Biggest plus is the ability show stats for per-CPU interrupts via
-"cat /proc/interrupts" (just like other architectures).
+> We don't have any "switch" to turn off this feature directly, but still
+> can suppress it by passing "nokaslr" as a kernel boot argument.
 
-Currently, we have only three per-CPU interrupts (timer, software,
-and external) but in-future people might come-up with interesting
-devices which might have per-CPU interrupts.
 
->
-> So after burning out on DT hacking (never mind retrofitting that into
-> actual shipping SOCs vs just qemu) I'm going to try a version that
-> doesn't add an irqchip for this but just handles it hardcoded in
-> RISC-V do_IRQ.  I'll still keep the irqchip for the PLIC, which while
-> specificed in the RISC-V spec isn't architectural but an actual
-> periphal.
+> diff --git a/arch/arm64/kernel/machine_kexec_file.c b/arch/arm64/kernel/machine_kexec_file.c
+> index 7356da5a53d5..47a4fbd0dc34 100644
+> --- a/arch/arm64/kernel/machine_kexec_file.c
+> +++ b/arch/arm64/kernel/machine_kexec_file.c
+> @@ -158,6 +160,12 @@ static int setup_dtb(struct kimage *image,
 
-I believe it possible to have RICV HLIC driver which maintains
-backward compatibility with legacy DTS. I haven't tried above
-approach myself on QEMU so I will let you decide.
+Don't you need to reserve some space in the area you vmalloc()d for the DT?
 
-Regards,
-Anup
+
+> +	/* add kaslr-seed */
+> +	get_random_bytes(&value, sizeof(value));
+
+What happens if the crng isn't ready?
+
+It looks like this will print a warning that these random-bytes aren't really up
+to standard, but the new kernel doesn't know this happened.
+
+crng_ready() isn't exposed, all we could do now is
+wait_for_random_bytes(), but that may wait forever because we do this
+unconditionally.
+
+I'd prefer to leave this feature until we can check crng_ready(), and skip
+adding a dodgy-seed if its not-ready. This avoids polluting the next-kernel's
+entropy pool.
+
+
+> +	ret = fdt_setprop(buf, nodeoffset, "kaslr-seed", &value, sizeof(value));
+
+Nit: It would be nice if this string were in a header file somewhere, to void
+future refactoring typos.
+
+
+Thanks,
+
+James
