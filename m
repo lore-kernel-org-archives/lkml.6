@@ -2,129 +2,183 @@ Return-Path: <SRS0=7Z+k=KK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+	T_DKIMWL_WL_HIGH,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0712EC28CF6
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 15:32:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8630EC28CF6
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 15:32:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ABA8E20857
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 15:32:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4223020857
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 15:32:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b="B9FmnNkK";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="fkA7AS8R"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ABA8E20857
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kroah.com
+	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="jgs0kghE"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4223020857
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=fb.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731781AbeGZQtZ (ORCPT
+        id S1731818AbeGZQt7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 26 Jul 2018 12:49:25 -0400
-Received: from wnew3-smtp.messagingengine.com ([64.147.123.17]:42829 "EHLO
-        wnew3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1731273AbeGZQtZ (ORCPT
+        Thu, 26 Jul 2018 12:49:59 -0400
+Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:54004 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1731273AbeGZQt7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Jul 2018 12:49:25 -0400
-Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
-        by mailnew.west.internal (Postfix) with ESMTP id 1C126351;
-        Thu, 26 Jul 2018 11:32:02 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute6.internal (MEProxy); Thu, 26 Jul 2018 11:32:03 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=cc
-        :content-type:date:from:in-reply-to:message-id:mime-version
-        :references:subject:to:x-me-sender:x-me-sender:x-sasl-enc; s=
-        fm1; bh=QIkgflTuTUkKvsVAiJ73uA+8iDChhCvCIMGi0/0iS1c=; b=B9FmnNkK
-        ojSAFkd+vmdb9r/WpT9m4ygDnvE+DGUfCojrWm0dkiiY6H/LvrFKLYoecO0a5FHq
-        iwmHBCp3cPnVFjNeawo2jIaK18W9Z2mnu/zoLli4h20QsRJPozpe8QmhLE4jGA0u
-        NZzPdsw1yrhFPFOCSBNAkeYD6sNSRIkbvMGMerktshLMEzMMeL4+UVU0BNAqiP8g
-        KfSzwYFDExfEO8fwsw6TUpGm4ZUNQqhJLboZkyVmcK1j/Z7BRQahoWAoYVR6tago
-        gepyYdm/HRVBaOQ82kCLEwP3brlV+nur/bklMvtUC+BuqkTww8Y9wAYQY4EDsBgc
-        oUSLpEQgcduhng==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-sender
-        :x-me-sender:x-sasl-enc; s=fm3; bh=QIkgflTuTUkKvsVAiJ73uA+8iDChh
-        CvCIMGi0/0iS1c=; b=fkA7AS8RNu0copRBt5Z6yxlO7uMPZgxiFmkUk/TW06c58
-        tU8fJEXkXmt+UT5iaOlOxErJZOLXDIXlxxeE4LNSYmAqb/bNQalJZw8rW0X35EDe
-        v1xk8LKrx7l+eH0kkQtLltwmHyKa9nSvgxRKYvoG5ut474LNxE0HXJCq5qsPJnT6
-        yF2eYNb/KWjw37UdFYCHOSP8fmyyHgl/q6BMaKDHOWANP92AwmeufEp7Cd3kNdRf
-        TOgspUljMRcn2UdNQQN5nSt/4ZanvYhv/S2EkbDtXnO9ushvnmgVVjU8r70pgnJa
-        VN+Nfe2PqXrSkrhd0/4+MgBgyMRiJOlvQjcSK9T5w==
-X-ME-Proxy: <xmx:culZW5doZvAqq6utZ5uqi2bMBpTaDiFyTxSFExcFkoa66A-Scaq0xg>
-    <xmx:culZW4vOp32uF0KLSNqfy8k6UMb6BgZOLw-XvMdtt0NpaI0m0_SwIA>
-    <xmx:culZWwKszVj-9elaJ4-GQkxv3FDPlfVlAU8tGMNjvy2trOCP9lmW1Q>
-    <xmx:culZW6a7s_Kh3krpI0PwnaVS3xNb8qTGs8yteDzaA82RMmLulGdn7g>
-    <xmx:culZW2KlTl_BV29vdAJHhN8axfOvBrkIGSPAMsIDMYauwx0nQkxgWg>
-    <xmx:culZW4Vd6kBMgL8chfsPXxsfVRlY7d5lcfA_HUIw9MMqpgfqLNk4-Hop1qE>
-X-ME-Sender: <xms:culZW4q5IpJ4fIcB8HN7Un5IH2mTuHIgqrNmEjl86UOuWvwg8KBAWQ>
-Received: from localhost (unknown [62.119.166.9])
-        by mail.messagingengine.com (Postfix) with ESMTPA id A8EC810276;
-        Thu, 26 Jul 2018 11:32:01 -0400 (EDT)
-Date:   Thu, 26 Jul 2018 17:31:53 +0200
-From:   Greg KH <greg@kroah.com>
-To:     Mark Salyzyn <salyzyn@android.com>
-Cc:     Steven Rostedt <rostedt@goodmis.org>, linux-kernel@vger.kernel.org,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Ingo Molnar <mingo@redhat.com>, kernel-team@android.com,
-        stable@vger.kernel.org
-Subject: Re: [PATCH] tracing: do not leak kernel addresses
-Message-ID: <20180726153153.GA8327@kroah.com>
-References: <20180725202238.165314-1-salyzyn@android.com>
- <20180725210717.3b807191@vmware.local.home>
- <11437c3e-5131-7190-c496-7b51eb7fcc2a@android.com>
+        Thu, 26 Jul 2018 12:49:59 -0400
+Received: from pps.filterd (m0148461.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w6QFMMJe005888;
+        Thu, 26 Jul 2018 08:32:13 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=date : from : to : cc :
+ subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=facebook; bh=3TrNSnukan3BDMXsKGH3JNaCE1xqkhgu6UASL2iEclU=;
+ b=jgs0kghEK63fVny/g54i+P8D+2YoZU1uy4KcncUYxySCCGuq0VPEMo1oWoWynlwmP/Ro
+ Uh6w4BNCxdgtvtGrAYujf1R/+SoxvqMKVYTmXY29RgZRMrXICP14ERxLft0FopGDCUc9
+ LXg50H6ONGC9oEJrMLB+Gm70reTmQh+maJw= 
+Received: from mail.thefacebook.com ([199.201.64.23])
+        by mx0a-00082601.pphosted.com with ESMTP id 2kfgvp8112-1
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Thu, 26 Jul 2018 08:32:13 -0700
+Received: from kafai-mbp.dhcp.thefacebook.com (192.168.52.123) by
+ mail.thefacebook.com (192.168.16.21) with Microsoft SMTP Server (TLS) id
+ 14.3.319.2; Thu, 26 Jul 2018 08:32:11 -0700
+Date:   Thu, 26 Jul 2018 08:32:07 -0700
+From:   Martin KaFai Lau <kafai@fb.com>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+CC:     David Miller <davem@davemloft.net>,
+        Networking <netdev@vger.kernel.org>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,
+        Okash Khawaja <osk@fb.com>,
+        "Daniel Borkmann" <daniel@iogearbox.net>,
+        Alexei Starovoitov <ast@kernel.org>
+Subject: Re: linux-next: manual merge of the net-next tree with the bpf tree
+Message-ID: <20180726153207.6xmtrmprko2cpat6@kafai-mbp.dhcp.thefacebook.com>
+References: <20180726111916.47a47dbf@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <11437c3e-5131-7190-c496-7b51eb7fcc2a@android.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20180726111916.47a47dbf@canb.auug.org.au>
+User-Agent: NeoMutt/20180512
+X-Originating-IP: [192.168.52.123]
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-26_04:,,
+ signatures=0
+X-Proofpoint-Spam-Reason: safe
+X-FB-Internal: Safe
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 26, 2018 at 08:14:08AM -0700, Mark Salyzyn wrote:
-> On 07/25/2018 06:07 PM, Steven Rostedt wrote:
-> > On Wed, 25 Jul 2018 13:22:36 -0700
-> > Mark Salyzyn <salyzyn@android.com> wrote:
-> > 
-> > > From: Nick Desaulniers <ndesaulniers@google.com>
-> > > 
-> > > Switch from 0x%lx to 0x%pK to print the kernel addresses.
-> > > 
-> > > Fixes: CVE-2017-0630
-> > Wait!!!! This breaks perf and trace-cmd! They require this to be able
-> > to print various strings in trace events. This file is root read only,
-> > as the CVE says.
-> > 
-> > NAK for this fix. Come up with something that doesn't break perf and
-> > trace-cmd. That will not be trivial, as the format is stored in the
-> > ring buffer with an address, then referenced directly. It also handles
-> > trace_printk() functions that simply point to the string format itself.
-> > 
-> > A fix would require having a pointer be the same that is referenced
-> > inside the kernel as well as in this file. Maybe make the format string
-> > placed in a location that doesn't leak where the rest of the kernel
-> > exists?
-> > 
-> > -- Steve
-> Thank you Steve, much appreciated feedback, I have asked the security
-> developers to keep this in mind and come up with a correct fix.
+On Thu, Jul 26, 2018 at 11:19:16AM +1000, Stephen Rothwell wrote:
+> Hi all,
 > 
-> The correct fix that meets your guidelines would _not_ be suitable for
-> stable due to the invasiveness it sounds, only for the latest will such a
-> rework make sense. As such, the fix proposed in this patch is the only one
-> that meets the bar for stable patch simplicity, and merely(!) needs to state
-> that if the fix is taken, perf and trace are broken.
+> Today's linux-next merge of the net-next tree got conflicts in:
+> 
+>   tools/lib/bpf/btf.c
+>   tools/lib/bpf/btf.h
+> 
+> between commits:
+> 
+>   5b891af7fca1 ("bpf: Replace [u]int32_t and [u]int64_t in libbpf")
+>   38d5d3b3d5db ("bpf: Introduce BPF_ANNOTATE_KV_PAIR")
+> 
+> from the bpf tree and commit:
+> 
+>   92b57121ca79 ("bpf: btf: export btf types and name by offset from lib")
+> 
+> from the net-next tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary.  This
+The fix LGTM. Thanks!
 
-Why would I take something for the stable trees that does not match what
-is upstream?  It feels to me that this CVE is just invalid.  Yes, root
-can read the kernel address, does that mean it is a problem?  Only if
-you allow unprotected users to run with root privileges :)
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
+> 
+> -- 
+> Cheers,
+> Stephen Rothwell
+> 
+> diff --cc tools/lib/bpf/btf.c
+> index 2d270c560df3,03161be094b4..000000000000
+> --- a/tools/lib/bpf/btf.c
+> +++ b/tools/lib/bpf/btf.c
+> @@@ -269,9 -259,29 +266,29 @@@ __s64 btf__resolve_size(const struct bt
+>   	return nelems * size;
+>   }
+>   
+> + int btf__resolve_type(const struct btf *btf, __u32 type_id)
+> + {
+> + 	const struct btf_type *t;
+> + 	int depth = 0;
+> + 
+> + 	t = btf__type_by_id(btf, type_id);
+> + 	while (depth < MAX_RESOLVE_DEPTH &&
+> + 	       !btf_type_is_void_or_null(t) &&
+> + 	       IS_MODIFIER(BTF_INFO_KIND(t->info))) {
+> + 		type_id = t->type;
+> + 		t = btf__type_by_id(btf, type_id);
+> + 		depth++;
+> + 	}
+> + 
+> + 	if (depth == MAX_RESOLVE_DEPTH || btf_type_is_void_or_null(t))
+> + 		return -EINVAL;
+> + 
+> + 	return type_id;
+> + }
+> + 
+>  -int32_t btf__find_by_name(const struct btf *btf, const char *type_name)
+>  +__s32 btf__find_by_name(const struct btf *btf, const char *type_name)
+>   {
+>  -	uint32_t i;
+>  +	__u32 i;
+>   
+>   	if (!strcmp(type_name, "void"))
+>   		return 0;
+> @@@ -368,3 -379,20 +385,11 @@@ int btf__fd(const struct btf *btf
+>   {
+>   	return btf->fd;
+>   }
+> + 
+> + const char *btf__name_by_offset(const struct btf *btf, __u32 offset)
+> + {
+> + 	if (offset < btf->hdr->str_len)
+> + 		return &btf->strings[offset];
+> + 	else
+> + 		return NULL;
+> + }
+>  -
+>  -const struct btf_type *btf__type_by_id(const struct btf *btf,
+>  -				       __u32 type_id)
+>  -{
+>  -	if (type_id > btf->nr_types)
+>  -		return NULL;
+>  -
+>  -	return btf->types[type_id];
+>  -}
+> diff --cc tools/lib/bpf/btf.h
+> index e2a09a155f84,24f361d99a5e..000000000000
+> --- a/tools/lib/bpf/btf.h
+> +++ b/tools/lib/bpf/btf.h
+> @@@ -15,10 -14,12 +15,12 @@@ typedef int (*btf_print_fn_t)(const cha
+>   	__attribute__((format(printf, 1, 2)));
+>   
+>   void btf__free(struct btf *btf);
+>  -struct btf *btf__new(uint8_t *data, uint32_t size, btf_print_fn_t err_log);
+>  -int32_t btf__find_by_name(const struct btf *btf, const char *type_name);
+>  -int64_t btf__resolve_size(const struct btf *btf, uint32_t type_id);
+>  +struct btf *btf__new(__u8 *data, __u32 size, btf_print_fn_t err_log);
+>  +__s32 btf__find_by_name(const struct btf *btf, const char *type_name);
+> - const struct btf_type *btf__type_by_id(const struct btf *btf, __u32 id);
+>  +__s64 btf__resolve_size(const struct btf *btf, __u32 type_id);
+> + int btf__resolve_type(const struct btf *btf, __u32 type_id);
+>   int btf__fd(const struct btf *btf);
+> + const char *btf__name_by_offset(const struct btf *btf, __u32 offset);
+> + const struct btf_type *btf__type_by_id(const struct btf *btf, __u32 type_id);
+>   
+>   #endif
 
-What exactly is the problem here in the current kernel that you are
-trying to solve?
 
-thanks,
-
-greg k-h
