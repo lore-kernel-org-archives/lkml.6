@@ -2,112 +2,184 @@ Return-Path: <SRS0=7Z+k=KK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06B5CECDFB8
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 06:46:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB348C6778F
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 06:47:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BA47720673
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 06:46:42 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=iluvatar.ai header.i=@iluvatar.ai header.b="RosgOxkc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA47720673
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=iluvatar.ai
+	by mail.kernel.org (Postfix) with ESMTP id 918482088E
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 06:47:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 918482088E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728825AbeGZICA (ORCPT
+        id S1727995AbeGZICW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 26 Jul 2018 04:02:00 -0400
-Received: from mail.iluvatar.ai ([58.213.90.100]:40310 "EHLO mail.iluvatar.ai"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728509AbeGZICA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Jul 2018 04:02:00 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by mail.iluvatar.ai (Postfix) with ESMTP id 3631713F10AA2;
-        Thu, 26 Jul 2018 14:49:55 +0800 (CST)
-Received: from mail.iluvatar.ai ([127.0.0.1])
-        by localhost (mail.iluvatar.ai [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id GlD__Xpd6ZEb; Thu, 26 Jul 2018 14:49:53 +0800 (CST)
-Received: from localhost (localhost [127.0.0.1])
-        by mail.iluvatar.ai (Postfix) with ESMTP id 3019613F10A9A;
-        Thu, 26 Jul 2018 14:49:53 +0800 (CST)
-DKIM-Filter: OpenDKIM Filter v2.9.2 mail.iluvatar.ai 3019613F10A9A
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iluvatar.ai;
-        s=809B2F8E-810B-11E8-86FD-A0A654EEFFEB; t=1532587793;
-        bh=D2exeT7BZ05pwWgEQQPRYgG26cRqCBnVhiH72cfH67o=;
-        h=From:To:Subject:Date:Message-Id;
-        b=RosgOxkcooGQogOIvCq4qnMyKNggAgkrYnBPldXqq0/6CrNn6IJE1+MhTHQ8dLtcu
-         k+45RvbePjUw91HZNo+cWNUb8VELdHgekNj01Nof1iyGQ89rHKAZYqaBKTvZIB7uQn
-         kbGn8mEoneWnGGfSsR3XTCKKawJFwceUtkfCTuA8=
-X-Virus-Scanned: amavisd-new at iluvatar.ai
-Received: from mail.iluvatar.ai ([127.0.0.1])
-        by localhost (mail.iluvatar.ai [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id 2WONsjbwb8sa; Thu, 26 Jul 2018 14:49:53 +0800 (CST)
-Received: from localhost.localdomain (unknown [180.166.124.10])
-        by mail.iluvatar.ai (Postfix) with ESMTPSA id AE8F113F10A9B;
-        Thu, 26 Jul 2018 14:49:52 +0800 (CST)
-From:   Huang Shijie <sjhuang@iluvatar.ai>
-To:     vkoul@kernel.org
-Cc:     corbet@lwn.net, dan.j.williams@intel.com, robh@kernel.org,
-        linux-doc@vger.kernel.org, dmaengine@vger.kernel.org,
-        linux-kernel@vger.kernel.org, ashutosh.dixit@intel.com,
-        Huang Shijie <sjhuang@iluvatar.ai>
-Subject: [PATCH v2 2/2] dmaengine: mic_x100_dma: use the new helper to simplify the code
-Date:   Thu, 26 Jul 2018 14:45:54 +0800
-Message-Id: <20180726064554.24975-2-sjhuang@iluvatar.ai>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180726064554.24975-1-sjhuang@iluvatar.ai>
-References: <20180726064554.24975-1-sjhuang@iluvatar.ai>
+        Thu, 26 Jul 2018 04:02:22 -0400
+Received: from Mailgw01.mediatek.com ([1.203.163.78]:9031 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1728509AbeGZICW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Jul 2018 04:02:22 -0400
+X-UUID: f0a218e4b19a4396a12fb6119b779333-20180726
+Received: from mtkcas34.mediatek.inc [(172.27.4.250)] by mailgw01.mediatek.com
+        (envelope-from <xiaolei.li@mediatek.com>)
+        (mailgw01.mediatek.com ESMTP with TLS)
+        with ESMTP id 749143884; Thu, 26 Jul 2018 14:46:32 +0800
+Received: from MTKCAS36.mediatek.inc (172.27.4.186) by MTKMBS32N2.mediatek.inc
+ (172.27.4.72) with Microsoft SMTP Server (TLS) id 15.0.1210.3; Thu, 26 Jul
+ 2018 14:46:30 +0800
+Received: from [10.17.3.153] (10.17.3.153) by MTKCAS36.mediatek.inc
+ (172.27.4.170) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
+ Transport; Thu, 26 Jul 2018 14:46:29 +0800
+Message-ID: <1532587589.10234.14.camel@mhfsdcap03>
+Subject: Re: [PATCH v4 14/35] mtd: rawnand: mtk: convert driver to
+ nand_scan()
+From:   xiaolei li <xiaolei.li@mediatek.com>
+To:     Boris Brezillon <boris.brezillon@bootlin.com>
+CC:     Miquel Raynal <miquel.raynal@bootlin.com>,
+        Wenyou Yang <wenyou.yang@microchip.com>,
+        Josh Wu <rainyfeeling@outlook.com>,
+        "Tudor Ambarus" <Tudor.Ambarus@microchip.com>,
+        Richard Weinberger <richard@nod.at>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        "Nicolas Ferre" <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Kamal Dasu <kdasu.kdev@gmail.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Han Xu <han.xu@nxp.com>,
+        Harvey Hunt <harveyhuntnexus@gmail.com>,
+        Vladimir Zapolskiy <vz@mleia.com>,
+        Sylvain Lemieux <slemieux.tyco@gmail.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Marc Gonzalez <marc.w.gonzalez@free.fr>,
+        "Mans Rullgard" <mans@mansr.com>, Stefan Agner <stefan@agner.ch>,
+        <linux-mtd@lists.infradead.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        <bcm-kernel-feedback-list@broadcom.com>,
+        <linux-mediatek@lists.infradead.org>
+Date:   Thu, 26 Jul 2018 14:46:29 +0800
+In-Reply-To: <20180726081402.1fa86ec5@bbrezillon>
+References: <20180720151527.16038-1-miquel.raynal@bootlin.com>
+         <20180720151527.16038-15-miquel.raynal@bootlin.com>
+         <20180721191004.26fc9290@bbrezillon>   <1532585201.10234.9.camel@mhfsdcap03>
+         <20180726081402.1fa86ec5@bbrezillon>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.2.3-0ubuntu6 
+Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use dmaenginem_async_device_register() to simplify the code:
-    remove the mic_dma_unregister_dma_device()
+On Thu, 2018-07-26 at 08:14 +0200, Boris Brezillon wrote:
+> On Thu, 26 Jul 2018 14:06:41 +0800
+> xiaolei li <xiaolei.li@mediatek.com> wrote:
+> 
+> > On Sat, 2018-07-21 at 19:10 +0200, Boris Brezillon wrote:
+> > > On Fri, 20 Jul 2018 17:15:06 +0200
+> > > Miquel Raynal <miquel.raynal@bootlin.com> wrote:
+> > >   
+> > > > Two helpers have been added to the core to make ECC-related
+> > > > configuration between the detection phase and the final NAND scan. Use
+> > > > these hooks and convert the driver to just use nand_scan() instead of
+> > > > both nand_scan_ident() and nand_scan_tail().
+> > > > 
+> > > > Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
+> > > > ---
+> > > >  drivers/mtd/nand/raw/mtk_nand.c | 75 ++++++++++++++++++++++++-----------------
+> > > >  1 file changed, 44 insertions(+), 31 deletions(-)
+> > > > 
+> > > > diff --git a/drivers/mtd/nand/raw/mtk_nand.c b/drivers/mtd/nand/raw/mtk_nand.c
+> > > > index 7bc6be3f6ec0..967418f945ea 100644
+> > > > --- a/drivers/mtd/nand/raw/mtk_nand.c
+> > > > +++ b/drivers/mtd/nand/raw/mtk_nand.c
+> > > > @@ -1250,13 +1250,54 @@ static int mtk_nfc_ecc_init(struct device *dev, struct mtd_info *mtd)
+> > > >  	return 0;
+> > > >  }
+> > > >  
+> > > > +static int mtk_nfc_attach_chip(struct nand_chip *chip)
+> > > > +{
+> > > > +	struct mtd_info *mtd = nand_to_mtd(chip);
+> > > > +	struct device *dev = mtd->dev.parent;
+> > > > +	struct mtk_nfc *nfc = nand_get_controller_data(chip);
+> > > > +	struct mtk_nfc_nand_chip *mtk_nand = to_mtk_nand(chip);
+> > > > +	int len;
+> > > > +	int ret;
+> > > > +
+> > > > +	if (chip->options & NAND_BUSWIDTH_16) {
+> > > > +		dev_err(dev, "16bits buswidth not supported");
+> > > > +		return -EINVAL;
+> > > > +	}
+> > > > +
+> > > > +	/* store bbt magic in page, cause OOB is not protected */
+> > > > +	if (chip->bbt_options & NAND_BBT_USE_FLASH)
+> > > > +		chip->bbt_options |= NAND_BBT_NO_OOB;
+> > > > +
+> > > > +	ret = mtk_nfc_ecc_init(dev, mtd);
+> > > > +	if (ret)
+> > > > +		return ret;
+> > > > +
+> > > > +	ret = mtk_nfc_set_spare_per_sector(&mtk_nand->spare_per_sector, mtd);
+> > > > +	if (ret)
+> > > > +		return ret;
+> > > > +
+> > > > +	mtk_nfc_set_fdm(&mtk_nand->fdm, mtd);
+> > > > +	mtk_nfc_set_bad_mark_ctl(&mtk_nand->bad_mark, mtd);
+> > > > +
+> > > > +	len = mtd->writesize + mtd->oobsize;
+> > > > +	nfc->buffer = devm_kzalloc(dev, len, GFP_KERNEL);
+> > > > +	if (!nfc->buffer)
+> > > > +		return  -ENOMEM;
+> > > > +
+> > > > +	return 0;
+> > > > +}
+> > > > +
+> > > > +static const struct nand_controller_ops mtk_nfc_controller_ops = {
+> > > > +	.attach_chip = mtk_nfc_attach_chip,
+> > > > +};
+> > > > +
+> > > >  static int mtk_nfc_nand_chip_init(struct device *dev, struct mtk_nfc *nfc,
+> > > >  				  struct device_node *np)
+> > > >  {
+> > > >  	struct mtk_nfc_nand_chip *chip;
+> > > >  	struct nand_chip *nand;
+> > > >  	struct mtd_info *mtd;
+> > > > -	int nsels, len;
+> > > > +	int nsels;
+> > > >  	u32 tmp;
+> > > >  	int ret;
+> > > >  	int i;
+> > > > @@ -1287,6 +1328,7 @@ static int mtk_nfc_nand_chip_init(struct device *dev, struct mtk_nfc *nfc,
+> > > >  
+> > > >  	nand = &chip->nand;
+> > > >  	nand->controller = &nfc->controller;
+> > > > +	nand->controller->ops = &mtk_nfc_controller_ops;  
+> > > 
+> > > Just like for the marvell driver, this assignment should be moved here
+> > > [1].   
+> > Agree to this.
+> >
+>  
+> > > Also, it looks like this driver is open-coding
+> > > nand_controller_init(), probably something we should fix (in a separate
+> > > patch).  
+> > May I ask if you mean driver should use nand_hw_control_init helper to
+> > do controller_init?
+> 
+> Well, now it's named nand_controller_init(), but yes, that's what I
+> meant.
 
-Signed-off-by: Huang Shijie <sjhuang@iluvatar.ai>
----
-    Just add a user for the new helper.
----
- drivers/dma/mic_x100_dma.c | 8 +-------
- 1 file changed, 1 insertion(+), 7 deletions(-)
+OK. I will fix it base on this patch series later.
+Thanks!
 
-diff --git a/drivers/dma/mic_x100_dma.c b/drivers/dma/mic_x100_dma.c
-index 68dd79783b54..b76cb17d879c 100644
---- a/drivers/dma/mic_x100_dma.c
-+++ b/drivers/dma/mic_x100_dma.c
-@@ -470,11 +470,6 @@ static void mic_dma_chan_destroy(struct mic_dma_chan *ch)
- 	mic_dma_chan_mask_intr(ch);
- }
- 
--static void mic_dma_unregister_dma_device(struct mic_dma_device *mic_dma_dev)
--{
--	dma_async_device_unregister(&mic_dma_dev->dma_dev);
--}
--
- static int mic_dma_setup_irq(struct mic_dma_chan *ch)
- {
- 	ch->cookie =
-@@ -630,7 +625,7 @@ static int mic_dma_register_dma_device(struct mic_dma_device *mic_dma_dev,
- 		list_add_tail(&mic_dma_dev->mic_ch[i].api_ch.device_node,
- 			      &mic_dma_dev->dma_dev.channels);
- 	}
--	return dma_async_device_register(&mic_dma_dev->dma_dev);
-+	return dmaenginem_async_device_register(&mic_dma_dev->dma_dev);
- }
- 
- /*
-@@ -678,7 +673,6 @@ static struct mic_dma_device *mic_dma_dev_reg(struct mbus_device *mbdev,
- 
- static void mic_dma_dev_unreg(struct mic_dma_device *mic_dma_dev)
- {
--	mic_dma_unregister_dma_device(mic_dma_dev);
- 	mic_dma_uninit(mic_dma_dev);
- 	kfree(mic_dma_dev);
- }
--- 
-2.17.1
 
