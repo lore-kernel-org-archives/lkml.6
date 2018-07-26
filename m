@@ -2,187 +2,108 @@ Return-Path: <SRS0=7Z+k=KK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=0.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E3B7C28CF6
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 13:59:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0248AC6778F
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 14:00:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9718A20673
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 13:59:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B055320673
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 14:00:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="NZkza4yo"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9718A20673
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bYGiB24b"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B055320673
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730610AbeGZPQV (ORCPT
+        id S1730677AbeGZPRk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 26 Jul 2018 11:16:21 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:54114 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729506AbeGZPQV (ORCPT
+        Thu, 26 Jul 2018 11:17:40 -0400
+Received: from mail-ua0-f195.google.com ([209.85.217.195]:40323 "EHLO
+        mail-ua0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729406AbeGZPRk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Jul 2018 11:16:21 -0400
-Received: by mail-wm0-f65.google.com with SMTP id s9-v6so2093349wmh.3
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Jul 2018 06:59:20 -0700 (PDT)
+        Thu, 26 Jul 2018 11:17:40 -0400
+Received: by mail-ua0-f195.google.com with SMTP id p22-v6so1131863uao.7
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Jul 2018 07:00:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id;
-        bh=m9CCiwR/zhrqNdJ6Qi86kfoFuPrHTGpOo/Cqk2c9lMw=;
-        b=NZkza4yogigBBOi5izjgx9CAY1ce3IXfSFLxmUy1TB4UQovCnPBny2wWmuPPw5D2Xn
-         Fkdxi2tLXl9aP+jeqy6Z6IsjNtfouzYYkn8U4lRNi7nXCqE6pd5oURI8dP6p5c98Ys6K
-         dam+D8uxPrX0AIzAnKOdI8aUWWBafjRDcFJSI4a3yWWlVKtZSUpbhq8K55GsLRxZniBm
-         4dI6ieTTm1fNilkW4e3yvUV1ldZr4EQB6L7DBb+wZQX9LPblJ8o0ZgrGKiIBE/siPC7T
-         ZRsqjkB/Dq5/chQ254R3gqx2Mt5ibXU7/SSYJxP6khIb7Rs/vnCyuLyyO79Jrvwl7Rn7
-         lpnA==
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=aoyaBYLdAR7G9qZi8MO/Kt3UvWlbOBA9anEPmOfH9A4=;
+        b=bYGiB24buxTzSZNLFONeN5I7j/BYsY6hebTiv0Voj/lWM0Mfv4q9PsTX2Cg/50Qt+/
+         tFsFcDPGtAY7j5I4StlsqNjR6nHiezQ7MyZlWhCoJkyNRSeJO2lGaMVT2wmfeE/Djzxl
+         GSbXLdH/GqRYPLq5ZTcdvV/ea1vOPz957le33CFx+BCzJ3hZtnk/EdxLut/+3GTLESUb
+         QeyDoCzAn6hIuB1/GMbsUkRYXjRYVan6I6Op0v0TPRykyQ9Y6237s0Ng79SyWwomkbL6
+         nvl98s17ZPGif2lSRaxNBGE52E8H8RP4OgTTZArKGcpTbq6sYEC+ssQR7gO4Mz2ztzxn
+         Srkg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=m9CCiwR/zhrqNdJ6Qi86kfoFuPrHTGpOo/Cqk2c9lMw=;
-        b=S4/L6f2NMub3Fplt5lIictHXPEDGRK48nZOqDIv3TTusgkpsWaqLG8ClMsVVDIzkFn
-         sMcONXOBnIK74d5RVmeElJAjJdIb1Z5K/Uo9hAk9hgokHYm3NFY3qsJwDQGufjS4FOvg
-         08gywielBlSDxD0xcPcIeOyEueFN6V+EaRB9FPdfgeBCeP+LmQ0uIW66BmMz8q/vgduL
-         vQG+DeTuBcauyvB7J6tg6wDPji9iUr+QWmbKJg25Fu+NffbuSo1H05YuRxi2i1M0XYVx
-         AxoOEYJRIHz//17AItO4gtylQdyPUza15J35ie1L0oI797fHTXNkjYrWr0QzHCp4h0YU
-         HJhg==
-X-Gm-Message-State: AOUpUlGTTUdlwR80TEhK6usTH0G8qYvi251FXeeBLQibPkcL5I5z9tOh
-        dqf7A0fhxHlCEU4CLRl+i/LCNA==
-X-Google-Smtp-Source: AAOMgpdIZHKdxLrmyYhJum/5Lv0enqEOOoxtxcAtew9b7WQ3g8SRQ1Lkhv8AyyfbQkYIIPYSHmOwbg==
-X-Received: by 2002:a1c:c4ce:: with SMTP id u197-v6mr1656860wmf.10.1532613559582;
-        Thu, 26 Jul 2018 06:59:19 -0700 (PDT)
-Received: from bender.baylibre.local ([90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id s7-v6sm1754942wru.96.2018.07.26.06.59.18
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Thu, 26 Jul 2018 06:59:18 -0700 (PDT)
-From:   Neil Armstrong <narmstrong@baylibre.com>
-To:     khilman@baylibre.com, carlo@caione.org
-Cc:     Neil Armstrong <narmstrong@baylibre.com>,
-        linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] firmware: meson_sm: Add serial number sysfs entry
-Date:   Thu, 26 Jul 2018 15:59:16 +0200
-Message-Id: <1532613556-5398-1-git-send-email-narmstrong@baylibre.com>
-X-Mailer: git-send-email 2.7.4
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=aoyaBYLdAR7G9qZi8MO/Kt3UvWlbOBA9anEPmOfH9A4=;
+        b=aFUR61HuIfhizfe3xLRntM1bXZZ7dKu0xnEgLWrfVXJB5inLBNwapKTOjwhPJ4gE+j
+         z2Imi01YwZiKuIu8uVAnqjNzZCMKwuCYC/fvFoeUlaVSGGu9LxgkOpE8QRS51Lx8R4Jw
+         wARocQSGJME9j/WIaC/J1DKsEos1xllEoWPNN7ZKarrFXnhY5+uaJvySutuaL8F79US3
+         A1G0njb2gtH8I/Tp0cDdivDXMTaWjYyfwfCyaCm5LNM090EaMK5M0AybKWDckKKFbrd4
+         +W56F3HT/J+ydUwJ1iPnc1YsDzcIVFbvupYTI/lHRcX81X1n0OI9qRq3VBqpV326OiLN
+         SUmw==
+X-Gm-Message-State: AOUpUlHiPQ5K2/HDllyvHz7m9pCJabUM8V3uc5+GSqSuY67meiNdpX8f
+        k1kk0MIWWp2S3ZUUiAIA1FQjNcBGfhqMFXQucPw=
+X-Google-Smtp-Source: AAOMgpdeB7HD8pwfI6uivlMFiCwzF1Kx8aHw9CRfA/Smu/V2PX3M6FmZSnDS3T97tN0s5FFwmRTnx8okG/t2jJDmc3M=
+X-Received: by 2002:ab0:70a9:: with SMTP id q9-v6mr1382939ual.141.1532613639695;
+ Thu, 26 Jul 2018 07:00:39 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:a67:2149:0:0:0:0:0 with HTTP; Thu, 26 Jul 2018 07:00:39
+ -0700 (PDT)
+In-Reply-To: <5B599DB7.4050700@intel.com>
+References: <1532592471-21177-1-git-send-email-wei.w.wang@intel.com>
+ <CAHp75VcFZ7jS-M6+O95XTfyg1m05UOQMVgdQb5wC-0bNWkyvMg@mail.gmail.com> <5B599DB7.4050700@intel.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Thu, 26 Jul 2018 17:00:39 +0300
+Message-ID: <CAHp75VeTN5AmVj5knocsRFssQ9phzCz+jTXLMKoJ9WtasAPJRQ@mail.gmail.com>
+Subject: Re: [PATCH] linux/bitmap.h: fix BITMAP_LAST_WORD_MASK
+To:     Wei Wang <wei.w.wang@intel.com>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Yury Norov <ynorov@caviumnetworks.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        dgilbert@redhat.com, Matthew Wilcox <mawilcox@microsoft.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The Amlogic Meson SoC Secure Monitor implements a call to retrieve an unique
-SoC ID starting from the GX Family and all new families.
+On Thu, Jul 26, 2018 at 1:08 PM, Wei Wang <wei.w.wang@intel.com> wrote:
+> On 07/26/2018 04:48 PM, Andy Shevchenko wrote:
+>>
+>> On Thu, Jul 26, 2018 at 11:07 AM, Wei Wang <wei.w.wang@intel.com> wrote:
+>>>
+>>> The existing BITMAP_LAST_WORD_MASK macro returns 0xffffffff if nbits is
+>>> 0. This patch changes the macro to return 0 when there is no bit needs to
+>>> be masked.
+>>>
+>> Can you provide a practical example of what's going wrong before this
+>> patch applied?
+>>
+>
+> The reason of making this patch is that I saw some other software which
+> ports this function and has possibilities to fall into bugs with usages
+> which pass 0 to the macro.
 
-The serial number is simply exposed as a sysfs entry under the firmware
-sysfs directory.
+No problems in the kernel, right?
 
-Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
----
- drivers/firmware/meson/meson_sm.c       | 56 +++++++++++++++++++++++++++++++++
- include/linux/firmware/meson/meson_sm.h |  1 +
- 2 files changed, 57 insertions(+)
+> So I wonder if it would be necessary to make such
+> changes in case we would get a similar bug. Or adding something to explain
+> that "0" is not applicable to this macro as a reminder to people who would
+> use it.
 
-diff --git a/drivers/firmware/meson/meson_sm.c b/drivers/firmware/meson/meson_sm.c
-index 0ec2ca8..29fbc81 100644
---- a/drivers/firmware/meson/meson_sm.c
-+++ b/drivers/firmware/meson/meson_sm.c
-@@ -24,6 +24,7 @@
- #include <linux/printk.h>
- #include <linux/types.h>
- #include <linux/sizes.h>
-+ #include <linux/slab.h>
- 
- #include <linux/firmware/meson/meson_sm.h>
- 
-@@ -48,6 +49,7 @@ struct meson_sm_chip gxbb_chip = {
- 		CMD(SM_EFUSE_READ,	0x82000030),
- 		CMD(SM_EFUSE_WRITE,	0x82000031),
- 		CMD(SM_EFUSE_USER_MAX,	0x82000033),
-+		CMD(SM_GET_CHIP_ID,	0x82000044),
- 		{ /* sentinel */ },
- 	},
- };
-@@ -214,6 +216,57 @@ int meson_sm_call_write(void *buffer, unsigned int size, unsigned int cmd_index,
- }
- EXPORT_SYMBOL(meson_sm_call_write);
- 
-+#define SM_CHIP_ID_LENGTH	119
-+#define SM_CHIP_ID_OFFSET	4
-+#define SM_CHIP_ID_SIZE		12
-+
-+static ssize_t serial_show(struct device *dev, struct device_attribute *attr,
-+			 char *buf)
-+{
-+	uint8_t *id_buf;
-+	int ret;
-+
-+	id_buf = kmalloc(SM_CHIP_ID_LENGTH, GFP_KERNEL);
-+	if (!id_buf)
-+		return -ENOMEM;
-+
-+	ret = meson_sm_call_read(id_buf, SM_CHIP_ID_LENGTH, SM_GET_CHIP_ID,
-+				 0, 0, 0, 0, 0);
-+	if (ret < 0) {
-+		kfree(id_buf);
-+		return ret;
-+	}
-+
-+	ret = sprintf(buf, "%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x\n",
-+			id_buf[SM_CHIP_ID_OFFSET + 0],
-+			id_buf[SM_CHIP_ID_OFFSET + 1],
-+			id_buf[SM_CHIP_ID_OFFSET + 2],
-+			id_buf[SM_CHIP_ID_OFFSET + 3],
-+			id_buf[SM_CHIP_ID_OFFSET + 4],
-+			id_buf[SM_CHIP_ID_OFFSET + 5],
-+			id_buf[SM_CHIP_ID_OFFSET + 6],
-+			id_buf[SM_CHIP_ID_OFFSET + 7],
-+			id_buf[SM_CHIP_ID_OFFSET + 8],
-+			id_buf[SM_CHIP_ID_OFFSET + 9],
-+			id_buf[SM_CHIP_ID_OFFSET + 10],
-+			id_buf[SM_CHIP_ID_OFFSET + 11]);
-+
-+	kfree(id_buf);
-+
-+	return ret;
-+}
-+
-+static DEVICE_ATTR_RO(serial);
-+
-+static struct attribute *meson_sm_sysfs_attributes[] = {
-+	&dev_attr_serial.attr,
-+	NULL,
-+};
-+
-+static const struct attribute_group meson_sm_sysfs_attr_group = {
-+	.attrs = meson_sm_sysfs_attributes,
-+};
-+
- static const struct of_device_id meson_sm_ids[] = {
- 	{ .compatible = "amlogic,meson-gxbb-sm", .data = &gxbb_chip },
- 	{ /* sentinel */ },
-@@ -242,6 +295,9 @@ static int __init meson_sm_probe(struct platform_device *pdev)
- 	fw.chip = chip;
- 	pr_info("secure-monitor enabled\n");
- 
-+	if (sysfs_create_group(&pdev->dev.kobj, &meson_sm_sysfs_attr_group))
-+		goto out_in_base;
-+
- 	return 0;
- 
- out_in_base:
-diff --git a/include/linux/firmware/meson/meson_sm.h b/include/linux/firmware/meson/meson_sm.h
-index 37a5eae..f98c20d 100644
---- a/include/linux/firmware/meson/meson_sm.h
-+++ b/include/linux/firmware/meson/meson_sm.h
-@@ -17,6 +17,7 @@ enum {
- 	SM_EFUSE_READ,
- 	SM_EFUSE_WRITE,
- 	SM_EFUSE_USER_MAX,
-+	SM_GET_CHIP_ID,
- };
- 
- struct meson_sm_firmware;
+Comment can be added, yes.
+
 -- 
-2.7.4
-
+With Best Regards,
+Andy Shevchenko
