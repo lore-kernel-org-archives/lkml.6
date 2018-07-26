@@ -2,523 +2,149 @@ Return-Path: <SRS0=7Z+k=KK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BAC12C28CF6
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 09:35:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0CB1C28CF6
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 09:37:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 41D5920671
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 09:35:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 35AFF20671
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 09:37:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="QK4aO04Z"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 41D5920671
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (1024-bit key) header.d=CAVIUMNETWORKS.onmicrosoft.com header.i=@CAVIUMNETWORKS.onmicrosoft.com header.b="GJOajr5P"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 35AFF20671
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=caviumnetworks.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729186AbeGZKvB (ORCPT
+        id S1729203AbeGZKxo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 26 Jul 2018 06:51:01 -0400
-Received: from mail-pg1-f170.google.com ([209.85.215.170]:45230 "EHLO
-        mail-pg1-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728998AbeGZKvB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Jul 2018 06:51:01 -0400
-Received: by mail-pg1-f170.google.com with SMTP id f1-v6so793396pgq.12
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Jul 2018 02:35:01 -0700 (PDT)
+        Thu, 26 Jul 2018 06:53:44 -0400
+Received: from mail-eopbgr710047.outbound.protection.outlook.com ([40.107.71.47]:12448
+        "EHLO NAM05-BY2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729031AbeGZKxn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Jul 2018 06:53:43 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=PGh/gaZLbAdjuB8AuRQ7J6qStK2wxeplGp44hv3vfrE=;
-        b=QK4aO04Z0Az/ieDuGkd5aVRJM2gc0Hnxf+aw/EHKghfgWyudcuUtP8k2+3mnkoXFr3
-         8TIRYjaIML+U3YSGAZrKqbCT5IIL0+KzPIHPe2N/YYpVEkCl87fv7npRmAkPWQepKWec
-         1i5xsfh/1tokhMYKiiyqU37bugVoasiXAfzIPvRrrGYn3ZI2TrPnZDRtctjF6GQmzNeL
-         3oxqcpWhy8+5Axfns8yOEHtWa3OtXbiGNjXjOncf9Q39CyUM1bliK7dIZShPMrthx8fq
-         Ws9BvGGcyFNmg1C+R0mrTKTMw4LVKq2B8szvrh3arkCmclihTMqZvH9XShsC6yiBehYP
-         DUtA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=PGh/gaZLbAdjuB8AuRQ7J6qStK2wxeplGp44hv3vfrE=;
-        b=qxYpPoQY2918A9XnL9rkwMeb3iVHIlyMU/rwWpKnTDG0ZGEgKpW/4YosRQw/NSo3yK
-         jjLZOOm05G/QkOLT9rgtY/B68LhUy5AfdnEYoFILiT5xr78B6YciH/tcfvec+jPXe3KX
-         KYi6qASxyVk3dhxJZJJbKzpPYmdl1Zx1cjGuPGH5T4AQaFmJ33QfcBynsJJv+LlOaqO0
-         b7M5paswgWbb2v0uC3/UbTE/jZwGVomcQrVJDwNWK7AkiYAYxr5Y0nN8W1yxSQqfZK3k
-         zDAlP3QnuFz5q3CtDpbzmGL0hxMGPLxnZc65rrBaSsME00JIHe7iMZBp4r6R5sNEmLZl
-         Ftrg==
-X-Gm-Message-State: AOUpUlFPOcr+DPwGdsikq9U8Ehe4iZC7WVApc9cOOdaKUV+OjE586QQr
-        dAyb0b1AWSog8kNt1uetM6tj1LhWZf8rK4SEmYDr1g==
-X-Google-Smtp-Source: AAOMgpd9KaGX1ExIq8rJSGRB/ZLvKCHged86OFK57tHqBUun6iHU912r4SsVCmdXuHDBbknSg7BiDwBq6R0Wb6xzMgc=
-X-Received: by 2002:a63:743:: with SMTP id 64-v6mr1265051pgh.216.1532597700552;
- Thu, 26 Jul 2018 02:35:00 -0700 (PDT)
+ d=CAVIUMNETWORKS.onmicrosoft.com; s=selector1-cavium-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ZdW0CyMkLYobrM5ooAmgtCBtfqAnL4dGRSntUnVVBYk=;
+ b=GJOajr5PZyidtproZcx0v8gP9OVketWEqUgjUU0XmDCW3xuxGiQX3hjegvawGY2Rw3eEH3gowLxOWSOvMz9WhIJHyv1pK6gERRBE16/4FlpBOu7nHOcE01L1C5yE7DGYqDrnvk1PYwUpKP/IVcGmSrlSt/TtwDtPBOV5ez+0m7g=
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=Yuri.Norov@cavium.com; 
+Received: from localhost (5.2.211.124) by
+ SN6PR07MB4384.namprd07.prod.outlook.com (2603:10b6:805:58::15) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.973.16; Thu, 26 Jul 2018 09:37:39 +0000
+Date:   Thu, 26 Jul 2018 12:37:28 +0300
+From:   Yury Norov <ynorov@caviumnetworks.com>
+To:     Wei Wang <wei.w.wang@intel.com>
+Cc:     linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
+        corbet@lwn.net, linux@rasmusvillemoes.dk, dgilbert@redhat.com,
+        mawilcox@microsoft.com
+Subject: Re: [PATCH] linux/bitmap.h: fix BITMAP_LAST_WORD_MASK
+Message-ID: <20180726093728.GA9069@yury-thinkpad>
+References: <1532592471-21177-1-git-send-email-wei.w.wang@intel.com>
 MIME-Version: 1.0
-Received: by 2002:a17:90a:ac14:0:0:0:0 with HTTP; Thu, 26 Jul 2018 02:34:39
- -0700 (PDT)
-In-Reply-To: <000000000000352dc20571e3a0d8@google.com>
-References: <000000000000352dc20571e3a0d8@google.com>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Thu, 26 Jul 2018 11:34:39 +0200
-Message-ID: <CACT4Y+ZBf_X=wKQLnAtVz_P-y-6L7+azmpRqT5XFaH5ySx3UiQ@mail.gmail.com>
-Subject: Re: net-next boot error
-To:     syzbot <syzbot+604f8271211546f5b3c7@syzkaller.appspotmail.com>
-Cc:     Borislav Petkov <bp@suse.de>, Jason Baron <jbaron@akamai.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Jason Wang <jasowang@redhat.com>,
-        David Miller <davem@davemloft.net>,
-        virtualization@lists.linux-foundation.org,
-        netdev <netdev@vger.kernel.org>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1532592471-21177-1-git-send-email-wei.w.wang@intel.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Originating-IP: [5.2.211.124]
+X-ClientProxiedBy: HE1PR06CA0162.eurprd06.prod.outlook.com
+ (2603:10a6:7:16::49) To SN6PR07MB4384.namprd07.prod.outlook.com
+ (2603:10b6:805:58::15)
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: cb59c5a8-020d-4f76-4cd9-08d5f2db6dfa
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600073)(711020)(2017052603328)(7153060)(7193020);SRVR:SN6PR07MB4384;
+X-Microsoft-Exchange-Diagnostics: 1;SN6PR07MB4384;3:0gq8QbZyjqdQRggT+plenFGwT7P5wOYHOVRSDe0qIbcfjbCMq3mvf4/MsUEAma02SVtjQv/4jdqH4TPQJzoc0YV6OIyLAMBVTlha/nop21rAw3Lu4N/AROKykQVSiC9AQ89uG/A9zw41qzajP9HeOYJuZ83HrFlX3OBh0nD0FQbnDYBQ8n+3gjO12pvxJwGy6LwvQF5Q+l3L2Grl9KAT+AJkR3PU3pGRmSgCbEm6iOjDqqkxOyQvOdzDzxVmPyCq;25:M//q8VopERHq1sUll8RfEnVAwKR52zY10HvbMVAQP4wEfJ/YeY81080ndUTZIgBsJGCwSmrnBFlJifYBL6inTRYdrUNX+O0exEr8qHX093Zot26zkVnV+jRIMYQRTzPeVMN6bvWAIm0zyQFJCfKFebobfgMqhK81fscpufUrf9/A95Xv6TA86xHPLZWMb8JtlDKC4alkGWuDC4x4j00IW+Run+GdCZSQxwffm+cxHy39bvZzUL1WjGRgw+RdzW2i/oqsaghGy8JALsy9XlJXg+VePHlG4Hgbfuea6EjGAieqI3kHjFekKy1zFkG6xUkFr7rwOmypHqd8Y1j3/Df8rA==;31:fRg9QO5ZAGSf4VNos90DYzyVP70/5BDGXeh2F8x4opTscZ7Fin3Wzxj161Evw94QtW02CKDRnsiNZkKid87m1lTKmvVM9dIPlHfNBgvPyz6n5Y5Am4d47SWO7FaSZMfQvsJMoavagxcuWfJzE9JheIs8p0m7YZQXnQQrJvUTjU1XkA2tn1bK/Fgjk/eWY+VZgNI1JawLQqLLexn4YzVv763Vz03oopYLWPtaininzwk=
+X-MS-TrafficTypeDiagnostic: SN6PR07MB4384:
+X-Microsoft-Exchange-Diagnostics: 1;SN6PR07MB4384;20:7/uCTBOhJN1fLn69YJnHD0EAoLNskWlEbMRSPXtd09NpwExaue8+1RVec9FmtxYC9KGA6Y5uxHHAwrHiheNQQCUz6IhIl9geK7g5uHXplnaCV25Onj4LJnL5gJ0DMecqg93vqojMLfI2P+cExX/WuDpNeKWCJZ91RtFpzF3whdoYWa0lYR5VPtv/nShaHbmyYpZcPNc1xUaKOxfgX7xByK34YtrJMIIFK3VMOD3rRGiu/cT7gRBfoDyM7woghK2IVC3i4UwDHutvTA1AcWPcDe6R61gpVJIa58rMPx+35Svfwb/D1EjlScZnZg4xWTo4GlNvY4IaEycWu+Bt88kPCih3djQQyXvfz8RVvif1bUuPGABm5/3CD0FJXl0SA6yxxqkBNIZPGZ8dMXCZgVNz8ckdMAaNcGqFABfU0o0mp1SCPvq1JgJh0LtPZThhP/sQYCUS050LLwTi8H4CENshdFFInkbijlqtz2l8LBLkRUr0WNxKteUTsX2bq4/XJSuDk2lLUo978FJ+Yn/GAVweztUIw7O0FC/bKgHNFXH/QpKHJ2NB6oo8yXotQ74j5uelAYtJeQA7aIKJKu2RShxeQZE7Kdd/iYwP5GXY1whRMmE=;4:6jgR6YuYD/E/9/AvstXIYiiYQu8H+mkOFPznKOFSESfc5lJXsz6vY3poa1au2sZR8yeoU9WA0xTIJNy+8TfNiIv7XwOgj+mauzN6ZCOUNkqYPU6t0WU+3BgxZcUXkdITJdMgNzYJA0hlxDG6yZsGN/EmCXaSBh8d/1yGLvfEvl396Y2gBYrQZWZ2TGWD2RtEfj237yUZAself77I1k/HqawRM9fqHVrEhhR9Rlbk7WELq+ctX1qUqMMNwb8HheJmadQq14tUU45g3s3LmIvjnK3E7Kn0+zCucYpvdho34qQDrfc2+fMhiOVw/EsvwjQK
+X-Microsoft-Antispam-PRVS: <SN6PR07MB4384B3EEDF3BCB541D415DB1E32B0@SN6PR07MB4384.namprd07.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:(228905959029699);
+X-MS-Exchange-SenderADCheck: 1
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3231311)(944501410)(52105095)(3002001)(93006095)(10201501046)(149027)(150027)(6041310)(20161123564045)(20161123562045)(20161123558120)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011)(7699016);SRVR:SN6PR07MB4384;BCL:0;PCL:0;RULEID:;SRVR:SN6PR07MB4384;
+X-Forefront-PRVS: 07459438AA
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(6069001)(7916004)(396003)(39850400004)(136003)(346002)(376002)(366004)(199004)(189003)(16586007)(33896004)(58126008)(6246003)(8676002)(50466002)(52116002)(81156014)(186003)(11346002)(76176011)(2906002)(68736007)(42882007)(316002)(4326008)(105586002)(66066001)(6496006)(6916009)(26005)(53936002)(106356001)(6486002)(486006)(8936002)(16526019)(81166006)(14444005)(386003)(446003)(9686003)(7736002)(229853002)(33656002)(23726003)(97736004)(76506005)(47776003)(72206003)(6116002)(1076002)(71446004)(33716001)(478600001)(25786009)(305945005)(956004)(476003)(5660300001)(3846002)(6666003)(18370500001);DIR:OUT;SFP:1101;SCL:1;SRVR:SN6PR07MB4384;H:localhost;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+Received-SPF: None (protection.outlook.com: cavium.com does not designate
+ permitted sender hosts)
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;SN6PR07MB4384;23:Fjg0sbMuC4hhoSKMMlumq6pj53M8lDGcHcMlsASOH?=
+ =?us-ascii?Q?k+FdIoPlendG4JzKZ+oNZWbC7FJaJaIvEg0xi1nvrNs4/F08yrvZn1VKwxi5?=
+ =?us-ascii?Q?e1k4XueDfA5u2Sa+Ngfz+V+800fV0e/US0Av3AxJeJiSTK03lI7MfrE7mvZS?=
+ =?us-ascii?Q?szfSQcHl1vQTA4KajSTHf0dOp0GTMMOMn7DO6IE7eTgJpTnmOPrMuQ/X+d5M?=
+ =?us-ascii?Q?to2khIbGHtBnwiDGpFahRu455lHF8rx+z5sXbWf1vv7eQSeugLfcdEGLO7mB?=
+ =?us-ascii?Q?if8HJ0z5QDUNbFHDkYJmwyTTIrV49ugVIrKOG/elnntk+teDvw5IYhmnm+5I?=
+ =?us-ascii?Q?xmpicPSgZjDXVOdMLr9UtjmqCdEoeqGR1i99Q0HTDjaGd9NMP2cK9x4lsCnt?=
+ =?us-ascii?Q?BVIB5vcRraFxOHi91ivFSjDeFw8DYFsdBOEHM6LQxP4luxUMWRnhu33qq5Ed?=
+ =?us-ascii?Q?N6/bvIIsWRbuCU3+tAhK59cfyT4cvbjzpmJ0m8sD6JqLbjBF+UGEioKHuJUj?=
+ =?us-ascii?Q?8EEYz/zpCJ5tUSPlRL4sPudm4I5HpbQeqb0qtwfEhGfEp+f1JLYtzjoYsTVQ?=
+ =?us-ascii?Q?0cDNP8d/mmaVO2kwcaP88f1vPaexXKDp+k86mJCE7oUi4KMJ7AGjdi0LyDV5?=
+ =?us-ascii?Q?TUlkYSohERCtzUEc9ypp82uoyCoWVeDuhUFQHOxWu+9cqnvhvqtHicPls8u4?=
+ =?us-ascii?Q?j1kfzcRigZxyh7/rlP/x9XUQthMNKWQN54yy5IUp3ofw8pmPNcYXk98rOBKO?=
+ =?us-ascii?Q?k/EK0ItKALvOb2mf8dK2qpAE4GWPrzWt78WoHpFF1ewrERmFwivVNQh1Zf4t?=
+ =?us-ascii?Q?bcnrh+N3YYdVdpgCpRj0CkF/aQuJ6ilnNE9igemfM3GJ0LRyk+txFKQF9PI5?=
+ =?us-ascii?Q?DdEDUrPRhE2/G/aviD2MK6RLTtukBM519wHe5ymNKBXAllNtixTp1BgaK/qo?=
+ =?us-ascii?Q?zQRzvd5vVeHSldhUuwwRsa8SF9GUYKI3f8mPwbMsdJK9xJJPm6gKETCXXQMC?=
+ =?us-ascii?Q?GNdz1wAR9ad7lgWN4Bfs1Ug8OwfAG32+bAHaiclC/ZiIdjjsPp2xhp5Z0OYW?=
+ =?us-ascii?Q?IhX5x5a5UaLOQyGZc6hxOAuuJGfOr+6SpmZ5qFcbenA0LPLZAVkdNe/3Ty52?=
+ =?us-ascii?Q?BYrV/wFI9cgJfTPgrRBwbjeANWJqoqvZRA8tVJX/kDiFxIn+9Cw8sbHpoTp3?=
+ =?us-ascii?Q?RRimNQyDQnk2hlNYEKP/6Bwom50MaRM+w3amwTpMNsydS3AViTLzN7D5LesO?=
+ =?us-ascii?Q?u4h4fzXW6/jZsP0j01IFRTEBCSiEShQW/js64a+7uRvDirw+p3K6cN2700fp?=
+ =?us-ascii?Q?JL/JIkchMSO/cLx1hKsQWr844Pw/Q1byjYNHtkTKzY0DtMkz66jO1N8RnN5u?=
+ =?us-ascii?Q?LkScJ/Fbh7B7T5li6dD1pWHRxE=3D?=
+X-Microsoft-Antispam-Message-Info: efTBcFc6kVjAIDdymz48dVQ6pUN3FtH10PE5OzCzgajbZ8RdJVWYmzadkBlw1bWGMvYEm8cPsRsGxLbLF9WKXFigu6NhWWsc3ZIMHDkXECFxMEQUHVCsic732fVS7qS5fv5lBUu0zWZETVNASQ76ytdES60LVypBXaWKtg0u/u/0i6olg9XMl7357gXgSkIVE0CeWhTedrY50YjgE8Sjf/MB6vVuHIjQ4CKQAbi1b/jZPx/srVfw9cZwQbIGgEDG0KfiVq7+L5jp5kXS6aLw6NsiO3yDiz2j4DX1xy0m3bfMEYhmDGJAQEoi6nPGqDnosqQycnPMjvBQ7RWStjEQkF+R+QMFHDMnKv9nAn82tKY=
+X-Microsoft-Exchange-Diagnostics: 1;SN6PR07MB4384;6:2fLozm7xpDdGXNlqzDlgttr4m+6ormnxwREgHlgpYx6OShTRsNapKD/Yyyd8nFk89OUPZfLVIlXqbg1hFR4yPt2eNZLMnvL997wUyqiGFg8NkZy2MmmX7hEiRZu87JJZhashlhy1WeXOiifU2cBW74nsdMx3t7pv0QniR64++EoVM2wMC900yMFzgg+rARyKnBONC8qh3IuZyGxPg2Mt9roTZ+c8rVaesZ/6qVGX7SQuvGboUzb8teDUgxV6NcOtyPkTmx8puY2VBUL6vDl3AqaI+zN6SO4CNNiB6QOGQ9sedAGkZSl9AIo9zs4tlTTXy/80N1TSPRkFGBRbu2ik7X+mVRwCGf+TIWFrmGtcVEfLo8PjM/JhWpfMO5qs/6AEEjDmr0VJGBiKX2BvHP7qBgIbZYbH86BI9AhECKamxU4HZqG5DHNhLhogF148enmwJYJ2CQdHRSghhhZnLfRBPA==;5:QzoYRPlDYVqycbYiI3WweNzckePVMTf62Am0eh3APJlujoNVtrBUTsR37utI9h4yu7SQoqoJSuYd37WOfXk0HIviIhOwJbKgPXrGCXOQcuEpn5d0ghwDu8bLwC6BeoZczyJjaSMjo24LiD5ACDHAVDOdoRk+80xW/q/QE6jQXfg=;7:t79ioCNI1GHiILpyrni7s30O9K/FPabjUGx8uiVS6F1JBpBEygumZikPFNdbgXVaXHXPgk8APoswt9nLTTRl4Pry3GIgzB5If5odRzniDDibyeF5P/BU8fDJG7ee4ZMXxdkcMVatnhDslrEROfUC83sR1urvKuX7UueDPnnnngAmxwKBVcVw/qkB5hO7hE+IMPTmI219RahzXOBvO2sTnEmVxUIeuVH0jcALDfoxlKq7difAS3pzSHuyoQQXPgie
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-OriginatorOrg: caviumnetworks.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Jul 2018 09:37:39.4360 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: cb59c5a8-020d-4f76-4cd9-08d5f2db6dfa
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 711e4ccf-2e9b-4bcf-a551-4094005b6194
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR07MB4384
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 26, 2018 at 11:29 AM, syzbot
-<syzbot+604f8271211546f5b3c7@syzkaller.appspotmail.com> wrote:
-> Hello,
->
-> syzbot found the following crash on:
->
-> HEAD commit:    dc66fe43b7eb rds: send: Fix dead code in rds_sendmsg
-> git tree:       net-next
-> console output: https://syzkaller.appspot.com/x/log.txt?x=127874c8400000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=f34ce142a9f5f0e8
-> dashboard link: https://syzkaller.appspot.com/bug?extid=604f8271211546f5b3c7
-> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
->
-> Unfortunately, I don't have any reproducer for this crash yet.
->
-> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+604f8271211546f5b3c7@syzkaller.appspotmail.com
->
-> possible deadlock in static_key_slow_incsd 0:0:1:0: [sda] Attached SCSI disk
-> MACsec IEEE 802.1AE
-> tun: Universal TUN/TAP device driver, 1.6
->
-> ============================================
-> WARNING: possible recursive locking detected
+On Thu, Jul 26, 2018 at 04:07:51PM +0800, Wei Wang wrote:
+> The existing BITMAP_LAST_WORD_MASK macro returns 0xffffffff if nbits is
+> 0. This patch changes the macro to return 0 when there is no bit needs to
+> be masked.
 
-+Tetsuo, perhaps this boot lockdep problem then disables lockdep for
-actual testing. I think lockdep should respect panic_on_warn.
+I think this is intentional behavour. Previous version did return ~0UL
+explicitly in this case. See patch 89c1e79eb3023 (linux/bitmap.h: improve
+BITMAP_{LAST,FIRST}_WORD_MASK) from Rasmus.
 
+Introducing conditional branch would affect performance. All existing
+code checks nbits for 0 before handling last word where needed
+explicitly. So I think we'd better change nothing here.
 
-> 4.18.0-rc6+ #141 Not tainted
-> --------------------------------------------
-> swapper/0/1 is trying to acquire lock:
-> (____ptrval____) (cpu_hotplug_lock.rw_sem){++++}, at:
-> static_key_slow_inc+0x12/0x30 kernel/jump_label.c:124
->
-> but task is already holding lock:
-> (____ptrval____) (cpu_hotplug_lock.rw_sem){++++}, at: get_online_cpus
-> include/linux/cpu.h:126 [inline]
-> (____ptrval____) (cpu_hotplug_lock.rw_sem){++++}, at: init_vqs+0xe1a/0x1520
-> drivers/net/virtio_net.c:2777
->
-> other info that might help us debug this:
->  Possible unsafe locking scenario:
->
->        CPU0
->        ----
->   lock(cpu_hotplug_lock.rw_sem);
->   lock(cpu_hotplug_lock.rw_sem);
->
->  *** DEADLOCK ***
->
->  May be due to missing lock nesting notation
->
-> 3 locks held by swapper/0/1:
->  #0: (____ptrval____) (&dev->mutex){....}, at: device_lock
-> include/linux/device.h:1134 [inline]
->  #0: (____ptrval____) (&dev->mutex){....}, at: __driver_attach+0x15f/0x2f0
-> drivers/base/dd.c:820
->  #1: (____ptrval____) (cpu_hotplug_lock.rw_sem){++++}, at: get_online_cpus
-> include/linux/cpu.h:126 [inline]
->  #1: (____ptrval____) (cpu_hotplug_lock.rw_sem){++++}, at:
-> init_vqs+0xe1a/0x1520 drivers/net/virtio_net.c:2777
->  #2: (____ptrval____) (xps_map_mutex){+.+.}, at:
-> __netif_set_xps_queue+0x243/0x23f0 net/core/dev.c:2278
->
-> stack backtrace:
-> CPU: 1 PID: 1 Comm: swapper/0 Not tainted 4.18.0-rc6+ #141
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-> Google 01/01/2011
-> Call Trace:
->  __dump_stack lib/dump_stack.c:77 [inline]
->  dump_stack+0x1c9/0x2b4 lib/dump_stack.c:113
->  print_deadlock_bug kernel/locking/lockdep.c:1765 [inline]
->  check_deadlock kernel/locking/lockdep.c:1809 [inline]
->  validate_chain kernel/locking/lockdep.c:2405 [inline]
->  __lock_acquire.cold.65+0x1fb/0x486 kernel/locking/lockdep.c:3435
->  lock_acquire+0x1e4/0x540 kernel/locking/lockdep.c:3924
->  percpu_down_read_preempt_disable include/linux/percpu-rwsem.h:36 [inline]
->  percpu_down_read include/linux/percpu-rwsem.h:59 [inline]
->  cpus_read_lock+0x43/0xa0 kernel/cpu.c:289
->  static_key_slow_inc+0x12/0x30 kernel/jump_label.c:124
->  __netif_set_xps_queue+0xaac/0x23f0 net/core/dev.c:2320
->  netif_set_xps_queue+0x26/0x30 net/core/dev.c:2455
->  virtnet_set_affinity+0x2ba/0x4b0 drivers/net/virtio_net.c:1944
->  init_vqs+0xe22/0x1520 drivers/net/virtio_net.c:2778
->  virtnet_probe+0x1092/0x2260 drivers/net/virtio_net.c:3016
->  virtio_dev_probe+0x592/0x942 drivers/virtio/virtio.c:245
->  really_probe drivers/base/dd.c:446 [inline]
->  driver_probe_device+0x6ad/0x970 drivers/base/dd.c:588
->  __driver_attach+0x28b/0x2f0 drivers/base/dd.c:822
->  bus_for_each_dev+0x15d/0x1f0 drivers/base/bus.c:311
->  driver_attach+0x3d/0x50 drivers/base/dd.c:841
->  bus_add_driver+0x4b2/0x600 drivers/base/bus.c:667
->  driver_register+0x1c8/0x320 drivers/base/driver.c:170
->  register_virtio_driver+0x79/0xd0 drivers/virtio/virtio.c:296
->  virtio_net_driver_init+0x8d/0xc9 drivers/net/virtio_net.c:3209
->  do_one_initcall+0x127/0x913 init/main.c:884
->  do_initcall_level init/main.c:952 [inline]
->  do_initcalls init/main.c:960 [inline]
->  do_basic_setup init/main.c:978 [inline]
->  kernel_init_freeable+0x49b/0x58e init/main.c:1135
->  kernel_init+0x11/0x1b3 init/main.c:1061
->  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:412
-> vcan: Virtual CAN interface driver
-> vxcan: Virtual CAN Tunnel driver
-> slcan: serial line CAN interface driver
-> slcan: 10 dynamic interface channels.
-> CAN device driver interface
-> enic: Cisco VIC Ethernet NIC Driver, ver 2.3.0.53
-> e100: Intel(R) PRO/100 Network Driver, 3.5.24-k2-NAPI
-> e100: Copyright(c) 1999-2006 Intel Corporation
-> e1000: Intel(R) PRO/1000 Network Driver - version 7.3.21-k8-NAPI
-> e1000: Copyright (c) 1999-2006 Intel Corporation.
-> e1000e: Intel(R) PRO/1000 Network Driver - 3.2.6-k
-> e1000e: Copyright(c) 1999 - 2015 Intel Corporation.
-> sky2: driver version 1.30
-> PPP generic driver version 2.4.2
-> PPP BSD Compression module registered
-> PPP Deflate Compression module registered
-> PPP MPPE Compression module registered
-> NET: Registered protocol family 24
-> PPTP driver version 0.8.5
-> mac80211_hwsim: initializing netlink
-> ieee80211 phy0: Selected rate control algorithm 'minstrel_ht'
-> ieee80211 phy1: Selected rate control algorithm 'minstrel_ht'
-> usbcore: registered new interface driver asix
-> usbcore: registered new interface driver ax88179_178a
-> usbcore: registered new interface driver cdc_ether
-> usbcore: registered new interface driver net1080
-> usbcore: registered new interface driver cdc_subset
-> usbcore: registered new interface driver zaurus
-> usbcore: registered new interface driver cdc_ncm
-> aoe: AoE v85 initialised.
-> ehci_hcd: USB 2.0 'Enhanced' Host Controller (EHCI) Driver
-> ehci-pci: EHCI PCI platform driver
-> ohci_hcd: USB 1.1 'Open' Host Controller (OHCI) Driver
-> ohci-pci: OHCI PCI platform driver
-> uhci_hcd: USB Universal Host Controller Interface driver
-> usbcore: registered new interface driver usblp
-> usbcore: registered new interface driver usb-storage
-> i8042: PNP: PS/2 Controller [PNP0303:KBD,PNP0f13:MOU] at 0x60,0x64 irq 1,12
-> i8042: Warning: Keylock active
-> serio: i8042 KBD port at 0x60,0x64 irq 1
-> serio: i8042 AUX port at 0x60,0x64 irq 12
-> mousedev: PS/2 mouse device common for all mice
-> rtc_cmos 00:00: RTC can wake from S4
-> rtc_cmos 00:00: registered as rtc0
-> rtc_cmos 00:00: alarms up to one day, 114 bytes nvram
-> i2c /dev entries driver
-> piix4_smbus 0000:00:01.3: SMBus base address uninitialized - upgrade BIOS or
-> use force_addr=0xaddr
-> i2c-parport-light: adapter type unspecified
-> usbcore: registered new interface driver RobotFuzz Open Source InterFace,
-> OSIF
-> usbcore: registered new interface driver i2c-tiny-usb
-> device-mapper: ioctl: 4.39.0-ioctl (2018-04-03) initialised:
-> dm-devel@redhat.com
-> device-mapper: raid: Loading target version 1.13.2
-> usbcore: registered new interface driver btusb
-> usnic_verbs: Cisco VIC (USNIC) Verbs Driver v1.0.3 (December 19, 2013)
-> usnic_verbs:usnic_uiom_init:585:
-> IOMMU required but not present or enabled.  USNIC QPs will not function w/o
-> enabling IOMMU
-> usnic_verbs:usnic_ib_init:649:
-> Unable to initalize umem with err -1
-> iscsi: registered transport (iser)
-> OPA Virtual Network Driver - v1.0
-> hidraw: raw HID events driver (C) Jiri Kosina
-> usbcore: registered new interface driver usbhid
-> usbhid: USB HID core driver
-> NET: Registered protocol family 40
-> ashmem: initialized
-> NET: Registered protocol family 26
-> Mirror/redirect action on
-> Simple TC action Loaded
-> netem: version 1.3
-> u32 classifier
->     Actions configured
-> nf_conntrack_irc: failed to register helpers
-> nf_conntrack_sane: failed to register helpers
-> nf_conntrack_sip: failed to register helpers
-> xt_time: kernel timezone is -0000
-> IPVS: Registered protocols (TCP, UDP, SCTP, AH, ESP)
-> IPVS: Connection hash table configured (size=4096, memory=64Kbytes)
-> IPVS: ipvs loaded.
-> IPVS: [rr] scheduler registered.
-> IPVS: [wrr] scheduler registered.
-> IPVS: [lc] scheduler registered.
-> IPVS: [wlc] scheduler registered.
-> IPVS: [fo] scheduler registered.
-> IPVS: [ovf] scheduler registered.
-> IPVS: [lblc] scheduler registered.
-> IPVS: [lblcr] scheduler registered.
-> IPVS: [dh] scheduler registered.
-> IPVS: [sh] scheduler registered.
-> IPVS: [mh] scheduler registered.
-> IPVS: [sed] scheduler registered.
-> IPVS: [nq] scheduler registered.
-> IPVS: ftp: loaded support on port[0] = 21
-> IPVS: [sip] pe registered.
-> ipip: IPv4 and MPLS over IPv4 tunneling driver
-> gre: GRE over IPv4 demultiplexor driver
-> ip_gre: GRE over IPv4 tunneling driver
-> IPv4 over IPsec tunneling driver
-> ipt_CLUSTERIP: ClusterIP Version 0.8 loaded successfully
-> Initializing XFRM netlink socket
-> NET: Registered protocol family 10
-> Segment Routing with IPv6
-> mip6: Mobile IPv6
-> sit: IPv6, IPv4 and MPLS over IPv4 tunneling driver
-> ip6_gre: GRE over IPv6 tunneling driver
-> bpfilter: Loaded bpfilter_umh pid 2080
-> NET: Registered protocol family 15
-> Bridge firewalling registered
-> can: controller area network core (rev 20170425 abi 9)
-> NET: Registered protocol family 29
-> can: raw protocol (rev 20170425)
-> can: broadcast manager protocol (rev 20170425 t)
-> can: netlink gateway (rev 20170425) max_hops=1
-> Bluetooth: RFCOMM TTY layer initialized
-> Bluetooth: RFCOMM socket layer initialized
-> Bluetooth: RFCOMM ver 1.11
-> Bluetooth: BNEP (Ethernet Emulation) ver 1.3
-> Bluetooth: BNEP filters: protocol multicast
-> Bluetooth: BNEP socket layer initialized
-> Bluetooth: HIDP (Human Interface Emulation) ver 1.2
-> Bluetooth: HIDP socket layer initialized
-> RPC: Registered rdma transport module.
-> RPC: Registered rdma backchannel transport module.
-> NET: Registered protocol family 41
-> lec:lane_module_init: lec.c: initialized
-> mpoa:atm_mpoa_init: mpc.c: initialized
-> l2tp_core: L2TP core driver, V2.0
-> l2tp_ppp: PPPoL2TP kernel driver, V2.0
-> 8021q: 802.1Q VLAN Support v1.8
-> input: AT Translated Set 2 keyboard as
-> /devices/platform/i8042/serio0/input/input2
-> DCCP: Activated CCID 2 (TCP-like)
-> DCCP: Activated CCID 3 (TCP-Friendly Rate Control)
-> sctp: Hash tables configured (bind 64/64)
-> tipc: Activated (version 2.0.0)
-> NET: Registered protocol family 30
-> tipc: Started in single node mode
-> NET: Registered protocol family 43
-> 9pnet: Installing 9P2000 support
-> NET: Registered protocol family 36
-> Key type dns_resolver registered
-> Key type ceph registered
-> libceph: loaded (mon/osd proto 15/24)
-> openvswitch: Open vSwitch switching datapath
-> mpls_gso: MPLS GSO support
-> start plist test
-> end plist test
-> AVX2 version of gcm_enc/dec engaged.
-> AES CTR mode by8 optimization enabled
-> sched_clock: Marking stable (4559438359, 0)->(6126385605, -1566947246)
-> registered taskstats version 1
-> Loading compiled-in X.509 certificates
-> zswap: default zpool zbud not available
-> zswap: pool creation failed
-> Btrfs loaded, crc32c=crc32c-intel
-> Key type big_key registered
-> Key type encrypted registered
->   Magic number: 10:317:168
-> console [netcon0] enabled
-> netconsole: network logging started
-> gtp: GTP module loaded (pdp ctx size 104 bytes)
-> rdma_rxe: loaded
-> cfg80211: Loading compiled-in X.509 certificates for regulatory database
-> cfg80211: Loaded X.509 cert 'sforshee: 00b28ddf47aef9cea7'
-> platform regulatory.0: Direct firmware load for regulatory.db failed with
-> error -2
-> cfg80211: failed to load regulatory.db
-> ALSA device list:
->   #0: Dummy 1
->   #1: Loopback 1
->   #2: Virtual MIDI Card 1
-> input: ImExPS/2 Generic Explorer Mouse as
-> /devices/platform/i8042/serio1/input/input4
-> md: Waiting for all devices to be available before autodetect
-> md: If you don't use raid, use raid=noautodetect
-> md: Autodetecting RAID arrays.
-> md: autorun ...
-> md: ... autorun DONE.
-> EXT4-fs (sda1): mounted filesystem with ordered data mode. Opts: (null)
-> VFS: Mounted root (ext4 filesystem) readonly on device 8:1.
-> devtmpfs: mounted
-> Freeing unused kernel memory: 3900K
-> Kernel memory protection disabled.
-> SELinux:  Disabled at runtime.
-> SELinux:  Unregistering netfilter hooks
-> audit: type=1404 audit(1532588961.277:2): enforcing=0 old_enforcing=0
-> auid=4294967295 ses=4294967295 enabled=0 old-enabled=1 lsm=selinux res=1
-> stty (2166) used greatest stack depth: 19664 bytes left
-> EXT4-fs (sda1): re-mounted. Opts: (null)
-> logsave (3615) used greatest stack depth: 17632 bytes left
-> random: dd: uninitialized urandom read (512 bytes read)
-> ==================================================================
-> BUG: KASAN: slab-out-of-bounds in virtnet_receive
-> drivers/net/virtio_net.c:1356 [inline]
+Yury
 
-+virtio maintainers for this one
-Probably something very recent.
-
-> BUG: KASAN: slab-out-of-bounds in virtnet_poll+0x111a/0x1226
-> drivers/net/virtio_net.c:1421
-> Read of size 8 at addr ffff8801cee08ff0 by task ip/3969
->
-> CPU: 0 PID: 3969 Comm: ip Not tainted 4.18.0-rc6+ #141
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-> Google 01/01/2011
-> Call Trace:
->  <IRQ>
->  __dump_stack lib/dump_stack.c:77 [inline]
->  dump_stack+0x1c9/0x2b4 lib/dump_stack.c:113
->  print_address_description+0x6c/0x20b mm/kasan/report.c:256
->  kasan_report_error mm/kasan/report.c:354 [inline]
->  kasan_report.cold.7+0x242/0x2fe mm/kasan/report.c:412
->  __asan_report_load8_noabort+0x14/0x20 mm/kasan/report.c:433
->  virtnet_receive drivers/net/virtio_net.c:1356 [inline]
->  virtnet_poll+0x111a/0x1226 drivers/net/virtio_net.c:1421
->  napi_poll net/core/dev.c:6214 [inline]
->  net_rx_action+0x7a5/0x1920 net/core/dev.c:6280
->  __do_softirq+0x2e8/0xb17 kernel/softirq.c:292
->  do_softirq_own_stack+0x2a/0x40 arch/x86/entry/entry_64.S:1046
->  </IRQ>
->  do_softirq.part.18+0x155/0x1a0 kernel/softirq.c:336
->  do_softirq arch/x86/include/asm/preempt.h:23 [inline]
->  __local_bh_enable_ip+0x1ec/0x230 kernel/softirq.c:189
->  local_bh_enable include/linux/bottom_half.h:32 [inline]
->  virtnet_napi_enable+0x8c/0xb0 drivers/net/virtio_net.c:1264
->  virtnet_open+0x16d/0x4d0 drivers/net/virtio_net.c:1464
->  __dev_open+0x26d/0x410 net/core/dev.c:1392
->  __dev_change_flags+0x739/0x9c0 net/core/dev.c:7434
->  dev_change_flags+0x89/0x150 net/core/dev.c:7503
->  do_setlink+0xb16/0x3dd0 net/core/rtnetlink.c:2416
->  rtnl_newlink+0x138d/0x1d60 net/core/rtnetlink.c:3029
->  rtnetlink_rcv_msg+0x46e/0xc30 net/core/rtnetlink.c:4705
->  netlink_rcv_skb+0x172/0x440 net/netlink/af_netlink.c:2447
->  rtnetlink_rcv+0x1c/0x20 net/core/rtnetlink.c:4723
->  netlink_unicast_kernel net/netlink/af_netlink.c:1310 [inline]
->  netlink_unicast+0x5a0/0x760 net/netlink/af_netlink.c:1336
->  netlink_sendmsg+0xa18/0xfc0 net/netlink/af_netlink.c:1901
->  sock_sendmsg_nosec net/socket.c:641 [inline]
->  sock_sendmsg+0xd5/0x120 net/socket.c:651
->  ___sys_sendmsg+0x7fd/0x930 net/socket.c:2125
->  __sys_sendmsg+0x11d/0x290 net/socket.c:2163
->  __do_sys_sendmsg net/socket.c:2172 [inline]
->  __se_sys_sendmsg net/socket.c:2170 [inline]
->  __x64_sys_sendmsg+0x78/0xb0 net/socket.c:2170
->  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
->  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> RIP: 0033:0x7f318d594320
-> Code: 02 48 83 c8 ff eb 8d 48 8b 05 14 7b 2a 00 f7 da 64 89 10 48 83 c8 ff
-> eb c9 90 83 3d d5 d2 2a 00 00 75 10 b8 2e 00 00 00 0f 05 <48> 3d 01 f0 ff ff
-> 73 31 c3 48 83 ec 08 e8 5e ba 00 00 48 89 04 24
-> RSP: 002b:00007ffd985d8f38 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
-> RAX: ffffffffffffffda RBX: 00007ffd985dd030 RCX: 00007f318d594320
-> RDX: 0000000000000000 RSI: 00007ffd985d8f70 RDI: 0000000000000003
-> RBP: 00007ffd985d8f70 R08: 0000000000000000 R09: 000000000000000f
-> R10: 0000000000000000 R11: 0000000000000246 R12: 000000005b5973aa
-> R13: 0000000000000000 R14: 00000000006395c0 R15: 00007ffd985dd808
->
-> Allocated by task 1:
->  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
->  set_track mm/kasan/kasan.c:460 [inline]
->  kasan_kmalloc+0xc4/0xe0 mm/kasan/kasan.c:553
->  __do_kmalloc mm/slab.c:3718 [inline]
->  __kmalloc+0x14e/0x760 mm/slab.c:3727
->  kmalloc_array include/linux/slab.h:635 [inline]
->  kcalloc include/linux/slab.h:646 [inline]
->  virtnet_alloc_queues drivers/net/virtio_net.c:2731 [inline]
->  init_vqs+0x127/0x1520 drivers/net/virtio_net.c:2769
->  virtnet_probe+0x1092/0x2260 drivers/net/virtio_net.c:3016
->  virtio_dev_probe+0x592/0x942 drivers/virtio/virtio.c:245
->  really_probe drivers/base/dd.c:446 [inline]
->  driver_probe_device+0x6ad/0x970 drivers/base/dd.c:588
->  __driver_attach+0x28b/0x2f0 drivers/base/dd.c:822
->  bus_for_each_dev+0x15d/0x1f0 drivers/base/bus.c:311
->  driver_attach+0x3d/0x50 drivers/base/dd.c:841
->  bus_add_driver+0x4b2/0x600 drivers/base/bus.c:667
->  driver_register+0x1c8/0x320 drivers/base/driver.c:170
->  register_virtio_driver+0x79/0xd0 drivers/virtio/virtio.c:296
->  virtio_net_driver_init+0x8d/0xc9 drivers/net/virtio_net.c:3209
->  do_one_initcall+0x127/0x913 init/main.c:884
->  do_initcall_level init/main.c:952 [inline]
->  do_initcalls init/main.c:960 [inline]
->  do_basic_setup init/main.c:978 [inline]
->  kernel_init_freeable+0x49b/0x58e init/main.c:1135
->  kernel_init+0x11/0x1b3 init/main.c:1061
->  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:412
->
-> Freed by task 0:
-> (stack is not available)
->
-> The buggy address belongs to the object at ffff8801cee08500
->  which belongs to the cache kmalloc-4096 of size 4096
-> The buggy address is located 2800 bytes inside of
->  4096-byte region [ffff8801cee08500, ffff8801cee09500)
-> The buggy address belongs to the page:
-> page:ffffea00073b8200 count:1 mapcount:0 mapping:ffff8801dac00dc0 index:0x0
-> compound_mapcount: 0
-> flags: 0x2fffc0000008100(slab|head)
-> raw: 02fffc0000008100 ffffea00073b7d88 ffffea00073b8288 ffff8801dac00dc0
-> raw: 0000000000000000 ffff8801cee08500 0000000100000001 0000000000000000
-> page dumped because: kasan: bad access detected
->
-> Memory state around the buggy address:
->  ffff8801cee08e80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
->  ffff8801cee08f00: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
->>
->> ffff8801cee08f80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
->
->                                                              ^
->  ffff8801cee09000: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
->  ffff8801cee09080: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-> ==================================================================
->
->
+> Signed-off-by: Wei Wang <wei.w.wang@intel.com>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+> Cc: Yury Norov <ynorov@caviumnetworks.com>
 > ---
-> This bug is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
->
-> syzbot will keep track of this bug report. See:
-> https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with
-> syzbot.
->
+>  include/linux/bitmap.h | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
+> 
+> diff --git a/include/linux/bitmap.h b/include/linux/bitmap.h
+> index 1ee46f4..12af3d7 100644
+> --- a/include/linux/bitmap.h
+> +++ b/include/linux/bitmap.h
+> @@ -194,7 +194,10 @@ extern int bitmap_print_to_pagebuf(bool list, char *buf,
+>                                    const unsigned long *maskp, int nmaskbits);
+> 
+>  #define BITMAP_FIRST_WORD_MASK(start) (~0UL << ((start) & (BITS_PER_LONG - 1)))
+> -#define BITMAP_LAST_WORD_MASK(nbits) (~0UL >> (-(nbits) & (BITS_PER_LONG - 1)))
+> +#define BITMAP_LAST_WORD_MASK(nbits)                           \
+> +(                                                              \
+> +       nbits ? (~0UL >> (-(nbits) & (BITS_PER_LONG - 1))) : 0  \
+> +)
+> 
+>  #define small_const_nbits(nbits) \
+>         (__builtin_constant_p(nbits) && (nbits) <= BITS_PER_LONG)
 > --
-> You received this message because you are subscribed to the Google Groups
-> "syzkaller-bugs" group.
-> To unsubscribe from this group and stop receiving emails from it, send an
-> email to syzkaller-bugs+unsubscribe@googlegroups.com.
-> To view this discussion on the web visit
-> https://groups.google.com/d/msgid/syzkaller-bugs/000000000000352dc20571e3a0d8%40google.com.
-> For more options, visit https://groups.google.com/d/optout.
+> 2.7.4
