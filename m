@@ -6,67 +6,73 @@ X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	T_DKIMWL_WL_HIGH,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28797C6778F
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 02:32:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07427C6778F
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 02:33:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BB6F520671
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 02:32:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 85A0120671
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 02:33:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=arista.com header.i=@arista.com header.b="cTovwWWm"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BB6F520671
+	dkim=pass (2048-bit key) header.d=arista.com header.i=@arista.com header.b="aYc3l1nq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 85A0120671
 Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=arista.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729340AbeGZDqe (ORCPT
+        id S1729157AbeGZDqc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 23:46:34 -0400
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:44817 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729038AbeGZDqe (ORCPT
+        Wed, 25 Jul 2018 23:46:32 -0400
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:45193 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729038AbeGZDqa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Jul 2018 23:46:34 -0400
-Received: by mail-ed1-f65.google.com with SMTP id f23-v6so324046edr.11
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Jul 2018 19:32:00 -0700 (PDT)
+        Wed, 25 Jul 2018 23:46:30 -0400
+Received: by mail-ed1-f68.google.com with SMTP id s16-v6so324232edq.12
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Jul 2018 19:31:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=arista.com; s=googlenew;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=XhoXMH7Yc+8ti6nLDpEVZ8/X4ueeuqbAkcluI8q7UX0=;
-        b=cTovwWWmTmHRDbP/wcFaazUNfntenzKIJEiKv/MaCnuIyjQLwmA0gray2hzf8WZyEp
-         lHhLqf1zZLqV4qLG/vZN48zsUeJ2qDvrCUjU1pTha/Q6kfDKEOFXgArLc+9TcjT/gLwX
-         HnvEWS9sZQH/mEg9poI3GoGtnMrZ48g+tc5QkSOBEGicUI54UkVxhohRnjxc5tVlcwhg
-         Y4juCcq6idSlGWn1pOHh/YPrFWCz5jimDLOxl076gAyXpOrwcqUfnAxDLJWo3C/LN7QM
-         Svzc7d7vvJtG0kySm/oXSTtkPOQd+h5j9o0A/XUMQkNA4UbBJEtr936JGo7c1ZTNpbMt
-         vKNA==
+        bh=wiZ8aVoT42kpmxdAcgdYsgiNgGLj0+jKQc9+v1tE0hs=;
+        b=aYc3l1nq2B89lJ0VQgRmhz43+FXp3oLS+dumJCPLhaQX+E4QWnAkHFblEiOhq47oHB
+         tq7gyw/RliBToKg/7YdTX8yu0qQZFFn/WMQMeSn6dlOrga4aFW8GjQ1dpXwaoLMb37o/
+         RFJOiSFzCwXYp+rQY6unvt1kzqjEW2rn8KrQjNaiHyQjZ9uY9kKOFVb5U9H8jE8l5BpV
+         xAzU84MWtHV71jco1wwv3SM+zBQBaE/8IlWRSY1LD/MDWUWatAkVraksBgt9g78vRGd6
+         kF0JwAobCKKpz+7zctXrEKuz0+vJYcmuX8v6uaSnU77gNk34mT8cqefDsDH1tTSKGys3
+         kmHQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=XhoXMH7Yc+8ti6nLDpEVZ8/X4ueeuqbAkcluI8q7UX0=;
-        b=rzH4b64tMpib+mc6Pfj/Lno/p0EexTfqXJzPo3p2k/fM7HTih9rDalwjLyjIs0uycW
-         J2f4huJvVZKaqIm+QA0PMCdBX2YbDQhBYXt8VXf77H1Bqxc8qniBa04mybgCLTajWrD5
-         xhRAJbRffL/pCn0dIFiq7gC24+SV+wE6Ko2R1DVyvY5Tte9jl2zhCNWUEYPDFEwl66lM
-         Q0t8BXqaE2WnvfNMKMCql3+zknGbWOVwQY85+FJalVF9Aih5I0iruznagnc8Y5zTFNxE
-         QYpANC3yg6WTSqOdNuXy8vZ3EZQK1u0lz3xaQ/fUeP9+ufPAWaNj7rPqgrZ1iTupCjtm
-         DenQ==
-X-Gm-Message-State: AOUpUlE1uoT9KQQdE+oONDM3qBYkeUQ3xZ+H+fL91O1VBQNfns0yt8Zy
-        wAAyCAwvXk9e6xV0pa2H7+OACPPfh60=
-X-Google-Smtp-Source: AAOMgpdYDeAFVDdquu//D7WoghhiieG+zFq64FZw32oJGiFDTYaUV1sMvjEEcQHavURySQqbducQCg==
-X-Received: by 2002:a50:eacb:: with SMTP id u11-v6mr502663edp.7.1532572319868;
-        Wed, 25 Jul 2018 19:31:59 -0700 (PDT)
+        bh=wiZ8aVoT42kpmxdAcgdYsgiNgGLj0+jKQc9+v1tE0hs=;
+        b=qw6r0abWC+wWENxv+dGOESrJxVeUAaKUGjS4k1PiSJaj4o+JhBEy+kuMNtcDjAPgHs
+         riX80gB4klYCsYVrdlkDI6SF0nF0fy7PHefiZpgwP4DA0oqtzdj/w2mEudowb45NCkO6
+         bSrUZXGAK+KSxEr92ByXVN5yQ2S0ju7vc/dhP1RQHYwDJ2DEgdl+fUze85FG9GNU9+7X
+         R+oNiquHQrmaGIBLqu6FyjK+BESIv0b5mYrILAl0F5MjE3jRvw1oGbYGBztWs/Kj1E8L
+         YA54i/xv5cQUM2HF27KwKs7SCAZe+CT7dzbIzA5nNk2Kz9y11uamRhBV2dh1y7e2I3lh
+         RNTQ==
+X-Gm-Message-State: AOUpUlHu3R90HroplnjckEjXsyO5MPuW6sr/sTj0JFpqI3S4lxM1ksRQ
+        srMRM7wb6iFE2rVvf6i5vmu3CWzmo18=
+X-Google-Smtp-Source: AAOMgpdC0OcbhN5cSW1WNQerxn+CdjQUh59rNs+gSv/7q722UiW23CCjlCm53g5Vh5D24aoWlQmlkA==
+X-Received: by 2002:aa7:c6c2:: with SMTP id b2-v6mr463393eds.302.1532572314807;
+        Wed, 25 Jul 2018 19:31:54 -0700 (PDT)
 Received: from dhcp.ire.aristanetworks.com ([217.173.96.166])
-        by smtp.gmail.com with ESMTPSA id x13-v6sm241024edx.17.2018.07.25.19.31.58
+        by smtp.gmail.com with ESMTPSA id x13-v6sm241024edx.17.2018.07.25.19.31.53
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 25 Jul 2018 19:31:59 -0700 (PDT)
+        Wed, 25 Jul 2018 19:31:54 -0700 (PDT)
 From:   Dmitry Safonov <dima@arista.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     Dmitry Safonov <dima@arista.com>,
         "David S. Miller" <davem@davemloft.net>,
         Herbert Xu <herbert@gondor.apana.org.au>,
         Steffen Klassert <steffen.klassert@secunet.com>,
-        Dmitry Safonov <0x7f454c46@gmail.com>, netdev@vger.kernel.org
-Subject: [PATCH 12/18] xfrm: Add compat support for xfrm_userpolicy_info messages
-Date:   Thu, 26 Jul 2018 03:31:38 +0100
-Message-Id: <20180726023144.31066-13-dima@arista.com>
+        Dmitry Safonov <0x7f454c46@gmail.com>, netdev@vger.kernel.org,
+        Eric Paris <eparis@redhat.com>,
+        Florian Westphal <fw@strlen.de>,
+        Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
+        Paul Moore <paul@paul-moore.com>, coreteam@netfilter.org,
+        linux-audit@redhat.com, netfilter-devel@vger.kernel.org
+Subject: [PATCH 07/18] netlink: Pass groups pointer to .bind()
+Date:   Thu, 26 Jul 2018 03:31:33 +0100
+Message-Id: <20180726023144.31066-8-dima@arista.com>
 X-Mailer: git-send-email 2.13.6
 In-Reply-To: <20180726023144.31066-1-dima@arista.com>
 References: <20180726023144.31066-1-dima@arista.com>
@@ -75,191 +81,322 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Parse userpolicy messages sent by userspace according to in_compat_syscall().
-Applications that used native bind() syscall are in XFRMNLGRP_POLICY, so
-send there xfrm_usersa_info messages (with 64-bit ABI). Compatible
-applications are added to kernel-hidden XFRMNLGRP_COMPAT_POLICY group, so
-send there xfrm_usersa_info messages_packed (with 32-bit ABI)
+Netlink messages sent by xfrm differ in size between 64-bit native and
+32-bit compatible applications. To know which UABI to use to send the
+message from kernel, I'll use the type of bind() syscall.
+Xfrm will have hidden from userspace kernel-only groups for compatible
+applications.
+So, add pointer to groups to netlink_bind().
+With later patches xfrm will set a proper compat group for netlink
+socket during bind().
 
 Cc: "David S. Miller" <davem@davemloft.net>
+Cc: Eric Paris <eparis@redhat.com>
+Cc: Florian Westphal <fw@strlen.de>
 Cc: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>
+Cc: Pablo Neira Ayuso <pablo@netfilter.org>
+Cc: Paul Moore <paul@paul-moore.com>
 Cc: Steffen Klassert <steffen.klassert@secunet.com>
+Cc: coreteam@netfilter.org
+Cc: linux-audit@redhat.com
 Cc: netdev@vger.kernel.org
+Cc: netfilter-devel@vger.kernel.org
 Signed-off-by: Dmitry Safonov <dima@arista.com>
 ---
- net/xfrm/xfrm_user.c | 73 +++++++++++++++++++++++++++++++++++++++++-----------
- 1 file changed, 58 insertions(+), 15 deletions(-)
+ include/linux/netlink.h   |  2 +-
+ kernel/audit.c            |  2 +-
+ net/core/rtnetlink.c      | 14 ++++++--------
+ net/core/sock_diag.c      | 25 ++++++++++++-------------
+ net/netfilter/nfnetlink.c | 24 ++++++++++++++----------
+ net/netlink/af_netlink.c  | 27 ++++++++++-----------------
+ net/netlink/af_netlink.h  |  4 ++--
+ net/netlink/genetlink.c   | 26 ++++++++++++++++++--------
+ 8 files changed, 64 insertions(+), 60 deletions(-)
 
-diff --git a/net/xfrm/xfrm_user.c b/net/xfrm/xfrm_user.c
-index ca1a14f45cf7..df792a3be8f2 100644
---- a/net/xfrm/xfrm_user.c
-+++ b/net/xfrm/xfrm_user.c
-@@ -1630,9 +1630,9 @@ static void copy_from_user_policy(struct xfrm_policy *xp,
- 	/* XXX xp->share = p->share; */
+diff --git a/include/linux/netlink.h b/include/linux/netlink.h
+index f3075d6c7e82..19202648e04a 100644
+--- a/include/linux/netlink.h
++++ b/include/linux/netlink.h
+@@ -46,7 +46,7 @@ struct netlink_kernel_cfg {
+ 	unsigned int	flags;
+ 	void		(*input)(struct sk_buff *skb);
+ 	struct mutex	*cb_mutex;
+-	int		(*bind)(struct net *net, int group);
++	int		(*bind)(struct net *net, unsigned long *groups);
+ 	void		(*unbind)(struct net *net, int group);
+ 	bool		(*compare)(struct net *net, struct sock *sk);
+ };
+diff --git a/kernel/audit.c b/kernel/audit.c
+index e7478cb58079..87ca0214bcf2 100644
+--- a/kernel/audit.c
++++ b/kernel/audit.c
+@@ -1523,7 +1523,7 @@ static void audit_receive(struct sk_buff  *skb)
  }
  
--static void copy_to_user_policy(struct xfrm_policy *xp, struct xfrm_userpolicy_info *p, int dir)
-+static void __copy_to_user_policy(struct xfrm_policy *xp,
-+		struct xfrm_userpolicy_info_packed *p, int dir)
+ /* Run custom bind function on netlink socket group connect or bind requests. */
+-static int audit_bind(struct net *net, int group)
++static int audit_bind(struct net *net, unsigned long *groups)
  {
--	memset(p, 0, sizeof(*p));
- 	memcpy(&p->sel, &xp->selector, sizeof(p->sel));
- 	memcpy(&p->lft, &xp->lft, sizeof(p->lft));
- 	memcpy(&p->curlft, &xp->curlft, sizeof(p->curlft));
-@@ -1645,6 +1645,20 @@ static void copy_to_user_policy(struct xfrm_policy *xp, struct xfrm_userpolicy_i
- 	p->share = XFRM_SHARE_ANY; /* XXX xp->share */
+ 	if (!capable(CAP_AUDIT_READ))
+ 		return -EPERM;
+diff --git a/net/core/rtnetlink.c b/net/core/rtnetlink.c
+index e3f743c141b3..0465e692ae32 100644
+--- a/net/core/rtnetlink.c
++++ b/net/core/rtnetlink.c
+@@ -4683,15 +4683,13 @@ static void rtnetlink_rcv(struct sk_buff *skb)
+ 	netlink_rcv_skb(skb, &rtnetlink_rcv_msg);
  }
  
-+static void copy_to_user_policy(struct xfrm_policy *xp,
-+		struct xfrm_userpolicy_info *p, int dir)
-+{
-+	memset(p, 0, sizeof(*p));
-+	__copy_to_user_policy(xp, (struct xfrm_userpolicy_info_packed *)p, dir);
-+}
-+
-+static void copy_to_user_policy_compat(struct xfrm_policy *xp,
-+		struct xfrm_userpolicy_info_packed *p, int dir)
-+{
-+	memset(p, 0, sizeof(*p));
-+	__copy_to_user_policy(xp, p, dir);
-+}
-+
- static struct xfrm_policy *xfrm_policy_construct(struct net *net,
- 		struct xfrm_userpolicy_info_packed *p,
- 		struct nlattr **attrs, int *errp)
-@@ -1795,19 +1809,26 @@ static inline int copy_to_user_policy_type(u8 type, struct sk_buff *skb)
- static int dump_one_policy(struct xfrm_policy *xp, int dir, int count, void *ptr)
+-static int rtnetlink_bind(struct net *net, int group)
++static int rtnetlink_bind(struct net *net, unsigned long *groups)
  {
- 	struct xfrm_dump_info *sp = ptr;
--	struct xfrm_userpolicy_info *p;
- 	struct sk_buff *in_skb = sp->in_skb;
- 	struct sk_buff *skb = sp->out_skb;
- 	struct nlmsghdr *nlh;
-+	size_t msg_len;
- 	int err;
- 
-+	if (sp->compat_dump)
-+		msg_len = sizeof(struct xfrm_userpolicy_info_packed);
-+	else
-+		msg_len = sizeof(struct xfrm_userpolicy_info);
- 	nlh = nlmsg_put(skb, NETLINK_CB(in_skb).portid, sp->nlmsg_seq,
--			XFRM_MSG_NEWPOLICY, sizeof(*p), sp->nlmsg_flags);
-+			XFRM_MSG_NEWPOLICY, msg_len, sp->nlmsg_flags);
- 	if (nlh == NULL)
- 		return -EMSGSIZE;
- 
--	p = nlmsg_data(nlh);
--	copy_to_user_policy(xp, p, dir);
-+	if (sp->compat_dump)
-+		copy_to_user_policy_compat(xp, nlmsg_data(nlh), dir);
-+	else
-+		copy_to_user_policy(xp, nlmsg_data(nlh), dir);
+-	switch (group) {
+-	case RTNLGRP_IPV4_MROUTE_R:
+-	case RTNLGRP_IPV6_MROUTE_R:
+-		if (!ns_capable(net->user_ns, CAP_NET_ADMIN))
+-			return -EPERM;
+-		break;
+-	}
++	unsigned long mroute_r;
 +
- 	err = copy_to_user_tmpl(xp, skb);
- 	if (!err)
- 		err = copy_to_user_sec_ctx(xp, skb);
-@@ -1852,6 +1873,7 @@ static int xfrm_dump_policy(struct sk_buff *skb, struct netlink_callback *cb)
- 	info.out_skb = skb;
- 	info.nlmsg_seq = cb->nlh->nlmsg_seq;
- 	info.nlmsg_flags = NLM_F_MULTI;
-+	info.compat_dump = in_compat_syscall();
- 
- 	(void) xfrm_policy_walk(net, walk, dump_one_policy, &info);
- 
-@@ -1874,6 +1896,7 @@ static struct sk_buff *xfrm_policy_netlink(struct sk_buff *in_skb,
- 	info.out_skb = skb;
- 	info.nlmsg_seq = seq;
- 	info.nlmsg_flags = 0;
-+	info.compat_dump = in_compat_syscall();
- 
- 	err = dump_one_policy(xp, dir, 0, &info);
- 	if (err) {
-@@ -3184,18 +3207,24 @@ static int xfrm_exp_policy_notify(struct xfrm_policy *xp, int dir, const struct
- 	return xfrm_nlmsg_multicast(net, skb, 0, XFRMNLGRP_EXPIRE);
++	mroute_r = 1UL << RTNLGRP_IPV4_MROUTE_R | 1UL << RTNLGRP_IPV6_MROUTE_R;
++	if ((*groups & mroute_r) && !ns_capable(net->user_ns, CAP_NET_ADMIN))
++		return -EPERM;
+ 	return 0;
  }
  
--static int xfrm_notify_policy(struct xfrm_policy *xp, int dir, const struct km_event *c)
-+static int __xfrm_notify_policy(struct xfrm_policy *xp, int dir,
-+		const struct km_event *c, bool compat)
+diff --git a/net/core/sock_diag.c b/net/core/sock_diag.c
+index c37b5be7c5e4..befa6759f2ad 100644
+--- a/net/core/sock_diag.c
++++ b/net/core/sock_diag.c
+@@ -273,20 +273,19 @@ static void sock_diag_rcv(struct sk_buff *skb)
+ 	mutex_unlock(&sock_diag_mutex);
+ }
+ 
+-static int sock_diag_bind(struct net *net, int group)
++static int sock_diag_bind(struct net *net, unsigned long *groups)
  {
- 	unsigned int len = nla_total_size(sizeof(struct xfrm_user_tmpl) * xp->xfrm_nr);
-+	unsigned int headlen, upi_size;
- 	struct net *net = xp_net(xp);
--	struct xfrm_userpolicy_info *p;
- 	struct xfrm_userpolicy_id *id;
-+	void *userpolicy_info;
- 	struct nlmsghdr *nlh;
- 	struct sk_buff *skb;
--	unsigned int headlen;
- 	int err;
- 
--	headlen = sizeof(*p);
-+	if (compat)
-+		upi_size = sizeof(struct xfrm_userpolicy_info_packed);
-+	else
-+		upi_size = sizeof(struct xfrm_userpolicy_info);
-+	headlen = upi_size;
+-	switch (group) {
+-	case SKNLGRP_INET_TCP_DESTROY:
+-	case SKNLGRP_INET_UDP_DESTROY:
+-		if (!sock_diag_handlers[AF_INET])
+-			sock_load_diag_module(AF_INET, 0);
+-		break;
+-	case SKNLGRP_INET6_TCP_DESTROY:
+-	case SKNLGRP_INET6_UDP_DESTROY:
+-		if (!sock_diag_handlers[AF_INET6])
+-			sock_load_diag_module(AF_INET6, 0);
+-		break;
+-	}
++	unsigned long inet_mask, inet6_mask;
 +
- 	if (c->event == XFRM_MSG_DELPOLICY) {
- 		len += nla_total_size(headlen);
- 		headlen = sizeof(*id);
-@@ -3213,7 +3242,7 @@ static int xfrm_notify_policy(struct xfrm_policy *xp, int dir, const struct km_e
- 	if (nlh == NULL)
- 		goto out_free_skb;
++	inet_mask   = 1UL << SKNLGRP_INET_TCP_DESTROY;
++	inet_mask  |= 1UL << SKNLGRP_INET_UDP_DESTROY;
++	inet6_mask  = 1UL << SKNLGRP_INET6_TCP_DESTROY;
++	inet6_mask |= 1UL << SKNLGRP_INET6_UDP_DESTROY;
++
++	if ((*groups & inet_mask) && !sock_diag_handlers[AF_INET])
++		sock_load_diag_module(AF_INET, 0);
++	if ((*groups & inet6_mask) && !sock_diag_handlers[AF_INET6])
++		sock_load_diag_module(AF_INET6, 0);
+ 	return 0;
+ }
  
--	p = nlmsg_data(nlh);
-+	userpolicy_info = nlmsg_data(nlh);
- 	if (c->event == XFRM_MSG_DELPOLICY) {
- 		struct nlattr *attr;
+diff --git a/net/netfilter/nfnetlink.c b/net/netfilter/nfnetlink.c
+index e1b6be29848d..6a8893df5285 100644
+--- a/net/netfilter/nfnetlink.c
++++ b/net/netfilter/nfnetlink.c
+@@ -556,21 +556,25 @@ static void nfnetlink_rcv(struct sk_buff *skb)
+ }
  
-@@ -3225,15 +3254,18 @@ static int xfrm_notify_policy(struct xfrm_policy *xp, int dir, const struct km_e
- 		else
- 			memcpy(&id->sel, &xp->selector, sizeof(id->sel));
+ #ifdef CONFIG_MODULES
+-static int nfnetlink_bind(struct net *net, int group)
++static int nfnetlink_bind(struct net *net, unsigned long *groups)
+ {
+ 	const struct nfnetlink_subsystem *ss;
+-	int type;
++	unsigned long _groups = *groups;
++	int type, group_bit, group = -1;
  
--		attr = nla_reserve(skb, XFRMA_POLICY, sizeof(*p));
-+		attr = nla_reserve(skb, XFRMA_POLICY, upi_size);
- 		err = -EMSGSIZE;
- 		if (attr == NULL)
- 			goto out_free_skb;
+-	if (group <= NFNLGRP_NONE || group > NFNLGRP_MAX)
+-		return 0;
++	while ((group_bit = __builtin_ffsl(_groups))) {
++		group += group_bit;
  
--		p = nla_data(attr);
-+		userpolicy_info = nla_data(attr);
- 	}
+-	type = nfnl_group2type[group];
++		type = nfnl_group2type[group];
++		rcu_read_lock();
++		ss = nfnetlink_get_subsys(type << 8);
++		rcu_read_unlock();
++		if (!ss)
++			request_module("nfnetlink-subsys-%d", type);
++
++		_groups >>= group_bit;
++	}
  
--	copy_to_user_policy(xp, p, dir);
-+	if (compat)
-+		copy_to_user_policy_compat(xp, userpolicy_info, dir);
-+	else
-+		copy_to_user_policy(xp, userpolicy_info, dir);
- 	err = copy_to_user_tmpl(xp, skb);
- 	if (!err)
- 		err = copy_to_user_policy_type(xp->type, skb);
-@@ -3244,13 +3276,24 @@ static int xfrm_notify_policy(struct xfrm_policy *xp, int dir, const struct km_e
+-	rcu_read_lock();
+-	ss = nfnetlink_get_subsys(type << 8);
+-	rcu_read_unlock();
+-	if (!ss)
+-		request_module("nfnetlink-subsys-%d", type);
+ 	return 0;
+ }
+ #endif
+diff --git a/net/netlink/af_netlink.c b/net/netlink/af_netlink.c
+index ac805caed2e2..1e11e706c683 100644
+--- a/net/netlink/af_netlink.c
++++ b/net/netlink/af_netlink.c
+@@ -668,7 +668,7 @@ static int netlink_create(struct net *net, struct socket *sock, int protocol,
+ 	struct module *module = NULL;
+ 	struct mutex *cb_mutex;
+ 	struct netlink_sock *nlk;
+-	int (*bind)(struct net *net, int group);
++	int (*bind)(struct net *net, unsigned long *groups);
+ 	void (*unbind)(struct net *net, int group);
+ 	int err = 0;
  
- 	nlmsg_end(skb, nlh);
- 
--	return xfrm_nlmsg_multicast(net, skb, 0, XFRMNLGRP_POLICY);
-+	return xfrm_nlmsg_multicast(net, skb, 0, compat ?
-+			XFRMNLGRP_COMPAT_POLICY : XFRMNLGRP_POLICY);
- 
- out_free_skb:
- 	kfree_skb(skb);
+@@ -969,8 +969,7 @@ static int netlink_realloc_groups(struct sock *sk)
  	return err;
  }
  
-+static int xfrm_notify_policy(struct xfrm_policy *xp, int dir,
-+		const struct km_event *c)
-+{
-+	int ret = __xfrm_notify_policy(xp, dir, c, false);
-+
-+	if ((ret && ret != -ESRCH) || !IS_ENABLED(CONFIG_COMPAT))
-+		return ret;
-+	return __xfrm_notify_policy(xp, dir, c, true);
-+}
-+
- static int xfrm_notify_policy_flush(const struct km_event *c)
+-static void netlink_undo_bind(int group, long unsigned int groups,
+-			      struct sock *sk)
++static void netlink_undo_bind(unsigned long groups, struct sock *sk)
  {
- 	struct net *net = c->net;
+ 	struct netlink_sock *nlk = nlk_sk(sk);
+ 	int undo;
+@@ -978,7 +977,7 @@ static void netlink_undo_bind(int group, long unsigned int groups,
+ 	if (!nlk->netlink_unbind)
+ 		return;
+ 
+-	for (undo = 0; undo < group; undo++)
++	for (undo = 0; undo < nlk->ngroups; undo++)
+ 		if (test_bit(undo, &groups))
+ 			nlk->netlink_unbind(sock_net(sk), undo + 1);
+ }
+@@ -991,7 +990,7 @@ static int netlink_bind(struct socket *sock, struct sockaddr *addr,
+ 	struct netlink_sock *nlk = nlk_sk(sk);
+ 	struct sockaddr_nl *nladdr = (struct sockaddr_nl *)addr;
+ 	int err = 0;
+-	long unsigned int groups = nladdr->nl_groups;
++	unsigned long groups = nladdr->nl_groups;
+ 	bool bound;
+ 
+ 	if (addr_len < sizeof(struct sockaddr_nl))
+@@ -1021,17 +1020,9 @@ static int netlink_bind(struct socket *sock, struct sockaddr *addr,
+ 
+ 	netlink_lock_table();
+ 	if (nlk->netlink_bind && groups) {
+-		int group;
+-
+-		for (group = 0; group < nlk->ngroups; group++) {
+-			if (!test_bit(group, &groups))
+-				continue;
+-			err = nlk->netlink_bind(net, group + 1);
+-			if (!err)
+-				continue;
+-			netlink_undo_bind(group, groups, sk);
++		err = nlk->netlink_bind(net, &groups);
++		if (err)
+ 			goto unlock;
+-		}
+ 	}
+ 
+ 	/* No need for barriers here as we return to user-space without
+@@ -1042,7 +1033,7 @@ static int netlink_bind(struct socket *sock, struct sockaddr *addr,
+ 			netlink_insert(sk, nladdr->nl_pid) :
+ 			netlink_autobind(sock);
+ 		if (err) {
+-			netlink_undo_bind(nlk->ngroups, groups, sk);
++			netlink_undo_bind(groups, sk);
+ 			goto unlock;
+ 		}
+ 	}
+@@ -1652,7 +1643,9 @@ static int netlink_setsockopt(struct socket *sock, int level, int optname,
+ 		if (!val || val - 1 >= nlk->ngroups)
+ 			return -EINVAL;
+ 		if (optname == NETLINK_ADD_MEMBERSHIP && nlk->netlink_bind) {
+-			err = nlk->netlink_bind(sock_net(sk), val);
++			unsigned long groups = 1UL << val;
++
++			err = nlk->netlink_bind(sock_net(sk), &groups);
+ 			if (err)
+ 				return err;
+ 		}
+diff --git a/net/netlink/af_netlink.h b/net/netlink/af_netlink.h
+index 962de7b3c023..e765172abbb7 100644
+--- a/net/netlink/af_netlink.h
++++ b/net/netlink/af_netlink.h
+@@ -39,7 +39,7 @@ struct netlink_sock {
+ 	struct mutex		*cb_mutex;
+ 	struct mutex		cb_def_mutex;
+ 	void			(*netlink_rcv)(struct sk_buff *skb);
+-	int			(*netlink_bind)(struct net *net, int group);
++	int			(*netlink_bind)(struct net *net, unsigned long *groups);
+ 	void			(*netlink_unbind)(struct net *net, int group);
+ 	struct module		*module;
+ 
+@@ -61,7 +61,7 @@ struct netlink_table {
+ 	unsigned int		groups;
+ 	struct mutex		*cb_mutex;
+ 	struct module		*module;
+-	int			(*bind)(struct net *net, int group);
++	int			(*bind)(struct net *net, unsigned long *groups);
+ 	void			(*unbind)(struct net *net, int group);
+ 	bool			(*compare)(struct net *net, struct sock *sock);
+ 	int			registered;
+diff --git a/net/netlink/genetlink.c b/net/netlink/genetlink.c
+index 25eeb6d2a75a..a86b105730cf 100644
+--- a/net/netlink/genetlink.c
++++ b/net/netlink/genetlink.c
+@@ -960,28 +960,38 @@ static struct genl_family genl_ctrl __ro_after_init = {
+ 	.netnsok = true,
+ };
+ 
+-static int genl_bind(struct net *net, int group)
++static int genl_bind(struct net *net, unsigned long *groups)
+ {
++	unsigned long mcgrps;
+ 	struct genl_family *f;
+-	int err = -ENOENT;
++	int err = 0;
+ 	unsigned int id;
+ 
+ 	down_read(&cb_lock);
+ 
+ 	idr_for_each_entry(&genl_fam_idr, f, id) {
+-		if (group >= f->mcgrp_offset &&
+-		    group < f->mcgrp_offset + f->n_mcgrps) {
+-			int fam_grp = group - f->mcgrp_offset;
++		int fam_grp_bit, fam_grp = -1;
++
++		mcgrps = (1UL << f->n_mcgrps) - 1;
++		mcgrps <<= f->mcgrp_offset;
++		mcgrps &= *groups;
++
++		if (!mcgrps)
++			continue;
++
++		while ((fam_grp_bit = __builtin_ffsl(mcgrps))) {
++			fam_grp += fam_grp_bit;
+ 
+ 			if (!f->netnsok && net != &init_net)
+ 				err = -ENOENT;
+ 			else if (f->mcast_bind)
+ 				err = f->mcast_bind(net, fam_grp);
+-			else
+-				err = 0;
+-			break;
++
++			if (err)
++				goto out;
+ 		}
+ 	}
++out:
+ 	up_read(&cb_lock);
+ 
+ 	return err;
 -- 
 2.13.6
 
