@@ -2,159 +2,152 @@ Return-Path: <SRS0=7Z+k=KK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56F9CC28CF6
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 03:57:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45E44C6778F
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 03:58:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EBED320891
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 03:57:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0133720846
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 03:58:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=runbox.com header.i=@runbox.com header.b="krXtVxbp"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EBED320891
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=runbox.com
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="dnYB9Pga"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0133720846
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727976AbeGZFMF (ORCPT
+        id S1728563AbeGZFM4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 26 Jul 2018 01:12:05 -0400
-Received: from aibo.runbox.com ([91.220.196.211]:47576 "EHLO aibo.runbox.com"
+        Thu, 26 Jul 2018 01:12:56 -0400
+Received: from ozlabs.org ([203.11.71.1]:41089 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725782AbeGZFMF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Jul 2018 01:12:05 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=runbox.com;
-         s=rbselector1; h=References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From;
-         bh=eFj8LP/eX8tJKM8GfNYDflcRqf/cD7t38qwhUB9BaGw=; b=krXtVxbpnEtgaB4jPntuuyBlg
-        x2mNPXWSMW6rG9Hp1l8dOwqA2P711k0w/7oyRuvIYJllKovbQt+QSVHJlaVv8IEc24eAY4X5lyRhY
-        0+tU9HDaKy1QhBcoK6tnrXzu/cylzv8X+9T0ScQxDD3LcY7ttajqqmhXmLhfMbK3TZ0ramaUJrrxx
-        ae4y4IsS0kvBpHai07kh5FD0056xslMtkazrzCGjprsq+wNADPXQF5PbApwNvlAWD+sQHDWL0l9tV
-        rnxspfDvfcAxydIE6B3SBd2U41qUTP0tVbXGGp8/eojQQ6oT9fm8jS0unPu+OiJxkDTcplWM1ppvi
-        C6i3HN7PA==;
-Received: from [10.9.9.210] (helo=mailfront10.runbox.com)
-        by mailtransmit02.runbox with esmtp (Exim 4.86_2)
-        (envelope-from <m.v.b@runbox.com>)
-        id 1fiXOn-0000jv-Tt; Thu, 26 Jul 2018 05:57:10 +0200
-Received: by mailfront10.runbox.com with esmtpsa  (uid:769847 )  (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.82)
-        id 1fiXOl-0007Rb-BQ; Thu, 26 Jul 2018 05:57:07 +0200
-From:   "M. Vefa Bicakci" <m.v.b@runbox.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        "M . Vefa Bicakci" <m.v.b@runbox.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Juergen Gross <jgross@suse.com>,
-        xen-devel@lists.xenproject.org, x86@kernel.org,
-        stable@vger.kernel.org
-Subject: [PATCH v3] xen/pv: Call get_cpu_address_sizes to set x86_virt/phys_bits
-Date:   Wed, 25 Jul 2018 23:56:56 -0400
-Message-Id: <20180726035656.6088-1-m.v.b@runbox.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180724124547.32562-1-m.v.b@runbox.com>
-References: <20180724124547.32562-1-m.v.b@runbox.com>
+        id S1728027AbeGZFM4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Jul 2018 01:12:56 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 41bdbx36lPz9ryn;
+        Thu, 26 Jul 2018 13:58:04 +1000 (AEST)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1532577485;
+        bh=jFmTNgTNxovVGofkfNIpuBRgT50jAl4UbzNQTsrGSgQ=;
+        h=Date:From:To:Cc:Subject:From;
+        b=dnYB9PgaVmsI6zkQuamOUy0ZYhDuiQgX/mAFasiizLTsuegJ85k58rTwx5lGcxauH
+         POArDvtBvNXKlJrgDV0ierPmfm2LVe6LPIQHYl1xlHMy9HISfHSCHYaQGgeBQ+9YSK
+         S7GgI8n/VhxJqKRM9XvJTl6Ig8a199GBesAj28wtm5/mt+3DN3u0s594ZtJ3qPT5D1
+         PbchkMTMXnmlKYyZWYqCWdVtOXeFVLaeWPiBHhpEhpjO+HcnT4LSyCTEvdrwjiwmMc
+         83DAAVIO5ztkD52TwjpxkD3fKl3aA21Bw/i8Sy1pamH1QxMuGr/4PgZW/8dRWeMvA5
+         JDGji+hALo1+w==
+Date:   Thu, 26 Jul 2018 13:58:04 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Jens Axboe <axboe@kernel.dk>, Doug Ledford <dledford@redhat.com>,
+        Jason Gunthorpe <jgg@mellanox.com>
+Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Bart Van Assche <bart.vanassche@wdc.com>,
+        Max Gurtovoy <maxg@mellanox.com>,
+        Christoph Hellwig <hch@lst.de>
+Subject: linux-next: manual merge of the block tree with the rdma tree
+Message-ID: <20180726135804.0257047e@canb.auug.org.au>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/TyzPvo+v9l0M=mmd.560WtY"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit d94a155c59c9 ("x86/cpu: Prevent cpuinfo_x86::x86_phys_bits
-adjustment corruption") has moved the query and calculation of the
-x86_virt_bits and x86_phys_bits fields of the cpuinfo_x86 struct
-from the get_cpu_cap function to a new function named
-get_cpu_address_sizes.
+--Sig_/TyzPvo+v9l0M=mmd.560WtY
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-One of the call sites related to Xen PV VMs was unfortunately missed
-in the aforementioned commit. This prevents successful boot-up of
-kernel versions 4.17 and up in Xen PV VMs if CONFIG_DEBUG_VIRTUAL
-is enabled, due to the following code path:
+Hi all,
 
-  enlighten_pv.c::xen_start_kernel
-    mmu_pv.c::xen_reserve_special_pages
-      page.h::__pa
-        physaddr.c::__phys_addr
-          physaddr.h::phys_addr_valid
+Today's linux-next merge of the block tree got a conflict in:
 
-phys_addr_valid uses boot_cpu_data.x86_phys_bits to validate physical
-addresses. boot_cpu_data.x86_phys_bits is no longer populated before
-the call to xen_reserve_special_pages due to the aforementioned commit
-though, so the validation performed by phys_addr_valid fails, which
-causes __phys_addr to trigger a BUG, preventing boot-up.
+  drivers/nvme/target/rdma.c
 
-Signed-off-by: M. Vefa Bicakci <m.v.b@runbox.com>
-Reviewed-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Juergen Gross <jgross@suse.com>
-Cc: xen-devel@lists.xenproject.org
-Cc: x86@kernel.org
-Cc: stable@vger.kernel.org # for v4.17 and up
-Fixes: d94a155c59c9 ("x86/cpu: Prevent cpuinfo_x86::x86_phys_bits adjustment corruption")
+between commit:
 
----
+  23f96d1f15a7 ("nvmet-rdma: Simplify ib_post_(send|recv|srq_recv)() calls")
+  202093848cac ("nvmet-rdma: add an error flow for post_recv failures")
 
-Changes since v1:
-- Move the call to get_cpu_address_sizes below the call to
-  x86_configure_nx.
-- Amend the commit message to describe why PV VMs do not boot up
-  successfully when CONFIG_DEBUG_VIRTUAL is enabled.
+from the rdma tree and commits:
 
-Changes since v2:
-- Add a Reviewed-by tag to note Boris Ostrovsky's code review.
-- Rebase onto next-20180725.
----
- arch/x86/kernel/cpu/common.c | 2 +-
- arch/x86/kernel/cpu/cpu.h    | 1 +
- arch/x86/xen/enlighten_pv.c  | 3 +++
- 3 files changed, 5 insertions(+), 1 deletion(-)
+  2fc464e2162c ("nvmet-rdma: add unlikely check in the fast path")
 
-diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
-index f73fa6f6d85e..dd282482de09 100644
---- a/arch/x86/kernel/cpu/common.c
-+++ b/arch/x86/kernel/cpu/common.c
-@@ -911,7 +911,7 @@ void get_cpu_cap(struct cpuinfo_x86 *c)
- 	apply_forced_caps(c);
- }
- 
--static void get_cpu_address_sizes(struct cpuinfo_x86 *c)
-+void get_cpu_address_sizes(struct cpuinfo_x86 *c)
- {
- 	u32 eax, ebx, ecx, edx;
- 
-diff --git a/arch/x86/kernel/cpu/cpu.h b/arch/x86/kernel/cpu/cpu.h
-index 38216f678fc3..12a5f0cec0b2 100644
---- a/arch/x86/kernel/cpu/cpu.h
-+++ b/arch/x86/kernel/cpu/cpu.h
-@@ -46,6 +46,7 @@ extern const struct cpu_dev *const __x86_cpu_dev_start[],
- 			    *const __x86_cpu_dev_end[];
- 
- extern void get_cpu_cap(struct cpuinfo_x86 *c);
-+extern void get_cpu_address_sizes(struct cpuinfo_x86 *c);
- extern void cpu_detect_cache_sizes(struct cpuinfo_x86 *c);
- extern void init_scattered_cpuid_features(struct cpuinfo_x86 *c);
- extern u32 get_scattered_cpuid_leaf(unsigned int level,
-diff --git a/arch/x86/xen/enlighten_pv.c b/arch/x86/xen/enlighten_pv.c
-index 105a57d73701..ee3b00c7acda 100644
---- a/arch/x86/xen/enlighten_pv.c
-+++ b/arch/x86/xen/enlighten_pv.c
-@@ -1256,6 +1256,9 @@ asmlinkage __visible void __init xen_start_kernel(void)
- 	get_cpu_cap(&boot_cpu_data);
- 	x86_configure_nx();
- 
-+	/* Determine virtual and physical address sizes */
-+	get_cpu_address_sizes(&boot_cpu_data);
-+
- 	/* Let's presume PV guests always boot on vCPU with id 0. */
- 	per_cpu(xen_vcpu_id, 0) = 0;
- 
--- 
-2.17.1
+from the block tree.
 
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc drivers/nvme/target/rdma.c
+index 1a642e214a4c,e7f43d1e1779..000000000000
+--- a/drivers/nvme/target/rdma.c
++++ b/drivers/nvme/target/rdma.c
+@@@ -382,13 -435,22 +435,21 @@@ static void nvmet_rdma_free_rsps(struc
+  static int nvmet_rdma_post_recv(struct nvmet_rdma_device *ndev,
+  		struct nvmet_rdma_cmd *cmd)
+  {
+ -	struct ib_recv_wr *bad_wr;
++ 	int ret;
++=20
+  	ib_dma_sync_single_for_device(ndev->device,
+  		cmd->sge[0].addr, cmd->sge[0].length,
+  		DMA_FROM_DEVICE);
+ =20
+  	if (ndev->srq)
+- 		return ib_post_srq_recv(ndev->srq, &cmd->wr, NULL);
+- 	return ib_post_recv(cmd->queue->cm_id->qp, &cmd->wr, NULL);
+ -		ret =3D ib_post_srq_recv(ndev->srq, &cmd->wr, &bad_wr);
+++		ret =3D ib_post_srq_recv(ndev->srq, &cmd->wr, NULL);
++ 	else
+ -		ret =3D ib_post_recv(cmd->queue->cm_id->qp, &cmd->wr, &bad_wr);
+++		ret =3D ib_post_recv(cmd->queue->cm_id->qp, &cmd->wr, NULL);
++=20
++ 	if (unlikely(ret))
++ 		pr_err("post_recv cmd failed\n");
++=20
++ 	return ret;
+  }
+ =20
+  static void nvmet_rdma_process_wr_wait_list(struct nvmet_rdma_queue *queu=
+e)
+@@@ -491,7 -553,7 +552,7 @@@ static void nvmet_rdma_queue_response(s
+  		rsp->send_sge.addr, rsp->send_sge.length,
+  		DMA_TO_DEVICE);
+ =20
+- 	if (ib_post_send(cm_id->qp, first_wr, NULL)) {
+ -	if (unlikely(ib_post_send(cm_id->qp, first_wr, &bad_wr))) {
+++	if (unlikely(ib_post_send(cm_id->qp, first_wr, NULL))) {
+  		pr_err("sending cmd response failed\n");
+  		nvmet_rdma_release_rsp(rsp);
+  	}
+
+--Sig_/TyzPvo+v9l0M=mmd.560WtY
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltZRswACgkQAVBC80lX
+0GyQXwf/bCGiW/XmxnWraE5HkRxiHOWEB0lmzJ73QnKLMTr7whW+fME7mDSY+NtH
+OYgfILj8vHAdH2ZFN4/VmBafac/QvrY6ydaFZSQcyOA7bagPyiskOVD5aP3Q4PaC
+srjRVP18yhd3Am6hozOYGhvblCkbMD/Lrk270/YF4bIq7ElxnZGb3QN5LaXmEFi3
+n6OaCxy/q0M2HcSVnBwwhgnZv6YQHxp7QwJ3LeKh5NCDMk0hRPVlxGviVG09b5n1
+y2qIeLWerx5weJqLkz5OXXwdCRieD+KJ2HCn4/ekXTr8Luc+tjAvULCVToMyCt6x
+lSmcj38DzgbHmKFPus0puLZnJLKKUA==
+=l9sh
+-----END PGP SIGNATURE-----
+
+--Sig_/TyzPvo+v9l0M=mmd.560WtY--
