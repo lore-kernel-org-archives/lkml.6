@@ -2,99 +2,111 @@ Return-Path: <SRS0=7Z+k=KK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9880CC28CF6
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 19:32:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28A9FC6778F
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 19:32:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4A98C2083F
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 19:32:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D619F20671
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 19:32:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="HpCWFq0O"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4A98C2083F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="HKFGzhRa"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D619F20671
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=broadcom.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731572AbeGZUuW (ORCPT
+        id S1731601AbeGZUvH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 26 Jul 2018 16:50:22 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:38002 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730452AbeGZUuW (ORCPT
+        Thu, 26 Jul 2018 16:51:07 -0400
+Received: from mail-qk0-f195.google.com ([209.85.220.195]:41193 "EHLO
+        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730452AbeGZUvH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Jul 2018 16:50:22 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=yt4kpoukY38rdIpGr/GPy991LMUHvz5VJETbDc5y/RU=; b=HpCWFq0OHMmSVECucmTjEBCun
-        6iUUZtLOghbbhUN7Pt02eO3xQudojShuL1CM90R3F8kSDugice7zbnKP9USmDci4g3A2Bto77vsKw
-        S84fM91pq7NKKnW4IzUDP8nLsMJQnpYcrj5dkPQSfRmpyx2gJ2B2FIJO1DrY2+xWSGtIqay8a8Zk5
-        D+OpC3IRdTpSOKjYZXYgI5MoQFSGpuj8Zn9D9G+7uevrgM8tERP49wQdJ5TnTiyzqCDp09ba8gVAf
-        RflE9xNPwH2vANjOwpX9rvTYD7sGRXJTvJvDmx390HvAvQOTCNzLR4FJWmYqnRQi8R2zAYD0hqgtQ
-        thQeDWJKQ==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1filzX-0002H3-7o; Thu, 26 Jul 2018 19:32:03 +0000
-Date:   Thu, 26 Jul 2018 12:32:03 -0700
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Hugh Dickins <hughd@google.com>
-Cc:     syzbot <syzbot+b8e0dfee3fd8c9012771@syzkaller.appspotmail.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        syzkaller-bugs@googlegroups.com
-Subject: Re: kernel BUG at mm/shmem.c:LINE!
-Message-ID: <20180726193203.GA12992@bombadil.infradead.org>
-References: <alpine.LSU.2.11.1807221856350.5536@eggly.anvils>
- <20180723140150.GA31843@bombadil.infradead.org>
- <alpine.LSU.2.11.1807231111310.1698@eggly.anvils>
- <20180723203628.GA18236@bombadil.infradead.org>
- <alpine.LSU.2.11.1807231531240.2545@eggly.anvils>
- <20180723225454.GC18236@bombadil.infradead.org>
- <alpine.LSU.2.11.1807240121590.1105@eggly.anvils>
- <alpine.LSU.2.11.1807252334420.1212@eggly.anvils>
- <20180726143353.GA27612@bombadil.infradead.org>
- <alpine.LSU.2.11.1807260936040.1101@eggly.anvils>
+        Thu, 26 Jul 2018 16:51:07 -0400
+Received: by mail-qk0-f195.google.com with SMTP id d22-v6so1773515qkc.8
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Jul 2018 12:32:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=WVT9UTMDq51YLbjJnNJ7a//BN28qoYszxbYXkVZKlO4=;
+        b=HKFGzhRaR0gLRDQNZ4WPTwxclD9fcgxFOuFFSqL92lylUF/Fuf1uquuhiWMA/ZBIBg
+         6g7EVslsMUMDKDeXYi/1pJYUGM7vF8FmeGijtwKI1+7HkgRXnMAZv7BkikQ01P7uRedb
+         ucDBNm+JascenV1KxVZnqRylleMfsrqVy9+Ek=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=WVT9UTMDq51YLbjJnNJ7a//BN28qoYszxbYXkVZKlO4=;
+        b=XkqIvizrc0lGMIkOz8UHXf1B7WlfPgCk1+lBQ/7FVazt14wX8OUZAd3jZbhJtmA8kR
+         T80haxrz+xFV8RLSxVbyZsklLXGRrvMnRTEIjAL4YbazQPuZoxfOX6IuSaxkwJl23/3N
+         K/oDdxijXMhiwGtxfChNO5DksZEyKK8+R8dcWP4M9H2Qoeoh8PTo4kKGj1YF123MdiBb
+         Gwh1A2PQFscAgmo7jwLlGspYu84f5W+Vlz9wvxPsH82xXLK/UGW3pN7Wqdcgt7JjPPFx
+         0Egaewgn0sGVmpAb1D51xQEZZHj82iLUHSmhLL+50cTjdiMH7axLJCH8vEdjWNWGaTrE
+         7CNw==
+X-Gm-Message-State: AOUpUlEF/ZQr8vl+UmRHyd7yiq3j2MiLOlagM8SbmWQ5NdjqWJaz1M8N
+        2pu3GWq73D7vVFibgsc+a9E92g==
+X-Google-Smtp-Source: AAOMgpeAudY2QFtzTkITmsiDS9JdQlaLdBXNvn0NKUYF762S9G2kA+ANoKCy+9BHfsBCKprltXXV1A==
+X-Received: by 2002:a37:9a41:: with SMTP id c62-v6mr3079721qke.395.1532633570039;
+        Thu, 26 Jul 2018 12:32:50 -0700 (PDT)
+Received: from [10.136.4.147] ([192.19.228.250])
+        by smtp.gmail.com with ESMTPSA id j45-v6sm2008093qta.46.2018.07.26.12.32.46
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 26 Jul 2018 12:32:49 -0700 (PDT)
+Subject: Re: [PATCH 7/7] net: phy: Add pm support for scan ctrl register to
+ bcm mdio mux
+To:     Andrew Lunn <andrew@lunn.ch>
+Cc:     "David S. Miller" <davem@davemloft.net>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>, netdev@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com
+References: <1532630184-29450-1-git-send-email-arun.parameswaran@broadcom.com>
+ <1532630184-29450-8-git-send-email-arun.parameswaran@broadcom.com>
+ <20180726192050.GJ10686@lunn.ch>
+From:   Arun Parameswaran <arun.parameswaran@broadcom.com>
+Message-ID: <170a4731-b091-aef4-2d66-2950114e41fc@broadcom.com>
+Date:   Thu, 26 Jul 2018 12:33:05 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <alpine.LSU.2.11.1807260936040.1101@eggly.anvils>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20180726192050.GJ10686@lunn.ch>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 26, 2018 at 09:40:20AM -0700, Hugh Dickins wrote:
-> On Thu, 26 Jul 2018, Matthew Wilcox wrote:
-> > On Wed, Jul 25, 2018 at 11:53:15PM -0700, Hugh Dickins wrote:
-> > 
-> > and fixing the bug differently ;-)  But many thanks for spotting it!
+
+
+On 18-07-26 12:20 PM, Andrew Lunn wrote:
+> On Thu, Jul 26, 2018 at 11:36:24AM -0700, Arun Parameswaran wrote:
+>> Add support for saving and restoring the 'scan control' register
+>> in the Broadcom iProc mdio mux driver.
 > 
-> I thought you might :)
-
-The xas_* functions are all _expected_ to behave the same way when
-passed an XA_STATE containing an error -- do nothing.  xas_create_range()
-behaved that way initially, then I fixed a bug and broke that invariant.
-Now the test suite checks it so I won't break it again.
-
-> > I'll look into the next bug you reported ...
+> Hi Arun
 > 
-> No need: that idea now works a lot better when I use the initialized
-> "start", instead of the uninitialized "index".
+> I don't see anything setting this register. So why is it necessary to
+> save it over suspend/resume?
+> 
+>      Andrew
+> 
+Hi Andrew
+In the Omega SoC (only), this register was defaulted incorrectly (to use
+a test mode) by the hardware. So we added the setup of the register to
+the early bootloader (ATF).
 
-Ugh.  xas_create_range() is _supposed_ to return with xas pointing to
-the first index in the range.  I wonder what I messed up.  I've had a
-go at producing a test-case for this and haven't provoked a bug yet.
+We still need to restore this register while resuming from sleep.
 
-Still, I don't want to keep xas_create_range() around long-term.
-I want to transition all the places that currently use it to use
-multi-index entries.  So I'm going to put your workaround in and then
-work on deleting xas_create_range() altogether.
-
-Thanks so much for all your work on this!
-
+Thanks
+Arun
