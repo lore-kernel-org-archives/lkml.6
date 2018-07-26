@@ -2,101 +2,104 @@ Return-Path: <SRS0=7Z+k=KK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F1DAC28CF6
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 08:50:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 321F7C28CF6
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 08:52:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E4CD020883
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 08:50:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E4CD020883
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=strlen.de
+	by mail.kernel.org (Postfix) with ESMTP id CD0452083F
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 08:52:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CD0452083F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729297AbeGZKGU (ORCPT
+        id S1729123AbeGZKIR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 26 Jul 2018 06:06:20 -0400
-Received: from Chamillionaire.breakpoint.cc ([146.0.238.67]:51364 "EHLO
-        Chamillionaire.breakpoint.cc" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728825AbeGZKGU (ORCPT
+        Thu, 26 Jul 2018 06:08:17 -0400
+Received: from cloudserver094114.home.pl ([79.96.170.134]:55280 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728871AbeGZKIQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Jul 2018 06:06:20 -0400
-Received: from fw by Chamillionaire.breakpoint.cc with local (Exim 4.89)
-        (envelope-from <fw@strlen.de>)
-        id 1fibyB-0001PG-Lz; Thu, 26 Jul 2018 10:49:59 +0200
-Date:   Thu, 26 Jul 2018 10:49:59 +0200
-From:   Florian Westphal <fw@strlen.de>
-To:     Dmitry Safonov <dima@arista.com>
-Cc:     linux-kernel@vger.kernel.org,
-        "David S. Miller" <davem@davemloft.net>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Steffen Klassert <steffen.klassert@secunet.com>,
-        Dmitry Safonov <0x7f454c46@gmail.com>, netdev@vger.kernel.org,
-        Andy Lutomirski <luto@kernel.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-        John Stultz <john.stultz@linaro.org>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
-        linux-efi@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Shuah Khan <shuah@kernel.org>, linux-kselftest@vger.kernel.org,
-        Eric Paris <eparis@redhat.com>,
-        Florian Westphal <fw@strlen.de>,
-        Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
-        Paul Moore <paul@paul-moore.com>, coreteam@netfilter.org,
-        linux-audit@redhat.com, netfilter-devel@vger.kernel.org,
-        Fan Du <fan.du@intel.com>
-Subject: Re: [PATCH 00/18] xfrm: Add compat layer
-Message-ID: <20180726084959.pzjvflfjq6a76du6@breakpoint.cc>
-References: <20180726023144.31066-1-dima@arista.com>
+        Thu, 26 Jul 2018 06:08:16 -0400
+Received: from 79.184.255.17.ipv4.supernova.orange.pl (79.184.255.17) (HELO aspire.rjw.lan)
+ by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83)
+ id 8405abc3c1254872; Thu, 26 Jul 2018 10:52:24 +0200
+From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To:     Kai-Heng Feng <kai.heng.feng@canonical.com>
+Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        P HeLiOn <perryhelionsemail@gmail.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Linux PM <linux-pm@vger.kernel.org>
+Subject: Re: [PATCH] ACPI / LPSS: Avoid PM quirks on suspend and resume from S3
+Date:   Thu, 26 Jul 2018 10:50:35 +0200
+Message-ID: <24724042.UC9DsrE2FJ@aspire.rjw.lan>
+In-Reply-To: <76C1A830-EEE1-486B-9B06-6C915C269278@canonical.com>
+References: <DEA1AE84-B0FD-481E-8E0D-788CD4EF59AE@canonical.com> <CAJZ5v0ifKcipGG0sM0iK0p4K0-V-PyoL-JfTH6uVVWoCA-eXnw@mail.gmail.com> <76C1A830-EEE1-486B-9B06-6C915C269278@canonical.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180726023144.31066-1-dima@arista.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dmitry Safonov <dima@arista.com> wrote:
-> So, here I add a compatible layer to xfrm.
-> As xfrm uses netlink notifications, kernel should send them in ABI
-> format that an application will parse. The proposed solution is
-> to save the ABI of bind() syscall. The realization detail is
-> to create kernel-hidden, non visible to userspace netlink groups
-> for compat applications.
+On Thursday, July 26, 2018 10:15:03 AM CEST Kai-Heng Feng wrote:
+> 
+> > On 2018Jul26, at 16:14, Rafael J. Wysocki <rafael@kernel.org> wrote:
+> > 
+> > On Thu, Jul 26, 2018 at 5:46 AM, Kai-Heng Feng
+> > <kai.heng.feng@canonical.com> wrote:
+> >> Hi Rafael,
+> >> 
+> >>> On 2018Jul24, at 18:36, Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
+> >>> 
+> >>> On Tuesday, July 24, 2018 11:13:42 AM CEST Rafael J. Wysocki wrote:
+> >>>> On Tuesday, July 24, 2018 10:46:09 AM CEST Kai Heng Feng wrote:
+> >>>>> Hi Rafael,
+> >>>>> 
+> >>>>>> On Jun 13, 2018, at 7:17 PM, Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
+> >>>>>> 
+> >>>>>> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> >>>>>> 
+> >>>>>> It is reported that commit a192aa923b66a (ACPI / LPSS: Consolidate
+> >>>>>> runtime PM and system sleep handling) introduced a system suspend
+> >>>>>> regression on some machines, but the only functional change made by
+> >>>>>> it was to cause the PM quirks in the LPSS to also be used during
+> >>>>>> system suspend and resume.  While that should always work for
+> >>>>>> suspend-to-idle, it turns out to be problematic for S3
+> >>>>>> (suspend-to-RAM).
+> >>>>>> 
+> >>>>>> To address that issue restore the previous S3 suspend and resume
+> >>>>>> behavior of the LPSS to avoid applying PM quirks then.
+> >>>>> 
+> >>>>> The users reported that this patch does fix the S3 issue, but the S4 still
+> >>>>> fails.
+> >>>>> 
+> >>>>> Please refer to [1] for more for user's testing result.
+> >>>>> 
+> >>>>> [1] https://bugs.launchpad.net/ubuntu/+source/linux/+bug/1774950/comments/60
+> >>>> 
+> >>>> Please ask the users to test the patch below, then, on top of the $subject one.
+> >>> 
+> >>> There was a mistake in the previous patch I posted, sorry about that.
+> >>> 
+> >>> Please test this one instead:
+> >> 
+> >> The result is positive, thanks!
+> > 
+> > Good, thanks!
+> > 
+> > I assume that S3 still works with this patch applied too.
+> 
+> Yes, S3 continues to work with this patch.
 
-Why not use exisiting netlink support?
-Just add the 32bit skb to skb64->frag_list and let
-netlink find if tasks needs 64 or 32 one.
+OK, thanks!
 
-It only needs this small fix to properly signal the end of a dump:
-https://marc.info/?l=linux-netdev&m=126625240303351&w=2
+Let me resend the patch with a proper subject and changelog, then.
 
-I had started a second attempt to make xfrm compat work,
-but its still in early stage.
-
-One link that might still have some value:
-https://git.breakpoint.cc/cgit/fw/net-next.git/commit/?h=xfrm_config_compat_07&id=f64430e6d9e297f3990f485a4832e273751b9869
-(compat structure definitions with BUILD_BUG_ON checking)
-
-My plan was to make xfrm compat work strictly as shrinker (64->32)
-and expander (32->64), i.e. no/little changes to exisiting code and
-pass all "expanded" skbs through existing xfrm rcv functions.
-
-Example to illustrate idea:
-https://git.breakpoint.cc/cgit/fw/net-next.git/commit/?h=xfrm_config_compat_07&id=c622f067849b02170127b69471cb3481e4bc9e49
-
-... its supposed to take 64bit skb and create a 32bit one from it.
-
-Just for reference; I currently don't plan to work on this again.
