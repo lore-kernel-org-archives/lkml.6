@@ -2,98 +2,97 @@ Return-Path: <SRS0=7Z+k=KK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.0 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
+	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5A3EC28CF6
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 13:01:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03BF7C28CF6
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 13:02:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9BF8820685
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 13:01:10 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="X3+63UBa"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9BF8820685
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id B86D020685
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 13:02:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B86D020685
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gmx.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730269AbeGZORy (ORCPT
+        id S1730335AbeGZOS7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 26 Jul 2018 10:17:54 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:50274 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729852AbeGZORy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Jul 2018 10:17:54 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=zXASJV1B8w6TWTclebE+L67zvG3MwPJohKc8D5awSUQ=; b=X3+63UBaeaMvPK++p/cHQHAiW
-        Anbemo/zFWVPZn/xxrybQacASkIxDf8Wjq1wmUZo0cMJaa0b7pFX0tEbY1rVb/z/rm2yg+LFcQ176
-        tRJ+nR2tLSZOnYvnixUqYt3llgF1fFqvj6iE2Cqax8jeOhaZHz4avEWBZ3pBRc0tfKoqqHRKcWAzI
-        8ioHwZZxl6h4NgLB4xA+7nZIENHd2QIiTQAQ1RGa342TNVZ/YM/5PWLstnLSzeBs1sl0x8MS1x4H1
-        XIY8UfCsbdji/bETtNhOlLaKfvB1UQ5RA2ZsrsG/VvG2MCOXGRMwandfQjTOggm7F3rvbxJjCdjVB
-        bwilizJFg==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fiftD-00006o-4m; Thu, 26 Jul 2018 13:01:07 +0000
-Date:   Thu, 26 Jul 2018 06:01:06 -0700
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Mike Rapoport <rppt@linux.vnet.ibm.com>
-Cc:     Jonathan Corbet <corbet@lwn.net>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-doc@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 7/7] docs/core-api: mm-api: add section about GFP flags
-Message-ID: <20180726130106.GC3504@bombadil.infradead.org>
-References: <1532607722-17079-1-git-send-email-rppt@linux.vnet.ibm.com>
- <1532607722-17079-8-git-send-email-rppt@linux.vnet.ibm.com>
+        Thu, 26 Jul 2018 10:18:59 -0400
+Received: from mout.gmx.net ([212.227.15.18]:53575 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729510AbeGZOS7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Jul 2018 10:18:59 -0400
+Received: from ls3530 ([155.56.40.73]) by mail.gmx.com (mrgmx002
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 0MTTKZ-1fbDCy051L-00SQbY; Thu, 26
+ Jul 2018 14:59:51 +0200
+Date:   Thu, 26 Jul 2018 14:59:40 +0200
+From:   Helge Deller <deller@gmx.de>
+To:     Alex Ghiti <alex@ghiti.fr>
+Cc:     Michael Ellerman <mpe@ellerman.id.au>,
+        Michal Hocko <mhocko@kernel.org>, linux@armlinux.org.uk,
+        catalin.marinas@arm.com, will.deacon@arm.com, tony.luck@intel.com,
+        fenghua.yu@intel.com, ralf@linux-mips.org, paul.burton@mips.com,
+        jhogan@kernel.org, jejb@parisc-linux.org, deller@gmx.de,
+        benh@kernel.crashing.org, paulus@samba.org,
+        ysato@users.sourceforge.jp, dalias@libc.org, davem@davemloft.net,
+        tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
+        x86@kernel.org, arnd@arndb.de,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-ia64@vger.kernel.org, linux-mips@linux-mips.org,
+        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
+        linux-arch@vger.kernel.org,
+        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>
+Subject: Re: [PATCH v4 00/11] hugetlb: Factorize hugetlb architecture
+ primitives
+Message-ID: <20180726125940.GA15033@ls3530>
+References: <20180705110716.3919-1-alex@ghiti.fr>
+ <20180709141621.GD22297@dhcp22.suse.cz>
+ <2173685f-7f85-7acb-4685-2383210c5fa2@ghiti.fr>
+ <87d0vehx16.fsf@concordia.ellerman.id.au>
+ <67aba0f0-c0d4-b06f-5fbc-f4d113ce5033@ghiti.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-15
 Content-Disposition: inline
-In-Reply-To: <1532607722-17079-8-git-send-email-rppt@linux.vnet.ibm.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <67aba0f0-c0d4-b06f-5fbc-f4d113ce5033@ghiti.fr>
+User-Agent: Mutt/1.9.1 (2017-09-22)
+X-Provags-ID: V03:K1:LJW7STv0ttsGWNRGMntZtI8g9h5WdEk1zchAg4XmzjhCReDadlR
+ KG+cYi35nReER/0L3a4C+m2kngX4xI03Labu+btPyA68jH3f+GC+B4qcZQauRRzrEc80ERE
+ aHGns9dZ853xNeeLFJnjGRUYdQsbCokyKXfbOydvSxnYlIPh6n3wWXsfKwCi920Up+MZU84
+ 4FSFjVIiKuyHgJ1Qk6Gqg==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:zkWr1oFCSxI=:2ucBH/SBIgeCNQ0BKUKeje
+ F+9jymR6qNiTUTKtDh89IYd0+6+Bsc5f/Syop13rLKmBEhnPFN+a41RacteZnwIBnLF9+ETjJ
+ 3DlfTAUQSeuGdnHBeADJFltjUCSTvD2vsM58+aeCkxMNMpajnlaqA3E/deNmLotmpKsrqKmrT
+ xKlckvHALi8pkKIKyDt5rE4pekx9GLBQHrEB1NEyQsX83D0pk7Fa15jDIyPGlYAUMVCVuoT17
+ DJeVFQ5oHMqQh4fvuIix9e6XmiP1i+/MxLVEOA++ocfAgfIXxZeQXNYsUss7wqZLlZ95KbpB4
+ nd1/9LjVBmgjK5zN4wTz2onTOFwgtJc09QXPUK1MLL2IOfESmDkYBPc0kTy3WMG7EITGFYPNq
+ HixBpBdcYX9LbmNXK17ispo3ECpjyd5I/z1NjyQd8knCR5tSlGgpWo5QqwfeE9aDbbXriwJ2t
+ /wsnmcXaL6hle00w1eZUquG+XYKrKxQ6+QU6lgXufdZW3cmVVZx0KiO+TJqk6T+10Ttt7D51L
+ ujer+8dhR2WIpubn1MFUSxKLz1do/E1GCp6bqM8TA5hUW2sPPdTl0fBs2i/8FGaAHsQc2Puzf
+ 1WyUDN0KnN7FwyxWaM99MUxbH1kX70dfXAa6+p3GiEzjwd/dTVZ0boShlQ9esqyhagkmjVRiz
+ z92FKnMmMwTkiykoE6mXlzBujDqmwCJ79GxbpgbZDTJVWBDagHK9DfPcW+VFFx/JUDs6tZHJa
+ 7LWB3ZcIw/5wqxV9V2OErrXZ/ChLYXLIWUiYsWrkJVlmrNajjZivfGblY84=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 26, 2018 at 03:22:02PM +0300, Mike Rapoport wrote:
-> +Memory Allocation Controls
-> +==========================
+* Alex Ghiti <alex@ghiti.fr>:
+> This is the result of the build for all arches tackled in this series
+> rebased on 4.18-rc6:
+> ...
+> parisc:
+>         generic-64bit_defconfig: with huge page does not link
+>         generic-64bit_defconfig: without huge page does not link
+>         BUT not because of this series, any feedback welcome.
+Strange, but I will check that later....
 
-Perhaps call this section "Memory Allocation Flags" instead?
+Anyway, I applied your v4-patch to my parisc64 tree, built the kernel,
+started it and ran some hugetlb LTP testcases sucessfully.
+So, please add:
 
-> +Linux provides a variety of APIs for memory allocation from direct
-> +calls to page allocator through slab caches and vmalloc to allocators
-> +of compressed memory. Although these allocators have different
-> +semantics and are used in different circumstances, they all share the
-> +GFP (get free page) flags that control behavior of each allocation
-> +request.
+Tested-by: Helge Deller <deller@gmx.de> # parisc
 
-While this isn't /wrong/, I think it might not be the most useful way
-of explaining what the GFP flags are to someone who's just come across
-them in some remote part of the kernel.  How about this paragraph instead?
-
-  Functions which need to allocate memory often use GFP flags to express
-  how that memory should be allocated.  The GFP acronym stands for "get
-  free pages", the underlying memory allocation function.  Not every GFP
-  flag is allowed to every function which may allocate memory.  Most
-  users will want to use a plain ``GFP_KERNEL`` or ``GFP_ATOMIC``.
-
-> +.. kernel-doc:: include/linux/gfp.h
-> +   :doc: Page mobility and placement hints
-> +
-> +.. kernel-doc:: include/linux/gfp.h
-> +   :doc: Watermark modifiers
-> +
-> +.. kernel-doc:: include/linux/gfp.h
-> +   :doc: Reclaim modifiers
-> +
-> +.. kernel-doc:: include/linux/gfp.h
-> +   :doc: Common combinations
-
-Would it make more sense to put 'common combinations' first?
-
+Helge
