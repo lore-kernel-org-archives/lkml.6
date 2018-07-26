@@ -2,80 +2,88 @@ Return-Path: <SRS0=7Z+k=KK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F901C28CF6
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 07:44:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D23BC28CF6
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 07:44:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DA91C2088E
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 07:44:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DA91C2088E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 4578020846
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 07:44:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4578020846
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728982AbeGZJAH (ORCPT
+        id S1729053AbeGZJA1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 26 Jul 2018 05:00:07 -0400
-Received: from mx2.suse.de ([195.135.220.15]:45212 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728378AbeGZJAH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Jul 2018 05:00:07 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 93754AECB;
-        Thu, 26 Jul 2018 07:44:31 +0000 (UTC)
-Date:   Thu, 26 Jul 2018 09:44:30 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     "zhaowuyun@wingtech.com" <zhaowuyun@wingtech.com>
-Cc:     akpm <akpm@linux-foundation.org>,
-        mgorman <mgorman@techsingularity.net>,
-        minchan <minchan@kernel.org>, vinmenon <vinmenon@codeaurora.org>,
-        hannes <hannes@cmpxchg.org>,
-        "hillf.zj" <hillf.zj@alibaba-inc.com>,
-        linux-mm <linux-mm@kvack.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Hugh Dickins <hughd@google.com>
-Subject: Re: Re: [PATCH] [PATCH] mm: disable preemption before swapcache_free
-Message-ID: <20180726074430.GV28386@dhcp22.suse.cz>
-References: <2018072514375722198958@wingtech.com>
- <20180725141643.6d9ba86a9698bc2580836618@linux-foundation.org>
- <2018072610214038358990@wingtech.com>
- <20180726060640.GQ28386@dhcp22.suse.cz>
- <20180726150323057627100@wingtech.com>
+        Thu, 26 Jul 2018 05:00:27 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:33879 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728378AbeGZJA1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Jul 2018 05:00:27 -0400
+Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
+        id C310B80475; Thu, 26 Jul 2018 09:44:49 +0200 (CEST)
+Date:   Thu, 26 Jul 2018 09:44:49 +0200
+From:   Pavel Machek <pavel@ucw.cz>
+To:     Simon Shields <simon@lineageos.org>
+Cc:     linux-leds@vger.kernel.org,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3 2/2] leds: add Panasonic AN30259A support
+Message-ID: <20180726074449.GB4872@amd>
+References: <20180721141228.2283-1-simon@lineageos.org>
+ <20180721141228.2283-3-simon@lineageos.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="uQr8t48UFsdbeI+V"
 Content-Disposition: inline
-In-Reply-To: <20180726150323057627100@wingtech.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <20180721141228.2283-3-simon@lineageos.org>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 26-07-18 15:03:23, zhaowuyun@wingtech.com wrote:
-> >On Thu 26-07-18 10:21:40, zhaowuyun@wingtech.com wrote:
-> >[...]
-> >> Our project really needs a fix to this issue
-> >
-> >Could you be more specific why? My understanding is that RT tasks
-> >usually have all the memory mlocked otherwise all the real time
-> >expectations are gone already.
-> >--
-> >Michal Hocko
-> >SUSE Labs 
-> 
-> 
-> The RT thread is created by a process with normal priority, and the process was sleep, 
-> then some task needs the RT thread to do something, so the process create this thread, and set it to RT policy.
-> I think that is the reason why RT task would read the swap.
 
-OK I see. This design is quite fragile though. You are opening ticket to
-priority inversions and what not.
+--uQr8t48UFsdbeI+V
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Anyway, the underlying swap issue should be fixed. Unfortunatelly I do
-not have a great idea how to do that properly.
+On Sun 2018-07-22 00:12:27, Simon Shields wrote:
+> AN30259A is a 3-channel LED driver which uses I2C. It supports timed
+> operation via an internal PWM clock, and variable brightness. This
+> driver offers support for basic hardware-based blinking and brightness
+> control.
+>=20
+> The datasheet is freely available:
+> https://www.alliedelec.com/m/d/a9d2b3ee87c2d1a535a41dd747b1c247.pdf
+>=20
+> Signed-off-by: Simon Shields <simon@lineageos.org>
 
--- 
-Michal Hocko
-SUSE Labs
+Acked-by: Pavel Machek <pavel@ucw.cz>
+
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--uQr8t48UFsdbeI+V
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAltZe/EACgkQMOfwapXb+vJvlwCbBXb2+g0cgKex/IjaREEUND6w
+RKUAn3H8s5I6vHOaVpE+zHBQ6XP3ScOA
+=/a69
+-----END PGP SIGNATURE-----
+
+--uQr8t48UFsdbeI+V--
