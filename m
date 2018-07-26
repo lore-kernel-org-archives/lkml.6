@@ -2,135 +2,132 @@ Return-Path: <SRS0=7Z+k=KK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 887F1C28CF6
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 20:11:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92EEFC28CF6
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 20:24:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 412E2206B7
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 20:11:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4049A206B7
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 20:24:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="gmkmeryE";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="VRlQn2H2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 412E2206B7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GVizCX7U"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4049A206B7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731709AbeGZV3k (ORCPT
+        id S1731281AbeGZVma (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 26 Jul 2018 17:29:40 -0400
-Received: from mail-ua0-f195.google.com ([209.85.217.195]:33566 "EHLO
-        mail-ua0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730643AbeGZV3j (ORCPT
+        Thu, 26 Jul 2018 17:42:30 -0400
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:42457 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730402AbeGZVma (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Jul 2018 17:29:39 -0400
-Received: by mail-ua0-f195.google.com with SMTP id i4-v6so1923649uak.0
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Jul 2018 13:11:13 -0700 (PDT)
+        Thu, 26 Jul 2018 17:42:30 -0400
+Received: by mail-pl0-f68.google.com with SMTP id z7-v6so1298270plo.9;
+        Thu, 26 Jul 2018 13:24:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=CCDdoDPiIf1rjjGOpcLo14Fu2KiK4Jt6zjEYVbtWCFA=;
-        b=gmkmeryEGFbtH63LQ8RqD0H5+MW4RO91eG80FpUeSiJl5//9jK7FTfzQ2d+1/ratDd
-         8ZHayfjxmKPV9mvYCZvgWYFhv1Cor4NBbL70YcbOcZfgDeJUfWnlAJiQfzgER7ntKub6
-         E+Lh4ZkAalkbulLABISu5CAke1JH2y0trHsvnCFoXqAxID4LaTUdWZVQr+SLaMm36cHU
-         78Ts1d5fPvsd5P4JAeou99dfdS1HLLAwfDwrClKANQMN4EEQpoOHTkWUTpDJbkvw4VtO
-         RoWCB1m0DKBUsOftZfhE0RxfWq/0tk1rt4vzkCwDExy0iJmKyeNgJH6s3QZsfMNFGuxD
-         qsmg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=CCDdoDPiIf1rjjGOpcLo14Fu2KiK4Jt6zjEYVbtWCFA=;
-        b=VRlQn2H2Hlm55ijyub4SK0uWxbZVW7qVvmCOr5rM9sXdjPgyjikNRFyLuAkjkkvF1L
-         UMNsZkBMNApSWxc7Ew9m76BX8/HbDx/Wey/koxH9EpMHm8q1LOwMA+ZhILEfQl0h2VuN
-         Nz/vq/WxWwjGtW+2O2GTBlS9C3DuzzGaC8TAE=
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=je7aQ3jurf64ONYjmHUGFXlh4NHT2dGPAFCAvnwJ4Hk=;
+        b=GVizCX7UxDmf8YvVKMg1IrFDgM2p7tutYzGOvlh0G9U4SDn8KzYvBJBCNLTKErrkct
+         CvX9sEes1FREWN9elo9JYt4Ng6g6uk5gkk2K6b5jAFgDBa0a0zYGNxxUcqycHJw9z44K
+         f0czKS2BIvtHA8Z3ABxvyCFEtzyNVsm3cKsU8fBtRhMXN6FAMN6vz2rUDFgKXLCEW+5f
+         wGVta/Ov3cd6gsjDkVY+LFtIMd/0a56KRTCv/JtI40opZTkc1XOB5aMIOZBlsgi2wV/H
+         jPu3HALD72gInzv/yG7/YeB6CBnyrLvdZx4VlLS03HXmb5z5nVov7S6ft9CK1Qa4lsEG
+         cPtg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
-         :date:message-id:subject:to:cc;
-        bh=CCDdoDPiIf1rjjGOpcLo14Fu2KiK4Jt6zjEYVbtWCFA=;
-        b=rPmvFx9pgmBh2ON4d0RltXuVcBkLehY1v/hZON8BQBzfzKDrDu9snSZo5aMvwiKbip
-         Z8e7J3wu/MFh1KSMDCswupAa2hT3/vbeqVFwlNtI4ofS6okKk/YWqrnuG0ygogjK6Jh0
-         taiy0xYa9Lu349a2DPEEByIqzIetui7va7h87PfZh7Hu2ZqhHQRbx1F4G40tx8zUjLr8
-         LrXl3gtZDCCtKN5cxwRjOHFjckywhKm2t7AjzkJ630QPGN7bGCKXxAFO1H+RBWgPIN+B
-         FDGXm81foZk2upIOWFwZfYT50IQcP2d25PBBuEq+7fZEGLhjvKiJibkkRgOpfxc3efHZ
-         QbDw==
-X-Gm-Message-State: AOUpUlEapc7efvpDxDgfXmblhpJZ0XOUoKjtf57nN4Zkg1fPpNsylNU5
-        JStsUxomk/vhqq6mAd+248416Lzw2lhY6YT2xONEpQ==
-X-Google-Smtp-Source: AAOMgpeZEZimL4Mf01sz+vrku9FDnoYjlIMj21oXkvlowb1zNa64S/5Txl2VbhP6cuCv4rVg5PVM7LvWfV2loi/IaWY=
-X-Received: by 2002:ab0:11dd:: with SMTP id q29-v6mr2415399uac.191.1532635872217;
- Thu, 26 Jul 2018 13:11:12 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a1f:cd5:0:0:0:0:0 with HTTP; Thu, 26 Jul 2018 13:11:11 -0700 (PDT)
-In-Reply-To: <87o9eu1cup.fsf@linux.intel.com>
-References: <20180706162154.196345-1-dianders@chromium.org> <87o9eu1cup.fsf@linux.intel.com>
-From:   Doug Anderson <dianders@chromium.org>
-Date:   Thu, 26 Jul 2018 13:11:11 -0700
-X-Google-Sender-Auth: bts8xwr8j819LetTErVe8Vk-UfI
-Message-ID: <CAD=FV=WjMVhc=h+YJLmW6jQ0aS+qc1ZQU5DCx2F8B7hKc4v8ZA@mail.gmail.com>
-Subject: Re: [RFT PATCH 0/4] usb: dwc2: Turn on uframe sched everywhere
-To:     Felipe Balbi <felipe.balbi@linux.intel.com>
-Cc:     Minas Harutyunyan <hminas@synopsys.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Zhangfei Gao <zhangfei.gao@linaro.org>,
-        Stephen Warren <swarren@wwwdotorg.org>,
-        Bruno Herrera <bruherrera@gmail.com>,
-        linux-usb@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=je7aQ3jurf64ONYjmHUGFXlh4NHT2dGPAFCAvnwJ4Hk=;
+        b=HGGBoA0AnMZzHexVIdVWSC8RnVk6mBsEbrG/z1Nc0tMLIKx+145xa3YMMUbNkxXs38
+         oSPPEceAQ7LZw4hCEpFPHPk0gD+MwpmnzMxF6LyGyfTwwq6qdoPBHZndYGj6qEkSluYj
+         s2aj7I3IioABhsTEctfnXfb4mqS6Bjnhjyw83a4sIgxFufnZH53GBOAbDsJ0DULkEQUs
+         KGzvaJnGEOqC8TGI1qHqtREthQCTrNLpYYobWtjg3pb0RtfbA0xHNBfeenS2F4E//KsX
+         yRRWj/A/16yJwlX1PtWLq9m6/9PvXYpo1Qr/LYNfYm1Twf6IrzpZuDz5CI9kM6xxKYgm
+         M5Pg==
+X-Gm-Message-State: AOUpUlH8iM9qcm9V6z/T3HzecBS9rDPmy319Uro0lcnFzhe816nYFLQw
+        DMxeplCK3AeFeTYLZv75ChAC2js2
+X-Google-Smtp-Source: AAOMgpc5rWJEGSmJC6oQO5oukSseMDYmltNsOxUSk8QC3+s1FkLouHqLzQGaSGfJwQDoluEmLQEb/A==
+X-Received: by 2002:a17:902:6684:: with SMTP id e4-v6mr3279392plk.35.1532636641676;
+        Thu, 26 Jul 2018 13:24:01 -0700 (PDT)
+Received: from localhost.localdomain ([162.255.34.186])
+        by smtp.gmail.com with ESMTPSA id d9-v6sm3777101pfb.86.2018.07.26.13.24.00
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 26 Jul 2018 13:24:01 -0700 (PDT)
+From:   David Archuleta <darchuletajr@gmail.com>
+To:     rjw@rjwysocki.net
+Cc:     lenb@kernel.org, linux-acpi@vger.kernel.org,
+        linux-kernel@vger.kernel.org, darchuletajr <darchuletajr@gmail.com>
+Subject: [PATCH] acpi: processor_throttling: fixed a few brace coding style issues.
+Date:   Thu, 26 Jul 2018 13:23:41 -0700
+Message-Id: <20180726202341.9816-1-darchuletajr@gmail.com>
+X-Mailer: git-send-email 2.18.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+From: darchuletajr <darchuletajr@gmail.com>
 
-On Thu, Jul 26, 2018 at 3:59 AM, Felipe Balbi
-<felipe.balbi@linux.intel.com> wrote:
-> Douglas Anderson <dianders@chromium.org> writes:
->
->> While looking at a dwc2 recently, I noticed that some platforms still
->> have the uframe scheduler off.  As far as I know, nothing good can
->> come out of having the uframe scheduler off.  Let's turn it on
->> everywhere.  Assuming this all works out then some time in the future
->> we can gut all the old code that handles the old non-uframe scheduler
->> and make everything simpler.
->>
->> NOTE: I don't have access to any of the platforms that I'm changing
->> here, so I'm hoping to see a Tested-by from those on the list.
->>
->>
->> Douglas Anderson (4):
->>   usb: dwc2: Turn on uframe_sched on "bcm" platforms
->>   usb: dwc2: Turn on uframe_sched on "his" platforms
->>   usb: dwc2: Turn on uframe_sched on "amlogic" platforms
->>   usb: dwc2: Turn on uframe_sched on "stm32f4x9_fsotg" platforms
->
-> care to resend without RFT prefix and with collected acks, tested-bys, etc?
+Fixed a few brace coding style issues found by running
+./scripts/checkpatch
 
-Done with a prefix of 'REPOST' to hopefully make it obvious nothing
-changed between the RFT and this version.  There were only two
-test-by, but as mentioned in the updated cover letter:
+Signed-off-by: David Archuleta Jr. <darchuletajr@gmail.com>
+---
+ drivers/acpi/processor_throttling.c | 12 ++++--------
+ 1 file changed, 4 insertions(+), 8 deletions(-)
 
-Since there should be nothing platform specific about the uFrame
-scheduler presumably this should mean we're good to go?  Specificaly
-note that in at least one of the "Tested-by" reports this patch caused
-a notable improvement.
+diff --git a/drivers/acpi/processor_throttling.c b/drivers/acpi/processor_throttling.c
+index fbc936cf2025..75cc179b352b 100644
+--- a/drivers/acpi/processor_throttling.c
++++ b/drivers/acpi/processor_throttling.c
+@@ -298,9 +298,8 @@ static int acpi_processor_get_platform_limit(struct acpi_processor *pr)
+ 
+ 	status = acpi_evaluate_integer(pr->handle, "_TPC", NULL, &tpc);
+ 	if (ACPI_FAILURE(status)) {
+-		if (status != AE_NOT_FOUND) {
++		if (status != AE_NOT_FOUND)
+ 			ACPI_EXCEPTION((AE_INFO, status, "Evaluating _TPC"));
+-		}
+ 		return -ENODEV;
+ 	}
+ 
+@@ -431,9 +430,8 @@ static int acpi_processor_get_throttling_control(struct acpi_processor *pr)
+ 
+ 	status = acpi_evaluate_object(pr->handle, "_PTC", NULL, &buffer);
+ 	if (ACPI_FAILURE(status)) {
+-		if (status != AE_NOT_FOUND) {
++		if (status != AE_NOT_FOUND)
+ 			ACPI_EXCEPTION((AE_INFO, status, "Evaluating _PTC"));
+-		}
+ 		return -ENODEV;
+ 	}
+ 
+@@ -516,9 +514,8 @@ static int acpi_processor_get_throttling_states(struct acpi_processor *pr)
+ 
+ 	status = acpi_evaluate_object(pr->handle, "_TSS", NULL, &buffer);
+ 	if (ACPI_FAILURE(status)) {
+-		if (status != AE_NOT_FOUND) {
++		if (status != AE_NOT_FOUND)
+ 			ACPI_EXCEPTION((AE_INFO, status, "Evaluating _TSS"));
+-		}
+ 		return -ENODEV;
+ 	}
+ 
+@@ -596,9 +593,8 @@ static int acpi_processor_get_tsd(struct acpi_processor *pr)
+ 
+ 	status = acpi_evaluate_object(pr->handle, "_TSD", NULL, &buffer);
+ 	if (ACPI_FAILURE(status)) {
+-		if (status != AE_NOT_FOUND) {
++		if (status != AE_NOT_FOUND)
+ 			ACPI_EXCEPTION((AE_INFO, status, "Evaluating _TSD"));
+-		}
+ 		return -ENODEV;
+ 	}
+ 
+-- 
+2.18.0
 
-
-BTW: I'm pleased to have you apply the patches, but I notice that
-get_maintainer no longer flags you as the person to post dwc2 patches
-to.  From linux-next:
-
-$ ./scripts/get_maintainer.pl -f drivers/usb/dwc2
-Minas Harutyunyan <hminas@synopsys.com> (maintainer:DESIGNWARE USB2
-DRD IP DRIVER)
-Greg Kroah-Hartman <gregkh@linuxfoundation.org> (supporter:USB SUBSYSTEM)
-linux-usb@vger.kernel.org (open list:DESIGNWARE USB2 DRD IP DRIVER)
-linux-kernel@vger.kernel.org (open list)
-
-
--Doug
