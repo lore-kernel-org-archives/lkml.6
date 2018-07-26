@@ -2,196 +2,121 @@ Return-Path: <SRS0=7Z+k=KK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE4FCC28CF6
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 15:14:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CC4BC6778F
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 15:14:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A9A3F2064D
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 15:14:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A9A3F2064D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
+	by mail.kernel.org (Postfix) with ESMTP id DD4572064D
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 15:14:12 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=android.com header.i=@android.com header.b="n+/FpwDe"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD4572064D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=android.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731721AbeGZQbS convert rfc822-to-8bit (ORCPT
+        id S1731746AbeGZQb1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 26 Jul 2018 12:31:18 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:5196 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729801AbeGZQbS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Jul 2018 12:31:18 -0400
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 41bwbm5rqVz9tvPy;
-        Thu, 26 Jul 2018 17:13:56 +0200 (CEST)
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id lZx6amBsL99K; Thu, 26 Jul 2018 17:13:56 +0200 (CEST)
-Received: from vm-hermes.si.c-s.fr (vm-hermes.si.c-s.fr [192.168.25.253])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 41bwbm50yjz9tvPZ;
-        Thu, 26 Jul 2018 17:13:56 +0200 (CEST)
-Received: by vm-hermes.si.c-s.fr (Postfix, from userid 33)
-        id 79DD760A; Thu, 26 Jul 2018 17:13:55 +0200 (CEST)
-Received: from 37.173.173.60 ([37.173.173.60]) by messagerie.si.c-s.fr
- (Horde Framework) with HTTP; Thu, 26 Jul 2018 17:13:55 +0200
-Date:   Thu, 26 Jul 2018 17:13:55 +0200
-Message-ID: <20180726171355.Horde.KlFUG9wXmbRDCiyhk5bHsw8@messagerie.si.c-s.fr>
-From:   LEROY Christophe <christophe.leroy@c-s.fr>
-To:     Alex Ghiti <alex@ghiti.fr>
-Cc:     Mike Kravetz <mike.kravetz@oracle.com>, davem@davemloft.net,
-        linuxppc-dev@lists.ozlabs.org,
-        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
-        paul.burton@mips.com, ralf@linux-mips.org,
-        linux-kernel@vger.kernel.org, linux-parisc@vger.kernel.org,
-        tony.luck@intel.com, linux-arm-kernel@lists.infradead.org,
-        tglx@linutronix.de, arnd@arndb.de, fenghua.yu@intel.com,
-        jhogan@kernel.org, catalin.marinas@arm.com, mingo@redhat.com,
-        linux@armlinux.org.uk, x86@kernel.org, deller@gmx.de,
-        ysato@users.sourceforge.jp, linux-arch@vger.kernel.org,
-        sparclinux@vger.kernel.org, hpa@zytor.com, paulus@samba.org,
-        jejb@parisc-linux.org, will.deacon@arm.com,
-        linux-sh@vger.kernel.org, linux-ia64@vger.kernel.org,
-        dalias@libc.org, linux-mips@linux-mips.org,
-        Michal Hocko <mhocko@kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Subject: Re: [PATCH v4 00/11] hugetlb: Factorize hugetlb architecture
- primitives
-References: <20180705110716.3919-1-alex@ghiti.fr>
- <20180709141621.GD22297@dhcp22.suse.cz>
- <2173685f-7f85-7acb-4685-2383210c5fa2@ghiti.fr>
- <87d0vehx16.fsf@concordia.ellerman.id.au>
- <67aba0f0-c0d4-b06f-5fbc-f4d113ce5033@ghiti.fr>
-In-Reply-To: <67aba0f0-c0d4-b06f-5fbc-f4d113ce5033@ghiti.fr>
-User-Agent: Internet Messaging Program (IMP) H5 (6.2.3)
-Content-Type: text/plain; charset=UTF-8; format=flowed; DelSp=Yes
+        Thu, 26 Jul 2018 12:31:27 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:33297 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729801AbeGZQb1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Jul 2018 12:31:27 -0400
+Received: by mail-pg1-f196.google.com with SMTP id r5-v6so1368478pgv.0
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Jul 2018 08:14:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=android.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=YhHi/dVQWSm1RFv0JuicmB9BtQrPGV4rHFVPofAhMb0=;
+        b=n+/FpwDeNyU+NKym7VPjZfPxaR4fFlSEW11XEteNsdfILN4t5Gu/r003e9M7TgBjnf
+         yuEmeWEG89CQBIiho4bH1ZNhPcbD7wgMfbOIHSkem05VTSKNLVJfVbqHr/2Huj8LaKeV
+         rrRBBXmZg3txosIM8PQWLmR0U7P9HMJvfZzvXTzPSlGg9TIyloZL1S/pnDbff9ycGEuz
+         oyfJWKXdLrMC+aYoQ6OD7PDWj6XChyhQ4WOrmuD67v5MIjq89CjZGlH0HtPi0jtFmHnE
+         Yp+aUDhQYzlKMwD0nUZhDfMtUaAVaCnmCsGuumF4uae0OPOwo0B6x5mfc4jtbJ2ypbyp
+         U9ig==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=YhHi/dVQWSm1RFv0JuicmB9BtQrPGV4rHFVPofAhMb0=;
+        b=arZLc+p4agjoB3DZPl0AegcMoewaphj3OC8ZIPOfbqNceMuEwvU32XgNSOAGAjV7Gg
+         3C0sIMLHL3wEnQU/Z3RNd0i2qHZTb6eGV1FqLR0BmIK6tMWWxb2TydGMsTRQZSHG7fBA
+         JTltNy0CzigP11aebS+qJmp6aMvOquMmY/amuru7Rzgmizv/R7yGuBNT3lEZajpZA7RS
+         iGls/qEmutFvYxae7RwivzqeuYrRbCOxwYjyCz05Y5CNtbJIMu8kzmk/ag3lM8QBKUsJ
+         cCikNG14coKeIWU8RjSH4X6m1uvJHhxrtu1t8uwBpSrtjN4qmZc09nRVYdpI+MDNENLx
+         OUZg==
+X-Gm-Message-State: AOUpUlETlfwmiFMTPm0hBYIjcGhGGBjGArrRz1uslPYS38jh5Zxm3H/R
+        3gQykO/vUsdXv2A3lL8CLzvfJQ==
+X-Google-Smtp-Source: AAOMgpdKnliykPFKWLKvw05Za0n5KQsi/of1hJT3MSNuNJ3Rgg90ZsteC2M1WcPkDdJdMZ5acHK7Ug==
+X-Received: by 2002:a63:291:: with SMTP id 139-v6mr2343488pgc.365.1532618049586;
+        Thu, 26 Jul 2018 08:14:09 -0700 (PDT)
+Received: from nebulus.mtv.corp.google.com ([2620:0:1000:1611:8fc3:703d:7635:5997])
+        by smtp.googlemail.com with ESMTPSA id b192-v6sm2934942pga.2.2018.07.26.08.14.08
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 26 Jul 2018 08:14:09 -0700 (PDT)
+Subject: Re: [PATCH] tracing: do not leak kernel addresses
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     linux-kernel@vger.kernel.org,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Ingo Molnar <mingo@redhat.com>, kernel-team@android.com,
+        stable@vger.kernel.org
+References: <20180725202238.165314-1-salyzyn@android.com>
+ <20180725210717.3b807191@vmware.local.home>
+From:   Mark Salyzyn <salyzyn@android.com>
+Message-ID: <11437c3e-5131-7190-c496-7b51eb7fcc2a@android.com>
+Date:   Thu, 26 Jul 2018 08:14:08 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Disposition: inline
-Content-Transfer-Encoding: 8BIT
+In-Reply-To: <20180725210717.3b807191@vmware.local.home>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-GB
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Alex Ghiti <alex@ghiti.fr> a écrit :
-
-> Hi everyone,
+On 07/25/2018 06:07 PM, Steven Rostedt wrote:
+> On Wed, 25 Jul 2018 13:22:36 -0700
+> Mark Salyzyn <salyzyn@android.com> wrote:
 >
-> This is the result of the build for all arches tackled in this  
-> series rebased on 4.18-rc6:
+>> From: Nick Desaulniers <ndesaulniers@google.com>
+>>
+>> Switch from 0x%lx to 0x%pK to print the kernel addresses.
+>>
+>> Fixes: CVE-2017-0630
+> Wait!!!! This breaks perf and trace-cmd! They require this to be able
+> to print various strings in trace events. This file is root read only,
+> as the CVE says.
 >
-> arm:
->         versatile_defconfig: without huge page OK
->         keystone_defconfig: with huge page OK
-> arm64:
->         defconfig: with huge page OK
-> ia64:
->         generic_defconfig: with huge page OK
-> mips:
->         Paul Burton tested cavium octeon with huge page OK
-> parisc:
->         generic-64bit_defconfig: with huge page does not link
->         generic-64bit_defconfig: without huge page does not link
->         BUT not because of this series, any feedback welcome.
-> powerpc:
->         ppc64_defconfig: without huge page OK
->         ppc64_defconfig: with huge page OK
-
-Can you also test ppc32 both with and without hugepage (mpc885_ads_defconfig)
-
-Thanks
-Christophe
-
-> sh:
->         dreamcast_defconfig: with huge page OK
-> sparc:
->         sparc32_defconfig: without huge page OK
-> sparc64:
->         sparc64_defconfig: with huge page OK
-> x86:
->         with huge page OK
+> NAK for this fix. Come up with something that doesn't break perf and
+> trace-cmd. That will not be trivial, as the format is stored in the
+> ring buffer with an address, then referenced directly. It also handles
+> trace_printk() functions that simply point to the string format itself.
 >
-> Alex
+> A fix would require having a pointer be the same that is referenced
+> inside the kernel as well as in this file. Maybe make the format string
+> placed in a location that doesn't leak where the rest of the kernel
+> exists?
 >
-> On 07/23/2018 02:00 PM, Michael Ellerman wrote:
->> Alex Ghiti <alex@ghiti.fr> writes:
->>
->>> Does anyone have any suggestion about those patches ?
->> Cross compiling it for some non-x86 arches would be a good start :)
->>
->> There are cross compilers available here:
->>
->>   https://mirrors.edge.kernel.org/pub/tools/crosstool/
->>
->>
->> cheers
->>
->>> On 07/09/2018 02:16 PM, Michal Hocko wrote:
->>>> [CC hugetlb guys -  
->>>> http://lkml.kernel.org/r/20180705110716.3919-1-alex@ghiti.fr]
->>>>
->>>> On Thu 05-07-18 11:07:05, Alexandre Ghiti wrote:
->>>>> In order to reduce copy/paste of functions across architectures and then
->>>>> make riscv hugetlb port (and future ports) simpler and smaller, this
->>>>> patchset intends to factorize the numerous hugetlb primitives that are
->>>>> defined across all the architectures.
->>>>>
->>>>> Except for prepare_hugepage_range, this patchset moves the versions that
->>>>> are just pass-through to standard pte primitives into
->>>>> asm-generic/hugetlb.h by using the same #ifdef semantic that can be
->>>>> found in asm-generic/pgtable.h, i.e. __HAVE_ARCH_***.
->>>>>
->>>>> s390 architecture has not been tackled in this serie since it does not
->>>>> use asm-generic/hugetlb.h at all.
->>>>> powerpc could be factorized a bit more (cf huge_ptep_set_wrprotect).
->>>>>
->>>>> This patchset has been compiled on x86 only.
->>>>>
->>>>> Changelog:
->>>>>
->>>>> v4:
->>>>>    Fix powerpc build error due to misplacing of #include
->>>>>    <asm-generic/hugetlb.h> outside of #ifdef CONFIG_HUGETLB_PAGE, as
->>>>>    pointed by Christophe Leroy.
->>>>>
->>>>> v1, v2, v3:
->>>>>    Same version, just problems with email provider and misuse of
->>>>>    --batch-size option of git send-email
->>>>>
->>>>> Alexandre Ghiti (11):
->>>>>    hugetlb: Harmonize hugetlb.h arch specific defines with pgtable.h
->>>>>    hugetlb: Introduce generic version of hugetlb_free_pgd_range
->>>>>    hugetlb: Introduce generic version of set_huge_pte_at
->>>>>    hugetlb: Introduce generic version of huge_ptep_get_and_clear
->>>>>    hugetlb: Introduce generic version of huge_ptep_clear_flush
->>>>>    hugetlb: Introduce generic version of huge_pte_none
->>>>>    hugetlb: Introduce generic version of huge_pte_wrprotect
->>>>>    hugetlb: Introduce generic version of prepare_hugepage_range
->>>>>    hugetlb: Introduce generic version of huge_ptep_set_wrprotect
->>>>>    hugetlb: Introduce generic version of huge_ptep_set_access_flags
->>>>>    hugetlb: Introduce generic version of huge_ptep_get
->>>>>
->>>>>   arch/arm/include/asm/hugetlb-3level.h        | 32 +---------
->>>>>   arch/arm/include/asm/hugetlb.h               | 33 +----------
->>>>>   arch/arm64/include/asm/hugetlb.h             | 39 +++---------
->>>>>   arch/ia64/include/asm/hugetlb.h              | 47 ++-------------
->>>>>   arch/mips/include/asm/hugetlb.h              | 40 +++----------
->>>>>   arch/parisc/include/asm/hugetlb.h            | 33 +++--------
->>>>>   arch/powerpc/include/asm/book3s/32/pgtable.h |  2 +
->>>>>   arch/powerpc/include/asm/book3s/64/pgtable.h |  1 +
->>>>>   arch/powerpc/include/asm/hugetlb.h           | 43 ++------------
->>>>>   arch/powerpc/include/asm/nohash/32/pgtable.h |  2 +
->>>>>   arch/powerpc/include/asm/nohash/64/pgtable.h |  1 +
->>>>>   arch/sh/include/asm/hugetlb.h                | 54 ++---------------
->>>>>   arch/sparc/include/asm/hugetlb.h             | 40 +++----------
->>>>>   arch/x86/include/asm/hugetlb.h               | 72  
->>>>> +----------------------
->>>>>   include/asm-generic/hugetlb.h                | 88  
->>>>> +++++++++++++++++++++++++++-
->>>>>   15 files changed, 143 insertions(+), 384 deletions(-)
->>>>>
->>>>> -- 
->>>>> 2.16.2
+> -- Steve
+Thank you Steve, much appreciated feedback, I have asked the security 
+developers to keep this in mind and come up with a correct fix.
 
+The correct fix that meets your guidelines would _not_ be suitable for 
+stable due to the invasiveness it sounds, only for the latest will such 
+a rework make sense. As such, the fix proposed in this patch is the only 
+one that meets the bar for stable patch simplicity, and merely(!) needs 
+to state that if the fix is taken, perf and trace are broken.
 
+Posting this patch publicly on the lists, that may never be applied, may 
+be the limit of our responsibility for a fix to stable kernel releases, 
+to be optionally applied by vendors concerned with this CVE criteria?
+
+-- Mark
