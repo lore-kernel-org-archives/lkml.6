@@ -2,73 +2,67 @@ Return-Path: <SRS0=7Z+k=KK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80F21C6778F
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 14:04:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9589AC28CF6
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 14:12:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 21A7E20673
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 14:04:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 43A8720647
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 14:12:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pj4Fk0jD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 21A7E20673
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k0+xviZH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 43A8720647
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730492AbeGZPVr (ORCPT
+        id S1730524AbeGZP3X (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 26 Jul 2018 11:21:47 -0400
-Received: from mail-ua0-f194.google.com ([209.85.217.194]:46680 "EHLO
-        mail-ua0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729877AbeGZPVr (ORCPT
+        Thu, 26 Jul 2018 11:29:23 -0400
+Received: from mail-oi0-f68.google.com ([209.85.218.68]:45865 "EHLO
+        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730068AbeGZP3X (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Jul 2018 11:21:47 -0400
-Received: by mail-ua0-f194.google.com with SMTP id r18-v6so1135120ual.13;
-        Thu, 26 Jul 2018 07:04:46 -0700 (PDT)
+        Thu, 26 Jul 2018 11:29:23 -0400
+Received: by mail-oi0-f68.google.com with SMTP id q11-v6so3155565oic.12;
+        Thu, 26 Jul 2018 07:12:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=WWbbh2qvNFM7bSl2x7J6re4mTHa6Mav16SIeH4UQWeM=;
-        b=pj4Fk0jDoOvD3is0yM4Fj30gMzVgecxAaqTExSLdapfkLLYHOy1NrIX2ECK4CQbMos
-         ZDlyhov7yJOfj6QBUEoY/EgJ3EHHRzeuxp0C+WxleYjv+3Suo4cXc2Msd0FIpzneOG02
-         kjYt+A7ozhYx2ncfKMawdASZ5XQNnsElu6TinUT4b/ij6cL74xUrGX4Kwd/wygMMWOPJ
-         dNWKiACuSXBTAeE826Pv7BbevMjxjS/DBqvi1/QVSJSbBFhVkCV7KDEe3rBk13iuN9gA
-         QmZ7KdP/vc0swGhkGQxipw4RvXgPPZG97AIyLBm4BK10W+Si+9HcP62HZeOs9ovQ1v7u
-         uD0w==
+        h=mime-version:sender:from:date:message-id:subject:to:cc;
+        bh=Iiop/PoqdOOuPg/DkETk9KNNqwPcixnHu+J0ibYzAxM=;
+        b=k0+xviZHyFzHlYmKX2f6JjJ/DM/gQbYnUKzp+65i4huftbx5oa2b//0EuzSYrwzZow
+         cHgHFUjLgHKy+QVk/T9BbgteWZHThcr0Kqx55tC8VzkglXgtzpD8n8Umf3wRsXRBux1E
+         xggcc9lskS4WQ0GHHVmLNwr5vdrD06Ee271O40e0HM/lCr/FFt1MWkkdM7NIhgVz7Tzv
+         Qt82D1JRIsqMFoRzRsxEoEpq1XGIRMzAcZVkPEAx+9dIMB1bbZzj0mOHfgqK1UGGF9Mp
+         niu+LjsxkJi14+dslCp6yf8ILzkhWApSfJ6qJJhW3JJmOOcrWfY5aulc1pC2dzbBBdcC
+         mPcw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=WWbbh2qvNFM7bSl2x7J6re4mTHa6Mav16SIeH4UQWeM=;
-        b=r77+K1Xq6l6iD9Fr06ov21x7/lENnnJyFcrPjQl9McG1mbVxetHivjxMotlETOriQg
-         nVTlGQxyEdBQBEAthLSXtqYZQT4K/ebBHniSELDsAYquuYU8PMjp2Dw+MtDvqGz/D2yw
-         5q6JndPRA49L8/xyTVcx9fEo5hN7tD+eNv1oNEuzC4qhG5A38UmLzGpFSJ1T5p+t4JhR
-         yZGrQnJzfYhEkZRp1Ecc9OIPJqvV87E+Z2epc+S+ViaYzl9WKANCS6+aN32vP2fShsUU
-         qGulTDPNlK/2zxbadgRaIHfus6069tGFUVKqdvjYDrucWFYZASf7e9mCC/oNv28YgIzX
-         HWLw==
-X-Gm-Message-State: AOUpUlFrL6xZ4UY2+Z7KckX6YmBf5uBcG6eDsgkkmIGGtzO6bL1HYYbx
-        NlFR48J1Zqs7F8Bs7w9Yxs6crntCSjjGX0Lp2tk=
-X-Google-Smtp-Source: AAOMgpdz3bSyys6w1ECF2E9QqoC4eZNrg05aeZ5MpsNxcACXj9Qy0+gkwK657ZemBOCFmiQVfMLYGmgdXhr9bH7116o=
-X-Received: by 2002:ab0:6037:: with SMTP id n23-v6mr1474815ual.28.1532613886003;
- Thu, 26 Jul 2018 07:04:46 -0700 (PDT)
+        h=x-gm-message-state:mime-version:sender:from:date:message-id:subject
+         :to:cc;
+        bh=Iiop/PoqdOOuPg/DkETk9KNNqwPcixnHu+J0ibYzAxM=;
+        b=YRTfFg9atpm7yJIVgbsS1tSvKRKhkvPF6Ua/8LkcgODeZJalkBUo3gIr7Do2uGhvkc
+         BrjmPj3lpbkw79r8bptRVNVo2j5k+OaxTb0iwnUobiB18xjlmHdXY+oOmYvnJ+adqBx6
+         Pj41T+Ekm4JadbmhXo/zI1Vh9cgaqaf6qL6dS1q1LNB35aEhALmO7fOjroqq38O8TG7z
+         308jD68C9dHur2R64sr8JTHMAZ6i/+mxZPOE/A9L0caZo16GK4oFQ0QQbhZBQev3XGe8
+         HjK2w5P3Mp8S5WMpzxLA/AJKC+tXw/iaBfI9r5k70Z/xkO26j0ccbqoeDeYjlbrMGJm1
+         ubvA==
+X-Gm-Message-State: AOUpUlHxV+/NezFsKKAXcOYQqC1uDI9db+LgHqJgyzqKIgBunn8I5vlo
+        ZhPILvPG3V6k+8rbY7KDCK1j5bpOiSbQ3B7/aC3tgP3N
+X-Google-Smtp-Source: AAOMgpfwWmrf7RYBLgaw+BbnjdJSe1m01UOMY2dKOFEUgFXpkIX1Do7G6Hw/X3ZhszcgTjIfhBjdNiku8a0kbKRBHRE=
+X-Received: by 2002:aca:ad4f:: with SMTP id w76-v6mr2294106oie.233.1532614340395;
+ Thu, 26 Jul 2018 07:12:20 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a67:2149:0:0:0:0:0 with HTTP; Thu, 26 Jul 2018 07:04:45
+Received: by 2002:a9d:63d2:0:0:0:0:0 with HTTP; Thu, 26 Jul 2018 07:12:20
  -0700 (PDT)
-In-Reply-To: <20180726093620.3876-1-hu1.chen@intel.com>
-References: <CAHp75Ve7i0QsrjshtMMp0cb44Mtet-SHDN+XuQHF-EHH_KuZEQ@mail.gmail.com>
- <20180726093620.3876-1-hu1.chen@intel.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Thu, 26 Jul 2018 17:04:45 +0300
-Message-ID: <CAHp75VeuCQ+R-rK+sYbZM_ED4R5aXSXy_QiAOPd4wE7FmBxX2Q@mail.gmail.com>
-Subject: Re: [PATCH] serial: core: stop passing NULL in uart_resume_port
-To:     Chen Hu <hu1.chen@intel.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>,
-        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Thu, 26 Jul 2018 16:12:20 +0200
+X-Google-Sender-Auth: 6g9uKNgBTD-jOVrPoKbKqy42_JI
+Message-ID: <CAJZ5v0jq73sRO77qRBcDqCH4rojnBNK+mTs9UJ3RQyNLW3x2zw@mail.gmail.com>
+Subject: [GIT PULL] Power management fix for v4.18-rc7
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Linux PM <linux-pm@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
@@ -76,17 +70,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 26, 2018 at 12:36 PM, Chen Hu <hu1.chen@intel.com> wrote:
-> Is it better to modify the DesignWare 8250 driver directly? Or do you think is this really an issue?
+Hi Linus,
 
-I have checked all of the users of do_termios in 8250 and only DW
-bails out on old == NULL.
+Please pull from the tag
 
-So, send a patch against 8250_dw with detailed explanation why it's
-wrong (use case, examples of wrong output, etc) and how you fix it.
-Describe any potential side effects (b/c it's a new behaviour).
+ git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git \
+ pm-4.18-rc7
+
+with top-most commit bafaf056e0734f7bca7d27716bb3c672e87bb0b1
+
+ cpufreq: qcom-kryo: add NULL entry to the end of_device_id array
+
+on top of commit d72e90f33aa4709ebecc5005562f52335e106a60
+
+ Linux 4.18-rc6
+
+to receive a power management fix for 4.18-rc7.
+
+This fixes up the recently introduced cpufreq driver for Qualcomm
+Kryo processors by adding a terminating NULL entry to its table of
+device IDs (YueHaibing).
+
+Thanks!
 
 
--- 
-With Best Regards,
-Andy Shevchenko
+---------------
+
+YueHaibing (1):
+      cpufreq: qcom-kryo: add NULL entry to the end of_device_id array
+
+---------------
+
+ drivers/cpufreq/qcom-cpufreq-kryo.c | 1 +
+ 1 file changed, 1 insertion(+)
