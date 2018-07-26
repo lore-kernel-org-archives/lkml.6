@@ -2,123 +2,141 @@ Return-Path: <SRS0=7Z+k=KK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68AF5C28CF6
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 19:59:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 073B7C28CF6
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 20:02:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1FA1220673
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 19:59:53 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="MLAxQ3zG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1FA1220673
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=broadcom.com
+	by mail.kernel.org (Postfix) with ESMTP id B222820673
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 20:02:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B222820673
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731808AbeGZVSN (ORCPT
+        id S1731692AbeGZVUg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 26 Jul 2018 17:18:13 -0400
-Received: from mail-qt0-f194.google.com ([209.85.216.194]:41340 "EHLO
-        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731674AbeGZVSN (ORCPT
+        Thu, 26 Jul 2018 17:20:36 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:42086 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730701AbeGZVUg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Jul 2018 17:18:13 -0400
-Received: by mail-qt0-f194.google.com with SMTP id e19-v6so2842037qtp.8
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Jul 2018 12:59:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=p70E5hBr1vNKJD4tO8VMDDAU3CjitBSp7uZMfHrf1W8=;
-        b=MLAxQ3zGo3tnPG3wlYJ4xVywVsQ9u3lWVuYINq1Mt62QQO/hqexYPqV4qQ7EgHu88n
-         5edjkmAARS5vr2GlgRHdwnoM7Q5EJEe4SXHpxait7U6D+zlt/9m7fXqYJkT+nBeoIlir
-         gafcT0B2u7bMc9upU/R86ssjptrOlDeCqJ0ns=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=p70E5hBr1vNKJD4tO8VMDDAU3CjitBSp7uZMfHrf1W8=;
-        b=t15AczmX1Y1YEkGPWyfLApCKjZdYl/zVwmgza9G2kFoTgq3fr/st26aIMETUJdegxu
-         fd3GM3I51nAVv4f5kY5tQ0ulbnN1MApffRBXDaRABgc8nP0SZVO/7Qz4vwTRMqzHLbdt
-         8MiSXUnfs/1OQj8m7ZXdX3zahEPiE39Q39bwepJYMTmLbJ6ORfO+4TYUpbsBwQrj4F6F
-         YHV8gYEqPCJlTbmTWwe37jhJLevjKJig/iSP5CPTkM8LMphn0Pf66UFlzTEfkW/EKRxi
-         NQInea05fboulGrgm35KaBOFId04e39XeEfEArCcUGAHXrA2VlADbQjGQjE00/nY8E+w
-         MD9g==
-X-Gm-Message-State: AOUpUlGbbZl1ydRQ0jIMcZ6bzSGz/p3s5tn296SEnj6+FD41IL6BgUbb
-        RfUarnMglnOQsylu9NLIb7lwzw==
-X-Google-Smtp-Source: AAOMgpf9cYw6vwK6xpyhVfRzuHlJHL3pPE+rIUz5+AuYGgHf56oBQY97V0nX8qkSYv+VTWnjGkgq+Q==
-X-Received: by 2002:aed:3ae5:: with SMTP id o92-v6mr3328059qte.127.1532635190016;
-        Thu, 26 Jul 2018 12:59:50 -0700 (PDT)
-Received: from [10.136.4.147] ([192.19.228.250])
-        by smtp.gmail.com with ESMTPSA id x41-v6sm1866929qtj.71.2018.07.26.12.59.46
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 26 Jul 2018 12:59:49 -0700 (PDT)
-Subject: Re: [PATCH 5/7] net: phy: Add support to configure clock in Broadcom
- iProc mdio mux
-To:     Andrew Lunn <andrew@lunn.ch>
-Cc:     "David S. Miller" <davem@davemloft.net>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>, netdev@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com
-References: <1532630184-29450-1-git-send-email-arun.parameswaran@broadcom.com>
- <1532630184-29450-6-git-send-email-arun.parameswaran@broadcom.com>
- <20180726192651.GK10686@lunn.ch>
-From:   Arun Parameswaran <arun.parameswaran@broadcom.com>
-Message-ID: <609726a2-e5ec-fe1d-4ee6-39db3d71b1f2@broadcom.com>
-Date:   Thu, 26 Jul 2018 13:00:05 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <20180726192651.GK10686@lunn.ch>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+        Thu, 26 Jul 2018 17:20:36 -0400
+Received: from akpm3.svl.corp.google.com (unknown [104.133.9.92])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 395DED1E;
+        Thu, 26 Jul 2018 20:02:11 +0000 (UTC)
+Date:   Thu, 26 Jul 2018 13:02:10 -0700
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     Coly Li <colyli@suse.de>
+Cc:     linux-kernel@vger.kernel.org, linux-bcache@vger.kernel.org,
+        linux-block@vger.kernel.org,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Michael Lyle <mlyle@lyle.org>,
+        Kent Overstreet <kent.overstreet@gmail.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Eric Biggers <ebiggers3@gmail.com>,
+        Randy Dunlap <rdunlap@infradead.org>
+Subject: Re: [PATCH v5 1/2] lib: add crc64 calculation routines
+Message-Id: <20180726130210.97450a74c164a02d7cfd79c1@linux-foundation.org>
+In-Reply-To: <20180726053352.2781-2-colyli@suse.de>
+References: <20180726053352.2781-1-colyli@suse.de>
+        <20180726053352.2781-2-colyli@suse.de>
+X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Andrew
+On Thu, 26 Jul 2018 13:33:51 +0800 Coly Li <colyli@suse.de> wrote:
 
-On 18-07-26 12:26 PM, Andrew Lunn wrote:
->> +static void mdio_mux_iproc_config_clk(struct iproc_mdiomux_desc *md)
->> +{
->> +	u32 val;
->> +	u32 divisor;
->> +
->> +	if (md->core_clk) {
->> +		divisor = clk_get_rate(md->core_clk) / MDIO_OPERATING_FREQUENCY;
+> This patch adds the re-write crc64 calculation routines for Linux kernel.
+> The CRC64 polynomial arithmetic follows ECMA-182 specification, inspired
+> by CRC paper of Dr. Ross N. Williams
+> (see http://www.ross.net/crc/download/crc_v3.txt) and other public domain
+> implementations.
 > 
-> /**
->  * clk_get_rate - obtain the current clock rate (in Hz) for a clock source.
->  * 		  This is only valid once the clock source has been enabled.
->  * @clk: clock source
->  */
-> unsigned long clk_get_rate(struct clk *clk);
+> All the changes work in this way,
+> - When Linux kernel is built, host program lib/gen_crc64table.c will be
+>   compiled to lib/gen_crc64table and executed.
+> - The output of gen_crc64table execution is an array called as lookup
+>   table (a.k.a POLY 0x42f0e1eba9ea369) which contain 256 64-bit long
+>   numbers, this talbe is dumped into header file lib/crc64table.h.
+> - Then the header file is included by lib/crc64.c for normal 64bit crc
+>   calculation.
+> - Function declaration of the crc64 calculation routines is placed in
+>   include/linux/crc64.h
 > 
-> It is generally good practice to call clk_prepare_enable() sometime
-> before clk_get_rate() to ensure the clock is ticking, and to show this
-> driver is making use of the clock, so it does not get turned off.
+> Currently bcache is the only user of crc64_be(), another potential user
+> is bcachefs which is on the way to be in mainline kernel. Therefore it
+> makes sense to move crc64 calculation into lib/crc64.c as public code.
 
-Will add 'clk_prepare_enable()' to the probe.
+delta from v4:
 
-Thanks
-Arun
+--- a/include/linux/crc64.h~lib-add-crc64-calculation-routines-v5
++++ a/include/linux/crc64.h
+@@ -1,6 +1,6 @@
+ /* SPDX-License-Identifier: GPL-2.0 */
+ /*
+- * See lib/crc64.c for the related specification and polynomical arithmetic.
++ * See lib/crc64.c for the related specification and polynomial arithmetic.
+  */
+ #ifndef _LINUX_CRC64_H
+ #define _LINUX_CRC64_H
+--- a/lib/crc64.c~lib-add-crc64-calculation-routines-v5
++++ a/lib/crc64.c
+@@ -12,7 +12,7 @@
+  * from,
+  * http://www.ross.net/crc/download/crc_v3.txt
+  *
+- * crc64table[256] is the lookup table of a table-driver 64-bit CRC
++ * crc64table[256] is the lookup table of a table-driven 64-bit CRC
+  * calculation, which is generated by gen_crc64table.c in kernel build
+  * time. The polynomial of crc64 arithmetic is from ECMA-182 specification
+  * as well, which is defined as,
+@@ -35,8 +35,8 @@ MODULE_LICENSE("GPL v2");
+ 
+ /**
+  * crc64_be - Calculate bitwise big-endian ECMA-182 CRC64
+- * @crc: seed value for computation. 0 for a new CRC computing, or the
+- *	previous crc64 value if computing incrementally.
++ * @crc: seed value for computation. 0 or (u64)~0 for a new CRC calculation,
++	or the previous crc64 value if computing incrementally.
+  * @p: pointer to buffer over which CRC64 is run
+  * @len: length of buffer @p
+  */
+--- a/lib/gen_crc64table.c~lib-add-crc64-calculation-routines-v5
++++ a/lib/gen_crc64table.c
+@@ -1,13 +1,13 @@
+ // SPDX-License-Identifier: GPL-2.0
+ /*
+- * Generate lookup table for the talbe-driven CRC64 calculation.
++ * Generate lookup table for the table-driven CRC64 calculation.
+  *
+  * gen_crc64table is executed in kernel build time and generates
+  * lib/crc64table.h. This header is included by lib/crc64.c for
+- * the table-driver CRC64 calculation.
++ * the table-driven CRC64 calculation.
+  *
+  * See lib/crc64.c for more information about which specification
+- * and polynomical arithmetic that gen_crc64table.c follows to
++ * and polynomial arithmetic that gen_crc64table.c follows to
+  * generate the lookup table.
+  *
+  * Copyright 2018 SUSE Linux.
+@@ -20,7 +20,7 @@
+ 
+ #define CRC64_ECMA182_POLY 0x42F0E1EBA9EA3693ULL
+ 
+-static int64_t crc64_table[256] = {0};
++static uint64_t crc64_table[256] = {0};
+ 
+ static void generate_crc64_table(void)
+ {
 
-> 
->> +		divisor = divisor / (MDIO_RATE_ADJ_DIVIDENT + 1);
->> +		val = divisor;
->> +		val |= MDIO_RATE_ADJ_DIVIDENT << MDIO_RATE_ADJ_DIVIDENT_SHIFT;
->> +		writel(val, md->base + MDIO_RATE_ADJ_EXT_OFFSET);
->> +		writel(val, md->base + MDIO_RATE_ADJ_INT_OFFSET);
->> +	}
->> +}
