@@ -5,151 +5,158 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69545C28CF6
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 23:07:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 815F3C28CF6
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 23:13:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1F74C2089C
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 23:07:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1F74C2089C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+	by mail.kernel.org (Postfix) with ESMTP id 2EFFC20862
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 23:13:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2EFFC20862
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731796AbeG0A0W (ORCPT
+        id S1731724AbeG0Acv convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 26 Jul 2018 20:26:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34260 "EHLO mail.kernel.org"
+        Thu, 26 Jul 2018 20:32:51 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:48615 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731846AbeG0AZu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Jul 2018 20:25:50 -0400
-Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9A3B820891;
-        Thu, 26 Jul 2018 23:06:52 +0000 (UTC)
-Received: from rostedt by gandalf.local.home with local (Exim 4.91)
-        (envelope-from <rostedt@goodmis.org>)
-        id 1fipLP-00069O-Cx; Thu, 26 Jul 2018 19:06:51 -0400
-Message-Id: <20180726230651.289642501@goodmis.org>
-User-Agent: quilt/0.65
-Date:   Thu, 26 Jul 2018 19:06:09 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Ingo Molnar <mingo@redhat.com>, Shuah Khan <shuah@kernel.org>,
-        Tom Zanussi <tom.zanussi@linux.intel.com>,
-        Hiraku Toyooka <hiraku.toyooka@cybertrust.co.jp>,
-        stable@vger.kernel.org, Masami Hiramatsu <mhiramat@kernel.org>
-Subject: [PATCH 2/7] ring_buffer: tracing: Inherit the tracing setting to next ring buffer
+        id S1731231AbeG0Acu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Jul 2018 20:32:50 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 7C5C52082B; Fri, 27 Jul 2018 01:13:48 +0200 (CEST)
+Received: from xps13 (unknown [91.224.148.103])
+        by mail.bootlin.com (Postfix) with ESMTPSA id A99BE20618;
+        Fri, 27 Jul 2018 01:13:46 +0200 (CEST)
+Date:   Fri, 27 Jul 2018 01:13:46 +0200
+From:   Miquel Raynal <miquel.raynal@bootlin.com>
+To:     Boris Brezillon <boris.brezillon@bootlin.com>
+Cc:     Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Mans Rullgard <mans@mansr.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Stefan Agner <stefan@agner.ch>, linux-kernel@vger.kernel.org,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        linux-mtd@lists.infradead.org, Kamal Dasu <kdasu.kdev@gmail.com>,
+        Josh Wu <rainyfeeling@outlook.com>,
+        Marc Gonzalez <marc.w.gonzalez@free.fr>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        bcm-kernel-feedback-list@broadcom.com,
+        Sylvain Lemieux <slemieux.tyco@gmail.com>,
+        Wenyou Yang <wenyou.yang@microchip.com>,
+        Tudor Ambarus <Tudor.Ambarus@microchip.com>,
+        Vladimir Zapolskiy <vz@mleia.com>,
+        Harvey Hunt <harveyhuntnexus@gmail.com>,
+        linux-mediatek@lists.infradead.org,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Han Xu <han.xu@nxp.com>, Xiaolei Li <xiaolei.li@mediatek.com>,
+        linux-arm-kernel@lists.infradead.org,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Richard Weinberger <richard@nod.at>,
+        Brian Norris <computersforpeace@gmail.com>,
+        David Woodhouse <dwmw2@infradead.org>
+Subject: Re: [PATCH v4 27/35] mtd: rawnand: sm_common: convert driver to
+ nand_scan_with_ids()
+Message-ID: <20180727011346.3931dbe9@xps13>
+In-Reply-To: <20180726210655.03eca681@bbrezillon>
+References: <20180720151527.16038-1-miquel.raynal@bootlin.com>
+        <20180720151527.16038-28-miquel.raynal@bootlin.com>
+        <20180722084432.61b579b1@bbrezillon>
+        <20180726210655.03eca681@bbrezillon>
+Organization: Bootlin
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-15
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Masami Hiramatsu <mhiramat@kernel.org>
+Hi Boris,
 
-Maintain the tracing on/off setting of the ring_buffer when switching
-to the trace buffer snapshot.
+Boris Brezillon <boris.brezillon@bootlin.com> wrote on Thu, 26 Jul 2018
+21:06:55 +0200:
 
-Taking a snapshot is done by swapping the backup ring buffer
-(max_tr_buffer). But since the tracing on/off setting is defined
-by the ring buffer, when swapping it, the tracing on/off setting
-can also be changed. This causes a strange result like below:
+> On Sun, 22 Jul 2018 08:44:32 +0200
+> Boris Brezillon <boris.brezillon@bootlin.com> wrote:
+> 
+> > On Fri, 20 Jul 2018 17:15:19 +0200
+> > Miquel Raynal <miquel.raynal@bootlin.com> wrote:
+> >   
+> > > Two helpers have been added to the core to make ECC-related
+> > > configuration between the detection phase and the final NAND scan. Use
+> > > these hooks and convert the driver to just use nand_scan_with_ids()
+> > > (alternative to nand_scan() for passing a flash IDs table) instead of
+> > > both nand_scan_ident() and nand_scan_tail().
+> > > 
+> > > Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>    
+> > 
+> > Reviewed-by: Boris Brezillon <boris.brezillon@bootlin.com>
+> >   
+> > > ---
+> > >  drivers/mtd/nand/raw/sm_common.c | 39 +++++++++++++++++++++++++--------------
+> > >  1 file changed, 25 insertions(+), 14 deletions(-)
+> > > 
+> > > diff --git a/drivers/mtd/nand/raw/sm_common.c b/drivers/mtd/nand/raw/sm_common.c
+> > > index 7f5044a79f01..d05e3f976a5e 100644
+> > > --- a/drivers/mtd/nand/raw/sm_common.c
+> > > +++ b/drivers/mtd/nand/raw/sm_common.c
+> > > @@ -160,19 +160,9 @@ static struct nand_flash_dev nand_xd_flash_ids[] = {
+> > >  	{NULL}
+> > >  };
+> > >  
+> > > -int sm_register_device(struct mtd_info *mtd, int smartmedia)
+> > > +static int sm_attach_chip(struct nand_chip *chip)
+> > >  {
+> > > -	struct nand_chip *chip = mtd_to_nand(mtd);
+> > > -	int ret;
+> > > -
+> > > -	chip->options |= NAND_SKIP_BBTSCAN;
+> > > -
+> > > -	/* Scan for card properties */
+> > > -	ret = nand_scan_ident(mtd, 1, smartmedia ?
+> > > -		nand_smartmedia_flash_ids : nand_xd_flash_ids);
+> > > -
+> > > -	if (ret)
+> > > -		return ret;
+> > > +	struct mtd_info *mtd = nand_to_mtd(chip);
+> > >  
+> > >  	/* Bad block marker position */
+> > >  	chip->badblockpos = 0x05;
+> > > @@ -187,12 +177,33 @@ int sm_register_device(struct mtd_info *mtd, int smartmedia)
+> > >  	else
+> > >  		return -ENODEV;
+> > >  
+> > > -	ret = nand_scan_tail(mtd);
+> > > +	return 0;
+> > > +}
+> > >  
+> > > +static const struct nand_controller_ops sm_controller_ops = {
+> > > +	.attach_chip = sm_attach_chip,
+> > > +};
+> > > +
+> > > +int sm_register_device(struct mtd_info *mtd, int smartmedia)
+> > > +{
+> > > +	struct nand_chip *chip = mtd_to_nand(mtd);
+> > > +	struct nand_flash_dev *flash_ids;
+> > > +	int ret;
+> > > +
+> > > +	chip->options |= NAND_SKIP_BBTSCAN;
+> > > +
+> > > +	/* Scan for card properties */
+> > > +	chip->dummy_controller.ops = &sm_controller_ops;
+> > > +	flash_ids = smartmedia ? nand_smartmedia_flash_ids : nand_xd_flash_ids;
+> > > +	ret = nand_scan_with_ids(mtd, 1, flash_ids);
+> > >  	if (ret)
+> > >  		return ret;
+> > >  
+> > > -	return mtd_device_register(mtd, NULL, 0);
+> > > +	ret = mtd_device_register(mtd, NULL, 0);
+> > > +	if (ret)
+> > > +		nand_release(mtd);  
+> 
+> Didn't notice that while reviewing, but it would have been better to
+> use nand_cleanup() and do this change separately.
 
-  /sys/kernel/debug/tracing # cat tracing_on
-  1
-  /sys/kernel/debug/tracing # echo 0 > tracing_on
-  /sys/kernel/debug/tracing # cat tracing_on
-  0
-  /sys/kernel/debug/tracing # echo 1 > snapshot
-  /sys/kernel/debug/tracing # cat tracing_on
-  1
-  /sys/kernel/debug/tracing # echo 1 > snapshot
-  /sys/kernel/debug/tracing # cat tracing_on
-  0
+Indeed, will fix it.
 
-We don't touch tracing_on, but snapshot changes tracing_on
-setting each time. This is an anomaly, because user doesn't know
-that each "ring_buffer" stores its own tracing-enable state and
-the snapshot is done by swapping ring buffers.
-
-Link: http://lkml.kernel.org/r/153149929558.11274.11730609978254724394.stgit@devbox
-
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Shuah Khan <shuah@kernel.org>
-Cc: Tom Zanussi <tom.zanussi@linux.intel.com>
-Cc: Hiraku Toyooka <hiraku.toyooka@cybertrust.co.jp>
-Cc: stable@vger.kernel.org
-Fixes: debdd57f5145 ("tracing: Make a snapshot feature available from userspace")
-Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
-[ Updated commit log and comment in the code ]
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
----
- include/linux/ring_buffer.h |  1 +
- kernel/trace/ring_buffer.c  | 16 ++++++++++++++++
- kernel/trace/trace.c        |  6 ++++++
- 3 files changed, 23 insertions(+)
-
-diff --git a/include/linux/ring_buffer.h b/include/linux/ring_buffer.h
-index b72ebdff0b77..003d09ab308d 100644
---- a/include/linux/ring_buffer.h
-+++ b/include/linux/ring_buffer.h
-@@ -165,6 +165,7 @@ void ring_buffer_record_enable(struct ring_buffer *buffer);
- void ring_buffer_record_off(struct ring_buffer *buffer);
- void ring_buffer_record_on(struct ring_buffer *buffer);
- int ring_buffer_record_is_on(struct ring_buffer *buffer);
-+int ring_buffer_record_is_set_on(struct ring_buffer *buffer);
- void ring_buffer_record_disable_cpu(struct ring_buffer *buffer, int cpu);
- void ring_buffer_record_enable_cpu(struct ring_buffer *buffer, int cpu);
- 
-diff --git a/kernel/trace/ring_buffer.c b/kernel/trace/ring_buffer.c
-index 6a46af21765c..0b0b688ea166 100644
---- a/kernel/trace/ring_buffer.c
-+++ b/kernel/trace/ring_buffer.c
-@@ -3226,6 +3226,22 @@ int ring_buffer_record_is_on(struct ring_buffer *buffer)
- 	return !atomic_read(&buffer->record_disabled);
- }
- 
-+/**
-+ * ring_buffer_record_is_set_on - return true if the ring buffer is set writable
-+ * @buffer: The ring buffer to see if write is set enabled
-+ *
-+ * Returns true if the ring buffer is set writable by ring_buffer_record_on().
-+ * Note that this does NOT mean it is in a writable state.
-+ *
-+ * It may return true when the ring buffer has been disabled by
-+ * ring_buffer_record_disable(), as that is a temporary disabling of
-+ * the ring buffer.
-+ */
-+int ring_buffer_record_is_set_on(struct ring_buffer *buffer)
-+{
-+	return !(atomic_read(&buffer->record_disabled) & RB_BUFFER_OFF);
-+}
-+
- /**
-  * ring_buffer_record_disable_cpu - stop all writes into the cpu_buffer
-  * @buffer: The ring buffer to stop writes to.
-diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-index 87cf25171fb8..823687997b01 100644
---- a/kernel/trace/trace.c
-+++ b/kernel/trace/trace.c
-@@ -1373,6 +1373,12 @@ update_max_tr(struct trace_array *tr, struct task_struct *tsk, int cpu)
- 
- 	arch_spin_lock(&tr->max_lock);
- 
-+	/* Inherit the recordable setting from trace_buffer */
-+	if (ring_buffer_record_is_set_on(tr->trace_buffer.buffer))
-+		ring_buffer_record_on(tr->max_buffer.buffer);
-+	else
-+		ring_buffer_record_off(tr->max_buffer.buffer);
-+
- 	swap(tr->trace_buffer.buffer, tr->max_buffer.buffer);
- 
- 	__update_max_tr(tr, tsk, cpu);
--- 
-2.17.1
-
-
+Miquèl
