@@ -2,113 +2,172 @@ Return-Path: <SRS0=7Z+k=KK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF535C6778F
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 03:38:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D34EBC28CF6
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 03:44:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A6C8A20647
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 03:38:05 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=brainfault-org.20150623.gappssmtp.com header.i=@brainfault-org.20150623.gappssmtp.com header.b="qtVMd4zg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A6C8A20647
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org
+	by mail.kernel.org (Postfix) with ESMTP id 788D920846
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 03:44:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 788D920846
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727947AbeGZEwr (ORCPT
+        id S1727742AbeGZE71 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 26 Jul 2018 00:52:47 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:40508 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725941AbeGZEwr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Jul 2018 00:52:47 -0400
-Received: by mail-wm0-f68.google.com with SMTP id y9-v6so466615wma.5
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Jul 2018 20:38:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brainfault-org.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=vbSlzqOTIYV4ZYP1HsjWbxsyNi/Vrqffqj98+AEo8+A=;
-        b=qtVMd4zgDIxYm3I1oIWg4/HldJkKMV1pXhHiw+ZudZKnQcf1I5zFQux1ZGg1rcoPsG
-         gitKaoIIptvbFROKTHVccLG+E7uYIGsRqw2fNS9QlYMn66i8RfLKPFyiIDCMvzMXCFOZ
-         gr/8uTto8d4zvu4srSSwVA6DOSOdEOgh7PwZ/9ZCOEnAcaPsQqJA/+zISzChvJlbm3mA
-         BEdO2e4rS1qXEDyq8ekISuV0Z0cF0ILGhlpisQabKV+na1kNJ7ULa8LWNZ34J0oAINHT
-         bJVtm0U70OlULw6OaTXD9twaqB9dkM3c8H8g/4ZH1wFeBwbBLlTqR5zx4oX4u5KumEc5
-         sWUg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=vbSlzqOTIYV4ZYP1HsjWbxsyNi/Vrqffqj98+AEo8+A=;
-        b=pAc/6kPC7qoY+jn21LaJVen7UqpIcbVbs+GrM7EGvxSiy2TB3HS865znGzfwaPiemU
-         8c3JDD0Xj12fwU1jpg3tVP4sHF5d808tKwATieDElyqz2HoeBaMdhsna9rWV3PLUV2SW
-         4uEJXv5KNECLxXuJrc9OR8G72up1pMXKOP/vjMQ6bdsiegW2/0EBLZPBVQGiksMEov33
-         s37L1MbLXLjIcy2y9ABnwRTeRFox1zEszDFPHARlu6K4FGmuwt9oM1r0KtCjRrzW911e
-         IzK2lX9guEPFL47GeScv/bTS00fXsuxVjTXPkl6cuuMK6ejmsff+cmGolHMxAyB9Nkss
-         9epg==
-X-Gm-Message-State: AOUpUlE4ZhkIUY9s0rMLQ6OESPsy4ttQNGjWcWbZJMcdGWrN5nOG660C
-        Ps3BYEpfGzr/AV6RAhL3d4WRixh0B0WZZVGp5IydVg==
-X-Google-Smtp-Source: AAOMgpeC/Sw2hBOpCTTR2Dprc1tDVKuKiHxhBOzTp1tVX2+VP5wkN0ogZ+N5Bmgv7h+XtS/z8vNH79mRDvy+IwfleCg=
-X-Received: by 2002:a1c:8a04:: with SMTP id m4-v6mr307687wmd.137.1532576280888;
- Wed, 25 Jul 2018 20:38:00 -0700 (PDT)
+        Thu, 26 Jul 2018 00:59:27 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:10124 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725782AbeGZE71 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Jul 2018 00:59:27 -0400
+Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 5B3DA4DEF148A;
+        Thu, 26 Jul 2018 11:44:36 +0800 (CST)
+Received: from [127.0.0.1] (10.177.23.164) by DGGEMS405-HUB.china.huawei.com
+ (10.3.19.205) with Microsoft SMTP Server id 14.3.382.0; Thu, 26 Jul 2018
+ 11:44:26 +0800
+Subject: Re: [PATCH v3 0/6] add non-strict mode support for arm-smmu-v3
+To:     Robin Murphy <robin.murphy@arm.com>,
+        Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        "Joerg Roedel" <joro@8bytes.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        iommu <iommu@lists.linux-foundation.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        LinuxArm <linuxarm@huawei.com>
+References: <1531376312-2192-1-git-send-email-thunder.leizhen@huawei.com>
+ <aace9ec9-a36a-79a8-98eb-bbedd06f11a4@arm.com>
+From:   "Leizhen (ThunderTown)" <thunder.leizhen@huawei.com>
+Message-ID: <5B594399.1080404@huawei.com>
+Date:   Thu, 26 Jul 2018 11:44:25 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:38.0) Gecko/20100101
+ Thunderbird/38.5.1
 MIME-Version: 1.0
-Received: by 2002:adf:9dd2:0:0:0:0:0 with HTTP; Wed, 25 Jul 2018 20:38:00
- -0700 (PDT)
-In-Reply-To: <20180725112457.GA24502@lst.de>
-References: <20180725093649.32332-1-hch@lst.de> <20180725093649.32332-4-hch@lst.de>
- <c3ccb953-cd75-4a37-636a-ca643602053a@arm.com> <20180725112457.GA24502@lst.de>
-From:   Anup Patel <anup@brainfault.org>
-Date:   Thu, 26 Jul 2018 09:08:00 +0530
-Message-ID: <CAAhSdy31=D3jOgvrc+Td-TeKQMazPA-suFjOy9XwEuima1WdeA@mail.gmail.com>
-Subject: Re: [PATCH 3/6] irqchip: RISC-V Local Interrupt Controller Driver
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Marc Zyngier <marc.zyngier@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>, palmer@sifive.com,
-        jason@lakedaemon.net, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org, aou@eecs.berkeley.edu,
-        "linux-kernel@vger.kernel.org List" <linux-kernel@vger.kernel.org>,
-        linux-riscv@lists.infradead.org, shorne@gmail.com,
-        Palmer Dabbelt <palmer@dabbelt.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <aace9ec9-a36a-79a8-98eb-bbedd06f11a4@arm.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.177.23.164]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 25, 2018 at 4:54 PM, Christoph Hellwig <hch@lst.de> wrote:
-> On Wed, Jul 25, 2018 at 12:18:39PM +0100, Marc Zyngier wrote:
->> This feels odd. It means that you cannot have the following sequence:
->>
->>       local_irq_disable();
->>       enable_irq(x); // where x is owned by a remote hart
->>
->> as smp_call_function_single() requires interrupts to be enabled.
->>
->> More fundamentally, why are you trying to make these interrupts look
->> global while they aren't? arm/arm64 have similar restrictions with GICv2
->> and earlier, and treats these interrupts as per-cpu.
->>
->> Given that the drivers that deal with drivers connected to the per-hart
->> irqchip are themselves likely to be aware of the per-cpu aspect, it
->> would make sense to align things (we've been through that same
->> discussion about the clocksource driver a few weeks back).
->
-> Right now the only direct consumers are said clocksource, the PLIC
-> driver later in this series and the RISC-V arch IPI code.  None of them
-> is going to do a manual enable_irq, so I guess the remote case of the
-> code is simply dead code.  I'll take a look at converting them to
-> per-cpu.  I guess the GICv2 driver is the best template?
 
-Actually, RISCV HLIC and PLIC are very similar to RPi2 and RPi3 SOCs.
 
-On RPi2 and RPi3, we have per-CPU BCM2836 local intc and the global
-interrupts are managed using BCM2835 intc. You should certainly have
-a look a this drivers because these very simple compared to GICv2 and
-GICv3 drivers.
+On 2018/7/25 5:51, Robin Murphy wrote:
+> On 2018-07-12 7:18 AM, Zhen Lei wrote:
+>> v2 -> v3:
+>> Add a bootup option "iommu_strict_mode" to make the manager can choose which
+>> mode to be used. The first 5 patches have not changed.
+>> +    iommu_strict_mode=    [arm-smmu-v3]
+>> +        0 - strict mode (default)
+>> +        1 - non-strict mode
+>>
+>> v1 -> v2:
+>> Use the lowest bit of the io_pgtable_ops.unmap's iova parameter to pass the strict mode:
+>> 0, IOMMU_STRICT;
+>> 1, IOMMU_NON_STRICT;
+>> Treat 0 as IOMMU_STRICT, so that the unmap operation can compatible with
+>> other IOMMUs which still use strict mode. In other words, this patch series
+>> will not impact other IOMMU drivers. I tried add a new quirk IO_PGTABLE_QUIRK_NON_STRICT
+>> in io_pgtable_cfg.quirks, but it can not pass the strict mode of the domain from SMMUv3
+>> driver to io-pgtable module.
+> 
+> What exactly is the issue there? We don't have any problem with other quirks like NO_DMA, and as I said before, by the time we're allocating the io-pgtable in arm_smmu_domain_finalise() we already know everything there is to know about the domain.
 
-Regards,
-Anup
+Because userspace can map/unamp and start devices to access memory through VFIO.
+So that, the attacker can:
+1. alloc memory
+2. map
+3. unmap
+4. free memory
+5. repeatedly accesssing the just freed memory base on the just unmapped iova,
+   this attack may success if the freed memory is reused by others and the mapping still staying in TLB
+
+But if only root user can use VFIO, this is an unnecessary worry. Then both normal and VFIO will use the
+same strict mode, so that the new quirk IO_PGTABLE_QUIRK_NON_STRICT can easily be applied.
+
+> 
+>> Add a new member domain_non_strict in struct iommu_dma_cookie, this member will only be
+>> initialized when the related domain and IOMMU driver support non-strict mode.
+>>
+>> v1:
+>> In common, a IOMMU unmap operation follow the below steps:
+>> 1. remove the mapping in page table of the specified iova range
+>> 2. execute tlbi command to invalid the mapping which is cached in TLB
+>> 3. wait for the above tlbi operation to be finished
+>> 4. free the IOVA resource
+>> 5. free the physical memory resource
+>>
+>> This maybe a problem when unmap is very frequently, the combination of tlbi
+>> and wait operation will consume a lot of time. A feasible method is put off
+>> tlbi and iova-free operation, when accumulating to a certain number or
+>> reaching a specified time, execute only one tlbi_all command to clean up
+>> TLB, then free the backup IOVAs. Mark as non-strict mode.
+>>
+>> But it must be noted that, although the mapping has already been removed in
+>> the page table, it maybe still exist in TLB. And the freed physical memory
+>> may also be reused for others. So a attacker can persistent access to memory
+>> based on the just freed IOVA, to obtain sensible data or corrupt memory. So
+>> the VFIO should always choose the strict mode.
+>>
+>> Some may consider put off physical memory free also, that will still follow
+>> strict mode. But for the map_sg cases, the memory allocation is not controlled
+>> by IOMMU APIs, so it is not enforceable.
+>>
+>> Fortunately, Intel and AMD have already applied the non-strict mode, and put
+>> queue_iova() operation into the common file dma-iommu.c., and my work is based
+>> on it. The difference is that arm-smmu-v3 driver will call IOMMU common APIs to
+>> unmap, but Intel and AMD IOMMU drivers are not.
+>>
+>> Below is the performance data of strict vs non-strict for NVMe device:
+>> Randomly Read  IOPS: 146K(strict) vs 573K(non-strict)
+>> Randomly Write IOPS: 143K(strict) vs 513K(non-strict)
+> 
+> How does that compare to passthrough performance? One thing I'm not entirely clear about is what the realistic use-case for this is - even if invalidation were infinitely fast, enabling translation still typically has a fair impact on overall system performance in terms of latency, power, memory bandwidth, etc., so I can't help wonder what devices exist today for which performance is critical and robustness* is unimportant, yet have crippled addressing capabilities such that they can't just use passthrough.
+I have no passthrough performance data yet, I will ask my team to do it. But we have tested the Global bypass:
+Randomly Read IOPS: 744K, and Randomly Write IOPS: is the same to non-strict.
+
+I'm also not clear. But I think in most cases, the system does not need to run at full capacity, but the system
+should have that ability. For example, a system's daily load may only 30-50%, but the load may increase to 80%+
+on festival day.
+
+Passthrough is not enough to support VFIO, and virtualization need the later.
+
+> 
+> Robin.
+> 
+> 
+> * I don't want to say "security" here, since I'm actually a lot less concerned about the theoretical malicious endpoint/wild write scenarios than the the much more straightforward malfunctioning device and/or buggy driver causing use-after-free style memory corruption. Also, I'm sick of the word "security"...
+
+OK，We really have no need to consider buggy devices.
+
+> 
+>>
+>> Zhen Lei (6):
+>>    iommu/arm-smmu-v3: fix the implementation of flush_iotlb_all hook
+>>    iommu/dma: add support for non-strict mode
+>>    iommu/amd: use default branch to deal with all non-supported
+>>      capabilities
+>>    iommu/io-pgtable-arm: add support for non-strict mode
+>>    iommu/arm-smmu-v3: add support for non-strict mode
+>>    iommu/arm-smmu-v3: add bootup option "iommu_strict_mode"
+>>
+>>   Documentation/admin-guide/kernel-parameters.txt | 12 +++++++
+>>   drivers/iommu/amd_iommu.c                       |  4 +--
+>>   drivers/iommu/arm-smmu-v3.c                     | 42 +++++++++++++++++++++++--
+>>   drivers/iommu/dma-iommu.c                       | 25 +++++++++++++++
+>>   drivers/iommu/io-pgtable-arm.c                  | 23 ++++++++------
+>>   include/linux/iommu.h                           |  7 +++++
+>>   6 files changed, 98 insertions(+), 15 deletions(-)
+>>
+> 
+> .
+> 
+
+-- 
+Thanks!
+BestRegards
+
