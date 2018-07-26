@@ -2,104 +2,142 @@ Return-Path: <SRS0=7Z+k=KK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4A33C6778F
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 07:32:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42468C28CF6
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 07:34:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6A54920673
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 07:32:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6A54920673
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id EB78E20673
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 07:34:54 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=agner.ch header.i=@agner.ch header.b="X2ZW0sLa"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB78E20673
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=agner.ch
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729024AbeGZIsN (ORCPT
+        id S1728955AbeGZIuZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 26 Jul 2018 04:48:13 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:46064 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727847AbeGZIsN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Jul 2018 04:48:13 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 1758020765; Thu, 26 Jul 2018 09:32:39 +0200 (CEST)
-Received: from localhost (AAubervilliers-681-1-78-122.w90-88.abo.wanadoo.fr [90.88.20.122])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 9E27020908;
-        Thu, 26 Jul 2018 09:31:37 +0200 (CEST)
-Date:   Thu, 26 Jul 2018 09:31:38 +0200
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Akash Gajjar <Akash_Gajjar@mentor.com>
-Cc:     icenowy@aosc.xyz, Chen-Yu Tsai <wens@csie.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] arm64: dts: allwinner: activate spi flash on pine64 LTS
- board
-Message-ID: <20180726073138.fexu4nxaamqmrbzb@flea>
-References: <Akash_Gajjar@mentor.com>
- <1532587906-5415-1-git-send-email-Akash_Gajjar@mentor.com>
- <20180726072924.bnvljmd2sf6bf5ae@flea>
+        Thu, 26 Jul 2018 04:50:25 -0400
+Received: from mail.kmu-office.ch ([178.209.48.109]:53584 "EHLO
+        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728547AbeGZIuZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Jul 2018 04:50:25 -0400
+Received: from webmail.kmu-office.ch (unknown [IPv6:2a02:418:6a02::a3])
+        by mail.kmu-office.ch (Postfix) with ESMTPSA id 708CC5C06D3;
+        Thu, 26 Jul 2018 09:34:49 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=agner.ch; s=dkim;
+        t=1532590489;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=ZqDG1NM8fLwjKU2KvoWe2CqKLtc7JpMxwr381T+X6Xw=;
+        b=X2ZW0sLaK3f306vY3WsFrtalRI/Dkk3d3pp7mMaF7XKNCzU8jXZukLh+iXUQP2uGBMmOjN
+        Wt9SqqthciPnIeaOEaUFjTzW4jcQMdJ6axi6s81Dhowm/BpqR6VOgixcfwb+eegRrA8scQ
+        29YvGAhLM0B3SSbKkaH4ABHHijhM8FA=
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="oeexq2bajwy2ctlp"
-Content-Disposition: inline
-In-Reply-To: <20180726072924.bnvljmd2sf6bf5ae@flea>
-User-Agent: NeoMutt/20180622
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Date:   Thu, 26 Jul 2018 09:34:49 +0200
+From:   Stefan Agner <stefan@agner.ch>
+To:     Marcel Ziswiler <marcel@ziswiler.com>,
+        Rob Herring <robh+dt@kernel.org>
+Cc:     devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-tegra-owner@vger.kernel.org
+Subject: Re: [PATCH 13/15] ARM: tegra: apalis-tk1: fix pcie switch vendor
+ compatible
+In-Reply-To: <20180724104309.21741-14-marcel@ziswiler.com>
+References: <20180724104309.21741-1-marcel@ziswiler.com>
+ <20180724104309.21741-14-marcel@ziswiler.com>
+Message-ID: <53e689eca0fe603305642abb559349db@agner.ch>
+X-Sender: stefan@agner.ch
+User-Agent: Roundcube Webmail/1.3.4
+X-Spamd-Result: default: False [-1.60 / 15.00];
+         TO_MATCH_ENVRCPT_ALL(0.00)[];
+         MID_RHS_MATCH_FROM(0.00)[];
+         SUSPICIOUS_RECIPS(1.50)[];
+         TAGGED_RCPT(0.00)[dt];
+         MIME_GOOD(-0.10)[text/plain];
+         FROM_HAS_DN(0.00)[];
+         RCPT_COUNT_SEVEN(0.00)[10];
+         FROM_EQ_ENVFROM(0.00)[];
+         DKIM_SIGNED(0.00)[];
+         TO_DN_SOME(0.00)[];
+         RCVD_COUNT_ZERO(0.00)[0];
+         RCVD_TLS_ALL(0.00)[];
+         BAYES_HAM(-3.00)[100.00%];
+         ARC_NA(0.00)[]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 24.07.2018 12:43, Marcel Ziswiler wrote:
+> From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+> 
+> PLX got bought by Broadcom therefore fix device tree compatible string
+> vendor which silences the following checkpatch.pl warning:
+> 
+> WARNING: DT compatible string vendor "plx" appears un-documented
+>  -- check ./Documentation/devicetree/bindings/vendor-prefixes.txt
 
---oeexq2bajwy2ctlp
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This seems to be not the only instance, there are other places where plx
+prefix is used. There are 8 instances in total, 4 ARM (in fact all
+Toradex device trees) and 4 PowerPC.
 
-On Thu, Jul 26, 2018 at 09:29:24AM +0200, Maxime Ripard wrote:
-> 1;5202;0c
-> On Thu, Jul 26, 2018 at 12:21:46PM +0530, Akash Gajjar wrote:
-> > This board has SPI flash. add spi flash support in device tree.
-> > Tested on pine64 LTS.
-> >=20
-> > Signed-off-by: Akash Gajjar <Akash_Gajjar@mentor.com>
->=20
-> Queued for 4.20, thanks!
+One device is already documented in
+Documentation/devicetree/bindings/trivial-devices.txt:
+plx,pex8648               48-Lane, 12-Port PCI Express Gen 2 (5.0 GT/s)
+Switch
 
-No, sorry, I ended up droping that patch.
+I suggest to just add plx as a valid vendor prefix by adding plx to
+Documentation/devicetree/bindings/vendor-prefixes.txt:
+plx	Broadcom Corporation (formerly PLX Technology)
 
-You mention that the Pine64 LTS has an SPI flash, yet you change the
-sopine baseboard dts. Why is that?
+--
+Stefan
 
-Maxime
-
---=20
-Maxime Ripard, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---oeexq2bajwy2ctlp
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAltZeNkACgkQ0rTAlCFN
-r3Ttig/+PcyaeKtRma4H+5ZJMY00IMKNcQxgzSGQdRxuDZyme44ganZjlgS8AYJl
-QFV5oVvk4SeULzuW1Oo+Syrx8TIMS2sZhhWdcMB9S4/ODPT57vdsrw1wE1V3oxQI
-16dSKqI58pByh3miYFlSXJtUUS21CnrSAuFcYgewzZ2j8uo3Z22RkIJEXfekUU6b
-a+iFybgNtpKLJUi48D/QVbnAy1QTPdtRNldGSEiAmtWVjNLVin//l+CLlx73nJBv
-NDaRYt4aaspD4qllA9mptK8JbQmDxQL+ObVoSm1S6XNy/HR112OQuoxW9jNh1iHn
-qhmb0Ydqe50kPck9HMa1E8ipO35Fc8JZXn8ZgGm53pXP9/eKvCBG8vuOITFBdxN3
-W7EWicAHYR3K55n29IGR5kBJA9/34Xn0IubeJwTu1IWzV6ZRP9FyzIq2l7u7EZP3
-0lfGRAU4cMVtSWwoqYUSai+It+i63UYD6eKXyYoPudpa/8e/aFjoIvY1fYxehjOl
-rVIrmJX0z9FJEHy5Ls2fFFTNUOJl2lcMDUGTflan2PDoPwSpA8aaGr1SKiQF5leG
-3QkGyGE7c0iPCVeFKghsvwiUsy+6oidNLhfEvnKVlbkEnUZUFTofBjXEXZAUGspw
-knLQopE6tZYFjuboD2PR5PEASIxTMjw2+limvIrNxNe1k31mgHY=
-=asom
------END PGP SIGNATURE-----
-
---oeexq2bajwy2ctlp--
+> 
+> Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+> 
+> ---
+> 
+>  arch/arm/boot/dts/tegra124-apalis-eval.dts      | 2 +-
+>  arch/arm/boot/dts/tegra124-apalis-v1.2-eval.dts | 2 +-
+>  2 files changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/arch/arm/boot/dts/tegra124-apalis-eval.dts
+> b/arch/arm/boot/dts/tegra124-apalis-eval.dts
+> index d9805fc97f5e..84ab7dc9febb 100644
+> --- a/arch/arm/boot/dts/tegra124-apalis-eval.dts
+> +++ b/arch/arm/boot/dts/tegra124-apalis-eval.dts
+> @@ -109,7 +109,7 @@
+>  		clock-frequency = <400000>;
+>  
+>  		pcie-switch@58 {
+> -			compatible = "plx,pex8605";
+> +			compatible = "brcm,pex8605";
+>  			reg = <0x58>;
+>  		};
+>  
+> diff --git a/arch/arm/boot/dts/tegra124-apalis-v1.2-eval.dts
+> b/arch/arm/boot/dts/tegra124-apalis-v1.2-eval.dts
+> index 89783fe76f65..5319f88d3cab 100644
+> --- a/arch/arm/boot/dts/tegra124-apalis-v1.2-eval.dts
+> +++ b/arch/arm/boot/dts/tegra124-apalis-v1.2-eval.dts
+> @@ -74,7 +74,7 @@
+>  		clock-frequency = <400000>;
+>  
+>  		pcie-switch@58 {
+> -			compatible = "plx,pex8605";
+> +			compatible = "brcm,pex8605";
+>  			reg = <0x58>;
+>  		};
