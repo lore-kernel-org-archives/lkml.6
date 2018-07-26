@@ -2,167 +2,232 @@ Return-Path: <SRS0=7Z+k=KK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B9BDC6778F
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 08:13:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 413C7C6778F
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 08:14:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0FC0C20673
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 08:13:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0FC0C20673
+	by mail.kernel.org (Postfix) with ESMTP id E5A6420673
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 08:14:15 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eKyqKHnm"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E5A6420673
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729023AbeGZJ32 (ORCPT
+        id S1729107AbeGZJ3y (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 26 Jul 2018 05:29:28 -0400
-Received: from mx2.suse.de ([195.135.220.15]:55570 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726326AbeGZJ32 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Jul 2018 05:29:28 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 2B051AB99;
-        Thu, 26 Jul 2018 08:13:45 +0000 (UTC)
-Date:   Thu, 26 Jul 2018 10:13:43 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Georgi Nikolov <gnikolov@icdsoft.com>
-Cc:     David Rientjes <rientjes@google.com>, Tejun Heo <tj@kernel.org>,
-        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: cgroups iptables-restor: vmalloc: allocation failure
-Message-ID: <20180726081343.GZ28386@dhcp22.suse.cz>
-References: <a1a4eb7c-e85c-dc6d-cfac-6d40af302182@icdsoft.com>
- <alpine.DEB.2.21.1807251241380.201050@chino.kir.corp.google.com>
- <b0b46aee-7a66-2166-4f19-61e5e5c5dcfc@icdsoft.com>
+        Thu, 26 Jul 2018 05:29:54 -0400
+Received: from mail-oi0-f65.google.com ([209.85.218.65]:37053 "EHLO
+        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727951AbeGZJ3y (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Jul 2018 05:29:54 -0400
+Received: by mail-oi0-f65.google.com with SMTP id k81-v6so1467164oib.4;
+        Thu, 26 Jul 2018 01:14:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=SLPA56ygmBOGAs8wvVg0mTb8XaNrxGGxuRwM2DFvm48=;
+        b=eKyqKHnmTTT7aVkEmQaz2m3XhjKLoFaw5eyzitYCWFZoxejF2qpbNaCGXqaG3asoj5
+         HD4Sb8QQedUaba0kLperfY0+krGH1d9cKdCA7lNH4c6XPI6GgpqIUSqkAcr+yhSfETzv
+         ILmiwGN5cWiq6bto+wWAvncGxnXyNxEq7e3QxZDb2VUE3Cct6x2bUEOVsshCGidX54bt
+         hmTPYVWBICRH4obzRFeb5SGVUL9p83lonAXAHC1Hfej55gyoLlFJSDLZJJFUcp8gtRrO
+         GcCbiH/KpEMRnayZMVTSMVu2RbqoBCi+7281yBsGnxI2yHlGGxiMG4sdkqbokxh/FR4K
+         rnGw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
+         :date:message-id:subject:to:cc;
+        bh=SLPA56ygmBOGAs8wvVg0mTb8XaNrxGGxuRwM2DFvm48=;
+        b=XsECf3WexrMMHUIKyPxDniZOdp9B28nx2/2ffTGVyU1LJgVqLJ5tn/co65zERG/IBD
+         HjmT8lQKu/+m7UW2p26A6gAz38c9c1KlIbUm3Qhb229E6hvTOlR0kshsiBrocuXFoVrI
+         d6JUxDRcyyCJ7ty7j9A8hwrwW2bbdqRMWe4Uz3T2udQxfcVqlpjNOc/OdESrpj5JGUx8
+         XLsE7JnCmm3dOnuOa+8MeNP6WFngCiULwMG4Y/PiN7omQwRVLkvbkh4LrxSn+i7wtu7m
+         4adIe0oW4GR3rYdexRayM7jjC4hMlQGJcKeFbiklSn1MVjOBNmBbIMX1e0CJBthQlOva
+         w6ZA==
+X-Gm-Message-State: AOUpUlEk4mEWPms7tyqMWGsXwHV1YzSd6JvoxjNEYSsc97Ix0O71yHtc
+        Sjgcx41mi7WlRMTPOk9RMY469aRnsvIHKWG3jh0=
+X-Google-Smtp-Source: AAOMgpex5jyZ5ddzdxExImhcXaeS2wu/KYP48kPtb5u8Z6NYVOMABOrWaBC+I34LPMM+5q3+q214rU7bAoNWPXSjaPY=
+X-Received: by 2002:aca:b841:: with SMTP id i62-v6mr889234oif.358.1532592852616;
+ Thu, 26 Jul 2018 01:14:12 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <b0b46aee-7a66-2166-4f19-61e5e5c5dcfc@icdsoft.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+Received: by 2002:a9d:63d2:0:0:0:0:0 with HTTP; Thu, 26 Jul 2018 01:14:12
+ -0700 (PDT)
+In-Reply-To: <68768884-983A-40EF-B7B4-F19AF4261879@canonical.com>
+References: <DEA1AE84-B0FD-481E-8E0D-788CD4EF59AE@canonical.com>
+ <ABABA247-9C33-4311-ADA5-D0D00B810C6C@canonical.com> <4689933.j1ecWYeVj2@aspire.rjw.lan>
+ <1855125.Q8EGVqeZWv@aspire.rjw.lan> <68768884-983A-40EF-B7B4-F19AF4261879@canonical.com>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Thu, 26 Jul 2018 10:14:12 +0200
+X-Google-Sender-Auth: 1YWduXnyAesjoZB_fMpAHs0OOvU
+Message-ID: <CAJZ5v0ifKcipGG0sM0iK0p4K0-V-PyoL-JfTH6uVVWoCA-eXnw@mail.gmail.com>
+Subject: Re: [PATCH] ACPI / LPSS: Avoid PM quirks on suspend and resume from S3
+To:     Kai-Heng Feng <kai.heng.feng@canonical.com>
+Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        P HeLiOn <perryhelionsemail@gmail.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Linux PM <linux-pm@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-For more context this is a follow up for http://lkml.kernel.org/r/df6f501c-8546-1f55-40b1-7e3a8f54d872@icdsoft.com
+On Thu, Jul 26, 2018 at 5:46 AM, Kai-Heng Feng
+<kai.heng.feng@canonical.com> wrote:
+> Hi Rafael,
+>
+>> On 2018Jul24, at 18:36, Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
+>>
+>> On Tuesday, July 24, 2018 11:13:42 AM CEST Rafael J. Wysocki wrote:
+>>> On Tuesday, July 24, 2018 10:46:09 AM CEST Kai Heng Feng wrote:
+>>>> Hi Rafael,
+>>>>
+>>>>> On Jun 13, 2018, at 7:17 PM, Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
+>>>>>
+>>>>> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+>>>>>
+>>>>> It is reported that commit a192aa923b66a (ACPI / LPSS: Consolidate
+>>>>> runtime PM and system sleep handling) introduced a system suspend
+>>>>> regression on some machines, but the only functional change made by
+>>>>> it was to cause the PM quirks in the LPSS to also be used during
+>>>>> system suspend and resume.  While that should always work for
+>>>>> suspend-to-idle, it turns out to be problematic for S3
+>>>>> (suspend-to-RAM).
+>>>>>
+>>>>> To address that issue restore the previous S3 suspend and resume
+>>>>> behavior of the LPSS to avoid applying PM quirks then.
+>>>>
+>>>> The users reported that this patch does fix the S3 issue, but the S4 still
+>>>> fails.
+>>>>
+>>>> Please refer to [1] for more for user's testing result.
+>>>>
+>>>> [1] https://bugs.launchpad.net/ubuntu/+source/linux/+bug/1774950/comments/60
+>>>
+>>> Please ask the users to test the patch below, then, on top of the $subject one.
+>>
+>> There was a mistake in the previous patch I posted, sorry about that.
+>>
+>> Please test this one instead:
+>
+> The result is positive, thanks!
 
-On Thu 26-07-18 09:53:20, Georgi Nikolov wrote:
-> Hello,
-> 
-> Servers are with 64bit kernel and 32bit userland.
-> 
-> here is the log:
-> 
-> [  485.467359] iptables-restor: vmalloc: allocation failure, allocated
-> 2367488 of 3608576 bytes, mode:0x14010c0(GFP_KERNEL|__GFP_NORETRY),
-> nodemask=(null)
-> [  485.467871] iptables-restor cpuset=/ mems_allowed=0
-> [  485.468089] CPU: 0 PID: 18093 Comm: iptables-restor Not tainted
-> 4.14.50 #1
-> [  485.468399] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996),
-> BIOS 1.10.2-1 04/01/2014
-> [  485.468725]  0000000000000000 ffffffff81ed2b8b ffffffff8333a330
-> bb5cfe6a5a821e59
-> [  485.469114]  0000000000000000 ffffc90004aaba80 ffffffff811fa3ea
-> ffffc90004aaba90
-> [  485.469422]  ffffffff825e11d0 014010c000000000 ffffffff825e11d0
-> ffffc90004aaba18
-> [  485.469735] Call Trace:
-> [  485.469941]  [<ffffffff81ed2b8b>] dump_stack+0x9a/0x10f
-> [  485.470159]  [<ffffffff811fa3ea>] warn_alloc+0x18a/0x270
-> [  485.470379]  [<ffffffff8124c9c1>] __vmalloc_node_range+0x251/0x470
-> [  485.470614]  [<ffffffff8124ccfe>] ? __vmalloc_node_flags_caller+0x3e/0x70
-> [  485.470881]  [<ffffffff8124ccfe>] __vmalloc_node_flags_caller+0x3e/0x70
-> [  485.471160]  [<ffffffff81d7cebe>] ? xt_alloc_table_info+0x4e/0xa0
-> [  485.471395]  [<ffffffff8121a1ca>] kvmalloc_node+0x7a/0xd0
-> [  485.471618]  [<ffffffff81d7cebe>] xt_alloc_table_info+0x4e/0xa0
-> [  485.471849]  [<ffffffff81e57357>] ?
-> translate_compat_table.constprop.19+0x447/0x870
-> [  485.472197]  [<ffffffff81e57357>]
-> translate_compat_table.constprop.19+0x447/0x870
-> [  485.472514]  [<ffffffff81e57917>] ?
-> compat_do_replace.isra.10.constprop.18+0x197/0x370
-> [  485.472833]  [<ffffffff81e57917>]
-> compat_do_replace.isra.10.constprop.18+0x197/0x370
-> [  485.473230]  [<ffffffff81e57b7b>] compat_do_ipt_set_ctl+0x8b/0xb0
-> [  485.473465]  [<ffffffff81d643ea>] compat_nf_setsockopt+0x6a/0xd0
-> [  485.473701]  [<ffffffff81df3ad3>] compat_ip_setsockopt+0x73/0xd0
-> [  485.473936]  [<ffffffff81e2129c>] compat_raw_setsockopt+0x7c/0xd0
-> [  485.474208]  [<ffffffff8123750c>] ? handle_mm_fault+0xec/0x240
-> [  485.474441]  [<ffffffff81cd3852>] compat_sock_common_setsockopt+0x32/0x80
-> [  485.474689]  [<ffffffff81d2ed6a>] compat_sys_setsockopt+0x9a/0x2e0
-> [  485.474926]  [<ffffffff81d309e5>] compat_sys_socketcall+0x415/0x570
-> [  485.475197]  [<ffffffff820018bc>] ? page_fault+0x5c/0x90
-> [  485.475416]  [<ffffffff82000ae6>] ? retint_user+0x2b/0x2b
-> [  485.475638]  [<ffffffff81d30b54>] ? rap_compat_sys_socketcall+0x14/0x40
-> [  485.475884]  [<ffffffff81002391>] ? do_fast_syscall_32+0xe1/0x2f0
-> [  485.476170]  [<ffffffff82001f03>] ? entry_SYSENTER_compat+0x93/0xa5
-> [  485.476414] Mem-Info:
-> [  485.476579] active_anon:79884 inactive_anon:103007 isolated_anon:0
->                 active_file:54010 inactive_file:219014 isolated_file:0
->                 unevictable:1822 dirty:22 writeback:0 unstable:0
->                 slab_reclaimable:8637 slab_unreclaimable:25015
->                 mapped:16094 shmem:2271 pagetables:1481 bounce:0
->                 free:3459 free_pcp:180 free_cma:0
-> [  485.477691] Node 0 active_anon:320376kB inactive_anon:412028kB
-> active_file:216040kB inactive_file:875844kB unevictable:7288kB
-> isolated(anon):0kB isolated(file):0kB mapped:64376kB dirty:88kB
-> writeback:0kB shmem:9084kB writeback_tmp:0kB unstable:0kB
-> all_unreclaimable? no
-> [  485.478457] Node 0 DMA free:7896kB min:44kB low:56kB high:68kB
-> active_anon:2324kB inactive_anon:0kB active_file:12kB
-> inactive_file:5228kB unevictable:0kB writepending:0kB present:15992kB
-> managed:15892kB mlocked:0kB kernel_stack:0kB pagetables:0kB bounce:0kB
-> free_pcp:0kB local_pcp:0kB free_cma:0kB
-> [  485.479233] lowmem_reserve[]: 0 1963 1963 1963
-> [  485.479483] Node 0 DMA32 free:5364kB min:5644kB low:7652kB
-> high:9660kB active_anon:317672kB inactive_anon:412028kB
-> active_file:216028kB inactive_file:871340kB unevictable:7288kB
-> writepending:88kB present:2080624kB managed:2015900kB mlocked:7288kB
-> kernel_stack:5584kB pagetables:5924kB bounce:0kB free_pcp:1052kB
-> local_pcp:720kB free_cma:0kB
-> [  485.480425] lowmem_reserve[]: 0 0 0 0
-> [  485.480612] Node 0 DMA: 38*4kB (UMEH) 54*8kB (MEH) 51*16kB (UMEH)
-> 35*32kB (UMEH) 16*64kB (MEH) 12*128kB (MH) 7*256kB (UMEH) 0*512kB
-> 1*1024kB (E) 0*2048kB 0*4096kB = 7896kB
-> [  485.481173] Node 0 DMA32: 12*4kB (MH) 16*8kB (H) 264*16kB (UH) 7*32kB
-> (H) 6*64kB (H) 1*128kB (H) 0*256kB 1*512kB (H) 0*1024kB 0*2048kB
-> 0*4096kB = 5648kB
-> [  485.481642] Node 0 hugepages_total=0 hugepages_free=0
-> hugepages_surp=0 hugepages_size=1048576kB
-> [  485.481975] Node 0 hugepages_total=0 hugepages_free=0
-> hugepages_surp=0 hugepages_size=2048kB
-> [  485.482309] 275972 total pagecache pages
-> [  485.482535] 0 pages in swap cache
-> [  485.482717] Swap cache stats: add 0, delete 0, find 0/0
-> [  485.482937] Free swap  = 1976316kB
-> [  485.483118] Total swap = 1976316kB
-> [  485.483300] 524154 pages RAM
-> [  485.483492] 0 pages HighMem/MovableOnly
-> [  485.483711] 16206 pages reserved
-> [  485.483889] 0 pages hwpoisoned
-> 
-> Regards,
-> 
-> -- 
-> Georgi Nikolov
-> 
-> On 07/25/2018 10:42 PM, David Rientjes wrote:
-> > On Wed, 25 Jul 2018, Georgi Nikolov wrote:
-> >
-> >> Hello,
-> >>
-> >> I posted a kernel bug https://bugzilla.kernel.org/show_bug.cgi?id=200651 and
-> >> i hope this is the correct place to discuss this.
-> >>
-> > Could you post the full allocation failure from the kernel log?  It's not 
-> > possible to vmalloc any additional memory due to the memory pressure, so 
-> > this is expected to fail but I'm curious as to the actual allocation that 
-> > is triggering it.
-> 
+Good, thanks!
 
--- 
-Michal Hocko
-SUSE Labs
+I assume that S3 still works with this patch applied too.
+
+>> ---
+>> drivers/acpi/acpi_lpss.c |   26 +++++++++++++++++---------
+>> 1 file changed, 17 insertions(+), 9 deletions(-)
+>>
+>> Index: linux-pm/drivers/acpi/acpi_lpss.c
+>> ===================================================================
+>> --- linux-pm.orig/drivers/acpi/acpi_lpss.c
+>> +++ linux-pm/drivers/acpi/acpi_lpss.c
+>> @@ -879,6 +879,7 @@ static void acpi_lpss_dismiss(struct dev
+>> #define LPSS_GPIODEF0_DMA_LLP         BIT(13)
+>>
+>> static DEFINE_MUTEX(lpss_iosf_mutex);
+>> +static bool lpss_iosf_d3_entered;
+>>
+>> static void lpss_iosf_enter_d3_state(void)
+>> {
+>> @@ -921,6 +922,9 @@ static void lpss_iosf_enter_d3_state(voi
+>>
+>>       iosf_mbi_modify(LPSS_IOSF_UNIT_LPIOEP, MBI_CR_WRITE,
+>>                       LPSS_IOSF_GPIODEF0, value1, mask1);
+>> +
+>> +     lpss_iosf_d3_entered = true;
+>> +
+>> exit:
+>>       mutex_unlock(&lpss_iosf_mutex);
+>> }
+>> @@ -935,6 +939,11 @@ static void lpss_iosf_exit_d3_state(void
+>>
+>>       mutex_lock(&lpss_iosf_mutex);
+>>
+>> +     if (!lpss_iosf_d3_entered)
+>> +             goto exit;
+>> +
+>> +     lpss_iosf_d3_entered = false;
+>> +
+>>       iosf_mbi_modify(LPSS_IOSF_UNIT_LPIOEP, MBI_CR_WRITE,
+>>                       LPSS_IOSF_GPIODEF0, value1, mask1);
+>>
+>> @@ -944,13 +953,13 @@ static void lpss_iosf_exit_d3_state(void
+>>       iosf_mbi_modify(LPSS_IOSF_UNIT_LPIO1, MBI_CFG_WRITE,
+>>                       LPSS_IOSF_PMCSR, value2, mask2);
+>>
+>> +exit:
+>>       mutex_unlock(&lpss_iosf_mutex);
+>> }
+>>
+>> -static int acpi_lpss_suspend(struct device *dev, bool runtime)
+>> +static int acpi_lpss_suspend(struct device *dev, bool wakeup)
+>> {
+>>       struct lpss_private_data *pdata = acpi_driver_data(ACPI_COMPANION(dev));
+>> -     bool wakeup = runtime || device_may_wakeup(dev);
+>>       int ret;
+>>
+>>       if (pdata->dev_desc->flags & LPSS_SAVE_CTX)
+>> @@ -963,14 +972,14 @@ static int acpi_lpss_suspend(struct devi
+>>        * wrong status for devices being about to be powered off. See
+>>        * lpss_iosf_enter_d3_state() for further information.
+>>        */
+>> -     if ((runtime || !pm_suspend_via_firmware()) &&
+>> +     if (acpi_target_system_state() == ACPI_STATE_S0 &&
+>>           lpss_quirks & LPSS_QUIRK_ALWAYS_POWER_ON && iosf_mbi_available())
+>>               lpss_iosf_enter_d3_state();
+>>
+>>       return ret;
+>> }
+>>
+>> -static int acpi_lpss_resume(struct device *dev, bool runtime)
+>> +static int acpi_lpss_resume(struct device *dev)
+>> {
+>>       struct lpss_private_data *pdata = acpi_driver_data(ACPI_COMPANION(dev));
+>>       int ret;
+>> @@ -979,8 +988,7 @@ static int acpi_lpss_resume(struct devic
+>>        * This call is kept first to be in symmetry with
+>>        * acpi_lpss_runtime_suspend() one.
+>>        */
+>> -     if ((runtime || !pm_resume_via_firmware()) &&
+>> -         lpss_quirks & LPSS_QUIRK_ALWAYS_POWER_ON && iosf_mbi_available())
+>> +     if (lpss_quirks & LPSS_QUIRK_ALWAYS_POWER_ON && iosf_mbi_available())
+>>               lpss_iosf_exit_d3_state();
+>>
+>>       ret = acpi_dev_resume(dev);
+>> @@ -1004,12 +1012,12 @@ static int acpi_lpss_suspend_late(struct
+>>               return 0;
+>>
+>>       ret = pm_generic_suspend_late(dev);
+>> -     return ret ? ret : acpi_lpss_suspend(dev, false);
+>> +     return ret ? ret : acpi_lpss_suspend(dev, device_may_wakeup(dev));
+>> }
+>>
+>> static int acpi_lpss_resume_early(struct device *dev)
+>> {
+>> -     int ret = acpi_lpss_resume(dev, false);
+>> +     int ret = acpi_lpss_resume(dev);
+>>
+>>       return ret ? ret : pm_generic_resume_early(dev);
+>> }
+>> @@ -1024,7 +1032,7 @@ static int acpi_lpss_runtime_suspend(str
+>>
+>> static int acpi_lpss_runtime_resume(struct device *dev)
+>> {
+>> -     int ret = acpi_lpss_resume(dev, true);
+>> +     int ret = acpi_lpss_resume(dev);
+>>
+>>       return ret ? ret : pm_generic_runtime_resume(dev);
+>> }
+>
