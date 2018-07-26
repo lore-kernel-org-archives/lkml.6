@@ -2,137 +2,133 @@ Return-Path: <SRS0=7Z+k=KK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51512C28CF6
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 13:58:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 500C7C6778F
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 13:59:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0A0F020673
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 13:58:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0A0F020673
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+	by mail.kernel.org (Postfix) with ESMTP id F031620673
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 13:59:12 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y1oGVTL5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F031620673
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730392AbeGZPPv (ORCPT
+        id S1730508AbeGZPQK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 26 Jul 2018 11:15:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50086 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729506AbeGZPPv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Jul 2018 11:15:51 -0400
-Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0971F20673;
-        Thu, 26 Jul 2018 13:58:49 +0000 (UTC)
-Date:   Thu, 26 Jul 2018 09:58:48 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Snild Dolkow <snild@sony.com>
-Cc:     <akpm@linux-foundation.org>, <axboe@kernel.dk>,
-        <gregkh@linuxfoundation.org>, <john.stultz@linaro.org>,
-        <kosaki.motohiro@jp.fujitsu.com>, <linux-kernel@vger.kernel.org>,
-        <mingo@kernel.org>, <oleksiy.avramchenko@sony.com>,
-        <peter.enderborg@sony.com>, <tj@kernel.org>,
-        <torvalds@linux-foundation.org>, <yoshitaka.seto@sony.com>,
-        <stable@vger.kernel.org>
-Subject: Re: [PATCH] kthread, tracing: Don't expose half-written comm when
- creating kthreads
-Message-ID: <20180726095848.61865443@gandalf.local.home>
-In-Reply-To: <20180726071539.188015-1-snild@sony.com>
-References: <20180725112619.00b629cd@gandalf.local.home>
-        <20180726071539.188015-1-snild@sony.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Thu, 26 Jul 2018 11:16:10 -0400
+Received: from mail-ua0-f195.google.com ([209.85.217.195]:46296 "EHLO
+        mail-ua0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729506AbeGZPQK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Jul 2018 11:16:10 -0400
+Received: by mail-ua0-f195.google.com with SMTP id r18-v6so1121405ual.13
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Jul 2018 06:59:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ipSMxe/AxtwPcVsrNdRWkFZR246cM5NwayOubDETSiw=;
+        b=Y1oGVTL5CS1ewiljOsz7i4birEiEO395iyAClbG14LFUP4xaCIjYSGzt9gERK8bB/a
+         CTgoLYFFQ4cz2h13xGf69Plq3uqqMQ/eK8w39u1WRfsKeQPlx6knSGiyQg3cWtn6gWND
+         a7vlDNkKAxiDpDSIxoZRP0/XiG0D2FI/ogeuwOQk1eehNgQB8FvEroqWMP6mUloVtunp
+         FDvGACMgeAf5ehugGyUus0PmzeW1vUnz9tLjc7ZvjXbrUvGT0YVoBjjx0kO3vOfzjwd0
+         vVpcvf3dS2MI2ZYSyWiD4WN4r5361w05gDF4SCpsOMXsMDx1KcHJVOnpeF0POfHi+1j5
+         uUFQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ipSMxe/AxtwPcVsrNdRWkFZR246cM5NwayOubDETSiw=;
+        b=efN+fByIqMac4yXOyoRfoKukjHqa12r6oKJCAIHYXFElLKOtZBhdnQOwX7XE66R+q3
+         MDKzrlkyOlyazSmzIOJwtM+AZmNa3h5JDxFrMBb49f/zmdIFEUgM8ZI83L+TFmO0YUp/
+         ugZs+PT9hT8RlwvUd5ETlAezEuEzV0frQZnVtvlCLFIdBbaeQgX8Lea5oYrncBE0XwXO
+         wQcxZ1d+KzXecVsL7rcWzDJNof85WUTi/4ZKmk5E7i2rXyJgm1Ap5B/yUf9OffElqcN4
+         fC+GyZBEuK1G9Rqk9V6wgnIwU0kQzXId+7cbl0Tx6XWEExIpF5hk3STuCxFigCdEb80r
+         0yeQ==
+X-Gm-Message-State: AOUpUlFqLsBsDodhuMNKiXz308Iw4dZ+obPtV+kFe+3GLqkdzb/elsrm
+        m9jiAkRxteuUqojIU/+O0nY1Otki5+KQMQ9Y8PDyMw==
+X-Google-Smtp-Source: AAOMgpcdbmC6W/25JZd6erbR6A++5R4PpFM+cwCKJuiWO5zkYhaKVaejLmIy60UDu5r9dBTc8PxWwAeFflcZNW3/NwU=
+X-Received: by 2002:ab0:32c1:: with SMTP id f1-v6mr1399493uao.87.1532613549527;
+ Thu, 26 Jul 2018 06:59:09 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20180711124112.893478-1-arnd@arndb.de>
+In-Reply-To: <20180711124112.893478-1-arnd@arndb.de>
+From:   Oded Gabbay <oded.gabbay@gmail.com>
+Date:   Thu, 26 Jul 2018 16:59:06 +0300
+Message-ID: <CAFCwf114SALuHsHmhbNxG+OMh+Zg+wnfJ6mirMuu2zmXiq6fqQ@mail.gmail.com>
+Subject: Re: [PATCH] [RESEND] amdgpu: kfd: use modern ktime accessors
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Alex Deucher <alexander.deucher@amd.com>,
+        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+        "David (ChunMing) Zhou" <David1.Zhou@amd.com>,
+        David Airlie <airlied@linux.ie>,
+        "Kuehling, Felix" <Felix.Kuehling@amd.com>,
+        Yong Zhao <yong.zhao@amd.com>,
+        Kent Russell <kent.russell@amd.com>,
+        Philip Yang <Philip.Yang@amd.com>,
+        Harish Kasiviswanathan <Harish.Kasiviswanathan@amd.com>,
+        Andres Rodriguez <andres.rodriguez@amd.com>,
+        Maling list - DRI developers 
+        <dri-devel@lists.freedesktop.org>,
+        amd-gfx list <amd-gfx@lists.freedesktop.org>,
+        "Linux-Kernel@Vger. Kernel. Org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-Thanks for sending this.
-
-Unless someone else has an issue with this, I'll just take it in my
-tree. I'm currently running a bunch of commits through my tests for
-this current rc cycle. I'll add this to the bunch.
-
-I still would like to have another ack from somebody.
-
--- Steve
-
-
-On Thu, 26 Jul 2018 09:15:39 +0200
-Snild Dolkow <snild@sony.com> wrote:
-
-> There is a window for racing when printing directly to task->comm,
-> allowing other threads to see a non-terminated string. The vsnprintf
-> function fills the buffer, counts the truncated chars, then finally
-> writes the \0 at the end.
-> 
-> 	creator                     other
-> 	vsnprintf:
-> 	  fill (not terminated)
-> 	  count the rest            trace_sched_waking(p):
-> 	  ...                         memcpy(comm, p->comm, TASK_COMM_LEN)
-> 	  write \0
-> 
-> The consequences depend on how 'other' uses the string. In our case,
-> it was copied into the tracing system's saved cmdlines, a buffer of
-> adjacent TASK_COMM_LEN-byte buffers (note the 'n' where 0 should be):
-> 
-> 	crash-arm64> x/1024s savedcmd->saved_cmdlines | grep 'evenk'
-> 	0xffffffd5b3818640:     "irq/497-pwr_evenkworker/u16:12"
-> 
-> ...and a strcpy out of there would cause stack corruption:
-> 
-> 	[224761.522292] Kernel panic - not syncing: stack-protector:
-> 	    Kernel stack is corrupted in: ffffff9bf9783c78
-> 
-> 	crash-arm64> kbt | grep 'comm\|trace_print_context'
-> 	#6  0xffffff9bf9783c78 in trace_print_context+0x18c(+396)
-> 	      comm (char [16]) =  "irq/497-pwr_even"
-> 
-> 	crash-arm64> rd 0xffffffd4d0e17d14 8
-> 	ffffffd4d0e17d14:  2f71726900000000 5f7277702d373934   ....irq/497-pwr_
-> 	ffffffd4d0e17d24:  726f776b6e657665 3a3631752f72656b   evenkworker/u16:
-> 	ffffffd4d0e17d34:  f9780248ff003231 cede60e0ffffff9b   12..H.x......`..
-> 	ffffffd4d0e17d44:  cede60c8ffffffd4 00000fffffffffd4   .....`..........
-> 
-> The workaround in e09e28671 (use strlcpy in __trace_find_cmdline) was
-> likely needed because of this same bug.
-> 
-> Solved by vsnprintf:ing to a local buffer, then using set_task_comm().
-> This way, there won't be a window where comm is not terminated.
-> 
-> Cc: stable@vger.kernel.org
-> Fixes: bc0c38d139ec7 ("ftrace: latency tracer infrastructure")
-> Reviewed-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-> Signed-off-by: Snild Dolkow <snild@sony.com>
+On Wed, Jul 11, 2018 at 3:41 PM Arnd Bergmann <arnd@arndb.de> wrote:
+>
+> getrawmonotonic64() and get_monotonic_boottime64() are deprecated
+> because of the nonstandard naming.
+>
+> The replacement functions ktime_get_raw_ns() and ktime_get_boot_ns()
+> also simplify the callers.
+>
+> Reviewed-by: Felix Kuehling <Felix.Kuehling@amd.com>.
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 > ---
->  kernel/kthread.c | 8 +++++++-
->  1 file changed, 7 insertions(+), 1 deletion(-)
-> 
-> diff --git a/kernel/kthread.c b/kernel/kthread.c
-> index 481951bf091d..1a481ae12dec 100644
-> --- a/kernel/kthread.c
-> +++ b/kernel/kthread.c
-> @@ -319,8 +319,14 @@ struct task_struct *__kthread_create_on_node(int (*threadfn)(void *data),
->  	task = create->result;
->  	if (!IS_ERR(task)) {
->  		static const struct sched_param param = { .sched_priority = 0 };
-> +		char name[TASK_COMM_LEN];
->  
-> -		vsnprintf(task->comm, sizeof(task->comm), namefmt, args);
-> +		/*
-> +		 * task is already visible to other tasks, so updating
-> +		 * COMM must be protected.
-> +		 */
-> +		vsnprintf(name, sizeof(name), namefmt, args);
-> +		set_task_comm(task, name);
->  		/*
->  		 * root may have changed our (kthreadd's) priority or CPU mask.
->  		 * The kernel thread should not inherit these properties.
-
+> Patch was originall sent on Jun 18 but not applied yet, resending
+> With Felix' Reviewed-by tag
+> ---
+>  drivers/gpu/drm/amd/amdkfd/kfd_chardev.c | 8 ++------
+>  1 file changed, 2 insertions(+), 6 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/amd/amdkfd/kfd_chardev.c b/drivers/gpu/drm/amd/amdkfd/kfd_chardev.c
+> index f64c5551cdba..7e717716b90e 100644
+> --- a/drivers/gpu/drm/amd/amdkfd/kfd_chardev.c
+> +++ b/drivers/gpu/drm/amd/amdkfd/kfd_chardev.c
+> @@ -754,7 +754,6 @@ static int kfd_ioctl_get_clock_counters(struct file *filep,
+>  {
+>         struct kfd_ioctl_get_clock_counters_args *args = data;
+>         struct kfd_dev *dev;
+> -       struct timespec64 time;
+>
+>         dev = kfd_device_by_id(args->gpu_id);
+>         if (dev)
+> @@ -766,11 +765,8 @@ static int kfd_ioctl_get_clock_counters(struct file *filep,
+>                 args->gpu_clock_counter = 0;
+>
+>         /* No access to rdtsc. Using raw monotonic time */
+> -       getrawmonotonic64(&time);
+> -       args->cpu_clock_counter = (uint64_t)timespec64_to_ns(&time);
+> -
+> -       get_monotonic_boottime64(&time);
+> -       args->system_clock_counter = (uint64_t)timespec64_to_ns(&time);
+> +       args->cpu_clock_counter = ktime_get_raw_ns();
+> +       args->system_clock_counter = ktime_get_boot_ns();
+>
+>         /* Since the counter is in nano-seconds we use 1GHz frequency */
+>         args->system_clock_freq = 1000000000;
+> --
+> 2.9.0
+>
+Applied to -next
+Thanks,
+Oded
