@@ -2,103 +2,105 @@ Return-Path: <SRS0=7Z+k=KK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD36EC28CF6
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 13:41:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15D2FC6778F
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 13:41:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 92BB820685
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 13:41:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 92BB820685
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id CF65920685
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 13:41:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF65920685
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731384AbeGZO61 (ORCPT
+        id S1731431AbeGZO6m (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 26 Jul 2018 10:58:27 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:59315 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730198AbeGZO61 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Jul 2018 10:58:27 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 3752B20943; Thu, 26 Jul 2018 15:41:29 +0200 (CEST)
-Received: from localhost (unknown [80.255.6.130])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 0D2A4209C2;
-        Thu, 26 Jul 2018 15:41:03 +0200 (CEST)
-From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
-To:     linux-rtc@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>
-Subject: [PATCH 8/8] rtc: remove struct rtc_task
-Date:   Thu, 26 Jul 2018 15:40:56 +0200
-Message-Id: <20180726134056.18273-9-alexandre.belloni@bootlin.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180726134056.18273-1-alexandre.belloni@bootlin.com>
-References: <20180726134056.18273-1-alexandre.belloni@bootlin.com>
+        Thu, 26 Jul 2018 10:58:42 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:47404 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1730881AbeGZO6l (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Jul 2018 10:58:41 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 80644402332F;
+        Thu, 26 Jul 2018 13:41:45 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.34.27.30])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 279FA10FFE54;
+        Thu, 26 Jul 2018 13:41:44 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+        oleg@redhat.com; Thu, 26 Jul 2018 15:41:45 +0200 (CEST)
+Date:   Thu, 26 Jul 2018 15:41:43 +0200
+From:   Oleg Nesterov <oleg@redhat.com>
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Wen Yang <wen.yang99@zte.com.cn>, majiang <ma.jiang@zte.com.cn>
+Subject: Re: [PATCH v3 20/20] signal: Don't restart fork when signals come in.
+Message-ID: <20180726134143.GB32718@redhat.com>
+References: <20180724032419.20231-20-ebiederm@xmission.com>
+ <CA+55aFxNijeenFd6o7fg3iJFqAjdTZLaFV2=Eaqbg1fDOzx26A@mail.gmail.com>
+ <874lgo5xdg.fsf@xmission.com>
+ <CA+55aFw_CTTRTZfUf1e9yg04X_djG3q7HrCG-XqnyQorpKjaTQ@mail.gmail.com>
+ <87fu084cxj.fsf@xmission.com>
+ <CA+55aFxUc3ttEAuRS7GKs9aTjTFw1poE80DASFSXudVQCuWpHg@mail.gmail.com>
+ <87a7qg4bb3.fsf_-_@xmission.com>
+ <CA+55aFxe+Ku78ZEvd_F2TD_3gTmLXw0kzo4HDE-ngkYfSHQfPw@mail.gmail.com>
+ <87pnzc2upf.fsf@xmission.com>
+ <87k1pk2cj9.fsf_-_@xmission.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87k1pk2cj9.fsf_-_@xmission.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Thu, 26 Jul 2018 13:41:45 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Thu, 26 Jul 2018 13:41:45 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'oleg@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Include rtc_task members directly in rtc_timer member.
+On 07/24, Eric W. Biederman wrote:
+>
+> @@ -1979,6 +1983,8 @@ static __latent_entropy struct task_struct *copy_process(
+>  			attach_pid(p, PIDTYPE_TGID);
+>  			attach_pid(p, PIDTYPE_PGID);
+>  			attach_pid(p, PIDTYPE_SID);
+> +			p->signal->shared_pending.signal = delayed.signal;
 
-Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
----
- drivers/rtc/interface.c | 8 ++++----
- include/linux/rtc.h     | 9 ++-------
- 2 files changed, 6 insertions(+), 11 deletions(-)
+Again, in this case we do not hold p->sighand->siglock (unless CLONE_SIGHAND),
+so this should be done before list_add_tail/attach_pid above. Plus we need some
+sort of barrier.
 
-diff --git a/drivers/rtc/interface.c b/drivers/rtc/interface.c
-index d0983ed6c842..a962540faf2e 100644
---- a/drivers/rtc/interface.c
-+++ b/drivers/rtc/interface.c
-@@ -912,8 +912,8 @@ void rtc_timer_do_work(struct work_struct *work)
- 		timerqueue_del(&rtc->timerqueue, &timer->node);
- 		trace_rtc_timer_dequeue(timer);
- 		timer->enabled = 0;
--		if (timer->task.func)
--			timer->task.func(timer->task.private_data);
-+		if (timer->func)
-+			timer->func(timer->private_data);
- 
- 		trace_rtc_timer_fired(timer);
- 		/* Re-add/fwd periodic timers */
-@@ -968,8 +968,8 @@ void rtc_timer_init(struct rtc_timer *timer, void (*f)(void *p), void *data)
- {
- 	timerqueue_init(&timer->node);
- 	timer->enabled = 0;
--	timer->task.func = f;
--	timer->task.private_data = data;
-+	timer->func = f;
-+	timer->private_data = data;
- }
- 
- /* rtc_timer_start - Sets an rtc_timer to fire in the future
-diff --git a/include/linux/rtc.h b/include/linux/rtc.h
-index bf4d375025d1..6aedc30003e7 100644
---- a/include/linux/rtc.h
-+++ b/include/linux/rtc.h
-@@ -87,16 +87,11 @@ struct rtc_class_ops {
- 	int (*set_offset)(struct device *, long offset);
- };
- 
--typedef struct rtc_task {
--	void (*func)(void *private_data);
--	void *private_data;
--} rtc_task_t;
--
--
- struct rtc_timer {
--	struct rtc_task	task;
- 	struct timerqueue_node node;
- 	ktime_t period;
-+	void (*func)(void *private_data);
-+	void *private_data;
- 	int enabled;
- };
- 
--- 
-2.18.0
+Or we can do
+
+	if (!CLONE_SIGHAND)
+		spin_lock_nested(child->siglock);
+
+at the start of "if (likely(p->pid))" block.
+
+> --- a/kernel/signal.c
+> +++ b/kernel/signal.c
+> @@ -1123,6 +1123,15 @@ static int __send_signal(int sig, struct siginfo *info, struct task_struct *t,
+>  out_set:
+>  	signalfd_notify(t, sig);
+>  	sigaddset(&pending->signal, sig);
+> +
+> +	/* Let multiprocess signals appear after on-going forks */
+> +	if (type > PIDTYPE_TGID) {
+> +		struct multiprocess_signals *delayed;
+> +		hlist_for_each_entry(delayed, &t->signal->multiprocess, node) {
+> +			sigaddset(&delayed->signal, sig);
+
+This is not enough, I think...
+
+Suppose you send SIGSTOP and then SIGCONT to some process group. The 1st SIGSTOP
+will be queued correctly, but the 2nd SIGCONT won't flush the pending SIGSTOP, you
+need to modify prepare_signal() too.
+
+Oleg.
 
