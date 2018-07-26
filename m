@@ -6,44 +6,41 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3CBAC28CF6
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 23:26:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A90D2C6778F
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 23:28:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A6C9220862
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 23:26:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A6C9220862
+	by mail.kernel.org (Postfix) with ESMTP id 5D630205F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 23:28:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D630205F4
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731961AbeG0ApD convert rfc822-to-8bit (ORCPT
+        id S1731969AbeG0ArE convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 26 Jul 2018 20:45:03 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:48792 "EHLO mail.bootlin.com"
+        Thu, 26 Jul 2018 20:47:04 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:48842 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730610AbeG0ApC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Jul 2018 20:45:02 -0400
+        id S1730610AbeG0ArE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Jul 2018 20:47:04 -0400
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id C8333207F4; Fri, 27 Jul 2018 01:25:58 +0200 (CEST)
+        id 0E2AB207F4; Fri, 27 Jul 2018 01:28:00 +0200 (CEST)
 Received: from xps13 (unknown [91.224.148.103])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 3895B20618;
-        Fri, 27 Jul 2018 01:25:58 +0200 (CEST)
-Date:   Fri, 27 Jul 2018 01:25:57 +0200
+        by mail.bootlin.com (Postfix) with ESMTPSA id 6765A20618;
+        Fri, 27 Jul 2018 01:27:59 +0200 (CEST)
+Date:   Fri, 27 Jul 2018 01:27:58 +0200
 From:   Miquel Raynal <miquel.raynal@bootlin.com>
 To:     Boris Brezillon <boris.brezillon@bootlin.com>
 Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Anders Roxell <anders.roxell@linaro.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Rob Herring <robh@kernel.org>,
-        DTML <devicetree@vger.kernel.org>
-Subject: Re: [PATCH] drivers/memory/Kconfig: Add CONFIG_OF dependency
-Message-ID: <20180727012557.72fff5e1@xps13>
-In-Reply-To: <20180723114107.664164d2@bbrezillon>
-References: <20180721200049.7553-1-anders.roxell@linaro.org>
-        <a83ff193-be57-f566-cafb-132075025b56@infradead.org>
-        <20180722082939.2de739f1@bbrezillon>
-        <CAK8P3a1_8OSqyKsbw+m3ZzLWfPqDK4ynG3WoPTk+K2uJJsiq5A@mail.gmail.com>
-        <20180723114107.664164d2@bbrezillon>
+        "David S. Miller" <davem@davemloft.net>,
+        linux-ia64@vger.kernel.org, linux-alpha@vger.kernel.org,
+        sparclinux@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>
+Subject: Re: [PATCH 2/2] sparc64: add reads{b,w,l}/writes{b,w,l}
+Message-ID: <20180727012758.664d5dcf@xps13>
+In-Reply-To: <20180720102339.22c9aa57@bbrezillon>
+References: <20180711120824.3882108-1-arnd@arndb.de>
+        <20180711120824.3882108-2-arnd@arndb.de>
+        <20180720102339.22c9aa57@bbrezillon>
 Organization: Bootlin
 X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
@@ -56,41 +53,38 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Hi Boris,
 
-Boris Brezillon <boris.brezillon@bootlin.com> wrote on Mon, 23 Jul 2018
-11:41:07 +0200:
+Boris Brezillon <boris.brezillon@bootlin.com> wrote on Fri, 20 Jul 2018
+10:23:39 +0200:
 
-> On Mon, 23 Jul 2018 11:34:43 +0200
+> +Miquel who's in charge of the NAND tree for this release
+> 
+> On Wed, 11 Jul 2018 14:08:06 +0200
 > Arnd Bergmann <arnd@arndb.de> wrote:
 > 
-> > On Sun, Jul 22, 2018 at 8:29 AM, Boris Brezillon
-> > <boris.brezillon@bootlin.com> wrote:  
-> > > +Arnd, Rob and the DT ML.
-> > >
-> > > On Sat, 21 Jul 2018 14:53:47 -0700
-> > > Randy Dunlap <rdunlap@infradead.org> wrote:
-> > >    
-> > >> On 07/21/2018 01:00 PM, Anders Roxell wrote:    
-> > >> > JZ4780_NEMC doesn't depend on OF, and if OF isn't enabled we get this
-> > >> > error:
-> > >> > drivers/memory/jz4780-nemc.c: In function ‘jz4780_nemc_num_banks’:
-> > >> > drivers/memory/jz4780-nemc.c:72:10: error: implicit declaration of
-> > >> >  function ‘of_read_number’; did you mean ‘down_read_nested’?
-> > >> >  [-Werror=implicit-function-declaration]
-> > >> >    bank = of_read_number(prop, 1);
-> > >> >           ^~~~~~~~~~~~~~
-> > >> >           down_read_nested    
-> > >
-> > > Looks like of.h defines stubs so that people can compile-test without
-> > > CONFIG_OF selected. Maybe we should move of_read_number() and
-> > > of_read_ulong() out of the #ifdef CONFIG_OF section.    
+> > Some drivers need these for compile-testing. On most architectures
+> > they come from asm-generic/io.h, but not on sparc64, which has its
+> > own definitions.
 > > 
-> > That seems fine, though the added dependency seems appropriate
-> > here as well. of_read_number() is rarely used, and for the most part in
-> > powerpc specific code that is guaranteed to have CONFIG_OF enabled,
-> > so it's not that likely to cause many more problems.  
+> > Since we already have ioread*_rep()/iowrite*_rep() that have the
+> > same behavior on sparc64 (i.e. all PCI I/O space is memory mapped),
+> > we can rename the existing helpers and add macros to define them
+> > to the same implementation.
+> > 
+> > Signed-off-by: Arnd Bergmann <arnd@arndb.de>  
 > 
-> Ok, then I'll let Miquel apply Anders' patch to the NAND tree.
+> I tried to compile a sparc64 kernel with COMPILE_TEST=y plus the
+> orion and s3c2410 NAND drivers enabled and it compiles fine (it does
+> without this patch). So it seems to fix the compilation error reported
+> by kbuild robots.
+> 
+> Tested-by: Boris Brezillon <boris.brezillon@bootlin>
+> (only compile-tested)
+> 
+> Dave gave his A-b, so, if everyone is okay with that, I'd like this
+> patch to go trough the NAND tree.
 
-Applied to nand/next, thanks.
+Applied to nand/next.
 
+Thanks,
 Miquèl
+
