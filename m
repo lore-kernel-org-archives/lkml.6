@@ -2,155 +2,91 @@ Return-Path: <SRS0=7Z+k=KK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 869A3C28CF6
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 16:13:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4BFAC28CF6
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 16:21:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3F71220846
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 16:13:15 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="S1quFqqQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3F71220846
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 64C9620846
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 16:21:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 64C9620846
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=real-time-systems.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732045AbeGZRan (ORCPT
+        id S1732056AbeGZRjP convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 26 Jul 2018 13:30:43 -0400
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:34841 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731851AbeGZRan (ORCPT
+        Thu, 26 Jul 2018 13:39:15 -0400
+Received: from mout.kundenserver.de ([212.227.126.135]:52695 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730781AbeGZRjP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Jul 2018 13:30:43 -0400
-Received: by mail-pl0-f67.google.com with SMTP id w3-v6so1034978plq.2
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Jul 2018 09:13:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=1hIK/H5MmOewLypG4apEZ7USzZzkjTyf2gMX6rCPwg8=;
-        b=S1quFqqQwN9Y8yzOHH+zQStJ7RTNc3fW4RrQMoK2Fs1NrdwGs7Jd1fpCs6towNMfQn
-         j+tTxx8VVxbR7yaJMqWS3N0Zf+G1yCyLI7bi7EfWi3/8rlBIeRGVgYYqxsgEqEIQr9Yo
-         iWWvHgjJFQCEImNVXKhdGt60b/TxYOVs+CI2U=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=1hIK/H5MmOewLypG4apEZ7USzZzkjTyf2gMX6rCPwg8=;
-        b=en0M7Xa0U22gAt6LTOplM6UZ66Xr4bzBdL9hHwejugxz96LMo1nFAMJ8xh04VElX66
-         gO+RHqdX5yqcdSyXUgFvy4Mc2SkLjWIUxI+7BsWjIKenaHX0TDtxQuJrtb/4uup6muYR
-         zBWS1k8OR/68VOlmbB6GJwMq3z6A9G7al0dfmTa/TXcgXEs3i3V9h04fiwLO9G0KG/hx
-         uymXkXmjiPM0/8MOmolijLoMJNWf58ZahbkS6R99ERCaLITM4N793cRfh8ShjiEyaDGe
-         f/cLZbkrVvFYjlw4yTO5hBE34HlgfQ9JeRD8vqGCkTV/CQpVYZ0bJn+lsIZ3PFp3JLpD
-         7YyQ==
-X-Gm-Message-State: AOUpUlHt+TkCrnskOmCm3ARIteJEerqeeGYcNDAeKk2G4R6fPdQLSY59
-        rrVR/WLAH5ll8o83bze21LShIcfvXS0=
-X-Google-Smtp-Source: AAOMgpe/Bk+ka+Qop4DZ33Q7NLBWGEruhbgKer2iWYtRNc7WdFhZXLNPQGICF+fUo0rJBLuy7IWLcw==
-X-Received: by 2002:a17:902:2f43:: with SMTP id s61-v6mr2515728plb.274.1532621592456;
-        Thu, 26 Jul 2018 09:13:12 -0700 (PDT)
-Received: from tuxbook-pro (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id h24-v6sm3644737pfk.113.2018.07.26.09.13.11
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 26 Jul 2018 09:13:11 -0700 (PDT)
-Date:   Thu, 26 Jul 2018 09:16:20 -0700
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Amit Kucheria <amit.kucheria@linaro.org>
-Cc:     linux-kernel@vger.kernel.org, rnayak@codeaurora.org,
-        linux-arm-msm@vger.kernel.org, edubezval@gmail.com,
-        smohanad@codeaurora.org, andy.gross@linaro.org,
-        dianders@chromium.org, mka@chromium.org,
-        Zhang Rui <rui.zhang@intel.com>, linux-pm@vger.kernel.org
-Subject: Re: [PATCH v2 1/3] thermal: tsens: Rename variable
-Message-ID: <20180726161620.GA5450@tuxbook-pro>
-References: <cover.1532600791.git.amit.kucheria@linaro.org>
- <5160b58d1d14b87b84ea49adc804afbefb792c34.1532600791.git.amit.kucheria@linaro.org>
+        Thu, 26 Jul 2018 13:39:15 -0400
+Received: from pc00012.rts.com ([46.237.192.139]) by mrelayeu.kundenserver.de
+ (mreue001 [212.227.15.167]) with ESMTPSA (Nemesis) id
+ 0MeXgF-1fLp4T2oRT-00QG6v; Thu, 26 Jul 2018 18:21:10 +0200
+Subject: Re: 4.17.x won't boot due to "x86/boot/compressed/64: Handle 5-level
+ paging boot if kernel is above 4G"
+To:     "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Cc:     linux-x86_64@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org
+References: <f1fb3e5e-f18a-9f89-84c5-1dc73e08ceef@real-time-systems.com>
+ <20180725212122.f2m3cfiqb4az3cb7@black.fi.intel.com>
+ <a3e428be-0875-3b64-7680-252cd61b52c9@real-time-systems.com>
+ <20180726145008.ccmeklqx4ofb4456@black.fi.intel.com>
+From:   Dmitry Malkin <d.malkin@real-time-systems.com>
+Organization: Real-Time Systems GmbH
+Message-ID: <9e22ee9b-0ada-9863-32aa-db3cacd25862@real-time-systems.com>
+Date:   Thu, 26 Jul 2018 18:21:11 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5160b58d1d14b87b84ea49adc804afbefb792c34.1532600791.git.amit.kucheria@linaro.org>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <20180726145008.ccmeklqx4ofb4456@black.fi.intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8BIT
+Content-Language: en-US
+X-Provags-ID: V03:K1:b5Mf2l12nBV0vEggjJakZnj30IjIs9X+k7hoYJUoOpu7a8Adczb
+ 9p7Jaj/WguNgog9lLx1oDX3u+BUZGl4K8Z4K8zWjk80Mq7b0qZMXftfNexXKOFHY6n4yWRu
+ qkPD3nfa0U0ZJYS8jjmp38t/iASzB+HR4XYU91t99iUJknZ8kgzLMM7PRMGkbzuE6JKA35p
+ 2Ha8IOseWSRVzH/jkG0CQ==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:9oeNbVPGt6A=:8mRe96L/VZFqr98tv9jAaU
+ TkYfQw6E+gXEJP9Alo3Uy5YNkE5RHnwRSpJG6jAj3vYj0yAvvtRQtezMGp/Y5Ez2EeKHYR6Eo
+ abUNE4JdEUBykLat3JaMtch4nxQEzhngwBgaVotuwQwhj8fx99YeYmUaoftAQEe1RlrVhA71I
+ 7Nrqh9KDAfuOkHbldX0UGULuMZrEz1fZQWp9FFZk27qBcm7KMa1wU9NTrunqCJXMru+ho+0CS
+ JFKOuDXVhO2fTw3AXX4d6mLE2gQw1hhkjlsVG9qIJeY0WKYD4411cPIBVdnMkJJxTIReH4l56
+ VS7dc6omwl+rBcwYe4eYGp9Sxrw62g86sdfjpjNM9NCwq/io4KEUoUuNjDQVU9aLvZNw+dZTa
+ IQkXC7tHkjYSru4utU4+LWbo/lG/052TFKIk6E7wivU9cO1AJpk9P+RwKHDeiwVOSYRWOz1ea
+ ecWiOjesL8eYVnzPhaA1AXBI+X1uc0RyWF6DuJyIHFBGUDoDiVnxt/AfmWRZDpolpSm0xGeVc
+ t4hGuZx9uGTdnP/JlEpzM1hIwoJk5JUQ6SOkwKvXJ+l0v+zX17LFoCoFoJF0zCTLLPfLuA8xG
+ JCNOuTMFD1BrZsNETEHPxBjdzy8OtVMZpVutsagnG4cOe38ewY5GVMVL3CcNq5+qLOm3Me7QD
+ 3Ay0TUGhAm+6bKaB0FzzV25u02RoZoeX7/goaLYNt3SOIe1/Wo1KK9EPE3J1GiNpXveIwbywO
+ SS0Pwa2HB2HB+cfg
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 26 Jul 03:33 PDT 2018, Amit Kucheria wrote:
+On 07/26/2018 04:50 PM, Kirill A. Shutemov wrote:
+>>>> 2. reading from memory which may be reserved in case of EFI systems:
+>>>>>>      ebda_start = *(unsigned short *)0x40e << 4;
+>>>>>>      bios_start = *(unsigned short *)0x413 << 10;
+>>>> Also, on EFI system without CSM it will results in all zeros. Which will
+>>>> place trampoline_start to 0x9d000. And it also may be reserved memory. In
+>>>> fact I have such system and it is causes instant reboot (when code starts
+>>>> copying to "trampoline_start").
+>>> Could you show dmesg from such system?
+>> Sure, here it is (please note than not both pages are reserved but only
+>> second one: 0x9e000-0x9ffff):
+> Well. That's bad.
+>
+> I don't see much options but parse e820 in decompression code. I hoped to
+> avoid this.
+>
+> Let me see what I can do there.
+Just in case of UEFI (I don't know much about BIOS and kexec):
+register RSI (right before call paging_prepare) will contains pointer to 
+"struct boot_params" (returned by function efi_main() in eboot.c).
+There are fields e820_table and e820_entries.
 
-> We're actually reading the temperature from the status register. Fix the
-> variable name to reflect that.
-> 
-> Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
-> Reviewed-by: Matthias Kaehlcke <mka@chromium.org>
-
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-
-Regards,
-Bjorn
-
-> ---
->  drivers/thermal/qcom/tsens-common.c |  6 +++---
->  drivers/thermal/qcom/tsens-v2.c     | 10 +++++-----
->  2 files changed, 8 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/thermal/qcom/tsens-common.c b/drivers/thermal/qcom/tsens-common.c
-> index c22dc18c7c65..25e7f247b027 100644
-> --- a/drivers/thermal/qcom/tsens-common.c
-> +++ b/drivers/thermal/qcom/tsens-common.c
-> @@ -104,11 +104,11 @@ int get_temp_common(struct tsens_device *tmdev, int id, int *temp)
->  {
->  	struct tsens_sensor *s = &tmdev->sensor[id];
->  	u32 code;
-> -	unsigned int sensor_addr;
-> +	unsigned int status_reg;
->  	int last_temp = 0, ret;
->  
-> -	sensor_addr = S0_ST_ADDR + s->hw_id * SN_ADDR_OFFSET;
-> -	ret = regmap_read(tmdev->map, sensor_addr, &code);
-> +	status_reg = S0_ST_ADDR + s->hw_id * SN_ADDR_OFFSET;
-> +	ret = regmap_read(tmdev->map, status_reg, &code);
->  	if (ret)
->  		return ret;
->  	last_temp = code & SN_ST_TEMP_MASK;
-> diff --git a/drivers/thermal/qcom/tsens-v2.c b/drivers/thermal/qcom/tsens-v2.c
-> index f40150fd7eae..908e3dcb2d5c 100644
-> --- a/drivers/thermal/qcom/tsens-v2.c
-> +++ b/drivers/thermal/qcom/tsens-v2.c
-> @@ -16,11 +16,11 @@ static int get_temp_tsens_v2(struct tsens_device *tmdev, int id, int *temp)
->  {
->  	struct tsens_sensor *s = &tmdev->sensor[id];
->  	u32 code;
-> -	unsigned int sensor_addr;
-> +	unsigned int status_reg;
->  	int last_temp = 0, last_temp2 = 0, last_temp3 = 0, ret;
->  
-> -	sensor_addr = tmdev->tm_offset + STATUS_OFFSET + s->hw_id * 4;
-> -	ret = regmap_read(tmdev->map, sensor_addr, &code);
-> +	status_reg = tmdev->tm_offset + STATUS_OFFSET + s->hw_id * 4;
-> +	ret = regmap_read(tmdev->map, status_reg, &code);
->  	if (ret)
->  		return ret;
->  	last_temp = code & LAST_TEMP_MASK;
-> @@ -28,7 +28,7 @@ static int get_temp_tsens_v2(struct tsens_device *tmdev, int id, int *temp)
->  		goto done;
->  
->  	/* Try a second time */
-> -	ret = regmap_read(tmdev->map, sensor_addr, &code);
-> +	ret = regmap_read(tmdev->map, status_reg, &code);
->  	if (ret)
->  		return ret;
->  	if (code & STATUS_VALID_BIT) {
-> @@ -39,7 +39,7 @@ static int get_temp_tsens_v2(struct tsens_device *tmdev, int id, int *temp)
->  	}
->  
->  	/* Try a third/last time */
-> -	ret = regmap_read(tmdev->map, sensor_addr, &code);
-> +	ret = regmap_read(tmdev->map, status_reg, &code);
->  	if (ret)
->  		return ret;
->  	if (code & STATUS_VALID_BIT) {
-> -- 
-> 2.17.GIT
-> 
