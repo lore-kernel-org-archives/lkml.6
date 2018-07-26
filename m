@@ -2,135 +2,175 @@ Return-Path: <SRS0=7Z+k=KK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A60D6C6778F
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 14:34:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74888C28CF6
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 14:36:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5C72A2064D
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 14:34:59 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="QW3VQtRY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5C72A2064D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
+	by mail.kernel.org (Postfix) with ESMTP id 294F020673
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 14:36:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 294F020673
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731273AbeGZPwF (ORCPT
+        id S1731281AbeGZPxL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 26 Jul 2018 11:52:05 -0400
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:40809 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729923AbeGZPwF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Jul 2018 11:52:05 -0400
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20180726143455euoutp01cad51788aaa858d4d7da29a0596bb714~E8drPHWnN1765617656euoutp01B;
-        Thu, 26 Jul 2018 14:34:55 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20180726143455euoutp01cad51788aaa858d4d7da29a0596bb714~E8drPHWnN1765617656euoutp01B
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1532615695;
-        bh=YmR3C4vh2L8Q6PFGq13UgDypEQcunQpHR905biFEyLc=;
-        h=From:To:Cc:Subject:Date:In-reply-to:References:From;
-        b=QW3VQtRYn7A+kk888us2QHOWlXi4cQPZ5q41TCe+6c8SzYZlKEUEDCmlUtAn36GAt
-         TpBc3HnOg69CQH1Nh7hlJzaMi2Pk+giqunxVFfmPVwyAcDXg7xp6RIUXM6ve/ZpY7F
-         ur7FBVgvS/RUJ5ZVvug0n18lI9pnaesjRZDwnKsE=
-Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20180726143454eucas1p27fe2de26588295c5dcbc802db371a5ef~E8dqzldp51246512465eucas1p2E;
-        Thu, 26 Jul 2018 14:34:54 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges3new.samsung.com (EUCPMTA) with SMTP id A3.3C.61560.E0CD95B5; Thu, 26
-        Jul 2018 15:34:54 +0100 (BST)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20180726143454eucas1p202f3b7d108ecc9130480d3d493c4c3fb~E8dqI7E653149531495eucas1p2J;
-        Thu, 26 Jul 2018 14:34:54 +0000 (GMT)
-X-AuditID: cbfec7f5-207ff7000002f078-8e-5b59dc0ed81e
-Received: from eusync4.samsung.com ( [203.254.199.214]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id 5B.23.04183.D0CD95B5; Thu, 26
-        Jul 2018 15:34:53 +0100 (BST)
-Received: from amdc3058.localnet ([106.120.53.102]) by eusync4.samsung.com
-        (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5
-        2014)) with ESMTPA id <0PCH003AS9U5Z590@eusync4.samsung.com>; Thu, 26 Jul
-        2018 15:34:53 +0100 (BST)
-From:   Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-To:     bai <baijiaju1990@gmail.com>
-Cc:     dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [BUG] video: fbdev: broadsheetfb: Possible null function
- pointers
-Date:   Thu, 26 Jul 2018 16:34:53 +0200
-Message-id: <2568790.PcaMMF1rzM@amdc3058>
-User-Agent: KMail/4.13.3 (Linux/3.13.0-96-generic; KDE/4.13.3; x86_64; ; )
-In-reply-to: <cb43741a-83af-0b55-f53b-489bf7cb8b61@gmail.com>
-MIME-version: 1.0
-Content-transfer-encoding: 7Bit
-Content-type: text/plain; charset="us-ascii"
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrJIsWRmVeSWpSXmKPExsWy7djPc7p8dyKjDY59k7VYN3Ehk8WVr+/Z
-        LE70fWC1uLxrDpsDi8fOWXfZPe53H2fy+LxJLoA5issmJTUnsyy1SN8ugSvj/tnfzAWn2CsW
-        fT/P3sD4lrWLkZNDQsBE4v6/icxdjFwcQgIrGCWaL/yGcj4zSmy4vBWoigOsavJdH4j4MkaJ
-        dava2CCc34wSe45cYgcZxSZgJTGxfRUjiC0ioCDRvOYuC4jNLJAgcXrRPTBbWCBA4u/OJjYQ
-        m0VAVWL/xGdgvbwCmhJHu+eB1YgKeEls2dfOBGJzCthKvLn9lAWiRlDix+R7UDPlJfbtn8oK
-        YetInD22jhHkIAmBGWwS25++Zof4zUVi2pZGqD+FJV4d3wIVl5G4PLmbBaJhOqPEm19LoZz1
-        jBJrzhxjgqiyljh8/CLUCj6JSdumM0PCgleio00IosRDorV3PzS8JjBKXLlwh3kCo8wsJNfO
-        QnLtLCTXLmBkXsUonlpanJueWmycl1quV5yYW1yal66XnJ+7iREY4af/Hf+6g3Hfn6RDjAIc
-        jEo8vBdmRkQLsSaWFVfmHmKU4GBWEuFdcz0yWog3JbGyKrUoP76oNCe1+BCjNAeLkjivtA9Q
-        tUB6YklqdmpqQWoRTJaJg1OqgdFhsvObKeErDv8qsb2Us+7+r9V7V3kdjiifKDR7epT5jG2s
-        fkJzRS6xcPFXCZxPK6rj27HZcvLjfzue33fR+m4856GehEHb9aAFAt3OzxerO2wVDUjMSNvM
-        HN2j++psZ4T/D6Z74Uynj1z+dnTa9Rf+TJLhomrsk3N6UgOObfk7S+HTu7WPJz9SYinOSDTU
-        Yi4qTgQATDoJN+wCAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrCLMWRmVeSWpSXmKPExsVy+t/xa7q8dyKjDabPMbVYN3Ehk8WVr+/Z
-        LE70fWC1uLxrDpsDi8fOWXfZPe53H2fy+LxJLoA5issmJTUnsyy1SN8ugSvj/tnfzAWn2CsW
-        fT/P3sD4lrWLkYNDQsBEYvJdny5GLg4hgSWMEtfef2eHcP4ySiz708fcxcjJwSZgJTGxfRUj
-        iC0ioCDRvOYuC0gzs0CCxLN5KSCmsICfxOV3eSAVLAKqEvsnPmMHsXkFNCWOds9jAbFFBbwk
-        tuxrZwKxOQVsJd7cfsoCsWoSo8S3V1tYIBoEJX5MvgdmMwvIS+zbP5UVwtaSWL/zONMERv5Z
-        SMpmISmbhaRsASPzKkaR1NLi3PTcYiO94sTc4tK8dL3k/NxNjMCw3Hbs55YdjF3vgg8xCnAw
-        KvHwXpgZES3EmlhWXJl7iFGCg1lJhHfN9choId6UxMqq1KL8+KLSnNTiQ4zSHCxK4rznDSqj
-        hATSE0tSs1NTC1KLYLJMHJxSDYw+97Vdrh1d4Lzif7JP6rrNVXXHOlrXCNeHPC9we5K35P48
-        69McsitqZ3hV7dbn3rlEr/mG3OUH158d72GemnVmoptaYdbyx5GKnasCHIR1Iss0UvOv3eto
-        Efwd/u4U65TEKrmAFol3UbPkXk6dYXAu+eo0qQD+G0HaDyQv5V5f/SbSydlsKbcSS3FGoqEW
-        c1FxIgDEmeqJRwIAAA==
-X-CMS-MailID: 20180726143454eucas1p202f3b7d108ecc9130480d3d493c4c3fb
-X-Msg-Generator: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20180726141748epcas1p28f6f11fea0152ed22113351e3a0affbc
-References: <CGME20180726141748epcas1p28f6f11fea0152ed22113351e3a0affbc@epcas1p2.samsung.com>
-        <cb43741a-83af-0b55-f53b-489bf7cb8b61@gmail.com>
+        Thu, 26 Jul 2018 11:53:11 -0400
+Received: from foss.arm.com ([217.140.101.70]:57216 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729506AbeGZPxL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Jul 2018 11:53:11 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7332180D;
+        Thu, 26 Jul 2018 07:36:02 -0700 (PDT)
+Received: from [10.1.39.194] (desktop-vlo843j.cambridge.arm.com [10.1.39.194])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 094DD3F2EA;
+        Thu, 26 Jul 2018 07:36:00 -0700 (PDT)
+Subject: Re: [PATCH v3 4/6] iommu/io-pgtable-arm: add support for non-strict
+ mode
+To:     "Leizhen (ThunderTown)" <thunder.leizhen@huawei.com>,
+        Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        iommu <iommu@lists.linux-foundation.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+References: <1531376312-2192-1-git-send-email-thunder.leizhen@huawei.com>
+ <1531376312-2192-5-git-send-email-thunder.leizhen@huawei.com>
+ <89cc2201-99ab-3f3b-a2d1-1766515d4375@arm.com> <5B597628.2020103@huawei.com>
+From:   Robin Murphy <robin.murphy@arm.com>
+Message-ID: <04239cfa-bcf2-a33a-e662-ebc75e66782b@arm.com>
+Date:   Thu, 26 Jul 2018 15:35:59 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <5B597628.2020103@huawei.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thursday, July 26, 2018 10:17:44 PM bai wrote:
-> In Linux-4.16, drivers/video/fbdev/broadsheetfb.c,
+On 2018-07-26 8:20 AM, Leizhen (ThunderTown) wrote:
+> On 2018/7/25 6:25, Robin Murphy wrote:
+>> On 2018-07-12 7:18 AM, Zhen Lei wrote:
+>>> To support the non-strict mode, now we only tlbi and sync for the strict
+>>> mode. But for the non-leaf case, always follow strict mode.
+>>>
+>>> Use the lowest bit of the iova parameter to pass the strict mode:
+>>> 0, IOMMU_STRICT;
+>>> 1, IOMMU_NON_STRICT;
+>>> Treat 0 as IOMMU_STRICT, so that the unmap operation can compatible with
+>>> other IOMMUs which still use strict mode.
+>>>
+>>> Signed-off-by: Zhen Lei <thunder.leizhen@huawei.com>
+>>> ---
+>>>    drivers/iommu/io-pgtable-arm.c | 23 ++++++++++++++---------
+>>>    1 file changed, 14 insertions(+), 9 deletions(-)
+>>>
+>>> diff --git a/drivers/iommu/io-pgtable-arm.c b/drivers/iommu/io-pgtable-arm.c
+>>> index 010a254..9234db3 100644
+>>> --- a/drivers/iommu/io-pgtable-arm.c
+>>> +++ b/drivers/iommu/io-pgtable-arm.c
+>>> @@ -292,7 +292,7 @@ static void __arm_lpae_set_pte(arm_lpae_iopte *ptep, arm_lpae_iopte pte,
+>>>      static size_t __arm_lpae_unmap(struct arm_lpae_io_pgtable *data,
+>>>                       unsigned long iova, size_t size, int lvl,
+>>> -                   arm_lpae_iopte *ptep);
+>>> +                   arm_lpae_iopte *ptep, int strict);
+>>>      static void __arm_lpae_init_pte(struct arm_lpae_io_pgtable *data,
+>>>                    phys_addr_t paddr, arm_lpae_iopte prot,
+>>> @@ -334,7 +334,7 @@ static int arm_lpae_init_pte(struct arm_lpae_io_pgtable *data,
+>>>            size_t sz = ARM_LPAE_BLOCK_SIZE(lvl, data);
+>>>              tblp = ptep - ARM_LPAE_LVL_IDX(iova, lvl, data);
+>>> -        if (WARN_ON(__arm_lpae_unmap(data, iova, sz, lvl, tblp) != sz))
+>>> +        if (WARN_ON(__arm_lpae_unmap(data, iova, sz, lvl, tblp, IOMMU_STRICT) != sz))
+>>>                return -EINVAL;
+>>>        }
+>>>    @@ -531,7 +531,7 @@ static void arm_lpae_free_pgtable(struct io_pgtable *iop)
+>>>    static size_t arm_lpae_split_blk_unmap(struct arm_lpae_io_pgtable *data,
+>>>                           unsigned long iova, size_t size,
+>>>                           arm_lpae_iopte blk_pte, int lvl,
+>>> -                       arm_lpae_iopte *ptep)
+>>> +                       arm_lpae_iopte *ptep, int strict)
+>>
+>> DMA code should never ever be splitting blocks anyway, and frankly the TLB maintenance here is dodgy enough (since we can't reasonably do break-before make as VMSA says we should) that I *really* don't want to introduce any possibility of making it more asynchronous. I'd much rather just hard-code the expectation of strict == true for this.
 > 
-> 158. static void broadsheet_mmio_send_cmdargs(...) {
->              ......
-> 163.     par->board->mmio_write(...);
->              ......
-> 166.     par->board->mmio_write(...);
-> 167. }
+> OK, I will hard-code strict=true for it.
 > 
-> For x86 kernel configuration, I find that there is no assignment of the 
-> function pointer ".mmio_write" in the kernel code.
-> So calling the function pointer in lines 163 and 166 may cause a null 
-> pointer dereference.
+> But since it never ever be happened, why did not give a warning at the beginning?
+
+Because DMA code is not the only caller of iommu_map/unmap. It's 
+perfectly legal in the IOMMU API to partially unmap a previous mapping 
+such that a block entry needs to be split. The DMA API, however, is a 
+lot more constrined, and thus by construction the iommu-dma layer will 
+never generate a block-splitting iommu_unmap() except as a result of 
+illegal DMA API usage, and we obviously do not need to optimise for that 
+(you will get a warning about mismatched unmaps under dma-debug, but 
+it's a bit too expensive to police in the general case).
+
+Robin.
+
+>>>    {
+>>>        struct io_pgtable_cfg *cfg = &data->iop.cfg;
+>>>        arm_lpae_iopte pte, *tablep;
+>>> @@ -576,15 +576,18 @@ static size_t arm_lpae_split_blk_unmap(struct arm_lpae_io_pgtable *data,
+>>>        }
+>>>          if (unmap_idx < 0)
+>>> -        return __arm_lpae_unmap(data, iova, size, lvl, tablep);
+>>> +        return __arm_lpae_unmap(data, iova, size, lvl, tablep, strict);
+>>>          io_pgtable_tlb_add_flush(&data->iop, iova, size, size, true);
+>>> +    if (!strict)
+>>> +        io_pgtable_tlb_sync(&data->iop);
+>>> +
+>>>        return size;
+>>>    }
+>>>      static size_t __arm_lpae_unmap(struct arm_lpae_io_pgtable *data,
+>>>                       unsigned long iova, size_t size, int lvl,
+>>> -                   arm_lpae_iopte *ptep)
+>>> +                   arm_lpae_iopte *ptep, int strict)
+>>>    {
+>>>        arm_lpae_iopte pte;
+>>>        struct io_pgtable *iop = &data->iop;
+>>> @@ -609,7 +612,7 @@ static size_t __arm_lpae_unmap(struct arm_lpae_io_pgtable *data,
+>>>                io_pgtable_tlb_sync(iop);
+>>>                ptep = iopte_deref(pte, data);
+>>>                __arm_lpae_free_pgtable(data, lvl + 1, ptep);
+>>> -        } else {
+>>> +        } else if (strict) {
+>>>                io_pgtable_tlb_add_flush(iop, iova, size, size, true);
+>>>            }
+>>>    @@ -620,25 +623,27 @@ static size_t __arm_lpae_unmap(struct arm_lpae_io_pgtable *data,
+>>>             * minus the part we want to unmap
+>>>             */
+>>>            return arm_lpae_split_blk_unmap(data, iova, size, pte,
+>>> -                        lvl + 1, ptep);
+>>> +                        lvl + 1, ptep, strict);
+>>>        }
+>>>          /* Keep on walkin' */
+>>>        ptep = iopte_deref(pte, data);
+>>> -    return __arm_lpae_unmap(data, iova, size, lvl + 1, ptep);
+>>> +    return __arm_lpae_unmap(data, iova, size, lvl + 1, ptep, strict);
+>>>    }
+>>>      static size_t arm_lpae_unmap(struct io_pgtable_ops *ops, unsigned long iova,
+>>>                     size_t size)
+>>>    {
+>>> +    int strict = ((iova & IOMMU_STRICT_MODE_MASK) == IOMMU_STRICT);
+>>>        struct arm_lpae_io_pgtable *data = io_pgtable_ops_to_data(ops);
+>>>        arm_lpae_iopte *ptep = data->pgd;
+>>>        int lvl = ARM_LPAE_START_LVL(data);
+>>>    +    iova &= ~IOMMU_STRICT_MODE_MASK;
+>>>        if (WARN_ON(iova >= (1ULL << data->iop.cfg.ias)))
+>>>            return 0;
+>>>    -    return __arm_lpae_unmap(data, iova, size, lvl, ptep);
+>>> +    return __arm_lpae_unmap(data, iova, size, lvl, ptep, strict);
+>>>    }
+>>>      static phys_addr_t arm_lpae_iova_to_phys(struct io_pgtable_ops *ops,
+>>>
+>>
+>> .
+>>
 > 
-> In this file, there are many calls to this function pointer...
-
-This is a platform driver and it won't be used on x86 (actually it is
-used only by single ARM PXA board). The dependency for FB_BROADSHEET
-in Kconfig file could be improved to i.e.
-
-	depends on FB && (ARCH_PXA || COMPILE_TEST)
-
-but there is no bug there.
-
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
-
