@@ -2,107 +2,125 @@ Return-Path: <SRS0=7Z+k=KK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70612C6778F
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 22:08:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9C65C28CF6
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 22:09:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 257C7206B7
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 22:08:41 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="jyhQSc9V"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 257C7206B7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+	by mail.kernel.org (Postfix) with ESMTP id AB149206B7
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 22:09:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AB149206B7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731790AbeGZX10 (ORCPT
+        id S1731823AbeGZX1p (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 26 Jul 2018 19:27:26 -0400
-Received: from ozlabs.org ([203.11.71.1]:32899 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730989AbeGZX1Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Jul 2018 19:27:25 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 41c5pD4rhDz9s0n;
-        Fri, 27 Jul 2018 08:08:36 +1000 (AEST)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1532642916;
-        bh=U2Pdcgctq0DYX03ymQX7j0GyczNwoHpjkk4VaA9aV+s=;
-        h=Date:From:To:Cc:Subject:From;
-        b=jyhQSc9VzsqNCXH2XLtRqZBiYcN/DFmvqtykRuHMTAeAOHni9yYrMdgF6hOUI3SqE
-         ABnrh/BTyeaW+za+oEfv7pNWAVa+9zGj7vOK5ZKt1mYk+/Z4TMoB2S88mzUfDGXjg+
-         fhkLkS1q2d6uRrTgaBxEEW/TYx5eZ/s7dAqLWPGKbj6VgMcpJzdDSW2LvQdJWv2OuS
-         NTHU449oHT/qENvLxqjezI18VOVsoU2Ge4qEyZlVao1PZuEqJOpL1lRr8Lr2IEMlXx
-         ze8ocC5sOfTACebr4Nr0fUYfkeLtbBeGpCYICs/KKqc7hH/I41O2m/hyoGbcswKHdE
-         UycVCROJj5emw==
-Date:   Fri, 27 Jul 2018 08:08:21 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Rob Clark <robdclark@gmail.com>
-Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Sean Paul <seanpaul@chromium.org>
-Subject: linux-next: Signed-off-by missing for commit in the drm-msm tree
-Message-ID: <20180727080821.3f277eb6@canb.auug.org.au>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/hLSTXTZjtA37Kq.INSGfP_0"; protocol="application/pgp-signature"
+        Thu, 26 Jul 2018 19:27:45 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:50558 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730989AbeGZX1o (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Jul 2018 19:27:44 -0400
+Received: from akpm3.svl.corp.google.com (unknown [104.133.9.92])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 071FC40B;
+        Thu, 26 Jul 2018 22:08:57 +0000 (UTC)
+Date:   Thu, 26 Jul 2018 15:08:55 -0700
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     Joe Perches <joe@perches.com>
+Cc:     Prakruthi Deepak Heragu <pheragu@codeaurora.org>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Andy Whitcroft <apw@canonical.com>,
+        linux-kernel@vger.kernel.org, tsoni@codeaurora.org,
+        bryanh@codeaurora.org, ckadabi@codeaurora.org,
+        David Keitel <dkeitel@codeaurora.org>
+Subject: Re: [PATCH] checkpatch: Warn when a patch doesn't have a
+ description
+Message-Id: <20180726150855.a9a3e81d5cdc4630c7f4ca2d@linux-foundation.org>
+In-Reply-To: <1b099f4d8373aa583a17011992676bf0f3f09eee.camel@perches.com>
+References: <1531518027-13318-1-git-send-email-pheragu@codeaurora.org>
+        <6799952fbd3639c764c112bde961b5e00270a52d.camel@perches.com>
+        <6ed46f85a7577e1d4a48e81f67fd7581@codeaurora.org>
+        <1b099f4d8373aa583a17011992676bf0f3f09eee.camel@perches.com>
+X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/hLSTXTZjtA37Kq.INSGfP_0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Wed, 25 Jul 2018 19:22:47 -0700 Joe Perches <joe@perches.com> wrote:
 
-Hi Rob,
+> Potential patches should have a commit description.
+> Emit a warning when there isn't one.
+> 
+> ...
+>
+> --- a/scripts/checkpatch.pl
+> +++ b/scripts/checkpatch.pl
+> @@ -2240,6 +2240,7 @@ sub process {
+>  	my $in_header_lines = $file ? 0 : 1;
+>  	my $in_commit_log = 0;		#Scanning lines before patch
+>  	my $has_commit_log = 0;		#Encountered lines before patch
+> +	my $commit_log_lines = 0;	#Number of commit log lines
+>  	my $commit_log_possible_stack_dump = 0;
+>  	my $commit_log_long_line = 0;
+>  	my $commit_log_has_diff = 0;
+> @@ -2497,6 +2498,18 @@ sub process {
+>  
+>  		$cnt_lines++ if ($realcnt != 0);
+>  
+> +# Verify the existence of a commit log if appropriate
+> +# 2 is used because a $signature is counted in $commit_log_lines
+> +		if ($in_commit_log) {
+> +			if ($line !~ /^\s*$/) {
+> +				$commit_log_lines++;	#could be a $signature
+> +			}
+> +		} else if ($has_commit_log && $commit_log_lines < 2) {
+> +			WARN("COMMIT_MESSAGE",
+> +			     "Missing commit description - Add an appropriate one\n");
+> +			$commit_log_lines = 2;	#warn only once
+> +		}
+> +
+>  # Check if the commit log has what seems like a diff which can confuse patch
+>  		if ($in_commit_log && !$commit_log_has_diff &&
+>  		    (($line =~ m@^\s+diff\b.*a/[\w/]+@ &&
 
-Commits
+This explodes all over the place.
 
-  746e4fe9c852 ("drm/msm/gpu: Add the buffer objects from the submit to the=
- crash dump")
-  f757c7aa9f52 ("drm/msm/adreno: Add a5xx specific registers for the GPU st=
-ate")
-  8ab75ab4f1a7 ("drm/msm/adreno: Add ringbuffer data to the GPU state")
-  db71c98cb23c ("drm/msm/adreno: Convert the show/crash file format")
-  abd069d0e0d8 ("drm/msm/gpu: Capture the GPU state on a GPU hang")
-  2426bf25885c ("drm/msm/gpu: Rearrange the code that collects the task dur=
-ing a hang")
-  34ee9abb541d ("drm/msm/gpu: Convert the GPU show function to use the GPU =
-state")
-  e0283c3c191a ("drm/msm/gpu: Capture the state of the GPU")
-  fb72cf6167a3 ("drm: Add puts callback for the coredump printer")
-  e0624c7467b3 ("drm: Add a -puts() function for the seq_file printer")
-  3f7719f78570 ("drm: Add drm_puts() to complement drm_printf()")
-  c7cec5d9fa96 ("drm: drm_printer: Add printer for devcoredump")
-  bdf6119e70d8 ("include: Move ascii85 functions from i915 to linux/ascii85=
-.h")
+Variable "$clean" is not imported at scripts/checkpatch.pl line 6565.
+Variable "$clean" is not imported at scripts/checkpatch.pl line 6590.
+Variable "$cnt_error" is not imported at scripts/checkpatch.pl line 6592.
+Variable "$cnt_warn" is not imported at scripts/checkpatch.pl line 6592.
+Variable "$cnt_chk" is not imported at scripts/checkpatch.pl line 6593.
+Variable "$cnt_lines" is not imported at scripts/checkpatch.pl line 6594.
+Variable "$clean" is not imported at scripts/checkpatch.pl line 6599.
+Variable "$clean" is not imported at scripts/checkpatch.pl line 6618.
+Variable "$clean" is not imported at scripts/checkpatch.pl line 6659.
+Variable "$clean" is not imported at scripts/checkpatch.pl line 6665.
+syntax error at scripts/checkpatch.pl line 2520, near "else if"
+Global symbol "$herecurr" requires explicit package name (did you forget to declare "my $herecurr"?) at scripts/checkpatch.pl line 2533.
+Global symbol "$herecurr" requires explicit package name (did you forget to declare "my $herecurr"?) at scripts/checkpatch.pl line 2584.
+Global symbol "$herecurr" requires explicit package name (did you forget to declare "my $herecurr"?) at scripts/checkpatch.pl line 2588.
+etc
 
-are missing a Signed-off-by from their committers.
+I did this:
 
---=20
-Cheers,
-Stephen Rothwell
+--- a/scripts/checkpatch.pl~checkpatch-warn-when-a-patch-doesnt-have-a-description-fix
++++ a/scripts/checkpatch.pl
+@@ -2517,7 +2517,7 @@ sub process {
+ 			if ($line !~ /^\s*$/) {
+ 				$commit_log_lines++;	#could be a $signature
+ 			}
+-		} else if ($has_commit_log && $commit_log_lines < 2) {
++		} elsif ($has_commit_log && $commit_log_lines < 2) {
+ 			WARN("COMMIT_MESSAGE",
+ 			     "Missing commit description - Add an appropriate one\n");
+ 			$commit_log_lines = 2;	#warn only once
 
---Sig_/hLSTXTZjtA37Kq.INSGfP_0
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+But I worry that you didn't send out the version which you tested, so
+please check.
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltaRlUACgkQAVBC80lX
-0GyIDgf8C8xINg8t0D1erYzli9CShyMdT/DA5aHiTrtkUXjRq9N5347iGbloTmUE
-gLKzVAsJ45wYlugEXGE38JBrz5xFuhvK2qwzaTkjlllW9kn+JN11aEwIe2XsfRec
-gIEn0tVKRa1RZWE6OYW6mw9jCuUL1XF4j7eZ/Yw584h5m2IZpIzwuN+c5wKdeml3
-zYLhV607vP9/Z6sAEn1s01RXpyiIhlwPcjDSP6jE2abU51nNzGYimzn1VHb6kc2B
-EXGPvc0MpzNle0C4E9HT4xwAkriK8/zrMoyI0d06fDtVjpWtRyto2tLXH1tp46m7
-fIn+0jQEhIprNH6jSqmle5MM60LVCQ==
-=xMGE
------END PGP SIGNATURE-----
-
---Sig_/hLSTXTZjtA37Kq.INSGfP_0--
