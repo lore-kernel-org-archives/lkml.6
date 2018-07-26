@@ -2,97 +2,121 @@ Return-Path: <SRS0=7Z+k=KK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97435C6778F
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 23:36:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C9BCC28CF6
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 23:38:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 55BF520673
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 23:36:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 55BF520673
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id A7C3920671
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 23:38:47 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="YpMfs8r+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A7C3920671
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=wdc.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731936AbeG0Azw convert rfc822-to-8bit (ORCPT
+        id S1731964AbeG0A5u (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 26 Jul 2018 20:55:52 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:49072 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731343AbeG0Azw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Jul 2018 20:55:52 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id A31E5207F4; Fri, 27 Jul 2018 01:36:45 +0200 (CEST)
-Received: from xps13 (unknown [91.224.148.103])
-        by mail.bootlin.com (Postfix) with ESMTPSA id DA95520618;
-        Fri, 27 Jul 2018 01:36:34 +0200 (CEST)
-Date:   Fri, 27 Jul 2018 01:36:34 +0200
-From:   Miquel Raynal <miquel.raynal@bootlin.com>
-To:     Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc:     Boris Brezillon <boris.brezillon@bootlin.com>,
-        Richard Weinberger <richard@nod.at>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Josh Wu <rainyfeeling@outlook.com>,
-        linux-kernel@vger.kernel.org,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        linux-mtd@lists.infradead.org
-Subject: Re: [PATCH] MAINTAINERS: drop Wenyou Yang from Atmel NAND driver
- support
-Message-ID: <20180727013634.74f87455@xps13>
-In-Reply-To: <20180725192805.GF3539@piout.net>
-References: <20180725145628.6625-1-miquel.raynal@bootlin.com>
-        <20180725203823.19a56d23@bbrezillon>
-        <20180725192805.GF3539@piout.net>
-Organization: Bootlin
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        Thu, 26 Jul 2018 20:57:50 -0400
+Received: from esa5.hgst.iphmx.com ([216.71.153.144]:41201 "EHLO
+        esa5.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731343AbeG0A5u (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Jul 2018 20:57:50 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1532648325; x=1564184325;
+  h=subject:to:cc:references:from:message-id:date:
+   mime-version:in-reply-to:content-transfer-encoding;
+  bh=4XAZAlPEVBbj5j7HHl+MxVn/Ww4nIY50tP9qZD4VifA=;
+  b=YpMfs8r+L/2nE2MpOV3H9uQJCFX3LNERUC4Yxd827ZwEw5VHJ7wVNIG5
+   4wirQM3too/lvhiKQkWBi6UWKuiuCeDtEOZnSiFh1wmWee0hACOV9MqB4
+   etp3X4ypthM82eHzU2KoK/ifrkqaJ0tuSE7xqUi14PI8N5mP1BwYV6GKe
+   pockqU3uikrJKlhO/MSz9wsIqLAzzyUs3fjfPMJ9kgMWy0Y6UafriEugf
+   V6j+ETNxNxwEmlzw0sJXpCLpTrAm2Zmhzt3CkH3U0J35XE517LScxP/yf
+   0yo/HdqbWss/+nmxUyr+a4Bc20XZjTiBUmYMGq15G6LoN/PgZyBdY43Dw
+   Q==;
+X-IronPort-AV: E=Sophos;i="5.51,407,1526313600"; 
+   d="scan'208";a="85923717"
+Received: from h199-255-45-15.hgst.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
+  by ob1.hgst.iphmx.com with ESMTP; 27 Jul 2018 07:38:45 +0800
+Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
+  by uls-op-cesaep02.wdc.com with ESMTP; 26 Jul 2018 16:26:48 -0700
+Received: from c02v91rdhtd5.sdcorp.global.sandisk.com (HELO [10.196.159.148]) ([10.196.159.148])
+  by uls-op-cesaip02.wdc.com with ESMTP; 26 Jul 2018 16:38:43 -0700
+Subject: Re: RFC: simplified RISC-V interrupt and clocksource handling
+To:     Christoph Hellwig <hch@lst.de>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "palmer@sifive.com" <palmer@sifive.com>,
+        "jason@lakedaemon.net" <jason@lakedaemon.net>,
+        "marc.zyngier@arm.com" <marc.zyngier@arm.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>
+Cc:     "anup@brainfault.org" <anup@brainfault.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "aou@eecs.berkeley.edu" <aou@eecs.berkeley.edu>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
+        "shorne@gmail.com" <shorne@gmail.com>
+References: <20180726143723.16585-1-hch@lst.de>
+From:   Atish Patra <atish.patra@wdc.com>
+Message-ID: <dc346650-0b48-3c2b-9190-b87ea6987e37@wdc.com>
+Date:   Thu, 26 Jul 2018 16:38:43 -0700
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
+ Gecko/20100101 Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+In-Reply-To: <20180726143723.16585-1-hch@lst.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Alexandre,
-
-Alexandre Belloni <alexandre.belloni@bootlin.com> wrote on Wed, 25 Jul
-2018 21:28:05 +0200:
-
-> On 25/07/2018 20:38:23+0200, Boris Brezillon wrote:
-> > On Wed, 25 Jul 2018 16:56:28 +0200
-> > Miquel Raynal <miquel.raynal@bootlin.com> wrote:
-> >   
-> > > Mails to wenyou.yang@microchip.com are not deliverable.
-> > > Drop him as Microchip/Atmel NAND controller driver maintainer.
-> > > 
-> > > Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
-> > > ---
-> > >  MAINTAINERS | 1 -
-> > >  1 file changed, 1 deletion(-)
-> > > 
-> > > diff --git a/MAINTAINERS b/MAINTAINERS
-> > > index 07d1576fc766..1e7bbd5843f1 100644
-> > > --- a/MAINTAINERS
-> > > +++ b/MAINTAINERS
-> > > @@ -9345,7 +9345,6 @@ F:	drivers/media/platform/atmel/atmel-isc-regs.h
-> > >  F:	devicetree/bindings/media/atmel-isc.txt
-> > >  
-> > >  MICROCHIP / ATMEL NAND DRIVER
-> > > -M:	Wenyou Yang <wenyou.yang@microchip.com>
-> > >  M:	Josh Wu <rainyfeeling@outlook.com>  
-> > 
-> > Hm, actually you can remove the entry completely. I doubt Josh will
-> > keep maintaining this driver since he's no longer working at Microchip.
-> >   
+On 7/26/18 7:37 AM, Christoph Hellwig wrote:
+> This series tries adds support for interrupt handling and timers
+> for the RISC-V architecture.
 > 
-> I think Nicolas' plan is to replace Wenyou so the entry may stay
+> The basic per-hart interrupt handling implemented by the scause
+> and sie CSRs is extremely simple and implemented directly in
+> arch/riscv/kernel/irq.c.  In addition there is a irqchip driver
+> for the PLIC external interrupt controller, which is called through
+> the set_handle_irq API, and a clocksource driver that gets its
+> timer interrupt directly from the low-level interrupt handling.
+> 
+> Compared to previous iterations this version does not try to use an
+> irqchip driver for the low-level interrupt handling.  This saves
+> a couple indirect calls and an additional read of the scause CSR
+> in the hot path, makes the code much simpler and last but not least
+> avoid the dependency on a device tree for a mandatory architectural
+> feature.
+> 
+I agree that this code is much simpler than HLIC code.
+Few doubts though
 
-Patch applied to nand/next to avoid receiving delivery errors.
+1. As per my understanding, timer interrupt now can't be registered as a 
+Linux IRQ now. Thus, /proc/interrupts will not be automatically 
+populated for timer interrupt stats. Am I wrong in my assumption?
 
-We'll wait for Nicolas' input to replace Josh.
+2. The future version of local interrupt controller known as Core Level 
+Interrupt Controller aka CLIC. Do we have to change the current design
+again for CLIC in future?
 
-Thanks,
-Miquèl
+Here are the docs:
+https://github.com/sifive/clic-spec/blob/master/clic.adoc
+
+Regards,
+Atish
+> A git tree is available here (contains a few more patches before
+> the ones in this series)
+> 
+>      git://git.infradead.org/users/hch/riscv.git riscv-irq-simple
+> 
+> Gitweb:
+> 
+>      http://git.infradead.org/users/hch/riscv.git/shortlog/refs/heads/riscv-irq-simple
+> 
+
