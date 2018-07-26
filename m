@@ -4,115 +4,105 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A4C0C6778F
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 23:34:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8893BC28CF6
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 23:35:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BC0A620673
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 23:34:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3D87F20673
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 23:35:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="wUdxpvnj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BC0A620673
+	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="mf7bIN9d"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3D87F20673
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=joelfernandes.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731949AbeG0Axm (ORCPT
+        id S1731991AbeG0Ayg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 26 Jul 2018 20:53:42 -0400
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:46435 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731286AbeG0Axl (ORCPT
+        Thu, 26 Jul 2018 20:54:36 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:35318 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731286AbeG0Ayg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Jul 2018 20:53:41 -0400
-Received: by mail-pl0-f68.google.com with SMTP id t17-v6so1470751ply.13
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Jul 2018 16:34:37 -0700 (PDT)
+        Thu, 26 Jul 2018 20:54:36 -0400
+Received: by mail-pg1-f194.google.com with SMTP id e6-v6so2086094pgv.2
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Jul 2018 16:35:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=joelfernandes.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=86dOKH0F5ymPUFqJUh6MLwgojjUqAEOCH69+iwtaQs4=;
-        b=wUdxpvnjnuWXPGBjyk8H2ikOdEtpjJhtzHVwG2af50W7mXvtXy+7pb/uVfY3/DiRqJ
-         Cuwbi1eSD3FrgZc/iapNzxzbskh+JfYGmLejE5E/3p5b9myrGhySkmqiFD71r+Ca34Nf
-         6R4ia5mNbvxvhRq76YFuQ5htn/bwlC9rh1y3c=
+        bh=BgepLu4qFRkCVji/S7m9MNFLH4XVu2eLeWzZgogQWnU=;
+        b=mf7bIN9d2XJwnNkrxG1pUE9Nx/zOLxMSzS2TsXRPshs2IJ4uJLMbYHXQYdh4z6Fb0M
+         oJgdMv7QkgimseyYWWEMyxUHUzOoz65qiiwGZxtJuclus/XERvnNLSlOnOXXT3zoygJH
+         15iBGAoDWaj5UxrHTYLWKCJfUwKVok+o/iK8A=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=86dOKH0F5ymPUFqJUh6MLwgojjUqAEOCH69+iwtaQs4=;
-        b=PfXWA7VG3wrXoiL221e6bdgRj3lhAwhCMdKfGVAxeRvcWti40Petkq+D/esININRj9
-         nvc+Kx2J9iox/1ZgzgRZ16iUxY5+UqDHLrvjFDsEdc84EyGYZ2ufk/UNK2uvp5ZioM+o
-         yiUQ5pNSbXeuCRx4MAe5U/txtjSpbyAikj98Gk7fHRrsowF71lDSTYSvH9hgsDU09Xog
-         LDlVPm0DW0MSFJQEDYcppqlak2xUP+rCH3wrbXJF/ExcZGNNt8g5JaPC710HAolwGZdz
-         EbWszFPDmeca0CxBwZY+paTbggGkOh1Inu6dwg3Nsxgd0NznjF5tirVmlr4BF5E0BAIW
-         uWPg==
-X-Gm-Message-State: AOUpUlHL/P9TDxq2GJvAgOJzP15FiYp+OiNjRh/s0ahH4WYgwU/Tfonb
-        ZyLrYcaTsR+cZPXJSpfmbpoCyOF9Z8w=
-X-Google-Smtp-Source: AAOMgpeOIrzBWAf1fIAce96yMzjHkWBxxGghlu0diS7jcIOVHKL+9sW6n7MDdTU2lOatKuJu8ElMHg==
-X-Received: by 2002:a17:902:760d:: with SMTP id k13-v6mr3715771pll.56.1532648077140;
-        Thu, 26 Jul 2018 16:34:37 -0700 (PDT)
+        bh=BgepLu4qFRkCVji/S7m9MNFLH4XVu2eLeWzZgogQWnU=;
+        b=fw/DxFlVh+cc2tOUBSJDrksjQ/xYQVpqGngQ+pMtc7IBV4UL/clhaowRxJabzMDCFa
+         6oysOS8126dvuh9/jiM3zfn3x0bjePvaypqO91YyfgAOdiBWAyqG6xMqKQohYxo48apu
+         ZXPQQCPqYI3r9WzRhJJRXEdNUB2ZjZD/1gKb/p5mEz8gbbNC9S6zzj2vR0KRMC56K8am
+         MlpYxPOg4na+ephuIAgCf4TsdT1j8N4M6qkdpzATveIxAmt435t3uP+RSFdPNz2cRy0k
+         XbFQ3iWDefpgXOM0X9MYhqUa9LEawdfZpWDyBnAO2oohQ5jdyF6+3mCPJyB6pvvU3KcZ
+         tFPA==
+X-Gm-Message-State: AOUpUlHkSsNf2SW8/5TwZLcn5O5HsMQ0TrW/8giijGzCp49+KZyvpf2/
+        UdcD06LjMoTBOjMgFA7fdnWLcw==
+X-Google-Smtp-Source: AAOMgpdj+T72ZMcQUIGoJdNAGIiYiAHLbnVsAHRZkGlR3lXj6FsjcAHKmWgmozarq9vpTbie5Gr2Eg==
+X-Received: by 2002:a62:e813:: with SMTP id c19-v6mr4074673pfi.124.1532648132416;
+        Thu, 26 Jul 2018 16:35:32 -0700 (PDT)
 Received: from localhost ([2620:0:1000:1600:3122:ea9c:d178:eb])
-        by smtp.gmail.com with ESMTPSA id s73-v6sm4520378pfi.154.2018.07.26.16.34.36
+        by smtp.gmail.com with ESMTPSA id g28-v6sm9205238pfe.41.2018.07.26.16.35.31
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 26 Jul 2018 16:34:36 -0700 (PDT)
-Date:   Thu, 26 Jul 2018 16:34:36 -0700
+        Thu, 26 Jul 2018 16:35:31 -0700 (PDT)
+Date:   Thu, 26 Jul 2018 16:35:31 -0700
 From:   Joel Fernandes <joel@joelfernandes.org>
-To:     "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Cc:     kernel test robot <rong.a.chen@intel.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>, lkp@01.org
-Subject: Re: [LKP] [rcutorture]  3b745c8969:
- WARNING:at_mm/slab_common.c:#kmalloc_slab
-Message-ID: <20180726233436.GA211260@joelaf.mtv.corp.google.com>
-References: <20180726085015.GA29979@shao2-debian>
- <20180726115325.GE24813@linux.vnet.ibm.com>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        linux-kernel@vger.kernel.org, kernel-team@android.com,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Byungchul Park <byungchul.park@lge.com>,
+        Erick Reyes <erickreyes@google.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Julia Cartwright <julia@ni.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Paul McKenney <paulmck@linux.vnet.ibm.com>,
+        Thomas Glexiner <tglx@linutronix.de>,
+        Todd Kjos <tkjos@google.com>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>,
+        Will Deacon <will.deacon@arm.com>
+Subject: Re: [PATCH v10 2/3] tracepoint: Make rcuidle tracepoint callers use
+ SRCU
+Message-ID: <20180726233531.GB211260@joelaf.mtv.corp.google.com>
+References: <20180713215547.255620-1-joel@joelfernandes.org>
+ <20180713215547.255620-3-joel@joelfernandes.org>
+ <20180717182528.GK2494@hirez.programming.kicks-ass.net>
+ <20180718001625.GA154046@joelaf.mtv.corp.google.com>
+ <20180726191800.154a178d@gandalf.local.home>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180726115325.GE24813@linux.vnet.ibm.com>
+In-Reply-To: <20180726191800.154a178d@gandalf.local.home>
 User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 26, 2018 at 04:53:25AM -0700, Paul E. McKenney wrote:
-> On Thu, Jul 26, 2018 at 04:50:15PM +0800, kernel test robot wrote:
-> > 
-> > FYI, we noticed the following commit (built with gcc-5):
-> > 
-> > commit: 3b745c8969c752601cb68c82a06735363563ab42 ("rcutorture: Make boost test more robust")
-> > https://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git master
-> > 
-> > in testcase: boot
-> > 
-> > on test machine: qemu-system-x86_64 -enable-kvm -smp 2 -m 512M
-> > 
-> > caused below changes (please refer to attached dmesg/kmsg for entire log/backtrace):
+On Thu, Jul 26, 2018 at 07:18:00PM -0400, Steven Rostedt wrote:
+> On Tue, 17 Jul 2018 17:16:25 -0700
+> Joel Fernandes <joel@joelfernandes.org> wrote:
 > 
-> Is this fixed by 4babd855fd61 ("rcutorture: Add support to detect
-> if boost kthread prio is too low")?  That could address the
-> rcu_torture_stats_print() failures, depending on exactly what they were.
-> (Yes, I should have reversed these two commits, but they are in -tip
-> now, so that ship has sailed.)
+> > Is it Ok with you to take the below patch ontop of this series? I avoided
+> > resending the 3-patch series since this is the only change, but let me know
+> > what you prefer or makes it easy for you.
 > 
-> Joel, any other thoughts?
+> Can you send a v11, even though this is the only change. My INBOX is
+> currently a mess, and I want to make sure I pull in the right patches.
 
-I ran the next tree myself and was not able to reproduce the issue with the
-same configuration. Although I don't have rcupdate.rcu_cpu_stall_timeout=100
-passed in like they do (which I can also try if you think its of significance
-here).
-
-It seems from their logs that most Locking API self tests are failing. the
-Lock API test suite is run before rcutorture where rcutorture hasn't even
-started.
-
-Also as per their rcutorture output, it appears the 'rtf' value is also
-non-zero (rcu_torture_free test). Which makes sense if the earlier memory
-allocation warnings are somehow related.
-
-thanks,
+Sure, I'll squash the extra patch and send it out as v11 now. Thanks!
 
 - Joel
-
 
