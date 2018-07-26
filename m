@@ -6,31 +6,31 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 285EFC28CF6
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 09:22:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A4E3C28CF6
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 09:22:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E41E62088E
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 09:22:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E41E62088E
+	by mail.kernel.org (Postfix) with ESMTP id 0E99D2088E
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 09:22:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0E99D2088E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729395AbeGZKip (ORCPT
+        id S1729379AbeGZKip (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Thu, 26 Jul 2018 06:38:45 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:40595 "EHLO
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:45119 "EHLO
         metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729089AbeGZKi3 (ORCPT
+        with ESMTP id S1728966AbeGZKi3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 26 Jul 2018 06:38:29 -0400
 Received: from dude.hi.pengutronix.de ([2001:67c:670:100:1d::7])
         by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ore@pengutronix.de>)
-        id 1ficTX-0002av-QY; Thu, 26 Jul 2018 11:22:23 +0200
+        id 1ficTX-0002as-Qd; Thu, 26 Jul 2018 11:22:23 +0200
 Received: from ore by dude.hi.pengutronix.de with local (Exim 4.91)
         (envelope-from <ore@pengutronix.de>)
-        id 1ficTW-0004Wf-33; Thu, 26 Jul 2018 11:22:22 +0200
+        id 1ficTV-0004WA-W2; Thu, 26 Jul 2018 11:22:21 +0200
 From:   Oleksij Rempel <o.rempel@pengutronix.de>
 To:     Shawn Guo <shawnguo@kernel.org>, Mark Brown <broonie@kernel.org>,
         "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
@@ -47,9 +47,9 @@ Cc:     Oleksij Rempel <o.rempel@pengutronix.de>, kernel@pengutronix.de,
         Fabio Estevam <fabio.estevam@nxp.com>,
         Russell King <linux@armlinux.org.uk>, linux-imx@nxp.com,
         yibin.gong@nxp.com, "A.s. Dong" <aisheng.dong@nxp.com>
-Subject: [PATCH v8 6/6] ARM: dts: imx6: RIoTboard provide standby on power off option
-Date:   Thu, 26 Jul 2018 11:22:20 +0200
-Message-Id: <20180726092220.17250-7-o.rempel@pengutronix.de>
+Subject: [PATCH v8 3/6] kernel/reboot.c: export pm_power_off_prepare
+Date:   Thu, 26 Jul 2018 11:22:17 +0200
+Message-Id: <20180726092220.17250-4-o.rempel@pengutronix.de>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180726092220.17250-1-o.rempel@pengutronix.de>
 References: <20180726092220.17250-1-o.rempel@pengutronix.de>
@@ -62,41 +62,27 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This board, as well as some other boards with i.MX6 and a PMIC, uses a
-"PMIC_STBY_REQ" line to notify the PMIC about a state change.
-The PMIC is programmed for a specific state change before triggering the
-line.
-In this case, PMIC_STBY_REQ can be used for stand by, sleep
-and power off modes.
+Export pm_power_off_prepare. It is needed to implement power off on
+Freescale/NXP iMX6 based boards with external power management
+integrated circuit (PMIC).
 
 Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
 ---
- arch/arm/boot/dts/imx6dl-riotboard.dts | 5 +++++
- 1 file changed, 5 insertions(+)
+ kernel/reboot.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm/boot/dts/imx6dl-riotboard.dts b/arch/arm/boot/dts/imx6dl-riotboard.dts
-index 2e98c92adff7..a0e9753ee767 100644
---- a/arch/arm/boot/dts/imx6dl-riotboard.dts
-+++ b/arch/arm/boot/dts/imx6dl-riotboard.dts
-@@ -90,6 +90,10 @@
- 	status = "okay";
- };
+diff --git a/kernel/reboot.c b/kernel/reboot.c
+index e4ced883d8de..83810d726f3e 100644
+--- a/kernel/reboot.c
++++ b/kernel/reboot.c
+@@ -49,6 +49,7 @@ int reboot_force;
+  */
  
-+&clks {
-+	fsl,pmic-stby-poweroff;
-+};
-+
- &fec {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&pinctrl_enet>;
-@@ -170,6 +174,7 @@
- 		reg = <0x08>;
- 		interrupt-parent = <&gpio5>;
- 		interrupts = <16 8>;
-+		fsl,pmic-stby-poweroff;
+ void (*pm_power_off_prepare)(void);
++EXPORT_SYMBOL_GPL(pm_power_off_prepare);
  
- 		regulators {
- 			reg_vddcore: sw1ab {				/* VDDARM_IN */
+ /**
+  *	emergency_restart - reboot the system
 -- 
 2.18.0
 
