@@ -2,194 +2,221 @@ Return-Path: <SRS0=7Z+k=KK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F5AFC6778F
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 11:38:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0964EC28CF6
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 11:40:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DAA582083F
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 11:38:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DAA582083F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id AB1BF2083F
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 11:40:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AB1BF2083F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729532AbeGZMyY (ORCPT
+        id S1729510AbeGZM43 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 26 Jul 2018 08:54:24 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:44317 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729255AbeGZMyY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Jul 2018 08:54:24 -0400
-Received: from soja.hi.pengutronix.de ([2001:67c:670:100:3ad5:47ff:feaf:13da])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.89)
-        (envelope-from <o.rempel@pengutronix.de>)
-        id 1fieac-0000fm-F0; Thu, 26 Jul 2018 13:37:50 +0200
-Subject: Re: [PATCH v8 1/6] ARM: imx6q: provide documentation for new
- fsl,pmic-stby-poweroff property
-To:     Robin Gong <yibin.gong@nxp.com>, Shawn Guo <shawnguo@kernel.org>,
-        Mark Brown <broonie@kernel.org>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Cc:     "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Thu, 26 Jul 2018 08:56:29 -0400
+Received: from mx2.suse.de ([195.135.220.15]:37976 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729384AbeGZM42 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Jul 2018 08:56:28 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 6F522AE29;
+        Thu, 26 Jul 2018 11:39:59 +0000 (UTC)
+Date:   Thu, 26 Jul 2018 13:39:58 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Cc:     Roman Gushchin <guro@fb.com>, Johannes Weiner <hannes@cmpxchg.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        David Rientjes <rientjes@google.com>,
+        Tejun Heo <tj@kernel.org>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Leonard Crestez <leonard.crestez@nxp.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Russell King <linux@armlinux.org.uk>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "A.s. Dong" <aisheng.dong@nxp.com>
-References: <20180726092220.17250-1-o.rempel@pengutronix.de>
- <20180726092220.17250-2-o.rempel@pengutronix.de>
- <DB6PR04MB3223605CB1F5E06D4A278B3C892B0@DB6PR04MB3223.eurprd04.prod.outlook.com>
-From:   Oleksij Rempel <o.rempel@pengutronix.de>
-Message-ID: <84c1921c-922e-4b5d-b688-db89047fa1db@pengutronix.de>
-Date:   Thu, 26 Jul 2018 13:37:41 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-mm <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] mm,page_alloc: PF_WQ_WORKER threads must sleep at
+ should_reclaim_retry().
+Message-ID: <20180726113958.GE28386@dhcp22.suse.cz>
+References: <ca3da8b8-1bb5-c302-b190-fa6cebab58ca@I-love.SAKURA.ne.jp>
 MIME-Version: 1.0
-In-Reply-To: <DB6PR04MB3223605CB1F5E06D4A278B3C892B0@DB6PR04MB3223.eurprd04.prod.outlook.com>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="CmSIAI6FGWQju5vbxnKfqJmQv2oAuY0pf"
-X-SA-Exim-Connect-IP: 2001:67c:670:100:3ad5:47ff:feaf:13da
-X-SA-Exim-Mail-From: o.rempel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ca3da8b8-1bb5-c302-b190-fa6cebab58ca@I-love.SAKURA.ne.jp>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---CmSIAI6FGWQju5vbxnKfqJmQv2oAuY0pf
-Content-Type: multipart/mixed; boundary="G2Tm66CxLRos6R6xC1wkdggvshNUH6LPO";
- protected-headers="v1"
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: Robin Gong <yibin.gong@nxp.com>, Shawn Guo <shawnguo@kernel.org>,
- Mark Brown <broonie@kernel.org>,
- "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Cc: "kernel@pengutronix.de" <kernel@pengutronix.de>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- Andrew Morton <akpm@linux-foundation.org>,
- Liam Girdwood <lgirdwood@gmail.com>,
- Leonard Crestez <leonard.crestez@nxp.com>, Rob Herring <robh+dt@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Fabio Estevam <fabio.estevam@nxp.com>,
- Russell King <linux@armlinux.org.uk>, dl-linux-imx <linux-imx@nxp.com>,
- "A.s. Dong" <aisheng.dong@nxp.com>
-Message-ID: <84c1921c-922e-4b5d-b688-db89047fa1db@pengutronix.de>
-Subject: Re: [PATCH v8 1/6] ARM: imx6q: provide documentation for new
- fsl,pmic-stby-poweroff property
-References: <20180726092220.17250-1-o.rempel@pengutronix.de>
- <20180726092220.17250-2-o.rempel@pengutronix.de>
- <DB6PR04MB3223605CB1F5E06D4A278B3C892B0@DB6PR04MB3223.eurprd04.prod.outlook.com>
-In-Reply-To: <DB6PR04MB3223605CB1F5E06D4A278B3C892B0@DB6PR04MB3223.eurprd04.prod.outlook.com>
+On Thu 26-07-18 20:06:24, Tetsuo Handa wrote:
+> Before applying "an OOM lockup mitigation patch", I want to apply this
+> "another OOM lockup avoidance" patch.
 
---G2Tm66CxLRos6R6xC1wkdggvshNUH6LPO
-Content-Type: text/plain; charset=gbk
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
+I do not really see why. All these are borderline interesting as the
+system is basically dead by the time you reach this state.
 
-Hi,
+> Complete log is at http://I-love.SAKURA.ne.jp/tmp/serial-20180726.txt.xz
+> (which was captured with
+> 
+>   --- a/mm/oom_kill.c
+>   +++ b/mm/oom_kill.c
+>   @@ -1071,6 +1071,12 @@ bool out_of_memory(struct oom_control *oc)
+>    {
+>    	unsigned long freed = 0;
+>    	bool delay = false; /* if set, delay next allocation attempt */
+>   +	static unsigned long last_warned;
+>   +	if (!last_warned || time_after(jiffies, last_warned + 10 * HZ)) {
+>   +		pr_warn("%s(%d) gfp_mask=%#x(%pGg), order=%d\n", current->comm,
+>   +			current->pid, oc->gfp_mask, &oc->gfp_mask, oc->order);
+>   +		last_warned = jiffies;
+>   +	}
+>    
+>    	oc->constraint = CONSTRAINT_NONE;
+>    	if (oom_killer_disabled)
+> 
+> in order to demonstrate that the GFP_NOIO allocation from disk_events_workfn() is
+> calling out_of_memory() rather than by error failing to give up direct reclaim).
+> 
+> [  258.619119] kworker/0:0(5) gfp_mask=0x600000(GFP_NOIO), order=0
+> [  268.622732] kworker/0:0(5) gfp_mask=0x600000(GFP_NOIO), order=0
+> [  278.635344] kworker/0:0(5) gfp_mask=0x600000(GFP_NOIO), order=0
+> [  288.639360] kworker/0:0(5) gfp_mask=0x600000(GFP_NOIO), order=0
+> [  298.642715] kworker/0:0(5) gfp_mask=0x600000(GFP_NOIO), order=0
 
-On 26.07.2018 11:51, Robin Gong wrote:
->=20
->=20
->> -----Original Message-----
->> From: Oleksij Rempel [mailto:o.rempel@pengutronix.de]
->> Sent: 2018=C4=EA7=D4=C226=C8=D5 17:22
->> To: Shawn Guo <shawnguo@kernel.org>; Mark Brown <broonie@kernel.org>;
->> Rafael J. Wysocki <rafael.j.wysocki@intel.com>
->> Cc: Oleksij Rempel <o.rempel@pengutronix.de>; kernel@pengutronix.de;
->> devicetree@vger.kernel.org; linux-arm-kernel@lists.infradead.org;
->> linux-clk@vger.kernel.org; linux-kernel@vger.kernel.org; Andrew Morton=
+Hmm, so there is no other memory allocation to trigger the oom or they
+all just back off on the oom_lock trylock? In other words what is
+preventing from the oom killer invocation?
+ 
+[...]
 
->> <akpm@linux-foundation.org>; Liam Girdwood <lgirdwood@gmail.com>;
->> Leonard Crestez <leonard.crestez@nxp.com>; Rob Herring
->> <robh+dt@kernel.org>; Mark Rutland <mark.rutland@arm.com>; Michael
->> Turquette <mturquette@baylibre.com>; Stephen Boyd
->> <sboyd@codeaurora.org>; Fabio Estevam <fabio.estevam@nxp.com>; Russell=
+> Since the patch shown below was suggested by Michal Hocko at
+> https://marc.info/?l=linux-mm&m=152723708623015 , it is from Michal Hocko.
+> 
+> >From cd8095242de13ace61eefca0c3d6f2a5a7b40032 Mon Sep 17 00:00:00 2001
+> From: Michal Hocko <mhocko@suse.com>
+> Date: Thu, 26 Jul 2018 14:40:03 +0900
+> Subject: [PATCH] mm,page_alloc: PF_WQ_WORKER threads must sleep at should_reclaim_retry().
+> 
+> Tetsuo Handa has reported that it is possible to bypass the short sleep
+> for PF_WQ_WORKER threads which was introduced by commit 373ccbe5927034b5
+> ("mm, vmstat: allow WQ concurrency to discover memory reclaim doesn't make
+> any progress") and moved by commit ede37713737834d9 ("mm: throttle on IO
+> only when there are too many dirty and writeback pages") and lock up the
+> system if OOM.
+> 
+> This is because we are implicitly counting on falling back to
+> schedule_timeout_uninterruptible() in __alloc_pages_may_oom() when
+> schedule_timeout_uninterruptible() in should_reclaim_retry() was not
+> called due to __zone_watermark_ok() == false.
 
->> King <linux@armlinux.org.uk>; dl-linux-imx <linux-imx@nxp.com>; Robin =
-Gong
->> <yibin.gong@nxp.com>; A.s. Dong <aisheng.dong@nxp.com>
->> Subject: [PATCH v8 1/6] ARM: imx6q: provide documentation for new
->> fsl,pmic-stby-poweroff property
->>
->> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
->> Acked-by: Rob Herring <robh@kernel.org>
->> ---
->>  Documentation/devicetree/bindings/clock/imx6q-clock.txt | 8 ++++++++
->>  1 file changed, 8 insertions(+)
->>
->> diff --git a/Documentation/devicetree/bindings/clock/imx6q-clock.txt
->> b/Documentation/devicetree/bindings/clock/imx6q-clock.txt
->> index a45ca67a9d5f..e1308346e00d 100644
->> --- a/Documentation/devicetree/bindings/clock/imx6q-clock.txt
->> +++ b/Documentation/devicetree/bindings/clock/imx6q-clock.txt
->> @@ -6,6 +6,14 @@ Required properties:
->>  - interrupts: Should contain CCM interrupt
->>  - #clock-cells: Should be <1>
->>
->> +Optional properties:
->> +- fsl,pmic-stby-poweroff: Configure CCM to assert PMIC_STBY_REQ signa=
-l
->> +  on power off.
->> +  Use this property if the SoC should be powered off by external powe=
-r
->> +  management IC (PMIC) triggered via PMIC_STBY_REQ signal.
-> PMIC_ON_REQ didn't connect to any pin of PMIC in your case?
+How do we rely on that?
 
-No. First, it was only one customer specific issue. After some research
-I found even publicly available boards (for example RioTboard) which has
-same/similar design. After seeing this in imx6 documentation as valid
-power off way, I have no doubts - there should be even more devices doin
-this in the wild.
+> However, schedule_timeout_uninterruptible() in __alloc_pages_may_oom() is
+> not called if all allocating threads but a PF_WQ_WORKER thread got stuck at
+> __GFP_FS direct reclaim, for mutex_trylock(&oom_lock) by that PF_WQ_WORKER
+> thread succeeds and out_of_memory() remains no-op unless that PF_WQ_WORKER
+> thread is doing __GFP_FS allocation.
 
-> Don't understand
-> why not follow normal board design guide to power off pmic by PMIC_ON_R=
-EQ.
-> How to power on board again then?
+I have really hard time to parse and understand this.
 
-Power cycle. Without this patch, power of is not real power off. So,
-power cycle, is expected behavior for user interaction. On usual PC,
-reset button will not enable PC as well.
+> Tetsuo is observing that GFP_NOIO
+> allocation request from disk_events_workfn() is preventing other pending
+> works from starting.
 
+What about any other allocation from !PF_WQ_WORKER context? Why those do
+not jump in?
 
---G2Tm66CxLRos6R6xC1wkdggvshNUH6LPO--
+> Since should_reclaim_retry() should be a natural reschedule point,
+> let's do the short sleep for PF_WQ_WORKER threads unconditionally
+> in order to guarantee that other pending works are started.
 
---CmSIAI6FGWQju5vbxnKfqJmQv2oAuY0pf
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
+OK, this is finally makes some sense. But it doesn't explain why it
+handles the live lock.
 
------BEGIN PGP SIGNATURE-----
+> Reported-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+> Signed-off-by: Michal Hocko <mhocko@suse.com>
 
-iQEzBAEBCAAdFiEEpENFL0P3hvQ7p0DDdQOiSHVI77QFAltZsoUACgkQdQOiSHVI
-77TWzQgAhQoMOjx7+S1Qm1rZPtMblz6hK1z0mNYWGfIGeg8cdj3+Aoo5ypnLb7+6
-MaMowFsPSn+MLu9KyaKTxhdSP+QBC9kGWqj7Dg13MILlNJJRvk5wLjYxEtbuU31H
-K0H8B2gIL9lKA7frgkndteGYeJFYM9ziaWnj1sLRzsud3TJJHx5WBYLCXI0OuLXx
-YD4H8fB2xR89Fj2Jqeaugux1Ewu99a/jUbX3PSi0trAi+AmLN83Yg1+c43r5O2Yn
-kfWatgPLmK7CMBoTZCKVZZwAG1auPkLnNXp0vSXwkoSnZaPKTzTahzCoKFb49wJ0
-PsMc7Rki7cPb+4x3ia0vwxAa/umtYw==
-=pEPP
------END PGP SIGNATURE-----
+Your s-o-b is missing again. I have already told you that previously
+when you were posting the patch.
 
---CmSIAI6FGWQju5vbxnKfqJmQv2oAuY0pf--
+I do not mind this change per se but I am not happy about _your_ changelog.
+It doesn't explain the underlying problem IMHO. Having a natural and
+unconditional scheduling point in should_reclaim_retry is a reasonable
+thing. But how the hack it relates to the livelock you are seeing. So
+namely the changelog should explain
+1) why nobody is able to make forward progress during direct reclaim
+2) why nobody is able to trigger oom killer as the last resort
+
+> Cc: Roman Gushchin <guro@fb.com>
+> Cc: Johannes Weiner <hannes@cmpxchg.org>
+> Cc: Vladimir Davydov <vdavydov.dev@gmail.com>
+> Cc: David Rientjes <rientjes@google.com>
+> Cc: Tejun Heo <tj@kernel.org>
+> ---
+>  mm/page_alloc.c | 34 ++++++++++++++++++----------------
+>  1 file changed, 18 insertions(+), 16 deletions(-)
+> 
+> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+> index a790ef4..0c2c0a2 100644
+> --- a/mm/page_alloc.c
+> +++ b/mm/page_alloc.c
+> @@ -3922,6 +3922,7 @@ bool gfp_pfmemalloc_allowed(gfp_t gfp_mask)
+>  {
+>  	struct zone *zone;
+>  	struct zoneref *z;
+> +	bool ret = false;
+>  
+>  	/*
+>  	 * Costly allocations might have made a progress but this doesn't mean
+> @@ -3985,25 +3986,26 @@ bool gfp_pfmemalloc_allowed(gfp_t gfp_mask)
+>  				}
+>  			}
+>  
+> -			/*
+> -			 * Memory allocation/reclaim might be called from a WQ
+> -			 * context and the current implementation of the WQ
+> -			 * concurrency control doesn't recognize that
+> -			 * a particular WQ is congested if the worker thread is
+> -			 * looping without ever sleeping. Therefore we have to
+> -			 * do a short sleep here rather than calling
+> -			 * cond_resched().
+> -			 */
+> -			if (current->flags & PF_WQ_WORKER)
+> -				schedule_timeout_uninterruptible(1);
+> -			else
+> -				cond_resched();
+> -
+> -			return true;
+> +			ret = true;
+> +			goto out;
+>  		}
+>  	}
+>  
+> -	return false;
+> +out:
+> +	/*
+> +	 * Memory allocation/reclaim might be called from a WQ
+> +	 * context and the current implementation of the WQ
+> +	 * concurrency control doesn't recognize that
+> +	 * a particular WQ is congested if the worker thread is
+> +	 * looping without ever sleeping. Therefore we have to
+> +	 * do a short sleep here rather than calling
+> +	 * cond_resched().
+> +	 */
+> +	if (current->flags & PF_WQ_WORKER)
+> +		schedule_timeout_uninterruptible(1);
+> +	else
+> +		cond_resched();
+> +	return ret;
+>  }
+>  
+>  static inline bool
+> -- 
+> 1.8.3.1
+> 
+
+-- 
+Michal Hocko
+SUSE Labs
