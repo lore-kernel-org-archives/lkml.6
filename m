@@ -2,117 +2,109 @@ Return-Path: <SRS0=7Z+k=KK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 724B3C28CF6
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 08:48:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB606C28CF6
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 08:48:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2179A2083F
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 08:48:19 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="vIP8Bwnm"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2179A2083F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+	by mail.kernel.org (Postfix) with ESMTP id 629542083F
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 08:48:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 629542083F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728998AbeGZKEF (ORCPT
+        id S1729155AbeGZKEO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 26 Jul 2018 06:04:05 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:37958 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728827AbeGZKEF (ORCPT
+        Thu, 26 Jul 2018 06:04:14 -0400
+Received: from alexa-out-blr-02.qualcomm.com ([103.229.18.198]:50994 "EHLO
+        alexa-out-blr.qualcomm.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728827AbeGZKEO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Jul 2018 06:04:05 -0400
-Received: by mail-wm0-f66.google.com with SMTP id t25-v6so1136913wmi.3
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Jul 2018 01:48:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=message-id:subject:from:to:cc:date:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=KoJ2I3DC32SYhrBKLVnfySpcMC8X5ZJXhAPeDfTegZ0=;
-        b=vIP8BwnmHHkkrEgCvyhNT7G493oUFXd1ZUm9NOBe8CwKR32wtDRR6VGLx/uP5Mc0Sn
-         1uywz60pi7LXaLjxQiNA3DzRXJN5jsiIEDJNxzVEEsu0rO/7pLXsq/9ZnHeL5TUfZjkc
-         qLRNv32uVQI8wD1Lxw2O+720XutkkP+lAPFfoiLjmSBnvTZckR31W4eAR0tZCWndDTeM
-         ZxaZ3ssA7Av3maz8uomMv36BzDP/hH06CCbhHOxj6bS63mRyqJk6GdhpV6SllnNxzo+Z
-         gFUpuh86EHEP5GEZ97x8gx4mg4lIZDgkvQ3PTL0x2Z7nLt7q+kRJOM3opzu4AzvP/BfC
-         G+5A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=KoJ2I3DC32SYhrBKLVnfySpcMC8X5ZJXhAPeDfTegZ0=;
-        b=rlShfhc44FKTxhaKdQYH/C+WPHmfqsD+zCwpLVUuRcwbREI4h9fYvi9pu/Ug6EmT2T
-         yc8YQBjZtXCEhpbUeOYKjrPJNev7xxTvt+pTUvXZFV/o+ZYM/HwObzRFxOyQk8wnk2ru
-         6x6y2iEti0BidiP1tqM82e9vzalunF0vqsvX6MWpRyPunIWjR2qwFD3FKYh9zgFlT0QB
-         HEtjUA4bt/rXjAGv4enxaoEgCCxtGa194smbAxg7kTxgkwd1yHsrEINweUQaqInGTMrk
-         2zbl3wMEmoXYGyv+44DomRWkbyCxeyf2f0yan+cuZ+Jtvmm4Qz/Hr4qeIFi3hwfwpkfk
-         61Cg==
-X-Gm-Message-State: AOUpUlGUfZpGctD0D9e84zym2t3RkP6/fM0HXItFcUVYjpwovnr1aXbl
-        eV7rt2njxJCUq4YMumoNtgxoOw==
-X-Google-Smtp-Source: AAOMgpdYsNb+RoY2CKdglRfaQzjEp7fGI0cSRKzzb2JK1UexRTyXOXSAUf1tV5rUFbeyqvSU/p6S5Q==
-X-Received: by 2002:a1c:4004:: with SMTP id n4-v6mr889565wma.83.1532594894652;
-        Thu, 26 Jul 2018 01:48:14 -0700 (PDT)
-Received: from boomer ([90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id w204-v6sm1439450wmw.5.2018.07.26.01.48.13
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 26 Jul 2018 01:48:14 -0700 (PDT)
-Message-ID: <190f2749c6e65fddcd2fd17ebdb45be5a434b869.camel@baylibre.com>
-Subject: Re: [PATCH 3/3] clk: meson: clk-pll: drop hard-coded rates from pll
- tables
-From:   jbrunet@baylibre.com
-To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc:     Neil Armstrong <narmstrong@baylibre.com>,
-        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, khilman@baylibre.com
-Date:   Thu, 26 Jul 2018 10:48:12 +0200
-In-Reply-To: <CAFBinCD3i5pRzSp4Sx5349p_2XQfdCNguxU-gU1tD_asFu6YjA@mail.gmail.com>
-References: <20180717095617.12240-1-jbrunet@baylibre.com>
-         <20180717095617.12240-4-jbrunet@baylibre.com>
-         <d4e5e35a-39e0-fe27-8d27-387c5312ca32@baylibre.com>
-         <CAFBinCBc_cFD2ACiSHVuRrXaqSyDnkJb2rem1_k2jwved=QXVw@mail.gmail.com>
-         <1532206010.26720.84.camel@baylibre.com>
-         <CAFBinCD3i5pRzSp4Sx5349p_2XQfdCNguxU-gU1tD_asFu6YjA@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.4 (3.28.4-1.fc28) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Thu, 26 Jul 2018 06:04:14 -0400
+X-Greylist: delayed 378 seconds by postgrey-1.27 at vger.kernel.org; Thu, 26 Jul 2018 06:04:12 EDT
+X-IronPort-AV: E=Sophos;i="5.51,404,1526322600"; 
+   d="scan'208";a="113498"
+Received: from ironmsg02-blr.qualcomm.com ([10.86.208.131])
+  by alexa-out-blr.qualcomm.com with ESMTP/TLS/AES256-SHA; 26 Jul 2018 14:12:05 +0530
+X-IronPort-AV: E=McAfee;i="5900,7806,8965"; a="661274"
+Received: from gkohli-linux.qualcomm.com ([10.204.78.26])
+  by ironmsg02-blr.qualcomm.com with ESMTP; 26 Jul 2018 14:12:05 +0530
+Received: by gkohli-linux.qualcomm.com (Postfix, from userid 427023)
+        id 8754A3092; Thu, 26 Jul 2018 14:12:04 +0530 (IST)
+From:   Gaurav Kohli <gkohli@codeaurora.org>
+To:     john.stultz@linaro.org, tglx@linutronix.de, sboyd@kernel.org
+Cc:     linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        Gaurav Kohli <gkohli@codeaurora.org>
+Subject: [PATCH] timers: Clear must_forward_clk inside base lock
+Date:   Thu, 26 Jul 2018 14:12:02 +0530
+Message-Id: <1532594522-28045-1-git-send-email-gkohli@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 2018-07-21 at 23:34 +0200, Martin Blumenstingl wrote:
-> On Sat, Jul 21, 2018 at 10:46 PM Jerome Brunet <jbrunet@baylibre.com> wrote:
-> > 
-> > On Sat, 2018-07-21 at 22:16 +0200, Martin Blumenstingl wrote:
-> > > > We could even add ranges instead of table when we know the PLL supports a well-known continuous dividers range.
-> > > 
-> > > I had a look at the sys_pll settings on Meson8b, here's what
-> > > Meson8/Meson8b/Meson8m2 support for sys_pll:
-> > > - 50..74
-> > > - 76
-> > > - 78
-> > > - 80
-> > > - 82
-> > > - 84
-> > > - 86
-> > > - 88
-> > > - 90
-> > > - 92
-> > > - 94
-> > > - 96
-> > > - 98
-> > 
-> > Are those values with the same predivider (n) value ?
-> 
-> yes, all are using n = 1
+While migrating timer to new base, there is a need
+to update base clk by calling forward_timer_base to
+avoid stale clock , but at the same time if run_timer
+is exectuing in new core it may set must_forward_clk
+to false and due to this forward base logic may fail as
+per below check:
 
-The table proposed in this patch keeps things the way they were before the
-change. We could extend the table with these values in a follow up patch.
+if (likely(!base->must_forward_clk))
+                return;
 
-If those value are with n=1, then I would guess that odd values from 75 to 97
-work as well. 
+So preventing the same by putting must_forward_clk inside
+base lock.
 
+Signed-off-by: Gaurav Kohli <gkohli@codeaurora.org>
+
+diff --git a/kernel/time/timer.c b/kernel/time/timer.c
+index cc2d23e..675241d 100644
+--- a/kernel/time/timer.c
++++ b/kernel/time/timer.c
+@@ -1657,6 +1657,19 @@ static inline void __run_timers(struct timer_base *base)
+ 
+ 	raw_spin_lock_irq(&base->lock);
+ 
++	/*
++	 * must_forward_clk must be cleared before running timers so that any
++	 * timer functions that call mod_timer will not try to forward the
++	 * base. idle trcking / clock forwarding logic is only used with
++	 * BASE_STD timers.
++	 *
++	 * The deferrable base does not do idle tracking at all, so we do
++	 * not forward it. This can result in very large variations in
++	 * granularity for deferrable timers, but they can be deferred for
++	 * long periods due to idle.
++	 */
++	base->must_forward_clk = false;
++
+ 	while (time_after_eq(jiffies, base->clk)) {
+ 
+ 		levels = collect_expired_timers(base, heads);
+@@ -1676,19 +1689,6 @@ static __latent_entropy void run_timer_softirq(struct softirq_action *h)
+ {
+ 	struct timer_base *base = this_cpu_ptr(&timer_bases[BASE_STD]);
+ 
+-	/*
+-	 * must_forward_clk must be cleared before running timers so that any
+-	 * timer functions that call mod_timer will not try to forward the
+-	 * base. idle trcking / clock forwarding logic is only used with
+-	 * BASE_STD timers.
+-	 *
+-	 * The deferrable base does not do idle tracking at all, so we do
+-	 * not forward it. This can result in very large variations in
+-	 * granularity for deferrable timers, but they can be deferred for
+-	 * long periods due to idle.
+-	 */
+-	base->must_forward_clk = false;
+-
+ 	__run_timers(base);
+ 	if (IS_ENABLED(CONFIG_NO_HZ_COMMON))
+ 		__run_timers(this_cpu_ptr(&timer_bases[BASE_DEF]));
+-- 
+1.9.1
 
