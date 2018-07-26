@@ -2,75 +2,262 @@ Return-Path: <SRS0=7Z+k=KK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E106EC6778F
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 19:13:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DDAA3C28CF6
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 19:13:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8C2DE20673
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 19:13:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7E27720673
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 19:13:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="ANtbWnWv"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C2DE20673
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lunn.ch
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="4SzkTIym"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7E27720673
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731233AbeGZUb6 (ORCPT
+        id S1731472AbeGZUcH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 26 Jul 2018 16:31:58 -0400
-Received: from vps0.lunn.ch ([185.16.172.187]:47631 "EHLO vps0.lunn.ch"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729801AbeGZUb6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Jul 2018 16:31:58 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch; s=20171124;
-        h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date; bh=7l7MDgFsVlZHkgRKlz+76x/yD2U8KpKGE7hP9xk8YLU=;
-        b=ANtbWnWvGrUk/fTI3fIJtSdx9DFLRfE7SYzna0KqZU/Gi8PVaTHwkI5StP7ZDARg9/rGdt8VIz1TEZ3KkaZ3WaUIi9+DJLWt5rPCc8sFs6uoaCKGrYIDlMHyGInkw2gMypqCkOFOmGnQafKW6Qy6uaNLtKkwinzz803x4+W6oOA=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.84_2)
-        (envelope-from <andrew@lunn.ch>)
-        id 1filhk-0005CS-DT; Thu, 26 Jul 2018 21:13:40 +0200
-Date:   Thu, 26 Jul 2018 21:13:40 +0200
-From:   Andrew Lunn <andrew@lunn.ch>
-To:     Arun Parameswaran <arun.parameswaran@broadcom.com>
-Cc:     "David S. Miller" <davem@davemloft.net>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>, netdev@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com
-Subject: Re: [PATCH 5/7] net: phy: Add support to configure clock in Broadcom
- iProc mdio mux
-Message-ID: <20180726191340.GH10686@lunn.ch>
-References: <1532630184-29450-1-git-send-email-arun.parameswaran@broadcom.com>
- <1532630184-29450-6-git-send-email-arun.parameswaran@broadcom.com>
+        Thu, 26 Jul 2018 16:32:07 -0400
+Received: from aserp2130.oracle.com ([141.146.126.79]:54702 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729801AbeGZUcG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Jul 2018 16:32:06 -0400
+Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
+        by aserp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w6QJBUV6137109;
+        Thu, 26 Jul 2018 19:12:40 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=wQQk0mpr625mfR8WiZSKVICv2kjWoNOcAHdaIiYlrlA=;
+ b=4SzkTIymCbkW+mEYXyHuFcxaaU9gYWen1zNWtNdYoWBKjv/Bzlr5HoNaiQYwtpBU+6Ev
+ cEFd+5UKLMzPeepCjHdfbaXRNIMbDlWzClDB3tORgZxMBTjaOXXq6t8ZoF8hYqN2R5aI
+ muxiP20v7SXJI5nusF4uWI2MWajFUwzXiwfbqutfdjDqiaAKzV9jit7QRG3mnZVQlZMZ
+ LBtLAGTurigkVNSYyv15VuaXQuKyDhKDO7VUy1V+1u9h2F/K2ltvC+bQunZXQ2/dpj75
+ oZSutKx2V3gEdGc4AasNNYg/9Aq57TXvtFydRjgbS9b2YFboiQ9gnScYHhbhQ6M2rYNo NA== 
+Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
+        by aserp2130.oracle.com with ESMTP id 2kbtbd4ku2-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 26 Jul 2018 19:12:40 +0000
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w6QJCdJv031607
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 26 Jul 2018 19:12:39 GMT
+Received: from abhmp0006.oracle.com (abhmp0006.oracle.com [141.146.116.12])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w6QJCcN5013259;
+        Thu, 26 Jul 2018 19:12:38 GMT
+Received: from [192.168.1.164] (/50.38.38.67)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 26 Jul 2018 12:12:38 -0700
+Subject: Re: [PATCH v4 10/11] hugetlb: Introduce generic version of
+ huge_ptep_set_access_flags
+To:     Alexandre Ghiti <alex@ghiti.fr>, linux@armlinux.org.uk,
+        catalin.marinas@arm.com, will.deacon@arm.com, tony.luck@intel.com,
+        fenghua.yu@intel.com, ralf@linux-mips.org, paul.burton@mips.com,
+        jhogan@kernel.org, jejb@parisc-linux.org, deller@gmx.de,
+        benh@kernel.crashing.org, paulus@samba.org, mpe@ellerman.id.au,
+        ysato@users.sourceforge.jp, dalias@libc.org, davem@davemloft.net,
+        tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
+        x86@kernel.org, arnd@arndb.de,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-ia64@vger.kernel.org, linux-mips@linux-mips.org,
+        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
+        linux-arch@vger.kernel.org
+References: <20180705110716.3919-1-alex@ghiti.fr>
+ <20180705110716.3919-11-alex@ghiti.fr>
+From:   Mike Kravetz <mike.kravetz@oracle.com>
+Message-ID: <ff7be1ec-be87-1691-93d4-8c055b93d054@oracle.com>
+Date:   Thu, 26 Jul 2018 12:12:35 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1532630184-29450-6-git-send-email-arun.parameswaran@broadcom.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <20180705110716.3919-11-alex@ghiti.fr>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8966 signatures=668706
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=919
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1806210000 definitions=main-1807260196
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> @@ -175,6 +198,12 @@ static int mdio_mux_iproc_probe(struct platform_device *pdev)
->  		return PTR_ERR(md->base);
->  	}
+On 07/05/2018 04:07 AM, Alexandre Ghiti wrote:
+> arm, ia64, sh, x86 architectures use the same version
+> of huge_ptep_set_access_flags, so move this generic implementation
+> into asm-generic/hugetlb.h.
+> 
+
+Reviewed-by: Mike Kravetz <mike.kravetz@oracle.com>
+-- 
+Mike Kravetz
+
+> Signed-off-by: Alexandre Ghiti <alex@ghiti.fr>
+> ---
+>  arch/arm/include/asm/hugetlb-3level.h | 7 -------
+>  arch/arm64/include/asm/hugetlb.h      | 1 +
+>  arch/ia64/include/asm/hugetlb.h       | 7 -------
+>  arch/mips/include/asm/hugetlb.h       | 1 +
+>  arch/parisc/include/asm/hugetlb.h     | 1 +
+>  arch/powerpc/include/asm/hugetlb.h    | 1 +
+>  arch/sh/include/asm/hugetlb.h         | 7 -------
+>  arch/sparc/include/asm/hugetlb.h      | 1 +
+>  arch/x86/include/asm/hugetlb.h        | 7 -------
+>  include/asm-generic/hugetlb.h         | 9 +++++++++
+>  10 files changed, 14 insertions(+), 28 deletions(-)
+> 
+> diff --git a/arch/arm/include/asm/hugetlb-3level.h b/arch/arm/include/asm/hugetlb-3level.h
+> index 8247cd6a2ac6..54e4b097b1f5 100644
+> --- a/arch/arm/include/asm/hugetlb-3level.h
+> +++ b/arch/arm/include/asm/hugetlb-3level.h
+> @@ -37,11 +37,4 @@ static inline pte_t huge_ptep_get(pte_t *ptep)
+>  	return retval;
+>  }
 >  
-> +	md->core_clk = devm_clk_get(&pdev->dev, NULL);
-> +	if (IS_ERR(md->core_clk)) {
-> +		dev_info(&pdev->dev, "core_clk not specified\n");
-> +		md->core_clk = NULL;
-> +	}
+> -static inline int huge_ptep_set_access_flags(struct vm_area_struct *vma,
+> -					     unsigned long addr, pte_t *ptep,
+> -					     pte_t pte, int dirty)
+> -{
+> -	return ptep_set_access_flags(vma, addr, ptep, pte, dirty);
+> -}
+> -
+>  #endif /* _ASM_ARM_HUGETLB_3LEVEL_H */
+> diff --git a/arch/arm64/include/asm/hugetlb.h b/arch/arm64/include/asm/hugetlb.h
+> index f4f69ae5466e..80887abcef7f 100644
+> --- a/arch/arm64/include/asm/hugetlb.h
+> +++ b/arch/arm64/include/asm/hugetlb.h
+> @@ -42,6 +42,7 @@ extern pte_t arch_make_huge_pte(pte_t entry, struct vm_area_struct *vma,
+>  #define __HAVE_ARCH_HUGE_SET_HUGE_PTE_AT
+>  extern void set_huge_pte_at(struct mm_struct *mm, unsigned long addr,
+>  			    pte_t *ptep, pte_t pte);
+> +#define __HAVE_ARCH_HUGE_PTEP_SET_ACCESS_FLAGS
+>  extern int huge_ptep_set_access_flags(struct vm_area_struct *vma,
+>  				      unsigned long addr, pte_t *ptep,
+>  				      pte_t pte, int dirty);
+> diff --git a/arch/ia64/include/asm/hugetlb.h b/arch/ia64/include/asm/hugetlb.h
+> index 49d1f7949f3a..e9b42750fdf5 100644
+> --- a/arch/ia64/include/asm/hugetlb.h
+> +++ b/arch/ia64/include/asm/hugetlb.h
+> @@ -27,13 +27,6 @@ static inline void huge_ptep_clear_flush(struct vm_area_struct *vma,
+>  {
+>  }
+>  
+> -static inline int huge_ptep_set_access_flags(struct vm_area_struct *vma,
+> -					     unsigned long addr, pte_t *ptep,
+> -					     pte_t pte, int dirty)
+> -{
+> -	return ptep_set_access_flags(vma, addr, ptep, pte, dirty);
+> -}
+> -
+>  static inline pte_t huge_ptep_get(pte_t *ptep)
+>  {
+>  	return *ptep;
+> diff --git a/arch/mips/include/asm/hugetlb.h b/arch/mips/include/asm/hugetlb.h
+> index 3dcf5debf8c4..120adc3b2ffd 100644
+> --- a/arch/mips/include/asm/hugetlb.h
+> +++ b/arch/mips/include/asm/hugetlb.h
+> @@ -63,6 +63,7 @@ static inline int huge_pte_none(pte_t pte)
+>  	return !val || (val == (unsigned long)invalid_pte_table);
+>  }
+>  
+> +#define __HAVE_ARCH_HUGE_PTEP_SET_ACCESS_FLAGS
+>  static inline int huge_ptep_set_access_flags(struct vm_area_struct *vma,
+>  					     unsigned long addr,
+>  					     pte_t *ptep, pte_t pte,
+> diff --git a/arch/parisc/include/asm/hugetlb.h b/arch/parisc/include/asm/hugetlb.h
+> index 9c3950ca2974..165b4e5a6f32 100644
+> --- a/arch/parisc/include/asm/hugetlb.h
+> +++ b/arch/parisc/include/asm/hugetlb.h
+> @@ -43,6 +43,7 @@ static inline void huge_ptep_clear_flush(struct vm_area_struct *vma,
+>  void huge_ptep_set_wrprotect(struct mm_struct *mm,
+>  					   unsigned long addr, pte_t *ptep);
+>  
+> +#define __HAVE_ARCH_HUGE_PTEP_SET_ACCESS_FLAGS
+>  int huge_ptep_set_access_flags(struct vm_area_struct *vma,
+>  					     unsigned long addr, pte_t *ptep,
+>  					     pte_t pte, int dirty);
+> diff --git a/arch/powerpc/include/asm/hugetlb.h b/arch/powerpc/include/asm/hugetlb.h
+> index 69c14ecac133..658bf7136a3c 100644
+> --- a/arch/powerpc/include/asm/hugetlb.h
+> +++ b/arch/powerpc/include/asm/hugetlb.h
+> @@ -137,6 +137,7 @@ static inline void huge_ptep_clear_flush(struct vm_area_struct *vma,
+>  	flush_hugetlb_page(vma, addr);
+>  }
+>  
+> +#define __HAVE_ARCH_HUGE_PTEP_SET_ACCESS_FLAGS
+>  extern int huge_ptep_set_access_flags(struct vm_area_struct *vma,
+>  				      unsigned long addr, pte_t *ptep,
+>  				      pte_t pte, int dirty);
+> diff --git a/arch/sh/include/asm/hugetlb.h b/arch/sh/include/asm/hugetlb.h
+> index 8df4004977b9..c87195ae0cfa 100644
+> --- a/arch/sh/include/asm/hugetlb.h
+> +++ b/arch/sh/include/asm/hugetlb.h
+> @@ -32,13 +32,6 @@ static inline void huge_ptep_clear_flush(struct vm_area_struct *vma,
+>  {
+>  }
+>  
+> -static inline int huge_ptep_set_access_flags(struct vm_area_struct *vma,
+> -					     unsigned long addr, pte_t *ptep,
+> -					     pte_t pte, int dirty)
+> -{
+> -	return ptep_set_access_flags(vma, addr, ptep, pte, dirty);
+> -}
+> -
+>  static inline pte_t huge_ptep_get(pte_t *ptep)
+>  {
+>  	return *ptep;
+> diff --git a/arch/sparc/include/asm/hugetlb.h b/arch/sparc/include/asm/hugetlb.h
+> index c41754a113f3..028a1465fbe7 100644
+> --- a/arch/sparc/include/asm/hugetlb.h
+> +++ b/arch/sparc/include/asm/hugetlb.h
+> @@ -40,6 +40,7 @@ static inline void huge_ptep_set_wrprotect(struct mm_struct *mm,
+>  	set_huge_pte_at(mm, addr, ptep, pte_wrprotect(old_pte));
+>  }
+>  
+> +#define __HAVE_ARCH_HUGE_PTEP_SET_ACCESS_FLAGS
+>  static inline int huge_ptep_set_access_flags(struct vm_area_struct *vma,
+>  					     unsigned long addr, pte_t *ptep,
+>  					     pte_t pte, int dirty)
+> diff --git a/arch/x86/include/asm/hugetlb.h b/arch/x86/include/asm/hugetlb.h
+> index de370836a17d..1df8944904c6 100644
+> --- a/arch/x86/include/asm/hugetlb.h
+> +++ b/arch/x86/include/asm/hugetlb.h
+> @@ -12,13 +12,6 @@ static inline int is_hugepage_only_range(struct mm_struct *mm,
+>  	return 0;
+>  }
+>  
+> -static inline int huge_ptep_set_access_flags(struct vm_area_struct *vma,
+> -					     unsigned long addr, pte_t *ptep,
+> -					     pte_t pte, int dirty)
+> -{
+> -	return ptep_set_access_flags(vma, addr, ptep, pte, dirty);
+> -}
+> -
+>  static inline pte_t huge_ptep_get(pte_t *ptep)
+>  {
+>  	return *ptep;
+> diff --git a/include/asm-generic/hugetlb.h b/include/asm-generic/hugetlb.h
+> index 9b9039845278..f3c99a03ee83 100644
+> --- a/include/asm-generic/hugetlb.h
+> +++ b/include/asm-generic/hugetlb.h
+> @@ -110,4 +110,13 @@ static inline void huge_ptep_set_wrprotect(struct mm_struct *mm,
+>  }
+>  #endif
+>  
+> +#ifndef __HAVE_ARCH_HUGE_PTEP_SET_ACCESS_FLAGS
+> +static inline int huge_ptep_set_access_flags(struct vm_area_struct *vma,
+> +		unsigned long addr, pte_t *ptep,
+> +		pte_t pte, int dirty)
+> +{
+> +	return ptep_set_access_flags(vma, addr, ptep, pte, dirty);
+> +}
+> +#endif
 > +
-
-In the binding, you say the clock is optional. This is a rather strong
-message for something which is optional. I think it would be better to
-not output anything.
-
-    Andrew
+>  #endif /* _ASM_GENERIC_HUGETLB_H */
+> 
