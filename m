@@ -2,89 +2,103 @@ Return-Path: <SRS0=7Z+k=KK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5785AC28CF6
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 06:34:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BEF18C28CF6
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 06:37:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DA60820846
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 06:34:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7053820846
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 06:37:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=contabo.de header.i=@contabo.de header.b="0F4MucxB"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DA60820846
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=contabo.de
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="tRlPUL/Q"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7053820846
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728584AbeGZHt5 (ORCPT
+        id S1728750AbeGZHwY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 26 Jul 2018 03:49:57 -0400
-Received: from mail.contabo.com ([91.205.175.50]:60490 "EHLO mail.contabo.com"
+        Thu, 26 Jul 2018 03:52:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46920 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726430AbeGZHt4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Jul 2018 03:49:56 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=contabo.de;
-         s=default; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:MIME-Version
-        :Date:Message-ID:From:References:Cc:To:Subject:Sender:Reply-To:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=T463keRGKLfgwzudii1gCgUhx96wr1PclApmb5EFS9U=; b=0F4MucxBinCPP2ccISE1aelWoS
-        ba56G6F4Z6/S7uZhps7xaCHw3OCcLiZPL1shw4h2QHbsn7rznKJTiZTYJZjyFXTpwl/y1kp1mZzJe
-        jUH3P6i89XR8O6ev53mosgJrBPp6Y1AO4S/yp7PaPs5nWfJRTtjfnQURtTjSfqjHDsX4onGF9sSWW
-        H96FlDX3Tb6SyCP/gCVCCMC6xX1HbUFq7yfrdenCzGADT0dMw9YosDoTgQV2vOq6BlnrcY4kX2s6s
-        v+qbLotW4Pz+drWuSWER8z5QGoOTZXJTQc6lxM+ba0T0HpJjMHnJs8E/QZiEU9oN8QNr4xPmlEXpJ
-        n3NkNQfA==;
-Received: from [178.238.239.246] (port=7490 helo=[192.168.178.123])
-        by mail.contabo.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.91)
-        (envelope-from <tino.lehnig@contabo.de>)
-        id 1fiZrA-0003XH-G6; Thu, 26 Jul 2018 08:34:36 +0200
-Subject: Re: Zram writeback feature unstable with heavy swap utilization -
- BUG: Bad page state in process...
-To:     Minchan Kim <minchan@kernel.org>
-Cc:     ngupta@vflare.org, linux-kernel@vger.kernel.org,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-References: <0516ae2d-b0fd-92c5-aa92-112ba7bd32fc@contabo.de>
- <20180724010342.GA195675@rodete-desktop-imager.corp.google.com>
- <d4f4b5a1-9e31-375d-0599-b6d8b0ebc9df@contabo.de>
- <20180725132126.GA2893@rodete-laptop-imager.corp.google.com>
- <d07348bb-3102-30f0-d138-de23449e23df@contabo.de>
- <20180726020351.GA221405@rodete-desktop-imager.corp.google.com>
- <1684cefc-c920-d53c-8d2d-c32da213a045@contabo.de>
- <20180726062106.GB221405@rodete-desktop-imager.corp.google.com>
-From:   Tino Lehnig <tino.lehnig@contabo.de>
-Message-ID: <ae04a49d-7d28-2717-daaf-369668ffe0cc@contabo.de>
-Date:   Thu, 26 Jul 2018 08:34:36 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        id S1727790AbeGZHwY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Jul 2018 03:52:24 -0400
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id BD64220895;
+        Thu, 26 Jul 2018 06:37:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1532587025;
+        bh=LU1qt3mTpaLplACYWYu/zYE2ByP1yBQ4Zy34t/puelw=;
+        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
+        b=tRlPUL/Qge2ufYW37MByjsO4P813qjsa2moHmz2Ham6K/rW6RiO2yJh/yz8iVUN/X
+         /Y0D1+URH+83QlfFji4/vqBhsxHfjHuDf4dQGNrgmStuL39buOdWDHwh9GkbYavGyP
+         YFJEitx0rfWzIodg4IIao4vpj60TbF6jU3Dnvwd8=
+Received: by mail-wr1-f43.google.com with SMTP id r16-v6so493799wrt.11;
+        Wed, 25 Jul 2018 23:37:04 -0700 (PDT)
+X-Gm-Message-State: AOUpUlGr9kd9gSBZMFmW1XyBLL1ZqlEAWTsobM9rvkR6n4wpgnnTBcRj
+        LvCqMub0kwqxjmnegv/+giVeUIKaCAKEpGKhxLc=
+X-Google-Smtp-Source: AAOMgpeJyJxsA/H0sbgsGS6m1Tk1PYyfPMWxKioXWhHKDYNTe+Xv6LNgFIQj1gOS409KpczIFK9Sw5Zt14FatbvT238=
+X-Received: by 2002:adf:f390:: with SMTP id m16-v6mr454708wro.279.1532587023237;
+ Wed, 25 Jul 2018 23:37:03 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20180726062106.GB221405@rodete-desktop-imager.corp.google.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - mail.contabo.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - contabo.de
-X-Get-Message-Sender-Via: mail.contabo.com: authenticated_id: tino.lehnig@contabo.de
-X-Authenticated-Sender: mail.contabo.com: tino.lehnig@contabo.de
+Received: by 2002:adf:9141:0:0:0:0:0 with HTTP; Wed, 25 Jul 2018 23:37:02
+ -0700 (PDT)
+In-Reply-To: <cdfed37dd6a24a4afffc0d880601e2c7@www.akkea.ca>
+References: <20180723135117.2090-1-angus@akkea.ca> <CAJKOXPczJWdNugbHiLRQv1krUFhZH=muix3M9R2LUT5=4zypYA@mail.gmail.com>
+ <cdfed37dd6a24a4afffc0d880601e2c7@www.akkea.ca>
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+Date:   Thu, 26 Jul 2018 08:37:02 +0200
+X-Gmail-Original-Message-ID: <CAJKOXPd1NZtyDmBnLnsQafH2AKufAsB-p78JM0s6kBXK3APhuA@mail.gmail.com>
+Message-ID: <CAJKOXPd1NZtyDmBnLnsQafH2AKufAsB-p78JM0s6kBXK3APhuA@mail.gmail.com>
+Subject: Re: [PATCH] bq25890_charger.c : add the BQ25896 part
+To:     Angus Ainslie <angus@akkea.ca>
+Cc:     Sebastian Reichel <sre@kernel.org>, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Angus Ainslie <angus.ainslie@puri.sm>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/26/2018 08:21 AM, Minchan Kim wrote:
-> That means you could reproduce it without writeback feature?
-> If so, it would be more reasoanble to check [0bcac06f27d75, skip swapcache for swapin of synchronous device]
+On 25 July 2018 at 14:17, Angus Ainslie <angus@akkea.ca> wrote:
+> Hi Krzysztof,
+>
+> On 2018-07-25 03:58, Krzysztof Kozlowski wrote:
+>>
+>> On 23 July 2018 at 15:51, Angus Ainslie <angus@akkea.ca> wrote:
+>>>
+>>> Add some debugging to be able to check the proper initialization
+>>> of the BQ25896 part.
+>>
+>>
+>> Hi,
+>>
+>> This should be split into separate patchset. Do not mix two features
+>> in one commit.
+>>
+>
+> Ok, I'll take it apart
+>
+>>> Enable the BQ25896 part.
+>>>
+>>> Add 2 new parameters "voltage_now" and "model_name".
+>>>
+>>> Signed-off-by: Angus Ainslie <angus.ainslie@puri.sm>
+>>
+>>
+>> Your signed-off-by does not match From address.
+>>
+>
+> That was intentional as I wanted Purism to get credit for it. I'm guessing
+> that's not the correct way of doing it.
 
-No, the bug only occurs with a backing device. The writeback feature is 
-enabled in the default Ubuntu kernel configuration.
+The author of patch (appearing as "From") should match Signed-off-by.
+You might however easily create commit and signed it with your Purism
+email. If you send such email, you will notice that "From" field is
+visible in the mail message and it differs from Sender.
 
--- 
-Kind regards,
-
-Tino Lehnig
+Best regards,
+Krzysztof
