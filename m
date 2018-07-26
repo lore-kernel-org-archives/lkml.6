@@ -2,204 +2,142 @@ Return-Path: <SRS0=7Z+k=KK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 459FFC28CF6
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 21:31:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE3D7C28CF6
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 21:32:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E155220857
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 21:31:25 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k1JbkkeA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E155220857
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 9D73520846
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 21:32:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9D73520846
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731687AbeGZWuD (ORCPT
+        id S1731765AbeGZWuv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 26 Jul 2018 18:50:03 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:36119 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730701AbeGZWuD (ORCPT
+        Thu, 26 Jul 2018 18:50:51 -0400
+Received: from gateway32.websitewelcome.com ([192.185.145.187]:17439 "EHLO
+        gateway32.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1731521AbeGZWuv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Jul 2018 18:50:03 -0400
-Received: by mail-pg1-f193.google.com with SMTP id s7-v6so1923284pgv.3;
-        Thu, 26 Jul 2018 14:31:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=/hRtxg6fUQ0gL3QOyE0ZRNMMYRDIL7yKstkNtMoIl1k=;
-        b=k1JbkkeAV2hqsnBb0S4lCYNAHxPR3ilRjLAGrOzbviUKpu2MzYGxdz3la36uhP3Mrg
-         JyrMBPNvy+glBS8yWQ2r2wec92u+AqO47IUceMeKXeO8vRJg+RTrEIsFlr10yU3jCUuB
-         Lg2CiokJUC99uuUVeB1cYFXHf7UHnCUMsuJgavh3KVlrduXUUud5mzUOxVShi9CZr+nR
-         blTMTzBwY/+BFMQuh3nC28+Xma95uMhEXxMt01hknaE7O/NMvOW95ND66dwYes0yNwAh
-         EdToBGSRiZd9wfrcAYSLtVlw5kreTYZsLcQC2fPzNuIQh97Q6DViHQzsrDawZgc0DaMp
-         hdrA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=/hRtxg6fUQ0gL3QOyE0ZRNMMYRDIL7yKstkNtMoIl1k=;
-        b=QzRENd2OZfT31UVpEdYmgy/bKjtFbZyOxFLSVAP7VLD9U2U2mxlaT0WMqAEVIAR+6p
-         28AxQy0/w+v975k79bww2xvjIF1EmAS20VIutl/XdL2DLnjDKVWe7njEGAMRDk/RP7R+
-         E6brqq2Sf61jzgJ/nMox+P33lY5rlEoShJJu/4NQzpe5NRNJTbPdasxTVHSbtpHzgS/j
-         9TmQ7JIgIzYsxKAnkfEYeEzgt8/aYBXfg9Vl6i7ondy+0o8jFKqyZswriY1hw9yRNLOO
-         WHcW3VIn+fnThE3rhEFkhSsnEvRfgDgHao1yv6X18Iq3/9p52QY7WaeU4+I2pJ0xgqt/
-         /l+Q==
-X-Gm-Message-State: AOUpUlHgDwmUs7Mo1+JYwgG7Cd1bL8jsbTCoCqCO3mFb6MgQo0BesCrM
-        T98ZoKlO9aWT/0QCvgCEiDrI1fywZreXizY7oH8=
-X-Google-Smtp-Source: AAOMgpd475Dj7bEfykcy6wc1xd3qlTu0eyzHS8L7Wmu445lXyGDey9pVDIRi6QMKgv+T/XzFYynCE4FSy/IWr9DoYNk=
-X-Received: by 2002:a65:5286:: with SMTP id y6-v6mr3451967pgp.65.1532640682596;
- Thu, 26 Jul 2018 14:31:22 -0700 (PDT)
+        Thu, 26 Jul 2018 18:50:51 -0400
+Received: from cm11.websitewelcome.com (cm11.websitewelcome.com [100.42.49.5])
+        by gateway32.websitewelcome.com (Postfix) with ESMTP id 1E37F11682
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Jul 2018 16:32:10 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id inrmfGMauRPojinrmfmjT6; Thu, 26 Jul 2018 16:32:10 -0500
+X-Authority-Reason: nr=8
+Received: from [189.250.102.187] (port=59320 helo=[192.168.1.71])
+        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1finrl-002V16-Lp; Thu, 26 Jul 2018 16:32:09 -0500
+Subject: Re: [PATCH] net: sched: cls_api: fix dead code in switch
+To:     David Miller <davem@davemloft.net>
+Cc:     jiri@mellanox.com, jhs@mojatatu.com, xiyou.wangcong@gmail.com,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20180725140724.GA23053@embeddedor.com>
+ <20180726.141022.1379401977396818228.davem@davemloft.net>
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=gustavo@embeddedor.com; keydata=
+ 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
+ VtSixD1uOgytAP7RWS474w==
+Message-ID: <6021c3c3-dc4a-ec09-a0dc-23ff548fa9f1@embeddedor.com>
+Date:   Thu, 26 Jul 2018 16:32:01 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Received: by 2002:a17:90a:6d90:0:0:0:0 with HTTP; Thu, 26 Jul 2018 14:31:02
- -0700 (PDT)
-In-Reply-To: <CABb+yY1VxNCskPK4LJ=JnxyKPBid2SEEgRLK3M1Csbu2xMRn8g@mail.gmail.com>
-References: <1515109891-17133-1-git-send-email-jliang@xilinx.com>
- <1515109891-17133-3-git-send-email-jliang@xilinx.com> <CABb+yY00n6fLiQXftj-TMhT6q=KopZMkLYr6DpYE8CvxH-gz8Q@mail.gmail.com>
- <BY1PR0201MB0885F2BCD9FE353171B54888B0110@BY1PR0201MB0885.namprd02.prod.outlook.com>
- <CABb+yY1VxNCskPK4LJ=JnxyKPBid2SEEgRLK3M1Csbu2xMRn8g@mail.gmail.com>
-From:   Wendy Liang <sunnyliangjy@gmail.com>
-Date:   Thu, 26 Jul 2018 14:31:02 -0700
-Message-ID: <CAA07jV-K5x0TFvVDE4SyFqCztJsjiMbns=h=dQ4_EPRa+p7jfg@mail.gmail.com>
-Subject: Re: [PATCH v3 2/2] dt-bindings: mailbox: Add Xilinx IPI Mailbox
-To:     Jassi Brar <jassisinghbrar@gmail.com>
-Cc:     Jiaying Liang <jliang@xilinx.com>,
-        Michal Simek <michal.simek@xilinx.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        Devicetree List <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Andre Przywara <andre.przywara@arm.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180726.141022.1379401977396818228.davem@davemloft.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.102.187
+X-Source-L: No
+X-Exim-ID: 1finrl-002V16-Lp
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.1.71]) [189.250.102.187]:59320
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 6
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 9, 2018 at 8:42 PM, Jassi Brar <jassisinghbrar@gmail.com> wrote:
-> On Wed, Jan 10, 2018 at 6:52 AM, Jiaying Liang <jliang@xilinx.com> wrote:
->>> From: Jassi Brar [mailto:jassisinghbrar@gmail.com]
->
->>> > +
->>> > +Controller Device Node:
->>> > +===========================
->>> > +Required properties:
->>> > +--------------------
->>> > +- compatible:          Shall be: "xlnx,zynqmp-ipi-mailbox"
->>> > +- reg:                 IPI buffers address ranges
->>> > +- reg-names:           Names of the reg resources. It should have:
->>> > +                       * local_request_region
->>> > +                         - IPI request msg buffer written by local and read
->>> > +                           by remote
->>> > +                       * local_response_region
->>> > +                         - IPI response msg buffer written by local and read
->>> > +                           by remote
->>> > +                       * remote_request_region
->>> > +                         - IPI request msg buffer written by remote and read
->>> > +                           by local
->>> > +                       * remote_response_region
->>> > +                         - IPI response msg buffer written by remote and read
->>> > +                           by local
->>> >
->>> shmem is option and external to the controller. It should be passed via
->>> client's binding.
->>> Please have a look at Sudeep's proposed patch
->>> https://www.spinics.net/lists/arm-kernel/msg626120.html
->> [Wendy] thanks for the link, but those 'buffers" are registers in the hardware
->> but not memory.
+
+
+On 07/26/2018 04:10 PM, David Miller wrote:
+> From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+> Date: Wed, 25 Jul 2018 09:07:24 -0500
+> 
+>> Code at line 1850 is unreachable. Fix this by removing the break
+>> statement above it, so the code for case RTM_GETCHAIN can be
+>> properly executed.
 >>
-> No, that is for memory, not registers.
-> Please have a more careful look at the patch.
+>> Addresses-Coverity-ID: 1472050 ("Structurally dead code")
+>> Fixes: 32a4f5ecd738 ("net: sched: introduce chain object to uapi")
+>> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+> 
+> Applied, thanks.
+> 
+> Please use "[PATCH net-next] ..." in your subject lines to indirect
+> the tree that this change is relevant for and targetted to.
+> 
 
-Sorry for very late response.
+Got it. Will do next time.
 
-Those are not the normal memory but device memories,
-they are 32bytes fixed request buffers and response buffers per
-channel. They come
-from the IPI hardware block.
-
-The mailbox framework API "mbox_send_message()" allows users to send message
-to the mailbox. in this case, just not clear on why we cannot have the
-buffer in the
-controller? These memories are not for sharing data, but just for
-short notification
-messages.
-
->
->>>
->>> > +- #mbox-cells:         Shall be 1. It contains:
->>> > +                       * tx(0) or rx(1) channel
->>> > +- xlnx,ipi-ids:                Xilinx IPI agent IDs of the two peers of the
->>> > +                       Xilinx IPI communication channel.
->>> > +- interrupt-parent:    Phandle for the interrupt controller
->>> > +- interrupts:          Interrupt information corresponding to the
->>> > +                       interrupt-names property.
->>> > +
->>> > +Optional properties:
->>> > +--------------------
->>> > +- method:              The method of accessing the IPI agent registers.
->>> > +                       Permitted values are: "smc" and "hvc". Default is
->>> > +                       "smc".
->>> > +
->>> Andre almost implemented the generic driver. Can you please have a look at
->>> https://www.spinics.net/lists/arm-kernel/msg595416.html
->>> and see if you can just finish it off?
->> [Wendy] This mailbox controller is about to use Xilinx IPI hardware as mailbox.
->>
-> I couldn't find anything specific to Xilinx h/w
-> zynqmp_ipi_fw_call() is same as arm_smc_send_data() in Andre's driver
-> (though it needs to pass on [R2,R7] as I suggested in reply to him).
->
->> We use it to send notification/short request to firmware (usually running on
->> another core on SoC),
->>
-> So does Andre's driver. Which is precise and generic, so I much prefer that.
->
->> and also to receive notification/short request from firmware.
->> Interrupt is used in the receiving direction. It looks different to the usage of
->> mailbox driver from the link.
->>
-> Yes, there is some difference. But nothing related to your h/w.
-> Andre's driver assume synchronous transmits where the response is
-> filled in the regs upon return.
-> What kind of calls do you make to your remote firmware? I would expect
-> them to be 'fast'.
-
-The reason to have this mailbox driver is because, we have an hardware block
-for IPI, this hardware block has registers and buffers and we want to
-to use Linux
-kernel mailbox framework APIs such as mbox_send_message() and rx_callback in
-client drivers to send notification or short request to other
-processors and receive
-response and request.
-
-The reason to use SMC calls to access the registers is because we have the case
-that both the ATF and Linux kernel drive will need to access the same registers.
-
-I have looked at the arm_smc patch, it looks like it is for
-synchronous request, and only
-allow 32bit message. In our case, we need to:
-* besides synchronous request, we also need to handle asynchronous request.
-  The driver will monitor the interrupt to see if there is a message
-from the other core.
-   If yes, it will notify the client from rx_callback.
-* put 32bytes short message to the mailbox.
-
-Thanks,
-Wendy
-
->
->> Is there a plan to extend the ARM SMC mailbox driver
->> to both trigger firmware actions and receive request from firmware?
->>
-> Sure if we have a genuine requirement we can support RX path as well.
->
-> Thanks.
+Thanks
+--
+Gustavo
