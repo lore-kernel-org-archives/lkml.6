@@ -2,121 +2,170 @@ Return-Path: <SRS0=7Z+k=KK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C9BCC28CF6
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 23:38:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F5FBC28CF6
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 23:51:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A7C3920671
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 23:38:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 47C3020857
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 23:51:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="YpMfs8r+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A7C3920671
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=wdc.com
+	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="OjkLULIU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 47C3020857
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=joelfernandes.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731964AbeG0A5u (ORCPT
+        id S1731974AbeG0BKI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 26 Jul 2018 20:57:50 -0400
-Received: from esa5.hgst.iphmx.com ([216.71.153.144]:41201 "EHLO
-        esa5.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731343AbeG0A5u (ORCPT
+        Thu, 26 Jul 2018 21:10:08 -0400
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:39008 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731629AbeG0BKI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Jul 2018 20:57:50 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1532648325; x=1564184325;
-  h=subject:to:cc:references:from:message-id:date:
-   mime-version:in-reply-to:content-transfer-encoding;
-  bh=4XAZAlPEVBbj5j7HHl+MxVn/Ww4nIY50tP9qZD4VifA=;
-  b=YpMfs8r+L/2nE2MpOV3H9uQJCFX3LNERUC4Yxd827ZwEw5VHJ7wVNIG5
-   4wirQM3too/lvhiKQkWBi6UWKuiuCeDtEOZnSiFh1wmWee0hACOV9MqB4
-   etp3X4ypthM82eHzU2KoK/ifrkqaJ0tuSE7xqUi14PI8N5mP1BwYV6GKe
-   pockqU3uikrJKlhO/MSz9wsIqLAzzyUs3fjfPMJ9kgMWy0Y6UafriEugf
-   V6j+ETNxNxwEmlzw0sJXpCLpTrAm2Zmhzt3CkH3U0J35XE517LScxP/yf
-   0yo/HdqbWss/+nmxUyr+a4Bc20XZjTiBUmYMGq15G6LoN/PgZyBdY43Dw
-   Q==;
-X-IronPort-AV: E=Sophos;i="5.51,407,1526313600"; 
-   d="scan'208";a="85923717"
-Received: from h199-255-45-15.hgst.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
-  by ob1.hgst.iphmx.com with ESMTP; 27 Jul 2018 07:38:45 +0800
-Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
-  by uls-op-cesaep02.wdc.com with ESMTP; 26 Jul 2018 16:26:48 -0700
-Received: from c02v91rdhtd5.sdcorp.global.sandisk.com (HELO [10.196.159.148]) ([10.196.159.148])
-  by uls-op-cesaip02.wdc.com with ESMTP; 26 Jul 2018 16:38:43 -0700
-Subject: Re: RFC: simplified RISC-V interrupt and clocksource handling
-To:     Christoph Hellwig <hch@lst.de>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "palmer@sifive.com" <palmer@sifive.com>,
-        "jason@lakedaemon.net" <jason@lakedaemon.net>,
-        "marc.zyngier@arm.com" <marc.zyngier@arm.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>
-Cc:     "anup@brainfault.org" <anup@brainfault.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "aou@eecs.berkeley.edu" <aou@eecs.berkeley.edu>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
-        "shorne@gmail.com" <shorne@gmail.com>
-References: <20180726143723.16585-1-hch@lst.de>
-From:   Atish Patra <atish.patra@wdc.com>
-Message-ID: <dc346650-0b48-3c2b-9190-b87ea6987e37@wdc.com>
-Date:   Thu, 26 Jul 2018 16:38:43 -0700
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
- Gecko/20100101 Thunderbird/52.9.1
+        Thu, 26 Jul 2018 21:10:08 -0400
+Received: by mail-pl0-f66.google.com with SMTP id m1-v6so1494408plt.6
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Jul 2018 16:51:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=joelfernandes.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=GvfrsfdXAkmeMkxmrY2UpBnQDemnLC7W3iDiMp5zPps=;
+        b=OjkLULIUCxO6JRuVwjGyVJaWwztWFS504JPJSi2TNYzjnn8MZI8WY0U6BaQ/6G6Fim
+         5sPUT5pxVO1ePOimuGRDxg/Jq9d0o23AGdF7dL5JIGrzjnOz1MULZ3eMMllOfbg3ZIVu
+         9plcaSa4hvk+GNB4A4y8O5MwTO84x4ZfumkJg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=GvfrsfdXAkmeMkxmrY2UpBnQDemnLC7W3iDiMp5zPps=;
+        b=JcsBUU8WFY3iFu7a7UD1LHmshau4EpiLz3gSfRAgPZAlVau2zZFx7/9DhtbLxXPXQ9
+         8kvVs25xJYSQtguddWybdFchwk2CBJY15DNUD2vD42Kwzz0CjE4w2zsoMbxDPl56w27p
+         ffjWRDFulOvTq1y/ZRPg038lSzSinG9415ozg1wu+Q6tlODmoy4QSb+cdv1MyAofqx6c
+         abshkQfVTo8q9t+ho1jWs1ClhafJZI364ObyBHTiQ4ERPg5jQuHoryzW+eh2gNvhRcaE
+         kYBcnyn+S4gmfaQ5nhM0qb2AcH6ueweaFeOnFH84iyVQPEA4HyK4YCVXIrjdsUiKyMgf
+         9d9Q==
+X-Gm-Message-State: AOUpUlHSVThj1A4lIEAHdWK97UKynpEiZ5S/B6INc7hCCo+NTqWsugC2
+        kAvOOZ0xx1+ScjkUXzhSYFSkPT13Xrs=
+X-Google-Smtp-Source: AAOMgpdSAZhVCLdGY61b/CHH0pp66BqVbqkt7eK1PdQoozu6QVEL4RwBhDR1sXvhHuaJ8/NyKrNmNg==
+X-Received: by 2002:a17:902:209:: with SMTP id 9-v6mr3809795plc.270.1532649060879;
+        Thu, 26 Jul 2018 16:51:00 -0700 (PDT)
+Received: from joelaf.mtv.corp.google.com ([2620:0:1000:1600:3122:ea9c:d178:eb])
+        by smtp.gmail.com with ESMTPSA id t76-v6sm3818840pfe.109.2018.07.26.16.50.59
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 26 Jul 2018 16:51:00 -0700 (PDT)
+From:   Joel Fernandes <joel@joelfernandes.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     kernel-team@android.com,
+        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Byungchul Park <byungchul.park@lge.com>,
+        Erick Reyes <erickreyes@google.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Julia Cartwright <julia@ni.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Paul McKenney <paulmck@linux.vnet.ibm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Thomas Glexiner <tglx@linutronix.de>,
+        Todd Kjos <tkjos@google.com>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>,
+        Will Deacon <will.deacon@arm.com>
+Subject: [PATCH v11 0/3] tracing: Centralize preemptirq tracepoints and unify their usage
+Date:   Thu, 26 Jul 2018 16:50:41 -0700
+Message-Id: <20180726235044.10195-1-joel@joelfernandes.org>
+X-Mailer: git-send-email 2.18.0.345.g5c9ce644c3-goog
 MIME-Version: 1.0
-In-Reply-To: <20180726143723.16585-1-hch@lst.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 7/26/18 7:37 AM, Christoph Hellwig wrote:
-> This series tries adds support for interrupt handling and timers
-> for the RISC-V architecture.
-> 
-> The basic per-hart interrupt handling implemented by the scause
-> and sie CSRs is extremely simple and implemented directly in
-> arch/riscv/kernel/irq.c.  In addition there is a irqchip driver
-> for the PLIC external interrupt controller, which is called through
-> the set_handle_irq API, and a clocksource driver that gets its
-> timer interrupt directly from the low-level interrupt handling.
-> 
-> Compared to previous iterations this version does not try to use an
-> irqchip driver for the low-level interrupt handling.  This saves
-> a couple indirect calls and an additional read of the scause CSR
-> in the hot path, makes the code much simpler and last but not least
-> avoid the dependency on a device tree for a mandatory architectural
-> feature.
-> 
-I agree that this code is much simpler than HLIC code.
-Few doubts though
+From: "Joel Fernandes (Google)" <joel@joelfernandes.org>
 
-1. As per my understanding, timer interrupt now can't be registered as a 
-Linux IRQ now. Thus, /proc/interrupts will not be automatically 
-populated for timer interrupt stats. Am I wrong in my assumption?
+This series contains the last 2 patches with minor changes suggested by
+Peter and Steven, and an additional clean up patch for get_lock_stats as
+suggested by Peter.
 
-2. The future version of local interrupt controller known as Core Level 
-Interrupt Controller aka CLIC. Do we have to change the current design
-again for CLIC in future?
+The preempt/irq tracepoints exist but not everything in the kernel is using it
+whenever they need to be notified that a preempt disable/enable or an irq
+disable/enable has occurred.  This makes things not work simultaneously (for
+example, only either lockdep or irqsoff trace-events can be used at a time).
 
-Here are the docs:
-https://github.com/sifive/clic-spec/blob/master/clic.adoc
+This is particularly painful to deal with, since turning on lockdep breaks
+tracers that install probes on IRQ events, such as the BCC atomic critical
+section tracer [1]. This constraint also makes it not possible to use synthetic
+events to trace irqsoff sections with lockdep simulataneously turned on.
 
-Regards,
-Atish
-> A git tree is available here (contains a few more patches before
-> the ones in this series)
-> 
->      git://git.infradead.org/users/hch/riscv.git riscv-irq-simple
-> 
-> Gitweb:
-> 
->      http://git.infradead.org/users/hch/riscv.git/shortlog/refs/heads/riscv-irq-simple
-> 
+This series solves that, and also results in a nice clean up of relevant parts
+of the kernel. Several ifdefs are simpler, and the design is more unified and
+better. Also as a result of this, we also speeded performance all rcuidle
+tracepoints since their handling is simpler.
+
+[1] https://github.com/iovisor/bcc/pull/1801/
+
+v10->v11:
+- Dropped extra unneeded else statement in tracepoint code since
+  rcu_read_lock_sched_notrace is same as prempt_disable_notrace (PeterZ)
+
+v9->v10:
+- Dropped first 3 and last 2 patches that were applied previously
+- Folded SPDK license into the main patch introducing trace_preemptirq.c (Steve)
+- Dropped lockdep_recursing & use simplify get_cpu_var instead (PeterZ)
+- Simplify __DO_TRACE and use rcu_dereference_raw for both RCU and SRCU (PeterZ)
+
+v8->v9:
+- Small style changes to tracepoint code (Mathieu)
+- Minor style fix to use PTR_ERR_OR_ZERO (0-day bot)
+- Minor fix to test_atomic_sections to use unsigned long.
+- Added Namhyung's, Mathieu's Reviewed-by to some patches.
+
+v7->v8:
+- Refactored irqsoff tracer probe defines (Namhyung)
+
+v6->v7:
+- Added a module to simulate an atomic section, a kselftest to load and
+  and trigger it which verifies the preempt-tracer and this series.
+
+- Fixed a new warning after I rebased in early boot, this is because
+early_boot_irqs_disabled was set too early, I moved it after the lockdep
+initialization.
+
+- added back the softirq fix since it appears it wasn't picked up.
+
+- Ran Ingo's locking API selftest suite which are passing with this
+  series.
+
+- Mathieu suggested ifdef'ing the tracepoint_synchronize_unregister
+  function incase tracepoints aren't enabled, did that.
+
+Joel Fernandes (Google) (3):
+  lockdep: use this_cpu_ptr instead of get_cpu_var stats
+  tracepoint: Make rcuidle tracepoint callers use SRCU
+  tracing: Centralize preemptirq tracepoints and unify their usage
+
+ include/linux/ftrace.h            |  11 +-
+ include/linux/irqflags.h          |  11 +-
+ include/linux/lockdep.h           |   8 +-
+ include/linux/preempt.h           |   2 +-
+ include/linux/tracepoint.h        |  41 ++++--
+ include/trace/events/preemptirq.h |  23 +--
+ init/main.c                       |   5 +-
+ kernel/locking/lockdep.c          |  45 ++----
+ kernel/sched/core.c               |   2 +-
+ kernel/trace/Kconfig              |  22 ++-
+ kernel/trace/Makefile             |   2 +-
+ kernel/trace/trace_irqsoff.c      | 231 ++++++++----------------------
+ kernel/trace/trace_preemptirq.c   |  72 ++++++++++
+ kernel/tracepoint.c               |  16 ++-
+ 14 files changed, 244 insertions(+), 247 deletions(-)
+ create mode 100644 kernel/trace/trace_preemptirq.c
+
+-- 
+2.18.0.345.g5c9ce644c3-goog
+
 
