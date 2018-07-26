@@ -2,414 +2,119 @@ Return-Path: <SRS0=7Z+k=KK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2BE3C6778F
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 17:54:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D0D5C28CF6
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 17:56:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 731A820647
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 17:54:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 14F6020862
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 17:56:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="V8jRAqvk"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 731A820647
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="loL9lPTA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 14F6020862
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388846AbeGZTML (ORCPT
+        id S2388741AbeGZTOI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 26 Jul 2018 15:12:11 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:40009 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731823AbeGZTML (ORCPT
+        Thu, 26 Jul 2018 15:14:08 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:37152 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731823AbeGZTOI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Jul 2018 15:12:11 -0400
-Received: by mail-pg1-f193.google.com with SMTP id x5-v6so1607197pgp.7
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Jul 2018 10:54:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=S7Lhg+eN2AyiUgIgQ7QDnTyPB8kYe/WwAc2m+x3NEHc=;
-        b=V8jRAqvkQWltlv8uItncFzX42aSco1xxTiZbDVQ5NKtNim4JuxXq76N66d5QYCKQSA
-         Ou0h0F/qwX3IZOAFdd6/36VyZjbeSPAH47chyjgUqjoCSxO5hAWK+gYxvoLmwHkYWudt
-         DuJHugnkQXJxFeOZkrvIJu4Wa0UeG+QW/8/HQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=S7Lhg+eN2AyiUgIgQ7QDnTyPB8kYe/WwAc2m+x3NEHc=;
-        b=OhnI0gxuREXaIWyGviedu4HG9i3m4ALGU6rVaaSxnvC3DednZ8w7NYmhy++PSTMErB
-         4NDPLuURDnHZULbLzo8oHIwoEGxk0Ouk7l20gm5Y4vWOyV0oXeRjk9wCTEmQpi3f9u5l
-         IFSQy7xUEExCSwF+FpNU7e71zWlcCYgOONEXbULUUkWjI6ybEJIUHaS2r4muGqObwasy
-         L+FMACGr9YBkqGUe+91AQJjG/AnrSM5N2UCSJMSIn6n9X9LOtYnAaHSsq3xWPm585+xq
-         AWim4Yu5WVtufz+9Q3bcyGjBhPvKLasf1crC7N05X6lwVh+7hI2qeY2a31VmzRCbVU0y
-         VVGQ==
-X-Gm-Message-State: AOUpUlGfN5IFsUd4SG4+3ev2FNBe+0dTQNULmEilVRSekqgwn36IA+AJ
-        UT0SZObBLgi+j+G7pwz14Vzf
-X-Google-Smtp-Source: AAOMgpd/l12PPEMYUcEGrSnxIwr1V6iy8ICnC5CUcJefMr3n+sucMl4BSiza4dCf1IbZ57FtQkaTkw==
-X-Received: by 2002:a65:40ca:: with SMTP id u10-v6mr2819345pgp.2.1532627657410;
-        Thu, 26 Jul 2018 10:54:17 -0700 (PDT)
-Received: from Mani-XPS-13-9360 ([2409:4072:628e:aef6:6d51:3501:dada:e06d])
-        by smtp.gmail.com with ESMTPSA id j83-v6sm4908516pfj.71.2018.07.26.10.54.08
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 26 Jul 2018 10:54:16 -0700 (PDT)
-Date:   Thu, 26 Jul 2018 23:24:05 +0530
-From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To:     Saravanan Sekar <sravanhome@gmail.com>
-Cc:     linus.walleij@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        afaerber@suse.de, catalin.marinas@arm.com, will.deacon@arm.com,
-        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        pn@denx.de, mp-cs@actions-semi.com, jeff.chen@actions-semi.com,
-        thomas.liau@actions-semi.com, linux@cubietech.com
-Subject: Re: [PATCH 1/5] pinctrl: actions: define constructor generic to
- Actions Semi SoC's
-Message-ID: <20180726175405.GD5220@Mani-XPS-13-9360>
-References: <20180722163601.28346-1-sravanhome@gmail.com>
- <20180722163601.28346-2-sravanhome@gmail.com>
+        Thu, 26 Jul 2018 15:14:08 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w6QHrhGZ054001
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Jul 2018 17:56:13 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=mime-version :
+ references : in-reply-to : from : date : message-id : subject : to : cc :
+ content-type; s=corp-2018-07-02;
+ bh=8FswLCcHgqOEaE8p9bODFHSc/2js+9arUGd/SyULSpg=;
+ b=loL9lPTATuALihkhtVFKjKYQKkIQNGJutVfdzxsgPzOsTInakH45kDgWixmwzwFDiThW
+ 5VcUA80dON9EN6D2Vx/F7gk8cd2hy54mZoNHaafU4uyYdFw8CTnHQDujYHPw1iuW55Cu
+ p4ak3pvueTvsqYpmjDYWB/jkW1haXJ1M7lWZbUpdvYAyfLSIrfUj0jlJqLAA/HiTB0Jb
+ Y5muPx92BR2VfOq3Azz9v4OLR5HEg/uZNNOtIBdQTRVv26ZXbafiqPLQFW3VpOLtH4VP
+ F97c9w/VKt1v7c5MdYofpA+OwaJ9dfsimaL8J34OsDaX5z0ctnpozdHIzVofW23QD66F ew== 
+Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
+        by userp2120.oracle.com with ESMTP id 2kbwfq46c8-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK)
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Jul 2018 17:56:13 +0000
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w6QHuBkN010294
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK)
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Jul 2018 17:56:11 GMT
+Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w6QHuATs031178
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Jul 2018 17:56:11 GMT
+Received: from mail-oi0-f43.google.com (/209.85.218.43)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 26 Jul 2018 10:56:10 -0700
+Received: by mail-oi0-f43.google.com with SMTP id k81-v6so4502227oib.4
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Jul 2018 10:56:10 -0700 (PDT)
+X-Gm-Message-State: AOUpUlFtBuGw4BQaxD/mBaQcwKYb+n/6Zg2H51wz748wiPpJIRsFXxwr
+        6b6kx5JauNE3/ezC+ujNOjcD/FObrS3CcZeAbxc=
+X-Google-Smtp-Source: AAOMgpcj3/c0n+WvmJp2WXIpBHfFrB/Rkw88sYYr/ka/bL4P5OrXETmlM30Z0VS2i1W5BvTocPAzcXZBRMCCaZ4HusE=
+X-Received: by 2002:aca:da88:: with SMTP id r130-v6mr3104758oig.163.1532627770203;
+ Thu, 26 Jul 2018 10:56:10 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180722163601.28346-2-sravanhome@gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <20180725220144.11531-1-osalvador@techadventures.net>
+ <20180725220144.11531-3-osalvador@techadventures.net> <20180726080500.GX28386@dhcp22.suse.cz>
+ <20180726081215.GC22028@techadventures.net> <20180726151420.uigttpoclcka6h4h@xakep.localdomain>
+ <20180726164304.GP28386@dhcp22.suse.cz> <CAGM2reatUAekg=e9FQM1-UVLOSBKb74-FYo7FcPqO_WaR7AmOQ@mail.gmail.com>
+ <20180726175212.GQ28386@dhcp22.suse.cz>
+In-Reply-To: <20180726175212.GQ28386@dhcp22.suse.cz>
+From:   Pavel Tatashin <pasha.tatashin@oracle.com>
+Date:   Thu, 26 Jul 2018 13:55:34 -0400
+X-Gmail-Original-Message-ID: <CAGM2reY2HAo3UDzw=P8ue0jJmRRZou-osyJwWjXt6vtC+CF8Ug@mail.gmail.com>
+Message-ID: <CAGM2reY2HAo3UDzw=P8ue0jJmRRZou-osyJwWjXt6vtC+CF8Ug@mail.gmail.com>
+Subject: Re: [PATCH v3 2/5] mm: access zone->node via zone_to_nid() and zone_set_nid()
+To:     mhocko@kernel.org
+Cc:     osalvador@techadventures.net,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Vlastimil Babka <vbabka@suse.cz>, mgorman@techsingularity.net,
+        aaron.lu@intel.com, iamjoonsoo.kim@lge.com,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>, dan.j.williams@intel.com,
+        osalvador@suse.de
+Content-Type: text/plain; charset="UTF-8"
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8965 signatures=668706
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=3 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=789
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1806210000 definitions=main-1807260184
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Saravanan,
+On Thu, Jul 26, 2018 at 1:52 PM Michal Hocko <mhocko@kernel.org> wrote:
+>
+> On Thu 26-07-18 13:18:46, Pavel Tatashin wrote:
+> > > > OpenGrok was used to find places where zone->node is accessed. A public one
+> > > > is available here: http://src.illumos.org/source/
+> > >
+> > > I assume that tool uses some pattern matching or similar so steps to use
+> > > the tool to get your results would be more helpful. This is basically
+> > > the same thing as coccinelle generated patches.
+> >
+> > OpenGrok is very easy to use, it is source browser, similar to cscope
+> > except obviously you can't edit the browsed code. I could have used
+> > cscope just as well here.
+>
+> OK, then I misunderstood. I thought it was some kind of c aware grep
+> that found all the usage for you. If this is cscope like then it is not
+> worth mentioning in the changelog.
 
-On Sun, Jul 22, 2018 at 06:35:57PM +0200, Saravanan Sekar wrote:
-> Existing constructor defined in S900 is reused generic
-> for all Actions Semi SoC's.
-> 
+That's what I thought :) Oscar, will you remove the comment about
+opengrok, or should I paste a new patch?
 
-Perhaps this could be,
+Thank you,
+Pavel
 
-Move generic defines common to the Owl family out of S900 driver.
-
-Thanks,
-Mani
-
-> Signed-off-by: Parthiban Nallathambi <pn@denx.de>
-> Signed-off-by: Saravanan Sekar <sravanhome@gmail.com>
-> ---
->  drivers/pinctrl/actions/pinctrl-owl.h  | 124 +++++++++++++++++++++++++
->  drivers/pinctrl/actions/pinctrl-s900.c | 122 ------------------------
->  2 files changed, 124 insertions(+), 122 deletions(-)
-> 
-> diff --git a/drivers/pinctrl/actions/pinctrl-owl.h b/drivers/pinctrl/actions/pinctrl-owl.h
-> index 74342378937c..42635366e68f 100644
-> --- a/drivers/pinctrl/actions/pinctrl-owl.h
-> +++ b/drivers/pinctrl/actions/pinctrl-owl.h
-> @@ -15,6 +15,130 @@
->  #define OWL_PINCONF_SLEW_SLOW 0
->  #define OWL_PINCONF_SLEW_FAST 1
->  
-> +#define OWL_GPIO_PORT_A		0
-> +#define OWL_GPIO_PORT_B		1
-> +#define OWL_GPIO_PORT_C		2
-> +#define OWL_GPIO_PORT_D		3
-> +#define OWL_GPIO_PORT_E		4
-> +#define OWL_GPIO_PORT_F		5
-> +
-
-Please order the defines as pinctrl first and GPIO second. It does look
-a lot better.
-
-Thanks,
-Mani
-
-> +#define MUX_PG(group_name, reg, shift, width)				\
-> +	{								\
-> +		.name = #group_name,					\
-> +		.pads = group_name##_pads,				\
-> +		.npads = ARRAY_SIZE(group_name##_pads),			\
-> +		.funcs = group_name##_funcs,				\
-> +		.nfuncs = ARRAY_SIZE(group_name##_funcs),		\
-> +		.mfpctl_reg  = MFCTL##reg,				\
-> +		.mfpctl_shift = shift,					\
-> +		.mfpctl_width = width,					\
-> +		.drv_reg = -1,						\
-> +		.drv_shift = -1,					\
-> +		.drv_width = -1,					\
-> +		.sr_reg = -1,						\
-> +		.sr_shift = -1,						\
-> +		.sr_width = -1,						\
-> +	}
-> +
-> +#define DRV_PG(group_name, reg, shift, width)				\
-> +	{								\
-> +		.name = #group_name,					\
-> +		.pads = group_name##_pads,				\
-> +		.npads = ARRAY_SIZE(group_name##_pads),			\
-> +		.mfpctl_reg  = -1,					\
-> +		.mfpctl_shift = -1,					\
-> +		.mfpctl_width = -1,					\
-> +		.drv_reg = PAD_DRV##reg,				\
-> +		.drv_shift = shift,					\
-> +		.drv_width = width,					\
-> +		.sr_reg = -1,						\
-> +		.sr_shift = -1,						\
-> +		.sr_width = -1,						\
-> +	}
-> +
-> +#define SR_PG(group_name, reg, shift, width)				\
-> +	{								\
-> +		.name = #group_name,					\
-> +		.pads = group_name##_pads,				\
-> +		.npads = ARRAY_SIZE(group_name##_pads),			\
-> +		.mfpctl_reg  = -1,					\
-> +		.mfpctl_shift = -1,					\
-> +		.mfpctl_width = -1,					\
-> +		.drv_reg = -1,						\
-> +		.drv_shift = -1,					\
-> +		.drv_width = -1,					\
-> +		.sr_reg = PAD_SR##reg,					\
-> +		.sr_shift = shift,					\
-> +		.sr_width = width,					\
-> +	}
-> +
-> +#define OWL_GPIO_PORT(port, base, count, _outen, _inen, _dat)	\
-> +	[OWL_GPIO_PORT_##port] = {				\
-> +		.offset = base,					\
-> +		.pins = count,					\
-> +		.outen = _outen,				\
-> +		.inen = _inen,					\
-> +		.dat = _dat,					\
-> +	}
-> +
-> +#define FUNCTION(fname)					\
-> +	{						\
-> +		.name = #fname,				\
-> +		.groups = fname##_groups,		\
-> +		.ngroups = ARRAY_SIZE(fname##_groups),	\
-> +	}
-> +
-> +/* PAD PULL UP/DOWN CONFIGURES */
-> +#define PULLCTL_CONF(pull_reg, pull_sft, pull_wdt)	\
-> +	{						\
-> +		.reg = PAD_PULLCTL##pull_reg,		\
-> +		.shift = pull_sft,			\
-> +		.width = pull_wdt,			\
-> +	}
-> +
-> +#define PAD_PULLCTL_CONF(pad_name, pull_reg, pull_sft, pull_wdt)	\
-> +	struct owl_pullctl pad_name##_pullctl_conf			\
-> +		= PULLCTL_CONF(pull_reg, pull_sft, pull_wdt)
-> +
-> +#define ST_CONF(st_reg, st_sft, st_wdt)			\
-> +	{						\
-> +		.reg = PAD_ST##st_reg,			\
-> +		.shift = st_sft,			\
-> +		.width = st_wdt,			\
-> +	}
-> +
-> +#define PAD_ST_CONF(pad_name, st_reg, st_sft, st_wdt)	\
-> +	struct owl_st pad_name##_st_conf		\
-> +		= ST_CONF(st_reg, st_sft, st_wdt)
-> +
-> +#define PAD_INFO(name)					\
-> +	{						\
-> +		.pad = name,				\
-> +		.pullctl = NULL,			\
-> +		.st = NULL,				\
-> +	}
-> +
-> +#define PAD_INFO_ST(name)				\
-> +	{						\
-> +		.pad = name,				\
-> +		.pullctl = NULL,			\
-> +		.st = &name##_st_conf,			\
-> +	}
-> +
-> +#define PAD_INFO_PULLCTL(name)				\
-> +	{						\
-> +		.pad = name,				\
-> +		.pullctl = &name##_pullctl_conf,	\
-> +		.st = NULL,				\
-> +	}
-> +
-> +#define PAD_INFO_PULLCTL_ST(name)			\
-> +	{						\
-> +		.pad = name,				\
-> +		.pullctl = &name##_pullctl_conf,	\
-> +		.st = &name##_st_conf,			\
-> +	}
-> +
->  enum owl_pinconf_pull {
->  	OWL_PINCONF_PULL_HIZ,
->  	OWL_PINCONF_PULL_DOWN,
-> diff --git a/drivers/pinctrl/actions/pinctrl-s900.c b/drivers/pinctrl/actions/pinctrl-s900.c
-> index 5503c7945764..baa2f4847418 100644
-> --- a/drivers/pinctrl/actions/pinctrl-s900.c
-> +++ b/drivers/pinctrl/actions/pinctrl-s900.c
-> @@ -33,13 +33,6 @@
->  #define PAD_SR1			(0x0274)
->  #define PAD_SR2			(0x0278)
->  
-> -#define OWL_GPIO_PORT_A		0
-> -#define OWL_GPIO_PORT_B		1
-> -#define OWL_GPIO_PORT_C		2
-> -#define OWL_GPIO_PORT_D		3
-> -#define OWL_GPIO_PORT_E		4
-> -#define OWL_GPIO_PORT_F		5
-> -
->  #define _GPIOA(offset)		(offset)
->  #define _GPIOB(offset)		(32 + (offset))
->  #define _GPIOC(offset)		(64 + (offset))
-> @@ -892,55 +885,6 @@ static unsigned int i2c2_sr_pads[]		= { I2C2_SCLK, I2C2_SDATA };
->  static unsigned int sensor0_sr_pads[]		= { SENSOR0_PCLK,
->  						    SENSOR0_CKOUT };
->  
-> -#define MUX_PG(group_name, reg, shift, width)				\
-> -	{								\
-> -		.name = #group_name,					\
-> -		.pads = group_name##_pads,				\
-> -		.npads = ARRAY_SIZE(group_name##_pads),			\
-> -		.funcs = group_name##_funcs,				\
-> -		.nfuncs = ARRAY_SIZE(group_name##_funcs),		\
-> -		.mfpctl_reg  = MFCTL##reg,				\
-> -		.mfpctl_shift = shift,					\
-> -		.mfpctl_width = width,					\
-> -		.drv_reg = -1,						\
-> -		.drv_shift = -1,					\
-> -		.drv_width = -1,					\
-> -		.sr_reg = -1,						\
-> -		.sr_shift = -1,						\
-> -		.sr_width = -1,						\
-> -	}
-> -
-> -#define DRV_PG(group_name, reg, shift, width)				\
-> -	{								\
-> -		.name = #group_name,					\
-> -		.pads = group_name##_pads,				\
-> -		.npads = ARRAY_SIZE(group_name##_pads),			\
-> -		.mfpctl_reg  = -1,					\
-> -		.mfpctl_shift = -1,					\
-> -		.mfpctl_width = -1,					\
-> -		.drv_reg = PAD_DRV##reg,				\
-> -		.drv_shift = shift,					\
-> -		.drv_width = width,					\
-> -		.sr_reg = -1,						\
-> -		.sr_shift = -1,						\
-> -		.sr_width = -1,						\
-> -	}
-> -
-> -#define SR_PG(group_name, reg, shift, width)				\
-> -	{								\
-> -		.name = #group_name,					\
-> -		.pads = group_name##_pads,				\
-> -		.npads = ARRAY_SIZE(group_name##_pads),			\
-> -		.mfpctl_reg  = -1,					\
-> -		.mfpctl_shift = -1,					\
-> -		.mfpctl_width = -1,					\
-> -		.drv_reg = -1,						\
-> -		.drv_shift = -1,					\
-> -		.drv_width = -1,					\
-> -		.sr_reg = PAD_SR##reg,					\
-> -		.sr_shift = shift,					\
-> -		.sr_width = width,					\
-> -	}
->  
->  /* Pinctrl groups */
->  static const struct owl_pingroup s900_groups[] = {
-> @@ -1442,13 +1386,6 @@ static const char * const sirq2_groups[] = {
->  	"sirq2_dummy",
->  };
->  
-> -#define FUNCTION(fname)					\
-> -	{						\
-> -		.name = #fname,				\
-> -		.groups = fname##_groups,		\
-> -		.ngroups = ARRAY_SIZE(fname##_groups),	\
-> -	}
-> -
->  static const struct owl_pinmux_func s900_functions[] = {
->  	[S900_MUX_ERAM] = FUNCTION(eram),
->  	[S900_MUX_ETH_RMII] = FUNCTION(eth_rmii),
-> @@ -1500,28 +1437,6 @@ static const struct owl_pinmux_func s900_functions[] = {
->  	[S900_MUX_SIRQ1] = FUNCTION(sirq1),
->  	[S900_MUX_SIRQ2] = FUNCTION(sirq2)
->  };
-> -/* PAD PULL UP/DOWN CONFIGURES */
-> -#define PULLCTL_CONF(pull_reg, pull_sft, pull_wdt)			\
-> -	{								\
-> -		.reg = PAD_PULLCTL##pull_reg,				\
-> -		.shift = pull_sft,					\
-> -		.width = pull_wdt,					\
-> -	}
-> -
-> -#define PAD_PULLCTL_CONF(pad_name, pull_reg, pull_sft, pull_wdt)	\
-> -	struct owl_pullctl pad_name##_pullctl_conf			\
-> -		= PULLCTL_CONF(pull_reg, pull_sft, pull_wdt)
-> -
-> -#define ST_CONF(st_reg, st_sft, st_wdt)					\
-> -	{								\
-> -		.reg = PAD_ST##st_reg,					\
-> -		.shift = st_sft,					\
-> -		.width = st_wdt,					\
-> -	}
-> -
-> -#define PAD_ST_CONF(pad_name, st_reg, st_sft, st_wdt)			\
-> -	struct owl_st pad_name##_st_conf				\
-> -		= ST_CONF(st_reg, st_sft, st_wdt)
->  
->  /* PAD_PULLCTL0 */
->  static PAD_PULLCTL_CONF(ETH_RXER, 0, 18, 2);
-> @@ -1639,34 +1554,6 @@ static PAD_ST_CONF(SPI0_SS, 1, 2, 1);
->  static PAD_ST_CONF(I2S_BCLK0, 1, 1, 1);
->  static PAD_ST_CONF(I2S_MCLK0, 1, 0, 1);
->  
-> -#define PAD_INFO(name)							\
-> -	{								\
-> -		.pad = name,						\
-> -		.pullctl = NULL,					\
-> -		.st = NULL,						\
-> -	}
-> -
-> -#define PAD_INFO_ST(name)						\
-> -	{								\
-> -		.pad = name,						\
-> -		.pullctl = NULL,					\
-> -		.st = &name##_st_conf,					\
-> -	}
-> -
-> -#define PAD_INFO_PULLCTL(name)						\
-> -	{								\
-> -		.pad = name,						\
-> -		.pullctl = &name##_pullctl_conf,			\
-> -		.st = NULL,						\
-> -	}
-> -
-> -#define PAD_INFO_PULLCTL_ST(name)					\
-> -	{								\
-> -		.pad = name,						\
-> -		.pullctl = &name##_pullctl_conf,			\
-> -		.st = &name##_st_conf,					\
-> -	}
-> -
->  /* Pad info table */
->  static struct owl_padinfo s900_padinfo[NUM_PADS] = {
->  	[ETH_TXD0] = PAD_INFO_ST(ETH_TXD0),
-> @@ -1821,15 +1708,6 @@ static struct owl_padinfo s900_padinfo[NUM_PADS] = {
->  	[SGPIO3] = PAD_INFO_PULLCTL_ST(SGPIO3)
->  };
->  
-> -#define OWL_GPIO_PORT(port, base, count, _outen, _inen, _dat)	\
-> -	[OWL_GPIO_PORT_##port] = {				\
-> -		.offset = base,					\
-> -		.pins = count,					\
-> -		.outen = _outen,				\
-> -		.inen = _inen,					\
-> -		.dat = _dat,					\
-> -	}
-> -
->  static const struct owl_gpio_port s900_gpio_ports[] = {
->  	OWL_GPIO_PORT(A, 0x0000, 32, 0x0, 0x4, 0x8),
->  	OWL_GPIO_PORT(B, 0x000C, 32, 0x0, 0x4, 0x8),
-> -- 
-> 2.18.0
-> 
+> --
+> Michal Hocko
+> SUSE Labs
+>
