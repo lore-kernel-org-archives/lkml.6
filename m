@@ -2,106 +2,109 @@ Return-Path: <SRS0=7Z+k=KK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EA6DC67790
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 00:41:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C573C6778F
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 00:47:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 23A8F20882
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 00:41:14 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="eho9tWlg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 23A8F20882
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id C719420852
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 00:47:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C719420852
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728615AbeGZBzV (ORCPT
+        id S1728535AbeGZCBt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 21:55:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39236 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728449AbeGZBzV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Jul 2018 21:55:21 -0400
-Received: from devbox (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6E37420846;
-        Thu, 26 Jul 2018 00:41:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1532565669;
-        bh=YIntXCC2jObea/TJjPOS+yKumScbe0KBFS57HMShnLQ=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=eho9tWlgI2lVd17CF6aIe5b3CmQ6xeCADisAZZPMhWcZ0DbLQS04rdbZpggicbdsU
-         +jlte7ce9dvrvMZP5QkSZjyPsgVNe6AfNh0/IE1Nnl2fQRHS+Uw5T/iGBWkaK6Nfc4
-         eUUiJhSFCA8RMJuy4brmsio7kcy9Q6IYf3rr7aAk=
-Date:   Thu, 26 Jul 2018 09:41:06 +0900
-From:   Masami Hiramatsu <mhiramat@kernel.org>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     Francis Deslauriers <francis.deslauriers@efficios.com>,
-        peterz@infradead.org, mathieu.desnoyers@efficios.com,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] tracing: kprobes: Prohibit probing on notrace
- functions
-Message-Id: <20180726094106.1e8db6e2df788de20e696566@kernel.org>
-In-Reply-To: <20180713081803.1b78ebbc@gandalf.local.home>
-References: <1500044315-9508-3-git-send-email-francis.deslauriers@efficios.com>
-        <1531418053-21414-1-git-send-email-francis.deslauriers@efficios.com>
-        <1531418053-21414-2-git-send-email-francis.deslauriers@efficios.com>
-        <20180713115301.532ab1484e8b0befd90782d0@kernel.org>
-        <20180713081803.1b78ebbc@gandalf.local.home>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Wed, 25 Jul 2018 22:01:49 -0400
+Received: from gateway24.websitewelcome.com ([192.185.51.251]:18377 "EHLO
+        gateway24.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728385AbeGZCBs (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Jul 2018 22:01:48 -0400
+Received: from cm15.websitewelcome.com (cm15.websitewelcome.com [100.42.49.9])
+        by gateway24.websitewelcome.com (Postfix) with ESMTP id C89162ABA5
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Jul 2018 19:47:34 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id iUR7faw3pbXuJiURFfhRgx; Wed, 25 Jul 2018 19:47:34 -0500
+X-Authority-Reason: nr=8
+Received: from [189.250.102.187] (port=37836 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1fiUR7-000w6j-5a; Wed, 25 Jul 2018 19:47:21 -0500
+Date:   Wed, 25 Jul 2018 19:47:19 -0500
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Jiancheng Xue <xuejiancheng@hisilicon.com>
+Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH v2] reset: hisilicon: fix potential NULL pointer dereference
+Message-ID: <20180726004719.GA9896@embeddedor.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.102.187
+X-Source-L: No
+X-Exim-ID: 1fiUR7-000w6j-5a
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [189.250.102.187]:37836
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 12
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 13 Jul 2018 08:18:03 -0400
-Steven Rostedt <rostedt@goodmis.org> wrote:
+There is a potential execution path in which function
+platform_get_resource() returns NULL. If this happens,
+we will end up having a NULL pointer dereference.
 
-> On Fri, 13 Jul 2018 11:53:01 +0900
-> Masami Hiramatsu <mhiramat@kernel.org> wrote:
-> 
-> > On Thu, 12 Jul 2018 13:54:12 -0400
-> > Francis Deslauriers <francis.deslauriers@efficios.com> wrote:
-> > 
-> > > From: Masami Hiramatsu <mhiramat@kernel.org>
-> > > 
-> > > Prohibit kprobe-events probing on notrace function.
-> > > Since probing on the notrace function can cause recursive
-> > > event call. In most case those are just skipped, but
-> > > in some case it falls into infinite recursive call.  
-> > 
-> > BTW, I'm considering to add an option to allow putting
-> > kprobes on notrace function - just for debugging 
-> > ftrace by kprobes. That is "developer only" option
-> > so generally it should be disabled, but for debugging
-> > the ftrace, we still need it. Or should I introduce
-> > another kprobes module for debugging it?
-> 
-> No, I think the former is better (to add an option to allow putting
-> kprobes on notrace functions). By default we let people protect
-> themselves. But if then provide a switch that lets you do things that
-> might let you shoot yourself in the foot.
+Fix this by replacing devm_ioremap with devm_ioremap_resource,
+which has the NULL check and the memory region request.
 
-I'm adding CONFIG_KPROBE_EVENTS_ON_NOTRACE kconfig which allows
-kprobes on notrace function. I think we don't need to make it
-online switchable, since it is only good for ftrace developers.
+This code was detected with the help of Coccinelle.
 
-Thank you,
+Cc: stable@vger.kernel.org
+Fixes: 97b7129cd2af ("reset: hisilicon: change the definition of hisi_reset_init")
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+Changes in v2:
+ - Use devm_ioremap_resource. Thanks to Stephen Boyd for
+   pointing it out.
 
-> 
-> BTW, I'm now leaving on vacation. I'll be back on the 23rd and will be
-> looking for patches that I should be pulling in then.
-> 
-> Thanks!
-> 
-> -- Steve
+ drivers/clk/hisilicon/reset.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-
+diff --git a/drivers/clk/hisilicon/reset.c b/drivers/clk/hisilicon/reset.c
+index 2a5015c..43e82fa 100644
+--- a/drivers/clk/hisilicon/reset.c
++++ b/drivers/clk/hisilicon/reset.c
+@@ -109,9 +109,8 @@ struct hisi_reset_controller *hisi_reset_init(struct platform_device *pdev)
+ 		return NULL;
+ 
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	rstc->membase = devm_ioremap(&pdev->dev,
+-				res->start, resource_size(res));
+-	if (!rstc->membase)
++	rstc->membase = devm_ioremap_resource(&pdev->dev, res);
++	if (IS_ERR(rstc->membase))
+ 		return NULL;
+ 
+ 	spin_lock_init(&rstc->lock);
 -- 
-Masami Hiramatsu <mhiramat@kernel.org>
+2.7.4
+
