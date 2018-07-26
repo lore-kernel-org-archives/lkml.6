@@ -2,74 +2,180 @@ Return-Path: <SRS0=7Z+k=KK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B8A2C28CF6
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 16:24:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75A18C6778F
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 16:25:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DD0FF2083F
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 16:24:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD0FF2083F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 2B3812083F
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 16:25:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2B3812083F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731443AbeGZRlf (ORCPT
+        id S1731740AbeGZRnB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 26 Jul 2018 13:41:35 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:32808 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730250AbeGZRlf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Jul 2018 13:41:35 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 753EC77886;
-        Thu, 26 Jul 2018 16:24:02 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.34.27.30])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 6F52B1C55D;
-        Thu, 26 Jul 2018 16:24:01 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-        oleg@redhat.com; Thu, 26 Jul 2018 18:24:02 +0200 (CEST)
-Date:   Thu, 26 Jul 2018 18:24:00 +0200
-From:   Oleg Nesterov <oleg@redhat.com>
-To:     "Eric W. Biederman" <ebiederm@xmission.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, Wen Yang <wen.yang99@zte.com.cn>,
-        majiang <ma.jiang@zte.com.cn>
-Subject: Re: [PATCH 18/20] signal: Add calculate_sigpending()
-Message-ID: <20180726162400.GB467@redhat.com>
-References: <87efft5ncd.fsf_-_@xmission.com>
- <20180724032419.20231-18-ebiederm@xmission.com>
- <20180726132050.GA32718@redhat.com>
- <87tvom58tz.fsf@xmission.com>
+        Thu, 26 Jul 2018 13:43:01 -0400
+Received: from mga03.intel.com ([134.134.136.65]:54848 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730250AbeGZRnA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Jul 2018 13:43:00 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Jul 2018 09:25:27 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,405,1526367600"; 
+   d="scan'208";a="76192023"
+Received: from marshy.an.intel.com ([10.122.105.159])
+  by orsmga001.jf.intel.com with ESMTP; 26 Jul 2018 09:25:25 -0700
+From:   richard.gong@linux.intel.com
+To:     gregkh@linuxfoundation.org, catalin.marinas@arm.com,
+        will.deacon@arm.com, dinguyen@kernel.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, atull@kernel.org, mdf@kernel.org,
+        arnd@arndb.de, corbet@lwn.net
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-fpga@vger.kernel.org,
+        linux-doc@vger.kernel.org, yves.vandervennet@linux.intel.com,
+        richard.gong@intel.com, joyce.ooi@intel.com
+Subject: [PATCHv8 0/9] Add Intel Stratix10 FPGA manager and service layer 
+Date:   Thu, 26 Jul 2018 11:27:17 -0500
+Message-Id: <1532622446-19663-1-git-send-email-richard.gong@linux.intel.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87tvom58tz.fsf@xmission.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Thu, 26 Jul 2018 16:24:02 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Thu, 26 Jul 2018 16:24:02 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'oleg@redhat.com' RCPT:''
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/26, Eric W. Biederman wrote:
->
-> > Easy to fix, but perhaps we can simply add recalc_sigpending() into
-> > schedule_tail() ? It already does more than just finish_task_switch/etc.
-> >
-> > This way we do not need the new helper (which btw can only be used by
-> > copy_process).
->
-> The problem I have with reusing recalc_sigpending is that it does not
-> set TIF_SIGPENDING if (freezing || klp_patch_pending).
+From: Richard Gong <richard.gong@intel.com>
 
-Ah, indeed, you are right.
+This is the 8th submission of Intel Stratix10 service layer and FPGA manager
+driver patches. This submission includes one additional patch for supporting
+remote status update, the second Stratix10 service layer client. Intel
+Stratix10 FPGA manager, which is 1st Stratix10 service layer client, is
+included in this submission. 
 
-Oleg.
+I have moved the stratix10-smc.h to include/linux since it is being reused.
+Header stratix10-smc.h defines a secure messaging protocol that used by
+Stratix10 service layer and EDAC/DWMAC drivers for:
+1. FPGA programming.
+2. RSU (remote status update). This updates some booting parameters that
+   happen on reboot, before the kernel boots the next time.
+3. reading and writing the secure registers.
+
+Stratix10 service layer patches have been reviewed internally by Alan Tull
+and other colleagues at Intel.
+
+Some features of the Intel Stratix10 SoC require a level of privilege
+higher than the kernel is granted. Such secure features include
+FPGA programming, remote status update, read and write the secure registers.
+In terms of the ARMv8 architecture, the kernel runs at Exception Level 1 (EL1),
+access to the features requires Exception Level 3 (EL3).
+
+The Intel Stratix10 service layer provides kernel APIs for drivers to
+request access to the secure features. The requests are queued and processed
+one by one. ARM’s SMCCC is used to pass the execution of the requests on to
+a secure monitor (EL3).
+
+Later the Intel Stratix10 service layer driver will be extended to provide
+services for QSPI, Crypto and warm reset.
+
+v2: add patches for FPGA manager, FPGA manager binding, dts and defconfig
+    remove intel-service subdirectory and intel-service.h, move intel-smc.h
+    and intel-service.c to driver/misc subdirectory
+    remove global variables
+    change service layer driver be 'default n'
+    correct SPDX markers
+    add timeout for do..while() loop
+    add kernel-doc for the functions and structs, correct multiline comments
+    replace kfifo_in/kfifo_out with kfifo_in_spinlocked/kfifo_out_spinlocked
+    rename struct intel_svc_data (at client header) to intel_svc_client_msg
+    rename struct intel_svc_private_mem to intel_svc_data
+    other corrections/changes from Intel internal code reviews
+v3: change all exported functions with "intel_svc_" as the prefix
+    increase timeout values for claiming back submitted buffer(s)
+    rename struct intel_command_reconfig_payload to
+    struct intel_svc_command_reconfig_payload
+    add pr_err() to provide the error return value
+    change to put fpga_mgr node under firmware/svc node
+    change to FPGA manager to align the update of service client APIs, and the
+    update of fpga_mgr device node
+    Other corrections/changes
+v4: s/intel/stratix10/ on some variables, structs, functions, and file names
+    intel-service.c -> stratix10-svc.c
+    intel-smc.h -> stratix10-smc.h
+    intel-service-client.h -> stratix10-svc-client.h
+    remove non-kernel-doc formatting
+    s/fpga-mgr@0/fpga-mgr/ to remove unit_address at fpga_mgr node
+    add Rob's Reviewed-by
+    add Richard's signed-off-by
+v5: add a new API statix10_svc_done() which is called by service client
+    when client request is completed or error occurs during request
+    process. Which allows service layer to free its resources.
+    remove dummy client from service layer client header and service layer
+    source file.
+    add Rob's Reviewed-by
+    add a new file stratix10-svc.rst and add that to driver-api/index.rst
+    kernel-doc fixes
+v6: replace kthread_create_on_cpu() with kthread_create_on_node()
+    extend stratix_svc_send() to support service client which doesn't use
+    memory allocated by service layer
+    add S10_RECONFIG_TIMEOUT
+    rename s/S10_BUF_TIMEOUT/S10_BUFFER_TIMEOUT/
+    fix service layer and FPGA manager Klocwork errors
+v7: add remote status update client support
+    s/pr_debug/dev_dbg, s/dev_info/dev_dbg
+    add unlock buffer if s10_svc_send_msg() fails
+    add release channel if fpga_mgr_create() fails
+    handle invalid pointer at svc if the client passed an invalid name
+v8: move stratix10-smc.h to include/linux from driver/misc
+    revert version 7 error code & smc function ID value changes at
+    stratix10-smc.h
+    add a goto and common error handling at the end of fpga driver's
+    probe function
+
+Alan Tull (3):
+  dt-bindings: fpga: add Stratix10 SoC FPGA manager binding
+  arm64: dts: stratix10: add fpga manager and region
+  fpga: add intel stratix10 soc fpga manager driver
+
+Richard Gong (6):
+  dt-bindings, firmware: add Intel Stratix10 service layer binding
+  arm64: dts: stratix10: add stratix10 service driver binding to base
+    dtsi
+  misc: add Intel Stratix10 service layer driver
+  defconfig: enable fpga and service layer
+  Documentation: driver-api: add stratix10 service layer
+  misc: add remote status update client support
+
+ .../bindings/firmware/intel,stratix10-svc.txt      |   57 ++
+ .../bindings/fpga/intel-stratix10-soc-fpga-mgr.txt |   17 +
+ Documentation/driver-api/index.rst                 |    1 +
+ Documentation/driver-api/stratix10-svc.rst         |   32 +
+ arch/arm64/boot/dts/altera/socfpga_stratix10.dtsi  |   33 +
+ arch/arm64/configs/defconfig                       |    7 +
+ drivers/fpga/Kconfig                               |    6 +
+ drivers/fpga/Makefile                              |    1 +
+ drivers/fpga/stratix10-soc.c                       |  560 ++++++++++
+ drivers/misc/Kconfig                               |   12 +
+ drivers/misc/Makefile                              |    1 +
+ drivers/misc/stratix10-svc.c                       | 1066 ++++++++++++++++++++
+ include/linux/stratix10-smc.h                      |  312 ++++++
+ include/linux/stratix10-svc-client.h               |  217 ++++
+ 14 files changed, 2322 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/firmware/intel,stratix10-svc.txt
+ create mode 100644 Documentation/devicetree/bindings/fpga/intel-stratix10-soc-fpga-mgr.txt
+ create mode 100644 Documentation/driver-api/stratix10-svc.rst
+ create mode 100644 drivers/fpga/stratix10-soc.c
+ create mode 100644 drivers/misc/stratix10-svc.c
+ create mode 100644 include/linux/stratix10-smc.h
+ create mode 100644 include/linux/stratix10-svc-client.h
+
+-- 
+2.7.4
 
