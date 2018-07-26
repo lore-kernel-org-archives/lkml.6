@@ -2,100 +2,92 @@ Return-Path: <SRS0=7Z+k=KK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AACD5C28CF6
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 10:45:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12137C6778F
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 10:45:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 57ADF2083F
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 10:45:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 57ADF2083F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id C4B762083F
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 10:45:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C4B762083F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729354AbeGZMBS (ORCPT
+        id S1729395AbeGZMCI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 26 Jul 2018 08:01:18 -0400
-Received: from foss.arm.com ([217.140.101.70]:52276 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728998AbeGZMBS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Jul 2018 08:01:18 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2CB9180D;
-        Thu, 26 Jul 2018 03:45:03 -0700 (PDT)
-Received: from e103592.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6071A3F575;
-        Thu, 26 Jul 2018 03:45:01 -0700 (PDT)
-Date:   Thu, 26 Jul 2018 11:44:58 +0100
-From:   Dave Martin <Dave.Martin@arm.com>
-To:     Will Deacon <will.deacon@arm.com>
-Cc:     arnd@arndb.de, linux-kernel@vger.kernel.org,
-        linux@dominikbrodowski.net, oleg@redhat.com,
-        viro@zeniv.linux.org.uk, akpm@linux-foundation.org,
-        steve.mcintyre@arm.com, linux-arm-kernel@lists.infradead.org,
-        ebiederm@xmission.com
-Subject: Re: [PATCH 1/2] signal: Introduce COMPAT_SIGMINSTKSZ for use in
- compat_sys_sigaltstack
-Message-ID: <20180726104456.GT4240@e103592.cambridge.arm.com>
-References: <1532526312-26993-1-git-send-email-will.deacon@arm.com>
- <1532526312-26993-2-git-send-email-will.deacon@arm.com>
- <20180725155427.GR4240@e103592.cambridge.arm.com>
- <20180725163726.GE6866@arm.com>
+        Thu, 26 Jul 2018 08:02:08 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:60159 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729107AbeGZMCI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Jul 2018 08:02:08 -0400
+Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 9BFF9D74B8A0B;
+        Thu, 26 Jul 2018 18:45:49 +0800 (CST)
+Received: from szvp000201624.huawei.com (10.120.216.130) by
+ DGGEMS411-HUB.china.huawei.com (10.3.19.211) with Microsoft SMTP Server id
+ 14.3.382.0; Thu, 26 Jul 2018 18:45:42 +0800
+From:   Chao Yu <yuchao0@huawei.com>
+To:     <jaegeuk@kernel.org>
+CC:     <linux-f2fs-devel@lists.sourceforge.net>,
+        <linux-kernel@vger.kernel.org>, <chao@kernel.org>,
+        Chao Yu <yuchao0@huawei.com>
+Subject: [PATCH] f2fs: avoid race between zero_range and background GC
+Date:   Thu, 26 Jul 2018 18:45:36 +0800
+Message-ID: <20180726104536.114340-1-yuchao0@huawei.com>
+X-Mailer: git-send-email 2.18.0.rc1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180725163726.GE6866@arm.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Type: text/plain
+X-Originating-IP: [10.120.216.130]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 25, 2018 at 05:37:26PM +0100, Will Deacon wrote:
-> On Wed, Jul 25, 2018 at 04:54:27PM +0100, Dave Martin wrote:
-> > On Wed, Jul 25, 2018 at 02:45:11PM +0100, Will Deacon wrote:
-> > > @@ -3476,7 +3478,8 @@ int restore_altstack(const stack_t __user *uss)
-> > >  	stack_t new;
-> > >  	if (copy_from_user(&new, uss, sizeof(stack_t)))
-> > >  		return -EFAULT;
-> > > -	(void)do_sigaltstack(&new, NULL, current_user_stack_pointer());
-> > > +	(void)do_sigaltstack(&new, NULL, current_user_stack_pointer(),
-> > > +			     MINSIGSTKSZ);
-> > 
-> > Why can't this fail?
-> > 
-> > If this fails here we silently go wrong, but...
-> > 
-> > >  	/* squash all but EFAULT for now */
-> > >  	return 0;
-> > >  }
-> > > @@ -3510,7 +3513,8 @@ static int do_compat_sigaltstack(const compat_stack_t __user *uss_ptr,
-> > >  		uss.ss_size = uss32.ss_size;
-> > >  	}
-> > >  	ret = do_sigaltstack(uss_ptr ? &uss : NULL, &uoss,
-> > > -			     compat_user_stack_pointer());
-> > > +			     compat_user_stack_pointer(),
-> > > +			     COMPAT_MINSIGSTKSZ);
-> > 
-> > If this fails on arm64, we seem to SEGV (see compat_sys_rt_sigreturn()).
-> > 
-> > This patch doesn't introduce this inconsistency, this might be a good
-> > opportunity to clean it up.
-> 
-> I don't think there's an inconsistency here -- both restore_altstack and
-> compat_restore_altstack suppress all non--EFAULT errors (remember that uoss
-> is NULL in both cases, so the copy_from_user() immediately before the
-> do_sigaltstack() call for the native path is all we care about). I think the
-> behaviour is: on a sigreturn, if you set the altstack to be an unmapped
-> address then you get a SEGV, otherwise if you make it invalid in some other
-> way (e.g. too small) then it's ignored and the old altstack remains intact.
+Thread A				Background GC
+- f2fs_zero_range
+ - truncate_pagecache_range
+					- gc_data_segment
+					 - get_read_data_page
+					  - move_data_page
+					   - set_page_dirty
+					   - set_cold_data
+ - f2fs_do_zero_range
+  - dn->data_blkaddr = NEW_ADDR;
+  - f2fs_set_data_blkaddr
 
-OK, I think I've satisfied myself that they do the same thing for now.
+Actually, we don't need to set dirty & checked flag on the page, since
+all valid data in the page should be zeroed by zero_range().
 
-The code for the paths is a bit different, so it's not trivial to see
-that they have the same effect...
+Use i_gc_rwsem[WRITE] to avoid such race condition.
 
-Cheers
----Dave
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+---
+ fs/f2fs/file.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index 267ec3794e1e..7bd2412a8c37 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -1309,6 +1309,7 @@ static int f2fs_zero_range(struct inode *inode, loff_t offset, loff_t len,
+ 	if (ret)
+ 		return ret;
+ 
++	down_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
+ 	down_write(&F2FS_I(inode)->i_mmap_sem);
+ 	ret = filemap_write_and_wait_range(mapping, offset, offset + len - 1);
+ 	if (ret)
+@@ -1389,6 +1390,7 @@ static int f2fs_zero_range(struct inode *inode, loff_t offset, loff_t len,
+ 	}
+ out_sem:
+ 	up_write(&F2FS_I(inode)->i_mmap_sem);
++	up_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
+ 
+ 	return ret;
+ }
+-- 
+2.18.0.rc1
+
