@@ -2,113 +2,103 @@ Return-Path: <SRS0=7Z+k=KK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FROM_EXCESS_BASE64,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E65FC28CF6
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 12:18:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD6AAC6778F
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 12:19:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A7CD52083F
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 12:18:41 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qa4nFYd+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A7CD52083F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 9E8252083F
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 12:19:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9E8252083F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730034AbeGZNfN (ORCPT
+        id S1730103AbeGZNgE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 26 Jul 2018 09:35:13 -0400
-Received: from mail-qk0-f193.google.com ([209.85.220.193]:40179 "EHLO
-        mail-qk0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729479AbeGZNfN (ORCPT
+        Thu, 26 Jul 2018 09:36:04 -0400
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:16640 "EHLO
+        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729479AbeGZNgE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Jul 2018 09:35:13 -0400
-Received: by mail-qk0-f193.google.com with SMTP id c126-v6so813559qkd.7;
-        Thu, 26 Jul 2018 05:18:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=wMG5Kl7sCZ9L9pOOdZJT3wJiDRE44fMECHYum9lJbzQ=;
-        b=qa4nFYd+cDUNYN/AAnQTq5f2hO9bo4MK2As56wwhz7fUFajIAlh+mAbF5Tvb+W/ypZ
-         VRnqx/28KW0+u/gJaC5cxa+VfI+998JGk+1OxurFlvfgbClGmzIT4Dd+u5iRM3EP8uFX
-         yR5hHNOA+NZM65xen2nii3eaP4r8OhkgGgaLaFFaofpfewEtlYdgrv11SJ6orSjT+mSt
-         Kd7nku4hD27NY74Kn8n7G/FzrrMbPkgAVabfpk07jtBNtfHqGXysujkXV+Wee6iDhiuh
-         mX16nWsAy1Nr7FcAy1ijf1TVDbC3vZfwOQyalNgwHzO+rGdK1vrC7xPOy+U/tqLJwzoe
-         eQLA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=wMG5Kl7sCZ9L9pOOdZJT3wJiDRE44fMECHYum9lJbzQ=;
-        b=ul0IJlp9a9Jxv/Zk2s+1b8iJxK5Uxk7qzuL9lBQ+9E6Tf02QfqRP6RhN5ycvdll7V7
-         Jau1pnca4fRIhYTuf7RK42bgkKJ1q9yttX+1i78FzxTjDAg/wlllWOf6RMo50lHsDnqO
-         iuNu8XPqekni3YZyWuoguzRmo+sKGg5uQc0g29LefQ/P1TGwS57pyzj4ZSnTILxHc7Es
-         Ecwim7S7492e1hfLMyFgrN0V6ToHlnn4MCQ7ARD46azOanFMohIncH1shfV8cuxM+Lgt
-         meegSRXRLDxRUiq3Ia5qw1c13LNt0uK7npn/JOfT74/SkcJDaWwJrvf7/X99I0+97p0n
-         4UKg==
-X-Gm-Message-State: AOUpUlHZWKYBmrwui/znsLVyGpaex9qQ6bnNpiyTZs/lf//RCMl/U/f+
-        6BcJXj6Ya4tba2aPXCckqjXyG9iUzMdCqtZjXgk=
-X-Google-Smtp-Source: AAOMgpdixFeBKL0hCgfn/31VamvMU1qGWjsI/vaQZ17BD1QrgXL7QDjirbTRfpcJTMPN1n14GsjIGWhFM8og/i81GGs=
-X-Received: by 2002:a37:d706:: with SMTP id m6-v6mr1357130qki.123.1532607518987;
- Thu, 26 Jul 2018 05:18:38 -0700 (PDT)
+        Thu, 26 Jul 2018 09:36:04 -0400
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1, AES128-SHA)
+        id <B5b59bc520000>; Thu, 26 Jul 2018 05:19:30 -0700
+Received: from HQMAIL106.nvidia.com ([172.20.161.6])
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Thu, 26 Jul 2018 05:19:24 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate102.nvidia.com on Thu, 26 Jul 2018 05:19:24 -0700
+Received: from HQMAIL102.nvidia.com (172.18.146.10) by HQMAIL106.nvidia.com
+ (172.18.146.12) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Thu, 26 Jul
+ 2018 12:19:28 +0000
+Received: from hqnvemgw01.nvidia.com (172.20.150.20) by HQMAIL102.nvidia.com
+ (172.18.146.10) with Microsoft SMTP Server (TLS) id 15.0.1347.2 via Frontend
+ Transport; Thu, 26 Jul 2018 12:19:28 +0000
+Received: from dhcp-10-21-25-168.Nvidia.com (Not Verified[10.21.25.201]) by hqnvemgw01.nvidia.com with Trustwave SEG (v7,5,8,10121)
+        id <B5b59bc4d0001>; Thu, 26 Jul 2018 05:19:28 -0700
+From:   Aapo Vienamo <avienamo@nvidia.com>
+To:     Ulf Hansson <ulf.hansson@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Mikko Perttunen <mperttunen@nvidia.com>
+CC:     <linux-mmc@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Aapo Vienamo <avienamo@nvidia.com>
+Subject: [PATCH v2 00/10] Tegra SDHCI enable 1.8 V signaling on Tegar210 and Tegra186
+Date:   Thu, 26 Jul 2018 15:19:10 +0300
+Message-ID: <1532607560-11253-1-git-send-email-avienamo@nvidia.com>
+X-Mailer: git-send-email 2.7.4
+X-NVConfidentiality: public
 MIME-Version: 1.0
-References: <20180725210819.1458-1-brian.brooks@linaro.org>
-In-Reply-To: <20180725210819.1458-1-brian.brooks@linaro.org>
-From:   =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn.topel@gmail.com>
-Date:   Thu, 26 Jul 2018 14:18:27 +0200
-Message-ID: <CAJ+HfNh19+_7oPBXAfGYksKRGHD=B1pJ6qfu8ta_BDza75YsGw@mail.gmail.com>
-Subject: Re: [PATCH v2 bpf-next] samples/bpf: xdpsock: order memory on AArch64
-To:     Brian Brooks <brian.brooks@linaro.org>
-Cc:     ast@kernel.org, Daniel Borkmann <daniel@iogearbox.net>,
-        =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn.topel@intel.com>,
-        "Karlsson, Magnus" <magnus.karlsson@intel.com>,
-        Netdev <netdev@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Den ons 25 juli 2018 kl 23:09 skrev Brian Brooks <brian.brooks@linaro.org>:
->
-> Define u_smp_rmb() and u_smp_wmb() to respective barrier instructions.
-> This ensures the processor will order accesses to queue indices against
-> accesses to queue ring entries.
->
+Hi all,
 
-Thanks Brian!
+Reconfigure pad voltages as part of mmc voltage switching on
+controllers with adjustable voltages. Allow for reconfiguration of the
+signaling voltage of SDMMC1 on Tegra210 P2597 and fix SDMMC4 signaling
+voltage regulator configuration on Tegra210 P2180.
 
-Acked-by: Bj=C3=B6rn T=C3=B6pel <bjorn.topel@intel.com>
+This series depends on the "Tegra PMC pinctrl pad configuration" series posted
+earlier.
 
-> Signed-off-by: Brian Brooks <brian.brooks@linaro.org>
-> ---
->  samples/bpf/xdpsock_user.c | 5 +++++
->  1 file changed, 5 insertions(+)
->
-> diff --git a/samples/bpf/xdpsock_user.c b/samples/bpf/xdpsock_user.c
-> index 5904b1543831..1e82f7c617c3 100644
-> --- a/samples/bpf/xdpsock_user.c
-> +++ b/samples/bpf/xdpsock_user.c
-> @@ -145,8 +145,13 @@ static void dump_stats(void);
->         } while (0)
->
->  #define barrier() __asm__ __volatile__("": : :"memory")
-> +#ifdef __aarch64__
-> +#define u_smp_rmb() __asm__ __volatile__("dmb ishld": : :"memory")
-> +#define u_smp_wmb() __asm__ __volatile__("dmb ishst": : :"memory")
-> +#else
->  #define u_smp_rmb() barrier()
->  #define u_smp_wmb() barrier()
-> +#endif
->  #define likely(x) __builtin_expect(!!(x), 1)
->  #define unlikely(x) __builtin_expect(!!(x), 0)
->
-> --
-> 2.18.0
->
+Changelog:
+v2:
+	- Change the pinctrl bindings commit title
+	- Use IS_ERR in tegra_sdhci_init_pinctrl_info()
+	- Add nvidia,only-1-8-v property
+	- Disable UHS modes in case the pad and regulator configuration
+	  is invalid
+
+Aapo Vienamo (10):
+  dt-bindings: mmc: tegra: Add pad voltage control properties
+  dt-bindings: mmc: tegra: Add nvidia,only-1-8-v property
+  mmc: tegra: Reconfigure pad voltages during voltage switching
+  arm64: dts: Add Tegra210 sdmmc pinctrl voltage states
+  arm64: dts: Add Tegra186 sdmmc pinctrl voltage states
+  arm64: dts: tegra210-p2180: Allow ldo2 to go down to 1.8 V
+  arm64: dts: tegra210-p2180: Correct sdmmc4 vqmmc-supply
+  arm64: dts: tegra210-p2597: Remove no-1-8-v from sdmmc1
+  arm64: dts: tegra210: Add nvidia,only-1-8-v to sdmmc4
+  arm64: dts: tegra186: Add nvidia,only-1-8-v to sdmmc4
+
+ .../bindings/mmc/nvidia,tegra20-sdhci.txt          |  24 ++++
+ arch/arm64/boot/dts/nvidia/tegra186.dtsi           |  41 ++++++
+ arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi     |  12 +-
+ arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi     |   1 -
+ arch/arm64/boot/dts/nvidia/tegra210.dtsi           |  28 +++++
+ drivers/mmc/host/sdhci-tegra.c                     | 140 +++++++++++++++++++--
+ 6 files changed, 222 insertions(+), 24 deletions(-)
+
+-- 
+2.7.4
+
