@@ -2,76 +2,91 @@ Return-Path: <SRS0=7Z+k=KK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9351C28CF6
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 09:49:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82A04C6778F
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 09:49:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4743D20846
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 09:49:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4743D20846
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codewreck.org
+	by mail.kernel.org (Postfix) with ESMTP id 47D2B20846
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 09:49:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 47D2B20846
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=i2se.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729297AbeGZLFJ (ORCPT
+        id S1729344AbeGZLFe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 26 Jul 2018 07:05:09 -0400
-Received: from nautica.notk.org ([91.121.71.147]:43694 "EHLO nautica.notk.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728681AbeGZLFI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Jul 2018 07:05:08 -0400
-Received: by nautica.notk.org (Postfix, from userid 1001)
-        id 976FAC009; Thu, 26 Jul 2018 11:49:04 +0200 (CEST)
-Date:   Thu, 26 Jul 2018 11:48:49 +0200
-From:   Dominique Martinet <asmadeus@codewreck.org>
-To:     Dmitry Vyukov <dvyukov@google.com>
-Cc:     Tomas Bortoli <tomasbortoli@gmail.com>,
-        David Miller <davem@davemloft.net>,
-        v9fs-developer@lists.sourceforge.net,
-        netdev <netdev@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        syzkaller <syzkaller@googlegroups.com>
-Subject: Re: [PATCH] 9p: fix NULL pointer dereferences
-Message-ID: <20180726094849.GA18334@nautica>
-References: <20180726081049.10527-1-tomasbortoli@gmail.com>
- <20180726081727.GA6699@nautica>
- <CACT4Y+ark+0EYSZaOX-qDKpOkyfLgSO9CkidZzx=xkUuhpr65A@mail.gmail.com>
+        Thu, 26 Jul 2018 07:05:34 -0400
+Received: from mout.kundenserver.de ([212.227.17.10]:48077 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729045AbeGZLFe (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Jul 2018 07:05:34 -0400
+Received: from [192.168.178.69] ([109.104.45.192]) by mrelayeu.kundenserver.de
+ (mreue102 [212.227.15.183]) with ESMTPSA (Nemesis) id
+ 0LcgwZ-1gRtwK1fCZ-00k8xz; Thu, 26 Jul 2018 11:48:51 +0200
+Subject: Re: [PATCH v8 0/6] provide power off support for iMX6 with external
+ PMIC
+To:     Oleksij Rempel <o.rempel@pengutronix.de>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Mark Brown <broonie@kernel.org>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+Cc:     Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org,
+        yibin.gong@nxp.com, Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        linux-kernel@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>, linux-imx@nxp.com,
+        kernel@pengutronix.de, "A.s. Dong" <aisheng.dong@nxp.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Leonard Crestez <leonard.crestez@nxp.com>,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+References: <20180726092220.17250-1-o.rempel@pengutronix.de>
+From:   Stefan Wahren <stefan.wahren@i2se.com>
+Message-ID: <650c8289-f3a1-8bb1-2e4b-876100f9ae21@i2se.com>
+Date:   Thu, 26 Jul 2018 11:48:47 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CACT4Y+ark+0EYSZaOX-qDKpOkyfLgSO9CkidZzx=xkUuhpr65A@mail.gmail.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <20180726092220.17250-1-o.rempel@pengutronix.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Provags-ID: V03:K1:TGbvXDBQsjAgxHG6A0qdj/ZgAIMPbeIwfVyvQCMSNXbKshMh4Nm
+ Cpo+Zs1C3Wnc6MOra8+rgLsHkXJMnGYKzAKhLEX2DcijEBDgaHUsNc5InKExDYGrqsf2+6x
+ ceUcWUjhhG2JR8wOXFuBg0p1aWTlUUFia6R+B22R3tizuJSJ3SUItMFiwVYtp0lKfHUDhiu
+ CywP6EDCMt0vx5z5VQvTg==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:zgRDaKK/RxI=:i6Xbb7TG5WV+0jGzrCxyyC
+ iBPMNtVNYwi9Ha8GEikr8i9p+o85Fw7dvqI+jwwZ3rkn8KKcGrKt7WAeVV5DXXft+DXEChyws
+ 8yAqXchaFk9L7VACoSUg/Zr6yE9pwFaoo/YRPs7lhWuurPuz2sgcfxcMj7PokqwNVWXlSNHhk
+ ddk+DCMhR13/Ca6YTjMDbN+DNYiq5NchKKSjNQe3vihjfsFmqJOtm0muVVv9EfwU8rd5GV/rO
+ DqsyWMCyYxUFUM/5cfOmXPoTgJTkC5VrPh64tVfdhSw684F56o8GZ6sYheV6yplKjDhz6p8pI
+ jvPbWVItq8mp+U8McboSeeXm729KF3ruE4ce4bu60vMit14wtbu2uPt2jzHRRQvB83g44Z4FT
+ VEnors3KzWcqSo7nRYrcVvQwkPduDe5DnH27zUt4t7dY5/i15s2nJzbP6cjXZG4prKqxuYy74
+ V84rTNubw7y9YXYd7CS6/+C5ON32qDnOyJNloqCbVss92Avya9tYnCvXKDKaEOc6ZglJLVd+o
+ PP9BZKNXG43E+Fs5Gn0KS2iI+TGlQanS94HmFuGvXBR9ube96EpA+Uzc0DUUyzUoB6OZZ9nBs
+ lOSAvh7LVDdRH3gaZ/sTAN87T+eOmeLwGTyH2V1wzQZAtlJynf2a7Eglto1bucd9wplJBysLb
+ 2i+HWPVl+gpSr5tF+rEGKoX2RRhi99sFHxqXT5t1HWaxAtlDid97QKaSv9kXM4mVRfxDQJuJ5
+ Lshwm9aFoatZL0D2
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dmitry Vyukov wrote on Thu, Jul 26, 2018:
-> > Let's refuse that at much higher level, like v9fs_mount() in
-> > fs/9p/vfs_super.c
-> >
-> > I can't think of any valid reason for dev_name to be NULL, it's the
-> > target IP or virtio handle.
-> 
-> But I think trans=fd allows NULL addr today, no?
+Hi Oleksij,
 
-Ah, right, I read the patch too fast and read unix_create as fd_create,
-I never realized there was a unix_create variant...
+Am 26.07.2018 um 11:22 schrieb Oleksij Rempel:
+> 2018.07.26:
+> v8 is a rebase against kernel v4.18-rc6. No other changes are made.
+> Added: linux-imx@nxp.com and yibin.gong@nxp.com to the CC.
 
-fd legitimately doesn't need a name, you are correct.
+your patches won't apply to regulator-next or linux-next because 
+"regulator: pfuze100: add pfuze3001 support" has been merged before.
 
-I'm really curious if anyone ever uses the unix/fd variants for "real"
-stuff though! (not meaning syzbot isn't real, but I have yet to see
-anything take advantage of this, even if I could imagine some fun
-applications by piping the wmii libixp server socket.. and just crashed
-my laptop trying because of the (fixed) trans put bug.. I have yet to
-see anyone actually doing this)
+Since the pfuze3001 doesn't support standby, it would be nice to make 
+the driver take care of this.
 
-
-On the other hand, virtio, rdma and xen all have the same problem, so
-Thomas, please fix them instead :)
-
--- 
-Dominique Martinet
+Best regards
+Stefan
