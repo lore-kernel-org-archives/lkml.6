@@ -2,93 +2,104 @@ Return-Path: <SRS0=7Z+k=KK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3FBDC28CF6
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 14:12:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DDF72C6778F
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 14:13:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8F9F020647
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 14:12:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8CCE520647
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 14:13:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b="kjkpfylD";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="nC2EHJwg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F9F020647
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kroah.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JBQEb/hz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8CCE520647
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730643AbeGZP3h (ORCPT
+        id S1730881AbeGZPa2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 26 Jul 2018 11:29:37 -0400
-Received: from wnew3-smtp.messagingengine.com ([64.147.123.17]:44817 "EHLO
-        wnew3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729923AbeGZP3h (ORCPT
+        Thu, 26 Jul 2018 11:30:28 -0400
+Received: from mail-oi0-f68.google.com ([209.85.218.68]:36070 "EHLO
+        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729506AbeGZPa2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Jul 2018 11:29:37 -0400
-Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
-        by mailnew.west.internal (Postfix) with ESMTP id 8DD3529F;
-        Thu, 26 Jul 2018 10:12:33 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute6.internal (MEProxy); Thu, 26 Jul 2018 10:12:34 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=cc
-        :content-type:date:from:in-reply-to:message-id:mime-version
-        :references:subject:to:x-me-sender:x-me-sender:x-sasl-enc; s=
-        fm1; bh=RmXg3cLDpDethyhD3b9tD2gyH/IFVsNSNgWyMoKtLO4=; b=kjkpfylD
-        Ko3jYECPY25rSgkUH8j2J4Uvqo49/9H9HHy60LIMj4ub/mCzZ+nm9s21nSon9gaR
-        7UAG284nCVTAHwO0IEvvjo0fdDMDbGf+oe/qsNB4++58iOSf4xMWwxqcA01Dy3tc
-        1TtWZ3Kh33WfHsj4klnZydZLE5UZp97Ze9KxNoBKXg8XE7tDPxF+4ZOuFf75Q9tc
-        mTfXU5DB4+mv92qP0F59Jse50HENwVXxgr/LJeeW8UPWGK8SQCBcdf1GVtWVSbeG
-        JD/+7sH3JSL9nX6KLW8yji3ShRGBM8jzWM7rQgpTaZtimYF3VWJBW4EJSOu7lp0J
-        TG/8SmHUk1v2lg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-sender
-        :x-me-sender:x-sasl-enc; s=fm3; bh=RmXg3cLDpDethyhD3b9tD2gyH/IFV
-        sNSNgWyMoKtLO4=; b=nC2EHJwgNlenYOlzgE2RP7BID7CD0TZC83WaD+I8a4agQ
-        GWhVLBtKW/75eTTVdY1egKA9rN4oqgYv0H/O1asOj2tibdThiJjSuJG3ssNJ8I5X
-        PE+tL+LHJ2yJUPNJEHwDZyzwBma2sRSgKWh256lBmRWh+x9OwsvzDBeU/y4bYXOv
-        B62dv7yIU1IptBtgNPrF0aZm1E2ZcIl2ECONAJ6mzHrmsbiCt0Rysr6V/3PwjqMT
-        r+nNcN5UMj+P6Sb63YgJ6hFAvyoWdquVMbfLVlAq+5roJtNoDzZJk8XKq9C/7sY3
-        wjJTvUocMpR24UY5eUC3YO0UGMemQJmfpQb9ixH1A==
-X-ME-Proxy: <xmx:0NZZW8zii0kji49IrRK_SCJT3N_gSomraaxeQ6HHulT40Y32FHYsdA>
-    <xmx:0NZZWzi5Ty-duQlI7ZFhDZKvO45IeypJe74vEgtKtEG2C_UMkPwo0g>
-    <xmx:0NZZW08jPF0HWyYRCpwI0NiuZtNCe-XaUNc6mnYpwHEbnd7DT3DuTg>
-    <xmx:0NZZW91FIc59IYFPMrrplMSbA5BYCkLy0Moji2dXYMHc36Cl9nn5_g>
-    <xmx:0NZZW68S8WC0fnp4itMq6o6xYjA1Tf3JEGsoDHNVhXNW2UNUr8d5dQ>
-    <xmx:0dZZW5qHJAR5YM3HwOwkpsTBF7PFSe4wb7x_RUjMC33bW5wMWkbQ5qt5tr4>
-X-ME-Sender: <xms:0NZZW52qu_QO-Zz2EjzEgIkpDr82oMdqDpQtlCdk2RIcjv9FqJ2TfA>
-Received: from localhost (unknown [62.119.166.9])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 49BA0E4BDA;
-        Thu, 26 Jul 2018 10:12:29 -0400 (EDT)
-Date:   Thu, 26 Jul 2018 16:12:27 +0200
-From:   Greg KH <greg@kroah.com>
-To:     Jia-Ju Bai <baijiaju1990@gmail.com>
-Cc:     oleg.drokin@intel.com, andreas.dilger@intel.com,
-        jsimmons@infradead.org, paf@cray.com, namit@vmware.com,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
-        lustre-devel@lists.lustre.org
-Subject: Re: [BUG] staging: lustre: Possible null function pointer in
- ctx_refresh_timeout()
-Message-ID: <20180726141227.GA12445@kroah.com>
-References: <6920e093-ad62-56dc-6f58-36cf8d7ed3b4@gmail.com>
+        Thu, 26 Jul 2018 11:30:28 -0400
+Received: by mail-oi0-f68.google.com with SMTP id n21-v6so3189740oig.3;
+        Thu, 26 Jul 2018 07:13:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:sender:from:date:message-id:subject:to:cc;
+        bh=CGu+Y4mbflGjhZHtG6eiKdIh0yUHT1kmAAZF61PEAUg=;
+        b=JBQEb/hzyzqhLg1mayTs8DcTGx1AtDWq5/q8F8deW7vo3peihYg1GktSQD92j0xS8L
+         j4orz3douLSyavXEGliqxBBa9FIxVugCanRQYWBjIJFSSxtOCVa3//C4EUiFOyXkioGY
+         D2HCthAQ2Su3ixwaIyG2a7hNevTnoVCUqMMj03y/dTm//6dI6zUjLMQBwZH1qRHnkZjR
+         D2IihmhHiESKuLlAnrF95rS6aY21xIWYSLVlzJmXyOtYqn7cnlgo9Hy9O2fbG3/Jryse
+         Fgcg3jTgPRuQWCG5s+XML356C7bGZq9K6m9lTQ/kqwGPycbGDPsJjftS/l7OcaJjcMmc
+         neXA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:sender:from:date:message-id:subject
+         :to:cc;
+        bh=CGu+Y4mbflGjhZHtG6eiKdIh0yUHT1kmAAZF61PEAUg=;
+        b=cxxLEFrNv56F+MlJsUbIQE4wSm+mQUeJZ5FH9bcWYd1nf+TrYOsS8IVlwPkGwza8zH
+         f0BdLyIhR8xCy6kv9kxGuVA8eb0E6JuyG/fLl529cr9gE4VQ0ExtLahKSL0BTJybWSou
+         r8335N5v2K2YCO99WFmZfR4CuXgOObZpmwMuK5zxigOa7s7qtZDNS9F2zwzgM95Jxsf8
+         vHH5ypcjvyGzh1Jzjz+fagqus08TFev53OgS8MjCcBZ43NIdZbKquuSZUTUFO1ovQySw
+         krJUvwEoUXov9+RS1KuqFBqVIHn7HN1ClFuHUtIbGQzVL0Ek1XOqF7F6aeIqXeWN7vXj
+         0KUg==
+X-Gm-Message-State: AOUpUlGdMuhr3DVMNG6gwIE573gpvMjFN64Bk/bVPNYQapBJ/LxApuaG
+        W4W5NIYEeiGmhWg/yQEfDDa4+JrN0KJWzLU1WZU=
+X-Google-Smtp-Source: AAOMgpfF1AwmBID2WbEQWdTb7JD2kVntPaUms0p3wPdcDg+UCtwy01/VIu5mBQ4cNqve4VopCEYc78HRsgL0LacZxuw=
+X-Received: by 2002:aca:ecd0:: with SMTP id k199-v6mr2255581oih.227.1532614404963;
+ Thu, 26 Jul 2018 07:13:24 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6920e093-ad62-56dc-6f58-36cf8d7ed3b4@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Received: by 2002:a9d:63d2:0:0:0:0:0 with HTTP; Thu, 26 Jul 2018 07:13:24
+ -0700 (PDT)
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Thu, 26 Jul 2018 16:13:24 +0200
+X-Google-Sender-Auth: ZPD1LeIjU3RLaMqlIy1Xo1mtalo
+Message-ID: <CAJZ5v0i=npm4hTb6M2cC=mDOhvnhmcsFPEGywhfuHchi20uwmQ@mail.gmail.com>
+Subject: [GIT PULL] ACPI fix for v4.18-rc7
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 26, 2018 at 10:02:22PM +0800, Jia-Ju Bai wrote:
-> In Linux-4.16, drivers/staging/lustre/lustre/ptlrp/sec.c,
+Hi Linus,
 
-Please look at the 4.18-rc6 release for this file.
+Please pull from the tag
 
-In short, nothing to worry about anymore :)
+ git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git \
+ acpi-4.18-rc7
 
-thanks,
+with top-most commit 73c2a01c52b657f4a0ead6c95f64c5279efbd000
 
-greg k-h
+ ACPICA: AML Parser: ignore dispatcher error status during table load
+
+on top of commit d72e90f33aa4709ebecc5005562f52335e106a60
+
+ Linux 4.18-rc6
+
+to receive an ACPI fix for 4.18-rc7.
+
+This fixes a recent ACPICA regression causing the AML parser to get
+confused and fail in some situations involving incorrect AML in an
+ACPI table (Erik Schmauss).
+
+Thanks!
+
+
+---------------
+
+Schmauss, Erik (1):
+      ACPICA: AML Parser: ignore dispatcher error status during table load
+
+---------------
+
+ drivers/acpi/acpica/psloop.c | 26 ++++++++++++++++++++++++++
+ 1 file changed, 26 insertions(+)
