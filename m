@@ -2,126 +2,109 @@ Return-Path: <SRS0=7Z+k=KK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06029C28CF6
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 09:23:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 159B7C28CF6
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 09:28:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C02332088E
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 09:23:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C02332088E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id BEF1C2064D
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 09:28:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BEF1C2064D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729403AbeGZKjB (ORCPT
+        id S1729045AbeGZKoP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 26 Jul 2018 06:39:01 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:54663 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728792AbeGZKi2 (ORCPT
+        Thu, 26 Jul 2018 06:44:15 -0400
+Received: from mail-ua0-f195.google.com ([209.85.217.195]:41874 "EHLO
+        mail-ua0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728504AbeGZKoP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Jul 2018 06:38:28 -0400
-Received: from dude.hi.pengutronix.de ([2001:67c:670:100:1d::7])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <ore@pengutronix.de>)
-        id 1ficTX-0002ar-QY; Thu, 26 Jul 2018 11:22:23 +0200
-Received: from ore by dude.hi.pengutronix.de with local (Exim 4.91)
-        (envelope-from <ore@pengutronix.de>)
-        id 1ficTV-0004W0-V0; Thu, 26 Jul 2018 11:22:21 +0200
-From:   Oleksij Rempel <o.rempel@pengutronix.de>
-To:     Shawn Guo <shawnguo@kernel.org>, Mark Brown <broonie@kernel.org>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Cc:     Oleksij Rempel <o.rempel@pengutronix.de>, kernel@pengutronix.de,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Leonard Crestez <leonard.crestez@nxp.com>,
+        Thu, 26 Jul 2018 06:44:15 -0400
+Received: by mail-ua0-f195.google.com with SMTP id t14-v6so638783uao.8;
+        Thu, 26 Jul 2018 02:28:16 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=7hcen07q/AogxYhU47MbvqScCxdALLBWJ1zIesvZ2+M=;
+        b=YqIdJiOdAXiD0JhkAtTKhkWFa4IvSm5UC5wIucjgr0PuCmlcyd3XOz6RQ+BaZY5zyT
+         HiLYxlLel8C58FHyfGstBjkYWQPubxMmInr3a3IhFlsicdjNIg/y8PACfHidvb3ohXsl
+         /zzl7xe7indmXbL8nAtrybzy7nveDChgrsfLZ4Pd48Hc2dUoSagcTEx0V44yyx+degml
+         oA+ojl3F2gR0bIUmxkw13KfsIRH5kkUXMPBWXshs8bMJvlQmCDWHuA5rqcSxX4rqcU7R
+         iEabDtd9DkOWJ3fIE57C3sTbV5H1Q0vXUunJs7AW/I50VRv6O5PMKEib2Lzk3MbqYru0
+         m/KA==
+X-Gm-Message-State: AOUpUlG+n/YvDy9phAA57S01wmaVL5ZBWI/n/IS0JDXaBr1zhGFZszJm
+        u0hVu4q3vzJh2iXy+VgbQWRIPoJukqzmgRR8gEs=
+X-Google-Smtp-Source: AAOMgpfxlc3DfLwe8BY0ZutAVz5yteLtHtWQITQSoGJmp7U/aDuIqrU07uh1+XClg/0XhV6OcUacp6DW/b8FIzeIVnk=
+X-Received: by 2002:ab0:5b57:: with SMTP id v23-v6mr769356uae.72.1532597296074;
+ Thu, 26 Jul 2018 02:28:16 -0700 (PDT)
+MIME-Version: 1.0
+References: <1532575736-20138-1-git-send-email-yamada.masahiro@socionext.com>
+ <1532575736-20138-2-git-send-email-yamada.masahiro@socionext.com>
+ <CAMuHMdUnYiLYO4hX3x6X7EZ8HnnOHXCPEUOXzPVJc=6s7VF+bQ@mail.gmail.com> <CAK7LNAT9nHCnq90tgomDnwF6RwSa9BGTnxqzgvVwqy-QBy+qxQ@mail.gmail.com>
+In-Reply-To: <CAK7LNAT9nHCnq90tgomDnwF6RwSa9BGTnxqzgvVwqy-QBy+qxQ@mail.gmail.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Thu, 26 Jul 2018 11:28:04 +0200
+Message-ID: <CAMuHMdX3zaeXsw799xnWKcZdVjP3r_n=NM-ihXzuSbnU5xF5jw@mail.gmail.com>
+Subject: Re: [PATCH 1/2] mmc: tmio: rename files and CONFIG options to have
+ the same prefix
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Linux MMC List <linux-mmc@vger.kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
         Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Russell King <linux@armlinux.org.uk>, linux-imx@nxp.com,
-        yibin.gong@nxp.com, "A.s. Dong" <aisheng.dong@nxp.com>
-Subject: [PATCH v8 2/6] ARM: imx6: register pm_power_off handler if "fsl,pmic-stby-poweroff" is set
-Date:   Thu, 26 Jul 2018 11:22:16 +0200
-Message-Id: <20180726092220.17250-3-o.rempel@pengutronix.de>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180726092220.17250-1-o.rempel@pengutronix.de>
-References: <20180726092220.17250-1-o.rempel@pengutronix.de>
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::7
-X-SA-Exim-Mail-From: ore@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-One of the Freescale recommended sequences for power off with external
-PMIC is the following:
-...
-3.  SoC is programming PMIC for power off when standby is asserted.
-4.  In CCM STOP mode, Standby is asserted, PMIC gates SoC supplies.
+Hi Yamada-san,
 
-See:
-http://www.nxp.com/assets/documents/data/en/reference-manuals/IMX6DQRM.pdf
-page 5083
+On Thu, Jul 26, 2018 at 11:15 AM Masahiro Yamada
+<yamada.masahiro@socionext.com> wrote:
+> 2018-07-26 17:25 GMT+09:00 Geert Uytterhoeven <geert@linux-m68k.org>:
+> > On Thu, Jul 26, 2018 at 5:33 AM Masahiro Yamada
+> > <yamada.masahiro@socionext.com> wrote:
+> >> This commit renames files as follows:
+> >>
+> >>   tmio_mmc_core.c              -> tmio_mmc.c
+> >>   tmio_mmc.c                   -> tmio_mmc_original.c
+> >>   renesas_sdhi_core.c          -> tmio_mmc_sdhi.c
+> >>   renesas_sdhi.h               -> tmio_mmc_sdhi.h
+> >>   renesas_sdhi_internal_dmac.c -> tmio_mmc_sdhi_internal_dmac.c
+> >>   renesas_sdhi_sys_dmac.c      -> tmio_mmc_sdhi_sys_dmac.c
+> >
+> > I have mixed feelings about the last two renames, especially about the last
+> > one: SYS-DMAC is very Renesas-specific, as it's a separate IP block in
+> > Renesas SoCs.
 
-This patch implements step 4. of this sequence.
+> > 2. Are there other SoCs using an external DMAC?
+>
+> Yes.  Some old SoCs in UniPhier SoC family rely on
+> the external DMAC, like renesas_sdhi_sys_dmac.c
+>
+> >    Is the interface to the external DMAC similar?
+> >    If yes, perhaps it should be renamed to tmio_mmc_sdhi_external_dmac.c?
+>
+> "sdhi" is already Renesas-specific name, isn't it?
 
-Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
----
- arch/arm/mach-imx/pm-imx6.c | 25 +++++++++++++++++++++++++
- 1 file changed, 25 insertions(+)
+Right, I'm mixing up SDHI and SDHC.
 
-diff --git a/arch/arm/mach-imx/pm-imx6.c b/arch/arm/mach-imx/pm-imx6.c
-index 017539dd712b..2f5c643f62fb 100644
---- a/arch/arm/mach-imx/pm-imx6.c
-+++ b/arch/arm/mach-imx/pm-imx6.c
-@@ -601,6 +601,28 @@ static void __init imx6_pm_common_init(const struct imx6_pm_socdata
- 				   IMX6Q_GPR1_GINT);
- }
- 
-+static void imx6_pm_stby_poweroff(void)
-+{
-+	imx6_set_lpm(STOP_POWER_OFF);
-+	imx6q_suspend_finish(0);
-+
-+	mdelay(1000);
-+
-+	pr_emerg("Unable to poweroff system\n");
-+}
-+
-+static int imx6_pm_stby_poweroff_probe(void)
-+{
-+	if (pm_power_off) {
-+		pr_warn("%s: pm_power_off already claimed  %p %pf!\n",
-+			__func__, pm_power_off, pm_power_off);
-+		return -EBUSY;
-+	}
-+
-+	pm_power_off = imx6_pm_stby_poweroff;
-+	return 0;
-+}
-+
- void __init imx6_pm_ccm_init(const char *ccm_compat)
- {
- 	struct device_node *np;
-@@ -617,6 +639,9 @@ void __init imx6_pm_ccm_init(const char *ccm_compat)
- 	val = readl_relaxed(ccm_base + CLPCR);
- 	val &= ~BM_CLPCR_LPM;
- 	writel_relaxed(val, ccm_base + CLPCR);
-+
-+	if (of_property_read_bool(np, "fsl,pmic-stby-poweroff"))
-+		imx6_pm_stby_poweroff_probe();
- }
- 
- void __init imx6q_pm_init(void)
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.18.0
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
