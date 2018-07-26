@@ -2,142 +2,143 @@ Return-Path: <SRS0=7Z+k=KK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BAAAC28CF6
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 05:56:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95D39C28CF6
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 05:58:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D5426208A2
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 05:56:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5D83A2089A
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 05:58:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amdcloud.onmicrosoft.com header.i=@amdcloud.onmicrosoft.com header.b="xd876KZw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D5426208A2
+	dkim=pass (1024-bit key) header.d=amdcloud.onmicrosoft.com header.i=@amdcloud.onmicrosoft.com header.b="BQHKWZ1u"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D83A2089A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amd.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727742AbeGZHMA (ORCPT
+        id S1727951AbeGZHN7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 26 Jul 2018 03:12:00 -0400
-Received: from mail-sn1nam02on0056.outbound.protection.outlook.com ([104.47.36.56]:43872
-        "EHLO NAM02-SN1-obe.outbound.protection.outlook.com"
+        Thu, 26 Jul 2018 03:13:59 -0400
+Received: from mail-bl2nam02on0045.outbound.protection.outlook.com ([104.47.38.45]:22815
+        "EHLO NAM02-BL2-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725955AbeGZHL7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Jul 2018 03:11:59 -0400
+        id S1726326AbeGZHN7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Jul 2018 03:13:59 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=amdcloud.onmicrosoft.com; s=selector1-amd-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=yKh65jFcZBShhQjcK7FtLih+9xUPHwqVQtxEhgYJXK0=;
- b=xd876KZwz9camkPkqQXz5wu240xskGldYrBiHxxrffFb07QU3NUiU7iAPe3vKyibLtZvNHJa42ru68DxNXs5nOrHpjqBf93dq4Bjb7hEVwuHlNmot+0WZt8w1V/rklJV5CEbIYxLUh+w8sYwMbkvG36wOVsVWzgDzDe8YnKbQOg=
+ bh=1MZOjXkdKFG+IyDKH0wskkvlIZ6PMvGLVOkS/wMXAFc=;
+ b=BQHKWZ1u5r8TesOLC34n2/cU9tNESSVR7+tvZxeX5I/GNL+CF18WoATmByVB1MYCZIgjuwJ6k3pwGpVKQ6vi5Confj0k5gxZooUMMYEHUNtRNwSM9LgZZQRx6xqQFUXTy49dYiBz3BGR+W35HpXSiI6+ScKBcVE448kMC7O01fg=
 Authentication-Results: spf=none (sender IP is )
  smtp.mailfrom=Akshu.Agrawal@amd.com; 
-Received: from akshu-HP-EliteBook-745-G2.amd.com (202.56.249.162) by
- MW2PR12MB2364.namprd12.prod.outlook.com (2603:10b6:907:8::11) with Microsoft
+Received: from [10.136.129.116] (202.56.249.162) by
+ SN1PR12MB2368.namprd12.prod.outlook.com (2603:10b6:802:25::21) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.973.21; Thu, 26 Jul 2018 05:56:35 +0000
-From:   Akshu Agrawal <akshu.agrawal@amd.com>
-Cc:     akshu.agrawal@amd.com, Alexander.Deucher@amd.com,
-        Liam Girdwood <lgirdwood@gmail.com>,
+ 15.20.973.16; Thu, 26 Jul 2018 05:58:43 +0000
+Subject: Re: linux-next: build warning after merge of the sound-asoc tree
+To:     Stephen Rothwell <sfr@canb.auug.org.au>,
         Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        Daniel Kurtz <djkurtz@chromium.org>,
-        "Mukunda, Vijendar" <Vijendar.Mukunda@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Wei Yongjun <weiyongjun1@huawei.com>,
-        alsa-devel@alsa-project.org (moderated list:SOUND - SOC LAYER / DYNAMIC
-        AUDIO POWER MANAGEM...), linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH] ASoC: AMD: Fix build warning
-Date:   Thu, 26 Jul 2018 13:55:48 +0800
-Message-Id: <1532584572-8362-1-git-send-email-akshu.agrawal@amd.com>
-X-Mailer: git-send-email 1.9.1
+        Liam Girdwood <lgirdwood@gmail.com>
+Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20180726121942.0ab69aac@canb.auug.org.au>
+From:   "Agrawal, Akshu" <Akshu.Agrawal@amd.com>
+Message-ID: <ebe278ff-becc-429f-f72b-3d1b6d9698a5@amd.com>
+Date:   Thu, 26 Jul 2018 11:28:24 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <20180726121942.0ab69aac@canb.auug.org.au>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 X-Originating-IP: [202.56.249.162]
-X-ClientProxiedBy: MA1PR0101CA0061.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:a00:20::23) To MW2PR12MB2364.namprd12.prod.outlook.com
- (2603:10b6:907:8::11)
+X-ClientProxiedBy: BM1PR01CA0089.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:b00:1::29) To SN1PR12MB2368.namprd12.prod.outlook.com
+ (2603:10b6:802:25::21)
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 81473155-0123-49d9-e5c8-08d5f2bc90cd
+X-MS-Office365-Filtering-Correlation-Id: c514d5fe-08a5-4c65-229f-08d5f2bcd8e7
 X-MS-Office365-Filtering-HT: Tenant
-X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(5600073)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:MW2PR12MB2364;
-X-Microsoft-Exchange-Diagnostics: 1;MW2PR12MB2364;3:mKBXrePOvlFwP8Vvi8JmQQVi5xIaYciVsmT+ztOPDGffagwJkaBtnbkFHx77aANSkkVyCzwKHlFdHDSrQKu591lvfZ68YZAqPq4wBXYC4g43TOL9wq5FZXiBDgHHEf2v0yXI7NKHIB1jSzVGejHtN9pY2CuvEvPx4zext+QIt3a9nHjVrWOACzbevUP8PYdsI7eP2C8adLTGn/s4Aml3Eu2L1tQY19D+a/PfIgbxFCBpX1L6h4t3lmDG5MnRfCip;25:Xa75ylqRheLxU5QiQtGhh1nKw9h9+E4X1v8OSEjgQakajelutiGfpE1+e3lNBapOcPTTSSrt/d3be5vs4WNPxZPAhYGpjMWIXiFIv5h8KeyvXBSGXRq6y/D08sDLdJd64hbSMK16ReoZujrtjuezOF8xQpcZc61QhLoNH6QZIw1Wsj8Adhr3iaojk4ZDuP5LdEM1Gt4STkWl1N75Z2DVLO9yms/hbCPxK1NFxtRSzFHCBPQJ1Y+Dhe9paMbB6dYzEu8lBKddkr+NMEp80k+Mmjpju2WMIKWrspNtIVr2315b7H5yPXjU5cFMWudparRq91IeCUar1Co49dpIMcAMXQ==;31:rQjPjTZhfuva2D3uGp3uKtxvnbJNqYjDpzZM9VTM9ObwQC3/ozCCxVcNAh9h4TswZ0wELSCtb9gDAv7ZNMw3oSZ29WuAiA5qDqo3KVquGbxqJBtWjmA91s00Cmz/VxOolENJ3QCTgsLmUVwmHyw0Fw81Pvpdy8J1oxMIV4UOMFWbh6ZdhHs7Pum2rzcWk3+tZps4gBwhexjzFgkAqBzr4pSR+5dzz91g3tdzecciGAU=
-X-MS-TrafficTypeDiagnostic: MW2PR12MB2364:
-X-Microsoft-Exchange-Diagnostics: 1;MW2PR12MB2364;20:JkStiPumuaDrOU3bucyDjw5Nyt/kQ8j7qdu+6oGOgIIlSQZBpF3m7BsMdD3cor7LIE1idUyuyKgV9p1vyQtdzCchAAtwfss7TT4jLJ2NImy0m7ze1zV6a7yOxpxYlLoLNpCdflHpaUUZ8tSr2Y80LyOBFNNEV+KUe23aEWNertr5gcBSUlma2rljYsCee7g1aIz6C5PPxFK+DDC5rS8enVYdAOsUzHYAw6QXY8fmZwJK0+ac17OmLbNZI6LRsONfu5CUHmDGjKEMHljfpFcJs6OSUlNmZ0M+Sp4TfKdMryckMhNPlWIwFdIZfKW3GxDUkGkEak7Fn6wHLSblaFYpZ0czJSiawGcSelCi7P/1jMOUmOihKXUGvALi7kBr3fDaPsd5inmF6sjQErHgftE6yD+YFpmsHtWoIAHT9e8Ko/FN1VjrG+6YfaKVHmJ5sHeiAYbg0ZED7RkpxOY0H96Sd95qpoN3F2ynJRnibx9sg/SSCPup4DqWkra8GASOyJUk;4:S6sWRCMZoRB6WTt9yUtdGMKH48ZmuW/KQBn7gajTkzzTQ2R3ZSXOipoX+lUjicpURK6AFzJA93tEw5PGpc6npJ89cQzFG7LvH1HZpci9Tf26GrzdlQM+ds0RLf/86O7xAyAR8TpkJxkWy2PwemR0T3p8Crzw0Y+MzgW5IxjMG0ey6eCehq3Uk1PGIeReL9IannAVvBGa5IiBHSKAaUA53LV3jcHa6ATS22g4RuWEwc3W5j/zfTCxTF4dOQaeq3FWk/n1ZtBkzKF5f4xQx7+Yrtngo8BHwm9L9h6hn4pcChjDfbZxwiYhUzWGg95gW5T5
-X-Microsoft-Antispam-PRVS: <MW2PR12MB23644CE490D214DED24401A8F82B0@MW2PR12MB2364.namprd12.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:(767451399110);
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(5600073)(711020)(4618075)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(2017052603328)(7153060)(7193020);SRVR:SN1PR12MB2368;
+X-Microsoft-Exchange-Diagnostics: 1;SN1PR12MB2368;3:JSCOuqTOP5K8SFwyim3YRNeRTu7Cw/UV2Wez0IlnmrnHlHDPOhiMYdPqrGaD/3nH0628UWGxXfioQSwzyWiAKGf6qss7bifXq3t2MvEPc1WlMUvZAoN6/Ji6IvLZFlqarEQ542E448FaLyb7nlb0UVYi6DBik61SGN97Qujku3Zcryqm2L1f9OlYz+8F4a3TaCRr7PhRtpwiqHKgJpbxcs43TxdlgjCMc0MdZMEIMmPPPi2pbiWXu1M3TAVG28f6;25:hq2uEUtp5ksJaCtrxEJMl3TjMeBgPrWihIEtyGWMs7Ha/cj3VQWyBS4ZAg4+uBgfknSEuq7RhssQxMpT6Dj1Ftu/eXFCkhwhiPT8en57i6z8xnFHsdk43/0p+UF0DJXTNn9oI/u0Mbr5ddslAcSVeAG5eQjDWNEMdVqjX7a5EkD1qzQ9ZHoypBI04K/e/sV/jAX0e8TWxndzrcSgO2MwSe53r76a51/3McdGB/h7VEJEbq0X/VVu6Ih+12w8J5+2znFkMMFW26xxXFASZMDn/GAJhkPxnhGQ6mjKOIeyf7xOmstgFAYoQuZ8fp9qhfSbEP8hkVLDonFfxxenatYCcA==;31:XACl+5E/2x6HxhA0IyaMOhwNiNT8jz+F7f4/NZN/rsBZrXwF13O14z/hkdfqvrznsfg60r52nxEIMWfdM61V/4jbNOTH3Bdsq5d3z6zWl02JbZJUS7j25W8KWjlirFCnOOvNE51s/foOANrH8yrICkRNORwRQ7Xc5vjjVnn7Tb+1C839m+/NxYICZEoS+REtwU3u9Ul+CEXzhdl4OqaBOWIciThEEVIP4MxrWZvSe7g=
+X-MS-TrafficTypeDiagnostic: SN1PR12MB2368:
+X-Microsoft-Exchange-Diagnostics: 1;SN1PR12MB2368;20:hKvIBypA6ujZe0+o2SLDKO6XXDTvrrIJbcHHxO91/HlELWtqIxDGS80j7q0+ogQdHN5QVIrtxkHkerriGfCtMNYI7RQmnywuLoUWfZ/HXIpb0VtAPI8gu7deAR0V1vvY50daJUBhnPkgocvcryXNy/SKMgswTBnOhnaf3FP0um6rXfCBzRYndJ1cF1zkcDGDrU655RLFzp4GCzh1hM+FZ6rxnTkcyahOLeIxdR5AWmENYgwi8v4Jre+ZPRKukbUwkui2zZypOUtCkdvHti/GowzqDPw6D7x/2yZaqiL8Ymz2JJ+g3XY/QmoY71Wz8+Ki6vcI0g+jHOg01x2or0rHlWKDnNGGswExI54aRvvMHktuKGMdqcT8GgLojXUoGqwhG+c3OsVHrhaEY2FmCQHHj60v3zjLqk9mEqWYuG1rs1IUvtQJ8Yijc4O7IQlbIakF6a8+lhN0nPmDGNpL+n+/PZOh8ilkTOgxp10tn5wX9cDeimccQWeY9+33GQ60b3c/;4:1d/25sp8YnFJI0swGK1R5dY9QItXr9gEGjqh5j3zmrG8JGaKLXgpLOVL2I56lOjX7Gkip+4g+aScAxrwLdAPNdCYfFqPj2fZvJGw5Y0WKUm78WQ0YKjhUd/SCowION+EJgwEfJ68V9coy6zaCPOSvXIe1h96umw9t6rZJEziTLu2K1c1HhbKt9v5zoqlr2hNUOnikTedKSqVPoPcvCWdhi6yyxBqegw66b0vxGdEmQeG4G1xJkWVN1nmQJpbNAEsdaqpknxR5BuU0w08KzKk4g==
+X-Microsoft-Antispam-PRVS: <SN1PR12MB2368CB25B771506492589B25F82B0@SN1PR12MB2368.namprd12.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:;
 X-MS-Exchange-SenderADCheck: 1
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(3231311)(944501410)(52105095)(3002001)(10201501046)(6055026)(149027)(150027)(6041310)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123564045)(20161123558120)(6072148)(201708071742011)(7699016);SRVR:MW2PR12MB2364;BCL:0;PCL:0;RULEID:;SRVR:MW2PR12MB2364;
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(10201501046)(3002001)(93006095)(93001095)(3231311)(944501410)(52105095)(6055026)(149027)(150027)(6041310)(20161123564045)(20161123560045)(20161123558120)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011)(7699016);SRVR:SN1PR12MB2368;BCL:0;PCL:0;RULEID:;SRVR:SN1PR12MB2368;
 X-Forefront-PRVS: 07459438AA
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(366004)(346002)(396003)(376002)(136003)(39860400002)(189003)(199004)(8676002)(3846002)(81156014)(316002)(81166006)(6116002)(68736007)(54906003)(16586007)(478600001)(5660300001)(6666003)(476003)(305945005)(97736004)(8936002)(53936002)(50226002)(16526019)(14444005)(47776003)(7696005)(44832011)(53416004)(50466002)(25786009)(2906002)(39060400002)(26005)(956004)(6486002)(106356001)(66066001)(1857600001)(2616005)(109986005)(36756003)(86362001)(52116002)(51416003)(7736002)(72206003)(486006)(1671002)(48376002)(386003)(105586002)(4326008)(266003);DIR:OUT;SFP:1101;SCL:1;SRVR:MW2PR12MB2364;H:akshu-HP-EliteBook-745-G2.amd.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(6049001)(396003)(376002)(366004)(346002)(39860400002)(136003)(199004)(53754006)(189003)(6306002)(26005)(31696002)(53546011)(50466002)(386003)(66066001)(77096007)(65826007)(54906003)(81166006)(81156014)(68736007)(53936002)(58126008)(110136005)(316002)(105586002)(446003)(186003)(23746002)(76176011)(229853002)(52116002)(8936002)(16576012)(4326008)(6246003)(230700001)(97736004)(106356001)(31686004)(72206003)(39060400002)(6116002)(36756003)(65806001)(6486002)(64126003)(7736002)(8676002)(2616005)(3846002)(6666003)(478600001)(16526019)(3260700006)(305945005)(14444005)(966005)(65956001)(86362001)(486006)(5660300001)(25786009)(476003)(956004)(11346002)(2906002)(47776003);DIR:OUT;SFP:1101;SCL:1;SRVR:SN1PR12MB2368;H:[10.136.129.116];FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
 Received-SPF: None (protection.outlook.com: amd.com does not designate
  permitted sender hosts)
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;MW2PR12MB2364;23:ejoTGbv7793yGv0SnOEyUq21Y3CAsrNLN7Fk1X5Rx?=
- =?us-ascii?Q?+jgWwqYo7vljno2g5Rz9eZVvil8cazbuTkS8jcXsj6tPDb/BMhxWHWB/xv3q?=
- =?us-ascii?Q?l1asRPrxldZom43+O1TtiIpMN3QCVYr7M7WiK9s9Z5D6fnLNTiX2KqfMqWPc?=
- =?us-ascii?Q?Pqs/PhHu5JiWQEebWJXY0xqCK+Tshcb5DIJvzHk/keziDx6VaFdZ1S35aYP/?=
- =?us-ascii?Q?Ap17cr8DH3qvnO5WLsAoVMceJqIjaePvFFtpPDiOmglXYg9mLKlv1E2ulyyX?=
- =?us-ascii?Q?8+RrPVnv5ay4kK6793rTLX2PxTin6SiLtuwAchXQDeHXbvSn12AFVt10ezAE?=
- =?us-ascii?Q?Rqyk9KR6ux7LoEW9U0BQhduNmk93G56FeJiViL6RLrIirfSY6r2pq8mlSEwb?=
- =?us-ascii?Q?7Pam7PWdFyE2kCoY/6dV3x1FOY0f4FExTNWJJTqE5jQoRQTqJF1LNGVhAjhi?=
- =?us-ascii?Q?pIhIZeBSFGjhsB590/fk8j4b3q74FE9g3MhUFc6gI7zPgw1tqNbqZlXoHrzm?=
- =?us-ascii?Q?AR/Ayezs5eUPhOpXdoBbdQQEZiCMcu5Go8kcHRQSG2c+SZaWu06sc0ejSI0p?=
- =?us-ascii?Q?sO1swPJ1l7QM9ZclvGIR6Ppkr144/3uwnS0L3aMf/E7tx/tZhzidMPPPPlnD?=
- =?us-ascii?Q?9491r2qiLv57MD3tMavwH5pocUh0oLQ9MTe7TbTj/hR81gPaUtkWE7stU3Er?=
- =?us-ascii?Q?gm1ogbeSekL6AJaddx7FTjrbp2LZXI66XzCUINPyj4JYrQLb5YYpSHtFP/xM?=
- =?us-ascii?Q?Tgiks4xuhFdVIQ7ENYfYUsDv4AWbuI0qGmrfFyKqggRvi4fx/3hlFMFHM6LB?=
- =?us-ascii?Q?uVGOc6R4QpFCw2Q7rmXIUXtgnXTW6WmkPCEig4duYfTnd8uaMHIZgDZUAKyz?=
- =?us-ascii?Q?TdI6GsLENR3FpjstYfE0ZkTe76SggZxi0UG9NqVdq/xNaYjgX1+nrir0xVkh?=
- =?us-ascii?Q?4HT7stqV7qulW6OVjbTuk+Wcuqt2o66vVk25XPaNah3wYxBlIHtPd6nMJ8jH?=
- =?us-ascii?Q?iSQjP2dkE1JzTMj2oKiCMyz45Wdc3lwj/2b45MsPouhPrnpWTi86CDHUXGvA?=
- =?us-ascii?Q?pY9qr9lzbEuRJ5kE7iaxeSlpS+idF2v3rkH9cgfg7R2y4Foc4PXarRU/kJeh?=
- =?us-ascii?Q?aCQDW83jpxNm0KcFwiO/mNXpIsJrJiihZ72CCDMyzjaxTHS9C0FxwNHIzIRT?=
- =?us-ascii?Q?5KOZkCWTvkKJEh4aw2jw30kxajGftNRHiT5BiWBuxK1UZpXS9HboOfeCMJ9e?=
- =?us-ascii?Q?fXmQP4hssPDq1O4hJKn6HJTj77iV7A97YPJBrqJ?=
-X-Microsoft-Antispam-Message-Info: UbHaah9U3T+IlMMDHCM/X4NXe2gQSXdao6UVXqxJHfX6IbpGSjKB8DMKAAMKgxBoyHyrHnBK9KhArHRGbB0xC8EvbXFjbHFCdQPom0EHEZflpu7Lxcxrcj71WPZ9H1yAJUNx/OARkfe8TP0p83H07MI7pTJ5jrEsgyErSRjfa8ggb5F/koI3Jko1UeD9SvcMd6oZs+qiHAObFyA6iMxBlyI3tjwnZHTukBOVA0Tx2c8fRlNUiXVGRpND5LmyT5eaajQJ0yn4M3947sEr1y4i8n0uxSQkYzyXAz3BjnIB1D3eL/VCN4RQbSUD7ovpRb2WpVzNij4sEpY/NfqH7Ksbjt8r3chbrVZGIy3Yg6fMMwo=
-X-Microsoft-Exchange-Diagnostics: 1;MW2PR12MB2364;6:ohp/quxnLvZjh2ROy/q7iH4HaphxkiazKaT7B8Iv2q46de01ugfBs7SKx0llVu65sWiA8UbcYqqqVr2AT3pOE8auIK8vLMcuOr+jjsPa2l8M1iAkdlosYeUU4g6tJK/WxBGpg4wdfVIogwScEIlH2PyhId40QrDpFmnhHMr7F6YI3AsflTB9Cf+jgUfkJBbX9Cwm/Ai9JcC8m0JiUTCwP3FhFW7QfXjsbEC9dUnf6bcobrl8kfhBnYbh3Oup9WK/FGr4gvqhWkKvtTtfXqQnZeKgVs1eBzZDM7YBfKRduEmUJ6m/UUzmXTAbXBtC0ZDxODAv/EfcpfW1wcP8dr7IfIKGoOPMw/2/6yoe/0G6ZSlU4KDzeIGWZnXaZ6gqzA1BAsxvF60vg+J/d5hnEo/aZkEeZiruRmjxqSvvSaqVvlFOAs/YYdBkne9+QebBc/ICcuu4fyP2jD7s7VSNX4ZO8Q==;5:viak4by/v26Hv524EwFHBe0/paubeFLQUd/NmQVmxor+S960ObTxY58voK1RPKZsN6gHCtn+W6vrDxGLzBLxJr125pB9QKap6k1m9p8WC2nGREzicdC44Vh9CNViVWwaol/7q6eeH79ma8ISgbDHMH6mdDeX8q3J3QJmOzwPCXQ=;7:H48Op0NPL64/xsZqJuSlvv9dG90MMogzJHed9G1VxDT59FnAuwgmDGSHg+ccOTCI4WTAJz/DVi9ghxmKhUQAoIb+RcPB/zDO3RnLxe7Zuh/QshAYYssKw6KIKhyOzmddBkya9UnEzgxkreCbQ2muR6UPWzClPBDIuDEMGrdqMRJznb1sshHj5sE0P4gdNV72Oy6z0w+w03Cqrgek3Pfqzdm5luqKnARxdGiV5rlGREtCMuNNaouasjiQKbQdCWDN
+X-Microsoft-Exchange-Diagnostics: =?Windows-1252?Q?1;SN1PR12MB2368;23:QCz+9jakDnB/VHIKY5out+UUkyiexEJ0Oj5/S?=
+ =?Windows-1252?Q?xOYsqPWNl3Xg13LbiMp0JIgSk4VX7KvLSpiz3OmetMW0pwpZboa75OJs?=
+ =?Windows-1252?Q?5Qaxc9QQ/7iRYSBpA5PQLbHzeu7uAkYMaxSjWfV2Vy+0B9QExh1vdH3u?=
+ =?Windows-1252?Q?uk8qKHST7K13XqTc85A/GxFL/J0/DosVCCYC11S9cZuAK86yg/bFuYcb?=
+ =?Windows-1252?Q?WJdWpfepnyvZSNNwiYCbIkjpLG13nOGfHCmj/UbglEoH4VLRQOtNxmLb?=
+ =?Windows-1252?Q?DkxUKx90EDOSVtkKwXDx7rUmVdA/zmxWa3/sYzEnwVsNsHSchDIy6lWY?=
+ =?Windows-1252?Q?Skvyf2PfGALWvbFqZXlxTFEfYwqD/2diAPWuARzTVz88dzbagkhSIN4p?=
+ =?Windows-1252?Q?5vybh18DyogrW/BZOzpqlXmYJbsqYyRVKK50fucYl3uJLUv9N07K28cB?=
+ =?Windows-1252?Q?BvmVtnFuKNVan7nK97YVwv8ermCol35MQfZe+Jlb4Z9QB+NTAEnUR28s?=
+ =?Windows-1252?Q?EEaxeywBLe5HCIWxmlc1331E7ooz8KccUpr+PKRAZbU7Sn2W80YI3j2P?=
+ =?Windows-1252?Q?NKx5NJVQ/6M8YHJFpuaWxfpeVCPxBLfVyoXMnRXYW2+hHYXJfj3zKjpK?=
+ =?Windows-1252?Q?e9Q5Y8gNiRn7eqB09mKh96JrXiueBHlJDkdKQ1g7NsU3ggB9ITvdubuw?=
+ =?Windows-1252?Q?qwzl2/qQQH8Rp8wChViUvt0i3YYCoHv1Lc1FYWCptSl6nynuJhKY0cCj?=
+ =?Windows-1252?Q?9Lufq60C8zj+17IbHsqN08+OXOXYOMjO7u30ZvPTb4bc/HIhwkZFSC3k?=
+ =?Windows-1252?Q?T7Lctf9BUiXlVj2Dlocl80pFxuC0jwBSsT4I5j4RePPZb+OnGllgw9di?=
+ =?Windows-1252?Q?n6EUTHzlxaBI2Mx8g618JG9pMFFm3qNzGZ6YFAWhacGmaLUkiVOfc+XN?=
+ =?Windows-1252?Q?JDpXck2vx7lbRjmjEu8iaX2wlTjB8+oRS1nIqBxMtFtij6tsA6/4fH50?=
+ =?Windows-1252?Q?rSZ/QuSKfGXI/54txtpANWIjYCzWd6b5hIz+tzvTVj2kV9ZluxulS23K?=
+ =?Windows-1252?Q?jJpjpeMR+mLSU/CaGMlk6ZgtNcQFiREULy7v7xTxD/fcWiQdB9tQXHUB?=
+ =?Windows-1252?Q?aWhRwc1b/erTIbVLELguL4cZda6jErAAQO8b80ZlKnmeIy7++eLPv69p?=
+ =?Windows-1252?Q?WSMXokf3e0zfDrAOSTaFK6tk7NV5jOq3LCVBoFO1uevTi/iQ9VxSI8Jh?=
+ =?Windows-1252?Q?XxR8b4ezAwcnAlYn5z6kqn+qeR1byf2hvSEJufMKvQsPnhOAg94DNFra?=
+ =?Windows-1252?Q?mc9QLZ8lT8HFIylQ6MH6GZYDxgTsVm7HgP8ZLr7Oy0mhg7R9BAQdh8KL?=
+ =?Windows-1252?Q?F1/Vj22IFmSJOHr0XsJ5EnArzdE7JkepshHqA/OfS0DoUtpGG7FtNstP?=
+ =?Windows-1252?Q?bt4TikJF2hrn31dXwXZIzN0msfuy/7gSJzfx56o+cujOY2VhEvLJUU0V?=
+ =?Windows-1252?Q?3FYZG7dwf53HyTwH4XoHUERp/uOiFr2xR0DT/znqEb7y2e1mDaLo6q5d?=
+ =?Windows-1252?Q?yiJi+bOCVvJ7R4ryv/CWFDfz8Uve7so8nLrIxBjTpSUl32aM89hQq5JL?=
+ =?Windows-1252?Q?NgNAgzPowRZahoekq5VQZ5EGjsVsbD7yxjLSI0vJK4S?=
+X-Microsoft-Antispam-Message-Info: B2oFiMra/mb/C5+D0gKIbgU6BpzN8ox9Yiv0CyOVZOEooQ4r3ch7NfHyY/eBb/wDKlkG7uC4ptff9c8+u/6Lv0Ej6spyVvumm0TREcmRB4qEnOL0MuO+fyW/D3k9tu6BPNmquV992R55GP/yj0wcXanN1a87Ey5vIDeGmXgWmsj6evLBUoxucYymP6sdrvTytsMPOKvfOV1C0amM5btttkYddeUmAuQGfeK8KYjl6NHrQmaM2SVitOBteTRtlT3xFKMw/OQYC8t2DGxK1j+4eDABJjCn3/URL/+c3Sb4A8pZYUhi2erbT/yCu2tAodA48Q/yGoACd8dqU9UnKqKJMZAGtNW0eZblynearMpmHtY=
+X-Microsoft-Exchange-Diagnostics: 1;SN1PR12MB2368;6:KQ/yUtXM4Pp54pMGSvE4J5MgstIKkHjXEWQM1JisDszX31AAZbkfSkRwitczQKLMhJ6k4Ks+LcBVhe9E77xv9YK2C/kvvdzPvdMFolISsUzaYRSlpsQQHAa0YotzQQJoNs/CiCzBCGYxgm4gz0E8r5Ln7o88IaMR8sIJPa5o5zbvACUiJqQEZ/7zISoE6z7lSVVlv67IRAdPkS/hDi+Pm8kzTpYMfQqi8BDk55ByTVCMc2jLXL2KpMU1gsRmoSxhgk55gYIA+H5DDKKyCk2TG3EqmQUivpBrZrh/AfipcFGNkD6wOLJ21sfbMjeNnOSeEBpTEpD/txKp2SDvmVxsK3oUDkeJQpmqmJ6G1ilJM2/M4aSgOiMy4dZIKLJANTmoegdXKX4eeuAY0/xFxqCjbgIHfforOrx98xR65Y3Gs4DqQumg6k6b5aZoQaEYhx6w8XQ3E8PcbKcAvYIkSsbNDA==;5:0cWDcxkbUy775iUnJ9TSFDrr/0Nx3wC1ug3kY4kuuVZZrekf4lbKTLAahFbWyuzYp2tDkj+dt15o6OxngtkSHT2pG56rcx8Rk/ApMauCUxYFUJo0/Hk9plek1FycWAIuOUNe3w7JZUNGT7NxdPr3Hi6Y4DAt55FrOYj6IUbNgGg=;7:bFDzaGq3/EUlIDZFXXyyjhuUqU9mdBtZ/RDE892uYIhEVgavcFSpa/e+bEUjZnZil3vkfHYYmbfBrjctvrh8FTyIp0MPQeHYzhYTRFJ3MZh/9fD+LT1QRleK3AceYy5s0zPhBWatnlCueqcVuFe0ZX/zJE0CQZlH+Oa7OGpdIdwcfYqTstBvo4a7BOM7OTxHFtjWs/uUgYPYB5MyTGtOR6I3YW8xtbdTvTCgpPuDHGsR9zMaaAZl1Yp7O/2V1oRd
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;MW2PR12MB2364;20:8dtGewBimPVNQBFilWQUPfP44fB6u9GjuJvBZNbs9dPcWIiXIvE5f4QmDnTOQ/GOgD1T+3Fw//BzGN10LV62h6mGvslWWhHToBbni9UDz1aN5nwYTNu9/ZSCEzRwAxfSNescWvI7IQ5l4z90IQz8S/jr5Br3xzw6R5PLcrS8q5QvI9oRbtiuSyRJm6jfIu6xjW1ygokERNmbMNE9R5ALuxs79TcU0SgY2b5i0uIYteTG7AgWBVC8HnmEFr/2Z9D3
+X-Microsoft-Exchange-Diagnostics: 1;SN1PR12MB2368;20:dtkUunb2cwEedQiDsOtfax0T+aA9lDVG1JMYUM9hc36uY6r15rKclmekOA2mQxR09msha+lNjUPJNhJnSuc0aGReRgi+EkBOOlLa4dEjYcAcY89PZHO/MhHELrlHPRFu8pzin+ZbiG9jx96Loy949K8r3emGN2oaZIIZqqjbpvG2B8RspYNmfVPY+hZBOvxv+mCEzfhw9HvKya9oBxDWq73cjbPsNh9csKQwWOX619Z59xOXFcxauUbkvwT9daE7
 X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Jul 2018 05:56:35.8104 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 81473155-0123-49d9-e5c8-08d5f2bc90cd
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Jul 2018 05:58:43.1936 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: c514d5fe-08a5-4c65-229f-08d5f2bcd8e7
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW2PR12MB2364
-To:     unlisted-recipients:; (no To-header on input)
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN1PR12MB2368
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fixes
-sound/soc/amd/acp-da7219-max98357a.c: In function 'cz_probe':
-sound/soc/amd/acp-da7219-max98357a.c:367:3: warning: 'ret' may
-be used uninitialized in this function [-Wmaybe-uninitialized]
-   dev_err(&pdev->dev, "Failed to register regulator: %d\n",
-ret);
 
-Signed-off-by: Akshu Agrawal <akshu.agrawal@amd.com>
----
- sound/soc/amd/acp-da7219-max98357a.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/sound/soc/amd/acp-da7219-max98357a.c b/sound/soc/amd/acp-da7219-max98357a.c
-index cd3cf6e..48c1d94 100644
---- a/sound/soc/amd/acp-da7219-max98357a.c
-+++ b/sound/soc/amd/acp-da7219-max98357a.c
-@@ -365,7 +365,7 @@ static int cz_probe(struct platform_device *pdev)
- 				       &acp_da7219_cfg);
- 	if (IS_ERR(rdev)) {
- 		dev_err(&pdev->dev, "Failed to register regulator: %d\n",
--			ret);
-+			(int)PTR_ERR(rdev);
- 		return -EINVAL;
- 	}
- 
--- 
-1.9.1
+On 7/26/2018 7:49 AM, Stephen Rothwell wrote:
+> Hi all,
+> 
+> After merging the sound-asoc tree, today's linux-next build (x86_64
+> allmodconfig) produced this warning:
+> 
+> sound/soc/amd/acp-da7219-max98357a.c: In function 'cz_probe':
+> sound/soc/amd/acp-da7219-max98357a.c:367:3: warning: 'ret' may be used uninitialized in this function [-Wmaybe-uninitialized]
+>    dev_err(&pdev->dev, "Failed to register regulator: %d\n",
+>    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>     ret);
+>     ~~~~
+> 
+> Introduced by commit
+> 
+>   7b5317aa809f ("ASoC: AMD: Add a fix voltage regulator for DA7219 and ADAU7002")
+> 
+> This is a real bug.
+> 
+Posted the fix for the above warning message:
+https://patchwork.kernel.org/patch/10545235/
 
+Thanks,
+Akshu
