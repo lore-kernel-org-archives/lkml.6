@@ -2,116 +2,152 @@ Return-Path: <SRS0=7Z+k=KK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_MUTT
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1124C28CF6
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 19:14:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DFB84C6778F
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 19:15:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AB77B2083F
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 19:14:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9543020673
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 19:15:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="2dL9VGQI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AB77B2083F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="XzmD0Ecg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9543020673
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=broadcom.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731583AbeGZUcw (ORCPT
+        id S1731605AbeGZUdT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 26 Jul 2018 16:32:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57932 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729801AbeGZUcw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Jul 2018 16:32:52 -0400
-Received: from jouet.infradead.org (unknown [177.79.81.37])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7CCF320673;
-        Thu, 26 Jul 2018 19:14:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1532632479;
-        bh=vme20K9mDxTv3P+9CN5JVS9660ReYEZMxgLcbYPCMUI=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=2dL9VGQIMzoOgkLr2sazpFpyQgK8gusOCLbRw08bAxNIETwmxAsw6D4/0srSaScLG
-         Z9R7gbEy8X3EbEK3ZuP+b5XWe6Vmm2E9CCGu4UyhP374yvfI/MKsyx3hoW63YNpaAa
-         lceO/ndo3f+2gdCRKrT4rLeUcyPy78pmaHZ2l/MQ=
-Received: by jouet.infradead.org (Postfix, from userid 1000)
-        id 673B81403B8; Thu, 26 Jul 2018 16:14:35 -0300 (-03)
-Date:   Thu, 26 Jul 2018 16:14:35 -0300
-From:   Arnaldo Carvalho de Melo <acme@kernel.org>
-To:     Sandipan Das <sandipan@linux.ibm.com>
-Cc:     Alexei Starovoitov <ast@fb.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Ingo Molnar <mingo@kernel.org>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Clark Williams <williams@redhat.com>,
-        linux-perf-users@vger.kernel.org,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Wang Nan <wangnan0@huawei.com>, linux-kernel@vger.kernel.org,
-        "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Hendrik Brueckner <brueckner@linux.ibm.com>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Ravi Bangoria <ravi.bangoria@linux.ibm.com>,
-        Thomas Richter <tmricht@linux.ibm.com>
-Subject: Re: BPF relocation 'perf test' entries failing was: Re: [GIT PULL
- 00/27] perf/core improvements and fixes
-Message-ID: <20180726191435.GB20438@kernel.org>
-References: <20180726131534.GD17940@kernel.org>
- <2fbfac01-e103-8daf-6187-b94d1725dbd0@linux.ibm.com>
- <20180726185805.GA20438@kernel.org>
+        Thu, 26 Jul 2018 16:33:19 -0400
+Received: from mail-qt0-f193.google.com ([209.85.216.193]:46712 "EHLO
+        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729801AbeGZUdS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Jul 2018 16:33:18 -0400
+Received: by mail-qt0-f193.google.com with SMTP id d4-v6so2690356qtn.13
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Jul 2018 12:15:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=wEGRVeH5Q8R2kGDMLp5XLOOvYGg2avneZ4EvROwRhXI=;
+        b=XzmD0Ecg8cYNKpi1HMQal9X9FRzKN0+bxM9dZPPg/WLtDiIavfkKw6MVfV1SRRYWCp
+         0ZdNQDZDoyw3ggOzFO73UU1UF4wDBS1fM3HR/F7hDirnpsS747VbiP4f+/1EcaAwD2sW
+         WALdEszI9qLHbaO/z7XATGcOw0Wd0C7xYdC4Q=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=wEGRVeH5Q8R2kGDMLp5XLOOvYGg2avneZ4EvROwRhXI=;
+        b=Hs91NnCWMtmv9XskqNtXC7GIN3vDSWyofGh4c3biTzeSbG64uOIhLSXG6JvQ5iTnB8
+         cBo0i15EDAcLMlQlko6REbPKl8Lo0URgmhRx/i2k6zhduyhm1x4EU8KQiIY+vjwdGcEL
+         9gpEJmUJYRf/Lik9rzZUj07QDfubwyPdZ8W5nl8xAucNr75c6+i45ymgUQiSTMl07gll
+         XB6yMisfVxw8sX340F10FPIfF0EYIMhHji+CGCLIgt88JDCw56zhp8tNXEaQXm7KChR5
+         ftuIxmibZjSGXwisSE/RSsXbXSsloID/56HyosOA1ECF/eyQS9pBj0KMqXtxB/Jlt6Pj
+         xrvA==
+X-Gm-Message-State: AOUpUlEtDn3YuUak63Dz0XMNd/mp1vqWcCvEM9hVOe4nUz2Q4xoSGH70
+        dATOjK+DxuTwJro9J1ZwL7YwinfGuKpZyw==
+X-Google-Smtp-Source: AAOMgpcS3xTNb3I6OqbkvCzyqsm7WB9sEvQWc5czMZblOe3HM9IJchg4xmyPwCp8rC6dpcpjwax31w==
+X-Received: by 2002:aed:3f7c:: with SMTP id q57-v6mr3225953qtf.256.1532632505678;
+        Thu, 26 Jul 2018 12:15:05 -0700 (PDT)
+Received: from [10.136.4.147] ([192.19.228.250])
+        by smtp.gmail.com with ESMTPSA id r27-v6sm2056201qkr.17.2018.07.26.12.15.02
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 26 Jul 2018 12:15:05 -0700 (PDT)
+Subject: Re: [PATCH 1/7] dt-bindings: net: Fix Broadcom iProc mdio mux driver
+ base address
+To:     Andrew Lunn <andrew@lunn.ch>
+Cc:     "David S. Miller" <davem@davemloft.net>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>, netdev@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com
+References: <1532630184-29450-1-git-send-email-arun.parameswaran@broadcom.com>
+ <1532630184-29450-2-git-send-email-arun.parameswaran@broadcom.com>
+ <20180726190103.GF10686@lunn.ch>
+From:   Arun Parameswaran <arun.parameswaran@broadcom.com>
+Message-ID: <35baf11b-0663-e221-5183-51c664a38e57@broadcom.com>
+Date:   Thu, 26 Jul 2018 12:15:20 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180726185805.GA20438@kernel.org>
-X-Url:  http://acmel.wordpress.com
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20180726190103.GF10686@lunn.ch>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Thu, Jul 26, 2018 at 03:58:05PM -0300, Arnaldo Carvalho de Melo escreveu:
-> Em Thu, Jul 26, 2018 at 11:04:08PM +0530, Sandipan Das escreveu:
-> > I came across the same problem. Does the following patch fix it?
+Hi Andrew
 
-> > https://lkml.org/lkml/2018/7/26/669
- 
-> Oh my, that one was subtle... Checking...
+On 18-07-26 12:01 PM, Andrew Lunn wrote:
+> On Thu, Jul 26, 2018 at 11:36:18AM -0700, Arun Parameswaran wrote:
+>> Modify the base address passed to the Broadcom iProc MDIO mux driver
+>> to point to the start of the block's register address space.
+>>
+>> Fixes: ce8d5dbfd64f ("Add DT binding doc for Broadcom MDIO bus multiplexer")
+> 
+> Hi Arun
+> 
+> Fixes generally means something explodes, throws an Opps, userspace
+> does the wrong thing. Documentation/process/stable-kernel-rules.rst
+> says:
+> 
+>  - It must fix a real bug that bothers people (not a, "This could be a
+>    problem..." type thing).
+> 
+> Please explain how this is a real problem and what people it bothers.
+> 
+It is only relevant when we need to modify the registers which are not
+currently accessible.
 
-Right, when it said it was running:
+I will remove the 'fixes' and use the 'net-next' repo for the change
+set.
 
-  40.3: BPF prologue generation
+> I also don't see any attempt to keep backwards compatibility with
+> older device tree blobs. Is it intentional you will break such old
+> blobs?
+> 
+I will modify the patch to keep backward compatibility like you
+suggested in the other patch.
 
-In fact it was running:
+Thanks
+Arun
 
-  40.4: BPF relocation checker
-
-That error message in the 'perf test -v' output:
-
-  libbpf: Program 'func=sys_write' contains non-map related relo data pointing to section 65522
-
-Was the _expected_ one for "40.4: BPF relocation checker", then it
-failed when it couldn't run the off by one "last" subtest, duh.
-
-Thomas, this was a problem introduced by a patch from you, just for
-reference, this one:
-
-    Fixes: 9ef0112442bd ("perf test: Fix subtest number when showing results")
-
-I should have caught this by running 'perf test' before/after applying
-that patch, I'll now make sure this is done before sending pull reqs
-upstream.
-
-In fact I did after, and thought, hey, some BPF related regression, I
-must've updated clang/llvm and something new appeared on the radar, so I
-went that direction and went nowhere, well, now I have an uptodate
-llvm/clang combo to play with BTF, pahole, etc 8-)
-
-Thanks!
-
-- Arnaldo
+> Thanks
+> 	Andrew
+> 
+> 
+>> Signed-off-by: Arun Parameswaran <arun.parameswaran@broadcom.com>
+>> ---
+>>  Documentation/devicetree/bindings/net/brcm,mdio-mux-iproc.txt | 4 ++--
+>>  1 file changed, 2 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/Documentation/devicetree/bindings/net/brcm,mdio-mux-iproc.txt b/Documentation/devicetree/bindings/net/brcm,mdio-mux-iproc.txt
+>> index dfe287a..dc8aa68 100644
+>> --- a/Documentation/devicetree/bindings/net/brcm,mdio-mux-iproc.txt
+>> +++ b/Documentation/devicetree/bindings/net/brcm,mdio-mux-iproc.txt
+>> @@ -18,9 +18,9 @@ at- Documentation/devicetree/bindings/net/mdio-mux.txt
+>>  
+>>  
+>>  for example:
+>> -		mdio_mux_iproc: mdio-mux@6602023c {
+>> +		mdio_mux_iproc: mdio-mux@66020000 {
+>>  			compatible = "brcm,mdio-mux-iproc";
+>> -			reg = <0x6602023c 0x14>;
+>> +			reg = <0x66020000 0x250>;
+>>  			#address-cells = <1>;
+>>  			#size-cells = <0>;
+>>  
+>> -- 
+>> 1.9.1
+>>
