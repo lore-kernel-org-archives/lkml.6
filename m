@@ -2,133 +2,187 @@ Return-Path: <SRS0=7Z+k=KK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=0.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 500C7C6778F
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 13:59:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E3B7C28CF6
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 13:59:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F031620673
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 13:59:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9718A20673
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 13:59:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y1oGVTL5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F031620673
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="NZkza4yo"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9718A20673
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730508AbeGZPQK (ORCPT
+        id S1730610AbeGZPQV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 26 Jul 2018 11:16:10 -0400
-Received: from mail-ua0-f195.google.com ([209.85.217.195]:46296 "EHLO
-        mail-ua0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729506AbeGZPQK (ORCPT
+        Thu, 26 Jul 2018 11:16:21 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:54114 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729506AbeGZPQV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Jul 2018 11:16:10 -0400
-Received: by mail-ua0-f195.google.com with SMTP id r18-v6so1121405ual.13
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Jul 2018 06:59:10 -0700 (PDT)
+        Thu, 26 Jul 2018 11:16:21 -0400
+Received: by mail-wm0-f65.google.com with SMTP id s9-v6so2093349wmh.3
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Jul 2018 06:59:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ipSMxe/AxtwPcVsrNdRWkFZR246cM5NwayOubDETSiw=;
-        b=Y1oGVTL5CS1ewiljOsz7i4birEiEO395iyAClbG14LFUP4xaCIjYSGzt9gERK8bB/a
-         CTgoLYFFQ4cz2h13xGf69Plq3uqqMQ/eK8w39u1WRfsKeQPlx6knSGiyQg3cWtn6gWND
-         a7vlDNkKAxiDpDSIxoZRP0/XiG0D2FI/ogeuwOQk1eehNgQB8FvEroqWMP6mUloVtunp
-         FDvGACMgeAf5ehugGyUus0PmzeW1vUnz9tLjc7ZvjXbrUvGT0YVoBjjx0kO3vOfzjwd0
-         vVpcvf3dS2MI2ZYSyWiD4WN4r5361w05gDF4SCpsOMXsMDx1KcHJVOnpeF0POfHi+1j5
-         uUFQ==
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id;
+        bh=m9CCiwR/zhrqNdJ6Qi86kfoFuPrHTGpOo/Cqk2c9lMw=;
+        b=NZkza4yogigBBOi5izjgx9CAY1ce3IXfSFLxmUy1TB4UQovCnPBny2wWmuPPw5D2Xn
+         Fkdxi2tLXl9aP+jeqy6Z6IsjNtfouzYYkn8U4lRNi7nXCqE6pd5oURI8dP6p5c98Ys6K
+         dam+D8uxPrX0AIzAnKOdI8aUWWBafjRDcFJSI4a3yWWlVKtZSUpbhq8K55GsLRxZniBm
+         4dI6ieTTm1fNilkW4e3yvUV1ldZr4EQB6L7DBb+wZQX9LPblJ8o0ZgrGKiIBE/siPC7T
+         ZRsqjkB/Dq5/chQ254R3gqx2Mt5ibXU7/SSYJxP6khIb7Rs/vnCyuLyyO79Jrvwl7Rn7
+         lpnA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ipSMxe/AxtwPcVsrNdRWkFZR246cM5NwayOubDETSiw=;
-        b=efN+fByIqMac4yXOyoRfoKukjHqa12r6oKJCAIHYXFElLKOtZBhdnQOwX7XE66R+q3
-         MDKzrlkyOlyazSmzIOJwtM+AZmNa3h5JDxFrMBb49f/zmdIFEUgM8ZI83L+TFmO0YUp/
-         ugZs+PT9hT8RlwvUd5ETlAezEuEzV0frQZnVtvlCLFIdBbaeQgX8Lea5oYrncBE0XwXO
-         wQcxZ1d+KzXecVsL7rcWzDJNof85WUTi/4ZKmk5E7i2rXyJgm1Ap5B/yUf9OffElqcN4
-         fC+GyZBEuK1G9Rqk9V6wgnIwU0kQzXId+7cbl0Tx6XWEExIpF5hk3STuCxFigCdEb80r
-         0yeQ==
-X-Gm-Message-State: AOUpUlFqLsBsDodhuMNKiXz308Iw4dZ+obPtV+kFe+3GLqkdzb/elsrm
-        m9jiAkRxteuUqojIU/+O0nY1Otki5+KQMQ9Y8PDyMw==
-X-Google-Smtp-Source: AAOMgpcdbmC6W/25JZd6erbR6A++5R4PpFM+cwCKJuiWO5zkYhaKVaejLmIy60UDu5r9dBTc8PxWwAeFflcZNW3/NwU=
-X-Received: by 2002:ab0:32c1:: with SMTP id f1-v6mr1399493uao.87.1532613549527;
- Thu, 26 Jul 2018 06:59:09 -0700 (PDT)
-MIME-Version: 1.0
-References: <20180711124112.893478-1-arnd@arndb.de>
-In-Reply-To: <20180711124112.893478-1-arnd@arndb.de>
-From:   Oded Gabbay <oded.gabbay@gmail.com>
-Date:   Thu, 26 Jul 2018 16:59:06 +0300
-Message-ID: <CAFCwf114SALuHsHmhbNxG+OMh+Zg+wnfJ6mirMuu2zmXiq6fqQ@mail.gmail.com>
-Subject: Re: [PATCH] [RESEND] amdgpu: kfd: use modern ktime accessors
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Alex Deucher <alexander.deucher@amd.com>,
-        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
-        "David (ChunMing) Zhou" <David1.Zhou@amd.com>,
-        David Airlie <airlied@linux.ie>,
-        "Kuehling, Felix" <Felix.Kuehling@amd.com>,
-        Yong Zhao <yong.zhao@amd.com>,
-        Kent Russell <kent.russell@amd.com>,
-        Philip Yang <Philip.Yang@amd.com>,
-        Harish Kasiviswanathan <Harish.Kasiviswanathan@amd.com>,
-        Andres Rodriguez <andres.rodriguez@amd.com>,
-        Maling list - DRI developers 
-        <dri-devel@lists.freedesktop.org>,
-        amd-gfx list <amd-gfx@lists.freedesktop.org>,
-        "Linux-Kernel@Vger. Kernel. Org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=m9CCiwR/zhrqNdJ6Qi86kfoFuPrHTGpOo/Cqk2c9lMw=;
+        b=S4/L6f2NMub3Fplt5lIictHXPEDGRK48nZOqDIv3TTusgkpsWaqLG8ClMsVVDIzkFn
+         sMcONXOBnIK74d5RVmeElJAjJdIb1Z5K/Uo9hAk9hgokHYm3NFY3qsJwDQGufjS4FOvg
+         08gywielBlSDxD0xcPcIeOyEueFN6V+EaRB9FPdfgeBCeP+LmQ0uIW66BmMz8q/vgduL
+         vQG+DeTuBcauyvB7J6tg6wDPji9iUr+QWmbKJg25Fu+NffbuSo1H05YuRxi2i1M0XYVx
+         AxoOEYJRIHz//17AItO4gtylQdyPUza15J35ie1L0oI797fHTXNkjYrWr0QzHCp4h0YU
+         HJhg==
+X-Gm-Message-State: AOUpUlGTTUdlwR80TEhK6usTH0G8qYvi251FXeeBLQibPkcL5I5z9tOh
+        dqf7A0fhxHlCEU4CLRl+i/LCNA==
+X-Google-Smtp-Source: AAOMgpdIZHKdxLrmyYhJum/5Lv0enqEOOoxtxcAtew9b7WQ3g8SRQ1Lkhv8AyyfbQkYIIPYSHmOwbg==
+X-Received: by 2002:a1c:c4ce:: with SMTP id u197-v6mr1656860wmf.10.1532613559582;
+        Thu, 26 Jul 2018 06:59:19 -0700 (PDT)
+Received: from bender.baylibre.local ([90.63.244.31])
+        by smtp.gmail.com with ESMTPSA id s7-v6sm1754942wru.96.2018.07.26.06.59.18
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Thu, 26 Jul 2018 06:59:18 -0700 (PDT)
+From:   Neil Armstrong <narmstrong@baylibre.com>
+To:     khilman@baylibre.com, carlo@caione.org
+Cc:     Neil Armstrong <narmstrong@baylibre.com>,
+        linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] firmware: meson_sm: Add serial number sysfs entry
+Date:   Thu, 26 Jul 2018 15:59:16 +0200
+Message-Id: <1532613556-5398-1-git-send-email-narmstrong@baylibre.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 11, 2018 at 3:41 PM Arnd Bergmann <arnd@arndb.de> wrote:
->
-> getrawmonotonic64() and get_monotonic_boottime64() are deprecated
-> because of the nonstandard naming.
->
-> The replacement functions ktime_get_raw_ns() and ktime_get_boot_ns()
-> also simplify the callers.
->
-> Reviewed-by: Felix Kuehling <Felix.Kuehling@amd.com>.
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
-> Patch was originall sent on Jun 18 but not applied yet, resending
-> With Felix' Reviewed-by tag
-> ---
->  drivers/gpu/drm/amd/amdkfd/kfd_chardev.c | 8 ++------
->  1 file changed, 2 insertions(+), 6 deletions(-)
->
-> diff --git a/drivers/gpu/drm/amd/amdkfd/kfd_chardev.c b/drivers/gpu/drm/amd/amdkfd/kfd_chardev.c
-> index f64c5551cdba..7e717716b90e 100644
-> --- a/drivers/gpu/drm/amd/amdkfd/kfd_chardev.c
-> +++ b/drivers/gpu/drm/amd/amdkfd/kfd_chardev.c
-> @@ -754,7 +754,6 @@ static int kfd_ioctl_get_clock_counters(struct file *filep,
->  {
->         struct kfd_ioctl_get_clock_counters_args *args = data;
->         struct kfd_dev *dev;
-> -       struct timespec64 time;
->
->         dev = kfd_device_by_id(args->gpu_id);
->         if (dev)
-> @@ -766,11 +765,8 @@ static int kfd_ioctl_get_clock_counters(struct file *filep,
->                 args->gpu_clock_counter = 0;
->
->         /* No access to rdtsc. Using raw monotonic time */
-> -       getrawmonotonic64(&time);
-> -       args->cpu_clock_counter = (uint64_t)timespec64_to_ns(&time);
-> -
-> -       get_monotonic_boottime64(&time);
-> -       args->system_clock_counter = (uint64_t)timespec64_to_ns(&time);
-> +       args->cpu_clock_counter = ktime_get_raw_ns();
-> +       args->system_clock_counter = ktime_get_boot_ns();
->
->         /* Since the counter is in nano-seconds we use 1GHz frequency */
->         args->system_clock_freq = 1000000000;
-> --
-> 2.9.0
->
-Applied to -next
-Thanks,
-Oded
+The Amlogic Meson SoC Secure Monitor implements a call to retrieve an unique
+SoC ID starting from the GX Family and all new families.
+
+The serial number is simply exposed as a sysfs entry under the firmware
+sysfs directory.
+
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+---
+ drivers/firmware/meson/meson_sm.c       | 56 +++++++++++++++++++++++++++++++++
+ include/linux/firmware/meson/meson_sm.h |  1 +
+ 2 files changed, 57 insertions(+)
+
+diff --git a/drivers/firmware/meson/meson_sm.c b/drivers/firmware/meson/meson_sm.c
+index 0ec2ca8..29fbc81 100644
+--- a/drivers/firmware/meson/meson_sm.c
++++ b/drivers/firmware/meson/meson_sm.c
+@@ -24,6 +24,7 @@
+ #include <linux/printk.h>
+ #include <linux/types.h>
+ #include <linux/sizes.h>
++ #include <linux/slab.h>
+ 
+ #include <linux/firmware/meson/meson_sm.h>
+ 
+@@ -48,6 +49,7 @@ struct meson_sm_chip gxbb_chip = {
+ 		CMD(SM_EFUSE_READ,	0x82000030),
+ 		CMD(SM_EFUSE_WRITE,	0x82000031),
+ 		CMD(SM_EFUSE_USER_MAX,	0x82000033),
++		CMD(SM_GET_CHIP_ID,	0x82000044),
+ 		{ /* sentinel */ },
+ 	},
+ };
+@@ -214,6 +216,57 @@ int meson_sm_call_write(void *buffer, unsigned int size, unsigned int cmd_index,
+ }
+ EXPORT_SYMBOL(meson_sm_call_write);
+ 
++#define SM_CHIP_ID_LENGTH	119
++#define SM_CHIP_ID_OFFSET	4
++#define SM_CHIP_ID_SIZE		12
++
++static ssize_t serial_show(struct device *dev, struct device_attribute *attr,
++			 char *buf)
++{
++	uint8_t *id_buf;
++	int ret;
++
++	id_buf = kmalloc(SM_CHIP_ID_LENGTH, GFP_KERNEL);
++	if (!id_buf)
++		return -ENOMEM;
++
++	ret = meson_sm_call_read(id_buf, SM_CHIP_ID_LENGTH, SM_GET_CHIP_ID,
++				 0, 0, 0, 0, 0);
++	if (ret < 0) {
++		kfree(id_buf);
++		return ret;
++	}
++
++	ret = sprintf(buf, "%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x\n",
++			id_buf[SM_CHIP_ID_OFFSET + 0],
++			id_buf[SM_CHIP_ID_OFFSET + 1],
++			id_buf[SM_CHIP_ID_OFFSET + 2],
++			id_buf[SM_CHIP_ID_OFFSET + 3],
++			id_buf[SM_CHIP_ID_OFFSET + 4],
++			id_buf[SM_CHIP_ID_OFFSET + 5],
++			id_buf[SM_CHIP_ID_OFFSET + 6],
++			id_buf[SM_CHIP_ID_OFFSET + 7],
++			id_buf[SM_CHIP_ID_OFFSET + 8],
++			id_buf[SM_CHIP_ID_OFFSET + 9],
++			id_buf[SM_CHIP_ID_OFFSET + 10],
++			id_buf[SM_CHIP_ID_OFFSET + 11]);
++
++	kfree(id_buf);
++
++	return ret;
++}
++
++static DEVICE_ATTR_RO(serial);
++
++static struct attribute *meson_sm_sysfs_attributes[] = {
++	&dev_attr_serial.attr,
++	NULL,
++};
++
++static const struct attribute_group meson_sm_sysfs_attr_group = {
++	.attrs = meson_sm_sysfs_attributes,
++};
++
+ static const struct of_device_id meson_sm_ids[] = {
+ 	{ .compatible = "amlogic,meson-gxbb-sm", .data = &gxbb_chip },
+ 	{ /* sentinel */ },
+@@ -242,6 +295,9 @@ static int __init meson_sm_probe(struct platform_device *pdev)
+ 	fw.chip = chip;
+ 	pr_info("secure-monitor enabled\n");
+ 
++	if (sysfs_create_group(&pdev->dev.kobj, &meson_sm_sysfs_attr_group))
++		goto out_in_base;
++
+ 	return 0;
+ 
+ out_in_base:
+diff --git a/include/linux/firmware/meson/meson_sm.h b/include/linux/firmware/meson/meson_sm.h
+index 37a5eae..f98c20d 100644
+--- a/include/linux/firmware/meson/meson_sm.h
++++ b/include/linux/firmware/meson/meson_sm.h
+@@ -17,6 +17,7 @@ enum {
+ 	SM_EFUSE_READ,
+ 	SM_EFUSE_WRITE,
+ 	SM_EFUSE_USER_MAX,
++	SM_GET_CHIP_ID,
+ };
+ 
+ struct meson_sm_firmware;
+-- 
+2.7.4
+
