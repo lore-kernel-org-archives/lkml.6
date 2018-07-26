@@ -2,113 +2,105 @@ Return-Path: <SRS0=7Z+k=KK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28EDEC28CF6
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 19:29:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8260C28CF6
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 19:29:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D02A220671
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 19:29:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7F8DA20671
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 19:29:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="fj3clX6H"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D02A220671
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="j6JyqrLE"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F8DA20671
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lunn.ch
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731463AbeGZUrg (ORCPT
+        id S1731629AbeGZUro (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 26 Jul 2018 16:47:36 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:42558 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730474AbeGZUrf (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Jul 2018 16:47:35 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=Evp98q7TGeMLWouw7IQaHciQ+h+CQTbno8nBiuRGlm0=; b=fj3clX6HWMJtmSku6ovk0EKnmX
-        Ac3PbXd6WUUJx+EbvONznQ42foJ9b18EWH6KaV+DjukN7+eUK4Ge1O8Y2LrKW/tpVJg4vbBM45fGL
-        NJ+h4X72EOmg8f7NQq2PoIhHRgDiOmm5kSBYaUJ0E/oa/rtlKK+xol0H1J1604wWZMQ1wBtk6UT0K
-        T4/9DKGvJb2Yo7c4FbWT9xIczfvb5XGhzoP+xnwkMbOcbnOljO2mwJgOFgZ2pzL+fc6ogJBb/9sEm
-        EFr7b2/g2EGDVTmA/6nuNsuuaEy4tyAeOvOVmSxdSFnn0e/w4IPFg2Zm2NOf5VAROWT7v1eX4rjHV
-        HqJGplVA==;
-Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1filwq-0006ZO-4x; Thu, 26 Jul 2018 19:29:16 +0000
-Subject: Re: m68k allmodconfig build errors
-To:     Finn Thain <fthain@telegraphics.com.au>
-Cc:     Andreas Schwab <schwab@linux-m68k.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        linux-m68k@lists.linux-m68k.org
-References: <28ebe45d-3dbd-2a82-f537-b0725f7a2bcf@infradead.org>
- <878t66idai.fsf@igel.home>
- <94dc0357-10d4-c3dc-ef2a-9643f08d2a09@infradead.org>
- <alpine.LNX.2.21.1807241423000.8@nippy.intranet>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <761399f0-0b10-716c-1e80-cfb19c06e455@infradead.org>
-Date:   Thu, 26 Jul 2018 12:29:10 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Thu, 26 Jul 2018 16:47:44 -0400
+Received: from vps0.lunn.ch ([185.16.172.187]:47705 "EHLO vps0.lunn.ch"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730439AbeGZUro (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Jul 2018 16:47:44 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch; s=20171124;
+        h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date; bh=FquRfStKJoc5qkcJpPqwZ2p010g1xohB/4nG2X7LxN0=;
+        b=j6JyqrLE5reXKWSJDqjqVYy2NKqHXAYQrwTxMM9jlRFYaRkOe/V4Tdhi5Xb3i3Cc+JkXcTCxnRggdz1hoGsi7gd8J0D6unFZ8UZXL5q9ENirkTQpJVSQngCe7pSA0fe3y/yNEGtEDGMFod/1IhrkSWUvh8va7RdYIg/VZ2NigZ8=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.84_2)
+        (envelope-from <andrew@lunn.ch>)
+        id 1filwx-0005bZ-8T; Thu, 26 Jul 2018 21:29:23 +0200
+Date:   Thu, 26 Jul 2018 21:29:23 +0200
+From:   Andrew Lunn <andrew@lunn.ch>
+To:     Ray Jui <ray.jui@broadcom.com>
+Cc:     Arun Parameswaran <arun.parameswaran@broadcom.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>, netdev@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com
+Subject: Re: [PATCH 2/7] net: phy: Fix the register offsets in Broadcom iProc
+ mdio mux driver
+Message-ID: <20180726192923.GL10686@lunn.ch>
+References: <1532630184-29450-1-git-send-email-arun.parameswaran@broadcom.com>
+ <1532630184-29450-3-git-send-email-arun.parameswaran@broadcom.com>
+ <20180726190636.GG10686@lunn.ch>
+ <6188441f-670d-7644-361b-7a5e8e06c9c2@broadcom.com>
+ <eeaf777f-e0ea-fb41-5a5e-4ab42a35e10f@broadcom.com>
 MIME-Version: 1.0
-In-Reply-To: <alpine.LNX.2.21.1807241423000.8@nippy.intranet>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <eeaf777f-e0ea-fb41-5a5e-4ab42a35e10f@broadcom.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/23/2018 09:49 PM, Finn Thain wrote:
-> On Mon, 23 Jul 2018, Randy Dunlap wrote:
+On Thu, Jul 26, 2018 at 12:25:24PM -0700, Ray Jui wrote:
 > 
->> On 07/20/2018 12:20 AM, Andreas Schwab wrote:
->>> On Jul 19 2018, Randy Dunlap <rdunlap@infradead.org> wrote:
->>>
->>>> block/partitions/ldm.o: In function `ldm_partition':
->>>> ldm.c:(.text+0x1900): undefined reference to `strcmp'
->>>> ldm.c:(.text+0x1964): undefined reference to `strcmp'
->>>> drivers/rtc/rtc-proc.o: In function `is_rtc_hctosys':
->>>> rtc-proc.c:(.text+0x290): undefined reference to `strcmp'
->>>> drivers/watchdog/watchdog_pretimeout.o: In function `watchdog_register_governor':
->>>> (.text+0x142): undefined reference to `strcmp'
->>>
->>> GCC has optimized strncmp to strcmp, but at a stage where macros are no
->>> longer available.  I think the right fix is to use strcmp directly,
->>> since strncmp doesn't make sense here.
->>
->> Hi Andreas,
->>
->> I don't see that all of these string compare fields are null-terminated.
->>
 > 
-> Some of the strncmp calls in ldm.c are null-terminated, some are not. 
+> On 7/26/2018 12:16 PM, Arun Parameswaran wrote:
+> >
+> >
+> >On 18-07-26 12:06 PM, Andrew Lunn wrote:
+> >>On Thu, Jul 26, 2018 at 11:36:19AM -0700, Arun Parameswaran wrote:
+> >>>Modify the register offsets in the Broadcom iProc mdio mux to start
+> >>>from the top of the register address space.
+> >>>
+> >>>Earlier the base address specified was from the middle of the block's
+> >>>register space. The base address will now point to the start of the
+> >>>mdio's address space. The offsets have been fixed to match this.
+> >>
+> >>Hi Arun
+> >>
+> >>Did you consider a change something like:
+> >That looks good. I will make this change to the patch.
+> >
+> >Thanks
+> >Arun
 > 
-> That would imply that the compiler will emit both strcmp and strncmp 
-> calls.
+> To make it backward compatible, then length of the resource also needs to be
+> adjusted from 0x14 to 0x250 in the driver?
 > 
-> A strncmp call isn't a problem, because m68k doesn't define 
-> __HAVE_ARCH_STRNCMP and so the one from lib/string.c gets built.
-> 
->> How does one convert strncmp() users to strcmp()?
->>
->> thanks,
->>
-> 
-> The untested patch below may work. It seems that it may be relevant to 
-> both arc and m68k:
+> Otherwise you will end up accessing areas out of 0x14 defined in old DT that
+> is not mapped?
 
+struct resource {
+       resource_size_t start;
+       resource_size_t end;
+       const char *name;
+       unsigned long flags;
+       unsigned long desc;
+       struct resource *parent, *sibling, *child;
+};
 
-I got back to looking at the build errors.  I agree with Andreas that
-all of the fields in question are null-terminated, so Finn's patch looks
-good to me.
+"end" suggests an address, not a length. But it would be good to look
+deeper into the code to be sure.
 
-
--- 
-~Randy
+       Andrew
