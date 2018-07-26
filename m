@@ -2,203 +2,252 @@ Return-Path: <SRS0=7Z+k=KK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 648DFC28CF6
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 12:26:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92F79ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 12:26:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 136D820894
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 12:26:33 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="iNKFhx9G"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 136D820894
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 4E8C7208A0
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 12:26:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4E8C7208A0
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731271AbeGZNnH (ORCPT
+        id S1731301AbeGZNnJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 26 Jul 2018 09:43:07 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:53458 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730308AbeGZNnH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Jul 2018 09:43:07 -0400
-Received: by mail-wm0-f66.google.com with SMTP id s9-v6so1783973wmh.3
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Jul 2018 05:26:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=vnzg/uiA3k6rO781938fn/q/XkEEKQ5Auf8o4/VfG+0=;
-        b=iNKFhx9G5JyaT5fvgPqfpI+fWs781Xl3lnyAthveCCruFNvVFuI5MJnU5WupatK7P/
-         rIzoVdsXOpk7yqw1D9fYQDIcBqt5szz+cWiN6PnV9TEyU1VlfR4dB7viI0dcHtmbY4DK
-         zZsLkVBkcxn5finxshVlmg4EBU02lOR2QzDcQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=vnzg/uiA3k6rO781938fn/q/XkEEKQ5Auf8o4/VfG+0=;
-        b=k1PtQ0jg2drNLNNu6excCF9vjhRRBbo01vc0m0vHW7XJ3+W7C3bsMzUBH78Iqv/QCQ
-         iihv2+82Y+TGCFhNADv3aC1RyrmnyV7P9amDqVlYe6gFlaWl4dfYQNjV6D2SkbPshD3z
-         XeTzYFVX3KTIayHVvFm2q8jyW3vGtV9Op+t0IJ/NWf+s1vvYIAvUnhkqvivqgm8e8v4m
-         8CyjculEK4f6uA5EEUlVfTj86O+VuVPJGNLdZiQHaPVJpLBDFqL3ViHPVYZbKNp7YPSi
-         4TXNCN3uzUCrXF28kdH2LmpsGQPVYuUkw1t+wtZ8+UQsLSuPOZsbxHwbESFvhKniWn7Y
-         d9Wg==
-X-Gm-Message-State: AOUpUlErTaH55asmiknVT/X7hn+IgV9uQr6rYWE3uPmVIMarctG8VoN/
-        fbnmFll80dcMWNLmxL9OGCwEFw==
-X-Google-Smtp-Source: AAOMgpdgruM0Nvw3pjI7JiEC3FECmeG/kMkWe+Biq3gc+6s23WW54bi5+5pycSKZyw9xHmJYnMVmuQ==
-X-Received: by 2002:a1c:3f08:: with SMTP id m8-v6mr1541002wma.88.1532607988306;
-        Thu, 26 Jul 2018 05:26:28 -0700 (PDT)
-Received: from [100.125.208.68] (193.84.136.77.rev.sfr.net. [77.136.84.193])
-        by smtp.gmail.com with ESMTPSA id q70-v6sm2791965wmd.39.2018.07.26.05.26.27
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 26 Jul 2018 05:26:27 -0700 (PDT)
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (1.0)
-Subject: Re: [PATCH RT] rtc: Disable RTC_DRV_EFI on RT
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-X-Mailer: iPhone Mail (15F79)
-In-Reply-To: <20180726121504.ba35z3j3wsesryy3@linutronix.de>
-Date:   Thu, 26 Jul 2018 14:26:25 +0200
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        linux-rt-users@vger.kernel.org,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        linux-efi <linux-efi@vger.kernel.org>,
-        Anna-Maria Gleixner <anna-maria@linutronix.de>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <5052E25B-9942-40C1-BD53-86E3D7014557@linaro.org>
-References: <20180726090449.hfvtey3ruzzhzdaz@linutronix.de> <CAKv+Gu_+t_VwY3xDq3nWbnOTfzBc6OtQeRD2GKsseO2uK-uruw@mail.gmail.com> <20180726121504.ba35z3j3wsesryy3@linutronix.de>
-To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+        Thu, 26 Jul 2018 09:43:09 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:10132 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729514AbeGZNnI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Jul 2018 09:43:08 -0400
+Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 22F5E44CC6C5D;
+        Thu, 26 Jul 2018 20:26:26 +0800 (CST)
+Received: from szvp000100637.huawei.com (10.162.55.131) by smtp.huawei.com
+ (10.3.19.208) with Microsoft SMTP Server (TLS) id 14.3.382.0; Thu, 26 Jul
+ 2018 20:26:20 +0800
+From:   Gao Xiang <gaoxiang25@huawei.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        <devel@driverdev.osuosl.org>
+CC:     <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-erofs@lists.ozlabs.org>, <yuchao0@huawei.com>,
+        <miaoxie@huawei.com>, <weidu.du@huawei.com>, <hsiangkao@aol.com>,
+        <chao@kernel.org>, Gao Xiang <gaoxiang25@huawei.com>
+Subject: [PATCH 14/25] staging: erofs: introduce pagevec for unzip subsystem
+Date:   Thu, 26 Jul 2018 20:21:57 +0800
+Message-ID: <1532607728-103372-15-git-send-email-gaoxiang25@huawei.com>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1532607728-103372-1-git-send-email-gaoxiang25@huawei.com>
+References: <1527764767-22190-1-git-send-email-gaoxiang25@huawei.com>
+ <1532607728-103372-1-git-send-email-gaoxiang25@huawei.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.162.55.131]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+For each compressed cluster, there is a straight-forward
+way of allocating a fixed or variable-sized (for VLE) array
+to record the corresponding file pages for its decompression
+if we decide to decompress these pages asynchronously (eg.
+read-ahead case), however it could take much extra on-heap
+memory compared with traditional uncompressed filesystems.
 
+This patch introduces a pagevec solution to reuse some
+allocated file page in the time-sharing approach storing
+parts of the array itself in order to minimize the extra
+memory overhead, thus only a constant and small-sized array
+used for booting the whole array itself up will be needed.
 
-> On 26 Jul 2018, at 14:15, Sebastian Andrzej Siewior <bigeasy@linutronix.de=
-> wrote:
->=20
->> On 2018-07-26 11:15:52 [+0200], Ard Biesheuvel wrote:
->> On 26 July 2018 at 11:04, Sebastian Andrzej Siewior
->> <bigeasy@linutronix.de> wrote:
->>> Based on measurements the EFI functions get_variable /
->>> get_next_variable take up to 2us. The functions get_time, set_time take
->>> around 10ms. Those 10ms are too much. Even one ms would be too much.
->>=20
->> You cannot extrapolate from these numbers. If the lack of worst case
->> guarantees on an EFI system is a problem for -rt, the only meaningful
->> course of action is to disable EFI runtime services entirely.
->=20
-> Oh boy. I disable EFI entirely because then the bootloader won't boot
-> due to missing efi-stub. But I could disable the runtime-wrappers if
-> that is what you meant. Patch below.
->=20
+Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
+---
+ drivers/staging/erofs/unzip_pagevec.h | 172 ++++++++++++++++++++++++++++++++++
+ 1 file changed, 172 insertions(+)
+ create mode 100644 drivers/staging/erofs/unzip_pagevec.h
 
-What i mean is whatever you end up with if you pass efi=3Dnoruntime to the k=
-ernel.
+diff --git a/drivers/staging/erofs/unzip_pagevec.h b/drivers/staging/erofs/unzip_pagevec.h
+new file mode 100644
+index 0000000..0956615
+--- /dev/null
++++ b/drivers/staging/erofs/unzip_pagevec.h
+@@ -0,0 +1,172 @@
++/* SPDX-License-Identifier: GPL-2.0
++ *
++ * linux/drivers/staging/erofs/unzip_pagevec.h
++ *
++ * Copyright (C) 2018 HUAWEI, Inc.
++ *             http://www.huawei.com/
++ * Created by Gao Xiang <gaoxiang25@huawei.com>
++ *
++ * This file is subject to the terms and conditions of the GNU General Public
++ * License.  See the file COPYING in the main directory of the Linux
++ * distribution for more details.
++ */
++#ifndef __EROFS_UNZIP_PAGEVEC_H
++#define __EROFS_UNZIP_PAGEVEC_H
++
++#include <linux/tagptr.h>
++
++/* page type in pagevec for unzip subsystem */
++enum z_erofs_page_type {
++	/* including Z_EROFS_VLE_PAGE_TAIL_EXCLUSIVE */
++	Z_EROFS_PAGE_TYPE_EXCLUSIVE,
++
++	Z_EROFS_VLE_PAGE_TYPE_TAIL_SHARED,
++
++	Z_EROFS_VLE_PAGE_TYPE_HEAD,
++	Z_EROFS_VLE_PAGE_TYPE_MAX
++};
++
++extern void __compiletime_error("Z_EROFS_PAGE_TYPE_EXCLUSIVE != 0")
++	__bad_page_type_exclusive(void);
++
++/* pagevec tagged pointer */
++typedef tagptr2_t	erofs_vtptr_t;
++
++/* pagevec collector */
++struct z_erofs_pagevec_ctor {
++	struct page *curr, *next;
++	erofs_vtptr_t *pages;
++
++	unsigned int nr, index;
++};
++
++static inline void z_erofs_pagevec_ctor_exit(struct z_erofs_pagevec_ctor *ctor,
++					     bool atomic)
++{
++	if (ctor->curr == NULL)
++		return;
++
++	if (atomic)
++		kunmap_atomic(ctor->pages);
++	else
++		kunmap(ctor->curr);
++}
++
++static inline struct page *
++z_erofs_pagevec_ctor_next_page(struct z_erofs_pagevec_ctor *ctor,
++			       unsigned nr)
++{
++	unsigned index;
++
++	/* keep away from occupied pages */
++	if (ctor->next != NULL)
++		return ctor->next;
++
++	for (index = 0; index < nr; ++index) {
++		const erofs_vtptr_t t = ctor->pages[index];
++		const unsigned tags = tagptr_unfold_tags(t);
++
++		if (tags == Z_EROFS_PAGE_TYPE_EXCLUSIVE)
++			return tagptr_unfold_ptr(t);
++	}
++
++	if (unlikely(nr >= ctor->nr))
++		BUG();
++
++	return NULL;
++}
++
++static inline void
++z_erofs_pagevec_ctor_pagedown(struct z_erofs_pagevec_ctor *ctor,
++			      bool atomic)
++{
++	struct page *next = z_erofs_pagevec_ctor_next_page(ctor, ctor->nr);
++
++	z_erofs_pagevec_ctor_exit(ctor, atomic);
++
++	ctor->curr = next;
++	ctor->next = NULL;
++	ctor->pages = atomic ?
++		kmap_atomic(ctor->curr) : kmap(ctor->curr);
++
++	ctor->nr = PAGE_SIZE / sizeof(struct page *);
++	ctor->index = 0;
++}
++
++static inline void z_erofs_pagevec_ctor_init(struct z_erofs_pagevec_ctor *ctor,
++					     unsigned nr,
++					     erofs_vtptr_t *pages, unsigned i)
++{
++	ctor->nr = nr;
++	ctor->curr = ctor->next = NULL;
++	ctor->pages = pages;
++
++	if (i >= nr) {
++		i -= nr;
++		z_erofs_pagevec_ctor_pagedown(ctor, false);
++		while (i > ctor->nr) {
++			i -= ctor->nr;
++			z_erofs_pagevec_ctor_pagedown(ctor, false);
++		}
++	}
++
++	ctor->next = z_erofs_pagevec_ctor_next_page(ctor, i);
++	ctor->index = i;
++}
++
++static inline bool
++z_erofs_pagevec_ctor_enqueue(struct z_erofs_pagevec_ctor *ctor,
++			     struct page *page,
++			     enum z_erofs_page_type type,
++			     bool *occupied)
++{
++	*occupied = false;
++	if (unlikely(ctor->next == NULL && type))
++		if (ctor->index + 1 == ctor->nr)
++			return false;
++
++	if (unlikely(ctor->index >= ctor->nr))
++		z_erofs_pagevec_ctor_pagedown(ctor, false);
++
++	/* exclusive page type must be 0 */
++	if (Z_EROFS_PAGE_TYPE_EXCLUSIVE != (uintptr_t)NULL)
++		__bad_page_type_exclusive();
++
++	/* should remind that collector->next never equal to 1, 2 */
++	if (type == (uintptr_t)ctor->next) {
++		ctor->next = page;
++		*occupied = true;
++	}
++
++	ctor->pages[ctor->index++] =
++		tagptr_fold(erofs_vtptr_t, page, type);
++	return true;
++}
++
++static inline struct page *
++z_erofs_pagevec_ctor_dequeue(struct z_erofs_pagevec_ctor *ctor,
++			     enum z_erofs_page_type *type)
++{
++	erofs_vtptr_t t;
++
++	if (unlikely(ctor->index >= ctor->nr)) {
++		BUG_ON(ctor->next == NULL);
++		z_erofs_pagevec_ctor_pagedown(ctor, true);
++	}
++
++	t = ctor->pages[ctor->index];
++
++	*type = tagptr_unfold_tags(t);
++
++	/* should remind that collector->next never equal to 1, 2 */
++	if (*type == (uintptr_t)ctor->next)
++		ctor->next = tagptr_unfold_ptr(t);
++
++	ctor->pages[ctor->index++] =
++		tagptr_fold(erofs_vtptr_t, NULL, 0);
++
++	return tagptr_unfold_ptr(t);
++}
++
++#endif
++
+-- 
+1.9.1
 
-But as i mentioned before, you may also lose the ability to reboot/shut down=
- your system this way. Can you please double check?
-
->> I think SetVariable() may be even worse than GetTime(), given that NOR
->> flash updates may involve erasing blocks.
->=20
-> Here we go. "Read" can be triggered from userland via sysfs / efivars.
-> "Write" is (currently) limited to pstore?
->=20
-
-No you can also write to variables via efivarfs and sysfs.
-
->>> The funny part is that EFI is invoked with enabled interrupts.
->>> According to my tracing I see the interrupt almost 10ms later which
->>> indicates that EFI is disabling interrupts while doing its thing.
->>=20
->> Yes, and this is also highly implementation specific. Basing this kind
->> of policy on a single implementation is not very wise imo.
->=20
-> even if interrupts were not disabled then there would be no context
-> switch on exit from interrupt path due to the preempt-disable part. So
-> no improvement.
->=20
->>> This was observed on "EFI v2.60 by SoftIron Overdrive 1000". I don't say=
-
->>> that every EFI implementation does this but given that it has to access a=
-
->>> slow bus like I2C/SPI it is expected.
->>>=20
->>> Disable EFI's RTC driver on RT.
->>>=20
->>=20
->> Other calls to GetTime() would still be permitted in this case, so
->> this seems like a partial solution (although no other calls seem to
->> exist atm)
->=20
-> I *assumed* pstore would use the SetVariable during warning/bug. The
-> pstore thingy might be useful. Not sure.
->=20
-> ------ >8
->=20
-> Subject: [PATCH RT] arm64: Disable EFI runtime services on RT
->=20
-> Based on meassurements the EFI functions get_variable /
-> get_next_variable take up to 2us which looks okay.
-> The functions get_time, set_time take around 10ms. Those 10ms are too
-> much. Even one ms would be too much.
-> Ard mentioned that SetVariable might even trigger larger latencies if
-> the firware will erase flash blocks on NOR.
->=20
-> The time-functions are used by efi-rtc and can be triggered during
-> runtimed (either via explicit read/write or ntp sync).
->=20
-> The variable write could be used by pstore.
-> These functions can be disabled without much of a loss. The poweroff /
-> reboot hooks will be provided by PSCI.
->=20
-> Disable EFI's runtime wrappers.
->=20
-> This was observed on "EFI v2.60 by SoftIron Overdrive 1000".
->=20
-> Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-> ---
-> arch/arm64/Kconfig                 | 2 +-
-> drivers/firmware/efi/arm-runtime.c | 2 ++
-> 2 files changed, 3 insertions(+), 1 deletion(-)
->=20
-> diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-> index 111db4e44fcf..68adcb0f4de6 100644
-> --- a/arch/arm64/Kconfig
-> +++ b/arch/arm64/Kconfig
-> @@ -1250,7 +1250,7 @@ config EFI
->    select LIBFDT
->    select UCS2_STRING
->    select EFI_PARAMS_FROM_FDT
-> -    select EFI_RUNTIME_WRAPPERS
-> +    select EFI_RUNTIME_WRAPPERS if !PREEMPT_RT_BASE
->    select EFI_STUB
->    select EFI_ARMSTUB
->    default y
-> diff --git a/drivers/firmware/efi/arm-runtime.c b/drivers/firmware/efi/arm=
--runtime.c
-> index 5889cbea60b8..3e96db10c034 100644
-> --- a/drivers/firmware/efi/arm-runtime.c
-> +++ b/drivers/firmware/efi/arm-runtime.c
-> @@ -140,8 +140,10 @@ static int __init arm_enable_runtime_services(void)
->    }
->=20
->    /* Set up runtime services function pointers */
-> +#ifdef CONFIG_EFI_RUNTIME_WRAPPERS
->    efi_native_runtime_setup();
->    set_bit(EFI_RUNTIME_SERVICES, &efi.flags);
-> +#endif
->=20
->    return 0;
-> }
-> --=20
-> 2.18.0
->=20
