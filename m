@@ -2,83 +2,101 @@ Return-Path: <SRS0=7Z+k=KK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2C3EC28CF6
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 08:19:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ACB56C28CF6
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 08:22:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8389D20673
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 08:19:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8389D20673
+	by mail.kernel.org (Postfix) with ESMTP id 58B7520673
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 08:22:08 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="agOldFa8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 58B7520673
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729089AbeGZJfc (ORCPT
+        id S1729130AbeGZJht (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 26 Jul 2018 05:35:32 -0400
-Received: from mx2.suse.de ([195.135.220.15]:58074 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727790AbeGZJfc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Jul 2018 05:35:32 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 68661AED4;
-        Thu, 26 Jul 2018 08:19:48 +0000 (UTC)
-Date:   Thu, 26 Jul 2018 10:19:47 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Bruce Merry <bmerry@ska.ac.za>
-Cc:     "Singh, Balbir" <bsingharora@gmail.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux MM <linux-mm@kvack.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>
-Subject: Re: Showing /sys/fs/cgroup/memory/memory.stat very slow on some
- machines
-Message-ID: <20180726081947.GA28386@dhcp22.suse.cz>
-References: <CAOm-9arwY3VLUx5189JAR9J7B=Miad9nQjjet_VNdT3i+J+5FA@mail.gmail.com>
- <20180717212307.d6803a3b0bbfeb32479c1e26@linux-foundation.org>
- <20180718104230.GC1431@dhcp22.suse.cz>
- <CAOm-9aqeKZ7+Jvhc5DxEEzbk4T0iQx8gZ=O1vy6YXnbOkncFsg@mail.gmail.com>
- <CALvZod7_vPwqyLBxiecZtREEeY4hioCGnZWVhQx9wVdM8CFcog@mail.gmail.com>
- <CAOm-9aprLokqi6awMvi0NbkriZBpmvnBA81QhOoHnK7ZEA96fw@mail.gmail.com>
- <CALvZod4ag02N6QPwRQCYv663hj05Z6vtrK8=XEE6uWHQCL4yRw@mail.gmail.com>
- <CAOm-9arxtTwNxXzmb8nN+N_UtjiuH0XkpkVPFHpi3EOYXvZYVA@mail.gmail.com>
- <dda7b095-db84-7e69-a03e-d8ce64fc9b8e@gmail.com>
- <CAOm-9ar2zzxZvZ9A0Yu0knn_LNcHsck72wXShFXutYvAN2qu9Q@mail.gmail.com>
+        Thu, 26 Jul 2018 05:37:49 -0400
+Received: from mail-oi0-f65.google.com ([209.85.218.65]:42205 "EHLO
+        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728956AbeGZJht (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Jul 2018 05:37:49 -0400
+Received: by mail-oi0-f65.google.com with SMTP id n84-v6so1492141oib.9;
+        Thu, 26 Jul 2018 01:22:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=GndRCQMau3PydFhw8kq1nYnMCcmKMqyUbqUtAZLhF3M=;
+        b=agOldFa8qwdRlVZW61U8HgUjoUjYGSsvdbzHtfz423OoRLjaY/1vgpTRoLVpJI9YIL
+         eX9/TZtMSf3bbXYmwgGK4VvpzxIznp8NJI8C2vfbF2MlCaCudco2QTSQL7luiAENG8EF
+         YYGuYduRgnii6IJiNgLabjnTiPq5j19UGS7fOUKaB9RO++i9P41cHwWqmJoeyf1LivAI
+         WrvjQe2/Npbk/BMVUUoHTRSAaE64YhP4TepqiaAQH91Awsaxy++TF5XY8Sgvt/gY27ZS
+         zNf5FbdNIqWeSKvpaCijyDANDSN2XSjypD9BZTl7pZG2zxGyQnrGYDwJDfqXTRj0PTIX
+         JrbQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
+         :date:message-id:subject:to:cc;
+        bh=GndRCQMau3PydFhw8kq1nYnMCcmKMqyUbqUtAZLhF3M=;
+        b=ps2cKUj0MtJFqdK6Bjc0uvTvXcjk02co3byO7qa32E9xS5ktYvTzSHV4nSr5MxsUer
+         jRkYDkDttIVi+D4TgwkBMvugO28TeuqQjFod8E6U/FHD8M8j7W4SaS/o2SGN77ePGhyP
+         vjLvIqbXzalWw5vNjQsl0X3P3Wdv4AjqFiwaTymSYdlYz2n/io5MSFMCYprFkSQwNBTW
+         idekf/BZ6zU5VVGHGtuftjaNfdOZN86HElGWoPyW5ktHGXTiyWaoO/9LkuFN88p+nWLZ
+         EEZzRKmGTu+6Yck2aU7QLFTRKFUo799yQL6mdA2i61SAXugOlgmIN/wL4tntHtpSBhB7
+         rpAQ==
+X-Gm-Message-State: AOUpUlG0JezaUyHBW/dL7nTHqAvHABLoXJFnKWJ+TgqGq5AX1vaNHNcW
+        klNUTPE6pNZj0Ryq1ko/Cq7LAUmB+DuAXZbw03s=
+X-Google-Smtp-Source: AAOMgpcM6zgioOsOkADpIu+FsjVe2boaJaIlsx7rQUVdAFygfUCU5ALWBEJLNNtuBZ8eQ09wtG2ciQMJCbuDjk5JN80=
+X-Received: by 2002:aca:42:: with SMTP id 63-v6mr882495oia.154.1532593325889;
+ Thu, 26 Jul 2018 01:22:05 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAOm-9ar2zzxZvZ9A0Yu0knn_LNcHsck72wXShFXutYvAN2qu9Q@mail.gmail.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+Received: by 2002:a9d:63d2:0:0:0:0:0 with HTTP; Thu, 26 Jul 2018 01:22:05
+ -0700 (PDT)
+In-Reply-To: <20180725091802.74400a81@gandalf.local.home>
+References: <20180724173544.18876-1-joel@joelfernandes.org> <20180725091802.74400a81@gandalf.local.home>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Thu, 26 Jul 2018 10:22:05 +0200
+X-Google-Sender-Auth: 7fphIQA3LKMYHtk3nB4oTD-8dLI
+Message-ID: <CAJZ5v0hzdLpFaZuMVPP1oWOExsp5BBStpkg_C1ZekCEnDQjdgA@mail.gmail.com>
+Subject: Re: [PATCH v3] cpufreq: trace frequency limits change
+To:     Steven Rostedt <rostedt@goodmis.org>,
+        Joel Fernandes <joel@joelfernandes.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        kernel-team@android.com, Ruchi Kandoi <kandoiruchi@google.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Viresh Kumar <viresh.kumar@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 26-07-18 08:41:35, Bruce Merry wrote:
-> On 26 July 2018 at 02:55, Singh, Balbir <bsingharora@gmail.com> wrote:
-> > Do you by any chance have use_hierarch=1? memcg_stat_show should just rely on counters inside the memory cgroup and the the LRU sizes for each node.
-> 
-> Yes, /sys/fs/cgroup/memory/memory.use_hierarchy is 1. I assume systemd
-> is doing that.
+On Wed, Jul 25, 2018 at 3:18 PM, Steven Rostedt <rostedt@goodmis.org> wrote:
+> On Tue, 24 Jul 2018 10:35:44 -0700
+> Joel Fernandes <joel@joelfernandes.org> wrote:
+>
+>> From: Ruchi Kandoi <kandoiruchi@google.com>
+>>
+>> systrace used for tracing for Android systems has carried a patch for
+>> many years in the Android tree that traces when the cpufreq limits
+>> change.  With the help of this information, systrace can know when the
+>> policy limits change and can visually display the data. Lets add
+>> upstream support for the same.
+>>
+>> Signed-off-by: Ruchi Kandoi <kandoiruchi@google.com>
+>> Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+>
+> Better ;-)
+>
+> Acked-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 
-And this is actually good. Non hierarchical behavior is discouraged.
-The real problem is that we are keeping way too many zombie memcgs
-around and waiting for memory pressure to reclaim them and so they go
-away on their own.
-
-As I've tried to explain in other email force_empty before removing the
-memcg should help.
-
-Fixing this properly would require quite some heavy lifting AFAICS. We
-would basically have to move zombies out of the way which is not hard
-but we do not want to hide their current memory consumption so we would
-have to somehow move their stats to the parent. And then we are back to
-reparenting which has been removed by b2052564e66d ("mm: memcontrol:
-continue cache reclaim from offlined groups").
--- 
-Michal Hocko
-SUSE Labs
+Patch applied, thanks!
