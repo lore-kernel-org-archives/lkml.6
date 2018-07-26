@@ -2,183 +2,125 @@ Return-Path: <SRS0=7Z+k=KK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8630EC28CF6
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 15:32:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C369DC28CF6
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 15:32:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4223020857
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 15:32:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 702E120857
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 15:32:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="jgs0kghE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4223020857
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=fb.com
+	dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b="qPM7XavF";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Y918wK+J"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 702E120857
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kroah.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731818AbeGZQt7 (ORCPT
+        id S1731846AbeGZQuT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 26 Jul 2018 12:49:59 -0400
-Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:54004 "EHLO
-        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1731273AbeGZQt7 (ORCPT
+        Thu, 26 Jul 2018 12:50:19 -0400
+Received: from wnew3-smtp.messagingengine.com ([64.147.123.17]:57329 "EHLO
+        wnew3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1730179AbeGZQuS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Jul 2018 12:49:59 -0400
-Received: from pps.filterd (m0148461.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w6QFMMJe005888;
-        Thu, 26 Jul 2018 08:32:13 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=date : from : to : cc :
- subject : message-id : references : mime-version : content-type :
- in-reply-to; s=facebook; bh=3TrNSnukan3BDMXsKGH3JNaCE1xqkhgu6UASL2iEclU=;
- b=jgs0kghEK63fVny/g54i+P8D+2YoZU1uy4KcncUYxySCCGuq0VPEMo1oWoWynlwmP/Ro
- Uh6w4BNCxdgtvtGrAYujf1R/+SoxvqMKVYTmXY29RgZRMrXICP14ERxLft0FopGDCUc9
- LXg50H6ONGC9oEJrMLB+Gm70reTmQh+maJw= 
-Received: from mail.thefacebook.com ([199.201.64.23])
-        by mx0a-00082601.pphosted.com with ESMTP id 2kfgvp8112-1
-        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Thu, 26 Jul 2018 08:32:13 -0700
-Received: from kafai-mbp.dhcp.thefacebook.com (192.168.52.123) by
- mail.thefacebook.com (192.168.16.21) with Microsoft SMTP Server (TLS) id
- 14.3.319.2; Thu, 26 Jul 2018 08:32:11 -0700
-Date:   Thu, 26 Jul 2018 08:32:07 -0700
-From:   Martin KaFai Lau <kafai@fb.com>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-CC:     David Miller <davem@davemloft.net>,
-        Networking <netdev@vger.kernel.org>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,
-        Okash Khawaja <osk@fb.com>,
-        "Daniel Borkmann" <daniel@iogearbox.net>,
-        Alexei Starovoitov <ast@kernel.org>
-Subject: Re: linux-next: manual merge of the net-next tree with the bpf tree
-Message-ID: <20180726153207.6xmtrmprko2cpat6@kafai-mbp.dhcp.thefacebook.com>
-References: <20180726111916.47a47dbf@canb.auug.org.au>
+        Thu, 26 Jul 2018 12:50:18 -0400
+Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
+        by mailnew.west.internal (Postfix) with ESMTP id B3C0F343;
+        Thu, 26 Jul 2018 11:32:55 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute6.internal (MEProxy); Thu, 26 Jul 2018 11:32:56 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=cc
+        :content-type:date:from:in-reply-to:message-id:mime-version
+        :references:subject:to:x-me-sender:x-me-sender:x-sasl-enc; s=
+        fm1; bh=fjUOqpIKgD586qq1NqyO2RsuRRXES4UAbazI4qNSpPM=; b=qPM7XavF
+        qI9QLel3QXh0xwR2k2+6TsjBfzrqrJ1+lSZgT0kK6FOlE9KMW81oh71IZWpugJCt
+        RYnHffAzVS2awo3I/LOY3c5tVlhHksmrCIzL7yImaOGlFTbbydxMMSHJUPtgE0Bj
+        MNKudEnAochkOTKi/1L0OParywbuOBToK+rVGfRDeRIHOtmRiHSZGJjPxxrG0CEE
+        5Dc+1/kj/eLibcV6EdAcfJF9NLhLZ/wU3XJrfcJ3cpVlXkOvxt//oGbNy1wVXPdX
+        z0lLnFamlGaqeOtHeUxsMJnvuuc0j2DpyeIS4Gvce6oazVLdVTzqNZjBfvzpLdf7
+        qq+dw/vJgPjOZA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-sender
+        :x-me-sender:x-sasl-enc; s=fm3; bh=fjUOqpIKgD586qq1NqyO2RsuRRXES
+        4UAbazI4qNSpPM=; b=Y918wK+JuJkCssampHW8UTc2Gyv70CjD3JDnbTAey6XCg
+        bY7+/r2Pca2UgJqLeHGRculgUT70wlarvsCYJB8R1wvNJFjSgjdcFCLXweYYFuo7
+        oXcsHc0LJllEewtWnyKBtYADDg7BH9D8vWt0STj3T4PscYN9oUhtLKUMllflkZGY
+        U+VbfbXzjzblSznuMb5cnMqweYB0UMHGO7QHH1muf+Dz0R3JuXHC0AhxdGhIbS9V
+        fGQmgdRteiBXtO4Z7btPrZPY5soC8PkviDuRWER/SXIl9YlmoFvs7cV+xyKZ5JRA
+        kO3u10cg35mBh5LEsgNg7h9IgDlguMbEMhxC/IKtQ==
+X-ME-Proxy: <xmx:pulZW3rZVCKjoKtUoTuvX25MT1ryYT8EHpZJ4eaWo-mZNUllj7osDA>
+    <xmx:pulZW7FWj1BTNbWkpJO48-UU_pHfrRYAZsP5_0trn9n_14IqPtL0Ug>
+    <xmx:pulZW_ZA9ukfrnqzg5E5IBuRlnekAbbs5SCx4dOqI52PMxClkRc-Vw>
+    <xmx:pulZWx3RJUDk02Jd9DCWZBXGwzQmuTRto1Ph6I85T2qwlwIEYVZ5cA>
+    <xmx:pulZW4_byMUpAADpldCh4J5EoPnB3756-iGLs05sBU-j1YAagkKWfQ>
+    <xmx:p-lZWxSVhYcV9ilJ1mprINxsg5PmAh2dOxRbDEs3ZWPuAYael9RsKdGxKkA>
+X-ME-Sender: <xms:pulZW_O6JfSDJ-8dMW19pVP5gWF4cB_VlFMEldGjv98XKsLEPrlJuQ>
+Received: from localhost (unknown [62.119.166.9])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 12825E4AB8;
+        Thu, 26 Jul 2018 11:32:51 -0400 (EDT)
+Date:   Thu, 26 Jul 2018 17:32:43 +0200
+From:   Greg KH <greg@kroah.com>
+To:     Neil Armstrong <narmstrong@baylibre.com>
+Cc:     stable@vger.kernel.org, jbrunet@baylibre.com, sboyd@kernel.org,
+        mturquette@baylibre.com, linux-clk@vger.kernel.org,
+        linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: meson-gxbb: set fclk_div2 as CLK_IS_CRITICAL
+Message-ID: <20180726153243.GB8327@kroah.com>
+References: <1528892421-12180-1-git-send-email-narmstrong@baylibre.com>
+ <5153040b-1f38-a17a-d78d-fec833c1c223@baylibre.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180726111916.47a47dbf@canb.auug.org.au>
-User-Agent: NeoMutt/20180512
-X-Originating-IP: [192.168.52.123]
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-26_04:,,
- signatures=0
-X-Proofpoint-Spam-Reason: safe
-X-FB-Internal: Safe
+In-Reply-To: <5153040b-1f38-a17a-d78d-fec833c1c223@baylibre.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 26, 2018 at 11:19:16AM +1000, Stephen Rothwell wrote:
-> Hi all,
+On Thu, Jul 26, 2018 at 05:24:09PM +0200, Neil Armstrong wrote:
+> Hi Stable Team,
 > 
-> Today's linux-next merge of the net-next tree got conflicts in:
+> On 13/06/2018 14:20, Neil Armstrong wrote:
+> > On Amlogic Meson GXBB & GXL platforms, the SCPI Cortex-M4 Co-Processor
+> > seems to be dependent on the FCLK_DIV2 to be operationnal.
+> > 
+> > The issue occured since v4.17-rc1 by freezing the kernel boot when
+> > the 'schedutil' cpufreq governor was selected as default :
+> > 
+> >   [   12.071837] scpi_protocol scpi: SCP Protocol 0.0 Firmware 0.0.0 version
+> >   domain-0 init dvfs: 4
+> >   [   12.087757] hctosys: unable to open rtc device (rtc0)
+> >   [   12.087907] cfg80211: Loading compiled-in X.509 certificates for regulatory database
+> >   [   12.102241] cfg80211: Loaded X.509 cert 'sforshee: 00b28ddf47aef9cea7'
+> > 
+> > But when disabling the MMC driver, the boot finished but cpufreq failed to
+> > change the CPU frequency :
+> > 
+> >   [   12.153045] cpufreq: __target_index: Failed to change cpu frequency: -5
+> > 
+> > A bisect between v4.16 and v4.16-rc1 gave the 05f814402d61 commit to be
+> > the first bad commit.
+> > This commit added support for the missing clock gates before the fixed PLL
+> > fixed dividers (FCLK_DIVx) and the clock framework basically disabled
+> > all the unused fixed dividers, thus disabled a critical clock path for
+> > the SCPI Co-Processor.
+> > 
+> > This patch simply sets the FCLK_DIV2 gate as critical to ensure
+> > nobody can disable it.
+> > 
+> > Fixes: 05f814402d61 ("clk: meson: add fdiv clock gates")
+> > Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
 > 
->   tools/lib/bpf/btf.c
->   tools/lib/bpf/btf.h
 > 
-> between commits:
+> This patch hit linux master with commit id c987ac6f1f088663b6dad39281071aeb31d450a8
 > 
->   5b891af7fca1 ("bpf: Replace [u]int32_t and [u]int64_t in libbpf")
->   38d5d3b3d5db ("bpf: Introduce BPF_ANNOTATE_KV_PAIR")
-> 
-> from the bpf tree and commit:
-> 
->   92b57121ca79 ("bpf: btf: export btf types and name by offset from lib")
-> 
-> from the net-next tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary.  This
-The fix LGTM. Thanks!
+> Could this be backported to the next 4.17 stable release ?
 
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
-> 
-> -- 
-> Cheers,
-> Stephen Rothwell
-> 
-> diff --cc tools/lib/bpf/btf.c
-> index 2d270c560df3,03161be094b4..000000000000
-> --- a/tools/lib/bpf/btf.c
-> +++ b/tools/lib/bpf/btf.c
-> @@@ -269,9 -259,29 +266,29 @@@ __s64 btf__resolve_size(const struct bt
->   	return nelems * size;
->   }
->   
-> + int btf__resolve_type(const struct btf *btf, __u32 type_id)
-> + {
-> + 	const struct btf_type *t;
-> + 	int depth = 0;
-> + 
-> + 	t = btf__type_by_id(btf, type_id);
-> + 	while (depth < MAX_RESOLVE_DEPTH &&
-> + 	       !btf_type_is_void_or_null(t) &&
-> + 	       IS_MODIFIER(BTF_INFO_KIND(t->info))) {
-> + 		type_id = t->type;
-> + 		t = btf__type_by_id(btf, type_id);
-> + 		depth++;
-> + 	}
-> + 
-> + 	if (depth == MAX_RESOLVE_DEPTH || btf_type_is_void_or_null(t))
-> + 		return -EINVAL;
-> + 
-> + 	return type_id;
-> + }
-> + 
->  -int32_t btf__find_by_name(const struct btf *btf, const char *type_name)
->  +__s32 btf__find_by_name(const struct btf *btf, const char *type_name)
->   {
->  -	uint32_t i;
->  +	__u32 i;
->   
->   	if (!strcmp(type_name, "void"))
->   		return 0;
-> @@@ -368,3 -379,20 +385,11 @@@ int btf__fd(const struct btf *btf
->   {
->   	return btf->fd;
->   }
-> + 
-> + const char *btf__name_by_offset(const struct btf *btf, __u32 offset)
-> + {
-> + 	if (offset < btf->hdr->str_len)
-> + 		return &btf->strings[offset];
-> + 	else
-> + 		return NULL;
-> + }
->  -
->  -const struct btf_type *btf__type_by_id(const struct btf *btf,
->  -				       __u32 type_id)
->  -{
->  -	if (type_id > btf->nr_types)
->  -		return NULL;
->  -
->  -	return btf->types[type_id];
->  -}
-> diff --cc tools/lib/bpf/btf.h
-> index e2a09a155f84,24f361d99a5e..000000000000
-> --- a/tools/lib/bpf/btf.h
-> +++ b/tools/lib/bpf/btf.h
-> @@@ -15,10 -14,12 +15,12 @@@ typedef int (*btf_print_fn_t)(const cha
->   	__attribute__((format(printf, 1, 2)));
->   
->   void btf__free(struct btf *btf);
->  -struct btf *btf__new(uint8_t *data, uint32_t size, btf_print_fn_t err_log);
->  -int32_t btf__find_by_name(const struct btf *btf, const char *type_name);
->  -int64_t btf__resolve_size(const struct btf *btf, uint32_t type_id);
->  +struct btf *btf__new(__u8 *data, __u32 size, btf_print_fn_t err_log);
->  +__s32 btf__find_by_name(const struct btf *btf, const char *type_name);
-> - const struct btf_type *btf__type_by_id(const struct btf *btf, __u32 id);
->  +__s64 btf__resolve_size(const struct btf *btf, __u32 type_id);
-> + int btf__resolve_type(const struct btf *btf, __u32 type_id);
->   int btf__fd(const struct btf *btf);
-> + const char *btf__name_by_offset(const struct btf *btf, __u32 offset);
-> + const struct btf_type *btf__type_by_id(const struct btf *btf, __u32 type_id);
->   
->   #endif
+Now queued up, thanks,
 
-
+greg k-h
