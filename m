@@ -2,125 +2,94 @@ Return-Path: <SRS0=7Z+k=KK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95578C28CF6
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 07:36:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31F9CC28CF6
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 07:38:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5BA4520673
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 07:36:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5BA4520673
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id DE7FB20673
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 07:38:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DE7FB20673
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=techadventures.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728974AbeGZIwE (ORCPT
+        id S1728998AbeGZIxm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 26 Jul 2018 04:52:04 -0400
-Received: from mx2.suse.de ([195.135.220.15]:43862 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728547AbeGZIwD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Jul 2018 04:52:03 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 5C066AD83;
-        Thu, 26 Jul 2018 07:36:29 +0000 (UTC)
-Date:   Thu, 26 Jul 2018 09:36:27 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Jiang Biao <jiang.biao2@zte.com.cn>
-Cc:     akpm@linux-foundation.org, hannes@cmpxchg.org,
-        hillf.zj@alibaba-inc.com, minchan@kernel.org, ying.huang@intel.com,
-        mgorman@techsingularity.net, n-horiguchi@ah.jp.nec.com,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        zhong.weidong@zte.com.cn
-Subject: Re: [PATCH v2] mm: fix page_freeze_refs and page_unfreeze_refs in
- comments.
-Message-ID: <20180726073627.GT28386@dhcp22.suse.cz>
-References: <1532590226-106038-1-git-send-email-jiang.biao2@zte.com.cn>
+        Thu, 26 Jul 2018 04:53:42 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:37514 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728792AbeGZIxm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Jul 2018 04:53:42 -0400
+Received: by mail-wr1-f68.google.com with SMTP id q10-v6so658546wrd.4
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Jul 2018 00:38:08 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=PjxBw7W9SMaERIJZDXqC+zJFB5dFn0cHmVtuL/Rk3sY=;
+        b=EvIOca+q5uAGsfvfyybn44OfulDsPBePEe3O/89LkNkhrBllLCUqZkXXUtye01+bJd
+         7xLOkSHb8p33+Z3PY51L7IXcTRGCGYn3LJHXrBLgDLFJgOb5nseQypxJWaRf4yVVRgYs
+         7Im/WG10ZgBIQjWdiiGQL7qv2LZ+iNrGXQ2P+qM6DT04N0tPGG4elhoOxBIh9us/Ji4h
+         h7+BsRbOp4Rr4VIKn4JvJm+iLyPlHA/Dp4yQSscyQ04/2qBrupMplbFORQMvZ5YH1MX4
+         ijkYv1RwrrkKbPDNyzAFLh5ldzu/iUVssRLxSMigRjhTm+gfieKtVDxQCs8ASqNEYqVg
+         elrA==
+X-Gm-Message-State: AOUpUlERNNeFpW0aSr/WpJVXam2MofENZQ01DdoxQGVOcPMyyAIWLsd2
+        IhezVLZuyLhf3zVMl9UvizxAIQcRZa8=
+X-Google-Smtp-Source: AAOMgpeaPgv6cduJqj2KiF1mgNDZniYKjnFYFYcJdXNvsktX5vlWEn7dQaOpmuzaBTkSXSAqLupoMA==
+X-Received: by 2002:adf:82f0:: with SMTP id 103-v6mr624091wrc.131.1532590688342;
+        Thu, 26 Jul 2018 00:38:08 -0700 (PDT)
+Received: from techadventures.net (techadventures.net. [62.201.165.239])
+        by smtp.gmail.com with ESMTPSA id f6-v6sm1861908wrw.78.2018.07.26.00.38.07
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 26 Jul 2018 00:38:07 -0700 (PDT)
+Received: by techadventures.net (Postfix, from userid 1000)
+        id 30FC6124380; Thu, 26 Jul 2018 09:38:07 +0200 (CEST)
+Date:   Thu, 26 Jul 2018 09:38:07 +0200
+From:   Oscar Salvador <osalvador@techadventures.net>
+To:     akpm@linux-foundation.org
+Cc:     mhocko@suse.com, vbabka@suse.cz, pasha.tatashin@oracle.com,
+        mgorman@techsingularity.net, aaron.lu@intel.com,
+        iamjoonsoo.kim@lge.com, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, dan.j.williams@intel.com,
+        Oscar Salvador <osalvador@suse.de>
+Subject: Re: [PATCH v3 5/5] mm/page_alloc: Introduce memhotplug version of
+ free_area_init_core
+Message-ID: <20180726073807.GA22028@techadventures.net>
+References: <20180725220144.11531-1-osalvador@techadventures.net>
+ <20180725220144.11531-6-osalvador@techadventures.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1532590226-106038-1-git-send-email-jiang.biao2@zte.com.cn>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <20180725220144.11531-6-osalvador@techadventures.net>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 26-07-18 15:30:26, Jiang Biao wrote:
-> page_freeze_refs/page_unfreeze_refs have already been relplaced by
-> page_ref_freeze/page_ref_unfreeze , but they are not modified in
-> the comments.
-> 
-> Signed-off-by: Jiang Biao <jiang.biao2@zte.com.cn>
+On Thu, Jul 26, 2018 at 12:01:44AM +0200, osalvador@techadventures.net wrote:
+>  extern void free_initmem(void);
+> +extern void free_area_init_core_hotplug(int nid);
 
-This looks better.
+The declaration should be wrapped with an #ifdef CONFIG_MEMORY_HOTPLUG.
 
-Acked-by: Michal Hocko <mhocko@suse.com>
+> +void __paginginit free_area_init_core_hotplug(int nid)
+> +{
+> +	enum zone_type j;
+> +	pg_data_t *pgdat = NODE_DATA(nid);
+> +
+> +	pgdat_init_internals(pgdat);
+> +	for(j = 0; j < MAX_NR_ZONES; j++) {
+> +		struct zone *zone = pgdat->node_zones + j;
+> +		zone_init_internals(zone, j, nid, 0);
+> +	}
+> +}
 
-Thanks!
-
-> ---
-> v1: fix comments in vmscan.
-> v2: fix other two places and fix typoes.
-> 
->  mm/ksm.c            | 4 ++--
->  mm/memory-failure.c | 2 +-
->  mm/vmscan.c         | 2 +-
->  3 files changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/mm/ksm.c b/mm/ksm.c
-> index a6d43cf..4c39cb67 100644
-> --- a/mm/ksm.c
-> +++ b/mm/ksm.c
-> @@ -703,7 +703,7 @@ static struct page *get_ksm_page(struct stable_node *stable_node, bool lock_it)
->  	 * We cannot do anything with the page while its refcount is 0.
->  	 * Usually 0 means free, or tail of a higher-order page: in which
->  	 * case this node is no longer referenced, and should be freed;
-> -	 * however, it might mean that the page is under page_freeze_refs().
-> +	 * however, it might mean that the page is under page_ref_freeze().
->  	 * The __remove_mapping() case is easy, again the node is now stale;
->  	 * but if page is swapcache in migrate_page_move_mapping(), it might
->  	 * still be our page, in which case it's essential to keep the node.
-> @@ -714,7 +714,7 @@ static struct page *get_ksm_page(struct stable_node *stable_node, bool lock_it)
->  		 * work here too.  We have chosen the !PageSwapCache test to
->  		 * optimize the common case, when the page is or is about to
->  		 * be freed: PageSwapCache is cleared (under spin_lock_irq)
-> -		 * in the freeze_refs section of __remove_mapping(); but Anon
-> +		 * in the ref_freeze section of __remove_mapping(); but Anon
->  		 * page->mapping reset to NULL later, in free_pages_prepare().
->  		 */
->  		if (!PageSwapCache(page))
-> diff --git a/mm/memory-failure.c b/mm/memory-failure.c
-> index 9d142b9..c83a174 100644
-> --- a/mm/memory-failure.c
-> +++ b/mm/memory-failure.c
-> @@ -1167,7 +1167,7 @@ int memory_failure(unsigned long pfn, int flags)
->  	 *    R/W the page; let's pray that the page has been
->  	 *    used and will be freed some time later.
->  	 * In fact it's dangerous to directly bump up page count from 0,
-> -	 * that may make page_freeze_refs()/page_unfreeze_refs() mismatch.
-> +	 * that may make page_ref_freeze()/page_ref_unfreeze() mismatch.
->  	 */
->  	if (!(flags & MF_COUNT_INCREASED) && !get_hwpoison_page(p)) {
->  		if (is_free_buddy_page(p)) {
-> diff --git a/mm/vmscan.c b/mm/vmscan.c
-> index 03822f8..02d0c20 100644
-> --- a/mm/vmscan.c
-> +++ b/mm/vmscan.c
-> @@ -744,7 +744,7 @@ static int __remove_mapping(struct address_space *mapping, struct page *page,
->  		refcount = 2;
->  	if (!page_ref_freeze(page, refcount))
->  		goto cannot_free;
-> -	/* note: atomic_cmpxchg in page_freeze_refs provides the smp_rmb */
-> +	/* note: atomic_cmpxchg in page_ref_freeze provides the smp_rmb */
->  	if (unlikely(PageDirty(page))) {
->  		page_ref_unfreeze(page, refcount);
->  		goto cannot_free;
-> -- 
-> 2.7.4
-> 
+The same applies here
 
 -- 
-Michal Hocko
-SUSE Labs
+Oscar Salvador
+SUSE L3
