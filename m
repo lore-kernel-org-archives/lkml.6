@@ -2,107 +2,128 @@ Return-Path: <SRS0=7Z+k=KK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 594FDC6778F
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 19:16:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 410DDC28CF6
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 19:16:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1C96820673
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 19:16:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C96820673
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=techadventures.net
+	by mail.kernel.org (Postfix) with ESMTP id EB07E20673
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 19:16:40 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="gLF4wTVc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB07E20673
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=broadcom.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731463AbeGZUeM (ORCPT
+        id S1731572AbeGZUev (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 26 Jul 2018 16:34:12 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:35637 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730221AbeGZUeL (ORCPT
+        Thu, 26 Jul 2018 16:34:51 -0400
+Received: from mail-qt0-f196.google.com ([209.85.216.196]:39035 "EHLO
+        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730221AbeGZUeu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Jul 2018 16:34:11 -0400
-Received: by mail-wr1-f66.google.com with SMTP id a3-v6so2766379wrt.2
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Jul 2018 12:15:58 -0700 (PDT)
+        Thu, 26 Jul 2018 16:34:50 -0400
+Received: by mail-qt0-f196.google.com with SMTP id q12-v6so2699100qtp.6
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Jul 2018 12:16:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=HROb7uR6HpyqTxx/WO9Gs2EAvacXPRY/CsmN1QYlcEA=;
+        b=gLF4wTVcCNWRjLbB9gMjHUvrKWfMYPWye3tkXX0lGQjqbGS/bCoD5jPjGjmjl9jJ2t
+         fYF216E+swCezy6gRrUBsugkCHr2pwzD7CJ17QmSWxQHPuul/WNd3/WeIMcLxgGZvi5Z
+         1JlC18hwhAd9HKwmakTrCCjSBKSt10gUR7NsY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Mn/+Vyx7rJ06mFiA+mriZ9jGeRRGrqi+Rxfo2aa3eQk=;
-        b=jsa3KrQ5MBC/TXar2QK/Vv8dxvOxAy6QbgzMuZ0C4zgE5wu/8S+lX8kv78MDsuQBTB
-         TNOeGr5GO7meaS5R9+Y0K7fM322noOWat9PQsDEHdS7aKX9xOnZakm7nPtDdfXKYr93K
-         e6fs4OZyqsWdLRfDeEWx4lZDqKmjIhySKEzJPoEx+3holHA2zUcXZoy458gLVM4sp8Nn
-         EXswM+DVtchOzKejD9EMdqEbQfclttBUeKfwdwMl2c2DShjr2e5WBlIvSNYZ9gIPuItV
-         gAZ8bAVPJfNa7ANFaGEa6Its5LWpANl5ERukYkBxcW8Nj6vh9fKEBlYkTk/8aMX9zMPG
-         qFzA==
-X-Gm-Message-State: AOUpUlEJlC1HeCeyz2Lsj0iclxsdM6IMXWNDympw371qyGcjQyVQB1hA
-        ZUY5B+Yi1LwGI8YtRIFfwJs=
-X-Google-Smtp-Source: AAOMgpcSuS+Xl2QgpeBkwuUOA9pts8U4TuFx1MYwnZLL3yce9aIbwkjx1YAn32Dg1mkQVVcb9Rcomg==
-X-Received: by 2002:adf:b69c:: with SMTP id j28-v6mr2606232wre.200.1532632557745;
-        Thu, 26 Jul 2018 12:15:57 -0700 (PDT)
-Received: from techadventures.net (techadventures.net. [62.201.165.239])
-        by smtp.gmail.com with ESMTPSA id f17-v6sm2601959wrs.1.2018.07.26.12.15.56
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=HROb7uR6HpyqTxx/WO9Gs2EAvacXPRY/CsmN1QYlcEA=;
+        b=Vufkc2akbCETlqyLdnCx43Bzh8cRDziAgjxEfT69cw2DDYWh4fM3Bx/IGs3bGAYE6K
+         WA7ClNVnQcpJo6Ht1bqgELUyPKxfwNPYbKcSjHgdtP091l431KynPCbFmGBz4UltjmlU
+         G4O8ZtgagEHTkNpSIoegxHJSzUkqe/HEPbmqSwbb6544fnSz2eBxvSFFtvHHVjLhSd4z
+         dwQrUkPlIwtX9gvMlu+MoC/Dw2Ok2ekqlZ7jlUZI/8PmazI5Pbe2sjBeME3DRpomf8rn
+         3MK8edLrvKB/Nm9kB5LBHhwviGYysx+12pdwLpE7/FPDGkZlICDshgGjsWB0TMc4tN7q
+         eCOA==
+X-Gm-Message-State: AOUpUlH0c7zQODWigyk6Lbw9n2bcdwiop+YIioiBguHItiQcHvgBCH9s
+        eSQolP4gUi0KRoQWlRylEYmwNw==
+X-Google-Smtp-Source: AAOMgpcFlm/tRGKc6QqBwdS99YZlv9F9YS69MVBlA2ryjl0VnlsgtkLM4a5KERHfxK/oqpA8XDqg0g==
+X-Received: by 2002:a0c:ae89:: with SMTP id j9-v6mr2938831qvd.174.1532632596690;
+        Thu, 26 Jul 2018 12:16:36 -0700 (PDT)
+Received: from [10.136.4.147] ([192.19.228.250])
+        by smtp.gmail.com with ESMTPSA id v57-v6sm1501794qtc.75.2018.07.26.12.16.33
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 26 Jul 2018 12:15:57 -0700 (PDT)
-Received: by techadventures.net (Postfix, from userid 1000)
-        id 741161243DC; Thu, 26 Jul 2018 21:15:56 +0200 (CEST)
-Date:   Thu, 26 Jul 2018 21:15:56 +0200
-From:   Oscar Salvador <osalvador@techadventures.net>
-To:     Pavel Tatashin <pasha.tatashin@oracle.com>
-Cc:     mhocko@kernel.org, Andrew Morton <akpm@linux-foundation.org>,
-        Vlastimil Babka <vbabka@suse.cz>, mgorman@techsingularity.net,
-        aaron.lu@intel.com, iamjoonsoo.kim@lge.com,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>, dan.j.williams@intel.com,
-        osalvador@suse.de
-Subject: Re: [PATCH v3 2/5] mm: access zone->node via zone_to_nid() and
- zone_set_nid()
-Message-ID: <20180726191556.GB10288@techadventures.net>
-References: <20180725220144.11531-1-osalvador@techadventures.net>
- <20180725220144.11531-3-osalvador@techadventures.net>
- <20180726080500.GX28386@dhcp22.suse.cz>
- <20180726081215.GC22028@techadventures.net>
- <20180726151420.uigttpoclcka6h4h@xakep.localdomain>
- <20180726164304.GP28386@dhcp22.suse.cz>
- <CAGM2reatUAekg=e9FQM1-UVLOSBKb74-FYo7FcPqO_WaR7AmOQ@mail.gmail.com>
- <20180726175212.GQ28386@dhcp22.suse.cz>
- <CAGM2reY2HAo3UDzw=P8ue0jJmRRZou-osyJwWjXt6vtC+CF8Ug@mail.gmail.com>
+        Thu, 26 Jul 2018 12:16:36 -0700 (PDT)
+Subject: Re: [PATCH 2/7] net: phy: Fix the register offsets in Broadcom iProc
+ mdio mux driver
+To:     Andrew Lunn <andrew@lunn.ch>
+Cc:     "David S. Miller" <davem@davemloft.net>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>, netdev@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com
+References: <1532630184-29450-1-git-send-email-arun.parameswaran@broadcom.com>
+ <1532630184-29450-3-git-send-email-arun.parameswaran@broadcom.com>
+ <20180726190636.GG10686@lunn.ch>
+From:   Arun Parameswaran <arun.parameswaran@broadcom.com>
+Message-ID: <6188441f-670d-7644-361b-7a5e8e06c9c2@broadcom.com>
+Date:   Thu, 26 Jul 2018 12:16:52 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAGM2reY2HAo3UDzw=P8ue0jJmRRZou-osyJwWjXt6vtC+CF8Ug@mail.gmail.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <20180726190636.GG10686@lunn.ch>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 26, 2018 at 01:55:34PM -0400, Pavel Tatashin wrote:
-> On Thu, Jul 26, 2018 at 1:52 PM Michal Hocko <mhocko@kernel.org> wrote:
-> >
-> > On Thu 26-07-18 13:18:46, Pavel Tatashin wrote:
-> > > > > OpenGrok was used to find places where zone->node is accessed. A public one
-> > > > > is available here: http://src.illumos.org/source/
-> > > >
-> > > > I assume that tool uses some pattern matching or similar so steps to use
-> > > > the tool to get your results would be more helpful. This is basically
-> > > > the same thing as coccinelle generated patches.
-> > >
-> > > OpenGrok is very easy to use, it is source browser, similar to cscope
-> > > except obviously you can't edit the browsed code. I could have used
-> > > cscope just as well here.
-> >
-> > OK, then I misunderstood. I thought it was some kind of c aware grep
-> > that found all the usage for you. If this is cscope like then it is not
-> > worth mentioning in the changelog.
-> 
-> That's what I thought :) Oscar, will you remove the comment about
-> opengrok, or should I paste a new patch?
 
-No worries, I will remove the comment ;-).
+
+On 18-07-26 12:06 PM, Andrew Lunn wrote:
+> On Thu, Jul 26, 2018 at 11:36:19AM -0700, Arun Parameswaran wrote:
+>> Modify the register offsets in the Broadcom iProc mdio mux to start
+>> from the top of the register address space.
+>>
+>> Earlier the base address specified was from the middle of the block's
+>> register space. The base address will now point to the start of the
+>> mdio's address space. The offsets have been fixed to match this.
+> 
+> Hi Arun
+> 
+> Did you consider a change something like:
+That looks good. I will make this change to the patch.
 
 Thanks
--- 
-Oscar Salvador
-SUSE L3
+Arun
+> 
+> diff --git a/drivers/net/phy/mdio-mux-bcm-iproc.c b/drivers/net/phy/mdio-mux-bcm-iproc.c
+> index 0831b7142df7..2d53e609498c 100644
+> --- a/drivers/net/phy/mdio-mux-bcm-iproc.c
+> +++ b/drivers/net/phy/mdio-mux-bcm-iproc.c
+> @@ -169,6 +169,12 @@ static int mdio_mux_iproc_probe(struct platform_device *pdev)
+>         md->dev = &pdev->dev;
+>  
+>         res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> +
+> +       if (res->start & 0xfff != 0) {
+> +               dev_info(&pdev->dev, "Please upgrade your device tree blob.\n");
+> +               res->start &= ~0xfff;
+> +       }
+> +
+>         md->base = devm_ioremap_resource(&pdev->dev, res);
+>         if (IS_ERR(md->base)) {
+>                 dev_err(&pdev->dev, "failed to ioremap register\n");
+> 
+> 
+> 	Andrew
+> 
