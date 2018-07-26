@@ -3,119 +3,103 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4BE9C6778F
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 07:31:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4A33C6778F
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 07:32:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AD24520673
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 07:31:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AD24520673
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zte.com.cn
+	by mail.kernel.org (Postfix) with ESMTP id 6A54920673
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 07:32:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6A54920673
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729048AbeGZIrJ (ORCPT
+        id S1729024AbeGZIsN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 26 Jul 2018 04:47:09 -0400
-Received: from out1.zte.com.cn ([202.103.147.172]:60810 "EHLO mxct.zte.com.cn"
+        Thu, 26 Jul 2018 04:48:13 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:46064 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728547AbeGZIrJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Jul 2018 04:47:09 -0400
-Received: from mse01.zte.com.cn (unknown [10.30.3.20])
-        by Forcepoint Email with ESMTPS id 57F34C761B9189448E38;
-        Thu, 26 Jul 2018 15:31:31 +0800 (CST)
-Received: from notes_smtp.zte.com.cn ([10.30.1.239])
-        by mse01.zte.com.cn with ESMTP id w6Q7VRZF089824;
-        Thu, 26 Jul 2018 15:31:27 +0800 (GMT-8)
-        (envelope-from jiang.biao2@zte.com.cn)
-Received: from localhost.localdomain ([10.75.10.200])
-          by szsmtp06.zte.com.cn (Lotus Domino Release 8.5.3FP6)
-          with ESMTP id 2018072615313446-1934739 ;
-          Thu, 26 Jul 2018 15:31:34 +0800 
-From:   Jiang Biao <jiang.biao2@zte.com.cn>
-To:     akpm@linux-foundation.org, mhocko@suse.com, hannes@cmpxchg.org,
-        hillf.zj@alibaba-inc.com, minchan@kernel.org, ying.huang@intel.com,
-        mgorman@techsingularity.net, n-horiguchi@ah.jp.nec.com
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        jiang.biao2@zte.com.cn, zhong.weidong@zte.com.cn
-Subject: [PATCH v2] mm: fix page_freeze_refs and page_unfreeze_refs in comments.
-Date:   Thu, 26 Jul 2018 15:30:26 +0800
-Message-Id: <1532590226-106038-1-git-send-email-jiang.biao2@zte.com.cn>
-X-Mailer: git-send-email 1.8.3.1
-X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
- 21, 2013) at 2018-07-26 15:31:34,
-        Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
- 2018-07-26 15:31:15,
-        Serialize complete at 2018-07-26 15:31:15
-X-MAIL: mse01.zte.com.cn w6Q7VRZF089824
+        id S1727847AbeGZIsN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Jul 2018 04:48:13 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 1758020765; Thu, 26 Jul 2018 09:32:39 +0200 (CEST)
+Received: from localhost (AAubervilliers-681-1-78-122.w90-88.abo.wanadoo.fr [90.88.20.122])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 9E27020908;
+        Thu, 26 Jul 2018 09:31:37 +0200 (CEST)
+Date:   Thu, 26 Jul 2018 09:31:38 +0200
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Akash Gajjar <Akash_Gajjar@mentor.com>
+Cc:     icenowy@aosc.xyz, Chen-Yu Tsai <wens@csie.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] arm64: dts: allwinner: activate spi flash on pine64 LTS
+ board
+Message-ID: <20180726073138.fexu4nxaamqmrbzb@flea>
+References: <Akash_Gajjar@mentor.com>
+ <1532587906-5415-1-git-send-email-Akash_Gajjar@mentor.com>
+ <20180726072924.bnvljmd2sf6bf5ae@flea>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="oeexq2bajwy2ctlp"
+Content-Disposition: inline
+In-Reply-To: <20180726072924.bnvljmd2sf6bf5ae@flea>
+User-Agent: NeoMutt/20180622
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-page_freeze_refs/page_unfreeze_refs have already been relplaced by
-page_ref_freeze/page_ref_unfreeze , but they are not modified in
-the comments.
 
-Signed-off-by: Jiang Biao <jiang.biao2@zte.com.cn>
----
-v1: fix comments in vmscan.
-v2: fix other two places and fix typoes.
+--oeexq2bajwy2ctlp
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
- mm/ksm.c            | 4 ++--
- mm/memory-failure.c | 2 +-
- mm/vmscan.c         | 2 +-
- 3 files changed, 4 insertions(+), 4 deletions(-)
+On Thu, Jul 26, 2018 at 09:29:24AM +0200, Maxime Ripard wrote:
+> 1;5202;0c
+> On Thu, Jul 26, 2018 at 12:21:46PM +0530, Akash Gajjar wrote:
+> > This board has SPI flash. add spi flash support in device tree.
+> > Tested on pine64 LTS.
+> >=20
+> > Signed-off-by: Akash Gajjar <Akash_Gajjar@mentor.com>
+>=20
+> Queued for 4.20, thanks!
 
-diff --git a/mm/ksm.c b/mm/ksm.c
-index a6d43cf..4c39cb67 100644
---- a/mm/ksm.c
-+++ b/mm/ksm.c
-@@ -703,7 +703,7 @@ static struct page *get_ksm_page(struct stable_node *stable_node, bool lock_it)
- 	 * We cannot do anything with the page while its refcount is 0.
- 	 * Usually 0 means free, or tail of a higher-order page: in which
- 	 * case this node is no longer referenced, and should be freed;
--	 * however, it might mean that the page is under page_freeze_refs().
-+	 * however, it might mean that the page is under page_ref_freeze().
- 	 * The __remove_mapping() case is easy, again the node is now stale;
- 	 * but if page is swapcache in migrate_page_move_mapping(), it might
- 	 * still be our page, in which case it's essential to keep the node.
-@@ -714,7 +714,7 @@ static struct page *get_ksm_page(struct stable_node *stable_node, bool lock_it)
- 		 * work here too.  We have chosen the !PageSwapCache test to
- 		 * optimize the common case, when the page is or is about to
- 		 * be freed: PageSwapCache is cleared (under spin_lock_irq)
--		 * in the freeze_refs section of __remove_mapping(); but Anon
-+		 * in the ref_freeze section of __remove_mapping(); but Anon
- 		 * page->mapping reset to NULL later, in free_pages_prepare().
- 		 */
- 		if (!PageSwapCache(page))
-diff --git a/mm/memory-failure.c b/mm/memory-failure.c
-index 9d142b9..c83a174 100644
---- a/mm/memory-failure.c
-+++ b/mm/memory-failure.c
-@@ -1167,7 +1167,7 @@ int memory_failure(unsigned long pfn, int flags)
- 	 *    R/W the page; let's pray that the page has been
- 	 *    used and will be freed some time later.
- 	 * In fact it's dangerous to directly bump up page count from 0,
--	 * that may make page_freeze_refs()/page_unfreeze_refs() mismatch.
-+	 * that may make page_ref_freeze()/page_ref_unfreeze() mismatch.
- 	 */
- 	if (!(flags & MF_COUNT_INCREASED) && !get_hwpoison_page(p)) {
- 		if (is_free_buddy_page(p)) {
-diff --git a/mm/vmscan.c b/mm/vmscan.c
-index 03822f8..02d0c20 100644
---- a/mm/vmscan.c
-+++ b/mm/vmscan.c
-@@ -744,7 +744,7 @@ static int __remove_mapping(struct address_space *mapping, struct page *page,
- 		refcount = 2;
- 	if (!page_ref_freeze(page, refcount))
- 		goto cannot_free;
--	/* note: atomic_cmpxchg in page_freeze_refs provides the smp_rmb */
-+	/* note: atomic_cmpxchg in page_ref_freeze provides the smp_rmb */
- 	if (unlikely(PageDirty(page))) {
- 		page_ref_unfreeze(page, refcount);
- 		goto cannot_free;
--- 
-2.7.4
+No, sorry, I ended up droping that patch.
 
+You mention that the Pine64 LTS has an SPI flash, yet you change the
+sopine baseboard dts. Why is that?
+
+Maxime
+
+--=20
+Maxime Ripard, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--oeexq2bajwy2ctlp
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAltZeNkACgkQ0rTAlCFN
+r3Ttig/+PcyaeKtRma4H+5ZJMY00IMKNcQxgzSGQdRxuDZyme44ganZjlgS8AYJl
+QFV5oVvk4SeULzuW1Oo+Syrx8TIMS2sZhhWdcMB9S4/ODPT57vdsrw1wE1V3oxQI
+16dSKqI58pByh3miYFlSXJtUUS21CnrSAuFcYgewzZ2j8uo3Z22RkIJEXfekUU6b
+a+iFybgNtpKLJUi48D/QVbnAy1QTPdtRNldGSEiAmtWVjNLVin//l+CLlx73nJBv
+NDaRYt4aaspD4qllA9mptK8JbQmDxQL+ObVoSm1S6XNy/HR112OQuoxW9jNh1iHn
+qhmb0Ydqe50kPck9HMa1E8ipO35Fc8JZXn8ZgGm53pXP9/eKvCBG8vuOITFBdxN3
+W7EWicAHYR3K55n29IGR5kBJA9/34Xn0IubeJwTu1IWzV6ZRP9FyzIq2l7u7EZP3
+0lfGRAU4cMVtSWwoqYUSai+It+i63UYD6eKXyYoPudpa/8e/aFjoIvY1fYxehjOl
+rVIrmJX0z9FJEHy5Ls2fFFTNUOJl2lcMDUGTflan2PDoPwSpA8aaGr1SKiQF5leG
+3QkGyGE7c0iPCVeFKghsvwiUsy+6oidNLhfEvnKVlbkEnUZUFTofBjXEXZAUGspw
+knLQopE6tZYFjuboD2PR5PEASIxTMjw2+limvIrNxNe1k31mgHY=
+=asom
+-----END PGP SIGNATURE-----
+
+--oeexq2bajwy2ctlp--
