@@ -6,47 +6,36 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77A39C28CF6
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 08:55:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DBF83C28CF6
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 09:00:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 387622083F
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 08:55:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 387622083F
+	by mail.kernel.org (Postfix) with ESMTP id 943DD20846
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 09:00:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 943DD20846
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729212AbeGZKLr (ORCPT
+        id S1729155AbeGZKQC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 26 Jul 2018 06:11:47 -0400
-Received: from cloudserver094114.home.pl ([79.96.170.134]:46618 "EHLO
+        Thu, 26 Jul 2018 06:16:02 -0400
+Received: from cloudserver094114.home.pl ([79.96.170.134]:65118 "EHLO
         cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728899AbeGZKLq (ORCPT
+        with ESMTP id S1728989AbeGZKQC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Jul 2018 06:11:46 -0400
+        Thu, 26 Jul 2018 06:16:02 -0400
 Received: from 79.184.255.17.ipv4.supernova.orange.pl (79.184.255.17) (HELO aspire.rjw.lan)
  by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83)
- id 5f9fdadb2a921dc6; Thu, 26 Jul 2018 10:55:53 +0200
+ id 4f56520c6c057776; Thu, 26 Jul 2018 11:00:08 +0200
 From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To:     Eduardo Valentin <eduval@amazon.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Dou Liyang <douly.fnst@cn.fujitsu.com>,
-        Len Brown <len.brown@intel.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        "mike.travis@hpe.com" <mike.travis@hpe.com>,
-        Rajvi Jingar <rajvi.jingar@intel.com>,
-        Pavel Tatashin <pasha.tatashin@oracle.com>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        x86@kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/1] x86: tsc: avoid system instability in hibernation
-Date:   Thu, 26 Jul 2018 10:54:06 +0200
-Message-ID: <1698243.s70xJfMujH@aspire.rjw.lan>
-In-Reply-To: <20180725181846.1817-1-eduval@amazon.com>
-References: <20180725181846.1817-1-eduval@amazon.com>
+To:     Linux ACPI <linux-acpi@vger.kernel.org>
+Cc:     Kai-Heng Feng <kai.heng.feng@canonical.com>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: [PATCH] ACPI / LPSS: Avoid PM quirks on suspend and resume from hibernation
+Date:   Thu, 26 Jul 2018 10:58:20 +0200
+Message-ID: <1645662.bYMTJFObNO@aspire.rjw.lan>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="us-ascii"
@@ -55,61 +44,123 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Eduardo,
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-On Wednesday, July 25, 2018 8:18:46 PM CEST Eduardo Valentin wrote:
-> System instability are seen during resume from hibernation when system
-> is under heavy CPU load. This is due to the lack of update of sched
-> clock data, and the scheduler would then think that heavy CPU hog
-> tasks need more time in CPU, causing the system to freeze
-> during the unfreezing of tasks. For example, threaded irqs,
-> and kernel processes servicing network interface may be delayed
-> for several tens of seconds, causing the system to be unreachable.
-> 
-> Situation like this can be reported by using lockup detectors
-> such as workqueue lockup detectors:
-> 
-> Message from syslogd@ip-172-31-67-114 at May  7 18:23:21 ...
->  kernel:BUG: workqueue lockup - pool cpus=0 node=0 flags=0x0 nice=0 stuck for 57s!
-> 
-> Message from syslogd@ip-172-31-67-114 at May  7 18:23:21 ...
->  kernel:BUG: workqueue lockup - pool cpus=1 node=0 flags=0x0 nice=0 stuck for 57s!
-> 
-> Message from syslogd@ip-172-31-67-114 at May  7 18:23:21 ...
->  kernel:BUG: workqueue lockup - pool cpus=3 node=0 flags=0x1 nice=0 stuck for 57s!
-> 
-> Message from syslogd@ip-172-31-67-114 at May  7 18:29:06 ...
->  kernel:BUG: workqueue lockup - pool cpus=3 node=0 flags=0x1 nice=0 stuck for 403s!
-> 
-> The fix for this situation is to mark the sched clock as unstable
-> as early as possible in the resume path, leaving it unstable
-> for the duration of the resume process. This will force the
-> scheduler to attempt to align the sched clock across CPUs using
-> the delta with time of day, updating sched clock data. In a post
-> hibernation event, we can then mark the sched clock as stable
-> again, avoiding unnecessary syncs with time of day on systems
-> in which TSC is reliable.
-> 
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Ingo Molnar <mingo@redhat.com>
-> Cc: "H. Peter Anvin" <hpa@zytor.com>
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: Dou Liyang <douly.fnst@cn.fujitsu.com>
-> Cc: Len Brown <len.brown@intel.com>
-> Cc: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-> Cc: Eduardo Valentin <eduval@amazon.com>
-> Cc: "mike.travis@hpe.com" <mike.travis@hpe.com>
-> Cc: Rajvi Jingar <rajvi.jingar@intel.com>
-> Cc: Pavel Tatashin <pasha.tatashin@oracle.com>
-> Cc: Philippe Ombredanne <pombredanne@nexb.com>
-> Cc: Kate Stewart <kstewart@linuxfoundation.org>
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Cc: x86@kernel.org
-> Cc: linux-kernel@vger.kernel.org
-> Signed-off-by: Eduardo Valentin <eduval@amazon.com>
+Commit a09c59130688 (ACPI / LPSS: Avoid PM quirks on suspend and
+resume from S3) modified the ACPI driver for Intel SoCs (LPSS) to
+avoid applying PM quirks on suspend and resume from S3 to address
+system-wide suspend and resume problems on some systems, but it is
+reported that the same issue also affects hibernation, so extend
+the approach used by that commit to cover hibernation as well.
 
-Can you please resend this with a CC to linux-pm?
+Fixes: a09c59130688 (ACPI / LPSS: Avoid PM quirks on suspend and resume from S3)
+Link: https://bugs.launchpad.net/bugs/1774950
+Reported-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
+Cc: 4.15+ <stable@vger.kernel.org> # 4.15+
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+---
+ drivers/acpi/acpi_lpss.c |   26 +++++++++++++++++---------
+ 1 file changed, 17 insertions(+), 9 deletions(-)
 
-Cheers,
-Rafael
+Index: linux-pm/drivers/acpi/acpi_lpss.c
+===================================================================
+--- linux-pm.orig/drivers/acpi/acpi_lpss.c
++++ linux-pm/drivers/acpi/acpi_lpss.c
+@@ -879,6 +879,7 @@ static void acpi_lpss_dismiss(struct dev
+ #define LPSS_GPIODEF0_DMA_LLP		BIT(13)
+ 
+ static DEFINE_MUTEX(lpss_iosf_mutex);
++static bool lpss_iosf_d3_entered;
+ 
+ static void lpss_iosf_enter_d3_state(void)
+ {
+@@ -921,6 +922,9 @@ static void lpss_iosf_enter_d3_state(voi
+ 
+ 	iosf_mbi_modify(LPSS_IOSF_UNIT_LPIOEP, MBI_CR_WRITE,
+ 			LPSS_IOSF_GPIODEF0, value1, mask1);
++
++	lpss_iosf_d3_entered = true;
++
+ exit:
+ 	mutex_unlock(&lpss_iosf_mutex);
+ }
+@@ -935,6 +939,11 @@ static void lpss_iosf_exit_d3_state(void
+ 
+ 	mutex_lock(&lpss_iosf_mutex);
+ 
++	if (!lpss_iosf_d3_entered)
++		goto exit;
++
++	lpss_iosf_d3_entered = false;
++
+ 	iosf_mbi_modify(LPSS_IOSF_UNIT_LPIOEP, MBI_CR_WRITE,
+ 			LPSS_IOSF_GPIODEF0, value1, mask1);
+ 
+@@ -944,13 +953,13 @@ static void lpss_iosf_exit_d3_state(void
+ 	iosf_mbi_modify(LPSS_IOSF_UNIT_LPIO1, MBI_CFG_WRITE,
+ 			LPSS_IOSF_PMCSR, value2, mask2);
+ 
++exit:
+ 	mutex_unlock(&lpss_iosf_mutex);
+ }
+ 
+-static int acpi_lpss_suspend(struct device *dev, bool runtime)
++static int acpi_lpss_suspend(struct device *dev, bool wakeup)
+ {
+ 	struct lpss_private_data *pdata = acpi_driver_data(ACPI_COMPANION(dev));
+-	bool wakeup = runtime || device_may_wakeup(dev);
+ 	int ret;
+ 
+ 	if (pdata->dev_desc->flags & LPSS_SAVE_CTX)
+@@ -963,14 +972,14 @@ static int acpi_lpss_suspend(struct devi
+ 	 * wrong status for devices being about to be powered off. See
+ 	 * lpss_iosf_enter_d3_state() for further information.
+ 	 */
+-	if ((runtime || !pm_suspend_via_firmware()) &&
++	if (acpi_target_system_state() == ACPI_STATE_S0 &&
+ 	    lpss_quirks & LPSS_QUIRK_ALWAYS_POWER_ON && iosf_mbi_available())
+ 		lpss_iosf_enter_d3_state();
+ 
+ 	return ret;
+ }
+ 
+-static int acpi_lpss_resume(struct device *dev, bool runtime)
++static int acpi_lpss_resume(struct device *dev)
+ {
+ 	struct lpss_private_data *pdata = acpi_driver_data(ACPI_COMPANION(dev));
+ 	int ret;
+@@ -979,8 +988,7 @@ static int acpi_lpss_resume(struct devic
+ 	 * This call is kept first to be in symmetry with
+ 	 * acpi_lpss_runtime_suspend() one.
+ 	 */
+-	if ((runtime || !pm_resume_via_firmware()) &&
+-	    lpss_quirks & LPSS_QUIRK_ALWAYS_POWER_ON && iosf_mbi_available())
++	if (lpss_quirks & LPSS_QUIRK_ALWAYS_POWER_ON && iosf_mbi_available())
+ 		lpss_iosf_exit_d3_state();
+ 
+ 	ret = acpi_dev_resume(dev);
+@@ -1004,12 +1012,12 @@ static int acpi_lpss_suspend_late(struct
+ 		return 0;
+ 
+ 	ret = pm_generic_suspend_late(dev);
+-	return ret ? ret : acpi_lpss_suspend(dev, false);
++	return ret ? ret : acpi_lpss_suspend(dev, device_may_wakeup(dev));
+ }
+ 
+ static int acpi_lpss_resume_early(struct device *dev)
+ {
+-	int ret = acpi_lpss_resume(dev, false);
++	int ret = acpi_lpss_resume(dev);
+ 
+ 	return ret ? ret : pm_generic_resume_early(dev);
+ }
+@@ -1024,7 +1032,7 @@ static int acpi_lpss_runtime_suspend(str
+ 
+ static int acpi_lpss_runtime_resume(struct device *dev)
+ {
+-	int ret = acpi_lpss_resume(dev, true);
++	int ret = acpi_lpss_resume(dev);
+ 
+ 	return ret ? ret : pm_generic_runtime_resume(dev);
+ }
 
