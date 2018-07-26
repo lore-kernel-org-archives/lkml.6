@@ -2,69 +2,70 @@ Return-Path: <SRS0=7Z+k=KK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD305C6778F
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 19:21:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E01F6C28CF6
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 19:21:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 75AA020673
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 19:21:00 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="GxJGEzZZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 75AA020673
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lunn.ch
+	by mail.kernel.org (Postfix) with ESMTP id A3FB520673
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 19:21:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A3FB520673
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=supermicro.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731504AbeGZUjM (ORCPT
+        id S1731570AbeGZUjj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 26 Jul 2018 16:39:12 -0400
-Received: from vps0.lunn.ch ([185.16.172.187]:47672 "EHLO vps0.lunn.ch"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730533AbeGZUjM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Jul 2018 16:39:12 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch; s=20171124;
-        h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date; bh=I/bLpD4AhIoXw5OFk3rfeDQeJCY2oWMvdvDoDmlKcAc=;
-        b=GxJGEzZZEFIY7l4EgbZczLyhxJRgoOaTcoGPYkCXR06ve7uI8jLJayLu8Vmmm1ok7gBz3OFmxi6iLZ1J7v8jl3SZiFYZloKnOw3nQkjJj5g00N0fiHk5RGaXcKO9gQBgcQKbKO/Ay8wmV0ndlTysPXTqpWynB4tZt58Z1kdGkRY=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.84_2)
-        (envelope-from <andrew@lunn.ch>)
-        id 1filog-0005RX-Vu; Thu, 26 Jul 2018 21:20:50 +0200
-Date:   Thu, 26 Jul 2018 21:20:50 +0200
-From:   Andrew Lunn <andrew@lunn.ch>
-To:     Arun Parameswaran <arun.parameswaran@broadcom.com>
-Cc:     "David S. Miller" <davem@davemloft.net>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>, netdev@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com
-Subject: Re: [PATCH 7/7] net: phy: Add pm support for scan ctrl register to
- bcm mdio mux
-Message-ID: <20180726192050.GJ10686@lunn.ch>
-References: <1532630184-29450-1-git-send-email-arun.parameswaran@broadcom.com>
- <1532630184-29450-8-git-send-email-arun.parameswaran@broadcom.com>
+        Thu, 26 Jul 2018 16:39:39 -0400
+Received: from mga.supermicro.com ([207.212.57.84]:39512 "EHLO
+        mga.supermicro.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730533AbeGZUjj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Jul 2018 16:39:39 -0400
+Received: from pps.filterd (MGA.supermicro.com [127.0.0.1])
+        by MGA.supermicro.com (8.16.0.22/8.16.0.22) with SMTP id w6QJLN7x025258;
+        Thu, 26 Jul 2018 12:21:23 -0700
+Received: from ex2013-mbx1.supermicro.com ([10.2.1.36])
+        by MGA.supermicro.com with ESMTP id 2kc4esa19c-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
+        Thu, 26 Jul 2018 12:21:23 -0700
+Received: from [172.16.95.100] (10.2.0.41) by EX2013-MBX1.supermicro.com
+ (10.2.1.36) with Microsoft SMTP Server (TLS) id 15.0.1236.3; Thu, 26 Jul 2018
+ 12:20:26 -0700
+Subject: Re: [RFC] x86, tsc: Add kcmdline args for skipping tsc calibration
+ sequences
+From:   patrickg <patrickg@supermicro.com>
+To:     "Brown, Len" <len.brown@intel.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+CC:     "mingo@kernel.org" <mingo@kernel.org>,
+        "Du, Alek" <alek.du@intel.com>,
+        "arjan@linux.intel.com" <arjan@linux.intel.com>,
+        "Tang, Feng" <feng.tang@intel.com>
+References: <fdf96605-a4a0-049b-51c9-1e68cc2a9b93@supermicro.com>
+ <1A7043D5F58CCB44A599DFD55ED4C94849A1AACF@FMSMSX126.amr.corp.intel.com>
+ <c7582a8c-8cc1-eff3-2452-a8d42d23fea1@supermicro.com>
+ <cb798dcd-8cd6-8a92-9f6c-50bec0afe204@supermicro.com>
+Message-ID: <94bebaa1-992b-572b-0d24-e08037611358@supermicro.com>
+Date:   Thu, 26 Jul 2018 12:21:22 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1532630184-29450-8-git-send-email-arun.parameswaran@broadcom.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <cb798dcd-8cd6-8a92-9f6c-50bec0afe204@supermicro.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.2.0.41]
+X-ClientProxiedBy: EX2013-CA1.supermicro.com (10.2.1.31) To
+ EX2013-MBX1.supermicro.com (10.2.1.36)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-26_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=589
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1806210000 definitions=main-1807260198
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 26, 2018 at 11:36:24AM -0700, Arun Parameswaran wrote:
-> Add support for saving and restoring the 'scan control' register
-> in the Broadcom iProc mdio mux driver.
-
-Hi Arun
-
-I don't see anything setting this register. So why is it necessary to
-save it over suspend/resume?
-
-     Andrew
+tsc_khz still zero with production CPU's, so it's reassigning tsc_khz to the cpuid-acquired cpu_khz value.
