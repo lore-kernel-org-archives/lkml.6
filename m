@@ -6,31 +6,31 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09A31C28CF6
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 09:22:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78840C28CF6
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 09:22:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BA14F2088E
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 09:22:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA14F2088E
+	by mail.kernel.org (Postfix) with ESMTP id 3E2BB208AD
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 09:22:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3E2BB208AD
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729260AbeGZKi3 (ORCPT
+        id S1729277AbeGZKie (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 26 Jul 2018 06:38:29 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:35981 "EHLO
+        Thu, 26 Jul 2018 06:38:34 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:42547 "EHLO
         metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729075AbeGZKi2 (ORCPT
+        with ESMTP id S1729097AbeGZKi3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Jul 2018 06:38:28 -0400
+        Thu, 26 Jul 2018 06:38:29 -0400
 Received: from dude.hi.pengutronix.de ([2001:67c:670:100:1d::7])
         by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ore@pengutronix.de>)
-        id 1ficTX-0002ap-Qb; Thu, 26 Jul 2018 11:22:23 +0200
+        id 1ficTX-0002aq-Qa; Thu, 26 Jul 2018 11:22:23 +0200
 Received: from ore by dude.hi.pengutronix.de with local (Exim 4.91)
         (envelope-from <ore@pengutronix.de>)
-        id 1ficTV-0004Vi-Ss; Thu, 26 Jul 2018 11:22:21 +0200
+        id 1ficTV-0004Vr-Ty; Thu, 26 Jul 2018 11:22:21 +0200
 From:   Oleksij Rempel <o.rempel@pengutronix.de>
 To:     Shawn Guo <shawnguo@kernel.org>, Mark Brown <broonie@kernel.org>,
         "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
@@ -47,10 +47,12 @@ Cc:     Oleksij Rempel <o.rempel@pengutronix.de>, kernel@pengutronix.de,
         Fabio Estevam <fabio.estevam@nxp.com>,
         Russell King <linux@armlinux.org.uk>, linux-imx@nxp.com,
         yibin.gong@nxp.com, "A.s. Dong" <aisheng.dong@nxp.com>
-Subject: [PATCH v8 0/6] provide power off support for iMX6 with external PMIC
-Date:   Thu, 26 Jul 2018 11:22:14 +0200
-Message-Id: <20180726092220.17250-1-o.rempel@pengutronix.de>
+Subject: [PATCH v8 1/6] ARM: imx6q: provide documentation for new fsl,pmic-stby-poweroff property
+Date:   Thu, 26 Jul 2018 11:22:15 +0200
+Message-Id: <20180726092220.17250-2-o.rempel@pengutronix.de>
 X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20180726092220.17250-1-o.rempel@pengutronix.de>
+References: <20180726092220.17250-1-o.rempel@pengutronix.de>
 X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::7
 X-SA-Exim-Mail-From: ore@pengutronix.de
 X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
@@ -60,83 +62,31 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018.07.26:
-v8 is a rebase against kernel v4.18-rc6. No other changes are made.
-Added: linux-imx@nxp.com and yibin.gong@nxp.com to the CC.
+Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+Acked-by: Rob Herring <robh@kernel.org>
+---
+ Documentation/devicetree/bindings/clock/imx6q-clock.txt | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-2018.05.17:
-update patches to version v7
-
-This patch series is providing power off support for Freescale/NXP iMX6 based
-boards with external power management integrated circuit (PMIC).
-As a first step the PMIC is configured to turn off the system if the
-standby pin is asserted. On second step we assert the standby pin.
-For this reason we need to use pm_power_off_prepare.
-
-Usage of stnadby pin for power off is described in official iMX6
-documentation.
-
-2018.03.05:
-As this patch set touches multiple subsystems I think it would make
-sense for Shawn Guo to take the all patch set.
-The only part which didn't receive an ACK is regulator stuff. So I would
-hope that Mark Brown can ACK it.
-
-Kind regards,
-Oleksij Rempel
-
-2017.12.06:
-Adding Linus. Probably there is no maintainer for this patch set.
-No changes are made, tested on v4.15-rc1.
-
-2017.10.27:
-Last version of this patch set was send at 20 Jun 2017, this is a rebase against
-kernel v4.14-rc6. Probably this set got lost. If I forgot to address some comments,
-please point me.
-
-changes:
-v7:
- - use EXPORT_SYMBOL_GPL(pm_power_off_prepare) instead of EXPORT_SYMBOL
- - call imx6q_suspend_finish() directly without cpu_suspend()
-
-v6:
- - rename imx6_pm_poweroff to imx6_pm_stby_poweroff
- - fix "MPIC_STBY_REQ" typo in the comment.
-
-v5:
- - remove useless includes from pm-imx6.c patch
- - add Acked-by to "regulator: pfuze100: add fsl,pmic-stby-poweroff property"
-   patch
-
-v4:
- - update comment in "regulator: pfuze100: add fsl,pmic-stby-poweroff ..."
-   patch
- - add Acked-by to "ARM: imx6q: provide documentation for new ..."
-   patch
-
-v3:
- - set pm_power_off_prepare = NULL on .remove.
- - documentation and spelling fixes.
- - use %pf instead of lookup_symbol_name.
-
-Oleksij Rempel (6):
-  ARM: imx6q: provide documentation for new fsl,pmic-stby-poweroff
-    property
-  ARM: imx6: register pm_power_off handler if "fsl,pmic-stby-poweroff"
-    is set
-  kernel/reboot.c: export pm_power_off_prepare
-  regulator: pfuze100: add fsl,pmic-stby-poweroff property
-  regulator: pfuze100-regulator: provide pm_power_off_prepare handler
-  ARM: dts: imx6: RIoTboard provide standby on power off option
-
- .../devicetree/bindings/clock/imx6q-clock.txt |  8 ++
- .../bindings/regulator/pfuze100.txt           |  7 ++
- arch/arm/boot/dts/imx6dl-riotboard.dts        |  5 +
- arch/arm/mach-imx/pm-imx6.c                   | 25 +++++
- drivers/regulator/pfuze100-regulator.c        | 92 +++++++++++++++++++
- kernel/reboot.c                               |  1 +
- 6 files changed, 138 insertions(+)
-
+diff --git a/Documentation/devicetree/bindings/clock/imx6q-clock.txt b/Documentation/devicetree/bindings/clock/imx6q-clock.txt
+index a45ca67a9d5f..e1308346e00d 100644
+--- a/Documentation/devicetree/bindings/clock/imx6q-clock.txt
++++ b/Documentation/devicetree/bindings/clock/imx6q-clock.txt
+@@ -6,6 +6,14 @@ Required properties:
+ - interrupts: Should contain CCM interrupt
+ - #clock-cells: Should be <1>
+ 
++Optional properties:
++- fsl,pmic-stby-poweroff: Configure CCM to assert PMIC_STBY_REQ signal
++  on power off.
++  Use this property if the SoC should be powered off by external power
++  management IC (PMIC) triggered via PMIC_STBY_REQ signal.
++  Boards that are designed to initiate poweroff on PMIC_ON_REQ signal should
++  be using "syscon-poweroff" driver instead.
++
+ The clock consumer should specify the desired clock by having the clock
+ ID in its "clocks" phandle cell.  See include/dt-bindings/clock/imx6qdl-clock.h
+ for the full list of i.MX6 Quad and DualLite clock IDs.
 -- 
 2.18.0
 
