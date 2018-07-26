@@ -2,102 +2,97 @@ Return-Path: <SRS0=7Z+k=KK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C51AC28CF6
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 22:39:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ACC8DC28CF6
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 22:55:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4DC0B20862
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 22:39:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4DC0B20862
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 4FC4A20846
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 22:55:17 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="P0cMxS1O"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4FC4A20846
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731919AbeGZX6l (ORCPT
+        id S1731860AbeG0AOJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 26 Jul 2018 19:58:41 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:51106 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731737AbeGZX6l (ORCPT
+        Thu, 26 Jul 2018 20:14:09 -0400
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:45758 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731729AbeG0AOJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Jul 2018 19:58:41 -0400
-Received: from akpm3.svl.corp.google.com (unknown [104.133.9.92])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 73AF840B;
-        Thu, 26 Jul 2018 22:39:47 +0000 (UTC)
-Date:   Thu, 26 Jul 2018 15:39:46 -0700
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     Antonio Nino Diaz <antonio.ninodiaz@arm.com>
-Cc:     Joe Perches <joe@perches.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] get_maintainer: Allow usage outside of kernel tree
-Message-Id: <20180726153946.3d81bf367cef7fe241bb3741@linux-foundation.org>
-In-Reply-To: <04452ac6-1575-f612-72c6-6ea88e70a9d5@arm.com>
-References: <04452ac6-1575-f612-72c6-6ea88e70a9d5@arm.com>
-X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Thu, 26 Jul 2018 20:14:09 -0400
+Received: by mail-pl0-f68.google.com with SMTP id j8-v6so1437755pll.12
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Jul 2018 15:55:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=B+ViF1JjYMbTF6gXyeRxJ3LRFCPpPvWE0v13usRTUV0=;
+        b=P0cMxS1OsT+cK7uW3MW08b5ER/NocR6nhJIR60ZIhlDAhtOvKbl/Z1nvQEQtS6HxdI
+         bR5bTI5MWu0Pwrz44p0KxPsjL919Jfuh+BHOC6BcpLegswcN/pR/7cEcrxLeybXF+6z4
+         tE7TZvZJX8A17ZrRPCAdF5nYF067fCIyAG3ro=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=B+ViF1JjYMbTF6gXyeRxJ3LRFCPpPvWE0v13usRTUV0=;
+        b=KoomY8t518AcyR+J3ACPqKQJJRKIZ454hd2e7NDRGntsA9MQ34uPD0BkuR9i1DPHH2
+         ccgl9YJelxZmbMOGF9JoTPhXBgNs8TEuCiKpj07FTC3ircSZO4mXqqNur1/gKO4+iKyf
+         qGOupB4pdUdNXrqRxrpQ/BEAKZipMpOC+B88fxVkV36uiW6UbK7iOG6QAGy6T2wv0sQA
+         LbJwvyXw880HkUgJ7dLLEwavmlN9uVzd1A3QwLan9T33opd+pVt0nmXF2y3T4dQNz5sL
+         iXZep9dbyelNxVIZiks98LjcS/IJxx30DYYOEMOR4ywABg2UOxDRMfO6xhVjFe9VgxiY
+         GQuA==
+X-Gm-Message-State: AOUpUlF2aRC32PXz4AhkATtEc6HHTbcb6x9P4qE9ZVKpKG4LYK6iPx94
+        kGJFgUlorsUJszf6rAbkefnNQ9aXt7g=
+X-Google-Smtp-Source: AAOMgpd7qRZnlzzRNFENMXj2vt1KJLwjSJjWncUL8CgXpI1arIGpm1len+CoL+5CSEFBUffmJ7KlZw==
+X-Received: by 2002:a17:902:760b:: with SMTP id k11-v6mr3615951pll.91.1532645713196;
+        Thu, 26 Jul 2018 15:55:13 -0700 (PDT)
+Received: from exogeni.mtv.corp.google.com ([2620:0:1000:1501:f407:8d12:c205:7153])
+        by smtp.gmail.com with ESMTPSA id 84-v6sm8015348pfj.33.2018.07.26.15.55.11
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 26 Jul 2018 15:55:12 -0700 (PDT)
+From:   Derek Basehore <dbasehore@chromium.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     wsa@the-dreams.de, linux-i2c@vger.kernel.org,
+        dianders@chromium.org, dtor@chromium.org,
+        venkateswarlu.v.vinjamuri@intel.corp-partner.google.com,
+        Derek Basehore <dbasehore@chromium.org>
+Subject: [PATCH] i2c: enable async suspend/resume on i2c devices
+Date:   Thu, 26 Jul 2018 15:55:08 -0700
+Message-Id: <20180726225508.74612-1-dbasehore@chromium.org>
+X-Mailer: git-send-email 2.18.0.345.g5c9ce644c3-goog
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 26 Jun 2018 11:07:03 +0100 Antonio Nino Diaz <antonio.ninodiaz@arm.com> wrote:
+This enables the async suspend property for i2c devices. This reduces
+the suspend/resume time considerably on platforms with multiple i2c
+devices (such as a trackpad or touchscreen).
 
-> Add option '--no-tree' to get_maintainer.pl script to allow using this
-> script in projects that aren't the Linux kernel if they use the same
-> format for their MAINTAINERS file. This command is also available in
-> checkpatch.pl, for example.
-> 
+Signed-off-by: Derek Basehore <dbasehore@chromium.org>
+---
+ drivers/i2c/i2c-core-base.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Seems OK to me?
-
-Please note that your email client is converting tabs to spaces.
-
-> --- a/scripts/get_maintainer.pl
-> +++ b/scripts/get_maintainer.pl
-> @@ -48,6 +48,7 @@ my $output_roles = 0;
->  my $output_rolestats = 1;
->  my $output_section_maxlen = 50;
->  my $scm = 0;
-> +my $tree = 1;
->  my $web = 0;
->  my $subsystem = 0;
->  my $status = 0;
-> @@ -255,6 +256,7 @@ if (!GetOptions(
->                 'subsystem!' => \$subsystem,
->                 'status!' => \$status,
->                 'scm!' => \$scm,
-> +               'tree!' => \$tree,
->                 'web!' => \$web,
->                 'letters=s' => \$letters,
->                 'pattern-depth=i' => \$pattern_depth,
-> @@ -319,7 +321,7 @@ if ($email &&
->      die "$P: Please select at least 1 email option\n";
->  }
-> 
-> -if (!top_of_kernel_tree($lk_path)) {
-> +if ($tree && !top_of_kernel_tree($lk_path)) {
->      die "$P: The current directory does not appear to be "
->         . "a linux kernel source tree.\n";
->  }
-> @@ -1031,13 +1033,14 @@ Other options:
->    --sections => print all of the subsystem sections with pattern matches
->    --letters => print all matching 'letter' types from all matching sections
->    --mailmap => use .mailmap file (default: $email_use_mailmap)
-> +  --no-tree => run without a kernel tree
->    --self-test => show potential issues with MAINTAINERS file content
->    --version => show version
->    --help => show this help information
-> 
->  Default options:
-> -  [--email --nogit --git-fallback --m --r --n --l --multiline --pattern-depth=0
-> -   --remove-duplicates --rolestats]
-> +  [--email --tree --nogit --git-fallback --m --r --n --l --multiline
-> +   --pattern-depth=0 --remove-duplicates --rolestats]
-> 
->  Notes:
->    Using "-f directory" may give unexpected results:
-
+diff --git a/drivers/i2c/i2c-core-base.c b/drivers/i2c/i2c-core-base.c
+index 1ba40bb2b966..3382bb7e1dcc 100644
+--- a/drivers/i2c/i2c-core-base.c
++++ b/drivers/i2c/i2c-core-base.c
+@@ -749,6 +749,7 @@ i2c_new_device(struct i2c_adapter *adap, struct i2c_board_info const *info)
+ 	client->dev.of_node = info->of_node;
+ 	client->dev.fwnode = info->fwnode;
+ 
++	device_enable_async_suspend(&client->dev);
+ 	i2c_dev_set_name(adap, client, info);
+ 
+ 	if (info->properties) {
+-- 
+2.18.0.345.g5c9ce644c3-goog
 
