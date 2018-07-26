@@ -6,95 +6,101 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03428C28CF6
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 07:57:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C75DC28CF6
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 08:00:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A4C4F2088E
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 07:57:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 21A712088E
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 08:00:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="cE25OJcU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A4C4F2088E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (1024-bit key) header.d=bidouilliste.com header.i=@bidouilliste.com header.b="B+h2HpAy"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 21A712088E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bidouilliste.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728935AbeGZJM7 (ORCPT
+        id S1728899AbeGZJQJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 26 Jul 2018 05:12:59 -0400
-Received: from mail-oi0-f66.google.com ([209.85.218.66]:34668 "EHLO
-        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728600AbeGZJM7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Jul 2018 05:12:59 -0400
-Received: by mail-oi0-f66.google.com with SMTP id 13-v6so1402382ois.1
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Jul 2018 00:57:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=a5WHBMbUJdRJ3x5qS98+TfZeKXF/7wPResP0zcgSx4w=;
-        b=cE25OJcU+NR0+IOnc+ejlq/n4pMJGjGXusWVrMchxazYAem8jRBHjjep7oCFEXSJqW
-         yQXTg04ioEXVBSyDa+7AUmaT7JbYCLBSisGYKeXiGveuToIbMMXfWt4udCvJ5pQ4FjYj
-         AYh06LDU0sWCkp0o/TldFXcmx+j00gIbrQ7E4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=a5WHBMbUJdRJ3x5qS98+TfZeKXF/7wPResP0zcgSx4w=;
-        b=ruuSzcZ6SB9oEpXKaIEdaMHcZWAce7mD9cImiXh0PrWuJfRGsgD1QVR3+OtKf5dLJS
-         QqsdguS5s6RNRF8+xRH73EIsQLcpBBwGtWShloSJOhVUauQlJFve/diXH1JE+wSpyS6o
-         Nxjr7xnNz7K95aj7AErj1dVZNlWy16lXKAr1aQSynz7yVNMPT+Qaaan3Y0QBU4iGJ+oq
-         aqQ2NttJaTcTXZiF4QsX9Js7L9NOeudw9tay3X8wXL8tyBzxLKZPKxjHaKbvjrxksJKN
-         5pUkQc1DABV923L0pSJYk/WhC19OoHruin5EM6iYw25/zZ6C84F9sLGO1Po2OgI2ko1c
-         MK9Q==
-X-Gm-Message-State: AOUpUlF/xwiooHLz+/rrs8V94sayMsW6/e48fP+Pr892PGGqiLVEp7kw
-        BurBJPaePtvZA1gCuLXpqSjHIbskJ+x2Hts2wjotJw==
-X-Google-Smtp-Source: AAOMgpfO1Vv1gykZcGWHshcEazoWdi5Ta7BI0f3OH8Nfrv/8DX4AZQ+3lDVkxU8p501QvJSXXjQDBxruk5WielN3lrI=
-X-Received: by 2002:aca:cdc2:: with SMTP id d185-v6mr959953oig.350.1532591841932;
- Thu, 26 Jul 2018 00:57:21 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a9d:237a:0:0:0:0:0 with HTTP; Thu, 26 Jul 2018 00:57:21
- -0700 (PDT)
-In-Reply-To: <20180726065208.yalawbgabym3evzy@localhost>
-References: <2531014d066e61063b3d7906e6df55caa028e17c.1531881619.git.baolin.wang@linaro.org>
- <20180726065208.yalawbgabym3evzy@localhost>
-From:   Baolin Wang <baolin.wang@linaro.org>
-Date:   Thu, 26 Jul 2018 15:57:21 +0800
-Message-ID: <CAMz4kuJ7e45xDe=aBc-m9dQczu+hdVH-SHCjnFSRmdjs-5BPZg@mail.gmail.com>
-Subject: Re: [PATCH 1/5] arm64: dts: sprd: Add SC27XX breathing light
- controller device
-To:     Olof Johansson <olof@lixom.net>
-Cc:     Rob Herring <robh+dt@kernel.org>,
+        Thu, 26 Jul 2018 05:16:09 -0400
+Received: from mail.blih.net ([212.83.177.182]:46203 "EHLO mail.blih.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728675AbeGZJQJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Jul 2018 05:16:09 -0400
+Received: from mail.blih.net (mail.blih.net [212.83.177.182])
+        by mail.blih.net (OpenSMTPD) with ESMTP id be2b78ce;
+        Thu, 26 Jul 2018 10:00:29 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=bidouilliste.com; h=date
+        :from:to:cc:subject:message-id:in-reply-to:references
+        :mime-version:content-type:content-transfer-encoding; s=mail;
+         bh=sOYkw3A9aEkFzO0q0dZEC1KXWdE=; b=B+h2HpAy4y/ylrRnA0Ri+zU2oKW6
+        sOLo1boTUL55RgxQztKtiwEHMqusrqCHDE/px26GdxUpsfr5mlNLm5jC0fiCjMQ3
+        jAk1jFgex8LoP/DiNrjrg5quV1fuHaE/TXjpDPI06c2Eq5NZMNSjUnRavHUUC6zJ
+        wOxrTWs9FlWcHNY=
+DomainKey-Signature: a=rsa-sha1; c=nofws; d=bidouilliste.com; h=date
+        :from:to:cc:subject:message-id:in-reply-to:references
+        :mime-version:content-type:content-transfer-encoding; q=dns; s=
+        mail; b=pELAROFxeR2Ewe28QoTano6U4t1zeeyZPwt/pZ7I0DzJbh1eNpAuLAu6
+        5rGSI1DIFnBeBljUGdvp6lrpri/vwowWQ58ayEtekLseSOnLHnk2Fhgw337n3KX4
+        PcmiKQ4l3IuH7boMSvW51eTRZ4jl3Euv059o4M0DmV4BGLHAqJk=
+Received: from skull.home.blih.net (ip-9.net-89-3-105.rev.numericable.fr [89.3.105.9])
+        by mail.blih.net (OpenSMTPD) with ESMTPSA id acf3350a
+        TLS version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO;
+        Thu, 26 Jul 2018 10:00:29 +0200 (CEST)
+Date:   Thu, 26 Jul 2018 10:00:28 +0200
+From:   Emmanuel Vadot <manu@bidouilliste.com>
+To:     Maxime Ripard <maxime.ripard@bootlin.com>
+Cc:     Akash Gajjar <Akash_Gajjar@mentor.com>,
         Mark Rutland <mark.rutland@arm.com>,
+        devicetree@vger.kernel.org,
         Catalin Marinas <catalin.marinas@arm.com>,
         Will Deacon <will.deacon@arm.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        DTML <devicetree@vger.kernel.org>, arm@kernel.org,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Mark Brown <broonie@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        linux-kernel@vger.kernel.org, Chen-Yu Tsai <wens@csie.org>,
+        Rob Herring <robh+dt@kernel.org>, icenowy@aosc.xyz,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] arm64: dts: allwinner: activate spi flash on pine64 LTS
+ board
+Message-Id: <20180726100028.071eae1c96fbe1e013b871b9@bidouilliste.com>
+In-Reply-To: <20180726073138.fexu4nxaamqmrbzb@flea>
+References: <Akash_Gajjar@mentor.com>
+        <1532587906-5415-1-git-send-email-Akash_Gajjar@mentor.com>
+        <20180726072924.bnvljmd2sf6bf5ae@flea>
+        <20180726073138.fexu4nxaamqmrbzb@flea>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.32; amd64-portbld-freebsd12.0)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Olof,
+On Thu, 26 Jul 2018 09:31:38 +0200
+Maxime Ripard <maxime.ripard@bootlin.com> wrote:
 
-On 26 July 2018 at 14:52, Olof Johansson <olof@lixom.net> wrote:
-> On Mon, Jul 23, 2018 at 02:10:16PM +0800, Baolin Wang wrote:
->> The SC27xx breathing light controller can support 3 outputs:
->> red LED, green LED and blue LED.
->>
->> Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
->
-> Applied 1-5, thanks. If you send a series like this, feel free to send a cover
-> letter as well, to let us know what you want done to them. I'm presuming you
-> wanted them applied in this case.
+> On Thu, Jul 26, 2018 at 09:29:24AM +0200, Maxime Ripard wrote:
+> > 1;5202;0c
+> > On Thu, Jul 26, 2018 at 12:21:46PM +0530, Akash Gajjar wrote:
+> > > This board has SPI flash. add spi flash support in device tree.
+> > > Tested on pine64 LTS.
+> > > 
+> > > Signed-off-by: Akash Gajjar <Akash_Gajjar@mentor.com>
+> > 
+> > Queued for 4.20, thanks!
+> 
+> No, sorry, I ended up droping that patch.
+> 
+> You mention that the Pine64 LTS has an SPI flash, yet you change the
+> sopine baseboard dts. Why is that?
 
-Sure, I will add one cover letter next time. Thanks.
+ There is still no dts for Pine64-LTS (Andre latest serie address that).
+ Note that the sopine.dtsi already have the SPI node, the patch is
+present in sunxi/dt64-for-4.19
+
+> Maxime
+> 
+> -- 
+> Maxime Ripard, Bootlin (formerly Free Electrons)
+> Embedded Linux and Kernel engineering
+> https://bootlin.com
+
 
 -- 
-Baolin Wang
-Best Regards
+Emmanuel Vadot <manu@bidouilliste.com> <manu@freebsd.org>
