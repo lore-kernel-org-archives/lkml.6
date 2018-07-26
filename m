@@ -2,85 +2,98 @@ Return-Path: <SRS0=7Z+k=KK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99D78C6778F
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 13:20:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CA04C6778F
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 13:20:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 468E320844
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 13:20:34 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Guq8N1ZR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 468E320844
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id D78B42083F
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 13:20:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D78B42083F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730587AbeGZOhX (ORCPT
+        id S1730728AbeGZOho (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 26 Jul 2018 10:37:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46272 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729410AbeGZOhW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Jul 2018 10:37:22 -0400
-Received: from mail-qk0-f176.google.com (mail-qk0-f176.google.com [209.85.220.176])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        Thu, 26 Jul 2018 10:37:44 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:49012 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729410AbeGZOho (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Jul 2018 10:37:44 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 500A02083F;
-        Thu, 26 Jul 2018 13:20:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1532611231;
-        bh=ZbK64BjwyyfL+2G5W6SbwILflfzQsxDlF2SRDQsOk6Y=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=Guq8N1ZRHFBEBiCLVARnRHB81jkiOgqKrOX8hS4soWIEcopyOC0gwvaVUgqXK9nI2
-         HWHJSgAP1tc+D3q4mH1bwIll4Np9YYp3HRZ9uFgBz1vLDCfYpG1G9sshxttnAF3nzE
-         2ujFufmnazxpQb9Ziof9YkN2YSEHD6A9s5aI4Dd0=
-Received: by mail-qk0-f176.google.com with SMTP id c126-v6so944391qkd.7;
-        Thu, 26 Jul 2018 06:20:31 -0700 (PDT)
-X-Gm-Message-State: AOUpUlGii2KUddVAyO7lBpecv1HfaSO3AuRnAXf3/Ko8j57s0EgTiEu+
-        eFNYHurus4UN614Wu49Og1YnUPFzBBdwrrawfQ==
-X-Google-Smtp-Source: AAOMgpfzk1pAeV/z05r9n0vAXB3vMM3yU6HSb5TtkgKhrJuxZnCwrQd3ox3W4wGulHBXhCAAJPocVnTPG/JZ9oV3hNw=
-X-Received: by 2002:ae9:e817:: with SMTP id a23-v6mr1639777qkg.213.1532611230558;
- Thu, 26 Jul 2018 06:20:30 -0700 (PDT)
+        by mx1.redhat.com (Postfix) with ESMTPS id F1043879C4;
+        Thu, 26 Jul 2018 13:20:52 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.34.27.30])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 6F6FD1C5B0;
+        Thu, 26 Jul 2018 13:20:51 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+        oleg@redhat.com; Thu, 26 Jul 2018 15:20:52 +0200 (CEST)
+Date:   Thu, 26 Jul 2018 15:20:50 +0200
+From:   Oleg Nesterov <oleg@redhat.com>
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, Wen Yang <wen.yang99@zte.com.cn>,
+        majiang <ma.jiang@zte.com.cn>
+Subject: Re: [PATCH 18/20] signal: Add calculate_sigpending()
+Message-ID: <20180726132050.GA32718@redhat.com>
+References: <87efft5ncd.fsf_-_@xmission.com>
+ <20180724032419.20231-18-ebiederm@xmission.com>
 MIME-Version: 1.0
-References: <20180717153643.8806-1-jbrunet@baylibre.com> <20180717153643.8806-18-jbrunet@baylibre.com>
- <20180725190619.GA20234@rob-hp-laptop> <9a71a5644b5257d48436a4d28972d4142a96b0eb.camel@baylibre.com>
-In-Reply-To: <9a71a5644b5257d48436a4d28972d4142a96b0eb.camel@baylibre.com>
-From:   Rob Herring <robh@kernel.org>
-Date:   Thu, 26 Jul 2018 07:20:18 -0600
-X-Gmail-Original-Message-ID: <CAL_Jsq+PCMbK_Ky6N-f-U65Lr9irSVCMNdvgfu3RJTRg_G90Qg@mail.gmail.com>
-Message-ID: <CAL_Jsq+PCMbK_Ky6N-f-U65Lr9irSVCMNdvgfu3RJTRg_G90Qg@mail.gmail.com>
-Subject: Re: [PATCH 14/15] ASoC: meson: add axg sound card DT binding documentation
-To:     Jerome Brunet <jbrunet@baylibre.com>
-Cc:     Mark Brown <broonie@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Carlo Caione <carlo@caione.org>,
-        Linux-ALSA <alsa-devel@alsa-project.org>,
-        devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        linux-amlogic@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180724032419.20231-18-ebiederm@xmission.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Thu, 26 Jul 2018 13:20:53 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Thu, 26 Jul 2018 13:20:53 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'oleg@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 26, 2018 at 1:40 AM <jbrunet@baylibre.com> wrote:
+On 07/23, Eric W. Biederman wrote:
 >
-> On Wed, 2018-07-25 at 13:06 -0600, Rob Herring wrote:
-> > > +- amlogic,aux-devs : List of phandles pointing to auxiliary devices
-> > > +- amlogic,widgets : Please refer to widgets.txt.
-> > > +- amlogic,routing : A list of the connections between audio components.
-> >
-> > audio-routing IIRC
->
-> Wouldn't it make sense to do the same for widgets and aux-devs then ?
->
-> audio-widgets ?
-> audio-aux-devs ?
+> --- a/kernel/fork.c
+> +++ b/kernel/fork.c
+> @@ -1988,6 +1988,7 @@ static __latent_entropy struct task_struct *copy_process(
+>  					  &p->signal->thread_head);
+>  		}
+>  		attach_pid(p, PIDTYPE_PID);
+> +		calculate_sigpending(p);
 
-Probably so. Those aren't as common.
+In theory this looks racy if !CLONE_SIGHAND, please see below
 
-Rob
+> +void calculate_sigpending(struct task_struct *new)
+> +{
+> +	/* Have any signals or users of TIF_SIGPENDING been delayed
+> +	 * until after fork?
+> +	 */
+> +	bool pending = (new->jobctl & JOBCTL_PENDING_MASK) ||
+> +		PENDING(&new->pending, &new->blocked) ||
+> +		PENDING(&new->signal->shared_pending, &new->blocked) ||
+> +		freezing(new) || klp_patch_pending(new);
+
+note that we do not hold new->sighand->siglock, but this "new" task is already
+visible to find_task_by_vpid/etc; so a new signal can come right after this check,
+
+> +	update_tsk_thread_flag(new, TIF_SIGPENDING, pending);
+
+and then update_tsk_thread_flag() can wrongly clear TIF_SIGPENDING.
+
+Easy to fix, but perhaps we can simply add recalc_sigpending() into
+schedule_tail() ? It already does more than just finish_task_switch/etc.
+
+This way we do not need the new helper (which btw can only be used by
+copy_process).
+
+
+Note also that either way you can remove set_tsk_thread_flag(TIF_SIGPENDING)
+from ptrace_init_task().
+
+Oleg.
+
