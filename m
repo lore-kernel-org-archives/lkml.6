@@ -2,268 +2,135 @@ Return-Path: <SRS0=7Z+k=KK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04C9FC6778F
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 20:11:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 887F1C28CF6
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 20:11:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A2012206B7
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 20:11:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 412E2206B7
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 20:11:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="tbZ98P6h"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A2012206B7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="gmkmeryE";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="VRlQn2H2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 412E2206B7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731550AbeGZV3i (ORCPT
+        id S1731709AbeGZV3k (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 26 Jul 2018 17:29:38 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41114 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730474AbeGZV3i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Jul 2018 17:29:38 -0400
-Received: from localhost (unknown [104.132.1.75])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8A9A7206B7;
-        Thu, 26 Jul 2018 20:11:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1532635871;
-        bh=xVDgorF6YphNwRQR1sAXrpnIQzf0rzap9BMQ6xlBAqU=;
-        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
-        b=tbZ98P6h4gengKcrpKWsvDTrsZErgFmuQ9+6/ayZGScjDTPV2QSbqnAFb/jgz9qaC
-         pfpKkT6k4ENyBzNWkH7g8w48T2RPI9UO7TaDTvAS/xgaWCujD2pEJzq0EgIi0sUkTh
-         gkpGxuvb1m30jQXCxzZaOAMpAlpGZjFVVP4M8MpE=
-Content-Type: text/plain; charset="utf-8"
+        Thu, 26 Jul 2018 17:29:40 -0400
+Received: from mail-ua0-f195.google.com ([209.85.217.195]:33566 "EHLO
+        mail-ua0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730643AbeGZV3j (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Jul 2018 17:29:39 -0400
+Received: by mail-ua0-f195.google.com with SMTP id i4-v6so1923649uak.0
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Jul 2018 13:11:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=CCDdoDPiIf1rjjGOpcLo14Fu2KiK4Jt6zjEYVbtWCFA=;
+        b=gmkmeryEGFbtH63LQ8RqD0H5+MW4RO91eG80FpUeSiJl5//9jK7FTfzQ2d+1/ratDd
+         8ZHayfjxmKPV9mvYCZvgWYFhv1Cor4NBbL70YcbOcZfgDeJUfWnlAJiQfzgER7ntKub6
+         E+Lh4ZkAalkbulLABISu5CAke1JH2y0trHsvnCFoXqAxID4LaTUdWZVQr+SLaMm36cHU
+         78Ts1d5fPvsd5P4JAeou99dfdS1HLLAwfDwrClKANQMN4EEQpoOHTkWUTpDJbkvw4VtO
+         RoWCB1m0DKBUsOftZfhE0RxfWq/0tk1rt4vzkCwDExy0iJmKyeNgJH6s3QZsfMNFGuxD
+         qsmg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=CCDdoDPiIf1rjjGOpcLo14Fu2KiK4Jt6zjEYVbtWCFA=;
+        b=VRlQn2H2Hlm55ijyub4SK0uWxbZVW7qVvmCOr5rM9sXdjPgyjikNRFyLuAkjkkvF1L
+         UMNsZkBMNApSWxc7Ew9m76BX8/HbDx/Wey/koxH9EpMHm8q1LOwMA+ZhILEfQl0h2VuN
+         Nz/vq/WxWwjGtW+2O2GTBlS9C3DuzzGaC8TAE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
+         :date:message-id:subject:to:cc;
+        bh=CCDdoDPiIf1rjjGOpcLo14Fu2KiK4Jt6zjEYVbtWCFA=;
+        b=rPmvFx9pgmBh2ON4d0RltXuVcBkLehY1v/hZON8BQBzfzKDrDu9snSZo5aMvwiKbip
+         Z8e7J3wu/MFh1KSMDCswupAa2hT3/vbeqVFwlNtI4ofS6okKk/YWqrnuG0ygogjK6Jh0
+         taiy0xYa9Lu349a2DPEEByIqzIetui7va7h87PfZh7Hu2ZqhHQRbx1F4G40tx8zUjLr8
+         LrXl3gtZDCCtKN5cxwRjOHFjckywhKm2t7AjzkJ630QPGN7bGCKXxAFO1H+RBWgPIN+B
+         FDGXm81foZk2upIOWFwZfYT50IQcP2d25PBBuEq+7fZEGLhjvKiJibkkRgOpfxc3efHZ
+         QbDw==
+X-Gm-Message-State: AOUpUlEapc7efvpDxDgfXmblhpJZ0XOUoKjtf57nN4Zkg1fPpNsylNU5
+        JStsUxomk/vhqq6mAd+248416Lzw2lhY6YT2xONEpQ==
+X-Google-Smtp-Source: AAOMgpeZEZimL4Mf01sz+vrku9FDnoYjlIMj21oXkvlowb1zNa64S/5Txl2VbhP6cuCv4rVg5PVM7LvWfV2loi/IaWY=
+X-Received: by 2002:ab0:11dd:: with SMTP id q29-v6mr2415399uac.191.1532635872217;
+ Thu, 26 Jul 2018 13:11:12 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Taniya Das <tdas@codeaurora.org>
-From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <1531719468-8458-2-git-send-email-tdas@codeaurora.org>
-Cc:     Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Amit Nischal <anischal@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Taniya Das <tdas@codeaurora.org>
-References: <1531719468-8458-1-git-send-email-tdas@codeaurora.org>
- <1531719468-8458-2-git-send-email-tdas@codeaurora.org>
-Message-ID: <153263587085.48062.14881216441533347350@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: [PATCH v3 1/2] clk: qcom: Add support for RCG to register for DFS
-Date:   Thu, 26 Jul 2018 13:11:10 -0700
+Received: by 2002:a1f:cd5:0:0:0:0:0 with HTTP; Thu, 26 Jul 2018 13:11:11 -0700 (PDT)
+In-Reply-To: <87o9eu1cup.fsf@linux.intel.com>
+References: <20180706162154.196345-1-dianders@chromium.org> <87o9eu1cup.fsf@linux.intel.com>
+From:   Doug Anderson <dianders@chromium.org>
+Date:   Thu, 26 Jul 2018 13:11:11 -0700
+X-Google-Sender-Auth: bts8xwr8j819LetTErVe8Vk-UfI
+Message-ID: <CAD=FV=WjMVhc=h+YJLmW6jQ0aS+qc1ZQU5DCx2F8B7hKc4v8ZA@mail.gmail.com>
+Subject: Re: [RFT PATCH 0/4] usb: dwc2: Turn on uframe sched everywhere
+To:     Felipe Balbi <felipe.balbi@linux.intel.com>
+Cc:     Minas Harutyunyan <hminas@synopsys.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Zhangfei Gao <zhangfei.gao@linaro.org>,
+        Stephen Warren <swarren@wwwdotorg.org>,
+        Bruno Herrera <bruherrera@gmail.com>,
+        linux-usb@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Taniya Das (2018-07-15 22:37:47)
-> diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
-> index 52208d4..f8f1417 100644
-> --- a/drivers/clk/qcom/clk-rcg2.c
-> +++ b/drivers/clk/qcom/clk-rcg2.c
-> @@ -929,3 +938,167 @@ static void clk_rcg2_shared_disable(struct clk_hw *=
-hw)
->         .set_rate_and_parent =3D clk_rcg2_shared_set_rate_and_parent,
->  };
->  EXPORT_SYMBOL_GPL(clk_rcg2_shared_ops);
-> +
-> +/* Common APIs to be used for DFS based RCGR */
-> +static unsigned long clk_rcg2_calculate_freq(struct clk_hw *hw,
-> +               int level, struct freq_tbl *f)
-> +{
-> +       struct clk_rcg2 *rcg =3D to_clk_rcg2(hw);
-> +       struct clk_hw *p;
-> +       unsigned long prate =3D 0;
-> +       u32 val, mask, cfg, m_off, n_off, offset, mode;
-> +       int i, ret, num_parents;
-> +
-> +       offset =3D SE_PERF_DFSR(level);
-> +       ret =3D regmap_read(rcg->clkr.regmap, rcg->cmd_rcgr + offset, &cf=
-g);
-> +       if (ret)
-> +               return ret;
-> +
-> +       mask =3D BIT(rcg->hid_width) - 1;
-> +       f->pre_div =3D cfg & mask ? (cfg & mask) : 1;
-> +
-> +       mode =3D cfg & CFG_MODE_MASK;
-> +       mode >>=3D CFG_MODE_SHIFT;
-> +
-> +       cfg &=3D CFG_SRC_SEL_MASK;
-> +       cfg >>=3D CFG_SRC_SEL_SHIFT;
-> +
-> +       num_parents =3D clk_hw_get_num_parents(hw);
-> +       for (i =3D 0; i < num_parents; i++) {
-> +               if (cfg =3D=3D rcg->parent_map[i].cfg) {
-> +                       f->src =3D rcg->parent_map[i].src;
-> +                       p =3D clk_hw_get_parent_by_index(&rcg->clkr.hw, i=
-);
-> +                       prate =3D clk_hw_get_rate(p);
-> +               }
-> +       }
-> +
-> +       if (!mode)
-> +               goto done;
+Hi,
 
-Please remove the goto and indent all the below code when we need to do
-the mode check.
+On Thu, Jul 26, 2018 at 3:59 AM, Felipe Balbi
+<felipe.balbi@linux.intel.com> wrote:
+> Douglas Anderson <dianders@chromium.org> writes:
+>
+>> While looking at a dwc2 recently, I noticed that some platforms still
+>> have the uframe scheduler off.  As far as I know, nothing good can
+>> come out of having the uframe scheduler off.  Let's turn it on
+>> everywhere.  Assuming this all works out then some time in the future
+>> we can gut all the old code that handles the old non-uframe scheduler
+>> and make everything simpler.
+>>
+>> NOTE: I don't have access to any of the platforms that I'm changing
+>> here, so I'm hoping to see a Tested-by from those on the list.
+>>
+>>
+>> Douglas Anderson (4):
+>>   usb: dwc2: Turn on uframe_sched on "bcm" platforms
+>>   usb: dwc2: Turn on uframe_sched on "his" platforms
+>>   usb: dwc2: Turn on uframe_sched on "amlogic" platforms
+>>   usb: dwc2: Turn on uframe_sched on "stm32f4x9_fsotg" platforms
+>
+> care to resend without RFT prefix and with collected acks, tested-bys, etc?
 
-> +
-> +       /* Calculate M & N values */
-> +       m_off =3D SE_PERF_M_DFSR(level);
-> +       n_off =3D SE_PERF_N_DFSR(level);
-> +
-> +       mask =3D BIT(rcg->mnd_width) - 1;
-> +       ret =3D regmap_read(rcg->clkr.regmap, rcg->cmd_rcgr + m_off, &val=
-);
-> +       if (ret) {
-> +               pr_err("Failed to read M offset register\n");
-> +               return ret;
-> +       }
-> +       val &=3D mask;
-> +       f->m =3D val;
-> +
-> +       ret =3D regmap_read(rcg->clkr.regmap, rcg->cmd_rcgr + n_off, &val=
-);
-> +       if (ret) {
-> +               pr_err("Failed to read N offset register\n");
-> +               return ret;
-> +       }
-> +       /* val ~(N-M) */
-> +       val =3D ~val;
-> +       val &=3D mask;
-> +       val +=3D f->m;
-> +       f->n =3D val;
-> +done:
-> +       return calc_rate(prate, f->m, f->n, mode, f->pre_div);
-> +}
-> +
-> +static int clk_rcg2_dfs_populate_freq_table(struct clk_rcg2 *rcg)
-> +{
-> +       struct freq_tbl *freq_tbl;
-> +       unsigned long calc_freq;
-> +       int i;
-> +
-> +       freq_tbl =3D kcalloc(MAX_PERF_LEVEL, sizeof(*freq_tbl),
-> +                               GFP_KERNEL);
-> +       if (!freq_tbl)
-> +               return -ENOMEM;
-> +
-> +       for (i =3D 0; i < MAX_PERF_LEVEL; i++) {
-> +               calc_freq =3D clk_rcg2_calculate_freq(&rcg->clkr.hw,
-> +                                                       i, &freq_tbl[i]);
-> +               if (calc_freq < 0) {
-> +                       kfree(freq_tbl);
-> +                       return calc_freq;
-> +               }
-> +
-> +               freq_tbl[i].freq =3D calc_freq;
-> +       }
-> +       rcg->freq_tbl =3D freq_tbl;
-> +
-> +       return 0;
-> +}
-> +
-> +static int clk_rcg2_dfs_determine_rate(struct clk_hw *hw,
-> +                                  struct clk_rate_request *req)
-> +{
-> +       struct clk_rcg2 *rcg =3D to_clk_rcg2(hw);
-> +       int ret;
-> +
-> +       if (!rcg->freq_tbl) {
-> +               ret =3D clk_rcg2_dfs_populate_freq_table(rcg);
-> +               if (ret) {
-> +                       pr_err("Failed to update DFS tables for %s\n",
-> +                                       clk_hw_get_name(hw));
-> +                       return ret;
-> +               }
-> +       }
-> +
-> +       return clk_rcg2_shared_ops.determine_rate(hw, req);
-> +}
-> +
-> +static const struct clk_ops clk_rcg2_dfs_ops =3D {
-> +       .is_enabled =3D clk_rcg2_is_enabled,
-> +       .get_parent =3D clk_rcg2_get_parent,
-> +       .determine_rate =3D clk_rcg2_dfs_determine_rate,
+Done with a prefix of 'REPOST' to hopefully make it obvious nothing
+changed between the RFT and this version.  There were only two
+test-by, but as mentioned in the updated cover letter:
 
-It seems very risky to do this without being able to read the frequency
-out of the hardware. Taking a peek at the DFS registers I see that there
-is some sort of 'CURR_PERF_STATE' field in the DFSR register. Wouldn't
-that correspond to the index in the table that the clk is currently
-using? Why can't we mark these clks as CLK_GET_RATE_NOCACHE and then
-read this field when we're using DFS?
+Since there should be nothing platform specific about the uFrame
+scheduler presumably this should mean we're good to go?  Specificaly
+note that in at least one of the "Tested-by" reports this patch caused
+a notable improvement.
 
-In fact, I just tested this on my device and I see that changing the DFS
-bit on the QUP register that controls the DFS used causes the DFSR
-register in GCC to update the CURR_PERF_STATE field to match what is
-chosen in the QUP. So there is definitely a way to implement
-recalc_rate() for this clk. Please do so.
 
-> +};
-> +
-> +static int clk_rcg2_enable_dfs(struct clk_rcg2 *rcg, struct regmap *regm=
-ap)
-> +{
-> +       struct clk_init_data *init;
-> +       u32 val;
-> +       int ret;
-> +
-> +       ret =3D regmap_read(regmap, rcg->cmd_rcgr + SE_CMD_DFSR_OFFSET,
-> +                         &val);
-> +       if (ret)
-> +               return -EINVAL;
-> +
-> +       if (!(val & SE_CMD_DFS_EN))
-> +               return 0;
-> +
-> +       init =3D kzalloc(sizeof(*init), GFP_KERNEL);
-> +       if (!init)
-> +               return -ENOMEM;
-> +
-> +       init->name =3D rcg->clkr.hw.init->name;
-> +       init->flags =3D rcg->clkr.hw.init->flags;
-> +       init->parent_names =3D rcg->clkr.hw.init->parent_names;
-> +       init->num_parents =3D rcg->clkr.hw.init->num_parents;
-> +       init->ops =3D &clk_rcg2_dfs_ops;
-> +
-> +       rcg->clkr.hw.init =3D init;
-> +       rcg->freq_tbl =3D NULL;
-> +
-> +       pr_debug("DFS registered for clk %s\n", init->name);
+BTW: I'm pleased to have you apply the patches, but I notice that
+get_maintainer no longer flags you as the person to post dwc2 patches
+to.  From linux-next:
 
-Ok
+$ ./scripts/get_maintainer.pl -f drivers/usb/dwc2
+Minas Harutyunyan <hminas@synopsys.com> (maintainer:DESIGNWARE USB2
+DRD IP DRIVER)
+Greg Kroah-Hartman <gregkh@linuxfoundation.org> (supporter:USB SUBSYSTEM)
+linux-usb@vger.kernel.org (open list:DESIGNWARE USB2 DRD IP DRIVER)
+linux-kernel@vger.kernel.org (open list)
 
-> +
-> +       return 0;
-> +}
-> +
-> +int qcom_cc_register_rcg_dfs(struct regmap *regmap,
-> +                           struct clk_rcg2 **rcgs, int num_clks)
-> +{
-> +       int i, ret =3D 0;
-> +
-> +       for (i =3D 0; i < num_clks; i++) {
-> +               ret =3D clk_rcg2_enable_dfs(rcgs[i], regmap);
-> +               if (ret) {
-> +                       const char *name =3D rcgs[i]->clkr.hw.init->name;
-> +
-> +                       pr_err("DFS register failed for clk %s\n", name);
-> +                       break;
 
-Just return ret please.
-
-> +               }
-> +       }
-> +
-> +       return ret;
-
-And return 0 here.
-
-> +}
-> +EXPORT_SYMBOL_GPL(qcom_cc_register_rcg_dfs);
+-Doug
