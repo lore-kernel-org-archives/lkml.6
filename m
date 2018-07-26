@@ -2,101 +2,165 @@ Return-Path: <SRS0=7Z+k=KK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ACB56C28CF6
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 08:22:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1616C28CF6
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 08:22:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 58B7520673
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 08:22:08 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="agOldFa8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 58B7520673
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 8B5B620673
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 08:22:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B5B620673
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729130AbeGZJht (ORCPT
+        id S1729147AbeGZJi3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 26 Jul 2018 05:37:49 -0400
-Received: from mail-oi0-f65.google.com ([209.85.218.65]:42205 "EHLO
-        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728956AbeGZJht (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Jul 2018 05:37:49 -0400
-Received: by mail-oi0-f65.google.com with SMTP id n84-v6so1492141oib.9;
-        Thu, 26 Jul 2018 01:22:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=GndRCQMau3PydFhw8kq1nYnMCcmKMqyUbqUtAZLhF3M=;
-        b=agOldFa8qwdRlVZW61U8HgUjoUjYGSsvdbzHtfz423OoRLjaY/1vgpTRoLVpJI9YIL
-         eX9/TZtMSf3bbXYmwgGK4VvpzxIznp8NJI8C2vfbF2MlCaCudco2QTSQL7luiAENG8EF
-         YYGuYduRgnii6IJiNgLabjnTiPq5j19UGS7fOUKaB9RO++i9P41cHwWqmJoeyf1LivAI
-         WrvjQe2/Npbk/BMVUUoHTRSAaE64YhP4TepqiaAQH91Awsaxy++TF5XY8Sgvt/gY27ZS
-         zNf5FbdNIqWeSKvpaCijyDANDSN2XSjypD9BZTl7pZG2zxGyQnrGYDwJDfqXTRj0PTIX
-         JrbQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
-         :date:message-id:subject:to:cc;
-        bh=GndRCQMau3PydFhw8kq1nYnMCcmKMqyUbqUtAZLhF3M=;
-        b=ps2cKUj0MtJFqdK6Bjc0uvTvXcjk02co3byO7qa32E9xS5ktYvTzSHV4nSr5MxsUer
-         jRkYDkDttIVi+D4TgwkBMvugO28TeuqQjFod8E6U/FHD8M8j7W4SaS/o2SGN77ePGhyP
-         vjLvIqbXzalWw5vNjQsl0X3P3Wdv4AjqFiwaTymSYdlYz2n/io5MSFMCYprFkSQwNBTW
-         idekf/BZ6zU5VVGHGtuftjaNfdOZN86HElGWoPyW5ktHGXTiyWaoO/9LkuFN88p+nWLZ
-         EEZzRKmGTu+6Yck2aU7QLFTRKFUo799yQL6mdA2i61SAXugOlgmIN/wL4tntHtpSBhB7
-         rpAQ==
-X-Gm-Message-State: AOUpUlG0JezaUyHBW/dL7nTHqAvHABLoXJFnKWJ+TgqGq5AX1vaNHNcW
-        klNUTPE6pNZj0Ryq1ko/Cq7LAUmB+DuAXZbw03s=
-X-Google-Smtp-Source: AAOMgpcM6zgioOsOkADpIu+FsjVe2boaJaIlsx7rQUVdAFygfUCU5ALWBEJLNNtuBZ8eQ09wtG2ciQMJCbuDjk5JN80=
-X-Received: by 2002:aca:42:: with SMTP id 63-v6mr882495oia.154.1532593325889;
- Thu, 26 Jul 2018 01:22:05 -0700 (PDT)
+        Thu, 26 Jul 2018 05:38:29 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:35892 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728378AbeGZJi3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Jul 2018 05:38:29 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id BFCD587A74;
+        Thu, 26 Jul 2018 08:22:44 +0000 (UTC)
+Received: from [10.36.117.37] (ovpn-117-37.ams2.redhat.com [10.36.117.37])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id B5E242166BA3;
+        Thu, 26 Jul 2018 08:22:41 +0000 (UTC)
+Subject: Re: [PATCH v1 0/2] mm/kdump: exclude reserved pages in dumps
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     Vlastimil Babka <vbabka@suse.cz>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Baoquan He <bhe@redhat.com>, Dave Young <dyoung@redhat.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Hari Bathini <hbathini@linux.vnet.ibm.com>,
+        Huang Ying <ying.huang@intel.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        =?UTF-8?Q?Marc-Andr=c3=a9_Lureau?= <marcandre.lureau@redhat.com>,
+        Matthew Wilcox <mawilcox@microsoft.com>,
+        Miles Chen <miles.chen@mediatek.com>,
+        Pavel Tatashin <pasha.tatashin@oracle.com>,
+        Petr Tesarik <ptesarik@suse.cz>
+References: <20180720123422.10127-1-david@redhat.com>
+ <9f46f0ed-e34c-73be-60ca-c892fb19ed08@suse.cz>
+ <f8d7b5f9-e5ee-0625-f53d-50d1841e1388@redhat.com>
+ <20180724072237.GA28386@dhcp22.suse.cz>
+From:   David Hildenbrand <david@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+ SE+xAvmumFBY
+Organization: Red Hat GmbH
+Message-ID: <e5264f8e-2bb5-7a9b-6352-ad18f04d49c2@redhat.com>
+Date:   Thu, 26 Jul 2018 10:22:41 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Received: by 2002:a9d:63d2:0:0:0:0:0 with HTTP; Thu, 26 Jul 2018 01:22:05
- -0700 (PDT)
-In-Reply-To: <20180725091802.74400a81@gandalf.local.home>
-References: <20180724173544.18876-1-joel@joelfernandes.org> <20180725091802.74400a81@gandalf.local.home>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Thu, 26 Jul 2018 10:22:05 +0200
-X-Google-Sender-Auth: 7fphIQA3LKMYHtk3nB4oTD-8dLI
-Message-ID: <CAJZ5v0hzdLpFaZuMVPP1oWOExsp5BBStpkg_C1ZekCEnDQjdgA@mail.gmail.com>
-Subject: Re: [PATCH v3] cpufreq: trace frequency limits change
-To:     Steven Rostedt <rostedt@goodmis.org>,
-        Joel Fernandes <joel@joelfernandes.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        kernel-team@android.com, Ruchi Kandoi <kandoiruchi@google.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Viresh Kumar <viresh.kumar@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180724072237.GA28386@dhcp22.suse.cz>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Thu, 26 Jul 2018 08:22:44 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Thu, 26 Jul 2018 08:22:44 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'david@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 25, 2018 at 3:18 PM, Steven Rostedt <rostedt@goodmis.org> wrote:
-> On Tue, 24 Jul 2018 10:35:44 -0700
-> Joel Fernandes <joel@joelfernandes.org> wrote:
->
->> From: Ruchi Kandoi <kandoiruchi@google.com>
+On 24.07.2018 09:22, Michal Hocko wrote:
+> On Mon 23-07-18 19:12:58, David Hildenbrand wrote:
+>> On 23.07.2018 13:45, Vlastimil Babka wrote:
+>>> On 07/20/2018 02:34 PM, David Hildenbrand wrote:
+>>>> Dumping tools (like makedumpfile) right now don't exclude reserved pages.
+>>>> So reserved pages might be access by dump tools although nobody except
+>>>> the owner should touch them.
+>>>
+>>> Are you sure about that? Or maybe I understand wrong. Maybe it changed
+>>> recently, but IIRC pages that are backing memmap (struct pages) are also
+>>> PG_reserved. And you definitely do want those in the dump.
 >>
->> systrace used for tracing for Android systems has carried a patch for
->> many years in the Android tree that traces when the cpufreq limits
->> change.  With the help of this information, systrace can know when the
->> policy limits change and can visually display the data. Lets add
->> upstream support for the same.
+>> I proposed a new flag/value to mask pages that are logically offline but
+>> Michal wanted me to go into this direction.
 >>
->> Signed-off-by: Ruchi Kandoi <kandoiruchi@google.com>
->> Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
->
-> Better ;-)
->
-> Acked-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+>> While we can special case struct pages in dump tools ("we have to
+>> read/interpret them either way, so we can also dump them"), it smells
+>> like my original attempt was cleaner. Michal?
+> 
+> But we do not have many page flags spare and even if we have one or two
+> this doesn't look like the use for them. So I still think we should try
+> the PageReserved way.
+> 
 
-Patch applied, thanks!
+So as a summary, the only real approach that would be acceptable is
+using PageReserved + some other identifier to mark pages as "logically
+offline".
+
+I wonder what identifier could be used, as this has to be consistent for
+all reserved pages (to avoid false positives).
+
+Using other pageflags in combination might be possible, but then we have
+to make assumptions about all users of PageReserved right now.
+
+As far as I can see (and as has been discussed), page_type could be
+used. If we don't want to consume a new bit, we could overload/reuse the
+"PG_balloon" bit.
+
+
+E.g. "PG_balloon" set -> exclude page from dump
+
+PG_balloon + !PG_reserved -> ballooned page (state as of now)
+PG_balloon + PG_reserved -> offline page
+
+This way, even pages inflated by virtio_balloon would not be touched.
+
+Opinions?
+
+-- 
+
+Thanks,
+
+David / dhildenb
