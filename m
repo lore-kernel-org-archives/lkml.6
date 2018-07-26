@@ -2,172 +2,124 @@ Return-Path: <SRS0=7Z+k=KK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B360CC6778F
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 00:00:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C80AAC6778F
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 00:04:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6E70320852
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 00:00:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 73A9320852
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 00:04:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=osandov-com.20150623.gappssmtp.com header.i=@osandov-com.20150623.gappssmtp.com header.b="N+/iL5fe"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6E70320852
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=osandov.com
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="GH9hW4lw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 73A9320852
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728815AbeGZBOT (ORCPT
+        id S1728561AbeGZBS2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 25 Jul 2018 21:14:19 -0400
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:33500 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728528AbeGZBNf (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Jul 2018 21:13:35 -0400
-Received: by mail-pl0-f65.google.com with SMTP id 6-v6so3964884plb.0
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Jul 2018 16:59:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=osandov-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=OyWywDrz0yNlctIEZKfvqcYdJMHey6G7QhHf0bJ4Juc=;
-        b=N+/iL5fejFKJBgL86c7dIvORG0UbpLxXfzFOWXP3pvNMvfaVPbBxgHlYEEmatjRxO1
-         ZYrCA2mIfw5RdzrG0/2x3YVOR4i1s1UHv00LhZnUi9F721HAX1LxuXt8dYBkJsTPsTHZ
-         +JN56l4lqbeLrh84/Afh5C6UWkVeM1Xguq7P8fAoG+EiN7iTL5IxxGNTBK7LHpEwOuyY
-         1cjCJHXKf7TJuxbr2FYjlRyYdDnsP1aunU6wcvZlymHIlJcFP7snq6/v12Ayl6g9Wcvs
-         j7YjLhVzOK+I5/jyrA5PgtZPbycR2a9pKnKB+X6A6lFFifJfXKC7TJV1KKwcYLGraZz7
-         vWcA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=OyWywDrz0yNlctIEZKfvqcYdJMHey6G7QhHf0bJ4Juc=;
-        b=VvzgZrZZjVpo3/SUhSQvZVDLg9GJO7NWe+UvtV9T0ow/By2W4R8K9ac6TzDrcPxSuv
-         qDiHuNdtgJtVtWkrru1cNsJVDEMcNfU2Y865Y2VJM/TEUBCYtLzq1pP6sjDw71OGoiMk
-         elkihLydQSUcU4zMP6Tn5Ht3hskfIUOAbAn6NzVnanZfETbazdRDwrAXugmACksMptdB
-         1GgcHKfMXVG7eCpXa2tD5bHNI+2Opvc6CkxrX1usLwwTh8EO6aG3kbBDW9Ct0st+GGaj
-         ca3iKjeCgCfm2+VQDNLeyb456qzoF/G05gvzw3QL7dEYg927fJ4KY7wbLNHQYPT8Chf6
-         rJZA==
-X-Gm-Message-State: AOUpUlHfRURHAbbqbmQKWGBDYX6C2JVsSP0MHqofOqU+Tn74oU/ad29m
-        uongjBEMaqdd3QVUqRIG5cNOvtP4T7I=
-X-Google-Smtp-Source: AAOMgpdIe/Dzyo7suaCjIk7sSJ1zT4w7ASuNcgmrQ0/ilyLri8disTx0IhCoYtKuTnqRDdVHjmJImQ==
-X-Received: by 2002:a17:902:9695:: with SMTP id n21-v6mr23026395plp.6.1532563170918;
-        Wed, 25 Jul 2018 16:59:30 -0700 (PDT)
-Received: from vader.thefacebook.com ([2620:10d:c090:180::1:8d38])
-        by smtp.gmail.com with ESMTPSA id 65-v6sm23188753pfq.81.2018.07.25.16.59.29
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 25 Jul 2018 16:59:30 -0700 (PDT)
-From:   Omar Sandoval <osandov@osandov.com>
-To:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc:     Alexey Dobriyan <adobriyan@gmail.com>,
-        Eric Biederman <ebiederm@xmission.com>,
-        James Morse <james.morse@arm.com>,
-        Bhupesh Sharma <bhsharma@redhat.com>, kernel-team@fb.com
-Subject: [PATCH v4 3/9] proc/kcore: replace kclist_lock rwlock with rwsem
-Date:   Wed, 25 Jul 2018 16:59:14 -0700
-Message-Id: <51ba5cba7c43ec5ddce8023054c99943fad02b6d.1532563124.git.osandov@fb.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <cover.1532563124.git.osandov@fb.com>
-References: <cover.1532563124.git.osandov@fb.com>
+        Wed, 25 Jul 2018 21:18:28 -0400
+Received: from ozlabs.org ([203.11.71.1]:40991 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728119AbeGZBS1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Jul 2018 21:18:27 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 41bXQD20JCz9s1R;
+        Thu, 26 Jul 2018 10:04:20 +1000 (AEST)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1532563460;
+        bh=higIhvpf2axbsWJyUwDuHaUvrK1VzCHgrNSW9McOPS8=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=GH9hW4lwfLjMRx4L0zlXUQIWCk3c+91iR177UmYLAwikb/9eEPx+b/RIgdggmPu9U
+         rYsVWcTvNbeBbAhLs+n92lCfOL+8+XSGu4yna5DNomCr9UcGdIFzJAlKMO/oVAwzvb
+         HFRcw/oaDB6A3r09k3JpSUwykxh54HyMbWhRrip4qIqDu5Zu5XDC6gsRXUMDd2HLly
+         5puqeVvzFV033Cc6s3SwE8tHrrsUtZJSblJUJxyPPKt1p/1c5gGoNAaoBI84sbC7rv
+         BSvxYFEahp97dZbq9SWPryAEKY1Q181AObLImZj4SgtDavQus84xC8chopGThitDEH
+         rQU51tL69uhKA==
+Date:   Thu, 26 Jul 2018 10:03:52 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Jiang <dave.jiang@intel.com>
+Subject: Re: linux-next: Signed-off-by missing for commit in the xarray tree
+Message-ID: <20180726100352.2d7c9c21@canb.auug.org.au>
+In-Reply-To: <20180725233621.GA20272@bombadil.infradead.org>
+References: <20180726072814.6c93b595@canb.auug.org.au>
+        <20180725233621.GA20272@bombadil.infradead.org>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/SVpBEgyhG6eN5FgH7xs5lSx"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Omar Sandoval <osandov@fb.com>
+--Sig_/SVpBEgyhG6eN5FgH7xs5lSx
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Now we only need kclist_lock from user context and at fs init time, and
-the following changes need to sleep while holding the kclist_lock.
+Hi Matthew,
 
-Signed-off-by: Omar Sandoval <osandov@fb.com>
----
- fs/proc/kcore.c | 20 ++++++++++----------
- 1 file changed, 10 insertions(+), 10 deletions(-)
+On Wed, 25 Jul 2018 16:36:21 -0700 Matthew Wilcox <willy@infradead.org> wro=
+te:
+>
+> On Thu, Jul 26, 2018 at 07:28:14AM +1000, Stephen Rothwell wrote:
+> >=20
+> > Commits
+> >=20
+> >   890e537e2b42 ("filesystem-dax: Introduce dax_lock_mapping_entry()")
+> >   aaf149902c79 ("filesystem-dax: Set page->index")
+> >=20
+> > are missing a Signed-off-by from their committers. =20
+>=20
+> Oh, hah.  I assume this is an automated email?
 
-diff --git a/fs/proc/kcore.c b/fs/proc/kcore.c
-index e83f15a4f66d..ae43a97d511d 100644
---- a/fs/proc/kcore.c
-+++ b/fs/proc/kcore.c
-@@ -59,7 +59,7 @@ struct memelfnote
- };
- 
- static LIST_HEAD(kclist_head);
--static DEFINE_RWLOCK(kclist_lock);
-+static DECLARE_RWSEM(kclist_lock);
- static int kcore_need_update = 1;
- 
- /* This doesn't grab kclist_lock, so it should only be used at init time. */
-@@ -117,7 +117,7 @@ static void __kcore_update_ram(struct list_head *list)
- 	struct kcore_list *tmp, *pos;
- 	LIST_HEAD(garbage);
- 
--	write_lock(&kclist_lock);
-+	down_write(&kclist_lock);
- 	if (xchg(&kcore_need_update, 0)) {
- 		list_for_each_entry_safe(pos, tmp, &kclist_head, list) {
- 			if (pos->type == KCORE_RAM
-@@ -128,7 +128,7 @@ static void __kcore_update_ram(struct list_head *list)
- 	} else
- 		list_splice(list, &garbage);
- 	proc_root_kcore->size = get_kcore_size(&nphdr, &size);
--	write_unlock(&kclist_lock);
-+	up_write(&kclist_lock);
- 
- 	free_kclist_ents(&garbage);
- }
-@@ -451,11 +451,11 @@ read_kcore(struct file *file, char __user *buffer, size_t buflen, loff_t *fpos)
- 	int nphdr;
- 	unsigned long start;
- 
--	read_lock(&kclist_lock);
-+	down_read(&kclist_lock);
- 	size = get_kcore_size(&nphdr, &elf_buflen);
- 
- 	if (buflen == 0 || *fpos >= size) {
--		read_unlock(&kclist_lock);
-+		up_read(&kclist_lock);
- 		return 0;
- 	}
- 
-@@ -472,11 +472,11 @@ read_kcore(struct file *file, char __user *buffer, size_t buflen, loff_t *fpos)
- 			tsz = buflen;
- 		elf_buf = kzalloc(elf_buflen, GFP_ATOMIC);
- 		if (!elf_buf) {
--			read_unlock(&kclist_lock);
-+			up_read(&kclist_lock);
- 			return -ENOMEM;
- 		}
- 		elf_kcore_store_hdr(elf_buf, nphdr, elf_buflen);
--		read_unlock(&kclist_lock);
-+		up_read(&kclist_lock);
- 		if (copy_to_user(buffer, elf_buf + *fpos, tsz)) {
- 			kfree(elf_buf);
- 			return -EFAULT;
-@@ -491,7 +491,7 @@ read_kcore(struct file *file, char __user *buffer, size_t buflen, loff_t *fpos)
- 		if (buflen == 0)
- 			return acc;
- 	} else
--		read_unlock(&kclist_lock);
-+		up_read(&kclist_lock);
- 
- 	/*
- 	 * Check to see if our file offset matches with any of
-@@ -504,12 +504,12 @@ read_kcore(struct file *file, char __user *buffer, size_t buflen, loff_t *fpos)
- 	while (buflen) {
- 		struct kcore_list *m;
- 
--		read_lock(&kclist_lock);
-+		down_read(&kclist_lock);
- 		list_for_each_entry(m, &kclist_head, list) {
- 			if (start >= m->addr && start < (m->addr+m->size))
- 				break;
- 		}
--		read_unlock(&kclist_lock);
-+		up_read(&kclist_lock);
- 
- 		if (&m->list == &kclist_head) {
- 			if (clear_user(buffer, tsz))
--- 
-2.18.0
+Well, semi-automatic :-)
 
+> These two commits I cherry-picked from the nvdimm tree so that XArray can
+> be rebased on top of it.  Is there some other way I should be doing this,
+> like rebasing on top of the nvdimm tree?
+
+Ideally, the nvdimm tree would have just those two commits in a branch
+that you could merge (so that you both have the same commits (as
+opposed to patches)) that way these changes cannot cause conflicts when
+the files are further modifed in either tree.  Alternatively, if you do
+have to cherry-pick them, then you need to add your Signed-off-by to
+the copy that you commit.
+
+As things are now, you could merge commit
+
+  c2a7d2a11552 ("filesystem-dax: Introduce dax_lock_mapping_entry()")
+
+from the nvdimm tree into your tree before the conflicting commits in
+your tree (or just rebase your tree on top of that commit).  You need
+to make sure that Dan and/or Dave (cc'd) will never rebase that part of
+their tree.  Also, you will pick up some other commits (which may not
+be a problem for you).
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/SVpBEgyhG6eN5FgH7xs5lSx
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltZD+gACgkQAVBC80lX
+0Gxv5Qf+OCqn81Iw9tHqUcywVWSKZYQHrfz6r96elRGsRmQzf5+ISrtqxh1MFIn2
+uX0kJxXf6/ZD/4Xt6TWH/BDEECJ4Gw4sc7zM2QrigcANWPSZskZt25iVJzn9FEQa
+n27uGdFsaOd1yCVAiyCPGUKsca/wTlqrhYZe6lbBlCqdmjDFhQHZqD4sA9chruY3
+yhez20dCkNik+jUloZqBjZcI8SedNXsGA7vQpS84WxskIwwTzbNK+0y6PFt3hhOF
+pjAo5JuEofOsUqVkvj2jojTcD3Gbx7oztxBWLHn9TFT+MChIUgr++3O/iUzgD9cF
+LHrQ6qchM7sG00JQ2f2IF2DbYtMavg==
+=2c05
+-----END PGP SIGNATURE-----
+
+--Sig_/SVpBEgyhG6eN5FgH7xs5lSx--
