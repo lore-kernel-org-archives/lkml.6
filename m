@@ -2,300 +2,123 @@ Return-Path: <SRS0=7Z+k=KK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BFA7C6778F
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 03:09:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62EF9C67790
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 03:28:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D325A20846
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 03:09:30 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SIC/lC6m"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D325A20846
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 1391A20647
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 03:28:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1391A20647
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726339AbeGZEYI (ORCPT
+        id S1726551AbeGZEnJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 26 Jul 2018 00:24:08 -0400
-Received: from mail-oi0-f65.google.com ([209.85.218.65]:35973 "EHLO
-        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725787AbeGZEYI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Jul 2018 00:24:08 -0400
-Received: by mail-oi0-f65.google.com with SMTP id n21-v6so435036oig.3;
-        Wed, 25 Jul 2018 20:09:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=kNYag7rdq2LBGuA+3ZOVGcq9ydf5JmFbNtNep1cYrqc=;
-        b=SIC/lC6mS+cJmX5vW40l9X73Ue5M4OoJ1BqsoUZ5DyKpAot7wtNlLd9ZTswDNB1MIE
-         v5A/d7m7a7yBNM+t/jskp0kTGRrQ+eauzSbBp5mcgSJo+wu+hCosHNB1R3tkUEJWTz99
-         drEkRJXX3ZjvnTzoJ5BKwzw6UIL0MsBkkcdzySI0pQCvFubkF1bYl92m273r11pTul4+
-         /L7niAmop5GlZMdKB7YDcl5RAcO076uFdFnz1pasLtEpmq3SDxeGTT9/Trgh7yKrL4UI
-         UVdW3KU7gCUAk4z2e8R4EyZi9bBwcSWP++hnLmn7ybjGJdAKToXJMnWRgTh6ylz7beyX
-         sbGQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=kNYag7rdq2LBGuA+3ZOVGcq9ydf5JmFbNtNep1cYrqc=;
-        b=G2anAxof1FN7kF/4/PrDM9jbYss0h7vqinqb7/J3H0qnZdzN0RVly/BnuFYGrVHgXa
-         qhjqxViMV8+3Go6WXS+2TwJJ+ITgWWYVixpAuRCZcFZnUwuP7YBEmDge4vbE1gv6IR3y
-         wAGyx9Yfv5PdqDXlAQJzbXkgi2N23opvg3rvIAGjFgVI94/lJnc21ZDyWhS73ENGnH+K
-         nBTRlmArdrRuLD1u7umRQFNJvV+vJCcALq6oGANM0DhQpwA51BLlx3SwAS20HLmD77WA
-         dWMUOxc7WwdjBMxR3PhFQSp6hkiNeC7UCADwF9vFZT7k3K8RcEQ7jHwVogrtdZEKdiRS
-         Inng==
-X-Gm-Message-State: AOUpUlEdL8azfvsifR4HdgOnQeI1pDljJuN0Nx9f4cmRpjNIKNL9Ok2r
-        G9ZVvmBA2azQW7ZeqpC1o56FtaGTzMTwUz3/iWA=
-X-Google-Smtp-Source: AAOMgpf263fOMowoCGfpoPAJ7uPg94HvNaJrBnLpdh9spLebtQfqEPd/+B0uoAxNyDjhCHZ7nHfS6XdlqRdBfRQqZ6Y=
-X-Received: by 2002:aca:cc46:: with SMTP id c67-v6mr171119oig.197.1532574567594;
- Wed, 25 Jul 2018 20:09:27 -0700 (PDT)
+        Thu, 26 Jul 2018 00:43:09 -0400
+Received: from mga11.intel.com ([192.55.52.93]:58250 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725787AbeGZEnJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Jul 2018 00:43:09 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Jul 2018 20:28:26 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,403,1526367600"; 
+   d="scan'208";a="70420766"
+Received: from fmsmsx107.amr.corp.intel.com ([10.18.124.205])
+  by fmsmga002.fm.intel.com with ESMTP; 25 Jul 2018 20:28:26 -0700
+Received: from fmsmsx119.amr.corp.intel.com (10.18.124.207) by
+ fmsmsx107.amr.corp.intel.com (10.18.124.205) with Microsoft SMTP Server (TLS)
+ id 14.3.319.2; Wed, 25 Jul 2018 20:28:26 -0700
+Received: from shsmsx104.ccr.corp.intel.com (10.239.4.70) by
+ FMSMSX119.amr.corp.intel.com (10.18.124.207) with Microsoft SMTP Server (TLS)
+ id 14.3.319.2; Wed, 25 Jul 2018 20:28:25 -0700
+Received: from shsmsx101.ccr.corp.intel.com ([169.254.1.57]) by
+ SHSMSX104.ccr.corp.intel.com ([169.254.5.81]) with mapi id 14.03.0319.002;
+ Thu, 26 Jul 2018 11:28:23 +0800
+From:   "Tian, Kevin" <kevin.tian@intel.com>
+To:     'Jean-Philippe Brucker' <jean-philippe.brucker@arm.com>,
+        Lu Baolu <baolu.lu@linux.intel.com>,
+        "Liu, Yi L" <yi.l.liu@intel.com>, Joerg Roedel <joro@8bytes.org>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Kirti Wankhede <kwankhede@nvidia.com>
+CC:     "Raj, Ashok" <ashok.raj@intel.com>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "Kumar, Sanjay K" <sanjay.k.kumar@intel.com>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Sun, Yi Y" <yi.y.sun@intel.com>,
+        "Pan, Jacob jun" <jacob.jun.pan@intel.com>
+Subject: RE: [RFC PATCH 03/10] iommu/vt-d: Allocate groups for mediated
+ devices
+Thread-Topic: [RFC PATCH 03/10] iommu/vt-d: Allocate groups for mediated
+ devices
+Thread-Index: AQHUIYLU0u0k0vB4lUGhJp9aIAl9hqSbto0AgAFqm4CAAJkvgIABd3XwgAA4QWCAAGW+gIAA/icAgAAMdAA=
+Date:   Thu, 26 Jul 2018 03:28:22 +0000
+Message-ID: <AADFC41AFE54684AB9EE6CBC0274A5D191282739@SHSMSX101.ccr.corp.intel.com>
+References: <1532239773-15325-1-git-send-email-baolu.lu@linux.intel.com>
+ <1532239773-15325-4-git-send-email-baolu.lu@linux.intel.com>
+ <A2975661238FB949B60364EF0F2C257439CA143E@SHSMSX104.ccr.corp.intel.com>
+ <5B568D5B.5050606@linux.intel.com>
+ <ccf6890a-30c6-770b-4299-8cabfdc32f2b@arm.com>
+ <AADFC41AFE54684AB9EE6CBC0274A5D19127FB9E@SHSMSX101.ccr.corp.intel.com>
+ <AADFC41AFE54684AB9EE6CBC0274A5D19127FF05@SHSMSX101.ccr.corp.intel.com>
+ <a530c220-9bf1-05ec-5698-526ccbea127f@arm.com>
+ <AADFC41AFE54684AB9EE6CBC0274A5D1912826AE@SHSMSX101.ccr.corp.intel.com>
+In-Reply-To: <AADFC41AFE54684AB9EE6CBC0274A5D1912826AE@SHSMSX101.ccr.corp.intel.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ctpclassification: CTP_NT
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiMTMyN2YyN2YtOGY0Yy00ODEzLWJkMzMtZTJjNjk3ZDY1ODYyIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiekdZczd3SE1zTFE3UWprZnE4ZEJlcVZuRnJuSEJwcDFFQ3UyUDhGbEwzOVNOSjdPVVNkbUhNZGY0WGVDYW82NyJ9
+dlp-product: dlpe-windows
+dlp-version: 11.0.400.15
+dlp-reaction: no-action
+x-originating-ip: [10.239.127.40]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-References: <1530200714-4504-1-git-send-email-vincent.guittot@linaro.org> <1530200714-4504-7-git-send-email-vincent.guittot@linaro.org>
-In-Reply-To: <1530200714-4504-7-git-send-email-vincent.guittot@linaro.org>
-From:   Wanpeng Li <kernellwp@gmail.com>
-Date:   Thu, 26 Jul 2018 11:09:29 +0800
-Message-ID: <CANRm+Cz0-61-WOT8CLf02G-aHEwrff6WVWd6mp0DKV+GfFyvWw@mail.gmail.com>
-Subject: Re: [PATCH 06/11] sched/irq: add irq utilization tracking
-To:     Vincent Guittot <vincent.guittot@linaro.org>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>, juri.lelli@redhat.com,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Morten Rasmussen <Morten.Rasmussen@arm.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        valentin.schneider@arm.com,
-        Patrick Bellasi <patrick.bellasi@arm.com>,
-        joel@joelfernandes.org, Daniel Lezcano <daniel.lezcano@linaro.org>,
-        quentin.perret@arm.com, Luca Abeni <luca.abeni@santannapisa.it>,
-        claudio@evidence.eu.com, Ingo Molnar <mingo@redhat.com>,
-        kvm <kvm@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Vincent,
-On Fri, 29 Jun 2018 at 03:07, Vincent Guittot
-<vincent.guittot@linaro.org> wrote:
->
-> interrupt and steal time are the only remaining activities tracked by
-> rt_avg. Like for sched classes, we can use PELT to track their average
-> utilization of the CPU. But unlike sched class, we don't track when
-> entering/leaving interrupt; Instead, we take into account the time spent
-> under interrupt context when we update rqs' clock (rq_clock_task).
-> This also means that we have to decay the normal context time and account
-> for interrupt time during the update.
->
-> That's also important to note that because
->   rq_clock == rq_clock_task + interrupt time
-> and rq_clock_task is used by a sched class to compute its utilization, the
-> util_avg of a sched class only reflects the utilization of the time spent
-> in normal context and not of the whole time of the CPU. The utilization of
-> interrupt gives an more accurate level of utilization of CPU.
-> The CPU utilization is :
->   avg_irq + (1 - avg_irq / max capacity) * /Sum avg_rq
->
-> Most of the time, avg_irq is small and neglictible so the use of the
-> approximation CPU utilization = /Sum avg_rq was enough
->
-> Cc: Ingo Molnar <mingo@redhat.com>
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
-> ---
->  kernel/sched/core.c  |  4 +++-
->  kernel/sched/fair.c  | 13 ++++++++++---
->  kernel/sched/pelt.c  | 40 ++++++++++++++++++++++++++++++++++++++++
->  kernel/sched/pelt.h  | 16 ++++++++++++++++
->  kernel/sched/sched.h |  3 +++
->  5 files changed, 72 insertions(+), 4 deletions(-)
->
-> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-> index 78d8fac..e5263a4 100644
-> --- a/kernel/sched/core.c
-> +++ b/kernel/sched/core.c
-> @@ -18,6 +18,8 @@
->  #include "../workqueue_internal.h"
->  #include "../smpboot.h"
->
-> +#include "pelt.h"
-> +
->  #define CREATE_TRACE_POINTS
->  #include <trace/events/sched.h>
->
-> @@ -186,7 +188,7 @@ static void update_rq_clock_task(struct rq *rq, s64 delta)
->
->  #if defined(CONFIG_IRQ_TIME_ACCOUNTING) || defined(CONFIG_PARAVIRT_TIME_ACCOUNTING)
->         if ((irq_delta + steal) && sched_feat(NONTASK_CAPACITY))
-> -               sched_rt_avg_update(rq, irq_delta + steal);
-> +               update_irq_load_avg(rq, irq_delta + steal);
-
-I think we should not add steal time into irq load tracking, steal
-time is always 0 on native kernel which doesn't matter, what will
-happen when guest disables IRQ_TIME_ACCOUNTING and enables
-PARAVIRT_TIME_ACCOUNTING? Steal time is not the real irq util_avg. In
-addition, we haven't exposed power management for performance which
-means that e.g. schedutil governor can not cooperate with passive mode
-intel_pstate driver to tune the OPP. To decay the old steal time avg
-and add the new one just wastes cpu cycles.
-
-Regards,
-Wanpeng Li
-
->  #endif
->  }
->
-> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> index ffce4b2..d2758e3 100644
-> --- a/kernel/sched/fair.c
-> +++ b/kernel/sched/fair.c
-> @@ -7289,7 +7289,7 @@ static inline bool cfs_rq_has_blocked(struct cfs_rq *cfs_rq)
->         return false;
->  }
->
-> -static inline bool others_rqs_have_blocked(struct rq *rq)
-> +static inline bool others_have_blocked(struct rq *rq)
->  {
->         if (READ_ONCE(rq->avg_rt.util_avg))
->                 return true;
-> @@ -7297,6 +7297,11 @@ static inline bool others_rqs_have_blocked(struct rq *rq)
->         if (READ_ONCE(rq->avg_dl.util_avg))
->                 return true;
->
-> +#if defined(CONFIG_IRQ_TIME_ACCOUNTING) || defined(CONFIG_PARAVIRT_TIME_ACCOUNTING)
-> +       if (READ_ONCE(rq->avg_irq.util_avg))
-> +               return true;
-> +#endif
-> +
->         return false;
->  }
->
-> @@ -7361,8 +7366,9 @@ static void update_blocked_averages(int cpu)
->         }
->         update_rt_rq_load_avg(rq_clock_task(rq), rq, 0);
->         update_dl_rq_load_avg(rq_clock_task(rq), rq, 0);
-> +       update_irq_load_avg(rq, 0);
->         /* Don't need periodic decay once load/util_avg are null */
-> -       if (others_rqs_have_blocked(rq))
-> +       if (others_have_blocked(rq))
->                 done = false;
->
->  #ifdef CONFIG_NO_HZ_COMMON
-> @@ -7431,9 +7437,10 @@ static inline void update_blocked_averages(int cpu)
->         update_cfs_rq_load_avg(cfs_rq_clock_task(cfs_rq), cfs_rq);
->         update_rt_rq_load_avg(rq_clock_task(rq), rq, 0);
->         update_dl_rq_load_avg(rq_clock_task(rq), rq, 0);
-> +       update_irq_load_avg(rq, 0);
->  #ifdef CONFIG_NO_HZ_COMMON
->         rq->last_blocked_load_update_tick = jiffies;
-> -       if (!cfs_rq_has_blocked(cfs_rq) && !others_rqs_have_blocked(rq))
-> +       if (!cfs_rq_has_blocked(cfs_rq) && !others_have_blocked(rq))
->                 rq->has_blocked_load = 0;
->  #endif
->         rq_unlock_irqrestore(rq, &rf);
-> diff --git a/kernel/sched/pelt.c b/kernel/sched/pelt.c
-> index 8b78b63..ead6d8b 100644
-> --- a/kernel/sched/pelt.c
-> +++ b/kernel/sched/pelt.c
-> @@ -357,3 +357,43 @@ int update_dl_rq_load_avg(u64 now, struct rq *rq, int running)
->
->         return 0;
->  }
-> +
-> +#if defined(CONFIG_IRQ_TIME_ACCOUNTING) || defined(CONFIG_PARAVIRT_TIME_ACCOUNTING)
-> +/*
-> + * irq:
-> + *
-> + *   util_sum = \Sum se->avg.util_sum but se->avg.util_sum is not tracked
-> + *   util_sum = cpu_scale * load_sum
-> + *   runnable_load_sum = load_sum
-> + *
-> + */
-> +
-> +int update_irq_load_avg(struct rq *rq, u64 running)
-> +{
-> +       int ret = 0;
-> +       /*
-> +        * We know the time that has been used by interrupt since last update
-> +        * but we don't when. Let be pessimistic and assume that interrupt has
-> +        * happened just before the update. This is not so far from reality
-> +        * because interrupt will most probably wake up task and trig an update
-> +        * of rq clock during which the metric si updated.
-> +        * We start to decay with normal context time and then we add the
-> +        * interrupt context time.
-> +        * We can safely remove running from rq->clock because
-> +        * rq->clock += delta with delta >= running
-> +        */
-> +       ret = ___update_load_sum(rq->clock - running, rq->cpu, &rq->avg_irq,
-> +                               0,
-> +                               0,
-> +                               0);
-> +       ret += ___update_load_sum(rq->clock, rq->cpu, &rq->avg_irq,
-> +                               1,
-> +                               1,
-> +                               1);
-> +
-> +       if (ret)
-> +               ___update_load_avg(&rq->avg_irq, 1, 1);
-> +
-> +       return ret;
-> +}
-> +#endif
-> diff --git a/kernel/sched/pelt.h b/kernel/sched/pelt.h
-> index 0e4f912..d2894db 100644
-> --- a/kernel/sched/pelt.h
-> +++ b/kernel/sched/pelt.h
-> @@ -6,6 +6,16 @@ int __update_load_avg_cfs_rq(u64 now, int cpu, struct cfs_rq *cfs_rq);
->  int update_rt_rq_load_avg(u64 now, struct rq *rq, int running);
->  int update_dl_rq_load_avg(u64 now, struct rq *rq, int running);
->
-> +#if defined(CONFIG_IRQ_TIME_ACCOUNTING) || defined(CONFIG_PARAVIRT_TIME_ACCOUNTING)
-> +int update_irq_load_avg(struct rq *rq, u64 running);
-> +#else
-> +static inline int
-> +update_irq_load_avg(struct rq *rq, u64 running)
-> +{
-> +       return 0;
-> +}
-> +#endif
-> +
->  /*
->   * When a task is dequeued, its estimated utilization should not be update if
->   * its util_avg has not been updated at least once.
-> @@ -51,6 +61,12 @@ update_dl_rq_load_avg(u64 now, struct rq *rq, int running)
->  {
->         return 0;
->  }
-> +
-> +static inline int
-> +update_irq_load_avg(struct rq *rq, u64 running)
-> +{
-> +       return 0;
-> +}
->  #endif
->
->
-> diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-> index ef5d6aa..377be2b 100644
-> --- a/kernel/sched/sched.h
-> +++ b/kernel/sched/sched.h
-> @@ -850,6 +850,9 @@ struct rq {
->         u64                     age_stamp;
->         struct sched_avg        avg_rt;
->         struct sched_avg        avg_dl;
-> +#if defined(CONFIG_IRQ_TIME_ACCOUNTING) || defined(CONFIG_PARAVIRT_TIME_ACCOUNTING)
-> +       struct sched_avg        avg_irq;
-> +#endif
->         u64                     idle_stamp;
->         u64                     avg_idle;
->
-> --
-> 2.7.4
->
+PiBGcm9tOiBUaWFuLCBLZXZpbg0KPiBTZW50OiBUaHVyc2RheSwgSnVseSAyNiwgMjAxOCAxMTow
+NCBBTQ0KWy4uLl0NCj4gPg0KPiA+IFRoZSBJT01NVSBvcGVyYXRpb25zIHdlIGNhcmUgYWJvdXQg
+ZG9uJ3QgdGFrZSBhIGRldmljZSBoYW5kbGUsIEkgdGhpbmssDQo+ID4ganVzdCBhIGRvbWFpbi4g
+QW5kIFZGSU8gaXRzZWxmIG9ubHkgZGVhbHMgd2l0aCBkb21haW5zIHdoZW4gZG9pbmcNCj4gPiBt
+YXAvdW5tYXAuIE1heWJlIHdlIGNvdWxkIGFkZCB0aGlzIG9wZXJhdGlvbiB0byB0aGUgSU9NTVUN
+Cj4gc3Vic3lzdGVtOg0KPiA+DQo+ID4gY2hpbGRfZG9tYWluID0gZG9tYWluX2NyZWF0ZV9jaGls
+ZChwYXJlbnRfZGV2LCBwYXJlbnRfZG9tYWluKQ0KPiA+DQo+ID4gQSBjaGlsZCBkb21haW4gd291
+bGQgYmUgYSBzbWFsbGVyIGlzb2xhdGlvbiBncmFudWxlLCBnZXR0aW5nIGEgUEFTSUQgaWYNCj4g
+PiB0aGF0J3Mgd2hhdCB0aGUgSU9NTVUgaW1wbGVtZW50cyBvciBhbm90aGVyIG1lY2hhbmlzbSBm
+b3IgMikuIEl0IGlzDQo+ID4gYXV0b21hdGljYWxseSBhdHRhY2hlZCB0byBpdHMgcGFyZW50J3Mg
+ZGV2aWNlcywgc28gYXR0YWNoL2RldGFjaA0KPiA+IG9wZXJhdGlvbnMgd291bGRuJ3QgYmUgbmVj
+ZXNzYXJ5IG9uIHRoZSBjaGlsZC4NCj4gPg0KPiA+IERlcGVuZGluZyBvbiB0aGUgdW5kZXJseWlu
+ZyBhcmNoaXRlY3R1cmUgdGhlIGNoaWxkIGRvbWFpbiBjYW4gc3VwcG9ydA0KPiA+IG1hcC91bm1h
+cCBvbiBhIHNpbmdsZSBzdGFnZSwgb3IgbWFwL3VubWFwIGZvciAybmQgbGV2ZWwgYW5kDQo+ID4g
+YmluZF9wZ3RhYmxlDQo+ID4gZm9yIDFzdCBsZXZlbC4NCj4gPg0KPiA+IEknbSBub3Qgc3VyZSBo
+b3cgdGhpcyB3b3JrcyBmb3IgaG9zdCBTVkEgdGhvdWdoLiBJIHRoaW5rIHRoZQ0KPiA+IHN2YV9i
+aW5kX2RldigpIEFQSSBjb3VsZCBzdGF5IHRoZSBzYW1lLCBidXQgdGhlIGludGVybmFscyB3aWxs
+IG5lZWQNCj4gPiB0byBjaGFuZ2UuDQo+ID4NCj4gDQo+IGhpZXJhcmNoaWNhbCBkb21haW4gbWln
+aHQgYmUgdGhlIHJpZ2h0IHdheSB0byBnbywgYnV0IGxldCdzIGRvIG1vcmUNCj4gdGhpbmtpbmcg
+b24gYW55IGNvcm5lciBjYXNlcy4NCj4gDQoNCmJ0dyBtYXliZSB3ZSBkb24ndCBuZWVkIG1ha2Ug
+aXQgJ2hpZXJhcmNoaWNhbCcsIGFzIG1haW50YWluaW5nDQpoaWVyYXJjaHkgdXN1YWxseSBicmlu
+Z3MgbW9yZSB3b3JrLiBXaGF0IHdlIHJlcXVpcmUgaXMgcG9zc2libHkNCmp1c3QgdGhlIGNhcGFi
+aWxpdHkgb2YgaGF2aW5nIG9uZSBkZXZpY2UgYmluZCB0byBtdWx0aXBsZSANCmlvbW11X2RvbWFp
+bnMuIE9uZSBkb21haW4gaXMgcmVzZXJ2ZWQgZm9yIHBhcmVudCBkcml2ZXIncw0Kb3duIERNQSBh
+Y3Rpdml0aWVzIChlLmcuIHNlcnZpbmcgRE1BIEFQSXMpLCB3aGlsZSBvdGhlciBkb21haW5zDQph
+cmUgYXV4aWxpYXJ5IGFuZCBjYW4gYmUgdGFnZ2VkIHdpdGggYSBQQVNJRCAob3IgYW55IG90aGVy
+IGlkZW50aWZpZXINCndoaWNoIElPTU1VIGNhbiB1c2UgdG8gc3VwcG9ydCBtdWx0aXBsZSBkb21h
+aW5zKS4gU3VjaCBpZGVudGlmaWVycyANCm1heSBiZSBhdXRvbWF0aWNhbGx5IHByb3Zpc2lvbmVk
+IHdoZW4gYXV4aWxpYXJ5IGRvbWFpbiBpcyBhdHRhY2hlZCwgDQppLmUuIG5vdCByZXF1aXJpbmcg
+YW4gZXhwbGljaXQgcmVxdWVzdCBmcm9tIGNhbGxlci4gSU1PIGl0J3Mgc2FmZSB0byANCmFzc3Vt
+ZSB0aGF0IHN1cHBvcnRpbmcgbXVsdGlwbGUgaW9tbXUgZG9tYWlucyBhbnl3YXkgaW1wbGllcyAN
+CnNvbWUgZmluZXItZ3JhaW5lZCBjYXBhYmlsaXR5IHRoYW4gUklELWJhc2VkIGluIHVuZGVybHlp
+bmcgSU9NTVUuDQpUaGVuIHRoZXJlIGlzIG5vIG5lZWQgb2YgcGFyZW50L2NoaWxkIGNvbmNlcHQu
+DQoNCnRob3VnaHRzPw0KDQpUaGFua3MNCktldmluDQo=
