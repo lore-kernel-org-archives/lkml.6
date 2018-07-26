@@ -2,42 +2,42 @@ Return-Path: <SRS0=7Z+k=KK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DATE_IN_FUTURE_06_12,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.7 required=3.0 tests=DATE_IN_FUTURE_06_12,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67D4EC6778F
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 12:56:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E635C6778F
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 12:56:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 09E462083F
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 12:56:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 09E462083F
+	by mail.kernel.org (Postfix) with ESMTP id CDDCB2083F
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 12:56:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CDDCB2083F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731359AbeGZOND (ORCPT
+        id S1731317AbeGZONb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 26 Jul 2018 10:13:03 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:10137 "EHLO huawei.com"
+        Thu, 26 Jul 2018 10:13:31 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:37748 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729510AbeGZOND (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Jul 2018 10:13:03 -0400
-Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id CF524D80838F;
-        Thu, 26 Jul 2018 20:56:13 +0800 (CST)
+        id S1729510AbeGZONa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Jul 2018 10:13:30 -0400
+Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 6328DBFF2DA0D;
+        Thu, 26 Jul 2018 20:56:41 +0800 (CST)
 Received: from localhost.localdomain (10.143.28.90) by
- DGGEMS412-HUB.china.huawei.com (10.3.19.212) with Microsoft SMTP Server id
- 14.3.382.0; Thu, 26 Jul 2018 20:56:11 +0800
+ DGGEMS414-HUB.china.huawei.com (10.3.19.214) with Microsoft SMTP Server id
+ 14.3.382.0; Thu, 26 Jul 2018 20:56:32 +0800
 From:   Dongjiu Geng <gengdongjiu@huawei.com>
 To:     <catalin.marinas@arm.com>, <will.deacon@arm.com>,
         <mark.rutland@arm.com>, <lenb@kernel.org>,
         <rafael.j.wysocki@intel.com>, <erik.schmauss@intel.com>,
         <robert.moore@intel.com>, <linux-arm-kernel@lists.infradead.org>,
         <linux-kernel@vger.kernel.org>, <linux-acpi@vger.kernel.org>,
-        <devel@acpica.org>
+        <devel@acpica.org>, <gengdongjiu@huawei.com>
 Subject: [PATCH] arm64: clean the additional checks before calling ghes_notify_sea()
-Date:   Thu, 26 Jul 2018 17:01:25 -0400
-Message-ID: <1532638885-45708-1-git-send-email-gengdongjiu@huawei.com>
+Date:   Thu, 26 Jul 2018 17:01:47 -0400
+Message-ID: <1532638907-46129-1-git-send-email-gengdongjiu@huawei.com>
 X-Mailer: git-send-email 1.9.1
 MIME-Version: 1.0
 Content-Type: text/plain
