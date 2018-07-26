@@ -3,40 +3,40 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50242C6778F
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 12:55:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DEED3C6778F
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 12:55:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 008AD2083F
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 12:55:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 008AD2083F
+	by mail.kernel.org (Postfix) with ESMTP id 9258520844
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 12:55:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9258520844
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731301AbeGZOMD (ORCPT
+        id S1731355AbeGZOMF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 26 Jul 2018 10:12:03 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:55080 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729801AbeGZOMD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Jul 2018 10:12:03 -0400
+        Thu, 26 Jul 2018 10:12:05 -0400
+Received: from foss.arm.com ([217.140.101.70]:55088 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729801AbeGZOME (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Jul 2018 10:12:04 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8146A1682;
-        Thu, 26 Jul 2018 05:55:18 -0700 (PDT)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1EFE11684;
+        Thu, 26 Jul 2018 05:55:20 -0700 (PDT)
 Received: from en101.Emea.Arm.com (en101.Emea.Arm.com [10.4.13.23])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 2D0323F6A8;
-        Thu, 26 Jul 2018 05:55:17 -0700 (PDT)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id BEE6F3F6A8;
+        Thu, 26 Jul 2018 05:55:18 -0700 (PDT)
 From:   Suzuki K Poulose <suzuki.poulose@arm.com>
 To:     linux-arm-kernel@lists.infradead.org
 Cc:     linux-kernel@vger.kernel.org, mathieu.poirier@linaro.org,
         mike.leach@linaro.org, robert.walker@arm.com,
         coresight@lists.linaro.org,
         Suzuki K Poulose <suzuki.poulose@arm.com>
-Subject: [PATCH v3 12/13] coresight: perf: Remove set_buffer call back
-Date:   Thu, 26 Jul 2018 13:54:50 +0100
-Message-Id: <1532609691-16863-13-git-send-email-suzuki.poulose@arm.com>
+Subject: [PATCH v3 13/13] coresight: etm-perf: Add support for ETR backend
+Date:   Thu, 26 Jul 2018 13:54:51 +0100
+Message-Id: <1532609691-16863-14-git-send-email-suzuki.poulose@arm.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1532609691-16863-1-git-send-email-suzuki.poulose@arm.com>
 References: <1532609691-16863-1-git-send-email-suzuki.poulose@arm.com>
@@ -45,352 +45,329 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In coresight perf mode, we need to prepare the sink before
-starting a session, which is done via set_buffer call back.
-We then proceed to enable the tracing. If we fail to start
-the session successfully, we leave the sink configuration
-unchanged.  In order to make the operation atomic and to
-avoid yet another call back to clear the buffer, we get
-rid of the "set_buffer" call back and pass the buffer details
-via enable() call back to the sink.
+Add support for using TMC-ETR as backend for ETM perf tracing.
+We use software double buffering at the moment. i.e, the TMC-ETR
+uses a separate buffer than the perf ring buffer. The data is
+copied to the perf ring buffer once a session completes.
+
+The TMC-ETR would try to match the larger of perf ring buffer
+or the ETR buffer size configured via sysfs, scaling down to
+a minimum limit of 1MB.
 
 Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
 Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
 ---
- drivers/hwtracing/coresight/coresight-etb10.c    | 32 ++++++++++++++++++------
- drivers/hwtracing/coresight/coresight-etm-perf.c |  9 ++-----
- drivers/hwtracing/coresight/coresight-priv.h     |  2 +-
- drivers/hwtracing/coresight/coresight-tmc-etf.c  | 28 ++++++++++++++-------
- drivers/hwtracing/coresight/coresight-tmc-etr.c  |  7 +++---
- drivers/hwtracing/coresight/coresight-tpiu.c     |  2 +-
- drivers/hwtracing/coresight/coresight.c          | 11 ++++----
- include/linux/coresight.h                        |  6 +----
- 8 files changed, 59 insertions(+), 38 deletions(-)
+Changes since v2:
+ - Fix typo with duplicated CS_UNLOCK
+ - Rename call backs from tmc_etr_<op>_perf_buffer => tmc_<op>_etr_buffer
+   to be consistent with ETF driver
+---
+ drivers/hwtracing/coresight/coresight-tmc-etr.c | 248 +++++++++++++++++++++++-
+ drivers/hwtracing/coresight/coresight-tmc.h     |   2 +
+ 2 files changed, 248 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/hwtracing/coresight/coresight-etb10.c b/drivers/hwtracing/coresight/coresight-etb10.c
-index 60bfc7b..70d6f1e 100644
---- a/drivers/hwtracing/coresight/coresight-etb10.c
-+++ b/drivers/hwtracing/coresight/coresight-etb10.c
-@@ -28,6 +28,7 @@
- 
- 
- #include "coresight-priv.h"
-+#include "coresight-etm-perf.h"
- 
- #define ETB_RAM_DEPTH_REG	0x004
- #define ETB_STATUS_REG		0x00c
-@@ -90,6 +91,9 @@ struct etb_drvdata {
- 	u32			trigger_cntr;
- };
- 
-+static int etb_set_buffer(struct coresight_device *csdev,
-+			  struct perf_output_handle *handle);
-+
- static unsigned int etb_get_buffer_depth(struct etb_drvdata *drvdata)
- {
- 	u32 depth = 0;
-@@ -131,12 +135,24 @@ static void etb_enable_hw(struct etb_drvdata *drvdata)
- 	CS_LOCK(drvdata->base);
- }
- 
--static int etb_enable(struct coresight_device *csdev, u32 mode)
-+static int etb_enable(struct coresight_device *csdev, u32 mode, void *data)
- {
-+	int ret = 0;
- 	u32 val;
- 	unsigned long flags;
- 	struct etb_drvdata *drvdata = dev_get_drvdata(csdev->dev.parent);
- 
-+	/*
-+	 * We don't have an internal state to clean up if we fail to setup
-+	 * the perf buffer. So we can perform the step before we turn the
-+	 * ETB on and leave without cleaning up.
-+	 */
-+	if (mode == CS_MODE_PERF) {
-+		ret = etb_set_buffer(csdev, (struct perf_output_handle *)data);
-+		if (ret)
-+			goto out;
-+	}
-+
- 	val = local_cmpxchg(&drvdata->mode,
- 			    CS_MODE_DISABLED, mode);
- 	/*
-@@ -160,8 +176,9 @@ static int etb_enable(struct coresight_device *csdev, u32 mode)
- 	spin_unlock_irqrestore(&drvdata->spinlock, flags);
- 
- out:
--	dev_dbg(drvdata->dev, "ETB enabled\n");
--	return 0;
-+	if (!ret)
-+		dev_dbg(drvdata->dev, "ETB enabled\n");
-+	return ret;
- }
- 
- static void etb_disable_hw(struct etb_drvdata *drvdata)
-@@ -298,12 +315,14 @@ static void etb_free_buffer(void *config)
- }
- 
- static int etb_set_buffer(struct coresight_device *csdev,
--			  struct perf_output_handle *handle,
--			  void *sink_config)
-+			  struct perf_output_handle *handle)
- {
- 	int ret = 0;
- 	unsigned long head;
--	struct cs_buffers *buf = sink_config;
-+	struct cs_buffers *buf = etm_perf_sink_config(handle);
-+
-+	if (!buf)
-+		return -EINVAL;
- 
- 	/* wrap head around to the amount of space we have */
- 	head = handle->head & ((buf->nr_pages << PAGE_SHIFT) - 1);
-@@ -457,7 +476,6 @@ static const struct coresight_ops_sink etb_sink_ops = {
- 	.disable	= etb_disable,
- 	.alloc_buffer	= etb_alloc_buffer,
- 	.free_buffer	= etb_free_buffer,
--	.set_buffer	= etb_set_buffer,
- 	.update_buffer	= etb_update_buffer,
- };
- 
-diff --git a/drivers/hwtracing/coresight/coresight-etm-perf.c b/drivers/hwtracing/coresight/coresight-etm-perf.c
-index 16b83d8..abe8249 100644
---- a/drivers/hwtracing/coresight/coresight-etm-perf.c
-+++ b/drivers/hwtracing/coresight/coresight-etm-perf.c
-@@ -286,16 +286,11 @@ static void etm_event_start(struct perf_event *event, int flags)
- 	path = etm_event_cpu_path(event_data, cpu);
- 	/* We need a sink, no need to continue without one */
- 	sink = coresight_get_sink(path);
--	if (WARN_ON_ONCE(!sink || !sink_ops(sink)->set_buffer))
--		goto fail_end_stop;
--
--	/* Configure the sink */
--	if (sink_ops(sink)->set_buffer(sink, handle,
--				       event_data->snk_config))
-+	if (WARN_ON_ONCE(!sink))
- 		goto fail_end_stop;
- 
- 	/* Nothing will happen without a path */
--	if (coresight_enable_path(path, CS_MODE_PERF))
-+	if (coresight_enable_path(path, CS_MODE_PERF, handle))
- 		goto fail_end_stop;
- 
- 	/* Tell the perf core the event is alive */
-diff --git a/drivers/hwtracing/coresight/coresight-priv.h b/drivers/hwtracing/coresight/coresight-priv.h
-index 1a6cf35..c11da55 100644
---- a/drivers/hwtracing/coresight/coresight-priv.h
-+++ b/drivers/hwtracing/coresight/coresight-priv.h
-@@ -137,7 +137,7 @@ static inline void coresight_write_reg_pair(void __iomem *addr, u64 val,
- }
- 
- void coresight_disable_path(struct list_head *path);
--int coresight_enable_path(struct list_head *path, u32 mode);
-+int coresight_enable_path(struct list_head *path, u32 mode, void *sink_data);
- struct coresight_device *coresight_get_sink(struct list_head *path);
- struct coresight_device *coresight_get_enabled_sink(bool reset);
- struct list_head *coresight_build_path(struct coresight_device *csdev,
-diff --git a/drivers/hwtracing/coresight/coresight-tmc-etf.c b/drivers/hwtracing/coresight/coresight-tmc-etf.c
-index 31a98f9..4156c95 100644
---- a/drivers/hwtracing/coresight/coresight-tmc-etf.c
-+++ b/drivers/hwtracing/coresight/coresight-tmc-etf.c
-@@ -10,6 +10,10 @@
- #include <linux/slab.h>
- #include "coresight-priv.h"
- #include "coresight-tmc.h"
-+#include "coresight-etm-perf.h"
-+
-+static int tmc_set_etf_buffer(struct coresight_device *csdev,
-+			      struct perf_output_handle *handle);
- 
- static void tmc_etb_enable_hw(struct tmc_drvdata *drvdata)
- {
-@@ -182,11 +186,12 @@ static int tmc_enable_etf_sink_sysfs(struct coresight_device *csdev)
- 	return ret;
- }
- 
--static int tmc_enable_etf_sink_perf(struct coresight_device *csdev)
-+static int tmc_enable_etf_sink_perf(struct coresight_device *csdev, void *data)
- {
- 	int ret = 0;
- 	unsigned long flags;
- 	struct tmc_drvdata *drvdata = dev_get_drvdata(csdev->dev.parent);
-+	struct perf_output_handle *handle = data;
- 
- 	spin_lock_irqsave(&drvdata->spinlock, flags);
- 	if (drvdata->reading) {
-@@ -204,15 +209,19 @@ static int tmc_enable_etf_sink_perf(struct coresight_device *csdev)
- 		goto out;
- 	}
- 
--	drvdata->mode = CS_MODE_PERF;
--	tmc_etb_enable_hw(drvdata);
-+	ret = tmc_set_etf_buffer(csdev, handle);
-+	if (!ret) {
-+		drvdata->mode = CS_MODE_PERF;
-+		tmc_etb_enable_hw(drvdata);
-+	}
- out:
- 	spin_unlock_irqrestore(&drvdata->spinlock, flags);
- 
- 	return ret;
- }
- 
--static int tmc_enable_etf_sink(struct coresight_device *csdev, u32 mode)
-+static int tmc_enable_etf_sink(struct coresight_device *csdev,
-+			       u32 mode, void *data)
- {
- 	int ret;
- 	struct tmc_drvdata *drvdata = dev_get_drvdata(csdev->dev.parent);
-@@ -222,7 +231,7 @@ static int tmc_enable_etf_sink(struct coresight_device *csdev, u32 mode)
- 		ret = tmc_enable_etf_sink_sysfs(csdev);
- 		break;
- 	case CS_MODE_PERF:
--		ret = tmc_enable_etf_sink_perf(csdev);
-+		ret = tmc_enable_etf_sink_perf(csdev, data);
- 		break;
- 	/* We shouldn't be here */
- 	default:
-@@ -328,12 +337,14 @@ static void tmc_free_etf_buffer(void *config)
- }
- 
- static int tmc_set_etf_buffer(struct coresight_device *csdev,
--			      struct perf_output_handle *handle,
--			      void *sink_config)
-+			      struct perf_output_handle *handle)
- {
- 	int ret = 0;
- 	unsigned long head;
--	struct cs_buffers *buf = sink_config;
-+	struct cs_buffers *buf = etm_perf_sink_config(handle);
-+
-+	if (!buf)
-+		return -EINVAL;
- 
- 	/* wrap head around to the amount of space we have */
- 	head = handle->head & ((buf->nr_pages << PAGE_SHIFT) - 1);
-@@ -472,7 +483,6 @@ static const struct coresight_ops_sink tmc_etf_sink_ops = {
- 	.disable	= tmc_disable_etf_sink,
- 	.alloc_buffer	= tmc_alloc_etf_buffer,
- 	.free_buffer	= tmc_free_etf_buffer,
--	.set_buffer	= tmc_set_etf_buffer,
- 	.update_buffer	= tmc_update_etf_buffer,
- };
- 
 diff --git a/drivers/hwtracing/coresight/coresight-tmc-etr.c b/drivers/hwtracing/coresight/coresight-tmc-etr.c
-index 85a3f59..bc0c932 100644
+index bc0c932..a4e6c48 100644
 --- a/drivers/hwtracing/coresight/coresight-tmc-etr.c
 +++ b/drivers/hwtracing/coresight/coresight-tmc-etr.c
-@@ -1103,19 +1103,20 @@ static int tmc_enable_etr_sink_sysfs(struct coresight_device *csdev)
+@@ -10,6 +10,7 @@
+ #include <linux/slab.h>
+ #include <linux/vmalloc.h>
+ #include "coresight-catu.h"
++#include "coresight-etm-perf.h"
+ #include "coresight-priv.h"
+ #include "coresight-tmc.h"
+ 
+@@ -21,6 +22,28 @@ struct etr_flat_buf {
+ };
+ 
+ /*
++ * etr_perf_buffer - Perf buffer used for ETR
++ * @etr_buf		- Actual buffer used by the ETR
++ * @snaphost		- Perf session mode
++ * @head		- handle->head at the beginning of the session.
++ * @nr_pages		- Number of pages in the ring buffer.
++ * @pages		- Array of Pages in the ring buffer.
++ */
++struct etr_perf_buffer {
++	struct etr_buf		*etr_buf;
++	bool			snapshot;
++	unsigned long		head;
++	int			nr_pages;
++	void			**pages;
++};
++
++/* Convert the perf index to an offset within the ETR buffer */
++#define PERF_IDX2OFF(idx, buf)	((idx) % ((buf)->nr_pages << PAGE_SHIFT))
++
++/* Lower limit for ETR hardware buffer */
++#define TMC_ETR_PERF_MIN_BUF_SIZE	SZ_1M
++
++/*
+  * The TMC ETR SG has a page size of 4K. The SG table contains pointers
+  * to 4KB buffers. However, the OS may use a PAGE_SIZE different from
+  * 4K (i.e, 16KB or 64KB). This implies that a single OS page could
+@@ -1103,10 +1126,228 @@ static int tmc_enable_etr_sink_sysfs(struct coresight_device *csdev)
  	return ret;
  }
  
--static int tmc_enable_etr_sink_perf(struct coresight_device *csdev)
-+static int tmc_enable_etr_sink_perf(struct coresight_device *csdev, void *data)
++/*
++ * tmc_etr_setup_perf_buf: Allocate ETR buffer for use by perf.
++ * The size of the hardware buffer is dependent on the size configured
++ * via sysfs and the perf ring buffer size. We prefer to allocate the
++ * largest possible size, scaling down the size by half until it
++ * reaches a minimum limit (1M), beyond which we give up.
++ */
++static struct etr_perf_buffer *
++tmc_etr_setup_perf_buf(struct tmc_drvdata *drvdata, int node, int nr_pages,
++		       void **pages, bool snapshot)
++{
++	struct etr_buf *etr_buf;
++	struct etr_perf_buffer *etr_perf;
++	unsigned long size;
++
++	etr_perf = kzalloc_node(sizeof(*etr_perf), GFP_KERNEL, node);
++	if (!etr_perf)
++		return ERR_PTR(-ENOMEM);
++
++	/*
++	 * Try to match the perf ring buffer size if it is larger
++	 * than the size requested via sysfs.
++	 */
++	if ((nr_pages << PAGE_SHIFT) > drvdata->size) {
++		etr_buf = tmc_alloc_etr_buf(drvdata, (nr_pages << PAGE_SHIFT),
++					    0, node, NULL);
++		if (!IS_ERR(etr_buf))
++			goto done;
++	}
++
++	/*
++	 * Else switch to configured size for this ETR
++	 * and scale down until we hit the minimum limit.
++	 */
++	size = drvdata->size;
++	do {
++		etr_buf = tmc_alloc_etr_buf(drvdata, size, 0, node, NULL);
++		if (!IS_ERR(etr_buf))
++			goto done;
++		size /= 2;
++	} while (size >= TMC_ETR_PERF_MIN_BUF_SIZE);
++
++	kfree(etr_perf);
++	return ERR_PTR(-ENOMEM);
++
++done:
++	etr_perf->etr_buf = etr_buf;
++	return etr_perf;
++}
++
++
++static void *tmc_alloc_etr_buffer(struct coresight_device *csdev,
++				  int cpu, void **pages, int nr_pages,
++				  bool snapshot)
++{
++	struct etr_perf_buffer *etr_perf;
++	struct tmc_drvdata *drvdata = dev_get_drvdata(csdev->dev.parent);
++
++	if (cpu == -1)
++		cpu = smp_processor_id();
++
++	etr_perf = tmc_etr_setup_perf_buf(drvdata, cpu_to_node(cpu),
++					  nr_pages, pages, snapshot);
++	if (IS_ERR(etr_perf)) {
++		dev_dbg(drvdata->dev, "Unable to allocate ETR buffer\n");
++		return NULL;
++	}
++
++	etr_perf->snapshot = snapshot;
++	etr_perf->nr_pages = nr_pages;
++	etr_perf->pages = pages;
++
++	return etr_perf;
++}
++
++static void tmc_free_etr_buffer(void *config)
++{
++	struct etr_perf_buffer *etr_perf = config;
++
++	if (etr_perf->etr_buf)
++		tmc_free_etr_buf(etr_perf->etr_buf);
++	kfree(etr_perf);
++}
++
++/*
++ * tmc_etr_sync_perf_buffer: Copy the actual trace data from the hardware
++ * buffer to the perf ring buffer.
++ */
++static void tmc_etr_sync_perf_buffer(struct etr_perf_buffer *etr_perf)
++{
++	long bytes, to_copy;
++	long pg_idx, pg_offset, src_offset;
++	unsigned long head = etr_perf->head;
++	char **dst_pages, *src_buf;
++	struct etr_buf *etr_buf = etr_perf->etr_buf;
++
++	head = etr_perf->head;
++	pg_idx = head >> PAGE_SHIFT;
++	pg_offset = head & (PAGE_SIZE - 1);
++	dst_pages = (char **)etr_perf->pages;
++	src_offset = etr_buf->offset;
++	to_copy = etr_buf->len;
++
++	while (to_copy > 0) {
++		/*
++		 * In one iteration, we can copy minimum of :
++		 *  1) what is available in the source buffer,
++		 *  2) what is available in the source buffer, before it
++		 *     wraps around.
++		 *  3) what is available in the destination page.
++		 * in one iteration.
++		 */
++		bytes = tmc_etr_buf_get_data(etr_buf, src_offset, to_copy,
++					     &src_buf);
++		if (WARN_ON_ONCE(bytes <= 0))
++			break;
++		bytes = min(bytes, (long)(PAGE_SIZE - pg_offset));
++
++		memcpy(dst_pages[pg_idx] + pg_offset, src_buf, bytes);
++
++		to_copy -= bytes;
++
++		/* Move destination pointers */
++		pg_offset += bytes;
++		if (pg_offset == PAGE_SIZE) {
++			pg_offset = 0;
++			if (++pg_idx == etr_perf->nr_pages)
++				pg_idx = 0;
++		}
++
++		/* Move source pointers */
++		src_offset += bytes;
++		if (src_offset >= etr_buf->size)
++			src_offset -= etr_buf->size;
++	}
++}
++
++/*
++ * tmc_update_etr_buffer : Update the perf ring buffer with the
++ * available trace data. We use software double buffering at the moment.
++ *
++ * TODO: Add support for reusing the perf ring buffer.
++ */
++static unsigned long
++tmc_update_etr_buffer(struct coresight_device *csdev,
++		      struct perf_output_handle *handle,
++		      void *config)
++{
++	bool lost = false;
++	unsigned long flags, size = 0;
++	struct tmc_drvdata *drvdata = dev_get_drvdata(csdev->dev.parent);
++	struct etr_perf_buffer *etr_perf = config;
++	struct etr_buf *etr_buf = etr_perf->etr_buf;
++
++	spin_lock_irqsave(&drvdata->spinlock, flags);
++	if (WARN_ON(drvdata->perf_data != etr_perf)) {
++		lost = true;
++		spin_unlock_irqrestore(&drvdata->spinlock, flags);
++		goto out;
++	}
++
++	CS_UNLOCK(drvdata->base);
++
++	tmc_flush_and_stop(drvdata);
++	tmc_sync_etr_buf(drvdata);
++
++	CS_LOCK(drvdata->base);
++	/* Reset perf specific data */
++	drvdata->perf_data = NULL;
++	spin_unlock_irqrestore(&drvdata->spinlock, flags);
++
++	size = etr_buf->len;
++	tmc_etr_sync_perf_buffer(etr_perf);
++
++	/*
++	 * Update handle->head in snapshot mode. Also update the size to the
++	 * hardware buffer size if there was an overflow.
++	 */
++	if (etr_perf->snapshot) {
++		handle->head += size;
++		if (etr_buf->full)
++			size = etr_buf->size;
++	}
++
++	lost |= etr_buf->full;
++out:
++	if (lost)
++		perf_aux_output_flag(handle, PERF_AUX_FLAG_TRUNCATED);
++	return size;
++}
++
+ static int tmc_enable_etr_sink_perf(struct coresight_device *csdev, void *data)
  {
- 	/* We don't support perf mode yet ! */
- 	return -EINVAL;
+-	/* We don't support perf mode yet ! */
+-	return -EINVAL;
++	int rc = 0;
++	unsigned long flags;
++	struct tmc_drvdata *drvdata = dev_get_drvdata(csdev->dev.parent);
++	struct perf_output_handle *handle = data;
++	struct etr_perf_buffer *etr_perf = etm_perf_sink_config(handle);
++
++	spin_lock_irqsave(&drvdata->spinlock, flags);
++	/*
++	 * There can be only one writer per sink in perf mode. If the sink
++	 * is already open in SYSFS mode, we can't use it.
++	 */
++	if (drvdata->mode != CS_MODE_DISABLED || WARN_ON(drvdata->perf_data)) {
++		rc = -EBUSY;
++		goto unlock_out;
++	}
++
++	if (WARN_ON(!etr_perf || !etr_perf->etr_buf)) {
++		rc = -EINVAL;
++		goto unlock_out;
++	}
++
++	etr_perf->head = PERF_IDX2OFF(handle->head, etr_perf);
++	drvdata->perf_data = etr_perf;
++	drvdata->mode = CS_MODE_PERF;
++	tmc_etr_enable_hw(drvdata, etr_perf->etr_buf);
++
++unlock_out:
++	spin_unlock_irqrestore(&drvdata->spinlock, flags);
++	return rc;
  }
  
--static int tmc_enable_etr_sink(struct coresight_device *csdev, u32 mode)
-+static int tmc_enable_etr_sink(struct coresight_device *csdev,
-+			       u32 mode, void *data)
- {
- 	switch (mode) {
- 	case CS_MODE_SYSFS:
- 		return tmc_enable_etr_sink_sysfs(csdev);
- 	case CS_MODE_PERF:
--		return tmc_enable_etr_sink_perf(csdev);
-+		return tmc_enable_etr_sink_perf(csdev, data);
- 	}
+ static int tmc_enable_etr_sink(struct coresight_device *csdev,
+@@ -1148,6 +1389,9 @@ static void tmc_disable_etr_sink(struct coresight_device *csdev)
+ static const struct coresight_ops_sink tmc_etr_sink_ops = {
+ 	.enable		= tmc_enable_etr_sink,
+ 	.disable	= tmc_disable_etr_sink,
++	.alloc_buffer	= tmc_alloc_etr_buffer,
++	.update_buffer	= tmc_update_etr_buffer,
++	.free_buffer	= tmc_free_etr_buffer,
+ };
  
- 	/* We shouldn't be here */
-diff --git a/drivers/hwtracing/coresight/coresight-tpiu.c b/drivers/hwtracing/coresight/coresight-tpiu.c
-index 7daeb084..d7dd5e4 100644
---- a/drivers/hwtracing/coresight/coresight-tpiu.c
-+++ b/drivers/hwtracing/coresight/coresight-tpiu.c
-@@ -67,7 +67,7 @@ static void tpiu_enable_hw(struct tpiu_drvdata *drvdata)
- 	CS_LOCK(drvdata->base);
- }
- 
--static int tpiu_enable(struct coresight_device *csdev, u32 mode)
-+static int tpiu_enable(struct coresight_device *csdev, u32 mode, void *__unused)
- {
- 	struct tpiu_drvdata *drvdata = dev_get_drvdata(csdev->dev.parent);
- 
-diff --git a/drivers/hwtracing/coresight/coresight.c b/drivers/hwtracing/coresight/coresight.c
-index c0dabbd..fab87c9 100644
---- a/drivers/hwtracing/coresight/coresight.c
-+++ b/drivers/hwtracing/coresight/coresight.c
-@@ -128,7 +128,8 @@ static int coresight_find_link_outport(struct coresight_device *csdev,
- 	return -ENODEV;
- }
- 
--static int coresight_enable_sink(struct coresight_device *csdev, u32 mode)
-+static int coresight_enable_sink(struct coresight_device *csdev,
-+				 u32 mode, void *data)
- {
- 	int ret;
- 
-@@ -137,7 +138,7 @@ static int coresight_enable_sink(struct coresight_device *csdev, u32 mode)
- 	 * existing "mode" of operation.
- 	 */
- 	if (sink_ops(csdev)->enable) {
--		ret = sink_ops(csdev)->enable(csdev, mode);
-+		ret = sink_ops(csdev)->enable(csdev, mode, data);
- 		if (ret)
- 			return ret;
- 		csdev->enable = true;
-@@ -315,7 +316,7 @@ void coresight_disable_path(struct list_head *path)
- 	}
- }
- 
--int coresight_enable_path(struct list_head *path, u32 mode)
-+int coresight_enable_path(struct list_head *path, u32 mode, void *sink_data)
- {
- 
- 	int ret = 0;
-@@ -340,7 +341,7 @@ int coresight_enable_path(struct list_head *path, u32 mode)
- 
- 		switch (type) {
- 		case CORESIGHT_DEV_TYPE_SINK:
--			ret = coresight_enable_sink(csdev, mode);
-+			ret = coresight_enable_sink(csdev, mode, sink_data);
- 			/*
- 			 * Sink is the first component turned on. If we
- 			 * failed to enable the sink, there are no components
-@@ -643,7 +644,7 @@ int coresight_enable(struct coresight_device *csdev)
- 		goto out;
- 	}
- 
--	ret = coresight_enable_path(path, CS_MODE_SYSFS);
-+	ret = coresight_enable_path(path, CS_MODE_SYSFS, NULL);
- 	if (ret)
- 		goto err_path;
- 
-diff --git a/include/linux/coresight.h b/include/linux/coresight.h
-index eafe4d1..3434758 100644
---- a/include/linux/coresight.h
-+++ b/include/linux/coresight.h
-@@ -190,18 +190,14 @@ struct coresight_device {
-  * @disable:		disables the sink.
-  * @alloc_buffer:	initialises perf's ring buffer for trace collection.
-  * @free_buffer:	release memory allocated in @get_config.
-- * @set_buffer:		initialises buffer mechanic before a trace session.
-  * @update_buffer:	update buffer pointers after a trace session.
+ const struct coresight_ops tmc_etr_cs_ops = {
+diff --git a/drivers/hwtracing/coresight/coresight-tmc.h b/drivers/hwtracing/coresight/coresight-tmc.h
+index 872f63e..487c537 100644
+--- a/drivers/hwtracing/coresight/coresight-tmc.h
++++ b/drivers/hwtracing/coresight/coresight-tmc.h
+@@ -170,6 +170,7 @@ struct etr_buf {
+  * @trigger_cntr: amount of words to store after a trigger.
+  * @etr_caps:	Bitmask of capabilities of the TMC ETR, inferred from the
+  *		device configuration register (DEVID)
++ * @perf_data:	PERF buffer for ETR.
+  * @sysfs_data:	SYSFS buffer for ETR.
   */
- struct coresight_ops_sink {
--	int (*enable)(struct coresight_device *csdev, u32 mode);
-+	int (*enable)(struct coresight_device *csdev, u32 mode, void *data);
- 	void (*disable)(struct coresight_device *csdev);
- 	void *(*alloc_buffer)(struct coresight_device *csdev, int cpu,
- 			      void **pages, int nr_pages, bool overwrite);
- 	void (*free_buffer)(void *config);
--	int (*set_buffer)(struct coresight_device *csdev,
--			  struct perf_output_handle *handle,
--			  void *sink_config);
- 	unsigned long (*update_buffer)(struct coresight_device *csdev,
- 			      struct perf_output_handle *handle,
- 			      void *sink_config);
+ struct tmc_drvdata {
+@@ -191,6 +192,7 @@ struct tmc_drvdata {
+ 	u32			trigger_cntr;
+ 	u32			etr_caps;
+ 	struct etr_buf		*sysfs_buf;
++	void			*perf_data;
+ };
+ 
+ struct etr_buf_operations {
 -- 
 2.7.4
 
