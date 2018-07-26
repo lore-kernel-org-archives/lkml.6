@@ -2,131 +2,120 @@ Return-Path: <SRS0=7Z+k=KK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08918C28CF6
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 19:26:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5E5DC6778F
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 19:26:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A36CE20671
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 19:26:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5CDF020671
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 19:26:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IB+NRu83"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A36CE20671
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="LIpvERgV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5CDF020671
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732124AbeGZUoT (ORCPT
+        id S1732138AbeGZUo1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 26 Jul 2018 16:44:19 -0400
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:41167 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730269AbeGZUnO (ORCPT
+        Thu, 26 Jul 2018 16:44:27 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:60600 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730269AbeGZUo0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Jul 2018 16:43:14 -0400
-Received: by mail-ed1-f66.google.com with SMTP id s24-v6so2243272edr.8
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Jul 2018 12:24:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=8StP2SYzZJP38uHqwuLrYpciAm5fdBAi6wn/6UoBD4o=;
-        b=IB+NRu83jBjwIA5wBSDnLjtCk1AANMHEDOawtJ1ersPQxEDF11WIo/kHVwwkYJqIbW
-         unLQy2J6/CLu69pqq3pu8WTF+Z/lpUBYvpHzZg89xQUhiUfH6IGbcMnI7+BnPg5bXg0t
-         m6r43Mi3zhEde/+jrJvimkNkMUFqVMLa9OUF7yY2pM3YGjGgL7PWhSiZVUfe2TET++hc
-         0YcnK2aW5heMLvIL5MAxRyPSBkIK352jlp2lvsnGaaeeHc66oP9O4Vg4kNpKyK9GAF2r
-         kTaz+pREmk1+Plcd1nN8sFR4MteV4L3FfwweHbdjJ/tXmqzv8lQPpm51PNuwdYHOC9Bp
-         +YNg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=8StP2SYzZJP38uHqwuLrYpciAm5fdBAi6wn/6UoBD4o=;
-        b=Anl3fF0Ez13LIYYIvffVLcg20NZ/QrVSXpUxPv25Hu8p7TJwNCIWAhQAyVjlqUebnt
-         juGb4iI8J5XtaJgguhUoRR9OANVEicqBSVGr79FyCuFzF10x1SOeHd8ykZ7Peh+j734+
-         U6KsvgCxIUMMeWYJr9L3pfYwojp0yr6izKpxlJB6L/6QMFW64GMtHdK+wXyBkMhDoD57
-         XGjIX1ffOLwu43sf72xve4MiYyza0fRPvF9PZseLu62dCC43S3gY7eQjmA/HFgbzJ+4Q
-         CkJF9vPxJc8zmRLTmQbqaftN6GCIgg4hTjX4qufJOb7Jaz5kuiOiHyhY/0h2QvOF2e1d
-         EUug==
-X-Gm-Message-State: AOUpUlFtTNTjrzSQAKZLb3XgdyQ++XucJ8KWRldQqBjDLS0Dt2uam8b6
-        sdifwDy9Dz6NZ0i8+NxSMFSpGDvS
-X-Google-Smtp-Source: AAOMgpfCPswwgGK68QGrZoN9/Z3/gX8Rs2Ks2HmjwljWZZpxCMiAL9RKj86P+he9hs9uwK9K0x2ZUw==
-X-Received: by 2002:a50:af45:: with SMTP id g63-v6mr4201002edd.30.1532633098873;
-        Thu, 26 Jul 2018 12:24:58 -0700 (PDT)
-Received: from localhost.localdomain ([109.76.149.40])
-        by smtp.gmail.com with ESMTPSA id m20-v6sm1100853eds.5.2018.07.26.12.24.57
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 26 Jul 2018 12:24:58 -0700 (PDT)
-From:   John Whitmore <johnfwhitmore@gmail.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     devel@driverdev.osuosl.org, gregkh@linuxfoundation.org,
-        John Whitmore <johnfwhitmore@gmail.com>
-Subject: [PATCH 07/16] staging:rtl8192u: Remove proxy struct rtl819XPHY_REG_1T2RArray - Style
-Date:   Thu, 26 Jul 2018 20:24:17 +0100
-Message-Id: <20180726192426.31913-8-johnfwhitmore@gmail.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180726192426.31913-1-johnfwhitmore@gmail.com>
-References: <20180726192426.31913-1-johnfwhitmore@gmail.com>
+        Thu, 26 Jul 2018 16:44:26 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Subject:Cc:To:
+        From:Date:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=PiZeAUHsj7tW6dYvJbze5h7e3H2oEqgoRu7sxIN5s9E=; b=LIpvERgVmOL9ogumzFBBkSOEv
+        6qhJqinX1INfSfb2pfdLlVYGzYb8bwlkvLwAFUm7wVMQ1K2XtVj0RObc4J+DaudjV+fCo6sYtqcNM
+        bcC7SmsCIhhp2lwfmtNEF+i5zHLc/l9Kzk7OYLtr8/xknhH8aaKSKZrmW/heVw4zljMdtKxuUZul+
+        KX0u35KpsW6FWYpz8YdChlirSxG/G6OicIczDCLBuHIS4G6Gsv/AV+DJPU70HXoCMC/k/kDBqHWFf
+        9Yxg48jaVvfTYkuZSBEYs8kswpXq5AuJ+X4m/c7HB3SWN18JIkUp+ONHtwj41ncUaoPv1HScPj7/I
+        Sb3WP6I6g==;
+Received: from [179.95.19.99] (helo=coco.lan)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1filtq-00086H-Vk; Thu, 26 Jul 2018 19:26:11 +0000
+Date:   Thu, 26 Jul 2018 16:26:07 -0300
+From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+To:     Ivan Bornyakov <brnkv.i1@gmail.com>
+Cc:     mchehab@kernel.org, linux-media@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] media: stv090x: fix if-else order
+Message-ID: <20180726162607.2de43b84@coco.lan>
+In-Reply-To: <20180601161221.24807-1-brnkv.i1@gmail.com>
+References: <20180601161221.24807-1-brnkv.i1@gmail.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove the struct rtl819XPHY_REG_1T2RArray which is simply a proxy for
-the struct Rtl8192UsbPHY_REG_1T2RArray. There appears to be no purpose
-served by this implementation, other then to obscure the
-Rtl8192UsbPHY_REG_1T2RArray structure.
+Em Fri,  1 Jun 2018 19:12:21 +0300
+Ivan Bornyakov <brnkv.i1@gmail.com> escreveu:
 
-Signed-off-by: John Whitmore <johnfwhitmore@gmail.com>
----
- drivers/staging/rtl8192u/r819xU_phy.c | 10 ++++------
- drivers/staging/rtl8192u/r819xU_phy.h |  1 -
- 2 files changed, 4 insertions(+), 7 deletions(-)
+> There is this code:
+> 
+> 	if (v >= 0x20) {
+> 		...
+> 	} else if (v < 0x20) {
+> 		...
+> 	} else if (v > 0x30) {
+> 		/* this branch is impossible */
+> 	}
+> 
+> It would be sensibly for last branch to be on the top.
 
-diff --git a/drivers/staging/rtl8192u/r819xU_phy.c b/drivers/staging/rtl8192u/r819xU_phy.c
-index cc35ca7b9140..8d44bbe90221 100644
---- a/drivers/staging/rtl8192u/r819xU_phy.c
-+++ b/drivers/staging/rtl8192u/r819xU_phy.c
-@@ -28,8 +28,6 @@ static u32 RF_CHANNEL_TABLE_ZEBRA[] = {
- 	0x0f72, /* 2484    */
- };
- 
--
--#define rtl819XPHY_REG_1T2RArray Rtl8192UsbPHY_REG_1T2RArray
- #define rtl819XMACPHY_Array Rtl8192UsbMACPHY_Array
- #define rtl819XRadioA_Array  Rtl8192UsbRadioA_Array
- #define rtl819XRadioB_Array Rtl8192UsbRadioB_Array
-@@ -534,13 +532,13 @@ void rtl8192_phyConfigBB(struct net_device *dev, u8 ConfigType)
- #endif
- 	if (ConfigType == BaseBand_Config_PHY_REG) {
- 		for (i = 0; i < PHY_REG_1T2RArrayLength; i += 2) {
--			rtl8192_setBBreg(dev, rtl819XPHY_REG_1T2RArray[i],
-+			rtl8192_setBBreg(dev, Rtl8192UsbPHY_REG_1T2RArray[i],
- 					 bMaskDWord,
--					 rtl819XPHY_REG_1T2RArray[i+1]);
-+					 Rtl8192UsbPHY_REG_1T2RArray[i+1]);
- 			RT_TRACE(COMP_DBG,
- 				 "i: %x, Rtl819xUsbPHY_REGArray[0]=%x Rtl819xUsbPHY_REGArray[1]=%x\n",
--				 i, rtl819XPHY_REG_1T2RArray[i],
--				 rtl819XPHY_REG_1T2RArray[i+1]);
-+				 i, Rtl8192UsbPHY_REG_1T2RArray[i],
-+				 Rtl8192UsbPHY_REG_1T2RArray[i+1]);
- 		}
- 	} else if (ConfigType == BaseBand_Config_AGC_TAB) {
- 		for (i = 0; i < AGCTAB_ArrayLength; i += 2) {
-diff --git a/drivers/staging/rtl8192u/r819xU_phy.h b/drivers/staging/rtl8192u/r819xU_phy.h
-index 3c069b89bcdb..842837bd6631 100644
---- a/drivers/staging/rtl8192u/r819xU_phy.h
-+++ b/drivers/staging/rtl8192u/r819xU_phy.h
-@@ -25,7 +25,6 @@ struct sw_chnl_cmd {
- 	u32		        ms_delay;
- } __packed;
- 
--extern u32 rtl819XPHY_REG_1T2RArray[];
- extern u32 rtl819XAGCTAB_Array[];
- extern u32 rtl819XRadioA_Array[];
- extern u32 rtl819XRadioB_Array[];
--- 
-2.18.0
+Have you tested it and check at the datasheets if dev_ver > 0x30 makes
+sense?
 
+If not, I would prefer, instead, to remove the dead code, as this
+patch may cause regressions (adding a FIXME comment about this
+special case).
+
+> 
+> Signed-off-by: Ivan Bornyakov <brnkv.i1@gmail.com>
+> ---
+>  drivers/media/dvb-frontends/stv090x.c | 10 +++++-----
+>  1 file changed, 5 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/media/dvb-frontends/stv090x.c b/drivers/media/dvb-frontends/stv090x.c
+> index 9133f65d4623..d70eb311ebaf 100644
+> --- a/drivers/media/dvb-frontends/stv090x.c
+> +++ b/drivers/media/dvb-frontends/stv090x.c
+> @@ -4841,7 +4841,11 @@ static int stv090x_setup(struct dvb_frontend *fe)
+>  	}
+>  
+>  	state->internal->dev_ver = stv090x_read_reg(state, STV090x_MID);
+> -	if (state->internal->dev_ver >= 0x20) {
+> +	if (state->internal->dev_ver > 0x30) {
+> +		/* we shouldn't bail out from here */
+> +		dprintk(FE_ERROR, 1, "INFO: Cut: 0x%02x probably incomplete support!",
+> +			state->internal->dev_ver);
+> +	} else if (state->internal->dev_ver >= 0x20) {
+>  		if (stv090x_write_reg(state, STV090x_TSGENERAL, 0x0c) < 0)
+>  			goto err;
+>  
+> @@ -4857,10 +4861,6 @@ static int stv090x_setup(struct dvb_frontend *fe)
+>  			state->internal->dev_ver);
+>  
+>  		goto err;
+> -	} else if (state->internal->dev_ver > 0x30) {
+> -		/* we shouldn't bail out from here */
+> -		dprintk(FE_ERROR, 1, "INFO: Cut: 0x%02x probably incomplete support!",
+> -			state->internal->dev_ver);
+>  	}
+>  
+>  	/* ADC1 range */
+
+
+
+Thanks,
+Mauro
