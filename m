@@ -6,100 +6,80 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0E31C28CF6
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 20:38:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DCCAC6778F
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 20:39:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 08CEE20862
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 20:38:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 08CEE20862
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	by mail.kernel.org (Postfix) with ESMTP id ED44B20862
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 20:39:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ED44B20862
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731370AbeGZV5B (ORCPT
+        id S1731570AbeGZV6F (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 26 Jul 2018 17:57:01 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:45262 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730533AbeGZV5B (ORCPT
+        Thu, 26 Jul 2018 17:58:05 -0400
+Received: from shards.monkeyblade.net ([23.128.96.9]:46430 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730439AbeGZV6F (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Jul 2018 17:57:01 -0400
-Received: from akpm3.svl.corp.google.com (unknown [104.133.9.92])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0DF4340B;
-        Thu, 26 Jul 2018 20:38:30 +0000 (UTC)
-Date:   Thu, 26 Jul 2018 13:38:29 -0700
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     Joe Perches <joe@perches.com>
-Cc:     Andy Whitcroft <apw@canonical.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC PATCH] checkpatch: check for function calls with struct or
- union on stack
-Message-Id: <20180726133829.bbe2677217f905c5df11d2d6@linux-foundation.org>
-In-Reply-To: <00bf258587510ee96a27918293bd4d75622512c6.camel@perches.com>
-References: <1236369d28b2f1f5389ff652c4eb89e699e6481e.camel@perches.com>
-        <20180726122533.104f6eea950853ef50ebc680@linux-foundation.org>
-        <20180726122807.fad0566951e36d930edb6874@linux-foundation.org>
-        <00bf258587510ee96a27918293bd4d75622512c6.camel@perches.com>
-X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        Thu, 26 Jul 2018 17:58:05 -0400
+Received: from localhost (unknown [172.58.43.154])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id 233B9108CB34A;
+        Thu, 26 Jul 2018 13:39:34 -0700 (PDT)
+Date:   Thu, 26 Jul 2018 13:39:20 -0700 (PDT)
+Message-Id: <20180726.133920.1400134352576859104.davem@davemloft.net>
+To:     jdmason@kudzu.us
+Cc:     helgaas@kernel.org, f.fainelli@gmail.com, rasesh.mody@cavium.com,
+        sudarsana.kalluru@cavium.com, Dept-GELinuxNICDev@cavium.com,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] net: sort Kconfig menu items alphabetically
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <20180724154340.GA5871@kudzu.us>
+References: <153237967407.172440.6754268418710104431.stgit@bhelgaas-glaptop.roam.corp.google.com>
+        <20180724154340.GA5871@kudzu.us>
+X-Mailer: Mew version 6.7 on Emacs 26 / Mule 6.0 (HANACHIRUSATO)
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Thu, 26 Jul 2018 13:39:34 -0700 (PDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 26 Jul 2018 13:05:29 -0700 Joe Perches <joe@perches.com> wrote:
+From: Jon Mason <jdmason@kudzu.us>
+Date: Tue, 24 Jul 2018 11:43:41 -0400
 
-> On Thu, 2018-07-26 at 12:28 -0700, Andrew Morton wrote:
-> > On Thu, 26 Jul 2018 12:25:33 -0700 Andrew Morton <akpm@linux-foundation.org> wrote:
-> > 
-> > > I'll give it a spin, see how noisy it is.
-> > 
-> > Actually, I would prefer if the message, changelog and title
-> > used the term "passed by value".  It's a more familiar term
-> > and it is possible for a passed-by-value aggregate to in fact 
-> > be passed in registers.
+> On Mon, Jul 23, 2018 at 04:01:14PM -0500, Bjorn Helgaas wrote:
+>> From: Bjorn Helgaas <bhelgaas@google.com>
+>> 
+>> 6c541b4595a2 ("net: ethernet: Sort Kconfig sourcing alphabetically")
+>> sorted Kconfig sourcing based on directory names, but in a couple cases,
+>> the menu item text is quite different from the directory name and is not
+>> sorted correctly:
+>> 
+>>   drivers/net/ethernet/neterion/Kconfig    => "Exar devices"
 > 
-> RFC, No worries, I'll change it if it's OK.
+> Stupid question, does it make more sense to clarify the names in the
+> Kconfig to more naturally follow what people are expecting?  In the
+> case of Neterion, it was standalone for several years, then aquired by
+> Exar and shutdown in 11 months without ever making any Exar branded
+> adatpers.  Users, if they still exist, would probably think of it as
+> Neterion and not Exar (as there have been no follow-on adapters and I
+> don't believe any plans to ever do so).
 > 
-> I'm testing it right now against the last 5000 commits
-> (which takes awhile here) via
+> So, this might be better as a rename of the Kconfig to something like
+> "Neterion (Exar) devices".  Of course, there is a fair amount of Exar
+> names in the Kconfig.  If you agree, I can do a clean-up of this to
+> match the expectations.
 > 
-> $ git log --no-merges --format=oneline -5000 | \
->   cut -f1 -d" " | \
->   while read commit ; do \
->     echo $commit; \
->     ./scripts/checkpatch.pl --git $commit --types=aggregate_on_stack --quiet --no-summary ; \
->   done
-> 
-> It doesn't seem noisy at all, but maybe there are a few
-> known structs like "struct timespec64" that could be
-> excluded.
-> 
-> The only real hits so far are:
-> 
-> commit f2fb56afba11426ee5c9603b28a9827c530909c0
-> WARNING: Unusual use of 'struct msm_display_topology' on stack
-> #28374: FILE: drivers/gpu/drm/msm/disp/dpu1/dpu_rm.c:149:
-> +enum dpu_rm_topology_name
-> +dpu_rm_get_topology_name(struct msm_display_topology topology)
-> +{
+> Thoughts?
 
-hm.  12 bytes.  I don't know if this would be more efficient than using
-const struct msm_display_topology*.
+I think this is a better way to handle this.
 
-> and
-> 
-> 33477d84c26bbfa626da2c032e567a90dd70a528
-> WARNING: Unusual use of 'struct cppc_perf_fb_ctrs' on stack
-> #45: FILE: drivers/cpufreq/cppc_cpufreq.c:307:
-> +static int cppc_get_rate_from_fbctrs(struct cppc_cpudata *cpu,
-> +				     struct cppc_perf_fb_ctrs fb_ctrs_t0,
-> +				     struct cppc_perf_fb_ctrs fb_ctrs_t1)
-> +{
-
-Two 32-byte structures?  That seems excessive.
-
-Yes, a warning which sends developers back for a bit more thinnking
-sounds useful.
-
+That way, a developer can read the Kconfig file and see if the entries
+are sorted properly without having to check the text of every
+sub-directory entry.
