@@ -2,206 +2,135 @@ Return-Path: <SRS0=7Z+k=KK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B14DC6778F
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 10:57:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D03BFC28CF6
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 11:00:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2BABB2083F
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 10:57:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2BABB2083F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xs4all.nl
+	by mail.kernel.org (Postfix) with ESMTP id 70FCC20671
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 11:00:38 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="n2G0kIi3"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 70FCC20671
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729789AbeGZMN0 (ORCPT
+        id S1729384AbeGZMQy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 26 Jul 2018 08:13:26 -0400
-Received: from lb2-smtp-cloud8.xs4all.net ([194.109.24.25]:49509 "EHLO
-        lb2-smtp-cloud8.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729097AbeGZMNZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Jul 2018 08:13:25 -0400
-Received: from [IPv6:2001:983:e9a7:1:9ca6:a377:e357:d31a] ([IPv6:2001:983:e9a7:1:9ca6:a377:e357:d31a])
-        by smtp-cloud8.xs4all.net with ESMTPA
-        id idx9fTAVdoj71idxAfQ9fp; Thu, 26 Jul 2018 12:57:06 +0200
-Subject: Re: [PATCH 1/2] media: docs-rst: Document memory-to-memory video
- decoder interface
-To:     Tomasz Figa <tfiga@chromium.org>
-Cc:     Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Thu, 26 Jul 2018 08:16:54 -0400
+Received: from mail-eopbgr70048.outbound.protection.outlook.com ([40.107.7.48]:15328
+        "EHLO EUR04-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729031AbeGZMQy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Jul 2018 08:16:54 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=WTm5xR4GpB5fhg2XM3tMmM9QXzssWgHdqT217TNJRkc=;
+ b=n2G0kIi3Ogb2xjOmNDj3LoireGg78cEoGdbKjgKD2HAIqWlbpyGZY3BzJULn27bWCTu5YDgI+qX5lX7Mhvd6qvX14PLkrwysjy83I8jv6i0QgCrb2ISbHSjYEwl95PLttJ+jbc4zvPSMI+3a/H+TvwQ8RS0hB2VhYRJKd+YFgjo=
+Received: from AM0PR04MB4211.eurprd04.prod.outlook.com (52.134.126.21) by
+ AM0PR04MB5299.eurprd04.prod.outlook.com (20.177.42.84) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.973.21; Thu, 26 Jul 2018 11:00:27 +0000
+Received: from AM0PR04MB4211.eurprd04.prod.outlook.com
+ ([fe80::6c5e:bec5:949d:4cc1]) by AM0PR04MB4211.eurprd04.prod.outlook.com
+ ([fe80::6c5e:bec5:949d:4cc1%2]) with mapi id 15.20.0973.022; Thu, 26 Jul 2018
+ 11:00:27 +0000
+From:   "A.s. Dong" <aisheng.dong@nxp.com>
+To:     Jassi Brar <jassisinghbrar@gmail.com>,
+        Oleksij Rempel <o.rempel@pengutronix.de>
+CC:     Shawn Guo <shawnguo@kernel.org>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Devicetree List <devicetree@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Pawel Osciak <posciak@chromium.org>,
-        Alexandre Courbot <acourbot@chromium.org>, kamil@wypas.org,
-        a.hajda@samsung.com, Kyungmin Park <kyungmin.park@samsung.com>,
-        jtp.park@samsung.com, Philipp Zabel <p.zabel@pengutronix.de>,
-        =?UTF-8?B?VGlmZmFueSBMaW4gKOael+aFp+ePiik=?= 
-        <tiffany.lin@mediatek.com>,
-        =?UTF-8?B?QW5kcmV3LUNUIENoZW4gKOmZs+aZuui/qik=?= 
-        <andrew-ct.chen@mediatek.com>, todor.tomov@linaro.org,
-        nicolas@ndufresne.ca,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        dave.stevenson@raspberrypi.org,
-        Ezequiel Garcia <ezequiel@collabora.com>
-References: <20180724140621.59624-1-tfiga@chromium.org>
- <20180724140621.59624-2-tfiga@chromium.org>
- <37a8faea-a226-2d52-36d4-f9df194623cc@xs4all.nl>
- <CAAFQd5BgGEBmd8gNGc-qqtUtLo=Mh8U+TVTWRsKYMv1LmeBQMA@mail.gmail.com>
-From:   Hans Verkuil <hverkuil@xs4all.nl>
-Message-ID: <a6af3dc9-1d09-a414-ce31-bc1b3e69894f@xs4all.nl>
-Date:   Thu, 26 Jul 2018 12:57:03 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
-MIME-Version: 1.0
-In-Reply-To: <CAAFQd5BgGEBmd8gNGc-qqtUtLo=Mh8U+TVTWRsKYMv1LmeBQMA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
+        ", Sascha Hauer" <kernel@pengutronix.de>,
+        ", linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, srv_heupstream" 
+        <linux-arm-kernel@lists.infradead.org>,
+        dl-linux-imx <linux-imx@nxp.com>
+Subject: RE: [PATCH v7 1/6] dt-bindings: mailbox: allow mbox-cells to be equal
+ to 0
+Thread-Topic: [PATCH v7 1/6] dt-bindings: mailbox: allow mbox-cells to be
+ equal to 0
+Thread-Index: AQHUJK1m6vAx3xRmv0idxy22l34kDKShQFmAgAAU83A=
+Date:   Thu, 26 Jul 2018 11:00:27 +0000
+Message-ID: <AM0PR04MB421178C5283BDCCF11F5E2AF802B0@AM0PR04MB4211.eurprd04.prod.outlook.com>
+References: <20180726065331.6186-1-o.rempel@pengutronix.de>
+ <20180726065331.6186-2-o.rempel@pengutronix.de>
+ <CABb+yY2+WwxHBtQfU3TJTErpfzfkNH8iwwYyXbmWAQy8UsqLRQ@mail.gmail.com>
+In-Reply-To: <CABb+yY2+WwxHBtQfU3TJTErpfzfkNH8iwwYyXbmWAQy8UsqLRQ@mail.gmail.com>
+Accept-Language: zh-CN, en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4wfJhP1XMB+afqUmKC2ytLy8l6EYXn8tJw0uLr51HLLYCLRlndc1e2ErP3kTWFzAg8NcS95jN5mLA/FXpup5US2Wl6W3Bd/ukPvlU+eGc/FG3pBH3SE+Sf
- zPMNsLb3H6Y/4PypQ8USG9yfmC1pGbA5QLUSJT/hj0EnFDWKGHNH/42wwU/Kyzul0paRx0tdA78IyDGnFiNQyTRkO2AEZQIT8Y+80cQtS/yNFwm/TL5OyKr5
- /F+oqHxCasnCk1X8/Z6rofh8V+Ifedj7BeB2rVW5Ocxw2cDKHvyxJj+0GSqNKncwJNappaq/wRV4KKtQS+Ne2EZCDGVEi6DMHzNI8mckR+vJGW09BMebS1EI
- +v9cABh4ZNqyEiJOSiu8il7C2wO7I02KcVvbRm6W+hdf5Q8dzbNioS3CiqGq1F2I2phsmYE4RJCorheToJ8Mt77OlJ2gpt1duOP4W6Nzh36ZpqDIHhae6HfE
- bZrOJtcwUG/uegLgU3ptmWO4FA2q6bPh+uVFl0i71nmoY9w1GY6iG0lWtThqPYYXp2Yn6FkfkzSepWk00vE+l5vaVeJwT93xqMtPUXizNLX6AMi9LyaZSopW
- PxdN+B2o1Uq5Np7sbUb6l1UUgBW6uIV9OMSv20Lae4iZ77IdatAEDAXeYou11lpUJ+szmc4ZtUQnH8RY6MIRlzRbnFlqiMMOMcko7WZcIde0nxYlKL0rOz6f
- D3seJnKkqZ8JbHuUXyMHzD2fD8QraN5w6oepjgEn3T1eCkUfoNFnW+zujviOhWGBq3BkA5PTIyXpltuGX629qjkGSFkRNw79jjLJVFCOtD82BQc4ubzHcA==
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=aisheng.dong@nxp.com; 
+x-originating-ip: [119.31.174.66]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;AM0PR04MB5299;6:MUsjbTFrAu4m4X1QtfHUwycOo5+fPlTUecOegOMCON5zBtbrdLSNcocroDaNnX0mNzbEeSr/ah+I2rO1/dB7DcZeJJ6356ZFO1Sam5g6oD455dGqDWS/Q9A2nrprfDDteKzYSomBKdm0fsXOpjhMjz1xVjqNMsUVUYdziWuBAPquBW6bn9nP1VXtBuc07nvtuwtGoV7Xn16VYauYIoRXJdC1quqYjoQGCu5jfyRU6Cywu6i2+rWtkNlJbNDvHj6OZoXE/qVPAz1Li5efoTcAOE/cFVBNgmrreSqVdGVpcva2SEpPlBonGl8vW51HoYYfHyY3mBMhWCypeYRs1a231OVmcFv0sQQTJl6wTmSgv0k7EN4NV2oe3C6OD3w5ItIWt+/BngwURnZdCxxO/4A0MJLTMkmLAH82rfcagqv4CRTszVQEuU9VwcpT++5QRV9QXGKYgZimTjisS1fcYCjk2w==;5:fPqCv7j2BkfDtcYosm6IsMZY3pzmNAUoqKUFHFCdSPNa59r8hElJaIfvIRlquXIj2jaAWK3MXCxo7NqpWwSGEdJN7rldumV7yhrmqfgBccLeKkfk9V+hrF027k0aDKKbrE7QbwJb6HUSCzKyD80rEm9ebbfTBhc2Xw6A7fodyMA=;7:9KZBGZHfwybrcV9ylXA6nzgAJoXhL7t3Nb7cp16zWXVQD8L78JPnh9GSwAoIiQSH0Edxbd02cI37rzYicYanfIqCpHCW/DmEv1TT4cdGI1AnHRNM8k8D5cqzld0sVL4z3aj35SPQjg73q9NW37uvRH+glbCN94GPxLyNBxeYXygcamSqDu5obEpWulbcpmrqcRzOp0GEZCmJoSU25tkqtxBOaOhCNPjJgTr3mMLjhPgH+bOEZ0t/q/4Y7pz62yqO
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: eb0ee290-2a12-44fd-4f33-08d5f2e6fee2
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600073)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM0PR04MB5299;
+x-ms-traffictypediagnostic: AM0PR04MB5299:
+x-microsoft-antispam-prvs: <AM0PR04MB5299E3E671644129608232B5802B0@AM0PR04MB5299.eurprd04.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(180628864354917)(9452136761055)(185117386973197)(85827821059158)(258649278758335);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231311)(944501410)(52105095)(93006095)(93001095)(3002001)(10201501046)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123564045)(20161123560045)(20161123562045)(6072148)(201708071742011)(7699016);SRVR:AM0PR04MB5299;BCL:0;PCL:0;RULEID:;SRVR:AM0PR04MB5299;
+x-forefront-prvs: 07459438AA
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(366004)(39850400004)(376002)(396003)(136003)(189003)(13464003)(199004)(8936002)(86362001)(7696005)(316002)(81166006)(81156014)(76176011)(8676002)(486006)(55016002)(39060400002)(6246003)(54906003)(110136005)(9686003)(102836004)(478600001)(15650500001)(99286004)(476003)(5250100002)(106356001)(11346002)(26005)(7736002)(53546011)(105586002)(4326008)(33656002)(446003)(25786009)(6506007)(5660300001)(6436002)(186003)(2900100001)(6116002)(14454004)(7416002)(3846002)(74316002)(97736004)(229853002)(2906002)(53936002)(66066001)(256004)(68736007)(305945005);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB5299;H:AM0PR04MB4211.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: 69wyNDrGUxeErWPgvxJmlfaFMVbmJI4j+xsnUklk8lXXW9B0Cq+wTzzn6bPQKJkk/8dX18dqqscnSX+An7d3BQf0kikwK7kbeLmjiSwd40wsielvLo2FavkiX8eWdtnJigeaDctpWABVN64SkBr1H/iZwNWI2ga56OZw4zTfufq9wNzYLdYzec1pcrlu5iQEiM53MxH6OhiZGszYWXb6QQwKlYZd83f5QygQvhZezGq+2WhZHwJRNz2N5XxIzhMVEdWbUh/8gXy7gd6KmeFs9HH0IMFGH3eBysmsP8009B7m5QfJQPUFcMzPTpJ3lEBxi6oXf6povPXhNTTfGfuws+1CqSwCQDnql+jShBbn+gA=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: eb0ee290-2a12-44fd-4f33-08d5f2e6fee2
+X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Jul 2018 11:00:27.4656
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB5299
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 26/07/18 12:20, Tomasz Figa wrote:
-> Hi Hans,
-> 
-> On Wed, Jul 25, 2018 at 8:59 PM Hans Verkuil <hverkuil@xs4all.nl> wrote:
->>
->> Hi Tomasz,
->>
->> Many, many thanks for working on this! It's a great document and when done
->> it will be very useful indeed.
->>
->> Review comments follow...
-> 
-> Thanks for review!
-> 
->>
->> On 24/07/18 16:06, Tomasz Figa wrote:
-
-> [snip]
-
->> Note that the v4l2_pix_format/S_FMT documentation needs to be updated as well
->> since we never allowed 0x0 before.
-> 
-> Is there any text that disallows this? I couldn't spot any. Generally
-> there are already drivers which return 0x0 for coded formats (s5p-mfc)
-> and it's not even strange, because in such case, the buffer contains
-> just a sequence of bytes, not a 2D picture.
-
-All non-m2m devices will always have non-zero width/height values. Only with
-m2m devices do we see this.
-
-This was probably never documented since before m2m appeared it was 'obvious'.
-
-This definitely needs to be documented, though.
-
-> 
->> What if you set the format to 0x0 but the stream does not have meta data with
->> the resolution? How does userspace know if 0x0 is allowed or not? If this is
->> specific to the chosen coded pixel format, should be add a new flag for those
->> formats indicating that the coded data contains resolution information?
-> 
-> Yes, this would definitely be on a per-format basis. Not sure what you
-> mean by a flag, though? E.g. if the format is set to H264, then it's
-> bound to include resolution information. If the format doesn't include
-> it, then userspace is already aware of this fact, because it needs to
-> get this from some other source (e.g. container).
-> 
->>
->> That way userspace knows if 0x0 can be used, and the driver can reject 0x0
->> for formats that do not support it.
-> 
-> As above, but I might be misunderstanding your suggestion.
-
-So my question is: is this tied to the pixel format, or should we make it
-explicit with a flag like V4L2_FMT_FLAG_CAN_DECODE_WXH.
-
-The advantage of a flag is that you don't need a switch on the format to
-know whether or not 0x0 is allowed. And the flag can just be set in
-v4l2-ioctls.c.
-
->>> +STREAMOFF-STREAMON sequence on it is intended solely for changing buffer
->>> +sets.
->>
->> 'changing buffer sets': not clear what is meant by this. It's certainly not
->> 'solely' since it can also be used to achieve an instantaneous seek.
->>
-> 
-> To be honest, I'm not sure whether there is even a need to include
-> this whole section. It's obvious that if you stop feeding a mem2mem
-> device, it will pause. Moreover, other sections imply various
-> behaviors triggered by STREAMOFF/STREAMON/DECODER_CMD/etc., so it
-> should be quite clear that they are different from a simple pause.
-> What do you think?
-
-Yes, I'd drop this last sentence ('Similarly...sets').
-
->>> +2.  After all buffers containing decoded frames from before the resolution
->>> +    change point are ready to be dequeued on the ``CAPTURE`` queue, the
->>> +    driver sends a ``V4L2_EVENT_SOURCE_CHANGE`` event for source change
->>> +    type ``V4L2_EVENT_SRC_CH_RESOLUTION``.
->>> +
->>> +    * The last buffer from before the change must be marked with
->>> +      :c:type:`v4l2_buffer` ``flags`` flag ``V4L2_BUF_FLAG_LAST`` as in the
->>
->> spurious 'as'?
->>
-> 
-> It should be:
-> 
->     * The last buffer from before the change must be marked with
->       the ``V4L2_BUF_FLAG_LAST`` flag in :c:type:`v4l2_buffer` ``flags`` field,
->       similarly to the
-
-Ah, OK. Now I get it.
-
->> I wonder if we should make these min buffer controls required. It might be easier
->> that way.
-> 
-> Agreed. Although userspace is still free to ignore it, because REQBUFS
-> would do the right thing anyway.
-
-It's never been entirely clear to me what the purpose of those min buffers controls
-is. REQBUFS ensures that the number of buffers is at least the minimum needed to
-make the HW work. So why would you need these controls? It only makes sense if they
-return something different from REQBUFS.
-
-> 
->>
->>> +7.  If all the following conditions are met, the client may resume the
->>> +    decoding instantly, by using :c:func:`VIDIOC_DECODER_CMD` with
->>> +    ``V4L2_DEC_CMD_START`` command, as in case of resuming after the drain
->>> +    sequence:
->>> +
->>> +    * ``sizeimage`` of new format is less than or equal to the size of
->>> +      currently allocated buffers,
->>> +
->>> +    * the number of buffers currently allocated is greater than or equal to
->>> +      the minimum number of buffers acquired in step 6.
->>
->> You might want to mention that if there are insufficient buffers, then
->> VIDIOC_CREATE_BUFS can be used to add more buffers.
->>
-> 
-> This might be a bit tricky, since at least s5p-mfc and coda can only
-> work on a fixed buffer set and one would need to fully reinitialize
-> the decoding to add one more buffer, which would effectively be the
-> full resolution change sequence, as below, just with REQBUFS(0),
-> REQBUFS(N) replaced with CREATE_BUFS.
-
-What happens today in those drivers if you try to call CREATE_BUFS?
-
-Regards,
-
-	Hans
+PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBKYXNzaSBCcmFyIFttYWlsdG86
+amFzc2lzaW5naGJyYXJAZ21haWwuY29tXQ0KPiBTZW50OiBUaHVyc2RheSwgSnVseSAyNiwgMjAx
+OCA1OjQyIFBNDQo+IFRvOiBPbGVrc2lqIFJlbXBlbCA8by5yZW1wZWxAcGVuZ3V0cm9uaXguZGU+
+DQo+IENjOiBTaGF3biBHdW8gPHNoYXduZ3VvQGtlcm5lbC5vcmc+OyBGYWJpbyBFc3RldmFtDQo+
+IDxmYWJpby5lc3RldmFtQG54cC5jb20+OyBSb2IgSGVycmluZyA8cm9iaCtkdEBrZXJuZWwub3Jn
+PjsgTWFyaw0KPiBSdXRsYW5kIDxtYXJrLnJ1dGxhbmRAYXJtLmNvbT47IEEucy4gRG9uZyA8YWlz
+aGVuZy5kb25nQG54cC5jb20+Ow0KPiBWbGFkaW1pciBaYXBvbHNraXkgPHZsYWRpbWlyX3phcG9s
+c2tpeUBtZW50b3IuY29tPjsgU3VkZWVwIEhvbGxhDQo+IDxzdWRlZXAuaG9sbGFAYXJtLmNvbT47
+IERldmljZXRyZWUgTGlzdCA8ZGV2aWNldHJlZUB2Z2VyLmtlcm5lbC5vcmc+Ow0KPiBMaW51eCBL
+ZXJuZWwgTWFpbGluZyBMaXN0IDxsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnPjsgLCBTYXNj
+aGEgSGF1ZXINCj4gPGtlcm5lbEBwZW5ndXRyb25peC5kZT47ICwgbGludXgtYXJtLWtlcm5lbEBs
+aXN0cy5pbmZyYWRlYWQub3JnLCBsaW51eC0NCj4gbWVkaWF0ZWtAbGlzdHMuaW5mcmFkZWFkLm9y
+Zywgc3J2X2hldXBzdHJlYW0gPGxpbnV4LWFybS0NCj4ga2VybmVsQGxpc3RzLmluZnJhZGVhZC5v
+cmc+OyBkbC1saW51eC1pbXggPGxpbnV4LWlteEBueHAuY29tPg0KPiBTdWJqZWN0OiBSZTogW1BB
+VENIIHY3IDEvNl0gZHQtYmluZGluZ3M6IG1haWxib3g6IGFsbG93IG1ib3gtY2VsbHMgdG8gYmUN
+Cj4gZXF1YWwgdG8gMA0KPiANCj4gT24gVGh1LCBKdWwgMjYsIDIwMTggYXQgMTI6MjMgUE0sIE9s
+ZWtzaWogUmVtcGVsIDxvLnJlbXBlbEBwZW5ndXRyb25peC5kZT4NCj4gd3JvdGU6DQo+ID4gRnJv
+bTogRG9uZyBBaXNoZW5nIDxhaXNoZW5nLmRvbmdAbnhwLmNvbT4NCj4gPg0KPiA+IE1haWxib3gg
+ZGV2aWNlcyBtYXkgaGF2ZSBvbmx5IG9uZSBjaGFubmVsIHdoaWNoIG1lYW5zIHRoZSBtYm94LWNl
+bGxzDQo+ID4gYXQgbGVhc3QgMSBkb2VzIG5vdCBtYWtlIHNlbnNlIGZvciB0aGlzIHR5cGUgZGV2
+aWNlcy4gTGV0J3MgcmVtb3ZlDQo+ID4gdGhhdCBsaW1pdGF0aW9uIHRvIGFsbG93IHRoZSBtYm94
+LWNlbGxzIHRvIGJlIGVxdWFsIHRvIDAuDQo+ID4NCj4gT0sNCj4gDQo+IEJ1dCBwbGVhc2UgcmVh
+bGlzZSB0aGF0IHlvdSdsbCBoYXZlIHRvIHdyaXRlIG1vcmUgY29kZSAtLSBpbXBsZW1lbnQgeW91
+ciBvd24NCj4gb2ZfeGxhdGUoKSBjYWxsYmFjay4NCj4gTW9zdCBkZXZlbG9wZXJzIHdvdWxkIHBy
+ZWZlciB0byBjYWxsIHRoZSBvbmx5IGNoYW5uZWwgYXMgY2hhbm5lbCBudW1iZXIgMCwNCj4gYW5k
+IHVzZSB0aGUgY29tbW9uIG9mX3hsYXRlIGltcGxlbWVudGF0aW9uLg0KPiANCg0KWWVzLCB0aGF0
+J3MgdHJ1ZSBiZWNhdXNlIHRoZSBjb21tb24gb2ZfeGxhdGUgYXNzdW1pbmcgdGhlIG1ib3gtY2Vs
+bHMgaXMgMS4NCkFuZCB0aGVyZSdzIGFscmVhZHkgc3VjaCB1c2VyczoNCmFyY2gvYXJtL2Jvb3Qv
+ZHRzL2JjbTI4M3guZHRzaQ0KDQpNb3JlIGNvbW1lbnRzIHdpbGwgYmUgb24geW91ciByZXBseSBv
+ZiBwYXRjaC0zLg0KDQpSZWdhcmRzDQpEb25nIEFpc2hlbmcNCg0KPiAtamFzc2kNCg==
