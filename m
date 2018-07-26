@@ -2,678 +2,154 @@ Return-Path: <SRS0=7Z+k=KK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C59C3C28CF6
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 09:49:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A09FC28CF6
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 09:51:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6B6B720846
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 09:49:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B6B720846
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	by mail.kernel.org (Postfix) with ESMTP id E6D1D2088E
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 09:51:20 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="qDo9HlGm"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E6D1D2088E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729368AbeGZLFw convert rfc822-to-8bit (ORCPT
+        id S1729254AbeGZLHW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 26 Jul 2018 07:05:52 -0400
-Received: from mx.socionext.com ([202.248.49.38]:14713 "EHLO mx.socionext.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729045AbeGZLFw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Jul 2018 07:05:52 -0400
-Received: from unknown (HELO iyokan-ex.css.socionext.com) ([172.31.9.54])
-  by mx.socionext.com with ESMTP; 26 Jul 2018 18:49:45 +0900
-Received: from mail.mfilter.local (m-filter-2 [10.213.24.62])
-        by iyokan-ex.css.socionext.com (Postfix) with ESMTP id 07B6260034;
-        Thu, 26 Jul 2018 18:49:46 +0900 (JST)
-Received: from 172.31.9.53 (172.31.9.53) by m-FILTER with ESMTP; Thu, 26 Jul 2018 18:49:46 +0900
-Received: from yuzu.css.socionext.com (yuzu [172.31.8.45])
-        by iyokan.css.socionext.com (Postfix) with ESMTP id C54884048F;
-        Thu, 26 Jul 2018 18:49:45 +0900 (JST)
-Received: from DESKTOP0FARE34 (unknown [10.213.134.218])
-        by yuzu.css.socionext.com (Postfix) with ESMTP id 8EF0D120424;
-        Thu, 26 Jul 2018 18:49:45 +0900 (JST)
-From:   "Keiji Hayashibara" <hayashibara.keiji@socionext.com>
-To:     "'Masahiro Yamada'" <yamada.masahiro@socionext.com>
-Cc:     "Mark Brown" <broonie@kernel.org>,
-        "Rob Herring" <robh+dt@kernel.org>,
-        "Mark Rutland" <mark.rutland@arm.com>, <linux-spi@vger.kernel.org>,
-        "linux-arm-kernel" <linux-arm-kernel@lists.infradead.org>,
-        "DTML" <devicetree@vger.kernel.org>,
-        "Masami Hiramatsu" <masami.hiramatsu@linaro.org>,
-        "Jassi Brar" <jaswinder.singh@linaro.org>,
-        "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,
-        =?utf-8?Q?Hayashi=2C_Kunihiko/=E6=9E=97_=E9=82=A6=E5=BD=A6?= 
-        <hayashi.kunihiko@socionext.com>
-References: <1532588943-19481-1-git-send-email-hayashibara.keiji@socionext.com> <1532588943-19481-3-git-send-email-hayashibara.keiji@socionext.com> <CAK7LNAS+T17JPb72b2aaE_g0D8kTqUZngcn-0yxyHcP8NusGYg@mail.gmail.com>
-In-Reply-To: <CAK7LNAS+T17JPb72b2aaE_g0D8kTqUZngcn-0yxyHcP8NusGYg@mail.gmail.com>
-Subject: RE: [PATCH v2 2/2] spi: add SPI controller driver for UniPhier SoC
-Date:   Thu, 26 Jul 2018 18:49:42 +0900
-Message-ID: <001c01d424c5$fa4a7d50$eedf77f0$@socionext.com>
+        Thu, 26 Jul 2018 07:07:22 -0400
+Received: from mail-eopbgr60079.outbound.protection.outlook.com ([40.107.6.79]:55837
+        "EHLO EUR04-DB3-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728792AbeGZLHV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Jul 2018 07:07:21 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=+uMtg0abO33TtEpfeBbTWDcIHo0GKEWzY5uvj5pbhoI=;
+ b=qDo9HlGm3GiBk0MO+u1+0NC+vmVTX/jD2MVP5qvCdGCwgKvGB2X6i1AUVBviLQI0zSO7dUNU9o3nt+xe1gr7UN6wYsgBNsvCWWJdgqxwiTPNsJ2xw2KEdOLz1vIoHAnQL1N7swpuPqvIdYRCz9lZVZPp+7FVtMximmIodtCzhlk=
+Received: from DB6PR04MB3223.eurprd04.prod.outlook.com (10.170.211.19) by
+ DB6PR04MB3287.eurprd04.prod.outlook.com (10.170.216.151) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.995.16; Thu, 26 Jul 2018 09:51:14 +0000
+Received: from DB6PR04MB3223.eurprd04.prod.outlook.com
+ ([fe80::b52c:4b0a:5bf4:cbfd]) by DB6PR04MB3223.eurprd04.prod.outlook.com
+ ([fe80::b52c:4b0a:5bf4:cbfd%4]) with mapi id 15.20.0973.022; Thu, 26 Jul 2018
+ 09:51:14 +0000
+From:   Robin Gong <yibin.gong@nxp.com>
+To:     Oleksij Rempel <o.rempel@pengutronix.de>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Mark Brown <broonie@kernel.org>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+CC:     "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Leonard Crestez <leonard.crestez@nxp.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Russell King <linux@armlinux.org.uk>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "A.s. Dong" <aisheng.dong@nxp.com>
+Subject: RE: [PATCH v8 1/6] ARM: imx6q: provide documentation for new
+ fsl,pmic-stby-poweroff property
+Thread-Topic: [PATCH v8 1/6] ARM: imx6q: provide documentation for new
+ fsl,pmic-stby-poweroff property
+Thread-Index: AQHUJMI388q4zA1ybU+fByMY2n4yEKShPSxQ
+Date:   Thu, 26 Jul 2018 09:51:13 +0000
+Message-ID: <DB6PR04MB3223605CB1F5E06D4A278B3C892B0@DB6PR04MB3223.eurprd04.prod.outlook.com>
+References: <20180726092220.17250-1-o.rempel@pengutronix.de>
+ <20180726092220.17250-2-o.rempel@pengutronix.de>
+In-Reply-To: <20180726092220.17250-2-o.rempel@pengutronix.de>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=yibin.gong@nxp.com; 
+x-originating-ip: [119.31.174.66]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;DB6PR04MB3287;6:x0rNFChd6aNfn0/Fnf0WBdOIb8di77VSl8aNbnoVeRDLT1/u6j4SasvcT+Fz5K6+1Yfo2RcCJyp8OMQ3PYPhQmkJz1ytFCSwJhkYbwPKnGqzK0mLi6FkDHRCI1OpO/9ce2CRRkpL2DrlXDkpsHFRgZB03tfLQtA6lZ0VHaALrXvYqvgFe+oHsVoIZ40m1cA6A+Wx/Eh8tp8yhMmLYun6HPK9ONnLW9We1iGoTJf8aFtbpD0tNDbeeeGlsqGtAxP/z7BLHeUFZDsVcvyA6EOk2H0v9fjV37VtGaslhjIS2/qQOM+F6tuxvTzmIs+/kE6BFWDNqzDLiYruy3UQNgZt2Nctc3gEfxjsYp3Vi8rqE/Yk0uMKpIHfauZKnVpAfOplhU+a8UcyFKmd/LcW65UGp2O74wdsjKWi+cwR0fpsuiuoWUI+89h9EIEDHjNBWhugVk9JTRMmkj/jT1LQEy0fHw==;5:A8IUv2bOnEjuJ3lydNCRPB9yTxIr8YmpZQzufJbIvJ0WkPlBVJXEadMIKVw0uW4AIm/uHEHMr6SBE1FkjrM1yz9Yyo3D3ur3YrXTxMpkUZ66qYpG9SmFKXNbDaQizT207I02N0LF7IbG5hWmi/e4Xu2LrKjtICHX4ZVrnOXI+Ys=;7:pg26AgVgYwK48CyOhuFHO1j4/K9SB2hhsBxFOyNjsE5qR2CBmWAPIvJNCPkbD+sPy0Cu/rn3aAdVIfEZlWYVYcLh86LzAVhzIQv82p5g0n1BvpRoHv61HNpoQHXQH/UslnpCocqwtP7doNlXr1MskTR8BPteVQNrXZK1AkzRvJbmycHDZJs5eZ7y//aOZUxLzaUDRodzG0kqkuJkAqCYgVhP+Xce4MgaiAGx/dVHR6aIQ/mQkz4GYny+Roa90Wbj
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: 0bf6b7be-15dc-4e42-1671-08d5f2dd5343
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(5600073)(711020)(4618075)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(2017052603328)(7153060)(7193020);SRVR:DB6PR04MB3287;
+x-ms-traffictypediagnostic: DB6PR04MB3287:
+x-microsoft-antispam-prvs: <DB6PR04MB3287BD84175B39DC940039F3892B0@DB6PR04MB3287.eurprd04.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(180628864354917)(9452136761055)(185117386973197)(85827821059158)(258649278758335)(21532816269658)(228905959029699);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3231311)(944501410)(52105095)(10201501046)(3002001)(93006095)(93001095)(6055026)(149027)(150027)(6041310)(20161123562045)(20161123560045)(20161123564045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011)(7699016);SRVR:DB6PR04MB3287;BCL:0;PCL:0;RULEID:;SRVR:DB6PR04MB3287;
+x-forefront-prvs: 07459438AA
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(136003)(366004)(396003)(39860400002)(376002)(199004)(189003)(13464003)(97736004)(8936002)(256004)(68736007)(66066001)(105586002)(106356001)(5250100002)(7416002)(2906002)(39060400002)(5660300001)(81166006)(81156014)(8676002)(74316002)(305945005)(7736002)(4326008)(6246003)(25786009)(86362001)(316002)(110136005)(446003)(54906003)(11346002)(55016002)(33656002)(102836004)(26005)(186003)(76176011)(229853002)(99286004)(53546011)(6506007)(7696005)(2900100001)(6116002)(3846002)(9686003)(486006)(478600001)(6436002)(14454004)(476003)(53936002)(32563001)(142933001);DIR:OUT;SFP:1101;SCL:1;SRVR:DB6PR04MB3287;H:DB6PR04MB3223.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: 2v+bSWjMITHDPrIULx3pROyqXpXjcI7Y26DplwqzuU/Cqv35+/v/iYZs6MZElcohGZwyMqNyP4p8jyh0t4HXiDw32K/Zg5mRyoZf6lGqQlwY4m8JOuEnl3IhRJBKC0c/0eiWxcciVIqzpw5kl2jW29NJ9/vwKHo94OFZR+fAUOwORc00CwO9PpPXMhk00Mk4qZfYAjIdZKtWOOvB09C08iRrbZEPx7R5IC64CzEUroH9imP7qbqLputEPtRuNUp+bsE2l4DuEM64RAi8C8b5eA+b/5X93F4a8/5+2q7ubEpHaI5RSrHK6Yqh9JOtyDw1FBUuglmVePh0TkLpjBQMT8nGahlOR/FL97Es8QvMA2s=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="gb2312"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain;
-        charset="utf-8"
-Content-Transfer-Encoding: 8BIT
-X-Mailer: Microsoft Outlook 15.0
-Thread-Index: AQHUJK+Lb4PtBS+ckEWxak8O5zFtw6SgoWuAgACeCjA=
-Content-Language: ja
-x-securitypolicycheck: OK by SHieldMailChecker v2.5.2
-x-shieldmailcheckerpolicyversion: POLICY180220
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0bf6b7be-15dc-4e42-1671-08d5f2dd5343
+X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Jul 2018 09:51:14.0292
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB6PR04MB3287
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Yamada-san,
-
-
-> From: Masahiro Yamada [mailto:yamada.masahiro@socionext.com]
-> Sent: Thursday, July 26, 2018 6:13 PM
-> To: Hayashibara, Keiji/林原 啓二 <hayashibara.keiji@socionext.com>
-> Subject: Re: [PATCH v2 2/2] spi: add SPI controller driver for UniPhier SoC
-> 
-> Hi.
-> 
-> 
-> 2018-07-26 16:09 GMT+09:00 Keiji Hayashibara <hayashibara.keiji@socionext.com>:
-> > Add SPI controller driver implemented in Socionext UniPhier SoCs.
-> >
-> > UniPhier SoCs have two types SPI controllers; SCSSI supports a single
-> > channel, and MCSSI supports multiple channels.
-> > This driver supports SCSSI only.
-> >
-> > This controller has 32bit TX/RX FIFO with depth of eight entry, and
-> > supports the SPI master mode only.
-> >
-> > This commit is implemented in PIO transfer mode, not DMA transfer.
-> >
-> > Signed-off-by: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
-> > Signed-off-by: Keiji Hayashibara <hayashibara.keiji@socionext.com>
-> > ---
-> >  drivers/spi/Kconfig        |  13 ++
-> >  drivers/spi/Makefile       |   1 +
-> >  drivers/spi/spi-uniphier.c | 539
-> > +++++++++++++++++++++++++++++++++++++++++++++
-> >  3 files changed, 553 insertions(+)
-> >  create mode 100644 drivers/spi/spi-uniphier.c
-> >
-> > diff --git a/drivers/spi/Kconfig b/drivers/spi/Kconfig index
-> > ad5d68e..671d078 100644
-> > --- a/drivers/spi/Kconfig
-> > +++ b/drivers/spi/Kconfig
-> > @@ -688,6 +688,19 @@ config SPI_TXX9
-> >         help
-> >           SPI driver for Toshiba TXx9 MIPS SoCs
-> >
-> > +config SPI_UNIPHIER
-> > +       tristate "Socionext UniPhier SPI Controller"
-> > +       depends on (ARCH_UNIPHIER || COMPILE_TEST) && OF
-> > +       help
-> > +         This enables a driver for the Socionext UniPhier SoC SCSSI SPI controller.
-> > +
-> > +         UniPhier SoCs have SCSSI and MCSSI SPI controllers.
-> > +         Every UniPhier SoC has SCSSI which supports single channel.
-> > +         Older UniPhier Pro4/Pro5 also has MCSSI which support multiple channels.
-> > +         This driver supports SCSSI only.
-> > +
-> > +         If your SoC supports SCSSI, say Y here.
-> > +
-> >  config SPI_XCOMM
-> >         tristate "Analog Devices AD-FMCOMMS1-EBZ SPI-I2C-bridge driver"
-> >         depends on I2C
-> > diff --git a/drivers/spi/Makefile b/drivers/spi/Makefile index
-> > cb1f437..a90d559 100644
-> > --- a/drivers/spi/Makefile
-> > +++ b/drivers/spi/Makefile
-> > @@ -101,6 +101,7 @@ spi-thunderx-objs                   := spi-cavium.o spi-cavium-thunderx.o
-> >  obj-$(CONFIG_SPI_THUNDERX)             += spi-thunderx.o
-> >  obj-$(CONFIG_SPI_TOPCLIFF_PCH)         += spi-topcliff-pch.o
-> >  obj-$(CONFIG_SPI_TXX9)                 += spi-txx9.o
-> > +obj-$(CONFIG_SPI_UNIPHIER)             += spi-uniphier.o
-> >  obj-$(CONFIG_SPI_XCOMM)                += spi-xcomm.o
-> >  obj-$(CONFIG_SPI_XILINX)               += spi-xilinx.o
-> >  obj-$(CONFIG_SPI_XLP)                  += spi-xlp.o
-> > diff --git a/drivers/spi/spi-uniphier.c b/drivers/spi/spi-uniphier.c
-> > new file mode 100644 index 0000000..2e80bb0
-> > --- /dev/null
-> > +++ b/drivers/spi/spi-uniphier.c
-> > @@ -0,0 +1,539 @@
-> > +// SPDX-License-Identifier: GPL-2.0
-> > +// spi-uniphier.c - Socionext UniPhier SPI controller driver
-> > +// Copyright 2012      Panasonic Corporation
-> > +// Copyright 2016-2018 Socionext Inc.
-> > +
-> > +#include <asm/unaligned.h>
-> > +#include <linux/kernel.h>
-> > +#include <linux/bitfield.h>
-> > +#include <linux/bitops.h>
-> > +#include <linux/clk.h>
-> > +#include <linux/interrupt.h>
-> > +#include <linux/io.h>
-> > +#include <linux/module.h>
-> > +#include <linux/of.h>
-> > +#include <linux/of_platform.h>
-> > +#include <linux/platform_device.h>
-> > +#include <linux/spi/spi.h>
-> > +
-> > +#define SSI_TIMEOUT            2000    /* ms */
-> > +#define SSI_MAX_CLK_DIVIDER    254
-> > +#define SSI_MIN_CLK_DIVIDER    4
-> > +
-> > +struct uniphier_spi_priv {
-> > +       void __iomem *base;
-> > +       int irq;
-> 
-> 
-> irq is unnecessary because it is only used in probe().
-> 
-> Use a stack variable.
-
-I see. I will modify it.
-
-> 
-> 
-> > +       struct clk *clk;
-> > +       struct spi_master *master;
-> > +       struct completion xfer_done;
-> > +
-> > +       int error;
-> > +       unsigned int tx_bytes;
-> > +       unsigned int rx_bytes;
-> > +       const u8 *tx_buf;
-> > +       u8 *rx_buf;
-> > +
-> > +       bool is_save_param;
-> > +       u8 bits_per_word;
-> > +       u16 mode;
-> > +       u32 speed_hz;
-> > +};
-> > +
-> > +#define SSI_CTL                        0x0
-> > +#define   SSI_CTL_EN           BIT(0)
-> > +
-> > +#define SSI_CKS                        0x4
-> > +#define   SSI_CKS_CKRAT_MASK   GENMASK(7, 0)
-> > +#define   SSI_CKS_CKPHS                BIT(14)
-> > +#define   SSI_CKS_CKINIT       BIT(13)
-> > +#define   SSI_CKS_CKDLY                BIT(12)
-> > +
-> > +#define SSI_TXWDS              0x8
-> > +#define   SSI_TXWDS_WDLEN_MASK GENMASK(13, 8)
-> > +#define   SSI_TXWDS_TDTF_MASK  GENMASK(7, 6)
-> > +#define   SSI_TXWDS_DTLEN_MASK GENMASK(5, 0)
-> > +
-> > +#define SSI_RXWDS              0xc
-> > +#define   SSI_RXWDS_DTLEN_MASK GENMASK(5, 0)
-> > +
-> > +#define SSI_FPS                        0x10
-> > +#define   SSI_FPS_FSPOL                BIT(15)
-> > +#define   SSI_FPS_FSTRT                BIT(14)
-> > +
-> > +#define SSI_SR                 0x14
-> > +#define   SSI_SR_RNE           BIT(0)
-> > +
-> > +#define SSI_IE                 0x18
-> > +#define   SSI_IE_RCIE          BIT(3)
-> > +#define   SSI_IE_RORIE         BIT(0)
-> > +
-> > +#define SSI_IS                 0x1c
-> > +#define   SSI_IS_RXRS          BIT(9)
-> > +#define   SSI_IS_RCID          BIT(3)
-> > +#define   SSI_IS_RORID         BIT(0)
-> > +
-> > +#define SSI_IC                 0x1c
-> > +#define   SSI_IC_TCIC          BIT(4)
-> > +#define   SSI_IC_RCIC          BIT(3)
-> > +#define   SSI_IC_RORIC         BIT(0)
-> > +
-> > +#define SSI_FC                 0x20
-> > +#define   SSI_FC_TXFFL         BIT(12)
-> > +#define   SSI_FC_TXFTH_MASK    GENMASK(11, 8)
-> > +#define   SSI_FC_RXFFL         BIT(4)
-> > +#define   SSI_FC_RXFTH_MASK    GENMASK(3, 0)
-> > +
-> > +#define SSI_TXDR               0x24
-> > +#define SSI_RXDR               0x24
-> > +
-> > +#define SSI_FIFO_DEPTH         8U
-> > +
-> > +static inline unsigned int bytes_per_word(unsigned int bits) {
-> > +       return bits <= 8 ? 1 : (bits <= 16 ? 2 : 4); }
-> > +
-> > +static inline void uniphier_spi_irq_enable(struct spi_device *spi,
-> > +u32 mask) {
-> > +       struct uniphier_spi_priv *priv = spi_master_get_devdata(spi->master);
-> > +       u32 val;
-> > +
-> > +       val = readl(priv->base + SSI_IE);
-> > +       val |= mask;
-> > +       writel(val, priv->base + SSI_IE); }
-> > +
-> > +static inline void uniphier_spi_irq_disable(struct spi_device *spi,
-> > +u32 mask) {
-> > +       struct uniphier_spi_priv *priv = spi_master_get_devdata(spi->master);
-> > +       u32 val;
-> > +
-> > +       val = readl(priv->base + SSI_IE);
-> > +       val &= ~mask;
-> > +       writel(val, priv->base + SSI_IE); }
-> > +
-> > +static void uniphier_spi_set_mode(struct spi_device *spi) {
-> > +       struct uniphier_spi_priv *priv = spi_master_get_devdata(spi->master);
-> > +       u32 val1, val2;
-> > +
-> > +       /*
-> > +        * clock setting
-> > +        * CKPHS    capture timing. 0:rising edge, 1:falling edge
-> > +        * CKINIT   clock initial level. 0:low, 1:high
-> > +        * CKDLY    clock delay. 0:no delay, 1:delay depending on FSTRT
-> > +        *          (FSTRT=0: 1 clock, FSTRT=1: 0.5 clock)
-> > +        *
-> > +        * frame setting
-> > +        * FSPOL    frame signal porarity. 0: low, 1: high
-> > +        * FSTRT    start frame timing
-> > +        *          0: rising edge of clock, 1: falling edge of clock
-> > +        */
-> > +       switch (spi->mode & (SPI_CPOL | SPI_CPHA)) {
-> > +       case SPI_MODE_0:
-> > +               /* CKPHS=1, CKINIT=0, CKDLY=1, FSTRT=0 */
-> > +               val1 = SSI_CKS_CKPHS | SSI_CKS_CKDLY;
-> > +               val2 = 0;
-> > +               break;
-> > +       case SPI_MODE_1:
-> > +               /* CKPHS=0, CKINIT=0, CKDLY=0, FSTRT=1 */
-> > +               val1 = 0;
-> > +               val2 = SSI_FPS_FSTRT;
-> > +               break;
-> > +       case SPI_MODE_2:
-> > +               /* CKPHS=0, CKINIT=1, CKDLY=1, FSTRT=1 */
-> > +               val1 = SSI_CKS_CKINIT | SSI_CKS_CKDLY;
-> > +               val2 = SSI_FPS_FSTRT;
-> > +               break;
-> > +       case SPI_MODE_3:
-> > +               /* CKPHS=1, CKINIT=1, CKDLY=0, FSTRT=0 */
-> > +               val1 = SSI_CKS_CKPHS | SSI_CKS_CKINIT;
-> > +               val2 = 0;
-> > +               break;
-> > +       }
-> > +
-> > +       if (!(spi->mode & SPI_CS_HIGH))
-> > +               val2 |= SSI_FPS_FSPOL;
-> > +
-> > +       writel(val1, priv->base + SSI_CKS);
-> > +       writel(val2, priv->base + SSI_FPS);
-> > +
-> > +       val1 = 0;
-> > +       if (spi->mode & SPI_LSB_FIRST)
-> > +               val1 |= FIELD_PREP(SSI_TXWDS_TDTF_MASK, 1);
-> > +       writel(val1, priv->base + SSI_TXWDS);
-> > +       writel(val1, priv->base + SSI_RXWDS); }
-> > +
-> > +static void uniphier_spi_set_transfer_size(struct spi_device *spi,
-> > +int size) {
-> > +       struct uniphier_spi_priv *priv = spi_master_get_devdata(spi->master);
-> > +       u32 val;
-> > +
-> > +       val = readl(priv->base + SSI_TXWDS);
-> > +       val &= ~(SSI_TXWDS_WDLEN_MASK | SSI_TXWDS_DTLEN_MASK);
-> > +       val |= FIELD_PREP(SSI_TXWDS_WDLEN_MASK, size);
-> > +       val |= FIELD_PREP(SSI_TXWDS_DTLEN_MASK, size);
-> > +       writel(val, priv->base + SSI_TXWDS);
-> > +
-> > +       val = readl(priv->base + SSI_RXWDS);
-> > +       val &= ~SSI_RXWDS_DTLEN_MASK;
-> > +       val |= FIELD_PREP(SSI_RXWDS_DTLEN_MASK, size);
-> > +       writel(val, priv->base + SSI_RXWDS); }
-> > +
-> > +static int uniphier_spi_set_baudrate(struct spi_device *spi, unsigned
-> > +int speed) {
-> > +       struct uniphier_spi_priv *priv = spi_master_get_devdata(spi->master);
-> > +       u32 val, ckrat;
-> > +
-> > +       /*
-> > +        * the supported rates are even numbers from 4 to 254. (4,6,8...254)
-> > +        * round up as we look for equal or less speed
-> > +        */
-> > +       ckrat = DIV_ROUND_UP(clk_get_rate(priv->clk), speed);
-> > +       ckrat = roundup(ckrat, 2);
-> > +
-> > +       /* check if requested speed is too small */
-> > +       if (ckrat > SSI_MAX_CLK_DIVIDER)
-> > +               return -EINVAL;
-> > +
-> > +       if (ckrat < SSI_MIN_CLK_DIVIDER)
-> > +               ckrat = SSI_MIN_CLK_DIVIDER;
-> > +
-> > +       val = readl(priv->base + SSI_CKS);
-> > +       val &= ~SSI_CKS_CKRAT_MASK;
-> > +       val |= ckrat & SSI_CKS_CKRAT_MASK;
-> > +       writel(val, priv->base + SSI_CKS);
-> > +
-> > +       return 0;
-> > +}
-> > +
-> > +static int uniphier_spi_setup_transfer(struct spi_device *spi,
-> > +                                      struct spi_transfer *t) {
-> > +       struct uniphier_spi_priv *priv = spi_master_get_devdata(spi->master);
-> > +       u32 val;
-> > +       int ret;
-> > +
-> > +       priv->error = 0;
-> > +       priv->tx_buf = t->tx_buf;
-> > +       priv->rx_buf = t->rx_buf;
-> > +       priv->tx_bytes = priv->rx_bytes = t->len;
-> > +
-> > +       if (!priv->is_save_param || priv->mode != spi->mode) {
-> > +               uniphier_spi_set_mode(spi);
-> > +               priv->mode = spi->mode;
-> > +       }
-> > +
-> > +       if (!priv->is_save_param || priv->bits_per_word != t->bits_per_word) {
-> > +               uniphier_spi_set_transfer_size(spi, t->bits_per_word);
-> > +               priv->bits_per_word = t->bits_per_word;
-> > +       }
-> > +
-> > +       if (!priv->is_save_param || priv->speed_hz != t->speed_hz) {
-> > +               ret = uniphier_spi_set_baudrate(spi, t->speed_hz);
-> > +               if (ret)
-> > +                       return ret;
-> > +               priv->speed_hz = t->speed_hz;
-> > +       }
-> > +
-> > +       if (!priv->is_save_param)
-> > +               priv->is_save_param = true;
-> > +
-> > +       /* reset FIFOs */
-> > +       val = SSI_FC_TXFFL | SSI_FC_RXFFL;
-> > +       writel(val, priv->base + SSI_FC);
-> > +
-> > +       return 0;
-> > +}
-> > +
-> > +static void uniphier_spi_send(struct uniphier_spi_priv *priv) {
-> > +       int wsize;
-> > +       u32 val = 0;
-> > +
-> > +       wsize = min(bytes_per_word(priv->bits_per_word), priv->tx_bytes);
-> > +       priv->tx_bytes -= wsize;
-> > +
-> > +       if (priv->tx_buf) {
-> > +               switch (wsize) {
-> > +               case 1:
-> > +                       val = *priv->tx_buf;
-> > +                       break;
-> > +               case 2:
-> > +                       val = get_unaligned_le16(priv->tx_buf);
-> > +                       break;
-> > +               case 4:
-> > +                       val = get_unaligned_le32(priv->tx_buf);
-> > +                       break;
-> > +               }
-> > +
-> > +               priv->tx_buf += wsize;
-> > +       }
-> > +
-> > +       writel(val, priv->base + SSI_TXDR); }
-> > +
-> > +static void uniphier_spi_recv(struct uniphier_spi_priv *priv) {
-> > +       int rsize;
-> > +       u32 val;
-> > +
-> > +       rsize = min(bytes_per_word(priv->bits_per_word), priv->rx_bytes);
-> > +       priv->rx_bytes -= rsize;
-> > +
-> > +       val = readl(priv->base + SSI_RXDR);
-> > +
-> > +       if (priv->rx_buf) {
-> > +               switch (rsize) {
-> > +               case 1:
-> > +                       *priv->rx_buf = (u8)val;
-> 
-> Is this cast necessary?
-
-I added it explicitly, but I will modify it.
-
-
-> 
-> > +                       break;
-> > +               case 2:
-> > +                       put_unaligned_le16(val, priv->rx_buf);
-> > +                       break;
-> > +               case 4:
-> > +                       put_unaligned_le32(val, priv->rx_buf);
-> > +                       break;
-> > +               }
-> > +
-> > +               priv->rx_buf += rsize;
-> > +       }
-> > +}
-> > +
-> > +static void uniphier_spi_fill_tx_fifo(struct uniphier_spi_priv *priv)
-> > +{
-> > +       unsigned int tx_count;
-> > +       u32 val;
-> > +
-> > +       tx_count = DIV_ROUND_UP(priv->tx_bytes,
-> > +                               bytes_per_word(priv->bits_per_word));
-> > +       tx_count = min(tx_count, SSI_FIFO_DEPTH);
-> > +
-> > +       /* set fifo threthold */
-> 
-> 
-> Typo.  threshold
-
-I will modify it.
-
-> 
-> 
-> > +       val = readl(priv->base + SSI_FC);
-> > +       val &= ~(SSI_FC_TXFTH_MASK | SSI_FC_RXFTH_MASK);
-> > +       val |= FIELD_PREP(SSI_FC_TXFTH_MASK, tx_count);
-> > +       val |= FIELD_PREP(SSI_FC_RXFTH_MASK, tx_count);
-> > +       writel(val, priv->base + SSI_FC);
-> > +
-> > +       while (tx_count--)
-> > +               uniphier_spi_send(priv); }
-> > +
-> > +static void uniphier_spi_set_cs(struct spi_device *spi, bool enable)
-> > +{
-> > +       struct uniphier_spi_priv *priv = spi_master_get_devdata(spi->master);
-> > +       u32 val;
-> > +
-> > +       val = readl(priv->base + SSI_FPS);
-> > +
-> > +       if (enable)
-> > +               val |= SSI_FPS_FSPOL;
-> > +       else
-> > +               val &= ~SSI_FPS_FSPOL;
-> > +
-> > +       writel(val, priv->base + SSI_FPS); }
-> > +
-> > +static int uniphier_spi_transfer_one(struct spi_master *master,
-> > +                                    struct spi_device *spi,
-> > +                                    struct spi_transfer *t) {
-> > +       struct uniphier_spi_priv *priv = spi_master_get_devdata(master);
-> > +       int status;
-> > +
-> > +       status = uniphier_spi_setup_transfer(spi, t);
-> > +       if (status < 0)
-> > +               return status;
-> > +
-> > +       reinit_completion(&priv->xfer_done);
-> > +
-> > +       uniphier_spi_fill_tx_fifo(priv);
-> > +
-> > +       uniphier_spi_irq_enable(spi, SSI_IE_RCIE | SSI_IE_RORIE);
-> > +
-> > +       status = wait_for_completion_timeout(&priv->xfer_done,
-> > +
-> > + msecs_to_jiffies(SSI_TIMEOUT));
-> > +
-> > +       uniphier_spi_irq_disable(spi, SSI_IE_RCIE | SSI_IE_RORIE);
-> > +
-> > +       if (status < 0)
-> > +               return status;
-> > +
-> > +       return priv->error;
-> > +}
-> > +
-> > +static int uniphier_spi_prepare_transfer_hardware(struct spi_master
-> > +*master) {
-> > +       struct uniphier_spi_priv *priv =
-> > +spi_master_get_devdata(master);
-> > +
-> > +       writel(SSI_CTL_EN, priv->base + SSI_CTL);
-> > +
-> > +       return 0;
-> > +}
-> > +
-> > +static int uniphier_spi_unprepare_transfer_hardware(struct spi_master
-> > +*master) {
-> > +       struct uniphier_spi_priv *priv =
-> > +spi_master_get_devdata(master);
-> > +
-> > +       writel(0, priv->base + SSI_CTL);
-> > +
-> > +       return 0;
-> > +}
-> > +
-> > +static irqreturn_t uniphier_spi_handler(int irq, void *dev_id) {
-> > +       struct uniphier_spi_priv *priv = dev_id;
-> > +       u32 val, stat;
-> > +
-> > +       stat = readl(priv->base + SSI_IS);
-> > +       val = SSI_IC_TCIC | SSI_IC_RCIC | SSI_IC_RORIC;
-> > +       writel(val, priv->base + SSI_IC);
-> > +
-> > +       /* rx fifo overrun */
-> > +       if (stat & SSI_IS_RORID) {
-> > +               priv->error = -EIO;
-> > +               goto done;
-> > +       }
-> > +
-> > +       /* rx complete */
-> > +       if ((stat & SSI_IS_RCID) && (stat & SSI_IS_RXRS)) {
-> > +               while ((readl(priv->base + SSI_SR) & SSI_SR_RNE) &&
-> > +                               (priv->rx_bytes - priv->tx_bytes) > 0)
-> > +                       uniphier_spi_recv(priv);
-> > +
-> > +               if ((readl(priv->base + SSI_SR) & SSI_SR_RNE) ||
-> > +                               (priv->rx_bytes != priv->tx_bytes)) {
-> > +                       priv->error = -EIO;
-> > +                       goto done;
-> > +               } else if (priv->rx_bytes == 0)
-> > +                       goto done;
-> > +
-> > +               /* next tx transfer */
-> > +               uniphier_spi_fill_tx_fifo(priv);
-> > +
-> > +               return IRQ_HANDLED;
-> > +       }
-> > +
-> > +       return IRQ_NONE;
-> > +
-> > +done:
-> > +       complete(&priv->xfer_done);
-> > +       return IRQ_HANDLED;
-> > +}
-> > +
-> > +static int uniphier_spi_probe(struct platform_device *pdev) {
-> > +       struct uniphier_spi_priv *priv;
-> > +       struct spi_master *master;
-> > +       struct resource *res;
-> > +       unsigned long clksrc;
-> > +       int ret;
-> > +
-> > +       master = spi_alloc_master(&pdev->dev, sizeof(*priv));
-> > +       if (!master)
-> > +               return -ENOMEM;
-> > +
-> > +       platform_set_drvdata(pdev, master);
-> > +
-> > +       priv = spi_master_get_devdata(master);
-> > +       priv->master = master;
-> > +       priv->is_save_param = false;
-> > +
-> > +       res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> > +       priv->base = devm_ioremap_resource(&pdev->dev, res);
-> > +       if (IS_ERR(priv->base)) {
-> > +               ret = PTR_ERR(priv->base);
-> > +               goto out_master_put;
-> > +       }
-> > +
-> > +       priv->clk = devm_clk_get(&pdev->dev, NULL);
-> > +       if (IS_ERR(priv->clk)) {
-> > +               dev_err(&pdev->dev, "failed to get clock\n");
-> > +               ret = PTR_ERR(priv->clk);
-> > +               goto out_master_put;
-> > +       }
-> > +
-> > +       ret = clk_prepare_enable(priv->clk);
-> > +       if (ret)
-> > +               goto out_master_put;
-> > +
-> > +       priv->irq = platform_get_irq(pdev, 0);
-> > +       if (priv->irq < 0) {
-> > +               dev_err(&pdev->dev, "failed to get IRQ\n");
-> > +               ret = -ENXIO;
-> > +               goto out_disable_clk;
-> > +       }
-> > +
-> > +       ret = devm_request_irq(&pdev->dev, priv->irq, uniphier_spi_handler,
-> > +                              0, "uniphier-spi", priv);
-> > +       if (ret) {
-> > +               dev_err(&pdev->dev, "failed to request IRQ\n");
-> > +               goto out_disable_clk;
-> > +       }
-> > +
-> > +       init_completion(&priv->xfer_done);
-> > +
-> > +       clksrc = clk_get_rate(priv->clk);
-> 
-> 
-> How about 'clk_rate' ?
-
-OK. I will replace clksrc to clk_rate.
-
-> 
-> 
-> > +       master->max_speed_hz = DIV_ROUND_UP(clksrc, SSI_MIN_CLK_DIVIDER);
-> > +       master->min_speed_hz = DIV_ROUND_UP(clksrc, SSI_MAX_CLK_DIVIDER);
-> > +       master->mode_bits = SPI_CPOL | SPI_CPHA | SPI_CS_HIGH | SPI_LSB_FIRST;
-> > +       master->dev.of_node = pdev->dev.of_node;
-> > +       master->bus_num = pdev->id;
-> > +       master->bits_per_word_mask = SPI_BPW_RANGE_MASK(1, 32);
-> > +
-> > +       master->set_cs = uniphier_spi_set_cs;
-> > +       master->transfer_one = uniphier_spi_transfer_one;
-> > +       master->prepare_transfer_hardware
-> > +                               = uniphier_spi_prepare_transfer_hardware;
-> > +       master->unprepare_transfer_hardware
-> > +                               = uniphier_spi_unprepare_transfer_hardware;
-> > +       master->num_chipselect = 1;
-> > +
-> > +       ret = devm_spi_register_master(&pdev->dev, master);
-> > +       if (ret)
-> > +               goto out_disable_clk;
-> > +
-> > +       return ret;
-> 
-> 
-> I think
-> 
->           return 0;
-> 
-> will be clearer.
-
-I think so. I will modify it.
-
-Thank you.
-
------------------
-Best Regards,
-Keiji Hayashibara
-
-
-
+DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogT2xla3NpaiBSZW1wZWwg
+W21haWx0bzpvLnJlbXBlbEBwZW5ndXRyb25peC5kZV0NCj4gU2VudDogMjAxOMTqN9TCMjbI1SAx
+NzoyMg0KPiBUbzogU2hhd24gR3VvIDxzaGF3bmd1b0BrZXJuZWwub3JnPjsgTWFyayBCcm93biA8
+YnJvb25pZUBrZXJuZWwub3JnPjsNCj4gUmFmYWVsIEouIFd5c29ja2kgPHJhZmFlbC5qLnd5c29j
+a2lAaW50ZWwuY29tPg0KPiBDYzogT2xla3NpaiBSZW1wZWwgPG8ucmVtcGVsQHBlbmd1dHJvbml4
+LmRlPjsga2VybmVsQHBlbmd1dHJvbml4LmRlOw0KPiBkZXZpY2V0cmVlQHZnZXIua2VybmVsLm9y
+ZzsgbGludXgtYXJtLWtlcm5lbEBsaXN0cy5pbmZyYWRlYWQub3JnOw0KPiBsaW51eC1jbGtAdmdl
+ci5rZXJuZWwub3JnOyBsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnOyBBbmRyZXcgTW9ydG9u
+DQo+IDxha3BtQGxpbnV4LWZvdW5kYXRpb24ub3JnPjsgTGlhbSBHaXJkd29vZCA8bGdpcmR3b29k
+QGdtYWlsLmNvbT47DQo+IExlb25hcmQgQ3Jlc3RleiA8bGVvbmFyZC5jcmVzdGV6QG54cC5jb20+
+OyBSb2IgSGVycmluZw0KPiA8cm9iaCtkdEBrZXJuZWwub3JnPjsgTWFyayBSdXRsYW5kIDxtYXJr
+LnJ1dGxhbmRAYXJtLmNvbT47IE1pY2hhZWwNCj4gVHVycXVldHRlIDxtdHVycXVldHRlQGJheWxp
+YnJlLmNvbT47IFN0ZXBoZW4gQm95ZA0KPiA8c2JveWRAY29kZWF1cm9yYS5vcmc+OyBGYWJpbyBF
+c3RldmFtIDxmYWJpby5lc3RldmFtQG54cC5jb20+OyBSdXNzZWxsDQo+IEtpbmcgPGxpbnV4QGFy
+bWxpbnV4Lm9yZy51az47IGRsLWxpbnV4LWlteCA8bGludXgtaW14QG54cC5jb20+OyBSb2JpbiBH
+b25nDQo+IDx5aWJpbi5nb25nQG54cC5jb20+OyBBLnMuIERvbmcgPGFpc2hlbmcuZG9uZ0BueHAu
+Y29tPg0KPiBTdWJqZWN0OiBbUEFUQ0ggdjggMS82XSBBUk06IGlteDZxOiBwcm92aWRlIGRvY3Vt
+ZW50YXRpb24gZm9yIG5ldw0KPiBmc2wscG1pYy1zdGJ5LXBvd2Vyb2ZmIHByb3BlcnR5DQo+IA0K
+PiBTaWduZWQtb2ZmLWJ5OiBPbGVrc2lqIFJlbXBlbCA8by5yZW1wZWxAcGVuZ3V0cm9uaXguZGU+
+DQo+IEFja2VkLWJ5OiBSb2IgSGVycmluZyA8cm9iaEBrZXJuZWwub3JnPg0KPiAtLS0NCj4gIERv
+Y3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9jbG9jay9pbXg2cS1jbG9jay50eHQgfCA4
+ICsrKysrKysrDQo+ICAxIGZpbGUgY2hhbmdlZCwgOCBpbnNlcnRpb25zKCspDQo+IA0KPiBkaWZm
+IC0tZ2l0IGEvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2Nsb2NrL2lteDZxLWNs
+b2NrLnR4dA0KPiBiL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9jbG9jay9pbXg2
+cS1jbG9jay50eHQNCj4gaW5kZXggYTQ1Y2E2N2E5ZDVmLi5lMTMwODM0NmUwMGQgMTAwNjQ0DQo+
+IC0tLSBhL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9jbG9jay9pbXg2cS1jbG9j
+ay50eHQNCj4gKysrIGIvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2Nsb2NrL2lt
+eDZxLWNsb2NrLnR4dA0KPiBAQCAtNiw2ICs2LDE0IEBAIFJlcXVpcmVkIHByb3BlcnRpZXM6DQo+
+ICAtIGludGVycnVwdHM6IFNob3VsZCBjb250YWluIENDTSBpbnRlcnJ1cHQNCj4gIC0gI2Nsb2Nr
+LWNlbGxzOiBTaG91bGQgYmUgPDE+DQo+IA0KPiArT3B0aW9uYWwgcHJvcGVydGllczoNCj4gKy0g
+ZnNsLHBtaWMtc3RieS1wb3dlcm9mZjogQ29uZmlndXJlIENDTSB0byBhc3NlcnQgUE1JQ19TVEJZ
+X1JFUSBzaWduYWwNCj4gKyAgb24gcG93ZXIgb2ZmLg0KPiArICBVc2UgdGhpcyBwcm9wZXJ0eSBp
+ZiB0aGUgU29DIHNob3VsZCBiZSBwb3dlcmVkIG9mZiBieSBleHRlcm5hbCBwb3dlcg0KPiArICBt
+YW5hZ2VtZW50IElDIChQTUlDKSB0cmlnZ2VyZWQgdmlhIFBNSUNfU1RCWV9SRVEgc2lnbmFsLg0K
+UE1JQ19PTl9SRVEgZGlkbid0IGNvbm5lY3QgdG8gYW55IHBpbiBvZiBQTUlDIGluIHlvdXIgY2Fz
+ZT8gRG9uJ3QgdW5kZXJzdGFuZA0Kd2h5IG5vdCBmb2xsb3cgbm9ybWFsIGJvYXJkIGRlc2lnbiBn
+dWlkZSB0byBwb3dlciBvZmYgcG1pYyBieSBQTUlDX09OX1JFUS4NCkhvdyB0byBwb3dlciBvbiBi
+b2FyZCBhZ2FpbiB0aGVuPw0KPiArICBCb2FyZHMgdGhhdCBhcmUgZGVzaWduZWQgdG8gaW5pdGlh
+dGUgcG93ZXJvZmYgb24gUE1JQ19PTl9SRVEgc2lnbmFsDQo+ICtzaG91bGQNCj4gKyAgYmUgdXNp
+bmcgInN5c2Nvbi1wb3dlcm9mZiIgZHJpdmVyIGluc3RlYWQuDQo+ICsNCj4gIFRoZSBjbG9jayBj
+b25zdW1lciBzaG91bGQgc3BlY2lmeSB0aGUgZGVzaXJlZCBjbG9jayBieSBoYXZpbmcgdGhlIGNs
+b2NrICBJRCBpbg0KPiBpdHMgImNsb2NrcyIgcGhhbmRsZSBjZWxsLiAgU2VlIGluY2x1ZGUvZHQt
+YmluZGluZ3MvY2xvY2svaW14NnFkbC1jbG9jay5oDQo+ICBmb3IgdGhlIGZ1bGwgbGlzdCBvZiBp
+Lk1YNiBRdWFkIGFuZCBEdWFsTGl0ZSBjbG9jayBJRHMuDQo+IC0tDQo+IDIuMTguMA0KDQo=
