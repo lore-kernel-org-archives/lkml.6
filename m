@@ -2,192 +2,203 @@ Return-Path: <SRS0=7Z+k=KK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EBBBC6778F
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 12:26:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 648DFC28CF6
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 12:26:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5363520894
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 12:26:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5363520894
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 136D820894
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 12:26:33 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="iNKFhx9G"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 136D820894
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730533AbeGZNm5 (ORCPT
+        id S1731271AbeGZNnH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 26 Jul 2018 09:42:57 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:10131 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729514AbeGZNm5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Jul 2018 09:42:57 -0400
-Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 03E57C4B2C05F;
-        Thu, 26 Jul 2018 20:26:16 +0800 (CST)
-Received: from szvp000100637.huawei.com (10.162.55.131) by smtp.huawei.com
- (10.3.19.208) with Microsoft SMTP Server (TLS) id 14.3.382.0; Thu, 26 Jul
- 2018 20:26:07 +0800
-From:   Gao Xiang <gaoxiang25@huawei.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        <devel@driverdev.osuosl.org>
-CC:     <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-erofs@lists.ozlabs.org>, <yuchao0@huawei.com>,
-        <miaoxie@huawei.com>, <weidu.du@huawei.com>, <hsiangkao@aol.com>,
-        <chao@kernel.org>, Gao Xiang <gaoxiang25@huawei.com>
-Subject: [PATCH 13/25] staging: erofs: <linux/tagptr.h>: introduce tagged pointer
-Date:   Thu, 26 Jul 2018 20:21:56 +0800
-Message-ID: <1532607728-103372-14-git-send-email-gaoxiang25@huawei.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1532607728-103372-1-git-send-email-gaoxiang25@huawei.com>
-References: <1527764767-22190-1-git-send-email-gaoxiang25@huawei.com>
- <1532607728-103372-1-git-send-email-gaoxiang25@huawei.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.162.55.131]
-X-CFilter-Loop: Reflected
+        Thu, 26 Jul 2018 09:43:07 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:53458 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730308AbeGZNnH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Jul 2018 09:43:07 -0400
+Received: by mail-wm0-f66.google.com with SMTP id s9-v6so1783973wmh.3
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Jul 2018 05:26:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=vnzg/uiA3k6rO781938fn/q/XkEEKQ5Auf8o4/VfG+0=;
+        b=iNKFhx9G5JyaT5fvgPqfpI+fWs781Xl3lnyAthveCCruFNvVFuI5MJnU5WupatK7P/
+         rIzoVdsXOpk7yqw1D9fYQDIcBqt5szz+cWiN6PnV9TEyU1VlfR4dB7viI0dcHtmbY4DK
+         zZsLkVBkcxn5finxshVlmg4EBU02lOR2QzDcQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=vnzg/uiA3k6rO781938fn/q/XkEEKQ5Auf8o4/VfG+0=;
+        b=k1PtQ0jg2drNLNNu6excCF9vjhRRBbo01vc0m0vHW7XJ3+W7C3bsMzUBH78Iqv/QCQ
+         iihv2+82Y+TGCFhNADv3aC1RyrmnyV7P9amDqVlYe6gFlaWl4dfYQNjV6D2SkbPshD3z
+         XeTzYFVX3KTIayHVvFm2q8jyW3vGtV9Op+t0IJ/NWf+s1vvYIAvUnhkqvivqgm8e8v4m
+         8CyjculEK4f6uA5EEUlVfTj86O+VuVPJGNLdZiQHaPVJpLBDFqL3ViHPVYZbKNp7YPSi
+         4TXNCN3uzUCrXF28kdH2LmpsGQPVYuUkw1t+wtZ8+UQsLSuPOZsbxHwbESFvhKniWn7Y
+         d9Wg==
+X-Gm-Message-State: AOUpUlErTaH55asmiknVT/X7hn+IgV9uQr6rYWE3uPmVIMarctG8VoN/
+        fbnmFll80dcMWNLmxL9OGCwEFw==
+X-Google-Smtp-Source: AAOMgpdgruM0Nvw3pjI7JiEC3FECmeG/kMkWe+Biq3gc+6s23WW54bi5+5pycSKZyw9xHmJYnMVmuQ==
+X-Received: by 2002:a1c:3f08:: with SMTP id m8-v6mr1541002wma.88.1532607988306;
+        Thu, 26 Jul 2018 05:26:28 -0700 (PDT)
+Received: from [100.125.208.68] (193.84.136.77.rev.sfr.net. [77.136.84.193])
+        by smtp.gmail.com with ESMTPSA id q70-v6sm2791965wmd.39.2018.07.26.05.26.27
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 26 Jul 2018 05:26:27 -0700 (PDT)
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (1.0)
+Subject: Re: [PATCH RT] rtc: Disable RTC_DRV_EFI on RT
+From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
+X-Mailer: iPhone Mail (15F79)
+In-Reply-To: <20180726121504.ba35z3j3wsesryy3@linutronix.de>
+Date:   Thu, 26 Jul 2018 14:26:25 +0200
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        linux-rt-users@vger.kernel.org,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        linux-efi <linux-efi@vger.kernel.org>,
+        Anna-Maria Gleixner <anna-maria@linutronix.de>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <5052E25B-9942-40C1-BD53-86E3D7014557@linaro.org>
+References: <20180726090449.hfvtey3ruzzhzdaz@linutronix.de> <CAKv+Gu_+t_VwY3xDq3nWbnOTfzBc6OtQeRD2GKsseO2uK-uruw@mail.gmail.com> <20180726121504.ba35z3j3wsesryy3@linutronix.de>
+To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently kernel has scattered tagged pointer usages hacked
-by hand in plain code, without a unique and portable functionset
-to highlight the tagged pointer itself and wrap these hacked code
-in order to clean up all over meaningless magic masks.
 
-Therefore, this patch introduces simple generic methods to fold
-tags into a pointer integer. It currently supports the last n bits
-of the pointer for tags, which can be selected by users.
 
-In addition, it will also be used for the upcoming EROFS filesystem,
-which heavily uses tagged pointer approach for high performance
-and reducing extra memory allocation.
+> On 26 Jul 2018, at 14:15, Sebastian Andrzej Siewior <bigeasy@linutronix.de=
+> wrote:
+>=20
+>> On 2018-07-26 11:15:52 [+0200], Ard Biesheuvel wrote:
+>> On 26 July 2018 at 11:04, Sebastian Andrzej Siewior
+>> <bigeasy@linutronix.de> wrote:
+>>> Based on measurements the EFI functions get_variable /
+>>> get_next_variable take up to 2us. The functions get_time, set_time take
+>>> around 10ms. Those 10ms are too much. Even one ms would be too much.
+>>=20
+>> You cannot extrapolate from these numbers. If the lack of worst case
+>> guarantees on an EFI system is a problem for -rt, the only meaningful
+>> course of action is to disable EFI runtime services entirely.
+>=20
+> Oh boy. I disable EFI entirely because then the bootloader won't boot
+> due to missing efi-stub. But I could disable the runtime-wrappers if
+> that is what you meant. Patch below.
+>=20
 
-Link: https://en.wikipedia.org/wiki/Tagged_pointer
+What i mean is whatever you end up with if you pass efi=3Dnoruntime to the k=
+ernel.
 
-Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
----
- drivers/staging/erofs/include/linux/tagptr.h | 110 +++++++++++++++++++++++++++
- 1 file changed, 110 insertions(+)
- create mode 100644 drivers/staging/erofs/include/linux/tagptr.h
+But as i mentioned before, you may also lose the ability to reboot/shut down=
+ your system this way. Can you please double check?
 
-diff --git a/drivers/staging/erofs/include/linux/tagptr.h b/drivers/staging/erofs/include/linux/tagptr.h
-new file mode 100644
-index 0000000..ccd106d
---- /dev/null
-+++ b/drivers/staging/erofs/include/linux/tagptr.h
-@@ -0,0 +1,110 @@
-+/* SPDX-License-Identifier: GPL-2.0
-+ *
-+ * Tagged pointer implementation
-+ *
-+ * Copyright (C) 2018 Gao Xiang <gaoxiang25@huawei.com>
-+ */
-+#ifndef _LINUX_TAGPTR_H
-+#define _LINUX_TAGPTR_H
-+
-+#include <linux/types.h>
-+#include <linux/build_bug.h>
-+
-+/*
-+ * the name of tagged pointer types are tagptr{1, 2, 3...}_t
-+ * avoid directly using the internal structs __tagptr{1, 2, 3...}
-+ */
-+#define __MAKE_TAGPTR(n) \
-+typedef struct __tagptr##n {	\
-+	uintptr_t v;	\
-+} tagptr##n##_t;
-+
-+__MAKE_TAGPTR(1)
-+__MAKE_TAGPTR(2)
-+__MAKE_TAGPTR(3)
-+__MAKE_TAGPTR(4)
-+
-+#undef __MAKE_TAGPTR
-+
-+extern void __compiletime_error("bad tagptr tags")
-+	__bad_tagptr_tags(void);
-+
-+extern void __compiletime_error("bad tagptr type")
-+	__bad_tagptr_type(void);
-+
-+/* fix the broken usage of "#define tagptr2_t tagptr3_t" by users */
-+#define __tagptr_mask_1(ptr, n)	\
-+	__builtin_types_compatible_p(typeof(ptr), struct __tagptr##n) ? \
-+		(1UL << (n)) - 1 :
-+
-+#define __tagptr_mask(ptr)	(\
-+	__tagptr_mask_1(ptr, 1) ( \
-+	__tagptr_mask_1(ptr, 2) ( \
-+	__tagptr_mask_1(ptr, 3) ( \
-+	__tagptr_mask_1(ptr, 4) ( \
-+	__bad_tagptr_type(), 0)))))
-+
-+/* generate a tagged pointer from a raw value */
-+#define tagptr_init(type, val) \
-+	((typeof(type)){ .v = (uintptr_t)(val) })
-+
-+/*
-+ * directly cast a tagged pointer to the native pointer type, which
-+ * could be used for backward compatibility of existing code.
-+ */
-+#define tagptr_cast_ptr(tptr) ((void *)(tptr).v)
-+
-+/* encode tagged pointers */
-+#define tagptr_fold(type, ptr, _tags) ({ \
-+	const typeof(_tags) tags = (_tags); \
-+	if (__builtin_constant_p(tags) && (tags & ~__tagptr_mask(type))) \
-+		__bad_tagptr_tags(); \
-+tagptr_init(type, (uintptr_t)(ptr) | tags); })
-+
-+/* decode tagged pointers */
-+#define tagptr_unfold_ptr(tptr) \
-+	((void *)((tptr).v & ~__tagptr_mask(tptr)))
-+
-+#define tagptr_unfold_tags(tptr) \
-+	((tptr).v & __tagptr_mask(tptr))
-+
-+/* operations for the tagger pointer */
-+#define tagptr_eq(_tptr1, _tptr2) ({ \
-+	typeof(_tptr1) tptr1 = (_tptr1); \
-+	typeof(_tptr2) tptr2 = (_tptr2); \
-+	(void)(&tptr1 == &tptr2); \
-+(tptr1).v == (tptr2).v; })
-+
-+/* lock-free CAS operation */
-+#define tagptr_cmpxchg(_ptptr, _o, _n) ({ \
-+	typeof(_ptptr) ptptr = (_ptptr); \
-+	typeof(_o) o = (_o); \
-+	typeof(_n) n = (_n); \
-+	(void)(&o == &n); \
-+	(void)(&o == ptptr); \
-+tagptr_init(o, cmpxchg(&ptptr->v, o.v, n.v)); })
-+
-+/* wrap WRITE_ONCE if atomic update is needed */
-+#define tagptr_replace_tags(_ptptr, tags) ({ \
-+	typeof(_ptptr) ptptr = (_ptptr); \
-+	*ptptr = tagptr_fold(*ptptr, tagptr_unfold_ptr(*ptptr), tags); \
-+*ptptr; })
-+
-+#define tagptr_set_tags(_ptptr, _tags) ({ \
-+	typeof(_ptptr) ptptr = (_ptptr); \
-+	const typeof(_tags) tags = (_tags); \
-+	if (__builtin_constant_p(tags) && (tags & ~__tagptr_mask(*ptptr))) \
-+		__bad_tagptr_tags(); \
-+	ptptr->v |= tags; \
-+*ptptr; })
-+
-+#define tagptr_clear_tags(_ptptr, _tags) ({ \
-+	typeof(_ptptr) ptptr = (_ptptr); \
-+	const typeof(_tags) tags = (_tags); \
-+	if (__builtin_constant_p(tags) && (tags & ~__tagptr_mask(*ptptr))) \
-+		__bad_tagptr_tags(); \
-+	ptptr->v &= ~tags; \
-+*ptptr; })
-+
-+#endif
-+
--- 
-1.9.1
+>> I think SetVariable() may be even worse than GetTime(), given that NOR
+>> flash updates may involve erasing blocks.
+>=20
+> Here we go. "Read" can be triggered from userland via sysfs / efivars.
+> "Write" is (currently) limited to pstore?
+>=20
 
+No you can also write to variables via efivarfs and sysfs.
+
+>>> The funny part is that EFI is invoked with enabled interrupts.
+>>> According to my tracing I see the interrupt almost 10ms later which
+>>> indicates that EFI is disabling interrupts while doing its thing.
+>>=20
+>> Yes, and this is also highly implementation specific. Basing this kind
+>> of policy on a single implementation is not very wise imo.
+>=20
+> even if interrupts were not disabled then there would be no context
+> switch on exit from interrupt path due to the preempt-disable part. So
+> no improvement.
+>=20
+>>> This was observed on "EFI v2.60 by SoftIron Overdrive 1000". I don't say=
+
+>>> that every EFI implementation does this but given that it has to access a=
+
+>>> slow bus like I2C/SPI it is expected.
+>>>=20
+>>> Disable EFI's RTC driver on RT.
+>>>=20
+>>=20
+>> Other calls to GetTime() would still be permitted in this case, so
+>> this seems like a partial solution (although no other calls seem to
+>> exist atm)
+>=20
+> I *assumed* pstore would use the SetVariable during warning/bug. The
+> pstore thingy might be useful. Not sure.
+>=20
+> ------ >8
+>=20
+> Subject: [PATCH RT] arm64: Disable EFI runtime services on RT
+>=20
+> Based on meassurements the EFI functions get_variable /
+> get_next_variable take up to 2us which looks okay.
+> The functions get_time, set_time take around 10ms. Those 10ms are too
+> much. Even one ms would be too much.
+> Ard mentioned that SetVariable might even trigger larger latencies if
+> the firware will erase flash blocks on NOR.
+>=20
+> The time-functions are used by efi-rtc and can be triggered during
+> runtimed (either via explicit read/write or ntp sync).
+>=20
+> The variable write could be used by pstore.
+> These functions can be disabled without much of a loss. The poweroff /
+> reboot hooks will be provided by PSCI.
+>=20
+> Disable EFI's runtime wrappers.
+>=20
+> This was observed on "EFI v2.60 by SoftIron Overdrive 1000".
+>=20
+> Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+> ---
+> arch/arm64/Kconfig                 | 2 +-
+> drivers/firmware/efi/arm-runtime.c | 2 ++
+> 2 files changed, 3 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+> index 111db4e44fcf..68adcb0f4de6 100644
+> --- a/arch/arm64/Kconfig
+> +++ b/arch/arm64/Kconfig
+> @@ -1250,7 +1250,7 @@ config EFI
+>    select LIBFDT
+>    select UCS2_STRING
+>    select EFI_PARAMS_FROM_FDT
+> -    select EFI_RUNTIME_WRAPPERS
+> +    select EFI_RUNTIME_WRAPPERS if !PREEMPT_RT_BASE
+>    select EFI_STUB
+>    select EFI_ARMSTUB
+>    default y
+> diff --git a/drivers/firmware/efi/arm-runtime.c b/drivers/firmware/efi/arm=
+-runtime.c
+> index 5889cbea60b8..3e96db10c034 100644
+> --- a/drivers/firmware/efi/arm-runtime.c
+> +++ b/drivers/firmware/efi/arm-runtime.c
+> @@ -140,8 +140,10 @@ static int __init arm_enable_runtime_services(void)
+>    }
+>=20
+>    /* Set up runtime services function pointers */
+> +#ifdef CONFIG_EFI_RUNTIME_WRAPPERS
+>    efi_native_runtime_setup();
+>    set_bit(EFI_RUNTIME_SERVICES, &efi.flags);
+> +#endif
+>=20
+>    return 0;
+> }
+> --=20
+> 2.18.0
+>=20
