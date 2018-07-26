@@ -2,106 +2,64 @@ Return-Path: <SRS0=7Z+k=KK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E530CC28CF6
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 05:34:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D616C6778F
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 05:34:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 877D620891
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 05:34:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 877D620891
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
+	by mail.kernel.org (Postfix) with ESMTP id B350020891
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 05:34:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B350020891
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728853AbeGZGtQ (ORCPT
+        id S1728965AbeGZGtf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 26 Jul 2018 02:49:16 -0400
-Received: from mx2.suse.de ([195.135.220.15]:43636 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728652AbeGZGtP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Jul 2018 02:49:15 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 88BEFACEF;
-        Thu, 26 Jul 2018 05:34:07 +0000 (UTC)
-From:   Coly Li <colyli@suse.de>
-To:     colyli@suse.de, akpm@linux-foundation.org,
-        linux-kernel@vger.kernel.org
-Cc:     linux-bcache@vger.kernel.org, linux-block@vger.kernel.org,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Michael Lyle <mlyle@lyle.org>,
-        Kent Overstreet <kent.overstreet@gmail.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Eric Biggers <ebiggers3@gmail.com>
-Subject: [PATCH v5 0/2] add crc64 calculation as kernel library 
-Date:   Thu, 26 Jul 2018 13:33:50 +0800
-Message-Id: <20180726053352.2781-1-colyli@suse.de>
-X-Mailer: git-send-email 2.17.1
+        Thu, 26 Jul 2018 02:49:35 -0400
+Received: from shards.monkeyblade.net ([23.128.96.9]:33248 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728914AbeGZGtf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Jul 2018 02:49:35 -0400
+Received: from localhost (unknown [172.58.43.249])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id 54C3C12DE580C;
+        Wed, 25 Jul 2018 22:34:28 -0700 (PDT)
+Date:   Wed, 25 Jul 2018 22:34:27 -0700 (PDT)
+Message-Id: <20180725.223427.566027515457701460.davem@davemloft.net>
+To:     anders.roxell@linaro.org
+Cc:     santosh.shilimkar@oracle.com, ka-cheong.poon@oracle.com,
+        netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
+        rds-devel@oss.oracle.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] net/rds/Kconfig: RDS should depend on IPV6
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <20180725222008.32186-1-anders.roxell@linaro.org>
+References: <20180725222008.32186-1-anders.roxell@linaro.org>
+X-Mailer: Mew version 6.7 on Emacs 26 / Mule 6.0 (HANACHIRUSATO)
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=iso-8859-7
+Content-Transfer-Encoding: base64
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Wed, 25 Jul 2018 22:34:28 -0700 (PDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch set adds basic implementation of crc64 calculation as Linux
-kernel library. Since bcache already does crc64 by itself, this patch
-set also modifies bcache code to use the new crc64 library routine.
-
-Currently bcache is the only user of crc64 calculation, another potential
-user is bcachefs which is on the way to be in mainline kernel. Therefore
-it makes sense to make crc64 calculation to be a public library.
-
-CRC calculation consistency testing is not trvial, it will be another
-separated patch set and not in this series any more.
-
-Coly Li
-
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Michael Lyle <mlyle@lyle.org>
-Cc: Kent Overstreet <kent.overstreet@gmail.com>
-Cc: Kate Stewart <kstewart@linuxfoundation.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Randy Dunlap <rdunlap@infradead.org>
-Cc: Eric Biggers <ebiggers3@gmail.com>
----
-Changelog:
-v5: Remove test_crc patch from this series, it will be another separated
-    patch set. Fixes review comments from v4.
-v4: Only keep crc64_be() in lib/crc64.c, tested bcache specific stuffs 
-    moved back to bcache code.
-    Fixes all review comments of v3.
-v3: Remove little endian restriction and remove 'le' from function names.
-    Fixes all review comments of v2
-v2: Combine first two patches into one
-    Fixes all review comments of v1
-v1: Initial version.
-
-Coly Li (2):
-  lib: add crc64 calculation routines
-  bcache: use routines from lib/crc64.c for CRC64 calculation
-
- drivers/md/bcache/Kconfig |   1 +
- drivers/md/bcache/util.c  | 131 --------------------------------------
- drivers/md/bcache/util.h  |  21 ++++--
- include/linux/crc64.h     |  11 ++++
- lib/.gitignore            |   2 +
- lib/Kconfig               |   8 +++
- lib/Makefile              |  11 ++++
- lib/crc64.c               |  56 ++++++++++++++++
- lib/gen_crc64table.c      |  68 ++++++++++++++++++++
- 9 files changed, 174 insertions(+), 135 deletions(-)
- create mode 100644 include/linux/crc64.h
- create mode 100644 lib/crc64.c
- create mode 100644 lib/gen_crc64table.c
-
--- 
-2.17.1
-
+RnJvbTogQW5kZXJzIFJveGVsbCA8YW5kZXJzLnJveGVsbEBsaW5hcm8ub3JnPg0KRGF0ZTogVGh1
+LCAyNiBKdWwgMjAxOCAwMDoyMDowOCArMDIwMA0KDQo+IEJ1aWxkIGVycm9yLCBpbXBsaWNpdCBk
+ZWNsYXJhdGlvbiBvZiBmdW5jdGlvbiBfX2luZXQ2X2VoYXNoZm4gc2hvd3MgdXANCj4gV2hlbiBS
+RFMgaXMgZW5hYmxlZCBidXQgbm90IElQVjYuDQo+IG5ldC9yZHMvY29ubmVjdGlvbi5jOiBJbiBm
+dW5jdGlvbiChcmRzX2Nvbm5fYnVja2V0ojoNCj4gbmV0L3Jkcy9jb25uZWN0aW9uLmM6Njc6OTog
+ZXJyb3I6IGltcGxpY2l0IGRlY2xhcmF0aW9uIG9mIGZ1bmN0aW9uIKFfX2luZXQ2X2VoYXNoZm6i
+OyBkaWQgeW91IG1lYW4goV9faW5ldF9laGFzaGZuoj8gWy1XZXJyb3I9aW1wbGljaXQtZnVuY3Rp
+b24tZGVjbGFyYXRpb25dDQo+ICAgaGFzaCA9IF9faW5ldDZfZWhhc2hmbihsaGFzaCwgMCwgZmhh
+c2gsIDAsIHJkc19oYXNoX3NlY3JldCk7DQo+ICAgICAgICAgIF5+fn5+fn5+fn5+fn5+fg0KPiAg
+ICAgICAgICBfX2luZXRfZWhhc2hmbg0KPiANCj4gQ3VycmVudCBjb2RlIGFkZHMgSVBWNiBhcyBh
+IGRlcGVuZHMgb24gaW4gY29uZmlnIFJEUy4NCj4gDQo+IEZpeGVzOiBlZWUyZmE2YWIzMjIgKCJy
+ZHM6IENoYW5naW5nIElQIGFkZHJlc3MgaW50ZXJuYWwgcmVwcmVzZW50YXRpb24gdG8gc3RydWN0
+IGluNl9hZGRyIikNCj4gU2lnbmVkLW9mZi1ieTogQW5kZXJzIFJveGVsbCA8YW5kZXJzLnJveGVs
+bEBsaW5hcm8ub3JnPg0KDQpBcHBsaWVkLg0K
