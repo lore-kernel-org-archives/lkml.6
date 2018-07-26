@@ -2,97 +2,112 @@ Return-Path: <SRS0=7Z+k=KK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ACC8DC28CF6
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 22:55:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27D3CC28CF6
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 23:06:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4FC4A20846
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 22:55:17 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="P0cMxS1O"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4FC4A20846
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id 6F16920857
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 23:06:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6F16920857
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731860AbeG0AOJ (ORCPT
+        id S1732079AbeG0AZw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 26 Jul 2018 20:14:09 -0400
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:45758 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731729AbeG0AOJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Jul 2018 20:14:09 -0400
-Received: by mail-pl0-f68.google.com with SMTP id j8-v6so1437755pll.12
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Jul 2018 15:55:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=B+ViF1JjYMbTF6gXyeRxJ3LRFCPpPvWE0v13usRTUV0=;
-        b=P0cMxS1OsT+cK7uW3MW08b5ER/NocR6nhJIR60ZIhlDAhtOvKbl/Z1nvQEQtS6HxdI
-         bR5bTI5MWu0Pwrz44p0KxPsjL919Jfuh+BHOC6BcpLegswcN/pR/7cEcrxLeybXF+6z4
-         tE7TZvZJX8A17ZrRPCAdF5nYF067fCIyAG3ro=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=B+ViF1JjYMbTF6gXyeRxJ3LRFCPpPvWE0v13usRTUV0=;
-        b=KoomY8t518AcyR+J3ACPqKQJJRKIZ454hd2e7NDRGntsA9MQ34uPD0BkuR9i1DPHH2
-         ccgl9YJelxZmbMOGF9JoTPhXBgNs8TEuCiKpj07FTC3ircSZO4mXqqNur1/gKO4+iKyf
-         qGOupB4pdUdNXrqRxrpQ/BEAKZipMpOC+B88fxVkV36uiW6UbK7iOG6QAGy6T2wv0sQA
-         LbJwvyXw880HkUgJ7dLLEwavmlN9uVzd1A3QwLan9T33opd+pVt0nmXF2y3T4dQNz5sL
-         iXZep9dbyelNxVIZiks98LjcS/IJxx30DYYOEMOR4ywABg2UOxDRMfO6xhVjFe9VgxiY
-         GQuA==
-X-Gm-Message-State: AOUpUlF2aRC32PXz4AhkATtEc6HHTbcb6x9P4qE9ZVKpKG4LYK6iPx94
-        kGJFgUlorsUJszf6rAbkefnNQ9aXt7g=
-X-Google-Smtp-Source: AAOMgpd7qRZnlzzRNFENMXj2vt1KJLwjSJjWncUL8CgXpI1arIGpm1len+CoL+5CSEFBUffmJ7KlZw==
-X-Received: by 2002:a17:902:760b:: with SMTP id k11-v6mr3615951pll.91.1532645713196;
-        Thu, 26 Jul 2018 15:55:13 -0700 (PDT)
-Received: from exogeni.mtv.corp.google.com ([2620:0:1000:1501:f407:8d12:c205:7153])
-        by smtp.gmail.com with ESMTPSA id 84-v6sm8015348pfj.33.2018.07.26.15.55.11
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 26 Jul 2018 15:55:12 -0700 (PDT)
-From:   Derek Basehore <dbasehore@chromium.org>
+        Thu, 26 Jul 2018 20:25:52 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34310 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731770AbeG0AZu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Jul 2018 20:25:50 -0400
+Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0462220894;
+        Thu, 26 Jul 2018 23:06:53 +0000 (UTC)
+Received: from rostedt by gandalf.local.home with local (Exim 4.91)
+        (envelope-from <rostedt@goodmis.org>)
+        id 1fipLQ-0006AS-0m; Thu, 26 Jul 2018 19:06:52 -0400
+Message-Id: <20180726230651.924950754@goodmis.org>
+User-Agent: quilt/0.65
+Date:   Thu, 26 Jul 2018 19:06:11 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
 To:     linux-kernel@vger.kernel.org
-Cc:     wsa@the-dreams.de, linux-i2c@vger.kernel.org,
-        dianders@chromium.org, dtor@chromium.org,
-        venkateswarlu.v.vinjamuri@intel.corp-partner.google.com,
-        Derek Basehore <dbasehore@chromium.org>
-Subject: [PATCH] i2c: enable async suspend/resume on i2c devices
-Date:   Thu, 26 Jul 2018 15:55:08 -0700
-Message-Id: <20180726225508.74612-1-dbasehore@chromium.org>
-X-Mailer: git-send-email 2.18.0.345.g5c9ce644c3-goog
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Ingo Molnar <mingo@redhat.com>, stable@vger.kernel.org,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Artem Savkov <asavkov@redhat.com>
+Subject: [PATCH 4/7] tracing/kprobes: Fix trace_probe flags on enable_trace_kprobe()
+ failure
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=ISO-8859-15
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This enables the async suspend property for i2c devices. This reduces
-the suspend/resume time considerably on platforms with multiple i2c
-devices (such as a trackpad or touchscreen).
+From: Artem Savkov <asavkov@redhat.com>
 
-Signed-off-by: Derek Basehore <dbasehore@chromium.org>
+If enable_trace_kprobe fails to enable the probe in enable_k(ret)probe
+it returns an error, but does not unset the tp flags it set previously.
+This results in a probe being considered enabled and failures like being
+unable to remove the probe through kprobe_events file since probes_open()
+expects every probe to be disabled.
+
+Link: http://lkml.kernel.org/r/20180725102826.8300-1-asavkov@redhat.com
+Link: http://lkml.kernel.org/r/20180725142038.4765-1-asavkov@redhat.com
+
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: stable@vger.kernel.org
+Fixes: 41a7dd420c57 ("tracing/kprobes: Support ftrace_event_file base multibuffer")
+Acked-by: Masami Hiramatsu <mhiramat@kernel.org>
+Reviewed-by: Josh Poimboeuf <jpoimboe@redhat.com>
+Signed-off-by: Artem Savkov <asavkov@redhat.com>
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 ---
- drivers/i2c/i2c-core-base.c | 1 +
- 1 file changed, 1 insertion(+)
+ kernel/trace/trace_kprobe.c | 13 +++++++++++--
+ 1 file changed, 11 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/i2c/i2c-core-base.c b/drivers/i2c/i2c-core-base.c
-index 1ba40bb2b966..3382bb7e1dcc 100644
---- a/drivers/i2c/i2c-core-base.c
-+++ b/drivers/i2c/i2c-core-base.c
-@@ -749,6 +749,7 @@ i2c_new_device(struct i2c_adapter *adap, struct i2c_board_info const *info)
- 	client->dev.of_node = info->of_node;
- 	client->dev.fwnode = info->fwnode;
+diff --git a/kernel/trace/trace_kprobe.c b/kernel/trace/trace_kprobe.c
+index 21f718472942..27ace4513c43 100644
+--- a/kernel/trace/trace_kprobe.c
++++ b/kernel/trace/trace_kprobe.c
+@@ -400,11 +400,10 @@ static struct trace_kprobe *find_trace_kprobe(const char *event,
+ static int
+ enable_trace_kprobe(struct trace_kprobe *tk, struct trace_event_file *file)
+ {
++	struct event_file_link *link;
+ 	int ret = 0;
  
-+	device_enable_async_suspend(&client->dev);
- 	i2c_dev_set_name(adap, client, info);
- 
- 	if (info->properties) {
+ 	if (file) {
+-		struct event_file_link *link;
+-
+ 		link = kmalloc(sizeof(*link), GFP_KERNEL);
+ 		if (!link) {
+ 			ret = -ENOMEM;
+@@ -424,6 +423,16 @@ enable_trace_kprobe(struct trace_kprobe *tk, struct trace_event_file *file)
+ 		else
+ 			ret = enable_kprobe(&tk->rp.kp);
+ 	}
++
++	if (ret) {
++		if (file) {
++			list_del_rcu(&link->list);
++			kfree(link);
++			tk->tp.flags &= ~TP_FLAG_TRACE;
++		} else {
++			tk->tp.flags &= ~TP_FLAG_PROFILE;
++		}
++	}
+  out:
+ 	return ret;
+ }
 -- 
-2.18.0.345.g5c9ce644c3-goog
+2.17.1
+
 
