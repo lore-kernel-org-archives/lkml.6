@@ -7,64 +7,64 @@ X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BC31C28CF6
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 19:25:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EFC55ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 19:25:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 32C162083F
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 19:25:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A172820671
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 19:25:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gqzhOAi8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 32C162083F
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fz2kTLyl"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A172820671
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731985AbeGZUnZ (ORCPT
+        id S1732068AbeGZUni (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 26 Jul 2018 16:43:25 -0400
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:46227 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731370AbeGZUnW (ORCPT
+        Thu, 26 Jul 2018 16:43:38 -0400
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:38826 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731964AbeGZUn0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Jul 2018 16:43:22 -0400
-Received: by mail-ed1-f66.google.com with SMTP id o8-v6so2238326edt.13
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Jul 2018 12:25:06 -0700 (PDT)
+        Thu, 26 Jul 2018 16:43:26 -0400
+Received: by mail-ed1-f67.google.com with SMTP id t2-v6so2253278edr.5
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Jul 2018 12:25:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=j1dgjhlU8oFNM9wP4mJurEVqSnb1T3bd7hiKA3FCGrA=;
-        b=gqzhOAi8UrXmMRtW/w0IkBGfgd6t/sl7QM45A/hgOTS2xLJze11fZcX0kr78WJ91z6
-         YRvuxAGed+QEWEjOxtKfGFuyI/xtLIUAeLJCc3q6FQpES1eMnsXUzmL4+T7BjjrPBxYu
-         /eEwSscudAHWx/agomfT5tmwWx2Ec1OV4wKjw3iaZtrLiNW2dDAKOBDKQ651tNwOneWZ
-         n0/q8v6ncT52pEG6hYuEZa8A5dRbKxsxyhoV+T+KxO3tZ9G2OSfcTxhTzkFamDELVmIR
-         jjRiGuV/HwjJQP2OTjd9JbLx3hM9tO/RSpk9WHFOEcgYQAByNpJ6ytYs/qFhFSNp3vnT
-         DIyQ==
+        bh=uv9mf5e5Y0DRn10HzQPmfp3MIjJY/Nl1Y23mfEH6Tz4=;
+        b=fz2kTLyla/yCwlaZeblzU0EGmF/nRMW9S80rE5Ztxwp3hzY7abEEvBdgnT0YgtFVet
+         69eXOPDCsGsqv5O1yo3gD5spAiZPc8VWkFqlB17OSD+zsfQdVuN9aWebhEe7uFs5Exr4
+         AHq69mv+re+55vqpix+uOSboO8mfUe0uL3M+aFrA27bSrqCJ+HszN0Zt9iDwru5GNGCl
+         VJfdDR0LK4BJBuJwMi6sNIKYRHm7+Z9x5YJZfSTOENd00BMz1srOrHwvFWa/GFESYsDM
+         GbNFaQ7FVIY6Ypa3eFJxqCZB3YVbgTeVhWs4txvx0cvLn0rfT1Q+CkA55lXLl/TgpBNF
+         AzOw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=j1dgjhlU8oFNM9wP4mJurEVqSnb1T3bd7hiKA3FCGrA=;
-        b=kDpexj7/o+Eup5sL7ps5HEbv/12vYa1eOcGZObn0tYOQiaaxqrCbepQqGcRQbRcJIr
-         5VH0Zrmv24AXRu/RzQiCiQufctlc7eUd5Th8AT240JyVGI9UGWB75ps3QWJIU4FBRnPT
-         ftK159Xk+wz+eTr2xh/v3fPJ/Be8v7mXeolwfVLhANH1L49SxYMGlt4VmJnQkyGiJX9J
-         12yHcYLcEUImJh9Kaf+xxjGcyV2+9eP2fWmWitDnyH4xkluecKclfATYNYGovrQv16an
-         eOvOJubhnn/Mhr7I0Y8Uts0NzsmwT599Z8cmysb7SkeGFDP0mGG48cbRvDRQ09AtV6PI
-         WXgQ==
-X-Gm-Message-State: AOUpUlGCnF4oswzuOz277mf0uQFEB876CUUPqQl5xUv2hd134xDddeB1
-        lHIq1KQaYeB6hHtC6DKSwmGvfU95
-X-Google-Smtp-Source: AAOMgpf/UuOLcoIgd+DmPEimvgGYoOX9m3acGh0ogcaH5K5HfWDH/QW3tEx0PeoZSj9l8HdmFApDPA==
-X-Received: by 2002:aa7:c803:: with SMTP id a3-v6mr4090954edt.124.1532633105546;
-        Thu, 26 Jul 2018 12:25:05 -0700 (PDT)
+        bh=uv9mf5e5Y0DRn10HzQPmfp3MIjJY/Nl1Y23mfEH6Tz4=;
+        b=Pr9a/gKMIogSXGWo2QwK0xCFtHAeWPk+KKLfK2FwmXqLphlTRV77/0Z0BwX91eny3a
+         lGI++XrqaZyZTcmjpeZ5Lx27q719ZcKsccwORk2yLkM2uZUvprhRykeSn7XxKK3LtTF5
+         pLHmSrCFdevWYXko36EnA4x/qEg21tsFKAhkT7OPpWA7nM9dbt4DSGoEJKyt++eAfTei
+         QfKRXcKjOM4jESfTQz027gOUgwQ6NnDlkysMdghg7sjOxm070Ugp3x5Q5YUPnFc2xcR1
+         Wjul7ivJYsBNziVw6QbdM0c9Kjxwaahx9lnxTj8S6kBB5lDhUei5nGeFA/h/eLCPgpgp
+         3Isw==
+X-Gm-Message-State: AOUpUlH6PHI1CvOBpCaLxWgX5uGZ5vPwoZp/hYlH3FsfmVEXU98Rr+wR
+        jGor15YycclsoNFxKtAPxpMfn3kf
+X-Google-Smtp-Source: AAOMgpfarVP0XqS9doOq2VsMI7x2VZakIAUnXZsDEBw5LEmFpTcIfH3otwR5yFT09GNSv9KsUFqMPw==
+X-Received: by 2002:a50:97bb:: with SMTP id e56-v6mr4167815edb.58.1532633110020;
+        Thu, 26 Jul 2018 12:25:10 -0700 (PDT)
 Received: from localhost.localdomain ([109.76.149.40])
-        by smtp.gmail.com with ESMTPSA id m20-v6sm1100853eds.5.2018.07.26.12.25.04
+        by smtp.gmail.com with ESMTPSA id m20-v6sm1100853eds.5.2018.07.26.12.25.08
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 26 Jul 2018 12:25:04 -0700 (PDT)
+        Thu, 26 Jul 2018 12:25:09 -0700 (PDT)
 From:   John Whitmore <johnfwhitmore@gmail.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     devel@driverdev.osuosl.org, gregkh@linuxfoundation.org,
         John Whitmore <johnfwhitmore@gmail.com>
-Subject: [PATCH 12/16] staging:rtl8192u: Remove proxy rtl819XRadioD_Array - Style
-Date:   Thu, 26 Jul 2018 20:24:22 +0100
-Message-Id: <20180726192426.31913-13-johnfwhitmore@gmail.com>
+Subject: [PATCH 15/16] staging:rtl8192u: Remove repeated definitions - Style
+Date:   Thu, 26 Jul 2018 20:24:25 +0100
+Message-Id: <20180726192426.31913-16-johnfwhitmore@gmail.com>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180726192426.31913-1-johnfwhitmore@gmail.com>
 References: <20180726192426.31913-1-johnfwhitmore@gmail.com>
@@ -73,61 +73,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove the array rtl819XRadioD_Array which is only acting as a proxy to
-the real array Rtl8192UsbRadioD_Array.
+Remove bit field masks which are defined in two files: r819xU_phy.h
+and r819xU_phyreg.h. Or in the case of bMaskByte3 defined but never used.
 
-This is a coding style change which should have no impact on runtime
+The definitions have been removed from the file r819xU_phy.h.
+
+This is a coding style change, which should have no impact on runtime
 code execution.
 
 Signed-off-by: John Whitmore <johnfwhitmore@gmail.com>
 ---
- drivers/staging/rtl8192u/r819xU_phy.c | 7 +++----
- drivers/staging/rtl8192u/r819xU_phy.h | 2 --
- 2 files changed, 3 insertions(+), 6 deletions(-)
+ drivers/staging/rtl8192u/r819xU_phy.h | 8 --------
+ 1 file changed, 8 deletions(-)
 
-diff --git a/drivers/staging/rtl8192u/r819xU_phy.c b/drivers/staging/rtl8192u/r819xU_phy.c
-index 3ed48d6095d7..983520b3aa25 100644
---- a/drivers/staging/rtl8192u/r819xU_phy.c
-+++ b/drivers/staging/rtl8192u/r819xU_phy.c
-@@ -29,7 +29,6 @@ static u32 RF_CHANNEL_TABLE_ZEBRA[] = {
- };
- 
- #define rtl819XMACPHY_Array Rtl8192UsbMACPHY_Array
--#define rtl819XRadioD_Array Rtl8192UsbRadioD_Array
- 
- /******************************************************************************
-  * function:  This function checks different RF type to execute legal judgement.
-@@ -1023,14 +1022,14 @@ u8 rtl8192_phy_ConfigRFWithHeaderFile(struct net_device *dev,
- 	case RF90_PATH_D:
- 		for (i = 0; i < RadioD_ArrayLength; i = i+2) {
- 
--			if (rtl819XRadioD_Array[i] == 0xfe) {
-+			if (Rtl8192UsbRadioD_Array[i] == 0xfe) {
- 				mdelay(100);
- 				continue;
- 			}
- 			rtl8192_phy_SetRFReg(dev, eRFPath,
--					     rtl819XRadioD_Array[i],
-+					     Rtl8192UsbRadioD_Array[i],
- 					     bMask12Bits,
--					     rtl819XRadioD_Array[i+1]);
-+					     Rtl8192UsbRadioD_Array[i+1]);
- 			mdelay(1);
- 
- 		}
 diff --git a/drivers/staging/rtl8192u/r819xU_phy.h b/drivers/staging/rtl8192u/r819xU_phy.h
-index 44af37f19f45..2cd1c25164a2 100644
+index 1ad459cf05ae..8ca869e8ee2f 100644
 --- a/drivers/staging/rtl8192u/r819xU_phy.h
 +++ b/drivers/staging/rtl8192u/r819xU_phy.h
-@@ -25,8 +25,6 @@ struct sw_chnl_cmd {
- 	u32		        ms_delay;
- } __packed;
+@@ -41,14 +41,6 @@ enum rf90_radio_path_e {
+ 	RF90_PATH_MAX				/* Max RF number 92 support */
+ };
  
--extern u32 rtl819XRadioD_Array[];
+-#define bMaskByte0                0xff
+-#define bMaskByte1                0xff00
+-#define bMaskByte2                0xff0000
+-#define bMaskByte3                0xff000000
+-#define bMaskHWord                0xffff0000
+-#define bMaskLWord                0x0000ffff
+-#define bMaskDWord                0xffffffff
 -
- enum HW90_BLOCK_E {
- 	HW90_BLOCK_MAC = 0,
- 	HW90_BLOCK_PHY0 = 1,
+ u8 rtl8192_phy_CheckIsLegalRFPath(struct net_device *dev, u32 eRFPath);
+ void rtl8192_setBBreg(struct net_device *dev, u32 reg_addr,
+ 		      u32 bitmask, u32 data);
 -- 
 2.18.0
 
