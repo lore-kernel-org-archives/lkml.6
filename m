@@ -2,127 +2,194 @@ Return-Path: <SRS0=7Z+k=KK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95583C6778F
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 11:36:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F5AFC6778F
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 11:38:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4E0A920846
-	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 11:36:53 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ox3vliEJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4E0A920846
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id DAA582083F
+	for <linux-kernel@archiver.kernel.org>; Thu, 26 Jul 2018 11:38:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DAA582083F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729820AbeGZMxQ (ORCPT
+        id S1729532AbeGZMyY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 26 Jul 2018 08:53:16 -0400
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:33951 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729268AbeGZMxQ (ORCPT
+        Thu, 26 Jul 2018 08:54:24 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:44317 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729255AbeGZMyY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Jul 2018 08:53:16 -0400
-Received: by mail-ed1-f65.google.com with SMTP id h1-v6so1217385eds.1;
-        Thu, 26 Jul 2018 04:36:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=gGgycYqKR2XYb7GOUj13nP1Wnr0niv4KmX5xHqmp+ek=;
-        b=Ox3vliEJKPzyTkZzed3M3uv34Ib/U2qp0beZhutI3MNk/yox62YQfbecOvW2x6bRw2
-         mqEuCyE6LZpPRjnj7UOQeHCt4SJX3C50CWASDT1t+qDvUjywWrjmBGyZ5y9Hwawm2uuC
-         Fpa7pDuV3P0t+KvkJfXEa97yil38B0vK6KOrUsAU10jOh5NRiQhjj8aVj1e7Q9gOzwMA
-         FbZVbVTgQaA+trezeZ/r2cID44ZpGkFbNy+H53PrrGWR40RdpZEVobgbdBk/rnIajqOc
-         LaFQjrIZazeeVCfjFM0X1knvK5gP1iQ3O7obax+w7t9JUZMi2oLAxKPHIe0zLnfNz8VP
-         3t8A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=gGgycYqKR2XYb7GOUj13nP1Wnr0niv4KmX5xHqmp+ek=;
-        b=SKGyndC8kj6w0kJ9xP5AIwxSV3YS/ndDyox9+9D3tz9zP5PjWkSRPeHRiddDSy8JnS
-         veFT4JAcGTdDQGs/pRPCX21svJX1puYO3mBcSE0fzA13Zt+r1bmp8ch40Jz3Ntiqt126
-         DdRk3OkLUw7D1FJIe9jLGSCheeiIqWg82IuMPcDfjWYcZWgD7K0VbtneNFLGylCliqUk
-         RB/pRqCYP95wsR0xiMat6gbr+l5cVbWv4WFfmhATvfH5ASK96eVNZ2kiJxDBwLNRw7Fn
-         quu9bAfutM+rgBIu6Bg+COEVsLM6qFgq6fkT9wAjl9z8/aSLR4EvScmgL5g1Q5YUzO3A
-         zaWQ==
-X-Gm-Message-State: AOUpUlEvXp/qYTM/1agBvRUtsP9+ywFoUZ0DnWrgGqZnepvdZWG/KZ1I
-        /BsxLiO/puik3gDCI8Q/5nkbVGQXvBGspnOUOmQ=
-X-Google-Smtp-Source: AAOMgpdp3tEuaoYRQtOaJtp3k8Nlyd2tJoFuxKKRoWG7RmfJKR8/234SJqWvZcQSuKYtnpY2B0s9xTm+icETMQpeMqw=
-X-Received: by 2002:a50:8a9b:: with SMTP id j27-v6mr2425931edj.36.1532605007257;
- Thu, 26 Jul 2018 04:36:47 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a50:f68b:0:0:0:0:0 with HTTP; Thu, 26 Jul 2018 04:36:46
- -0700 (PDT)
-In-Reply-To: <AM0PR04MB421178C5283BDCCF11F5E2AF802B0@AM0PR04MB4211.eurprd04.prod.outlook.com>
-References: <20180726065331.6186-1-o.rempel@pengutronix.de>
- <20180726065331.6186-2-o.rempel@pengutronix.de> <CABb+yY2+WwxHBtQfU3TJTErpfzfkNH8iwwYyXbmWAQy8UsqLRQ@mail.gmail.com>
- <AM0PR04MB421178C5283BDCCF11F5E2AF802B0@AM0PR04MB4211.eurprd04.prod.outlook.com>
-From:   Jassi Brar <jassisinghbrar@gmail.com>
-Date:   Thu, 26 Jul 2018 17:06:46 +0530
-Message-ID: <CABb+yY1DQbGnWL=HZc=xPLdJjKgkpdvCHmm6Pr6_MvERR=D56Q@mail.gmail.com>
-Subject: Re: [PATCH v7 1/6] dt-bindings: mailbox: allow mbox-cells to be equal
- to 0
-To:     "A.s. Dong" <aisheng.dong@nxp.com>
-Cc:     Oleksij Rempel <o.rempel@pengutronix.de>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
+        Thu, 26 Jul 2018 08:54:24 -0400
+Received: from soja.hi.pengutronix.de ([2001:67c:670:100:3ad5:47ff:feaf:13da])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.89)
+        (envelope-from <o.rempel@pengutronix.de>)
+        id 1fieac-0000fm-F0; Thu, 26 Jul 2018 13:37:50 +0200
+Subject: Re: [PATCH v8 1/6] ARM: imx6q: provide documentation for new
+ fsl,pmic-stby-poweroff property
+To:     Robin Gong <yibin.gong@nxp.com>, Shawn Guo <shawnguo@kernel.org>,
+        Mark Brown <broonie@kernel.org>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+Cc:     "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Leonard Crestez <leonard.crestez@nxp.com>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Devicetree List <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        ", Sascha Hauer" <kernel@pengutronix.de>,
-        ", linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, srv_heupstream" 
-        <linux-arm-kernel@lists.infradead.org>,
-        dl-linux-imx <linux-imx@nxp.com>
-Content-Type: text/plain; charset="UTF-8"
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Russell King <linux@armlinux.org.uk>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "A.s. Dong" <aisheng.dong@nxp.com>
+References: <20180726092220.17250-1-o.rempel@pengutronix.de>
+ <20180726092220.17250-2-o.rempel@pengutronix.de>
+ <DB6PR04MB3223605CB1F5E06D4A278B3C892B0@DB6PR04MB3223.eurprd04.prod.outlook.com>
+From:   Oleksij Rempel <o.rempel@pengutronix.de>
+Message-ID: <84c1921c-922e-4b5d-b688-db89047fa1db@pengutronix.de>
+Date:   Thu, 26 Jul 2018 13:37:41 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <DB6PR04MB3223605CB1F5E06D4A278B3C892B0@DB6PR04MB3223.eurprd04.prod.outlook.com>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="CmSIAI6FGWQju5vbxnKfqJmQv2oAuY0pf"
+X-SA-Exim-Connect-IP: 2001:67c:670:100:3ad5:47ff:feaf:13da
+X-SA-Exim-Mail-From: o.rempel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 26, 2018 at 4:30 PM, A.s. Dong <aisheng.dong@nxp.com> wrote:
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--CmSIAI6FGWQju5vbxnKfqJmQv2oAuY0pf
+Content-Type: multipart/mixed; boundary="G2Tm66CxLRos6R6xC1wkdggvshNUH6LPO";
+ protected-headers="v1"
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+To: Robin Gong <yibin.gong@nxp.com>, Shawn Guo <shawnguo@kernel.org>,
+ Mark Brown <broonie@kernel.org>,
+ "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+Cc: "kernel@pengutronix.de" <kernel@pengutronix.de>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Liam Girdwood <lgirdwood@gmail.com>,
+ Leonard Crestez <leonard.crestez@nxp.com>, Rob Herring <robh+dt@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Fabio Estevam <fabio.estevam@nxp.com>,
+ Russell King <linux@armlinux.org.uk>, dl-linux-imx <linux-imx@nxp.com>,
+ "A.s. Dong" <aisheng.dong@nxp.com>
+Message-ID: <84c1921c-922e-4b5d-b688-db89047fa1db@pengutronix.de>
+Subject: Re: [PATCH v8 1/6] ARM: imx6q: provide documentation for new
+ fsl,pmic-stby-poweroff property
+References: <20180726092220.17250-1-o.rempel@pengutronix.de>
+ <20180726092220.17250-2-o.rempel@pengutronix.de>
+ <DB6PR04MB3223605CB1F5E06D4A278B3C892B0@DB6PR04MB3223.eurprd04.prod.outlook.com>
+In-Reply-To: <DB6PR04MB3223605CB1F5E06D4A278B3C892B0@DB6PR04MB3223.eurprd04.prod.outlook.com>
+
+--G2Tm66CxLRos6R6xC1wkdggvshNUH6LPO
+Content-Type: text/plain; charset=gbk
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
+
+Hi,
+
+On 26.07.2018 11:51, Robin Gong wrote:
+>=20
+>=20
 >> -----Original Message-----
->> From: Jassi Brar [mailto:jassisinghbrar@gmail.com]
->> Sent: Thursday, July 26, 2018 5:42 PM
->> To: Oleksij Rempel <o.rempel@pengutronix.de>
->> Cc: Shawn Guo <shawnguo@kernel.org>; Fabio Estevam
->> <fabio.estevam@nxp.com>; Rob Herring <robh+dt@kernel.org>; Mark
->> Rutland <mark.rutland@arm.com>; A.s. Dong <aisheng.dong@nxp.com>;
->> Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>; Sudeep Holla
->> <sudeep.holla@arm.com>; Devicetree List <devicetree@vger.kernel.org>;
->> Linux Kernel Mailing List <linux-kernel@vger.kernel.org>; , Sascha Hauer
->> <kernel@pengutronix.de>; , linux-arm-kernel@lists.infradead.org, linux-
->> mediatek@lists.infradead.org, srv_heupstream <linux-arm-
->> kernel@lists.infradead.org>; dl-linux-imx <linux-imx@nxp.com>
->> Subject: Re: [PATCH v7 1/6] dt-bindings: mailbox: allow mbox-cells to be
->> equal to 0
+>> From: Oleksij Rempel [mailto:o.rempel@pengutronix.de]
+>> Sent: 2018=C4=EA7=D4=C226=C8=D5 17:22
+>> To: Shawn Guo <shawnguo@kernel.org>; Mark Brown <broonie@kernel.org>;
+>> Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+>> Cc: Oleksij Rempel <o.rempel@pengutronix.de>; kernel@pengutronix.de;
+>> devicetree@vger.kernel.org; linux-arm-kernel@lists.infradead.org;
+>> linux-clk@vger.kernel.org; linux-kernel@vger.kernel.org; Andrew Morton=
+
+>> <akpm@linux-foundation.org>; Liam Girdwood <lgirdwood@gmail.com>;
+>> Leonard Crestez <leonard.crestez@nxp.com>; Rob Herring
+>> <robh+dt@kernel.org>; Mark Rutland <mark.rutland@arm.com>; Michael
+>> Turquette <mturquette@baylibre.com>; Stephen Boyd
+>> <sboyd@codeaurora.org>; Fabio Estevam <fabio.estevam@nxp.com>; Russell=
+
+>> King <linux@armlinux.org.uk>; dl-linux-imx <linux-imx@nxp.com>; Robin =
+Gong
+>> <yibin.gong@nxp.com>; A.s. Dong <aisheng.dong@nxp.com>
+>> Subject: [PATCH v8 1/6] ARM: imx6q: provide documentation for new
+>> fsl,pmic-stby-poweroff property
 >>
->> On Thu, Jul 26, 2018 at 12:23 PM, Oleksij Rempel <o.rempel@pengutronix.de>
->> wrote:
->> > From: Dong Aisheng <aisheng.dong@nxp.com>
->> >
->> > Mailbox devices may have only one channel which means the mbox-cells
->> > at least 1 does not make sense for this type devices. Let's remove
->> > that limitation to allow the mbox-cells to be equal to 0.
->> >
->> OK
+>> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+>> Acked-by: Rob Herring <robh@kernel.org>
+>> ---
+>>  Documentation/devicetree/bindings/clock/imx6q-clock.txt | 8 ++++++++
+>>  1 file changed, 8 insertions(+)
 >>
->> But please realise that you'll have to write more code -- implement your own
->> of_xlate() callback.
->> Most developers would prefer to call the only channel as channel number 0,
->> and use the common of_xlate implementation.
+>> diff --git a/Documentation/devicetree/bindings/clock/imx6q-clock.txt
+>> b/Documentation/devicetree/bindings/clock/imx6q-clock.txt
+>> index a45ca67a9d5f..e1308346e00d 100644
+>> --- a/Documentation/devicetree/bindings/clock/imx6q-clock.txt
+>> +++ b/Documentation/devicetree/bindings/clock/imx6q-clock.txt
+>> @@ -6,6 +6,14 @@ Required properties:
+>>  - interrupts: Should contain CCM interrupt
+>>  - #clock-cells: Should be <1>
 >>
->
-> Yes, that's true because the common of_xlate assuming the mbox-cells is 1.
-> And there's already such users:
-> arch/arm/boot/dts/bcm283x.dtsi
->
-You mean that is a good thing, right?
+>> +Optional properties:
+>> +- fsl,pmic-stby-poweroff: Configure CCM to assert PMIC_STBY_REQ signa=
+l
+>> +  on power off.
+>> +  Use this property if the SoC should be powered off by external powe=
+r
+>> +  management IC (PMIC) triggered via PMIC_STBY_REQ signal.
+> PMIC_ON_REQ didn't connect to any pin of PMIC in your case?
+
+No. First, it was only one customer specific issue. After some research
+I found even publicly available boards (for example RioTboard) which has
+same/similar design. After seeing this in imx6 documentation as valid
+power off way, I have no doubts - there should be even more devices doin
+this in the wild.
+
+> Don't understand
+> why not follow normal board design guide to power off pmic by PMIC_ON_R=
+EQ.
+> How to power on board again then?
+
+Power cycle. Without this patch, power of is not real power off. So,
+power cycle, is expected behavior for user interaction. On usual PC,
+reset button will not enable PC as well.
+
+
+--G2Tm66CxLRos6R6xC1wkdggvshNUH6LPO--
+
+--CmSIAI6FGWQju5vbxnKfqJmQv2oAuY0pf
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEEpENFL0P3hvQ7p0DDdQOiSHVI77QFAltZsoUACgkQdQOiSHVI
+77TWzQgAhQoMOjx7+S1Qm1rZPtMblz6hK1z0mNYWGfIGeg8cdj3+Aoo5ypnLb7+6
+MaMowFsPSn+MLu9KyaKTxhdSP+QBC9kGWqj7Dg13MILlNJJRvk5wLjYxEtbuU31H
+K0H8B2gIL9lKA7frgkndteGYeJFYM9ziaWnj1sLRzsud3TJJHx5WBYLCXI0OuLXx
+YD4H8fB2xR89Fj2Jqeaugux1Ewu99a/jUbX3PSi0trAi+AmLN83Yg1+c43r5O2Yn
+kfWatgPLmK7CMBoTZCKVZZwAG1auPkLnNXp0vSXwkoSnZaPKTzTahzCoKFb49wJ0
+PsMc7Rki7cPb+4x3ia0vwxAa/umtYw==
+=pEPP
+-----END PGP SIGNATURE-----
+
+--CmSIAI6FGWQju5vbxnKfqJmQv2oAuY0pf--
