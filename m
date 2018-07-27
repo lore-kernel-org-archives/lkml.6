@@ -2,138 +2,231 @@ Return-Path: <SRS0=OQFz=KL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=0.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DEEDC67790
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 14:03:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EFA3C67790
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 14:04:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 11CAD2064D
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 14:03:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 11CAD2064D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 427E12064D
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 14:04:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 427E12064D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=techadventures.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388785AbeG0PZw (ORCPT
+        id S2388688AbeG0PZn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 11:25:52 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:38629 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730737AbeG0PZv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 11:25:51 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 7AC8320798; Fri, 27 Jul 2018 16:03:44 +0200 (CEST)
-Received: from aptenodytes (AAubervilliers-681-1-89-120.w90-88.abo.wanadoo.fr [90.88.30.120])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 1F06B20717;
-        Fri, 27 Jul 2018 16:03:44 +0200 (CEST)
-Message-ID: <ec974f9dbf73dede2b82f81faafa68b04c7aec61.camel@bootlin.com>
-Subject: Re: [PATCH 9/9] media: cedrus: Add H264 decoding support
-From:   Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-To:     Chen-Yu Tsai <wens@csie.org>
-Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        Alexandre Courbot <acourbot@chromium.org>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Tomasz Figa <tfiga@chromium.org>,
-        Pawel Osciak <posciak@chromium.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        nicolas.dufresne@collabora.com, Jens Kuske <jenskuske@gmail.com>,
-        linux-sunxi <linux-sunxi@googlegroups.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Date:   Fri, 27 Jul 2018 16:03:44 +0200
-In-Reply-To: <CAGb2v67k_bwATPiaRVifR0gnAaG56VztpW9WifOExQbLqm2Csg@mail.gmail.com>
-References: <20180613140714.1686-1-maxime.ripard@bootlin.com>
-         <20180613140714.1686-10-maxime.ripard@bootlin.com>
-         <8c0b2fbec0302a15292d3629570ab1268fd306b8.camel@bootlin.com>
-         <CAGb2v67k_bwATPiaRVifR0gnAaG56VztpW9WifOExQbLqm2Csg@mail.gmail.com>
-Organization: Bootlin
-Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-TetegmsUWJBkTobuJJEE"
-X-Mailer: Evolution 3.28.4 
-Mime-Version: 1.0
+        Fri, 27 Jul 2018 11:25:43 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:43619 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730340AbeG0PZm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Jul 2018 11:25:42 -0400
+Received: by mail-wr1-f66.google.com with SMTP id b15-v6so5164668wrv.10
+        for <linux-kernel@vger.kernel.org>; Fri, 27 Jul 2018 07:03:35 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=r3FUumIztPDwO6lIdEH4/NlXhd3R05jzu97rMbjyVnY=;
+        b=FP3ki32sCT93r6cId7hqhLwrOCzfAd5CPQXe1cFAKqRPw/3gLdNjkhkH0vsMECc1YW
+         Rpkcw5BdU6E0h3a1rBBQ+dGa2lzv+4/j8f8Qrnqhj4NYu8uS5bV0n43ofDfn5mfVhXxW
+         r73XKiUiQirH5pvNENdYdc/QkuC364Rn+nIiM8Y+gh6TCsDx8s9eD2JoO6v0pGXywg7e
+         wLxNT7QpdKg/vQ9LTr21JzX1SF+ZLttCInbTdTAGAKv6poL5BOpGDUYBE1pnAGgw5KYs
+         YZNggOfME5XeQxvg14UEnKzaqrNSYqo+RvwpKwvbhidduqBhLwcE9OIX4q7J/eR/CP1x
+         8LpQ==
+X-Gm-Message-State: AOUpUlE+Ckhj/HhICQQZcw362MZJEqrg0lPVyu8HKalPSmeisRVHd2xh
+        Je/ZcLXwkXMAGEG9n9DY7VE=
+X-Google-Smtp-Source: AAOMgpc2oRKahwTzpqyQdfrA/ycGXlMEtY+0/wUdqxVn6BihI6UQUSvu6a8TlVZXTeXog+sJy6YLZA==
+X-Received: by 2002:adf:a599:: with SMTP id g25-v6mr5109662wrc.88.1532700215035;
+        Fri, 27 Jul 2018 07:03:35 -0700 (PDT)
+Received: from techadventures.net (techadventures.net. [62.201.165.239])
+        by smtp.gmail.com with ESMTPSA id d8-v6sm4077313wrv.68.2018.07.27.07.03.32
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 27 Jul 2018 07:03:33 -0700 (PDT)
+Received: from d104.suse.de (nat.nue.novell.com [195.135.221.2])
+        by techadventures.net (Postfix) with ESMTPA id ABEFF124406;
+        Fri, 27 Jul 2018 16:03:31 +0200 (CEST)
+From:   osalvador@techadventures.net
+To:     akpm@linux-foundation.org
+Cc:     mhocko@suse.com, vbabka@suse.cz, pasha.tatashin@oracle.com,
+        mgorman@techsingularity.net, aaron.lu@intel.com,
+        iamjoonsoo.kim@lge.com, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, dan.j.williams@intel.com,
+        Oscar Salvador <osalvador@suse.de>
+Subject: [PATCH v4 2/4] mm: access zone->node via zone_to_nid() and zone_set_nid()
+Date:   Fri, 27 Jul 2018 16:03:23 +0200
+Message-Id: <20180727140325.11881-3-osalvador@techadventures.net>
+X-Mailer: git-send-email 2.13.6
+In-Reply-To: <20180727140325.11881-1-osalvador@techadventures.net>
+References: <20180727140325.11881-1-osalvador@techadventures.net>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Pavel Tatashin <pasha.tatashin@oracle.com>
 
---=-TetegmsUWJBkTobuJJEE
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+zone->node is configured only when CONFIG_NUMA=y, so it is a good idea to
+have inline functions to access this field in order to avoid ifdef's in
+c files.
 
-Hi Chen-Yu,
+Signed-off-by: Pavel Tatashin <pasha.tatashin@oracle.com>
+Signed-off-by: Oscar Salvador <osalvador@suse.de>
+Reviewed-by: Oscar Salvador <osalvador@suse.de>
+Acked-by: Michal Hocko <mhocko@suse.com>
+---
+ include/linux/mm.h     |  9 ---------
+ include/linux/mmzone.h | 26 ++++++++++++++++++++------
+ mm/mempolicy.c         |  4 ++--
+ mm/mm_init.c           |  9 ++-------
+ mm/page_alloc.c        | 10 ++++------
+ 5 files changed, 28 insertions(+), 30 deletions(-)
 
-On Fri, 2018-07-27 at 22:01 +0800, Chen-Yu Tsai wrote:
-> On Fri, Jul 27, 2018 at 9:56 PM, Paul Kocialkowski
-> <paul.kocialkowski@bootlin.com> wrote:
-> > Hi,
-> >=20
-> > On Wed, 2018-06-13 at 16:07 +0200, Maxime Ripard wrote:
-> > > Introduce some basic H264 decoding support in cedrus. So far, only th=
-e
-> > > baseline profile videos have been tested, and some more advanced feat=
-ures
-> > > used in higher profiles are not even implemented.
-> >=20
-> > Here are two specific comments about things I noticed when going throug=
-h
-> > the h264 code.
-> >=20
-> > [...]
-> >=20
-> > > @@ -88,12 +101,37 @@ struct sunxi_cedrus_ctx {
-> > >       struct work_struct run_work;
-> > >       struct list_head src_list;
-> > >       struct list_head dst_list;
-> > > +
-> > > +     union {
-> > > +             struct {
-> > > +                     void            *mv_col_buf;
-> > > +                     dma_addr_t      mv_col_buf_dma;
-> > > +                     ssize_t         mv_col_buf_size;
-> > > +                     void            *neighbor_info_buf;
-> > > +                     dma_addr_t      neighbor_info_buf_dma;
-> >=20
-> > Should be "neighbour" instead of "neighbor" and the same applies to mos=
-t
-> > variables related to this, as well as the register description.
->=20
-> This just means you've been hanging out with people who use American
-> English. :)
-
-Oh wow, I honestly thought this was a typo. My mistake then!
-
-Thanks for the heads-up!
-
-Cheers,
-
-Paul
-
---=20
-Paul Kocialkowski, Bootlin (formerly Free Electrons)
-Embedded Linux and kernel engineering
-https://bootlin.com
-
---=-TetegmsUWJBkTobuJJEE
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCAAdFiEEJZpWjZeIetVBefti3cLmz3+fv9EFAltbJkAACgkQ3cLmz3+f
-v9EWnwgAnt3yCgJkaA7JpP0nO0SFQDU7bzp6ZNBgG3eFwTAater8XW3PEQze6EH5
-MnXBgOn6+Rld4kMmmrqFUwuUgj6c3ay3+8WWMol57dU/hgrsRfIFUbUMf/50jJi6
-90inWBqxDMY9uTjy4pJmaaL4CXRwZQYG7IJcp0OB0SxY6lUXBpwyfuGvi6Q3uxGk
-tCZFqgXLuW2gEcaEUmci+mkYv6qnF0d6ewHe2wjh8WxcC/+O8128om3aMtYuHHpT
-gbnwzfDlacDFBb77paObOmtD6vTHeQ1UaZAsTPZgEKtKx8T811Gkmfy41FbknQo3
-0FNd3ifcbHp3ctEc/2SFgOso9myUcg==
-=MbB7
------END PGP SIGNATURE-----
-
---=-TetegmsUWJBkTobuJJEE--
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index 726e71475144..6954ad183159 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -940,15 +940,6 @@ static inline int page_zone_id(struct page *page)
+ 	return (page->flags >> ZONEID_PGSHIFT) & ZONEID_MASK;
+ }
+ 
+-static inline int zone_to_nid(struct zone *zone)
+-{
+-#ifdef CONFIG_NUMA
+-	return zone->node;
+-#else
+-	return 0;
+-#endif
+-}
+-
+ #ifdef NODE_NOT_IN_PAGE_FLAGS
+ extern int page_to_nid(const struct page *page);
+ #else
+diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
+index ae1a034c3e2c..17fdff3bfb41 100644
+--- a/include/linux/mmzone.h
++++ b/include/linux/mmzone.h
+@@ -842,6 +842,25 @@ static inline bool populated_zone(struct zone *zone)
+ 	return zone->present_pages;
+ }
+ 
++#ifdef CONFIG_NUMA
++static inline int zone_to_nid(struct zone *zone)
++{
++	return zone->node;
++}
++
++static inline void zone_set_nid(struct zone *zone, int nid)
++{
++	zone->node = nid;
++}
++#else
++static inline int zone_to_nid(struct zone *zone)
++{
++	return 0;
++}
++
++static inline void zone_set_nid(struct zone *zone, int nid) {}
++#endif
++
+ extern int movable_zone;
+ 
+ #ifdef CONFIG_HIGHMEM
+@@ -957,12 +976,7 @@ static inline int zonelist_zone_idx(struct zoneref *zoneref)
+ 
+ static inline int zonelist_node_idx(struct zoneref *zoneref)
+ {
+-#ifdef CONFIG_NUMA
+-	/* zone_to_nid not available in this context */
+-	return zoneref->zone->node;
+-#else
+-	return 0;
+-#endif /* CONFIG_NUMA */
++	return zone_to_nid(zoneref->zone);
+ }
+ 
+ struct zoneref *__next_zones_zonelist(struct zoneref *z,
+diff --git a/mm/mempolicy.c b/mm/mempolicy.c
+index f0fcf70bcec7..8c1c09b3852a 100644
+--- a/mm/mempolicy.c
++++ b/mm/mempolicy.c
+@@ -1784,7 +1784,7 @@ unsigned int mempolicy_slab_node(void)
+ 		zonelist = &NODE_DATA(node)->node_zonelists[ZONELIST_FALLBACK];
+ 		z = first_zones_zonelist(zonelist, highest_zoneidx,
+ 							&policy->v.nodes);
+-		return z->zone ? z->zone->node : node;
++		return z->zone ? zone_to_nid(z->zone) : node;
+ 	}
+ 
+ 	default:
+@@ -2326,7 +2326,7 @@ int mpol_misplaced(struct page *page, struct vm_area_struct *vma, unsigned long
+ 				node_zonelist(numa_node_id(), GFP_HIGHUSER),
+ 				gfp_zone(GFP_HIGHUSER),
+ 				&pol->v.nodes);
+-		polnid = z->zone->node;
++		polnid = zone_to_nid(z->zone);
+ 		break;
+ 
+ 	default:
+diff --git a/mm/mm_init.c b/mm/mm_init.c
+index 5b72266b4b03..6838a530789b 100644
+--- a/mm/mm_init.c
++++ b/mm/mm_init.c
+@@ -53,13 +53,8 @@ void __init mminit_verify_zonelist(void)
+ 				zone->name);
+ 
+ 			/* Iterate the zonelist */
+-			for_each_zone_zonelist(zone, z, zonelist, zoneid) {
+-#ifdef CONFIG_NUMA
+-				pr_cont("%d:%s ", zone->node, zone->name);
+-#else
+-				pr_cont("0:%s ", zone->name);
+-#endif /* CONFIG_NUMA */
+-			}
++			for_each_zone_zonelist(zone, z, zonelist, zoneid)
++				pr_cont("%d:%s ", zone_to_nid(zone), zone->name);
+ 			pr_cont("\n");
+ 		}
+ 	}
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index 8a73305f7c55..10b754fba5fa 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -2909,10 +2909,10 @@ static inline void zone_statistics(struct zone *preferred_zone, struct zone *z)
+ 	if (!static_branch_likely(&vm_numa_stat_key))
+ 		return;
+ 
+-	if (z->node != numa_node_id())
++	if (zone_to_nid(z) != numa_node_id())
+ 		local_stat = NUMA_OTHER;
+ 
+-	if (z->node == preferred_zone->node)
++	if (zone_to_nid(z) == zone_to_nid(preferred_zone))
+ 		__inc_numa_state(z, NUMA_HIT);
+ 	else {
+ 		__inc_numa_state(z, NUMA_MISS);
+@@ -5287,7 +5287,7 @@ int local_memory_node(int node)
+ 	z = first_zones_zonelist(node_zonelist(node, GFP_KERNEL),
+ 				   gfp_zone(GFP_KERNEL),
+ 				   NULL);
+-	return z->zone->node;
++	return zone_to_nid(z->zone);
+ }
+ #endif
+ 
+@@ -6311,9 +6311,7 @@ static void __paginginit free_area_init_core(struct pglist_data *pgdat)
+ 		 * And all highmem pages will be managed by the buddy system.
+ 		 */
+ 		zone->managed_pages = freesize;
+-#ifdef CONFIG_NUMA
+-		zone->node = nid;
+-#endif
++		zone_set_nid(zone, nid);
+ 		zone->name = zone_names[j];
+ 		zone->zone_pgdat = pgdat;
+ 		spin_lock_init(&zone->lock);
+-- 
+2.13.6
 
