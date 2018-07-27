@@ -2,124 +2,108 @@ Return-Path: <SRS0=OQFz=KL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80EF7C6778F
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 16:06:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72AC1C67790
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 16:07:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3ABA1208B0
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 16:06:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3ABA1208B0
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gondor.apana.org.au
+	by mail.kernel.org (Postfix) with ESMTP id 1BEBB208B0
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 16:07:47 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ea2BrteD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1BEBB208B0
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388917AbeG0R2i (ORCPT
+        id S2388752AbeG0RaR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 13:28:38 -0400
-Received: from orcrist.hmeau.com ([104.223.48.154]:37000 "EHLO
-        deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388156AbeG0R2i (ORCPT
+        Fri, 27 Jul 2018 13:30:17 -0400
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:43345 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388156AbeG0RaR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 13:28:38 -0400
-Received: from gondobar.mordor.me.apana.org.au ([192.168.128.4] helo=gondobar)
-        by deadmen.hmeau.com with esmtps (Exim 4.89 #2 (Debian))
-        id 1fj5F9-0002RA-AK; Sat, 28 Jul 2018 00:05:27 +0800
-Received: from herbert by gondobar with local (Exim 4.89)
-        (envelope-from <herbert@gondor.apana.org.au>)
-        id 1fj5Ev-0007JH-Qz; Sat, 28 Jul 2018 00:05:13 +0800
-Date:   Sat, 28 Jul 2018 00:05:13 +0800
-From:   Herbert Xu <herbert@gondor.apana.org.au>
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     "David S. Miller" <davem@davemloft.net>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Siva Reddy Kallam <siva.kallam@broadcom.com>,
-        Prashant Sreedharan <prashant@broadcom.com>,
-        Michael Chan <mchan@broadcom.com>,
-        Fugang Duan <fugang.duan@nxp.com>,
-        Pantelis Antoniou <pantelis.antoniou@gmail.com>,
-        Vitaly Bordug <vbordug@ru.mvista.com>,
-        Jose Abreu <Jose.Abreu@synopsys.com>,
-        Larry Finger <Larry.Finger@lwfinger.net>,
-        Florian Schilhabel <florian.c.schilhabel@googlemail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, netdev@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, devel@driverdev.osuosl.org
-Subject: Re: [PATCH 0/6] lib/crc32: treewide: Use existing define with
- polynomial
-Message-ID: <20180727160513.fluthoaj24co2khr@gondor.apana.org.au>
-References: <20180717160541.3843-1-krzk@kernel.org>
+        Fri, 27 Jul 2018 13:30:17 -0400
+Received: by mail-pl0-f67.google.com with SMTP id x6-v6so2497450plv.10
+        for <linux-kernel@vger.kernel.org>; Fri, 27 Jul 2018 09:07:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=GovrtAOVCB7hdXVG2gd1tnYGWA0NS17fl1VKLdAxx7g=;
+        b=ea2BrteDsRBh89DbaRwlbMuexlfhhqqfHC/h/s//9gwHzRUUJRjQ0fwy0Cw1OzNeyO
+         3nWlwkcuy+1gHKG07FwTXEBaPalOGiERHMSyP953cocvEBUYYdTu+59KLUTBmXcDoM3g
+         QzxYdeDltBagCYSBrHZGwanscpV0x07QuptgY2ucOREzhT4o07956i+oSVcafhZcjRiO
+         KSuC6U1plk7s5UOlk+sRyGEtrulkNnvDQ81R48msLmb0t3IDtWLVQJnkDsS7sL16owl2
+         X0NfklCEiE/H20AycjjPQH0asOcLhdy3V2hVgEMFbTDFI8BEaeXyQSPxQI7GbY5ucID2
+         bSQQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=GovrtAOVCB7hdXVG2gd1tnYGWA0NS17fl1VKLdAxx7g=;
+        b=CBWwTPnzZcUQIsdf79OHQtFsUgIyZFqgaj66q4GOdb/kIBBd9GeJiwOzIE0GUKIPNL
+         xGEaOjyyKf3vHSaHozBJxJpJRd0Jj7My/MFCEJkEDVTG1bHXakfNBr1whqaGg7YYysia
+         b5CHOHW+V+Ixn/kNIC4Fw/rtxlIYP1qJnFgzHDedGH1WQhP0Xob2EmB9Wv0qYLSvY8RP
+         8sDK0GyX+hosDBGGvuLmXG+hoJ0fV2wPxeA92o2OmdQv/Rxw5rbZHNVTmEdmxdr7W3LX
+         pnbQcAJJumElwK0INxULJBDq3jGfX+6+NIEDTOXV7Q+GOOWD8XHRRARIvKSiJKLwvbpR
+         Lfaw==
+X-Gm-Message-State: AOUpUlHqXy+1jBF9mGX8inoHh+BLxUKgkv9Qoh9I44mOQFCnlgM1kG5u
+        h3a16ps63+rsLaI85NpOMjA=
+X-Google-Smtp-Source: AAOMgpdiLWn6zlg9z3RHfCKzqpfW1LngK0SehwVnobemr8gQti8tsIfce9TXd9qyEHT3jqaeDgKxvw==
+X-Received: by 2002:a17:902:b7c5:: with SMTP id v5-v6mr1134870plz.30.1532707663711;
+        Fri, 27 Jul 2018 09:07:43 -0700 (PDT)
+Received: from nishad ([106.51.27.228])
+        by smtp.gmail.com with ESMTPSA id 137-v6sm2761055pfu.121.2018.07.27.09.07.40
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 27 Jul 2018 09:07:43 -0700 (PDT)
+Date:   Fri, 27 Jul 2018 21:37:37 +0530
+From:   Nishad Kamdar <nishadkamdar@gmail.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Christian =?utf-8?Q?L=C3=BCtke-Stetzkamp?= <christian@lkamp.de>,
+        NeilBrown <neil@brown.name>, John Crispin <blogic@openwrt.org>,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] staging: mt7621-mmc: Use BIT macro instead of explicit
+ shifting in board.h
+Message-ID: <20180727160733.GA10467@nishad>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180717160541.3843-1-krzk@kernel.org>
-User-Agent: NeoMutt/20170113 (1.7.2)
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 17, 2018 at 06:05:35PM +0200, Krzysztof Kozlowski wrote:
-> Hi,
-> 
-> Kernel defines same polynomial for CRC-32 in few places.
-> This is unnecessary duplication of the same value. Also this might
-> be error-prone for future code - every driver will define the
-> polynomial again.
-> 
-> This is an attempt to unify definition of polynomial.  Few obvious
-> hard-coded locations are fixed with define.
-> 
-> All series depend on each 1/6 and 2/6.
-> 
-> This could be merged in two different merge windows (1st lib/crc and then
-> the rest) or taken through one tree.
-> 
-> It would be nice to get some testing. Only generic lib/crc, bunzip, xz_crc32
-> and Freescale's Ethernet driver were tested on HW.  Rest got just different
-> builds.
-> 
-> Best regards,
-> Krzysztof
-> 
-> 
-> 
-> 
-> Krzysztof Kozlowski (6):
->   lib/crc: Move polynomial definition to separate header
->   lib/crc: Use consistent naming for CRC-32 polynomials
->   crypto: stm32_crc32 - Use existing define with polynomial
->   net: ethernet: Use existing define with polynomial
->   staging: rtl: Use existing define with polynomial
->   lib: Use existing define with polynomial
-> 
->  drivers/crypto/stm32/stm32_crc32.c               | 11 ++++-------
->  drivers/net/ethernet/amd/xgbe/xgbe-dev.c         |  4 ++--
->  drivers/net/ethernet/apple/bmac.c                |  8 ++------
->  drivers/net/ethernet/broadcom/tg3.c              |  3 ++-
->  drivers/net/ethernet/freescale/fec_main.c        |  4 ++--
->  drivers/net/ethernet/freescale/fs_enet/fec.h     |  3 ---
->  drivers/net/ethernet/freescale/fs_enet/mac-fec.c |  3 ++-
->  drivers/net/ethernet/micrel/ks8851_mll.c         |  3 ++-
->  drivers/net/ethernet/synopsys/dwc-xlgmac-hw.c    |  4 ++--
->  drivers/staging/rtl8712/rtl871x_security.c       |  5 ++---
->  drivers/staging/rtl8723bs/core/rtw_security.c    |  5 ++---
->  include/linux/crc32poly.h                        | 20 ++++++++++++++++++++
->  lib/crc32.c                                      | 11 ++++++-----
->  lib/crc32defs.h                                  | 14 --------------
->  lib/decompress_bunzip2.c                         |  3 ++-
->  lib/gen_crc32table.c                             |  5 +++--
->  lib/xz/xz_crc32.c                                |  3 ++-
->  17 files changed, 55 insertions(+), 54 deletions(-)
->  create mode 100644 include/linux/crc32poly.h
+Replace explicit shifting with BIT macro in board.h.
+Issue found by checkpatch.
 
-All applied.  Thanks.
+Signed-off-by: Nishad Kamdar <nishadkamdar@gmail.com>
+---
+ drivers/staging/mt7621-mmc/board.h | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/staging/mt7621-mmc/board.h b/drivers/staging/mt7621-mmc/board.h
+index a7d82f321b00..983791ee308d 100644
+--- a/drivers/staging/mt7621-mmc/board.h
++++ b/drivers/staging/mt7621-mmc/board.h
+@@ -36,10 +36,10 @@
+ #ifndef __ARCH_ARM_MACH_BOARD_H
+ #define __ARCH_ARM_MACH_BOARD_H
+ 
+-#define MSDC_CD_PIN_EN      (1 << 0)  /* card detection pin is wired   */
+-#define MSDC_WP_PIN_EN      (1 << 1)  /* write protection pin is wired */
+-#define MSDC_RST_PIN_EN     (1 << 2)  /* emmc reset pin is wired       */
+-#define MSDC_REMOVABLE      (1 << 5)  /* removable slot                */
++#define MSDC_CD_PIN_EN      BIT(0)  /* card detection pin is wired   */
++#define MSDC_WP_PIN_EN      BIT(1)  /* write protection pin is wired */
++#define MSDC_RST_PIN_EN     BIT(2)  /* emmc reset pin is wired       */
++#define MSDC_REMOVABLE      BIT(5)  /* removable slot                */
+ 
+ #define MSDC_SMPL_RISING    (0)
+ #define MSDC_SMPL_FALLING   (1)
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+2.17.1
+
