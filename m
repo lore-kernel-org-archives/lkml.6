@@ -2,91 +2,87 @@ Return-Path: <SRS0=OQFz=KL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BB91C67790
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 07:56:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9355C6778F
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 07:57:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 13CCA20862
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 07:56:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 13CCA20862
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 9F97C20862
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 07:57:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F97C20862
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729568AbeG0JRa convert rfc822-to-8bit (ORCPT
+        id S1730120AbeG0JSd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 05:17:30 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:51126 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729445AbeG0JRa (ORCPT
+        Fri, 27 Jul 2018 05:18:33 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:46717 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729536AbeG0JSc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 05:17:30 -0400
-Received: from bigeasy by Galois.linutronix.de with local (Exim 4.80)
-        (envelope-from <bigeasy@linutronix.de>)
-        id 1fixcD-0002JB-7A; Fri, 27 Jul 2018 09:56:45 +0200
-Date:   Fri, 27 Jul 2018 09:56:44 +0200
-From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To:     Mike Galbraith <efault@gmx.de>
-Cc:     Steven Rostedt <rostedt@goodmis.org>,
-        Dave Martin <Dave.Martin@arm.com>,
-        linux-rt-users@vger.kernel.org,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        linux-kernel@vger.kernel.org, tglx@linutronix.de,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH RT v3] arm64: fpsimd: use preemp_disable in addition to
- local_bh_disable()
-Message-ID: <20180727075644.lapmhyxxdb6jbaqr@linutronix.de>
-References: <20180522173333.aawadhkcekzvrswp@linutronix.de>
- <20180711092555.268adf7f@gandalf.local.home>
- <20180711133157.bvrza5vmthu6lwjd@linutronix.de>
- <20180711093346.782af07a@gandalf.local.home>
- <20180713174937.5ddaqpylalcmc3jq@linutronix.de>
- <20180716151737.GO9486@e103592.cambridge.arm.com>
- <20180718091209.u76gzacanj5avhdl@linutronix.de>
- <20180724094623.37430032@gandalf.local.home>
- <20180726150634.cl3wccqur6qhle6p@linutronix.de>
- <1532661443.10554.5.camel@gmx.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8BIT
-In-Reply-To: <1532661443.10554.5.camel@gmx.de>
-User-Agent: NeoMutt/20180716
+        Fri, 27 Jul 2018 05:18:32 -0400
+Received: from lupine.hi.pengutronix.de ([2001:67c:670:100:3ad5:47ff:feaf:1a17] helo=lupine)
+        by metis.ext.pengutronix.de with esmtp (Exim 4.89)
+        (envelope-from <p.zabel@pengutronix.de>)
+        id 1fixdA-0000hX-2w; Fri, 27 Jul 2018 09:57:44 +0200
+Message-ID: <1532678263.4694.4.camel@pengutronix.de>
+Subject: Re: linux-next: manual merge of the drm tree with the v4l-dvb tree
+From:   Philipp Zabel <p.zabel@pengutronix.de>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Dave Airlie <airlied@linux.ie>,
+        DRI <dri-devel@lists.freedesktop.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Steve Longerbeam <steve_longerbeam@mentor.com>
+Date:   Fri, 27 Jul 2018 09:57:43 +0200
+In-Reply-To: <20180727143640.4dc3fa54@canb.auug.org.au>
+References: <20180727143640.4dc3fa54@canb.auug.org.au>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6-1+deb9u1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 2001:67c:670:100:3ad5:47ff:feaf:1a17
+X-SA-Exim-Mail-From: p.zabel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-07-27 05:17:23 [+0200], Mike Galbraith wrote:
-> On Thu, 2018-07-26 at 17:06 +0200, Sebastian Andrzej Siewior wrote:
-> > 
-> > @@ -1115,6 +1139,7 @@ void kernel_neon_begin(void)
-> >  
-> >  	BUG_ON(!may_use_simd());
-> >  
-> > +	preempt_disable();
-> >  	local_bh_disable();
-> >  
-> >  	__this_cpu_write(kernel_neon_busy, true);
-> > @@ -1131,6 +1156,7 @@ void kernel_neon_begin(void)
-> >  	preempt_disable();
+On Fri, 2018-07-27 at 14:36 +1000, Stephen Rothwell wrote:
+> Hi all,
 > 
-> Nit: this preempt_disable() could be removed...
->  
-> >  	local_bh_enable();
-> > +	preempt_enable();
-> >  }
-> >  EXPORT_SYMBOL(kernel_neon_begin);
+> Today's linux-next merge of the drm tree got a conflict in:
 > 
-> ...instead of adding this one.
+>   drivers/gpu/ipu-v3/ipu-cpmem.c
+> 
+> between commit:
+> 
+>   343b23a7c6b6 ("media: gpu: ipu-v3: Allow negative offsets for interlaced scanning")
+> 
+> from the v4l-dvb tree and commit:
+> 
+>   4e3c5d7e05be ("gpu: ipu-v3: Allow negative offsets for interlaced scanning")
+> 
+> from the drm tree.
+>
+> I fixed it up (I just used the drm tree version)
 
-It could. I have currently no idea for the long term solution and this
-keeps track what is intended to do. It might get replaced with
-preempt_.*_rt()…
+This is correct.
 
-> 	-Mike
+>  and can carry the fix
+> as necessary. This is now fixed as far as linux-next is concerned, but
+> any non trivial conflicts should be mentioned to your upstream maintainer
+> when your tree is submitted for merging.  You may also want to consider
+> cooperating with the maintainer of the conflicting tree to minimise any
+> particularly complex conflicts.
 
-Sebastian
+Steve had pointed out a valid issue with 343b23a7c6b6, I didn't expect
+this patch to get picked up. I should have mentioned on linux-media that
+I had submitted the fixed version for inclusion in drm-next.
+
+regards
+Philipp
