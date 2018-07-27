@@ -6,36 +6,36 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2946EC67790
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:00:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A404AC67790
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:00:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C51F420894
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:00:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C51F420894
+	by mail.kernel.org (Postfix) with ESMTP id 602A82089A
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:00:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 602A82089A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730801AbeG0LV6 (ORCPT
+        id S1730992AbeG0LWB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 07:21:58 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:33730 "EHLO
+        Fri, 27 Jul 2018 07:22:01 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33758 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730244AbeG0LV6 (ORCPT
+        with ESMTP id S1730244AbeG0LWA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 07:21:58 -0400
+        Fri, 27 Jul 2018 07:22:00 -0400
 Received: from localhost (unknown [89.188.5.116])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A2C35CBA;
-        Fri, 27 Jul 2018 10:00:48 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 610B8CB8;
+        Fri, 27 Jul 2018 10:00:51 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        syzbot+9adb4b567003cac781f0@syzkaller.appspotmail.com,
-        Willem de Bruijn <willemb@google.com>,
+        Jack Morgenstein <jackm@dev.mellanox.co.il>,
+        Tariq Toukan <tariqt@mellanox.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 10/48] ip: in cmsg IP(V6)_ORIGDSTADDR call pskb_may_pull
-Date:   Fri, 27 Jul 2018 11:59:55 +0200
-Message-Id: <20180727095919.603751463@linuxfoundation.org>
+Subject: [PATCH 4.14 11/48] net/mlx4_core: Save the qpn from the input modifier in RST2INIT wrapper
+Date:   Fri, 27 Jul 2018 11:59:56 +0200
+Message-Id: <20180727095919.710383846@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180727095918.503549522@linuxfoundation.org>
 References: <20180727095918.503549522@linuxfoundation.org>
@@ -52,93 +52,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Willem de Bruijn <willemb@google.com>
+From: Jack Morgenstein <jackm@dev.mellanox.co.il>
 
-[ Upstream commit 2efd4fca703a6707cad16ab486eaab8fc7f0fd49 ]
+[ Upstream commit 958c696f5a7274d9447a458ad7aa70719b29a50a ]
 
-Syzbot reported a read beyond the end of the skb head when returning
-IPV6_ORIGDSTADDR:
+Function mlx4_RST2INIT_QP_wrapper saved the qp number passed in the qp
+context, rather than the one passed in the input modifier.
 
-  BUG: KMSAN: kernel-infoleak in put_cmsg+0x5ef/0x860 net/core/scm.c:242
-  CPU: 0 PID: 4501 Comm: syz-executor128 Not tainted 4.17.0+ #9
-  Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-  Google 01/01/2011
-  Call Trace:
-    __dump_stack lib/dump_stack.c:77 [inline]
-    dump_stack+0x185/0x1d0 lib/dump_stack.c:113
-    kmsan_report+0x188/0x2a0 mm/kmsan/kmsan.c:1125
-    kmsan_internal_check_memory+0x138/0x1f0 mm/kmsan/kmsan.c:1219
-    kmsan_copy_to_user+0x7a/0x160 mm/kmsan/kmsan.c:1261
-    copy_to_user include/linux/uaccess.h:184 [inline]
-    put_cmsg+0x5ef/0x860 net/core/scm.c:242
-    ip6_datagram_recv_specific_ctl+0x1cf3/0x1eb0 net/ipv6/datagram.c:719
-    ip6_datagram_recv_ctl+0x41c/0x450 net/ipv6/datagram.c:733
-    rawv6_recvmsg+0x10fb/0x1460 net/ipv6/raw.c:521
-    [..]
+However, the qp number in the qp context is not defined as a
+required parameter by the FW. Therefore, drivers may choose to not
+specify the qp number in the qp context for the reset-to-init transition.
 
-This logic and its ipv4 counterpart read the destination port from
-the packet at skb_transport_offset(skb) + 4.
+Thus, we must save the qp number passed in the command input modifier --
+which is always present. (This saved qp number is used as the input
+modifier for command 2RST_QP when a slave's qp's are destroyed).
 
-With MSG_MORE and a local SOCK_RAW sender, syzbot was able to cook a
-packet that stores headers exactly up to skb_transport_offset(skb) in
-the head and the remainder in a frag.
-
-Call pskb_may_pull before accessing the pointer to ensure that it lies
-in skb head.
-
-Link: http://lkml.kernel.org/r/CAF=yD-LEJwZj5a1-bAAj2Oy_hKmGygV6rsJ_WOrAYnv-fnayiQ@mail.gmail.com
-Reported-by: syzbot+9adb4b567003cac781f0@syzkaller.appspotmail.com
-Signed-off-by: Willem de Bruijn <willemb@google.com>
+Fixes: c82e9aa0a8bc ("mlx4_core: resource tracking for HCA resources used by guests")
+Signed-off-by: Jack Morgenstein <jackm@dev.mellanox.co.il>
+Signed-off-by: Tariq Toukan <tariqt@mellanox.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ipv4/ip_sockglue.c |    7 +++++--
- net/ipv6/datagram.c    |    7 +++++--
- 2 files changed, 10 insertions(+), 4 deletions(-)
+ drivers/net/ethernet/mellanox/mlx4/resource_tracker.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/net/ipv4/ip_sockglue.c
-+++ b/net/ipv4/ip_sockglue.c
-@@ -148,15 +148,18 @@ static void ip_cmsg_recv_dstaddr(struct
- {
- 	struct sockaddr_in sin;
- 	const struct iphdr *iph = ip_hdr(skb);
--	__be16 *ports = (__be16 *)skb_transport_header(skb);
-+	__be16 *ports;
-+	int end;
+--- a/drivers/net/ethernet/mellanox/mlx4/resource_tracker.c
++++ b/drivers/net/ethernet/mellanox/mlx4/resource_tracker.c
+@@ -2957,7 +2957,7 @@ int mlx4_RST2INIT_QP_wrapper(struct mlx4
+ 	u32 srqn = qp_get_srqn(qpc) & 0xffffff;
+ 	int use_srq = (qp_get_srqn(qpc) >> 24) & 1;
+ 	struct res_srq *srq;
+-	int local_qpn = be32_to_cpu(qpc->local_qpn) & 0xffffff;
++	int local_qpn = vhcr->in_modifier & 0xffffff;
  
--	if (skb_transport_offset(skb) + 4 > (int)skb->len)
-+	end = skb_transport_offset(skb) + 4;
-+	if (end > 0 && !pskb_may_pull(skb, end))
- 		return;
- 
- 	/* All current transport protocols have the port numbers in the
- 	 * first four bytes of the transport header and this function is
- 	 * written with this assumption in mind.
- 	 */
-+	ports = (__be16 *)skb_transport_header(skb);
- 
- 	sin.sin_family = AF_INET;
- 	sin.sin_addr.s_addr = iph->daddr;
---- a/net/ipv6/datagram.c
-+++ b/net/ipv6/datagram.c
-@@ -708,13 +708,16 @@ void ip6_datagram_recv_specific_ctl(stru
- 	}
- 	if (np->rxopt.bits.rxorigdstaddr) {
- 		struct sockaddr_in6 sin6;
--		__be16 *ports = (__be16 *) skb_transport_header(skb);
-+		__be16 *ports;
-+		int end;
- 
--		if (skb_transport_offset(skb) + 4 <= (int)skb->len) {
-+		end = skb_transport_offset(skb) + 4;
-+		if (end <= 0 || pskb_may_pull(skb, end)) {
- 			/* All current transport protocols have the port numbers in the
- 			 * first four bytes of the transport header and this function is
- 			 * written with this assumption in mind.
- 			 */
-+			ports = (__be16 *)skb_transport_header(skb);
- 
- 			sin6.sin6_family = AF_INET6;
- 			sin6.sin6_addr = ipv6_hdr(skb)->daddr;
+ 	err = adjust_qp_sched_queue(dev, slave, qpc, inbox);
+ 	if (err)
 
 
