@@ -2,148 +2,124 @@ Return-Path: <SRS0=OQFz=KL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99AC3C6778F
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 03:20:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97EFFC6778F
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 03:22:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3AAB120883
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 03:20:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 497F3206B7
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 03:22:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="tW6SgVkd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3AAB120883
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eXAt1Ahv"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 497F3206B7
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729504AbeG0Ejs (ORCPT
+        id S1726225AbeG0EmF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 00:39:48 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:47079 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725838AbeG0Ejs (ORCPT
+        Fri, 27 Jul 2018 00:42:05 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:36288 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725806AbeG0EmF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 00:39:48 -0400
-Received: by mail-pg1-f193.google.com with SMTP id p23-v6so2359674pgv.13
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Jul 2018 20:20:02 -0700 (PDT)
+        Fri, 27 Jul 2018 00:42:05 -0400
+Received: by mail-pf1-f195.google.com with SMTP id d14-v6so1247492pfo.3;
+        Thu, 26 Jul 2018 20:22:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:in-reply-to;
-        bh=ExX/0UskqZFk3iQZvd/sNSWWHFk6XFzds/iQ/J3r5Mk=;
-        b=tW6SgVkddcAtrN8SndB7dsZuIoe2IHdm9MS5y3u3YcOoG8Hc6qTeZ+LO5/H8Qs9rG6
-         UAm0M07Ebs/rpovN26smwecKpefKYTc7WBUrvoJt2E2/s7j6J6qQc8TQGoaVJsj1O47v
-         /7UgZV6Z5JxlgD+F5PdFkUqhysRC9im6wjjL1XSkoupnoV8f6tVQ+d/ZWik2gCK5S2Tw
-         lrq6SeK+jtMs86aDzvt0YWg2ANRMLnU3erJGv/sLwZpufgZlmNvi7N879O1nhRQKy6US
-         msUaWQ34www9JaMaNcTlL0HUxbpV1CRfg9b0X72mT49rJTICLBrsPwUwMj2XQ0Nyc1o7
-         MShQ==
+        h=from:to:cc:subject:date:message-id;
+        bh=aDcdg20wqS6l0/q3CQjePZhEkFF3+kY6U4pe4Gk9R54=;
+        b=eXAt1AhvKyMeezhPM4xyuU4IReMU66uHnWj5eEcpHKWhNXh5p0mde+5/Ww1t0Tmr3i
+         SNkw1GXGSYdyMPgSa6otzHe9SkT5J/rd8XPjyogz4X+oFAiMmwFuN579HMQ0T4Qf4x8T
+         esQWJ2WQqvG+/xNqHAqda6gPGvxgZTAqb7wrseC9XHEtwT8huR9U97PrsK9SonfjdTAw
+         Yj9paL2k4KYQqyRYCybCXfmqUOrRQ/FA0+U3/zbXbVCnOHqgz2kJBMUnIaAJdGacUVBy
+         kbx3mbfW/quYFMmhJ9207ixT6smnPIwhyqYXsEgPVTWmEcFospjuCZzhCYwE2BzqKDkc
+         etFw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to;
-        bh=ExX/0UskqZFk3iQZvd/sNSWWHFk6XFzds/iQ/J3r5Mk=;
-        b=ma5D0UG3HD9QlaSt6lCaDCM5HOXJwDvqlX9i78SRWIRbHnM6JXaqvGXG8SfUd8oE/b
-         NPHWFYht7GFRynLZvza79Yqm2xGXi+j2ijibkPpujEvm/kFTCxrLyH6Ru8/+w+EvpbVk
-         6TGWIKP9+rXSXghY+6Iu87lFiIFuOgLfgNlkNMYeb5fpwwefqLIUdzkBxZL5B7XvwLHM
-         h/hqS/B1FAXJUM9/kZHm1xt4p9G2u3WUQrwljzfNBRN3zy1hYplyUuuy+Gqj3u7Yhti5
-         v8MDF9KeTxZgD+ZYh3weJgnlOx4eUGV3KHzJZINSCw/njavfNTV0Z3YjGZkEi7bbYYxM
-         wV5g==
-X-Gm-Message-State: AOUpUlFocvl8GZ1SEHTz1ybKNosXoK2K82P1MfZx/zL7Ec5IggIg8cA/
-        qSSym+ajqMW6Pus8KDF+myw=
-X-Google-Smtp-Source: AAOMgpfO4u+o8y2wyF9hJoKvq/Bplj5efmEZPte9zr49RyH9970FFSf9C0/kigZtnqIULieZi3wW6A==
-X-Received: by 2002:a62:bd4:: with SMTP id 81-v6mr4797311pfl.67.1532661602421;
-        Thu, 26 Jul 2018 20:20:02 -0700 (PDT)
-Received: from localhost (static-50-53-52-16.bvtn.or.frontiernet.net. [50.53.52.16])
-        by smtp.gmail.com with ESMTPSA id z90-v6sm5743882pfk.85.2018.07.26.20.20.01
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=aDcdg20wqS6l0/q3CQjePZhEkFF3+kY6U4pe4Gk9R54=;
+        b=Xwxobb4qbXJc7/P1PCBjTeAIsBKYuINmyPkbRinifcNFZOLwgA5HI16dlm9X4g85y6
+         e4Xr+YtWM4AUHlhRNkVthN53wV8c23Ma6pfI+HPsAn9HYJEeMWQuhTwfezBb0T4sUemR
+         aCJ3fQKTMQIMhvGLl4lMftMqCzg8mf7L4rypPgmy0ictNGhIOXi26l1yT0eb+OnXh8AF
+         h9McR2RWXEzHPhfkHiY/iQTb2NV9HNR/axJeR705ljuCEEGiEXANzeJ78Ws0JnfuwoEA
+         Rc7GnviNZ1Wj10fMf88hfSlvv2mwExdjW1bTG0h2H0A5B0lAR+FU3S9sJEnp9FeJOqs9
+         p/GQ==
+X-Gm-Message-State: AOUpUlHajftmXmSCYkFFHLF9TuGNuLK2ZA0RD8KobqBQSXciwEqm/ZTR
+        Kn29swvK7Sv6uCRAOJcb/CY=
+X-Google-Smtp-Source: AAOMgpdz2ASloRBglwe8Cd1FqHgSWoJ0gW5oAZks2gsyx/AcPg8Mzk9eXpBWYUKHXowIBhYmbYUygA==
+X-Received: by 2002:a62:591a:: with SMTP id n26-v6mr4831928pfb.94.1532661738417;
+        Thu, 26 Jul 2018 20:22:18 -0700 (PDT)
+Received: from localhost.localdomain ([2402:f000:1:4414:6c14:7712:e625:1be4])
+        by smtp.gmail.com with ESMTPSA id d11-v6sm3861267pfo.135.2018.07.26.20.22.15
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 26 Jul 2018 20:20:01 -0700 (PDT)
-Date:   Thu, 26 Jul 2018 20:16:35 -0700
-From:   rd_dunlab <rd.dunlab@gmail.com>
-To:     Randy Dunlap <rdunlap@infradead.org>,
-        lkml <linux-kernel@vger.kernel.org>
-Cc:     Vineet Gupta <vgupta@synopsys.com>,
-        linux-snps-arc@lists.infradead.org,
-        Elad Kanfi <eladkan@mellanox.com>,
-        Leon Romanovsky <leonro@mellanox.com>,
-        Ofer Levi <oferle@mellanox.com>
-Subject: [PATCH 4/4 v2] arc: fix printk warning in arc/plat-eznps/mtm.c
-Message-ID: <1532661395133@infradead.org>
-In-Reply-To: <15326613951079@infradead.org>
-X-Mailer: gregkh_patchbomb
+        Thu, 26 Jul 2018 20:22:17 -0700 (PDT)
+From:   Jia-Ju Bai <baijiaju1990@gmail.com>
+To:     mchehab@kernel.org, hans.verkuil@cisco.com, bhumirks@gmail.com,
+        colin.king@canonical.com, viro@zeniv.linux.org.uk,
+        gregkh@linuxfoundation.org
+Cc:     linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jia-Ju Bai <baijiaju1990@gmail.com>
+Subject: [PATCH] media: pci: cx25821: Replace mdelay() with msleep()
+Date:   Fri, 27 Jul 2018 11:22:09 +0800
+Message-Id: <20180727032209.3320-1-baijiaju1990@gmail.com>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Randy Dunlap <rdunlap@infradead.org>
+cx25821_gpio_init(), cx25821_initialize() and cx25821_registers_init() 
+are never called in atomic context.
+They call mdelay() to busily wait, which is not necessary.
+mdelay() can be replaced with msleep().
 
-Fix printk format warning in arch/arc/plat-eznps/mtm.c:
+This is found by a static analysis tool named DCNS written by myself.
 
-In file included from ../include/linux/printk.h:7,
-                 from ../include/linux/kernel.h:14,
-                 from ../include/linux/list.h:9,
-                 from ../include/linux/smp.h:12,
-                 from ../arch/arc/plat-eznps/mtm.c:17:
-../arch/arc/plat-eznps/mtm.c: In function 'set_mtm_hs_ctr':
-../include/linux/kern_levels.h:5:18: warning: format '%d' expects argument of type 'int', but argument 2 has type 'long int' [-Wformat=]
- #define KERN_SOH "\001"  /* ASCII Start Of Header */
-                  ^~~~~~
-../include/linux/kern_levels.h:11:18: note: in expansion of macro 'KERN_SOH'
- #define KERN_ERR KERN_SOH "3" /* error conditions */
-                  ^~~~~~~~
-../include/linux/printk.h:308:9: note: in expansion of macro 'KERN_ERR'
-  printk(KERN_ERR pr_fmt(fmt), ##__VA_ARGS__)
-         ^~~~~~~~
-../arch/arc/plat-eznps/mtm.c:166:3: note: in expansion of macro 'pr_err'
-   pr_err("** Invalid @nps_mtm_hs_ctr [%d] needs to be [%d:%d] (incl)\n",
-   ^~~~~~
-../arch/arc/plat-eznps/mtm.c:166:40: note: format string is defined here
-   pr_err("** Invalid @nps_mtm_hs_ctr [%d] needs to be [%d:%d] (incl)\n",
-                                       ~^
-                                       %ld
-The hs_ctr variable can just be int instead of long, so also change
-kstrtol() to kstrtoint() and leave the format string as %d.
-
-Also add 2 header files since they are used in mtm.c and we prefer
-not to depend on accidental/indirect #includes.
-
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-Cc: Vineet Gupta <vgupta@synopsys.com>
-Cc: linux-snps-arc@lists.infradead.org
-Cc: Elad Kanfi <eladkan@mellanox.com>
-Cc: Leon Romanovsky <leonro@mellanox.com>
-Cc: Ofer Levi <oferle@mellanox.com>
+Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
 ---
-v2: no change
+ drivers/media/pci/cx25821/cx25821-core.c | 4 ++--
+ drivers/media/pci/cx25821/cx25821-gpio.c | 2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
- arch/arc/plat-eznps/mtm.c |    6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
-
---- linux-next-20180723.orig/arch/arc/plat-eznps/mtm.c
-+++ linux-next-20180723/arch/arc/plat-eznps/mtm.c
-@@ -15,6 +15,8 @@
-  */
+diff --git a/drivers/media/pci/cx25821/cx25821-core.c b/drivers/media/pci/cx25821/cx25821-core.c
+index 040c6c251d3a..2f0171134f7e 100644
+--- a/drivers/media/pci/cx25821/cx25821-core.c
++++ b/drivers/media/pci/cx25821/cx25821-core.c
+@@ -428,7 +428,7 @@ static void cx25821_registers_init(struct cx25821_dev *dev)
+ 	tmp |= FLD_USE_ALT_PLL_REF;
+ 	cx_write(CLK_RST, tmp & ~(FLD_VID_I_CLK_NOE | FLD_VID_J_CLK_NOE));
  
- #include <linux/smp.h>
-+#include <linux/init.h>
-+#include <linux/kernel.h>
- #include <linux/io.h>
- #include <linux/log2.h>
- #include <asm/arcregs.h>
-@@ -157,10 +159,10 @@ void mtm_enable_core(unsigned int cpu)
- /* Verify and set the value of the mtm hs counter */
- static int __init set_mtm_hs_ctr(char *ctr_str)
- {
--	long hs_ctr;
-+	int hs_ctr;
- 	int ret;
+-	mdelay(100);
++	msleep(100);
+ }
  
--	ret = kstrtol(ctr_str, 0, &hs_ctr);
-+	ret = kstrtoint(ctr_str, 0, &hs_ctr);
+ int cx25821_sram_channel_setup(struct cx25821_dev *dev,
+@@ -803,7 +803,7 @@ static void cx25821_initialize(struct cx25821_dev *dev)
+ 	cx_write(CLK_DELAY, cx_read(CLK_DELAY) & 0x80000000);
+ 	cx_write(PAD_CTRL, 0x12);	/* for I2C */
+ 	cx25821_registers_init(dev);	/* init Pecos registers */
+-	mdelay(100);
++	msleep(100);
  
- 	if (ret || hs_ctr > MT_HS_CNT_MAX || hs_ctr < MT_HS_CNT_MIN) {
- 		pr_err("** Invalid @nps_mtm_hs_ctr [%d] needs to be [%d:%d] (incl)\n",
-
-
+ 	for (i = 0; i < VID_CHANNEL_NUM; i++) {
+ 		cx25821_set_vip_mode(dev, dev->channels[i].sram_channels);
+diff --git a/drivers/media/pci/cx25821/cx25821-gpio.c b/drivers/media/pci/cx25821/cx25821-gpio.c
+index 76b8f619e55a..f5ffaf880e5f 100644
+--- a/drivers/media/pci/cx25821/cx25821-gpio.c
++++ b/drivers/media/pci/cx25821/cx25821-gpio.c
+@@ -88,7 +88,7 @@ void cx25821_gpio_init(struct cx25821_dev *dev)
+ 	default:
+ 		/* set GPIO 5 to select the path for Medusa/Athena */
+ 		cx25821_set_gpiopin_logicvalue(dev, 5, 1);
+-		mdelay(20);
++		msleep(20);
+ 		break;
+ 	}
+ 
 -- 
+2.17.0
 
