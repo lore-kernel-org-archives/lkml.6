@@ -6,35 +6,33 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 973F2C67790
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:11:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7553AC67790
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:11:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4A5282089E
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:11:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4A5282089E
+	by mail.kernel.org (Postfix) with ESMTP id 35FF32089E
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:11:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 35FF32089E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389259AbeG0LcU (ORCPT
+        id S2389273AbeG0LcY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 07:32:20 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:36662 "EHLO
+        Fri, 27 Jul 2018 07:32:24 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:36670 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730448AbeG0LcU (ORCPT
+        with ESMTP id S1730448AbeG0LcX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 07:32:20 -0400
+        Fri, 27 Jul 2018 07:32:23 -0400
 Received: from localhost (unknown [89.188.5.116])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1E5B9CB6;
-        Fri, 27 Jul 2018 10:11:06 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 2F7E2CB5;
+        Fri, 27 Jul 2018 10:11:10 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Anssi Hannula <anssi.hannula@bitwise.fi>,
-        Michal Simek <michal.simek@xilinx.com>,
-        Marc Kleine-Budde <mkl@pengutronix.de>
-Subject: [PATCH 4.9 31/33] can: xilinx_can: fix RX overflow interrupt not being enabled
-Date:   Fri, 27 Jul 2018 12:09:12 +0200
-Message-Id: <20180727100828.820471191@linuxfoundation.org>
+        Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH 4.9 32/33] turn off -Wattribute-alias
+Date:   Fri, 27 Jul 2018 12:09:13 +0200
+Message-Id: <20180727100828.853992212@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180727100827.665729981@linuxfoundation.org>
 References: <20180727100827.665729981@linuxfoundation.org>
@@ -51,37 +49,59 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Anssi Hannula <anssi.hannula@bitwise.fi>
+From: Arnd Bergmann <arnd@arndb.de>
 
-commit 83997997252f5d3fc7f04abc24a89600c2b504ab upstream.
+Starting with gcc-8.1, we get a warning about all system call definitions,
+which use an alias between functions with incompatible prototypes, e.g.:
 
-RX overflow interrupt (RXOFLW) is disabled even though xcan_interrupt()
-processes it. This means that an RX overflow interrupt will only be
-processed when another interrupt gets asserted (e.g. for RX/TX).
+In file included from ../mm/process_vm_access.c:19:
+../include/linux/syscalls.h:211:18: warning: 'sys_process_vm_readv' alias between functions of incompatible types 'long int(pid_t,  const struct iovec *, long unsigned int,  const struct iovec *, long unsigned int,  long unsigned int)' {aka 'long int(int,  const struct iovec *, long unsigned int,  const struct iovec *, long unsigned int,  long unsigned int)'} and 'long int(long int,  long int,  long int,  long int,  long int,  long int)' [-Wattribute-alias]
+  asmlinkage long sys##name(__MAP(x,__SC_DECL,__VA_ARGS__)) \
+                  ^~~
+../include/linux/syscalls.h:207:2: note: in expansion of macro '__SYSCALL_DEFINEx'
+  __SYSCALL_DEFINEx(x, sname, __VA_ARGS__)
+  ^~~~~~~~~~~~~~~~~
+../include/linux/syscalls.h:201:36: note: in expansion of macro 'SYSCALL_DEFINEx'
+ #define SYSCALL_DEFINE6(name, ...) SYSCALL_DEFINEx(6, _##name, __VA_ARGS__)
+                                    ^~~~~~~~~~~~~~~
+../mm/process_vm_access.c:300:1: note: in expansion of macro 'SYSCALL_DEFINE6'
+ SYSCALL_DEFINE6(process_vm_readv, pid_t, pid, const struct iovec __user *, lvec,
+ ^~~~~~~~~~~~~~~
+../include/linux/syscalls.h:215:18: note: aliased declaration here
+  asmlinkage long SyS##name(__MAP(x,__SC_LONG,__VA_ARGS__)) \
+                  ^~~
+../include/linux/syscalls.h:207:2: note: in expansion of macro '__SYSCALL_DEFINEx'
+  __SYSCALL_DEFINEx(x, sname, __VA_ARGS__)
+  ^~~~~~~~~~~~~~~~~
+../include/linux/syscalls.h:201:36: note: in expansion of macro 'SYSCALL_DEFINEx'
+ #define SYSCALL_DEFINE6(name, ...) SYSCALL_DEFINEx(6, _##name, __VA_ARGS__)
+                                    ^~~~~~~~~~~~~~~
+../mm/process_vm_access.c:300:1: note: in expansion of macro 'SYSCALL_DEFINE6'
+ SYSCALL_DEFINE6(process_vm_readv, pid_t, pid, const struct iovec __user *, lvec,
 
-Fix that by enabling the RXOFLW interrupt.
+This is really noisy and does not indicate a real problem. In the latest
+mainline kernel, this was addressed by commit bee20031772a ("disable
+-Wattribute-alias warning for SYSCALL_DEFINEx()"), which seems too invasive
+to backport.
 
-Fixes: b1201e44f50b ("can: xilinx CAN controller support")
-Signed-off-by: Anssi Hannula <anssi.hannula@bitwise.fi>
-Cc: Michal Simek <michal.simek@xilinx.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
+This takes a much simpler approach and just disables the warning across the
+kernel.
+
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/net/can/xilinx_can.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ Makefile |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/net/can/xilinx_can.c
-+++ b/drivers/net/can/xilinx_can.c
-@@ -104,7 +104,7 @@ enum xcan_reg {
- #define XCAN_INTR_ALL		(XCAN_IXR_TXOK_MASK | XCAN_IXR_BSOFF_MASK |\
- 				 XCAN_IXR_WKUP_MASK | XCAN_IXR_SLP_MASK | \
- 				 XCAN_IXR_RXNEMP_MASK | XCAN_IXR_ERROR_MASK | \
--				 XCAN_IXR_ARBLST_MASK)
-+				 XCAN_IXR_RXOFLW_MASK | XCAN_IXR_ARBLST_MASK)
+--- a/Makefile
++++ b/Makefile
+@@ -635,6 +635,7 @@ KBUILD_CFLAGS	+= $(call cc-disable-warni
+ KBUILD_CFLAGS	+= $(call cc-disable-warning, format-truncation)
+ KBUILD_CFLAGS	+= $(call cc-disable-warning, format-overflow)
+ KBUILD_CFLAGS	+= $(call cc-disable-warning, int-in-bool-context)
++KBUILD_CFLAGS	+= $(call cc-disable-warning, attribute-alias)
  
- /* CAN register bit shift - XCAN_<REG>_<BIT>_SHIFT */
- #define XCAN_BTR_SJW_SHIFT		7  /* Synchronous jump width */
+ ifdef CONFIG_LD_DEAD_CODE_DATA_ELIMINATION
+ KBUILD_CFLAGS	+= $(call cc-option,-ffunction-sections,)
 
 
