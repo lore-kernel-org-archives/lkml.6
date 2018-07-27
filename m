@@ -2,795 +2,151 @@ Return-Path: <SRS0=OQFz=KL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82B4BC6778F
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:50:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA43DC67790
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:51:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 051E42089E
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:50:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 051E42089E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 7EB862089E
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:51:01 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=xilinx.onmicrosoft.com header.i=@xilinx.onmicrosoft.com header.b="xDJcAGNb"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7EB862089E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xilinx.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730709AbeG0MLh (ORCPT
+        id S1730980AbeG0MMV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 08:11:37 -0400
-Received: from mga07.intel.com ([134.134.136.100]:32460 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729533AbeG0MLh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 08:11:37 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Jul 2018 03:50:15 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,408,1526367600"; 
-   d="scan'208";a="60281355"
-Received: from jfkehoe-mobl.amr.corp.intel.com (HELO kekkonen.fi.intel.com) ([10.252.34.222])
-  by orsmga008.jf.intel.com with ESMTP; 27 Jul 2018 03:50:11 -0700
-Received: by kekkonen.fi.intel.com (Postfix, from userid 1000)
-        id 68AFE21E18; Fri, 27 Jul 2018 13:50:09 +0300 (EEST)
-Date:   Fri, 27 Jul 2018 13:50:09 +0300
-From:   Sakari Ailus <sakari.ailus@linux.intel.com>
-To:     Luca Ceresoli <luca@lucaceresoli.net>
-Cc:     linux-media@vger.kernel.org, Leon Luo <leonl@leopardimaging.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 2/2] media: imx274: add cropping support via SELECTION
- API
-Message-ID: <20180727105007.kkz635rcejqgvsov@kekkonen.localdomain>
-References: <20180725162455.31381-1-luca@lucaceresoli.net>
- <20180725162455.31381-3-luca@lucaceresoli.net>
+        Fri, 27 Jul 2018 08:12:21 -0400
+Received: from mail-eopbgr690044.outbound.protection.outlook.com ([40.107.69.44]:27190
+        "EHLO NAM04-CO1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1730784AbeG0MMU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Jul 2018 08:12:20 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=xilinx.onmicrosoft.com; s=selector1-xilinx-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=6nXQR88Hb0Zb3QWsbiQuxFsGg2QMQV2xCgLqMFMGwHw=;
+ b=xDJcAGNbxtOn3VIgP+v84HsAJ0nStRF3UqKXyC2E7C/q6xXJCRfRFB0LZ3ZNPVr54PQf+huwcHLR+Y7A/8Xap25Z8l8mYB60gGPPY7votXPlFg23I4TzRtsb/la9MC4OH0ekmdQ7T4CgH33jfT/R6XcDwBoguXzEkOmKaLWYOT4=
+Received: from BL0PR02CA0101.namprd02.prod.outlook.com (2603:10b6:208:51::42)
+ by BYAPR02MB4455.namprd02.prod.outlook.com (2603:10b6:a03:57::28) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.973.21; Fri, 27 Jul
+ 2018 10:50:55 +0000
+Received: from SN1NAM02FT019.eop-nam02.prod.protection.outlook.com
+ (2a01:111:f400:7e44::203) by BL0PR02CA0101.outlook.office365.com
+ (2603:10b6:208:51::42) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.995.16 via Frontend
+ Transport; Fri, 27 Jul 2018 10:50:54 +0000
+Authentication-Results: spf=pass (sender IP is 149.199.60.83)
+ smtp.mailfrom=xilinx.com; vger.kernel.org; dkim=none (message not signed)
+ header.d=none;vger.kernel.org; dmarc=bestguesspass action=none
+ header.from=xilinx.com;
+Received-SPF: Pass (protection.outlook.com: domain of xilinx.com designates
+ 149.199.60.83 as permitted sender) receiver=protection.outlook.com;
+ client-ip=149.199.60.83; helo=xsj-pvapsmtpgw01;
+Received: from xsj-pvapsmtpgw01 (149.199.60.83) by
+ SN1NAM02FT019.mail.protection.outlook.com (10.152.72.130) with Microsoft SMTP
+ Server (version=TLS1_0, cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.20.995.12
+ via Frontend Transport; Fri, 27 Jul 2018 10:50:52 +0000
+Received: from unknown-38-66.xilinx.com ([149.199.38.66] helo=xsj-pvapsmtp01)
+        by xsj-pvapsmtpgw01 with esmtp (Exim 4.63)
+        (envelope-from <radhey.shyam.pandey@xilinx.com>)
+        id 1fj0Kh-0000O4-CJ; Fri, 27 Jul 2018 03:50:51 -0700
+Received: from [127.0.0.1] (helo=localhost)
+        by xsj-pvapsmtp01 with smtp (Exim 4.63)
+        (envelope-from <radhey.shyam.pandey@xilinx.com>)
+        id 1fj0Kc-0001O0-8l; Fri, 27 Jul 2018 03:50:46 -0700
+Received: from xsj-pvapsmtp01 (xsj-mail.xilinx.com [149.199.38.66])
+        by xsj-smtp-dlp2.xlnx.xilinx.com (8.13.8/8.13.1) with ESMTP id w6RAogvP011876;
+        Fri, 27 Jul 2018 03:50:42 -0700
+Received: from [172.23.37.80] (helo=xhd-paegbuild40.xilinx.com)
+        by xsj-pvapsmtp01 with esmtp (Exim 4.63)
+        (envelope-from <radheys@xilinx.com>)
+        id 1fj0KX-0001NN-QE; Fri, 27 Jul 2018 03:50:42 -0700
+Received: by xhd-paegbuild40.xilinx.com (Postfix, from userid 13245)
+        id F040DB20796; Fri, 27 Jul 2018 16:20:40 +0530 (IST)
+From:   Radhey Shyam Pandey <radhey.shyam.pandey@xilinx.com>
+To:     <dan.j.williams@intel.com>, <vkoul@kernel.org>,
+        <michal.simek@xilinx.com>, <appana.durga.rao@xilinx.com>,
+        <lars@metafoo.de>, <radhey.shyam.pandey@xilinx.com>
+CC:     <dmaengine@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH 0/3] dmaengine: xilinx_dma: Minor fix and refactoring
+Date:   Fri, 27 Jul 2018 16:20:36 +0530
+Message-ID: <1532688639-32230-1-git-send-email-radhey.shyam.pandey@xilinx.com>
+X-Mailer: git-send-email 2.4.4
+X-RCIS-Action: ALLOW
+X-TM-AS-Product-Ver: IMSS-7.1.0.1224-8.2.0.1013-23620.005
+X-TM-AS-User-Approved-Sender: Yes;Yes
+X-EOPAttributedMessage: 0
+X-MS-Office365-Filtering-HT: Tenant
+X-Forefront-Antispam-Report: CIP:149.199.60.83;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(396003)(136003)(346002)(376002)(39860400002)(2980300002)(438002)(189003)(199004)(2906002)(106002)(316002)(16586007)(48376002)(52956003)(50466002)(356003)(2201001)(42186006)(63266004)(5660300001)(110136005)(36386004)(336012)(51416003)(103686004)(8676002)(81156014)(8936002)(7049001)(305945005)(81166006)(36756003)(47776003)(478600001)(126002)(486006)(426003)(6266002)(476003)(6666003)(54906003)(4326008)(26005)(186003)(90966002)(106466001)(2616005)(50226002)(107986001);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR02MB4455;H:xsj-pvapsmtpgw01;FPR:;SPF:Pass;LANG:en;PTR:unknown-60-83.xilinx.com;MX:1;A:1;
+X-Microsoft-Exchange-Diagnostics: 1;SN1NAM02FT019;1:bXCB3fV/lzoDMv7xG0CeA32ii+NdgPuSBZGKhJzdB2dbPnXSPe4EQftpX1IhBg3x1LjIARESN3ViQgnxVaMY8+ehWL4QX7MIpWb0/v4ypX27OGBakpR3vfZ0J8v3N8X4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180725162455.31381-3-luca@lucaceresoli.net>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Type: text/plain
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: b0880a94-5bec-4313-03ed-08d5f3aed39d
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(5600074)(711020)(4608076)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(2017052603328)(7153060);SRVR:BYAPR02MB4455;
+X-Microsoft-Exchange-Diagnostics: 1;BYAPR02MB4455;3:8UmQBYw6FDgg/p68WHyZxsaBsuwp/6gju6ii4ctM/DJ6M29iVpDAhxw73AZ8N7fYoLiJV5ySEL9qKqQHxWE8dA4AdjZQm+BpeHAVY8twOcbrrYNzO84m2QCnl9RqEi/9dwn/p//3RAUIS2tTUPL8MX588xf1hCEaKs5fr536R8Edh7jWoKMj64ZIDaA7kNCFuC7Ei0zCBtYOCEG1Xuz/A6yMSd/8LVIBrQTtZzMTU7RdDXXPRBlryHjAYbWKRswL/GpQOw+xutVEPzq2ejusGGiKVrBLAkutGLjjgmXjwvAven2y53JGFlRa4PYkIRE2XlE3cerC+LoVGyyKJNl1X/x2S7Zj7ST4YBRRDlFEFUg=;25:ud/PSDkVAegoR2mGpSE4XIK5GHgBCzAV4seRVkaqOC6+4DgdxRc3NFwYNFWUsz1xZ20GZRJ4plTQ/EoJV7IEBJ+woq28h3hcB2JdwKhbI0fCDobEebulaSLkdoOG+OzA3EshJJ6JernrQpDkiOotZgac+qD+O9C5L7QOl1R7w6J5lEQSdZj8BgGBwKKHwBvU9QT4DUVs0xuvGuVomccWAZ+/EkimzT4jeDg8TRjgjfQlAmlS/tjPGRwqlzfE0Q6Uu5yPDQjZrkGSQHo0ZlT7QtRqWirNcqK3qhIfAck90PJDBHkwga7+O+6Hd8gm+3KJfqz1DLqo1xcZ/+KmNnm5Kg==
+X-MS-TrafficTypeDiagnostic: BYAPR02MB4455:
+X-Microsoft-Exchange-Diagnostics: 1;BYAPR02MB4455;31:4P4VbvERZAvxQIl0H09WBp0sfJmUBaEaKDhbAOrSYs5FhQ6LU5a+5XtVj0pLKliKXjxoxZvti7u5/M00ha7LINIa8I4rpittueUn1fcWzjkeTWIHHifz4cDNxmel+LyAWKr5r0PS2JN8TFnnHmwrlTXi7t0nUgsMOHzdtc5qKQ6V8YhpuxwoUnd7lXm7Hz9ea3hlmsAgmtGmbEGt+Bt/l09Hkc1Pcj+QeQZFyc9Lx/0=;20:DNeuzcYadODn+8bk9oVpRKb9b55W92rbeT+/xG94J/CzWaNgW3PB2qoWC5XLzdWhoY7Jz7zyV6XMRWvIu8G99MhEdyxQxUSfJmcNL/a7PoScRtRjecPjHnUI3r4m/LnzXKxU2dR1vSUEwWsUYgrQpgdsMHM6WDMhtUFhTjszOjECOqyCrbSiqM2iDksG7jKbGC/F2b68OLF8tRonRuEcfSNQrMqSeJtIWvQIZspjmHU7d0gwQ5emPOOqtQOsBNk6hxqIhVaInfGv/TbrgvZV8WTPJt5RO+6NRAnUxpeZ38NuVPiQCcRnPtQZapWzoCv2H1f5hijEOIJsmFPtcw8VyF3+swBxnJrbLifomM4u18Tj47JyvkP6G1s0RWOUZRv7epmHUcLVKF3YJiKKW7bu9hAOG7mIFPTdcYAylsHEEAocqtsRw7O4t7FI1gUT0h63mRurd0/JAY+o2XGaxe2rmIEH9CKmFOUlQyFG6AovdpgD04+0jZo1dB98I0SjZGga
+X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
+X-Microsoft-Antispam-PRVS: <BYAPR02MB44551D283CFA7A78D614761DC72A0@BYAPR02MB4455.namprd02.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:;
+X-MS-Exchange-SenderADCheck: 1
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3002001)(10201501046)(93006095)(93004095)(3231311)(944501410)(52105095)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123562045)(20161123558120)(20161123560045)(6072148)(201708071742011)(7699016);SRVR:BYAPR02MB4455;BCL:0;PCL:0;RULEID:;SRVR:BYAPR02MB4455;
+X-Microsoft-Exchange-Diagnostics: 1;BYAPR02MB4455;4:qM9wvI1RpaIv3MY+XutqnNf7N1ORNaZbKDvlckr7cWT24KCoRP/TDiPIICy6ZVte10ED6QdoL4P1xpBMZPpyLbA++H6F+V7NVm3KhUao6wzOBBySGTf9h8vjfU2SIRubOX6GsfmuEjzuuX+SCGEw7LugbCba9jLmLCLm4sa0+hsiEFsKWn5BDqKa7NDKpnzuKEwaOznckFJ7HNdyo06XvexdYIZuPC465SrrFEPDTQO9pIlgUqLJKKDINzqbpx6zSr+J4LfBqzr6bJEVZHDlTg==
+X-Forefront-PRVS: 07467C4D33
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;BYAPR02MB4455;23:FMZBoa/WMYSFoj5/5cfIPa3L4Gnc8z2UQ9uKRQDA2?=
+ =?us-ascii?Q?Tz4ICyn5IFiMbcenWJf/CnT+HcKGwEeojcj8D3H5/5aHmJ69cQ/+Lh4ZQ76b?=
+ =?us-ascii?Q?SHdt3cS0/E+4ILFc6K2nHUQ4Y4X2IaKQyUx97laitV0hYoQqOo4MCKM5tcId?=
+ =?us-ascii?Q?JxPUeCSF2ssPbO8IarmmDU+Q7QJLvxBpAU2TmhLh0nQwjU44ojuYTpqwP9HJ?=
+ =?us-ascii?Q?LCRp3hnsTzrBE1YiN/bioIKxOj5d2r+qmgR3xl7Ju9S3k054OcQHljYNiJkV?=
+ =?us-ascii?Q?ZsVwYpOH643+3wmoByv5H4+pM16j2cf+Bb0ZyNMV6aD2rzKDZJ3liZtYElNE?=
+ =?us-ascii?Q?7282mILo+AZqv5/qBNmIY3kVdlROK28oyL9dd0yMJ5siyoeOWoBKfOPZkVTx?=
+ =?us-ascii?Q?7Vzvnt1iD0FzmmmbWtXbduScs9heWhDIkdMlCSOJ0Mp+Z2RrxjJVdivxJuJO?=
+ =?us-ascii?Q?7RlyutUJJ4njza09m3Bek5AbuyHw4Cs3sqroDaOzqTyvQE/Na+mvuK5sSUHx?=
+ =?us-ascii?Q?igxRb/uAgTH7TGN3K3jHxLG6pWLhUmv7TPm3XfTqVboPRp8Pm9yqVCMWz0NC?=
+ =?us-ascii?Q?cebzrBP3sMAYqjqujrtOkxApzz3X3P1+JaiFjwGlg+1/KFS2ZU6hFvk/95PO?=
+ =?us-ascii?Q?WmOYKhhLo0GJjGiSRnV2xwk8ZsQj/wOxbgF6lFHOHD2qFFhxHVoh0kvw1+Vj?=
+ =?us-ascii?Q?b+WgNXoypprJxeQqkZa6wFpxp0OUkdVo1a7aH0/G9zZKx7D7t+QU0GMW92fH?=
+ =?us-ascii?Q?MUkoavv4md2zYoxWQWttrcODK3wpclvVYJFWmWNsCf64PDAWbmvOTQAgallV?=
+ =?us-ascii?Q?Xiff9EBSXLHYpDMydLmE9WVg1ff8MI/8IqEUX5JdLEcg6Pvna1eDhayKKLQ0?=
+ =?us-ascii?Q?CVTFXtduuvsMhqQ/KB2moA6s6UjZas2BGtYOxUtcuo2/lO4Pvf3zqcTtGefe?=
+ =?us-ascii?Q?CKbdUtNwnjGLzYO6uzmIumIgFKyvltYx9wl9qAjL6Cn7KXAwIkPYgrFo+0w2?=
+ =?us-ascii?Q?5yGYQfXdz4Qkxna9g+AhXNqXg0BG6w3KXyTfAK0rm18LumlmR/3eUhfUbfXp?=
+ =?us-ascii?Q?2CFMxAjFvv1R7hlkccKj1M29bNizazO3HFUiWuHqbI9uNPth4ya+EGA9wFLW?=
+ =?us-ascii?Q?ZYGfF7MCMU=3D?=
+X-Microsoft-Antispam-Message-Info: Vo/lSppBVCd2cuprQ3fmze1QIj4uMhfFQRaOZJQRFgLySoqe1C/6kNsfIx7QWhqF1p4pw4kk5Ddvk8CvfYvuBh8+5GU6HhZltDV4heDiLX292mzBR86+ctTGtQ0sYF0vBekVn5guzobt/haHkvYLcNcxEIdJ2+D9skt845juJ41R2l1WIChjQIuF+RX79jGfg0fU1AzI1eQJ0VWK+Wkx3MCINmzSm751+ObY6zOi5YAeDMQKCNPq3/6q/dt8I6wOTUr2DDBFz0Lvft6Q8BzLeQo/vuzFroc71My3F4DKqIhqJo7aHi2dFWW95ab2eOUQECzShW6IVgwr5lM3MvA3Iw+cjvtZc1w2YRPFDeLeGKQ=
+X-Microsoft-Exchange-Diagnostics: 1;BYAPR02MB4455;6:djzzhruGMHcZy9FlhDQHdiugNmDMZs4msrzhCJUHnBQDr3sc+YBwq/+M+agVWZTx2YuDRmT3R2rfv/Ckyw2f3FJHPEYEahUfOkeT3j6aHhUcgExJyfMu4pYEsCUbTJX4BLspOE2VCDZLvm6Mj4dF4nvwPcv5c5V2uXRf5PR9mGPaPQL0/yZ04j7ZI9xFhk/qccd4FaNVNB0AI+A2R+d0Mf5jple7Qvb8nbaU4mRvsqf6T+EeZQvcoSEV9jMBQXApmvqNgxCNHQbS0T9q2FM2hdQx6LzXzA/uEcHBouGmnMj5bzt+gMpOEZexcMCECC6A688P6OFJECRaxnN7h0dIZxP+t2u3YJFuqngXZ5Esz5L2PBaoy+ZSXUC+BXZcBaOTbHeBmL9sG3gsR9FPzBzAthJGKk9ok/1tch1uAm685vFUCTfpreELIDtV04q06KbEkM8y/iWwOrTFi5BK7DNzFQ==;5:lFfB/xJIjh9tF1aoncgGe+w8xj0sl7BIm7kJjhEW29qxu87W6QOyTCqbQt08xb/f0UMZpbmmk+fW1bCLxmoX69bsH4Ii4vIUlYfaBiEHaM6rQlMNaV+0+YtwcI/+I0d4RClipgh75uZ2/f6mLR7issL+grA6sPh006GzFwbzpwI=;7:EtDPAq/gF1dsVRquNQ3bF5r+flRn3HwUB5REIYnazwb7BE094439aeye7/Oj9ls3vwXZMjpI/MjKDdswBoJcyX4xt5WzwFyeuS4d3SCXzIfrY0ShfqADEcNNPsr6E2f+V4u589eyYvI1ZvkVLmRorxpsjLJ/Xa8QMKZVC8GZhfA3/hi6D5MmffaH8tNppO+b7tg5+4+m2dDRiMKP8KeMskD3RM971lzdpSDlNMUlvjYQn04IMfpb5SvBVDPgJKcd
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-OriginatorOrg: xilinx.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Jul 2018 10:50:52.0590
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: b0880a94-5bec-4313-03ed-08d5f3aed39d
+X-MS-Exchange-CrossTenant-Id: 657af505-d5df-48d0-8300-c31994686c5c
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.60.83];Helo=[xsj-pvapsmtpgw01]
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR02MB4455
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Luca,
+This patchset fixes 64-bit simple CDMA transfer.
+It also does some trivial code refactoring.
 
-Thanks for the update.
 
-On Wed, Jul 25, 2018 at 06:24:55PM +0200, Luca Ceresoli wrote:
-> Currently this driver does not support cropping. The supported modes
-> are the following, all capturing the entire area:
-> 
->  - 3840x2160, 1:1 binning (native sensor resolution)
->  - 1920x1080, 2:1 binning
->  - 1280x720,  3:1 binning
-> 
-> The VIDIOC_SUBDEV_S_FMT ioctl chooses among these 3 configurations the
-> one that matches the requested format.
-> 
-> Add cropping support via VIDIOC_SUBDEV_S_SELECTION: with target
-> V4L2_SEL_TGT_CROP to choose the captured area, with
-> V4L2_SEL_TGT_COMPOSE to choose the output resolution.
-> 
-> To maintain backward compatibility we also allow setting the compose
-> format via VIDIOC_SUBDEV_S_FMT. To obtain this, compose rect and
-> output format are computed in the common helper function
-> __imx274_change_compose(), which sets both to the same width/height
-> values.
-> 
-> Cropping also calls __imx274_change_compose() whenever cropping rect
-> size changes in order to reset the compose rect (and output format
-> size) for 1:1 binning.
-> 
-> Also rename enum imx274_mode to imx274_binning (and its values from
-> IMX274_MODE_BINNING_* to IMX274_BINNING_*). Without cropping, the two
-> naming are equivalent. With cropping, the resolution could be
-> different, e.g. using 2:1 binning mode to crop 1200x960 and output a
-> 600x480 format. Using binning in the names avoids any
-> misunderstanding. For the same reason, replace the 'size' field in
-> struct imx274_frmfmt with 'bin_ratio'.
-> 
-> Signed-off-by: Luca Ceresoli <luca@lucaceresoli.net>
-> Cc: Sakari Ailus <sakari.ailus@linux.intel.com>
-> 
-> ---
-> Changed v5 -> v6:
->  - simplify last call to imx274_write_mbreg() (Sakari)
->  - fix typo in comment
->  - remove unused variable
-> 
-> Changed v4 -> v5:
->  - use imx274_write_mbreg, not prepare_reg (it doesn't exist in v5)
->  - order #includes alphabetically (Sakari)
->  - rename imx274_mode to imx274_binning and
->    IMX274_MODE_BINNING_* to IMX274_BINNING_* (Sakari)
->  - fix doc syntax (Sakari)
->  - remove debug prints that should not be in individual drivers (Sakari)
->  - honor the GE/LE selection flags (algorithm inspired to smiapp) (Sakari)
->  - remove the compose rect from struct stimx274; it duplicates info
->    that we already store in stimx274.format
->  - minor cleanups
-> 
-> Changed v3 -> v4:
->  - Set the binning via the SELECTION API (COMPOSE rect), but still
->    allow using VIDIOC_SUBDEV_S_FMT for backward compatibility.
->  - rename imx274_set_trimming -> imx274_apply_trimming for clarity
-> 
-> Changed v2 -> v3:
->  - Remove hard-coded HMAX reg setting from all modes, not only the
->    first one. HMAX is always computed and set in s_stream now.
->  - Reword commit log message.
-> 
-> Changed v1 -> v2:
->  - add "media: " prefix to commit message
-> ---
->  drivers/media/i2c/imx274.c | 464 +++++++++++++++++++++++++++++--------
->  1 file changed, 373 insertions(+), 91 deletions(-)
-> 
-> diff --git a/drivers/media/i2c/imx274.c b/drivers/media/i2c/imx274.c
-> index 093c4587832a..2d859f46ce13 100644
-> --- a/drivers/media/i2c/imx274.c
-> +++ b/drivers/media/i2c/imx274.c
-> @@ -5,6 +5,7 @@
->   *
->   * Leon Luo <leonl@leopardimaging.com>
->   * Edwin Zou <edwinz@leopardimaging.com>
-> + * Luca Ceresoli <luca@lucaceresoli.net>
->   *
->   * This program is free software; you can redistribute it and/or modify it
->   * under the terms and conditions of the GNU General Public License,
-> @@ -25,6 +26,7 @@
->  #include <linux/gpio/consumer.h>
->  #include <linux/i2c.h>
->  #include <linux/init.h>
-> +#include <linux/kernel.h>
->  #include <linux/module.h>
->  #include <linux/of_gpio.h>
->  #include <linux/regmap.h>
-> @@ -74,7 +76,7 @@
->   */
->  #define IMX274_MIN_EXPOSURE_TIME		(4 * 260 / 72)
->  
-> -#define IMX274_DEFAULT_MODE			IMX274_MODE_3840X2160
-> +#define IMX274_DEFAULT_MODE			IMX274_BINNING_OFF
->  #define IMX274_MAX_WIDTH			(3840)
->  #define IMX274_MAX_HEIGHT			(2160)
->  #define IMX274_MAX_FRAME_RATE			(120)
-> @@ -111,6 +113,20 @@
->  #define IMX274_SHR_REG_LSB			0x300C /* SHR */
->  #define IMX274_SVR_REG_MSB			0x300F /* SVR */
->  #define IMX274_SVR_REG_LSB			0x300E /* SVR */
-> +#define IMX274_HTRIM_EN_REG			0x3037
-> +#define IMX274_HTRIM_START_REG_LSB		0x3038
-> +#define IMX274_HTRIM_START_REG_MSB		0x3039
-> +#define IMX274_HTRIM_END_REG_LSB		0x303A
-> +#define IMX274_HTRIM_END_REG_MSB		0x303B
-> +#define IMX274_VWIDCUTEN_REG			0x30DD
-> +#define IMX274_VWIDCUT_REG_LSB			0x30DE
-> +#define IMX274_VWIDCUT_REG_MSB			0x30DF
-> +#define IMX274_VWINPOS_REG_LSB			0x30E0
-> +#define IMX274_VWINPOS_REG_MSB			0x30E1
-> +#define IMX274_WRITE_VSIZE_REG_LSB		0x3130
-> +#define IMX274_WRITE_VSIZE_REG_MSB		0x3131
-> +#define IMX274_Y_OUT_SIZE_REG_LSB		0x3132
-> +#define IMX274_Y_OUT_SIZE_REG_MSB		0x3133
->  #define IMX274_VMAX_REG_1			0x30FA /* VMAX, MSB */
->  #define IMX274_VMAX_REG_2			0x30F9 /* VMAX */
->  #define IMX274_VMAX_REG_3			0x30F8 /* VMAX, LSB */
-> @@ -140,10 +156,10 @@ static const struct regmap_config imx274_regmap_config = {
->  	.cache_type = REGCACHE_RBTREE,
->  };
->  
-> -enum imx274_mode {
-> -	IMX274_MODE_3840X2160,
-> -	IMX274_MODE_1920X1080,
-> -	IMX274_MODE_1280X720,
-> +enum imx274_binning {
-> +	IMX274_BINNING_OFF,
-> +	IMX274_BINNING_2_1,
-> +	IMX274_BINNING_3_1,
->  };
->  
->  /*
-> @@ -152,8 +168,8 @@ enum imx274_mode {
->   * These are the values to configure the sensor in one of the
->   * implemented modes.
->   *
-> - * @size: recommended recording pixels
->   * @init_regs: registers to initialize the mode
-> + * @bin_ratio: downscale factor (e.g. 3 for 3:1 binning)
->   * @min_frame_len: Minimum frame length for each mode (see "Frame Rate
->   *                 Adjustment (CSI-2)" in the datasheet)
->   * @min_SHR: Minimum SHR register value (see "Shutter Setting (CSI-2)" in the
-> @@ -163,8 +179,8 @@ enum imx274_mode {
->   *           in Each Readout Drive Mode (CSI-2)" in the datasheet)
->   */
->  struct imx274_frmfmt {
-> -	struct v4l2_frmsize_discrete size;
->  	const struct reg_8 *init_regs;
-> +	unsigned int bin_ratio;
->  	int min_frame_len;
->  	int min_SHR;
->  	int max_fps;
-> @@ -215,31 +231,14 @@ static const struct reg_8 imx274_mode1_3840x2160_raw10[] = {
->  	{0x3004, 0x01},
->  	{0x3005, 0x01},
->  	{0x3006, 0x00},
-> -	{0x3007, 0x02},
-> +	{0x3007, 0xa2},
->  
->  	{0x3018, 0xA2}, /* output XVS, HVS */
->  
->  	{0x306B, 0x05},
->  	{0x30E2, 0x01},
-> -	{0x30F6, 0x07}, /* HMAX, 263 */
-> -	{0x30F7, 0x01}, /* HMAX */
-> -
-> -	{0x30dd, 0x01}, /* crop to 2160 */
-> -	{0x30de, 0x06},
-> -	{0x30df, 0x00},
-> -	{0x30e0, 0x12},
-> -	{0x30e1, 0x00},
-> -	{0x3037, 0x01}, /* to crop to 3840 */
-> -	{0x3038, 0x0c},
-> -	{0x3039, 0x00},
-> -	{0x303a, 0x0c},
-> -	{0x303b, 0x0f},
->  
->  	{0x30EE, 0x01},
-> -	{0x3130, 0x86},
-> -	{0x3131, 0x08},
-> -	{0x3132, 0x7E},
-> -	{0x3133, 0x08},
->  	{0x3342, 0x0A},
->  	{0x3343, 0x00},
->  	{0x3344, 0x16},
-> @@ -273,32 +272,14 @@ static const struct reg_8 imx274_mode3_1920x1080_raw10[] = {
->  	{0x3004, 0x02},
->  	{0x3005, 0x21},
->  	{0x3006, 0x00},
-> -	{0x3007, 0x11},
-> +	{0x3007, 0xb1},
->  
->  	{0x3018, 0xA2}, /* output XVS, HVS */
->  
->  	{0x306B, 0x05},
->  	{0x30E2, 0x02},
->  
-> -	{0x30F6, 0x04}, /* HMAX, 260 */
-> -	{0x30F7, 0x01}, /* HMAX */
-> -
-> -	{0x30dd, 0x01}, /* to crop to 1920x1080 */
-> -	{0x30de, 0x05},
-> -	{0x30df, 0x00},
-> -	{0x30e0, 0x04},
-> -	{0x30e1, 0x00},
-> -	{0x3037, 0x01},
-> -	{0x3038, 0x0c},
-> -	{0x3039, 0x00},
-> -	{0x303a, 0x0c},
-> -	{0x303b, 0x0f},
-> -
->  	{0x30EE, 0x01},
-> -	{0x3130, 0x4E},
-> -	{0x3131, 0x04},
-> -	{0x3132, 0x46},
-> -	{0x3133, 0x04},
->  	{0x3342, 0x0A},
->  	{0x3343, 0x00},
->  	{0x3344, 0x1A},
-> @@ -331,31 +312,14 @@ static const struct reg_8 imx274_mode5_1280x720_raw10[] = {
->  	{0x3004, 0x03},
->  	{0x3005, 0x31},
->  	{0x3006, 0x00},
-> -	{0x3007, 0x09},
-> +	{0x3007, 0xa9},
->  
->  	{0x3018, 0xA2}, /* output XVS, HVS */
->  
->  	{0x306B, 0x05},
->  	{0x30E2, 0x03},
->  
-> -	{0x30F6, 0x04}, /* HMAX, 260 */
-> -	{0x30F7, 0x01}, /* HMAX */
-> -
-> -	{0x30DD, 0x01},
-> -	{0x30DE, 0x07},
-> -	{0x30DF, 0x00},
-> -	{0x40E0, 0x04},
-> -	{0x30E1, 0x00},
-> -	{0x3030, 0xD4},
-> -	{0x3031, 0x02},
-> -	{0x3032, 0xD0},
-> -	{0x3033, 0x02},
-> -
->  	{0x30EE, 0x01},
-> -	{0x3130, 0xE2},
-> -	{0x3131, 0x02},
-> -	{0x3132, 0xDE},
-> -	{0x3133, 0x02},
->  	{0x3342, 0x0A},
->  	{0x3343, 0x00},
->  	{0x3344, 0x1B},
-> @@ -498,7 +462,7 @@ static const struct reg_8 imx274_tp_regs[] = {
->  static const struct imx274_frmfmt imx274_formats[] = {
->  	{
->  		/* mode 1, 4K */
-> -		.size = {3840, 2160},
-> +		.bin_ratio = 1,
->  		.init_regs = imx274_mode1_3840x2160_raw10,
->  		.min_frame_len = 4550,
->  		.min_SHR = 12,
-> @@ -507,7 +471,7 @@ static const struct imx274_frmfmt imx274_formats[] = {
->  	},
->  	{
->  		/* mode 3, 1080p */
-> -		.size = {1920, 1080},
-> +		.bin_ratio = 2,
->  		.init_regs = imx274_mode3_1920x1080_raw10,
->  		.min_frame_len = 2310,
->  		.min_SHR = 8,
-> @@ -516,7 +480,7 @@ static const struct imx274_frmfmt imx274_formats[] = {
->  	},
->  	{
->  		/* mode 5, 720p */
-> -		.size = {1280, 720},
-> +		.bin_ratio = 3,
->  		.init_regs = imx274_mode5_1280x720_raw10,
->  		.min_frame_len = 2310,
->  		.min_SHR = 8,
-> @@ -547,7 +511,10 @@ struct imx274_ctrls {
->   * @pad: Media pad structure
->   * @client: Pointer to I2C client
->   * @ctrls: imx274 control structure
-> + * @crop: rect to be captured
-> + * @compose: compose rect, i.e. output resolution
->   * @format: V4L2 media bus frame format structure
-> + *          (width and height are in sync with the compose rect)
->   * @frame_rate: V4L2 frame rate structure
->   * @regmap: Pointer to regmap structure
->   * @reset_gpio: Pointer to reset gpio
-> @@ -559,6 +526,7 @@ struct stimx274 {
->  	struct media_pad pad;
->  	struct i2c_client *client;
->  	struct imx274_ctrls ctrls;
-> +	struct v4l2_rect crop;
->  	struct v4l2_mbus_framefmt format;
->  	struct v4l2_fract frame_interval;
->  	struct regmap *regmap;
-> @@ -567,6 +535,13 @@ struct stimx274 {
->  	const struct imx274_frmfmt *mode;
->  };
->  
-> +#define IMX274_ROUND(dim, step, flags)			\
-> +	((flags) & V4L2_SEL_FLAG_GE			\
-> +	 ? roundup((dim), (step))			\
-> +	 : ((flags) & V4L2_SEL_FLAG_LE			\
-> +	    ? rounddown((dim), (step))			\
-> +	    : rounddown((dim) + (step) / 2, (step))))
-> +
->  /*
->   * Function declaration
->   */
-> @@ -840,6 +815,114 @@ static int imx274_s_ctrl(struct v4l2_ctrl *ctrl)
->  	return ret;
->  }
->  
-> +static int imx274_binning_goodness(struct stimx274 *imx274,
-> +				   int w, int ask_w,
-> +				   int h, int ask_h, u32 flags)
-> +{
-> +	struct device *dev = &imx274->client->dev;
-> +	const int goodness = 100000;
-> +	int val = 0;
-> +
-> +	if (flags & V4L2_SEL_FLAG_GE) {
-> +		if (w < ask_w)
-> +			val -= goodness;
-> +		if (h < ask_h)
-> +			val -= goodness;
-> +	}
-> +
-> +	if (flags & V4L2_SEL_FLAG_LE) {
-> +		if (w > ask_w)
-> +			val -= goodness;
-> +		if (h > ask_h)
-> +			val -= goodness;
-> +	}
-> +
-> +	val -= abs(w - ask_w);
-> +	val -= abs(h - ask_h);
-> +
-> +	dev_dbg(dev, "%s: ask %dx%d, size %dx%d, goodness %d\n",
-> +		__func__, ask_w, ask_h, w, h, val);
-> +
-> +	return val;
-> +}
-> +
-> +/**
-> + * Helper function to change binning and set both compose and format.
-> + *
-> + * We have two entry points to change binning: set_fmt and
-> + * set_selection(COMPOSE). Both have to compute the new output size
-> + * and set it in both the compose rect and the frame format size. We
-> + * also need to do the same things after setting cropping to restore
-> + * 1:1 binning.
-> + *
-> + * This function contains the common code for these three cases, it
-> + * has many arguments in order to accommodate the needs of all of
-> + * them.
-> + *
-> + * Must be called with imx274->lock locked.
-> + *
-> + * @imx274: The device object
-> + * @cfg:    The pad config we are editing for TRY requests
-> + * @which:  V4L2_SUBDEV_FORMAT_ACTIVE or V4L2_SUBDEV_FORMAT_TRY from the caller
-> + * @width:  Input-output parameter: set to the desired width before
-> + *          the call, contains the chosen value after returning successfully
-> + * @height: Input-output parameter for height (see @width)
-> + * @flags:  Selection flags from struct v4l2_subdev_selection, or 0 if not
-> + *          available (when called from set_fmt)
-> + */
-> +static int __imx274_change_compose(struct stimx274 *imx274,
-> +				   struct v4l2_subdev_pad_config *cfg,
-> +				   u32 which,
-> +				   u32 *width,
-> +				   u32 *height,
-> +				   u32 flags)
-> +{
-> +	struct device *dev = &imx274->client->dev;
-> +	const struct v4l2_rect *cur_crop;
-> +	struct v4l2_mbus_framefmt *tgt_fmt;
-> +	unsigned int i;
-> +	const struct imx274_frmfmt *best_mode = &imx274_formats[0];
-> +	int best_goodness = INT_MIN;
-> +
-> +	if (which == V4L2_SUBDEV_FORMAT_TRY) {
-> +		cur_crop = &cfg->try_crop;
-> +		tgt_fmt = &cfg->try_fmt;
-> +	} else {
-> +		cur_crop = &imx274->crop;
-> +		tgt_fmt = &imx274->format;
-> +	}
-> +
-> +	for (i = 0; i < ARRAY_SIZE(imx274_formats); i++) {
-> +		unsigned int ratio = imx274_formats[i].bin_ratio;
-> +
-> +		int goodness = imx274_binning_goodness(
-> +			imx274,
-> +			cur_crop->width / ratio, *width,
-> +			cur_crop->height / ratio, *height,
-> +			flags);
-> +
-> +		if (goodness >= best_goodness) {
-> +			best_goodness = goodness;
-> +			best_mode = &imx274_formats[i];
-> +		}
-> +	}
-> +
-> +	*width = cur_crop->width / best_mode->bin_ratio;
-> +	*height = cur_crop->height / best_mode->bin_ratio;
-> +
-> +	if (which == V4L2_SUBDEV_FORMAT_ACTIVE)
-> +		imx274->mode = best_mode;
-> +
-> +	dev_dbg(dev, "%s: selected %u:1 binning\n",
-> +		__func__, best_mode->bin_ratio);
-> +
-> +	tgt_fmt->width = *width;
-> +	tgt_fmt->height = *height;
-> +	tgt_fmt->field = V4L2_FIELD_NONE;
-> +
-> +	return 0;
-> +}
-> +
->  /**
->   * imx274_get_fmt - Get the pad format
->   * @sd: Pointer to V4L2 Sub device structure
-> @@ -878,45 +961,236 @@ static int imx274_set_fmt(struct v4l2_subdev *sd,
->  {
->  	struct v4l2_mbus_framefmt *fmt = &format->format;
->  	struct stimx274 *imx274 = to_imx274(sd);
-> -	struct i2c_client *client = imx274->client;
-> -	int index;
-> -
-> -	dev_dbg(&client->dev,
-> -		"%s: width = %d height = %d code = %d\n",
-> -		__func__, fmt->width, fmt->height, fmt->code);
-> +	int err = 0;
->  
->  	mutex_lock(&imx274->lock);
->  
-> -	for (index = 0; index < ARRAY_SIZE(imx274_formats); index++) {
-> -		if (imx274_formats[index].size.width == fmt->width &&
-> -		    imx274_formats[index].size.height == fmt->height)
-> -			break;
-> -	}
-> -
-> -	if (index >= ARRAY_SIZE(imx274_formats)) {
-> -		/* default to first format */
-> -		index = 0;
-> -	}
-> +	err = __imx274_change_compose(imx274, cfg, format->which,
-> +				      &fmt->width, &fmt->height, 0);
->  
-> -	imx274->mode = &imx274_formats[index];
-> +	if (err)
-> +		goto out;
->  
-> -	if (fmt->width > IMX274_MAX_WIDTH)
-> -		fmt->width = IMX274_MAX_WIDTH;
-> -	if (fmt->height > IMX274_MAX_HEIGHT)
-> -		fmt->height = IMX274_MAX_HEIGHT;
-> -	fmt->width = fmt->width & (~IMX274_MASK_LSB_2_BITS);
-> -	fmt->height = fmt->height & (~IMX274_MASK_LSB_2_BITS);
-> +	/*
-> +	 * __imx274_change_compose already set width and height in the
-> +	 * applicable format, but we need to keep all other format
-> +	 * values, so do a full copy here
-> +	 */
->  	fmt->field = V4L2_FIELD_NONE;
-> -
->  	if (format->which == V4L2_SUBDEV_FORMAT_TRY)
->  		cfg->try_fmt = *fmt;
->  	else
->  		imx274->format = *fmt;
->  
-> +out:
-> +	mutex_unlock(&imx274->lock);
-> +
-> +	return err;
-> +}
-> +
-> +static int imx274_get_selection(struct v4l2_subdev *sd,
-> +				struct v4l2_subdev_pad_config *cfg,
-> +				struct v4l2_subdev_selection *sel)
-> +{
-> +	struct stimx274 *imx274 = to_imx274(sd);
-> +	const struct v4l2_rect *src_crop;
-> +	const struct v4l2_mbus_framefmt *src_fmt;
-> +	int ret = 0;
-> +
-> +	if (sel->pad != 0)
-> +		return -EINVAL;
-> +
-> +	if (sel->target == V4L2_SEL_TGT_CROP_BOUNDS) {
-> +		sel->r.left = 0;
-> +		sel->r.top = 0;
-> +		sel->r.width = IMX274_MAX_WIDTH;
-> +		sel->r.height = IMX274_MAX_HEIGHT;
-> +		return 0;
-> +	}
-> +
-> +	if (sel->which == V4L2_SUBDEV_FORMAT_TRY) {
-> +		src_crop = &cfg->try_crop;
-> +		src_fmt = &cfg->try_fmt;
-> +	} else {
-> +		src_crop = &imx274->crop;
-> +		src_fmt = &imx274->format;
-> +	}
-> +
-> +	mutex_lock(&imx274->lock);
-> +
-> +	switch (sel->target) {
-> +	case V4L2_SEL_TGT_CROP:
-> +		sel->r = *src_crop;
-> +		break;
-> +	case V4L2_SEL_TGT_COMPOSE_BOUNDS:
-> +		sel->r.top = 0;
-> +		sel->r.left = 0;
-> +		sel->r.width = src_crop->width;
-> +		sel->r.height = src_crop->height;
-> +		break;
-> +	case V4L2_SEL_TGT_COMPOSE:
-> +		sel->r.top = 0;
-> +		sel->r.left = 0;
-> +		sel->r.width = src_fmt->width;
-> +		sel->r.height = src_fmt->height;
-> +		break;
-> +	default:
-> +		ret = -EINVAL;
-> +	}
-> +
-> +	mutex_unlock(&imx274->lock);
-> +
-> +	return ret;
-> +}
-> +
-> +static int imx274_set_selection_crop(struct stimx274 *imx274,
-> +				     struct v4l2_subdev_pad_config *cfg,
-> +				     struct v4l2_subdev_selection *sel)
-> +{
-> +	struct v4l2_rect *tgt_crop;
-> +	struct v4l2_rect new_crop;
-> +	bool size_changed;
-> +
-> +	/*
-> +	 * h_step could be 12 or 24 depending on the binning. But we
-> +	 * won't know the binning until we choose the mode later in
-> +	 * __imx274_change_compose(). Thus let's be safe and use the
-> +	 * most conservative value in all cases.
-> +	 */
-> +	const u32 h_step = 24;
-> +
-> +	new_crop.width = min_t(u32,
-> +			       IMX274_ROUND(sel->r.width, h_step, sel->flags),
-> +			       IMX274_MAX_WIDTH);
-> +
-> +	/* Constraint: HTRIMMING_END - HTRIMMING_START >= 144 */
-> +	if (new_crop.width < 144)
-> +		new_crop.width = 144;
-> +
-> +	new_crop.left = min_t(u32,
-> +			      IMX274_ROUND(sel->r.left, h_step, 0),
-> +			      IMX274_MAX_WIDTH - new_crop.width);
-> +
-> +	new_crop.height = min_t(u32,
-> +				IMX274_ROUND(sel->r.height, 2, sel->flags),
-> +				IMX274_MAX_HEIGHT);
-> +
-> +	new_crop.top = min_t(u32, IMX274_ROUND(sel->r.top, 2, 0),
-> +			     IMX274_MAX_HEIGHT - new_crop.height);
-> +
-> +	sel->r = new_crop;
-> +
-> +	if (sel->which == V4L2_SUBDEV_FORMAT_TRY)
-> +		tgt_crop = &cfg->try_crop;
-> +	else
-> +		tgt_crop = &imx274->crop;
-> +
-> +	mutex_lock(&imx274->lock);
-> +
-> +	size_changed = (new_crop.width != tgt_crop->width ||
-> +			new_crop.height != tgt_crop->height);
-> +
-> +	/* __imx274_change_compose needs the new size in *tgt_crop */
-> +	*tgt_crop = new_crop;
-> +
-> +	/* if crop size changed then reset the output image size */
-> +	if (size_changed)
-> +		__imx274_change_compose(imx274, cfg, sel->which,
-> +					&new_crop.width, &new_crop.height,
-> +					sel->flags);
-> +
->  	mutex_unlock(&imx274->lock);
-> +
->  	return 0;
->  }
->  
-> +static int imx274_set_selection(struct v4l2_subdev *sd,
-> +				struct v4l2_subdev_pad_config *cfg,
-> +				struct v4l2_subdev_selection *sel)
-> +{
-> +	struct stimx274 *imx274 = to_imx274(sd);
-> +
-> +	if (sel->pad != 0)
-> +		return -EINVAL;
-> +
-> +	if (sel->target == V4L2_SEL_TGT_CROP)
-> +		return imx274_set_selection_crop(imx274, cfg, sel);
-> +
-> +	if (sel->target == V4L2_SEL_TGT_COMPOSE) {
-> +		int err;
-> +
-> +		mutex_lock(&imx274->lock);
-> +		err =  __imx274_change_compose(imx274, cfg, sel->which,
-> +					       &sel->r.width, &sel->r.height,
-> +					       sel->flags);
-> +		mutex_unlock(&imx274->lock);
-> +
-> +		/*
-> +		 * __imx274_change_compose already set width and
-> +		 * height in set->r, we still need to set top-left
-> +		 */
-> +		if (!err) {
-> +			sel->r.top = 0;
-> +			sel->r.left = 0;
-> +		}
-> +
-> +		return err;
-> +	}
-> +
-> +	return -EINVAL;
-> +}
-> +
-> +static int imx274_apply_trimming(struct stimx274 *imx274)
-> +{
-> +	u32 h_start;
-> +	u32 h_end;
-> +	u32 hmax;
-> +	u32 v_cut;
-> +	s32 v_pos;
-> +	u32 write_v_size;
-> +	u32 y_out_size;
-> +	int err;
-> +
-> +	h_start = imx274->crop.left + 12;
-> +	h_end = h_start + imx274->crop.width;
-> +
-> +	/* Use the minimum allowed value of HMAX */
-> +	/* Note: except in mode 1, (width / 16 + 23) is always < hmax_min */
-> +	/* Note: 260 is the minimum HMAX in all implemented modes */
-> +	hmax = max_t(u32, 260, (imx274->crop.width) / 16 + 23);
-> +
-> +	/* invert v_pos if VFLIP */
-> +	v_pos = imx274->ctrls.vflip->cur.val ?
-> +		(-imx274->crop.top / 2) : (imx274->crop.top / 2);
-> +	v_cut = (IMX274_MAX_HEIGHT - imx274->crop.height) / 2;
-> +	write_v_size = imx274->crop.height + 22;
-> +	y_out_size   = imx274->crop.height + 14;
-> +
-> +	err = imx274_write_mbreg(imx274, IMX274_HMAX_REG_LSB, hmax, 2);
-> +	if (!err)
-> +		err = imx274_write_mbreg(imx274, IMX274_HTRIM_EN_REG, 1, 1);
-> +	if (!err)
-> +		err = imx274_write_mbreg(imx274, IMX274_HTRIM_START_REG_LSB,
-> +					 h_start, 2);
-> +	if (!err)
-> +		err = imx274_write_mbreg(imx274, IMX274_HTRIM_END_REG_LSB,
-> +					 h_end, 2);
-> +	if (!err)
-> +		err = imx274_write_mbreg(imx274, IMX274_VWIDCUTEN_REG, 1, 1);
-> +	if (!err)
-> +		err = imx274_write_mbreg(imx274, IMX274_VWIDCUT_REG_LSB,
-> +					 v_cut, 2);
-> +	if (!err)
-> +		err = imx274_write_mbreg(imx274, IMX274_VWINPOS_REG_LSB,
-> +					 v_pos, 2);
-> +	if (!err)
-> +		err = imx274_write_mbreg(imx274, IMX274_WRITE_VSIZE_REG_LSB,
-> +					 write_v_size, 2);
-> +	if (!err)
+Radhey Shyam Pandey (3):
+  dmaengine: xilinx_dma: Refactor axidma channel allocation
+  dmaengine: xilinx_dma: Refactor axidma channel validation
+  dmaengine: xilinx_dma: Fix 64-bit simple CDMA transfer
 
-I guess you forgot removing this line (and reindent the one below). Apart
-from this the patches seem fine, let me know if you're happy with me fixing
-this.
+ drivers/dma/xilinx/xilinx_dma.c |   46 ++++++++++++++++++++------------------
+ 1 files changed, 24 insertions(+), 22 deletions(-)
 
-> +		return imx274_write_mbreg(imx274, IMX274_Y_OUT_SIZE_REG_LSB,
-> +					  y_out_size, 2);
-> +}
-> +
->  /**
->   * imx274_g_frame_interval - Get the frame interval
->   * @sd: Pointer to V4L2 Sub device structure
-> @@ -1057,6 +1331,10 @@ static int imx274_s_stream(struct v4l2_subdev *sd, int on)
->  		if (ret)
->  			goto fail;
->  
-> +		ret = imx274_apply_trimming(imx274);
-> +		if (ret)
-> +			goto fail;
-> +
->  		/*
->  		 * update frame rate & expsoure. if the last mode is different,
->  		 * HMAX could be changed. As the result, frame rate & exposure
-> @@ -1545,6 +1823,8 @@ static int imx274_set_frame_interval(struct stimx274 *priv,
->  static const struct v4l2_subdev_pad_ops imx274_pad_ops = {
->  	.get_fmt = imx274_get_fmt,
->  	.set_fmt = imx274_set_fmt,
-> +	.get_selection = imx274_get_selection,
-> +	.set_selection = imx274_set_selection,
->  };
->  
->  static const struct v4l2_subdev_video_ops imx274_video_ops = {
-> @@ -1590,8 +1870,10 @@ static int imx274_probe(struct i2c_client *client,
->  
->  	/* initialize format */
->  	imx274->mode = &imx274_formats[IMX274_DEFAULT_MODE];
-> -	imx274->format.width = imx274->mode->size.width;
-> -	imx274->format.height = imx274->mode->size.height;
-> +	imx274->crop.width = IMX274_MAX_WIDTH;
-> +	imx274->crop.height = IMX274_MAX_HEIGHT;
-> +	imx274->format.width = imx274->crop.width / imx274->mode->bin_ratio;
-> +	imx274->format.height = imx274->crop.height / imx274->mode->bin_ratio;
->  	imx274->format.field = V4L2_FIELD_NONE;
->  	imx274->format.code = MEDIA_BUS_FMT_SRGGB10_1X10;
->  	imx274->format.colorspace = V4L2_COLORSPACE_SRGB;
-> -- 
-> 2.17.1
-> 
-
--- 
-Sakari Ailus
-sakari.ailus@linux.intel.com
