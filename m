@@ -2,93 +2,84 @@ Return-Path: <SRS0=OQFz=KL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD31EC67790
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 12:14:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28DADC67790
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 12:14:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7B83D2088E
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 12:14:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C9253208AF
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 12:14:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=contabo.de header.i=@contabo.de header.b="xzK3Ivkz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7B83D2088E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=contabo.de
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="vCOpheaC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C9253208AF
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732728AbeG0Nfi (ORCPT
+        id S1732909AbeG0Nfq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 09:35:38 -0400
-Received: from mail.contabo.com ([91.205.175.50]:35769 "EHLO mail.contabo.com"
+        Fri, 27 Jul 2018 09:35:46 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33948 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730126AbeG0Nfi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 09:35:38 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=contabo.de;
-         s=default; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:MIME-Version
-        :Date:Message-ID:From:References:Cc:To:Subject:Sender:Reply-To:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=g7/TnCNoBLFIK3JP0uN10aVX+Xrsx2lI3xqesWbpf4A=; b=xzK3Ivkz5a4hkoU67+CAWoLo/A
-        IZSHVv9BDw3vhq76ZfDzScrY/42YsirGRU7ulrNHQvcjxqgEThexGS6VNPAMXPfoTn+Ew4ckE5RXt
-        hf6KRamzmY0g6s1TAmP0hu6YPvbrU5UuD/jXx2Td5UHJXUNAMW76ktAdLu9xEVVQ/mlG5wiZ36vtG
-        0CsA9PYtuixiSW+NHwYbGLs/jxr/CctMrs8kfnzUqADubjSUZnmDDB2nVwzqr0epObXpILQ3pFZ2i
-        uNFgVLU3cJ7OgfxnyCZkAXTbKA4H52a7DvZg845CYyoh2SrFkHf7rQpLKF/04QbbBMUK3Rgn/slKd
-        PbYGzdTQ==;
-Received: from [178.238.239.246] (port=31756 helo=[192.168.178.123])
-        by mail.contabo.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.91)
-        (envelope-from <tino.lehnig@contabo.de>)
-        id 1fj1d7-0002IV-AL; Fri, 27 Jul 2018 14:13:57 +0200
-Subject: Re: Zram writeback feature unstable with heavy swap utilization -
- BUG: Bad page state in process...
-To:     Minchan Kim <minchan@kernel.org>
-Cc:     ngupta@vflare.org, linux-kernel@vger.kernel.org,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-References: <d4f4b5a1-9e31-375d-0599-b6d8b0ebc9df@contabo.de>
- <20180725132126.GA2893@rodete-laptop-imager.corp.google.com>
- <d07348bb-3102-30f0-d138-de23449e23df@contabo.de>
- <20180726020351.GA221405@rodete-desktop-imager.corp.google.com>
- <1684cefc-c920-d53c-8d2d-c32da213a045@contabo.de>
- <15e3a0af-7e02-83fb-4b72-b05f6d7ded71@contabo.de>
- <20180726103001.GC221405@rodete-desktop-imager.corp.google.com>
- <b914205b-f3eb-7c0e-cd60-88c34341f84a@contabo.de>
- <20180727091431.GA229060@rodete-desktop-imager.corp.google.com>
- <4e0ab1cd-ea7a-0916-eb85-0396c61bd949@contabo.de>
- <20180727120517.GB229060@rodete-desktop-imager.corp.google.com>
-From:   Tino Lehnig <tino.lehnig@contabo.de>
-Message-ID: <54eddd07-9fe5-0a83-0d2f-556726f64516@contabo.de>
-Date:   Fri, 27 Jul 2018 14:13:57 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        id S1730126AbeG0Nfp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Jul 2018 09:35:45 -0400
+Received: from localhost.localdomain (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id E2360208AD;
+        Fri, 27 Jul 2018 12:14:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1532693646;
+        bh=/GLnsf4QnRa6GHrHxdKREIoRrEDq6hnuvzGZZpvsSuc=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=vCOpheaC2bDQEWhe9c2BMyqBjLlg1cPa/o3hKg27tnQdUjaet03Qjib7u9AoJTaZ3
+         gp25CR5dO9fB31vTtslJI/10YArhjgd1e1zZA30bE3NUwVHaWZjTf18s1JVtfXxPO1
+         141vZUlPJYRwzB+wCkF7PMxHMOZn5LMWXlT4DiYo=
+From:   Masami Hiramatsu <mhiramat@kernel.org>
+To:     Shuah Khan <shuah@kernel.org>, Steven Rostedt <rostedt@goodmis.org>
+Cc:     Ingo Molnar <mingo@redhat.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 08/25] selftests/ftrace: Fix to test kprobe $comm arg only if available
+Date:   Fri, 27 Jul 2018 21:13:44 +0900
+Message-Id: <153269362401.3084.11029345703822906960.stgit@devbox>
+X-Mailer: git-send-email 2.13.6
+In-Reply-To: <153269339575.3084.16279591141931053689.stgit@devbox>
+References: <153269339575.3084.16279591141931053689.stgit@devbox>
+User-Agent: StGit/0.17.1-dirty
 MIME-Version: 1.0
-In-Reply-To: <20180727120517.GB229060@rodete-desktop-imager.corp.google.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - mail.contabo.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - contabo.de
-X-Get-Message-Sender-Via: mail.contabo.com: authenticated_id: tino.lehnig@contabo.de
-X-Authenticated-Sender: mail.contabo.com: tino.lehnig@contabo.de
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/27/2018 02:05 PM, Minchan Kim wrote:
-> And bad page is always with writeback enable?
-> 
-> writeback enable means "echo "some dev" > /sys/block/zram0/backing_dev,
-> not just enable CONFIG_ZRAM_WRITEBACK.
+Test $comm in kprobe-event argument syntax testcase
+only if it is supported on the kernel because
+$comm has been introduced 4.8 kernel.
+So on older stable kernel, it should be skipped.
 
-Yes, the bug only appears when backing_dev is set.
+Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
+---
+ .../ftrace/test.d/kprobe/kprobe_args_syntax.tc     |    3 +++
+ 1 file changed, 3 insertions(+)
 
--- 
-Kind regards,
+diff --git a/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_args_syntax.tc b/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_args_syntax.tc
+index d783a8ce0692..6f0f19953193 100644
+--- a/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_args_syntax.tc
++++ b/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_args_syntax.tc
+@@ -75,8 +75,11 @@ test_badarg "\$stackp" "\$stack0+10" "\$stack1-10"
+ echo "r ${PROBEFUNC} \$retval" > kprobe_events
+ ! echo "p ${PROBEFUNC} \$retval" > kprobe_events
+ 
++# $comm was introduced in 4.8, older kernels reject it.
++if grep -A1 "fetcharg:" README | grep -q '\$comm' ; then
+ : "Comm access"
+ test_goodarg "\$comm"
++fi
+ 
+ : "Indirect memory access"
+ test_goodarg "+0(${GOODREG})" "-0(${GOODREG})" "+10(\$stack)" \
 
-Tino Lehnig
