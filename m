@@ -2,200 +2,107 @@ Return-Path: <SRS0=OQFz=KL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EEA1C67790
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 12:56:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9BE0C67790
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 12:59:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F0E18208AF
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 12:56:49 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KIzr+D+Y"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F0E18208AF
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id A0F0F208AF
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 12:59:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A0F0F208AF
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732099AbeG0OSg (ORCPT
+        id S1731002AbeG0OVT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 10:18:36 -0400
-Received: from mail-oi0-f67.google.com ([209.85.218.67]:43533 "EHLO
-        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730314AbeG0OSg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 10:18:36 -0400
-Received: by mail-oi0-f67.google.com with SMTP id b15-v6so8853095oib.10
-        for <linux-kernel@vger.kernel.org>; Fri, 27 Jul 2018 05:56:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=6v/0N8AiFLlSLTV0L4auuUkXb03OdHWLa0gwiyViN1E=;
-        b=KIzr+D+Y6xNEjtdPPy6ZaVa7AFYhleYb/LDNZKwfEbLsAwHwNMs0MFO88itmZ4JTcw
-         CPgnoVyUVuV3nle1f8qsW7LdsvPEOBQso25BIYOj7cTa2WFFIHc+VfRdXaioetzHulJI
-         fNHPob22SJgDkB0vIITP724J9GZ+W81bOzPVc2o6Ah/h3u3G4mA7b6oK334csatAlXbc
-         qYw4FHV9YAsgq4SNDy/9xRe3bxmFvarIdLdkrSaIaO8Vdo8iDCDNcxlK6xw5dZ7JhXgf
-         Vet90l9dXsQRJn+h3vyscRUwZ90mRaUryu07/POkWA1l5qlMtI2/jvlw/xaVxNllA/qK
-         RK0Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=6v/0N8AiFLlSLTV0L4auuUkXb03OdHWLa0gwiyViN1E=;
-        b=Q9o3RAG5gED3v+hHB5x2z3hNFvPAKp1OBbA+qHd429hOFnBFwkTOCypJC36kQ2YPrX
-         vY9xog3mSl9wBQYAjIrFaUGw04UDw30G8UjQnhP8EeDnfHLCF6asULmMqXaQj8WxAq5K
-         qPnQuRf7QxU9kXlviEqQoywcTYjDVIGfZ+MYcYtDrf+I3mup5VFSx8zgW8Ez8U5vEmfa
-         O7B0r619CtLyZ/JnMHF75ldj0Gj00GCQpSmlKQ7pLeC8cGeOLL8V4iZPviXISjzi7+OA
-         rfjIqx9q372G9EFtU6bK25UunGFkj9qynjeryVmkaTIoQM6LhNqe2DBheAw03D+cS56Z
-         uv8Q==
-X-Gm-Message-State: AOUpUlEjTf+S2tQ2Us0mzwNs0HYldXFQo/6YHoZccFUY7bfNebeUovQs
-        JX+p1OEw5ftALO9veaEl0SXoANr3iGv/booTS08=
-X-Google-Smtp-Source: AAOMgpcMm2J0GA+LeHRz9xqzTAtphdXEqjmzwx2yTn77pDOSmluRykh7PHDouanoL8zewwF2nxbExVzq7OHzcUsTIt0=
-X-Received: by 2002:aca:4e50:: with SMTP id c77-v6mr5931334oib.254.1532696206959;
- Fri, 27 Jul 2018 05:56:46 -0700 (PDT)
+        Fri, 27 Jul 2018 10:21:19 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:36555 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728384AbeG0OVT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Jul 2018 10:21:19 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 3FE942073D; Fri, 27 Jul 2018 14:59:22 +0200 (CEST)
+Received: from localhost (AAubervilliers-681-1-89-120.w90-88.abo.wanadoo.fr [90.88.30.120])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 1127020618;
+        Fri, 27 Jul 2018 14:59:12 +0200 (CEST)
+Date:   Fri, 27 Jul 2018 14:59:12 +0200
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Icenowy Zheng <icenowy@aosc.io>
+Cc:     Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+        Jagan Teki <jagan@amarulasolutions.com>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com
+Subject: Re: [PATCH v3.1 00/10] arm64: allwinner: Add A64 DE2 HDMI support
+Message-ID: <20180727125912.e5js7krmthto6gmz@flea>
+References: <20180726171257.6688-1-icenowy@aosc.io>
 MIME-Version: 1.0
-Received: by 2002:ac9:7702:0:0:0:0:0 with HTTP; Fri, 27 Jul 2018 05:56:46
- -0700 (PDT)
-In-Reply-To: <3ed2046c-6912-9380-7ea4-4d921981c64c@arm.com>
-References: <20180419171234.11053-1-ganapatrao.kulkarni@cavium.com>
- <c6c3655b-cef2-1112-e8a7-79c99f9ddac6@arm.com> <CAKTKpr67gqCK5y6atsterc7kCAg9fK_NKx2yMD3OjY+1L=j0sQ@mail.gmail.com>
- <CAKTKpr4skf3=Aw1YJNPppSjUT7w7_CF6QhefeHZDQXzENCfm5g@mail.gmail.com>
- <CAKTKpr7BmaR-rwqf=z8JiNpaoQNhpSXuUp8sZogUgSLpfcCe0A@mail.gmail.com>
- <CAKTKpr694WntjTB+pbXN--wthH+sw1mrr=JWjDfddG4bHdLwjw@mail.gmail.com>
- <CAKTKpr74X9e2X-deraxFQzeoTio09LqoZoLDgod4J5AOn+vPMg@mail.gmail.com> <3ed2046c-6912-9380-7ea4-4d921981c64c@arm.com>
-From:   Ganapatrao Kulkarni <gklkml16@gmail.com>
-Date:   Fri, 27 Jul 2018 18:26:46 +0530
-Message-ID: <CAKTKpr5eERRzxDcH5cno5kDQ10XO9nHXbLTmk=ShEi8HK05fsg@mail.gmail.com>
-Subject: Re: [PATCH] iommu/iova: Update cached node pointer when current node
- fails to get any free IOVA
-To:     Robin Murphy <robin.murphy@arm.com>
-Cc:     Ganapatrao Kulkarni <ganapatrao.kulkarni@cavium.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        iommu@lists.linux-foundation.org,
-        LKML <linux-kernel@vger.kernel.org>, tomasz.nowicki@cavium.com,
-        jnair@caviumnetworks.com,
-        Robert Richter <Robert.Richter@cavium.com>,
-        Vadim.Lomovtsev@cavium.com, Jan.Glauber@cavium.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="anrqhmutbeiy5itt"
+Content-Disposition: inline
+In-Reply-To: <20180726171257.6688-1-icenowy@aosc.io>
+User-Agent: NeoMutt/20180622
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Robin,
 
-On Wed, Jul 25, 2018 at 7:50 PM, Robin Murphy <robin.murphy@arm.com> wrote:
-> On 12/07/18 08:45, Ganapatrao Kulkarni wrote:
->>
->> Hi Robin,
->>
->>
->> On Mon, Jun 4, 2018 at 9:36 AM, Ganapatrao Kulkarni <gklkml16@gmail.com>
->> wrote:
->>>
->>> ping??
->>>
->>> On Mon, May 21, 2018 at 6:45 AM, Ganapatrao Kulkarni <gklkml16@gmail.com>
->>> wrote:
->>>>
->>>> On Thu, Apr 26, 2018 at 3:15 PM, Ganapatrao Kulkarni
->>>> <gklkml16@gmail.com> wrote:
->>>>>
->>>>> Hi Robin,
->>>>>
->>>>> On Mon, Apr 23, 2018 at 11:11 PM, Ganapatrao Kulkarni
->>>>> <gklkml16@gmail.com> wrote:
->>>>>>
->>>>>> On Mon, Apr 23, 2018 at 10:07 PM, Robin Murphy <robin.murphy@arm.com>
->>>>>> wrote:
->>>>>>>
->>>>>>> On 19/04/18 18:12, Ganapatrao Kulkarni wrote:
->>>>>>>>
->>>>>>>>
->>>>>>>> The performance drop is observed with long hours iperf testing using
->>>>>>>> 40G
->>>>>>>> cards. This is mainly due to long iterations in finding the free
->>>>>>>> iova
->>>>>>>> range in 32bit address space.
->>>>>>>>
->>>>>>>> In current implementation for 64bit PCI devices, there is always
->>>>>>>> first
->>>>>>>> attempt to allocate iova from 32bit(SAC preferred over DAC) address
->>>>>>>> range. Once we run out 32bit range, there is allocation from higher
->>>>>>>> range,
->>>>>>>> however due to cached32_node optimization it does not suppose to be
->>>>>>>> painful. cached32_node always points to recently allocated 32-bit
->>>>>>>> node.
->>>>>>>> When address range is full, it will be pointing to last allocated
->>>>>>>> node
->>>>>>>> (leaf node), so walking rbtree to find the available range is not
->>>>>>>> expensive affair. However this optimization does not behave well
->>>>>>>> when
->>>>>>>> one of the middle node is freed. In that case cached32_node is
->>>>>>>> updated
->>>>>>>> to point to next iova range. The next iova allocation will consume
->>>>>>>> free
->>>>>>>> range and again update cached32_node to itself. From now on, walking
->>>>>>>> over 32-bit range is more expensive.
->>>>>>>>
->>>>>>>> This patch adds fix to update cached node to leaf node when there
->>>>>>>> are no
->>>>>>>> iova free range left, which avoids unnecessary long iterations.
->>>>>>>
->>>>>>>
->>>>>>>
->>>>>>> The only trouble with this is that "allocation failed" doesn't
->>>>>>> uniquely mean
->>>>>>> "space full". Say that after some time the 32-bit space ends up empty
->>>>>>> except
->>>>>>> for one page at 0x1000 and one at 0x80000000, then somebody tries to
->>>>>>> allocate 2GB. If we move the cached node down to the leftmost entry
->>>>>>> when
->>>>>>> that fails, all subsequent allocation attempts are now going to fail
->>>>>>> despite
->>>>>>> the space being 99.9999% free!
->>>>>>>
->>>>>>> I can see a couple of ways to solve that general problem of free
->>>>>>> space above
->>>>>>> the cached node getting lost, but neither of them helps with the case
->>>>>>> where
->>>>>>> there is genuinely insufficient space (and if anything would make it
->>>>>>> even
->>>>>>> slower). In terms of the optimisation you want here, i.e. fail fast
->>>>>>> when an
->>>>>>> allocation cannot possibly succeed, the only reliable idea which
->>>>>>> comes to
->>>>>>> mind is free-PFN accounting. I might give that a go myself to see how
->>>>>>> ugly
->>>>>>> it looks.
->>
->>
->> did you get any chance to look in to this issue?
->> i am waiting for your suggestion/patch for this issue!
->
->
-> I got as far as [1], but I wasn't sure how much I liked it, since it still
-> seems a little invasive for such a specific case (plus I can't remember if
-> it's actually been debugged or not). I think in the end I started wondering
-> whether it's even worth bothering with the 32-bit optimisation for PCIe
-> devices - 4 extra bytes worth of TLP is surely a lot less significant than
-> every transaction taking up to 50% more bus cycles was for legacy PCI.
+--anrqhmutbeiy5itt
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-how about tracking previous attempt to get 32bit range iova and avoid
-further attempts, if it was failed. Later Resume attempts once
-replenish happens.
-Created patch for the same [2]
+On Fri, Jul 27, 2018 at 01:12:47AM +0800, Icenowy Zheng wrote:
+> Allwinner A64 has display engine pipeline like other Allwinner SOC's A83T=
+/H3/H5.
+>=20
+> A64 behaviour similar to Allwinner A83T where
+> Mixer0 =3D> TCON0 =3D> LVDS/RGB/MIPI-DSI
+> Mixer1 =3D> TCON1 =3D> HDMI
+> as per Display System Block Diagram from the A64 user manual.
+>=20
+> This is third patch-set followed with previous RFC[1], first and second
+> series[2][3] and merely concentrated on HDMI pipeline through TCON1 and
+> rest will add eventually.
+>=20
+> I just rebased and slightly re-integrated the patchset according to the
+> requirments of the maintainer, and added the mixer0->tcon0 pipeline.
+> The further maintainship of the patchset still needs to be discussed
+> between I and Jagan.
 
-[2] https://github.com/gpkulkarni/linux/commit/e2343a3e1f55cdeb5694103dd354bcb881dc65c3
-note, the testing of this patch is in progress.
+Beside the comment on the pine64, it looks good to me. Can you
+resubmit those patches after rc1 is out?
 
->
-> Robin.
->
-> [1]
-> http://www.linux-arm.org/git?p=linux-rm.git;a=commitdiff;h=a8e0e4af10ebebb3669750e05bf0028e5bd6afe8
+Thanks!
+Maxime
 
-thanks
-Ganapat
+--=20
+Maxime Ripard, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--anrqhmutbeiy5itt
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAltbFx8ACgkQ0rTAlCFN
+r3Rh4w//YULFl9J+chHjxWnvahKtcxglkDFlvK0R3Ht0O0wkegqgZci5c425DsnK
+1ISyKxPobr41n6NRuwAje2hqwZte2DoSM3E/TQ749KtzcJGqJHc6jk07+t5oz7CT
+JKi3xip659H/78FOhE/gXxc6XfgKVT+YzH2FbBAJL/Q8wid0O3INJiy+3oqX0ffV
+RUtk23mAMLPe74ku8lvJKxlISZxaapB8W5515IN7oqJBoOfvTJVapQB2Mc/GJXN/
+VsfbDvKKeYLUH9nd+no7iLVkbsb4Jr4byU2pxDCol/jh/t/91AXi7pbLaL4rzfko
+XNiQzohYBbYoTnVIjmxVgYiL8bCI4MUFJ1FH0MCQiP2w0c4bxVSVKZEXzXIqtPaL
+GfZDKGKYUHqiUz8+4LKgV6oNi2xhpD10dXS2H30Rd7rcpbQN9ROibBrdf+0iIvay
+I0+upoQSS1AQcgUGyREum0dQq3QA0dqFeAV76LxXIntcXt2IZ4hw30GwDNBqhi3D
+v/q2NceMeYxM12aAzVg9pkZwY6XGjn9ftdmvXzLLr2OR8+h22Y75dhA7FSEzEPLz
+chxk4lAOyQWDezye0o0+wbEQXii7jxb/E3QLb7JF2EZ6awEG+7aakAuySkG1HJsG
+518FmSA41GV4a/Wtc2+xrThNOr1MIBtgEFiZYzn/V4Kf4bRiV84=
+=/5kr
+-----END PGP SIGNATURE-----
+
+--anrqhmutbeiy5itt--
