@@ -2,105 +2,99 @@ Return-Path: <SRS0=OQFz=KL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9E0AC67790
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:29:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CC5EC67790
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:32:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 917F7208A4
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:29:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A66CF2089A
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:32:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="z+X/FXds"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 917F7208A4
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="GSpaDYmn"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A66CF2089A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731149AbeG0Luh (ORCPT
+        id S1730706AbeG0LyK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 07:50:37 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42698 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729489AbeG0Luh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 07:50:37 -0400
-Received: from localhost (unknown [119.197.233.250])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8D099208A2;
-        Fri, 27 Jul 2018 10:29:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1532687360;
-        bh=DmKL19mdN8G3ZC0jr7gLOoaBo890N+xZVOp42yp6iw8=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=z+X/FXdsGtVVmzMqlHdn3WjvIlS8izdiNu11kexDyH4hrm554TugBcqawpakEG604
-         Un13iyWlhlmuYyxPAJvnZXVxSYU8/AG3HRqnGeq6LLP8xIuAIb/OLPiY4jrrB7wjOR
-         Q/+euOlswWw2VlPCSiyRg2kyLEy7XPlNaTfpLBTI=
-Date:   Fri, 27 Jul 2018 19:29:16 +0900
-From:   Jaegeuk Kim <jaegeuk@kernel.org>
-To:     Chao Yu <yuchao0@huawei.com>
-Cc:     linux-f2fs-devel@lists.sourceforge.net,
-        linux-kernel@vger.kernel.org, chao@kernel.org
-Subject: Re: [PATCH] f2fs: avoid race between zero_range and background GC
-Message-ID: <20180727102916.GI16155@jaegeuk-macbookpro.roam.corp.google.com>
-References: <20180726104536.114340-1-yuchao0@huawei.com>
+        Fri, 27 Jul 2018 07:54:10 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:50968 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730120AbeG0LyJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Jul 2018 07:54:09 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Subject:Cc:To:
+        From:Date:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=TZdq/khbKx87tq+zY1V5s7m8egq8T6gFVIiGCEyQXEU=; b=GSpaDYmndTe4VWslbxK8z04g/
+        i8gw7Sl6eH20OQbaE8omTfpplXOgAzEzZnw98gwlFninRcjmQjO43XTi9B4YN3llVE8aLVS0+q/UN
+        Y0/0doloIfuzkDzZmp1TPxNxscOWxYm0AeYk+wpFb4R27N1Omjp8znkTMg90FqWsIMysIxpreGcAJ
+        yqaAnwSCmwEgcCANO2JAvL9DSoHF8hFw1hIy8nHMFCEs7+pR+Eitb2zoJ2wDoZWquFN0KXOJzNsPs
+        EwZvMsM2u8GwdsmFFusq/vwxQepeqXV1VBWtUNl8oqU8YuFy9lRiRdj8mHspqj3krSEKIj/RBY4an
+        majpSStdw==;
+Received: from 179.176.120.227.dynamic.adsl.gvt.net.br ([179.176.120.227] helo=coco.lan)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fj03E-0007jt-5F; Fri, 27 Jul 2018 10:32:48 +0000
+Date:   Fri, 27 Jul 2018 07:32:42 -0300
+From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     Dave Airlie <airlied@linux.ie>,
+        DRI <dri-devel@lists.freedesktop.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Steve Longerbeam <steve_longerbeam@mentor.com>
+Subject: Re: linux-next: manual merge of the drm tree with the v4l-dvb tree
+Message-ID: <20180727073242.4b18aa05@coco.lan>
+In-Reply-To: <20180727143640.4dc3fa54@canb.auug.org.au>
+References: <20180727143640.4dc3fa54@canb.auug.org.au>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180726104536.114340-1-yuchao0@huawei.com>
-User-Agent: Mutt/1.8.2 (2017-04-18)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/26, Chao Yu wrote:
-> Thread A				Background GC
-> - f2fs_zero_range
->  - truncate_pagecache_range
-> 					- gc_data_segment
-> 					 - get_read_data_page
-> 					  - move_data_page
-> 					   - set_page_dirty
-> 					   - set_cold_data
->  - f2fs_do_zero_range
->   - dn->data_blkaddr = NEW_ADDR;
->   - f2fs_set_data_blkaddr
+Em Fri, 27 Jul 2018 14:36:40 +1000
+Stephen Rothwell <sfr@canb.auug.org.au> escreveu:
+
+> Hi all,
 > 
-> Actually, we don't need to set dirty & checked flag on the page, since
-> all valid data in the page should be zeroed by zero_range().
-
-But, it doesn't matter too much, right?
-
-> Use i_gc_rwsem[WRITE] to avoid such race condition.
-
-Hope to avoid abusing i_gc_rwsem[] tho.
-
+> Today's linux-next merge of the drm tree got a conflict in:
 > 
-> Signed-off-by: Chao Yu <yuchao0@huawei.com>
-> ---
->  fs/f2fs/file.c | 2 ++
->  1 file changed, 2 insertions(+)
+>   drivers/gpu/ipu-v3/ipu-cpmem.c
 > 
-> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-> index 267ec3794e1e..7bd2412a8c37 100644
-> --- a/fs/f2fs/file.c
-> +++ b/fs/f2fs/file.c
-> @@ -1309,6 +1309,7 @@ static int f2fs_zero_range(struct inode *inode, loff_t offset, loff_t len,
->  	if (ret)
->  		return ret;
->  
-> +	down_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
->  	down_write(&F2FS_I(inode)->i_mmap_sem);
->  	ret = filemap_write_and_wait_range(mapping, offset, offset + len - 1);
->  	if (ret)
-> @@ -1389,6 +1390,7 @@ static int f2fs_zero_range(struct inode *inode, loff_t offset, loff_t len,
->  	}
->  out_sem:
->  	up_write(&F2FS_I(inode)->i_mmap_sem);
-> +	up_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
->  
->  	return ret;
->  }
-> -- 
-> 2.18.0.rc1
+> between commit:
+> 
+>   343b23a7c6b6 ("media: gpu: ipu-v3: Allow negative offsets for interlaced scanning")
+> 
+> from the v4l-dvb tree and commit:
+> 
+>   4e3c5d7e05be ("gpu: ipu-v3: Allow negative offsets for interlaced scanning")
+> 
+> from the drm tree.
+> 
+> I fixed it up (I just used the drm tree version) and can carry the fix
+> as necessary. This is now fixed as far as linux-next is concerned, but
+> any non trivial conflicts should be mentioned to your upstream maintainer
+> when your tree is submitted for merging.  You may also want to consider
+> cooperating with the maintainer of the conflicting tree to minimise any
+> particularly complex conflicts.
+
+My mistake. Not sure why media ML was c/c on this patch. As the author
+is an usual media contributor and we have an IPU3 driver that has being
+taking some discussions those days, I ended by merging it without
+noticing that it was for the gpu driver.
+
+I'll remove it from my tree in order to avoid conflicts.
+
+Thanks,
+Mauro
