@@ -2,168 +2,126 @@ Return-Path: <SRS0=OQFz=KL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 269A1C67790
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 15:28:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6ADAC6778F
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 15:30:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CB8892089F
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 15:28:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 547AF2089F
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 15:30:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="pNCGBOyQ";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="UWtrdPmx"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CB8892089F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=pass (1024-bit key) header.d=akkea.ca header.i=@akkea.ca header.b="AEa66Kru"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 547AF2089F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=akkea.ca
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388893AbeG0QvH (ORCPT
+        id S2388739AbeG0Qw5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 12:51:07 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:58276 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730395AbeG0QvH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 12:51:07 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 289F960B62; Fri, 27 Jul 2018 15:28:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1532705321;
-        bh=i4h1ZO925eZkFZT+DmUMvFxOS80S10ooZwtqH6hbaeQ=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=pNCGBOyQI2W4W2R9ZK3KA1CjY51x1pSGtpr94gZhg4RLHxBblDRdRFIe/7sagOSaA
-         r9oDBoK9aLksAEfjJH/LM5oCBwYGHvnnCIWoc6T1au1UiNhH1gD5f9bYf7nIj1J4Jr
-         hii4GYwh4X3UDl6j0uQSIHmCknKCLGsbFYnqT3Qw=
-Received: from blr-ubuntu-87.qualcomm.com (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: sibis@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 0114F60481;
-        Fri, 27 Jul 2018 15:28:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1532705319;
-        bh=i4h1ZO925eZkFZT+DmUMvFxOS80S10ooZwtqH6hbaeQ=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UWtrdPmx1wAZRPONU7zexD0R+zG3/ZquQ14FdtSo5ZvGTVwWEritW5+6gBfbq6o3x
-         ngLGvfy1od9K2jrRtZipnK8ccNp6vt58tgwnJXCf0JjQ6rahuFfiP8h9y05W3aNv22
-         RNXVOS3PlZuI35iIXn3Lvi30yQfdu+ofahuHP9/8=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 0114F60481
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=sibis@codeaurora.org
-From:   Sibi Sankar <sibis@codeaurora.org>
-To:     bjorn.andersson@linaro.org, p.zabel@pengutronix.de,
-        robh+dt@kernel.org
-Cc:     linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, ohad@wizery.com, mark.rutland@arm.com,
-        sricharan@codeaurora.org, akdwived@codeaurora.org,
-        linux-arm-msm@vger.kernel.org, tsoni@codeaurora.org,
-        Sibi Sankar <sibis@codeaurora.org>
-Subject: [PATCH 4/4] remoteproc: qcom: q6v5-pil: Add PDC restart for modem on SDM845 SoCs
-Date:   Fri, 27 Jul 2018 20:58:11 +0530
-Message-Id: <20180727152811.15258-4-sibis@codeaurora.org>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180727152811.15258-1-sibis@codeaurora.org>
-References: <20180727152811.15258-1-sibis@codeaurora.org>
+        Fri, 27 Jul 2018 12:52:57 -0400
+Received: from node.akkea.ca ([192.155.83.177]:41604 "EHLO node.akkea.ca"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732167AbeG0Qw5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Jul 2018 12:52:57 -0400
+Received: by node.akkea.ca (Postfix, from userid 33)
+        id BE1CE54204A; Fri, 27 Jul 2018 15:30:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=akkea.ca; s=mail;
+        t=1532705431; bh=HeYptZ05WKaUBv3dfr8vvrC+7xG/Gh+/Ph0TwK/y1l8=;
+        h=To:Subject:Date:From:Cc:In-Reply-To:References;
+        b=AEa66Kruob/iBn8S+TKsB56H15WoUJHrueTpm8dYcoFHbLyJSQuD/gJEfyG4759vA
+         6KuSrTpw6Q/k3PCai8SguCkeZyJOuH6vWTQ4hpvkOT84Az5L2k7S+Mehgv2G8C6YN/
+         UDSvdvT2p04xkUAIUU+FPTvxND/x0S7d7G7I3+Ac=
+To:     Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v2 4/4] power: bq25890_charger.c: Read back the current  battery voltage
+X-PHP-Originating-Script: 1000:rcube.php
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Fri, 27 Jul 2018 09:30:31 -0600
+From:   Angus Ainslie <angus@akkea.ca>
+Cc:     angus.ainslie@puri.sm, Sebastian Reichel <sre@kernel.org>,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <CAJKOXPc1amTiPKNU02OruOpw+GA6DrZgv1+HhqZ14OZYpA2-YA@mail.gmail.com>
+References: <CAJKOXPczJWdNugbHiLRQv1krUFhZH=muix3M9R2LUT5=4zypYA@mail.gmail.com>
+ <20180725194630.10414-1-angus@akkea.ca>
+ <20180725194630.10414-5-angus@akkea.ca>
+ <CAJKOXPc1amTiPKNU02OruOpw+GA6DrZgv1+HhqZ14OZYpA2-YA@mail.gmail.com>
+Message-ID: <551b84dd28cba9bf7ca7e2f52c9d1901@www.akkea.ca>
+X-Sender: angus@akkea.ca
+User-Agent: Roundcube Webmail/1.1.3
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In the presence of a PDC block working with subsystem RSC,
-assert/deassert PDC restart in modem start/stop path.
+On 2018-07-26 01:03, Krzysztof Kozlowski wrote:
+> On 25 July 2018 at 21:46, Angus Ainslie (Purism) <angus@akkea.ca> 
+> wrote:
+>> The part has the capability of reading the current battery voltage
+>> 
+>> Signed-off-by: Angus Ainslie (Purism) <angus@akkea.ca>
+>> ---
+>>  drivers/power/supply/bq25890_charger.c | 15 +++++++++++++++
+>>  1 file changed, 15 insertions(+)
+>> 
+>> diff --git a/drivers/power/supply/bq25890_charger.c 
+>> b/drivers/power/supply/bq25890_charger.c
+>> index f4cf2987996b..60ccd6c2b7ad 100644
+>> --- a/drivers/power/supply/bq25890_charger.c
+>> +++ b/drivers/power/supply/bq25890_charger.c
+>> @@ -464,6 +464,20 @@ static int 
+>> bq25890_power_supply_get_property(struct power_supply *psy,
+>>                 val->intval = bq25890_find_val(bq->init_data.iterm, 
+>> TBL_ITERM);
+>>                 break;
+>> 
+>> +       case POWER_SUPPLY_PROP_VOLTAGE_NOW:
+>> +               if (!state.online) {
+>> +                       val->intval = 0;
+>> +                       break;
+>> +               }
+> 
+> You use state from cached value (from last interrupt) but the voltage
+> is read directly from registers. The driver follows this convention in
+> few other places so maybe it is okay. It depends how accurately the
+> interrupts are generated - on every change? IOW, is always guaranteed
+> that state will be consistent with values read below?
+> 
 
-Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
----
- .../bindings/remoteproc/qcom,q6v5.txt         |  4 +++
- drivers/remoteproc/qcom_q6v5_pil.c            | 27 ++++++++++++++++---
- 2 files changed, 27 insertions(+), 4 deletions(-)
+Well I shouldn't even be checking state here as the VOLTAGE_NOW should 
+be valid without it. I'll drop that check.
 
-diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt b/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt
-index 601dd9f389aa..124fb1dc6fb8 100644
---- a/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt
-+++ b/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt
-@@ -51,6 +51,8 @@ on the Qualcomm Hexagon core.
- 	Usage: required
- 	Value type: <phandle>
- 	Definition: reference to the reset-controller for the modem sub-system
-+		    reference to the list of 2 reset-controllers for the modem
-+		    sub-system on SDM845 SoCs
- 		    reference to the list of 3 reset-controllers for the
- 		    wcss sub-system
- 
-@@ -58,6 +60,8 @@ on the Qualcomm Hexagon core.
- 	Usage: required
- 	Value type: <stringlist>
- 	Definition: must be "mss_restart" for the modem sub-system
-+	Definition: must be "mss_restart", "pdc_restart" for the modem
-+		    sub-system on SDM845 SoCs
- 	Definition: must be "wcss_aon_reset", "wcss_reset", "wcss_q6_reset"
- 		    for the wcss syb-system
- 
-diff --git a/drivers/remoteproc/qcom_q6v5_pil.c b/drivers/remoteproc/qcom_q6v5_pil.c
-index d57fdb34e3dd..5be794639fc3 100644
---- a/drivers/remoteproc/qcom_q6v5_pil.c
-+++ b/drivers/remoteproc/qcom_q6v5_pil.c
-@@ -149,6 +149,7 @@ struct q6v5 {
- 	u32 halt_nc;
- 
- 	struct reset_control *mss_restart;
-+	struct reset_control *pdc_restart;
- 
- 	struct qcom_q6v5 q6v5;
- 
-@@ -349,10 +350,17 @@ static int q6v5_load(struct rproc *rproc, const struct firmware *fw)
- 
- static int q6v5_reset_assert(struct q6v5 *qproc)
- {
--	if (qproc->has_alt_reset)
--		return reset_control_reset(qproc->mss_restart);
--	else
--		return reset_control_assert(qproc->mss_restart);
-+	int ret;
-+
-+	if (qproc->has_alt_reset) {
-+		reset_control_assert(qproc->pdc_restart);
-+		ret = reset_control_reset(qproc->mss_restart);
-+		reset_control_deassert(qproc->pdc_restart);
-+	} else {
-+		ret = reset_control_assert(qproc->mss_restart);
-+	}
-+
-+	return ret;
- }
- 
- static int q6v5_reset_deassert(struct q6v5 *qproc)
-@@ -360,9 +368,11 @@ static int q6v5_reset_deassert(struct q6v5 *qproc)
- 	int ret;
- 
- 	if (qproc->has_alt_reset) {
-+		reset_control_assert(qproc->pdc_restart);
- 		writel(1, qproc->rmb_base + RMB_MBA_ALT_RESET);
- 		ret = reset_control_reset(qproc->mss_restart);
- 		writel(0, qproc->rmb_base + RMB_MBA_ALT_RESET);
-+		reset_control_deassert(qproc->pdc_restart);
- 	} else {
- 		ret = reset_control_deassert(qproc->mss_restart);
- 	}
-@@ -1182,6 +1192,15 @@ static int q6v5_init_reset(struct q6v5 *qproc)
- 		return PTR_ERR(qproc->mss_restart);
- 	}
- 
-+	if (qproc->has_alt_reset) {
-+		qproc->pdc_restart = devm_reset_control_get(qproc->dev,
-+							    "pdc_restart");
-+		if (IS_ERR(qproc->pdc_restart)) {
-+			dev_err(qproc->dev, "failed to acquire pdc restart\n");
-+			return PTR_ERR(qproc->pdc_restart);
-+		}
-+	}
-+
- 	return 0;
- }
- 
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+( Krzysztof sorry for the duplicate email )
+
+> Best regards,
+> Krzysztof
+> 
+>> +
+>> +               ret = bq25890_field_read(bq, F_SYSV); /* read measured 
+>> value */
+>> +               if (ret < 0)
+>> +                       return ret;
+>> +
+>> +               /* converted_val = 2.304V + ADC_val * 20mV (table 
+>> 10.3.15) */
+>> +               val->intval = 2304000 + ret * 20000;
+>> +               break;
+>> +
+>>         default:
+>>                 return -EINVAL;
+>>         }
+>> @@ -672,6 +686,7 @@ static enum power_supply_property 
+>> bq25890_power_supply_props[] = {
+>>         POWER_SUPPLY_PROP_CONSTANT_CHARGE_VOLTAGE,
+>>         POWER_SUPPLY_PROP_CONSTANT_CHARGE_VOLTAGE_MAX,
+>>         POWER_SUPPLY_PROP_CHARGE_TERM_CURRENT,
+>> +       POWER_SUPPLY_PROP_VOLTAGE_NOW,
+>>  };
+>> 
+>>  static char *bq25890_charger_supplied_to[] = {
+>> --
+>> 2.17.1
+>> 
 
