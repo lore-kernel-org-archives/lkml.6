@@ -6,128 +6,145 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19DB1C67790
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 07:00:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DAC6BC67790
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 07:02:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C60C620873
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 07:00:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C60C620873
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 835AE20873
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 07:02:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 835AE20873
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729556AbeG0IUi (ORCPT
+        id S1729489AbeG0IWj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 04:20:38 -0400
-Received: from mga01.intel.com ([192.55.52.88]:29355 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725988AbeG0IUi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 04:20:38 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Jul 2018 00:00:09 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,408,1526367600"; 
-   d="scan'208";a="59908472"
-Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.168]) ([10.237.72.168])
-  by orsmga007.jf.intel.com with ESMTP; 27 Jul 2018 00:00:07 -0700
-Subject: Re: [PATCH V7 2/5] mmc: sdhci: Change O2 Host HS200 mode clock
- frequency to 200MHz
-To:     "Ernest Zhang(WH)" <ernest.zhang@bayhubtech.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Cc:     "Chuanjin Pang (WH)" <chuanjin.pang@bayhubtech.com>,
-        "Mike Li (WH)" <mike.li@bayhubtech.com>,
-        "Chevron Li (WH)" <chevron.li@bayhubtech.com>,
-        "Shirley Her (SC)" <shirley.her@bayhubtech.com>,
-        "Xiaoguang Yu (WH)" <xiaoguang.yu@bayhubtech.com>,
-        "Bobby Wu (WH)" <bobby.wu@bayhubtech.com>
-References: <20180716062655.24703-1-ernest.zhang@bayhubtech.com>
- <20180716062655.24703-2-ernest.zhang@bayhubtech.com>
- <06a9dcec-846e-495c-4519-4af13549fe0e@intel.com>
- <BYAPR04MB4760BF8783C0E58A75D00F25E52A0@BYAPR04MB4760.namprd04.prod.outlook.com>
-From:   Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-Message-ID: <a56c0e30-cf71-5294-bc3a-1179808bd85b@intel.com>
-Date:   Fri, 27 Jul 2018 09:58:27 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.0
-MIME-Version: 1.0
-In-Reply-To: <BYAPR04MB4760BF8783C0E58A75D00F25E52A0@BYAPR04MB4760.namprd04.prod.outlook.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        Fri, 27 Jul 2018 04:22:39 -0400
+Received: from mx2.suse.de ([195.135.220.15]:52506 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725988AbeG0IWj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Jul 2018 04:22:39 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 5D8B3B603;
+        Fri, 27 Jul 2018 07:02:08 +0000 (UTC)
+Date:   Fri, 27 Jul 2018 09:02:07 +0200
+Message-ID: <s5h7elhupow.wl-tiwai@suse.de>
+From:   Takashi Iwai <tiwai@suse.de>
+To:     "Dae R. Jeong" <threeearcat@gmail.com>
+Cc:     perex@perex.cz, alsa-devel@alsa-project.org, kt0755@gmail.com,
+        syzkaller@googlegroups.com, bammanag@purdue.edu,
+        linux-kernel@vger.kernel.org
+Subject: Re: BUG: soft lockup in snd_virmidi_output_trigger
+In-Reply-To: <20180727055104.GA18733@dragonet>
+References: <20180726055326.GA12625@dragonet>
+        <s5hva92yxda.wl-tiwai@suse.de>
+        <20180727041322.GA13067@dragonet>
+        <s5hbmatuue9.wl-tiwai@suse.de>
+        <20180727055104.GA18733@dragonet>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI/1.14.6 (Maruoka)
+ FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 Emacs/26
+ (x86_64-suse-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+MIME-Version: 1.0 (generated by SEMI 1.14.6 - "Maruoka")
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 27/07/18 09:49, Ernest Zhang(WH) wrote:
-> Hi Adrian,
-> 	Do I need re-submit all 5 patches after fix that and change the version to v8?
+On Fri, 27 Jul 2018 07:51:04 +0200,
+Dae R. Jeong wrote:
+> 
+> On Fri, Jul 27, 2018 at 07:20:30AM +0200, Takashi Iwai wrote:
+> 
+> I think there is a mistake on the reported-by tag.
+> The reported-by tag (e4c8abb920ef...) is for WARNING in port_delete.
+> I guess the tag below is correct.
+> Reported-by: syzbot+619d9f40141d826b097e@syzkaller.appspotmail.com
+> Could you please make sure that the reported-by tag is correct?
 
-You can reply to this email with PATCH V8 2/5 that has my Ack and the
-comment fixed.
+Indeed, corrected now.  Thanks.
 
-> BR
-> 
-> -----Original Message-----
-> From: Adrian Hunter [mailto:adrian.hunter@intel.com] 
-> Sent: 2018年7月25日 15:45
-> To: Ernest Zhang(WH); Ulf Hansson; linux-mmc@vger.kernel.org; linux-kernel@vger.kernel.org
-> Cc: Chuanjin Pang (WH); Mike Li (WH); Chevron Li (WH); Shirley Her (SC); Xiaoguang Yu (WH); Bobby Wu (WH)
-> Subject: Re: [PATCH V7 2/5] mmc: sdhci: Change O2 Host HS200 mode clock frequency to 200MHz
-> 
-> On 16/07/18 09:26, ernest.zhang wrote:
->> O2 SD Host HS200 mode clock frequency current is 208MHz, should be 
->> changed to 200MHz to meet specification.
->>
->> Signed-off-by: ernest.zhang <ernest.zhang@bayhubtech.com>
-> 
-> You left in the misleading comment.  Fix that and add:
-> 
-> Acked-by: Adrian Hunter <adrian.hunter@intel.com>
-> 
->> ---
->> Change in V7:
->> 	Change HS200 mode clock frequency from 208MHz to 200MHz to meet
->> 	Specification.
->>
->> Change in V1~V6:
->> 	N/A
->> ---
->>  drivers/mmc/host/sdhci-pci-o2micro.c | 4 ++--
->>  1 file changed, 2 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/mmc/host/sdhci-pci-o2micro.c 
->> b/drivers/mmc/host/sdhci-pci-o2micro.c
->> index ba59db6a126c..94cf3cd75dd3 100644
->> --- a/drivers/mmc/host/sdhci-pci-o2micro.c
->> +++ b/drivers/mmc/host/sdhci-pci-o2micro.c
->> @@ -311,7 +311,7 @@ int sdhci_pci_o2_probe(struct sdhci_pci_chip 
->> *chip)
->>  
->>  			/* Check Whether subId is 0x11 or 0x12 */
->>  			if ((scratch_32 == 0x11) || (scratch_32 == 0x12)) {
->> -				scratch_32 = 0x2c280000;
->> +				scratch_32 = 0x25100000;
->>  
->>  				/* Set Base Clock to 208MZ */
-> 
-> That comment is misleading now.
-> 
->>  				o2_pci_set_baseclk(chip, scratch_32); @@ -406,7 +406,7 @@ int 
->> sdhci_pci_o2_probe(struct sdhci_pci_chip *chip)
->>  					       O2_SD_PLL_SETTING, scratch_32);
->>  		} else {
->>  			scratch_32 &= 0x0000FFFF;
->> -			scratch_32 |= 0x2c280000;
->> +			scratch_32 |= 0x25100000;
->>  
->>  			pci_write_config_dword(chip->pdev,
->>  					       O2_SD_PLL_SETTING, scratch_32);
->>
-> 
+> By the way, I can't reproduce the crash WARNING in port_delete so
+> far. I feel sad for saying this..
+> I really want to reproduce the crash and thus, to help to fix the
+> crash. If there is any progress on it, I will let you know
+> immediately.
 
+This looks like a sheer race condition.
+Thanks for your help in anyway!
+
+
+Takashi
+
+> 
+> Best regards,
+> Dae R. Jeong
+> 
+> > On Fri, 27 Jul 2018 06:13:22 +0200,
+> > Dae R. Jeong wrote:
+> > > 
+> > > I tested it and it worked.
+> > > Thanks a lot!
+> > 
+> > Good to hear.  Below is the final patch with a proper comment (and
+> > with syzbot reported-by, too) I'm going to queue to sound.git tree.
+> > 
+> > 
+> > thanks,
+> > 
+> > Takashi
+> > 
+> > -- 8< --
+> > 
+> > From: Takashi Iwai <tiwai@suse.de>
+> > Subject: [PATCH v2] ALSA: virmidi: Fix too long output trigger loop
+> > 
+> > The virmidi output trigger tries to parse the all available bytes and
+> > process sequencer events as much as possible.  In a normal situation,
+> > this is supposed to be relatively short, but a program may give a huge
+> > buffer and it'll take a long time in a single spin lock, which may
+> > eventually lead to a soft lockup.
+> > 
+> > This patch simply adds a workaround, a cond_resched() call in the loop
+> > if applicable.  A better solution would be to move the event processor
+> > into a work, but let's put a duct-tape quickly at first.
+> > 
+> > Reported-and-tested-by: Dae R. Jeong <threeearcat@gmail.com>
+> > Reported-by: syzbot+e4c8abb920efa77bace9@syzkaller.appspotmail.com
+> > Cc: <stable@vger.kernel.org>
+> > Signed-off-by: Takashi Iwai <tiwai@suse.de>
+> > ---
+> >  sound/core/seq/seq_virmidi.c | 10 ++++++++++
+> >  1 file changed, 10 insertions(+)
+> > 
+> > diff --git a/sound/core/seq/seq_virmidi.c b/sound/core/seq/seq_virmidi.c
+> > index 289ae6bb81d9..8ebbca554e99 100644
+> > --- a/sound/core/seq/seq_virmidi.c
+> > +++ b/sound/core/seq/seq_virmidi.c
+> > @@ -163,6 +163,7 @@ static void snd_virmidi_output_trigger(struct snd_rawmidi_substream *substream,
+> >  	int count, res;
+> >  	unsigned char buf[32], *pbuf;
+> >  	unsigned long flags;
+> > +	bool check_resched = !in_atomic();
+> >  
+> >  	if (up) {
+> >  		vmidi->trigger = 1;
+> > @@ -200,6 +201,15 @@ static void snd_virmidi_output_trigger(struct snd_rawmidi_substream *substream,
+> >  					vmidi->event.type = SNDRV_SEQ_EVENT_NONE;
+> >  				}
+> >  			}
+> > +			if (!check_resched)
+> > +				continue;
+> > +			/* do temporary unlock & cond_resched() for avoiding
+> > +			 * CPU soft lockup, which may happen via a write from
+> > +			 * a huge rawmidi buffer
+> > +			 */
+> > +			spin_unlock_irqrestore(&substream->runtime->lock, flags);
+> > +			cond_resched();
+> > +			spin_lock_irqsave(&substream->runtime->lock, flags);
+> >  		}
+> >  	out:
+> >  		spin_unlock_irqrestore(&substream->runtime->lock, flags);
+> > -- 
+> > 2.18.0
+> > 
+> 
