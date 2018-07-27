@@ -2,127 +2,378 @@ Return-Path: <SRS0=OQFz=KL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+X-Spam-Status: No, score=-0.5 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
+	FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A06E6C6778F
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 14:44:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BC3CC6778F
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 14:46:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 67C35208AF
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 14:44:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 67C35208AF
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 3593B208AF
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 14:46:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3593B208AF
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388626AbeG0QHG (ORCPT
+        id S2388529AbeG0QIv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 12:07:06 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:57820 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730714AbeG0QHF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 12:07:05 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id A9E928197008;
-        Fri, 27 Jul 2018 14:44:50 +0000 (UTC)
-Received: from vitty.brq.redhat.com (unknown [10.43.2.155])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 9B34F2026D6B;
-        Fri, 27 Jul 2018 14:44:49 +0000 (UTC)
-From:   Vitaly Kuznetsov <vkuznets@redhat.com>
-To:     kvm@vger.kernel.org
-Cc:     Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
-        x86@kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH RFC] x86/kvm/lapic: always disable MMIO interface in x2APIC mode
-Date:   Fri, 27 Jul 2018 16:44:48 +0200
-Message-Id: <20180727144448.9606-1-vkuznets@redhat.com>
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Fri, 27 Jul 2018 14:44:50 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Fri, 27 Jul 2018 14:44:50 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'vkuznets@redhat.com' RCPT:''
+        Fri, 27 Jul 2018 12:08:51 -0400
+Received: from mout02.posteo.de ([185.67.36.142]:40467 "EHLO mout02.posteo.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732059AbeG0QIv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Jul 2018 12:08:51 -0400
+X-Greylist: delayed 433 seconds by postgrey-1.27 at vger.kernel.org; Fri, 27 Jul 2018 12:08:49 EDT
+Received: from submission (posteo.de [89.146.220.130]) 
+        by mout02.posteo.de (Postfix) with ESMTPS id DEABE210DD
+        for <linux-kernel@vger.kernel.org>; Fri, 27 Jul 2018 16:39:21 +0200 (CEST)
+Received: from customer (localhost [127.0.0.1])
+        by submission (posteo.de) with ESMTPSA id 41cWnM0JZVz9rxS;
+        Fri, 27 Jul 2018 16:39:18 +0200 (CEST)
+Subject: Re: [PATCH v2 2/2] tty/serial: atmel: add ISO7816 support
+To:     Ludovic Desroches <ludovic.desroches@microchip.com>,
+        linux-serial@vger.kernel.org, linux-arch@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Cc:     gregkh@linuxfoundation.org, jslaby@suse.com, arnd@arndb.de,
+        richard.genoud@gmail.com, nicolas.ferre@microchip.com,
+        alexandre.belloni@bootlin.com, linux-kernel@vger.kernel.org
+References: <20180719084737.1490-1-ludovic.desroches@microchip.com>
+ <20180719084737.1490-3-ludovic.desroches@microchip.com>
+From:   Richard Genoud <richard.genoud@gmail.com>
+Message-ID: <1353b166-c1d0-6be6-a873-a54d210869fd@sorico.fr>
+Date:   Fri, 27 Jul 2018 16:39:17 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <20180719084737.1490-3-ludovic.desroches@microchip.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When VMX is used with flexpriority disabled (because of no support or
-if disabled with module parameter) MMIO interface to lAPIC is still
-available in x2APIC mode while it shouldn't be (kvm-unit-tests):
+Hi Ludovic,
 
-PASS: apic_disable: Local apic enabled in x2APIC mode
-PASS: apic_disable: CPUID.1H:EDX.APIC[bit 9] is set
-FAIL: apic_disable: *0xfee00030: 50014
+On 19/07/2018 10:47, Ludovic Desroches wrote:
+> From: Nicolas Ferre <nicolas.ferre@microchip.com>
+> 
+> When mode is set in atmel_config_iso7816() we backup last RS232 mode
+> for coming back to this mode if requested.
+> Also allow setup of T=0 and T=1 parameter and basic support in set_termios
+> function as well.
+> Report NACK and ITER errors in irq handler.
+> 
+> Signed-off-by: Nicolas Ferre <nicolas.ferre@microchip.com>
+> Signed-off-by: Ludovic Desroches <ludovic.desroches@microchip.com>
+> ---
+>  drivers/tty/serial/atmel_serial.c | 170 +++++++++++++++++++++++++++++++++++---
+>  drivers/tty/serial/atmel_serial.h |   3 +-
+>  2 files changed, 162 insertions(+), 11 deletions(-)
+> 
+> diff --git a/drivers/tty/serial/atmel_serial.c b/drivers/tty/serial/atmel_serial.c
+> index 8e4428725848..cec958f1e7d4 100644
+> --- a/drivers/tty/serial/atmel_serial.c
+> +++ b/drivers/tty/serial/atmel_serial.c
+> @@ -34,6 +34,7 @@
+>  #include <linux/suspend.h>
+>  #include <linux/mm.h>
+>  
+> +#include <asm/div64.h>
+>  #include <asm/io.h>
+>  #include <asm/ioctls.h>
+>  
+> @@ -147,6 +148,8 @@ struct atmel_uart_port {
+>  	struct circ_buf		rx_ring;
+>  
+>  	struct mctrl_gpios	*gpios;
+> +	u32			backup_mode;	/* MR saved during iso7816 operations */
+> +	u32			backup_brgr;	/* BRGR saved during iso7816 operations */
+>  	unsigned int		tx_done_mask;
+>  	u32			fifo_size;
+>  	u32			rts_high;
+> @@ -362,6 +365,132 @@ static int atmel_config_rs485(struct uart_port *port,
+>  	return 0;
+>  }
+>  
+> +static unsigned int atmel_calc_cd(struct uart_port *port,
+> +				  struct serial_iso7816 *iso7816conf)
+> +{
+> +	struct atmel_uart_port *atmel_port = to_atmel_uart_port(port);
+> +	unsigned int cd;
+> +	u64 mck_rate;
+> +
+> +	mck_rate = (u64)clk_get_rate(atmel_port->clk);
+> +	do_div(mck_rate, iso7816conf->clk);
+> +	cd = mck_rate;
+> +	return cd;
+> +}
+> +
+> +static unsigned int atmel_calc_fidi(struct uart_port *port,
+> +				    struct serial_iso7816 *iso7816conf)
+> +{
+> +	u64 fidi = 0;
+> +
+> +	if (iso7816conf->sc_fi && iso7816conf->sc_di) {
+> +		fidi = (u64)iso7816conf->sc_fi;
+> +		do_div(fidi, iso7816conf->sc_di);
+> +	}
+> +	return (u32)fidi;
+> +}
+> +
+> +/* Enable or disable the iso7816 support */
+> +/* Called with interrupts disabled */
+> +static int atmel_config_iso7816(struct uart_port *port,
+> +				struct serial_iso7816 *iso7816conf)
+> +{
+> +	struct atmel_uart_port *atmel_port = to_atmel_uart_port(port);
+> +	unsigned int mode, t;
+> +	unsigned int cd, fidi;
+> +	int ret = 0;
+> +
+> +	/* Disable RX and TX */
+> +	atmel_uart_writel(port, ATMEL_US_CR, ATMEL_US_RXDIS | ATMEL_US_TXDIS);
+> +	/* Disable interrupts */
+> +	atmel_uart_writel(port, ATMEL_US_IDR, atmel_port->tx_done_mask);
+> +
+> +	mode = atmel_uart_readl(port, ATMEL_US_MR);
+> +
+> +	if (iso7816conf->flags & SER_ISO7816_ENABLED) {
+> +		mode &= ~ATMEL_US_USMODE;
+> +
+> +		if ((iso7816conf->flags & SER_ISO7816_T_PARAM)
+> +					== SER_ISO7816_T(0)) {
+> +			mode |= ATMEL_US_USMODE_ISO7816_T0;
+> +			t = 0;
+> +		} else if ((iso7816conf->flags & SER_ISO7816_T_PARAM)
+> +					== SER_ISO7816_T(1)) {
+> +			mode |= ATMEL_US_USMODE_ISO7816_T1;
+> +			t = 1;
+> +		} else {
+> +			dev_warn(port->dev, "ISO7816 Type not supported. Resetting\n");
+> +			memset(iso7816conf, 0, sizeof(struct serial_iso7816));
+> +			goto err_out;
+> +		}
+> +
+> +		dev_dbg(port->dev, "Setting USART to ISO7816 mode T%d\n", t);
+> +
+> +		mode &= ~(ATMEL_US_USCLKS | ATMEL_US_CHRL
+> +			| ATMEL_US_NBSTOP | ATMEL_US_PAR);
+This could be merged in the mode &= line above.
 
-The issue appears because we basically do nothing while switching to
-x2APIC mode when APIC access page is not used. apic_mmio_{read,write}
-only check if lAPIC is disabled before proceeding to actual write.
+> +
+> +		/* NACK configuration */
+> +		if ((iso7816conf->flags & SER_ISO7816_T_PARAM)
+> +					== SER_ISO7816_T(0))
+> +			mode |= ATMEL_US_DSNACK;
+> +		else
+> +			mode |= ATMEL_US_INACK;
+This could be also part of the if () above.
 
-When APIC access is virtualized we correctly manipulate with VMX controls
-in vmx_set_virtual_apic_mode() and we don't get vmexits from memory writes
-in x2APIC mode so there's no issue.
+> +		/* select mck clock, and output  */
+> +		mode |= ATMEL_US_USCLKS_MCK | ATMEL_US_CLKO;
+> +		/* set parity for normal/inverse mode + max iterations */
+> +		mode |= ATMEL_US_PAR_EVEN | ATMEL_US_NBSTOP_1 | (3 << 24);
+Is this really needed ?
+In the documentation, I found:
+"The configuration is 8 data bits, even parity and 1 or 2 stop bits,
+regardless of the values programmed in the CHRL, MODE9, PAR and CHMODE
+fields."
+And, for MAX_ITERATIONS, could you add a macro instead of (x << 24) ?
+(ATMEL_US_MAX_ITER mask is already defined).
+And why 3 ? Should the user-space be allowed to control the max
+automatic iteration ? or is it more like a "same-value-for-every-one"
+thing ?
 
-Disabling MMIO interface seems to be easy. The question is: what do we
-do with these reads and writes? If we add apic_x2apic_mode() check to
-apic_mmio_in_range() and return -EOPNOTSUPP these reads and writes will
-go to userspace. When lAPIC is in kernel, Qemu uses this interface to
-inject MSIs only (see kvm_apic_mem_write() in hw/i386/kvm/apic.c). This
-somehow works with disabled lAPIC but when we're in xAPIC mode we will
-get a real injected MSI from every write to lAPIC. Not good.
+> +
+> +		cd = atmel_calc_cd(port, iso7816conf);
+> +		fidi = atmel_calc_fidi(port, iso7816conf);
+> +		if (fidi < 0) {
+I guess you meant (fidi == 0)
+Because fidi is unsigned and atmel_calc_fidi() returns also an unsigned.
 
-The simplest solution seems to be to just ignore writes to the region
-and return ~0 for all reads when we're in x2APIC mode. This is what this
-patch does. However, this approach is inconsistent with what currently
-happens when flexpriority is enabled: we allocate APIC access page and
-create KVM memory region so in x2APIC modes all reads and writes go to
-this pre-allocated page which is, btw, the same for all vCPUs.
+> +			dev_warn(port->dev, "ISO7816 fidi = 0, Generator generates no signal\n");
+> +		} else if (fidi == 1 || fidi == 2) {
+> +			dev_err(port->dev, "ISO7816 fidi = %u, value not supported\n", fidi);
+> +			ret = -EINVAL;
+> +			goto err_out;
+> +		}
+And you may also want to check upper values ( <2048 or <65536, depending
+on the SoC)
 
-The other solution would be to pre-allocate a 'shadow' page for lAPICs
-in disabled/x2APIC mode and re-direct all reads and writes there. I'm,
-however, not convinced this is a good thing to do.
+> +
+> +		if (!(port->iso7816.flags & SER_ISO7816_ENABLED)) {
+> +			/* port not yet in iso7816 mode: store configuration */
+> +			atmel_port->backup_mode = atmel_uart_readl(port, ATMEL_US_MR);
+> +			atmel_port->backup_brgr = atmel_uart_readl(port, ATMEL_US_BRGR);
+> +		}
+> +
+> +		/* Actually set ISO7816 mode */
+> +		atmel_uart_writel(port, ATMEL_US_TTGR, iso7816conf->tg);
+iso7816conf->tg comes from user-space unchecked. AFAIK, max value is 255
 
-Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
----
- arch/x86/kvm/lapic.c | 13 ++++++++++---
- 1 file changed, 10 insertions(+), 3 deletions(-)
+> +		atmel_uart_writel(port, ATMEL_US_BRGR, cd);
+> +		atmel_uart_writel(port, ATMEL_US_FIDIR, fidi);
+> +
+> +		atmel_port->tx_done_mask = ATMEL_US_TXEMPTY | ATMEL_US_NACK | ATMEL_US_ITERATION;
+> +	} else {
+> +		dev_dbg(port->dev, "Setting UART to RS232\n");
+> +		/* back to last RS232 settings */
+> +		mode = atmel_port->backup_mode;
+> +		memset(iso7816conf, 0, sizeof(struct serial_iso7816));
+> +		atmel_uart_writel(port, ATMEL_US_TTGR, 0);
+> +		atmel_uart_writel(port, ATMEL_US_BRGR, atmel_port->backup_brgr);
+> +		atmel_uart_writel(port, ATMEL_US_FIDIR, 0x174);
+> +
+> +		if (atmel_use_pdc_tx(port))
+> +			atmel_port->tx_done_mask = ATMEL_US_ENDTX |
+> +						   ATMEL_US_TXBUFE;
+> +		else
+> +			atmel_port->tx_done_mask = ATMEL_US_TXRDY;
+> +	}
+> +
+> +	port->iso7816 = *iso7816conf;
+> +
+> +	atmel_uart_writel(port, ATMEL_US_MR, mode);
+> +
+> +err_out:
+> +	/* Enable interrupts */
+> +	atmel_uart_writel(port, ATMEL_US_IER, atmel_port->tx_done_mask);
+> +	/* Enable RX and TX */
+> +	atmel_uart_writel(port, ATMEL_US_CR, ATMEL_US_RXEN | ATMEL_US_TXEN);
+Is it all right to enable RX/TX unconditionally here ?
 
-diff --git a/arch/x86/kvm/lapic.c b/arch/x86/kvm/lapic.c
-index b5cd8465d44f..89b59d6410ae 100644
---- a/arch/x86/kvm/lapic.c
-+++ b/arch/x86/kvm/lapic.c
-@@ -1291,9 +1291,8 @@ EXPORT_SYMBOL_GPL(kvm_lapic_reg_read);
- 
- static int apic_mmio_in_range(struct kvm_lapic *apic, gpa_t addr)
- {
--	return kvm_apic_hw_enabled(apic) &&
--	    addr >= apic->base_address &&
--	    addr < apic->base_address + LAPIC_MMIO_LENGTH;
-+	return addr >= apic->base_address &&
-+		addr < apic->base_address + LAPIC_MMIO_LENGTH;
- }
- 
- static int apic_mmio_read(struct kvm_vcpu *vcpu, struct kvm_io_device *this,
-@@ -1305,6 +1304,11 @@ static int apic_mmio_read(struct kvm_vcpu *vcpu, struct kvm_io_device *this,
- 	if (!apic_mmio_in_range(apic, address))
- 		return -EOPNOTSUPP;
- 
-+	if (!kvm_apic_hw_enabled(apic) || apic_x2apic_mode(apic)) {
-+		memset(data, 0xff, len);
-+		return 0;
-+	}
-+
- 	kvm_lapic_reg_read(apic, offset, len, data);
- 
- 	return 0;
-@@ -1864,6 +1868,9 @@ static int apic_mmio_write(struct kvm_vcpu *vcpu, struct kvm_io_device *this,
- 	if (!apic_mmio_in_range(apic, address))
- 		return -EOPNOTSUPP;
- 
-+	if (!kvm_apic_hw_enabled(apic) || apic_x2apic_mode(apic))
-+		return 0;
-+
- 	/*
- 	 * APIC register must be aligned on 128-bits boundary.
- 	 * 32/64/128 bits registers must be accessed thru 32 bits.
--- 
-2.14.4
+> +
+> +	return ret;
+> +}
+> +
+>  /*
+>   * Return TIOCSER_TEMT when transmitter FIFO and Shift register is empty.
+>   */
+> @@ -481,8 +610,9 @@ static void atmel_stop_tx(struct uart_port *port)
+>  	/* Disable interrupts */
+>  	atmel_uart_writel(port, ATMEL_US_IDR, atmel_port->tx_done_mask);
+>  
+> -	if ((port->rs485.flags & SER_RS485_ENABLED) &&
+> -	    !(port->rs485.flags & SER_RS485_RX_DURING_TX))
+> +	if (((port->rs485.flags & SER_RS485_ENABLED) &&
+> +	     !(port->rs485.flags & SER_RS485_RX_DURING_TX)) ||
+> +	    port->iso7816.flags & SER_ISO7816_ENABLED)
+>  		atmel_start_rx(port);
+>  }
+>  
+> @@ -500,8 +630,9 @@ static void atmel_start_tx(struct uart_port *port)
+>  		return;
+>  
+>  	if (atmel_use_pdc_tx(port) || atmel_use_dma_tx(port))
+> -		if ((port->rs485.flags & SER_RS485_ENABLED) &&
+> -		    !(port->rs485.flags & SER_RS485_RX_DURING_TX))
+> +		if (((port->rs485.flags & SER_RS485_ENABLED) &&
+> +		     !(port->rs485.flags & SER_RS485_RX_DURING_TX)) ||
+> +		    port->iso7816.flags & SER_ISO7816_ENABLED)
+>  			atmel_stop_rx(port);
+>  
+>  	if (atmel_use_pdc_tx(port))
+> @@ -799,8 +930,9 @@ static void atmel_complete_tx_dma(void *arg)
+>  	 */
+>  	if (!uart_circ_empty(xmit))
+>  		atmel_tasklet_schedule(atmel_port, &atmel_port->tasklet_tx);
+> -	else if ((port->rs485.flags & SER_RS485_ENABLED) &&
+> -		 !(port->rs485.flags & SER_RS485_RX_DURING_TX)) {
+> +	else if (((port->rs485.flags & SER_RS485_ENABLED) &&
+> +		  !(port->rs485.flags & SER_RS485_RX_DURING_TX)) ||
+> +		 port->iso7816.flags & SER_ISO7816_ENABLED) {
+>  		/* DMA done, stop TX, start RX for RS485 */
+>  		atmel_start_rx(port);
+>  	}
+> @@ -1281,6 +1413,9 @@ atmel_handle_status(struct uart_port *port, unsigned int pending,
+>  			wake_up_interruptible(&port->state->port.delta_msr_wait);
+>  		}
+>  	}
+> +
+> +	if (pending & (ATMEL_US_NACK | ATMEL_US_ITERATION))
+> +		dev_dbg(port->dev, "ISO7816 ERROR (0x%08x)\n", pending);
+>  }
+>  
+>  /*
+> @@ -1373,8 +1508,9 @@ static void atmel_tx_pdc(struct uart_port *port)
+>  		atmel_uart_writel(port, ATMEL_US_IER,
+>  				  atmel_port->tx_done_mask);
+>  	} else {
+> -		if ((port->rs485.flags & SER_RS485_ENABLED) &&
+> -		    !(port->rs485.flags & SER_RS485_RX_DURING_TX)) {
+> +		if (((port->rs485.flags & SER_RS485_ENABLED) &&
+> +		     !(port->rs485.flags & SER_RS485_RX_DURING_TX)) ||
+> +		    port->iso7816.flags & SER_ISO7816_ENABLED) {
+>  			/* DMA done, stop TX, start RX for RS485 */
+>  			atmel_start_rx(port);
+>  		}
+> @@ -2099,6 +2235,17 @@ static void atmel_set_termios(struct uart_port *port, struct ktermios *termios,
+>  		atmel_uart_writel(port, ATMEL_US_TTGR,
+>  				  port->rs485.delay_rts_after_send);
+>  		mode |= ATMEL_US_USMODE_RS485;
+> +	} else if (port->iso7816.flags & SER_ISO7816_ENABLED) {
+> +		atmel_uart_writel(port, ATMEL_US_TTGR, port->iso7816.tg);
+> +		/* select mck clock, and output  */
+> +		mode |= ATMEL_US_USCLKS_MCK | ATMEL_US_CLKO;
+> +		/* set max iterations */
+> +		mode |= (3 << 24);
+Same remark for macro / hardcoded value.
 
+> +		if ((port->iso7816.flags & SER_ISO7816_T_PARAM)
+> +				== SER_ISO7816_T(0))
+> +			mode |= ATMEL_US_USMODE_ISO7816_T0;
+> +		else
+> +			mode |= ATMEL_US_USMODE_ISO7816_T1;
+>  	} else if (termios->c_cflag & CRTSCTS) {
+>  		/* RS232 with hardware handshake (RTS/CTS) */
+>  		if (atmel_use_fifo(port) &&
+> @@ -2175,7 +2322,8 @@ static void atmel_set_termios(struct uart_port *port, struct ktermios *termios,
+>  	}
+>  	quot = cd | fp << ATMEL_US_FP_OFFSET;
+>  
+> -	atmel_uart_writel(port, ATMEL_US_BRGR, quot);
+> +	if (!(port->iso7816.flags & SER_ISO7816_ENABLED))
+> +		atmel_uart_writel(port, ATMEL_US_BRGR, quot);
+>  	atmel_uart_writel(port, ATMEL_US_CR, ATMEL_US_RSTSTA | ATMEL_US_RSTRX);
+>  	atmel_uart_writel(port, ATMEL_US_CR, ATMEL_US_TXEN | ATMEL_US_RXEN);
+>  	atmel_port->tx_stopped = false;
+> @@ -2355,6 +2503,7 @@ static int atmel_init_port(struct atmel_uart_port *atmel_port,
+>  	port->mapbase	= pdev->resource[0].start;
+>  	port->irq	= pdev->resource[1].start;
+>  	port->rs485_config	= atmel_config_rs485;
+> +	port->iso7816_config	= atmel_config_iso7816;
+>  	port->membase	= NULL;
+>  
+>  	memset(&atmel_port->rx_ring, 0, sizeof(atmel_port->rx_ring));
+> @@ -2379,7 +2528,8 @@ static int atmel_init_port(struct atmel_uart_port *atmel_port,
+>  	}
+>  
+>  	/* Use TXEMPTY for interrupt when rs485 else TXRDY or ENDTX|TXBUFE */
+> -	if (port->rs485.flags & SER_RS485_ENABLED)
+> +	if (port->rs485.flags & SER_RS485_ENABLED ||
+> +	    port->iso7816.flags & SER_ISO7816_ENABLED)
+please update the comment above.
+
+>  		atmel_port->tx_done_mask = ATMEL_US_TXEMPTY;
+>  	else if (atmel_use_pdc_tx(port)) {
+>  		port->fifosize = PDC_BUFFER_SIZE;
+> diff --git a/drivers/tty/serial/atmel_serial.h b/drivers/tty/serial/atmel_serial.h
+> index ba3a2437cde4..fff51f5fe8bc 100644
+> --- a/drivers/tty/serial/atmel_serial.h
+> +++ b/drivers/tty/serial/atmel_serial.h
+> @@ -124,7 +124,8 @@
+>  #define ATMEL_US_TTGR		0x28	/* Transmitter Timeguard Register */
+>  #define	ATMEL_US_TG		GENMASK(7, 0)	/* Timeguard Value */
+>  
+> -#define ATMEL_US_FIDI		0x40	/* FI DI Ratio Register */
+> +#define ATMEL_US_FIDIR		0x40	/* FI DI Ratio Register */
+> +#define ATMEL_US_FIDI		GENMASK(15, 0)	/* FIDI ratio */
+>  #define ATMEL_US_NER		0x44	/* Number of Errors Register */
+>  #define ATMEL_US_IF		0x4c	/* IrDA Filter Register */
+>  
+> 
+
+Thanks !
+
+Richard.
