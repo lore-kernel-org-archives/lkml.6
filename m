@@ -2,102 +2,99 @@ Return-Path: <SRS0=OQFz=KL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC0E5C28CF6
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 02:09:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58872C28CF6
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 02:13:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7038C20857
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 02:09:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7038C20857
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id F2DA320857
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 02:13:07 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FUPbWPAL"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F2DA320857
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732079AbeG0D3A (ORCPT
+        id S1732120AbeG0Dci (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 26 Jul 2018 23:29:00 -0400
-Received: from mga02.intel.com ([134.134.136.20]:56556 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731974AbeG0D3A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Jul 2018 23:29:00 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Jul 2018 19:09:28 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,407,1526367600"; 
-   d="scan'208";a="70311575"
-Received: from unknown (HELO [10.239.13.97]) ([10.239.13.97])
-  by orsmga003.jf.intel.com with ESMTP; 26 Jul 2018 19:09:26 -0700
-Message-ID: <5B5A7FD9.2010105@intel.com>
-Date:   Fri, 27 Jul 2018 10:13:45 +0800
-From:   Wei Wang <wei.w.wang@intel.com>
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:31.0) Gecko/20100101 Thunderbird/31.7.0
-MIME-Version: 1.0
-To:     Yury Norov <ynorov@caviumnetworks.com>
-CC:     linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
-        corbet@lwn.net, linux@rasmusvillemoes.dk, dgilbert@redhat.com,
-        Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: Re: [PATCH] linux/bitmap.h: fix BITMAP_LAST_WORD_MASK
-References: <1532592471-21177-1-git-send-email-wei.w.wang@intel.com> <20180726093728.GA9069@yury-thinkpad> <5B599F5F.2070705@intel.com> <20180726121042.GA11481@yury-thinkpad>
-In-Reply-To: <20180726121042.GA11481@yury-thinkpad>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
+        Thu, 26 Jul 2018 23:32:38 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:43333 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732043AbeG0Dci (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Jul 2018 23:32:38 -0400
+Received: by mail-pg1-f196.google.com with SMTP id v13-v6so2274473pgr.10;
+        Thu, 26 Jul 2018 19:13:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=nVAkD3uKYDtdsLDY4zEptBxny+D9QKC8Gw+NBOVmUEs=;
+        b=FUPbWPALh1VywiThhmtNnzWlNCCzMTb95oh0gzHNd38vYnQXSCrqTW1VegcM/sNVOQ
+         Volob6mgUcjOhdMkjAEKpKh+zCdT6L/gOSiBK200KtKJlSm6fbB/nqw/qZh5+20JIOSG
+         sTT+Bytn6mjx8yp67Wez+gQ3RZoX/N9kScHGJ6KuEribPpEPWFQYcEX868SsVxOQx3sX
+         7eAmLK8N1B13eRsovsGjEQaBVAdTF95rw5F9oPuCIg2ieOrJe4dIpGocVUQ57YKf0LRR
+         d3M0zmJ5opJcf8+kyRYqalSOEXzTouXEBRWnjqfZlYTcILzqxcrjli6KELc7QPlK3VeV
+         8ykw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=nVAkD3uKYDtdsLDY4zEptBxny+D9QKC8Gw+NBOVmUEs=;
+        b=DyWxgbmFoHsNNOGgV6Z3IKuTdFHb0kE07cWkzjW/3XRiAGN7GErsO6LQ51pOih+TFS
+         dZZ/vZblz/IglezFPOV02+rp3g162nWpxQjFXsQCa5gynBQjJ9Ia/0IhzZ4m9+9rMORx
+         L8MX+9dDB7jl2D3dgTS3Fn0iZeY8kVN78m7qUTUXVpDTUqquuIGiQPXNPS/VEWLU4XM+
+         vRPo2CtSDQVXRj6CSj0GFKvFTLYo6p2DM0ub41jKjPnR+7D0HE5g1CziWGzcj9tEkL7l
+         h0706C9zdiApMa3iOOj33Oc9IATaM+sLm9niOQ4Jdoqop3j9D22MelH2cVMKEwhuJut5
+         R/RA==
+X-Gm-Message-State: AOUpUlEObw9e8zevnrQ4BCCkFhRXTj2LhyetsR/nckliSR+Tjq65v4KR
+        7Tqu07f7bIj2EQNxVZ8Sq2DIPTJw
+X-Google-Smtp-Source: AAOMgpflbjRRR0sYFULjhDheTyxy2VKFU5C904Qn5a0z9VATGOYNHPyFyTL3yB7671/3rWcKtikE3g==
+X-Received: by 2002:a65:5c83:: with SMTP id a3-v6mr4205137pgt.164.1532657585675;
+        Thu, 26 Jul 2018 19:13:05 -0700 (PDT)
+Received: from localhost.localdomain ([2402:f000:1:4414:6c14:7712:e625:1be4])
+        by smtp.gmail.com with ESMTPSA id f5-v6sm3565406pga.58.2018.07.26.19.13.03
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 26 Jul 2018 19:13:05 -0700 (PDT)
+From:   Jia-Ju Bai <baijiaju1990@gmail.com>
+To:     dmitry.torokhov@gmail.com, arvind.yadav.cs@gmail.com,
+        gregkh@linuxfoundation.org, pombredanne@nexb.com
+Cc:     linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jia-Ju Bai <baijiaju1990@gmail.com>
+Subject: [PATCH] input: misc: keyspan_remote: Replace GFP_ATOMIC with GFP_KERNEL in keyspan_probe()
+Date:   Fri, 27 Jul 2018 10:12:58 +0800
+Message-Id: <20180727021258.29675-1-baijiaju1990@gmail.com>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/26/2018 08:10 PM, Yury Norov wrote:
-> On Thu, Jul 26, 2018 at 06:15:59PM +0800, Wei Wang wrote:
->> External Email
->>
->> On 07/26/2018 05:37 PM, Yury Norov wrote:
->>> On Thu, Jul 26, 2018 at 04:07:51PM +0800, Wei Wang wrote:
->>>> The existing BITMAP_LAST_WORD_MASK macro returns 0xffffffff if nbits is
->>>> 0. This patch changes the macro to return 0 when there is no bit needs to
->>>> be masked.
->>> I think this is intentional behavour. Previous version did return ~0UL
->>> explicitly in this case. See patch 89c1e79eb3023 (linux/bitmap.h: improve
->>> BITMAP_{LAST,FIRST}_WORD_MASK) from Rasmus.
->> Yes, I saw that. But it seems confusing for the corner case that nbits=0
->> (no bits to mask), the macro returns with all the bits set.
->>
->>
->>> Introducing conditional branch would affect performance. All existing
->>> code checks nbits for 0 before handling last word where needed
->>> explicitly. So I think we'd better change nothing here.
->> I think that didn't save the conditional branch essentially, because
->> it's just moved from inside this macro to the caller as you mentioned.
->> If callers missed the check for some reason and passed 0 to the macro,
->> they will get something unexpected.
->>
->> Current callers like __bitmap_weight, __bitmap_equal, and others, they have
->>
->> if (bits % BITS_PER_LONG)
->>      w += hweight_long(bitmap[k] & BITMAP_LAST_WORD_MASK(bits));
->>
->> we could remove the "if" check by "w += hweight_long(bitmap[k] &
->> BITMAP_LAST_WORD_MASK(bits % BITS_PER_LONG));" the branch is the same.
-> But your patch doesn't remove external conditional, and it fact
-> introduces overhead, right? Also, in some cases it's not so trivial to
-> remove it. Consider __bitmap_intersects() for example.
->
-> Anyway, this patch changes the very basic API. In that case you should
-> check every user of the macro to be safe against the change, including
-> possible performance downsides.
->
-> If you find this corner case behavior of macro confusing, I think that
-> the better option would be introducing detailed comment to the
-> BITMAP_LAST_WORD_MASK(), or writing wrapper around it that handles
-> nbits == 0 as you expect.
->
+keyspan_probe() is never called in atomic context.
+It calls usb_alloc_coherent() with GFP_ATOMIC, which is not necessary.
+GFP_ATOMIC can be replace with GFP_KERNEL.
 
-OK. Thanks Yury and Andy for the discussion. It seems the more preferred 
-way is just to add comments as a note. Agree with that.
+This is found by a static analysis tool named DCNS written by myself.
 
-Best,
-Wei
+Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+---
+ drivers/input/misc/keyspan_remote.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/drivers/input/misc/keyspan_remote.c b/drivers/input/misc/keyspan_remote.c
+index 67482b248b2d..a8937ceac66a 100644
+--- a/drivers/input/misc/keyspan_remote.c
++++ b/drivers/input/misc/keyspan_remote.c
+@@ -466,7 +466,7 @@ static int keyspan_probe(struct usb_interface *interface, const struct usb_devic
+ 	remote->in_endpoint = endpoint;
+ 	remote->toggle = -1;	/* Set to -1 so we will always not match the toggle from the first remote message. */
+ 
+-	remote->in_buffer = usb_alloc_coherent(udev, RECV_SIZE, GFP_ATOMIC, &remote->in_dma);
++	remote->in_buffer = usb_alloc_coherent(udev, RECV_SIZE, GFP_KERNEL, &remote->in_dma);
+ 	if (!remote->in_buffer) {
+ 		error = -ENOMEM;
+ 		goto fail1;
+-- 
+2.17.0
 
