@@ -6,36 +6,37 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13E84C6778F
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:27:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3442FC6778F
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:27:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C27C4208A4
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:27:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C27C4208A4
+	by mail.kernel.org (Postfix) with ESMTP id E7CD1208A4
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:27:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E7CD1208A4
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388580AbeG0Ls5 (ORCPT
+        id S2388612AbeG0Ls7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 07:48:57 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:42306 "EHLO
+        Fri, 27 Jul 2018 07:48:59 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:42324 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730340AbeG0Ls4 (ORCPT
+        with ESMTP id S1730340AbeG0Ls6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 07:48:56 -0400
+        Fri, 27 Jul 2018 07:48:58 -0400
 Received: from localhost (unknown [89.188.5.116])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 379FBCD1;
-        Fri, 27 Jul 2018 10:27:38 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 75C0CCD1;
+        Fri, 27 Jul 2018 10:27:41 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Yuchung Cheng <ycheng@google.com>,
-        Neal Cardwell <ncardwell@google.com>,
-        Eric Dumazet <edumazet@google.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 3.18 16/27] tcp: do not delay ACK in DCTCP upon CE status change
-Date:   Fri, 27 Jul 2018 12:26:53 +0200
-Message-Id: <20180727102649.642952362@linuxfoundation.org>
+        stable@vger.kernel.org,
+        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
+        syzbot+90b8e10515ae88228a92@syzkaller.appspotmail.com,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 3.18 02/27] fat: fix memory allocation failure handling of match_strdup()
+Date:   Fri, 27 Jul 2018 12:26:39 +0200
+Message-Id: <20180727102649.135411430@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180727102649.049641021@linuxfoundation.org>
 References: <20180727102649.049641021@linuxfoundation.org>
@@ -52,138 +53,82 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Yuchung Cheng <ycheng@google.com>
+From: OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
 
-[ Upstream commit a0496ef2c23b3b180902dd185d0d63ccbc624cf8 ]
+commit 35033ab988c396ad7bce3b6d24060c16a9066db8 upstream.
 
-Per DCTCP RFC8257 (Section 3.2) the ACK reflecting the CE status change
-has to be sent immediately so the sender can respond quickly:
+In parse_options(), if match_strdup() failed, parse_options() leaves
+opts->iocharset in unexpected state (i.e.  still pointing the freed
+string).  And this can be the cause of double free.
 
-""" When receiving packets, the CE codepoint MUST be processed as follows:
+To fix, this initialize opts->iocharset always when freeing.
 
-   1.  If the CE codepoint is set and DCTCP.CE is false, set DCTCP.CE to
-       true and send an immediate ACK.
-
-   2.  If the CE codepoint is not set and DCTCP.CE is true, set DCTCP.CE
-       to false and send an immediate ACK.
-"""
-
-Previously DCTCP implementation may continue to delay the ACK. This
-patch fixes that to implement the RFC by forcing an immediate ACK.
-
-Tested with this packetdrill script provided by Larry Brakmo
-
-0.000 socket(..., SOCK_STREAM, IPPROTO_TCP) = 3
-0.000 setsockopt(3, SOL_SOCKET, SO_REUSEADDR, [1], 4) = 0
-0.000 setsockopt(3, SOL_TCP, TCP_CONGESTION, "dctcp", 5) = 0
-0.000 bind(3, ..., ...) = 0
-0.000 listen(3, 1) = 0
-
-0.100 < [ect0] SEW 0:0(0) win 32792 <mss 1000,sackOK,nop,nop,nop,wscale 7>
-0.100 > SE. 0:0(0) ack 1 <mss 1460,nop,nop,sackOK,nop,wscale 8>
-0.110 < [ect0] . 1:1(0) ack 1 win 257
-0.200 accept(3, ..., ...) = 4
-   +0 setsockopt(4, SOL_SOCKET, SO_DEBUG, [1], 4) = 0
-
-0.200 < [ect0] . 1:1001(1000) ack 1 win 257
-0.200 > [ect01] . 1:1(0) ack 1001
-
-0.200 write(4, ..., 1) = 1
-0.200 > [ect01] P. 1:2(1) ack 1001
-
-0.200 < [ect0] . 1001:2001(1000) ack 2 win 257
-+0.005 < [ce] . 2001:3001(1000) ack 2 win 257
-
-+0.000 > [ect01] . 2:2(0) ack 2001
-// Previously the ACK below would be delayed by 40ms
-+0.000 > [ect01] E. 2:2(0) ack 3001
-
-+0.500 < F. 9501:9501(0) ack 4 win 257
-
-Signed-off-by: Yuchung Cheng <ycheng@google.com>
-Acked-by: Neal Cardwell <ncardwell@google.com>
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Link: http://lkml.kernel.org/r/8736wp9dzc.fsf@mail.parknet.co.jp
+Signed-off-by: OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
+Reported-by: syzbot+90b8e10515ae88228a92@syzkaller.appspotmail.com
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- include/net/tcp.h    |    1 +
- net/ipv4/tcp_dctcp.c |   30 ++++++++++++++++++------------
- net/ipv4/tcp_input.c |    3 ++-
- 3 files changed, 21 insertions(+), 13 deletions(-)
 
---- a/include/net/tcp.h
-+++ b/include/net/tcp.h
-@@ -372,6 +372,7 @@ ssize_t tcp_splice_read(struct socket *s
- 			struct pipe_inode_info *pipe, size_t len,
- 			unsigned int flags);
- 
-+void tcp_enter_quickack_mode(struct sock *sk);
- static inline void tcp_dec_quickack_mode(struct sock *sk,
- 					 const unsigned int pkts)
- {
---- a/net/ipv4/tcp_dctcp.c
-+++ b/net/ipv4/tcp_dctcp.c
-@@ -128,12 +128,15 @@ static void dctcp_ce_state_0_to_1(struct
- 	struct dctcp *ca = inet_csk_ca(sk);
- 	struct tcp_sock *tp = tcp_sk(sk);
- 
--	/* State has changed from CE=0 to CE=1 and delayed
--	 * ACK has not sent yet.
--	 */
--	if (!ca->ce_state &&
--	    inet_csk(sk)->icsk_ack.pending & ICSK_ACK_TIMER)
--		__tcp_send_ack(sk, ca->prior_rcv_nxt);
-+	if (!ca->ce_state) {
-+		/* State has changed from CE=0 to CE=1, force an immediate
-+		 * ACK to reflect the new CE state. If an ACK was delayed,
-+		 * send that first to reflect the prior CE state.
-+		 */
-+		if (inet_csk(sk)->icsk_ack.pending & ICSK_ACK_TIMER)
-+			__tcp_send_ack(sk, ca->prior_rcv_nxt);
-+		tcp_enter_quickack_mode(sk);
-+	}
- 
- 	ca->prior_rcv_nxt = tp->rcv_nxt;
- 	ca->ce_state = 1;
-@@ -146,12 +149,15 @@ static void dctcp_ce_state_1_to_0(struct
- 	struct dctcp *ca = inet_csk_ca(sk);
- 	struct tcp_sock *tp = tcp_sk(sk);
- 
--	/* State has changed from CE=1 to CE=0 and delayed
--	 * ACK has not sent yet.
--	 */
--	if (ca->ce_state &&
--	    inet_csk(sk)->icsk_ack.pending & ICSK_ACK_TIMER)
--		__tcp_send_ack(sk, ca->prior_rcv_nxt);
-+	if (ca->ce_state) {
-+		/* State has changed from CE=1 to CE=0, force an immediate
-+		 * ACK to reflect the new CE state. If an ACK was delayed,
-+		 * send that first to reflect the prior CE state.
-+		 */
-+		if (inet_csk(sk)->icsk_ack.pending & ICSK_ACK_TIMER)
-+			__tcp_send_ack(sk, ca->prior_rcv_nxt);
-+		tcp_enter_quickack_mode(sk);
-+	}
- 
- 	ca->prior_rcv_nxt = tp->rcv_nxt;
- 	ca->ce_state = 0;
---- a/net/ipv4/tcp_input.c
-+++ b/net/ipv4/tcp_input.c
-@@ -182,13 +182,14 @@ static void tcp_incr_quickack(struct soc
- 		icsk->icsk_ack.quick = min(quickacks, TCP_MAX_QUICKACKS);
+---
+ fs/fat/inode.c |   20 +++++++++++++-------
+ 1 file changed, 13 insertions(+), 7 deletions(-)
+
+--- a/fs/fat/inode.c
++++ b/fs/fat/inode.c
+@@ -610,13 +610,21 @@ static void fat_set_state(struct super_b
+ 	brelse(bh);
  }
  
--static void tcp_enter_quickack_mode(struct sock *sk)
-+void tcp_enter_quickack_mode(struct sock *sk)
++static void fat_reset_iocharset(struct fat_mount_options *opts)
++{
++	if (opts->iocharset != fat_default_iocharset) {
++		/* Note: opts->iocharset can be NULL here */
++		kfree(opts->iocharset);
++		opts->iocharset = fat_default_iocharset;
++	}
++}
++
+ static void delayed_free(struct rcu_head *p)
  {
- 	struct inet_connection_sock *icsk = inet_csk(sk);
- 	tcp_incr_quickack(sk);
- 	icsk->icsk_ack.pingpong = 0;
- 	icsk->icsk_ack.ato = TCP_ATO_MIN;
+ 	struct msdos_sb_info *sbi = container_of(p, struct msdos_sb_info, rcu);
+ 	unload_nls(sbi->nls_disk);
+ 	unload_nls(sbi->nls_io);
+-	if (sbi->options.iocharset != fat_default_iocharset)
+-		kfree(sbi->options.iocharset);
++	fat_reset_iocharset(&sbi->options);
+ 	kfree(sbi);
  }
-+EXPORT_SYMBOL(tcp_enter_quickack_mode);
  
- /* Send ACKs quickly, if "quick" count is not exhausted
-  * and the session is not interactive.
+@@ -1031,7 +1039,7 @@ static int parse_options(struct super_bl
+ 	opts->fs_fmask = opts->fs_dmask = current_umask();
+ 	opts->allow_utime = -1;
+ 	opts->codepage = fat_default_codepage;
+-	opts->iocharset = fat_default_iocharset;
++	fat_reset_iocharset(opts);
+ 	if (is_vfat) {
+ 		opts->shortname = VFAT_SFN_DISPLAY_WINNT|VFAT_SFN_CREATE_WIN95;
+ 		opts->rodir = 0;
+@@ -1181,8 +1189,7 @@ static int parse_options(struct super_bl
+ 
+ 		/* vfat specific */
+ 		case Opt_charset:
+-			if (opts->iocharset != fat_default_iocharset)
+-				kfree(opts->iocharset);
++			fat_reset_iocharset(opts);
+ 			iocharset = match_strdup(&args[0]);
+ 			if (!iocharset)
+ 				return -ENOMEM;
+@@ -1774,8 +1781,7 @@ out_fail:
+ 		iput(fat_inode);
+ 	unload_nls(sbi->nls_io);
+ 	unload_nls(sbi->nls_disk);
+-	if (sbi->options.iocharset != fat_default_iocharset)
+-		kfree(sbi->options.iocharset);
++	fat_reset_iocharset(&sbi->options);
+ 	sb->s_fs_info = NULL;
+ 	kfree(sbi);
+ 	return error;
 
 
