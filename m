@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D0DEC67790
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 09:50:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AE05C6778F
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 09:50:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 23E542089A
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 09:50:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 23E542089A
+	by mail.kernel.org (Postfix) with ESMTP id 09A7F2089A
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 09:50:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 09A7F2089A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389158AbeG0LLp (ORCPT
+        id S2389170AbeG0LLs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 07:11:45 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:53190 "EHLO
+        Fri, 27 Jul 2018 07:11:48 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:53198 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729431AbeG0LLo (ORCPT
+        with ESMTP id S1729431AbeG0LLr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 07:11:44 -0400
+        Fri, 27 Jul 2018 07:11:47 -0400
 Received: from localhost (unknown [89.188.5.116])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A96D0BBD;
-        Fri, 27 Jul 2018 09:50:37 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B24B6BBF;
+        Fri, 27 Jul 2018 09:50:40 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Bastien Nocera <hadess@hadess.net>,
-        Erik Schmauss <erik.schmauss@intel.com>,
+        stable@vger.kernel.org, Pingfan Liu <kernelfans@gmail.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
         "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Subject: [PATCH 4.17 55/66] ACPICA: AML Parser: ignore dispatcher error status during table load
-Date:   Fri, 27 Jul 2018 11:45:48 +0200
-Message-Id: <20180727093815.227850545@linuxfoundation.org>
+Subject: [PATCH 4.17 56/66] driver core: Partially revert "driver core: correct devices shutdown order"
+Date:   Fri, 27 Jul 2018 11:45:49 +0200
+Message-Id: <20180727093815.347239080@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180727093809.043856530@linuxfoundation.org>
 References: <20180727093809.043856530@linuxfoundation.org>
@@ -51,90 +51,70 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Schmauss, Erik <erik.schmauss@intel.com>
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-commit 73c2a01c52b657f4a0ead6c95f64c5279efbd000 upstream.
+commit 722e5f2b1eec7de61117b7c0a7914761e3da2eda upstream.
 
-The dispatcher and the executer process the parse nodes During table
-load. Error status from the evaluation confuses the AML parser. This
-results in the parser failing to complete parsing of the current
-scope op which becomes problematic. For the incorrect AML below, _ADR
-never gets created.
+Commit 52cdbdd49853 (driver core: correct device's shutdown order)
+introduced a regression by breaking device shutdown on some systems.
 
-definition_block(...)
-{
-   Scope (\_SB)
-   {
-     Device (PCI0){...}
-     Name (OBJ1, 0x0)
-     OBJ1 = PCI0 + 5 // Results in an operand error.
-   } // \_SB not closed
+Namely, the devices_kset_move_last() call in really_probe() added by
+that commit is a mistake as it may cause parents to follow children
+in the devices_kset list which then causes shutdown to fail.  For
+example, if a device has children before really_probe() is called
+for it (which is not uncommon), that call will cause it to be
+reordered after the children in the devices_kset list and the
+ordering of that list will not reflect the correct device shutdown
+order any more.
 
-   // parser looks for \_SB._SB.PCI0, results in AE_NOT_FOUND error
-   // Entire scope block gets skipped.
-   Scope (\_SB.PCI0)
-   {
-       Name (_ADR, 0x0)
-   }
-}
+Also it causes the devices_kset list to be constantly reordered
+until all drivers have been probed which is totally pointless
+overhead in the majority of cases and it only covered an issue
+with system shutdown, while system-wide suspend/resume potentially
+had the same issue on the affected platforms (which was not covered).
 
-Fix the above error by properly completing the initial \_SB scope
-after an error by clearing errors that occur during table load. In
-the above case, this means that OBJ1 = PIC0 + 5 is skipped.
+Moreover, the shutdown issue originally addressed by the change in
+really_probe() made by commit 52cdbdd49853 is not present in 4.18-rc
+any more, since dra7 started to use the sdhci-omap driver which
+doesn't disable any regulators during shutdown, so the really_probe()
+part of commit 52cdbdd49853 can be safely reverted.  [The original
+issue was related to the omap_hsmmc driver used by dra7 previously.]
 
-Fixes: 5088814a6e93 (ACPICA: AML parser: attempt to continue loading table after error)
-Link: https://bugzilla.kernel.org/show_bug.cgi?id=200363
-Tested-by: Bastien Nocera <hadess@hadess.net>
-Signed-off-by: Erik Schmauss <erik.schmauss@intel.com>
-Cc: 4.17+ <stable@vger.kernel.org> # 4.17+
+For the above reasons, revert the really_probe() modifications made
+by commit 52cdbdd49853.
+
+The other code changes made by commit 52cdbdd49853 are useful and
+they need not be reverted.
+
+Fixes: 52cdbdd49853 (driver core: correct device's shutdown order)
+Link: https://lore.kernel.org/lkml/CAFgQCTt7VfqM=UyCnvNFxrSw8Z6cUtAi3HUwR4_xPAc03SgHjQ@mail.gmail.com/
+Reported-by: Pingfan Liu <kernelfans@gmail.com>
+Tested-by: Pingfan Liu <kernelfans@gmail.com>
+Reviewed-by: Kishon Vijay Abraham I <kishon@ti.com>
 Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Cc: stable <stable@vger.kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/acpi/acpica/psloop.c |   26 ++++++++++++++++++++++++++
- 1 file changed, 26 insertions(+)
+ drivers/base/dd.c |    8 --------
+ 1 file changed, 8 deletions(-)
 
---- a/drivers/acpi/acpica/psloop.c
-+++ b/drivers/acpi/acpica/psloop.c
-@@ -497,6 +497,18 @@ acpi_status acpi_ps_parse_loop(struct ac
- 			status =
- 			    acpi_ps_create_op(walk_state, aml_op_start, &op);
- 			if (ACPI_FAILURE(status)) {
-+				/*
-+				 * ACPI_PARSE_MODULE_LEVEL means that we are loading a table by
-+				 * executing it as a control method. However, if we encounter
-+				 * an error while loading the table, we need to keep trying to
-+				 * load the table rather than aborting the table load. Set the
-+				 * status to AE_OK to proceed with the table load.
-+				 */
-+				if ((walk_state->
-+				     parse_flags & ACPI_PARSE_MODULE_LEVEL)
-+				    && status == AE_ALREADY_EXISTS) {
-+					status = AE_OK;
-+				}
- 				if (status == AE_CTRL_PARSE_CONTINUE) {
- 					continue;
- 				}
-@@ -694,6 +706,20 @@ acpi_status acpi_ps_parse_loop(struct ac
- 			    acpi_ps_next_parse_state(walk_state, op, status);
- 			if (status == AE_CTRL_PENDING) {
- 				status = AE_OK;
-+			} else
-+			    if ((walk_state->
-+				 parse_flags & ACPI_PARSE_MODULE_LEVEL)
-+				&& ACPI_FAILURE(status)) {
-+				/*
-+				 * ACPI_PARSE_MODULE_LEVEL means that we are loading a table by
-+				 * executing it as a control method. However, if we encounter
-+				 * an error while loading the table, we need to keep trying to
-+				 * load the table rather than aborting the table load. Set the
-+				 * status to AE_OK to proceed with the table load. If we get a
-+				 * failure at this point, it means that the dispatcher got an
-+				 * error while processing Op (most likely an AML operand error.
-+				 */
-+				status = AE_OK;
- 			}
- 		}
+--- a/drivers/base/dd.c
++++ b/drivers/base/dd.c
+@@ -436,14 +436,6 @@ re_probe:
+ 			goto probe_failed;
+ 	}
  
+-	/*
+-	 * Ensure devices are listed in devices_kset in correct order
+-	 * It's important to move Dev to the end of devices_kset before
+-	 * calling .probe, because it could be recursive and parent Dev
+-	 * should always go first
+-	 */
+-	devices_kset_move_last(dev);
+-
+ 	if (dev->bus->probe) {
+ 		ret = dev->bus->probe(dev);
+ 		if (ret)
 
 
