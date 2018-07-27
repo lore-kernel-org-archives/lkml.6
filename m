@@ -6,37 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E43A6C67790
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:01:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 823BEC67790
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:01:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9A4AA20894
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:01:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9A4AA20894
+	by mail.kernel.org (Postfix) with ESMTP id 22F4020894
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:01:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 22F4020894
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388535AbeG0LW2 (ORCPT
+        id S2388568AbeG0LWc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 07:22:28 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:34006 "EHLO
+        Fri, 27 Jul 2018 07:22:32 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:34026 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730703AbeG0LW2 (ORCPT
+        with ESMTP id S1730120AbeG0LWb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 07:22:28 -0400
+        Fri, 27 Jul 2018 07:22:31 -0400
 Received: from localhost (unknown [89.188.5.116])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B0D4DCBB;
-        Fri, 27 Jul 2018 10:01:18 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C0D86CBD;
+        Fri, 27 Jul 2018 10:01:21 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Felix Fietkau <nbd@nbd.name>,
-        John Crispin <john@phrozen.org>,
-        Paul Burton <paul.burton@mips.com>,
-        Alban Bedel <albeu@free.fr>, James Hogan <jhogan@kernel.org>,
-        Ralf Baechle <ralf@linux-mips.org>, linux-mips@linux-mips.org
-Subject: [PATCH 4.14 02/48] MIPS: ath79: fix register address in ath79_ddr_wb_flush()
-Date:   Fri, 27 Jul 2018 11:59:47 +0200
-Message-Id: <20180727095918.727784548@linuxfoundation.org>
+        stable@vger.kernel.org, Roopa Prabhu <roopa@cumulusnetworks.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.14 20/48] rtnetlink: add rtnl_link_state check in rtnl_configure_link
+Date:   Fri, 27 Jul 2018 12:00:05 +0200
+Message-Id: <20180727095920.604135468@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180727095918.503549522@linuxfoundation.org>
 References: <20180727095918.503549522@linuxfoundation.org>
@@ -53,39 +50,65 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Felix Fietkau <nbd@nbd.name>
+From: Roopa Prabhu <roopa@cumulusnetworks.com>
 
-commit bc88ad2efd11f29e00a4fd60fcd1887abfe76833 upstream.
+[ Upstream commit 5025f7f7d506fba9b39e7fe8ca10f6f34cb9bc2d ]
 
-ath79_ddr_wb_flush_base has the type void __iomem *, so register offsets
-need to be a multiple of 4 in order to access the intended register.
+rtnl_configure_link sets dev->rtnl_link_state to
+RTNL_LINK_INITIALIZED and unconditionally calls
+__dev_notify_flags to notify user-space of dev flags.
 
-Signed-off-by: Felix Fietkau <nbd@nbd.name>
-Signed-off-by: John Crispin <john@phrozen.org>
-Signed-off-by: Paul Burton <paul.burton@mips.com>
-Fixes: 24b0e3e84fbf ("MIPS: ath79: Improve the DDR controller interface")
-Patchwork: https://patchwork.linux-mips.org/patch/19912/
-Cc: Alban Bedel <albeu@free.fr>
-Cc: James Hogan <jhogan@kernel.org>
-Cc: Ralf Baechle <ralf@linux-mips.org>
-Cc: linux-mips@linux-mips.org
-Cc: stable@vger.kernel.org # 4.2+
+current call sequence for rtnl_configure_link
+rtnetlink_newlink
+    rtnl_link_ops->newlink
+    rtnl_configure_link (unconditionally notifies userspace of
+                         default and new dev flags)
+
+If a newlink handler wants to call rtnl_configure_link
+early, we will end up with duplicate notifications to
+user-space.
+
+This patch fixes rtnl_configure_link to check rtnl_link_state
+and call __dev_notify_flags with gchanges = 0 if already
+RTNL_LINK_INITIALIZED.
+
+Later in the series, this patch will help the following sequence
+where a driver implementing newlink can call rtnl_configure_link
+to initialize the link early.
+
+makes the following call sequence work:
+rtnetlink_newlink
+    rtnl_link_ops->newlink (vxlan) -> rtnl_configure_link (initializes
+                                                link and notifies
+                                                user-space of default
+                                                dev flags)
+    rtnl_configure_link (updates dev flags if requested by user ifm
+                         and notifies user-space of new dev flags)
+
+Signed-off-by: Roopa Prabhu <roopa@cumulusnetworks.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- arch/mips/ath79/common.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/core/rtnetlink.c |    9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
---- a/arch/mips/ath79/common.c
-+++ b/arch/mips/ath79/common.c
-@@ -58,7 +58,7 @@ EXPORT_SYMBOL_GPL(ath79_ddr_ctrl_init);
+--- a/net/core/rtnetlink.c
++++ b/net/core/rtnetlink.c
+@@ -2402,9 +2402,12 @@ int rtnl_configure_link(struct net_devic
+ 			return err;
+ 	}
  
- void ath79_ddr_wb_flush(u32 reg)
- {
--	void __iomem *flush_reg = ath79_ddr_wb_flush_base + reg;
-+	void __iomem *flush_reg = ath79_ddr_wb_flush_base + (reg * 4);
- 
- 	/* Flush the DDR write buffer. */
- 	__raw_writel(0x1, flush_reg);
+-	dev->rtnl_link_state = RTNL_LINK_INITIALIZED;
+-
+-	__dev_notify_flags(dev, old_flags, ~0U);
++	if (dev->rtnl_link_state == RTNL_LINK_INITIALIZED) {
++		__dev_notify_flags(dev, old_flags, 0U);
++	} else {
++		dev->rtnl_link_state = RTNL_LINK_INITIALIZED;
++		__dev_notify_flags(dev, old_flags, ~0U);
++	}
+ 	return 0;
+ }
+ EXPORT_SYMBOL(rtnl_configure_link);
 
 
