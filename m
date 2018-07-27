@@ -3,38 +3,41 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2714C6778F
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:10:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EFF6C6778F
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:10:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6083B2089E
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:10:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6083B2089E
+	by mail.kernel.org (Postfix) with ESMTP id 3BD5C2089F
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:10:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3BD5C2089F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388712AbeG0LbT (ORCPT
+        id S2388741AbeG0LbX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 07:31:19 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:36468 "EHLO
+        Fri, 27 Jul 2018 07:31:23 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:36482 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729431AbeG0LbS (ORCPT
+        with ESMTP id S1729431AbeG0LbW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 07:31:18 -0400
+        Fri, 27 Jul 2018 07:31:22 -0400
 Received: from localhost (unknown [89.188.5.116])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0C069CB5;
-        Fri, 27 Jul 2018 10:10:05 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3A1D7CB5;
+        Fri, 27 Jul 2018 10:10:09 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-        Soheil Hassas Yeganeh <soheil@google.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 19/33] tcp: detect malicious patterns in tcp_collapse_ofo_queue()
-Date:   Fri, 27 Jul 2018 12:09:00 +0200
-Message-Id: <20180727100828.391655534@linuxfoundation.org>
+        stable@vger.kernel.org, Paul Burton <paul.burton@mips.com>,
+        Rui Wang <rui.wang@windriver.com>,
+        James Hogan <jhogan@kernel.org>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Wolfgang Grandegger <wg@grandegger.com>,
+        linux-mips@linux-mips.org
+Subject: [PATCH 4.9 02/33] MIPS: Fix off-by-one in pci_resource_to_user()
+Date:   Fri, 27 Jul 2018 12:08:43 +0200
+Message-Id: <20180727100827.752861092@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180727100827.665729981@linuxfoundation.org>
 References: <20180727100827.665729981@linuxfoundation.org>
@@ -51,72 +54,49 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Eric Dumazet <edumazet@google.com>
+From: Paul Burton <paul.burton@mips.com>
 
-[ Upstream commit 3d4bf93ac12003f9b8e1e2de37fe27983deebdcf ]
+commit 38c0a74fe06da3be133cae3fb7bde6a9438e698b upstream.
 
-In case an attacker feeds tiny packets completely out of order,
-tcp_collapse_ofo_queue() might scan the whole rb-tree, performing
-expensive copies, but not changing socket memory usage at all.
+The MIPS implementation of pci_resource_to_user() introduced in v3.12 by
+commit 4c2924b725fb ("MIPS: PCI: Use pci_resource_to_user to map pci
+memory space properly") incorrectly sets *end to the address of the
+byte after the resource, rather than the last byte of the resource.
 
-1) Do not attempt to collapse tiny skbs.
-2) Add logic to exit early when too many tiny skbs are detected.
+This results in userland seeing resources as a byte larger than they
+actually are, for example a 32 byte BAR will be reported by a tool such
+as lspci as being 33 bytes in size:
 
-We prefer not doing aggressive collapsing (which copies packets)
-for pathological flows, and revert to tcp_prune_ofo_queue() which
-will be less expensive.
+    Region 2: I/O ports at 1000 [disabled] [size=33]
 
-In the future, we might add the possibility of terminating flows
-that are proven to be malicious.
+Correct this by subtracting one from the calculated end address,
+reporting the correct address to userland.
 
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Acked-by: Soheil Hassas Yeganeh <soheil@google.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Paul Burton <paul.burton@mips.com>
+Reported-by: Rui Wang <rui.wang@windriver.com>
+Fixes: 4c2924b725fb ("MIPS: PCI: Use pci_resource_to_user to map pci memory space properly")
+Cc: James Hogan <jhogan@kernel.org>
+Cc: Ralf Baechle <ralf@linux-mips.org>
+Cc: Wolfgang Grandegger <wg@grandegger.com>
+Cc: linux-mips@linux-mips.org
+Cc: stable@vger.kernel.org # v3.12+
+Patchwork: https://patchwork.linux-mips.org/patch/19829/
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- net/ipv4/tcp_input.c |   15 +++++++++++++--
- 1 file changed, 13 insertions(+), 2 deletions(-)
 
---- a/net/ipv4/tcp_input.c
-+++ b/net/ipv4/tcp_input.c
-@@ -4918,6 +4918,7 @@ end:
- static void tcp_collapse_ofo_queue(struct sock *sk)
- {
- 	struct tcp_sock *tp = tcp_sk(sk);
-+	u32 range_truesize, sum_tiny = 0;
- 	struct sk_buff *skb, *head;
- 	struct rb_node *p;
- 	u32 start, end;
-@@ -4936,6 +4937,7 @@ new_range:
- 	}
- 	start = TCP_SKB_CB(skb)->seq;
- 	end = TCP_SKB_CB(skb)->end_seq;
-+	range_truesize = skb->truesize;
+---
+ arch/mips/pci/pci.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- a/arch/mips/pci/pci.c
++++ b/arch/mips/pci/pci.c
+@@ -55,7 +55,7 @@ void pci_resource_to_user(const struct p
+ 	phys_addr_t size = resource_size(rsrc);
  
- 	for (head = skb;;) {
- 		skb = tcp_skb_next(skb, NULL);
-@@ -4946,11 +4948,20 @@ new_range:
- 		if (!skb ||
- 		    after(TCP_SKB_CB(skb)->seq, end) ||
- 		    before(TCP_SKB_CB(skb)->end_seq, start)) {
--			tcp_collapse(sk, NULL, &tp->out_of_order_queue,
--				     head, skb, start, end);
-+			/* Do not attempt collapsing tiny skbs */
-+			if (range_truesize != head->truesize ||
-+			    end - start >= SKB_WITH_OVERHEAD(SK_MEM_QUANTUM)) {
-+				tcp_collapse(sk, NULL, &tp->out_of_order_queue,
-+					     head, skb, start, end);
-+			} else {
-+				sum_tiny += range_truesize;
-+				if (sum_tiny > sk->sk_rcvbuf >> 3)
-+					return;
-+			}
- 			goto new_range;
- 		}
+ 	*start = fixup_bigphys_addr(rsrc->start, size);
+-	*end = rsrc->start + size;
++	*end = rsrc->start + size - 1;
+ }
  
-+		range_truesize += skb->truesize;
- 		if (unlikely(before(TCP_SKB_CB(skb)->seq, start)))
- 			start = TCP_SKB_CB(skb)->seq;
- 		if (after(TCP_SKB_CB(skb)->end_seq, end))
+ int pci_mmap_page_range(struct pci_dev *dev, struct vm_area_struct *vma,
 
 
