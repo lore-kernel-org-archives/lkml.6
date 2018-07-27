@@ -2,98 +2,99 @@ Return-Path: <SRS0=OQFz=KL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01EB7C67790
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 03:51:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3F90C6778F
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 04:01:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9584F20673
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 03:51:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4D7A320842
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 04:01:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EJfDGKUq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9584F20673
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="SV15j8QA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D7A320842
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=broadcom.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729249AbeG0FLF (ORCPT
+        id S1727384AbeG0FVQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 01:11:05 -0400
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:41096 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725870AbeG0FLF (ORCPT
+        Fri, 27 Jul 2018 01:21:16 -0400
+Received: from mail-qt0-f196.google.com ([209.85.216.196]:42071 "EHLO
+        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725861AbeG0FVQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 01:11:05 -0400
-Received: by mail-pl0-f66.google.com with SMTP id w8-v6so1719955ply.8;
-        Thu, 26 Jul 2018 20:51:14 -0700 (PDT)
+        Fri, 27 Jul 2018 01:21:16 -0400
+Received: by mail-qt0-f196.google.com with SMTP id z8-v6so3831148qto.9
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Jul 2018 21:01:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=broadcom.com; s=google;
         h=from:to:cc:subject:date:message-id;
-        bh=WoCYEQ4/93geepmV3eG3C0h/RgQuGzZsmsCCY/grRXs=;
-        b=EJfDGKUqMLo61dsBsCup/Kv0hW6Z5/cvajjhxdSm7jV7e7XeGpeJlQGHAgxXOIY2Ea
-         Gr90QVJy67aVfxwCrYU49Syn8Uzy24kQAoApK4L3mtKkiILldnega505KtvyXfd4cd/x
-         VRJtqlw3b1vAEwt8NMeMZo01R/K3Wvn9eIBY1FWZ/9a0xowKKdvqtQO5NotAPyncBHTh
-         4sW4xvTzf2/9wp9OtyjlzLj6k/6HUO9uAWIzwdBd3TvlBCIr/IrumoysLFM2zFNLebZ4
-         DnMZH5qx0t4DkS7Jwvo8l/6jS7U6IHXa5VHs+2gWhn1b0chUhR4aIVM4lo5atDAYszem
-         uASA==
+        bh=X0w1efvXaK9Zo8ADrUTbqDp9GUR4TScxv019+ZKxMQI=;
+        b=SV15j8QAw1/8S1hcCXIjBAkd3Dqy/91/4aYMtuuNQNXqiilCBQpPRwyGIN/WW0qAt0
+         GXw9Dt2b+CiEKHAwRYPY6x7ZJKYyzFwA/4Cr29E34ONiYY1/eU7XY51RcIk3ezoG3J7Y
+         DuhDLgva0g68iHQuwdpU7Sc4y5wzm2ZHwpbBo=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=WoCYEQ4/93geepmV3eG3C0h/RgQuGzZsmsCCY/grRXs=;
-        b=Blx9Sb3ym/Xt3JhkkxcuVFhqopqInKDEZynEVjdVncP/+H/S3g6D593AQZaRCVYnaw
-         37yOg1Goysaysk7yGJ+kjuQHBMSHIL28dxNeFxoccoB9wuNsupK5fd6NcIrsJpohv/Zc
-         1XoB0rgIGClQLNO7QJCz11OY9g45BKaK/oF9btTmYCXX4Y+wWA9GgKn5gC6aL6kPVg+l
-         Wn7e1t9dvajZyjIe9tqMhdsH4KA42eFiNhgoiNQHta4+0ps0o6QF+gSP+EB6USBXIf9H
-         mp9lYkHGdyYengcKHOXz/mEphfKBzyIM6G+hsRsxFAD2IMw9FwcZoMdGdzJxRb6+WVnN
-         8C4Q==
-X-Gm-Message-State: AOUpUlGEaHoKOXV5C68xBbGAXpc554yYUso6oWJDn6UL4MysFRSOi/yS
-        jkrmb2mHA2abgSJeG9kdYGUUVg2j
-X-Google-Smtp-Source: AAOMgpfXlm1xYxpTv5HBdHxXYbHViVlED6YhgKpY60Bv855/lFRf/O3g/LOOfv+zvy37X9woi99D3g==
-X-Received: by 2002:a17:902:7b97:: with SMTP id w23-v6mr4509516pll.66.1532663474046;
-        Thu, 26 Jul 2018 20:51:14 -0700 (PDT)
-Received: from localhost.localdomain ([2402:f000:1:4414:6c14:7712:e625:1be4])
-        by smtp.gmail.com with ESMTPSA id u9-v6sm9824748pfi.104.2018.07.26.20.51.12
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 26 Jul 2018 20:51:13 -0700 (PDT)
-From:   Jia-Ju Bai <baijiaju1990@gmail.com>
-To:     ionut@badula.org
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jia-Ju Bai <baijiaju1990@gmail.com>
-Subject: [PATCH] net: adaptec: Replace mdelay() with msleep() in starfire_init_one()
-Date:   Fri, 27 Jul 2018 11:51:06 +0800
-Message-Id: <20180727035106.5185-1-baijiaju1990@gmail.com>
-X-Mailer: git-send-email 2.17.0
+        bh=X0w1efvXaK9Zo8ADrUTbqDp9GUR4TScxv019+ZKxMQI=;
+        b=BJ1eHHpH9eh7EUZStx+3cpOFe2DmzICrSdvqNen9z2qngT4mXHRZZCJIuC6VnkB3y2
+         MgjrHTkgxyBzuISZhhvEmiqJfVWWDE0Pv/XewBg/GdrzEdpQ10SOgd2CYWjN2gjI1LAZ
+         xHw9pCMTUB+9et3cb+l1u14lWIq3OpipXUndZhwesdR9tGLsGE5YN/GvetTJ7yfLLI+/
+         1Ih2h1mjjDNE4iZ3PihkCEVfLhTtRCa76BPIEYgPYCa3T6HvEYSJlIZ+xXHVCrwSj1dh
+         En+PvJ8bEl8ZJaqSfjoA/2FOZN/aLI+P1vgii+b5b6fiIIgA8qZrgF+mtr+st4GcW65+
+         xDdw==
+X-Gm-Message-State: AOUpUlEjRKbYqhvfKJOVIoxFLz5tDwLeNznCIlvUG1HVxDAncDPLaALR
+        HlQMN5tgzDsWvaZorysmIzWw3A==
+X-Google-Smtp-Source: AAOMgpd1j2z/xdCcjFZuJE0ZwbT0xVxg6EBftjgYKgLAX+BTR9uSdnTCDmkr6p2XOAyDxu/P2U9aow==
+X-Received: by 2002:ac8:530d:: with SMTP id t13-v6mr4369404qtn.396.1532664082422;
+        Thu, 26 Jul 2018 21:01:22 -0700 (PDT)
+Received: from mannams-OptiPlex-7010.dhcp.broadcom.net ([192.19.252.250])
+        by smtp.gmail.com with ESMTPSA id f184-v6sm2006522qkc.23.2018.07.26.21.01.18
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Thu, 26 Jul 2018 21:01:21 -0700 (PDT)
+From:   Srinath Mannam <srinath.mannam@broadcom.com>
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>, vikram.prakash@broadcom.com,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>
+Cc:     linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
+        bcm-kernel-feedback-list@broadcom.com,
+        Srinath Mannam <srinath.mannam@broadcom.com>
+Subject: [PATCH] serial: 8250_dw: Add ACPI support for uart on Broadcom SoC
+Date:   Fri, 27 Jul 2018 09:31:06 +0530
+Message-Id: <1532664066-30056-1-git-send-email-srinath.mannam@broadcom.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-starfire_init_one() is never called in atomic context.
-It calls mdelay() to busily wait, which is not necessary.
-mdelay() can be replaced with msleep().
+Add ACPI identifier HID for UART DW 8250 on Broadcom SoCs
+to match the HID passed through ACPI tables to enable
+UART controller.
 
-This is found by a static analysis tool named DCNS written by myself.
-
-Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+Signed-off-by: Srinath Mannam <srinath.mannam@broadcom.com>
+Reviewed-by: Vladimir Olovyannikov <vladimir.olovyannikov@broadcom.com>
+Tested-by: Vladimir Olovyannikov <vladimir.olovyannikov@broadcom.com>
+Reviewed-by: Ray Jui <ray.jui@broadcom.com>
 ---
- drivers/net/ethernet/adaptec/starfire.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/tty/serial/8250/8250_dw.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/net/ethernet/adaptec/starfire.c b/drivers/net/ethernet/adaptec/starfire.c
-index 3872ab96b80a..097467f44b0d 100644
---- a/drivers/net/ethernet/adaptec/starfire.c
-+++ b/drivers/net/ethernet/adaptec/starfire.c
-@@ -802,7 +802,7 @@ static int starfire_init_one(struct pci_dev *pdev,
- 		int mii_status;
- 		for (phy = 0; phy < 32 && phy_idx < PHY_CNT; phy++) {
- 			mdio_write(dev, phy, MII_BMCR, BMCR_RESET);
--			mdelay(100);
-+			msleep(100);
- 			boguscnt = 1000;
- 			while (--boguscnt > 0)
- 				if ((mdio_read(dev, phy, MII_BMCR) & BMCR_RESET) == 0)
+diff --git a/drivers/tty/serial/8250/8250_dw.c b/drivers/tty/serial/8250/8250_dw.c
+index aff04f1..7ea94ec 100644
+--- a/drivers/tty/serial/8250/8250_dw.c
++++ b/drivers/tty/serial/8250/8250_dw.c
+@@ -708,6 +708,7 @@ static const struct acpi_device_id dw8250_acpi_match[] = {
+ 	{ "AMD0020", 0 },
+ 	{ "AMDI0020", 0 },
+ 	{ "HISI0031", 0 },
++	{ "BRCM2032", 0 },
+ 	{ },
+ };
+ MODULE_DEVICE_TABLE(acpi, dw8250_acpi_match);
 -- 
-2.17.0
+2.7.4
 
