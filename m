@@ -2,82 +2,98 @@ Return-Path: <SRS0=OQFz=KL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A261C6778F
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 08:41:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF3BBC6778F
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 08:41:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 346A020893
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 08:41:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 346A020893
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	by mail.kernel.org (Postfix) with ESMTP id 945FA20893
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 08:41:16 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DycbC6mN"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 945FA20893
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730204AbeG0KCB (ORCPT
+        id S1730408AbeG0KCC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 06:02:01 -0400
-Received: from mail-out.m-online.net ([212.18.0.10]:34255 "EHLO
-        mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729431AbeG0KCA (ORCPT
+        Fri, 27 Jul 2018 06:02:02 -0400
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:41718 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729481AbeG0KCB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 06:02:00 -0400
-Received: from frontend01.mail.m-online.net (unknown [192.168.8.182])
-        by mail-out.m-online.net (Postfix) with ESMTP id 41cMr36JzDz1qvnL;
-        Fri, 27 Jul 2018 10:41:07 +0200 (CEST)
-Received: from localhost (dynscan1.mnet-online.de [192.168.6.70])
-        by mail.m-online.net (Postfix) with ESMTP id 41cMr35ZgBz20xTF;
-        Fri, 27 Jul 2018 10:41:07 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at mnet-online.de
-Received: from mail.mnet-online.de ([192.168.8.182])
-        by localhost (dynscan1.mail.m-online.net [192.168.6.70]) (amavisd-new, port 10024)
-        with ESMTP id llpo6ExXIX3m; Fri, 27 Jul 2018 10:41:05 +0200 (CEST)
-X-Auth-Info: uxiIcWPB8EZppfbXqgfuaZIrl+WlbduaSfTzkvND/RNBwwC2QLKwRBCSMQC/hvMw
-Received: from igel.home (ppp-188-174-155-24.dynamic.mnet-online.de [188.174.155.24])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.mnet-online.de (Postfix) with ESMTPSA;
-        Fri, 27 Jul 2018 10:41:05 +0200 (CEST)
-Received: by igel.home (Postfix, from userid 1000)
-        id 0F8B32C1140; Fri, 27 Jul 2018 10:40:54 +0200 (CEST)
-From:   Andreas Schwab <schwab@linux-m68k.org>
-To:     Finn Thain <fthain@telegraphics.com.au>
-Cc:     Randy Dunlap <rdunlap@infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        linux-m68k@lists.linux-m68k.org
-Subject: Re: m68k allmodconfig build errors
-References: <28ebe45d-3dbd-2a82-f537-b0725f7a2bcf@infradead.org>
-        <878t66idai.fsf@igel.home>
-        <94dc0357-10d4-c3dc-ef2a-9643f08d2a09@infradead.org>
-        <alpine.LNX.2.21.1807241423000.8@nippy.intranet>
-        <761399f0-0b10-716c-1e80-cfb19c06e455@infradead.org>
-        <alpine.LNX.2.21.1807271428300.65@nippy.intranet>
-X-Yow:  Is this "BIKINI BEACH"?
-Date:   Fri, 27 Jul 2018 10:40:54 +0200
-In-Reply-To: <alpine.LNX.2.21.1807271428300.65@nippy.intranet> (Finn Thain's
-        message of "Fri, 27 Jul 2018 14:44:17 +1000 (AEST)")
-Message-ID: <87in513wbt.fsf@igel.home>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
-MIME-Version: 1.0
-Content-Type: text/plain
+        Fri, 27 Jul 2018 06:02:01 -0400
+Received: by mail-pl0-f65.google.com with SMTP id w8-v6so2026111ply.8;
+        Fri, 27 Jul 2018 01:41:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=XGmq/x6P7K2Cm+nsR2uCIe5Myu9pfo9b8TAre9jUuvM=;
+        b=DycbC6mNe5Dn2fKKN9kdGAO0a/45yfB5EhWdSCyiMX6HQBH8+rE9qR/5/TGevrhz7p
+         bNzXzlzwlHo/jPI3SZFUV2BOvBu/Kor0TdFIYG1W+DI0AW0kp2HixitcDYgUAYpz9mCo
+         IgKX3NjpcM9rjy6I1JGomZDuBvn8Qk+Bmu30/sFsePTMeSc8dm4VH8syDcTcr4it+7IO
+         oQ6S2L/Msqk6w56QiQZ44CZev28HiAIBND3VLwCzNll7ULOlZWi8nmF7jIHVf5j6UHRK
+         2P0Cq87/lMJSL9mxJXnSMn43Ns8/HnfddNfuhD5cs04yPHMu3Z2n3jNnWIYoudIafKGs
+         E9vw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=XGmq/x6P7K2Cm+nsR2uCIe5Myu9pfo9b8TAre9jUuvM=;
+        b=XWreVlimN2p9MRMA2z25PhMrhsIA4nN1kz3ispLzJA6F1JLpAtQ5Cvn00Gi9gbpZ3w
+         h3ZcbGg+jC+JJ7AqcWyHqb3FRtAOhjPcc22m4brROOESnxL6kOoTkuy5wsjg1KJaouRr
+         fMTtCjjus+6j8XUjODpjy9XsfpaTJo6+9cie67FkJzHAaLSol4uxPEb+CppolV/Q7k2m
+         FHAXdc+iKe2OBQCvPjtz1Ha94S3+3USEaDSXRwhYGz5YB3du07VpHFavAHERnCYlxdmw
+         XZPK5O33yXTGsUFrP3T47w4jKxVyuFJ3M8fIpX2DHAcCLWBQfG33bnEzvXVZGYgbB/zx
+         JhNQ==
+X-Gm-Message-State: AOUpUlESA6Ku0US3rQ5peW3+4g/WW52qtSk7IiX6nRygV0YZjefw8z31
+        Qn2IZYW/1nmgaWtXlWZaFjOBcdm4
+X-Google-Smtp-Source: AAOMgpcs5jhxRmUKw/WOPuA8LTX9dL/bC+BwAidLNva4z8AAaM9GL9DSoRsQU+opzu8lpcxwYJnNxQ==
+X-Received: by 2002:a17:902:bcc5:: with SMTP id o5-v6mr5156349pls.336.1532680870302;
+        Fri, 27 Jul 2018 01:41:10 -0700 (PDT)
+Received: from localhost.localdomain ([2402:f000:1:4414:8ca7:1cde:b1e6:2647])
+        by smtp.gmail.com with ESMTPSA id x2-v6sm7781921pfi.166.2018.07.27.01.41.08
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 27 Jul 2018 01:41:09 -0700 (PDT)
+From:   Jia-Ju Bai <baijiaju1990@gmail.com>
+To:     liujunliang_ljl@163.com
+Cc:     linux-usb@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Jia-Ju Bai <baijiaju1990@gmail.com>
+Subject: [PATCH] net: usb: sr9700: Replace mdelay() with msleep() in sr9700_bind()
+Date:   Fri, 27 Jul 2018 16:41:04 +0800
+Message-Id: <20180727084104.29726-1-baijiaju1990@gmail.com>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Jul 27 2018, Finn Thain <fthain@telegraphics.com.au> wrote:
+sr9700_bind() is never called in atomic context.
+It calls mdelay() to busily wait, which is not necessary.
+mdelay() can be replaced with msleep().
 
-> Why doesn't gcc convert strncmp to __builtin_strcmp?
+This is found by a static analysis tool named DCNS written by myself.
 
-It does.  In fact, it first converts strncmp to __builtin_strncmp, then
-optimizes it to __builtin_strcmp.  Finally, __bultin_strcmp is expanded
-to a call to strcmp.
+Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+---
+ drivers/net/usb/sr9700.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Andreas.
-
+diff --git a/drivers/net/usb/sr9700.c b/drivers/net/usb/sr9700.c
+index 2d316c1b851b..6ac232e52bf7 100644
+--- a/drivers/net/usb/sr9700.c
++++ b/drivers/net/usb/sr9700.c
+@@ -358,7 +358,7 @@ static int sr9700_bind(struct usbnet *dev, struct usb_interface *intf)
+ 	/* power up and reset phy */
+ 	sr_write_reg(dev, SR_PRR, PRR_PHY_RST);
+ 	/* at least 10ms, here 20ms for safe */
+-	mdelay(20);
++	msleep(20);
+ 	sr_write_reg(dev, SR_PRR, 0);
+ 	/* at least 1ms, here 2ms for reading right register */
+ 	udelay(2 * 1000);
 -- 
-Andreas Schwab, schwab@linux-m68k.org
-GPG Key fingerprint = 7578 EB47 D4E5 4D69 2510  2552 DF73 E780 A9DA AEC1
-"And now for something completely different."
+2.17.0
+
