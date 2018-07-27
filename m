@@ -2,117 +2,168 @@ Return-Path: <SRS0=OQFz=KL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0961C67790
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 05:46:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8439C6778F
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 05:51:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9E42D20862
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 05:46:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7C70120873
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 05:51:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="XOKUsqrd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9E42D20862
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=broadcom.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XQ+nTFqV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7C70120873
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729442AbeG0HGM (ORCPT
+        id S1729459AbeG0HLX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 03:06:12 -0400
-Received: from mail-qt0-f196.google.com ([209.85.216.196]:36760 "EHLO
-        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726044AbeG0HGL (ORCPT
+        Fri, 27 Jul 2018 03:11:23 -0400
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:44555 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726044AbeG0HLW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 03:06:11 -0400
-Received: by mail-qt0-f196.google.com with SMTP id t5-v6so3987296qtn.3
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Jul 2018 22:45:58 -0700 (PDT)
+        Fri, 27 Jul 2018 03:11:22 -0400
+Received: by mail-pl0-f67.google.com with SMTP id m16-v6so1837306pls.11
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Jul 2018 22:51:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=AyOWqV7Wx96+aKn00y1iY+aCN4pwnNfEecIu3hcFAnY=;
-        b=XOKUsqrdEzpXI1h3mGOE5wHwHyLLEI8lJPvVMHqsGT/qnHYMAhWUhkqjnB/fqe8sT5
-         QsDShu+a3d5/CMW0jnxkBjT1QNEIxVTkHnRKcySDyKIFSZiyEmOZDZDaWp/XVDPJkz3P
-         peSJnUzBGTxHRoF27IGwGEBHDzuW0KP8bldig=
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=nKyCMFPH1a0FpO6y3GTtTcuwR+n7EQZ6GJoojYVCXKM=;
+        b=XQ+nTFqVK8VD2liRuwkTyRovRYTIIytRURywF4F+sdIvpCjuEC5geSbFJGCG4Q5J3O
+         D0lE7wqdZapVJrbKIRAuoWfrXnnX+Vw+8rmAc4+ROB33koTIPuVBJh19RxMrd0nhD4FD
+         /hJiAAF6Zf9vbbV/iIY9XKHx80iN/RMJc46IgtkCzYP9fcjAwGqqBxpxKHEeyW6kVwWg
+         VEuNRdDiAfRQUX8d3arkhSn+91QgJNKFQ3URI0olthKBTprSslh55Y9ZR4VQwKDImd8z
+         S15Vai2lym34Xb88FenQhiY+8GMNl/XevXfCZeP64o9I83JLPiDyEGdqBOD8IsIEJ5SS
+         VDNg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=AyOWqV7Wx96+aKn00y1iY+aCN4pwnNfEecIu3hcFAnY=;
-        b=qq3MCU9ZGvffL4ndMujawrB0v7a8qFoOa2IBHsjfdc++8fOV3L2407Ii+Lw4r9+uwd
-         BcNlZwJC4ioW2QZKYMSRUbwXE/0PdDAG+wROQIgvCrzQFPcLrGKfkznV+dc1sTuRy2gO
-         vKqAYKxO4oxjIcsYGpiRERgq6ytppvkFnrNqbX+NrBnBXSVx02DgTCAwXsrzwnhp1XAu
-         de9Nrs0NDRmi4I53cHKDYQntIulZM+c+5/3ONDYEJKiNZCNyLqwG/EFm6GcAVvHPkVoa
-         nDRZ1S4CnMUpSxLXzK5IZNLcyUpBeNf476A2ov8pnovKuxdoF5PQGLU/VFT5PtOmCP00
-         4l6g==
-X-Gm-Message-State: AOUpUlGoAQbhtpHaKGhUCT70x3BfiWgMWgcRfPj0ab/CCPe9QXAKAXAS
-        7zyqXOf3tF7w8Zc9uVWNt31CRqTdFo3rakP925qsEA==
-X-Google-Smtp-Source: AAOMgpdjKAYWLCYHelpdut7t8Eg1m5IEsHDLkrJ7FbRwpzwL8ws2Nsxh4bJu9W6JvflbzRvZE0JhqoqFt92pKboLhc4=
-X-Received: by 2002:ac8:3647:: with SMTP id n7-v6mr4739936qtb.65.1532670357931;
- Thu, 26 Jul 2018 22:45:57 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=nKyCMFPH1a0FpO6y3GTtTcuwR+n7EQZ6GJoojYVCXKM=;
+        b=ntbzp98j/mg8mK1FW+FsmFP5FqwMuYXkCCbBrerX5dcc3U45waodZib/zp5E1WGu5S
+         v0+6WSdUlBELXo+2XpGQHs64iHLv6cSTDEUq1zjzhwgwnZNtz9LcsqLe3rFz/7K4zOc7
+         sSFHmsne7DVbpQX4rV9MYSYjcQLoPvEmhcZWZySP+5WTI5KNyf8xgrdnVmOjtnK1tvra
+         +jpX9no9HDM0TWpkxh6IDb+ipAavfgdr9pxESLkbW5PLvoQIqrltaBcmSBWSbSDhpnf7
+         r8VJz53/44CNI0UkOpLYf6+ZST4vKDbxyVNnHiiQ+nBpjyBafu8ns6FvK9LRRD3b6TiD
+         rFRQ==
+X-Gm-Message-State: AOUpUlHxUV0cTI+XmhDM3A60HBaPiZi9k73fDhh5KXU54heF0QBOujZ0
+        HE46omc5013QUkRIXxQE7TQ=
+X-Google-Smtp-Source: AAOMgpdV8ivAeRhN08el0Pkhr3t1CHNJwoSZhGJktsjlS/R+tsLvN3lgWlmomeoFTCWBAwvHRFTPmQ==
+X-Received: by 2002:a17:902:8f8c:: with SMTP id z12-v6mr4663604plo.4.1532670669295;
+        Thu, 26 Jul 2018 22:51:09 -0700 (PDT)
+Received: from dragonet (dragonet.kaist.ac.kr. [143.248.133.220])
+        by smtp.gmail.com with ESMTPSA id s85-v6sm5481344pfa.116.2018.07.26.22.51.06
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 26 Jul 2018 22:51:08 -0700 (PDT)
+Date:   Fri, 27 Jul 2018 14:51:04 +0900
+From:   "Dae R. Jeong" <threeearcat@gmail.com>
+To:     Takashi Iwai <tiwai@suse.de>
+Cc:     perex@perex.cz, alsa-devel@alsa-project.org, kt0755@gmail.com,
+        syzkaller@googlegroups.com, bammanag@purdue.edu,
+        linux-kernel@vger.kernel.org
+Subject: Re: BUG: soft lockup in snd_virmidi_output_trigger
+Message-ID: <20180727055104.GA18733@dragonet>
+References: <20180726055326.GA12625@dragonet>
+ <s5hva92yxda.wl-tiwai@suse.de>
+ <20180727041322.GA13067@dragonet>
+ <s5hbmatuue9.wl-tiwai@suse.de>
 MIME-Version: 1.0
-Received: by 2002:a0c:9206:0:0:0:0:0 with HTTP; Thu, 26 Jul 2018 22:45:57
- -0700 (PDT)
-In-Reply-To: <CAACQVJo8zB2H6AtQZEVK-nfg8j0f9oVPrBSMjq+CKoQ+xeVrUA@mail.gmail.com>
-References: <20180725111459.10800-1-yuehaibing@huawei.com> <CAACQVJo8zB2H6AtQZEVK-nfg8j0f9oVPrBSMjq+CKoQ+xeVrUA@mail.gmail.com>
-From:   Vasundhara Volam <vasundhara-v.volam@broadcom.com>
-Date:   Fri, 27 Jul 2018 11:15:57 +0530
-Message-ID: <CAACQVJqDrVePOVrM3bOnxqUgxbcirDqhStZ3SJW2OBrNYv3d7A@mail.gmail.com>
-Subject: Re: [PATCH net-next] bnxt_en: combine 'else if' and 'else' into
- single branche
-To:     YueHaibing <yuehaibing@huawei.com>
-Cc:     David Miller <davem@davemloft.net>,
-        "michael.chan@broadcom.com" <michael.chan@broadcom.com>,
-        open list <linux-kernel@vger.kernel.org>,
-        Netdev <netdev@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <s5hbmatuue9.wl-tiwai@suse.de>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 26, 2018 at 8:24 PM, Vasundhara Volam
-<vasundhara-v.volam@broadcom.com> wrote:
-> On Wed, Jul 25, 2018 at 4:44 PM, YueHaibing <yuehaibing@huawei.com> wrote:
->>
->> The else-if branch and else branch set mac_ok to true similarly,
->> so combine the two into single else branch.
->>
->> Aslo add comments to explain the two conditions, which
->> from Michael Chan and Vasundhara Volam.
->>
->> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
->> ---
->>  drivers/net/ethernet/broadcom/bnxt/bnxt_sriov.c | 8 ++++++--
->>  1 file changed, 6 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/net/ethernet/broadcom/bnxt/bnxt_sriov.c b/drivers/net/ethernet/broadcom/bnxt/bnxt_sriov.c
->> index a649108..f560845 100644
->> --- a/drivers/net/ethernet/broadcom/bnxt/bnxt_sriov.c
->> +++ b/drivers/net/ethernet/broadcom/bnxt/bnxt_sriov.c
->> @@ -956,9 +956,13 @@ static int bnxt_vf_validate_set_mac(struct bnxt *bp, struct bnxt_vf_info *vf)
->>         } else if (is_valid_ether_addr(vf->vf_mac_addr)) {
->>                 if (ether_addr_equal((const u8 *)req->l2_addr, vf->vf_mac_addr))
->>                         mac_ok = true;
->> -       } else if (bp->hwrm_spec_code < 0x10202) {
->> -               mac_ok = true;
->>         } else {
->> +               /* There are two cases:
->> +                * 1.If firmware spec < 0x10202,VF MAC address is not forwarded
->> +                *   to the PF and so it doesn't have to match
->> +                * 2.Allow VF to modify it's own MAC when PF has not assigned a
->> +                *   valid MAC address and firmware spec >= 0x10202
->> +                */
-> No, this is not correct either. You are not covering both conditions.
-> else part with cover if (!is_valid_ether_addr(vf->vf_mac_addr))
-> before.
-My apologies, I was thinking one more condition was required.
-Patch seems fine.
->>                 mac_ok = true;
->>         }
->>         if (mac_ok)
->> --
->> 2.7.0
->>
->>
+On Fri, Jul 27, 2018 at 07:20:30AM +0200, Takashi Iwai wrote:
+
+I think there is a mistake on the reported-by tag.
+The reported-by tag (e4c8abb920ef...) is for WARNING in port_delete.
+I guess the tag below is correct.
+Reported-by: syzbot+619d9f40141d826b097e@syzkaller.appspotmail.com
+Could you please make sure that the reported-by tag is correct?
+
+By the way, I can't reproduce the crash WARNING in port_delete so
+far. I feel sad for saying this..
+I really want to reproduce the crash and thus, to help to fix the
+crash. If there is any progress on it, I will let you know
+immediately.
+
+
+Best regards,
+Dae R. Jeong
+
+> On Fri, 27 Jul 2018 06:13:22 +0200,
+> Dae R. Jeong wrote:
+> > 
+> > I tested it and it worked.
+> > Thanks a lot!
+> 
+> Good to hear.  Below is the final patch with a proper comment (and
+> with syzbot reported-by, too) I'm going to queue to sound.git tree.
+> 
+> 
+> thanks,
+> 
+> Takashi
+> 
+> -- 8< --
+> 
+> From: Takashi Iwai <tiwai@suse.de>
+> Subject: [PATCH v2] ALSA: virmidi: Fix too long output trigger loop
+> 
+> The virmidi output trigger tries to parse the all available bytes and
+> process sequencer events as much as possible.  In a normal situation,
+> this is supposed to be relatively short, but a program may give a huge
+> buffer and it'll take a long time in a single spin lock, which may
+> eventually lead to a soft lockup.
+> 
+> This patch simply adds a workaround, a cond_resched() call in the loop
+> if applicable.  A better solution would be to move the event processor
+> into a work, but let's put a duct-tape quickly at first.
+> 
+> Reported-and-tested-by: Dae R. Jeong <threeearcat@gmail.com>
+> Reported-by: syzbot+e4c8abb920efa77bace9@syzkaller.appspotmail.com
+> Cc: <stable@vger.kernel.org>
+> Signed-off-by: Takashi Iwai <tiwai@suse.de>
+> ---
+>  sound/core/seq/seq_virmidi.c | 10 ++++++++++
+>  1 file changed, 10 insertions(+)
+> 
+> diff --git a/sound/core/seq/seq_virmidi.c b/sound/core/seq/seq_virmidi.c
+> index 289ae6bb81d9..8ebbca554e99 100644
+> --- a/sound/core/seq/seq_virmidi.c
+> +++ b/sound/core/seq/seq_virmidi.c
+> @@ -163,6 +163,7 @@ static void snd_virmidi_output_trigger(struct snd_rawmidi_substream *substream,
+>  	int count, res;
+>  	unsigned char buf[32], *pbuf;
+>  	unsigned long flags;
+> +	bool check_resched = !in_atomic();
+>  
+>  	if (up) {
+>  		vmidi->trigger = 1;
+> @@ -200,6 +201,15 @@ static void snd_virmidi_output_trigger(struct snd_rawmidi_substream *substream,
+>  					vmidi->event.type = SNDRV_SEQ_EVENT_NONE;
+>  				}
+>  			}
+> +			if (!check_resched)
+> +				continue;
+> +			/* do temporary unlock & cond_resched() for avoiding
+> +			 * CPU soft lockup, which may happen via a write from
+> +			 * a huge rawmidi buffer
+> +			 */
+> +			spin_unlock_irqrestore(&substream->runtime->lock, flags);
+> +			cond_resched();
+> +			spin_lock_irqsave(&substream->runtime->lock, flags);
+>  		}
+>  	out:
+>  		spin_unlock_irqrestore(&substream->runtime->lock, flags);
+> -- 
+> 2.18.0
+> 
