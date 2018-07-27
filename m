@@ -6,35 +6,36 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE617C6778F
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 09:47:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90817C6778F
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 09:47:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8D62920671
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 09:47:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D62920671
+	by mail.kernel.org (Postfix) with ESMTP id 45BA420671
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 09:47:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 45BA420671
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732094AbeG0LIc (ORCPT
+        id S1732138AbeG0LIq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 07:08:32 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:51512 "EHLO
+        Fri, 27 Jul 2018 07:08:46 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:51534 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730963AbeG0LIc (ORCPT
+        with ESMTP id S1730963AbeG0LIp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 07:08:32 -0400
+        Fri, 27 Jul 2018 07:08:45 -0400
 Received: from localhost (unknown [89.188.5.116])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id DA439898;
-        Fri, 27 Jul 2018 09:47:26 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 44C2EBB6;
+        Fri, 27 Jul 2018 09:47:40 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Andrew Jeffery <andrew@aj.id.au>,
-        Lei YU <mine260309@gmail.com>, Joel Stanley <joel@jms.id.au>,
-        Stephen Boyd <sboyd@kernel.org>
-Subject: [PATCH 4.17 06/66] clk: aspeed: Mark bclk (PCIe) and dclk (VGA) as critical
-Date:   Fri, 27 Jul 2018 11:44:59 +0200
-Message-Id: <20180727093809.744727217@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Juergen Gross <jgross@suse.com>,
+        Jason Andryuk <jandryuk@gmail.com>
+Subject: [PATCH 4.17 08/66] xen/PVH: Set up GS segment for stack canary
+Date:   Fri, 27 Jul 2018 11:45:01 +0200
+Message-Id: <20180727093809.966120940@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180727093809.043856530@linuxfoundation.org>
 References: <20180727093809.043856530@linuxfoundation.org>
@@ -51,38 +52,80 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Joel Stanley <joel@jms.id.au>
+From: Boris Ostrovsky <boris.ostrovsky@oracle.com>
 
-commit 974c7c6d7ba5a4b12d99456b0599aa6326dc2b69 upstream.
+commit 98014068328c5574de9a4a30b604111fd9d8f901 upstream.
 
-This is used by the host to talk to the BMC's PCIe slave device. The BMC
-is not involved, but the clock needs to be enabled so the host can use
-the device.
+We are making calls to C code (e.g. xen_prepare_pvh()) which may use
+stack canary (stored in GS segment).
 
-Fixes: 15ed8ce5f84e ("clk: aspeed: Register gated clocks")
-Cc: stable@vger.kernel.org # 4.15
-Acked-by: Andrew Jeffery <andrew@aj.id.au>
-Tested-by: Lei YU <mine260309@gmail.com>
-Signed-off-by: Joel Stanley <joel@jms.id.au>
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+Signed-off-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Reviewed-by: Juergen Gross <jgross@suse.com>
+Signed-off-by: Juergen Gross <jgross@suse.com>
+Cc: Jason Andryuk <jandryuk@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/clk/clk-aspeed.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/x86/xen/xen-pvh.S |   26 +++++++++++++++++++++++++-
+ 1 file changed, 25 insertions(+), 1 deletion(-)
 
---- a/drivers/clk/clk-aspeed.c
-+++ b/drivers/clk/clk-aspeed.c
-@@ -88,8 +88,8 @@ static const struct aspeed_gate_data asp
- 	[ASPEED_CLK_GATE_GCLK] =	{  1,  7, "gclk-gate",		NULL,	0 }, /* 2D engine */
- 	[ASPEED_CLK_GATE_MCLK] =	{  2, -1, "mclk-gate",		"mpll",	CLK_IS_CRITICAL }, /* SDRAM */
- 	[ASPEED_CLK_GATE_VCLK] =	{  3,  6, "vclk-gate",		NULL,	0 }, /* Video Capture */
--	[ASPEED_CLK_GATE_BCLK] =	{  4,  8, "bclk-gate",		"bclk",	0 }, /* PCIe/PCI */
--	[ASPEED_CLK_GATE_DCLK] =	{  5, -1, "dclk-gate",		NULL,	0 }, /* DAC */
-+	[ASPEED_CLK_GATE_BCLK] =	{  4,  8, "bclk-gate",		"bclk",	CLK_IS_CRITICAL }, /* PCIe/PCI */
-+	[ASPEED_CLK_GATE_DCLK] =	{  5, -1, "dclk-gate",		NULL,	CLK_IS_CRITICAL }, /* DAC */
- 	[ASPEED_CLK_GATE_REFCLK] =	{  6, -1, "refclk-gate",	"clkin", CLK_IS_CRITICAL },
- 	[ASPEED_CLK_GATE_USBPORT2CLK] =	{  7,  3, "usb-port2-gate",	NULL,	0 }, /* USB2.0 Host port 2 */
- 	[ASPEED_CLK_GATE_LCLK] =	{  8,  5, "lclk-gate",		NULL,	0 }, /* LPC */
+--- a/arch/x86/xen/xen-pvh.S
++++ b/arch/x86/xen/xen-pvh.S
+@@ -54,6 +54,9 @@
+  * charge of setting up it's own stack, GDT and IDT.
+  */
+ 
++#define PVH_GDT_ENTRY_CANARY	4
++#define PVH_CANARY_SEL		(PVH_GDT_ENTRY_CANARY * 8)
++
+ ENTRY(pvh_start_xen)
+ 	cld
+ 
+@@ -98,6 +101,12 @@ ENTRY(pvh_start_xen)
+ 	/* 64-bit entry point. */
+ 	.code64
+ 1:
++	/* Set base address in stack canary descriptor. */
++	mov $MSR_GS_BASE,%ecx
++	mov $_pa(canary), %eax
++	xor %edx, %edx
++	wrmsr
++
+ 	call xen_prepare_pvh
+ 
+ 	/* startup_64 expects boot_params in %rsi. */
+@@ -107,6 +116,17 @@ ENTRY(pvh_start_xen)
+ 
+ #else /* CONFIG_X86_64 */
+ 
++	/* Set base address in stack canary descriptor. */
++	movl $_pa(gdt_start),%eax
++	movl $_pa(canary),%ecx
++	movw %cx, (PVH_GDT_ENTRY_CANARY * 8) + 2(%eax)
++	shrl $16, %ecx
++	movb %cl, (PVH_GDT_ENTRY_CANARY * 8) + 4(%eax)
++	movb %ch, (PVH_GDT_ENTRY_CANARY * 8) + 7(%eax)
++
++	mov $PVH_CANARY_SEL,%eax
++	mov %eax,%gs
++
+ 	call mk_early_pgtbl_32
+ 
+ 	mov $_pa(initial_page_table), %eax
+@@ -150,9 +170,13 @@ gdt_start:
+ 	.quad GDT_ENTRY(0xc09a, 0, 0xfffff) /* __KERNEL_CS */
+ #endif
+ 	.quad GDT_ENTRY(0xc092, 0, 0xfffff) /* __KERNEL_DS */
++	.quad GDT_ENTRY(0x4090, 0, 0x18)    /* PVH_CANARY_SEL */
+ gdt_end:
+ 
+-	.balign 4
++	.balign 16
++canary:
++	.fill 48, 1, 0
++
+ early_stack:
+ 	.fill 256, 1, 0
+ early_stack_end:
 
 
