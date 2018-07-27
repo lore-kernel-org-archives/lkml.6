@@ -5,57 +5,55 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C59FC6778F
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 21:12:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B9C4C67790
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 21:12:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5A0BB20895
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 21:12:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5A0BB20895
+	by mail.kernel.org (Postfix) with ESMTP id 0A41820842
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 21:12:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0A41820842
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389736AbeG0WgD (ORCPT
+        id S2389760AbeG0WgL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 18:36:03 -0400
-Received: from shards.monkeyblade.net ([23.128.96.9]:39140 "EHLO
+        Fri, 27 Jul 2018 18:36:11 -0400
+Received: from shards.monkeyblade.net ([23.128.96.9]:39156 "EHLO
         shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389542AbeG0WgD (ORCPT
+        with ESMTP id S2389542AbeG0WgL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 18:36:03 -0400
+        Fri, 27 Jul 2018 18:36:11 -0400
 Received: from localhost (unknown [172.56.44.110])
         (using TLSv1 with cipher AES256-SHA (256/256 bits))
         (Client did not present a certificate)
         (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 14BDD108A9043;
-        Fri, 27 Jul 2018 14:12:18 -0700 (PDT)
-Date:   Fri, 27 Jul 2018 14:12:16 -0700 (PDT)
-Message-Id: <20180727.141216.2218815863913834329.davem@davemloft.net>
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id 618AA102B38BC;
+        Fri, 27 Jul 2018 14:12:28 -0700 (PDT)
+Date:   Fri, 27 Jul 2018 14:12:26 -0700 (PDT)
+Message-Id: <20180727.141226.1999188475085596310.davem@davemloft.net>
 To:     baijiaju1990@gmail.com
-Cc:     yisen.zhuang@huawei.com, salil.mehta@huawei.com,
-        linyunsheng@huawei.com, joe@perches.com, pombredanne@nexb.com,
-        bianpan2016@163.com, shenjian15@huawei.com, keescook@chromium.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] net: hisilicon: hns: Replace mdelay() with msleep()
+Cc:     cooldavid@cooldavid.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] net: jme: Replace mdelay() with msleep() and
+ usleep_range() in jme_wait_link()
 From:   David Miller <davem@davemloft.net>
-In-Reply-To: <20180727080141.3079-1-baijiaju1990@gmail.com>
-References: <20180727080141.3079-1-baijiaju1990@gmail.com>
+In-Reply-To: <20180727082507.3917-1-baijiaju1990@gmail.com>
+References: <20180727082507.3917-1-baijiaju1990@gmail.com>
 X-Mailer: Mew version 6.7 on Emacs 26 / Mule 6.0 (HANACHIRUSATO)
 Mime-Version: 1.0
 Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Fri, 27 Jul 2018 14:12:22 -0700 (PDT)
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Fri, 27 Jul 2018 14:12:31 -0700 (PDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Jia-Ju Bai <baijiaju1990@gmail.com>
-Date: Fri, 27 Jul 2018 16:01:41 +0800
+Date: Fri, 27 Jul 2018 16:25:07 +0800
 
-> hns_ppe_common_init_hw() and hns_xgmac_init() are never 
-> called in atomic context.
-> They call mdelay() to busily wait, which is not necessary.
-> mdelay() can be replaced with msleep().
+> jme_wait_link() is never called in atomic context.
+> It calls mdelay() to busily wait, which is not necessary.
+> mdelay() can be replaced with msleep() and usleep_range().
 > 
 > This is found by a static analysis tool named DCNS written by myself.
 > 
