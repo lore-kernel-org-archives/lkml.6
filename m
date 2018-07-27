@@ -6,34 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6447C6778F
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 09:47:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE6CCC6778F
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 09:47:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 858CE20895
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 09:47:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 858CE20895
+	by mail.kernel.org (Postfix) with ESMTP id 9A45520895
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 09:47:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9A45520895
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730717AbeG0LIK (ORCPT
+        id S1730779AbeG0LIN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 07:08:10 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:51428 "EHLO
+        Fri, 27 Jul 2018 07:08:13 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:51434 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729560AbeG0LIJ (ORCPT
+        with ESMTP id S1729560AbeG0LIM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 07:08:09 -0400
+        Fri, 27 Jul 2018 07:08:12 -0400
 Received: from localhost (unknown [89.188.5.116])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B0C4BAF8;
-        Fri, 27 Jul 2018 09:47:03 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4BB32AF8;
+        Fri, 27 Jul 2018 09:47:07 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Lyude Paul <lyude@redhat.com>,
-        Ben Skeggs <bskeggs@redhat.com>
-Subject: [PATCH 4.17 11/66] drm/nouveau: Set DRIVER_ATOMIC cap earlier to fix debugfs
-Date:   Fri, 27 Jul 2018 11:45:04 +0200
-Message-Id: <20180727093810.343347458@linuxfoundation.org>
+        stable@vger.kernel.org, Neil Armstrong <narmstrong@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>
+Subject: [PATCH 4.17 12/66] clk: meson-gxbb: set fclk_div2 as CLK_IS_CRITICAL
+Date:   Fri, 27 Jul 2018 11:45:05 +0200
+Message-Id: <20180727093810.473928139@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180727093809.043856530@linuxfoundation.org>
 References: <20180727093809.043856530@linuxfoundation.org>
@@ -50,97 +51,57 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Lyude Paul <lyude@redhat.com>
+From: Neil Armstrong <narmstrong@baylibre.com>
 
-commit eb493fbc150f4a28151ae1ee84f24395989f3600 upstream.
+commit c987ac6f1f088663b6dad39281071aeb31d450a8 upstream.
 
-Currently nouveau doesn't actually expose the state debugfs file that's
-usually provided for any modesetting driver that supports atomic, even
-if nouveau is loaded with atomic=1. This is due to the fact that the
-standard debugfs files that DRM creates for atomic drivers is called
-when drm_get_pci_dev() is called from nouveau_drm.c. This happens well
-before we've initialized the display core, which is currently
-responsible for setting the DRIVER_ATOMIC cap.
+On Amlogic Meson GXBB & GXL platforms, the SCPI Cortex-M4 Co-Processor
+seems to be dependent on the FCLK_DIV2 to be operationnal.
 
-So, move the atomic option into nouveau_drm.c and just add the
-DRIVER_ATOMIC cap whenever it's enabled on the kernel commandline. This
-shouldn't cause any actual issues, as the atomic ioctl will still fail
-as expected even if the display core doesn't disable it until later in
-the init sequence. This also provides the added benefit of being able to
-use the state debugfs file to check the current display state even if
-clients aren't allowed to modify it through anything other than the
-legacy ioctls.
+The issue occurred since v4.17-rc1 by freezing the kernel boot when
+the 'schedutil' cpufreq governor was selected as default :
 
-Additionally, disable the DRIVER_ATOMIC cap in nv04's display core, as
-this was already disabled there previously.
+  [   12.071837] scpi_protocol scpi: SCP Protocol 0.0 Firmware 0.0.0 version
+  domain-0 init dvfs: 4
+  [   12.087757] hctosys: unable to open rtc device (rtc0)
+  [   12.087907] cfg80211: Loading compiled-in X.509 certificates for regulatory database
+  [   12.102241] cfg80211: Loaded X.509 cert 'sforshee: 00b28ddf47aef9cea7'
 
-Signed-off-by: Lyude Paul <lyude@redhat.com>
-Cc: stable@vger.kernel.org
-Signed-off-by: Ben Skeggs <bskeggs@redhat.com>
+But when disabling the MMC driver, the boot finished but cpufreq failed to
+change the CPU frequency :
+
+  [   12.153045] cpufreq: __target_index: Failed to change cpu frequency: -5
+
+A bisect between v4.16 and v4.16-rc1 gave
+05f814402d61 ("clk: meson: add fdiv clock gates") to be the first bad commit.
+This commit added support for the missing clock gates before the fixed PLL
+fixed dividers (FCLK_DIVx) and the clock framework basically disabled
+all the unused fixed dividers, thus disabled a critical clock path for
+the SCPI Co-Processor.
+
+This patch simply sets the FCLK_DIV2 gate as critical to ensure
+nobody can disable it.
+
+Fixes: 05f814402d61 ("clk: meson: add fdiv clock gates")
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+Tested-by: Kevin Hilman <khilman@baylibre.com>
+[few corrections in the commit description]
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/nouveau/dispnv04/disp.c |    3 +++
- drivers/gpu/drm/nouveau/nouveau_drm.c   |    7 +++++++
- drivers/gpu/drm/nouveau/nv50_display.c  |    6 ------
- 3 files changed, 10 insertions(+), 6 deletions(-)
+ drivers/clk/meson/gxbb.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/gpu/drm/nouveau/dispnv04/disp.c
-+++ b/drivers/gpu/drm/nouveau/dispnv04/disp.c
-@@ -55,6 +55,9 @@ nv04_display_create(struct drm_device *d
- 	nouveau_display(dev)->init = nv04_display_init;
- 	nouveau_display(dev)->fini = nv04_display_fini;
+--- a/drivers/clk/meson/gxbb.c
++++ b/drivers/clk/meson/gxbb.c
+@@ -511,6 +511,7 @@ static struct clk_regmap gxbb_fclk_div2
+ 		.ops = &clk_regmap_gate_ops,
+ 		.parent_names = (const char *[]){ "fclk_div2_div" },
+ 		.num_parents = 1,
++		.flags = CLK_IS_CRITICAL,
+ 	},
+ };
  
-+	/* Pre-nv50 doesn't support atomic, so don't expose the ioctls */
-+	dev->driver->driver_features &= ~DRIVER_ATOMIC;
-+
- 	nouveau_hw_save_vga_fonts(dev, 1);
- 
- 	nv04_crtc_create(dev, 0);
---- a/drivers/gpu/drm/nouveau/nouveau_drm.c
-+++ b/drivers/gpu/drm/nouveau/nouveau_drm.c
-@@ -79,6 +79,10 @@ MODULE_PARM_DESC(modeset, "enable driver
- int nouveau_modeset = -1;
- module_param_named(modeset, nouveau_modeset, int, 0400);
- 
-+MODULE_PARM_DESC(atomic, "Expose atomic ioctl (default: disabled)");
-+static int nouveau_atomic = 0;
-+module_param_named(atomic, nouveau_atomic, int, 0400);
-+
- MODULE_PARM_DESC(runpm, "disable (0), force enable (1), optimus only default (-1)");
- static int nouveau_runtime_pm = -1;
- module_param_named(runpm, nouveau_runtime_pm, int, 0400);
-@@ -501,6 +505,9 @@ static int nouveau_drm_probe(struct pci_
- 
- 	pci_set_master(pdev);
- 
-+	if (nouveau_atomic)
-+		driver_pci.driver_features |= DRIVER_ATOMIC;
-+
- 	ret = drm_get_pci_dev(pdev, pent, &driver_pci);
- 	if (ret) {
- 		nvkm_device_del(&device);
---- a/drivers/gpu/drm/nouveau/nv50_display.c
-+++ b/drivers/gpu/drm/nouveau/nv50_display.c
-@@ -4441,10 +4441,6 @@ nv50_display_destroy(struct drm_device *
- 	kfree(disp);
- }
- 
--MODULE_PARM_DESC(atomic, "Expose atomic ioctl (default: disabled)");
--static int nouveau_atomic = 0;
--module_param_named(atomic, nouveau_atomic, int, 0400);
--
- int
- nv50_display_create(struct drm_device *dev)
- {
-@@ -4469,8 +4465,6 @@ nv50_display_create(struct drm_device *d
- 	disp->disp = &nouveau_display(dev)->disp;
- 	dev->mode_config.funcs = &nv50_disp_func;
- 	dev->driver->driver_features |= DRIVER_PREFER_XBGR_30BPP;
--	if (nouveau_atomic)
--		dev->driver->driver_features |= DRIVER_ATOMIC;
- 
- 	/* small shared memory area we use for notifiers and semaphores */
- 	ret = nouveau_bo_new(&drm->client, 4096, 0x1000, TTM_PL_FLAG_VRAM,
 
 
