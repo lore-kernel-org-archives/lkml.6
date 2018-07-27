@@ -6,42 +6,40 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C795C67790
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:27:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F016C6778F
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:27:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C110E208A2
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:27:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C110E208A2
+	by mail.kernel.org (Postfix) with ESMTP id 1E804208A2
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:27:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E804208A2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732165AbeG0Lse (ORCPT
+        id S1732559AbeG0Lsh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 07:48:34 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:41098 "EHLO
+        Fri, 27 Jul 2018 07:48:37 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:41394 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729431AbeG0Lsd (ORCPT
+        with ESMTP id S1729431AbeG0Lsg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 07:48:33 -0400
+        Fri, 27 Jul 2018 07:48:36 -0400
 Received: from localhost (unknown [89.188.5.116])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 30BC6CD1;
-        Fri, 27 Jul 2018 10:27:16 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 46B8BCD4;
+        Fri, 27 Jul 2018 10:27:19 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dewet Thibaut <thibaut.dewet@nokia.com>,
-        Alexander Sverdlin <alexander.sverdlin@nokia.com>,
-        Borislav Petkov <bp@suse.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Tony Luck <tony.luck@intel.com>,
-        linux-edac <linux-edac@vger.kernel.org>
-Subject: [PATCH 3.18 01/27] x86/MCE: Remove min interval polling limitation
-Date:   Fri, 27 Jul 2018 12:26:38 +0200
-Message-Id: <20180727102649.100967882@linuxfoundation.org>
+        stable@vger.kernel.org, Paolo Abeni <pabeni@redhat.com>,
+        Eric Dumazet <edumazet@google.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 3.18 10/27] ip: hash fragments consistently
+Date:   Fri, 27 Jul 2018 12:26:47 +0200
+Message-Id: <20180727102649.422064291@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180727102649.049641021@linuxfoundation.org>
 References: <20180727102649.049641021@linuxfoundation.org>
 User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
@@ -53,44 +51,73 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dewet Thibaut <thibaut.dewet@nokia.com>
+From: Paolo Abeni <pabeni@redhat.com>
 
-commit fbdb328c6bae0a7c78d75734a738b66b86dffc96 upstream.
+[ Upstream commit 3dd1c9a1270736029ffca670e9bd0265f4120600 ]
 
-commit b3b7c4795c ("x86/MCE: Serialize sysfs changes") introduced a min
-interval limitation when setting the check interval for polled MCEs.
-However, the logic is that 0 disables polling for corrected MCEs, see
-Documentation/x86/x86_64/machinecheck. The limitation prevents disabling.
+The skb hash for locally generated ip[v6] fragments belonging
+to the same datagram can vary in several circumstances:
+* for connected UDP[v6] sockets, the first fragment get its hash
+  via set_owner_w()/skb_set_hash_from_sk()
+* for unconnected IPv6 UDPv6 sockets, the first fragment can get
+  its hash via ip6_make_flowlabel()/skb_get_hash_flowi6(), if
+  auto_flowlabel is enabled
 
-Remove this limitation and allow the value 0 to disable polling again.
+For the following frags the hash is usually computed via
+skb_get_hash().
+The above can cause OoO for unconnected IPv6 UDPv6 socket: in that
+scenario the egress tx queue can be selected on a per packet basis
+via the skb hash.
+It may also fool flow-oriented schedulers to place fragments belonging
+to the same datagram in different flows.
 
-Fixes: b3b7c4795c ("x86/MCE: Serialize sysfs changes")
-Signed-off-by: Dewet Thibaut <thibaut.dewet@nokia.com>
-Signed-off-by: Alexander Sverdlin <alexander.sverdlin@nokia.com>
-[ Massage commit message. ]
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Tony Luck <tony.luck@intel.com>
-Cc: linux-edac <linux-edac@vger.kernel.org>
-Cc: stable@vger.kernel.org
-Link: http://lkml.kernel.org/r/20180716084927.24869-1-alexander.sverdlin@nokia.com
+Fix the issue by copying the skb hash from the head frag into
+the others at fragmentation time.
+
+Before this commit:
+perf probe -a "dev_queue_xmit skb skb->hash skb->l4_hash:b1@0/8 skb->sw_hash:b1@1/8"
+netperf -H $IPV4 -t UDP_STREAM -l 5 -- -m 2000 -n &
+perf record -e probe:dev_queue_xmit -e probe:skb_set_owner_w -a sleep 0.1
+perf script
+probe:dev_queue_xmit: (ffffffff8c6b1b20) hash=3713014309 l4_hash=1 sw_hash=0
+probe:dev_queue_xmit: (ffffffff8c6b1b20) hash=0 l4_hash=0 sw_hash=0
+
+After this commit:
+probe:dev_queue_xmit: (ffffffff8c6b1b20) hash=2171763177 l4_hash=1 sw_hash=0
+probe:dev_queue_xmit: (ffffffff8c6b1b20) hash=2171763177 l4_hash=1 sw_hash=0
+
+Fixes: b73c3d0e4f0e ("net: Save TX flow hash in sock and set in skbuf on xmit")
+Fixes: 67800f9b1f4e ("ipv6: Call skb_get_hash_flowi6 to get skb->hash in ip6_make_flowlabel")
+Signed-off-by: Paolo Abeni <pabeni@redhat.com>
+Reviewed-by: Eric Dumazet <edumazet@google.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- arch/x86/kernel/cpu/mcheck/mce.c |    3 ---
- 1 file changed, 3 deletions(-)
+ net/ipv4/ip_output.c  |    2 ++
+ net/ipv6/ip6_output.c |    2 ++
+ 2 files changed, 4 insertions(+)
 
---- a/arch/x86/kernel/cpu/mcheck/mce.c
-+++ b/arch/x86/kernel/cpu/mcheck/mce.c
-@@ -2240,9 +2240,6 @@ static ssize_t store_int_with_restart(st
- 	if (check_interval == old_check_interval)
- 		return ret;
+--- a/net/ipv4/ip_output.c
++++ b/net/ipv4/ip_output.c
+@@ -459,6 +459,8 @@ static void ip_copy_metadata(struct sk_b
+ 	to->dev = from->dev;
+ 	to->mark = from->mark;
  
--	if (check_interval < 1)
--		check_interval = 1;
--
- 	mutex_lock(&mce_sysfs_mutex);
- 	mce_restart();
- 	mutex_unlock(&mce_sysfs_mutex);
++	skb_copy_hash(to, from);
++
+ 	/* Copy the flags to each fragment. */
+ 	IPCB(to)->flags = IPCB(from)->flags;
+ 
+--- a/net/ipv6/ip6_output.c
++++ b/net/ipv6/ip6_output.c
+@@ -533,6 +533,8 @@ static void ip6_copy_metadata(struct sk_
+ 	to->dev = from->dev;
+ 	to->mark = from->mark;
+ 
++	skb_copy_hash(to, from);
++
+ #ifdef CONFIG_NET_SCHED
+ 	to->tc_index = from->tc_index;
+ #endif
 
 
