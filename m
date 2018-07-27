@@ -2,957 +2,208 @@ Return-Path: <SRS0=OQFz=KL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FBC2C67790
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 16:57:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E93D5C67790
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 17:00:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 064C8208B0
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 16:57:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7E6CA208B0
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 17:00:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aHoOQzPF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 064C8208B0
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HbNt/KSk"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7E6CA208B0
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388989AbeG0STd (ORCPT
+        id S2388771AbeG0SXA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 14:19:33 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:41626 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388961AbeG0STd (ORCPT
+        Fri, 27 Jul 2018 14:23:00 -0400
+Received: from mail-qk0-f194.google.com ([209.85.220.194]:33149 "EHLO
+        mail-qk0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388556AbeG0SW7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 14:19:33 -0400
-Received: by mail-wr1-f67.google.com with SMTP id j5-v6so5708586wrr.8;
-        Fri, 27 Jul 2018 09:56:46 -0700 (PDT)
+        Fri, 27 Jul 2018 14:22:59 -0400
+Received: by mail-qk0-f194.google.com with SMTP id 27-v6so3710948qkv.0
+        for <linux-kernel@vger.kernel.org>; Fri, 27 Jul 2018 10:00:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=sender:from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=D26/NP0VEp7k1ap5/Zk0AUJCYmJ/Uea8pYR1KsakPtc=;
-        b=aHoOQzPFm9FAjsuOzIPiDm5Q4cmtE//yFRDhHO8DeuiOilNCDaap9E9mje9ftktHY+
-         8DGyd4Io7yH9aA9eHe6C+w+QwTulXfVJilzNcFr32aw8Y7Z6OKllF4ni2QIFJoGmBEFj
-         agaAcSFBCUQNdvz1wPmBo2NK8CkOQuYQjx6EssaFBph9rh7B+a61vtAsWdfy1NIefXyD
-         O1JrMHEg0xg1JWTv1DzJNEwD/u8M0WeTJSWTLaTFrdKWkPaRUFPqg7IO2Vc6mLbXBJgj
-         Sw2Vz2klO4C4Va0S9Yyu/Y1DNW7THS38Bdbs+zPduQXdbvetxTtc+jBifqPCks31NGQH
-         TdIQ==
+        h=subject:from:to:cc:references:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=7kUhz4iRpkT/SHlFMVfOW3f5JfC7cKLRjPwIZdZJ6mY=;
+        b=HbNt/KSk0rnKJmuwVxKvsiJLasLcmMcr7+C50pr3IDYI3ekATcP9iC7ni3d0kBZm4O
+         e9lVQc/w8o57FgmMs6BtEKPfR5AHvRgg389OlhY1tCHlFZzUGFt/yHmwxXm60XBvmsQZ
+         PrOHlm1kX+kJTtgDolBji8nFKSIT7p6dDKT2KwuTWc1iKlA/mc9IQK1heIXcGPUwTbWS
+         79qpN1fjarxywty5j57wHhoEEH/pVVE2PxjG1gsr6xT7S1D4x3sW+F2UKLB0imlUFNkJ
+         p0TwbzGHDafheJ+MQoNTqrirLl3/GauDcOBTTukxI0ULA0hLy+82jbyJ/FdyGxzlxLyb
+         JUHQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
-         :in-reply-to:references;
-        bh=D26/NP0VEp7k1ap5/Zk0AUJCYmJ/Uea8pYR1KsakPtc=;
-        b=BlDvxdtemJ7pCuQQfdIsWsZvMkrc4bvbWGrcZs3zFB7c4z2TSgp901EjFbAq5lHUgU
-         ZHopK3xO7Q2sq5iy5Eld6DGtcM4JN7eXjJGm2HTae8wLBDsgAGzbwtKA4WtKqZwbIqee
-         REm0EAvNa1e2Jwmy0ATAe3y1mi2oJ7cZvR/vDf1HqxuFpohvSn2qov6rFK3CVXoqgoJq
-         iqsZZojxyJnEWUmDHDXUf+BCuWFgsb4j8BYLzaDkTJOCC4MMQ1lzBkfYniY7EVDIqHcF
-         mhhzPyYKmNnV0T1VKqebdI/VRRbIchN0RuzBOrTv+wzsDxDbxdlIdMNveJ2rOLe+Qn7d
-         bmfA==
-X-Gm-Message-State: AOUpUlF0bscqOS3FPzPlwp0pv+fwPfhO63uRGNFAQfuJZDyaQ+NcATqh
-        MeJ+lgPUo1uP1IluNnRoXvOdbhJ/
-X-Google-Smtp-Source: AAOMgpcvut1fRsWvw3cDYczIKJZhg3eaiJC0njzTJnW/VDk0VydZ3I98dPO7kY+1WqwlITsEtFMVRw==
-X-Received: by 2002:adf:88e3:: with SMTP id g32-v6mr5179902wrg.62.1532710605078;
-        Fri, 27 Jul 2018 09:56:45 -0700 (PDT)
-Received: from 640k.lan (94-36-184-250.adsl-ull.clienti.tiscali.it. [94.36.184.250])
-        by smtp.gmail.com with ESMTPSA id u185-v6sm5528184wmg.25.2018.07.27.09.56.43
+        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=7kUhz4iRpkT/SHlFMVfOW3f5JfC7cKLRjPwIZdZJ6mY=;
+        b=T064m4KsICWxiIOFgY1ht5ALJYT5bGUvBqlz8iPHHhbuQNMSKenALs64aEWgQmC6bI
+         7d86HvW++uxlECSl+2aTGT8NZ5wnjtHYjtG82I8P6+rAjnMYsdde3jJH6NupFpuS1PaS
+         O5kY4CLySEJXow+nsTMnMgsvrpa/WQO8pBI0IlEQRkgPw6Om2fKeIyNyCYtj5BmmQmjS
+         OrW0X9vpOwv5y/SyperDJvLxLUMHxzAeT+qmLlbAIWlnan1UOnoQOdBsHK0KQ95Mk+EF
+         gYT+POqKLnqon0OB/36k1Y0iEV08KCBynO4RqIVS/2IdxPP0HwAkWG31hiEpXyPWUZ55
+         3RGQ==
+X-Gm-Message-State: AOUpUlEojie6560nc8L6/SYwIYDPErxY3LHSua8bzhFLYJMHQXjfzuWO
+        900OEFDR1bbvdXvPYtGELw==
+X-Google-Smtp-Source: AAOMgpffA11ZnTjopQ1fh9c9LMk9caGV1Mklqjxt9PsEm5k+agUzzMWjG7aNhejilg2Rv2cFU9KtGg==
+X-Received: by 2002:a37:284a:: with SMTP id o71-v6mr6399111qkh.176.1532710813333;
+        Fri, 27 Jul 2018 10:00:13 -0700 (PDT)
+Received: from [10.18.17.172] (nat-pool-bos-t.redhat.com. [66.187.233.206])
+        by smtp.gmail.com with ESMTPSA id z18-v6sm4421561qtz.89.2018.07.27.10.00.12
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 27 Jul 2018 09:56:44 -0700 (PDT)
-From:   Paolo Bonzini <pbonzini@redhat.com>
-To:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Cc:     vkuznets@redhat.com
-Subject: [PATCH 1/4] x86/kvm/mmu: make vcpu->mmu a pointer to the current MMU
-Date:   Fri, 27 Jul 2018 18:56:38 +0200
-Message-Id: <1532710601-45449-2-git-send-email-pbonzini@redhat.com>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1532710601-45449-1-git-send-email-pbonzini@redhat.com>
-References: <1532710601-45449-1-git-send-email-pbonzini@redhat.com>
+        Fri, 27 Jul 2018 10:00:12 -0700 (PDT)
+Subject: Re: [PATCH] [RESEND] perf/x86/intel/uncore: Fix the index of PCU.3
+ Broadwell CPUs
+From:   Masayoshi Mizuma <msys.mizuma@gmail.com>
+To:     mingo@kernel.org
+Cc:     kan.liang@linux.intel.com, kan.liang@intel.com, tglx@linutronix.de,
+        mingo@redhat.com, hpa@zytor.com, x86@kernel.org,
+        linux-kernel@vger.kernel.org, m.mizuma@jp.fujitsu.com
+References: <20180710233158.21037-1-msys.mizuma@gmail.com>
+ <20180715223444.GA16209@gmail.com>
+ <7d97606b-67b6-4eb7-48ca-99250edc3fba@linux.intel.com>
+ <376d5419-9ba5-ef5e-3089-f841fbb1772b@gmail.com>
+ <55fd243f-7c3c-1a02-65d4-3fae3c540d50@linux.intel.com>
+ <1677c9ca-a522-ae7e-6a1f-86c3767a35f8@gmail.com>
+Message-ID: <3aed5057-7328-90aa-3c35-7c143866aaf0@gmail.com>
+Date:   Fri, 27 Jul 2018 13:00:11 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <1677c9ca-a522-ae7e-6a1f-86c3767a35f8@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vitaly Kuznetsov <vkuznets@redhat.com>
+Hi Ingo,
 
-As a preparation to full MMU split between L1 and L2 make vcpu->arch.mmu
-a pointer to the currently used mmu. For now, this is always
-vcpu->arch.root_mmu. No functional change.
+Is the following Kan's patch ready to merge...?
 
-Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
----
- arch/x86/include/asm/kvm_host.h |   5 +-
- arch/x86/kvm/mmu.c              | 165 ++++++++++++++++++++--------------------
- arch/x86/kvm/mmu.h              |   8 +-
- arch/x86/kvm/mmu_audit.c        |  12 +--
- arch/x86/kvm/paging_tmpl.h      |  15 ++--
- arch/x86/kvm/svm.c              |  14 ++--
- arch/x86/kvm/vmx.c              |  15 ++--
- arch/x86/kvm/x86.c              |  20 ++---
- 8 files changed, 130 insertions(+), 124 deletions(-)
+Thanks,
+Masa
 
-diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
-index 150937e64f63..7ae8ae58f3bd 100644
---- a/arch/x86/include/asm/kvm_host.h
-+++ b/arch/x86/include/asm/kvm_host.h
-@@ -533,7 +533,10 @@ struct kvm_vcpu_arch {
- 	 * the paging mode of the l1 guest. This context is always used to
- 	 * handle faults.
- 	 */
--	struct kvm_mmu mmu;
-+	struct kvm_mmu *mmu;
-+
-+	/* Non-nested MMU for L1 */
-+	struct kvm_mmu root_mmu;
- 
- 	/*
- 	 * Paging state of an L2 guest (used for nested npt)
-diff --git a/arch/x86/kvm/mmu.c b/arch/x86/kvm/mmu.c
-index 22a7984c68a5..0a40afd71d74 100644
---- a/arch/x86/kvm/mmu.c
-+++ b/arch/x86/kvm/mmu.c
-@@ -2137,7 +2137,7 @@ static bool __kvm_sync_page(struct kvm_vcpu *vcpu, struct kvm_mmu_page *sp,
- 			    struct list_head *invalid_list)
- {
- 	if (sp->role.cr4_pae != !!is_pae(vcpu)
--	    || vcpu->arch.mmu.sync_page(vcpu, sp) == 0) {
-+	    || vcpu->arch.mmu->sync_page(vcpu, sp) == 0) {
- 		kvm_mmu_prepare_zap_page(vcpu->kvm, sp, invalid_list);
- 		return false;
- 	}
-@@ -2331,14 +2331,14 @@ static struct kvm_mmu_page *kvm_mmu_get_page(struct kvm_vcpu *vcpu,
- 	int collisions = 0;
- 	LIST_HEAD(invalid_list);
- 
--	role = vcpu->arch.mmu.base_role;
-+	role = vcpu->arch.mmu->base_role;
- 	role.level = level;
- 	role.direct = direct;
- 	if (role.direct)
- 		role.cr4_pae = 0;
- 	role.access = access;
--	if (!vcpu->arch.mmu.direct_map
--	    && vcpu->arch.mmu.root_level <= PT32_ROOT_LEVEL) {
-+	if (!vcpu->arch.mmu->direct_map
-+	    && vcpu->arch.mmu->root_level <= PT32_ROOT_LEVEL) {
- 		quadrant = gaddr >> (PAGE_SHIFT + (PT64_PT_BITS * level));
- 		quadrant &= (1 << ((PT32_PT_BITS - PT64_PT_BITS) * level)) - 1;
- 		role.quadrant = quadrant;
-@@ -2413,11 +2413,11 @@ static void shadow_walk_init_using_root(struct kvm_shadow_walk_iterator *iterato
- {
- 	iterator->addr = addr;
- 	iterator->shadow_addr = root;
--	iterator->level = vcpu->arch.mmu.shadow_root_level;
-+	iterator->level = vcpu->arch.mmu->shadow_root_level;
- 
- 	if (iterator->level == PT64_ROOT_4LEVEL &&
--	    vcpu->arch.mmu.root_level < PT64_ROOT_4LEVEL &&
--	    !vcpu->arch.mmu.direct_map)
-+	    vcpu->arch.mmu->root_level < PT64_ROOT_4LEVEL &&
-+	    !vcpu->arch.mmu->direct_map)
- 		--iterator->level;
- 
- 	if (iterator->level == PT32E_ROOT_LEVEL) {
-@@ -2425,10 +2425,10 @@ static void shadow_walk_init_using_root(struct kvm_shadow_walk_iterator *iterato
- 		 * prev_root is currently only used for 64-bit hosts. So only
- 		 * the active root_hpa is valid here.
- 		 */
--		BUG_ON(root != vcpu->arch.mmu.root_hpa);
-+		BUG_ON(root != vcpu->arch.mmu->root_hpa);
- 
- 		iterator->shadow_addr
--			= vcpu->arch.mmu.pae_root[(addr >> 30) & 3];
-+			= vcpu->arch.mmu->pae_root[(addr >> 30) & 3];
- 		iterator->shadow_addr &= PT64_BASE_ADDR_MASK;
- 		--iterator->level;
- 		if (!iterator->shadow_addr)
-@@ -2439,7 +2439,7 @@ static void shadow_walk_init_using_root(struct kvm_shadow_walk_iterator *iterato
- static void shadow_walk_init(struct kvm_shadow_walk_iterator *iterator,
- 			     struct kvm_vcpu *vcpu, u64 addr)
- {
--	shadow_walk_init_using_root(iterator, vcpu, vcpu->arch.mmu.root_hpa,
-+	shadow_walk_init_using_root(iterator, vcpu, vcpu->arch.mmu->root_hpa,
- 				    addr);
- }
- 
-@@ -3050,7 +3050,7 @@ static int __direct_map(struct kvm_vcpu *vcpu, int write, int map_writable,
- 	int emulate = 0;
- 	gfn_t pseudo_gfn;
- 
--	if (!VALID_PAGE(vcpu->arch.mmu.root_hpa))
-+	if (!VALID_PAGE(vcpu->arch.mmu->root_hpa))
- 		return 0;
- 
- 	for_each_shadow_entry(vcpu, (u64)gfn << PAGE_SHIFT, iterator) {
-@@ -3265,7 +3265,7 @@ static bool fast_page_fault(struct kvm_vcpu *vcpu, gva_t gva, int level,
- 	u64 spte = 0ull;
- 	uint retry_count = 0;
- 
--	if (!VALID_PAGE(vcpu->arch.mmu.root_hpa))
-+	if (!VALID_PAGE(vcpu->arch.mmu->root_hpa))
- 		return false;
- 
- 	if (!page_fault_can_be_fast(error_code))
-@@ -3439,7 +3439,7 @@ void kvm_mmu_free_roots(struct kvm_vcpu *vcpu, ulong roots_to_free)
- {
- 	int i;
- 	LIST_HEAD(invalid_list);
--	struct kvm_mmu *mmu = &vcpu->arch.mmu;
-+	struct kvm_mmu *mmu = vcpu->arch.mmu;
- 	bool free_active_root = roots_to_free & KVM_MMU_ROOT_CURRENT;
- 
- 	BUILD_BUG_ON(KVM_MMU_NUM_PREV_ROOTS >= BITS_PER_LONG);
-@@ -3499,20 +3499,20 @@ static int mmu_alloc_direct_roots(struct kvm_vcpu *vcpu)
- 	struct kvm_mmu_page *sp;
- 	unsigned i;
- 
--	if (vcpu->arch.mmu.shadow_root_level >= PT64_ROOT_4LEVEL) {
-+	if (vcpu->arch.mmu->shadow_root_level >= PT64_ROOT_4LEVEL) {
- 		spin_lock(&vcpu->kvm->mmu_lock);
- 		if(make_mmu_pages_available(vcpu) < 0) {
- 			spin_unlock(&vcpu->kvm->mmu_lock);
- 			return -ENOSPC;
- 		}
- 		sp = kvm_mmu_get_page(vcpu, 0, 0,
--				vcpu->arch.mmu.shadow_root_level, 1, ACC_ALL);
-+				vcpu->arch.mmu->shadow_root_level, 1, ACC_ALL);
- 		++sp->root_count;
- 		spin_unlock(&vcpu->kvm->mmu_lock);
--		vcpu->arch.mmu.root_hpa = __pa(sp->spt);
--	} else if (vcpu->arch.mmu.shadow_root_level == PT32E_ROOT_LEVEL) {
-+		vcpu->arch.mmu->root_hpa = __pa(sp->spt);
-+	} else if (vcpu->arch.mmu->shadow_root_level == PT32E_ROOT_LEVEL) {
- 		for (i = 0; i < 4; ++i) {
--			hpa_t root = vcpu->arch.mmu.pae_root[i];
-+			hpa_t root = vcpu->arch.mmu->pae_root[i];
- 
- 			MMU_WARN_ON(VALID_PAGE(root));
- 			spin_lock(&vcpu->kvm->mmu_lock);
-@@ -3525,9 +3525,9 @@ static int mmu_alloc_direct_roots(struct kvm_vcpu *vcpu)
- 			root = __pa(sp->spt);
- 			++sp->root_count;
- 			spin_unlock(&vcpu->kvm->mmu_lock);
--			vcpu->arch.mmu.pae_root[i] = root | PT_PRESENT_MASK;
-+			vcpu->arch.mmu->pae_root[i] = root | PT_PRESENT_MASK;
- 		}
--		vcpu->arch.mmu.root_hpa = __pa(vcpu->arch.mmu.pae_root);
-+		vcpu->arch.mmu->root_hpa = __pa(vcpu->arch.mmu->pae_root);
- 	} else
- 		BUG();
- 
-@@ -3541,7 +3541,7 @@ static int mmu_alloc_shadow_roots(struct kvm_vcpu *vcpu)
- 	gfn_t root_gfn;
- 	int i;
- 
--	root_gfn = vcpu->arch.mmu.get_cr3(vcpu) >> PAGE_SHIFT;
-+	root_gfn = vcpu->arch.mmu->get_cr3(vcpu) >> PAGE_SHIFT;
- 
- 	if (mmu_check_root(vcpu, root_gfn))
- 		return 1;
-@@ -3550,8 +3550,8 @@ static int mmu_alloc_shadow_roots(struct kvm_vcpu *vcpu)
- 	 * Do we shadow a long mode page table? If so we need to
- 	 * write-protect the guests page table root.
- 	 */
--	if (vcpu->arch.mmu.root_level >= PT64_ROOT_4LEVEL) {
--		hpa_t root = vcpu->arch.mmu.root_hpa;
-+	if (vcpu->arch.mmu->root_level >= PT64_ROOT_4LEVEL) {
-+		hpa_t root = vcpu->arch.mmu->root_hpa;
- 
- 		MMU_WARN_ON(VALID_PAGE(root));
- 
-@@ -3561,11 +3561,11 @@ static int mmu_alloc_shadow_roots(struct kvm_vcpu *vcpu)
- 			return -ENOSPC;
- 		}
- 		sp = kvm_mmu_get_page(vcpu, root_gfn, 0,
--				vcpu->arch.mmu.shadow_root_level, 0, ACC_ALL);
-+				vcpu->arch.mmu->shadow_root_level, 0, ACC_ALL);
- 		root = __pa(sp->spt);
- 		++sp->root_count;
- 		spin_unlock(&vcpu->kvm->mmu_lock);
--		vcpu->arch.mmu.root_hpa = root;
-+		vcpu->arch.mmu->root_hpa = root;
- 		return 0;
- 	}
- 
-@@ -3575,17 +3575,17 @@ static int mmu_alloc_shadow_roots(struct kvm_vcpu *vcpu)
- 	 * the shadow page table may be a PAE or a long mode page table.
- 	 */
- 	pm_mask = PT_PRESENT_MASK;
--	if (vcpu->arch.mmu.shadow_root_level == PT64_ROOT_4LEVEL)
-+	if (vcpu->arch.mmu->shadow_root_level == PT64_ROOT_4LEVEL)
- 		pm_mask |= PT_ACCESSED_MASK | PT_WRITABLE_MASK | PT_USER_MASK;
- 
- 	for (i = 0; i < 4; ++i) {
--		hpa_t root = vcpu->arch.mmu.pae_root[i];
-+		hpa_t root = vcpu->arch.mmu->pae_root[i];
- 
- 		MMU_WARN_ON(VALID_PAGE(root));
--		if (vcpu->arch.mmu.root_level == PT32E_ROOT_LEVEL) {
--			pdptr = vcpu->arch.mmu.get_pdptr(vcpu, i);
-+		if (vcpu->arch.mmu->root_level == PT32E_ROOT_LEVEL) {
-+			pdptr = vcpu->arch.mmu->get_pdptr(vcpu, i);
- 			if (!(pdptr & PT_PRESENT_MASK)) {
--				vcpu->arch.mmu.pae_root[i] = 0;
-+				vcpu->arch.mmu->pae_root[i] = 0;
- 				continue;
- 			}
- 			root_gfn = pdptr >> PAGE_SHIFT;
-@@ -3603,16 +3603,16 @@ static int mmu_alloc_shadow_roots(struct kvm_vcpu *vcpu)
- 		++sp->root_count;
- 		spin_unlock(&vcpu->kvm->mmu_lock);
- 
--		vcpu->arch.mmu.pae_root[i] = root | pm_mask;
-+		vcpu->arch.mmu->pae_root[i] = root | pm_mask;
- 	}
--	vcpu->arch.mmu.root_hpa = __pa(vcpu->arch.mmu.pae_root);
-+	vcpu->arch.mmu->root_hpa = __pa(vcpu->arch.mmu->pae_root);
- 
- 	/*
- 	 * If we shadow a 32 bit page table with a long mode page
- 	 * table we enter this path.
- 	 */
--	if (vcpu->arch.mmu.shadow_root_level == PT64_ROOT_4LEVEL) {
--		if (vcpu->arch.mmu.lm_root == NULL) {
-+	if (vcpu->arch.mmu->shadow_root_level == PT64_ROOT_4LEVEL) {
-+		if (vcpu->arch.mmu->lm_root == NULL) {
- 			/*
- 			 * The additional page necessary for this is only
- 			 * allocated on demand.
-@@ -3624,12 +3624,12 @@ static int mmu_alloc_shadow_roots(struct kvm_vcpu *vcpu)
- 			if (lm_root == NULL)
- 				return 1;
- 
--			lm_root[0] = __pa(vcpu->arch.mmu.pae_root) | pm_mask;
-+			lm_root[0] = __pa(vcpu->arch.mmu->pae_root) | pm_mask;
- 
--			vcpu->arch.mmu.lm_root = lm_root;
-+			vcpu->arch.mmu->lm_root = lm_root;
- 		}
- 
--		vcpu->arch.mmu.root_hpa = __pa(vcpu->arch.mmu.lm_root);
-+		vcpu->arch.mmu->root_hpa = __pa(vcpu->arch.mmu->lm_root);
- 	}
- 
- 	return 0;
-@@ -3637,7 +3637,7 @@ static int mmu_alloc_shadow_roots(struct kvm_vcpu *vcpu)
- 
- static int mmu_alloc_roots(struct kvm_vcpu *vcpu)
- {
--	if (vcpu->arch.mmu.direct_map)
-+	if (vcpu->arch.mmu->direct_map)
- 		return mmu_alloc_direct_roots(vcpu);
- 	else
- 		return mmu_alloc_shadow_roots(vcpu);
-@@ -3648,17 +3648,16 @@ void kvm_mmu_sync_roots(struct kvm_vcpu *vcpu)
- 	int i;
- 	struct kvm_mmu_page *sp;
- 
--	if (vcpu->arch.mmu.direct_map)
-+	if (vcpu->arch.mmu->direct_map)
- 		return;
- 
--	if (!VALID_PAGE(vcpu->arch.mmu.root_hpa))
-+	if (!VALID_PAGE(vcpu->arch.mmu->root_hpa))
- 		return;
- 
- 	vcpu_clear_mmio_info(vcpu, MMIO_GVA_ANY);
- 
--	if (vcpu->arch.mmu.root_level >= PT64_ROOT_4LEVEL) {
--		hpa_t root = vcpu->arch.mmu.root_hpa;
--
-+	if (vcpu->arch.mmu->root_level >= PT64_ROOT_4LEVEL) {
-+		hpa_t root = vcpu->arch.mmu->root_hpa;
- 		sp = page_header(root);
- 
- 		/*
-@@ -3689,7 +3688,7 @@ void kvm_mmu_sync_roots(struct kvm_vcpu *vcpu)
- 	kvm_mmu_audit(vcpu, AUDIT_PRE_SYNC);
- 
- 	for (i = 0; i < 4; ++i) {
--		hpa_t root = vcpu->arch.mmu.pae_root[i];
-+		hpa_t root = vcpu->arch.mmu->pae_root[i];
- 
- 		if (root && VALID_PAGE(root)) {
- 			root &= PT64_BASE_ADDR_MASK;
-@@ -3763,7 +3762,7 @@ static bool mmio_info_in_cache(struct kvm_vcpu *vcpu, u64 addr, bool direct)
- 	int root, leaf;
- 	bool reserved = false;
- 
--	if (!VALID_PAGE(vcpu->arch.mmu.root_hpa))
-+	if (!VALID_PAGE(vcpu->arch.mmu->root_hpa))
- 		goto exit;
- 
- 	walk_shadow_page_lockless_begin(vcpu);
-@@ -3780,7 +3779,7 @@ static bool mmio_info_in_cache(struct kvm_vcpu *vcpu, u64 addr, bool direct)
- 		if (!is_shadow_present_pte(spte))
- 			break;
- 
--		reserved |= is_shadow_zero_bits_set(&vcpu->arch.mmu, spte,
-+		reserved |= is_shadow_zero_bits_set(vcpu->arch.mmu, spte,
- 						    iterator.level);
- 	}
- 
-@@ -3859,7 +3858,7 @@ static void shadow_page_table_clear_flood(struct kvm_vcpu *vcpu, gva_t addr)
- 	struct kvm_shadow_walk_iterator iterator;
- 	u64 spte;
- 
--	if (!VALID_PAGE(vcpu->arch.mmu.root_hpa))
-+	if (!VALID_PAGE(vcpu->arch.mmu->root_hpa))
- 		return;
- 
- 	walk_shadow_page_lockless_begin(vcpu);
-@@ -3886,7 +3885,7 @@ static int nonpaging_page_fault(struct kvm_vcpu *vcpu, gva_t gva,
- 	if (r)
- 		return r;
- 
--	MMU_WARN_ON(!VALID_PAGE(vcpu->arch.mmu.root_hpa));
-+	MMU_WARN_ON(!VALID_PAGE(vcpu->arch.mmu->root_hpa));
- 
- 
- 	return nonpaging_map(vcpu, gva & PAGE_MASK,
-@@ -3899,8 +3898,8 @@ static int kvm_arch_setup_async_pf(struct kvm_vcpu *vcpu, gva_t gva, gfn_t gfn)
- 
- 	arch.token = (vcpu->arch.apf.id++ << 12) | vcpu->vcpu_id;
- 	arch.gfn = gfn;
--	arch.direct_map = vcpu->arch.mmu.direct_map;
--	arch.cr3 = vcpu->arch.mmu.get_cr3(vcpu);
-+	arch.direct_map = vcpu->arch.mmu->direct_map;
-+	arch.cr3 = vcpu->arch.mmu->get_cr3(vcpu);
- 
- 	return kvm_setup_async_pf(vcpu, gva, kvm_vcpu_gfn_to_hva(vcpu, gfn), &arch);
- }
-@@ -4005,7 +4004,7 @@ static int tdp_page_fault(struct kvm_vcpu *vcpu, gva_t gpa, u32 error_code,
- 	int write = error_code & PFERR_WRITE_MASK;
- 	bool map_writable;
- 
--	MMU_WARN_ON(!VALID_PAGE(vcpu->arch.mmu.root_hpa));
-+	MMU_WARN_ON(!VALID_PAGE(vcpu->arch.mmu->root_hpa));
- 
- 	if (page_fault_handle_page_track(vcpu, error_code, gfn))
- 		return RET_PF_EMULATE;
-@@ -4081,7 +4080,7 @@ static bool cached_root_available(struct kvm_vcpu *vcpu, gpa_t new_cr3,
- {
- 	uint i;
- 	struct kvm_mmu_root_info root;
--	struct kvm_mmu *mmu = &vcpu->arch.mmu;
-+	struct kvm_mmu *mmu = vcpu->arch.mmu;
- 
- 	root.cr3 = mmu->get_cr3(vcpu);
- 	root.hpa = mmu->root_hpa;
-@@ -4104,7 +4103,7 @@ static bool fast_cr3_switch(struct kvm_vcpu *vcpu, gpa_t new_cr3,
- 			    union kvm_mmu_page_role new_role,
- 			    bool skip_tlb_flush)
- {
--	struct kvm_mmu *mmu = &vcpu->arch.mmu;
-+	struct kvm_mmu *mmu = vcpu->arch.mmu;
- 
- 	/*
- 	 * For now, limit the fast switch to 64-bit hosts+VMs in order to avoid
-@@ -4173,7 +4172,7 @@ static unsigned long get_cr3(struct kvm_vcpu *vcpu)
- static void inject_page_fault(struct kvm_vcpu *vcpu,
- 			      struct x86_exception *fault)
- {
--	vcpu->arch.mmu.inject_page_fault(vcpu, fault);
-+	vcpu->arch.mmu->inject_page_fault(vcpu, fault);
- }
- 
- static bool sync_mmio_spte(struct kvm_vcpu *vcpu, u64 *sptep, gfn_t gfn,
-@@ -4694,7 +4693,7 @@ static void paging32E_init_context(struct kvm_vcpu *vcpu,
- 
- static void init_kvm_tdp_mmu(struct kvm_vcpu *vcpu)
- {
--	struct kvm_mmu *context = &vcpu->arch.mmu;
-+	struct kvm_mmu *context = vcpu->arch.mmu;
- 
- 	context->base_role.word = mmu_base_role_mask.word &
- 				  kvm_calc_tdp_mmu_root_page_role(vcpu).word;
-@@ -4766,7 +4765,7 @@ static void init_kvm_tdp_mmu(struct kvm_vcpu *vcpu)
- 
- void kvm_init_shadow_mmu(struct kvm_vcpu *vcpu)
- {
--	struct kvm_mmu *context = &vcpu->arch.mmu;
-+	struct kvm_mmu *context = vcpu->arch.mmu;
- 
- 	if (!is_paging(vcpu))
- 		nonpaging_init_context(vcpu, context);
-@@ -4786,7 +4785,7 @@ void kvm_init_shadow_mmu(struct kvm_vcpu *vcpu)
- static union kvm_mmu_page_role
- kvm_calc_shadow_ept_root_page_role(struct kvm_vcpu *vcpu, bool accessed_dirty)
- {
--	union kvm_mmu_page_role role = vcpu->arch.mmu.base_role;
-+	union kvm_mmu_page_role role = vcpu->arch.mmu->base_role;
- 
- 	role.level = PT64_ROOT_4LEVEL;
- 	role.direct = false;
-@@ -4800,7 +4799,7 @@ void kvm_init_shadow_mmu(struct kvm_vcpu *vcpu)
- void kvm_init_shadow_ept_mmu(struct kvm_vcpu *vcpu, bool execonly,
- 			     bool accessed_dirty, gpa_t new_eptp)
- {
--	struct kvm_mmu *context = &vcpu->arch.mmu;
-+	struct kvm_mmu *context = vcpu->arch.mmu;
- 	union kvm_mmu_page_role root_page_role =
- 		kvm_calc_shadow_ept_root_page_role(vcpu, accessed_dirty);
- 
-@@ -4827,7 +4826,7 @@ void kvm_init_shadow_ept_mmu(struct kvm_vcpu *vcpu, bool execonly,
- 
- static void init_kvm_softmmu(struct kvm_vcpu *vcpu)
- {
--	struct kvm_mmu *context = &vcpu->arch.mmu;
-+	struct kvm_mmu *context = vcpu->arch.mmu;
- 
- 	kvm_init_shadow_mmu(vcpu);
- 	context->set_cr3           = kvm_x86_ops->set_cr3;
-@@ -4845,7 +4844,7 @@ static void init_kvm_nested_mmu(struct kvm_vcpu *vcpu)
- 	g_context->inject_page_fault = kvm_inject_page_fault;
- 
- 	/*
--	 * Note that arch.mmu.gva_to_gpa translates l2_gpa to l1_gpa using
-+	 * Note that arch.mmu->gva_to_gpa translates l2_gpa to l1_gpa using
- 	 * L1's nested page tables (e.g. EPT12). The nested translation
- 	 * of l2_gva to l1_gpa is done by arch.nested_mmu.gva_to_gpa using
- 	 * L2's page tables as the first level of translation and L1's
-@@ -4884,10 +4883,10 @@ void kvm_init_mmu(struct kvm_vcpu *vcpu, bool reset_roots)
- 	if (reset_roots) {
- 		uint i;
- 
--		vcpu->arch.mmu.root_hpa = INVALID_PAGE;
-+		vcpu->arch.mmu->root_hpa = INVALID_PAGE;
- 
- 		for (i = 0; i < KVM_MMU_NUM_PREV_ROOTS; i++)
--			vcpu->arch.mmu.prev_roots[i] = KVM_MMU_ROOT_INFO_INVALID;
-+			vcpu->arch.mmu->prev_roots[i] = KVM_MMU_ROOT_INFO_INVALID;
- 	}
- 
- 	if (mmu_is_nested(vcpu))
-@@ -4936,7 +4935,7 @@ int kvm_mmu_load(struct kvm_vcpu *vcpu)
- void kvm_mmu_unload(struct kvm_vcpu *vcpu)
- {
- 	kvm_mmu_free_roots(vcpu, KVM_MMU_ROOTS_ALL);
--	WARN_ON(VALID_PAGE(vcpu->arch.mmu.root_hpa));
-+	WARN_ON(VALID_PAGE(vcpu->arch.mmu->root_hpa));
- }
- EXPORT_SYMBOL_GPL(kvm_mmu_unload);
- 
-@@ -4950,7 +4949,7 @@ static void mmu_pte_write_new_pte(struct kvm_vcpu *vcpu,
-         }
- 
- 	++vcpu->kvm->stat.mmu_pte_updated;
--	vcpu->arch.mmu.update_pte(vcpu, sp, spte, new);
-+	vcpu->arch.mmu->update_pte(vcpu, sp, spte, new);
- }
- 
- static bool need_remote_flush(u64 old, u64 new)
-@@ -5130,7 +5129,7 @@ static void kvm_mmu_pte_write(struct kvm_vcpu *vcpu, gpa_t gpa,
- 			entry = *spte;
- 			mmu_page_zap_pte(vcpu->kvm, sp, spte);
- 			if (gentry &&
--			      !((sp->role.word ^ vcpu->arch.mmu.base_role.word)
-+			      !((sp->role.word ^ vcpu->arch.mmu->base_role.word)
- 			      & mmu_base_role_mask.word) && rmap_can_add(vcpu))
- 				mmu_pte_write_new_pte(vcpu, sp, spte, &gentry);
- 			if (need_remote_flush(entry, *spte))
-@@ -5148,7 +5147,7 @@ int kvm_mmu_unprotect_page_virt(struct kvm_vcpu *vcpu, gva_t gva)
- 	gpa_t gpa;
- 	int r;
- 
--	if (vcpu->arch.mmu.direct_map)
-+	if (vcpu->arch.mmu->direct_map)
- 		return 0;
- 
- 	gpa = kvm_mmu_gva_to_gpa_read(vcpu, gva, NULL);
-@@ -5184,10 +5183,10 @@ int kvm_mmu_page_fault(struct kvm_vcpu *vcpu, gva_t cr2, u64 error_code,
- {
- 	int r, emulation_type = EMULTYPE_RETRY;
- 	enum emulation_result er;
--	bool direct = vcpu->arch.mmu.direct_map;
-+	bool direct = vcpu->arch.mmu->direct_map;
- 
- 	/* With shadow page tables, fault_address contains a GVA or nGPA.  */
--	if (vcpu->arch.mmu.direct_map) {
-+	if (vcpu->arch.mmu->direct_map) {
- 		vcpu->arch.gpa_available = true;
- 		vcpu->arch.gpa_val = cr2;
- 	}
-@@ -5202,8 +5201,9 @@ int kvm_mmu_page_fault(struct kvm_vcpu *vcpu, gva_t cr2, u64 error_code,
- 	}
- 
- 	if (r == RET_PF_INVALID) {
--		r = vcpu->arch.mmu.page_fault(vcpu, cr2, lower_32_bits(error_code),
--					      false);
-+		r = vcpu->arch.mmu->page_fault(vcpu, cr2,
-+					       lower_32_bits(error_code),
-+					       false);
- 		WARN_ON(r == RET_PF_INVALID);
- 	}
- 
-@@ -5219,7 +5219,7 @@ int kvm_mmu_page_fault(struct kvm_vcpu *vcpu, gva_t cr2, u64 error_code,
- 	 * paging in both guests. If true, we simply unprotect the page
- 	 * and resume the guest.
- 	 */
--	if (vcpu->arch.mmu.direct_map &&
-+	if (vcpu->arch.mmu->direct_map &&
- 	    (error_code & PFERR_NESTED_GUEST_PAGE) == PFERR_NESTED_GUEST_PAGE) {
- 		kvm_mmu_unprotect_page(vcpu->kvm, gpa_to_gfn(cr2));
- 		return 1;
-@@ -5256,7 +5256,7 @@ int kvm_mmu_page_fault(struct kvm_vcpu *vcpu, gva_t cr2, u64 error_code,
- 
- void kvm_mmu_invlpg(struct kvm_vcpu *vcpu, gva_t gva)
- {
--	struct kvm_mmu *mmu = &vcpu->arch.mmu;
-+	struct kvm_mmu *mmu = vcpu->arch.mmu;
- 	int i;
- 
- 	/* INVLPG on a * non-canonical address is a NOP according to the SDM.  */
-@@ -5287,7 +5287,7 @@ void kvm_mmu_invlpg(struct kvm_vcpu *vcpu, gva_t gva)
- 
- void kvm_mmu_invpcid_gva(struct kvm_vcpu *vcpu, gva_t gva, unsigned long pcid)
- {
--	struct kvm_mmu *mmu = &vcpu->arch.mmu;
-+	struct kvm_mmu *mmu = vcpu->arch.mmu;
- 	bool tlb_flush = false;
- 	uint i;
- 
-@@ -5331,8 +5331,8 @@ void kvm_disable_tdp(void)
- 
- static void free_mmu_pages(struct kvm_vcpu *vcpu)
- {
--	free_page((unsigned long)vcpu->arch.mmu.pae_root);
--	free_page((unsigned long)vcpu->arch.mmu.lm_root);
-+	free_page((unsigned long)vcpu->arch.mmu->pae_root);
-+	free_page((unsigned long)vcpu->arch.mmu->lm_root);
- }
- 
- static int alloc_mmu_pages(struct kvm_vcpu *vcpu)
-@@ -5349,9 +5349,9 @@ static int alloc_mmu_pages(struct kvm_vcpu *vcpu)
- 	if (!page)
- 		return -ENOMEM;
- 
--	vcpu->arch.mmu.pae_root = page_address(page);
-+	vcpu->arch.mmu->pae_root = page_address(page);
- 	for (i = 0; i < 4; ++i)
--		vcpu->arch.mmu.pae_root[i] = INVALID_PAGE;
-+		vcpu->arch.mmu->pae_root[i] = INVALID_PAGE;
- 
- 	return 0;
- }
-@@ -5360,20 +5360,21 @@ int kvm_mmu_create(struct kvm_vcpu *vcpu)
- {
- 	uint i;
- 
--	vcpu->arch.walk_mmu = &vcpu->arch.mmu;
--	vcpu->arch.mmu.root_hpa = INVALID_PAGE;
--	vcpu->arch.mmu.translate_gpa = translate_gpa;
-+	vcpu->arch.mmu = &vcpu->arch.root_mmu;
-+	vcpu->arch.walk_mmu = &vcpu->arch.root_mmu;
-+	vcpu->arch.root_mmu.root_hpa = INVALID_PAGE;
-+	vcpu->arch.root_mmu.translate_gpa = translate_gpa;
- 	vcpu->arch.nested_mmu.translate_gpa = translate_nested_gpa;
- 
- 	for (i = 0; i < KVM_MMU_NUM_PREV_ROOTS; i++)
--		vcpu->arch.mmu.prev_roots[i] = KVM_MMU_ROOT_INFO_INVALID;
-+		vcpu->arch.root_mmu.prev_roots[i] = KVM_MMU_ROOT_INFO_INVALID;
- 
- 	return alloc_mmu_pages(vcpu);
- }
- 
- void kvm_mmu_setup(struct kvm_vcpu *vcpu)
- {
--	MMU_WARN_ON(VALID_PAGE(vcpu->arch.mmu.root_hpa));
-+	MMU_WARN_ON(VALID_PAGE(vcpu->arch.mmu->root_hpa));
- 
- 	kvm_init_mmu(vcpu, true);
- }
-diff --git a/arch/x86/kvm/mmu.h b/arch/x86/kvm/mmu.h
-index 1fab69c0b2f3..f602b26140a3 100644
---- a/arch/x86/kvm/mmu.h
-+++ b/arch/x86/kvm/mmu.h
-@@ -80,7 +80,7 @@ static inline unsigned int kvm_mmu_available_pages(struct kvm *kvm)
- 
- static inline int kvm_mmu_reload(struct kvm_vcpu *vcpu)
- {
--	if (likely(vcpu->arch.mmu.root_hpa != INVALID_PAGE))
-+	if (likely(vcpu->arch.mmu->root_hpa != INVALID_PAGE))
- 		return 0;
- 
- 	return kvm_mmu_load(vcpu);
-@@ -102,9 +102,9 @@ static inline unsigned long kvm_get_active_pcid(struct kvm_vcpu *vcpu)
- 
- static inline void kvm_mmu_load_cr3(struct kvm_vcpu *vcpu)
- {
--	if (VALID_PAGE(vcpu->arch.mmu.root_hpa))
--		vcpu->arch.mmu.set_cr3(vcpu, vcpu->arch.mmu.root_hpa |
--					     kvm_get_active_pcid(vcpu));
-+	if (VALID_PAGE(vcpu->arch.mmu->root_hpa))
-+		vcpu->arch.mmu->set_cr3(vcpu, vcpu->arch.mmu->root_hpa |
-+					      kvm_get_active_pcid(vcpu));
- }
- 
- /*
-diff --git a/arch/x86/kvm/mmu_audit.c b/arch/x86/kvm/mmu_audit.c
-index 1272861e77b9..abac7e208853 100644
---- a/arch/x86/kvm/mmu_audit.c
-+++ b/arch/x86/kvm/mmu_audit.c
-@@ -59,19 +59,19 @@ static void mmu_spte_walk(struct kvm_vcpu *vcpu, inspect_spte_fn fn)
- 	int i;
- 	struct kvm_mmu_page *sp;
- 
--	if (!VALID_PAGE(vcpu->arch.mmu.root_hpa))
-+	if (!VALID_PAGE(vcpu->arch.mmu->root_hpa))
- 		return;
- 
--	if (vcpu->arch.mmu.root_level >= PT64_ROOT_4LEVEL) {
--		hpa_t root = vcpu->arch.mmu.root_hpa;
-+	if (vcpu->arch.mmu->root_level >= PT64_ROOT_4LEVEL) {
-+		hpa_t root = vcpu->arch.mmu->root_hpa;
- 
- 		sp = page_header(root);
--		__mmu_spte_walk(vcpu, sp, fn, vcpu->arch.mmu.root_level);
-+		__mmu_spte_walk(vcpu, sp, fn, vcpu->arch.mmu->root_level);
- 		return;
- 	}
- 
- 	for (i = 0; i < 4; ++i) {
--		hpa_t root = vcpu->arch.mmu.pae_root[i];
-+		hpa_t root = vcpu->arch.mmu->pae_root[i];
- 
- 		if (root && VALID_PAGE(root)) {
- 			root &= PT64_BASE_ADDR_MASK;
-@@ -122,7 +122,7 @@ static void audit_mappings(struct kvm_vcpu *vcpu, u64 *sptep, int level)
- 	hpa =  pfn << PAGE_SHIFT;
- 	if ((*sptep & PT64_BASE_ADDR_MASK) != hpa)
- 		audit_printk(vcpu->kvm, "levels %d pfn %llx hpa %llx "
--			     "ent %llxn", vcpu->arch.mmu.root_level, pfn,
-+			     "ent %llxn", vcpu->arch.mmu->root_level, pfn,
- 			     hpa, *sptep);
- }
- 
-diff --git a/arch/x86/kvm/paging_tmpl.h b/arch/x86/kvm/paging_tmpl.h
-index 14ffd973df54..7cf2185b7eb5 100644
---- a/arch/x86/kvm/paging_tmpl.h
-+++ b/arch/x86/kvm/paging_tmpl.h
-@@ -158,14 +158,15 @@ static bool FNAME(prefetch_invalid_gpte)(struct kvm_vcpu *vcpu,
- 				  struct kvm_mmu_page *sp, u64 *spte,
- 				  u64 gpte)
- {
--	if (is_rsvd_bits_set(&vcpu->arch.mmu, gpte, PT_PAGE_TABLE_LEVEL))
-+	if (is_rsvd_bits_set(vcpu->arch.mmu, gpte, PT_PAGE_TABLE_LEVEL))
- 		goto no_present;
- 
- 	if (!FNAME(is_present_gpte)(gpte))
- 		goto no_present;
- 
- 	/* if accessed bit is not supported prefetch non accessed gpte */
--	if (PT_HAVE_ACCESSED_DIRTY(&vcpu->arch.mmu) && !(gpte & PT_GUEST_ACCESSED_MASK))
-+	if (PT_HAVE_ACCESSED_DIRTY(vcpu->arch.mmu) &&
-+	    !(gpte & PT_GUEST_ACCESSED_MASK))
- 		goto no_present;
- 
- 	return false;
-@@ -480,7 +481,7 @@ static int FNAME(walk_addr_generic)(struct guest_walker *walker,
- static int FNAME(walk_addr)(struct guest_walker *walker,
- 			    struct kvm_vcpu *vcpu, gva_t addr, u32 access)
- {
--	return FNAME(walk_addr_generic)(walker, vcpu, &vcpu->arch.mmu, addr,
-+	return FNAME(walk_addr_generic)(walker, vcpu, vcpu->arch.mmu, addr,
- 					access);
- }
- 
-@@ -509,7 +510,7 @@ static int FNAME(walk_addr_nested)(struct guest_walker *walker,
- 
- 	gfn = gpte_to_gfn(gpte);
- 	pte_access = sp->role.access & FNAME(gpte_access)(gpte);
--	FNAME(protect_clean_gpte)(&vcpu->arch.mmu, &pte_access, gpte);
-+	FNAME(protect_clean_gpte)(vcpu->arch.mmu, &pte_access, gpte);
- 	pfn = pte_prefetch_gfn_to_pfn(vcpu, gfn,
- 			no_dirty_log && (pte_access & ACC_WRITE_MASK));
- 	if (is_error_pfn(pfn))
-@@ -604,7 +605,7 @@ static int FNAME(fetch)(struct kvm_vcpu *vcpu, gva_t addr,
- 
- 	direct_access = gw->pte_access;
- 
--	top_level = vcpu->arch.mmu.root_level;
-+	top_level = vcpu->arch.mmu->root_level;
- 	if (top_level == PT32E_ROOT_LEVEL)
- 		top_level = PT32_ROOT_LEVEL;
- 	/*
-@@ -616,7 +617,7 @@ static int FNAME(fetch)(struct kvm_vcpu *vcpu, gva_t addr,
- 	if (FNAME(gpte_changed)(vcpu, gw, top_level))
- 		goto out_gpte_changed;
- 
--	if (!VALID_PAGE(vcpu->arch.mmu.root_hpa))
-+	if (!VALID_PAGE(vcpu->arch.mmu->root_hpa))
- 		goto out_gpte_changed;
- 
- 	for (shadow_walk_init(&it, vcpu, addr);
-@@ -1004,7 +1005,7 @@ static int FNAME(sync_page)(struct kvm_vcpu *vcpu, struct kvm_mmu_page *sp)
- 		gfn = gpte_to_gfn(gpte);
- 		pte_access = sp->role.access;
- 		pte_access &= FNAME(gpte_access)(gpte);
--		FNAME(protect_clean_gpte)(&vcpu->arch.mmu, &pte_access, gpte);
-+		FNAME(protect_clean_gpte)(vcpu->arch.mmu, &pte_access, gpte);
- 
- 		if (sync_mmio_spte(vcpu, &sp->spt[i], gfn, pte_access,
- 		      &nr_present))
-diff --git a/arch/x86/kvm/svm.c b/arch/x86/kvm/svm.c
-index 73e27a98456f..f73a57ddbc57 100644
---- a/arch/x86/kvm/svm.c
-+++ b/arch/x86/kvm/svm.c
-@@ -2919,18 +2919,18 @@ static void nested_svm_init_mmu_context(struct kvm_vcpu *vcpu)
- {
- 	WARN_ON(mmu_is_nested(vcpu));
- 	kvm_init_shadow_mmu(vcpu);
--	vcpu->arch.mmu.set_cr3           = nested_svm_set_tdp_cr3;
--	vcpu->arch.mmu.get_cr3           = nested_svm_get_tdp_cr3;
--	vcpu->arch.mmu.get_pdptr         = nested_svm_get_tdp_pdptr;
--	vcpu->arch.mmu.inject_page_fault = nested_svm_inject_npf_exit;
--	vcpu->arch.mmu.shadow_root_level = get_npt_level(vcpu);
--	reset_shadow_zero_bits_mask(vcpu, &vcpu->arch.mmu);
-+	vcpu->arch.mmu->set_cr3           = nested_svm_set_tdp_cr3;
-+	vcpu->arch.mmu->get_cr3           = nested_svm_get_tdp_cr3;
-+	vcpu->arch.mmu->get_pdptr         = nested_svm_get_tdp_pdptr;
-+	vcpu->arch.mmu->inject_page_fault = nested_svm_inject_npf_exit;
-+	vcpu->arch.mmu->shadow_root_level = get_npt_level(vcpu);
-+	reset_shadow_zero_bits_mask(vcpu, vcpu->arch.mmu);
- 	vcpu->arch.walk_mmu              = &vcpu->arch.nested_mmu;
- }
- 
- static void nested_svm_uninit_mmu_context(struct kvm_vcpu *vcpu)
- {
--	vcpu->arch.walk_mmu = &vcpu->arch.mmu;
-+	vcpu->arch.walk_mmu = &vcpu->arch.root_mmu;
- }
- 
- static int nested_svm_check_permissions(struct vcpu_svm *svm)
-diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
-index 56c7c7a62a06..3ee8137b2026 100644
---- a/arch/x86/kvm/vmx.c
-+++ b/arch/x86/kvm/vmx.c
-@@ -4819,9 +4819,10 @@ static inline void __vmx_flush_tlb(struct kvm_vcpu *vcpu, int vpid,
- 				bool invalidate_gpa)
- {
- 	if (enable_ept && (invalidate_gpa || !enable_vpid)) {
--		if (!VALID_PAGE(vcpu->arch.mmu.root_hpa))
-+		if (!VALID_PAGE(vcpu->arch.mmu->root_hpa))
- 			return;
--		ept_sync_context(construct_eptp(vcpu, vcpu->arch.mmu.root_hpa));
-+		ept_sync_context(construct_eptp(vcpu,
-+						vcpu->arch.mmu->root_hpa));
- 	} else {
- 		vpid_sync_context(vpid);
- 	}
-@@ -8888,7 +8889,7 @@ static int handle_invpcid(struct kvm_vcpu *vcpu)
- 		}
- 
- 		for (i = 0; i < KVM_MMU_NUM_PREV_ROOTS; i++)
--			if (kvm_get_pcid(vcpu, vcpu->arch.mmu.prev_roots[i].cr3)
-+			if (kvm_get_pcid(vcpu, vcpu->arch.mmu->prev_roots[i].cr3)
- 			    == operand.pcid)
- 				roots_to_free |= KVM_MMU_ROOT_PREVIOUS(i);
- 
-@@ -10911,9 +10912,9 @@ static int nested_ept_init_mmu_context(struct kvm_vcpu *vcpu)
- 			VMX_EPT_EXECUTE_ONLY_BIT,
- 			nested_ept_ad_enabled(vcpu),
- 			nested_ept_get_cr3(vcpu));
--	vcpu->arch.mmu.set_cr3           = vmx_set_cr3;
--	vcpu->arch.mmu.get_cr3           = nested_ept_get_cr3;
--	vcpu->arch.mmu.inject_page_fault = nested_ept_inject_page_fault;
-+	vcpu->arch.mmu->set_cr3           = vmx_set_cr3;
-+	vcpu->arch.mmu->get_cr3           = nested_ept_get_cr3;
-+	vcpu->arch.mmu->inject_page_fault = nested_ept_inject_page_fault;
- 
- 	vcpu->arch.walk_mmu              = &vcpu->arch.nested_mmu;
- 	return 0;
-@@ -10921,7 +10922,7 @@ static int nested_ept_init_mmu_context(struct kvm_vcpu *vcpu)
- 
- static void nested_ept_uninit_mmu_context(struct kvm_vcpu *vcpu)
- {
--	vcpu->arch.walk_mmu = &vcpu->arch.mmu;
-+	vcpu->arch.walk_mmu = &vcpu->arch.root_mmu;
- }
- 
- static bool nested_vmx_is_page_fault_vmexit(struct vmcs12 *vmcs12,
-diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-index 153564db7980..b49091a55865 100644
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -502,7 +502,7 @@ static bool kvm_propagate_fault(struct kvm_vcpu *vcpu, struct x86_exception *fau
- 	if (mmu_is_nested(vcpu) && !fault->nested_page_fault)
- 		vcpu->arch.nested_mmu.inject_page_fault(vcpu, fault);
- 	else
--		vcpu->arch.mmu.inject_page_fault(vcpu, fault);
-+		vcpu->arch.mmu->inject_page_fault(vcpu, fault);
- 
- 	return fault->nested_page_fault;
- }
-@@ -601,7 +601,7 @@ int load_pdptrs(struct kvm_vcpu *vcpu, struct kvm_mmu *mmu, unsigned long cr3)
- 	for (i = 0; i < ARRAY_SIZE(pdpte); ++i) {
- 		if ((pdpte[i] & PT_PRESENT_MASK) &&
- 		    (pdpte[i] &
--		     vcpu->arch.mmu.guest_rsvd_check.rsvd_bits_mask[0][2])) {
-+		     vcpu->arch.mmu->guest_rsvd_check.rsvd_bits_mask[0][2])) {
- 			ret = 0;
- 			goto out;
- 		}
-@@ -4761,7 +4761,7 @@ gpa_t translate_nested_gpa(struct kvm_vcpu *vcpu, gpa_t gpa, u32 access,
- 
- 	/* NPT walks are always user-walks */
- 	access |= PFERR_USER_MASK;
--	t_gpa  = vcpu->arch.mmu.gva_to_gpa(vcpu, gpa, access, exception);
-+	t_gpa  = vcpu->arch.mmu->gva_to_gpa(vcpu, gpa, access, exception);
- 
- 	return t_gpa;
- }
-@@ -5841,7 +5841,7 @@ static bool reexecute_instruction(struct kvm_vcpu *vcpu, gva_t cr2,
- 	if (emulation_type & EMULTYPE_NO_REEXECUTE)
- 		return false;
- 
--	if (!vcpu->arch.mmu.direct_map) {
-+	if (!vcpu->arch.mmu->direct_map) {
- 		/*
- 		 * Write permission should be allowed since only
- 		 * write access need to be emulated.
-@@ -5874,7 +5874,7 @@ static bool reexecute_instruction(struct kvm_vcpu *vcpu, gva_t cr2,
- 	kvm_release_pfn_clean(pfn);
- 
- 	/* The instructions are well-emulated on direct mmu. */
--	if (vcpu->arch.mmu.direct_map) {
-+	if (vcpu->arch.mmu->direct_map) {
- 		unsigned int indirect_shadow_pages;
- 
- 		spin_lock(&vcpu->kvm->mmu_lock);
-@@ -5938,7 +5938,7 @@ static bool retry_instruction(struct x86_emulate_ctxt *ctxt,
- 	vcpu->arch.last_retry_eip = ctxt->eip;
- 	vcpu->arch.last_retry_addr = cr2;
- 
--	if (!vcpu->arch.mmu.direct_map)
-+	if (!vcpu->arch.mmu->direct_map)
- 		gpa = kvm_mmu_gva_to_gpa_write(vcpu, cr2, NULL);
- 
- 	kvm_mmu_unprotect_page(vcpu->kvm, gpa_to_gfn(gpa));
-@@ -9236,7 +9236,7 @@ void kvm_arch_async_page_ready(struct kvm_vcpu *vcpu, struct kvm_async_pf *work)
- {
- 	int r;
- 
--	if ((vcpu->arch.mmu.direct_map != work->arch.direct_map) ||
-+	if ((vcpu->arch.mmu->direct_map != work->arch.direct_map) ||
- 	      work->wakeup_all)
- 		return;
- 
-@@ -9244,11 +9244,11 @@ void kvm_arch_async_page_ready(struct kvm_vcpu *vcpu, struct kvm_async_pf *work)
- 	if (unlikely(r))
- 		return;
- 
--	if (!vcpu->arch.mmu.direct_map &&
--	      work->arch.cr3 != vcpu->arch.mmu.get_cr3(vcpu))
-+	if (!vcpu->arch.mmu->direct_map &&
-+	      work->arch.cr3 != vcpu->arch.mmu->get_cr3(vcpu))
- 		return;
- 
--	vcpu->arch.mmu.page_fault(vcpu, work->gva, 0, true);
-+	vcpu->arch.mmu->page_fault(vcpu, work->gva, 0, true);
- }
- 
- static inline u32 kvm_async_pf_hash_fn(gfn_t gfn)
--- 
-1.8.3.1
-
-
+On 07/17/2018 12:37 PM, Masayoshi Mizuma wrote:
+...
+>> Here is the patch.
+>>
+>> Masa, could you please give it a try?
+> 
+> Thank you for the patch, it works well!
+> 
+> Please feel free to add:
+> 
+> Tested-by: Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>
+> 
+> Thanks,
+> Masa
+> 
+>>
+>> Thanks,
+>> Kan
+>>
+>> From 688378a4003ec33156958a52dc822105c18075af Mon Sep 17 00:00:00 2001
+>> From: Kan Liang <kan.liang@linux.intel.com>
+>> Date: Mon, 16 Jul 2018 04:57:51 -0400
+>> Subject: [PATCH] perf/x86/intel/uncore: Fix hardcode index of Broadwell extra PCI DEV
+>>
+>> Masa reports that a warning message is shown while CPU hot-removing on
+>> Broadwell server.
+>>
+>>   WARNING: CPU: 126 PID: 6 at arch/x86/events/intel/uncore.c:988
+>>   uncore_pci_remove+0x10b/0x150
+>>   Call Trace:
+>>    pci_device_remove+0x42/0xd0
+>>    device_release_driver_internal+0x148/0x220
+>>    pci_stop_bus_device+0x76/0xa0
+>>    pci_stop_root_bus+0x44/0x60
+>>    acpi_pci_root_remove+0x1f/0x80
+>>    acpi_bus_trim+0x57/0x90
+>>    acpi_bus_trim+0x2e/0x90
+>>    acpi_device_hotplug+0x2bc/0x4b0
+>>    acpi_hotplug_work_fn+0x1a/0x30
+>>    process_one_work+0x174/0x3a0
+>>    worker_thread+0x4c/0x3d0
+>>    kthread+0xf8/0x130
+>>
+>> This bug was introduced in:
+>>
+>>   commit 15a3e845b01c ("perf/x86/intel/uncore: Fix SBOX support for
+>> Broadwell CPUs")
+>>
+>> The index of "QPI Port 2 filter" was hardcode to 2. The index of
+>> "PCU.3" used enumerator "HSWEP_PCI_PCU_3", which equals to 2 as well.
+>>
+>> To fix the conflict, the hardcode index needs to be cleaned up.
+>> Introduce a new enumerator "BDX_PCI_QPI_PORT2_FILTER" for "QPI Port 2
+>> filter" on Broadwell, and increase the UNCORE_EXTRA_PCI_DEV_MAX.
+>> Clean up hardcode index.
+>>
+>> Reported-by: Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>
+>> Suggested-by: Ingo Molnar <mingo@kernel.org>
+>> Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
+>> Fixes: 15a3e845b01c ("perf/x86/intel/uncore: Fix SBOX support for
+>> Broadwell CPUs")
+>> ---
+>>  arch/x86/events/intel/uncore.h       |  2 +-
+>>  arch/x86/events/intel/uncore_snbep.c | 10 +++++++---
+>>  2 files changed, 8 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/arch/x86/events/intel/uncore.h b/arch/x86/events/intel/uncore.h
+>> index c9e1e0b..e17ab88 100644
+>> --- a/arch/x86/events/intel/uncore.h
+>> +++ b/arch/x86/events/intel/uncore.h
+>> @@ -28,7 +28,7 @@
+>>  #define UNCORE_PCI_DEV_TYPE(data)    ((data >> 8) & 0xff)
+>>  #define UNCORE_PCI_DEV_IDX(data)    (data & 0xff)
+>>  #define UNCORE_EXTRA_PCI_DEV        0xff
+>> -#define UNCORE_EXTRA_PCI_DEV_MAX    3
+>> +#define UNCORE_EXTRA_PCI_DEV_MAX    4
+>>
+>>  #define UNCORE_EVENT_CONSTRAINT(c, n) EVENT_CONSTRAINT(c, n, 0xff)
+>>
+>> diff --git a/arch/x86/events/intel/uncore_snbep.c b/arch/x86/events/intel/uncore_snbep.c
+>> index 87dc026..51d7c11 100644
+>> --- a/arch/x86/events/intel/uncore_snbep.c
+>> +++ b/arch/x86/events/intel/uncore_snbep.c
+>> @@ -1029,6 +1029,7 @@ void snbep_uncore_cpu_init(void)
+>>  enum {
+>>      SNBEP_PCI_QPI_PORT0_FILTER,
+>>      SNBEP_PCI_QPI_PORT1_FILTER,
+>> +    BDX_PCI_QPI_PORT2_FILTER,
+>>      HSWEP_PCI_PCU_3,
+>>  };
+>>
+>> @@ -3286,15 +3287,18 @@ static const struct pci_device_id bdx_uncore_pci_ids[] = {
+>>      },
+>>      { /* QPI Port 0 filter  */
+>>          PCI_DEVICE(PCI_VENDOR_ID_INTEL, 0x6f86),
+>> -        .driver_data = UNCORE_PCI_DEV_DATA(UNCORE_EXTRA_PCI_DEV, 0),
+>> +        .driver_data = UNCORE_PCI_DEV_DATA(UNCORE_EXTRA_PCI_DEV,
+>> +                           SNBEP_PCI_QPI_PORT0_FILTER),
+>>      },
+>>      { /* QPI Port 1 filter  */
+>>          PCI_DEVICE(PCI_VENDOR_ID_INTEL, 0x6f96),
+>> -        .driver_data = UNCORE_PCI_DEV_DATA(UNCORE_EXTRA_PCI_DEV, 1),
+>> +        .driver_data = UNCORE_PCI_DEV_DATA(UNCORE_EXTRA_PCI_DEV,
+>> +                           SNBEP_PCI_QPI_PORT1_FILTER),
+>>      },
+>>      { /* QPI Port 2 filter  */
+>>          PCI_DEVICE(PCI_VENDOR_ID_INTEL, 0x6f46),
+>> -        .driver_data = UNCORE_PCI_DEV_DATA(UNCORE_EXTRA_PCI_DEV, 2),
+>> +        .driver_data = UNCORE_PCI_DEV_DATA(UNCORE_EXTRA_PCI_DEV,
+>> +                           BDX_PCI_QPI_PORT2_FILTER),
+>>      },
+>>      { /* PCU.3 (for Capability registers) */
+>>          PCI_DEVICE(PCI_VENDOR_ID_INTEL, 0x6fc0),
