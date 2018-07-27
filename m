@@ -6,35 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6A24C6778F
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:02:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52FD3C67790
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:02:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A580F20895
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:02:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A580F20895
+	by mail.kernel.org (Postfix) with ESMTP id 00F5D20894
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:02:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 00F5D20894
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389222AbeG0LXt (ORCPT
+        id S2389236AbeG0LXv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 07:23:49 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:34412 "EHLO
+        Fri, 27 Jul 2018 07:23:51 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:34420 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730568AbeG0LXs (ORCPT
+        with ESMTP id S1730568AbeG0LXv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 07:23:48 -0400
+        Fri, 27 Jul 2018 07:23:51 -0400
 Received: from localhost (unknown [89.188.5.116])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 6EF7BCB1;
-        Fri, 27 Jul 2018 10:02:38 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 73273CB6;
+        Fri, 27 Jul 2018 10:02:41 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Stephane Grosjean <s.grosjean@peak-system.com>,
+        stable@vger.kernel.org, Roman Fietze <roman.fietze@telemotive.de>,
         Marc Kleine-Budde <mkl@pengutronix.de>
-Subject: [PATCH 4.14 46/48] can: peak_canfd: fix firmware < v3.3.0: limit allocation to 32-bit DMA addr only
-Date:   Fri, 27 Jul 2018 12:00:31 +0200
-Message-Id: <20180727095923.253794276@linuxfoundation.org>
+Subject: [PATCH 4.14 47/48] can: m_can.c: fix setup of CCCR register: clear CCCR NISO bit before checking can.ctrlmode
+Date:   Fri, 27 Jul 2018 12:00:32 +0200
+Message-Id: <20180727095923.350967121@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180727095918.503549522@linuxfoundation.org>
 References: <20180727095918.503549522@linuxfoundation.org>
@@ -51,64 +50,41 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Stephane Grosjean <s.grosjean@peak-system.com>
+From: Roman Fietze <roman.fietze@telemotive.de>
 
-commit 5d4c94ed9f564224d7b37dbee13f7c5d4a8a01ac upstream.
+commit 393753b217f05474e714aea36c37501546ed1202 upstream.
 
-The DMA logic in firmwares < v3.3.0 embedded in the PCAN-PCIe FD cards
-family is not capable of handling a mix of 32-bit and 64-bit logical
-addresses. If the board is equipped with 2 or 4 CAN ports, then such a
-situation might lead to a PCIe Bus Error "Malformed TLP" packet
-as well as "irq xx: nobody cared" issue.
+Inside m_can_chip_config(), when setting up the new value of the CCCR,
+the CCCR_NISO bit is not cleared like the others, CCCR_TEST, CCCR_MON,
+CCCR_BRSE and CCCR_FDOE, before checking the can.ctrlmode bits for
+CAN_CTRLMODE_FD_NON_ISO.
 
-This patch adds a workaround that requests only 32-bit DMA addresses
-when these might be allocated outside of the 4 GB area.
+This way once the controller was configured for CAN_CTRLMODE_FD_NON_ISO,
+this mode could never be cleared again.
 
-This issue has been fixed in firmware v3.3.0 and next.
+This fix is only relevant for controllers with version 3.1.x or 3.2.x.
+Older versions do not support NISO.
 
-Signed-off-by: Stephane Grosjean <s.grosjean@peak-system.com>
+Signed-off-by: Roman Fietze <roman.fietze@telemotive.de>
 Cc: linux-stable <stable@vger.kernel.org>
 Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/can/peak_canfd/peak_pciefd_main.c |   19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
+ drivers/net/can/m_can/m_can.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/net/can/peak_canfd/peak_pciefd_main.c
-+++ b/drivers/net/can/peak_canfd/peak_pciefd_main.c
-@@ -58,6 +58,10 @@ MODULE_LICENSE("GPL v2");
- #define PCIEFD_REG_SYS_VER1		0x0040	/* version reg #1 */
- #define PCIEFD_REG_SYS_VER2		0x0044	/* version reg #2 */
+--- a/drivers/net/can/m_can/m_can.c
++++ b/drivers/net/can/m_can/m_can.c
+@@ -1073,7 +1073,8 @@ static void m_can_chip_config(struct net
  
-+#define PCIEFD_FW_VERSION(x, y, z)	(((u32)(x) << 24) | \
-+					 ((u32)(y) << 16) | \
-+					 ((u32)(z) << 8))
-+
- /* System Control Registers Bits */
- #define PCIEFD_SYS_CTL_TS_RST		0x00000001	/* timestamp clock */
- #define PCIEFD_SYS_CTL_CLK_EN		0x00000002	/* system clock */
-@@ -783,6 +787,21 @@ static int peak_pciefd_probe(struct pci_
- 		 "%ux CAN-FD PCAN-PCIe FPGA v%u.%u.%u:\n", can_count,
- 		 hw_ver_major, hw_ver_minor, hw_ver_sub);
+ 	} else {
+ 	/* Version 3.1.x or 3.2.x */
+-		cccr &= ~(CCCR_TEST | CCCR_MON | CCCR_BRSE | CCCR_FDOE);
++		cccr &= ~(CCCR_TEST | CCCR_MON | CCCR_BRSE | CCCR_FDOE |
++			  CCCR_NISO);
  
-+#ifdef CONFIG_ARCH_DMA_ADDR_T_64BIT
-+	/* FW < v3.3.0 DMA logic doesn't handle correctly the mix of 32-bit and
-+	 * 64-bit logical addresses: this workaround forces usage of 32-bit
-+	 * DMA addresses only when such a fw is detected.
-+	 */
-+	if (PCIEFD_FW_VERSION(hw_ver_major, hw_ver_minor, hw_ver_sub) <
-+	    PCIEFD_FW_VERSION(3, 3, 0)) {
-+		err = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(32));
-+		if (err)
-+			dev_warn(&pdev->dev,
-+				 "warning: can't set DMA mask %llxh (err %d)\n",
-+				 DMA_BIT_MASK(32), err);
-+	}
-+#endif
-+
- 	/* stop system clock */
- 	pciefd_sys_writereg(pciefd, PCIEFD_SYS_CTL_CLK_EN,
- 			    PCIEFD_REG_SYS_CTL_CLR);
+ 		/* Only 3.2.x has NISO Bit implemented */
+ 		if (priv->can.ctrlmode & CAN_CTRLMODE_FD_NON_ISO)
 
 
