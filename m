@@ -6,108 +6,114 @@ X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65044C67790
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 04:36:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BCF5C67790
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 04:44:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0B67720893
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 04:36:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1E84620842
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 04:44:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="SxlZ+wJg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0B67720893
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="gi7tM37w"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E84620842
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729104AbeG0F4q (ORCPT
+        id S1729426AbeG0GEC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 01:56:46 -0400
-Received: from ozlabs.org ([203.11.71.1]:36383 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725838AbeG0F4q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 01:56:46 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 41cGQ33Zq5z9rxx;
-        Fri, 27 Jul 2018 14:36:41 +1000 (AEST)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1532666204;
-        bh=WUfUuTC0USVZXJwq9TfFzxW4EkQTIt4zNAQOHf/+sXk=;
-        h=Date:From:To:Cc:Subject:From;
-        b=SxlZ+wJgxb5EDwlENY2LStwoKL5Y7x4ksjRlZKwR8WltrJHmjtYMJcvRbd3WUZxa6
-         Q7s+1+NgXlawYPMiNzxobR0j3rlVppTg0IJqJKA3kOSG1UqWo1KjFQtR6VAKAqF7oV
-         yfB5sJ1Dkj7svvAyxMDAKXjGOxxCsdcVpdW01FZH23t//B/FX/ONpTy0H4URQahZIW
-         IBVYuZg3SEvTlB4uDHIHD24CqI75a2p+D12JVSclG8prbpF2dRZyQWJvI0xL5Xk47x
-         688qaF84aF4KLUputv2YL7nUF+TKfAFzalmSR6480TOn58Idq+gxK/fPEEagCYlm1s
-         S8KwaLfQytVMw==
-Date:   Fri, 27 Jul 2018 14:36:40 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Dave Airlie <airlied@linux.ie>,
-        DRI <dri-devel@lists.freedesktop.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Steve Longerbeam <steve_longerbeam@mentor.com>
-Subject: linux-next: manual merge of the drm tree with the v4l-dvb tree
-Message-ID: <20180727143640.4dc3fa54@canb.auug.org.au>
+        Fri, 27 Jul 2018 02:04:02 -0400
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:38188 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725999AbeG0GEC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Jul 2018 02:04:02 -0400
+Received: from dflxv15.itg.ti.com ([128.247.5.124])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id w6R4htnm130886;
+        Thu, 26 Jul 2018 23:43:55 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1532666635;
+        bh=EjxdLIfuGZctNJySJUZyuR37j1oXjx/8TXLNYlT7D58=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=gi7tM37wMhr58JOvcR/zW9B0ICIPdOe4cKTe61FVxLKR3L99UCKGVP22J1nuZz26B
+         stSJ291gHeJMCkUhda8Ncf8Q6+Y8KfKjB0HCG3DEI/2rAlmOuk3aVnFUB22ObG5b9P
+         h8EBxqK+LLpYsfHbVeZdHEtWBJFxtv8P/VMiwBiA=
+Received: from DLEE110.ent.ti.com (dlee110.ent.ti.com [157.170.170.21])
+        by dflxv15.itg.ti.com (8.14.3/8.13.8) with ESMTP id w6R4hta2004134;
+        Thu, 26 Jul 2018 23:43:55 -0500
+Received: from DLEE106.ent.ti.com (157.170.170.36) by DLEE110.ent.ti.com
+ (157.170.170.21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Thu, 26
+ Jul 2018 23:43:55 -0500
+Received: from dflp32.itg.ti.com (10.64.6.15) by DLEE106.ent.ti.com
+ (157.170.170.36) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
+ Thu, 26 Jul 2018 23:43:54 -0500
+Received: from [172.24.191.45] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dflp32.itg.ti.com (8.14.3/8.13.8) with ESMTP id w6R4hpw4021612;
+        Thu, 26 Jul 2018 23:43:52 -0500
+Subject: Re: [PATCH 01/14] thermal: ti-soc-thermal: fix TALERT IRQ handling
+ for DRA752
+To:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+CC:     Eduardo Valentin <edubezval@gmail.com>,
+        Zhang Rui <rui.zhang@intel.com>, <linux-pm@vger.kernel.org>,
+        <linux-omap@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <1526298141-14045-1-git-send-email-b.zolnierkie@samsung.com>
+ <1526298141-14045-2-git-send-email-b.zolnierkie@samsung.com>
+ <fd458da1-75d6-84ed-838a-0495045fad77@ti.com>
+ <CGME20180725142707eucas1p25bf4bc7b63babc0732db13ae9a79d983@eucas1p2.samsung.com>
+ <2243156.HcYyxvpmOE@amdc3058>
+From:   Keerthy <j-keerthy@ti.com>
+Message-ID: <e9452238-319e-ad4b-5e9a-df3cd0d25ae8@ti.com>
+Date:   Fri, 27 Jul 2018 10:13:51 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/tJtDrI3UakkURF+g5o+Re61"; protocol="application/pgp-signature"
+In-Reply-To: <2243156.HcYyxvpmOE@amdc3058>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/tJtDrI3UakkURF+g5o+Re61
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
-
-Hi all,
-
-Today's linux-next merge of the drm tree got a conflict in:
-
-  drivers/gpu/ipu-v3/ipu-cpmem.c
-
-between commit:
-
-  343b23a7c6b6 ("media: gpu: ipu-v3: Allow negative offsets for interlaced =
-scanning")
-
-from the v4l-dvb tree and commit:
-
-  4e3c5d7e05be ("gpu: ipu-v3: Allow negative offsets for interlaced scannin=
-g")
-
-from the drm tree.
-
-I fixed it up (I just used the drm tree version) and can carry the fix
-as necessary. This is now fixed as far as linux-next is concerned, but
-any non trivial conflicts should be mentioned to your upstream maintainer
-when your tree is submitted for merging.  You may also want to consider
-cooperating with the maintainer of the conflicting tree to minimise any
-particularly complex conflicts.
 
 
+On Wednesday 25 July 2018 07:57 PM, Bartlomiej Zolnierkiewicz wrote:
+> On Wednesday, July 11, 2018 07:49:41 AM J, KEERTHY wrote:
+>>
+>> On 5/14/2018 5:12 PM, Bartlomiej Zolnierkiewicz wrote:
+>>> .report_temperature is not set in dra752_data which
+>>> results in temperature updates not being propagated by
+>>> ti_bandgap_talert_irq_handler() (it doesn't make much
+>>> sense to handle TALERT IRQ without reporting temperature
+>>> updates to the thermal core). Fix it.
+>>
+>> ATM no one is using TALERT as the thermal software polls on the 
+>> temperature. No real benefit from TALERT.
+>>
+>> TALERT is set at different temperature and software polling thresholds 
+>> come from Device tree and i believe its best for software to go by 
+>> polling and then act on trip points.
+> 
+> Could you please explain what do you mean by "no one is using
+> TALERT"?
+> 
+> The code in ti_bandgap_probe() sets TALERT thresholds and requests
+> IRQ if the TI_BANDGAP_FEATURE_TALERT feature flag is set (and this
+> flag is set in omap4460_data, omap4470_data, omap5430_data and
+> dra752_data).
 
---=20
-Cheers,
-Stephen Rothwell
+The software thresholds and the polling takes care of reducing the
+temperature. What i actually meant was we never relied on talert and the
+polling takes care of keeping a check on the temperature.
 
---Sig_/tJtDrI3UakkURF+g5o+Re61
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+Regards,
+Keerthy
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltaoVgACgkQAVBC80lX
-0Gw6PAf/WB4sfm81A8xuj62y9T8Kw1mNJDO7++f3WjYdlepP5s/EchZeun1kr9od
-qdlRuSeUFrUvk99jLYCUrbNowkULSMypUJF/vCnCvhuc6ozrc9yUjJSchnPmRiZp
-RVVWoHMw49pbzVlxvnd7BQkyXZhNuqyL8jpPdq/46TAXsMK+uyYmgpHebaTVBLYj
-tNVIc3De2BejcKrZJj0cn0AU3aRNTEGUNQ6ZFxyTal8+JarXl9ynJIiWH0ooLJTw
-qMlXcKRvpotzZsItP/N65RW6PJAD0AQMcImqu1bzSTCsrwKkN4zorSL8ihLG5WG9
-rdGsp6MmZxtQllOHeyWkOvgRRU3WnA==
-=vROx
------END PGP SIGNATURE-----
-
---Sig_/tJtDrI3UakkURF+g5o+Re61--
+> 
+> Best regards,
+> --
+> Bartlomiej Zolnierkiewicz
+> Samsung R&D Institute Poland
+> Samsung Electronics
+> 
