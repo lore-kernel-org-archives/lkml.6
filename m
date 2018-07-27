@@ -2,172 +2,123 @@ Return-Path: <SRS0=OQFz=KL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41F53C67790
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 11:11:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02F02C67790
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 11:11:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8FE022089B
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 11:11:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A11D92089B
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 11:11:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="dMdXqAWB"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8FE022089B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
+	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="glsoox0v"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A11D92089B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732336AbeG0Mcn (ORCPT
+        id S1732899AbeG0Mcp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 08:32:43 -0400
-Received: from mailout1.samsung.com ([203.254.224.24]:53351 "EHLO
-        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730290AbeG0Mcn (ORCPT
+        Fri, 27 Jul 2018 08:32:45 -0400
+Received: from smtprelay2.synopsys.com ([198.182.60.111]:50034 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730290AbeG0Mcp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 08:32:43 -0400
-Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
-        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20180727111114epoutp01c62ae45a656590d998eb7e5f73051bc0~FNVH2js-o0488004880epoutp01n
-        for <linux-kernel@vger.kernel.org>; Fri, 27 Jul 2018 11:11:14 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20180727111114epoutp01c62ae45a656590d998eb7e5f73051bc0~FNVH2js-o0488004880epoutp01n
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1532689874;
-        bh=2rxVXV4IZyVD+7u190/rUBtSmE8Km16+XG+rERbsr2Y=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dMdXqAWBxs+SkTwLw4yWFmgwBmRjoSIeUvDhiUNphXXiyu8AcCFnIrDD4uvIEtlRD
-         zTxYLCy1Vi1BtiPSOSHyW75cy9wINLma0MElGZMOdCk/q3OdQ9WefgSsrnR714mTNu
-         ZdXUv+1VqE693SxqXVb9walSMFq6EP5u6VYBCXyo=
-Received: from epsmges5p2new.samsung.com (unknown [182.195.40.195]) by
-        epcas5p3.samsung.com (KnoxPortal) with ESMTP id
-        20180727111113epcas5p3f4c6fc421b39dd9ad35c0d89fb7a3031~FNVHSjb6G2447324473epcas5p3H;
-        Fri, 27 Jul 2018 11:11:13 +0000 (GMT)
-Received: from epcas5p4.samsung.com ( [182.195.41.42]) by
-        epsmges5p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        A4.2C.04309.1DDFA5B5; Fri, 27 Jul 2018 20:11:13 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
-        20180727111112epcas5p35e49be90453d18c560207d6ab34661ec~FNVGm5QCq0042200422epcas5p3X;
-        Fri, 27 Jul 2018 11:11:12 +0000 (GMT)
-Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
-        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20180727111112epsmtrp1945caf469dc584f5fb18de5477e7481e~FNVGlbx010700207002epsmtrp1K;
-        Fri, 27 Jul 2018 11:11:12 +0000 (GMT)
-X-AuditID: b6c32a4a-9b3ff700000010d5-c8-5b5afdd1ed78
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-        epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        74.95.03889.0DDFA5B5; Fri, 27 Jul 2018 20:11:12 +0900 (KST)
-Received: from localhost.localdomain (unknown [107.108.161.94]) by
-        epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20180727111111epsmtip1571545345effcf9abfad87356d95cfc7~FNVExqOkv2482624826epsmtip1F;
-        Fri, 27 Jul 2018 11:11:10 +0000 (GMT)
-From:   Satendra Singh Thakur <satendra.t@samsung.com>
-To:     Gustavo Padovan <gustavo@padovan.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Sean Paul <seanpaul@chromium.org>,
-        David Airlie <airlied@linux.ie>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Cc:     vineet.j@samsung.com, hemanshu.s@samsung.com, sst2005@gmail.com,
-        Satendra Singh Thakur <satendra.t@samsung.com>
-Subject: [PATCH v1] drm/kms/atomic: Using existing func for checking
- framebuffer dimensions
-Date:   Fri, 27 Jul 2018 16:41:02 +0530
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <0fe3bbc5-d10b-7c95-e77d-f4cd5ee6016b@linux.intel.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrJKsWRmVeSWpSXmKPExsWy7bCmlu7Fv1HRBouuqln0njvJZHHl63s2
-        i50PdrFbvDr/htni8q45bBYLP25lsVh7vpXF4u6Gs4wWy09fZ7Y4tvUSuwOXx+yGiyweO2fd
-        ZffY/u0Bq8e8k4Ee97uPM3nsnLSXyaNvyypGj8+b5AI4olJtMlITU1KLFFLzkvNTMvPSbZW8
-        g+Od403NDAx1DS0tzJUU8hJzU22VXHwCdN0yc4BuVFIoS8wpBQoFJBYXK+nb2RTll5akKmTk
-        F5fYKkUbGhrpGRqY6xkZAWnTWCsjU6CShNSM/knrmAs2C1T07m5gbWBcxdvFyMkhIWAice3p
-        H6YuRi4OIYHdjBJbFz9mhHA+MUo0r3nKDOF8Y5T48PESK0zL+z8N7BCJvYwSB5cdYgFJCAl8
-        YZRYc8MaxGYDKno+ZwYrSJGIwEtGiZstZ8C6mQVKJR7cbGIGsYUFYiUeHz/EDmKzCKhK/Do8
-        nw1ig5zEzXOdYDWcAs4Sb1dsYwEZJCFwgk1i6f9jjCAJXoEyiXmfzzFDNLhIXNq9kAnCFpZ4
-        dXwLO4QtJfGyvw3Kngz00Fk/iEGrGSXOXuyFSthLtEw5ALSBA+g6TYn1u/QhDuWT6P39hAkk
-        LCHAK9HRJgRRrSKx8sVhZpjxfxZ0QUPFQ2Lhh5/Q4JrGKPHx2EGmCYyysxCmLmBkXMUomVpQ
-        nJueWmxaYJSXWq5XnJhbXJqXrpecn7uJEZzstLx2MC4753OIUYCDUYmHN+B1ZLQQa2JZcWXu
-        IUYJDmYlEd4114FCvCmJlVWpRfnxRaU5qcWHGE2BITiRWUo0OR+YiPNK4g1NjczMDCwNTI0t
-        zAyVxHk/+AVHCwmkJ5akZqemFqQWwfQxcXBKNTByHC/0mS+Q8c1y37aH6bG5XCENMuGLwj86
-        znLXXPdPkq86zJGBZfIShx9vLkqKffP6sv/ItVKrmBcPrwpMEOj1M/rE4tIcvP2no7FlxDrW
-        F6HxqyLu9n7+rrWXqSd2lfx5JR/7CXdS94ozSOifrMp4sMrdas1srXyTBtErByOK6t+XPWpx
-        m6fEUpyRaKjFXFScCAANENDqjAMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrALMWRmVeSWpSXmKPExsWy7bCSnO6Fv1HRBptfmVn0njvJZHHl63s2
-        i50PdrFbvDr/htni8q45bBYLP25lsVh7vpXF4u6Gs4wWy09fZ7Y4tvUSuwOXx+yGiyweO2fd
-        ZffY/u0Bq8e8k4Ee97uPM3nsnLSXyaNvyypGj8+b5AI4orhsUlJzMstSi/TtErgy+ietYy7Y
-        LFDRu7uBtYFxFW8XIyeHhICJxPs/DewgtpDAbkaJuVNNIOJSEsvebGODsIUlVv57DlTDBVTz
-        iVHi6IX/zCAJNqDm53NmsIIkRATeMkq07jzNApJgFqiUOPd8MmMXIweHsEC0xP9uI5Awi4Cq
-        xK/D88GG8gq4SvTsW80MsUBO4ua5TjCbU8BZ4u2KbSwQBzlJzJ/UzDyBkW8BI8MqRsnUguLc
-        9NxiwwKjvNRyveLE3OLSvHS95PzcTYzgcNXS2sF44kT8IUYBDkYlHt6A15HRQqyJZcWVuYcY
-        JTiYlUR411wHCvGmJFZWpRblxxeV5qQWH2KU5mBREueVzz8WKSSQnliSmp2aWpBaBJNl4uCU
-        amAsC30bHlya0vzcvUzujh1LveSp2awaITc3bty3Oa1/efzbjSJeG68liU2V2FS/PWzznziX
-        zxeyTTx9/K9zW0oGOBbr5upGrP48dd56zpVF7nyS2+Z8MlYJmvOLd5HEsa13fbYc42+/2Les
-        eGd+SJ5p7NwLcy6dEj64puHn5C8yhkeiL37/zDpPiaU4I9FQi7moOBEAQhxNL1MCAAA=
-Message-Id: <20180727111112epcas5p35e49be90453d18c560207d6ab34661ec~FNVGm5QCq0042200422epcas5p3X@epcas5p3.samsung.com>
-X-CMS-MailID: 20180727111112epcas5p35e49be90453d18c560207d6ab34661ec
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20180727111112epcas5p35e49be90453d18c560207d6ab34661ec
-References: <0fe3bbc5-d10b-7c95-e77d-f4cd5ee6016b@linux.intel.com>
-        <CGME20180727111112epcas5p35e49be90453d18c560207d6ab34661ec@epcas5p3.samsung.com>
+        Fri, 27 Jul 2018 08:32:45 -0400
+Received: from mailhost.synopsys.com (mailhost3.synopsys.com [10.12.238.238])
+        by smtprelay.synopsys.com (Postfix) with ESMTP id 7D4C910C0F9E;
+        Fri, 27 Jul 2018 04:11:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1532689878; bh=69rGn+FADR5C6E9IiFHn1tcxUELc7Z3Ze+eWrcG6Foc=;
+        h=From:To:CC:Subject:Date:References:From;
+        b=glsoox0v3t96ABcQOZtxLJ6cAr/a5ujJSEaAjkTkd81lWMcVh8ih07zl7cH/oUP8t
+         K3/Ctd3wdkybpTJlVKFUtclAqBhQ9qwisJlXMqp08b0eqJB3RjPyQnIYnn19vD9+7t
+         Xi0twAHQ0SPegWna77QoLXS86N31LFSmpy4sPzh/Us1pFtVfyGkuiBgldkPGXRyy0H
+         U/F27hkuPs47oHkhtL/Dau8dXG3BBj9NaIFY9C89n07W491cQawvXiZeKXEg3U93ey
+         UVLu4mnYDu8jUNKVvPeHB3kKB+PPb65mp2bWhHg4aW9JXY3WR5DLzkJQ0iRpzQrIiw
+         2ldb+Wg/alemQ==
+Received: from US01WXQAHTC1.internal.synopsys.com (us01wxqahtc1.internal.synopsys.com [10.12.238.230])
+        by mailhost.synopsys.com (Postfix) with ESMTP id 5A2733B78;
+        Fri, 27 Jul 2018 04:11:18 -0700 (PDT)
+Received: from AM04WEHTCB.internal.synopsys.com (10.116.16.192) by
+ US01WXQAHTC1.internal.synopsys.com (10.12.238.230) with Microsoft SMTP Server
+ (TLS) id 14.3.361.1; Fri, 27 Jul 2018 04:11:17 -0700
+Received: from AM04WEMBXA.internal.synopsys.com ([fe80::79c3:55f2:1f20:5bf4])
+ by am04wehtcb.internal.synopsys.com ([::1]) with mapi id 14.03.0361.001; Fri,
+ 27 Jul 2018 15:11:15 +0400
+From:   Minas Harutyunyan <Minas.Harutyunyan@synopsys.com>
+To:     Douglas Anderson <dianders@chromium.org>,
+        "balbi@kernel.org" <balbi@kernel.org>,
+        "Minas.Harutyunyan@synopsys.com" <Minas.Harutyunyan@synopsys.com>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
+CC:     "stefan.wahren@i2se.com" <stefan.wahren@i2se.com>,
+        "grigor.tovmasyan@synopsys.com" <grigor.tovmasyan@synopsys.com>,
+        "Bruno Herrera" <bruherrera@gmail.com>,
+        Zhangfei Gao <zhangfei.gao@linaro.org>,
+        "john.stultz@linaro.org" <john.stultz@linaro.org>,
+        Stephen Warren <swarren@wwwdotorg.org>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [REPOST PATCH 4/4] usb: dwc2: Turn on uframe_sched on
+ "stm32f4x9_fsotg" platforms
+Thread-Topic: [REPOST PATCH 4/4] usb: dwc2: Turn on uframe_sched on
+ "stm32f4x9_fsotg" platforms
+Thread-Index: AQHUJRxfzn89egir8kiZnHbl16+nLA==
+Date:   Fri, 27 Jul 2018 11:11:15 +0000
+Message-ID: <410670D7E743164D87FA6160E7907A56013A5CBE67@am04wembxa.internal.synopsys.com>
+References: <20180726200730.18290-1-dianders@chromium.org>
+ <20180726200730.18290-5-dianders@chromium.org>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.116.70.151]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In the func drm_atomic_plane_check, the fb geometry checking code
-can be replaced by func drm_framebuffer_check_src_coords, this will
-remove several redundant lines of code.
-
-Signed-off-by: Satendra Singh Thakur <satendra.t@samsung.com>
----
- v1: Hi Mr Maarten, Thanks for the comments.
-     I have splitted them into two patches.  
-
- drivers/gpu/drm/drm_atomic.c | 22 ++++------------------
- 1 file changed, 4 insertions(+), 18 deletions(-)
-
-diff --git a/drivers/gpu/drm/drm_atomic.c b/drivers/gpu/drm/drm_atomic.c
-index 895741e..953bd2a 100644
---- a/drivers/gpu/drm/drm_atomic.c
-+++ b/drivers/gpu/drm/drm_atomic.c
-@@ -909,7 +909,6 @@ plane_switching_crtc(struct drm_atomic_state *state,
- static int drm_atomic_plane_check(struct drm_plane *plane,
- 		struct drm_plane_state *state)
- {
--	unsigned int fb_width, fb_height;
- 	int ret;
- 
- 	/* either *both* CRTC and FB must be set, or neither */
-@@ -954,24 +953,11 @@ static int drm_atomic_plane_check(struct drm_plane *plane,
- 		return -ERANGE;
- 	}
- 
--	fb_width = state->fb->width << 16;
--	fb_height = state->fb->height << 16;
--
- 	/* Make sure source coordinates are inside the fb. */
--	if (state->src_w > fb_width ||
--	    state->src_x > fb_width - state->src_w ||
--	    state->src_h > fb_height ||
--	    state->src_y > fb_height - state->src_h) {
--		DRM_DEBUG_ATOMIC("Invalid source coordinates "
--				 "%u.%06ux%u.%06u+%u.%06u+%u.%06u (fb %ux%u)\n",
--				 state->src_w >> 16, ((state->src_w & 0xffff) * 15625) >> 10,
--				 state->src_h >> 16, ((state->src_h & 0xffff) * 15625) >> 10,
--				 state->src_x >> 16, ((state->src_x & 0xffff) * 15625) >> 10,
--				 state->src_y >> 16, ((state->src_y & 0xffff) * 15625) >> 10,
--				 state->fb->width, state->fb->height);
--		return -ENOSPC;
--	}
--
-+	ret = drm_framebuffer_check_src_coords(state->src_x, state->src_y,
-+		state->src_w, state->src_h, state->fb);
-+	if (ret)
-+		return ret;
- 	if (plane_switching_crtc(state->state, plane, state)) {
- 		DRM_DEBUG_ATOMIC("[PLANE:%d:%s] switching CRTC directly\n",
- 				 plane->base.id, plane->name);
--- 
-2.7.4
-
+On 7/27/2018 12:08 AM, Douglas Anderson wrote:=0A=
+> There's no reason to have the uframe scheduler off on dwc2.  Running=0A=
+> with uframe_sched =3D False is equivalent to saying "I don't want to run=
+=0A=
+> the correct code, I want to run the old and incorrect code".=0A=
+> =0A=
+> The uframe scheduler has been off on stm32f4x9_fsotg since commit=0A=
+> e35b135055e2 ("usb: dwc2: Add support for STM32F429/439/469 USB OTG=0A=
+> HS/FS in FS mode (internal PHY)").  That commit is pretty recent, so=0A=
+> it's unclear to me why the uframe scheduler was left off.  Hopefully=0A=
+> it's because someone copied it from other parameters and didn't think=0A=
+> to try it?=0A=
+> =0A=
+> Presumably if everyone is good w/ the uframe_sched turned back on we=0A=
+> can kill all the old and crufty non-uframe sched code.=0A=
+> =0A=
+> Signed-off-by: Douglas Anderson <dianders@chromium.org>=0A=
+=0A=
+Reviewed-by: Minas Harutyunyan <hminas@synopsys.com>=0A=
+=0A=
+> ---=0A=
+> =0A=
+>   drivers/usb/dwc2/params.c | 1 -=0A=
+>   1 file changed, 1 deletion(-)=0A=
+> =0A=
+> diff --git a/drivers/usb/dwc2/params.c b/drivers/usb/dwc2/params.c=0A=
+> index 93380f7c32b4..7be35bcde713 100644=0A=
+> --- a/drivers/usb/dwc2/params.c=0A=
+> +++ b/drivers/usb/dwc2/params.c=0A=
+> @@ -131,7 +131,6 @@ static void dwc2_set_stm32f4x9_fsotg_params(struct dw=
+c2_hsotg *hsotg)=0A=
+>   	p->max_packet_count =3D 256;=0A=
+>   	p->phy_type =3D DWC2_PHY_TYPE_PARAM_FS;=0A=
+>   	p->i2c_enable =3D false;=0A=
+> -	p->uframe_sched =3D false;=0A=
+>   	p->activate_stm_fs_transceiver =3D true;=0A=
+>   }=0A=
+>   =0A=
+> =0A=
+=0A=
