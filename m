@@ -2,152 +2,122 @@ Return-Path: <SRS0=OQFz=KL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52860C6778F
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 11:06:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C4FBC6778F
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 11:09:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 06F182089B
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 11:06:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E6B18208A3
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 11:09:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="De9+5RYF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 06F182089B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="eRVPk3rD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E6B18208A3
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732091AbeG0M1d (ORCPT
+        id S1730866AbeG0MbL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 08:27:33 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:44097 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730753AbeG0M1d (ORCPT
+        Fri, 27 Jul 2018 08:31:11 -0400
+Received: from us01smtprelay-2.synopsys.com ([198.182.47.9]:53354 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730182AbeG0MbL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 08:27:33 -0400
-Received: by mail-lj1-f195.google.com with SMTP id q127-v6so4082096ljq.11;
-        Fri, 27 Jul 2018 04:06:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=2eCDJqCQOR5gJhwrnKSgSE2xyMt1RtU4mVw1jc49DtY=;
-        b=De9+5RYFkEKrgTdSJtIPY2K7AsY0faRjBt1jyqFm6s8g1YM4QQUEqJ2kURuCIhopoj
-         bE7t7ndxcXjsvrwG0myxXF7rzcXkdZNDvlaE4mhe6GQIXZUUGyC2Y8C4msmsluRuS4Jx
-         LteQaVxzGJOd7CihD9NOlov7d1OzOKLkoa6CqQ5spAY7hygsrXZFEjkoXtI/HZFPyghe
-         yq+Tcp5zu2fhbHC8AN5bPa6MsZtc1bDYdByLADdMlwugPizh3qWEF0jqtW2HDhpooxYg
-         K3YzXikjUuZKsk4tNI684Szgn0XWA3ENwl0+1cwpCEAJCPxwYDPhZM4wl46RpnssSXGF
-         5Wyw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=2eCDJqCQOR5gJhwrnKSgSE2xyMt1RtU4mVw1jc49DtY=;
-        b=b8+MRintATTUFqy3MH61tiMpxyvtcnixtA5KIBl8PLB5MY8rqjA06wDO1Uh6E0eYD+
-         vlkrBg41crtkNFRuPs2TlqgJq64Co6b0y+qu/nrhM+xxSXPXGK/PQP4JTMjFRig5pHt5
-         CoMWtf2dIp/YiiFCiVkoVjf000woOjXgdrHh4lre4ND+CV/QeyrdZc7pU/hht5lgwAuz
-         dOd4YhBEEvrL9pJ39ecw2hNTplTjoUQMF/TSAE4ZMrSUhqyXI8DrU71/2ZJvkziirkzr
-         ZAAeECwOkZf1TYayXGUq4klwiF5g7L9n20R3q4efqwspzaYe5EfjYDUsC0XTr7vtAdUv
-         PHqw==
-X-Gm-Message-State: AOUpUlGoZeBTHHcfrAkvgBrMKijLIJsW3ZPPugF2badmCW7SK7DGMRq1
-        M9GNhhqi0t1if6iQ07oVxIU=
-X-Google-Smtp-Source: AAOMgpeSlmXiFkrDbWHot+/ZCruZTggaYVxuRpChVlwva/hbVJJ82IpfHnOadx3pVbZGhysYrZtdUQ==
-X-Received: by 2002:a2e:1517:: with SMTP id s23-v6mr4813145ljd.73.1532689566182;
-        Fri, 27 Jul 2018 04:06:06 -0700 (PDT)
-Received: from debian-tom.lan ([2001:2012:22e:1b00:f2e2:9015:9262:3fde])
-        by smtp.gmail.com with ESMTPSA id t66-v6sm616475lje.95.2018.07.27.04.06.04
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 27 Jul 2018 04:06:05 -0700 (PDT)
-From:   Tomas Bortoli <tomasbortoli@gmail.com>
-To:     ericvh@gmail.com, rminnich@sandia.gov, lucho@ionkov.net
-Cc:     asmadeus@codewreck.org, davem@davemloft.net,
-        v9fs-developer@lists.sourceforge.net, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller@googlegroups.com,
-        Tomas Bortoli <tomasbortoli@gmail.com>
-Subject: [PATCH] 9p: fix multiple NULL-pointer-dereferences
-Date:   Fri, 27 Jul 2018 13:05:58 +0200
-Message-Id: <20180727110558.5479-1-tomasbortoli@gmail.com>
-X-Mailer: git-send-email 2.11.0
+        Fri, 27 Jul 2018 08:31:11 -0400
+Received: from mailhost.synopsys.com (mailhost2.synopsys.com [10.13.184.66])
+        by smtprelay.synopsys.com (Postfix) with ESMTP id 9895A24E2126;
+        Fri, 27 Jul 2018 04:09:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1532689784; bh=DKR/blZ4DBjVoWpoQ2GYaRONUKgedSVM+ZWCCo+F/S4=;
+        h=From:To:CC:Subject:Date:References:From;
+        b=eRVPk3rDBdjXn2Ai+6578URtgvLIJw8aHBTzcWrUgaGLB6mOa1oUarDtnoGHPk0Yd
+         LrVBXusD5e+pEX8bb02FO+g0eWPDx6M6zoh474WAi1xbcvoevNqnwb73UHHdS59aw8
+         HztdW/WHxhHiBNokYTuvvB5LQO0uXUw0cux1V4jGChk07gDmdjq/g2dMteBmIOd/D5
+         bTnPnWF9Pqbalqs7XjmB7TUS0FVxGcc1bBr6oHuY0sG9a6aZ4XAG2DLWwrIIB0Y7ks
+         TIDsIdf1oHziwPm1FgFVgYIIPVNAlz6QZPfbM+6BSqfdgKPj4LuPrlZppIkzXTwXjv
+         /wMsubeMDe3jA==
+Received: from US01WEHTC3.internal.synopsys.com (us01wehtc3.internal.synopsys.com [10.15.84.232])
+        by mailhost.synopsys.com (Postfix) with ESMTP id 2ECFE37AB;
+        Fri, 27 Jul 2018 04:09:44 -0700 (PDT)
+Received: from AM04WEHTCB.internal.synopsys.com (10.116.16.192) by
+ US01WEHTC3.internal.synopsys.com (10.15.84.232) with Microsoft SMTP Server
+ (TLS) id 14.3.361.1; Fri, 27 Jul 2018 04:09:43 -0700
+Received: from AM04WEMBXA.internal.synopsys.com ([fe80::79c3:55f2:1f20:5bf4])
+ by am04wehtcb.internal.synopsys.com ([::1]) with mapi id 14.03.0361.001; Fri,
+ 27 Jul 2018 15:09:41 +0400
+From:   Minas Harutyunyan <Minas.Harutyunyan@synopsys.com>
+To:     Douglas Anderson <dianders@chromium.org>,
+        "balbi@kernel.org" <balbi@kernel.org>,
+        "Minas.Harutyunyan@synopsys.com" <Minas.Harutyunyan@synopsys.com>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
+CC:     "stefan.wahren@i2se.com" <stefan.wahren@i2se.com>,
+        "grigor.tovmasyan@synopsys.com" <grigor.tovmasyan@synopsys.com>,
+        "Bruno Herrera" <bruherrera@gmail.com>,
+        Zhangfei Gao <zhangfei.gao@linaro.org>,
+        "john.stultz@linaro.org" <john.stultz@linaro.org>,
+        Stephen Warren <swarren@wwwdotorg.org>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [REPOST PATCH 1/4] usb: dwc2: Turn on uframe_sched on "bcm"
+ platforms
+Thread-Topic: [REPOST PATCH 1/4] usb: dwc2: Turn on uframe_sched on "bcm"
+ platforms
+Thread-Index: AQHUJRxdKPuevOS9UEymG/oseDHvnA==
+Date:   Fri, 27 Jul 2018 11:09:39 +0000
+Message-ID: <410670D7E743164D87FA6160E7907A56013A5CBE23@am04wembxa.internal.synopsys.com>
+References: <20180726200730.18290-1-dianders@chromium.org>
+ <20180726200730.18290-2-dianders@chromium.org>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.116.70.151]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Added checks to prevent GPFs from raising.
-
-Signed-off-by: Tomas Bortoli <tomasbortoli@gmail.com>
-Reported-by: syzbot+1a262da37d3bead15c39@syzkaller.appspotmail.com
----
- net/9p/trans_fd.c     | 5 ++++-
- net/9p/trans_rdma.c   | 3 +++
- net/9p/trans_virtio.c | 3 +++
- net/9p/trans_xen.c    | 3 +++
- 4 files changed, 13 insertions(+), 1 deletion(-)
-
-diff --git a/net/9p/trans_fd.c b/net/9p/trans_fd.c
-index 964260265b13..e2ef3c782c53 100644
---- a/net/9p/trans_fd.c
-+++ b/net/9p/trans_fd.c
-@@ -945,7 +945,7 @@ p9_fd_create_tcp(struct p9_client *client, const char *addr, char *args)
- 	if (err < 0)
- 		return err;
- 
--	if (valid_ipaddr4(addr) < 0)
-+	if (addr == NULL || valid_ipaddr4(addr) < 0)
- 		return -EINVAL;
- 
- 	csocket = NULL;
-@@ -995,6 +995,9 @@ p9_fd_create_unix(struct p9_client *client, const char *addr, char *args)
- 
- 	csocket = NULL;
- 
-+	if (addr == NULL)
-+		return -EINVAL;
-+
- 	if (strlen(addr) >= UNIX_PATH_MAX) {
- 		pr_err("%s (%d): address too long: %s\n",
- 		       __func__, task_pid_nr(current), addr);
-diff --git a/net/9p/trans_rdma.c b/net/9p/trans_rdma.c
-index 2649b2ebf961..2ab4574183c9 100644
---- a/net/9p/trans_rdma.c
-+++ b/net/9p/trans_rdma.c
-@@ -645,6 +645,9 @@ rdma_create_trans(struct p9_client *client, const char *addr, char *args)
- 	struct rdma_conn_param conn_param;
- 	struct ib_qp_init_attr qp_attr;
- 
-+	if (addr == NULL)
-+		return -EINVAL;
-+
- 	/* Parse the transport specific mount options */
- 	err = parse_opts(args, &opts);
- 	if (err < 0)
-diff --git a/net/9p/trans_virtio.c b/net/9p/trans_virtio.c
-index 06dcd3cc6a29..8ca356eb66bb 100644
---- a/net/9p/trans_virtio.c
-+++ b/net/9p/trans_virtio.c
-@@ -654,6 +654,9 @@ p9_virtio_create(struct p9_client *client, const char *devname, char *args)
- 	int ret = -ENOENT;
- 	int found = 0;
- 
-+	if (devname == NULL)
-+		return -EINVAL;
-+
- 	mutex_lock(&virtio_9p_lock);
- 	list_for_each_entry(chan, &virtio_chan_list, chan_list) {
- 		if (!strncmp(devname, chan->tag, chan->tag_len) &&
-diff --git a/net/9p/trans_xen.c b/net/9p/trans_xen.c
-index 2e2b8bca54f3..c2d54ac76bfd 100644
---- a/net/9p/trans_xen.c
-+++ b/net/9p/trans_xen.c
-@@ -94,6 +94,9 @@ static int p9_xen_create(struct p9_client *client, const char *addr, char *args)
- {
- 	struct xen_9pfs_front_priv *priv;
- 
-+	if (addr == NULL)
-+		return -EINVAL;
-+
- 	read_lock(&xen_9pfs_lock);
- 	list_for_each_entry(priv, &xen_9pfs_devs, list) {
- 		if (!strcmp(priv->tag, addr)) {
--- 
-2.11.0
-
+On 7/27/2018 12:08 AM, Douglas Anderson wrote:=0A=
+> There's no reason to have the uframe scheduler off on dwc2.  Running=0A=
+> with uframe_sched =3D False is equivalent to saying "I don't want to run=
+=0A=
+> the correct code, I want to run the old and incorrect code".=0A=
+> =0A=
+> The uframe scheduler has been off on Broadcom since commit=0A=
+> 58b179dcf28c ("staging: dwc2: disable uframe_sched on the bcm2835").=0A=
+> Since then there have been many many improvements, notably the commit=0A=
+> 9f9f09b048f5 ("usb: dwc2: host: Totally redo the microframe=0A=
+> scheduler")=0A=
+> =0A=
+> Presumably if everyone is good w/ the uframe_sched turned back on we=0A=
+> can kill all the old and crufty non-uframe sched code.=0A=
+> =0A=
+> Signed-off-by: Douglas Anderson <dianders@chromium.org>=0A=
+> Tested-by: Stefan Wahren <stefan.wahren@i2se.com>=0A=
+Acked-by: Minas Harutyunyan <hminas@synopsys.com>=0A=
+=0A=
+> ---=0A=
+> =0A=
+>   drivers/usb/dwc2/params.c | 1 -=0A=
+>   1 file changed, 1 deletion(-)=0A=
+> =0A=
+> diff --git a/drivers/usb/dwc2/params.c b/drivers/usb/dwc2/params.c=0A=
+> index af075d4da895..14b8742e62fa 100644=0A=
+> --- a/drivers/usb/dwc2/params.c=0A=
+> +++ b/drivers/usb/dwc2/params.c=0A=
+> @@ -47,7 +47,6 @@ static void dwc2_set_bcm_params(struct dwc2_hsotg *hsot=
+g)=0A=
+>   	p->max_transfer_size =3D 65535;=0A=
+>   	p->max_packet_count =3D 511;=0A=
+>   	p->ahbcfg =3D 0x10;=0A=
+> -	p->uframe_sched =3D false;=0A=
+>   }=0A=
+>   =0A=
+>   static void dwc2_set_his_params(struct dwc2_hsotg *hsotg)=0A=
+> =0A=
+=0A=
