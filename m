@@ -6,34 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AFEBC6778F
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 09:50:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F26F8C6778F
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 09:50:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BC9992089A
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 09:50:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BC9992089A
+	by mail.kernel.org (Postfix) with ESMTP id B399820895
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 09:50:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B399820895
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389117AbeG0LL0 (ORCPT
+        id S2389129AbeG0LLc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 07:11:26 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:53144 "EHLO
+        Fri, 27 Jul 2018 07:11:32 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:53160 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729431AbeG0LL0 (ORCPT
+        with ESMTP id S1729431AbeG0LLc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 07:11:26 -0400
+        Fri, 27 Jul 2018 07:11:32 -0400
 Received: from localhost (unknown [89.188.5.116])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E1152AF8;
-        Fri, 27 Jul 2018 09:50:19 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 09362AF8;
+        Fri, 27 Jul 2018 09:50:25 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Roman Fietze <roman.fietze@telemotive.de>,
-        Marc Kleine-Budde <mkl@pengutronix.de>
-Subject: [PATCH 4.17 66/66] can: m_can.c: fix setup of CCCR register: clear CCCR NISO bit before checking can.ctrlmode
-Date:   Fri, 27 Jul 2018 11:45:59 +0200
-Message-Id: <20180727093816.450558232@linuxfoundation.org>
+        stable@vger.kernel.org, Zheng Xiaowei <zhengxiaowei@ruijie.com.cn>,
+        Mathias Nyman <mathias.nyman@linux.intel.com>
+Subject: [PATCH 4.17 52/66] usb: xhci: Fix memory leak in xhci_endpoint_reset()
+Date:   Fri, 27 Jul 2018 11:45:45 +0200
+Message-Id: <20180727093814.897151441@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180727093809.043856530@linuxfoundation.org>
 References: <20180727093809.043856530@linuxfoundation.org>
@@ -50,41 +50,31 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Roman Fietze <roman.fietze@telemotive.de>
+From: Zheng Xiaowei <zhengxiaowei@ruijie.com.cn>
 
-commit 393753b217f05474e714aea36c37501546ed1202 upstream.
+commit d89b7664f76047e7beca8f07e86f2ccfad085a28 upstream.
 
-Inside m_can_chip_config(), when setting up the new value of the CCCR,
-the CCCR_NISO bit is not cleared like the others, CCCR_TEST, CCCR_MON,
-CCCR_BRSE and CCCR_FDOE, before checking the can.ctrlmode bits for
-CAN_CTRLMODE_FD_NON_ISO.
+If td_list is not empty the cfg_cmd will not be freed,
+call xhci_free_command to free it.
 
-This way once the controller was configured for CAN_CTRLMODE_FD_NON_ISO,
-this mode could never be cleared again.
-
-This fix is only relevant for controllers with version 3.1.x or 3.2.x.
-Older versions do not support NISO.
-
-Signed-off-by: Roman Fietze <roman.fietze@telemotive.de>
-Cc: linux-stable <stable@vger.kernel.org>
-Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
+Signed-off-by: Zheng Xiaowei <zhengxiaowei@ruijie.com.cn>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Mathias Nyman <mathias.nyman@linux.intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/can/m_can/m_can.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/usb/host/xhci.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/net/can/m_can/m_can.c
-+++ b/drivers/net/can/m_can/m_can.c
-@@ -1111,7 +1111,8 @@ static void m_can_chip_config(struct net
- 
- 	} else {
- 	/* Version 3.1.x or 3.2.x */
--		cccr &= ~(CCCR_TEST | CCCR_MON | CCCR_BRSE | CCCR_FDOE);
-+		cccr &= ~(CCCR_TEST | CCCR_MON | CCCR_BRSE | CCCR_FDOE |
-+			  CCCR_NISO);
- 
- 		/* Only 3.2.x has NISO Bit implemented */
- 		if (priv->can.ctrlmode & CAN_CTRLMODE_FD_NON_ISO)
+--- a/drivers/usb/host/xhci.c
++++ b/drivers/usb/host/xhci.c
+@@ -2981,6 +2981,7 @@ static void xhci_endpoint_reset(struct u
+ 	if (!list_empty(&ep->ring->td_list)) {
+ 		dev_err(&udev->dev, "EP not empty, refuse reset\n");
+ 		spin_unlock_irqrestore(&xhci->lock, flags);
++		xhci_free_command(xhci, cfg_cmd);
+ 		goto cleanup;
+ 	}
+ 	xhci_queue_stop_endpoint(xhci, stop_cmd, udev->slot_id, ep_index, 0);
 
 
