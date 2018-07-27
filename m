@@ -6,167 +6,110 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D88CDC67790
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 16:27:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12FF7C6778F
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 16:27:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7BA46208B1
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 16:27:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7BA46208B1
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+	by mail.kernel.org (Postfix) with ESMTP id CAB70205C9
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 16:27:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CAB70205C9
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xmission.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388796AbeG0Rtl (ORCPT
+        id S2388909AbeG0Rtz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 13:49:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44050 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730850AbeG0Rtl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 13:49:41 -0400
-Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B4D03205C9;
-        Fri, 27 Jul 2018 16:27:00 +0000 (UTC)
-Date:   Fri, 27 Jul 2018 12:26:59 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Joel Fernandes <joel@joelfernandes.org>
-Cc:     linux-kernel@vger.kernel.org, kernel-team@android.com,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Byungchul Park <byungchul.park@lge.com>,
-        Erick Reyes <erickreyes@google.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Julia Cartwright <julia@ni.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Paul McKenney <paulmck@linux.vnet.ibm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Glexiner <tglx@linutronix.de>,
-        Todd Kjos <tkjos@google.com>,
-        Tom Zanussi <tom.zanussi@linux.intel.com>,
-        Will Deacon <will.deacon@arm.com>
-Subject: Re: [PATCH v11 2/3] tracepoint: Make rcuidle tracepoint callers use
- SRCU
-Message-ID: <20180727122659.524dd13f@gandalf.local.home>
-In-Reply-To: <20180726235044.10195-3-joel@joelfernandes.org>
-References: <20180726235044.10195-1-joel@joelfernandes.org>
-        <20180726235044.10195-3-joel@joelfernandes.org>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Fri, 27 Jul 2018 13:49:55 -0400
+Received: from out03.mta.xmission.com ([166.70.13.233]:43930 "EHLO
+        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730784AbeG0Rty (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Jul 2018 13:49:54 -0400
+Received: from in01.mta.xmission.com ([166.70.13.51])
+        by out03.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1fj5aE-0006NY-C7; Fri, 27 Jul 2018 10:27:14 -0600
+Received: from [97.119.167.31] (helo=x220.xmission.com)
+        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1fj5aD-0004nO-Gk; Fri, 27 Jul 2018 10:27:13 -0600
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     David Laight <David.Laight@ACULAB.COM>
+Cc:     David Ahern <dsahern@gmail.com>,
+        Cong Wang <xiyou.wangcong@gmail.com>,
+        David Miller <davem@davemloft.net>,
+        Linux Kernel Network Developers <netdev@vger.kernel.org>,
+        "nikita.leshchenko\@oracle.com" <nikita.leshchenko@oracle.com>,
+        Roopa Prabhu <roopa@cumulusnetworks.com>,
+        Stephen Hemminger <stephen@networkplumber.org>,
+        Ido Schimmel <idosch@mellanox.com>,
+        Jiri Pirko <jiri@mellanox.com>,
+        "Saeed Mahameed" <saeedm@mellanox.com>,
+        Alexander Aring <alex.aring@gmail.com>,
+        "linux-wpan\@vger.kernel.org" <linux-wpan@vger.kernel.org>,
+        NetFilter <netfilter-devel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+References: <1a3f59a9-0ba5-c83f-16a6-f9550a84f693@gmail.com>
+        <CAM_iQpWabZorkMNswyfHyS4KT=f_bgMtK8K35=84uah6Kfqxew@mail.gmail.com>
+        <1a27e301-3275-b349-a2f8-afdfdc02f04f@gmail.com>
+        <20180718.125938.2271502580775162784.davem@davemloft.net>
+        <28c30574-391c-b4bd-c337-51d3040d901a@gmail.com>
+        <CAM_iQpW4-JkZY7jXx0Q1b907hQ85UOL1eXv2YHwSukb5L=apUg@mail.gmail.com>
+        <5021d874-8e99-6eba-f24b-4257c62d4457@gmail.com>
+        <CAM_iQpUc-H2kZCBevePs6g-8qKyJkUhdd1ZDSQgYsCG0ChfC2w@mail.gmail.com>
+        <87muufze8w.fsf@xmission.com>
+        <4b03b5f6-87ce-9ff2-7c14-598beebd8fb8@gmail.com>
+        <87zhyfw70m.fsf@xmission.com>
+        <be5c3f5be49e4e22bf1160a1d6d3a1b0@AcuMS.aculab.com>
+Date:   Fri, 27 Jul 2018 11:27:06 -0500
+In-Reply-To: <be5c3f5be49e4e22bf1160a1d6d3a1b0@AcuMS.aculab.com> (David
+        Laight's message of "Thu, 26 Jul 2018 11:12:34 +0000")
+Message-ID: <87k1pg1w6d.fsf@xmission.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-XM-SPF: eid=1fj5aD-0004nO-Gk;;;mid=<87k1pg1w6d.fsf@xmission.com>;;;hst=in01.mta.xmission.com;;;ip=97.119.167.31;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX18DuLPkLR4vYzZ4SYltuwqk4K9E1oVzPcw=
+X-SA-Exim-Connect-IP: 97.119.167.31
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+Subject: Re: [PATCH RFC/RFT net-next 00/17] net: Convert neighbor tables to per-namespace
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 26 Jul 2018 16:50:43 -0700
-Joel Fernandes <joel@joelfernandes.org> wrote:
+David Laight <David.Laight@ACULAB.COM> writes:
 
-> F
->  include/linux/tracepoint.h | 41 ++++++++++++++++++++++++++++++--------
->  kernel/tracepoint.c        | 16 ++++++++++++++-
->  2 files changed, 48 insertions(+), 9 deletions(-)
-> 
-> diff --git a/include/linux/tracepoint.h b/include/linux/tracepoint.h
-> index 19a690b559ca..6e7bc6ebfcd8 100644
-> --- a/include/linux/tracepoint.h
-> +++ b/include/linux/tracepoint.h
-> @@ -15,6 +15,7 @@
->   */
->  
->  #include <linux/smp.h>
-> +#include <linux/srcu.h>
->  #include <linux/errno.h>
->  #include <linux/types.h>
->  #include <linux/cpumask.h>
-> @@ -33,6 +34,8 @@ struct trace_eval_map {
->  
->  #define TRACEPOINT_DEFAULT_PRIO	10
->  
-> +extern struct srcu_struct tracepoint_srcu;
-> +
->  extern int
->  tracepoint_probe_register(struct tracepoint *tp, void *probe, void *data);
->  extern int
-> @@ -75,10 +78,16 @@ int unregister_tracepoint_module_notifier(struct notifier_block *nb)
->   * probe unregistration and the end of module exit to make sure there is no
->   * caller executing a probe when it is freed.
->   */
-> +#ifdef CONFIG_TRACEPOINTS
->  static inline void tracepoint_synchronize_unregister(void)
->  {
-> +	synchronize_srcu(&tracepoint_srcu);
->  	synchronize_sched();
->  }
-> +#else
-> +static inline void tracepoint_synchronize_unregister(void)
-> +{ }
-> +#endif
->  
->  #ifdef CONFIG_HAVE_SYSCALL_TRACEPOINTS
->  extern int syscall_regfunc(void);
-> @@ -129,18 +138,32 @@ extern void syscall_unregfunc(void);
->   * as "(void *, void)". The DECLARE_TRACE_NOARGS() will pass in just
->   * "void *data", where as the DECLARE_TRACE() will pass in "void *data, proto".
->   */
-> -#define __DO_TRACE(tp, proto, args, cond, rcucheck)			\
-> +#define __DO_TRACE(tp, proto, args, cond, rcuidle)			\
->  	do {								\
->  		struct tracepoint_func *it_func_ptr;			\
->  		void *it_func;						\
->  		void *__data;						\
-> +		int __maybe_unused idx = 0;				\
->  									\
->  		if (!(cond))						\
->  			return;						\
-> -		if (rcucheck)						\
-> -			rcu_irq_enter_irqson();				\
-> -		rcu_read_lock_sched_notrace();				\
-> -		it_func_ptr = rcu_dereference_sched((tp)->funcs);	\
-> +									\
-> +		/* srcu can't be used from NMI */			\
-> +		if (rcuidle && in_nmi())				\
-> +			WARN_ON_ONCE(1);				\
+> From: Eric W. Biederman
+>> Sent: 25 July 2018 18:38
+> ...
+>> >> Further unless I misread something you are increasing the number of
+>> >> timers to 3 per namespace.  If I create create a thousand network
+>> >> namespaces that feels like it will hurt system performance overall.
+>> >
+>> > It seems to me the timers are per neighbor entry not table. The per
+>> > table ones are for proxies.
+>> 
+>> It seems I misread that bit when I was refreshing my memory on what
+>> everything is doing.  If we can already have 1024 timers that makes
+>> timers not a concern.
+>
+> Surely it is enough to just have a timestamp in each entry.
+> Deletion of expired items need not be done until insert (which
+> has the table suitable locked) bumps into an expired item.
 
-Why isn't the above:
+Part of the state machine the timer is used for is sending retransmits
+before we get out first response, so the state machine is not just
+about expiry and may not be simple enough to do without a timer.
 
-		WARN_ON_ONCE(rcuidle && in_nmi());
+I honestly don't remember the tradeoffs between the various kinds of
+timers.  If we already can have up to 1000 timers without problems I suspect
+they are cheap enough optimizing for fewer times simply doesn't matter.
+Certainly we are not in regression territory if we don't.
 
-?
+As for bumping into expired items on insert it would be a bad hash table
+if we were bumping into any other entries frequently on insert.
 
-The rest looks fine.
-
--- Steve
-
-> +									\
-> +		/* keep srcu and sched-rcu usage consistent */		\
-> +		preempt_disable_notrace();				\
-> +									\
-> +		/*							\
-> +		 * For rcuidle callers, use srcu since sched-rcu	\
-> +		 * doesn't work from the idle path.			\
-> +		 */							\
-> +		if (rcuidle)						\
-> +			idx = srcu_read_lock_notrace(&tracepoint_srcu);	\
-> +									\
-> +		it_func_ptr = rcu_dereference_raw((tp)->funcs);		\
-> +									\
->  		if (it_func_ptr) {					\
->  			do {						\
->  				it_func = (it_func_ptr)->func;		\
-> @@ -148,9 +171,11 @@ extern void syscall_unregfunc(void);
->  				((void(*)(proto))(it_func))(args);	\
->  			} while ((++it_func_ptr)->func);		\
->  		}							\
-> -		rcu_read_unlock_sched_notrace();			\
-> -		if (rcucheck)						\
-> -			rcu_irq_exit_irqson();				\
-> +									\
-> +		if (rcuidle)						\
-> +			srcu_read_unlock_notrace(&tracepoint_srcu, idx);\
-> +									\
-> +		preempt_enable_notrace();				\
->  	} while (0)
->  
-> 
+Eric
