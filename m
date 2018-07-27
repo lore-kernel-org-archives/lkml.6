@@ -6,34 +6,33 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52FD3C67790
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:02:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53182C67790
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:02:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 00F5D20894
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:02:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 00F5D20894
+	by mail.kernel.org (Postfix) with ESMTP id 12F8C20895
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:02:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 12F8C20895
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389236AbeG0LXv (ORCPT
+        id S2389248AbeG0LXz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 07:23:51 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:34420 "EHLO
+        Fri, 27 Jul 2018 07:23:55 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:34430 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730568AbeG0LXv (ORCPT
+        with ESMTP id S1730568AbeG0LXy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 07:23:51 -0400
+        Fri, 27 Jul 2018 07:23:54 -0400
 Received: from localhost (unknown [89.188.5.116])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 73273CB6;
-        Fri, 27 Jul 2018 10:02:41 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 5C815CB1;
+        Fri, 27 Jul 2018 10:02:44 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Roman Fietze <roman.fietze@telemotive.de>,
-        Marc Kleine-Budde <mkl@pengutronix.de>
-Subject: [PATCH 4.14 47/48] can: m_can.c: fix setup of CCCR register: clear CCCR NISO bit before checking can.ctrlmode
-Date:   Fri, 27 Jul 2018 12:00:32 +0200
-Message-Id: <20180727095923.350967121@linuxfoundation.org>
+        Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH 4.14 48/48] turn off -Wattribute-alias
+Date:   Fri, 27 Jul 2018 12:00:33 +0200
+Message-Id: <20180727095923.463256543@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180727095918.503549522@linuxfoundation.org>
 References: <20180727095918.503549522@linuxfoundation.org>
@@ -50,41 +49,59 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Roman Fietze <roman.fietze@telemotive.de>
+From: Arnd Bergmann <arnd@arndb.de>
 
-commit 393753b217f05474e714aea36c37501546ed1202 upstream.
+Starting with gcc-8.1, we get a warning about all system call definitions,
+which use an alias between functions with incompatible prototypes, e.g.:
 
-Inside m_can_chip_config(), when setting up the new value of the CCCR,
-the CCCR_NISO bit is not cleared like the others, CCCR_TEST, CCCR_MON,
-CCCR_BRSE and CCCR_FDOE, before checking the can.ctrlmode bits for
-CAN_CTRLMODE_FD_NON_ISO.
+In file included from ../mm/process_vm_access.c:19:
+../include/linux/syscalls.h:211:18: warning: 'sys_process_vm_readv' alias between functions of incompatible types 'long int(pid_t,  const struct iovec *, long unsigned int,  const struct iovec *, long unsigned int,  long unsigned int)' {aka 'long int(int,  const struct iovec *, long unsigned int,  const struct iovec *, long unsigned int,  long unsigned int)'} and 'long int(long int,  long int,  long int,  long int,  long int,  long int)' [-Wattribute-alias]
+  asmlinkage long sys##name(__MAP(x,__SC_DECL,__VA_ARGS__)) \
+                  ^~~
+../include/linux/syscalls.h:207:2: note: in expansion of macro '__SYSCALL_DEFINEx'
+  __SYSCALL_DEFINEx(x, sname, __VA_ARGS__)
+  ^~~~~~~~~~~~~~~~~
+../include/linux/syscalls.h:201:36: note: in expansion of macro 'SYSCALL_DEFINEx'
+ #define SYSCALL_DEFINE6(name, ...) SYSCALL_DEFINEx(6, _##name, __VA_ARGS__)
+                                    ^~~~~~~~~~~~~~~
+../mm/process_vm_access.c:300:1: note: in expansion of macro 'SYSCALL_DEFINE6'
+ SYSCALL_DEFINE6(process_vm_readv, pid_t, pid, const struct iovec __user *, lvec,
+ ^~~~~~~~~~~~~~~
+../include/linux/syscalls.h:215:18: note: aliased declaration here
+  asmlinkage long SyS##name(__MAP(x,__SC_LONG,__VA_ARGS__)) \
+                  ^~~
+../include/linux/syscalls.h:207:2: note: in expansion of macro '__SYSCALL_DEFINEx'
+  __SYSCALL_DEFINEx(x, sname, __VA_ARGS__)
+  ^~~~~~~~~~~~~~~~~
+../include/linux/syscalls.h:201:36: note: in expansion of macro 'SYSCALL_DEFINEx'
+ #define SYSCALL_DEFINE6(name, ...) SYSCALL_DEFINEx(6, _##name, __VA_ARGS__)
+                                    ^~~~~~~~~~~~~~~
+../mm/process_vm_access.c:300:1: note: in expansion of macro 'SYSCALL_DEFINE6'
+ SYSCALL_DEFINE6(process_vm_readv, pid_t, pid, const struct iovec __user *, lvec,
 
-This way once the controller was configured for CAN_CTRLMODE_FD_NON_ISO,
-this mode could never be cleared again.
+This is really noisy and does not indicate a real problem. In the latest
+mainline kernel, this was addressed by commit bee20031772a ("disable
+-Wattribute-alias warning for SYSCALL_DEFINEx()"), which seems too invasive
+to backport.
 
-This fix is only relevant for controllers with version 3.1.x or 3.2.x.
-Older versions do not support NISO.
+This takes a much simpler approach and just disables the warning across the
+kernel.
 
-Signed-off-by: Roman Fietze <roman.fietze@telemotive.de>
-Cc: linux-stable <stable@vger.kernel.org>
-Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/net/can/m_can/m_can.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ Makefile |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/net/can/m_can/m_can.c
-+++ b/drivers/net/can/m_can/m_can.c
-@@ -1073,7 +1073,8 @@ static void m_can_chip_config(struct net
+--- a/Makefile
++++ b/Makefile
+@@ -642,6 +642,7 @@ KBUILD_CFLAGS	+= $(call cc-disable-warni
+ KBUILD_CFLAGS	+= $(call cc-disable-warning, format-truncation)
+ KBUILD_CFLAGS	+= $(call cc-disable-warning, format-overflow)
+ KBUILD_CFLAGS	+= $(call cc-disable-warning, int-in-bool-context)
++KBUILD_CFLAGS	+= $(call cc-disable-warning, attribute-alias)
  
- 	} else {
- 	/* Version 3.1.x or 3.2.x */
--		cccr &= ~(CCCR_TEST | CCCR_MON | CCCR_BRSE | CCCR_FDOE);
-+		cccr &= ~(CCCR_TEST | CCCR_MON | CCCR_BRSE | CCCR_FDOE |
-+			  CCCR_NISO);
- 
- 		/* Only 3.2.x has NISO Bit implemented */
- 		if (priv->can.ctrlmode & CAN_CTRLMODE_FD_NON_ISO)
+ ifdef CONFIG_CC_OPTIMIZE_FOR_SIZE
+ KBUILD_CFLAGS	+= $(call cc-option,-Oz,-Os)
 
 
