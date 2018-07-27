@@ -6,34 +6,36 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AAA1C67790
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:27:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D9FAC67790
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:28:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3FBDD208A5
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:27:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3FBDD208A5
+	by mail.kernel.org (Postfix) with ESMTP id AF1CB208A2
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:27:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AF1CB208A2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388731AbeG0LtL (ORCPT
+        id S2388748AbeG0LtO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 07:49:11 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:42388 "EHLO
+        Fri, 27 Jul 2018 07:49:14 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:42414 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729536AbeG0LtK (ORCPT
+        with ESMTP id S1729536AbeG0LtO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 07:49:10 -0400
+        Fri, 27 Jul 2018 07:49:14 -0400
 Received: from localhost (unknown [89.188.5.116])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 9C9B9CD1;
-        Fri, 27 Jul 2018 10:27:53 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B91F3CD1;
+        Fri, 27 Jul 2018 10:27:56 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tyler Hicks <tyhicks@canonical.com>,
+        stable@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Richard Cochran <richardcochran@gmail.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 3.18 06/27] ipv4: Return EINVAL when ping_group_range sysctl doesnt map to user ns
-Date:   Fri, 27 Jul 2018 12:26:43 +0200
-Message-Id: <20180727102649.275249134@linuxfoundation.org>
+Subject: [PATCH 3.18 07/27] ptp: fix missing break in switch
+Date:   Fri, 27 Jul 2018 12:26:44 +0200
+Message-Id: <20180727102649.310003802@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180727102649.049641021@linuxfoundation.org>
 References: <20180727102649.049641021@linuxfoundation.org>
@@ -50,43 +52,31 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Tyler Hicks <tyhicks@canonical.com>
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
 
-[ Upstream commit 70ba5b6db96ff7324b8cfc87e0d0383cf59c9677 ]
+[ Upstream commit 9ba8376ce1e2cbf4ce44f7e4bee1d0648e10d594 ]
 
-The low and high values of the net.ipv4.ping_group_range sysctl were
-being silently forced to the default disabled state when a write to the
-sysctl contained GIDs that didn't map to the associated user namespace.
-Confusingly, the sysctl's write operation would return success and then
-a subsequent read of the sysctl would indicate that the low and high
-values are the overflowgid.
+It seems that a *break* is missing in order to avoid falling through
+to the default case. Otherwise, checking *chan* makes no sense.
 
-This patch changes the behavior by clearly returning an error when the
-sysctl write operation receives a GID range that doesn't map to the
-associated user namespace. In such a situation, the previous value of
-the sysctl is preserved and that range will be returned in a subsequent
-read of the sysctl.
-
-Signed-off-by: Tyler Hicks <tyhicks@canonical.com>
+Fixes: 72df7a7244c0 ("ptp: Allow reassigning calibration pin function")
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+Acked-by: Richard Cochran <richardcochran@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ipv4/sysctl_net_ipv4.c |    5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/ptp/ptp_chardev.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/net/ipv4/sysctl_net_ipv4.c
-+++ b/net/ipv4/sysctl_net_ipv4.c
-@@ -134,8 +134,9 @@ static int ipv4_ping_group_range(struct
- 	if (write && ret == 0) {
- 		low = make_kgid(user_ns, urange[0]);
- 		high = make_kgid(user_ns, urange[1]);
--		if (!gid_valid(low) || !gid_valid(high) ||
--		    (urange[1] < urange[0]) || gid_lt(high, low)) {
-+		if (!gid_valid(low) || !gid_valid(high))
-+			return -EINVAL;
-+		if (urange[1] < urange[0] || gid_lt(high, low)) {
- 			low = make_kgid(&init_user_ns, 1);
- 			high = make_kgid(&init_user_ns, 0);
- 		}
+--- a/drivers/ptp/ptp_chardev.c
++++ b/drivers/ptp/ptp_chardev.c
+@@ -88,6 +88,7 @@ int ptp_set_pinfunc(struct ptp_clock *pt
+ 	case PTP_PF_PHYSYNC:
+ 		if (chan != 0)
+ 			return -EINVAL;
++		break;
+ 	default:
+ 		return -EINVAL;
+ 	}
 
 
