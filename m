@@ -2,110 +2,121 @@ Return-Path: <SRS0=OQFz=KL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+	FROM_LOCAL_NOVOWEL,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIM_INVALID,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 866E0C6778F
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:04:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3489EC67790
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:05:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 429B820897
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:04:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 429B820897
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id DB2A920897
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:05:01 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="N8CNBSVr";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="CS2tD4aJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DB2A920897
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388884AbeG0L0G (ORCPT
+        id S2389053AbeG0L0J (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 07:26:06 -0400
-Received: from mga04.intel.com ([192.55.52.120]:51745 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730425AbeG0L0F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 07:26:05 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Jul 2018 03:04:54 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,408,1526367600"; 
-   d="asc'?scan'208";a="219584821"
-Received: from pipin.fi.intel.com (HELO localhost) ([10.237.68.37])
-  by orsmga004.jf.intel.com with ESMTP; 27 Jul 2018 03:04:51 -0700
-From:   Felipe Balbi <balbi@kernel.org>
-To:     Douglas Anderson <dianders@chromium.org>, hminas@synopsys.com,
-        gregkh@linuxfoundation.org
-Cc:     stefan.wahren@i2se.com, grigor.tovmasyan@synopsys.com,
-        Bruno Herrera <bruherrera@gmail.com>,
-        Zhangfei Gao <zhangfei.gao@linaro.org>, john.stultz@linaro.org,
-        Stephen Warren <swarren@wwwdotorg.org>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Douglas Anderson <dianders@chromium.org>,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [REPOST PATCH 0/4] usb: dwc2: Turn on uframe sched everywhere
-In-Reply-To: <20180726200730.18290-1-dianders@chromium.org>
-References: <20180726200730.18290-1-dianders@chromium.org>
-Date:   Fri, 27 Jul 2018 13:01:32 +0300
-Message-ID: <87zhydxair.fsf@linux.intel.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-        micalg=pgp-sha512; protocol="application/pgp-signature"
+        Fri, 27 Jul 2018 07:26:09 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:45090 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730425AbeG0L0J (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Jul 2018 07:26:09 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 5063D60B73; Fri, 27 Jul 2018 10:04:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1532685898;
+        bh=LGwuAsSSA9mFYW6Xl2IfTsNPIOpith4beacERvtaqwQ=;
+        h=From:To:Cc:Subject:Date:From;
+        b=N8CNBSVr+Y4p/WAX/6MgRceFFffcdNA+ERCKF1tXr8mWV/rpJ0boG+zsqgejSM2Jb
+         4xoKs/1F/tzE+h66gdLqhA2DuNKUkvroik/d9raz1H3AB46x5a5mfRrN2Fn1cAlZY1
+         4P5Fn+uubqAF6K2an9eD0eeHE97biDrUKD2fyUCY=
+Received: from rplsssn-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: rplsssn@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 491FA60594;
+        Fri, 27 Jul 2018 10:04:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1532685897;
+        bh=LGwuAsSSA9mFYW6Xl2IfTsNPIOpith4beacERvtaqwQ=;
+        h=From:To:Cc:Subject:Date:From;
+        b=CS2tD4aJKbW+XFE6GpkW513hJfKDYrmEV/0q/jBEZsAwLhf6VkU5aiDbzoRHc5ieX
+         2+6Wfc2ZjLdjcPRwW9F0nKq/ofQbp5g0PMpmi+KJUQclL/SHT2GjERYft6k3lS6qfD
+         pqOv5x+v9NQ1ngL7yTv6UpkiCCHwTmxxtoOM5MLU=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 491FA60594
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rplsssn@codeaurora.org
+From:   Raju P L S S S N <rplsssn@codeaurora.org>
+To:     andy.gross@linaro.org, david.brown@linaro.org,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org
+Cc:     rnayak@codeaurora.org, bjorn.andersson@linaro.org,
+        linux-kernel@vger.kernel.org, sboyd@kernel.org,
+        evgreen@chromium.org, dianders@chromium.org, mka@chromium.org,
+        ilina@codeaurora.org, "Raju P.L.S.S.S.N" <rplsssn@codeaurora.org>
+Subject: [PATCH v2 0/6] drivers/qcom: add additional functionality to RPMH
+Date:   Fri, 27 Jul 2018 15:34:43 +0530
+Message-Id: <1532685889-31345-1-git-send-email-rplsssn@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+From: "Raju P.L.S.S.S.N" <rplsssn@codeaurora.org>
 
-Douglas Anderson <dianders@chromium.org> writes:
+Changes in v1:
+- Remove unnecessary EXPORT_SYMBOL in rpmh-rsc
 
-> While looking at a dwc2 recently, I noticed that some platforms still
-> have the uframe scheduler off.  As far as I know, nothing good can
-> come out of having the uframe scheduler off.  Let's turn it on
-> everywhere.  Assuming this all works out then some time in the future
-> we can gut all the old code that handles the old non-uframe scheduler
-> and make everything simpler.
->
-> This is a repost of the original "RFT" (request for testing) series I
-> posted a few weeks ago but without the "RFT" prefix.  Two of the
-> patches in the series now have "Tested-by:" tags.  Since there should
-> be nothing platform specific about the uFrame scheduler presumably
-> this should mean we're good to go?  Specificaly note that in at least
-> one of the "Tested-by" reports this patch caused a notable
-> improvement.
->
-> In response to the original RFT, some notes about testing this:
-> - In general, try to have lots of things plugged in.
-> - Plug many different keyboards / mice in.  See if keys are
->   dropped / mouse is jerky.
-> - Try USB audio (ideally full speed, not high speed).  How is
->   the audio?
-> - If you're brave, try a USB webcam.  How is the video?
->   ...maybe try including patches from crbug.com/820961 too.
+This set of patches add additional functionality to RPMH drivers[1].
 
-Minas??
+PM drivers can choose to disallow idle modes when RSC controller is busy
+sending or processing requests. The patches add necessary functions to
+query the controller status.
 
-=2D-=20
-balbi
+The controllers may be in 'solver' state, where they could be in autonomous
+mode executing low power modes for their hardware and as such are not
+available for sending active votes. Functionality to get notified about
+such state and disallow requests for state change in that case is added
+in these patches.
 
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
+The Power Domain Controller can be programmed to wakeup the RSC and
+setup the resources back in the active state, before the processor is
+woken up by a timer interrupt. The wakeup value from the timer hardware
+can be copied to the PDC which has its own timer and is in an always-on
+power domain. Programming the wakeup value is done through a separate
+register on the RSC. Functions necessary to program wakeup is added in
+the patches.
 
------BEGIN PGP SIGNATURE-----
+Please consider reviewing this patchset.
 
-iQIzBAEBCgAdFiEElLzh7wn96CXwjh2IzL64meEamQYFAlta7XwACgkQzL64meEa
-mQaf2A//UINDaDWJgqK0oT0pHv1vAr4Cy5/bwfV3V/TBRIHtx7rv0IPdbWzG/611
-Xz9Opx3yJG1cbVIpTnUpumztCpJLgHKr7Tn29fsHVW/HvMx+3pFppt/l2yrhfE49
-Y5PPrvhhAbSR+J7uut6b78LQAP1FlrfG5qn6mlN9N4Dpdlgki3QZ0c8qd+XPS1OU
-VEAaFYvyaNKvjHefddJZPXvh4A7ezU664Dyzox9/uYEeYVpl9pe/TSBUXC6BW0L9
-E2YzqdCjN+B3dRpzAm3gS+wFWn+uIC/FA2RgxdUUjNS6/XB9w77lg+5OrFgQZUbe
-DDXl6PKqd9ajzyJIwaIBtTJHMxVbIb8OQaqJxLWfx9NWqj9h+yTTYTZ06hlSgjJa
-7+SPY74+TejfZ0lbwbpvI1MbaESWcqMZbY8AdOgkGnj830Aghs+dfXdJ0kvnC98a
-d1BfD5InEte83agMsITpmtzq9rugDVV5HTT5z5ojcnXJd3/LgoLokmYss96ChhKR
-pcmr0vmlxafq+yN35J28n8k4IAcWVD/kqLwOu70UJvm51h+8jv8A1Ym1N3yQNH70
-rK6XZs6Q8CF/wLCY3m7d867y1S31x2Oxj7/3hf+NyyGSf4RrolRIN1n3NchdLRjz
-KiIO5y/TqwWzPaUbqcK9RwUGNePrvAzi2lLfYfYC2EUj3ji4Qas=
-=voHU
------END PGP SIGNATURE-----
---=-=-=--
+v1:https://lkml.org/lkml/2018/7/19/213
+
+
+
+[1] https://lkml.org/lkml/2018/6/20/519
+
+Lina Iyer (5):
+  drivers: qcom: rpmh-rsc: return if the controller is idle
+  drivers: qcom: rpmh: export controller idle status
+  drivers: qcom: rpmh: disallow active requests in solver mode
+  drivers: qcom: rpmh-rsc: write PDC data
+  drivers: qcom: rpmh: write PDC data
+
+Raju P.L.S.S.S.N (1):
+  drivers: qcom: rpmh-rsc: clear active mode configuration for waketcs
+
+ drivers/soc/qcom/rpmh-internal.h |   6 ++
+ drivers/soc/qcom/rpmh-rsc.c      | 132 ++++++++++++++++++++++++++++++---------
+ drivers/soc/qcom/rpmh.c          | 100 +++++++++++++++++++++++++++++
+ include/soc/qcom/rpmh.h          |  16 +++++
+ 4 files changed, 225 insertions(+), 29 deletions(-)
+
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,\na Linux Foundation Collaborative Project
+
