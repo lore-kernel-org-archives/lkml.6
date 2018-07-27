@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF400C6778F
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 09:47:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE617C6778F
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 09:47:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8599920671
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 09:47:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8599920671
+	by mail.kernel.org (Postfix) with ESMTP id 8D62920671
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 09:47:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D62920671
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732035AbeG0LI3 (ORCPT
+        id S1732094AbeG0LIc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 07:08:29 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:51500 "EHLO
+        Fri, 27 Jul 2018 07:08:32 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:51512 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730963AbeG0LI3 (ORCPT
+        with ESMTP id S1730963AbeG0LIc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 07:08:29 -0400
+        Fri, 27 Jul 2018 07:08:32 -0400
 Received: from localhost (unknown [89.188.5.116])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1CA40BBD;
-        Fri, 27 Jul 2018 09:47:22 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id DA439898;
+        Fri, 27 Jul 2018 09:47:26 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Gregory CLEMENT <gregory.clement@bootlin.com>,
+        stable@vger.kernel.org, Andrew Jeffery <andrew@aj.id.au>,
+        Lei YU <mine260309@gmail.com>, Joel Stanley <joel@jms.id.au>,
         Stephen Boyd <sboyd@kernel.org>
-Subject: [PATCH 4.17 05/66] clk: mvebu: armada-37xx-periph: Fix switching CPU rate from 300Mhz to 1.2GHz
-Date:   Fri, 27 Jul 2018 11:44:58 +0200
-Message-Id: <20180727093809.622587845@linuxfoundation.org>
+Subject: [PATCH 4.17 06/66] clk: aspeed: Mark bclk (PCIe) and dclk (VGA) as critical
+Date:   Fri, 27 Jul 2018 11:44:59 +0200
+Message-Id: <20180727093809.744727217@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180727093809.043856530@linuxfoundation.org>
 References: <20180727093809.043856530@linuxfoundation.org>
@@ -51,97 +51,38 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Gregory CLEMENT <gregory.clement@bootlin.com>
+From: Joel Stanley <joel@jms.id.au>
 
-commit 61c40f35f5cd6f67ccbd7319a1722eb78c815989 upstream.
+commit 974c7c6d7ba5a4b12d99456b0599aa6326dc2b69 upstream.
 
-Switching the CPU from the L2 or L3 frequencies (300 and 200 Mhz
-respectively) to L0 frequency (1.2 Ghz) requires a significant amount
-of time to let VDD stabilize to the appropriate voltage. This amount of
-time is large enough that it cannot be covered by the hardware
-countdown register. Due to this, the CPU might start operating at L0
-before the voltage is stabilized, leading to CPU stalls.
+This is used by the host to talk to the BMC's PCIe slave device. The BMC
+is not involved, but the clock needs to be enabled so the host can use
+the device.
 
-To work around this problem, we prevent switching directly from the
-L2/L3 frequencies to the L0 frequency, and instead switch to the L1
-frequency in-between. The sequence therefore becomes:
-
-1. First switch from L2/L3(200/300MHz) to L1(600MHZ)
-2. Sleep 20ms for stabling VDD voltage
-3. Then switch from L1(600MHZ) to L0(1200Mhz).
-
-It is based on the work done by Ken Ma <make@marvell.com>
-
-Cc: stable@vger.kernel.org
-Fixes: 2089dc33ea0e ("clk: mvebu: armada-37xx-periph: add DVFS support for cpu clocks")
-Signed-off-by: Gregory CLEMENT <gregory.clement@bootlin.com>
+Fixes: 15ed8ce5f84e ("clk: aspeed: Register gated clocks")
+Cc: stable@vger.kernel.org # 4.15
+Acked-by: Andrew Jeffery <andrew@aj.id.au>
+Tested-by: Lei YU <mine260309@gmail.com>
+Signed-off-by: Joel Stanley <joel@jms.id.au>
 Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/clk/mvebu/armada-37xx-periph.c |   38 +++++++++++++++++++++++++++++++++
- 1 file changed, 38 insertions(+)
+ drivers/clk/clk-aspeed.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/clk/mvebu/armada-37xx-periph.c
-+++ b/drivers/clk/mvebu/armada-37xx-periph.c
-@@ -35,6 +35,7 @@
- #define CLK_SEL		0x10
- #define CLK_DIS		0x14
- 
-+#define  ARMADA_37XX_DVFS_LOAD_1 1
- #define LOAD_LEVEL_NR	4
- 
- #define ARMADA_37XX_NB_L0L1	0x18
-@@ -507,6 +508,40 @@ static long clk_pm_cpu_round_rate(struct
- 	return -EINVAL;
- }
- 
-+/*
-+ * Switching the CPU from the L2 or L3 frequencies (300 and 200 Mhz
-+ * respectively) to L0 frequency (1.2 Ghz) requires a significant
-+ * amount of time to let VDD stabilize to the appropriate
-+ * voltage. This amount of time is large enough that it cannot be
-+ * covered by the hardware countdown register. Due to this, the CPU
-+ * might start operating at L0 before the voltage is stabilized,
-+ * leading to CPU stalls.
-+ *
-+ * To work around this problem, we prevent switching directly from the
-+ * L2/L3 frequencies to the L0 frequency, and instead switch to the L1
-+ * frequency in-between. The sequence therefore becomes:
-+ * 1. First switch from L2/L3(200/300MHz) to L1(600MHZ)
-+ * 2. Sleep 20ms for stabling VDD voltage
-+ * 3. Then switch from L1(600MHZ) to L0(1200Mhz).
-+ */
-+static void clk_pm_cpu_set_rate_wa(unsigned long rate, struct regmap *base)
-+{
-+	unsigned int cur_level;
-+
-+	if (rate != 1200 * 1000 * 1000)
-+		return;
-+
-+	regmap_read(base, ARMADA_37XX_NB_CPU_LOAD, &cur_level);
-+	cur_level &= ARMADA_37XX_NB_CPU_LOAD_MASK;
-+	if (cur_level <= ARMADA_37XX_DVFS_LOAD_1)
-+		return;
-+
-+	regmap_update_bits(base, ARMADA_37XX_NB_CPU_LOAD,
-+			   ARMADA_37XX_NB_CPU_LOAD_MASK,
-+			   ARMADA_37XX_DVFS_LOAD_1);
-+	msleep(20);
-+}
-+
- static int clk_pm_cpu_set_rate(struct clk_hw *hw, unsigned long rate,
- 			       unsigned long parent_rate)
- {
-@@ -537,6 +572,9 @@ static int clk_pm_cpu_set_rate(struct cl
- 			 */
- 			reg = ARMADA_37XX_NB_CPU_LOAD;
- 			mask = ARMADA_37XX_NB_CPU_LOAD_MASK;
-+
-+			clk_pm_cpu_set_rate_wa(rate, base);
-+
- 			regmap_update_bits(base, reg, mask, load_level);
- 
- 			return rate;
+--- a/drivers/clk/clk-aspeed.c
++++ b/drivers/clk/clk-aspeed.c
+@@ -88,8 +88,8 @@ static const struct aspeed_gate_data asp
+ 	[ASPEED_CLK_GATE_GCLK] =	{  1,  7, "gclk-gate",		NULL,	0 }, /* 2D engine */
+ 	[ASPEED_CLK_GATE_MCLK] =	{  2, -1, "mclk-gate",		"mpll",	CLK_IS_CRITICAL }, /* SDRAM */
+ 	[ASPEED_CLK_GATE_VCLK] =	{  3,  6, "vclk-gate",		NULL,	0 }, /* Video Capture */
+-	[ASPEED_CLK_GATE_BCLK] =	{  4,  8, "bclk-gate",		"bclk",	0 }, /* PCIe/PCI */
+-	[ASPEED_CLK_GATE_DCLK] =	{  5, -1, "dclk-gate",		NULL,	0 }, /* DAC */
++	[ASPEED_CLK_GATE_BCLK] =	{  4,  8, "bclk-gate",		"bclk",	CLK_IS_CRITICAL }, /* PCIe/PCI */
++	[ASPEED_CLK_GATE_DCLK] =	{  5, -1, "dclk-gate",		NULL,	CLK_IS_CRITICAL }, /* DAC */
+ 	[ASPEED_CLK_GATE_REFCLK] =	{  6, -1, "refclk-gate",	"clkin", CLK_IS_CRITICAL },
+ 	[ASPEED_CLK_GATE_USBPORT2CLK] =	{  7,  3, "usb-port2-gate",	NULL,	0 }, /* USB2.0 Host port 2 */
+ 	[ASPEED_CLK_GATE_LCLK] =	{  8,  5, "lclk-gate",		NULL,	0 }, /* LPC */
 
 
