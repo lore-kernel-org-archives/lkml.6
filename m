@@ -6,54 +6,54 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AD96C6778F
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 16:25:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BBD9C6778F
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 16:25:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 59F9C205C9
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 16:25:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 59F9C205C9
+	by mail.kernel.org (Postfix) with ESMTP id C21B4205C9
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 16:25:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C21B4205C9
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388813AbeG0RsB (ORCPT
+        id S2388879AbeG0RsF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 13:48:01 -0400
-Received: from mail-qk0-f194.google.com ([209.85.220.194]:35547 "EHLO
-        mail-qk0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732108AbeG0RsA (ORCPT
+        Fri, 27 Jul 2018 13:48:05 -0400
+Received: from mail-qk0-f196.google.com ([209.85.220.196]:35863 "EHLO
+        mail-qk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388822AbeG0RsF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 13:48:00 -0400
-Received: by mail-qk0-f194.google.com with SMTP id u21-v6so3650494qku.2
-        for <linux-kernel@vger.kernel.org>; Fri, 27 Jul 2018 09:25:22 -0700 (PDT)
+        Fri, 27 Jul 2018 13:48:05 -0400
+Received: by mail-qk0-f196.google.com with SMTP id a132-v6so3638206qkg.3
+        for <linux-kernel@vger.kernel.org>; Fri, 27 Jul 2018 09:25:27 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=P/lSHzE430aXs465bW969DzHsmQxzWeoM827lISk+1s=;
-        b=MEP4LaDdKXxeGZwd8lRGPa2f0R4n0X3HtbcJk/6Ggujps28Ikx9OlSOjGhn9YjrNCG
-         eTHr/fjwQQDmnvTCix0/LotX+r/VFziDrvsAWUgkDiBZIdxSoW/cCuFQE/yGwUJwowZ5
-         gZoTC3UlLuOzTcOcFQiXq0M0vRsWn0l4KQVausmJ0Hanm4IzyW1MojO0XcJBRnmUiNRV
-         fhXNIbuY14E8+o6xaEyFd3B1bgqX15B8jImrabGtoltQAmayYB/n7mNp63yVToeJ6SYc
-         QnKlP9rZJOsCfIqdJ4EmFTVPE88ELVxAOpegj8ITjlrEYm8dNwEb/E9thfCqLVv8vYGG
-         nVoQ==
-X-Gm-Message-State: AOUpUlErDhKuLBez89RZC1Sua72eme8PNRckZDV5p6qZvjTVwK4DxOoe
-        TeHRY2tpdU2HPGgCQDyV1BGUo73RtIM=
-X-Google-Smtp-Source: AAOMgpeq4J9nlGWZZ5HkPKrTAJKZiBSBVEsJlG4mvF/D+HtR3MKa+bQh/amVUJ+HR/Sq6UWoEMJ4Qg==
-X-Received: by 2002:a37:bf82:: with SMTP id p124-v6mr6367499qkf.46.1532708722116;
-        Fri, 27 Jul 2018 09:25:22 -0700 (PDT)
+        bh=iIFGek2TeGaOl6TdxTq+XC8TXnIhRl2UfHIJFNsmdc8=;
+        b=Q5oZ9CLMyut2YVpHq7VkNlmiGKYPkhtFnTZXjAUBZhmJqxuzuKsvF+TZWGdp6sdO0C
+         EyIiGOUCqjY08hOlesDBhbWHkJowck+/F3WB++t44fuOXTD3VuOiQQbMxANsa5RI34sc
+         h1XGHPbMJJddz2S1PXYe+WTz5+IWaPtIn83TbobQa7DKjE+TkB+FLmC0bSkkzYSCchTp
+         sv+/Rd18Xk+Umc7UR1XkpDWBuCoBx0/5WPBfFvub57qiESgnAwtqVQKofVQNQL7axHoW
+         vg2P5Xh7RZklWQBK6le9WwZj0YZHQIQrpOLlGJwgbNZOpdeJsDr8N4x86cS3Fq5a2p/r
+         RW5w==
+X-Gm-Message-State: AOUpUlF+gzt5FNYidS66pu/mUQbKPrQ9m3BE7fM0lHTq4SKU2wpp63A2
+        INZAF1yjz7Tjl93Z/GZN4pUPlg==
+X-Google-Smtp-Source: AAOMgpf2fA6QIV5B1YLPEbATuzKEkNKuVNvYzZ4guNIh6fNb28PQ3GO9ySvE+qWFq3U9I95BwF9GnQ==
+X-Received: by 2002:a37:d197:: with SMTP id o23-v6mr6563761qkl.210.1532708726931;
+        Fri, 27 Jul 2018 09:25:26 -0700 (PDT)
 Received: from builder.jcline.org.com ([2605:a601:80ce:4700:77a5:8983:ea8b:82ec])
-        by smtp.gmail.com with ESMTPSA id s73-v6sm3137342qkl.65.2018.07.27.09.25.21
+        by smtp.gmail.com with ESMTPSA id s73-v6sm3137342qkl.65.2018.07.27.09.25.26
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 27 Jul 2018 09:25:21 -0700 (PDT)
+        Fri, 27 Jul 2018 09:25:26 -0700 (PDT)
 From:   Jeremy Cline <jcline@redhat.com>
 To:     Theodore Ts'o <tytso@mit.edu>,
         Andreas Dilger <adilger.kernel@dilger.ca>
 Cc:     Josh Poimboeuf <jpoimboe@redhat.com>, linux-ext4@vger.kernel.org,
         linux-kernel@vger.kernel.org, Jeremy Cline <jcline@redhat.com>,
         stable@vger.kernel.org
-Subject: [PATCH 2/3] ext4: super: Fix spectre gadgets in ext4_quota_{read,write,off}
-Date:   Fri, 27 Jul 2018 16:23:56 +0000
-Message-Id: <20180727162357.30801-3-jcline@redhat.com>
+Subject: [PATCH 3/3] ext4: mballoc: Fix spectre gadget in ext4_mb_simple_scan_group
+Date:   Fri, 27 Jul 2018 16:23:57 +0000
+Message-Id: <20180727162357.30801-4-jcline@redhat.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180727162357.30801-1-jcline@redhat.com>
 References: <20180727162357.30801-1-jcline@redhat.com>
@@ -62,82 +62,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-'type' is a user-controlled value used to index 'sb_dqopt(sb)->files'.
-Clamp 'type' to the size of the array to avoid a speculative
-out-of-bounds read.
+'ac->ac_2order' is a user-controlled value used to index into
+'grp->bb_counters' and based on the value at that index, 'ac->ac_found'
+is written to. Clamp the value right after the bounds check to avoid a
+speculative out-of-bounds read of 'grp->bb_counters'.
 
-These gadgets were found with the help of smatch:
+This also protects the access of the s_mb_offsets and s_mb_maxs arrays
+inside mb_find_buddy().
 
-* fs/ext4/super.c:5741 ext4_quota_read() warn: potential spectre issue
-  'sb_dqopt(sb)->files' [r]
+These gadgets were discovered with the help of smatch:
 
-* fs/ext4/super.c:5778 ext4_quota_write() warn: potential spectre issue
-  'sb_dqopt(sb)->files' [r]
+* fs/ext4/mballoc.c:1896 ext4_mb_simple_scan_group() warn: potential
+  spectre issue 'grp->bb_counters' [w] (local cap)
+
+* fs/ext4/mballoc.c:445 mb_find_buddy() warn: potential spectre issue
+  'EXT4_SB(e4b->bd_sb)->s_mb_offsets' [r] (local cap)
+
+* fs/ext4/mballoc.c:446 mb_find_buddy() warn: potential spectre issue
+  'EXT4_SB(e4b->bd_sb)->s_mb_maxs' [r] (local cap)
 
 Cc: Josh Poimboeuf <jpoimboe@redhat.com>
 Cc: stable@vger.kernel.org
 Signed-off-by: Jeremy Cline <jcline@redhat.com>
 ---
- fs/ext4/super.c | 18 ++++++++++++++----
- 1 file changed, 14 insertions(+), 4 deletions(-)
+ fs/ext4/mballoc.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/fs/ext4/super.c b/fs/ext4/super.c
-index c04a09b51742..de358eba024a 100644
---- a/fs/ext4/super.c
-+++ b/fs/ext4/super.c
-@@ -5693,10 +5693,13 @@ static int ext4_enable_quotas(struct super_block *sb)
+diff --git a/fs/ext4/mballoc.c b/fs/ext4/mballoc.c
+index f7ab34088162..c0866007a949 100644
+--- a/fs/ext4/mballoc.c
++++ b/fs/ext4/mballoc.c
+@@ -14,6 +14,7 @@
+ #include <linux/log2.h>
+ #include <linux/module.h>
+ #include <linux/slab.h>
++#include <linux/nospec.h>
+ #include <linux/backing-dev.h>
+ #include <trace/events/ext4.h>
  
- static int ext4_quota_off(struct super_block *sb, int type)
- {
--	struct inode *inode = sb_dqopt(sb)->files[type];
-+	struct inode *inode;
- 	handle_t *handle;
- 	int err;
+@@ -1893,6 +1894,7 @@ void ext4_mb_simple_scan_group(struct ext4_allocation_context *ac,
  
-+	type = array_index_nospec(type, MAXQUOTAS);
-+	inode = sb_dqopt(sb)->files[type];
-+
- 	/* Force all delayed allocation blocks to be allocated.
- 	 * Caller already holds s_umount sem */
- 	if (test_opt(sb, DELALLOC))
-@@ -5740,13 +5743,17 @@ static int ext4_quota_off(struct super_block *sb, int type)
- static ssize_t ext4_quota_read(struct super_block *sb, int type, char *data,
- 			       size_t len, loff_t off)
- {
--	struct inode *inode = sb_dqopt(sb)->files[type];
-+	struct inode *inode;
- 	ext4_lblk_t blk = off >> EXT4_BLOCK_SIZE_BITS(sb);
- 	int offset = off & (sb->s_blocksize - 1);
- 	int tocopy;
- 	size_t toread;
- 	struct buffer_head *bh;
--	loff_t i_size = i_size_read(inode);
-+	loff_t i_size;
-+
-+	type = array_index_nospec(type, MAXQUOTAS);
-+	inode = sb_dqopt(sb)->files[type];
-+	i_size = i_size_read(inode);
+ 	BUG_ON(ac->ac_2order <= 0);
+ 	for (i = ac->ac_2order; i <= sb->s_blocksize_bits + 1; i++) {
++		i = array_index_nospec(i, sb->s_blocksize_bits + 2);
+ 		if (grp->bb_counters[i] == 0)
+ 			continue;
  
- 	if (off > i_size)
- 		return 0;
-@@ -5777,13 +5784,16 @@ static ssize_t ext4_quota_read(struct super_block *sb, int type, char *data,
- static ssize_t ext4_quota_write(struct super_block *sb, int type,
- 				const char *data, size_t len, loff_t off)
- {
--	struct inode *inode = sb_dqopt(sb)->files[type];
-+	struct inode *inode;
- 	ext4_lblk_t blk = off >> EXT4_BLOCK_SIZE_BITS(sb);
- 	int err, offset = off & (sb->s_blocksize - 1);
- 	int retries = 0;
- 	struct buffer_head *bh;
- 	handle_t *handle = journal_current_handle();
- 
-+	type = array_index_nospec(type, MAXQUOTAS);
-+	inode = sb_dqopt(sb)->files[type];
-+
- 	if (EXT4_SB(sb)->s_journal && !handle) {
- 		ext4_msg(sb, KERN_WARNING, "Quota write (off=%llu, len=%llu)"
- 			" cancelled because transaction is not started",
 -- 
 2.17.1
 
