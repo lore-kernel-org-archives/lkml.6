@@ -3,38 +3,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BDABC6778F
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:10:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2083C67790
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:10:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B9A242089E
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:10:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B9A242089E
+	by mail.kernel.org (Postfix) with ESMTP id 5A32C2089F
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:10:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5A32C2089F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388904AbeG0Lbg (ORCPT
+        id S2388940AbeG0Lbj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 07:31:36 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:36530 "EHLO
+        Fri, 27 Jul 2018 07:31:39 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:36542 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729431AbeG0Lbg (ORCPT
+        with ESMTP id S1729431AbeG0Lbj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 07:31:36 -0400
+        Fri, 27 Jul 2018 07:31:39 -0400
 Received: from localhost (unknown [89.188.5.116])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 71CF5CB7;
-        Fri, 27 Jul 2018 10:10:23 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 23BE6CB7;
+        Fri, 27 Jul 2018 10:10:25 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Pingfan Liu <kernelfans@gmail.com>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Subject: [PATCH 4.9 24/33] driver core: Partially revert "driver core: correct devices shutdown order"
-Date:   Fri, 27 Jul 2018 12:09:05 +0200
-Message-Id: <20180727100828.578418013@linuxfoundation.org>
+        stable@vger.kernel.org, Anssi Hannula <anssi.hannula@bitwise.fi>,
+        Marc Kleine-Budde <mkl@pengutronix.de>
+Subject: [PATCH 4.9 25/33] can: xilinx_can: fix RX loop if RXNEMP is asserted without RXOK
+Date:   Fri, 27 Jul 2018 12:09:06 +0200
+Message-Id: <20180727100828.612874789@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180727100827.665729981@linuxfoundation.org>
 References: <20180727100827.665729981@linuxfoundation.org>
@@ -51,70 +50,98 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+From: Anssi Hannula <anssi.hannula@bitwise.fi>
 
-commit 722e5f2b1eec7de61117b7c0a7914761e3da2eda upstream.
+commit 32852c561bffd613d4ed7ec464b1e03e1b7b6c5c upstream.
 
-Commit 52cdbdd49853 (driver core: correct device's shutdown order)
-introduced a regression by breaking device shutdown on some systems.
+If the device gets into a state where RXNEMP (RX FIFO not empty)
+interrupt is asserted without RXOK (new frame received successfully)
+interrupt being asserted, xcan_rx_poll() will continue to try to clear
+RXNEMP without actually reading frames from RX FIFO. If the RX FIFO is
+not empty, the interrupt will not be cleared and napi_schedule() will
+just be called again.
 
-Namely, the devices_kset_move_last() call in really_probe() added by
-that commit is a mistake as it may cause parents to follow children
-in the devices_kset list which then causes shutdown to fail.  For
-example, if a device has children before really_probe() is called
-for it (which is not uncommon), that call will cause it to be
-reordered after the children in the devices_kset list and the
-ordering of that list will not reflect the correct device shutdown
-order any more.
+This situation can occur when:
 
-Also it causes the devices_kset list to be constantly reordered
-until all drivers have been probed which is totally pointless
-overhead in the majority of cases and it only covered an issue
-with system shutdown, while system-wide suspend/resume potentially
-had the same issue on the affected platforms (which was not covered).
+(a) xcan_rx() returns without reading RX FIFO due to an error condition.
+The code tries to clear both RXOK and RXNEMP but RXNEMP will not clear
+due to a frame still being in the FIFO. The frame will never be read
+from the FIFO as RXOK is no longer set.
 
-Moreover, the shutdown issue originally addressed by the change in
-really_probe() made by commit 52cdbdd49853 is not present in 4.18-rc
-any more, since dra7 started to use the sdhci-omap driver which
-doesn't disable any regulators during shutdown, so the really_probe()
-part of commit 52cdbdd49853 can be safely reverted.  [The original
-issue was related to the omap_hsmmc driver used by dra7 previously.]
+(b) A frame is received between xcan_rx_poll() reading interrupt status
+and clearing RXOK. RXOK will be cleared, but RXNEMP will again remain
+set as the new message is still in the FIFO.
 
-For the above reasons, revert the really_probe() modifications made
-by commit 52cdbdd49853.
+I'm able to trigger case (b) by flooding the bus with frames under load.
 
-The other code changes made by commit 52cdbdd49853 are useful and
-they need not be reverted.
+There does not seem to be any benefit in using both RXNEMP and RXOK in
+the way the driver does, and the polling example in the reference manual
+(UG585 v1.10 18.3.7 Read Messages from RxFIFO) also says that either
+RXOK or RXNEMP can be used for detecting incoming messages.
 
-Fixes: 52cdbdd49853 (driver core: correct device's shutdown order)
-Link: https://lore.kernel.org/lkml/CAFgQCTt7VfqM=UyCnvNFxrSw8Z6cUtAi3HUwR4_xPAc03SgHjQ@mail.gmail.com/
-Reported-by: Pingfan Liu <kernelfans@gmail.com>
-Tested-by: Pingfan Liu <kernelfans@gmail.com>
-Reviewed-by: Kishon Vijay Abraham I <kishon@ti.com>
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-Cc: stable <stable@vger.kernel.org>
+Fix the issue and simplify the RX processing by only using RXNEMP
+without RXOK.
+
+Tested with the integrated CAN on Zynq-7000 SoC.
+
+Fixes: b1201e44f50b ("can: xilinx CAN controller support")
+Signed-off-by: Anssi Hannula <anssi.hannula@bitwise.fi>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/base/dd.c |    8 --------
- 1 file changed, 8 deletions(-)
+ drivers/net/can/xilinx_can.c |   18 +++++-------------
+ 1 file changed, 5 insertions(+), 13 deletions(-)
 
---- a/drivers/base/dd.c
-+++ b/drivers/base/dd.c
-@@ -363,14 +363,6 @@ re_probe:
- 			goto probe_failed;
+--- a/drivers/net/can/xilinx_can.c
++++ b/drivers/net/can/xilinx_can.c
+@@ -101,7 +101,7 @@ enum xcan_reg {
+ #define XCAN_INTR_ALL		(XCAN_IXR_TXOK_MASK | XCAN_IXR_BSOFF_MASK |\
+ 				 XCAN_IXR_WKUP_MASK | XCAN_IXR_SLP_MASK | \
+ 				 XCAN_IXR_RXNEMP_MASK | XCAN_IXR_ERROR_MASK | \
+-				 XCAN_IXR_ARBLST_MASK | XCAN_IXR_RXOK_MASK)
++				 XCAN_IXR_ARBLST_MASK)
+ 
+ /* CAN register bit shift - XCAN_<REG>_<BIT>_SHIFT */
+ #define XCAN_BTR_SJW_SHIFT		7  /* Synchronous jump width */
+@@ -709,15 +709,7 @@ static int xcan_rx_poll(struct napi_stru
+ 
+ 	isr = priv->read_reg(priv, XCAN_ISR_OFFSET);
+ 	while ((isr & XCAN_IXR_RXNEMP_MASK) && (work_done < quota)) {
+-		if (isr & XCAN_IXR_RXOK_MASK) {
+-			priv->write_reg(priv, XCAN_ICR_OFFSET,
+-				XCAN_IXR_RXOK_MASK);
+-			work_done += xcan_rx(ndev);
+-		} else {
+-			priv->write_reg(priv, XCAN_ICR_OFFSET,
+-				XCAN_IXR_RXNEMP_MASK);
+-			break;
+-		}
++		work_done += xcan_rx(ndev);
+ 		priv->write_reg(priv, XCAN_ICR_OFFSET, XCAN_IXR_RXNEMP_MASK);
+ 		isr = priv->read_reg(priv, XCAN_ISR_OFFSET);
+ 	}
+@@ -728,7 +720,7 @@ static int xcan_rx_poll(struct napi_stru
+ 	if (work_done < quota) {
+ 		napi_complete(napi);
+ 		ier = priv->read_reg(priv, XCAN_IER_OFFSET);
+-		ier |= (XCAN_IXR_RXOK_MASK | XCAN_IXR_RXNEMP_MASK);
++		ier |= XCAN_IXR_RXNEMP_MASK;
+ 		priv->write_reg(priv, XCAN_IER_OFFSET, ier);
+ 	}
+ 	return work_done;
+@@ -800,9 +792,9 @@ static irqreturn_t xcan_interrupt(int ir
  	}
  
--	/*
--	 * Ensure devices are listed in devices_kset in correct order
--	 * It's important to move Dev to the end of devices_kset before
--	 * calling .probe, because it could be recursive and parent Dev
--	 * should always go first
--	 */
--	devices_kset_move_last(dev);
--
- 	if (dev->bus->probe) {
- 		ret = dev->bus->probe(dev);
- 		if (ret)
+ 	/* Check for the type of receive interrupt and Processing it */
+-	if (isr & (XCAN_IXR_RXNEMP_MASK | XCAN_IXR_RXOK_MASK)) {
++	if (isr & XCAN_IXR_RXNEMP_MASK) {
+ 		ier = priv->read_reg(priv, XCAN_IER_OFFSET);
+-		ier &= ~(XCAN_IXR_RXNEMP_MASK | XCAN_IXR_RXOK_MASK);
++		ier &= ~XCAN_IXR_RXNEMP_MASK;
+ 		priv->write_reg(priv, XCAN_IER_OFFSET, ier);
+ 		napi_schedule(&priv->napi);
+ 	}
 
 
