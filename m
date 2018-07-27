@@ -6,34 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EDDC7C6778F
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:28:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B9CEC67790
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:28:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 975A9208A2
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:28:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 975A9208A2
+	by mail.kernel.org (Postfix) with ESMTP id 20E0D208B3
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:28:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 20E0D208B3
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388960AbeG0Ltg (ORCPT
+        id S2388985AbeG0Ltk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 07:49:36 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:42552 "EHLO
+        Fri, 27 Jul 2018 07:49:40 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:42574 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730747AbeG0Ltf (ORCPT
+        with ESMTP id S1730747AbeG0Ltk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 07:49:35 -0400
+        Fri, 27 Jul 2018 07:49:40 -0400
 Received: from localhost (unknown [89.188.5.116])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 661EACD1;
-        Fri, 27 Jul 2018 10:28:18 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A45A5CD1;
+        Fri, 27 Jul 2018 10:28:21 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jerry Zhang <zhangjerry@google.com>,
-        Felipe Balbi <felipe.balbi@linux.intel.com>
-Subject: [PATCH 3.18 21/27] usb: gadget: f_fs: Only return delayed status when len is 0
-Date:   Fri, 27 Jul 2018 12:26:58 +0200
-Message-Id: <20180727102649.820874230@linuxfoundation.org>
+        stable@vger.kernel.org, Anssi Hannula <anssi.hannula@bitwise.fi>,
+        Marc Kleine-Budde <mkl@pengutronix.de>
+Subject: [PATCH 3.18 22/27] can: xilinx_can: fix RX loop if RXNEMP is asserted without RXOK
+Date:   Fri, 27 Jul 2018 12:26:59 +0200
+Message-Id: <20180727102649.855045500@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180727102649.049641021@linuxfoundation.org>
 References: <20180727102649.049641021@linuxfoundation.org>
@@ -50,54 +50,98 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jerry Zhang <zhangjerry@google.com>
+From: Anssi Hannula <anssi.hannula@bitwise.fi>
 
-commit 4d644abf25698362bd33d17c9ddc8f7122c30f17 upstream.
+commit 32852c561bffd613d4ed7ec464b1e03e1b7b6c5c upstream.
 
-Commit 1b9ba000 ("Allow function drivers to pause control
-transfers") states that USB_GADGET_DELAYED_STATUS is only
-supported if data phase is 0 bytes.
+If the device gets into a state where RXNEMP (RX FIFO not empty)
+interrupt is asserted without RXOK (new frame received successfully)
+interrupt being asserted, xcan_rx_poll() will continue to try to clear
+RXNEMP without actually reading frames from RX FIFO. If the RX FIFO is
+not empty, the interrupt will not be cleared and napi_schedule() will
+just be called again.
 
-It seems that when the length is not 0 bytes, there is no
-need to explicitly delay the data stage since the transfer
-is not completed until the user responds. However, when the
-length is 0, there is no data stage and the transfer is
-finished once setup() returns, hence there is a need to
-explicitly delay completion.
+This situation can occur when:
 
-This manifests as the following bugs:
+(a) xcan_rx() returns without reading RX FIFO due to an error condition.
+The code tries to clear both RXOK and RXNEMP but RXNEMP will not clear
+due to a frame still being in the FIFO. The frame will never be read
+from the FIFO as RXOK is no longer set.
 
-Prior to 946ef68ad4e4 ('Let setup() return
-USB_GADGET_DELAYED_STATUS'), when setup is 0 bytes, ffs
-would require user to queue a 0 byte request in order to
-clear setup state. However, that 0 byte request was actually
-not needed and would hang and cause errors in other setup
-requests.
+(b) A frame is received between xcan_rx_poll() reading interrupt status
+and clearing RXOK. RXOK will be cleared, but RXNEMP will again remain
+set as the new message is still in the FIFO.
 
-After the above commit, 0 byte setups work since the gadget
-now accepts empty queues to ep0 to clear the delay, but all
-other setups hang.
+I'm able to trigger case (b) by flooding the bus with frames under load.
 
-Fixes: 946ef68ad4e4 ("Let setup() return USB_GADGET_DELAYED_STATUS")
-Signed-off-by: Jerry Zhang <zhangjerry@google.com>
-Cc: stable <stable@vger.kernel.org>
-Acked-by: Felipe Balbi <felipe.balbi@linux.intel.com>
+There does not seem to be any benefit in using both RXNEMP and RXOK in
+the way the driver does, and the polling example in the reference manual
+(UG585 v1.10 18.3.7 Read Messages from RxFIFO) also says that either
+RXOK or RXNEMP can be used for detecting incoming messages.
+
+Fix the issue and simplify the RX processing by only using RXNEMP
+without RXOK.
+
+Tested with the integrated CAN on Zynq-7000 SoC.
+
+Fixes: b1201e44f50b ("can: xilinx CAN controller support")
+Signed-off-by: Anssi Hannula <anssi.hannula@bitwise.fi>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/gadget/function/f_fs.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/can/xilinx_can.c |   18 +++++-------------
+ 1 file changed, 5 insertions(+), 13 deletions(-)
 
---- a/drivers/usb/gadget/function/f_fs.c
-+++ b/drivers/usb/gadget/function/f_fs.c
-@@ -2987,7 +2987,7 @@ static int ffs_func_setup(struct usb_fun
- 	__ffs_event_add(ffs, FUNCTIONFS_SETUP);
- 	spin_unlock_irqrestore(&ffs->ev.waitq.lock, flags);
+--- a/drivers/net/can/xilinx_can.c
++++ b/drivers/net/can/xilinx_can.c
+@@ -100,7 +100,7 @@ enum xcan_reg {
+ #define XCAN_INTR_ALL		(XCAN_IXR_TXOK_MASK | XCAN_IXR_BSOFF_MASK |\
+ 				 XCAN_IXR_WKUP_MASK | XCAN_IXR_SLP_MASK | \
+ 				 XCAN_IXR_RXNEMP_MASK | XCAN_IXR_ERROR_MASK | \
+-				 XCAN_IXR_ARBLST_MASK | XCAN_IXR_RXOK_MASK)
++				 XCAN_IXR_ARBLST_MASK)
  
--	return USB_GADGET_DELAYED_STATUS;
-+	return creq->wLength == 0 ? USB_GADGET_DELAYED_STATUS : 0;
- }
+ /* CAN register bit shift - XCAN_<REG>_<BIT>_SHIFT */
+ #define XCAN_BTR_SJW_SHIFT		7  /* Synchronous jump width */
+@@ -710,15 +710,7 @@ static int xcan_rx_poll(struct napi_stru
  
- static void ffs_func_suspend(struct usb_function *f)
+ 	isr = priv->read_reg(priv, XCAN_ISR_OFFSET);
+ 	while ((isr & XCAN_IXR_RXNEMP_MASK) && (work_done < quota)) {
+-		if (isr & XCAN_IXR_RXOK_MASK) {
+-			priv->write_reg(priv, XCAN_ICR_OFFSET,
+-				XCAN_IXR_RXOK_MASK);
+-			work_done += xcan_rx(ndev);
+-		} else {
+-			priv->write_reg(priv, XCAN_ICR_OFFSET,
+-				XCAN_IXR_RXNEMP_MASK);
+-			break;
+-		}
++		work_done += xcan_rx(ndev);
+ 		priv->write_reg(priv, XCAN_ICR_OFFSET, XCAN_IXR_RXNEMP_MASK);
+ 		isr = priv->read_reg(priv, XCAN_ISR_OFFSET);
+ 	}
+@@ -729,7 +721,7 @@ static int xcan_rx_poll(struct napi_stru
+ 	if (work_done < quota) {
+ 		napi_complete(napi);
+ 		ier = priv->read_reg(priv, XCAN_IER_OFFSET);
+-		ier |= (XCAN_IXR_RXOK_MASK | XCAN_IXR_RXNEMP_MASK);
++		ier |= XCAN_IXR_RXNEMP_MASK;
+ 		priv->write_reg(priv, XCAN_IER_OFFSET, ier);
+ 	}
+ 	return work_done;
+@@ -801,9 +793,9 @@ static irqreturn_t xcan_interrupt(int ir
+ 	}
+ 
+ 	/* Check for the type of receive interrupt and Processing it */
+-	if (isr & (XCAN_IXR_RXNEMP_MASK | XCAN_IXR_RXOK_MASK)) {
++	if (isr & XCAN_IXR_RXNEMP_MASK) {
+ 		ier = priv->read_reg(priv, XCAN_IER_OFFSET);
+-		ier &= ~(XCAN_IXR_RXNEMP_MASK | XCAN_IXR_RXOK_MASK);
++		ier &= ~XCAN_IXR_RXNEMP_MASK;
+ 		priv->write_reg(priv, XCAN_IER_OFFSET, ier);
+ 		napi_schedule(&priv->napi);
+ 	}
 
 
