@@ -2,329 +2,212 @@ Return-Path: <SRS0=OQFz=KL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87615C67790
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 15:47:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D52EC67790
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 15:49:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 044CB2088E
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 15:47:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 044CB2088E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=i-love.sakura.ne.jp
+	by mail.kernel.org (Postfix) with ESMTP id BCFCB2088E
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 15:49:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BCFCB2088E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388796AbeG0RKT (ORCPT
+        id S2388668AbeG0RMF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 13:10:19 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:12707 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388075AbeG0RKT (ORCPT
+        Fri, 27 Jul 2018 13:12:05 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:48118 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1732059AbeG0RMF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 13:10:19 -0400
-Received: from fsav305.sakura.ne.jp (fsav305.sakura.ne.jp [153.120.85.136])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id w6RFljjM015086;
-        Sat, 28 Jul 2018 00:47:45 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav305.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav305.sakura.ne.jp);
- Sat, 28 Jul 2018 00:47:45 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav305.sakura.ne.jp)
-Received: from [192.168.1.8] (softbank126074194044.bbtec.net [126.74.194.44])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id w6RFle98015075
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
-        Sat, 28 Jul 2018 00:47:45 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Subject: Re: [PATCH] mm,page_alloc: PF_WQ_WORKER threads must sleep at
- should_reclaim_retry().
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     Roman Gushchin <guro@fb.com>, Johannes Weiner <hannes@cmpxchg.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        David Rientjes <rientjes@google.com>,
-        Tejun Heo <tj@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-mm <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <ca3da8b8-1bb5-c302-b190-fa6cebab58ca@I-love.SAKURA.ne.jp>
- <20180726113958.GE28386@dhcp22.suse.cz>
-From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Message-ID: <55c9da7f-e448-964a-5b50-47f89a24235b@i-love.sakura.ne.jp>
-Date:   Sat, 28 Jul 2018 00:47:40 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Fri, 27 Jul 2018 13:12:05 -0400
+Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w6RFinaZ071145
+        for <linux-kernel@vger.kernel.org>; Fri, 27 Jul 2018 11:49:34 -0400
+Received: from e11.ny.us.ibm.com (e11.ny.us.ibm.com [129.33.205.201])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2kg4n8wa84-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Fri, 27 Jul 2018 11:49:34 -0400
+Received: from localhost
+        by e11.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
+        Fri, 27 Jul 2018 11:49:33 -0400
+Received: from b01cxnp23032.gho.pok.ibm.com (9.57.198.27)
+        by e11.ny.us.ibm.com (146.89.104.198) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 27 Jul 2018 11:49:32 -0400
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp23032.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w6RFnVnl18481484
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 27 Jul 2018 15:49:31 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 3438EB206A;
+        Fri, 27 Jul 2018 11:49:10 -0400 (EDT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 04689B2065;
+        Fri, 27 Jul 2018 11:49:09 -0400 (EDT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.159])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Fri, 27 Jul 2018 11:49:09 -0400 (EDT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id B319816CA3C6; Fri, 27 Jul 2018 08:49:31 -0700 (PDT)
+Date:   Fri, 27 Jul 2018 08:49:31 -0700
+From:   "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+To:     peterz@infradead.org
+Cc:     linux-kernel@vger.kernel.org
+Subject: [PATCH RFC tip/core/rcu] Avoid resched_cpu() when rescheduling the
+ current CPU
+Reply-To: paulmck@linux.vnet.ibm.com
 MIME-Version: 1.0
-In-Reply-To: <20180726113958.GE28386@dhcp22.suse.cz>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18072715-2213-0000-0000-000002D0C9DD
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009438; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000266; SDB=6.01066924; UDB=6.00548196; IPR=6.00844790;
+ MB=3.00022355; MTD=3.00000008; XFM=3.00000015; UTC=2018-07-27 15:49:32
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18072715-2214-0000-0000-00005AFC1CF8
+Message-Id: <20180727154931.GA12106@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-27_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1806210000 definitions=main-1807270160
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/07/26 20:39, Michal Hocko wrote:
-> On Thu 26-07-18 20:06:24, Tetsuo Handa wrote:
->> Before applying "an OOM lockup mitigation patch", I want to apply this
->> "another OOM lockup avoidance" patch.
-> 
-> I do not really see why. All these are borderline interesting as the
-> system is basically dead by the time you reach this state.
+Hello, Peter,
 
-I don't like your "borderline interesting". We still don't have a watchdog
-which tells something went wrong. Thus, "borderline interesting" has to be
-examined and fixed.
+It occurred to me that it is wasteful to let resched_cpu() acquire
+->pi_lock when doing something like resched_cpu(smp_processor_id()),
+and that it would be better to instead use set_tsk_need_resched(current)
+and set_preempt_need_resched().
 
-> 
->> Complete log is at http://I-love.SAKURA.ne.jp/tmp/serial-20180726.txt.xz
->> (which was captured with
->>
->>   --- a/mm/oom_kill.c
->>   +++ b/mm/oom_kill.c
->>   @@ -1071,6 +1071,12 @@ bool out_of_memory(struct oom_control *oc)
->>    {
->>    	unsigned long freed = 0;
->>    	bool delay = false; /* if set, delay next allocation attempt */
->>   +	static unsigned long last_warned;
->>   +	if (!last_warned || time_after(jiffies, last_warned + 10 * HZ)) {
->>   +		pr_warn("%s(%d) gfp_mask=%#x(%pGg), order=%d\n", current->comm,
->>   +			current->pid, oc->gfp_mask, &oc->gfp_mask, oc->order);
->>   +		last_warned = jiffies;
->>   +	}
->>    
->>    	oc->constraint = CONSTRAINT_NONE;
->>    	if (oom_killer_disabled)
->>
->> in order to demonstrate that the GFP_NOIO allocation from disk_events_workfn() is
->> calling out_of_memory() rather than by error failing to give up direct reclaim).
->>
->> [  258.619119] kworker/0:0(5) gfp_mask=0x600000(GFP_NOIO), order=0
->> [  268.622732] kworker/0:0(5) gfp_mask=0x600000(GFP_NOIO), order=0
->> [  278.635344] kworker/0:0(5) gfp_mask=0x600000(GFP_NOIO), order=0
->> [  288.639360] kworker/0:0(5) gfp_mask=0x600000(GFP_NOIO), order=0
->> [  298.642715] kworker/0:0(5) gfp_mask=0x600000(GFP_NOIO), order=0
-> 
-> Hmm, so there is no other memory allocation to trigger the oom or they
-> all just back off on the oom_lock trylock? In other words what is
-> preventing from the oom killer invocation?
+But is doing so really worthwhile?  For that matter, are there some
+constraints on the use of those two functions that I am failing to
+allow for in the patch below?
 
-All __GFP_FS allocations got stuck at direct reclaim or workqueue.
+							Thanx, Paul
 
-[  310.265293] systemd         D12240     1      0 0x00000000
-[  310.268118] Call Trace:
-[  310.269894]  ? __schedule+0x245/0x7f0
-[  310.271901]  ? xfs_reclaim_inodes_ag+0x3b8/0x470 [xfs]
-[  310.274187]  schedule+0x23/0x80
-[  310.275965]  schedule_preempt_disabled+0x5/0x10
-[  310.278107]  __mutex_lock+0x3f5/0x9b0
-[  310.280070]  ? xfs_reclaim_inodes_ag+0x3b8/0x470 [xfs]
-[  310.282451]  xfs_reclaim_inodes_ag+0x3b8/0x470 [xfs]
-[  310.284730]  ? lock_acquire+0x51/0x70
-[  310.286678]  ? xfs_ail_push_all+0x13/0x60 [xfs]
-[  310.288844]  xfs_reclaim_inodes_nr+0x2c/0x40 [xfs]
-[  310.291092]  super_cache_scan+0x14b/0x1a0
-[  310.293131]  do_shrink_slab+0xfc/0x190
-[  310.295082]  shrink_slab+0x240/0x2c0
-[  310.297028]  shrink_node+0xe3/0x460
-[  310.298899]  do_try_to_free_pages+0xcb/0x380
-[  310.300945]  try_to_free_pages+0xbb/0xf0
-[  310.302874]  __alloc_pages_slowpath+0x3c1/0xc50
-[  310.304931]  ? lock_acquire+0x51/0x70
-[  310.306753]  ? set_page_refcounted+0x40/0x40
-[  310.308686]  __alloc_pages_nodemask+0x2a6/0x2c0
-[  310.310663]  filemap_fault+0x437/0x8e0
-[  310.312446]  ? lock_acquire+0x51/0x70
-[  310.314150]  ? xfs_ilock+0x86/0x190 [xfs]
-[  310.315915]  __xfs_filemap_fault.constprop.21+0x37/0xc0 [xfs]
-[  310.318089]  __do_fault+0x13/0x126
-[  310.319696]  __handle_mm_fault+0xc8d/0x11c0
-[  310.321493]  handle_mm_fault+0x17a/0x390
-[  310.323156]  __do_page_fault+0x24c/0x4d0
-[  310.324782]  do_page_fault+0x2a/0x70
-[  310.326289]  ? page_fault+0x8/0x30
-[  310.327745]  page_fault+0x1e/0x30
+------------------------------------------------------------------------
 
-[  313.714537] systemd-journal D12600   498      1 0x00000000
-[  313.716538] Call Trace:
-[  313.717683]  ? __schedule+0x245/0x7f0
-[  313.719221]  schedule+0x23/0x80
-[  313.720586]  schedule_timeout+0x21f/0x400
-[  313.722163]  wait_for_completion+0xb2/0x130
-[  313.723750]  ? wake_up_q+0x70/0x70
-[  313.725134]  flush_work+0x1db/0x2b0
-[  313.726535]  ? flush_workqueue_prep_pwqs+0x1b0/0x1b0
-[  313.728336]  ? page_alloc_cpu_dead+0x30/0x30
-[  313.729936]  drain_all_pages+0x174/0x1e0
-[  313.731446]  __alloc_pages_slowpath+0x428/0xc50
-[  313.733120]  __alloc_pages_nodemask+0x2a6/0x2c0
-[  313.734826]  filemap_fault+0x437/0x8e0
-[  313.736296]  ? lock_acquire+0x51/0x70
-[  313.737769]  ? xfs_ilock+0x86/0x190 [xfs]
-[  313.739309]  __xfs_filemap_fault.constprop.21+0x37/0xc0 [xfs]
-[  313.741291]  __do_fault+0x13/0x126
-[  313.742667]  __handle_mm_fault+0xc8d/0x11c0
-[  313.744245]  handle_mm_fault+0x17a/0x390
-[  313.745755]  __do_page_fault+0x24c/0x4d0
-[  313.747290]  do_page_fault+0x2a/0x70
-[  313.748728]  ? page_fault+0x8/0x30
-[  313.750148]  page_fault+0x1e/0x30
+commit e95e2d26fff60af9bb4111a9c17461ecd5e17a7d
+Author: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+Date:   Thu Jul 26 13:44:00 2018 -0700
 
-[  324.987240] workqueue events_freezable_power_: flags=0x84
-[  324.989292]   pwq 0: cpus=0 node=0 flags=0x0 nice=0 active=1/256
-[  324.991482]     in-flight: 5:disk_events_workfn
-[  324.993371] workqueue mm_percpu_wq: flags=0x8
-[  324.995167]   pwq 0: cpus=0 node=0 flags=0x0 nice=0 active=2/256
-[  324.997363]     pending: vmstat_update, drain_local_pages_wq BAR(498)
+    rcu: Avoid resched_cpu() when rescheduling the current CPU
+    
+    The resched_cpu() interface is quite handy, but it does acquire the
+    specified CPU's runqueue lock, which does not come for free.  This
+    commit therefore substitutes the following when directing resched_cpu()
+    at the current CPU:
+    
+            set_tsk_need_resched(current);
+            set_preempt_need_resched();
+    
+    Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+    Cc: Peter Zijlstra <peterz@infradead.org>
 
-[  378.984241] INFO: task systemd-journal:498 blocked for more than 120 seconds.
-[  378.986657]       Not tainted 4.18.0-rc6-next-20180724+ #248
-[  378.988741] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-[  378.991343] systemd-journal D12600   498      1 0x00000000
-[  378.993434] Call Trace:
-[  378.994643]  ? __schedule+0x245/0x7f0
-[  378.996158]  schedule+0x23/0x80
-[  378.997528]  schedule_timeout+0x21f/0x400
-[  378.999112]  wait_for_completion+0xb2/0x130
-[  379.000728]  ? wake_up_q+0x70/0x70
-[  379.002170]  flush_work+0x1db/0x2b0
-[  379.003667]  ? flush_workqueue_prep_pwqs+0x1b0/0x1b0
-[  379.005507]  ? page_alloc_cpu_dead+0x30/0x30
-[  379.007176]  drain_all_pages+0x174/0x1e0
-[  379.008836]  __alloc_pages_slowpath+0x428/0xc50
-[  379.010625]  __alloc_pages_nodemask+0x2a6/0x2c0
-[  379.012364]  filemap_fault+0x437/0x8e0
-[  379.013881]  ? lock_acquire+0x51/0x70
-[  379.015373]  ? xfs_ilock+0x86/0x190 [xfs]
-[  379.016950]  __xfs_filemap_fault.constprop.21+0x37/0xc0 [xfs]
-[  379.019019]  __do_fault+0x13/0x126
-[  379.020439]  __handle_mm_fault+0xc8d/0x11c0
-[  379.022055]  handle_mm_fault+0x17a/0x390
-[  379.023623]  __do_page_fault+0x24c/0x4d0
-[  379.025167]  do_page_fault+0x2a/0x70
-[  379.026621]  ? page_fault+0x8/0x30
-[  379.028022]  page_fault+0x1e/0x30
-
-[  432.759743] systemd-journal D12600   498      1 0x00000000
-[  432.761748] Call Trace:
-[  432.762892]  ? __schedule+0x245/0x7f0
-[  432.764352]  schedule+0x23/0x80
-[  432.765673]  schedule_timeout+0x21f/0x400
-[  432.767428]  wait_for_completion+0xb2/0x130
-[  432.769207]  ? wake_up_q+0x70/0x70
-[  432.770764]  flush_work+0x1db/0x2b0
-[  432.772223]  ? flush_workqueue_prep_pwqs+0x1b0/0x1b0
-[  432.774125]  ? page_alloc_cpu_dead+0x30/0x30
-[  432.775873]  drain_all_pages+0x174/0x1e0
-[  432.777528]  __alloc_pages_slowpath+0x428/0xc50
-[  432.779306]  __alloc_pages_nodemask+0x2a6/0x2c0
-[  432.780977]  filemap_fault+0x437/0x8e0
-[  432.782503]  ? lock_acquire+0x51/0x70
-[  432.784012]  ? xfs_ilock+0x86/0x190 [xfs]
-[  432.785556]  __xfs_filemap_fault.constprop.21+0x37/0xc0 [xfs]
-[  432.787537]  __do_fault+0x13/0x126
-[  432.788930]  __handle_mm_fault+0xc8d/0x11c0
-[  432.790570]  handle_mm_fault+0x17a/0x390
-[  432.792162]  __do_page_fault+0x24c/0x4d0
-[  432.793773]  do_page_fault+0x2a/0x70
-[  432.795196]  ? page_fault+0x8/0x30
-[  432.796572]  page_fault+0x1e/0x30
-
-[  444.234824] workqueue events_freezable_power_: flags=0x84
-[  444.236937]   pwq 0: cpus=0 node=0 flags=0x0 nice=0 active=1/256
-[  444.239138]     in-flight: 5:disk_events_workfn
-[  444.241022] workqueue mm_percpu_wq: flags=0x8
-[  444.242829]   pwq 0: cpus=0 node=0 flags=0x0 nice=0 active=2/256
-[  444.245057]     pending: vmstat_update, drain_local_pages_wq BAR(498)
-
->  
-> [...]
-> 
->> Since the patch shown below was suggested by Michal Hocko at
->> https://marc.info/?l=linux-mm&m=152723708623015 , it is from Michal Hocko.
->>
->> >From cd8095242de13ace61eefca0c3d6f2a5a7b40032 Mon Sep 17 00:00:00 2001
->> From: Michal Hocko <mhocko@suse.com>
->> Date: Thu, 26 Jul 2018 14:40:03 +0900
->> Subject: [PATCH] mm,page_alloc: PF_WQ_WORKER threads must sleep at should_reclaim_retry().
->>
->> Tetsuo Handa has reported that it is possible to bypass the short sleep
->> for PF_WQ_WORKER threads which was introduced by commit 373ccbe5927034b5
->> ("mm, vmstat: allow WQ concurrency to discover memory reclaim doesn't make
->> any progress") and moved by commit ede37713737834d9 ("mm: throttle on IO
->> only when there are too many dirty and writeback pages") and lock up the
->> system if OOM.
->>
->> This is because we are implicitly counting on falling back to
->> schedule_timeout_uninterruptible() in __alloc_pages_may_oom() when
->> schedule_timeout_uninterruptible() in should_reclaim_retry() was not
->> called due to __zone_watermark_ok() == false.
-> 
-> How do we rely on that?
-
-Unless disk_events_workfn() (PID=5) sleeps at schedule_timeout_uninterruptible()
-in __alloc_pages_may_oom(), drain_local_pages_wq() which a thread doing __GFP_FS
-allocation (PID=498) is waiting for cannot be started.
-
-> 
->> However, schedule_timeout_uninterruptible() in __alloc_pages_may_oom() is
->> not called if all allocating threads but a PF_WQ_WORKER thread got stuck at
->> __GFP_FS direct reclaim, for mutex_trylock(&oom_lock) by that PF_WQ_WORKER
->> thread succeeds and out_of_memory() remains no-op unless that PF_WQ_WORKER
->> thread is doing __GFP_FS allocation.
-> 
-> I have really hard time to parse and understand this.
-
-You can write as you like.
-
-> 
->> Tetsuo is observing that GFP_NOIO
->> allocation request from disk_events_workfn() is preventing other pending
->> works from starting.
-> 
-> What about any other allocation from !PF_WQ_WORKER context? Why those do
-> not jump in?
-
-All __GFP_FS allocations got stuck at direct reclaim or workqueue.
-
-> 
->> Since should_reclaim_retry() should be a natural reschedule point,
->> let's do the short sleep for PF_WQ_WORKER threads unconditionally
->> in order to guarantee that other pending works are started.
-> 
-> OK, this is finally makes some sense. But it doesn't explain why it
-> handles the live lock.
-
-As explained above, if disk_events_workfn() (PID=5) explicitly sleeps,
-vmstat_update and drain_local_pages_wq from WQ_MEM_RECLAIM workqueue will
-start, and unblock PID=498 which is waiting for drain_local_pages_wq and
-allow PID=498 to invoke the OOM killer.
-
-> 
->> Reported-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
->> Signed-off-by: Michal Hocko <mhocko@suse.com>
-> 
-> Your s-o-b is missing again. I have already told you that previously
-> when you were posting the patch.
-
-I'm waiting for you to post this change with your wording.
-
-> 
-> I do not mind this change per se but I am not happy about _your_ changelog.
-> It doesn't explain the underlying problem IMHO. Having a natural and
-> unconditional scheduling point in should_reclaim_retry is a reasonable
-> thing. But how the hack it relates to the livelock you are seeing. So
-> namely the changelog should explain
-> 1) why nobody is able to make forward progress during direct reclaim
-
-Because GFP_NOIO allocation from one workqueue prevented WQ_MEM_RECLAIM
-workqueues from starting, for it did not call schedule_timeout_*() because
-mutex_trylock(&oom_lock) did not fail because nobody else could call
-__alloc_pages_may_oom().
-
-> 2) why nobody is able to trigger oom killer as the last resort
-
-Because only one !__GFP_FS allocating thread which did not get stuck at
-direct reclaim was able to call __alloc_pages_may_oom().
+diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
+index 595059141c40..061ceb171d8e 100644
+--- a/kernel/rcu/tree.c
++++ b/kernel/rcu/tree.c
+@@ -1353,7 +1353,8 @@ static void print_cpu_stall(void)
+ 	 * progress and it could be we're stuck in kernel space without context
+ 	 * switches for an entirely unreasonable amount of time.
+ 	 */
+-	resched_cpu(smp_processor_id());
++	set_tsk_need_resched(current);
++	set_preempt_need_resched();
+ }
+ 
+ static void check_cpu_stall(struct rcu_data *rdp)
+@@ -2674,10 +2675,12 @@ static __latent_entropy void rcu_process_callbacks(struct softirq_action *unused
+ 	WARN_ON_ONCE(!rdp->beenonline);
+ 
+ 	/* Report any deferred quiescent states if preemption enabled. */
+-	if (!(preempt_count() & PREEMPT_MASK))
++	if (!(preempt_count() & PREEMPT_MASK)) {
+ 		rcu_preempt_deferred_qs(current);
+-	else if (rcu_preempt_need_deferred_qs(current))
+-		resched_cpu(rdp->cpu); /* Provoke future context switch. */
++	} else if (rcu_preempt_need_deferred_qs(current)) {
++		set_tsk_need_resched(current);
++		set_preempt_need_resched();
++	}
+ 
+ 	/* Update RCU state based on any recent quiescent states. */
+ 	rcu_check_quiescent_state(rdp);
+diff --git a/kernel/rcu/tree_exp.h b/kernel/rcu/tree_exp.h
+index b3e2c873b8e4..62d363d7fab2 100644
+--- a/kernel/rcu/tree_exp.h
++++ b/kernel/rcu/tree_exp.h
+@@ -672,7 +672,8 @@ static void sync_rcu_exp_handler(void *unused)
+ 			rcu_report_exp_rdp(rdp);
+ 		} else {
+ 			rdp->deferred_qs = true;
+-			resched_cpu(rdp->cpu);
++			set_tsk_need_resched(t);
++			set_preempt_need_resched();
+ 		}
+ 		return;
+ 	}
+@@ -710,15 +711,16 @@ static void sync_rcu_exp_handler(void *unused)
+ 	 * because we are in an interrupt handler, which will cause that
+ 	 * function to take an early exit without doing anything.
+ 	 *
+-	 * Otherwise, use resched_cpu() to force a context switch after
+-	 * the CPU enables everything.
++	 * Otherwise, force a context switch after the CPU enables everything.
+ 	 */
+ 	rdp->deferred_qs = true;
+ 	if (!(preempt_count() & (PREEMPT_MASK | SOFTIRQ_MASK)) ||
+-	    WARN_ON_ONCE(rcu_dynticks_curr_cpu_in_eqs()))
++	    WARN_ON_ONCE(rcu_dynticks_curr_cpu_in_eqs())) {
+ 		rcu_preempt_deferred_qs(t);
+-	else
+-		resched_cpu(rdp->cpu);
++	} else {
++		set_tsk_need_resched(t);
++		set_preempt_need_resched();
++	}
+ }
+ 
+ /* PREEMPT=y, so no PREEMPT=n expedited grace period to clean up after. */
+@@ -779,7 +781,8 @@ static void sync_sched_exp_handler(void *unused)
+ 	__this_cpu_write(rcu_data.cpu_no_qs.b.exp, true);
+ 	/* Store .exp before .rcu_urgent_qs. */
+ 	smp_store_release(this_cpu_ptr(&rcu_dynticks.rcu_urgent_qs), true);
+-	resched_cpu(smp_processor_id());
++	set_tsk_need_resched(current);
++	set_preempt_need_resched();
+ }
+ 
+ /* Send IPI for expedited cleanup if needed at end of CPU-hotplug operation. */
+diff --git a/kernel/rcu/tree_plugin.h b/kernel/rcu/tree_plugin.h
+index 5f4c8bab7c72..d3ccf4389a67 100644
+--- a/kernel/rcu/tree_plugin.h
++++ b/kernel/rcu/tree_plugin.h
+@@ -791,8 +791,10 @@ static void rcu_flavor_check_callbacks(int user)
+ 	if (t->rcu_read_lock_nesting > 0 ||
+ 	    (preempt_count() & (PREEMPT_MASK | SOFTIRQ_MASK))) {
+ 		/* No QS, force context switch if deferred. */
+-		if (rcu_preempt_need_deferred_qs(t))
+-			resched_cpu(smp_processor_id());
++		if (rcu_preempt_need_deferred_qs(t)) {
++			set_tsk_need_resched(t);
++			set_preempt_need_resched();
++		}
+ 	} else if (rcu_preempt_need_deferred_qs(t)) {
+ 		rcu_preempt_deferred_qs(t); /* Report deferred QS. */
+ 		return;
 
