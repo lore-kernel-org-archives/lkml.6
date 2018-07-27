@@ -6,34 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73949C6778F
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 09:48:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0D9FC67790
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 09:48:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2671520891
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 09:48:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2671520891
+	by mail.kernel.org (Postfix) with ESMTP id 8969C20891
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 09:48:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8969C20891
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388735AbeG0LJu (ORCPT
+        id S2388745AbeG0LJx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 07:09:50 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:52592 "EHLO
+        Fri, 27 Jul 2018 07:09:53 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:52600 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730395AbeG0LJu (ORCPT
+        with ESMTP id S1730395AbeG0LJx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 07:09:50 -0400
+        Fri, 27 Jul 2018 07:09:53 -0400
 Received: from localhost (unknown [89.188.5.116])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D3B96C03;
-        Fri, 27 Jul 2018 09:48:43 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D5AC2C03;
+        Fri, 27 Jul 2018 09:48:46 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Roopa Prabhu <roopa@cumulusnetworks.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.17 40/66] vxlan: make netlink notify in vxlan_fdb_destroy optional
-Date:   Fri, 27 Jul 2018 11:45:33 +0200
-Message-Id: <20180727093813.647340646@linuxfoundation.org>
+Subject: [PATCH 4.17 41/66] vxlan: fix default fdb entry netlink notify ordering during netdev create
+Date:   Fri, 27 Jul 2018 11:45:34 +0200
+Message-Id: <20180727093813.743894260@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180727093809.043856530@linuxfoundation.org>
 References: <20180727093809.043856530@linuxfoundation.org>
@@ -52,73 +52,114 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Roopa Prabhu <roopa@cumulusnetworks.com>
 
-[ Upstream commit f6e053858671bb156b6e44ad66418acc8c7f4e77 ]
+[ Upstream commit e99465b952861533d9ba748fdbecc96d9a36da3e ]
 
-Add a new option do_notify to vxlan_fdb_destroy to make
-sending netlink notify optional. Used by a later patch.
+Problem:
+In vxlan_newlink, a default fdb entry is added before register_netdev.
+The default fdb creation function also notifies user-space of the
+fdb entry on the vxlan device which user-space does not know about yet.
+(RTM_NEWNEIGH goes before RTM_NEWLINK for the same ifindex).
 
+This patch fixes the user-space netlink notification ordering issue
+with the following changes:
+- decouple fdb notify from fdb create.
+- Move fdb notify after register_netdev.
+- Call rtnl_configure_link in vxlan newlink handler to notify
+userspace about the newlink before fdb notify and
+hence avoiding the user-space race.
+
+Fixes: afbd8bae9c79 ("vxlan: add implicit fdb entry for default destination")
 Signed-off-by: Roopa Prabhu <roopa@cumulusnetworks.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/vxlan.c |   14 ++++++++------
- 1 file changed, 8 insertions(+), 6 deletions(-)
+ drivers/net/vxlan.c |   29 +++++++++++++++++++++--------
+ 1 file changed, 21 insertions(+), 8 deletions(-)
 
 --- a/drivers/net/vxlan.c
 +++ b/drivers/net/vxlan.c
-@@ -774,13 +774,15 @@ static void vxlan_fdb_free(struct rcu_he
- 	kfree(f);
- }
- 
--static void vxlan_fdb_destroy(struct vxlan_dev *vxlan, struct vxlan_fdb *f)
-+static void vxlan_fdb_destroy(struct vxlan_dev *vxlan, struct vxlan_fdb *f,
-+			      bool do_notify)
+@@ -3190,6 +3190,7 @@ static int __vxlan_dev_create(struct net
  {
- 	netdev_dbg(vxlan->dev,
- 		    "delete %pM\n", f->eth_addr);
+ 	struct vxlan_net *vn = net_generic(net, vxlan_net_id);
+ 	struct vxlan_dev *vxlan = netdev_priv(dev);
++	struct vxlan_fdb *f = NULL;
+ 	int err;
  
- 	--vxlan->addrcnt;
--	vxlan_fdb_notify(vxlan, f, first_remote_rtnl(f), RTM_DELNEIGH);
-+	if (do_notify)
-+		vxlan_fdb_notify(vxlan, f, first_remote_rtnl(f), RTM_DELNEIGH);
+ 	err = vxlan_dev_configure(net, dev, conf, false, extack);
+@@ -3200,27 +3201,38 @@ static int __vxlan_dev_create(struct net
  
- 	hlist_del_rcu(&f->hlist);
- 	call_rcu(&f->rcu, vxlan_fdb_free);
-@@ -930,7 +932,7 @@ static int __vxlan_fdb_delete(struct vxl
- 		goto out;
+ 	/* create an fdb entry for a valid default destination */
+ 	if (!vxlan_addr_any(&vxlan->default_dst.remote_ip)) {
+-		err = vxlan_fdb_update(vxlan, all_zeros_mac,
++		err = vxlan_fdb_create(vxlan, all_zeros_mac,
+ 				       &vxlan->default_dst.remote_ip,
+ 				       NUD_REACHABLE | NUD_PERMANENT,
+-				       NLM_F_EXCL | NLM_F_CREATE,
+ 				       vxlan->cfg.dst_port,
+ 				       vxlan->default_dst.remote_vni,
+ 				       vxlan->default_dst.remote_vni,
+ 				       vxlan->default_dst.remote_ifindex,
+-				       NTF_SELF);
++				       NTF_SELF, &f);
+ 		if (err)
+ 			return err;
  	}
  
--	vxlan_fdb_destroy(vxlan, f);
-+	vxlan_fdb_destroy(vxlan, f, true);
+ 	err = register_netdevice(dev);
++	if (err)
++		goto errout;
++
++	err = rtnl_configure_link(dev, NULL);
+ 	if (err) {
+-		vxlan_fdb_delete_default(vxlan, vxlan->default_dst.remote_vni);
+-		return err;
++		unregister_netdevice(dev);
++		goto errout;
+ 	}
  
- out:
++	/* notify default fdb entry */
++	if (f)
++		vxlan_fdb_notify(vxlan, f, first_remote_rtnl(f), RTM_NEWNEIGH);
++
+ 	list_add(&vxlan->next, &vn->vxlan_list);
  	return 0;
-@@ -2393,7 +2395,7 @@ static void vxlan_cleanup(struct timer_l
- 					   "garbage collect %pM\n",
- 					   f->eth_addr);
- 				f->state = NUD_STALE;
--				vxlan_fdb_destroy(vxlan, f);
-+				vxlan_fdb_destroy(vxlan, f, true);
- 			} else if (time_before(timeout, next_timer))
- 				next_timer = timeout;
- 		}
-@@ -2444,7 +2446,7 @@ static void vxlan_fdb_delete_default(str
- 	spin_lock_bh(&vxlan->hash_lock);
- 	f = __vxlan_find_mac(vxlan, all_zeros_mac, vni);
- 	if (f)
--		vxlan_fdb_destroy(vxlan, f);
-+		vxlan_fdb_destroy(vxlan, f, true);
- 	spin_unlock_bh(&vxlan->hash_lock);
++errout:
++	if (f)
++		vxlan_fdb_destroy(vxlan, f, false);
++	return err;
  }
  
-@@ -2498,7 +2500,7 @@ static void vxlan_flush(struct vxlan_dev
- 				continue;
- 			/* the all_zeros_mac entry is deleted at vxlan_uninit */
- 			if (!is_zero_ether_addr(f->eth_addr))
--				vxlan_fdb_destroy(vxlan, f);
-+				vxlan_fdb_destroy(vxlan, f, true);
+ static int vxlan_nl2conf(struct nlattr *tb[], struct nlattr *data[],
+@@ -3449,6 +3461,7 @@ static int vxlan_changelink(struct net_d
+ 	struct vxlan_rdst *dst = &vxlan->default_dst;
+ 	struct vxlan_rdst old_dst;
+ 	struct vxlan_config conf;
++	struct vxlan_fdb *f = NULL;
+ 	int err;
+ 
+ 	err = vxlan_nl2conf(tb, data,
+@@ -3474,19 +3487,19 @@ static int vxlan_changelink(struct net_d
+ 					   old_dst.remote_ifindex, 0);
+ 
+ 		if (!vxlan_addr_any(&dst->remote_ip)) {
+-			err = vxlan_fdb_update(vxlan, all_zeros_mac,
++			err = vxlan_fdb_create(vxlan, all_zeros_mac,
+ 					       &dst->remote_ip,
+ 					       NUD_REACHABLE | NUD_PERMANENT,
+-					       NLM_F_CREATE | NLM_F_APPEND,
+ 					       vxlan->cfg.dst_port,
+ 					       dst->remote_vni,
+ 					       dst->remote_vni,
+ 					       dst->remote_ifindex,
+-					       NTF_SELF);
++					       NTF_SELF, &f);
+ 			if (err) {
+ 				spin_unlock_bh(&vxlan->hash_lock);
+ 				return err;
+ 			}
++			vxlan_fdb_notify(vxlan, f, first_remote_rtnl(f), RTM_NEWNEIGH);
  		}
+ 		spin_unlock_bh(&vxlan->hash_lock);
  	}
- 	spin_unlock_bh(&vxlan->hash_lock);
 
 
