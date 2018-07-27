@@ -2,96 +2,68 @@ Return-Path: <SRS0=OQFz=KL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B789C67790
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 07:42:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89E6FC67790
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 07:45:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4F3FD20673
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 07:42:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F3FD20673
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 366B620673
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 07:45:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 366B620673
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730218AbeG0JDb (ORCPT
+        id S1730142AbeG0JFm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 05:03:31 -0400
-Received: from mga01.intel.com ([192.55.52.88]:31220 "EHLO mga01.intel.com"
+        Fri, 27 Jul 2018 05:05:42 -0400
+Received: from verein.lst.de ([213.95.11.211]:39928 "EHLO newverein.lst.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725988AbeG0JDb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 05:03:31 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Jul 2018 00:42:53 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,408,1526367600"; 
-   d="scan'208";a="57574611"
-Received: from taolv-mobl.ccr.corp.intel.com ([10.249.169.42])
-  by fmsmga007.fm.intel.com with ESMTP; 27 Jul 2018 00:42:47 -0700
-Message-ID: <1532677364.2358.51.camel@intel.com>
-Subject: Re: [PATCH] MAINTAINERS: Add myself as designated reviewer for
- thermal
-From:   Zhang Rui <rui.zhang@intel.com>
-To:     Eduardo Valentin <edubezval@gmail.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc:     linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Fri, 27 Jul 2018 15:42:44 +0800
-In-Reply-To: <20180726211237.GA3487@localhost.localdomain>
-References: <1532600980-29357-1-git-send-email-daniel.lezcano@linaro.org>
-         <20180726211237.GA3487@localhost.localdomain>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.18.5.2-0ubuntu3.2 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        id S1729498AbeG0JFm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Jul 2018 05:05:42 -0400
+Received: by newverein.lst.de (Postfix, from userid 2407)
+        id E023B68D60; Fri, 27 Jul 2018 09:48:54 +0200 (CEST)
+Date:   Fri, 27 Jul 2018 09:48:54 +0200
+From:   Christoph Hellwig <hch@lst.de>
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     Christoph Hellwig <hch@lst.de>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Richard Weinberger <richard@nod.at>,
+        Ley Foon Tan <lftan@altera.com>,
+        Michal Simek <monstr@monstr.eu>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        linux-um@lists.infradead.org, linux-arch@lists.infradead.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: include architecture Kconfig files from top-level Kconfig v3
+Message-ID: <20180727074854.GA21840@lst.de>
+References: <20180724175646.3621-1-hch@lst.de> <CAK7LNARP2HZ8GdsAU8h_b04jLWbvFXTWqiVt2hpE0vJbjP82ZA@mail.gmail.com> <20180726172143.GA9836@lst.de> <CAK7LNASd0YCj4wwmT9-6GYiBz=wDoXkmQW2F_5XjbCzS9-weUw@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAK7LNASd0YCj4wwmT9-6GYiBz=wDoXkmQW2F_5XjbCzS9-weUw@mail.gmail.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 四, 2018-07-26 at 14:12 -0700, Eduardo Valentin wrote:
-> On Thu, Jul 26, 2018 at 12:29:40PM +0200, Daniel Lezcano wrote:
-> > 
-> > I would like to participate in the review process effort for the
-> > thermal framework, especially the SoC part.
-> > 
-> > Instead of capturing emails with message filters, I would like to
-> > humbly add myself as reviewer so I can receive the patches directly
-> > in
-> > my INBOX and focus on their review.
-> > 
-> > Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-> Acked-by: Eduardo Valentin <edubezval@gmail.com>
-> 
-> Thanks for the help Daniel.
-> 
-> Rui, want to take care of this?
-> 
+On Fri, Jul 27, 2018 at 10:32:19AM +0900, Masahiro Yamada wrote:
+> This will just add a new unmet dependency warning.
+> CONFIG_PREEMPT_COUNT will be still selected.
 
-yes, I will take this patch
+True.  I guess we simply need to prohibit CONFIG_DEBUG_ATOMIC_SLEEP
+explicitly if PREEMPT_COUNT isn't supported.  E.g something like this:
 
-thanks,
-rui
-> > 
-> > ---
-> >  MAINTAINERS | 1 +
-> >  1 file changed, 1 insertion(+)
-> > 
-> > diff --git a/MAINTAINERS b/MAINTAINERS
-> > index 0fe4228..1890aad 100644
-> > --- a/MAINTAINERS
-> > +++ b/MAINTAINERS
-> > @@ -14119,6 +14119,7 @@ F:	drivers/media/radio/radio-
-> > raremono.c
-> >  THERMAL
-> >  M:	Zhang Rui <rui.zhang@intel.com>
-> >  M:	Eduardo Valentin <edubezval@gmail.com>
-> > +R:	Daniel Lezcano <daniel.lezcano@linaro.org>
-> >  L:	linux-pm@vger.kernel.org
-> >  T:	git
-> > git://git.kernel.org/pub/scm/linux/kernel/git/rzhang/linux.git
-> >  T:	git
-> > git://git.kernel.org/pub/scm/linux/kernel/git/evalenti/linux-soc-
-> > thermal.git
+diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
+index 26d3ff7e3cf4..373ce9fecd7e 100644
+--- a/lib/Kconfig.debug
++++ b/lib/Kconfig.debug
+@@ -1195,6 +1195,7 @@ config DEBUG_ATOMIC_SLEEP
+ 	bool "Sleep inside atomic section checking"
+ 	select PREEMPT_COUNT
+ 	depends on DEBUG_KERNEL
++	depends on !ARCH_NO_PREEMPT
+ 	help
+ 	  If you say Y here, various routines which may sleep will become very
+ 	  noisy if they are called inside atomic sections: when a spinlock is
