@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7D36C67790
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:01:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BAF1AC67790
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:01:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 85BFD20894
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:01:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 85BFD20894
+	by mail.kernel.org (Postfix) with ESMTP id 7B0FE20895
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:01:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7B0FE20895
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732121AbeG0LWH (ORCPT
+        id S1732178AbeG0LWK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 07:22:07 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:33838 "EHLO
+        Fri, 27 Jul 2018 07:22:10 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33874 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730244AbeG0LWH (ORCPT
+        with ESMTP id S1730244AbeG0LWK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 07:22:07 -0400
+        Fri, 27 Jul 2018 07:22:10 -0400
 Received: from localhost (unknown [89.188.5.116])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 105FBCB8;
-        Fri, 27 Jul 2018 10:00:56 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3DCC7CB8;
+        Fri, 27 Jul 2018 10:01:00 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ariel Levkovich <lariel@mellanox.com>,
-        Eran Ben Elisha <eranbe@mellanox.com>,
+        stable@vger.kernel.org, Eran Ben Elisha <eranbe@mellanox.com>,
+        Tariq Toukan <tariqt@mellanox.com>,
         Saeed Mahameed <saeedm@mellanox.com>
-Subject: [PATCH 4.14 13/48] net/mlx5: Adjust clock overflow work period
-Date:   Fri, 27 Jul 2018 11:59:58 +0200
-Message-Id: <20180727095919.913724325@linuxfoundation.org>
+Subject: [PATCH 4.14 14/48] net/mlx5e: Dont allow aRFS for encapsulated packets
+Date:   Fri, 27 Jul 2018 11:59:59 +0200
+Message-Id: <20180727095920.023734070@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180727095918.503549522@linuxfoundation.org>
 References: <20180727095918.503549522@linuxfoundation.org>
@@ -51,70 +51,33 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ariel Levkovich <lariel@mellanox.com>
+From: Eran Ben Elisha <eranbe@mellanox.com>
 
-[ Upstream commit 33180bee86a8940a84950edca46315cd9dd6deb5 ]
+[ Upstream commit d2e1c57bcf9a07cbb67f30ecf238f298799bce1c ]
 
-When driver converts HW timestamp to wall clock time it subtracts
-the last saved cycle counter from the HW timestamp and converts the
-difference to nanoseconds.
-The conversion is done by multiplying the cycles difference with the
-clock multiplier value as a first step and therefore the cycles
-difference should be small enough so that the multiplication product
-doesn't exceed 64bit.
+Driver is yet to support aRFS for encapsulated packets, return early
+error in such case.
 
-The overflow handling routine is in charge of updating the last saved
-cycle counter in driver and it is called periodically using kernel
-delayed workqueue.
-
-The delay period for this work is calculated using the max HW cycle
-counter value (a 41 bit mask) as a base which doesn't take the 64bit
-limit into account so the delay period may be incorrect and too
-long to prevent a large difference between the HW counter and the last
-saved counter in SW.
-
-This change adjusts the work period for the HW clock overflow work by
-taking the minimum between the previous value and the quotient of max
-u64 value and the clock multiplier value.
-
-Fixes: ef9814deafd0 ("net/mlx5e: Add HW timestamping (TS) support")
-Signed-off-by: Ariel Levkovich <lariel@mellanox.com>
-Reviewed-by: Eran Ben Elisha <eranbe@mellanox.com>
+Fixes: 18c908e477dc ("net/mlx5e: Add accelerated RFS support")
+Signed-off-by: Eran Ben Elisha <eranbe@mellanox.com>
+Reviewed-by: Tariq Toukan <tariqt@mellanox.com>
 Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/mellanox/mlx5/core/en_clock.c |   12 ++++++++++--
- 1 file changed, 10 insertions(+), 2 deletions(-)
+ drivers/net/ethernet/mellanox/mlx5/core/en_arfs.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/drivers/net/ethernet/mellanox/mlx5/core/en_clock.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/en_clock.c
-@@ -545,6 +545,7 @@ void mlx5e_pps_event_handler(struct mlx5
- void mlx5e_timestamp_init(struct mlx5e_priv *priv)
- {
- 	struct mlx5e_tstamp *tstamp = &priv->tstamp;
-+	u64 overflow_cycles;
- 	u64 ns;
- 	u64 frac = 0;
- 	u32 dev_freq;
-@@ -569,10 +570,17 @@ void mlx5e_timestamp_init(struct mlx5e_p
+--- a/drivers/net/ethernet/mellanox/mlx5/core/en_arfs.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/en_arfs.c
+@@ -711,6 +711,9 @@ int mlx5e_rx_flow_steer(struct net_devic
+ 	    skb->protocol != htons(ETH_P_IPV6))
+ 		return -EPROTONOSUPPORT;
  
- 	/* Calculate period in seconds to call the overflow watchdog - to make
- 	 * sure counter is checked at least once every wrap around.
-+	 * The period is calculated as the minimum between max HW cycles count
-+	 * (The clock source mask) and max amount of cycles that can be
-+	 * multiplied by clock multiplier where the result doesn't exceed
-+	 * 64bits.
- 	 */
--	ns = cyclecounter_cyc2ns(&tstamp->cycles, tstamp->cycles.mask,
-+	overflow_cycles = div64_u64(~0ULL >> 1, tstamp->cycles.mult);
-+	overflow_cycles = min(overflow_cycles, tstamp->cycles.mask >> 1);
++	if (skb->encapsulation)
++		return -EPROTONOSUPPORT;
 +
-+	ns = cyclecounter_cyc2ns(&tstamp->cycles, overflow_cycles,
- 				 frac, &frac);
--	do_div(ns, NSEC_PER_SEC / 2 / HZ);
-+	do_div(ns, NSEC_PER_SEC / HZ);
- 	tstamp->overflow_period = ns;
- 
- 	INIT_WORK(&tstamp->pps_info.out_work, mlx5e_pps_out);
+ 	arfs_t = arfs_get_table(arfs, arfs_get_ip_proto(skb), skb->protocol);
+ 	if (!arfs_t)
+ 		return -EPROTONOSUPPORT;
 
 
