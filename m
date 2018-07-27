@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67D32C67790
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 09:50:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 459F6C6778F
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 09:50:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1BCB920895
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 09:50:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1BCB920895
+	by mail.kernel.org (Postfix) with ESMTP id 047952089A
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 09:50:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 047952089A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389074AbeG0LLO (ORCPT
+        id S2389090AbeG0LLS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 07:11:14 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:53096 "EHLO
+        Fri, 27 Jul 2018 07:11:18 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:53106 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729431AbeG0LLN (ORCPT
+        with ESMTP id S1729431AbeG0LLR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 07:11:13 -0400
+        Fri, 27 Jul 2018 07:11:17 -0400
 Received: from localhost (unknown [89.188.5.116])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id EE138AF8;
-        Fri, 27 Jul 2018 09:50:07 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B1819BB6;
+        Fri, 27 Jul 2018 09:50:10 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Anssi Hannula <anssi.hannula@bitwise.fi>,
-        Michal Simek <michal.simek@xilinx.com>,
+        stable@vger.kernel.org,
+        Stephane Grosjean <s.grosjean@peak-system.com>,
         Marc Kleine-Budde <mkl@pengutronix.de>
-Subject: [PATCH 4.17 63/66] can: xilinx_can: fix RX overflow interrupt not being enabled
-Date:   Fri, 27 Jul 2018 11:45:56 +0200
-Message-Id: <20180727093816.119939029@linuxfoundation.org>
+Subject: [PATCH 4.17 64/66] can: peak_canfd: fix firmware < v3.3.0: limit allocation to 32-bit DMA addr only
+Date:   Fri, 27 Jul 2018 11:45:57 +0200
+Message-Id: <20180727093816.247265789@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180727093809.043856530@linuxfoundation.org>
 References: <20180727093809.043856530@linuxfoundation.org>
@@ -51,37 +51,64 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Anssi Hannula <anssi.hannula@bitwise.fi>
+From: Stephane Grosjean <s.grosjean@peak-system.com>
 
-commit 83997997252f5d3fc7f04abc24a89600c2b504ab upstream.
+commit 5d4c94ed9f564224d7b37dbee13f7c5d4a8a01ac upstream.
 
-RX overflow interrupt (RXOFLW) is disabled even though xcan_interrupt()
-processes it. This means that an RX overflow interrupt will only be
-processed when another interrupt gets asserted (e.g. for RX/TX).
+The DMA logic in firmwares < v3.3.0 embedded in the PCAN-PCIe FD cards
+family is not capable of handling a mix of 32-bit and 64-bit logical
+addresses. If the board is equipped with 2 or 4 CAN ports, then such a
+situation might lead to a PCIe Bus Error "Malformed TLP" packet
+as well as "irq xx: nobody cared" issue.
 
-Fix that by enabling the RXOFLW interrupt.
+This patch adds a workaround that requests only 32-bit DMA addresses
+when these might be allocated outside of the 4 GB area.
 
-Fixes: b1201e44f50b ("can: xilinx CAN controller support")
-Signed-off-by: Anssi Hannula <anssi.hannula@bitwise.fi>
-Cc: Michal Simek <michal.simek@xilinx.com>
-Cc: <stable@vger.kernel.org>
+This issue has been fixed in firmware v3.3.0 and next.
+
+Signed-off-by: Stephane Grosjean <s.grosjean@peak-system.com>
+Cc: linux-stable <stable@vger.kernel.org>
 Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/can/xilinx_can.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/can/peak_canfd/peak_pciefd_main.c |   19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
 
---- a/drivers/net/can/xilinx_can.c
-+++ b/drivers/net/can/xilinx_can.c
-@@ -104,7 +104,7 @@ enum xcan_reg {
- #define XCAN_INTR_ALL		(XCAN_IXR_TXOK_MASK | XCAN_IXR_BSOFF_MASK |\
- 				 XCAN_IXR_WKUP_MASK | XCAN_IXR_SLP_MASK | \
- 				 XCAN_IXR_RXNEMP_MASK | XCAN_IXR_ERROR_MASK | \
--				 XCAN_IXR_ARBLST_MASK)
-+				 XCAN_IXR_RXOFLW_MASK | XCAN_IXR_ARBLST_MASK)
+--- a/drivers/net/can/peak_canfd/peak_pciefd_main.c
++++ b/drivers/net/can/peak_canfd/peak_pciefd_main.c
+@@ -58,6 +58,10 @@ MODULE_LICENSE("GPL v2");
+ #define PCIEFD_REG_SYS_VER1		0x0040	/* version reg #1 */
+ #define PCIEFD_REG_SYS_VER2		0x0044	/* version reg #2 */
  
- /* CAN register bit shift - XCAN_<REG>_<BIT>_SHIFT */
- #define XCAN_BTR_SJW_SHIFT		7  /* Synchronous jump width */
++#define PCIEFD_FW_VERSION(x, y, z)	(((u32)(x) << 24) | \
++					 ((u32)(y) << 16) | \
++					 ((u32)(z) << 8))
++
+ /* System Control Registers Bits */
+ #define PCIEFD_SYS_CTL_TS_RST		0x00000001	/* timestamp clock */
+ #define PCIEFD_SYS_CTL_CLK_EN		0x00000002	/* system clock */
+@@ -783,6 +787,21 @@ static int peak_pciefd_probe(struct pci_
+ 		 "%ux CAN-FD PCAN-PCIe FPGA v%u.%u.%u:\n", can_count,
+ 		 hw_ver_major, hw_ver_minor, hw_ver_sub);
+ 
++#ifdef CONFIG_ARCH_DMA_ADDR_T_64BIT
++	/* FW < v3.3.0 DMA logic doesn't handle correctly the mix of 32-bit and
++	 * 64-bit logical addresses: this workaround forces usage of 32-bit
++	 * DMA addresses only when such a fw is detected.
++	 */
++	if (PCIEFD_FW_VERSION(hw_ver_major, hw_ver_minor, hw_ver_sub) <
++	    PCIEFD_FW_VERSION(3, 3, 0)) {
++		err = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(32));
++		if (err)
++			dev_warn(&pdev->dev,
++				 "warning: can't set DMA mask %llxh (err %d)\n",
++				 DMA_BIT_MASK(32), err);
++	}
++#endif
++
+ 	/* stop system clock */
+ 	pciefd_sys_writereg(pciefd, PCIEFD_SYS_CTL_CLK_EN,
+ 			    PCIEFD_REG_SYS_CTL_CLR);
 
 
