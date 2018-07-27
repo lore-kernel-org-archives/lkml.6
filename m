@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C01DC67790
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:28:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05B8CC67790
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:28:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 00DB3208A2
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:28:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 00DB3208A2
+	by mail.kernel.org (Postfix) with ESMTP id A60A7208A2
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:28:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A60A7208A2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388813AbeG0LtV (ORCPT
+        id S2388847AbeG0LtY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 07:49:21 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:42458 "EHLO
+        Fri, 27 Jul 2018 07:49:24 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:42474 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730515AbeG0LtV (ORCPT
+        with ESMTP id S2388818AbeG0LtX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 07:49:21 -0400
+        Fri, 27 Jul 2018 07:49:23 -0400
 Received: from localhost (unknown [89.188.5.116])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 82E63CD2;
-        Fri, 27 Jul 2018 10:28:03 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 69C0ACD4;
+        Fri, 27 Jul 2018 10:28:06 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sabrina Dubroca <sd@queasysnail.net>,
-        Stefano Brivio <sbrivio@redhat.com>,
+        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+        Soheil Hassas Yeganeh <soheil@google.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 3.18 09/27] skbuff: Unconditionally copy pfmemalloc in __skb_clone()
-Date:   Fri, 27 Jul 2018 12:26:46 +0200
-Message-Id: <20180727102649.382023308@linuxfoundation.org>
+Subject: [PATCH 3.18 18/27] tcp: detect malicious patterns in tcp_collapse_ofo_queue()
+Date:   Fri, 27 Jul 2018 12:26:55 +0200
+Message-Id: <20180727102649.714312081@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180727102649.049641021@linuxfoundation.org>
 References: <20180727102649.049641021@linuxfoundation.org>
@@ -51,41 +51,69 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Stefano Brivio <sbrivio@redhat.com>
+From: Eric Dumazet <edumazet@google.com>
 
-[ Upstream commit e78bfb0751d4e312699106ba7efbed2bab1a53ca ]
+[ Upstream commit 3d4bf93ac12003f9b8e1e2de37fe27983deebdcf ]
 
-Commit 8b7008620b84 ("net: Don't copy pfmemalloc flag in
-__copy_skb_header()") introduced a different handling for the
-pfmemalloc flag in copy and clone paths.
+In case an attacker feeds tiny packets completely out of order,
+tcp_collapse_ofo_queue() might scan the whole rb-tree, performing
+expensive copies, but not changing socket memory usage at all.
 
-In __skb_clone(), now, the flag is set only if it was set in the
-original skb, but not cleared if it wasn't. This is wrong and
-might lead to socket buffers being flagged with pfmemalloc even
-if the skb data wasn't allocated from pfmemalloc reserves. Copy
-the flag instead of ORing it.
+1) Do not attempt to collapse tiny skbs.
+2) Add logic to exit early when too many tiny skbs are detected.
 
-Reported-by: Sabrina Dubroca <sd@queasysnail.net>
-Fixes: 8b7008620b84 ("net: Don't copy pfmemalloc flag in __copy_skb_header()")
-Signed-off-by: Stefano Brivio <sbrivio@redhat.com>
-Tested-by: Sabrina Dubroca <sd@queasysnail.net>
+We prefer not doing aggressive collapsing (which copies packets)
+for pathological flows, and revert to tcp_prune_ofo_queue() which
+will be less expensive.
+
+In the future, we might add the possibility of terminating flows
+that are proven to be malicious.
+
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Acked-by: Soheil Hassas Yeganeh <soheil@google.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/core/skbuff.c |    3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ net/ipv4/tcp_input.c |   15 +++++++++++++--
+ 1 file changed, 13 insertions(+), 2 deletions(-)
 
---- a/net/core/skbuff.c
-+++ b/net/core/skbuff.c
-@@ -780,8 +780,7 @@ static struct sk_buff *__skb_clone(struc
- 	n->cloned = 1;
- 	n->nohdr = 0;
- 	n->peeked = 0;
--	if (skb->pfmemalloc)
--		n->pfmemalloc = 1;
-+	C(pfmemalloc);
- 	n->destructor = NULL;
- 	C(tail);
- 	C(end);
+--- a/net/ipv4/tcp_input.c
++++ b/net/ipv4/tcp_input.c
+@@ -4652,6 +4652,7 @@ restart:
+ static void tcp_collapse_ofo_queue(struct sock *sk)
+ {
+ 	struct tcp_sock *tp = tcp_sk(sk);
++	u32 range_truesize, sum_tiny = 0;
+ 	struct sk_buff *skb = skb_peek(&tp->out_of_order_queue);
+ 	struct sk_buff *head;
+ 	u32 start, end;
+@@ -4661,6 +4662,7 @@ static void tcp_collapse_ofo_queue(struc
+ 
+ 	start = TCP_SKB_CB(skb)->seq;
+ 	end = TCP_SKB_CB(skb)->end_seq;
++	range_truesize = skb->truesize;
+ 	head = skb;
+ 
+ 	for (;;) {
+@@ -4675,8 +4677,17 @@ static void tcp_collapse_ofo_queue(struc
+ 		if (!skb ||
+ 		    after(TCP_SKB_CB(skb)->seq, end) ||
+ 		    before(TCP_SKB_CB(skb)->end_seq, start)) {
+-			tcp_collapse(sk, &tp->out_of_order_queue,
+-				     head, skb, start, end);
++			/* Do not attempt collapsing tiny skbs */
++			if (range_truesize != head->truesize ||
++			    end - start >= SKB_WITH_OVERHEAD(SK_MEM_QUANTUM)) {
++				tcp_collapse(sk, &tp->out_of_order_queue,
++					     head, skb, start, end);
++			} else {
++				sum_tiny += range_truesize;
++				if (sum_tiny > sk->sk_rcvbuf >> 3)
++					return;
++			}
++
+ 			head = skb;
+ 			if (!skb)
+ 				break;
 
 
