@@ -2,99 +2,145 @@ Return-Path: <SRS0=OQFz=KL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3F90C6778F
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 04:01:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 203ADC6778F
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 04:12:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4D7A320842
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 04:01:25 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="SV15j8QA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D7A320842
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=broadcom.com
+	by mail.kernel.org (Postfix) with ESMTP id BED5120842
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 04:12:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BED5120842
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=iogearbox.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727384AbeG0FVQ (ORCPT
+        id S1728052AbeG0Fbd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 01:21:16 -0400
-Received: from mail-qt0-f196.google.com ([209.85.216.196]:42071 "EHLO
-        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725861AbeG0FVQ (ORCPT
+        Fri, 27 Jul 2018 01:31:33 -0400
+Received: from www62.your-server.de ([213.133.104.62]:42788 "EHLO
+        www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725842AbeG0Fbc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 01:21:16 -0400
-Received: by mail-qt0-f196.google.com with SMTP id z8-v6so3831148qto.9
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Jul 2018 21:01:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=X0w1efvXaK9Zo8ADrUTbqDp9GUR4TScxv019+ZKxMQI=;
-        b=SV15j8QAw1/8S1hcCXIjBAkd3Dqy/91/4aYMtuuNQNXqiilCBQpPRwyGIN/WW0qAt0
-         GXw9Dt2b+CiEKHAwRYPY6x7ZJKYyzFwA/4Cr29E34ONiYY1/eU7XY51RcIk3ezoG3J7Y
-         DuhDLgva0g68iHQuwdpU7Sc4y5wzm2ZHwpbBo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=X0w1efvXaK9Zo8ADrUTbqDp9GUR4TScxv019+ZKxMQI=;
-        b=BJ1eHHpH9eh7EUZStx+3cpOFe2DmzICrSdvqNen9z2qngT4mXHRZZCJIuC6VnkB3y2
-         MgjrHTkgxyBzuISZhhvEmiqJfVWWDE0Pv/XewBg/GdrzEdpQ10SOgd2CYWjN2gjI1LAZ
-         xHw9pCMTUB+9et3cb+l1u14lWIq3OpipXUndZhwesdR9tGLsGE5YN/GvetTJ7yfLLI+/
-         1Ih2h1mjjDNE4iZ3PihkCEVfLhTtRCa76BPIEYgPYCa3T6HvEYSJlIZ+xXHVCrwSj1dh
-         En+PvJ8bEl8ZJaqSfjoA/2FOZN/aLI+P1vgii+b5b6fiIIgA8qZrgF+mtr+st4GcW65+
-         xDdw==
-X-Gm-Message-State: AOUpUlEjRKbYqhvfKJOVIoxFLz5tDwLeNznCIlvUG1HVxDAncDPLaALR
-        HlQMN5tgzDsWvaZorysmIzWw3A==
-X-Google-Smtp-Source: AAOMgpd1j2z/xdCcjFZuJE0ZwbT0xVxg6EBftjgYKgLAX+BTR9uSdnTCDmkr6p2XOAyDxu/P2U9aow==
-X-Received: by 2002:ac8:530d:: with SMTP id t13-v6mr4369404qtn.396.1532664082422;
-        Thu, 26 Jul 2018 21:01:22 -0700 (PDT)
-Received: from mannams-OptiPlex-7010.dhcp.broadcom.net ([192.19.252.250])
-        by smtp.gmail.com with ESMTPSA id f184-v6sm2006522qkc.23.2018.07.26.21.01.18
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Thu, 26 Jul 2018 21:01:21 -0700 (PDT)
-From:   Srinath Mannam <srinath.mannam@broadcom.com>
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>, vikram.prakash@broadcom.com,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>
-Cc:     linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
-        bcm-kernel-feedback-list@broadcom.com,
-        Srinath Mannam <srinath.mannam@broadcom.com>
-Subject: [PATCH] serial: 8250_dw: Add ACPI support for uart on Broadcom SoC
-Date:   Fri, 27 Jul 2018 09:31:06 +0530
-Message-Id: <1532664066-30056-1-git-send-email-srinath.mannam@broadcom.com>
-X-Mailer: git-send-email 2.7.4
+        Fri, 27 Jul 2018 01:31:32 -0400
+Received: from [78.46.172.3] (helo=sslproxy06.your-server.de)
+        by www62.your-server.de with esmtpsa (TLSv1.2:DHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.85_2)
+        (envelope-from <daniel@iogearbox.net>)
+        id 1fiu6I-0006pB-Mc; Fri, 27 Jul 2018 06:11:34 +0200
+Received: from [99.0.85.34] (helo=localhost.localdomain)
+        by sslproxy06.your-server.de with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.89)
+        (envelope-from <daniel@iogearbox.net>)
+        id 1fiu6I-000DGA-Bt; Fri, 27 Jul 2018 06:11:34 +0200
+Subject: Re: [PATCH v3 bpf-next 02/14] bpf: introduce cgroup storage maps
+To:     Roman Gushchin <guro@fb.com>, netdev@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, kernel-team@fb.com,
+        Alexei Starovoitov <ast@kernel.org>
+References: <20180720174558.5829-1-guro@fb.com>
+ <20180720174558.5829-3-guro@fb.com>
+From:   Daniel Borkmann <daniel@iogearbox.net>
+Message-ID: <a7bbd507-3de9-e574-7187-f7915add7474@iogearbox.net>
+Date:   Fri, 27 Jul 2018 06:11:31 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.3.0
+MIME-Version: 1.0
+In-Reply-To: <20180720174558.5829-3-guro@fb.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Authenticated-Sender: daniel@iogearbox.net
+X-Virus-Scanned: Clear (ClamAV 0.100.0/24786/Fri Jul 27 02:41:39 2018)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add ACPI identifier HID for UART DW 8250 on Broadcom SoCs
-to match the HID passed through ACPI tables to enable
-UART controller.
+On 07/20/2018 07:45 PM, Roman Gushchin wrote:
+> This commit introduces BPF_MAP_TYPE_CGROUP_STORAGE maps:
+> a special type of maps which are implementing the cgroup storage.
+> 
+> From the userspace point of view it's almost a generic
+> hash map with the (cgroup inode id, attachment type) pair
+> used as a key.
+> 
+> The only difference is that some operations are restricted:
+>   1) a user can't create new entries,
+>   2) a user can't remove existing entries.
+> 
+> The lookup from userspace is o(log(n)).
+> 
+> Signed-off-by: Roman Gushchin <guro@fb.com>
+> Cc: Alexei Starovoitov <ast@kernel.org>
+> Cc: Daniel Borkmann <daniel@iogearbox.net>
+> Acked-by: Martin KaFai Lau <kafai@fb.com>
 
-Signed-off-by: Srinath Mannam <srinath.mannam@broadcom.com>
-Reviewed-by: Vladimir Olovyannikov <vladimir.olovyannikov@broadcom.com>
-Tested-by: Vladimir Olovyannikov <vladimir.olovyannikov@broadcom.com>
-Reviewed-by: Ray Jui <ray.jui@broadcom.com>
----
- drivers/tty/serial/8250/8250_dw.c | 1 +
- 1 file changed, 1 insertion(+)
+(First of all sorry for the late review, only limited availability this week
+ on my side.)
 
-diff --git a/drivers/tty/serial/8250/8250_dw.c b/drivers/tty/serial/8250/8250_dw.c
-index aff04f1..7ea94ec 100644
---- a/drivers/tty/serial/8250/8250_dw.c
-+++ b/drivers/tty/serial/8250/8250_dw.c
-@@ -708,6 +708,7 @@ static const struct acpi_device_id dw8250_acpi_match[] = {
- 	{ "AMD0020", 0 },
- 	{ "AMDI0020", 0 },
- 	{ "HISI0031", 0 },
-+	{ "BRCM2032", 0 },
- 	{ },
- };
- MODULE_DEVICE_TABLE(acpi, dw8250_acpi_match);
--- 
-2.7.4
+> ---
+>  include/linux/bpf-cgroup.h |  38 +++++
+>  include/linux/bpf.h        |   1 +
+>  include/linux/bpf_types.h  |   3 +
+>  include/uapi/linux/bpf.h   |   6 +
+>  kernel/bpf/Makefile        |   1 +
+>  kernel/bpf/local_storage.c | 367 +++++++++++++++++++++++++++++++++++++++++++++
+>  kernel/bpf/verifier.c      |  12 ++
+>  7 files changed, 428 insertions(+)
+>  create mode 100644 kernel/bpf/local_storage.c
+> 
+> diff --git a/include/linux/bpf-cgroup.h b/include/linux/bpf-cgroup.h
+> index 79795c5fa7c3..6b0e7bd4b154 100644
+> --- a/include/linux/bpf-cgroup.h
+> +++ b/include/linux/bpf-cgroup.h
+> @@ -3,19 +3,39 @@
+>  #define _BPF_CGROUP_H
+>  
+>  #include <linux/jump_label.h>
+> +#include <linux/rbtree.h>
+>  #include <uapi/linux/bpf.h>
+>  
+[...]
+> diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
+> index 15d69b278277..0b089ba4595d 100644
+> --- a/kernel/bpf/verifier.c
+> +++ b/kernel/bpf/verifier.c
+> @@ -5140,6 +5140,14 @@ static int replace_map_fd_with_map_ptr(struct bpf_verifier_env *env)
+>  				return -E2BIG;
+>  			}
+>  
+> +			if (map->map_type == BPF_MAP_TYPE_CGROUP_STORAGE &&
+> +			    bpf_cgroup_storage_assign(env->prog, map)) {
+> +				verbose(env,
+> +					"only one cgroup storage is allowed\n");
+> +				fdput(f);
+> +				return -EBUSY;
+> +			}
+> +
+>  			/* hold the map. If the program is rejected by verifier,
+>  			 * the map will be released by release_maps() or it
+>  			 * will be used by the valid program until it's unloaded
+> @@ -5148,6 +5156,10 @@ static int replace_map_fd_with_map_ptr(struct bpf_verifier_env *env)
+>  			map = bpf_map_inc(map, false);
+>  			if (IS_ERR(map)) {
+>  				fdput(f);
+> +				if (map->map_type ==
+> +				    BPF_MAP_TYPE_CGROUP_STORAGE)
+> +					bpf_cgroup_storage_release(env->prog,
+> +								   map);
+
+I think this behavior is a bit strange, meaning that we would reset the map via
+bpf_cgroup_storage_release() in this case, but if we error out and exit in any
+later instruction the prior bpf_cgroup_storage_assign() is not undone, meaning
+at this point we have no other choice but to destroy the map since any later
+BPF prog load with bpf_cgroup_storage_assign() attempt would fail with -EBUSY
+even though it's not assigned anywhere, is that correct? Same also on any other
+errors along the prog load path. E.g. say, as one example, your verifier buffer
+is too small, so any retry with the very same program from loader side would fail
+above due to different prog pointers?
+
+>  				return PTR_ERR(map);
+>  			}
+>  			env->used_maps[env->used_map_cnt++] = map;
+> 
 
