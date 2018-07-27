@@ -6,54 +6,54 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A3A7C6778F
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 07:29:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47C65C6778F
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 07:34:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2135C20857
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 07:29:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DA29920673
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 07:34:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=xilinx.onmicrosoft.com header.i=@xilinx.onmicrosoft.com header.b="fu3Xqcmo"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2135C20857
+	dkim=pass (1024-bit key) header.d=xilinx.onmicrosoft.com header.i=@xilinx.onmicrosoft.com header.b="mnes8c2d"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DA29920673
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xilinx.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729586AbeG0Iu2 (ORCPT
+        id S1729565AbeG0IzD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 04:50:28 -0400
-Received: from mail-eopbgr720080.outbound.protection.outlook.com ([40.107.72.80]:51264
+        Fri, 27 Jul 2018 04:55:03 -0400
+Received: from mail-eopbgr720080.outbound.protection.outlook.com ([40.107.72.80]:29152
         "EHLO NAM05-CO1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729416AbeG0Iu1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 04:50:27 -0400
+        id S1729420AbeG0IzD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Jul 2018 04:55:03 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=xilinx.onmicrosoft.com; s=selector1-xilinx-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=t3g1Flm59TgCj/KwAY25lDQOAUZPrBDiKub+Gg6pahA=;
- b=fu3XqcmoMuR7sE3WetI4RMmCk3xaFQL6w2wrA9hPyyCXqpKO9mOv+jNwEgIGQXFkLS36nmcQJWQeQ03Z/PuSURNyOFqiMEMg97Wu+FMRGQZBDBbDgaEDQKjfGOOQfmZFJYt9T7SnfrHTVScAknuRwXGb3xo57W/Z9Qj3ob3wGl0=
+ bh=seqn2oyXCM8Qg3e9EPkRQ4VgQSgyrOGhFom6beKomQk=;
+ b=mnes8c2dXyswK75TQdXv6V7vY0sKM7JQKZbMixTW5ghTtMIuHnt1D/rul04xhNynv/B4wO/28aAjo3FoXcV9ZP/njYLvTajL7fgC3EL52mYLTyMLdQZPfB2oSIJllnDOLXXO263BEYvVeEmoMMu2QHSECch5Y44CrED0JZW5KYk=
 Received: from MWHPR02MB2816.namprd02.prod.outlook.com (10.175.50.14) by
- MWHPR02MB3168.namprd02.prod.outlook.com (10.164.133.141) with Microsoft SMTP
+ MWHPR02MB2558.namprd02.prod.outlook.com (10.168.205.136) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.995.16; Fri, 27 Jul 2018 07:29:37 +0000
+ 15.20.995.16; Fri, 27 Jul 2018 07:34:23 +0000
 Received: from MWHPR02MB2816.namprd02.prod.outlook.com
  ([fe80::8453:d61e:5ced:a726]) by MWHPR02MB2816.namprd02.prod.outlook.com
  ([fe80::8453:d61e:5ced:a726%3]) with mapi id 15.20.0995.019; Fri, 27 Jul 2018
- 07:29:37 +0000
+ 07:34:23 +0000
 From:   Anurag Kumar Vulisha <anuragku@xilinx.com>
 To:     Felipe Balbi <balbi@kernel.org>,
         "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
 CC:     "v.anuragkumar@gmail.com" <v.anuragkumar@gmail.com>,
         "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH v2] usb: dwc3: core: Add quirk for enabling AutoRetry
+Subject: RE: [PATCH v3] usb: dwc3: core: Add quirk for enabling AutoRetry
  feature in the controller
-Thread-Topic: [PATCH v2] usb: dwc3: core: Add quirk for enabling AutoRetry
+Thread-Topic: [PATCH v3] usb: dwc3: core: Add quirk for enabling AutoRetry
  feature in the controller
-Thread-Index: AQHUJN2BN6j+pPNjJUq6AkpLiXk/dqShckiAgAACXHA=
-Date:   Fri, 27 Jul 2018 07:29:37 +0000
-Message-ID: <MWHPR02MB281661D98648F430989697E8A72A0@MWHPR02MB2816.namprd02.prod.outlook.com>
-References: <1532608663-4091-1-git-send-email-anurag.kumar.vulisha@xilinx.com>
- <87va92yxrs.fsf@linux.intel.com>
-In-Reply-To: <87va92yxrs.fsf@linux.intel.com>
+Thread-Index: AQHUJOHTzwXtrtjD0kyGI3yBBhb0wKSiqfUAgAAEOLA=
+Date:   Fri, 27 Jul 2018 07:34:23 +0000
+Message-ID: <MWHPR02MB2816BCF2F19A0D7DA70A6E53A72A0@MWHPR02MB2816.namprd02.prod.outlook.com>
+References: <1532610528-7290-1-git-send-email-anurag.kumar.vulisha@xilinx.com>
+ <87k1phywot.fsf@linux.intel.com>
+In-Reply-To: <87k1phywot.fsf@linux.intel.com>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
@@ -63,59 +63,41 @@ authentication-results: spf=none (sender IP is )
  smtp.mailfrom=anuragku@xilinx.com; 
 x-originating-ip: [149.199.50.133]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;MWHPR02MB3168;6:pBT3u1ejGHCbxMg9KO8GJbV8KGqm4GLyRmkXlUCMW7nO5wHO0folJCIvndgrKtyBSiKvr/WVqV2RfVjacuZHIxzH+FE/xZgJIUBUh4gKuf/8vuEiGxsOMhkETX5/tRAKENgS4wyQYSKIiyLxZNtY0ks6T/9fbZiu/CBEAfNlrzFR/nHXgJy44yxprNsaeExCXem4WFwSIaToBZldDmV8rFgGFl2wKrkL1Khym4ie/M5lczF+99C6QWFl1ZgP3zovoeuCH0dnd9fmneHGiXrKNNr127HtVXNeN7lqkcE6RWAfI+Bxgv4SA6W0srKu8Lqu0xYEFClrTbUZ6QfJb/splzZ/EyWM+Kx7I+nf6RHSc5twB878uCK5PlOJ9UYL/AtbdNpwTEpV8SmJOUyjrEfVwy6LKCwSBChyhzQ5Sw2Ur7eWaRx2nOaVLiDnCOOQFQ8Nthz1QO0c6qzH4ZXROLAB8A==;5:PVZVOBdCDe26HtH5rAfmX5MhsO8K5q4qBwNWv+LCN6YH5aU1aAA4Z+JNGWBjU64JXYkoGykH3y63t99bYcRxRJT7yVXezTkZZzeyIKZCReRMPg3J05eMgrxNS3nfpKo04PbQ/hR2CWaf4sJd4ZgipLQ1DC8pgrQVsPUSUiYXSns=;7:oyBhpNrPgWzqholQMJxD1BL4Z0HW05GCXGWK2iYi6s8NUoI6KUKQXduNkgGv8ochLKRfoiRfHdVpW9/skHcJAj1/gY+/yVI5drzNkfNl8/YrmH36AyT2HT3ZQ1EUQthQWR1fqavzBeY4k62idLxcvOBEP+yEiUt9jJUmvn2yxkGWJWcefz0f1bPHfGNdQxLgsELD5liMdb6y6tvWwcu4oIDUHUwasRlSnaq87XS1euQCrLUwI4JP9kO+jtTeUKW2
+x-microsoft-exchange-diagnostics: 1;MWHPR02MB2558;6:3aa7cdXkkNweZKos0/y82g2wjycfwyspfS/MF/0HNvKaU2+spPWMq4FDcg4dvY4EA7i2WBNpkNFD8+5GZXfWMBOddKytx7gXXOz9jLQekPBhqR0LiyRNWDf/w7bzREhaIE8memlJUFo3WCjwAMac2+aHHyTfN0cjkdvapCYIySbcDl3Cuz+LObQ4cNSAAKG0BO3dLyEXcDgcbQnXnpiZngeU6XQFMaNO4hLJqoY6hBCtctZCKdYUq7A8XfNsofrKIrEB/KbRqOJ68EEc0AMRS0JL4hw5KWmagdLQmM7lpbGlaI1n4Yo+3c2kWK+F+0uTOH6xskhQ35Bvwuy1pjCi2/ofM7E5omJ9H1608FNGtfAOOFdnysB90ZYr44hCHQPX2pjA78/VQKCEbd6zS4F1jgVthueulxWUTjG4y1r6xEZXu+eC3W/0bNWohAjlGRihOcV0rgk7RJ19u0a8pgyEjA==;5:+IfpIoYJZA4+4j/bd8N7PafOo3CFSri4AWvSuxTcrPa1zszwVhgzRIzlqVeoV2h96G2s5OixUaJT9z0dRB+HOsVG3f/VgkveYX+6EBYZsDWw5otKteYLT6xH3r7iTIVX3esrBAiCOxOskPgSFXyPjbgJ0qpsXcuV40sbwiSF/7w=;7:bPwAMr6AgbITy97TLXP+7BnTDQYTkHeMyx7uDHPdvp41dRNapZaRc+4IFW7KaxIJe60YdMlCBjkRHF/3MPUq9RpZHpjMrYW+WlLLOf9TH3oocPd17PkLup8nLr/x1J31M7gg1yG1ak51x+i922wbwxmC59E9xEEuWXmaEskrsqJ8oBfXLMJ0dvsraghvPQ6pX8dPyoghBkhYCFyxHXXhU/0fu4ugjHLieSeZZ7q6/8j/h6DRvNjTd09AdRA4fNUo
 x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: 310387c5-c1b9-48a6-7afb-08d5f392b55c
+x-ms-office365-filtering-correlation-id: ed0bb9ab-f905-45a2-5675-08d5f3935fbb
 x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:MWHPR02MB3168;
-x-ms-traffictypediagnostic: MWHPR02MB3168:
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:MWHPR02MB2558;
+x-ms-traffictypediagnostic: MWHPR02MB2558:
 x-ld-processed: 657af505-d5df-48d0-8300-c31994686c5c,ExtAddr
-x-microsoft-antispam-prvs: <MWHPR02MB31684E8BA473A503099A3DDAA72A0@MWHPR02MB3168.namprd02.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(9452136761055)(85827821059158)(192813158149592);
+x-microsoft-antispam-prvs: <MWHPR02MB2558B78971DB6DC76EB8813AA72A0@MWHPR02MB2558.namprd02.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(192813158149592);
 x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3002001)(10201501046)(3231311)(944501410)(52105095)(93006095)(93001095)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123564045)(20161123560045)(20161123562045)(6072148)(201708071742011)(7699016);SRVR:MWHPR02MB3168;BCL:0;PCL:0;RULEID:;SRVR:MWHPR02MB3168;
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(10201501046)(3002001)(93006095)(93001095)(3231311)(944501410)(52105095)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123564045)(20161123560045)(20161123562045)(6072148)(201708071742011)(7699016);SRVR:MWHPR02MB2558;BCL:0;PCL:0;RULEID:;SRVR:MWHPR02MB2558;
 x-forefront-prvs: 07467C4D33
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(1496009)(396003)(39860400002)(366004)(136003)(346002)(376002)(13464003)(199004)(189003)(81156014)(81166006)(74316002)(486006)(476003)(11346002)(256004)(53936002)(186003)(76176011)(7696005)(4326008)(305945005)(6246003)(39060400002)(7736002)(551934003)(110136005)(54906003)(102836004)(14454004)(86362001)(6506007)(26005)(316002)(446003)(5250100002)(2900100001)(99286004)(2501003)(106356001)(229853002)(97736004)(66066001)(2906002)(55016002)(9686003)(33656002)(5660300001)(105586002)(6436002)(25786009)(68736007)(8676002)(8936002)(478600001)(6116002)(3846002);DIR:OUT;SFP:1101;SCL:1;SRVR:MWHPR02MB3168;H:MWHPR02MB2816.namprd02.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(39860400002)(376002)(396003)(366004)(346002)(189003)(199004)(5250100002)(110136005)(26005)(102836004)(2900100001)(316002)(86362001)(9686003)(446003)(55016002)(105586002)(305945005)(106356001)(74316002)(25786009)(54906003)(256004)(5660300001)(6436002)(476003)(486006)(2501003)(7696005)(6506007)(229853002)(76176011)(186003)(11346002)(33656002)(6246003)(39060400002)(97736004)(8936002)(53936002)(6116002)(4326008)(3846002)(478600001)(2906002)(551934003)(99286004)(81166006)(68736007)(8676002)(81156014)(7736002)(14454004)(66066001);DIR:OUT;SFP:1101;SCL:1;SRVR:MWHPR02MB2558;H:MWHPR02MB2816.namprd02.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
 received-spf: None (protection.outlook.com: xilinx.com does not designate
  permitted sender hosts)
-x-microsoft-antispam-message-info: mOBdHdlI4bU11KME8UHzDDLZPONvIKqsu9PPxCDxrhbJk053WxqCg3JOba/stNls7g0LfIC2Lyj2X2d6dAh7ecRGLLjWNUXDmSU6LM2PGAzPxWBBy/IAwGK/5h8FHn56gs6uIwQJLmrY9Yxefn0vMzmiyuhtd6ywkVKi9mhm1f/bzq4vyVVyJRVTEtw5qta2KOOhUmCH8b3h4jKpssRtrOR2lfuiWPCp3b9Nl4NXrVF+9dexnz98AGjAh0UGH+C9Az8zKqCmimosHp2S6/Y8lwtTcMpofVtXLyHEJbnviK4S+beYcbT8odeVU6JEbnorK73jbVMdarSp2+0FPkB0YkA3J+oPqUQevOsRq5+WcRA=
+x-microsoft-antispam-message-info: rV7WnAT2sLxh2eo/lsCsMa5F2DFJLxER0M/6vpxcMsIjjJIbShR4UCFmDRc9/WQCjYqVN0iHiK8XURGVb1cZQVjoZkN6N3VLGWcuC/uNL8ipw+ZlLwEfU4wxKB22U12IxE4fwStiJh93l2eexKW0aZ63z2R2L050XsxIdhHevAX4N6aGfKzaVySkp2f6AKDZ6IhuP1fPahOAHlQc7juBCivH0kLO4JEXtxLx3C/kODM7A72MpzJQER0LZqWfwWO38xJJsDG61CAt1x17uC8TK5ozesb97AiJlyHGXJ6u4ScNTbE+Xqw1Y68bFBaP+18roJZaRdB5ujEokSlCnTV4esc+zJb8m+RPVSwUxCITl/E=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: xilinx.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 310387c5-c1b9-48a6-7afb-08d5f392b55c
-X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Jul 2018 07:29:37.5234
+X-MS-Exchange-CrossTenant-Network-Message-Id: ed0bb9ab-f905-45a2-5675-08d5f3935fbb
+X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Jul 2018 07:34:23.2926
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 657af505-d5df-48d0-8300-c31994686c5c
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR02MB3168
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR02MB2558
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
 Hi Felipe,
 
-Thanks again for reviewing the patch. Will make the suggested changes and s=
-end v3.
-
-Thanks,
-Anurag Kumar Vulisha
-
->-----Original Message-----
->From: Felipe Balbi [mailto:balbi@kernel.org]
->Sent: Thursday, July 26, 2018 6:12 PM
->To: Anurag Kumar Vulisha <anuragku@xilinx.com>; gregkh@linuxfoundation.org
->Cc: v.anuragkumar@gmail.com; linux-usb@vger.kernel.org; linux-
->kernel@vger.kernel.org; Anurag Kumar Vulisha <anuragku@xilinx.com>
->Subject: Re: [PATCH v2] usb: dwc3: core: Add quirk for enabling AutoRetry =
-feature in
->the controller
->
->
 >Hi,
 >
 >Anurag Kumar Vulisha <anurag.kumar.vulisha@xilinx.com> writes:
@@ -129,37 +111,12 @@ feature in
 >>
 >> Signed-off-by: Anurag Kumar Vulisha <anurag.kumar.vulisha@xilinx.com>
 >> ---
->>  Changes in v2:
->> 	1. As suggested by Rob Herring & Felipe Balbi removed the
->> 	   quirk logic and setting the AutoRetry bits unconditionally
->> 	   for hostmode
->> ---
->>  drivers/usb/dwc3/core.c | 14 ++++++++++++++  drivers/usb/dwc3/core.h
->> |  3 +++
->>  2 files changed, 17 insertions(+)
->>
->> diff --git a/drivers/usb/dwc3/core.c b/drivers/usb/dwc3/core.c index
->> 1038075..478c8a6 100644
->> --- a/drivers/usb/dwc3/core.c
->> +++ b/drivers/usb/dwc3/core.c
->> @@ -883,6 +883,20 @@ static int dwc3_core_init(struct dwc3 *dwc)
->>  		dwc3_writel(dwc->regs, DWC3_GUCTL1, reg);
->>  	}
->>
->> +	if (dwc->dr_mode =3D=3D USB_DR_MODE_HOST) {
 >
->almost there. You also wanna check for dr_mode =3D=3D OTG. OTG configurati=
-ons can
->switch between device and host mode at will.
+>subject line is misleading, at best. You're not adding any quirks.
 >
->> +		reg =3D dwc3_readl(dwc->regs, DWC3_GUCTL);
->> +
->> +		/* Enable Auto retry Feature to make the controller operating in
->
->match the multi-line comment style already in this file:
->
->	/*
->         * Enable Auto ....
->
+Oops !  Will fix this and send another version
+
+Thanks,
+Anurag Kumar Vulisha
 >--
 >balbi
