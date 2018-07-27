@@ -2,229 +2,150 @@ Return-Path: <SRS0=OQFz=KL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AA4EC6778F
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 17:31:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 870D2C6778F
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 17:31:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CCE3A20842
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 17:31:47 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fSGN6too"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CCE3A20842
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 50604208B7
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 17:31:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 50604208B7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389105AbeG0Syh (ORCPT
+        id S2389124AbeG0Syj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 14:54:37 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:44794 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389064AbeG0Syg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 14:54:36 -0400
-Received: by mail-wr1-f68.google.com with SMTP id r16-v6so5785641wrt.11
-        for <linux-kernel@vger.kernel.org>; Fri, 27 Jul 2018 10:31:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=z7YrfrFTzg0UMwzteMRULGV98hmoCC1b8l2JJCXrBEg=;
-        b=fSGN6too4YUHbjtwt47Vre4NO8++gjRZ8W168bXYCKR2IwDP2ln0+gtIdIU1iuA3aM
-         R3Vw1rK/R943xBZX/gu1Ug8W9NJAeNoMiWnziQU+kZA9EEFI6KjjEuXllOpmndMt4PPu
-         o3v1PHBS5RZKAVDc67nQlvivTgxUJGrJgG5wUY//GWEF42673lZXruGrq2RpOtrQ4hhc
-         cstKbQCYc/WSrMO6c5mbCiN8FV1ewgc2uHNaUjIpl8jYOjqYDQo7Nrhn9b3eLdnnVfAb
-         undj3F1+c5yqpXxoU4GX29x0SREMyAPKcOh5erv4tnE7gpTPceHTe4qtCMiRMzX01v8g
-         d7Kg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=z7YrfrFTzg0UMwzteMRULGV98hmoCC1b8l2JJCXrBEg=;
-        b=gBODetnadSptmmyrTjm7vha0atMdzwXN2D/0TRRzoZseJuLMC4nN/7cZCrO9tjdG17
-         6L20tlDAuLP538Dj13UjeoBnsD0jOhaLfcmLFlml/tQZOe62jQcNQVVfjlUw9zZRMKeO
-         iVQbJYuRCPxVmj443kDhPc63Hqm3ILxUvY+YQTr84pI6mEwvRzwq/b5WHcmEuI8HzsVd
-         drKeC6KBFGkasnHuF9YtI+VV1/wzipaQd9zgPSBIM3iomgFr+V+yw9i8V8o+6G+hgVFo
-         Y9IfyoECh1O669dRaJ9xXQC0AM/A2ONfD4/vBAk+DB2xEjXhdvmIWv6fpwv21K30ds8x
-         onJg==
-X-Gm-Message-State: AOUpUlGTP3Gf5A4g7mwSgssBqiTk2XaJOUWub8W74vek5ouVnZieDi3H
-        rz6e1KRtbwSUXeSeb6jLK9AO/GtaYxI=
-X-Google-Smtp-Source: AAOMgpdn/iq9JlvaT9teq33nHyx+79A+/CvEMroTA0Z9O6wz68ay0fDKijTK8756ln1shtHyuTHaaA==
-X-Received: by 2002:adf:e642:: with SMTP id b2-v6mr5989349wrn.254.1532712701946;
-        Fri, 27 Jul 2018 10:31:41 -0700 (PDT)
-Received: from localhost.localdomain (host81-158-116-187.range81-158.btcentralplus.com. [81.158.116.187])
-        by smtp.gmail.com with ESMTPSA id z3-v6sm6000010wru.27.2018.07.27.10.31.40
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 27 Jul 2018 10:31:41 -0700 (PDT)
-From:   John Whitmore <johnfwhitmore@gmail.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     devel@driverdev.osuosl.org, gregkh@linuxfoundation.org,
-        John Whitmore <johnfwhitmore@gmail.com>
-Subject: [PATCH 02/20] staging:rtl8192u: Rename TsCommonInfo - Style
-Date:   Fri, 27 Jul 2018 18:31:05 +0100
-Message-Id: <20180727173123.27391-3-johnfwhitmore@gmail.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180727173123.27391-1-johnfwhitmore@gmail.com>
-References: <20180727173123.27391-1-johnfwhitmore@gmail.com>
+        Fri, 27 Jul 2018 14:54:39 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:40280 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2389096AbeG0Syi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Jul 2018 14:54:38 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id D318181663D8;
+        Fri, 27 Jul 2018 17:31:44 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-116.rdu2.redhat.com [10.10.120.116])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 38BD41C5B9;
+        Fri, 27 Jul 2018 17:31:44 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+ Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+ Kingdom.
+ Registered in England and Wales under Company Registration No. 3798903
+Subject: [PATCH 03/38] teach move_mount(2) to work with OPEN_TREE_CLONE [ver
+ #10]
+From:   David Howells <dhowells@redhat.com>
+To:     viro@zeniv.linux.org.uk
+Cc:     torvalds@linux-foundation.org, dhowells@redhat.com,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Fri, 27 Jul 2018 18:31:43 +0100
+Message-ID: <153271270374.9458.14888440216312686324.stgit@warthog.procyon.org.uk>
+In-Reply-To: <153271267980.9458.7640156373438016898.stgit@warthog.procyon.org.uk>
+References: <153271267980.9458.7640156373438016898.stgit@warthog.procyon.org.uk>
+User-Agent: StGit/unknown-version
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Fri, 27 Jul 2018 17:31:44 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Fri, 27 Jul 2018 17:31:44 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'dhowells@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Rename the member variable TsCommonInfo in two structures, both
-tx_ts_record and RX_TS_RECORD. This member variable is used in both
-structures and in both cases causes a checkpatch issue with CamelCase
-naming.
+From: Al Viro <viro@zeniv.linux.org.uk>
 
-The changes are purely coding style and should not impact runtime
-code execution.
+Allow a detached tree created by open_tree(..., OPEN_TREE_CLONE) to be
+attached by move_mount(2).
 
-Signed-off-by: John Whitmore <johnfwhitmore@gmail.com>
+If by the time of final fput() of OPEN_TREE_CLONE-opened file its tree is
+not detached anymore, it won't be dissolved.  move_mount(2) is adjusted
+to handle detached source.
+
+That gives us equivalents of mount --bind and mount --rbind.
+
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+Signed-off-by: David Howells <dhowells@redhat.com>
 ---
- .../rtl8192u/ieee80211/rtl819x_BAProc.c       |  8 ++++----
- .../staging/rtl8192u/ieee80211/rtl819x_TS.h   |  4 ++--
- .../rtl8192u/ieee80211/rtl819x_TSProc.c       | 20 +++++++++----------
- 3 files changed, 16 insertions(+), 16 deletions(-)
 
-diff --git a/drivers/staging/rtl8192u/ieee80211/rtl819x_BAProc.c b/drivers/staging/rtl8192u/ieee80211/rtl819x_BAProc.c
-index 507014d44d54..686d4e917384 100644
---- a/drivers/staging/rtl8192u/ieee80211/rtl819x_BAProc.c
-+++ b/drivers/staging/rtl8192u/ieee80211/rtl819x_BAProc.c
-@@ -626,7 +626,7 @@ TsInitAddBA(
- 	pBA->DialogToken++;						// DialogToken: Only keep the latest dialog token
- 	pBA->BaParamSet.field.AMSDU_Support = 0;	// Do not support A-MSDU with A-MPDU now!!
- 	pBA->BaParamSet.field.BAPolicy = Policy;	// Policy: Delayed or Immediate
--	pBA->BaParamSet.field.TID = pTS->TsCommonInfo.t_spec.f.TSInfo.field.ucTSID;	// TID
-+	pBA->BaParamSet.field.TID = pTS->ts_common_info.t_spec.f.TSInfo.field.ucTSID;	// TID
- 	// BufferSize: This need to be set according to A-MPDU vector
- 	pBA->BaParamSet.field.BufferSize = 32;		// BufferSize: This need to be set according to A-MPDU vector
- 	pBA->BaTimeoutValue = 0;					// Timeout value: Set 0 to disable Timer
-@@ -634,7 +634,7 @@ TsInitAddBA(
- 
- 	ActivateBAEntry(ieee, pBA, BA_SETUP_TIMEOUT);
- 
--	ieee80211_send_ADDBAReq(ieee, pTS->TsCommonInfo.addr, pBA);
-+	ieee80211_send_ADDBAReq(ieee, pTS->ts_common_info.addr, pBA);
+ fs/namespace.c |   26 ++++++++++++++++++++------
+ 1 file changed, 20 insertions(+), 6 deletions(-)
+
+diff --git a/fs/namespace.c b/fs/namespace.c
+index e2934a4f342b..3981fd7b13f5 100644
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@ -1846,8 +1846,10 @@ void dissolve_on_fput(struct vfsmount *mnt)
+ {
+ 	namespace_lock();
+ 	lock_mount_hash();
+-	mntget(mnt);
+-	umount_tree(real_mount(mnt), UMOUNT_SYNC);
++	if (!real_mount(mnt)->mnt_ns) {
++		mntget(mnt);
++		umount_tree(real_mount(mnt), UMOUNT_SYNC);
++	}
+ 	unlock_mount_hash();
+ 	namespace_unlock();
  }
+@@ -2454,6 +2456,7 @@ static int do_move_mount(struct path *old_path, struct path *new_path)
+ 	struct mount *old;
+ 	struct mountpoint *mp;
+ 	int err;
++	bool attached;
  
- void
-@@ -683,7 +683,7 @@ void TxBaInactTimeout(struct timer_list *t)
- 	TxTsDeleteBA(ieee, pTxTs);
- 	ieee80211_send_DELBA(
- 		ieee,
--		pTxTs->TsCommonInfo.addr,
-+		pTxTs->ts_common_info.addr,
- 		&pTxTs->TxAdmittedBARecord,
- 		TX_DIR,
- 		DELBA_REASON_TIMEOUT);
-@@ -697,7 +697,7 @@ void RxBaInactTimeout(struct timer_list *t)
- 	RxTsDeleteBA(ieee, pRxTs);
- 	ieee80211_send_DELBA(
- 		ieee,
--		pRxTs->TsCommonInfo.addr,
-+		pRxTs->ts_common_info.addr,
- 		&pRxTs->RxAdmittedBARecord,
- 		RX_DIR,
- 		DELBA_REASON_TIMEOUT);
-diff --git a/drivers/staging/rtl8192u/ieee80211/rtl819x_TS.h b/drivers/staging/rtl8192u/ieee80211/rtl819x_TS.h
-index 0f744b112dcf..e2c2001dc5ca 100644
---- a/drivers/staging/rtl8192u/ieee80211/rtl819x_TS.h
-+++ b/drivers/staging/rtl8192u/ieee80211/rtl819x_TS.h
-@@ -27,7 +27,7 @@ struct ts_common_info {
- };
+ 	mp = lock_mount(new_path);
+ 	err = PTR_ERR(mp);
+@@ -2464,10 +2467,19 @@ static int do_move_mount(struct path *old_path, struct path *new_path)
+ 	p = real_mount(new_path->mnt);
  
- struct tx_ts_record {
--	struct ts_common_info		TsCommonInfo;
-+	struct ts_common_info		ts_common_info;
- 	u16				TxCurSeq;
- 	BA_RECORD			TxPendingBARecord;	/*  For BA Originator */
- 	BA_RECORD			TxAdmittedBARecord;	/*  For BA Originator */
-@@ -40,7 +40,7 @@ struct tx_ts_record {
- };
+ 	err = -EINVAL;
+-	if (!check_mnt(p) || !check_mnt(old))
++	/* The mountpoint must be in our namespace. */
++	if (!check_mnt(p))
++		goto out1;
++	/* The thing moved should be either ours or completely unattached. */
++	if (old->mnt_ns && !check_mnt(old))
+ 		goto out1;
  
- typedef struct _RX_TS_RECORD {
--	struct ts_common_info		TsCommonInfo;
-+	struct ts_common_info		ts_common_info;
- 	u16				RxIndicateSeq;
- 	u16				RxTimeoutIndicateSeq;
- 	struct list_head		RxPendingPktList;
-diff --git a/drivers/staging/rtl8192u/ieee80211/rtl819x_TSProc.c b/drivers/staging/rtl8192u/ieee80211/rtl819x_TSProc.c
-index f2a5771185f0..e1ce4e5096bb 100644
---- a/drivers/staging/rtl8192u/ieee80211/rtl819x_TSProc.c
-+++ b/drivers/staging/rtl8192u/ieee80211/rtl819x_TSProc.c
-@@ -112,7 +112,7 @@ static void ResetTsCommonInfo(struct ts_common_info *pTsCommonInfo)
+-	if (!mnt_has_parent(old))
++	attached = mnt_has_parent(old);
++	/*
++	 * We need to allow open_tree(OPEN_TREE_CLONE) followed by
++	 * move_mount(), but mustn't allow "/" to be moved.
++	 */
++	if (old->mnt_ns && !attached)
+ 		goto out1;
  
- static void ResetTxTsEntry(struct tx_ts_record *pTS)
- {
--	ResetTsCommonInfo(&pTS->TsCommonInfo);
-+	ResetTsCommonInfo(&pTS->ts_common_info);
- 	pTS->TxCurSeq = 0;
- 	pTS->bAddBaReqInProgress = false;
- 	pTS->bAddBaReqDelayed = false;
-@@ -123,7 +123,7 @@ static void ResetTxTsEntry(struct tx_ts_record *pTS)
+ 	if (old->mnt.mnt_flags & MNT_LOCKED)
+@@ -2482,7 +2494,7 @@ static int do_move_mount(struct path *old_path, struct path *new_path)
+ 	/*
+ 	 * Don't move a mount residing in a shared parent.
+ 	 */
+-	if (IS_MNT_SHARED(old->mnt_parent))
++	if (attached && IS_MNT_SHARED(old->mnt_parent))
+ 		goto out1;
+ 	/*
+ 	 * Don't move a mount tree containing unbindable mounts to a destination
+@@ -2496,7 +2508,7 @@ static int do_move_mount(struct path *old_path, struct path *new_path)
+ 			goto out1;
  
- static void ResetRxTsEntry(PRX_TS_RECORD pTS)
- {
--	ResetTsCommonInfo(&pTS->TsCommonInfo);
-+	ResetTsCommonInfo(&pTS->ts_common_info);
- 	pTS->RxIndicateSeq = 0xffff; // This indicate the RxIndicateSeq is not used now!!
- 	pTS->RxTimeoutIndicateSeq = 0xffff; // This indicate the RxTimeoutIndicateSeq is not used now!!
- 	ResetBaEntry(&pTS->RxAdmittedBARecord);	  // For BA Recipient
-@@ -146,9 +146,9 @@ void TSInitialize(struct ieee80211_device *ieee)
- 		pTxTS->num = count;
- 		// The timers for the operation of Traffic Stream and Block Ack.
- 		// DLS related timer will be add here in the future!!
--		timer_setup(&pTxTS->TsCommonInfo.setup_timer, TsSetupTimeOut,
-+		timer_setup(&pTxTS->ts_common_info.setup_timer, TsSetupTimeOut,
- 			    0);
--		timer_setup(&pTxTS->TsCommonInfo.inact_timer, TsInactTimeout,
-+		timer_setup(&pTxTS->ts_common_info.inact_timer, TsInactTimeout,
- 			    0);
- 		timer_setup(&pTxTS->TsAddBaTimer, TsAddBaProcess, 0);
- 		timer_setup(&pTxTS->TxPendingBARecord.Timer, BaSetupTimeOut,
-@@ -156,7 +156,7 @@ void TSInitialize(struct ieee80211_device *ieee)
- 		timer_setup(&pTxTS->TxAdmittedBARecord.Timer,
- 			    TxBaInactTimeout, 0);
- 		ResetTxTsEntry(pTxTS);
--		list_add_tail(&pTxTS->TsCommonInfo.list, &ieee->Tx_TS_Unused_List);
-+		list_add_tail(&pTxTS->ts_common_info.list, &ieee->Tx_TS_Unused_List);
- 		pTxTS++;
- 	}
+ 	err = attach_recursive_mnt(old, real_mount(new_path->mnt), mp,
+-				   &parent_path);
++				   attached ? &parent_path : NULL);
+ 	if (err)
+ 		goto out1;
  
-@@ -167,15 +167,15 @@ void TSInitialize(struct ieee80211_device *ieee)
- 	for(count = 0; count < TOTAL_TS_NUM; count++) {
- 		pRxTS->num = count;
- 		INIT_LIST_HEAD(&pRxTS->RxPendingPktList);
--		timer_setup(&pRxTS->TsCommonInfo.setup_timer, TsSetupTimeOut,
-+		timer_setup(&pRxTS->ts_common_info.setup_timer, TsSetupTimeOut,
- 			    0);
--		timer_setup(&pRxTS->TsCommonInfo.inact_timer, TsInactTimeout,
-+		timer_setup(&pRxTS->ts_common_info.inact_timer, TsInactTimeout,
- 			    0);
- 		timer_setup(&pRxTS->RxAdmittedBARecord.Timer,
- 			    RxBaInactTimeout, 0);
- 		timer_setup(&pRxTS->RxPktPendingTimer, RxPktPendingTimeout, 0);
- 		ResetRxTsEntry(pRxTS);
--		list_add_tail(&pRxTS->TsCommonInfo.list, &ieee->Rx_TS_Unused_List);
-+		list_add_tail(&pRxTS->ts_common_info.list, &ieee->Rx_TS_Unused_List);
- 		pRxTS++;
- 	}
- 	// Initialize unused Rx Reorder List.
-@@ -374,10 +374,10 @@ bool GetTs(
- 				(*ppTS) = list_entry(pUnusedList->next, struct ts_common_info, list);
- 				list_del_init(&(*ppTS)->list);
- 				if(TxRxSelect==TX_DIR) {
--					struct tx_ts_record *tmp = container_of(*ppTS, struct tx_ts_record, TsCommonInfo);
-+					struct tx_ts_record *tmp = container_of(*ppTS, struct tx_ts_record, ts_common_info);
- 					ResetTxTsEntry(tmp);
- 				} else {
--					PRX_TS_RECORD tmp = container_of(*ppTS, RX_TS_RECORD, TsCommonInfo);
-+					PRX_TS_RECORD tmp = container_of(*ppTS, RX_TS_RECORD, ts_common_info);
- 					ResetRxTsEntry(tmp);
- 				}
+@@ -3182,6 +3194,8 @@ SYSCALL_DEFINE5(mount, char __user *, dev_name, char __user *, dir_name,
  
--- 
-2.18.0
+ /*
+  * Move a mount from one place to another.
++ * In combination with open_tree(OPEN_TREE_CLONE [| AT_RECURSIVE]) it can be
++ * used to copy a mount subtree.
+  *
+  * Note the flags value is a combination of MOVE_MOUNT_* flags.
+  */
 
