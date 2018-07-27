@@ -6,35 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0B56C67790
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:27:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE0E8C6778F
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:27:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7FE47208A2
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:27:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7FE47208A2
+	by mail.kernel.org (Postfix) with ESMTP id 9ED58208A4
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:27:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9ED58208A4
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388641AbeG0LtC (ORCPT
+        id S2388675AbeG0LtF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 07:49:02 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:42340 "EHLO
+        Fri, 27 Jul 2018 07:49:05 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:42354 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730340AbeG0LtB (ORCPT
+        with ESMTP id S1730340AbeG0LtF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 07:49:01 -0400
+        Fri, 27 Jul 2018 07:49:05 -0400
 Received: from localhost (unknown [89.188.5.116])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 68D13CD1;
-        Fri, 27 Jul 2018 10:27:44 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 6FAF0CD1;
+        Fri, 27 Jul 2018 10:27:47 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+52f83f0ea8df16932f7f@syzkaller.appspotmail.com,
-        Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 3.18 03/27] ALSA: rawmidi: Change resized buffers atomically
-Date:   Fri, 27 Jul 2018 12:26:40 +0200
-Message-Id: <20180727102649.168841256@linuxfoundation.org>
+        stable@vger.kernel.org, Alexey Brodkin <abrodkin@synopsys.com>,
+        Vineet Gupta <vgupta@synopsys.com>
+Subject: [PATCH 3.18 04/27] ARC: Fix CONFIG_SWAP
+Date:   Fri, 27 Jul 2018 12:26:41 +0200
+Message-Id: <20180727102649.203883105@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180727102649.049641021@linuxfoundation.org>
 References: <20180727102649.049641021@linuxfoundation.org>
@@ -51,84 +50,48 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Takashi Iwai <tiwai@suse.de>
+From: Alexey Brodkin <abrodkin@synopsys.com>
 
-commit 39675f7a7c7e7702f7d5341f1e0d01db746543a0 upstream.
+commit 6e3761145a9ba3ce267c330b6bff51cf6a057b06 upstream.
 
-The SNDRV_RAWMIDI_IOCTL_PARAMS ioctl may resize the buffers and the
-current code is racy.  For example, the sequencer client may write to
-buffer while it being resized.
+swap was broken on ARC due to silly copy-paste issue.
 
-As a simple workaround, let's switch to the resized buffer inside the
-stream runtime lock.
+We encode offset from swapcache page in __swp_entry() as (off << 13) but
+were not decoding back in __swp_offset() as (off >> 13) - it was still
+(off << 13).
 
-Reported-by: syzbot+52f83f0ea8df16932f7f@syzkaller.appspotmail.com
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+This finally fixes swap usage on ARC.
+
+| # mkswap /dev/sda2
+|
+| # swapon -a -e /dev/sda2
+| Adding 500728k swap on /dev/sda2.  Priority:-2 extents:1 across:500728k
+|
+| # free
+|              total       used       free     shared    buffers     cached
+| Mem:        765104      13456     751648       4736          8       4736
+| -/+ buffers/cache:       8712     756392
+| Swap:       500728          0     500728
+
+Cc: stable@vger.kernel.org
+Signed-off-by: Alexey Brodkin <abrodkin@synopsys.com>
+Signed-off-by: Vineet Gupta <vgupta@synopsys.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/core/rawmidi.c |   20 ++++++++++++++------
- 1 file changed, 14 insertions(+), 6 deletions(-)
+ arch/arc/include/asm/pgtable.h |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/sound/core/rawmidi.c
-+++ b/sound/core/rawmidi.c
-@@ -645,7 +645,7 @@ static int snd_rawmidi_info_select_user(
- int snd_rawmidi_output_params(struct snd_rawmidi_substream *substream,
- 			      struct snd_rawmidi_params * params)
- {
--	char *newbuf;
-+	char *newbuf, *oldbuf;
- 	struct snd_rawmidi_runtime *runtime = substream->runtime;
- 	
- 	if (substream->append && substream->use_count > 1)
-@@ -658,13 +658,17 @@ int snd_rawmidi_output_params(struct snd
- 		return -EINVAL;
- 	}
- 	if (params->buffer_size != runtime->buffer_size) {
--		newbuf = krealloc(runtime->buffer, params->buffer_size,
--				  GFP_KERNEL);
-+		newbuf = kmalloc(params->buffer_size, GFP_KERNEL);
- 		if (!newbuf)
- 			return -ENOMEM;
-+		spin_lock_irq(&runtime->lock);
-+		oldbuf = runtime->buffer;
- 		runtime->buffer = newbuf;
- 		runtime->buffer_size = params->buffer_size;
- 		runtime->avail = runtime->buffer_size;
-+		runtime->appl_ptr = runtime->hw_ptr = 0;
-+		spin_unlock_irq(&runtime->lock);
-+		kfree(oldbuf);
- 	}
- 	runtime->avail_min = params->avail_min;
- 	substream->active_sensing = !params->no_active_sensing;
-@@ -675,7 +679,7 @@ EXPORT_SYMBOL(snd_rawmidi_output_params)
- int snd_rawmidi_input_params(struct snd_rawmidi_substream *substream,
- 			     struct snd_rawmidi_params * params)
- {
--	char *newbuf;
-+	char *newbuf, *oldbuf;
- 	struct snd_rawmidi_runtime *runtime = substream->runtime;
+--- a/arch/arc/include/asm/pgtable.h
++++ b/arch/arc/include/asm/pgtable.h
+@@ -372,7 +372,7 @@ void update_mmu_cache(struct vm_area_str
  
- 	snd_rawmidi_drain_input(substream);
-@@ -686,12 +690,16 @@ int snd_rawmidi_input_params(struct snd_
- 		return -EINVAL;
- 	}
- 	if (params->buffer_size != runtime->buffer_size) {
--		newbuf = krealloc(runtime->buffer, params->buffer_size,
--				  GFP_KERNEL);
-+		newbuf = kmalloc(params->buffer_size, GFP_KERNEL);
- 		if (!newbuf)
- 			return -ENOMEM;
-+		spin_lock_irq(&runtime->lock);
-+		oldbuf = runtime->buffer;
- 		runtime->buffer = newbuf;
- 		runtime->buffer_size = params->buffer_size;
-+		runtime->appl_ptr = runtime->hw_ptr = 0;
-+		spin_unlock_irq(&runtime->lock);
-+		kfree(oldbuf);
- 	}
- 	runtime->avail_min = params->avail_min;
- 	return 0;
+ /* Decode a PTE containing swap "identifier "into constituents */
+ #define __swp_type(pte_lookalike)	(((pte_lookalike).val) & 0x1f)
+-#define __swp_offset(pte_lookalike)	((pte_lookalike).val << 13)
++#define __swp_offset(pte_lookalike)	((pte_lookalike).val >> 13)
+ 
+ /* NOPs, to keep generic kernel happy */
+ #define __pte_to_swp_entry(pte)	((swp_entry_t) { pte_val(pte) })
 
 
