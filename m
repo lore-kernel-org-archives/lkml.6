@@ -6,49 +6,49 @@ X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3A8AC67790
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 12:18:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 314FDC67790
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 12:18:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 95745208AC
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 12:18:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D6329208B0
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 12:18:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="RId7ecU2";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="RId7ecU2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 95745208AC
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="P6vtYGRN";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="P6vtYGRN"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D6329208B0
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388602AbeG0NkQ (ORCPT
+        id S2388630AbeG0NkT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 09:40:16 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:45894 "EHLO
+        Fri, 27 Jul 2018 09:40:19 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:46054 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730488AbeG0NkP (ORCPT
+        with ESMTP id S1730488AbeG0NkS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 09:40:15 -0400
+        Fri, 27 Jul 2018 09:40:18 -0400
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id BDC2C6085F; Fri, 27 Jul 2018 12:18:34 +0000 (UTC)
+        id 3FB7560B7E; Fri, 27 Jul 2018 12:18:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1532693914;
-        bh=a0tfnI0doOCjNvfCw741371JJr81Y5dLABlWTH4KQxk=;
+        s=default; t=1532693918;
+        bh=BY/aSkH9MI7NgUAIsPWv/6I20fPzcHPW17eOSShBZ8Q=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=RId7ecU2ZKQhpIMU/KTo5Uj88DzKVZZZqEUQd44UANlke+hBC1t6QdNvQ1TxN3NbY
-         7SkkWMOjU0XSfGV2BuabI2jzWljhD2xxdPkM3/pOmxB/6g3j9BSCtxmnMtYFTVrZft
-         gmiNipooMiaj0WHtQIEa4wXYmFgrSccAE2mHviMo=
+        b=P6vtYGRNCpTxUXnBCKfghNj3aRSk59pRSezjkdKJRq3lmb+VW1Zv4FCIy4yC3veh5
+         38qwcVc9dx8KVC4K11wrzmCGURfGPLnUNvRUkGPcTMvj8uRzTAj2s7SIDea99nvja9
+         Pukctgh5vwVZPRKqSK4biSupc6QK9QASu3bqq49Y=
 Received: from aneelaka-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
         (Authenticated sender: aneela@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 4E2B560B7A;
-        Fri, 27 Jul 2018 12:18:31 +0000 (UTC)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 0650360B7B;
+        Fri, 27 Jul 2018 12:18:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1532693914;
-        bh=a0tfnI0doOCjNvfCw741371JJr81Y5dLABlWTH4KQxk=;
+        s=default; t=1532693918;
+        bh=BY/aSkH9MI7NgUAIsPWv/6I20fPzcHPW17eOSShBZ8Q=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=RId7ecU2ZKQhpIMU/KTo5Uj88DzKVZZZqEUQd44UANlke+hBC1t6QdNvQ1TxN3NbY
-         7SkkWMOjU0XSfGV2BuabI2jzWljhD2xxdPkM3/pOmxB/6g3j9BSCtxmnMtYFTVrZft
-         gmiNipooMiaj0WHtQIEa4wXYmFgrSccAE2mHviMo=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 4E2B560B7A
+        b=P6vtYGRNCpTxUXnBCKfghNj3aRSk59pRSezjkdKJRq3lmb+VW1Zv4FCIy4yC3veh5
+         38qwcVc9dx8KVC4K11wrzmCGURfGPLnUNvRUkGPcTMvj8uRzTAj2s7SIDea99nvja9
+         Pukctgh5vwVZPRKqSK4biSupc6QK9QASu3bqq49Y=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 0650360B7B
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=aneela@codeaurora.org
 From:   Arun Kumar Neelakantam <aneela@codeaurora.org>
@@ -56,9 +56,9 @@ To:     ohad@wizery.com, bjorn.andersson@linaro.org, clew@codeaurora.org,
         robh+dt@kernel.org, arnaud.pouliquen@st.com, andy.gross@linaro.org
 Cc:     linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
         Arun Kumar Neelakantam <aneela@codeaurora.org>
-Subject: [PATCH V4 3/9] rpmsg: glink: Use complete_all for open states
-Date:   Fri, 27 Jul 2018 17:47:23 +0530
-Message-Id: <1532693849-7037-4-git-send-email-aneela@codeaurora.org>
+Subject: [PATCH V4 4/9] rpmsg: Guard against null endpoint ops in destroy
+Date:   Fri, 27 Jul 2018 17:47:24 +0530
+Message-Id: <1532693849-7037-5-git-send-email-aneela@codeaurora.org>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1532693849-7037-1-git-send-email-aneela@codeaurora.org>
 References: <1532693849-7037-1-git-send-email-aneela@codeaurora.org>
@@ -69,38 +69,30 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Chris Lew <clew@codeaurora.org>
 
-The open_req and open_ack completion variables are the state variables
-to represet a remote channel as open. Use complete_all so there are no
-races with waiters and using completion_done.
+In RPMSG GLINK the chrdev device will allocate an ept as part of the
+rpdev creation. This device will not register endpoint ops even though
+it has an allocated ept. Protect against the case where the device is
+being destroyed.
 
 Signed-off-by: Chris Lew <clew@codeaurora.org>
 Signed-off-by: Arun Kumar Neelakantam <aneela@codeaurora.org>
 ---
- drivers/rpmsg/qcom_glink_native.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/rpmsg/rpmsg_core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/rpmsg/qcom_glink_native.c b/drivers/rpmsg/qcom_glink_native.c
-index 22a3cac..f43341d 100644
---- a/drivers/rpmsg/qcom_glink_native.c
-+++ b/drivers/rpmsg/qcom_glink_native.c
-@@ -949,7 +949,7 @@ static int qcom_glink_rx_open_ack(struct qcom_glink *glink, unsigned int lcid)
- 		return -EINVAL;
- 	}
- 
--	complete(&channel->open_ack);
-+	complete_all(&channel->open_ack);
- 
- 	return 0;
+diff --git a/drivers/rpmsg/rpmsg_core.c b/drivers/rpmsg/rpmsg_core.c
+index b714a54..0860328 100644
+--- a/drivers/rpmsg/rpmsg_core.c
++++ b/drivers/rpmsg/rpmsg_core.c
+@@ -80,7 +80,7 @@ struct rpmsg_endpoint *rpmsg_create_ept(struct rpmsg_device *rpdev,
+  */
+ void rpmsg_destroy_ept(struct rpmsg_endpoint *ept)
+ {
+-	if (ept)
++	if (ept && ept->ops)
+ 		ept->ops->destroy_ept(ept);
  }
-@@ -1393,7 +1393,7 @@ static int qcom_glink_rx_open(struct qcom_glink *glink, unsigned int rcid,
- 	channel->rcid = ret;
- 	spin_unlock_irqrestore(&glink->idr_lock, flags);
- 
--	complete(&channel->open_req);
-+	complete_all(&channel->open_req);
- 
- 	if (create_device) {
- 		rpdev = kzalloc(sizeof(*rpdev), GFP_KERNEL);
+ EXPORT_SYMBOL(rpmsg_destroy_ept);
 -- 
 The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
 a Linux Foundation Collaborative Project
