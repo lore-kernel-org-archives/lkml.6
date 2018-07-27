@@ -2,107 +2,124 @@ Return-Path: <SRS0=OQFz=KL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4354C6778F
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 08:29:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B505CC67790
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 08:30:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 501FF2088E
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 08:29:41 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Tp3xYFJx"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 501FF2088E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 16EA920891
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 08:30:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 16EA920891
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730324AbeG0Ju0 (ORCPT
+        id S1730396AbeG0JvJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 05:50:26 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:43161 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726034AbeG0Ju0 (ORCPT
+        Fri, 27 Jul 2018 05:51:09 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:49211 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729431AbeG0JvJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 05:50:26 -0400
-Received: by mail-pf1-f194.google.com with SMTP id j26-v6so1492454pfi.10;
-        Fri, 27 Jul 2018 01:29:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=mPSTWh3lwRepsLbgt2o0sl8oKrikhsxeI/ve+7lxBcM=;
-        b=Tp3xYFJxr4Vxf8OFKNp8P5qouAFZfTEkOccniXiTH3pRakPvbHa12sUDkCpORGj7Kz
-         clnqMPQRrnXbEPnmZsa2ZWNpbj/i2lbTNqN3tOisJhBx0TJZVeVFNPb1kmjfs9ubKvEh
-         BxIHed4UJKfwC1A/d1XD9kriEFeubiIy+DEsg5GvAyXx8skLJcy4juAILX69bRJpQLxt
-         /6qh05vaz1XqR0OUHLTMOOA1cY/MRRZIjgHQjrrfj0CbKrjl0HpCttpL9/wjzoQPXs3F
-         M2XrVV8tvUE37yho+qN7fMvzU3Rr9478HRiWhExm3U9+IZFzjNu8pFdsXjwejzYNagrK
-         SXZQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=mPSTWh3lwRepsLbgt2o0sl8oKrikhsxeI/ve+7lxBcM=;
-        b=ZQWcgfr12PjfY1RwgSk9yGuE4wVm6VR44UvF+Rk1Hn0T+fFV8DqOJvQPKlurJC8j73
-         FK/H+cvPBuMTeGrovRpq03TRE8O1tvB2IrYgsRKnaehq4VYQxn3eaFC1LKOpR7TV6yBj
-         4/KYl3K8SnMcdZYmqL30PmXeIBqxxKPB5lQlay8gxivjABmI6HjBLcWRo8f/uQF7/Qtx
-         569oB6nLnRxp79FuT4OQGoZYbHzlhAxAbfFgw8XMXo/9ML6VZqsbSAshHL/bmrHAFQhf
-         s7Brr0FvKX9/A39DKE+ySZTqJfKUVlgjODd3ACuA09W5SYeuT5/vJbs4ze4nf97Tzqmd
-         D3lQ==
-X-Gm-Message-State: AOUpUlGkO1I44CCfKxMe3139unJyYrISuqkpoUak1O7UekcnuwQ3xg4o
-        n10PZ9ENWDqlI2KDpCS2iFU=
-X-Google-Smtp-Source: AAOMgpc4GmwtXgNyhuw4YAlf83ezBDXkxkuVifLkGI2ZqQKas0pdnKiG7A5gZwIv+kcAanhnbE197w==
-X-Received: by 2002:a65:6243:: with SMTP id q3-v6mr5022733pgv.273.1532680178417;
-        Fri, 27 Jul 2018 01:29:38 -0700 (PDT)
-Received: from localhost.localdomain ([2402:f000:1:4414:6c14:7712:e625:1be4])
-        by smtp.gmail.com with ESMTPSA id q81-v6sm9734363pfd.15.2018.07.27.01.29.36
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 27 Jul 2018 01:29:37 -0700 (PDT)
-From:   Jia-Ju Bai <baijiaju1990@gmail.com>
-To:     davem@davemloft.net, yanjun.zhu@oracle.com, keescook@chromium.org
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jia-Ju Bai <baijiaju1990@gmail.com>
-Subject: [PATCH] net: nvidia: forcedeth: Replace GFP_ATOMIC with GFP_KERNEL in nv_probe()
-Date:   Fri, 27 Jul 2018 16:29:31 +0800
-Message-Id: <20180727082931.7340-1-baijiaju1990@gmail.com>
-X-Mailer: git-send-email 2.17.0
+        Fri, 27 Jul 2018 05:51:09 -0400
+Received: from kresse.hi.pengutronix.de ([2001:67c:670:100:1d::2a])
+        by metis.ext.pengutronix.de with esmtp (Exim 4.89)
+        (envelope-from <l.stach@pengutronix.de>)
+        id 1fiy8c-0003mQ-9I; Fri, 27 Jul 2018 10:30:14 +0200
+Message-ID: <1532680211.32306.36.camel@pengutronix.de>
+Subject: Re: [PATCH v8 1/6] ARM: imx6q: provide documentation for new
+ fsl,pmic-stby-poweroff property
+From:   Lucas Stach <l.stach@pengutronix.de>
+To:     Robin Gong <yibin.gong@nxp.com>,
+        Oleksij Rempel <o.rempel@pengutronix.de>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Mark Brown <broonie@kernel.org>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+Cc:     Mark Rutland <mark.rutland@arm.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "A.s. Dong" <aisheng.dong@nxp.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Leonard Crestez <leonard.crestez@nxp.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>
+Date:   Fri, 27 Jul 2018 10:30:11 +0200
+In-Reply-To: <DB6PR04MB32236EA307DCD070771B1D4D892A0@DB6PR04MB3223.eurprd04.prod.outlook.com>
+References: <20180726092220.17250-1-o.rempel@pengutronix.de>
+         <20180726092220.17250-2-o.rempel@pengutronix.de>
+         <DB6PR04MB3223605CB1F5E06D4A278B3C892B0@DB6PR04MB3223.eurprd04.prod.outlook.com>
+         <84c1921c-922e-4b5d-b688-db89047fa1db@pengutronix.de>
+         <DB6PR04MB32236EA307DCD070771B1D4D892A0@DB6PR04MB3223.eurprd04.prod.outlook.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6-1+deb9u1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::2a
+X-SA-Exim-Mail-From: l.stach@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-nv_probe() is never called in atomic context.
-It calls dma_alloc_coherent() with GFP_ATOMIC, which is not necessary.
-GFP_ATOMIC can be replaced with GFP_KERNEL.
+Hi Robin,
 
-This is found by a static analysis tool named DCNS written by myself.
+Am Freitag, den 27.07.2018, 01:51 +0000 schrieb Robin Gong:
+[...]
+> > > > ---
+> > > >  Documentation/devicetree/bindings/clock/imx6q-clock.txt | 8 ++++++++
+> > > >  1 file changed, 8 insertions(+)
+> > > > 
+> > > > diff --git a/Documentation/devicetree/bindings/clock/imx6q-clock.txt
+> > > > b/Documentation/devicetree/bindings/clock/imx6q-clock.txt
+> > > > index a45ca67a9d5f..e1308346e00d 100644
+> > > > --- a/Documentation/devicetree/bindings/clock/imx6q-clock.txt
+> > > > +++ b/Documentation/devicetree/bindings/clock/imx6q-clock.txt
+> > > > @@ -6,6 +6,14 @@ Required properties:
+> > > >  - interrupts: Should contain CCM interrupt
+> > > >  - #clock-cells: Should be <1>
+> > > > 
+> > > > +Optional properties:
+> > > > +- fsl,pmic-stby-poweroff: Configure CCM to assert PMIC_STBY_REQ
+> > > > +signal
+> > > > +  on power off.
+> > > > +  Use this property if the SoC should be powered off by external
+> > > > +power
+> > > > +  management IC (PMIC) triggered via PMIC_STBY_REQ signal.
+> > > 
+> > > PMIC_ON_REQ didn't connect to any pin of PMIC in your case?
+> > 
+> > No. First, it was only one customer specific issue. After some research I found
+> > even publicly available boards (for example RioTboard) which has same/similar
+> > design. After seeing this in imx6 documentation as valid power off way, I have
+> > no doubts - there should be even more devices doin this in the wild.
+> 
+> Not sure why the customer didn't follow reference design, since PMIC_ON_REQ can
+> provide power off/on feature by pressing ONOFF key which connected ONOFF
+> pin of i.mx6(ONOFF will toggle PMIC_ON_REQ to power off/on PMIC). The official
+> power off/on way (PMIC_ON_REQ) can also power off all power rails of PFUZE except
+> snvs as your patch did on PMIC_STBY_REQ.  PMIC_STBY_REQ is used to notify pmic
+> switch power mode (PFM/APS) or decrease voltage to save power in kernel suspend,
+> not power off....I am not sure if we need this patchset to 'workaround' the board issue.
+> 
+Not all boards follow the reference design, that's a fact of life.
 
-Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
----
- drivers/net/ethernet/nvidia/forcedeth.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Please look at the i.MX6Q reference manual. The sequence implemented in
+this patchset can be found as a valid way to power off the system in
+"60.4.3 Power mode transitions" "Normal ON to OFF with external PMIC",
+so there is hardly any way to argue that this is a board specific
+quirk. This is one of the Freescale/NXP recommended sequences to turn
+off the system.
 
-diff --git a/drivers/net/ethernet/nvidia/forcedeth.c b/drivers/net/ethernet/nvidia/forcedeth.c
-index 66c665d0b926..a6f1a5a3daea 100644
---- a/drivers/net/ethernet/nvidia/forcedeth.c
-+++ b/drivers/net/ethernet/nvidia/forcedeth.c
-@@ -5775,7 +5775,7 @@ static int nv_probe(struct pci_dev *pci_dev, const struct pci_device_id *id)
- 						      (np->rx_ring_size +
- 						      np->tx_ring_size),
- 						      &np->ring_addr,
--						      GFP_ATOMIC);
-+						      GFP_KERNEL);
- 		if (!np->rx_ring.orig)
- 			goto out_unmap;
- 		np->tx_ring.orig = &np->rx_ring.orig[np->rx_ring_size];
-@@ -5784,7 +5784,7 @@ static int nv_probe(struct pci_dev *pci_dev, const struct pci_device_id *id)
- 						    sizeof(struct ring_desc_ex) *
- 						    (np->rx_ring_size +
- 						    np->tx_ring_size),
--						    &np->ring_addr, GFP_ATOMIC);
-+						    &np->ring_addr, GFP_KERNEL);
- 		if (!np->rx_ring.ex)
- 			goto out_unmap;
- 		np->tx_ring.ex = &np->rx_ring.ex[np->rx_ring_size];
--- 
-2.17.0
-
+Regards,
+Lucas
