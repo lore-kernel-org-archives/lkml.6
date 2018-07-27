@@ -2,154 +2,105 @@ Return-Path: <SRS0=OQFz=KL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D96BAC6778F
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 11:34:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10F2AC6778F
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 11:38:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7A9BC2089F
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 11:34:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AB4272089F
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 11:38:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=bidouilliste.com header.i=@bidouilliste.com header.b="lBYa2NwO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7A9BC2089F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bidouilliste.com
+	dkim=pass (1024-bit key) header.d=kepstin.ca header.i=@kepstin.ca header.b="GDKLmOax"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AB4272089F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kepstin.ca
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731039AbeG0M4M (ORCPT
+        id S1730801AbeG0M74 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 08:56:12 -0400
-Received: from mail.blih.net ([212.83.177.182]:61474 "EHLO mail.blih.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730425AbeG0M4M (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 08:56:12 -0400
-Received: from mail.blih.net (mail.blih.net [212.83.177.182])
-        by mail.blih.net (OpenSMTPD) with ESMTP id 53f71e28;
-        Fri, 27 Jul 2018 13:34:39 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=bidouilliste.com; h=date
-        :from:to:cc:subject:message-id:in-reply-to:references
-        :mime-version:content-type:content-transfer-encoding; s=mail;
-         bh=9vP1Dlcu3RCVipRmSaeg+cn4e7s=; b=lBYa2NwOSGg5MExpJ99rykF8TfB5
-        ytQxDT5sjCEcQyBnQ3J/kzEd5+/QNcWX9o9qCO+c5Cmv8eeoF+gjxEikE3PxHxwL
-        m3IRijPCcaDxffUoT3QZaz1v/lO8KqXRxFHCm0V2Kg8uXpH2IXL0F+Fs/W4c3hv9
-        K88MsSM+7i846tU=
-DomainKey-Signature: a=rsa-sha1; c=nofws; d=bidouilliste.com; h=date
-        :from:to:cc:subject:message-id:in-reply-to:references
-        :mime-version:content-type:content-transfer-encoding; q=dns; s=
-        mail; b=MYHCVUpfKX+WFLkDh1uiyW6TgzmTvaMuuVDjvQoy0s0BWn7X8ZNqzw/F
-        yBQrmkgcVcDA1RiYMSHe0wfuadCwZcGbPA7e9C2y72rzN7m5IqYwGLFXTTN7YhHA
-        W+5xTJZsT9wC7HNIMs/cN8d4Lpx4QQMN7yrIyqIifLMX05m0sRM=
-Received: from skull.home.blih.net (ip-9.net-89-3-105.rev.numericable.fr [89.3.105.9])
-        by mail.blih.net (OpenSMTPD) with ESMTPSA id 0c26672f
-        TLS version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO;
-        Fri, 27 Jul 2018 13:34:39 +0200 (CEST)
-Date:   Fri, 27 Jul 2018 13:34:39 +0200
-From:   Emmanuel Vadot <manu@bidouilliste.com>
-To:     Emmanuel Vadot <manu@bidouilliste.com>
-Cc:     Maxime Ripard <maxime.ripard@bootlin.com>, mark.rutland@arm.com,
-        devicetree@vger.kernel.org, catalin.marinas@arm.com,
-        will.deacon@arm.com, linux-kernel@vger.kernel.org,
-        Emmanuel Vadot <manu@freebsd.org>, wens@csie.org,
-        robh+dt@kernel.org, srinivas.kandagatla@linaro.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2 5/5] arm64: dts: allwinner: h5: Add SID for H5
-Message-Id: <20180727133439.2f54a1a06d7a80560027cda3@bidouilliste.com>
-In-Reply-To: <20180727125654.ec813df71b492201aea2ca5f@bidouilliste.com>
-References: <20180724101522.68165-1-manu@freebsd.org>
-        <20180724101522.68165-5-manu@freebsd.org>
-        <20180724130004.ynaiabshexrrbvo4@flea>
-        <20180724153432.e398bddfe63e51e8dcebfc46@bidouilliste.com>
-        <20180724144218.jdvgrcqkz2kmohqx@flea>
-        <20180724165501.d8f01bf20c7cc43e7ed7fc62@bidouilliste.com>
-        <20180726115409.7hqtvx4rdqcqdjrq@flea>
-        <20180727125654.ec813df71b492201aea2ca5f@bidouilliste.com>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.32; amd64-portbld-freebsd12.0)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Fri, 27 Jul 2018 08:59:56 -0400
+Received: from mail-it0-f65.google.com ([209.85.214.65]:38540 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730568AbeG0M7z (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Jul 2018 08:59:55 -0400
+Received: by mail-it0-f65.google.com with SMTP id v71-v6so6923746itb.3
+        for <linux-kernel@vger.kernel.org>; Fri, 27 Jul 2018 04:38:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kepstin.ca; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=8X+pkn91M35ugopLay0L/cQmVmMlQKHVL/hCFSfYtvU=;
+        b=GDKLmOaxb6UOaFpTjkIYxn96IDhRVCq+GuMBSgx95kIjHpi+P0lggXLSITww0gWyFP
+         yYMQCsHyLD5iVeiInf5hDBgE6/alrtxsklxHKuUSL7e/oNQbyfuJaiqtC347R9C3iYDN
+         ye/UDrr0vLB8LuQIju2SBveOxVhzYjEZM8dmw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=8X+pkn91M35ugopLay0L/cQmVmMlQKHVL/hCFSfYtvU=;
+        b=sD4YVhK6ARVZZETJ37tzykbEAR9tV2VJNcbgJvAeClmYmoJO2WZRSn5KCycCSnYnXi
+         HAlxKeT0HY6PCcrG0ChzDu0T/u6sz9fC6ixbjZGyOaKceVhjrZEWxfL4KEa5zV9Ada0L
+         nAMmuPZQCHF5H3bwuwnc5VKO9NSUN+57tnpylxwIRRYai4RF6/Q5W6rnbdgwN/nlUtgO
+         de0m7p8PP7pSK8dcAhgh53WGx9ZJR6PqFV/iSzubOn2be1KbgkgMVVjEmBvOBkvTiQFM
+         ASuuL/h5Mk/hCwFx+j7hxhWINE+zsSc4kUj0DwC/JfJhH6+abL+uZpCWbj9ABZHvTnyT
+         TdAQ==
+X-Gm-Message-State: AOUpUlHVR47QkWc5LDqFIZgd5fv2IWSMBEHTao4Q4VzZVpOAAD3a3sGH
+        vfJGvm8S4+Bd/RMvVlfdhbHZfw==
+X-Google-Smtp-Source: AAOMgpdwsGHHSC2dE6WfI9nNmTOgBWCgtulcEerCuHfJ/GeXnFgIPeA+tgiv1TgWnTSy0u04c7C4HQ==
+X-Received: by 2002:a24:97cd:: with SMTP id k196-v6mr4831805ite.93.1532691503950;
+        Fri, 27 Jul 2018 04:38:23 -0700 (PDT)
+Received: from fuko.kepstin.ca ([2001:470:b3f4::561])
+        by smtp.gmail.com with ESMTPSA id e2-v6sm1302869ioa.33.2018.07.27.04.38.22
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 27 Jul 2018 04:38:23 -0700 (PDT)
+From:   Calvin Walton <calvin.walton@kepstin.ca>
+To:     Len Brown <lenb@kernel.org>, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     Calvin Walton <calvin.walton@kepstin.ca>
+Subject: [PATCH v2] turbostat: Read extended processor family from CPUID
+Date:   Fri, 27 Jul 2018 07:38:09 -0400
+Message-Id: <20180727113809.8427-1-calvin.walton@kepstin.ca>
+X-Mailer: git-send-email 2.18.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 27 Jul 2018 12:56:54 +0200
-Emmanuel Vadot <manu@bidouilliste.com> wrote:
+This fixes the reported family on modern AMD processors (e.g. Ryzen,
+which is family 0x17). Previously these processors all showed up as
+family 0xf.
 
-> On Thu, 26 Jul 2018 13:54:09 +0200
-> Maxime Ripard <maxime.ripard@bootlin.com> wrote:
-> 
-> > On Tue, Jul 24, 2018 at 04:55:01PM +0200, Emmanuel Vadot wrote:
-> > > On Tue, 24 Jul 2018 16:42:18 +0200
-> > > Maxime Ripard <maxime.ripard@bootlin.com> wrote:
-> > > 
-> > > > On Tue, Jul 24, 2018 at 03:34:32PM +0200, Emmanuel Vadot wrote:
-> > > > > On Tue, 24 Jul 2018 15:00:04 +0200
-> > > > > Maxime Ripard <maxime.ripard@bootlin.com> wrote:
-> > > > > 
-> > > > > > On Tue, Jul 24, 2018 at 12:15:22PM +0200, Emmanuel Vadot wrote:
-> > > > > > > The SID controller on H5 look the same as the one present in the A64.
-> > > > > > > But in case we find some difference one day at a compatible string
-> > > > > > > of it's own and a fallback to the A64 one.
-> > > > > > > 
-> > > > > > > Signed-off-by: Emmanuel Vadot <manu@freebsd.org>
-> > > > > > > ---
-> > > > > > >  arch/arm64/boot/dts/allwinner/sun50i-h5.dtsi | 5 +++++
-> > > > > > >  1 file changed, 5 insertions(+)
-> > > > > > > 
-> > > > > > > diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h5.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-h5.dtsi
-> > > > > > > index 62d646baac3c..28183bf77164 100644
-> > > > > > > --- a/arch/arm64/boot/dts/allwinner/sun50i-h5.dtsi
-> > > > > > > +++ b/arch/arm64/boot/dts/allwinner/sun50i-h5.dtsi
-> > > > > > > @@ -129,3 +129,8 @@
-> > > > > > >  		     <GIC_SPI 23 IRQ_TYPE_LEVEL_HIGH>;
-> > > > > > >  	compatible = "allwinner,sun50i-h5-pinctrl";
-> > > > > > >  };
-> > > > > > > +
-> > > > > > > +&sid {
-> > > > > > > +	compatible = "allwinner,sun50i-h5-sid",
-> > > > > > > +		     "allwinner,sun50i-a64-sid";
-> > > > > > > +};
-> > > > > > 
-> > > > > > This is still a bit pointless, please remove the common node.
-> > > > > 
-> > > > >  You mean directly declare sid controller in the SoC dtsi and not
-> > > > > have a common node in sunxi-h3-h5.dtsi ?
-> > > > 
-> > > > Yep
-> > > 
-> > >  The reason I've put it in the common file is because I'll send patches
-> > > for the nvmem-cells needed for thermal, and those are common between
-> > > the two. Other nvmem-cells are also common (like the chipid and
-> > > probably other).
-> > 
-> > Then we'll see what we can have in common and what not when we'll have
-> > something in common?
-> 
->  Will it make more sense that I just send a new series with nvmem-cells
-> now along with thermal bindings ?
+See the document
+https://support.amd.com/TechDocs/56255_OSRR.pdf
+section CPUID_Fn00000001_EAX for how to calculate the family
+from the BaseFamily and ExtFamily values.
 
- My bad, I remembered H5 thermal sensor being the same as H3 but I was
-wrong.
- I'll send a v3 with your changes suggestion and we'll see later for
-thermal sensor.
+This matches the code in arch/x86/lib/cpu.c
 
-> > Maxime
-> > 
-> > -- 
-> > Maxime Ripard, Bootlin (formerly Free Electrons)
-> > Embedded Linux and Kernel engineering
-> > https://bootlin.com
-> 
-> 
-> -- 
-> Emmanuel Vadot <manu@bidouilliste.com> <manu@freebsd.org>
-> 
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+Signed-off-by: Calvin Walton <calvin.walton@kepstin.ca>
+---
 
+I'm still working on updating the RAPL patch on top of the changes for
+v4.18, but this CPUID fix doesn't have to wait.
 
+ tools/power/x86/turbostat/turbostat.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/tools/power/x86/turbostat/turbostat.c b/tools/power/x86/turbostat/turbostat.c
+index bd9c6b31a504..8452ace384b3 100644
+--- a/tools/power/x86/turbostat/turbostat.c
++++ b/tools/power/x86/turbostat/turbostat.c
+@@ -4031,7 +4031,9 @@ void process_cpuid()
+ 	family = (fms >> 8) & 0xf;
+ 	model = (fms >> 4) & 0xf;
+ 	stepping = fms & 0xf;
+-	if (family == 6 || family == 0xf)
++	if (family == 0xf)
++		family += (fms >> 20) & 0xff;
++	if (family == 6 || family >= 0xf)
+ 		model += ((fms >> 16) & 0xf) << 4;
+ 
+ 	if (!quiet) {
 -- 
-Emmanuel Vadot <manu@bidouilliste.com> <manu@freebsd.org>
+2.18.0
+
