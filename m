@@ -6,34 +6,36 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BADB0C6778F
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:01:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66A96C67790
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:01:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3536A20894
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:01:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3536A20894
+	by mail.kernel.org (Postfix) with ESMTP id 1AE9320894
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:01:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1AE9320894
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388864AbeG0LXB (ORCPT
+        id S2388892AbeG0LXE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 07:23:01 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:34212 "EHLO
+        Fri, 27 Jul 2018 07:23:04 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:34238 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730120AbeG0LXA (ORCPT
+        with ESMTP id S1730120AbeG0LXD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 07:23:00 -0400
+        Fri, 27 Jul 2018 07:23:03 -0400
 Received: from localhost (unknown [89.188.5.116])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 61A4ACB8;
-        Fri, 27 Jul 2018 10:01:50 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 42075BB6;
+        Fri, 27 Jul 2018 10:01:53 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Lyude Paul <lyude@redhat.com>,
-        Ben Skeggs <bskeggs@redhat.com>
-Subject: [PATCH 4.14 07/48] drm/nouveau: Set DRIVER_ATOMIC cap earlier to fix debugfs
-Date:   Fri, 27 Jul 2018 11:59:52 +0200
-Message-Id: <20180727095919.270447780@linuxfoundation.org>
+        stable@vger.kernel.org, Bob Ball <ball@umich.edu>,
+        Jarod Wilson <jarod@redhat.com>,
+        Mahesh Bandewar <maheshb@google.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.14 08/48] bonding: set default miimon value for non-arp modes if not set
+Date:   Fri, 27 Jul 2018 11:59:53 +0200
+Message-Id: <20180727095919.370874429@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180727095918.503549522@linuxfoundation.org>
 References: <20180727095918.503549522@linuxfoundation.org>
@@ -50,97 +52,103 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Lyude Paul <lyude@redhat.com>
+From: Jarod Wilson <jarod@redhat.com>
 
-commit eb493fbc150f4a28151ae1ee84f24395989f3600 upstream.
+[ Upstream commit c1f897ce186a529a494441642125479d38727a3d ]
 
-Currently nouveau doesn't actually expose the state debugfs file that's
-usually provided for any modesetting driver that supports atomic, even
-if nouveau is loaded with atomic=1. This is due to the fact that the
-standard debugfs files that DRM creates for atomic drivers is called
-when drm_get_pci_dev() is called from nouveau_drm.c. This happens well
-before we've initialized the display core, which is currently
-responsible for setting the DRIVER_ATOMIC cap.
+For some time now, if you load the bonding driver and configure bond
+parameters via sysfs using minimal config options, such as specifying
+nothing but the mode, relying on defaults for everything else, modes
+that cannot use arp monitoring (802.3ad, balance-tlb, balance-alb) all
+wind up with both arp_interval=0 (as it should be) and miimon=0, which
+means the miimon monitor thread never actually runs. This is particularly
+problematic for 802.3ad.
 
-So, move the atomic option into nouveau_drm.c and just add the
-DRIVER_ATOMIC cap whenever it's enabled on the kernel commandline. This
-shouldn't cause any actual issues, as the atomic ioctl will still fail
-as expected even if the display core doesn't disable it until later in
-the init sequence. This also provides the added benefit of being able to
-use the state debugfs file to check the current display state even if
-clients aren't allowed to modify it through anything other than the
-legacy ioctls.
+For example, from an LNST recipe I've set up:
 
-Additionally, disable the DRIVER_ATOMIC cap in nv04's display core, as
-this was already disabled there previously.
+$ modprobe bonding max_bonds=0"
+$ echo "+t_bond0" > /sys/class/net/bonding_masters"
+$ ip link set t_bond0 down"
+$ echo "802.3ad" > /sys/class/net/t_bond0/bonding/mode"
+$ ip link set ens1f1 down"
+$ echo "+ens1f1" > /sys/class/net/t_bond0/bonding/slaves"
+$ ip link set ens1f0 down"
+$ echo "+ens1f0" > /sys/class/net/t_bond0/bonding/slaves"
+$ ethtool -i t_bond0"
+$ ip link set ens1f1 up"
+$ ip link set ens1f0 up"
+$ ip link set t_bond0 up"
+$ ip addr add 192.168.9.1/24 dev t_bond0"
+$ ip addr add 2002::1/64 dev t_bond0"
 
-Signed-off-by: Lyude Paul <lyude@redhat.com>
-Cc: stable@vger.kernel.org
-Signed-off-by: Ben Skeggs <bskeggs@redhat.com>
+This bond comes up okay, but things look slightly suspect in
+/proc/net/bonding/t_bond0 output:
+
+$ grep -i mii /proc/net/bonding/t_bond0
+MII Status: up
+MII Polling Interval (ms): 0
+MII Status: up
+MII Status: up
+
+Now, pull a cable on one of the ports in the bond, then reconnect it, and
+you'll see:
+
+Slave Interface: ens1f0
+MII Status: down
+Speed: 1000 Mbps
+Duplex: full
+
+I believe this became a major issue as of commit 4d2c0cda0744, which for
+802.3ad bonds, sets slave->link = BOND_LINK_DOWN, with a comment about
+relying on link monitoring via miimon to set it correctly, but since the
+miimon work queue never runs, the link just stays marked down.
+
+If we simply tweak bond_option_mode_set() slightly, we can check for the
+non-arp modes having no miimon value set, and insert BOND_DEFAULT_MIIMON,
+which gets things back in full working order. This problem exists as far
+back as 4.14, and might be worth fixing in all stable trees since, though
+the work-around is to simply specify an miimon value yourself.
+
+Reported-by: Bob Ball <ball@umich.edu>
+Signed-off-by: Jarod Wilson <jarod@redhat.com>
+Acked-by: Mahesh Bandewar <maheshb@google.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/gpu/drm/nouveau/dispnv04/disp.c |    3 +++
- drivers/gpu/drm/nouveau/nouveau_drm.c   |    7 +++++++
- drivers/gpu/drm/nouveau/nv50_display.c  |    6 ------
- 3 files changed, 10 insertions(+), 6 deletions(-)
+ drivers/net/bonding/bond_options.c |   23 ++++++++++++++---------
+ 1 file changed, 14 insertions(+), 9 deletions(-)
 
---- a/drivers/gpu/drm/nouveau/dispnv04/disp.c
-+++ b/drivers/gpu/drm/nouveau/dispnv04/disp.c
-@@ -55,6 +55,9 @@ nv04_display_create(struct drm_device *d
- 	nouveau_display(dev)->init = nv04_display_init;
- 	nouveau_display(dev)->fini = nv04_display_fini;
- 
-+	/* Pre-nv50 doesn't support atomic, so don't expose the ioctls */
-+	dev->driver->driver_features &= ~DRIVER_ATOMIC;
-+
- 	nouveau_hw_save_vga_fonts(dev, 1);
- 
- 	nv04_crtc_create(dev, 0);
---- a/drivers/gpu/drm/nouveau/nouveau_drm.c
-+++ b/drivers/gpu/drm/nouveau/nouveau_drm.c
-@@ -79,6 +79,10 @@ MODULE_PARM_DESC(modeset, "enable driver
- int nouveau_modeset = -1;
- module_param_named(modeset, nouveau_modeset, int, 0400);
- 
-+MODULE_PARM_DESC(atomic, "Expose atomic ioctl (default: disabled)");
-+static int nouveau_atomic = 0;
-+module_param_named(atomic, nouveau_atomic, int, 0400);
-+
- MODULE_PARM_DESC(runpm, "disable (0), force enable (1), optimus only default (-1)");
- static int nouveau_runtime_pm = -1;
- module_param_named(runpm, nouveau_runtime_pm, int, 0400);
-@@ -383,6 +387,9 @@ static int nouveau_drm_probe(struct pci_
- 
- 	pci_set_master(pdev);
- 
-+	if (nouveau_atomic)
-+		driver_pci.driver_features |= DRIVER_ATOMIC;
-+
- 	ret = drm_get_pci_dev(pdev, pent, &driver_pci);
- 	if (ret) {
- 		nvkm_device_del(&device);
---- a/drivers/gpu/drm/nouveau/nv50_display.c
-+++ b/drivers/gpu/drm/nouveau/nv50_display.c
-@@ -4398,10 +4398,6 @@ nv50_display_destroy(struct drm_device *
- 	kfree(disp);
- }
- 
--MODULE_PARM_DESC(atomic, "Expose atomic ioctl (default: disabled)");
--static int nouveau_atomic = 0;
--module_param_named(atomic, nouveau_atomic, int, 0400);
--
- int
- nv50_display_create(struct drm_device *dev)
+--- a/drivers/net/bonding/bond_options.c
++++ b/drivers/net/bonding/bond_options.c
+@@ -743,15 +743,20 @@ const struct bond_option *bond_opt_get(u
+ static int bond_option_mode_set(struct bonding *bond,
+ 				const struct bond_opt_value *newval)
  {
-@@ -4426,8 +4422,6 @@ nv50_display_create(struct drm_device *d
- 	disp->disp = &nouveau_display(dev)->disp;
- 	dev->mode_config.funcs = &nv50_disp_func;
- 	dev->driver->driver_features |= DRIVER_PREFER_XBGR_30BPP;
--	if (nouveau_atomic)
--		dev->driver->driver_features |= DRIVER_ATOMIC;
+-	if (!bond_mode_uses_arp(newval->value) && bond->params.arp_interval) {
+-		netdev_dbg(bond->dev, "%s mode is incompatible with arp monitoring, start mii monitoring\n",
+-			   newval->string);
+-		/* disable arp monitoring */
+-		bond->params.arp_interval = 0;
+-		/* set miimon to default value */
+-		bond->params.miimon = BOND_DEFAULT_MIIMON;
+-		netdev_dbg(bond->dev, "Setting MII monitoring interval to %d\n",
+-			   bond->params.miimon);
++	if (!bond_mode_uses_arp(newval->value)) {
++		if (bond->params.arp_interval) {
++			netdev_dbg(bond->dev, "%s mode is incompatible with arp monitoring, start mii monitoring\n",
++				   newval->string);
++			/* disable arp monitoring */
++			bond->params.arp_interval = 0;
++		}
++
++		if (!bond->params.miimon) {
++			/* set miimon to default value */
++			bond->params.miimon = BOND_DEFAULT_MIIMON;
++			netdev_dbg(bond->dev, "Setting MII monitoring interval to %d\n",
++				   bond->params.miimon);
++		}
+ 	}
  
- 	/* small shared memory area we use for notifiers and semaphores */
- 	ret = nouveau_bo_new(&drm->client, 4096, 0x1000, TTM_PL_FLAG_VRAM,
+ 	if (newval->value == BOND_MODE_ALB)
 
 
