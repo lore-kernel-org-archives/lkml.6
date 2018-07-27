@@ -2,96 +2,105 @@ Return-Path: <SRS0=OQFz=KL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7542C67790
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:28:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9E0AC67790
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:29:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7D19E2089B
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:28:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7D19E2089B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 917F7208A4
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:29:22 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="z+X/FXds"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 917F7208A4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389082AbeG0Ltz (ORCPT
+        id S1731149AbeG0Luh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 07:49:55 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:42676 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389057AbeG0Lty (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 07:49:54 -0400
-Received: from localhost (unknown [89.188.5.116])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 80064CD1;
-        Fri, 27 Jul 2018 10:28:37 +0000 (UTC)
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-        Soheil Hassas Yeganeh <soheil@google.com>,
-        Yuchung Cheng <ycheng@google.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 3.18 17/27] tcp: avoid collapses in tcp_prune_queue() if possible
-Date:   Fri, 27 Jul 2018 12:26:54 +0200
-Message-Id: <20180727102649.679062445@linuxfoundation.org>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180727102649.049641021@linuxfoundation.org>
-References: <20180727102649.049641021@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+        Fri, 27 Jul 2018 07:50:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42698 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729489AbeG0Luh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Jul 2018 07:50:37 -0400
+Received: from localhost (unknown [119.197.233.250])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8D099208A2;
+        Fri, 27 Jul 2018 10:29:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1532687360;
+        bh=DmKL19mdN8G3ZC0jr7gLOoaBo890N+xZVOp42yp6iw8=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=z+X/FXdsGtVVmzMqlHdn3WjvIlS8izdiNu11kexDyH4hrm554TugBcqawpakEG604
+         Un13iyWlhlmuYyxPAJvnZXVxSYU8/AG3HRqnGeq6LLP8xIuAIb/OLPiY4jrrB7wjOR
+         Q/+euOlswWw2VlPCSiyRg2kyLEy7XPlNaTfpLBTI=
+Date:   Fri, 27 Jul 2018 19:29:16 +0900
+From:   Jaegeuk Kim <jaegeuk@kernel.org>
+To:     Chao Yu <yuchao0@huawei.com>
+Cc:     linux-f2fs-devel@lists.sourceforge.net,
+        linux-kernel@vger.kernel.org, chao@kernel.org
+Subject: Re: [PATCH] f2fs: avoid race between zero_range and background GC
+Message-ID: <20180727102916.GI16155@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20180726104536.114340-1-yuchao0@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180726104536.114340-1-yuchao0@huawei.com>
+User-Agent: Mutt/1.8.2 (2017-04-18)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-3.18-stable review patch.  If anyone has any objections, please let me know.
+On 07/26, Chao Yu wrote:
+> Thread A				Background GC
+> - f2fs_zero_range
+>  - truncate_pagecache_range
+> 					- gc_data_segment
+> 					 - get_read_data_page
+> 					  - move_data_page
+> 					   - set_page_dirty
+> 					   - set_cold_data
+>  - f2fs_do_zero_range
+>   - dn->data_blkaddr = NEW_ADDR;
+>   - f2fs_set_data_blkaddr
+> 
+> Actually, we don't need to set dirty & checked flag on the page, since
+> all valid data in the page should be zeroed by zero_range().
 
-------------------
+But, it doesn't matter too much, right?
 
-From: Eric Dumazet <edumazet@google.com>
+> Use i_gc_rwsem[WRITE] to avoid such race condition.
 
-[ Upstream commit f4a3313d8e2ca9fd8d8f45e40a2903ba782607e7 ]
+Hope to avoid abusing i_gc_rwsem[] tho.
 
-Right after a TCP flow is created, receiving tiny out of order
-packets allways hit the condition :
-
-if (atomic_read(&sk->sk_rmem_alloc) >= sk->sk_rcvbuf)
-	tcp_clamp_window(sk);
-
-tcp_clamp_window() increases sk_rcvbuf to match sk_rmem_alloc
-(guarded by tcp_rmem[2])
-
-Calling tcp_collapse_ofo_queue() in this case is not useful,
-and offers a O(N^2) surface attack to malicious peers.
-
-Better not attempt anything before full queue capacity is reached,
-forcing attacker to spend lots of resource and allow us to more
-easily detect the abuse.
-
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Acked-by: Soheil Hassas Yeganeh <soheil@google.com>
-Acked-by: Yuchung Cheng <ycheng@google.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- net/ipv4/tcp_input.c |    3 +++
- 1 file changed, 3 insertions(+)
-
---- a/net/ipv4/tcp_input.c
-+++ b/net/ipv4/tcp_input.c
-@@ -4738,6 +4738,9 @@ static int tcp_prune_queue(struct sock *
- 	else if (sk_under_memory_pressure(sk))
- 		tp->rcv_ssthresh = min(tp->rcv_ssthresh, 4U * tp->advmss);
- 
-+	if (atomic_read(&sk->sk_rmem_alloc) <= sk->sk_rcvbuf)
-+		return 0;
-+
- 	tcp_collapse_ofo_queue(sk);
- 	if (!skb_queue_empty(&sk->sk_receive_queue))
- 		tcp_collapse(sk, &sk->sk_receive_queue,
-
-
+> 
+> Signed-off-by: Chao Yu <yuchao0@huawei.com>
+> ---
+>  fs/f2fs/file.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+> index 267ec3794e1e..7bd2412a8c37 100644
+> --- a/fs/f2fs/file.c
+> +++ b/fs/f2fs/file.c
+> @@ -1309,6 +1309,7 @@ static int f2fs_zero_range(struct inode *inode, loff_t offset, loff_t len,
+>  	if (ret)
+>  		return ret;
+>  
+> +	down_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
+>  	down_write(&F2FS_I(inode)->i_mmap_sem);
+>  	ret = filemap_write_and_wait_range(mapping, offset, offset + len - 1);
+>  	if (ret)
+> @@ -1389,6 +1390,7 @@ static int f2fs_zero_range(struct inode *inode, loff_t offset, loff_t len,
+>  	}
+>  out_sem:
+>  	up_write(&F2FS_I(inode)->i_mmap_sem);
+> +	up_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
+>  
+>  	return ret;
+>  }
+> -- 
+> 2.18.0.rc1
