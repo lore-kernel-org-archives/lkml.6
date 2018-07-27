@@ -2,370 +2,116 @@ Return-Path: <SRS0=OQFz=KL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85E5BC67790
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 17:38:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7096AC6778F
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 17:44:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3447720862
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 17:38:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3447720862
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 1FC1C2064D
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 17:44:42 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="Z+qL/q7P"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1FC1C2064D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=wdc.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389039AbeG0Syd (ORCPT
+        id S2389011AbeG0THg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 14:54:33 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:40274 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730852AbeG0Syc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 14:54:32 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 9228B81663D7;
-        Fri, 27 Jul 2018 17:31:38 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-116.rdu2.redhat.com [10.10.120.116])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id B89BF1C5B9;
-        Fri, 27 Jul 2018 17:31:37 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
- Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
- Kingdom.
- Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH 02/38] vfs: syscall: Add move_mount(2) to move mounts around
- [ver #10]
-From:   David Howells <dhowells@redhat.com>
-To:     viro@zeniv.linux.org.uk
-Cc:     linux-api@vger.kernel.org, torvalds@linux-foundation.org,
-        dhowells@redhat.com, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Date:   Fri, 27 Jul 2018 18:31:37 +0100
-Message-ID: <153271269726.9458.1444064322961471568.stgit@warthog.procyon.org.uk>
-In-Reply-To: <153271267980.9458.7640156373438016898.stgit@warthog.procyon.org.uk>
-References: <153271267980.9458.7640156373438016898.stgit@warthog.procyon.org.uk>
-User-Agent: StGit/unknown-version
+        Fri, 27 Jul 2018 15:07:36 -0400
+Received: from esa1.hgst.iphmx.com ([68.232.141.245]:23748 "EHLO
+        esa1.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388951AbeG0THg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Jul 2018 15:07:36 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1532713479; x=1564249479;
+  h=subject:to:cc:references:from:message-id:date:
+   mime-version:in-reply-to:content-transfer-encoding;
+  bh=o+XhC5hTUW8QSlbmNq+/Q0xh5YstXqE4KUh4i+xLo64=;
+  b=Z+qL/q7PoIvCll+LxU7HQhw253mtWHlm8XLMpRgqdN5ftuI4RjiSXzEy
+   XP44IrR8XsWIts7HTL4HH2bTVECFSAzfPJtIBtfgwqTe7IKJl3qKUPCJ8
+   eEpvGRf1M44ySKrh8DPRW0Sh1z4VwisYLHQrf+u8Q+YzHfFBVC/5f7TO3
+   6voUQNOnTP2MR+6lqoT7IWFtiokSt7VGdqh7DukEKu7llQId6irsgmgcd
+   s1/A5ZC1Hu70V6V2qUSuH1a8Ihu+JRK6MeVbVq/3ETOZ0Hf4vf0VIMMIM
+   /JAEsld/QyTdV17iqwauexj/VqLAsEi9vRLX2wynvdtqqP3VNUh1837uD
+   Q==;
+X-IronPort-AV: E=Sophos;i="5.51,410,1526313600"; 
+   d="scan'208";a="188897726"
+Received: from h199-255-45-14.hgst.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
+  by ob1.hgst.iphmx.com with ESMTP; 28 Jul 2018 01:44:39 +0800
+Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
+  by uls-op-cesaep01.wdc.com with ESMTP; 27 Jul 2018 10:33:12 -0700
+Received: from c02v91rdhtd5.sdcorp.global.sandisk.com (HELO [10.196.159.148]) ([10.196.159.148])
+  by uls-op-cesaip02.wdc.com with ESMTP; 27 Jul 2018 10:44:39 -0700
+Subject: Re: [PATCH 9/9] clocksource: new RISC-V SBI timer driver
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     "tglx@linutronix.de" <tglx@linutronix.de>,
+        "palmer@sifive.com" <palmer@sifive.com>,
+        "jason@lakedaemon.net" <jason@lakedaemon.net>,
+        "marc.zyngier@arm.com" <marc.zyngier@arm.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "aou@eecs.berkeley.edu" <aou@eecs.berkeley.edu>,
+        Dmitriy Cherkasov <dmitriy@oss-tech.org>,
+        "anup@brainfault.org" <anup@brainfault.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
+        "shorne@gmail.com" <shorne@gmail.com>
+References: <20180726143723.16585-1-hch@lst.de>
+ <20180726143723.16585-10-hch@lst.de>
+ <972dacda-75d6-83cd-45e0-c7526a4e02ba@wdc.com>
+ <20180727144148.GA29626@lst.de>
+From:   Atish Patra <atish.patra@wdc.com>
+Message-ID: <f0a5a2e0-7f08-13cd-1758-f53494c1e391@wdc.com>
+Date:   Fri, 27 Jul 2018 10:44:05 -0700
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
+ Gecko/20100101 Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <20180727144148.GA29626@lst.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Fri, 27 Jul 2018 17:31:38 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Fri, 27 Jul 2018 17:31:38 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'dhowells@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a move_mount() system call that will move a mount from one place to
-another and, in the next commit, allow to attach an unattached mount tree.
+On 7/27/18 7:38 AM, Christoph Hellwig wrote:
+> On Thu, Jul 26, 2018 at 11:51:56AM -0700, Atish Patra wrote:
+>> Should we follow the same prefix for these functions?
+>> either timer_riscv* or riscv_timer* ?
+>>
+>> Apologies for overlooking this in my timer patch as wel
+> 
+> riscv_timer_* sounds saner to me, I can update that.
+> 
 
-The new system call looks like the following:
+Thanks.
+>>> +	struct clock_event_device *evdev = this_cpu_ptr(&riscv_clock_event);
+>>> +
+>>
+>> The comment about the purpose of clearing the interrupt in the original
+>> patch is removed here. If that's intentional, it's fine.
+>>
+>> I thought having that comment helps understanding the distinction between
+>> clearing the timer interrupt in SBI call & here.
+> 
+> Yes, that was intentional.  But given that I don't even understand why
+> not using an ABI for architectural interrupt source enable/disable maybe
+> I'm confused and should revisit that decision.
+> 
 
-	int move_mount(int from_dfd, const char *from_path,
-		       int to_dfd, const char *to_path,
-		       unsigned int flags);
+I tried adding a new SBI call to disable the interrupts. However, I 
+realized that it is not recommended to change the SBI unless absolutely 
+required.
 
-Signed-off-by: David Howells <dhowells@redhat.com>
-cc: linux-api@vger.kernel.org
----
+Here is the PR & following discussion.
+https://github.com/riscv/riscv-pk/pull/108
 
- arch/x86/entry/syscalls/syscall_32.tbl |    1 
- arch/x86/entry/syscalls/syscall_64.tbl |    1 
- fs/namespace.c                         |  102 ++++++++++++++++++++++++++------
- include/linux/lsm_hooks.h              |    6 ++
- include/linux/security.h               |    7 ++
- include/linux/syscalls.h               |    3 +
- include/uapi/linux/mount.h             |   11 +++
- security/security.c                    |    5 ++
- 8 files changed, 118 insertions(+), 18 deletions(-)
-
-diff --git a/arch/x86/entry/syscalls/syscall_32.tbl b/arch/x86/entry/syscalls/syscall_32.tbl
-index ea1b413afd47..76d092b7d1b0 100644
---- a/arch/x86/entry/syscalls/syscall_32.tbl
-+++ b/arch/x86/entry/syscalls/syscall_32.tbl
-@@ -399,3 +399,4 @@
- 385	i386	io_pgetevents		sys_io_pgetevents		__ia32_compat_sys_io_pgetevents
- 386	i386	rseq			sys_rseq			__ia32_sys_rseq
- 387	i386	open_tree		sys_open_tree			__ia32_sys_open_tree
-+388	i386	move_mount		sys_move_mount			__ia32_sys_move_mount
-diff --git a/arch/x86/entry/syscalls/syscall_64.tbl b/arch/x86/entry/syscalls/syscall_64.tbl
-index 0545bed581dc..37ba4e65eee6 100644
---- a/arch/x86/entry/syscalls/syscall_64.tbl
-+++ b/arch/x86/entry/syscalls/syscall_64.tbl
-@@ -344,6 +344,7 @@
- 333	common	io_pgetevents		__x64_sys_io_pgetevents
- 334	common	rseq			__x64_sys_rseq
- 335	common	open_tree		__x64_sys_open_tree
-+336	common	move_mount		__x64_sys_move_mount
- 
- #
- # x32-specific system call numbers start at 512 to avoid cache impact
-diff --git a/fs/namespace.c b/fs/namespace.c
-index a4a01ecbcacd..e2934a4f342b 100644
---- a/fs/namespace.c
-+++ b/fs/namespace.c
-@@ -2447,43 +2447,37 @@ static inline int tree_contains_unbindable(struct mount *mnt)
- 	return 0;
- }
- 
--static int do_move_mount(struct path *path, const char *old_name)
-+static int do_move_mount(struct path *old_path, struct path *new_path)
- {
--	struct path old_path, parent_path;
-+	struct path parent_path = {.mnt = NULL, .dentry = NULL};
- 	struct mount *p;
- 	struct mount *old;
- 	struct mountpoint *mp;
- 	int err;
--	if (!old_name || !*old_name)
--		return -EINVAL;
--	err = kern_path(old_name, LOOKUP_FOLLOW, &old_path);
--	if (err)
--		return err;
- 
--	mp = lock_mount(path);
-+	mp = lock_mount(new_path);
- 	err = PTR_ERR(mp);
- 	if (IS_ERR(mp))
- 		goto out;
- 
--	old = real_mount(old_path.mnt);
--	p = real_mount(path->mnt);
-+	old = real_mount(old_path->mnt);
-+	p = real_mount(new_path->mnt);
- 
- 	err = -EINVAL;
- 	if (!check_mnt(p) || !check_mnt(old))
- 		goto out1;
- 
--	if (old->mnt.mnt_flags & MNT_LOCKED)
-+	if (!mnt_has_parent(old))
- 		goto out1;
- 
--	err = -EINVAL;
--	if (old_path.dentry != old_path.mnt->mnt_root)
-+	if (old->mnt.mnt_flags & MNT_LOCKED)
- 		goto out1;
- 
--	if (!mnt_has_parent(old))
-+	if (old_path->dentry != old_path->mnt->mnt_root)
- 		goto out1;
- 
--	if (d_is_dir(path->dentry) !=
--	      d_is_dir(old_path.dentry))
-+	if (d_is_dir(new_path->dentry) !=
-+	    d_is_dir(old_path->dentry))
- 		goto out1;
- 	/*
- 	 * Don't move a mount residing in a shared parent.
-@@ -2501,7 +2495,8 @@ static int do_move_mount(struct path *path, const char *old_name)
- 		if (p == old)
- 			goto out1;
- 
--	err = attach_recursive_mnt(old, real_mount(path->mnt), mp, &parent_path);
-+	err = attach_recursive_mnt(old, real_mount(new_path->mnt), mp,
-+				   &parent_path);
- 	if (err)
- 		goto out1;
- 
-@@ -2513,6 +2508,22 @@ static int do_move_mount(struct path *path, const char *old_name)
- out:
- 	if (!err)
- 		path_put(&parent_path);
-+	return err;
-+}
-+
-+static int do_move_mount_old(struct path *path, const char *old_name)
-+{
-+	struct path old_path;
-+	int err;
-+
-+	if (!old_name || !*old_name)
-+		return -EINVAL;
-+
-+	err = kern_path(old_name, LOOKUP_FOLLOW, &old_path);
-+	if (err)
-+		return err;
-+
-+	err = do_move_mount(&old_path, path);
- 	path_put(&old_path);
- 	return err;
- }
-@@ -2934,7 +2945,7 @@ long do_mount(const char *dev_name, const char __user *dir_name,
- 	else if (flags & (MS_SHARED | MS_PRIVATE | MS_SLAVE | MS_UNBINDABLE))
- 		retval = do_change_type(&path, flags);
- 	else if (flags & MS_MOVE)
--		retval = do_move_mount(&path, dev_name);
-+		retval = do_move_mount_old(&path, dev_name);
- 	else
- 		retval = do_new_mount(&path, type_page, sb_flags, mnt_flags,
- 				      dev_name, data_page, data_size);
-@@ -3169,6 +3180,61 @@ SYSCALL_DEFINE5(mount, char __user *, dev_name, char __user *, dir_name,
- 	return ksys_mount(dev_name, dir_name, type, flags, data);
- }
- 
-+/*
-+ * Move a mount from one place to another.
-+ *
-+ * Note the flags value is a combination of MOVE_MOUNT_* flags.
-+ */
-+SYSCALL_DEFINE5(move_mount,
-+		int, from_dfd, const char *, from_pathname,
-+		int, to_dfd, const char *, to_pathname,
-+		unsigned int, flags)
-+{
-+	struct path from_path, to_path;
-+	unsigned int lflags;
-+	int ret = 0;
-+
-+	if (!may_mount())
-+		return -EPERM;
-+
-+	if (flags & ~MOVE_MOUNT__MASK)
-+		return -EINVAL;
-+
-+	/* If someone gives a pathname, they aren't permitted to move
-+	 * from an fd that requires unmount as we can't get at the flag
-+	 * to clear it afterwards.
-+	 */
-+	lflags = 0;
-+	if (flags & MOVE_MOUNT_F_SYMLINKS)	lflags |= LOOKUP_FOLLOW;
-+	if (flags & MOVE_MOUNT_F_AUTOMOUNTS)	lflags |= LOOKUP_AUTOMOUNT;
-+	if (flags & MOVE_MOUNT_F_EMPTY_PATH)	lflags |= LOOKUP_EMPTY;
-+
-+	ret = user_path_at(from_dfd, from_pathname, lflags, &from_path);
-+	if (ret < 0)
-+		return ret;
-+
-+	lflags = 0;
-+	if (flags & MOVE_MOUNT_T_SYMLINKS)	lflags |= LOOKUP_FOLLOW;
-+	if (flags & MOVE_MOUNT_T_AUTOMOUNTS)	lflags |= LOOKUP_AUTOMOUNT;
-+	if (flags & MOVE_MOUNT_T_EMPTY_PATH)	lflags |= LOOKUP_EMPTY;
-+
-+	ret = user_path_at(to_dfd, to_pathname, lflags, &to_path);
-+	if (ret < 0)
-+		goto out_from;
-+
-+	ret = security_move_mount(&from_path, &to_path);
-+	if (ret < 0)
-+		goto out_to;
-+
-+	ret = do_move_mount(&from_path, &to_path);
-+
-+out_to:
-+	path_put(&to_path);
-+out_from:
-+	path_put(&from_path);
-+	return ret;
-+}
-+
- /*
-  * Return true if path is reachable from root
-  *
-diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
-index b43bbc893074..924424e7be8f 100644
---- a/include/linux/lsm_hooks.h
-+++ b/include/linux/lsm_hooks.h
-@@ -147,6 +147,10 @@
-  *	Parse a string of security data filling in the opts structure
-  *	@options string containing all mount options known by the LSM
-  *	@opts binary data structure usable by the LSM
-+ * @move_mount:
-+ *	Check permission before a mount is moved.
-+ *	@from_path indicates the mount that is going to be moved.
-+ *	@to_path indicates the mountpoint that will be mounted upon.
-  * @dentry_init_security:
-  *	Compute a context for a dentry as the inode is not yet available
-  *	since NFSv4 has no label backed by an EA anyway.
-@@ -1480,6 +1484,7 @@ union security_list_options {
- 					unsigned long kern_flags,
- 					unsigned long *set_kern_flags);
- 	int (*sb_parse_opts_str)(char *options, struct security_mnt_opts *opts);
-+	int (*move_mount)(const struct path *from_path, const struct path *to_path);
- 	int (*dentry_init_security)(struct dentry *dentry, int mode,
- 					const struct qstr *name, void **ctx,
- 					u32 *ctxlen);
-@@ -1811,6 +1816,7 @@ struct security_hook_heads {
- 	struct hlist_head sb_set_mnt_opts;
- 	struct hlist_head sb_clone_mnt_opts;
- 	struct hlist_head sb_parse_opts_str;
-+	struct hlist_head move_mount;
- 	struct hlist_head dentry_init_security;
- 	struct hlist_head dentry_create_files_as;
- #ifdef CONFIG_SECURITY_PATH
-diff --git a/include/linux/security.h b/include/linux/security.h
-index 1498b9e0539b..9bb5bc6d596c 100644
---- a/include/linux/security.h
-+++ b/include/linux/security.h
-@@ -245,6 +245,7 @@ int security_sb_clone_mnt_opts(const struct super_block *oldsb,
- 				unsigned long kern_flags,
- 				unsigned long *set_kern_flags);
- int security_sb_parse_opts_str(char *options, struct security_mnt_opts *opts);
-+int security_move_mount(const struct path *from_path, const struct path *to_path);
- int security_dentry_init_security(struct dentry *dentry, int mode,
- 					const struct qstr *name, void **ctx,
- 					u32 *ctxlen);
-@@ -599,6 +600,12 @@ static inline int security_sb_parse_opts_str(char *options, struct security_mnt_
- 	return 0;
- }
- 
-+static inline int security_move_mount(const struct path *from_path,
-+				      const struct path *to_path)
-+{
-+	return 0;
-+}
-+
- static inline int security_inode_alloc(struct inode *inode)
- {
- 	return 0;
-diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
-index 3cc6b8f8bd2f..3c0855d9b105 100644
---- a/include/linux/syscalls.h
-+++ b/include/linux/syscalls.h
-@@ -901,6 +901,9 @@ asmlinkage long sys_statx(int dfd, const char __user *path, unsigned flags,
- asmlinkage long sys_rseq(struct rseq __user *rseq, uint32_t rseq_len,
- 			 int flags, uint32_t sig);
- asmlinkage long sys_open_tree(int dfd, const char __user *path, unsigned flags);
-+asmlinkage long sys_move_mount(int from_dfd, const char __user *from_path,
-+			       int to_dfd, const char __user *to_path,
-+			       unsigned int ms_flags);
- 
- /*
-  * Architecture-specific system calls
-diff --git a/include/uapi/linux/mount.h b/include/uapi/linux/mount.h
-index e8db2911adca..89adf0d731ab 100644
---- a/include/uapi/linux/mount.h
-+++ b/include/uapi/linux/mount.h
-@@ -7,4 +7,15 @@
- #define OPEN_TREE_CLONE		1		/* Clone the target tree and attach the clone */
- #define OPEN_TREE_CLOEXEC	O_CLOEXEC	/* Close the file on execve() */
- 
-+/*
-+ * move_mount() flags.
-+ */
-+#define MOVE_MOUNT_F_SYMLINKS		0x00000001 /* Follow symlinks on from path */
-+#define MOVE_MOUNT_F_AUTOMOUNTS		0x00000002 /* Follow automounts on from path */
-+#define MOVE_MOUNT_F_EMPTY_PATH		0x00000004 /* Empty from path permitted */
-+#define MOVE_MOUNT_T_SYMLINKS		0x00000010 /* Follow symlinks on to path */
-+#define MOVE_MOUNT_T_AUTOMOUNTS		0x00000020 /* Follow automounts on to path */
-+#define MOVE_MOUNT_T_EMPTY_PATH		0x00000040 /* Empty to path permitted */
-+#define MOVE_MOUNT__MASK		0x00000077
-+
- #endif /* _UAPI_LINUX_MOUNT_H */
-diff --git a/security/security.c b/security/security.c
-index 7cafc1c90d16..5149c2cbe8a7 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -439,6 +439,11 @@ int security_sb_parse_opts_str(char *options, struct security_mnt_opts *opts)
- }
- EXPORT_SYMBOL(security_sb_parse_opts_str);
- 
-+int security_move_mount(const struct path *from_path, const struct path *to_path)
-+{
-+	return call_int_hook(move_mount, 0, from_path, to_path);
-+}
-+
- int security_inode_alloc(struct inode *inode)
- {
- 	inode->i_security = NULL;
-
+Regards,
+Atish
