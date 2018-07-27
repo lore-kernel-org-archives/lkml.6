@@ -2,155 +2,125 @@ Return-Path: <SRS0=OQFz=KL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50F5CC67790
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 19:21:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1E0AC67790
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 19:26:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1542D20842
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 19:21:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1542D20842
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
+	by mail.kernel.org (Postfix) with ESMTP id 8F47F20842
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 19:26:28 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="ZFvnUMyT";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="ZFvnUMyT"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F47F20842
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389291AbeG0Uo1 (ORCPT
+        id S2389232AbeG0Utn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 16:44:27 -0400
-Received: from smtprelay0135.hostedemail.com ([216.40.44.135]:56892 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2389064AbeG0Uo1 (ORCPT
+        Fri, 27 Jul 2018 16:49:43 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:50640 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389143AbeG0Utn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 16:44:27 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay03.hostedemail.com (Postfix) with ESMTP id 1B46A837F252;
-        Fri, 27 Jul 2018 19:21:10 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-HE-Tag: debt16_27242af689920
-X-Filterd-Recvd-Size: 4183
-Received: from XPS-9350.home (unknown [47.151.153.53])
-        (Authenticated sender: joe@perches.com)
-        by omf03.hostedemail.com (Postfix) with ESMTPA;
-        Fri, 27 Jul 2018 19:21:08 +0000 (UTC)
-Message-ID: <98a6d1cd4d313512d66ced3fc25f438449b3c310.camel@perches.com>
-Subject: Re: [PATCH net-next] net: ethernet: ti: cpsw: replace unnecessarily
- macroses on functions
-From:   Joe Perches <joe@perches.com>
-To:     Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>,
-        grygorii.strashko@ti.com, davem@davemloft.net
-Cc:     linux-omap@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Date:   Fri, 27 Jul 2018 12:21:07 -0700
-In-Reply-To: <20180727191318.18698-1-ivan.khoronzhuk@linaro.org>
-References: <20180727191318.18698-1-ivan.khoronzhuk@linaro.org>
-Content-Type: text/plain; charset="ISO-8859-1"
-X-Mailer: Evolution 3.28.1-2 
-Mime-Version: 1.0
+        Fri, 27 Jul 2018 16:49:43 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id D90DA60B11; Fri, 27 Jul 2018 19:26:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1532719585;
+        bh=qdWodCh0lhiiYvQLy6bcYbDwPBsL39I/Hj6WXIzvWUQ=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=ZFvnUMyTID+rUn+hbcopicjSOnuCJ3H4X/oPhtREoYrLQstmUHaJqeCNpAYyndiae
+         65fnTWdmZR0EIFCppQjVCEjsEn7XDRkiCPMTFJdGOsTeXOkdlKNcu/CQt5YLduDuQ/
+         zxqMWeuTfkv/IXEuLBj/gpYxUNrvUSCkkz5kJENs=
+Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by smtp.codeaurora.org (Postfix) with ESMTP id 40B1C607BD;
+        Fri, 27 Jul 2018 19:26:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1532719585;
+        bh=qdWodCh0lhiiYvQLy6bcYbDwPBsL39I/Hj6WXIzvWUQ=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=ZFvnUMyTID+rUn+hbcopicjSOnuCJ3H4X/oPhtREoYrLQstmUHaJqeCNpAYyndiae
+         65fnTWdmZR0EIFCppQjVCEjsEn7XDRkiCPMTFJdGOsTeXOkdlKNcu/CQt5YLduDuQ/
+         zxqMWeuTfkv/IXEuLBj/gpYxUNrvUSCkkz5kJENs=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
 Content-Transfer-Encoding: 7bit
+Date:   Fri, 27 Jul 2018 12:26:25 -0700
+From:   Sodagudi Prasad <psodagud@codeaurora.org>
+To:     tytso@mit.edu, adilger.kernel@dilger.ca, wen.xu@gatech.edu
+Cc:     linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: Remounting filesystem read-only
+In-Reply-To: <366cf3ac534bbadaaa61714a43006ac7@codeaurora.org>
+References: <366cf3ac534bbadaaa61714a43006ac7@codeaurora.org>
+Message-ID: <e9869d6cd358e9de395d730ab7b3aa60@codeaurora.org>
+X-Sender: psodagud@codeaurora.org
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2018-07-27 at 22:13 +0300, Ivan Khoronzhuk wrote:
-> Replace ugly macroses on functions.
+On 2018-07-26 18:04, Sodagudi Prasad wrote:
+> Hi All,
+> 
 
-Careful, see below.
++linux-kernel@vger.kernel.org list.
 
-> diff --git a/drivers/net/ethernet/ti/cpsw.c b/drivers/net/ethernet/ti/cpsw.c
-[]
-> @@ -565,40 +565,40 @@ static const struct cpsw_stats cpsw_gstrings_ch_stats[] = {
->  				(func)(slave++, ##arg);			\
->  	} while (0)
->  
-> -#define cpsw_dual_emac_src_port_detect(cpsw, status, ndev, skb)		\
-> -	do {								\
-> -		if (!cpsw->data.dual_emac)				\
-> -			break;						\
-> -		if (CPDMA_RX_SOURCE_PORT(status) == 1) {		\
-> -			ndev = cpsw->slaves[0].ndev;			\
-> -			skb->dev = ndev;				\
-> -		} else if (CPDMA_RX_SOURCE_PORT(status) == 2) {		\
-> -			ndev = cpsw->slaves[1].ndev;			\
-> -			skb->dev = ndev;				\
-> -		}							\
-> -	} while (0)
-> -#define cpsw_add_mcast(cpsw, priv, addr)				\
-> -	do {								\
-> -		if (cpsw->data.dual_emac) {				\
-> -			struct cpsw_slave *slave = cpsw->slaves +	\
-> -						priv->emac_port;	\
-> -			int slave_port = cpsw_get_slave_port(		\
-> -						slave->slave_num);	\
-> -			cpsw_ale_add_mcast(cpsw->ale, addr,		\
-> -				1 << slave_port | ALE_PORT_HOST,	\
-> -				ALE_VLAN, slave->port_vlan, 0);		\
-> -		} else {						\
-> -			cpsw_ale_add_mcast(cpsw->ale, addr,		\
-> -				ALE_ALL_PORTS,				\
-> -				0, 0, 0);				\
-> -		}							\
-> -	} while (0)
-> -
->  static inline int cpsw_get_slave_port(u32 slave_num)
->  {
->  	return slave_num + 1;
->  }
->  
-> +static inline void cpsw_src_port_detect(struct cpsw_common *cpsw, int status,
-> +					struct sk_buff *skb)
-> +{
-> +	if (!cpsw->data.dual_emac)
-> +		return;
-> +
-> +	if (CPDMA_RX_SOURCE_PORT(status) == 1)
-> +		skb->dev = cpsw->slaves[0].ndev;
-> +	else if (CPDMA_RX_SOURCE_PORT(status) == 2)
-> +		skb->dev = cpsw->slaves[1].ndev;
-> +}
+Hi All,
 
-perhaps better as a switch/case
+Observing the following issue with one of the partition on android 
+device with 4.14.56 kernel.  When I try to remount this partition using 
+the command - mount -o rw,remount /vendor/dsp, it is remounting as 
+read-only.
 
-> +
-> +static void cpsw_add_mcast(struct cpsw_priv *priv, u8 *addr)
-> +{
-> +	struct cpsw_common *cpsw = priv->cpsw;
-> +
-> +	if (cpsw->data.dual_emac) {
-> +		struct cpsw_slave *slave = cpsw->slaves + priv->emac_port;
-> +		int slave_port = cpsw_get_slave_port(slave->slave_num);
-> +
-> +		cpsw_ale_add_mcast(cpsw->ale, addr,
-> +				   1 << slave_port | ALE_PORT_HOST,
-> +				   ALE_VLAN, slave->port_vlan, 0);
-> +		return;
-> +	}
-> +
-> +	cpsw_ale_add_mcast(cpsw->ale, addr, ALE_ALL_PORTS, 0, 0, 0);
-> +}
-> +
->  static void cpsw_set_promiscious(struct net_device *ndev, bool enable)
->  {
->  	struct cpsw_common *cpsw = ndev_to_cpsw(ndev);
-> @@ -706,7 +706,7 @@ static void cpsw_ndo_set_rx_mode(struct net_device *ndev)
->  
->  		/* program multicast address list into ALE register */
->  		netdev_for_each_mc_addr(ha, ndev) {
-> -			cpsw_add_mcast(cpsw, priv, (u8 *)ha->addr);
-> +			cpsw_add_mcast(priv, (u8 *)ha->addr);
->  		}
->  	}
->  }
-> @@ -801,7 +801,8 @@ static void cpsw_rx_handler(void *token, int len, int status)
->  	int			ret = 0;
->  	struct cpsw_common	*cpsw = ndev_to_cpsw(ndev);
->  
-> -	cpsw_dual_emac_src_port_detect(cpsw, status, ndev, skb);
-> +	cpsw_src_port_detect(cpsw, status, skb);
-> +	ndev = skb->dev;
+[  191.364358] EXT4-fs error (device sde9): ext4_has_uninit_itable:3108: 
+comm mount: Inode table for bg 0 marked as needing zeroing
+[  191.364762] Aborting journal on device sde9-8.
+[  191.365226] EXT4-fs (sde9): Remounting filesystem read-only
+[  191.365232] EXT4-fs (sde9): re-mounted. Opts: data=ordere
 
-This is not the same code as the new function
-is not guaranteed to succeed or set skb->dev.
+If I revert this commit [1] -"ext4: only look at the bg_flags field if 
+it is valid", the issue is not observed. It is just giving following 
+warning message.
+[1] - https://patchwork.ozlabs.org/patch/929239/.
 
->  	if (unlikely(status < 0) || unlikely(!netif_running(ndev))) {
->  		/* In dual emac mode check for all interfaces */
+[  123.373456] EXT4-fs (sde9): warning: mounting fs with errors, running 
+e2fsck is recommended
+[  123.389649] EXT4-fs (sde9): re-mounted. Opts: data=ordered
+
+Can you provide some inputs what could be the issue with this partition?
+
+> Observing the following issue with one of the partition on android
+> device with 4.14.56 kernel.  When I try to remount this partition
+> using the command - mount -o rw,remount /vendor/dsp, it is remounting
+> as read-only.
+> 
+> [  191.364358] EXT4-fs error (device sde9):
+> ext4_has_uninit_itable:3108: comm mount: Inode table for bg 0 marked
+> as needing zeroing
+> [  191.364762] Aborting journal on device sde9-8.
+> [  191.365226] EXT4-fs (sde9): Remounting filesystem read-only
+> [  191.365232] EXT4-fs (sde9): re-mounted. Opts: data=ordere
+> 
+> If I revert this commit [1] -"ext4: only look at the bg_flags field if
+> it is valid", the issue is not observed. It is just giving following
+> warning message.
+> [1] - https://patchwork.ozlabs.org/patch/929239/.
+> 
+> [  123.373456] EXT4-fs (sde9): warning: mounting fs with errors,
+> running e2fsck is recommended
+> [  123.389649] EXT4-fs (sde9): re-mounted. Opts: data=ordered
+> 
+> Can you provide some inputs what could be the issue with this 
+> partition?
+> 
+> -Thanks, Prasad
+
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora 
+Forum,
+Linux Foundation Collaborative Project
