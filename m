@@ -1,150 +1,596 @@
 Return-Path: <SRS0=OQFz=KL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Level: *
+X-Spam-Status: No, score=1.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
+	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CCAAC6778F
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 14:30:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8178C6778F
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 14:30:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D3316208AF
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 14:30:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 530FC208AF
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 14:30:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="afMqltMt"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D3316208AF
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="cDww3Vp1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 530FC208AF
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=broadcom.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387912AbeG0Pwg (ORCPT
+        id S2388496AbeG0Pwo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 11:52:36 -0400
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:39673 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730395AbeG0Pwg (ORCPT
+        Fri, 27 Jul 2018 11:52:44 -0400
+Received: from mail-oi0-f66.google.com ([209.85.218.66]:37333 "EHLO
+        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730709AbeG0Pwo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 11:52:36 -0400
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20180727143024euoutp014868e2ba8b3a76902cbcdc4d087b6d13~FQDBbppJb0454204542euoutp01s;
-        Fri, 27 Jul 2018 14:30:24 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20180727143024euoutp014868e2ba8b3a76902cbcdc4d087b6d13~FQDBbppJb0454204542euoutp01s
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1532701824;
-        bh=ok+ParegWWntGjOA43lGXoWAu477wHsesX9/25oRQB0=;
-        h=From:To:Cc:Subject:Date:In-reply-to:References:From;
-        b=afMqltMtTDOYeOtjr0cYT90NlsJ6awIZpNoe72J+gAafgZYlfiPkhujiTywXH6p+9
-         jjQ2EExjXNPGrhRxomYvgOYFoWQRR8ZSIO2TbCA5L0ov4vgPIF/9pYR1IO7ezd3e/i
-         bjCXqK2KrYNeg/NFFYilLydzqhUiTukyJcGyXoDA=
-Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20180727143024eucas1p1009329e34ba96276a232b362337fb1f7~FQDBG9PrI2741727417eucas1p1C;
-        Fri, 27 Jul 2018 14:30:24 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges2new.samsung.com (EUCPMTA) with SMTP id CF.09.05751.F7C2B5B5; Fri, 27
-        Jul 2018 15:30:23 +0100 (BST)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20180727143023eucas1p1adfe1860327829e7cf39bcdd3290d11c~FQDAW0CFh2741727417eucas1p1B;
-        Fri, 27 Jul 2018 14:30:23 +0000 (GMT)
-X-AuditID: cbfec7f4-c2dff70000001677-a1-5b5b2c7fe813
-Received: from eusync4.samsung.com ( [203.254.199.214]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id 3E.84.04178.F7C2B5B5; Fri, 27
-        Jul 2018 15:30:23 +0100 (BST)
-Received: from amdc3058.localnet ([106.120.53.102]) by eusync4.samsung.com
-        (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5
-        2014)) with ESMTPA id <0PCJ00HDH4ANMI90@eusync4.samsung.com>; Fri, 27 Jul
-        2018 15:30:23 +0100 (BST)
-From:   Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-To:     Keerthy <j-keerthy@ti.com>
-Cc:     Eduardo Valentin <edubezval@gmail.com>,
-        Zhang Rui <rui.zhang@intel.com>, linux-pm@vger.kernel.org,
-        linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 01/14] thermal: ti-soc-thermal: fix TALERT IRQ handling
- for DRA752
-Date:   Fri, 27 Jul 2018 16:30:22 +0200
-Message-id: <1926566.4EVPFnjd9v@amdc3058>
-User-Agent: KMail/4.13.3 (Linux/3.13.0-96-generic; KDE/4.13.3; x86_64; ; )
-In-reply-to: <e9452238-319e-ad4b-5e9a-df3cd0d25ae8@ti.com>
-MIME-version: 1.0
-Content-transfer-encoding: 7Bit
-Content-type: text/plain; charset="us-ascii"
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrBIsWRmVeSWpSXmKPExsWy7djP87r1OtHRBpPnW1rMv3KN1eLU9iYm
-        i8u75rBZzF7Sz2LxufcIo8WTh31sDmweO2fdZfdYvOclk8fxG9uZPD5vkgtgieKySUnNySxL
-        LdK3S+DKaPjdxFxwhrfiy9cjLA2M77m6GDk5JARMJBqutbJ3MXJxCAmsYJRYOnkVC4TzmVHi
-        at8vdpiq6WffsUEkljFKXJs4jwkkISTwm1Hi1zItEJtNwEpiYvsqRhBbREBOYsrX6SwgNrPA
-        YkaJ/l5uEFtYIEJieuN/ZhCbRUBV4nv3OTCbV0BTovXfU1YQW1TAS2LLvnaw+ZxAMxdv3cUO
-        USMo8WPyPaiZ8hL79k9lhbB1JM4eW8cIcpyEwBo2iXdbvrJCXO0i8e3TeihbWOLV8S1Q38hI
-        dHYcZIJomM4o8ebXUhYIZz2jxJozx5ggqqwlDh+/CLWCT2LStulAp3IAxXklOtqEIEo8JKbM
-        P8oKCZZXjBLTvz5gn8AoMwvJtbOQXDsLybULGJlXMYqnlhbnpqcWG+WllusVJ+YWl+al6yXn
-        525iBMb/6X/Hv+xg3PUn6RCjAAejEg9vwOvIaCHWxLLiytxDjBIczEoivMIq0dFCvCmJlVWp
-        RfnxRaU5qcWHGKU5WJTEeaV9IqKFBNITS1KzU1MLUotgskwcnFINjP4/dBYt2fXm6D/Fv9fO
-        rKn996z7nABDsMhZM/ELkr+N5E6xmjf/Cl21jt3QZlG856X0LO/bS+8ec5nXl+OzyojRI/NT
-        bod6yk1GP6ONRyIanjGvcdx86rjV9J8ZwRKvX95gyK+yePh35ZuWP0q261S8bP7xWjsFx6k2
-        rXqb6y68tL91achFayWW4oxEQy3mouJEAKOX5gX7AgAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrOLMWRmVeSWpSXmKPExsVy+t/xa7r1OtHRBp/miFvMv3KN1eLU9iYm
-        i8u75rBZzF7Sz2LxufcIo8WTh31sDmweO2fdZfdYvOclk8fxG9uZPD5vkgtgieKySUnNySxL
-        LdK3S+DKaPjdxFxwhrfiy9cjLA2M77m6GDk5JARMJKaffcfWxcjFISSwhFHixK7nzBDOX0aJ
-        J+cuMIJUsQlYSUxsXwVmiwjISUz5Op0FpIhZYDGjxLcFf1hBEsICERKrvk9gAbFZBFQlvnef
-        YwaxeQU0JVr/PQWrERXwktiyr50JxOYEGrp46y52iG3TGCV2nvzNBtEgKPFj8j2wQcwC8hL7
-        9k9lhbC1JNbvPM40gZF/FpKyWUjKZiEpW8DIvIpRJLW0ODc9t9hQrzgxt7g0L10vOT93EyMw
-        eLcd+7l5B+OljcGHGAU4GJV4eANeR0YLsSaWFVfmHmKU4GBWEuEVVomOFuJNSaysSi3Kjy8q
-        zUktPsQozcGiJM573qAySkggPbEkNTs1tSC1CCbLxMEp1cCYLB+56ZiT+rWCriPM0/Z6909Y
-        +ZZNiVel+ceKLye8PgiEzTqvIHom6IvlDck9K+t/uvTsK5NWuP2oI/5kSvNfodf2HgZJkbMD
-        C7NDjH4zTnty4PO6vvc36lfU35n0WSb27IXTeY9a/wTv45L/xfA09aBX4ESPvqlCajqiRzSW
-        K9+Zqr5lQ6yqEktxRqKhFnNRcSIAebjuXloCAAA=
-X-CMS-MailID: 20180727143023eucas1p1adfe1860327829e7cf39bcdd3290d11c
-X-Msg-Generator: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20180727143023eucas1p1adfe1860327829e7cf39bcdd3290d11c
-References: <1526298141-14045-1-git-send-email-b.zolnierkie@samsung.com>
-        <2243156.HcYyxvpmOE@amdc3058> <e9452238-319e-ad4b-5e9a-df3cd0d25ae8@ti.com>
-        <CGME20180727143023eucas1p1adfe1860327829e7cf39bcdd3290d11c@eucas1p1.samsung.com>
+        Fri, 27 Jul 2018 11:52:44 -0400
+Received: by mail-oi0-f66.google.com with SMTP id k81-v6so9371260oib.4
+        for <linux-kernel@vger.kernel.org>; Fri, 27 Jul 2018 07:30:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=VFz7J5VRDZyOdTcu1os9HQmHCL2MWejhtVbIRwY0da0=;
+        b=cDww3Vp1ZQQp/dsGbUvVG0qKcTy3Il3MiAWNXZYMvWn3kZkG9Qs7/w39+0tRFW/G9R
+         /0WXrG1hxX1Tb/SfJFWIJAQmAC4t0oCAuH6Fg3c/9NeFuIKDtG0rVUoC+b7HWI6oDf1q
+         ez7oWLt/Wa8qQTEuZvx5ewoCEh6KFEetieECM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=VFz7J5VRDZyOdTcu1os9HQmHCL2MWejhtVbIRwY0da0=;
+        b=DmI5b4menm/BvElaK+97YNnGQAF7ksoZPT0XG0sUKTDEUoYNNQmYWc9l0q1CPecVzt
+         lYaCATioKUMk0tjUoXrIayh2KGTnsKl+ccMHY1j0CnorNTDmURUDVkc8AFBVOMun87of
+         cGTeuc32NrUKE2NG+F7H8bDGLkohKG70EzDGo7DuA5diCy32XwFlr6RrvZdKUea6J+Rl
+         8WhyiCy3SAYnCbZkbEGuExqNOuaLQ8iXzloL5DVz+4hzVU4QZ4SWn9lPIF3ynSaJlAnz
+         vivMSD01O1mTEH6I+z8KA1fgoAKsZFnY48W3+aojaMMi6zX+0cQFpKi2/fH25qPZkvpe
+         6EmQ==
+X-Gm-Message-State: AOUpUlEeCJp3i2I97aJ2oBpoxQXfAQ7PdJHQrYq7z/3H3KDEO4DI6mEK
+        8YOfsgUbJuykqZ5TE9Vav+XQ3tBmA0ENi9EQOzlD1Q==
+X-Google-Smtp-Source: AAOMgpcYWGij51/JkGjtsnb5yTYbLgEhRsIpQ1XiZiRUMlaa3p8MwBPAoNWZ2Bm++L/Or/OBPXmzw/DevyeLKteVB4c=
+X-Received: by 2002:aca:afcc:: with SMTP id y195-v6mr7115484oie.322.1532701831984;
+ Fri, 27 Jul 2018 07:30:31 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:a9d:6043:0:0:0:0:0 with HTTP; Fri, 27 Jul 2018 07:30:31
+ -0700 (PDT)
+In-Reply-To: <9365e83f-e638-7f83-c520-f27f5c9ca532@intel.com>
+References: <1531845907-26213-1-git-send-email-srinath.mannam@broadcom.com>
+ <b8bc96ee-e035-7a51-499f-b16dc3c7edd0@intel.com> <CABe79T6w11k_=OVf=LdTmGNS+sQcueL_fqp9ipi_zNyHgXVxsQ@mail.gmail.com>
+ <9365e83f-e638-7f83-c520-f27f5c9ca532@intel.com>
+From:   Srinath Mannam <srinath.mannam@broadcom.com>
+Date:   Fri, 27 Jul 2018 20:00:31 +0530
+Message-ID: <CABe79T7aLSXm3tjv9JQzD2Ku-0JrJTboUh3YGd9GFFJc0iV=WQ@mail.gmail.com>
+Subject: Re: [PATCH] mmc: host: iproc: Add ACPI support to IPROC SDHCI
+To:     Adrian Hunter <adrian.hunter@intel.com>
+Cc:     Ulf Hansson <ulf.hansson@linaro.org>, Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        Jon Mason <jonmason@broadcom.com>,
+        BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>,
+        linux-mmc@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Friday, July 27, 2018 10:13:51 AM Keerthy wrote:
-> 
-> On Wednesday 25 July 2018 07:57 PM, Bartlomiej Zolnierkiewicz wrote:
-> > On Wednesday, July 11, 2018 07:49:41 AM J, KEERTHY wrote:
-> >>
-> >> On 5/14/2018 5:12 PM, Bartlomiej Zolnierkiewicz wrote:
-> >>> .report_temperature is not set in dra752_data which
-> >>> results in temperature updates not being propagated by
-> >>> ti_bandgap_talert_irq_handler() (it doesn't make much
-> >>> sense to handle TALERT IRQ without reporting temperature
-> >>> updates to the thermal core). Fix it.
-> >>
-> >> ATM no one is using TALERT as the thermal software polls on the 
-> >> temperature. No real benefit from TALERT.
-> >>
-> >> TALERT is set at different temperature and software polling thresholds 
-> >> come from Device tree and i believe its best for software to go by 
-> >> polling and then act on trip points.
-> > 
-> > Could you please explain what do you mean by "no one is using
-> > TALERT"?
-> > 
-> > The code in ti_bandgap_probe() sets TALERT thresholds and requests
-> > IRQ if the TI_BANDGAP_FEATURE_TALERT feature flag is set (and this
-> > flag is set in omap4460_data, omap4470_data, omap5430_data and
-> > dra752_data).
-> 
-> The software thresholds and the polling takes care of reducing the
-> temperature. What i actually meant was we never relied on talert and the
-> polling takes care of keeping a check on the temperature.
+Hi Adrian Hunter,
 
-OK I see, maybe TALERT handling can be removed altogether?
+Thank you very much for your inputs.
+I will send next patch set with all your suggested modifications.
 
-If not can we make TALERT behavior on DRA752 consistent with other
-chipsets supporting TALERT (this is useful for code unification
-between OMAP5430 and DRA752)?
+Regards,
+Srinath.
 
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
-
+On Fri, Jul 27, 2018 at 4:45 PM, Adrian Hunter <adrian.hunter@intel.com> wrote:
+> On 27/07/18 11:59, Srinath Mannam wrote:
+>> Hi Adrian Hunter,
+>>
+>> Thank you very much for review and feedback.
+>> Please find my comments inline..
+>>
+>> On Fri, Jul 27, 2018 at 11:50 AM, Adrian Hunter <adrian.hunter@intel.com> wrote:
+>>> On 17/07/18 19:45, Srinath Mannam wrote:
+>>>> Add ACPI support to all IPROC SDHCI varients
+>>>>
+>>>> Signed-off-by: Srinath Mannam <srinath.mannam@broadcom.com>
+>>>> Reviewed-by: Ray Jui <ray.jui@broadcom.com>
+>>>> Reviewed-by: Scott Branden <scott.branden@broadcom.com>
+>>>> Reviewed-by: Vladimir Olovyannikov <vladimir.olovyannikov@broadcom.com>
+>>>> ---
+>>>>  drivers/mmc/host/Kconfig       |   1 +
+>>>>  drivers/mmc/host/sdhci-iproc.c | 187 ++++++++++++++++++++++++++++-------------
+>>>>  2 files changed, 128 insertions(+), 60 deletions(-)
+>>>>
+>>>> diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
+>>>> index 0581c19..bc6702e 100644
+>>>> --- a/drivers/mmc/host/Kconfig
+>>>> +++ b/drivers/mmc/host/Kconfig
+>>>> @@ -334,6 +334,7 @@ config MMC_SDHCI_IPROC
+>>>>       tristate "SDHCI support for the BCM2835 & iProc SD/MMC Controller"
+>>>>       depends on ARCH_BCM2835 || ARCH_BCM_IPROC || COMPILE_TEST
+>>>>       depends on MMC_SDHCI_PLTFM
+>>>> +     depends on OF || ACPI
+>>>>       default ARCH_BCM_IPROC
+>>>>       select MMC_SDHCI_IO_ACCESSORS
+>>>>       help
+>>>> diff --git a/drivers/mmc/host/sdhci-iproc.c b/drivers/mmc/host/sdhci-iproc.c
+>>>> index d0e83db..7c5c923 100644
+>>>> --- a/drivers/mmc/host/sdhci-iproc.c
+>>>> +++ b/drivers/mmc/host/sdhci-iproc.c
+>>>> @@ -15,6 +15,7 @@
+>>>>   * iProc SDHCI platform driver
+>>>>   */
+>>>>
+>>>> +#include <linux/acpi.h>
+>>>>  #include <linux/delay.h>
+>>>>  #include <linux/module.h>
+>>>>  #include <linux/mmc/host.h>
+>>>> @@ -162,9 +163,19 @@ static void sdhci_iproc_writeb(struct sdhci_host *host, u8 val, int reg)
+>>>>       sdhci_iproc_writel(host, newval, reg & ~3);
+>>>>  }
+>>>>
+>>>> +static unsigned int sdhci_iproc_get_max_clock(struct sdhci_host *host)
+>>>> +{
+>>>> +     struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
+>>>> +
+>>>> +     if (pltfm_host->clk)
+>>>> +             return sdhci_pltfm_clk_get_max_clock(host);
+>>>> +     else
+>>>> +             return pltfm_host->clock;
+>>>> +}
+>>>> +
+>>>>  static const struct sdhci_ops sdhci_iproc_ops = {
+>>>>       .set_clock = sdhci_set_clock,
+>>>> -     .get_max_clock = sdhci_pltfm_clk_get_max_clock,
+>>>> +     .get_max_clock = sdhci_iproc_get_max_clock,
+>>>>       .set_bus_width = sdhci_set_bus_width,
+>>>>       .reset = sdhci_reset,
+>>>>       .set_uhs_signaling = sdhci_set_uhs_signaling,
+>>>> @@ -178,34 +189,24 @@ static const struct sdhci_ops sdhci_iproc_32only_ops = {
+>>>>       .write_w = sdhci_iproc_writew,
+>>>>       .write_b = sdhci_iproc_writeb,
+>>>>       .set_clock = sdhci_set_clock,
+>>>> -     .get_max_clock = sdhci_pltfm_clk_get_max_clock,
+>>>> +     .get_max_clock = sdhci_iproc_get_max_clock,
+>>>>       .set_bus_width = sdhci_set_bus_width,
+>>>>       .reset = sdhci_reset,
+>>>>       .set_uhs_signaling = sdhci_set_uhs_signaling,
+>>>>  };
+>>>>
+>>>> +enum sdhci_pltfm_type {
+>>>> +     SDHCI_PLTFM_IPROC_CYGNUS,
+>>>> +     SDHCI_PLTFM_IPROC,
+>>>> +     SDHCI_PLTFM_BCM2835,
+>>>> +};
+>>>> +
+>>>>  static const struct sdhci_pltfm_data sdhci_iproc_cygnus_pltfm_data = {
+>>>>       .quirks = SDHCI_QUIRK_DATA_TIMEOUT_USES_SDCLK,
+>>>>       .quirks2 = SDHCI_QUIRK2_ACMD23_BROKEN | SDHCI_QUIRK2_HOST_OFF_CARD_ON,
+>>>>       .ops = &sdhci_iproc_32only_ops,
+>>>>  };
+>>>>
+>>>> -static const struct sdhci_iproc_data iproc_cygnus_data = {
+>>>> -     .pdata = &sdhci_iproc_cygnus_pltfm_data,
+>>>> -     .caps = ((0x1 << SDHCI_MAX_BLOCK_SHIFT)
+>>>> -                     & SDHCI_MAX_BLOCK_MASK) |
+>>>> -             SDHCI_CAN_VDD_330 |
+>>>> -             SDHCI_CAN_VDD_180 |
+>>>> -             SDHCI_CAN_DO_SUSPEND |
+>>>> -             SDHCI_CAN_DO_HISPD |
+>>>> -             SDHCI_CAN_DO_ADMA2 |
+>>>> -             SDHCI_CAN_DO_SDMA,
+>>>> -     .caps1 = SDHCI_DRIVER_TYPE_C |
+>>>> -              SDHCI_DRIVER_TYPE_D |
+>>>> -              SDHCI_SUPPORT_DDR50,
+>>>> -     .mmc_caps = MMC_CAP_1_8V_DDR,
+>>>> -};
+>>>> -
+>>>>  static const struct sdhci_pltfm_data sdhci_iproc_pltfm_data = {
+>>>>       .quirks = SDHCI_QUIRK_DATA_TIMEOUT_USES_SDCLK |
+>>>>                 SDHCI_QUIRK_MULTIBLOCK_READ_ACMD12,
+>>>> @@ -213,21 +214,6 @@ static const struct sdhci_pltfm_data sdhci_iproc_pltfm_data = {
+>>>>       .ops = &sdhci_iproc_ops,
+>>>>  };
+>>>>
+>>>> -static const struct sdhci_iproc_data iproc_data = {
+>>>> -     .pdata = &sdhci_iproc_pltfm_data,
+>>>> -     .caps = ((0x1 << SDHCI_MAX_BLOCK_SHIFT)
+>>>> -                     & SDHCI_MAX_BLOCK_MASK) |
+>>>> -             SDHCI_CAN_VDD_330 |
+>>>> -             SDHCI_CAN_VDD_180 |
+>>>> -             SDHCI_CAN_DO_SUSPEND |
+>>>> -             SDHCI_CAN_DO_HISPD |
+>>>> -             SDHCI_CAN_DO_ADMA2 |
+>>>> -             SDHCI_CAN_DO_SDMA,
+>>>> -     .caps1 = SDHCI_DRIVER_TYPE_C |
+>>>> -              SDHCI_DRIVER_TYPE_D |
+>>>> -              SDHCI_SUPPORT_DDR50,
+>>>> -};
+>>>> -
+>>>>  static const struct sdhci_pltfm_data sdhci_bcm2835_pltfm_data = {
+>>>>       .quirks = SDHCI_QUIRK_BROKEN_CARD_DETECTION |
+>>>>                 SDHCI_QUIRK_DATA_TIMEOUT_USES_SDCLK |
+>>>> @@ -237,38 +223,104 @@ static const struct sdhci_pltfm_data sdhci_bcm2835_pltfm_data = {
+>>>>       .ops = &sdhci_iproc_32only_ops,
+>>>>  };
+>>>>
+>>>> -static const struct sdhci_iproc_data bcm2835_data = {
+>>>> -     .pdata = &sdhci_bcm2835_pltfm_data,
+>>>> -     .caps = ((0x1 << SDHCI_MAX_BLOCK_SHIFT)
+>>>> -                     & SDHCI_MAX_BLOCK_MASK) |
+>>>> -             SDHCI_CAN_VDD_330 |
+>>>> -             SDHCI_CAN_DO_HISPD,
+>>>> -     .caps1 = SDHCI_DRIVER_TYPE_A |
+>>>> -              SDHCI_DRIVER_TYPE_C,
+>>>> -     .mmc_caps = 0x00000000,
+>>>> +static const struct sdhci_iproc_data sdhci_iproc_data_list[] = {
+>>>
+>>> Why change to an array?  Also would need to be a separate patch.
+>> In the existing device tree support, data parameter of of_device_id
+>> list contains pointers of "sdhci_iproc_data" structure.
+>> But driver_data parameter in acpi_device_id list is ulong. so we can't
+>> assign "sdhci_iproc_data" structure pointer which can be 64bit.
+>
+> kernel_ulong_t is always the same size as a pointer.
+>
+>> Hence, it is required to take array of "sdhci_iproc_data" structures,
+>> so that array index can assign to both data and driver_data
+>> parameters of of_device_id and acpi_device_id lists respectively. same
+>> pattern found in some other drivers.
+>> This method is required to use in the part of adding ACPI support. so
+>> I keep in single patch.
+>>
+>>>
+>>>> +     [SDHCI_PLTFM_IPROC_CYGNUS] = {
+>>>> +             /* SDHCI IPROC CYGNUS */
+>>>> +             .pdata = &sdhci_iproc_cygnus_pltfm_data,
+>>>> +             .caps = ((0x1 << SDHCI_MAX_BLOCK_SHIFT)
+>>>> +                             & SDHCI_MAX_BLOCK_MASK) |
+>>>> +                     SDHCI_CAN_VDD_330 |
+>>>> +                     SDHCI_CAN_VDD_180 |
+>>>> +                     SDHCI_CAN_DO_SUSPEND |
+>>>> +                     SDHCI_CAN_DO_HISPD |
+>>>> +                     SDHCI_CAN_DO_ADMA2 |
+>>>> +                     SDHCI_CAN_DO_SDMA,
+>>>> +             .caps1 = SDHCI_DRIVER_TYPE_C |
+>>>> +                     SDHCI_DRIVER_TYPE_D |
+>>>> +                     SDHCI_SUPPORT_DDR50,
+>>>> +             .mmc_caps = MMC_CAP_1_8V_DDR,
+>>>> +     },
+>>>> +     [SDHCI_PLTFM_IPROC] = {
+>>>> +             /* SDHCI IPROC */
+>>>> +             .pdata = &sdhci_iproc_pltfm_data,
+>>>> +             .caps = ((0x1 << SDHCI_MAX_BLOCK_SHIFT)
+>>>> +                             & SDHCI_MAX_BLOCK_MASK) |
+>>>> +                     SDHCI_CAN_VDD_330 |
+>>>> +                     SDHCI_CAN_VDD_180 |
+>>>> +                     SDHCI_CAN_DO_SUSPEND |
+>>>> +                     SDHCI_CAN_DO_HISPD |
+>>>> +                     SDHCI_CAN_DO_ADMA2 |
+>>>> +                     SDHCI_CAN_DO_SDMA,
+>>>> +             .caps1 = SDHCI_DRIVER_TYPE_C |
+>>>> +                     SDHCI_DRIVER_TYPE_D |
+>>>> +                     SDHCI_SUPPORT_DDR50,
+>>>> +     },
+>>>> +     [SDHCI_PLTFM_BCM2835] = {
+>>>> +             /* SDHCI BCM2835 */
+>>>> +             .pdata = &sdhci_bcm2835_pltfm_data,
+>>>> +             .caps = ((0x1 << SDHCI_MAX_BLOCK_SHIFT)
+>>>> +                             & SDHCI_MAX_BLOCK_MASK) |
+>>>> +                     SDHCI_CAN_VDD_330 |
+>>>> +                     SDHCI_CAN_DO_HISPD,
+>>>> +             .caps1 = SDHCI_DRIVER_TYPE_A |
+>>>> +                     SDHCI_DRIVER_TYPE_C,
+>>>> +             .mmc_caps = 0x00000000,
+>>>> +
+>>>> +     },
+>>>>  };
+>>>>
+>>>>  static const struct of_device_id sdhci_iproc_of_match[] = {
+>>>> -     { .compatible = "brcm,bcm2835-sdhci", .data = &bcm2835_data },
+>>>> -     { .compatible = "brcm,sdhci-iproc-cygnus", .data = &iproc_cygnus_data},
+>>>> -     { .compatible = "brcm,sdhci-iproc", .data = &iproc_data },
+>>>> +     {
+>>>> +             .compatible = "brcm,bcm2835-sdhci",
+>>>> +             .data = (void *)SDHCI_PLTFM_BCM2835
+>>>> +     },
+>>>> +     {
+>>>> +             .compatible = "brcm,sdhci-iproc-cygnus",
+>>>> +             .data = (void *)SDHCI_PLTFM_IPROC_CYGNUS
+>>>> +     },
+>>>> +     {
+>>>> +             .compatible = "brcm,sdhci-iproc",
+>>>> +             .data = (void *)SDHCI_PLTFM_IPROC
+>>>> +     },
+>>>>       { }
+>>>>  };
+>>>>  MODULE_DEVICE_TABLE(of, sdhci_iproc_of_match);
+>>>>
+>>>> +static const struct acpi_device_id sdhci_iproc_acpi_ids[] = {
+>>>> +     { .id = "BRCM5871", .driver_data = SDHCI_PLTFM_IPROC_CYGNUS },
+>>>> +     { .id = "BRCM5872", .driver_data = SDHCI_PLTFM_IPROC },
+>>>> +     { /* sentinel */ }
+>>>> +};
+>>>> +MODULE_DEVICE_TABLE(acpi, sdhci_iproc_acpi_ids);
+>>>> +
+>>>>  static int sdhci_iproc_probe(struct platform_device *pdev)
+>>>>  {
+>>>> +     struct device *dev = &pdev->dev;
+>>>>       const struct of_device_id *match;
+>>>> +     const struct acpi_device_id *acpi_id;
+>>>>       const struct sdhci_iproc_data *iproc_data;
+>>>>       struct sdhci_host *host;
+>>>>       struct sdhci_iproc_host *iproc_host;
+>>>>       struct sdhci_pltfm_host *pltfm_host;
+>>>>       int ret;
+>>>> +     enum sdhci_pltfm_type plat_type;
+>>>> +
+>>>> +     if (dev->of_node) {
+>>>> +             match = of_match_device(sdhci_iproc_of_match, dev);
+>>>> +             if (match)
+>>>> +                     plat_type = (enum sdhci_pltfm_type)match->data;
+>>>> +             else
+>>>> +                     return -ENODEV;
+>>>> +     } else if (has_acpi_companion(dev)) {
+>>>> +             acpi_id = acpi_match_device(sdhci_iproc_acpi_ids, dev);
+>>>> +             if (acpi_id)
+>>>> +                     plat_type = (enum sdhci_pltfm_type)acpi_id->driver_data;
+>>>> +             else
+>>>> +                     return -ENODEV;
+>>>> +     } else
+>>>> +             return -ENODEV;
+>>>>
+>>>> -     match = of_match_device(sdhci_iproc_of_match, &pdev->dev);
+>>>> -     if (!match)
+>>>> -             return -EINVAL;
+>>>> -     iproc_data = match->data;
+>>>> +     iproc_data = &sdhci_iproc_data_list[plat_type];
+>>>>
+>>>>       host = sdhci_pltfm_init(pdev, iproc_data->pdata, sizeof(*iproc_host));
+>>>>       if (IS_ERR(host))
+>>>> @@ -284,17 +336,30 @@ static int sdhci_iproc_probe(struct platform_device *pdev)
+>>>>
+>>>>       host->mmc->caps |= iproc_host->data->mmc_caps;
+>>>>
+>>>> -     pltfm_host->clk = devm_clk_get(&pdev->dev, NULL);
+>>>> -     if (IS_ERR(pltfm_host->clk)) {
+>>>> -             ret = PTR_ERR(pltfm_host->clk);
+>>>> -             goto err;
+>>>> -     }
+>>>> -     ret = clk_prepare_enable(pltfm_host->clk);
+>>>> -     if (ret) {
+>>>> -             dev_err(&pdev->dev, "failed to enable host clk\n");
+>>>> -             goto err;
+>>>> +     if (dev->of_node) {
+>>>> +             pltfm_host->clk = devm_clk_get(dev, NULL);
+>>>> +             if (IS_ERR(pltfm_host->clk)) {
+>>>> +                     ret = PTR_ERR(pltfm_host->clk);
+>>>> +                     goto err;
+>>>> +             }
+>>>> +             ret = clk_prepare_enable(pltfm_host->clk);
+>>>> +             if (ret) {
+>>>> +                     dev_err(dev, "failed to enable host clk\n");
+>>>> +                     goto err;
+>>>> +             }
+>>>> +     } else if (has_acpi_companion(dev)) {
+>>>> +             /*
+>>>> +              * When Driver probe with ACPI device, clock devices
+>>>> +              * are not available, so sdhci clock get from
+>>>> +              * clock-frequency property given in _DSD object.
+>>>> +              */
+>>>> +             device_property_read_u32(dev, "clock-frequency",
+>>>> +                                      &pltfm_host->clock);
+>>>
+>>> Is this a new property, or is it documented?  Did you consider enhancing
+>>> __sdhci_read_caps() and using the existing "sdhci-caps" and
+>>> "sdhci-caps-mask" properties?
+>>>
+>> "clock-frequency" is not a new property also used in "sdhci-pltfm.c"
+>> to get clock
+>> frequency and use in the case of clock device node is not passed from
+>> device tree node.
+>> But In the case of ACPI support, ACPI does not support common clock framework.
+>> so clock frequency get by "clock-frequency" property given in _DSD
+>> object of ACPI device node.
+>
+> So we should convert to generic device properties i.e. add the patch below and
+> call sdhci_get_property(pdev):
+>
+> From: Adrian Hunter <adrian.hunter@intel.com>
+> Date: Fri, 27 Jul 2018 13:52:02 +0300
+> Subject: [PATCH] mmc: sdhci-pltfm: Convert DT properties to generic device
+>  properties
+>
+> Convert DT properties to generic device properties so that drivers can get
+> properties from DT or ACPI.
+>
+> Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
+> ---
+>  drivers/mmc/host/sdhci-pltfm.c | 68 +++++++++++++++++++++++++-----------------
+>  drivers/mmc/host/sdhci-pltfm.h |  7 ++++-
+>  2 files changed, 46 insertions(+), 29 deletions(-)
+>
+> diff --git a/drivers/mmc/host/sdhci-pltfm.c b/drivers/mmc/host/sdhci-pltfm.c
+> index 02bea6159d79..b231c9a3f888 100644
+> --- a/drivers/mmc/host/sdhci-pltfm.c
+> +++ b/drivers/mmc/host/sdhci-pltfm.c
+> @@ -30,6 +30,7 @@
+>
+>  #include <linux/err.h>
+>  #include <linux/module.h>
+> +#include <linux/property.h>
+>  #include <linux/of.h>
+>  #ifdef CONFIG_PPC
+>  #include <asm/machdep.h>
+> @@ -51,11 +52,10 @@ unsigned int sdhci_pltfm_clk_get_max_clock(struct sdhci_host *host)
+>         .set_uhs_signaling = sdhci_set_uhs_signaling,
+>  };
+>
+> -#ifdef CONFIG_OF
+> -static bool sdhci_of_wp_inverted(struct device_node *np)
+> +static bool sdhci_wp_inverted(struct device *dev)
+>  {
+> -       if (of_get_property(np, "sdhci,wp-inverted", NULL) ||
+> -           of_get_property(np, "wp-inverted", NULL))
+> +       if (device_property_present(dev, "sdhci,wp-inverted") ||
+> +           device_property_present(dev, "wp-inverted"))
+>                 return true;
+>
+>         /* Old device trees don't have the wp-inverted property. */
+> @@ -66,52 +66,64 @@ static bool sdhci_of_wp_inverted(struct device_node *np)
+>  #endif /* CONFIG_PPC */
+>  }
+>
+> -void sdhci_get_of_property(struct platform_device *pdev)
+> +#ifdef CONFIG_OF
+> +static void sdhci_get_compatibility(struct platform_device *pdev)
+>  {
+> +       struct sdhci_host *host = platform_get_drvdata(pdev);
+>         struct device_node *np = pdev->dev.of_node;
+> +
+> +       if (!np)
+> +               return;
+> +
+> +       if (of_device_is_compatible(np, "fsl,p2020-rev1-esdhc"))
+> +               host->quirks |= SDHCI_QUIRK_BROKEN_DMA;
+> +
+> +       if (of_device_is_compatible(np, "fsl,p2020-esdhc") ||
+> +           of_device_is_compatible(np, "fsl,p1010-esdhc") ||
+> +           of_device_is_compatible(np, "fsl,t4240-esdhc") ||
+> +           of_device_is_compatible(np, "fsl,mpc8536-esdhc"))
+> +               host->quirks |= SDHCI_QUIRK_BROKEN_TIMEOUT_VAL;
+> +}
+> +#else
+> +void sdhci_get_compatibility(struct platform_device *pdev) {}
+> +#endif /* CONFIG_OF */
+> +
+> +void sdhci_get_property(struct platform_device *pdev)
+> +{
+> +       struct device *dev = &pdev->dev;
+>         struct sdhci_host *host = platform_get_drvdata(pdev);
+>         struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
+>         u32 bus_width;
+>
+> -       if (of_get_property(np, "sdhci,auto-cmd12", NULL))
+> +       if (device_property_present(dev, "sdhci,auto-cmd12"))
+>                 host->quirks |= SDHCI_QUIRK_MULTIBLOCK_READ_ACMD12;
+>
+> -       if (of_get_property(np, "sdhci,1-bit-only", NULL) ||
+> -           (of_property_read_u32(np, "bus-width", &bus_width) == 0 &&
+> +       if (device_property_present(dev, "sdhci,1-bit-only") ||
+> +           (device_property_read_u32(dev, "bus-width", &bus_width) == 0 &&
+>             bus_width == 1))
+>                 host->quirks |= SDHCI_QUIRK_FORCE_1_BIT_DATA;
+>
+> -       if (sdhci_of_wp_inverted(np))
+> +       if (sdhci_wp_inverted(dev))
+>                 host->quirks |= SDHCI_QUIRK_INVERTED_WRITE_PROTECT;
+>
+> -       if (of_get_property(np, "broken-cd", NULL))
+> +       if (device_property_present(dev, "broken-cd"))
+>                 host->quirks |= SDHCI_QUIRK_BROKEN_CARD_DETECTION;
+>
+> -       if (of_get_property(np, "no-1-8-v", NULL))
+> +       if (device_property_present(dev, "no-1-8-v"))
+>                 host->quirks2 |= SDHCI_QUIRK2_NO_1_8_V;
+>
+> -       if (of_device_is_compatible(np, "fsl,p2020-rev1-esdhc"))
+> -               host->quirks |= SDHCI_QUIRK_BROKEN_DMA;
+> -
+> -       if (of_device_is_compatible(np, "fsl,p2020-esdhc") ||
+> -           of_device_is_compatible(np, "fsl,p1010-esdhc") ||
+> -           of_device_is_compatible(np, "fsl,t4240-esdhc") ||
+> -           of_device_is_compatible(np, "fsl,mpc8536-esdhc"))
+> -               host->quirks |= SDHCI_QUIRK_BROKEN_TIMEOUT_VAL;
+> +       sdhci_get_compatibility(pdev);
+>
+> -       of_property_read_u32(np, "clock-frequency", &pltfm_host->clock);
+> +       device_property_read_u32(dev, "clock-frequency", &pltfm_host->clock);
+>
+> -       if (of_find_property(np, "keep-power-in-suspend", NULL))
+> +       if (device_property_present(dev, "keep-power-in-suspend"))
+>                 host->mmc->pm_caps |= MMC_PM_KEEP_POWER;
+>
+> -       if (of_property_read_bool(np, "wakeup-source") ||
+> -           of_property_read_bool(np, "enable-sdio-wakeup")) /* legacy */
+> +       if (device_property_read_bool(dev, "wakeup-source") ||
+> +           device_property_read_bool(dev, "enable-sdio-wakeup")) /* legacy */
+>                 host->mmc->pm_caps |= MMC_PM_WAKE_SDIO_IRQ;
+>  }
+> -#else
+> -void sdhci_get_of_property(struct platform_device *pdev) {}
+> -#endif /* CONFIG_OF */
+> -EXPORT_SYMBOL_GPL(sdhci_get_of_property);
+> +EXPORT_SYMBOL_GPL(sdhci_get_property);
+>
+>  struct sdhci_host *sdhci_pltfm_init(struct platform_device *pdev,
+>                                     const struct sdhci_pltfm_data *pdata,
+> @@ -184,7 +196,7 @@ int sdhci_pltfm_register(struct platform_device *pdev,
+>         if (IS_ERR(host))
+>                 return PTR_ERR(host);
+>
+> -       sdhci_get_of_property(pdev);
+> +       sdhci_get_property(pdev);
+>
+>         ret = sdhci_add_host(host);
+>         if (ret)
+> diff --git a/drivers/mmc/host/sdhci-pltfm.h b/drivers/mmc/host/sdhci-pltfm.h
+> index 1e91fb1c020e..6109987fc3b5 100644
+> --- a/drivers/mmc/host/sdhci-pltfm.h
+> +++ b/drivers/mmc/host/sdhci-pltfm.h
+> @@ -90,7 +90,12 @@ static inline void sdhci_be32bs_writeb(struct sdhci_host *host, u8 val, int reg)
+>  }
+>  #endif /* CONFIG_MMC_SDHCI_BIG_ENDIAN_32BIT_BYTE_SWAPPER */
+>
+> -extern void sdhci_get_of_property(struct platform_device *pdev);
+> +void sdhci_get_property(struct platform_device *pdev);
+> +
+> +static inline void sdhci_get_of_property(struct platform_device *pdev)
+> +{
+> +       return sdhci_get_property(pdev);
+> +}
+>
+>  extern struct sdhci_host *sdhci_pltfm_init(struct platform_device *pdev,
+>                                           const struct sdhci_pltfm_data *pdata,
+> --
+> 1.9.1
+>
+>
+>
+>>
+>>>> +             if (!pltfm_host->clock) {
+>>>> +                     ret = -ENODEV;
+>>>> +                     goto err;
+>>>> +             }
+>>>>       }
+>>>> -
+>>>>       if (iproc_host->data->pdata->quirks & SDHCI_QUIRK_MISSING_CAPS) {
+>>>>               host->caps = iproc_host->data->caps;
+>>>>               host->caps1 = iproc_host->data->caps1;
+>>>> @@ -307,7 +372,8 @@ static int sdhci_iproc_probe(struct platform_device *pdev)
+>>>>       return 0;
+>>>>
+>>>>  err_clk:
+>>>> -     clk_disable_unprepare(pltfm_host->clk);
+>>>> +     if (dev->of_node)
+>>>> +             clk_disable_unprepare(pltfm_host->clk);
+>>>>  err:
+>>>>       sdhci_pltfm_free(pdev);
+>>>>       return ret;
+>>>> @@ -317,6 +383,7 @@ static struct platform_driver sdhci_iproc_driver = {
+>>>>       .driver = {
+>>>>               .name = "sdhci-iproc",
+>>>>               .of_match_table = sdhci_iproc_of_match,
+>>>> +             .acpi_match_table = ACPI_PTR(sdhci_iproc_acpi_ids),
+>>>>               .pm = &sdhci_pltfm_pmops,
+>>>>       },
+>>>>       .probe = sdhci_iproc_probe,
+>>>>
+>>>
+>> Regards,
+>> Srinath.
+>>
+>
