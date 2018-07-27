@@ -6,36 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 064BEC6778F
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:01:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29339C6778F
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:01:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AE48620894
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:01:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AE48620894
+	by mail.kernel.org (Postfix) with ESMTP id D7F112089B
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:01:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D7F112089B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732746AbeG0LWN (ORCPT
+        id S1733043AbeG0LWR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 07:22:13 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:33902 "EHLO
+        Fri, 27 Jul 2018 07:22:17 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33916 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730244AbeG0LWM (ORCPT
+        with ESMTP id S1730244AbeG0LWQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 07:22:12 -0400
+        Fri, 27 Jul 2018 07:22:16 -0400
 Received: from localhost (unknown [89.188.5.116])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 566B5CBA;
-        Fri, 27 Jul 2018 10:01:03 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 9702FCB8;
+        Fri, 27 Jul 2018 10:01:06 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eran Ben Elisha <eranbe@mellanox.com>,
-        Maor Gottlieb <maorg@mellanox.com>,
-        Tariq Toukan <tariqt@mellanox.com>,
-        Saeed Mahameed <saeedm@mellanox.com>
-Subject: [PATCH 4.14 15/48] net/mlx5e: Fix quota counting in aRFS expire flow
-Date:   Fri, 27 Jul 2018 12:00:00 +0200
-Message-Id: <20180727095920.113745084@linuxfoundation.org>
+        stable@vger.kernel.org, David Ahern <dsahern@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.14 16/48] net/ipv6: Fix linklocal to global address with VRF
+Date:   Fri, 27 Jul 2018 12:00:01 +0200
+Message-Id: <20180727095920.213714686@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180727095918.503549522@linuxfoundation.org>
 References: <20180727095918.503549522@linuxfoundation.org>
@@ -52,41 +50,93 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Eran Ben Elisha <eranbe@mellanox.com>
+From: David Ahern <dsahern@gmail.com>
 
-[ Upstream commit 2630bae8018823c3b88788b69fb9f16ea3b4a11e ]
+[ Upstream commit 24b711edfc34bc45777a3f068812b7d1ed004a5d ]
 
-Quota should follow the amount of rules which do expire, and not the
-number of rules that were examined, fixed that.
+Example setup:
+    host: ip -6 addr add dev eth1 2001:db8:104::4
+           where eth1 is enslaved to a VRF
 
-Fixes: 18c908e477dc ("net/mlx5e: Add accelerated RFS support")
-Signed-off-by: Eran Ben Elisha <eranbe@mellanox.com>
-Reviewed-by: Maor Gottlieb <maorg@mellanox.com>
-Reviewed-by: Tariq Toukan <tariqt@mellanox.com>
-Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
+    switch: ip -6 ro add 2001:db8:104::4/128 dev br1
+            where br1 only has an LLA
+
+           ping6 2001:db8:104::4
+           ssh   2001:db8:104::4
+
+(NOTE: UDP works fine if the PKTINFO has the address set to the global
+address and ifindex is set to the index of eth1 with a destination an
+LLA).
+
+For ICMP, icmp6_iif needs to be updated to check if skb->dev is an
+L3 master. If it is then return the ifindex from rt6i_idev similar
+to what is done for loopback.
+
+For TCP, restore the original tcp_v6_iif definition which is needed in
+most places and add a new tcp_v6_iif_l3_slave that considers the
+l3_slave variability. This latter check is only needed for socket
+lookups.
+
+Fixes: 9ff74384600a ("net: vrf: Handle ipv6 multicast and link-local addresses")
+Signed-off-by: David Ahern <dsahern@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/mellanox/mlx5/core/en_arfs.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ include/net/tcp.h   |    5 +++++
+ net/ipv6/icmp.c     |    5 +++--
+ net/ipv6/tcp_ipv6.c |    6 ++++--
+ 3 files changed, 12 insertions(+), 4 deletions(-)
 
---- a/drivers/net/ethernet/mellanox/mlx5/core/en_arfs.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/en_arfs.c
-@@ -381,14 +381,14 @@ static void arfs_may_expire_flow(struct
- 	HLIST_HEAD(del_list);
- 	spin_lock_bh(&priv->fs.arfs.arfs_lock);
- 	mlx5e_for_each_arfs_rule(arfs_rule, htmp, priv->fs.arfs.arfs_tables, i, j) {
--		if (quota++ > MLX5E_ARFS_EXPIRY_QUOTA)
--			break;
- 		if (!work_pending(&arfs_rule->arfs_work) &&
- 		    rps_may_expire_flow(priv->netdev,
- 					arfs_rule->rxq, arfs_rule->flow_id,
- 					arfs_rule->filter_id)) {
- 			hlist_del_init(&arfs_rule->hlist);
- 			hlist_add_head(&arfs_rule->hlist, &del_list);
-+			if (quota++ > MLX5E_ARFS_EXPIRY_QUOTA)
-+				break;
- 		}
- 	}
- 	spin_unlock_bh(&priv->fs.arfs.arfs_lock);
+--- a/include/net/tcp.h
++++ b/include/net/tcp.h
+@@ -858,6 +858,11 @@ struct tcp_skb_cb {
+  */
+ static inline int tcp_v6_iif(const struct sk_buff *skb)
+ {
++	return TCP_SKB_CB(skb)->header.h6.iif;
++}
++
++static inline int tcp_v6_iif_l3_slave(const struct sk_buff *skb)
++{
+ 	bool l3_slave = ipv6_l3mdev_skb(TCP_SKB_CB(skb)->header.h6.flags);
+ 
+ 	return l3_slave ? skb->skb_iif : TCP_SKB_CB(skb)->header.h6.iif;
+--- a/net/ipv6/icmp.c
++++ b/net/ipv6/icmp.c
+@@ -405,9 +405,10 @@ static int icmp6_iif(const struct sk_buf
+ 
+ 	/* for local traffic to local address, skb dev is the loopback
+ 	 * device. Check if there is a dst attached to the skb and if so
+-	 * get the real device index.
++	 * get the real device index. Same is needed for replies to a link
++	 * local address on a device enslaved to an L3 master device
+ 	 */
+-	if (unlikely(iif == LOOPBACK_IFINDEX)) {
++	if (unlikely(iif == LOOPBACK_IFINDEX || netif_is_l3_master(skb->dev))) {
+ 		const struct rt6_info *rt6 = skb_rt6_info(skb);
+ 
+ 		if (rt6)
+--- a/net/ipv6/tcp_ipv6.c
++++ b/net/ipv6/tcp_ipv6.c
+@@ -918,7 +918,8 @@ static void tcp_v6_send_reset(const stru
+ 					   &tcp_hashinfo, NULL, 0,
+ 					   &ipv6h->saddr,
+ 					   th->source, &ipv6h->daddr,
+-					   ntohs(th->source), tcp_v6_iif(skb),
++					   ntohs(th->source),
++					   tcp_v6_iif_l3_slave(skb),
+ 					   tcp_v6_sdif(skb));
+ 		if (!sk1)
+ 			goto out;
+@@ -1573,7 +1574,8 @@ do_time_wait:
+ 					    skb, __tcp_hdrlen(th),
+ 					    &ipv6_hdr(skb)->saddr, th->source,
+ 					    &ipv6_hdr(skb)->daddr,
+-					    ntohs(th->dest), tcp_v6_iif(skb),
++					    ntohs(th->dest),
++					    tcp_v6_iif_l3_slave(skb),
+ 					    sdif);
+ 		if (sk2) {
+ 			struct inet_timewait_sock *tw = inet_twsk(sk);
 
 
