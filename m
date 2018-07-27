@@ -2,255 +2,79 @@ Return-Path: <SRS0=OQFz=KL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CEB0C6778F
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 22:41:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49F88C67790
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 22:44:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CE36120842
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 22:40:59 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a0I8LcrY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CE36120842
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id F2B0B20842
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 22:44:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F2B0B20842
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388955AbeG1AEz (ORCPT
+        id S2388986AbeG1AIL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 20:04:55 -0400
-Received: from mail-oi0-f68.google.com ([209.85.218.68]:37739 "EHLO
-        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728656AbeG1AEz (ORCPT
+        Fri, 27 Jul 2018 20:08:11 -0400
+Received: from mail-qt0-f194.google.com ([209.85.216.194]:43305 "EHLO
+        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388668AbeG1AIK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 20:04:55 -0400
-Received: by mail-oi0-f68.google.com with SMTP id k81-v6so11749261oib.4;
-        Fri, 27 Jul 2018 15:40:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=nGJSZQpB7wqonxzAIqndSImrLGQu1RbYmYtF82rjvMQ=;
-        b=a0I8LcrY9hxigR2m4+yLVgOu69dr8GdBMRd7SHMkZD7kIp4o3jtdW4MGuPbjnWFoUI
-         mjubBh9JTOUNaXdCoczb1+9jIyL0SygPbXAWImQ6dIvQHGScOQvVWd4oERRyS8Em8H2l
-         seaVYZzr8S0Ov6f4FHumScQxlXQ3PvsK7gcg1JYufzt/t1O+x+q0t163lEKfJWoGW7Tu
-         0Rod2dD9ujHNVdcmP1gQiGLhOm6j+zISvpdtSQRgxCDVHKoHrB+HUoRRMXBIh5uBMUyA
-         Jke3+K0IAwRts/xSXYnqs3dxseVWOrjoPGs8hhb/sRm71tH2pV4nZczJ0WyJBL00Xk18
-         QS9w==
+        Fri, 27 Jul 2018 20:08:10 -0400
+Received: by mail-qt0-f194.google.com with SMTP id f18-v6so6687549qtp.10
+        for <linux-kernel@vger.kernel.org>; Fri, 27 Jul 2018 15:44:11 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=nGJSZQpB7wqonxzAIqndSImrLGQu1RbYmYtF82rjvMQ=;
-        b=PKDzxn3QGhDJOmpYPFVlHkZ6BoSTvERGHdHZgGy83CrbqNYDFdU5VRC9Dk1wTkBAJp
-         Yh3Tldue64gDLuXI9f938IGmS3GY6dEwbuWnaFWL0XFa2Z6FbQMHq605FHNZ5nDDvRBA
-         pCv7kDs/t+mdvREVutdT5hJWLEzW9iMo1/3l+N9xCPUYyPMgBkTkqEC721T7YKbypLcU
-         A3MlckevIWtkkjGkJXe5yNtYK0JCCto467pnYMytYHWZ+zvDaNSOzzG+GeeNyLAAywwE
-         eiUBt4ulGEbSAeKqTIC2vmyS8kbiK5Z/+HdSgTDMI7+YMuAGfwLFQf9PDMOTcRc8y6JB
-         GdtA==
-X-Gm-Message-State: AOUpUlEm2mhScVudvefREWxoRG+weI3m2VeKT6Bl0pfpuu2rLYQhuWNp
-        2OBJtHy+h7rKMtDJgSUTJTj8TDxLz5o=
-X-Google-Smtp-Source: AAOMgpfLbIblq2PEJClMpUZbx1n4LBdZ0NylES8/cuYQ8CiHAt8Rose6VInJfbTb0r2Gx7/65Mbd5A==
-X-Received: by 2002:aca:400b:: with SMTP id n11-v6mr8034939oia.150.1532731254996;
-        Fri, 27 Jul 2018 15:40:54 -0700 (PDT)
-Received: from localhost.localdomain ([12.251.228.178])
-        by smtp.gmail.com with ESMTPSA id e205-v6sm5710594oia.9.2018.07.27.15.40.53
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 27 Jul 2018 15:40:54 -0700 (PDT)
-Date:   Fri, 27 Jul 2018 15:40:52 -0700
-From:   Eduardo Valentin <edubezval@gmail.com>
-To:     Matthias Kaehlcke <mka@chromium.org>
-Cc:     Doug Anderson <dianders@chromium.org>,
-        Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Zhang Rui <rui.zhang@intel.com>,
-        "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>, devicetree@vger.kernel.org,
-        linux-pm@vger.kernel.org, David Collins <collinsd@codeaurora.org>,
-        Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH v5 1/3] thermal: qcom-spmi: Use PMIC thermal stage 2 for
- critical trip points
-Message-ID: <20180727224050.GC4450@localhost.localdomain>
-References: <20180724234636.57137-1-mka@chromium.org>
- <CAD=FV=VODGOE=qvJVeLGBs8xXQvbHZu7S9rqSpMY4AetUjd3fQ@mail.gmail.com>
- <20180726011228.GV129942@google.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180726011228.GV129942@google.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=yNUN47lKpvHq+FINBIiaH90BLsZAxxYvxgH2DYUpisM=;
+        b=kCNUrdTOG4FC9Mh6jLWbfpYy28EIuAtfsS8dwPpo9nusmllbRrIg0TF9aE7hn7s1Oj
+         uOUTP426WVNmLe1/HyI2xT13usxyQIwxmVWqZS+9/GdK5s3/mLSLRbNIl6tPjswYbu2C
+         6oYQWJ/ZMhuW7puVfRdoDE45TNqjuJoxxgGzIY8WH403zLeiLIZ2xYqR/v4uVK+goYo0
+         0or1oV+E3h2m7SuftH/ppG6oWPn4ICLthtx7edvkvGiwJYZBzqOCet5sTjtYoQAxqCAj
+         CA2Z+IgC+h9QYi1wqgaPB4uUglKRFTtkSnW9ao/LIn/pcilnB6yjLn1KA7JUFjWUlX+m
+         TnfA==
+X-Gm-Message-State: AOUpUlHxcwZ7ojN8wrW1jKM3gg7BrX28udENZjYzl8RueJ8cpsGns/sK
+        ILVbxwFU1tHzzzVsDgnKtqbdnA==
+X-Google-Smtp-Source: AAOMgpdQgr5WeeUOAxwNIBiLfH2KZpm3rjU1LFppu6dgBHfHj2y4Gs+mdBfRBlogBulRu6VdSBm4rw==
+X-Received: by 2002:aed:3d95:: with SMTP id i21-v6mr8120386qtf.232.1532731451043;
+        Fri, 27 Jul 2018 15:44:11 -0700 (PDT)
+Received: from builder.jcline.org.com ([2605:a601:80ce:4700:77a5:8983:ea8b:82ec])
+        by smtp.gmail.com with ESMTPSA id g39-v6sm4145984qtb.47.2018.07.27.15.44.09
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 27 Jul 2018 15:44:10 -0700 (PDT)
+From:   Jeremy Cline <jcline@redhat.com>
+To:     "David S . Miller" <davem@davemloft.net>
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Jeremy Cline <jcline@redhat.com>
+Subject: [PATCH 0/2] net: socket: Fix potential spectre v1 gadgets
+Date:   Fri, 27 Jul 2018 22:43:00 +0000
+Message-Id: <20180727224302.5503-1-jcline@redhat.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 25, 2018 at 06:12:28PM -0700, Matthias Kaehlcke wrote:
-> Hi Doug,
-> 
-> On Wed, Jul 25, 2018 at 04:19:56PM -0700, Doug Anderson wrote:
-> 
-> > On Tue, Jul 24, 2018 at 4:46 PM, Matthias Kaehlcke <mka@chromium.org> wrote:
-> > > +static int qpnp_tm_update_critical_trip_temp(struct qpnp_tm_chip *chip,
-> > > +                                            int temp)
-> > > +{
-> > > +       u8 reg;
-> > > +       bool disable_s2_shutdown = false;
-> > > +       int ret;
-> > > +
-> > > +       WARN_ON(!mutex_is_locked(&chip->lock));
-> > > +
-> > > +       /*
-> > > +        * Default: S2 and S3 shutdown enabled, thresholds at
-> > > +        * 105C/125C/145C, monitoring at 25Hz
-> > > +        */
-> > > +       reg = SHUTDOWN_CTRL1_RATE_25HZ;
-> > > +
-> > > +       if ((temp == THERMAL_TEMP_INVALID) ||
-> > > +           (temp < STAGE2_THRESHOLD_MIN)) {
-> > > +               chip->thresh = THRESH_MIN;
-> > > +               goto skip;
-> > > +       }
-> > > +
-> > > +       if (temp <= STAGE2_THRESHOLD_MAX) {
-> > > +               chip->thresh = THRESH_MAX -
-> > > +                       ((STAGE2_THRESHOLD_MAX - temp) /
-> > > +                        TEMP_THRESH_STEP);
-> > > +               disable_s2_shutdown = true;
-> > > +       } else {
-> > > +               chip->thresh = THRESH_MAX;
-> > > +
-> > > +               if (!IS_ERR(chip->adc))
-> > > +                       disable_s2_shutdown = true;
-> > > +               else
-> > > +                       dev_warn(chip->dev,
-> > > +                                "No ADC is configured and critical temperature is above the maximum stage 2 threshold of 140°C! Configuring stage 2 shutdown at 140°C.\n");
-> > 
-> > Putting a non-ASCII character (the degree symbol) in your commit
-> > message is one thing, but are you sure it's wise to put it in the
-> > kernel logs?
-> 
-> A few other drivers also do this
-> (drivers/gpu/drm/nouveau/nvkm/subdev/clk/base.c,
-> drivers/macintosh/windfarm_pm121.c), however that doesn't mean it's a
-> good idea. Will change to degC or C.
-> 
-> > > +       }
-> > > +
-> > > +skip:
-> > > +       reg |= chip->thresh;
-> > > +       if (disable_s2_shutdown)
-> > > +               reg |= SHUTDOWN_CTRL1_OVERRIDE_S2;
-> > > +
-> > > +       ret = qpnp_tm_write(chip, QPNP_TM_REG_SHUTDOWN_CTRL1, reg);
-> > > +       if (ret < 0)
-> > > +               return ret;
-> > > +
-> > > +       return ret;
-> > 
-> > Simplify the above lines to:
-> > 
-> > return qpnp_tm_write(chip, QPNP_TM_REG_SHUTDOWN_CTRL1, reg);
-> 
-> Ouch, my code is indeed dumb ...
-> 
-> > > @@ -313,12 +441,7 @@ static int qpnp_tm_probe(struct platform_device *pdev)
-> > >         if (ret < 0)
-> > >                 return ret;
-> > >
-> > > -       chip->tz_dev = devm_thermal_zone_of_sensor_register(&pdev->dev, 0, chip,
-> > > -                                                       &qpnp_tm_sensor_ops);
-> > > -       if (IS_ERR(chip->tz_dev)) {
-> > > -               dev_err(&pdev->dev, "failed to register sensor\n");
-> > > -               return PTR_ERR(chip->tz_dev);
-> > > -       }
-> > > +       chip->initialized = true;
-> > 
-> > Should we add "thermal_zone_device_update(chip->tz_dev,
-> > THERMAL_EVENT_UNSPECIFIED);" here
-> 
-> Seems reasonable, will do.
-> 
-> > ...also: do we care about any type of locking for chip->initialized?
-> > Technically we can be running on weakly ordered memory so if
-> > qpnp_tm_update_temp_no_adc() is running on a different processor then
-> > possibly it could still keep returning the default temperature for a
-> > little while.  We could try to analyze whether there's some sort of
-> > implicit barrier or we could add manual memory barriers, but generally
-> > I try to avoid that and just do the simple locking...  What about just
-> > setting chip-Initialized = true at the end of qpnp_tm_init() while the
-> > mutex is still held?
-> 
-> Thanks for pointing that out. I agree that we should keep things
-> simple, chip->initialized to true at the end of qpnp_tm_init() sounds
-> good to me.
-> 
-> > I'd also love to hear from someone with more thermal framework
-> > experience to make sure it's legit to return a default value if
-> > someone calls us while we're initting.  It seems sane to me but nice
-> > to confirm it's OK.
-> 
-> An alternative could be to return THERMAL_TEMP_INVALID, however I
-> don't see this handled outside of thermal_core.c, not sure if it could
-> throw some other code off.
-> 
-> Comments from thermal folks on either approach (or alternatives) are
-> definitely welcome :)
-> 
-> > Overall I like the idea of this patch so hopefully others do too.
-> > Thanks for sending it out!
-> 
+Hi folks,
 
-minor ask for next version
+This fixes a pair of potential spectre v1 gadgets.
 
+Note that because the speculation window is large, the policy is to stop
+the speculative out-of-bounds load and not worry if the attack can be
+completed with a dependent load or store[0].
 
-WARNING: line over 80 characters
-#159: FILE: drivers/thermal/qcom-spmi-temp-alarm.c:65:
-+#define STAGE2_THRESHOLD_MIN		125000	/* Stage 2 Threshold
-Min: 125 C */
+[0] https://marc.info/?l=linux-kernel&m=152449131114778
 
-WARNING: line over 80 characters
-#160: FILE: drivers/thermal/qcom-spmi-temp-alarm.c:66:
-+#define STAGE2_THRESHOLD_MAX		140000	/* Stage 2 Threshold
-Max: 140 C */
+Jeremy Cline (2):
+  net: socket: fix potential spectre v1 gadget in socketcall
+  net: socket: Fix potential spectre v1 gadget in sock_is_registered
 
-ERROR: trailing statements should be on next line
-#201: FILE: drivers/thermal/qcom-spmi-temp-alarm.c:186:
-+	if (!chip->adc)) {
+ net/socket.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-CHECK: Unnecessary parentheses around 'temp == THERMAL_TEMP_INVALID'
-#227: FILE: drivers/thermal/qcom-spmi-temp-alarm.c:220:
-+	if ((temp == THERMAL_TEMP_INVALID) ||
-+	    (temp < STAGE2_THRESHOLD_MIN)) {
+-- 
+2.17.1
 
-CHECK: Unnecessary parentheses around 'temp < STAGE2_THRESHOLD_MIN'
-#227: FILE: drivers/thermal/qcom-spmi-temp-alarm.c:220:
-+	if ((temp == THERMAL_TEMP_INVALID) ||
-+	    (temp < STAGE2_THRESHOLD_MIN)) {
-
-CHECK: Unnecessary parentheses around 'trips[i].type ==
-THERMAL_TRIP_CRITICAL'
-#305: FILE: drivers/thermal/qcom-spmi-temp-alarm.c:302:
-+		if (of_thermal_is_trip_valid(chip->tz_dev, i) &&
-+		    (trips[i].type == THERMAL_TRIP_CRITICAL))
-
-CHECK: Alignment should match open parenthesis
-#386: FILE: drivers/thermal/qcom-spmi-temp-alarm.c:427:
-+	chip->tz_dev = devm_thermal_zone_of_sensor_register(&pdev->dev,
-0, chip,
-+
-&qpnp_tm_sensor_ops);
-
-> Thanks for the review!
-> 
-> Matthias
