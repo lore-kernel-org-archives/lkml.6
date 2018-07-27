@@ -6,34 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01715C67790
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 09:50:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D103AC67790
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 09:50:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9CF8020895
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 09:50:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9CF8020895
+	by mail.kernel.org (Postfix) with ESMTP id 8FE6A20895
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 09:50:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8FE6A20895
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389182AbeG0LLv (ORCPT
+        id S2389187AbeG0LL4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 07:11:51 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:53210 "EHLO
+        Fri, 27 Jul 2018 07:11:56 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:53218 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732099AbeG0LLv (ORCPT
+        with ESMTP id S1729431AbeG0LLx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 07:11:51 -0400
+        Fri, 27 Jul 2018 07:11:53 -0400
 Received: from localhost (unknown [89.188.5.116])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A5DA4AF8;
-        Fri, 27 Jul 2018 09:50:43 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A8559BBD;
+        Fri, 27 Jul 2018 09:50:46 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Anssi Hannula <anssi.hannula@bitwise.fi>,
-        Marc Kleine-Budde <mkl@pengutronix.de>
-Subject: [PATCH 4.17 57/66] can: xilinx_can: fix RX loop if RXNEMP is asserted without RXOK
-Date:   Fri, 27 Jul 2018 11:45:50 +0200
-Message-Id: <20180727093815.465858243@linuxfoundation.org>
+        stable@vger.kernel.org, Lubomir Rintel <lkundrak@v3.sk>,
+        Oliver Neukum <oneukum@suse.com>
+Subject: [PATCH 4.17 49/66] usb: cdc_acm: Add quirk for Castles VEGA3000
+Date:   Fri, 27 Jul 2018 11:45:42 +0200
+Message-Id: <20180727093814.593903063@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180727093809.043856530@linuxfoundation.org>
 References: <20180727093809.043856530@linuxfoundation.org>
@@ -50,98 +50,33 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Anssi Hannula <anssi.hannula@bitwise.fi>
+From: Lubomir Rintel <lkundrak@v3.sk>
 
-commit 32852c561bffd613d4ed7ec464b1e03e1b7b6c5c upstream.
+commit 1445cbe476fc3dd09c0b380b206526a49403c071 upstream.
 
-If the device gets into a state where RXNEMP (RX FIFO not empty)
-interrupt is asserted without RXOK (new frame received successfully)
-interrupt being asserted, xcan_rx_poll() will continue to try to clear
-RXNEMP without actually reading frames from RX FIFO. If the RX FIFO is
-not empty, the interrupt will not be cleared and napi_schedule() will
-just be called again.
+The device (a POS terminal) implements CDC ACM, but has not union
+descriptor.
 
-This situation can occur when:
-
-(a) xcan_rx() returns without reading RX FIFO due to an error condition.
-The code tries to clear both RXOK and RXNEMP but RXNEMP will not clear
-due to a frame still being in the FIFO. The frame will never be read
-from the FIFO as RXOK is no longer set.
-
-(b) A frame is received between xcan_rx_poll() reading interrupt status
-and clearing RXOK. RXOK will be cleared, but RXNEMP will again remain
-set as the new message is still in the FIFO.
-
-I'm able to trigger case (b) by flooding the bus with frames under load.
-
-There does not seem to be any benefit in using both RXNEMP and RXOK in
-the way the driver does, and the polling example in the reference manual
-(UG585 v1.10 18.3.7 Read Messages from RxFIFO) also says that either
-RXOK or RXNEMP can be used for detecting incoming messages.
-
-Fix the issue and simplify the RX processing by only using RXNEMP
-without RXOK.
-
-Tested with the integrated CAN on Zynq-7000 SoC.
-
-Fixes: b1201e44f50b ("can: xilinx CAN controller support")
-Signed-off-by: Anssi Hannula <anssi.hannula@bitwise.fi>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
+Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
+Acked-by: Oliver Neukum <oneukum@suse.com>
+Cc: stable <stable@vger.kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/can/xilinx_can.c |   18 +++++-------------
- 1 file changed, 5 insertions(+), 13 deletions(-)
+ drivers/usb/class/cdc-acm.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/drivers/net/can/xilinx_can.c
-+++ b/drivers/net/can/xilinx_can.c
-@@ -101,7 +101,7 @@ enum xcan_reg {
- #define XCAN_INTR_ALL		(XCAN_IXR_TXOK_MASK | XCAN_IXR_BSOFF_MASK |\
- 				 XCAN_IXR_WKUP_MASK | XCAN_IXR_SLP_MASK | \
- 				 XCAN_IXR_RXNEMP_MASK | XCAN_IXR_ERROR_MASK | \
--				 XCAN_IXR_ARBLST_MASK | XCAN_IXR_RXOK_MASK)
-+				 XCAN_IXR_ARBLST_MASK)
+--- a/drivers/usb/class/cdc-acm.c
++++ b/drivers/usb/class/cdc-acm.c
+@@ -1831,6 +1831,9 @@ static const struct usb_device_id acm_id
+ 	{ USB_DEVICE(0x09d8, 0x0320), /* Elatec GmbH TWN3 */
+ 	.driver_info = NO_UNION_NORMAL, /* has misplaced union descriptor */
+ 	},
++	{ USB_DEVICE(0x0ca6, 0xa050), /* Castles VEGA3000 */
++	.driver_info = NO_UNION_NORMAL, /* reports zero length descriptor */
++	},
  
- /* CAN register bit shift - XCAN_<REG>_<BIT>_SHIFT */
- #define XCAN_BTR_SJW_SHIFT		7  /* Synchronous jump width */
-@@ -709,15 +709,7 @@ static int xcan_rx_poll(struct napi_stru
- 
- 	isr = priv->read_reg(priv, XCAN_ISR_OFFSET);
- 	while ((isr & XCAN_IXR_RXNEMP_MASK) && (work_done < quota)) {
--		if (isr & XCAN_IXR_RXOK_MASK) {
--			priv->write_reg(priv, XCAN_ICR_OFFSET,
--				XCAN_IXR_RXOK_MASK);
--			work_done += xcan_rx(ndev);
--		} else {
--			priv->write_reg(priv, XCAN_ICR_OFFSET,
--				XCAN_IXR_RXNEMP_MASK);
--			break;
--		}
-+		work_done += xcan_rx(ndev);
- 		priv->write_reg(priv, XCAN_ICR_OFFSET, XCAN_IXR_RXNEMP_MASK);
- 		isr = priv->read_reg(priv, XCAN_ISR_OFFSET);
- 	}
-@@ -728,7 +720,7 @@ static int xcan_rx_poll(struct napi_stru
- 	if (work_done < quota) {
- 		napi_complete_done(napi, work_done);
- 		ier = priv->read_reg(priv, XCAN_IER_OFFSET);
--		ier |= (XCAN_IXR_RXOK_MASK | XCAN_IXR_RXNEMP_MASK);
-+		ier |= XCAN_IXR_RXNEMP_MASK;
- 		priv->write_reg(priv, XCAN_IER_OFFSET, ier);
- 	}
- 	return work_done;
-@@ -800,9 +792,9 @@ static irqreturn_t xcan_interrupt(int ir
- 	}
- 
- 	/* Check for the type of receive interrupt and Processing it */
--	if (isr & (XCAN_IXR_RXNEMP_MASK | XCAN_IXR_RXOK_MASK)) {
-+	if (isr & XCAN_IXR_RXNEMP_MASK) {
- 		ier = priv->read_reg(priv, XCAN_IER_OFFSET);
--		ier &= ~(XCAN_IXR_RXNEMP_MASK | XCAN_IXR_RXOK_MASK);
-+		ier &= ~XCAN_IXR_RXNEMP_MASK;
- 		priv->write_reg(priv, XCAN_IER_OFFSET, ier);
- 		napi_schedule(&priv->napi);
- 	}
+ 	{ USB_DEVICE(0x2912, 0x0001), /* ATOL FPrint */
+ 	.driver_info = CLEAR_HALT_CONDITIONS,
 
 
