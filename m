@@ -2,82 +2,199 @@ Return-Path: <SRS0=OQFz=KL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4142C6778F
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 20:25:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 243E1C6778F
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 20:26:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 860C820671
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 20:25:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 860C820671
+	by mail.kernel.org (Postfix) with ESMTP id C6E7B20857
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 20:26:25 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="JbiEBUDz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C6E7B20857
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389586AbeG0VtC (ORCPT
+        id S2389621AbeG0Vty (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 17:49:02 -0400
-Received: from mailout.easymail.ca ([64.68.200.34]:33017 "EHLO
-        mailout.easymail.ca" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731012AbeG0VtB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 17:49:01 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by mailout.easymail.ca (Postfix) with ESMTP id 9EBEEC0D04;
-        Fri, 27 Jul 2018 20:25:30 +0000 (UTC)
-Received: from mailout.easymail.ca ([127.0.0.1])
-        by localhost (emo01-pco.easydns.vpn [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id iv14kStAlmuN; Fri, 27 Jul 2018 20:25:30 +0000 (UTC)
-Received: from [192.168.1.87] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        Fri, 27 Jul 2018 17:49:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54394 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2389210AbeG0Vtx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Jul 2018 17:49:53 -0400
+Received: from localhost (unknown [69.71.4.100])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mailout.easymail.ca (Postfix) with ESMTPSA id CAA12BFE01;
-        Fri, 27 Jul 2018 20:25:15 +0000 (UTC)
-Subject: Re: [PATCH 3.18 00/27] 3.18.117-stable review
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org
-Cc:     torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        linux@roeck-us.net, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org, Shuah Khan <shuah@kernel.org>
-References: <20180727102649.049641021@linuxfoundation.org>
-From:   Shuah Khan <shuah@kernel.org>
-Message-ID: <8b9f5f22-d764-05ea-8462-f91087208c6d@kernel.org>
-Date:   Fri, 27 Jul 2018 14:25:14 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        by mail.kernel.org (Postfix) with ESMTPSA id A6A8420671;
+        Fri, 27 Jul 2018 20:26:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1532723182;
+        bh=bs6tU4soZemLTfvgJ80Mz5P3OQJtIk59h6hgSNWdu9M=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=JbiEBUDz528t6L/JNHS1U60PgRhfJWzi0x6kbpVIsnghsjvA0kkE+NaMMwlhgny5q
+         pmY1zNieX/dpPqpvDugplbMLkJmmqHIAIx8rC4zIgXO78pwrplmiibbt5Jhfy0Y3Fo
+         G8nBskJZXDj4rpygGQoZIMnwwtL9OQn4dPY04B80=
+Date:   Fri, 27 Jul 2018 15:26:19 -0500
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Rajat Jain <rajatja@google.com>
+Cc:     Bjorn Helgaas <bhelgaas@google.com>,
+        Keith Busch <keith.busch@intel.com>,
+        Vidya Sagar <vidyas@nvidia.com>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Kees Cook <keescook@chromium.org>,
+        "Gustavo A. R. Silva" <garsilva@embeddedor.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Sinan Kaya <okaya@codeaurora.org>,
+        Frederick Lawler <fred@fredlawl.com>,
+        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+        mayurkumar.patel@intel.com, rajatxjain@gmail.com,
+        Richard Hughes <rhughes@redhat.com>,
+        Carlos Garnacho <cgarnach@redhat.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Pali Rohar <pali.rohar@gmail.com>,
+        Takashi Iwai <tiwai@suse.de>,
+        Andy Whitcroft <apw@canonical.com>,
+        Colin Ian King <colin.king@canonical.com>
+Subject: Re: [PATCH v2] pci/aspm: Remove CONFIG_PCIEASPM_DEBUG
+Message-ID: <20180727202619.GD173328@bhelgaas-glaptop.roam.corp.google.com>
+References: <20180508230148.121852-1-rajatja@google.com>
+ <20180510233912.96454-1-rajatja@google.com>
 MIME-Version: 1.0
-In-Reply-To: <20180727102649.049641021@linuxfoundation.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180510233912.96454-1-rajatja@google.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/27/2018 04:26 AM, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 3.18.117 release.
-> There are 27 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Sun Jul 29 10:26:38 UTC 2018.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v3.x/stable-review/patch-3.18.117-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-3.18.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
-> 
+[+cc Rafael, Richard, Carlos, Pali, Takashi, Andy, Colin for question
+about how to expose ASPM power management in sysfs]
 
-Compiled and booted on my test system. No dmesg regressions.
+On Thu, May 10, 2018 at 04:39:12PM -0700, Rajat Jain wrote:
+> ...
+> And some suggestions from Bjorn here:
+> https://www.spinics.net/lists/linux-pci/msg60541.html
+> 
+> This patch picks up one of the suggestion, to remove the
+> CONFIG_PCIEASPM_DEBUG and thus make the code always
+> avilable. This provides control to userspace to control
+> ASPM on a per slot / device basis using sysfs interface.
 
-thanks,
--- Shuah
+TL;DR: When CONFIG_PCIEASPM_DEBUG=y, Linux makes ASPM control files
+       visible in sysfs, associated with the upstream end (e.g., Root
+       Port) of a link.  Should these files be associated with the
+       downstream end (e.g., NIC, GPU, etc) instead?
 
+I think we do need to make ASPM control files visible in sysfs, as
+this patch does.  But I have a question about exactly *how* we want to
+do this.  I had planned to merge this patch for v4.19, but I think
+I'll postpone it until we figure this out.
+
+ASPM is a power management feature of a PCIe link, and it affects the
+devices on both ends of that link.  The upstream end (closest to the
+CPU) is typically a Root Port, and the downstream end is typically an
+Endpoint (e.g., a GPU, NIC, or NVMe device).  For example, my laptop
+has these devices:
+
+  00:1c.2 Intel Root Port to [bus 04]
+  04:00.0 Intel 8260 Wireless NIC
+
+There's a PCIe link between these two devices, and if both ends
+support it, ASPM reduces power usage when the NIC is idle.  The
+hardware reduces power usage automatically; the kernel only needs to
+configure ASPM.
+
+ASPM affects performance as well as power, so we have knobs to control
+the tradeoff.  Starting with the big hammers, we currently have:
+
+  - Kernel build-time setting (CONFIG_PCIEASPM_PERFORMANCE, etc).
+    Requires kernel rebuild and reboot.
+
+  - "pcie_aspm=X" kernel boot parameter.  Can only enable/disable and
+    requires a reboot.
+
+  - /sys/module/pcie_aspm/parameters/policy file.  At any time, root
+    can set the system-wide ASPM policy to one of these settings:
+
+      + highest performance, highest power consumption
+      + moderate power saving at cost of some performance
+      + aggressive power saving at cost of more performance
+      + use whatever setting BIOS configured
+
+  - Many /sys/devices/pci0000:00/0000:00:1c.2/power/link_state files.
+    At any time, root can set the ASPM policy to one of the above
+    settings, but for individual devices.  Currently these files are
+    only available when CONFIG_PCIEASPM_DEBUG=y (Red Hat does not
+    enable this, but Ubuntu does).
+
+The patch below changes it so these /sys/devices/.../link_state files
+*always* exist, regardless of CONFIG_PCIEASPM_DEBUG.
+
+The question is where those sysfs files should be.  Currently they are
+associated with the device at the *upstream* end of the link.  In the
+example above, they're associated with the Root Port:
+
+  /sys/devices/pci0000:00/0000:00:1c.2/power/link_state
+
+I don't know if that's the right place, or if they should be
+associated with the device at the *downstream* end of the link, i.e.,
+04:00.0.  The downstream end might be better because:
+
+  - It's easier to associate the downstream end with a device the user
+    cares about, e.g., a NIC, GPU, etc.  This is mostly a user-
+    interface issue.
+
+  - A link can lead to a multi-function device, and the spec allows
+    those functions to have different ASPM settings (see PCIe r4.0,
+    sec 5.4.1).  With the sysfs files at the upstream end of the link,
+    we have no way to configure those functions individually.
+
+Any thoughts?
+
+> ...
+> diff --git a/drivers/pci/pcie/Kconfig b/drivers/pci/pcie/Kconfig
+> index b12e28b3d8f9..089b9f559d88 100644
+> --- a/drivers/pci/pcie/Kconfig
+> +++ b/drivers/pci/pcie/Kconfig
+> @@ -46,14 +46,6 @@ config PCIEASPM
+>  
+>  	  When in doubt, say Y.
+>  
+> -config PCIEASPM_DEBUG
+> -	bool "Debug PCI Express ASPM"
+> -	depends on PCIEASPM
+> -	default n
+> -	help
+> -	  This enables PCI Express ASPM debug support. It will add per-device
+> -	  interface to control ASPM.
+> -
+>  choice
+>  	prompt "Default ASPM policy"
+>  	default PCIEASPM_DEFAULT
+> diff --git a/drivers/pci/pcie/aspm.c b/drivers/pci/pcie/aspm.c
+> index c687c817b47d..8ffc13d42baa 100644
+> --- a/drivers/pci/pcie/aspm.c
+> +++ b/drivers/pci/pcie/aspm.c
+> @@ -1161,7 +1161,6 @@ static int pcie_aspm_get_policy(char *buffer, const struct kernel_param *kp)
+>  module_param_call(policy, pcie_aspm_set_policy, pcie_aspm_get_policy,
+>  	NULL, 0644);
+>  
+> -#ifdef CONFIG_PCIEASPM_DEBUG
+>  static ssize_t link_state_show(struct device *dev,
+>  		struct device_attribute *attr,
+>  		char *buf)
+> @@ -1264,7 +1263,6 @@ void pcie_aspm_remove_sysfs_dev_files(struct pci_dev *pdev)
+>  		sysfs_remove_file_from_group(&pdev->dev.kobj,
+>  			&dev_attr_clk_ctl.attr, power_group);
+>  }
+> -#endif
+>  
+>  static int __init pcie_aspm_disable(char *str)
+>  {
+> -- 
+> 2.17.0.441.gb46fe60e1d-goog
+> 
