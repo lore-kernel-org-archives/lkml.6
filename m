@@ -2,347 +2,96 @@ Return-Path: <SRS0=OQFz=KL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4693C67790
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 06:05:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3078AC6778F
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 06:15:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6AB5C20673
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 06:05:49 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="e+qjm6Ha"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6AB5C20673
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=163.com
+	by mail.kernel.org (Postfix) with ESMTP id A8A0420671
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 06:15:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A8A0420671
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zte.com.cn
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729483AbeG0H0C (ORCPT
+        id S1729442AbeG0Hf4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 03:26:02 -0400
-Received: from m12-14.163.com ([220.181.12.14]:57925 "EHLO m12-14.163.com"
+        Fri, 27 Jul 2018 03:35:56 -0400
+Received: from out1.zte.com.cn ([202.103.147.172]:42064 "EHLO mxct.zte.com.cn"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726044AbeG0H0B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 03:26:01 -0400
-X-Greylist: delayed 991 seconds by postgrey-1.27 at vger.kernel.org; Fri, 27 Jul 2018 03:25:57 EDT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-        s=s110527; h=Subject:From:Message-ID:Date:MIME-Version; bh=fvTBp
-        1x2cmXMzuB79rgL4hnLmLqOsM7wjAhNhEn5yrE=; b=e+qjm6Ha1H6mG6D4HQ/34
-        UjvEssQx2QchU1UVbnFGhIQaChb1t2EQ+sqTEpLGVZZGFirPkTStVUI7UXxxMQoV
-        ZW/3FOsqPPgyTBEWfX3so8cMcK1HaddZ3q5xzyuG51uLELZbkYnIebawRgst9z5Y
-        G6cH/ITxe8tcTs6DpyuQzQ=
-Received: from [192.168.0.103] (unknown [223.73.7.236])
-        by smtp10 (Coremail) with SMTP id DsCowACXJdU6slpb5FRQLQ--.6838S3;
-        Fri, 27 Jul 2018 13:48:45 +0800 (CST)
-Subject: Re: [PATCH 1/1] lib: use sunday algorithm to do strstr() and
- strnstr()
-From:   Zhaoxiu Zeng <zengzhaoxiu@163.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Matthew Wilcox <mawilcox@microsoft.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        linux-kernel@vger.kernel.org, Zhaoxiu Zeng <zhaoxiu.zeng@gmail.com>
-References: <20180722173715.25327-1-zengzhaoxiu@163.com>
- <20180722183706.GA7979@kroah.com>
- <9b18802b-a451-eb81-3317-1de406f03118@163.com>
-Message-ID: <6dc928cd-adbb-0304-1308-fb556d48698d@163.com>
-Date:   Fri, 27 Jul 2018 13:48:43 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <9b18802b-a451-eb81-3317-1de406f03118@163.com>
-Content-Type: text/plain; charset=gbk
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: DsCowACXJdU6slpb5FRQLQ--.6838S3
-X-Coremail-Antispam: 1Uf129KBjvJXoW3XFyxuryDAFW3ZFy8Xw18Xwb_yoW7ZFyDpF
-        Wqkasaqw4Fqr1ayw10yF1xKay0ka9xtry8J348ta9xZ3ZIqFs5Kr43GF4Y9F4fW34kWr4f
-        Zr4fWwnrAFWUJ37anT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jiZ23UUUUU=
-X-Originating-IP: [223.73.7.236]
-X-CM-SenderInfo: p2hqw6xkdr5xrx6rljoofrz/1tbiJR+QgFUMMGIsXQAAsQ
+        id S1726151AbeG0Hf4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Jul 2018 03:35:56 -0400
+Received: from mse01.zte.com.cn (unknown [10.30.3.20])
+        by Forcepoint Email with ESMTPS id 3868B4CA73FA06F6B8FD;
+        Fri, 27 Jul 2018 14:15:35 +0800 (CST)
+Received: from notes_smtp.zte.com.cn ([10.30.1.239])
+        by mse01.zte.com.cn with ESMTP id w6R6FAJI034208;
+        Fri, 27 Jul 2018 14:15:10 +0800 (GMT-8)
+        (envelope-from wang.yi59@zte.com.cn)
+Received: from fox-host8.localdomain ([10.74.120.8])
+          by szsmtp06.zte.com.cn (Lotus Domino Release 8.5.3FP6)
+          with ESMTP id 2018072714151885-2117033 ;
+          Fri, 27 Jul 2018 14:15:18 +0800 
+From:   Yi Wang <wang.yi59@zte.com.cn>
+To:     tglx@linutronix.de
+Cc:     mingo@redhat.com, hpa@zytor.com, x86@kernel.org,
+        douly.fnst@cn.fujitsu.com, jgross@suse.com, rostedt@goodmis.org,
+        ville.syrjala@linux.intel.com, len.brown@intel.com,
+        linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org,
+        jiang.biao2@zte.com.cn, wang.yi59@zte.com.cn,
+        zhong.weidong@zte.com.cn
+Subject: [PATCH] x86/apic: fix two slight indenting
+Date:   Fri, 27 Jul 2018 14:15:03 +0800
+Message-Id: <1532672103-32250-1-git-send-email-wang.yi59@zte.com.cn>
+X-Mailer: git-send-email 1.8.3.1
+X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
+ 21, 2013) at 2018-07-27 14:15:18,
+        Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
+ 2018-07-27 14:14:54,
+        Serialize complete at 2018-07-27 14:14:54
+X-MAIL: mse01.zte.com.cn w6R6FAJI034208
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-在 2018/7/27 1:17, Zhaoxiu Zeng 写道:
-> 在 2018/7/23 2:37, Greg Kroah-Hartman 写道:
->> On Mon, Jul 23, 2018 at 01:37:15AM +0800, Zhaoxiu Zeng wrote:
->>> From: Zhaoxiu Zeng <zhaoxiu.zeng@gmail.com>
->>>
->>> The Sunday algorithm is a variation of Boyer-Moore algorithm, it is easy and fast.
->>> For the Sunday algorithm, to see
->>> 	http://www.inf.fh-flensburg.de/lang/algorithmen/pattern/sundayen.htm
->>
->> So you say, but what does this really buy us?  Why make this change?
->> How was it tested?  What is the downside of not taking this?
->>
->> thanks,
->>
->> greg k-h
->>
-> 
-> I use the following program to test on fc28.
-> Compile with O2, the new version is almost 2X faster than the original.
-> The code size of the original is 0x80, the newer is 0xB0.
-> 
-> 
-> #include <stdio.h>
-> #include <stdlib.h>
-> #include <stdint.h>
-> #include <string.h>
-> #include <time.h>
-> #include <unistd.h>
-> 
-> /**
->  * strstr - Find the first substring in a %NUL terminated string
->  * @s1: The string to be searched
->  * @s2: The string to search for
->  */
-> char *strstr1(const char *s1, const char *s2)
-> {
-> 	size_t l1, l2;
-> 
-> 	l2 = strlen(s2);
-> 	if (!l2)
-> 		return (char *)s1;
-> 	l1 = strlen(s1);
-> 	while (l1 >= l2) {
-> 		l1--;
-> 		if (!memcmp(s1, s2, l2))
-> 			return (char *)s1;
-> 		s1++;
-> 	}
-> 	return NULL;
-> }
-> 
-> char *strstr2(const char *s1, const char *s2)
-> {
-> 	size_t l2;
-> 	const char *pchk = s1;
-> 
-> #if 1//def __HAVE_ARCH_STRLEN
-> 	l2 = strlen(s2);
-> #else
-> 	for (l2 = 0; s2[l2] != 0; l2++)
-> 		/* nothing */;
-> #endif
-> 	if (!l2)
-> 		return (char *)s1;
-> 
-> 	/*
-> 	 * Sunday matching
-> 	 */
-> 	while (1) {
-> 		size_t i;
-> 		char k;
-> 
-> 		/* compare */
-> 		for (i = 0; i < l2; i++) {
-> 			if (s1[i] != s2[i])
-> 				break;
-> 		}
-> 		if (i >= l2)
-> 			return (char *)s1;
-> 
-> 		/* if s1 terminate early? */
-> 		if (pchk < s1 + i)
-> 			pchk = s1 + i;
-> 		do {
-> 			k = *pchk;
-> 			if (k == 0)
-> 				return NULL;
-> 		} while (pchk++ != s1 + l2);
-> 
-> 		/* find the k's last presence in s2 (k = s1[l2]) */
-> 		for (i = l2; --i != (size_t)-1; ) {
-> 			if (k == s2[i])
-> 				break;
-> 		}
-> 
-> 		/* shift */
-> 		s1 += l2 - i;
-> 	}
-> }
-> 
-> #ifdef __i386__
-> #  define RDTSC_CLOBBER "%eax", "%ebx", "%ecx", "%edx"
-> #elif __x86_64__
-> #  define RDTSC_CLOBBER "%rax", "%rbx", "%rcx", "%rdx"
-> #else
-> # error unknown platform
-> #endif
-> 
-> #define RDTSC_START(cycles)                                \
->     do {                                                   \
->         register unsigned cyc_high, cyc_low;               \
->         asm volatile("CPUID\n\t"                           \
->                      "RDTSC\n\t"                           \
->                      "mov %%edx, %0\n\t"                   \
->                      "mov %%eax, %1\n\t"                   \
->                      : "=r" (cyc_high), "=r" (cyc_low)     \
->                      :: RDTSC_CLOBBER);                    \
->         (cycles) = ((uint64_t)cyc_high << 32) | cyc_low;   \
->     } while (0)
-> 
-> #define RDTSC_STOP(cycles)                                 \
->     do {                                                   \
->         register unsigned cyc_high, cyc_low;               \
->         asm volatile("RDTSCP\n\t"                          \
->                      "mov %%edx, %0\n\t"                   \
->                      "mov %%eax, %1\n\t"                   \
->                      "CPUID\n\t"                           \
->                      : "=r" (cyc_high), "=r" (cyc_low)     \
->                      :: RDTSC_CLOBBER);                    \
->         (cycles) = ((uint64_t)cyc_high << 32) | cyc_low;   \
->     } while (0)
-> 
-> typedef unsigned long long TIME_T;
-> #define start_time(start)		RDTSC_START(start)
-> #define stop_time(stop)			RDTSC_STOP(stop)
-> #define diff_time(start, stop)	(stop - start)
-> 
-> #define MAX_HAYSTACK_LENGTH 64
-> #define MAX_NEEDLE_LENGTH 16
-> #define TEST_LOOPS 1000
-> 
-> char haystack[MAX_HAYSTACK_LENGTH + 1];
-> char needle[MAX_NEEDLE_LENGTH + 1];
-> 
-> int main(int argc, char **argv)
-> {
->     size_t i, j, n;
->     void *p1, *p2;
-> 
->     srand(time(0));
-> 
->     for (i = 0; i < MAX_HAYSTACK_LENGTH; ) {
->         haystack[i] = rand();
->         if (haystack[i] != 0)
->             i++;
->     }
->     haystack[i] = 0;
-> 
->     for (i = 0; i < MAX_HAYSTACK_LENGTH; i++) {
->         TIME_T start, stop;
->         unsigned long long elapsed1, elapsed2;
-> 
->         j = rand() % MAX_NEEDLE_LENGTH;
->         if (i <= MAX_HAYSTACK_LENGTH - (MAX_NEEDLE_LENGTH - j))
->             n = i;
->         else
->             n = MAX_HAYSTACK_LENGTH - (MAX_NEEDLE_LENGTH - j);
->         memcpy(needle + j, haystack + n, MAX_NEEDLE_LENGTH - j);
->         needle[MAX_NEEDLE_LENGTH] = 0;
-> 
->         elapsed1 = ~0UL;
->         for (n = 0; n < TEST_LOOPS; n++) {
->             start_time(start);
->             asm volatile("":::"memory");
->             p1 = strstr1(haystack, needle + j);
->             asm volatile("":::"memory");
->             stop_time(stop);
-> 
->             if (elapsed1 > diff_time(start, stop))
->                 elapsed1 = diff_time(start, stop);
->         }
-> 
->         elapsed2 = ~0UL;
->         for (n = 0; n < TEST_LOOPS; n++) {
->             start_time(start);
->             asm volatile("":::"memory");
->             p2 = strstr2(haystack, needle + j);
->             asm volatile("":::"memory");
->             stop_time(stop);
-> 
->             if (elapsed2 > diff_time(start, stop))
->                 elapsed2 = diff_time(start, stop);
->         }
-> 
->         if (p1 != p2)
->             fprintf(stderr, "Error: %p != %p\n", p1, p2);
->         else
->             fprintf(stdout, "%3d, %3d:\t%lld,\t%lld\n", i, j, elapsed1, elapsed2);
->     }
-> 
->     return 0;
-> }
-> 
-> The test result:
-> [zzx@fedora strstr]$ ./test
->   0,   3:	68,	68
->   1,  13:	74,	66
->   2,   2:	88,	94
->   3,   5:	96,	88
->   4,   8:	108,	80
->   5,  13:	110,	76
->   6,  12:	132,	82
->   7,   9:	142,	82
->   8,  11:	152,	88
->   9,  13:	146,	90
->  10,  14:	154,	94
->  11,  15:	132,	104
->  12,   1:	196,	114
->  13,   8:	206,	108
->  14,  14:	186,	110
->  15,  13:	194,	112
->  16,   0:	260,	124
->  17,  10:	258,	124
->  18,  15:	208,	136
->  19,  11:	276,	136
->  20,  13:	256,	128
->  21,  12:	292,	144
->  22,  11:	300,	142
->  23,  13:	278,	144
->  24,   7:	334,	152
->  25,   1:	346,	166
->  26,   6:	368,	168
->  27,  15:	278,	182
->  28,   1:	374,	168
->  29,   3:	382,	188
->  30,   8:	398,	172
->  31,   4:	402,	188
->  32,   0:	430,	180
->  33,  10:	398,	184
->  34,  10:	410,	192
->  35,   8:	434,	180
->  36,   7:	444,	198
->  37,   6:	454,	204
->  38,   1:	464,	220
->  39,   2:	472,	206
->  40,   4:	482,	210
->  41,  15:	388,	262
->  42,   2:	502,	210
->  43,   5:	510,	220
->  44,   8:	520,	214
->  45,   0:	564,	236
->  46,   3:	550,	242
->  47,   8:	552,	262
->  48,  10:	528,	270
->  49,   2:	572,	256
->  50,   3:	586,	246
->  51,   7:	590,	278
->  52,  14:	506,	308
->  53,  14:	514,	298
->  54,   4:	602,	240
->  55,   5:	626,	284
->  56,  15:	506,	316
->  57,  10:	606,	326
->  58,   4:	606,	240
->  59,   0:	596,	240
->  60,  13:	570,	316
->  61,  13:	576,	328
->  62,   5:	618,	284
->  63,  13:	576,	328
-> 
-> Thanks!
-> 
+There are two inconsistent indenting in calibrate_APIC_clock()
+and activate_managed(). Remove the surplus TAB.
 
-The original strnstr might has a bug too!
-For example, assume s1 is "123\0abc...." and s2 is "abc\0",
-call strnstr(s1, s2, 7) will return &s1[4], but the correct result is NULL.
+Signed-off-by: Yi Wang <wang.yi59@zte.com.cn>
+Reviewed-by: Jiang Biao <jiang.biao2@zte.com.cn>
+---
+ arch/x86/kernel/apic/apic.c   | 2 +-
+ arch/x86/kernel/apic/vector.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/arch/x86/kernel/apic/apic.c b/arch/x86/kernel/apic/apic.c
+index 5071cc7..f222ebc 100644
+--- a/arch/x86/kernel/apic/apic.c
++++ b/arch/x86/kernel/apic/apic.c
+@@ -937,7 +937,7 @@ static int __init calibrate_APIC_clock(void)
+ 
+ 	if (levt->features & CLOCK_EVT_FEAT_DUMMY) {
+ 		pr_warning("APIC timer disabled due to verification failure\n");
+-			return -1;
++		return -1;
+ 	}
+ 
+ 	return 0;
+diff --git a/arch/x86/kernel/apic/vector.c b/arch/x86/kernel/apic/vector.c
+index b708f59..19e0b2f 100644
+--- a/arch/x86/kernel/apic/vector.c
++++ b/arch/x86/kernel/apic/vector.c
+@@ -433,7 +433,7 @@ static int activate_managed(struct irq_data *irqd)
+ 		pr_err("Managed startup irq %u, no vector available\n",
+ 		       irqd->irq);
+ 	}
+-       return ret;
++	return ret;
+ }
+ 
+ static int x86_vector_activate(struct irq_domain *dom, struct irq_data *irqd,
+-- 
+1.8.3.1
 
