@@ -2,94 +2,104 @@ Return-Path: <SRS0=OQFz=KL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA60DC6778F
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:45:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1758C6778F
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:48:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 49CEB20894
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:45:00 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="athAdx/d"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 49CEB20894
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 78D3E2089E
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:48:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 78D3E2089E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730756AbeG0MGS (ORCPT
+        id S1730612AbeG0MJr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 08:06:18 -0400
-Received: from mail-ua0-f193.google.com ([209.85.217.193]:41483 "EHLO
-        mail-ua0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729519AbeG0MGS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 08:06:18 -0400
-Received: by mail-ua0-f193.google.com with SMTP id h1-v6so727310uao.8;
-        Fri, 27 Jul 2018 03:44:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=B5ipsHWpjV5F9Hej6Wn0EK1AtUmLueusI+giUSnEp3A=;
-        b=athAdx/dAHnksT6NGzpZnQn11t9roR1OIhOnVkYNhtJs1injsGMB1oeDkIsI2hO08y
-         Epty2h5FtF5M4clvKSKoxHTC/YLQyU3yJ730uYaz+ehqJhcTa3uUUiSUmjwAKgz2WLgw
-         +uCMONUlvzq0aXKaD9Gq2H2Z62lz2lOmpjDu1g3nx3rpZThgzy+5XuBy66hIT0o0fpPO
-         WO3lCsZ+ymRViYkOEJc35Dnnq1mmzyvek2ZKX3Tt4rXfG0TByfUxDdAZH5d1C7F97/4H
-         uT7w3K60C9HM70Y7cWaR95nx8j969OAkcRQ5iNbaGf+P+KfIZZSa0T4pJWgij8l+lw+8
-         UnWA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=B5ipsHWpjV5F9Hej6Wn0EK1AtUmLueusI+giUSnEp3A=;
-        b=uNdMdSqw+Yv7qdVO/YHTsN6grkEaRGyq8hJ8UVshRnEMC8zUKhtMoG64GhWaHaeact
-         4dAE1+I/k+a7UjxFG1SZ2EdwnAzeWJZO5DayspXnDr0xQy635fX8W0tPDajSRRSZHFZC
-         fTmscOAFB6hKj5Hl/5QR9HtrGVRfmYQ2SFu2b6hbajnvj263+g5nDvelygC+zrNSr0C3
-         8gX1MaO7Kg4AXxVLzBfvPjVOcTpgoXysnaz+EDuh1H/d2gKtEGmDnOW6xFT+cBvjpNOJ
-         hRnsLwI4D2nR+tvHibEaQXjZEyb1TClZSHHa1GA+xx8mMsPGCEBORoios8fAeZB5HsZw
-         SFrw==
-X-Gm-Message-State: AOUpUlGxLLxCRIy+1619eddH8WzIkmQBsQsTQvgyDqdTX1q7Hk1o+qaO
-        4K8V2XfNq0T9xEPIrklw67p6Sl5AsaVvrKxYO2hyg0UP
-X-Google-Smtp-Source: AAOMgpe6R6WJfPRe+NLgHKGfEXuoW2UK8YgLEtcKRVceIb0A65nn+UKC/j3VHbtJlH/+T2qFhEfPOEufcrSM0P08U+A=
-X-Received: by 2002:ab0:1b93:: with SMTP id k19-v6mr4063032uai.122.1532688297284;
- Fri, 27 Jul 2018 03:44:57 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a67:2149:0:0:0:0:0 with HTTP; Fri, 27 Jul 2018 03:44:56
- -0700 (PDT)
-In-Reply-To: <20180726225508.74612-1-dbasehore@chromium.org>
-References: <20180726225508.74612-1-dbasehore@chromium.org>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Fri, 27 Jul 2018 13:44:56 +0300
-Message-ID: <CAHp75VfXXdzmp7M8rpcYTTKzwMT=QKt=_m7m7Bfp7uM4izMkrQ@mail.gmail.com>
-Subject: Re: [PATCH] i2c: enable async suspend/resume on i2c devices
-To:     Derek Basehore <dbasehore@chromium.org>,
-        Hans de Goede <hdegoede@redhat.com>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        linux-i2c <linux-i2c@vger.kernel.org>,
-        Douglas Anderson <dianders@chromium.org>,
-        Dmitry Torokhov <dtor@chromium.org>,
-        venkateswarlu.v.vinjamuri@intel.corp-partner.google.com
-Content-Type: text/plain; charset="UTF-8"
+        Fri, 27 Jul 2018 08:09:47 -0400
+Received: from mga14.intel.com ([192.55.52.115]:15432 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729955AbeG0MJr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Jul 2018 08:09:47 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Jul 2018 03:48:26 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,408,1526367600"; 
+   d="scan'208";a="57609564"
+Received: from hu.sh.intel.com ([10.239.160.33])
+  by fmsmga007.fm.intel.com with ESMTP; 27 Jul 2018 03:48:24 -0700
+From:   Chen Hu <hu1.chen@intel.com>
+To:     andy.shevchenko@gmail.com
+Cc:     Chen Hu <hu1.chen@intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Subramony Sesha <subramony.sesha@intel.com>,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        Stefan Potyra <Stefan.Potyra@elektrobit.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Archana Patni <archana.patni@intel.com>,
+        linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] serial: 8250_dw: always set baud rate in dw8250_set_termios
+Date:   Fri, 27 Jul 2018 18:32:41 +0800
+Message-Id: <20180727103242.29675-1-hu1.chen@intel.com>
+X-Mailer: git-send-email 2.13.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 27, 2018 at 1:55 AM, Derek Basehore <dbasehore@chromium.org> wrote:
-> This enables the async suspend property for i2c devices. This reduces
-> the suspend/resume time considerably on platforms with multiple i2c
-> devices (such as a trackpad or touchscreen).
+dw8250_set_termios() doesn't set baud rate if the arg "old ktermios" is
+NULL. This happens during resume.
+Call Trace:
+...
+[   54.928108] dw8250_set_termios+0x162/0x170
+[   54.928114] serial8250_set_termios+0x17/0x20
+[   54.928117] uart_change_speed+0x64/0x160
+[   54.928119] uart_resume_port
+...
 
-How did you test this?
+So the baud rate is not restored after S3 and breaks the apps who use
+UART, for example, console and bluetooth etc.
 
-Especially on Chromebooks based on Intel Cherrytrail / Braswell
-platforms, they have a painful PMIC vs. OS design solution.
+We address this issue by setting the baud rate irrespective of arg
+"old", just like the drivers for other 8250 IPs. This is tested with
+Intel Broxton platform.
 
-+Cc: Hans, who did a lot in this area.
+Signed-off-by: Chen Hu <hu1.chen@intel.com>
+---
+We found UART based apps such as console and bluetooth etc. are broken after S3
+on Intel Broxton platform. The further debug shows that the baud rate of all
+UARTs are different with our settings after S3. During S3, the 8250 related IPs
+may lose power and thus lose the OS's baud rate setting. The driver should
+restore it during resume. However, Desinware 8250's driver doesn't restore the
+baud if the arg "old ktermios" is NULL. Unfortunely, it get a NULL arg from
+serial_core and skips this step in resume path.
 
+Andy guide me that he doesn't see other 8250 IPs judge old==NULL to set baud.
+
+With the modification in this email, the baud rate is OK after S3. A local
+quick test doesn't show any error. Report the issue here and hope some serial
+experts can present formal patch to fix.
+ drivers/tty/serial/8250/8250_dw.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/tty/serial/8250/8250_dw.c b/drivers/tty/serial/8250/8250_dw.c
+index 02a9b995e8f9..82bf46507f6d 100644
+--- a/drivers/tty/serial/8250/8250_dw.c
++++ b/drivers/tty/serial/8250/8250_dw.c
+@@ -250,7 +250,7 @@ static void dw8250_set_termios(struct uart_port *p, struct ktermios *termios,
+ 	long rate;
+ 	int ret;
+ 
+-	if (IS_ERR(d->clk) || !old)
++	if (IS_ERR(d->clk))
+ 		goto out;
+ 
+ 	clk_disable_unprepare(d->clk);
 -- 
-With Best Regards,
-Andy Shevchenko
+2.13.0
+
