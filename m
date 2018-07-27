@@ -2,209 +2,160 @@ Return-Path: <SRS0=OQFz=KL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EAC99C6778F
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 07:22:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B089C6778F
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 07:29:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9699420862
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 07:22:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9699420862
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id AB40A20857
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 07:29:52 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=xilinx.onmicrosoft.com header.i=@xilinx.onmicrosoft.com header.b="Cu+tCuMM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AB40A20857
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xilinx.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729576AbeG0Imp (ORCPT
+        id S1729539AbeG0IuZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 04:42:45 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:55632 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725861AbeG0Imp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 04:42:45 -0400
-Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w6R7J5nG140867
-        for <linux-kernel@vger.kernel.org>; Fri, 27 Jul 2018 03:22:11 -0400
-Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2kfw67v62r-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Fri, 27 Jul 2018 03:22:10 -0400
-Received: from localhost
-        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <tmricht@linux.ibm.com>;
-        Fri, 27 Jul 2018 08:22:09 +0100
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
-        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 27 Jul 2018 08:22:05 +0100
-Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w6R7M4sN24051730
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 27 Jul 2018 07:22:04 GMT
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 89C064C040;
-        Fri, 27 Jul 2018 10:22:18 +0100 (BST)
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 138EE4C050;
-        Fri, 27 Jul 2018 10:22:18 +0100 (BST)
-Received: from oc3784624756.ibm.com (unknown [9.152.212.85])
-        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Fri, 27 Jul 2018 10:22:17 +0100 (BST)
-Subject: Re: [PATCH v2] perf build: Build error in libbpf with
- EXTRA_CFLAGS="-Wp,-D_FORTIFY_SOURCE=2 -O2"
-To:     Daniel Borkmann <daniel@iogearbox.net>,
-        Jakub Kicinski <jakub.kicinski@netronome.com>
-Cc:     ast@kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, heiko.carstens@de.ibm.com,
-        brueckner@linux.vnet.ibm.com, schwidefsky@de.ibm.com,
-        wangnan0@huawei.com
-References: <20180725072126.2232-1-tmricht@linux.ibm.com>
- <20180725184835.5d37bef4@cakuba.netronome.com>
- <08b6ed57-40a4-7468-b78d-f2a2c5ab10a8@iogearbox.net>
-From:   Thomas-Mich Richter <tmricht@linux.ibm.com>
-Organization: IBM
-Date:   Fri, 27 Jul 2018 09:22:03 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
-MIME-Version: 1.0
-In-Reply-To: <08b6ed57-40a4-7468-b78d-f2a2c5ab10a8@iogearbox.net>
-Content-Type: text/plain; charset=utf-8
+        Fri, 27 Jul 2018 04:50:25 -0400
+Received: from mail-eopbgr720080.outbound.protection.outlook.com ([40.107.72.80]:51264
+        "EHLO NAM05-CO1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726034AbeG0IuZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Jul 2018 04:50:25 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=xilinx.onmicrosoft.com; s=selector1-xilinx-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=oO6tb4ZPGmZBFLIdWJ0c7zHJYS7KjqDapriIGDGVvKQ=;
+ b=Cu+tCuMMvYkfyFxEz8QHPRe6SGzbd1cESsSaK4xroCjpRxT4dqMNJldMULmqYD3axK81CyKDQvKeaYlluGYI8h1ffkFleaIfoOScVEyO5ccBeJUCK8tOHyGWIugb6OP1smlR1CfzhvglGFDRidOLuxPGKyjBQievzRP7CIydI/o=
+Received: from MWHPR02MB2816.namprd02.prod.outlook.com (10.175.50.14) by
+ MWHPR02MB3168.namprd02.prod.outlook.com (10.164.133.141) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.995.16; Fri, 27 Jul 2018 07:29:35 +0000
+Received: from MWHPR02MB2816.namprd02.prod.outlook.com
+ ([fe80::8453:d61e:5ced:a726]) by MWHPR02MB2816.namprd02.prod.outlook.com
+ ([fe80::8453:d61e:5ced:a726%3]) with mapi id 15.20.0995.019; Fri, 27 Jul 2018
+ 07:29:35 +0000
+From:   Anurag Kumar Vulisha <anuragku@xilinx.com>
+To:     Felipe Balbi <balbi@kernel.org>, Rob Herring <robh@kernel.org>
+CC:     "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "v.anuragkumar@gmail.com" <v.anuragkumar@gmail.com>,
+        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH] usb: dwc3: core: Add quirk for enabling AutoRetry feature
+ in the controller
+Thread-Topic: [PATCH] usb: dwc3: core: Add quirk for enabling AutoRetry
+ feature in the controller
+Thread-Index: AQHUIN2h2dmt05eMckmpM4FUm2VKGKSgY1yAgABpkrCAAJTigIAACINg
+Date:   Fri, 27 Jul 2018 07:29:35 +0000
+Message-ID: <MWHPR02MB2816FFCAB118C07C7754BF58A72A0@MWHPR02MB2816.namprd02.prod.outlook.com>
+References: <1532168920-3269-1-git-send-email-anurag.kumar.vulisha@xilinx.com>
+ <20180725200325.GA21007@rob-hp-laptop>
+ <MWHPR02MB2816DDEAE84716F88B08EB46A72B0@MWHPR02MB2816.namprd02.prod.outlook.com>
+ <877eli1c72.fsf@linux.intel.com>
+In-Reply-To: <877eli1c72.fsf@linux.intel.com>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 18072707-4275-0000-0000-0000029F3AD9
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18072707-4276-0000-0000-000037A73D35
-Message-Id: <325e3d58-89fb-1b50-8865-22c6f372671a@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-27_03:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1806210000 definitions=main-1807270075
+X-MS-Has-Attach: 
+X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=anuragku@xilinx.com; 
+x-originating-ip: [149.199.50.133]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;MWHPR02MB3168;6:vLCPtrtPrzRNJEW6S+b6ib+dVSWXOt+NIWkPqpvdH3IAOa7EAcBB0P+1n674YaFhK02LoL3senX+DgX7gzzcGXm/NrfN8IKLoE1m97+BMje2KxvkgxJ0kiJVSLuBN8hEjLjOc4fzE1MDz2PBPQudFHYzxrxUsNJ6fxgEjVm6PuIUizPTBWMYfh0nBiuwpdjTMgtW3/cWw09wNf9tYwgUr2mLzZIDRUaw4Y1/lPAZvS66abpdjQsja3PlzgHOYD/qduCQ5Am/gtx+0eu5Lxrr+zThO8J9ZqfMv9RDX8zmiyigocrMicvU+SoRVMrbYdsN/ET3O/gAGauCvpx/LMR4d86oAbQSq3w3CKdkt/H34uCvVI4euOKh9pxVhZjeeXr8xJQY8n4FafN98elKHg5Ipn5lAPTXH+Jqu4fyF+6e8Vubm29aZvcKSxK9TP7uiZUFJv2koax03f0u8b/pE9mlOw==;5:6oysuYoQ48+QdOXihohACuuFBLKaQGvtcXHJnml7VcRQtGueCH37xaaljEXLYLCbSANSW0gqWAFE89CvFZzMPwkAslcKA8vLCCSesxhwSbyYrrplo/52A5FLtjU5pWXzsx9htbPY+ukNFNYx4E42kPpyQHBYB9TMEiuTGV1cdWs=;7:qlJM+MSfPHEtWMTaXoOS441LfXGD88aS0rOOSCCCpDvbJzPJb7RcCF3CuIbnBOWi0tHax6NqBvk6arD859cyjbdsy6GgWrQhZRiARanUQa07byOceJv1Z5Ov13ygbD9j3KUlAR3kUVCnYW9i3jT3A15cKqz2CqFj6sS1cKIV4kXa10w5glacM817PGzufNpjhCKwpMb+F12Q5R0+AMAXh2F7D6zKFHkV272RhvcYzxh7yQQgoj6EtBFmjXYTAcYC
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: f1b814c2-92a0-4c4a-0016-08d5f392b3fe
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:MWHPR02MB3168;
+x-ms-traffictypediagnostic: MWHPR02MB3168:
+x-microsoft-antispam-prvs: <MWHPR02MB316884A7295793021E94307EA72A0@MWHPR02MB3168.namprd02.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(180628864354917)(9452136761055)(85827821059158)(788757137089)(192813158149592);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3002001)(10201501046)(3231311)(944501410)(52105095)(93006095)(93001095)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123564045)(20161123560045)(20161123562045)(6072148)(201708071742011)(7699016);SRVR:MWHPR02MB3168;BCL:0;PCL:0;RULEID:;SRVR:MWHPR02MB3168;
+x-forefront-prvs: 07467C4D33
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(1496009)(396003)(39860400002)(366004)(136003)(346002)(376002)(13464003)(199004)(189003)(81156014)(81166006)(74316002)(486006)(476003)(11346002)(256004)(53936002)(186003)(76176011)(7696005)(4326008)(305945005)(6246003)(39060400002)(7736002)(551934003)(110136005)(54906003)(102836004)(14454004)(86362001)(6506007)(26005)(316002)(446003)(5250100002)(2900100001)(99286004)(106356001)(229853002)(97736004)(66066001)(2906002)(55016002)(93886005)(9686003)(33656002)(5660300001)(105586002)(6436002)(25786009)(68736007)(8676002)(8936002)(478600001)(6116002)(3846002);DIR:OUT;SFP:1101;SCL:1;SRVR:MWHPR02MB3168;H:MWHPR02MB2816.namprd02.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: xilinx.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: Gm30Agel++PiL3HNmFVaurVOkYFJvenHHwA6ojWekKcjF5ocBAobCF/oXOZV6hEnk2dNH8AJd6qmR2ZOSzE52x0KivjllovhLYIWMEVv9kwfac69wJ25UVDLq+5ZLg8XLXmWBxtuIpNU/76BjhMW5rGXXA6J7n1MFhbIeJlokIowqEoCswrcHNFvItoVfDMFGAaAwwYVd70FB3AD+osJhr/fzSF7ySkfd4eymA63f9imE7Q41zPLTCcSBUIakUHHJjfgzOpMmgzmTPog+SQ5tT7wuw7Vom1sjjncUVZ2zqJHFIB/CwR8YLsXSHZMfyXm12NOC0/s2NKF+QeneSQsC8XnMlFZF5G6CDc054LahrQ=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: xilinx.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f1b814c2-92a0-4c4a-0016-08d5f392b3fe
+X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Jul 2018 07:29:35.2334
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 657af505-d5df-48d0-8300-c31994686c5c
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR02MB3168
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/27/2018 04:16 AM, Daniel Borkmann wrote:
-> On 07/26/2018 03:48 AM, Jakub Kicinski wrote:
->> On Wed, 25 Jul 2018 09:21:26 +0200, Thomas Richter wrote:
->>> commit a5b8bd47dcc57 ("bpf tools: Collect eBPF programs from their own sections")
->>
->> Hmm.. are you sure it's not 531b014e7a2f ("tools: bpf: make use of
->> reallocarray") that caused the issue?  That commit made us switch from
->> XSI-compliant to GNU-specific strerror_r() implementation..
->>
->> /me checks
->>
->> Yes it looks like 531b014e7a2f~ builds just fine.
->>
->> Daniel, did you try to apply v1 to the bpf tree?  Perhaps there is a
->> confusion about the trees here, if this is caused by my recent change
->> it's a bpf-next material.  strerror() works, but strerror_r() seems
->> nicer, so perhaps we could keep it if the patch worked in bpf-next?
-> 
-> Yeah indeed, the issue is only in bpf-next. When I compile libbpf from
-> bpf tree with the below flags then it's all good> 
-> Agree that we should rather use strerror_r() given this is a library.
 
-Are you sure to stick with strerror_r? I ask because it is the only
-occurence of strerror_r in this file. All other error messages use strerror
-as in:
-pr_warning("failed to create map (name: '%s'): %s\n",
-                                   map->name,
-                                   strerror(errno));
+Hi Felipe,
 
-
-$ fgrep strerror tools/lib/bpf/libbpf.c
-                                        strerror(errno));
-          issue I try to solve--->  strerror_r(-err, errmsg, sizeof(errmsg));
-                                   map->name, strerror(errno), errno);
-                                   strerror(errno));
-        pr_warning("load bpf program failed: %s\n", strerror(errno));
-                pr_warning("failed to statfs %s: %s\n", dir, strerror(errno));
-                pr_warning("failed to pin program: %s\n", strerror(errno));
-                pr_warning("failed to mkdir %s: %s\n", path, strerror(-err));
-                pr_warning("failed to pin map: %s\n", strerror(errno));
-$
-
-The next issue with strerror_r is to assign the return value to a variable.
-Then we end up with variable set but not used:
-libbpf.c: In function ‘bpf_object__elf_collect’:
-libbpf.c:809:35: error: variable ‘cp’ set but not used [-Werror=unused-but-set-variable]
-     char errmsg[STRERR_BUFSIZE], *cp;
-                                   ^
-cc1: all warnings being treated as errors
-Here is the source:
-                       if (err) {
-                                char errmsg[STRERR_BUFSIZE], *cp;
-
-                                cp = strerror_r(-err, errmsg, sizeof(errmsg));
-                                pr_warning("failed to alloc program %s (%s): %s",
-                                           name, obj->path, errmsg);
-                        }
-
-To fix this requires something like:
-                               pr_warning("failed to alloc program %s (%s): %s",
-                                           name, obj->path, cp);
-
-And after pr_warning() is done, the local array errmsg is deleted.
-
-A lot of overkill in my opinion, unless I miss something.
-
-
->>> causes a compiler error when building the perf tool in the linux-next tree.
->>> I compile it using a FEDORA 28 installation, my gcc compiler version:
->>> gcc (GCC) 8.0.1 20180324 (Red Hat 8.0.1-0.20)
+>-----Original Message-----
+>From: Felipe Balbi [mailto:balbi@kernel.org]
+>Sent: Thursday, July 26, 2018 4:44 PM
+>To: Anurag Kumar Vulisha <anuragku@xilinx.com>; Rob Herring <robh@kernel.o=
+rg>
+>Cc: gregkh@linuxfoundation.org; mark.rutland@arm.com;
+>v.anuragkumar@gmail.com; linux-usb@vger.kernel.org; devicetree@vger.kernel=
+.org;
+>linux-kernel@vger.kernel.org
+>Subject: RE: [PATCH] usb: dwc3: core: Add quirk for enabling AutoRetry fea=
+ture in the
+>controller
+>
+>
+>>>>
+>>>> diff --git a/Documentation/devicetree/bindings/usb/dwc3.txt
+>>>b/Documentation/devicetree/bindings/usb/dwc3.txt
+>>>> index 7f13ebe..2ba2bc2 100644
+>>>> --- a/Documentation/devicetree/bindings/usb/dwc3.txt
+>>>> +++ b/Documentation/devicetree/bindings/usb/dwc3.txt
+>>>> @@ -94,6 +94,11 @@ Optional properties:
+>>>>  			this and tx-thr-num-pkt-prd to a valid, non-zero value
+>>>>  			1-16 (DWC_usb31 programming guide section 1.2.3) to
+>>>>  			enable periodic ESS TX threshold.
+>>>> + - snps,enable_auto_retry: Set to enable Auto retry Feature to make
+>>>> + the
 >>>
->>> The file that causes the error is tools/lib/bpf/libbpf.c
+>>>s/_/-/
+>> Sorry, I am not able to understand what needs to fixed here. Please
+>> help me in understanding, so that I can fix it in v2.
+>
+>replace _ with -
+>
+>>>> +			controller operating in Host mode on seeing transaction
+>>>> +			errors(CRC errors or internal overrun scenerios) on IN
+>>>> +			transfers to reply to the device with a non-terminating
+>>>> +			retry ACK (i.e, an ACK TP with Retry=3D1 & Nump !=3D 0)
 >>>
->>> Here is the error message:
-> [...]
->>> @@ -2334,7 +2331,7 @@ bpf_perf_event_read_simple(void *mem, unsigned long size,
->>>  	__u64 data_tail = header->data_tail;
->>>  	__u64 data_head = header->data_head;
->>>  	void *base, *begin, *end;
->>> -	int ret;
->>> +	int ret = 0;
->>>  
->>>  	asm volatile("" ::: "memory"); /* in real code it should be smp_rmb() */
->>>  	if (data_head == data_tail)
->>
->> This looks like a separate issue.  The ret variable should really be
->> enum bpf_perf_event_ret, so could you please initialize it to one of the
->> values of this enum?
->>
->> The uninitilized condition can only happen if (data_head != data_tail)
->> but at the same time (data_head % size == data_tail % size) which
->> should never really happen...  Perhaps initializing to
->> LIBBPF_PERF_EVENT_ERROR would make sense?
->>
->> Or better still adding:
->>
->> diff --git a/tools/lib/bpf/libbpf.c b/tools/lib/bpf/libbpf.c
->> index f732237610e5..fa5a25945f19 100644
->> --- a/tools/lib/bpf/libbpf.c
->> +++ b/tools/lib/bpf/libbpf.c
->> @@ -2289,6 +2289,8 @@ bpf_perf_event_read_simple(void *mem, unsigned long size,
->>  
->>         begin = base + data_tail % size;
->>         end = base + data_head % size;
->> +       if (being == end)
->> +               return LIBBPF_PERF_EVENT_ERROR;
-> 
-> Sounds good to me.
-> 
+>>>Seems like the property is unnecessary. When would you not want this
+>>>retry behavior? Why not just enable unconditionally in the driver?
+>>>
+>> There is no harm in adding this fix always but I think this Retry
+>> feature should be added depending on the user and type of the
+>> application. For example, applying this feature in a streaming
+>> application where isochronous transfers are used might end up in
+>
+>read the docs. Auto Retry in only for non-isochronous IN endpoints. You do=
+n't need
+>any quirk for this. Just enable it unconditionally. Actually, you wanna ma=
+ke sure the
+>core can run in Host mode before setting this, but that's it. No need for =
+a quirk.
+>
+Thanks for making me understand. Will remove this quirk and send v2
 
-If you want I can send you a separate patch for this.
-
-
--- 
-Thomas Richter, Dept 3303, IBM s390 Linux Development, Boeblingen, Germany
---
-Vorsitzende des Aufsichtsrats: Martina Koederitz 
-Geschäftsführung: Dirk Wittkopp
-Sitz der Gesellschaft: Böblingen / Registergericht: Amtsgericht Stuttgart, HRB 243294
-
+Best Regards,
+Anurag Kumar Vulisha
