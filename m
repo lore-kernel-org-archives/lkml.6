@@ -2,98 +2,111 @@ Return-Path: <SRS0=OQFz=KL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF3BBC6778F
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 08:41:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72434C67790
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 08:41:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 945FA20893
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 08:41:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 258A420895
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 08:41:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DycbC6mN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 945FA20893
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="KVb8H9ks"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 258A420895
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730408AbeG0KCC (ORCPT
+        id S1730525AbeG0KCI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 06:02:02 -0400
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:41718 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729481AbeG0KCB (ORCPT
+        Fri, 27 Jul 2018 06:02:08 -0400
+Received: from mail-oi0-f68.google.com ([209.85.218.68]:37449 "EHLO
+        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729481AbeG0KCH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 06:02:01 -0400
-Received: by mail-pl0-f65.google.com with SMTP id w8-v6so2026111ply.8;
-        Fri, 27 Jul 2018 01:41:10 -0700 (PDT)
+        Fri, 27 Jul 2018 06:02:07 -0400
+Received: by mail-oi0-f68.google.com with SMTP id k81-v6so7759829oib.4
+        for <linux-kernel@vger.kernel.org>; Fri, 27 Jul 2018 01:41:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=XGmq/x6P7K2Cm+nsR2uCIe5Myu9pfo9b8TAre9jUuvM=;
-        b=DycbC6mNe5Dn2fKKN9kdGAO0a/45yfB5EhWdSCyiMX6HQBH8+rE9qR/5/TGevrhz7p
-         bNzXzlzwlHo/jPI3SZFUV2BOvBu/Kor0TdFIYG1W+DI0AW0kp2HixitcDYgUAYpz9mCo
-         IgKX3NjpcM9rjy6I1JGomZDuBvn8Qk+Bmu30/sFsePTMeSc8dm4VH8syDcTcr4it+7IO
-         oQ6S2L/Msqk6w56QiQZ44CZev28HiAIBND3VLwCzNll7ULOlZWi8nmF7jIHVf5j6UHRK
-         2P0Cq87/lMJSL9mxJXnSMn43Ns8/HnfddNfuhD5cs04yPHMu3Z2n3jNnWIYoudIafKGs
-         E9vw==
+        d=linaro.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=xiV6W6QUa6RJq0yEgSuELZNPrpqsyFzh7iY14hvALKw=;
+        b=KVb8H9ksWGYTSaKoYGki4Ns9wHJNmxiCvRowg2CzbPsXz1yt8kdXG2Ne887ML7FI6S
+         IDFaOi8NRElUeKBabnwhziGaok9txvwyxbTgSX+92em9fvhczXmCvwErXKZrt4XXQcFl
+         wW7/kzawrWI5yeV3/57FradCR6LCP+ZtToIPM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=XGmq/x6P7K2Cm+nsR2uCIe5Myu9pfo9b8TAre9jUuvM=;
-        b=XWreVlimN2p9MRMA2z25PhMrhsIA4nN1kz3ispLzJA6F1JLpAtQ5Cvn00Gi9gbpZ3w
-         h3ZcbGg+jC+JJ7AqcWyHqb3FRtAOhjPcc22m4brROOESnxL6kOoTkuy5wsjg1KJaouRr
-         fMTtCjjus+6j8XUjODpjy9XsfpaTJo6+9cie67FkJzHAaLSol4uxPEb+CppolV/Q7k2m
-         FHAXdc+iKe2OBQCvPjtz1Ha94S3+3USEaDSXRwhYGz5YB3du07VpHFavAHERnCYlxdmw
-         XZPK5O33yXTGsUFrP3T47w4jKxVyuFJ3M8fIpX2DHAcCLWBQfG33bnEzvXVZGYgbB/zx
-         JhNQ==
-X-Gm-Message-State: AOUpUlESA6Ku0US3rQ5peW3+4g/WW52qtSk7IiX6nRygV0YZjefw8z31
-        Qn2IZYW/1nmgaWtXlWZaFjOBcdm4
-X-Google-Smtp-Source: AAOMgpcs5jhxRmUKw/WOPuA8LTX9dL/bC+BwAidLNva4z8AAaM9GL9DSoRsQU+opzu8lpcxwYJnNxQ==
-X-Received: by 2002:a17:902:bcc5:: with SMTP id o5-v6mr5156349pls.336.1532680870302;
-        Fri, 27 Jul 2018 01:41:10 -0700 (PDT)
-Received: from localhost.localdomain ([2402:f000:1:4414:8ca7:1cde:b1e6:2647])
-        by smtp.gmail.com with ESMTPSA id x2-v6sm7781921pfi.166.2018.07.27.01.41.08
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 27 Jul 2018 01:41:09 -0700 (PDT)
-From:   Jia-Ju Bai <baijiaju1990@gmail.com>
-To:     liujunliang_ljl@163.com
-Cc:     linux-usb@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Jia-Ju Bai <baijiaju1990@gmail.com>
-Subject: [PATCH] net: usb: sr9700: Replace mdelay() with msleep() in sr9700_bind()
-Date:   Fri, 27 Jul 2018 16:41:04 +0800
-Message-Id: <20180727084104.29726-1-baijiaju1990@gmail.com>
-X-Mailer: git-send-email 2.17.0
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=xiV6W6QUa6RJq0yEgSuELZNPrpqsyFzh7iY14hvALKw=;
+        b=durZWjUm4LUBDczPVJECxVL278DZzqaZ6zTr/c0DIpQEBYcnYtbJjuhEUH7SlYQgqI
+         67FXjlp7orYGI89Q9WlH2l1Gb5IlNVy22VYEDiw9Ms9e6Qvm7LkTYcO3IYBqATX4Zgnl
+         +oGhuJdWKmVv75ASbxXGoOd/5yZH0vlfCrOemJFFJATeAf1qxRbJrGbrDdy0L2NB77HS
+         sndDUegZkIhyGYQ4IFqJ6nPrUihprLWuC/yHxgFDIgOG0P/3skDdk82Njm3KyfkeoXWF
+         PIHm3jtrUegTxnHjedDDbOwTdiJ5pNPY5RVCFBalKPBOiEEVUWpG+JvH8WAzLEOWwYNO
+         dBTQ==
+X-Gm-Message-State: AOUpUlGezwcP9hIL7jMI01Q6k2RKjQGQF+yW61UyY3tNF+7+PcDSt675
+        DRFOxT48BXY3rZswAaCJPWph4iJkYx94C3USpBezzA==
+X-Google-Smtp-Source: AAOMgpej8kSI542Srn7mm1qgwOZB+SyCIH7E8aSr4fIqrjzPZKZj9d9gPEjd0OKy0a8Pc7gBeiaUJ/FW3w3AxC8PfLE=
+X-Received: by 2002:aca:7c2:: with SMTP id 185-v6mr5773150oih.31.1532680876497;
+ Fri, 27 Jul 2018 01:41:16 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:a9d:237a:0:0:0:0:0 with HTTP; Fri, 27 Jul 2018 01:41:15
+ -0700 (PDT)
+In-Reply-To: <20180727083605.GA20233@amd>
+References: <2c3a8911-150a-9b25-2a66-a9432047f96b@lechnology.com>
+ <68996338-a902-2b57-0bb9-df274a496b06@gmail.com> <20180718075637.GA10279@amd>
+ <913151e4-c19f-9a22-697c-52a9fb48cb32@gmail.com> <0e0cd8f7-dc73-6733-65f2-9a14506b0f0e@gmail.com>
+ <20180718221717.GA5451@amd> <20180719202005.GA7763@amd> <CAMz4kuKGcnDqyF29vGDqjRDMWmmk=c=QVQExYrx_Ymomm3qh+g@mail.gmail.com>
+ <20180724114147.GA26036@amd> <CAMz4kuKbjUDvqyM3rovRmUpeSabNL6yHX1HpFUYD0pc9d4PNMg@mail.gmail.com>
+ <20180727083605.GA20233@amd>
+From:   Baolin Wang <baolin.wang@linaro.org>
+Date:   Fri, 27 Jul 2018 16:41:15 +0800
+Message-ID: <CAMz4kuLLf84ZnxEVowCFnj9NGGU8zD39A-Oeqr+cbFSuBc1xOw@mail.gmail.com>
+Subject: Re: [PATCH v3 1/2] leds: core: Introduce generic pattern interface
+To:     Pavel Machek <pavel@ucw.cz>
+Cc:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        David Lechner <david@lechnology.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Mark Brown <broonie@kernel.org>,
+        Linux LED Subsystem <linux-leds@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-sr9700_bind() is never called in atomic context.
-It calls mdelay() to busily wait, which is not necessary.
-mdelay() can be replaced with msleep().
+Hi Pavel,
 
-This is found by a static analysis tool named DCNS written by myself.
+On 27 July 2018 at 16:36, Pavel Machek <pavel@ucw.cz> wrote:
+> Hi!
+>
+>> > This should be a bit better. I attempted to compile it with your
+>> > driver, but whether it works is an open question.
+>>
+>> Sorry for late reply. I've compiled and tested this version on my
+>> platform, the hardware pattern can work with one small fix as below.
+>>
+>>  if (led_cdev->pattern_set && !led_cdev->pattern_set(led_cdev,
+>> data->steps, data->nsteps)) {
+>>         return;
+>>  }
+>>
+>> But I saw there are lots coding style issues and something can be
+>> improved in this patch, so will you send out one clean patch (I will
+>> help to test the hardware pattern support)? Or I can help to improve
+>> this code and try to upstream it again?
+>
+> If you could do the upstreaming, that would be great.
 
-Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
----
- drivers/net/usb/sr9700.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+OK, I will improve the code and test the software/hardware pattern,
+and upstream it again with keeping the original authorization.
 
-diff --git a/drivers/net/usb/sr9700.c b/drivers/net/usb/sr9700.c
-index 2d316c1b851b..6ac232e52bf7 100644
---- a/drivers/net/usb/sr9700.c
-+++ b/drivers/net/usb/sr9700.c
-@@ -358,7 +358,7 @@ static int sr9700_bind(struct usbnet *dev, struct usb_interface *intf)
- 	/* power up and reset phy */
- 	sr_write_reg(dev, SR_PRR, PRR_PHY_RST);
- 	/* at least 10ms, here 20ms for safe */
--	mdelay(20);
-+	msleep(20);
- 	sr_write_reg(dev, SR_PRR, 0);
- 	/* at least 1ms, here 2ms for reading right register */
- 	udelay(2 * 1000);
+> I tried to get hardware accelerated LED to work on N900, but that
+> hardware is rather complex, so it would take me some time...
+
 -- 
-2.17.0
-
+Baolin Wang
+Best Regards
