@@ -6,36 +6,36 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31EDEC67790
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:09:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97F43C67790
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:09:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E4E9A2089E
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:09:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E4E9A2089E
+	by mail.kernel.org (Postfix) with ESMTP id 4B5D52089E
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:09:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4B5D52089E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388468AbeG0LbA (ORCPT
+        id S2388533AbeG0LbD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 07:31:00 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:36426 "EHLO
+        Fri, 27 Jul 2018 07:31:03 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:36436 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729431AbeG0LbA (ORCPT
+        with ESMTP id S1729431AbeG0LbC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 07:31:00 -0400
+        Fri, 27 Jul 2018 07:31:02 -0400
 Received: from localhost (unknown [89.188.5.116])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A1237BB6;
-        Fri, 27 Jul 2018 10:09:47 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 6CA16CB5;
+        Fri, 27 Jul 2018 10:09:50 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Yuchung Cheng <ycheng@google.com>,
-        Neal Cardwell <ncardwell@google.com>,
+        stable@vger.kernel.org, Neal Cardwell <ncardwell@google.com>,
+        Yuchung Cheng <ycheng@google.com>,
         Eric Dumazet <edumazet@google.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 14/33] tcp: helpers to send special DCTCP ack
-Date:   Fri, 27 Jul 2018 12:08:55 +0200
-Message-Id: <20180727100828.208557443@linuxfoundation.org>
+Subject: [PATCH 4.9 15/33] tcp: do not cancel delay-AcK on DCTCP special ACK
+Date:   Fri, 27 Jul 2018 12:08:56 +0200
+Message-Id: <20180727100828.248442805@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180727100827.665729981@linuxfoundation.org>
 References: <20180727100827.665729981@linuxfoundation.org>
@@ -54,77 +54,136 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Yuchung Cheng <ycheng@google.com>
 
-[ Upstream commit 2987babb6982306509380fc11b450227a844493b ]
+[ Upstream commit 27cde44a259c380a3c09066fc4b42de7dde9b1ad ]
 
-Refactor and create helpers to send the special ACK in DCTCP.
+Currently when a DCTCP receiver delays an ACK and receive a
+data packet with a different CE mark from the previous one's, it
+sends two immediate ACKs acking previous and latest sequences
+respectly (for ECN accounting).
 
+Previously sending the first ACK may mark off the delayed ACK timer
+(tcp_event_ack_sent). This may subsequently prevent sending the
+second ACK to acknowledge the latest sequence (tcp_ack_snd_check).
+The culprit is that tcp_send_ack() assumes it always acknowleges
+the latest sequence, which is not true for the first special ACK.
+
+The fix is to not make the assumption in tcp_send_ack and check the
+actual ack sequence before cancelling the delayed ACK. Further it's
+safer to pass the ack sequence number as a local variable into
+tcp_send_ack routine, instead of intercepting tp->rcv_nxt to avoid
+future bugs like this.
+
+Reported-by: Neal Cardwell <ncardwell@google.com>
 Signed-off-by: Yuchung Cheng <ycheng@google.com>
 Acked-by: Neal Cardwell <ncardwell@google.com>
 Signed-off-by: Eric Dumazet <edumazet@google.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ipv4/tcp_output.c |   22 +++++++++++++++++-----
- 1 file changed, 17 insertions(+), 5 deletions(-)
+ include/net/tcp.h     |    1 +
+ net/ipv4/tcp_dctcp.c  |   34 ++++------------------------------
+ net/ipv4/tcp_output.c |   11 ++++++++---
+ 3 files changed, 13 insertions(+), 33 deletions(-)
 
+--- a/include/net/tcp.h
++++ b/include/net/tcp.h
+@@ -553,6 +553,7 @@ void tcp_send_fin(struct sock *sk);
+ void tcp_send_active_reset(struct sock *sk, gfp_t priority);
+ int tcp_send_synack(struct sock *);
+ void tcp_push_one(struct sock *, unsigned int mss_now);
++void __tcp_send_ack(struct sock *sk, u32 rcv_nxt);
+ void tcp_send_ack(struct sock *sk);
+ void tcp_send_delayed_ack(struct sock *sk);
+ void tcp_send_loss_probe(struct sock *sk);
+--- a/net/ipv4/tcp_dctcp.c
++++ b/net/ipv4/tcp_dctcp.c
+@@ -135,21 +135,8 @@ static void dctcp_ce_state_0_to_1(struct
+ 	 * ACK has not sent yet.
+ 	 */
+ 	if (!ca->ce_state &&
+-	    inet_csk(sk)->icsk_ack.pending & ICSK_ACK_TIMER) {
+-		u32 tmp_rcv_nxt;
+-
+-		/* Save current rcv_nxt. */
+-		tmp_rcv_nxt = tp->rcv_nxt;
+-
+-		/* Generate previous ack with CE=0. */
+-		tp->ecn_flags &= ~TCP_ECN_DEMAND_CWR;
+-		tp->rcv_nxt = ca->prior_rcv_nxt;
+-
+-		tcp_send_ack(sk);
+-
+-		/* Recover current rcv_nxt. */
+-		tp->rcv_nxt = tmp_rcv_nxt;
+-	}
++	    inet_csk(sk)->icsk_ack.pending & ICSK_ACK_TIMER)
++		__tcp_send_ack(sk, ca->prior_rcv_nxt);
+ 
+ 	ca->prior_rcv_nxt = tp->rcv_nxt;
+ 	ca->ce_state = 1;
+@@ -166,21 +153,8 @@ static void dctcp_ce_state_1_to_0(struct
+ 	 * ACK has not sent yet.
+ 	 */
+ 	if (ca->ce_state &&
+-	    inet_csk(sk)->icsk_ack.pending & ICSK_ACK_TIMER) {
+-		u32 tmp_rcv_nxt;
+-
+-		/* Save current rcv_nxt. */
+-		tmp_rcv_nxt = tp->rcv_nxt;
+-
+-		/* Generate previous ack with CE=1. */
+-		tp->ecn_flags |= TCP_ECN_DEMAND_CWR;
+-		tp->rcv_nxt = ca->prior_rcv_nxt;
+-
+-		tcp_send_ack(sk);
+-
+-		/* Recover current rcv_nxt. */
+-		tp->rcv_nxt = tmp_rcv_nxt;
+-	}
++	    inet_csk(sk)->icsk_ack.pending & ICSK_ACK_TIMER)
++		__tcp_send_ack(sk, ca->prior_rcv_nxt);
+ 
+ 	ca->prior_rcv_nxt = tp->rcv_nxt;
+ 	ca->ce_state = 0;
 --- a/net/ipv4/tcp_output.c
 +++ b/net/ipv4/tcp_output.c
-@@ -905,8 +905,8 @@ out:
-  * We are working here with either a clone of the original
-  * SKB, or a fresh unique copy made by the retransmit engine.
-  */
--static int tcp_transmit_skb(struct sock *sk, struct sk_buff *skb, int clone_it,
--			    gfp_t gfp_mask)
-+static int __tcp_transmit_skb(struct sock *sk, struct sk_buff *skb,
-+			      int clone_it, gfp_t gfp_mask, u32 rcv_nxt)
- {
- 	const struct inet_connection_sock *icsk = inet_csk(sk);
- 	struct inet_sock *inet;
-@@ -969,7 +969,7 @@ static int tcp_transmit_skb(struct sock
- 	th->source		= inet->inet_sport;
- 	th->dest		= inet->inet_dport;
- 	th->seq			= htonl(tcb->seq);
--	th->ack_seq		= htonl(tp->rcv_nxt);
-+	th->ack_seq		= htonl(rcv_nxt);
- 	*(((__be16 *)th) + 6)	= htons(((tcp_header_size >> 2) << 12) |
- 					tcb->tcp_flags);
- 
-@@ -1046,6 +1046,13 @@ static int tcp_transmit_skb(struct sock
- 	return err;
+@@ -174,8 +174,13 @@ static void tcp_event_data_sent(struct t
  }
  
-+static int tcp_transmit_skb(struct sock *sk, struct sk_buff *skb, int clone_it,
-+			    gfp_t gfp_mask)
-+{
-+	return __tcp_transmit_skb(sk, skb, clone_it, gfp_mask,
-+				  tcp_sk(sk)->rcv_nxt);
-+}
+ /* Account for an ACK we sent. */
+-static inline void tcp_event_ack_sent(struct sock *sk, unsigned int pkts)
++static inline void tcp_event_ack_sent(struct sock *sk, unsigned int pkts,
++				      u32 rcv_nxt)
+ {
++	struct tcp_sock *tp = tcp_sk(sk);
 +
- /* This routine just queues the buffer for sending.
-  *
-  * NOTE: probe0 timer is not checked, do not forget tcp_push_pending_frames,
-@@ -3482,7 +3489,7 @@ void tcp_send_delayed_ack(struct sock *s
++	if (unlikely(rcv_nxt != tp->rcv_nxt))
++		return;  /* Special ACK sent by DCTCP to reflect ECN */
+ 	tcp_dec_quickack_mode(sk, pkts);
+ 	inet_csk_clear_xmit_timer(sk, ICSK_TIME_DACK);
  }
+@@ -1010,7 +1015,7 @@ static int __tcp_transmit_skb(struct soc
+ 	icsk->icsk_af_ops->send_check(sk, skb);
  
- /* This routine sends an ack and also updates the window. */
--void tcp_send_ack(struct sock *sk)
-+void __tcp_send_ack(struct sock *sk, u32 rcv_nxt)
- {
- 	struct sk_buff *buff;
+ 	if (likely(tcb->tcp_flags & TCPHDR_ACK))
+-		tcp_event_ack_sent(sk, tcp_skb_pcount(skb));
++		tcp_event_ack_sent(sk, tcp_skb_pcount(skb), rcv_nxt);
  
-@@ -3520,7 +3527,12 @@ void tcp_send_ack(struct sock *sk)
- 
- 	/* Send it off, this clears delayed acks for us. */
+ 	if (skb->len != tcp_header_size) {
+ 		tcp_event_data_sent(tp, sk);
+@@ -3529,12 +3534,12 @@ void __tcp_send_ack(struct sock *sk, u32
  	skb_mstamp_get(&buff->skb_mstamp);
--	tcp_transmit_skb(sk, buff, 0, (__force gfp_t)0);
-+	__tcp_transmit_skb(sk, buff, 0, (__force gfp_t)0, rcv_nxt);
-+}
-+
-+void tcp_send_ack(struct sock *sk)
-+{
-+	__tcp_send_ack(sk, tcp_sk(sk)->rcv_nxt);
+ 	__tcp_transmit_skb(sk, buff, 0, (__force gfp_t)0, rcv_nxt);
  }
- EXPORT_SYMBOL_GPL(tcp_send_ack);
++EXPORT_SYMBOL_GPL(__tcp_send_ack);
  
+ void tcp_send_ack(struct sock *sk)
+ {
+ 	__tcp_send_ack(sk, tcp_sk(sk)->rcv_nxt);
+ }
+-EXPORT_SYMBOL_GPL(tcp_send_ack);
+ 
+ /* This routine sends a packet with an out of date sequence
+  * number. It assumes the other end will try to ack it.
 
 
