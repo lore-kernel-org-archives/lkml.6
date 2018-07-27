@@ -2,135 +2,118 @@ Return-Path: <SRS0=OQFz=KL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F10A0C6778F
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 12:16:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 276ECC67790
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 12:17:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A9418208B0
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 12:16:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C81DF208B4
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 12:17:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="eN5tjSV2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A9418208B0
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="TD7gXjv4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C81DF208B4
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388156AbeG0Nig (ORCPT
+        id S1732623AbeG0NjA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 09:38:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34434 "EHLO mail.kernel.org"
+        Fri, 27 Jul 2018 09:39:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34652 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730205AbeG0Nig (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 09:38:36 -0400
-Received: from localhost.localdomain (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1729955AbeG0NjA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Jul 2018 09:39:00 -0400
+Received: from [192.168.0.101] (unknown [180.111.102.36])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9D922208AD;
-        Fri, 27 Jul 2018 12:16:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0E7BC208AD;
+        Fri, 27 Jul 2018 12:17:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1532693816;
-        bh=Cx8bgZ/4bb4qCrMtB8ILVPYfj40i7XTj6zsakcaeV5M=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=eN5tjSV2cEKD2FKL8rXtaZhYxSFyNE6fuOAlNvSsqm3/26+llNohKnFJCA84aCfiA
-         SmgGDdci/CP8pzxLsuZWeYsHGix10owBV6hbz0y/Qn8L7aT6Bj7zKAKQKUJXcRGbjL
-         QC7qauDk2ryq552L9pHfHupCmPGeHsMpzTe7qJwU=
-From:   Masami Hiramatsu <mhiramat@kernel.org>
-To:     Shuah Khan <shuah@kernel.org>, Steven Rostedt <rostedt@goodmis.org>
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 14/25] selftests/ftrace: Test kprobe-event argument with various bitsize
-Date:   Fri, 27 Jul 2018 21:16:33 +0900
-Message-Id: <153269379362.3084.6493537345417100466.stgit@devbox>
-X-Mailer: git-send-email 2.13.6
-In-Reply-To: <153269339575.3084.16279591141931053689.stgit@devbox>
-References: <153269339575.3084.16279591141931053689.stgit@devbox>
-User-Agent: StGit/0.17.1-dirty
+        s=default; t=1532693840;
+        bh=xLoq7KD9bjRrtmWGlQBGHUBsfQXvNTc0VBLIG0kzUyk=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=TD7gXjv4+X/Xtu2dsMbqYAwC1MOxHgBGv5Y7q98wc1IyYKBhg91RH9BHEzYZPzaGI
+         ufmB5B/+NBlS0GiOjcJDJ0Yi1/LxFjVl58iYX3nLKuV/HPNQtYa0JHxp/cicCyZ9aO
+         D7VVwGbtRKxAMKNFNcnO9l4uiamIOhKoyNOsp5DA=
+Subject: Re: [PATCH] f2fs: avoid race between zero_range and background GC
+To:     Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>
+Cc:     linux-f2fs-devel@lists.sourceforge.net,
+        linux-kernel@vger.kernel.org
+References: <20180726104536.114340-1-yuchao0@huawei.com>
+ <20180727102916.GI16155@jaegeuk-macbookpro.roam.corp.google.com>
+From:   Chao Yu <chao@kernel.org>
+Message-ID: <10d7814b-06d0-6751-ca56-85e7c8b92a27@kernel.org>
+Date:   Fri, 27 Jul 2018 20:16:50 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <20180727102916.GI16155@jaegeuk-macbookpro.roam.corp.google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Improve the kprobe-event with argument types testcase
-to test it with various bitsize.
-kprobe-event argument can be recorded in given types with
-various bitsize (8, 16, 32, 64), thus the type testcase
-should test the different bitsize too.
+On 2018/7/27 18:29, Jaegeuk Kim wrote:
+> On 07/26, Chao Yu wrote:
+>> Thread A				Background GC
+>> - f2fs_zero_range
+>>  - truncate_pagecache_range
+>> 					- gc_data_segment
+>> 					 - get_read_data_page
+>> 					  - move_data_page
+>> 					   - set_page_dirty
+>> 					   - set_cold_data
+>>  - f2fs_do_zero_range
+>>   - dn->data_blkaddr = NEW_ADDR;
+>>   - f2fs_set_data_blkaddr
+>>
+>> Actually, we don't need to set dirty & checked flag on the page, since
+>> all valid data in the page should be zeroed by zero_range().
+> 
+> But, it doesn't matter too much, right?
 
-Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
----
- .../ftrace/test.d/kprobe/kprobe_args_type.tc       |   48 +++++++++++++-------
- 1 file changed, 32 insertions(+), 16 deletions(-)
+No, if the dirtied page is writebacked after f2fs_do_zero_range(), result of
+zero_range() should be wrong, as zeroed page contains valid user data.
 
-diff --git a/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_args_type.tc b/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_args_type.tc
-index 37443dd23d15..1bcb67dcae26 100644
---- a/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_args_type.tc
-+++ b/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_args_type.tc
-@@ -6,29 +6,45 @@
- 
- grep "x8/16/32/64" README > /dev/null || exit_unsupported # version issue
- 
--echo 'p:testprobe _do_fork $stack0:s32 $stack0:u32 $stack0:x32 $stack0:b8@4/32' > kprobe_events
--grep testprobe kprobe_events
--test -d events/kprobes/testprobe
--
--echo 1 > events/kprobes/testprobe/enable
--( echo "forked")
--echo 0 > events/kprobes/testprobe/enable
--ARGS=`tail -n 1 trace | sed -e 's/.* arg1=\(.*\) arg2=\(.*\) arg3=\(.*\) arg4=\(.*\)/\1 \2 \3 \4/'`
-+gen_event() { # Bitsize
-+  echo "p:testprobe _do_fork \$stack0:s$1 \$stack0:u$1 \$stack0:x$1 \$stack0:b4@4/$1"
-+}
- 
--check_types() {
--  X1=`printf "%x" $1 | tail -c 8`
-+check_types() { # s-type u-type x-type bf-type width
-+  test $# -eq 5
-+  CW=$5
-+  CW=$((CW / 4))
-+  X1=`printf "%x" $1 | tail -c ${CW}`
-   X2=`printf "%x" $2`
-   X3=`printf "%x" $3`
-   test $X1 = $X2
-   test $X2 = $X3
-   test 0x$X3 = $3
- 
--  B4=`printf "%02x" $4`
--  B3=`echo -n $X3 | tail -c 3 | head -c 2`
-+  B4=`printf "%1x" $4`
-+  B3=`printf "%03x" 0x$X3 | tail -c 2 | head -c 1`
-   test $B3 = $B4
- }
--check_types $ARGS
- 
--echo "-:testprobe" >> kprobe_events
--clear_trace
--test -d events/kprobes/testprobe && exit_fail || exit_pass
-+for width in 64 32 16 8; do
-+  : "Add new event with basic types"
-+  gen_event $width > kprobe_events
-+  grep testprobe kprobe_events
-+  test -d events/kprobes/testprobe
-+
-+  : "Trace the event"
-+  echo 1 > events/kprobes/testprobe/enable
-+  ( echo "forked")
-+  echo 0 > events/kprobes/testprobe/enable
-+
-+  : "Confirm the arguments is recorded in given types correctly"
-+  ARGS=`grep "testprobe" trace | sed -e 's/.* arg1=\(.*\) arg2=\(.*\) arg3=\(.*\) arg4=\(.*\)/\1 \2 \3 \4/'`
-+  check_types $ARGS $width
-+
-+  : "Clear event for next loop"
-+  echo "-:testprobe" >> kprobe_events
-+  clear_trace
-+
-+done
-+
-+exit_pass
+> 
+>> Use i_gc_rwsem[WRITE] to avoid such race condition.
+> 
+> Hope to avoid abusing i_gc_rwsem[] tho.
 
+Agreed, let's try avoiding until we have to use it.
+
+Thanks,
+
+> 
+>>
+>> Signed-off-by: Chao Yu <yuchao0@huawei.com>
+>> ---
+>>  fs/f2fs/file.c | 2 ++
+>>  1 file changed, 2 insertions(+)
+>>
+>> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+>> index 267ec3794e1e..7bd2412a8c37 100644
+>> --- a/fs/f2fs/file.c
+>> +++ b/fs/f2fs/file.c
+>> @@ -1309,6 +1309,7 @@ static int f2fs_zero_range(struct inode *inode, loff_t offset, loff_t len,
+>>  	if (ret)
+>>  		return ret;
+>>  
+>> +	down_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
+>>  	down_write(&F2FS_I(inode)->i_mmap_sem);
+>>  	ret = filemap_write_and_wait_range(mapping, offset, offset + len - 1);
+>>  	if (ret)
+>> @@ -1389,6 +1390,7 @@ static int f2fs_zero_range(struct inode *inode, loff_t offset, loff_t len,
+>>  	}
+>>  out_sem:
+>>  	up_write(&F2FS_I(inode)->i_mmap_sem);
+>> +	up_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
+>>  
+>>  	return ret;
+>>  }
+>> -- 
+>> 2.18.0.rc1
