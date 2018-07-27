@@ -2,116 +2,152 @@ Return-Path: <SRS0=OQFz=KL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E81BCC67790
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 18:14:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A1F2C6778F
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 18:29:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9F54F205F4
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 18:14:08 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Gq8vH1L6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F54F205F4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id 32BA420673
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 18:29:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 32BA420673
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=iogearbox.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388990AbeG0ThG (ORCPT
+        id S2389019AbeG0Tw5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 15:37:06 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:43372 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730636AbeG0ThG (ORCPT
+        Fri, 27 Jul 2018 15:52:57 -0400
+Received: from www62.your-server.de ([213.133.104.62]:37864 "EHLO
+        www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388836AbeG0Tw4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 15:37:06 -0400
-Received: by mail-pg1-f193.google.com with SMTP id v13-v6so3667225pgr.10
-        for <linux-kernel@vger.kernel.org>; Fri, 27 Jul 2018 11:14:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=C6U4Waqa/3ME/5HP/Y9f6Ju2Z/mr5jUc1nqYMbCXurU=;
-        b=Gq8vH1L6Lq5C2StvDQgbMn9c3IWi+OGnUiOutpQzcIUN0UWLQglAgBfblj8iRUHp+j
-         2G/jvDueT/DF3p2ctD2SomoSyRFtwr/oV/Wf0qynDup3TsA9+ViDPfrup/Mp36l+db3D
-         7KWCL9p6IrZyEuwNa8BxG+jkq/tOrK95JE1KtZ9zq3+AXrr1QfjQDdz/vmxp4EOZysRx
-         EqrdSPP9TRGsz78CQ6AJEkUm7pVzg5qajH2oVuZdWsQyjhKLtXpe3nB+nS2V8AgofGAV
-         VCB8dab3p1rPqsdN//Yfo921WyjV5+unHY5Rg+VloOOyVoKMhxevNAG8jlpmRxjKqMQB
-         c77w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=C6U4Waqa/3ME/5HP/Y9f6Ju2Z/mr5jUc1nqYMbCXurU=;
-        b=Ubgw6z/dHGq/L9bqXys6EeQLwZp4aEGF/9MnGNrGeLth7tuUJWAVYJ26IzpGAD8e7m
-         kWWFaeqa1iHTgqr7fexxm3NjyVdOCBaF5LiaP0NMgvZha6art+T+c0csE+SUIiwsTr9U
-         bPojqDZTRDhQ/5tVbRVsjmFJ2tdJPwuac1NkkkAl2qh2U8oreXVtRFhbcyl09S4qqpK7
-         TOG3ejuvh0PWg2QwDZdCAOREYkQe8z7y7kNkzPkIBbHCrTj8xte2VQoBIvLKUP6h/0z5
-         5mhVdqIGjlAUimycgZCHu1EFB0zh+ZFQsW/VQ62OIJJcjzjvtAjKRG1yFo1LU1PQXShd
-         v7Eg==
-X-Gm-Message-State: AOUpUlHuxoTy0hPa9KgG+rXytkqJdy54BCyEj8M+M42EEdGTG/3Wc8KS
-        lwkDRWJ6RzHVjkV4fbfFvIz1pAHwm+Ed1xoAmLuduw==
-X-Google-Smtp-Source: AAOMgpd+VlgyGLdrKHW9eReYL8INEfUqEfHQSXLgJOSdwjTS44WF30wiy3kdhgBym2hOo54KilVFdPxsRt8+ihqTsws=
-X-Received: by 2002:a63:d916:: with SMTP id r22-v6mr6904989pgg.381.1532715242897;
- Fri, 27 Jul 2018 11:14:02 -0700 (PDT)
+        Fri, 27 Jul 2018 15:52:56 -0400
+Received: from [78.46.172.3] (helo=sslproxy06.your-server.de)
+        by www62.your-server.de with esmtpsa (TLSv1.2:DHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.85_2)
+        (envelope-from <daniel@iogearbox.net>)
+        id 1fj7Uo-0004Ug-Jv; Fri, 27 Jul 2018 20:29:46 +0200
+Received: from [99.0.85.34] (helo=localhost.localdomain)
+        by sslproxy06.your-server.de with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.89)
+        (envelope-from <daniel@iogearbox.net>)
+        id 1fj7Uo-000RsU-9J; Fri, 27 Jul 2018 20:29:46 +0200
+Subject: Re: [PATCH v2] perf build: Build error in libbpf with
+ EXTRA_CFLAGS="-Wp,-D_FORTIFY_SOURCE=2 -O2"
+To:     Jakub Kicinski <jakub.kicinski@netronome.com>,
+        Thomas-Mich Richter <tmricht@linux.ibm.com>
+Cc:     ast@kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, heiko.carstens@de.ibm.com,
+        brueckner@linux.vnet.ibm.com, schwidefsky@de.ibm.com,
+        wangnan0@huawei.com
+References: <20180725072126.2232-1-tmricht@linux.ibm.com>
+ <20180725184835.5d37bef4@cakuba.netronome.com>
+ <08b6ed57-40a4-7468-b78d-f2a2c5ab10a8@iogearbox.net>
+ <325e3d58-89fb-1b50-8865-22c6f372671a@linux.ibm.com>
+ <20180727105757.2d851920@cakuba.netronome.com>
+From:   Daniel Borkmann <daniel@iogearbox.net>
+Message-ID: <d3bed01d-2a85-e5bf-aea2-c5e5b7cbff61@iogearbox.net>
+Date:   Fri, 27 Jul 2018 20:29:42 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.3.0
 MIME-Version: 1.0
-References: <20180725202238.165314-1-salyzyn@android.com> <20180725210717.3b807191@vmware.local.home>
- <11437c3e-5131-7190-c496-7b51eb7fcc2a@android.com> <20180726153153.GA8327@kroah.com>
- <CAKwvOdk9s+=kUwcPGQzZNxR7eOGAiiasAyWhZxgKom4_6h+oxA@mail.gmail.com>
- <20180726181558.25a5c3b8@gandalf.local.home> <753E9YR1QhdsPhsFoYuXCwfUzfyntDrc_A93hMUkktMi7lbh3KUZMcbfqKVWUfi15zYhuiDFant-ROa4QNV5shx74ff4hGngq2BOJDv-hq4=@protonmail.ch>
- <CAG48ez1U=5nTOrnOqwMuXhdER-7XxJUYLcyYNuczwasQLQ0gXA@mail.gmail.com> <20180727094730.3a448629@gandalf.local.home>
-In-Reply-To: <20180727094730.3a448629@gandalf.local.home>
-From:   Nick Desaulniers <ndesaulniers@google.com>
-Date:   Fri, 27 Jul 2018 11:13:51 -0700
-Message-ID: <CAKwvOdmg4DSSwy9YBccYWzc+6ZU2yKSSFmfnj72wqbYDJU0gzw@mail.gmail.com>
-Subject: Re: [PATCH] tracing: do not leak kernel addresses
-To:     rostedt@goodmis.org
-Cc:     Jann Horn <jannh@google.com>, Golden_Miller83@protonmail.ch,
-        greg@kroah.com, Kees Cook <keescook@google.com>,
-        salyzyn@android.com, LKML <linux-kernel@vger.kernel.org>,
-        mingo@redhat.com, kernel-team@android.com, stable@vger.kernel.org,
-        kernel-hardening@lists.openwall.com
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180727105757.2d851920@cakuba.netronome.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Authenticated-Sender: daniel@iogearbox.net
+X-Virus-Scanned: Clear (ClamAV 0.100.0/24788/Fri Jul 27 18:45:51 2018)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 27, 2018 at 6:47 AM Steven Rostedt <rostedt@goodmis.org> wrote:
->
-> On Fri, 27 Jul 2018 15:40:32 +0200
-> Jann Horn <jannh@google.com> wrote:
->
-> > > > But the code doesn't go to dmesg. It's only available
-> > > > via /sys/kernel/debug/tracing/printk_formats which is only available
-> > > > via root. Nobody else has access to that directory.
+On 07/27/2018 07:57 PM, Jakub Kicinski wrote:
+> On Fri, 27 Jul 2018 09:22:03 +0200, Thomas-Mich Richter wrote:
+>> On 07/27/2018 04:16 AM, Daniel Borkmann wrote:
+>>> On 07/26/2018 03:48 AM, Jakub Kicinski wrote:  
+>>>> On Wed, 25 Jul 2018 09:21:26 +0200, Thomas Richter wrote:  
+>>>>> commit a5b8bd47dcc57 ("bpf tools: Collect eBPF programs from their own sections")  
+>>>>
+>>>> Hmm.. are you sure it's not 531b014e7a2f ("tools: bpf: make use of
+>>>> reallocarray") that caused the issue?  That commit made us switch from
+>>>> XSI-compliant to GNU-specific strerror_r() implementation..
+>>>>
+>>>> /me checks
+>>>>
+>>>> Yes it looks like 531b014e7a2f~ builds just fine.
+>>>>
+>>>> Daniel, did you try to apply v1 to the bpf tree?  Perhaps there is a
+>>>> confusion about the trees here, if this is caused by my recent change
+>>>> it's a bpf-next material.  strerror() works, but strerror_r() seems
+>>>> nicer, so perhaps we could keep it if the patch worked in bpf-next?  
+>>>
+>>> Yeah indeed, the issue is only in bpf-next. When I compile libbpf from
+>>> bpf tree with the below flags then it's all good> 
+>>> Agree that we should rather use strerror_r() given this is a library.  
+>>
+>> Are you sure to stick with strerror_r? I ask because it is the only
+>> occurence of strerror_r in this file. All other error messages use strerror
+>> as in:
+>> pr_warning("failed to create map (name: '%s'): %s\n",
+>>                                    map->name,
+>>                                    strerror(errno));
+>>
+>> $ fgrep strerror tools/lib/bpf/libbpf.c
+>>                                         strerror(errno));
+>>           issue I try to solve--->  strerror_r(-err, errmsg, sizeof(errmsg));
+>>                                    map->name, strerror(errno), errno);
+>>                                    strerror(errno));
+>>         pr_warning("load bpf program failed: %s\n", strerror(errno));
+>>                 pr_warning("failed to statfs %s: %s\n", dir, strerror(errno));
+>>                 pr_warning("failed to pin program: %s\n", strerror(errno));
+>>                 pr_warning("failed to mkdir %s: %s\n", path, strerror(-err));
+>>                 pr_warning("failed to pin map: %s\n", strerror(errno));
+>> $
+>>
+>> The next issue with strerror_r is to assign the return value to a variable.
+>> Then we end up with variable set but not used:
+>> libbpf.c: In function ‘bpf_object__elf_collect’:
+>> libbpf.c:809:35: error: variable ‘cp’ set but not used [-Werror=unused-but-set-variable]
+>>      char errmsg[STRERR_BUFSIZE], *cp;
+>>                                    ^
+>> cc1: all warnings being treated as errors
+> 
+>        The GNU-specific strerror_r() returns a pointer to a string  containing
+>        the  error  message.  This may be either a pointer to a string that the
+>        function stores in buf, or a pointer to some (immutable) static  string
+>        (in which case buf is unused).  If the function stores a string in buf,
+>        then at most buflen bytes are stored (the string may  be  truncated  if
+>        buflen is too small and errnum is unknown).  The string always includes
+>        a terminating null byte ('\0').
+> 
+> IOW you gotta use the return value.
+> 
+>> Here is the source:
+>>                        if (err) {
+>>                                 char errmsg[STRERR_BUFSIZE], *cp;
+>>
+>>                                 cp = strerror_r(-err, errmsg, sizeof(errmsg));
+>>                                 pr_warning("failed to alloc program %s (%s): %s",
+>>                                            name, obj->path, errmsg);
+>>                         }
+>>
+>> To fix this requires something like:
+>>                                pr_warning("failed to alloc program %s (%s): %s",
+>>                                            name, obj->path, cp);
+> 
+> This looks correct.
+> 
+>> And after pr_warning() is done, the local array errmsg is deleted.
+>>
+>> A lot of overkill in my opinion, unless I miss something.
+> 
+> IMO using potentially mutli-thread unsafe functions in a library is not
+> optimal, we should strive to convert the other instances of strerror()
+> rather than move the other way.
 
-Oh, sorry, you're right. We're not printing an address to dmesg, but
-to a sysfs node.  If you must have CAP_SYS_ADMIN to read this dir,
-then printk's %pK wont save you, because then you can modify
-kptr_restrict with sysctl.
+Yeah, fully agree. We should convert the other ones as well over to use
+strerror_r().
 
-> > > I think the point was that when we take capabilities into account the root
-> > > privileges aren't unequivocal anymore. The 'root' owned process with only
-> > > 'CAP_SYSLOG' shouldn't have access to /sys/kernel/debug/tracing/printk_formats
-> >
-> > Then they shouldn't have access to debugfs at all, right?
->
-> That's what I'm thinking.
-
-I found the internal bug report (reported Jan '17, you'll have to
-forgive me if my memory of the issue is hazy, or if the fix used at
-the time wasn't perfect), which was reported against the Nexus 6.
-From the report, it was possible to `cat
-/sys/kernel/debug/tracing/printk_formats` without being root, which I
-can't do on my workstations much more modern kernel (Nexus 6 was
-3.10).  So I guess the question is what governs access to files below
-/sys/kernel/debug, and why was it missing from those kernels?  I
-assume some check was added, but either not backported to 3.10 stable
-(or more likely not pulled in to Nexus 6's kernel through stable;
-Android is now in a much better place for that kind of issue).
-
---
 Thanks,
-~Nick Desaulniers
+Daniel
