@@ -3,30 +3,30 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 531ABC6778F
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 12:05:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58197C67790
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 12:05:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 11D92208AD
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 12:05:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 11D92208AD
+	by mail.kernel.org (Postfix) with ESMTP id 1902F208A5
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 12:05:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1902F208A5
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730836AbeG0N1W (ORCPT
+        id S1730997AbeG0N1X (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 09:27:22 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:35160 "EHLO mail.bootlin.com"
+        Fri, 27 Jul 2018 09:27:23 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:35172 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729568AbeG0N1W (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 09:27:22 -0400
+        id S1730703AbeG0N1X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Jul 2018 09:27:23 -0400
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id D3A3D2073D; Fri, 27 Jul 2018 14:05:43 +0200 (CEST)
+        id 9CBB020798; Fri, 27 Jul 2018 14:05:44 +0200 (CEST)
 Received: from localhost (unknown [88.128.81.178])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 935A320717;
-        Fri, 27 Jul 2018 14:05:43 +0200 (CEST)
+        by mail.bootlin.com (Postfix) with ESMTPSA id 5FB0620717;
+        Fri, 27 Jul 2018 14:05:44 +0200 (CEST)
 From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
 To:     Mark Brown <broonie@kernel.org>, James Hogan <jhogan@kernel.org>
 Cc:     Paul Burton <paul.burton@mips.com>, linux-spi@vger.kernel.org,
@@ -34,38 +34,45 @@ Cc:     Paul Burton <paul.burton@mips.com>, linux-spi@vger.kernel.org,
         linux-mips@linux-mips.org,
         Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
         Allan Nielsen <allan.nielsen@microsemi.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>
-Subject: [PATCH v2 0/4] Add support for MSCC Ocelot SPI
-Date:   Fri, 27 Jul 2018 14:05:31 +0200
-Message-Id: <20180727120535.16504-1-alexandre.belloni@bootlin.com>
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Rob Herring <robh+dt@kernel.org>
+Subject: [PATCH v2 1/4] dt-bindings: spi: snps,dw-apb-ssi: document Microsemi integration
+Date:   Fri, 27 Jul 2018 14:05:32 +0200
+Message-Id: <20180727120535.16504-2-alexandre.belloni@bootlin.com>
 X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20180727120535.16504-1-alexandre.belloni@bootlin.com>
+References: <20180727120535.16504-1-alexandre.belloni@bootlin.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+The integration of the Designware SPI controller on Microsemi SoCs requires
+an extra register set to be able to give the IP control of the SPI
+interface.
 
-The MSCC MIPS SoC line uses a designware IP for the SPI controller but
-still requires some special handling to give control of the SPI
-interface to the IP and also has a specific handling for the chip
-select.
+Cc: Rob Herring <robh+dt@kernel.org>
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+---
+ Documentation/devicetree/bindings/spi/snps,dw-apb-ssi.txt | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-Changes in v2:
- - Removed already applied patches
- - separated DT binding changes from the driver patch
-
-Alexandre Belloni (4):
-  dt-bindings: spi: snps,dw-apb-ssi: document Microsemi integration
-  spi: dw-mmio: add MSCC Ocelot support
-  mips: dts: mscc: Add spi on Ocelot
-  mips: dts: mscc: enable spi and NOR flash support on ocelot PCB123
-
- arch/mips/boot/dts/mscc/ocelot.dtsi       | 11 +++
- arch/mips/boot/dts/mscc/ocelot_pcb123.dts | 10 +++
- drivers/spi/spi-dw-mmio.c                 | 91 +++++++++++++++++++++++
- 3 files changed, 112 insertions(+)
-
+diff --git a/Documentation/devicetree/bindings/spi/snps,dw-apb-ssi.txt b/Documentation/devicetree/bindings/spi/snps,dw-apb-ssi.txt
+index 204b311e0400..d97b9fc4c1cb 100644
+--- a/Documentation/devicetree/bindings/spi/snps,dw-apb-ssi.txt
++++ b/Documentation/devicetree/bindings/spi/snps,dw-apb-ssi.txt
+@@ -1,8 +1,9 @@
+ Synopsys DesignWare AMBA 2.0 Synchronous Serial Interface.
+ 
+ Required properties:
+-- compatible : "snps,dw-apb-ssi"
+-- reg : The register base for the controller.
++- compatible : "snps,dw-apb-ssi" or "mscc,<soc>-spi"
++- reg : The register base for the controller. For "mscc,<soc>-spi", a second
++  register set is required (named ICPU_CFG:SPI_MST)
+ - interrupts : One interrupt, used by the controller.
+ - #address-cells : <1>, as required by generic SPI binding.
+ - #size-cells : <0>, also as required by generic SPI binding.
 -- 
 2.18.0
 
