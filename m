@@ -3,195 +3,135 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7CEEC67790
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 17:36:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B68FC6778F
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 17:36:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 849D720862
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 17:36:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 849D720862
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 2F1C420862
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 17:36:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2F1C420862
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389535AbeG0S7M (ORCPT
+        id S2389608AbeG0S7U (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 14:59:12 -0400
-Received: from mga04.intel.com ([192.55.52.120]:5150 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388666AbeG0S7L (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 14:59:11 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Jul 2018 10:36:17 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,410,1526367600"; 
-   d="scan'208";a="219675878"
-Received: from yoojae-mobl1.amr.corp.intel.com (HELO [10.7.153.149]) ([10.7.153.149])
-  by orsmga004.jf.intel.com with ESMTP; 27 Jul 2018 10:36:16 -0700
-Subject: Re: [PATCH v7 08/12] mfd: intel-peci-client: Add PECI client MFD
- driver
-To:     Lee Jones <lee.jones@linaro.org>
-Cc:     Jean Delvare <jdelvare@suse.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Joel Stanley <joel@jms.id.au>,
-        Andrew Jeffery <andrew@aj.id.au>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        "Darrick J . Wong" <darrick.wong@oracle.com>,
-        Eric Sandeen <sandeen@redhat.com>,
-        Arnd Bergmann <arnd@arndb.de>, Wu Hao <hao.wu@intel.com>,
-        Tomohiro Kusumi <kusumi.tomohiro@gmail.com>,
-        "Bryant G . Ly" <bryantly@linux.vnet.ibm.com>,
-        Frederic Barrat <fbarrat@linux.vnet.ibm.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Vinod Koul <vkoul@kernel.org>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        David Kershner <david.kershner@unisys.com>,
-        Uwe Kleine-Konig <u.kleine-koenig@pengutronix.de>,
-        Sagar Dharia <sdharia@codeaurora.org>,
-        Johan Hovold <johan@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Juergen Gross <jgross@suse.com>,
-        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
-        linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-aspeed@lists.ozlabs.org, linux-doc@vger.kernel.org,
-        openbmc@lists.ozlabs.org,
-        James Feist <james.feist@linux.intel.com>,
-        Jason M Biils <jason.m.bills@linux.intel.com>,
-        Vernon Mauery <vernon.mauery@linux.intel.com>
-References: <20180723214751.1733-1-jae.hyun.yoo@linux.intel.com>
- <20180723214751.1733-9-jae.hyun.yoo@linux.intel.com>
- <20180727082611.GE4628@dell>
-From:   Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
-Message-ID: <acffdfef-cb20-4208-5297-d94bac5ecb1b@linux.intel.com>
-Date:   Fri, 27 Jul 2018 10:36:15 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Fri, 27 Jul 2018 14:59:20 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:40298 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2389347AbeG0Sy6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Jul 2018 14:54:58 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id EDA9181663CE;
+        Fri, 27 Jul 2018 17:32:04 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-116.rdu2.redhat.com [10.10.120.116])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 546851C5B9;
+        Fri, 27 Jul 2018 17:32:04 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+ Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+ Kingdom.
+ Registered in England and Wales under Company Registration No. 3798903
+Subject: [PATCH 06/38] vfs: Introduce logging functions [ver #10]
+From:   David Howells <dhowells@redhat.com>
+To:     viro@zeniv.linux.org.uk
+Cc:     torvalds@linux-foundation.org, dhowells@redhat.com,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Fri, 27 Jul 2018 18:32:02 +0100
+Message-ID: <153271272284.9458.1302779298307992140.stgit@warthog.procyon.org.uk>
+In-Reply-To: <153271267980.9458.7640156373438016898.stgit@warthog.procyon.org.uk>
+References: <153271267980.9458.7640156373438016898.stgit@warthog.procyon.org.uk>
+User-Agent: StGit/unknown-version
 MIME-Version: 1.0
-In-Reply-To: <20180727082611.GE4628@dell>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Fri, 27 Jul 2018 17:32:04 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Fri, 27 Jul 2018 17:32:04 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'dhowells@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Lee,
+Introduce a set of logging functions through which informational messages,
+warnings and error messages incurred by the mount procedure can be logged
+and, in a future patch, passed to userspace instead by way of the
+filesystem configuration context file descriptor.
 
-On 7/27/2018 1:26 AM, Lee Jones wrote:
-> On Mon, 23 Jul 2018, Jae Hyun Yoo wrote:
-> 
->> This commit adds PECI client MFD driver.
->>
->> Signed-off-by: Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
->> Cc: Lee Jones <lee.jones@linaro.org>
->> Cc: Rob Herring <robh+dt@kernel.org>
->> Cc: Andrew Jeffery <andrew@aj.id.au>
->> Cc: James Feist <james.feist@linux.intel.com>
->> Cc: Jason M Biils <jason.m.bills@linux.intel.com>
->> Cc: Joel Stanley <joel@jms.id.au>
->> Cc: Vernon Mauery <vernon.mauery@linux.intel.com>
->> ---
->>   drivers/mfd/Kconfig                   |  14 ++
->>   drivers/mfd/Makefile                  |   1 +
->>   drivers/mfd/intel-peci-client.c       | 182 ++++++++++++++++++++++++++
->>   include/linux/mfd/intel-peci-client.h |  81 ++++++++++++
->>   4 files changed, 278 insertions(+)
->>   create mode 100644 drivers/mfd/intel-peci-client.c
->>   create mode 100644 include/linux/mfd/intel-peci-client.h
->>
->> diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
->> index f3fa516011ec..e38b591479d4 100644
->> --- a/drivers/mfd/Kconfig
->> +++ b/drivers/mfd/Kconfig
->> @@ -595,6 +595,20 @@ config MFD_INTEL_MSIC
->>   	  Passage) chip. This chip embeds audio, battery, GPIO, etc.
->>   	  devices used in Intel Medfield platforms.
->>   
->> +config MFD_INTEL_PECI_CLIENT
->> +	bool "Intel PECI client"
->> +	depends on (PECI || COMPILE_TEST)
->> +	select MFD_CORE
->> +	help
->> +	  If you say yes to this option, support will be included for the
->> +	  multi-funtional Intel PECI (Platform Environment Control Interface)
->> +	  client. PECI is a one-wire bus interface that provides a communication
->> +	  channel from PECI clients in Intel processors and chipset components
->> +	  to external monitoring or control devices.
->> +
->> +	  Additional drivers must be enabled in order to use the functionality
->> +	  of the device.
->> +
->>   config MFD_IPAQ_MICRO
->>   	bool "Atmel Micro ASIC (iPAQ h3100/h3600/h3700) Support"
->>   	depends on SA1100_H3100 || SA1100_H3600
->> diff --git a/drivers/mfd/Makefile b/drivers/mfd/Makefile
->> index 2852a6042ecf..29e2cacc58bd 100644
->> --- a/drivers/mfd/Makefile
->> +++ b/drivers/mfd/Makefile
->> @@ -203,6 +203,7 @@ obj-$(CONFIG_MFD_INTEL_LPSS)	+= intel-lpss.o
->>   obj-$(CONFIG_MFD_INTEL_LPSS_PCI)	+= intel-lpss-pci.o
->>   obj-$(CONFIG_MFD_INTEL_LPSS_ACPI)	+= intel-lpss-acpi.o
->>   obj-$(CONFIG_MFD_INTEL_MSIC)	+= intel_msic.o
->> +obj-$(CONFIG_MFD_INTEL_PECI_CLIENT)	+= intel-peci-client.o
->>   obj-$(CONFIG_MFD_PALMAS)	+= palmas.o
->>   obj-$(CONFIG_MFD_VIPERBOARD)    += viperboard.o
->>   obj-$(CONFIG_MFD_RC5T583)	+= rc5t583.o rc5t583-irq.o
->> diff --git a/drivers/mfd/intel-peci-client.c b/drivers/mfd/intel-peci-client.c
->> new file mode 100644
->> index 000000000000..d7702cf1ea50
->> --- /dev/null
->> +++ b/drivers/mfd/intel-peci-client.c
->> @@ -0,0 +1,182 @@
->> +// SPDX-License-Identifier: GPL-2.0
->> +// Copyright (c) 2018 Intel Corporation
->> +
->> +#include <linux/bitfield.h>
->> +#include <linux/mfd/core.h>
->> +#include <linux/mfd/intel-peci-client.h>
->> +#include <linux/module.h>
->> +#include <linux/peci.h>
->> +#include <linux/of_device.h>
->> +
->> +enum cpu_gens {
->> +	CPU_GEN_HSX = 0, /* Haswell Xeon */
->> +	CPU_GEN_BRX,     /* Broadwell Xeon */
->> +	CPU_GEN_SKX,     /* Skylake Xeon */
->> +};
->> +
->> +static struct mfd_cell peci_functions[] = {
->> +	{
->> +		.name = "peci-cputemp",
->> +		.of_compatible = "intel,peci-cputemp",
->> +	},
->> +	{
->> +		.name = "peci-dimmtemp",
->> +		.of_compatible = "intel,peci-dimmtemp",
->> +	},
->> +};
-> 
-> The more I look at this driver, the less I think it fits into MFD.
-> 
-> What's stopping you from registering these devices directly from DT?
-> 
+There are four functions:
 
-Because DT doesn't allow 2 nodes at the same address so Rob suggested
-MFD for this case.
+ (1) infof(const char *fmt, ...);
 
-Thanks,
+     Logs an informational message.
 
-Jae
+ (2) warnf(const char *fmt, ...);
+
+     Logs a warning message.
+
+ (3) errorf(const char *fmt, ...);
+
+     Logs an error message.
+
+ (4) invalf(const char *fmt, ...);
+
+     As errof(), but returns -EINVAL so can be used on a return statement.
+
+Signed-off-by: David Howells <dhowells@redhat.com>
+---
+
+ include/linux/fs_context.h |   42 ++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 42 insertions(+)
+
+diff --git a/include/linux/fs_context.h b/include/linux/fs_context.h
+index 0ff4969f9d5a..a88b54752f86 100644
+--- a/include/linux/fs_context.h
++++ b/include/linux/fs_context.h
+@@ -98,4 +98,46 @@ struct fs_context_operations {
+ 	int (*get_tree)(struct fs_context *fc);
+ };
+ 
++#define logfc(FC, FMT, ...) pr_notice(FMT, ## __VA_ARGS__)
++
++/**
++ * infof - Store supplementary informational message
++ * @fc: The context in which to log the informational message
++ * @fmt: The format string
++ *
++ * Store the supplementary informational message for the process if the process
++ * has enabled the facility.
++ */
++#define infof(fc, fmt, ...) ({ logfc(fc, fmt, ## __VA_ARGS__); })
++
++/**
++ * warnf - Store supplementary warning message
++ * @fc: The context in which to log the error message
++ * @fmt: The format string
++ *
++ * Store the supplementary warning message for the process if the process has
++ * enabled the facility.
++ */
++#define warnf(fc, fmt, ...) ({ logfc(fc, fmt, ## __VA_ARGS__); })
++
++/**
++ * errorf - Store supplementary error message
++ * @fc: The context in which to log the error message
++ * @fmt: The format string
++ *
++ * Store the supplementary error message for the process if the process has
++ * enabled the facility.
++ */
++#define errorf(fc, fmt, ...) ({ logfc(fc, fmt, ## __VA_ARGS__); })
++
++/**
++ * invalf - Store supplementary invalid argument error message
++ * @fc: The context in which to log the error message
++ * @fmt: The format string
++ *
++ * Store the supplementary error message for the process if the process has
++ * enabled the facility and return -EINVAL.
++ */
++#define invalf(fc, fmt, ...) ({	errorf(fc, fmt, ## __VA_ARGS__); -EINVAL; })
++
+ #endif /* _LINUX_FS_CONTEXT_H */
+
