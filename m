@@ -6,124 +6,219 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49897C67790
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 11:52:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43601C67790
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 11:54:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 092822089B
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 11:52:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 092822089B
+	by mail.kernel.org (Postfix) with ESMTP id E7ED6208A3
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 11:54:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E7ED6208A3
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ispras.ru
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732619AbeG0NOH (ORCPT
+        id S1730613AbeG0NQ3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 09:14:07 -0400
-Received: from bran.ispras.ru ([83.149.199.196]:19599 "EHLO smtp.ispras.ru"
+        Fri, 27 Jul 2018 09:16:29 -0400
+Received: from bran.ispras.ru ([83.149.199.196]:21735 "EHLO smtp.ispras.ru"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730126AbeG0NOG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 09:14:06 -0400
+        id S1730088AbeG0NQ3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Jul 2018 09:16:29 -0400
 Received: from myklebust.intra.ispras.ru (unknown [10.10.2.207])
-        by smtp.ispras.ru (Postfix) with ESMTP id 872C4203B2;
-        Fri, 27 Jul 2018 14:52:31 +0300 (MSK)
+        by smtp.ispras.ru (Postfix) with ESMTP id 6B183203B2;
+        Fri, 27 Jul 2018 14:54:52 +0300 (MSK)
 From:   Anton Vasilyev <vasilyev@ispras.ru>
-To:     "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+To:     Dave Airlie <airlied@redhat.com>
 Cc:     Anton Vasilyev <vasilyev@ispras.ru>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Gerd Hoffmann <kraxel@redhat.com>,
+        David Airlie <airlied@linux.ie>,
+        virtualization@lists.linux-foundation.org,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
         ldv-project@linuxtesting.org
-Subject: [PATCH] media: davinci: vpif_display: Mix memory leak on probe error path
-Date:   Fri, 27 Jul 2018 14:52:20 +0300
-Message-Id: <20180727115220.10991-1-vasilyev@ispras.ru>
+Subject: [PATCH] drm: qxl: Fix error handling at qxl_device_init
+Date:   Fri, 27 Jul 2018 14:54:40 +0300
+Message-Id: <20180727115440.11112-1-vasilyev@ispras.ru>
 X-Mailer: git-send-email 2.18.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If vpif_probe() fails on v4l2_device_register() then memory allocated
-at initialize_vpif() for global vpif_obj.dev[i] become unreleased.
+If qxl_device_init fails on creating resources and does not report it,
+then qxl module will catch null pointer exception on remove, or on
+probe's error path.
 
-The patch adds deallocation of vpif_obj.dev[i] on the error path and
-removes duplicated check on platform_data presence.
+The patch adds error path with resources release into qxl_device_init.
 
 Found by Linux Driver Verification project (linuxtesting.org).
 
 Signed-off-by: Anton Vasilyev <vasilyev@ispras.ru>
 ---
- drivers/media/platform/davinci/vpif_display.c | 24 ++++++++++++-------
- 1 file changed, 16 insertions(+), 8 deletions(-)
+ drivers/gpu/drm/qxl/qxl_kms.c | 80 ++++++++++++++++++++++++++++++++---
+ 1 file changed, 73 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/media/platform/davinci/vpif_display.c b/drivers/media/platform/davinci/vpif_display.c
-index 7be636237acf..0f324055cc9f 100644
---- a/drivers/media/platform/davinci/vpif_display.c
-+++ b/drivers/media/platform/davinci/vpif_display.c
-@@ -1114,6 +1114,14 @@ static int initialize_vpif(void)
- 	return err;
- }
+diff --git a/drivers/gpu/drm/qxl/qxl_kms.c b/drivers/gpu/drm/qxl/qxl_kms.c
+index 771250aed78d..e25c589d5f50 100644
+--- a/drivers/gpu/drm/qxl/qxl_kms.c
++++ b/drivers/gpu/drm/qxl/qxl_kms.c
+@@ -102,8 +102,10 @@ int qxl_device_init(struct qxl_device *qdev,
+ 	int r, sb;
  
-+static void free_vpif_objs(void)
-+{
-+	int i;
-+
-+	for (i = 0; i < VPIF_DISPLAY_MAX_DEVICES; i++)
-+		kfree(vpif_obj.dev[i]);
-+}
-+
- static int vpif_async_bound(struct v4l2_async_notifier *notifier,
- 			    struct v4l2_subdev *subdev,
- 			    struct v4l2_async_subdev *asd)
-@@ -1255,11 +1263,6 @@ static __init int vpif_probe(struct platform_device *pdev)
- 		return -EINVAL;
- 	}
+ 	r = drm_dev_init(&qdev->ddev, drv, &pdev->dev);
+-	if (r)
+-		return r;
++	if (r) {
++		pr_err("Unable to init drm dev");
++		goto error;
++	}
  
--	if (!pdev->dev.platform_data) {
--		dev_warn(&pdev->dev, "Missing platform data.  Giving up.\n");
--		return -EINVAL;
--	}
--
- 	vpif_dev = &pdev->dev;
- 	err = initialize_vpif();
+ 	qdev->ddev.pdev = pdev;
+ 	pci_set_drvdata(pdev, &qdev->ddev);
+@@ -121,6 +123,11 @@ int qxl_device_init(struct qxl_device *qdev,
+ 	qdev->io_base = pci_resource_start(pdev, 3);
  
-@@ -1271,7 +1274,7 @@ static __init int vpif_probe(struct platform_device *pdev)
- 	err = v4l2_device_register(vpif_dev, &vpif_obj.v4l2_dev);
- 	if (err) {
- 		v4l2_err(vpif_dev->driver, "Error registering v4l2 device\n");
--		return err;
-+		goto vpif_free;
- 	}
+ 	qdev->vram_mapping = io_mapping_create_wc(qdev->vram_base, pci_resource_len(pdev, 0));
++	if (!qdev->vram_mapping) {
++		pr_err("Unable to create vram_mapping");
++		r = -ENOMEM;
++		goto error;
++	}
  
- 	while ((res = platform_get_resource(pdev, IORESOURCE_IRQ, res_idx))) {
-@@ -1314,7 +1317,10 @@ static __init int vpif_probe(struct platform_device *pdev)
- 			if (vpif_obj.sd[i])
- 				vpif_obj.sd[i]->grp_id = 1 << i;
- 		}
--		vpif_probe_complete();
-+		err = vpif_probe_complete();
-+		if (err) {
-+			goto probe_subdev_out;
+ 	if (pci_resource_len(pdev, 4) > 0) {
+ 		/* 64bit surface bar present */
+@@ -139,6 +146,11 @@ int qxl_device_init(struct qxl_device *qdev,
+ 		qdev->surface_mapping =
+ 			io_mapping_create_wc(qdev->surfaceram_base,
+ 					     qdev->surfaceram_size);
++		if (!qdev->surface_mapping) {
++			pr_err("Unable to create surface_mapping");
++			r = -ENOMEM;
++			goto vram_mapping_free;
 +		}
- 	} else {
- 		vpif_obj.notifier.subdevs = vpif_obj.config->asd;
- 		vpif_obj.notifier.num_subdevs = vpif_obj.config->asd_sizes[0];
-@@ -1334,6 +1340,8 @@ static __init int vpif_probe(struct platform_device *pdev)
- 	kfree(vpif_obj.sd);
- vpif_unregister:
- 	v4l2_device_unregister(&vpif_obj.v4l2_dev);
-+vpif_free:
-+	free_vpif_objs();
- 
- 	return err;
- }
-@@ -1355,8 +1363,8 @@ static int vpif_remove(struct platform_device *device)
- 		ch = vpif_obj.dev[i];
- 		/* Unregister video device */
- 		video_unregister_device(&ch->video_dev);
--		kfree(vpif_obj.dev[i]);
  	}
-+	free_vpif_objs();
+ 
+ 	DRM_DEBUG_KMS("qxl: vram %llx-%llx(%dM %dk), surface %llx-%llx(%dM %dk, %s)\n",
+@@ -155,20 +167,29 @@ int qxl_device_init(struct qxl_device *qdev,
+ 	qdev->rom = ioremap(qdev->rom_base, qdev->rom_size);
+ 	if (!qdev->rom) {
+ 		pr_err("Unable to ioremap ROM\n");
+-		return -ENOMEM;
++		r = -ENOMEM;
++		goto surface_mapping_free;
+ 	}
+ 
+-	qxl_check_device(qdev);
++	if (!qxl_check_device(qdev)) {
++		r = -ENODEV;
++		goto surface_mapping_free;
++	}
+ 
+ 	r = qxl_bo_init(qdev);
+ 	if (r) {
+ 		DRM_ERROR("bo init failed %d\n", r);
+-		return r;
++		goto rom_unmap;
+ 	}
+ 
+ 	qdev->ram_header = ioremap(qdev->vram_base +
+ 				   qdev->rom->ram_header_offset,
+ 				   sizeof(*qdev->ram_header));
++	if (!qdev->ram_header) {
++		DRM_ERROR("Unable to ioremap RAM header\n");
++		r = -ENOMEM;
++		goto bo_fini;
++	}
+ 
+ 	qdev->command_ring = qxl_ring_create(&(qdev->ram_header->cmd_ring_hdr),
+ 					     sizeof(struct qxl_command),
+@@ -176,6 +197,11 @@ int qxl_device_init(struct qxl_device *qdev,
+ 					     qdev->io_base + QXL_IO_NOTIFY_CMD,
+ 					     false,
+ 					     &qdev->display_event);
++	if (!qdev->command_ring) {
++		DRM_ERROR("Unable to create command ring\n");
++		r = -ENOMEM;
++		goto ram_header_unmap;
++	}
+ 
+ 	qdev->cursor_ring = qxl_ring_create(
+ 				&(qdev->ram_header->cursor_ring_hdr),
+@@ -185,12 +211,23 @@ int qxl_device_init(struct qxl_device *qdev,
+ 				false,
+ 				&qdev->cursor_event);
+ 
++	if (!qdev->cursor_ring) {
++		DRM_ERROR("Unable to create cursor ring\n");
++		r = -ENOMEM;
++		goto command_ring_free;
++	}
++
+ 	qdev->release_ring = qxl_ring_create(
+ 				&(qdev->ram_header->release_ring_hdr),
+ 				sizeof(uint64_t),
+ 				QXL_RELEASE_RING_SIZE, 0, true,
+ 				NULL);
+ 
++	if (!qdev->release_ring) {
++		DRM_ERROR("Unable to create release ring\n");
++		r = -ENOMEM;
++		goto cursor_ring_free;
++	}
+ 	/* TODO - slot initialization should happen on reset. where is our
+ 	 * reset handler? */
+ 	qdev->n_mem_slots = qdev->rom->slots_end;
+@@ -203,6 +240,12 @@ int qxl_device_init(struct qxl_device *qdev,
+ 		kmalloc_array(qdev->n_mem_slots, sizeof(struct qxl_memslot),
+ 			      GFP_KERNEL);
+ 
++	if (!qdev->mem_slots) {
++		DRM_ERROR("Unable to alloc mem slots\n");
++		r = -ENOMEM;
++		goto release_ring_free;
++	}
++
+ 	idr_init(&qdev->release_idr);
+ 	spin_lock_init(&qdev->release_idr_lock);
+ 	spin_lock_init(&qdev->release_lock);
+@@ -218,8 +261,10 @@ int qxl_device_init(struct qxl_device *qdev,
+ 
+ 	/* must initialize irq before first async io - slot creation */
+ 	r = qxl_irq_init(qdev);
+-	if (r)
+-		return r;
++	if (r) {
++		DRM_ERROR("Unable to init qxl irq\n");
++		goto mem_slots_free;
++	}
+ 
+ 	/*
+ 	 * Note that virtual is surface0. We rely on the single ioremap done
+@@ -243,6 +288,27 @@ int qxl_device_init(struct qxl_device *qdev,
+ 	INIT_WORK(&qdev->gc_work, qxl_gc_work);
  
  	return 0;
++
++mem_slots_free:
++	kfree(qdev->mem_slots);
++release_ring_free:
++	qxl_ring_free(qdev->release_ring);
++cursor_ring_free:
++	qxl_ring_free(qdev->cursor_ring);
++command_ring_free:
++	qxl_ring_free(qdev->command_ring);
++ram_header_unmap:
++	iounmap(qdev->ram_header);
++bo_fini:
++	qxl_bo_fini(qdev);
++rom_unmap:
++	iounmap(qdev->rom);
++surface_mapping_free:
++	io_mapping_free(qdev->surface_mapping);
++vram_mapping_free:
++	io_mapping_free(qdev->vram_mapping);
++error:
++	return r;
  }
+ 
+ void qxl_device_fini(struct qxl_device *qdev)
 -- 
 2.18.0
 
