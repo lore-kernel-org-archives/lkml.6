@@ -2,133 +2,123 @@ Return-Path: <SRS0=OQFz=KL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3B5FC67790
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 11:10:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B563C67790
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 11:11:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5AE812089B
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 11:10:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2C3A92089B
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 11:11:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dJiknFHR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5AE812089B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="VlfoDkD6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2C3A92089B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731568AbeG0McF (ORCPT
+        id S1732141AbeG0Mcb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 08:32:05 -0400
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:36986 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730613AbeG0McF (ORCPT
+        Fri, 27 Jul 2018 08:32:31 -0400
+Received: from us01smtprelay-2.synopsys.com ([198.182.47.9]:53372 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730290AbeG0Mca (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 08:32:05 -0400
-Received: by mail-lf1-f68.google.com with SMTP id j8-v6so3271590lfb.4;
-        Fri, 27 Jul 2018 04:10:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Ljp7fKycJrZk6kOxEolSO4EHnp1SMXr3FGi/yhWeF8k=;
-        b=dJiknFHRlnjf6sgcZTFUpD7sN5GKZp4B2IcubkzUgCl2VePrwl1QR7pda1e6/OZA+2
-         wHWzH4ul6wxX2CYVaBVwzMw9m1G+kblOTi61S24oVKewmfMEP7fGpLeyOGWCcO0HPw8z
-         /QcnuIlLSupvcIEIDg8rpkpN79c0DJKuS/UgVsldF8ba9KQSzPygn12SbY9h0sEpDzVc
-         +X2E1JXtIQ9horcpnJL9jFoTzDq0x/2ir8aEfSXuy3AGHQIy6IYslNij2FyUgB/UX5+s
-         +me3UEZPH/YUcYi70uDIxRq3DbaXR8iDmt15nk5pl5tUkt6fknGmpQPvkpYGCA/+cI4H
-         2AxQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Ljp7fKycJrZk6kOxEolSO4EHnp1SMXr3FGi/yhWeF8k=;
-        b=ufxKP8tbpU/keRvSWJi2G/rzXReNn/JIPCt7aAy0oc/CGtpNYxd9WYwc7KGR/KRyEm
-         TXGF8PYDzeUP7ThpXfvEC6xiMdMg7elxh2lAAjFab0vA9NTWzuCEIvHtmDLmORdJm46m
-         i7Wz4eZXoTUl5yh2aB/pHgvR1zGOcm/AIzj5DtdxCOSFr2UUrSvm9Hulxm2KQtpoGo8j
-         f8NMWuf3cP7G3bdWwZuXgNHBtvbN5PsQLv8IVNZHDQiWLGPPmvfeorlApY1jfYcv8o7z
-         iSj2/QNfeNPSQdJXFiflT8TTl7qnWnasJmCmnYIT7vg8pgBVF/IkGEwwvEpxqHwHz48X
-         5nlw==
-X-Gm-Message-State: AOUpUlEB7eZbNLZ+VHDZlYbGhfHR49trm0D1Rt34BHSU74e8kTTnZl/F
-        z0yQyi7tKa5IPMeI/Kvuez4y/R4U
-X-Google-Smtp-Source: AAOMgpf7aADY0yxmaaVG00cJenSoCXAyqIQ9qTEsxgu5NhbRJdqoGZV5hbSeBO1IGo2zTrP40r5rrw==
-X-Received: by 2002:a19:4895:: with SMTP id v143-v6mr3618002lfa.82.1532689836901;
-        Fri, 27 Jul 2018 04:10:36 -0700 (PDT)
-Received: from localhost.localdomain ([188.162.65.128])
-        by smtp.gmail.com with ESMTPSA id m29-v6sm501329lfj.45.2018.07.27.04.10.34
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 27 Jul 2018 04:10:35 -0700 (PDT)
-Date:   Fri, 27 Jul 2018 14:10:34 +0300
-From:   Ivan Bornyakov <brnkv.i1@gmail.com>
-To:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Cc:     mchehab@kernel.org, linux-media@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] media: stv090x: fix if-else order
-Message-ID: <20180727111034.f42dhlwijthxfp3n@localhost.localdomain>
-References: <20180601161221.24807-1-brnkv.i1@gmail.com>
- <20180726162607.2de43b84@coco.lan>
+        Fri, 27 Jul 2018 08:32:30 -0400
+Received: from mailhost.synopsys.com (mailhost3.synopsys.com [10.12.238.238])
+        by smtprelay.synopsys.com (Postfix) with ESMTP id 5EADA24E0396;
+        Fri, 27 Jul 2018 04:11:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1532689864; bh=23uReKFiTvinKImWq2aBjmupK0oFWfOYXhWxiKRuWns=;
+        h=From:To:CC:Subject:Date:References:From;
+        b=VlfoDkD6kvn7wTNuHFmkXxyqh3yWrX/JIvBvtW/GdlVlLZ1g2cPlATNICOuHp0PpS
+         nd4FejSGIJvULAizO4cn0ujle8OQxP+94VNZaaxiRWhoCPmsxEghFuD4Ol1x9v57Ep
+         /G7HN2UGTc6Qx8JaXOWMTEK2fSW/NHxgNp2o0QKoYxiEUWYHnMxpa0J4rvN/PesGs9
+         ngu3V8S2VPspRexex+VNpje1ZtZwPXtWdxSyEpWuVzuHdTDrUuXDuo6Hy3UcNuO44m
+         CGFikKiuZnf8nsYePTqwWBqdt3lDUVz8Io+QG2GiguG89mUmd2kdhLlookv0sa0gjb
+         5HR2Dx3FuiOzQ==
+Received: from us01wehtc1.internal.synopsys.com (us01wehtc1-vip.internal.synopsys.com [10.12.239.236])
+        by mailhost.synopsys.com (Postfix) with ESMTP id 3DEA43A9A;
+        Fri, 27 Jul 2018 04:11:04 -0700 (PDT)
+Received: from AM04WEHTCA.internal.synopsys.com (10.116.16.190) by
+ us01wehtc1.internal.synopsys.com (10.12.239.231) with Microsoft SMTP Server
+ (TLS) id 14.3.361.1; Fri, 27 Jul 2018 04:11:04 -0700
+Received: from AM04WEMBXA.internal.synopsys.com ([fe80::79c3:55f2:1f20:5bf4])
+ by am04wehtca.internal.synopsys.com ([::1]) with mapi id 14.03.0361.001; Fri,
+ 27 Jul 2018 15:11:01 +0400
+From:   Minas Harutyunyan <Minas.Harutyunyan@synopsys.com>
+To:     Douglas Anderson <dianders@chromium.org>,
+        "balbi@kernel.org" <balbi@kernel.org>,
+        "Minas.Harutyunyan@synopsys.com" <Minas.Harutyunyan@synopsys.com>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
+CC:     "stefan.wahren@i2se.com" <stefan.wahren@i2se.com>,
+        "grigor.tovmasyan@synopsys.com" <grigor.tovmasyan@synopsys.com>,
+        "Bruno Herrera" <bruherrera@gmail.com>,
+        Zhangfei Gao <zhangfei.gao@linaro.org>,
+        "john.stultz@linaro.org" <john.stultz@linaro.org>,
+        Stephen Warren <swarren@wwwdotorg.org>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [REPOST PATCH 3/4] usb: dwc2: Turn on uframe_sched on "amlogic"
+ platforms
+Thread-Topic: [REPOST PATCH 3/4] usb: dwc2: Turn on uframe_sched on
+ "amlogic" platforms
+Thread-Index: AQHUJRxeUWy2qj6wI0S5d3VRi5vBAA==
+Date:   Fri, 27 Jul 2018 11:11:00 +0000
+Message-ID: <410670D7E743164D87FA6160E7907A56013A5CBE48@am04wembxa.internal.synopsys.com>
+References: <20180726200730.18290-1-dianders@chromium.org>
+ <20180726200730.18290-4-dianders@chromium.org>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.116.70.151]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180726162607.2de43b84@coco.lan>
-User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 26, 2018 at 04:26:07PM -0300, Mauro Carvalho Chehab wrote:
-> Em Fri,  1 Jun 2018 19:12:21 +0300
-> Ivan Bornyakov <brnkv.i1@gmail.com> escreveu:
-> 
-> > There is this code:
-> > 
-> > 	if (v >= 0x20) {
-> > 		...
-> > 	} else if (v < 0x20) {
-> > 		...
-> > 	} else if (v > 0x30) {
-> > 		/* this branch is impossible */
-> > 	}
-> > 
-> > It would be sensibly for last branch to be on the top.
-> 
-> Have you tested it and check at the datasheets if dev_ver > 0x30 makes
-> sense?
-> 
-> If not, I would prefer, instead, to remove the dead code, as this
-> patch may cause regressions (adding a FIXME comment about this
-> special case).
-> 
-
-Hi, Mauro!
-
-Actually, I did not test it, because I did not have the hardware.
-But, in the other places of the code, the same if cases are used.
-
-Here are a couple examples:
-
-  static int stv090x_dvbs_track_crl(struct stv090x_state *state)
-  {
-          if (state->internal->dev_ver >= 0x30) {
-                  ...
-	  } else {
-	          ...
-	  }
-
-	  ...
-  }
-
-  static u32 stv090x_srate_srch_coarse(struct stv090x_state *state)
-  {
-	...
-
-	if (state->internal->dev_ver >= 0x30) {
-                ...
-	} else if (state->internal->dev_ver >= 0x20) {
-	        ...
-	}
-
-	...
-  }
+On 7/27/2018 12:08 AM, Douglas Anderson wrote:=0A=
+> There's no reason to have the uframe scheduler off on dwc2.  Running=0A=
+> with uframe_sched =3D False is equivalent to saying "I don't want to run=
+=0A=
+> the correct code, I want to run the old and incorrect code".=0A=
+> =0A=
+> The uframe scheduler has been off on Amlogic since commit f94310ac076e=0A=
+> ("usb: dwc2: add support for Meson8b and GXBB SoCs").  While this was=0A=
+> after most of the recent improvements, notably the commit 9f9f09b048f5=0A=
+> ("usb: dwc2: host: Totally redo the microframe scheduler"), presumably=0A=
+> the parameters were copied from another platform and the uframe=0A=
+> scheduler wasn't tried.=0A=
+> =0A=
+> Presumably if everyone is good w/ the uframe_sched turned back on we=0A=
+> can kill all the old and crufty non-uframe sched code.=0A=
+> =0A=
+> Signed-off-by: Douglas Anderson <dianders@chromium.org>=0A=
+=0A=
+Reviewed-by: Minas Harutyunyan <hminas@synopsys.com>=0A=
+=0A=
+> ---=0A=
+> =0A=
+>   drivers/usb/dwc2/params.c | 1 -=0A=
+>   1 file changed, 1 deletion(-)=0A=
+> =0A=
+> diff --git a/drivers/usb/dwc2/params.c b/drivers/usb/dwc2/params.c=0A=
+> index db97bb16ecc4..93380f7c32b4 100644=0A=
+> --- a/drivers/usb/dwc2/params.c=0A=
+> +++ b/drivers/usb/dwc2/params.c=0A=
+> @@ -110,7 +110,6 @@ static void dwc2_set_amlogic_params(struct dwc2_hsotg=
+ *hsotg)=0A=
+>   	p->phy_type =3D DWC2_PHY_TYPE_PARAM_UTMI;=0A=
+>   	p->ahbcfg =3D GAHBCFG_HBSTLEN_INCR8 <<=0A=
+>   		GAHBCFG_HBSTLEN_SHIFT;=0A=
+> -	p->uframe_sched =3D false;=0A=
+>   }=0A=
+>   =0A=
+>   static void dwc2_set_amcc_params(struct dwc2_hsotg *hsotg)=0A=
+> =0A=
+=0A=
