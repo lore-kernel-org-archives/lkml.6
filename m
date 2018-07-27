@@ -2,133 +2,202 @@ Return-Path: <SRS0=OQFz=KL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DED3BC67790
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 06:58:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DDD9C67790
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 06:59:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8FB0720673
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 06:58:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8FB0720673
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 3E0B420673
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 06:59:01 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="aT4rFPL3"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3E0B420673
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729481AbeG0ITW (ORCPT
+        id S1729536AbeG0IT1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 04:19:22 -0400
-Received: from mga18.intel.com ([134.134.136.126]:10349 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726053AbeG0ITW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 04:19:22 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Jul 2018 23:58:54 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,408,1526367600"; 
-   d="asc'?scan'208";a="57567311"
-Received: from pipin.fi.intel.com (HELO localhost) ([10.237.68.37])
-  by fmsmga007.fm.intel.com with ESMTP; 26 Jul 2018 23:58:51 -0700
-From:   Felipe Balbi <felipe.balbi@linux.intel.com>
-To:     Doug Anderson <dianders@chromium.org>
-Cc:     Minas Harutyunyan <hminas@synopsys.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Zhangfei Gao <zhangfei.gao@linaro.org>,
-        Stephen Warren <swarren@wwwdotorg.org>,
-        Bruno Herrera <bruherrera@gmail.com>,
-        linux-usb@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [RFT PATCH 0/4] usb: dwc2: Turn on uframe sched everywhere
-In-Reply-To: <CAD=FV=WjMVhc=h+YJLmW6jQ0aS+qc1ZQU5DCx2F8B7hKc4v8ZA@mail.gmail.com>
-References: <20180706162154.196345-1-dianders@chromium.org> <87o9eu1cup.fsf@linux.intel.com> <CAD=FV=WjMVhc=h+YJLmW6jQ0aS+qc1ZQU5DCx2F8B7hKc4v8ZA@mail.gmail.com>
-Date:   Fri, 27 Jul 2018 09:55:32 +0300
-Message-ID: <87pnz9yxp7.fsf@linux.intel.com>
+        Fri, 27 Jul 2018 04:19:27 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:45012 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726053AbeG0IT0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Jul 2018 04:19:26 -0400
+Received: by mail-pg1-f194.google.com with SMTP id r1-v6so2673874pgp.11
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Jul 2018 23:58:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:mail-followup-to:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=DrwXN0lnZyEtNP7fSC4yp+Ct1fvcLFammFPrQ18DXiU=;
+        b=aT4rFPL3h0GatvLWd+ohi264DviSusYKUGzA8hJpwKgPh+8i/zw67M4gidXsNuiziW
+         InqVNlQkmPSqFcxVTBdfQy6Ax4q9TZvW5ALqhdBMpTIlfbCzVFynJdPZ1KCzEeEN+/pW
+         yqKONhYfJgoXPKE9J4aljOyPu8Pw6oaJRFo0A=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :in-reply-to:user-agent;
+        bh=DrwXN0lnZyEtNP7fSC4yp+Ct1fvcLFammFPrQ18DXiU=;
+        b=K6ouO3Y2as7iC3ZTpMU+ysehDoAlkHy2I9L0Rp7pKKBzfvyIS93XnaUE5DTvxEiMwK
+         SCdxN4A/F9rUki990Yl0rU3dvgDvKHAxnEPrRXiI2kgL4cDSiZqNwc9icgpuiKCpgv8J
+         MOEbSuZYdUYJxdFJVfSas8RCiUDaSI0Jy2OpOu1UB1p+F9sE/fBmT55DQj+qyYaQTio8
+         s2+MHMbX2QN28T7xTliJG31iVR0tWEadg9aucT433tJ/7rBL+d857/qLmegy9Uw3GoTR
+         bJaIG+7CeipozpLmAdn5lecheM/bCcMVjp01wb8yBr6CyPmN9BK3GtEBHPuDPgdzIgvf
+         66Sg==
+X-Gm-Message-State: AOUpUlERxrMXerxZ1+tS45sPXcSdM8+9R7Yn/nZ1/4E9G0ux7VEwpbOY
+        1zGwO8hqj7nOSiHkZMZvCf4H/Q==
+X-Google-Smtp-Source: AAOMgpfCLr1oYAAw5unhQ3LD3UHJsngkj+7oc96ot4jaRLRQsqTmsN0bABwtL/P0yLrAUrV00L8KQA==
+X-Received: by 2002:a65:5106:: with SMTP id f6-v6mr4857600pgq.72.1532674737769;
+        Thu, 26 Jul 2018 23:58:57 -0700 (PDT)
+Received: from linaro.org ([121.95.100.191])
+        by smtp.googlemail.com with ESMTPSA id z19-v6sm5119055pgi.33.2018.07.26.23.58.53
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 26 Jul 2018 23:58:57 -0700 (PDT)
+Date:   Fri, 27 Jul 2018 16:00:31 +0900
+From:   AKASHI Takahiro <takahiro.akashi@linaro.org>
+To:     James Morse <james.morse@arm.com>
+Cc:     catalin.marinas@arm.com, will.deacon@arm.com, dhowells@redhat.com,
+        vgoyal@redhat.com, herbert@gondor.apana.org.au,
+        davem@davemloft.net, dyoung@redhat.com, bhe@redhat.com,
+        arnd@arndb.de, schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
+        ard.biesheuvel@linaro.org, bhsharma@redhat.com,
+        kexec@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v12 12/16] arm64: kexec_file: add crash dump support
+Message-ID: <20180727070030.GG11258@linaro.org>
+Mail-Followup-To: AKASHI Takahiro <takahiro.akashi@linaro.org>,
+        James Morse <james.morse@arm.com>, catalin.marinas@arm.com,
+        will.deacon@arm.com, dhowells@redhat.com, vgoyal@redhat.com,
+        herbert@gondor.apana.org.au, davem@davemloft.net, dyoung@redhat.com,
+        bhe@redhat.com, arnd@arndb.de, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com, ard.biesheuvel@linaro.org,
+        bhsharma@redhat.com, kexec@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20180724065759.19186-1-takahiro.akashi@linaro.org>
+ <20180724065759.19186-13-takahiro.akashi@linaro.org>
+ <e7605411-c54f-c744-43a7-aecc0e36e3f3@arm.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-        micalg=pgp-sha512; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e7605411-c54f-c744-43a7-aecc0e36e3f3@arm.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+On Thu, Jul 26, 2018 at 02:36:58PM +0100, James Morse wrote:
+> Hi Akashi,
+> 
+> On 24/07/18 07:57, AKASHI Takahiro wrote:
+> > Enabling crash dump (kdump) includes
+> > * prepare contents of ELF header of a core dump file, /proc/vmcore,
+> >   using crash_prepare_elf64_headers(), and
+> > * add two device tree properties, "linux,usable-memory-range" and
+> >   "linux,elfcorehdr", which represent respectively a memory range
+> >   to be used by crash dump kernel and the header's location
+> 
+> > diff --git a/arch/arm64/include/asm/kexec.h b/arch/arm64/include/asm/kexec.h
+> > index 5d102a1054b3..1b2c27026ae0 100644
+> > --- a/arch/arm64/include/asm/kexec.h
+> > +++ b/arch/arm64/include/asm/kexec.h
+> > @@ -97,8 +97,12 @@ static inline void crash_post_resume(void) {}
+> >  #define ARCH_HAS_KIMAGE_ARCH
+> >  
+> >  struct kimage_arch {
+> 
+> > -	void *dtb_buf;
+> > +	void *dtb;
+> 
+> This change should be in an earlier patch, otherwise this series doesn't build
+> during bisect.
+
+Will fix.
+
+> With the build-issues fixed:
+> Reviewed-by: James Morse <james.morse@arm.com>
+> 
+> Some boring Nits:
+> 
+> >  	unsigned long dtb_mem;
+> > +	/* Core ELF header buffer */
+> > +	void *elf_headers;
+> > +	unsigned long elf_headers_mem;
+> > +	unsigned long elf_headers_sz;
+> >  };
+> > diff --git a/arch/arm64/kernel/machine_kexec_file.c b/arch/arm64/kernel/machine_kexec_file.c
+> > index b8297f10e2ef..7356da5a53d5 100644
+> > --- a/arch/arm64/kernel/machine_kexec_file.c
+> > +++ b/arch/arm64/kernel/machine_kexec_file.c
+> > @@ -38,12 +44,30 @@ static int setup_dtb(struct kimage *image,
+> >  		void **dtb_buf, unsigned long *dtb_buf_len)
+> >  {
+> >  	void *buf = NULL;
+> > -	size_t buf_size;
+> > +	size_t buf_size, range_size;
+> >  	int nodeoffset;
+> >  	int ret;
+> >  
+> >  	/* duplicate dt blob */
+> >  	buf_size = fdt_totalsize(initial_boot_params);
+> > +	range_size = of_fdt_reg_cells_size();
+> > +
+> > +	if (image->type == KEXEC_TYPE_CRASH) {
+> > +		buf_size += fdt_prop_len("linux,elfcorehdr", range_size);
+> > +		buf_size += fdt_prop_len("linux,usable-memory-range",
+> > +								range_size);
+> > +	}
+> 
+> Nit: it would be better if these strings were defined in a header file somewhere
+> so we don't risk a typo if this gets refactored.
+
+Nit??
+Well, I do understand your concern, but it's a bit headache.
+If we handle them in such a way, we may want to handle others, such as
+linux,initrd-start/end, chosen and bootargs, as well in this file.
+They are not kexec specific and should go into a common header. This will
+end up propagating similar changes to other no-kexec-related occurrences
+under drivers/of.
+
+So I want to keep the following def's local in this file for easy
+maintenance.
+#define FDT_PSTR_KEXEC_ELFHDR  "linux,elfcorehdr"
+#define FDT_PSTR_MEM_RANGE     "linux,usable-memory-range"
+#define FDT_PSTR_INITRD_ST     "linux,initrd-start"
+#define FDT_PSTR_INITRD_END    "linux,initrd-end"
+#define FDT_PSTR_BOOTARGS       "bootargs"
+#define FDT_PSTR_KASLR_SEED     "kaslr-seed"
+
+> 
+> 
+> > @@ -129,6 +170,43 @@ static int setup_dtb(struct kimage *image,
+> >  	return ret;
+> >  }
+> >  
+> > +static int prepare_elf_headers(void **addr, unsigned long *sz)
+> > +{
+> > +	struct crash_mem *cmem;
+> > +	unsigned int nr_ranges;
+> > +	int ret;
+> > +	u64 i;
+> > +	phys_addr_t start, end;
+> > +
+> > +	nr_ranges = 1; /* for exclusion of crashkernel region */
+> 
+> > +	for_each_mem_range(i, &memblock.memory, NULL, NUMA_NO_NODE, 0,
+> > +							&start, &end, NULL)
+> 
+> Nit: MEMBLOCK_NONE
+
+OK
+
+-Takahiro AKASHI
 
 
-Hi,
-
-Doug Anderson <dianders@chromium.org> writes:
-> On Thu, Jul 26, 2018 at 3:59 AM, Felipe Balbi
-> <felipe.balbi@linux.intel.com> wrote:
->> Douglas Anderson <dianders@chromium.org> writes:
->>
->>> While looking at a dwc2 recently, I noticed that some platforms still
->>> have the uframe scheduler off.  As far as I know, nothing good can
->>> come out of having the uframe scheduler off.  Let's turn it on
->>> everywhere.  Assuming this all works out then some time in the future
->>> we can gut all the old code that handles the old non-uframe scheduler
->>> and make everything simpler.
->>>
->>> NOTE: I don't have access to any of the platforms that I'm changing
->>> here, so I'm hoping to see a Tested-by from those on the list.
->>>
->>>
->>> Douglas Anderson (4):
->>>   usb: dwc2: Turn on uframe_sched on "bcm" platforms
->>>   usb: dwc2: Turn on uframe_sched on "his" platforms
->>>   usb: dwc2: Turn on uframe_sched on "amlogic" platforms
->>>   usb: dwc2: Turn on uframe_sched on "stm32f4x9_fsotg" platforms
->>
->> care to resend without RFT prefix and with collected acks, tested-bys, e=
-tc?
->
-> Done with a prefix of 'REPOST' to hopefully make it obvious nothing
-> changed between the RFT and this version.  There were only two
-> test-by, but as mentioned in the updated cover letter:
->
-> Since there should be nothing platform specific about the uFrame
-> scheduler presumably this should mean we're good to go?  Specificaly
-> note that in at least one of the "Tested-by" reports this patch caused
-> a notable improvement.
->
->
-> BTW: I'm pleased to have you apply the patches, but I notice that
-> get_maintainer no longer flags you as the person to post dwc2 patches
-> to.  From linux-next:
->
-> $ ./scripts/get_maintainer.pl -f drivers/usb/dwc2
-> Minas Harutyunyan <hminas@synopsys.com> (maintainer:DESIGNWARE USB2
-> DRD IP DRIVER)
-> Greg Kroah-Hartman <gregkh@linuxfoundation.org> (supporter:USB SUBSYSTEM)
-> linux-usb@vger.kernel.org (open list:DESIGNWARE USB2 DRD IP DRIVER)
-> linux-kernel@vger.kernel.org (open list)
-
-I need to add dwc2 to the gadget framework part of MAINTAINERS. I'll do
-that at some point.
-
-=2D-=20
-balbi
-
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEElLzh7wn96CXwjh2IzL64meEamQYFAltaweQACgkQzL64meEa
-mQZeQg//fpx6aH57cgQVkHE4v3J3icKrd3OFRIBYy8MRvDWPlK5Q2KuJCEjzpP+0
-IHHHf+mye3lWnFVG4eVvzaZdlY0NvfRVtFUUnZtYA0UJqOv5VkuHa5t8dQCnKxZW
-f4PIeW5qg3iTfe1JpajeL0RWV4KQYm4OuYGGrvB/rOhBxGBVRGvxdXzz+tvZX02m
-rUMbDOLiATSZ6hhUoTndDPzOKaaETHHJ6fBfBaRnNTEeUBmfc+Xcw/kv8dBv2rbV
-5PcwyBl1Joi9leLZLB04IF6rpcRHh+Df/2LKc/LxpCqCQBa7Cl7Sj14ZSgJBnVie
-eDEkxniSKsPRzi2dqPi0sE5KXQf2kv2r2QdYMBQfN7CKNjGyjjjNtF8D6S5BQSxG
-JbGZBFO/B1wlZ57j9j/Iu/9r8IBXHtVSvQxzWnw1mgGruGOptwC3uqAFFU6idBoD
-tlpIj5wMDQTwpO6FXpvafJRFEE6F+N3mTvlNqTM/ZT2f1gGf7q0OouCEFp2DL7+D
-cLpBTpePL4kodbBzhPFbM2kBqKtn3wmMZxYADYVSszkSwkVotYKyH4aIMB/7j7e1
-vpzAXjfuvRv1r/83EGCZkzd6rVaeUZP2WrrX89oGx5H1VHRdx9wvp3fkA49UQjwT
-jNpaKaiaPCzFRLW1cmrLJ0E1Kk27/cEp4f5K/+6rt8CQYtX242o=
-=ZKgS
------END PGP SIGNATURE-----
---=-=-=--
+> 
+> Thanks,
+> 
+> James
