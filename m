@@ -6,33 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7472BC67790
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:28:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54F94C67790
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:28:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 32A80208A2
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:28:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 32A80208A2
+	by mail.kernel.org (Postfix) with ESMTP id 15B73208A4
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:28:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 15B73208A4
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388874AbeG0Lt1 (ORCPT
+        id S2388909AbeG0Lta (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 07:49:27 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:42498 "EHLO
+        Fri, 27 Jul 2018 07:49:30 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:42512 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730747AbeG0Lt0 (ORCPT
+        with ESMTP id S1730747AbeG0Lt3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 07:49:26 -0400
+        Fri, 27 Jul 2018 07:49:29 -0400
 Received: from localhost (unknown [89.188.5.116])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 5A730CD1;
-        Fri, 27 Jul 2018 10:28:09 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 5D697CD1;
+        Fri, 27 Jul 2018 10:28:12 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH 3.18 27/27] turn off -Wattribute-alias
-Date:   Fri, 27 Jul 2018 12:27:04 +0200
-Message-Id: <20180727102650.038872005@linuxfoundation.org>
+        stable@vger.kernel.org, Lubomir Rintel <lkundrak@v3.sk>,
+        Oliver Neukum <oneukum@suse.com>
+Subject: [PATCH 3.18 19/27] usb: cdc_acm: Add quirk for Castles VEGA3000
+Date:   Fri, 27 Jul 2018 12:26:56 +0200
+Message-Id: <20180727102649.750122713@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180727102649.049641021@linuxfoundation.org>
 References: <20180727102649.049641021@linuxfoundation.org>
@@ -49,59 +50,33 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Arnd Bergmann <arnd@arndb.de>
+From: Lubomir Rintel <lkundrak@v3.sk>
 
-Starting with gcc-8.1, we get a warning about all system call definitions,
-which use an alias between functions with incompatible prototypes, e.g.:
+commit 1445cbe476fc3dd09c0b380b206526a49403c071 upstream.
 
-In file included from ../mm/process_vm_access.c:19:
-../include/linux/syscalls.h:211:18: warning: 'sys_process_vm_readv' alias between functions of incompatible types 'long int(pid_t,  const struct iovec *, long unsigned int,  const struct iovec *, long unsigned int,  long unsigned int)' {aka 'long int(int,  const struct iovec *, long unsigned int,  const struct iovec *, long unsigned int,  long unsigned int)'} and 'long int(long int,  long int,  long int,  long int,  long int,  long int)' [-Wattribute-alias]
-  asmlinkage long sys##name(__MAP(x,__SC_DECL,__VA_ARGS__)) \
-                  ^~~
-../include/linux/syscalls.h:207:2: note: in expansion of macro '__SYSCALL_DEFINEx'
-  __SYSCALL_DEFINEx(x, sname, __VA_ARGS__)
-  ^~~~~~~~~~~~~~~~~
-../include/linux/syscalls.h:201:36: note: in expansion of macro 'SYSCALL_DEFINEx'
- #define SYSCALL_DEFINE6(name, ...) SYSCALL_DEFINEx(6, _##name, __VA_ARGS__)
-                                    ^~~~~~~~~~~~~~~
-../mm/process_vm_access.c:300:1: note: in expansion of macro 'SYSCALL_DEFINE6'
- SYSCALL_DEFINE6(process_vm_readv, pid_t, pid, const struct iovec __user *, lvec,
- ^~~~~~~~~~~~~~~
-../include/linux/syscalls.h:215:18: note: aliased declaration here
-  asmlinkage long SyS##name(__MAP(x,__SC_LONG,__VA_ARGS__)) \
-                  ^~~
-../include/linux/syscalls.h:207:2: note: in expansion of macro '__SYSCALL_DEFINEx'
-  __SYSCALL_DEFINEx(x, sname, __VA_ARGS__)
-  ^~~~~~~~~~~~~~~~~
-../include/linux/syscalls.h:201:36: note: in expansion of macro 'SYSCALL_DEFINEx'
- #define SYSCALL_DEFINE6(name, ...) SYSCALL_DEFINEx(6, _##name, __VA_ARGS__)
-                                    ^~~~~~~~~~~~~~~
-../mm/process_vm_access.c:300:1: note: in expansion of macro 'SYSCALL_DEFINE6'
- SYSCALL_DEFINE6(process_vm_readv, pid_t, pid, const struct iovec __user *, lvec,
+The device (a POS terminal) implements CDC ACM, but has not union
+descriptor.
 
-This is really noisy and does not indicate a real problem. In the latest
-mainline kernel, this was addressed by commit bee20031772a ("disable
--Wattribute-alias warning for SYSCALL_DEFINEx()"), which seems too invasive
-to backport.
-
-This takes a much simpler approach and just disables the warning across the
-kernel.
-
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
+Acked-by: Oliver Neukum <oneukum@suse.com>
+Cc: stable <stable@vger.kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- Makefile |    1 +
- 1 file changed, 1 insertion(+)
 
---- a/Makefile
-+++ b/Makefile
-@@ -613,6 +613,7 @@ KBUILD_CFLAGS	+= $(call cc-disable-warni
- KBUILD_CFLAGS	+= $(call cc-disable-warning, format-truncation)
- KBUILD_CFLAGS	+= $(call cc-disable-warning, format-overflow)
- KBUILD_CFLAGS	+= $(call cc-disable-warning, int-in-bool-context)
-+KBUILD_CFLAGS	+= $(call cc-disable-warning, attribute-alias)
- KBUILD_CFLAGS	+= $(call cc-option,-fno-PIE)
- KBUILD_AFLAGS	+= $(call cc-option,-fno-PIE)
+---
+ drivers/usb/class/cdc-acm.c |    3 +++
+ 1 file changed, 3 insertions(+)
+
+--- a/drivers/usb/class/cdc-acm.c
++++ b/drivers/usb/class/cdc-acm.c
+@@ -1785,6 +1785,9 @@ static const struct usb_device_id acm_id
+ 	{ USB_DEVICE(0x09d8, 0x0320), /* Elatec GmbH TWN3 */
+ 	.driver_info = NO_UNION_NORMAL, /* has misplaced union descriptor */
+ 	},
++	{ USB_DEVICE(0x0ca6, 0xa050), /* Castles VEGA3000 */
++	.driver_info = NO_UNION_NORMAL, /* reports zero length descriptor */
++	},
  
+ 	{ USB_DEVICE(0x2912, 0x0001), /* ATOL FPrint */
+ 	.driver_info = CLEAR_HALT_CONDITIONS,
 
 
