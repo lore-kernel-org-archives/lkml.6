@@ -2,193 +2,109 @@ Return-Path: <SRS0=OQFz=KL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CB12C28CF6
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 01:17:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AFB8C28CF6
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 01:32:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 423D320857
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 01:17:50 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="le2cAeZQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 423D320857
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	by mail.kernel.org (Postfix) with ESMTP id 2BE26206B7
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 01:32:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2BE26206B7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732075AbeG0ChK (ORCPT
+        id S1731993AbeG0CqO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 26 Jul 2018 22:37:10 -0400
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:57460 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731737AbeG0ChJ (ORCPT
+        Thu, 26 Jul 2018 22:46:14 -0400
+Received: from smtprelay0014.hostedemail.com ([216.40.44.14]:39776 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1731800AbeG0CqO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Jul 2018 22:37:09 -0400
-Received: from dlelxv90.itg.ti.com ([172.17.2.17])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id w6R1HhZw045720;
-        Thu, 26 Jul 2018 20:17:43 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1532654263;
-        bh=ODloMAzNcUY29Epgu/gvVDiKDIGTK2rY1PuMeJllD+0=;
-        h=Subject:From:To:CC:References:Date:In-Reply-To;
-        b=le2cAeZQ4fhI9oSDlegHCRXYz9BYNYfbEd3sy/yHSB6rNd0OBwgfTIvU78XUUm/sx
-         l0ps4M1hM0vMrzSYhTvmeeWlw04IOiGgII/LgZh8gai0mWKYPpjd6PKdUV4izFuETk
-         l71o/KtMQdc7g564GTjiAJV0XymlHQlSJRqErGYg=
-Received: from DFLE114.ent.ti.com (dfle114.ent.ti.com [10.64.6.35])
-        by dlelxv90.itg.ti.com (8.14.3/8.13.8) with ESMTP id w6R1HhvA031521;
-        Thu, 26 Jul 2018 20:17:43 -0500
-Received: from DFLE108.ent.ti.com (10.64.6.29) by DFLE114.ent.ti.com
- (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Thu, 26
- Jul 2018 20:17:43 -0500
-Received: from dlep32.itg.ti.com (157.170.170.100) by DFLE108.ent.ti.com
- (10.64.6.29) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
- Thu, 26 Jul 2018 20:17:43 -0500
-Received: from [128.247.58.153] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id w6R1Hhw3013385;
-        Thu, 26 Jul 2018 20:17:43 -0500
-Subject: Re: [PATCH v2 1/1] remoteproc: correct rproc_free_vring() to avoid
- invalid kernel paging
-From:   Suman Anna <s-anna@ti.com>
-To:     Loic PALLARDY <loic.pallardy@st.com>,
-        "bjorn.andersson@linaro.org" <bjorn.andersson@linaro.org>,
-        "ohad@wizery.com" <ohad@wizery.com>
-CC:     "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Arnaud POULIQUEN <arnaud.pouliquen@st.com>,
-        "benjamin.gaignard@linaro.org" <benjamin.gaignard@linaro.org>
-References: <1530863212-16584-1-git-send-email-loic.pallardy@st.com>
- <ee64ddf7-e9c6-0b77-8a4e-44f77d264fe0@ti.com>
- <8e943f4d2a1b4e10a8a0756c737d53a8@SFHDAG7NODE2.st.com>
- <56aeb569-cd4d-3769-fdad-ee3d4dbdc19b@ti.com>
-Message-ID: <62bfadef-d330-4724-12c0-d4b2f3999980@ti.com>
-Date:   Thu, 26 Jul 2018 20:17:43 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <56aeb569-cd4d-3769-fdad-ee3d4dbdc19b@ti.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
+        Thu, 26 Jul 2018 22:46:14 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay02.hostedemail.com (Postfix) with ESMTP id 8F285813F;
+        Fri, 27 Jul 2018 01:26:49 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-HE-Tag: brain86_7596608fe0163
+X-Filterd-Recvd-Size: 3117
+Received: from XPS-9350.home (unknown [47.151.153.53])
+        (Authenticated sender: joe@perches.com)
+        by omf08.hostedemail.com (Postfix) with ESMTPA;
+        Fri, 27 Jul 2018 01:26:47 +0000 (UTC)
+Message-ID: <a13641bc42f2981e7997f4a1900d5a480cc2ee6d.camel@perches.com>
+Subject: Re: [PATCH] checkpatch: Warn when a patch doesn't have a description
+From:   Joe Perches <joe@perches.com>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Prakruthi Deepak Heragu <pheragu@codeaurora.org>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Andy Whitcroft <apw@canonical.com>,
+        linux-kernel@vger.kernel.org, tsoni@codeaurora.org,
+        bryanh@codeaurora.org, ckadabi@codeaurora.org,
+        David Keitel <dkeitel@codeaurora.org>
+Date:   Thu, 26 Jul 2018 18:26:46 -0700
+In-Reply-To: <20180726150855.a9a3e81d5cdc4630c7f4ca2d@linux-foundation.org>
+References: <1531518027-13318-1-git-send-email-pheragu@codeaurora.org>
+         <6799952fbd3639c764c112bde961b5e00270a52d.camel@perches.com>
+         <6ed46f85a7577e1d4a48e81f67fd7581@codeaurora.org>
+         <1b099f4d8373aa583a17011992676bf0f3f09eee.camel@perches.com>
+         <20180726150855.a9a3e81d5cdc4630c7f4ca2d@linux-foundation.org>
+Content-Type: text/plain; charset="ISO-8859-1"
+X-Mailer: Evolution 3.28.1-2 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/26/2018 06:51 PM, Suman Anna wrote:
-> Hi Loic,
+On Thu, 2018-07-26 at 15:08 -0700, Andrew Morton wrote:
+> On Wed, 25 Jul 2018 19:22:47 -0700 Joe Perches <joe@perches.com> wrote:
 > 
-> On 07/26/2018 02:48 AM, Loic PALLARDY wrote:
->> Hi Suman,
->>>
->>> Hi Loic,
->>>
->>> On 07/06/2018 02:46 AM, Loic Pallardy wrote:
->>>> If rproc_start() failed, rproc_resource_cleanup() is called to clean
->>>> debugfs entries, then associated iommu mappings, carveouts and vdev.
->>>> Issue occurs when rproc_free_vring() is trying to reset vring resource
->>>> table entry.
->>>> At this time, table_ptr is pointing on loaded resource table and carveouts
->>>> already released, so access to loaded resource table is generating a kernel
->>>> paging error:
->>>
->>> Are you using a device specific CMA pool or carveout, and if so, where
->>> the pool is? If not, where is the default CMA pool? I am trying to
->>> reproduce the issue on my platform with the start failure as you
->>> suggested, but haven't seen it so far. That said, I have seen the exact
->>> same crash when using HighMEM CMA pools on my downstream kernel
->>> when
->>> stopping the processor, and the root cause is essentially the same as
->>> what you summarized here. The issue was present with LowMem pools as
->>> well, but got masked because of the kernel linear mapping.
->>
->> I have a carveout declared in firmware resource table for co-processor code and data, and st driver has a specific 
->> reserved memory region to fit fix address space requested by co-processor.
->> So CPU access to code and loaded resource table area is granted thanks to allocation done by rproc_handle_carveout().
+> > Potential patches should have a commit description.
+> > Emit a warning when there isn't one.
+[]
+> I did this:
 > 
-> Where are the vrings getting allocated from?
+> --- a/scripts/checkpatch.pl~checkpatch-warn-when-a-patch-doesnt-have-a-description-fix
+> +++ a/scripts/checkpatch.pl
+> @@ -2517,7 +2517,7 @@ sub process {
+>  			if ($line !~ /^\s*$/) {
+>  				$commit_log_lines++;	#could be a $signature
+>  			}
+> -		} else if ($has_commit_log && $commit_log_lines < 2) {
+> +		} elsif ($has_commit_log && $commit_log_lines < 2) {
+>  			WARN("COMMIT_MESSAGE",
+>  			     "Missing commit description - Add an appropriate one\n");
+>  			$commit_log_lines = 2;	#warn only once
 > 
-> In anycase, I prefer that we should actually reset the table_ptr in
-> rproc_start() in failure cases (undo the operation essentially) as we
-> don't call rproc_stop() in those cases. This will result in symmetric
-> code. We already have the reset handled in rproc_stop() added recently
-> in commit 0a8b81cb2e41 ("remoteproc: Reset table_ptr on stop"). Let me
-> know what you think, I can send a quick patch.
+> But I worry that you didn't send out the version which you tested, so
+> please check.
 
-FYI, patch for the same posted here,
-https://patchwork.kernel.org/patch/10546555/
+You're right, I inserted the wrong one.
+Anyway, what you did is correct and that was the only change.
+Thanks.
 
-regards
-Suman
-
->>
->>>
->>>>
->>>> [   12.696535] Unable to handle kernel paging request at virtual address
->>> f0f357cc
->>>> [   12.696540] pgd = (ptrval)
->>>> [   12.696542] [f0f357cc] *pgd=6d2d0811, *pte=00000000, *ppte=00000000
->>>> [   12.696558] Internal error: Oops: 807 [#1] SMP ARM
->>>> [   12.696563] Modules linked in: rpmsg_core v4l2_mem2mem
->>> videobuf2_dma_contig sti_drm v4l2_common vida
->>>> [   12.696598] CPU: 1 PID: 48 Comm: kworker/1:1 Tainted: G        W
->>> 4.18.0-rc2-00018-g3170fdd-8
->>>> [   12.696602] Hardware name: STi SoC with Flattened Device Tree
->>>> [   12.696625] Workqueue: events request_firmware_work_func
->>>> [   12.696659] PC is at rproc_free_vring+0x84/0xbc [remoteproc]
->>>> [   12.696667] LR is at rproc_free_vring+0x70/0xbc [remoteproc]
->>>>
->>>> This patch proposes to simply remove reset of resource table vring entries,
->>>> as firmware and resource table are reloaded at each rproc boot.
->>>> rproc_trigger_recovery() not impacted as resources not touched during
->>> recovery
->>>> procedure.
->>>
->>> And error recovery doesn't work for me after the rproc_start, stop got
->>> introduced.
->> Recovery no available on B2260, but I'll test it on another platform this week
->>
->> Regards,
->> Loic
->>>
->>> regards
->>> Suman
->>>
->>>>
->>>> Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
->>>> ---
->>>> Changes from V1: typo fixes in commit message
->>>>
->>>>  drivers/remoteproc/remoteproc_core.c | 6 ------
->>>>  1 file changed, 6 deletions(-)
->>>>
->>>> diff --git a/drivers/remoteproc/remoteproc_core.c
->>> b/drivers/remoteproc/remoteproc_core.c
->>>> index a9609d9..9a8b47c 100644
->>>> --- a/drivers/remoteproc/remoteproc_core.c
->>>> +++ b/drivers/remoteproc/remoteproc_core.c
->>>> @@ -289,16 +289,10 @@ void rproc_free_vring(struct rproc_vring *rvring)
->>>>  {
->>>>  	int size = PAGE_ALIGN(vring_size(rvring->len, rvring->align));
->>>>  	struct rproc *rproc = rvring->rvdev->rproc;
->>>> -	int idx = rvring->rvdev->vring - rvring;
->>>> -	struct fw_rsc_vdev *rsc;
->>>>
->>>>  	dma_free_coherent(rproc->dev.parent, size, rvring->va, rvring-
->>>> dma);
->>>>  	idr_remove(&rproc->notifyids, rvring->notifyid);
->>>>
->>>> -	/* reset resource entry info */
->>>> -	rsc = (void *)rproc->table_ptr + rvring->rvdev->rsc_offset;
->>>> -	rsc->vring[idx].da = 0;
->>>> -	rsc->vring[idx].notifyid = -1;
->>>>  }
->>>>
->>>>  static int rproc_vdev_do_probe(struct rproc_subdev *subdev)
->>>>
->>
-> 
+$ diff -urN cp_commit_log_lines.diff cp_commit_message.diff 
+--- cp_commit_log_lines.diff	2018-07-13 17:06:29.115337477 -0700
++++ cp_commit_message.diff	2018-07-15 05:46:29.878805336 -0700
+@@ -2,7 +2,7 @@
+  1 file changed, 13 insertions(+)
+ 
+ diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
+-index b5c875d7132b..8b5f3dae31c9 100755
++index b5c875d7132b..4ccf84079ea4 100755
+ --- a/scripts/checkpatch.pl
+ +++ b/scripts/checkpatch.pl
+ @@ -2240,6 +2240,7 @@ sub process {
+@@ -23,7 +23,7 @@
+ +			if ($line !~ /^\s*$/) {
+ +				$commit_log_lines++;	#could be a $signature
+ +			}
+-+		} else if ($has_commit_log && $commit_log_lines < 2) {
+++		} elsif ($has_commit_log && $commit_log_lines < 2) {
+ +			WARN("COMMIT_MESSAGE",
+ +			     "Missing commit description - Add an appropriate one\n");
+ +			$commit_log_lines = 2;	#warn only once
 
