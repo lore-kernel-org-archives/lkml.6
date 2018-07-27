@@ -6,41 +6,40 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BCCDBC6778F
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:11:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67C7CC67790
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:11:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7D3152089E
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:11:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7D3152089E
+	by mail.kernel.org (Postfix) with ESMTP id 239902089E
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:11:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 239902089E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389322AbeG0Lcf (ORCPT
+        id S2389338AbeG0Lcj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 07:32:35 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:36716 "EHLO
+        Fri, 27 Jul 2018 07:32:39 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:36732 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730866AbeG0Lce (ORCPT
+        with ESMTP id S1730866AbeG0Lci (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 07:32:34 -0400
+        Fri, 27 Jul 2018 07:32:38 -0400
 Received: from localhost (unknown [89.188.5.116])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3F451CB7;
-        Fri, 27 Jul 2018 10:11:22 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id F3BEBCBA;
+        Fri, 27 Jul 2018 10:11:24 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Felix Fietkau <nbd@nbd.name>,
-        John Crispin <john@phrozen.org>,
-        Paul Burton <paul.burton@mips.com>,
-        Alban Bedel <albeu@free.fr>, James Hogan <jhogan@kernel.org>,
-        Ralf Baechle <ralf@linux-mips.org>, linux-mips@linux-mips.org
-Subject: [PATCH 4.4 01/23] MIPS: ath79: fix register address in ath79_ddr_wb_flush()
-Date:   Fri, 27 Jul 2018 12:09:02 +0200
-Message-Id: <20180727100845.236622331@linuxfoundation.org>
+        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+        Soheil Hassas Yeganeh <soheil@google.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.4 10/23] tcp: detect malicious patterns in tcp_collapse_ofo_queue()
+Date:   Fri, 27 Jul 2018 12:09:11 +0200
+Message-Id: <20180727100845.566992497@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180727100845.054377089@linuxfoundation.org>
 References: <20180727100845.054377089@linuxfoundation.org>
 User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
@@ -52,39 +51,69 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Felix Fietkau <nbd@nbd.name>
+From: Eric Dumazet <edumazet@google.com>
 
-commit bc88ad2efd11f29e00a4fd60fcd1887abfe76833 upstream.
+[ Upstream commit 3d4bf93ac12003f9b8e1e2de37fe27983deebdcf ]
 
-ath79_ddr_wb_flush_base has the type void __iomem *, so register offsets
-need to be a multiple of 4 in order to access the intended register.
+In case an attacker feeds tiny packets completely out of order,
+tcp_collapse_ofo_queue() might scan the whole rb-tree, performing
+expensive copies, but not changing socket memory usage at all.
 
-Signed-off-by: Felix Fietkau <nbd@nbd.name>
-Signed-off-by: John Crispin <john@phrozen.org>
-Signed-off-by: Paul Burton <paul.burton@mips.com>
-Fixes: 24b0e3e84fbf ("MIPS: ath79: Improve the DDR controller interface")
-Patchwork: https://patchwork.linux-mips.org/patch/19912/
-Cc: Alban Bedel <albeu@free.fr>
-Cc: James Hogan <jhogan@kernel.org>
-Cc: Ralf Baechle <ralf@linux-mips.org>
-Cc: linux-mips@linux-mips.org
-Cc: stable@vger.kernel.org # 4.2+
+1) Do not attempt to collapse tiny skbs.
+2) Add logic to exit early when too many tiny skbs are detected.
+
+We prefer not doing aggressive collapsing (which copies packets)
+for pathological flows, and revert to tcp_prune_ofo_queue() which
+will be less expensive.
+
+In the future, we might add the possibility of terminating flows
+that are proven to be malicious.
+
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Acked-by: Soheil Hassas Yeganeh <soheil@google.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- arch/mips/ath79/common.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/ipv4/tcp_input.c |   15 +++++++++++++--
+ 1 file changed, 13 insertions(+), 2 deletions(-)
 
---- a/arch/mips/ath79/common.c
-+++ b/arch/mips/ath79/common.c
-@@ -58,7 +58,7 @@ EXPORT_SYMBOL_GPL(ath79_ddr_ctrl_init);
- 
- void ath79_ddr_wb_flush(u32 reg)
+--- a/net/ipv4/tcp_input.c
++++ b/net/ipv4/tcp_input.c
+@@ -4789,6 +4789,7 @@ restart:
+ static void tcp_collapse_ofo_queue(struct sock *sk)
  {
--	void __iomem *flush_reg = ath79_ddr_wb_flush_base + reg;
-+	void __iomem *flush_reg = ath79_ddr_wb_flush_base + (reg * 4);
+ 	struct tcp_sock *tp = tcp_sk(sk);
++	u32 range_truesize, sum_tiny = 0;
+ 	struct sk_buff *skb = skb_peek(&tp->out_of_order_queue);
+ 	struct sk_buff *head;
+ 	u32 start, end;
+@@ -4798,6 +4799,7 @@ static void tcp_collapse_ofo_queue(struc
  
- 	/* Flush the DDR write buffer. */
- 	__raw_writel(0x1, flush_reg);
+ 	start = TCP_SKB_CB(skb)->seq;
+ 	end = TCP_SKB_CB(skb)->end_seq;
++	range_truesize = skb->truesize;
+ 	head = skb;
+ 
+ 	for (;;) {
+@@ -4812,8 +4814,17 @@ static void tcp_collapse_ofo_queue(struc
+ 		if (!skb ||
+ 		    after(TCP_SKB_CB(skb)->seq, end) ||
+ 		    before(TCP_SKB_CB(skb)->end_seq, start)) {
+-			tcp_collapse(sk, &tp->out_of_order_queue,
+-				     head, skb, start, end);
++			/* Do not attempt collapsing tiny skbs */
++			if (range_truesize != head->truesize ||
++			    end - start >= SKB_WITH_OVERHEAD(SK_MEM_QUANTUM)) {
++				tcp_collapse(sk, &tp->out_of_order_queue,
++					     head, skb, start, end);
++			} else {
++				sum_tiny += range_truesize;
++				if (sum_tiny > sk->sk_rcvbuf >> 3)
++					return;
++			}
++
+ 			head = skb;
+ 			if (!skb)
+ 				break;
 
 
