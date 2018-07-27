@@ -6,35 +6,37 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32FF2C6778F
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:01:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E43A6C67790
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:01:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CDB4820894
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:01:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CDB4820894
+	by mail.kernel.org (Postfix) with ESMTP id 9A4AA20894
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:01:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9A4AA20894
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388503AbeG0LW0 (ORCPT
+        id S2388535AbeG0LW2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 07:22:26 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:33984 "EHLO
+        Fri, 27 Jul 2018 07:22:28 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:34006 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388412AbeG0LWZ (ORCPT
+        with ESMTP id S1730703AbeG0LW2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 07:22:25 -0400
+        Fri, 27 Jul 2018 07:22:28 -0400
 Received: from localhost (unknown [89.188.5.116])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id ABEB7CBA;
-        Fri, 27 Jul 2018 10:01:15 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B0D4DCBB;
+        Fri, 27 Jul 2018 10:01:18 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Daniel Borkmann <daniel@iogearbox.net>,
-        Dave Watson <davejwatson@fb.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 19/48] sock: fix sg page frag coalescing in sk_alloc_sg
-Date:   Fri, 27 Jul 2018 12:00:04 +0200
-Message-Id: <20180727095920.513756194@linuxfoundation.org>
+        stable@vger.kernel.org, Felix Fietkau <nbd@nbd.name>,
+        John Crispin <john@phrozen.org>,
+        Paul Burton <paul.burton@mips.com>,
+        Alban Bedel <albeu@free.fr>, James Hogan <jhogan@kernel.org>,
+        Ralf Baechle <ralf@linux-mips.org>, linux-mips@linux-mips.org
+Subject: [PATCH 4.14 02/48] MIPS: ath79: fix register address in ath79_ddr_wb_flush()
+Date:   Fri, 27 Jul 2018 11:59:47 +0200
+Message-Id: <20180727095918.727784548@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180727095918.503549522@linuxfoundation.org>
 References: <20180727095918.503549522@linuxfoundation.org>
@@ -51,41 +53,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Daniel Borkmann <daniel@iogearbox.net>
+From: Felix Fietkau <nbd@nbd.name>
 
-[ Upstream commit 144fe2bfd236dc814eae587aea7e2af03dbdd755 ]
+commit bc88ad2efd11f29e00a4fd60fcd1887abfe76833 upstream.
 
-Current sg coalescing logic in sk_alloc_sg() (latter is used by tls and
-sockmap) is not quite correct in that we do fetch the previous sg entry,
-however the subsequent check whether the refilled page frag from the
-socket is still the same as from the last entry with prior offset and
-length matching the start of the current buffer is comparing always the
-first sg list entry instead of the prior one.
+ath79_ddr_wb_flush_base has the type void __iomem *, so register offsets
+need to be a multiple of 4 in order to access the intended register.
 
-Fixes: 3c4d7559159b ("tls: kernel TLS support")
-Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
-Acked-by: Dave Watson <davejwatson@fb.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Felix Fietkau <nbd@nbd.name>
+Signed-off-by: John Crispin <john@phrozen.org>
+Signed-off-by: Paul Burton <paul.burton@mips.com>
+Fixes: 24b0e3e84fbf ("MIPS: ath79: Improve the DDR controller interface")
+Patchwork: https://patchwork.linux-mips.org/patch/19912/
+Cc: Alban Bedel <albeu@free.fr>
+Cc: James Hogan <jhogan@kernel.org>
+Cc: Ralf Baechle <ralf@linux-mips.org>
+Cc: linux-mips@linux-mips.org
+Cc: stable@vger.kernel.org # 4.2+
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- net/tls/tls_sw.c |    7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
 
---- a/net/tls/tls_sw.c
-+++ b/net/tls/tls_sw.c
-@@ -135,9 +135,10 @@ static int alloc_sg(struct sock *sk, int
- 		pfrag->offset += use;
+---
+ arch/mips/ath79/common.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- a/arch/mips/ath79/common.c
++++ b/arch/mips/ath79/common.c
+@@ -58,7 +58,7 @@ EXPORT_SYMBOL_GPL(ath79_ddr_ctrl_init);
  
- 		sge = sg + num_elem - 1;
--		if (num_elem > first_coalesce && sg_page(sg) == pfrag->page &&
--		    sg->offset + sg->length == orig_offset) {
--			sg->length += use;
-+
-+		if (num_elem > first_coalesce && sg_page(sge) == pfrag->page &&
-+		    sge->offset + sge->length == orig_offset) {
-+			sge->length += use;
- 		} else {
- 			sge++;
- 			sg_unmark_end(sge);
+ void ath79_ddr_wb_flush(u32 reg)
+ {
+-	void __iomem *flush_reg = ath79_ddr_wb_flush_base + reg;
++	void __iomem *flush_reg = ath79_ddr_wb_flush_base + (reg * 4);
+ 
+ 	/* Flush the DDR write buffer. */
+ 	__raw_writel(0x1, flush_reg);
 
 
