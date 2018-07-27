@@ -2,206 +2,214 @@ Return-Path: <SRS0=OQFz=KL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C8A2C6778F
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 21:01:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8288C6778F
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 21:03:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AB23A20647
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 21:01:53 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="u8dQ0DYG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AB23A20647
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 8C72320842
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 21:03:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C72320842
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389644AbeG0WZ3 (ORCPT
+        id S2389667AbeG0W04 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 18:25:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59502 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389479AbeG0WZ3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 18:25:29 -0400
-Received: from localhost (unknown [69.71.4.100])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DCFB920647;
-        Fri, 27 Jul 2018 21:01:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1532725310;
-        bh=YbVmsFV6zOuUFQY44XV4BhnndI5tSnGTCTTlt+E4RjI=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=u8dQ0DYGyhewLJSW+zrDEsJHfwEqHIPqln3jx3SS1uLrI9XfUJrngq2CsYc+2x2s8
-         fHbSHsPsxD2ss1PAo8RdKu8E7r3JU6jTFoJUhDV0bpnPqRnykTeAMKL1yQQSGwEMKZ
-         FwnjeOXKYFVOFnY+pjvCqDf9Rg2oAVQCAYzTqmiI=
-Date:   Fri, 27 Jul 2018 16:01:48 -0500
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     "Rafael J. Wysocki" <rafael@kernel.org>
-Cc:     Linux PCI <linux-pci@vger.kernel.org>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v1 2/2] PCI: Document ACPI description of PCI host bridges
-Message-ID: <20180727210147.GE173328@bhelgaas-glaptop.roam.corp.google.com>
-References: <153030390808.57832.2200774416664543563.stgit@bhelgaas-glaptop.roam.corp.google.com>
- <153030406630.57832.11564334393458981467.stgit@bhelgaas-glaptop.roam.corp.google.com>
- <CAJZ5v0iBZRJuh8Yu03p-k_rR_oxr9rJiOvRmvXpOxPjScM+w1Q@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJZ5v0iBZRJuh8Yu03p-k_rR_oxr9rJiOvRmvXpOxPjScM+w1Q@mail.gmail.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+        Fri, 27 Jul 2018 18:26:56 -0400
+Received: from mx2.suse.de ([195.135.220.15]:55396 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2389211AbeG0W0z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Jul 2018 18:26:55 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id B1BF3B054;
+        Fri, 27 Jul 2018 21:03:14 +0000 (UTC)
+Date:   Fri, 27 Jul 2018 23:03:13 +0200
+Message-ID: <s5hva90tmr2.wl-tiwai@suse.de>
+From:   Takashi Iwai <tiwai@suse.de>
+To:     Bjorn Helgaas <helgaas@kernel.org>
+Cc:     Rajat Jain <rajatja@google.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Keith Busch <keith.busch@intel.com>,
+        Vidya Sagar <vidyas@nvidia.com>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Kees Cook <keescook@chromium.org>,
+        "Gustavo A. R. Silva" <garsilva@embeddedor.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Sinan Kaya <okaya@codeaurora.org>,
+        Frederick Lawler <fred@fredlawl.com>,
+        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+        mayurkumar.patel@intel.com, rajatxjain@gmail.com,
+        Richard Hughes <rhughes@redhat.com>,
+        Carlos Garnacho <cgarnach@redhat.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Pali Rohar <pali.rohar@gmail.com>,
+        Takashi Iwai <tiwai@suse.de>,
+        Andy Whitcroft <apw@canonical.com>,
+        Colin Ian King <colin.king@canonical.com>
+Subject: Re: [PATCH v2] pci/aspm: Remove CONFIG_PCIEASPM_DEBUG
+In-Reply-To: <20180727202619.GD173328@bhelgaas-glaptop.roam.corp.google.com>
+References: <20180508230148.121852-1-rajatja@google.com>
+        <20180510233912.96454-1-rajatja@google.com>
+        <20180727202619.GD173328@bhelgaas-glaptop.roam.corp.google.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI/1.14.6 (Maruoka)
+ FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 Emacs/26
+ (x86_64-suse-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+MIME-Version: 1.0 (generated by SEMI 1.14.6 - "Maruoka")
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 04, 2018 at 11:40:52AM +0200, Rafael J. Wysocki wrote:
-> On Fri, Jun 29, 2018 at 10:27 PM, Bjorn Helgaas <helgaas@kernel.org> wrote:
-> > From: Bjorn Helgaas <bhelgaas@google.com>
-> >
-> > Add a writeup about how PCI host bridges should be described in ACPI
-> > using PNP0A03/PNP0A08 devices, PNP0C02 devices, and the MCFG table.
-> >
-> > Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-> > ---
-> >  Documentation/PCI/00-INDEX      |    2
-> >  Documentation/PCI/acpi-info.txt |  183 +++++++++++++++++++++++++++++++++++++++
-> >  2 files changed, 185 insertions(+)
-> >  create mode 100644 Documentation/PCI/acpi-info.txt
-> >
-> > diff --git a/Documentation/PCI/00-INDEX b/Documentation/PCI/00-INDEX
-> > index 0f1d1de087f1..fc6af2957e55 100644
-> > --- a/Documentation/PCI/00-INDEX
-> > +++ b/Documentation/PCI/00-INDEX
-> > @@ -1,5 +1,7 @@
-> >  00-INDEX
-> >         - this file
-> > +acpi-info.txt
-> > +       - info on how PCI host bridges are represented in ACPI
-> >  MSI-HOWTO.txt
-> >         - the Message Signaled Interrupts (MSI) Driver Guide HOWTO and FAQ.
-> >  PCIEBUS-HOWTO.txt
-> > diff --git a/Documentation/PCI/acpi-info.txt b/Documentation/PCI/acpi-info.txt
-> > new file mode 100644
-> > index 000000000000..9b8e7b560b50
-> > --- /dev/null
-> > +++ b/Documentation/PCI/acpi-info.txt
-> > @@ -0,0 +1,183 @@
-> > +           ACPI considerations for PCI host bridges
-> > +
-> > +The general rule is that the ACPI namespace should describe everything the
-> > +OS might use unless there's another way for the OS to find it [1, 2].
-> > +
-> > +For example, there's no standard hardware mechanism for enumerating PCI
-> > +host bridges, so ACPI must describe each host bridge, the method for
-> > +accessing PCI config space below it, the address space windows the bridge
-> > +forwards to PCI, and the routing of legacy INTx interrupts.
-> > +
-> > +PCI devices *below* the host bridge generally do not need to be described
-> > +via ACPI because the OS can discover them via the standard PCI enumeration
-> > +mechanism, which uses config accesses to discover and identify the device
-> > +and read and size its BARs.
+On Fri, 27 Jul 2018 22:26:19 +0200,
+Bjorn Helgaas wrote:
 > 
-> While they can be discovered without ACPI, power management or hotplug
-> may depend on it.
+> [+cc Rafael, Richard, Carlos, Pali, Takashi, Andy, Colin for question
+> about how to expose ASPM power management in sysfs]
 > 
-> Also things like _PRT come to mind here.
-
-Good point.  I added some text for these items (see below).
-
-> > +ACPI resource description is done via _CRS objects of devices in the ACPI
-> > +namespace [2].   The _CRS is like a generalized PCI BAR: the OS can read
-> > +_CRS and figure out what resource is being consumed even if it doesn't have
-> > +a driver for the device [3].  That's important because it means an old OS
-> > +can work correctly even on a system with new devices unknown to the OS.
-> > +The new devices might not do anything, but the OS can at least make sure no
-> > +resources conflict with them.
-> > +
-> > +Static tables like MCFG, HPET, ECDT, etc., are *not* mechanisms for
-> > +reserving address space!  The static tables are for things the OS needs to
-> > +know early in boot, before it can parse the ACPI namespace.  If a new table
-> > +is defined, an old OS needs to operate correctly even though it ignores the
-> > +table.  _CRS allows that because it is generic and understood by the old
-> > +OS; a static table does not.
-> > +
-> > +If the OS is expected to manage a non-discoverable device described via
-> > +ACPI, that device will have a specific _HID/_CID that tells the OS what
-> > +driver to bind to it, and the _CRS tells the OS and the driver where the
-> > +device's registers are.
-> > +
-> > +PCI host bridges are PNP0A03 or PNP0A08 devices.  Their _CRS should
-> > +describe all the address space they consume.  This includes all the windows
-> > +they forward down to the PCI bus, as well as bridge registers that are not
+> On Thu, May 10, 2018 at 04:39:12PM -0700, Rajat Jain wrote:
+> > ...
+> > And some suggestions from Bjorn here:
+> > https://www.spinics.net/lists/linux-pci/msg60541.html
+> > 
+> > This patch picks up one of the suggestion, to remove the
+> > CONFIG_PCIEASPM_DEBUG and thus make the code always
+> > avilable. This provides control to userspace to control
+> > ASPM on a per slot / device basis using sysfs interface.
 > 
-> I believe you mean registers of the host bridge itself here, but it is
-> somewhat unclear if that applies to bridges below it too.
+> TL;DR: When CONFIG_PCIEASPM_DEBUG=y, Linux makes ASPM control files
+>        visible in sysfs, associated with the upstream end (e.g., Root
+>        Port) of a link.  Should these files be associated with the
+>        downstream end (e.g., NIC, GPU, etc) instead?
+> 
+> I think we do need to make ASPM control files visible in sysfs, as
+> this patch does.  But I have a question about exactly *how* we want to
+> do this.  I had planned to merge this patch for v4.19, but I think
+> I'll postpone it until we figure this out.
+> 
+> ASPM is a power management feature of a PCIe link, and it affects the
+> devices on both ends of that link.  The upstream end (closest to the
+> CPU) is typically a Root Port, and the downstream end is typically an
+> Endpoint (e.g., a GPU, NIC, or NVMe device).  For example, my laptop
+> has these devices:
+> 
+>   00:1c.2 Intel Root Port to [bus 04]
+>   04:00.0 Intel 8260 Wireless NIC
+> 
+> There's a PCIe link between these two devices, and if both ends
+> support it, ASPM reduces power usage when the NIC is idle.  The
+> hardware reduces power usage automatically; the kernel only needs to
+> configure ASPM.
+> 
+> ASPM affects performance as well as power, so we have knobs to control
+> the tradeoff.  Starting with the big hammers, we currently have:
+> 
+>   - Kernel build-time setting (CONFIG_PCIEASPM_PERFORMANCE, etc).
+>     Requires kernel rebuild and reboot.
+> 
+>   - "pcie_aspm=X" kernel boot parameter.  Can only enable/disable and
+>     requires a reboot.
+> 
+>   - /sys/module/pcie_aspm/parameters/policy file.  At any time, root
+>     can set the system-wide ASPM policy to one of these settings:
+> 
+>       + highest performance, highest power consumption
+>       + moderate power saving at cost of some performance
+>       + aggressive power saving at cost of more performance
+>       + use whatever setting BIOS configured
+> 
+>   - Many /sys/devices/pci0000:00/0000:00:1c.2/power/link_state files.
+>     At any time, root can set the ASPM policy to one of the above
+>     settings, but for individual devices.  Currently these files are
+>     only available when CONFIG_PCIEASPM_DEBUG=y (Red Hat does not
+>     enable this, but Ubuntu does).
+> 
+> The patch below changes it so these /sys/devices/.../link_state files
+> *always* exist, regardless of CONFIG_PCIEASPM_DEBUG.
+> 
+> The question is where those sysfs files should be.  Currently they are
+> associated with the device at the *upstream* end of the link.  In the
+> example above, they're associated with the Root Port:
+> 
+>   /sys/devices/pci0000:00/0000:00:1c.2/power/link_state
+> 
+> I don't know if that's the right place, or if they should be
+> associated with the device at the *downstream* end of the link, i.e.,
+> 04:00.0.  The downstream end might be better because:
+> 
+>   - It's easier to associate the downstream end with a device the user
+>     cares about, e.g., a NIC, GPU, etc.  This is mostly a user-
+>     interface issue.
+> 
+>   - A link can lead to a multi-function device, and the spec allows
+>     those functions to have different ASPM settings (see PCIe r4.0,
+>     sec 5.4.1).  With the sysfs files at the upstream end of the link,
+>     we have no way to configure those functions individually.
+> 
+> Any thoughts?
 
-Right, I do mean host bridge registers for all the "bridge"
-occurrences in this paragraph.  I changed all these references to
-"host bridge".
+Through your description, having a control in the downstream side
+sounds convincing enough.  The only drawback I can think of is the
+complication of setups; you'd need to adjust each downstream node.
 
-PCI-to-PCI bridges below the host bridge are just like any other PCI
-device, of course.  Their config registers are accessed via the normal
-config accessors and their MMIO space (if any) would be included in
-the host bridge's apertures.
+Maybe one option would be to add a new policy "let downstream decide",
+and the downstream sysfs has effect only when the upstream sets this
+mode.  When the upstream sets to another (currently existing) mode, it
+forces the mode to all downstream devices.
 
-> > +forwarded to PCI.  The bridge registers include things like secondary/
-> > +subordinate bus registers that determine the bus range below the bridge,
-> > +window registers that describe the apertures, etc.  These are all
-> > +device-specific, non-architected things, so the only way a PNP0A03/PNP0A08
-> > +driver can manage them is via _PRS/_CRS/_SRS, which contain the
-> > +device-specific details.  The bridge registers also include ECAM space,
-> > +since it is consumed by the bridge.
 
-I made the following changes (hand-edited to remove trivial changes):
+Just my quick $0.02.
 
-diff -u b/Documentation/PCI/acpi-info.txt b/Documentation/PCI/acpi-info.txt
---- b/Documentation/PCI/acpi-info.txt
-+++ b/Documentation/PCI/acpi-info.txt
-@@ -1,17 +1,21 @@
- 
- For example, there's no standard hardware mechanism for enumerating PCI
--host bridges, so ACPI must describe each host bridge, the method for
--accessing PCI config space below it, the address space windows the bridge
--forwards to PCI, and the routing of legacy INTx interrupts.
--
--PCI devices *below* the host bridge generally do not need to be described
--via ACPI because the OS can discover them via the standard PCI enumeration
--mechanism, which uses config accesses to discover and identify the device
--and read and size its BARs.
-+host bridges, so the ACPI namespace must describe each host bridge, the
-+method for accessing PCI config space below it, the address space windows
-+the host bridge forwards to PCI (using _CRS), and the routing of legacy
-+INTx interrupts (using _PRT).
-+
-+PCI devices, which are below the host bridge, generally do not need to be
-+described via ACPI.  The OS can discover them via the standard PCI
-+enumeration mechanism, using config accesses to discover and identify
-+devices and read and size their BARs.  However, ACPI may describe PCI
-+devices if it provides power management or hotplug functionality for them
-+or if the device has INTx interrupts connected by platform interrupt
-+controllers and a _PRT is needed to describe those connections.
- 
-@@ -35,14 +39,14 @@
- 
- PCI host bridges are PNP0A03 or PNP0A08 devices.  Their _CRS should
- describe all the address space they consume.  This includes all the windows
--they forward down to the PCI bus, as well as bridge registers that are not
--forwarded to PCI.  The bridge registers include things like secondary/
--subordinate bus registers that determine the bus range below the bridge,
--window registers that describe the apertures, etc.  These are all
--device-specific, non-architected things, so the only way a PNP0A03/PNP0A08
--driver can manage them is via _PRS/_CRS/_SRS, which contain the
--device-specific details.  The bridge registers also include ECAM space,
--since it is consumed by the bridge.
-+they forward down to the PCI bus, as well as registers of the host bridge
-+itself that are not forwarded to PCI.  The host bridge registers include
-+things like secondary/subordinate bus registers that determine the bus
-+range below the bridge, window registers that describe the apertures, etc.
-+These are all device-specific, non-architected things, so the only way a
-+PNP0A03/PNP0A08 driver can manage them is via _PRS/_CRS/_SRS, which contain
-+the device-specific details.  The host bridge registers also include ECAM
-+space, since it is consumed by the host bridge.
+
+thanks,
+
+Takashi
+
+> 
+> > ...
+> > diff --git a/drivers/pci/pcie/Kconfig b/drivers/pci/pcie/Kconfig
+> > index b12e28b3d8f9..089b9f559d88 100644
+> > --- a/drivers/pci/pcie/Kconfig
+> > +++ b/drivers/pci/pcie/Kconfig
+> > @@ -46,14 +46,6 @@ config PCIEASPM
+> >  
+> >  	  When in doubt, say Y.
+> >  
+> > -config PCIEASPM_DEBUG
+> > -	bool "Debug PCI Express ASPM"
+> > -	depends on PCIEASPM
+> > -	default n
+> > -	help
+> > -	  This enables PCI Express ASPM debug support. It will add per-device
+> > -	  interface to control ASPM.
+> > -
+> >  choice
+> >  	prompt "Default ASPM policy"
+> >  	default PCIEASPM_DEFAULT
+> > diff --git a/drivers/pci/pcie/aspm.c b/drivers/pci/pcie/aspm.c
+> > index c687c817b47d..8ffc13d42baa 100644
+> > --- a/drivers/pci/pcie/aspm.c
+> > +++ b/drivers/pci/pcie/aspm.c
+> > @@ -1161,7 +1161,6 @@ static int pcie_aspm_get_policy(char *buffer, const struct kernel_param *kp)
+> >  module_param_call(policy, pcie_aspm_set_policy, pcie_aspm_get_policy,
+> >  	NULL, 0644);
+> >  
+> > -#ifdef CONFIG_PCIEASPM_DEBUG
+> >  static ssize_t link_state_show(struct device *dev,
+> >  		struct device_attribute *attr,
+> >  		char *buf)
+> > @@ -1264,7 +1263,6 @@ void pcie_aspm_remove_sysfs_dev_files(struct pci_dev *pdev)
+> >  		sysfs_remove_file_from_group(&pdev->dev.kobj,
+> >  			&dev_attr_clk_ctl.attr, power_group);
+> >  }
+> > -#endif
+> >  
+> >  static int __init pcie_aspm_disable(char *str)
+> >  {
+> > -- 
+> > 2.17.0.441.gb46fe60e1d-goog
+> > 
+> 
