@@ -3,123 +3,134 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B82CC6778F
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:55:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A6EAC6778F
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:57:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C24DA208A3
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:55:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2853E2089E
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:57:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="HZ7/n2QE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C24DA208A3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+	dkim=pass (1024-bit key) header.d=bidouilliste.com header.i=@bidouilliste.com header.b="twD7y2gw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2853E2089E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bidouilliste.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731020AbeG0MRE (ORCPT
+        id S1730801AbeG0MSV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 08:17:04 -0400
-Received: from ozlabs.org ([203.11.71.1]:41983 "EHLO ozlabs.org"
+        Fri, 27 Jul 2018 08:18:21 -0400
+Received: from mail.blih.net ([212.83.177.182]:11604 "EHLO mail.blih.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730801AbeG0MRE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 08:17:04 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 41cQqB22W5z9rxx;
-        Fri, 27 Jul 2018 20:55:34 +1000 (AEST)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1532688935;
-        bh=shcQjxVoCY+DjFr3Ex7Y62uYNWHJiGaJU5AFxWFVwd4=;
-        h=Date:From:To:Cc:Subject:From;
-        b=HZ7/n2QEDgyRiIotrBFuGAFRVlIb7sP8jIMvXsRP0b5fX/9qpG1TEIodWMgyci6S5
-         ymQ8zMHMKUDxr82SUD7otwH0eMFOSHpuHefQX0WCEmaTtL10FfloU3zt37Vk9A27TJ
-         NcX1VDXcfvCU13FZcoxLa+2e2NsnNssGfIS7ZBqdkbPWwPt6eMYwfbBxPg76FID638
-         Z0YSokzsegkek+dFh/XqpMIo3Ojc0Lqi9WW20nQJs2qULCTelDtYY5U92NAyj+ByP0
-         HWDEAadYRgJBiHy0l9/HLwcWf7uxfH0QV3GrQ63BCPIr8KF/TcVPcFnnjf489nbvX6
-         Ym73sOXXaKR4A==
-Date:   Fri, 27 Jul 2018 20:55:32 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Andrew Morton <akpm@linux-foundation.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>
-Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Laura Abbott <labbott@redhat.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Subject: linux-next: manual merge of the akpm-current tree with the arm64
- tree
-Message-ID: <20180727205532.28de3353@canb.auug.org.au>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/I6jsFjSkCEl6JqXAley0Bo6"; protocol="application/pgp-signature"
+        id S1729539AbeG0MSV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Jul 2018 08:18:21 -0400
+Received: from mail.blih.net (mail.blih.net [212.83.177.182])
+        by mail.blih.net (OpenSMTPD) with ESMTP id 80334dfb;
+        Fri, 27 Jul 2018 12:56:55 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=bidouilliste.com; h=date
+        :from:to:cc:subject:message-id:in-reply-to:references
+        :mime-version:content-type:content-transfer-encoding; s=mail;
+         bh=dv8Bkkr39ul4WAzDhiyv2kba+OY=; b=twD7y2gwwQWOeG5JXowKXKtgqFDl
+        G2+8Kapky5k0OIr3yiDKM5p3tx4rDIFbC5BCzVX0He9JYY0azWq816u9hWAzrwxk
+        jPBG94gjLP/v+/b+jIYcf+Vn9QPs0ZEMplLFznqLmdHQwsfkwBWG4Kd/yeBfmS1Z
+        bM/xyA0alcxVVrE=
+DomainKey-Signature: a=rsa-sha1; c=nofws; d=bidouilliste.com; h=date
+        :from:to:cc:subject:message-id:in-reply-to:references
+        :mime-version:content-type:content-transfer-encoding; q=dns; s=
+        mail; b=QlcAtlfFkK0giAOxBT4qSO4JR2dTzbncFmiiIKLIHBjzUaZWeQcApZSf
+        7lygmb0Cz/OMAzGLO3Io8o8gLGlpcdiOs7MbmfDEiXIjKUBNqnC00T1XFFb+tvc4
+        K7ilhcJRJ++6s085rQ8ou8+jcCRjhvKqpKh+ZUJAfhtHYN/M3G4=
+Received: from skull.home.blih.net (ip-9.net-89-3-105.rev.numericable.fr [89.3.105.9])
+        by mail.blih.net (OpenSMTPD) with ESMTPSA id cdfa0d4c
+        TLS version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO;
+        Fri, 27 Jul 2018 12:56:55 +0200 (CEST)
+Date:   Fri, 27 Jul 2018 12:56:54 +0200
+From:   Emmanuel Vadot <manu@bidouilliste.com>
+To:     Maxime Ripard <maxime.ripard@bootlin.com>
+Cc:     mark.rutland@arm.com, devicetree@vger.kernel.org,
+        catalin.marinas@arm.com, will.deacon@arm.com,
+        linux-kernel@vger.kernel.org, Emmanuel Vadot <manu@freebsd.org>,
+        wens@csie.org, robh+dt@kernel.org, srinivas.kandagatla@linaro.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2 5/5] arm64: dts: allwinner: h5: Add SID for H5
+Message-Id: <20180727125654.ec813df71b492201aea2ca5f@bidouilliste.com>
+In-Reply-To: <20180726115409.7hqtvx4rdqcqdjrq@flea>
+References: <20180724101522.68165-1-manu@freebsd.org>
+        <20180724101522.68165-5-manu@freebsd.org>
+        <20180724130004.ynaiabshexrrbvo4@flea>
+        <20180724153432.e398bddfe63e51e8dcebfc46@bidouilliste.com>
+        <20180724144218.jdvgrcqkz2kmohqx@flea>
+        <20180724165501.d8f01bf20c7cc43e7ed7fc62@bidouilliste.com>
+        <20180726115409.7hqtvx4rdqcqdjrq@flea>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.32; amd64-portbld-freebsd12.0)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/I6jsFjSkCEl6JqXAley0Bo6
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Thu, 26 Jul 2018 13:54:09 +0200
+Maxime Ripard <maxime.ripard@bootlin.com> wrote:
 
-Hi Andrew,
+> On Tue, Jul 24, 2018 at 04:55:01PM +0200, Emmanuel Vadot wrote:
+> > On Tue, 24 Jul 2018 16:42:18 +0200
+> > Maxime Ripard <maxime.ripard@bootlin.com> wrote:
+> > 
+> > > On Tue, Jul 24, 2018 at 03:34:32PM +0200, Emmanuel Vadot wrote:
+> > > > On Tue, 24 Jul 2018 15:00:04 +0200
+> > > > Maxime Ripard <maxime.ripard@bootlin.com> wrote:
+> > > > 
+> > > > > On Tue, Jul 24, 2018 at 12:15:22PM +0200, Emmanuel Vadot wrote:
+> > > > > > The SID controller on H5 look the same as the one present in the A64.
+> > > > > > But in case we find some difference one day at a compatible string
+> > > > > > of it's own and a fallback to the A64 one.
+> > > > > > 
+> > > > > > Signed-off-by: Emmanuel Vadot <manu@freebsd.org>
+> > > > > > ---
+> > > > > >  arch/arm64/boot/dts/allwinner/sun50i-h5.dtsi | 5 +++++
+> > > > > >  1 file changed, 5 insertions(+)
+> > > > > > 
+> > > > > > diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h5.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-h5.dtsi
+> > > > > > index 62d646baac3c..28183bf77164 100644
+> > > > > > --- a/arch/arm64/boot/dts/allwinner/sun50i-h5.dtsi
+> > > > > > +++ b/arch/arm64/boot/dts/allwinner/sun50i-h5.dtsi
+> > > > > > @@ -129,3 +129,8 @@
+> > > > > >  		     <GIC_SPI 23 IRQ_TYPE_LEVEL_HIGH>;
+> > > > > >  	compatible = "allwinner,sun50i-h5-pinctrl";
+> > > > > >  };
+> > > > > > +
+> > > > > > +&sid {
+> > > > > > +	compatible = "allwinner,sun50i-h5-sid",
+> > > > > > +		     "allwinner,sun50i-a64-sid";
+> > > > > > +};
+> > > > > 
+> > > > > This is still a bit pointless, please remove the common node.
+> > > > 
+> > > >  You mean directly declare sid controller in the SoC dtsi and not
+> > > > have a common node in sunxi-h3-h5.dtsi ?
+> > > 
+> > > Yep
+> > 
+> >  The reason I've put it in the common file is because I'll send patches
+> > for the nvmem-cells needed for thermal, and those are common between
+> > the two. Other nvmem-cells are also common (like the chipid and
+> > probably other).
+> 
+> Then we'll see what we can have in common and what not when we'll have
+> something in common?
 
-Today's linux-next merge of the akpm-current tree got a conflict in:
+ Will it make more sense that I just send a new series with nvmem-cells
+now along with thermal bindings ?
 
-  drivers/firmware/efi/libstub/Makefile
+> Maxime
+> 
+> -- 
+> Maxime Ripard, Bootlin (formerly Free Electrons)
+> Embedded Linux and Kernel engineering
+> https://bootlin.com
 
-between commit:
 
-  0b3e336601b8 ("arm64: Add support for STACKLEAK gcc plugin")
-
-from the arm64 tree and commit:
-
-  08cc64a7109b ("module: allow symbol exports to be disabled")
-
-from the akpm-current tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc drivers/firmware/efi/libstub/Makefile
-index 25dd2a14560d,0d0d3483241c..000000000000
---- a/drivers/firmware/efi/libstub/Makefile
-+++ b/drivers/firmware/efi/libstub/Makefile
-@@@ -21,7 -21,7 +21,8 @@@ KBUILD_CFLAGS			:=3D $(cflags-y) -DDISABL
-  				   -D__NO_FORTIFY \
-  				   $(call cc-option,-ffreestanding) \
-  				   $(call cc-option,-fno-stack-protector) \
-- 				   $(DISABLE_STACKLEAK_PLUGIN)
-++				   $(DISABLE_STACKLEAK_PLUGIN) \
-+ 				   -D__DISABLE_EXPORTS
- =20
-  GCOV_PROFILE			:=3D n
-  KASAN_SANITIZE			:=3D n
-
---Sig_/I6jsFjSkCEl6JqXAley0Bo6
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlta+iQACgkQAVBC80lX
-0GyBBQgAkjx9lFZiVVmRQG0IHn6JyjQYAuHrN/pDk1XEG+IsupYq0zEfKVC8wLrL
-mWkCYbQRw3tpFOTMzCoIfde45u7bTjYgAwPUzcqMRCXrSm/U3u3bRLLdax8h0hrN
-7lBnbHX6mJ0jFM81AwwqNRxyNE9SwVHgUke4XtboVKbnaIz8kLTwfx6rK3t6A793
-Za09IQe8V5KBAUqJThchsULA1nfEhYXTsomMMQFxZ88NV+4Q8yVHx38/3EPoG90a
-XBhc/x4/CF2vwm6lzXJyXh3TE35iIVrizSb4UjUr9u1K+UHo1iRtaiZiD3lChmiF
-q1AzuTw/WtLnkfh4UbRH5BPTRbUN5Q==
-=Amwj
------END PGP SIGNATURE-----
-
---Sig_/I6jsFjSkCEl6JqXAley0Bo6--
+-- 
+Emmanuel Vadot <manu@bidouilliste.com> <manu@freebsd.org>
