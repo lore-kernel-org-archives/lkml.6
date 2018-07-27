@@ -2,100 +2,140 @@ Return-Path: <SRS0=OQFz=KL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA2F2C67790
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 13:33:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 943F6C67790
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 13:38:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7BC1E208AF
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 13:33:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7BC1E208AF
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 266A720873
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 13:38:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 266A720873
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730836AbeG0Oza (ORCPT
+        id S1731002AbeG0PAn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 10:55:30 -0400
-Received: from foss.arm.com ([217.140.101.70]:43676 "EHLO foss.arm.com"
+        Fri, 27 Jul 2018 11:00:43 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48852 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730318AbeG0Oz3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 10:55:29 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3EBF280D;
-        Fri, 27 Jul 2018 06:33:32 -0700 (PDT)
-Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 0FF393F2EA;
-        Fri, 27 Jul 2018 06:33:32 -0700 (PDT)
-Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
-        id 92A131AE5252; Fri, 27 Jul 2018 14:33:32 +0100 (BST)
-Date:   Fri, 27 Jul 2018 14:33:32 +0100
-From:   Will Deacon <will.deacon@arm.com>
-To:     Waiman Long <longman@redhat.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
-        Joe Mario <jmario@redhat.com>,
-        Davidlohr Bueso <dave@stgolabs.net>
-Subject: Re: [PATCH v3] locking/rwsem: Exit read lock slowpath if queue empty
- & no writer
-Message-ID: <20180727133331.GC28549@arm.com>
-References: <1532459425-19204-1-git-send-email-longman@redhat.com>
+        id S1730395AbeG0PAm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Jul 2018 11:00:42 -0400
+Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id E432320873;
+        Fri, 27 Jul 2018 13:38:43 +0000 (UTC)
+Date:   Fri, 27 Jul 2018 09:38:41 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Masami Hiramatsu <mhiramat@kernel.org>
+Cc:     Josh Poimboeuf <jpoimboe@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Artem Savkov <asavkov@redhat.com>
+Subject: [PATCH v2] tracing/kprobes: Simplify the logic of
+ enable_trace_kprobe()
+Message-ID: <20180727093841.73f27a7b@gandalf.local.home>
+In-Reply-To: <20180727215202.0af90e09709f7699e033ef54@kernel.org>
+References: <20180726121152.4dd54330@gandalf.local.home>
+        <20180726164352.tctldcryo4fs3nap@treble>
+        <20180727215202.0af90e09709f7699e033ef54@kernel.org>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1532459425-19204-1-git-send-email-longman@redhat.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 24, 2018 at 03:10:25PM -0400, Waiman Long wrote:
-> It was discovered that a constant stream of readers with occassional
-> writers pounding on a rwsem may cause many of the readers to enter the
-> slowpath unnecessarily thus increasing latency and lowering performance.
-> 
-> In the current code, a reader entering the slowpath critical section
-> will unconditionally set the WAITING_BIAS, if not set yet, and clear
-> its active count even if no one is in the wait queue and no writer
-> is present. This causes some incoming readers to observe the presence
-> of waiters in the wait queue and hence have to go into the slowpath
-> themselves.
-> 
-> With sufficient numbers of readers and a relatively short lock hold time,
-> the WAITING_BIAS may be repeatedly turned on and off and a substantial
-> portion of the readers will go into the slowpath sustaining a rather
-> long queue in the wait queue spinlock and repeated WAITING_BIAS on/off
-> cycle until the logjam is broken opportunistically.
-> 
-> To avoid this situation from happening, an additional check is added to
-> detect the special case that the reader in the critical section is the
-> only one in the wait queue and no writer is present. When that happens,
-> it can just exit the slowpath and return immediately as its active count
-> has already been set in the lock.  Other incoming readers won't observe
-> the presence of waiters and so will not be forced into the slowpath.
-> 
-> The issue was found in a customer site where they had an application
-> that pounded on the pread64 syscalls heavily on an XFS filesystem. The
-> application was run in a recent 4-socket boxes with a lot of CPUs. They
-> saw significant spinlock contention in the rwsem_down_read_failed() call.
-> With this patch applied, the system CPU usage went down from 85% to 57%,
-> and the spinlock contention in the pread64 syscalls was gone.
-> 
-> v3: Revise the commit log and comment again.
-> v2: Add customer testing results and remove wording that may cause
->     confusion.
-> 
-> Signed-off-by: Waiman Long <longman@redhat.com>
-> ---
->  kernel/locking/rwsem-xadd.c | 13 ++++++++++++-
->  1 file changed, 12 insertions(+), 1 deletion(-)
+From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
 
-My nits with the commit message have been addressed, so:
+The function enable_trace_kprobe() performs slightly differently if the file
+parameter is passed in as NULL on non-NULL. Instead of checking file twice,
+move the code between the two tests into a static inline helper function to
+make the code easier to follow.
 
-Acked-by: Will Deacon <will.deacon@arm.com>
+Link: http://lkml.kernel.org/r/20180725224728.7b1d5db2@vmware.local.home
+Link: http://lkml.kernel.org/r/20180726121152.4dd54330@gandalf.local.home
 
-Thanks!
+Reviewed-by: Josh Poimboeuf <jpoimboe@redhat.com>
+Acked-by: Masami Hiramatsu <mhiramat@kernel.org>
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+---
+ kernel/trace/trace_kprobe.c | 42 ++++++++++++++++++++++++------------------
+ 1 file changed, 24 insertions(+), 18 deletions(-)
 
-Will
+diff --git a/kernel/trace/trace_kprobe.c b/kernel/trace/trace_kprobe.c
+index 6b71860f3998..0534eb8b7640 100644
+--- a/kernel/trace/trace_kprobe.c
++++ b/kernel/trace/trace_kprobe.c
+@@ -393,6 +393,20 @@ static struct trace_kprobe *find_trace_kprobe(const char *event,
+ 	return NULL;
+ }
+ 
++static inline int __enable_trace_kprobe(struct trace_kprobe *tk)
++{
++	int ret = 0;
++
++	if (trace_probe_is_registered(&tk->tp) && !trace_kprobe_has_gone(tk)) {
++		if (trace_kprobe_is_return(tk))
++			ret = enable_kretprobe(&tk->rp);
++		else
++			ret = enable_kprobe(&tk->rp.kp);
++	}
++
++	return ret;
++}
++
+ /*
+  * Enable trace_probe
+  * if the file is NULL, enable "perf" handler, or enable "trace" handler.
+@@ -400,7 +414,7 @@ static struct trace_kprobe *find_trace_kprobe(const char *event,
+ static int
+ enable_trace_kprobe(struct trace_kprobe *tk, struct trace_event_file *file)
+ {
+-	struct event_file_link *link = NULL;
++	struct event_file_link *link;
+ 	int ret = 0;
+ 
+ 	if (file) {
+@@ -414,26 +428,18 @@ enable_trace_kprobe(struct trace_kprobe *tk, struct trace_event_file *file)
+ 		list_add_tail_rcu(&link->list, &tk->tp.files);
+ 
+ 		tk->tp.flags |= TP_FLAG_TRACE;
+-	} else
+-		tk->tp.flags |= TP_FLAG_PROFILE;
+-
+-	if (trace_probe_is_registered(&tk->tp) && !trace_kprobe_has_gone(tk)) {
+-		if (trace_kprobe_is_return(tk))
+-			ret = enable_kretprobe(&tk->rp);
+-		else
+-			ret = enable_kprobe(&tk->rp.kp);
+-	}
+-
+-	if (ret) {
+-		if (file) {
+-			/* Notice the if is true on not WARN() */
+-			if (!WARN_ON_ONCE(!link))
+-				list_del_rcu(&link->list);
++		ret = __enable_trace_kprobe(tk);
++		if (ret) {
++			list_del_rcu(&link->list);
+ 			kfree(link);
+ 			tk->tp.flags &= ~TP_FLAG_TRACE;
+-		} else {
+-			tk->tp.flags &= ~TP_FLAG_PROFILE;
+ 		}
++
++	} else {
++		tk->tp.flags |= TP_FLAG_PROFILE;
++		ret = __enable_trace_kprobe(tk);
++		if (ret)
++			tk->tp.flags &= ~TP_FLAG_PROFILE;
+ 	}
+  out:
+ 	return ret;
+-- 
+2.13.6
+
