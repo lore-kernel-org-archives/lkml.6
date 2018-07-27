@@ -7,56 +7,56 @@ X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D636FC6778F
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 03:08:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 196AFECDFB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 03:08:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 87BB420673
+	by mail.kernel.org (Postfix) with ESMTP id C105520891
 	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 03:08:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VBNfQK8l"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 87BB420673
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LVX9f7ai"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C105520891
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729559AbeG0E1z (ORCPT
+        id S1729575AbeG0E14 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 00:27:55 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:45039 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729400AbeG0E1y (ORCPT
+        Fri, 27 Jul 2018 00:27:56 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:46173 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729487AbeG0E1z (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 00:27:54 -0400
-Received: by mail-pf1-f194.google.com with SMTP id k21-v6so1230478pff.11
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Jul 2018 20:08:12 -0700 (PDT)
+        Fri, 27 Jul 2018 00:27:55 -0400
+Received: by mail-pg1-f195.google.com with SMTP id p23-v6so2345127pgv.13
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Jul 2018 20:08:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=+CfZ00t9u1vOIZqmMouqMdFDmZ8z0MMaKVOmeI3srS8=;
-        b=VBNfQK8lLU6s+jNXuNYvnntsYTsDgsT2CxyoRBUMOjZ7QrKJrJDPY7csm86j5XDkCj
-         QToNtr8jsmbvPybFmniuIa4ygU3kewYZ0bk96ann/GkYyg5rZ4a3WPWZ2kOcF0ioEW/b
-         gpY2iHhV8rPPqurE1JIb8gd2zVsIFadflTXX47aCDRRct0I2QUrPdlNQG/F7EU3sCw96
-         uT14ESrfSXvq0CoyCidcBuvL17df6IIrefT56Rca0GQikuUe2BuhUGdkfv0/QH9JeadS
-         xPggSIUUnzJlZ8VZ51g+Bf6jVWhTgeYvGRkpyvztGyRSQGCFG+xBW2GclYSaIlCTeLM3
-         vvhg==
+        bh=bA5E+7oxB5/I9RZmISekzIBuNv3hX8/DEB6zrTy53Mg=;
+        b=LVX9f7aiYYAb7PvTyKsT8BOI3MjC6dFb5pUN9Zw7lJPQag0YIBCT4b1pHt992rn/7U
+         ZtbmNEkJ6CY9x2/dbME1/NQtRWA+utfa73SgxRI2pSpYGpYtwrk9ef9Fznf2HmgvTObI
+         CWjnw0lcLVA7V5PZ0v8Ub+MANE7yf6XkeL9M6e6Yr4dRY53T1cz383u0+a1lWnpUjP4t
+         Y1+EZ55l+NUkcDAK1g7oAdPLvkV/MdySSrqNWsv0Ci6LNCVAfVRVrsBzJL+5PzFk49/r
+         4uVc7dqritpQpEhplFnBfGi+TbidX3ygy2GIUp3k4ngti1DGa4/Ee5RFcetjqSQU8vou
+         yOvA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=+CfZ00t9u1vOIZqmMouqMdFDmZ8z0MMaKVOmeI3srS8=;
-        b=mxlzHT9R7KbXL8LlrcZArKWkX58uC7jNRlvAegJVHXlNeBjiT09SVYXhwM23UP0Fl4
-         Id/PRAg6MZdZiGVlmNCpx1NllSZTwpdPf2fvqLm0VHImWrarzrzylVrA/xi6H4BsFtNS
-         nF8RwaYJirfV/gEc/quI1PJ2+SDcN7cFfzFnyupplzGS5rgp2wl3Ul8Ncfs6rGp5+etP
-         Vu+xOg0G6TUkrzljbSkcfu2kVdPPIPqRUp/nQtgoWL6ufY9yLz2RQRhIcJ5yGvrVDZns
-         1RrLtq1qtD1Dxs026jKzi+XuyfHj4KPY/k2phbwnYZta/RmcyL3vB4EjKMnuFMPKj3DT
-         ojBw==
-X-Gm-Message-State: AOUpUlFMhNYDgTmOLL9LGSHzyUrQL/6PlrAho7UIZfh/cSRK9LxkRi0f
-        My5wQ1Lbf79Od2foIiXWVoM=
-X-Google-Smtp-Source: AAOMgpcc0QM2f/CBFmt07ohxXDrfu5fO6/0zgqed6kYAW0CqpRxZWe4s1D0XenTC9bO9fkmozATuPA==
-X-Received: by 2002:a63:647:: with SMTP id 68-v6mr4322487pgg.205.1532660891609;
-        Thu, 26 Jul 2018 20:08:11 -0700 (PDT)
+        bh=bA5E+7oxB5/I9RZmISekzIBuNv3hX8/DEB6zrTy53Mg=;
+        b=XUasSHGWB8AerafkJdqNmivpB2/paaK8wUXlKzqXMtH9PbvSEpUomRBHBpX1NCHcFe
+         E4yyfe1wqJna05UZ0BLDcMAw3RBWVHVsfo13xdX5QNBIRGxvPB5D0YRnN2pBR/RU4Ub0
+         0JeD/hWczW00xZzoGeERyTbesLRFrIAOqD7zrElIYBLh6AKbZrTk+gY/EmB1Fh/PHLt3
+         YDe9WSiz59hYGZFbXniiUkjy2a9RRMvdG35gR8BhAngia33o/a5PE6iMuskywFw+2zdK
+         TPSyP+SCR+kYxcQOuuhJ8PDDWLpIUKSnDtlWfV/hh/+8gpuycygMupPpUK7qHYzn2FT6
+         pC4Q==
+X-Gm-Message-State: AOUpUlG4cW33cwVaiF/gdp9jSmPoiYzZpKmmbgMDsxFngYzC3EROjPsQ
+        ABV0Tff9F2WtHfifnFl3e8w=
+X-Google-Smtp-Source: AAOMgpdIlBLUBVgqLb1jH93KAvXP7nIRb1oSQexqsCg42EpmZlwUQtG9gRqLEnzrsvjnduGlCoMung==
+X-Received: by 2002:a63:1d22:: with SMTP id d34-v6mr4316139pgd.133.1532660892645;
+        Thu, 26 Jul 2018 20:08:12 -0700 (PDT)
 Received: from toddpoynor2.mtv.corp.google.com ([2620:0:1000:3701:7d29:cd13:d903:7908])
-        by smtp.gmail.com with ESMTPSA id e126-v6sm6418544pfg.31.2018.07.26.20.08.10
+        by smtp.gmail.com with ESMTPSA id e126-v6sm6418544pfg.31.2018.07.26.20.08.11
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
         Thu, 26 Jul 2018 20:08:11 -0700 (PDT)
 From:   Todd Poynor <toddpoynor@gmail.com>
@@ -66,9 +66,9 @@ To:     Rob Springer <rspringer@google.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
         Todd Poynor <toddpoynor@google.com>
-Subject: [PATCH 09/10] staging: gasket: TODO: remove entry for convert to standard logging
-Date:   Thu, 26 Jul 2018 20:07:36 -0700
-Message-Id: <20180727030737.231268-10-toddpoynor@gmail.com>
+Subject: [PATCH 10/10] staging: gasket: don't print device addresses as kernel pointers
+Date:   Thu, 26 Jul 2018 20:07:37 -0700
+Message-Id: <20180727030737.231268-11-toddpoynor@gmail.com>
 X-Mailer: git-send-email 2.18.0.345.g5c9ce644c3-goog
 In-Reply-To: <20180727030737.231268-1-toddpoynor@gmail.com>
 References: <20180727030737.231268-1-toddpoynor@gmail.com>
@@ -81,26 +81,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Todd Poynor <toddpoynor@google.com>
 
-Gasket/apex drivers now use standard logging, remove TODO entry for
-this.
+Print device addresses as unsigned long, not as kernel pointers.
 
 Signed-off-by: Todd Poynor <toddpoynor@google.com>
 ---
- drivers/staging/gasket/TODO | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/staging/gasket/gasket_page_table.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/staging/gasket/TODO b/drivers/staging/gasket/TODO
-index d3c44ca4fda25..fb71997fb5612 100644
---- a/drivers/staging/gasket/TODO
-+++ b/drivers/staging/gasket/TODO
-@@ -4,7 +4,6 @@ staging directory.
- - Document sysfs files with Documentation/ABI/ entries.
- - Use misc interface instead of major number for driver version description.
- - Add descriptions of module_param's
--- Remove gasket-specific logging functions.
- - apex_get_status() should actually check status.
- - Static functions don't need kernel doc formatting, can be simplified.
- - Fix multi-line alignment formatting to look like:
+diff --git a/drivers/staging/gasket/gasket_page_table.c b/drivers/staging/gasket/gasket_page_table.c
+index 8ea8ea1c5174c..32f1c1e10c7e2 100644
+--- a/drivers/staging/gasket/gasket_page_table.c
++++ b/drivers/staging/gasket/gasket_page_table.c
+@@ -1333,8 +1333,8 @@ static bool gasket_is_extended_dev_addr_bad(
+ 	/* check if the device address is out of bound */
+ 	addr = dev_addr & ~((pg_tbl)->extended_flag);
+ 	if (addr >> (GASKET_EXTENDED_LVL0_WIDTH + GASKET_EXTENDED_LVL0_SHIFT)) {
+-		dev_err(pg_tbl->device, "device address out of bound, 0x%p\n",
+-			(void *)dev_addr);
++		dev_err(pg_tbl->device, "device address out of bounds: 0x%lx\n",
++			dev_addr);
+ 		return true;
+ 	}
+ 
+@@ -1351,8 +1351,8 @@ static bool gasket_is_extended_dev_addr_bad(
+ 
+ 	if (gasket_components_to_dev_address(
+ 		pg_tbl, 0, page_global_idx, page_offset) != dev_addr) {
+-		dev_err(pg_tbl->device, "address is invalid, 0x%p\n",
+-			(void *)dev_addr);
++		dev_err(pg_tbl->device, "address is invalid: 0x%lx\n",
++			dev_addr);
+ 		return true;
+ 	}
+ 
 -- 
 2.18.0.345.g5c9ce644c3-goog
 
