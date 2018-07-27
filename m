@@ -6,36 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B3F2C6778F
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:10:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2714C6778F
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:10:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 353A72089F
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:10:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 353A72089F
+	by mail.kernel.org (Postfix) with ESMTP id 6083B2089E
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:10:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6083B2089E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388684AbeG0LbM (ORCPT
+        id S2388712AbeG0LbT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 07:31:12 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:36462 "EHLO
+        Fri, 27 Jul 2018 07:31:19 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:36468 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729431AbeG0LbL (ORCPT
+        with ESMTP id S1729431AbeG0LbS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 07:31:11 -0400
+        Fri, 27 Jul 2018 07:31:18 -0400
 Received: from localhost (unknown [89.188.5.116])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D0AE2CB5;
-        Fri, 27 Jul 2018 10:09:58 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0C069CB5;
+        Fri, 27 Jul 2018 10:10:05 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
         Soheil Hassas Yeganeh <soheil@google.com>,
-        Yuchung Cheng <ycheng@google.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 18/33] tcp: avoid collapses in tcp_prune_queue() if possible
-Date:   Fri, 27 Jul 2018 12:08:59 +0200
-Message-Id: <20180727100828.356613301@linuxfoundation.org>
+Subject: [PATCH 4.9 19/33] tcp: detect malicious patterns in tcp_collapse_ofo_queue()
+Date:   Fri, 27 Jul 2018 12:09:00 +0200
+Message-Id: <20180727100828.391655534@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180727100827.665729981@linuxfoundation.org>
 References: <20180727100827.665729981@linuxfoundation.org>
@@ -54,44 +53,70 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Eric Dumazet <edumazet@google.com>
 
-[ Upstream commit f4a3313d8e2ca9fd8d8f45e40a2903ba782607e7 ]
+[ Upstream commit 3d4bf93ac12003f9b8e1e2de37fe27983deebdcf ]
 
-Right after a TCP flow is created, receiving tiny out of order
-packets allways hit the condition :
+In case an attacker feeds tiny packets completely out of order,
+tcp_collapse_ofo_queue() might scan the whole rb-tree, performing
+expensive copies, but not changing socket memory usage at all.
 
-if (atomic_read(&sk->sk_rmem_alloc) >= sk->sk_rcvbuf)
-	tcp_clamp_window(sk);
+1) Do not attempt to collapse tiny skbs.
+2) Add logic to exit early when too many tiny skbs are detected.
 
-tcp_clamp_window() increases sk_rcvbuf to match sk_rmem_alloc
-(guarded by tcp_rmem[2])
+We prefer not doing aggressive collapsing (which copies packets)
+for pathological flows, and revert to tcp_prune_ofo_queue() which
+will be less expensive.
 
-Calling tcp_collapse_ofo_queue() in this case is not useful,
-and offers a O(N^2) surface attack to malicious peers.
-
-Better not attempt anything before full queue capacity is reached,
-forcing attacker to spend lots of resource and allow us to more
-easily detect the abuse.
+In the future, we might add the possibility of terminating flows
+that are proven to be malicious.
 
 Signed-off-by: Eric Dumazet <edumazet@google.com>
 Acked-by: Soheil Hassas Yeganeh <soheil@google.com>
-Acked-by: Yuchung Cheng <ycheng@google.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ipv4/tcp_input.c |    3 +++
- 1 file changed, 3 insertions(+)
+ net/ipv4/tcp_input.c |   15 +++++++++++++--
+ 1 file changed, 13 insertions(+), 2 deletions(-)
 
 --- a/net/ipv4/tcp_input.c
 +++ b/net/ipv4/tcp_input.c
-@@ -5027,6 +5027,9 @@ static int tcp_prune_queue(struct sock *
- 	else if (tcp_under_memory_pressure(sk))
- 		tp->rcv_ssthresh = min(tp->rcv_ssthresh, 4U * tp->advmss);
+@@ -4918,6 +4918,7 @@ end:
+ static void tcp_collapse_ofo_queue(struct sock *sk)
+ {
+ 	struct tcp_sock *tp = tcp_sk(sk);
++	u32 range_truesize, sum_tiny = 0;
+ 	struct sk_buff *skb, *head;
+ 	struct rb_node *p;
+ 	u32 start, end;
+@@ -4936,6 +4937,7 @@ new_range:
+ 	}
+ 	start = TCP_SKB_CB(skb)->seq;
+ 	end = TCP_SKB_CB(skb)->end_seq;
++	range_truesize = skb->truesize;
  
-+	if (atomic_read(&sk->sk_rmem_alloc) <= sk->sk_rcvbuf)
-+		return 0;
-+
- 	tcp_collapse_ofo_queue(sk);
- 	if (!skb_queue_empty(&sk->sk_receive_queue))
- 		tcp_collapse(sk, &sk->sk_receive_queue, NULL,
+ 	for (head = skb;;) {
+ 		skb = tcp_skb_next(skb, NULL);
+@@ -4946,11 +4948,20 @@ new_range:
+ 		if (!skb ||
+ 		    after(TCP_SKB_CB(skb)->seq, end) ||
+ 		    before(TCP_SKB_CB(skb)->end_seq, start)) {
+-			tcp_collapse(sk, NULL, &tp->out_of_order_queue,
+-				     head, skb, start, end);
++			/* Do not attempt collapsing tiny skbs */
++			if (range_truesize != head->truesize ||
++			    end - start >= SKB_WITH_OVERHEAD(SK_MEM_QUANTUM)) {
++				tcp_collapse(sk, NULL, &tp->out_of_order_queue,
++					     head, skb, start, end);
++			} else {
++				sum_tiny += range_truesize;
++				if (sum_tiny > sk->sk_rcvbuf >> 3)
++					return;
++			}
+ 			goto new_range;
+ 		}
+ 
++		range_truesize += skb->truesize;
+ 		if (unlikely(before(TCP_SKB_CB(skb)->seq, start)))
+ 			start = TCP_SKB_CB(skb)->seq;
+ 		if (after(TCP_SKB_CB(skb)->end_seq, end))
 
 
