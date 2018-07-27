@@ -2,501 +2,128 @@ Return-Path: <SRS0=OQFz=KL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28C26C28CF6
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 00:44:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 024ABC28CF6
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 00:55:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BD0B7206B7
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 00:44:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BD0B7206B7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=aosc.io
+	by mail.kernel.org (Postfix) with ESMTP id 51D0F206B7
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 00:55:18 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dwuJrjTt"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 51D0F206B7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731975AbeG0CDi convert rfc822-to-8bit (ORCPT
+        id S1731988AbeG0COe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 26 Jul 2018 22:03:38 -0400
-Received: from hermes.aosc.io ([199.195.250.187]:42444 "EHLO hermes.aosc.io"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731412AbeG0CDh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Jul 2018 22:03:37 -0400
-Received: from localhost (localhost [127.0.0.1]) (Authenticated sender: icenowy@aosc.io)
-        by hermes.aosc.io (Postfix) with ESMTPSA id 138119F906;
-        Fri, 27 Jul 2018 00:44:13 +0000 (UTC)
-Date:   Fri, 27 Jul 2018 08:44:00 +0800
-In-Reply-To: <1571011.jY5lUBhtiX@jernej-laptop>
-References: <20180726171257.6688-1-icenowy@aosc.io> <20180726171257.6688-11-icenowy@aosc.io> <1571011.jY5lUBhtiX@jernej-laptop>
+        Thu, 26 Jul 2018 22:14:34 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:44125 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731729AbeG0COe (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Jul 2018 22:14:34 -0400
+Received: by mail-pf1-f196.google.com with SMTP id k21-v6so1131094pff.11;
+        Thu, 26 Jul 2018 17:55:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=r+qX+r/J3JrCXa26zepx8oYZzNTJmSzWhcahIDNPnk0=;
+        b=dwuJrjTtecdMN7FVjZfJQlrBRgxaZxwYUjrw7lU7pNTfz15dgda/EbbZSNk5rx/eHz
+         6hR9lRYZR1mQFtNyZUUGqI8BFqbOq4j7dusnB6/SXdLAagSD9wRTUKDUHpnywdXtvJzN
+         d0bbG4/LOzQcPSa0wWtXSFQHOyAvIV1QTYoZXsLfjZF3dlwZ6PXLu4Ix1wcNBnzKiYA2
+         hODa+wrcfsNqPu/94iiQdbyD1TCoaQkHl1IuF5T70OmvGVB4P5cWrqnqb1LPKJS0EF7Y
+         s8QaOoWHy706pd7EKHbPptGX3qGECppUMaktducRG6s7q+q0rktWFcol7tRgWFaqh8ht
+         YFJA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=r+qX+r/J3JrCXa26zepx8oYZzNTJmSzWhcahIDNPnk0=;
+        b=J3oZJUNTuat8n7pDeNWcn3ebrTat8zZyW8lcg4SZD3iWWZYy7ico5i8sWdZO1XrrTp
+         lBYywKkj6lhVM9ovIv3ISszarCxd0ndQ0OsOeUOIZydURUjW+mWdyOmjGpJU7KymNz1X
+         Wd1koGbdNmp5C+XPo70c1jy0tVuBgiI4Vh1ZtCy13pnTuvy7zSXlVOjaHze/QpqrkFIg
+         USPtsYF3JfX4Z+p6i4Uwc2zHEruaAqu2JEZ/1DYkACWGNN5nfoQrXlX4FNpU/K26CLFi
+         +i+i7pFyqFimoJvisMnHVS8xEv8YbRBm6M9tjuYOjbyIRN9yG2iWgOSF2pL1OKDpLQGn
+         aiRg==
+X-Gm-Message-State: AOUpUlHXvLxKsOfZpKx8tao9thZUe+ZsSTirVEtQO6hkG/5McgITrLKT
+        G+/RMI0+ZFO9KuFVO9/jFcU=
+X-Google-Smtp-Source: AAOMgpc9QZTNnJ3JtFm6aeqjuGckKszbvsGufzEsNFNUV0I6h3lGeZgOfqkhnihEYdfkFmEMSfzYvA==
+X-Received: by 2002:a65:594b:: with SMTP id g11-v6mr4002739pgu.260.1532652915105;
+        Thu, 26 Jul 2018 17:55:15 -0700 (PDT)
+Received: from hobbes.alyptik.lan ([2605:e000:1117:c002:2e0:1bff:fe70:ea])
+        by smtp.gmail.com with ESMTPSA id u71-v6sm4038267pfk.174.2018.07.26.17.55.12
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 26 Jul 2018 17:55:13 -0700 (PDT)
+Date:   Thu, 26 Jul 2018 14:55:11 -1000
+From:   Joey Pabalinas <joeypabalinas@gmail.com>
+To:     Richard Weinberger <richard@sigma-star.at>
+Cc:     Gao Xiang <gaoxiang25@huawei.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        miaoxie@huawei.com, yuchao0@huawei.com, sunqiuyang@huawei.com,
+        fangwei1@huawei.com, liguifu2@huawei.com, weidu.du@huawei.com,
+        chen.chun.yen@huawei.com, brooke.wangzhigang@hisilicon.com,
+        dongjinguang@huawei.com, Joey Pabalinas <joeypabalinas@gmail.com>
+Subject: Re: [NOMERGE] [RFC PATCH 00/12] erofs: introduce erofs file system
+Message-ID: <20180727005511.igabkdzwpb64bniq@hobbes.alyptik.lan>
+References: <1527764767-22190-1-git-send-email-gaoxiang25@huawei.com>
+ <CAFLxGvw5PXBLKuaaK5xipiwTOXohtdeenD0XQHgX6+r4rS=GqQ@mail.gmail.com>
+ <aae078b7-c364-106a-dd56-91abc945d7bb@huawei.com>
+ <1670077.cnVahIradn@blindfold>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: 8BIT
-Subject: Re: [linux-sunxi] [PATCH v3.1 10/10] arm64: dts: allwinner: a64: Enable HDMI output on A64 boards w/ HDMI
-To:     jernej.skrabec@siol.net,
-        =?UTF-8?Q?Jernej_=C5=A0krabec?= <jernej.skrabec@siol.net>,
-        linux-sunxi@googlegroups.com
-CC:     Maxime Ripard <maxime.ripard@bootlin.com>,
-        Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-        Jagan Teki <jagan@amarulasolutions.com>,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org
-From:   Icenowy Zheng <icenowy@aosc.io>
-Message-ID: <615A272A-A739-4EDE-9AF4-4FC2822F3E3F@aosc.io>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="luuepj5gh2e6h5z4"
+Content-Disposition: inline
+In-Reply-To: <1670077.cnVahIradn@blindfold>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
+--luuepj5gh2e6h5z4
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-于 2018年7月27日 GMT+08:00 上午2:03:00, "Jernej Škrabec" <jernej.skrabec@siol.net> 写到:
->Dne četrtek, 26. julij 2018 ob 19:12:57 CEST je Icenowy Zheng
->napisal(a):
->> From: Jagan Teki <jagan@amarulasolutions.com>
->> 
->> Enable all necessary device tree nodes and add connector node to
->device
->> trees for all supported A64 boards with HDMI.
->> 
->> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
->> [Icenowy: squash all board patches altogether and change supply name]
->> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
->> ---
->> Changes in v3,1:
->> - Squash all enablement patches altogether.
->> - Change supply name to match DT binding & driver change.
->> Changes for v3:
->> - Enable all pipeline components
->> Changes for v2:
->> - none
->> 
->>  .../dts/allwinner/sun50i-a64-bananapi-m64.dts | 34
->+++++++++++++++++++
->>  .../dts/allwinner/sun50i-a64-nanopi-a64.dts   | 34
->+++++++++++++++++++
->>  .../dts/allwinner/sun50i-a64-olinuxino.dts    | 34
->+++++++++++++++++++
->>  .../dts/allwinner/sun50i-a64-orangepi-win.dts | 34
->+++++++++++++++++++
->>  .../boot/dts/allwinner/sun50i-a64-pine64.dts  | 34
->+++++++++++++++++++
->>  .../allwinner/sun50i-a64-sopine-baseboard.dts | 34
->+++++++++++++++++++
->>  6 files changed, 204 insertions(+)
->> 
->> diff --git
->a/arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts
->> b/arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts index
->> 094cfed13df9..0d8f5571d574 100644
->> --- a/arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts
->> +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts
->> @@ -60,6 +60,17 @@
->>  		stdout-path = "serial0:115200n8";
->>  	};
->> 
->> +	connector {
->> +		compatible = "hdmi-connector";
->> +		type = "a";
->> +
->> +		port {
->> +			hdmi_con_in: endpoint {
->> +				remote-endpoint = <&hdmi_out_con>;
->> +			};
->> +		};
->> +	};
->> +
->>  	leds {
->>  		compatible = "gpio-leds";
->> 
->> @@ -86,6 +97,10 @@
->>  	};
->>  };
->> 
->> +&de {
->> +	status = "okay";
->> +};
->> +
->>  &ehci0 {
->>  	status = "okay";
->>  };
->> @@ -103,6 +118,17 @@
->>  	status = "okay";
->>  };
->> 
->> +&hdmi {
->> +	hdmi-supply = <&reg_dldo1>;
->> +	status = "okay";
->> +};
->> +
->> +&hdmi_out {
->> +	hdmi_out_con: endpoint {
->> +		remote-endpoint = <&hdmi_con_in>;
->> +	};
->> +};
->> +
->>  &i2c1 {
->>  	pinctrl-names = "default";
->>  	pinctrl-0 = <&i2c1_pins>;
->> @@ -120,6 +146,10 @@
->>  	};
->>  };
->> 
->> +&mixer1 {
->> +	status = "okay";
->> +};
->> +
->>  &mmc0 {
->>  	pinctrl-names = "default";
->>  	pinctrl-0 = <&mmc0_pins>;
->> @@ -300,6 +330,10 @@
->>  	vcc-hdmi-supply = <&reg_dldo1>;
->>  };
->> 
->> +&tcon1 {
->> +	status = "okay";
->> +};
->> +
->>  &uart0 {
->>  	pinctrl-names = "default";
->>  	pinctrl-0 = <&uart0_pins_a>;
->> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-nanopi-a64.dts
->> b/arch/arm64/boot/dts/allwinner/sun50i-a64-nanopi-a64.dts index
->> 98dbff19f5cc..2bcf02f46366 100644
->> --- a/arch/arm64/boot/dts/allwinner/sun50i-a64-nanopi-a64.dts
->> +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-nanopi-a64.dts
->> @@ -57,6 +57,21 @@
->>  	chosen {
->>  		stdout-path = "serial0:115200n8";
->>  	};
->> +
->> +	connector {
->> +		compatible = "hdmi-connector";
->> +		type = "a";
->> +
->> +		port {
->> +			hdmi_con_in: endpoint {
->> +				remote-endpoint = <&hdmi_out_con>;
->> +			};
->> +		};
->> +	};
->> +};
->> +
->> +&de {
->> +	status = "okay";
->>  };
->> 
->>  &ehci0 {
->> @@ -67,6 +82,17 @@
->>  	status = "okay";
->>  };
->> 
->> +&hdmi {
->> +	hdmi-supply = <&reg_dldo1>;
->> +	status = "okay";
->> +};
->> +
->> +&hdmi_out {
->> +	hdmi_out_con: endpoint {
->> +		remote-endpoint = <&hdmi_con_in>;
->> +	};
->> +};
->> +
->>  /* i2c1 connected with gpio headers like pine64, bananapi */
->>  &i2c1 {
->>  	pinctrl-names = "default";
->> @@ -78,6 +104,10 @@
->>  	bias-pull-up;
->>  };
->> 
->> +&mixer1 {
->> +	status = "okay";
->> +};
->> +
->>  &mmc0 {
->>  	pinctrl-names = "default";
->>  	pinctrl-0 = <&mmc0_pins>;
->> @@ -199,6 +229,10 @@
->>  	vcc-hdmi-supply = <&reg_dldo1>;
->>  };
->> 
->> +&tcon1 {
->> +	status = "okay";
->> +};
->> +
->>  &uart0 {
->>  	pinctrl-names = "default";
->>  	pinctrl-0 = <&uart0_pins_a>;
->> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-olinuxino.dts
->> b/arch/arm64/boot/dts/allwinner/sun50i-a64-olinuxino.dts index
->> 3f531393eaee..5445a7a1db51 100644
->> --- a/arch/arm64/boot/dts/allwinner/sun50i-a64-olinuxino.dts
->> +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-olinuxino.dts
->> @@ -58,12 +58,42 @@
->>  		stdout-path = "serial0:115200n8";
->>  	};
->> 
->> +	connector {
->> +		compatible = "hdmi-connector";
->> +		type = "a";
->> +
->> +		port {
->> +			hdmi_con_in: endpoint {
->> +				remote-endpoint = <&hdmi_out_con>;
->> +			};
->> +		};
->> +	};
->> +
->>  	wifi_pwrseq: wifi_pwrseq {
->>  		compatible = "mmc-pwrseq-simple";
->>  		reset-gpios = <&r_pio 0 2 GPIO_ACTIVE_LOW>; /* PL2 */
->>  	};
->>  };
->> 
->> +&de {
->> +	status = "okay";
->> +};
->> +
->> +&hdmi {
->> +	hdmi-supply = <&reg_dldo1>;
->> +	status = "okay";
->> +};
->> +
->> +&hdmi_out {
->> +	hdmi_out_con: endpoint {
->> +		remote-endpoint = <&hdmi_con_in>;
->> +	};
->> +};
->> +
->> +&mixer1 {
->> +	status = "okay";
->> +};
->> +
->>  &mmc0 {
->>  	pinctrl-names = "default";
->>  	pinctrl-0 = <&mmc0_pins>;
->> @@ -218,6 +248,10 @@
->>  	vcc-hdmi-supply = <&reg_dldo1>;
->>  };
->> 
->> +&tcon1 {
->> +	status = "okay";
->> +};
->> +
->>  &uart0 {
->>  	pinctrl-names = "default";
->>  	pinctrl-0 = <&uart0_pins_a>;
->> diff --git
->a/arch/arm64/boot/dts/allwinner/sun50i-a64-orangepi-win.dts
->> b/arch/arm64/boot/dts/allwinner/sun50i-a64-orangepi-win.dts index
->> 1221764f5719..81a8f92c6c35 100644
->> --- a/arch/arm64/boot/dts/allwinner/sun50i-a64-orangepi-win.dts
->> +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-orangepi-win.dts
->> @@ -57,12 +57,42 @@
->>  	chosen {
->>  		stdout-path = "serial0:115200n8";
->>  	};
->> +
->> +	connector {
->> +		compatible = "hdmi-connector";
->> +		type = "a";
->> +
->> +		port {
->> +			hdmi_con_in: endpoint {
->> +				remote-endpoint = <&hdmi_out_con>;
->> +			};
->> +		};
->> +	};
->> +};
->> +
->> +&de {
->> +	status = "okay";
->>  };
->> 
->>  &ehci1 {
->>  	status = "okay";
->>  };
->> 
->> +&hdmi {
->> +	hdmi-supply = <&reg_dldo1>;
->> +	status = "okay";
->> +};
->> +
->> +&hdmi_out {
->> +	hdmi_out_con: endpoint {
->> +		remote-endpoint = <&hdmi_con_in>;
->> +	};
->> +};
->> +
->> +&mixer1 {
->> +	status = "okay";
->> +};
->> +
->>  &mmc0 {
->>  	pinctrl-names = "default";
->>  	pinctrl-0 = <&mmc0_pins>;
->> @@ -195,6 +225,10 @@
->>  	vcc-hdmi-supply = <&reg_dldo1>;
->>  };
->> 
->> +&tcon1 {
->> +	status = "okay";
->> +};
->> +
->>  &uart0 {
->>  	pinctrl-names = "default";
->>  	pinctrl-0 = <&uart0_pins_a>;
->> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts
->> b/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts index
->> 1b9b92e541d2..1b972bade9f6 100644
->> --- a/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts
->> +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts
->> @@ -62,6 +62,21 @@
->>  	chosen {
->>  		stdout-path = "serial0:115200n8";
->>  	};
->> +
->> +	connector {
->> +		compatible = "hdmi-connector";
->> +		type = "a";
->> +
->> +		port {
->> +			hdmi_con_in: endpoint {
->> +				remote-endpoint = <&hdmi_out_con>;
->> +			};
->> +		};
->> +	};
->> +};
->> +
->> +&de {
->> +	status = "okay";
->>  };
->> 
->>  &ehci0 {
->> @@ -82,6 +97,17 @@
->> 
->>  };
->> 
->> +&hdmi {
->> +	hdmi-supply = <&reg_dldo1>;
->> +	status = "okay";
->> +};
->> +
->> +&hdmi_out {
->> +	hdmi_out_con: endpoint {
->> +		remote-endpoint = <&hdmi_con_in>;
->> +	};
->> +};
->> +
->>  &i2c1 {
->>  	pinctrl-names = "default";
->>  	pinctrl-0 = <&i2c1_pins>;
->> @@ -99,6 +125,10 @@
->>  	};
->>  };
->> 
->> +&mixer1 {
->> +	status = "okay";
->> +};
->> +
->>  &mmc0 {
->>  	pinctrl-names = "default";
->>  	pinctrl-0 = <&mmc0_pins>;
->> @@ -238,6 +268,10 @@
->>  	status = "disabled";
->>  };
->> 
->> +&tcon1 {
->> +	status = "okay";
->> +};
->> +
->>  /* On Exp and Euler connectors */
->>  &uart0 {
->>  	pinctrl-names = "default";
->> diff --git
->a/arch/arm64/boot/dts/allwinner/sun50i-a64-sopine-baseboard.dts
->> b/arch/arm64/boot/dts/allwinner/sun50i-a64-sopine-baseboard.dts index
->> c21f2331add6..eff44b069b1d 100644
->> --- a/arch/arm64/boot/dts/allwinner/sun50i-a64-sopine-baseboard.dts
->> +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-sopine-baseboard.dts
->> @@ -61,6 +61,17 @@
->>  		stdout-path = "serial0:115200n8";
->>  	};
->> 
->> +	connector {
->> +		compatible = "hdmi-connector";
->> +		type = "a";
->> +
->> +		port {
->> +			hdmi_con_in: endpoint {
->> +				remote-endpoint = <&hdmi_out_con>;
->> +			};
->> +		};
->> +	};
->> +
->>  	reg_vcc1v8: vcc1v8 {
->>  		compatible = "regulator-fixed";
->>  		regulator-name = "vcc1v8";
->> @@ -69,6 +80,10 @@
->>  	};
->>  };
->> 
->> +&de {
->> +	status = "okay";
->> +};
->> +
->>  &ehci0 {
->>  	status = "okay";
->>  };
->> @@ -86,6 +101,17 @@
->>  	status = "okay";
->>  };
->> 
->> +&hdmi {
->> +	hdmi-supply = <&reg_dldo1>;
->> +	status = "okay";
->> +};
->> +
->> +&hdmi_out {
->> +	hdmi_out_con: endpoint {
->> +		remote-endpoint = <&hdmi_con_in>;
->> +	};
->> +};
->> +
->>  &mdio {
->>  	ext_rgmii_phy: ethernet-phy@1 {
->>  		compatible = "ethernet-phy-ieee802.3-c22";
->> @@ -93,6 +119,10 @@
->>  	};
->>  };
->> 
->> +&mixer1 {
->> +	status = "okay";
->> +};
->> +
->>  &mmc2 {
->>  	pinctrl-names = "default";
->>  	pinctrl-0 = <&mmc2_pins>;
->> @@ -138,6 +168,10 @@
->>  	vcc-hdmi-supply = <&reg_dldo1>;
->
->How is it possible to have vcc-hdmi-supply already defined? Did I miss
+On Fri, Jun 01, 2018 at 11:28:07AM +0200, Richard Weinberger wrote:
+> > We also think of other candidate full names, such as
+> > Enhanced / Extented Read-only File System, all the names short for "ero=
+fs" are okay.
+>=20
+> TBH, I read "erofs" as "error fs". ;-)
 
-It's for simplefb.
+I thought the exact same thing; opened the thread and was a bit confused
+at first. In my opinion the name feels slightly misleading.
 
->some 
->patch?
->
->Best regards,
->Jernej
->
->>  };
->> 
->> +&tcon1 {
->> +	status = "okay";
->> +};
->> +
->>  &uart0 {
->>  	pinctrl-names = "default";
->>  	pinctrl-0 = <&uart0_pins_a>;
+--=20
+Cheers,
+Joey Pabalinas
+
+--luuepj5gh2e6h5z4
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEKlZXrihdNOcUPZTNruvLfWhyVBkFAltabW4ACgkQruvLfWhy
+VBkcPxAAjHR5A3LXGQzDNgTIdBETDgkqfM5UtXYKlUV/hqnzb9OrRTcpmjckd3oD
+IeB0BicApQ6el5CCNj0x8DAVMOzLDwW5cYc0d2MWHcaZwr0g5KBWAUZ7G2lyVM2q
+cgh5P63b8WFzkC1AY6oVQvuGagiHgj85I9X61112XSqGNh4Hm0toNry4qqEGGJ/U
+IJ7KjQrkWAGkSGRqfV+10Vf5x6YobxrP1mdhlfTdyXO73wyAdn4KMNj03Fblby8T
+vaf8vng7mQv92wZZuVNiqMJUucSrfQHLEIARNMxF/OZ3KekkF53yvSzEQg1K7KEo
+iHQlledBelXKp0GGENdvCu2yw3xfJ/mxKuRsf+lZeRn0/WTaCx3I8nGodnWECtgY
+n2LmHFkMgDX7Uyaw3I9nhTskZgTBPyy4i2veq5wrNATPwPRRhsz05MnEpjbM6kWo
+0ILXjOEZ2FiwWy3a6t+NfErPxJ2HbaJndmWl1tuNzG/JeVXsz/z3SIq96II9dHZC
+rVfSbVobgx2So/6rSP1MdGvuHSRRrIIa+C/TGlyEHN5STxtp9G0AcUOKZItUhuaS
+iBe8vgmOL7kgK8QgUccdRXaxb1oQFeVC2fqLjq3V43c40pZVX+/XAKEX9wEoRSrp
+Bhcsm+ZLKPOGWwk2QA0+H9O22Os4BwrCQhwPXbqSa8KthGeu3bc=
+=YCXi
+-----END PGP SIGNATURE-----
+
+--luuepj5gh2e6h5z4--
