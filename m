@@ -2,92 +2,118 @@ Return-Path: <SRS0=OQFz=KL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39966C6778F
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 16:38:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9894C6778F
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 16:40:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DAEF22089B
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 16:38:08 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="cOOkqBLJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DAEF22089B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 627842089B
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 16:40:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 627842089B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732841AbeG0SA2 (ORCPT
+        id S2388507AbeG0SDF convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 14:00:28 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45460 "EHLO mail.kernel.org"
+        Fri, 27 Jul 2018 14:03:05 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:16067 "EHLO pegase1.c-s.fr"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730205AbeG0SA2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 14:00:28 -0400
-Received: from localhost (unknown [104.132.1.75])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EE45B2089B;
-        Fri, 27 Jul 2018 16:37:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1532709468;
-        bh=tAvZRyxzXAURJ2Yay1vs0wJO/rOmGCB9AmY6IZCPbXI=;
-        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
-        b=cOOkqBLJEhSyzMela7QW05wLSb35lu7v81ugWTIOhVn2jyl0HR6eWJWO9eKu37jl+
-         NrRa0t0m59o5x2mkTxIVDr3RrBs2lFsZxUA8dBNktF2q5V/Kde6kp3wZlb4E2I3q7T
-         NSIAvJds3t/DyL6VHsly72QhPLOLZNWpb4S8iBdw=
-Content-Type: text/plain; charset="utf-8"
+        id S1730510AbeG0SDF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Jul 2018 14:03:05 -0400
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 41cZSz7465z9ty7q;
+        Fri, 27 Jul 2018 18:40:19 +0200 (CEST)
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id Q00rF5ueDD0k; Fri, 27 Jul 2018 18:40:19 +0200 (CEST)
+Received: from vm-hermes.si.c-s.fr (vm-hermes.si.c-s.fr [192.168.25.253])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 41cZSz6RvQz9ty76;
+        Fri, 27 Jul 2018 18:40:19 +0200 (CEST)
+Received: by vm-hermes.si.c-s.fr (Postfix, from userid 33)
+        id 8728144; Fri, 27 Jul 2018 18:40:23 +0200 (CEST)
+Received: from 37-169-90-232.coucou-networks.fr
+ (37-169-90-232.coucou-networks.fr [37.169.90.232]) by messagerie.si.c-s.fr
+ (Horde Framework) with HTTP; Fri, 27 Jul 2018 18:40:23 +0200
+Date:   Fri, 27 Jul 2018 18:40:23 +0200
+Message-ID: <20180727184023.Horde.KRXPzZpG18uxt_B9sy_FBg5@messagerie.si.c-s.fr>
+From:   LEROY Christophe <christophe.leroy@c-s.fr>
+To:     Murilo Opsfelder Araujo <muriloo@linux.ibm.com>
+Cc:     linuxppc-dev@lists.ozlabs.org, "Tobin C . Harding" <me@tobin.cc>,
+        Sukadev Bhattiprolu <sukadev@linux.vnet.ibm.com>,
+        Simon Guo <wei.guo.simon@gmail.com>,
+        Paul Mackerras <paulus@samba.org>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Michael Neuling <mikey@neuling.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        Cyril Bur <cyrilbur@gmail.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Balbir Singh <bsingharora@gmail.com>,
+        Andrew Donnellan <andrew.donnellan@au1.ibm.com>,
+        Alastair D'Silva <alastair@d-silva.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 04/10] powerpc/traps: Use REG_FMT in
+ show_signal_msg()
+References: <20180727145811.12334-1-muriloo@linux.ibm.com>
+ <20180727145811.12334-5-muriloo@linux.ibm.com>
+In-Reply-To: <20180727145811.12334-5-muriloo@linux.ibm.com>
+User-Agent: Internet Messaging Program (IMP) H5 (6.2.3)
+Content-Type: text/plain; charset=UTF-8; format=flowed; DelSp=Yes
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-To:     Amit Daniel Kachhap <amit.kachhap@arm.com>,
-        linux-arm-kernel@lists.infradead.org
-From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <1532700112-11852-1-git-send-email-amit.kachhap@arm.com>
-Cc:     Sudeep Holla <sudeep.holla@arm.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Amit Daniel Kachhap <amit.kachhap@arm.com>
-References: <1532700112-11852-1-git-send-email-amit.kachhap@arm.com>
-Message-ID: <153270946725.48062.11195853363758024681@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: [PATCH] clk: scmi: Fix the rounding of clock rate
-Date:   Fri, 27 Jul 2018 09:37:47 -0700
+Content-Disposition: inline
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Amit Daniel Kachhap (2018-07-27 07:01:52)
-> This fix rounds the clock rate properly by using quotient and not
-> remainder in the calculation. This issue was found while testing HDMI
-> in the Juno platform.
-> =
+Murilo Opsfelder Araujo <muriloo@linux.ibm.com> a écrit :
 
-> Signed-off-by: Amit Daniel Kachhap <amit.kachhap@arm.com>
+> Simplify the message format by using REG_FMT as the register format.  This
+> avoids having two different formats and avoids checking for MSR_64BIT.
 
-Any Fixes: tag here?
+Are you sure it is what we want ?
 
+Won't it change the behaviour for a 32 bits app running on a 64bits kernel ?
+
+Christophe
+
+
+>
+> Signed-off-by: Murilo Opsfelder Araujo <muriloo@linux.ibm.com>
 > ---
->  drivers/clk/clk-scmi.c | 5 ++---
->  1 file changed, 2 insertions(+), 3 deletions(-)
-> =
+>  arch/powerpc/kernel/traps.c | 12 ++++--------
+>  1 file changed, 4 insertions(+), 8 deletions(-)
+>
+> diff --git a/arch/powerpc/kernel/traps.c b/arch/powerpc/kernel/traps.c
+> index 4faab4705774..047d980ac776 100644
+> --- a/arch/powerpc/kernel/traps.c
+> +++ b/arch/powerpc/kernel/traps.c
+> @@ -311,17 +311,13 @@ static bool show_unhandled_signals_ratelimited(void)
+>  static void show_signal_msg(int signr, struct pt_regs *regs, int code,
+>  			    unsigned long addr)
+>  {
+> -	const char fmt32[] = KERN_INFO "%s[%d]: unhandled signal %d " \
+> -		"at %08lx nip %08lx lr %08lx code %x\n";
+> -	const char fmt64[] = KERN_INFO "%s[%d]: unhandled signal %d " \
+> -		"at %016lx nip %016lx lr %016lx code %x\n";
+> -
+>  	if (!unhandled_signal(current, signr))
+>  		return;
+>
+> -	printk(regs->msr & MSR_64BIT ? fmt64 : fmt32,
+> -	       current->comm, current->pid, signr,
+> -	       addr, regs->nip, regs->link, code);
+> +	pr_info("%s[%d]: unhandled signal %d at "REG_FMT \
+> +		" nip "REG_FMT" lr "REG_FMT" code %x\n",
+> +		current->comm, current->pid, signr, addr,
+> +		regs->nip, regs->link, code);
+>  }
+>
+>  void _exception_pkey(int signr, struct pt_regs *regs, int code,
+> --
+> 2.17.1
 
-> diff --git a/drivers/clk/clk-scmi.c b/drivers/clk/clk-scmi.c
-> index bb2a6f2..a985bf5 100644
-> --- a/drivers/clk/clk-scmi.c
-> +++ b/drivers/clk/clk-scmi.c
-> @@ -60,9 +59,9 @@ static long scmi_clk_round_rate(struct clk_hw *hw, unsi=
-gned long rate,
->  =
-
->         ftmp =3D rate - fmin;
->         ftmp +=3D clk->info->range.step_size - 1; /* to round up */
-> -       step =3D do_div(ftmp, clk->info->range.step_size);
-> +       do_div(ftmp, clk->info->range.step_size);
->  =
-
-> -       return step * clk->info->range.step_size + fmin;
-> +       return ftmp * clk->info->range.step_size + fmin;
-
-Good catch.
 
