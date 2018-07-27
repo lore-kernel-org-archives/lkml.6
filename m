@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B097FC67790
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:01:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32FF2C6778F
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:01:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 63EF520894
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:01:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 63EF520894
+	by mail.kernel.org (Postfix) with ESMTP id CDB4820894
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:01:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CDB4820894
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388396AbeG0LWX (ORCPT
+        id S2388503AbeG0LW0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 07:22:23 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:33960 "EHLO
+        Fri, 27 Jul 2018 07:22:26 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33984 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730244AbeG0LWW (ORCPT
+        with ESMTP id S2388412AbeG0LWZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 07:22:22 -0400
+        Fri, 27 Jul 2018 07:22:25 -0400
 Received: from localhost (unknown [89.188.5.116])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D42C9CB8;
-        Fri, 27 Jul 2018 10:01:12 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id ABEB7CBA;
+        Fri, 27 Jul 2018 10:01:15 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Heiner Kallweit <hkallweit1@gmail.com>,
-        Andrew Lunn <andrew@lunn.ch>,
+        stable@vger.kernel.org, Daniel Borkmann <daniel@iogearbox.net>,
+        Dave Watson <davejwatson@fb.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 18/48] net: phy: consider PHY_IGNORE_INTERRUPT in phy_start_aneg_priv
-Date:   Fri, 27 Jul 2018 12:00:03 +0200
-Message-Id: <20180727095920.437064768@linuxfoundation.org>
+Subject: [PATCH 4.14 19/48] sock: fix sg page frag coalescing in sk_alloc_sg
+Date:   Fri, 27 Jul 2018 12:00:04 +0200
+Message-Id: <20180727095920.513756194@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180727095918.503549522@linuxfoundation.org>
 References: <20180727095918.503549522@linuxfoundation.org>
@@ -51,32 +51,41 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Heiner Kallweit <hkallweit1@gmail.com>
+From: Daniel Borkmann <daniel@iogearbox.net>
 
-[ Upstream commit 215d08a85b9acf5e1fe9dbf50f1774cde333efef ]
+[ Upstream commit 144fe2bfd236dc814eae587aea7e2af03dbdd755 ]
 
-The situation described in the comment can occur also with
-PHY_IGNORE_INTERRUPT, therefore change the condition to include it.
+Current sg coalescing logic in sk_alloc_sg() (latter is used by tls and
+sockmap) is not quite correct in that we do fetch the previous sg entry,
+however the subsequent check whether the refilled page frag from the
+socket is still the same as from the last entry with prior offset and
+length matching the start of the current buffer is comparing always the
+first sg list entry instead of the prior one.
 
-Fixes: f555f34fdc58 ("net: phy: fix auto-negotiation stall due to unavailable interrupt")
-Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+Fixes: 3c4d7559159b ("tls: kernel TLS support")
+Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
+Acked-by: Dave Watson <davejwatson@fb.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/phy/phy.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/tls/tls_sw.c |    7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
---- a/drivers/net/phy/phy.c
-+++ b/drivers/net/phy/phy.c
-@@ -511,7 +511,7 @@ static int phy_start_aneg_priv(struct ph
- 	 * negotiation may already be done and aneg interrupt may not be
- 	 * generated.
- 	 */
--	if (phy_interrupt_is_valid(phydev) && (phydev->state == PHY_AN)) {
-+	if (phydev->irq != PHY_POLL && phydev->state == PHY_AN) {
- 		err = phy_aneg_done(phydev);
- 		if (err > 0) {
- 			trigger = true;
+--- a/net/tls/tls_sw.c
++++ b/net/tls/tls_sw.c
+@@ -135,9 +135,10 @@ static int alloc_sg(struct sock *sk, int
+ 		pfrag->offset += use;
+ 
+ 		sge = sg + num_elem - 1;
+-		if (num_elem > first_coalesce && sg_page(sg) == pfrag->page &&
+-		    sg->offset + sg->length == orig_offset) {
+-			sg->length += use;
++
++		if (num_elem > first_coalesce && sg_page(sge) == pfrag->page &&
++		    sge->offset + sge->length == orig_offset) {
++			sge->length += use;
+ 		} else {
+ 			sge++;
+ 			sg_unmark_end(sge);
 
 
