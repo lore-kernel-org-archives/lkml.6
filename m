@@ -6,41 +6,39 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AC64C67790
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:09:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4420CC67790
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:09:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D2E5B2089E
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:09:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D2E5B2089E
+	by mail.kernel.org (Postfix) with ESMTP id 017EB208A0
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:09:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 017EB208A0
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730704AbeG0Lap (ORCPT
+        id S1732091AbeG0Las (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 07:30:45 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:36380 "EHLO
+        Fri, 27 Jul 2018 07:30:48 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:36388 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729431AbeG0Lap (ORCPT
+        with ESMTP id S1729431AbeG0Las (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 07:30:45 -0400
+        Fri, 27 Jul 2018 07:30:48 -0400
 Received: from localhost (unknown [89.188.5.116])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1042CBB6;
-        Fri, 27 Jul 2018 10:09:32 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id DFCBFCB6;
+        Fri, 27 Jul 2018 10:09:35 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Felix Fietkau <nbd@nbd.name>,
-        John Crispin <john@phrozen.org>,
-        Paul Burton <paul.burton@mips.com>,
-        Alban Bedel <albeu@free.fr>, James Hogan <jhogan@kernel.org>,
-        Ralf Baechle <ralf@linux-mips.org>, linux-mips@linux-mips.org
-Subject: [PATCH 4.9 01/33] MIPS: ath79: fix register address in ath79_ddr_wb_flush()
-Date:   Fri, 27 Jul 2018 12:08:42 +0200
-Message-Id: <20180727100827.717809104@linuxfoundation.org>
+        stable@vger.kernel.org, Hangbin Liu <liuhangbin@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.9 10/33] multicast: do not restore deleted record source filter mode to new one
+Date:   Fri, 27 Jul 2018 12:08:51 +0200
+Message-Id: <20180727100828.054314417@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180727100827.665729981@linuxfoundation.org>
 References: <20180727100827.665729981@linuxfoundation.org>
 User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
@@ -52,39 +50,56 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Felix Fietkau <nbd@nbd.name>
+From: Hangbin Liu <liuhangbin@gmail.com>
 
-commit bc88ad2efd11f29e00a4fd60fcd1887abfe76833 upstream.
+There are two scenarios that we will restore deleted records. The first is
+when device down and up(or unmap/remap). In this scenario the new filter
+mode is same with previous one. Because we get it from in_dev->mc_list and
+we do not touch it during device down and up.
 
-ath79_ddr_wb_flush_base has the type void __iomem *, so register offsets
-need to be a multiple of 4 in order to access the intended register.
+The other scenario is when a new socket join a group which was just delete
+and not finish sending status reports. In this scenario, we should use the
+current filter mode instead of restore old one. Here are 4 cases in total.
 
-Signed-off-by: Felix Fietkau <nbd@nbd.name>
-Signed-off-by: John Crispin <john@phrozen.org>
-Signed-off-by: Paul Burton <paul.burton@mips.com>
-Fixes: 24b0e3e84fbf ("MIPS: ath79: Improve the DDR controller interface")
-Patchwork: https://patchwork.linux-mips.org/patch/19912/
-Cc: Alban Bedel <albeu@free.fr>
-Cc: James Hogan <jhogan@kernel.org>
-Cc: Ralf Baechle <ralf@linux-mips.org>
-Cc: linux-mips@linux-mips.org
-Cc: stable@vger.kernel.org # 4.2+
+old_socket        new_socket       before_fix       after_fix
+  IN(A)             IN(A)           ALLOW(A)         ALLOW(A)
+  IN(A)             EX( )           TO_IN( )         TO_EX( )
+  EX( )             IN(A)           TO_EX( )         ALLOW(A)
+  EX( )             EX( )           TO_EX( )         TO_EX( )
+
+Fixes: 24803f38a5c0b (igmp: do not remove igmp souce list info when set link down)
+Fixes: 1666d49e1d416 (mld: do not remove mld souce list info when set link down)
+Signed-off-by: Hangbin Liu <liuhangbin@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- arch/mips/ath79/common.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/ipv4/igmp.c  |    3 +--
+ net/ipv6/mcast.c |    3 +--
+ 2 files changed, 2 insertions(+), 4 deletions(-)
 
---- a/arch/mips/ath79/common.c
-+++ b/arch/mips/ath79/common.c
-@@ -58,7 +58,7 @@ EXPORT_SYMBOL_GPL(ath79_ddr_ctrl_init);
- 
- void ath79_ddr_wb_flush(u32 reg)
- {
--	void __iomem *flush_reg = ath79_ddr_wb_flush_base + reg;
-+	void __iomem *flush_reg = ath79_ddr_wb_flush_base + (reg * 4);
- 
- 	/* Flush the DDR write buffer. */
- 	__raw_writel(0x1, flush_reg);
+--- a/net/ipv4/igmp.c
++++ b/net/ipv4/igmp.c
+@@ -1193,8 +1193,7 @@ static void igmpv3_del_delrec(struct in_
+ 	if (pmc) {
+ 		im->interface = pmc->interface;
+ 		im->crcount = in_dev->mr_qrv ?: net->ipv4.sysctl_igmp_qrv;
+-		im->sfmode = pmc->sfmode;
+-		if (pmc->sfmode == MCAST_INCLUDE) {
++		if (im->sfmode == MCAST_INCLUDE) {
+ 			im->tomb = pmc->tomb;
+ 			im->sources = pmc->sources;
+ 			for (psf = im->sources; psf; psf = psf->sf_next)
+--- a/net/ipv6/mcast.c
++++ b/net/ipv6/mcast.c
+@@ -771,8 +771,7 @@ static void mld_del_delrec(struct inet6_
+ 	if (pmc) {
+ 		im->idev = pmc->idev;
+ 		im->mca_crcount = idev->mc_qrv;
+-		im->mca_sfmode = pmc->mca_sfmode;
+-		if (pmc->mca_sfmode == MCAST_INCLUDE) {
++		if (im->mca_sfmode == MCAST_INCLUDE) {
+ 			im->mca_tomb = pmc->mca_tomb;
+ 			im->mca_sources = pmc->mca_sources;
+ 			for (psf = im->mca_sources; psf; psf = psf->sf_next)
 
 
