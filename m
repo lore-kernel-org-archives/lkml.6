@@ -3,88 +3,89 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 771A0C6778F
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:03:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3992CC6778F
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:03:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 34FB720894
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:03:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 34FB720894
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ACULAB.COM
+	by mail.kernel.org (Postfix) with ESMTP id EBE4B205F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:03:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EBE4B205F4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389365AbeG0LY2 convert rfc822-to-8bit (ORCPT
+        id S2388917AbeG0LY4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 07:24:28 -0400
-Received: from eu-smtp-delivery-211.mimecast.com ([146.101.78.211]:28204 "EHLO
-        eu-smtp-delivery-211.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2388562AbeG0LY2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 07:24:28 -0400
-Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
- TLS) by eu-smtp-1.mimecast.com with ESMTP id
- uk-mta-89-ojS13K8VPQCLTutgFW1spg-1; Fri, 27 Jul 2018 11:03:15 +0100
-Received: from AcuMS.Aculab.com (fd9f:af1c:a25b::d117) by AcuMS.aculab.com
- (fd9f:af1c:a25b::d117) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Fri,
- 27 Jul 2018 11:04:54 +0100
-Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
- AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
- Fri, 27 Jul 2018 11:04:54 +0100
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     'Andrew Morton' <akpm@linux-foundation.org>,
-        Joe Perches <joe@perches.com>,
-        Andy Whitcroft <apw@canonical.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: RE: [RFC PATCH] checkpatch: check for function calls with struct or
- union on stack
-Thread-Topic: [RFC PATCH] checkpatch: check for function calls with struct or
- union on stack
-Thread-Index: AQHUJRcFUx4+BuOgSky66zuZVVqB+6Si1nhw
-Date:   Fri, 27 Jul 2018 10:04:54 +0000
-Message-ID: <9d7441a14897426f8ed5befe8da0cad3@AcuMS.aculab.com>
-References: <1236369d28b2f1f5389ff652c4eb89e699e6481e.camel@perches.com>
-        <20180726122533.104f6eea950853ef50ebc680@linux-foundation.org>
- <20180726122807.fad0566951e36d930edb6874@linux-foundation.org>
-In-Reply-To: <20180726122807.fad0566951e36d930edb6874@linux-foundation.org>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.33]
+        Fri, 27 Jul 2018 07:24:56 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:10143 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1731165AbeG0LY4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Jul 2018 07:24:56 -0400
+Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id EFACA22E7980E;
+        Fri, 27 Jul 2018 18:03:41 +0800 (CST)
+Received: from [127.0.0.1] (10.177.31.96) by DGGEMS401-HUB.china.huawei.com
+ (10.3.19.201) with Microsoft SMTP Server id 14.3.382.0; Fri, 27 Jul 2018
+ 18:03:39 +0800
+Subject: Re: [PATCH] hostap: hide unused procfs helpers
+To:     Kalle Valo <kvalo@codeaurora.org>,
+        Arend van Spriel <arend.vanspriel@broadcom.com>
+References: <20180713070317.6724-1-yuehaibing@huawei.com>
+ <5B485441.1080305@broadcom.com> <87r2jpvxme.fsf@codeaurora.org>
+CC:     <j@w1.fi>, <linux-kernel@vger.kernel.org>,
+        <netdev@vger.kernel.org>, <linux-wireless@vger.kernel.org>,
+        <davem@davemloft.net>, Randy Dunlap <rdunlap@infradead.org>
+From:   YueHaibing <yuehaibing@huawei.com>
+Message-ID: <9c6401cd-c04c-1230-d360-922b476c6541@huawei.com>
+Date:   Fri, 27 Jul 2018 18:03:38 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.2.0
 MIME-Version: 1.0
-X-MC-Unique: ojS13K8VPQCLTutgFW1spg-1
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+In-Reply-To: <87r2jpvxme.fsf@codeaurora.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.177.31.96]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andrew Morton
-> Sent: 26 July 2018 20:28
-> On Thu, 26 Jul 2018 12:25:33 -0700 Andrew Morton <akpm@linux-foundation.org> wrote:
+On 2018/7/27 17:25, Kalle Valo wrote:
+> Arend van Spriel <arend.vanspriel@broadcom.com> writes:
 > 
-> > I'll give it a spin, see how noisy it is.
+>> + Randy
+>>
+>> On 7/13/2018 9:03 AM, YueHaibing wrote:
+>>> When CONFIG_PROC_FS isn't set, gcc warning this:
+>>>
+>>> drivers/net/wireless/intersil/hostap/hostap_hw.c:2901:12: warning: ‘prism2_registers_proc_show’ defined but not used [-Wunused-function]
+>>>   static int prism2_registers_proc_show(struct seq_file *m, void *v)
+>>>
+>>> drivers/net/wireless/intersil/hostap/hostap_proc.c:16:12: warning: ‘prism2_debug_proc_show’ defined but not used [-Wunused-function]
+>>>   static int prism2_debug_proc_show(struct seq_file *m, void *v)
+>>>              ^
+>>> drivers/net/wireless/intersil/hostap/hostap_proc.c:49:12: warning: ‘prism2_stats_proc_show’ defined but not used [-Wunused-function]
+>>>   static int prism2_stats_proc_show(struct seq_file *m, void *v)
+>>>              ^
+>>> drivers/net/wireless/intersil/hostap/hostap_proc.c:177:12: warning: ‘prism2_crypt_proc_show’ defined but not used [-Wunused-function]
+>>>   static int prism2_crypt_proc_show(struct seq_file *m, void *v)
+>>>              ^
+>>>
+>>> fix this by adding #ifdef around them.
+>>> hfa384x_read_reg is only used by prism2_registers_proc_show,so move it
+>>> into #ifdef.
+>>
+>> There was already a fix for this posted by Randy Dunlap taking a
+>> different approach, ie. use __maybe_unused classifier. To be honest I
+>> prefer the ifdef approach as it is more explicit and does not feel
+>> like a cheat.
 > 
-> Actually, I would prefer if the message, changelog and title
-> used the term "passed by value".  It's a more familiar term
-> and it is possible for a passed-by-value aggregate to in fact
-> be passed in registers.
+> I also prefer the ifdef approach more so I'm planning to take this
+> patch.
 
-You need to detect (and ignore) 'small' structures.
-Quite a few ABI pass small structures by value in register(s)
-or directly on the stack.
+It's ok if you prefer pick this.
 
-So it can make sense to encapsulate an integer value in a
-structure in order to get strong typing.
-
-It would, for instance, make sense to do that for user addresses.
-
-	David
-
--
-Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
-Registration No: 1397386 (Wales)
+> 
 
