@@ -6,49 +6,49 @@ X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AADAC67790
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 07:02:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37F0CC6778F
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 07:03:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 35A5620671
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 07:02:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D52ED20857
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 07:03:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="XuMTRfb9";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="JueHXnNR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 35A5620671
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="lnW1P9Pz";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="TPSXsY6X"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D52ED20857
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729955AbeG0IXU (ORCPT
+        id S1730150AbeG0IXa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 04:23:20 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:60732 "EHLO
+        Fri, 27 Jul 2018 04:23:30 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:33016 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729566AbeG0IXT (ORCPT
+        with ESMTP id S1729566AbeG0IXa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 04:23:19 -0400
+        Fri, 27 Jul 2018 04:23:30 -0400
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 812AD60BB0; Fri, 27 Jul 2018 07:02:49 +0000 (UTC)
+        id ECC7C60B62; Fri, 27 Jul 2018 07:02:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1532674969;
-        bh=LGSYKYovtkDvHfYAuH5Yo3N6ZmnWYxNORxi5XM2379g=;
+        s=default; t=1532674980;
+        bh=QMiQXu2qFeLnLfrvnvvITCYFG+n8uZZZFjHy/X6EAE4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=XuMTRfb97IyWgCHPxccwvWAxrb3aNojW53JCS6Zc3i0OppSA63s2VVMbCAWcz+thM
-         VJaw+2b6N2eNXo5P+wpNovoQfeRtBiFIgpBvX6stWazORacElKGHmNA4pK0+X9MVWP
-         afYqLJidASEI44mfHhssuTy9r1MFW0ThTBBqqQns=
+        b=lnW1P9PzZK00GCh5y5bWKGPC44wYY4tb9mIOHnISJaB4JpPCtq8E4M0nCk+MSSg+b
+         yVM3xwWQ4rbvSNbNtLzVMpthtgSDhY9LldrVi0WP7pJ9L5oSx3xO1SIO9b81cNlOKl
+         FCpvm/EnJumJKSfFCeChdj31xfegH0ZTVApCM/ek=
 Received: from blr-ubuntu-41.ap.qualcomm.com (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
         (Authenticated sender: vivek.gautam@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id C09766034F;
-        Fri, 27 Jul 2018 07:02:42 +0000 (UTC)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 8B46360B62;
+        Fri, 27 Jul 2018 07:02:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1532674968;
-        bh=LGSYKYovtkDvHfYAuH5Yo3N6ZmnWYxNORxi5XM2379g=;
+        s=default; t=1532674974;
+        bh=QMiQXu2qFeLnLfrvnvvITCYFG+n8uZZZFjHy/X6EAE4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=JueHXnNRcd9KoN6cIoUOs50V2wyjqLEuLpYyOkbWbqzH1D6POz6bQCWry+Pg/p4bh
-         C/PTc7idduo52n4AHC3SK7+tfWU0PL2+CbtvbY8d5cPEK/woCoN7EbcdanmGq1bDQe
-         2rlXVi2em1fDMHgdmAvrBZlfj5IAewG86iaAcjMw=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org C09766034F
+        b=TPSXsY6XwdBwagB+aILL+TTt0quRGkGvHD8w+Ll86m1kZovFNzb/PdgHOeAFLf84p
+         rNBhRLbCNRL14I1XOtyWO3RABiBPn9eZVZ0rF1qsoWOzMmnPXBkKcaqXLuiogF2CrL
+         tDUXU2PFlexC4KbHAJPl/Z4Cr7PeM7IB3/L5du0c=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 8B46360B62
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=vivek.gautam@codeaurora.org
 From:   Vivek Gautam <vivek.gautam@codeaurora.org>
@@ -62,9 +62,9 @@ Cc:     alex.williamson@redhat.com, mark.rutland@arm.com,
         sricharan@codeaurora.org, m.szyprowski@samsung.com,
         architt@codeaurora.org, linux-arm-msm@vger.kernel.org,
         Vivek Gautam <vivek.gautam@codeaurora.org>
-Subject: [PATCH v14 1/4] iommu/arm-smmu: Add pm_runtime/sleep ops
-Date:   Fri, 27 Jul 2018 12:32:21 +0530
-Message-Id: <20180727070224.23966-2-vivek.gautam@codeaurora.org>
+Subject: [PATCH v14 2/4] iommu/arm-smmu: Invoke pm_runtime during probe, add/remove device
+Date:   Fri, 27 Jul 2018 12:32:22 +0530
+Message-Id: <20180727070224.23966-3-vivek.gautam@codeaurora.org>
 X-Mailer: git-send-email 2.16.1.72.g5be1f00a9a70
 In-Reply-To: <20180727070224.23966-1-vivek.gautam@codeaurora.org>
 References: <20180727070224.23966-1-vivek.gautam@codeaurora.org>
@@ -75,184 +75,250 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Sricharan R <sricharan@codeaurora.org>
 
-The smmu needs to be functional only when the respective
-master's using it are active. The device_link feature
-helps to track such functional dependencies, so that the
-iommu gets powered when the master device enables itself
-using pm_runtime. So by adapting the smmu driver for
-runtime pm, above said dependency can be addressed.
-
-This patch adds the pm runtime/sleep callbacks to the
-driver and also the functions to parse the smmu clocks
-from DT and enable them in resume/suspend.
-
-Also, while we enable the runtime pm add a pm sleep suspend
-callback that pushes devices to low power state by turning
-the clocks off in a system sleep.
-Also add corresponding clock enable path in resume callback.
+The smmu device probe/remove and add/remove master device callbacks
+gets called when the smmu is not linked to its master, that is without
+the context of the master device. So calling runtime apis in those places
+separately.
 
 Signed-off-by: Sricharan R <sricharan@codeaurora.org>
-Signed-off-by: Archit Taneja <architt@codeaurora.org>
-[vivek: rework for clock and pm ops]
+[vivek: Cleanup pm runtime calls]
 Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
 Reviewed-by: Tomasz Figa <tfiga@chromium.org>
 ---
 
-Changes since v13:
- - Moved arm_smmu_device_reset() from arm_smmu_pm_resume() to
-   arm_smmu_runtime_resume(). arm_smmu_pm_resume() calls just
-   runtime_resume() now.
+Change since v13:
+ - No change.
 
- drivers/iommu/arm-smmu.c | 77 ++++++++++++++++++++++++++++++++++++++++++++++--
- 1 file changed, 74 insertions(+), 3 deletions(-)
+ drivers/iommu/arm-smmu.c | 101 +++++++++++++++++++++++++++++++++++++++++++----
+ 1 file changed, 93 insertions(+), 8 deletions(-)
 
 diff --git a/drivers/iommu/arm-smmu.c b/drivers/iommu/arm-smmu.c
-index c73cfce1ccc0..5f6a9e3c0079 100644
+index 5f6a9e3c0079..1efa5681b905 100644
 --- a/drivers/iommu/arm-smmu.c
 +++ b/drivers/iommu/arm-smmu.c
-@@ -48,6 +48,7 @@
- #include <linux/of_iommu.h>
- #include <linux/pci.h>
- #include <linux/platform_device.h>
-+#include <linux/pm_runtime.h>
- #include <linux/slab.h>
- #include <linux/spinlock.h>
- 
-@@ -205,6 +206,8 @@ struct arm_smmu_device {
- 	u32				num_global_irqs;
- 	u32				num_context_irqs;
- 	unsigned int			*irqs;
-+	struct clk_bulk_data		*clks;
-+	int				num_clks;
- 
- 	u32				cavium_id_base; /* Specific to Cavium */
- 
-@@ -1897,10 +1900,12 @@ static int arm_smmu_device_cfg_probe(struct arm_smmu_device *smmu)
- struct arm_smmu_match_data {
- 	enum arm_smmu_arch_version version;
- 	enum arm_smmu_implementation model;
-+	const char * const *clks;
-+	int num_clks;
+@@ -268,6 +268,20 @@ static struct arm_smmu_option_prop arm_smmu_options[] = {
+ 	{ 0, NULL},
  };
  
- #define ARM_SMMU_MATCH_DATA(name, ver, imp)	\
--static struct arm_smmu_match_data name = { .version = ver, .model = imp }
-+static const struct arm_smmu_match_data name = { .version = ver, .model = imp }
- 
- ARM_SMMU_MATCH_DATA(smmu_generic_v1, ARM_SMMU_V1, GENERIC_SMMU);
- ARM_SMMU_MATCH_DATA(smmu_generic_v2, ARM_SMMU_V2, GENERIC_SMMU);
-@@ -1919,6 +1924,23 @@ static const struct of_device_id arm_smmu_of_match[] = {
- };
- MODULE_DEVICE_TABLE(of, arm_smmu_of_match);
- 
-+static void arm_smmu_fill_clk_data(struct arm_smmu_device *smmu,
-+				   const char * const *clks)
++static inline int arm_smmu_rpm_get(struct arm_smmu_device *smmu)
 +{
-+	int i;
-+
-+	if (smmu->num_clks < 1)
-+		return;
-+
-+	smmu->clks = devm_kcalloc(smmu->dev, smmu->num_clks,
-+				  sizeof(*smmu->clks), GFP_KERNEL);
-+	if (!smmu->clks)
-+		return;
-+
-+	for (i = 0; i < smmu->num_clks; i++)
-+		smmu->clks[i].id = clks[i];
-+}
-+
- #ifdef CONFIG_ACPI
- static int acpi_smmu_get_data(u32 model, struct arm_smmu_device *smmu)
- {
-@@ -2001,6 +2023,9 @@ static int arm_smmu_device_dt_probe(struct platform_device *pdev,
- 	data = of_device_get_match_data(dev);
- 	smmu->version = data->version;
- 	smmu->model = data->model;
-+	smmu->num_clks = data->num_clks;
-+
-+	arm_smmu_fill_clk_data(smmu, data->clks);
- 
- 	parse_driver_options(smmu);
- 
-@@ -2099,6 +2124,14 @@ static int arm_smmu_device_probe(struct platform_device *pdev)
- 		smmu->irqs[i] = irq;
- 	}
- 
-+	err = devm_clk_bulk_get(smmu->dev, smmu->num_clks, smmu->clks);
-+	if (err)
-+		return err;
-+
-+	err = clk_bulk_prepare(smmu->num_clks, smmu->clks);
-+	if (err)
-+		return err;
-+
- 	err = arm_smmu_device_cfg_probe(smmu);
- 	if (err)
- 		return err;
-@@ -2181,6 +2214,9 @@ static int arm_smmu_device_remove(struct platform_device *pdev)
- 
- 	/* Turn the thing off */
- 	writel(sCR0_CLIENTPD, ARM_SMMU_GR0_NS(smmu) + ARM_SMMU_GR0_sCR0);
-+
-+	clk_bulk_unprepare(smmu->num_clks, smmu->clks);
-+
- 	return 0;
- }
- 
-@@ -2189,15 +2225,50 @@ static void arm_smmu_device_shutdown(struct platform_device *pdev)
- 	arm_smmu_device_remove(pdev);
- }
- 
--static int __maybe_unused arm_smmu_pm_resume(struct device *dev)
-+static int __maybe_unused arm_smmu_runtime_resume(struct device *dev)
- {
- 	struct arm_smmu_device *smmu = dev_get_drvdata(dev);
-+	int ret;
-+
-+	ret = clk_bulk_enable(smmu->num_clks, smmu->clks);
-+	if (ret)
-+		return ret;
- 
- 	arm_smmu_device_reset(smmu);
-+
- 	return 0;
- }
- 
--static SIMPLE_DEV_PM_OPS(arm_smmu_pm_ops, NULL, arm_smmu_pm_resume);
-+static int __maybe_unused arm_smmu_runtime_suspend(struct device *dev)
-+{
-+	struct arm_smmu_device *smmu = dev_get_drvdata(dev);
-+
-+	clk_bulk_disable(smmu->num_clks, smmu->clks);
++	if (pm_runtime_enabled(smmu->dev))
++		return pm_runtime_get_sync(smmu->dev);
 +
 +	return 0;
 +}
 +
-+static int __maybe_unused arm_smmu_pm_resume(struct device *dev)
++static inline void arm_smmu_rpm_put(struct arm_smmu_device *smmu)
 +{
-+	if (pm_runtime_suspended(dev))
-+		return 0;
-+
-+	return arm_smmu_runtime_resume(dev);
++	if (pm_runtime_enabled(smmu->dev))
++		pm_runtime_put(smmu->dev);
 +}
 +
-+static int __maybe_unused arm_smmu_pm_suspend(struct device *dev)
-+{
-+	if (pm_runtime_suspended(dev))
-+		return 0;
-+
-+	return arm_smmu_runtime_suspend(dev);
-+}
-+
-+static const struct dev_pm_ops arm_smmu_pm_ops = {
-+	SET_SYSTEM_SLEEP_PM_OPS(arm_smmu_pm_suspend, arm_smmu_pm_resume)
-+	SET_RUNTIME_PM_OPS(arm_smmu_runtime_suspend,
-+			   arm_smmu_runtime_resume, NULL)
-+};
+ static struct arm_smmu_domain *to_smmu_domain(struct iommu_domain *dom)
+ {
+ 	return container_of(dom, struct arm_smmu_domain, domain);
+@@ -913,11 +927,15 @@ static void arm_smmu_destroy_domain_context(struct iommu_domain *domain)
+ 	struct arm_smmu_domain *smmu_domain = to_smmu_domain(domain);
+ 	struct arm_smmu_device *smmu = smmu_domain->smmu;
+ 	struct arm_smmu_cfg *cfg = &smmu_domain->cfg;
+-	int irq;
++	int ret, irq;
  
- static struct platform_driver arm_smmu_driver = {
- 	.driver	= {
+ 	if (!smmu || domain->type == IOMMU_DOMAIN_IDENTITY)
+ 		return;
+ 
++	ret = arm_smmu_rpm_get(smmu);
++	if (ret < 0)
++		return;
++
+ 	/*
+ 	 * Disable the context bank and free the page tables before freeing
+ 	 * it.
+@@ -932,6 +950,8 @@ static void arm_smmu_destroy_domain_context(struct iommu_domain *domain)
+ 
+ 	free_io_pgtable_ops(smmu_domain->pgtbl_ops);
+ 	__arm_smmu_free_bitmap(smmu->context_map, cfg->cbndx);
++
++	arm_smmu_rpm_put(smmu);
+ }
+ 
+ static struct iommu_domain *arm_smmu_domain_alloc(unsigned type)
+@@ -1213,10 +1233,15 @@ static int arm_smmu_attach_dev(struct iommu_domain *domain, struct device *dev)
+ 		return -ENODEV;
+ 
+ 	smmu = fwspec_smmu(fwspec);
++
++	ret = arm_smmu_rpm_get(smmu);
++	if (ret < 0)
++		return ret;
++
+ 	/* Ensure that the domain is finalised */
+ 	ret = arm_smmu_init_domain_context(domain, smmu);
+ 	if (ret < 0)
+-		return ret;
++		goto rpm_put;
+ 
+ 	/*
+ 	 * Sanity check the domain. We don't support domains across
+@@ -1226,33 +1251,50 @@ static int arm_smmu_attach_dev(struct iommu_domain *domain, struct device *dev)
+ 		dev_err(dev,
+ 			"cannot attach to SMMU %s whilst already attached to domain on SMMU %s\n",
+ 			dev_name(smmu_domain->smmu->dev), dev_name(smmu->dev));
+-		return -EINVAL;
++		ret = -EINVAL;
++		goto rpm_put;
+ 	}
+ 
+ 	/* Looks ok, so add the device to the domain */
+-	return arm_smmu_domain_add_master(smmu_domain, fwspec);
++	ret = arm_smmu_domain_add_master(smmu_domain, fwspec);
++
++rpm_put:
++	arm_smmu_rpm_put(smmu);
++	return ret;
+ }
+ 
+ static int arm_smmu_map(struct iommu_domain *domain, unsigned long iova,
+ 			phys_addr_t paddr, size_t size, int prot)
+ {
+ 	struct io_pgtable_ops *ops = to_smmu_domain(domain)->pgtbl_ops;
++	struct arm_smmu_device *smmu = to_smmu_domain(domain)->smmu;
++	int ret;
+ 
+ 	if (!ops)
+ 		return -ENODEV;
+ 
+-	return ops->map(ops, iova, paddr, size, prot);
++	arm_smmu_rpm_get(smmu);
++	ret = ops->map(ops, iova, paddr, size, prot);
++	arm_smmu_rpm_put(smmu);
++
++	return ret;
+ }
+ 
+ static size_t arm_smmu_unmap(struct iommu_domain *domain, unsigned long iova,
+ 			     size_t size)
+ {
+ 	struct io_pgtable_ops *ops = to_smmu_domain(domain)->pgtbl_ops;
++	struct arm_smmu_device *smmu = to_smmu_domain(domain)->smmu;
++	size_t ret;
+ 
+ 	if (!ops)
+ 		return 0;
+ 
+-	return ops->unmap(ops, iova, size);
++	arm_smmu_rpm_get(smmu);
++	ret = ops->unmap(ops, iova, size);
++	arm_smmu_rpm_put(smmu);
++
++	return ret;
+ }
+ 
+ static void arm_smmu_iotlb_sync(struct iommu_domain *domain)
+@@ -1407,7 +1449,13 @@ static int arm_smmu_add_device(struct device *dev)
+ 	while (i--)
+ 		cfg->smendx[i] = INVALID_SMENDX;
+ 
++	ret = arm_smmu_rpm_get(smmu);
++	if (ret < 0)
++		goto out_cfg_free;
++
+ 	ret = arm_smmu_master_alloc_smes(dev);
++	arm_smmu_rpm_put(smmu);
++
+ 	if (ret)
+ 		goto out_cfg_free;
+ 
+@@ -1427,7 +1475,7 @@ static void arm_smmu_remove_device(struct device *dev)
+ 	struct iommu_fwspec *fwspec = dev->iommu_fwspec;
+ 	struct arm_smmu_master_cfg *cfg;
+ 	struct arm_smmu_device *smmu;
+-
++	int ret;
+ 
+ 	if (!fwspec || fwspec->ops != &arm_smmu_ops)
+ 		return;
+@@ -1435,8 +1483,15 @@ static void arm_smmu_remove_device(struct device *dev)
+ 	cfg  = fwspec->iommu_priv;
+ 	smmu = cfg->smmu;
+ 
++	ret = arm_smmu_rpm_get(smmu);
++	if (ret < 0)
++		return;
++
+ 	iommu_device_unlink(&smmu->iommu, dev);
+ 	arm_smmu_master_free_smes(fwspec);
++
++	arm_smmu_rpm_put(smmu);
++
+ 	iommu_group_remove_device(dev);
+ 	kfree(fwspec->iommu_priv);
+ 	iommu_fwspec_free(dev);
+@@ -2124,6 +2179,8 @@ static int arm_smmu_device_probe(struct platform_device *pdev)
+ 		smmu->irqs[i] = irq;
+ 	}
+ 
++	platform_set_drvdata(pdev, smmu);
++
+ 	err = devm_clk_bulk_get(smmu->dev, smmu->num_clks, smmu->clks);
+ 	if (err)
+ 		return err;
+@@ -2132,6 +2189,26 @@ static int arm_smmu_device_probe(struct platform_device *pdev)
+ 	if (err)
+ 		return err;
+ 
++	/*
++	 * We want to avoid touching dev->power.lock in fastpaths unless
++	 * it's really going to do something useful - pm_runtime_enabled()
++	 * can serve as an ideal proxy for that decision. So, conditionally
++	 * enable pm_runtime.
++	 */
++	if (dev->pm_domain)
++		pm_runtime_enable(dev);
++
++	err = arm_smmu_rpm_get(smmu);
++	if (err < 0)
++		return err;
++
++	/* Enable clocks explicitly if runtime PM is disabled */
++	if (!pm_runtime_enabled(dev)) {
++		err = clk_bulk_enable(smmu->num_clks, smmu->clks);
++		if (err)
++			return err;
++	}
++
+ 	err = arm_smmu_device_cfg_probe(smmu);
+ 	if (err)
+ 		return err;
+@@ -2173,10 +2250,11 @@ static int arm_smmu_device_probe(struct platform_device *pdev)
+ 		return err;
+ 	}
+ 
+-	platform_set_drvdata(pdev, smmu);
+ 	arm_smmu_device_reset(smmu);
+ 	arm_smmu_test_smr_masks(smmu);
+ 
++	arm_smmu_rpm_put(smmu);
++
+ 	/*
+ 	 * For ACPI and generic DT bindings, an SMMU will be probed before
+ 	 * any device which might need it, so we want the bus ops in place
+@@ -2212,8 +2290,15 @@ static int arm_smmu_device_remove(struct platform_device *pdev)
+ 	if (!bitmap_empty(smmu->context_map, ARM_SMMU_MAX_CBS))
+ 		dev_err(&pdev->dev, "removing device with active domains!\n");
+ 
++	arm_smmu_rpm_get(smmu);
+ 	/* Turn the thing off */
+ 	writel(sCR0_CLIENTPD, ARM_SMMU_GR0_NS(smmu) + ARM_SMMU_GR0_sCR0);
++	arm_smmu_rpm_put(smmu);
++
++	if (pm_runtime_enabled(smmu->dev))
++		pm_runtime_force_suspend(smmu->dev);
++	else
++		clk_bulk_disable(smmu->num_clks, smmu->clks);
+ 
+ 	clk_bulk_unprepare(smmu->num_clks, smmu->clks);
+ 
 -- 
 QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
 of Code Aurora Forum, hosted by The Linux Foundation
