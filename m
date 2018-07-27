@@ -6,35 +6,36 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE6CCC6778F
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 09:47:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71ABFC67790
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 09:47:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9A45520895
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 09:47:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9A45520895
+	by mail.kernel.org (Postfix) with ESMTP id 23C3120895
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 09:47:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 23C3120895
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730779AbeG0LIN (ORCPT
+        id S1730858AbeG0LIR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 07:08:13 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:51434 "EHLO
+        Fri, 27 Jul 2018 07:08:17 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:51440 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729560AbeG0LIM (ORCPT
+        with ESMTP id S1729560AbeG0LIQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 07:08:12 -0400
+        Fri, 27 Jul 2018 07:08:16 -0400
 Received: from localhost (unknown [89.188.5.116])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4BB32AF8;
-        Fri, 27 Jul 2018 09:47:07 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 7F4F8AF8;
+        Fri, 27 Jul 2018 09:47:10 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Neil Armstrong <narmstrong@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>
-Subject: [PATCH 4.17 12/66] clk: meson-gxbb: set fclk_div2 as CLK_IS_CRITICAL
-Date:   Fri, 27 Jul 2018 11:45:05 +0200
-Message-Id: <20180727093810.473928139@linuxfoundation.org>
+        stable@vger.kernel.org, Bob Ball <ball@umich.edu>,
+        Jarod Wilson <jarod@redhat.com>,
+        Mahesh Bandewar <maheshb@google.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.17 13/66] bonding: set default miimon value for non-arp modes if not set
+Date:   Fri, 27 Jul 2018 11:45:06 +0200
+Message-Id: <20180727093810.593725733@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180727093809.043856530@linuxfoundation.org>
 References: <20180727093809.043856530@linuxfoundation.org>
@@ -51,57 +52,103 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Neil Armstrong <narmstrong@baylibre.com>
+From: Jarod Wilson <jarod@redhat.com>
 
-commit c987ac6f1f088663b6dad39281071aeb31d450a8 upstream.
+[ Upstream commit c1f897ce186a529a494441642125479d38727a3d ]
 
-On Amlogic Meson GXBB & GXL platforms, the SCPI Cortex-M4 Co-Processor
-seems to be dependent on the FCLK_DIV2 to be operationnal.
+For some time now, if you load the bonding driver and configure bond
+parameters via sysfs using minimal config options, such as specifying
+nothing but the mode, relying on defaults for everything else, modes
+that cannot use arp monitoring (802.3ad, balance-tlb, balance-alb) all
+wind up with both arp_interval=0 (as it should be) and miimon=0, which
+means the miimon monitor thread never actually runs. This is particularly
+problematic for 802.3ad.
 
-The issue occurred since v4.17-rc1 by freezing the kernel boot when
-the 'schedutil' cpufreq governor was selected as default :
+For example, from an LNST recipe I've set up:
 
-  [   12.071837] scpi_protocol scpi: SCP Protocol 0.0 Firmware 0.0.0 version
-  domain-0 init dvfs: 4
-  [   12.087757] hctosys: unable to open rtc device (rtc0)
-  [   12.087907] cfg80211: Loading compiled-in X.509 certificates for regulatory database
-  [   12.102241] cfg80211: Loaded X.509 cert 'sforshee: 00b28ddf47aef9cea7'
+$ modprobe bonding max_bonds=0"
+$ echo "+t_bond0" > /sys/class/net/bonding_masters"
+$ ip link set t_bond0 down"
+$ echo "802.3ad" > /sys/class/net/t_bond0/bonding/mode"
+$ ip link set ens1f1 down"
+$ echo "+ens1f1" > /sys/class/net/t_bond0/bonding/slaves"
+$ ip link set ens1f0 down"
+$ echo "+ens1f0" > /sys/class/net/t_bond0/bonding/slaves"
+$ ethtool -i t_bond0"
+$ ip link set ens1f1 up"
+$ ip link set ens1f0 up"
+$ ip link set t_bond0 up"
+$ ip addr add 192.168.9.1/24 dev t_bond0"
+$ ip addr add 2002::1/64 dev t_bond0"
 
-But when disabling the MMC driver, the boot finished but cpufreq failed to
-change the CPU frequency :
+This bond comes up okay, but things look slightly suspect in
+/proc/net/bonding/t_bond0 output:
 
-  [   12.153045] cpufreq: __target_index: Failed to change cpu frequency: -5
+$ grep -i mii /proc/net/bonding/t_bond0
+MII Status: up
+MII Polling Interval (ms): 0
+MII Status: up
+MII Status: up
 
-A bisect between v4.16 and v4.16-rc1 gave
-05f814402d61 ("clk: meson: add fdiv clock gates") to be the first bad commit.
-This commit added support for the missing clock gates before the fixed PLL
-fixed dividers (FCLK_DIVx) and the clock framework basically disabled
-all the unused fixed dividers, thus disabled a critical clock path for
-the SCPI Co-Processor.
+Now, pull a cable on one of the ports in the bond, then reconnect it, and
+you'll see:
 
-This patch simply sets the FCLK_DIV2 gate as critical to ensure
-nobody can disable it.
+Slave Interface: ens1f0
+MII Status: down
+Speed: 1000 Mbps
+Duplex: full
 
-Fixes: 05f814402d61 ("clk: meson: add fdiv clock gates")
-Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
-Tested-by: Kevin Hilman <khilman@baylibre.com>
-[few corrections in the commit description]
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+I believe this became a major issue as of commit 4d2c0cda0744, which for
+802.3ad bonds, sets slave->link = BOND_LINK_DOWN, with a comment about
+relying on link monitoring via miimon to set it correctly, but since the
+miimon work queue never runs, the link just stays marked down.
+
+If we simply tweak bond_option_mode_set() slightly, we can check for the
+non-arp modes having no miimon value set, and insert BOND_DEFAULT_MIIMON,
+which gets things back in full working order. This problem exists as far
+back as 4.14, and might be worth fixing in all stable trees since, though
+the work-around is to simply specify an miimon value yourself.
+
+Reported-by: Bob Ball <ball@umich.edu>
+Signed-off-by: Jarod Wilson <jarod@redhat.com>
+Acked-by: Mahesh Bandewar <maheshb@google.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/clk/meson/gxbb.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/net/bonding/bond_options.c |   23 ++++++++++++++---------
+ 1 file changed, 14 insertions(+), 9 deletions(-)
 
---- a/drivers/clk/meson/gxbb.c
-+++ b/drivers/clk/meson/gxbb.c
-@@ -511,6 +511,7 @@ static struct clk_regmap gxbb_fclk_div2
- 		.ops = &clk_regmap_gate_ops,
- 		.parent_names = (const char *[]){ "fclk_div2_div" },
- 		.num_parents = 1,
-+		.flags = CLK_IS_CRITICAL,
- 	},
- };
+--- a/drivers/net/bonding/bond_options.c
++++ b/drivers/net/bonding/bond_options.c
+@@ -743,15 +743,20 @@ const struct bond_option *bond_opt_get(u
+ static int bond_option_mode_set(struct bonding *bond,
+ 				const struct bond_opt_value *newval)
+ {
+-	if (!bond_mode_uses_arp(newval->value) && bond->params.arp_interval) {
+-		netdev_dbg(bond->dev, "%s mode is incompatible with arp monitoring, start mii monitoring\n",
+-			   newval->string);
+-		/* disable arp monitoring */
+-		bond->params.arp_interval = 0;
+-		/* set miimon to default value */
+-		bond->params.miimon = BOND_DEFAULT_MIIMON;
+-		netdev_dbg(bond->dev, "Setting MII monitoring interval to %d\n",
+-			   bond->params.miimon);
++	if (!bond_mode_uses_arp(newval->value)) {
++		if (bond->params.arp_interval) {
++			netdev_dbg(bond->dev, "%s mode is incompatible with arp monitoring, start mii monitoring\n",
++				   newval->string);
++			/* disable arp monitoring */
++			bond->params.arp_interval = 0;
++		}
++
++		if (!bond->params.miimon) {
++			/* set miimon to default value */
++			bond->params.miimon = BOND_DEFAULT_MIIMON;
++			netdev_dbg(bond->dev, "Setting MII monitoring interval to %d\n",
++				   bond->params.miimon);
++		}
+ 	}
  
+ 	if (newval->value == BOND_MODE_ALB)
 
 
