@@ -4,55 +4,56 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F98CC67790
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 21:23:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BDCDDC6778F
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 21:23:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F241B20862
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 21:23:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 73F4720671
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 21:23:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="WltTNsqe"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F241B20862
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="K/AAJmlR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 73F4720671
 Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=broadcom.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389738AbeG0WrF (ORCPT
+        id S2389785AbeG0WrJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 18:47:05 -0400
-Received: from mail-qt0-f195.google.com ([209.85.216.195]:41748 "EHLO
-        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389368AbeG0WrF (ORCPT
+        Fri, 27 Jul 2018 18:47:09 -0400
+Received: from mail-qt0-f193.google.com ([209.85.216.193]:45968 "EHLO
+        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389750AbeG0WrI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 18:47:05 -0400
-Received: by mail-qt0-f195.google.com with SMTP id e19-v6so6509804qtp.8
-        for <linux-kernel@vger.kernel.org>; Fri, 27 Jul 2018 14:23:22 -0700 (PDT)
+        Fri, 27 Jul 2018 18:47:08 -0400
+Received: by mail-qt0-f193.google.com with SMTP id y5-v6so6504079qti.12
+        for <linux-kernel@vger.kernel.org>; Fri, 27 Jul 2018 14:23:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=broadcom.com; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=bkDf9H/lCzyN8r7W365Wx28B9L8S1jVg+xhMsFMvT7Y=;
-        b=WltTNsqe0pSQeTHTYNDXGNcMPYCPWuvguNqsCDCdpUaZiNOfc3DZ6U/b/aoIHGrwi6
-         DJkIrw4kfFaDvqt6QinWsv0Guc4ypROxWawAmonHGIKw9sZE/jP/uuOVxIWu8X1XKPuE
-         0GA2Df1vhLAEdmYzzWc2v8A3QCAOdfbL+A2FM=
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=y6Hd5BS/lfwDod/uAbVqEBcsSQeI1lqv/Zl6upf/sUA=;
+        b=K/AAJmlRAvJJHba+zF1e1iFmOk0ZaKDCUQu8cfqBYym7q/phu3yVpvpbpCHP9Vl160
+         lgrmUEGPc4HxykW2R63VfJ8j2WJQF0b+fbCUErEBNLkt0lBuBd5zST3lLSa7CuzyWdmG
+         WpO+eUwGorxLumZ2feMR5R1zuuW5l02+i7xM8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=bkDf9H/lCzyN8r7W365Wx28B9L8S1jVg+xhMsFMvT7Y=;
-        b=e7X9rtC2n7u5m5uoQpaAOA8kd8ZzU9ZycutXNRVhcAffpjUjegY4Ac9g/A0A6xhV/E
-         zKm/qcGeIgCUIyNXjOBKpasDf0VyPHjxlU1+4jS4zXq4MercHFi0BEuazsBm3eUO2zzK
-         PxL4MAY4Ew1RFaLWfrCzYW/GV/4U7+CHrcvHNyHXKbBfUC2M2FUGIpAFuBB8mOJabEl7
-         L2g/xRCfIbdecp8VrtiFbnnooN9NfXsoigXMo7QXLsCMVdazsQm/sTvXAYjVVhugZAYg
-         naPlel3UMTnK+A3ZVtHscoLQsLG+J7n/YlOg19i4fFX6xGFSXRd8CJDRdixIzkClDisS
-         sGIg==
-X-Gm-Message-State: AOUpUlHDm5x8xxBka9kfqkFSY05UPbflFVSc+j/FVsaILsNhVs5Nx7b3
-        YKjxDF7yia2y3kYUm8MAkW6BSw==
-X-Google-Smtp-Source: AAOMgpc2VCv3e+6Im30SOH5hB36Fq8vCEcYsIxWlQWtpyQIjahRKeQSlab09GDqmqaX42LBUXZ2Hcw==
-X-Received: by 2002:aed:35f8:: with SMTP id d53-v6mr7856400qte.239.1532726601637;
-        Fri, 27 Jul 2018 14:23:21 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=y6Hd5BS/lfwDod/uAbVqEBcsSQeI1lqv/Zl6upf/sUA=;
+        b=WKk8P2T4NM0SpSNj1C0hqW3tGNlKNyKiGCfnDKcsTXR0P2fdf19Lxms8f3R97Zjrj/
+         ooTduqwnNsczxd6mF2xNMFRrb+Npq4+riFLWb0iDy02uHyqC9pxzWpop36wfD+3yQy16
+         DhA7VLTAcaR/kKGPlrfx7Mpy40/8RNEO9dcbl/grG2YAcYbVgjFgSv5qPypgX3fBHVHs
+         EpF+FPt5dCieYtkKCOK/5il+Czvd2bvQadMosWbE6Rpy8VrR4cAohriRzw884iymotQZ
+         gOFNTCc622pBQAaHazXsczEGDjYiBYnwn44C7SI82yl+LUeQs/zuC7/+8C978q4zh2kb
+         705A==
+X-Gm-Message-State: AOUpUlGjyLrKVwpNTVbBj/gF3iUbfW0Z0JblEQCLqfoGGv/ADcY0+h3j
+        q650eNyyPfMb1MEMCiv3zlCONA==
+X-Google-Smtp-Source: AAOMgpc2NZIdU2nC7sytihIATbiYlFlKPx8KqLjZKUhRpRonWHXSSaXEWac1qX9mk+MkeeJ4qIKFgw==
+X-Received: by 2002:ac8:7107:: with SMTP id z7-v6mr7417164qto.326.1532726604596;
+        Fri, 27 Jul 2018 14:23:24 -0700 (PDT)
 Received: from lbrmn-lnxub86.ric.broadcom.com ([192.19.228.250])
-        by smtp.gmail.com with ESMTPSA id e21-v6sm3416622qtc.67.2018.07.27.14.23.18
+        by smtp.gmail.com with ESMTPSA id e21-v6sm3416622qtc.67.2018.07.27.14.23.21
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Fri, 27 Jul 2018 14:23:20 -0700 (PDT)
+        Fri, 27 Jul 2018 14:23:24 -0700 (PDT)
 From:   Arun Parameswaran <arun.parameswaran@broadcom.com>
 To:     "David S. Miller" <davem@davemloft.net>,
         Florian Fainelli <f.fainelli@gmail.com>,
@@ -66,62 +67,41 @@ Cc:     netdev@vger.kernel.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         bcm-kernel-feedback-list@broadcom.com,
         Arun Parameswaran <arun.parameswaran@broadcom.com>
-Subject: [PATCH v2 0/7] Add clock config and pm support to bcm iProc mdio mux
-Date:   Fri, 27 Jul 2018 14:23:26 -0700
-Message-Id: <1532726613-6483-1-git-send-email-arun.parameswaran@broadcom.com>
+Subject: [PATCH v2 1/7] dt-bindings: net: Fix Broadcom iProc mdio mux driver base address
+Date:   Fri, 27 Jul 2018 14:23:27 -0700
+Message-Id: <1532726613-6483-2-git-send-email-arun.parameswaran@broadcom.com>
 X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1532726613-6483-1-git-send-email-arun.parameswaran@broadcom.com>
+References: <1532726613-6483-1-git-send-email-arun.parameswaran@broadcom.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-The patchset is based on David Miller's "net-next" repo.
+Modify the base address of the Broadcom iProc MDIO mux driver to
+point to the start of the block's register address space.
 
-The patchset extends the Broadcom iProc mdio mux to add support for
-suspend/resume and the ability to configure the internal clock
-divider. The patchset also sets the scan control register to
-disable external master access.
+Signed-off-by: Arun Parameswaran <arun.parameswaran@broadcom.com>
+---
+ Documentation/devicetree/bindings/net/brcm,mdio-mux-iproc.txt | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-The base address of the mdio-mux-bcm-iproc is modified to point to the
-start of the mdio block's address space, to be able to access all the
-mdio's registers. The missing registers are required to configure the
-internal clock divider registers in some of the Broadcom SoC's.
-
-Changes from v1:
- - Addressed Andrew's comments.
-   - Reworked the patches to be based on 'net-next'
-   - Removed 'fixes' from the commit messages, the changes are related
-     to the new features being added.
-   - Maintained backward compatibility to older dt-blob's specifying
-     base addresse with an offset. The correction is applied in the
-     driver and a message is printed to update the dt-blob.
-   - Re-worked and re-ordered the last four patches (4-7).
-     - Added setting of the scan control register as a new patch
-     - Added a call to 'clk_prepare_enable()' in the patch that adds
-       the clock config support, removed the debug message when clock
-       is not passed.
-     - Simplified the pm support patch (removed the array used for the
-       save/restore logic).
-
-Thanks
-Arun
-
-Arun Parameswaran (7):
-  dt-bindings: net: Fix Broadcom iProc mdio mux driver base address
-  net: phy: Fix the register offsets in Broadcom iProc mdio mux driver
-  arm64: dts: Fix the base address of the Broadcom iProc mdio mux
-  net: phy: Disable external master access in bcm mdio mux driver
-  dt-bindings: net: Add clock handle to Broadcom iProc mdio mux
-  net: phy: Add support to configure clock in Broadcom iProc mdio mux
-  net: phy: Add pm support to Broadcom iProc mdio mux driver
-
- .../bindings/net/brcm,mdio-mux-iproc.txt           |   7 +-
- arch/arm64/boot/dts/broadcom/northstar2/ns2.dtsi   |   4 +-
- .../arm64/boot/dts/broadcom/stingray/stingray.dtsi |   4 +-
- drivers/net/phy/mdio-mux-bcm-iproc.c               | 109 +++++++++++++++++++--
- 4 files changed, 109 insertions(+), 15 deletions(-)
-
+diff --git a/Documentation/devicetree/bindings/net/brcm,mdio-mux-iproc.txt b/Documentation/devicetree/bindings/net/brcm,mdio-mux-iproc.txt
+index dfe287a..dc8aa68 100644
+--- a/Documentation/devicetree/bindings/net/brcm,mdio-mux-iproc.txt
++++ b/Documentation/devicetree/bindings/net/brcm,mdio-mux-iproc.txt
+@@ -18,9 +18,9 @@ at- Documentation/devicetree/bindings/net/mdio-mux.txt
+ 
+ 
+ for example:
+-		mdio_mux_iproc: mdio-mux@6602023c {
++		mdio_mux_iproc: mdio-mux@66020000 {
+ 			compatible = "brcm,mdio-mux-iproc";
+-			reg = <0x6602023c 0x14>;
++			reg = <0x66020000 0x250>;
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+ 
 -- 
 1.9.1
 
