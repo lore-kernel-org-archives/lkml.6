@@ -2,121 +2,154 @@ Return-Path: <SRS0=OQFz=KL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=0.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FORGED_MUA_MOZILLA,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47C65C6778F
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 07:34:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BDB65C67790
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 07:37:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DA29920673
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 07:34:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5817920673
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 07:37:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=xilinx.onmicrosoft.com header.i=@xilinx.onmicrosoft.com header.b="mnes8c2d"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DA29920673
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xilinx.com
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="SUGtQihT"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5817920673
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729565AbeG0IzD (ORCPT
+        id S1729561AbeG0I61 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 04:55:03 -0400
-Received: from mail-eopbgr720080.outbound.protection.outlook.com ([40.107.72.80]:29152
-        "EHLO NAM05-CO1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729420AbeG0IzD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 04:55:03 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=xilinx.onmicrosoft.com; s=selector1-xilinx-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=seqn2oyXCM8Qg3e9EPkRQ4VgQSgyrOGhFom6beKomQk=;
- b=mnes8c2dXyswK75TQdXv6V7vY0sKM7JQKZbMixTW5ghTtMIuHnt1D/rul04xhNynv/B4wO/28aAjo3FoXcV9ZP/njYLvTajL7fgC3EL52mYLTyMLdQZPfB2oSIJllnDOLXXO263BEYvVeEmoMMu2QHSECch5Y44CrED0JZW5KYk=
-Received: from MWHPR02MB2816.namprd02.prod.outlook.com (10.175.50.14) by
- MWHPR02MB2558.namprd02.prod.outlook.com (10.168.205.136) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.995.16; Fri, 27 Jul 2018 07:34:23 +0000
-Received: from MWHPR02MB2816.namprd02.prod.outlook.com
- ([fe80::8453:d61e:5ced:a726]) by MWHPR02MB2816.namprd02.prod.outlook.com
- ([fe80::8453:d61e:5ced:a726%3]) with mapi id 15.20.0995.019; Fri, 27 Jul 2018
- 07:34:23 +0000
-From:   Anurag Kumar Vulisha <anuragku@xilinx.com>
-To:     Felipe Balbi <balbi@kernel.org>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
-CC:     "v.anuragkumar@gmail.com" <v.anuragkumar@gmail.com>,
-        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH v3] usb: dwc3: core: Add quirk for enabling AutoRetry
- feature in the controller
-Thread-Topic: [PATCH v3] usb: dwc3: core: Add quirk for enabling AutoRetry
- feature in the controller
-Thread-Index: AQHUJOHTzwXtrtjD0kyGI3yBBhb0wKSiqfUAgAAEOLA=
-Date:   Fri, 27 Jul 2018 07:34:23 +0000
-Message-ID: <MWHPR02MB2816BCF2F19A0D7DA70A6E53A72A0@MWHPR02MB2816.namprd02.prod.outlook.com>
-References: <1532610528-7290-1-git-send-email-anurag.kumar.vulisha@xilinx.com>
- <87k1phywot.fsf@linux.intel.com>
-In-Reply-To: <87k1phywot.fsf@linux.intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=anuragku@xilinx.com; 
-x-originating-ip: [149.199.50.133]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;MWHPR02MB2558;6:3aa7cdXkkNweZKos0/y82g2wjycfwyspfS/MF/0HNvKaU2+spPWMq4FDcg4dvY4EA7i2WBNpkNFD8+5GZXfWMBOddKytx7gXXOz9jLQekPBhqR0LiyRNWDf/w7bzREhaIE8memlJUFo3WCjwAMac2+aHHyTfN0cjkdvapCYIySbcDl3Cuz+LObQ4cNSAAKG0BO3dLyEXcDgcbQnXnpiZngeU6XQFMaNO4hLJqoY6hBCtctZCKdYUq7A8XfNsofrKIrEB/KbRqOJ68EEc0AMRS0JL4hw5KWmagdLQmM7lpbGlaI1n4Yo+3c2kWK+F+0uTOH6xskhQ35Bvwuy1pjCi2/ofM7E5omJ9H1608FNGtfAOOFdnysB90ZYr44hCHQPX2pjA78/VQKCEbd6zS4F1jgVthueulxWUTjG4y1r6xEZXu+eC3W/0bNWohAjlGRihOcV0rgk7RJ19u0a8pgyEjA==;5:+IfpIoYJZA4+4j/bd8N7PafOo3CFSri4AWvSuxTcrPa1zszwVhgzRIzlqVeoV2h96G2s5OixUaJT9z0dRB+HOsVG3f/VgkveYX+6EBYZsDWw5otKteYLT6xH3r7iTIVX3esrBAiCOxOskPgSFXyPjbgJ0qpsXcuV40sbwiSF/7w=;7:bPwAMr6AgbITy97TLXP+7BnTDQYTkHeMyx7uDHPdvp41dRNapZaRc+4IFW7KaxIJe60YdMlCBjkRHF/3MPUq9RpZHpjMrYW+WlLLOf9TH3oocPd17PkLup8nLr/x1J31M7gg1yG1ak51x+i922wbwxmC59E9xEEuWXmaEskrsqJ8oBfXLMJ0dvsraghvPQ6pX8dPyoghBkhYCFyxHXXhU/0fu4ugjHLieSeZZ7q6/8j/h6DRvNjTd09AdRA4fNUo
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: ed0bb9ab-f905-45a2-5675-08d5f3935fbb
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:MWHPR02MB2558;
-x-ms-traffictypediagnostic: MWHPR02MB2558:
-x-ld-processed: 657af505-d5df-48d0-8300-c31994686c5c,ExtAddr
-x-microsoft-antispam-prvs: <MWHPR02MB2558B78971DB6DC76EB8813AA72A0@MWHPR02MB2558.namprd02.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(192813158149592);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(10201501046)(3002001)(93006095)(93001095)(3231311)(944501410)(52105095)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123564045)(20161123560045)(20161123562045)(6072148)(201708071742011)(7699016);SRVR:MWHPR02MB2558;BCL:0;PCL:0;RULEID:;SRVR:MWHPR02MB2558;
-x-forefront-prvs: 07467C4D33
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(39860400002)(376002)(396003)(366004)(346002)(189003)(199004)(5250100002)(110136005)(26005)(102836004)(2900100001)(316002)(86362001)(9686003)(446003)(55016002)(105586002)(305945005)(106356001)(74316002)(25786009)(54906003)(256004)(5660300001)(6436002)(476003)(486006)(2501003)(7696005)(6506007)(229853002)(76176011)(186003)(11346002)(33656002)(6246003)(39060400002)(97736004)(8936002)(53936002)(6116002)(4326008)(3846002)(478600001)(2906002)(551934003)(99286004)(81166006)(68736007)(8676002)(81156014)(7736002)(14454004)(66066001);DIR:OUT;SFP:1101;SCL:1;SRVR:MWHPR02MB2558;H:MWHPR02MB2816.namprd02.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: xilinx.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: rV7WnAT2sLxh2eo/lsCsMa5F2DFJLxER0M/6vpxcMsIjjJIbShR4UCFmDRc9/WQCjYqVN0iHiK8XURGVb1cZQVjoZkN6N3VLGWcuC/uNL8ipw+ZlLwEfU4wxKB22U12IxE4fwStiJh93l2eexKW0aZ63z2R2L050XsxIdhHevAX4N6aGfKzaVySkp2f6AKDZ6IhuP1fPahOAHlQc7juBCivH0kLO4JEXtxLx3C/kODM7A72MpzJQER0LZqWfwWO38xJJsDG61CAt1x17uC8TK5ozesb97AiJlyHGXJ6u4ScNTbE+Xqw1Y68bFBaP+18roJZaRdB5ujEokSlCnTV4esc+zJb8m+RPVSwUxCITl/E=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Fri, 27 Jul 2018 04:58:27 -0400
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:41693 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729463AbeG0I60 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Jul 2018 04:58:26 -0400
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20180727073748euoutp0266887db910758f38a0c05527b16b68e2~FKaxkUn6N0799507995euoutp02c
+        for <linux-kernel@vger.kernel.org>; Fri, 27 Jul 2018 07:37:48 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20180727073748euoutp0266887db910758f38a0c05527b16b68e2~FKaxkUn6N0799507995euoutp02c
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1532677068;
+        bh=D9FxbGf9jAtPOMXL4ZZXfyPDtjTGu8Ur+LLvn2EXEz4=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=SUGtQihT8RtyWROn/xrWfjRFys1e4cVwejy0kKxKx5XfM4bvekQn9EAcIp0uBvdbT
+         Vfqp5RrlCWFNmb2swc/9pd0tVb8hTXTrRBDdxplPsfLtVX27bhP2jTdFc/Y+RRpegi
+         cVcjbHBGr1Bek92bVklCI219P/NBVBUuIlbCpt0o=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20180727073747eucas1p121760a55edbd1c9a06b4c9d41b547bff~FKawzR92K3141231412eucas1p1y;
+        Fri, 27 Jul 2018 07:37:47 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges2new.samsung.com (EUCPMTA) with SMTP id 0E.95.05751.BCBCA5B5; Fri, 27
+        Jul 2018 08:37:47 +0100 (BST)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20180727073746eucas1p1b3654f59b10d1263e4910029aa46788a~FKawCPesk2929129291eucas1p1v;
+        Fri, 27 Jul 2018 07:37:46 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20180727073746eusmtrp10e66a9dbaeddfc4419056b5216c8ea33~FKavzLY_w1877018770eusmtrp11;
+        Fri, 27 Jul 2018 07:37:46 +0000 (GMT)
+X-AuditID: cbfec7f4-c2dff70000001677-4e-5b5acbcb800a
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id 17.DF.04183.ACBCA5B5; Fri, 27
+        Jul 2018 08:37:46 +0100 (BST)
+Received: from [106.120.43.17] (unknown [106.120.43.17]) by
+        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20180727073746eusmtip2d47697ce31e7e686cd34ec00a3e12edb~FKavWdvTh0882608826eusmtip2Y;
+        Fri, 27 Jul 2018 07:37:46 +0000 (GMT)
+Subject: Re: [RESEND PATCH] drm/bridge/synopsys: remove commented-out flag
+ in Makefile
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Gustavo Padovan <gustavo@padovan.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Sean Paul <seanpaul@chromium.org>,
+        dri-devel@lists.freedesktop.org
+Cc:     Archit Taneja <architt@codeaurora.org>,
+        linux-kernel@vger.kernel.org,
+        Russell King <rmk+kernel@armlinux.org.uk>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        David Airlie <airlied@linux.ie>
+From:   Andrzej Hajda <a.hajda@samsung.com>
+Date:   Fri, 27 Jul 2018 09:37:45 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+        Thunderbird/52.9.1
 MIME-Version: 1.0
-X-OriginatorOrg: xilinx.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ed0bb9ab-f905-45a2-5675-08d5f3935fbb
-X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Jul 2018 07:34:23.2926
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 657af505-d5df-48d0-8300-c31994686c5c
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR02MB2558
+In-Reply-To: <1532496348-11589-1-git-send-email-yamada.masahiro@socionext.com>
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Brightmail-Tracker: H4sIAAAAAAAAA02SeUgUYRjG/WZmZ8fFkXE1fNMsWxJUSu34YyCRoqAhIo1AKonactLSXWUn
+        Vy0okcqj8ko8VjFlDaWDSl2PDQXNcs08NjetPDsgUxY1j4pS2nWM/O/3Pu/7fO/7wEfh8q8S
+        D+q8+iKvUStjFaSMqH/5q3dbV9eJiKA0kxd7u6cTY1PTrRLWsjBNsk3jRilb+cuIsRm5lVK2
+        31hKshWzBoJty4pg32TnYuzIk27ENo/OoT1OXP+AGeem312XciUpZoLL//1UwvVn3ca4kvRi
+        CdewOC7hyjqPcGM3OzCuKa8Z40yFPwhurmZjmNMJWXAkH3tey2sCQ07LojNf96H4m2TSZHMu
+        noIKJJnIkQJmF9SkTKFMJKPkTDUC6zWLRCzmEUyUWHCxmENQ1TeM/bP0tNcRYqMKQeuMYdVv
+        RdA0krfysCtzDPTDL0h7w40ZQvDze8uKBWf0GFSNfCTtUyTjB0u171eYYHygsDlnhdfZ3O3j
+        FcjONOMCncVfCDs7Mofhc3um1M44swkarKW4yO7w4ctdzL4AmOsU3DJmk6JZCzNFS0g8fD8M
+        3nhGiuwKkx11UpE3QNedW4TIVyG1WEwNTDoCk75q1bAbnneYbdko2zY/eGwMFOW9UFunQ3YZ
+        GGd4Z3UR73GGvPpCXJRpSL8hF6c3w1i3ARfZHe71LZA5SKFbk1K3JpluTTLd/73liLiP3PkE
+        QRXFCzvUfGKAoFQJCeqogLNxqhpk+35dyx3zjcj450wbYiikcKLDpo5HyCVKrZCsakNA4Qo3
+        +uGgTaIjlcmXeE3cKU1CLC+0IU+KULjTnoeORciZKOVFPobn43nNvy5GOXqkIH9D0f3qYQc6
+        7NXOrNC32qYDbpa+oImFmC3zT02XkmZ7l8fONfrzWaHJB0szfI8njMrUBfnh5mCtuUd1YeDB
+        UBKpuOLl8CpsYt+34kfl2OKnustpnaSH6ye9ENRw1Kcs3Nd5Nq3W2xC41SNkbKhlPU2bCDY1
+        Z9dJ7xHLhKOQ2KoghGjldn9cIyj/Ap96BLp6AwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrJIsWRmVeSWpSXmKPExsVy+t/xe7qnTkdFG0zarWHRe+4kk0VTx1tW
+        iytf37NZ7Hywi91iyc9dTBadE5ewW1zeNYfNYuHHrSwWh/qiLS71T2SyuLvhLKPF3nufGR14
+        PC5fu8js8f5GK7vH7IaLLB5Tfm9k9bjc18vkMbtjJqvH9m8PWD3mnQz0uN99nMlj56S9TB4n
+        pn9n8fi8SS6AJ0rPpii/tCRVISO/uMRWKdrQwkjP0NJCz8jEUs/Q2DzWyshUSd/OJiU1J7Ms
+        tUjfLkEvo+vMBcaCbraKV3snMjcwTmPtYuTkkBAwkTh3ZAtLFyMXh5DAUkaJ2UfXQiXEJXbP
+        f8sMYQtL/LnWxQZR9JpR4ujftUwgCWGBCIm/E46BdYsI3GaUeHx2FjtIgllgMZPEwU2OEB0L
+        GSXa/3wA62AT0JT4u/kmG4jNK2AnMaXvBNg6FgFViel7J4DFRYGmrl7+ghWiRlDi5MwnLCA2
+        p4CfxOMjXVAL1CX+zLvEDGHLS2x/OwfKFpe49WQ+0wRGoVlI2mchaZmFpGUWkpYFjCyrGEVS
+        S4tz03OLjfSKE3OLS/PS9ZLzczcxAqN927GfW3Ywdr0LPsQowMGoxMMb8DoyWog1say4MvcQ
+        owQHs5II75rrQCHelMTKqtSi/Pii0pzU4kOMpkDPTWSWEk3OByaivJJ4Q1NDcwtLQ3Njc2Mz
+        CyVx3vMGlVFCAumJJanZqakFqUUwfUwcnFINjEU3PO+sf3xVe3rzgmwzf+4J5wXj99/kdxWe
+        KDLldd7b/sK/fteqbpqv0uNpj9LqPe7CbLvxz/5d1l6ODqfe/tazri/9K72b5VfNFiGtMB+r
+        d+cm505QLVj4XW4Vl1jqDk0JmWk3jnye+NVlbSnL4tVmh3UZ+ObU9O6oWP/12N2rC9aGFy34
+        3KXEUpyRaKjFXFScCABk5ahJDAMAAA==
+Message-Id: <20180727073746eucas1p1b3654f59b10d1263e4910029aa46788a~FKawCPesk2929129291eucas1p1v@eucas1p1.samsung.com>
+X-CMS-MailID: 20180727073746eucas1p1b3654f59b10d1263e4910029aa46788a
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20180725052739epcas3p39b7080b6adeff8657c7c64c3b60f06c9
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20180725052739epcas3p39b7080b6adeff8657c7c64c3b60f06c9
+References: <CGME20180725052739epcas3p39b7080b6adeff8657c7c64c3b60f06c9@epcas3p3.samsung.com>
+        <1532496348-11589-1-git-send-email-yamada.masahiro@socionext.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Felipe,
+On 25.07.2018 07:25, Masahiro Yamada wrote:
+> Please do not comment out unneeded code.  Remove.
+>
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 
->Hi,
->
->Anurag Kumar Vulisha <anurag.kumar.vulisha@xilinx.com> writes:
->> By default when core sees any transaction error(CRC or overflow) it
->> replies with terminating retry ACK (Retry=3D1 and Nump =3D=3D 0).
->> Enabling this Auto Retry feature in controller, on seeing any
->> transaction errors makes the core to send a non-terminating ACK
->> transaction packet (that is, ACK TP with Retry=3D1 and Nump !=3D 0).
->> Doing so will give controller a chance to recover from the error
->> condition.
->>
->> Signed-off-by: Anurag Kumar Vulisha <anurag.kumar.vulisha@xilinx.com>
->> ---
->
->subject line is misleading, at best. You're not adding any quirks.
->
-Oops !  Will fix this and send another version
+Queued to drm-misc-next.
 
-Thanks,
-Anurag Kumar Vulisha
->--
->balbi
+Regards
+Andrzej
+
+> ---
+>
+>  drivers/gpu/drm/bridge/synopsys/Makefile | 2 --
+>  1 file changed, 2 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/bridge/synopsys/Makefile b/drivers/gpu/drm/bridge/synopsys/Makefile
+> index 5dad97d..3e1b1e3 100644
+> --- a/drivers/gpu/drm/bridge/synopsys/Makefile
+> +++ b/drivers/gpu/drm/bridge/synopsys/Makefile
+> @@ -1,5 +1,3 @@
+> -#ccflags-y := -Iinclude/drm
+> -
+>  obj-$(CONFIG_DRM_DW_HDMI) += dw-hdmi.o
+>  obj-$(CONFIG_DRM_DW_HDMI_AHB_AUDIO) += dw-hdmi-ahb-audio.o
+>  obj-$(CONFIG_DRM_DW_HDMI_I2S_AUDIO) += dw-hdmi-i2s-audio.o
+
+
