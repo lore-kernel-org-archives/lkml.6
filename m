@@ -7,64 +7,64 @@ X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D7C9C67790
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 17:32:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9DB2C67790
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 17:32:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ED6F8208B4
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 17:32:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 941DC208B6
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 17:32:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E+lbkOgW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ED6F8208B4
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FKP3lRVF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 941DC208B6
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389415AbeG0SzC (ORCPT
+        id S2389427AbeG0SzD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 14:55:02 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:45127 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388951AbeG0SzB (ORCPT
+        Fri, 27 Jul 2018 14:55:03 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:33131 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388886AbeG0SzC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 14:55:01 -0400
-Received: by mail-wr1-f66.google.com with SMTP id t13-v6so5791926wrv.12
-        for <linux-kernel@vger.kernel.org>; Fri, 27 Jul 2018 10:32:08 -0700 (PDT)
+        Fri, 27 Jul 2018 14:55:02 -0400
+Received: by mail-wr1-f67.google.com with SMTP id g6-v6so5812010wrp.0
+        for <linux-kernel@vger.kernel.org>; Fri, 27 Jul 2018 10:32:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=S/mH10gOqvOaVJXu+pBbWWWVxx9HQaypLr0KM4PKe2o=;
-        b=E+lbkOgW+ERc0tAazLRVAspjBoK84KwrZQEMIrhB4S5a6xPC0xU/HQQ8GiRtonaRi/
-         kAwH3mdKUM7sOdEPzzRykEkUHU1a+GdMoB5OrLEv5GgcKZC9oGfz4lZDLiGRGuxXuqJT
-         kXSZpfO1OF0NzoRrNlJDnOQuhEm917ay4wG1ksHqT5cCRBiuRIdCsmxEEyKkFLQMo4Fk
-         7P6gYWmCvcqNSDPtiI+qnxMcOMl7u0l0eoX69q1KSW7OILfGbhyGdypok6MQImqA5fxJ
-         LEnGKn7RDL571qQDO+eiZuMj+QQqxQuN5lt9Xr300T/fuWwVkppfNTkO70FFhyPSlmeF
-         bcMg==
+        bh=4y4cABAORtbftN/zU/G1hhIjCxvy9hXquTavdOt4Bm8=;
+        b=FKP3lRVF7GX8TCbFiXWNxcMmHw9IDUJS1CsVTgKAOD9PpcO03xfc6TMQM6rj13fqub
+         N0iDGHgkf0OkHFf16E/y8LpOJ33tr323Dx6nZDi9r/N3aRsJNG/e5cW5X+JGpgOFmPEF
+         xsOmxFclN0Byvxd2UsNdWUg66Uw/+nCDbzAlZQwwRCb4Xj5P6hIr9w3bXM2Y/TDjaECJ
+         dauKHmt6la36i61CIcxh0+B6D61cCRrtoLhzNNJ/krjP52VJ6SdiNJSYZXwLSffCJKq/
+         sbQ+uV6UuP49pGUiKAvVSjYpMGub1vpJv7wdBXkBeFeJ7ukiRrfzYwwpreJ/NmssxvQQ
+         mcIQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=S/mH10gOqvOaVJXu+pBbWWWVxx9HQaypLr0KM4PKe2o=;
-        b=RVDQG6eKEe8qhN32x4B+3BCDgaaVf+TVYX5+0g18HsI+iO4sf9lHakB7F/mSyXyJjp
-         2VpVpl+YtMx8MnzFuMfvlIdDBLjrKVeAnKTKq3nkJEX9Mqo+6Kcgrun9X7Pw/zt5GssQ
-         T9QA2Fi/nWfymfJs4ByYJ9N1Mte/ntJ4mOs8UVzrjDwqwAwdFv9KU1dzH1YkWlCqIeyy
-         jFLrXQy0fgGweF3wi/kRlqIrcKuhLS9wDbMrD/3ENc5kTlC776Kt/TT9YQFBzvQVmyZP
-         atS/Up7VBwdqtG6VSLASb8hS5PlrlnD28yzT+GAB25HXml38Il6ZKmLoz21zoxZeWJG3
-         UH7A==
-X-Gm-Message-State: AOUpUlE7nM1EbEhKdFbIOYw0QpyhEx74OA32yjQRFMX6ys3NxHO7F27c
-        jkvzvY4JlxpB/2W1q0jURI/r+ox/4nA=
-X-Google-Smtp-Source: AAOMgpcYnOxN+e07KPXmjE3LT7WXdOWLeFImZzdiBCfiRJrUFcpge88Pgnbh4EkzGElmhgFFd1NO/w==
-X-Received: by 2002:adf:8276:: with SMTP id 109-v6mr5836800wrb.127.1532712727139;
-        Fri, 27 Jul 2018 10:32:07 -0700 (PDT)
+        bh=4y4cABAORtbftN/zU/G1hhIjCxvy9hXquTavdOt4Bm8=;
+        b=dO0Qd3XH1u00qItEumVk1vvhyRCC4Y30TbpgszrX7pvXDmf52G3ccS/UAX1dw4w81a
+         q7cBbdYszE7CFL6sxayi9D/AAc8h9UoKQ+06Ex4tGMKebwzYzKSqipiBsMCB03AXg/zN
+         FlnnzhY1q8X3kJm/2aozRjHYKkheTYa/y21/kFdqCr+hYBuxn4cd57uVttL6P3WosdYn
+         xd0ykxJE1pm6/UmOuxkwaZPK4wnDC6SdcBnBDIYY2NjjsSmSOw+qyQ5VNGXrDj9wbhBX
+         RfDOkhWSRni7HnD1CYKFjXoSI9bivUY+gc+c8jDKWkf2LW5GlcL1qrEcaM0GNER8DmLb
+         EwyQ==
+X-Gm-Message-State: AOUpUlEmFicbvLmkqm7BRejd2HOPirBlGerfS9lc1V4wLGFkoeL2ABPH
+        nyHJzIXpSWAJ+QcHjnYt8xCSZvBPbeU=
+X-Google-Smtp-Source: AAOMgpdV5tBMQHftZ2v02kGSahSdbrFAqyEfyAQfd2UuzhbCxq7z6484xZNu18vAsSjhskI3E2NzdA==
+X-Received: by 2002:adf:fc86:: with SMTP id g6-v6mr5599949wrr.216.1532712728481;
+        Fri, 27 Jul 2018 10:32:08 -0700 (PDT)
 Received: from localhost.localdomain (host81-158-116-187.range81-158.btcentralplus.com. [81.158.116.187])
-        by smtp.gmail.com with ESMTPSA id z3-v6sm6000010wru.27.2018.07.27.10.32.05
+        by smtp.gmail.com with ESMTPSA id z3-v6sm6000010wru.27.2018.07.27.10.32.07
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 27 Jul 2018 10:32:06 -0700 (PDT)
+        Fri, 27 Jul 2018 10:32:07 -0700 (PDT)
 From:   John Whitmore <johnfwhitmore@gmail.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     devel@driverdev.osuosl.org, gregkh@linuxfoundation.org,
         John Whitmore <johnfwhitmore@gmail.com>
-Subject: [PATCH 19/20] staging:rtl8192u: Rename RxLastFragNum - Style
-Date:   Fri, 27 Jul 2018 18:31:22 +0100
-Message-Id: <20180727173123.27391-20-johnfwhitmore@gmail.com>
+Subject: [PATCH 20/20] staging:rtl8192u: Remove blank line - Style
+Date:   Fri, 27 Jul 2018 18:31:23 +0100
+Message-Id: <20180727173123.27391-21-johnfwhitmore@gmail.com>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180727173123.27391-1-johnfwhitmore@gmail.com>
 References: <20180727173123.27391-1-johnfwhitmore@gmail.com>
@@ -73,54 +73,27 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Rename the member variable RxLastFragNum to rx_last_frag_num. This
-change clears the checkpatch issue with CamelCase naming.
+Remove a blank line to clear the checkpatch issue with use of multiple
+blank lines.
 
-The resulting edits are all coding style changes which should have
-no impact on runtime code execution.
+This is a coding style change which should have no impact on runtime
+code execution.
 
 Signed-off-by: John Whitmore <johnfwhitmore@gmail.com>
 ---
- drivers/staging/rtl8192u/ieee80211/ieee80211_rx.c | 6 +++---
- drivers/staging/rtl8192u/ieee80211/rtl819x_TS.h   | 2 +-
- 2 files changed, 4 insertions(+), 4 deletions(-)
+ drivers/staging/rtl8192u/ieee80211/rtl819x_TS.h | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/staging/rtl8192u/ieee80211/ieee80211_rx.c b/drivers/staging/rtl8192u/ieee80211/ieee80211_rx.c
-index c0c746bfd390..28cae82d795c 100644
---- a/drivers/staging/rtl8192u/ieee80211/ieee80211_rx.c
-+++ b/drivers/staging/rtl8192u/ieee80211/ieee80211_rx.c
-@@ -1028,15 +1028,15 @@ int ieee80211_rx(struct ieee80211_device *ieee, struct sk_buff *skb,
- 				true))
- 		{
- 
--		//	IEEE80211_DEBUG(IEEE80211_DL_REORDER,"%s(): pRxTS->RxLastFragNum is %d,frag is %d,pRxTS->rx_last_seq_num is %d,seq is %d\n",__func__,pRxTS->RxLastFragNum,frag,pRxTS->rx_last_seq_num,WLAN_GET_SEQ_SEQ(sc));
-+		//	IEEE80211_DEBUG(IEEE80211_DL_REORDER,"%s(): pRxTS->rx_last_frag_num is %d,frag is %d,pRxTS->rx_last_seq_num is %d,seq is %d\n",__func__,pRxTS->rx_last_frag_num,frag,pRxTS->rx_last_seq_num,WLAN_GET_SEQ_SEQ(sc));
- 			if ((fc & (1<<11)) &&
--			    (frag == pRxTS->RxLastFragNum) &&
-+			    (frag == pRxTS->rx_last_frag_num) &&
- 			    (WLAN_GET_SEQ_SEQ(sc) == pRxTS->rx_last_seq_num)) {
- 				goto rx_dropped;
- 			}
- 			else
- 			{
--				pRxTS->RxLastFragNum = frag;
-+				pRxTS->rx_last_frag_num = frag;
- 				pRxTS->rx_last_seq_num = WLAN_GET_SEQ_SEQ(sc);
- 			}
- 		}
 diff --git a/drivers/staging/rtl8192u/ieee80211/rtl819x_TS.h b/drivers/staging/rtl8192u/ieee80211/rtl819x_TS.h
-index 0bf877162a8f..aaed1dab7100 100644
+index aaed1dab7100..f5e79853fe9c 100644
 --- a/drivers/staging/rtl8192u/ieee80211/rtl819x_TS.h
 +++ b/drivers/staging/rtl8192u/ieee80211/rtl819x_TS.h
-@@ -45,7 +45,7 @@ struct rx_ts_record {
- 	struct timer_list		rx_pkt_pending_timer;
- 	BA_RECORD			rx_admitted_ba_record;	 /*  For BA Recipient */
- 	u16				rx_last_seq_num;
--	u8				RxLastFragNum;
-+	u8				rx_last_frag_num;
+@@ -49,5 +49,4 @@ struct rx_ts_record {
  	u8				num;
  };
  
+-
+ #endif
 -- 
 2.18.0
 
