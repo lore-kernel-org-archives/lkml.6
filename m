@@ -6,33 +6,36 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53182C67790
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:02:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7B52C67790
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:02:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 12F8C20895
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:02:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 12F8C20895
+	by mail.kernel.org (Postfix) with ESMTP id 864E620894
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:02:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 864E620894
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389248AbeG0LXz (ORCPT
+        id S2389261AbeG0LX6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 07:23:55 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:34430 "EHLO
+        Fri, 27 Jul 2018 07:23:58 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:34436 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730568AbeG0LXy (ORCPT
+        with ESMTP id S1730568AbeG0LX6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 07:23:54 -0400
+        Fri, 27 Jul 2018 07:23:58 -0400
 Received: from localhost (unknown [89.188.5.116])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 5C815CB1;
-        Fri, 27 Jul 2018 10:02:44 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 966DDBB6;
+        Fri, 27 Jul 2018 10:02:48 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH 4.14 48/48] turn off -Wattribute-alias
-Date:   Fri, 27 Jul 2018 12:00:33 +0200
-Message-Id: <20180727095923.463256543@linuxfoundation.org>
+        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+        Soheil Hassas Yeganeh <soheil@google.com>,
+        Yuchung Cheng <ycheng@google.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.14 29/48] tcp: avoid collapses in tcp_prune_queue() if possible
+Date:   Fri, 27 Jul 2018 12:00:14 +0200
+Message-Id: <20180727095921.563691340@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180727095918.503549522@linuxfoundation.org>
 References: <20180727095918.503549522@linuxfoundation.org>
@@ -49,59 +52,46 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Arnd Bergmann <arnd@arndb.de>
+From: Eric Dumazet <edumazet@google.com>
 
-Starting with gcc-8.1, we get a warning about all system call definitions,
-which use an alias between functions with incompatible prototypes, e.g.:
+[ Upstream commit f4a3313d8e2ca9fd8d8f45e40a2903ba782607e7 ]
 
-In file included from ../mm/process_vm_access.c:19:
-../include/linux/syscalls.h:211:18: warning: 'sys_process_vm_readv' alias between functions of incompatible types 'long int(pid_t,  const struct iovec *, long unsigned int,  const struct iovec *, long unsigned int,  long unsigned int)' {aka 'long int(int,  const struct iovec *, long unsigned int,  const struct iovec *, long unsigned int,  long unsigned int)'} and 'long int(long int,  long int,  long int,  long int,  long int,  long int)' [-Wattribute-alias]
-  asmlinkage long sys##name(__MAP(x,__SC_DECL,__VA_ARGS__)) \
-                  ^~~
-../include/linux/syscalls.h:207:2: note: in expansion of macro '__SYSCALL_DEFINEx'
-  __SYSCALL_DEFINEx(x, sname, __VA_ARGS__)
-  ^~~~~~~~~~~~~~~~~
-../include/linux/syscalls.h:201:36: note: in expansion of macro 'SYSCALL_DEFINEx'
- #define SYSCALL_DEFINE6(name, ...) SYSCALL_DEFINEx(6, _##name, __VA_ARGS__)
-                                    ^~~~~~~~~~~~~~~
-../mm/process_vm_access.c:300:1: note: in expansion of macro 'SYSCALL_DEFINE6'
- SYSCALL_DEFINE6(process_vm_readv, pid_t, pid, const struct iovec __user *, lvec,
- ^~~~~~~~~~~~~~~
-../include/linux/syscalls.h:215:18: note: aliased declaration here
-  asmlinkage long SyS##name(__MAP(x,__SC_LONG,__VA_ARGS__)) \
-                  ^~~
-../include/linux/syscalls.h:207:2: note: in expansion of macro '__SYSCALL_DEFINEx'
-  __SYSCALL_DEFINEx(x, sname, __VA_ARGS__)
-  ^~~~~~~~~~~~~~~~~
-../include/linux/syscalls.h:201:36: note: in expansion of macro 'SYSCALL_DEFINEx'
- #define SYSCALL_DEFINE6(name, ...) SYSCALL_DEFINEx(6, _##name, __VA_ARGS__)
-                                    ^~~~~~~~~~~~~~~
-../mm/process_vm_access.c:300:1: note: in expansion of macro 'SYSCALL_DEFINE6'
- SYSCALL_DEFINE6(process_vm_readv, pid_t, pid, const struct iovec __user *, lvec,
+Right after a TCP flow is created, receiving tiny out of order
+packets allways hit the condition :
 
-This is really noisy and does not indicate a real problem. In the latest
-mainline kernel, this was addressed by commit bee20031772a ("disable
--Wattribute-alias warning for SYSCALL_DEFINEx()"), which seems too invasive
-to backport.
+if (atomic_read(&sk->sk_rmem_alloc) >= sk->sk_rcvbuf)
+	tcp_clamp_window(sk);
 
-This takes a much simpler approach and just disables the warning across the
-kernel.
+tcp_clamp_window() increases sk_rcvbuf to match sk_rmem_alloc
+(guarded by tcp_rmem[2])
 
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Calling tcp_collapse_ofo_queue() in this case is not useful,
+and offers a O(N^2) surface attack to malicious peers.
+
+Better not attempt anything before full queue capacity is reached,
+forcing attacker to spend lots of resource and allow us to more
+easily detect the abuse.
+
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Acked-by: Soheil Hassas Yeganeh <soheil@google.com>
+Acked-by: Yuchung Cheng <ycheng@google.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- Makefile |    1 +
- 1 file changed, 1 insertion(+)
+ net/ipv4/tcp_input.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/Makefile
-+++ b/Makefile
-@@ -642,6 +642,7 @@ KBUILD_CFLAGS	+= $(call cc-disable-warni
- KBUILD_CFLAGS	+= $(call cc-disable-warning, format-truncation)
- KBUILD_CFLAGS	+= $(call cc-disable-warning, format-overflow)
- KBUILD_CFLAGS	+= $(call cc-disable-warning, int-in-bool-context)
-+KBUILD_CFLAGS	+= $(call cc-disable-warning, attribute-alias)
+--- a/net/ipv4/tcp_input.c
++++ b/net/ipv4/tcp_input.c
+@@ -4986,6 +4986,9 @@ static int tcp_prune_queue(struct sock *
+ 	else if (tcp_under_memory_pressure(sk))
+ 		tp->rcv_ssthresh = min(tp->rcv_ssthresh, 4U * tp->advmss);
  
- ifdef CONFIG_CC_OPTIMIZE_FOR_SIZE
- KBUILD_CFLAGS	+= $(call cc-option,-Oz,-Os)
++	if (atomic_read(&sk->sk_rmem_alloc) <= sk->sk_rcvbuf)
++		return 0;
++
+ 	tcp_collapse_ofo_queue(sk);
+ 	if (!skb_queue_empty(&sk->sk_receive_queue))
+ 		tcp_collapse(sk, &sk->sk_receive_queue, NULL,
 
 
