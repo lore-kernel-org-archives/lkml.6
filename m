@@ -2,116 +2,347 @@ Return-Path: <SRS0=OQFz=KL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93C11C6778F
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 06:04:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4693C67790
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 06:05:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 22B0320673
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 06:04:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6AB5C20673
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 06:05:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="K1P6JJ1s"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 22B0320673
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="e+qjm6Ha"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6AB5C20673
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=163.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729445AbeG0HYN (ORCPT
+        id S1729483AbeG0H0C (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 03:24:13 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:41434 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726044AbeG0HYN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 03:24:13 -0400
-Received: by mail-wr1-f66.google.com with SMTP id j5-v6so3837556wrr.8
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Jul 2018 23:03:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=2QBp0gumFG3GnpvUJ2wSEz1AklSSPCMtMUSefGdk3xs=;
-        b=K1P6JJ1smjf/TVKBouohOVH5k5amJmT8oanA8KP9vzV8TsHZUK0XraZsdBBElWSOMR
-         vs1LG36vtNz1Q1XWnVgjBSs2H5LbQZpzx1cbEGgcilcwBkGVrKWbMGS2/7Z5QvRCZwxK
-         2fdQBwYTqhFMBG1wmJJlerE7Qcsl0GCukknc0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=2QBp0gumFG3GnpvUJ2wSEz1AklSSPCMtMUSefGdk3xs=;
-        b=ftKkb/gyPA4qLlFQQEgdeFQ1yhyXUxkH2zGq29hgca68zydthRDUkYoA+VLZzwhCC9
-         ZvfuX6nmG9ZiA4tEnUF6pvZ4Y+16fYn61nbr9mXSK/9Moy7ijpjaImSC/ImVEFW+E4sl
-         XObBovn/OWkaADQMPuHBJm7SZ06lM/ovluRIuo17U1kgd059x3/biXjjzJdxoj8e6tsT
-         pA+Y4WHB5toSCWqhk3Aun30lxFzQiG/G299RDjv+BMXQBmqOsHk3yi6ZiM02OzQc86AU
-         KLnkQrF6GJjNQh65HlBNrVy8BhcRGJRqaQOuriC+g7lAmcauD2M1oNbgE+ATmD6vIjpT
-         OfcA==
-X-Gm-Message-State: AOUpUlHRhDMhGYWEDNASVDAFKHWL+nBujkvE8YKFW3PjtVRIH5d//t7L
-        gmPmWaKT53k96Jy8gDmj50FlyA==
-X-Google-Smtp-Source: AAOMgpdGyDEXIZqpp400uZ4pDwlwvNhxyH8XmP2zMjdmVZv15yDEqa8EseCmQSezTZYLjj1EtUtSxQ==
-X-Received: by 2002:adf:959a:: with SMTP id p26-v6mr3575027wrp.202.1532671437416;
-        Thu, 26 Jul 2018 23:03:57 -0700 (PDT)
-Received: from dell (host109-153-79-7.range109-153.btcentralplus.com. [109.153.79.7])
-        by smtp.gmail.com with ESMTPSA id 133-v6sm5055928wmh.27.2018.07.26.23.03.56
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 26 Jul 2018 23:03:56 -0700 (PDT)
-Date:   Fri, 27 Jul 2018 07:03:54 +0100
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Neil Armstrong <narmstrong@baylibre.com>
-Cc:     khilman@baylibre.com, linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] arm64: dts: meson: Switch simple-mfd and syscon order
-Message-ID: <20180727060354.GA4628@dell>
-References: <1532614438-7207-1-git-send-email-narmstrong@baylibre.com>
+        Fri, 27 Jul 2018 03:26:02 -0400
+Received: from m12-14.163.com ([220.181.12.14]:57925 "EHLO m12-14.163.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726044AbeG0H0B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Jul 2018 03:26:01 -0400
+X-Greylist: delayed 991 seconds by postgrey-1.27 at vger.kernel.org; Fri, 27 Jul 2018 03:25:57 EDT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+        s=s110527; h=Subject:From:Message-ID:Date:MIME-Version; bh=fvTBp
+        1x2cmXMzuB79rgL4hnLmLqOsM7wjAhNhEn5yrE=; b=e+qjm6Ha1H6mG6D4HQ/34
+        UjvEssQx2QchU1UVbnFGhIQaChb1t2EQ+sqTEpLGVZZGFirPkTStVUI7UXxxMQoV
+        ZW/3FOsqPPgyTBEWfX3so8cMcK1HaddZ3q5xzyuG51uLELZbkYnIebawRgst9z5Y
+        G6cH/ITxe8tcTs6DpyuQzQ=
+Received: from [192.168.0.103] (unknown [223.73.7.236])
+        by smtp10 (Coremail) with SMTP id DsCowACXJdU6slpb5FRQLQ--.6838S3;
+        Fri, 27 Jul 2018 13:48:45 +0800 (CST)
+Subject: Re: [PATCH 1/1] lib: use sunday algorithm to do strstr() and
+ strnstr()
+From:   Zhaoxiu Zeng <zengzhaoxiu@163.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Matthew Wilcox <mawilcox@microsoft.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        linux-kernel@vger.kernel.org, Zhaoxiu Zeng <zhaoxiu.zeng@gmail.com>
+References: <20180722173715.25327-1-zengzhaoxiu@163.com>
+ <20180722183706.GA7979@kroah.com>
+ <9b18802b-a451-eb81-3317-1de406f03118@163.com>
+Message-ID: <6dc928cd-adbb-0304-1308-fb556d48698d@163.com>
+Date:   Fri, 27 Jul 2018 13:48:43 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+In-Reply-To: <9b18802b-a451-eb81-3317-1de406f03118@163.com>
+Content-Type: text/plain; charset=gbk
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <1532614438-7207-1-git-send-email-narmstrong@baylibre.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+X-CM-TRANSID: DsCowACXJdU6slpb5FRQLQ--.6838S3
+X-Coremail-Antispam: 1Uf129KBjvJXoW3XFyxuryDAFW3ZFy8Xw18Xwb_yoW7ZFyDpF
+        Wqkasaqw4Fqr1ayw10yF1xKay0ka9xtry8J348ta9xZ3ZIqFs5Kr43GF4Y9F4fW34kWr4f
+        Zr4fWwnrAFWUJ37anT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jiZ23UUUUU=
+X-Originating-IP: [223.73.7.236]
+X-CM-SenderInfo: p2hqw6xkdr5xrx6rljoofrz/1tbiJR+QgFUMMGIsXQAAsQ
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 26 Jul 2018, Neil Armstrong wrote:
-
-> The order between "syscon" and "simple-mfd" is important because in these
-> particular cases, the node needs to be first a "simple-mfd" to expose
-> it's sub-nodes, and later on a "syscon" to permit other nodes to access
-> this register space through the "syscon" mechanism.
+‘⁄ 2018/7/27 1:17, Zhaoxiu Zeng –¥µ¿:
+> ‘⁄ 2018/7/23 2:37, Greg Kroah-Hartman –¥µ¿:
+>> On Mon, Jul 23, 2018 at 01:37:15AM +0800, Zhaoxiu Zeng wrote:
+>>> From: Zhaoxiu Zeng <zhaoxiu.zeng@gmail.com>
+>>>
+>>> The Sunday algorithm is a variation of Boyer-Moore algorithm, it is easy and fast.
+>>> For the Sunday algorithm, to see
+>>> 	http://www.inf.fh-flensburg.de/lang/algorithmen/pattern/sundayen.htm
+>>
+>> So you say, but what does this really buy us?  Why make this change?
+>> How was it tested?  What is the downside of not taking this?
+>>
+>> thanks,
+>>
+>> greg k-h
+>>
 > 
-> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
-> ---
-> This also has a consequence for U-Boot since the U-Boot DM is much simpler
-> and can only associate a single device to a node, thus here we want these
-> nodes to be an mfd bus to be able to probe the sub-nodes.
+> I use the following program to test on fc28.
+> Compile with O2, the new version is almost 2X faster than the original.
+> The code size of the original is 0x80, the newer is 0xB0.
 > 
->  arch/arm64/boot/dts/amlogic/meson-axg.dtsi | 4 ++--
->  arch/arm64/boot/dts/amlogic/meson-gx.dtsi  | 4 ++--
->  2 files changed, 4 insertions(+), 4 deletions(-)
 > 
-> diff --git a/arch/arm64/boot/dts/amlogic/meson-axg.dtsi b/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
-> index 6adc8d3..3f0de9d 100644
-> --- a/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
-> +++ b/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
-> @@ -342,7 +342,7 @@
->  			ranges = <0x0 0x0 0x0 0xff63c000 0x0 0x1c00>;
->  
->  			sysctrl: system-controller@0 {
-> -				compatible = "amlogic,meson-axg-hhi-sysctrl", "syscon", "simple-mfd";
-> +				compatible = "amlogic,meson-axg-hhi-sysctrl", "simple-mfd", "syscon";
+> #include <stdio.h>
+> #include <stdlib.h>
+> #include <stdint.h>
+> #include <string.h>
+> #include <time.h>
+> #include <unistd.h>
+> 
+> /**
+>  * strstr - Find the first substring in a %NUL terminated string
+>  * @s1: The string to be searched
+>  * @s2: The string to search for
+>  */
+> char *strstr1(const char *s1, const char *s2)
+> {
+> 	size_t l1, l2;
+> 
+> 	l2 = strlen(s2);
+> 	if (!l2)
+> 		return (char *)s1;
+> 	l1 = strlen(s1);
+> 	while (l1 >= l2) {
+> 		l1--;
+> 		if (!memcmp(s1, s2, l2))
+> 			return (char *)s1;
+> 		s1++;
+> 	}
+> 	return NULL;
+> }
+> 
+> char *strstr2(const char *s1, const char *s2)
+> {
+> 	size_t l2;
+> 	const char *pchk = s1;
+> 
+> #if 1//def __HAVE_ARCH_STRLEN
+> 	l2 = strlen(s2);
+> #else
+> 	for (l2 = 0; s2[l2] != 0; l2++)
+> 		/* nothing */;
+> #endif
+> 	if (!l2)
+> 		return (char *)s1;
+> 
+> 	/*
+> 	 * Sunday matching
+> 	 */
+> 	while (1) {
+> 		size_t i;
+> 		char k;
+> 
+> 		/* compare */
+> 		for (i = 0; i < l2; i++) {
+> 			if (s1[i] != s2[i])
+> 				break;
+> 		}
+> 		if (i >= l2)
+> 			return (char *)s1;
+> 
+> 		/* if s1 terminate early? */
+> 		if (pchk < s1 + i)
+> 			pchk = s1 + i;
+> 		do {
+> 			k = *pchk;
+> 			if (k == 0)
+> 				return NULL;
+> 		} while (pchk++ != s1 + l2);
+> 
+> 		/* find the k's last presence in s2 (k = s1[l2]) */
+> 		for (i = l2; --i != (size_t)-1; ) {
+> 			if (k == s2[i])
+> 				break;
+> 		}
+> 
+> 		/* shift */
+> 		s1 += l2 - i;
+> 	}
+> }
+> 
+> #ifdef __i386__
+> #  define RDTSC_CLOBBER "%eax", "%ebx", "%ecx", "%edx"
+> #elif __x86_64__
+> #  define RDTSC_CLOBBER "%rax", "%rbx", "%rcx", "%rdx"
+> #else
+> # error unknown platform
+> #endif
+> 
+> #define RDTSC_START(cycles)                                \
+>     do {                                                   \
+>         register unsigned cyc_high, cyc_low;               \
+>         asm volatile("CPUID\n\t"                           \
+>                      "RDTSC\n\t"                           \
+>                      "mov %%edx, %0\n\t"                   \
+>                      "mov %%eax, %1\n\t"                   \
+>                      : "=r" (cyc_high), "=r" (cyc_low)     \
+>                      :: RDTSC_CLOBBER);                    \
+>         (cycles) = ((uint64_t)cyc_high << 32) | cyc_low;   \
+>     } while (0)
+> 
+> #define RDTSC_STOP(cycles)                                 \
+>     do {                                                   \
+>         register unsigned cyc_high, cyc_low;               \
+>         asm volatile("RDTSCP\n\t"                          \
+>                      "mov %%edx, %0\n\t"                   \
+>                      "mov %%eax, %1\n\t"                   \
+>                      "CPUID\n\t"                           \
+>                      : "=r" (cyc_high), "=r" (cyc_low)     \
+>                      :: RDTSC_CLOBBER);                    \
+>         (cycles) = ((uint64_t)cyc_high << 32) | cyc_low;   \
+>     } while (0)
+> 
+> typedef unsigned long long TIME_T;
+> #define start_time(start)		RDTSC_START(start)
+> #define stop_time(stop)			RDTSC_STOP(stop)
+> #define diff_time(start, stop)	(stop - start)
+> 
+> #define MAX_HAYSTACK_LENGTH 64
+> #define MAX_NEEDLE_LENGTH 16
+> #define TEST_LOOPS 1000
+> 
+> char haystack[MAX_HAYSTACK_LENGTH + 1];
+> char needle[MAX_NEEDLE_LENGTH + 1];
+> 
+> int main(int argc, char **argv)
+> {
+>     size_t i, j, n;
+>     void *p1, *p2;
+> 
+>     srand(time(0));
+> 
+>     for (i = 0; i < MAX_HAYSTACK_LENGTH; ) {
+>         haystack[i] = rand();
+>         if (haystack[i] != 0)
+>             i++;
+>     }
+>     haystack[i] = 0;
+> 
+>     for (i = 0; i < MAX_HAYSTACK_LENGTH; i++) {
+>         TIME_T start, stop;
+>         unsigned long long elapsed1, elapsed2;
+> 
+>         j = rand() % MAX_NEEDLE_LENGTH;
+>         if (i <= MAX_HAYSTACK_LENGTH - (MAX_NEEDLE_LENGTH - j))
+>             n = i;
+>         else
+>             n = MAX_HAYSTACK_LENGTH - (MAX_NEEDLE_LENGTH - j);
+>         memcpy(needle + j, haystack + n, MAX_NEEDLE_LENGTH - j);
+>         needle[MAX_NEEDLE_LENGTH] = 0;
+> 
+>         elapsed1 = ~0UL;
+>         for (n = 0; n < TEST_LOOPS; n++) {
+>             start_time(start);
+>             asm volatile("":::"memory");
+>             p1 = strstr1(haystack, needle + j);
+>             asm volatile("":::"memory");
+>             stop_time(stop);
+> 
+>             if (elapsed1 > diff_time(start, stop))
+>                 elapsed1 = diff_time(start, stop);
+>         }
+> 
+>         elapsed2 = ~0UL;
+>         for (n = 0; n < TEST_LOOPS; n++) {
+>             start_time(start);
+>             asm volatile("":::"memory");
+>             p2 = strstr2(haystack, needle + j);
+>             asm volatile("":::"memory");
+>             stop_time(stop);
+> 
+>             if (elapsed2 > diff_time(start, stop))
+>                 elapsed2 = diff_time(start, stop);
+>         }
+> 
+>         if (p1 != p2)
+>             fprintf(stderr, "Error: %p != %p\n", p1, p2);
+>         else
+>             fprintf(stdout, "%3d, %3d:\t%lld,\t%lld\n", i, j, elapsed1, elapsed2);
+>     }
+> 
+>     return 0;
+> }
+> 
+> The test result:
+> [zzx@fedora strstr]$ ./test
+>   0,   3:	68,	68
+>   1,  13:	74,	66
+>   2,   2:	88,	94
+>   3,   5:	96,	88
+>   4,   8:	108,	80
+>   5,  13:	110,	76
+>   6,  12:	132,	82
+>   7,   9:	142,	82
+>   8,  11:	152,	88
+>   9,  13:	146,	90
+>  10,  14:	154,	94
+>  11,  15:	132,	104
+>  12,   1:	196,	114
+>  13,   8:	206,	108
+>  14,  14:	186,	110
+>  15,  13:	194,	112
+>  16,   0:	260,	124
+>  17,  10:	258,	124
+>  18,  15:	208,	136
+>  19,  11:	276,	136
+>  20,  13:	256,	128
+>  21,  12:	292,	144
+>  22,  11:	300,	142
+>  23,  13:	278,	144
+>  24,   7:	334,	152
+>  25,   1:	346,	166
+>  26,   6:	368,	168
+>  27,  15:	278,	182
+>  28,   1:	374,	168
+>  29,   3:	382,	188
+>  30,   8:	398,	172
+>  31,   4:	402,	188
+>  32,   0:	430,	180
+>  33,  10:	398,	184
+>  34,  10:	410,	192
+>  35,   8:	434,	180
+>  36,   7:	444,	198
+>  37,   6:	454,	204
+>  38,   1:	464,	220
+>  39,   2:	472,	206
+>  40,   4:	482,	210
+>  41,  15:	388,	262
+>  42,   2:	502,	210
+>  43,   5:	510,	220
+>  44,   8:	520,	214
+>  45,   0:	564,	236
+>  46,   3:	550,	242
+>  47,   8:	552,	262
+>  48,  10:	528,	270
+>  49,   2:	572,	256
+>  50,   3:	586,	246
+>  51,   7:	590,	278
+>  52,  14:	506,	308
+>  53,  14:	514,	298
+>  54,   4:	602,	240
+>  55,   5:	626,	284
+>  56,  15:	506,	316
+>  57,  10:	606,	326
+>  58,   4:	606,	240
+>  59,   0:	596,	240
+>  60,  13:	570,	316
+>  61,  13:	576,	328
+>  62,   5:	618,	284
+>  63,  13:	576,	328
+> 
+> Thanks!
+> 
 
-I must profess, I haven't looked at the code recently so can't really
-comment on the semantics - I'll leave that to Rob et. al.
+The original strnstr might has a bug too!
+For example, assume s1 is "123\0abc...." and s2 is "abc\0",
+call strnstr(s1, s2, 7) will return &s1[4], but the correct result is NULL.
 
-However, if the ordering is important, you should add a comment to
-prevent anyone re-jigging it or reverting the patch for some reason.
-
--- 
-Lee Jones [ÊùéÁêºÊñØ]
-Linaro Services Technical Lead
-Linaro.org ‚îÇ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
