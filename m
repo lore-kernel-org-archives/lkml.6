@@ -2,117 +2,145 @@ Return-Path: <SRS0=OQFz=KL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AD6BC67790
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 09:09:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EDE7BC6778F
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 09:13:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F1BB920893
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 09:09:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9780620671
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 09:13:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="GfDdRp4h"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F1BB920893
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AkssfN9d"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9780620671
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730577AbeG0Kaj (ORCPT
+        id S1730425AbeG0KeV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 06:30:39 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:49902 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729519AbeG0Kaj (ORCPT
+        Fri, 27 Jul 2018 06:34:21 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:41471 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729955AbeG0KeV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 06:30:39 -0400
-Received: from avalon.localnet (dfj612ybrt5fhg77mgycy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:2e86:4862:ef6a:2804])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 1DAE491;
-        Fri, 27 Jul 2018 11:09:39 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1532682580;
-        bh=Z/zesk2Wz6pgE2mbG3eII58/J2AFXpYyiSkgSoETSVs=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GfDdRp4hMm3pqsctE2dIbBlY+R8bjcKfeBcoYqNBkY6Kz7gNt/F9YpWqVdBzl0ewR
-         hfS0Is+BpxK8omWs+wVd080cnCNI/qtOt4lQ7gdX6HSnCgC/+2is88uMiLkDAQ71iM
-         XCbIreeLIkRCIcvDj/Pd926GWnuKazdp8a7j5zcA=
-From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     Joerg Roedel <joro@8bytes.org>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        Marc Dietrich <marvin24@gmx.de>,
-        iommu@lists.linux-foundation.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Geert Uytterhoeven <geert@glider.be>,
-        Magnus Damm <magnus.damm@gmail.com>
-Subject: Re: [PATCH v1] iommu/ipmmu-vmsa: Don't register as BUS IOMMU if machine doesn't have IPMMU-VMSA
-Date:   Fri, 27 Jul 2018 12:10:15 +0300
-Message-ID: <2725801.tsBI9ZhLPt@avalon>
-Organization: Ideas on Board Oy
-In-Reply-To: <20180726211916.10264-1-digetx@gmail.com>
-References: <20180726211916.10264-1-digetx@gmail.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+        Fri, 27 Jul 2018 06:34:21 -0400
+Received: by mail-pg1-f193.google.com with SMTP id z8-v6so2880222pgu.8;
+        Fri, 27 Jul 2018 02:13:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=uvTHbGutzAZckRt+6qi7Iz8OaqAPur9V4Cn4afpXUVY=;
+        b=AkssfN9dyA3um/2+9+ODrauLL0F5lFgNcm3n1jT0nGUv+MRU8jJDK87xHRCuwvezAf
+         RvRzznBpnU8OHAuPqn9DwMHKfPYDtfDRoTptgRWMYJgBDHoGWp2zF4X0d14ctyetAwMr
+         rYvq9GDEYG1H8/cmTzT1lT+UTIc5ZYUcCqB16dSCjXQlLBqBRoJlLdb4tbuvzj0IIBpX
+         qVJkzlLKYarxLKXW3SgKO4T/KNZM56JwKF8VuoF9pkD6eav65dtkyJgtEUUfGbKCBZ9I
+         1vFUvStHE17XCDs6ciw/MkhUxq11x5zVDU4fsfiA1Tu4xsWnwXvsf9ECwTyttCFg60j7
+         Z8eQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=uvTHbGutzAZckRt+6qi7Iz8OaqAPur9V4Cn4afpXUVY=;
+        b=rGfzH5rXIICvar+KF3RMIxpCB3sBlgaN6qrpS8ugBCMD1gCOGDvledieWuZCWnBzW2
+         SPZf1cYs5xr/POHceMJe77+42jZhCkET58Xdc0boa9pygG6T5TY33sjonNkWmIknz6w/
+         /L0rRhqFT4911T1S/Nsna2DyONzr2YN81mEbC4kSszVOWxPN7jprN77gZ4eRt/g9vQR6
+         NsRJ8O21O/iNsqLmIenbk9mHdnBgkpYu8sv+q1mJ9ibGGW8BgQHv4oF32VmFBpTLAGQ/
+         nnwXIf4b4OjthE7FEhpUg1LqzPtd/eFJiSoio56V2vX1aJSVM/c4XzmXuCPMdKhogGsb
+         Xapw==
+X-Gm-Message-State: AOUpUlFNYZYLN2C1S/nUAkLUkYxTcSFrx/1vqq0s1O6WTohR7XEqc9+7
+        Zd3+955koO6nepDhV1V2yuU=
+X-Google-Smtp-Source: AAOMgpf1NLykPeLVVajz7JxoDax44b8LprFuoVh3w8LGK2qG+dZAJ0NOmjCQsYaQfJt/9PuZqzX47Q==
+X-Received: by 2002:a63:4a61:: with SMTP id j33-v6mr5305289pgl.436.1532682802910;
+        Fri, 27 Jul 2018 02:13:22 -0700 (PDT)
+Received: from localhost.localdomain ([2402:f000:1:4414:8ca7:1cde:b1e6:2647])
+        by smtp.gmail.com with ESMTPSA id 64-v6sm6474685pfi.89.2018.07.27.02.13.21
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 27 Jul 2018 02:13:22 -0700 (PDT)
+From:   Jia-Ju Bai <baijiaju1990@gmail.com>
+To:     jejb@linux.vnet.ibm.com, martin.petersen@oracle.com
+Cc:     linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jia-Ju Bai <baijiaju1990@gmail.com>
+Subject: [PATCH] scsi: atp870u: Replace mdelay() with msleep()
+Date:   Fri, 27 Jul 2018 17:13:17 +0800
+Message-Id: <20180727091317.6976-1-baijiaju1990@gmail.com>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Dmitry,
+tscam(), atp870_init(), atp880_init() and atp885_init() are never 
+called in atomic context.
+They call mdelay() to busily wait, which is not necessary.
+mdelay() can be replaced with msleep().
 
-(CC'ing Geert and Magnus)
+This is found by a static analysis tool named DCNS written by myself.
 
-Thank you for the patch.
+Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+---
+ drivers/scsi/atp870u.c | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
-On Friday, 27 July 2018 00:19:16 EEST Dmitry Osipenko wrote:
-> This fixes kernel crashing on NVIDIA Tegra if kernel is compiled in
-> a multiplatform configuration and IPMMU-VMSA driver is enabled.
-> 
-> Cc: <stable@vger.kernel.org> # v3.20+
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> ---
->  drivers/iommu/ipmmu-vmsa.c | 7 +++++++
->  1 file changed, 7 insertions(+)
-> 
-> diff --git a/drivers/iommu/ipmmu-vmsa.c b/drivers/iommu/ipmmu-vmsa.c
-> index 9e8495762bc8..78c50db9cd71 100644
-> --- a/drivers/iommu/ipmmu-vmsa.c
-> +++ b/drivers/iommu/ipmmu-vmsa.c
-> @@ -1109,12 +1109,19 @@ static struct platform_driver ipmmu_driver = {
-> 
->  static int __init ipmmu_init(void)
->  {
-> +	struct device_node *np;
->  	static bool setup_done;
->  	int ret;
-> 
->  	if (setup_done)
->  		return 0;
-> 
-> +	np = of_find_matching_node(NULL, ipmmu_of_ids);
-> +	if (!np)
-> +		return 0;
-> +
-> +	of_node_put(np);
-> +
-
-While functionally correct, this will add some unnecessary overhead when 
-iommu_init() is called from IOMMU_OF_DECLARE(). I'm OK with this fix as a 
-temporary measure to solve your problem, but we need to address the underlying 
-issue properly.
-
-Geert, Magnus, the ipmmu-vmsa driver is a bit of a mess. We should brush it up 
-and start using IOMMU_OF_DECLARE() on all platforms (and eventually get rid of 
-bus_set_iommu() completely...). Do you have plans to address this ? If not, 
-could you please add it to your to-do list ?
-
->  	ret = platform_driver_register(&ipmmu_driver);
->  	if (ret < 0)
->  		return ret;
-
+diff --git a/drivers/scsi/atp870u.c b/drivers/scsi/atp870u.c
+index b46997cf77e2..8996d2329e11 100644
+--- a/drivers/scsi/atp870u.c
++++ b/drivers/scsi/atp870u.c
+@@ -1055,7 +1055,7 @@ static void tscam(struct Scsi_Host *host, bool wide_chip, u8 scam_on)
+ 	udelay(2);		/* 2 deskew delay(45ns*2=90ns) */
+ 	val &= 0x007f;		/* no bsy  */
+ 	atp_writew_io(dev, 0, 0x1c, val);
+-	mdelay(128);
++	msleep(128);
+ 	val &= 0x00fb;		/* after 1ms no msg */
+ 	atp_writew_io(dev, 0, 0x1c, val);
+ 	while ((atp_readb_io(dev, 0, 0x1c) & 0x04) != 0)
+@@ -1286,9 +1286,9 @@ static void atp870_init(struct Scsi_Host *shpnt)
+ 	k = (atp_readb_base(atpdev, 0x3a) & 0xf3) | 0x10;
+ 	atp_writeb_base(atpdev, 0x3a, k);
+ 	atp_writeb_base(atpdev, 0x3a, k & 0xdf);
+-	mdelay(32);
++	msleep(32);
+ 	atp_writeb_base(atpdev, 0x3a, k);
+-	mdelay(32);
++	msleep(32);
+ 	atp_set_host_id(atpdev, 0, host_id);
+ 
+ 	tscam(shpnt, wide_chip, scam_on);
+@@ -1370,9 +1370,9 @@ static void atp880_init(struct Scsi_Host *shpnt)
+ 	k = atp_readb_base(atpdev, 0x38) & 0x80;
+ 	atp_writeb_base(atpdev, 0x38, k);
+ 	atp_writeb_base(atpdev, 0x3b, 0x20);
+-	mdelay(32);
++	msleep(32);
+ 	atp_writeb_base(atpdev, 0x3b, 0);
+-	mdelay(32);
++	msleep(32);
+ 	atp_readb_io(atpdev, 0, 0x1b);
+ 	atp_readb_io(atpdev, 0, 0x17);
+ 
+@@ -1454,10 +1454,10 @@ static void atp885_init(struct Scsi_Host *shpnt)
+ 	atp_writeb_base(atpdev, 0x28, k);
+ 	atp_writeb_pci(atpdev, 0, 1, 0x80);
+ 	atp_writeb_pci(atpdev, 1, 1, 0x80);
+-	mdelay(100);
++	msleep(100);
+ 	atp_writeb_pci(atpdev, 0, 1, 0);
+ 	atp_writeb_pci(atpdev, 1, 1, 0);
+-	mdelay(1000);
++	msleep(1000);
+ 	atp_readb_io(atpdev, 0, 0x1b);
+ 	atp_readb_io(atpdev, 0, 0x17);
+ 	atp_readb_io(atpdev, 1, 0x1b);
+@@ -1473,7 +1473,7 @@ static void atp885_init(struct Scsi_Host *shpnt)
+ 		k = (k & 0x07) | 0x40;
+ 	atp_set_host_id(atpdev, 1, k);
+ 
+-	mdelay(600); /* this delay used to be called tscam_885() */
++	msleep(600); /* this delay used to be called tscam_885() */
+ 	dev_info(&pdev->dev, "Scanning Channel A SCSI Device ...\n");
+ 	atp_is(atpdev, 0, true, atp_readb_io(atpdev, 0, 0x1b) >> 7);
+ 	atp_writeb_io(atpdev, 0, 0x16, 0x80);
 -- 
-Regards,
-
-Laurent Pinchart
-
-
+2.17.0
 
