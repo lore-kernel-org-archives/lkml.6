@@ -6,51 +6,51 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E07CC6778F
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 13:22:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 076BEC6778F
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 13:22:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 07F54208B1
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 13:22:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 07F54208B1
+	by mail.kernel.org (Postfix) with ESMTP id BB4BC2064D
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 13:22:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BB4BC2064D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388563AbeG0OoY (ORCPT
+        id S2388212AbeG0Oo0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 10:44:24 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:42146 "EHLO
+        Fri, 27 Jul 2018 10:44:26 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:36098 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2388496AbeG0OoX (ORCPT
+        by vger.kernel.org with ESMTP id S2388497AbeG0OoY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 10:44:23 -0400
-Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w6RDJUJD099114
-        for <linux-kernel@vger.kernel.org>; Fri, 27 Jul 2018 09:22:27 -0400
+        Fri, 27 Jul 2018 10:44:24 -0400
+Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w6RDJT18100274
+        for <linux-kernel@vger.kernel.org>; Fri, 27 Jul 2018 09:22:29 -0400
 Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2kg2j5mgf0-1
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2kg3632stj-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Fri, 27 Jul 2018 09:22:27 -0400
+        for <linux-kernel@vger.kernel.org>; Fri, 27 Jul 2018 09:22:29 -0400
 Received: from localhost
         by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-kernel@vger.kernel.org> from <ldufour@linux.vnet.ibm.com>;
-        Fri, 27 Jul 2018 14:22:25 +0100
+        Fri, 27 Jul 2018 14:22:27 +0100
 Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
         by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 27 Jul 2018 14:22:22 +0100
+        Fri, 27 Jul 2018 14:22:24 +0100
 Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w6RDML5r42205354
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w6RDMNuZ39321662
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 27 Jul 2018 13:22:21 GMT
+        Fri, 27 Jul 2018 13:22:23 GMT
 Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 99E1DA4053;
-        Fri, 27 Jul 2018 16:22:34 +0100 (BST)
+        by IMSVA (Postfix) with ESMTP id 47FF2A4053;
+        Fri, 27 Jul 2018 16:22:36 +0100 (BST)
 Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 103DFA405D;
-        Fri, 27 Jul 2018 16:22:34 +0100 (BST)
+        by IMSVA (Postfix) with ESMTP id B2AFFA404D;
+        Fri, 27 Jul 2018 16:22:35 +0100 (BST)
 Received: from nimbus.lab.toulouse-stg.fr.ibm.com (unknown [9.145.62.135])
         by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Fri, 27 Jul 2018 16:22:33 +0100 (BST)
+        Fri, 27 Jul 2018 16:22:35 +0100 (BST)
 From:   Laurent Dufour <ldufour@linux.vnet.ibm.com>
 To:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
 Cc:     "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
@@ -58,16 +58,16 @@ Cc:     "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
         Michael Ellerman <mpe@ellerman.id.au>,
         Paul Mackerras <paulus@samba.org>,
         Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Subject: [PATCH 1/3] powerpc/pseries/mm: Introducing FW_FEATURE_BLOCK_REMOVE
-Date:   Fri, 27 Jul 2018 15:22:17 +0200
+Subject: [PATCH 2/3] powerpc/pseries/mm: factorize PTE slot computation
+Date:   Fri, 27 Jul 2018 15:22:18 +0200
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1532697739-4878-1-git-send-email-ldufour@linux.vnet.ibm.com>
 References: <1532697739-4878-1-git-send-email-ldufour@linux.vnet.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 18072713-4275-0000-0000-0000029F6392
+x-cbid: 18072713-4275-0000-0000-0000029F6395
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18072713-4276-0000-0000-000037A76791
-Message-Id: <1532697739-4878-2-git-send-email-ldufour@linux.vnet.ibm.com>
+x-cbparentid: 18072713-4276-0000-0000-000037A76794
+Message-Id: <1532697739-4878-3-git-send-email-ldufour@linux.vnet.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-27_06:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
@@ -80,7 +80,7 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This feature tells if the hcall H_BLOCK_REMOVE is available.
+This part of code will be called also when dealing with H_BLOCK_REMOVE.
 
 Cc: "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>
 Cc: Nicholas Piggin <npiggin@gmail.com>
@@ -89,43 +89,61 @@ Cc: Paul Mackerras <paulus@samba.org>
 Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
 Signed-off-by: Laurent Dufour <ldufour@linux.vnet.ibm.com>
 ---
- arch/powerpc/include/asm/firmware.h       | 3 ++-
- arch/powerpc/platforms/pseries/firmware.c | 1 +
- 2 files changed, 3 insertions(+), 1 deletion(-)
+ arch/powerpc/platforms/pseries/lpar.c | 27 ++++++++++++++++++++-------
+ 1 file changed, 20 insertions(+), 7 deletions(-)
 
-diff --git a/arch/powerpc/include/asm/firmware.h b/arch/powerpc/include/asm/firmware.h
-index 535add3f7791..360ba197f9d2 100644
---- a/arch/powerpc/include/asm/firmware.h
-+++ b/arch/powerpc/include/asm/firmware.h
-@@ -53,6 +53,7 @@
- #define FW_FEATURE_PRRN		ASM_CONST(0x0000000200000000)
- #define FW_FEATURE_DRMEM_V2	ASM_CONST(0x0000000400000000)
- #define FW_FEATURE_DRC_INFO	ASM_CONST(0x0000000800000000)
-+#define FW_FEATURE_BLOCK_REMOVE ASM_CONST(0x0000001000000000)
+diff --git a/arch/powerpc/platforms/pseries/lpar.c b/arch/powerpc/platforms/pseries/lpar.c
+index 52eeff1297f4..96b8cd8a802d 100644
+--- a/arch/powerpc/platforms/pseries/lpar.c
++++ b/arch/powerpc/platforms/pseries/lpar.c
+@@ -547,6 +547,24 @@ static int pSeries_lpar_hpte_removebolted(unsigned long ea,
+ 	return 0;
+ }
  
- #ifndef __ASSEMBLY__
++
++static inline unsigned long compute_slot(real_pte_t pte,
++					 unsigned long vpn,
++					 unsigned long index,
++					 unsigned long shift,
++					 int ssize)
++{
++	unsigned long slot, hash, hidx;
++
++	hash = hpt_hash(vpn, shift, ssize);
++	hidx = __rpte_to_hidx(pte, index);
++	if (hidx & _PTEIDX_SECONDARY)
++		hash = ~hash;
++	slot = (hash & htab_hash_mask) * HPTES_PER_GROUP;
++	slot += hidx & _PTEIDX_GROUP_IX;
++	return slot;
++}
++
+ /*
+  * Take a spinlock around flushes to avoid bouncing the hypervisor tlbie
+  * lock.
+@@ -559,7 +577,7 @@ static void pSeries_lpar_flush_hash_range(unsigned long number, int local)
+ 	struct ppc64_tlb_batch *batch = this_cpu_ptr(&ppc64_tlb_batch);
+ 	int lock_tlbie = !mmu_has_feature(MMU_FTR_LOCKLESS_TLBIE);
+ 	unsigned long param[PLPAR_HCALL9_BUFSIZE];
+-	unsigned long hash, index, shift, hidx, slot;
++	unsigned long index, shift, slot;
+ 	real_pte_t pte;
+ 	int psize, ssize;
  
-@@ -70,7 +71,7 @@ enum {
- 		FW_FEATURE_SET_MODE | FW_FEATURE_BEST_ENERGY |
- 		FW_FEATURE_TYPE1_AFFINITY | FW_FEATURE_PRRN |
- 		FW_FEATURE_HPT_RESIZE | FW_FEATURE_DRMEM_V2 |
--		FW_FEATURE_DRC_INFO,
-+		FW_FEATURE_DRC_INFO | FW_FEATURE_BLOCK_REMOVE,
- 	FW_FEATURE_PSERIES_ALWAYS = 0,
- 	FW_FEATURE_POWERNV_POSSIBLE = FW_FEATURE_OPAL,
- 	FW_FEATURE_POWERNV_ALWAYS = 0,
-diff --git a/arch/powerpc/platforms/pseries/firmware.c b/arch/powerpc/platforms/pseries/firmware.c
-index a3bbeb43689e..1624501386f4 100644
---- a/arch/powerpc/platforms/pseries/firmware.c
-+++ b/arch/powerpc/platforms/pseries/firmware.c
-@@ -65,6 +65,7 @@ hypertas_fw_features_table[] = {
- 	{FW_FEATURE_SET_MODE,		"hcall-set-mode"},
- 	{FW_FEATURE_BEST_ENERGY,	"hcall-best-energy-1*"},
- 	{FW_FEATURE_HPT_RESIZE,		"hcall-hpt-resize"},
-+	{FW_FEATURE_BLOCK_REMOVE,	"hcall-block-remove"},
- };
- 
- /* Build up the firmware features bitmask using the contents of
+@@ -573,12 +591,7 @@ static void pSeries_lpar_flush_hash_range(unsigned long number, int local)
+ 		vpn = batch->vpn[i];
+ 		pte = batch->pte[i];
+ 		pte_iterate_hashed_subpages(pte, psize, vpn, index, shift) {
+-			hash = hpt_hash(vpn, shift, ssize);
+-			hidx = __rpte_to_hidx(pte, index);
+-			if (hidx & _PTEIDX_SECONDARY)
+-				hash = ~hash;
+-			slot = (hash & htab_hash_mask) * HPTES_PER_GROUP;
+-			slot += hidx & _PTEIDX_GROUP_IX;
++			slot = compute_slot(pte, vpn, index, shift, ssize);
+ 			if (!firmware_has_feature(FW_FEATURE_BULK_REMOVE)) {
+ 				/*
+ 				 * lpar doesn't use the passed actual page size
 -- 
 2.7.4
 
