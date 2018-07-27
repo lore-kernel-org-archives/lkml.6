@@ -2,419 +2,112 @@ Return-Path: <SRS0=OQFz=KL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56269C67790
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 17:31:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46CF1C67790
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 17:31:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0298720842
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 17:31:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0298720842
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id F2EAC20842
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 17:31:42 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q/PV+Vl8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F2EAC20842
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389006AbeG0SyZ (ORCPT
+        id S2389059AbeG0Syd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 14:54:25 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:40268 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730852AbeG0SyZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 14:54:25 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 2404081663CF;
-        Fri, 27 Jul 2018 17:31:32 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-116.rdu2.redhat.com [10.10.120.116])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 2A59B21568A1;
-        Fri, 27 Jul 2018 17:31:31 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
- Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
- Kingdom.
- Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH 01/38] vfs: syscall: Add open_tree(2) to reference or clone
- a mount [ver #10]
-From:   David Howells <dhowells@redhat.com>
-To:     viro@zeniv.linux.org.uk
-Cc:     linux-api@vger.kernel.org, torvalds@linux-foundation.org,
-        dhowells@redhat.com, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Date:   Fri, 27 Jul 2018 18:31:30 +0100
-Message-ID: <153271269067.9458.203758938391920203.stgit@warthog.procyon.org.uk>
-In-Reply-To: <153271267980.9458.7640156373438016898.stgit@warthog.procyon.org.uk>
-References: <153271267980.9458.7640156373438016898.stgit@warthog.procyon.org.uk>
-User-Agent: StGit/unknown-version
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Fri, 27 Jul 2018 17:31:32 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Fri, 27 Jul 2018 17:31:32 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'dhowells@redhat.com' RCPT:''
+        Fri, 27 Jul 2018 14:54:33 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:42692 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389008AbeG0Syc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Jul 2018 14:54:32 -0400
+Received: by mail-wr1-f67.google.com with SMTP id e7-v6so5788128wrs.9
+        for <linux-kernel@vger.kernel.org>; Fri, 27 Jul 2018 10:31:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=CzmDmdL4N5sCO0VMfsWHJV/qesX+8Z5c9izK4kehRxM=;
+        b=Q/PV+Vl8HVMjP48ZgLoc3ILcwVjObKbrg6bHWtS/wXgAJ6orzX7ltiDmQhqpLGLoP5
+         2KkiG5f5mFvhoP/feowvVqs9WPdbZuQzYTWwry+QR2T0HRBG59a7iZm/ssWl46iaacGU
+         pwpWYgVn9gXe+nl7gpvqtcYtl3BUgXgI8hbv1OgdhhfzdVl9JuANd/7MxtwzGOSghK0w
+         UelcSYnVJR1AGPHj/Lu84pfOJkFPeZ/fQ0t3sMFEb222GY2g55ScDFmy2hlA3lWB3io0
+         bHQ9nxN864/oprxxOFtSTz9RWvfEYRTm9K7g1sY816fl+jESXnXgeOBJWCyuVLl4aJhy
+         n88g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=CzmDmdL4N5sCO0VMfsWHJV/qesX+8Z5c9izK4kehRxM=;
+        b=n7WygNS/EWFp0A8+coQzP7saismDDoKpKJ0RfWGmMCm2+Co7mZtpVzmZc9q1h/XDvX
+         c8/NavdM/vU3ujKm3lIRH4w+TR65A4pMJ2yImZfoGt6A3vSYx/RH+LJeXeKZcD7KTxlP
+         aOuS8cvGwjzKDxCPuNBE32EPPf8LaGQ/+zagcYhbK7h+OXyh04LxP15MSLY6do+23+vw
+         agBUdEIX15vNmqEzynn0AIykXZ216IP32CbUXDAjX/DSriiVkjSLr07NWi402DLoBdlh
+         ehgjVmC8q79Gl3rNP1LgTswMYR5nCMMDWQGGSj8Rn0ZyK4BiANcQxgRz2FewSHYjd1oP
+         VQAA==
+X-Gm-Message-State: AOUpUlGzag65xQMEXo1uUXUUHQSRJPPJPb26CR6gM7HfmsUWqHZXkIkJ
+        /pG+of63cINBvqSPL4VOlZpSOPU91Tk=
+X-Google-Smtp-Source: AAOMgpck0or5tIyJQOdaVFwrYAD1YagOomPk8JVy3SGZy42oWAvGithmA5E/GlPGh10E0bEfKMCRdQ==
+X-Received: by 2002:adf:f410:: with SMTP id g16-v6mr5628444wro.256.1532712698549;
+        Fri, 27 Jul 2018 10:31:38 -0700 (PDT)
+Received: from localhost.localdomain (host81-158-116-187.range81-158.btcentralplus.com. [81.158.116.187])
+        by smtp.gmail.com with ESMTPSA id z3-v6sm6000010wru.27.2018.07.27.10.31.36
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 27 Jul 2018 10:31:37 -0700 (PDT)
+From:   John Whitmore <johnfwhitmore@gmail.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     devel@driverdev.osuosl.org, gregkh@linuxfoundation.org,
+        John Whitmore <johnfwhitmore@gmail.com>
+Subject: [PATCH 00/20] staging:rtl8192u Header file cleanup - Style
+Date:   Fri, 27 Jul 2018 18:31:03 +0100
+Message-Id: <20180727173123.27391-1-johnfwhitmore@gmail.com>
+X-Mailer: git-send-email 2.18.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Al Viro <viro@zeniv.linux.org.uk>
+Coding style cleanup of drivers/staging/rtl8192u/ieee80211/rtl819x_TS.h
 
-open_tree(dfd, pathname, flags)
+The only checkpatch issues which remain are three 'questionable'
+comments which extend over the 80 character line limit.
 
-Returns an O_PATH-opened file descriptor or an error.
-dfd and pathname specify the location to open, in usual
-fashion (see e.g. fstatat(2)).  flags should be an OR of
-some of the following:
-	* AT_PATH_EMPTY, AT_NO_AUTOMOUNT, AT_SYMLINK_NOFOLLOW -
-same meanings as usual
-	* OPEN_TREE_CLOEXEC - make the resulting descriptor
-close-on-exec
-	* OPEN_TREE_CLONE or OPEN_TREE_CLONE | AT_RECURSIVE -
-instead of opening the location in question, create a detached
-mount tree matching the subtree rooted at location specified by
-dfd/pathname.  With AT_RECURSIVE the entire subtree is cloned,
-without it - only the part within in the mount containing the
-location in question.  In other words, the same as mount --rbind
-or mount --bind would've taken.  The detached tree will be
-dissolved on the final close of obtained file.  Creation of such
-detached trees requires the same capabilities as doing mount --bind.
+The changes are generally either removal of typedef directives, removal
+of unused constants or renaming of CamelCase variable names.
 
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
-Signed-off-by: David Howells <dhowells@redhat.com>
-cc: linux-api@vger.kernel.org
----
+John Whitmore (20):
+  staging:rtl8192u: Remove typedef and rename TX_TS_RECORD - Style
+  staging:rtl8192u: Rename TsCommonInfo - Style
+  staging:rtl8192u: Rename TxCurSeq - Style
+  staging:rtl8192u: Rename TxPendingBARecord - Style
+  staging:rtl8192u: Rename TxAdmittedBARecord - Style
+  staging:rtl8192u: Rename bAddBaReqInProgress - Style
+  staging:rtl8192u: Rename bAddBaReqDelayed - Style
+  staging:rtl8192u: Rename bUsingBa - Style
+  staging:rtl8192u: Rename TsAddBaTimer - Style
+  staging:rtl8192u: Remove typedef and rename RX_TS_RECORD - Style
+  staging:rtl8192u: Remove commented out code - Style
+  staging:rtl8192u: Remove unused timer values - Style
+  staging:rtl8192u: Rename RxIndicateSeq - Style
+  staging:rtl8192u: Rename RxTimeoutIndicateSeq _Style
+  staging:rtl8192u: Rename RxPendingPktList - Style
+  staging:rtl8192u: Rename RxPktPendingTimer - Style
+  staging:rtl8192u: Rename RxAdmittedBARecord - Style
+  staging:rtl8192u: Rename RxLastSeqNum - Style
+  staging:rtl8192u: Rename RxLastFragNum - Style
+  staging:rtl8192u: Remove blank line - Style
 
- arch/x86/entry/syscalls/syscall_32.tbl |    1 
- arch/x86/entry/syscalls/syscall_64.tbl |    1 
- fs/file_table.c                        |    9 +-
- fs/internal.h                          |    1 
- fs/namespace.c                         |  132 +++++++++++++++++++++++++++-----
- include/linux/fs.h                     |    3 +
- include/linux/syscalls.h               |    1 
- include/uapi/linux/fcntl.h             |    2 
- include/uapi/linux/mount.h             |   10 ++
- 9 files changed, 135 insertions(+), 25 deletions(-)
- create mode 100644 include/uapi/linux/mount.h
+ .../staging/rtl8192u/ieee80211/ieee80211.h    |   8 +-
+ .../staging/rtl8192u/ieee80211/ieee80211_rx.c |  80 ++++++------
+ .../staging/rtl8192u/ieee80211/ieee80211_tx.c |  14 +-
+ .../rtl8192u/ieee80211/rtl819x_BAProc.c       |  88 ++++++-------
+ .../staging/rtl8192u/ieee80211/rtl819x_TS.h   |  46 +++----
+ .../rtl8192u/ieee80211/rtl819x_TSProc.c       | 120 +++++++++---------
+ 6 files changed, 176 insertions(+), 180 deletions(-)
 
-diff --git a/arch/x86/entry/syscalls/syscall_32.tbl b/arch/x86/entry/syscalls/syscall_32.tbl
-index 3cf7b533b3d1..ea1b413afd47 100644
---- a/arch/x86/entry/syscalls/syscall_32.tbl
-+++ b/arch/x86/entry/syscalls/syscall_32.tbl
-@@ -398,3 +398,4 @@
- 384	i386	arch_prctl		sys_arch_prctl			__ia32_compat_sys_arch_prctl
- 385	i386	io_pgetevents		sys_io_pgetevents		__ia32_compat_sys_io_pgetevents
- 386	i386	rseq			sys_rseq			__ia32_sys_rseq
-+387	i386	open_tree		sys_open_tree			__ia32_sys_open_tree
-diff --git a/arch/x86/entry/syscalls/syscall_64.tbl b/arch/x86/entry/syscalls/syscall_64.tbl
-index f0b1709a5ffb..0545bed581dc 100644
---- a/arch/x86/entry/syscalls/syscall_64.tbl
-+++ b/arch/x86/entry/syscalls/syscall_64.tbl
-@@ -343,6 +343,7 @@
- 332	common	statx			__x64_sys_statx
- 333	common	io_pgetevents		__x64_sys_io_pgetevents
- 334	common	rseq			__x64_sys_rseq
-+335	common	open_tree		__x64_sys_open_tree
- 
- #
- # x32-specific system call numbers start at 512 to avoid cache impact
-diff --git a/fs/file_table.c b/fs/file_table.c
-index 7ec0b3e5f05d..7480271a0d21 100644
---- a/fs/file_table.c
-+++ b/fs/file_table.c
-@@ -189,6 +189,7 @@ static void __fput(struct file *file)
- 	struct dentry *dentry = file->f_path.dentry;
- 	struct vfsmount *mnt = file->f_path.mnt;
- 	struct inode *inode = file->f_inode;
-+	fmode_t mode = file->f_mode;
- 
- 	might_sleep();
- 
-@@ -209,14 +210,14 @@ static void __fput(struct file *file)
- 		file->f_op->release(inode, file);
- 	security_file_free(file);
- 	if (unlikely(S_ISCHR(inode->i_mode) && inode->i_cdev != NULL &&
--		     !(file->f_mode & FMODE_PATH))) {
-+		     !(mode & FMODE_PATH))) {
- 		cdev_put(inode->i_cdev);
- 	}
- 	fops_put(file->f_op);
- 	put_pid(file->f_owner.pid);
--	if ((file->f_mode & (FMODE_READ | FMODE_WRITE)) == FMODE_READ)
-+	if ((mode & (FMODE_READ | FMODE_WRITE)) == FMODE_READ)
- 		i_readcount_dec(inode);
--	if (file->f_mode & FMODE_WRITER) {
-+	if (mode & FMODE_WRITER) {
- 		put_write_access(inode);
- 		__mnt_drop_write(mnt);
- 	}
-@@ -224,6 +225,8 @@ static void __fput(struct file *file)
- 	file->f_path.mnt = NULL;
- 	file->f_inode = NULL;
- 	file_free(file);
-+	if (unlikely(mode & FMODE_NEED_UNMOUNT))
-+		dissolve_on_fput(mnt);
- 	dput(dentry);
- 	mntput(mnt);
- }
-diff --git a/fs/internal.h b/fs/internal.h
-index 56533b08532e..383ee4724f77 100644
---- a/fs/internal.h
-+++ b/fs/internal.h
-@@ -85,6 +85,7 @@ extern void __mnt_drop_write(struct vfsmount *);
- extern void __mnt_drop_write_file(struct file *);
- extern void mnt_drop_write_file_path(struct file *);
- 
-+extern void dissolve_on_fput(struct vfsmount *);
- /*
-  * fs_struct.c
-  */
-diff --git a/fs/namespace.c b/fs/namespace.c
-index 03cc3b5bcf00..a4a01ecbcacd 100644
---- a/fs/namespace.c
-+++ b/fs/namespace.c
-@@ -20,12 +20,14 @@
- #include <linux/init.h>		/* init_rootfs */
- #include <linux/fs_struct.h>	/* get_fs_root et.al. */
- #include <linux/fsnotify.h>	/* fsnotify_vfsmount_delete */
-+#include <linux/file.h>
- #include <linux/uaccess.h>
- #include <linux/proc_ns.h>
- #include <linux/magic.h>
- #include <linux/bootmem.h>
- #include <linux/task_work.h>
- #include <linux/sched/task.h>
-+#include <uapi/linux/mount.h>
- 
- #include "pnode.h"
- #include "internal.h"
-@@ -1840,6 +1842,16 @@ struct vfsmount *collect_mounts(const struct path *path)
- 	return &tree->mnt;
- }
- 
-+void dissolve_on_fput(struct vfsmount *mnt)
-+{
-+	namespace_lock();
-+	lock_mount_hash();
-+	mntget(mnt);
-+	umount_tree(real_mount(mnt), UMOUNT_SYNC);
-+	unlock_mount_hash();
-+	namespace_unlock();
-+}
-+
- void drop_collected_mounts(struct vfsmount *mnt)
- {
- 	namespace_lock();
-@@ -2199,6 +2211,30 @@ static bool has_locked_children(struct mount *mnt, struct dentry *dentry)
- 	return false;
- }
- 
-+static struct mount *__do_loopback(struct path *old_path, int recurse)
-+{
-+	struct mount *mnt = ERR_PTR(-EINVAL), *old = real_mount(old_path->mnt);
-+
-+	if (IS_MNT_UNBINDABLE(old))
-+		return mnt;
-+
-+	if (!check_mnt(old) && old_path->dentry->d_op != &ns_dentry_operations)
-+		return mnt;
-+
-+	if (!recurse && has_locked_children(old, old_path->dentry))
-+		return mnt;
-+
-+	if (recurse)
-+		mnt = copy_tree(old, old_path->dentry, CL_COPY_MNT_NS_FILE);
-+	else
-+		mnt = clone_mnt(old, old_path->dentry, 0);
-+
-+	if (!IS_ERR(mnt))
-+		mnt->mnt.mnt_flags &= ~MNT_LOCKED;
-+
-+	return mnt;
-+}
-+
- /*
-  * do loopback mount.
-  */
-@@ -2206,7 +2242,7 @@ static int do_loopback(struct path *path, const char *old_name,
- 				int recurse)
- {
- 	struct path old_path;
--	struct mount *mnt = NULL, *old, *parent;
-+	struct mount *mnt = NULL, *parent;
- 	struct mountpoint *mp;
- 	int err;
- 	if (!old_name || !*old_name)
-@@ -2220,38 +2256,21 @@ static int do_loopback(struct path *path, const char *old_name,
- 		goto out;
- 
- 	mp = lock_mount(path);
--	err = PTR_ERR(mp);
--	if (IS_ERR(mp))
-+	if (IS_ERR(mp)) {
-+		err = PTR_ERR(mp);
- 		goto out;
-+	}
- 
--	old = real_mount(old_path.mnt);
- 	parent = real_mount(path->mnt);
--
--	err = -EINVAL;
--	if (IS_MNT_UNBINDABLE(old))
--		goto out2;
--
- 	if (!check_mnt(parent))
- 		goto out2;
- 
--	if (!check_mnt(old) && old_path.dentry->d_op != &ns_dentry_operations)
--		goto out2;
--
--	if (!recurse && has_locked_children(old, old_path.dentry))
--		goto out2;
--
--	if (recurse)
--		mnt = copy_tree(old, old_path.dentry, CL_COPY_MNT_NS_FILE);
--	else
--		mnt = clone_mnt(old, old_path.dentry, 0);
--
-+	mnt = __do_loopback(&old_path, recurse);
- 	if (IS_ERR(mnt)) {
- 		err = PTR_ERR(mnt);
- 		goto out2;
- 	}
- 
--	mnt->mnt.mnt_flags &= ~MNT_LOCKED;
--
- 	err = graft_tree(mnt, parent, mp);
- 	if (err) {
- 		lock_mount_hash();
-@@ -2265,6 +2284,75 @@ static int do_loopback(struct path *path, const char *old_name,
- 	return err;
- }
- 
-+SYSCALL_DEFINE3(open_tree, int, dfd, const char *, filename, unsigned, flags)
-+{
-+	struct file *file;
-+	struct path path;
-+	int lookup_flags = LOOKUP_AUTOMOUNT | LOOKUP_FOLLOW;
-+	bool detached = flags & OPEN_TREE_CLONE;
-+	int error;
-+	int fd;
-+
-+	BUILD_BUG_ON(OPEN_TREE_CLOEXEC != O_CLOEXEC);
-+
-+	if (flags & ~(AT_EMPTY_PATH | AT_NO_AUTOMOUNT | AT_RECURSIVE |
-+		      AT_SYMLINK_NOFOLLOW | OPEN_TREE_CLONE |
-+		      OPEN_TREE_CLOEXEC))
-+		return -EINVAL;
-+
-+	if ((flags & (AT_RECURSIVE | OPEN_TREE_CLONE)) == AT_RECURSIVE)
-+		return -EINVAL;
-+
-+	if (flags & AT_NO_AUTOMOUNT)
-+		lookup_flags &= ~LOOKUP_AUTOMOUNT;
-+	if (flags & AT_SYMLINK_NOFOLLOW)
-+		lookup_flags &= ~LOOKUP_FOLLOW;
-+	if (flags & AT_EMPTY_PATH)
-+		lookup_flags |= LOOKUP_EMPTY;
-+
-+	if (detached && !may_mount())
-+		return -EPERM;
-+
-+	fd = get_unused_fd_flags(flags & O_CLOEXEC);
-+	if (fd < 0)
-+		return fd;
-+
-+	error = user_path_at(dfd, filename, lookup_flags, &path);
-+	if (error)
-+		goto out;
-+
-+	if (detached) {
-+		struct mount *mnt = __do_loopback(&path, flags & AT_RECURSIVE);
-+		if (IS_ERR(mnt)) {
-+			error = PTR_ERR(mnt);
-+			goto out2;
-+		}
-+		mntput(path.mnt);
-+		path.mnt = &mnt->mnt;
-+	}
-+
-+	file = dentry_open(&path, O_PATH, current_cred());
-+	if (IS_ERR(file)) {
-+		error = PTR_ERR(file);
-+		goto out3;
-+	}
-+
-+	if (detached)
-+		file->f_mode |= FMODE_NEED_UNMOUNT;
-+	path_put(&path);
-+	fd_install(fd, file);
-+	return fd;
-+
-+out3:
-+	if (detached)
-+		dissolve_on_fput(path.mnt);
-+out2:
-+	path_put(&path);
-+out:
-+	put_unused_fd(fd);
-+	return error;
-+}
-+
- static int change_mount_flags(struct vfsmount *mnt, int ms_flags)
- {
- 	int error = 0;
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index e3a18cddb74e..067f0e31aec7 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -154,6 +154,9 @@ typedef int (dio_iodone_t)(struct kiocb *iocb, loff_t offset,
- /* File is capable of returning -EAGAIN if I/O will block */
- #define FMODE_NOWAIT	((__force fmode_t)0x8000000)
- 
-+/* File represents mount that needs unmounting */
-+#define FMODE_NEED_UNMOUNT     ((__force fmode_t)0x10000000)
-+
- /*
-  * Flag for rw_copy_check_uvector and compat_rw_copy_check_uvector
-  * that indicates that they should check the contents of the iovec are
-diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
-index 73810808cdf2..3cc6b8f8bd2f 100644
---- a/include/linux/syscalls.h
-+++ b/include/linux/syscalls.h
-@@ -900,6 +900,7 @@ asmlinkage long sys_statx(int dfd, const char __user *path, unsigned flags,
- 			  unsigned mask, struct statx __user *buffer);
- asmlinkage long sys_rseq(struct rseq __user *rseq, uint32_t rseq_len,
- 			 int flags, uint32_t sig);
-+asmlinkage long sys_open_tree(int dfd, const char __user *path, unsigned flags);
- 
- /*
-  * Architecture-specific system calls
-diff --git a/include/uapi/linux/fcntl.h b/include/uapi/linux/fcntl.h
-index 6448cdd9a350..594b85f7cb86 100644
---- a/include/uapi/linux/fcntl.h
-+++ b/include/uapi/linux/fcntl.h
-@@ -90,5 +90,7 @@
- #define AT_STATX_FORCE_SYNC	0x2000	/* - Force the attributes to be sync'd with the server */
- #define AT_STATX_DONT_SYNC	0x4000	/* - Don't sync attributes with the server */
- 
-+#define AT_RECURSIVE		0x8000	/* Apply to the entire subtree */
-+
- 
- #endif /* _UAPI_LINUX_FCNTL_H */
-diff --git a/include/uapi/linux/mount.h b/include/uapi/linux/mount.h
-new file mode 100644
-index 000000000000..e8db2911adca
---- /dev/null
-+++ b/include/uapi/linux/mount.h
-@@ -0,0 +1,10 @@
-+#ifndef _UAPI_LINUX_MOUNT_H
-+#define _UAPI_LINUX_MOUNT_H
-+
-+/*
-+ * open_tree() flags.
-+ */
-+#define OPEN_TREE_CLONE		1		/* Clone the target tree and attach the clone */
-+#define OPEN_TREE_CLOEXEC	O_CLOEXEC	/* Close the file on execve() */
-+
-+#endif /* _UAPI_LINUX_MOUNT_H */
+-- 
+2.18.0
 
