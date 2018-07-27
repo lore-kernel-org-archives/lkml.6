@@ -6,34 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DBB4EC67790
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:02:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4007DC6778F
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:02:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 99D5C20894
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:02:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 99D5C20894
+	by mail.kernel.org (Postfix) with ESMTP id EF0D120894
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:02:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EF0D120894
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389041AbeG0LXZ (ORCPT
+        id S2389063AbeG0LX2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 07:23:25 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:34340 "EHLO
+        Fri, 27 Jul 2018 07:23:28 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:34348 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730120AbeG0LXY (ORCPT
+        with ESMTP id S1730120AbeG0LX1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 07:23:24 -0400
+        Fri, 27 Jul 2018 07:23:27 -0400
 Received: from localhost (unknown [89.188.5.116])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B9DDDBB6;
-        Fri, 27 Jul 2018 10:02:13 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 099CDCB1;
+        Fri, 27 Jul 2018 10:02:16 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Anssi Hannula <anssi.hannula@bitwise.fi>,
+        Michal Simek <michal.simek@xilinx.com>,
         Marc Kleine-Budde <mkl@pengutronix.de>
-Subject: [PATCH 4.14 39/48] can: xilinx_can: fix RX loop if RXNEMP is asserted without RXOK
-Date:   Fri, 27 Jul 2018 12:00:24 +0200
-Message-Id: <20180727095922.524391919@linuxfoundation.org>
+Subject: [PATCH 4.14 40/48] can: xilinx_can: fix power management handling
+Date:   Fri, 27 Jul 2018 12:00:25 +0200
+Message-Id: <20180727095922.627145705@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180727095918.503549522@linuxfoundation.org>
 References: <20180727095918.503549522@linuxfoundation.org>
@@ -52,96 +53,176 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Anssi Hannula <anssi.hannula@bitwise.fi>
 
-commit 32852c561bffd613d4ed7ec464b1e03e1b7b6c5c upstream.
+commit 8ebd83bdb027f29870d96649dba18b91581ea829 upstream.
 
-If the device gets into a state where RXNEMP (RX FIFO not empty)
-interrupt is asserted without RXOK (new frame received successfully)
-interrupt being asserted, xcan_rx_poll() will continue to try to clear
-RXNEMP without actually reading frames from RX FIFO. If the RX FIFO is
-not empty, the interrupt will not be cleared and napi_schedule() will
-just be called again.
+There are several issues with the suspend/resume handling code of the
+driver:
 
-This situation can occur when:
+- The device is attached and detached in the runtime_suspend() and
+  runtime_resume() callbacks if the interface is running. However,
+  during xcan_chip_start() the interface is considered running,
+  causing the resume handler to incorrectly call netif_start_queue()
+  at the beginning of xcan_chip_start(), and on xcan_chip_start() error
+  return the suspend handler detaches the device leaving the user
+  unable to bring-up the device anymore.
 
-(a) xcan_rx() returns without reading RX FIFO due to an error condition.
-The code tries to clear both RXOK and RXNEMP but RXNEMP will not clear
-due to a frame still being in the FIFO. The frame will never be read
-from the FIFO as RXOK is no longer set.
+- The device is not brought properly up on system resume. A reset is
+  done and the code tries to determine the bus state after that.
+  However, after reset the device is always in Configuration mode
+  (down), so the state checking code does not make sense and
+  communication will also not work.
 
-(b) A frame is received between xcan_rx_poll() reading interrupt status
-and clearing RXOK. RXOK will be cleared, but RXNEMP will again remain
-set as the new message is still in the FIFO.
+- The suspend callback tries to set the device to sleep mode (low-power
+  mode which monitors the bus and brings the device back to normal mode
+  on activity), but then immediately disables the clocks (possibly
+  before the device reaches the sleep mode), which does not make sense
+  to me. If a clean shutdown is wanted before disabling clocks, we can
+  just bring it down completely instead of only sleep mode.
 
-I'm able to trigger case (b) by flooding the bus with frames under load.
+Reorganize the PM code so that only the clock logic remains in the
+runtime PM callbacks and the system PM callbacks contain the device
+bring-up/down logic. This makes calling the runtime PM callbacks during
+e.g. xcan_chip_start() safe.
 
-There does not seem to be any benefit in using both RXNEMP and RXOK in
-the way the driver does, and the polling example in the reference manual
-(UG585 v1.10 18.3.7 Read Messages from RxFIFO) also says that either
-RXOK or RXNEMP can be used for detecting incoming messages.
+The system PM callbacks now simply call common code to start/stop the
+HW if the interface was running, replacing the broken code from before.
 
-Fix the issue and simplify the RX processing by only using RXNEMP
-without RXOK.
+xcan_chip_stop() is updated to use the common reset code so that it will
+wait for the reset to complete. Reset also disables all interrupts so do
+not do that separately.
 
-Tested with the integrated CAN on Zynq-7000 SoC.
+Also, the device_may_wakeup() checks are removed as the driver does not
+have wakeup support.
 
-Fixes: b1201e44f50b ("can: xilinx CAN controller support")
+Tested on Zynq-7000 integrated CAN.
+
 Signed-off-by: Anssi Hannula <anssi.hannula@bitwise.fi>
+Cc: Michal Simek <michal.simek@xilinx.com>
 Cc: <stable@vger.kernel.org>
 Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/can/xilinx_can.c |   18 +++++-------------
- 1 file changed, 5 insertions(+), 13 deletions(-)
+ drivers/net/can/xilinx_can.c |   69 +++++++++++++++++--------------------------
+ 1 file changed, 28 insertions(+), 41 deletions(-)
 
 --- a/drivers/net/can/xilinx_can.c
 +++ b/drivers/net/can/xilinx_can.c
-@@ -101,7 +101,7 @@ enum xcan_reg {
- #define XCAN_INTR_ALL		(XCAN_IXR_TXOK_MASK | XCAN_IXR_BSOFF_MASK |\
- 				 XCAN_IXR_WKUP_MASK | XCAN_IXR_SLP_MASK | \
- 				 XCAN_IXR_RXNEMP_MASK | XCAN_IXR_ERROR_MASK | \
--				 XCAN_IXR_ARBLST_MASK | XCAN_IXR_RXOK_MASK)
-+				 XCAN_IXR_ARBLST_MASK)
+@@ -811,13 +811,9 @@ static irqreturn_t xcan_interrupt(int ir
+ static void xcan_chip_stop(struct net_device *ndev)
+ {
+ 	struct xcan_priv *priv = netdev_priv(ndev);
+-	u32 ier;
  
- /* CAN register bit shift - XCAN_<REG>_<BIT>_SHIFT */
- #define XCAN_BTR_SJW_SHIFT		7  /* Synchronous jump width */
-@@ -709,15 +709,7 @@ static int xcan_rx_poll(struct napi_stru
+ 	/* Disable interrupts and leave the can in configuration mode */
+-	ier = priv->read_reg(priv, XCAN_IER_OFFSET);
+-	ier &= ~XCAN_INTR_ALL;
+-	priv->write_reg(priv, XCAN_IER_OFFSET, ier);
+-	priv->write_reg(priv, XCAN_SRR_OFFSET, XCAN_SRR_RESET_MASK);
++	set_reset_mode(ndev);
+ 	priv->can.state = CAN_STATE_STOPPED;
+ }
  
- 	isr = priv->read_reg(priv, XCAN_ISR_OFFSET);
- 	while ((isr & XCAN_IXR_RXNEMP_MASK) && (work_done < quota)) {
--		if (isr & XCAN_IXR_RXOK_MASK) {
--			priv->write_reg(priv, XCAN_ICR_OFFSET,
--				XCAN_IXR_RXOK_MASK);
--			work_done += xcan_rx(ndev);
+@@ -950,10 +946,15 @@ static const struct net_device_ops xcan_
+  */
+ static int __maybe_unused xcan_suspend(struct device *dev)
+ {
+-	if (!device_may_wakeup(dev))
+-		return pm_runtime_force_suspend(dev);
++	struct net_device *ndev = dev_get_drvdata(dev);
+ 
+-	return 0;
++	if (netif_running(ndev)) {
++		netif_stop_queue(ndev);
++		netif_device_detach(ndev);
++		xcan_chip_stop(ndev);
++	}
++
++	return pm_runtime_force_suspend(dev);
+ }
+ 
+ /**
+@@ -965,11 +966,27 @@ static int __maybe_unused xcan_suspend(s
+  */
+ static int __maybe_unused xcan_resume(struct device *dev)
+ {
+-	if (!device_may_wakeup(dev))
+-		return pm_runtime_force_resume(dev);
++	struct net_device *ndev = dev_get_drvdata(dev);
++	int ret;
+ 
+-	return 0;
++	ret = pm_runtime_force_resume(dev);
++	if (ret) {
++		dev_err(dev, "pm_runtime_force_resume failed on resume\n");
++		return ret;
++	}
++
++	if (netif_running(ndev)) {
++		ret = xcan_chip_start(ndev);
++		if (ret) {
++			dev_err(dev, "xcan_chip_start failed on resume\n");
++			return ret;
++		}
++
++		netif_device_attach(ndev);
++		netif_start_queue(ndev);
++	}
+ 
++	return 0;
+ }
+ 
+ /**
+@@ -984,14 +1001,6 @@ static int __maybe_unused xcan_runtime_s
+ 	struct net_device *ndev = dev_get_drvdata(dev);
+ 	struct xcan_priv *priv = netdev_priv(ndev);
+ 
+-	if (netif_running(ndev)) {
+-		netif_stop_queue(ndev);
+-		netif_device_detach(ndev);
+-	}
+-
+-	priv->write_reg(priv, XCAN_MSR_OFFSET, XCAN_MSR_SLEEP_MASK);
+-	priv->can.state = CAN_STATE_SLEEPING;
+-
+ 	clk_disable_unprepare(priv->bus_clk);
+ 	clk_disable_unprepare(priv->can_clk);
+ 
+@@ -1010,7 +1019,6 @@ static int __maybe_unused xcan_runtime_r
+ 	struct net_device *ndev = dev_get_drvdata(dev);
+ 	struct xcan_priv *priv = netdev_priv(ndev);
+ 	int ret;
+-	u32 isr, status;
+ 
+ 	ret = clk_prepare_enable(priv->bus_clk);
+ 	if (ret) {
+@@ -1024,27 +1032,6 @@ static int __maybe_unused xcan_runtime_r
+ 		return ret;
+ 	}
+ 
+-	priv->write_reg(priv, XCAN_SRR_OFFSET, XCAN_SRR_RESET_MASK);
+-	isr = priv->read_reg(priv, XCAN_ISR_OFFSET);
+-	status = priv->read_reg(priv, XCAN_SR_OFFSET);
+-
+-	if (netif_running(ndev)) {
+-		if (isr & XCAN_IXR_BSOFF_MASK) {
+-			priv->can.state = CAN_STATE_BUS_OFF;
+-			priv->write_reg(priv, XCAN_SRR_OFFSET,
+-					XCAN_SRR_RESET_MASK);
+-		} else if ((status & XCAN_SR_ESTAT_MASK) ==
+-					XCAN_SR_ESTAT_MASK) {
+-			priv->can.state = CAN_STATE_ERROR_PASSIVE;
+-		} else if (status & XCAN_SR_ERRWRN_MASK) {
+-			priv->can.state = CAN_STATE_ERROR_WARNING;
 -		} else {
--			priv->write_reg(priv, XCAN_ICR_OFFSET,
--				XCAN_IXR_RXNEMP_MASK);
--			break;
+-			priv->can.state = CAN_STATE_ERROR_ACTIVE;
 -		}
-+		work_done += xcan_rx(ndev);
- 		priv->write_reg(priv, XCAN_ICR_OFFSET, XCAN_IXR_RXNEMP_MASK);
- 		isr = priv->read_reg(priv, XCAN_ISR_OFFSET);
- 	}
-@@ -728,7 +720,7 @@ static int xcan_rx_poll(struct napi_stru
- 	if (work_done < quota) {
- 		napi_complete_done(napi, work_done);
- 		ier = priv->read_reg(priv, XCAN_IER_OFFSET);
--		ier |= (XCAN_IXR_RXOK_MASK | XCAN_IXR_RXNEMP_MASK);
-+		ier |= XCAN_IXR_RXNEMP_MASK;
- 		priv->write_reg(priv, XCAN_IER_OFFSET, ier);
- 	}
- 	return work_done;
-@@ -800,9 +792,9 @@ static irqreturn_t xcan_interrupt(int ir
- 	}
+-		netif_device_attach(ndev);
+-		netif_start_queue(ndev);
+-	}
+-
+ 	return 0;
+ }
  
- 	/* Check for the type of receive interrupt and Processing it */
--	if (isr & (XCAN_IXR_RXNEMP_MASK | XCAN_IXR_RXOK_MASK)) {
-+	if (isr & XCAN_IXR_RXNEMP_MASK) {
- 		ier = priv->read_reg(priv, XCAN_IER_OFFSET);
--		ier &= ~(XCAN_IXR_RXNEMP_MASK | XCAN_IXR_RXOK_MASK);
-+		ier &= ~XCAN_IXR_RXNEMP_MASK;
- 		priv->write_reg(priv, XCAN_IER_OFFSET, ier);
- 		napi_schedule(&priv->napi);
- 	}
 
 
