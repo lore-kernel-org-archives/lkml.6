@@ -2,109 +2,139 @@ Return-Path: <SRS0=OQFz=KL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AFB8C28CF6
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 01:32:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67773C28CF6
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 01:33:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2BE26206B7
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 01:32:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2BE26206B7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
+	by mail.kernel.org (Postfix) with ESMTP id 1CC0C206B7
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 01:33:24 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="jm4WcPna"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1CC0C206B7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731993AbeG0CqO (ORCPT
+        id S1732011AbeG0Cwj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 26 Jul 2018 22:46:14 -0400
-Received: from smtprelay0014.hostedemail.com ([216.40.44.14]:39776 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1731800AbeG0CqO (ORCPT
+        Thu, 26 Jul 2018 22:52:39 -0400
+Received: from conssluserg-06.nifty.com ([210.131.2.91]:45315 "EHLO
+        conssluserg-06.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731937AbeG0Cwi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Jul 2018 22:46:14 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay02.hostedemail.com (Postfix) with ESMTP id 8F285813F;
-        Fri, 27 Jul 2018 01:26:49 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-HE-Tag: brain86_7596608fe0163
-X-Filterd-Recvd-Size: 3117
-Received: from XPS-9350.home (unknown [47.151.153.53])
-        (Authenticated sender: joe@perches.com)
-        by omf08.hostedemail.com (Postfix) with ESMTPA;
-        Fri, 27 Jul 2018 01:26:47 +0000 (UTC)
-Message-ID: <a13641bc42f2981e7997f4a1900d5a480cc2ee6d.camel@perches.com>
-Subject: Re: [PATCH] checkpatch: Warn when a patch doesn't have a description
-From:   Joe Perches <joe@perches.com>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Prakruthi Deepak Heragu <pheragu@codeaurora.org>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Andy Whitcroft <apw@canonical.com>,
-        linux-kernel@vger.kernel.org, tsoni@codeaurora.org,
-        bryanh@codeaurora.org, ckadabi@codeaurora.org,
-        David Keitel <dkeitel@codeaurora.org>
-Date:   Thu, 26 Jul 2018 18:26:46 -0700
-In-Reply-To: <20180726150855.a9a3e81d5cdc4630c7f4ca2d@linux-foundation.org>
-References: <1531518027-13318-1-git-send-email-pheragu@codeaurora.org>
-         <6799952fbd3639c764c112bde961b5e00270a52d.camel@perches.com>
-         <6ed46f85a7577e1d4a48e81f67fd7581@codeaurora.org>
-         <1b099f4d8373aa583a17011992676bf0f3f09eee.camel@perches.com>
-         <20180726150855.a9a3e81d5cdc4630c7f4ca2d@linux-foundation.org>
-Content-Type: text/plain; charset="ISO-8859-1"
-X-Mailer: Evolution 3.28.1-2 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Thu, 26 Jul 2018 22:52:38 -0400
+Received: from mail-vk0-f54.google.com (mail-vk0-f54.google.com [209.85.213.54]) (authenticated)
+        by conssluserg-06.nifty.com with ESMTP id w6R1X0q6019353;
+        Fri, 27 Jul 2018 10:33:01 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-06.nifty.com w6R1X0q6019353
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1532655181;
+        bh=4N3+Ux2GTbpmO6X7Yk7XOCofTSSqZE2QZrCnDILokj4=;
+        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
+        b=jm4WcPnaJv8l4TH/dMLL78VALrwDjEJM0HjQlQXgkjbx0WI6gGMb8l7TC0y+xhgSQ
+         Z0usFRalepy9FT63S9zYFUT1tyevXYOsLal2Lp4zmyIMADVlvd1pzYhE4uzmm4jAGb
+         EE1w69IHuRsLHnw8xPUJjsT8+tjmCBFcjsXQYB9hoclGlLygy4eddjHsDRQG1BU+QK
+         fESf03OnYTFmhrVDwateKnegn9/sH/Z26yyMiXf3yTZGZhPSMOdhnL1rs2AtyelO09
+         HB/NoVJgPPY5IsL3Q++Xnr4P/Qxb7i8k86JnssxjVYfXlVD/IgDYXwUwf0Vwq7/sNu
+         5+mOaYyi4LJRQ==
+X-Nifty-SrcIP: [209.85.213.54]
+Received: by mail-vk0-f54.google.com with SMTP id o82-v6so1731686vko.8;
+        Thu, 26 Jul 2018 18:33:00 -0700 (PDT)
+X-Gm-Message-State: AOUpUlEEzx8MQ26sp6YGw71xfNEzssOjtFyAiZUVibJEy58SOObKrI2B
+        RzlY5HWT1kH0wS1CgyQsIxSnkQIkcsDmhWElX7I=
+X-Google-Smtp-Source: AAOMgpc/kEZ0obK+h8fMOGOJkqqXAC8gXsSvbhRSzFuGyykJq0fwZ+bjpR2rpH/XDHh7EYVlpwlxpEAgxYZZzCxPYXk=
+X-Received: by 2002:a1f:420d:: with SMTP id p13-v6mr2745586vka.10.1532655179917;
+ Thu, 26 Jul 2018 18:32:59 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:ab0:7289:0:0:0:0:0 with HTTP; Thu, 26 Jul 2018 18:32:19
+ -0700 (PDT)
+In-Reply-To: <20180726172143.GA9836@lst.de>
+References: <20180724175646.3621-1-hch@lst.de> <CAK7LNARP2HZ8GdsAU8h_b04jLWbvFXTWqiVt2hpE0vJbjP82ZA@mail.gmail.com>
+ <20180726172143.GA9836@lst.de>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Fri, 27 Jul 2018 10:32:19 +0900
+X-Gmail-Original-Message-ID: <CAK7LNASd0YCj4wwmT9-6GYiBz=wDoXkmQW2F_5XjbCzS9-weUw@mail.gmail.com>
+Message-ID: <CAK7LNASd0YCj4wwmT9-6GYiBz=wDoXkmQW2F_5XjbCzS9-weUw@mail.gmail.com>
+Subject: Re: include architecture Kconfig files from top-level Kconfig v3
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Randy Dunlap <rdunlap@infradead.org>,
+        Richard Weinberger <richard@nod.at>,
+        Ley Foon Tan <lftan@altera.com>,
+        Michal Simek <monstr@monstr.eu>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        linux-um@lists.infradead.org, linux-arch@lists.infradead.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2018-07-26 at 15:08 -0700, Andrew Morton wrote:
-> On Wed, 25 Jul 2018 19:22:47 -0700 Joe Perches <joe@perches.com> wrote:
-> 
-> > Potential patches should have a commit description.
-> > Emit a warning when there isn't one.
-[]
-> I did this:
-> 
-> --- a/scripts/checkpatch.pl~checkpatch-warn-when-a-patch-doesnt-have-a-description-fix
-> +++ a/scripts/checkpatch.pl
-> @@ -2517,7 +2517,7 @@ sub process {
->  			if ($line !~ /^\s*$/) {
->  				$commit_log_lines++;	#could be a $signature
->  			}
-> -		} else if ($has_commit_log && $commit_log_lines < 2) {
-> +		} elsif ($has_commit_log && $commit_log_lines < 2) {
->  			WARN("COMMIT_MESSAGE",
->  			     "Missing commit description - Add an appropriate one\n");
->  			$commit_log_lines = 2;	#warn only once
-> 
-> But I worry that you didn't send out the version which you tested, so
-> please check.
+2018-07-27 2:21 GMT+09:00 Christoph Hellwig <hch@lst.de>:
+> On Wed, Jul 25, 2018 at 01:30:24PM +0900, Masahiro Yamada wrote:
+>> Could you check the difference of CONFIG_PREEMPT_COUNT, please?
+>>
+>>
+>> For alpha, hexagon, um,
+>> CONFIG_PREEMPT_COUNT was previously never enabled
+>> because kernel/Kconfig.preempt was not included.
+>>
+>> Now, CONFIG_PREEMPT_COUNT can be enabled
+>> if it is select'ed by someone.
+>>
+>> I guess this change will be OK, but
+>> I'd like you and Randy to double-check it just in case.
+>
+> It might be fine, but with this little fix folded in we should be
+> safer:
+>
+> diff --git a/kernel/Kconfig.preempt b/kernel/Kconfig.preempt
+> index cd1655122ec0..1321a4a7a677 100644
+> --- a/kernel/Kconfig.preempt
+> +++ b/kernel/Kconfig.preempt
+> @@ -57,4 +57,5 @@ config PREEMPT
+>  endchoice
+>
+>  config PREEMPT_COUNT
+> -       bool
+> \ No newline at end of file
+> +       depends on !ARCH_NO_PREEMPT
+> +       bool
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-kbuild" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 
-You're right, I inserted the wrong one.
-Anyway, what you did is correct and that was the only change.
-Thanks.
 
-$ diff -urN cp_commit_log_lines.diff cp_commit_message.diff 
---- cp_commit_log_lines.diff	2018-07-13 17:06:29.115337477 -0700
-+++ cp_commit_message.diff	2018-07-15 05:46:29.878805336 -0700
-@@ -2,7 +2,7 @@
-  1 file changed, 13 insertions(+)
- 
- diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
--index b5c875d7132b..8b5f3dae31c9 100755
-+index b5c875d7132b..4ccf84079ea4 100755
- --- a/scripts/checkpatch.pl
- +++ b/scripts/checkpatch.pl
- @@ -2240,6 +2240,7 @@ sub process {
-@@ -23,7 +23,7 @@
- +			if ($line !~ /^\s*$/) {
- +				$commit_log_lines++;	#could be a $signature
- +			}
--+		} else if ($has_commit_log && $commit_log_lines < 2) {
-++		} elsif ($has_commit_log && $commit_log_lines < 2) {
- +			WARN("COMMIT_MESSAGE",
- +			     "Missing commit description - Add an appropriate one\n");
- +			$commit_log_lines = 2;	#warn only once
 
+This will just add a new unmet dependency warning.
+CONFIG_PREEMPT_COUNT will be still selected.
+
+
+$ make ARCH=alpha allyesconfig
+  HOSTCC  scripts/basic/fixdep
+  HOSTCC  scripts/kconfig/conf.o
+  YACC    scripts/kconfig/zconf.tab.c
+  LEX     scripts/kconfig/zconf.lex.c
+  HOSTCC  scripts/kconfig/zconf.tab.o
+  HOSTLD  scripts/kconfig/conf
+scripts/kconfig/conf  --allyesconfig Kconfig
+
+WARNING: unmet direct dependencies detected for PREEMPT_COUNT
+  Depends on [n]: !ARCH_NO_PREEMPT [=y]
+  Selected by [y]:
+  - DEBUG_ATOMIC_SLEEP [=y] && DEBUG_KERNEL [=y]
+#
+# configuration written to .config
+#
+
+
+
+
+
+
+-- 
+Best Regards
+Masahiro Yamada
