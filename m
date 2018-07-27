@@ -2,112 +2,95 @@ Return-Path: <SRS0=OQFz=KL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 625F6C67790
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 07:15:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C03EAC6778F
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 07:20:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D243320891
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 07:15:50 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="VffsnhbF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D243320891
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 705FC20862
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 07:20:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 705FC20862
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729889AbeG0IgU (ORCPT
+        id S1729519AbeG0IlP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 04:36:20 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:39754 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729430AbeG0IgU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 04:36:20 -0400
-Received: by mail-wm0-f68.google.com with SMTP id h20-v6so4339464wmb.4
-        for <linux-kernel@vger.kernel.org>; Fri, 27 Jul 2018 00:15:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=LLGYLc5Ol/xnNAMHs4wYIO1iblMPl4LZoI50+ItSZw0=;
-        b=VffsnhbFYoZXUE+b0e/uaV71TWM32hb7vkddlqWwx5DPjh1hGK797FvZvZayPGSmCb
-         +UPzGoV33bAkJntWLifX8RFNgfZwPfvvvbKNQT3LMWHvPD0RPYd1Jvl/qjiIyUyi0faa
-         796BHbLj25aSXAN5zqmCAEXb++AhBFcgjAu74=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=LLGYLc5Ol/xnNAMHs4wYIO1iblMPl4LZoI50+ItSZw0=;
-        b=NTL9GjNE7RNBOGMWayqLIvupEdIQi2h8WA9/GUb+/iuc3vbUWeP9qke0R7arhTkD/j
-         WMkjW8KoXphT/4lNU3PvoIr4RiuTGLss0BahaBlsI3p21GDOLsYnSt3Q4KEwD6RAGNM4
-         puHDrUHDXRnoK1bzNRq6Ci1aIHij3wxF+xYZyIDtTsdnvRS8akWRDiYv6fSA7MNuIn35
-         /CyRLjIKIT2zbzuY8ulpyWo7qXfPyI//zhaZokbsg66kb9PYD1FgXkqrQCOvIneGCMRS
-         wpAHSN7G9drb7Cyj1du1FZsAdwrkhGIEC3J89sCtpw1mGycDJD7sHEYjNLO2S4lAqLCx
-         I6Ew==
-X-Gm-Message-State: AOUpUlEjnpgQ6nHf017f+9tsBudik+yNQCkZdv5+l+dsHdB6ZKSnnoCp
-        G8+FLBw7ZJhMUeoF6lSO8o9KRw==
-X-Google-Smtp-Source: AAOMgpehzU37ksTjEV7fWg7EitZ5/IrwerpNPzDj5LLpkid9OUGuVfNRZAswlnbOUuig+9J6/eGGuQ==
-X-Received: by 2002:a1c:be13:: with SMTP id o19-v6mr3271758wmf.1.1532675747225;
-        Fri, 27 Jul 2018 00:15:47 -0700 (PDT)
-Received: from dell (host109-153-79-7.range109-153.btcentralplus.com. [109.153.79.7])
-        by smtp.gmail.com with ESMTPSA id y14-v6sm6680170wrq.45.2018.07.27.00.15.46
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 27 Jul 2018 00:15:46 -0700 (PDT)
-Date:   Fri, 27 Jul 2018 08:15:44 +0100
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Marcel Ziswiler <marcel@ziswiler.com>
-Cc:     linux-tegra@vger.kernel.org,
-        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
-        Laxman Dewangan <ldewangan@nvidia.com>,
-        devicetree@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh+dt@kernel.org>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] mfd: as3722: disable auto power on when AC OK
-Message-ID: <20180727071544.GD4628@dell>
-References: <20180703150411.29709-1-marcel@ziswiler.com>
+        Fri, 27 Jul 2018 04:41:15 -0400
+Received: from mga12.intel.com ([192.55.52.136]:25070 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726044AbeG0IlP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Jul 2018 04:41:15 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Jul 2018 00:20:43 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,408,1526367600"; 
+   d="asc'?scan'208";a="75959899"
+Received: from pipin.fi.intel.com (HELO localhost) ([10.237.68.37])
+  by fmsmga001.fm.intel.com with ESMTP; 27 Jul 2018 00:20:41 -0700
+From:   Felipe Balbi <balbi@kernel.org>
+To:     Anurag Kumar Vulisha <anurag.kumar.vulisha@xilinx.com>,
+        gregkh@linuxfoundation.org
+Cc:     v.anuragkumar@gmail.com, linux-usb@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Anurag Kumar Vulisha <anurag.kumar.vulisha@xilinx.com>
+Subject: Re: [PATCH v3] usb: dwc3: core: Add quirk for enabling AutoRetry feature in the controller
+In-Reply-To: <1532610528-7290-1-git-send-email-anurag.kumar.vulisha@xilinx.com>
+References: <1532610528-7290-1-git-send-email-anurag.kumar.vulisha@xilinx.com>
+Date:   Fri, 27 Jul 2018 10:17:22 +0300
+Message-ID: <87k1phywot.fsf@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180703150411.29709-1-marcel@ziswiler.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: multipart/signed; boundary="=-=-=";
+        micalg=pgp-sha512; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 03 Jul 2018, Marcel Ziswiler wrote:
+--=-=-=
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-> From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
-> 
-> On ams AS3722, power on when AC OK is enabled by default.
-> Making this option as disable by default and enable only
-> when platform need this explicitly.
-> 
-> Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
-> Reviewed-by: Bibek Basu <bbasu@nvidia.com>
-> Tested-by: Bibek Basu <bbasu@nvidia.com>
-> Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
-> 
+
+Hi,
+
+Anurag Kumar Vulisha <anurag.kumar.vulisha@xilinx.com> writes:
+> By default when core sees any transaction error(CRC or overflow)
+> it replies with terminating retry ACK (Retry=3D1 and Nump =3D=3D 0).
+> Enabling this Auto Retry feature in controller, on seeing any
+> transaction errors makes the core to send a non-terminating ACK
+> transaction packet (that is, ACK TP with Retry=3D1 and Nump !=3D 0).
+> Doing so will give controller a chance to recover from the error
+> condition.
+>
+> Signed-off-by: Anurag Kumar Vulisha <anurag.kumar.vulisha@xilinx.com>
 > ---
-> 
-> Changes in v2:
-> - Document device tree property as suggested by Stefan.
-> - Rename SEQ1 to SEQU1 as per datasheet as suggested by Stefan.
-> - Drop reference to downstream commit as suggested by Lee.
-> 
->  Documentation/devicetree/bindings/mfd/as3722.txt |  2 ++
->  drivers/mfd/as3722.c                             | 12 ++++++++++++
->  include/linux/mfd/as3722.h                       |  3 +++
->  3 files changed, 17 insertions(+)
 
-Applied, thanks.
+subject line is misleading, at best. You're not adding any quirks.
 
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+=2D-=20
+balbi
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEElLzh7wn96CXwjh2IzL64meEamQYFAltaxwIACgkQzL64meEa
+mQYB7RAA2zqNJ0igY/47+trUhOfwGvIPRMr5Tuub9wA5YvVjYmn5ZQYdYRwc0Bgp
+JSZPHHQqOijJi6vYseeAf6UbbJuYbX9fXdeRbO5IoM1web8dDSC/uPj4UWsw1r+z
+Eeg50yvbT7hrHFNVOl6Nn/krTEcLyq9PUk1284w+OkKOhtYh6q8g61ygjkYJn+yv
+PqIvfS2cnQbGGyrKFL2UrAtU/stiX7YSXQvMKQe9efSjtJ0WW2Wln3etuQefdGds
+aFraOIKQfsDA/Hb52kh/g71M+sHkye02FCkg+7bYuCJPbwzbw6dbjSCj6Ox2xbLR
+udLZbEqkCjpw15i5JkTVW0JkXL3xl+tYYtH4rcp9o5cb3lA1HZD2HNGKr2nRrHZI
+5dlU+MWxdsjzic7cptdYrUKtUUQ0yb7ux4Slas2O0vUp/w0pOIrTJcA+yHQrnC1Z
+QChmvemw//MxR7247KjwEiWMRq7KmOHEjr9z+oIFyw1aEVuAKYc0WBqb1ota12QF
+E/VU+JYkH8E80QEFlGvDrximpeCpKSnQg4nvFOoZ20CBO1C+jH0g3jQecmQyQQd/
+iyMFgpIRoNovaa8PaNKxpvAVaUxJFo063f0rde1wkSb5adNtO6zLznkrouqbH/A0
+/gWjQ+2tb/zuWz+HyyClJnfYxqqrHD4pfKhf1gW/+LMOxCLggp8=
+=hmZv
+-----END PGP SIGNATURE-----
+--=-=-=--
