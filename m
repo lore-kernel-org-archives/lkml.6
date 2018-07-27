@@ -2,110 +2,210 @@ Return-Path: <SRS0=OQFz=KL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24606C28CF6
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 02:33:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62628C28CF6
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 02:37:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4D98120891
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 02:33:11 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="pNqeeWvB"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D98120891
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+	by mail.kernel.org (Postfix) with ESMTP id 07BE220891
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 02:37:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 07BE220891
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732173AbeG0Dwm (ORCPT
+        id S1732085AbeG0D5N (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 26 Jul 2018 23:52:42 -0400
-Received: from ozlabs.org ([203.11.71.1]:60967 "EHLO ozlabs.org"
+        Thu, 26 Jul 2018 23:57:13 -0400
+Received: from mx.socionext.com ([202.248.49.38]:23194 "EHLO mx.socionext.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731587AbeG0Dwm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Jul 2018 23:52:42 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 41cCgM2kZlz9ryl;
-        Fri, 27 Jul 2018 12:33:01 +1000 (AEST)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1532658784;
-        bh=uzPz66I+TyXMpAglaRKSl2sRKVfVwL7nq3epTyAefmE=;
-        h=Date:From:To:Cc:Subject:From;
-        b=pNqeeWvBhSIVERNF/pCj/sseTctSvlC3SvSV2RjxqlJyss6L/1G+cTkixu7CUx9RE
-         oiE7h+FjB4LQYc4AgB7Zu+CwL/puXFe240TytCSJYCghFFMAZE97PiCMX4K5NJtqHA
-         Z63lCvdMwjVAiX9LXwHGPilEKLwQ4LEoyCupGZ0DffsK61k8/LAYV6ClaTCnvO+wIa
-         bjL+Ys99XhzEaxUbvujQxVpl3OaZID7W9UETnjPzRLkbJvLXbTxh+isHeGxRAoSlKJ
-         uuIN0Q2dv3VuGxfxl7OBSg8vfff8tjbMCiXh9OhN4lFJxNOcjBpYB7m+3OSsRBIESy
-         Xw7ZePFqX+rHA==
-Date:   Fri, 27 Jul 2018 12:33:01 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     David Miller <davem@davemloft.net>,
-        Networking <netdev@vger.kernel.org>,
-        Doug Ledford <dledford@redhat.com>,
-        Jason Gunthorpe <jgg@mellanox.com>
-Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Parav Pandit <parav@mellanox.com>,
-        Ursula Braun <ubraun@linux.ibm.com>,
-        Leon Romanovsky <leonro@mellanox.com>
-Subject: linux-next: manual merge of the net-next tree with the rdma tree
-Message-ID: <20180727123301.3ac97ddc@canb.auug.org.au>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/obtSygckK1wuZX/oWMFIP+z"; protocol="application/pgp-signature"
+        id S1731974AbeG0D5M (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Jul 2018 23:57:12 -0400
+Received: from unknown (HELO iyokan-ex.css.socionext.com) ([172.31.9.54])
+  by mx.socionext.com with ESMTP; 27 Jul 2018 11:37:35 +0900
+Received: from mail.mfilter.local (m-filter-1 [10.213.24.61])
+        by iyokan-ex.css.socionext.com (Postfix) with ESMTP id 4641560034;
+        Fri, 27 Jul 2018 11:37:35 +0900 (JST)
+Received: from 172.31.9.53 (172.31.9.53) by m-FILTER with ESMTP; Fri, 27 Jul 2018 11:37:35 +0900
+Received: from yuzu.css.socionext.com (yuzu [172.31.8.45])
+        by iyokan.css.socionext.com (Postfix) with ESMTP id 1354740176;
+        Fri, 27 Jul 2018 11:37:35 +0900 (JST)
+Received: from aegis.e01.socionext.com (unknown [10.213.134.210])
+        by yuzu.css.socionext.com (Postfix) with ESMTP id E1B36120448;
+        Fri, 27 Jul 2018 11:37:34 +0900 (JST)
+From:   Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
+To:     Mark Brown <broonie@kernel.org>, alsa-devel@alsa-project.org
+Cc:     Masami Hiramatsu <masami.hiramatsu@linaro.org>,
+        Jassi Brar <jaswinder.singh@linaro.org>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
+Subject: [PATCH] ASoC: uniphier: add support for multichannel output
+Date:   Fri, 27 Jul 2018 11:37:28 +0900
+Message-Id: <20180727023728.7810-1-suzuki.katsuhiro@socionext.com>
+X-Mailer: git-send-email 2.18.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/obtSygckK1wuZX/oWMFIP+z
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+This patch adds multichannel PCM output support for LD11/LD20.
+Currently driver tested and supported only 2ch, 6ch, and 8ch.
 
-Hi all,
+Signed-off-by: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
+---
+ sound/soc/uniphier/aio-core.c | 78 ++++++++++++++++++++++++++++++++---
+ sound/soc/uniphier/aio-ld11.c |  2 +-
+ sound/soc/uniphier/aio-reg.h  |  1 +
+ sound/soc/uniphier/aio.h      |  3 ++
+ 4 files changed, 78 insertions(+), 6 deletions(-)
 
-Today's linux-next merge of the net-next tree got conflicts in:
+diff --git a/sound/soc/uniphier/aio-core.c b/sound/soc/uniphier/aio-core.c
+index 638cb3fc5f7b..8b09bbb0f8d0 100644
+--- a/sound/soc/uniphier/aio-core.c
++++ b/sound/soc/uniphier/aio-core.c
+@@ -264,6 +264,57 @@ void aio_port_reset(struct uniphier_aio_sub *sub)
+ 	}
+ }
+ 
++/**
++ * aio_port_set_ch - set channels of LPCM
++ * @sub: the AIO substream pointer, PCM substream only
++ * @ch : count of channels
++ *
++ * Set suitable slot selecting to input/output port block of AIO.
++ *
++ * This function may return error if non-PCM substream.
++ *
++ * Return: Zero if successful, otherwise a negative value on error.
++ */
++static int aio_port_set_ch(struct uniphier_aio_sub *sub)
++{
++	struct regmap *r = sub->aio->chip->regmap;
++	u32 slotsel_2ch[] = {
++		0, 0, 0, 0, 0,
++	};
++	u32 slotsel_multi[] = {
++		OPORTMXTYSLOTCTR_SLOTSEL_SLOT0,
++		OPORTMXTYSLOTCTR_SLOTSEL_SLOT1,
++		OPORTMXTYSLOTCTR_SLOTSEL_SLOT2,
++		OPORTMXTYSLOTCTR_SLOTSEL_SLOT3,
++		OPORTMXTYSLOTCTR_SLOTSEL_SLOT4,
++	};
++	u32 mode, *slotsel;
++	int i;
++
++	switch (params_channels(&sub->params)) {
++	case 8:
++	case 6:
++		mode = OPORTMXTYSLOTCTR_MODE;
++		slotsel = slotsel_multi;
++		break;
++	case 2:
++		mode = 0;
++		slotsel = slotsel_2ch;
++		break;
++	default:
++		return -EINVAL;
++	}
++
++	for (i = 0; i < AUD_MAX_SLOTSEL; i++) {
++		regmap_update_bits(r, OPORTMXTYSLOTCTR(sub->swm->oport.map, i),
++				   OPORTMXTYSLOTCTR_MODE, mode);
++		regmap_update_bits(r, OPORTMXTYSLOTCTR(sub->swm->oport.map, i),
++				   OPORTMXTYSLOTCTR_SLOTSEL_MASK, slotsel[i]);
++	}
++
++	return 0;
++}
++
+ /**
+  * aio_port_set_rate - set sampling rate of LPCM
+  * @sub: the AIO substream pointer, PCM substream only
+@@ -575,6 +626,10 @@ int aio_port_set_param(struct uniphier_aio_sub *sub, int pass_through,
+ 			rate = params_rate(params);
+ 		}
+ 
++		ret = aio_port_set_ch(sub);
++		if (ret)
++			return ret;
++
+ 		ret = aio_port_set_rate(sub, rate);
+ 		if (ret)
+ 			return ret;
+@@ -731,15 +786,28 @@ void aio_port_set_volume(struct uniphier_aio_sub *sub, int vol)
+ int aio_if_set_param(struct uniphier_aio_sub *sub, int pass_through)
+ {
+ 	struct regmap *r = sub->aio->chip->regmap;
+-	u32 v;
++	u32 memfmt, v;
+ 
+ 	if (sub->swm->dir == PORT_DIR_OUTPUT) {
+-		if (pass_through)
++		if (pass_through) {
+ 			v = PBOUTMXCTR0_ENDIAN_0123 |
+ 				PBOUTMXCTR0_MEMFMT_STREAM;
+-		else
+-			v = PBOUTMXCTR0_ENDIAN_3210 |
+-				PBOUTMXCTR0_MEMFMT_2CH;
++		} else {
++			switch (params_channels(&sub->params)) {
++			case 2:
++				memfmt = PBOUTMXCTR0_MEMFMT_2CH;
++				break;
++			case 6:
++				memfmt = PBOUTMXCTR0_MEMFMT_6CH;
++				break;
++			case 8:
++				memfmt = PBOUTMXCTR0_MEMFMT_8CH;
++				break;
++			default:
++				return -EINVAL;
++			}
++			v = PBOUTMXCTR0_ENDIAN_3210 | memfmt;
++		}
+ 
+ 		regmap_write(r, PBOUTMXCTR0(sub->swm->oif.map), v);
+ 		regmap_write(r, PBOUTMXCTR1(sub->swm->oif.map), 0);
+diff --git a/sound/soc/uniphier/aio-ld11.c b/sound/soc/uniphier/aio-ld11.c
+index ab04d3331be9..de962df245ba 100644
+--- a/sound/soc/uniphier/aio-ld11.c
++++ b/sound/soc/uniphier/aio-ld11.c
+@@ -286,7 +286,7 @@ static struct snd_soc_dai_driver uniphier_aio_dai_ld11[] = {
+ 			.formats     = SNDRV_PCM_FMTBIT_S32_LE,
+ 			.rates       = SNDRV_PCM_RATE_48000,
+ 			.channels_min = 2,
+-			.channels_max = 2,
++			.channels_max = 8,
+ 		},
+ 		.ops = &uniphier_aio_i2s_ops,
+ 	},
+diff --git a/sound/soc/uniphier/aio-reg.h b/sound/soc/uniphier/aio-reg.h
+index 45fdc6ae358a..734395dbcffb 100644
+--- a/sound/soc/uniphier/aio-reg.h
++++ b/sound/soc/uniphier/aio-reg.h
+@@ -374,6 +374,7 @@
+ #define OPORTMXTYVOLGAINSTATUS(n, m)     (0x42108 + 0x400 * (n) + 0x20 * (m))
+ #define   OPORTMXTYVOLGAINSTATUS_CUR_MASK  GENMASK(15, 0)
+ #define OPORTMXTYSLOTCTR(n, m)           (0x42114 + 0x400 * (n) + 0x20 * (m))
++#define   OPORTMXTYSLOTCTR_MODE            BIT(15)
+ #define   OPORTMXTYSLOTCTR_SLOTSEL_MASK    GENMASK(11, 8)
+ #define   OPORTMXTYSLOTCTR_SLOTSEL_SLOT0   (0x8 << 8)
+ #define   OPORTMXTYSLOTCTR_SLOTSEL_SLOT1   (0x9 << 8)
+diff --git a/sound/soc/uniphier/aio.h b/sound/soc/uniphier/aio.h
+index aa89c2f6fa24..23a5c3c68658 100644
+--- a/sound/soc/uniphier/aio.h
++++ b/sound/soc/uniphier/aio.h
+@@ -141,6 +141,9 @@ enum IEC61937_PC {
+ #define AUD_MIN_FRAGMENT_SIZE    (4 * 1024)
+ #define AUD_MAX_FRAGMENT_SIZE    (16 * 1024)
+ 
++/* max 5 slots, 10 channels, 2 channel in 1 slot */
++#define AUD_MAX_SLOTSEL    5
++
+ /*
+  * This is a selector for virtual register map of AIO.
+  *
+-- 
+2.18.0
 
-  net/smc/smc_core.c
-  net/smc/smc_ib.c
-
-between commit:
-
-  ddb457c6993b ("net/smc: Replace ib_query_gid with rdma_get_gid_attr")
-
-from the rdma tree and commit:
-
-  7005ada68d17 ("net/smc: use correct vlan gid of RoCE device")
-(and maybe others)
-
-from the net-next tree.
-
-I fixed it up (I wasn't sure how to fix this up as so much has changed
-in the net-next tree and both modified functions had been (re)moved,
-so I effectively reverted the rdma tree commit) and can carry the fix
-as necessary.  Please come to some arrangement about this.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/obtSygckK1wuZX/oWMFIP+z
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltahF0ACgkQAVBC80lX
-0GwnXQf/Y+fXHWI6aGm6LUXQeoHVB++6qxfQuMtudcwQdCr6FSm7nFWpXsS31G3/
-ONe5F4QH0aFtFfrsV9iuxhmT0h4yAe7PN4uR64Kr2+wmffcPuMPgOQiJX1IfFsOo
-hIHwatLR6HyFS0SLMnpEWD0MpUcU8pf+t/LPE7kbnXyNlbmKswIBz7qWGDA0ucau
-ogafC8tOc+Zu4XKy1Y0azDjBPSqhSAk/qZ8mAjJv+EaCFUxfQ0ri0OuVo6vJ/YX4
-/vXwYAxAKMkQH4l1+xHZ67WRb+oh0kJzGfPhXynvANAn4EeiCNjMWIcZnl5hHhe5
-iaY3HPgtXrp3CxpRjmWKCj4R6joR7g==
-=WdDR
------END PGP SIGNATURE-----
-
---Sig_/obtSygckK1wuZX/oWMFIP+z--
