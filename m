@@ -2,152 +2,242 @@ Return-Path: <SRS0=OQFz=KL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1974C67790
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:14:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4B86C67790
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:15:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 55F152089E
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:14:26 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amdcloud.onmicrosoft.com header.i=@amdcloud.onmicrosoft.com header.b="k7jrCa1B"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 55F152089E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amd.com
+	by mail.kernel.org (Postfix) with ESMTP id 57AEB2089E
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:15:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 57AEB2089E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388767AbeG0Lfh (ORCPT
+        id S1732042AbeG0LhK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 07:35:37 -0400
-Received: from mail-sn1nam02on0075.outbound.protection.outlook.com ([104.47.36.75]:56144
-        "EHLO NAM02-SN1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730205AbeG0Lfh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 07:35:37 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=amdcloud.onmicrosoft.com; s=selector1-amd-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=qS62/xwdbZGAwJmNCs+6BkZejaVP1fIhJ4i8EIee9Dw=;
- b=k7jrCa1BaYlHdsUVBPRUNwR31Mxkrnq3BbLSR+dWJCis/CuxJvt8CB/kF3W7cqOw6TWXwO9peuIkDHco0cLvOOVp1HW8J5Epjqe6c0jk7oklwZvJZ2egMCWTVxWwLeqpOSe3+x45KGJLSzx5R16eyvkKrcJicrvclPmXluqEpl0=
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=Akshu.Agrawal@amd.com; 
-Received: from akshu-HP-EliteBook-745-G2.amd.com (202.56.249.162) by
- MW2PR12MB2361.namprd12.prod.outlook.com (2603:10b6:907:7::32) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.973.22; Fri, 27 Jul 2018 10:14:18 +0000
-From:   Akshu Agrawal <akshu.agrawal@amd.com>
-Cc:     djkurtz@chromium.org, akshu.agrawal@amd.com,
-        Alexander.Deucher@amd.com, Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        alsa-devel@alsa-project.org (moderated list:SOUND - SOC LAYER / DYNAMIC
-        AUDIO POWER MANAGEM...), linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH] ASoC: soc-pcm: Use delay set in pointer function
-Date:   Fri, 27 Jul 2018 18:13:42 +0800
-Message-Id: <1532686422-1790-1-git-send-email-akshu.agrawal@amd.com>
-X-Mailer: git-send-email 1.9.1
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [202.56.249.162]
-X-ClientProxiedBy: MA1PR0101CA0035.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:a00:22::21) To MW2PR12MB2361.namprd12.prod.outlook.com
- (2603:10b6:907:7::32)
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 660b226e-8597-479f-24b9-08d5f3a9b85a
-X-MS-Office365-Filtering-HT: Tenant
-X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(5600074)(711020)(4618075)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(2017052603328)(7153060)(7193020);SRVR:MW2PR12MB2361;
-X-Microsoft-Exchange-Diagnostics: 1;MW2PR12MB2361;3:QiQg8kRd6bP6CwCrcz3BJOfXKEv0SXTMHrZLjK0swhc0ahHSbYK3r0tl7834Kf1aRF4sU7GyYqkT7uywR2xV+dZQcobUgdZ/gORLvdKr8x+kgKyjXivuGRLBMULp4RUfLYdzIQg3hndgQI5VShgviR5rCKfM1+6OaA//uOEO8PcDW1FwuIr7ZwS+5PAGkjJUa9U+18LnA9JQqrO35E7NF1pN+lIJmyAG0pBfaX5xDNeJmhUC8yp7TYxnccClkmvI;25:PYR1UqmitjzbDm2bbxWfwdVqIIg/VTtYyEuD6wtzrCrjVE0BFZbLFTfs44jAtToRGS7jJU25N2VqrOaQqae7XV35oVP9nApKOkgDd4CoWp6blkprLzb19JP3ZFpK1ANicjrKsmpfFPtoBZKQMMTSsP0arEuKY5P6psmV1T5RUhFxAgOmEEWdZUSsmIHN/8AldbUuzPcxQym9eSlEMoxRVkXKDreYed0QXjzgxEMpUVefYkq4lfGsVPFF7/27ZWUWYXNsncDNuskLmjGfPo8sTVIxexLpt7mnmdQLLVixMT8kVxy/mQRoydAxaVqA5HkAh9XnkyOMHwNF9QG9kl4vpA==;31:jPQhFUm6RqHJ6js+7MMyPsFq7H8C/lTeUoDDxMGd/yDGr7cZq0XUM8wyxHMEB6HEzy3zEN6yhxeKja38fpua8ugBzncWUkCMnvDQiL8ReMwDB5O08zFOSfKRMT21Bgqn0cISbH0/Dj5IlJGnJY9K4zj6q2/N0j6Ii7idTlSBeTVTh5E3DM3xQzMohsyP9k95nzpiOqF7ZJGdk6GktJpz2PFoMcXtnVNcVL/yT4j5tHI=
-X-MS-TrafficTypeDiagnostic: MW2PR12MB2361:
-X-Microsoft-Exchange-Diagnostics: 1;MW2PR12MB2361;20:Wacx7JSMHgJmMvEz7biu2aKSY7qFYDbDyDd9NvEKgMRHB/mZn+BjyOGm2wLdl4zDOfcj1cemXEu9u1AVPDqjGd91pk2qUy0yJWbscjSKWAqvn95O1kQ59B5lHx4LWUDvxtNkilnMm5kLFHApUkTSOw+BzsuF5vxvXY0jGHd1em9K99H1LRttZGA2y9cHrOI96GVxQPKg61hRfUERPZbzmHqjvc5TBNbzlEEgPiSdM2TCxVmxRN6gIZw6zGP8E/ViLXgFxtIHcIahI15p5yHgq8VmS5kaYEoOqiMz0fy+gobhB5pMCrUZtIHw8KYivTFBcimUVA1yYJkmcbxmoSlXYIuapWu/H2E7erJk3ccLerO0N+/FDTz4csjBJV93+HFlzT9hvx+aCUG1EQrxDEsAikIMqtw/cL9lIkSJXO9Xrq44albLYphUZEHZR4TyLlcQsEctjlnB/zYLaaNR1HUztE2Eo+BuMrwdwvAmylxVe+MThd3pA4e5QA7Dn9mHPsuT;4:F8ieYGGjdsn3CVTJ2hhenljs9uW9kd49v7gnMqYRXIY0gAjJrQwpZjvJaUuoKgn/yXY44xEnQiyS9SsB6ZhrypiKJHvWJ6+n0KMBUnnRIsXSAK/9YtJJWHrRnpZUFJGEe9S2BI0vE32ShPlTk6m+AKW8ae8Fp7tOUVbXOVfp4Fg2GYxCJcEhDQDbgKTbCWHhiALZWWphFun6CCwv8ubuIYcVP04PALNl5OoLMS0IieMQFJLkaZ4U07MPlNYsOD16h6zP52qqRVDOGxVk5VPTTkrKZspH+lEzAhqUg8oTCDrvj4x/Zr7hVt9eSxulo1EO
-X-Microsoft-Antispam-PRVS: <MW2PR12MB236134E8BAD83EFB4BC0AE40F82A0@MW2PR12MB2361.namprd12.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:(767451399110);
-X-MS-Exchange-SenderADCheck: 1
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(10201501046)(3002001)(93006095)(93001095)(3231311)(944501410)(52105095)(6055026)(149027)(150027)(6041310)(20161123558120)(20161123562045)(20161123564045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011)(7699016);SRVR:MW2PR12MB2361;BCL:0;PCL:0;RULEID:;SRVR:MW2PR12MB2361;
-X-Forefront-PRVS: 07467C4D33
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(39860400002)(376002)(366004)(136003)(346002)(396003)(199004)(189003)(1857600001)(16526019)(8676002)(3846002)(6116002)(26005)(72206003)(186003)(478600001)(66066001)(44832011)(52116002)(305945005)(476003)(7736002)(47776003)(105586002)(2616005)(106356001)(956004)(54906003)(7696005)(97736004)(486006)(81156014)(81166006)(316002)(16586007)(6486002)(14444005)(53416004)(386003)(2906002)(6666003)(8936002)(68736007)(86362001)(109986005)(39060400002)(36756003)(25786009)(50466002)(5660300001)(48376002)(1671002)(53936002)(4326008)(50226002)(51416003)(266003);DIR:OUT;SFP:1101;SCL:1;SRVR:MW2PR12MB2361;H:akshu-HP-EliteBook-745-G2.amd.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-Received-SPF: None (protection.outlook.com: amd.com does not designate
- permitted sender hosts)
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;MW2PR12MB2361;23:R27qpSXBgAyoXpanTVHXkTy496Qhtioh77hZknie8?=
- =?us-ascii?Q?OHpUvtpan6BdkqQ6vhbjm+tjLvErY1B1v7q77cnEhTrdwTBanH8No2nb6dlh?=
- =?us-ascii?Q?t4bZKT21a0rKJddOH2xsG/w5CN6sjS2APhBVlU2xqm5Jh825e3a8Uh0QocU6?=
- =?us-ascii?Q?Dhg3AFrttJn4TyXVIwOtVAXjfp4dshcIFFbPuCtB9jcHqYiJZuyUlHY6xKVj?=
- =?us-ascii?Q?KnRZecCavMm0EyiEN4JFn0qgQIVBb5OWb5j+QoTdASSIjkZG/LBywDHi3Xuc?=
- =?us-ascii?Q?eloryak6eS3p2TbItC8m73CbROQCKC2W8DD6zWdN04bv/8DIGRj58Iv2fvmw?=
- =?us-ascii?Q?QUXPCBlWXIz+8QTa3OXPZe4WuLtgZKanCSSYwaWskg5CVAPZk63dhAmj47cu?=
- =?us-ascii?Q?Obc5truyxp+oVn/d5LO4oZ+DNJcOV30ywx868lylkMu9HJ7XgcqlCdi0KJN/?=
- =?us-ascii?Q?OBkgU+8I/5vu/DdhKa4KR0c8NNWWqy3HJ9p/x31XuOmQ3muXUqAafQG7tEyS?=
- =?us-ascii?Q?CAF9lZlfW3fwpeV88dxtVWHEkJCBfg6PheUSMUXSnChwJiYDVTerXimPUD5z?=
- =?us-ascii?Q?3S36+VSaxbWtMwJDTFF7/Ro0jsSl2Xgf0kyG33QWFE3RhhSHQr2BPch+HzVr?=
- =?us-ascii?Q?Er6heMGcCBDJLr8XD8vxqmt1J2Cc7nvy3EJCM+3CTlxDC5BbP+TJsZL6Y9PH?=
- =?us-ascii?Q?msRDof2YFWYneLNpyf2VjQMLNhgFpHYveWq2aT0EayLyHJwRsBIf+XbVOyFf?=
- =?us-ascii?Q?HwS1rurEQBqWuVm8jx0y9eqt1ezTQvvQF7bhD7LCHRwDA9+gP0QtbSUZisfp?=
- =?us-ascii?Q?wONMeQbHVZcDM0aG52iQ8dHlucH97pCcJXaUV8SkxdJZw8akIzzk5iYb8Fax?=
- =?us-ascii?Q?hGwweDOLl17juxUa9U4DxMVGgpzhXG5S1h1l2XXZERceqRqTkYmVxeStdkKd?=
- =?us-ascii?Q?O5z4ZV4lLs9yi6gO02IpFyHbTwxOmWfmngoo+DzepIAZfXyHBdKo4qEZ6I+b?=
- =?us-ascii?Q?M1Usaplsg7/EtWyRkDbVAeyLM3BI1RzPTHZXAIa1WcPKlmEU7crJDcKvf9lF?=
- =?us-ascii?Q?q9K6M2+g3yUhJTbZoSbbnzvmQO6CBHNQPMWkm1G4qVdMR93SLyPZlYcGJaDZ?=
- =?us-ascii?Q?xT072lZ67nH7gqKtv77ZaRCSrlN8F23aLiin6WZH9pgbwnahta6vjNocbbl+?=
- =?us-ascii?Q?3gIQ+HtBFjmQUGIL68TGiPnVbcCTXaSbHS+pRYfbdQr/VFdCy0wFjMlv0uVR?=
- =?us-ascii?Q?3ogP8PdqH85PaNoUN/e8bnZ81FZqlypCjjWmSEozeDQKyGpzRybomYeaHmmC?=
- =?us-ascii?B?UT09?=
-X-Microsoft-Antispam-Message-Info: UoTy+73fw4eCeqnM5q6Snji7Rju03GAMna24eOPbrcEzCNfoehaKqrBpbsWlV6lfiBqgWEu6sWh3N7ovwq4lbu3ftzVlWXx0oQc0rIkByj8v4uqJQ30bOx7aF/Imk3zQnZDLUJo8fCzXjKquef5ygPqbMXUdJu1Cy/UhdYmuUxlBYKpROQFFSBSU91rvn8qnXbAL24NXAm4x7AfDeJYh5YoWd4mP9I/rVyjwMnGGNTOQounmQF1gzRKhhTbkGpSEbvHKyuwXwMcNwFkUjQxI75mhSUx5rouhZfjUOSFz2Q4JaZH39IMBLnf79c8mUF0Df0/PsV9lltZjk+XtssXv+N6On54iuGT/T+xDlEHnIMM=
-X-Microsoft-Exchange-Diagnostics: 1;MW2PR12MB2361;6:XET1uZCXtBgpBn7VHfydKNQ7dfRLPEqkue2LiIlt08Fu8uU4R6bWDDBHzwyr661oFJBbrX8MQdIdmmAfXfvmd+jIKod775lsCTbk1uwMOJuHi+y89NeLsBXOyhGPDjZondK5W1M8zeDbqtHTklJtykhXPlrKM+OmihRRamudBndyPuCUpMCiEdi73Gn+RaaNEomTOKSewZARKRq7daeiVd4j0fpSz0s9J/Mel1Vyi9VMJNh24YExHG1rNkMIOWPjw+V/RxwCRuGu9KknOShk7KdT3VSWQP80DLkh8Oc3qEGTtcPnKmMocIoCjnJzU483sv3d9cLQBK1Dih5s9hICCOJ+ZezS0ijXQRIYUu041iMdB+0cwZXRo3A0qPOPJw46fgr41qEWkdmqux1H7GbmaOuhaCnAyvvbBT6lY/kvsdz2RcTlOBRmG0p8tb4nL7xDWB1TPKFn4nWYULy9AuAqFw==;5:KcyN00Ma9BlprAn6luFDq9ZUMfh+TWJl7lCoafGrY95JNNhE1tHORevvtHaVsFkaSoeHiXgPmzR22+qVPYcgxYVfGKjFM4yxYakXfNZLXd/NGv/7db4rf30M3xfHV+dalJwzmAO/IBW68sBPHX8F/ZnjCPBrbPx5AT2MUO4wcRs=;7:JmXUFU6DQOv82mvOzQSuXDo5bwrw1O/iaA93+HALi27FmCOMNcdQPPBHcFqfyFWzTXYdmB4CU6V5guIIvj+Ss/dPqBnAtqRqnj3dSoktuBuFNOBGMxjVpsXBcWtiFjDJRyzHxVCJAFYEwlqloZS60D7YPGsyTKPCqv7QwDM4Kff/n8cV9cUnKSx1Ddx99x1CXA/jBRIOPIDYH0otPefjotbOREGXb9VqKYnHmb/EQKSWsIqQRXznNCQLRrQfGBrZ
-SpamDiagnosticOutput: 1:99
-SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;MW2PR12MB2361;20:d73SCxtNp3UOvD+jT5pANqXUrRNuvYIY+WjYGOBO+ROypFlEUG3giXfEiZDWvmLp56XA3DmTTQl52T8twjbtgG5lbhw6IAREL+K1tK//51gooKkaO7p7YPAYhyuEqldTV2RocdcrEPKeDy0NFwzVMtXh/rUGj5bhxD8QVlf0qfCCaiGlXGGmh1+C2afKUjHJ6qz8fSRwKiS8h8AwnGRytt7fPoOIb+4bYl9chsPbVB1xq9hBjsFuGud7ZNNl7p2J
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Jul 2018 10:14:18.7762 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 660b226e-8597-479f-24b9-08d5f3a9b85a
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW2PR12MB2361
-To:     unlisted-recipients:; (no To-header on input)
+        Fri, 27 Jul 2018 07:37:10 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:40836 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729547AbeG0LhK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Jul 2018 07:37:10 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BEEC415AD;
+        Fri, 27 Jul 2018 03:15:56 -0700 (PDT)
+Received: from en101.Emea.Arm.com (en101.Emea.Arm.com [10.4.13.23])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 668353F575;
+        Fri, 27 Jul 2018 03:15:54 -0700 (PDT)
+From:   Suzuki K Poulose <suzuki.poulose@arm.com>
+To:     linux-arm-kernel@lists.infradead.org
+Cc:     linux-kernel@vger.kernel.org, mathieu.poirier@linaro.org,
+        mike.leach@linaro.org, robert.walker@arm.com,
+        coresight@lists.linaro.org, robh@kernel.org,
+        frowand.list@gmail.com, devicetree@vger.kernel.org,
+        matt.sealey@arm.com, charles.garcia-tobin@arm.com,
+        john.horley@arm.com, al.grant@arm.com,
+        Suzuki K Poulose <suzuki.poulose@arm.com>
+Subject: [PATCH v3 0/9] coresight: Update device tree bindings
+Date:   Fri, 27 Jul 2018 11:15:28 +0100
+Message-Id: <1532686537-12380-1-git-send-email-suzuki.poulose@arm.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There are cases where a pointer function populates
-runtime->delay, such as:
-./sound/pci/hda/hda_controller.c
-./sound/soc/intel/atom/sst-mfld-platform-pcm.c
+Coresight uses DT graph bindings to describe the connections of the
+components. However we have some undocumented usage of the bindings
+to describe some of the properties of the connections.
 
-Also, in some cases cpu dai used is generic and the pcm
-driver needs to set delay.
+The coresight driver needs to know the hardware ports invovled
+in the connection and the direction of data flow to effectively
+manage the trace sessions. So far we have relied on the "port"
+address (as described by the generic graph bindings) to represent
+the hardware port of the component for a connection.
 
-This delay was getting lost and was overwritten by delays
-from codec or cpu dai delay function if exposed.
+The hardware uses separate numbering scheme for input and output
+ports, which implies, we could have two different (input and output)
+ports with the same port number. This could create problems in the
+graph bindings where the label of the port wouldn't match the address.
 
-Signed-off-by: Akshu Agrawal <akshu.agrawal@amd.com>
----
- sound/soc/soc-pcm.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+e.g, with the existing bindings we get :
 
-diff --git a/sound/soc/soc-pcm.c b/sound/soc/soc-pcm.c
-index 98be04b..b1a2bc2 100644
---- a/sound/soc/soc-pcm.c
-+++ b/sound/soc/soc-pcm.c
-@@ -1179,6 +1179,9 @@ static snd_pcm_uframes_t soc_pcm_pointer(struct snd_pcm_substream *substream)
- 	snd_pcm_sframes_t codec_delay = 0;
- 	int i;
- 
-+	/* clearing the previous delay */
-+	runtime->delay = 0;
-+
- 	for_each_rtdcom(rtd, rtdcom) {
- 		component = rtdcom->component;
- 
-@@ -1203,7 +1206,7 @@ static snd_pcm_uframes_t soc_pcm_pointer(struct snd_pcm_substream *substream)
- 	}
- 	delay += codec_delay;
- 
--	runtime->delay = delay;
-+	runtime->delay += delay;
- 
- 	return offset;
- }
+	port@0{				// Output port 0
+		reg = <0>;
+		...
+	};
+
+	port@1{
+		reg = <0>;		// Input port 0
+		endpoint {
+			slave-mode;
+			...
+		};
+	};
+
+With the new enforcement in the DT rules, mismatches in label and address
+are not allowed (as see in the case for port@1). So, we need a new mechanism
+to describe the hardware port number reliably.
+
+Also, we relied on an undocumented "slave-mode" property (see the above
+example) to indicate if the port is an input port. Let us formalise and
+switch to a new property to describe the direction of data flow.
+
+There were three options considered for the hardware port number scheme:
+
+ 1) Use natural ordering in the DT to infer the hardware port number.
+  i.e, Mandate that the all ports are listed in the DT and in the ascending
+  order for each class (input and output respectively).
+   Pros :
+      - We don't need new properties and if the existing DTS list them in
+        order (which most of them do), they work out of the box.
+   Cons :
+      - We must list all the ports even if the system cannot/shouldn't use
+        it.
+      - It is prone to human errors (if the order is not kept).
+
+ 2) Use an explicit property to list both the direction and the hw port
+    number and direction. Define "coresight,hwid" as 2 member array of u32,
+    where the members are port number and the direction respectively.
+	e.g
+
+	port@0{
+		reg = <0>;
+		endpoint {
+			coresight,hwid = <0 1>;	// Port # 0, Output
+		}
+	};
+
+	port@1{
+		reg = <1>;
+		endpoint {
+			coresight,hwid = <0 0>;	// Port # 0, Input
+		};
+	};
+
+	Pros:
+	  - The bindings are formal but not so reader friendly and could
+	    potentially lead to human errors.
+	Cons:
+	  - Backward compatiblity is lost.
+ 3) Use explicit properties (implemented in the series) for the hardware
+    port id and direction. We define a new property "coresight,hwid" for
+    each endpoint in coresight devices to specify the hardware port number
+    explicitly. Also use a separate property "direction" to specify the
+    direction of the data flow.
+
+	e.g,
+
+	port@0{
+		reg = <0>;
+		endpoint {
+			direction = <1>;	// Output
+			coresight,hwid = <0>;	// Port # 0
+		}
+	};
+
+	port@1{
+		reg = <1>;
+		endpoint {
+			direction = <0>;	// Input
+			coresight,hwid = <0>;	// Port # 0
+		};
+	};
+
+    Pros:
+       - The bindings are formal and reader friendly, and less prone to errors.
+    Cons:
+       - Backward compatibility is lost.
+
+After a round of discussions [1], the following option (4) is adopted :
+
+ 4) Group ports based on the directions under a dedicated node. This has been
+    checked with the upstream DTC tool to resolve the "address mismatch" issue.
+
+	e.g,
+
+	out-ports {				// Output ports for this component
+
+		port@0 {			// Outport 0
+		  reg = 0;
+		  endpoint { ... };
+		};
+
+		port@1 {			// Outport 1
+		  reg = 1;
+		  endpoint { ... };
+		};
+
+	};
+
+	in-ports {				// Input ports for this component
+		port@0 {			// Inport 0
+		  reg = 0;
+		  endpoint { ... };
+		};
+
+		port@1 {			// Inport 1
+		  reg = 1;
+		  endpoint { ... };
+		};
+
+	};
+
+
+This series implements Option (4) listed above and falls back to the old
+bindings if the new bindings are not available. This allows the systems
+with old bindings work with the new driver. The driver now issues a warning
+(once) when it encounters the old bindings. The series contains DT update
+for Juno platform. The remaining in-kernel sources could be updated once
+we are fine with the proposal.
+
+It also cleans up the platform parsing code to reduce the memory usage by
+reusing the platform description.
+
+Applies on coresight/next
+
+Changes since V2:
+  - Clean of_coresight_parse_endpoint() to return 1 to indicate a connection
+    record was updated.
+  - Drop documentation for old bindings
+
+Changes since V1:
+  - Implement the proposal by Rob.
+  - Drop the DTS updates for all platforms except Juno
+  - Drop the incorrect fix in coresight_register. Instead document the code
+    to prevent people trying to un-fix it again.
+  - Add a patch to drop remote device references in DT graph parsing
+  - Split of_node refcount fixing patch, fix a typo in the comment.
+  - Add Reviewed-by tags from Mathieu.
+  - Drop patches picked up for 4.18-rc series
+
+Changes since RFC:
+ - Fixed style issues
+ - Fix an existing memory leak coresight_register (Found in code update)
+ - Fix missing of_node_put() in the existing driver (Reported-by Mathieu)
+ - Update the existing dts in kernel tree.
+
+Suzuki K Poulose (9):
+  coresight: Document error handling in coresight_register
+  coresight: platform: Refactor graph endpoint parsing
+  coresight: platform: Fix refcounting for graph nodes
+  coresight: platform: Fix leaking device reference
+  coresight: Fix remote endpoint parsing
+  coresight: Add helper to check if the endpoint is input
+  coresight: platform: Cleanup coresight connection handling
+  coresight: Cleanup coresight DT bindings
+  dts: juno: Update coresight bindings
+
+ .../devicetree/bindings/arm/coresight.txt          |  95 +++++---
+ arch/arm64/boot/dts/arm/juno-base.dtsi             | 161 ++++++------
+ arch/arm64/boot/dts/arm/juno-cs-r1r2.dtsi          |  52 ++--
+ arch/arm64/boot/dts/arm/juno.dts                   |  13 +-
+ drivers/hwtracing/coresight/coresight.c            |  35 +--
+ drivers/hwtracing/coresight/of_coresight.c         | 269 ++++++++++++++-------
+ include/linux/coresight.h                          |   9 +-
+ 7 files changed, 359 insertions(+), 275 deletions(-)
+
 -- 
-1.9.1
+2.7.4
 
