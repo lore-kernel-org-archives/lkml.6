@@ -2,88 +2,96 @@ Return-Path: <SRS0=OQFz=KL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3266C67790
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 07:41:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B789C67790
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 07:42:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5E74C20673
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 07:41:56 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b="K8Ia9qsr"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E74C20673
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=8bytes.org
+	by mail.kernel.org (Postfix) with ESMTP id 4F3FD20673
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 07:42:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F3FD20673
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730154AbeG0JCb (ORCPT
+        id S1730218AbeG0JDb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 05:02:31 -0400
-Received: from 8bytes.org ([81.169.241.247]:32836 "EHLO theia.8bytes.org"
+        Fri, 27 Jul 2018 05:03:31 -0400
+Received: from mga01.intel.com ([192.55.52.88]:31220 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729445AbeG0JCb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 05:02:31 -0400
-Received: by theia.8bytes.org (Postfix, from userid 1000)
-        id 1B36B25A; Fri, 27 Jul 2018 09:41:53 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=8bytes.org; s=mail-1;
-        t=1532677313; bh=5fNy9WJLM20ClCpqC8t1dGhy/jtYxpMBE27+rfeeXA0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=K8Ia9qsrTMjnvy/tAJLj9zAIiRS9FP8KTNZ5H/qTt+LlJqQ18v3+VABoLDfDO+2pD
-         Q6+FxF7+aZeSi0aamLHCh0/8GpLYomNNQ5ofoamIH2zoX2HOUtEecICln9jxFz2dSG
-         qpTj37kR4aJyisHQYTqQH64aTpoTzUos677K9ElIQoYOnWTt+CPv5fzBRXPf8pJ/nX
-         CRBcpEXWEpgQcgu3zvAYsUmX99gZtEOsjP0yyxqsIxNgcXQl/uHU0B0s8wIKCoWnBm
-         8+rJC+N05hyk0lV/LP6Hg4Sj/RzpNEB9knuCoZrdYZaMZnbMEGGknft3g8zuCjX0ke
-         JBrX98deQbu0w==
-Date:   Fri, 27 Jul 2018 09:41:52 +0200
-From:   Joerg Roedel <joro@8bytes.org>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>
-Cc:     Magnus Damm <magnus.damm@gmail.com>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        iommu@lists.linux-foundation.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] iommu/ipmmu-vmsa: Fix allocation in atomic context
-Message-ID: <20180727074152.bmso3y4lr53ixo2f@8bytes.org>
-References: <20180720161659.29800-1-geert+renesas@glider.be>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180720161659.29800-1-geert+renesas@glider.be>
-User-Agent: NeoMutt/20170421 (1.8.2)
+        id S1725988AbeG0JDb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Jul 2018 05:03:31 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Jul 2018 00:42:53 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,408,1526367600"; 
+   d="scan'208";a="57574611"
+Received: from taolv-mobl.ccr.corp.intel.com ([10.249.169.42])
+  by fmsmga007.fm.intel.com with ESMTP; 27 Jul 2018 00:42:47 -0700
+Message-ID: <1532677364.2358.51.camel@intel.com>
+Subject: Re: [PATCH] MAINTAINERS: Add myself as designated reviewer for
+ thermal
+From:   Zhang Rui <rui.zhang@intel.com>
+To:     Eduardo Valentin <edubezval@gmail.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc:     linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Fri, 27 Jul 2018 15:42:44 +0800
+In-Reply-To: <20180726211237.GA3487@localhost.localdomain>
+References: <1532600980-29357-1-git-send-email-daniel.lezcano@linaro.org>
+         <20180726211237.GA3487@localhost.localdomain>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.18.5.2-0ubuntu3.2 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 20, 2018 at 06:16:59PM +0200, Geert Uytterhoeven wrote:
-> When attaching a device to an IOMMU group with
-> CONFIG_DEBUG_ATOMIC_SLEEP=y:
+On 四, 2018-07-26 at 14:12 -0700, Eduardo Valentin wrote:
+> On Thu, Jul 26, 2018 at 12:29:40PM +0200, Daniel Lezcano wrote:
+> > 
+> > I would like to participate in the review process effort for the
+> > thermal framework, especially the SoC part.
+> > 
+> > Instead of capturing emails with message filters, I would like to
+> > humbly add myself as reviewer so I can receive the patches directly
+> > in
+> > my INBOX and focus on their review.
+> > 
+> > Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+> Acked-by: Eduardo Valentin <edubezval@gmail.com>
 > 
->     BUG: sleeping function called from invalid context at mm/slab.h:421
->     in_atomic(): 1, irqs_disabled(): 128, pid: 61, name: kworker/1:1
->     ...
->     Call trace:
->      ...
->      arm_lpae_alloc_pgtable+0x114/0x184
->      arm_64_lpae_alloc_pgtable_s1+0x2c/0x128
->      arm_32_lpae_alloc_pgtable_s1+0x40/0x6c
->      alloc_io_pgtable_ops+0x60/0x88
->      ipmmu_attach_device+0x140/0x334
+> Thanks for the help Daniel.
 > 
-> ipmmu_attach_device() takes a spinlock, while arm_lpae_alloc_pgtable()
-> allocates memory using GFP_KERNEL.  Originally, the ipmmu-vmsa driver
-> had its own custom page table allocation implementation using
-> GFP_ATOMIC, hence the spinlock was fine.
+> Rui, want to take care of this?
 > 
-> Fix this by replacing the spinlock by a mutex, like the arm-smmu driver
-> does.
-> 
-> Fixes: f20ed39f53145e45 ("iommu/ipmmu-vmsa: Use the ARM LPAE page table allocator")
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
->  drivers/iommu/ipmmu-vmsa.c | 9 ++++-----
->  1 file changed, 4 insertions(+), 5 deletions(-)
 
-Applied, thanks.
+yes, I will take this patch
 
+thanks,
+rui
+> > 
+> > ---
+> >  MAINTAINERS | 1 +
+> >  1 file changed, 1 insertion(+)
+> > 
+> > diff --git a/MAINTAINERS b/MAINTAINERS
+> > index 0fe4228..1890aad 100644
+> > --- a/MAINTAINERS
+> > +++ b/MAINTAINERS
+> > @@ -14119,6 +14119,7 @@ F:	drivers/media/radio/radio-
+> > raremono.c
+> >  THERMAL
+> >  M:	Zhang Rui <rui.zhang@intel.com>
+> >  M:	Eduardo Valentin <edubezval@gmail.com>
+> > +R:	Daniel Lezcano <daniel.lezcano@linaro.org>
+> >  L:	linux-pm@vger.kernel.org
+> >  T:	git
+> > git://git.kernel.org/pub/scm/linux/kernel/git/rzhang/linux.git
+> >  T:	git
+> > git://git.kernel.org/pub/scm/linux/kernel/git/evalenti/linux-soc-
+> > thermal.git
