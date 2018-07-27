@@ -2,133 +2,332 @@ Return-Path: <SRS0=OQFz=KL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66947C28CF6
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 03:14:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C4C5C28CF6
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 03:15:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 08A3C20883
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 03:14:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 08A3C20883
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 17172206B7
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 03:15:44 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IwjcH+ZX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 17172206B7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726028AbeG0EeQ (ORCPT
+        id S1727695AbeG0Ef0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 00:34:16 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:43088 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725819AbeG0EeP (ORCPT
+        Fri, 27 Jul 2018 00:35:26 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:33377 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725819AbeG0Ef0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 00:34:15 -0400
-Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w6R33Zhj165547
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Jul 2018 23:14:30 -0400
-Received: from e17.ny.us.ibm.com (e17.ny.us.ibm.com [129.33.205.207])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2kfsrd385d-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Jul 2018 23:14:30 -0400
-Received: from localhost
-        by e17.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Thu, 26 Jul 2018 23:14:29 -0400
-Received: from b01cxnp23033.gho.pok.ibm.com (9.57.198.28)
-        by e17.ny.us.ibm.com (146.89.104.204) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 26 Jul 2018 23:14:27 -0400
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp23033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w6R3EQGh8323400
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 27 Jul 2018 03:14:26 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 16001B2064;
-        Thu, 26 Jul 2018 23:14:06 -0400 (EDT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id E9EDFB205F;
-        Thu, 26 Jul 2018 23:14:05 -0400 (EDT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.85.139.164])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Thu, 26 Jul 2018 23:14:05 -0400 (EDT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id 0BF6A16CA220; Thu, 26 Jul 2018 20:14:26 -0700 (PDT)
-Date:   Thu, 26 Jul 2018 20:14:26 -0700
-From:   "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-To:     Joel Fernandes <joel@joelfernandes.org>
-Cc:     kernel test robot <rong.a.chen@intel.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>, lkp@01.org
-Subject: Re: [LKP] [rcutorture]  3b745c8969:
- WARNING:at_mm/slab_common.c:#kmalloc_slab
-Reply-To: paulmck@linux.vnet.ibm.com
-References: <20180726085015.GA29979@shao2-debian>
- <20180726115325.GE24813@linux.vnet.ibm.com>
- <20180726233436.GA211260@joelaf.mtv.corp.google.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180726233436.GA211260@joelaf.mtv.corp.google.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18072703-0040-0000-0000-000004548025
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009435; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000266; SDB=6.01066676; UDB=6.00548045; IPR=6.00844537;
- MB=3.00022343; MTD=3.00000008; XFM=3.00000015; UTC=2018-07-27 03:14:29
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18072703-0041-0000-0000-0000085AB727
-Message-Id: <20180727031426.GU24813@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-26_06:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1806210000 definitions=main-1807270028
+        Fri, 27 Jul 2018 00:35:26 -0400
+Received: by mail-pg1-f194.google.com with SMTP id r5-v6so2372961pgv.0;
+        Thu, 26 Jul 2018 20:15:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=0IkSzewAd/VeffZhMAfUjhKscKdE9XuQouYlw3f38zk=;
+        b=IwjcH+ZXjyhHar9xsQtXUuzQFIuJaskNToQUSn6q8wqeshxFaEYiiYF4owchRziugm
+         3iyPhMkV+HNsScsT5D5mnsEnfZ6eaTRp5UJRrohnSMkuNcGkEXr9m4yReHD/mgfV+xGn
+         8xmalL2o6Rm7iSdZOKGv75R3+Z78gn7D04ropj93b0EYZsPQ45pnw+dUg4DuSTBoRPiO
+         czZ4jROAcZCelyqYmHjRKIZXOfMACIfD5rEgtmyNHn6CABP6Eu7uSm72q2/51kOJ1ynb
+         YntVyzIMxgfSpf/PZncOvXi4oZT68gHPsO1TMXOteDzU9ITz4hIZGKmXMHZJPgkZCivj
+         EEvg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=0IkSzewAd/VeffZhMAfUjhKscKdE9XuQouYlw3f38zk=;
+        b=LdlLpBmaEA4r2RZA3EQzsZNtWWmmXErXw6x3o1mDlEur81ijxbo54H2l2O/SgFFibj
+         6Jw7BUwanwWcPV3FAYOsLX+rMQ17Ylawn7NMG+fie3rsb07f8VzeXI7lSzmGoLL5GjBQ
+         aBW0PC3nZLfkj4DSA6XmrXyB+C4gNCq1++PxOrSCe5nq5FH6ZYrCjDaMSiBXjOXpnQhC
+         C3P73y4RJL2I+QpqFBo7TAngg41POEMfi8fnvVjaZPGL5zVucvfXU5UabZV2Xm2ziUFm
+         ql+aYsNiRNKOI3fe63Vj/Yq1AJ85juIBUEbaImfNOORVQrhh/0xcJ7HvKZRryIgZn1WW
+         7mUg==
+X-Gm-Message-State: AOUpUlFxRTRQctTxX8e5jvLRTyBkY2z+p4M/KXv+08BF0A86/mTkRaDw
+        BPG9j2mv84RpoWBCbevOSKA=
+X-Google-Smtp-Source: AAOMgpfIv2Paw+WP8QkWvX2NQZrtQ5etKzzXNEN1v852JkmZxG0jzLWk6wUVML/z2e4eNDZqemGfEg==
+X-Received: by 2002:a62:2646:: with SMTP id m67-v6mr4821780pfm.254.1532661341364;
+        Thu, 26 Jul 2018 20:15:41 -0700 (PDT)
+Received: from localhost.localdomain ([2402:f000:1:4414:6c14:7712:e625:1be4])
+        by smtp.gmail.com with ESMTPSA id a20-v6sm3631754pfi.124.2018.07.26.20.15.38
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 26 Jul 2018 20:15:40 -0700 (PDT)
+From:   Jia-Ju Bai <baijiaju1990@gmail.com>
+To:     mchehab@kernel.org, brad@nextdimension.cc, hansverk@cisco.com,
+        colin.king@canonical.com, zzam@gentoo.org
+Cc:     linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jia-Ju Bai <baijiaju1990@gmail.com>
+Subject: [PATCH] media: pci: cx23885: Replace mdelay() with msleep() and usleep_range() in cx23885_gpio_setup()
+Date:   Fri, 27 Jul 2018 11:15:34 +0800
+Message-Id: <20180727031534.2988-1-baijiaju1990@gmail.com>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 26, 2018 at 04:34:36PM -0700, Joel Fernandes wrote:
-> On Thu, Jul 26, 2018 at 04:53:25AM -0700, Paul E. McKenney wrote:
-> > On Thu, Jul 26, 2018 at 04:50:15PM +0800, kernel test robot wrote:
-> > > 
-> > > FYI, we noticed the following commit (built with gcc-5):
-> > > 
-> > > commit: 3b745c8969c752601cb68c82a06735363563ab42 ("rcutorture: Make boost test more robust")
-> > > https://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git master
-> > > 
-> > > in testcase: boot
-> > > 
-> > > on test machine: qemu-system-x86_64 -enable-kvm -smp 2 -m 512M
-> > > 
-> > > caused below changes (please refer to attached dmesg/kmsg for entire log/backtrace):
-> > 
-> > Is this fixed by 4babd855fd61 ("rcutorture: Add support to detect
-> > if boost kthread prio is too low")?  That could address the
-> > rcu_torture_stats_print() failures, depending on exactly what they were.
-> > (Yes, I should have reversed these two commits, but they are in -tip
-> > now, so that ship has sailed.)
-> > 
-> > Joel, any other thoughts?
-> 
-> I ran the next tree myself and was not able to reproduce the issue with the
-> same configuration. Although I don't have rcupdate.rcu_cpu_stall_timeout=100
-> passed in like they do (which I can also try if you think its of significance
-> here).
-> 
-> It seems from their logs that most Locking API self tests are failing. the
-> Lock API test suite is run before rcutorture where rcutorture hasn't even
-> started.
-> 
-> Also as per their rcutorture output, it appears the 'rtf' value is also
-> non-zero (rcu_torture_free test). Which makes sense if the earlier memory
-> allocation warnings are somehow related.
+cx23885_gpio_setup() is never called in atomic context.
+It calls mdelay() to busily wait, which is not necessary.
+mdelay() can be replaced with msleep() and usleep_range().
 
-It could potentially be an OOM issue.  Something to keep an eye out for,
-then.
+This is found by a static analysis tool named DCNS written by myself.
 
-							Thanx, Paul
+Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+---
+ drivers/media/pci/cx23885/cx23885-cards.c | 82 +++++++++++------------
+ 1 file changed, 41 insertions(+), 41 deletions(-)
+
+diff --git a/drivers/media/pci/cx23885/cx23885-cards.c b/drivers/media/pci/cx23885/cx23885-cards.c
+index 3a1c55187b2a..4148ab4f3af0 100644
+--- a/drivers/media/pci/cx23885/cx23885-cards.c
++++ b/drivers/media/pci/cx23885/cx23885-cards.c
+@@ -1497,20 +1497,20 @@ void cx23885_gpio_setup(struct cx23885_dev *dev)
+ 
+ 		/* Put the demod into reset and protect the eeprom */
+ 		mc417_gpio_clear(dev, GPIO_15 | GPIO_14);
+-		mdelay(100);
++		msleep(100);
+ 
+ 		/* Bring the demod and blaster out of reset */
+ 		mc417_gpio_set(dev, GPIO_15 | GPIO_14);
+-		mdelay(100);
++		msleep(100);
+ 
+ 		/* Force the TDA8295A into reset and back */
+ 		cx23885_gpio_enable(dev, GPIO_2, 1);
+ 		cx23885_gpio_set(dev, GPIO_2);
+-		mdelay(20);
++		msleep(20);
+ 		cx23885_gpio_clear(dev, GPIO_2);
+-		mdelay(20);
++		msleep(20);
+ 		cx23885_gpio_set(dev, GPIO_2);
+-		mdelay(20);
++		msleep(20);
+ 		break;
+ 	case CX23885_BOARD_HAUPPAUGE_HVR1200:
+ 		/* GPIO-0 tda10048 demodulator reset */
+@@ -1518,9 +1518,9 @@ void cx23885_gpio_setup(struct cx23885_dev *dev)
+ 
+ 		/* Put the parts into reset and back */
+ 		cx_set(GP0_IO, 0x00050000);
+-		mdelay(20);
++		msleep(20);
+ 		cx_clear(GP0_IO, 0x00000005);
+-		mdelay(20);
++		msleep(20);
+ 		cx_set(GP0_IO, 0x00050005);
+ 		break;
+ 	case CX23885_BOARD_HAUPPAUGE_HVR1700:
+@@ -1539,9 +1539,9 @@ void cx23885_gpio_setup(struct cx23885_dev *dev)
+ 
+ 		/* Put the parts into reset and back */
+ 		cx_set(GP0_IO, 0x00050000);
+-		mdelay(20);
++		msleep(20);
+ 		cx_clear(GP0_IO, 0x00000005);
+-		mdelay(20);
++		msleep(20);
+ 		cx_set(GP0_IO, 0x00050005);
+ 		break;
+ 	case CX23885_BOARD_HAUPPAUGE_HVR1400:
+@@ -1551,9 +1551,9 @@ void cx23885_gpio_setup(struct cx23885_dev *dev)
+ 
+ 		/* Put the parts into reset and back */
+ 		cx_set(GP0_IO, 0x00050000);
+-		mdelay(20);
++		msleep(20);
+ 		cx_clear(GP0_IO, 0x00000005);
+-		mdelay(20);
++		msleep(20);
+ 		cx_set(GP0_IO, 0x00050005);
+ 		break;
+ 	case CX23885_BOARD_DVICO_FUSIONHDTV_7_DUAL_EXP:
+@@ -1564,9 +1564,9 @@ void cx23885_gpio_setup(struct cx23885_dev *dev)
+ 
+ 		/* Put the parts into reset and back */
+ 		cx_set(GP0_IO, 0x000f0000);
+-		mdelay(20);
++		msleep(20);
+ 		cx_clear(GP0_IO, 0x0000000f);
+-		mdelay(20);
++		msleep(20);
+ 		cx_set(GP0_IO, 0x000f000f);
+ 		break;
+ 	case CX23885_BOARD_DVICO_FUSIONHDTV_DVB_T_DUAL_EXP:
+@@ -1578,9 +1578,9 @@ void cx23885_gpio_setup(struct cx23885_dev *dev)
+ 
+ 		/* Put the parts into reset and back */
+ 		cx_set(GP0_IO, 0x000f0000);
+-		mdelay(20);
++		msleep(20);
+ 		cx_clear(GP0_IO, 0x0000000f);
+-		mdelay(20);
++		msleep(20);
+ 		cx_set(GP0_IO, 0x000f000f);
+ 		break;
+ 	case CX23885_BOARD_LEADTEK_WINFAST_PXDVR3200_H:
+@@ -1596,9 +1596,9 @@ void cx23885_gpio_setup(struct cx23885_dev *dev)
+ 
+ 		/* Put the parts into reset and back */
+ 		cx_set(GP0_IO, 0x00040000);
+-		mdelay(20);
++		msleep(20);
+ 		cx_clear(GP0_IO, 0x00000004);
+-		mdelay(20);
++		msleep(20);
+ 		cx_set(GP0_IO, 0x00040004);
+ 		break;
+ 	case CX23885_BOARD_TBS_6920:
+@@ -1608,11 +1608,11 @@ void cx23885_gpio_setup(struct cx23885_dev *dev)
+ 		cx_write(MC417_CTL, 0x00000036);
+ 		cx_write(MC417_OEN, 0x00001000);
+ 		cx_set(MC417_RWD, 0x00000002);
+-		mdelay(200);
++		msleep(200);
+ 		cx_clear(MC417_RWD, 0x00000800);
+-		mdelay(200);
++		msleep(200);
+ 		cx_set(MC417_RWD, 0x00000800);
+-		mdelay(200);
++		msleep(200);
+ 		break;
+ 	case CX23885_BOARD_NETUP_DUAL_DVBS2_CI:
+ 		/* GPIO-0 INTA from CiMax1
+@@ -1630,7 +1630,7 @@ void cx23885_gpio_setup(struct cx23885_dev *dev)
+ 		cx_set(GP0_IO, 0x00040000); /* GPIO as out */
+ 		/* GPIO1 and GPIO2 as INTA and INTB from CiMaxes, reset low */
+ 		cx_clear(GP0_IO, 0x00030004);
+-		mdelay(100);/* reset delay */
++		msleep(100);/* reset delay */
+ 		cx_set(GP0_IO, 0x00040004); /* GPIO as out, reset high */
+ 		cx_write(MC417_CTL, 0x00000037);/* enable GPIO3-18 pins */
+ 		/* GPIO-15 IN as ~ACK, rest as OUT */
+@@ -1653,7 +1653,7 @@ void cx23885_gpio_setup(struct cx23885_dev *dev)
+ 		cx23885_gpio_enable(dev, GPIO_9 | GPIO_6 | GPIO_5, 1);
+ 		cx23885_gpio_set(dev, GPIO_9 | GPIO_6 | GPIO_5);
+ 		cx23885_gpio_clear(dev, GPIO_9);
+-		mdelay(20);
++		msleep(20);
+ 		cx23885_gpio_set(dev, GPIO_9);
+ 		break;
+ 	case CX23885_BOARD_MYGICA_X8506:
+@@ -1664,18 +1664,18 @@ void cx23885_gpio_setup(struct cx23885_dev *dev)
+ 		/* GPIO-2 demod reset */
+ 		cx23885_gpio_enable(dev, GPIO_0 | GPIO_1 | GPIO_2, 1);
+ 		cx23885_gpio_clear(dev, GPIO_1 | GPIO_2);
+-		mdelay(100);
++		msleep(100);
+ 		cx23885_gpio_set(dev, GPIO_0 | GPIO_1 | GPIO_2);
+-		mdelay(100);
++		msleep(100);
+ 		break;
+ 	case CX23885_BOARD_MYGICA_X8558PRO:
+ 		/* GPIO-0 reset first ATBM8830 */
+ 		/* GPIO-1 reset second ATBM8830 */
+ 		cx23885_gpio_enable(dev, GPIO_0 | GPIO_1, 1);
+ 		cx23885_gpio_clear(dev, GPIO_0 | GPIO_1);
+-		mdelay(100);
++		msleep(100);
+ 		cx23885_gpio_set(dev, GPIO_0 | GPIO_1);
+-		mdelay(100);
++		msleep(100);
+ 		break;
+ 	case CX23885_BOARD_HAUPPAUGE_HVR1850:
+ 	case CX23885_BOARD_HAUPPAUGE_HVR1290:
+@@ -1699,11 +1699,11 @@ void cx23885_gpio_setup(struct cx23885_dev *dev)
+ 
+ 		/* Put the demod into reset and protect the eeprom */
+ 		mc417_gpio_clear(dev, GPIO_14 | GPIO_13);
+-		mdelay(100);
++		msleep(100);
+ 
+ 		/* Bring the demod out of reset */
+ 		mc417_gpio_set(dev, GPIO_14);
+-		mdelay(100);
++		msleep(100);
+ 
+ 		/* CX24228 GPIO */
+ 		/* Connected to IF / Mux */
+@@ -1728,7 +1728,7 @@ void cx23885_gpio_setup(struct cx23885_dev *dev)
+ 		cx_set(GP0_IO, 0x00060000); /* GPIO-1,2 as out */
+ 		/* GPIO-0 as INT, reset & TMS low */
+ 		cx_clear(GP0_IO, 0x00010006);
+-		mdelay(100);/* reset delay */
++		msleep(100);/* reset delay */
+ 		cx_set(GP0_IO, 0x00000004); /* reset high */
+ 		cx_write(MC417_CTL, 0x00000037);/* enable GPIO-3..18 pins */
+ 		/* GPIO-17 is TDO in, GPIO-15 is ~RDY in, rest is out */
+@@ -1747,36 +1747,36 @@ void cx23885_gpio_setup(struct cx23885_dev *dev)
+ 		cx23885_gpio_enable(dev, GPIO_8 | GPIO_9, 1);
+ 
+ 		cx23885_gpio_clear(dev, GPIO_8 | GPIO_9);
+-		mdelay(100);
++		msleep(100);
+ 		cx23885_gpio_set(dev, GPIO_8 | GPIO_9);
+-		mdelay(100);
++		msleep(100);
+ 
+ 		break;
+ 	case CX23885_BOARD_AVERMEDIA_HC81R:
+ 		cx_clear(MC417_CTL, 1);
+ 		/* GPIO-0,1,2 setup direction as output */
+ 		cx_set(GP0_IO, 0x00070000);
+-		mdelay(10);
++		usleep_range(10000, 11000);
+ 		/* AF9013 demod reset */
+ 		cx_set(GP0_IO, 0x00010001);
+-		mdelay(10);
++		usleep_range(10000, 11000);
+ 		cx_clear(GP0_IO, 0x00010001);
+-		mdelay(10);
++		usleep_range(10000, 11000);
+ 		cx_set(GP0_IO, 0x00010001);
+-		mdelay(10);
++		usleep_range(10000, 11000);
+ 		/* demod tune? */
+ 		cx_clear(GP0_IO, 0x00030003);
+-		mdelay(10);
++		usleep_range(10000, 11000);
+ 		cx_set(GP0_IO, 0x00020002);
+-		mdelay(10);
++		usleep_range(10000, 11000);
+ 		cx_set(GP0_IO, 0x00010001);
+-		mdelay(10);
++		usleep_range(10000, 11000);
+ 		cx_clear(GP0_IO, 0x00020002);
+ 		/* XC3028L tuner reset */
+ 		cx_set(GP0_IO, 0x00040004);
+ 		cx_clear(GP0_IO, 0x00040004);
+ 		cx_set(GP0_IO, 0x00040004);
+-		mdelay(60);
++		msleep(60);
+ 		break;
+ 	case CX23885_BOARD_DVBSKY_T9580:
+ 	case CX23885_BOARD_DVBSKY_S952:
+@@ -1785,7 +1785,7 @@ void cx23885_gpio_setup(struct cx23885_dev *dev)
+ 		cx_write(MC417_CTL, 0x00000037);
+ 		cx23885_gpio_enable(dev, GPIO_2 | GPIO_11, 1);
+ 		cx23885_gpio_clear(dev, GPIO_2 | GPIO_11);
+-		mdelay(100);
++		msleep(100);
+ 		cx23885_gpio_set(dev, GPIO_2 | GPIO_11);
+ 		break;
+ 	case CX23885_BOARD_DVBSKY_T980C:
+@@ -1807,7 +1807,7 @@ void cx23885_gpio_setup(struct cx23885_dev *dev)
+ 
+ 		cx_set(GP0_IO, 0x00060002); /* GPIO 1/2 as output */
+ 		cx_clear(GP0_IO, 0x00010004); /* GPIO 0 as input */
+-		mdelay(100); /* reset delay */
++		msleep(100); /* reset delay */
+ 		cx_set(GP0_IO, 0x00060004); /* GPIO as out, reset high */
+ 		cx_clear(GP0_IO, 0x00010002);
+ 		cx_write(MC417_CTL, 0x00000037); /* enable GPIO3-18 pins */
+-- 
+2.17.0
 
