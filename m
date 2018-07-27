@@ -2,482 +2,138 @@ Return-Path: <SRS0=OQFz=KL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A1ACC67790
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 08:15:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 649D6C67790
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 08:21:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E57D520857
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 08:15:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E57D520857
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 1504020673
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 08:21:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1504020673
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729547AbeG0Jg2 (ORCPT
+        id S1729565AbeG0JmX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 05:36:28 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:41558 "EHLO
+        Fri, 27 Jul 2018 05:42:23 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:43060 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729420AbeG0Jg2 (ORCPT
+        by vger.kernel.org with ESMTP id S1729472AbeG0JmX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 05:36:28 -0400
-Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w6R8EAqP013569
-        for <linux-kernel@vger.kernel.org>; Fri, 27 Jul 2018 04:15:42 -0400
-Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2kfye6guba-1
+        Fri, 27 Jul 2018 05:42:23 -0400
+Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w6R8JU4J014066
+        for <linux-kernel@vger.kernel.org>; Fri, 27 Jul 2018 04:21:37 -0400
+Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2kfy2ea7jv-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Fri, 27 Jul 2018 04:15:41 -0400
+        for <linux-kernel@vger.kernel.org>; Fri, 27 Jul 2018 04:21:36 -0400
 Received: from localhost
-        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <ldufour@linux.vnet.ibm.com>;
-        Fri, 27 Jul 2018 09:15:39 +0100
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
-        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <tmricht@linux.ibm.com>;
+        Fri, 27 Jul 2018 09:21:34 +0100
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
+        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 27 Jul 2018 09:15:35 +0100
-Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w6R8FY6642729662
+        Fri, 27 Jul 2018 09:21:30 +0100
+Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w6R8LTHU30605454
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 27 Jul 2018 08:15:34 GMT
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 76ED9A4057;
-        Fri, 27 Jul 2018 11:15:47 +0100 (BST)
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id C5245A4040;
-        Fri, 27 Jul 2018 11:15:46 +0100 (BST)
-Received: from [9.145.62.135] (unknown [9.145.62.135])
-        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Fri, 27 Jul 2018 11:15:46 +0100 (BST)
-Subject: Re: [RFC v6 PATCH 2/2] mm: mmap: zap pages with read mmap_sem in
- munmap
-To:     Yang Shi <yang.shi@linux.alibaba.com>, mhocko@kernel.org,
-        willy@infradead.org, kirill@shutemov.name,
-        akpm@linux-foundation.org
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <1532628614-111702-1-git-send-email-yang.shi@linux.alibaba.com>
- <1532628614-111702-3-git-send-email-yang.shi@linux.alibaba.com>
-From:   Laurent Dufour <ldufour@linux.vnet.ibm.com>
-Date:   Fri, 27 Jul 2018 10:15:33 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Fri, 27 Jul 2018 08:21:29 GMT
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 3486911C050;
+        Fri, 27 Jul 2018 11:21:42 +0100 (BST)
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id CDB1C11C04A;
+        Fri, 27 Jul 2018 11:21:41 +0100 (BST)
+Received: from tuxmaker.boeblingen.de.ibm.com (unknown [9.152.85.9])
+        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Fri, 27 Jul 2018 11:21:41 +0100 (BST)
+From:   Thomas Richter <tmricht@linux.ibm.com>
+To:     daniel@iogearbox.net, ast@kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     heiko.carstens@de.ibm.com, brueckner@linux.vnet.ibm.com,
+        schwidefsky@de.ibm.com, jakub.kicinski@netronome.com,
+        Thomas Richter <tmricht@linux.ibm.com>
+Subject: [PATCH] perf build: Build error in libbpf missing initialization
+Date:   Fri, 27 Jul 2018 10:21:26 +0200
+X-Mailer: git-send-email 2.16.4
 MIME-Version: 1.0
-In-Reply-To: <1532628614-111702-3-git-send-email-yang.shi@linux.alibaba.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 X-TM-AS-GCONF: 00
-x-cbid: 18072708-0008-0000-0000-0000025879BA
+x-cbid: 18072708-0028-0000-0000-000002E0FAAF
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18072708-0009-0000-0000-000021BEFE02
-Message-Id: <4d45b22e-1afc-8763-eed7-bef57a44303c@linux.vnet.ibm.com>
+x-cbparentid: 18072708-0029-0000-0000-00002398F1EF
+Message-Id: <20180727082126.87530-1-tmricht@linux.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-27_04:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
  clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
  mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1806210000 definitions=main-1807270086
+ scancount=1 engine=8.0.1-1806210000 definitions=main-1807270087
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 26/07/2018 20:10, Yang Shi wrote:
-> When running some mmap/munmap scalability tests with large memory (i.e.
->> 300GB), the below hung task issue may happen occasionally.
-> 
-> INFO: task ps:14018 blocked for more than 120 seconds.
->        Tainted: G            E 4.9.79-009.ali3000.alios7.x86_64 #1
->  "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this
-> message.
->  ps              D    0 14018      1 0x00000004
->   ffff885582f84000 ffff885e8682f000 ffff880972943000 ffff885ebf499bc0
->   ffff8828ee120000 ffffc900349bfca8 ffffffff817154d0 0000000000000040
->   00ffffff812f872a ffff885ebf499bc0 024000d000948300 ffff880972943000
->  Call Trace:
->   [<ffffffff817154d0>] ? __schedule+0x250/0x730
->   [<ffffffff817159e6>] schedule+0x36/0x80
->   [<ffffffff81718560>] rwsem_down_read_failed+0xf0/0x150
->   [<ffffffff81390a28>] call_rwsem_down_read_failed+0x18/0x30
->   [<ffffffff81717db0>] down_read+0x20/0x40
->   [<ffffffff812b9439>] proc_pid_cmdline_read+0xd9/0x4e0
->   [<ffffffff81253c95>] ? do_filp_open+0xa5/0x100
->   [<ffffffff81241d87>] __vfs_read+0x37/0x150
->   [<ffffffff812f824b>] ? security_file_permission+0x9b/0xc0
->   [<ffffffff81242266>] vfs_read+0x96/0x130
->   [<ffffffff812437b5>] SyS_read+0x55/0xc0
->   [<ffffffff8171a6da>] entry_SYSCALL_64_fastpath+0x1a/0xc5
-> 
-> It is because munmap holds mmap_sem exclusively from very beginning to
-> all the way down to the end, and doesn't release it in the middle. When
-> unmapping large mapping, it may take long time (take ~18 seconds to
-> unmap 320GB mapping with every single page mapped on an idle machine).
-> 
-> Zapping pages is the most time consuming part, according to the
-> suggestion from Michal Hocko [1], zapping pages can be done with holding
-> read mmap_sem, like what MADV_DONTNEED does. Then re-acquire write
-> mmap_sem to cleanup vmas.
-> 
-> But, some part may need write mmap_sem, for example, vma splitting. So,
-> the design is as follows:
->         acquire write mmap_sem
->         lookup vmas (find and split vmas)
-> 	detach vmas
->         deal with special mappings
->         downgrade_write
-> 
->         zap pages
-> 	free page tables
->         release mmap_sem
-> 
-> The vm events with read mmap_sem may come in during page zapping, but
-> since vmas have been detached before, they, i.e. page fault, gup, etc,
-> will not be able to find valid vma, then just return SIGSEGV or -EFAULT
-> as expected.
-> 
-> If the vma has VM_LOCKED | VM_HUGETLB | VM_PFNMAP or uprobe, they are
-> considered as special mappings. They will be dealt with before zapping
-> pages with write mmap_sem held. Basically, just update vm_flags.
-> 
-> And, since they are also manipulated by unmap_single_vma() which is
-> called by unmap_vma() with read mmap_sem held in this case, to
-> prevent from updating vm_flags in read critical section, a new
-> parameter, called "skip_flags" is added to unmap_region(), unmap_vmas()
-> and unmap_single_vma(). If it is true, then just skip unmap those
-> special mappings. Currently, the only place which pass true to this
-> parameter is us.
-> 
-> With this approach we don't have to re-acquire mmap_sem again to clean
-> up vmas to avoid race window which might get the address space changed.
-> 
-> And, since the lock acquire/release cost is managed to the minimum and
-> almost as same as before, the optimization could be extended to any size
-> of mapping without incurring significant penalty to small mappings.
-> 
-> For the time being, just do this in munmap syscall path. Other
-> vm_munmap() or do_munmap() call sites (i.e mmap, mremap, etc) remain
-> intact for stability reason.
-> 
-> With the patches, exclusive mmap_sem hold time when munmap a 80GB
-> address space on a machine with 32 cores of E5-2680 @ 2.70GHz dropped to
-> us level from second.
-> 
-> munmap_test-15002 [008]   594.380138: funcgraph_entry: |  vm_munmap_zap_rlock() {
-> munmap_test-15002 [008]   594.380146: funcgraph_entry:      !2485684 us |    unmap_region();
-> munmap_test-15002 [008]   596.865836: funcgraph_exit:       !2485692 us |  }
-> 
-> Here the excution time of unmap_region() is used to evaluate the time of
-> holding read mmap_sem, then the remaining time is used with holding
-> exclusive lock.
-> 
-> [1] https://lwn.net/Articles/753269/
-> 
-> Suggested-by: Michal Hocko <mhocko@kernel.org>
-> Suggested-by: Kirill A. Shutemov <kirill@shutemov.name>
-> Cc: Matthew Wilcox <willy@infradead.org>
-> Cc: Laurent Dufour <ldufour@linux.vnet.ibm.com>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Signed-off-by: Yang Shi <yang.shi@linux.alibaba.com>
-> ---
->  include/linux/mm.h |  2 +-
->  mm/memory.c        | 41 ++++++++++++++++------
->  mm/mmap.c          | 99 +++++++++++++++++++++++++++++++++++++++++++++++++-----
->  3 files changed, 123 insertions(+), 19 deletions(-)
-> 
-> diff --git a/include/linux/mm.h b/include/linux/mm.h
-> index a0fbb9f..e4480d8 100644
-> --- a/include/linux/mm.h
-> +++ b/include/linux/mm.h
-> @@ -1321,7 +1321,7 @@ void zap_vma_ptes(struct vm_area_struct *vma, unsigned long address,
->  void zap_page_range(struct vm_area_struct *vma, unsigned long address,
->  		    unsigned long size);
->  void unmap_vmas(struct mmu_gather *tlb, struct vm_area_struct *start_vma,
-> -		unsigned long start, unsigned long end);
-> +		unsigned long start, unsigned long end, bool skip_vm_flags);
-> 
->  /**
->   * mm_walk - callbacks for walk_page_range
-> diff --git a/mm/memory.c b/mm/memory.c
-> index 7206a63..6a772bd 100644
-> --- a/mm/memory.c
-> +++ b/mm/memory.c
-> @@ -1514,7 +1514,7 @@ void unmap_page_range(struct mmu_gather *tlb,
->  static void unmap_single_vma(struct mmu_gather *tlb,
->  		struct vm_area_struct *vma, unsigned long start_addr,
->  		unsigned long end_addr,
-> -		struct zap_details *details)
-> +		struct zap_details *details, bool skip_vm_flags)
->  {
->  	unsigned long start = max(vma->vm_start, start_addr);
->  	unsigned long end;
-> @@ -1525,11 +1525,19 @@ static void unmap_single_vma(struct mmu_gather *tlb,
->  	if (end <= vma->vm_start)
->  		return;
-> 
-> -	if (vma->vm_file)
-> -		uprobe_munmap(vma, start, end);
-> +	/*
-> +	 * Since unmap_single_vma might be called with read mmap_sem held
-> +	 * in munmap optimization, so vm_flags can't be updated in this case.
-> +	 * They have been updated before this call with write mmap_sem held.
-> +	 * Here if skip_vm_flags is true, just skip the update.
-> +	 */
-> +	if (!skip_vm_flags) {
-> +		if (vma->vm_file)
-> +			uprobe_munmap(vma, start, end);
-> 
-> -	if (unlikely(vma->vm_flags & VM_PFNMAP))
-> -		untrack_pfn(vma, 0, 0);
-> +		if (unlikely(vma->vm_flags & VM_PFNMAP))
-> +			untrack_pfn(vma, 0, 0);
-> +	}
-> 
->  	if (start != end) {
->  		if (unlikely(is_vm_hugetlb_page(vma))) {
-> @@ -1546,7 +1554,19 @@ static void unmap_single_vma(struct mmu_gather *tlb,
->  			 */
->  			if (vma->vm_file) {
->  				i_mmap_lock_write(vma->vm_file->f_mapping);
-> -				__unmap_hugepage_range_final(tlb, vma, start, end, NULL);
-> +				if (!skip_vm_flags) {
+In linux-next tree compiling the perf tool with additional make flags
+"EXTRA_CFLAGS="-Wp,-D_FORTIFY_SOURCE=2 -O2"
+causes a compiler error. It is the warning
+	'variable may be used uninitialized'
+which is treated as error:
 
-As already reported by Mika : if (skip_vm_flags).
+I compile it using a FEDORA 28 installation, my gcc compiler version:
+gcc (GCC) 8.0.1 20180324 (Red Hat 8.0.1-0.20)
 
-> +					/*
-> +					 * The vma is being unmapped with read
-> +					 * mmap_sem.
-> +					 * Can't update vm_flags here, it has
-> +					 * been updated before this call with
-> +					 * write mmap_sem held.
-> +					 */
-> +					__unmap_hugepage_range(tlb, vma, start,
-> +							end, NULL);
-> +				} else
-> +					__unmap_hugepage_range_final(tlb, vma,
-> +							start, end, NULL);
->  				i_mmap_unlock_write(vma->vm_file->f_mapping);
->  			}
->  		} else
-> @@ -1574,13 +1594,14 @@ static void unmap_single_vma(struct mmu_gather *tlb,
->   */
->  void unmap_vmas(struct mmu_gather *tlb,
->  		struct vm_area_struct *vma, unsigned long start_addr,
-> -		unsigned long end_addr)
-> +		unsigned long end_addr, bool skip_vm_flags)
->  {
->  	struct mm_struct *mm = vma->vm_mm;
-> 
->  	mmu_notifier_invalidate_range_start(mm, start_addr, end_addr);
->  	for ( ; vma && vma->vm_start < end_addr; vma = vma->vm_next)
-> -		unmap_single_vma(tlb, vma, start_addr, end_addr, NULL);
-> +		unmap_single_vma(tlb, vma, start_addr, end_addr, NULL,
-> +				 skip_vm_flags);
->  	mmu_notifier_invalidate_range_end(mm, start_addr, end_addr);
->  }
-> 
-> @@ -1604,7 +1625,7 @@ void zap_page_range(struct vm_area_struct *vma, unsigned long start,
->  	update_hiwater_rss(mm);
->  	mmu_notifier_invalidate_range_start(mm, start, end);
->  	for ( ; vma && vma->vm_start < end; vma = vma->vm_next) {
-> -		unmap_single_vma(&tlb, vma, start, end, NULL);
-> +		unmap_single_vma(&tlb, vma, start, end, NULL, false);
-> 
->  		/*
->  		 * zap_page_range does not specify whether mmap_sem should be
-> @@ -1641,7 +1662,7 @@ static void zap_page_range_single(struct vm_area_struct *vma, unsigned long addr
->  	tlb_gather_mmu(&tlb, mm, address, end);
->  	update_hiwater_rss(mm);
->  	mmu_notifier_invalidate_range_start(mm, address, end);
-> -	unmap_single_vma(&tlb, vma, address, end, details);
-> +	unmap_single_vma(&tlb, vma, address, end, details, false);
->  	mmu_notifier_invalidate_range_end(mm, address, end);
->  	tlb_finish_mmu(&tlb, address, end);
->  }
-> diff --git a/mm/mmap.c b/mm/mmap.c
-> index 2504094..663a0c5 100644
-> --- a/mm/mmap.c
-> +++ b/mm/mmap.c
-> @@ -73,7 +73,7 @@
-> 
->  static void unmap_region(struct mm_struct *mm,
->  		struct vm_area_struct *vma, struct vm_area_struct *prev,
-> -		unsigned long start, unsigned long end);
-> +		unsigned long start, unsigned long end, bool skip_flags);
+The file that causes the error is tools/lib/bpf/libbpf.c
 
-Earlier, you used the name 'skip_vm_flags'. It would be nice to keep the same
-parameter name everywhere, isn't it ?
+Here is the error message:
 
-> 
->  /* description of effects of mapping type and prot in current implementation.
->   * this is due to the limited x86 page protection hardware.  The expected
-> @@ -1824,7 +1824,7 @@ unsigned long mmap_region(struct file *file, unsigned long addr,
->  	fput(file);
-> 
->  	/* Undo any partial mapping done by a device driver. */
-> -	unmap_region(mm, vma, prev, vma->vm_start, vma->vm_end);
-> +	unmap_region(mm, vma, prev, vma->vm_start, vma->vm_end, false);
->  	charged = 0;
->  	if (vm_flags & VM_SHARED)
->  		mapping_unmap_writable(file->f_mapping);
-> @@ -2559,7 +2559,7 @@ static void remove_vma_list(struct mm_struct *mm, struct vm_area_struct *vma)
->   */
->  static void unmap_region(struct mm_struct *mm,
->  		struct vm_area_struct *vma, struct vm_area_struct *prev,
-> -		unsigned long start, unsigned long end)
-> +		unsigned long start, unsigned long end, bool skip_flags)
+[root@p23lp27] # make V=1 EXTRA_CFLAGS="-Wp,-D_FORTIFY_SOURCE=2 -O2"
+[...]
+Makefile.config:849: No openjdk development package found, please
+   install JDK package, e.g. openjdk-8-jdk, java-1.8.0-openjdk-devel
+Warning: Kernel ABI header at 'tools/include/uapi/linux/if_link.h'
+        differs from latest version at 'include/uapi/linux/if_link.h'
+  CC       libbpf.o
+libbpf.c: In function ‘bpf_perf_event_read_simple’:
+libbpf.c:2342:6: error: ‘ret’ may be used uninitialized in this
+			function [-Werror=maybe-uninitialized]
+  int ret;
+      ^
+cc1: all warnings being treated as errors
+mv: cannot stat './.libbpf.o.tmp': No such file or directory
+/home6/tmricht/linux-next/tools/build/Makefile.build:96: recipe for target 'libbpf.o' failed
 
-Here too.
+Fix this warning and add an addition check at the beginning
+of the while loop.
 
->  {
->  	struct vm_area_struct *next = prev ? prev->vm_next : mm->mmap;
->  	struct mmu_gather tlb;
-> @@ -2567,7 +2567,7 @@ static void unmap_region(struct mm_struct *mm,
->  	lru_add_drain();
->  	tlb_gather_mmu(&tlb, mm, start, end);
->  	update_hiwater_rss(mm);
-> -	unmap_vmas(&tlb, vma, start, end);
-> +	unmap_vmas(&tlb, vma, start, end, skip_flags);
->  	free_pgtables(&tlb, vma, prev ? prev->vm_end : FIRST_USER_ADDRESS,
->  				 next ? next->vm_start : USER_PGTABLES_CEILING);
->  	tlb_finish_mmu(&tlb, start, end);
-> @@ -2778,6 +2778,79 @@ static inline void munmap_mlock_vma(struct vm_area_struct *vma,
->  	}
->  }
-> 
-> +/*
-> + * Zap pages with read mmap_sem held
-> + *
-> + * uf is the list for userfaultfd
-> + */
-> +static int do_munmap_zap_rlock(struct mm_struct *mm, unsigned long start,
-> +			       size_t len, struct list_head *uf)
-> +{
-> +	unsigned long end = 0;
-> +	struct vm_area_struct *start_vma = NULL, *prev, *vma;
-> +	int ret = 0;
+Cc: Alexei Starovoitov <ast@kernel.org>
+Cc: Daniel Borkmann <daniel@iogearbox.net>
 
-No need to initialize end, start_vma and ret here, they will be assigned before
-used.
+Suggested-by: Jakub Kicinski <jakub.kicinski@netronome.com>
+Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
+---
+ tools/lib/bpf/libbpf.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-> +
-> +	if (!munmap_addr_sanity(start, len))
-> +		return -EINVAL;
-> +
-> +	len = PAGE_ALIGN(len);
-> +
-> +	end = start + len;
-> +
-> +	/*
-> +	 * Need write mmap_sem to split vmas and detach vmas
-> +	 * splitting vma up-front to save PITA to clean if it is failed
-> +	 */
-> +	if (down_write_killable(&mm->mmap_sem))
-> +		return -EINTR;
-> +
-> +	ret = munmap_lookup_vma(mm, &start_vma, &prev, start, end);
-> +	if (ret != 1)
-> +		goto out;
-> +
-> +	if (unlikely(uf)) {
-> +		ret = userfaultfd_unmap_prep(start_vma, start, end, uf);
-> +		if (ret)
-> +			goto out;
-> +	}
-> +
-> +	/* Handle mlocked vmas */
-> +	if (mm->locked_vm)
-> +		munmap_mlock_vma(start_vma, end);
-> +
-> +	/* Detach vmas from rbtree */
-> +	detach_vmas_to_be_unmapped(mm, start_vma, prev, end);
-> +
-> +	/*
-> +	 * Clear uprobe, VM_PFNMAP and hugetlb mapping in advance since they
-> +	 * need update vm_flags with write mmap_sem
-> +	 */
-> +	vma = start_vma;
-> +	for ( ; vma && vma->vm_start < end; vma = vma->vm_next) {
-
-Not critical, but 'vma = start_vma' should be part of the init stuff in for(),
-like this:
-	for (vma = start_vma; vma && vma->vm_start < end; vma = vma->vm_next) {
-
-> +		if (vma->vm_file)
-> +			uprobe_munmap(vma, vma->vm_start, vma->vm_end);
-> +		if (unlikely(vma->vm_flags & VM_PFNMAP))
-> +			untrack_pfn(vma, 0, 0);
-> +		if (is_vm_hugetlb_page(vma))
-> +			vma->vm_flags &= ~VM_MAYSHARE;
-> +	}
-> +
-> +	downgrade_write(&mm->mmap_sem);
-> +
-> +	/* Zap mappings with read mmap_sem */
-> +	unmap_region(mm, start_vma, prev, start, end, true);
-> +
-> +	arch_unmap(mm, start_vma, start, end);
-> +	remove_vma_list(mm, start_vma);
-> +	up_read(&mm->mmap_sem);
-> +
-> +	return 0;
-> +
-> +out:
-> +	up_write(&mm->mmap_sem);
-> +	return ret;
-> +}
-> +
->  /* Munmap is split into 2 main parts -- this part which finds
->   * what needs doing, and the areas themselves, which do the
->   * work.  This now handles partial unmappings.
-> @@ -2826,7 +2899,7 @@ int do_munmap(struct mm_struct *mm, unsigned long start, size_t len,
->  	 * Remove the vma's, and unmap the actual pages
->  	 */
->  	detach_vmas_to_be_unmapped(mm, vma, prev, end);
-> -	unmap_region(mm, vma, prev, start, end);
-> +	unmap_region(mm, vma, prev, start, end, false);
-> 
->  	arch_unmap(mm, vma, start, end);
-> 
-> @@ -2836,6 +2909,17 @@ int do_munmap(struct mm_struct *mm, unsigned long start, size_t len,
->  	return 0;
->  }
-> 
-> +static int vm_munmap_zap_rlock(unsigned long start, size_t len)
-> +{
-> +	int ret;
-> +	struct mm_struct *mm = current->mm;
-> +	LIST_HEAD(uf);
-> +
-> +	ret = do_munmap_zap_rlock(mm, start, len, &uf);
-> +	userfaultfd_unmap_complete(mm, &uf);
-> +	return ret;
-> +}
-> +
->  int vm_munmap(unsigned long start, size_t len)
->  {
->  	int ret;
-> @@ -2855,10 +2939,9 @@ int vm_munmap(unsigned long start, size_t len)
->  SYSCALL_DEFINE2(munmap, unsigned long, addr, size_t, len)
->  {
->  	profile_munmap(addr);
-> -	return vm_munmap(addr, len);
-> +	return vm_munmap_zap_rlock(addr, len);
->  }
-> 
-> -
->  /*
->   * Emulation of deprecated remap_file_pages() syscall.
->   */
-> @@ -3146,7 +3229,7 @@ void exit_mmap(struct mm_struct *mm)
->  	tlb_gather_mmu(&tlb, mm, 0, -1);
->  	/* update_hiwater_rss(mm) here? but nobody should be looking */
->  	/* Use -1 here to ensure all VMAs in the mm are unmapped */
-> -	unmap_vmas(&tlb, vma, 0, -1);
-> +	unmap_vmas(&tlb, vma, 0, -1, false);
->  	free_pgtables(&tlb, vma, FIRST_USER_ADDRESS, USER_PGTABLES_CEILING);
->  	tlb_finish_mmu(&tlb, 0, -1);
-> 
+diff --git a/tools/lib/bpf/libbpf.c b/tools/lib/bpf/libbpf.c
+index 73465caa33ba..66965ca96113 100644
+--- a/tools/lib/bpf/libbpf.c
++++ b/tools/lib/bpf/libbpf.c
+@@ -2349,6 +2349,8 @@ bpf_perf_event_read_simple(void *mem, unsigned long size,
+ 
+ 	begin = base + data_tail % size;
+ 	end = base + data_head % size;
++	if (begin == end)
++		return LIBBPF_PERF_EVENT_ERROR;
+ 
+ 	while (begin != end) {
+ 		struct perf_event_header *ehdr;
+-- 
+2.16.4
 
