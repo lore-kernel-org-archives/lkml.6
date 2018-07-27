@@ -2,136 +2,316 @@ Return-Path: <SRS0=OQFz=KL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E29BC67790
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 06:50:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D64DC67790
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 06:51:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0829320673
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 06:50:10 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=towerbridgetechnology.onmicrosoft.com header.i=@towerbridgetechnology.onmicrosoft.com header.b="aMUG6rhX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0829320673
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bayhubtech.com
+	by mail.kernel.org (Postfix) with ESMTP id AC8B120873
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 06:51:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AC8B120873
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729472AbeG0IKc (ORCPT
+        id S1729481AbeG0IMP convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 04:10:32 -0400
-Received: from mail-eopbgr720093.outbound.protection.outlook.com ([40.107.72.93]:20593
-        "EHLO NAM05-CO1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726044AbeG0IKb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 04:10:31 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=towerbridgetechnology.onmicrosoft.com; s=selector1-bayhubtech-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=gkRnN51FF1x6wj11TXR/7PdjSM0PCARG3UETrky+G/w=;
- b=aMUG6rhXf6PV462Y/Rr3vEfBBAeTX6onreryY5ThS5KIEBsxF4MmWhWX/lb21/sNRPTXsTAL4+n0XWaMNjyQc5W+hLM42vSrPqpu1lwn9QD7XlHF0ZrZxbdlcuZIcDn8VysCAJMyYsG+uoygEEJBZw4B+8y5mJQapWAq7AmohKA=
-Received: from BYAPR04MB4760.namprd04.prod.outlook.com (52.135.240.79) by
- BYAPR04MB5112.namprd04.prod.outlook.com (52.135.235.74) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.995.16; Fri, 27 Jul 2018 06:50:01 +0000
-Received: from BYAPR04MB4760.namprd04.prod.outlook.com
- ([fe80::44e2:1ff2:21d5:5b45]) by BYAPR04MB4760.namprd04.prod.outlook.com
- ([fe80::44e2:1ff2:21d5:5b45%3]) with mapi id 15.20.0973.022; Fri, 27 Jul 2018
- 06:49:59 +0000
-From:   "Ernest Zhang(WH)" <ernest.zhang@bayhubtech.com>
-To:     Adrian Hunter <adrian.hunter@intel.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     "Chuanjin Pang (WH)" <chuanjin.pang@bayhubtech.com>,
-        "Mike Li (WH)" <mike.li@bayhubtech.com>,
-        "Chevron Li (WH)" <chevron.li@bayhubtech.com>,
-        "Shirley Her (SC)" <shirley.her@bayhubtech.com>,
-        "Xiaoguang Yu (WH)" <xiaoguang.yu@bayhubtech.com>,
-        "Bobby Wu (WH)" <bobby.wu@bayhubtech.com>
-Subject: RE: [PATCH V7 2/5] mmc: sdhci: Change O2 Host HS200 mode clock
- frequency to 200MHz
-Thread-Topic: [PATCH V7 2/5] mmc: sdhci: Change O2 Host HS200 mode clock
- frequency to 200MHz
-Thread-Index: AQHUHM4qII4CPaY8ykquzv+/lMDqTqSfnUMAgAMU9YA=
-Date:   Fri, 27 Jul 2018 06:49:59 +0000
-Message-ID: <BYAPR04MB4760BF8783C0E58A75D00F25E52A0@BYAPR04MB4760.namprd04.prod.outlook.com>
-References: <20180716062655.24703-1-ernest.zhang@bayhubtech.com>
- <20180716062655.24703-2-ernest.zhang@bayhubtech.com>
- <06a9dcec-846e-495c-4519-4af13549fe0e@intel.com>
-In-Reply-To: <06a9dcec-846e-495c-4519-4af13549fe0e@intel.com>
-Accept-Language: zh-CN, en-US
+        Fri, 27 Jul 2018 04:12:15 -0400
+Received: from mga02.intel.com ([134.134.136.20]:33069 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725988AbeG0IMP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Jul 2018 04:12:15 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Jul 2018 23:51:49 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,408,1526367600"; 
+   d="scan'208";a="67934257"
+Received: from pgsmsx112-dag.png.intel.com (HELO PGSMSX112.gar.corp.intel.com) ([10.108.55.234])
+  by FMSMGA003.fm.intel.com with ESMTP; 26 Jul 2018 23:51:47 -0700
+Received: from pgsmsx109.gar.corp.intel.com ([169.254.14.206]) by
+ PGSMSX112.gar.corp.intel.com ([169.254.3.172]) with mapi id 14.03.0319.002;
+ Fri, 27 Jul 2018 14:51:46 +0800
+From:   "Ooi, Tzy Way" <tzy.way.ooi@intel.com>
+To:     'Russell King - ARM Linux' <linux@armlinux.org.uk>
+CC:     "'linux-kernel@vger.kernel.org'" <linux-kernel@vger.kernel.org>,
+        "See, Chin Liang" <chin.liang.see@intel.com>,
+        "Tan, Ley Foon" <ley.foon.tan@intel.com>,
+        "Nguyen, Dinh" <dinh.nguyen@intel.com>,
+        "Aw, Khai Liang" <khai.liang.aw@intel.com>
+Subject: RE: Enquiry on unbalanced memory throughput for dual-Cortex A9 core.
+Thread-Topic: Enquiry on unbalanced memory throughput for dual-Cortex A9
+ core.
+Thread-Index: AdQgBgDwE8ZxdM9cQg6mUrKZHryEF///mOiA//m+0TD/7noZ4A==
+Date:   Fri, 27 Jul 2018 06:51:45 +0000
+Message-ID: <5F1105621EDF844291AF8B109E27C06D34C4DBA5@PGSMSX109.gar.corp.intel.com>
+References: <5F1105621EDF844291AF8B109E27C06D34C4BEBD@PGSMSX109.gar.corp.intel.com>
+ <20180720103627.GA29084@n2100.armlinux.org.uk>
+ <5F1105621EDF844291AF8B109E27C06D34C4C35C@PGSMSX109.gar.corp.intel.com>
+In-Reply-To: <5F1105621EDF844291AF8B109E27C06D34C4C35C@PGSMSX109.gar.corp.intel.com>
+Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-x-originating-ip: [27.17.7.178]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;BYAPR04MB5112;6:86jlC4cC18MsJwtaecTzkkqkWotg6oJ6hsFzpXX5HpnRxfx9mbYO3YljTDVEGYFpLaXU+i72IOMPefEP5MdLyjAofQNoTjsLbhyeoNVSVaFjhOrjRPUIWme6J4UDJX2viA+0fGnFpcDdWvDzDlJVRH9V6AUuWS0igbMypfxBy5rkHO+a19YeIm7VSlxMPOUPESx4UhHDCIQJ+D1sA+bUoMqyipKsMVwj/kRk1UWYRpXLuKEHlv+mcFz3BX8uQL43FuGXlLWoGv3P9m1AKVupPWZjSutGWbAZyBjnfRP4/yzMoQnhRr/eqa+M1BgRcGdHJp5XiYZHlGjLDlPa3XS8JJXHjpo3+2gbH10yAALjoseUd0yS1KJOXLBsy6oEiTTwhFuv4hoDCfBKFTADzPzBGA5Qtbr3aJ2rLadhAwnWZtdjK5Z5BXwyQJUP7mZGOvc0eXTGi9nC2L0eVWX/bglv+g==;5:FmdPoU0iAoywnwDw72i1b+EZ0CUsS8hDHLLPEvVCBTbzFRLrCq0CU5aSbNUSox1rISXNPSJVgqYPw3J2NUI5aEZQgitXfkyMZSXOEzpynLjorWrM9Sc8CZIBvbzlAwEwCV5n3nqiGUk6S4fqAciV4skOr/PiuCl2dMksG0A4+Ro=;7:Z4JrALPpUpDAbv6LN6nEjzOLrk5K9EI0zoGvpHHbLxnqgwbgWrEwZZHbIEKHy2odFkHWCpsf5g02DT0BEQFxGRT/NKYkrhcsYaifwkTvBpOQHPSCI/KKqKZc4VyfFV6qzC5FDNdYIuqLzChbmeEOODOanuL6vS7EHY6MJpbti/rgcCyKiO1PmhCWbBGknweSNOTm6flf/GN+t1BQD/7XyJrLAnvrjqjuQfgIxkWtp/xo60dpss34d98cOPT0s+IH
-x-ms-exchange-antispam-srfa-diagnostics: SOS;SOR;
-x-forefront-antispam-report: SFV:SKI;SCL:-1;SFV:NSPM;SFS:(10019020)(376002)(346002)(39840400004)(366004)(136003)(396003)(199004)(189003)(57704003)(13464003)(107886003)(9686003)(478600001)(3846002)(11346002)(446003)(256004)(55016002)(486006)(74316002)(476003)(2906002)(81166006)(7696005)(7736002)(81156014)(97736004)(305945005)(6116002)(26005)(105586002)(33656002)(106356001)(99286004)(76176011)(14454004)(6246003)(53936002)(5250100002)(2501003)(8936002)(53546011)(5660300001)(2201001)(6506007)(229853002)(316002)(186003)(86362001)(66066001)(6436002)(2900100001)(54906003)(110136005)(102836004)(25786009)(68736007)(8676002)(4326008);DIR:OUT;SFP:1102;SCL:1;SRVR:BYAPR04MB5112;H:BYAPR04MB4760.namprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-x-ms-office365-filtering-correlation-id: 55a8b326-10da-4543-2365-08d5f38d2c12
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(7021125)(8989117)(5600074)(711020)(4534165)(7022125)(4603075)(4627221)(201702281549075)(8990107)(7048125)(7024125)(7027125)(7028125)(7023125)(2017052603328)(7153060)(7193020);SRVR:BYAPR04MB5112;
-x-ms-traffictypediagnostic: BYAPR04MB5112:
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=ernest.zhang@bayhubtech.com; 
-x-microsoft-antispam-prvs: <BYAPR04MB51121CBC78E694BF33668540E52A0@BYAPR04MB5112.namprd04.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(9452136761055)(228905959029699);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(3231311)(944501410)(52105095)(10201501046)(3002001)(149027)(150027)(6041310)(20161123560045)(2016111802025)(20161123558120)(20161123562045)(20161123564045)(6072148)(6043046)(201708071742011)(7699016);SRVR:BYAPR04MB5112;BCL:0;PCL:0;RULEID:;SRVR:BYAPR04MB5112;
-x-forefront-prvs: 07467C4D33
-received-spf: None (protection.outlook.com: bayhubtech.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: 0+pXfKn0MqIW0vwbs8MWcLnXVFV5YJU/7BB4yUaQz3AD1/3JJg7pz2FZmqzxBKBcw1EjyedvZc89Fahx1UYZXy8R6/V/cz+6ZPqRuUNtwQXNbdN+zq9J6Pu3DuDrw60k+gDsudXAJDEDY4q2sLGGBc68raxx7nb8gBEXVIqqyABy3Lc+eKqHoc+bXIjqwqXIrQC9iNtzsGdUqDdfFLMrl3d6j0aLe9qjWU+6nwpXDm+myQ1+Pb8z4y823X/HX+QSeeEuKRQUwkdz00fVO65rjHpAeuyGfs4pwZorWqIjiX7P70PrtHCxGELUl6eY2sKj8pqqBwshYkT22g8MCCxO1iKQD5pe7XQYBBrhyYCUq3E=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+dlp-product: dlpe-windows
+dlp-version: 11.0.400.15
+dlp-reaction: no-action
+x-originating-ip: [172.30.20.206]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-X-OriginatorOrg: bayhubtech.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 55a8b326-10da-4543-2365-08d5f38d2c12
-X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Jul 2018 06:49:59.4523
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 0a7aae2b-8f2e-44df-ba2f-42de7f93c642
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR04MB5112
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGkgQWRyaWFuLA0KCURvIEkgbmVlZCByZS1zdWJtaXQgYWxsIDUgcGF0Y2hlcyBhZnRlciBmaXgg
-dGhhdCBhbmQgY2hhbmdlIHRoZSB2ZXJzaW9uIHRvIHY4Pw0KQlINCg0KLS0tLS1PcmlnaW5hbCBN
-ZXNzYWdlLS0tLS0NCkZyb206IEFkcmlhbiBIdW50ZXIgW21haWx0bzphZHJpYW4uaHVudGVyQGlu
-dGVsLmNvbV0gDQpTZW50OiAyMDE45bm0N+aciDI15pelIDE1OjQ1DQpUbzogRXJuZXN0IFpoYW5n
-KFdIKTsgVWxmIEhhbnNzb247IGxpbnV4LW1tY0B2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LWtlcm5l
-bEB2Z2VyLmtlcm5lbC5vcmcNCkNjOiBDaHVhbmppbiBQYW5nIChXSCk7IE1pa2UgTGkgKFdIKTsg
-Q2hldnJvbiBMaSAoV0gpOyBTaGlybGV5IEhlciAoU0MpOyBYaWFvZ3VhbmcgWXUgKFdIKTsgQm9i
-YnkgV3UgKFdIKQ0KU3ViamVjdDogUmU6IFtQQVRDSCBWNyAyLzVdIG1tYzogc2RoY2k6IENoYW5n
-ZSBPMiBIb3N0IEhTMjAwIG1vZGUgY2xvY2sgZnJlcXVlbmN5IHRvIDIwME1Ieg0KDQpPbiAxNi8w
-Ny8xOCAwOToyNiwgZXJuZXN0LnpoYW5nIHdyb3RlOg0KPiBPMiBTRCBIb3N0IEhTMjAwIG1vZGUg
-Y2xvY2sgZnJlcXVlbmN5IGN1cnJlbnQgaXMgMjA4TUh6LCBzaG91bGQgYmUgDQo+IGNoYW5nZWQg
-dG8gMjAwTUh6IHRvIG1lZXQgc3BlY2lmaWNhdGlvbi4NCj4gDQo+IFNpZ25lZC1vZmYtYnk6IGVy
-bmVzdC56aGFuZyA8ZXJuZXN0LnpoYW5nQGJheWh1YnRlY2guY29tPg0KDQpZb3UgbGVmdCBpbiB0
-aGUgbWlzbGVhZGluZyBjb21tZW50LiAgRml4IHRoYXQgYW5kIGFkZDoNCg0KQWNrZWQtYnk6IEFk
-cmlhbiBIdW50ZXIgPGFkcmlhbi5odW50ZXJAaW50ZWwuY29tPg0KDQo+IC0tLQ0KPiBDaGFuZ2Ug
-aW4gVjc6DQo+IAlDaGFuZ2UgSFMyMDAgbW9kZSBjbG9jayBmcmVxdWVuY3kgZnJvbSAyMDhNSHog
-dG8gMjAwTUh6IHRvIG1lZXQNCj4gCVNwZWNpZmljYXRpb24uDQo+IA0KPiBDaGFuZ2UgaW4gVjF+
-VjY6DQo+IAlOL0ENCj4gLS0tDQo+ICBkcml2ZXJzL21tYy9ob3N0L3NkaGNpLXBjaS1vMm1pY3Jv
-LmMgfCA0ICsrLS0NCj4gIDEgZmlsZSBjaGFuZ2VkLCAyIGluc2VydGlvbnMoKyksIDIgZGVsZXRp
-b25zKC0pDQo+IA0KPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9tbWMvaG9zdC9zZGhjaS1wY2ktbzJt
-aWNyby5jIA0KPiBiL2RyaXZlcnMvbW1jL2hvc3Qvc2RoY2ktcGNpLW8ybWljcm8uYw0KPiBpbmRl
-eCBiYTU5ZGI2YTEyNmMuLjk0Y2YzY2Q3NWRkMyAxMDA2NDQNCj4gLS0tIGEvZHJpdmVycy9tbWMv
-aG9zdC9zZGhjaS1wY2ktbzJtaWNyby5jDQo+ICsrKyBiL2RyaXZlcnMvbW1jL2hvc3Qvc2RoY2kt
-cGNpLW8ybWljcm8uYw0KPiBAQCAtMzExLDcgKzMxMSw3IEBAIGludCBzZGhjaV9wY2lfbzJfcHJv
-YmUoc3RydWN0IHNkaGNpX3BjaV9jaGlwIA0KPiAqY2hpcCkNCj4gIA0KPiAgCQkJLyogQ2hlY2sg
-V2hldGhlciBzdWJJZCBpcyAweDExIG9yIDB4MTIgKi8NCj4gIAkJCWlmICgoc2NyYXRjaF8zMiA9
-PSAweDExKSB8fCAoc2NyYXRjaF8zMiA9PSAweDEyKSkgew0KPiAtCQkJCXNjcmF0Y2hfMzIgPSAw
-eDJjMjgwMDAwOw0KPiArCQkJCXNjcmF0Y2hfMzIgPSAweDI1MTAwMDAwOw0KPiAgDQo+ICAJCQkJ
-LyogU2V0IEJhc2UgQ2xvY2sgdG8gMjA4TVogKi8NCg0KVGhhdCBjb21tZW50IGlzIG1pc2xlYWRp
-bmcgbm93Lg0KDQo+ICAJCQkJbzJfcGNpX3NldF9iYXNlY2xrKGNoaXAsIHNjcmF0Y2hfMzIpOyBA
-QCAtNDA2LDcgKzQwNiw3IEBAIGludCANCj4gc2RoY2lfcGNpX28yX3Byb2JlKHN0cnVjdCBzZGhj
-aV9wY2lfY2hpcCAqY2hpcCkNCj4gIAkJCQkJICAgICAgIE8yX1NEX1BMTF9TRVRUSU5HLCBzY3Jh
-dGNoXzMyKTsNCj4gIAkJfSBlbHNlIHsNCj4gIAkJCXNjcmF0Y2hfMzIgJj0gMHgwMDAwRkZGRjsN
-Cj4gLQkJCXNjcmF0Y2hfMzIgfD0gMHgyYzI4MDAwMDsNCj4gKwkJCXNjcmF0Y2hfMzIgfD0gMHgy
-NTEwMDAwMDsNCj4gIA0KPiAgCQkJcGNpX3dyaXRlX2NvbmZpZ19kd29yZChjaGlwLT5wZGV2LA0K
-PiAgCQkJCQkgICAgICAgTzJfU0RfUExMX1NFVFRJTkcsIHNjcmF0Y2hfMzIpOw0KPiANCg0K
+> -----Original Message-----
+> From: Ooi, Tzy Way
+> Sent: Tuesday, July 24, 2018 10:23 AM
+> To: Russell King - ARM Linux <linux@armlinux.org.uk>
+> Cc: linux-kernel@vger.kernel.org; See, Chin Liang
+> <chin.liang.see@intel.com>; Tan, Ley Foon <ley.foon.tan@intel.com>;
+> Nguyen, Dinh <dinh.nguyen@intel.com>; Aw, Khai Liang
+> <khai.liang.aw@intel.com>
+> Subject: RE: Enquiry on unbalanced memory throughput for dual-Cortex A9
+> core.
+> 
+> > -----Original Message-----
+> > From: Russell King - ARM Linux <linux@armlinux.org.uk>
+> > Sent: Friday, July 20, 2018 6:36 PM
+> > To: Ooi, Tzy Way <tzy.way.ooi@intel.com>
+> > Cc: linux-kernel@vger.kernel.org; See, Chin Liang
+> > <chin.liang.see@intel.com>; Tan, Ley Foon <ley.foon.tan@intel.com>;
+> > Nguyen, Dinh <dinh.nguyen@intel.com>; Aw, Khai Liang
+> > <khai.liang.aw@intel.com>
+> > Subject: Re: Enquiry on unbalanced memory throughput for dual-Cortex
+> > A9 core.
+> >
+> > On Fri, Jul 20, 2018 at 08:49:47AM +0000, Ooi, Tzy Way wrote:
+> > > Hi Russell,
+> > >
+> > > I am trying the memory write operation with the LM benchmark test. I
+> > > tried to execute the memory write operation here
+> > > <http://lmbench.sourceforge.net/cgi-
+> > bin/man?section=8&keyword=bw_mem>
+> > > twice to get both Cortex A9 core processor to work on each processes.
+> > > Both processors is going to perform write operation at almost the
+> > > same time to the memory.
+> > >
+> > > As shown in the pictures below, the memory throughput from one of
+> > > the cores is about double the throughput of another core. i.e.
+> > > 377MB/s VS 728MB/s
+> > >
+> > > [cid:image001.png@01D42049.5A7D0070]
+> > >
+> > > I have tested this operation across few dual cores Cortex A9 boards
+> > > and all the board is having the same result. The test is tested on
+> > > kernel version 4.9 and newest Linux kernel version 4.18.0-rc2
+> >
+> > Here's how 4.14 behaves on an iMX6D SoC (also dual core Cortex A9):
+> >
+> > $ taskset -c 0 ./bw_mem -N 1000 1M fwr & taskset -c 1 ./bw_mem -N 1000
+> > 1M fwr [1] 21799
+> > 1.00 521.10
+> > 1.00 497.27
+> > [1]+  Done                    taskset -c 0 ./bw_mem -N 1000 1M fwr
+> > $ taskset -c 0 ./bw_mem -N 1000 1M fwr & taskset -c 1 ./bw_mem -N 1000
+> > 1M fwr [1] 21803
+> > 1.00 520.83
+> > 1.00 496.44
+> >
+> > which shows some asymmetry but nowhere near yours.
+> >
+> > I'm using taskset to force each to be locked to a particular CPU -
+> > you'll see why further down.  Even without it, I get similar results
+> > to those I mention above.
+> >
+> > Now, playing around with this, so we can identify which bw_mem output
+> > is
+> > which:
+> >
+> > $ taskset -c 0 ./bw_mem -N 1000 1M fwr & c1=$(taskset -c 1 ./bw_mem -N
+> > 1000 1M fwr 2>&1); echo "c1: $c1"
+> > [1] 21876
+> > 1.00 521.92
+> > c1: 1.00 496.69
+> > $ taskset -c 1 ./bw_mem -N 1000 1M fwr & c1=$(taskset -c 0 ./bw_mem -N
+> > 1000 1M fwr 2>&1); echo "c0: $c1"
+> > [1] 21881
+> > c0: 1.00 521.83
+> > 1.00 496.20
+> >
+> > CPU0 is always the slightly faster of the two.  If we use
+> > /usr/bin/time to time
+> > these:
+> >
+> > CPU0:
+> > 6.10user 0.25system 0:06.56elapsed 96%CPU (0avgtext+0avgdata
+> > 1664maxresident)k
+> > 0inputs+0outputs (0major+407minor)pagefaults 0swaps
+> >
+> > CPU1:
+> > 6.36user 0.24system 0:06.77elapsed 97%CPU (0avgtext+0avgdata
+> > 1600maxresident)k
+> > 0inputs+0outputs (0major+399minor)pagefaults 0swaps
+> >
+> > So, CPU1 takes slightly longer in userspace, has less resident pages
+> > and less minor faults which is rather odd.  Repeatedly running just
+> > one instance gives different results each time... disabling virtual
+> > address space randomisation solves that:
+> >
+> >   echo 0 >/proc/sys/kernel/randomize_va_space
+> >
+> > which then gives me:
+> >
+> > CPU0: 1.00 520.20
+> > 6.18user 0.20system 0:06.59elapsed 96%CPU (0avgtext+0avgdata
+> > 1700maxresident)k
+> > 0inputs+0outputs (0major+403minor)pagefaults 0swaps
+> > CPU1: 1.00 496.61
+> > 6.46user 0.14system 0:06.77elapsed 97%CPU (0avgtext+0avgdata
+> > 1700maxresident)k
+> > 0inputs+0outputs (0major+403minor)pagefaults 0swaps
+> >
+> > CPU0: 1.00 521.10
+> > 6.13user 0.21system 0:06.57elapsed 96%CPU (0avgtext+0avgdata
+> > 1700maxresident)k
+> > 0inputs+0outputs (0major+403minor)pagefaults 0swaps
+> > CPU1: 1.00 498.01
+> > 6.40user 0.18system 0:06.75elapsed 97%CPU (0avgtext+0avgdata
+> > 1700maxresident)k
+> > 0inputs+0outputs (0major+403minor)pagefaults 0swaps
+> >
+> > which is rather more stable as far as resource usage goes between the
+> > two CPUs, but still an asymmetry in the reported bandwidths and times.
+> > So, this has ruled out differences in VA layout.
+> >
+> > Now for the interesting bit... it's important to understand what and
+> > how stuff is being measured.  Looking at the bw_mem.c and associated
+> > source code, it measures the performance against the wall clock, which
+> > includes everything that the system is doing on each particular CPU.
+> > So, if a CPU is interrupted by another thread wanting to run, it'll
+> > affect the results.  Hence, it's best to run on an otherwise quiet
+> > system, eg, without an init daemon (eg, booted with init=/bin/sh on
+> > the kernel command line - but note there won't be any job control, so
+> > ^C won't work!)
+> >
+> > However, continuing on...
+> >
+> > If I run bw_mem on just one CPU:
+> >
+> > CPU1: 1.00 2617.31
+> > 5.74user 0.18system 0:06.03elapsed 98%CPU (0avgtext+0avgdata
+> > 1700maxresident)k
+> > 0inputs+0outputs (0major+403minor)pagefaults 0swaps
+> >
+> > Same number of iterations, same memory size, but notice that it
+> > appears to be a lot faster reported by bw_mem, but the time taken is
+> about the same.
+> > cpufreq comes to mind, but that's disabled on this system.
+> >
+> > So, it brings up a rather obvious question: what exactly is bw_mem
+> > measuring, and is it measuring it correctly?
+> >
+> > $ /usr/bin/time taskset -c 1 ./bw_mem -P 1 -N 1000 1M fwr
+> > 1.00 2601.26
+> > 5.80user 0.16system 0:06.06elapsed 98%CPU (0avgtext+0avgdata
+> > 1700maxresident)k
+> > 0inputs+0outputs (0major+403minor)pagefaults 0swaps
+> > $ /usr/bin/time ./bw_mem -P 2 -N 1000 1M fwr ^CCommand terminated
+> by
+> > signal 2 5.54user 0.13system 1:12.20elapsed 7%CPU (0avgtext+0avgdata
+> > 1696maxresident)k
+> > 0inputs+0outputs (0major+365minor)pagefaults 0swaps
+> >
+> > so requesting a parallelism of 2 results in the program never
+> > seemingly ending in a reasonable period of time, which suggests a bug
+> somewhere.
+> > Are we sure that bw_mem is actually working as intended?
+> >
+> > Maybe if Larry is reading this, he could share some thoughts.
+> >
+> > --
+> > RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
+> > FTTC broadband for 0.8mile line in suburbia: sync at 13.8Mbps down
+> > 630kbps up According to speedtest.net: 13Mbps down 490kbps up
+> 
+> Thanks for the detail explanation on LM bench test.
+> 
+> Initially, I tested to run my own's created memory test program and
+> encountered the same unbalanced memory throughput whenever two
+> threads are running on different cores. I tested to run the memory test
+> program on either one core or two cores. The unbalanced memory
+> throughput is seen when running on two cores. Hence, I tried out the
+> bw_mem test as it is a general benchmark program and it appears to be alike
+> to my own test case.
+> 
+> Attached is the memory test program memtest.c file and the Linux
+> executable file. The memtest -a1 will forces the two threads running on
+> different cores while memtest -a2 will forces the two threads running on one
+> core.
+> May I know if is it possible if you could try out my test program on your
+> iMX6D SoC (also dual core Cortex A9) board?
+> 
+> Below show the comparison between two threads running on one core vs
+> two cores
+> 
+> One core:
+> ========= Multi Thread =========
+> 
+> Thread 3067511920 - data size 1 MB, runs = 1000 Thread 3059123312 - data
+> size 1 MB, runs = 1000 Thread :3059123312: Datarate: 974.887201 MB/s
+> Thread :3067511920: Datarate: 960.289834 MB/s Thread :3067511920:
+> Datarate: 1083.249741 MB/s Thread :3059123312: Datarate: 1055.545769 MB/s
+> Thread :3067511920: Datarate: 1085.555446 MB/s Thread :3059123312:
+> Datarate: 1084.503430 MB/s Thread :3067511920: Datarate: 1063.379303 MB/s
+> Thread :3059123312: Datarate: 1070.705338 MB/s Thread :3067511920:
+> Datarate: 1050.933243 MB/s Thread :3059123312: Datarate: 1050.153330 MB/s
+> Thread :3067511920: Datarate: 1085.489144 MB/s Thread :3059123312:
+> Datarate: 1071.774560 MB/s Thread :3067511920: Datarate: 1084.506795 MB/s
+> Thread :3059123312: Datarate: 1060.260066 MB/s Thread :3067511920:
+> Datarate: 1074.058027 MB/s Thread :3059123312: Datarate: 1069.279388 MB/s
+> Thread :3067511920: Datarate: 1073.924924 MB/s Thread :3059123312:
+> Datarate: 1080.818992 MB/s Thread :3067511920: Datarate: 1081.871683 MB/s
+> Thread :3067511920: Average Datarate: 1064.325814 MB/s
+> Thread :3059123312: Datarate: 1097.549768 MB/s Thread :3059123312:
+> Average Datarate: 1061.547784 MB/s Finished!
+> 
+> Two cores:
+> ========= Multi Thread =========
+> 
+> Thread 3067954288 - data size 1 MB, runs = 1000 Thread 3059565680 - data
+> size 1 MB, runs = 1000 Thread :3067954288: Datarate: 741.930805 MB/s
+> Thread :3059565680: Datarate: 377.979641 MB/s Thread :3067954288:
+> Datarate: 741.976479 MB/s Thread :3067954288: Datarate: 740.548015 MB/s
+> Thread :3059565680: Datarate: 376.706463 MB/s Thread :3067954288:
+> Datarate: 740.313260 MB/s Thread :3067954288: Datarate: 740.363440 MB/s
+> Thread :3059565680: Datarate: 376.129877 MB/s Thread :3067954288:
+> Datarate: 740.056194 MB/s Thread :3067954288: Datarate: 740.219191 MB/s
+> Thread :3059565680: Datarate: 376.114092 MB/s Thread :3067954288:
+> Datarate: 740.152311 MB/s Thread :3067954288: Datarate: 724.094688 MB/s
+> Thread :3059565680: Datarate: 388.118117 MB/s Thread :3067954288:
+> Datarate: 740.556383 MB/s Thread :3067954288: Average Datarate:
+> 739.021077 MB/s Thread :3059565680: Datarate: 1323.735631 MB/s
+> Thread :3059565680: Datarate: 2072.948256 MB/s Thread :3059565680:
+> Datarate: 2069.817984 MB/s Thread :3059565680: Datarate: 2069.295149 MB/s
+> Thread :3059565680: Datarate: 2040.932474 MB/s Thread :3059565680:
+> Average Datarate: 1147.177768 MB/s Finished!
+> 
+> Thanks
+> Tzy Way
+
+
+Hi Russell,
+
+Sorry for interrupt. I would like to check with you if do you have the chance to try out the memory test program on your iMX6D SoC board?
+Currently, I do not have other board with me and I wish to test it across other platform to see if the same issue will be seen on other board.
+
+Really appreciate on your help to run the test program on your board. Hope to hear from you soon.
+
+Thank you
+
+Best regards,
+Tzy Way
