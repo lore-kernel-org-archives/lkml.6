@@ -2,123 +2,80 @@ Return-Path: <SRS0=OQFz=KL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CC2AC67790
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 08:22:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73D2AC6778F
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 08:25:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4F39F20893
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 08:22:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1A8FF2088E
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 08:25:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iT1Aw/tH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F39F20893
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b="rZABMMDy"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1A8FF2088E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=8bytes.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730416AbeG0JnZ (ORCPT
+        id S1730168AbeG0JqC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 05:43:25 -0400
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:46672 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730189AbeG0JnZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 05:43:25 -0400
-Received: by mail-pl0-f66.google.com with SMTP id t17-v6so1998241ply.13;
-        Fri, 27 Jul 2018 01:22:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=/gzMd54Ec+OtZaWMQabcpGO3Adpp6UPzv3QK9xSICBM=;
-        b=iT1Aw/tHcOrtcvZTWUUffBXO61lXo8j9RsD3zivpcsABkx471mCgVzWQ3E+TPox6zH
-         znfNN73ogmlyWH5jQr13cKH/bP4GXYO/0bgwU7H1XaiXSq9h7Lczw/T9JVosVCXv2IkP
-         tWArHaGeDdIQoTTlkplXvLUbzQNvEJaXQ47LSF+/6NxRgKmhTWawEzF/eugtRBwtlzt1
-         t7QZ7LgJipNRBAjY5QQJjuRHmBmF96wMQinVO6qt8QXU6aUM5TxdRWDa6hb37FnOZgfU
-         gE7zaIpjbCozWm0ijVCYWXbMHo3umOHEwfYDfEWDTcP4yzAjWeO7aN/SW+guGy4eUTn3
-         fC0Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=/gzMd54Ec+OtZaWMQabcpGO3Adpp6UPzv3QK9xSICBM=;
-        b=udYGIN3mMeTBt97olk7kpcDfH7X0G1UCfma6VUMIIh0r/t3oh37U6t+sBwdaqm2Wuv
-         q4uRBqwvIGz+4vNW5zZr42NU+RaXX9xhzs7g5wv40W1DSZBtdwmoHzeIJHXBbQstN68A
-         ghaGLA/NXD5NGPd7tt2JeqAY0yD/e6ZnHQFKEG4TkleAMh8PvAQ3IaJ2OLWFZJoxs1gz
-         5S/umzQn7WNIgUH1UsafIYsZT2UuOi7L+sGtNSPeq4v1c3awT9yE/Gei/rVTnZiEFj9F
-         R8cQZoLkAQy0UPAQWxFSUgqF/miuNt0nET4P2fY/4CSSjZbmPmpVpFCKmOzD1sTg2tLe
-         BTCw==
-X-Gm-Message-State: AOUpUlHypgv9E26Ugs1JCFpYtduxVqzfnYFoVgPTXJkyfy9mlaNDOHeN
-        t8DfUrmWZ/935KgQOcATbMaa1Ee/
-X-Google-Smtp-Source: AAOMgpcppLIQ8h6bhdFicM/GXHwGJlnqyA/0iF+82wSFCSzUKgVDE/XUnfu9a8qQiIPgTu9Kf34lvw==
-X-Received: by 2002:a17:902:28a4:: with SMTP id f33-v6mr5043668plb.297.1532679758992;
-        Fri, 27 Jul 2018 01:22:38 -0700 (PDT)
-Received: from localhost.localdomain ([2402:f000:1:4414:6c14:7712:e625:1be4])
-        by smtp.gmail.com with ESMTPSA id d132-v6sm4573023pga.10.2018.07.27.01.22.37
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 27 Jul 2018 01:22:38 -0700 (PDT)
-From:   Jia-Ju Bai <baijiaju1990@gmail.com>
-To:     jeffrey.t.kirsher@intel.com
-Cc:     intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Jia-Ju Bai <baijiaju1990@gmail.com>
-Subject: [PATCH] net: intel: ixgbe: Replace GFP_ATOMIC with GFP_KERNEL
-Date:   Fri, 27 Jul 2018 16:22:31 +0800
-Message-Id: <20180727082231.3798-1-baijiaju1990@gmail.com>
-X-Mailer: git-send-email 2.17.0
+        Fri, 27 Jul 2018 05:46:02 -0400
+Received: from 8bytes.org ([81.169.241.247]:33166 "EHLO theia.8bytes.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729431AbeG0JqC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Jul 2018 05:46:02 -0400
+Received: by theia.8bytes.org (Postfix, from userid 1000)
+        id 2595525A; Fri, 27 Jul 2018 10:25:14 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=8bytes.org; s=mail-1;
+        t=1532679914; bh=lfcxpOZdhkEgGJHUYs2LGreSEDxoS6TGO2txPpbpusY=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=rZABMMDyoaIA4Xe9UmPGWavmK8kK83tBJ4x21B/6C8Z0uOrBZwpYdDWXAe5/Xc5lt
+         o4chJHeo1Bz6hhoTJJ27hNI3b20YGEAZujKBCxJ39qDtbkfhA3Q7a5zO1fXr9+ifiA
+         gjLnWYDNp2VwxLUYlmpKYCB4LBOokOPJfNkZn93DAUPDyd++atohnfRBLAtTr4PdmM
+         lQeUcAPKpNIO282q4ahv+RWAr9ehW5WVYssggLIJ0/74ZJy+/5ESoPD0JuAYBkUaHz
+         P7FACIWf0hHs72lx3zkwPkBt/fttIlDPwRb7sLilOd1MElFMFWACN2SP2e9wZvsWhr
+         RMUNKS5pAyFJw==
+Date:   Fri, 27 Jul 2018 10:25:13 +0200
+From:   Joerg Roedel <joro@8bytes.org>
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Mikko Perttunen <cyndis@kapsi.fi>,
+        Rob Herring <robh+dt@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Ben Skeggs <bskeggs@redhat.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Nicolas Chauvet <kwizart@gmail.com>,
+        devicetree@vger.kernel.org, nouveau@lists.freedesktop.org,
+        iommu@lists.linux-foundation.org, dri-devel@lists.freedesktop.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH v1 0/6] Resolve unwanted DMA backing with IOMMU
+Message-ID: <20180727082512.lpvmeuvxnw3mpeym@8bytes.org>
+References: <20180726231624.21084-1-digetx@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180726231624.21084-1-digetx@gmail.com>
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-ixgbe_fcoe_ddp_setup(), ixgbe_setup_fcoe_ddp_resources() and 
-ixgbe_sw_init() are never called in atomic context.
-They call kmalloc(), dma_pool_alloc() and kzalloc() with GFP_ATOMIC, 
-which is not necessary.
-GFP_ATOMIC can be replaced with GFP_KERNEL.
+On Fri, Jul 27, 2018 at 02:16:18AM +0300, Dmitry Osipenko wrote:
+> The proposed solution adds a new option to the base device driver
+> structure that allows device drivers to explicitly convey to the drivers
+> core that the implicit IOMMU backing for devices must not happen.
 
-This is found by a static analysis tool named DCNS written by myself.
+Why is IOMMU mapping a problem for the Tegra GPU driver?
 
-Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
----
- drivers/net/ethernet/intel/ixgbe/ixgbe_fcoe.c | 4 ++--
- drivers/net/ethernet/intel/ixgbe/ixgbe_main.c | 2 +-
- 2 files changed, 3 insertions(+), 3 deletions(-)
+If we add something like this then it should not be the choice of the
+device driver, but of the user and/or the firmware.
 
-diff --git a/drivers/net/ethernet/intel/ixgbe/ixgbe_fcoe.c b/drivers/net/ethernet/intel/ixgbe/ixgbe_fcoe.c
-index 7a09a40e4472..ff7ed77ce224 100644
---- a/drivers/net/ethernet/intel/ixgbe/ixgbe_fcoe.c
-+++ b/drivers/net/ethernet/intel/ixgbe/ixgbe_fcoe.c
-@@ -217,7 +217,7 @@ static int ixgbe_fcoe_ddp_setup(struct net_device *netdev, u16 xid,
- 	}
- 
- 	/* alloc the udl from per cpu ddp pool */
--	ddp->udl = dma_pool_alloc(ddp_pool->pool, GFP_ATOMIC, &ddp->udp);
-+	ddp->udl = dma_pool_alloc(ddp_pool->pool, GFP_KERNEL, &ddp->udp);
- 	if (!ddp->udl) {
- 		e_err(drv, "failed allocated ddp context\n");
- 		goto out_noddp_unmap;
-@@ -785,7 +785,7 @@ int ixgbe_setup_fcoe_ddp_resources(struct ixgbe_adapter *adapter)
- 		return 0;
- 
- 	/* Extra buffer to be shared by all DDPs for HW work around */
--	buffer = kmalloc(IXGBE_FCBUFF_MIN, GFP_ATOMIC);
-+	buffer = kmalloc(IXGBE_FCBUFF_MIN, GFP_KERNEL);
- 	if (!buffer)
- 		return -ENOMEM;
- 
-diff --git a/drivers/net/ethernet/intel/ixgbe/ixgbe_main.c b/drivers/net/ethernet/intel/ixgbe/ixgbe_main.c
-index afadba99f7b8..fe4a6125576d 100644
---- a/drivers/net/ethernet/intel/ixgbe/ixgbe_main.c
-+++ b/drivers/net/ethernet/intel/ixgbe/ixgbe_main.c
-@@ -6138,7 +6138,7 @@ static int ixgbe_sw_init(struct ixgbe_adapter *adapter,
- 
- 	adapter->mac_table = kzalloc(sizeof(struct ixgbe_mac_addr) *
- 				     hw->mac.num_rar_entries,
--				     GFP_ATOMIC);
-+				     GFP_KERNEL);
- 	if (!adapter->mac_table)
- 		return -ENOMEM;
- 
--- 
-2.17.0
+
+	Joerg
 
