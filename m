@@ -6,35 +6,36 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F016C6778F
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:27:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23DBCC67790
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:27:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1E804208A2
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:27:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E804208A2
+	by mail.kernel.org (Postfix) with ESMTP id D2C87208A2
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:27:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D2C87208A2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732559AbeG0Lsh (ORCPT
+        id S1732981AbeG0Lsk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 07:48:37 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:41394 "EHLO
+        Fri, 27 Jul 2018 07:48:40 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:41830 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729431AbeG0Lsg (ORCPT
+        with ESMTP id S1729431AbeG0Lsk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 07:48:36 -0400
+        Fri, 27 Jul 2018 07:48:40 -0400
 Received: from localhost (unknown [89.188.5.116])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 46B8BCD4;
-        Fri, 27 Jul 2018 10:27:19 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 6E944CD4;
+        Fri, 27 Jul 2018 10:27:22 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Paolo Abeni <pabeni@redhat.com>,
-        Eric Dumazet <edumazet@google.com>,
+        stable@vger.kernel.org,
+        Jack Morgenstein <jackm@dev.mellanox.co.il>,
+        Tariq Toukan <tariqt@mellanox.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 3.18 10/27] ip: hash fragments consistently
-Date:   Fri, 27 Jul 2018 12:26:47 +0200
-Message-Id: <20180727102649.422064291@linuxfoundation.org>
+Subject: [PATCH 3.18 11/27] net/mlx4_core: Save the qpn from the input modifier in RST2INIT wrapper
+Date:   Fri, 27 Jul 2018 12:26:48 +0200
+Message-Id: <20180727102649.455676328@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180727102649.049641021@linuxfoundation.org>
 References: <20180727102649.049641021@linuxfoundation.org>
@@ -51,73 +52,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Paolo Abeni <pabeni@redhat.com>
+From: Jack Morgenstein <jackm@dev.mellanox.co.il>
 
-[ Upstream commit 3dd1c9a1270736029ffca670e9bd0265f4120600 ]
+[ Upstream commit 958c696f5a7274d9447a458ad7aa70719b29a50a ]
 
-The skb hash for locally generated ip[v6] fragments belonging
-to the same datagram can vary in several circumstances:
-* for connected UDP[v6] sockets, the first fragment get its hash
-  via set_owner_w()/skb_set_hash_from_sk()
-* for unconnected IPv6 UDPv6 sockets, the first fragment can get
-  its hash via ip6_make_flowlabel()/skb_get_hash_flowi6(), if
-  auto_flowlabel is enabled
+Function mlx4_RST2INIT_QP_wrapper saved the qp number passed in the qp
+context, rather than the one passed in the input modifier.
 
-For the following frags the hash is usually computed via
-skb_get_hash().
-The above can cause OoO for unconnected IPv6 UDPv6 socket: in that
-scenario the egress tx queue can be selected on a per packet basis
-via the skb hash.
-It may also fool flow-oriented schedulers to place fragments belonging
-to the same datagram in different flows.
+However, the qp number in the qp context is not defined as a
+required parameter by the FW. Therefore, drivers may choose to not
+specify the qp number in the qp context for the reset-to-init transition.
 
-Fix the issue by copying the skb hash from the head frag into
-the others at fragmentation time.
+Thus, we must save the qp number passed in the command input modifier --
+which is always present. (This saved qp number is used as the input
+modifier for command 2RST_QP when a slave's qp's are destroyed).
 
-Before this commit:
-perf probe -a "dev_queue_xmit skb skb->hash skb->l4_hash:b1@0/8 skb->sw_hash:b1@1/8"
-netperf -H $IPV4 -t UDP_STREAM -l 5 -- -m 2000 -n &
-perf record -e probe:dev_queue_xmit -e probe:skb_set_owner_w -a sleep 0.1
-perf script
-probe:dev_queue_xmit: (ffffffff8c6b1b20) hash=3713014309 l4_hash=1 sw_hash=0
-probe:dev_queue_xmit: (ffffffff8c6b1b20) hash=0 l4_hash=0 sw_hash=0
-
-After this commit:
-probe:dev_queue_xmit: (ffffffff8c6b1b20) hash=2171763177 l4_hash=1 sw_hash=0
-probe:dev_queue_xmit: (ffffffff8c6b1b20) hash=2171763177 l4_hash=1 sw_hash=0
-
-Fixes: b73c3d0e4f0e ("net: Save TX flow hash in sock and set in skbuf on xmit")
-Fixes: 67800f9b1f4e ("ipv6: Call skb_get_hash_flowi6 to get skb->hash in ip6_make_flowlabel")
-Signed-off-by: Paolo Abeni <pabeni@redhat.com>
-Reviewed-by: Eric Dumazet <edumazet@google.com>
+Fixes: c82e9aa0a8bc ("mlx4_core: resource tracking for HCA resources used by guests")
+Signed-off-by: Jack Morgenstein <jackm@dev.mellanox.co.il>
+Signed-off-by: Tariq Toukan <tariqt@mellanox.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ipv4/ip_output.c  |    2 ++
- net/ipv6/ip6_output.c |    2 ++
- 2 files changed, 4 insertions(+)
+ drivers/net/ethernet/mellanox/mlx4/resource_tracker.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/net/ipv4/ip_output.c
-+++ b/net/ipv4/ip_output.c
-@@ -459,6 +459,8 @@ static void ip_copy_metadata(struct sk_b
- 	to->dev = from->dev;
- 	to->mark = from->mark;
+--- a/drivers/net/ethernet/mellanox/mlx4/resource_tracker.c
++++ b/drivers/net/ethernet/mellanox/mlx4/resource_tracker.c
+@@ -2709,7 +2709,7 @@ int mlx4_RST2INIT_QP_wrapper(struct mlx4
+ 	u32 srqn = qp_get_srqn(qpc) & 0xffffff;
+ 	int use_srq = (qp_get_srqn(qpc) >> 24) & 1;
+ 	struct res_srq *srq;
+-	int local_qpn = be32_to_cpu(qpc->local_qpn) & 0xffffff;
++	int local_qpn = vhcr->in_modifier & 0xffffff;
  
-+	skb_copy_hash(to, from);
-+
- 	/* Copy the flags to each fragment. */
- 	IPCB(to)->flags = IPCB(from)->flags;
- 
---- a/net/ipv6/ip6_output.c
-+++ b/net/ipv6/ip6_output.c
-@@ -533,6 +533,8 @@ static void ip6_copy_metadata(struct sk_
- 	to->dev = from->dev;
- 	to->mark = from->mark;
- 
-+	skb_copy_hash(to, from);
-+
- #ifdef CONFIG_NET_SCHED
- 	to->tc_index = from->tc_index;
- #endif
+ 	err = qp_res_start_move_to(dev, slave, qpn, RES_QP_HW, &qp, 0);
+ 	if (err)
 
 
