@@ -6,45 +6,44 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06E45C6778F
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 17:32:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F837C67790
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 17:32:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B1FD0208B4
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 17:32:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B1FD0208B4
+	by mail.kernel.org (Postfix) with ESMTP id D5700208B4
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 17:32:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D5700208B4
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389479AbeG0SzU (ORCPT
+        id S2388467AbeG0Sz1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 14:55:20 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:46664 "EHLO mx1.redhat.com"
+        Fri, 27 Jul 2018 14:55:27 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:46672 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2388886AbeG0SzT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 14:55:19 -0400
+        id S2388886AbeG0Sz0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Jul 2018 14:55:26 -0400
 Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 14D194219DCA;
-        Fri, 27 Jul 2018 17:32:26 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id A61EB40241CC;
+        Fri, 27 Jul 2018 17:32:32 +0000 (UTC)
 Received: from warthog.procyon.org.uk (ovpn-120-116.rdu2.redhat.com [10.10.120.116])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 86E4C2026D6B;
-        Fri, 27 Jul 2018 17:32:23 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id B5AA72026D6B;
+        Fri, 27 Jul 2018 17:32:31 +0000 (UTC)
 Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
  Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
  Kingdom.
  Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH 09/38] selinux: Implement the new mount API LSM hooks [ver
- #10]
+Subject: [PATCH 10/38] smack: Implement filesystem context security hooks
+ [ver #10]
 From:   David Howells <dhowells@redhat.com>
 To:     viro@zeniv.linux.org.uk
-Cc:     Paul Moore <paul@paul-moore.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>, selinux@tycho.nsa.gov,
+Cc:     Casey Schaufler <casey@schaufler-ca.com>,
         linux-security-module@vger.kernel.org,
         torvalds@linux-foundation.org, dhowells@redhat.com,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Fri, 27 Jul 2018 18:32:23 +0100
-Message-ID: <153271274305.9458.13602378603425233117.stgit@warthog.procyon.org.uk>
+Date:   Fri, 27 Jul 2018 18:32:31 +0100
+Message-ID: <153271275122.9458.5878346975276108582.stgit@warthog.procyon.org.uk>
 In-Reply-To: <153271267980.9458.7640156373438016898.stgit@warthog.procyon.org.uk>
 References: <153271267980.9458.7640156373438016898.stgit@warthog.procyon.org.uk>
 User-Agent: StGit/unknown-version
@@ -52,349 +51,409 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Fri, 27 Jul 2018 17:32:26 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Fri, 27 Jul 2018 17:32:26 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'dhowells@redhat.com' RCPT:''
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Fri, 27 Jul 2018 17:32:32 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Fri, 27 Jul 2018 17:32:32 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'dhowells@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Implement the new mount API LSM hooks for SELinux.  At some point the old
-hooks will need to be removed.
+Implement filesystem context security hooks for the smack LSM.
 
 Question: Should the ->fs_context_parse_source() hook be implemented to
 check the labels on any source devices specified?
 
 Signed-off-by: David Howells <dhowells@redhat.com>
-cc: Paul Moore <paul@paul-moore.com>
-cc: Stephen Smalley <sds@tycho.nsa.gov>
-cc: selinux@tycho.nsa.gov
+cc: Casey Schaufler <casey@schaufler-ca.com>
 cc: linux-security-module@vger.kernel.org
 ---
 
- security/selinux/hooks.c |  290 ++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 290 insertions(+)
+ security/smack/smack.h     |   11 +
+ security/smack/smack_lsm.c |  337 ++++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 343 insertions(+), 5 deletions(-)
 
-diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-index ef0428311a5c..9774d1f0e99f 100644
---- a/security/selinux/hooks.c
-+++ b/security/selinux/hooks.c
-@@ -48,6 +48,8 @@
- #include <linux/fdtable.h>
- #include <linux/namei.h>
- #include <linux/mount.h>
-+#include <linux/fs_context.h>
-+#include <linux/fs_parser.h>
- #include <linux/netfilter_ipv4.h>
- #include <linux/netfilter_ipv6.h>
- #include <linux/tty.h>
-@@ -446,6 +448,7 @@ enum {
- 	Opt_rootcontext = 4,
- 	Opt_labelsupport = 5,
- 	Opt_nextmntopt = 6,
-+	nr__selinux_params
+diff --git a/security/smack/smack.h b/security/smack/smack.h
+index f7db791fb566..e6d54e829394 100644
+--- a/security/smack/smack.h
++++ b/security/smack/smack.h
+@@ -195,11 +195,12 @@ struct smack_known_list_elem {
+ 
+ enum {
+ 	Opt_error = -1,
+-	Opt_fsdefault = 1,
+-	Opt_fsfloor = 2,
+-	Opt_fshat = 3,
+-	Opt_fsroot = 4,
+-	Opt_fstransmute = 5,
++	Opt_fsdefault = 0,
++	Opt_fsfloor = 1,
++	Opt_fshat = 2,
++	Opt_fsroot = 3,
++	Opt_fstransmute = 4,
++        nr__smack_params
  };
  
- #define NUM_SEL_MNT_OPTS	(Opt_nextmntopt - 1)
-@@ -2974,6 +2977,285 @@ static int selinux_umount(struct vfsmount *mnt, int flags)
- 				   FILESYSTEM__UNMOUNT, NULL);
+ /*
+diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
+index 9811476c8441..339ac4d42785 100644
+--- a/security/smack/smack_lsm.c
++++ b/security/smack/smack_lsm.c
+@@ -42,6 +42,8 @@
+ #include <linux/shm.h>
+ #include <linux/binfmts.h>
+ #include <linux/parser.h>
++#include <linux/fs_context.h>
++#include <linux/fs_parser.h>
+ #include "smack.h"
+ 
+ #define TRANS_TRUE	"TRUE"
+@@ -521,6 +523,334 @@ static int smack_syslog(int typefrom_file)
+ 	return rc;
  }
  
-+/* fsopen mount context operations */
++/*
++ * Mount context operations
++ */
 +
-+static int selinux_fs_context_alloc(struct fs_context *fc,
-+				    struct dentry *reference)
++struct smack_fs_context {
++	union {
++		struct {
++			char		*fsdefault;
++			char		*fsfloor;
++			char		*fshat;
++			char		*fsroot;
++			char		*fstransmute;
++		};
++		char			*ptrs[5];
++
++	};
++	struct superblock_smack		*sbsp;
++	struct inode_smack		*isp;
++	bool				transmute;
++};
++
++/**
++ * smack_fs_context_free - Free the security data from a filesystem context
++ * @fc: The filesystem context to be cleaned up.
++ */
++static void smack_fs_context_free(struct fs_context *fc)
 +{
-+	struct security_mnt_opts *opts;
++	struct smack_fs_context *ctx = fc->security;
++	int i;
 +
-+	opts = kzalloc(sizeof(*opts), GFP_KERNEL);
-+	if (!opts)
-+		return -ENOMEM;
-+
-+	fc->security = opts;
-+	return 0;
-+}
-+
-+static int selinux_fs_context_dup(struct fs_context *fc,
-+				  struct fs_context *src_fc)
-+{
-+	const struct security_mnt_opts *src = src_fc->security;
-+	struct security_mnt_opts *opts;
-+	int i, n;
-+
-+	opts = kzalloc(sizeof(*opts), GFP_KERNEL);
-+	if (!opts)
-+		return -ENOMEM;
-+	fc->security = opts;
-+
-+	if (!src || !src->num_mnt_opts)
-+		return 0;
-+	n = opts->num_mnt_opts = src->num_mnt_opts;
-+
-+	if (src->mnt_opts) {
-+		opts->mnt_opts = kcalloc(n, sizeof(char *), GFP_KERNEL);
-+		if (!opts->mnt_opts)
-+			return -ENOMEM;
-+
-+		for (i = 0; i < n; i++) {
-+			if (src->mnt_opts[i]) {
-+				opts->mnt_opts[i] = kstrdup(src->mnt_opts[i],
-+							    GFP_KERNEL);
-+				if (!opts->mnt_opts[i])
-+					return -ENOMEM;
-+			}
-+		}
-+	}
-+
-+	if (src->mnt_opts_flags) {
-+		opts->mnt_opts_flags = kmemdup(src->mnt_opts_flags,
-+					       n * sizeof(int), GFP_KERNEL);
-+		if (!opts->mnt_opts_flags)
-+			return -ENOMEM;
-+	}
-+
-+	return 0;
-+}
-+
-+static void selinux_fs_context_free(struct fs_context *fc)
-+{
-+	struct security_mnt_opts *opts = fc->security;
-+
-+	if (opts) {
-+		security_free_mnt_opts(opts);
++	if (ctx) {
++		for (i = 0; i < ARRAY_SIZE(ctx->ptrs); i++)
++			kfree(ctx->ptrs[i]);
++		kfree(ctx->isp);
++		kfree(ctx->sbsp);
++		kfree(ctx);
 +		fc->security = NULL;
 +	}
 +}
 +
-+static const struct fs_parameter_spec selinux_param_specs[nr__selinux_params] = {
-+	[Opt_context]		= { fs_param_is_string },
-+	[Opt_defcontext]	= { fs_param_is_string },
-+	[Opt_fscontext]		= { fs_param_is_string },
-+	[Opt_labelsupport]	= { fs_param_takes_no_value },
-+	[Opt_rootcontext]	= { fs_param_is_string },
-+};
-+
-+static const struct constant_table selinux_param_keys[] = {
-+	{ CONTEXT_STR,		Opt_context },
-+	{ DEFCONTEXT_STR,	Opt_defcontext },
-+	{ FSCONTEXT_STR,	Opt_fscontext },
-+	{ ROOTCONTEXT_STR,	Opt_rootcontext },
-+	{ LABELSUPP_STR,	Opt_labelsupport },
-+};
-+
-+static const struct fs_parameter_description selinux_fs_parameters = {
-+	.name		= "SELinux",
-+	.nr_params	= nr__selinux_params,
-+	.nr_keys	= ARRAY_SIZE(selinux_param_keys),
-+	.keys		= selinux_param_keys,
-+	.specs		= selinux_param_specs,
-+	.ignore_unknown	= true,
-+};
-+
-+static int selinux_fs_context_parse_param(struct fs_context *fc,
-+					  struct fs_parameter *param)
++/**
++ * smack_fs_context_alloc - Allocate security data for a filesystem context
++ * @fc: The filesystem context.
++ * @reference: Reference dentry (automount/reconfigure) or NULL
++ *
++ * Returns 0 on success or -ENOMEM on error.
++ */
++static int smack_fs_context_alloc(struct fs_context *fc,
++				  struct dentry *reference)
 +{
-+	struct security_mnt_opts *opts = fc->security;
-+	struct fs_parse_result result;
-+	unsigned int have;
-+	char **oo;
-+	int ret, ctx, i, *of;
++	struct smack_fs_context *ctx;
++	struct superblock_smack *sbsp;
++	struct inode_smack *isp;
++	struct smack_known *skp;
 +
-+	ret = fs_parse(fc, &selinux_fs_parameters, param, &result);
++	ctx = kzalloc(sizeof(struct smack_fs_context), GFP_KERNEL);
++	if (!ctx)
++		goto nomem;
++	fc->security = ctx;
++
++	sbsp = kzalloc(sizeof(struct superblock_smack), GFP_KERNEL);
++	if (!sbsp)
++		goto nomem_free;
++	ctx->sbsp = sbsp;
++
++	isp = new_inode_smack(NULL);
++	if (!isp)
++		goto nomem_free;
++	ctx->isp = isp;
++
++	if (reference) {
++		if (reference->d_sb->s_security)
++			memcpy(sbsp, reference->d_sb->s_security, sizeof(*sbsp));
++	} else if (!smack_privileged(CAP_MAC_ADMIN)) {
++		/* Unprivileged mounts get root and default from the caller. */
++		skp = smk_of_current();
++		sbsp->smk_root = skp;
++		sbsp->smk_default = skp;
++	} else {
++		sbsp->smk_root = &smack_known_floor;
++		sbsp->smk_default = &smack_known_floor;
++		sbsp->smk_floor = &smack_known_floor;
++		sbsp->smk_hat = &smack_known_hat;
++		/* SMK_SB_INITIALIZED will be zero from kzalloc. */
++	}
++
++	return 0;
++
++nomem_free:
++	smack_fs_context_free(fc);
++nomem:
++	return -ENOMEM;
++}
++
++/**
++ * smack_fs_context_dup - Duplicate the security data on fs_context duplication
++ * @fc: The new filesystem context.
++ * @src_fc: The source filesystem context being duplicated.
++ *
++ * Returns 0 on success or -ENOMEM on error.
++ */
++static int smack_fs_context_dup(struct fs_context *fc,
++				struct fs_context *src_fc)
++{
++	struct smack_fs_context *dst, *src = src_fc->security;
++	int i;
++
++	dst = kzalloc(sizeof(struct smack_fs_context), GFP_KERNEL);
++	if (!dst)
++		goto nomem;
++	fc->security = dst;
++
++	dst->sbsp = kmemdup(src->sbsp, sizeof(struct superblock_smack),
++			    GFP_KERNEL);
++	if (!dst->sbsp)
++		goto nomem_free;
++
++	for (i = 0; i < ARRAY_SIZE(dst->ptrs); i++) {
++		if (src->ptrs[i]) {
++			dst->ptrs[i] = kstrdup(src->ptrs[i], GFP_KERNEL);
++			if (!dst->ptrs[i])
++				goto nomem_free;
++		}
++	}
++
++	return 0;
++
++nomem_free:
++	smack_fs_context_free(fc);
++nomem:
++	return -ENOMEM;
++}
++
++static const struct fs_parameter_spec smack_param_specs[nr__smack_params] = {
++	[Opt_fsdefault]		= { fs_param_is_string },
++	[Opt_fsfloor]		= { fs_param_is_string },
++	[Opt_fshat]		= { fs_param_is_string },
++	[Opt_fsroot]		= { fs_param_is_string },
++	[Opt_fstransmute]	= { fs_param_is_string },
++};
++
++static const struct constant_table smack_param_keys[] = {
++	{ SMK_FSDEFAULT,	Opt_fsdefault },
++	{ SMK_FSFLOOR,		Opt_fsfloor },
++	{ SMK_FSHAT,		Opt_fshat },
++	{ SMK_FSROOT,		Opt_fsroot },
++	{ SMK_FSTRANS,		Opt_fstransmute },
++};
++
++static const struct fs_parameter_description smack_fs_parameters = {
++	.name		= "smack",
++	.nr_params	= nr__smack_params,
++	.nr_keys	= ARRAY_SIZE(smack_param_keys),
++	.keys		= smack_param_keys,
++	.specs		= smack_param_specs,
++};
++
++/**
++ * smack_fs_context_parse_param - Parse a single mount parameter
++ * @fc: The new filesystem context being constructed.
++ * @param: The parameter.
++ *
++ * Returns 0 on success or -ENOMEM on error.
++ */
++static int smack_fs_context_parse_param(struct fs_context *fc,
++					struct fs_parameter *param)
++{
++	struct smack_fs_context *ctx = fc->security;
++	struct fs_parse_result result;
++	int ret;
++
++	/* Unprivileged mounts don't get to specify Smack values. */
++	if (!smack_privileged(CAP_MAC_ADMIN))
++		return -EPERM;
++
++	ret = fs_parse(fc, &smack_fs_parameters, param, &result);
 +	if (ret <= 0)
 +		return ret; /* Note: 0 indicates no match */
 +
-+	have = 0;
-+	for (i = 0; i < opts->num_mnt_opts; i++)
-+		have |= 1 << opts->mnt_opts_flags[i];
-+	if (have & (1 << result.key))
-+		return -EINVAL;
-+
 +	switch (result.key) {
-+	case Opt_context:
-+		if (have & (1 << Opt_defcontext))
-+			goto incompatible;
-+		ctx = CONTEXT_MNT;
-+		goto copy_context_string;
-+
-+	case Opt_fscontext:
-+		ctx = FSCONTEXT_MNT;
-+		goto copy_context_string;
-+
-+	case Opt_rootcontext:
-+		ctx = ROOTCONTEXT_MNT;
-+		goto copy_context_string;
-+
-+	case Opt_defcontext:
-+		if (have & (1 << Opt_context))
-+			goto incompatible;
-+		ctx = DEFCONTEXT_MNT;
-+		goto copy_context_string;
-+
-+	case Opt_labelsupport:
-+		return 1;
-+
++	case Opt_fsdefault:
++		if (ctx->fsdefault)
++			goto error_dup;
++		ctx->fsdefault = param->string;
++		if (!ctx->fsdefault)
++			goto error;
++		break;
++	case Opt_fsfloor:
++		if (ctx->fsfloor)
++			goto error_dup;
++		ctx->fsfloor = param->string;
++		if (!ctx->fsfloor)
++			goto error;
++		break;
++	case Opt_fshat:
++		if (ctx->fshat)
++			goto error_dup;
++		ctx->fshat = param->string;
++		if (!ctx->fshat)
++			goto error;
++		break;
++	case Opt_fsroot:
++		if (ctx->fsroot)
++			goto error_dup;
++		ctx->fsroot = param->string;
++		if (!ctx->fsroot)
++			goto error;
++		break;
++	case Opt_fstransmute:
++		if (ctx->fstransmute)
++			goto error_dup;
++		ctx->fstransmute = param->string;
++		if (!ctx->fstransmute)
++			goto error;
++		break;
 +	default:
-+		return -EINVAL;
++		pr_warn("Smack:  unknown mount option\n");
++		goto error_inval;
 +	}
 +
-+copy_context_string:
-+	if (opts->num_mnt_opts > 3)
-+		return -EINVAL;
-+
-+	of = krealloc(opts->mnt_opts_flags,
-+		      (opts->num_mnt_opts + 1) * sizeof(int), GFP_KERNEL);
-+	if (!of)
-+		return -ENOMEM;
-+	of[opts->num_mnt_opts] = 0;
-+	opts->mnt_opts_flags = of;
-+
-+	oo = krealloc(opts->mnt_opts,
-+		      (opts->num_mnt_opts + 1) * sizeof(char *), GFP_KERNEL);
-+	if (!oo)
-+		return -ENOMEM;
-+	oo[opts->num_mnt_opts] = NULL;
-+	opts->mnt_opts = oo;
-+
-+	opts->mnt_opts[opts->num_mnt_opts] = param->string;
-+	opts->mnt_opts_flags[opts->num_mnt_opts] = ctx;
-+	opts->num_mnt_opts++;
 +	param->string = NULL;
-+	return 1;
++	return 0;
 +
-+incompatible:
-+	return -EINVAL;
++error_dup:
++	warnf(fc, "Smack: duplicate mount option\n");
++error_inval:
++	ret = -EINVAL;
++error:
++	return ret;
 +}
 +
-+/*
-+ * Validate the security parameters supplied for a reconfiguration/remount
-+ * event.
++/**
++ * smack_fs_context_validate - Validate the filesystem context security data
++ * @fc: The filesystem context.
++ *
++ * Returns 0 on success or -ENOMEM on error.
 + */
-+static int selinux_validate_for_sb_reconfigure(struct fs_context *fc)
++static int smack_fs_context_validate(struct fs_context *fc)
 +{
-+	struct super_block *sb = fc->root->d_sb;
-+	struct superblock_security_struct *sbsec = sb->s_security;
-+	struct security_mnt_opts *opts = fc->security;
-+	int rc, i, *flags;
-+	char **mount_options;
++	struct smack_fs_context *ctx = fc->security;
++	struct superblock_smack *sbsp = ctx->sbsp;
++	struct inode_smack *isp = ctx->isp;
++	struct smack_known *skp;
 +
-+	if (!(sbsec->flags & SE_SBINITIALIZED))
-+		return 0;
-+
-+	mount_options = opts->mnt_opts;
-+	flags = opts->mnt_opts_flags;
-+
-+	for (i = 0; i < opts->num_mnt_opts; i++) {
-+		u32 sid;
-+
-+		if (flags[i] == SBLABEL_MNT)
-+			continue;
-+
-+		rc = security_context_str_to_sid(&selinux_state, mount_options[i],
-+						 &sid, GFP_KERNEL);
-+		if (rc) {
-+			pr_warn("SELinux: security_context_str_to_sid"
-+				"(%s) failed for (dev %s, type %s) errno=%d\n",
-+				mount_options[i], sb->s_id, sb->s_type->name, rc);
-+			goto inval;
-+		}
-+
-+		switch (flags[i]) {
-+		case FSCONTEXT_MNT:
-+			if (bad_option(sbsec, FSCONTEXT_MNT, sbsec->sid, sid))
-+				goto bad_option;
-+			break;
-+		case CONTEXT_MNT:
-+			if (bad_option(sbsec, CONTEXT_MNT, sbsec->mntpoint_sid, sid))
-+				goto bad_option;
-+			break;
-+		case ROOTCONTEXT_MNT: {
-+			struct inode_security_struct *root_isec;
-+			root_isec = backing_inode_security(sb->s_root);
-+
-+			if (bad_option(sbsec, ROOTCONTEXT_MNT, root_isec->sid, sid))
-+				goto bad_option;
-+			break;
-+		}
-+		case DEFCONTEXT_MNT:
-+			if (bad_option(sbsec, DEFCONTEXT_MNT, sbsec->def_sid, sid))
-+				goto bad_option;
-+			break;
-+		default:
-+			goto inval;
-+		}
++	if (ctx->fsdefault) {
++		skp = smk_import_entry(ctx->fsdefault, 0);
++		if (IS_ERR(skp))
++			return PTR_ERR(skp);
++		sbsp->smk_default = skp;
 +	}
 +
-+	rc = 0;
-+out:
-+	return rc;
++	if (ctx->fsfloor) {
++		skp = smk_import_entry(ctx->fsfloor, 0);
++		if (IS_ERR(skp))
++			return PTR_ERR(skp);
++		sbsp->smk_floor = skp;
++	}
 +
-+bad_option:
-+	pr_warn("SELinux: unable to change security options "
-+		"during remount (dev %s, type=%s)\n",
-+		sb->s_id, sb->s_type->name);
-+inval:
-+	rc = -EINVAL;
-+	goto out;
-+}
++	if (ctx->fshat) {
++		skp = smk_import_entry(ctx->fshat, 0);
++		if (IS_ERR(skp))
++			return PTR_ERR(skp);
++		sbsp->smk_hat = skp;
++	}
 +
-+/*
-+ * Validate the security context assembled from the option data supplied to
-+ * mount.
-+ */
-+static int selinux_fs_context_validate(struct fs_context *fc)
-+{
-+	if (fc->purpose == FS_CONTEXT_FOR_RECONFIGURE)
-+		return selinux_validate_for_sb_reconfigure(fc);
++	if (ctx->fsroot || ctx->fstransmute) {
++		skp = smk_import_entry(ctx->fstransmute ?: ctx->fsroot, 0);
++		if (IS_ERR(skp))
++			return PTR_ERR(skp);
++		sbsp->smk_root = skp;
++		ctx->transmute = !!ctx->fstransmute;
++	}
++
++	isp->smk_inode = sbsp->smk_root;
 +	return 0;
 +}
 +
-+/*
-+ * Set the security context on a superblock.
++/**
++ * smack_sb_get_tree - Assign the context to a newly created superblock
++ * @fc: The new filesystem context.
++ *
++ * Returns 0 on success or -ENOMEM on error.
 + */
-+static int selinux_sb_get_tree(struct fs_context *fc)
++static int smack_sb_get_tree(struct fs_context *fc)
 +{
-+	const struct cred *cred = current_cred();
-+	struct common_audit_data ad;
-+	int rc;
++	struct smack_fs_context *ctx = fc->security;
++	struct superblock_smack *sbsp = ctx->sbsp;
++	struct dentry *root = fc->root;
++	struct inode *inode = d_backing_inode(root);
++	struct super_block *sb = root->d_sb;
++	struct inode_smack *isp;
++	bool transmute = ctx->transmute;
 +
-+	rc = selinux_set_mnt_opts(fc->root->d_sb, fc->security, 0, NULL);
-+	if (rc)
-+		return rc;
-+
-+	/* Allow all mounts performed by the kernel */
-+	if (fc->purpose == FS_CONTEXT_FOR_KERNEL_MOUNT)
++	if (sb->s_security)
 +		return 0;
 +
-+	ad.type = LSM_AUDIT_DATA_DENTRY;
-+	ad.u.dentry = fc->root;
-+	return superblock_has_perm(cred, fc->root->d_sb, FILESYSTEM__MOUNT, &ad);
++	if (!smack_privileged(CAP_MAC_ADMIN)) {
++		/*
++		 * For a handful of fs types with no user-controlled
++		 * backing store it's okay to trust security labels
++		 * in the filesystem. The rest are untrusted.
++		 */
++		if (fc->user_ns != &init_user_ns &&
++		    sb->s_magic != SYSFS_MAGIC && sb->s_magic != TMPFS_MAGIC &&
++		    sb->s_magic != RAMFS_MAGIC) {
++			transmute = true;
++			sbsp->smk_flags |= SMK_SB_UNTRUSTED;
++		}
++	}
++
++	sbsp->smk_flags |= SMK_SB_INITIALIZED;
++	sb->s_security = sbsp;
++	ctx->sbsp = NULL;
++
++	/* Initialize the root inode. */
++	isp = inode->i_security;
++	if (isp == NULL) {
++		isp = ctx->isp;
++		ctx->isp = NULL;
++		inode->i_security = isp;
++	} else
++		isp->smk_inode = sbsp->smk_root;
++
++	if (transmute)
++		isp->smk_flags |= SMK_INODE_TRANSMUTE;
++
++	return 0;
 +}
-+
-+static int selinux_sb_mountpoint(struct fs_context *fc, struct path *mountpoint,
-+				 unsigned int mnt_flags)
-+{
-+	const struct cred *cred = current_cred();
-+
-+	return path_has_perm(cred, mountpoint, FILE__MOUNTON);
-+}
-+
- /* inode security operations */
  
- static int selinux_inode_alloc_security(struct inode *inode)
-@@ -6906,6 +7188,14 @@ static struct security_hook_list selinux_hooks[] __lsm_ro_after_init = {
- 	LSM_HOOK_INIT(bprm_committing_creds, selinux_bprm_committing_creds),
- 	LSM_HOOK_INIT(bprm_committed_creds, selinux_bprm_committed_creds),
+ /*
+  * Superblock Hooks.
+@@ -4649,6 +4979,13 @@ static struct security_hook_list smack_hooks[] __lsm_ro_after_init = {
+ 	LSM_HOOK_INIT(ptrace_traceme, smack_ptrace_traceme),
+ 	LSM_HOOK_INIT(syslog, smack_syslog),
  
-+	LSM_HOOK_INIT(fs_context_alloc, selinux_fs_context_alloc),
-+	LSM_HOOK_INIT(fs_context_dup, selinux_fs_context_dup),
-+	LSM_HOOK_INIT(fs_context_free, selinux_fs_context_free),
-+	LSM_HOOK_INIT(fs_context_parse_param, selinux_fs_context_parse_param),
-+	LSM_HOOK_INIT(fs_context_validate, selinux_fs_context_validate),
-+	LSM_HOOK_INIT(sb_get_tree, selinux_sb_get_tree),
-+	LSM_HOOK_INIT(sb_mountpoint, selinux_sb_mountpoint),
++	LSM_HOOK_INIT(fs_context_alloc, smack_fs_context_alloc),
++	LSM_HOOK_INIT(fs_context_dup, smack_fs_context_dup),
++	LSM_HOOK_INIT(fs_context_free, smack_fs_context_free),
++	LSM_HOOK_INIT(fs_context_parse_param, smack_fs_context_parse_param),
++	LSM_HOOK_INIT(fs_context_validate, smack_fs_context_validate),
++	LSM_HOOK_INIT(sb_get_tree, smack_sb_get_tree),
 +
- 	LSM_HOOK_INIT(sb_alloc_security, selinux_sb_alloc_security),
- 	LSM_HOOK_INIT(sb_free_security, selinux_sb_free_security),
- 	LSM_HOOK_INIT(sb_copy_data, selinux_sb_copy_data),
+ 	LSM_HOOK_INIT(sb_alloc_security, smack_sb_alloc_security),
+ 	LSM_HOOK_INIT(sb_free_security, smack_sb_free_security),
+ 	LSM_HOOK_INIT(sb_copy_data, smack_sb_copy_data),
 
