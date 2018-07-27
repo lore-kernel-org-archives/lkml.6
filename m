@@ -6,34 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A94EBC6778F
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:11:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F506C67790
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:11:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6777C2089F
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:11:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6777C2089F
+	by mail.kernel.org (Postfix) with ESMTP id 134A22089E
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:11:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 134A22089E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389433AbeG0Lc4 (ORCPT
+        id S2389447AbeG0Lc7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 07:32:56 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:36794 "EHLO
+        Fri, 27 Jul 2018 07:32:59 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:36802 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388663AbeG0Lc4 (ORCPT
+        with ESMTP id S2388663AbeG0Lc7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 07:32:56 -0400
+        Fri, 27 Jul 2018 07:32:59 -0400
 Received: from localhost (unknown [89.188.5.116])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 106BFCB5;
-        Fri, 27 Jul 2018 10:11:42 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1F3B8CB5;
+        Fri, 27 Jul 2018 10:11:45 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Anssi Hannula <anssi.hannula@bitwise.fi>,
         Marc Kleine-Budde <mkl@pengutronix.de>
-Subject: [PATCH 4.4 16/23] can: xilinx_can: fix RX loop if RXNEMP is asserted without RXOK
-Date:   Fri, 27 Jul 2018 12:09:17 +0200
-Message-Id: <20180727100845.788761462@linuxfoundation.org>
+Subject: [PATCH 4.4 17/23] can: xilinx_can: fix recovery from error states not being propagated
+Date:   Fri, 27 Jul 2018 12:09:18 +0200
+Message-Id: <20180727100845.825462980@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180727100845.054377089@linuxfoundation.org>
 References: <20180727100845.054377089@linuxfoundation.org>
@@ -52,35 +52,15 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Anssi Hannula <anssi.hannula@bitwise.fi>
 
-commit 32852c561bffd613d4ed7ec464b1e03e1b7b6c5c upstream.
+commit 877e0b75947e2c7acf5624331bb17ceb093c98ae upstream.
 
-If the device gets into a state where RXNEMP (RX FIFO not empty)
-interrupt is asserted without RXOK (new frame received successfully)
-interrupt being asserted, xcan_rx_poll() will continue to try to clear
-RXNEMP without actually reading frames from RX FIFO. If the RX FIFO is
-not empty, the interrupt will not be cleared and napi_schedule() will
-just be called again.
+The xilinx_can driver contains no mechanism for propagating recovery
+from CAN_STATE_ERROR_WARNING and CAN_STATE_ERROR_PASSIVE.
 
-This situation can occur when:
-
-(a) xcan_rx() returns without reading RX FIFO due to an error condition.
-The code tries to clear both RXOK and RXNEMP but RXNEMP will not clear
-due to a frame still being in the FIFO. The frame will never be read
-from the FIFO as RXOK is no longer set.
-
-(b) A frame is received between xcan_rx_poll() reading interrupt status
-and clearing RXOK. RXOK will be cleared, but RXNEMP will again remain
-set as the new message is still in the FIFO.
-
-I'm able to trigger case (b) by flooding the bus with frames under load.
-
-There does not seem to be any benefit in using both RXNEMP and RXOK in
-the way the driver does, and the polling example in the reference manual
-(UG585 v1.10 18.3.7 Read Messages from RxFIFO) also says that either
-RXOK or RXNEMP can be used for detecting incoming messages.
-
-Fix the issue and simplify the RX processing by only using RXNEMP
-without RXOK.
+Add such a mechanism by factoring the handling of
+XCAN_STATE_ERROR_PASSIVE and XCAN_STATE_ERROR_WARNING out of
+xcan_err_interrupt and checking for recovery after RX and TX if the
+interface is in one of those states.
 
 Tested with the integrated CAN on Zynq-7000 SoC.
 
@@ -91,57 +71,213 @@ Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/can/xilinx_can.c |   18 +++++-------------
- 1 file changed, 5 insertions(+), 13 deletions(-)
+ drivers/net/can/xilinx_can.c |  155 +++++++++++++++++++++++++++++++++++--------
+ 1 file changed, 127 insertions(+), 28 deletions(-)
 
 --- a/drivers/net/can/xilinx_can.c
 +++ b/drivers/net/can/xilinx_can.c
-@@ -100,7 +100,7 @@ enum xcan_reg {
- #define XCAN_INTR_ALL		(XCAN_IXR_TXOK_MASK | XCAN_IXR_BSOFF_MASK |\
- 				 XCAN_IXR_WKUP_MASK | XCAN_IXR_SLP_MASK | \
- 				 XCAN_IXR_RXNEMP_MASK | XCAN_IXR_ERROR_MASK | \
--				 XCAN_IXR_ARBLST_MASK | XCAN_IXR_RXOK_MASK)
-+				 XCAN_IXR_ARBLST_MASK)
+@@ -2,6 +2,7 @@
+  *
+  * Copyright (C) 2012 - 2014 Xilinx, Inc.
+  * Copyright (C) 2009 PetaLogix. All rights reserved.
++ * Copyright (C) 2017 Sandvik Mining and Construction Oy
+  *
+  * Description:
+  * This driver is developed for Axi CAN IP and for Zynq CANPS Controller.
+@@ -529,6 +530,123 @@ static int xcan_rx(struct net_device *nd
+ }
  
- /* CAN register bit shift - XCAN_<REG>_<BIT>_SHIFT */
- #define XCAN_BTR_SJW_SHIFT		7  /* Synchronous jump width */
-@@ -708,15 +708,7 @@ static int xcan_rx_poll(struct napi_stru
+ /**
++ * xcan_current_error_state - Get current error state from HW
++ * @ndev:	Pointer to net_device structure
++ *
++ * Checks the current CAN error state from the HW. Note that this
++ * only checks for ERROR_PASSIVE and ERROR_WARNING.
++ *
++ * Return:
++ * ERROR_PASSIVE or ERROR_WARNING if either is active, ERROR_ACTIVE
++ * otherwise.
++ */
++static enum can_state xcan_current_error_state(struct net_device *ndev)
++{
++	struct xcan_priv *priv = netdev_priv(ndev);
++	u32 status = priv->read_reg(priv, XCAN_SR_OFFSET);
++
++	if ((status & XCAN_SR_ESTAT_MASK) == XCAN_SR_ESTAT_MASK)
++		return CAN_STATE_ERROR_PASSIVE;
++	else if (status & XCAN_SR_ERRWRN_MASK)
++		return CAN_STATE_ERROR_WARNING;
++	else
++		return CAN_STATE_ERROR_ACTIVE;
++}
++
++/**
++ * xcan_set_error_state - Set new CAN error state
++ * @ndev:	Pointer to net_device structure
++ * @new_state:	The new CAN state to be set
++ * @cf:		Error frame to be populated or NULL
++ *
++ * Set new CAN error state for the device, updating statistics and
++ * populating the error frame if given.
++ */
++static void xcan_set_error_state(struct net_device *ndev,
++				 enum can_state new_state,
++				 struct can_frame *cf)
++{
++	struct xcan_priv *priv = netdev_priv(ndev);
++	u32 ecr = priv->read_reg(priv, XCAN_ECR_OFFSET);
++	u32 txerr = ecr & XCAN_ECR_TEC_MASK;
++	u32 rxerr = (ecr & XCAN_ECR_REC_MASK) >> XCAN_ESR_REC_SHIFT;
++
++	priv->can.state = new_state;
++
++	if (cf) {
++		cf->can_id |= CAN_ERR_CRTL;
++		cf->data[6] = txerr;
++		cf->data[7] = rxerr;
++	}
++
++	switch (new_state) {
++	case CAN_STATE_ERROR_PASSIVE:
++		priv->can.can_stats.error_passive++;
++		if (cf)
++			cf->data[1] = (rxerr > 127) ?
++					CAN_ERR_CRTL_RX_PASSIVE :
++					CAN_ERR_CRTL_TX_PASSIVE;
++		break;
++	case CAN_STATE_ERROR_WARNING:
++		priv->can.can_stats.error_warning++;
++		if (cf)
++			cf->data[1] |= (txerr > rxerr) ?
++					CAN_ERR_CRTL_TX_WARNING :
++					CAN_ERR_CRTL_RX_WARNING;
++		break;
++	case CAN_STATE_ERROR_ACTIVE:
++		if (cf)
++			cf->data[1] |= CAN_ERR_CRTL_ACTIVE;
++		break;
++	default:
++		/* non-ERROR states are handled elsewhere */
++		WARN_ON(1);
++		break;
++	}
++}
++
++/**
++ * xcan_update_error_state_after_rxtx - Update CAN error state after RX/TX
++ * @ndev:	Pointer to net_device structure
++ *
++ * If the device is in a ERROR-WARNING or ERROR-PASSIVE state, check if
++ * the performed RX/TX has caused it to drop to a lesser state and set
++ * the interface state accordingly.
++ */
++static void xcan_update_error_state_after_rxtx(struct net_device *ndev)
++{
++	struct xcan_priv *priv = netdev_priv(ndev);
++	enum can_state old_state = priv->can.state;
++	enum can_state new_state;
++
++	/* changing error state due to successful frame RX/TX can only
++	 * occur from these states
++	 */
++	if (old_state != CAN_STATE_ERROR_WARNING &&
++	    old_state != CAN_STATE_ERROR_PASSIVE)
++		return;
++
++	new_state = xcan_current_error_state(ndev);
++
++	if (new_state != old_state) {
++		struct sk_buff *skb;
++		struct can_frame *cf;
++
++		skb = alloc_can_err_skb(ndev, &cf);
++
++		xcan_set_error_state(ndev, new_state, skb ? cf : NULL);
++
++		if (skb) {
++			struct net_device_stats *stats = &ndev->stats;
++
++			stats->rx_packets++;
++			stats->rx_bytes += cf->can_dlc;
++			netif_rx(skb);
++		}
++	}
++}
++
++/**
+  * xcan_err_interrupt - error frame Isr
+  * @ndev:	net_device pointer
+  * @isr:	interrupt status register value
+@@ -543,16 +661,12 @@ static void xcan_err_interrupt(struct ne
+ 	struct net_device_stats *stats = &ndev->stats;
+ 	struct can_frame *cf;
+ 	struct sk_buff *skb;
+-	u32 err_status, status, txerr = 0, rxerr = 0;
++	u32 err_status;
  
- 	isr = priv->read_reg(priv, XCAN_ISR_OFFSET);
- 	while ((isr & XCAN_IXR_RXNEMP_MASK) && (work_done < quota)) {
--		if (isr & XCAN_IXR_RXOK_MASK) {
--			priv->write_reg(priv, XCAN_ICR_OFFSET,
--				XCAN_IXR_RXOK_MASK);
--			work_done += xcan_rx(ndev);
--		} else {
--			priv->write_reg(priv, XCAN_ICR_OFFSET,
--				XCAN_IXR_RXNEMP_MASK);
--			break;
+ 	skb = alloc_can_err_skb(ndev, &cf);
+ 
+ 	err_status = priv->read_reg(priv, XCAN_ESR_OFFSET);
+ 	priv->write_reg(priv, XCAN_ESR_OFFSET, err_status);
+-	txerr = priv->read_reg(priv, XCAN_ECR_OFFSET) & XCAN_ECR_TEC_MASK;
+-	rxerr = ((priv->read_reg(priv, XCAN_ECR_OFFSET) &
+-			XCAN_ECR_REC_MASK) >> XCAN_ESR_REC_SHIFT);
+-	status = priv->read_reg(priv, XCAN_SR_OFFSET);
+ 
+ 	if (isr & XCAN_IXR_BSOFF_MASK) {
+ 		priv->can.state = CAN_STATE_BUS_OFF;
+@@ -562,28 +676,10 @@ static void xcan_err_interrupt(struct ne
+ 		can_bus_off(ndev);
+ 		if (skb)
+ 			cf->can_id |= CAN_ERR_BUSOFF;
+-	} else if ((status & XCAN_SR_ESTAT_MASK) == XCAN_SR_ESTAT_MASK) {
+-		priv->can.state = CAN_STATE_ERROR_PASSIVE;
+-		priv->can.can_stats.error_passive++;
+-		if (skb) {
+-			cf->can_id |= CAN_ERR_CRTL;
+-			cf->data[1] = (rxerr > 127) ?
+-					CAN_ERR_CRTL_RX_PASSIVE :
+-					CAN_ERR_CRTL_TX_PASSIVE;
+-			cf->data[6] = txerr;
+-			cf->data[7] = rxerr;
 -		}
-+		work_done += xcan_rx(ndev);
- 		priv->write_reg(priv, XCAN_ICR_OFFSET, XCAN_IXR_RXNEMP_MASK);
+-	} else if (status & XCAN_SR_ERRWRN_MASK) {
+-		priv->can.state = CAN_STATE_ERROR_WARNING;
+-		priv->can.can_stats.error_warning++;
+-		if (skb) {
+-			cf->can_id |= CAN_ERR_CRTL;
+-			cf->data[1] |= (txerr > rxerr) ?
+-					CAN_ERR_CRTL_TX_WARNING :
+-					CAN_ERR_CRTL_RX_WARNING;
+-			cf->data[6] = txerr;
+-			cf->data[7] = rxerr;
+-		}
++	} else {
++		enum can_state new_state = xcan_current_error_state(ndev);
++
++		xcan_set_error_state(ndev, new_state, skb ? cf : NULL);
+ 	}
+ 
+ 	/* Check for Arbitration lost interrupt */
+@@ -713,8 +809,10 @@ static int xcan_rx_poll(struct napi_stru
  		isr = priv->read_reg(priv, XCAN_ISR_OFFSET);
  	}
-@@ -727,7 +719,7 @@ static int xcan_rx_poll(struct napi_stru
+ 
+-	if (work_done)
++	if (work_done) {
+ 		can_led_event(ndev, CAN_LED_EVENT_RX);
++		xcan_update_error_state_after_rxtx(ndev);
++	}
+ 
  	if (work_done < quota) {
  		napi_complete(napi);
- 		ier = priv->read_reg(priv, XCAN_IER_OFFSET);
--		ier |= (XCAN_IXR_RXOK_MASK | XCAN_IXR_RXNEMP_MASK);
-+		ier |= XCAN_IXR_RXNEMP_MASK;
- 		priv->write_reg(priv, XCAN_IER_OFFSET, ier);
+@@ -745,6 +843,7 @@ static void xcan_tx_interrupt(struct net
+ 		isr = priv->read_reg(priv, XCAN_ISR_OFFSET);
  	}
- 	return work_done;
-@@ -799,9 +791,9 @@ static irqreturn_t xcan_interrupt(int ir
- 	}
+ 	can_led_event(ndev, CAN_LED_EVENT_TX);
++	xcan_update_error_state_after_rxtx(ndev);
+ 	netif_wake_queue(ndev);
+ }
  
- 	/* Check for the type of receive interrupt and Processing it */
--	if (isr & (XCAN_IXR_RXNEMP_MASK | XCAN_IXR_RXOK_MASK)) {
-+	if (isr & XCAN_IXR_RXNEMP_MASK) {
- 		ier = priv->read_reg(priv, XCAN_IER_OFFSET);
--		ier &= ~(XCAN_IXR_RXNEMP_MASK | XCAN_IXR_RXOK_MASK);
-+		ier &= ~XCAN_IXR_RXNEMP_MASK;
- 		priv->write_reg(priv, XCAN_IER_OFFSET, ier);
- 		napi_schedule(&priv->napi);
- 	}
 
 
