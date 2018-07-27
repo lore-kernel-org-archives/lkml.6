@@ -6,35 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B03C4C6778F
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:28:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 502B5C6778F
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:28:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6CC5A208A4
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:28:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6CC5A208A4
+	by mail.kernel.org (Postfix) with ESMTP id 031222089B
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:28:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 031222089B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389031AbeG0Ltt (ORCPT
+        id S2389054AbeG0Ltw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 07:49:49 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:42640 "EHLO
+        Fri, 27 Jul 2018 07:49:52 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:42658 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730916AbeG0Lts (ORCPT
+        with ESMTP id S1730916AbeG0Ltv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 07:49:48 -0400
+        Fri, 27 Jul 2018 07:49:51 -0400
 Received: from localhost (unknown [89.188.5.116])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id DB646CD1;
-        Fri, 27 Jul 2018 10:28:30 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 25FCACD2;
+        Fri, 27 Jul 2018 10:28:33 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Anssi Hannula <anssi.hannula@bitwise.fi>,
-        Michal Simek <michal.simek@xilinx.com>,
-        Marc Kleine-Budde <mkl@pengutronix.de>
-Subject: [PATCH 3.18 25/27] can: xilinx_can: fix RX overflow interrupt not being enabled
-Date:   Fri, 27 Jul 2018 12:27:02 +0200
-Message-Id: <20180727102649.966719982@linuxfoundation.org>
+        Bernd Edlinger <bernd.edlinger@hotmail.de>,
+        Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH 3.18 26/27] ARM: fix put_user() for gcc-8
+Date:   Fri, 27 Jul 2018 12:27:03 +0200
+Message-Id: <20180727102650.001671150@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180727102649.049641021@linuxfoundation.org>
 References: <20180727102649.049641021@linuxfoundation.org>
@@ -51,37 +50,46 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Anssi Hannula <anssi.hannula@bitwise.fi>
+From: Arnd Bergmann <arnd@arndb.de>
 
-commit 83997997252f5d3fc7f04abc24a89600c2b504ab upstream.
+Building kernels before linux-4.7 with gcc-8 results in many build failures
+when gcc triggers a check that was meant to catch broken compilers:
 
-RX overflow interrupt (RXOFLW) is disabled even though xcan_interrupt()
-processes it. This means that an RX overflow interrupt will only be
-processed when another interrupt gets asserted (e.g. for RX/TX).
+/tmp/ccCGMQmS.s:648: Error: .err encountered
 
-Fix that by enabling the RXOFLW interrupt.
+According to the discussion in the gcc bugzilla, a local "register
+asm()" variable is still supposed to be the correct way to force an
+inline assembly to use a particular register, but marking it 'const'
+lets the compiler do optimizations that break that, i.e the compiler is
+free to treat the variable as either 'const' or 'register' in that case.
 
-Fixes: b1201e44f50b ("can: xilinx CAN controller support")
-Signed-off-by: Anssi Hannula <anssi.hannula@bitwise.fi>
-Cc: Michal Simek <michal.simek@xilinx.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
+Upstream commit 9f73bd8bb445 ("ARM: uaccess: remove put_user() code
+duplication") fixed this problem in linux-4.8 as part of a larger change,
+but seems a little too big to be backported to 4.4.
+
+Let's take the simplest fix and change only the one broken line in the
+same way as newer kernels.
+
+Suggested-by: Bernd Edlinger <bernd.edlinger@hotmail.de>
+Link: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=85745
+Link: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=86673
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/can/xilinx_can.c |    2 +-
+ arch/arm/include/asm/uaccess.h |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/net/can/xilinx_can.c
-+++ b/drivers/net/can/xilinx_can.c
-@@ -102,7 +102,7 @@ enum xcan_reg {
- #define XCAN_INTR_ALL		(XCAN_IXR_TXOK_MASK | XCAN_IXR_BSOFF_MASK |\
- 				 XCAN_IXR_WKUP_MASK | XCAN_IXR_SLP_MASK | \
- 				 XCAN_IXR_RXNEMP_MASK | XCAN_IXR_ERROR_MASK | \
--				 XCAN_IXR_ARBLST_MASK)
-+				 XCAN_IXR_RXOFLW_MASK | XCAN_IXR_ARBLST_MASK)
- 
- /* CAN register bit shift - XCAN_<REG>_<BIT>_SHIFT */
- #define XCAN_BTR_SJW_SHIFT		7  /* Synchronous jump width */
+--- a/arch/arm/include/asm/uaccess.h
++++ b/arch/arm/include/asm/uaccess.h
+@@ -220,7 +220,7 @@ extern int __put_user_8(void *, unsigned
+ 	({								\
+ 		unsigned long __limit = current_thread_info()->addr_limit - 1; \
+ 		const typeof(*(p)) __user *__tmp_p = (p);		\
+-		register const typeof(*(p)) __r2 asm("r2") = (x);	\
++		register typeof(*(p)) __r2 asm("r2") = (x);	\
+ 		register const typeof(*(p)) __user *__p asm("r0") = __tmp_p; \
+ 		register unsigned long __l asm("r1") = __limit;		\
+ 		register int __e asm("r0");				\
 
 
