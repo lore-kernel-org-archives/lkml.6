@@ -2,158 +2,114 @@ Return-Path: <SRS0=OQFz=KL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE957C67790
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 13:16:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05000C67790
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 13:18:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9B01E208B0
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 13:16:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B01E208B0
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=st.com
+	by mail.kernel.org (Postfix) with ESMTP id AE31A208B2
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 13:18:20 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="yG5uDyp7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AE31A208B2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388925AbeG0Oij (ORCPT
+        id S2388613AbeG0OkM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 10:38:39 -0400
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:31524 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1732452AbeG0OhU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 10:37:20 -0400
-Received: from pps.filterd (m0046668.ppops.net [127.0.0.1])
-        by mx07-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id w6RDEOMl020459;
-        Fri, 27 Jul 2018 15:15:22 +0200
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 2kg25fgjtj-1
-        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Fri, 27 Jul 2018 15:15:22 +0200
-Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 6DCCA3D;
-        Fri, 27 Jul 2018 13:15:21 +0000 (GMT)
-Received: from Webmail-eu.st.com (sfhdag7node2.st.com [10.75.127.20])
-        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 49C0A577A;
-        Fri, 27 Jul 2018 13:15:21 +0000 (GMT)
-Received: from localhost (10.75.127.51) by SFHDAG7NODE2.st.com (10.75.127.20)
- with Microsoft SMTP Server (TLS) id 15.0.1347.2; Fri, 27 Jul 2018 15:15:20
- +0200
-From:   Loic Pallardy <loic.pallardy@st.com>
-To:     <bjorn.andersson@linaro.org>, <ohad@wizery.com>
-CC:     <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <arnaud.pouliquen@st.com>, <benjamin.gaignard@linaro.org>,
-        <s-anna@ti.com>, Loic Pallardy <loic.pallardy@st.com>
-Subject: [PATCH v4 03/17] remoteproc: add release ops in rproc_mem_entry struct
-Date:   Fri, 27 Jul 2018 15:14:38 +0200
-Message-ID: <1532697292-14272-4-git-send-email-loic.pallardy@st.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1532697292-14272-1-git-send-email-loic.pallardy@st.com>
-References: <1532697292-14272-1-git-send-email-loic.pallardy@st.com>
+        Fri, 27 Jul 2018 10:40:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43636 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729568AbeG0OkL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Jul 2018 10:40:11 -0400
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id F0FEB208B9;
+        Fri, 27 Jul 2018 13:18:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1532697497;
+        bh=8i1yvTmC1huTf78EBqYiGO//lFJmzaBy6PwPOj1jgls=;
+        h=In-Reply-To:References:From:Date:Subject:To:From;
+        b=yG5uDyp7h1RnqiPHbB0dIUrK6Nry7zRk4PF0rdYdxCSE79inKdFJijrZEVUGUmqGb
+         ZPGGBZc2fkVy4iRUAmU2hS8vracHk3oSheLNrlVJpSjEvKahKj2JMbP9NRghtD2SBq
+         zvdiYUYEEEu+g4PgE/OCbsqldtFM/ylzGd3DUzMQ=
+Received: by mail-wr1-f52.google.com with SMTP id c13-v6so5037319wrt.1;
+        Fri, 27 Jul 2018 06:18:16 -0700 (PDT)
+X-Gm-Message-State: AOUpUlGLd7B4LRG8luIWC+rLMPQYshA4noCAE9Sd5YEb9ckUoFrVwwkT
+        Ko01nmg3GV52cwaXRRshw79x6skDfHfULUpItXo=
+X-Google-Smtp-Source: AAOMgpfDiuZTtEQW0hOM3cCrG+G6YwXlkEGlzc7koU8pmdtD7x+f2SJqGcJmsoB3ZExGD2JivRX2cr7B8Hr58RwC6+w=
+X-Received: by 2002:adf:f390:: with SMTP id m16-v6mr4584120wro.279.1532697495451;
+ Fri, 27 Jul 2018 06:18:15 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.75.127.51]
-X-ClientProxiedBy: SFHDAG3NODE2.st.com (10.75.127.8) To SFHDAG7NODE2.st.com
- (10.75.127.20)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-27_06:,,
- signatures=0
+Received: by 2002:adf:9141:0:0:0:0:0 with HTTP; Fri, 27 Jul 2018 06:18:14
+ -0700 (PDT)
+In-Reply-To: <CAJKOXPeaguNxRr7pCArJ5Db4tS6Kr5BDheCxskY+vd0dUN+0GQ@mail.gmail.com>
+References: <CAJKOXPeaguNxRr7pCArJ5Db4tS6Kr5BDheCxskY+vd0dUN+0GQ@mail.gmail.com>
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+Date:   Fri, 27 Jul 2018 15:18:14 +0200
+X-Gmail-Original-Message-ID: <CAJKOXPfageiBVXddtdJRBS+092O3QfD0yoS_Mk+PoX7+qNYNUA@mail.gmail.com>
+Message-ID: <CAJKOXPfageiBVXddtdJRBS+092O3QfD0yoS_Mk+PoX7+qNYNUA@mail.gmail.com>
+Subject: Re: [BUG BISECT] Ethernet fail on VF50 (OF: Don't set default
+ coherent DMA mask)
+To:     Robin Murphy <robin.murphy@arm.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Christoph Hellwig <hch@lst.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Stefan Agner <stefan@agner.ch>,
+        Fugang Duan <fugang.duan@nxp.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Memory entry could be allocated in different ways (ioremap,
-dma_alloc_coherent, internal RAM allocator...).
-This patch introduces a release ops in rproc_mem_entry structure
-to associate dedicated release mechanism to each memory entry descriptor
-in order to keep remoteproc core generic.
+On 27 July 2018 at 15:11, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+> Hi,
+>
+> On today's next, the bisect pointed commit
+> ff33d1030a6ca87cea9a41e1a2ea7750a781ab3d as fault for my boot failures
+> with NFSv4 root on Toradex Colibri VF50 (Iris carrier board).
+>
+> Author: Robin Murphy <robin.murphy@arm.com>
+> Date:   Mon Jul 23 23:16:12 2018 +0100
+>     OF: Don't set default coherent DMA mask
+>
+> Board: Toradex Colibri VF50 (NXP VF500, Cortex A5, serial configured
+> with DMA) on Iris Carrier.
+>
+> It looks like problem with Freescale Ethernet driver:
+> [   15.458477] fsl-edma 40018000.dma-controller: coherent DMA mask is unset
+> [   15.465284] fsl-lpuart 40027000.serial: Cannot prepare cyclic DMA
+> [   15.472086] Root-NFS: no NFS server address
+> [   15.476359] VFS: Unable to mount root fs via NFS, trying floppy.
+> [   15.484228] VFS: Cannot open root device "nfs" or
+> unknown-block(2,0): error -6
+> [   15.491664] Please append a correct "root=" boot option; here are
+> the available partitions:
+> [   15.500188] 0100           16384 ram0
+> [   15.500200]  (driver?)
+> [   15.506406] Kernel panic - not syncing: VFS: Unable to mount root
+> fs on unknown-block(2,0)
+> [   15.514747] ---[ end Kernel panic - not syncing: VFS: Unable to
+> mount root fs on unknown-block(2,0) ]---
+>
+> Attached - defconfig and full boot log.
+>
+> Any hints?
+> Let me know if you need any more information.
 
-Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
-Acked-by: Bjorn Andersson <bjorn.andersson@linaro.org>
----
- drivers/remoteproc/remoteproc_core.c | 23 +++++++++++++++++++++--
- include/linux/remoteproc.h           |  5 ++++-
- 2 files changed, 25 insertions(+), 3 deletions(-)
+My Exynos boards also fail to boot on missing network:
+https://krzk.eu/#/builders/21/builds/799/steps/10/logs/serial0
 
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index 8e5fe1e..24fe11f 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -600,6 +600,24 @@ static int rproc_handle_devmem(struct rproc *rproc, struct fw_rsc_devmem *rsc,
- }
- 
- /**
-+ * rproc_release_carveout() - release acquired carveout
-+ * @rproc: rproc handle
-+ * @mem: the memory entry to release
-+ *
-+ * This function releases specified memory entry @mem allocated via
-+ * dma_alloc_coherent() function by @rproc.
-+ */
-+static int rproc_release_carveout(struct rproc *rproc,
-+				  struct rproc_mem_entry *mem)
-+{
-+	struct device *dev = &rproc->dev;
-+
-+	/* clean up carveout allocations */
-+	dma_free_coherent(dev->parent, mem->len, mem->va, mem->dma);
-+	return 0;
-+}
-+
-+/**
-  * rproc_handle_carveout() - handle phys contig memory allocation requests
-  * @rproc: rproc handle
-  * @rsc: the resource entry
-@@ -733,6 +751,7 @@ static int rproc_handle_carveout(struct rproc *rproc,
- 	carveout->len = rsc->len;
- 	carveout->dma = dma;
- 	carveout->da = rsc->da;
-+	carveout->release = rproc_release_carveout;
- 
- 	list_add_tail(&carveout->node, &rproc->carveouts);
- 
-@@ -920,8 +939,8 @@ static void rproc_resource_cleanup(struct rproc *rproc)
- 
- 	/* clean up carveout allocations */
- 	list_for_each_entry_safe(entry, tmp, &rproc->carveouts, node) {
--		dma_free_coherent(dev->parent, entry->len, entry->va,
--				  entry->dma);
-+		if (entry->release)
-+			entry->release(rproc, entry);
- 		list_del(&entry->node);
- 		kfree(entry);
- 	}
-diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
-index e3c5d85..bef2e83 100644
---- a/include/linux/remoteproc.h
-+++ b/include/linux/remoteproc.h
-@@ -305,12 +305,15 @@ struct fw_rsc_vdev {
- 	struct fw_rsc_vdev_vring vring[0];
- } __packed;
- 
-+struct rproc;
-+
- /**
-  * struct rproc_mem_entry - memory entry descriptor
-  * @va:	virtual address
-  * @dma: dma address
-  * @len: length, in bytes
-  * @da: device address
-+ * @release: release associated memory
-  * @priv: associated data
-  * @node: list node
-  */
-@@ -321,9 +324,9 @@ struct rproc_mem_entry {
- 	u32 da;
- 	void *priv;
- 	struct list_head node;
-+	int (*release)(struct rproc *rproc, struct rproc_mem_entry *mem);
- };
- 
--struct rproc;
- struct firmware;
- 
- /**
--- 
-1.9.1
+As expected there are plenty of "DMA mask not set" warnings... and
+later dwc3 driver fails with:
+    dwc3: probe of 12400000.dwc3 failed with error -12
+which is probably the answer why LAN attached to USB is not present.
 
+Best regards,
+Krzysztof
