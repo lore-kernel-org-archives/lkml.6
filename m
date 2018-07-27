@@ -2,62 +2,122 @@ Return-Path: <SRS0=OQFz=KL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0530BC28CF6
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 00:32:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D08FC28CF6
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 00:39:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A28BE20857
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 00:32:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A28BE20857
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=nerdbynature.de
+	by mail.kernel.org (Postfix) with ESMTP id D5A7E20857
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 00:39:23 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="UInheXtX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D5A7E20857
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=joelfernandes.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731960AbeG0Bvg (ORCPT
+        id S1732005AbeG0B6h (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 26 Jul 2018 21:51:36 -0400
-Received: from trent.utfs.org ([94.185.90.103]:34210 "EHLO trent.utfs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731855AbeG0Bvg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Jul 2018 21:51:36 -0400
-X-Greylist: delayed 415 seconds by postgrey-1.27 at vger.kernel.org; Thu, 26 Jul 2018 21:51:35 EDT
-Received: from localhost (localhost [IPv6:::1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by trent.utfs.org (Postfix) with ESMTPS id DD43660145;
-        Fri, 27 Jul 2018 02:25:26 +0200 (CEST)
-Date:   Thu, 26 Jul 2018 17:25:26 -0700 (PDT)
-From:   Christian Kujau <lists@nerdbynature.de>
-To:     Gao Xiang <gaoxiang25@huawei.com>
-cc:     linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 00/25] staging: erofs: introduce erofs file system
-In-Reply-To: <1532607728-103372-1-git-send-email-gaoxiang25@huawei.com>
-Message-ID: <alpine.DEB.2.21.999.1807261707460.11672@trent.utfs.org>
-References: <1527764767-22190-1-git-send-email-gaoxiang25@huawei.com> <1532607728-103372-1-git-send-email-gaoxiang25@huawei.com>
-User-Agent: Alpine 2.21.999 (DEB 277 2018-05-20)
+        Thu, 26 Jul 2018 21:58:37 -0400
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:44223 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731918AbeG0B6h (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Jul 2018 21:58:37 -0400
+Received: by mail-pl0-f65.google.com with SMTP id m16-v6so1534426pls.11
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Jul 2018 17:39:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=joelfernandes.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=4opr+/kHytBWMkdVdGM8uECAls6MsLpo+kmC9K8FzLs=;
+        b=UInheXtXHoL+Wg8MZ02XJMAqu5psEr5g0313KlbI0MML96BqdGx2OEPawjbnMrUtlo
+         IKSHeEGZArkdQruLrsgIrtH/4F94dmZ7D/UIxlASGU/ByqHB3Y4PjHyEozWWd/CB+UmJ
+         +bq6RVwtIjUXUBIXEdlzS0LgaP1WN2dil5DsI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=4opr+/kHytBWMkdVdGM8uECAls6MsLpo+kmC9K8FzLs=;
+        b=jDQWkp9iBmmcBvX1CNNJUbpGbAQiuN0VICdsAkxPWJWkk6+nrvZxiXe9sFL5FzktGw
+         yTw5cNyJ/omOXB8yJ3yyuUEGmEEt690sK7V5I7r24XOQqJw4mSGVBE/BKbYv+aiWNfe0
+         m5tZHwKxwLmOhDJ/NEScgzlSQlbCJETGRBZh2f5RF6cu1QX9Vud+mp+0NnkOJCHmQavy
+         i4GkiByU2/KK3hQzf8hlwjopZfvMsBGvCGYk54En1pm+eHXc7DO77KAtuq1T6IBVx5/B
+         PB866WHdVdGjkNwaBu+sACr8OGBPM+wO76CgoBIysXVulgtRJF2sMnWyxXJZ2nX46N7x
+         o/wQ==
+X-Gm-Message-State: AOUpUlFr2Q7a8+I6myc+1aQF9Mi2LJAV9n91XMFGKPYhc05hRbkCRAy9
+        8nTc8XNR8ieo+t0G1u/JrfyYAQ==
+X-Google-Smtp-Source: AAOMgpfal6HBLJi7ISYsQPO1YvCbp4gBhPyr/oIkr6zebew6P+Mmbjzdrcx5EU7SXUG4pcwtXMULbQ==
+X-Received: by 2002:a17:902:9a06:: with SMTP id v6-v6mr3893781plp.21.1532651960915;
+        Thu, 26 Jul 2018 17:39:20 -0700 (PDT)
+Received: from localhost ([2620:0:1000:1600:3122:ea9c:d178:eb])
+        by smtp.gmail.com with ESMTPSA id u2-v6sm4065372pfn.59.2018.07.26.17.39.19
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 26 Jul 2018 17:39:20 -0700 (PDT)
+Date:   Thu, 26 Jul 2018 17:39:19 -0700
+From:   Joel Fernandes <joel@joelfernandes.org>
+To:     Tejun Heo <tj@kernel.org>
+Cc:     Patrick Bellasi <patrick.bellasi@arm.com>,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Paul Turner <pjt@google.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Todd Kjos <tkjos@google.com>,
+        Joel Fernandes <joelaf@google.com>,
+        Steve Muckle <smuckle@google.com>,
+        Suren Baghdasaryan <surenb@google.com>
+Subject: Re: [PATCH v2 08/12] sched/core: uclamp: extend cpu's cgroup
+ controller
+Message-ID: <20180727003919.GA22416@joelaf.mtv.corp.google.com>
+References: <20180716082906.6061-1-patrick.bellasi@arm.com>
+ <20180716082906.6061-9-patrick.bellasi@arm.com>
+ <20180723153040.GG1934745@devbig577.frc2.facebook.com>
+ <20180723172215.GG2683@e110439-lin>
+ <20180724132902.GI1934745@devbig577.frc2.facebook.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180724132902.GI1934745@devbig577.frc2.facebook.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 26 Jul 2018, Gao Xiang wrote:
-> EROFS file system is a read-only file system with compression
-> support designed for certain devices (especially embeded
-> devices) with very limited physical memory and lots of memory
+On Tue, Jul 24, 2018 at 06:29:02AM -0700, Tejun Heo wrote:
+> Hello, Patrick.
+> 
+> On Mon, Jul 23, 2018 at 06:22:15PM +0100, Patrick Bellasi wrote:
+> > However, the "best effort" bandwidth control we have for CFS and RT
+> > can be further improved if, instead of just looking at time spent on
+> > CPUs, we provide some more hints to the scheduler to know at which
+> > min/max "MIPS" we want to consume the (best effort) time we have been
+> > allocated on a CPU.
+> > 
+> > Such a simple extension is still quite useful to satisfy many use-case
+> > we have, mainly on mobile systems, like the ones I've described in the
+> >    "Newcomer's Short Abstract (Updated)"
+> > section of the cover letter:
+> >    https://lore.kernel.org/lkml/20180716082906.6061-1-patrick.bellasi@arm.com/T/#u
+> 
+> So, that's all completely fine but then let's please not give it a
+> name which doesn't quite match what it does.  We can just call it
+> e.g. cpufreq range control.
 
-Out of curiousity, and as Richard already asked[0] - what about existing 
-file system, why can't they be used or extended instead of introducing yet 
-another file system into the kernel? JFFS2? UBIFS? CramFs? SquashFS? 
-ROMFS? F2FS? YAFFS?
+But then what name can one give it if it does more than one thing, like
+task-placement and CPU frequency control?
 
-Christian.
+It doesn't make sense to name it cpufreq IMHO. Its a clamp on the utilization
+of the task which can be used for many purposes.
 
-[0] https://marc.info/?l=linux-kernel&m=152783930418348&w=2
--- 
-BOFH excuse #247:
+thanks,
 
-Due to Federal Budget problems we have been forced to cut back on the number of users able to access the system at one time. (namely none allowed....)
+- Joel
+
