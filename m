@@ -2,168 +2,192 @@ Return-Path: <SRS0=OQFz=KL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25296C67790
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 17:36:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70EA5C6778F
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 17:36:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B5F4320862
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 17:36:36 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Tmuw6Zsw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B5F4320862
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 18B2A20862
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 17:36:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 18B2A20862
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389350AbeG0Sy5 (ORCPT
+        id S2389281AbeG0Syv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 14:54:57 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:39794 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388886AbeG0Sy4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 14:54:56 -0400
-Received: by mail-wm0-f67.google.com with SMTP id h20-v6so6259202wmb.4
-        for <linux-kernel@vger.kernel.org>; Fri, 27 Jul 2018 10:32:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=ftfe38b24mLEXR5z3+wUvh0iiKpqK72kgHIElTfePzE=;
-        b=Tmuw6ZswHEV+Ud/SdROpqjT27QypeIVMrvs69cPrO0UzsoY83VMZqKNZTFfZW7c5Bt
-         zojib5NUit7/SbYHDUnjjatpOLJRIfHCRPKojo2BoUR9HfI+8zpWOALyVCQapitbGIDN
-         uCQHrTKhwdR/pWHfZTES/3eqJQfWQ/DXXZZcC/7gpTQ/IGRxj18sm9CimRyS6aqtpob2
-         aF9MjVi4NxdeNB6LwzCzjBJJE30rHXsdMz5amP2WqCn+v9PpgiXrGrFmk0g+bbzv/n7o
-         tWKa/x6gq9+T/aPt17WYWqRZsm5b/sUIi6TLYBeFCWpuWIKJ9VqwIiC5YvKbnCzGAjJ6
-         jeUA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=ftfe38b24mLEXR5z3+wUvh0iiKpqK72kgHIElTfePzE=;
-        b=KGq7m/wYTWrJSYwMv9p7TgPNyMICCcFt/7FY24f0mkDyD9g4AU4+zoSd860i/3gBgh
-         lXRwUp7cyQOYfws8qwBnQydAUmSVQOyFwsFGGDvq6YFu8OQ/I/52nNSOgHE2olNcrQ1R
-         O+bOUTuMbAJejvXDb3mcN7lYpgvtNP54G8y1A2QvCMtqyny4YQQU9ghFINq5PFKQuysn
-         8Zj27q2n5a4F01vgVOj6RM6zlXOm89hgp/piI4ZzSr9FEG3p91mfKWF/oiAeyNspsgrq
-         qOff41u7oqu4EmX31VdkWEoe0G3ZtqKFbFVelpkm9ULq5HPcpAMXhfycOXECuVVqqFBP
-         wI5w==
-X-Gm-Message-State: AOUpUlEY9LY74ATquIF3z1RC1gWL03s6FCc2EiChrB1zgJalysxXPEuI
-        chHdEszkJwaK84dzTBK85UBerwJ7zDw=
-X-Google-Smtp-Source: AAOMgpcRbvJKqjbsLyN38ePKmsNwvGvXBSVe1I2dfBNY/N9Xj/zdxeZEAQj0pmcPZpkasygn7tcqhA==
-X-Received: by 2002:a1c:ee9a:: with SMTP id j26-v6mr4956438wmi.116.1532712721392;
-        Fri, 27 Jul 2018 10:32:01 -0700 (PDT)
-Received: from localhost.localdomain (host81-158-116-187.range81-158.btcentralplus.com. [81.158.116.187])
-        by smtp.gmail.com with ESMTPSA id z3-v6sm6000010wru.27.2018.07.27.10.31.59
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 27 Jul 2018 10:32:00 -0700 (PDT)
-From:   John Whitmore <johnfwhitmore@gmail.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     devel@driverdev.osuosl.org, gregkh@linuxfoundation.org,
-        John Whitmore <johnfwhitmore@gmail.com>
-Subject: [PATCH 15/20] staging:rtl8192u: Rename RxPendingPktList - Style
-Date:   Fri, 27 Jul 2018 18:31:18 +0100
-Message-Id: <20180727173123.27391-16-johnfwhitmore@gmail.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180727173123.27391-1-johnfwhitmore@gmail.com>
-References: <20180727173123.27391-1-johnfwhitmore@gmail.com>
+        Fri, 27 Jul 2018 14:54:51 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:54316 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2389233AbeG0Syv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Jul 2018 14:54:51 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id ABB9F8577C;
+        Fri, 27 Jul 2018 17:31:57 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-116.rdu2.redhat.com [10.10.120.116])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id EACB82166BA3;
+        Fri, 27 Jul 2018 17:31:56 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+ Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+ Kingdom.
+ Registered in England and Wales under Company Registration No. 3798903
+Subject: [PATCH 05/38] vfs: Introduce the basic header for the new mount
+ API's filesystem context [ver #10]
+From:   David Howells <dhowells@redhat.com>
+To:     viro@zeniv.linux.org.uk
+Cc:     torvalds@linux-foundation.org, dhowells@redhat.com,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Fri, 27 Jul 2018 18:31:56 +0100
+Message-ID: <153271271646.9458.2535241852617893548.stgit@warthog.procyon.org.uk>
+In-Reply-To: <153271267980.9458.7640156373438016898.stgit@warthog.procyon.org.uk>
+References: <153271267980.9458.7640156373438016898.stgit@warthog.procyon.org.uk>
+User-Agent: StGit/unknown-version
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Fri, 27 Jul 2018 17:31:57 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Fri, 27 Jul 2018 17:31:57 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'dhowells@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Rename the member variable RxPendingPktList to rx_pending_pkt_list.
-This change resolves the checkpatch issue with CamelCase naming.
+Introduce a filesystem context concept to be used during superblock
+creation for mount and superblock reconfiguration for remount.  This is
+allocated at the beginning of the mount procedure and into it is placed:
 
-The resulting changes are purely coding style changes which should have
-no impact on runtime code execution.
+ (1) Filesystem type.
 
-Signed-off-by: John Whitmore <johnfwhitmore@gmail.com>
+ (2) Namespaces.
+
+ (3) Source/Device names (there may be multiple).
+
+ (4) Superblock flags (SB_*).
+
+ (5) Security details.
+
+ (6) Filesystem-specific data, as set by the mount options.
+
+Also introduce a struct for typed key=value parameter concept with which
+configuration data will be passed to filesystems.  This will allow not only
+for ordinary string values, but also make it possible to pass more exotic
+values such as binary blobs, paths and fds with greater ease.
+
+Signed-off-by: David Howells <dhowells@redhat.com>
 ---
- drivers/staging/rtl8192u/ieee80211/ieee80211_rx.c   |  8 ++++----
- drivers/staging/rtl8192u/ieee80211/rtl819x_TS.h     |  2 +-
- drivers/staging/rtl8192u/ieee80211/rtl819x_TSProc.c | 12 ++++++------
- 3 files changed, 11 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/staging/rtl8192u/ieee80211/ieee80211_rx.c b/drivers/staging/rtl8192u/ieee80211/ieee80211_rx.c
-index 99fb59a3b8f0..0a1f433def2f 100644
---- a/drivers/staging/rtl8192u/ieee80211/ieee80211_rx.c
-+++ b/drivers/staging/rtl8192u/ieee80211/ieee80211_rx.c
-@@ -510,8 +510,8 @@ static int is_duplicate_packet(struct ieee80211_device *ieee,
- 
- static bool AddReorderEntry(struct rx_ts_record *pTS, PRX_REORDER_ENTRY pReorderEntry)
- {
--	struct list_head *pList = &pTS->RxPendingPktList;
--	while(pList->next != &pTS->RxPendingPktList)
-+	struct list_head *pList = &pTS->rx_pending_pkt_list;
-+	while(pList->next != &pTS->rx_pending_pkt_list)
- 	{
- 		if( SN_LESS(pReorderEntry->SeqNum, ((PRX_REORDER_ENTRY)list_entry(pList->next,RX_REORDER_ENTRY,List))->SeqNum) )
- 		{
-@@ -707,9 +707,9 @@ static void RxReorderIndicatePacket(struct ieee80211_device *ieee,
- 	}
- 
- 	/* Check if there is any packet need indicate.*/
--	while(!list_empty(&pTS->RxPendingPktList)) {
-+	while(!list_empty(&pTS->rx_pending_pkt_list)) {
- 		IEEE80211_DEBUG(IEEE80211_DL_REORDER,"%s(): start RREORDER indicate\n",__func__);
--		pReorderEntry = (PRX_REORDER_ENTRY)list_entry(pTS->RxPendingPktList.prev,RX_REORDER_ENTRY,List);
-+		pReorderEntry = (PRX_REORDER_ENTRY)list_entry(pTS->rx_pending_pkt_list.prev,RX_REORDER_ENTRY,List);
- 		if (SN_LESS(pReorderEntry->SeqNum, pTS->rx_indicate_seq) ||
- 		    SN_EQUAL(pReorderEntry->SeqNum, pTS->rx_indicate_seq))
- 		{
-diff --git a/drivers/staging/rtl8192u/ieee80211/rtl819x_TS.h b/drivers/staging/rtl8192u/ieee80211/rtl819x_TS.h
-index 02b76d49b5e1..9c85d3623578 100644
---- a/drivers/staging/rtl8192u/ieee80211/rtl819x_TS.h
-+++ b/drivers/staging/rtl8192u/ieee80211/rtl819x_TS.h
-@@ -41,7 +41,7 @@ struct rx_ts_record {
- 	struct ts_common_info		ts_common_info;
- 	u16				rx_indicate_seq;
- 	u16				rx_timeout_indicate_seq;
--	struct list_head		RxPendingPktList;
-+	struct list_head		rx_pending_pkt_list;
- 	struct timer_list		RxPktPendingTimer;
- 	BA_RECORD			RxAdmittedBARecord;	 /*  For BA Recipient */
- 	u16				RxLastSeqNum;
-diff --git a/drivers/staging/rtl8192u/ieee80211/rtl819x_TSProc.c b/drivers/staging/rtl8192u/ieee80211/rtl819x_TSProc.c
-index e3877f35e677..6a6aad6decd6 100644
---- a/drivers/staging/rtl8192u/ieee80211/rtl819x_TSProc.c
-+++ b/drivers/staging/rtl8192u/ieee80211/rtl819x_TSProc.c
-@@ -39,8 +39,8 @@ static void RxPktPendingTimeout(struct timer_list *t)
- 	IEEE80211_DEBUG(IEEE80211_DL_REORDER,"==================>%s()\n",__func__);
- 	if(pRxTs->rx_timeout_indicate_seq != 0xffff) {
- 		// Indicate the pending packets sequentially according to SeqNum until meet the gap.
--		while(!list_empty(&pRxTs->RxPendingPktList)) {
--			pReorderEntry = (PRX_REORDER_ENTRY)list_entry(pRxTs->RxPendingPktList.prev,RX_REORDER_ENTRY,List);
-+		while(!list_empty(&pRxTs->rx_pending_pkt_list)) {
-+			pReorderEntry = (PRX_REORDER_ENTRY)list_entry(pRxTs->rx_pending_pkt_list.prev,RX_REORDER_ENTRY,List);
- 			if(index == 0)
- 				pRxTs->rx_indicate_seq = pReorderEntry->SeqNum;
- 
-@@ -166,7 +166,7 @@ void TSInitialize(struct ieee80211_device *ieee)
- 	INIT_LIST_HEAD(&ieee->Rx_TS_Unused_List);
- 	for(count = 0; count < TOTAL_TS_NUM; count++) {
- 		pRxTS->num = count;
--		INIT_LIST_HEAD(&pRxTS->RxPendingPktList);
-+		INIT_LIST_HEAD(&pRxTS->rx_pending_pkt_list);
- 		timer_setup(&pRxTS->ts_common_info.setup_timer, TsSetupTimeOut,
- 			    0);
- 		timer_setup(&pRxTS->ts_common_info.inact_timer, TsInactTimeout,
-@@ -423,10 +423,10 @@ static void RemoveTsEntry(struct ieee80211_device *ieee, struct ts_common_info *
- 		if(timer_pending(&pRxTS->RxPktPendingTimer))
- 			del_timer_sync(&pRxTS->RxPktPendingTimer);
- 
--		while(!list_empty(&pRxTS->RxPendingPktList)) {
-+		while(!list_empty(&pRxTS->rx_pending_pkt_list)) {
- 			spin_lock_irqsave(&(ieee->reorder_spinlock), flags);
--			//pRxReorderEntry = list_entry(&pRxTS->RxPendingPktList.prev,RX_REORDER_ENTRY,List);
--			pRxReorderEntry = (PRX_REORDER_ENTRY)list_entry(pRxTS->RxPendingPktList.prev,RX_REORDER_ENTRY,List);
-+			//pRxReorderEntry = list_entry(&pRxTS->rx_pending_pkt_list.prev,RX_REORDER_ENTRY,List);
-+			pRxReorderEntry = (PRX_REORDER_ENTRY)list_entry(pRxTS->rx_pending_pkt_list.prev,RX_REORDER_ENTRY,List);
- 			list_del_init(&pRxReorderEntry->List);
- 			{
- 				int i = 0;
--- 
-2.18.0
+ include/linux/fs_context.h |  101 ++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 101 insertions(+)
+ create mode 100644 include/linux/fs_context.h
+
+diff --git a/include/linux/fs_context.h b/include/linux/fs_context.h
+new file mode 100644
+index 000000000000..0ff4969f9d5a
+--- /dev/null
++++ b/include/linux/fs_context.h
+@@ -0,0 +1,101 @@
++/* Filesystem superblock creation and reconfiguration context.
++ *
++ * Copyright (C) 2018 Red Hat, Inc. All Rights Reserved.
++ * Written by David Howells (dhowells@redhat.com)
++ *
++ * This program is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU General Public Licence
++ * as published by the Free Software Foundation; either version
++ * 2 of the Licence, or (at your option) any later version.
++ */
++
++#ifndef _LINUX_FS_CONTEXT_H
++#define _LINUX_FS_CONTEXT_H
++
++#include <linux/kernel.h>
++#include <linux/errno.h>
++
++struct cred;
++struct dentry;
++struct file_operations;
++struct file_system_type;
++struct mnt_namespace;
++struct net;
++struct pid_namespace;
++struct super_block;
++struct user_namespace;
++struct vfsmount;
++
++enum fs_context_purpose {
++	FS_CONTEXT_FOR_USER_MOUNT,	/* New superblock for user-specified mount */
++	FS_CONTEXT_FOR_KERNEL_MOUNT,	/* New superblock for kernel-internal mount */
++	FS_CONTEXT_FOR_SUBMOUNT,	/* New superblock for automatic submount */
++	FS_CONTEXT_FOR_RECONFIGURE,	/* Superblock reconfiguration (remount) */
++};
++
++/*
++ * Type of parameter value.
++ */
++enum fs_value_type {
++	fs_value_is_undefined,
++	fs_value_is_flag,		/* Value not given a value */
++	fs_value_is_string,		/* Value is a string */
++	fs_value_is_blob,		/* Value is a binary blob */
++	fs_value_is_filename,		/* Value is a filename* + dirfd */
++	fs_value_is_filename_empty,	/* Value is a filename* + dirfd + AT_EMPTY_PATH */
++	fs_value_is_file,		/* Value is a file* */
++};
++
++/*
++ * Configuration parameter.
++ */
++struct fs_parameter {
++	const char		*key;		/* Parameter name */
++	enum fs_value_type	type:8;		/* The type of value here */
++	union {
++		char		*string;
++		void		*blob;
++		struct filename	*name;
++		struct file	*file;
++	};
++	size_t	size;
++	int	dirfd;
++};
++
++/*
++ * Filesystem context for holding the parameters used in the creation or
++ * reconfiguration of a superblock.
++ *
++ * Superblock creation fills in ->root whereas reconfiguration begins with this
++ * already set.
++ *
++ * See Documentation/filesystems/mounting.txt
++ */
++struct fs_context {
++	const struct fs_context_operations *ops;
++	struct file_system_type	*fs_type;
++	void			*fs_private;	/* The filesystem's context */
++	struct dentry		*root;		/* The root and superblock */
++	struct user_namespace	*user_ns;	/* The user namespace for this mount */
++	struct net		*net_ns;	/* The network namespace for this mount */
++	const struct cred	*cred;		/* The mounter's credentials */
++	char			*source;	/* The source name (eg. dev path) */
++	char			*subtype;	/* The subtype to set on the superblock */
++	void			*security;	/* The LSM context */
++	void			*s_fs_info;	/* Proposed s_fs_info */
++	unsigned int		sb_flags;	/* Proposed superblock flags (SB_*) */
++	enum fs_context_purpose	purpose:8;
++	bool			sloppy:1;	/* T if unrecognised options are okay */
++	bool			silent:1;	/* T if "o silent" specified */
++};
++
++struct fs_context_operations {
++	void (*free)(struct fs_context *fc);
++	int (*dup)(struct fs_context *fc, struct fs_context *src_fc);
++	int (*parse_param)(struct fs_context *fc, struct fs_parameter *param);
++	int (*parse_monolithic)(struct fs_context *fc, void *data, size_t data_size);
++	int (*validate)(struct fs_context *fc);
++	int (*get_tree)(struct fs_context *fc);
++};
++
++#endif /* _LINUX_FS_CONTEXT_H */
 
