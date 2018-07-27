@@ -6,38 +6,36 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EFF6C6778F
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:10:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CB00C67790
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:10:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3BD5C2089F
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:10:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3BD5C2089F
+	by mail.kernel.org (Postfix) with ESMTP id E6CB42089E
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:10:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E6CB42089E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388741AbeG0LbX (ORCPT
+        id S2388775AbeG0Lb0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 07:31:23 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:36482 "EHLO
+        Fri, 27 Jul 2018 07:31:26 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:36494 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729431AbeG0LbW (ORCPT
+        with ESMTP id S1729431AbeG0LbY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 07:31:22 -0400
+        Fri, 27 Jul 2018 07:31:24 -0400
 Received: from localhost (unknown [89.188.5.116])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3A1D7CB5;
-        Fri, 27 Jul 2018 10:10:09 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 539B1CB6;
+        Fri, 27 Jul 2018 10:10:12 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Paul Burton <paul.burton@mips.com>,
-        Rui Wang <rui.wang@windriver.com>,
-        James Hogan <jhogan@kernel.org>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Wolfgang Grandegger <wg@grandegger.com>,
-        linux-mips@linux-mips.org
-Subject: [PATCH 4.9 02/33] MIPS: Fix off-by-one in pci_resource_to_user()
-Date:   Fri, 27 Jul 2018 12:08:43 +0200
-Message-Id: <20180727100827.752861092@linuxfoundation.org>
+        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+        Soheil Hassas Yeganeh <soheil@google.com>,
+        Yuchung Cheng <ycheng@google.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.9 20/33] tcp: call tcp_drop() from tcp_data_queue_ofo()
+Date:   Fri, 27 Jul 2018 12:09:01 +0200
+Message-Id: <20180727100828.429780690@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180727100827.665729981@linuxfoundation.org>
 References: <20180727100827.665729981@linuxfoundation.org>
@@ -54,49 +52,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Paul Burton <paul.burton@mips.com>
+From: Eric Dumazet <edumazet@google.com>
 
-commit 38c0a74fe06da3be133cae3fb7bde6a9438e698b upstream.
+[ Upstream commit 8541b21e781a22dce52a74fef0b9bed00404a1cd ]
 
-The MIPS implementation of pci_resource_to_user() introduced in v3.12 by
-commit 4c2924b725fb ("MIPS: PCI: Use pci_resource_to_user to map pci
-memory space properly") incorrectly sets *end to the address of the
-byte after the resource, rather than the last byte of the resource.
+In order to be able to give better diagnostics and detect
+malicious traffic, we need to have better sk->sk_drops tracking.
 
-This results in userland seeing resources as a byte larger than they
-actually are, for example a 32 byte BAR will be reported by a tool such
-as lspci as being 33 bytes in size:
-
-    Region 2: I/O ports at 1000 [disabled] [size=33]
-
-Correct this by subtracting one from the calculated end address,
-reporting the correct address to userland.
-
-Signed-off-by: Paul Burton <paul.burton@mips.com>
-Reported-by: Rui Wang <rui.wang@windriver.com>
-Fixes: 4c2924b725fb ("MIPS: PCI: Use pci_resource_to_user to map pci memory space properly")
-Cc: James Hogan <jhogan@kernel.org>
-Cc: Ralf Baechle <ralf@linux-mips.org>
-Cc: Wolfgang Grandegger <wg@grandegger.com>
-Cc: linux-mips@linux-mips.org
-Cc: stable@vger.kernel.org # v3.12+
-Patchwork: https://patchwork.linux-mips.org/patch/19829/
+Fixes: 9f5afeae5152 ("tcp: use an RB tree for ooo receive queue")
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Acked-by: Soheil Hassas Yeganeh <soheil@google.com>
+Acked-by: Yuchung Cheng <ycheng@google.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- arch/mips/pci/pci.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/ipv4/tcp_input.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/arch/mips/pci/pci.c
-+++ b/arch/mips/pci/pci.c
-@@ -55,7 +55,7 @@ void pci_resource_to_user(const struct p
- 	phys_addr_t size = resource_size(rsrc);
- 
- 	*start = fixup_bigphys_addr(rsrc->start, size);
--	*end = rsrc->start + size;
-+	*end = rsrc->start + size - 1;
- }
- 
- int pci_mmap_page_range(struct pci_dev *dev, struct vm_area_struct *vma,
+--- a/net/ipv4/tcp_input.c
++++ b/net/ipv4/tcp_input.c
+@@ -4517,7 +4517,7 @@ coalesce_done:
+ 				/* All the bits are present. Drop. */
+ 				NET_INC_STATS(sock_net(sk),
+ 					      LINUX_MIB_TCPOFOMERGE);
+-				__kfree_skb(skb);
++				tcp_drop(sk, skb);
+ 				skb = NULL;
+ 				tcp_dsack_set(sk, seq, end_seq);
+ 				goto add_sack;
+@@ -4536,7 +4536,7 @@ coalesce_done:
+ 						 TCP_SKB_CB(skb1)->end_seq);
+ 				NET_INC_STATS(sock_net(sk),
+ 					      LINUX_MIB_TCPOFOMERGE);
+-				__kfree_skb(skb1);
++				tcp_drop(sk, skb1);
+ 				goto merge_right;
+ 			}
+ 		} else if (tcp_try_coalesce(sk, skb1, skb, &fragstolen)) {
 
 
