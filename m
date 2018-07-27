@@ -2,62 +2,34 @@ Return-Path: <SRS0=OQFz=KL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6F18C67790
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 18:55:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1F9DC67790
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 18:57:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E8217205F4
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 18:55:28 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="G3jy2uF7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E8217205F4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=joelfernandes.org
+	by mail.kernel.org (Postfix) with ESMTP id 5FCB720671
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 18:57:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5FCB720671
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389177AbeG0USh (ORCPT
+        id S2389170AbeG0UVA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 16:18:37 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:36351 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389006AbeG0USh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 16:18:37 -0400
-Received: by mail-pg1-f194.google.com with SMTP id s7-v6so3731087pgv.3
-        for <linux-kernel@vger.kernel.org>; Fri, 27 Jul 2018 11:55:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=joelfernandes.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=MiaHAWD+Dzfaq7akYt/AZMFxzI1zju5tdsP1nmGUXTA=;
-        b=G3jy2uF7l7V+DZkBRHYs60oQaayMhqpMa6ySkihosK8OzF5tfpWx5gHeOp7gK2lowR
-         mgsmygZBTABF1zSSScnqmrgMZOatc6+XPOW7VLdjpZC2VXEPpTMq3wsmD5ncSv1yET95
-         RjfVsILlKPZM7Wd2JKLQOlWjv/VUWHzCEWi8E=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=MiaHAWD+Dzfaq7akYt/AZMFxzI1zju5tdsP1nmGUXTA=;
-        b=FmTaQYyj5kXeBqCpr5Usey+N9EYiDy855hqBBBS7NDEN4pP3JrqF6pDeCGEt7UW6/m
-         ZF27H9v/tYM/czvdQrkdTxSsQIC4FBcVF08JV8y+dYktPHgotnxCadAG+npsERhHEKbG
-         i91Wb6GbgywWvKkTH8Vcc8cZ5mSDx1l+0/JuJFJofXMKFlTl+fVIH6hg8S6KnAymOxn8
-         394OwmrE01zJt2t/hAi25sX1SqXCfqYdlwg4iqfkUNqBlTicTHXC6rhnLUAyDXxjlAg+
-         dqRuWx0DeNBkmxRFNVVQstXmRhe5e6Lv2IqIkrAYxkF9U/jFXNWLqc3SvWj7uuU4i/mM
-         /AQw==
-X-Gm-Message-State: AOUpUlFxBR5ZvnrlPjbhGzmfWR8ot29138EQpjJa8hBUbkJaSPoORsji
-        S157wX/P9g9ep94xpPQ5FWR+EA==
-X-Google-Smtp-Source: AAOMgpf2eAZ4ObAa+dvXH+0aeV/hD4JbmQfh0iAU0X7w2VbA1mhA/UqMzybVZ5PAsWWhXDqL76YlXA==
-X-Received: by 2002:a65:4587:: with SMTP id o7-v6mr7287900pgq.317.1532717725785;
-        Fri, 27 Jul 2018 11:55:25 -0700 (PDT)
-Received: from localhost ([2620:0:1000:1600:3122:ea9c:d178:eb])
-        by smtp.gmail.com with ESMTPSA id s20-v6sm5837611pga.37.2018.07.27.11.55.24
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 27 Jul 2018 11:55:25 -0700 (PDT)
-Date:   Fri, 27 Jul 2018 11:55:24 -0700
-From:   Joel Fernandes <joel@joelfernandes.org>
-To:     Steven Rostedt <rostedt@goodmis.org>
+        Fri, 27 Jul 2018 16:21:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58756 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2389006AbeG0UU7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Jul 2018 16:20:59 -0400
+Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 56A8F205F4;
+        Fri, 27 Jul 2018 18:57:46 +0000 (UTC)
+Date:   Fri, 27 Jul 2018 14:57:44 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Joel Fernandes <joel@joelfernandes.org>
 Cc:     linux-kernel@vger.kernel.org, kernel-team@android.com,
         Boqun Feng <boqun.feng@gmail.com>,
         Byungchul Park <byungchul.park@lge.com>,
@@ -73,128 +45,35 @@ Cc:     linux-kernel@vger.kernel.org, kernel-team@android.com,
         Todd Kjos <tkjos@google.com>,
         Tom Zanussi <tom.zanussi@linux.intel.com>,
         Will Deacon <will.deacon@arm.com>
-Subject: Re: [PATCH v11 3/3] tracing: Centralize preemptirq tracepoints and
- unify their usage
-Message-ID: <20180727185524.GB83926@joelaf.mtv.corp.google.com>
+Subject: Re: [PATCH v11 2/3] tracepoint: Make rcuidle tracepoint callers use
+ SRCU
+Message-ID: <20180727145744.2a4464d8@gandalf.local.home>
+In-Reply-To: <20180727185113.GA83926@joelaf.mtv.corp.google.com>
 References: <20180726235044.10195-1-joel@joelfernandes.org>
- <20180726235044.10195-4-joel@joelfernandes.org>
- <20180727122825.281a3a67@gandalf.local.home>
+        <20180726235044.10195-3-joel@joelfernandes.org>
+        <20180727122659.524dd13f@gandalf.local.home>
+        <20180727185113.GA83926@joelaf.mtv.corp.google.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180727122825.281a3a67@gandalf.local.home>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 27, 2018 at 12:28:25PM -0400, Steven Rostedt wrote:
-> On Thu, 26 Jul 2018 16:50:44 -0700
-> Joel Fernandes <joel@joelfernandes.org> wrote:
+On Fri, 27 Jul 2018 11:51:13 -0700
+Joel Fernandes <joel@joelfernandes.org> wrote:
+
+> When I refactored the code as Peter suggested I happen to move the warning
+> out but didn't simplify it further (I had it at the back of my head to do
+> that but missed it).
 > 
-> > From: "Joel Fernandes (Google)" <joel@joelfernandes.org>
-> > 
-> > This patch detaches the preemptirq tracepoints from the tracers and
-> > keeps it separate.
-> > 
-> > Advantages:
-> > * Lockdep and irqsoff event can now run in parallel since they no longer
-> > have their own calls.
-> > 
-> > * This unifies the usecase of adding hooks to an irqsoff and irqson
-> > event, and a preemptoff and preempton event.
-> >   3 users of the events exist:
-> >   - Lockdep
-> >   - irqsoff and preemptoff tracers
-> >   - irqs and preempt trace events
-> > 
-> > The unification cleans up several ifdefs and makes the code in preempt
-> > tracer and irqsoff tracers simpler. It gets rid of all the horrific
-> > ifdeferry around PROVE_LOCKING and makes configuration of the different
-> > users of the tracepoints more easy and understandable. It also gets rid
-> > of the time_* function calls from the lockdep hooks used to call into
-> > the preemptirq tracer which is not needed anymore. The negative delta in
-> > lines of code in this patch is quite large too.
-> > 
-> > In the patch we introduce a new CONFIG option PREEMPTIRQ_TRACEPOINTS
-> > as a single point for registering probes onto the tracepoints. With
-> > this,
-> > the web of config options for preempt/irq toggle tracepoints and its
-> > users becomes:
-> > 
-> >  PREEMPT_TRACER   PREEMPTIRQ_EVENTS  IRQSOFF_TRACER PROVE_LOCKING
-> >        |                 |     \         |           |
-> >        \    (selects)    /      \        \ (selects) /
-> >       TRACE_PREEMPT_TOGGLE       ----> TRACE_IRQFLAGS
-> >                       \                  /
-> >                        \ (depends on)   /
-> >                      PREEMPTIRQ_TRACEPOINTS
-> > 
-> > One note, I have to check for lockdep recursion in the code that calls
-> > the trace events API and bail out if we're in lockdep recursion
-> > protection to prevent something like the following case: a spin_lock is
-> > taken. Then lockdep_acquired is called.  That does a raw_local_irq_save
-> > and then sets lockdep_recursion, and then calls __lockdep_acquired. In
-> > this function, a call to get_lock_stats happens which calls
-> > preempt_disable, which calls trace IRQS off somewhere which enters my
-> > tracepoint code and sets the tracing_irq_cpu flag to prevent recursion.
-> > This flag is then never cleared causing lockdep paths to never be
-> > entered and thus causing splats and other bad things.
-> > 
-> > Other than the performance tests mentioned in the previous patch, I also
-> > ran the locking API test suite. I verified that all tests cases are
-> > passing.
-> > 
-> > I also injected issues by not registering lockdep probes onto the
-> > tracepoints and I see failures to confirm that the probes are indeed
-> > working.
-> > 
-> > This series + lockdep probes not registered (just to inject errors):
-> > [    0.000000]      hard-irqs-on + irq-safe-A/21:  ok  |  ok  |  ok  |
-> > [    0.000000]      soft-irqs-on + irq-safe-A/21:  ok  |  ok  |  ok  |
-> > [    0.000000]        sirq-safe-A => hirqs-on/12:FAILED|FAILED|  ok  |
-> > [    0.000000]        sirq-safe-A => hirqs-on/21:FAILED|FAILED|  ok  |
-> > [    0.000000]          hard-safe-A + irqs-on/12:FAILED|FAILED|  ok  |
-> > [    0.000000]          soft-safe-A + irqs-on/12:FAILED|FAILED|  ok  |
-> > [    0.000000]          hard-safe-A + irqs-on/21:FAILED|FAILED|  ok  |
-> > [    0.000000]          soft-safe-A + irqs-on/21:FAILED|FAILED|  ok  |
-> > [    0.000000]     hard-safe-A + unsafe-B #1/123:  ok  |  ok  |  ok  |
-> > [    0.000000]     soft-safe-A + unsafe-B #1/123:  ok  |  ok  |  ok  |
-> > 
-> > With this series + lockdep probes registered, all locking tests pass:
-> > 
-> > [    0.000000]      hard-irqs-on + irq-safe-A/21:  ok  |  ok  |  ok  |
-> > [    0.000000]      soft-irqs-on + irq-safe-A/21:  ok  |  ok  |  ok  |
-> > [    0.000000]        sirq-safe-A => hirqs-on/12:  ok  |  ok  |  ok  |
-> > [    0.000000]        sirq-safe-A => hirqs-on/21:  ok  |  ok  |  ok  |
-> > [    0.000000]          hard-safe-A + irqs-on/12:  ok  |  ok  |  ok  |
-> > [    0.000000]          soft-safe-A + irqs-on/12:  ok  |  ok  |  ok  |
-> > [    0.000000]          hard-safe-A + irqs-on/21:  ok  |  ok  |  ok  |
-> > [    0.000000]          soft-safe-A + irqs-on/21:  ok  |  ok  |  ok  |
-> > [    0.000000]     hard-safe-A + unsafe-B #1/123:  ok  |  ok  |  ok  |
-> > [    0.000000]     soft-safe-A + unsafe-B #1/123:  ok  |  ok  |  ok  |
-> > 
-> > Reviewed-by: Namhyung Kim <namhyung@kernel.org>
-> > Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
-> > ---
-> >  include/linux/ftrace.h            |  11 +-
-> >  include/linux/irqflags.h          |  11 +-
-> >  include/linux/lockdep.h           |   8 +-
-> >  include/linux/preempt.h           |   2 +-
-> >  include/trace/events/preemptirq.h |  23 +--
-> >  init/main.c                       |   5 +-
-> >  kernel/locking/lockdep.c          |  35 ++---
-> 
-> Did Peter ever give an Acked-by for this patch?
+> Since its quite a simple change I can send a follow up patch doing so later,
+> or can resend this one. What do you suggest?
 
-Peter didn't give an ack yet, but he had some simple comments last time
-around lockdep recursrion and all those were addressed.
+I'll do it myself if that's OK with you.
 
-Peter, could you Ack this patch if you're Ok with the lockdep and/or other
-parts of it?
+Thanks,
 
-thanks!
-
-- Joel
-
+-- Steve
