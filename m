@@ -2,75 +2,123 @@ Return-Path: <SRS0=OQFz=KL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25C1DC6778F
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 08:22:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CC2AC67790
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 08:22:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D7C9F2088E
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 08:22:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D7C9F2088E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=codethink.co.uk
+	by mail.kernel.org (Postfix) with ESMTP id 4F39F20893
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 08:22:42 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iT1Aw/tH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F39F20893
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730345AbeG0JnU (ORCPT
+        id S1730416AbeG0JnZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 05:43:20 -0400
-Received: from imap1.codethink.co.uk ([176.9.8.82]:46102 "EHLO
-        imap1.codethink.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730189AbeG0JnT (ORCPT
+        Fri, 27 Jul 2018 05:43:25 -0400
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:46672 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730189AbeG0JnZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 05:43:19 -0400
-Received: from [192.168.122.135] (helo=_)
-        by imap1.codethink.co.uk with esmtpsa (Exim 4.84_2 #1 (Debian))
-        id 1fiy19-0007qV-UW; Fri, 27 Jul 2018 09:22:32 +0100
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Fri, 27 Jul 2018 09:22:31 +0100
-From:   Ben Dooks <ben.dooks@codethink.co.uk>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@lists.codethink.co.uk,
-        jonathanh@nvidia.com, pdeschrijver@nvidia.com, pgaikwad@nvidia.com,
-        thierry.reding@gmail.com
-Subject: Re: [Linux-kernel] tegra clock updates and fixes
-In-Reply-To: <153261857589.48062.4721112255504541100@swboyd.mtv.corp.google.com>
-References: <20180720134532.13148-1-ben.dooks@codethink.co.uk>
- <16564340083ea64de8c956ba65ea59f8@codethink.co.uk>
- <153261857589.48062.4721112255504541100@swboyd.mtv.corp.google.com>
-Message-ID: <22193ef215e669f4273f8a66bf5482db@codethink.co.uk>
-X-Sender: ben.dooks@codethink.co.uk
-User-Agent: Roundcube Webmail/1.1.5
+        Fri, 27 Jul 2018 05:43:25 -0400
+Received: by mail-pl0-f66.google.com with SMTP id t17-v6so1998241ply.13;
+        Fri, 27 Jul 2018 01:22:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=/gzMd54Ec+OtZaWMQabcpGO3Adpp6UPzv3QK9xSICBM=;
+        b=iT1Aw/tHcOrtcvZTWUUffBXO61lXo8j9RsD3zivpcsABkx471mCgVzWQ3E+TPox6zH
+         znfNN73ogmlyWH5jQr13cKH/bP4GXYO/0bgwU7H1XaiXSq9h7Lczw/T9JVosVCXv2IkP
+         tWArHaGeDdIQoTTlkplXvLUbzQNvEJaXQ47LSF+/6NxRgKmhTWawEzF/eugtRBwtlzt1
+         t7QZ7LgJipNRBAjY5QQJjuRHmBmF96wMQinVO6qt8QXU6aUM5TxdRWDa6hb37FnOZgfU
+         gE7zaIpjbCozWm0ijVCYWXbMHo3umOHEwfYDfEWDTcP4yzAjWeO7aN/SW+guGy4eUTn3
+         fC0Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=/gzMd54Ec+OtZaWMQabcpGO3Adpp6UPzv3QK9xSICBM=;
+        b=udYGIN3mMeTBt97olk7kpcDfH7X0G1UCfma6VUMIIh0r/t3oh37U6t+sBwdaqm2Wuv
+         q4uRBqwvIGz+4vNW5zZr42NU+RaXX9xhzs7g5wv40W1DSZBtdwmoHzeIJHXBbQstN68A
+         ghaGLA/NXD5NGPd7tt2JeqAY0yD/e6ZnHQFKEG4TkleAMh8PvAQ3IaJ2OLWFZJoxs1gz
+         5S/umzQn7WNIgUH1UsafIYsZT2UuOi7L+sGtNSPeq4v1c3awT9yE/Gei/rVTnZiEFj9F
+         R8cQZoLkAQy0UPAQWxFSUgqF/miuNt0nET4P2fY/4CSSjZbmPmpVpFCKmOzD1sTg2tLe
+         BTCw==
+X-Gm-Message-State: AOUpUlHypgv9E26Ugs1JCFpYtduxVqzfnYFoVgPTXJkyfy9mlaNDOHeN
+        t8DfUrmWZ/935KgQOcATbMaa1Ee/
+X-Google-Smtp-Source: AAOMgpcppLIQ8h6bhdFicM/GXHwGJlnqyA/0iF+82wSFCSzUKgVDE/XUnfu9a8qQiIPgTu9Kf34lvw==
+X-Received: by 2002:a17:902:28a4:: with SMTP id f33-v6mr5043668plb.297.1532679758992;
+        Fri, 27 Jul 2018 01:22:38 -0700 (PDT)
+Received: from localhost.localdomain ([2402:f000:1:4414:6c14:7712:e625:1be4])
+        by smtp.gmail.com with ESMTPSA id d132-v6sm4573023pga.10.2018.07.27.01.22.37
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 27 Jul 2018 01:22:38 -0700 (PDT)
+From:   Jia-Ju Bai <baijiaju1990@gmail.com>
+To:     jeffrey.t.kirsher@intel.com
+Cc:     intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Jia-Ju Bai <baijiaju1990@gmail.com>
+Subject: [PATCH] net: intel: ixgbe: Replace GFP_ATOMIC with GFP_KERNEL
+Date:   Fri, 27 Jul 2018 16:22:31 +0800
+Message-Id: <20180727082231.3798-1-baijiaju1990@gmail.com>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+ixgbe_fcoe_ddp_setup(), ixgbe_setup_fcoe_ddp_resources() and 
+ixgbe_sw_init() are never called in atomic context.
+They call kmalloc(), dma_pool_alloc() and kzalloc() with GFP_ATOMIC, 
+which is not necessary.
+GFP_ATOMIC can be replaced with GFP_KERNEL.
 
+This is found by a static analysis tool named DCNS written by myself.
 
-On 2018-07-26 16:22, Stephen Boyd wrote:
-> Quoting Ben Dooks (2018-07-26 06:32:29)
->> On 2018-07-20 14:45, Ben Dooks wrote:
->> > Hi, this is a set of clock updates and fixes we did when developing
->> > the tegra20/tegra30 auto support. The audio change is due to using
->> > the tegra in clock-slave mode (this hasn't been done before)
->> >
->> > We have also implemented the clock reset status callback as it is
->> > used by some of the driver work we did.
->> 
->> Is it possible to look at applying the bits of the series that are
->> not currently under discussion? If so should I post a smaller series?
->> 
-> 
-> Just send it again please. I'd prefer to see some reviewed-by tags from
-> Nvidia folks on bits that are good to merge.
+Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+---
+ drivers/net/ethernet/intel/ixgbe/ixgbe_fcoe.c | 4 ++--
+ drivers/net/ethernet/intel/ixgbe/ixgbe_main.c | 2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
-I've seen feedback on some of the tegra3 clock bits, however no one
-has made any comments on other bits like the reset controller.
-
+diff --git a/drivers/net/ethernet/intel/ixgbe/ixgbe_fcoe.c b/drivers/net/ethernet/intel/ixgbe/ixgbe_fcoe.c
+index 7a09a40e4472..ff7ed77ce224 100644
+--- a/drivers/net/ethernet/intel/ixgbe/ixgbe_fcoe.c
++++ b/drivers/net/ethernet/intel/ixgbe/ixgbe_fcoe.c
+@@ -217,7 +217,7 @@ static int ixgbe_fcoe_ddp_setup(struct net_device *netdev, u16 xid,
+ 	}
+ 
+ 	/* alloc the udl from per cpu ddp pool */
+-	ddp->udl = dma_pool_alloc(ddp_pool->pool, GFP_ATOMIC, &ddp->udp);
++	ddp->udl = dma_pool_alloc(ddp_pool->pool, GFP_KERNEL, &ddp->udp);
+ 	if (!ddp->udl) {
+ 		e_err(drv, "failed allocated ddp context\n");
+ 		goto out_noddp_unmap;
+@@ -785,7 +785,7 @@ int ixgbe_setup_fcoe_ddp_resources(struct ixgbe_adapter *adapter)
+ 		return 0;
+ 
+ 	/* Extra buffer to be shared by all DDPs for HW work around */
+-	buffer = kmalloc(IXGBE_FCBUFF_MIN, GFP_ATOMIC);
++	buffer = kmalloc(IXGBE_FCBUFF_MIN, GFP_KERNEL);
+ 	if (!buffer)
+ 		return -ENOMEM;
+ 
+diff --git a/drivers/net/ethernet/intel/ixgbe/ixgbe_main.c b/drivers/net/ethernet/intel/ixgbe/ixgbe_main.c
+index afadba99f7b8..fe4a6125576d 100644
+--- a/drivers/net/ethernet/intel/ixgbe/ixgbe_main.c
++++ b/drivers/net/ethernet/intel/ixgbe/ixgbe_main.c
+@@ -6138,7 +6138,7 @@ static int ixgbe_sw_init(struct ixgbe_adapter *adapter,
+ 
+ 	adapter->mac_table = kzalloc(sizeof(struct ixgbe_mac_addr) *
+ 				     hw->mac.num_rar_entries,
+-				     GFP_ATOMIC);
++				     GFP_KERNEL);
+ 	if (!adapter->mac_table)
+ 		return -ENOMEM;
+ 
 -- 
-Ben
+2.17.0
 
