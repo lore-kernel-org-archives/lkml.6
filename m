@@ -7,58 +7,58 @@ X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF545C6778F
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 03:08:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33CBFC28CF6
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 03:08:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A8B3220673
+	by mail.kernel.org (Postfix) with ESMTP id E0CF220894
 	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 03:08:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DXbojf4h"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A8B3220673
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gzcgoxzB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E0CF220894
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728987AbeG0E1q (ORCPT
+        id S1729178AbeG0E1r (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 00:27:46 -0400
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:34618 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725819AbeG0E1p (ORCPT
+        Fri, 27 Jul 2018 00:27:47 -0400
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:36317 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725819AbeG0E1q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 00:27:45 -0400
-Received: by mail-pl0-f66.google.com with SMTP id f6-v6so1692225plo.1
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Jul 2018 20:08:03 -0700 (PDT)
+        Fri, 27 Jul 2018 00:27:46 -0400
+Received: by mail-pl0-f65.google.com with SMTP id e11-v6so1684085plb.3
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Jul 2018 20:08:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=B06caSY6eZuqn5Y3Axx4VzBac4YEufOZejntHWM8dpY=;
-        b=DXbojf4hd4kvqY21TPWhrfWNNdBEula7QroDQhbdb5fPlm1h/NiNT/1rXTDLh/kaKO
-         zcmSAjmx+zm7S455CypNCeWi71+k8K04mKqRrausu67/S62tE96qT6AnNrc9bjB4I+26
-         M/YuVVWi1v9Tv1SwPLH3XEHI3U7MnM0bPY85RKw7a35LnGutrPa+ZZZp48jcCrDVwY9K
-         /90f6Fe65/R7+RZsRJlsDH5I9onffDt8ED1p80iGb8rcTfYpOeMErsbMswZSYHMMI29u
-         VNgGT0fCKMiv8jxoDVgpH9gRIEL2mjMTNvaGJXS37DHoFkdpj1+qhiekt263Va1ngcxI
-         7s2w==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=RwF7OBw+uCRO59fL/hzWXrE791y0Ep0b9CoPOz2BjEk=;
+        b=gzcgoxzBgUb3Gl0XYSIFdIZGUZsO27jaWKMPdPwHHK/tKBbvXjiQW1hWxdn5S4gTGs
+         aL0NncgU/am/Uz2if2qDo0c3VyAxU+hMXWVxUmBKeU45pIa8YGum9XBs1Ox0Em4QTV87
+         Z8Xfp6Qosrw0CDJKgwVwYONp3MaCVaei482BRU/cadBf9okWUsu7KbfLMvGlPIsWtPVl
+         5kUopUFG3n37lg4QM7xxdWS3BNy2sVOrCYue0RyGCniuRxpt/Oz3uIlnZeZSnZ0mXvsN
+         kfAJd0iqVSlHoiZyMfNH2uUzjk1abEwauX9XeKR0sauztWM/xea7GNpJqQT2Ib4IQ//2
+         fVkA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=B06caSY6eZuqn5Y3Axx4VzBac4YEufOZejntHWM8dpY=;
-        b=c+4E2HioZfNp4y/fWoUG6L4i3tlyXfO56Bc3gCPff6ODE+UnM4J2vErOv88xgn4wL3
-         x2owuHGyRwKZRhLMz6nNJQqQ7l6wZbg3aWQ++HS0aLzjQb/aZfM7dLJpUrT886usGA+B
-         /6PjWwt2s3aNK5EqdFA5CUSUQebyNwue2eaWZcgG/2oIQDSqXXDNN5Pupib4eZASii9h
-         5FxlOtY3q3U+LeXBuhIQPa4eCJFBEsJyGKQYbY3L69xnTvlJ8U/aHZTnE+gzlnkk20w4
-         ZKBrxuqdbSxOZA84MheZ2OjvolHA0flTmMCtjzB24LA+KBU57777TZGFaDoZBm5AITVC
-         9BHg==
-X-Gm-Message-State: AOUpUlFU3aMS66uCSUI5allxwxjSmJmZpt7E5WRAgGmGJd4pEUcJQ2Aq
-        iSdW04rmx4Ga3Zg8DvATBfM=
-X-Google-Smtp-Source: AAOMgpdsT7vV+cNa8/tzzc8gykkwMzISMgLQ6sxCW0RdtPzCUXHdWE+Yba808PYBU/Datdk4wum6Jw==
-X-Received: by 2002:a17:902:20e9:: with SMTP id v38-v6mr4337331plg.107.1532660882870;
-        Thu, 26 Jul 2018 20:08:02 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=RwF7OBw+uCRO59fL/hzWXrE791y0Ep0b9CoPOz2BjEk=;
+        b=DEiCZwRsh4zEQ4JlPoGCIzEagCC2LHgJqKUkYcZI25uwIJ9uVihAloxuyUFIl44RmZ
+         YHAlcE54Ep+Fdt8FtLveO2Al1Ea0lHrfHgnJba/HfqDdp3khkIDP/KI+6o2SyeNZPhDC
+         mVhBXk2KrNLbGEWV7c8/ZK9OdmSR+ioDeqvEyr9cnQCVIU51vGVGujA07xshNzSWayOa
+         9ws3epC7c1kgvO0e93Dg/hro9nZTr/yrOgX5oonzz/o9cyJf0wxmXwqT6lIZlhiPuzkl
+         XCDMXE/SC08Lvw+moKHAR+r304BDsHUg0NP+FvCNVQrnaRepndW1GnLEuJZd2mZb0vx+
+         ViGQ==
+X-Gm-Message-State: AOUpUlGMaPncwQQdmRGceQ6xYYyHYcXbDkuN6hqGiBkUnOr88YQEz5IA
+        rfS1rpdXk8G3qIm7C9tt4DQ=
+X-Google-Smtp-Source: AAOMgpe9Q1Rg1aTnFcT1UKG/EGMblyRafA+cDgAL02ggJB0zlvz0TWS+GoTS9URoPdZp6rXxP1yLHg==
+X-Received: by 2002:a17:902:bd93:: with SMTP id q19-v6mr4289063pls.238.1532660883676;
+        Thu, 26 Jul 2018 20:08:03 -0700 (PDT)
 Received: from toddpoynor2.mtv.corp.google.com ([2620:0:1000:3701:7d29:cd13:d903:7908])
-        by smtp.gmail.com with ESMTPSA id e126-v6sm6418544pfg.31.2018.07.26.20.08.01
+        by smtp.gmail.com with ESMTPSA id e126-v6sm6418544pfg.31.2018.07.26.20.08.02
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 26 Jul 2018 20:08:02 -0700 (PDT)
+        Thu, 26 Jul 2018 20:08:03 -0700 (PDT)
 From:   Todd Poynor <toddpoynor@gmail.com>
 To:     Rob Springer <rspringer@google.com>,
         John Joseph <jnjoseph@google.com>,
@@ -66,10 +66,12 @@ To:     Rob Springer <rspringer@google.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
         Todd Poynor <toddpoynor@google.com>
-Subject: [PATCH 00/10] staging: gasket: logging cleanups
-Date:   Thu, 26 Jul 2018 20:07:27 -0700
-Message-Id: <20180727030737.231268-1-toddpoynor@gmail.com>
+Subject: [PATCH 01/10] staging: gasket: save struct device for a gasket device
+Date:   Thu, 26 Jul 2018 20:07:28 -0700
+Message-Id: <20180727030737.231268-2-toddpoynor@gmail.com>
 X-Mailer: git-send-email 2.18.0.345.g5c9ce644c3-goog
+In-Reply-To: <20180727030737.231268-1-toddpoynor@gmail.com>
+References: <20180727030737.231268-1-toddpoynor@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -79,34 +81,60 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Todd Poynor <toddpoynor@google.com>
 
-Kill off gasket logging functions, convert to standard.
+Save the struct device pointer to a gasket device in gasket's metadata,
+to facilitate use of standard logging calls and in anticipation of
+non-PCI gasket devices in the future.
 
-Fixup a few formatting/style problems in the process.
+Signed-off-by: Todd Poynor <toddpoynor@google.com>
+---
+ drivers/staging/gasket/gasket_core.c | 5 +++--
+ drivers/staging/gasket/gasket_core.h | 3 +++
+ 2 files changed, 6 insertions(+), 2 deletions(-)
 
-Todd Poynor (10):
-  staging: gasket: save struct device for a gasket device
-  staging: gasket: core: convert to standard logging
-  staging: gasket: interrupt: convert to standard logging
-  staging: gasket: ioctl: convert to standard logging
-  staging: gasket: page table: convert to standard logging
-  staging: gasket: sysfs: convert to standard logging
-  staging: gasket: apex: convert to standard logging
-  staging: gasket: remove gasket logging header
-  staging: gasket: TODO: remove entry for convert to standard logging
-  staging: gasket: don't print device addresses as kernel pointers
-
- drivers/staging/gasket/TODO                |   1 -
- drivers/staging/gasket/apex_driver.c       |  61 ++---
- drivers/staging/gasket/gasket_core.c       | 300 ++++++++++-----------
- drivers/staging/gasket/gasket_core.h       |   3 +
- drivers/staging/gasket/gasket_interrupt.c  |  67 +++--
- drivers/staging/gasket/gasket_ioctl.c      |  23 +-
- drivers/staging/gasket/gasket_logging.h    |  64 -----
- drivers/staging/gasket/gasket_page_table.c | 131 ++++-----
- drivers/staging/gasket/gasket_sysfs.c      |  73 +++--
- 9 files changed, 296 insertions(+), 427 deletions(-)
- delete mode 100644 drivers/staging/gasket/gasket_logging.h
-
+diff --git a/drivers/staging/gasket/gasket_core.c b/drivers/staging/gasket/gasket_core.c
+index 732218773c3c6..e8f3b021c20d1 100644
+--- a/drivers/staging/gasket/gasket_core.c
++++ b/drivers/staging/gasket/gasket_core.c
+@@ -450,6 +450,7 @@ static int gasket_alloc_dev(
+ 	gasket_dev->internal_desc = internal_desc;
+ 	gasket_dev->dev_idx = dev_idx;
+ 	snprintf(gasket_dev->kobj_name, GASKET_NAME_MAX, "%s", kobj_name);
++	gasket_dev->dev = parent;
+ 	/* gasket_bar_data is uninitialized. */
+ 	gasket_dev->num_page_tables = driver_desc->num_page_tables;
+ 	/* max_page_table_size and *page table are uninit'ed */
+@@ -925,7 +926,7 @@ static int gasket_enable_dev(
+ 			&gasket_dev->bar_data[
+ 				driver_desc->page_table_bar_index],
+ 			&driver_desc->page_table_configs[tbl_idx],
+-			&gasket_dev->pci_dev->dev, gasket_dev->pci_dev, true);
++			gasket_dev->dev, gasket_dev->pci_dev, true);
+ 		if (ret) {
+ 			gasket_log_error(
+ 				gasket_dev,
+@@ -2028,7 +2029,7 @@ const struct gasket_driver_desc *gasket_get_driver_desc(struct gasket_dev *dev)
+  */
+ struct device *gasket_get_device(struct gasket_dev *dev)
+ {
+-	return &dev->pci_dev->dev;
++	return dev->dev;
+ }
+ 
+ /**
+diff --git a/drivers/staging/gasket/gasket_core.h b/drivers/staging/gasket/gasket_core.h
+index bf4ed3769efb2..8bd431ad3b58b 100644
+--- a/drivers/staging/gasket/gasket_core.h
++++ b/drivers/staging/gasket/gasket_core.h
+@@ -263,6 +263,9 @@ struct gasket_dev {
+ 	/* Pointer to the internal driver description for this device. */
+ 	struct gasket_internal_desc *internal_desc;
+ 
++	/* Device info */
++	struct device *dev;
++
+ 	/* PCI subsystem metadata. */
+ 	struct pci_dev *pci_dev;
+ 
 -- 
 2.18.0.345.g5c9ce644c3-goog
 
