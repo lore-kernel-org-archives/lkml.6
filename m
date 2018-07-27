@@ -7,64 +7,64 @@ X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2755C67790
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 23:28:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11D00C6778F
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 23:28:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8881C20857
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 23:28:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BC8EB20842
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 23:28:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J5YrrTxF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8881C20857
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m1ipDPOk"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BC8EB20842
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389101AbeG1Awo (ORCPT
+        id S2389156AbeG1Awq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 20:52:44 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:52104 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730850AbeG1Awn (ORCPT
+        Fri, 27 Jul 2018 20:52:46 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:35205 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389108AbeG1Awp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 20:52:43 -0400
-Received: by mail-wm0-f65.google.com with SMTP id y2-v6so6865968wma.1
-        for <linux-kernel@vger.kernel.org>; Fri, 27 Jul 2018 16:28:35 -0700 (PDT)
+        Fri, 27 Jul 2018 20:52:45 -0400
+Received: by mail-wm0-f66.google.com with SMTP id o18-v6so7196267wmc.0
+        for <linux-kernel@vger.kernel.org>; Fri, 27 Jul 2018 16:28:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=Gl+aK2ly2QIfuIXisWYcSBHmTSF7rnKWcUrQWJgtaW8=;
-        b=J5YrrTxFw+ZjzbDG8PeJSCkCcQCctoO+HaYEU2Xc43+qFHadqjXATyMC8pe2IKqd+3
-         ENQl9QAOVvK7VDwgBkfYLNsOGft5r/IC+soYTuhTSmiuGl6ZGJp700I+tzHF9N+2Yw6A
-         /gtOTAkCca4rb68HZpOvlPwmXXIlqYxBYeSOjY0+O1LWgDWo/fy6OqRTkoFcItkzkf8s
-         5fa02DsCivpHZghkrnjrSAjCtq+8vHrDvl3sT8yTuEq50hkeujvuH7QaGZPayZedK5vj
-         n++CGgrlOnK9P9bDgjHEPhJCrWh5wGk9ah0ubcgiju3tSLFFx8jrx9mNPTtYR522El4m
-         Xfpg==
+        bh=OAf+f0cW5l8x3pPCzW6+D6k28z7op01JkjFTz+E9iYQ=;
+        b=m1ipDPOkGVK3gNaZzt4g0ndxIdTvq/HTmi5GvmL30E/ta9dEnHpKQrw9P/PjojsuUm
+         fU/JvTyfD51jTbsM8aeysOZfRxRhq2tGoGhLyVp2CGSsoz6/Xt1eEfUuhsh4d7MDZTWz
+         Y7itgCa3T5gznntx+P9xoMfd3xOAp/EzFG2lpL2CcTzDiIlt+Yg78UGeOfc7wdOswI8H
+         NzmHdmity3ilUQi83zniOGJActgTksdTDK8L4yZrLrao+S0Y0qYQnI+LM+JnxAj+oMut
+         SgUzuJrG067QsrXLDA85lrMfNLMiUYMZk655aEkYs6S7kAdIQLQGrYmigDtCMuU0Zh8f
+         EZqQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=Gl+aK2ly2QIfuIXisWYcSBHmTSF7rnKWcUrQWJgtaW8=;
-        b=fSsRt0sBcUihDnwDxfUVYtGuCtO6JWGP7H3xGyQJAU623XnOsISPTs7/V1/rIHNg+7
-         5z/wZInG1pXfWrCzvbTrqJXBo21naKFHad3/u2UkVKYwa8hRXZyG3c+mKp/YDrBH/jzo
-         n2pA3ckEOmapRHl5R1I1ZBQdKP/mxPE31csP6V2n8qVY/7kqfoQy42bdF/7QI9wYthfe
-         XT5OrbzdzgXQNf+BdNDuXxItiZrGvK4PRdIFfr1Sx5r1i+HBKwueTCUWXz36Z1R1gg4n
-         lKhh9Q5opZx5T+mLzLihSzSl3FWUzakfU+/RGDBhd8yhKgCJy6kDZBLQh8kI0kJeCpA7
-         ke+w==
-X-Gm-Message-State: AOUpUlEIGlnqVj0wpg3blfhJvb5mtRmHfS1aDxyLy2GVZJX1TYj8HfbK
-        zqed6wBBI/7RRnili2O1Q4G2XAo6ySE=
-X-Google-Smtp-Source: AAOMgpegDKDcVsCqCQYYXZk2H1dOMqgdj+LkL9bxvk7yhdSr9zGrUxEDtnFTtIiQfiNzsn7oUWrB4Q==
-X-Received: by 2002:a1c:f46:: with SMTP id 67-v6mr5625866wmp.122.1532734115097;
-        Fri, 27 Jul 2018 16:28:35 -0700 (PDT)
+        bh=OAf+f0cW5l8x3pPCzW6+D6k28z7op01JkjFTz+E9iYQ=;
+        b=Pqn8+7CSE/wAGY78pybjLn+jgrQeypb9R0864jb4KbWTT0LnB8XIlWpsQuUhF1THOl
+         A/X75UqPTyojDVwOFzl3jq+dnApKFNpVRMpwbKS3IUxoeARjenCpmY+6uXaUh5/kfdCT
+         4vsaaPYQ6gLgWo9eTghPX2weY2IlDxObw2+yK/YesGEICn6aKFJGeSL/67BIQZoo07hy
+         9HjsP6cGChgpjBi3Rci5XKSrGS/IszhnFQEfZMf8m0bTcj/wFjVqcMMxBUlPzZspaz3P
+         Hke/8IOU/hpc5YuJ07zEZm+6SYlhVXPeCIe5hoPAByeBTLZLDIrpLQffL6Gva0XTkMRg
+         6LEQ==
+X-Gm-Message-State: AOUpUlGl4zsajAf1l/4twSB3CfillHKotXAZ5JBpfBtZ508IQFUZrAWV
+        wURo/GNzmw8gurJEj5ztgSJN11KCsK4=
+X-Google-Smtp-Source: AAOMgpdL2izKvgeu2nujwou8go38unEWcMl/prIT4BI5B1ba60JHCn9br/r0RQkKWCl78Yd88MW6Lg==
+X-Received: by 2002:a1c:f611:: with SMTP id w17-v6mr5712325wmc.143.1532734116467;
+        Fri, 27 Jul 2018 16:28:36 -0700 (PDT)
 Received: from localhost.localdomain (host81-158-116-187.range81-158.btcentralplus.com. [81.158.116.187])
-        by smtp.gmail.com with ESMTPSA id m13-v6sm7313217wru.93.2018.07.27.16.28.33
+        by smtp.gmail.com with ESMTPSA id m13-v6sm7313217wru.93.2018.07.27.16.28.35
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 27 Jul 2018 16:28:34 -0700 (PDT)
+        Fri, 27 Jul 2018 16:28:35 -0700 (PDT)
 From:   John Whitmore <johnfwhitmore@gmail.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     devel@driverdev.osuosl.org, gregkh@linuxfoundation.org,
         John Whitmore <johnfwhitmore@gmail.com>
-Subject: [PATCH 01/10] staging:rtl8192u: Remove unused DM_check_fsync_time_interval - Style
-Date:   Sat, 28 Jul 2018 00:28:17 +0100
-Message-Id: <20180727232826.28014-2-johnfwhitmore@gmail.com>
+Subject: [PATCH 02/10] staging:rtl8192u: Refactor use of enum dm_dig_sta_e - Style
+Date:   Sat, 28 Jul 2018 00:28:18 +0100
+Message-Id: <20180727232826.28014-3-johnfwhitmore@gmail.com>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180727232826.28014-1-johnfwhitmore@gmail.com>
 References: <20180727232826.28014-1-johnfwhitmore@gmail.com>
@@ -73,30 +73,74 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove the unused definition for DM_check_fsync_time_interval.
+Refactor the use of the enumerated type dm_dig_sta_e, which is not
+actually used for type checking by the compiler.
 
-This is a coding style change which should have no impact on runtime
-code execution.
+The enumerated type defines values for the enumeration, which are used
+by both dig_state and dig_highpwr_state, (members of the struct dig).
+Both of those variables were defined as being of type u8. This negates
+any usefulness of the use of the enumeration, (compiler type checking).
+
+To make use of the compiler's type-checking the two member variables,
+dig_state and dig_highpwr_state have been changed to being of type
+enum dm_dig_sta_e. The enumerated type has been moved above the
+struct dig definition so that the enumeration is already defined when
+compiler reaches the two types using the enumerated type.
+
+In addition the 'typedef' of the enumerated type has been removed to
+clear the checkpatch issue with declaring new types.
+
+These changes, whilst convoluted, are purely coding style in nature and
+should not impact runtime code execution.
 
 Signed-off-by: John Whitmore <johnfwhitmore@gmail.com>
 ---
- drivers/staging/rtl8192u/r8192U_dm.h | 3 ---
- 1 file changed, 3 deletions(-)
+ drivers/staging/rtl8192u/r8192U_dm.h | 18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
 
 diff --git a/drivers/staging/rtl8192u/r8192U_dm.h b/drivers/staging/rtl8192u/r8192U_dm.h
-index 8f3d618dcfdb..e86dda99c223 100644
+index e86dda99c223..2444e1c1357b 100644
 --- a/drivers/staging/rtl8192u/r8192U_dm.h
 +++ b/drivers/staging/rtl8192u/r8192U_dm.h
-@@ -32,9 +32,6 @@
- #define		BW_AUTO_SWITCH_HIGH_LOW			25
- #define		BW_AUTO_SWITCH_LOW_HIGH			30
+@@ -64,6 +64,13 @@
  
--#define		DM_check_fsync_time_interval				500
+ 
+ /*------------------------------Define structure----------------------------*/
++
++enum dm_dig_sta_e {
++	DM_STA_DIG_OFF = 0,
++	DM_STA_DIG_ON,
++	DM_STA_DIG_MAX
++};
++
+ /* 2007/10/04 MH Define upper and lower threshold of DIG enable or disable. */
+ struct dig {
+ 	u8		dig_enable_flag;
+@@ -77,8 +84,8 @@ struct dig {
+ 	long		rssi_high_power_lowthresh;
+ 	long		rssi_high_power_highthresh;
+ 
+-	u8		dig_state;
+-	u8		dig_highpwr_state;
++	enum dm_dig_sta_e		dig_state;
++	enum dm_dig_sta_e		dig_highpwr_state;
+ 	u8		cur_connect_state;
+ 	u8		pre_connect_state;
+ 
+@@ -98,13 +105,6 @@ struct dig {
+ 	long		rssi_val;
+ };
+ 
+-typedef enum tag_dynamic_init_gain_state_definition {
+-	DM_STA_DIG_OFF = 0,
+-	DM_STA_DIG_ON,
+-	DM_STA_DIG_MAX
+-} dm_dig_sta_e;
 -
 -
- #define		DM_DIG_BACKOFF				12
- #define		DM_DIG_MAX					0x36
- #define		DM_DIG_MIN					0x1c
+ /* 2007/10/08 MH Define RATR state. */
+ typedef enum tag_dynamic_ratr_state_definition {
+ 	DM_RATR_STA_HIGH = 0,
 -- 
 2.18.0
 
