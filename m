@@ -6,36 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F4F1C67790
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 09:47:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0221FC67790
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 09:47:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D33CF20895
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 09:47:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D33CF20895
+	by mail.kernel.org (Postfix) with ESMTP id B4F6220895
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 09:47:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B4F6220895
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732706AbeG0LIz (ORCPT
+        id S1732909AbeG0LI6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 07:08:55 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:51574 "EHLO
+        Fri, 27 Jul 2018 07:08:58 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:51582 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730963AbeG0LIz (ORCPT
+        with ESMTP id S1730963AbeG0LI5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 07:08:55 -0400
+        Fri, 27 Jul 2018 07:08:57 -0400
 Received: from localhost (unknown [89.188.5.116])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4D1AC898;
-        Fri, 27 Jul 2018 09:47:49 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1AE88898;
+        Fri, 27 Jul 2018 09:47:51 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+9adb4b567003cac781f0@syzkaller.appspotmail.com,
-        Willem de Bruijn <willemb@google.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.17 15/66] ip: in cmsg IP(V6)_ORIGDSTADDR call pskb_may_pull
-Date:   Fri, 27 Jul 2018 11:45:08 +0200
-Message-Id: <20180727093810.790096617@linuxfoundation.org>
+        stable@vger.kernel.org, Saeed Mahameed <saeedm@mellanox.com>,
+        Leon Romanovsky <leonro@mellanox.com>
+Subject: [PATCH 4.17 24/66] net/mlx5: E-Switch, UBSAN fix undefined behavior in mlx5_eswitch_mode
+Date:   Fri, 27 Jul 2018 11:45:17 +0200
+Message-Id: <20180727093811.899216452@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180727093809.043856530@linuxfoundation.org>
 References: <20180727093809.043856530@linuxfoundation.org>
@@ -52,93 +50,50 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Willem de Bruijn <willemb@google.com>
+From: Saeed Mahameed <saeedm@mellanox.com>
 
-[ Upstream commit 2efd4fca703a6707cad16ab486eaab8fc7f0fd49 ]
+[ Upstream commit 443a858158d35916e572b75667ca4924a6af2182 ]
 
-Syzbot reported a read beyond the end of the skb head when returning
-IPV6_ORIGDSTADDR:
+With debug kernel UBSAN detects the following issue, which might happen
+when eswitch instance is not created, fix this by testing the eswitch
+pointer before returning the eswitch mode, if not set return mode =
+SRIOV_NONE.
 
-  BUG: KMSAN: kernel-infoleak in put_cmsg+0x5ef/0x860 net/core/scm.c:242
-  CPU: 0 PID: 4501 Comm: syz-executor128 Not tainted 4.17.0+ #9
-  Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-  Google 01/01/2011
-  Call Trace:
-    __dump_stack lib/dump_stack.c:77 [inline]
-    dump_stack+0x185/0x1d0 lib/dump_stack.c:113
-    kmsan_report+0x188/0x2a0 mm/kmsan/kmsan.c:1125
-    kmsan_internal_check_memory+0x138/0x1f0 mm/kmsan/kmsan.c:1219
-    kmsan_copy_to_user+0x7a/0x160 mm/kmsan/kmsan.c:1261
-    copy_to_user include/linux/uaccess.h:184 [inline]
-    put_cmsg+0x5ef/0x860 net/core/scm.c:242
-    ip6_datagram_recv_specific_ctl+0x1cf3/0x1eb0 net/ipv6/datagram.c:719
-    ip6_datagram_recv_ctl+0x41c/0x450 net/ipv6/datagram.c:733
-    rawv6_recvmsg+0x10fb/0x1460 net/ipv6/raw.c:521
-    [..]
+[   32.528951] UBSAN: Undefined behaviour in drivers/net/ethernet/mellanox/mlx5/core/eswitch.c:2219:12
+[   32.528951] member access within null pointer of type 'struct mlx5_eswitch'
+[   32.528951] CPU: 0 PID: 1 Comm: swapper/0 Not tainted 4.18.0-rc3-dirty #181
+[   32.528951] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.11.0-0-g63451fca13-prebuilt.qemu-project.org 04/01/2014
+[   32.528951] Call Trace:
+[   32.528951]  dump_stack+0xc7/0x13b
+[   32.528951]  ? show_regs_print_info+0x5/0x5
+[   32.528951]  ? __pm_runtime_use_autosuspend+0x140/0x140
+[   32.528951]  ubsan_epilogue+0x9/0x49
+[   32.528951]  ubsan_type_mismatch_common+0x1f9/0x2c0
+[   32.528951]  ? ucs2_as_utf8+0x310/0x310
+[   32.528951]  ? device_initialize+0x229/0x2e0
+[   32.528951]  __ubsan_handle_type_mismatch+0x9f/0xc9
+[   32.528951]  ? __ubsan_handle_divrem_overflow+0x19b/0x19b
+[   32.578008]  ? ib_device_get_by_index+0xf0/0xf0
+[   32.578008]  mlx5_eswitch_mode+0x30/0x40
+[   32.578008]  mlx5_ib_add+0x1e0/0x4a0
 
-This logic and its ipv4 counterpart read the destination port from
-the packet at skb_transport_offset(skb) + 4.
-
-With MSG_MORE and a local SOCK_RAW sender, syzbot was able to cook a
-packet that stores headers exactly up to skb_transport_offset(skb) in
-the head and the remainder in a frag.
-
-Call pskb_may_pull before accessing the pointer to ensure that it lies
-in skb head.
-
-Link: http://lkml.kernel.org/r/CAF=yD-LEJwZj5a1-bAAj2Oy_hKmGygV6rsJ_WOrAYnv-fnayiQ@mail.gmail.com
-Reported-by: syzbot+9adb4b567003cac781f0@syzkaller.appspotmail.com
-Signed-off-by: Willem de Bruijn <willemb@google.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: 57cbd893c4c5 ("net/mlx5: E-Switch, Move representors definition to a global scope")
+Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
+Reviewed-by: Leon Romanovsky <leonro@mellanox.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ipv4/ip_sockglue.c |    7 +++++--
- net/ipv6/datagram.c    |    7 +++++--
- 2 files changed, 10 insertions(+), 4 deletions(-)
+ drivers/net/ethernet/mellanox/mlx5/core/eswitch.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/net/ipv4/ip_sockglue.c
-+++ b/net/ipv4/ip_sockglue.c
-@@ -148,15 +148,18 @@ static void ip_cmsg_recv_dstaddr(struct
+--- a/drivers/net/ethernet/mellanox/mlx5/core/eswitch.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/eswitch.c
+@@ -2221,6 +2221,6 @@ free_out:
+ 
+ u8 mlx5_eswitch_mode(struct mlx5_eswitch *esw)
  {
- 	struct sockaddr_in sin;
- 	const struct iphdr *iph = ip_hdr(skb);
--	__be16 *ports = (__be16 *)skb_transport_header(skb);
-+	__be16 *ports;
-+	int end;
- 
--	if (skb_transport_offset(skb) + 4 > (int)skb->len)
-+	end = skb_transport_offset(skb) + 4;
-+	if (end > 0 && !pskb_may_pull(skb, end))
- 		return;
- 
- 	/* All current transport protocols have the port numbers in the
- 	 * first four bytes of the transport header and this function is
- 	 * written with this assumption in mind.
- 	 */
-+	ports = (__be16 *)skb_transport_header(skb);
- 
- 	sin.sin_family = AF_INET;
- 	sin.sin_addr.s_addr = iph->daddr;
---- a/net/ipv6/datagram.c
-+++ b/net/ipv6/datagram.c
-@@ -700,13 +700,16 @@ void ip6_datagram_recv_specific_ctl(stru
- 	}
- 	if (np->rxopt.bits.rxorigdstaddr) {
- 		struct sockaddr_in6 sin6;
--		__be16 *ports = (__be16 *) skb_transport_header(skb);
-+		__be16 *ports;
-+		int end;
- 
--		if (skb_transport_offset(skb) + 4 <= (int)skb->len) {
-+		end = skb_transport_offset(skb) + 4;
-+		if (end <= 0 || pskb_may_pull(skb, end)) {
- 			/* All current transport protocols have the port numbers in the
- 			 * first four bytes of the transport header and this function is
- 			 * written with this assumption in mind.
- 			 */
-+			ports = (__be16 *)skb_transport_header(skb);
- 
- 			sin6.sin6_family = AF_INET6;
- 			sin6.sin6_addr = ipv6_hdr(skb)->daddr;
+-	return esw->mode;
++	return ESW_ALLOWED(esw) ? esw->mode : SRIOV_NONE;
+ }
+ EXPORT_SYMBOL_GPL(mlx5_eswitch_mode);
 
 
