@@ -7,64 +7,64 @@ X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83ECFC67790
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 23:28:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F752C67790
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 23:28:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 396AA20842
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 23:28:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 33A9020857
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 23:28:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iIeSv/e1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 396AA20842
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="serOR6G0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 33A9020857
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389390AbeG1Aw5 (ORCPT
+        id S2389415AbeG1Aw5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Fri, 27 Jul 2018 20:52:57 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:47038 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389317AbeG1Awy (ORCPT
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:50183 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389334AbeG1Aw5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 20:52:54 -0400
-Received: by mail-wr1-f68.google.com with SMTP id h14-v6so6553867wrw.13
-        for <linux-kernel@vger.kernel.org>; Fri, 27 Jul 2018 16:28:45 -0700 (PDT)
+        Fri, 27 Jul 2018 20:52:57 -0400
+Received: by mail-wm0-f68.google.com with SMTP id s12-v6so6866928wmc.0
+        for <linux-kernel@vger.kernel.org>; Fri, 27 Jul 2018 16:28:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=iFZbODAXmIOMf+KTSzdHOMhDJ6FWaRDKAVnuHltjmDM=;
-        b=iIeSv/e16Ax9rQAP9ebslOxOczFQvb6CLU1naWZPeJGhKtNWOTCmnAr77t9YeYWe25
-         Io3e8yMaTWwp7LpjalF5q7y7YWXaVTmScvnd4UFT7Wxs4LqEMlWNsFLeSULHWJYpv31i
-         HGcgY5RHQrWk5s0zDW85tp+FBTNMHe/vrGT1pEd1W+8vOHvyB9KZxKhyqNpk66oew2u0
-         OkIUruh+FKxLDR/E9dMYkffR3oslc6dFmQFuvwQ5ItGNKVbtvu+TxIQhFJDOeM1m/iUq
-         iDKJ7B9NZmCvDIpEomgiEQdIrdlQjouA64eKDI3G8Ion/37mpOFvQ6m7cve8WrSKCy6B
-         yb/w==
+        bh=oEt/y9gqciYodrqMCHbDn0tWVDXYV921GuE9yOAzCFE=;
+        b=serOR6G0kiy/Z0iLY8jZlEhi+pjEUnleegInsQNIA74iRsSPcPXJciQTatGC7ntERd
+         UorNBw8NIwjtMyPRpUV9nOKjKhAlSJX67OpxYGX9FL/MXF/awZPMuwK5ZM5pCDf26pZ4
+         eQGgTXsX+VD6dMSkTqMrihsla7gS/Zldeh8RidMwpzJ5dDSeJJggN6icwlDOGNk4OUcN
+         WK8XF7ricGEXh9671VijdgZhbRVc/YUJThi7/swm09DRMOVlykWH+bUPxgv9ZZsJUPcK
+         B5THEwJDnY6zfmn9+8YaWeaVSYCEbUatXGb1kE+xzpzvLSxPNp4ZhvHgh9BfS308Bdaw
+         6nlg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=iFZbODAXmIOMf+KTSzdHOMhDJ6FWaRDKAVnuHltjmDM=;
-        b=PjbOWyKSOiXozPpQtEJOdgHM0mqFy5b3DBQtgDdYs7ydc0OxExBKvPO2x3yZ5zfjwp
-         2TcN4fS++xGZMynJknVpL8PLT5jn7PMgZ0NrD4V/M7YE0tvn21qwvpnwnmcgYhvYB8td
-         vWOf0Fkpe/j2S/ynu2H+3SyDwaKLcK+s8WFfeYfaKlCt6uyu1wDIuZE/884jyMEjR7Tc
-         AGithfGL3cgp8p96Zq4xEpW2E2LVfdIO90/egprlL7G2h3TMjTm/gCfBFum8+WZFppnr
-         foW142LD41Smzwkuu/REWJDGm4pKL5rpu2lltv++LFZZjZsWtuHnZs2yg6XHf/YhdHID
-         Cn0w==
-X-Gm-Message-State: AOUpUlHx/9ZsxYA00fsWLacqP+d6nNmkAaeYmDh3ii5vDstQQly+g+VA
-        kZq+k4pPH86LrZm5Qzoc3yYoxEPuCh0=
-X-Google-Smtp-Source: AAOMgpfhTfycgi0umRt6D7Ni869MEOIhpz6OCAeU7E/L1yJBMPyTkJCwDRq+BiDWJh45SEF6T4bkWg==
-X-Received: by 2002:adf:97d5:: with SMTP id t21-v6mr7060208wrb.28.1532734124810;
-        Fri, 27 Jul 2018 16:28:44 -0700 (PDT)
+        bh=oEt/y9gqciYodrqMCHbDn0tWVDXYV921GuE9yOAzCFE=;
+        b=DnJh1em6US64LPAJL9roM/gw1nnL1ErjBevkMpLwjgJWUO2d44nQ6+lMTf19Zl9p59
+         NSlDmGKQOS+nV2v+0qo2omPf+e5VbKMQerm5RHcVY9g5JRRguN05TfdOWnM4NMcFna5k
+         90ZVfryUm4XBak1P1WWrj2ex8POmDCeBgxYEm1f3o9vEaeo0+tRRQMVR6MAwqPhRicai
+         lzCWZjQRzMaqKzrj0vVoLaPQVxHQ0PLBBFrAGEByiMQ5YQtlU/niVgdB1fUPlGVKPmwH
+         CTLONOo7XkdOo3fW5WlMBEo3sMSg4/xvyjTqxn3V1PMFKzTPPcPxBkYDlOwxyl2d7j2v
+         Dy3A==
+X-Gm-Message-State: AOUpUlHAV8EHxRIAp0kNtmXBwQz4vuukcIzGzDF0l6rXhnKCefN1bpZ5
+        zEQ112Xdwyx9dV7efe6GwB4OMzkubkU=
+X-Google-Smtp-Source: AAOMgpdAG5m6djdV3BhjBfkvPvPVIZMGmL+U3Rp58KS2RpuGH2woDS/iPIfeq/IrJkw7HjveZNdzvg==
+X-Received: by 2002:a1c:1004:: with SMTP id 4-v6mr5992207wmq.68.1532734127583;
+        Fri, 27 Jul 2018 16:28:47 -0700 (PDT)
 Received: from localhost.localdomain (host81-158-116-187.range81-158.btcentralplus.com. [81.158.116.187])
-        by smtp.gmail.com with ESMTPSA id m13-v6sm7313217wru.93.2018.07.27.16.28.43
+        by smtp.gmail.com with ESMTPSA id m13-v6sm7313217wru.93.2018.07.27.16.28.46
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 27 Jul 2018 16:28:44 -0700 (PDT)
+        Fri, 27 Jul 2018 16:28:46 -0700 (PDT)
 From:   John Whitmore <johnfwhitmore@gmail.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     devel@driverdev.osuosl.org, gregkh@linuxfoundation.org,
         John Whitmore <johnfwhitmore@gmail.com>
-Subject: [PATCH 08/10] staging:rtl8192u: Refactor enum dm_dig_pd_th_e - Style
-Date:   Sat, 28 Jul 2018 00:28:24 +0100
-Message-Id: <20180727232826.28014-9-johnfwhitmore@gmail.com>
+Subject: [PATCH 10/10] staging:rtl8192u: Refactor enum DM_CCK_Rx_Path_Method - Style
+Date:   Sat, 28 Jul 2018 00:28:26 +0100
+Message-Id: <20180727232826.28014-11-johnfwhitmore@gmail.com>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180727232826.28014-1-johnfwhitmore@gmail.com>
 References: <20180727232826.28014-1-johnfwhitmore@gmail.com>
@@ -73,67 +73,61 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The enumerated type dm_dig_pd_th_e is never actually used as
-the type for the two variables which use the constants, which the
-enumeration defines. This omission removes the possibility of taking
-advantage of compiler type checking.
+The enumerated type DM_CCK_Rx_Path_Method is used as a container for
+constant definitions, rather then an enumerated type enabling compiler
+type checking. To correct this, the variable which uses the constants,
+defined by the enumeration, has had its type changed from a u8 to the
+enumeration.
 
-To correct this the two member variables, (curpd_thstate & prepd_thstate)
-have been changed to use the type enum dm_dig_pd_th_e rather then u8.
+Additionally the type has been moved above the structure where the type
+is used, to avoid compiler error. The typedef has been removed from the
+enumerated type to clear the checkpatch issue with defining new types.
+The name of the type has been changed to dm_cck_rx_path_method to clear
+the checkpatch issue with CamelCase naming. And the enumerated constant
+CCK_Rx_Version_MAX has been removed, since it is never used in code.
 
-Additionally the enum's declaration has been moved above the dig
-structure, where the type is used, the 'typedef' has been removed to
-clear the checkpatch issue with defining new types, and the value
-'DIG_PD_MAX' has been removed from the enumeration, since it is never
-used in code.
+The changes are all coding style in nature and so should have no
+impact on runtime code execution.
 
 Signed-off-by: John Whitmore <johnfwhitmore@gmail.com>
 ---
- drivers/staging/rtl8192u/r8192U_dm.h | 17 ++++++++---------
- 1 file changed, 8 insertions(+), 9 deletions(-)
+ drivers/staging/rtl8192u/r8192U_dm.h | 13 ++++++-------
+ 1 file changed, 6 insertions(+), 7 deletions(-)
 
 diff --git a/drivers/staging/rtl8192u/r8192U_dm.h b/drivers/staging/rtl8192u/r8192U_dm.h
-index 825df06e17a8..41b08211e958 100644
+index 2aef330379cb..42effcec5277 100644
 --- a/drivers/staging/rtl8192u/r8192U_dm.h
 +++ b/drivers/staging/rtl8192u/r8192U_dm.h
-@@ -81,6 +81,12 @@ enum dm_dig_connect_e {
- 	DIG_CONNECT = 1,
- };
- 
-+enum dm_dig_pd_th_e {
-+	DIG_PD_AT_LOW_POWER = 0,
-+	DIG_PD_AT_NORMAL_POWER = 1,
-+	DIG_PD_AT_HIGH_POWER = 2,
-+};
-+
- /* 2007/10/04 MH Define upper and lower threshold of DIG enable or disable. */
- struct dig {
- 	u8		dig_enable_flag;
-@@ -99,8 +105,8 @@ struct dig {
- 	enum dm_dig_connect_e		cur_connect_state;
- 	enum dm_dig_connect_e		pre_connect_state;
- 
--	u8		curpd_thstate;
--	u8		prepd_thstate;
-+	enum dm_dig_pd_th_e		curpd_thstate;
-+	enum dm_dig_pd_th_e		prepd_thstate;
- 	u8		curcs_ratio_state;
- 	u8		precs_ratio_state;
- 
-@@ -115,13 +121,6 @@ struct dig {
+@@ -126,10 +126,15 @@ struct dig {
  	long		rssi_val;
  };
  
--typedef enum tag_dig_packetdetection_threshold_definition {
--	DIG_PD_AT_LOW_POWER = 0,
--	DIG_PD_AT_NORMAL_POWER = 1,
--	DIG_PD_AT_HIGH_POWER = 2,
--	DIG_PD_MAX
--} dm_dig_pd_th_e;
++enum dm_cck_rx_path_method {
++	CCK_Rx_Version_1 = 0,
++	CCK_Rx_Version_2 = 1,
++};
++
+ struct dynamic_rx_path_sel {
+ 	u8		Enable;
+ 	u8		DbgMode;
+-	u8		cck_method;
++	enum dm_cck_rx_path_method		cck_method;
+ 	u8		cck_Rx_path;
+ 
+ 	u8		SS_TH_low;
+@@ -142,12 +147,6 @@ struct dynamic_rx_path_sel {
+ 	long		cck_pwdb_sta[4];
+ };
+ 
+-typedef enum tag_CCK_Rx_Path_Method_Definition {
+-	CCK_Rx_Version_1 = 0,
+-	CCK_Rx_Version_2 = 1,
+-	CCK_Rx_Version_MAX
+-} DM_CCK_Rx_Path_Method;
 -
- typedef enum tag_dig_cck_cs_ratio_state_definition {
- 	DIG_CS_RATIO_LOWER = 0,
- 	DIG_CS_RATIO_HIGHER = 1,
+ typedef enum tag_DM_DbgMode_Definition {
+ 	DM_DBG_OFF = 0,
+ 	DM_DBG_ON = 1,
 -- 
 2.18.0
 
