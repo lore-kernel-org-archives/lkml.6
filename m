@@ -6,34 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2083C67790
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:10:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7171C67790
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:10:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5A32C2089F
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:10:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5A32C2089F
+	by mail.kernel.org (Postfix) with ESMTP id 7DA992089E
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:10:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7DA992089E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388940AbeG0Lbj (ORCPT
+        id S2388977AbeG0Lbm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 07:31:39 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:36542 "EHLO
+        Fri, 27 Jul 2018 07:31:42 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:36550 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729431AbeG0Lbj (ORCPT
+        with ESMTP id S1729431AbeG0Lbl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 07:31:39 -0400
+        Fri, 27 Jul 2018 07:31:41 -0400
 Received: from localhost (unknown [89.188.5.116])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 23BE6CB7;
-        Fri, 27 Jul 2018 10:10:25 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 26084CB8;
+        Fri, 27 Jul 2018 10:10:28 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Anssi Hannula <anssi.hannula@bitwise.fi>,
-        Marc Kleine-Budde <mkl@pengutronix.de>
-Subject: [PATCH 4.9 25/33] can: xilinx_can: fix RX loop if RXNEMP is asserted without RXOK
-Date:   Fri, 27 Jul 2018 12:09:06 +0200
-Message-Id: <20180727100828.612874789@linuxfoundation.org>
+        stable@vger.kernel.org, Paolo Abeni <pabeni@redhat.com>,
+        Eric Dumazet <edumazet@google.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.9 03/33] ip: hash fragments consistently
+Date:   Fri, 27 Jul 2018 12:08:44 +0200
+Message-Id: <20180727100827.792720769@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180727100827.665729981@linuxfoundation.org>
 References: <20180727100827.665729981@linuxfoundation.org>
@@ -50,98 +51,73 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Anssi Hannula <anssi.hannula@bitwise.fi>
+From: Paolo Abeni <pabeni@redhat.com>
 
-commit 32852c561bffd613d4ed7ec464b1e03e1b7b6c5c upstream.
+[ Upstream commit 3dd1c9a1270736029ffca670e9bd0265f4120600 ]
 
-If the device gets into a state where RXNEMP (RX FIFO not empty)
-interrupt is asserted without RXOK (new frame received successfully)
-interrupt being asserted, xcan_rx_poll() will continue to try to clear
-RXNEMP without actually reading frames from RX FIFO. If the RX FIFO is
-not empty, the interrupt will not be cleared and napi_schedule() will
-just be called again.
+The skb hash for locally generated ip[v6] fragments belonging
+to the same datagram can vary in several circumstances:
+* for connected UDP[v6] sockets, the first fragment get its hash
+  via set_owner_w()/skb_set_hash_from_sk()
+* for unconnected IPv6 UDPv6 sockets, the first fragment can get
+  its hash via ip6_make_flowlabel()/skb_get_hash_flowi6(), if
+  auto_flowlabel is enabled
 
-This situation can occur when:
+For the following frags the hash is usually computed via
+skb_get_hash().
+The above can cause OoO for unconnected IPv6 UDPv6 socket: in that
+scenario the egress tx queue can be selected on a per packet basis
+via the skb hash.
+It may also fool flow-oriented schedulers to place fragments belonging
+to the same datagram in different flows.
 
-(a) xcan_rx() returns without reading RX FIFO due to an error condition.
-The code tries to clear both RXOK and RXNEMP but RXNEMP will not clear
-due to a frame still being in the FIFO. The frame will never be read
-from the FIFO as RXOK is no longer set.
+Fix the issue by copying the skb hash from the head frag into
+the others at fragmentation time.
 
-(b) A frame is received between xcan_rx_poll() reading interrupt status
-and clearing RXOK. RXOK will be cleared, but RXNEMP will again remain
-set as the new message is still in the FIFO.
+Before this commit:
+perf probe -a "dev_queue_xmit skb skb->hash skb->l4_hash:b1@0/8 skb->sw_hash:b1@1/8"
+netperf -H $IPV4 -t UDP_STREAM -l 5 -- -m 2000 -n &
+perf record -e probe:dev_queue_xmit -e probe:skb_set_owner_w -a sleep 0.1
+perf script
+probe:dev_queue_xmit: (ffffffff8c6b1b20) hash=3713014309 l4_hash=1 sw_hash=0
+probe:dev_queue_xmit: (ffffffff8c6b1b20) hash=0 l4_hash=0 sw_hash=0
 
-I'm able to trigger case (b) by flooding the bus with frames under load.
+After this commit:
+probe:dev_queue_xmit: (ffffffff8c6b1b20) hash=2171763177 l4_hash=1 sw_hash=0
+probe:dev_queue_xmit: (ffffffff8c6b1b20) hash=2171763177 l4_hash=1 sw_hash=0
 
-There does not seem to be any benefit in using both RXNEMP and RXOK in
-the way the driver does, and the polling example in the reference manual
-(UG585 v1.10 18.3.7 Read Messages from RxFIFO) also says that either
-RXOK or RXNEMP can be used for detecting incoming messages.
-
-Fix the issue and simplify the RX processing by only using RXNEMP
-without RXOK.
-
-Tested with the integrated CAN on Zynq-7000 SoC.
-
-Fixes: b1201e44f50b ("can: xilinx CAN controller support")
-Signed-off-by: Anssi Hannula <anssi.hannula@bitwise.fi>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
+Fixes: b73c3d0e4f0e ("net: Save TX flow hash in sock and set in skbuf on xmit")
+Fixes: 67800f9b1f4e ("ipv6: Call skb_get_hash_flowi6 to get skb->hash in ip6_make_flowlabel")
+Signed-off-by: Paolo Abeni <pabeni@redhat.com>
+Reviewed-by: Eric Dumazet <edumazet@google.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/net/can/xilinx_can.c |   18 +++++-------------
- 1 file changed, 5 insertions(+), 13 deletions(-)
+ net/ipv4/ip_output.c  |    2 ++
+ net/ipv6/ip6_output.c |    2 ++
+ 2 files changed, 4 insertions(+)
 
---- a/drivers/net/can/xilinx_can.c
-+++ b/drivers/net/can/xilinx_can.c
-@@ -101,7 +101,7 @@ enum xcan_reg {
- #define XCAN_INTR_ALL		(XCAN_IXR_TXOK_MASK | XCAN_IXR_BSOFF_MASK |\
- 				 XCAN_IXR_WKUP_MASK | XCAN_IXR_SLP_MASK | \
- 				 XCAN_IXR_RXNEMP_MASK | XCAN_IXR_ERROR_MASK | \
--				 XCAN_IXR_ARBLST_MASK | XCAN_IXR_RXOK_MASK)
-+				 XCAN_IXR_ARBLST_MASK)
+--- a/net/ipv4/ip_output.c
++++ b/net/ipv4/ip_output.c
+@@ -497,6 +497,8 @@ static void ip_copy_metadata(struct sk_b
+ 	to->dev = from->dev;
+ 	to->mark = from->mark;
  
- /* CAN register bit shift - XCAN_<REG>_<BIT>_SHIFT */
- #define XCAN_BTR_SJW_SHIFT		7  /* Synchronous jump width */
-@@ -709,15 +709,7 @@ static int xcan_rx_poll(struct napi_stru
++	skb_copy_hash(to, from);
++
+ 	/* Copy the flags to each fragment. */
+ 	IPCB(to)->flags = IPCB(from)->flags;
  
- 	isr = priv->read_reg(priv, XCAN_ISR_OFFSET);
- 	while ((isr & XCAN_IXR_RXNEMP_MASK) && (work_done < quota)) {
--		if (isr & XCAN_IXR_RXOK_MASK) {
--			priv->write_reg(priv, XCAN_ICR_OFFSET,
--				XCAN_IXR_RXOK_MASK);
--			work_done += xcan_rx(ndev);
--		} else {
--			priv->write_reg(priv, XCAN_ICR_OFFSET,
--				XCAN_IXR_RXNEMP_MASK);
--			break;
--		}
-+		work_done += xcan_rx(ndev);
- 		priv->write_reg(priv, XCAN_ICR_OFFSET, XCAN_IXR_RXNEMP_MASK);
- 		isr = priv->read_reg(priv, XCAN_ISR_OFFSET);
- 	}
-@@ -728,7 +720,7 @@ static int xcan_rx_poll(struct napi_stru
- 	if (work_done < quota) {
- 		napi_complete(napi);
- 		ier = priv->read_reg(priv, XCAN_IER_OFFSET);
--		ier |= (XCAN_IXR_RXOK_MASK | XCAN_IXR_RXNEMP_MASK);
-+		ier |= XCAN_IXR_RXNEMP_MASK;
- 		priv->write_reg(priv, XCAN_IER_OFFSET, ier);
- 	}
- 	return work_done;
-@@ -800,9 +792,9 @@ static irqreturn_t xcan_interrupt(int ir
- 	}
+--- a/net/ipv6/ip6_output.c
++++ b/net/ipv6/ip6_output.c
+@@ -576,6 +576,8 @@ static void ip6_copy_metadata(struct sk_
+ 	to->dev = from->dev;
+ 	to->mark = from->mark;
  
- 	/* Check for the type of receive interrupt and Processing it */
--	if (isr & (XCAN_IXR_RXNEMP_MASK | XCAN_IXR_RXOK_MASK)) {
-+	if (isr & XCAN_IXR_RXNEMP_MASK) {
- 		ier = priv->read_reg(priv, XCAN_IER_OFFSET);
--		ier &= ~(XCAN_IXR_RXNEMP_MASK | XCAN_IXR_RXOK_MASK);
-+		ier &= ~XCAN_IXR_RXNEMP_MASK;
- 		priv->write_reg(priv, XCAN_IER_OFFSET, ier);
- 		napi_schedule(&priv->napi);
- 	}
++	skb_copy_hash(to, from);
++
+ #ifdef CONFIG_NET_SCHED
+ 	to->tc_index = from->tc_index;
+ #endif
 
 
