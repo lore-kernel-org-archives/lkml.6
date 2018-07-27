@@ -2,109 +2,84 @@ Return-Path: <SRS0=OQFz=KL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C0ECC6778F
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:06:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58309C6778F
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:08:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CEB5C20897
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:06:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CEB5C20897
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 0827920873
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:08:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0827920873
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389051AbeG0L13 (ORCPT
+        id S1730963AbeG0LaH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 07:27:29 -0400
-Received: from foss.arm.com ([217.140.101.70]:40594 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732111AbeG0L12 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 07:27:28 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0DDA515AD;
-        Fri, 27 Jul 2018 03:06:18 -0700 (PDT)
-Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id D29D33F575;
-        Fri, 27 Jul 2018 03:06:17 -0700 (PDT)
-Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
-        id 564FD1AE13AE; Fri, 27 Jul 2018 11:06:18 +0100 (BST)
-Date:   Fri, 27 Jul 2018 11:06:18 +0100
-From:   Will Deacon <will.deacon@arm.com>
-To:     Dongjiu Geng <gengdongjiu@huawei.com>
-Cc:     catalin.marinas@arm.com, mark.rutland@arm.com, lenb@kernel.org,
-        rafael.j.wysocki@intel.com, erik.schmauss@intel.com,
-        robert.moore@intel.com, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
-        devel@acpica.org
-Subject: Re: [PATCH] arm64: clean the additional checks before calling
- ghes_notify_sea()
-Message-ID: <20180727100617.GB25592@arm.com>
-References: <1532638907-46129-1-git-send-email-gengdongjiu@huawei.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1532638907-46129-1-git-send-email-gengdongjiu@huawei.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+        Fri, 27 Jul 2018 07:30:07 -0400
+Received: from smtprelay0142.hostedemail.com ([216.40.44.142]:35947 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1730577AbeG0LaG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Jul 2018 07:30:06 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay08.hostedemail.com (Postfix) with ESMTP id 74F5A182CF68A;
+        Fri, 27 Jul 2018 10:08:54 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-HE-Tag: girls49_136cba3270455
+X-Filterd-Recvd-Size: 2027
+Received: from XPS-9350.home (unknown [47.151.153.53])
+        (Authenticated sender: joe@perches.com)
+        by omf08.hostedemail.com (Postfix) with ESMTPA;
+        Fri, 27 Jul 2018 10:08:53 +0000 (UTC)
+Message-ID: <0a6d2ecfacf3786228de664c8e01f6de10314c1b.camel@perches.com>
+Subject: Re: [RFC PATCH] checkpatch: check for function calls with struct or
+ union on stack
+From:   Joe Perches <joe@perches.com>
+To:     David Laight <David.Laight@ACULAB.COM>,
+        'Andrew Morton' <akpm@linux-foundation.org>,
+        Andy Whitcroft <apw@canonical.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Date:   Fri, 27 Jul 2018 03:08:52 -0700
+In-Reply-To: <9d7441a14897426f8ed5befe8da0cad3@AcuMS.aculab.com>
+References: <1236369d28b2f1f5389ff652c4eb89e699e6481e.camel@perches.com>
+         <20180726122533.104f6eea950853ef50ebc680@linux-foundation.org>
+         <20180726122807.fad0566951e36d930edb6874@linux-foundation.org>
+         <9d7441a14897426f8ed5befe8da0cad3@AcuMS.aculab.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+X-Mailer: Evolution 3.28.1-2 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 26, 2018 at 05:01:47PM -0400, Dongjiu Geng wrote:
-> In order to remove the additional check before calling the
-> ghes_notify_sea(), make stub definition when !CONFIG_ACPI_APEI_SEA.
+On Fri, 2018-07-27 at 10:04 +0000, David Laight wrote:
+> From: Andrew Morton
+> > Sent: 26 July 2018 20:28
+> > On Thu, 26 Jul 2018 12:25:33 -0700 Andrew Morton <akpm@linux-foundation.org> wrote:
+> > 
+> > > I'll give it a spin, see how noisy it is.
+> > 
+> > Actually, I would prefer if the message, changelog and title
+> > used the term "passed by value".  It's a more familiar term
+> > and it is possible for a passed-by-value aggregate to in fact
+> > be passed in registers.
 > 
-> Signed-off-by: Dongjiu Geng <gengdongjiu@huawei.com>
-> ---
+> You need to detect (and ignore) 'small' structures.
 
-Acked-by: Will Deacon <will.deacon@arm.com>
+checkpatch is stupid and basically can't do that
+as it has no context other than the current line.
 
-Will
+It would need a list of specific struct types to
+ignore.  Care to create and send that list to me?
 
-> This cleanup is ever mentioned by Mark Rutland in [1]
-> 
-> [1]:
-> https://lkml.org/lkml/2018/5/31/289
-> ---
->  arch/arm64/mm/fault.c | 7 +------
->  include/acpi/ghes.h   | 4 ++++
->  2 files changed, 5 insertions(+), 6 deletions(-)
-> 
-> diff --git a/arch/arm64/mm/fault.c b/arch/arm64/mm/fault.c
-> index b8eecc7..9ffe01d 100644
-> --- a/arch/arm64/mm/fault.c
-> +++ b/arch/arm64/mm/fault.c
-> @@ -727,12 +727,7 @@ static int do_sea(unsigned long addr, unsigned int esr, struct pt_regs *regs)
->  
->  int handle_guest_sea(phys_addr_t addr, unsigned int esr)
->  {
-> -	int ret = -ENOENT;
-> -
-> -	if (IS_ENABLED(CONFIG_ACPI_APEI_SEA))
-> -		ret = ghes_notify_sea();
-> -
-> -	return ret;
-> +	return ghes_notify_sea();
->  }
->  
->  asmlinkage void __exception do_mem_abort(unsigned long addr, unsigned int esr,
-> diff --git a/include/acpi/ghes.h b/include/acpi/ghes.h
-> index 1624e2b..82cb4eb 100644
-> --- a/include/acpi/ghes.h
-> +++ b/include/acpi/ghes.h
-> @@ -118,6 +118,10 @@ static inline void *acpi_hest_get_next(struct acpi_hest_generic_data *gdata)
->  	     (void *)section - (void *)(estatus + 1) < estatus->data_length; \
->  	     section = acpi_hest_get_next(section))
->  
-> +#ifdef CONFIG_ACPI_APEI_SEA
->  int ghes_notify_sea(void);
-> +#else
-> +static inline int ghes_notify_sea(void) { return -ENOENT; }
-> +#endif
->  
->  #endif /* GHES_H */
-> -- 
-> 1.9.1
-> 
+From an earlier message:
+
+On Thu, 2018-07-26 at 13:05 -0700, Joe Perches wrote:
+> It doesn't seem noisy at all, but maybe there are a few
+> known structs like "struct timespec64" that could be
+> excluded.
+
