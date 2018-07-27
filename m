@@ -6,35 +6,36 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 616F1C6778F
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 09:48:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 737F0C6778F
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 09:48:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 166D420895
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 09:48:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 166D420895
+	by mail.kernel.org (Postfix) with ESMTP id 321CF20895
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 09:48:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 321CF20895
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388527AbeG0LJR (ORCPT
+        id S2388548AbeG0LJW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 07:09:17 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:51628 "EHLO
+        Fri, 27 Jul 2018 07:09:22 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:51646 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388154AbeG0LJQ (ORCPT
+        with ESMTP id S2388154AbeG0LJV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 07:09:16 -0400
+        Fri, 27 Jul 2018 07:09:21 -0400
 Received: from localhost (unknown [89.188.5.116])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B5BC6898;
-        Fri, 27 Jul 2018 09:48:10 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 23C10898;
+        Fri, 27 Jul 2018 09:48:15 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, John Hurley <john.hurley@netronome.com>,
-        Jakub Kicinski <jakub.kicinski@netronome.com>,
+        stable@vger.kernel.org,
+        Jack Morgenstein <jackm@dev.mellanox.co.il>,
+        Tariq Toukan <tariqt@mellanox.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.17 30/66] nfp: flower: ensure dead neighbour entries are not offloaded
-Date:   Fri, 27 Jul 2018 11:45:23 +0200
-Message-Id: <20180727093812.547502450@linuxfoundation.org>
+Subject: [PATCH 4.17 17/66] net/mlx4_core: Save the qpn from the input modifier in RST2INIT wrapper
+Date:   Fri, 27 Jul 2018 11:45:10 +0200
+Message-Id: <20180727093811.031071493@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180727093809.043856530@linuxfoundation.org>
 References: <20180727093809.043856530@linuxfoundation.org>
@@ -51,37 +52,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: John Hurley <john.hurley@netronome.com>
+From: Jack Morgenstein <jackm@dev.mellanox.co.il>
 
-[ Upstream commit b809ec869b2cf2af053ffd99e5a46ab600e94aa2 ]
+[ Upstream commit 958c696f5a7274d9447a458ad7aa70719b29a50a ]
 
-Previously only the neighbour state was checked to decide if an offloaded
-entry should be removed. However, there can be situations when the entry
-is dead but still marked as valid. This can lead to dead entries not
-being removed from fw tables or even incorrect data being added.
+Function mlx4_RST2INIT_QP_wrapper saved the qp number passed in the qp
+context, rather than the one passed in the input modifier.
 
-Check the entry dead bit before deciding if it should be added to or
-removed from fw neighbour tables.
+However, the qp number in the qp context is not defined as a
+required parameter by the FW. Therefore, drivers may choose to not
+specify the qp number in the qp context for the reset-to-init transition.
 
-Fixes: 8e6a9046b66a ("nfp: flower vxlan neighbour offload")
-Signed-off-by: John Hurley <john.hurley@netronome.com>
-Reviewed-by: Jakub Kicinski <jakub.kicinski@netronome.com>
+Thus, we must save the qp number passed in the command input modifier --
+which is always present. (This saved qp number is used as the input
+modifier for command 2RST_QP when a slave's qp's are destroyed).
+
+Fixes: c82e9aa0a8bc ("mlx4_core: resource tracking for HCA resources used by guests")
+Signed-off-by: Jack Morgenstein <jackm@dev.mellanox.co.il>
+Signed-off-by: Tariq Toukan <tariqt@mellanox.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/netronome/nfp/flower/tunnel_conf.c |    2 +-
+ drivers/net/ethernet/mellanox/mlx4/resource_tracker.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/net/ethernet/netronome/nfp/flower/tunnel_conf.c
-+++ b/drivers/net/ethernet/netronome/nfp/flower/tunnel_conf.c
-@@ -317,7 +317,7 @@ nfp_tun_write_neigh(struct net_device *n
- 	payload.dst_ipv4 = flow->daddr;
+--- a/drivers/net/ethernet/mellanox/mlx4/resource_tracker.c
++++ b/drivers/net/ethernet/mellanox/mlx4/resource_tracker.c
+@@ -2956,7 +2956,7 @@ int mlx4_RST2INIT_QP_wrapper(struct mlx4
+ 	u32 srqn = qp_get_srqn(qpc) & 0xffffff;
+ 	int use_srq = (qp_get_srqn(qpc) >> 24) & 1;
+ 	struct res_srq *srq;
+-	int local_qpn = be32_to_cpu(qpc->local_qpn) & 0xffffff;
++	int local_qpn = vhcr->in_modifier & 0xffffff;
  
- 	/* If entry has expired send dst IP with all other fields 0. */
--	if (!(neigh->nud_state & NUD_VALID)) {
-+	if (!(neigh->nud_state & NUD_VALID) || neigh->dead) {
- 		nfp_tun_del_route_from_cache(app, payload.dst_ipv4);
- 		/* Trigger ARP to verify invalid neighbour state. */
- 		neigh_event_send(neigh, NULL);
+ 	err = adjust_qp_sched_queue(dev, slave, qpc, inbox);
+ 	if (err)
 
 
