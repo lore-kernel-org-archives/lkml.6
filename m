@@ -6,92 +6,129 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B24EC67790
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 06:52:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DED3BC67790
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 06:58:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1EE1A20673
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 06:52:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1EE1A20673
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
+	by mail.kernel.org (Postfix) with ESMTP id 8FB0720673
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 06:58:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8FB0720673
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729889AbeG0INI (ORCPT
+        id S1729481AbeG0ITW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 04:13:08 -0400
-Received: from relay7-d.mail.gandi.net ([217.70.183.200]:59317 "EHLO
-        relay7-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728766AbeG0INH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 04:13:07 -0400
-X-Originating-IP: 81.250.144.103
-Received: from [10.30.1.20] (LNeuilly-657-1-5-103.w81-250.abo.wanadoo.fr [81.250.144.103])
-        (Authenticated sender: alex@ghiti.fr)
-        by relay7-d.mail.gandi.net (Postfix) with ESMTPSA id CE5722000A;
-        Fri, 27 Jul 2018 06:52:15 +0000 (UTC)
-Subject: Re: [PATCH v4 00/11] hugetlb: Factorize hugetlb architecture
- primitives
-To:     Mike Kravetz <mike.kravetz@oracle.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Michal Hocko <mhocko@kernel.org>
-Cc:     linux@armlinux.org.uk, catalin.marinas@arm.com,
-        will.deacon@arm.com, tony.luck@intel.com, fenghua.yu@intel.com,
-        ralf@linux-mips.org, paul.burton@mips.com, jhogan@kernel.org,
-        jejb@parisc-linux.org, deller@gmx.de, benh@kernel.crashing.org,
-        paulus@samba.org, ysato@users.sourceforge.jp, dalias@libc.org,
-        davem@davemloft.net, tglx@linutronix.de, mingo@redhat.com,
-        hpa@zytor.com, x86@kernel.org, arnd@arndb.de,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-ia64@vger.kernel.org, linux-mips@linux-mips.org,
-        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
-        linux-arch@vger.kernel.org,
-        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
-        "Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>
-References: <20180705110716.3919-1-alex@ghiti.fr>
- <20180709141621.GD22297@dhcp22.suse.cz>
- <2173685f-7f85-7acb-4685-2383210c5fa2@ghiti.fr>
- <75195a7d-3d0f-4e55-92cc-4ad772683c75@oracle.com>
- <87tvomgqyv.fsf@concordia.ellerman.id.au>
- <99473e0d-12d8-bbea-fe9c-4e3738ab7f5a@oracle.com>
-From:   Alexandre Ghiti <alex@ghiti.fr>
-Message-ID: <a6d158b6-965d-7473-677d-13a9b7d46ba1@ghiti.fr>
-Date:   Fri, 27 Jul 2018 08:51:51 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.2
+        Fri, 27 Jul 2018 04:19:22 -0400
+Received: from mga18.intel.com ([134.134.136.126]:10349 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726053AbeG0ITW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Jul 2018 04:19:22 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Jul 2018 23:58:54 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,408,1526367600"; 
+   d="asc'?scan'208";a="57567311"
+Received: from pipin.fi.intel.com (HELO localhost) ([10.237.68.37])
+  by fmsmga007.fm.intel.com with ESMTP; 26 Jul 2018 23:58:51 -0700
+From:   Felipe Balbi <felipe.balbi@linux.intel.com>
+To:     Doug Anderson <dianders@chromium.org>
+Cc:     Minas Harutyunyan <hminas@synopsys.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Zhangfei Gao <zhangfei.gao@linaro.org>,
+        Stephen Warren <swarren@wwwdotorg.org>,
+        Bruno Herrera <bruherrera@gmail.com>,
+        linux-usb@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [RFT PATCH 0/4] usb: dwc2: Turn on uframe sched everywhere
+In-Reply-To: <CAD=FV=WjMVhc=h+YJLmW6jQ0aS+qc1ZQU5DCx2F8B7hKc4v8ZA@mail.gmail.com>
+References: <20180706162154.196345-1-dianders@chromium.org> <87o9eu1cup.fsf@linux.intel.com> <CAD=FV=WjMVhc=h+YJLmW6jQ0aS+qc1ZQU5DCx2F8B7hKc4v8ZA@mail.gmail.com>
+Date:   Fri, 27 Jul 2018 09:55:32 +0300
+Message-ID: <87pnz9yxp7.fsf@linux.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <99473e0d-12d8-bbea-fe9c-4e3738ab7f5a@oracle.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Type: multipart/signed; boundary="=-=-=";
+        micalg=pgp-sha512; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Mike,
-
-Thanks for your review. I'm going to fix the 2nd patch as you said, 
-you're right, no need to move the #include at the bottom of the file.
-I'm going to post a v5, add -mm in cc and ask for inclusion in their tree.
-
-Thanks again for your time,
-
-Alex
+--=-=-=
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
 
-On 07/26/2018 09:16 PM, Mike Kravetz wrote:
-> On 07/26/2018 04:46 AM, Michael Ellerman wrote:
->> Mike Kravetz <mike.kravetz@oracle.com> writes:
+Hi,
+
+Doug Anderson <dianders@chromium.org> writes:
+> On Thu, Jul 26, 2018 at 3:59 AM, Felipe Balbi
+> <felipe.balbi@linux.intel.com> wrote:
+>> Douglas Anderson <dianders@chromium.org> writes:
 >>
->>> On 07/20/2018 11:37 AM, Alex Ghiti wrote:
->>>> Does anyone have any suggestion about those patches ?
->>> I only took a quick look.  From the hugetlb perspective, I like the
->>> idea of moving routines to a common file.  If any of the arch owners
->>> (or anyone else) agree, I can do a review of the series.
->> The conversions look pretty good to me. If you want to give it a review
->> then from my point of view it could go in -mm to shake out any bugs.
-> Nothing of significance found in a review.  As others have suggested,
-> the (cross)compiler may be better at finding issues than human eyes.
+>>> While looking at a dwc2 recently, I noticed that some platforms still
+>>> have the uframe scheduler off.  As far as I know, nothing good can
+>>> come out of having the uframe scheduler off.  Let's turn it on
+>>> everywhere.  Assuming this all works out then some time in the future
+>>> we can gut all the old code that handles the old non-uframe scheduler
+>>> and make everything simpler.
+>>>
+>>> NOTE: I don't have access to any of the platforms that I'm changing
+>>> here, so I'm hoping to see a Tested-by from those on the list.
+>>>
+>>>
+>>> Douglas Anderson (4):
+>>>   usb: dwc2: Turn on uframe_sched on "bcm" platforms
+>>>   usb: dwc2: Turn on uframe_sched on "his" platforms
+>>>   usb: dwc2: Turn on uframe_sched on "amlogic" platforms
+>>>   usb: dwc2: Turn on uframe_sched on "stm32f4x9_fsotg" platforms
+>>
+>> care to resend without RFT prefix and with collected acks, tested-bys, e=
+tc?
 >
-> I also suggest it be added to -mm.
+> Done with a prefix of 'REPOST' to hopefully make it obvious nothing
+> changed between the RFT and this version.  There were only two
+> test-by, but as mentioned in the updated cover letter:
+>
+> Since there should be nothing platform specific about the uFrame
+> scheduler presumably this should mean we're good to go?  Specificaly
+> note that in at least one of the "Tested-by" reports this patch caused
+> a notable improvement.
+>
+>
+> BTW: I'm pleased to have you apply the patches, but I notice that
+> get_maintainer no longer flags you as the person to post dwc2 patches
+> to.  From linux-next:
+>
+> $ ./scripts/get_maintainer.pl -f drivers/usb/dwc2
+> Minas Harutyunyan <hminas@synopsys.com> (maintainer:DESIGNWARE USB2
+> DRD IP DRIVER)
+> Greg Kroah-Hartman <gregkh@linuxfoundation.org> (supporter:USB SUBSYSTEM)
+> linux-usb@vger.kernel.org (open list:DESIGNWARE USB2 DRD IP DRIVER)
+> linux-kernel@vger.kernel.org (open list)
 
+I need to add dwc2 to the gadget framework part of MAINTAINERS. I'll do
+that at some point.
+
+=2D-=20
+balbi
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEElLzh7wn96CXwjh2IzL64meEamQYFAltaweQACgkQzL64meEa
+mQZeQg//fpx6aH57cgQVkHE4v3J3icKrd3OFRIBYy8MRvDWPlK5Q2KuJCEjzpP+0
+IHHHf+mye3lWnFVG4eVvzaZdlY0NvfRVtFUUnZtYA0UJqOv5VkuHa5t8dQCnKxZW
+f4PIeW5qg3iTfe1JpajeL0RWV4KQYm4OuYGGrvB/rOhBxGBVRGvxdXzz+tvZX02m
+rUMbDOLiATSZ6hhUoTndDPzOKaaETHHJ6fBfBaRnNTEeUBmfc+Xcw/kv8dBv2rbV
+5PcwyBl1Joi9leLZLB04IF6rpcRHh+Df/2LKc/LxpCqCQBa7Cl7Sj14ZSgJBnVie
+eDEkxniSKsPRzi2dqPi0sE5KXQf2kv2r2QdYMBQfN7CKNjGyjjjNtF8D6S5BQSxG
+JbGZBFO/B1wlZ57j9j/Iu/9r8IBXHtVSvQxzWnw1mgGruGOptwC3uqAFFU6idBoD
+tlpIj5wMDQTwpO6FXpvafJRFEE6F+N3mTvlNqTM/ZT2f1gGf7q0OouCEFp2DL7+D
+cLpBTpePL4kodbBzhPFbM2kBqKtn3wmMZxYADYVSszkSwkVotYKyH4aIMB/7j7e1
+vpzAXjfuvRv1r/83EGCZkzd6rVaeUZP2WrrX89oGx5H1VHRdx9wvp3fkA49UQjwT
+jNpaKaiaPCzFRLW1cmrLJ0E1Kk27/cEp4f5K/+6rt8CQYtX242o=
+=ZKgS
+-----END PGP SIGNATURE-----
+--=-=-=--
