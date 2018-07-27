@@ -6,34 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E79CCC6778F
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 09:49:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F16C4C67790
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 09:49:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A7B2C20895
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 09:49:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A7B2C20895
+	by mail.kernel.org (Postfix) with ESMTP id B06FD20895
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 09:49:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B06FD20895
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388955AbeG0LKo (ORCPT
+        id S1732642AbeG0LKr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 07:10:44 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:52900 "EHLO
+        Fri, 27 Jul 2018 07:10:47 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:52928 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729431AbeG0LKn (ORCPT
+        with ESMTP id S1729431AbeG0LKq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 07:10:43 -0400
+        Fri, 27 Jul 2018 07:10:46 -0400
 Received: from localhost (unknown [89.188.5.116])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 418E0AF8;
-        Fri, 27 Jul 2018 09:49:37 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1BB31AF8;
+        Fri, 27 Jul 2018 09:49:39 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Roopa Prabhu <roopa@cumulusnetworks.com>,
+        stable@vger.kernel.org, Daniel Borkmann <daniel@iogearbox.net>,
+        Dave Watson <davejwatson@fb.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.17 39/66] vxlan: add new fdb alloc and create helpers
-Date:   Fri, 27 Jul 2018 11:45:32 +0200
-Message-Id: <20180727093813.503879642@linuxfoundation.org>
+Subject: [PATCH 4.17 31/66] sock: fix sg page frag coalescing in sk_alloc_sg
+Date:   Fri, 27 Jul 2018 11:45:24 +0200
+Message-Id: <20180727093812.660577497@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180727093809.043856530@linuxfoundation.org>
 References: <20180727093809.043856530@linuxfoundation.org>
@@ -50,169 +51,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Roopa Prabhu <roopa@cumulusnetworks.com>
+From: Daniel Borkmann <daniel@iogearbox.net>
 
-[ Upstream commit 7431016b107c95cb5b2014aa1901fcb115f746bc ]
+[ Upstream commit 144fe2bfd236dc814eae587aea7e2af03dbdd755 ]
 
-- Add new vxlan_fdb_alloc helper
-- rename existing vxlan_fdb_create into vxlan_fdb_update:
-        because it really creates or updates an existing
-        fdb entry
-- move new fdb creation into a separate vxlan_fdb_create
+Current sg coalescing logic in sk_alloc_sg() (latter is used by tls and
+sockmap) is not quite correct in that we do fetch the previous sg entry,
+however the subsequent check whether the refilled page frag from the
+socket is still the same as from the last entry with prior offset and
+length matching the start of the current buffer is comparing always the
+first sg list entry instead of the prior one.
 
-Main motivation for this change is to introduce the ability
-to decouple vxlan fdb creation and notify, used in a later patch.
-
-Signed-off-by: Roopa Prabhu <roopa@cumulusnetworks.com>
+Fixes: 3c4d7559159b ("tls: kernel TLS support")
+Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
+Acked-by: Dave Watson <davejwatson@fb.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/vxlan.c |   91 +++++++++++++++++++++++++++++++++++-----------------
- 1 file changed, 62 insertions(+), 29 deletions(-)
+ net/core/sock.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
---- a/drivers/net/vxlan.c
-+++ b/drivers/net/vxlan.c
-@@ -636,9 +636,62 @@ static int vxlan_gro_complete(struct soc
- 	return eth_gro_complete(skb, nhoff + sizeof(struct vxlanhdr));
- }
+--- a/net/core/sock.c
++++ b/net/core/sock.c
+@@ -2270,9 +2270,9 @@ int sk_alloc_sg(struct sock *sk, int len
+ 		pfrag->offset += use;
  
--/* Add new entry to forwarding table -- assumes lock held */
-+static struct vxlan_fdb *vxlan_fdb_alloc(struct vxlan_dev *vxlan,
-+					 const u8 *mac, __u16 state,
-+					 __be32 src_vni, __u8 ndm_flags)
-+{
-+	struct vxlan_fdb *f;
-+
-+	f = kmalloc(sizeof(*f), GFP_ATOMIC);
-+	if (!f)
-+		return NULL;
-+	f->state = state;
-+	f->flags = ndm_flags;
-+	f->updated = f->used = jiffies;
-+	f->vni = src_vni;
-+	INIT_LIST_HEAD(&f->remotes);
-+	memcpy(f->eth_addr, mac, ETH_ALEN);
-+
-+	return f;
-+}
-+
- static int vxlan_fdb_create(struct vxlan_dev *vxlan,
- 			    const u8 *mac, union vxlan_addr *ip,
-+			    __u16 state, __be16 port, __be32 src_vni,
-+			    __be32 vni, __u32 ifindex, __u8 ndm_flags,
-+			    struct vxlan_fdb **fdb)
-+{
-+	struct vxlan_rdst *rd = NULL;
-+	struct vxlan_fdb *f;
-+	int rc;
-+
-+	if (vxlan->cfg.addrmax &&
-+	    vxlan->addrcnt >= vxlan->cfg.addrmax)
-+		return -ENOSPC;
-+
-+	netdev_dbg(vxlan->dev, "add %pM -> %pIS\n", mac, ip);
-+	f = vxlan_fdb_alloc(vxlan, mac, state, src_vni, ndm_flags);
-+	if (!f)
-+		return -ENOMEM;
-+
-+	rc = vxlan_fdb_append(f, ip, port, vni, ifindex, &rd);
-+	if (rc < 0) {
-+		kfree(f);
-+		return rc;
-+	}
-+
-+	++vxlan->addrcnt;
-+	hlist_add_head_rcu(&f->hlist,
-+			   vxlan_fdb_head(vxlan, mac, src_vni));
-+
-+	*fdb = f;
-+
-+	return 0;
-+}
-+
-+/* Add new entry to forwarding table -- assumes lock held */
-+static int vxlan_fdb_update(struct vxlan_dev *vxlan,
-+			    const u8 *mac, union vxlan_addr *ip,
- 			    __u16 state, __u16 flags,
- 			    __be16 port, __be32 src_vni, __be32 vni,
- 			    __u32 ifindex, __u8 ndm_flags)
-@@ -687,37 +740,17 @@ static int vxlan_fdb_create(struct vxlan
- 		if (!(flags & NLM_F_CREATE))
- 			return -ENOENT;
- 
--		if (vxlan->cfg.addrmax &&
--		    vxlan->addrcnt >= vxlan->cfg.addrmax)
--			return -ENOSPC;
--
- 		/* Disallow replace to add a multicast entry */
- 		if ((flags & NLM_F_REPLACE) &&
- 		    (is_multicast_ether_addr(mac) || is_zero_ether_addr(mac)))
- 			return -EOPNOTSUPP;
- 
- 		netdev_dbg(vxlan->dev, "add %pM -> %pIS\n", mac, ip);
--		f = kmalloc(sizeof(*f), GFP_ATOMIC);
--		if (!f)
--			return -ENOMEM;
--
--		notify = 1;
--		f->state = state;
--		f->flags = ndm_flags;
--		f->updated = f->used = jiffies;
--		f->vni = src_vni;
--		INIT_LIST_HEAD(&f->remotes);
--		memcpy(f->eth_addr, mac, ETH_ALEN);
--
--		rc = vxlan_fdb_append(f, ip, port, vni, ifindex, &rd);
--		if (rc < 0) {
--			kfree(f);
-+		rc = vxlan_fdb_create(vxlan, mac, ip, state, port, src_vni,
-+				      vni, ifindex, ndm_flags, &f);
-+		if (rc < 0)
- 			return rc;
--		}
--
--		++vxlan->addrcnt;
--		hlist_add_head_rcu(&f->hlist,
--				   vxlan_fdb_head(vxlan, mac, src_vni));
-+		notify = 1;
- 	}
- 
- 	if (notify) {
-@@ -863,7 +896,7 @@ static int vxlan_fdb_add(struct ndmsg *n
- 		return -EAFNOSUPPORT;
- 
- 	spin_lock_bh(&vxlan->hash_lock);
--	err = vxlan_fdb_create(vxlan, addr, &ip, ndm->ndm_state, flags,
-+	err = vxlan_fdb_update(vxlan, addr, &ip, ndm->ndm_state, flags,
- 			       port, src_vni, vni, ifindex, ndm->ndm_flags);
- 	spin_unlock_bh(&vxlan->hash_lock);
- 
-@@ -1006,7 +1039,7 @@ static bool vxlan_snoop(struct net_devic
- 
- 		/* close off race between vxlan_flush and incoming packets */
- 		if (netif_running(dev))
--			vxlan_fdb_create(vxlan, src_mac, src_ip,
-+			vxlan_fdb_update(vxlan, src_mac, src_ip,
- 					 NUD_REACHABLE,
- 					 NLM_F_EXCL|NLM_F_CREATE,
- 					 vxlan->cfg.dst_port,
-@@ -3165,7 +3198,7 @@ static int __vxlan_dev_create(struct net
- 
- 	/* create an fdb entry for a valid default destination */
- 	if (!vxlan_addr_any(&vxlan->default_dst.remote_ip)) {
--		err = vxlan_fdb_create(vxlan, all_zeros_mac,
-+		err = vxlan_fdb_update(vxlan, all_zeros_mac,
- 				       &vxlan->default_dst.remote_ip,
- 				       NUD_REACHABLE | NUD_PERMANENT,
- 				       NLM_F_EXCL | NLM_F_CREATE,
-@@ -3439,7 +3472,7 @@ static int vxlan_changelink(struct net_d
- 					   old_dst.remote_ifindex, 0);
- 
- 		if (!vxlan_addr_any(&dst->remote_ip)) {
--			err = vxlan_fdb_create(vxlan, all_zeros_mac,
-+			err = vxlan_fdb_update(vxlan, all_zeros_mac,
- 					       &dst->remote_ip,
- 					       NUD_REACHABLE | NUD_PERMANENT,
- 					       NLM_F_CREATE | NLM_F_APPEND,
+ 		sge = sg + sg_curr - 1;
+-		if (sg_curr > first_coalesce && sg_page(sg) == pfrag->page &&
+-		    sg->offset + sg->length == orig_offset) {
+-			sg->length += use;
++		if (sg_curr > first_coalesce && sg_page(sge) == pfrag->page &&
++		    sge->offset + sge->length == orig_offset) {
++			sge->length += use;
+ 		} else {
+ 			sge = sg + sg_curr;
+ 			sg_unmark_end(sge);
 
 
