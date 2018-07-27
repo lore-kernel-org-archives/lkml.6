@@ -6,35 +6,33 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05B8CC67790
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:28:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7472BC67790
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:28:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A60A7208A2
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:28:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A60A7208A2
+	by mail.kernel.org (Postfix) with ESMTP id 32A80208A2
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:28:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 32A80208A2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388847AbeG0LtY (ORCPT
+        id S2388874AbeG0Lt1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 07:49:24 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:42474 "EHLO
+        Fri, 27 Jul 2018 07:49:27 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:42498 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388818AbeG0LtX (ORCPT
+        with ESMTP id S1730747AbeG0Lt0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 07:49:23 -0400
+        Fri, 27 Jul 2018 07:49:26 -0400
 Received: from localhost (unknown [89.188.5.116])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 69C0ACD4;
-        Fri, 27 Jul 2018 10:28:06 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 5A730CD1;
+        Fri, 27 Jul 2018 10:28:09 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-        Soheil Hassas Yeganeh <soheil@google.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 3.18 18/27] tcp: detect malicious patterns in tcp_collapse_ofo_queue()
-Date:   Fri, 27 Jul 2018 12:26:55 +0200
-Message-Id: <20180727102649.714312081@linuxfoundation.org>
+        Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH 3.18 27/27] turn off -Wattribute-alias
+Date:   Fri, 27 Jul 2018 12:27:04 +0200
+Message-Id: <20180727102650.038872005@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180727102649.049641021@linuxfoundation.org>
 References: <20180727102649.049641021@linuxfoundation.org>
@@ -51,69 +49,59 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Eric Dumazet <edumazet@google.com>
+From: Arnd Bergmann <arnd@arndb.de>
 
-[ Upstream commit 3d4bf93ac12003f9b8e1e2de37fe27983deebdcf ]
+Starting with gcc-8.1, we get a warning about all system call definitions,
+which use an alias between functions with incompatible prototypes, e.g.:
 
-In case an attacker feeds tiny packets completely out of order,
-tcp_collapse_ofo_queue() might scan the whole rb-tree, performing
-expensive copies, but not changing socket memory usage at all.
+In file included from ../mm/process_vm_access.c:19:
+../include/linux/syscalls.h:211:18: warning: 'sys_process_vm_readv' alias between functions of incompatible types 'long int(pid_t,  const struct iovec *, long unsigned int,  const struct iovec *, long unsigned int,  long unsigned int)' {aka 'long int(int,  const struct iovec *, long unsigned int,  const struct iovec *, long unsigned int,  long unsigned int)'} and 'long int(long int,  long int,  long int,  long int,  long int,  long int)' [-Wattribute-alias]
+  asmlinkage long sys##name(__MAP(x,__SC_DECL,__VA_ARGS__)) \
+                  ^~~
+../include/linux/syscalls.h:207:2: note: in expansion of macro '__SYSCALL_DEFINEx'
+  __SYSCALL_DEFINEx(x, sname, __VA_ARGS__)
+  ^~~~~~~~~~~~~~~~~
+../include/linux/syscalls.h:201:36: note: in expansion of macro 'SYSCALL_DEFINEx'
+ #define SYSCALL_DEFINE6(name, ...) SYSCALL_DEFINEx(6, _##name, __VA_ARGS__)
+                                    ^~~~~~~~~~~~~~~
+../mm/process_vm_access.c:300:1: note: in expansion of macro 'SYSCALL_DEFINE6'
+ SYSCALL_DEFINE6(process_vm_readv, pid_t, pid, const struct iovec __user *, lvec,
+ ^~~~~~~~~~~~~~~
+../include/linux/syscalls.h:215:18: note: aliased declaration here
+  asmlinkage long SyS##name(__MAP(x,__SC_LONG,__VA_ARGS__)) \
+                  ^~~
+../include/linux/syscalls.h:207:2: note: in expansion of macro '__SYSCALL_DEFINEx'
+  __SYSCALL_DEFINEx(x, sname, __VA_ARGS__)
+  ^~~~~~~~~~~~~~~~~
+../include/linux/syscalls.h:201:36: note: in expansion of macro 'SYSCALL_DEFINEx'
+ #define SYSCALL_DEFINE6(name, ...) SYSCALL_DEFINEx(6, _##name, __VA_ARGS__)
+                                    ^~~~~~~~~~~~~~~
+../mm/process_vm_access.c:300:1: note: in expansion of macro 'SYSCALL_DEFINE6'
+ SYSCALL_DEFINE6(process_vm_readv, pid_t, pid, const struct iovec __user *, lvec,
 
-1) Do not attempt to collapse tiny skbs.
-2) Add logic to exit early when too many tiny skbs are detected.
+This is really noisy and does not indicate a real problem. In the latest
+mainline kernel, this was addressed by commit bee20031772a ("disable
+-Wattribute-alias warning for SYSCALL_DEFINEx()"), which seems too invasive
+to backport.
 
-We prefer not doing aggressive collapsing (which copies packets)
-for pathological flows, and revert to tcp_prune_ofo_queue() which
-will be less expensive.
+This takes a much simpler approach and just disables the warning across the
+kernel.
 
-In the future, we might add the possibility of terminating flows
-that are proven to be malicious.
-
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Acked-by: Soheil Hassas Yeganeh <soheil@google.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ipv4/tcp_input.c |   15 +++++++++++++--
- 1 file changed, 13 insertions(+), 2 deletions(-)
+ Makefile |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/net/ipv4/tcp_input.c
-+++ b/net/ipv4/tcp_input.c
-@@ -4652,6 +4652,7 @@ restart:
- static void tcp_collapse_ofo_queue(struct sock *sk)
- {
- 	struct tcp_sock *tp = tcp_sk(sk);
-+	u32 range_truesize, sum_tiny = 0;
- 	struct sk_buff *skb = skb_peek(&tp->out_of_order_queue);
- 	struct sk_buff *head;
- 	u32 start, end;
-@@ -4661,6 +4662,7 @@ static void tcp_collapse_ofo_queue(struc
+--- a/Makefile
++++ b/Makefile
+@@ -613,6 +613,7 @@ KBUILD_CFLAGS	+= $(call cc-disable-warni
+ KBUILD_CFLAGS	+= $(call cc-disable-warning, format-truncation)
+ KBUILD_CFLAGS	+= $(call cc-disable-warning, format-overflow)
+ KBUILD_CFLAGS	+= $(call cc-disable-warning, int-in-bool-context)
++KBUILD_CFLAGS	+= $(call cc-disable-warning, attribute-alias)
+ KBUILD_CFLAGS	+= $(call cc-option,-fno-PIE)
+ KBUILD_AFLAGS	+= $(call cc-option,-fno-PIE)
  
- 	start = TCP_SKB_CB(skb)->seq;
- 	end = TCP_SKB_CB(skb)->end_seq;
-+	range_truesize = skb->truesize;
- 	head = skb;
- 
- 	for (;;) {
-@@ -4675,8 +4677,17 @@ static void tcp_collapse_ofo_queue(struc
- 		if (!skb ||
- 		    after(TCP_SKB_CB(skb)->seq, end) ||
- 		    before(TCP_SKB_CB(skb)->end_seq, start)) {
--			tcp_collapse(sk, &tp->out_of_order_queue,
--				     head, skb, start, end);
-+			/* Do not attempt collapsing tiny skbs */
-+			if (range_truesize != head->truesize ||
-+			    end - start >= SKB_WITH_OVERHEAD(SK_MEM_QUANTUM)) {
-+				tcp_collapse(sk, &tp->out_of_order_queue,
-+					     head, skb, start, end);
-+			} else {
-+				sum_tiny += range_truesize;
-+				if (sum_tiny > sk->sk_rcvbuf >> 3)
-+					return;
-+			}
-+
- 			head = skb;
- 			if (!skb)
- 				break;
 
 
