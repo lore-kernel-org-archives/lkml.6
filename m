@@ -2,110 +2,80 @@ Return-Path: <SRS0=OQFz=KL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B210C6778F
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 17:18:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42D70C67790
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 17:19:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0392D208B1
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 17:18:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F0CE4208B1
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 17:19:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="JYLdFjfo"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0392D208B1
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="L63F86NW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F0CE4208B1
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388922AbeG0Slj (ORCPT
+        id S2388947AbeG0Slu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 14:41:39 -0400
-Received: from mail-oi0-f65.google.com ([209.85.218.65]:40439 "EHLO
-        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730852AbeG0Sli (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 14:41:38 -0400
-Received: by mail-oi0-f65.google.com with SMTP id w126-v6so10347298oie.7
-        for <linux-kernel@vger.kernel.org>; Fri, 27 Jul 2018 10:18:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=CM/tjtfsBOnRjg4dlus9Z+nkNaqYi4+ENA1XZ2Q+fYQ=;
-        b=JYLdFjfoHJGrLpHu7VHqcO/6dyGn0cdPkxCkguGchAIh176mbTxQ145+Y2X6QKEBqV
-         +1v68KtYK1utBcO2vDQGX+PpwbfADN3lCiXNq+zlq4rtYpSYuk3GfrOGG0vOYSuLGYT+
-         fdFUz2qDZ5CWSB45wq9hmdsnR7G1GwahvDDZWOxjFO/6wurqamUU9mVrPTAvDkDNsW1u
-         M5Fh0aXnPLInZ5BfE+Qzmq+0UtTnx8ykd02XPVNR+Af7iK9Cbz8Wqkd4TZBc3S97t7QP
-         2ovEx58RYRFgJ75LA/EXzeGG/pw62VzcBYx8nfhJkoGyFDSMuCb0LPOliR/V5HVl6NX0
-         vSBw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=CM/tjtfsBOnRjg4dlus9Z+nkNaqYi4+ENA1XZ2Q+fYQ=;
-        b=YvbnJzixSCwr9Plj8DJYOmLDiPUr3XiROXLVXn7paEuFrNfzHqTO3nFOL7hzD7Vpxl
-         B37CeBYU3hScaCXhu9GTEp3UIhCbcul0FP+2fBSPLgteakNajMCjbyX0yZkYhCpo59z4
-         omOutQywzGrmkfWP29cmwzmxU19pqRPFs64JTh0PIJbZIUKviCz7vhNqOBF0+GulPqMM
-         LEMXSXMRAgaLyR4uIk2BTE098uHT3m36njEb6rBjveTe4IKRzrsAVp7AdqWYRoRMW2n3
-         6HbRwh3DljcYABv/qJnEd8Eem13Fzatds6tvnUG997cq6klGpPx8xA2KEb2gwOXasdDC
-         bnjQ==
-X-Gm-Message-State: AOUpUlEUBHRLquEDstEdysE+SqpyhpQKFnjqzhYHO5+SJJQeoDwxqPsA
-        FqxnkKmAF3Oz5YHqCxOock3tZ+hKwBA2L6xazBmg0w==
-X-Google-Smtp-Source: AAOMgpf/sVAewxrTfz5RVPIEoE66LVSd+MzvYm0Yf8KUS8G5f0f1g/HYku7oN0K+cMPo7LGNoR/ZXLbKqICjB3WTyoE=
-X-Received: by 2002:aca:e8c9:: with SMTP id f192-v6mr7532998oih.87.1532711927794;
- Fri, 27 Jul 2018 10:18:47 -0700 (PDT)
+        Fri, 27 Jul 2018 14:41:50 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57502 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730852AbeG0Slu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Jul 2018 14:41:50 -0400
+Received: from localhost (unknown [69.71.4.100])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id E9833208AF;
+        Fri, 27 Jul 2018 17:18:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1532711940;
+        bh=4EIsl+VyEOlUlyOkIWdoECd/oAKtLMnmoARgn8nj6dY=;
+        h=Date:From:To:Cc:Subject:From;
+        b=L63F86NWpoz/wluyldXMAIuTrAN6TnOLC+yNQS81mVxsXso7vAyBg5snXd7APaEbq
+         QQTyR/w0+rpRcnGZjze9cfVfl6z8qGSIglr+oOrAknIChDDxPnIKbaH0HmVN7ZTwGq
+         z43keBlPcDvOIC/weD6WQxcfJHUl0CgZzvbIELzw=
+Date:   Fri, 27 Jul 2018 12:18:58 -0500
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Thomas Tai <thomas.tai@oracle.com>
+Subject: [GIT PULL] PCI fixes for v4.18
+Message-ID: <20180727171858.GA16743@bhelgaas-glaptop.roam.corp.google.com>
 MIME-Version: 1.0
-Received: by 2002:ac9:3404:0:0:0:0:0 with HTTP; Fri, 27 Jul 2018 10:18:47
- -0700 (PDT)
-In-Reply-To: <20170320081628.18952-2-khuey@kylehuey.com>
-References: <20170320081628.18952-1-khuey@kylehuey.com> <20170320081628.18952-2-khuey@kylehuey.com>
-From:   Jim Mattson <jmattson@google.com>
-Date:   Fri, 27 Jul 2018 10:18:47 -0700
-Message-ID: <CALMp9eR-g7-vv8vcTZbf0jeoH=5wNfnwjOT-gW-4gPFDsrLBJg@mail.gmail.com>
-Subject: Re: [PATCH v16 01/10] x86/msr: Rename MISC_FEATURE_ENABLES to MISC_FEATURES_ENABLES
-To:     Kyle Huey <me@kylehuey.com>
-Cc:     "Robert O'Callahan" <robert@ocallahan.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Andy Lutomirski <luto@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Jeff Dike <jdike@addtoit.com>,
-        Richard Weinberger <richard@nod.at>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Shuah Khan <shuah@kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Borislav Petkov <bp@suse.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Len Brown <len.brown@intel.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Dmitry Safonov <dsafonov@virtuozzo.com>,
-        David Matlack <dmatlack@google.com>,
-        Nadav Amit <nadav.amit@gmail.com>,
-        Andi Kleen <andi@firstfloor.org>,
-        Grzegorz Andrejczuk <grzegorz.andrejczuk@intel.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        user-mode-linux-devel@lists.sourceforge.net,
-        user-mode-linux-user@lists.sourceforge.net,
-        linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        kvm list <kvm@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 20, 2017 at 1:16 AM, Kyle Huey <me@kylehuey.com> wrote:
-> This matches the only public Intel documentation of this MSR, in the
-> "Virtualization Technology FlexMigration Application Note"
-> (preserved at https://bugzilla.kernel.org/attachment.cgi?id=243991)
->
-> Signed-off-by: Kyle Huey <khuey@kylehuey.com>
+PCI fixes:
 
-The old spelling matched volume 4 of the SDM, Table 2-43. "Selected
-MSRs Supported by Intel Xeon Phi Processors with
-DisplayFamily_DisplayModel Signatures 06_57H and 06_85H."
+  - Fix a use-after-free error in fatal error recovery (Thomas Tai)
+
+
+The following changes since commit 270ed733e68955049b693bea8f4a1efb293a96ae:
+
+  PCI: v3-semi: Fix I/O space page leak (2018-07-18 17:02:13 -0500)
+
+are available in the Git repository at:
+
+  ssh://git@gitolite.kernel.org/pub/scm/linux/kernel/git/helgaas/pci.git tags/pci-v4.18-fixes-4
+
+for you to fetch changes up to bd91b56cb3b27492963caeb5fccefe20a986ca8d:
+
+  PCI/AER: Work around use-after-free in pcie_do_fatal_recovery() (2018-07-26 12:13:04 -0500)
+
+----------------------------------------------------------------
+pci-v4.18-fixes-4
+
+----------------------------------------------------------------
+Thomas Tai (1):
+      PCI/AER: Work around use-after-free in pcie_do_fatal_recovery()
+
+ drivers/pci/pcie/err.c | 2 ++
+ 1 file changed, 2 insertions(+)
