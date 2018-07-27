@@ -2,227 +2,174 @@ Return-Path: <SRS0=OQFz=KL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BC3AC67790
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 16:21:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1C64C67790
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 16:24:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BDD2E208A6
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 16:21:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3A54E205C9
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 16:24:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=endlessm-com.20150623.gappssmtp.com header.i=@endlessm-com.20150623.gappssmtp.com header.b="P7b81J3H"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BDD2E208A6
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=endlessm.com
+	dkim=pass (1024-bit key) header.d=towerbridgetechnology.onmicrosoft.com header.i=@towerbridgetechnology.onmicrosoft.com header.b="WNkrM8Wf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3A54E205C9
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bayhubtech.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733043AbeG0Roa (ORCPT
+        id S1732841AbeG0Rqk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 13:44:30 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:42636 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730510AbeG0Roa (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 13:44:30 -0400
-Received: by mail-pg1-f196.google.com with SMTP id y4-v6so3512880pgp.9
-        for <linux-kernel@vger.kernel.org>; Fri, 27 Jul 2018 09:21:52 -0700 (PDT)
+        Fri, 27 Jul 2018 13:46:40 -0400
+Received: from mail-eopbgr730121.outbound.protection.outlook.com ([40.107.73.121]:26356
+        "EHLO NAM05-DM3-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1730516AbeG0Rqj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Jul 2018 13:46:39 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=endlessm-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id;
-        bh=RJo1bpbTpD3jpRAwX9/ttCICodK0fTis+3K5gkO1RB0=;
-        b=P7b81J3HXJbzbV/IW/4WCeglpX01UF+PG52sk/qnn4KG/BTTIAhEZ8gSt+BGjIR55I
-         /sfNdaX0yL7AUK0/NmpbNxkOJ9h36I7w41leOMRjSyrwynsCcU0v9OlAVvoTHuwQFaWI
-         C+pH/A7IUkY9C9FjSdynxr9ITVY0wxNtANaivxYh+kLJ0oKFFWrDXtVOjzHwTD7q2rFt
-         sAJALskKD2o66CX5e9hBs+fxXFR7IqA6RykefAPsuo44jicK1knjwSnSHVdZlLOLmGR9
-         0IdMVPwMxy6Uf8Vn4JIB61amolagXX3EouWzpSdYOSOV02Tw4Jh6pfXgNkZ8O1QrK6w7
-         GVrw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=RJo1bpbTpD3jpRAwX9/ttCICodK0fTis+3K5gkO1RB0=;
-        b=ELf9PqKqrPespyM+IpForQ83iyHZQ7ws2NptrpXAwCEWhFEcTruAEr6lmOMRskeUmt
-         kdpPFZ26wYaxMLE6hIW6Tzn9yLG+EWukoYi8SYHzNMjZLW3KGYRLAvCp6IZHgJrtAmq6
-         iB+1i8bk5OYgSf4Asy+fFNAEaN6/mTlBi3FRr1Sl6/Ji8EJgmvnlGQLxv5Lh49dUgmAI
-         L+If7AScIqu1ubec23S5A8VRwTMaIyE6ul8TcCrEcwUoqeERjIjxs1qlv5/LkeGRuJ7G
-         JvRTfhQ6p1te2I6sixMA0douX5sjfCJXU/yv3RtCnpr/s3Tb0p0aTiLSDqgVI+Ff2/Yi
-         8K8g==
-X-Gm-Message-State: AOUpUlFrbKelNtVCLsivpp1Ye5fsXEqchbFKPL1KuqVlosrpEGYB/bYv
-        9TSSoGm+1uBeMu0hRMjbDrERTw==
-X-Google-Smtp-Source: AAOMgpf81hw1ubjw1FZvKXd1VdK+UoSzXOU+ES/KsiKnIjECIJODM6CxQIOLbA1/kA3dn+SkwtMvtg==
-X-Received: by 2002:a62:6941:: with SMTP id e62-v6mr7332670pfc.217.1532708512457;
-        Fri, 27 Jul 2018 09:21:52 -0700 (PDT)
-Received: from limbo.local ([190.105.169.2])
-        by smtp.gmail.com with ESMTPSA id r28-v6sm11392248pfd.37.2018.07.27.09.21.48
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 27 Jul 2018 09:21:51 -0700 (PDT)
-From:   Daniel Drake <drake@endlessm.com>
-To:     mhocko@kernel.org
-Cc:     hannes@cmpxchg.org, linux-mm@kvack.org, linux@endlessm.com,
-        linux-kernel@vger.kernel.org
-Subject: Making direct reclaim fail when thrashing
-Date:   Fri, 27 Jul 2018 11:21:43 -0500
-Message-Id: <20180727162143.26466-1-drake@endlessm.com>
-X-Mailer: git-send-email 2.17.1
+ d=towerbridgetechnology.onmicrosoft.com; s=selector1-bayhubtech-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=NXeOqd6cKkmW1lH6AtuuGCmx0qMl86t1Uj/jyquAj+Y=;
+ b=WNkrM8WfXizYMQWEIAQQdIJYmE9wfGw55w9beyON4EQdpS1aelF76P/A7W0SVqpS/Ptw+saxkpJWKVZIpOtuWvPLaevqf5TQGvvXBAPnVNTD5vG2W5zPg/S+YOgJyt8tG+Pj1S8ANCHrkqcb0R2GX2Fx3TQCrHSguRC+zPWi6jQ=
+Received: from BYAPR04MB4760.namprd04.prod.outlook.com (52.135.240.79) by
+ BYAPR04MB4680.namprd04.prod.outlook.com (52.135.240.19) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.973.22; Fri, 27 Jul 2018 16:23:43 +0000
+Received: from BYAPR04MB4760.namprd04.prod.outlook.com
+ ([fe80::44e2:1ff2:21d5:5b45]) by BYAPR04MB4760.namprd04.prod.outlook.com
+ ([fe80::44e2:1ff2:21d5:5b45%3]) with mapi id 15.20.0973.022; Fri, 27 Jul 2018
+ 16:23:41 +0000
+From:   "Ernest Zhang(WH)" <ernest.zhang@bayhubtech.com>
+To:     Adrian Hunter <adrian.hunter@intel.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+CC:     "Chuanjin Pang (WH)" <chuanjin.pang@bayhubtech.com>,
+        "Mike Li (WH)" <mike.li@bayhubtech.com>,
+        "Chevron Li (WH)" <chevron.li@bayhubtech.com>,
+        "Shirley Her (SC)" <shirley.her@bayhubtech.com>,
+        "Xiaoguang Yu (WH)" <xiaoguang.yu@bayhubtech.com>,
+        "Bobby Wu (WH)" <bobby.wu@bayhubtech.com>
+Subject: [PATCH V8 2/5] mmc: sdhci: Change O2 Host HS200 mode clock frequency
+ to 200MHz
+Thread-Topic: [PATCH V8 2/5] mmc: sdhci: Change O2 Host HS200 mode clock
+ frequency to 200MHz
+Thread-Index: AdQlxhUr6YbZUmHxRYOjRyJK87Krqw==
+Date:   Fri, 27 Jul 2018 16:23:40 +0000
+Message-ID: <BYAPR04MB476082C4951D3D7EE47B3881E52A0@BYAPR04MB4760.namprd04.prod.outlook.com>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=ernest.zhang@bayhubtech.com; 
+x-originating-ip: [45.77.188.133]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;BYAPR04MB4680;6:+ZngHJKFelKQ83VFt1nI56GFbJPCTlOixvJvI8S2AYq+Z4k/mr+6i+vvDfeN4ydkDorAmHylSaL/lft7+3pQNyEhvNRWhJ9ar8t3P4ow6WMiyEt7I4dyD4fDveAGACuBY9KhEXJjjITaGB8J1+c/k0qde8DYDnKLqdsKLjgNzBoyistchDiZMlic7VuDWuEi3W2Y4mbdfME95jv1Zzvavzr1IWPik+zNB1JTvPgEJPIFPU3Orfvv2lneLRETAavpCgchDqBPQCO242B57iQtxHcgAVbpxF0upqZ9fP9j51CBDEzPYYidkxZONB//nvFMrXy/kTcbEnjHD6qXu35OTsJ1UPhWLm64CefJlyHIxtVpn5QAn1iq4+ALCtbWVOz+irqH+W3W751iEWAn/P0couhcWXi+YNZF6Nr/HqGilXdjs0LBisWTwNrY4IdqOdGefwhxFkGUHZwc7mCULjjnKA==;5:ZxtCD/c4dmOJ/8W3xTkE/0gy9VUXJ4BNRHthSNAY4kcMbaofYI9j0vDLqi+M0GhscJvoqm9wUQxxuUzeGmchD1+8rL7mZjziYKA9a0afY7eK3D1cXmaiVMHtBfgDM2ThTefbKBGXsdsNknFwJqILArH9XR8UPAM415n0aP+4a9I=;7:eD6TIBoYZOOGb+O2pE7bQeFsfFvqhTMJIFQXVBojEDS72C5yL+NdDjAMPec0j/kuArr6nXMNAGhG+adpzKy/KcAqOGjxggljc9mdu4SY4vzYVl1nvmqzn5HXmpIFs+l0ZC0vtKjM6GKWsuPTmtDtUY2lfPp3ttjlcZ+WHPCH3NMENe1QpCBqTigVyQ09tozfQoYZFquw+2acl29odoCq2+bQTOx/vcW9WRl8YUvGC5G82elzQRGpaJM/kfM/AV3O
+x-ms-exchange-antispam-srfa-diagnostics: SOS;SOR;
+x-forefront-antispam-report: SFV:SKI;SCL:-1;SFV:NSPM;SFS:(10019020)(366004)(136003)(39830400003)(396003)(376002)(346002)(189003)(199004)(13464003)(57704003)(6116002)(53936002)(86362001)(105586002)(316002)(53546011)(106356001)(110136005)(3846002)(4326008)(5660300001)(25786009)(99286004)(2906002)(54906003)(107886003)(97736004)(14454004)(478600001)(66066001)(8676002)(8936002)(81166006)(33656002)(26005)(2201001)(74316002)(81156014)(7736002)(305945005)(6436002)(102836004)(476003)(55236004)(186003)(486006)(2501003)(9686003)(6506007)(55016002)(2900100001)(68736007)(7696005)(256004)(5250100002);DIR:OUT;SFP:1102;SCL:1;SRVR:BYAPR04MB4680;H:BYAPR04MB4760.namprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-ms-office365-filtering-correlation-id: c783c8a0-bf22-4501-1ba6-08d5f3dd50b3
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(7021125)(8989117)(4534165)(7022125)(4603075)(7168020)(4627221)(201702281549075)(8990107)(7048125)(7024125)(7027125)(7028125)(7023125)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:BYAPR04MB4680;
+x-ms-traffictypediagnostic: BYAPR04MB4680:
+x-microsoft-antispam-prvs: <BYAPR04MB46807CFB396E3D8701520EC4E52A0@BYAPR04MB4680.namprd04.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(9452136761055)(228905959029699);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(3231311)(944501410)(52105095)(3002001)(10201501046)(149027)(150027)(6041310)(20161123562045)(20161123560045)(20161123564045)(20161123558120)(2016111802025)(6072148)(6043046)(201708071742011)(7699016);SRVR:BYAPR04MB4680;BCL:0;PCL:0;RULEID:;SRVR:BYAPR04MB4680;
+x-forefront-prvs: 07467C4D33
+received-spf: None (protection.outlook.com: bayhubtech.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: t02D5oj6yuUPecjI3Myj4AgdtnnwSPcTCFpdLvHKBhrshZXPGqmOOfeqyXMRlf4dYKbGgWCVIzA4k9ITqSc0QK5YHBSWGy44lE+apXRUOJOaScJUufewJHkyeHlEGrdx6kA4m13j0WeLNJQ3bKTcngVErqiGuIyaPeh5Dl7F7K4orb6IZqchT/Pjl3tsaLAZm1+2x4dKHJj8jc2NwYxB2/3eYsyDarKU806BKLGHOmmX62rcmGSbAa8L16quHzhTNitmgmnMEaeliO9rimHv4fSV1e7LN03gDIGOmpbi7sT3LLbIcogCFEJTUAcHeZfhP0KI6wYbFXQFnALMRS3YeI6ErNwOf4aZ3cPhWMZ9Txk=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-OriginatorOrg: bayhubtech.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c783c8a0-bf22-4501-1ba6-08d5f3dd50b3
+X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Jul 2018 16:23:40.6592
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 0a7aae2b-8f2e-44df-ba2f-42de7f93c642
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR04MB4680
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Split from the thread
-  [PATCH 0/10] psi: pressure stall information for CPU, memory, and IO v2
-where we were discussing if/how to make the direct reclaim codepath
-fail if we're excessively thrashing, so that the OOM killer might
-step in. This is potentially desirable when the thrashing is so bad
-that the UI stops responding, causing the user to pull the plug.
-
-On Tue, Jul 17, 2018 at 7:23 AM, Michal Hocko <mhocko@kernel.org> wrote:
-> mm/workingset.c allows for tracking when an actual page got evicted.
-> workingset_refault tells us whether a give filemap fault is a recent
-> refault and activates the page if that is the case. So what you need is
-> to note how many refaulted pages we have on the active LRU list. If that
-> is a large part of the list and if the inactive list is really small
-> then we know we are trashing. This all sounds much easier than it will
-> eventually turn out to be of course but I didn't really get to play with
-> this much.
-
-Apologies in advance for any silly mistakes or terrible code that
-follows, as I am not familiar in this part of the kernel.
-
-As mentioned in my last mail, knowing if a page on the active list was
-refaulted into place appears not trivial, because the eviction information
-was lost upon refault (it was stored in the page cache shadow entry).
-
-Here I'm experimenting by adding another tag to the page cache radix tree,
-tagging pages that were activated in the refault path.
-
-And then in get_scan_count I'm checking how many active pages have that
-tag, and also looking at the size of the active and inactive lists.
-
-It has a performance blow (probably due to looping over the whole
-active list and doing lots of locking?) but I figured it might serve
-as one step forward.
-
-The results are not exactly as I would expect. Upon launching 20
-processes that allocate and memset 100mb RAM each, exhausting all RAM
-(and no swap available), the kernel starts thrashing and I get numbers
-like:
-
- get_scan_count lru1 active=422714 inactive=19595 refaulted=0
- get_scan_count lru3 active=832 inactive=757 refaulted=21
-
-Lots of active anonymous pages (lru1), and none refaulted, perhaps
-not surprising because it can't swap them out, no swap available.
-
-But only few file pages on the lists (lru3), and only a tiny number
-of refaulted ones, which doesn't line up with your suggestion of
-detecting when a large part of the active list is made up of refaulted
-pages.
-
-Any further suggestions appreciated.
-
-Thanks
-Daniel
----
- include/linux/fs.h         |  1 +
- include/linux/radix-tree.h |  2 +-
- mm/filemap.c               |  2 ++
- mm/vmscan.c                | 37 +++++++++++++++++++++++++++++++++++++
- 4 files changed, 41 insertions(+), 1 deletion(-)
-
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index d85ac9d24bb3..45f94ffd1c67 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -462,6 +462,7 @@ struct block_device {
- #define PAGECACHE_TAG_DIRTY	0
- #define PAGECACHE_TAG_WRITEBACK	1
- #define PAGECACHE_TAG_TOWRITE	2
-+#define PAGECACHE_TAG_REFAULTED	3
- 
- int mapping_tagged(struct address_space *mapping, int tag);
- 
-diff --git a/include/linux/radix-tree.h b/include/linux/radix-tree.h
-index 34149e8b5f73..86eccb71ef7e 100644
---- a/include/linux/radix-tree.h
-+++ b/include/linux/radix-tree.h
-@@ -65,7 +65,7 @@ static inline bool radix_tree_is_internal_node(void *ptr)
- 
- /*** radix-tree API starts here ***/
- 
--#define RADIX_TREE_MAX_TAGS 3
-+#define RADIX_TREE_MAX_TAGS 4
- 
- #ifndef RADIX_TREE_MAP_SHIFT
- #define RADIX_TREE_MAP_SHIFT	(CONFIG_BASE_SMALL ? 4 : 6)
-diff --git a/mm/filemap.c b/mm/filemap.c
-index 250f675dcfb2..9a686570dc75 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -917,6 +917,8 @@ int add_to_page_cache_lru(struct page *page, struct address_space *mapping,
- 		 */
- 		if (!(gfp_mask & __GFP_WRITE) &&
- 		    shadow && workingset_refault(shadow)) {
-+			radix_tree_tag_set(&mapping->i_pages, page_index(page),
-+					   PAGECACHE_TAG_REFAULTED);
- 			SetPageActive(page);
- 			workingset_activation(page);
- 		} else
-diff --git a/mm/vmscan.c b/mm/vmscan.c
-index 03822f86f288..79bc810b43bb 100644
---- a/mm/vmscan.c
-+++ b/mm/vmscan.c
-@@ -2102,6 +2102,30 @@ enum scan_balance {
- 	SCAN_FILE,
- };
- 
-+
-+static int count_refaulted(struct lruvec *lruvec, enum lru_list lru) {
-+	int nr_refaulted = 0;
-+	struct page *page;
-+
-+	list_for_each_entry(page, &lruvec->lists[lru], lru) {
-+		/* Lookup page cache entry from page following the approach
-+		 * taken in __set_page_dirty_nobuffers */
-+		unsigned long flags;
-+		struct address_space *mapping = page_mapping(page);
-+		if (!mapping)
-+			continue;
-+
-+		xa_lock_irqsave(&mapping->i_pages, flags);
-+		BUG_ON(page_mapping(page) != mapping);
-+		nr_refaulted += radix_tree_tag_get(&mapping->i_pages,
-+						   page_index(page),
-+						   PAGECACHE_TAG_REFAULTED);
-+		xa_unlock_irqrestore(&mapping->i_pages, flags);
-+	}
-+
-+	return nr_refaulted;
-+}
-+
- /*
-  * Determine how aggressively the anon and file LRU lists should be
-  * scanned.  The relative value of each set of LRU lists is determined
-@@ -2270,6 +2294,19 @@ static void get_scan_count(struct lruvec *lruvec, struct mem_cgroup *memcg,
- 		unsigned long size;
- 		unsigned long scan;
- 
-+		if (lru == LRU_ACTIVE_ANON || lru == LRU_ACTIVE_FILE) {
-+			int nr_refaulted;
-+			unsigned long inactive, active;
-+
-+			nr_refaulted  = count_refaulted(lruvec, lru);
-+			active = lruvec_lru_size(lruvec, lru, sc->reclaim_idx);
-+			inactive = lruvec_lru_size(lruvec, lru - 1,
-+						   sc->reclaim_idx);
-+			pr_err("get_scan_count lru%d active=%ld inactive=%ld "
-+			      "refaulted=%d\n",
-+			       lru, active, inactive, nr_refaulted);
-+		}
-+
- 		size = lruvec_lru_size(lruvec, lru, sc->reclaim_idx);
- 		scan = size >> sc->priority;
- 		/*
--- 
-2.17.1
-
+TzIgU0QgSG9zdCBIUzIwMCBtb2RlIGNsb2NrIGZyZXF1ZW5jeSBjdXJyZW50IGlzIDIwOE1Ieiwg
+c2hvdWxkIGJlIGNoYW5nZWQgdG8gMjAwTUh6IHRvIG1lZXQgc3BlY2lmaWNhdGlvbi4NCg0KU2ln
+bmVkLW9mZi1ieTogZXJuZXN0LnpoYW5nIDxlcm5lc3QuemhhbmdAYmF5aHVidGVjaC5jb20+DQot
+LS0NCkNoYW5nZSBpbiBWODoNCglUaGUgc2V0IGJhc2UgY2xvY2sgY29kZSBjb21tZW50IGhhcyBi
+ZWVuIGNoYW5nZWQgaW4gYWNjb3JkYW5jZSB3aXRoDQoJY29kZSBjaGFuZ2UgaW4gVjcuDQoNCkNo
+YW5nZSBpbiBWNzoNCglDaGFuZ2UgSFMyMDAgbW9kZSBjbG9jayBmcmVxdWVuY3kgZnJvbSAyMDhN
+SHogdG8gMjAwTUh6IHRvIG1lZXQNCglTcGVjaWZpY2F0aW9uLg0KDQpDaGFuZ2UgaW4gVjF+VjY6
+DQoJTi9BDQotLS0NCiBkcml2ZXJzL21tYy9ob3N0L3NkaGNpLXBjaS1vMm1pY3JvLmMgfCA2ICsr
+Ky0tLQ0KIDEgZmlsZSBjaGFuZ2VkLCAzIGluc2VydGlvbnMoKyksIDMgZGVsZXRpb25zKC0pDQoN
+CmRpZmYgLS1naXQgYS9kcml2ZXJzL21tYy9ob3N0L3NkaGNpLXBjaS1vMm1pY3JvLmMgYi9kcml2
+ZXJzL21tYy9ob3N0L3NkaGNpLXBjaS1vMm1pY3JvLmMNCmluZGV4IGJhNTlkYjZhMTI2Yy4uOWU3
+YmFjZGE0NzE3IDEwMDY0NA0KLS0tIGEvZHJpdmVycy9tbWMvaG9zdC9zZGhjaS1wY2ktbzJtaWNy
+by5jDQorKysgYi9kcml2ZXJzL21tYy9ob3N0L3NkaGNpLXBjaS1vMm1pY3JvLmMNCkBAIC0zMTEs
+OSArMzExLDkgQEAgaW50IHNkaGNpX3BjaV9vMl9wcm9iZShzdHJ1Y3Qgc2RoY2lfcGNpX2NoaXAg
+KmNoaXApDQogDQogCQkJLyogQ2hlY2sgV2hldGhlciBzdWJJZCBpcyAweDExIG9yIDB4MTIgKi8N
+CiAJCQlpZiAoKHNjcmF0Y2hfMzIgPT0gMHgxMSkgfHwgKHNjcmF0Y2hfMzIgPT0gMHgxMikpIHsN
+Ci0JCQkJc2NyYXRjaF8zMiA9IDB4MmMyODAwMDA7DQorCQkJCXNjcmF0Y2hfMzIgPSAweDI1MTAw
+MDAwOw0KIA0KLQkJCQkvKiBTZXQgQmFzZSBDbG9jayB0byAyMDhNWiAqLw0KKwkJCQkvKiBTZXQg
+QmFzZSBDbG9jayB0byAyMDBNWiAqLw0KIAkJCQlvMl9wY2lfc2V0X2Jhc2VjbGsoY2hpcCwgc2Ny
+YXRjaF8zMik7DQogCQkJCXJldCA9IHBjaV9yZWFkX2NvbmZpZ19kd29yZChjaGlwLT5wZGV2LA0K
+IAkJCQkJCQkgICAgTzJfU0RfRlVOQ19SRUc0LA0KQEAgLTQwNiw3ICs0MDYsNyBAQCBpbnQgc2Ro
+Y2lfcGNpX28yX3Byb2JlKHN0cnVjdCBzZGhjaV9wY2lfY2hpcCAqY2hpcCkNCiAJCQkJCSAgICAg
+ICBPMl9TRF9QTExfU0VUVElORywgc2NyYXRjaF8zMik7DQogCQl9IGVsc2Ugew0KIAkJCXNjcmF0
+Y2hfMzIgJj0gMHgwMDAwRkZGRjsNCi0JCQlzY3JhdGNoXzMyIHw9IDB4MmMyODAwMDA7DQorCQkJ
+c2NyYXRjaF8zMiB8PSAweDI1MTAwMDAwOw0KIA0KIAkJCXBjaV93cml0ZV9jb25maWdfZHdvcmQo
+Y2hpcC0+cGRldiwNCiAJCQkJCSAgICAgICBPMl9TRF9QTExfU0VUVElORywgc2NyYXRjaF8zMik7
+DQotLQ0KMi4xNy4xDQoNCg0KLS0tLS3pgq7ku7bljp/ku7YtLS0tLQ0K5Y+R5Lu25Lq6OiBBZHJp
+YW4gSHVudGVyIDxhZHJpYW4uaHVudGVyQGludGVsLmNvbT4gDQrlj5HpgIHml7bpl7Q6IEZyaWRh
+eSwgSnVseSAyNywgMjAxOCAyOjU4IFBNDQrmlLbku7bkuro6IEVybmVzdCBaaGFuZyhXSCkgPGVy
+bmVzdC56aGFuZ0BiYXlodWJ0ZWNoLmNvbT47IFVsZiBIYW5zc29uIDx1bGYuaGFuc3NvbkBsaW5h
+cm8ub3JnPjsgbGludXgtbW1jQHZnZXIua2VybmVsLm9yZzsgbGludXgta2VybmVsQHZnZXIua2Vy
+bmVsLm9yZw0K5oqE6YCBOiBDaHVhbmppbiBQYW5nIChXSCkgPGNodWFuamluLnBhbmdAYmF5aHVi
+dGVjaC5jb20+OyBNaWtlIExpIChXSCkgPG1pa2UubGlAYmF5aHVidGVjaC5jb20+OyBDaGV2cm9u
+IExpIChXSCkgPGNoZXZyb24ubGlAYmF5aHVidGVjaC5jb20+OyBTaGlybGV5IEhlciAoU0MpIDxz
+aGlybGV5LmhlckBiYXlodWJ0ZWNoLmNvbT47IFhpYW9ndWFuZyBZdSAoV0gpIDx4aWFvZ3Vhbmcu
+eXVAYmF5aHVidGVjaC5jb20+OyBCb2JieSBXdSAoV0gpIDxib2JieS53dUBiYXlodWJ0ZWNoLmNv
+bT4NCuS4u+mimDogUmU6IFtQQVRDSCBWNyAyLzVdIG1tYzogc2RoY2k6IENoYW5nZSBPMiBIb3N0
+IEhTMjAwIG1vZGUgY2xvY2sgZnJlcXVlbmN5IHRvIDIwME1Ieg0KDQpPbiAyNy8wNy8xOCAwOTo0
+OSwgRXJuZXN0IFpoYW5nKFdIKSB3cm90ZToNCj4gSGkgQWRyaWFuLA0KPiAJRG8gSSBuZWVkIHJl
+LXN1Ym1pdCBhbGwgNSBwYXRjaGVzIGFmdGVyIGZpeCB0aGF0IGFuZCBjaGFuZ2UgdGhlIHZlcnNp
+b24gdG8gdjg/DQoNCllvdSBjYW4gcmVwbHkgdG8gdGhpcyBlbWFpbCB3aXRoIFBBVENIIFY4IDIv
+NSB0aGF0IGhhcyBteSBBY2sgYW5kIHRoZSBjb21tZW50IGZpeGVkLg0KDQo+IEJSDQo+IA0KPiAt
+LS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBBZHJpYW4gSHVudGVyIFttYWlsdG86
+YWRyaWFuLmh1bnRlckBpbnRlbC5jb21dDQo+IFNlbnQ6IDIwMTjlubQ35pyIMjXml6UgMTU6NDUN
+Cj4gVG86IEVybmVzdCBaaGFuZyhXSCk7IFVsZiBIYW5zc29uOyBsaW51eC1tbWNAdmdlci5rZXJu
+ZWwub3JnOyANCj4gbGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZw0KPiBDYzogQ2h1YW5qaW4g
+UGFuZyAoV0gpOyBNaWtlIExpIChXSCk7IENoZXZyb24gTGkgKFdIKTsgU2hpcmxleSBIZXIgDQo+
+IChTQyk7IFhpYW9ndWFuZyBZdSAoV0gpOyBCb2JieSBXdSAoV0gpDQo+IFN1YmplY3Q6IFJlOiBb
+UEFUQ0ggVjcgMi81XSBtbWM6IHNkaGNpOiBDaGFuZ2UgTzIgSG9zdCBIUzIwMCBtb2RlIA0KPiBj
+bG9jayBmcmVxdWVuY3kgdG8gMjAwTUh6DQo+IA0KPiBPbiAxNi8wNy8xOCAwOToyNiwgZXJuZXN0
+LnpoYW5nIHdyb3RlOg0KPj4gTzIgU0QgSG9zdCBIUzIwMCBtb2RlIGNsb2NrIGZyZXF1ZW5jeSBj
+dXJyZW50IGlzIDIwOE1Ieiwgc2hvdWxkIGJlIA0KPj4gY2hhbmdlZCB0byAyMDBNSHogdG8gbWVl
+dCBzcGVjaWZpY2F0aW9uLg0KPj4NCj4+IFNpZ25lZC1vZmYtYnk6IGVybmVzdC56aGFuZyA8ZXJu
+ZXN0LnpoYW5nQGJheWh1YnRlY2guY29tPg0KPiANCj4gWW91IGxlZnQgaW4gdGhlIG1pc2xlYWRp
+bmcgY29tbWVudC4gIEZpeCB0aGF0IGFuZCBhZGQ6DQo+IA0KPiBBY2tlZC1ieTogQWRyaWFuIEh1
+bnRlciA8YWRyaWFuLmh1bnRlckBpbnRlbC5jb20+DQo+IA0KPj4gLS0tDQo+PiBDaGFuZ2UgaW4g
+Vjc6DQo+PiAJQ2hhbmdlIEhTMjAwIG1vZGUgY2xvY2sgZnJlcXVlbmN5IGZyb20gMjA4TUh6IHRv
+IDIwME1IeiB0byBtZWV0DQo+PiAJU3BlY2lmaWNhdGlvbi4NCj4+DQo+PiBDaGFuZ2UgaW4gVjF+
+VjY6DQo+PiAJTi9BDQo+PiAtLS0NCj4+ICBkcml2ZXJzL21tYy9ob3N0L3NkaGNpLXBjaS1vMm1p
+Y3JvLmMgfCA0ICsrLS0NCj4+ICAxIGZpbGUgY2hhbmdlZCwgMiBpbnNlcnRpb25zKCspLCAyIGRl
+bGV0aW9ucygtKQ0KPj4NCj4+IGRpZmYgLS1naXQgYS9kcml2ZXJzL21tYy9ob3N0L3NkaGNpLXBj
+aS1vMm1pY3JvLmMNCj4+IGIvZHJpdmVycy9tbWMvaG9zdC9zZGhjaS1wY2ktbzJtaWNyby5jDQo+
+PiBpbmRleCBiYTU5ZGI2YTEyNmMuLjk0Y2YzY2Q3NWRkMyAxMDA2NDQNCj4+IC0tLSBhL2RyaXZl
+cnMvbW1jL2hvc3Qvc2RoY2ktcGNpLW8ybWljcm8uYw0KPj4gKysrIGIvZHJpdmVycy9tbWMvaG9z
+dC9zZGhjaS1wY2ktbzJtaWNyby5jDQo+PiBAQCAtMzExLDcgKzMxMSw3IEBAIGludCBzZGhjaV9w
+Y2lfbzJfcHJvYmUoc3RydWN0IHNkaGNpX3BjaV9jaGlwDQo+PiAqY2hpcCkNCj4+ICANCj4+ICAJ
+CQkvKiBDaGVjayBXaGV0aGVyIHN1YklkIGlzIDB4MTEgb3IgMHgxMiAqLw0KPj4gIAkJCWlmICgo
+c2NyYXRjaF8zMiA9PSAweDExKSB8fCAoc2NyYXRjaF8zMiA9PSAweDEyKSkgew0KPj4gLQkJCQlz
+Y3JhdGNoXzMyID0gMHgyYzI4MDAwMDsNCj4+ICsJCQkJc2NyYXRjaF8zMiA9IDB4MjUxMDAwMDA7
+DQo+PiAgDQo+PiAgCQkJCS8qIFNldCBCYXNlIENsb2NrIHRvIDIwOE1aICovDQo+IA0KPiBUaGF0
+IGNvbW1lbnQgaXMgbWlzbGVhZGluZyBub3cuDQo+IA0KPj4gIAkJCQlvMl9wY2lfc2V0X2Jhc2Vj
+bGsoY2hpcCwgc2NyYXRjaF8zMik7IEBAIC00MDYsNyArNDA2LDcgQEAgaW50IA0KPj4gc2RoY2lf
+cGNpX28yX3Byb2JlKHN0cnVjdCBzZGhjaV9wY2lfY2hpcCAqY2hpcCkNCj4+ICAJCQkJCSAgICAg
+ICBPMl9TRF9QTExfU0VUVElORywgc2NyYXRjaF8zMik7DQo+PiAgCQl9IGVsc2Ugew0KPj4gIAkJ
+CXNjcmF0Y2hfMzIgJj0gMHgwMDAwRkZGRjsNCj4+IC0JCQlzY3JhdGNoXzMyIHw9IDB4MmMyODAw
+MDA7DQo+PiArCQkJc2NyYXRjaF8zMiB8PSAweDI1MTAwMDAwOw0KPj4gIA0KPj4gIAkJCXBjaV93
+cml0ZV9jb25maWdfZHdvcmQoY2hpcC0+cGRldiwNCj4+ICAJCQkJCSAgICAgICBPMl9TRF9QTExf
+U0VUVElORywgc2NyYXRjaF8zMik7DQo+Pg0KPiANCg0K
