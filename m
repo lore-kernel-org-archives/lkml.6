@@ -2,716 +2,164 @@ Return-Path: <SRS0=OQFz=KL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FROM_EXCESS_BASE64,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15639C6778F
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 14:59:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A7FEC67790
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 14:59:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A219E208AC
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 14:59:00 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TwEFI133"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A219E208AC
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 54210208AC
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 14:59:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 54210208AC
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388735AbeG0QVP (ORCPT
+        id S2388766AbeG0QVT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 12:21:15 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:36727 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388674AbeG0QVO (ORCPT
+        Fri, 27 Jul 2018 12:21:19 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:47700 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S2388674AbeG0QVT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 12:21:14 -0400
-Received: by mail-wm0-f66.google.com with SMTP id s14-v6so5811138wmc.1;
-        Fri, 27 Jul 2018 07:58:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=ocS+OO1JnFNW2QYjIgBe0kEptqMZtT6dz0hBpmYGpzE=;
-        b=TwEFI133QVU8V5uztTCX5+e8QJTGT0QTHhA+rqwJnh04RSddqMDhWqehEAlBP5WmzB
-         rOd+aBPdL0+28KssQOSYS4KNGsCvMHHrLtgkBIY2MNiisDM24FvbqpXM7O+WozM3uQat
-         kyRFdRs2MkGCE39XX5V4RDvsQao9GLT0fi09D68yZhTyq1l7nprLC0XYPII+eNgrpVd7
-         ZaZd/KU9QjfLSlKFxDfv7h+CKkVzMBkZcovINvfdR+QBiaO9MQvdCe4Lc+/35LXbEZlE
-         iMLA0/ohMuAMdsxXa2LKYfsrsu8PxL8nOdBflTPPY5XpaGIe5bmolKCwU5OJtT9ze+I8
-         tZEQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=ocS+OO1JnFNW2QYjIgBe0kEptqMZtT6dz0hBpmYGpzE=;
-        b=DIc8Q5HUEO7SoD2vSghcjk6dpVdNIn3Si/l+Z0d1uGPXLRUJJqdYfUWQcbdfi7LNVP
-         SCZU39FbL+ZYd3TYXeqfNK1alk8Io1Dqbf+lh5n2z2t33XqGfUIoJUMSa3+AeUcL4EJ8
-         GB+4Mkl3bFphGa3cDYH5a574SONLyoSutRTqSQsT4i4EAeNg0HQ1K3AKBv1UqNS0VtDl
-         kOCejIpSlXjpPghRZvaw4ZXJqBFj8u7Wqr/eF8LSPrGm/ctroTrnXQnx2cJ4pUSFVfu7
-         Gx3GwhgpGae+3HANM1IgmxF/oJ5Pf/cWl8SHRjG2SZULd8uYOA/RUc+i8WO4AafTinvj
-         lgXA==
-X-Gm-Message-State: AOUpUlGc4+PgcwKdEw/PEzKscFDH9GAiGOyTQsV3fjn1ezn8OOTCFmu9
-        NTx2MPkTH1lX42JCF92d20o=
-X-Google-Smtp-Source: AAOMgpcfi0bFhHewnzmZHtYJpMYOCHj2t5Q7Ric/VWF6qJFa1KOMzCRD2QFO4KlGyBKKUkAI1AFA7g==
-X-Received: by 2002:a1c:c4ce:: with SMTP id u197-v6mr4427693wmf.10.1532703535091;
-        Fri, 27 Jul 2018 07:58:55 -0700 (PDT)
-Received: from jernej-laptop.localnet ([194.152.15.144])
-        by smtp.gmail.com with ESMTPSA id b6-v6sm6402877wru.66.2018.07.27.07.58.52
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 27 Jul 2018 07:58:54 -0700 (PDT)
-From:   Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@gmail.com>
-To:     linux-sunxi@googlegroups.com
-Cc:     paul.kocialkowski@bootlin.com, linux-media@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, devel@driverdev.osuosl.org,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Hugues Fruchet <hugues.fruchet@st.com>,
-        Randy Li <ayaka@soulik.info>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Ezequiel Garcia <ezequiel@collabora.com>,
-        Tomasz Figa <tfiga@chromium.org>,
-        Alexandre Courbot <acourbot@chromium.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>
-Subject: Re: [linux-sunxi] [PATCH v6 4/8] media: platform: Add Cedrus VPU decoder driver
-Date:   Fri, 27 Jul 2018 16:58:52 +0200
-Message-ID: <2251357.uoA9bQP17p@jernej-laptop>
-In-Reply-To: <1688687.Q0yMyAUrqh@jernej-laptop>
-References: <20180725100256.22833-1-paul.kocialkowski@bootlin.com> <20180725100256.22833-5-paul.kocialkowski@bootlin.com> <1688687.Q0yMyAUrqh@jernej-laptop>
+        Fri, 27 Jul 2018 12:21:19 -0400
+Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w6REs8va077921
+        for <linux-kernel@vger.kernel.org>; Fri, 27 Jul 2018 10:59:01 -0400
+Received: from e13.ny.us.ibm.com (e13.ny.us.ibm.com [129.33.205.203])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2kg3p7nh67-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Fri, 27 Jul 2018 10:59:00 -0400
+Received: from localhost
+        by e13.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <muriloo@linux.ibm.com>;
+        Fri, 27 Jul 2018 10:59:00 -0400
+Received: from b01cxnp23034.gho.pok.ibm.com (9.57.198.29)
+        by e13.ny.us.ibm.com (146.89.104.200) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 27 Jul 2018 10:58:54 -0400
+Received: from b01ledav006.gho.pok.ibm.com (b01ledav006.gho.pok.ibm.com [9.57.199.111])
+        by b01cxnp23034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w6REwrrg6488538
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 27 Jul 2018 14:58:53 GMT
+Received: from b01ledav006.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 62BACAC05B;
+        Fri, 27 Jul 2018 10:59:36 -0400 (EDT)
+Received: from b01ledav006.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 179F0AC059;
+        Fri, 27 Jul 2018 10:59:31 -0400 (EDT)
+Received: from kermit-br-ibm-com.ibmmodules.com (unknown [9.80.82.251])
+        by b01ledav006.gho.pok.ibm.com (Postfix) with ESMTP;
+        Fri, 27 Jul 2018 10:59:30 -0400 (EDT)
+From:   Murilo Opsfelder Araujo <muriloo@linux.ibm.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     "Alastair D'Silva" <alastair@d-silva.org>,
+        Andrew Donnellan <andrew.donnellan@au1.ibm.com>,
+        Balbir Singh <bsingharora@gmail.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Christophe Leroy <christophe.leroy@c-s.fr>,
+        Cyril Bur <cyrilbur@gmail.com>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Michael Neuling <mikey@neuling.org>,
+        Murilo Opsfelder Araujo <muriloo@linux.ibm.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Paul Mackerras <paulus@samba.org>,
+        Simon Guo <wei.guo.simon@gmail.com>,
+        Sukadev Bhattiprolu <sukadev@linux.vnet.ibm.com>,
+        "Tobin C . Harding" <me@tobin.cc>, linuxppc-dev@lists.ozlabs.org
+Subject: [PATCH v2 02/10] powerpc/traps: Return early in show_signal_msg()
+Date:   Fri, 27 Jul 2018 11:58:03 -0300
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180727145811.12334-1-muriloo@linux.ibm.com>
+References: <20180727145811.12334-1-muriloo@linux.ibm.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 18072714-0064-0000-0000-000003308A58
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009438; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000266; SDB=6.01066907; UDB=6.00548186; IPR=6.00844773;
+ MB=3.00022354; MTD=3.00000008; XFM=3.00000015; UTC=2018-07-27 14:58:58
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18072714-0065-0000-0000-00003A17164C
+Message-Id: <20180727145811.12334-3-muriloo@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-27_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1806210000 definitions=main-1807270153
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dne petek, 27. julij 2018 ob 16:03:41 CEST je Jernej =C5=A0krabec napisal(a=
-):
-> Hi!
->=20
-> Dne sreda, 25. julij 2018 ob 12:02:52 CEST je Paul Kocialkowski napisal(a=
-):
-> > This introduces the Cedrus VPU driver that supports the VPU found in
-> > Allwinner SoCs, also known as Video Engine. It is implemented through
-> > a v4l2 m2m decoder device and a media device (used for media requests).
-> > So far, it only supports MPEG2 decoding.
-> >=20
-> > Since this VPU is stateless, synchronization with media requests is
-> > required in order to ensure consistency between frame headers that
-> > contain metadata about the frame to process and the raw slice data that
-> > is used to generate the frame.
-> >=20
-> > This driver was made possible thanks to the long-standing effort
-> > carried out by the linux-sunxi community in the interest of reverse
-> > engineering, documenting and implementing support for Allwinner VPU.
-> >=20
-> > Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-> > ---
->=20
-> <snip>
->=20
-> > +void cedrus_dst_format_set(struct cedrus_dev *dev,
-> > +			   struct v4l2_pix_format_mplane *fmt)
-> > +{
-> > +	unsigned int width =3D fmt->width;
-> > +	unsigned int height =3D fmt->height;
-> > +	u32 chroma_size;
-> > +	u32 reg;
-> > +
-> > +	switch (fmt->pixelformat) {
-> > +	case V4L2_PIX_FMT_NV12:
-> > +		chroma_size =3D ALIGN(width, 32) * ALIGN(height / 2, 32);
->=20
-> After some testing, it turns out that right aligment for untiled format is
-> 16.
-> > +
-> > +		reg =3D VE_PRIMARY_OUT_FMT_NV12 |
-> > +		      VE_SECONDARY_SPECIAL_OUT_FMT_NV12;
-> > +		cedrus_write(dev, VE_PRIMARY_OUT_FMT, reg);
-> > +
-> > +		reg =3D VE_CHROMA_BUF_LEN_SDRT(chroma_size / 2) |
-> > +		      VE_SECONDARY_OUT_FMT_SPECIAL;
-> > +		cedrus_write(dev, VE_CHROMA_BUF_LEN, reg);
-> > +
-> > +		reg =3D chroma_size / 2;
-> > +		cedrus_write(dev, VE_PRIMARY_CHROMA_BUF_LEN, reg);
-> > +
-> > +		reg =3D VE_PRIMARY_FB_LINE_STRIDE_LUMA(ALIGN(width, 32)) |
->=20
-> ^ that one should be aligned to 16
->=20
-> > +		      VE_PRIMARY_FB_LINE_STRIDE_CHROMA(ALIGN(width / 2, 16));
+Modify the logic of show_signal_msg() to return early, if possible.
+Replace printk_ratelimited() by printk() and a default rate limit burst to
+limit displaying unhandled signals messages.
 
-It seems that CHROMA has to be aligned to 8 ^
+Mainly reason of this change is to improve readability of the function.
+The conditions to display the message were coupled together in one single
+`if` statement.
 
-That, with previosly comments, completely solves issues for one of my sampl=
-e=20
-video. However, there are still sample videos with issues. Those are mostly=
-=20
-rendered green with slight impressions of right image. Maybe LUMA issue?
+Splitting out the rate limit check outside show_signal_msg() makes it
+easier to the caller decide if it wants to respect a printk rate limit or
+not.
 
-Best regards,
-Jernej
+Signed-off-by: Murilo Opsfelder Araujo <muriloo@linux.ibm.com>
+---
+ arch/powerpc/kernel/traps.c | 21 +++++++++++++++------
+ 1 file changed, 15 insertions(+), 6 deletions(-)
 
-> > +		cedrus_write(dev, VE_PRIMARY_FB_LINE_STRIDE, reg);
-> > +
-> > +		break;
-> > +	case V4L2_PIX_FMT_MB32_NV12:
-> > +	default:
-> > +		reg =3D VE_PRIMARY_OUT_FMT_MB32_NV12;
-> > +		cedrus_write(dev, VE_PRIMARY_OUT_FMT, reg);
-> > +
-> > +		reg =3D VE_SECONDARY_OUT_FMT_MB32_NV12;
-> > +		cedrus_write(dev, VE_CHROMA_BUF_LEN, reg);
-> > +
-> > +		break;
-> > +	}
-> > +}
->=20
-> <snip>
->=20
-> > +static void cedrus_prepare_plane_format(struct cedrus_format *fmt,
-> > +					struct v4l2_format *f,
-> > +					unsigned int i)
-> > +{
-> > +	struct v4l2_plane_pix_format *plane_fmt =3D &f->fmt.pix_mp.plane_fmt[=
-i];
-> > +	unsigned int width =3D f->fmt.pix_mp.width;
-> > +	unsigned int height =3D f->fmt.pix_mp.height;
-> > +	unsigned int sizeimage =3D plane_fmt->sizeimage;
-> > +	unsigned int bytesperline =3D plane_fmt->bytesperline;
-> > +
-> > +	switch (fmt->pixelformat) {
-> > +	case V4L2_PIX_FMT_MPEG2_SLICE:
-> > +		/* Zero bytes per line. */
-> > +		bytesperline =3D 0;
-> > +		break;
-> > +
-> > +	case V4L2_PIX_FMT_MB32_NV12:
-> > +		/* 32-aligned stride. */
-> > +		bytesperline =3D ALIGN(width, 32);
-> > +
-> > +		/* 32-aligned (luma) height. */
-> > +		height =3D ALIGN(height, 32);
-> > +
-> > +		if (i =3D=3D 0)
-> > +			/* 32-aligned luma size. */
-> > +			sizeimage =3D bytesperline * height;
-> > +		else if (i =3D=3D 1)
-> > +			/* 32-aligned chroma size with 2x2 sub-sampling. */
-> > +			sizeimage =3D bytesperline * ALIGN(height / 2, 32);
-> > +
-> > +		break;
-> > +
-> > +	case V4L2_PIX_FMT_NV12:
-> > +		/* 32-aligned stride. */
-> > +		bytesperline =3D ALIGN(width, 32);
->=20
-> ^ and that one should be aligned to 16 too.
->=20
-> This partially fixes some MPEG2 videos I have tested with Kodi. I think
-> there are other aligment issues, but I have to find them first.
->=20
-> Best regards,
-> Jernej
->=20
-> > +
-> > +		if (i =3D=3D 0)
-> > +			/* Regular luma size. */
-> > +			sizeimage =3D bytesperline * height;
-> > +		else if (i =3D=3D 1)
-> > +			/* Regular chroma size with 2x2 sub-sampling. */
-> > +			sizeimage =3D bytesperline * height / 2;
-> > +
-> > +		break;
-> > +	}
-> > +
-> > +	f->fmt.pix_mp.width =3D width;
-> > +	f->fmt.pix_mp.height =3D height;
-> > +
-> > +	plane_fmt->bytesperline =3D bytesperline;
-> > +	plane_fmt->sizeimage =3D sizeimage;
-> > +}
-> > +
-> > +static void cedrus_prepare_format(struct cedrus_format *fmt,
-> > +				  struct v4l2_format *f)
-> > +{
-> > +	unsigned int i;
-> > +
-> > +	f->fmt.pix_mp.field =3D V4L2_FIELD_NONE;
-> > +	f->fmt.pix_mp.num_planes =3D fmt->num_planes;
-> > +
-> > +	for (i =3D 0; i < fmt->num_planes; i++)
-> > +		cedrus_prepare_plane_format(fmt, f, i);
-> > +}
-> > +
-> > +static int cedrus_querycap(struct file *file, void *priv,
-> > +			   struct v4l2_capability *cap)
-> > +{
-> > +	strncpy(cap->driver, CEDRUS_NAME, sizeof(cap->driver) - 1);
-> > +	strncpy(cap->card, CEDRUS_NAME, sizeof(cap->card) - 1);
-> > +	snprintf(cap->bus_info, sizeof(cap->bus_info),
-> > +		 "platform:%s", CEDRUS_NAME);
-> > +
-> > +	cap->device_caps =3D V4L2_CAP_VIDEO_M2M_MPLANE | V4L2_CAP_STREAMING;
-> > +	cap->capabilities =3D cap->device_caps | V4L2_CAP_DEVICE_CAPS;
-> > +
-> > +	return 0;
-> > +}
-> > +
-> > +static int cedrus_enum_fmt(struct file *file, struct v4l2_fmtdesc *f,
-> > +			   u32 direction)
-> > +{
-> > +	struct cedrus_ctx *ctx =3D cedrus_file2ctx(file);
-> > +	struct cedrus_dev *dev =3D ctx->dev;
-> > +	unsigned int capabilities =3D dev->capabilities;
-> > +	struct cedrus_format *fmt;
-> > +	unsigned int i, index;
-> > +
-> > +	/* Index among formats that match the requested direction. */
-> > +	index =3D 0;
-> > +
-> > +	for (i =3D 0; i < CEDRUS_FORMATS_COUNT; i++) {
-> > +		fmt =3D &cedrus_formats[i];
-> > +
-> > +		if (fmt->capabilities && (fmt->capabilities & capabilities) !=3D
-> > +		    fmt->capabilities)
-> > +			continue;
-> > +
-> > +		if (!(cedrus_formats[i].directions & direction))
-> > +			continue;
-> > +
-> > +		if (index =3D=3D f->index)
-> > +			break;
-> > +
-> > +		index++;
-> > +	}
-> > +
-> > +	/* Matched format. */
-> > +	if (i < CEDRUS_FORMATS_COUNT) {
-> > +		f->pixelformat =3D cedrus_formats[i].pixelformat;
-> > +
-> > +		return 0;
-> > +	}
-> > +
-> > +	return -EINVAL;
-> > +}
-> > +
-> > +static int cedrus_enum_fmt_vid_cap(struct file *file, void *priv,
-> > +				   struct v4l2_fmtdesc *f)
-> > +{
-> > +	return cedrus_enum_fmt(file, f, CEDRUS_DECODE_DST);
-> > +}
-> > +
-> > +static int cedrus_enum_fmt_vid_out(struct file *file, void *priv,
-> > +				   struct v4l2_fmtdesc *f)
-> > +{
-> > +	return cedrus_enum_fmt(file, f, CEDRUS_DECODE_SRC);
-> > +}
-> > +
-> > +static int cedrus_g_fmt_vid_cap(struct file *file, void *priv,
-> > +				struct v4l2_format *f)
-> > +{
-> > +	struct cedrus_ctx *ctx =3D cedrus_file2ctx(file);
-> > +
-> > +	if (f->type !=3D V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE)
-> > +		return -EINVAL;
-> > +
-> > +	f->fmt.pix_mp =3D ctx->dst_fmt;
-> > +
-> > +	return 0;
-> > +}
-> > +
-> > +static int cedrus_g_fmt_vid_out(struct file *file, void *priv,
-> > +				struct v4l2_format *f)
-> > +{
-> > +	struct cedrus_ctx *ctx =3D cedrus_file2ctx(file);
-> > +
-> > +	if (f->type !=3D V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE)
-> > +		return -EINVAL;
-> > +
-> > +	f->fmt.pix_mp =3D ctx->src_fmt;
-> > +
-> > +	return 0;
-> > +}
-> > +
-> > +static int cedrus_try_fmt_vid_cap(struct file *file, void *priv,
-> > +				  struct v4l2_format *f)
-> > +{
-> > +	struct cedrus_ctx *ctx =3D cedrus_file2ctx(file);
-> > +	struct cedrus_dev *dev =3D ctx->dev;
-> > +	struct cedrus_format *fmt;
-> > +
-> > +	fmt =3D cedrus_find_format(f->fmt.pix_mp.pixelformat, CEDRUS_DECODE_D=
-ST,
-> > +				 dev->capabilities);
-> > +	if (!fmt)
-> > +		return -EINVAL;
-> > +
-> > +	cedrus_prepare_format(fmt, f);
-> > +
-> > +	/* Limit to hardware min/max. */
-> > +	f->fmt.pix_mp.width =3D clamp(f->fmt.pix_mp.width, CEDRUS_MIN_WIDTH,
-> > +				    CEDRUS_MAX_WIDTH);
-> > +	f->fmt.pix_mp.height =3D clamp(f->fmt.pix_mp.height, CEDRUS_MIN_HEIGH=
-T,
-> > +				     CEDRUS_MAX_HEIGHT);
-> > +
-> > +	return 0;
-> > +}
-> > +
-> > +static int cedrus_try_fmt_vid_out(struct file *file, void *priv,
-> > +				  struct v4l2_format *f)
-> > +{
-> > +	struct cedrus_ctx *ctx =3D cedrus_file2ctx(file);
-> > +	struct cedrus_dev *dev =3D ctx->dev;
-> > +	struct cedrus_format *fmt;
-> > +	struct v4l2_plane_pix_format *plane_fmt;
-> > +	unsigned int i;
-> > +
-> > +	fmt =3D cedrus_find_format(f->fmt.pix_mp.pixelformat, CEDRUS_DECODE_S=
-RC,
-> > +				 dev->capabilities);
-> > +	if (!fmt)
-> > +		return -EINVAL;
-> > +
-> > +	cedrus_prepare_format(fmt, f);
-> > +
-> > +	for (i =3D 0; i < f->fmt.pix_mp.num_planes; i++) {
-> > +		plane_fmt =3D &f->fmt.pix_mp.plane_fmt[i];
-> > +
-> > +		/* Source image size has to be given by userspace. */
-> > +		if (plane_fmt->sizeimage =3D=3D 0)
-> > +			return -EINVAL;
-> > +	}
-> > +
-> > +	return 0;
-> > +}
-> > +
-> > +static int cedrus_s_fmt_vid_cap(struct file *file, void *priv,
-> > +				struct v4l2_format *f)
-> > +{
-> > +	struct cedrus_ctx *ctx =3D cedrus_file2ctx(file);
-> > +	struct cedrus_dev *dev =3D ctx->dev;
-> > +	int ret;
-> > +
-> > +	ret =3D cedrus_try_fmt_vid_cap(file, priv, f);
-> > +	if (ret)
-> > +		return ret;
-> > +
-> > +	ctx->dst_fmt =3D f->fmt.pix_mp;
-> > +
-> > +	cedrus_dst_format_set(dev, &ctx->dst_fmt);
-> > +
-> > +	return 0;
-> > +}
-> > +
-> > +static int cedrus_s_fmt_vid_out(struct file *file, void *priv,
-> > +				struct v4l2_format *f)
-> > +{
-> > +	struct cedrus_ctx *ctx =3D cedrus_file2ctx(file);
-> > +	int ret;
-> > +
-> > +	ret =3D cedrus_try_fmt_vid_out(file, priv, f);
-> > +	if (ret)
-> > +		return ret;
-> > +
-> > +	ctx->src_fmt =3D f->fmt.pix_mp;
-> > +
-> > +	return 0;
-> > +}
-> > +
-> > +const struct v4l2_ioctl_ops cedrus_ioctl_ops =3D {
-> > +	.vidioc_querycap		=3D cedrus_querycap,
-> > +
-> > +	.vidioc_enum_fmt_vid_cap_mplane	=3D cedrus_enum_fmt_vid_cap,
-> > +	.vidioc_g_fmt_vid_cap_mplane	=3D cedrus_g_fmt_vid_cap,
-> > +	.vidioc_try_fmt_vid_cap_mplane	=3D cedrus_try_fmt_vid_cap,
-> > +	.vidioc_s_fmt_vid_cap_mplane	=3D cedrus_s_fmt_vid_cap,
-> > +
-> > +	.vidioc_enum_fmt_vid_out_mplane =3D cedrus_enum_fmt_vid_out,
-> > +	.vidioc_g_fmt_vid_out_mplane	=3D cedrus_g_fmt_vid_out,
-> > +	.vidioc_try_fmt_vid_out_mplane	=3D cedrus_try_fmt_vid_out,
-> > +	.vidioc_s_fmt_vid_out_mplane	=3D cedrus_s_fmt_vid_out,
-> > +
-> > +	.vidioc_reqbufs			=3D v4l2_m2m_ioctl_reqbufs,
-> > +	.vidioc_querybuf		=3D v4l2_m2m_ioctl_querybuf,
-> > +	.vidioc_qbuf			=3D v4l2_m2m_ioctl_qbuf,
-> > +	.vidioc_dqbuf			=3D v4l2_m2m_ioctl_dqbuf,
-> > +	.vidioc_prepare_buf		=3D v4l2_m2m_ioctl_prepare_buf,
-> > +	.vidioc_create_bufs		=3D v4l2_m2m_ioctl_create_bufs,
-> > +	.vidioc_expbuf			=3D v4l2_m2m_ioctl_expbuf,
-> > +
-> > +	.vidioc_streamon		=3D v4l2_m2m_ioctl_streamon,
-> > +	.vidioc_streamoff		=3D v4l2_m2m_ioctl_streamoff,
-> > +
-> > +	.vidioc_subscribe_event		=3D v4l2_ctrl_subscribe_event,
-> > +	.vidioc_unsubscribe_event	=3D v4l2_event_unsubscribe,
-> > +};
-> > +
-> > +static int cedrus_queue_setup(struct vb2_queue *vq, unsigned int *nbuf=
-s,
-> > +			      unsigned int *nplanes, unsigned int sizes[],
-> > +			      struct device *alloc_devs[])
-> > +{
-> > +	struct cedrus_ctx *ctx =3D vb2_get_drv_priv(vq);
-> > +	struct cedrus_dev *dev =3D ctx->dev;
-> > +	struct v4l2_pix_format_mplane *mplane_fmt;
-> > +	struct cedrus_format *fmt;
-> > +	unsigned int i;
-> > +
-> > +	switch (vq->type) {
-> > +	case V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE:
-> > +		mplane_fmt =3D &ctx->src_fmt;
-> > +		fmt =3D cedrus_find_format(mplane_fmt->pixelformat,
-> > +					 CEDRUS_DECODE_SRC,
-> > +					 dev->capabilities);
-> > +		break;
-> > +
-> > +	case V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE:
-> > +		mplane_fmt =3D &ctx->dst_fmt;
-> > +		fmt =3D cedrus_find_format(mplane_fmt->pixelformat,
-> > +					 CEDRUS_DECODE_DST,
-> > +					 dev->capabilities);
-> > +		break;
-> > +
-> > +	default:
-> > +		return -EINVAL;
-> > +	}
-> > +
-> > +	if (!fmt)
-> > +		return -EINVAL;
-> > +
-> > +	if (fmt->num_buffers =3D=3D 1) {
-> > +		sizes[0] =3D 0;
-> > +
-> > +		for (i =3D 0; i < fmt->num_planes; i++)
-> > +			sizes[0] +=3D mplane_fmt->plane_fmt[i].sizeimage;
-> > +	} else if (fmt->num_buffers =3D=3D fmt->num_planes) {
-> > +		for (i =3D 0; i < fmt->num_planes; i++)
-> > +			sizes[i] =3D mplane_fmt->plane_fmt[i].sizeimage;
-> > +	} else {
-> > +		return -EINVAL;
-> > +	}
-> > +
-> > +	*nplanes =3D fmt->num_buffers;
-> > +
-> > +	return 0;
-> > +}
-> > +
-> > +static int cedrus_buf_init(struct vb2_buffer *vb)
-> > +{
-> > +	struct vb2_queue *vq =3D vb->vb2_queue;
-> > +	struct cedrus_ctx *ctx =3D vb2_get_drv_priv(vq);
-> > +
-> > +	if (vq->type =3D=3D V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE)
-> > +		ctx->dst_bufs[vb->index] =3D vb;
-> > +
-> > +	return 0;
-> > +}
-> > +
-> > +static void cedrus_buf_cleanup(struct vb2_buffer *vb)
-> > +{
-> > +	struct vb2_queue *vq =3D vb->vb2_queue;
-> > +	struct cedrus_ctx *ctx =3D vb2_get_drv_priv(vq);
-> > +
-> > +	if (vq->type =3D=3D V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE)
-> > +		ctx->dst_bufs[vb->index] =3D NULL;
-> > +}
-> > +
-> > +static int cedrus_buf_prepare(struct vb2_buffer *vb)
-> > +{
-> > +	struct vb2_queue *vq =3D vb->vb2_queue;
-> > +	struct cedrus_ctx *ctx =3D vb2_get_drv_priv(vq);
-> > +	struct v4l2_pix_format_mplane *fmt;
-> > +	unsigned int buffer_size =3D 0;
-> > +	unsigned int format_size =3D 0;
-> > +	unsigned int i;
-> > +
-> > +	if (vq->type =3D=3D V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE)
-> > +		fmt =3D &ctx->src_fmt;
-> > +	else if (vq->type =3D=3D V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE)
-> > +		fmt =3D &ctx->dst_fmt;
-> > +	else
-> > +		return -EINVAL;
-> > +
-> > +	for (i =3D 0; i < vb->num_planes; i++)
-> > +		buffer_size +=3D vb2_plane_size(vb, i);
-> > +
-> > +	for (i =3D 0; i < fmt->num_planes; i++)
-> > +		format_size +=3D fmt->plane_fmt[i].sizeimage;
-> > +
-> > +	if (buffer_size < format_size)
-> > +		return -EINVAL;
-> > +
-> > +	return 0;
-> > +}
-> > +
-> > +static int cedrus_start_streaming(struct vb2_queue *q, unsigned int
-> > count)
-> > +{
-> > +	struct cedrus_ctx *ctx =3D vb2_get_drv_priv(q);
-> > +	struct cedrus_dev *dev =3D ctx->dev;
-> > +	int ret =3D 0;
-> > +
-> > +	switch (ctx->src_fmt.pixelformat) {
-> > +	case V4L2_PIX_FMT_MPEG2_SLICE:
-> > +		ctx->current_codec =3D CEDRUS_CODEC_MPEG2;
-> > +		break;
-> > +	default:
-> > +		return -EINVAL;
-> > +	}
-> > +
-> > +	if (V4L2_TYPE_IS_OUTPUT(q->type) &&
-> > +	    dev->dec_ops[ctx->current_codec]->start)
-> > +		ret =3D dev->dec_ops[ctx->current_codec]->start(ctx);
-> > +
-> > +	return ret;
-> > +}
-> > +
-> > +static void cedrus_stop_streaming(struct vb2_queue *q)
-> > +{
-> > +	struct cedrus_ctx *ctx =3D vb2_get_drv_priv(q);
-> > +	struct cedrus_dev *dev =3D ctx->dev;
-> > +	struct vb2_v4l2_buffer *vbuf;
-> > +	unsigned long flags;
-> > +
-> > +	flush_scheduled_work();
-> > +
-> > +	if (V4L2_TYPE_IS_OUTPUT(q->type) &&
-> > +	    dev->dec_ops[ctx->current_codec]->stop)
-> > +		dev->dec_ops[ctx->current_codec]->stop(ctx);
-> > +
-> > +	for (;;) {
-> > +		spin_lock_irqsave(&ctx->dev->irq_lock, flags);
-> > +
-> > +		if (V4L2_TYPE_IS_OUTPUT(q->type))
-> > +			vbuf =3D v4l2_m2m_src_buf_remove(ctx->fh.m2m_ctx);
-> > +		else
-> > +			vbuf =3D v4l2_m2m_dst_buf_remove(ctx->fh.m2m_ctx);
-> > +
-> > +		spin_unlock_irqrestore(&ctx->dev->irq_lock, flags);
-> > +
-> > +		if (!vbuf)
-> > +			return;
-> > +
-> > +		v4l2_ctrl_request_complete(vbuf->vb2_buf.req_obj.req,
-> > +					   &ctx->hdl);
-> > +		v4l2_m2m_buf_done(vbuf, VB2_BUF_STATE_ERROR);
-> > +	}
-> > +}
-> > +
-> > +static void cedrus_buf_queue(struct vb2_buffer *vb)
-> > +{
-> > +	struct vb2_v4l2_buffer *vbuf =3D to_vb2_v4l2_buffer(vb);
-> > +	struct cedrus_ctx *ctx =3D vb2_get_drv_priv(vb->vb2_queue);
-> > +
-> > +	v4l2_m2m_buf_queue(ctx->fh.m2m_ctx, vbuf);
-> > +}
-> > +
-> > +static void cedrus_buf_request_complete(struct vb2_buffer *vb)
-> > +{
-> > +	struct cedrus_ctx *ctx =3D vb2_get_drv_priv(vb->vb2_queue);
-> > +
-> > +	v4l2_ctrl_request_complete(vb->req_obj.req, &ctx->hdl);
-> > +}
-> > +
-> > +static struct vb2_ops cedrus_qops =3D {
-> > +	.queue_setup		=3D cedrus_queue_setup,
-> > +	.buf_prepare		=3D cedrus_buf_prepare,
-> > +	.buf_init		=3D cedrus_buf_init,
-> > +	.buf_cleanup		=3D cedrus_buf_cleanup,
-> > +	.buf_queue		=3D cedrus_buf_queue,
-> > +	.buf_request_complete	=3D cedrus_buf_request_complete,
-> > +	.start_streaming	=3D cedrus_start_streaming,
-> > +	.stop_streaming		=3D cedrus_stop_streaming,
-> > +	.wait_prepare		=3D vb2_ops_wait_prepare,
-> > +	.wait_finish		=3D vb2_ops_wait_finish,
-> > +};
-> > +
-> > +int cedrus_queue_init(void *priv, struct vb2_queue *src_vq,
-> > +		      struct vb2_queue *dst_vq)
-> > +{
-> > +	struct cedrus_ctx *ctx =3D priv;
-> > +	int ret;
-> > +
-> > +	src_vq->type =3D V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE;
-> > +	src_vq->io_modes =3D VB2_MMAP | VB2_DMABUF;
-> > +	src_vq->drv_priv =3D ctx;
-> > +	src_vq->buf_struct_size =3D sizeof(struct cedrus_buffer);
-> > +	src_vq->allow_zero_bytesused =3D 1;
-> > +	src_vq->min_buffers_needed =3D 1;
-> > +	src_vq->ops =3D &cedrus_qops;
-> > +	src_vq->mem_ops =3D &vb2_dma_contig_memops;
-> > +	src_vq->timestamp_flags =3D V4L2_BUF_FLAG_TIMESTAMP_COPY;
-> > +	src_vq->lock =3D &ctx->dev->dev_mutex;
-> > +	src_vq->dev =3D ctx->dev->dev;
-> > +
-> > +	ret =3D vb2_queue_init(src_vq);
-> > +	if (ret)
-> > +		return ret;
-> > +
-> > +	dst_vq->type =3D V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE;
-> > +	dst_vq->io_modes =3D VB2_MMAP | VB2_DMABUF;
-> > +	dst_vq->drv_priv =3D ctx;
-> > +	dst_vq->buf_struct_size =3D sizeof(struct cedrus_buffer);
-> > +	dst_vq->allow_zero_bytesused =3D 1;
-> > +	dst_vq->min_buffers_needed =3D 1;
-> > +	dst_vq->ops =3D &cedrus_qops;
-> > +	dst_vq->mem_ops =3D &vb2_dma_contig_memops;
-> > +	dst_vq->timestamp_flags =3D V4L2_BUF_FLAG_TIMESTAMP_COPY;
-> > +	dst_vq->lock =3D &ctx->dev->dev_mutex;
-> > +	dst_vq->dev =3D ctx->dev->dev;
-> > +
-> > +	return vb2_queue_init(dst_vq);
-> > +}
-> > diff --git a/drivers/staging/media/sunxi/cedrus/cedrus_video.h
-> > b/drivers/staging/media/sunxi/cedrus/cedrus_video.h new file mode 100644
-> > index 000000000000..56afcc8c02ba
-> > --- /dev/null
-> > +++ b/drivers/staging/media/sunxi/cedrus/cedrus_video.h
-> > @@ -0,0 +1,31 @@
-> > +/* SPDX-License-Identifier: GPL-2.0 */
-> > +/*
-> > + * Sunxi-Cedrus VPU driver
-> > + *
-> > + * Copyright (C) 2018 Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-> > + * Copyright (C) 2016 Florent Revest <florent.revest@free-electrons.co=
-m>
-> > + *
-> > + * Based on the vim2m driver, that is:
-> > + *
-> > + * Copyright (c) 2009-2010 Samsung Electronics Co., Ltd.
-> > + * Pawel Osciak, <pawel@osciak.com>
-> > + * Marek Szyprowski, <m.szyprowski@samsung.com>
-> > + */
-> > +
-> > +#ifndef _CEDRUS_VIDEO_H_
-> > +#define _CEDRUS_VIDEO_H_
-> > +
-> > +struct cedrus_format {
-> > +	u32		pixelformat;
-> > +	u32		directions;
-> > +	unsigned int	num_planes;
-> > +	unsigned int	num_buffers;
-> > +	unsigned int	capabilities;
-> > +};
-> > +
-> > +extern const struct v4l2_ioctl_ops cedrus_ioctl_ops;
-> > +
-> > +int cedrus_queue_init(void *priv, struct vb2_queue *src_vq,
-> > +		      struct vb2_queue *dst_vq);
-> > +
-> > +#endif
-
-
-
+diff --git a/arch/powerpc/kernel/traps.c b/arch/powerpc/kernel/traps.c
+index cbd3dc365193..4faab4705774 100644
+--- a/arch/powerpc/kernel/traps.c
++++ b/arch/powerpc/kernel/traps.c
+@@ -301,6 +301,13 @@ void user_single_step_siginfo(struct task_struct *tsk,
+ 	info->si_addr = (void __user *)regs->nip;
+ }
+ 
++static bool show_unhandled_signals_ratelimited(void)
++{
++	static DEFINE_RATELIMIT_STATE(rs, DEFAULT_RATELIMIT_INTERVAL,
++				      DEFAULT_RATELIMIT_BURST);
++	return show_unhandled_signals && __ratelimit(&rs);
++}
++
+ static void show_signal_msg(int signr, struct pt_regs *regs, int code,
+ 			    unsigned long addr)
+ {
+@@ -309,11 +316,12 @@ static void show_signal_msg(int signr, struct pt_regs *regs, int code,
+ 	const char fmt64[] = KERN_INFO "%s[%d]: unhandled signal %d " \
+ 		"at %016lx nip %016lx lr %016lx code %x\n";
+ 
+-	if (show_unhandled_signals && unhandled_signal(current, signr)) {
+-		printk_ratelimited(regs->msr & MSR_64BIT ? fmt64 : fmt32,
+-				   current->comm, current->pid, signr,
+-				   addr, regs->nip, regs->link, code);
+-	}
++	if (!unhandled_signal(current, signr))
++		return;
++
++	printk(regs->msr & MSR_64BIT ? fmt64 : fmt32,
++	       current->comm, current->pid, signr,
++	       addr, regs->nip, regs->link, code);
+ }
+ 
+ void _exception_pkey(int signr, struct pt_regs *regs, int code,
+@@ -326,7 +334,8 @@ void _exception_pkey(int signr, struct pt_regs *regs, int code,
+ 		return;
+ 	}
+ 
+-	show_signal_msg(signr, regs, code, addr);
++	if (show_unhandled_signals_ratelimited())
++		show_signal_msg(signr, regs, code, addr);
+ 
+ 	if (arch_irqs_disabled() && !arch_irq_disabled_regs(regs))
+ 		local_irq_enable();
+-- 
+2.17.1
 
