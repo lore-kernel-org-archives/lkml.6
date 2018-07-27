@@ -1,60 +1,70 @@
 Return-Path: <SRS0=OQFz=KL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: **
-X-Spam-Status: No, score=2.9 required=3.0 tests=DATE_IN_PAST_06_12,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,PHOTO_EDITING_FREEM,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE7A7C67790
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 16:14:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B724DC67790
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 16:17:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 73404208B0
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 16:14:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 73404208B0
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arvindguptatoys.com
+	by mail.kernel.org (Postfix) with ESMTP id 61A51208B0
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 16:17:17 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="OiwzAAak"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 61A51208B0
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lunn.ch
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388836AbeG0Rgf (ORCPT
+        id S1731974AbeG0Rju (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 13:36:35 -0400
-Received: from 93521.net ([185.232.65.148]:57108 "EHLO flyracing.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1732752AbeG0Rgf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 13:36:35 -0400
-To:     linux-kernel@vger.kernel.org
-Subject: need photos editing
-Message-ID: <8cdb988ed765e90600e2df4801086e2b@gotoilsupplies.com>
-Date:   Fri, 27 Jul 2018 11:02:37 +0200
-From:   "Jeremy" <dinsingi@arvindguptatoys.com>
-Reply-To: juhutanl@sina.com
+        Fri, 27 Jul 2018 13:39:50 -0400
+Received: from vps0.lunn.ch ([185.16.172.187]:48587 "EHLO vps0.lunn.ch"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730205AbeG0Rju (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Jul 2018 13:39:50 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch; s=20171124;
+        h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date; bh=a5s+NJD/X2YeL9w4XAwv6PBKR/Il0O23Lvdg0ZthFgc=;
+        b=OiwzAAakIVJzf3lv5U4ErfEKd+Hl5dtl9Q6Pto9fGIJKR0JXS/GHVOnCMA477jmFmpSkjQR2Bla31f+IhJuSEHb7F3BiPEKUpRe7oINb/On3vSo9yTrwdvapBrcVY8xqLAmkBsmtBo/qJwkCXELVl9c5U0EwLnml4js/k2rGgJc=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.84_2)
+        (envelope-from <andrew@lunn.ch>)
+        id 1fj5QR-0003a7-Kj; Fri, 27 Jul 2018 18:17:07 +0200
+Date:   Fri, 27 Jul 2018 18:17:07 +0200
+From:   Andrew Lunn <andrew@lunn.ch>
+To:     Anton Vasilyev <vasilyev@ispras.ru>
+Cc:     Florian Fainelli <f.fainelli@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        Jon Mason <jonmason@broadcom.com>,
+        bcm-kernel-feedback-list@broadcom.com, netdev@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        ldv-project@linuxtesting.org
+Subject: Re: [PATCH] net: mdio-mux: bcm-iproc: fix wrong getter and setter
+ pair
+Message-ID: <20180727161707.GP10686@lunn.ch>
+References: <20180727155747.24978-1-vasilyev@ispras.ru>
 MIME-Version: 1.0
-Content-Type: text/plain; format=flowed; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180727155747.24978-1-vasilyev@ispras.ru>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I would like to contact the person who manages your images for your
-company?
+On Fri, Jul 27, 2018 at 06:57:47PM +0300, Anton Vasilyev wrote:
+> mdio_mux_iproc_probe() uses platform_set_drvdata() to store md pointer
+> in device, whereas mdio_mux_iproc_remove() restores md pointer by
+> dev_get_platdata(&pdev->dev). This leads to wrong resources release.
+> 
+> The patch replaces getter to platform_get_drvdata.
+> 
+> Signed-off-by: Anton Vasilyev <vasilyev@ispras.ru>
 
-We services such as background image cut out, clipping path, shadow adding
-(drop shadow, reflection shadow, natural shadow, mirror effect), image
-masking, product image editing.
+Fixes: 98bc865a1ec8 ("net: mdio-mux: Add MDIO mux driver for iProc SoCs")
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 
-The following are the kind of services together:
-Clipping Path Service
-Cut out image,Image Clipping, Clip image
-Photo Masking Service
-Crop image, Photo cut out
-Beauty Retouching, Model retouching
-
-We can give you editing test on your photos.
-
-Also, we also use the most recent application as well as techniques such as
-Adobe Photoshop.
-
-Thanks,
-Jeremy
-
+    Andrew
