@@ -2,315 +2,232 @@ Return-Path: <SRS0=OQFz=KL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E59ABC67790
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 12:09:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A616EC6778F
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 12:10:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8A5B0208AC
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 12:09:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 26C23208AF
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 12:10:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="F9pRvE5D"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8A5B0208AC
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="qeqwXudQ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 26C23208AF
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730737AbeG0NbC (ORCPT
+        id S1730784AbeG0Nb7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 09:31:02 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33302 "EHLO mail.kernel.org"
+        Fri, 27 Jul 2018 09:31:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33366 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730126AbeG0NbC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 09:31:02 -0400
-Received: from [192.168.0.101] (unknown [180.111.102.36])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1729488AbeG0Nb7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Jul 2018 09:31:59 -0400
+Received: from localhost.localdomain (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B8210208A5;
-        Fri, 27 Jul 2018 12:09:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6AC11208AD;
+        Fri, 27 Jul 2018 12:10:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1532693364;
-        bh=Ur0eiALpQwLpWqj+Kvb4SOqnwY8n7Y2BvTuXFCJcA14=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=F9pRvE5DI/wccsuPH1OMFi52ghQtV/o6//Oj/6dHyo41y0fP30idXqEmZvIXnAVRL
-         eeT373yzj9MqxCYJXqzw81++ND9ZGNWwOsCo3vviuEm9bRLEseNtUgH9iE/41SNyE+
-         zgrTHPVNlzOrBVdb+gxTrUGHKnLrrLkw7Vau40j8=
-Subject: Re: [PATCH] f2fs: relocate f2fs_sanity_check_ckpt() and make it
- static
-To:     Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>
-Cc:     linux-f2fs-devel@lists.sourceforge.net,
-        linux-kernel@vger.kernel.org
-References: <20180726105411.115343-1-yuchao0@huawei.com>
- <20180727102516.GH16155@jaegeuk-macbookpro.roam.corp.google.com>
-From:   Chao Yu <chao@kernel.org>
-Message-ID: <3e2587dc-b060-5d95-8fe8-74f7831eba44@kernel.org>
-Date:   Fri, 27 Jul 2018 20:08:53 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        s=default; t=1532693420;
+        bh=NOG5CEnZYZjHqBTZJvBJl9eV5ddvKI7k35IQuWCm1vo=;
+        h=From:To:Cc:Subject:Date:From;
+        b=qeqwXudQkh757HVvz52Pvi0VizNFfepfnwq5cYC5eCTUNq3HoBazM1UM5VwcSw2U0
+         6C0uqygvgTywBxBkoRnx1FaQcl6Y0lRUkyI8wxMUcY3T9GbB1nA1ECS1z5KzLhUUeR
+         zka/IH5KnccCCPeB0FOFUb4qMqrOVql9vZD1TQ6U=
+From:   Masami Hiramatsu <mhiramat@kernel.org>
+To:     Shuah Khan <shuah@kernel.org>, Steven Rostedt <rostedt@goodmis.org>
+Cc:     Ingo Molnar <mingo@redhat.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 00/25] selftests/ftrace: Improve ftracetest with coverage check
+Date:   Fri, 27 Jul 2018 21:09:56 +0900
+Message-Id: <153269339575.3084.16279591141931053689.stgit@devbox>
+X-Mailer: git-send-email 2.13.6
+User-Agent: StGit/0.17.1-dirty
 MIME-Version: 1.0
-In-Reply-To: <20180727102516.GH16155@jaegeuk-macbookpro.roam.corp.google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jaegeuk,
+Hello,
 
-On 2018/7/27 18:25, Jaegeuk Kim wrote:
-> Hi Chao,
-> 
-> I don't see any reason to do this at all.
+Here is a series of patches for improving ftracetest testcase
+using gcov/lcov. It is still in progress, and I have got good
+improvement of line/function coverage under kernel/trace with
+this series. (Note that this kernel enables ftrace startup
+tests)
 
-Hmm.. f2fs_sanity_check_ckpt() is not used in super.c and there-in code logic is
-not related to super.c too, instead, it is all related to checkpoint.c.
+Without this series
+Lines:		10156	17200	59.0 %
+Functions:	1069	1772	60.3 %
 
-So I just want to unify maintaining checkpoint related functions, it may make
-code more clean.
+With this series
+Lines:		11130	17200	64.7 %
+Functions:	1185	1772	66.9 %
 
-Anyway, it's trivial cleanup, please ignore this patch if you don't want to do
-such relocation.
+Of course we don't need to make it 100%, because ftracetest
+is a function/specification test, and there are functions and
+lines which never be called (like critical error detection :) ).
+Also, ftrace has some amount of code for perf and bpf subsystem
+which should be tested by perf/bpf tests.
+However, GCOV(LCOV) gives us a good insight into which
+functions are covered or not covered by the test cases.
 
-Thanks,
+This series has some ftracetest framework improvements too,
+which are for debugging ftracetest itself.
 
-> 
-> Thanks,
-> 
-> On 07/26, Chao Yu wrote:
->> Signed-off-by: Chao Yu <yuchao0@huawei.com>
->> ---
->>  fs/f2fs/checkpoint.c | 93 +++++++++++++++++++++++++++++++++++++++++++-
->>  fs/f2fs/f2fs.h       |  1 -
->>  fs/f2fs/super.c      | 91 -------------------------------------------
->>  3 files changed, 92 insertions(+), 93 deletions(-)
->>
->> diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
->> index e010fecce097..7d16cb36be47 100644
->> --- a/fs/f2fs/checkpoint.c
->> +++ b/fs/f2fs/checkpoint.c
->> @@ -833,6 +833,97 @@ static struct page *validate_checkpoint(struct f2fs_sb_info *sbi,
->>  	return NULL;
->>  }
->>  
->> +static int sanity_check_ckpt(struct f2fs_sb_info *sbi)
->> +{
->> +	unsigned int total, fsmeta;
->> +	struct f2fs_super_block *raw_super = F2FS_RAW_SUPER(sbi);
->> +	struct f2fs_checkpoint *ckpt = F2FS_CKPT(sbi);
->> +	unsigned int ovp_segments, reserved_segments;
->> +	unsigned int main_segs, blocks_per_seg;
->> +	unsigned int sit_segs, nat_segs;
->> +	unsigned int sit_bitmap_size, nat_bitmap_size;
->> +	unsigned int log_blocks_per_seg;
->> +	unsigned int user_block_count;
->> +	unsigned int segment_count_main;
->> +	unsigned int cp_pack_start_sum, cp_blkaddr, cp_payload;
->> +	int i;
->> +
->> +	total = le32_to_cpu(raw_super->segment_count);
->> +	fsmeta = le32_to_cpu(raw_super->segment_count_ckpt);
->> +	sit_segs = le32_to_cpu(raw_super->segment_count_sit);
->> +	fsmeta += sit_segs;
->> +	nat_segs = le32_to_cpu(raw_super->segment_count_nat);
->> +	fsmeta += nat_segs;
->> +	fsmeta += le32_to_cpu(ckpt->rsvd_segment_count);
->> +	fsmeta += le32_to_cpu(raw_super->segment_count_ssa);
->> +
->> +	if (unlikely(fsmeta >= total))
->> +		return 1;
->> +
->> +	ovp_segments = le32_to_cpu(ckpt->overprov_segment_count);
->> +	reserved_segments = le32_to_cpu(ckpt->rsvd_segment_count);
->> +
->> +	if (unlikely(fsmeta < F2FS_MIN_SEGMENTS ||
->> +			ovp_segments == 0 || reserved_segments == 0)) {
->> +		f2fs_msg(sbi->sb, KERN_ERR,
->> +			"Wrong layout: check mkfs.f2fs version");
->> +		return 1;
->> +	}
->> +
->> +	user_block_count = le32_to_cpu(ckpt->user_block_count);
->> +	segment_count_main = le32_to_cpu(raw_super->segment_count_main);
->> +	log_blocks_per_seg = le32_to_cpu(raw_super->log_blocks_per_seg);
->> +	if (!user_block_count || user_block_count >=
->> +			segment_count_main << log_blocks_per_seg) {
->> +		f2fs_msg(sbi->sb, KERN_ERR,
->> +			"Wrong user_block_count: %u", user_block_count);
->> +		return 1;
->> +	}
->> +
->> +	main_segs = le32_to_cpu(raw_super->segment_count_main);
->> +	blocks_per_seg = sbi->blocks_per_seg;
->> +
->> +	for (i = 0; i < NR_CURSEG_NODE_TYPE; i++) {
->> +		if (le32_to_cpu(ckpt->cur_node_segno[i]) >= main_segs ||
->> +			le16_to_cpu(ckpt->cur_node_blkoff[i]) >= blocks_per_seg)
->> +			return 1;
->> +	}
->> +	for (i = 0; i < NR_CURSEG_DATA_TYPE; i++) {
->> +		if (le32_to_cpu(ckpt->cur_data_segno[i]) >= main_segs ||
->> +			le16_to_cpu(ckpt->cur_data_blkoff[i]) >= blocks_per_seg)
->> +			return 1;
->> +	}
->> +
->> +	sit_bitmap_size = le32_to_cpu(ckpt->sit_ver_bitmap_bytesize);
->> +	nat_bitmap_size = le32_to_cpu(ckpt->nat_ver_bitmap_bytesize);
->> +
->> +	if (sit_bitmap_size != ((sit_segs / 2) << log_blocks_per_seg) / 8 ||
->> +		nat_bitmap_size != ((nat_segs / 2) << log_blocks_per_seg) / 8) {
->> +		f2fs_msg(sbi->sb, KERN_ERR,
->> +			"Wrong bitmap size: sit: %u, nat:%u",
->> +			sit_bitmap_size, nat_bitmap_size);
->> +		return 1;
->> +	}
->> +
->> +	cp_pack_start_sum = __start_sum_addr(sbi);
->> +	cp_blkaddr = __start_cp_addr(sbi);
->> +	cp_payload = __cp_payload(sbi);
->> +	if (cp_pack_start_sum < cp_payload + 1 ||
->> +		cp_pack_start_sum > blocks_per_seg - 1 -
->> +			NR_CURSEG_TYPE) {
->> +		f2fs_msg(sbi->sb, KERN_ERR,
->> +			"Wrong cp_pack_start_sum: %u",
->> +			cp_pack_start_sum);
->> +		return 1;
->> +	}
->> +
->> +	if (unlikely(f2fs_cp_error(sbi))) {
->> +		f2fs_msg(sbi->sb, KERN_ERR, "A bug case: need to run fsck");
->> +		return 1;
->> +	}
->> +	return 0;
->> +}
->> +
->>  int f2fs_get_valid_checkpoint(struct f2fs_sb_info *sbi)
->>  {
->>  	struct f2fs_checkpoint *cp_block;
->> @@ -883,7 +974,7 @@ int f2fs_get_valid_checkpoint(struct f2fs_sb_info *sbi)
->>  		sbi->cur_cp_pack = 2;
->>  
->>  	/* Sanity checking of checkpoint */
->> -	if (f2fs_sanity_check_ckpt(sbi))
->> +	if (sanity_check_ckpt(sbi))
->>  		goto free_fail_no_cp;
->>  
->>  	if (cp_blks <= 1)
->> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
->> index adee43288593..fa5d0ebf8998 100644
->> --- a/fs/f2fs/f2fs.h
->> +++ b/fs/f2fs/f2fs.h
->> @@ -2817,7 +2817,6 @@ int f2fs_commit_super(struct f2fs_sb_info *sbi, bool recover);
->>  int f2fs_sync_fs(struct super_block *sb, int sync);
->>  extern __printf(3, 4)
->>  void f2fs_msg(struct super_block *sb, const char *level, const char *fmt, ...);
->> -int f2fs_sanity_check_ckpt(struct f2fs_sb_info *sbi);
->>  
->>  /*
->>   * hash.c
->> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
->> index 622acaab46b2..0eb5c9b659f7 100644
->> --- a/fs/f2fs/super.c
->> +++ b/fs/f2fs/super.c
->> @@ -2295,97 +2295,6 @@ static int sanity_check_raw_super(struct f2fs_sb_info *sbi,
->>  	return 0;
->>  }
->>  
->> -int f2fs_sanity_check_ckpt(struct f2fs_sb_info *sbi)
->> -{
->> -	unsigned int total, fsmeta;
->> -	struct f2fs_super_block *raw_super = F2FS_RAW_SUPER(sbi);
->> -	struct f2fs_checkpoint *ckpt = F2FS_CKPT(sbi);
->> -	unsigned int ovp_segments, reserved_segments;
->> -	unsigned int main_segs, blocks_per_seg;
->> -	unsigned int sit_segs, nat_segs;
->> -	unsigned int sit_bitmap_size, nat_bitmap_size;
->> -	unsigned int log_blocks_per_seg;
->> -	unsigned int user_block_count;
->> -	unsigned int segment_count_main;
->> -	unsigned int cp_pack_start_sum, cp_blkaddr, cp_payload;
->> -	int i;
->> -
->> -	total = le32_to_cpu(raw_super->segment_count);
->> -	fsmeta = le32_to_cpu(raw_super->segment_count_ckpt);
->> -	sit_segs = le32_to_cpu(raw_super->segment_count_sit);
->> -	fsmeta += sit_segs;
->> -	nat_segs = le32_to_cpu(raw_super->segment_count_nat);
->> -	fsmeta += nat_segs;
->> -	fsmeta += le32_to_cpu(ckpt->rsvd_segment_count);
->> -	fsmeta += le32_to_cpu(raw_super->segment_count_ssa);
->> -
->> -	if (unlikely(fsmeta >= total))
->> -		return 1;
->> -
->> -	ovp_segments = le32_to_cpu(ckpt->overprov_segment_count);
->> -	reserved_segments = le32_to_cpu(ckpt->rsvd_segment_count);
->> -
->> -	if (unlikely(fsmeta < F2FS_MIN_SEGMENTS ||
->> -			ovp_segments == 0 || reserved_segments == 0)) {
->> -		f2fs_msg(sbi->sb, KERN_ERR,
->> -			"Wrong layout: check mkfs.f2fs version");
->> -		return 1;
->> -	}
->> -
->> -	user_block_count = le32_to_cpu(ckpt->user_block_count);
->> -	segment_count_main = le32_to_cpu(raw_super->segment_count_main);
->> -	log_blocks_per_seg = le32_to_cpu(raw_super->log_blocks_per_seg);
->> -	if (!user_block_count || user_block_count >=
->> -			segment_count_main << log_blocks_per_seg) {
->> -		f2fs_msg(sbi->sb, KERN_ERR,
->> -			"Wrong user_block_count: %u", user_block_count);
->> -		return 1;
->> -	}
->> -
->> -	main_segs = le32_to_cpu(raw_super->segment_count_main);
->> -	blocks_per_seg = sbi->blocks_per_seg;
->> -
->> -	for (i = 0; i < NR_CURSEG_NODE_TYPE; i++) {
->> -		if (le32_to_cpu(ckpt->cur_node_segno[i]) >= main_segs ||
->> -			le16_to_cpu(ckpt->cur_node_blkoff[i]) >= blocks_per_seg)
->> -			return 1;
->> -	}
->> -	for (i = 0; i < NR_CURSEG_DATA_TYPE; i++) {
->> -		if (le32_to_cpu(ckpt->cur_data_segno[i]) >= main_segs ||
->> -			le16_to_cpu(ckpt->cur_data_blkoff[i]) >= blocks_per_seg)
->> -			return 1;
->> -	}
->> -
->> -	sit_bitmap_size = le32_to_cpu(ckpt->sit_ver_bitmap_bytesize);
->> -	nat_bitmap_size = le32_to_cpu(ckpt->nat_ver_bitmap_bytesize);
->> -
->> -	if (sit_bitmap_size != ((sit_segs / 2) << log_blocks_per_seg) / 8 ||
->> -		nat_bitmap_size != ((nat_segs / 2) << log_blocks_per_seg) / 8) {
->> -		f2fs_msg(sbi->sb, KERN_ERR,
->> -			"Wrong bitmap size: sit: %u, nat:%u",
->> -			sit_bitmap_size, nat_bitmap_size);
->> -		return 1;
->> -	}
->> -
->> -	cp_pack_start_sum = __start_sum_addr(sbi);
->> -	cp_blkaddr = __start_cp_addr(sbi);
->> -	cp_payload = __cp_payload(sbi);
->> -	if (cp_pack_start_sum < cp_payload + 1 ||
->> -		cp_pack_start_sum > blocks_per_seg - 1 -
->> -			NR_CURSEG_TYPE) {
->> -		f2fs_msg(sbi->sb, KERN_ERR,
->> -			"Wrong cp_pack_start_sum: %u",
->> -			cp_pack_start_sum);
->> -		return 1;
->> -	}
->> -
->> -	if (unlikely(f2fs_cp_error(sbi))) {
->> -		f2fs_msg(sbi->sb, KERN_ERR, "A bug case: need to run fsck");
->> -		return 1;
->> -	}
->> -	return 0;
->> -}
->> -
->>  static void init_sb_info(struct f2fs_sb_info *sbi)
->>  {
->>  	struct f2fs_super_block *raw_super = sbi->raw_super;
->> -- 
->> 2.18.0.rc1
+Tracing/Gcov-kernel:
+ - Add CONFIG_GCOV_PROFILE_FRACE, which enables gcov profiling
+   only on tracing subsystem (under kernel/trace/). This may not
+   needed for everyone (like a debugging feature).
+   So it can be dropped anyway.
+
+Ftracetest framework improvements:
+ - Add --stop-fail for detecting failure soon.
+ - Add --console for interactively debugging a testcase by shell.
+ - Add testcase-number prefix to logfile for finding log easier.
+ - Improve general init function
+ - Call general init function after all testcases.
+ - Remove init/cleanup code from all testcase (since general init
+   function will fixed it up)
+
+Testcase fixes:
+ - Fix to check $comm availability.
+ - Make checkbashisms clean
+
+Testcase improvements:
+ - Use loopback address instead of localhost
+ - Improve kprobe on module testcase to load/unload module
+ - Improve kprobe testcase to check log data
+ - Improve kretprobe testcase to check log data
+ - Test kprobe-event argument with various bitsize
+ - Check set_event_pid result
+
+Adding testcases:
+ - Add kprobe event with $comm argument testcase
+ - Add kprobe profile testcase
+ - Add kprobe-event with symbol argument test
+ - Add nop tracer testcase
+ - Add trace_printk sample module testcase
+ - Add ringbuffer size changing testcase
+ - Add function profiling statistics testcase
+ - Add max stack tracer testcase
+ - Add function filter on module testcase
+ - Add trace_pipe testcase
+ 
+TBD:
+Following testcase improvements are remaining.
+ - Checking of various supported types (like u8, u64 etc.)
+   testcases
+ - Filter actions for ftrace testcases
+
+Thank you,
+
+---
+
+Masami Hiramatsu (25):
+      tracing: Allow gcov profiling on only ftrace subsystem
+      selftests/ftrace: Add --stop-fail hidden option for debug
+      selftests/ftrace: Add --console hidden option
+      selftests/ftrace: Add case number prefix to logfile
+      selftests/ftrace: More initialize features in initialize_ftrace
+      selftests/ftrace: Cleanup ftrace after running test
+      selftests/ftrace: Remove unneeded per-test init/cleanup ftrace
+      selftests/ftrace: Fix to test kprobe $comm arg only if available
+      selftests/ftrace: Fix checkbashisms errors
+      selftests/ftrace: Use loopback address instead of localhost
+      selftests/ftrace: Improve kprobe on module testcase to load/unload module
+      selftests/ftrace: Improve kprobe testcase to check log data
+      selftests/ftrace: Improve kretprobe testcase to check log data
+      selftests/ftrace: Test kprobe-event argument with various bitsize
+      selftests/ftrace: Check set_event_pid result
+      selftests/ftrace: Add kprobe event with $comm argument testcase
+      selftests/ftrace: Add kprobe profile testcase
+      selftests/ftrace: Add a testcase for nop tracer
+      selftests/ftrace: Add kprobe-event with symbol argument test
+      selftests/ftrace: Add trace_printk sample module test
+      selftests/ftrace: Add ringbuffer size changing testcase
+      selftests/ftrace: Add function profiling stat testcase
+      selftests/ftrace: Add max stack tracer testcase
+      selftests/ftrace: Add function filter on module testcase
+      selftests/ftrace: Add trace_pipe testcase
+
+
+ kernel/trace/Kconfig                               |   13 +++++
+ kernel/trace/Makefile                              |    5 ++
+ tools/testing/selftests/ftrace/config              |    5 ++
+ tools/testing/selftests/ftrace/ftracetest          |   32 +++++++++++-
+ .../ftrace/test.d/00basic/ringbuffer_size.tc       |   21 ++++++++
+ .../selftests/ftrace/test.d/00basic/trace_pipe.tc  |   15 ++++++
+ .../selftests/ftrace/test.d/event/event-enable.tc  |    8 ---
+ .../selftests/ftrace/test.d/event/event-pid.tc     |    6 +-
+ .../ftrace/test.d/event/subsystem-enable.tc        |    8 ---
+ .../ftrace/test.d/event/toplevel-enable.tc         |    8 ---
+ .../selftests/ftrace/test.d/event/trace_printk.tc  |   27 ++++++++++
+ .../ftrace/test.d/ftrace/fgraph-filter-stack.tc    |    4 --
+ .../ftrace/test.d/ftrace/fgraph-filter.tc          |    9 ---
+ .../ftrace/test.d/ftrace/func-filter-pid.tc        |    8 ---
+ .../ftrace/test.d/ftrace/func_event_triggers.tc    |    3 -
+ .../ftrace/test.d/ftrace/func_mod_trace.tc         |   24 +++++++++
+ .../ftrace/test.d/ftrace/func_profile_stat.tc      |   23 +++++++++
+ .../ftrace/test.d/ftrace/func_profiler.tc          |    4 --
+ .../ftrace/test.d/ftrace/func_set_ftrace_file.tc   |   13 -----
+ .../ftrace/test.d/ftrace/func_stack_tracer.tc      |   39 +++++++++++++++
+ .../test.d/ftrace/func_traceonoff_triggers.tc      |   11 ----
+ tools/testing/selftests/ftrace/test.d/functions    |    4 ++
+ .../ftrace/test.d/kprobe/add_and_remove.tc         |    3 -
+ .../selftests/ftrace/test.d/kprobe/busy_check.tc   |    3 -
+ .../selftests/ftrace/test.d/kprobe/kprobe_args.tc  |    8 ++-
+ .../ftrace/test.d/kprobe/kprobe_args_comm.tc       |   17 +++++++
+ .../ftrace/test.d/kprobe/kprobe_args_string.tc     |    5 --
+ .../ftrace/test.d/kprobe/kprobe_args_symbol.tc     |   39 +++++++++++++++
+ .../ftrace/test.d/kprobe/kprobe_args_syntax.tc     |    8 +--
+ .../ftrace/test.d/kprobe/kprobe_args_type.tc       |   52 ++++++++++++--------
+ .../ftrace/test.d/kprobe/kprobe_eventname.tc       |    5 --
+ .../ftrace/test.d/kprobe/kprobe_ftrace.tc          |    9 ---
+ .../ftrace/test.d/kprobe/kprobe_module.tc          |   36 ++++++++++++--
+ .../ftrace/test.d/kprobe/kretprobe_args.tc         |    9 ++-
+ .../ftrace/test.d/kprobe/kretprobe_maxactive.tc    |    4 --
+ .../ftrace/test.d/kprobe/multiple_kprobes.tc       |    5 --
+ .../selftests/ftrace/test.d/kprobe/probepoint.tc   |    4 --
+ .../selftests/ftrace/test.d/kprobe/profile.tc      |   15 ++++++
+ .../testing/selftests/ftrace/test.d/tracer/nop.tc  |   22 ++++++++
+ .../inter-event/trigger-extended-error-support.tc  |   12 -----
+ .../inter-event/trigger-field-variable-support.tc  |   15 ------
+ .../trigger-inter-event-combined-hist.tc           |   15 ------
+ .../inter-event/trigger-multi-actions-accept.tc    |   14 -----
+ .../inter-event/trigger-onmatch-action-hist.tc     |   15 ------
+ .../trigger-onmatch-onmax-action-hist.tc           |   15 ------
+ .../inter-event/trigger-onmax-action-hist.tc       |   15 ------
+ .../trigger-synthetic-event-createremove.tc        |   12 -----
+ .../ftrace/test.d/trigger/trigger-eventonoff.tc    |   12 -----
+ .../ftrace/test.d/trigger/trigger-filter.tc        |   14 -----
+ .../ftrace/test.d/trigger/trigger-hist-mod.tc      |   12 -----
+ .../ftrace/test.d/trigger/trigger-hist.tc          |   12 -----
+ .../ftrace/test.d/trigger/trigger-multihist.tc     |   16 ------
+ .../ftrace/test.d/trigger/trigger-snapshot.tc      |   12 -----
+ .../ftrace/test.d/trigger/trigger-stacktrace.tc    |   12 -----
+ .../test.d/trigger/trigger-trace-marker-hist.tc    |   11 ----
+ .../trigger/trigger-trace-marker-snapshot.tc       |   16 +-----
+ .../trigger-trace-marker-synthetic-kernel.tc       |   12 -----
+ .../trigger/trigger-trace-marker-synthetic.tc      |   12 -----
+ .../ftrace/test.d/trigger/trigger-traceonoff.tc    |   12 -----
+ 59 files changed, 388 insertions(+), 412 deletions(-)
+ create mode 100644 tools/testing/selftests/ftrace/test.d/00basic/ringbuffer_size.tc
+ create mode 100644 tools/testing/selftests/ftrace/test.d/00basic/trace_pipe.tc
+ create mode 100644 tools/testing/selftests/ftrace/test.d/event/trace_printk.tc
+ create mode 100644 tools/testing/selftests/ftrace/test.d/ftrace/func_mod_trace.tc
+ create mode 100644 tools/testing/selftests/ftrace/test.d/ftrace/func_profile_stat.tc
+ create mode 100644 tools/testing/selftests/ftrace/test.d/ftrace/func_stack_tracer.tc
+ create mode 100644 tools/testing/selftests/ftrace/test.d/kprobe/kprobe_args_comm.tc
+ create mode 100644 tools/testing/selftests/ftrace/test.d/kprobe/kprobe_args_symbol.tc
+ create mode 100644 tools/testing/selftests/ftrace/test.d/kprobe/profile.tc
+ create mode 100644 tools/testing/selftests/ftrace/test.d/tracer/nop.tc
+
+--
+Masami Hiramatsu (Linaro)
