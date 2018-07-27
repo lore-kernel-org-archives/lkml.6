@@ -3,57 +3,57 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5989C6778F
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 13:16:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B72BC6778F
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 13:16:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 70676208B0
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 13:16:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 70676208B0
+	by mail.kernel.org (Postfix) with ESMTP id 33496208B0
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 13:16:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 33496208B0
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=st.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388712AbeG0Oh2 (ORCPT
+        id S2388868AbeG0OiC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 10:37:28 -0400
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:39866 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2388662AbeG0Oh1 (ORCPT
+        Fri, 27 Jul 2018 10:38:02 -0400
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:43928 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1730706AbeG0Oh2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 10:37:27 -0400
-Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
-        by mx08-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id w6RDE244014483;
-        Fri, 27 Jul 2018 15:15:31 +0200
+        Fri, 27 Jul 2018 10:37:28 -0400
+Received: from pps.filterd (m0046037.ppops.net [127.0.0.1])
+        by mx07-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id w6RDETgI024981;
+        Fri, 27 Jul 2018 15:15:26 +0200
 Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx08-00178001.pphosted.com with ESMTP id 2kg1tj8pu9-1
+        by mx07-00178001.pphosted.com with ESMTP id 2kg1up0nsa-1
         (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Fri, 27 Jul 2018 15:15:31 +0200
+        Fri, 27 Jul 2018 15:15:26 +0200
 Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 1CDD834;
-        Fri, 27 Jul 2018 13:15:31 +0000 (GMT)
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 1B40D31;
+        Fri, 27 Jul 2018 13:15:26 +0000 (GMT)
 Received: from Webmail-eu.st.com (sfhdag7node2.st.com [10.75.127.20])
-        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id EEB92577A;
-        Fri, 27 Jul 2018 13:15:30 +0000 (GMT)
-Received: from localhost (10.75.127.50) by SFHDAG7NODE2.st.com (10.75.127.20)
- with Microsoft SMTP Server (TLS) id 15.0.1347.2; Fri, 27 Jul 2018 15:15:30
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id F138A577A;
+        Fri, 27 Jul 2018 13:15:25 +0000 (GMT)
+Received: from localhost (10.75.127.49) by SFHDAG7NODE2.st.com (10.75.127.20)
+ with Microsoft SMTP Server (TLS) id 15.0.1347.2; Fri, 27 Jul 2018 15:15:25
  +0200
 From:   Loic Pallardy <loic.pallardy@st.com>
 To:     <bjorn.andersson@linaro.org>, <ohad@wizery.com>
 CC:     <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <arnaud.pouliquen@st.com>, <benjamin.gaignard@linaro.org>,
         <s-anna@ti.com>, Loic Pallardy <loic.pallardy@st.com>
-Subject: [PATCH v4 13/17] remoteproc: create vdev subdevice with specific dma memory pool
-Date:   Fri, 27 Jul 2018 15:14:48 +0200
-Message-ID: <1532697292-14272-14-git-send-email-loic.pallardy@st.com>
+Subject: [PATCH v4 08/17] remoteproc: add alloc ops in rproc_mem_entry struct
+Date:   Fri, 27 Jul 2018 15:14:43 +0200
+Message-ID: <1532697292-14272-9-git-send-email-loic.pallardy@st.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1532697292-14272-1-git-send-email-loic.pallardy@st.com>
 References: <1532697292-14272-1-git-send-email-loic.pallardy@st.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-X-Originating-IP: [10.75.127.50]
-X-ClientProxiedBy: SFHDAG8NODE1.st.com (10.75.127.22) To SFHDAG7NODE2.st.com
+X-Originating-IP: [10.75.127.49]
+X-ClientProxiedBy: SFHDAG4NODE1.st.com (10.75.127.10) To SFHDAG7NODE2.st.com
  (10.75.127.20)
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-27_06:,,
  signatures=0
@@ -62,203 +62,406 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch creates a dedicated vdev subdevice for each vdev declared
-in firmware resource table and associates carveout named "vdev%dbuffer"
-(with %d vdev index in resource table) if any as dma coherent memory pool.
+Memory entry could be allocated in different ways (ioremap,
+dma_alloc_coherent, internal RAM allocator...).
+This patch introduces an alloc ops in rproc_mem_entry structure
+to associate dedicated allocation mechanism to each memory entry
+descriptor in order to do remote core agnostic from memory allocators.
 
-Then vdev subdevice is used as parent for virtio device.
+The introduction of this ops allows to perform allocation of all registered
+carveout at the same time, just before calling rproc_start().
+It simplifies and makes uniform carveout management whatever origin.
 
 Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
 ---
- drivers/remoteproc/remoteproc_core.c     | 35 +++++++++++++++++++++++---
- drivers/remoteproc/remoteproc_internal.h |  1 +
- drivers/remoteproc/remoteproc_virtio.c   | 42 +++++++++++++++++++++++++++++++-
- include/linux/remoteproc.h               |  1 +
- 4 files changed, 75 insertions(+), 4 deletions(-)
+ drivers/remoteproc/remoteproc_core.c | 261 ++++++++++++++++++++++-------------
+ include/linux/remoteproc.h           |   7 +
+ 2 files changed, 175 insertions(+), 93 deletions(-)
 
 diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index 4edc6f0..adcc66e 100644
+index 77b39ba..2c51549 100644
 --- a/drivers/remoteproc/remoteproc_core.c
 +++ b/drivers/remoteproc/remoteproc_core.c
-@@ -39,6 +39,7 @@
- #include <linux/idr.h>
- #include <linux/elf.h>
- #include <linux/crc32.h>
-+#include <linux/of_reserved_mem.h>
- #include <linux/virtio_ids.h>
- #include <linux/virtio_ring.h>
- #include <asm/byteorder.h>
-@@ -145,7 +146,7 @@ static void rproc_disable_iommu(struct rproc *rproc)
- 	iommu_domain_free(domain);
+@@ -642,74 +642,31 @@ static int rproc_handle_devmem(struct rproc *rproc, struct fw_rsc_devmem *rsc,
  }
  
--static phys_addr_t rproc_va_to_pa(void *cpu_addr)
-+phys_addr_t rproc_va_to_pa(void *cpu_addr)
+ /**
+- * rproc_release_carveout() - release acquired carveout
++ * rproc_alloc_carveout() - allocated specified carveout
+  * @rproc: rproc handle
+- * @mem: the memory entry to release
+- *
+- * This function releases specified memory entry @mem allocated via
+- * dma_alloc_coherent() function by @rproc.
+- */
+-static int rproc_release_carveout(struct rproc *rproc,
+-				  struct rproc_mem_entry *mem)
+-{
+-	struct device *dev = &rproc->dev;
+-
+-	/* clean up carveout allocations */
+-	dma_free_coherent(dev->parent, mem->len, mem->va, mem->dma);
+-	return 0;
+-}
+-
+-/**
+- * rproc_handle_carveout() - handle phys contig memory allocation requests
+- * @rproc: rproc handle
+- * @rsc: the resource entry
+- * @avail: size of available data (for image validation)
+- *
+- * This function will handle firmware requests for allocation of physically
+- * contiguous memory regions.
+- *
+- * These request entries should come first in the firmware's resource table,
+- * as other firmware entries might request placing other data objects inside
+- * these memory regions (e.g. data/code segments, trace resource entries, ...).
++ * @mem: the memory entry to allocate
+  *
+- * Allocating memory this way helps utilizing the reserved physical memory
+- * (e.g. CMA) more efficiently, and also minimizes the number of TLB entries
+- * needed to map it (in case @rproc is using an IOMMU). Reducing the TLB
+- * pressure is important; it may have a substantial impact on performance.
++ * This function allocate specified memory entry @mem using
++ * dma_alloc_coherent() as default allocator
+  */
+-static int rproc_handle_carveout(struct rproc *rproc,
+-				 struct fw_rsc_carveout *rsc,
+-				 int offset, int avail)
++static int rproc_alloc_carveout(struct rproc *rproc,
++				struct rproc_mem_entry *mem)
  {
- 	/*
- 	 * Return physical address according to virtual address location
-@@ -160,6 +161,7 @@ static phys_addr_t rproc_va_to_pa(void *cpu_addr)
- 	WARN_ON(!virt_addr_valid(cpu_addr));
- 	return virt_to_phys(cpu_addr);
- }
-+EXPORT_SYMBOL(rproc_va_to_pa);
- 
- /**
-  * rproc_da_to_va() - lookup the kernel virtual address for a remoteproc address
-@@ -423,6 +425,20 @@ static void rproc_vdev_do_stop(struct rproc_subdev *subdev, bool crashed)
- }
- 
- /**
-+ * rproc_rvdev_release() - release the existence of a rvdev
-+ *
-+ * @dev: the subdevice's dev
-+ */
-+static void rproc_rvdev_release(struct device *dev)
-+{
-+	struct rproc_vdev *rvdev = container_of(dev, struct rproc_vdev, dev);
-+
-+	of_reserved_mem_device_release(dev);
-+
-+	kfree(rvdev);
-+}
-+
-+/**
-  * rproc_handle_vdev() - handle a vdev fw resource
-  * @rproc: the remote processor
-  * @rsc: the vring resource descriptor
-@@ -455,6 +471,7 @@ static int rproc_handle_vdev(struct rproc *rproc, struct fw_rsc_vdev *rsc,
+-	struct rproc_mem_entry *carveout, *mapping = NULL;
++	struct rproc_mem_entry *mapping = NULL;
  	struct device *dev = &rproc->dev;
- 	struct rproc_vdev *rvdev;
- 	int i, ret;
-+	char name[16];
+ 	dma_addr_t dma;
+ 	void *va;
+ 	int ret;
  
- 	/* make sure resource isn't truncated */
- 	if (sizeof(*rsc) + rsc->num_of_vrings * sizeof(struct fw_rsc_vdev_vring)
-@@ -488,6 +505,18 @@ static int rproc_handle_vdev(struct rproc *rproc, struct fw_rsc_vdev *rsc,
- 	rvdev->rproc = rproc;
- 	rvdev->index = rproc->nb_vdev++;
+-	if (sizeof(*rsc) > avail) {
+-		dev_err(dev, "carveout rsc is truncated\n");
+-		return -EINVAL;
+-	}
+-
+-	/* make sure reserved bytes are zeroes */
+-	if (rsc->reserved) {
+-		dev_err(dev, "carveout rsc has non zero reserved bytes\n");
+-		return -EINVAL;
+-	}
+-
+-	dev_dbg(dev, "carveout rsc: name: %s, da 0x%x, pa 0x%x, len 0x%x, flags 0x%x\n",
+-		rsc->name, rsc->da, rsc->pa, rsc->len, rsc->flags);
+-
+-	va = dma_alloc_coherent(dev->parent, rsc->len, &dma, GFP_KERNEL);
++	va = dma_alloc_coherent(dev->parent, mem->len, &dma, GFP_KERNEL);
+ 	if (!va) {
+ 		dev_err(dev->parent,
+-			"failed to allocate dma memory: len 0x%x\n", rsc->len);
++			"failed to allocate dma memory: len 0x%x\n", mem->len);
+ 		return -ENOMEM;
+ 	}
  
-+	/* Initialise vdev subdevice */
-+	snprintf(name, sizeof(name), "vdev%dbuffer", rvdev->index);
-+	rvdev->dev.parent = rproc->dev.parent;
-+	rvdev->dev.release = rproc_rvdev_release;
-+	dev_set_name(&rvdev->dev, "%s#%s", dev_name(rvdev->dev.parent), name);
-+	dev_set_drvdata(&rvdev->dev, rvdev);
-+	dma_set_coherent_mask(&rvdev->dev, DMA_BIT_MASK(32));
-+
-+	ret = device_register(&rvdev->dev);
-+	if (ret)
-+		goto free_rvdev;
-+
- 	/* parse the vrings */
- 	for (i = 0; i < rsc->num_of_vrings; i++) {
- 		ret = rproc_parse_vring(rvdev, rsc, i);
-@@ -518,7 +547,7 @@ static int rproc_handle_vdev(struct rproc *rproc, struct fw_rsc_vdev *rsc,
- 	for (i--; i >= 0; i--)
- 		rproc_free_vring(&rvdev->vring[i]);
- free_rvdev:
--	kfree(rvdev);
-+	device_unregister(&rvdev->dev);
+ 	dev_dbg(dev, "carveout va %pK, dma %pad, len 0x%x\n",
+-		va, &dma, rsc->len);
++		va, &dma, mem->len);
+ 
+ 	/*
+ 	 * Ok, this is non-standard.
+@@ -729,22 +686,22 @@ static int rproc_handle_carveout(struct rproc *rproc,
+ 	 * physical address in this case.
+ 	 */
+ 
+-	if (rsc->da != FW_RSC_ADDR_ANY && !rproc->domain) {
+-		dev_err(dev->parent,
+-			"Bad carveout rsc configuration\n");
+-		ret = -ENOMEM;
+-		goto dma_free;
+-	}
++	if (mem->da != FW_RSC_ADDR_ANY) {
++		if (!rproc->domain) {
++			dev_err(dev->parent,
++				"Bad carveout rsc configuration\n");
++			ret = -ENOMEM;
++			goto dma_free;
++		}
+ 
+-	if (rsc->da != FW_RSC_ADDR_ANY && rproc->domain) {
+ 		mapping = kzalloc(sizeof(*mapping), GFP_KERNEL);
+ 		if (!mapping) {
+ 			ret = -ENOMEM;
+ 			goto dma_free;
+ 		}
+ 
+-		ret = iommu_map(rproc->domain, rsc->da, dma, rsc->len,
+-				rsc->flags);
++		ret = iommu_map(rproc->domain, mem->da, dma, mem->len,
++				mem->flags);
+ 		if (ret) {
+ 			dev_err(dev, "iommu_map failed: %d\n", ret);
+ 			goto free_mapping;
+@@ -757,52 +714,102 @@ static int rproc_handle_carveout(struct rproc *rproc,
+ 		 * We can't trust the remote processor not to change the
+ 		 * resource table, so we must maintain this info independently.
+ 		 */
+-		mapping->da = rsc->da;
+-		mapping->len = rsc->len;
++		mapping->da = mem->da;
++		mapping->len = mem->len;
+ 		list_add_tail(&mapping->node, &rproc->mappings);
+ 
+ 		dev_dbg(dev, "carveout mapped 0x%x to %pad\n",
+-			rsc->da, &dma);
++			mem->da, &dma);
++	} else {
++		mem->da = (u32)dma;
+ 	}
+ 
+-	/*
+-	 * Some remote processors might need to know the pa
+-	 * even though they are behind an IOMMU. E.g., OMAP4's
+-	 * remote M3 processor needs this so it can control
+-	 * on-chip hardware accelerators that are not behind
+-	 * the IOMMU, and therefor must know the pa.
+-	 *
+-	 * Generally we don't want to expose physical addresses
+-	 * if we don't have to (remote processors are generally
+-	 * _not_ trusted), so we might want to do this only for
+-	 * remote processor that _must_ have this (e.g. OMAP4's
+-	 * dual M3 subsystem).
+-	 *
+-	 * Non-IOMMU processors might also want to have this info.
+-	 * In this case, the device address and the physical address
+-	 * are the same.
+-	 */
+-	rsc->pa = (u32)rproc_va_to_pa(va);
+-
+-	carveout = rproc_mem_entry_init(dev, va, dma, rsc->len, rsc->da,
+-					rproc_release_carveout, rsc->name);
+-	if (!carveout)
+-		goto free_carv;
+-
+-	rproc_add_carveout(rproc, carveout);
++	mem->dma = (u32)dma;
++	mem->va = va;
+ 
+ 	return 0;
+ 
+-free_carv:
+-	kfree(carveout);
+ free_mapping:
+ 	kfree(mapping);
+ dma_free:
+-	dma_free_coherent(dev->parent, rsc->len, va, dma);
++	dma_free_coherent(dev->parent, mem->len, va, dma);
  	return ret;
  }
  
-@@ -536,7 +565,7 @@ void rproc_vdev_release(struct kref *ref)
+ /**
++ * rproc_release_carveout() - release acquired carveout
++ * @rproc: rproc handle
++ * @mem: the memory entry to release
++ *
++ * This function releases specified memory entry @mem allocated via
++ * rproc_alloc_carveout() function by @rproc.
++ */
++static int rproc_release_carveout(struct rproc *rproc,
++				  struct rproc_mem_entry *mem)
++{
++	struct device *dev = &rproc->dev;
++
++	/* clean up carveout allocations */
++	dma_free_coherent(dev->parent, mem->len, mem->va, mem->dma);
++	return 0;
++}
++
++/**
++ * rproc_handle_carveout() - handle phys contig memory allocation requests
++ * @rproc: rproc handle
++ * @rsc: the resource entry
++ * @avail: size of available data (for image validation)
++ *
++ * This function will handle firmware requests for allocation of physically
++ * contiguous memory regions.
++ *
++ * These request entries should come first in the firmware's resource table,
++ * as other firmware entries might request placing other data objects inside
++ * these memory regions (e.g. data/code segments, trace resource entries, ...).
++ *
++ * Allocating memory this way helps utilizing the reserved physical memory
++ * (e.g. CMA) more efficiently, and also minimizes the number of TLB entries
++ * needed to map it (in case @rproc is using an IOMMU). Reducing the TLB
++ * pressure is important; it may have a substantial impact on performance.
++ */
++static int rproc_handle_carveout(struct rproc *rproc,
++				 struct fw_rsc_carveout *rsc,
++				 int offset, int avail)
++{
++	struct rproc_mem_entry *carveout;
++	struct device *dev = &rproc->dev;
++
++	if (sizeof(*rsc) > avail) {
++		dev_err(dev, "carveout rsc is truncated\n");
++		return -EINVAL;
++	}
++
++	/* make sure reserved bytes are zeroes */
++	if (rsc->reserved) {
++		dev_err(dev, "carveout rsc has non zero reserved bytes\n");
++		return -EINVAL;
++	}
++
++	dev_dbg(dev, "carveout rsc: name: %s, da 0x%x, pa 0x%x, len 0x%x, flags 0x%x\n",
++		rsc->name, rsc->da, rsc->pa, rsc->len, rsc->flags);
++
++	/* Register carveout in in list */
++	carveout = rproc_mem_entry_init(dev, 0, 0, rsc->len, rsc->da,
++					rproc_alloc_carveout,
++					rproc_release_carveout, rsc->name);
++	if (!carveout) {
++		dev_err(dev, "Can't allocate memory entry structure\n");
++		return -ENOMEM;
++	}
++
++	carveout->flags = rsc->flags;
++	carveout->rsc_offset = offset;
++	rproc_add_carveout(rproc, carveout);
++
++	return 0;
++}
++
++/**
+  * rproc_add_carveout() - register an allocated carveout region
+  * @rproc: rproc handle
+  * @mem: memory entry to register
+@@ -832,6 +839,7 @@ void rproc_add_carveout(struct rproc *rproc, struct rproc_mem_entry *mem)
+ struct rproc_mem_entry *
+ rproc_mem_entry_init(struct device *dev,
+ 		     void *va, dma_addr_t dma, int len, u32 da,
++		     int (*alloc)(struct rproc *, struct rproc_mem_entry *),
+ 		     int (*release)(struct rproc *, struct rproc_mem_entry *),
+ 		     const char *name, ...)
+ {
+@@ -846,7 +854,9 @@ struct rproc_mem_entry *
+ 	mem->dma = dma;
+ 	mem->da = da;
+ 	mem->len = len;
++	mem->alloc = alloc;
+ 	mem->release = release;
++	mem->rsc_offset = FW_RSC_ADDR_ANY;
  
- 	rproc_remove_subdev(rproc, &rvdev->subdev);
- 	list_del(&rvdev->node);
--	kfree(rvdev);
-+	device_unregister(&rvdev->dev);
+ 	va_start(args, name);
+ 	vsnprintf(mem->name, sizeof(mem->name), name, args);
+@@ -978,6 +988,63 @@ static void rproc_unprepare_subdevices(struct rproc *rproc)
  }
  
  /**
-diff --git a/drivers/remoteproc/remoteproc_internal.h b/drivers/remoteproc/remoteproc_internal.h
-index f6cad24..bfeacfd 100644
---- a/drivers/remoteproc/remoteproc_internal.h
-+++ b/drivers/remoteproc/remoteproc_internal.h
-@@ -52,6 +52,7 @@ struct dentry *rproc_create_trace_file(const char *name, struct rproc *rproc,
- int rproc_alloc_vring(struct rproc_vdev *rvdev, int i);
- 
- void *rproc_da_to_va(struct rproc *rproc, u64 da, int len);
-+phys_addr_t rproc_va_to_pa(void *cpu_addr);
- int rproc_trigger_recovery(struct rproc *rproc);
- 
- int rproc_elf_sanity_check(struct rproc *rproc, const struct firmware *fw);
-diff --git a/drivers/remoteproc/remoteproc_virtio.c b/drivers/remoteproc/remoteproc_virtio.c
-index de21f62..9ee63c0 100644
---- a/drivers/remoteproc/remoteproc_virtio.c
-+++ b/drivers/remoteproc/remoteproc_virtio.c
-@@ -17,7 +17,9 @@
-  * GNU General Public License for more details.
-  */
- 
-+#include <linux/dma-mapping.h>
- #include <linux/export.h>
-+#include <linux/of_reserved_mem.h>
- #include <linux/remoteproc.h>
- #include <linux/virtio.h>
- #include <linux/virtio_config.h>
-@@ -315,10 +317,48 @@ static void rproc_virtio_dev_release(struct device *dev)
- int rproc_add_virtio_dev(struct rproc_vdev *rvdev, int id)
- {
- 	struct rproc *rproc = rvdev->rproc;
--	struct device *dev = &rproc->dev;
-+	struct device *dev = &rvdev->dev;
- 	struct virtio_device *vdev = &rvdev->vdev;
-+	struct rproc_mem_entry *mem;
- 	int ret;
- 
-+	/* Try to find dedicated vdev buffer carveout */
-+	mem = rproc_find_carveout_by_name(rproc, "vdev%dbuffer", rvdev->index);
-+	if (mem) {
-+		phys_addr_t pa;
++ * rproc_alloc_registered_carveouts() - allocate all carveouts registered
++ * in the list
++ * @rproc: the remote processor handle
++ *
++ * This function parses registered carveout list, performs allocation
++ * if alloc() ops registered and updates resource table information
++ * if rsc_offset set.
++ *
++ * Return: 0 on success
++ */
++static int rproc_alloc_registered_carveouts(struct rproc *rproc)
++{
++	struct rproc_mem_entry *entry, *tmp;
++	struct fw_rsc_carveout *rsc;
++	struct device *dev = &rproc->dev;
++	int ret;
 +
-+		if (mem->of_resm_idx != -1) {
-+			struct device_node *np = rproc->dev.parent->of_node;
-+
-+			/* Associate reserved memory to vdev device */
-+			ret = of_reserved_mem_device_init_by_idx(dev, np,
-+								 mem->of_resm_idx);
++	list_for_each_entry_safe(entry, tmp, &rproc->carveouts, node) {
++		if (entry->alloc) {
++			ret = entry->alloc(rproc, entry);
 +			if (ret) {
-+				dev_err(dev, "Can't associate reserved memory\n");
-+				goto out;
++				dev_err(dev, "Unable to allocate carveout %s: %d\n",
++					entry->name, ret);
++				return -ENOMEM;
 +			}
-+		} else {
-+			if (mem->va) {
-+				dev_warn(dev, "vdev %d buffer already mapped\n",
-+					 rvdev->index);
-+				pa = rproc_va_to_pa(mem->va);
-+			} else {
-+				/* Use dma address as carveout no memmapped yet */
-+				pa = (phys_addr_t)mem->dma;
-+			}
++		}
 +
-+			/* Associate vdev buffer memory pool to vdev subdev */
-+			ret = dmam_declare_coherent_memory(dev, pa,
-+							   mem->da,
-+							   mem->len,
-+							   DMA_MEMORY_EXCLUSIVE);
-+			if (ret < 0) {
-+				dev_err(dev, "Failed to associate buffer\n");
-+				goto out;
-+			}
++		if (entry->rsc_offset != FW_RSC_ADDR_ANY) {
++			/* update resource table */
++			rsc = (void *)rproc->table_ptr + entry->rsc_offset;
++
++			/*
++			 * Some remote processors might need to know the pa
++			 * even though they are behind an IOMMU. E.g., OMAP4's
++			 * remote M3 processor needs this so it can control
++			 * on-chip hardware accelerators that are not behind
++			 * the IOMMU, and therefor must know the pa.
++			 *
++			 * Generally we don't want to expose physical addresses
++			 * if we don't have to (remote processors are generally
++			 * _not_ trusted), so we might want to do this only for
++			 * remote processor that _must_ have this (e.g. OMAP4's
++			 * dual M3 subsystem).
++			 *
++			 * Non-IOMMU processors might also want to have this info.
++			 * In this case, the device address and the physical address
++			 * are the same.
++			 */
++			if (entry->va)
++				rsc->pa = (u32)rproc_va_to_pa(entry->va);
 +		}
 +	}
 +
- 	vdev->id.device	= id,
- 	vdev->config = &rproc_virtio_config_ops,
- 	vdev->dev.parent = dev;
++	return 0;
++}
++
++/**
+  * rproc_coredump_cleanup() - clean up dump_segments list
+  * @rproc: the remote processor handle
+  */
+@@ -1148,6 +1215,14 @@ static int rproc_fw_boot(struct rproc *rproc, const struct firmware *fw)
+ 		goto clean_up_resources;
+ 	}
+ 
++	/* Allocate carveout resources associated to rproc */
++	ret = rproc_alloc_registered_carveouts(rproc);
++	if (ret) {
++		dev_err(dev, "Failed to allocate associated carveouts: %d\n",
++			ret);
++		goto clean_up_resources;
++	}
++
+ 	ret = rproc_start(rproc, fw);
+ 	if (ret)
+ 		goto clean_up_resources;
 diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
-index 6b3a234..2921dd2 100644
+index 55f30fc..ea95b04 100644
 --- a/include/linux/remoteproc.h
 +++ b/include/linux/remoteproc.h
-@@ -547,6 +547,7 @@ struct rproc_vdev {
- 	struct kref refcount;
- 
- 	struct rproc_subdev subdev;
-+	struct device dev;
- 
- 	unsigned int id;
+@@ -317,6 +317,9 @@ struct fw_rsc_vdev {
+  * @priv: associated data
+  * @name: associated memory region name (optional)
+  * @node: list node
++ * @rsc_offset: offset in resource table
++ * @flags: iommu protection flags
++ * @alloc: specific memory allocator function
+  */
+ struct rproc_mem_entry {
+ 	void *va;
+@@ -326,6 +329,9 @@ struct rproc_mem_entry {
+ 	void *priv;
+ 	char name[32];
  	struct list_head node;
++	u32 rsc_offset;
++	u32 flags;
++	int (*alloc)(struct rproc *rproc, struct rproc_mem_entry *mem);
+ 	int (*release)(struct rproc *rproc, struct rproc_mem_entry *mem);
+ };
+ 
+@@ -563,6 +569,7 @@ struct rproc *rproc_alloc(struct device *dev, const char *name,
+ struct rproc_mem_entry *
+ rproc_mem_entry_init(struct device *dev,
+ 		     void *va, dma_addr_t dma, int len, u32 da,
++		     int (*alloc)(struct rproc *, struct rproc_mem_entry *),
+ 		     int (*release)(struct rproc *, struct rproc_mem_entry *),
+ 		     const char *name, ...);
+ 
 -- 
 1.9.1
 
