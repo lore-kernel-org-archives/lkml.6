@@ -6,33 +6,45 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7553AC67790
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:11:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB4DCC6778F
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:11:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 35FF32089E
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:11:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 35FF32089E
+	by mail.kernel.org (Postfix) with ESMTP id 5E0062089E
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:11:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E0062089E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389273AbeG0LcY (ORCPT
+        id S2389285AbeG0Lc3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 07:32:24 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:36670 "EHLO
+        Fri, 27 Jul 2018 07:32:29 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:36696 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730448AbeG0LcX (ORCPT
+        with ESMTP id S1730866AbeG0Lc3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 07:32:23 -0400
+        Fri, 27 Jul 2018 07:32:29 -0400
 Received: from localhost (unknown [89.188.5.116])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 2F7E2CB5;
-        Fri, 27 Jul 2018 10:11:10 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 7389CCB5;
+        Fri, 27 Jul 2018 10:11:15 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH 4.9 32/33] turn off -Wattribute-alias
-Date:   Fri, 27 Jul 2018 12:09:13 +0200
-Message-Id: <20180727100828.853992212@linuxfoundation.org>
+        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Kees Cook <keescook@chromium.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Serge Hallyn <serge@hallyn.com>,
+        James Morris <james.l.morris@oracle.com>,
+        Aleksa Sarai <asarai@suse.de>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.9 33/33] exec: avoid gcc-8 warning for get_task_comm
+Date:   Fri, 27 Jul 2018 12:09:14 +0200
+Message-Id: <20180727100828.887569287@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180727100827.665729981@linuxfoundation.org>
 References: <20180727100827.665729981@linuxfoundation.org>
@@ -51,57 +63,82 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Arnd Bergmann <arnd@arndb.de>
 
-Starting with gcc-8.1, we get a warning about all system call definitions,
-which use an alias between functions with incompatible prototypes, e.g.:
+commit 3756f6401c302617c5e091081ca4d26ab604bec5 upstream.
 
-In file included from ../mm/process_vm_access.c:19:
-../include/linux/syscalls.h:211:18: warning: 'sys_process_vm_readv' alias between functions of incompatible types 'long int(pid_t,  const struct iovec *, long unsigned int,  const struct iovec *, long unsigned int,  long unsigned int)' {aka 'long int(int,  const struct iovec *, long unsigned int,  const struct iovec *, long unsigned int,  long unsigned int)'} and 'long int(long int,  long int,  long int,  long int,  long int,  long int)' [-Wattribute-alias]
-  asmlinkage long sys##name(__MAP(x,__SC_DECL,__VA_ARGS__)) \
-                  ^~~
-../include/linux/syscalls.h:207:2: note: in expansion of macro '__SYSCALL_DEFINEx'
-  __SYSCALL_DEFINEx(x, sname, __VA_ARGS__)
-  ^~~~~~~~~~~~~~~~~
-../include/linux/syscalls.h:201:36: note: in expansion of macro 'SYSCALL_DEFINEx'
- #define SYSCALL_DEFINE6(name, ...) SYSCALL_DEFINEx(6, _##name, __VA_ARGS__)
-                                    ^~~~~~~~~~~~~~~
-../mm/process_vm_access.c:300:1: note: in expansion of macro 'SYSCALL_DEFINE6'
- SYSCALL_DEFINE6(process_vm_readv, pid_t, pid, const struct iovec __user *, lvec,
- ^~~~~~~~~~~~~~~
-../include/linux/syscalls.h:215:18: note: aliased declaration here
-  asmlinkage long SyS##name(__MAP(x,__SC_LONG,__VA_ARGS__)) \
-                  ^~~
-../include/linux/syscalls.h:207:2: note: in expansion of macro '__SYSCALL_DEFINEx'
-  __SYSCALL_DEFINEx(x, sname, __VA_ARGS__)
-  ^~~~~~~~~~~~~~~~~
-../include/linux/syscalls.h:201:36: note: in expansion of macro 'SYSCALL_DEFINEx'
- #define SYSCALL_DEFINE6(name, ...) SYSCALL_DEFINEx(6, _##name, __VA_ARGS__)
-                                    ^~~~~~~~~~~~~~~
-../mm/process_vm_access.c:300:1: note: in expansion of macro 'SYSCALL_DEFINE6'
- SYSCALL_DEFINE6(process_vm_readv, pid_t, pid, const struct iovec __user *, lvec,
+gcc-8 warns about using strncpy() with the source size as the limit:
 
-This is really noisy and does not indicate a real problem. In the latest
-mainline kernel, this was addressed by commit bee20031772a ("disable
--Wattribute-alias warning for SYSCALL_DEFINEx()"), which seems too invasive
-to backport.
+  fs/exec.c:1223:32: error: argument to 'sizeof' in 'strncpy' call is the same expression as the source; did you mean to use the size of the destination? [-Werror=sizeof-pointer-memaccess]
 
-This takes a much simpler approach and just disables the warning across the
-kernel.
+This is indeed slightly suspicious, as it protects us from source
+arguments without NUL-termination, but does not guarantee that the
+destination is terminated.
 
+This keeps the strncpy() to ensure we have properly padded target
+buffer, but ensures that we use the correct length, by passing the
+actual length of the destination buffer as well as adding a build-time
+check to ensure it is exactly TASK_COMM_LEN.
+
+There are only 23 callsites which I all reviewed to ensure this is
+currently the case.  We could get away with doing only the check or
+passing the right length, but it doesn't hurt to do both.
+
+Link: http://lkml.kernel.org/r/20171205151724.1764896-1-arnd@arndb.de
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Suggested-by: Kees Cook <keescook@chromium.org>
+Acked-by: Kees Cook <keescook@chromium.org>
+Acked-by: Ingo Molnar <mingo@kernel.org>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Serge Hallyn <serge@hallyn.com>
+Cc: James Morris <james.l.morris@oracle.com>
+Cc: Aleksa Sarai <asarai@suse.de>
+Cc: "Eric W. Biederman" <ebiederm@xmission.com>
+Cc: Frederic Weisbecker <frederic@kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- Makefile |    1 +
- 1 file changed, 1 insertion(+)
 
---- a/Makefile
-+++ b/Makefile
-@@ -635,6 +635,7 @@ KBUILD_CFLAGS	+= $(call cc-disable-warni
- KBUILD_CFLAGS	+= $(call cc-disable-warning, format-truncation)
- KBUILD_CFLAGS	+= $(call cc-disable-warning, format-overflow)
- KBUILD_CFLAGS	+= $(call cc-disable-warning, int-in-bool-context)
-+KBUILD_CFLAGS	+= $(call cc-disable-warning, attribute-alias)
+---
+ fs/exec.c             |    7 +++----
+ include/linux/sched.h |    6 +++++-
+ 2 files changed, 8 insertions(+), 5 deletions(-)
+
+--- a/fs/exec.c
++++ b/fs/exec.c
+@@ -1228,15 +1228,14 @@ killed:
+ 	return -EAGAIN;
+ }
  
- ifdef CONFIG_LD_DEAD_CODE_DATA_ELIMINATION
- KBUILD_CFLAGS	+= $(call cc-option,-ffunction-sections,)
+-char *get_task_comm(char *buf, struct task_struct *tsk)
++char *__get_task_comm(char *buf, size_t buf_size, struct task_struct *tsk)
+ {
+-	/* buf must be at least sizeof(tsk->comm) in size */
+ 	task_lock(tsk);
+-	strncpy(buf, tsk->comm, sizeof(tsk->comm));
++	strncpy(buf, tsk->comm, buf_size);
+ 	task_unlock(tsk);
+ 	return buf;
+ }
+-EXPORT_SYMBOL_GPL(get_task_comm);
++EXPORT_SYMBOL_GPL(__get_task_comm);
+ 
+ /*
+  * These functions flushes out all traces of the currently running executable
+--- a/include/linux/sched.h
++++ b/include/linux/sched.h
+@@ -2999,7 +2999,11 @@ static inline void set_task_comm(struct
+ {
+ 	__set_task_comm(tsk, from, false);
+ }
+-extern char *get_task_comm(char *to, struct task_struct *tsk);
++extern char *__get_task_comm(char *to, size_t len, struct task_struct *tsk);
++#define get_task_comm(buf, tsk) ({			\
++	BUILD_BUG_ON(sizeof(buf) != TASK_COMM_LEN);	\
++	__get_task_comm(buf, sizeof(buf), tsk);		\
++})
+ 
+ #ifdef CONFIG_SMP
+ void scheduler_ipi(void);
 
 
