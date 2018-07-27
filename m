@@ -2,118 +2,156 @@ Return-Path: <SRS0=OQFz=KL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9894C6778F
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 16:40:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4485C67790
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 16:41:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 627842089B
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 16:40:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 627842089B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
+	by mail.kernel.org (Postfix) with ESMTP id A024A208B1
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 16:41:49 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="u/JiYRyn"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A024A208B1
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388507AbeG0SDF convert rfc822-to-8bit (ORCPT
+        id S2388652AbeG0SEX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 14:03:05 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:16067 "EHLO pegase1.c-s.fr"
+        Fri, 27 Jul 2018 14:04:23 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46616 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730510AbeG0SDF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 14:03:05 -0400
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 41cZSz7465z9ty7q;
-        Fri, 27 Jul 2018 18:40:19 +0200 (CEST)
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id Q00rF5ueDD0k; Fri, 27 Jul 2018 18:40:19 +0200 (CEST)
-Received: from vm-hermes.si.c-s.fr (vm-hermes.si.c-s.fr [192.168.25.253])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 41cZSz6RvQz9ty76;
-        Fri, 27 Jul 2018 18:40:19 +0200 (CEST)
-Received: by vm-hermes.si.c-s.fr (Postfix, from userid 33)
-        id 8728144; Fri, 27 Jul 2018 18:40:23 +0200 (CEST)
-Received: from 37-169-90-232.coucou-networks.fr
- (37-169-90-232.coucou-networks.fr [37.169.90.232]) by messagerie.si.c-s.fr
- (Horde Framework) with HTTP; Fri, 27 Jul 2018 18:40:23 +0200
-Date:   Fri, 27 Jul 2018 18:40:23 +0200
-Message-ID: <20180727184023.Horde.KRXPzZpG18uxt_B9sy_FBg5@messagerie.si.c-s.fr>
-From:   LEROY Christophe <christophe.leroy@c-s.fr>
-To:     Murilo Opsfelder Araujo <muriloo@linux.ibm.com>
-Cc:     linuxppc-dev@lists.ozlabs.org, "Tobin C . Harding" <me@tobin.cc>,
-        Sukadev Bhattiprolu <sukadev@linux.vnet.ibm.com>,
-        Simon Guo <wei.guo.simon@gmail.com>,
-        Paul Mackerras <paulus@samba.org>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Michael Neuling <mikey@neuling.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        Cyril Bur <cyrilbur@gmail.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Balbir Singh <bsingharora@gmail.com>,
-        Andrew Donnellan <andrew.donnellan@au1.ibm.com>,
-        Alastair D'Silva <alastair@d-silva.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 04/10] powerpc/traps: Use REG_FMT in
- show_signal_msg()
-References: <20180727145811.12334-1-muriloo@linux.ibm.com>
- <20180727145811.12334-5-muriloo@linux.ibm.com>
-In-Reply-To: <20180727145811.12334-5-muriloo@linux.ibm.com>
-User-Agent: Internet Messaging Program (IMP) H5 (6.2.3)
-Content-Type: text/plain; charset=UTF-8; format=flowed; DelSp=Yes
+        id S1730510AbeG0SEX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Jul 2018 14:04:23 -0400
+Received: from localhost (unknown [104.132.1.75])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8BC1B2089B;
+        Fri, 27 Jul 2018 16:41:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1532709701;
+        bh=tf68ZV0t8Om63LAlFpuqS3AX7vkqXwnykK9piQdSbYM=;
+        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
+        b=u/JiYRynan7i5ZbvJTKODQMY+K+IyOsa6WFP8Wfq2gWyH3RWm2L3W8AY64BZXFedn
+         YE6aoZAkPrJOoBoOjLkvQ1Z7oujPMU1g9RjRh0y9hp4SYZ0Nbe140nuDoR2EmrTiM4
+         pfW7NGakvHmZ4UHsZICxHrkacGeUpqPY9EwfBS4M=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Disposition: inline
-Content-Transfer-Encoding: 8BIT
+Content-Transfer-Encoding: quoted-printable
+To:     Jerome Brunet <jbrunet@baylibre.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Yixun Lan <yixun.lan@amlogic.com>
+From:   Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <f52d2511-bab7-2c39-cea7-8702e27d2ef8@amlogic.com>
+Cc:     Rob Herring <robh@kernel.org>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        yixun.lan@amlogic.com, linux-kernel@vger.kernel.org,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Liang Yang <liang.yang@amlogic.com>,
+        Qiufang Dai <qiufang.dai@amlogic.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Carlo Caione <carlo@caione.org>,
+        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, Jian Hu <jian.hu@amlogic.com>
+References: <20180712211244.11428-1-yixun.lan@amlogic.com>
+ <20180712211244.11428-3-yixun.lan@amlogic.com>
+ <153261840298.48062.2497103873681297587@swboyd.mtv.corp.google.com>
+ <f52d2511-bab7-2c39-cea7-8702e27d2ef8@amlogic.com>
+Message-ID: <153270970080.48062.18399022907046343950@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.7
+Subject: Re: [PATCH v3 2/2] clk: meson: add sub MMC clock controller driver
+Date:   Fri, 27 Jul 2018 09:41:40 -0700
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Murilo Opsfelder Araujo <muriloo@linux.ibm.com> a écrit :
+Quoting Yixun Lan (2018-07-27 07:52:23)
+> HI Stephen:
+> =
 
-> Simplify the message format by using REG_FMT as the register format.  This
-> avoids having two different formats and avoids checking for MSR_64BIT.
+> On 07/26/2018 11:20 PM, Stephen Boyd wrote:
+> > Quoting Yixun Lan (2018-07-12 14:12:44)
+> >> diff --git a/drivers/clk/meson/mmc-clkc.c b/drivers/clk/meson/mmc-clkc=
+.c
+> >> new file mode 100644
+> >> index 000000000000..36c4c7cd69a6
+> >> --- /dev/null
+> >> +++ b/drivers/clk/meson/mmc-clkc.c
+> >> @@ -0,0 +1,367 @@
+> >> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+> >> +/*
+> >> + * Amlogic Meson MMC Sub Clock Controller Driver
+> >> + *
+> >> + * Copyright (c) 2017 Baylibre SAS.
+> >> + * Author: Jerome Brunet <jbrunet@baylibre.com>
+> >> + *
+> >> + * Copyright (c) 2018 Amlogic, inc.
+> >> + * Author: Yixun Lan <yixun.lan@amlogic.com>
+> >> + */
+> >> +
+> >> +#include <linux/clk.h>
+> > =
 
-Are you sure it is what we want ?
+> > Is this include used?
+> > =
 
-Won't it change the behaviour for a 32 bits app running on a 64bits kernel ?
+> this is needed by clk_get_rate()
+> see drivers/clk/meson/mmc-clkc.c:204
 
-Christophe
+Hmm ok. That's unfortunate.
 
+> =
 
->
-> Signed-off-by: Murilo Opsfelder Araujo <muriloo@linux.ibm.com>
-> ---
->  arch/powerpc/kernel/traps.c | 12 ++++--------
->  1 file changed, 4 insertions(+), 8 deletions(-)
->
-> diff --git a/arch/powerpc/kernel/traps.c b/arch/powerpc/kernel/traps.c
-> index 4faab4705774..047d980ac776 100644
-> --- a/arch/powerpc/kernel/traps.c
-> +++ b/arch/powerpc/kernel/traps.c
-> @@ -311,17 +311,13 @@ static bool show_unhandled_signals_ratelimited(void)
->  static void show_signal_msg(int signr, struct pt_regs *regs, int code,
->  			    unsigned long addr)
->  {
-> -	const char fmt32[] = KERN_INFO "%s[%d]: unhandled signal %d " \
-> -		"at %08lx nip %08lx lr %08lx code %x\n";
-> -	const char fmt64[] = KERN_INFO "%s[%d]: unhandled signal %d " \
-> -		"at %016lx nip %016lx lr %016lx code %x\n";
-> -
->  	if (!unhandled_signal(current, signr))
->  		return;
->
-> -	printk(regs->msr & MSR_64BIT ? fmt64 : fmt32,
-> -	       current->comm, current->pid, signr,
-> -	       addr, regs->nip, regs->link, code);
-> +	pr_info("%s[%d]: unhandled signal %d at "REG_FMT \
-> +		" nip "REG_FMT" lr "REG_FMT" code %x\n",
-> +		current->comm, current->pid, signr, addr,
-> +		regs->nip, regs->link, code);
->  }
->
->  void _exception_pkey(int signr, struct pt_regs *regs, int code,
-> --
-> 2.17.1
+> > =
 
+> >> +       init.num_parents =3D 1;
+> >> +
+> >> +       clk =3D mmc_clkc_register_clk(dev, map, &init, suffix, data);
+> >> +       if (IS_ERR(clk))
+> >> +               dev_err(dev, "Core %s clock registration failed\n", su=
+ffix);
+> >> +
+> >> +       kfree(parent);
+> >> +       return clk;
+> >> +}
+> >> +
+> >> +static int mmc_clkc_probe(struct platform_device *pdev)
+> >> +{
+> >> +       struct clk_hw_onecell_data *onecell_data;
+> >> +       struct device *dev =3D &pdev->dev;
+> >> +       struct mmc_clkc_data *data;
+> >> +       struct regmap *map;
+> >> +       struct clk_regmap *mux, *div, *core, *rx, *tx;
+> >> +
+> >> +       data =3D (struct mmc_clkc_data *)of_device_get_match_data(dev);
+> > =
+
+> > This cast is unnecessary. Pleas remove.
+> > =
+
+> Ok, I will try to fix in next version
+> =
+
+> =
+
+> this was trying to silence the =E2=80=99const=E2=80=98 cast warning [1]
+> I could make a 'const struct mmc_clkc_data *data' declare, but need to
+> fix further cast warning issue..
+> =
+
+> =
+
+> [1] drivers/clk/meson/mmc-clkc.c: In function =E2=80=98mmc_clkc_probe=E2=
+=80=99:
+> drivers/clk/meson/mmc-clkc.c:302:7: warning: assignment discards =E2=80=
+=98const=E2=80=99
+> qualifier from pointer target type [-Wdiscarded-qualifiers]
+>   data =3D of_device_get_match_data(dev);
+>        ^
+
+Yes. Casting away const is a bad idea.
 
