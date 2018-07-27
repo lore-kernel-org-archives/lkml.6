@@ -2,75 +2,92 @@ Return-Path: <SRS0=OQFz=KL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA279C6778F
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 19:33:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C692C6778F
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 19:35:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5620720671
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 19:33:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5620720671
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id CAF4920671
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 19:35:32 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="CYGaFpgU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CAF4920671
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389275AbeG0U4z (ORCPT
+        id S2389309AbeG0U6t (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 16:56:55 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:50184 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2388467AbeG0U4y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 16:56:54 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 4430F4219DA6;
-        Fri, 27 Jul 2018 19:33:35 +0000 (UTC)
-Received: from localhost (unknown [10.18.25.149])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 36DAB21568A1;
-        Fri, 27 Jul 2018 19:33:34 +0000 (UTC)
-Date:   Fri, 27 Jul 2018 15:33:33 -0400
-From:   Mike Snitzer <snitzer@redhat.com>
-To:     Huaisheng Ye <yehs2007@zoho.com>
-Cc:     linux-nvdimm@lists.01.org, dan.j.williams@intel.com,
-        axboe@kernel.dk, linux-s390@vger.kernel.org, dave.jiang@intel.com,
-        martin.petersen@oracle.com, vishal.l.verma@intel.com,
-        chengnt@lenovo.com, linux-fsdevel@vger.kernel.org,
-        heiko.carstens@de.ibm.com, linux-kernel@vger.kernel.org,
-        willy@infradead.org, colyli@suse.de, bart.vanassche@wdc.com,
-        dm-devel@redhat.com, viro@zeniv.linux.org.uk,
-        gregkh@linuxfoundation.org, schwidefsky@de.ibm.com, jack@suse.cz,
-        ross.zwisler@linux.intel.com, agk@redhat.com,
-        Huaisheng Ye <yehs1@lenovo.com>
-Subject: Re: [PATCH v2 5/6] md/dm-writecache: Don't request pointer
- dummy_addr when not required
-Message-ID: <20180727193333.GA23266@redhat.com>
-References: <20180725162849.8320-1-yehs2007@zoho.com>
- <20180725162849.8320-6-yehs2007@zoho.com>
+        Fri, 27 Jul 2018 16:58:49 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:33888 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389159AbeG0U6t (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Jul 2018 16:58:49 -0400
+Received: by mail-wm0-f68.google.com with SMTP id l2-v6so2845247wme.1
+        for <linux-kernel@vger.kernel.org>; Fri, 27 Jul 2018 12:35:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=FRrt3Eb9q0HJXqQIZQCu4+ypGNmZua9eN5JHC4IWILo=;
+        b=CYGaFpgUmhkuaLrl9ISVT0OoR8rDDgg33D3iUDfI3r2QkwowkLksYvO54+mYYCxYkf
+         ++Ta2KvzN/zuD0SEFZ7dGOppbU3t3AsBEDDYe0U1jGbgrDh3XaTurpWTJ40dQjtVsDWt
+         oP+fE5uzdcAFESyN1fcOr8g7Gs+E8OwUU5V3ExqES/1ew18aDuT5omvir9Jpq5ElMOqM
+         ih2IUsZkpoad6zg9tLOR5xtATVVWNyszaW32B0upjqedPeZq4scbKSg6Kfjr5x6mWjPH
+         VmH8X34LTYt9/zifm9ZbmK2ou60bWlFFJkrLXlU6vaOUtWHWhAzG1dN3OPEK4eGxBw7v
+         7wzA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=FRrt3Eb9q0HJXqQIZQCu4+ypGNmZua9eN5JHC4IWILo=;
+        b=fnu5l+NxnNtyAgz9xNreKNWezTA8eyskbXEwy03FmNz7+BMsvyCkSmdwx0o5es0lj3
+         jJT92wN9/Im2SlOkA04I+GkjQ6FKf833gi5AHxrE/J2DaVuHWPejxcDGVNpAbS2RwR4y
+         /yB8paGJmEwpMflLNY76l0x61Z/IQ0wYU19KRzTqmEh+JIMX8i7urFJk4YgbbwNLwHfe
+         Q6PUOWwNSaIzhsgqJwsK5dMEMkN5C92VPyDyuX1Boi42O/Rz5ZVvSXi/9/2z2zX1XDAs
+         9U9dTuBifnnRZpT/yeQICrNL8JqzkKj15ahbf5PGfRNOTgh28UW35RRWtYk/HkqXaATg
+         fg1g==
+X-Gm-Message-State: AOUpUlHMKGoXD1qnw7Zt5FfKjJNOyzFeH/j70vDcrPdnlTuLHQl59gRQ
+        W8saHllpTwL6YjKxrvKw/gcCdW4v7tm3t7GNXABDAg==
+X-Google-Smtp-Source: AAOMgpfNUbznR0XO45JCGID709btBGUM9YHnT4bM9lLXxl2qiwtkgZfmIAIjmtsBAGYj+PRvuY3OFCydDFKBpvFdoPo=
+X-Received: by 2002:a1c:3413:: with SMTP id b19-v6mr5682197wma.21.1532720129013;
+ Fri, 27 Jul 2018 12:35:29 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180725162849.8320-6-yehs2007@zoho.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Fri, 27 Jul 2018 19:33:35 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Fri, 27 Jul 2018 19:33:35 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'msnitzer@redhat.com' RCPT:''
+Received: by 2002:a1c:548:0:0:0:0:0 with HTTP; Fri, 27 Jul 2018 12:35:08 -0700 (PDT)
+In-Reply-To: <153271291017.9458.7827028432894772673.stgit@warthog.procyon.org.uk>
+References: <153271267980.9458.7640156373438016898.stgit@warthog.procyon.org.uk>
+ <153271291017.9458.7827028432894772673.stgit@warthog.procyon.org.uk>
+From:   Andy Lutomirski <luto@amacapital.net>
+Date:   Fri, 27 Jul 2018 12:35:08 -0700
+Message-ID: <CALCETrW6HQnGnnmzNrNAeEyRZZv9uJFcH92jjofR1Rx5NQTxDQ@mail.gmail.com>
+Subject: Re: [PATCH 34/38] vfs: syscall: Add fsinfo() to query filesystem
+ information [ver #10]
+To:     David Howells <dhowells@redhat.com>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        Linux API <linux-api@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 25 2018 at 12:28pm -0400,
-Huaisheng Ye <yehs2007@zoho.com> wrote:
+On Fri, Jul 27, 2018 at 10:35 AM, David Howells <dhowells@redhat.com> wrote:
+> Add a system call to allow filesystem information to be queried.  A request
+> value can be given to indicate the desired attribute.  Support is provided
+> for enumerating multi-value attributes.
 
-> From: Huaisheng Ye <yehs1@lenovo.com>
-> 
-> Function persistent_memory_claim doesn't need to get local pointer
-> dummy_addr from direct_access. Using NULL instead of having to pass
-> in a useless local pointer that caller then just throw away.
-> 
-> Suggested-by: Ross Zwisler <ross.zwisler@linux.intel.com>
-> Signed-off-by: Huaisheng Ye <yehs1@lenovo.com>
+Has anyone seriously reviewed this?  It might make sense to defer this
+to a followup patch set.  Also:
 
-Acked-by: Mike Snitzer <snitzer@redhat.com>
+> params->request indicates the attribute/attributes to be queried.  This can
+> be one of:
+>
+>         fsinfo_attr_statfs              - statfs-style info
+>         fsinfo_attr_fsinfo              - Information about fsinfo()
+
+Constants are almost always all caps.  Is there any reason these are lowercase?
