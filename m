@@ -2,183 +2,140 @@ Return-Path: <SRS0=OQFz=KL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19E83C6778F
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 19:28:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E2CEC6778F
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 19:31:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BD0EE20842
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 19:28:47 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=cmpxchg-org.20150623.gappssmtp.com header.i=@cmpxchg-org.20150623.gappssmtp.com header.b="fWYnH7o/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BD0EE20842
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=cmpxchg.org
+	by mail.kernel.org (Postfix) with ESMTP id 1E69C20842
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 19:31:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E69C20842
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=iogearbox.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389301AbeG0UwD (ORCPT
+        id S2389292AbeG0Uy3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 16:52:03 -0400
-Received: from mail-yb0-f193.google.com ([209.85.213.193]:44803 "EHLO
-        mail-yb0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389078AbeG0UwC (ORCPT
+        Fri, 27 Jul 2018 16:54:29 -0400
+Received: from www62.your-server.de ([213.133.104.62]:56673 "EHLO
+        www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388467AbeG0Uy2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 16:52:02 -0400
-Received: by mail-yb0-f193.google.com with SMTP id l16-v6so2431538ybk.11
-        for <linux-kernel@vger.kernel.org>; Fri, 27 Jul 2018 12:28:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cmpxchg-org.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=H6r+ivETp18KyvaR5ps5MBhP9aK6uRFs/KhKJoV12pY=;
-        b=fWYnH7o/d3+mtS2nn0NijOsZEuTTm1ymFa+LWKzR5ri8zMUTHp7WlR/WzFP515F9iu
-         /yYt7RCZ/zIwYF4mIpeK/pii0O6wAD4jk4K4Q1AM+epv/s8n9XumWHln60rbdeXHRb+u
-         ykZY3NfDyH7/IlHR33yxRPdpvK6rD4mj68aVf6mMLIuukM7l8/vDTgehVo5a1E3HbNIJ
-         AnK1IJPykrKVDLGmD3U3rIat5W74sFo7zrT/RuXEHxCeBqn69XR0MP4HdB15MTGusiKW
-         K/DOuSG1VzRJmAJ2DWzr4g/qQPpyIiVVzByh2SklLfNudRUN08lgfRKDiJ+VQgIvUUPz
-         VoYA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=H6r+ivETp18KyvaR5ps5MBhP9aK6uRFs/KhKJoV12pY=;
-        b=CARhXiouUJ2ZmMB5b+yOLfpeM8zqoc9HeXiMY4Fd1T/LWpfEMlO/7bHyxWHU6CRuVQ
-         A1C98euCRFB7vH/jWg9mBxRbFNCsRK8+uYJ/O/53ig83gK7AJF4AFqRns+NPeao/BDr3
-         H5XpyBy//Uj1F2UlY+1KBn80B66OPYrRTSuUZzm6teiulMffSKBohz2qvZ8NiplkrQqm
-         sHt7Sj/wzYd6cruN6oef5OI0U2LKbZlGs0de80/tSgqbc0ccpLdarFaAP48htsMKNw1t
-         dPaUwzXhLP53JwSOg3+6EXjEjT2SCZ33ydKOHyQn43pJJzRABja201N6/x+Xo5wWNqWX
-         A3uA==
-X-Gm-Message-State: AOUpUlExJ/JJmYyLVN3ixM+lLNN8tvRKUoEdY3q6fN0yBrZCjQR7UkRD
-        M0uH8eJ7vfl32OlBjNO6mjfQMw==
-X-Google-Smtp-Source: AAOMgpe3nwhvvJSuF10P1mtabv+ZvOTtnRL+UzlMI0YnIe/wx73Dxf6y4Wl0AiJqQDySqNoss6iN7A==
-X-Received: by 2002:a25:3886:: with SMTP id f128-v6mr4195710yba.236.1532719723926;
-        Fri, 27 Jul 2018 12:28:43 -0700 (PDT)
-Received: from localhost ([2620:10d:c091:180::1:b944])
-        by smtp.gmail.com with ESMTPSA id j8-v6sm3025582ywj.6.2018.07.27.12.28.42
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 27 Jul 2018 12:28:42 -0700 (PDT)
-Date:   Fri, 27 Jul 2018 15:31:34 -0400
-From:   Johannes Weiner <hannes@cmpxchg.org>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Michal Hocko <mhocko@kernel.org>,
-        Kirill Tkhai <ktkhai@virtuozzo.com>, vdavydov.dev@gmail.com,
-        cgroups@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] memcg: Remove memcg_cgroup::id from IDR on
- mem_cgroup_css_alloc() failure
-Message-ID: <20180727193134.GA10996@cmpxchg.org>
-References: <06931a83-91d2-3dcf-31cf-0b98d82e957f@virtuozzo.com>
- <20180413112036.GH17484@dhcp22.suse.cz>
- <6dbc33bb-f3d5-1a46-b454-13c6f5865fcd@virtuozzo.com>
- <20180413113855.GI17484@dhcp22.suse.cz>
- <8a81c801-35c8-767d-54b0-df9f1ca0abc0@virtuozzo.com>
- <20180413115454.GL17484@dhcp22.suse.cz>
- <abfd4903-c455-fac2-7ed6-73707cda64d1@virtuozzo.com>
- <20180413121433.GM17484@dhcp22.suse.cz>
- <20180413125101.GO17484@dhcp22.suse.cz>
- <20180726162512.6056b5d7c1d2a5fbff6ce214@linux-foundation.org>
+        Fri, 27 Jul 2018 16:54:28 -0400
+Received: from [78.46.172.2] (helo=sslproxy05.your-server.de)
+        by www62.your-server.de with esmtpsa (TLSv1.2:DHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.85_2)
+        (envelope-from <daniel@iogearbox.net>)
+        id 1fj8S9-0000nV-7y; Fri, 27 Jul 2018 21:31:05 +0200
+Received: from [99.0.85.34] (helo=localhost.localdomain)
+        by sslproxy05.your-server.de with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.89)
+        (envelope-from <daniel@iogearbox.net>)
+        id 1fj8S8-00054A-Ty; Fri, 27 Jul 2018 21:31:05 +0200
+Subject: Re: [PATCH] perf build: Build error in libbpf missing initialization
+To:     Jakub Kicinski <jakub.kicinski@netronome.com>,
+        Thomas Richter <tmricht@linux.ibm.com>
+Cc:     ast@kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, heiko.carstens@de.ibm.com,
+        brueckner@linux.vnet.ibm.com, schwidefsky@de.ibm.com
+References: <20180727082126.87530-1-tmricht@linux.ibm.com>
+ <20180727105923.2d5da6aa@cakuba.netronome.com>
+From:   Daniel Borkmann <daniel@iogearbox.net>
+Message-ID: <c8409ab8-69df-17f4-9da3-610c60143d9a@iogearbox.net>
+Date:   Fri, 27 Jul 2018 21:31:01 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180726162512.6056b5d7c1d2a5fbff6ce214@linux-foundation.org>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <20180727105923.2d5da6aa@cakuba.netronome.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Authenticated-Sender: daniel@iogearbox.net
+X-Virus-Scanned: Clear (ClamAV 0.100.0/24788/Fri Jul 27 18:45:51 2018)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 26, 2018 at 04:25:12PM -0700, Andrew Morton wrote:
-> On Fri, 13 Apr 2018 14:51:01 +0200 Michal Hocko <mhocko@kernel.org> wrote:
+On 07/27/2018 07:59 PM, Jakub Kicinski wrote:
+> On Fri, 27 Jul 2018 10:21:26 +0200, Thomas Richter wrote:
+>> In linux-next tree compiling the perf tool with additional make flags
+>> "EXTRA_CFLAGS="-Wp,-D_FORTIFY_SOURCE=2 -O2"
+>> causes a compiler error. It is the warning
+>> 	'variable may be used uninitialized'
+>> which is treated as error:
+>>
+>> I compile it using a FEDORA 28 installation, my gcc compiler version:
+>> gcc (GCC) 8.0.1 20180324 (Red Hat 8.0.1-0.20)
+>>
+>> The file that causes the error is tools/lib/bpf/libbpf.c
+>>
+>> Here is the error message:
+>>
+>> [root@p23lp27] # make V=1 EXTRA_CFLAGS="-Wp,-D_FORTIFY_SOURCE=2 -O2"
+>> [...]
+>> Makefile.config:849: No openjdk development package found, please
+>>    install JDK package, e.g. openjdk-8-jdk, java-1.8.0-openjdk-devel
+>> Warning: Kernel ABI header at 'tools/include/uapi/linux/if_link.h'
+>>         differs from latest version at 'include/uapi/linux/if_link.h'
+>>   CC       libbpf.o
+>> libbpf.c: In function ‘bpf_perf_event_read_simple’:
+>> libbpf.c:2342:6: error: ‘ret’ may be used uninitialized in this
+>> 			function [-Werror=maybe-uninitialized]
+>>   int ret;
+>>       ^
+>> cc1: all warnings being treated as errors
+>> mv: cannot stat './.libbpf.o.tmp': No such file or directory
+>> /home6/tmricht/linux-next/tools/build/Makefile.build:96: recipe for target 'libbpf.o' failed
+>>
+>> Fix this warning and add an addition check at the beginning
+>> of the while loop.
+>>
+>> Cc: Alexei Starovoitov <ast@kernel.org>
+>> Cc: Daniel Borkmann <daniel@iogearbox.net>
+>>
+>> Suggested-by: Jakub Kicinski <jakub.kicinski@netronome.com>
+>> Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
 > 
-> > On Fri 13-04-18 14:14:33, Michal Hocko wrote:
-> > [...]
-> > > Well, this is probably a matter of taste. I will not argue. I will not
-> > > object if Johannes is OK with your patch. But the whole thing confused
-> > > hell out of me so I would rather un-clutter it...
-> > 
-> > In other words, this
-> > 
+> Ah, you already sent this, LGTM, thanks Thomas!
 > 
-> This discussion has rather petered out.  afaict we're waiting for
-> hannes to offer an opinion?
-> 
-> 
-> From: Kirill Tkhai <ktkhai@virtuozzo.com>
-> Subject: memcg: remove memcg_cgroup::id from IDR on mem_cgroup_css_alloc() failure
-> 
-> In case of memcg_online_kmem() failure, memcg_cgroup::id remains hashed in
-> mem_cgroup_idr even after memcg memory is freed.  This leads to leak of ID
-> in mem_cgroup_idr.
-> 
-> This patch adds removal into mem_cgroup_css_alloc(), which fixes the
-> problem.  For better readability, it adds a generic helper which is used
-> in mem_cgroup_alloc() and mem_cgroup_id_put_many() as well.
-> 
-> Link: http://lkml.kernel.org/r/152354470916.22460.14397070748001974638.stgit@localhost.localdomain
-> Fixes 73f576c04b94 ("mm: memcontrol: fix cgroup creation failure after many small jobs")
-> Signed-off-by: Kirill Tkhai <ktkhai@virtuozzo.com>
-> Cc: Johannes Weiner <hannes@cmpxchg.org>
-> Cc: Vladimir Davydov <vdavydov.dev@gmail.com>
-> Cc: Michal Hocko <mhocko@kernel.org>
-> Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+>>  tools/lib/bpf/libbpf.c | 2 ++
+>>  1 file changed, 2 insertions(+)
+>>
+>> diff --git a/tools/lib/bpf/libbpf.c b/tools/lib/bpf/libbpf.c
+>> index 73465caa33ba..66965ca96113 100644
+>> --- a/tools/lib/bpf/libbpf.c
+>> +++ b/tools/lib/bpf/libbpf.c
+>> @@ -2349,6 +2349,8 @@ bpf_perf_event_read_simple(void *mem, unsigned long size,
+>>  
+>>  	begin = base + data_tail % size;
+>>  	end = base + data_head % size;
+>> +	if (begin == end)
+>> +		return LIBBPF_PERF_EVENT_ERROR;
+>>  
+>>  	while (begin != end) {
+>>  		struct perf_event_header *ehdr;
 
-I also do wonder if we can do it cleaner, but since it's a fix I don't
-want that discussion to hold things up:
+One question though, any objections to go for something like the below instead?
+I doubt we ever hit this in a 'normal' situation, and given we already test for
+the begin and end anyway, we could just avoid the extra test altogether. I could
+change it to the below if you're good as well (no need to resend anything):
 
-Acked-by: Johannes Weiner <hannes@cmpxchg.org>
+diff --git a/tools/lib/bpf/libbpf.c b/tools/lib/bpf/libbpf.c
+index d881d37..1aafdbe 100644
+--- a/tools/lib/bpf/libbpf.c
++++ b/tools/lib/bpf/libbpf.c
+@@ -2273,8 +2273,8 @@ bpf_perf_event_read_simple(void *mem, unsigned long size,
+        volatile struct perf_event_mmap_page *header = mem;
+        __u64 data_tail = header->data_tail;
+        __u64 data_head = header->data_head;
++       int ret = LIBBPF_PERF_EVENT_ERROR;
+        void *base, *begin, *end;
+-       int ret;
 
-That said, the lifetime of the root reference on the ID is the online
-state, we put that in css_offline. Is there a reason we need to have
-the ID ready and the memcg in the IDR before onlining it? Can we do
-something like this and not mess with the alloc/free sequence at all?
+        asm volatile("" ::: "memory"); /* in real code it should be smp_rmb() */
+        if (data_head == data_tail)
 
-Michal, Vladimir, am I missing something?
-
-diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-index c59519d600ea..865e6d41d3d1 100644
---- a/mm/memcontrol.c
-+++ b/mm/memcontrol.c
-@@ -4144,12 +4144,6 @@ static struct mem_cgroup *mem_cgroup_alloc(void)
- 	if (!memcg)
- 		return NULL;
- 
--	memcg->id.id = idr_alloc(&mem_cgroup_idr, NULL,
--				 1, MEM_CGROUP_ID_MAX,
--				 GFP_KERNEL);
--	if (memcg->id.id < 0)
--		goto fail;
--
- 	memcg->stat_cpu = alloc_percpu(struct mem_cgroup_stat_cpu);
- 	if (!memcg->stat_cpu)
- 		goto fail;
-@@ -4176,11 +4170,8 @@ static struct mem_cgroup *mem_cgroup_alloc(void)
- #ifdef CONFIG_CGROUP_WRITEBACK
- 	INIT_LIST_HEAD(&memcg->cgwb_list);
- #endif
--	idr_replace(&mem_cgroup_idr, memcg, memcg->id.id);
- 	return memcg;
- fail:
--	if (memcg->id.id > 0)
--		idr_remove(&mem_cgroup_idr, memcg->id.id);
- 	__mem_cgroup_free(memcg);
- 	return NULL;
- }
-@@ -4246,10 +4237,17 @@ mem_cgroup_css_alloc(struct cgroup_subsys_state *parent_css)
- static int mem_cgroup_css_online(struct cgroup_subsys_state *css)
- {
- 	struct mem_cgroup *memcg = mem_cgroup_from_css(css);
-+	int i;
-+
-+	i = idr_alloc(&mem_cgroup_idr, memcg, 1, MEM_CGROUP_ID_MAX, GFP_KERNEL);
-+	if (i < 0)
-+		return i;
- 
- 	/* Online state pins memcg ID, memcg ID pins CSS */
-+	memcg->id.id = i;
- 	atomic_set(&memcg->id.ref, 1);
- 	css_get(css);
-+
- 	return 0;
- }
- 
+Thanks,
+Daniel
