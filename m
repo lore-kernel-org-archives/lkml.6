@@ -3,138 +3,143 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1860FC6778F
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 13:52:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B59C8C67790
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 13:52:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9CB8F208B0
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 13:52:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9CB8F208B0
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 6BFDE208B0
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 13:52:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6BFDE208B0
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ispras.ru
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732097AbeG0PNo (ORCPT
+        id S2388472AbeG0POP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 11:13:44 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:39034 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730354AbeG0PNo (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 11:13:44 -0400
-Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w6RDmlPP043019
-        for <linux-kernel@vger.kernel.org>; Fri, 27 Jul 2018 09:51:42 -0400
-Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2kg3mkanms-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Fri, 27 Jul 2018 09:51:41 -0400
-Received: from localhost
-        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <ldufour@linux.vnet.ibm.com>;
-        Fri, 27 Jul 2018 14:51:39 +0100
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
-        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 27 Jul 2018 14:51:35 +0100
-Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w6RDpYZp41484478
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 27 Jul 2018 13:51:34 GMT
-Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 4077652057;
-        Fri, 27 Jul 2018 16:51:47 +0100 (BST)
-Received: from nimbus.lab.toulouse-stg.fr.ibm.com (unknown [9.145.62.135])
-        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id B3D1A5204E;
-        Fri, 27 Jul 2018 16:51:46 +0100 (BST)
-From:   Laurent Dufour <ldufour@linux.vnet.ibm.com>
-To:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Cc:     aneesh.kumar@linux.ibm.com, mpe@ellerman.id.au,
-        benh@kernel.crashing.org, paulus@samba.org, npiggin@gmail.com
-Subject: [resend] [PATCH 0/3] powerpc/pseries: use H_BLOCK_REMOVE
-Date:   Fri, 27 Jul 2018 15:51:30 +0200
-X-Mailer: git-send-email 2.7.4
-X-TM-AS-GCONF: 00
-x-cbid: 18072713-0016-0000-0000-000001ECE165
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18072713-0017-0000-0000-00003241EEA0
-Message-Id: <1532699493-10883-1-git-send-email-ldufour@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-27_06:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=392 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1806210000 definitions=main-1807270142
+        Fri, 27 Jul 2018 11:14:15 -0400
+Received: from bran.ispras.ru ([83.149.199.196]:12443 "EHLO smtp.ispras.ru"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1730088AbeG0POP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Jul 2018 11:14:15 -0400
+Received: from myklebust.intra.ispras.ru (unknown [10.10.2.207])
+        by smtp.ispras.ru (Postfix) with ESMTP id D58D9203C6;
+        Fri, 27 Jul 2018 16:52:11 +0300 (MSK)
+From:   Anton Vasilyev <vasilyev@ispras.ru>
+To:     "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>
+Cc:     Anton Vasilyev <vasilyev@ispras.ru>,
+        Adam Radford <aradford@gmail.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        ldv-project@linuxtesting.org
+Subject: [PATCH] scsi: 3ware: fix return 0 on the error path of probe
+Date:   Fri, 27 Jul 2018 16:51:57 +0300
+Message-Id: <20180727135157.13051-1-vasilyev@ispras.ru>
+X-Mailer: git-send-email 2.18.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[Resending so everyone is getting the cover letter]
+tw_probe() returns 0 in case of fail of tw_initialize_device_extension(),
+pci_resource_start() or tw_reset_sequence() and releases resources.
+twl_probe() returns 0 in case of fail of twl_initialize_device_extension(),
+pci_iomap() and twl_reset_sequence().
+twa_probe() returns 0 in case of fail of tw_initialize_device_extension(),
+ioremap() and twa_reset_sequence().
 
-On very large system we could see soft lockup fired when a process is exiting
 
-watchdog: BUG: soft lockup - CPU#851 stuck for 21s! [forkoff:215523]
-Modules linked in: pseries_rng rng_core xfs raid10 vmx_crypto btrfs libcrc32c xor zstd_decompress zstd_compress xxhash lzo_compress raid6_pq crc32c_vpmsum lpfc crc_t10dif crct10dif_generic crct10dif_common dm_multipath scsi_dh_rdac scsi_dh_alua autofs4
-CPU: 851 PID: 215523 Comm: forkoff Not tainted 4.17.0 #1
-NIP:  c0000000000b995c LR: c0000000000b8f64 CTR: 000000000000aa18
-REGS: c00006b0645b7610 TRAP: 0901   Not tainted  (4.17.0)
-MSR:  800000010280b033 <SF,VEC,VSX,EE,FP,ME,IR,DR,RI,LE,TM[E]>  CR: 22042082  XER: 00000000
-CFAR: 00000000006cf8f0 SOFTE: 0 
-GPR00: 0010000000000000 c00006b0645b7890 c000000000f99200 0000000000000000 
-GPR04: 8e000001a5a4de58 400249cf1bfd5480 8e000001a5a4de50 400249cf1bfd5480 
-GPR08: 8e000001a5a4de48 400249cf1bfd5480 8e000001a5a4de40 400249cf1bfd5480 
-GPR12: ffffffffffffffff c00000001e690800 
-NIP [c0000000000b995c] plpar_hcall9+0x44/0x7c
-LR [c0000000000b8f64] pSeries_lpar_flush_hash_range+0x324/0x3d0
-Call Trace:
-[c00006b0645b7890] [8e000001a5a4dd20] 0x8e000001a5a4dd20 (unreliable)
-[c00006b0645b7a00] [c00000000006d5b0] flush_hash_range+0x60/0x110
-[c00006b0645b7a50] [c000000000072a2c] __flush_tlb_pending+0x4c/0xd0
-[c00006b0645b7a80] [c0000000002eaf44] unmap_page_range+0x984/0xbd0
-[c00006b0645b7bc0] [c0000000002eb594] unmap_vmas+0x84/0x100
-[c00006b0645b7c10] [c0000000002f8afc] exit_mmap+0xac/0x1f0
-[c00006b0645b7cd0] [c0000000000f2638] mmput+0x98/0x1b0
-[c00006b0645b7d00] [c0000000000fc9d0] do_exit+0x330/0xc00
-[c00006b0645b7dc0] [c0000000000fd384] do_group_exit+0x64/0x100
-[c00006b0645b7e00] [c0000000000fd44c] sys_exit_group+0x2c/0x30
-[c00006b0645b7e30] [c00000000000b960] system_call+0x58/0x6c
-Instruction dump:
-60000000 f8810028 7ca42b78 7cc53378 7ce63b78 7d074378 7d284b78 7d495378 
-e9410060 e9610068 e9810070 44000022 <7d806378> e9810028 f88c0000 f8ac0008
+The patch adds retval initialization for these cases.
 
-This happens when removing the PTE by calling the hypervisor using the
-H_BULK_REMOVE call. This call is processing up to 4 PTEs but is doing a
-tlbie for each PTE it is processing. This could lead to long time spent in
-the hypervisor (sometimes up to 4s) and soft lockup being raised because
-the scheduler is not called in zap_pte_range().
+Found by Linux Driver Verification project (linuxtesting.org).
 
-Since the Power7's time, the hypervisor is providing a new hcall
-H_BLOCK_REMOVE allowing processing up to 8 PTEs with one call to
-tlbie. By limiting the amount of tlbie generated, this reduces the time
-spent invalidating the PTEs.
+Signed-off-by: Anton Vasilyev <vasilyev@ispras.ru>
+---
+ drivers/scsi/3w-9xxx.c | 6 +++++-
+ drivers/scsi/3w-sas.c  | 3 +++
+ drivers/scsi/3w-xxxx.c | 2 ++
+ 3 files changed, 10 insertions(+), 1 deletion(-)
 
-This hcall requires that the pages are "all within the same naturally
-aligned 8 page virtual address block".
-
-With this patch series applied, I couldn't see any soft lockup raised on
-the victim LPAR I was running the test one.
-
-This series is covering both normal pages and huge pages.
-
-Laurent Dufour (3):
-  powerpc/pseries/mm: Introducing FW_FEATURE_BLOCK_REMOVE
-  powerpc/pseries/mm: factorize PTE slot computation
-  powerpc/pseries/mm: call H_BLOCK_REMOVE
-
- arch/powerpc/include/asm/firmware.h       |   3 +-
- arch/powerpc/include/asm/hvcall.h         |   1 +
- arch/powerpc/platforms/pseries/firmware.c |   1 +
- arch/powerpc/platforms/pseries/lpar.c     | 250 ++++++++++++++++++++++++++----
- 4 files changed, 228 insertions(+), 27 deletions(-)
-
+diff --git a/drivers/scsi/3w-9xxx.c b/drivers/scsi/3w-9xxx.c
+index 99ba4a770406..27521fc3ef5a 100644
+--- a/drivers/scsi/3w-9xxx.c
++++ b/drivers/scsi/3w-9xxx.c
+@@ -2038,6 +2038,7 @@ static int twa_probe(struct pci_dev *pdev, const struct pci_device_id *dev_id)
+ 
+ 	if (twa_initialize_device_extension(tw_dev)) {
+ 		TW_PRINTK(tw_dev->host, TW_DRIVER, 0x25, "Failed to initialize device extension");
++		retval = -ENOMEM;
+ 		goto out_free_device_extension;
+ 	}
+ 
+@@ -2060,6 +2061,7 @@ static int twa_probe(struct pci_dev *pdev, const struct pci_device_id *dev_id)
+ 	tw_dev->base_addr = ioremap(mem_addr, mem_len);
+ 	if (!tw_dev->base_addr) {
+ 		TW_PRINTK(tw_dev->host, TW_DRIVER, 0x35, "Failed to ioremap");
++		retval = -ENOMEM;
+ 		goto out_release_mem_region;
+ 	}
+ 
+@@ -2067,8 +2069,10 @@ static int twa_probe(struct pci_dev *pdev, const struct pci_device_id *dev_id)
+ 	TW_DISABLE_INTERRUPTS(tw_dev);
+ 
+ 	/* Initialize the card */
+-	if (twa_reset_sequence(tw_dev, 0))
++	if (twa_reset_sequence(tw_dev, 0)) {
++		retval = -ENOMEM;
+ 		goto out_iounmap;
++	}
+ 
+ 	/* Set host specific parameters */
+ 	if ((pdev->device == PCI_DEVICE_ID_3WARE_9650SE) ||
+diff --git a/drivers/scsi/3w-sas.c b/drivers/scsi/3w-sas.c
+index cf9f2a09b47d..40c1e6e64f58 100644
+--- a/drivers/scsi/3w-sas.c
++++ b/drivers/scsi/3w-sas.c
+@@ -1594,6 +1594,7 @@ static int twl_probe(struct pci_dev *pdev, const struct pci_device_id *dev_id)
+ 
+ 	if (twl_initialize_device_extension(tw_dev)) {
+ 		TW_PRINTK(tw_dev->host, TW_DRIVER, 0x1a, "Failed to initialize device extension");
++		retval = -ENOMEM;
+ 		goto out_free_device_extension;
+ 	}
+ 
+@@ -1608,6 +1609,7 @@ static int twl_probe(struct pci_dev *pdev, const struct pci_device_id *dev_id)
+ 	tw_dev->base_addr = pci_iomap(pdev, 1, 0);
+ 	if (!tw_dev->base_addr) {
+ 		TW_PRINTK(tw_dev->host, TW_DRIVER, 0x1c, "Failed to ioremap");
++		retval = -ENOMEM;
+ 		goto out_release_mem_region;
+ 	}
+ 
+@@ -1617,6 +1619,7 @@ static int twl_probe(struct pci_dev *pdev, const struct pci_device_id *dev_id)
+ 	/* Initialize the card */
+ 	if (twl_reset_sequence(tw_dev, 0)) {
+ 		TW_PRINTK(tw_dev->host, TW_DRIVER, 0x1d, "Controller reset failed during probe");
++		retval = -ENOMEM;
+ 		goto out_iounmap;
+ 	}
+ 
+diff --git a/drivers/scsi/3w-xxxx.c b/drivers/scsi/3w-xxxx.c
+index f6179e3d6953..961ea6f7def8 100644
+--- a/drivers/scsi/3w-xxxx.c
++++ b/drivers/scsi/3w-xxxx.c
+@@ -2280,6 +2280,7 @@ static int tw_probe(struct pci_dev *pdev, const struct pci_device_id *dev_id)
+ 
+ 	if (tw_initialize_device_extension(tw_dev)) {
+ 		printk(KERN_WARNING "3w-xxxx: Failed to initialize device extension.");
++		retval = -ENOMEM;
+ 		goto out_free_device_extension;
+ 	}
+ 
+@@ -2294,6 +2295,7 @@ static int tw_probe(struct pci_dev *pdev, const struct pci_device_id *dev_id)
+ 	tw_dev->base_addr = pci_resource_start(pdev, 0);
+ 	if (!tw_dev->base_addr) {
+ 		printk(KERN_WARNING "3w-xxxx: Failed to get io address.");
++		retval = -ENOMEM;
+ 		goto out_release_mem_region;
+ 	}
+ 
 -- 
-2.7.4
+2.18.0
 
