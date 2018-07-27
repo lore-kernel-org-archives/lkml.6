@@ -2,144 +2,95 @@ Return-Path: <SRS0=OQFz=KL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B59C8C67790
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 13:52:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93DB3C67790
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 13:55:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6BFDE208B0
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 13:52:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6BFDE208B0
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ispras.ru
+	by mail.kernel.org (Postfix) with ESMTP id 5114D208B0
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 13:55:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5114D208B0
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388472AbeG0POP (ORCPT
+        id S1732143AbeG0PRg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 11:14:15 -0400
-Received: from bran.ispras.ru ([83.149.199.196]:12443 "EHLO smtp.ispras.ru"
+        Fri, 27 Jul 2018 11:17:36 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:55508 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730088AbeG0POP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 11:14:15 -0400
-Received: from myklebust.intra.ispras.ru (unknown [10.10.2.207])
-        by smtp.ispras.ru (Postfix) with ESMTP id D58D9203C6;
-        Fri, 27 Jul 2018 16:52:11 +0300 (MSK)
-From:   Anton Vasilyev <vasilyev@ispras.ru>
-To:     "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>
-Cc:     Anton Vasilyev <vasilyev@ispras.ru>,
-        Adam Radford <aradford@gmail.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ldv-project@linuxtesting.org
-Subject: [PATCH] scsi: 3ware: fix return 0 on the error path of probe
-Date:   Fri, 27 Jul 2018 16:51:57 +0300
-Message-Id: <20180727135157.13051-1-vasilyev@ispras.ru>
-X-Mailer: git-send-email 2.18.0
+        id S1730458AbeG0PRg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Jul 2018 11:17:36 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 3D6E940216E7;
+        Fri, 27 Jul 2018 13:55:33 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.34.27.30])
+        by smtp.corp.redhat.com (Postfix) with SMTP id F0E221102E29;
+        Fri, 27 Jul 2018 13:55:29 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+        oleg@redhat.com; Fri, 27 Jul 2018 15:55:33 +0200 (CEST)
+Date:   Fri, 27 Jul 2018 15:55:29 +0200
+From:   Oleg Nesterov <oleg@redhat.com>
+To:     Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+Cc:     srikar@linux.vnet.ibm.com, rostedt@goodmis.org,
+        mhiramat@kernel.org, peterz@infradead.org, mingo@redhat.com,
+        acme@kernel.org, alexander.shishkin@linux.intel.com,
+        jolsa@redhat.com, namhyung@kernel.org,
+        linux-kernel@vger.kernel.org, ananth@linux.vnet.ibm.com,
+        alexis.berlemont@gmail.com, naveen.n.rao@linux.vnet.ibm.com,
+        linux-arm-kernel@lists.infradead.org, linux-mips@linux-mips.org,
+        linux@armlinux.org.uk, ralf@linux-mips.org, paul.burton@mips.com
+Subject: Re: [PATCH v6 5/6] Uprobes/sdt: Prevent multiple reference counter
+ for same uprobe
+Message-ID: <20180727135528.GA3618@redhat.com>
+References: <20180716084706.28244-1-ravi.bangoria@linux.ibm.com>
+ <20180716084706.28244-6-ravi.bangoria@linux.ibm.com>
+ <20180725110802.GA27325@redhat.com>
+ <19d8abb0-44a3-cb26-405d-95f63fc01517@linux.ibm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <19d8abb0-44a3-cb26-405d-95f63fc01517@linux.ibm.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Fri, 27 Jul 2018 13:55:33 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Fri, 27 Jul 2018 13:55:33 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'oleg@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-tw_probe() returns 0 in case of fail of tw_initialize_device_extension(),
-pci_resource_start() or tw_reset_sequence() and releases resources.
-twl_probe() returns 0 in case of fail of twl_initialize_device_extension(),
-pci_iomap() and twl_reset_sequence().
-twa_probe() returns 0 in case of fail of tw_initialize_device_extension(),
-ioremap() and twa_reset_sequence().
+Hi Ravi,
 
+On 07/27, Ravi Bangoria wrote:
+>
+> > I simply can't understand this "bool installed"....
+>
+>
+> That boolean is needed because consumer_filter() returns false when this
+> function gets called first time from uprobe_register().
 
-The patch adds retval initialization for these cases.
+Ah yes, I forgot about the (ugly) 2-stage TRACE_REG_PERF_REGISTER +
+TRACE_REG_PERF_OPEN logic...
 
-Found by Linux Driver Verification project (linuxtesting.org).
+But then I think the whole idea of REF_CTR_OFF_RELOADED is even more broken.
+Nevermind.
 
-Signed-off-by: Anton Vasilyev <vasilyev@ispras.ru>
----
- drivers/scsi/3w-9xxx.c | 6 +++++-
- drivers/scsi/3w-sas.c  | 3 +++
- drivers/scsi/3w-xxxx.c | 2 ++
- 3 files changed, 10 insertions(+), 1 deletion(-)
+> I have a solution for this. Idea is, if reference counter is reloaded, save
+> of all mms for which consumer_filter() denied to updated when being called
+> from register_for_each_vma(). Use this list of mms as checklist next time
+> onwards. I don't know if it's good to do that or not.
 
-diff --git a/drivers/scsi/3w-9xxx.c b/drivers/scsi/3w-9xxx.c
-index 99ba4a770406..27521fc3ef5a 100644
---- a/drivers/scsi/3w-9xxx.c
-+++ b/drivers/scsi/3w-9xxx.c
-@@ -2038,6 +2038,7 @@ static int twa_probe(struct pci_dev *pdev, const struct pci_device_id *dev_id)
- 
- 	if (twa_initialize_device_extension(tw_dev)) {
- 		TW_PRINTK(tw_dev->host, TW_DRIVER, 0x25, "Failed to initialize device extension");
-+		retval = -ENOMEM;
- 		goto out_free_device_extension;
- 	}
- 
-@@ -2060,6 +2061,7 @@ static int twa_probe(struct pci_dev *pdev, const struct pci_device_id *dev_id)
- 	tw_dev->base_addr = ioremap(mem_addr, mem_len);
- 	if (!tw_dev->base_addr) {
- 		TW_PRINTK(tw_dev->host, TW_DRIVER, 0x35, "Failed to ioremap");
-+		retval = -ENOMEM;
- 		goto out_release_mem_region;
- 	}
- 
-@@ -2067,8 +2069,10 @@ static int twa_probe(struct pci_dev *pdev, const struct pci_device_id *dev_id)
- 	TW_DISABLE_INTERRUPTS(tw_dev);
- 
- 	/* Initialize the card */
--	if (twa_reset_sequence(tw_dev, 0))
-+	if (twa_reset_sequence(tw_dev, 0)) {
-+		retval = -ENOMEM;
- 		goto out_iounmap;
-+	}
- 
- 	/* Set host specific parameters */
- 	if ((pdev->device == PCI_DEVICE_ID_3WARE_9650SE) ||
-diff --git a/drivers/scsi/3w-sas.c b/drivers/scsi/3w-sas.c
-index cf9f2a09b47d..40c1e6e64f58 100644
---- a/drivers/scsi/3w-sas.c
-+++ b/drivers/scsi/3w-sas.c
-@@ -1594,6 +1594,7 @@ static int twl_probe(struct pci_dev *pdev, const struct pci_device_id *dev_id)
- 
- 	if (twl_initialize_device_extension(tw_dev)) {
- 		TW_PRINTK(tw_dev->host, TW_DRIVER, 0x1a, "Failed to initialize device extension");
-+		retval = -ENOMEM;
- 		goto out_free_device_extension;
- 	}
- 
-@@ -1608,6 +1609,7 @@ static int twl_probe(struct pci_dev *pdev, const struct pci_device_id *dev_id)
- 	tw_dev->base_addr = pci_iomap(pdev, 1, 0);
- 	if (!tw_dev->base_addr) {
- 		TW_PRINTK(tw_dev->host, TW_DRIVER, 0x1c, "Failed to ioremap");
-+		retval = -ENOMEM;
- 		goto out_release_mem_region;
- 	}
- 
-@@ -1617,6 +1619,7 @@ static int twl_probe(struct pci_dev *pdev, const struct pci_device_id *dev_id)
- 	/* Initialize the card */
- 	if (twl_reset_sequence(tw_dev, 0)) {
- 		TW_PRINTK(tw_dev->host, TW_DRIVER, 0x1d, "Controller reset failed during probe");
-+		retval = -ENOMEM;
- 		goto out_iounmap;
- 	}
- 
-diff --git a/drivers/scsi/3w-xxxx.c b/drivers/scsi/3w-xxxx.c
-index f6179e3d6953..961ea6f7def8 100644
---- a/drivers/scsi/3w-xxxx.c
-+++ b/drivers/scsi/3w-xxxx.c
-@@ -2280,6 +2280,7 @@ static int tw_probe(struct pci_dev *pdev, const struct pci_device_id *dev_id)
- 
- 	if (tw_initialize_device_extension(tw_dev)) {
- 		printk(KERN_WARNING "3w-xxxx: Failed to initialize device extension.");
-+		retval = -ENOMEM;
- 		goto out_free_device_extension;
- 	}
- 
-@@ -2294,6 +2295,7 @@ static int tw_probe(struct pci_dev *pdev, const struct pci_device_id *dev_id)
- 	tw_dev->base_addr = pci_resource_start(pdev, 0);
- 	if (!tw_dev->base_addr) {
- 		printk(KERN_WARNING "3w-xxxx: Failed to get io address.");
-+		retval = -ENOMEM;
- 		goto out_release_mem_region;
- 	}
- 
--- 
-2.18.0
+Sounds horrible ;) and I bet this is not enough.
+
+> Please let me know if you have any better approach.
+
+Just drop this patch.
+
+If we can't make it per consumer, let it be global like it was in first version.
+
+Oleg.
 
