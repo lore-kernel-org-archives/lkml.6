@@ -6,36 +6,37 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56774C6778F
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 09:48:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05EF9C6778F
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 09:48:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0BBAE20895
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 09:48:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0BBAE20895
+	by mail.kernel.org (Postfix) with ESMTP id B746120895
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 09:48:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B746120895
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388591AbeG0LJ2 (ORCPT
+        id S2388616AbeG0LJc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 07:09:28 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:51924 "EHLO
+        Fri, 27 Jul 2018 07:09:32 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:52084 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388154AbeG0LJ1 (ORCPT
+        with ESMTP id S2388594AbeG0LJb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 07:09:27 -0400
+        Fri, 27 Jul 2018 07:09:31 -0400
 Received: from localhost (unknown [89.188.5.116])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B54D6BBF;
-        Fri, 27 Jul 2018 09:48:21 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D7B19AF8;
+        Fri, 27 Jul 2018 09:48:24 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-        Alexander Duyck <alexander.h.duyck@intel.com>,
-        syzbot <syzkaller@googlegroups.com>,
+        stable@vger.kernel.org, Larry Brakmo <brakmo@fb.com>,
+        Yuchung Cheng <ycheng@google.com>,
+        Eric Dumazet <edumazet@google.com>,
+        Neal Cardwell <ncardwell@google.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.17 19/66] net: skb_segment() should not return NULL
-Date:   Fri, 27 Jul 2018 11:45:12 +0200
-Message-Id: <20180727093811.287333156@linuxfoundation.org>
+Subject: [PATCH 4.17 20/66] tcp: fix dctcp delayed ACK schedule
+Date:   Fri, 27 Jul 2018 11:45:13 +0200
+Message-Id: <20180727093811.420620747@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180727093809.043856530@linuxfoundation.org>
 References: <20180727093809.043856530@linuxfoundation.org>
@@ -52,139 +53,98 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Eric Dumazet <edumazet@google.com>
+From: Yuchung Cheng <ycheng@google.com>
 
-[ Upstream commit ff907a11a0d68a749ce1a321f4505c03bf72190c ]
+[ Upstream commit b0c05d0e99d98d7f0cd41efc1eeec94efdc3325d ]
 
-syzbot caught a NULL deref [1], caused by skb_segment()
+Previously, when a data segment was sent an ACK was piggybacked
+on the data segment without generating a CA_EVENT_NON_DELAYED_ACK
+event to notify congestion control modules. So the DCTCP
+ca->delayed_ack_reserved flag could incorrectly stay set when
+in fact there were no delayed ACKs being reserved. This could result
+in sending a special ECN notification ACK that carries an older
+ACK sequence, when in fact there was no need for such an ACK.
+DCTCP keeps track of the delayed ACK status with its own separate
+state ca->delayed_ack_reserved. Previously it may accidentally cancel
+the delayed ACK without updating this field upon sending a special
+ACK that carries a older ACK sequence. This inconsistency would
+lead to DCTCP receiver never acknowledging the latest data until the
+sender times out and retry in some cases.
 
-skb_segment() has many "goto err;" that assume the @err variable
-contains -ENOMEM.
+Packetdrill script (provided by Larry Brakmo)
 
-A successful call to __skb_linearize() should not clear @err,
-otherwise a subsequent memory allocation error could return NULL.
+0.000 socket(..., SOCK_STREAM, IPPROTO_TCP) = 3
+0.000 setsockopt(3, SOL_SOCKET, SO_REUSEADDR, [1], 4) = 0
+0.000 setsockopt(3, SOL_TCP, TCP_CONGESTION, "dctcp", 5) = 0
+0.000 bind(3, ..., ...) = 0
+0.000 listen(3, 1) = 0
 
-While we are at it, we might use -EINVAL instead of -ENOMEM when
-MAX_SKB_FRAGS limit is reached.
+0.100 < [ect0] SEW 0:0(0) win 32792 <mss 1000,sackOK,nop,nop,nop,wscale 7>
+0.100 > SE. 0:0(0) ack 1 <mss 1460,nop,nop,sackOK,nop,wscale 8>
+0.110 < [ect0] . 1:1(0) ack 1 win 257
+0.200 accept(3, ..., ...) = 4
 
-[1]
-kasan: CONFIG_KASAN_INLINE enabled
-kasan: GPF could be caused by NULL-ptr deref or user memory access
-general protection fault: 0000 [#1] SMP KASAN
-CPU: 0 PID: 13285 Comm: syz-executor3 Not tainted 4.18.0-rc4+ #146
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-RIP: 0010:tcp_gso_segment+0x3dc/0x1780 net/ipv4/tcp_offload.c:106
-Code: f0 ff ff 0f 87 1c fd ff ff e8 00 88 0b fb 48 8b 75 d0 48 b9 00 00 00 00 00 fc ff df 48 8d be 90 00 00 00 48 89 f8 48 c1 e8 03 <0f> b6 14 08 48 8d 86 94 00 00 00 48 89 c6 83 e0 07 48 c1 ee 03 0f
-RSP: 0018:ffff88019b7fd060 EFLAGS: 00010206
-RAX: 0000000000000012 RBX: 0000000000000020 RCX: dffffc0000000000
-RDX: 0000000000040000 RSI: 0000000000000000 RDI: 0000000000000090
-RBP: ffff88019b7fd0f0 R08: ffff88019510e0c0 R09: ffffed003b5c46d6
-R10: ffffed003b5c46d6 R11: ffff8801dae236b3 R12: 0000000000000001
-R13: ffff8801d6c581f4 R14: 0000000000000000 R15: ffff8801d6c58128
-FS:  00007fcae64d6700(0000) GS:ffff8801dae00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00000000004e8664 CR3: 00000001b669b000 CR4: 00000000001406f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- tcp4_gso_segment+0x1c3/0x440 net/ipv4/tcp_offload.c:54
- inet_gso_segment+0x64e/0x12d0 net/ipv4/af_inet.c:1342
- inet_gso_segment+0x64e/0x12d0 net/ipv4/af_inet.c:1342
- skb_mac_gso_segment+0x3b5/0x740 net/core/dev.c:2792
- __skb_gso_segment+0x3c3/0x880 net/core/dev.c:2865
- skb_gso_segment include/linux/netdevice.h:4099 [inline]
- validate_xmit_skb+0x640/0xf30 net/core/dev.c:3104
- __dev_queue_xmit+0xc14/0x3910 net/core/dev.c:3561
- dev_queue_xmit+0x17/0x20 net/core/dev.c:3602
- neigh_hh_output include/net/neighbour.h:473 [inline]
- neigh_output include/net/neighbour.h:481 [inline]
- ip_finish_output2+0x1063/0x1860 net/ipv4/ip_output.c:229
- ip_finish_output+0x841/0xfa0 net/ipv4/ip_output.c:317
- NF_HOOK_COND include/linux/netfilter.h:276 [inline]
- ip_output+0x223/0x880 net/ipv4/ip_output.c:405
- dst_output include/net/dst.h:444 [inline]
- ip_local_out+0xc5/0x1b0 net/ipv4/ip_output.c:124
- iptunnel_xmit+0x567/0x850 net/ipv4/ip_tunnel_core.c:91
- ip_tunnel_xmit+0x1598/0x3af1 net/ipv4/ip_tunnel.c:778
- ipip_tunnel_xmit+0x264/0x2c0 net/ipv4/ipip.c:308
- __netdev_start_xmit include/linux/netdevice.h:4148 [inline]
- netdev_start_xmit include/linux/netdevice.h:4157 [inline]
- xmit_one net/core/dev.c:3034 [inline]
- dev_hard_start_xmit+0x26c/0xc30 net/core/dev.c:3050
- __dev_queue_xmit+0x29ef/0x3910 net/core/dev.c:3569
- dev_queue_xmit+0x17/0x20 net/core/dev.c:3602
- neigh_direct_output+0x15/0x20 net/core/neighbour.c:1403
- neigh_output include/net/neighbour.h:483 [inline]
- ip_finish_output2+0xa67/0x1860 net/ipv4/ip_output.c:229
- ip_finish_output+0x841/0xfa0 net/ipv4/ip_output.c:317
- NF_HOOK_COND include/linux/netfilter.h:276 [inline]
- ip_output+0x223/0x880 net/ipv4/ip_output.c:405
- dst_output include/net/dst.h:444 [inline]
- ip_local_out+0xc5/0x1b0 net/ipv4/ip_output.c:124
- ip_queue_xmit+0x9df/0x1f80 net/ipv4/ip_output.c:504
- tcp_transmit_skb+0x1bf9/0x3f10 net/ipv4/tcp_output.c:1168
- tcp_write_xmit+0x1641/0x5c20 net/ipv4/tcp_output.c:2363
- __tcp_push_pending_frames+0xb2/0x290 net/ipv4/tcp_output.c:2536
- tcp_push+0x638/0x8c0 net/ipv4/tcp.c:735
- tcp_sendmsg_locked+0x2ec5/0x3f00 net/ipv4/tcp.c:1410
- tcp_sendmsg+0x2f/0x50 net/ipv4/tcp.c:1447
- inet_sendmsg+0x1a1/0x690 net/ipv4/af_inet.c:798
- sock_sendmsg_nosec net/socket.c:641 [inline]
- sock_sendmsg+0xd5/0x120 net/socket.c:651
- __sys_sendto+0x3d7/0x670 net/socket.c:1797
- __do_sys_sendto net/socket.c:1809 [inline]
- __se_sys_sendto net/socket.c:1805 [inline]
- __x64_sys_sendto+0xe1/0x1a0 net/socket.c:1805
- do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
- entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x455ab9
-Code: 1d ba fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 eb b9 fb ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007fcae64d5c68 EFLAGS: 00000246 ORIG_RAX: 000000000000002c
-RAX: ffffffffffffffda RBX: 00007fcae64d66d4 RCX: 0000000000455ab9
-RDX: 0000000000000001 RSI: 0000000020000200 RDI: 0000000000000013
-RBP: 000000000072bea0 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000014
-R13: 00000000004c1145 R14: 00000000004d1818 R15: 0000000000000006
-Modules linked in:
-Dumping ftrace buffer:
-   (ftrace buffer empty)
+0.200 < [ect0] . 1:1001(1000) ack 1 win 257
+0.200 > [ect01] . 1:1(0) ack 1001
 
-Fixes: ddff00d42043 ("net: Move skb_has_shared_frag check out of GRE code and into segmentation")
+0.200 write(4, ..., 1) = 1
+0.200 > [ect01] P. 1:2(1) ack 1001
+
+0.200 < [ect0] . 1001:2001(1000) ack 2 win 257
+0.200 write(4, ..., 1) = 1
+0.200 > [ect01] P. 2:3(1) ack 2001
+
+0.200 < [ect0] . 2001:3001(1000) ack 3 win 257
+0.200 < [ect0] . 3001:4001(1000) ack 3 win 257
+0.200 > [ect01] . 3:3(0) ack 4001
+
+0.210 < [ce] P. 4001:4501(500) ack 3 win 257
+
++0.001 read(4, ..., 4500) = 4500
++0 write(4, ..., 1) = 1
++0 > [ect01] PE. 3:4(1) ack 4501
+
++0.010 < [ect0] W. 4501:5501(1000) ack 4 win 257
+// Previously the ACK sequence below would be 4501, causing a long RTO
++0.040~+0.045 > [ect01] . 4:4(0) ack 5501   // delayed ack
+
++0.311 < [ect0] . 5501:6501(1000) ack 4 win 257  // More data
++0 > [ect01] . 4:4(0) ack 6501     // now acks everything
+
++0.500 < F. 9501:9501(0) ack 4 win 257
+
+Reported-by: Larry Brakmo <brakmo@fb.com>
+Signed-off-by: Yuchung Cheng <ycheng@google.com>
 Signed-off-by: Eric Dumazet <edumazet@google.com>
-Cc: Alexander Duyck <alexander.h.duyck@intel.com>
-Reported-by: syzbot <syzkaller@googlegroups.com>
-Acked-by: Alexander Duyck <alexander.h.duyck@intel.com>
+Acked-by: Neal Cardwell <ncardwell@google.com>
+Acked-by: Lawrence Brakmo <brakmo@fb.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/core/skbuff.c |   10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ net/ipv4/tcp_dctcp.c |    6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
---- a/net/core/skbuff.c
-+++ b/net/core/skbuff.c
-@@ -3705,6 +3705,7 @@ normal:
- 				net_warn_ratelimited(
- 					"skb_segment: too many frags: %u %u\n",
- 					pos, mss);
-+				err = -EINVAL;
- 				goto err;
- 			}
+--- a/net/ipv4/tcp_dctcp.c
++++ b/net/ipv4/tcp_dctcp.c
+@@ -134,7 +134,8 @@ static void dctcp_ce_state_0_to_1(struct
+ 	/* State has changed from CE=0 to CE=1 and delayed
+ 	 * ACK has not sent yet.
+ 	 */
+-	if (!ca->ce_state && ca->delayed_ack_reserved) {
++	if (!ca->ce_state &&
++	    inet_csk(sk)->icsk_ack.pending & ICSK_ACK_TIMER) {
+ 		u32 tmp_rcv_nxt;
  
-@@ -3738,11 +3739,10 @@ skip_fraglist:
+ 		/* Save current rcv_nxt. */
+@@ -164,7 +165,8 @@ static void dctcp_ce_state_1_to_0(struct
+ 	/* State has changed from CE=1 to CE=0 and delayed
+ 	 * ACK has not sent yet.
+ 	 */
+-	if (ca->ce_state && ca->delayed_ack_reserved) {
++	if (ca->ce_state &&
++	    inet_csk(sk)->icsk_ack.pending & ICSK_ACK_TIMER) {
+ 		u32 tmp_rcv_nxt;
  
- perform_csum_check:
- 		if (!csum) {
--			if (skb_has_shared_frag(nskb)) {
--				err = __skb_linearize(nskb);
--				if (err)
--					goto err;
--			}
-+			if (skb_has_shared_frag(nskb) &&
-+			    __skb_linearize(nskb))
-+				goto err;
-+
- 			if (!nskb->remcsum_offload)
- 				nskb->ip_summed = CHECKSUM_NONE;
- 			SKB_GSO_CB(nskb)->csum =
+ 		/* Save current rcv_nxt. */
 
 
