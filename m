@@ -2,122 +2,89 @@ Return-Path: <SRS0=OQFz=KL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67A1AC6778F
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 17:02:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19D5FC67790
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 17:03:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 19912208B3
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 17:02:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BE7D6208B1
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 17:03:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="MesFzsBo"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 19912208B3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="R9KZDy6K"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BE7D6208B1
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388874AbeG0SZJ (ORCPT
+        id S2388926AbeG0S0K (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 14:25:09 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:37913 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730510AbeG0SZJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 14:25:09 -0400
-Received: by mail-wm0-f66.google.com with SMTP id t25-v6so6178803wmi.3
-        for <linux-kernel@vger.kernel.org>; Fri, 27 Jul 2018 10:02:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=pd8oAo0UR1IEBOUY2nlnpzU7L5g2B1zTEkOTlwLHaAk=;
-        b=MesFzsBorAhUdswqwgeYqf1K5kiJ1pzrZImOdjmhpTKPMEMm9FFDbMc4bipRFs2hqE
-         5atfd/yEK5HOuT6Kg/CpO81U8G5flULHxKn2XpzFRbpIWZTjfobvAk4lXyA5GZNqKsCy
-         MiI+CviLUmOjuZ0uF5KwsoghddSsUMWVrm2HSN1NJgRYp5cKtvVXvOmwMzFpM6buARDL
-         YMjW7Fx9bu3AmAFOASHPVv1Rc/Kx2z+//znOjE8PZa1CGZ8O9KHxwvoAu/Hv1x3ktK/V
-         4g7DFacxZ/4WIbRmYQigVcQevN4TfdAta4hetg7iGNu5vgJ8jgXmusU8W1Kyp5hihvah
-         RV1A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=pd8oAo0UR1IEBOUY2nlnpzU7L5g2B1zTEkOTlwLHaAk=;
-        b=Qi5oMhN6/S5B+dc16b7VvbzB6NaPxCHcwgZosxRGoz6v7d52Vwb4tlmoXdr98wVvHK
-         L/+dMgwqf0sWu/tTeYOpINvKrr5v6gi4qehvtS7jbzGyLV1pRSWedY4v+BhI0M3mjMiS
-         OnIM7S/xYoxuxXqDqBPEi4VelDd/dav2Cn9vLGbxQmwJKhcwAxuc+e1muelxQOA9h/MT
-         AdemubsrNCphLxpf2NP4XiiYv687lAOS/srvNDOGKeS75yVi1oYfsskcYnkeYm5tfdRQ
-         kEsCxj4trSSE6fsRVs+Yj4jhAyJilBykQmgPt7yyS41uu1lYrWnH7TWnuVkdNTlydDqU
-         pluw==
-X-Gm-Message-State: AOUpUlHhOVF3w/mWJS8F0xYcRcCNFT2l7gMGV1zRH+zrD2Lxia7jRlLJ
-        gek2Gg0B7gr+pAhbUEMdq/26EuOwyxFRwCYNrDFySw==
-X-Google-Smtp-Source: AAOMgpcNO0u2RSeIynBMA8/72GBGAbmfLiSu64/phJDXy1YiHbXr2cJ3Rvc5Tj5posZXUxAQL2pAf2lvV38dWbEv53Q=
-X-Received: by 2002:a1c:2807:: with SMTP id o7-v6mr4666543wmo.11.1532710941639;
- Fri, 27 Jul 2018 10:02:21 -0700 (PDT)
+        Fri, 27 Jul 2018 14:26:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55456 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730510AbeG0S0K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Jul 2018 14:26:10 -0400
+Received: from localhost (unknown [104.132.1.75])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 84EBC205C9;
+        Fri, 27 Jul 2018 17:03:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1532711003;
+        bh=HS8QPX/nIXV9vGg0Zc15b0NPWTXjRnQfCSl22yFHisk=;
+        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
+        b=R9KZDy6KG+cQdhXQhByUxoCanPX02JXYHS8oDBJfLbfqBxi0Ymj8nhFy4rkCKYo7p
+         Q636Peo4b23L2SQQWSAGU6r+m9F7nIdqq2tId+LhB5UsMCOGfc3J5OJCxVW4tVpZ3B
+         8sXzE0xDhSnXzxlTdB37nhrL5vbeUIlyiVYCYOfw=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-References: <20180727030737.231268-1-toddpoynor@gmail.com> <20180727030737.231268-2-toddpoynor@gmail.com>
- <20180727150855.GB3713@kroah.com>
-In-Reply-To: <20180727150855.GB3713@kroah.com>
-From:   Todd Poynor <toddpoynor@google.com>
-Date:   Fri, 27 Jul 2018 10:02:09 -0700
-Message-ID: <CAAW3YpaX6fNq2TCsu6cbgYkLsd8vHdZ0Wz+0+WkkHiL5UKjmcw@mail.gmail.com>
-Subject: Re: [PATCH 01/10] staging: gasket: save struct device for a gasket device
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     "toddpoynor@gmail.com" <toddpoynor@gmail.com>,
-        Rob Springer <rspringer@google.com>,
-        John Joseph <jnjoseph@google.com>, benchan@chromium.org,
-        devel@driverdev.osuosl.org, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+To:     Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Rob Herring <robh+dt@kernel.org>
+From:   Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <20180717222757.10253-1-alexandre.belloni@bootlin.com>
+Cc:     devicetree@vger.kernel.org,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-kernel@vger.kernel.org,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+References: <20180717222757.10253-1-alexandre.belloni@bootlin.com>
+Message-ID: <153271100280.48062.2538655794734424353@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.7
+Subject: Re: [PATCH 00/16] clk: at91: Rework DT bindings
+Date:   Fri, 27 Jul 2018 10:03:22 -0700
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 27, 2018 at 8:09 AM Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> On Thu, Jul 26, 2018 at 08:07:28PM -0700, Todd Poynor wrote:
-> > From: Todd Poynor <toddpoynor@google.com>
-> >
-> > Save the struct device pointer to a gasket device in gasket's metadata,
-> > to facilitate use of standard logging calls and in anticipation of
-> > non-PCI gasket devices in the future.
-> >
-> > Signed-off-by: Todd Poynor <toddpoynor@google.com>
-> > ---
-> >  drivers/staging/gasket/gasket_core.c | 5 +++--
-> >  drivers/staging/gasket/gasket_core.h | 3 +++
-> >  2 files changed, 6 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/drivers/staging/gasket/gasket_core.c b/drivers/staging/gasket/gasket_core.c
-> > index 732218773c3c6..e8f3b021c20d1 100644
-> > --- a/drivers/staging/gasket/gasket_core.c
-> > +++ b/drivers/staging/gasket/gasket_core.c
-> > @@ -450,6 +450,7 @@ static int gasket_alloc_dev(
-> >       gasket_dev->internal_desc = internal_desc;
-> >       gasket_dev->dev_idx = dev_idx;
-> >       snprintf(gasket_dev->kobj_name, GASKET_NAME_MAX, "%s", kobj_name);
-> > +     gasket_dev->dev = parent;
->
-> Normally when saving off a pointer to an object that you reference later
-> on, and that you rely on, you need to grab a reference to it, otherwise
-> it may disappear at any point in time.
+Quoting Alexandre Belloni (2018-07-17 15:27:41)
+> This is the promised rework of the at91 PMC clocks driver. It is mainly
+> necessary to remove the DTC warnings but it also complies with the CCF
+> rule that there should be one node per controller instead of one node
+> per clock.
+> =
 
-Got it, I'll clean that up next round, thanks.
+> This only handles the PMC, I'm planning to also rework the SCKC bindings
+> later (without breaking the DT ABI).
+> =
 
->
-> However this whole "wrap the pci layer" nonsense is a total mess with
-> the lifetime rules of devices, so it's probably the least of your
-> worries....
+> The series is based on top of clk-next plus at91-dt so I don't think it
+> is convenient to have it this cycle. However, I would really like to
+> ensure we agree on the new bindings this cycle before converting all the
+> other platforms as this is a bit tedious.
+> =
 
-That's high on the list to fix up, too.
+> The first two patches are actually fixes and may be considered for this
+> cycle.
+> =
 
->
-> As long as you know you will have to fix that crud up, and what you are
-> doing here will bite you if you do not do it right, that's fine with
-> me...
->
-> thanks,
->
-> greg k-h
+> One nice note:
+> at91-sama5d2_xplained.dtb goes from 29351 bytes to 22082 bytes
+
+Patches look mostly good. Rob is happy with the bindings and so am I.
+
+One general question is why the drivers can't be moved to real platform
+drivers instead of using OF_CLK_DECLARE?
+
