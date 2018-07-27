@@ -2,201 +2,141 @@ Return-Path: <SRS0=OQFz=KL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EDC1C67790
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 07:03:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7492C6778F
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 07:06:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2768420857
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 07:03:15 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="N/8WBJrq";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="lYICqabU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2768420857
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id 740CF20857
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 07:06:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 740CF20857
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730306AbeG0IXm (ORCPT
+        id S1729539AbeG0I1B (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 04:23:42 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:33508 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729416AbeG0IXl (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 04:23:41 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 8845E60B73; Fri, 27 Jul 2018 07:03:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1532674991;
-        bh=zjM0yoje0qZX13eWBdh53xYgEZrbUAXQLL+Bspcoq70=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=N/8WBJrqRjuTgpyRRn/CB1p1c0n8xh4YrXOQrl2R7RVxO/miPe2PWJ5Mj1ud9ctI2
-         Wu4QmhqdChInNllde5r9kL17OH2cwnMeiGFplJ8glyRZGGAX87BoWaXUkm4Fq/xT02
-         10NtcKEcOhl32Hdgv+hzFcfPBeNjh5xhlYGzGLJM=
-Received: from blr-ubuntu-41.ap.qualcomm.com (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        Fri, 27 Jul 2018 04:27:01 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:37168 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729426AbeG0I1B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Jul 2018 04:27:01 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        (Authenticated sender: vivek.gautam@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id C5F5060BB2;
-        Fri, 27 Jul 2018 07:03:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1532674986;
-        bh=zjM0yoje0qZX13eWBdh53xYgEZrbUAXQLL+Bspcoq70=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lYICqabUkf76QbGSQxixl4IwgbMTW/hkn3kdmPXMuduIoJO1WXr6l9HvWzSxrw2Pd
-         uaDHr+hu0r4A3on/Wd4noE0186MKlEjNgjQwoUKw+Jz+Yt61s1RrN2uGCE9UeU8RTh
-         gytdIhsn/7LyYf5AURGEaNXC463c5fpjmBbiRW7A=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org C5F5060BB2
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=vivek.gautam@codeaurora.org
-From:   Vivek Gautam <vivek.gautam@codeaurora.org>
-To:     joro@8bytes.org, robh+dt@kernel.org, rjw@rjwysocki.net,
-        robin.murphy@arm.com, will.deacon@arm.com,
-        iommu@lists.linux-foundation.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, freedreno@lists.freedesktop.org
-Cc:     alex.williamson@redhat.com, mark.rutland@arm.com,
-        robdclark@gmail.com, linux-pm@vger.kernel.org, sboyd@kernel.org,
-        tfiga@chromium.org, jcrouse@codeaurora.org,
-        sricharan@codeaurora.org, m.szyprowski@samsung.com,
-        architt@codeaurora.org, linux-arm-msm@vger.kernel.org,
-        Vivek Gautam <vivek.gautam@codeaurora.org>
-Subject: [PATCH v14 4/4] iommu/arm-smmu: Add support for qcom,smmu-v2 variant
-Date:   Fri, 27 Jul 2018 12:32:24 +0530
-Message-Id: <20180727070224.23966-5-vivek.gautam@codeaurora.org>
-X-Mailer: git-send-email 2.16.1.72.g5be1f00a9a70
-In-Reply-To: <20180727070224.23966-1-vivek.gautam@codeaurora.org>
-References: <20180727070224.23966-1-vivek.gautam@codeaurora.org>
+        by mx1.redhat.com (Postfix) with ESMTPS id 2480340216E6;
+        Fri, 27 Jul 2018 07:06:30 +0000 (UTC)
+Received: from krava (unknown [10.40.205.24])
+        by smtp.corp.redhat.com (Postfix) with SMTP id F29347C49;
+        Fri, 27 Jul 2018 07:06:25 +0000 (UTC)
+Date:   Fri, 27 Jul 2018 09:06:23 +0200
+From:   Jiri Olsa <jolsa@redhat.com>
+To:     rodia@autistici.org
+Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Jiri Olsa <jolsa@kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        David Ahern <dsahern@gmail.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>
+Subject: Re: [PATCH] perf c2c report: Fix crash for empty browser
+Message-ID: <20180727070623.GA24770@krava>
+References: <20180724062008.26126-1-jolsa@kernel.org>
+ <20180726193046.GC20438@kernel.org>
+ <c5cb64016f7da6c2abdef4a05ea74425@autistici.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c5cb64016f7da6c2abdef4a05ea74425@autistici.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Fri, 27 Jul 2018 07:06:30 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Fri, 27 Jul 2018 07:06:30 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jolsa@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-qcom,smmu-v2 is an arm,smmu-v2 implementation with specific
-clock and power requirements. This smmu core is used with
-multiple masters on msm8996, viz. mdss, video, etc.
-Add bindings for the same.
+On Thu, Jul 26, 2018 at 11:31:34PM +0000, rodia@autistici.org wrote:
+> On 2018-07-26 19:30, Arnaldo Carvalho de Melo wrote:
+> > Em Tue, Jul 24, 2018 at 08:20:08AM +0200, Jiri Olsa escreveu:
+> > > Do not try to display entry details if there's
+> > > not any. Currently this ends up in crash:
+> > >   $ perf c2c report
+> > >   perf: Segmentation fault
+> > 
+> > How to replicate this?
+> > 
+> > I tried:
+> > 
+> > $ perf record sleep 1
+> > $ perf c2c report
+> > 
+> > But it didn't segfault
+> 
+> Similarly I have tried :
+> $ perf record sleep 1
+> $ perf c2c report
+> Then Press `d` to show the cache-line contents.
 
-Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
-Reviewed-by: Rob Herring <robh@kernel.org>
-Reviewed-by: Tomasz Figa <tfiga@chromium.org>
+yep, sry I forgot to mention you need to press the 'd' to show details
+
+
+> This replies the segfault on my machine (4.17.8-1).
+> The patch mentioned above should solve it, even tough I am not sure as I
+> haven't been able to recompile the kernel.
+
+no need to recompile kernel
+
+> 
+> The segfault by itself seems to be due to the report logic, as it did not
+> expect to report on an empty browser.
+> What has stepped me back is that application which I have been testing with
+> rely on multiple threads instantiated through pthread, which should be
+> counted in user-level threads right? But they still seem to return an empty
+> browser.
+
+right, c2c scans read/write accesses and tries to find false sharing
+cases maybe there was nothing to be found
+
+> When instead c2c is runned system-wide, with an application running on
+> multiple threads like firefox or julia, cache hits are measured and also
+> they are traced back in the source code.
+
+I got a cache line (attached) for 'perf bench sched messaging'
+NOT being traced system wide and just for user (you'll get plenty
+of detected cachelines in kernel space):
+
+jirka
+
+
 ---
+[root@krava perf]# ./perf c2c record --all-user -- ./perf bench sched messaging -l 100000
+[root@krava perf]# ./perf c2c report --stdio
 
-Change since v13:
- - No change.
+=================================================
+           Shared Data Cache Line Table          
+=================================================
+#
+#        ----------- Cacheline ----------    Total      Tot  ----- LLC Load Hitm -----  ---- Store Reference ----  --- Load Dram ----      LLC    Total  ----- Core Load Hit -----  -- LLC Load Hit --
+# Index             Address  Node  PA cnt  records     Hitm    Total      Lcl      Rmt    Total    L1Hit   L1Miss       Lcl       Rmt  Ld Miss    Loads       FB       L1       L2       Llc       Rmt
+# .....  ..................  ....  ......  .......  .......  .......  .......  .......  .......  .......  .......  ........  ........  .......  .......  .......  .......  .......  ........  ........
+#
+      0      0x7fff5b729cc0     0       1       44  100.00%        1        1        0       21       21        0         2         0        2       23        0        0        9        11         0
 
- .../devicetree/bindings/iommu/arm,smmu.txt         | 42 ++++++++++++++++++++++
- drivers/iommu/arm-smmu.c                           | 13 +++++++
- 2 files changed, 55 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/iommu/arm,smmu.txt b/Documentation/devicetree/bindings/iommu/arm,smmu.txt
-index 8a6ffce12af5..7c71a6ed465a 100644
---- a/Documentation/devicetree/bindings/iommu/arm,smmu.txt
-+++ b/Documentation/devicetree/bindings/iommu/arm,smmu.txt
-@@ -17,10 +17,19 @@ conditions.
-                         "arm,mmu-401"
-                         "arm,mmu-500"
-                         "cavium,smmu-v2"
-+                        "qcom,<soc>-smmu-v2", "qcom,smmu-v2"
- 
-                   depending on the particular implementation and/or the
-                   version of the architecture implemented.
- 
-+                  A number of Qcom SoCs use qcom,smmu-v2 version of the IP.
-+                  "qcom,<soc>-smmu-v2" represents a soc specific compatible
-+                  string that should be present along with the "qcom,smmu-v2"
-+                  to facilitate SoC specific clocks/power connections and to
-+                  address specific bug fixes.
-+                  An example string would be -
-+                  "qcom,msm8996-smmu-v2", "qcom,smmu-v2".
-+
- - reg           : Base address and size of the SMMU.
- 
- - #global-interrupts : The number of global interrupts exposed by the
-@@ -71,6 +80,22 @@ conditions.
-                   or using stream matching with #iommu-cells = <2>, and
-                   may be ignored if present in such cases.
- 
-+- clock-names:    List of the names of clocks input to the device. The
-+                  required list depends on particular implementation and
-+                  is as follows:
-+                  - for "qcom,smmu-v2":
-+                    - "bus": clock required for downstream bus access and
-+                             for the smmu ptw,
-+                    - "iface": clock required to access smmu's registers
-+                               through the TCU's programming interface.
-+                  - unspecified for other implementations.
-+
-+- clocks:         Specifiers for all clocks listed in the clock-names property,
-+                  as per generic clock bindings.
-+
-+- power-domains:  Specifiers for power domains required to be powered on for
-+                  the SMMU to operate, as per generic power domain bindings.
-+
- ** Deprecated properties:
- 
- - mmu-masters (deprecated in favour of the generic "iommus" binding) :
-@@ -137,3 +162,20 @@ conditions.
-                 iommu-map = <0 &smmu3 0 0x400>;
-                 ...
-         };
-+
-+	/* Qcom's arm,smmu-v2 implementation */
-+	smmu4: iommu {
-+		compatible = "qcom,msm8996-smmu-v2", "qcom,smmu-v2";
-+		reg = <0xd00000 0x10000>;
-+
-+		#global-interrupts = <1>;
-+		interrupts = <GIC_SPI 73 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 320 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 321 IRQ_TYPE_LEVEL_HIGH>;
-+		#iommu-cells = <1>;
-+		power-domains = <&mmcc MDSS_GDSC>;
-+
-+		clocks = <&mmcc SMMU_MDP_AXI_CLK>,
-+			 <&mmcc SMMU_MDP_AHB_CLK>;
-+		clock-names = "bus", "iface";
-+	};
-diff --git a/drivers/iommu/arm-smmu.c b/drivers/iommu/arm-smmu.c
-index e558abf1ecfc..2b4edba188a5 100644
---- a/drivers/iommu/arm-smmu.c
-+++ b/drivers/iommu/arm-smmu.c
-@@ -119,6 +119,7 @@ enum arm_smmu_implementation {
- 	GENERIC_SMMU,
- 	ARM_MMU500,
- 	CAVIUM_SMMUV2,
-+	QCOM_SMMUV2,
- };
- 
- struct arm_smmu_s2cr {
-@@ -1971,6 +1972,17 @@ ARM_SMMU_MATCH_DATA(arm_mmu401, ARM_SMMU_V1_64K, GENERIC_SMMU);
- ARM_SMMU_MATCH_DATA(arm_mmu500, ARM_SMMU_V2, ARM_MMU500);
- ARM_SMMU_MATCH_DATA(cavium_smmuv2, ARM_SMMU_V2, CAVIUM_SMMUV2);
- 
-+static const char * const qcom_smmuv2_clks[] = {
-+	"bus", "iface",
-+};
-+
-+static const struct arm_smmu_match_data qcom_smmuv2 = {
-+	.version = ARM_SMMU_V2,
-+	.model = QCOM_SMMUV2,
-+	.clks = qcom_smmuv2_clks,
-+	.num_clks = ARRAY_SIZE(qcom_smmuv2_clks),
-+};
-+
- static const struct of_device_id arm_smmu_of_match[] = {
- 	{ .compatible = "arm,smmu-v1", .data = &smmu_generic_v1 },
- 	{ .compatible = "arm,smmu-v2", .data = &smmu_generic_v2 },
-@@ -1978,6 +1990,7 @@ static const struct of_device_id arm_smmu_of_match[] = {
- 	{ .compatible = "arm,mmu-401", .data = &arm_mmu401 },
- 	{ .compatible = "arm,mmu-500", .data = &arm_mmu500 },
- 	{ .compatible = "cavium,smmu-v2", .data = &cavium_smmuv2 },
-+	{ .compatible = "qcom,smmu-v2", .data = &qcom_smmuv2 },
- 	{ },
- };
- MODULE_DEVICE_TABLE(of, arm_smmu_of_match);
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
+=================================================
+      Shared Cache Line Distribution Pareto      
+=================================================
+#
+#        ----- HITM -----  -- Store Refs --  --------- Data address ---------                               ---------- cycles ----------    Total       cpu                               Shared                             
+#   Num      Rmt      Lcl   L1 Hit  L1 Miss              Offset  Node  PA cnt      Pid        Code address  rmt hitm  lcl hitm      load  records       cnt           Symbol              Object            Source:Line  Node
+# .....  .......  .......  .......  .......  ..................  ....  ......  .......  ..................  ........  ........  ........  .......  ........  ...............  ..................  .....................  ....
+#
+  -------------------------------------------------------------
+      0        0        1       21        0      0x7fff5b729cc0
+  -------------------------------------------------------------
+           0.00%  100.00%    0.00%    0.00%                0x38     0       1    17356      0x7febaf7e1a46         0       142       101       23         4  [.] __libc_read  libpthread-2.27.so  read.c:28               0
+           0.00%    0.00%  100.00%    0.00%                0x38     0       1    17356            0x494e4e         0         0         0       21         4  [.] receiver     perf                sched-messaging.c:129   0
 
