@@ -2,128 +2,98 @@ Return-Path: <SRS0=OQFz=KL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D463C28CF6
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 02:16:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D891C6778F
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 02:17:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C47FF20883
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 02:16:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C47FF20883
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=iogearbox.net
+	by mail.kernel.org (Postfix) with ESMTP id 4674920883
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 02:17:35 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="L5V5RNf5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4674920883
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732138AbeG0DgG (ORCPT
+        id S1732160AbeG0DhG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 26 Jul 2018 23:36:06 -0400
-Received: from www62.your-server.de ([213.133.104.62]:39443 "EHLO
-        www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731963AbeG0DgG (ORCPT
+        Thu, 26 Jul 2018 23:37:06 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:42328 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732045AbeG0DhF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Jul 2018 23:36:06 -0400
-Received: from [78.46.172.3] (helo=sslproxy06.your-server.de)
-        by www62.your-server.de with esmtpsa (TLSv1.2:DHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.85_2)
-        (envelope-from <daniel@iogearbox.net>)
-        id 1fisIt-0006hY-FV; Fri, 27 Jul 2018 04:16:27 +0200
-Received: from [99.0.85.34] (helo=localhost.localdomain)
-        by sslproxy06.your-server.de with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.89)
-        (envelope-from <daniel@iogearbox.net>)
-        id 1fisIt-000X4D-4a; Fri, 27 Jul 2018 04:16:27 +0200
-Subject: Re: [PATCH v2] perf build: Build error in libbpf with
- EXTRA_CFLAGS="-Wp,-D_FORTIFY_SOURCE=2 -O2"
-To:     Jakub Kicinski <jakub.kicinski@netronome.com>,
-        Thomas Richter <tmricht@linux.ibm.com>
-Cc:     ast@kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, heiko.carstens@de.ibm.com,
-        brueckner@linux.vnet.ibm.com, schwidefsky@de.ibm.com,
-        wangnan0@huawei.com
-References: <20180725072126.2232-1-tmricht@linux.ibm.com>
- <20180725184835.5d37bef4@cakuba.netronome.com>
-From:   Daniel Borkmann <daniel@iogearbox.net>
-Message-ID: <08b6ed57-40a4-7468-b78d-f2a2c5ab10a8@iogearbox.net>
-Date:   Fri, 27 Jul 2018 04:16:23 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.3.0
-MIME-Version: 1.0
-In-Reply-To: <20180725184835.5d37bef4@cakuba.netronome.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Authenticated-Sender: daniel@iogearbox.net
-X-Virus-Scanned: Clear (ClamAV 0.100.0/24786/Fri Jul 27 02:41:39 2018)
+        Thu, 26 Jul 2018 23:37:05 -0400
+Received: by mail-pg1-f193.google.com with SMTP id y4-v6so2285985pgp.9;
+        Thu, 26 Jul 2018 19:17:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=G8y7N9RH4AZkGuy8f62RMTy9APWhxwa4QK5qc88GqXI=;
+        b=L5V5RNf5sSBsbQCk1PgyDjBJUfjGqGSIuvrwIOoI/1t+jw66a5B78CufrTekxOL9tW
+         S0Uprpd6FZZdrU+p4mUPyvwbbZ98t8dRSQLfJ+Br0Dt8oxEMbETW/A4jx4QL/nR9YpNm
+         1ofb45mEwqPxVzhmX+Vhj3C9aSjVhGOGB3zAVdtA6LX7xtuyphciiNQu2H8Z5p9n1A0S
+         9qoLTLK53iYtnd4FzfGby7dL4mNGLB9KFhBPK/PY77glgo7yVc7bixZN21jX1SbfBWPH
+         I8bq6ad9TkI7kgwJ39L5kWa+2qhlgNhpvfbPtc+nuF5jAh5yNMFit3xGTCURVnQp5/Lb
+         +66w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=G8y7N9RH4AZkGuy8f62RMTy9APWhxwa4QK5qc88GqXI=;
+        b=G5LlAUg6qoA3RU6MUiAPZSluq8VNPSJOb/EaOsoApufMSgar1NQuY0LkodUF8u9fhH
+         c2s7lROSofgSH4G/nvvQ1g8eexwEBRu+7A1rj991TH9/0qo1V53eYGTTtq7QmHbr4b+A
+         sdZWJTpzhILtSAGCa+qu145eP0Un2ItE80PDpp3zAEIb+cwqgr7Lh3zuI0Ppk7vRKeCR
+         iKxh6OIMfVJpnEluCK+6nGazA8/3RhgCNSrDN/fbDZO63zioNhsV+NSjZjPTFn37JM2Q
+         xpJCA7GC7lGmifCb1RKJVRvFhZqsSqZQXsL41HAiGHHEpnLr5bkJTYzegpevsH8v4MZc
+         UMwA==
+X-Gm-Message-State: AOUpUlFBNOzGcdsQI+KuhtVLF47KGXuZGSNVvkuz6iErdHUYZ05tpUXo
+        76zJBeUhjBTJvbrVhv9kPWw=
+X-Google-Smtp-Source: AAOMgpeluSlSXdfteri0oN9jHZUS6F8SLSvLntvPQ8mgEEF6n+XG49KSuVyqOChNqvNe9rffP6uL7Q==
+X-Received: by 2002:a63:8b44:: with SMTP id j65-v6mr4224804pge.248.1532657852447;
+        Thu, 26 Jul 2018 19:17:32 -0700 (PDT)
+Received: from localhost.localdomain ([2402:f000:1:4414:6c14:7712:e625:1be4])
+        by smtp.gmail.com with ESMTPSA id y3-v6sm3364502pge.29.2018.07.26.19.17.30
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 26 Jul 2018 19:17:32 -0700 (PDT)
+From:   Jia-Ju Bai <baijiaju1990@gmail.com>
+To:     dmitry.torokhov@gmail.com, arvind.yadav.cs@gmail.com
+Cc:     linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jia-Ju Bai <baijiaju1990@gmail.com>
+Subject: [PATCH] input: misc: powermate: Replace GFP_ATOMIC with GFP_KERNEL in powermate_alloc_buffers()
+Date:   Fri, 27 Jul 2018 10:17:23 +0800
+Message-Id: <20180727021723.709-1-baijiaju1990@gmail.com>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/26/2018 03:48 AM, Jakub Kicinski wrote:
-> On Wed, 25 Jul 2018 09:21:26 +0200, Thomas Richter wrote:
->> commit a5b8bd47dcc57 ("bpf tools: Collect eBPF programs from their own sections")
-> 
-> Hmm.. are you sure it's not 531b014e7a2f ("tools: bpf: make use of
-> reallocarray") that caused the issue?  That commit made us switch from
-> XSI-compliant to GNU-specific strerror_r() implementation..
-> 
-> /me checks
-> 
-> Yes it looks like 531b014e7a2f~ builds just fine.
-> 
-> Daniel, did you try to apply v1 to the bpf tree?  Perhaps there is a
-> confusion about the trees here, if this is caused by my recent change
-> it's a bpf-next material.  strerror() works, but strerror_r() seems
-> nicer, so perhaps we could keep it if the patch worked in bpf-next?
+powermate_alloc_buffers() is never called in atomic context.
+It calls usb_alloc_coherent() with GFP_ATOMIC, which is not necessary.
+GFP_ATOMIC can be replaced with GFP_KERNEL.
 
-Yeah indeed, the issue is only in bpf-next. When I compile libbpf from
-bpf tree with the below flags then it's all good.
+This is found by a static analysis tool named DCNS written by myself.
 
-Agree that we should rather use strerror_r() given this is a library.
+Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+---
+ drivers/input/misc/powermate.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
->> causes a compiler error when building the perf tool in the linux-next tree.
->> I compile it using a FEDORA 28 installation, my gcc compiler version:
->> gcc (GCC) 8.0.1 20180324 (Red Hat 8.0.1-0.20)
->>
->> The file that causes the error is tools/lib/bpf/libbpf.c
->>
->> Here is the error message:
-[...]
->> @@ -2334,7 +2331,7 @@ bpf_perf_event_read_simple(void *mem, unsigned long size,
->>  	__u64 data_tail = header->data_tail;
->>  	__u64 data_head = header->data_head;
->>  	void *base, *begin, *end;
->> -	int ret;
->> +	int ret = 0;
->>  
->>  	asm volatile("" ::: "memory"); /* in real code it should be smp_rmb() */
->>  	if (data_head == data_tail)
-> 
-> This looks like a separate issue.  The ret variable should really be
-> enum bpf_perf_event_ret, so could you please initialize it to one of the
-> values of this enum?
-> 
-> The uninitilized condition can only happen if (data_head != data_tail)
-> but at the same time (data_head % size == data_tail % size) which
-> should never really happen...  Perhaps initializing to
-> LIBBPF_PERF_EVENT_ERROR would make sense?
-> 
-> Or better still adding:
-> 
-> diff --git a/tools/lib/bpf/libbpf.c b/tools/lib/bpf/libbpf.c
-> index f732237610e5..fa5a25945f19 100644
-> --- a/tools/lib/bpf/libbpf.c
-> +++ b/tools/lib/bpf/libbpf.c
-> @@ -2289,6 +2289,8 @@ bpf_perf_event_read_simple(void *mem, unsigned long size,
->  
->         begin = base + data_tail % size;
->         end = base + data_head % size;
-> +       if (being == end)
-> +               return LIBBPF_PERF_EVENT_ERROR;
-
-Sounds good to me.
-
->         while (begin != end) {
->                 struct perf_event_header *ehdr;
-> 
+diff --git a/drivers/input/misc/powermate.c b/drivers/input/misc/powermate.c
+index 5c8c79623c87..e8de3aaf9f63 100644
+--- a/drivers/input/misc/powermate.c
++++ b/drivers/input/misc/powermate.c
+@@ -277,7 +277,7 @@ static int powermate_input_event(struct input_dev *dev, unsigned int type, unsig
+ static int powermate_alloc_buffers(struct usb_device *udev, struct powermate_device *pm)
+ {
+ 	pm->data = usb_alloc_coherent(udev, POWERMATE_PAYLOAD_SIZE_MAX,
+-				      GFP_ATOMIC, &pm->data_dma);
++				      GFP_KERNEL, &pm->data_dma);
+ 	if (!pm->data)
+ 		return -1;
+ 
+-- 
+2.17.0
 
