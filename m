@@ -6,35 +6,36 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67C7CC67790
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:11:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4533EC67790
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:11:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 239902089E
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:11:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 239902089E
+	by mail.kernel.org (Postfix) with ESMTP id 06B412089E
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:11:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 06B412089E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389338AbeG0Lcj (ORCPT
+        id S2389357AbeG0Lcm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 07:32:39 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:36732 "EHLO
+        Fri, 27 Jul 2018 07:32:42 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:36742 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730866AbeG0Lci (ORCPT
+        with ESMTP id S1730866AbeG0Lcl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 07:32:38 -0400
+        Fri, 27 Jul 2018 07:32:41 -0400
 Received: from localhost (unknown [89.188.5.116])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id F3BEBCBA;
-        Fri, 27 Jul 2018 10:11:24 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C4244CBA;
+        Fri, 27 Jul 2018 10:11:27 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-        Soheil Hassas Yeganeh <soheil@google.com>,
+        stable@vger.kernel.org,
+        syzbot+9adb4b567003cac781f0@syzkaller.appspotmail.com,
+        Willem de Bruijn <willemb@google.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.4 10/23] tcp: detect malicious patterns in tcp_collapse_ofo_queue()
-Date:   Fri, 27 Jul 2018 12:09:11 +0200
-Message-Id: <20180727100845.566992497@linuxfoundation.org>
+Subject: [PATCH 4.4 11/23] ip: in cmsg IP(V6)_ORIGDSTADDR call pskb_may_pull
+Date:   Fri, 27 Jul 2018 12:09:12 +0200
+Message-Id: <20180727100845.604642868@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180727100845.054377089@linuxfoundation.org>
 References: <20180727100845.054377089@linuxfoundation.org>
@@ -51,69 +52,93 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Eric Dumazet <edumazet@google.com>
+From: Willem de Bruijn <willemb@google.com>
 
-[ Upstream commit 3d4bf93ac12003f9b8e1e2de37fe27983deebdcf ]
+[ Upstream commit 2efd4fca703a6707cad16ab486eaab8fc7f0fd49 ]
 
-In case an attacker feeds tiny packets completely out of order,
-tcp_collapse_ofo_queue() might scan the whole rb-tree, performing
-expensive copies, but not changing socket memory usage at all.
+Syzbot reported a read beyond the end of the skb head when returning
+IPV6_ORIGDSTADDR:
 
-1) Do not attempt to collapse tiny skbs.
-2) Add logic to exit early when too many tiny skbs are detected.
+  BUG: KMSAN: kernel-infoleak in put_cmsg+0x5ef/0x860 net/core/scm.c:242
+  CPU: 0 PID: 4501 Comm: syz-executor128 Not tainted 4.17.0+ #9
+  Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+  Google 01/01/2011
+  Call Trace:
+    __dump_stack lib/dump_stack.c:77 [inline]
+    dump_stack+0x185/0x1d0 lib/dump_stack.c:113
+    kmsan_report+0x188/0x2a0 mm/kmsan/kmsan.c:1125
+    kmsan_internal_check_memory+0x138/0x1f0 mm/kmsan/kmsan.c:1219
+    kmsan_copy_to_user+0x7a/0x160 mm/kmsan/kmsan.c:1261
+    copy_to_user include/linux/uaccess.h:184 [inline]
+    put_cmsg+0x5ef/0x860 net/core/scm.c:242
+    ip6_datagram_recv_specific_ctl+0x1cf3/0x1eb0 net/ipv6/datagram.c:719
+    ip6_datagram_recv_ctl+0x41c/0x450 net/ipv6/datagram.c:733
+    rawv6_recvmsg+0x10fb/0x1460 net/ipv6/raw.c:521
+    [..]
 
-We prefer not doing aggressive collapsing (which copies packets)
-for pathological flows, and revert to tcp_prune_ofo_queue() which
-will be less expensive.
+This logic and its ipv4 counterpart read the destination port from
+the packet at skb_transport_offset(skb) + 4.
 
-In the future, we might add the possibility of terminating flows
-that are proven to be malicious.
+With MSG_MORE and a local SOCK_RAW sender, syzbot was able to cook a
+packet that stores headers exactly up to skb_transport_offset(skb) in
+the head and the remainder in a frag.
 
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Acked-by: Soheil Hassas Yeganeh <soheil@google.com>
+Call pskb_may_pull before accessing the pointer to ensure that it lies
+in skb head.
+
+Link: http://lkml.kernel.org/r/CAF=yD-LEJwZj5a1-bAAj2Oy_hKmGygV6rsJ_WOrAYnv-fnayiQ@mail.gmail.com
+Reported-by: syzbot+9adb4b567003cac781f0@syzkaller.appspotmail.com
+Signed-off-by: Willem de Bruijn <willemb@google.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ipv4/tcp_input.c |   15 +++++++++++++--
- 1 file changed, 13 insertions(+), 2 deletions(-)
+ net/ipv4/ip_sockglue.c |    7 +++++--
+ net/ipv6/datagram.c    |    7 +++++--
+ 2 files changed, 10 insertions(+), 4 deletions(-)
 
---- a/net/ipv4/tcp_input.c
-+++ b/net/ipv4/tcp_input.c
-@@ -4789,6 +4789,7 @@ restart:
- static void tcp_collapse_ofo_queue(struct sock *sk)
+--- a/net/ipv4/ip_sockglue.c
++++ b/net/ipv4/ip_sockglue.c
+@@ -135,15 +135,18 @@ static void ip_cmsg_recv_dstaddr(struct
  {
- 	struct tcp_sock *tp = tcp_sk(sk);
-+	u32 range_truesize, sum_tiny = 0;
- 	struct sk_buff *skb = skb_peek(&tp->out_of_order_queue);
- 	struct sk_buff *head;
- 	u32 start, end;
-@@ -4798,6 +4799,7 @@ static void tcp_collapse_ofo_queue(struc
+ 	struct sockaddr_in sin;
+ 	const struct iphdr *iph = ip_hdr(skb);
+-	__be16 *ports = (__be16 *)skb_transport_header(skb);
++	__be16 *ports;
++	int end;
  
- 	start = TCP_SKB_CB(skb)->seq;
- 	end = TCP_SKB_CB(skb)->end_seq;
-+	range_truesize = skb->truesize;
- 	head = skb;
+-	if (skb_transport_offset(skb) + 4 > skb->len)
++	end = skb_transport_offset(skb) + 4;
++	if (end > 0 && !pskb_may_pull(skb, end))
+ 		return;
  
- 	for (;;) {
-@@ -4812,8 +4814,17 @@ static void tcp_collapse_ofo_queue(struc
- 		if (!skb ||
- 		    after(TCP_SKB_CB(skb)->seq, end) ||
- 		    before(TCP_SKB_CB(skb)->end_seq, start)) {
--			tcp_collapse(sk, &tp->out_of_order_queue,
--				     head, skb, start, end);
-+			/* Do not attempt collapsing tiny skbs */
-+			if (range_truesize != head->truesize ||
-+			    end - start >= SKB_WITH_OVERHEAD(SK_MEM_QUANTUM)) {
-+				tcp_collapse(sk, &tp->out_of_order_queue,
-+					     head, skb, start, end);
-+			} else {
-+				sum_tiny += range_truesize;
-+				if (sum_tiny > sk->sk_rcvbuf >> 3)
-+					return;
-+			}
-+
- 			head = skb;
- 			if (!skb)
- 				break;
+ 	/* All current transport protocols have the port numbers in the
+ 	 * first four bytes of the transport header and this function is
+ 	 * written with this assumption in mind.
+ 	 */
++	ports = (__be16 *)skb_transport_header(skb);
+ 
+ 	sin.sin_family = AF_INET;
+ 	sin.sin_addr.s_addr = iph->daddr;
+--- a/net/ipv6/datagram.c
++++ b/net/ipv6/datagram.c
+@@ -657,13 +657,16 @@ void ip6_datagram_recv_specific_ctl(stru
+ 	}
+ 	if (np->rxopt.bits.rxorigdstaddr) {
+ 		struct sockaddr_in6 sin6;
+-		__be16 *ports = (__be16 *) skb_transport_header(skb);
++		__be16 *ports;
++		int end;
+ 
+-		if (skb_transport_offset(skb) + 4 <= skb->len) {
++		end = skb_transport_offset(skb) + 4;
++		if (end <= 0 || pskb_may_pull(skb, end)) {
+ 			/* All current transport protocols have the port numbers in the
+ 			 * first four bytes of the transport header and this function is
+ 			 * written with this assumption in mind.
+ 			 */
++			ports = (__be16 *)skb_transport_header(skb);
+ 
+ 			sin6.sin6_family = AF_INET6;
+ 			sin6.sin6_addr = ipv6_hdr(skb)->daddr;
 
 
