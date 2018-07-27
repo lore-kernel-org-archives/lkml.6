@@ -2,124 +2,78 @@ Return-Path: <SRS0=OQFz=KL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B505CC67790
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 08:30:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46872C6778F
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 08:31:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 16EA920891
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 08:30:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 16EA920891
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 6E04A2088E
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 08:31:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6E04A2088E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730396AbeG0JvJ (ORCPT
+        id S1730182AbeG0JwU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 05:51:09 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:49211 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729431AbeG0JvJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 05:51:09 -0400
-Received: from kresse.hi.pengutronix.de ([2001:67c:670:100:1d::2a])
-        by metis.ext.pengutronix.de with esmtp (Exim 4.89)
-        (envelope-from <l.stach@pengutronix.de>)
-        id 1fiy8c-0003mQ-9I; Fri, 27 Jul 2018 10:30:14 +0200
-Message-ID: <1532680211.32306.36.camel@pengutronix.de>
-Subject: Re: [PATCH v8 1/6] ARM: imx6q: provide documentation for new
- fsl,pmic-stby-poweroff property
-From:   Lucas Stach <l.stach@pengutronix.de>
-To:     Robin Gong <yibin.gong@nxp.com>,
-        Oleksij Rempel <o.rempel@pengutronix.de>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Mark Brown <broonie@kernel.org>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Cc:     Mark Rutland <mark.rutland@arm.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "A.s. Dong" <aisheng.dong@nxp.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Leonard Crestez <leonard.crestez@nxp.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>
-Date:   Fri, 27 Jul 2018 10:30:11 +0200
-In-Reply-To: <DB6PR04MB32236EA307DCD070771B1D4D892A0@DB6PR04MB3223.eurprd04.prod.outlook.com>
-References: <20180726092220.17250-1-o.rempel@pengutronix.de>
-         <20180726092220.17250-2-o.rempel@pengutronix.de>
-         <DB6PR04MB3223605CB1F5E06D4A278B3C892B0@DB6PR04MB3223.eurprd04.prod.outlook.com>
-         <84c1921c-922e-4b5d-b688-db89047fa1db@pengutronix.de>
-         <DB6PR04MB32236EA307DCD070771B1D4D892A0@DB6PR04MB3223.eurprd04.prod.outlook.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6-1+deb9u1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::2a
-X-SA-Exim-Mail-From: l.stach@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+        Fri, 27 Jul 2018 05:52:20 -0400
+Received: from mga06.intel.com ([134.134.136.31]:26914 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726034AbeG0JwU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Jul 2018 05:52:20 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Jul 2018 01:31:32 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,408,1526367600"; 
+   d="scan'208";a="76407873"
+Received: from devel-ww.sh.intel.com ([10.239.48.110])
+  by orsmga001.jf.intel.com with ESMTP; 27 Jul 2018 01:31:20 -0700
+From:   Wei Wang <wei.w.wang@intel.com>
+To:     linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
+        andy.shevchenko@gmail.com, ynorov@caviumnetworks.com,
+        corbet@lwn.net, linux@rasmusvillemoes.dk
+Cc:     dgilbert@redhat.com, wei.w.wang@intel.com
+Subject: [PATCH v2] linux/bitmap.h: comments on BITMAP_LAST_WORD_MASK
+Date:   Fri, 27 Jul 2018 16:03:31 +0800
+Message-Id: <1532678611-9136-1-git-send-email-wei.w.wang@intel.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Robin,
+When "nbits = 0" which means no bits to mask, this macro is expected to
+return 0, instead of 0xffffffff. Currently, the "nbits = 0" case is
+avoided by the callers themselves (e.g.__bitmap_intersects,
+__bitmap_weight). This corner case should be explicitly noted.
 
-Am Freitag, den 27.07.2018, 01:51 +0000 schrieb Robin Gong:
-[...]
-> > > > ---
-> > > >  Documentation/devicetree/bindings/clock/imx6q-clock.txt | 8 ++++++++
-> > > >  1 file changed, 8 insertions(+)
-> > > > 
-> > > > diff --git a/Documentation/devicetree/bindings/clock/imx6q-clock.txt
-> > > > b/Documentation/devicetree/bindings/clock/imx6q-clock.txt
-> > > > index a45ca67a9d5f..e1308346e00d 100644
-> > > > --- a/Documentation/devicetree/bindings/clock/imx6q-clock.txt
-> > > > +++ b/Documentation/devicetree/bindings/clock/imx6q-clock.txt
-> > > > @@ -6,6 +6,14 @@ Required properties:
-> > > >  - interrupts: Should contain CCM interrupt
-> > > >  - #clock-cells: Should be <1>
-> > > > 
-> > > > +Optional properties:
-> > > > +- fsl,pmic-stby-poweroff: Configure CCM to assert PMIC_STBY_REQ
-> > > > +signal
-> > > > +  on power off.
-> > > > +  Use this property if the SoC should be powered off by external
-> > > > +power
-> > > > +  management IC (PMIC) triggered via PMIC_STBY_REQ signal.
-> > > 
-> > > PMIC_ON_REQ didn't connect to any pin of PMIC in your case?
-> > 
-> > No. First, it was only one customer specific issue. After some research I found
-> > even publicly available boards (for example RioTboard) which has same/similar
-> > design. After seeing this in imx6 documentation as valid power off way, I have
-> > no doubts - there should be even more devices doin this in the wild.
-> 
-> Not sure why the customer didn't follow reference design, since PMIC_ON_REQ can
-> provide power off/on feature by pressing ONOFF key which connected ONOFF
-> pin of i.mx6(ONOFF will toggle PMIC_ON_REQ to power off/on PMIC). The official
-> power off/on way (PMIC_ON_REQ) can also power off all power rails of PFUZE except
-> snvs as your patch did on PMIC_STBY_REQ.  PMIC_STBY_REQ is used to notify pmic
-> switch power mode (PFM/APS) or decrease voltage to save power in kernel suspend,
-> not power off....I am not sure if we need this patchset to 'workaround' the board issue.
-> 
-Not all boards follow the reference design, that's a fact of life.
+This patch simply adds a comment above the macro as a note to users about
+the corner case.
 
-Please look at the i.MX6Q reference manual. The sequence implemented in
-this patchset can be found as a valid way to power off the system in
-"60.4.3 Power mode transitions" "Normal ON to OFF with external PMIC",
-so there is hardly any way to argue that this is a board specific
-quirk. This is one of the Freescale/NXP recommended sequences to turn
-off the system.
+Signed-off-by: Wei Wang <wei.w.wang@intel.com>
+Cc: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Yury Norov <ynorov@caviumnetworks.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+---
+ include/linux/bitmap.h | 1 +
+ 1 file changed, 1 insertion(+)
 
-Regards,
-Lucas
+diff --git a/include/linux/bitmap.h b/include/linux/bitmap.h
+index 1ee46f4..4e64d1f 100644
+--- a/include/linux/bitmap.h
++++ b/include/linux/bitmap.h
+@@ -194,6 +194,7 @@ extern int bitmap_print_to_pagebuf(bool list, char *buf,
+ 				   const unsigned long *maskp, int nmaskbits);
+ 
+ #define BITMAP_FIRST_WORD_MASK(start) (~0UL << ((start) & (BITS_PER_LONG - 1)))
++/* "nbits = 0" is not applicable to this macro. Callers should avoid that. */
+ #define BITMAP_LAST_WORD_MASK(nbits) (~0UL >> (-(nbits) & (BITS_PER_LONG - 1)))
+ 
+ #define small_const_nbits(nbits) \
+-- 
+2.7.4
+
