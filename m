@@ -6,36 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 737F0C6778F
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 09:48:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14865C67790
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 09:48:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 321CF20895
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 09:48:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 321CF20895
+	by mail.kernel.org (Postfix) with ESMTP id ADC8120895
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 09:48:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ADC8120895
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388548AbeG0LJW (ORCPT
+        id S2388571AbeG0LJZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 07:09:22 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:51646 "EHLO
+        Fri, 27 Jul 2018 07:09:25 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:51732 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388154AbeG0LJV (ORCPT
+        with ESMTP id S2388154AbeG0LJY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 07:09:21 -0400
+        Fri, 27 Jul 2018 07:09:24 -0400
 Received: from localhost (unknown [89.188.5.116])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 23C10898;
-        Fri, 27 Jul 2018 09:48:15 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C4AFEAF8;
+        Fri, 27 Jul 2018 09:48:18 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Jack Morgenstein <jackm@dev.mellanox.co.il>,
-        Tariq Toukan <tariqt@mellanox.com>,
+        stable@vger.kernel.org, Zhou Wang <wangzhou1@hisilicon.com>,
+        Zhao Chen <zhaochen6@huawei.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.17 17/66] net/mlx4_core: Save the qpn from the input modifier in RST2INIT wrapper
-Date:   Fri, 27 Jul 2018 11:45:10 +0200
-Message-Id: <20180727093811.031071493@linuxfoundation.org>
+Subject: [PATCH 4.17 18/66] net-next/hinic: fix a problem in hinic_xmit_frame()
+Date:   Fri, 27 Jul 2018 11:45:11 +0200
+Message-Id: <20180727093811.164723943@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180727093809.043856530@linuxfoundation.org>
 References: <20180727093809.043856530@linuxfoundation.org>
@@ -52,40 +51,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jack Morgenstein <jackm@dev.mellanox.co.il>
+From: Zhao Chen <zhaochen6@huawei.com>
 
-[ Upstream commit 958c696f5a7274d9447a458ad7aa70719b29a50a ]
+[ Upstream commit f7482683f1f4925c60941dbbd0813ceaa069d106 ]
 
-Function mlx4_RST2INIT_QP_wrapper saved the qp number passed in the qp
-context, rather than the one passed in the input modifier.
+The calculation of "wqe_size" is not correct when the tx queue is busy in
+hinic_xmit_frame().
 
-However, the qp number in the qp context is not defined as a
-required parameter by the FW. Therefore, drivers may choose to not
-specify the qp number in the qp context for the reset-to-init transition.
+When there are no free WQEs, the tx flow will unmap the skb buffer, then
+ring the doobell for the pending packets. But the "wqe_size" which used
+to calculate the doorbell address is not correct. The wqe size should be
+cleared to 0, otherwise, it will cause a doorbell error.
 
-Thus, we must save the qp number passed in the command input modifier --
-which is always present. (This saved qp number is used as the input
-modifier for command 2RST_QP when a slave's qp's are destroyed).
+This patch fixes the problem.
 
-Fixes: c82e9aa0a8bc ("mlx4_core: resource tracking for HCA resources used by guests")
-Signed-off-by: Jack Morgenstein <jackm@dev.mellanox.co.il>
-Signed-off-by: Tariq Toukan <tariqt@mellanox.com>
+Reported-by: Zhou Wang <wangzhou1@hisilicon.com>
+Signed-off-by: Zhao Chen <zhaochen6@huawei.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/mellanox/mlx4/resource_tracker.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/ethernet/huawei/hinic/hinic_tx.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/net/ethernet/mellanox/mlx4/resource_tracker.c
-+++ b/drivers/net/ethernet/mellanox/mlx4/resource_tracker.c
-@@ -2956,7 +2956,7 @@ int mlx4_RST2INIT_QP_wrapper(struct mlx4
- 	u32 srqn = qp_get_srqn(qpc) & 0xffffff;
- 	int use_srq = (qp_get_srqn(qpc) >> 24) & 1;
- 	struct res_srq *srq;
--	int local_qpn = be32_to_cpu(qpc->local_qpn) & 0xffffff;
-+	int local_qpn = vhcr->in_modifier & 0xffffff;
+--- a/drivers/net/ethernet/huawei/hinic/hinic_tx.c
++++ b/drivers/net/ethernet/huawei/hinic/hinic_tx.c
+@@ -229,6 +229,7 @@ netdev_tx_t hinic_xmit_frame(struct sk_b
+ 		txq->txq_stats.tx_busy++;
+ 		u64_stats_update_end(&txq->txq_stats.syncp);
+ 		err = NETDEV_TX_BUSY;
++		wqe_size = 0;
+ 		goto flush_skbs;
+ 	}
  
- 	err = adjust_qp_sched_queue(dev, slave, qpc, inbox);
- 	if (err)
 
 
