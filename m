@@ -2,208 +2,118 @@ Return-Path: <SRS0=OQFz=KL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB3DFC6778F
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 02:50:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45CFBC6778F
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 02:53:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8FEF920857
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 02:50:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8FEF920857
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id DF8FF20857
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 02:52:59 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EiJR9uBt"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DF8FF20857
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727384AbeG0EKP (ORCPT
+        id S1726688AbeG0EMh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 00:10:15 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:10140 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725817AbeG0EKP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 00:10:15 -0400
-Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id D1D00949252B;
-        Fri, 27 Jul 2018 10:50:32 +0800 (CST)
-Received: from [127.0.0.1] (10.177.23.164) by DGGEMS413-HUB.china.huawei.com
- (10.3.19.213) with Microsoft SMTP Server id 14.3.382.0; Fri, 27 Jul 2018
- 10:50:00 +0800
-Subject: Re: [PATCH v3 0/6] add non-strict mode support for arm-smmu-v3
-To:     Robin Murphy <robin.murphy@arm.com>,
-        Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        "Joerg Roedel" <joro@8bytes.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        iommu <iommu@lists.linux-foundation.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        LinuxArm <linuxarm@huawei.com>
-References: <1531376312-2192-1-git-send-email-thunder.leizhen@huawei.com>
- <aace9ec9-a36a-79a8-98eb-bbedd06f11a4@arm.com> <5B594399.1080404@huawei.com>
- <f54dd9e0-6d4b-5daa-f6f6-be610393b487@arm.com>
-From:   "Leizhen (ThunderTown)" <thunder.leizhen@huawei.com>
-Message-ID: <5B5A8857.9040907@huawei.com>
-Date:   Fri, 27 Jul 2018 10:49:59 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:38.0) Gecko/20100101
- Thunderbird/38.5.1
-MIME-Version: 1.0
-In-Reply-To: <f54dd9e0-6d4b-5daa-f6f6-be610393b487@arm.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.177.23.164]
-X-CFilter-Loop: Reflected
+        Fri, 27 Jul 2018 00:12:37 -0400
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:35232 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725781AbeG0EMg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Jul 2018 00:12:36 -0400
+Received: by mail-pl0-f68.google.com with SMTP id w3-v6so1672134plq.2;
+        Thu, 26 Jul 2018 19:52:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=91B6a86QVGszavNjsra5ZaWT6Vl1493aO3Bd4/ZdI8E=;
+        b=EiJR9uBt0gOpqcFZLPnQsz0QVMkSDG9wg0iAoHmap5x/R5j4Qxrn5uKVKTwb3AzDgu
+         pZVRl5m6DpQ3Rj00PfdrtZhqbTdrnlJ/7fSGV7ugzwilMwhBkv8TMrQUNyamvqNaTWfn
+         k7734z45xy7VHQsBFa5d0oGJnTs+zMes7jvsgz5Vu/xc8x7cqXTBc3XXZXMulWJlMw3R
+         owycV+1iIViSeB0U2veo04j5PuvLeqGz0mixsb8bvKsqA5A5X82flS8PFCt3QW2/vEsw
+         XQ3Z+rYMoKrCk2zGb3ip3F0bzCiTOH86vO/qPN2GStBsTCme5T+hdo6cGZa1SkWiw2oZ
+         iG+g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=91B6a86QVGszavNjsra5ZaWT6Vl1493aO3Bd4/ZdI8E=;
+        b=FxV8V8BIyKdvSF0uHGfRRA9+lEjo3OFxHzShC1lxjNMFoEHRr7kM/499+XZPzmyw1n
+         YCxfJpCl3y3+lAd447LUdAeJDei4uNigXQScTW88izKiYwlizuv2Nq9wNT1lBzPIoXLs
+         6aOGjWP0HPzd9y9YiB9iFF5GwnPxDvejtRWQ1izCDg7cdVSatYc7p4y5IV6xv5WiveBD
+         0bSGbGR6BRX0vc6kSgB4ycfV6wOhou0Cs4PEcJFYBBFd2XKVlqy3JofUazrUfc6ZLoV3
+         ZYgHznBpw6OXcj/3O2e/cealkEqeYYutOcHpv72fjvmbigtFQYFVWsb/J7W4wXh7TR8Q
+         0FUQ==
+X-Gm-Message-State: AOUpUlGXUw65rFHJDhTaiMlpy/CSL4zB2SZe6az6CoUfE/NiW8WTy23Z
+        Pou68WSRD1TzqKw6hPDuBsw=
+X-Google-Smtp-Source: AAOMgpfxaEEb1fktbrSos5PWxKyO6AMGFMQ8Whhshelc/iPmY0g5lG+/Q3XBfYi/k9tVWul8WQc8jQ==
+X-Received: by 2002:a17:902:a5:: with SMTP id a34-v6mr4367094pla.60.1532659976583;
+        Thu, 26 Jul 2018 19:52:56 -0700 (PDT)
+Received: from localhost.localdomain ([2402:f000:1:4414:6c14:7712:e625:1be4])
+        by smtp.gmail.com with ESMTPSA id f18-v6sm8701675pff.29.2018.07.26.19.52.54
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 26 Jul 2018 19:52:56 -0700 (PDT)
+From:   Jia-Ju Bai <baijiaju1990@gmail.com>
+To:     crope@iki.fi, mchehab@kernel.org
+Cc:     linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jia-Ju Bai <baijiaju1990@gmail.com>
+Subject: [PATCH] media: dvb-frontends: rtl2832_sdr: Replace GFP_ATOMIC with GFP_KERNEL
+Date:   Fri, 27 Jul 2018 10:52:49 +0800
+Message-Id: <20180727025249.2249-1-baijiaju1990@gmail.com>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+rtl2832_sdr_submit_urbs(), rtl2832_sdr_alloc_stream_bufs(), and 
+rtl2832_sdr_alloc_urbs() are never called in atomic context.
+They call usb_submit_urb(), usb_alloc_coherent() and usb_alloc_urb() 
+with GFP_ATOMIC, which is not necessary.
+GFP_ATOMIC can be replaced with GFP_KERNEL.
 
+This is found by a static analysis tool named DCNS written by myself.
 
-On 2018/7/26 22:16, Robin Murphy wrote:
-> On 2018-07-26 4:44 AM, Leizhen (ThunderTown) wrote:
->>
->>
->> On 2018/7/25 5:51, Robin Murphy wrote:
->>> On 2018-07-12 7:18 AM, Zhen Lei wrote:
->>>> v2 -> v3: Add a bootup option "iommu_strict_mode" to make the
->>>> manager can choose which mode to be used. The first 5 patches
->>>> have not changed. +    iommu_strict_mode=    [arm-smmu-v3] +
->>>> 0 - strict mode (default) +        1 - non-strict mode
->>>>
->>>> v1 -> v2: Use the lowest bit of the io_pgtable_ops.unmap's iova
->>>> parameter to pass the strict mode: 0, IOMMU_STRICT; 1,
->>>> IOMMU_NON_STRICT; Treat 0 as IOMMU_STRICT, so that the unmap
->>>> operation can compatible with other IOMMUs which still use strict
->>>> mode. In other words, this patch series will not impact other
->>>> IOMMU drivers. I tried add a new quirk
->>>> IO_PGTABLE_QUIRK_NON_STRICT in io_pgtable_cfg.quirks, but it can
->>>> not pass the strict mode of the domain from SMMUv3 driver to
->>>> io-pgtable module.
->>>
->>> What exactly is the issue there? We don't have any problem with
->>> other quirks like NO_DMA, and as I said before, by the time we're
->>> allocating the io-pgtable in arm_smmu_domain_finalise() we already
->>> know everything there is to know about the domain.
->>
->> Because userspace can map/unamp and start devices to access memory
->> through VFIO. So that, the attacker can: 1. alloc memory 2. map 3.
->> unmap 4. free memory 5. repeatedly accesssing the just freed memory
->> base on the just unmapped iova, this attack may success if the freed
->> memory is reused by others and the mapping still staying in TLB
-> 
-> Right, but that's why we don't set non-strict mode on unmanaged domains; what I was asking about was specifically why "it can not pass the strict mode of the domain from SMMUv3 driver to io-pgtable module", because we don't get anywhere near io-pgtable until we already know whether the domain in question can allow lazy unmaps or not.
+Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+---
+ drivers/media/dvb-frontends/rtl2832_sdr.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-Sorry, it's my fault. I've all through mistaken that "data->iop.cfg" is shared by all domains until you mentioned me again.
-
-> 
->> But if only root user can use VFIO, this is an unnecessary worry.
->> Then both normal and VFIO will use the same strict mode, so that the
->> new quirk IO_PGTABLE_QUIRK_NON_STRICT can easily be applied.
->>
->>>
->>>> Add a new member domain_non_strict in struct iommu_dma_cookie,
->>>> this member will only be initialized when the related domain and
->>>> IOMMU driver support non-strict mode.
->>>>
->>>> v1: In common, a IOMMU unmap operation follow the below steps: 1.
->>>> remove the mapping in page table of the specified iova range 2.
->>>> execute tlbi command to invalid the mapping which is cached in
->>>> TLB 3. wait for the above tlbi operation to be finished 4. free
->>>> the IOVA resource 5. free the physical memory resource
->>>>
->>>> This maybe a problem when unmap is very frequently, the
->>>> combination of tlbi and wait operation will consume a lot of
->>>> time. A feasible method is put off tlbi and iova-free operation,
->>>> when accumulating to a certain number or reaching a specified
->>>> time, execute only one tlbi_all command to clean up TLB, then
->>>> free the backup IOVAs. Mark as non-strict mode.
->>>>
->>>> But it must be noted that, although the mapping has already been
->>>> removed in the page table, it maybe still exist in TLB. And the
->>>> freed physical memory may also be reused for others. So a
->>>> attacker can persistent access to memory based on the just freed
->>>> IOVA, to obtain sensible data or corrupt memory. So the VFIO
->>>> should always choose the strict mode.
->>>>
->>>> Some may consider put off physical memory free also, that will
->>>> still follow strict mode. But for the map_sg cases, the memory
->>>> allocation is not controlled by IOMMU APIs, so it is not
->>>> enforceable.
->>>>
->>>> Fortunately, Intel and AMD have already applied the non-strict
->>>> mode, and put queue_iova() operation into the common file
->>>> dma-iommu.c., and my work is based on it. The difference is that
->>>> arm-smmu-v3 driver will call IOMMU common APIs to unmap, but
->>>> Intel and AMD IOMMU drivers are not.
->>>>
->>>> Below is the performance data of strict vs non-strict for NVMe
->>>> device: Randomly Read  IOPS: 146K(strict) vs 573K(non-strict) Randomly Write IOPS: 143K(strict) vs 513K(non-strict)
->>>
->>> How does that compare to passthrough performance? One thing I'm not
->>> entirely clear about is what the realistic use-case for this is -
->>> even if invalidation were infinitely fast, enabling translation
->>> still typically has a fair impact on overall system performance in
->>> terms of latency, power, memory bandwidth, etc., so I can't help
->>> wonder what devices exist today for which performance is critical
->>> and robustness* is unimportant, yet have crippled addressing
->>> capabilities such that they can't just use passthrough.
->> I have no passthrough performance data yet, I will ask my team to do
->> it. But we have tested the Global bypass: Randomly Read IOPS: 744K,
->> and Randomly Write IOPS: is the same to non-strict.
->>
->> I'm also not clear. But I think in most cases, the system does not
->> need to run at full capacity, but the system should have that
->> ability. For example, a system's daily load may only 30-50%, but the
->> load may increase to 80%+ on festival day.
->>
->> Passthrough is not enough to support VFIO, and virtualization need
->> the later.
-> 
-> Huh? The whole point of passthrough mode is that the IOMMU can still be used for VFIO, but without imposing the overhead of dynamic mapping on host DMA.
-
-I said that from my experience. Userspace do not known the PA, so I think the user can not fill dma_map.iova correctly.
-
-	/* Allocate some space and setup a DMA mapping */
-	dma_map.vaddr = (__u64)mmap(0, 0x1000, PROT_READ | PROT_WRITE,
-			     MAP_PRIVATE | MAP_ANONYMOUS, 0, 0);
-	dma_map.size = 0x1000;
-	dma_map.iova = 0x2f00000000UL;						/* user specified */
-	dma_map.flags = VFIO_DMA_MAP_FLAG_READ | VFIO_DMA_MAP_FLAG_WRITE;
-
-	ioctl(container, VFIO_IOMMU_MAP_DMA, &dma_map);
-
-Further more, dma_map is also suitable for iommu_map_sg usage scenario.
-
-> 
-> Robin.
-> 
->>> * I don't want to say "security" here, since I'm actually a lot
->>> less concerned about the theoretical malicious endpoint/wild write
->>> scenarios than the the much more straightforward malfunctioning
->>> device and/or buggy driver causing use-after-free style memory
->>> corruption. Also, I'm sick of the word "security"...
->>
->> OK，We really have no need to consider buggy devices.
->>
->>>
->>>>
->>>> Zhen Lei (6): iommu/arm-smmu-v3: fix the implementation of
->>>> flush_iotlb_all hook iommu/dma: add support for non-strict mode iommu/amd: use default branch to deal with all non-supported capabilities iommu/io-pgtable-arm: add support for non-strict
->>>> mode iommu/arm-smmu-v3: add support for non-strict mode iommu/arm-smmu-v3: add bootup option "iommu_strict_mode"
->>>>
->>>> Documentation/admin-guide/kernel-parameters.txt | 12 +++++++ drivers/iommu/amd_iommu.c                       |  4 +-- drivers/iommu/arm-smmu-v3.c                     | 42
->>>> +++++++++++++++++++++++-- drivers/iommu/dma-iommu.c
->>>> | 25 +++++++++++++++ drivers/iommu/io-pgtable-arm.c
->>>> | 23 ++++++++------ include/linux/iommu.h
->>>> |  7 +++++ 6 files changed, 98 insertions(+), 15 deletions(-)
->>>>
->>>
->>> .
->>>
->>
-> 
-> .
-> 
-
+diff --git a/drivers/media/dvb-frontends/rtl2832_sdr.c b/drivers/media/dvb-frontends/rtl2832_sdr.c
+index c6e78d870ccd..d448d9d4879c 100644
+--- a/drivers/media/dvb-frontends/rtl2832_sdr.c
++++ b/drivers/media/dvb-frontends/rtl2832_sdr.c
+@@ -301,7 +301,7 @@ static int rtl2832_sdr_submit_urbs(struct rtl2832_sdr_dev *dev)
+ 
+ 	for (i = 0; i < dev->urbs_initialized; i++) {
+ 		dev_dbg(&pdev->dev, "submit urb=%d\n", i);
+-		ret = usb_submit_urb(dev->urb_list[i], GFP_ATOMIC);
++		ret = usb_submit_urb(dev->urb_list[i], GFP_KERNEL);
+ 		if (ret) {
+ 			dev_err(&pdev->dev,
+ 				"Could not submit urb no. %d - get them all back\n",
+@@ -345,7 +345,7 @@ static int rtl2832_sdr_alloc_stream_bufs(struct rtl2832_sdr_dev *dev)
+ 
+ 	for (dev->buf_num = 0; dev->buf_num < MAX_BULK_BUFS; dev->buf_num++) {
+ 		dev->buf_list[dev->buf_num] = usb_alloc_coherent(dev->udev,
+-				BULK_BUFFER_SIZE, GFP_ATOMIC,
++				BULK_BUFFER_SIZE, GFP_KERNEL,
+ 				&dev->dma_addr[dev->buf_num]);
+ 		if (!dev->buf_list[dev->buf_num]) {
+ 			dev_dbg(&pdev->dev, "alloc buf=%d failed\n",
+@@ -390,7 +390,7 @@ static int rtl2832_sdr_alloc_urbs(struct rtl2832_sdr_dev *dev)
+ 	/* allocate the URBs */
+ 	for (i = 0; i < MAX_BULK_BUFS; i++) {
+ 		dev_dbg(&pdev->dev, "alloc urb=%d\n", i);
+-		dev->urb_list[i] = usb_alloc_urb(0, GFP_ATOMIC);
++		dev->urb_list[i] = usb_alloc_urb(0, GFP_KERNEL);
+ 		if (!dev->urb_list[i]) {
+ 			for (j = 0; j < i; j++)
+ 				usb_free_urb(dev->urb_list[j]);
 -- 
-Thanks!
-BestRegards
+2.17.0
 
