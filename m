@@ -2,95 +2,84 @@ Return-Path: <SRS0=OQFz=KL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F2A1C67790
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 11:51:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57227C6778F
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 11:52:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 475902089B
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 11:51:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 475902089B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 113882089B
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 11:52:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 113882089B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=freebsd.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730791AbeG0NNI (ORCPT
+        id S1730938AbeG0NNr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 09:13:08 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:42360 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730314AbeG0NNH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 09:13:07 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2030F15AD;
-        Fri, 27 Jul 2018 04:51:34 -0700 (PDT)
-Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id E667B3F575;
-        Fri, 27 Jul 2018 04:51:33 -0700 (PDT)
-Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
-        id 5F09F1AE2DA4; Fri, 27 Jul 2018 12:51:34 +0100 (BST)
-Date:   Fri, 27 Jul 2018 12:51:34 +0100
-From:   Will Deacon <will.deacon@arm.com>
-To:     torvalds@linux-foundation.org
-Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        catalin.marinas@arm.com
-Subject: [GIT PULL] arm64: fixes for -rc7
-Message-ID: <20180727115133.GD25592@arm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.23 (2014-03-12)
+        Fri, 27 Jul 2018 09:13:47 -0400
+Received: from mx2.freebsd.org ([8.8.178.116]:32892 "EHLO mx2.freebsd.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730395AbeG0NNr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Jul 2018 09:13:47 -0400
+Received: from mx1.freebsd.org (mx1.freebsd.org [IPv6:2610:1c1:1:606c::19:1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client CN "mx1.freebsd.org", Issuer "Let's Encrypt Authority X3" (verified OK))
+        by mx2.freebsd.org (Postfix) with ESMTPS id 5084666287;
+        Fri, 27 Jul 2018 11:52:13 +0000 (UTC)
+        (envelope-from manu@freebsd.org)
+Received: from smtp.freebsd.org (smtp.freebsd.org [IPv6:2610:1c1:1:606c::24b:4])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client CN "smtp.freebsd.org", Issuer "Let's Encrypt Authority X3" (verified OK))
+        by mx1.freebsd.org (Postfix) with ESMTPS id A381870F43;
+        Fri, 27 Jul 2018 11:52:12 +0000 (UTC)
+        (envelope-from manu@freebsd.org)
+Received: from skull.home.blih.net (ip-9.net-89-3-105.rev.numericable.fr [89.3.105.9])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: manu)
+        by smtp.freebsd.org (Postfix) with ESMTPSA id 78CB2EAD1;
+        Fri, 27 Jul 2018 11:52:11 +0000 (UTC)
+        (envelope-from manu@freebsd.org)
+From:   Emmanuel Vadot <manu@freebsd.org>
+To:     srinivas.kandagatla@linaro.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, maxime.ripard@bootlin.com, wens@csie.org,
+        catalin.marinas@arm.com, will.deacon@arm.com
+Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, Emmanuel Vadot <manu@freebsd.org>
+Subject: [PATCH v3 1/4] arm64: dts: allwinner: a64: Add SID node
+Date:   Fri, 27 Jul 2018 13:52:02 +0200
+Message-Id: <20180727115205.20955-1-manu@freebsd.org>
+X-Mailer: git-send-email 2.18.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+The A64 have a SID controller which consist of EFUSE (starting at 0x200)
+and three registers to read/write some of the protected efuses.
 
-Inevitably, after saying that I hoped we would be done on the fixes front,
-a couple of issues have cropped up over the last week. Next time I'll stay
-schtum.
+Signed-off-by: Emmanuel Vadot <manu@freebsd.org>
+---
+ arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-As usual, details are in the tag, but we've fixed an over-eager BUILD_BUG_ON()
-which Arnd ran into with arndconfig, as well as ensuring that KPTI really
-is disabled on Thunder-X1, where the cure is worse than the disease (this
-regressed when we reworked the heterogeneous CPU feature checking).
+diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
+index 1b2ef28c42bd..69c0d9362553 100644
+--- a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
++++ b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
+@@ -227,6 +227,11 @@
+ 			#size-cells = <0>;
+ 		};
+ 
++		sid: eeprom@1c14000 {
++			compatible = "allwinner,sun50i-a64-sid";
++			reg = <0x1c14000 0x400>;
++		};
++
+ 		usb_otg: usb@1c19000 {
+ 			compatible = "allwinner,sun8i-a33-musb";
+ 			reg = <0x01c19000 0x0400>;
+-- 
+2.18.0
 
-Please pull.
-
-Thanks,
-
-Will
-
---->8
-
-The following changes since commit d72e90f33aa4709ebecc5005562f52335e106a60:
-
-  Linux 4.18-rc6 (2018-07-22 14:12:20 -0700)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git tags/arm64-fixes
-
-for you to fetch changes up to 7b0eb6b41a08fa1fa0d04b1c53becd62b5fbfaee:
-
-  arm64: fix vmemmap BUILD_BUG_ON() triggering on !vmemmap setups (2018-07-25 13:32:30 +0100)
-
-----------------------------------------------------------------
-More arm64 fixes:
-
-- Fix disabling of kpti on Thunder-X machines
-
-- Fix premature BUILD_BUG_ON() found with randconfig
-
-----------------------------------------------------------------
-Dirk Mueller (1):
-      arm64: Check for errata before evaluating cpu features
-
-Johannes Weiner (1):
-      arm64: fix vmemmap BUILD_BUG_ON() triggering on !vmemmap setups
-
- arch/arm64/kernel/cpufeature.c | 4 ++--
- arch/arm64/mm/init.c           | 4 +++-
- 2 files changed, 5 insertions(+), 3 deletions(-)
