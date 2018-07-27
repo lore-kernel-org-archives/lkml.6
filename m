@@ -2,188 +2,89 @@ Return-Path: <SRS0=OQFz=KL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E307C6778F
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:03:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 771A0C6778F
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:03:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0DF9B20894
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:03:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0DF9B20894
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 34FB720894
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:03:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 34FB720894
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ACULAB.COM
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389354AbeG0LYW (ORCPT
+        id S2389365AbeG0LY2 convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 07:24:22 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:34496 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388562AbeG0LYW (ORCPT
+        Fri, 27 Jul 2018 07:24:28 -0400
+Received: from eu-smtp-delivery-211.mimecast.com ([146.101.78.211]:28204 "EHLO
+        eu-smtp-delivery-211.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2388562AbeG0LY2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 07:24:22 -0400
-Received: from localhost (unknown [89.188.5.116])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 693CCBB6;
-        Fri, 27 Jul 2018 10:03:11 +0000 (UTC)
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Neal Cardwell <ncardwell@google.com>,
-        Yuchung Cheng <ycheng@google.com>,
-        Eric Dumazet <edumazet@google.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 26/48] tcp: do not cancel delay-AcK on DCTCP special ACK
-Date:   Fri, 27 Jul 2018 12:00:11 +0200
-Message-Id: <20180727095921.250421080@linuxfoundation.org>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180727095918.503549522@linuxfoundation.org>
-References: <20180727095918.503549522@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+        Fri, 27 Jul 2018 07:24:28 -0400
+Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
+ TLS) by eu-smtp-1.mimecast.com with ESMTP id
+ uk-mta-89-ojS13K8VPQCLTutgFW1spg-1; Fri, 27 Jul 2018 11:03:15 +0100
+Received: from AcuMS.Aculab.com (fd9f:af1c:a25b::d117) by AcuMS.aculab.com
+ (fd9f:af1c:a25b::d117) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Fri,
+ 27 Jul 2018 11:04:54 +0100
+Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
+ AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
+ Fri, 27 Jul 2018 11:04:54 +0100
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     'Andrew Morton' <akpm@linux-foundation.org>,
+        Joe Perches <joe@perches.com>,
+        Andy Whitcroft <apw@canonical.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: RE: [RFC PATCH] checkpatch: check for function calls with struct or
+ union on stack
+Thread-Topic: [RFC PATCH] checkpatch: check for function calls with struct or
+ union on stack
+Thread-Index: AQHUJRcFUx4+BuOgSky66zuZVVqB+6Si1nhw
+Date:   Fri, 27 Jul 2018 10:04:54 +0000
+Message-ID: <9d7441a14897426f8ed5befe8da0cad3@AcuMS.aculab.com>
+References: <1236369d28b2f1f5389ff652c4eb89e699e6481e.camel@perches.com>
+        <20180726122533.104f6eea950853ef50ebc680@linux-foundation.org>
+ <20180726122807.fad0566951e36d930edb6874@linux-foundation.org>
+In-Reply-To: <20180726122807.fad0566951e36d930edb6874@linux-foundation.org>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.33]
 MIME-Version: 1.0
+X-MC-Unique: ojS13K8VPQCLTutgFW1spg-1
 Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.14-stable review patch.  If anyone has any objections, please let me know.
+From: Andrew Morton
+> Sent: 26 July 2018 20:28
+> On Thu, 26 Jul 2018 12:25:33 -0700 Andrew Morton <akpm@linux-foundation.org> wrote:
+> 
+> > I'll give it a spin, see how noisy it is.
+> 
+> Actually, I would prefer if the message, changelog and title
+> used the term "passed by value".  It's a more familiar term
+> and it is possible for a passed-by-value aggregate to in fact
+> be passed in registers.
 
-------------------
+You need to detect (and ignore) 'small' structures.
+Quite a few ABI pass small structures by value in register(s)
+or directly on the stack.
 
-From: Yuchung Cheng <ycheng@google.com>
+So it can make sense to encapsulate an integer value in a
+structure in order to get strong typing.
 
-[ Upstream commit 27cde44a259c380a3c09066fc4b42de7dde9b1ad ]
+It would, for instance, make sense to do that for user addresses.
 
-Currently when a DCTCP receiver delays an ACK and receive a
-data packet with a different CE mark from the previous one's, it
-sends two immediate ACKs acking previous and latest sequences
-respectly (for ECN accounting).
+	David
 
-Previously sending the first ACK may mark off the delayed ACK timer
-(tcp_event_ack_sent). This may subsequently prevent sending the
-second ACK to acknowledge the latest sequence (tcp_ack_snd_check).
-The culprit is that tcp_send_ack() assumes it always acknowleges
-the latest sequence, which is not true for the first special ACK.
-
-The fix is to not make the assumption in tcp_send_ack and check the
-actual ack sequence before cancelling the delayed ACK. Further it's
-safer to pass the ack sequence number as a local variable into
-tcp_send_ack routine, instead of intercepting tp->rcv_nxt to avoid
-future bugs like this.
-
-Reported-by: Neal Cardwell <ncardwell@google.com>
-Signed-off-by: Yuchung Cheng <ycheng@google.com>
-Acked-by: Neal Cardwell <ncardwell@google.com>
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- include/net/tcp.h     |    1 +
- net/ipv4/tcp_dctcp.c  |   34 ++++------------------------------
- net/ipv4/tcp_output.c |   11 ++++++++---
- 3 files changed, 13 insertions(+), 33 deletions(-)
-
---- a/include/net/tcp.h
-+++ b/include/net/tcp.h
-@@ -560,6 +560,7 @@ void tcp_send_fin(struct sock *sk);
- void tcp_send_active_reset(struct sock *sk, gfp_t priority);
- int tcp_send_synack(struct sock *);
- void tcp_push_one(struct sock *, unsigned int mss_now);
-+void __tcp_send_ack(struct sock *sk, u32 rcv_nxt);
- void tcp_send_ack(struct sock *sk);
- void tcp_send_delayed_ack(struct sock *sk);
- void tcp_send_loss_probe(struct sock *sk);
---- a/net/ipv4/tcp_dctcp.c
-+++ b/net/ipv4/tcp_dctcp.c
-@@ -135,21 +135,8 @@ static void dctcp_ce_state_0_to_1(struct
- 	 * ACK has not sent yet.
- 	 */
- 	if (!ca->ce_state &&
--	    inet_csk(sk)->icsk_ack.pending & ICSK_ACK_TIMER) {
--		u32 tmp_rcv_nxt;
 -
--		/* Save current rcv_nxt. */
--		tmp_rcv_nxt = tp->rcv_nxt;
--
--		/* Generate previous ack with CE=0. */
--		tp->ecn_flags &= ~TCP_ECN_DEMAND_CWR;
--		tp->rcv_nxt = ca->prior_rcv_nxt;
--
--		tcp_send_ack(sk);
--
--		/* Recover current rcv_nxt. */
--		tp->rcv_nxt = tmp_rcv_nxt;
--	}
-+	    inet_csk(sk)->icsk_ack.pending & ICSK_ACK_TIMER)
-+		__tcp_send_ack(sk, ca->prior_rcv_nxt);
- 
- 	ca->prior_rcv_nxt = tp->rcv_nxt;
- 	ca->ce_state = 1;
-@@ -166,21 +153,8 @@ static void dctcp_ce_state_1_to_0(struct
- 	 * ACK has not sent yet.
- 	 */
- 	if (ca->ce_state &&
--	    inet_csk(sk)->icsk_ack.pending & ICSK_ACK_TIMER) {
--		u32 tmp_rcv_nxt;
--
--		/* Save current rcv_nxt. */
--		tmp_rcv_nxt = tp->rcv_nxt;
--
--		/* Generate previous ack with CE=1. */
--		tp->ecn_flags |= TCP_ECN_DEMAND_CWR;
--		tp->rcv_nxt = ca->prior_rcv_nxt;
--
--		tcp_send_ack(sk);
--
--		/* Recover current rcv_nxt. */
--		tp->rcv_nxt = tmp_rcv_nxt;
--	}
-+	    inet_csk(sk)->icsk_ack.pending & ICSK_ACK_TIMER)
-+		__tcp_send_ack(sk, ca->prior_rcv_nxt);
- 
- 	ca->prior_rcv_nxt = tp->rcv_nxt;
- 	ca->ce_state = 0;
---- a/net/ipv4/tcp_output.c
-+++ b/net/ipv4/tcp_output.c
-@@ -175,8 +175,13 @@ static void tcp_event_data_sent(struct t
- }
- 
- /* Account for an ACK we sent. */
--static inline void tcp_event_ack_sent(struct sock *sk, unsigned int pkts)
-+static inline void tcp_event_ack_sent(struct sock *sk, unsigned int pkts,
-+				      u32 rcv_nxt)
- {
-+	struct tcp_sock *tp = tcp_sk(sk);
-+
-+	if (unlikely(rcv_nxt != tp->rcv_nxt))
-+		return;  /* Special ACK sent by DCTCP to reflect ECN */
- 	tcp_dec_quickack_mode(sk, pkts);
- 	inet_csk_clear_xmit_timer(sk, ICSK_TIME_DACK);
- }
-@@ -1098,7 +1103,7 @@ static int __tcp_transmit_skb(struct soc
- 	icsk->icsk_af_ops->send_check(sk, skb);
- 
- 	if (likely(tcb->tcp_flags & TCPHDR_ACK))
--		tcp_event_ack_sent(sk, tcp_skb_pcount(skb));
-+		tcp_event_ack_sent(sk, tcp_skb_pcount(skb), rcv_nxt);
- 
- 	if (skb->len != tcp_header_size) {
- 		tcp_event_data_sent(tp, sk);
-@@ -3595,12 +3600,12 @@ void __tcp_send_ack(struct sock *sk, u32
- 	/* Send it off, this clears delayed acks for us. */
- 	__tcp_transmit_skb(sk, buff, 0, (__force gfp_t)0, rcv_nxt);
- }
-+EXPORT_SYMBOL_GPL(__tcp_send_ack);
- 
- void tcp_send_ack(struct sock *sk)
- {
- 	__tcp_send_ack(sk, tcp_sk(sk)->rcv_nxt);
- }
--EXPORT_SYMBOL_GPL(tcp_send_ack);
- 
- /* This routine sends a packet with an out of date sequence
-  * number. It assumes the other end will try to ack it.
-
+Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
+Registration No: 1397386 (Wales)
 
