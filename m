@@ -6,34 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B146C67790
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:28:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CDA8FC67790
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:28:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 57D25208A4
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:28:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 57D25208A4
+	by mail.kernel.org (Postfix) with ESMTP id 7201B208A2
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:28:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7201B208A2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388997AbeG0Lto (ORCPT
+        id S2389011AbeG0Ltr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 07:49:44 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:42592 "EHLO
+        Fri, 27 Jul 2018 07:49:47 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:42612 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730717AbeG0Ltm (ORCPT
+        with ESMTP id S1730916AbeG0Ltp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 07:49:42 -0400
+        Fri, 27 Jul 2018 07:49:45 -0400
 Received: from localhost (unknown [89.188.5.116])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id DFAA1CD2;
-        Fri, 27 Jul 2018 10:28:24 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id BD320CD1;
+        Fri, 27 Jul 2018 10:28:27 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Anssi Hannula <anssi.hannula@bitwise.fi>,
         Marc Kleine-Budde <mkl@pengutronix.de>
-Subject: [PATCH 3.18 23/27] can: xilinx_can: fix device dropping off bus on RX overrun
-Date:   Fri, 27 Jul 2018 12:27:00 +0200
-Message-Id: <20180727102649.889465967@linuxfoundation.org>
+Subject: [PATCH 3.18 24/27] can: xilinx_can: keep only 1-2 frames in TX FIFO to fix TX accounting
+Date:   Fri, 27 Jul 2018 12:27:01 +0200
+Message-Id: <20180727102649.930157520@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180727102649.049641021@linuxfoundation.org>
 References: <20180727102649.049641021@linuxfoundation.org>
@@ -52,19 +52,53 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Anssi Hannula <anssi.hannula@bitwise.fi>
 
-commit 2574fe54515ed3487405de329e4e9f13d7098c10 upstream.
+commit 620050d9c2be15c47017ba95efe59e0832e99a56 upstream.
 
-The xilinx_can driver performs a software reset when an RX overrun is
-detected. This causes the device to enter Configuration mode where no
-messages are received or transmitted.
+The xilinx_can driver assumes that the TXOK interrupt only clears after
+it has been acknowledged as many times as there have been successfully
+sent frames.
 
-The documentation does not mention any need to perform a reset on an RX
-overrun, and testing by inducing an RX overflow also indicated that the
-device continues to work just fine without a reset.
+However, the documentation does not mention such behavior, instead
+saying just that the interrupt is cleared when the clear bit is set.
 
-Remove the software reset.
+Similarly, testing seems to also suggest that it is immediately cleared
+regardless of the amount of frames having been sent. Performing some
+heavy TX load and then going back to idle has the tx_head drifting
+further away from tx_tail over time, steadily reducing the amount of
+frames the driver keeps in the TX FIFO (but not to zero, as the TXOK
+interrupt always frees up space for 1 frame from the driver's
+perspective, so frames continue to be sent) and delaying the local echo
+frames.
 
-Tested with the integrated CAN on Zynq-7000 SoC.
+The TX FIFO tracking is also otherwise buggy as it does not account for
+TX FIFO being cleared after software resets, causing
+  BUG!, TX FIFO full when queue awake!
+messages to be output.
+
+There does not seem to be any way to accurately track the state of the
+TX FIFO for local echo support while using the full TX FIFO.
+
+The Zynq version of the HW (but not the soft-AXI version) has watermark
+programming support and with it an additional TX-FIFO-empty interrupt
+bit.
+
+Modify the driver to only put 1 frame into TX FIFO at a time on soft-AXI
+and 2 frames at a time on Zynq. On Zynq the TXFEMP interrupt bit is used
+to detect whether 1 or 2 frames have been sent at interrupt processing
+time.
+
+Tested with the integrated CAN on Zynq-7000 SoC. The 1-frame-FIFO mode
+was also tested.
+
+An alternative way to solve this would be to drop local echo support but
+keep using the full TX FIFO.
+
+v2: Add FIFO space check before TX queue wake with locking to
+synchronize with queue stop. This avoids waking the queue when xmit()
+had just filled it.
+
+v3: Keep local echo support and reduce the amount of frames in FIFO
+instead as suggested by Marc Kleine-Budde.
 
 Fixes: b1201e44f50b ("can: xilinx CAN controller support")
 Signed-off-by: Anssi Hannula <anssi.hannula@bitwise.fi>
@@ -73,18 +107,202 @@ Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/can/xilinx_can.c |    1 -
- 1 file changed, 1 deletion(-)
+ drivers/net/can/xilinx_can.c |   79 ++++++++++++++++++++++++++++++++++++-------
+ 1 file changed, 67 insertions(+), 12 deletions(-)
 
 --- a/drivers/net/can/xilinx_can.c
 +++ b/drivers/net/can/xilinx_can.c
-@@ -598,7 +598,6 @@ static void xcan_err_interrupt(struct ne
- 	if (isr & XCAN_IXR_RXOFLW_MASK) {
- 		stats->rx_over_errors++;
- 		stats->rx_errors++;
--		priv->write_reg(priv, XCAN_SRR_OFFSET, XCAN_SRR_RESET_MASK);
- 		if (skb) {
- 			cf->can_id |= CAN_ERR_CRTL;
- 			cf->data[1] |= CAN_ERR_CRTL_RX_OVERFLOW;
+@@ -25,8 +25,10 @@
+ #include <linux/module.h>
+ #include <linux/netdevice.h>
+ #include <linux/of.h>
++#include <linux/of_device.h>
+ #include <linux/platform_device.h>
+ #include <linux/skbuff.h>
++#include <linux/spinlock.h>
+ #include <linux/string.h>
+ #include <linux/types.h>
+ #include <linux/can/dev.h>
+@@ -117,6 +119,7 @@ enum xcan_reg {
+ /**
+  * struct xcan_priv - This definition define CAN driver instance
+  * @can:			CAN private data structure.
++ * @tx_lock:			Lock for synchronizing TX interrupt handling
+  * @tx_head:			Tx CAN packets ready to send on the queue
+  * @tx_tail:			Tx CAN packets successfully sended on the queue
+  * @tx_max:			Maximum number packets the driver can send
+@@ -131,6 +134,7 @@ enum xcan_reg {
+  */
+ struct xcan_priv {
+ 	struct can_priv can;
++	spinlock_t tx_lock;
+ 	unsigned int tx_head;
+ 	unsigned int tx_tail;
+ 	unsigned int tx_max;
+@@ -158,6 +162,11 @@ static const struct can_bittiming_const
+ 	.brp_inc = 1,
+ };
+ 
++#define XCAN_CAP_WATERMARK	0x0001
++struct xcan_devtype_data {
++	unsigned int caps;
++};
++
+ /**
+  * xcan_write_reg_le - Write a value to the device register little endian
+  * @priv:	Driver private data structure
+@@ -237,6 +246,10 @@ static int set_reset_mode(struct net_dev
+ 		usleep_range(500, 10000);
+ 	}
+ 
++	/* reset clears FIFOs */
++	priv->tx_head = 0;
++	priv->tx_tail = 0;
++
+ 	return 0;
+ }
+ 
+@@ -391,6 +404,7 @@ static int xcan_start_xmit(struct sk_buf
+ 	struct net_device_stats *stats = &ndev->stats;
+ 	struct can_frame *cf = (struct can_frame *)skb->data;
+ 	u32 id, dlc, data[2] = {0, 0};
++	unsigned long flags;
+ 
+ 	if (can_dropped_invalid_skb(ndev, skb))
+ 		return NETDEV_TX_OK;
+@@ -438,6 +452,9 @@ static int xcan_start_xmit(struct sk_buf
+ 		data[1] = be32_to_cpup((__be32 *)(cf->data + 4));
+ 
+ 	can_put_echo_skb(skb, ndev, priv->tx_head % priv->tx_max);
++
++	spin_lock_irqsave(&priv->tx_lock, flags);
++
+ 	priv->tx_head++;
+ 
+ 	/* Write the Frame to Xilinx CAN TX FIFO */
+@@ -453,10 +470,16 @@ static int xcan_start_xmit(struct sk_buf
+ 		stats->tx_bytes += cf->can_dlc;
+ 	}
+ 
++	/* Clear TX-FIFO-empty interrupt for xcan_tx_interrupt() */
++	if (priv->tx_max > 1)
++		priv->write_reg(priv, XCAN_ICR_OFFSET, XCAN_IXR_TXFEMP_MASK);
++
+ 	/* Check if the TX buffer is full */
+ 	if ((priv->tx_head - priv->tx_tail) == priv->tx_max)
+ 		netif_stop_queue(ndev);
+ 
++	spin_unlock_irqrestore(&priv->tx_lock, flags);
++
+ 	return NETDEV_TX_OK;
+ }
+ 
+@@ -1023,6 +1046,18 @@ static int __maybe_unused xcan_resume(st
+ 
+ static SIMPLE_DEV_PM_OPS(xcan_dev_pm_ops, xcan_suspend, xcan_resume);
+ 
++static const struct xcan_devtype_data xcan_zynq_data = {
++	.caps = XCAN_CAP_WATERMARK,
++};
++
++/* Match table for OF platform binding */
++static const struct of_device_id xcan_of_match[] = {
++	{ .compatible = "xlnx,zynq-can-1.0", .data = &xcan_zynq_data },
++	{ .compatible = "xlnx,axi-can-1.00.a", },
++	{ /* end of list */ },
++};
++MODULE_DEVICE_TABLE(of, xcan_of_match);
++
+ /**
+  * xcan_probe - Platform registration call
+  * @pdev:	Handle to the platform device structure
+@@ -1037,8 +1072,10 @@ static int xcan_probe(struct platform_de
+ 	struct resource *res; /* IO mem resources */
+ 	struct net_device *ndev;
+ 	struct xcan_priv *priv;
++	const struct of_device_id *of_id;
++	int caps = 0;
+ 	void __iomem *addr;
+-	int ret, rx_max, tx_max;
++	int ret, rx_max, tx_max, tx_fifo_depth;
+ 
+ 	/* Get the virtual base address for the device */
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+@@ -1048,7 +1085,8 @@ static int xcan_probe(struct platform_de
+ 		goto err;
+ 	}
+ 
+-	ret = of_property_read_u32(pdev->dev.of_node, "tx-fifo-depth", &tx_max);
++	ret = of_property_read_u32(pdev->dev.of_node, "tx-fifo-depth",
++				   &tx_fifo_depth);
+ 	if (ret < 0)
+ 		goto err;
+ 
+@@ -1056,6 +1094,30 @@ static int xcan_probe(struct platform_de
+ 	if (ret < 0)
+ 		goto err;
+ 
++	of_id = of_match_device(xcan_of_match, &pdev->dev);
++	if (of_id) {
++		const struct xcan_devtype_data *devtype_data = of_id->data;
++
++		if (devtype_data)
++			caps = devtype_data->caps;
++	}
++
++	/* There is no way to directly figure out how many frames have been
++	 * sent when the TXOK interrupt is processed. If watermark programming
++	 * is supported, we can have 2 frames in the FIFO and use TXFEMP
++	 * to determine if 1 or 2 frames have been sent.
++	 * Theoretically we should be able to use TXFWMEMP to determine up
++	 * to 3 frames, but it seems that after putting a second frame in the
++	 * FIFO, with watermark at 2 frames, it can happen that TXFWMEMP (less
++	 * than 2 frames in FIFO) is set anyway with no TXOK (a frame was
++	 * sent), which is not a sensible state - possibly TXFWMEMP is not
++	 * completely synchronized with the rest of the bits?
++	 */
++	if (caps & XCAN_CAP_WATERMARK)
++		tx_max = min(tx_fifo_depth, 2);
++	else
++		tx_max = 1;
++
+ 	/* Create a CAN device instance */
+ 	ndev = alloc_candev(sizeof(struct xcan_priv), tx_max);
+ 	if (!ndev)
+@@ -1070,6 +1132,7 @@ static int xcan_probe(struct platform_de
+ 					CAN_CTRLMODE_BERR_REPORTING;
+ 	priv->reg_base = addr;
+ 	priv->tx_max = tx_max;
++	spin_lock_init(&priv->tx_lock);
+ 
+ 	/* Get IRQ for the device */
+ 	ndev->irq = platform_get_irq(pdev, 0);
+@@ -1137,9 +1200,9 @@ static int xcan_probe(struct platform_de
+ 	devm_can_led_init(ndev);
+ 	clk_disable_unprepare(priv->bus_clk);
+ 	clk_disable_unprepare(priv->can_clk);
+-	netdev_dbg(ndev, "reg_base=0x%p irq=%d clock=%d, tx fifo depth:%d\n",
++	netdev_dbg(ndev, "reg_base=0x%p irq=%d clock=%d, tx fifo depth: actual %d, using %d\n",
+ 			priv->reg_base, ndev->irq, priv->can.clock.freq,
+-			priv->tx_max);
++			tx_fifo_depth, priv->tx_max);
+ 
+ 	return 0;
+ 
+@@ -1175,14 +1238,6 @@ static int xcan_remove(struct platform_d
+ 	return 0;
+ }
+ 
+-/* Match table for OF platform binding */
+-static struct of_device_id xcan_of_match[] = {
+-	{ .compatible = "xlnx,zynq-can-1.0", },
+-	{ .compatible = "xlnx,axi-can-1.00.a", },
+-	{ /* end of list */ },
+-};
+-MODULE_DEVICE_TABLE(of, xcan_of_match);
+-
+ static struct platform_driver xcan_driver = {
+ 	.probe = xcan_probe,
+ 	.remove	= xcan_remove,
 
 
