@@ -6,44 +6,44 @@ X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D5F4C6778F
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 12:15:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11BF9C67790
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 12:15:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1E9D3208AF
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 12:15:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BBD8A208AD
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 12:15:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="k1yKzryy"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E9D3208AF
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Co8+u4Lr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BBD8A208AD
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732994AbeG0Ngn (ORCPT
+        id S1732094AbeG0NhM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 09:36:43 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34050 "EHLO mail.kernel.org"
+        Fri, 27 Jul 2018 09:37:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34124 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730488AbeG0Ngn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 09:36:43 -0400
+        id S1729431AbeG0NhL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Jul 2018 09:37:11 -0400
 Received: from localhost.localdomain (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4CE10208AD;
-        Fri, 27 Jul 2018 12:15:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 93900208AF;
+        Fri, 27 Jul 2018 12:15:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1532693703;
-        bh=rmdQT+Lk7UKciEZogA/axNlSdMXAAjebf0Ht9CndDTw=;
+        s=default; t=1532693731;
+        bh=kEAJAQ+i3bNCv1b9F1B5u13CahTnHgcfQKwlFPJ+fDI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=k1yKzryy+DlZMawEfE+l+cWpixPD9B7n0pS34rYYVmi6N2td+9fveFm4osWKwit1m
-         T2MHNpjNOCrR/c/xb6nYDKSjqXlkaPt+MCK9wRU+qhBW9SKZBjoe5o2JIZl5CZzCyv
-         U9XEWaf/ciN/TDpia+chMbq9zLe+2/0O5dZ42bhc=
+        b=Co8+u4LrLnNo5KcgvhHLNApC+db0jjhYnoVSIXbAkl04+IsVG0LInbbHxGn7+i8Z6
+         pcg+JWlm2LuuI18Sd/QMkapXSsP0Jdzz9BIzdpeVtYwY/jLa5lsLitG/R/wcB+Uvcn
+         xTTQnkdlHZsM8v0UXL8U3h5G3KRfAtuqHvOTePWs=
 From:   Masami Hiramatsu <mhiramat@kernel.org>
 To:     Shuah Khan <shuah@kernel.org>, Steven Rostedt <rostedt@goodmis.org>
 Cc:     Ingo Molnar <mingo@redhat.com>,
         Masami Hiramatsu <mhiramat@kernel.org>,
         linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 10/25] selftests/ftrace: Use loopback address instead of localhost
-Date:   Fri, 27 Jul 2018 21:14:40 +0900
-Message-Id: <153269368036.3084.11089045823444073169.stgit@devbox>
+Subject: [PATCH 11/25] selftests/ftrace: Improve kprobe on module testcase to load/unload module
+Date:   Fri, 27 Jul 2018 21:15:08 +0900
+Message-Id: <153269370853.3084.10985190108092225790.stgit@devbox>
 X-Mailer: git-send-email 2.13.6
 In-Reply-To: <153269339575.3084.16279591141931053689.stgit@devbox>
 References: <153269339575.3084.16279591141931053689.stgit@devbox>
@@ -56,152 +56,79 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use raw loopback address instead of localhost, because
-"localhost" can depend on nsswitch and in some case
-we can not resolve the localhost.
+Improve kprobe events on module testcase to check module
+load/unload with disabled/enabled events. This also change
+the target module to trace_printk.ko, so it depends on
+CONFIG_SAMPLE_TRACE_PRINTK=m.
 
 Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
 ---
- .../selftests/ftrace/test.d/event/event-enable.tc  |    2 +-
- .../selftests/ftrace/test.d/event/event-pid.tc     |    2 +-
- .../ftrace/test.d/event/subsystem-enable.tc        |    2 +-
- .../ftrace/test.d/event/toplevel-enable.tc         |    2 +-
- .../ftrace/test.d/ftrace/func-filter-pid.tc        |    2 +-
- .../inter-event/trigger-field-variable-support.tc  |    2 +-
- .../trigger-inter-event-combined-hist.tc           |    2 +-
- .../inter-event/trigger-onmatch-action-hist.tc     |    2 +-
- .../trigger-onmatch-onmax-action-hist.tc           |    2 +-
- .../inter-event/trigger-onmax-action-hist.tc       |    2 +-
- 10 files changed, 10 insertions(+), 10 deletions(-)
+ tools/testing/selftests/ftrace/config              |    4 ++
+ .../ftrace/test.d/kprobe/kprobe_module.tc          |   35 ++++++++++++++++++--
+ 2 files changed, 36 insertions(+), 3 deletions(-)
 
-diff --git a/tools/testing/selftests/ftrace/test.d/event/event-enable.tc b/tools/testing/selftests/ftrace/test.d/event/event-enable.tc
-index 386dbddbdc11..a028628cdd0e 100644
---- a/tools/testing/selftests/ftrace/test.d/event/event-enable.tc
-+++ b/tools/testing/selftests/ftrace/test.d/event/event-enable.tc
-@@ -14,7 +14,7 @@ fail() { #msg
- }
+diff --git a/tools/testing/selftests/ftrace/config b/tools/testing/selftests/ftrace/config
+index b01924c71c09..766669592173 100644
+--- a/tools/testing/selftests/ftrace/config
++++ b/tools/testing/selftests/ftrace/config
+@@ -4,3 +4,7 @@ CONFIG_FUNCTION_PROFILER=y
+ CONFIG_TRACER_SNAPSHOT=y
+ CONFIG_STACK_TRACER=y
+ CONFIG_HIST_TRIGGERS=y
++CONFIG_MODULES=y
++CONFIG_MODULE_UNLOAD=y
++CONFIG_SAMPLES=y
++CONFIG_SAMPLE_TRACE_PRINTK=m
+diff --git a/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_module.tc b/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_module.tc
+index ec6c5fffef1e..1efe9e616bc4 100644
+--- a/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_module.tc
++++ b/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_module.tc
+@@ -4,11 +4,18 @@
  
- yield() {
--    ping localhost -c 1 || sleep .001 || usleep 1 || sleep 1
-+    ping 127.0.0.1 -c 1 || sleep .001 || usleep 1 || sleep 1
- }
+ [ -f kprobe_events ] || exit_unsupported # this is configurable
  
- if [ ! -f set_event -o ! -d events/sched ]; then
-diff --git a/tools/testing/selftests/ftrace/test.d/event/event-pid.tc b/tools/testing/selftests/ftrace/test.d/event/event-pid.tc
-index 6dbf67544fde..6d2897f6a106 100644
---- a/tools/testing/selftests/ftrace/test.d/event/event-pid.tc
-+++ b/tools/testing/selftests/ftrace/test.d/event/event-pid.tc
-@@ -17,7 +17,7 @@ fail() { #msg
- }
++rmmod trace-printk ||:
++if ! modprobe trace-printk.ko ; then
++  echo "No trace-printk sample module - please make CONFIG_SAMPLE_TRACE_PRINTK=
++m"
++  exit_unresolved;
++fi
++
++MOD=trace_printk
++FUNC=trace_printk_irq_work
++
+ :;: "Add an event on a module function without specifying event name" ;:
  
- yield() {
--    ping localhost -c 1 || sleep .001 || usleep 1 || sleep 1
-+    ping 127.0.0.1 -c 1 || sleep .001 || usleep 1 || sleep 1
- }
+-MOD=`lsmod | head -n 2 | tail -n 1 | cut -f1 -d" "`
+-FUNC=`grep -m 1 ".* t .*\\[$MOD\\]" /proc/kallsyms | xargs | cut -f3 -d" "`
+-[ "x" != "x$MOD" -a "y" != "y$FUNC" ] || exit_unresolved
+ echo "p $MOD:$FUNC" > kprobe_events
+ PROBE_NAME=`echo $MOD:$FUNC | tr ".:" "_"`
+ test -d events/kprobes/p_${PROBE_NAME}_0 || exit_failure
+@@ -22,3 +29,25 @@ test -d events/kprobes/event1 || exit_failure
  
- if [ ! -f set_event -o ! -d events/sched ]; then
-diff --git a/tools/testing/selftests/ftrace/test.d/event/subsystem-enable.tc b/tools/testing/selftests/ftrace/test.d/event/subsystem-enable.tc
-index 10eb17f161b7..9f0221b39d4d 100644
---- a/tools/testing/selftests/ftrace/test.d/event/subsystem-enable.tc
-+++ b/tools/testing/selftests/ftrace/test.d/event/subsystem-enable.tc
-@@ -14,7 +14,7 @@ fail() { #msg
- }
- 
- yield() {
--    ping localhost -c 1 || sleep .001 || usleep 1 || sleep 1
-+    ping 127.0.0.1 -c 1 || sleep .001 || usleep 1 || sleep 1
- }
- 
- if [ ! -f set_event -o ! -d events/sched ]; then
-diff --git a/tools/testing/selftests/ftrace/test.d/event/toplevel-enable.tc b/tools/testing/selftests/ftrace/test.d/event/toplevel-enable.tc
-index 8d55a233c1a4..5f3611047d3a 100644
---- a/tools/testing/selftests/ftrace/test.d/event/toplevel-enable.tc
-+++ b/tools/testing/selftests/ftrace/test.d/event/toplevel-enable.tc
-@@ -13,7 +13,7 @@ fail() { #msg
- }
- 
- yield() {
--    ping localhost -c 1 || sleep .001 || usleep 1 || sleep 1
-+    ping 127.0.0.1 -c 1 || sleep .001 || usleep 1 || sleep 1
- }
- 
- if [ ! -f available_events -o ! -f set_event -o ! -d events ]; then
-diff --git a/tools/testing/selftests/ftrace/test.d/ftrace/func-filter-pid.tc b/tools/testing/selftests/ftrace/test.d/ftrace/func-filter-pid.tc
-index 970903cb7834..cd52cf6a1fc4 100644
---- a/tools/testing/selftests/ftrace/test.d/ftrace/func-filter-pid.tc
-+++ b/tools/testing/selftests/ftrace/test.d/ftrace/func-filter-pid.tc
-@@ -49,7 +49,7 @@ fail() { # msg
- }
- 
- yield() {
--    ping localhost -c 1 || sleep .001 || usleep 1 || sleep 1
-+    ping 127.0.0.1 -c 1 || sleep .001 || usleep 1 || sleep 1
- }
- 
- do_test() {
-diff --git a/tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-field-variable-support.tc b/tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-field-variable-support.tc
-index 575af23df04e..59b58c77e9ce 100644
---- a/tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-field-variable-support.tc
-+++ b/tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-field-variable-support.tc
-@@ -23,7 +23,7 @@ echo 'hist:keys=comm:ts0=common_timestamp.usecs if comm=="ping"' > events/sched/
- echo 'hist:keys=next_comm:wakeup_lat=common_timestamp.usecs-$ts0:onmatch(sched.sched_waking).wakeup_latency($wakeup_lat,next_pid,sched.sched_waking.prio,next_comm) if next_comm=="ping"' > events/sched/sched_switch/trigger
- echo 'hist:keys=pid,prio,comm:vals=lat:sort=pid,prio' > events/synthetic/wakeup_latency/trigger
- 
--ping localhost -c 3
-+ping 127.0.0.1 -c 3
- if ! grep -q "ping" events/synthetic/wakeup_latency/hist; then
-     fail "Failed to create inter-event histogram"
- fi
-diff --git a/tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-inter-event-combined-hist.tc b/tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-inter-event-combined-hist.tc
-index 92aef26e2631..0a7709fdfd8e 100644
---- a/tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-inter-event-combined-hist.tc
-+++ b/tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-inter-event-combined-hist.tc
-@@ -37,7 +37,7 @@ echo 'waking+wakeup_latency u64 lat; pid_t pid' >> synthetic_events
- echo 'hist:keys=pid,lat:sort=pid,lat:ww_lat=$waking_lat+$wakeup_lat:onmatch(synthetic.wakeup_latency).waking+wakeup_latency($ww_lat,pid)' >> events/synthetic/wakeup_latency/trigger
- echo 'hist:keys=pid,lat:sort=pid,lat' >> events/synthetic/waking+wakeup_latency/trigger
- 
--ping localhost -c 3
-+ping 127.0.0.1 -c 3
- if ! grep -q "pid:" events/synthetic/waking+wakeup_latency/hist; then
-     fail "Failed to create combined histogram"
- fi
-diff --git a/tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-onmatch-action-hist.tc b/tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-onmatch-action-hist.tc
-index 1ef5dd4521f0..c5bdf8338aeb 100644
---- a/tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-onmatch-action-hist.tc
-+++ b/tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-onmatch-action-hist.tc
-@@ -29,7 +29,7 @@ echo "Test histogram variables,simple expression support and onmatch action"
- echo 'hist:keys=pid:ts0=common_timestamp.usecs if comm=="ping"' > events/sched/sched_wakeup/trigger
- echo 'hist:keys=next_pid:wakeup_lat=common_timestamp.usecs-$ts0:onmatch(sched.sched_wakeup).wakeup_latency($wakeup_lat,next_pid,next_comm) if next_comm=="ping"' > events/sched/sched_switch/trigger
- echo 'hist:keys=comm,pid,lat:wakeup_lat=lat:sort=lat' > events/synthetic/wakeup_latency/trigger
--ping localhost -c 5
-+ping 127.0.0.1 -c 5
- if ! grep -q "ping" events/synthetic/wakeup_latency/hist; then
-     fail "Failed to create onmatch action inter-event histogram"
- fi
-diff --git a/tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-onmatch-onmax-action-hist.tc b/tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-onmatch-onmax-action-hist.tc
-index 7234683ee5e5..47cb76bfd9c0 100644
---- a/tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-onmatch-onmax-action-hist.tc
-+++ b/tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-onmatch-onmax-action-hist.tc
-@@ -29,7 +29,7 @@ echo "Test histogram variables,simple expression support and onmatch-onmax actio
- echo 'hist:keys=pid:ts0=common_timestamp.usecs if comm=="ping"' > events/sched/sched_wakeup/trigger
- echo 'hist:keys=next_pid:wakeup_lat=common_timestamp.usecs-$ts0:onmatch(sched.sched_wakeup).wakeup_latency($wakeup_lat,next_pid,next_comm):onmax($wakeup_lat).save(next_comm,prev_pid,prev_prio,prev_comm) if next_comm=="ping"' >> events/sched/sched_switch/trigger
- echo 'hist:keys=comm,pid,lat:wakeup_lat=lat:sort=lat' > events/synthetic/wakeup_latency/trigger
--ping localhost -c 5
-+ping 127.0.0.1 -c 5
- if [ ! grep -q "ping" events/synthetic/wakeup_latency/hist -o ! grep -q "max:" events/sched/sched_switch/hist]; then
-     fail "Failed to create onmatch-onmax action inter-event histogram"
- fi
-diff --git a/tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-onmax-action-hist.tc b/tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-onmax-action-hist.tc
-index 55b9630a1d70..6fa0c449035c 100644
---- a/tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-onmax-action-hist.tc
-+++ b/tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-onmax-action-hist.tc
-@@ -27,7 +27,7 @@ echo "Test onmax action"
- 
- echo 'hist:keys=pid:ts0=common_timestamp.usecs if comm=="ping"' >> events/sched/sched_waking/trigger
- echo 'hist:keys=next_pid:wakeup_lat=common_timestamp.usecs-$ts0:onmax($wakeup_lat).save(next_comm,prev_pid,prev_prio,prev_comm) if next_comm=="ping"' >> events/sched/sched_switch/trigger
--ping localhost -c 3
-+ping 127.0.0.1 -c 3
- if ! grep -q "max:" events/sched/sched_switch/hist; then
-     fail "Failed to create onmax action inter-event histogram"
- fi
+ echo "p:kprobes1/event1 $MOD:$FUNC" > kprobe_events
+ test -d events/kprobes1/event1 || exit_failure
++
++:;: "Remove target module, but event still be there" ;:
++if ! rmmod trace-printk ; then
++  echo "Failed to unload module - please enable CONFIG_MODULE_UNLOAD"
++  exit_unresolved;
++fi
++test -d events/kprobes1/event1
++
++:;: "Check posibility to defining events on unloaded module";:
++echo "p:event2 $MOD:$FUNC" >> kprobe_events
++
++:;: "Target is gone, but we can prepare for next time";:
++echo 1 > events/kprobes1/event1/enable
++
++:;: "Load module again, which means the event1 should be recorded";:
++modprobe trace-printk.ko
++grep "event1:" trace
++
++:;: "Remove the module again and check the event is not locked"
++rmmod trace-printk
++echo 0 > events/kprobes1/event1/enable
++echo "-:kprobes1/event1" >> kprobe_events
 
