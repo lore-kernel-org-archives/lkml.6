@@ -2,117 +2,133 @@ Return-Path: <SRS0=OQFz=KL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84B8BC6778F
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 11:00:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FDDCC67790
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 11:00:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2BF1C2089F
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 11:00:15 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="kelkQbCC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2BF1C2089F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
+	by mail.kernel.org (Postfix) with ESMTP id E15822089F
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 11:00:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E15822089F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732153AbeG0MVg (ORCPT
+        id S1732351AbeG0MVn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 08:21:36 -0400
-Received: from us01smtprelay-2.synopsys.com ([198.182.60.111]:49826 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730977AbeG0MVg (ORCPT
+        Fri, 27 Jul 2018 08:21:43 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:44002 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1730515AbeG0MVn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 08:21:36 -0400
-Received: from mailhost.synopsys.com (mailhost1.synopsys.com [10.12.238.239])
-        by smtprelay.synopsys.com (Postfix) with ESMTP id EA3C210C1279;
-        Fri, 27 Jul 2018 04:00:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1532689212; bh=8A+8Yotd315gqgsutUcjGMuHDSSUYbNly4xfnR9r334=;
-        h=From:To:CC:Subject:Date:References:From;
-        b=kelkQbCCqQHMCLAH4Y4oW3oC1d84UdZdPR3NBi4z7yLdiyan2oQTwl4ggNY9z2DPA
-         Qj7MicmbrnrFURxPgofJujLpahCSPc6bDqIbdFE9vAfLVqbWlTXbegvlMx8tHH98Wy
-         Vx6H+iywtwLaf4oE16e+CM20scjBopapGnUbQCDnUByMhZbd2QHeebjSlV+YuL769Z
-         dsWwcUA2lSRJoakiToX3gGnymPKCS93bTt8+qDzV/UuJyzBa+tMzPEqCYam1JCJpDM
-         2FBgNvZ/ntB6LQ5EkPb+/iVbz7ONlDYB1dalx8hnUYV/KoZhxv863m7asTAFXAPATe
-         +3M7hOOxZdOlQ==
-Received: from US01WEHTC3.internal.synopsys.com (us01wehtc3.internal.synopsys.com [10.15.84.232])
-        by mailhost.synopsys.com (Postfix) with ESMTP id 20C83573D;
-        Fri, 27 Jul 2018 04:00:11 -0700 (PDT)
-Received: from AM04WEHTCA.internal.synopsys.com (10.116.16.190) by
- US01WEHTC3.internal.synopsys.com (10.15.84.232) with Microsoft SMTP Server
- (TLS) id 14.3.361.1; Fri, 27 Jul 2018 04:00:10 -0700
-Received: from AM04WEMBXA.internal.synopsys.com ([fe80::79c3:55f2:1f20:5bf4])
- by am04wehtca.internal.synopsys.com ([::1]) with mapi id 14.03.0361.001; Fri,
- 27 Jul 2018 15:00:08 +0400
-From:   Minas Harutyunyan <Minas.Harutyunyan@synopsys.com>
-To:     Douglas Anderson <dianders@chromium.org>,
-        "balbi@kernel.org" <balbi@kernel.org>,
-        "Minas.Harutyunyan@synopsys.com" <Minas.Harutyunyan@synopsys.com>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
-CC:     "stefan.wahren@i2se.com" <stefan.wahren@i2se.com>,
-        "grigor.tovmasyan@synopsys.com" <grigor.tovmasyan@synopsys.com>,
-        "Bruno Herrera" <bruherrera@gmail.com>,
-        Zhangfei Gao <zhangfei.gao@linaro.org>,
-        "john.stultz@linaro.org" <john.stultz@linaro.org>,
-        Stephen Warren <swarren@wwwdotorg.org>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [REPOST PATCH 0/4] usb: dwc2: Turn on uframe sched everywhere
-Thread-Topic: [REPOST PATCH 0/4] usb: dwc2: Turn on uframe sched everywhere
-Thread-Index: AQHUJRxcWQJzTHhXfkeORkEblzPMGQ==
-Date:   Fri, 27 Jul 2018 11:00:07 +0000
-Message-ID: <410670D7E743164D87FA6160E7907A56013A5CBDB4@am04wembxa.internal.synopsys.com>
-References: <20180726200730.18290-1-dianders@chromium.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.116.70.151]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Fri, 27 Jul 2018 08:21:43 -0400
+Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w6RAwu4C027485
+        for <linux-kernel@vger.kernel.org>; Fri, 27 Jul 2018 07:00:18 -0400
+Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2kfytydu3s-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Fri, 27 Jul 2018 07:00:18 -0400
+Received: from localhost
+        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <khandual@linux.vnet.ibm.com>;
+        Fri, 27 Jul 2018 12:00:16 +0100
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
+        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 27 Jul 2018 12:00:11 +0100
+Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w6RB0AVB36896848
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 27 Jul 2018 11:00:10 GMT
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id DBB9B11C069;
+        Fri, 27 Jul 2018 14:00:23 +0100 (BST)
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 2998E11C04A;
+        Fri, 27 Jul 2018 13:58:47 +0100 (BST)
+Received: from [9.202.14.95] (unknown [9.202.14.95])
+        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Fri, 27 Jul 2018 13:58:46 +0100 (BST)
+Subject: Re: [RFC 0/4] Virtio uses DMA API for all devices
+To:     Will Deacon <will.deacon@arm.com>
+References: <20180720035941.6844-1-khandual@linux.vnet.ibm.com>
+ <20180727095804.GA25592@arm.com>
+Cc:     robh@kernel.org, srikar@linux.vnet.ibm.com, mst@redhat.com,
+        aik@ozlabs.ru, jasowang@redhat.com, linuxram@us.ibm.com,
+        linux-kernel@vger.kernel.org,
+        virtualization@lists.linux-foundation.org, hch@infradead.org,
+        jean-philippe.brucker@arm.com, paulus@samba.org,
+        marc.zyngier@arm.com, joe@perches.com, robin.murphy@arm.com,
+        linuxppc-dev@lists.ozlabs.org, elfring@users.sourceforge.net,
+        haren@linux.vnet.ibm.com, david@gibson.dropbear.id.au
+From:   Anshuman Khandual <khandual@linux.vnet.ibm.com>
+Date:   Fri, 27 Jul 2018 16:28:33 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
+ Thunderbird/45.5.1
 MIME-Version: 1.0
+In-Reply-To: <20180727095804.GA25592@arm.com>
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 18072711-0020-0000-0000-000002ACCE76
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18072711-0021-0000-0000-000020F8DA51
+Message-Id: <0f123b95-7ac2-d1a2-80c9-732c7113d9c0@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-27_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1806210000 definitions=main-1807270114
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 7/27/2018 12:08 AM, Douglas Anderson wrote:=0A=
-> While looking at a dwc2 recently, I noticed that some platforms still=0A=
-> have the uframe scheduler off.  As far as I know, nothing good can=0A=
-> come out of having the uframe scheduler off.  Let's turn it on=0A=
-> everywhere.  Assuming this all works out then some time in the future=0A=
-> we can gut all the old code that handles the old non-uframe scheduler=0A=
-> and make everything simpler.=0A=
-> =0A=
-> This is a repost of the original "RFT" (request for testing) series I=0A=
-> posted a few weeks ago but without the "RFT" prefix.  Two of the=0A=
-> patches in the series now have "Tested-by:" tags.  Since there should=0A=
-> be nothing platform specific about the uFrame scheduler presumably=0A=
-> this should mean we're good to go?  Specificaly note that in at least=0A=
-> one of the "Tested-by" reports this patch caused a notable=0A=
-> improvement.=0A=
-> =0A=
-> In response to the original RFT, some notes about testing this:=0A=
-> - In general, try to have lots of things plugged in.=0A=
-> - Plug many different keyboards / mice in.  See if keys are=0A=
->    dropped / mouse is jerky.=0A=
-> - Try USB audio (ideally full speed, not high speed).  How is=0A=
->    the audio?=0A=
-> - If you're brave, try a USB webcam.  How is the video?=0A=
->    ...maybe try including patches from crbug.com/820961 too.=0A=
-> =0A=
-> =0A=
-> Douglas Anderson (4):=0A=
->    usb: dwc2: Turn on uframe_sched on "bcm" platforms=0A=
->    usb: dwc2: Turn on uframe_sched on "his" platforms=0A=
->    usb: dwc2: Turn on uframe_sched on "amlogic" platforms=0A=
->    usb: dwc2: Turn on uframe_sched on "stm32f4x9_fsotg" platforms=0A=
-> =0A=
->   drivers/usb/dwc2/params.c | 4 ----=0A=
->   1 file changed, 4 deletions(-)=0A=
-> =0A=
-Reviewed-by: Minas Harutyunyan <hminas@synopsys.com>=0A=
-=0A=
+On 07/27/2018 03:28 PM, Will Deacon wrote:
+> Hi Anshuman,
+> 
+> On Fri, Jul 20, 2018 at 09:29:37AM +0530, Anshuman Khandual wrote:
+>> This patch series is the follow up on the discussions we had before about
+>> the RFC titled [RFC,V2] virtio: Add platform specific DMA API translation
+>> for virito devices (https://patchwork.kernel.org/patch/10417371/). There
+>> were suggestions about doing away with two different paths of transactions
+>> with the host/QEMU, first being the direct GPA and the other being the DMA
+>> API based translations.
+>>
+>> First patch attempts to create a direct GPA mapping based DMA operations
+>> structure called 'virtio_direct_dma_ops' with exact same implementation
+>> of the direct GPA path which virtio core currently has but just wrapped in
+>> a DMA API format. Virtio core must use 'virtio_direct_dma_ops' instead of
+>> the arch default in absence of VIRTIO_F_IOMMU_PLATFORM flag to preserve the
+>> existing semantics. The second patch does exactly that inside the function
+>> virtio_finalize_features(). The third patch removes the default direct GPA
+>> path from virtio core forcing it to use DMA API callbacks for all devices.
+>> Now with that change, every device must have a DMA operations structure
+>> associated with it. The fourth patch adds an additional hook which gives
+>> the platform an opportunity to do yet another override if required. This
+>> platform hook can be used on POWER Ultravisor based protected guests to
+>> load up SWIOTLB DMA callbacks to do the required (as discussed previously
+>> in the above mentioned thread how host is allowed to access only parts of
+>> the guest GPA range) bounce buffering into the shared memory for all I/O
+>> scatter gather buffers to be consumed on the host side.
+>>
+>> Please go through these patches and review whether this approach broadly
+>> makes sense. I will appreciate suggestions, inputs, comments regarding
+>> the patches or the approach in general. Thank you.
+> I just wanted to say that this patch series provides a means for us to
+> force the coherent DMA ops for legacy virtio devices on arm64, which in turn
+> means that we can enable the SMMU with legacy devices in our fastmodel
+> emulation platform (which is slowly being upgraded to virtio 1.0) without
+> hanging during boot. Patch below.
+> 
+> So:
+> 
+> Acked-by: Will Deacon <will.deacon@arm.com>
+> Tested-by: Will Deacon <will.deacon@arm.com>
+
+Thanks Will.
+
