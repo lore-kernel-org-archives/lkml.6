@@ -2,699 +2,158 @@ Return-Path: <SRS0=OQFz=KL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A82B2C67790
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 14:11:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D961EC6778F
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 14:13:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3E77C2064D
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 14:11:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3E77C2064D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=aosc.io
+	by mail.kernel.org (Postfix) with ESMTP id 81AA02064D
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 14:13:22 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="hGpnqeck"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 81AA02064D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388156AbeG0PeB convert rfc822-to-8bit (ORCPT
+        id S2388282AbeG0Pf1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 11:34:01 -0400
-Received: from hermes.aosc.io ([199.195.250.187]:36319 "EHLO hermes.aosc.io"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730340AbeG0PeA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 11:34:00 -0400
-Received: from localhost (localhost [127.0.0.1]) (Authenticated sender: icenowy@aosc.io)
-        by hermes.aosc.io (Postfix) with ESMTPSA id 1E0E09F9EC;
-        Fri, 27 Jul 2018 14:11:31 +0000 (UTC)
-Date:   Fri, 27 Jul 2018 22:11:20 +0800
-In-Reply-To: <CAMty3ZDZfhCjekd2eSHNFS9aagpwdG0rwL1jamuwoA=vWcd86w@mail.gmail.com>
-References: <20180726171257.6688-1-icenowy@aosc.io> <20180726171257.6688-11-icenowy@aosc.io> <20180727125615.ju23ecgm6y4rz7p5@flea> <8DF4600E-DFE4-47CD-B541-FFDD903A65FB@aosc.io> <CAMty3ZDZfhCjekd2eSHNFS9aagpwdG0rwL1jamuwoA=vWcd86w@mail.gmail.com>
+        Fri, 27 Jul 2018 11:35:27 -0400
+Received: from mail-eopbgr00052.outbound.protection.outlook.com ([40.107.0.52]:1281
+        "EHLO EUR02-AM5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1730709AbeG0Pf0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Jul 2018 11:35:26 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=AMmlmQHsmSzE8oj93ajLpDC8xO5bN5UlpSqYJlMR9mM=;
+ b=hGpnqeckIzqHzY8VHaE4WBwITdO+8YH23OrC+KDFYtxrEiKQgYyroMOkzPGb42PziUQfmnrjm0oRwIYcAa0ZZlYFzRZ0jpSlDfdIfWag4u5y/ufumvc6ZOuB8ezTw8ua542Y7sR3eWf8i0U93dOHq7lELt641H8P13Puhtj+mmI=
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=ruxandra.radulescu@nxp.com; 
+Received: from rhuath.am.freescale.net (64.157.242.222) by
+ DB4PR04MB348.eurprd04.prod.outlook.com (2a01:111:e400:9831::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.973.22; Fri, 27 Jul
+ 2018 14:13:12 +0000
+From:   Ioana Radulescu <ruxandra.radulescu@nxp.com>
+To:     gregkh@linuxfoundation.org
+Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
+        ioana.ciornei@nxp.com
+Subject: [PATCH 1/2] staging: fsl-dpaa2/eth: Update default hash key
+Date:   Fri, 27 Jul 2018 09:12:59 -0500
+Message-Id: <20180727141300.17511-1-ruxandra.radulescu@nxp.com>
+X-Mailer: git-send-email 2.11.0
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: 8BIT
-Subject: Re: [linux-sunxi] Re: [PATCH v3.1 10/10] arm64: dts: allwinner: a64: Enable HDMI output on A64 boards w/ HDMI
-To:     jagan@amarulasolutions.com,
-        Jagan Teki <jagan@amarulasolutions.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>
-CC:     linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        linux-sunxi <linux-sunxi@googlegroups.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>
-From:   Icenowy Zheng <icenowy@aosc.io>
-Message-ID: <2E41BEB6-6D69-4597-9559-25389B310209@aosc.io>
+Content-Type: text/plain
+X-Originating-IP: [64.157.242.222]
+X-ClientProxiedBy: SN6PR06CA0010.namprd06.prod.outlook.com
+ (2603:10b6:805:8e::23) To DB4PR04MB348.eurprd04.prod.outlook.com
+ (2a01:111:e400:9831::20)
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: b293a7db-92cf-4e4e-6460-08d5f3cb1765
+X-MS-Office365-Filtering-HT: Tenant
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:DB4PR04MB348;
+X-Microsoft-Exchange-Diagnostics: 1;DB4PR04MB348;3:q4aV66/4JT2I78RR5apYrTiujrvS/weYO0sLTGyNmUIJvgcbIYzkhCLs7M9S905vwG8AZpt9sRIj3v9eVbLFtFbnb9trP52wjX6BDdSIYYkOaTbz/YDfL+cR4j3E3N7ACvFjNvf4jFXsA+mFf/PbvOn8J/ZtEAGM8itNmDo68JmlnZ3vQac3cVJbB9XiVsqDvCAtQzxuGu/FdzPVMucO2ATf2NpuKCA7WrQ4f7hOU+aAPYyIhKrc/EJarBoUy8Xb;25:blsjo/p3CZC7gtxqrJ2nkJX81y4K8eOl8C4no7kRxQ9hc3LtF9qX/T87P7/A+/vBID7G8r2TfhOoW68qsN0Ud6ApHI1OoR+3cSysk3wCel1sAs/zZ0QVSxBRwibCIfAPQjISvAesHV+sBPc3ecjeAzdOEvLPqk572xh9MypPE6CCU6G1e84aYnGMo8RQ1K8NgSE6QTFNXG1DRyzuj46vBNFabrPk//4gdZZqbM0+ONQBvF7vZ20OV63waqhlXPFYAY/bLa7OoPappvEMcrmSWEn9voxRF9eH60UMXgvrsIxbC7oeTE3d1gZc3NHGb7+0pPSw9c829r8fdWJ4a2vh6w==;31:cQqlroKp0C/+7swtx9EyrS4fxZFgVKXedDV/Fml/XwaE//S7V1TxnviQyL1gEzHZqxnm4XrHD59/SFumfCTXA8/yKn21DXHHEwYd78pU8GQ0ejD7JLzM6jaycuZu/UoRhpaM+nt/DU3wCX9q/Yws7VCK1Az16U1NakbE7hBprqxNehi9/Yy3E0ZLaQi5Qnr4FPTimXGROFu9tFR/0o/x8f2vBK4nRN4RNcr9o+nj9j8=
+X-MS-TrafficTypeDiagnostic: DB4PR04MB348:
+X-Microsoft-Exchange-Diagnostics: 1;DB4PR04MB348;20:Pa3ieyt8S/JM3WXTdtYYX/OXcjRFWvvYyKuWyc4FxEK69mTXygKur9YjoAcZt8+ABe03f3aiUbtDgvctSIptyJSTdrOikOsnWkmJpNrKgv37vXYg1yzi5FJMEMoC3F6UMYsXVNF6V+9ZQPTMma4OUjNPaMJ5z31VbN9IPmoM6XIcU85y8f8wile/LIQNkMETSASabNM/qMWTduSjsd4pJ7WNm7Qsr99BlbsEZkra4twc6m+KEQIYATjVLPZthAVBE4r2kponehyTS/os6OLOmIUWr4jz0B0dvH3WgOP7Vj+XWmT6PUkLB7RZbPE9Dsrr23St/1xMqXVj5tCxYtgrlL9jFYxPe200ZnLHvSqTpsCO15x7mnBSODP5NHoqU3S3gjr1Km+OA8nce16Kh3BZZw6EH8gK1/B6V40GNb4fNpmQe0w5cJmtehirRrLVbxNnB4LFazIWaiONt6HI6cqIetG3QcmCEfYPYhoBI6+VQaaa65RFL7erQiOMOTjgjaQF;4:Of26+IH1siHcE3/hvdhoOOkXMAHy+MZjklRxKENrFNy5PiAkDK+rXnM9aORip7+bVhFI3lqUS5/c+mTD9T7WwjzGYjzZ3wqdIb2ylzYO9nJDT9gqWl1u5GdM7BMt6dbvGm3GgOOc6NJBht/3hycuD9ZtVHdlkSxNsBM+HMCm/8gE55cHH2nrzJO++bzcqXbWvIPySxH00AMgsTEfU3pET/2MvO8zEdNWlDEZuC4wngouLL2z2L40cEQMjkrEvTABNMLZUE6n9VN5gw5TfQsrTiwtj1B/XEkoLgZgCKH2ZASA2JhluUJjdBekU9SCWof1
+X-Microsoft-Antispam-PRVS: <DB4PR04MB348D7CC0BE8F6A5E7C7A4F6942A0@DB4PR04MB348.eurprd04.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:(185117386973197);
+X-MS-Exchange-SenderADCheck: 1
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(10201501046)(3002001)(93006095)(93001095)(3231311)(944501410)(52105095)(6055026)(149027)(150027)(6041310)(20161123558120)(20161123562045)(20161123564045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011)(7699016);SRVR:DB4PR04MB348;BCL:0;PCL:0;RULEID:;SRVR:DB4PR04MB348;
+X-Forefront-PRVS: 07467C4D33
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(366004)(396003)(376002)(346002)(136003)(39860400002)(199004)(189003)(50226002)(6512007)(316002)(6916009)(15650500001)(16586007)(486006)(8676002)(8936002)(47776003)(476003)(81166006)(6486002)(81156014)(66066001)(52116002)(7736002)(51416003)(2361001)(956004)(25786009)(305945005)(6666003)(478600001)(97736004)(2616005)(68736007)(36756003)(1076002)(2351001)(3846002)(53936002)(6116002)(86362001)(4326008)(2906002)(48376002)(386003)(16526019)(186003)(5660300001)(6506007)(50466002)(106356001)(14444005)(105586002)(26005);DIR:OUT;SFP:1101;SCL:1;SRVR:DB4PR04MB348;H:rhuath.am.freescale.net;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+Received-SPF: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;DB4PR04MB348;23:51p0UmZYmAm5h+VaJ60KPfIlCFiTQMcipL9jWvGgl0?=
+ =?us-ascii?Q?L1Q2AZ6rlK86xj2Co7Wv3fEzLKxmlIfxVsX4GZhnAhKW2Iq+/FgJxLoLJEq7?=
+ =?us-ascii?Q?6tNfz2gaSB5p6HrvE6R72JBxFadYFCYhEvRhodst+zCoOSUOK8f97AWfWgiO?=
+ =?us-ascii?Q?o9hJH8zuuad+hwDggPjTg2lOaHuseIE1EuMgQ7lArwarhZgNi60NfmOCw2GN?=
+ =?us-ascii?Q?aEcsKgWe5K3hCMoEdGFQF9ICJPBXV3R9v77b9z1PrgbCOsd8LouQ2xvzLQvQ?=
+ =?us-ascii?Q?pCMyMU+mnEPP7wpErHNqs7NQodzPy5FyZczbmS75kbbbZ1Czm1Pf6woYSgYH?=
+ =?us-ascii?Q?OltfwcXWE1WO1KrWSD6DWTyeMKxdz5gfqJh9eNCsXt0GdBXV6BSMzvpylIfy?=
+ =?us-ascii?Q?hfC0nlFEEeNOnEBVqr2ybm6VMf7rDEiym+BCeYc1An1Cip6YSzoXdYa9eB9g?=
+ =?us-ascii?Q?CoDz3EqI3VeVYPmB+T87SePffi8nmFlZdOdrGPJVhSLFxTKjRkNdKAowGVmL?=
+ =?us-ascii?Q?Vi8KyRYl2QCKni7SSohXPsJb/qFX0yrmy53wyu2ID93O67FYmAvwo98+E0ev?=
+ =?us-ascii?Q?kFDJ70Ql/bC0Dl07O6EiKI76jFqRid4seLzFBfAInbRf3XrzRZKQ0LcqUStP?=
+ =?us-ascii?Q?zoVzJK35GCp0BSgVpNOMKzvr1VEVzBGctPqeGODmoB26ImM+v8LkbxH9gbEP?=
+ =?us-ascii?Q?hghtSjaYrcXPOVlMV/VLE3E1cm8OdjT5kaJMXN7FHfijsm8NQBJQB9B3mDgR?=
+ =?us-ascii?Q?tI+guOT4iynxs+Xg/J83T5mxvkPEr5bL52xRnFBLArodsP3An/KqyljmqblZ?=
+ =?us-ascii?Q?eJ5zR67+MpJo/aE7R6OaDe3GZd+7qvFu/iZbfGs4Xnpu0lXm05jSAcHbXWwq?=
+ =?us-ascii?Q?Dq4419Vai8LWONHtPh5fAccRyDZImx373kYZGhofEIMrmrdD2gipaoPSKbp6?=
+ =?us-ascii?Q?ostHolIpKChAyYFW1zIcj+qqI41WHYhjMGpEqa00l4OjF/R5OVqm5CI/cSuR?=
+ =?us-ascii?Q?ja2gSNcOHPWFHWUCkm5TMJquxhoKAozV/+6oQDSRa+eYlKrmdua9rFTaBJr8?=
+ =?us-ascii?Q?sRcJzmi6byo6ix8OEMY7poSJko574ynQCKEGyooncNNydGBPA06FrjlpSocA?=
+ =?us-ascii?Q?zUQ2nRMfBqTJmT436tXQuE0/b1EVWG1c2n91tc8AbFCbN5vHY2rnpr5wyr4n?=
+ =?us-ascii?Q?RPN0YbnTwFJdWALx1oTdNP3c6s6gk/ofyf?=
+X-Microsoft-Antispam-Message-Info: zwYtprkbCR7FaFiY+xndpdnKJo21i28tftavfSnJCSXHdaYQpEgjEH3icQUKAL+OK/f6Sqe4i0tTR/m3Xsxo9JDRFB72emlQ78cvTtvIlyOE0ruKxK1qijiOOcVR2seXU4JRNIV3RKUzYNdXgQ/geVZmAVefsWuPxqwv8AZhHSyI1my05h1/NxV3TrsfG5e9+lyDsg/FMsd4bkJgAnY0sibBC/b0dIZNS5qtO9iGVzSKWIj25ZnW4iVRfgfLcJ/Sfnl/K9O6O2BvMw+SEGfX9cuR/t6MuJkAd7+veKfq62nECi4rLLnSd2Elsrzj5SDAwXFmfgBe+wIUfwurh6UuDF4Bjax5liXDSPWy7WzHoMo=
+X-Microsoft-Exchange-Diagnostics: 1;DB4PR04MB348;6:kZ5Wu/ixUc1xkwYDd9ceu8InSanR8hCyMr2NKy+G8i1pnJ1kEPI4cuMzY2Fut9osZv+sTi1X0OvHkob7hY0nb+QBnXolB1Kx+7NW/Pl9gkfpGgvIGynhVi6aHPLcwbcewFxCgkzsod8tmP6X2PdqKEQl55ij0f8BdgoTx6ZS9/q0u+3cK7/4EmyN4KjUnX5ZXkxA/ZJnHqTYzFWSflRbur9DZIjbq2uPocWu9AQ9WTfvVpU8nvBlXeRxWizEguF93gcuZjymhK3J58LwUNWFIQeFcfJ50xYXtV06Cccr18hOnhdoDPANVY5SD7Vcw3NtTxsb7uUmhwylNWAFtFMjJShkvcSE70ILPT5eghqcLJLclJYIcz1wi2nrR/Y1zBrBRoR6RyxPBP+g3Dy/jp02+ULwUaq6b168Vj6yXo1B6Q66XfYdAVw81d0BhSeX7qfAs0qVjmiNVZOOWlGXYWzClA==;5:GA6J4I0MQp6xwneoiODCngpX30OXUmu7m3tPEl1Twmvuf8iB3NzCHoxGsWUeEvSW80f7M4kGKHWHRfHDPBPgbRihZ//ogkkgYwkB1C+BtTKg8vMNhtK+XH+CpP7CsJwgoTmONV1PjdLGY7uXHjCOdXs/YbV24l24Cp6gA1P6mLw=;7:MIZqhGAlbDABxo0nUvCWAXcq2Xkm4Dqcy9cM4PXcowtA6Vo1ObBg7+WuQuwD4JcmkiIIpjOGGGAXWF4SLIaVfZZQz24ZG1z+emBwD2zXHnGCWoS5PnfFvQeKRnWcoV7AfWEl8ukkxAl/n32tn1hww8S4lgjhsXMjh6ufEZY4y4d4dp0YGu2gls7pdWFMHGc+eSLaWXAImIcnLq82iRrODSGUBBDYLVPr2MlsBfsu5n1JgRK9gdgxsKjs+6uav4P0
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Jul 2018 14:13:12.8912
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: b293a7db-92cf-4e4e-6460-08d5f3cb1765
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB4PR04MB348
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+In our documentation, we claim to use a 5-tuple key for Rx hash
+distribution of flows. The code however configures a key composed
+of all supported header fields.
 
+Update the Rx hash key to contain only the documented fields:
+{IP src, IP dst, IP nextproto, L4 src, L4 dst}, which was the
+original intention and makes most sense as a default.
 
-于 2018年7月27日 GMT+08:00 下午9:57:08, Jagan Teki <jagan@amarulasolutions.com> 写到:
->On Fri, Jul 27, 2018 at 6:56 PM, Icenowy Zheng <icenowy@aosc.io> wrote:
->>
->>
->> 于 2018年7月27日 GMT+08:00 下午8:56:15, Maxime Ripard
-><maxime.ripard@bootlin.com> 写到:
->>>On Fri, Jul 27, 2018 at 01:12:57AM +0800, Icenowy Zheng wrote:
->>>> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts
->>>b/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts
->>>> index 1b9b92e541d2..1b972bade9f6 100644
->>>> --- a/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts
->>>> +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts
->>>> @@ -62,6 +62,21 @@
->>>>      chosen {
->>>>              stdout-path = "serial0:115200n8";
->>>>      };
->>>> +
->>>> +    connector {
->>>> +            compatible = "hdmi-connector";
->>>> +            type = "a";
->>>> +
->>>> +            port {
->>>> +                    hdmi_con_in: endpoint {
->>>> +                            remote-endpoint = <&hdmi_out_con>;
->>>> +                    };
->>>> +            };
->>>> +    };
->>>> +};
->>>> +
->>>> +&de {
->>>> +    status = "okay";
->>>>  };
->>>>
->>>>  &ehci0 {
->>>> @@ -82,6 +97,17 @@
->>>>
->>>>  };
->>>>
->>>> +&hdmi {
->>>> +    hdmi-supply = <&reg_dldo1>;
->>>> +    status = "okay";
->>>> +};
->>>> +
->>>> +&hdmi_out {
->>>> +    hdmi_out_con: endpoint {
->>>> +            remote-endpoint = <&hdmi_con_in>;
->>>> +    };
->>>> +};
->>>> +
->>>>  &i2c1 {
->>>>      pinctrl-names = "default";
->>>>      pinctrl-0 = <&i2c1_pins>;
->>>> @@ -99,6 +125,10 @@
->>>>      };
->>>>  };
->>>>
->>>> +&mixer1 {
->>>> +    status = "okay";
->>>> +};
->>>> +
->>>>  &mmc0 {
->>>>      pinctrl-names = "default";
->>>>      pinctrl-0 = <&mmc0_pins>;
->>>> @@ -238,6 +268,10 @@
->>>>      status = "disabled";
->>>>  };
->>>>
->>>> +&tcon1 {
->>>> +    status = "okay";
->>>> +};
->>>
->>>Is it working or not on the pine64?
->>
->> Not tested yet, as my main A64 device is Pine A64-LTS now.
->
->I have seen BPI-M64 seems failing.
->
->[    0.000000] Booting Linux on physical CPU 0x0000000000 [0x410fd034]
->[    0.000000] Linux version
->4.18.0-rc6-next-20180727-00014-gc7092bc38139 (jagan@jagan-XPS-13-9350)
->(gcc version 6.3.1 20170109 (Linaro GCC 6.3-2
->017.02)) #1 SMP PREEMPT Fri Jul 27 19:05:15 IST 2018
->[    0.000000] Machine model: BananaPi-M64
->[    0.000000] efi: Getting EFI parameters from FDT:
->[    0.000000] efi: UEFI not found.
->[    0.000000] cma: Reserved 32 MiB at 0x00000000bc000000
->[    0.000000] NUMA: No NUMA configuration found
->[    0.000000] NUMA: Faking a node at [mem
->0x0000000000000000-0x00000000bdffffff]
->[    0.000000] NUMA: NODE_DATA [mem 0xbbfd7780-0xbbfd8f3f]
->[    0.000000] Zone ranges:
->[    0.000000]   DMA32    [mem 0x0000000040000000-0x00000000bdffffff]
->[    0.000000]   Normal   empty
->[    0.000000] Movable zone start for each node
->[    0.000000] Early memory node ranges
->[    0.000000]   node   0: [mem 0x0000000040000000-0x00000000bdffffff]
->[    0.000000] Initmem setup node 0 [mem
->0x0000000040000000-0x00000000bdffffff]
->[    0.000000] psci: probing for conduit method from DT.
->[    0.000000] psci: PSCIv0.2 detected in firmware.
->[    0.000000] psci: Using standard PSCI v0.2 function IDs
->[    0.000000] psci: Trusted OS migration not required
->[    0.000000] random: get_random_bytes called from
->start_kernel+0xa4/0x414 with crng_init=0
->[    0.000000] percpu: Embedded 23 pages/cpu @(____ptrval____) s56728
->r8192 d29288 u94208
->[    0.000000] Detected VIPT I-cache on CPU0
->[    0.000000] CPU features: enabling workaround for ARM erratum 843419
->[    0.000000] CPU features: enabling workaround for ARM erratum 845719
->[    0.000000] CPU features: detected: Kernel page table isolation
->(KPTI)
->[    0.000000] Built 1 zonelists, mobility grouping on.  Total pages:
->508032
->[    0.000000] Policy zone: DMA32
->[    0.000000] Kernel command line: console=ttyS0,115200 earlyprintk
->root=/dev/mmcblk0p2 rootwait
->[    0.000000] Memory: 1979032K/2064384K available (10812K kernel
->code, 1382K rwdata, 5096K rodata, 1344K init, 382K bss, 52584K
->reserved, 32768K
-> cma-reserved)
->[    0.000000] SLUB: HWalign=64, Order=0-3, MinObjects=0, CPUs=4,
->Nodes=1
->[    0.000000] rcu: Preemptible hierarchical RCU implementation.
->[    0.000000] rcu:     RCU restricting CPUs from NR_CPUS=64 to
->nr_cpu_ids=4.
->[    0.000000]  Tasks RCU enabled.
->[    0.000000] rcu: Adjusting geometry for rcu_fanout_leaf=16,
->nr_cpu_ids=4
->[    0.000000] NR_IRQS: 64, nr_irqs: 64, preallocated irqs: 0
->[    0.000000] GIC: Using split EOI/Deactivate mode
->[    0.000000] Persistent clock returned invalid value
->[    0.000000] arch_timer: cp15 timer(s) running at 24.00MHz (phys).
->[    0.000000] clocksource: arch_sys_counter: mask: 0xffffffffffffff
->max_cycles: 0x588fe9dc0, max_idle_ns: 440795202592 ns
->[    0.000004] sched_clock: 56 bits at 24MHz, resolution 41ns, wraps
->every 4398046511097ns
->[    0.000491] Console: colour dummy device 80x25
->[    0.000575] Calibrating delay loop (skipped), value calculated
->using timer frequency.. 48.00 BogoMIPS (lpj=96000)
->[    0.000589] pid_max: default: 32768 minimum: 301
->[    0.000671] Security Framework initialized
->[    0.001977] Dentry cache hash table entries: 262144 (order: 9,
->2097152 bytes)
->[    0.002635] Inode-cache hash table entries: 131072 (order: 8,
->1048576 bytes)
->[    0.002684] Mount-cache hash table entries: 4096 (order: 3, 32768
->bytes)
->[    0.002713] Mountpoint-cache hash table entries: 4096 (order: 3,
->32768 bytes)
->[    0.024041] ASID allocator initialised with 32768 entries
->[    0.032035] rcu: Hierarchical SRCU implementation.
->[    0.041639] EFI services will not be available.
->[    0.048073] smp: Bringing up secondary CPUs ...
->[    0.080932] Detected VIPT I-cache on CPU1
->[    0.080992] CPU1: Booted secondary processor 0x0000000001
->[0x410fd034]
->[    0.112631] Detected VIPT I-cache on CPU2
->[    0.112667] CPU2: Booted secondary processor 0x0000000002
->[0x410fd034]
->[    0.144707] Detected VIPT I-cache on CPU3
->[    0.144739] CPU3: Booted secondary processor 0x0000000003
->[0x410fd034]
->[    0.144814] smp: Brought up 1 node, 4 CPUs
->[    0.144840] SMP: Total of 4 processors activated.
->[    0.144849] CPU features: detected: 32-bit EL0 Support
->[    0.154877] CPU: All CPU(s) started at EL2
->[    0.154897] alternatives: patching kernel code
->[    0.156490] devtmpfs: initialized
->[    0.161841] clocksource: jiffies: mask: 0xffffffff max_cycles:
->0xffffffff, max_idle_ns: 7645041785100000 ns
->[    0.161905] futex hash table entries: 1024 (order: 4, 65536 bytes)
->[    0.163334] pinctrl core: initialized pinctrl subsystem
->[    0.164938] DMI not present or invalid.
->[    0.165455] NET: Registered protocol family 16
->[    0.165896] audit: initializing netlink subsys (disabled)
->[    0.166040] audit: type=2000 audit(0.160:1): state=initialized
->audit_enabled=0 res=1
->[    0.167564] cpuidle: using governor menu
->[    0.167960] vdso: 2 pages (1 code @ (____ptrval____), 1 data @
->(____ptrval____))
->[    0.167974] hw-breakpoint: found 6 breakpoint and 4 watchpoint
->registers.
->[    0.171685] DMA: preallocated 256 KiB pool for atomic allocations
->[    0.172948] Serial: AMBA PL011 UART driver
->[    0.195691] HugeTLB registered 2.00 MiB page size, pre-allocated 0
->pages
->[    0.196128] cryptd: max_cpu_qlen set to 1000
->[    0.196923] ACPI: Interpreter disabled.
->[    0.198046] vgaarb: loaded
->[    0.198380] SCSI subsystem initialized
->[    0.199024] usbcore: registered new interface driver usbfs
->[    0.199093] usbcore: registered new interface driver hub
->[    0.199167] usbcore: registered new device driver usb
->[    0.200125] pps_core: LinuxPPS API ver. 1 registered
->[    0.200137] pps_core: Software ver. 5.3.6 - Copyright 2005-2007
->Rodolfo Giometti <giometti@linux.it>
->[    0.200166] PTP clock support registered
->[    0.200335] EDAC MC: Ver: 3.0.0
->[    0.201397] Advanced Linux Sound Architecture Driver Initialized.
->[    0.202248] clocksource: Switched to clocksource arch_sys_counter
->[    0.202467] VFS: Disk quotas dquot_6.6.0
->[    0.202538] VFS: Dquot-cache hash table entries: 512 (order 0, 4096
->bytes)
->[    0.202946] pnp: PnP ACPI: disabled
->[    0.210691] NET: Registered protocol family 2
->[    0.211403] tcp_listen_portaddr_hash hash table entries: 1024
->(order: 2, 16384 bytes)
->[    0.211468] TCP established hash table entries: 16384 (order: 5,
->131072 bytes)
->[    0.211683] TCP bind hash table entries: 16384 (order: 6, 262144
->bytes)
->[    0.211987] TCP: Hash tables configured (established 16384 bind
->16384)
->[    0.212142] UDP hash table entries: 1024 (order: 3, 32768 bytes)
->[    0.212209] UDP-Lite hash table entries: 1024 (order: 3, 32768
->bytes)
->[    0.212390] NET: Registered protocol family 1
->[    0.212813] RPC: Registered named UNIX socket transport module.
->[    0.212821] RPC: Registered udp transport module.
->[    0.212827] RPC: Registered tcp transport module.
->[    0.212833] RPC: Registered tcp NFSv4.1 backchannel transport
->module.
->[    0.213695] kvm [1]: 8-bit VMID
->[    0.215775] kvm [1]: vgic interrupt IRQ1
->[    0.215975] kvm [1]: Hyp mode initialized successfully
->[    0.220557] Initialise system trusted keyrings
->[    0.220710] workingset: timestamp_bits=45 max_order=19
->bucket_order=0
->[    0.229546] squashfs: version 4.0 (2009/01/31) Phillip Lougher
->[    0.230522] NFS: Registering the id_resolver key type
->[    0.230557] Key type id_resolver registered
->[    0.230564] Key type id_legacy registered
->[    0.230580] nfs4filelayout_init: NFSv4 File Layout Driver
->Registering...
->[    0.230785] 9p: Installing v9fs 9p2000 file system support
->[    0.230909] pstore: using deflate compression
->[    0.234029] Key type asymmetric registered
->[    0.234046] Asymmetric key parser 'x509' registered
->[    0.234104] Block layer SCSI generic (bsg) driver version 0.4
->loaded (major 244)
->[    0.234115] io scheduler noop registered
->[    0.234122] io scheduler deadline registered
->[    0.234384] io scheduler cfq registered (default)
->[    0.234394] io scheduler mq-deadline registered
->[    0.234402] io scheduler kyber registered
->[    0.235702] sun50i-de2-bus 1000000.de2: DMA mask not set
->[    0.235744] sun50i-de2-bus 1000000.de2: Error couldn't map SRAM to
->device
->[    0.236353] sun4i-usb-phy 1c19400.phy: DMA mask not set
->[    0.236428] sun4i-usb-phy 1c19400.phy: Couldn't request ID GPIO
->[    0.239670] sun50i-a64-pinctrl 1c20800.pinctrl: DMA mask not set
->[    0.241173] sun50i-a64-r-pinctrl 1f02c00.pinctrl: DMA mask not set
->[    0.242701] sun50i-a64-r-pinctrl 1f02c00.pinctrl: initialized sunXi
->PIO driver
->[    0.246771] EINJ: ACPI disabled.
->[    0.249349] sun50i-a64-ccu 1c20000.clock: DMA mask not set
->[    0.252866] sunxi-sram 1c00000.syscon: DMA mask not set
->[    0.253218] sram 18000.sram: DMA mask not set
->[    0.259221] Serial: 8250/16550 driver, 4 ports, IRQ sharing enabled
->[    0.261898] SuperH (H)SCI(F) driver initialized
->[    0.262440] msm_serial: driver initialized
->[    0.263282] sun4i-drm display-engine: DMA mask not set
->[    0.263852] sun4i-tcon 1c0c000.lcd-controller: DMA mask not set
->[    0.263952] sun4i-tcon 1c0d000.lcd-controller: DMA mask not set
->[    0.264879] sun8i-dw-hdmi 1ee0000.hdmi: DMA mask not set
->[    0.265396] cacheinfo: Unable to detect cache hierarchy for CPU 0
->[    0.273880] loop: module loaded
->[    0.279047] libphy: Fixed MDIO Bus: probed
->[    0.279631] tun: Universal TUN/TAP device driver, 1.6
->[    0.280729] thunder_xcv, ver 1.0
->[    0.280798] thunder_bgx, ver 1.0
->[    0.280852] nicpf, ver 1.0
->[    0.281358] e1000e: Intel(R) PRO/1000 Network Driver - 3.2.6-k
->[    0.281367] e1000e: Copyright(c) 1999 - 2015 Intel Corporation.
->[    0.281427] igb: Intel(R) Gigabit Ethernet Network Driver - version
->5.4.0-k
->[    0.281435] igb: Copyright (c) 2007-2014 Intel Corporation.
->[    0.281490] igbvf: Intel(R) Gigabit Virtual Function Network Driver
->- version 2.4.0-k
->[    0.281498] igbvf: Copyright (c) 2009 - 2012 Intel Corporation.
->[    0.281875] sky2: driver version 1.30
->[    0.282744] VFIO - User Level meta-driver version: 0.3
->[    0.284239] ehci_hcd: USB 2.0 'Enhanced' Host Controller (EHCI)
->Driver
->[    0.284252] ehci-pci: EHCI PCI platform driver
->[    0.284303] ehci-platform: EHCI generic platform driver
->[    0.284417] ehci-platform 1c1a000.usb: DMA mask not set
->[    0.284559] ehci-platform 1c1a000.usb: EHCI Host Controller
->[    0.284587] ehci-platform 1c1a000.usb: new USB bus registered,
->assigned bus number 1
->[    0.285256] ehci-platform 1c1a000.usb: irq 14, io mem 0x01c1a000
->[    0.298255] ehci-platform 1c1a000.usb: USB 2.0 started, EHCI 1.00
->[    0.299042] hub 1-0:1.0: USB hub found
->[    0.299079] hub 1-0:1.0: 1 port detected
->[    0.299554] ehci-platform 1c1b000.usb: DMA mask not set
->[    0.299832] ehci-orion: EHCI orion driver
->[    0.300060] ehci-exynos: EHCI EXYNOS driver
->[    0.300186] ohci_hcd: USB 1.1 'Open' Host Controller (OHCI) Driver
->[    0.300219] ohci-pci: OHCI PCI platform driver
->[    0.300309] ohci-platform: OHCI generic platform driver
->[    0.300404] ohci-platform 1c1a400.usb: DMA mask not set
->[    0.300502] ohci-platform 1c1a400.usb: Generic Platform OHCI
->controller
->[    0.300528] ohci-platform 1c1a400.usb: new USB bus registered,
->assigned bus number 2
->[    0.300860] ohci-platform 1c1a400.usb: irq 15, io mem 0x01c1a400
->[    0.362977] hub 2-0:1.0: USB hub found
->[    0.363017] hub 2-0:1.0: 1 port detected
->[    0.363420] ohci-platform 1c1b400.usb: DMA mask not set
->[    0.363676] ohci-exynos: OHCI EXYNOS driver
->[    0.364386] usbcore: registered new interface driver usb-storage
->[    0.364713] musb-sunxi 1c19000.usb: DMA mask not set
->[    0.367499] sun6i-rtc 1f00000.rtc: DMA mask not set
->[    0.367858] sun6i-rtc 1f00000.rtc: rtc core: registered rtc-sun6i as
->rtc0
->[    0.367871] sun6i-rtc 1f00000.rtc: RTC enabled
->[    0.368196] i2c /dev entries driver
->[    0.372718] pwrseq_simple wifi_pwrseq: DMA mask not set
->[    0.373113] sdhci: Secure Digital Host Controller Interface driver
->[    0.373125] sdhci: Copyright(c) Pierre Ossman
->[    0.373456] Synopsys Designware Multimedia Card Interface Driver
->[    0.374617] sdhci-pltfm: SDHCI platform and OF driver helper
->[    0.375695] leds-gpio leds: DMA mask not set
->[    0.376136] ledtrig-cpu: registered to indicate activity on CPUs
->[    0.377457] usbcore: registered new interface driver usbhid
->[    0.377472] usbhid: USB HID core driver
->[    0.380972] NET: Registered protocol family 17
->[    0.381230] 9pnet: Installing 9P2000 support
->[    0.381304] Key type dns_resolver registered
->[    0.381985] registered taskstats version 1
->[    0.381994] Loading compiled-in X.509 certificates
->[    0.390508] sunxi-de2-clks 1000000.clock: DMA mask not set
->[    0.392353] sun8i-mixer 1200000.mixer: DMA mask not set
->[    0.402857] sun4i-drm display-engine: bound 1200000.mixer (ops
->sun8i_mixer_ops)
->[    0.403112] sun4i-drm display-engine: bound 1c0d000.lcd-controller
->(ops sun4i_tcon_ops)
->[    0.403172] sun8i-dw-hdmi 1ee0000.hdmi: Couldn't get regulator
->[    0.403191] sun4i-drm display-engine: failed to bind 1ee0000.hdmi
->(ops sun8i_dw_hdmi_ops): -517
->[    0.403322] sun4i-drm display-engine: Couldn't bind all pipelines
->components
->[    0.403422] sun4i-drm display-engine: master bind failed: -517
->[    0.404396] sunxi-rsb 1f03400.rsb: DMA mask not set
->[    0.404487] sunxi-rsb 1f03400.rsb: RSB running at 3000000 Hz
->[    0.404925] axp20x-rsb sunxi-rsb-3a3: AXP20x variant AXP803 found
->[    0.407592] dcdc1: supplied by regulator-dummy
->[    0.407904] dcdc2: supplied by regulator-dummy
->[    0.408131] dcdc4: supplied by regulator-dummy
->[    0.408355] dcdc5: supplied by regulator-dummy
->[    0.408608] dcdc6: supplied by regulator-dummy
->[    0.408822] dc1sw: supplied by regulator-dummy
->[    0.409052] aldo1: supplied by regulator-dummy
->[    0.409167] afvcc-csi: Bringing 3300000uV into 2800000-2800000uV
->[    0.409380] aldo2: supplied by regulator-dummy
->[    0.409598] aldo3: supplied by regulator-dummy
->[    0.409836] dldo1: supplied by regulator-dummy
->[    0.410087] dldo2: supplied by regulator-dummy
->[    0.410160] vcc-wifi: Bringing 2900000uV into 3300000-3300000uV
->[    0.410393] dldo3: supplied by regulator-dummy
->[    0.410623] dldo4: supplied by regulator-dummy
->[    0.410884] eldo1: supplied by regulator-dummy
->[    0.411113] eldo2: supplied by regulator-dummy
->[    0.411333] eldo3: supplied by regulator-dummy
->[    0.411596] fldo1: supplied by regulator-dummy
->[    0.411835] fldo2: supplied by regulator-dummy
->[    0.412088] rtc-ldo: supplied by regulator-dummy
->[    0.412300] ldo-io0: supplied by regulator-dummy
->[    0.412561] ldo-io1: supplied by regulator-dummy
->[    0.412846] drivevbus: supplied by regulator-dummy
->[    0.413096] axp20x-rsb sunxi-rsb-3a3: AXP20X driver loaded
->[    0.413597] sun4i-usb-phy 1c19400.phy: Couldn't request ID GPIO
->[    0.419074] sun50i-a64-pinctrl 1c20800.pinctrl: initialized sunXi
->PIO driver
->[    0.419935] dw-apb-uart 1c28000.serial: DMA mask not set
->[    0.420349] console [ttyS0] disabled
->[    0.440883] 1c28000.serial: ttyS0 at MMIO 0x1c28000 (irq = 21,
->base_baud = 1500000) is a U6_16550A
->[    1.757108] console [ttyS0] enabled
->[    1.761887] dw-apb-uart 1c28400.serial: DMA mask not set
->[    1.788099] 1c28400.serial: ttyS1 at MMIO 0x1c28400 (irq = 22,
->base_baud = 1500000) is a U6_16550A
->[    1.802439] mv64xxx_i2c 1c2b000.i2c: DMA mask not set
->[    1.809485] sunxi-mmc 1c0f000.mmc: DMA mask not set
->[    1.814529] sunxi-mmc 1c0f000.mmc: Linked as a consumer to
->regulator.1
->[    1.821642] WARNING: CPU: 2 PID: 50 at
->./include/linux/dma-mapping.h:516 sunxi_mmc_probe+0x1f4/0x508
->[    1.830760] Modules linked in:
->[    1.833818] CPU: 2 PID: 50 Comm: kworker/2:1 Not tainted
->4.18.0-rc6-next-20180727-00014-gc7092bc38139 #1
->[    1.843281] Hardware name: BananaPi-M64 (DT)
->[    1.847554] Workqueue: events deferred_probe_work_func
->[    1.852689] pstate: 60000005 (nZCv daif -PAN -UAO)
->[    1.857476] pc : sunxi_mmc_probe+0x1f4/0x508
->[    1.861742] lr : sunxi_mmc_probe+0x1d4/0x508
->[    1.866004] sp : ffff00000975bb60
->[    1.869313] x29: ffff00000975bb60 x28: 0000000000000000
->[    1.874621] x27: ffff0000096abce8 x26: ffff00000917de78
->[    1.879929] x25: 0000000000000000 x24: ffff80007897fdd8
->[    1.885237] x23: ffff000009169000 x22: ffff000008b17000
->[    1.890545] x21: ffff80007897fd80 x20: ffff800079063410
->[    1.895852] x19: ffff80007897f800 x18: ffffffffffffffff
->[    1.901160] x17: 0000000000000000 x16: 0000000000000000
->[    1.906468] x15: ffff0000091696c8 x14: ffff00008975ba37
->[    1.911775] x13: ffffff0000000000 x12: 0000000000000008
->[    1.917083] x11: 0101010101010101 x10: ffffff7f7fffffff
->[    1.922390] x9 : 0000000000000000 x8 : ffff800078fe4140
->[    1.927697] x7 : ffff800078fe4140 x6 : ffff800078fe4141
->[    1.933004] x5 : ffff800078879ec0 x4 : ffff8000789b3000
->[    1.938311] x3 : ffff8000789b3100 x2 : 0000000000000000
->[    1.943618] x1 : ffff8000791327c0 x0 : 0000000000000000
->[    1.948926] Call trace:
->[    1.951373]  sunxi_mmc_probe+0x1f4/0x508
->[    1.955293]  platform_drv_probe+0x50/0xa8
->[    1.959299]  really_probe+0x1fc/0x290
->[    1.962959]  driver_probe_device+0x58/0x100
->[    1.967138]  __device_attach_driver+0x9c/0xf8
->[    1.971490]  bus_for_each_drv+0x70/0xc8
->[    1.975322]  __device_attach+0xdc/0x138
->[    1.979153]  device_initial_probe+0x10/0x18
->[    1.983331]  bus_probe_device+0x94/0xa0
->[    1.987162]  deferred_probe_work_func+0x6c/0xa0
->[    1.991690]  process_one_work+0x1c8/0x318
->[    1.995697]  worker_thread+0x234/0x428
->[    1.999443]  kthread+0xf8/0x128
->[    2.002584]  ret_from_fork+0x10/0x18
->[    2.006154] ---[ end trace 7f686a1ed4dfbded ]---
->[    2.011182] sunxi-mmc 1c0f000.mmc: swiotlb: coherent allocation
->failed, size=4096
->[    2.018674] CPU: 2 PID: 50 Comm: kworker/2:1 Tainted: G        W
->     4.18.0-rc6-next-20180727-00014-gc7092bc38139 #1
->[    2.029524] Hardware name: BananaPi-M64 (DT)
->[    2.033793] Workqueue: events deferred_probe_work_func
->[    2.038924] Call trace:
->[    2.041372]  dump_backtrace+0x0/0x150
->[    2.045031]  show_stack+0x14/0x20
->[    2.048346]  dump_stack+0x8c/0xac
->[    2.051660]  swiotlb_alloc+0x130/0x170
->[    2.055406]  __dma_alloc+0xc4/0x1b0
->[    2.058893]  sunxi_mmc_probe+0x34c/0x508
->[    2.062812]  platform_drv_probe+0x50/0xa8
->[    2.066817]  really_probe+0x1fc/0x290
->[    2.070475]  driver_probe_device+0x58/0x100
->[    2.074653]  __device_attach_driver+0x9c/0xf8
->[    2.079004]  bus_for_each_drv+0x70/0xc8
->[    2.082835]  __device_attach+0xdc/0x138
->[    2.086667]  device_initial_probe+0x10/0x18
->[    2.090844]  bus_probe_device+0x94/0xa0
->[    2.094675]  deferred_probe_work_func+0x6c/0xa0
->[    2.099202]  process_one_work+0x1c8/0x318
->[    2.103209]  worker_thread+0x234/0x428
->[    2.106954]  kthread+0xf8/0x128
->[    2.110092]  ret_from_fork+0x10/0x18
->[    2.113685] sunxi-mmc 1c0f000.mmc: Failed to allocate DMA descriptor
->mem
->[    2.120519] sunxi-mmc 1c0f000.mmc: Dropping the link to regulator.1
->[    2.126845] sunxi-mmc: probe of 1c0f000.mmc failed with error -12
->[    2.134550] sunxi-mmc 1c10000.mmc: DMA mask not set
->[    2.139583] sunxi-mmc 1c10000.mmc: Linked as a consumer to
->regulator.11
->[    2.146279] sunxi-mmc 1c10000.mmc: Linked as a consumer to
->regulator.13
->[    2.153403] sunxi-mmc 1c10000.mmc: swiotlb: coherent allocation
->failed, size=4096
->[    2.160898] CPU: 2 PID: 50 Comm: kworker/2:1 Tainted: G        W
->     4.18.0-rc6-next-20180727-00014-gc7092bc38139 #1
->[    2.171749] Hardware name: BananaPi-M64 (DT)
->[    2.176026] Workqueue: events deferred_probe_work_func
->[    2.181159] Call trace:
->[    2.183608]  dump_backtrace+0x0/0x150
->[    2.187269]  show_stack+0x14/0x20
->[    2.190583]  dump_stack+0x8c/0xac
->[    2.193899]  swiotlb_alloc+0x130/0x170
->[    2.197645]  __dma_alloc+0xc4/0x1b0
->[    2.201135]  sunxi_mmc_probe+0x34c/0x508
->[    2.205056]  platform_drv_probe+0x50/0xa8
->[    2.209061]  really_probe+0x1fc/0x290
->[    2.212719]  driver_probe_device+0x58/0x100
->[    2.216897]  __device_attach_driver+0x9c/0xf8
->[    2.221249]  bus_for_each_drv+0x70/0xc8
->[    2.225081]  __device_attach+0xdc/0x138
->[    2.228912]  device_initial_probe+0x10/0x18
->[    2.233090]  bus_probe_device+0x94/0xa0
->[    2.236922]  deferred_probe_work_func+0x6c/0xa0
->[    2.241450]  process_one_work+0x1c8/0x318
->[    2.245456]  worker_thread+0x234/0x428
->[    2.249202]  kthread+0xf8/0x128
->[    2.252341]  ret_from_fork+0x10/0x18
->[    2.255939] sunxi-mmc 1c10000.mmc: Failed to allocate DMA descriptor
->mem
->[    2.262765] sunxi-mmc 1c10000.mmc: Dropping the link to regulator.13
->[    2.269180] sunxi-mmc 1c10000.mmc: Dropping the link to regulator.11
->[    2.275574] sunxi-mmc: probe of 1c10000.mmc failed with error -12
->[    2.283233] sunxi-mmc 1c11000.mmc: DMA mask not set
->[    2.288259] sunxi-mmc 1c11000.mmc: Linked as a consumer to
->regulator.1
->[    2.295295] sunxi-mmc 1c11000.mmc: swiotlb: coherent allocation
->failed, size=4096
->[    2.302792] CPU: 2 PID: 50 Comm: kworker/2:1 Tainted: G        W
->     4.18.0-rc6-next-20180727-00014-gc7092bc38139 #1
->[    2.313642] Hardware name: BananaPi-M64 (DT)
->[    2.317920] Workqueue: events deferred_probe_work_func
->[    2.323052] Call trace:
->[    2.325501]  dump_backtrace+0x0/0x150
->[    2.329162]  show_stack+0x14/0x20
->[    2.332476]  dump_stack+0x8c/0xac
->[    2.335790]  swiotlb_alloc+0x130/0x170
->[    2.339537]  __dma_alloc+0xc4/0x1b0
->[    2.343026]  sunxi_mmc_probe+0x34c/0x508
->[    2.346946]  platform_drv_probe+0x50/0xa8
->[    2.350951]  really_probe+0x1fc/0x290
->[    2.354610]  driver_probe_device+0x58/0x100
->[    2.358789]  __device_attach_driver+0x9c/0xf8
->[    2.363141]  bus_for_each_drv+0x70/0xc8
->[    2.366973]  __device_attach+0xdc/0x138
->[    2.370804]  device_initial_probe+0x10/0x18
->[    2.374983]  bus_probe_device+0x94/0xa0
->[    2.378815]  deferred_probe_work_func+0x6c/0xa0
->[    2.383343]  process_one_work+0x1c8/0x318
->[    2.387349]  worker_thread+0x234/0x428
->[    2.391095]  kthread+0xf8/0x128
->[    2.394235]  ret_from_fork+0x10/0x18
->[    2.397830] sunxi-mmc 1c11000.mmc: Failed to allocate DMA descriptor
->mem
->[    2.404650] sunxi-mmc 1c11000.mmc: Dropping the link to regulator.1
->[    2.410967] sunxi-mmc: probe of 1c11000.mmc failed with error -12
->[    2.430226] sun4i-drm display-engine: bound 1200000.mixer (ops
->sun8i_mixer_ops)
->[    2.437766] sun4i-drm display-engine: bound 1c0d000.lcd-controller
->(ops sun4i_tcon_ops)
->[    2.445889] sun8i-dw-hdmi 1ee0000.hdmi: Linked as a consumer to
->regulator.10
->[    2.453957] sun8i-dw-hdmi 1ee0000.hdmi: Detected HDMI TX controller
->v1.32a with HDCP (sun8i_dw_hdmi_phy)
->[    2.463964] sun8i-dw-hdmi 1ee0000.hdmi: registered DesignWare HDMI
->I2C bus driver
->[    2.472454] sun4i-drm display-engine: bound 1ee0000.hdmi (ops
->sun8i_dw_hdmi_ops)
->[    2.479866] [drm] Supports vblank timestamp caching Rev 2
->(21.10.2013).
->[    2.486486] [drm] No driver support for vblank timestamp query.
->[    2.648129] random: fast init done
->[    2.699113] WARNING: CPU: 2 PID: 50 at
->./include/linux/dma-mapping.h:516 drm_gem_cma_create+0x68/0x128
->[    2.708404] Modules linked in:
->[    2.711464] CPU: 2 PID: 50 Comm: kworker/2:1 Tainted: G        W
->     4.18.0-rc6-next-20180727-00014-gc7092bc38139 #1
->[    2.722314] Hardware name: BananaPi-M64 (DT)
->[    2.726585] Workqueue: events deferred_probe_work_func
->[    2.731720] pstate: 80000005 (Nzcv daif -PAN -UAO)
->[    2.736505] pc : drm_gem_cma_create+0x68/0x128
->[    2.740944] lr : drm_gem_cma_create+0x40/0x128
->[    2.745380] sp : ffff00000975b870
->[    2.748689] x29: ffff00000975b870 x28: ffff800078d34c18
->[    2.753997] x27: ffff800078d34d00 x26: ffff8000789b3f00
->[    2.759304] x25: ffff80007897f800 x24: ffff800078d126f0
->[    2.764613] x23: ffff000008b17000 x22: ffff000009169000
->[    2.769920] x21: ffff800079060810 x20: ffff800078d12600
->[    2.775228] x19: 00000000004f2000 x18: ffffffffffffffff
->[    2.780536] x17: 0000000000000000 x16: 0000000000000000
->[    2.785843] x15: ffff80007897fab0 x14: 00000387000003a6
->[    2.791151] x13: 0000038400000384 x12: 0000000000000028
->[    2.796458] x11: 0101010101010101 x10: 0000000000000000
->[    2.801765] x9 : 00000000010ffff0 x8 : ffff8000789b07c0
->[    2.807073] x7 : 0000000000100000 x6 : 00000000001004f2
->[    2.812380] x5 : 0000000000000000 x4 : 0000000000000010
->[    2.817688] x3 : 0000000000000000 x2 : d1022ccae126e900
->[    2.822996] x1 : ffff8000791327c0 x0 : 0000000000000000
->[    2.828303] Call trace:
->[    2.830750]  drm_gem_cma_create+0x68/0x128
->[    2.834842]  drm_gem_cma_dumb_create+0x40/0xa8
->[    2.839283]  drm_mode_create_dumb+0x94/0xb0
->[    2.843465]  drm_client_framebuffer_create+0x90/0x1f8
->[    2.848511]  drm_fb_helper_generic_probe+0x4c/0x238
->[    2.853385]  __drm_fb_helper_initial_config_and_unlock+0x1e0/0x3a0
->[    2.859557]  drm_fb_helper_fbdev_setup+0xcc/0x1c8
->[    2.864255]  drm_fbdev_cma_init+0x9c/0xc8
->[    2.868260]  drm_fb_cma_fbdev_init+0xc/0x20
->[    2.872441]  sun4i_framebuffer_init+0x48/0x58
->[    2.876793]  sun4i_drv_bind+0x180/0x1d0
->[    2.880627]  try_to_bring_up_master+0x144/0x1a8
->[    2.885153]  component_add+0x98/0x160
->[    2.888811]  sun8i_mixer_probe+0x18/0x20
->[    2.892731]  platform_drv_probe+0x50/0xa8
->[    2.896736]  really_probe+0x1fc/0x290
->[    2.900395]  driver_probe_device+0x58/0x100
->[    2.904573]  __device_attach_driver+0x9c/0xf8
->[    2.908925]  bus_for_each_drv+0x70/0xc8
->[    2.912757]  __device_attach+0xdc/0x138
->[    2.916588]  device_initial_probe+0x10/0x18
->[    2.920766]  bus_probe_device+0x94/0xa0
->[    2.924599]  deferred_probe_work_func+0x6c/0xa0
->[    2.929128]  process_one_work+0x1c8/0x318
->[    2.933134]  worker_thread+0x234/0x428
->[    2.936880]  kthread+0xf8/0x128
->[    2.940020]  ret_from_fork+0x10/0x18
->[    2.943591] ---[ end trace 7f686a1ed4dfbdee ]---
->[    2.949730] sun4i-drm display-engine:
->[drm:drm_fb_helper_fbdev_setup] *ERROR* Failed to set fbdev
+Signed-off-by: Ioana Radulescu <ruxandra.radulescu@nxp.com>
+---
+ drivers/staging/fsl-dpaa2/ethernet/dpaa2-eth.c | 6 +++---
+ drivers/staging/fsl-dpaa2/ethernet/dpaa2-eth.h | 5 ++++-
+ 2 files changed, 7 insertions(+), 4 deletions(-)
 
-Have you configured a big enough CMA?
+diff --git a/drivers/staging/fsl-dpaa2/ethernet/dpaa2-eth.c b/drivers/staging/fsl-dpaa2/ethernet/dpaa2-eth.c
+index da993ed..5dd73b1 100644
+--- a/drivers/staging/fsl-dpaa2/ethernet/dpaa2-eth.c
++++ b/drivers/staging/fsl-dpaa2/ethernet/dpaa2-eth.c
+@@ -2195,10 +2195,10 @@ static int bind_dpni(struct dpaa2_eth_priv *priv)
+ 		return err;
+ 	}
+ 
+-	/* have the interface implicitly distribute traffic based on supported
+-	 * header fields
++	/* have the interface implicitly distribute traffic based on
++	 * the default hash key
+ 	 */
+-	err = dpaa2_eth_set_hash(net_dev, DPAA2_RXH_SUPPORTED);
++	err = dpaa2_eth_set_hash(net_dev, DPAA2_RXH_DEFAULT);
+ 	if (err)
+ 		dev_err(dev, "Failed to configure hashing\n");
+ 
+diff --git a/drivers/staging/fsl-dpaa2/ethernet/dpaa2-eth.h b/drivers/staging/fsl-dpaa2/ethernet/dpaa2-eth.h
+index 905a4e6..5589738 100644
+--- a/drivers/staging/fsl-dpaa2/ethernet/dpaa2-eth.h
++++ b/drivers/staging/fsl-dpaa2/ethernet/dpaa2-eth.h
+@@ -377,11 +377,14 @@ struct dpaa2_eth_priv {
+ 	u64 rx_hash_fields;
+ };
+ 
+-/* default Rx hash options, set during probing */
+ #define DPAA2_RXH_SUPPORTED	(RXH_L2DA | RXH_VLAN | RXH_L3_PROTO \
+ 				| RXH_IP_SRC | RXH_IP_DST | RXH_L4_B_0_1 \
+ 				| RXH_L4_B_2_3)
+ 
++/* default Rx hash options, set during probing */
++#define DPAA2_RXH_DEFAULT	(RXH_L3_PROTO | RXH_IP_SRC | RXH_IP_DST | \
++				 RXH_L4_B_0_1 | RXH_L4_B_2_3)
++
+ #define dpaa2_eth_hash_enabled(priv)	\
+ 	((priv)->dpni_attrs.num_queues > 1)
+ 
+-- 
+2.7.4
 
->configuration
->[    2.959846] sun4i-drm display-engine: Couldn't create our
->framebuffer
->[    2.966492] sun4i-drm display-engine: master bind failed: -12
->[    2.972352] sun8i-mixer: probe of 1200000.mixer failed with error
->-12
->[    2.980094] sun4i-usb-phy 1c19400.phy: Linked as a consumer to
->regulator.22
->[    2.988807] ehci-platform 1c1b000.usb: EHCI Host Controller
->[    2.994429] ehci-platform 1c1b000.usb: new USB bus registered,
->assigned bus number 3
->[    3.002709] ehci-platform 1c1b000.usb: irq 16, io mem 0x01c1b000
->[    3.022268] ehci-platform 1c1b000.usb: USB 2.0 started, EHCI 1.00
->[    3.029045] hub 3-0:1.0: USB hub found
->[    3.032841] hub 3-0:1.0: 1 port detected
->[    3.038440] ohci-platform 1c1b400.usb: Generic Platform OHCI
->controller
->[    3.045089] ohci-platform 1c1b400.usb: new USB bus registered,
->assigned bus number 4
->[    3.053135] ohci-platform 1c1b400.usb: irq 17, io mem 0x01c1b400
->[    3.122925] hub 4-0:1.0: USB hub found
->[    3.126713] hub 4-0:1.0: 1 port detected
->[    3.132346] usb_phy_generic usb_phy_generic.2.auto:
->usb_phy_generic.2.auto supply vcc not found, using dummy regulator
->[    3.143150] usb_phy_generic usb_phy_generic.2.auto: Linked as a
->consumer to regulator.0
->[    3.151793] musb-hdrc musb-hdrc.3.auto: MUSB HDRC host driver
->[    3.157559] musb-hdrc musb-hdrc.3.auto: new USB bus registered,
->assigned bus number 5
->[    3.166017] hub 5-0:1.0: USB hub found
->[    3.169808] hub 5-0:1.0: 1 port detected
->[    3.174817] sun6i-rtc 1f00000.rtc: setting system clock to
->1970-01-01 00:00:09 UTC (9)
->[    3.183177] vcc-wifi-io: disabling
->[    3.186642] cpvdd: disabling
->[    3.189573] ALSA device list:
->[    3.192551]   No soundcards found.
->[    3.196433] Waiting for root device /dev/mmcblk0p2...
->[    3.374265] usb 3-1: new high-speed USB device number 2 using
->ehci-platform
->[    3.535499] hub 3-1:1.0: USB hub found
->[    3.539377] hub 3-1:1.0: 4 ports detected
