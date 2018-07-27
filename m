@@ -6,34 +6,36 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3948C67790
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:12:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FE9CC67790
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:12:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A26222089E
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:12:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A26222089E
+	by mail.kernel.org (Postfix) with ESMTP id F179A2089F
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:12:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F179A2089F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389510AbeG0LdU (ORCPT
+        id S2389515AbeG0LdY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 07:33:20 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:36968 "EHLO
+        Fri, 27 Jul 2018 07:33:24 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:36978 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729547AbeG0LdU (ORCPT
+        with ESMTP id S1729547AbeG0LdW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 07:33:20 -0400
+        Fri, 27 Jul 2018 07:33:22 -0400
 Received: from localhost (unknown [89.188.5.116])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 04D9ACB5;
-        Fri, 27 Jul 2018 10:12:06 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id AC56ACB5;
+        Fri, 27 Jul 2018 10:12:09 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Bernd Edlinger <bernd.edlinger@hotmail.de>,
-        Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH 4.4 23/23] ARM: fix put_user() for gcc-8
-Date:   Fri, 27 Jul 2018 12:09:24 +0200
-Message-Id: <20180727100846.050436889@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Jack Morgenstein <jackm@dev.mellanox.co.il>,
+        Tariq Toukan <tariqt@mellanox.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.4 03/23] net/mlx4_core: Save the qpn from the input modifier in RST2INIT wrapper
+Date:   Fri, 27 Jul 2018 12:09:04 +0200
+Message-Id: <20180727100845.315516288@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180727100845.054377089@linuxfoundation.org>
 References: <20180727100845.054377089@linuxfoundation.org>
@@ -50,46 +52,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Arnd Bergmann <arnd@arndb.de>
+From: Jack Morgenstein <jackm@dev.mellanox.co.il>
 
-Building kernels before linux-4.7 with gcc-8 results in many build failures
-when gcc triggers a check that was meant to catch broken compilers:
+[ Upstream commit 958c696f5a7274d9447a458ad7aa70719b29a50a ]
 
-/tmp/ccCGMQmS.s:648: Error: .err encountered
+Function mlx4_RST2INIT_QP_wrapper saved the qp number passed in the qp
+context, rather than the one passed in the input modifier.
 
-According to the discussion in the gcc bugzilla, a local "register
-asm()" variable is still supposed to be the correct way to force an
-inline assembly to use a particular register, but marking it 'const'
-lets the compiler do optimizations that break that, i.e the compiler is
-free to treat the variable as either 'const' or 'register' in that case.
+However, the qp number in the qp context is not defined as a
+required parameter by the FW. Therefore, drivers may choose to not
+specify the qp number in the qp context for the reset-to-init transition.
 
-Upstream commit 9f73bd8bb445 ("ARM: uaccess: remove put_user() code
-duplication") fixed this problem in linux-4.8 as part of a larger change,
-but seems a little too big to be backported to 4.4.
+Thus, we must save the qp number passed in the command input modifier --
+which is always present. (This saved qp number is used as the input
+modifier for command 2RST_QP when a slave's qp's are destroyed).
 
-Let's take the simplest fix and change only the one broken line in the
-same way as newer kernels.
-
-Suggested-by: Bernd Edlinger <bernd.edlinger@hotmail.de>
-Link: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=85745
-Link: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=86673
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Fixes: c82e9aa0a8bc ("mlx4_core: resource tracking for HCA resources used by guests")
+Signed-off-by: Jack Morgenstein <jackm@dev.mellanox.co.il>
+Signed-off-by: Tariq Toukan <tariqt@mellanox.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- arch/arm/include/asm/uaccess.h |    2 +-
+ drivers/net/ethernet/mellanox/mlx4/resource_tracker.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/arm/include/asm/uaccess.h
-+++ b/arch/arm/include/asm/uaccess.h
-@@ -251,7 +251,7 @@ extern int __put_user_8(void *, unsigned
- 	({								\
- 		unsigned long __limit = current_thread_info()->addr_limit - 1; \
- 		const typeof(*(p)) __user *__tmp_p = (p);		\
--		register const typeof(*(p)) __r2 asm("r2") = (x);	\
-+		register typeof(*(p)) __r2 asm("r2") = (x);	\
- 		register const typeof(*(p)) __user *__p asm("r0") = __tmp_p; \
- 		register unsigned long __l asm("r1") = __limit;		\
- 		register int __e asm("r0");				\
+--- a/drivers/net/ethernet/mellanox/mlx4/resource_tracker.c
++++ b/drivers/net/ethernet/mellanox/mlx4/resource_tracker.c
+@@ -2891,7 +2891,7 @@ int mlx4_RST2INIT_QP_wrapper(struct mlx4
+ 	u32 srqn = qp_get_srqn(qpc) & 0xffffff;
+ 	int use_srq = (qp_get_srqn(qpc) >> 24) & 1;
+ 	struct res_srq *srq;
+-	int local_qpn = be32_to_cpu(qpc->local_qpn) & 0xffffff;
++	int local_qpn = vhcr->in_modifier & 0xffffff;
+ 
+ 	err = adjust_qp_sched_queue(dev, slave, qpc, inbox);
+ 	if (err)
 
 
