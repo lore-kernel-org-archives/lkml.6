@@ -2,122 +2,171 @@ Return-Path: <SRS0=OQFz=KL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22DEDC67790
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 16:26:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D88CDC67790
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 16:27:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D2440205C9
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 16:26:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D2440205C9
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 7BA46208B1
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 16:27:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7BA46208B1
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388886AbeG0RtH convert rfc822-to-8bit (ORCPT
+        id S2388796AbeG0Rtl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 13:49:07 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:52011 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730205AbeG0RtH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 13:49:07 -0400
-Received: from bigeasy by Galois.linutronix.de with local (Exim 4.80)
-        (envelope-from <bigeasy@linutronix.de>)
-        id 1fj5ZO-0001hu-W2; Fri, 27 Jul 2018 18:26:23 +0200
-Date:   Fri, 27 Jul 2018 18:26:22 +0200
-From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To:     Dave Martin <Dave.Martin@arm.com>
-Cc:     Steven Rostedt <rostedt@goodmis.org>,
-        linux-rt-users@vger.kernel.org,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Mike Galbraith <efault@gmx.de>,
-        Will Deacon <will.deacon@arm.com>,
-        linux-kernel@vger.kernel.org, tglx@linutronix.de,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH RT v3] arm64: fpsimd: use preemp_disable in addition to
- local_bh_disable()
-Message-ID: <20180727162622.gupa5kc4l2rlxtyb@linutronix.de>
-References: <20180522173333.aawadhkcekzvrswp@linutronix.de>
- <20180711092555.268adf7f@gandalf.local.home>
- <20180711133157.bvrza5vmthu6lwjd@linutronix.de>
- <20180711093346.782af07a@gandalf.local.home>
- <20180713174937.5ddaqpylalcmc3jq@linutronix.de>
- <20180716151737.GO9486@e103592.cambridge.arm.com>
- <20180718091209.u76gzacanj5avhdl@linutronix.de>
- <20180724094623.37430032@gandalf.local.home>
- <20180726150634.cl3wccqur6qhle6p@linutronix.de>
- <20180727153559.GA4240@e103592.cambridge.arm.com>
+        Fri, 27 Jul 2018 13:49:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44050 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730850AbeG0Rtl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Jul 2018 13:49:41 -0400
+Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B4D03205C9;
+        Fri, 27 Jul 2018 16:27:00 +0000 (UTC)
+Date:   Fri, 27 Jul 2018 12:26:59 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Joel Fernandes <joel@joelfernandes.org>
+Cc:     linux-kernel@vger.kernel.org, kernel-team@android.com,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Byungchul Park <byungchul.park@lge.com>,
+        Erick Reyes <erickreyes@google.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Julia Cartwright <julia@ni.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Paul McKenney <paulmck@linux.vnet.ibm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Glexiner <tglx@linutronix.de>,
+        Todd Kjos <tkjos@google.com>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>,
+        Will Deacon <will.deacon@arm.com>
+Subject: Re: [PATCH v11 2/3] tracepoint: Make rcuidle tracepoint callers use
+ SRCU
+Message-ID: <20180727122659.524dd13f@gandalf.local.home>
+In-Reply-To: <20180726235044.10195-3-joel@joelfernandes.org>
+References: <20180726235044.10195-1-joel@joelfernandes.org>
+        <20180726235044.10195-3-joel@joelfernandes.org>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8BIT
-In-Reply-To: <20180727153559.GA4240@e103592.cambridge.arm.com>
-User-Agent: NeoMutt/20180716
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-07-27 16:35:59 [+0100], Dave Martin wrote:
-> On Thu, Jul 26, 2018 at 05:06:34PM +0200, Sebastian Andrzej Siewior wrote:
-> > In v4.16-RT I noticed a number of warnings from task_fpsimd_load(). The
-> > code disables BH and expects that it is not preemptible. On -RT the
-> > task remains preemptible but remains the same CPU. This may corrupt the
-> > content of the SIMD registers if the task is preempted during
-> > saving/restoring those registers.
-> > 
-> > Add preempt_disable()/enable() to enfore the required semantic on -RT.
+On Thu, 26 Jul 2018 16:50:43 -0700
+Joel Fernandes <joel@joelfernandes.org> wrote:
+
+> F
+>  include/linux/tracepoint.h | 41 ++++++++++++++++++++++++++++++--------
+>  kernel/tracepoint.c        | 16 ++++++++++++++-
+>  2 files changed, 48 insertions(+), 9 deletions(-)
 > 
-> Does this supersede the local_lock based approach?
+> diff --git a/include/linux/tracepoint.h b/include/linux/tracepoint.h
+> index 19a690b559ca..6e7bc6ebfcd8 100644
+> --- a/include/linux/tracepoint.h
+> +++ b/include/linux/tracepoint.h
+> @@ -15,6 +15,7 @@
+>   */
+>  
+>  #include <linux/smp.h>
+> +#include <linux/srcu.h>
+>  #include <linux/errno.h>
+>  #include <linux/types.h>
+>  #include <linux/cpumask.h>
+> @@ -33,6 +34,8 @@ struct trace_eval_map {
+>  
+>  #define TRACEPOINT_DEFAULT_PRIO	10
+>  
+> +extern struct srcu_struct tracepoint_srcu;
+> +
+>  extern int
+>  tracepoint_probe_register(struct tracepoint *tp, void *probe, void *data);
+>  extern int
+> @@ -75,10 +78,16 @@ int unregister_tracepoint_module_notifier(struct notifier_block *nb)
+>   * probe unregistration and the end of module exit to make sure there is no
+>   * caller executing a probe when it is freed.
+>   */
+> +#ifdef CONFIG_TRACEPOINTS
+>  static inline void tracepoint_synchronize_unregister(void)
+>  {
+> +	synchronize_srcu(&tracepoint_srcu);
+>  	synchronize_sched();
+>  }
+> +#else
+> +static inline void tracepoint_synchronize_unregister(void)
+> +{ }
+> +#endif
+>  
+>  #ifdef CONFIG_HAVE_SYSCALL_TRACEPOINTS
+>  extern int syscall_regfunc(void);
+> @@ -129,18 +138,32 @@ extern void syscall_unregfunc(void);
+>   * as "(void *, void)". The DECLARE_TRACE_NOARGS() will pass in just
+>   * "void *data", where as the DECLARE_TRACE() will pass in "void *data, proto".
+>   */
+> -#define __DO_TRACE(tp, proto, args, cond, rcucheck)			\
+> +#define __DO_TRACE(tp, proto, args, cond, rcuidle)			\
+>  	do {								\
+>  		struct tracepoint_func *it_func_ptr;			\
+>  		void *it_func;						\
+>  		void *__data;						\
+> +		int __maybe_unused idx = 0;				\
+>  									\
+>  		if (!(cond))						\
+>  			return;						\
+> -		if (rcucheck)						\
+> -			rcu_irq_enter_irqson();				\
+> -		rcu_read_lock_sched_notrace();				\
+> -		it_func_ptr = rcu_dereference_sched((tp)->funcs);	\
+> +									\
+> +		/* srcu can't be used from NMI */			\
+> +		if (rcuidle && in_nmi())				\
+> +			WARN_ON_ONCE(1);				\
 
-Yes, it does.
+Why isn't the above:
 
-> That would have been nice to have, but if there are open questions about
-> how to do it then I guess something like this patch makes sense as a
-> stopgap solution.
+		WARN_ON_ONCE(rcuidle && in_nmi());
+
+?
+
+The rest looks fine.
+
+-- Steve
+
+> +									\
+> +		/* keep srcu and sched-rcu usage consistent */		\
+> +		preempt_disable_notrace();				\
+> +									\
+> +		/*							\
+> +		 * For rcuidle callers, use srcu since sched-rcu	\
+> +		 * doesn't work from the idle path.			\
+> +		 */							\
+> +		if (rcuidle)						\
+> +			idx = srcu_read_lock_notrace(&tracepoint_srcu);	\
+> +									\
+> +		it_func_ptr = rcu_dereference_raw((tp)->funcs);		\
+> +									\
+>  		if (it_func_ptr) {					\
+>  			do {						\
+>  				it_func = (it_func_ptr)->func;		\
+> @@ -148,9 +171,11 @@ extern void syscall_unregfunc(void);
+>  				((void(*)(proto))(it_func))(args);	\
+>  			} while ((++it_func_ptr)->func);		\
+>  		}							\
+> -		rcu_read_unlock_sched_notrace();			\
+> -		if (rcucheck)						\
+> -			rcu_irq_exit_irqson();				\
+> +									\
+> +		if (rcuidle)						\
+> +			srcu_read_unlock_notrace(&tracepoint_srcu, idx);\
+> +									\
+> +		preempt_enable_notrace();				\
+>  	} while (0)
+>  
 > 
-> > Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-> > ---
-> > This should work. Compiling currently gcc-6 on the box to see what
-> > happens. Since the crypto disables preemption "frequently" and I don't
-> > expect or see anything to worry about.
-> > 
-> >  arch/arm64/kernel/fpsimd.c |   30 ++++++++++++++++++++++++++++--
-> >  1 file changed, 28 insertions(+), 2 deletions(-)
-> > 
-> > --- a/arch/arm64/kernel/fpsimd.c
-> > +++ b/arch/arm64/kernel/fpsimd.c
-> > @@ -157,6 +157,15 @@ static void sve_free(struct task_struct
-> >  	__sve_free(task);
-> >  }
-> >  
-> > +static void *sve_free_atomic(struct task_struct *task)
-> > +{
-> > +	void *sve_state = task->thread.sve_state;
-> > +
-> > +	WARN_ON(test_tsk_thread_flag(task, TIF_SVE));
-> > +
-> > +	task->thread.sve_state = NULL;
-> > +	return sve_state;
-> > +}
-> 
-> This feels a bit excessive.  Since there's only one call site, I'd
-> prefer if the necessary code were simply inlined.  We wouldn't need the
-> WARN either in that case, since (IIUC) it's only there to check for
-> accidental misuse of this helper.
-okay.
-
-> >  /* Offset of FFR in the SVE register dump */
-> >  static size_t sve_ffr_offset(int vl)
-…
-> I think we should have local helpers for the preempt+local_bh
-> maintenance, since they're needed all over the place in this
-> file.
-okay.
-
-> Cheers
-> ---Dave
-
-Sebastian
