@@ -2,95 +2,147 @@ Return-Path: <SRS0=OQFz=KL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C03EAC6778F
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 07:20:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE85FC67790
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 07:21:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 705FC20862
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 07:20:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 705FC20862
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 9F79E20862
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 07:21:12 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="dAoTVqnN"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F79E20862
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729519AbeG0IlP (ORCPT
+        id S1729557AbeG0Iln (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 04:41:15 -0400
-Received: from mga12.intel.com ([192.55.52.136]:25070 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726044AbeG0IlP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 04:41:15 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Jul 2018 00:20:43 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,408,1526367600"; 
-   d="asc'?scan'208";a="75959899"
-Received: from pipin.fi.intel.com (HELO localhost) ([10.237.68.37])
-  by fmsmga001.fm.intel.com with ESMTP; 27 Jul 2018 00:20:41 -0700
-From:   Felipe Balbi <balbi@kernel.org>
-To:     Anurag Kumar Vulisha <anurag.kumar.vulisha@xilinx.com>,
-        gregkh@linuxfoundation.org
-Cc:     v.anuragkumar@gmail.com, linux-usb@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Anurag Kumar Vulisha <anurag.kumar.vulisha@xilinx.com>
-Subject: Re: [PATCH v3] usb: dwc3: core: Add quirk for enabling AutoRetry feature in the controller
-In-Reply-To: <1532610528-7290-1-git-send-email-anurag.kumar.vulisha@xilinx.com>
-References: <1532610528-7290-1-git-send-email-anurag.kumar.vulisha@xilinx.com>
-Date:   Fri, 27 Jul 2018 10:17:22 +0300
-Message-ID: <87k1phywot.fsf@linux.intel.com>
+        Fri, 27 Jul 2018 04:41:43 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:47003 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726044AbeG0Iln (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Jul 2018 04:41:43 -0400
+Received: by mail-pg1-f193.google.com with SMTP id p23-v6so2701157pgv.13
+        for <linux-kernel@vger.kernel.org>; Fri, 27 Jul 2018 00:21:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:mail-followup-to:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=NvqMEOX3abAY6bbS1k6sfnl8oyIOMEcePeAC8eVeMIk=;
+        b=dAoTVqnN5Aedyv7u2CgMcnTFRL4wPxjRhUza6v1sTClYg0j0xxMU04gzqD888p6yfd
+         NtcE2nUTE7ANH5lftvfwfYO1lDuTii0ELKWeJPYj2lSTv3BSFPuehMCamyaDfliCYutS
+         zbPCIkm1gPiJPcPTIsepRfP4uIxWL4mzPFTAU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :in-reply-to:user-agent;
+        bh=NvqMEOX3abAY6bbS1k6sfnl8oyIOMEcePeAC8eVeMIk=;
+        b=fU/trnCI0sfLlIxnYWfg72kZ02dvMj4rNXlhmeGtb7fqvwaGE3FhvO+oCa+Geut1vP
+         xCRTQz5T8TxplQ8z1d+bJuXXy6QO1xi0TQloUThirKdjYT5W3OLAbMLYRBx28f7lZycX
+         IrJ6uRmxBh8UI+nv1IwEucUjjGYXC4EFg2ql67TtIKTk3SxA79FCV+rwmzkvzhhZgy+6
+         gStAW28t9zkyY4u76IwHoNhVeTccaR2LV0ROyOz5SsLOi+hxprIbhQNGYECFk9wqUQoM
+         GoFLyDR0M4isMEnFPIbvGvF1hFHjKiDjcwAEke7EZl+xH1J/O6D36h8twXWtGwhxYlEK
+         1Dbg==
+X-Gm-Message-State: AOUpUlHg5k3grF1kDag1m4B9u6i8G/fi0r6v/5L2AD1i0H4YD0un0BQu
+        TA6UpSbtgP+CRvv3SPiZcdtENQ==
+X-Google-Smtp-Source: AAOMgpd5OnMShhTiZKr/VjA48msVgacFpNXhaASH5oyHHYCVbMniMUiIz0G+wM+r8RcVoT9kuHcb6w==
+X-Received: by 2002:a62:ca0d:: with SMTP id n13-v6mr5385806pfg.69.1532676069704;
+        Fri, 27 Jul 2018 00:21:09 -0700 (PDT)
+Received: from linaro.org ([121.95.100.191])
+        by smtp.googlemail.com with ESMTPSA id s85-v6sm6283328pfa.116.2018.07.27.00.21.05
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 27 Jul 2018 00:21:09 -0700 (PDT)
+Date:   Fri, 27 Jul 2018 16:22:43 +0900
+From:   AKASHI Takahiro <takahiro.akashi@linaro.org>
+To:     James Morse <james.morse@arm.com>
+Cc:     catalin.marinas@arm.com, will.deacon@arm.com, dhowells@redhat.com,
+        vgoyal@redhat.com, herbert@gondor.apana.org.au,
+        davem@davemloft.net, dyoung@redhat.com, bhe@redhat.com,
+        arnd@arndb.de, schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
+        ard.biesheuvel@linaro.org, bhsharma@redhat.com,
+        kexec@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v12 13/16] arm64: kexec_file: invoke the kernel without
+ purgatory
+Message-ID: <20180727072242.GH11258@linaro.org>
+Mail-Followup-To: AKASHI Takahiro <takahiro.akashi@linaro.org>,
+        James Morse <james.morse@arm.com>, catalin.marinas@arm.com,
+        will.deacon@arm.com, dhowells@redhat.com, vgoyal@redhat.com,
+        herbert@gondor.apana.org.au, davem@davemloft.net, dyoung@redhat.com,
+        bhe@redhat.com, arnd@arndb.de, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com, ard.biesheuvel@linaro.org,
+        bhsharma@redhat.com, kexec@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20180724065759.19186-1-takahiro.akashi@linaro.org>
+ <20180724065759.19186-14-takahiro.akashi@linaro.org>
+ <b9257c90-a538-fb82-b9de-574d68d06fbd@arm.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-        micalg=pgp-sha512; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b9257c90-a538-fb82-b9de-574d68d06fbd@arm.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+On Thu, Jul 26, 2018 at 02:36:07PM +0100, James Morse wrote:
+> Hi Akashi,
+> 
+> On 24/07/18 07:57, AKASHI Takahiro wrote:
+> > On arm64, purgatory would do almost nothing. So just invoke secondary
+> > kernel directly by jumping into its entry code.
+> > 
+> > While, in this case, cpu_soft_restart() must be called with dtb address
+> > in the fifth argument, the behavior still stays compatible with kexec_load
+> > case as long as the argument is null.
+> 
+> This patch conflicts with commit 76f4e2da45b4 ("arm64: kexec: always reset to
+> EL2 if present") in the arm64 tree.
 
+I haven't noticed Mark's patch.
 
-Hi,
+I'm going to have to refresh my memory regarding why I introduced
+el2_switch when I implemented kdump.
+According to my current memory, however, I added
+kvm_arch_hardware_enable/disable(), and associated functions, to gracefully
+shutdown EL2 in case of kexec. Since we have no chance to call reset
+function (via notifier) at kdump, I believed that el2_switch was necessary
+for better chance of successful kdump.
 
-Anurag Kumar Vulisha <anurag.kumar.vulisha@xilinx.com> writes:
-> By default when core sees any transaction error(CRC or overflow)
-> it replies with terminating retry ACK (Retry=3D1 and Nump =3D=3D 0).
-> Enabling this Auto Retry feature in controller, on seeing any
-> transaction errors makes the core to send a non-terminating ACK
-> transaction packet (that is, ACK TP with Retry=3D1 and Nump !=3D 0).
-> Doing so will give controller a chance to recover from the error
-> condition.
->
-> Signed-off-by: Anurag Kumar Vulisha <anurag.kumar.vulisha@xilinx.com>
-> ---
+Thanks,
+-Takahiro AKASHI
 
-subject line is misleading, at best. You're not adding any quirks.
-
-=2D-=20
-balbi
-
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEElLzh7wn96CXwjh2IzL64meEamQYFAltaxwIACgkQzL64meEa
-mQYB7RAA2zqNJ0igY/47+trUhOfwGvIPRMr5Tuub9wA5YvVjYmn5ZQYdYRwc0Bgp
-JSZPHHQqOijJi6vYseeAf6UbbJuYbX9fXdeRbO5IoM1web8dDSC/uPj4UWsw1r+z
-Eeg50yvbT7hrHFNVOl6Nn/krTEcLyq9PUk1284w+OkKOhtYh6q8g61ygjkYJn+yv
-PqIvfS2cnQbGGyrKFL2UrAtU/stiX7YSXQvMKQe9efSjtJ0WW2Wln3etuQefdGds
-aFraOIKQfsDA/Hb52kh/g71M+sHkye02FCkg+7bYuCJPbwzbw6dbjSCj6Ox2xbLR
-udLZbEqkCjpw15i5JkTVW0JkXL3xl+tYYtH4rcp9o5cb3lA1HZD2HNGKr2nRrHZI
-5dlU+MWxdsjzic7cptdYrUKtUUQ0yb7ux4Slas2O0vUp/w0pOIrTJcA+yHQrnC1Z
-QChmvemw//MxR7247KjwEiWMRq7KmOHEjr9z+oIFyw1aEVuAKYc0WBqb1ota12QF
-E/VU+JYkH8E80QEFlGvDrximpeCpKSnQg4nvFOoZ20CBO1C+jH0g3jQecmQyQQd/
-iyMFgpIRoNovaa8PaNKxpvAVaUxJFo063f0rde1wkSb5adNtO6zLznkrouqbH/A0
-/gWjQ+2tb/zuWz+HyyClJnfYxqqrHD4pfKhf1gW/+LMOxCLggp8=
-=hmZv
------END PGP SIGNATURE-----
---=-=-=--
+> Thanks,
+> 
+> James
+> 
+> > diff --git a/arch/arm64/kernel/machine_kexec.c b/arch/arm64/kernel/machine_kexec.c
+> > index f76ea92dff91..830a5063e09d 100644
+> > --- a/arch/arm64/kernel/machine_kexec.c
+> > +++ b/arch/arm64/kernel/machine_kexec.c
+> > @@ -205,10 +205,18 @@ void machine_kexec(struct kimage *kimage)
+> >  	 * uses physical addressing to relocate the new image to its final
+> >  	 * position and transfers control to the image entry point when the
+> >  	 * relocation is complete.
+> > +	 * In kexec case, kimage->start points to purgatory assuming that
+> > +	 * kernel entry and dtb address are embedded in purgatory by
+> > +	 * userspace (kexec-tools).
+> > +	 * In kexec_file case, the kernel starts directly without purgatory.
+> >  	 */
+> > -
+> >  	cpu_soft_restart(kimage != kexec_crash_image,
+> > -		reboot_code_buffer_phys, kimage->head, kimage->start, 0);
+> > +		reboot_code_buffer_phys, kimage->head, kimage->start,
+> > +#ifdef CONFIG_KEXEC_FILE
+> > +						kimage->arch.dtb_mem);
+> > +#else
+> > +						0);
+> > +#endif
+> >  
+> >  	BUG(); /* Should never get here. */
+> >  }
