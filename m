@@ -6,36 +6,38 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7CDDC6778F
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:01:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B56E0C67790
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:01:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8659C20894
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:01:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8659C20894
+	by mail.kernel.org (Postfix) with ESMTP id 6A19B20894
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:01:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6A19B20894
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388726AbeG0LWq (ORCPT
+        id S2388750AbeG0LWu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 07:22:46 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:34118 "EHLO
+        Fri, 27 Jul 2018 07:22:50 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:34144 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730120AbeG0LWp (ORCPT
+        with ESMTP id S1730120AbeG0LWt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 07:22:45 -0400
+        Fri, 27 Jul 2018 07:22:49 -0400
 Received: from localhost (unknown [89.188.5.116])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id DF993CB8;
-        Fri, 27 Jul 2018 10:01:35 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id EA8FACB8;
+        Fri, 27 Jul 2018 10:01:38 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Yuchung Cheng <ycheng@google.com>,
-        Neal Cardwell <ncardwell@google.com>,
-        Eric Dumazet <edumazet@google.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 25/48] tcp: helpers to send special DCTCP ack
-Date:   Fri, 27 Jul 2018 12:00:10 +0200
-Message-Id: <20180727095921.124249735@linuxfoundation.org>
+        stable@vger.kernel.org, Paul Burton <paul.burton@mips.com>,
+        Rui Wang <rui.wang@windriver.com>,
+        James Hogan <jhogan@kernel.org>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Wolfgang Grandegger <wg@grandegger.com>,
+        linux-mips@linux-mips.org
+Subject: [PATCH 4.14 03/48] MIPS: Fix off-by-one in pci_resource_to_user()
+Date:   Fri, 27 Jul 2018 11:59:48 +0200
+Message-Id: <20180727095918.839251734@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180727095918.503549522@linuxfoundation.org>
 References: <20180727095918.503549522@linuxfoundation.org>
@@ -52,79 +54,47 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Yuchung Cheng <ycheng@google.com>
+From: Paul Burton <paul.burton@mips.com>
 
-[ Upstream commit 2987babb6982306509380fc11b450227a844493b ]
+commit 38c0a74fe06da3be133cae3fb7bde6a9438e698b upstream.
 
-Refactor and create helpers to send the special ACK in DCTCP.
+The MIPS implementation of pci_resource_to_user() introduced in v3.12 by
+commit 4c2924b725fb ("MIPS: PCI: Use pci_resource_to_user to map pci
+memory space properly") incorrectly sets *end to the address of the
+byte after the resource, rather than the last byte of the resource.
 
-Signed-off-by: Yuchung Cheng <ycheng@google.com>
-Acked-by: Neal Cardwell <ncardwell@google.com>
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+This results in userland seeing resources as a byte larger than they
+actually are, for example a 32 byte BAR will be reported by a tool such
+as lspci as being 33 bytes in size:
+
+    Region 2: I/O ports at 1000 [disabled] [size=33]
+
+Correct this by subtracting one from the calculated end address,
+reporting the correct address to userland.
+
+Signed-off-by: Paul Burton <paul.burton@mips.com>
+Reported-by: Rui Wang <rui.wang@windriver.com>
+Fixes: 4c2924b725fb ("MIPS: PCI: Use pci_resource_to_user to map pci memory space properly")
+Cc: James Hogan <jhogan@kernel.org>
+Cc: Ralf Baechle <ralf@linux-mips.org>
+Cc: Wolfgang Grandegger <wg@grandegger.com>
+Cc: linux-mips@linux-mips.org
+Cc: stable@vger.kernel.org # v3.12+
+Patchwork: https://patchwork.linux-mips.org/patch/19829/
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- net/ipv4/tcp_output.c |   22 +++++++++++++++++-----
- 1 file changed, 17 insertions(+), 5 deletions(-)
 
---- a/net/ipv4/tcp_output.c
-+++ b/net/ipv4/tcp_output.c
-@@ -984,8 +984,8 @@ static void tcp_internal_pacing(struct s
-  * We are working here with either a clone of the original
-  * SKB, or a fresh unique copy made by the retransmit engine.
-  */
--static int tcp_transmit_skb(struct sock *sk, struct sk_buff *skb, int clone_it,
--			    gfp_t gfp_mask)
-+static int __tcp_transmit_skb(struct sock *sk, struct sk_buff *skb,
-+			      int clone_it, gfp_t gfp_mask, u32 rcv_nxt)
- {
- 	const struct inet_connection_sock *icsk = inet_csk(sk);
- 	struct inet_sock *inet;
-@@ -1057,7 +1057,7 @@ static int tcp_transmit_skb(struct sock
- 	th->source		= inet->inet_sport;
- 	th->dest		= inet->inet_dport;
- 	th->seq			= htonl(tcb->seq);
--	th->ack_seq		= htonl(tp->rcv_nxt);
-+	th->ack_seq		= htonl(rcv_nxt);
- 	*(((__be16 *)th) + 6)	= htons(((tcp_header_size >> 2) << 12) |
- 					tcb->tcp_flags);
+---
+ arch/mips/pci/pci.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- a/arch/mips/pci/pci.c
++++ b/arch/mips/pci/pci.c
+@@ -54,5 +54,5 @@ void pci_resource_to_user(const struct p
+ 	phys_addr_t size = resource_size(rsrc);
  
-@@ -1135,6 +1135,13 @@ static int tcp_transmit_skb(struct sock
- 	return err;
+ 	*start = fixup_bigphys_addr(rsrc->start, size);
+-	*end = rsrc->start + size;
++	*end = rsrc->start + size - 1;
  }
- 
-+static int tcp_transmit_skb(struct sock *sk, struct sk_buff *skb, int clone_it,
-+			    gfp_t gfp_mask)
-+{
-+	return __tcp_transmit_skb(sk, skb, clone_it, gfp_mask,
-+				  tcp_sk(sk)->rcv_nxt);
-+}
-+
- /* This routine just queues the buffer for sending.
-  *
-  * NOTE: probe0 timer is not checked, do not forget tcp_push_pending_frames,
-@@ -3551,7 +3558,7 @@ void tcp_send_delayed_ack(struct sock *s
- }
- 
- /* This routine sends an ack and also updates the window. */
--void tcp_send_ack(struct sock *sk)
-+void __tcp_send_ack(struct sock *sk, u32 rcv_nxt)
- {
- 	struct sk_buff *buff;
- 
-@@ -3586,7 +3593,12 @@ void tcp_send_ack(struct sock *sk)
- 	skb_set_tcp_pure_ack(buff);
- 
- 	/* Send it off, this clears delayed acks for us. */
--	tcp_transmit_skb(sk, buff, 0, (__force gfp_t)0);
-+	__tcp_transmit_skb(sk, buff, 0, (__force gfp_t)0, rcv_nxt);
-+}
-+
-+void tcp_send_ack(struct sock *sk)
-+{
-+	__tcp_send_ack(sk, tcp_sk(sk)->rcv_nxt);
- }
- EXPORT_SYMBOL_GPL(tcp_send_ack);
- 
 
 
