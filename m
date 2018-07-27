@@ -6,34 +6,37 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47288C67790
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:01:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB97EC67790
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:01:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 008E820895
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:01:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 008E820895
+	by mail.kernel.org (Postfix) with ESMTP id 698C220894
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:01:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 698C220894
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388668AbeG0LWk (ORCPT
+        id S2388696AbeG0LWo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 07:22:40 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:34076 "EHLO
+        Fri, 27 Jul 2018 07:22:44 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:34100 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730120AbeG0LWk (ORCPT
+        with ESMTP id S1730120AbeG0LWn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 07:22:40 -0400
+        Fri, 27 Jul 2018 07:22:43 -0400
 Received: from localhost (unknown [89.188.5.116])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0CBFDCB8;
-        Fri, 27 Jul 2018 10:01:29 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id F41E1CB8;
+        Fri, 27 Jul 2018 10:01:32 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Roopa Prabhu <roopa@cumulusnetworks.com>,
+        stable@vger.kernel.org, Larry Brakmo <brakmo@fb.com>,
+        Yuchung Cheng <ycheng@google.com>,
+        Eric Dumazet <edumazet@google.com>,
+        Neal Cardwell <ncardwell@google.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 23/48] vxlan: fix default fdb entry netlink notify ordering during netdev create
-Date:   Fri, 27 Jul 2018 12:00:08 +0200
-Message-Id: <20180727095920.927066910@linuxfoundation.org>
+Subject: [PATCH 4.14 24/48] tcp: fix dctcp delayed ACK schedule
+Date:   Fri, 27 Jul 2018 12:00:09 +0200
+Message-Id: <20180727095921.023692882@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180727095918.503549522@linuxfoundation.org>
 References: <20180727095918.503549522@linuxfoundation.org>
@@ -50,116 +53,98 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Roopa Prabhu <roopa@cumulusnetworks.com>
+From: Yuchung Cheng <ycheng@google.com>
 
-[ Upstream commit e99465b952861533d9ba748fdbecc96d9a36da3e ]
+[ Upstream commit b0c05d0e99d98d7f0cd41efc1eeec94efdc3325d ]
 
-Problem:
-In vxlan_newlink, a default fdb entry is added before register_netdev.
-The default fdb creation function also notifies user-space of the
-fdb entry on the vxlan device which user-space does not know about yet.
-(RTM_NEWNEIGH goes before RTM_NEWLINK for the same ifindex).
+Previously, when a data segment was sent an ACK was piggybacked
+on the data segment without generating a CA_EVENT_NON_DELAYED_ACK
+event to notify congestion control modules. So the DCTCP
+ca->delayed_ack_reserved flag could incorrectly stay set when
+in fact there were no delayed ACKs being reserved. This could result
+in sending a special ECN notification ACK that carries an older
+ACK sequence, when in fact there was no need for such an ACK.
+DCTCP keeps track of the delayed ACK status with its own separate
+state ca->delayed_ack_reserved. Previously it may accidentally cancel
+the delayed ACK without updating this field upon sending a special
+ACK that carries a older ACK sequence. This inconsistency would
+lead to DCTCP receiver never acknowledging the latest data until the
+sender times out and retry in some cases.
 
-This patch fixes the user-space netlink notification ordering issue
-with the following changes:
-- decouple fdb notify from fdb create.
-- Move fdb notify after register_netdev.
-- Call rtnl_configure_link in vxlan newlink handler to notify
-userspace about the newlink before fdb notify and
-hence avoiding the user-space race.
+Packetdrill script (provided by Larry Brakmo)
 
-Fixes: afbd8bae9c79 ("vxlan: add implicit fdb entry for default destination")
-Signed-off-by: Roopa Prabhu <roopa@cumulusnetworks.com>
+0.000 socket(..., SOCK_STREAM, IPPROTO_TCP) = 3
+0.000 setsockopt(3, SOL_SOCKET, SO_REUSEADDR, [1], 4) = 0
+0.000 setsockopt(3, SOL_TCP, TCP_CONGESTION, "dctcp", 5) = 0
+0.000 bind(3, ..., ...) = 0
+0.000 listen(3, 1) = 0
+
+0.100 < [ect0] SEW 0:0(0) win 32792 <mss 1000,sackOK,nop,nop,nop,wscale 7>
+0.100 > SE. 0:0(0) ack 1 <mss 1460,nop,nop,sackOK,nop,wscale 8>
+0.110 < [ect0] . 1:1(0) ack 1 win 257
+0.200 accept(3, ..., ...) = 4
+
+0.200 < [ect0] . 1:1001(1000) ack 1 win 257
+0.200 > [ect01] . 1:1(0) ack 1001
+
+0.200 write(4, ..., 1) = 1
+0.200 > [ect01] P. 1:2(1) ack 1001
+
+0.200 < [ect0] . 1001:2001(1000) ack 2 win 257
+0.200 write(4, ..., 1) = 1
+0.200 > [ect01] P. 2:3(1) ack 2001
+
+0.200 < [ect0] . 2001:3001(1000) ack 3 win 257
+0.200 < [ect0] . 3001:4001(1000) ack 3 win 257
+0.200 > [ect01] . 3:3(0) ack 4001
+
+0.210 < [ce] P. 4001:4501(500) ack 3 win 257
+
++0.001 read(4, ..., 4500) = 4500
++0 write(4, ..., 1) = 1
++0 > [ect01] PE. 3:4(1) ack 4501
+
++0.010 < [ect0] W. 4501:5501(1000) ack 4 win 257
+// Previously the ACK sequence below would be 4501, causing a long RTO
++0.040~+0.045 > [ect01] . 4:4(0) ack 5501   // delayed ack
+
++0.311 < [ect0] . 5501:6501(1000) ack 4 win 257  // More data
++0 > [ect01] . 4:4(0) ack 6501     // now acks everything
+
++0.500 < F. 9501:9501(0) ack 4 win 257
+
+Reported-by: Larry Brakmo <brakmo@fb.com>
+Signed-off-by: Yuchung Cheng <ycheng@google.com>
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Acked-by: Neal Cardwell <ncardwell@google.com>
+Acked-by: Lawrence Brakmo <brakmo@fb.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/vxlan.c |   29 +++++++++++++++++++++--------
- 1 file changed, 21 insertions(+), 8 deletions(-)
+ net/ipv4/tcp_dctcp.c |    6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
---- a/drivers/net/vxlan.c
-+++ b/drivers/net/vxlan.c
-@@ -3192,6 +3192,7 @@ static int __vxlan_dev_create(struct net
- {
- 	struct vxlan_net *vn = net_generic(net, vxlan_net_id);
- 	struct vxlan_dev *vxlan = netdev_priv(dev);
-+	struct vxlan_fdb *f = NULL;
- 	int err;
+--- a/net/ipv4/tcp_dctcp.c
++++ b/net/ipv4/tcp_dctcp.c
+@@ -134,7 +134,8 @@ static void dctcp_ce_state_0_to_1(struct
+ 	/* State has changed from CE=0 to CE=1 and delayed
+ 	 * ACK has not sent yet.
+ 	 */
+-	if (!ca->ce_state && ca->delayed_ack_reserved) {
++	if (!ca->ce_state &&
++	    inet_csk(sk)->icsk_ack.pending & ICSK_ACK_TIMER) {
+ 		u32 tmp_rcv_nxt;
  
- 	err = vxlan_dev_configure(net, dev, conf, false, extack);
-@@ -3202,27 +3203,38 @@ static int __vxlan_dev_create(struct net
+ 		/* Save current rcv_nxt. */
+@@ -164,7 +165,8 @@ static void dctcp_ce_state_1_to_0(struct
+ 	/* State has changed from CE=1 to CE=0 and delayed
+ 	 * ACK has not sent yet.
+ 	 */
+-	if (ca->ce_state && ca->delayed_ack_reserved) {
++	if (ca->ce_state &&
++	    inet_csk(sk)->icsk_ack.pending & ICSK_ACK_TIMER) {
+ 		u32 tmp_rcv_nxt;
  
- 	/* create an fdb entry for a valid default destination */
- 	if (!vxlan_addr_any(&vxlan->default_dst.remote_ip)) {
--		err = vxlan_fdb_update(vxlan, all_zeros_mac,
-+		err = vxlan_fdb_create(vxlan, all_zeros_mac,
- 				       &vxlan->default_dst.remote_ip,
- 				       NUD_REACHABLE | NUD_PERMANENT,
--				       NLM_F_EXCL | NLM_F_CREATE,
- 				       vxlan->cfg.dst_port,
- 				       vxlan->default_dst.remote_vni,
- 				       vxlan->default_dst.remote_vni,
- 				       vxlan->default_dst.remote_ifindex,
--				       NTF_SELF);
-+				       NTF_SELF, &f);
- 		if (err)
- 			return err;
- 	}
- 
- 	err = register_netdevice(dev);
-+	if (err)
-+		goto errout;
-+
-+	err = rtnl_configure_link(dev, NULL);
- 	if (err) {
--		vxlan_fdb_delete_default(vxlan, vxlan->default_dst.remote_vni);
--		return err;
-+		unregister_netdevice(dev);
-+		goto errout;
- 	}
- 
-+	/* notify default fdb entry */
-+	if (f)
-+		vxlan_fdb_notify(vxlan, f, first_remote_rtnl(f), RTM_NEWNEIGH);
-+
- 	list_add(&vxlan->next, &vn->vxlan_list);
- 	return 0;
-+errout:
-+	if (f)
-+		vxlan_fdb_destroy(vxlan, f, false);
-+	return err;
- }
- 
- static int vxlan_nl2conf(struct nlattr *tb[], struct nlattr *data[],
-@@ -3451,6 +3463,7 @@ static int vxlan_changelink(struct net_d
- 	struct vxlan_rdst *dst = &vxlan->default_dst;
- 	struct vxlan_rdst old_dst;
- 	struct vxlan_config conf;
-+	struct vxlan_fdb *f = NULL;
- 	int err;
- 
- 	err = vxlan_nl2conf(tb, data,
-@@ -3476,19 +3489,19 @@ static int vxlan_changelink(struct net_d
- 					   old_dst.remote_ifindex, 0);
- 
- 		if (!vxlan_addr_any(&dst->remote_ip)) {
--			err = vxlan_fdb_update(vxlan, all_zeros_mac,
-+			err = vxlan_fdb_create(vxlan, all_zeros_mac,
- 					       &dst->remote_ip,
- 					       NUD_REACHABLE | NUD_PERMANENT,
--					       NLM_F_CREATE | NLM_F_APPEND,
- 					       vxlan->cfg.dst_port,
- 					       dst->remote_vni,
- 					       dst->remote_vni,
- 					       dst->remote_ifindex,
--					       NTF_SELF);
-+					       NTF_SELF, &f);
- 			if (err) {
- 				spin_unlock_bh(&vxlan->hash_lock);
- 				return err;
- 			}
-+			vxlan_fdb_notify(vxlan, f, first_remote_rtnl(f), RTM_NEWNEIGH);
- 		}
- 		spin_unlock_bh(&vxlan->hash_lock);
- 	}
+ 		/* Save current rcv_nxt. */
 
 
