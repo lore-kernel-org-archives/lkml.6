@@ -2,151 +2,85 @@ Return-Path: <SRS0=OQFz=KL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35E5BC6778F
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 14:59:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BAB8C67790
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 15:02:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EFB0E208B2
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 14:59:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EFB0E208B2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 3274620899
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 15:02:59 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="JGHetoWW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3274620899
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=broadcom.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388977AbeG0QWO (ORCPT
+        id S2388554AbeG0QZN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 12:22:14 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:36104 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2388955AbeG0QWO (ORCPT
+        Fri, 27 Jul 2018 12:25:13 -0400
+Received: from mail-yb0-f195.google.com ([209.85.213.195]:41997 "EHLO
+        mail-yb0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731974AbeG0QZM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 12:22:14 -0400
-Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w6RExMh8138540
-        for <linux-kernel@vger.kernel.org>; Fri, 27 Jul 2018 10:59:56 -0400
-Received: from e11.ny.us.ibm.com (e11.ny.us.ibm.com [129.33.205.201])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2kg2ejrng1-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Fri, 27 Jul 2018 10:59:55 -0400
-Received: from localhost
-        by e11.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <muriloo@linux.ibm.com>;
-        Fri, 27 Jul 2018 10:59:55 -0400
-Received: from b01cxnp22033.gho.pok.ibm.com (9.57.198.23)
-        by e11.ny.us.ibm.com (146.89.104.198) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 27 Jul 2018 10:59:50 -0400
-Received: from b01ledav006.gho.pok.ibm.com (b01ledav006.gho.pok.ibm.com [9.57.199.111])
-        by b01cxnp22033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w6RExnNJ3539368
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 27 Jul 2018 14:59:49 GMT
-Received: from b01ledav006.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id DE5EEAC05B;
-        Fri, 27 Jul 2018 11:00:31 -0400 (EDT)
-Received: from b01ledav006.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 0FB90AC059;
-        Fri, 27 Jul 2018 11:00:26 -0400 (EDT)
-Received: from kermit-br-ibm-com.ibmmodules.com (unknown [9.80.82.251])
-        by b01ledav006.gho.pok.ibm.com (Postfix) with ESMTP;
-        Fri, 27 Jul 2018 11:00:25 -0400 (EDT)
-From:   Murilo Opsfelder Araujo <muriloo@linux.ibm.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     "Alastair D'Silva" <alastair@d-silva.org>,
-        Andrew Donnellan <andrew.donnellan@au1.ibm.com>,
-        Balbir Singh <bsingharora@gmail.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Christophe Leroy <christophe.leroy@c-s.fr>,
-        Cyril Bur <cyrilbur@gmail.com>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Michael Neuling <mikey@neuling.org>,
-        Murilo Opsfelder Araujo <muriloo@linux.ibm.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Paul Mackerras <paulus@samba.org>,
-        Simon Guo <wei.guo.simon@gmail.com>,
-        Sukadev Bhattiprolu <sukadev@linux.vnet.ibm.com>,
-        "Tobin C . Harding" <me@tobin.cc>, linuxppc-dev@lists.ozlabs.org
-Subject: [PATCH v2 10/10] powerpc/traps: Add line prefix in show_instructions()
-Date:   Fri, 27 Jul 2018 11:58:11 -0300
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180727145811.12334-1-muriloo@linux.ibm.com>
-References: <20180727145811.12334-1-muriloo@linux.ibm.com>
+        Fri, 27 Jul 2018 12:25:12 -0400
+Received: by mail-yb0-f195.google.com with SMTP id c10-v6so2107953ybf.9
+        for <linux-kernel@vger.kernel.org>; Fri, 27 Jul 2018 08:02:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=6E2ocujsy+qFwidm3Vq0JiRWkhuR/rV5dKEavZPoia0=;
+        b=JGHetoWWQnEAcCqKnGigRqgllGFgFxrCXU4mwUbcOB9ThUPiE/9kaaJ/G5FPkbIv3y
+         whSayC/PSB9jo1TgHy3DdrtGlvouWichtoIZyFzfZhv65oqrC/ULVNqqpIo47l9RoBPv
+         pTqh2FkkhN8cBWpn1s6gI6TayQG7zoJNLMar0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=6E2ocujsy+qFwidm3Vq0JiRWkhuR/rV5dKEavZPoia0=;
+        b=Zho4WhliznIyg98WLPRPaABJ5FY8vMu8PdJDDIpJhoHiiwcrEBKOknjlOjJOGqnHyH
+         89Ntp2CaFP1IBcXTTruLO0yjLJwRTLzK9+Kjb+GlkZkk54LTom/vXfdXpZpOobabni7i
+         zVFIQuG/8G4Vr5qgSRTMjzO1zHgYHeTHs8PQtEziqaDxaRYtNjh0JVeqDHPMWPke15v9
+         2Wdv4OdTSVvW/+dM6VdwNrfztwkL+3+BVdcwyRqfHoU3FBfFNjB5UEKzZtH5ctUUzxD6
+         yd0edHjbzSCieeyFcMWSiUsXvVuE0KxnBguAZh2sB164jUH+xHtRKvXc9Dz2PX90m4dk
+         Z2gg==
+X-Gm-Message-State: AOUpUlF0JIVe6xPmwTD/g03hPdoBxVhNm8hDHgasdkdIDBI7LBF2qrv5
+        EXkforbC4oshBcn9kZeGXJIPF94FnyxaCkkMI4Gorw==
+X-Google-Smtp-Source: AAOMgpeAc1VMhDtCZn07jDJcauTiLN9gjDc7LAcVUGV6XLTrt5VqoOOUAms15PDGEi53NXkKasnSNlddrzsSDw4Rwh8=
+X-Received: by 2002:a25:4754:: with SMTP id u81-v6mr3740099yba.54.1532703772812;
+ Fri, 27 Jul 2018 08:02:52 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 18072714-2213-0000-0000-000002D0C58E
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009438; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000266; SDB=6.01066908; UDB=6.00548186; IPR=6.00844774;
- MB=3.00022354; MTD=3.00000008; XFM=3.00000015; UTC=2018-07-27 14:59:54
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18072714-2214-0000-0000-00005AFBFFC5
-Message-Id: <20180727145811.12334-11-muriloo@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-27_06:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=950 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1806210000 definitions=main-1807270154
+Received: by 2002:a25:e716:0:0:0:0:0 with HTTP; Fri, 27 Jul 2018 08:02:52
+ -0700 (PDT)
+In-Reply-To: <20180725111459.10800-1-yuehaibing@huawei.com>
+References: <20180725111459.10800-1-yuehaibing@huawei.com>
+From:   Michael Chan <michael.chan@broadcom.com>
+Date:   Fri, 27 Jul 2018 08:02:52 -0700
+Message-ID: <CACKFLim+u+KPfJjj2fZ2BBDdzNDiKLV-hdeF8jJ0R-pW7G9nfw@mail.gmail.com>
+Subject: Re: [PATCH net-next] bnxt_en: combine 'else if' and 'else' into
+ single branche
+To:     YueHaibing <yuehaibing@huawei.com>
+Cc:     David Miller <davem@davemloft.net>,
+        open list <linux-kernel@vger.kernel.org>,
+        Netdev <netdev@vger.kernel.org>,
+        Vasundhara Volam <vasundhara-v.volam@broadcom.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove "Instruction dump:" line by adding a prefix to display current->comm
-and current->pid, along with the instructions dump.
+On Wed, Jul 25, 2018 at 4:14 AM, YueHaibing <yuehaibing@huawei.com> wrote:
+> The else-if branch and else branch set mac_ok to true similarly,
+> so combine the two into single else branch.
+>
+> Aslo add comments to explain the two conditions, which
+> from Michael Chan and Vasundhara Volam.
+>
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 
-The prefix can serve as a glue that links the instructions dump to its
-originator, allowing messages to be interleaved in the logs.
+Acked-by: Michael Chan <michael.chan@broadcom.com>
 
-Before this patch, a page fault looked like:
-
-    pandafault[10524]: segfault (11) at 00000000100007d0 nip 000000001000061c lr 00007fffbd295100 code 2 in pandafault[10000000+10000]
-    Instruction dump:
-    4bfffeec 4bfffee8 3c401002 38427f00 fbe1fff8 f821ffc1 7c3f0b78 3d22fffe
-    392988d0 f93f0020 e93f0020 39400048 <99490000> 39200000 7d234b78 383f0040
-
-After this patch, it looks like:
-
-    pandafault[10850]: segfault (11) at 00000000100007d0 nip 000000001000061c lr 00007fff9f3e5100 code 2 in pandafault[10000000+10000]
-    pandafault[10850]: code: 4bfffeec 4bfffee8 3c401002 38427f00 fbe1fff8 f821ffc1 7c3f0b78 3d22fffe
-    pandafault[10850]: code: 392988d0 f93f0020 e93f0020 39400048 <99490000> 39200000 7d234b78 383f0040
-
-Signed-off-by: Murilo Opsfelder Araujo <muriloo@linux.ibm.com>
----
- arch/powerpc/kernel/process.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
-
-diff --git a/arch/powerpc/kernel/process.c b/arch/powerpc/kernel/process.c
-index 709bfb524b84..25b6dfc8dd81 100644
---- a/arch/powerpc/kernel/process.c
-+++ b/arch/powerpc/kernel/process.c
-@@ -1265,16 +1265,19 @@ static int instructions_to_print = 16;
- void show_instructions(struct pt_regs *regs)
- {
- 	int i;
-+	const char *prefix = KERN_INFO "%s[%d]: code: ";
- 	unsigned long pc = regs->nip - (instructions_to_print * 3 / 4 *
- 			sizeof(int));
- 
--	printk("Instruction dump:");
-+	printk(prefix, current->comm, current->pid);
- 
- 	for (i = 0; i < instructions_to_print; i++) {
- 		int instr;
- 
--		if (!(i % 8))
-+		if (!(i % 8) && (i > 0)) {
- 			pr_cont("\n");
-+			printk(prefix, current->comm, current->pid);
-+		}
- 
- #if !defined(CONFIG_BOOKE)
- 		/* If executing with the IMMU off, adjust pc rather
--- 
-2.17.1
-
+Thanks.
