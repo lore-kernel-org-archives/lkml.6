@@ -2,164 +2,122 @@ Return-Path: <SRS0=OQFz=KL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 456C3C6778F
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 14:52:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E480C67790
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 14:54:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 06FC0208AC
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 14:52:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 06FC0208AC
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amlogic.com
+	by mail.kernel.org (Postfix) with ESMTP id 1608C205C9
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 14:54:07 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="GxSYFsSD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1608C205C9
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388563AbeG0QOl (ORCPT
+        id S2388503AbeG0QQV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 12:14:41 -0400
-Received: from mail-sh2.amlogic.com ([58.32.228.45]:19397 "EHLO
-        mail-sh2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730771AbeG0QOl (ORCPT
+        Fri, 27 Jul 2018 12:16:21 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:38788 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730714AbeG0QQU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 12:14:41 -0400
-Received: from [192.168.90.67] (61.170.236.39) by mail-sh2.amlogic.com
- (10.18.11.6) with Microsoft SMTP Server (TLS) id 15.0.1320.4; Fri, 27 Jul
- 2018 22:52:31 +0800
-Subject: Re: [PATCH v3 2/2] clk: meson: add sub MMC clock controller driver
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Neil Armstrong <narmstrong@baylibre.com>
-References: <20180712211244.11428-1-yixun.lan@amlogic.com>
- <20180712211244.11428-3-yixun.lan@amlogic.com>
- <153261840298.48062.2497103873681297587@swboyd.mtv.corp.google.com>
-CC:     <yixun.lan@amlogic.com>, Kevin Hilman <khilman@baylibre.com>,
-        Carlo Caione <carlo@caione.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh@kernel.org>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Liang Yang <liang.yang@amlogic.com>,
-        Qiufang Dai <qiufang.dai@amlogic.com>,
-        Jian Hu <jian.hu@amlogic.com>, <linux-clk@vger.kernel.org>,
-        <linux-amlogic@lists.infradead.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-From:   Yixun Lan <yixun.lan@amlogic.com>
-Message-ID: <f52d2511-bab7-2c39-cea7-8702e27d2ef8@amlogic.com>
-Date:   Fri, 27 Jul 2018 22:52:23 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
- Thunderbird/45.5.1
+        Fri, 27 Jul 2018 12:16:20 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w6REhxlT134277
+        for <linux-kernel@vger.kernel.org>; Fri, 27 Jul 2018 14:54:03 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=mime-version :
+ references : in-reply-to : from : date : message-id : subject : to : cc :
+ content-type; s=corp-2018-07-02;
+ bh=ccFNO2RC5TnSnUSGrld7JQAt/erF48OCW+LVyrfhryU=;
+ b=GxSYFsSDHI5gIkoxeQvDLpTbGVGIr1pHPyoH/86cT9FKF+n/sBAZRXdwobmhjCrmRNb7
+ ZbFKhnYnsIaKWXyIAO3MjG5yTrrldx6WBOM0lKUoccRRShYUUgWB1GeQnwyihXHfyprR
+ kAA0Tcgmd5srWoOhn5234XlgEk7EiGeMt6Wv4meUxI0wcaxIpjCrxJjBAK/wm2JnOPFX
+ I3o5F1st9MEUa1ZJEZ+U41PMq+UX/JAnWc/dYgq+UM14k509APbHpONInRn+QRBIHqH0
+ DMksfl+rePTLwHoU1oKbxyQe3jY4/5W/5BR8X+fm5o4JstD5wahSwR5zQmHWYB81EVyH Zw== 
+Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
+        by userp2130.oracle.com with ESMTP id 2kbv8tfm1k-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK)
+        for <linux-kernel@vger.kernel.org>; Fri, 27 Jul 2018 14:54:03 +0000
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w6REs1b1025369
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK)
+        for <linux-kernel@vger.kernel.org>; Fri, 27 Jul 2018 14:54:01 GMT
+Received: from abhmp0007.oracle.com (abhmp0007.oracle.com [141.146.116.13])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w6REs14b015483
+        for <linux-kernel@vger.kernel.org>; Fri, 27 Jul 2018 14:54:01 GMT
+Received: from mail-oi0-f47.google.com (/209.85.218.47)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Fri, 27 Jul 2018 07:54:00 -0700
+Received: by mail-oi0-f47.google.com with SMTP id k12-v6so9513672oiw.8
+        for <linux-kernel@vger.kernel.org>; Fri, 27 Jul 2018 07:54:00 -0700 (PDT)
+X-Gm-Message-State: AOUpUlFuzJxqIXqwe5r2h6c7SP9AUVaEziMfRylx9oUOdMig1gXN/v3Y
+        X2A16A+hIkiuz1c5BUtEf1wy6XLgrE4DQsEMrrY=
+X-Google-Smtp-Source: AAOMgpcg/1n1qjdXUvJygdZJ1i51jFo1Q+ogNiYVFGb4djIF4ZQMwMJoCz269Qc/5TFgYjkbMvzw+ThxthklU6mcYD8=
+X-Received: by 2002:a54:4f88:: with SMTP id g8-v6mr7226312oiy.191.1532703240360;
+ Fri, 27 Jul 2018 07:54:00 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <153261840298.48062.2497103873681297587@swboyd.mtv.corp.google.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [61.170.236.39]
-X-ClientProxiedBy: mail-sh2.amlogic.com (10.18.11.6) To mail-sh2.amlogic.com
- (10.18.11.6)
+References: <20180726193509.3326-1-pasha.tatashin@oracle.com>
+ <20180726193509.3326-3-pasha.tatashin@oracle.com> <20180727115645.GA13637@techadventures.net>
+In-Reply-To: <20180727115645.GA13637@techadventures.net>
+From:   Pavel Tatashin <pasha.tatashin@oracle.com>
+Date:   Fri, 27 Jul 2018 10:53:24 -0400
+X-Gmail-Original-Message-ID: <CAGM2reZnrwy1Y8MFRgyDLG8VZ6Hf+v-PAmZvUG4H65zunmjWZw@mail.gmail.com>
+Message-ID: <CAGM2reZnrwy1Y8MFRgyDLG8VZ6Hf+v-PAmZvUG4H65zunmjWZw@mail.gmail.com>
+Subject: Re: [PATCH v2 2/3] mm: calculate deferred pages after skipping
+ mirrored memory
+To:     osalvador@techadventures.net
+Cc:     Steven Sistare <steven.sistare@oracle.com>,
+        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        kirill.shutemov@linux.intel.com, Michal Hocko <mhocko@suse.com>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        dan.j.williams@intel.com, jack@suse.cz, jglisse@redhat.com,
+        Souptick Joarder <jrdr.linux@gmail.com>, bhe@redhat.com,
+        gregkh@linuxfoundation.org, Vlastimil Babka <vbabka@suse.cz>,
+        Wei Yang <richard.weiyang@gmail.com>, dave.hansen@intel.com,
+        rientjes@google.com, mingo@kernel.org, abdhalee@linux.vnet.ibm.com,
+        mpe@ellerman.id.au
+Content-Type: text/plain; charset="UTF-8"
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8966 signatures=668706
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=3 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=793
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1806210000 definitions=main-1807270152
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-HI Stephen:
+                         unsigned long *nr_initialised)
+> > +static bool __meminit
+> > +defer_init(int nid, unsigned long pfn, unsigned long end_pfn)
+>
+> Hi Pavel,
+>
+> maybe I do not understand properly the __init/__meminit macros, but should not
+> "defer_init" be __init instead of __meminit?
+> I think that functions marked as __meminit are not freed up, right?
 
-On 07/26/2018 11:20 PM, Stephen Boyd wrote:
-> Quoting Yixun Lan (2018-07-12 14:12:44)
->> diff --git a/drivers/clk/meson/mmc-clkc.c b/drivers/clk/meson/mmc-clkc.c
->> new file mode 100644
->> index 000000000000..36c4c7cd69a6
->> --- /dev/null
->> +++ b/drivers/clk/meson/mmc-clkc.c
->> @@ -0,0 +1,367 @@
->> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
->> +/*
->> + * Amlogic Meson MMC Sub Clock Controller Driver
->> + *
->> + * Copyright (c) 2017 Baylibre SAS.
->> + * Author: Jerome Brunet <jbrunet@baylibre.com>
->> + *
->> + * Copyright (c) 2018 Amlogic, inc.
->> + * Author: Yixun Lan <yixun.lan@amlogic.com>
->> + */
->> +
->> +#include <linux/clk.h>
-> 
-> Is this include used?
-> 
-this is needed by clk_get_rate()
-see drivers/clk/meson/mmc-clkc.c:204
+Not exactly. As I understand: __meminit is the same as __init when
+CONFIG_MEMORY_HOTPLUG=n. But, when memory hotplug is configured,
+__meminit is not freed, because code that adds memory is shared
+between boot and hotplug. In this case defer_init() is called only
+during boot, and could be __init, but it is called from
+memmap_init_zone() which is __meminit and thus section mismatch would
+happen.
 
->> +#include <linux/clk-provider.h>
->> +#include <linux/module.h>
->> +#include <linux/regmap.h>
->> +#include <linux/slab.h>
->> +#include <linux/of_device.h>
->> +#include <linux/mfd/syscon.h>
->> +#include <linux/platform_device.h>
->> +#include <dt-bindings/clock/amlogic,meson-mmc-clkc.h>
->> +
->> +#include "clkc.h"
->> +
->> +
->> +static struct clk_regmap *
->> +mmc_clkc_register_other_clk(struct device *dev, struct regmap *map,
->> +                           char *suffix, char *parent_suffix,
->> +                           unsigned long flags,
->> +                           const struct clk_ops *ops, void *data)
->> +{
->> +       struct clk_init_data init;
->> +       struct clk_regmap *clk;
->> +       char *parent;
->> +
->> +       parent = kasprintf(GFP_KERNEL, "%s#%s", dev_name(dev), parent_suffix);
->> +       if (!parent)
->> +               return ERR_PTR(-ENOMEM);
->> +
->> +       init.ops = ops;
->> +       init.flags = flags;
->> +       init.parent_names = (const char* const []){ parent, };
-> 
-> Can't this just be &parent?
-sure, I can fix this
+We could split memmap_init_zone() into two functions: boot and hotplug
+variants, or we could use __ref, but I do not think any of that is
+really needed. Keeping defer_init() in __meminit is OK, it does not
+take that much memory.
 
-> 
->> +       init.num_parents = 1;
->> +
->> +       clk = mmc_clkc_register_clk(dev, map, &init, suffix, data);
->> +       if (IS_ERR(clk))
->> +               dev_err(dev, "Core %s clock registration failed\n", suffix);
->> +
->> +       kfree(parent);
->> +       return clk;
->> +}
->> +
->> +static int mmc_clkc_probe(struct platform_device *pdev)
->> +{
->> +       struct clk_hw_onecell_data *onecell_data;
->> +       struct device *dev = &pdev->dev;
->> +       struct mmc_clkc_data *data;
->> +       struct regmap *map;
->> +       struct clk_regmap *mux, *div, *core, *rx, *tx;
->> +
->> +       data = (struct mmc_clkc_data *)of_device_get_match_data(dev);
-> 
-> This cast is unnecessary. Pleas remove.
-> 
-Ok, I will try to fix in next version
+>
+> Reviewed-by: Oscar Salvador <osalvador@suse.de>
 
-
-this was trying to silence the ’const‘ cast warning [1]
-I could make a 'const struct mmc_clkc_data *data' declare, but need to
-fix further cast warning issue..
-
-
-[1] drivers/clk/meson/mmc-clkc.c: In function ‘mmc_clkc_probe’:
-drivers/clk/meson/mmc-clkc.c:302:7: warning: assignment discards ‘const’
-qualifier from pointer target type [-Wdiscarded-qualifiers]
-  data = of_device_get_match_data(dev);
-       ^
-
-
-
+Thank you,
+Pavel
