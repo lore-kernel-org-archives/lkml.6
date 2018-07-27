@@ -2,303 +2,93 @@ Return-Path: <SRS0=OQFz=KL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BE01C67790
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 15:43:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E339BC6778F
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 15:45:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 15EFA208B0
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 15:43:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 15EFA208B0
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=aosc.io
+	by mail.kernel.org (Postfix) with ESMTP id 94AE12088E
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 15:45:03 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="OLDSIJjL"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 94AE12088E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388727AbeG0RFc (ORCPT
+        id S2388697AbeG0RH3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 13:05:32 -0400
-Received: from hermes.aosc.io ([199.195.250.187]:39351 "EHLO hermes.aosc.io"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733081AbeG0RFb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 13:05:31 -0400
-Received: from localhost (localhost [127.0.0.1]) (Authenticated sender: icenowy@aosc.io)
-        by hermes.aosc.io (Postfix) with ESMTPSA id 610095827D;
-        Fri, 27 Jul 2018 15:42:50 +0000 (UTC)
-Message-ID: <16929adfe068302187af72b0ed0f1d472b6b02e2.camel@aosc.io>
-Subject: Re: [PATCH v3.1 07/10] arm64: dts: allwinner: a64: Add display
- pipeline
-From:   Icenowy Zheng <icenowy@aosc.io>
-To:     Maxime Ripard <maxime.ripard@bootlin.com>,
-        Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-        Jagan Teki <jagan@amarulasolutions.com>,
-        Jernej Skrabec <jernej.skrabec@siol.net>
-Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-sunxi@googlegroups.com,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Date:   Fri, 27 Jul 2018 23:42:30 +0800
-In-Reply-To: <20180726171257.6688-8-icenowy@aosc.io>
-References: <20180726171257.6688-1-icenowy@aosc.io>
-         <20180726171257.6688-8-icenowy@aosc.io>
-Organization: Anthon Open-Source Community
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+        Fri, 27 Jul 2018 13:07:29 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:52172 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388075AbeG0RH3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Jul 2018 13:07:29 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
+        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=gpoB32Wvm6OaGwTjwxc0VjbDNl0yfbzRxyn1eiviIUY=; b=OLDSIJjLSe4Sul3aUhgKxOUzKo
+        02dGQNEIslqnQgdMqNTmHZFPmLcKW5fAiQOliqZ5Ra3DAJ3Z1P35cZR8H0AzIa7cNpf7ex+bbnfwm
+        xDIFf9nYxMA5ekcF8MYcINIYAgwujil36FJDmZWUhDR68+DWaw0bZ88YRhXdobHVLkgRwZ4dotGWN
+        wa7440+rb0X3UtEQSe12dMv1RNTvTFg7fUF06C9K4Xjj9lWoIpSHeBKmYPp/6u5uZGDXOsUv7NNIX
+        etCUqwjZOL9diIXjI4CjUVFYI/z0HeEa7a3XeXW5zXdfyspLJH76nH2WXWfphcWIj4HJlgW5yOYGF
+        PmWnaxKg==;
+Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fj4vI-0004Kt-Gi; Fri, 27 Jul 2018 15:44:56 +0000
+Subject: Re: [PATCH 03/10] atmel: hide unused procfs helpers
+To:     Kalle Valo <kvalo@codeaurora.org>,
+        YueHaibing <yuehaibing@huawei.com>
+Cc:     simon@thekelleys.org.uk, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, linux-wireless@vger.kernel.org,
+        davem@davemloft.net
+References: <20180713064658.10340-1-yuehaibing@huawei.com>
+ <ded55181-e1b0-99e9-ac68-2d93fb6168c0@huawei.com>
+ <87va91vxnr.fsf@codeaurora.org>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <e6100005-2c8e-b1b9-2870-b8ca2d61fe30@infradead.org>
+Date:   Fri, 27 Jul 2018 08:44:54 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <87va91vxnr.fsf@codeaurora.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-在 2018-07-27五的 01:12 +0800，Icenowy Zheng写道：
-> From: Jagan Teki <jagan@amarulasolutions.com>
+On 07/27/2018 02:24 AM, Kalle Valo wrote:
+> (fixing top posting)
 > 
-> Allwinner A64 have a display pipeline with 2 mixers/TCONs, the first
-> TCON is connected to LCD and the second is to HDMI.
+> YueHaibing <yuehaibing@huawei.com> writes:
 > 
-> The HDMI controller/PHY pair is similar to the one on H3/H5, but have
-> two video PLLs selectable.
+>> On 2018/7/13 14:46, YueHaibing wrote:
+>>> When CONFIG_PROC_FS isn't set, gcc warning this:
+>>>
+>>> drivers/net/wireless/atmel/atmel.c:1402:12: warning: ‘atmel_proc_show’ defined but not used [-Wunused-function]
+>>>  static int atmel_proc_show(struct seq_file *m, void *v)
+>>>             ^
+>>> fix this by adding #ifdef around it.
+>>>
+>>> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+>>
+>> pls ignore this,my bad.
 > 
-> Add all required device tree nodes of the display pipeline, including
-> the TCON0 LCD one and the TCON1 HDMI one.
+> Why should I drop this? Does the patch have something wrong which I'm
+> missing?
 > 
-> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
-> [Icenowy: refactor commit message and add 1st pipeline]
-> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
-> ---
-> Changes for v3.1:
-> - Refactor commit message to make it more clear.
-> - Added first pipeline (mixer0 -> tcon0)
-> Changes for v3:
-> - Squash all pipeline components in one patch
-> - Add status for mixer1 and tcon1
-> Changes for v2:
-> - Change compatibles and other based on previous patch changes
+> I'm asking because I prefer this over Randy's version:
 > 
->  arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi | 169
-> ++++++++++++++++++
->  1 file changed, 169 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
-> b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
-> index d3daf90a8715..fe9cc673fe07 100644
-> --- a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
-> +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
-> @@ -112,6 +112,12 @@
->  		};
->  	};
->  
-> +	de: display-engine {
-> +		compatible = "allwinner,sun50i-a64-display-engine";
-> +		allwinner,pipelines = <&mixer1>;
-> +		status = "disabled";
-> +	};
-> +
->  	osc24M: osc24M_clk {
->  		#clock-cells = <0>;
->  		compatible = "fixed-clock";
-> @@ -194,6 +200,55 @@
->  				#clock-cells = <1>;
->  				#reset-cells = <1>;
->  			};
-> +
-> +			mixer0: mixer@100000 {
-> +				compatible = "allwinner,sun50i-a64-de2-
-> mixer-0";
-> +				reg = <0x100000 0x100000>;
-> +				clocks = <&display_clocks
-> CLK_BUS_MIXER0>,
-> +					 <&display_clocks CLK_MIXER0>;
-> +				clock-names = "bus",
-> +					      "mod";
-> +				resets = <&display_clocks RST_MIXER0>;
-> +				status = "disabled";
-> +
-> +				ports {
-> +					#address-cells = <1>;
-> +					#size-cells = <0>;
-> +
-> +					mixer0_out: port@1 {
-> +						reg = <1>;
-> +
-> +						mixer0_out_tcon0:
-> endpoint {
-> +							remote-endpoint 
-> = <&tcon0_in_mixer0>;
-> +						};
-> +					};
-> +				};
-> +			};
-> +
-> +			mixer1: mixer@200000 {
-> +				compatible = "allwinner,sun50i-a64-de2-
-> mixer-1";
-> +				reg = <0x200000 0x100000>;
-> +				clocks = <&display_clocks
-> CLK_BUS_MIXER1>,
-> +					 <&display_clocks CLK_MIXER1>;
-> +				clock-names = "bus",
-> +					      "mod";
-> +				/* The reset line is shared */
-> +				resets = <&display_clocks RST_WB>;
+> https://patchwork.kernel.org/patch/10512913/
 
-Sorry here the reset line is not shared, and should be RST_MIXER1.
+Take it.  I don't mind.
 
-> +				status = "disabled";
-> +
-> +				ports {
-> +					#address-cells = <1>;
-> +					#size-cells = <0>;
-> +
-> +					mixer1_out: port@1 {
-> +						reg = <1>;
-> +
-> +						mixer1_out_tcon1:
-> endpoint {
-> +							remote-endpoint 
-> = <&tcon1_in_mixer1>;
-> +						};
-> +					};
-> +				};
-> +			};
->  		};
->  
->  		syscon: syscon@1c00000 {
-> @@ -228,6 +283,76 @@
->  			#dma-cells = <1>;
->  		};
->  
-> +		tcon0: lcd-controller@1c0c000 {
-> +			compatible = "allwinner,sun50i-a64-tcon-lcd",
-> +				     "allwinner,sun8i-a83t-tcon-lcd";
-> +			reg = <0x01c0c000 0x1000>;
-> +			interrupts = <GIC_SPI 86 IRQ_TYPE_LEVEL_HIGH>;
-> +			clocks = <&ccu CLK_BUS_TCON0>, <&ccu
-> CLK_TCON0>;
-> +			clock-names = "ahb", "tcon-ch0";
-> +			clock-output-names = "tcon-pixel-clock";
-> +			resets = <&ccu RST_BUS_TCON0>, <&ccu
-> RST_BUS_LVDS>;
-> +			reset-names = "lcd", "lvds";
-> +
-> +			ports {
-> +				#address-cells = <1>;
-> +				#size-cells = <0>;
-> +
-> +				tcon0_in: port@0 {
-> +					#address-cells = <1>;
-> +					#size-cells = <0>;
-> +					reg = <0>;
-> +
-> +					tcon0_in_mixer0: endpoint@0 {
-> +						reg = <0>;
-> +						remote-endpoint =
-> <&mixer0_out_tcon0>;
-> +					};
-> +				};
-> +
-> +				tcon0_out: port@1 {
-> +					#address-cells = <1>;
-> +					#size-cells = <0>;
-> +					reg = <1>;
-> +				};
-> +			};
-> +		};
-> +
-> +		tcon1: lcd-controller@1c0d000 {
-> +			compatible = "allwinner,sun50i-a64-tcon-tv",
-> +				     "allwinner,sun8i-a83t-tcon-tv";
-> +			reg = <0x01c0d000 0x1000>;
-> +			interrupts = <GIC_SPI 87 IRQ_TYPE_LEVEL_HIGH>;
-> +			clocks = <&ccu CLK_BUS_TCON1>, <&ccu
-> CLK_TCON1>;
-> +			clock-names = "ahb", "tcon-ch1";
-> +			resets = <&ccu RST_BUS_TCON1>;
-> +			reset-names = "lcd";
-> +			status = "disabled";
-> +
-> +			ports {
-> +				#address-cells = <1>;
-> +				#size-cells = <0>;
-> +
-> +				tcon1_in: port@0 {
-> +					reg = <0>;
-> +
-> +					tcon1_in_mixer1: endpoint {
-> +						remote-endpoint =
-> <&mixer1_out_tcon1>;
-> +					};
-> +				};
-> +
-> +				tcon1_out: port@1 {
-> +					#address-cells = <1>;
-> +					#size-cells = <0>;
-> +					reg = <1>;
-> +
-> +					tcon1_out_hdmi: endpoint@1 {
-> +						reg = <1>;
-> +						remote-endpoint =
-> <&hdmi_in_tcon1>;
-> +					};
-> +				};
-> +			};
-> +		};
-> +
->  		mmc0: mmc@1c0f000 {
->  			compatible = "allwinner,sun50i-a64-mmc";
->  			reg = <0x01c0f000 0x1000>;
-> @@ -686,6 +811,50 @@
->  			status = "disabled";
->  		};
->  
-> +		hdmi: hdmi@1ee0000 {
-> +			compatible = "allwinner,sun50i-a64-dw-hdmi",
-> +				     "allwinner,sun8i-a83t-dw-hdmi";
-> +			reg = <0x01ee0000 0x10000>;
-> +			reg-io-width = <1>;
-> +			interrupts = <GIC_SPI 88 IRQ_TYPE_LEVEL_HIGH>;
-> +			clocks = <&ccu CLK_BUS_HDMI>, <&ccu
-> CLK_HDMI_DDC>,
-> +				 <&ccu CLK_HDMI>;
-> +			clock-names = "iahb", "isfr", "tmds";
-> +			resets = <&ccu RST_BUS_HDMI1>;
-> +			reset-names = "ctrl";
-> +			phys = <&hdmi_phy>;
-> +			phy-names = "hdmi-phy";
-> +			status = "disabled";
-> +
-> +			ports {
-> +				#address-cells = <1>;
-> +				#size-cells = <0>;
-> +
-> +				hdmi_in: port@0 {
-> +					reg = <0>;
-> +
-> +					hdmi_in_tcon1: endpoint {
-> +						remote-endpoint =
-> <&tcon1_out_hdmi>;
-> +					};
-> +				};
-> +
-> +				hdmi_out: port@1 {
-> +					reg = <1>;
-> +				};
-> +			};
-> +		};
-> +
-> +		hdmi_phy: hdmi-phy@1ef0000 {
-> +			compatible = "allwinner,sun50i-a64-hdmi-phy";
-> +			reg = <0x01ef0000 0x10000>;
-> +			clocks = <&ccu CLK_BUS_HDMI>, <&ccu
-> CLK_HDMI_DDC>,
-> +				 <&ccu CLK_PLL_VIDEO0>, <&ccu
-> CLK_PLL_VIDEO1>;
-> +			clock-names = "bus", "mod", "pll-0", "pll-1";
-> +			resets = <&ccu RST_BUS_HDMI0>;
-> +			reset-names = "phy";
-> +			#phy-cells = <0>;
-> +		};
-> +
->  		rtc: rtc@1f00000 {
->  			compatible = "allwinner,sun6i-a31-rtc";
->  			reg = <0x01f00000 0x54>;
-
+-- 
+~Randy
