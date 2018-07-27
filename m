@@ -2,117 +2,127 @@ Return-Path: <SRS0=OQFz=KL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F80AC67790
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 05:20:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7075AC6778F
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 05:21:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3DCC620673
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 05:20:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3DCC620673
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
+	by mail.kernel.org (Postfix) with ESMTP id 24F5A20673
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 05:21:06 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="EeMW/mBX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 24F5A20673
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729372AbeG0Gkj (ORCPT
+        id S1729445AbeG0GlK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 02:40:39 -0400
-Received: from mx2.suse.de ([195.135.220.15]:55658 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725838AbeG0Gkj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 02:40:39 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 3A1EEAE84;
-        Fri, 27 Jul 2018 05:20:31 +0000 (UTC)
-Date:   Fri, 27 Jul 2018 07:20:30 +0200
-Message-ID: <s5hbmatuue9.wl-tiwai@suse.de>
-From:   Takashi Iwai <tiwai@suse.de>
-To:     "Dae R. Jeong" <threeearcat@gmail.com>
-Cc:     perex@perex.cz, alsa-devel@alsa-project.org, kt0755@gmail.com,
-        syzkaller@googlegroups.com, bammanag@purdue.edu,
+        Fri, 27 Jul 2018 02:41:10 -0400
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:45554 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725838AbeG0GlK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Jul 2018 02:41:10 -0400
+Received: by mail-pl0-f65.google.com with SMTP id j8-v6so1807273pll.12
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Jul 2018 22:21:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:mail-followup-to:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=lIGrVEYlxySY5vG6HPLgklzeIRGh5p/fybcldshXazI=;
+        b=EeMW/mBX6GxENuf4vfV6DRImyAglmNvwRN7OVW+Its3B5S+otGYfjDlt2AcoeO70nV
+         9MXGTKHcyRFEt+XHOSHRR9sZX1lckQxP9RDgT8kVWtoZJ91tLCFanfyg5puKFrgva595
+         aT/ef8VpV9hEx4WrU4Bbs2+rsZxYWM2GlGaHU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :in-reply-to:user-agent;
+        bh=lIGrVEYlxySY5vG6HPLgklzeIRGh5p/fybcldshXazI=;
+        b=PJIvdmB2nuUJ+yaZngBzC1ccnwHXmd2aJ+uBa8az2qxvpyuOFInW0Kik6d0GqWU7F4
+         LxuhwV3Ely8jXzmUmCvTtZ6ZNwl7pkZJGVDkKGA/7BlUKQcisbKbUCbewiBoCVBCBu+D
+         2IZd9s8+vBUsyevgqflu4L1mZy1Pyb6PfQUeLB8BqYChr0zuw8ZeCDu2FeiGwWSwOyFy
+         PjNgHCZCXo8pXFZPbBpmoqgSju/Q6TvJUKo1VTsOpbVKfvYhHz+y4BlG7Xen44wxPTDG
+         kL3hHCWXtVjq5aFdksSjzhoGznPKN2bJ+s+lauCN6TJqXTrQFnfElwt86tRvnZqwFSDU
+         RQSA==
+X-Gm-Message-State: AOUpUlE5ehBFWhIYc6m9V5BBTAYAwXGpfIAI6aIUalMGbO7frrnuBaCA
+        xeKu4VkD3fFiuMlZ/9mP0vOpFw==
+X-Google-Smtp-Source: AAOMgpdV6ERLh5EfGsARzHSZ1vlM4CBO3Qgb7B2fi3s7kyq1MXCYVzt8yhDJfoRXxewtD82Wdibp5A==
+X-Received: by 2002:a17:902:2006:: with SMTP id n6-v6mr4567247pla.325.1532668863030;
+        Thu, 26 Jul 2018 22:21:03 -0700 (PDT)
+Received: from linaro.org ([121.95.100.191])
+        by smtp.googlemail.com with ESMTPSA id q5-v6sm3298486pgv.61.2018.07.26.22.20.59
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 26 Jul 2018 22:21:02 -0700 (PDT)
+Date:   Fri, 27 Jul 2018 14:22:37 +0900
+From:   AKASHI Takahiro <takahiro.akashi@linaro.org>
+To:     James Morse <james.morse@arm.com>
+Cc:     catalin.marinas@arm.com, will.deacon@arm.com, dhowells@redhat.com,
+        vgoyal@redhat.com, herbert@gondor.apana.org.au,
+        davem@davemloft.net, dyoung@redhat.com, bhe@redhat.com,
+        arnd@arndb.de, schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
+        ard.biesheuvel@linaro.org, bhsharma@redhat.com,
+        kexec@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org
-Subject: Re: BUG: soft lockup in snd_virmidi_output_trigger
-In-Reply-To: <20180727041322.GA13067@dragonet>
-References: <20180726055326.GA12625@dragonet>
-        <s5hva92yxda.wl-tiwai@suse.de>
-        <20180727041322.GA13067@dragonet>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI/1.14.6 (Maruoka)
- FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 Emacs/26
- (x86_64-suse-linux-gnu) MULE/6.0 (HANACHIRUSATO)
-MIME-Version: 1.0 (generated by SEMI 1.14.6 - "Maruoka")
-Content-Type: text/plain; charset=US-ASCII
+Subject: Re: [PATCH v12 01/16] asm-generic: add kexec_file_load system call
+ to unistd.h
+Message-ID: <20180727052235.GD11258@linaro.org>
+Mail-Followup-To: AKASHI Takahiro <takahiro.akashi@linaro.org>,
+        James Morse <james.morse@arm.com>, catalin.marinas@arm.com,
+        will.deacon@arm.com, dhowells@redhat.com, vgoyal@redhat.com,
+        herbert@gondor.apana.org.au, davem@davemloft.net, dyoung@redhat.com,
+        bhe@redhat.com, arnd@arndb.de, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com, ard.biesheuvel@linaro.org,
+        bhsharma@redhat.com, kexec@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20180724065759.19186-1-takahiro.akashi@linaro.org>
+ <20180724065759.19186-2-takahiro.akashi@linaro.org>
+ <f77fe157-f9f6-8dfc-eca0-1ecd687f671f@arm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f77fe157-f9f6-8dfc-eca0-1ecd687f671f@arm.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 27 Jul 2018 06:13:22 +0200,
-Dae R. Jeong wrote:
+On Thu, Jul 26, 2018 at 02:35:50PM +0100, James Morse wrote:
+> Hi Akashi,
 > 
-> I tested it and it worked.
-> Thanks a lot!
+> On 24/07/18 07:57, AKASHI Takahiro wrote:
+> > The initial user of this system call number is arm64.
+> 
+> This patch conflicts with commit db7a2d1809a5 ("asm-generic: unistd.h: Wire up
+> sys_rseq") in the arm64 tree.
 
-Good to hear.  Below is the final patch with a proper comment (and
-with syzbot reported-by, too) I'm going to queue to sound.git tree.
+OK. I will try to rebase my code to arm64/for-next/core at v13.
 
+Thanks,
+-Takahiro AKASHI
 
-thanks,
-
-Takashi
-
--- 8< --
-
-From: Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH v2] ALSA: virmidi: Fix too long output trigger loop
-
-The virmidi output trigger tries to parse the all available bytes and
-process sequencer events as much as possible.  In a normal situation,
-this is supposed to be relatively short, but a program may give a huge
-buffer and it'll take a long time in a single spin lock, which may
-eventually lead to a soft lockup.
-
-This patch simply adds a workaround, a cond_resched() call in the loop
-if applicable.  A better solution would be to move the event processor
-into a work, but let's put a duct-tape quickly at first.
-
-Reported-and-tested-by: Dae R. Jeong <threeearcat@gmail.com>
-Reported-by: syzbot+e4c8abb920efa77bace9@syzkaller.appspotmail.com
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
----
- sound/core/seq/seq_virmidi.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
-
-diff --git a/sound/core/seq/seq_virmidi.c b/sound/core/seq/seq_virmidi.c
-index 289ae6bb81d9..8ebbca554e99 100644
---- a/sound/core/seq/seq_virmidi.c
-+++ b/sound/core/seq/seq_virmidi.c
-@@ -163,6 +163,7 @@ static void snd_virmidi_output_trigger(struct snd_rawmidi_substream *substream,
- 	int count, res;
- 	unsigned char buf[32], *pbuf;
- 	unsigned long flags;
-+	bool check_resched = !in_atomic();
- 
- 	if (up) {
- 		vmidi->trigger = 1;
-@@ -200,6 +201,15 @@ static void snd_virmidi_output_trigger(struct snd_rawmidi_substream *substream,
- 					vmidi->event.type = SNDRV_SEQ_EVENT_NONE;
- 				}
- 			}
-+			if (!check_resched)
-+				continue;
-+			/* do temporary unlock & cond_resched() for avoiding
-+			 * CPU soft lockup, which may happen via a write from
-+			 * a huge rawmidi buffer
-+			 */
-+			spin_unlock_irqrestore(&substream->runtime->lock, flags);
-+			cond_resched();
-+			spin_lock_irqsave(&substream->runtime->lock, flags);
- 		}
- 	out:
- 		spin_unlock_irqrestore(&substream->runtime->lock, flags);
--- 
-2.18.0
-
+> Thanks,
+> 
+> James
+> 
+> > diff --git a/include/uapi/asm-generic/unistd.h b/include/uapi/asm-generic/unistd.h
+> > index 42990676a55e..c81f4a0df51f 100644
+> > --- a/include/uapi/asm-generic/unistd.h
+> > +++ b/include/uapi/asm-generic/unistd.h
+> > @@ -734,9 +734,11 @@ __SYSCALL(__NR_pkey_free,     sys_pkey_free)
+> >  __SYSCALL(__NR_statx,     sys_statx)
+> >  #define __NR_io_pgetevents 292
+> >  __SC_COMP(__NR_io_pgetevents, sys_io_pgetevents, compat_sys_io_pgetevents)
+> > +#define __NR_kexec_file_load 293
+> > +__SYSCALL(__NR_kexec_file_load,     sys_kexec_file_load)
+> >  
+> >  #undef __NR_syscalls
+> > -#define __NR_syscalls 293
+> > +#define __NR_syscalls 294
+> >  
+> >  /*
+> >   * 32 bit systems traditionally used different
+> > 
