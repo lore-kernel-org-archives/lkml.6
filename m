@@ -6,34 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F26F8C6778F
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 09:50:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 419A6C6778F
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 09:50:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B399820895
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 09:50:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B399820895
+	by mail.kernel.org (Postfix) with ESMTP id E967B20895
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 09:50:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E967B20895
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389129AbeG0LLc (ORCPT
+        id S2389143AbeG0LLf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 07:11:32 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:53160 "EHLO
+        Fri, 27 Jul 2018 07:11:35 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:53168 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729431AbeG0LLc (ORCPT
+        with ESMTP id S1729431AbeG0LLf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 07:11:32 -0400
+        Fri, 27 Jul 2018 07:11:35 -0400
 Received: from localhost (unknown [89.188.5.116])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 09362AF8;
-        Fri, 27 Jul 2018 09:50:25 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1D3E1BB6;
+        Fri, 27 Jul 2018 09:50:28 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Zheng Xiaowei <zhengxiaowei@ruijie.com.cn>,
-        Mathias Nyman <mathias.nyman@linux.intel.com>
-Subject: [PATCH 4.17 52/66] usb: xhci: Fix memory leak in xhci_endpoint_reset()
-Date:   Fri, 27 Jul 2018 11:45:45 +0200
-Message-Id: <20180727093814.897151441@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Felipe Balbi <felipe.balbi@linux.intel.com>
+Subject: [PATCH 4.17 53/66] usb: gadget: Fix OS descriptors support
+Date:   Fri, 27 Jul 2018 11:45:46 +0200
+Message-Id: <20180727093815.002097607@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180727093809.043856530@linuxfoundation.org>
 References: <20180727093809.043856530@linuxfoundation.org>
@@ -50,31 +51,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Zheng Xiaowei <zhengxiaowei@ruijie.com.cn>
+From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
 
-commit d89b7664f76047e7beca8f07e86f2ccfad085a28 upstream.
+commit 50b9773c13bffbef32060e67c4483ea7b2eca7b5 upstream.
 
-If td_list is not empty the cfg_cmd will not be freed,
-call xhci_free_command to free it.
+The current code is broken as it re-defines "req" inside the
+if block, then goto out of it. Thus the request that ends
+up being sent is not the one that was populated by the
+code in question.
 
-Signed-off-by: Zheng Xiaowei <zhengxiaowei@ruijie.com.cn>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Mathias Nyman <mathias.nyman@linux.intel.com>
+This fixes RNDIS driver autodetect by Windows 10 for me.
+
+The bug was introduced by Chris rework to remove the local
+queuing inside the if { } block of the redefined request.
+
+Fixes: 636ba13aec8a ("usb: gadget: composite: remove duplicated code in OS desc handling")
+Cc: <stable@vger.kernel.org> # v4.17
+Signed-off-by: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/host/xhci.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/usb/gadget/composite.c |    1 -
+ 1 file changed, 1 deletion(-)
 
---- a/drivers/usb/host/xhci.c
-+++ b/drivers/usb/host/xhci.c
-@@ -2981,6 +2981,7 @@ static void xhci_endpoint_reset(struct u
- 	if (!list_empty(&ep->ring->td_list)) {
- 		dev_err(&udev->dev, "EP not empty, refuse reset\n");
- 		spin_unlock_irqrestore(&xhci->lock, flags);
-+		xhci_free_command(xhci, cfg_cmd);
- 		goto cleanup;
- 	}
- 	xhci_queue_stop_endpoint(xhci, stop_cmd, udev->slot_id, ep_index, 0);
+--- a/drivers/usb/gadget/composite.c
++++ b/drivers/usb/gadget/composite.c
+@@ -1816,7 +1816,6 @@ unknown:
+ 		if (cdev->use_os_string && cdev->os_desc_config &&
+ 		    (ctrl->bRequestType & USB_TYPE_VENDOR) &&
+ 		    ctrl->bRequest == cdev->b_vendor_code) {
+-			struct usb_request		*req;
+ 			struct usb_configuration	*os_desc_cfg;
+ 			u8				*buf;
+ 			int				interface;
 
 
