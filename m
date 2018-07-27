@@ -2,81 +2,139 @@ Return-Path: <SRS0=OQFz=KL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 118E0C67790
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:02:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D2CFC6778F
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:02:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C598020895
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:02:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C598020895
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id D0E9E20895
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:02:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D0E9E20895
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389196AbeG0LXp (ORCPT
+        id S2389209AbeG0LXq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 07:23:45 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:10142 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1732452AbeG0LXo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 07:23:44 -0400
-Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 88D38147AAA93;
-        Fri, 27 Jul 2018 18:02:30 +0800 (CST)
-Received: from [127.0.0.1] (10.177.31.96) by DGGEMS410-HUB.china.huawei.com
- (10.3.19.210) with Microsoft SMTP Server id 14.3.382.0; Fri, 27 Jul 2018
- 18:02:30 +0800
-Subject: Re: [PATCH 03/10] atmel: hide unused procfs helpers
-To:     Kalle Valo <kvalo@codeaurora.org>
-References: <20180713064658.10340-1-yuehaibing@huawei.com>
- <ded55181-e1b0-99e9-ac68-2d93fb6168c0@huawei.com>
- <87va91vxnr.fsf@codeaurora.org>
-CC:     <simon@thekelleys.org.uk>, <linux-kernel@vger.kernel.org>,
-        <netdev@vger.kernel.org>, <linux-wireless@vger.kernel.org>,
-        <davem@davemloft.net>, <rdunlap@infradead.org>
-From:   YueHaibing <yuehaibing@huawei.com>
-Message-ID: <3684c95c-6df1-183e-8940-807dfb49e5bb@huawei.com>
-Date:   Fri, 27 Jul 2018 18:02:29 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.2.0
+        Fri, 27 Jul 2018 07:23:46 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:34402 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732983AbeG0LXq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Jul 2018 07:23:46 -0400
+Received: from localhost (unknown [89.188.5.116])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A4448BB6;
+        Fri, 27 Jul 2018 10:02:35 +0000 (UTC)
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+        Juha-Matti Tilli <juha-matti.tilli@iki.fi>,
+        Yuchung Cheng <ycheng@google.com>,
+        Soheil Hassas Yeganeh <soheil@google.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.14 28/48] tcp: free batches of packets in tcp_prune_ofo_queue()
+Date:   Fri, 27 Jul 2018 12:00:13 +0200
+Message-Id: <20180727095921.457100398@linuxfoundation.org>
+X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20180727095918.503549522@linuxfoundation.org>
+References: <20180727095918.503549522@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
-In-Reply-To: <87va91vxnr.fsf@codeaurora.org>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.177.31.96]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/7/27 17:24, Kalle Valo wrote:
-> (fixing top posting)
-> 
-> YueHaibing <yuehaibing@huawei.com> writes:
-> 
->> On 2018/7/13 14:46, YueHaibing wrote:
->>> When CONFIG_PROC_FS isn't set, gcc warning this:
->>>
->>> drivers/net/wireless/atmel/atmel.c:1402:12: warning: ‘atmel_proc_show’ defined but not used [-Wunused-function]
->>>  static int atmel_proc_show(struct seq_file *m, void *v)
->>>             ^
->>> fix this by adding #ifdef around it.
->>>
->>> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
->>
->> pls ignore this,my bad.
-> 
-> Why should I drop this? Does the patch have something wrong which I'm
-> missing?
+4.14-stable review patch.  If anyone has any objections, please let me know.
 
-No,the patch is ok,just because I find this issue has a fix patch from Randy.
+------------------
 
-> 
-> I'm asking because I prefer this over Randy's version:
-> 
-> https://patchwork.kernel.org/patch/10512913/
-> 
+From: Eric Dumazet <edumazet@google.com>
+
+[ Upstream commit 72cd43ba64fc172a443410ce01645895850844c8 ]
+
+Juha-Matti Tilli reported that malicious peers could inject tiny
+packets in out_of_order_queue, forcing very expensive calls
+to tcp_collapse_ofo_queue() and tcp_prune_ofo_queue() for
+every incoming packet. out_of_order_queue rb-tree can contain
+thousands of nodes, iterating over all of them is not nice.
+
+Before linux-4.9, we would have pruned all packets in ofo_queue
+in one go, every XXXX packets. XXXX depends on sk_rcvbuf and skbs
+truesize, but is about 7000 packets with tcp_rmem[2] default of 6 MB.
+
+Since we plan to increase tcp_rmem[2] in the future to cope with
+modern BDP, can not revert to the old behavior, without great pain.
+
+Strategy taken in this patch is to purge ~12.5 % of the queue capacity.
+
+Fixes: 36a6503fedda ("tcp: refine tcp_prune_ofo_queue() to not drop all packets")
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Reported-by: Juha-Matti Tilli <juha-matti.tilli@iki.fi>
+Acked-by: Yuchung Cheng <ycheng@google.com>
+Acked-by: Soheil Hassas Yeganeh <soheil@google.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ include/linux/skbuff.h |    2 ++
+ net/ipv4/tcp_input.c   |   15 +++++++++++----
+ 2 files changed, 13 insertions(+), 4 deletions(-)
+
+--- a/include/linux/skbuff.h
++++ b/include/linux/skbuff.h
+@@ -3167,6 +3167,8 @@ static inline int __skb_grow_rcsum(struc
+ 	return __skb_grow(skb, len);
+ }
+ 
++#define rb_to_skb(rb) rb_entry_safe(rb, struct sk_buff, rbnode)
++
+ #define skb_queue_walk(queue, skb) \
+ 		for (skb = (queue)->next;					\
+ 		     skb != (struct sk_buff *)(queue);				\
+--- a/net/ipv4/tcp_input.c
++++ b/net/ipv4/tcp_input.c
+@@ -4924,6 +4924,7 @@ new_range:
+  * 2) not add too big latencies if thousands of packets sit there.
+  *    (But if application shrinks SO_RCVBUF, we could still end up
+  *     freeing whole queue here)
++ * 3) Drop at least 12.5 % of sk_rcvbuf to avoid malicious attacks.
+  *
+  * Return true if queue has shrunk.
+  */
+@@ -4931,20 +4932,26 @@ static bool tcp_prune_ofo_queue(struct s
+ {
+ 	struct tcp_sock *tp = tcp_sk(sk);
+ 	struct rb_node *node, *prev;
++	int goal;
+ 
+ 	if (RB_EMPTY_ROOT(&tp->out_of_order_queue))
+ 		return false;
+ 
+ 	NET_INC_STATS(sock_net(sk), LINUX_MIB_OFOPRUNED);
++	goal = sk->sk_rcvbuf >> 3;
+ 	node = &tp->ooo_last_skb->rbnode;
+ 	do {
+ 		prev = rb_prev(node);
+ 		rb_erase(node, &tp->out_of_order_queue);
++		goal -= rb_to_skb(node)->truesize;
+ 		tcp_drop(sk, rb_entry(node, struct sk_buff, rbnode));
+-		sk_mem_reclaim(sk);
+-		if (atomic_read(&sk->sk_rmem_alloc) <= sk->sk_rcvbuf &&
+-		    !tcp_under_memory_pressure(sk))
+-			break;
++		if (!prev || goal <= 0) {
++			sk_mem_reclaim(sk);
++			if (atomic_read(&sk->sk_rmem_alloc) <= sk->sk_rcvbuf &&
++			    !tcp_under_memory_pressure(sk))
++				break;
++			goal = sk->sk_rcvbuf >> 3;
++		}
+ 		node = prev;
+ 	} while (node);
+ 	tp->ooo_last_skb = rb_entry(prev, struct sk_buff, rbnode);
+
 
