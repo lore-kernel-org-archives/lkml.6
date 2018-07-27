@@ -2,94 +2,138 @@ Return-Path: <SRS0=OQFz=KL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06B99C6778F
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 13:19:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25AF2C67790
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 13:22:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A05812064D
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 13:19:25 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="P4KgFOeH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A05812064D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id AB6792064D
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 13:22:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AB6792064D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388412AbeG0OlS (ORCPT
+        id S1732148AbeG0OoU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 10:41:18 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:35073 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730953AbeG0OlS (ORCPT
+        Fri, 27 Jul 2018 10:44:20 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:41420 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1730516AbeG0OoU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 10:41:18 -0400
-Received: by mail-lj1-f193.google.com with SMTP id p10-v6so4416819ljg.2
-        for <linux-kernel@vger.kernel.org>; Fri, 27 Jul 2018 06:19:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=s/nhDr4DwkbALX3c2VZV0SuNSzciSZ6CaI3u8/fyaNE=;
-        b=P4KgFOeHOwR0El6MQPFVyUQ6clrrVIyHxVwN7yFZ69zH2LlF05TUHbTjQEfsIt+RfW
-         LbbHz5xZNTN8vCr6+AyIrbx8DyUwtcBNwXFOT0w4RjL6NAEsNCTXCOD/31UcQFxk/hiq
-         xtQLfw6w9hXnleA8aZIPE3u/9L4QSUuX2DJjQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=s/nhDr4DwkbALX3c2VZV0SuNSzciSZ6CaI3u8/fyaNE=;
-        b=SOoS1s06RfXxuS8wlav3bDMZrGJp5pR5BhF9jncn3CofAo9ateLImat/VpiuSEQgbg
-         waE8wIdJTnOq76TWn1/XTXTbfT5kHLgFNrhg23dYvfl7vCnfebQ/dpxEQb1xfCYFgMvA
-         Ijum0foBNmqo50LvmirE/aHRP8R70U7NB1Y7/U+pM/HSjyA3uT15urQHFZCmRcWLrZyd
-         zADOuxmPLn7ofQrfBX2ojIRtO/8nLF9YoDKSz3o8keOemJ7SpD7cUKl3wpnyoVEfxa2h
-         TpOXmusoz82gMCVslOBeH0h7u7LEgacJCbfJl4rjvyNsslLT/M4BTnMASMDg9rFuZslX
-         YckA==
-X-Gm-Message-State: AOUpUlEip9U+MYc/PDfiGpLeEUfBruNNXmgH/WEImczE94pFOBqWnIbC
-        h9Mr0Dkfn0dRAf3Sdx1p9b8pMA==
-X-Google-Smtp-Source: AAOMgpfqH911XOH9uRgxN2aVmisKoSo0Kx3sC2m6FBXw2mn1PjC1JyFHm0TE0KkS6asimsJB5EseLg==
-X-Received: by 2002:a2e:6d0a:: with SMTP id i10-v6mr5147689ljc.145.1532697561845;
-        Fri, 27 Jul 2018 06:19:21 -0700 (PDT)
-Received: from localhost (c-2c3d70d5.07-21-73746f28.bbcust.telenor.se. [213.112.61.44])
-        by smtp.gmail.com with ESMTPSA id k10-v6sm677450ljh.5.2018.07.27.06.19.21
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 27 Jul 2018 06:19:21 -0700 (PDT)
-From:   Anders Roxell <anders.roxell@linaro.org>
-To:     santosh.shilimkar@oracle.com, davem@davemloft.net,
-        eric.dumazet@gmail.com
-Cc:     netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
-        rds-devel@oss.oracle.com, linux-kernel@vger.kernel.org,
-        Anders Roxell <anders.roxell@linaro.org>
-Subject: [PATCH] net/rds/Kconfig: Correct the RDS depends
-Date:   Fri, 27 Jul 2018 15:18:49 +0200
-Message-Id: <20180727131849.18488-1-anders.roxell@linaro.org>
-X-Mailer: git-send-email 2.18.0
+        Fri, 27 Jul 2018 10:44:20 -0400
+Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w6RDJWh8099322
+        for <linux-kernel@vger.kernel.org>; Fri, 27 Jul 2018 09:22:24 -0400
+Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2kg2j5mgbu-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Fri, 27 Jul 2018 09:22:24 -0400
+Received: from localhost
+        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <ldufour@linux.vnet.ibm.com>;
+        Fri, 27 Jul 2018 14:22:22 +0100
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
+        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 27 Jul 2018 14:22:20 +0100
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w6RDMJfV39059470
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 27 Jul 2018 13:22:19 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id EB1C2A404D;
+        Fri, 27 Jul 2018 16:22:32 +0100 (BST)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 9D441A4040;
+        Fri, 27 Jul 2018 16:22:32 +0100 (BST)
+Received: from nimbus.lab.toulouse-stg.fr.ibm.com (unknown [9.145.62.135])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Fri, 27 Jul 2018 16:22:32 +0100 (BST)
+From:   Laurent Dufour <ldufour@linux.vnet.ibm.com>
+To:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 0/3] powerpc/pseries: use H_BLOCK_REMOVE
+Date:   Fri, 27 Jul 2018 15:22:16 +0200
+X-Mailer: git-send-email 2.7.4
+X-TM-AS-GCONF: 00
+x-cbid: 18072713-0012-0000-0000-0000028FAD1D
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18072713-0013-0000-0000-000020C1A149
+Message-Id: <1532697739-4878-1-git-send-email-ldufour@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-27_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=359 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1806210000 definitions=main-1807270137
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove prefix 'CONFIG_' from CONFIG_IPV6
+On very large system we could see soft lockup fired when a process is exiting
 
-Fixes: ba7d7e2677c0 ("net/rds/Kconfig: RDS should depend on IPV6")
-Reported-by: Eric Dumazet <eric.dumazet@gmail.com>
-Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
----
- net/rds/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+watchdog: BUG: soft lockup - CPU#851 stuck for 21s! [forkoff:215523]
+Modules linked in: pseries_rng rng_core xfs raid10 vmx_crypto btrfs libcrc32c xor zstd_decompress zstd_compress xxhash lzo_compress raid6_pq crc32c_vpmsum lpfc crc_t10dif crct10dif_generic crct10dif_common dm_multipath scsi_dh_rdac scsi_dh_alua autofs4
+CPU: 851 PID: 215523 Comm: forkoff Not tainted 4.17.0 #1
+NIP:  c0000000000b995c LR: c0000000000b8f64 CTR: 000000000000aa18
+REGS: c00006b0645b7610 TRAP: 0901   Not tainted  (4.17.0)
+MSR:  800000010280b033 <SF,VEC,VSX,EE,FP,ME,IR,DR,RI,LE,TM[E]>  CR: 22042082  XER: 00000000
+CFAR: 00000000006cf8f0 SOFTE: 0 
+GPR00: 0010000000000000 c00006b0645b7890 c000000000f99200 0000000000000000 
+GPR04: 8e000001a5a4de58 400249cf1bfd5480 8e000001a5a4de50 400249cf1bfd5480 
+GPR08: 8e000001a5a4de48 400249cf1bfd5480 8e000001a5a4de40 400249cf1bfd5480 
+GPR12: ffffffffffffffff c00000001e690800 
+NIP [c0000000000b995c] plpar_hcall9+0x44/0x7c
+LR [c0000000000b8f64] pSeries_lpar_flush_hash_range+0x324/0x3d0
+Call Trace:
+[c00006b0645b7890] [8e000001a5a4dd20] 0x8e000001a5a4dd20 (unreliable)
+[c00006b0645b7a00] [c00000000006d5b0] flush_hash_range+0x60/0x110
+[c00006b0645b7a50] [c000000000072a2c] __flush_tlb_pending+0x4c/0xd0
+[c00006b0645b7a80] [c0000000002eaf44] unmap_page_range+0x984/0xbd0
+[c00006b0645b7bc0] [c0000000002eb594] unmap_vmas+0x84/0x100
+[c00006b0645b7c10] [c0000000002f8afc] exit_mmap+0xac/0x1f0
+[c00006b0645b7cd0] [c0000000000f2638] mmput+0x98/0x1b0
+[c00006b0645b7d00] [c0000000000fc9d0] do_exit+0x330/0xc00
+[c00006b0645b7dc0] [c0000000000fd384] do_group_exit+0x64/0x100
+[c00006b0645b7e00] [c0000000000fd44c] sys_exit_group+0x2c/0x30
+[c00006b0645b7e30] [c00000000000b960] system_call+0x58/0x6c
+Instruction dump:
+60000000 f8810028 7ca42b78 7cc53378 7ce63b78 7d074378 7d284b78 7d495378 
+e9410060 e9610068 e9810070 44000022 <7d806378> e9810028 f88c0000 f8ac0008
 
-diff --git a/net/rds/Kconfig b/net/rds/Kconfig
-index 607128f10bcd..4c7f2595d919 100644
---- a/net/rds/Kconfig
-+++ b/net/rds/Kconfig
-@@ -1,7 +1,7 @@
- 
- config RDS
- 	tristate "The RDS Protocol"
--	depends on INET && CONFIG_IPV6
-+	depends on INET && IPV6
- 	---help---
- 	  The RDS (Reliable Datagram Sockets) protocol provides reliable,
- 	  sequenced delivery of datagrams over Infiniband or TCP.
+This happens when removing the PTE by calling the hypervisor using the
+H_BULK_REMOVE call. This call is processing up to 4 PTEs but is doing a
+tlbie for each PTE it is processing. This could lead to long time spent in
+the hypervisor (sometimes up to 4s) and soft lockup being raised because
+the scheduler is not called in zap_pte_range().
+
+Since the Power7's time, the hypervisor is providing a new hcall
+H_BLOCK_REMOVE allowing processing up to 8 PTEs with one call to
+tlbie. By limiting the amount of tlbie generated, this reduces the time
+spent invalidating the PTEs.
+
+This hcall requires that the pages are "all within the same naturally
+aligned 8 page virtual address block".
+
+With this patch series applied, I couldn't see any soft lockup raised on
+the victim LPAR I was running the test one.
+
+This series is covering both normal pages and huge pages.
+
+Laurent Dufour (3):
+  powerpc/pseries/mm: Introducing FW_FEATURE_BLOCK_REMOVE
+  powerpc/pseries/mm: factorize PTE slot computation
+  powerpc/pseries/mm: call H_BLOCK_REMOVE
+
+ arch/powerpc/include/asm/firmware.h       |   3 +-
+ arch/powerpc/include/asm/hvcall.h         |   1 +
+ arch/powerpc/platforms/pseries/firmware.c |   1 +
+ arch/powerpc/platforms/pseries/lpar.c     | 250 ++++++++++++++++++++++++++----
+ 4 files changed, 228 insertions(+), 27 deletions(-)
+
 -- 
-2.18.0
+2.7.4
 
