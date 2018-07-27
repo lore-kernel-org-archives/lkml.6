@@ -2,105 +2,120 @@ Return-Path: <SRS0=OQFz=KL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0206BC6778F
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 17:00:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DBD6C6778F
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 17:00:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B86B9208B0
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 17:00:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B86B9208B0
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 4BFEF208B0
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 17:00:53 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="msxhGLr7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4BFEF208B0
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388899AbeG0SX1 (ORCPT
+        id S2388938AbeG0SXg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 14:23:27 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:40310 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2388497AbeG0SX0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 14:23:26 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 8C69740216E7;
-        Fri, 27 Jul 2018 17:00:40 +0000 (UTC)
-Received: from [10.36.116.204] (ovpn-116-204.ams2.redhat.com [10.36.116.204])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 5AA7A1C5B9;
-        Fri, 27 Jul 2018 17:00:39 +0000 (UTC)
-Subject: Re: [PATCH RFC] x86/kvm/lapic: always disable MMIO interface in
- x2APIC mode
-To:     Jim Mattson <jmattson@google.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>
-Cc:     kvm list <kvm@vger.kernel.org>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <20180727144448.9606-1-vkuznets@redhat.com>
- <CALMp9eSaiw7wMMhzKZQpM141h6zEz=shu5P++BerbQBTVyFdYA@mail.gmail.com>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <e3b7080f-b788-048b-6f3a-e1a90e4206b7@redhat.com>
-Date:   Fri, 27 Jul 2018 19:00:38 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Fri, 27 Jul 2018 14:23:36 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:39436 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388497AbeG0SXg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Jul 2018 14:23:36 -0400
+Received: by mail-wr1-f68.google.com with SMTP id h10-v6so5708569wre.6
+        for <linux-kernel@vger.kernel.org>; Fri, 27 Jul 2018 10:00:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=CmLE2WtXNG5TArMcSuwLpLYJ/d6nA3BzySSEwHDNa7s=;
+        b=msxhGLr7+PJ95HoWHLHBwuGQLG9qkVpGqKwRHkFI6WKiy5/G4pCQ9UaA4Ge7U6tl49
+         m3W70kL2kGrMO1ZGvSvhkOyQcLDWxxja8XmYo5zSRQdIpHtjiKGraE2WGlqmUwDxvqWT
+         k4UkGMmkAv3/PGr964sDNu5ytvVzP5KSYvoLe0GT9BLr5tZZ8O/7MvWnfP5gALof9wzV
+         p2CP9mh3cgVeVkFlkQ0wFzKOGbd1wmFH+S62jvFfFruKR/s/VUi38ir+vQZE7rYUjc6Q
+         RUtiW6rKZoBgVmac/KnNEGHX0ZUSU+eQeQj7mPPTq/Cc0HLLtWkOMlibzAz93XAb/Sr6
+         8vPQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=CmLE2WtXNG5TArMcSuwLpLYJ/d6nA3BzySSEwHDNa7s=;
+        b=GknL/fuvjOVoDp/Zmfph1VQEBXka2x/X15E7EF8r+jPfTeEGJdx+ibEcC6Frf9X6Ec
+         rQFoyNKLiIJDt5ETdnGhzn5fsuU1oFc7gu0rFkZJei0uEuP1usvgQM1UYW2VZk/x9cvv
+         9MoGpPMrR/+qCjIRU5/N9G9oLQEH60+LkbEBBg3WgBlC3I6Z6rU4qzWYeO0KjTII0A1z
+         AdCEU0myaIj6s6BAUuzYA1h+BTcjC1mJEs9nm20butst8LiREbBoq2oiWpAsFDuPRa+B
+         C2nTRRQPIf7BHYA/AHToIpXZRh1AhpSec5AnsgNHslU+1FvqeJ/W6o53XPDjp2hKvWcR
+         NQBA==
+X-Gm-Message-State: AOUpUlHysiKnyOg9tLNFfdrzEH5/UK46Axoev0+vhCN5P8OG6s2Cfo0Y
+        tdXuyxc0WrieUJFaKtivikrD0nwUd6c63sxNtn8RKQ==
+X-Google-Smtp-Source: AAOMgpeJrpwftpmsxlasTJtoWofZt3WyF8CBO2CP25G6UJDuembY0TfIYftAR6joSYf6ArMKsIJQiB+sJcleLzTKL2w=
+X-Received: by 2002:a5d:5043:: with SMTP id h3-v6mr5346867wrt.186.1532710849077;
+ Fri, 27 Jul 2018 10:00:49 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <CALMp9eSaiw7wMMhzKZQpM141h6zEz=shu5P++BerbQBTVyFdYA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Fri, 27 Jul 2018 17:00:40 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Fri, 27 Jul 2018 17:00:40 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'pbonzini@redhat.com' RCPT:''
+References: <20180727030737.231268-1-toddpoynor@gmail.com> <20180727030737.231268-7-toddpoynor@gmail.com>
+ <20180727150731.GA3713@kroah.com>
+In-Reply-To: <20180727150731.GA3713@kroah.com>
+From:   Todd Poynor <toddpoynor@google.com>
+Date:   Fri, 27 Jul 2018 10:00:37 -0700
+Message-ID: <CAAW3YpY2rD6adA8zcHxR6Ty+nkK=Hyj-DkntkdsbFfWg71PzHQ@mail.gmail.com>
+Subject: Re: [PATCH 06/10] staging: gasket: sysfs: convert to standard logging
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     "toddpoynor@gmail.com" <toddpoynor@gmail.com>,
+        Rob Springer <rspringer@google.com>,
+        John Joseph <jnjoseph@google.com>, benchan@chromium.org,
+        devel@driverdev.osuosl.org, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 27/07/2018 18:48, Jim Mattson wrote:
-> On a physical machine, I would expect the default local APIC page to
-> fall in the PCI hole, so it would be correct to sink writes and to
-> return all ones for reads. Does qemu implement a PCI hole, and does
-> this address fall into it?
+On Fri, Jul 27, 2018 at 8:07 AM Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> On Thu, Jul 26, 2018 at 08:07:33PM -0700, Todd Poynor wrote:
+> > From: Todd Poynor <toddpoynor@google.com>
+> >
+> > Drop gasket logging calls in favor of standard logging.
+> >
+> > Signed-off-by: Todd Poynor <toddpoynor@google.com>
+> > ---
+> >  drivers/staging/gasket/gasket_sysfs.c | 73 +++++++++++++--------------
+> >  1 file changed, 35 insertions(+), 38 deletions(-)
+> >
+> > diff --git a/drivers/staging/gasket/gasket_sysfs.c b/drivers/staging/gasket/gasket_sysfs.c
+> > index 1c5f7502e0d5e..418b81797e638 100644
+> > --- a/drivers/staging/gasket/gasket_sysfs.c
+> > +++ b/drivers/staging/gasket/gasket_sysfs.c
+> > @@ -3,7 +3,9 @@
+> >  #include "gasket_sysfs.h"
+> >
+> >  #include "gasket_core.h"
+> > -#include "gasket_logging.h"
+> > +
+> > +#include <linux/device.h>
+> > +#include <linux/printk.h>
+> >
+> >  /*
+> >   * Pair of kernel device and user-specified pointer. Used in lookups in sysfs
+> > @@ -66,7 +68,7 @@ static struct gasket_sysfs_mapping *get_mapping(struct device *device)
+> >       int i;
+> >
+> >       if (!device) {
+> > -             gasket_nodev_error("Received NULL device!");
+> > +             pr_debug("%s: Received NULL device\n", __func__);
+>
+> I know you are just trying to clean up the logging mess, but this type
+> of check isn't even needed, as it's impossible.
 
-It does implement a PCI hole, but when using the kernel LAPIC it expects
-that only devices write to that range; therefore that address doesn't
-fall into the PCI hole, and instead it generates an MSIs.
+Ah, yeah, I noticed it when I was converting, I'll put this on my list
+to clean up in next round, thanks.
 
-Paolo
+>
+> thanks,
+>
+> greg k-h
