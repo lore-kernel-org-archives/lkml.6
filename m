@@ -2,113 +2,92 @@ Return-Path: <SRS0=OQFz=KL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0D2AC6778F
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 09:19:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE341C67790
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 09:19:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 71F5C20895
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 09:19:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 71F5C20895
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id A436920894
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 09:19:49 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="gjx0bxv1";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Pc6IeZyi"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A436920894
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730746AbeG0Kkm (ORCPT
+        id S1730824AbeG0Kkp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 06:40:42 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:47398 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730340AbeG0Kkl (ORCPT
+        Fri, 27 Jul 2018 06:40:45 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:43204 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730340AbeG0Kko (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 06:40:41 -0400
-Received: from localhost (unknown [89.188.5.116])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id EBA9FAF8;
+        Fri, 27 Jul 2018 06:40:44 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 736CA60B11; Fri, 27 Jul 2018 09:19:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1532683185;
+        bh=mp4PagvudNu/mtbidVod/daxbA6QNjke9Ts6jGrO/mw=;
+        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
+        b=gjx0bxv1FvBhwVgE1hxQtY/1Z1zqEA/J19ZVOP7qJYYDWAoz+cos+RPHoZaNBg3l3
+         Crl9wusUR0cuM+oWXGowxUdnOqG/V1EKwXpvbqzxXztpPU971GCFb0TwMXhHl3BRLz
+         zcgZPrwllVbtvdBWyENcL2Jvcz33H2Mn4XR5xp7I=
+Received: from x230.qca.qualcomm.com (88-114-240-52.elisa-laajakaista.fi [88.114.240.52])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: kvalo@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id F236C60500;
         Fri, 27 Jul 2018 09:19:41 +0000 (UTC)
-Date:   Fri, 27 Jul 2018 11:19:39 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     "# 3.4.x" <stable@vger.kernel.org>, Michal Marek <mmarek@suse.com>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] [stable 4.14] turn off -Wattribute-alias
-Message-ID: <20180727091939.GA12736@kroah.com>
-References: <20180726081358.3829157-1-arnd@arndb.de>
- <20180726092231.GA6916@kroah.com>
- <CAK8P3a3g7VSu3W0DiMcUdLB0b1fmUaHJxEyC30K8EfP5a9T1ig@mail.gmail.com>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1532683184;
+        bh=mp4PagvudNu/mtbidVod/daxbA6QNjke9Ts6jGrO/mw=;
+        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
+        b=Pc6IeZyid5pSVFCAjLJqNEjX0aY25VfymbnXfJHq2KLD7PcwkM7NDqa4Wm0CGDlcp
+         cHU05AupCMGvWMjLCqSGgH51Ujh7EhnWCsvoppxxrP2MReGgmxAPgA1FgSFziUhw8f
+         4aZHsnlulwdCCsE22pwu0W3YswziCP0o+L0QoKH0=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org F236C60500
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
+From:   Kalle Valo <kvalo@codeaurora.org>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Dominique Martinet <asmadeus@codewreck.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Joe Perches <joe@perches.com>, linux-wireless@vger.kernel.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 11/18] wireless/ti: change strncpy+truncation to strlcpy
+References: <1531444483-17338-1-git-send-email-asmadeus@codewreck.org>
+        <1531445149-19607-1-git-send-email-asmadeus@codewreck.org>
+        <20180713073810.GA31984@kroah.com>
+Date:   Fri, 27 Jul 2018 12:19:38 +0300
+In-Reply-To: <20180713073810.GA31984@kroah.com> (Greg Kroah-Hartman's message
+        of "Fri, 13 Jul 2018 09:38:10 +0200")
+Message-ID: <87zhydvxw5.fsf@codeaurora.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAK8P3a3g7VSu3W0DiMcUdLB0b1fmUaHJxEyC30K8EfP5a9T1ig@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 26, 2018 at 12:02:42PM +0200, Arnd Bergmann wrote:
-> On Thu, Jul 26, 2018 at 11:22 AM, Greg KH <gregkh@linuxfoundation.org> wrote:
-> > On Thu, Jul 26, 2018 at 10:13:22AM +0200, Arnd Bergmann wrote:
-> >> Starting with gcc-8.1, we get a warning about all system call definitions,
-> >> which use an alias between functions with incompatible prototypes, e.g.:
-> >>
-> >> In file included from ../mm/process_vm_access.c:19:
-> >> ../include/linux/syscalls.h:211:18: warning: 'sys_process_vm_readv' alias between functions of incompatible types 'long int(pid_t,  const struct iovec *, long unsigned int,  const struct iovec *, long unsigned int,  long unsigned int)' {aka 'long int(int,  const struct iovec *, long unsigned int,  const struct iovec *, long unsigned int,  long unsigned int)'} and 'long int(long int,  long int,  long int,  long int,  long int,  long int)' [-Wattribute-alias]
-> >>   asmlinkage long sys##name(__MAP(x,__SC_DECL,__VA_ARGS__)) \
-> >>                   ^~~
-> >> ../include/linux/syscalls.h:207:2: note: in expansion of macro '__SYSCALL_DEFINEx'
-> >>   __SYSCALL_DEFINEx(x, sname, __VA_ARGS__)
-> >>   ^~~~~~~~~~~~~~~~~
-> >> ../include/linux/syscalls.h:201:36: note: in expansion of macro 'SYSCALL_DEFINEx'
-> >>  #define SYSCALL_DEFINE6(name, ...) SYSCALL_DEFINEx(6, _##name, __VA_ARGS__)
-> >>                                     ^~~~~~~~~~~~~~~
-> >> ../mm/process_vm_access.c:300:1: note: in expansion of macro 'SYSCALL_DEFINE6'
-> >>  SYSCALL_DEFINE6(process_vm_readv, pid_t, pid, const struct iovec __user *, lvec,
-> >>  ^~~~~~~~~~~~~~~
-> >> ../include/linux/syscalls.h:215:18: note: aliased declaration here
-> >>   asmlinkage long SyS##name(__MAP(x,__SC_LONG,__VA_ARGS__)) \
-> >>                   ^~~
-> >> ../include/linux/syscalls.h:207:2: note: in expansion of macro '__SYSCALL_DEFINEx'
-> >>   __SYSCALL_DEFINEx(x, sname, __VA_ARGS__)
-> >>   ^~~~~~~~~~~~~~~~~
-> >> ../include/linux/syscalls.h:201:36: note: in expansion of macro 'SYSCALL_DEFINEx'
-> >>  #define SYSCALL_DEFINE6(name, ...) SYSCALL_DEFINEx(6, _##name, __VA_ARGS__)
-> >>                                     ^~~~~~~~~~~~~~~
-> >> ../mm/process_vm_access.c:300:1: note: in expansion of macro 'SYSCALL_DEFINE6'
-> >>  SYSCALL_DEFINE6(process_vm_readv, pid_t, pid, const struct iovec __user *, lvec,
-> >>
-> >> This is really noisy and does not indicate a real problem. In the latest
-> >> mainline kernel, this was addressed by commit bee20031772a ("disable
-> >> -Wattribute-alias warning for SYSCALL_DEFINEx()"), which seems too invasive
-> >> to backport.
-> >
-> > Too invasive?
-> >
-> > Here's the diffstat:
-> >          include/linux/compat.h   |    8 +++++++-
-> >          include/linux/syscalls.h |    4 ++++
-> >          2 files changed, 11 insertions(+), 1 deletion(-)
-> >
-> > That seems almost trivial to backport.  Did you try it and it caused
-> > other problems?
-> >
-> > Where ever possible, I always want to use the upstream commits.
-> 
-> I forward ported that patch a few times across kernels when that macro
-> changed in subtle ways. This was particularly tricky as some using the
-> new macro inside of another macro sometimes has different effects
-> based on seemingly unrelated changes: in particular the addition of
-> __MAP() in COMPAT_SYSCALL_DEFINEx that I had to do to work
-> around gcc pr83256 can easily break.
-> 
-> It also depends on commit 8793bb7f4a9d ("kbuild: add macro for
-> controlling warnings to linux/compiler.h") before it, which is not long
-> but does add new infrastructure.
+Greg Kroah-Hartman <gregkh@linuxfoundation.org> writes:
 
-Ah, yeah, that's a mess.  Ok, I'll go queue these up, thanks.  Maybe I
-can finally move to gcc-8 now :)
+> On Fri, Jul 13, 2018 at 03:25:49AM +0200, Dominique Martinet wrote:
+>> Generated by scripts/coccinelle/misc/strncpy_truncation.cocci
+>> 
+>> Signed-off-by: Dominique Martinet <asmadeus@codewreck.org>
+>
+> I don't know about other maintainers, but I know I wouldn't take such a
+> horrid changelog description as this :)
 
-thanks,
+I agree and I'll drop this. If this is still needed please resend with a
+better commit log.
 
-greg k-h
+-- 
+Kalle Valo
