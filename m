@@ -6,36 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FE9CC67790
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:12:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17775C67790
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:12:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F179A2089F
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:12:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F179A2089F
+	by mail.kernel.org (Postfix) with ESMTP id C8B632089F
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:12:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C8B632089F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389515AbeG0LdY (ORCPT
+        id S2389522AbeG0Ld1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 07:33:24 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:36978 "EHLO
+        Fri, 27 Jul 2018 07:33:27 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:36988 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729547AbeG0LdW (ORCPT
+        with ESMTP id S1729547AbeG0Ld0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 07:33:22 -0400
+        Fri, 27 Jul 2018 07:33:26 -0400
 Received: from localhost (unknown [89.188.5.116])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id AC56ACB5;
-        Fri, 27 Jul 2018 10:12:09 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 32C05CB5;
+        Fri, 27 Jul 2018 10:12:13 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Jack Morgenstein <jackm@dev.mellanox.co.il>,
-        Tariq Toukan <tariqt@mellanox.com>,
+        stable@vger.kernel.org, Roopa Prabhu <roopa@cumulusnetworks.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.4 03/23] net/mlx4_core: Save the qpn from the input modifier in RST2INIT wrapper
-Date:   Fri, 27 Jul 2018 12:09:04 +0200
-Message-Id: <20180727100845.315516288@linuxfoundation.org>
+Subject: [PATCH 4.4 04/23] rtnetlink: add rtnl_link_state check in rtnl_configure_link
+Date:   Fri, 27 Jul 2018 12:09:05 +0200
+Message-Id: <20180727100845.349736340@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180727100845.054377089@linuxfoundation.org>
 References: <20180727100845.054377089@linuxfoundation.org>
@@ -52,40 +50,65 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jack Morgenstein <jackm@dev.mellanox.co.il>
+From: Roopa Prabhu <roopa@cumulusnetworks.com>
 
-[ Upstream commit 958c696f5a7274d9447a458ad7aa70719b29a50a ]
+[ Upstream commit 5025f7f7d506fba9b39e7fe8ca10f6f34cb9bc2d ]
 
-Function mlx4_RST2INIT_QP_wrapper saved the qp number passed in the qp
-context, rather than the one passed in the input modifier.
+rtnl_configure_link sets dev->rtnl_link_state to
+RTNL_LINK_INITIALIZED and unconditionally calls
+__dev_notify_flags to notify user-space of dev flags.
 
-However, the qp number in the qp context is not defined as a
-required parameter by the FW. Therefore, drivers may choose to not
-specify the qp number in the qp context for the reset-to-init transition.
+current call sequence for rtnl_configure_link
+rtnetlink_newlink
+    rtnl_link_ops->newlink
+    rtnl_configure_link (unconditionally notifies userspace of
+                         default and new dev flags)
 
-Thus, we must save the qp number passed in the command input modifier --
-which is always present. (This saved qp number is used as the input
-modifier for command 2RST_QP when a slave's qp's are destroyed).
+If a newlink handler wants to call rtnl_configure_link
+early, we will end up with duplicate notifications to
+user-space.
 
-Fixes: c82e9aa0a8bc ("mlx4_core: resource tracking for HCA resources used by guests")
-Signed-off-by: Jack Morgenstein <jackm@dev.mellanox.co.il>
-Signed-off-by: Tariq Toukan <tariqt@mellanox.com>
+This patch fixes rtnl_configure_link to check rtnl_link_state
+and call __dev_notify_flags with gchanges = 0 if already
+RTNL_LINK_INITIALIZED.
+
+Later in the series, this patch will help the following sequence
+where a driver implementing newlink can call rtnl_configure_link
+to initialize the link early.
+
+makes the following call sequence work:
+rtnetlink_newlink
+    rtnl_link_ops->newlink (vxlan) -> rtnl_configure_link (initializes
+                                                link and notifies
+                                                user-space of default
+                                                dev flags)
+    rtnl_configure_link (updates dev flags if requested by user ifm
+                         and notifies user-space of new dev flags)
+
+Signed-off-by: Roopa Prabhu <roopa@cumulusnetworks.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/mellanox/mlx4/resource_tracker.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/core/rtnetlink.c |    9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
---- a/drivers/net/ethernet/mellanox/mlx4/resource_tracker.c
-+++ b/drivers/net/ethernet/mellanox/mlx4/resource_tracker.c
-@@ -2891,7 +2891,7 @@ int mlx4_RST2INIT_QP_wrapper(struct mlx4
- 	u32 srqn = qp_get_srqn(qpc) & 0xffffff;
- 	int use_srq = (qp_get_srqn(qpc) >> 24) & 1;
- 	struct res_srq *srq;
--	int local_qpn = be32_to_cpu(qpc->local_qpn) & 0xffffff;
-+	int local_qpn = vhcr->in_modifier & 0xffffff;
+--- a/net/core/rtnetlink.c
++++ b/net/core/rtnetlink.c
+@@ -2087,9 +2087,12 @@ int rtnl_configure_link(struct net_devic
+ 			return err;
+ 	}
  
- 	err = adjust_qp_sched_queue(dev, slave, qpc, inbox);
- 	if (err)
+-	dev->rtnl_link_state = RTNL_LINK_INITIALIZED;
+-
+-	__dev_notify_flags(dev, old_flags, ~0U);
++	if (dev->rtnl_link_state == RTNL_LINK_INITIALIZED) {
++		__dev_notify_flags(dev, old_flags, 0U);
++	} else {
++		dev->rtnl_link_state = RTNL_LINK_INITIALIZED;
++		__dev_notify_flags(dev, old_flags, ~0U);
++	}
+ 	return 0;
+ }
+ EXPORT_SYMBOL(rtnl_configure_link);
 
 
