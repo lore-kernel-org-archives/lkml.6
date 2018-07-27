@@ -2,140 +2,197 @@ Return-Path: <SRS0=OQFz=KL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EEB0C67790
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 17:59:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE016C67790
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 18:01:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C25E820673
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 17:59:28 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=netronome-com.20150623.gappssmtp.com header.i=@netronome-com.20150623.gappssmtp.com header.b="k4hXs9Wl"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C25E820673
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=netronome.com
+	by mail.kernel.org (Postfix) with ESMTP id 69C4220673
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 18:01:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 69C4220673
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=iogearbox.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389149AbeG0TWZ (ORCPT
+        id S2389189AbeG0TYL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 15:22:25 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:39040 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389067AbeG0TWZ (ORCPT
+        Fri, 27 Jul 2018 15:24:11 -0400
+Received: from www62.your-server.de ([213.133.104.62]:57809 "EHLO
+        www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730636AbeG0TYL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 15:22:25 -0400
-Received: by mail-pg1-f194.google.com with SMTP id a11-v6so3657298pgw.6
-        for <linux-kernel@vger.kernel.org>; Fri, 27 Jul 2018 10:59:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=netronome-com.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:in-reply-to:references
-         :organization:mime-version:content-transfer-encoding;
-        bh=ca7VtAOr5CbyNXYw+EYnGz1kTQzO9N05tUUdLE7DFCk=;
-        b=k4hXs9WlXdONJpuVYpqEB8Z2x1EHYmErOjR3b/pYJrWjbgscG7dRaS1PsrGvqTyP7n
-         /+hwewD30QQvyhcYGMra0hdRdxgD9juAHGk9svJktGE44+Xw13TNhlQ8KNPWeaUEsLbc
-         5trjbpbwU7q+WZeatgeejahgZufaHX0+Gr3dSxsuRR44To8UPeyv8K6vi34XJYPRo6vy
-         zBTdHsvDD0jVKbAX5Ye29wO3gFIt9y/sop0XyY+Yf3NCn6WIHMPX+dwUTJwJQJyy1Ygq
-         /jj76zIQ3E3WEQhLWUUD3yjwuKQGDap+1FO8OL7bXArxZiNAMJxp9sZM+an/1X8WjL0Z
-         Uhmw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
-         :references:organization:mime-version:content-transfer-encoding;
-        bh=ca7VtAOr5CbyNXYw+EYnGz1kTQzO9N05tUUdLE7DFCk=;
-        b=kTNcTu/y8bseHk1FrD6/zyFwERiI7bwoFIR0dW0Tzw+hULpk8eEjY+mg/uv9Atcjf6
-         GqcKykMht14jdMwN7/q9lqODOUdZMXJ4Flqb2nVAK6f+JYJCfv47kYCBj1weTQnGhaLn
-         EDvlCYbNRNYHOJNJLK5AAzEBXt7aJH9g1ifV/yO1JqQMhwFMgbuCG0V1B8XvPAGZjtXM
-         nJWP6YWuBmM2PEfUi/AQ8mHqH8YqAFDwPE5D0UCrtAMVlEcC3rjL5lvOTdUZNy9wvBPm
-         Evq0PLfQCSE3VZlifN7mxacrCpiZhA1Ff1Kz4tYWXXKpRhWM58et99nCc+qdqkZFOBlh
-         VtTw==
-X-Gm-Message-State: AOUpUlEDi68mqeC2PLQ1x2PMaJyRmBxt11ys//GrKizBChKjo/DeC8hQ
-        vNSSUE9rNL1Md/P8sLX8DaWw4g==
-X-Google-Smtp-Source: AAOMgpebW93greJ3u7klPY8etcrCpMqO8OOEkvBF69E6rGF/HHTRWsoVjL4fxPKY9pbkRaIoaHCPNg==
-X-Received: by 2002:a62:3d41:: with SMTP id k62-v6mr7649586pfa.35.1532714365982;
-        Fri, 27 Jul 2018 10:59:25 -0700 (PDT)
-Received: from cakuba.netronome.com (c-73-231-89-118.hsd1.ca.comcast.net. [73.231.89.118])
-        by smtp.gmail.com with ESMTPSA id l79-v6sm14440885pfj.179.2018.07.27.10.59.25
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 27 Jul 2018 10:59:25 -0700 (PDT)
-Date:   Fri, 27 Jul 2018 10:59:23 -0700
-From:   Jakub Kicinski <jakub.kicinski@netronome.com>
-To:     Thomas Richter <tmricht@linux.ibm.com>
-Cc:     daniel@iogearbox.net, ast@kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, heiko.carstens@de.ibm.com,
-        brueckner@linux.vnet.ibm.com, schwidefsky@de.ibm.com
-Subject: Re: [PATCH] perf build: Build error in libbpf missing
- initialization
-Message-ID: <20180727105923.2d5da6aa@cakuba.netronome.com>
-In-Reply-To: <20180727082126.87530-1-tmricht@linux.ibm.com>
-References: <20180727082126.87530-1-tmricht@linux.ibm.com>
-Organization: Netronome Systems, Ltd.
+        Fri, 27 Jul 2018 15:24:11 -0400
+Received: from [78.46.172.3] (helo=sslproxy06.your-server.de)
+        by www62.your-server.de with esmtpsa (TLSv1.2:DHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.85_2)
+        (envelope-from <daniel@iogearbox.net>)
+        id 1fj736-0001bS-AS; Fri, 27 Jul 2018 20:01:08 +0200
+Received: from [99.0.85.34] (helo=localhost.localdomain)
+        by sslproxy06.your-server.de with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.89)
+        (envelope-from <daniel@iogearbox.net>)
+        id 1fj736-000PLj-0E; Fri, 27 Jul 2018 20:01:08 +0200
+Subject: Re: [PATCH v3 bpf-next 01/14] bpf: add ability to charge bpf maps
+ memory dynamically
+To:     Roman Gushchin <guro@fb.com>, netdev@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, kernel-team@fb.com,
+        Alexei Starovoitov <ast@kernel.org>
+References: <20180720174558.5829-1-guro@fb.com>
+ <20180720174558.5829-2-guro@fb.com>
+From:   Daniel Borkmann <daniel@iogearbox.net>
+Message-ID: <4f96442f-d9bc-c366-1dbd-17d4cc47783a@iogearbox.net>
+Date:   Fri, 27 Jul 2018 20:01:05 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20180720174558.5829-2-guro@fb.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Authenticated-Sender: daniel@iogearbox.net
+X-Virus-Scanned: Clear (ClamAV 0.100.0/24788/Fri Jul 27 18:45:51 2018)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 27 Jul 2018 10:21:26 +0200, Thomas Richter wrote:
-> In linux-next tree compiling the perf tool with additional make flags
-> "EXTRA_CFLAGS=3D"-Wp,-D_FORTIFY_SOURCE=3D2 -O2"
-> causes a compiler error. It is the warning
-> 	'variable may be used uninitialized'
-> which is treated as error:
->=20
-> I compile it using a FEDORA 28 installation, my gcc compiler version:
-> gcc (GCC) 8.0.1 20180324 (Red Hat 8.0.1-0.20)
->=20
-> The file that causes the error is tools/lib/bpf/libbpf.c
->=20
-> Here is the error message:
->=20
-> [root@p23lp27] # make V=3D1 EXTRA_CFLAGS=3D"-Wp,-D_FORTIFY_SOURCE=3D2 -O2"
-> [...]
-> Makefile.config:849: No openjdk development package found, please
->    install JDK package, e.g. openjdk-8-jdk, java-1.8.0-openjdk-devel
-> Warning: Kernel ABI header at 'tools/include/uapi/linux/if_link.h'
->         differs from latest version at 'include/uapi/linux/if_link.h'
->   CC       libbpf.o
-> libbpf.c: In function =E2=80=98bpf_perf_event_read_simple=E2=80=99:
-> libbpf.c:2342:6: error: =E2=80=98ret=E2=80=99 may be used uninitialized i=
-n this
-> 			function [-Werror=3Dmaybe-uninitialized]
->   int ret;
->       ^
-> cc1: all warnings being treated as errors
-> mv: cannot stat './.libbpf.o.tmp': No such file or directory
-> /home6/tmricht/linux-next/tools/build/Makefile.build:96: recipe for targe=
-t 'libbpf.o' failed
->=20
-> Fix this warning and add an addition check at the beginning
-> of the while loop.
->=20
+On 07/20/2018 07:45 PM, Roman Gushchin wrote:
+> This commits extends existing bpf maps memory charging API
+> to support dynamic charging/uncharging.
+> 
+> This is required to account memory used by maps,
+> if all entries are created dynamically after
+> the map initialization.
+> 
+> Signed-off-by: Roman Gushchin <guro@fb.com>
 > Cc: Alexei Starovoitov <ast@kernel.org>
 > Cc: Daniel Borkmann <daniel@iogearbox.net>
->=20
-> Suggested-by: Jakub Kicinski <jakub.kicinski@netronome.com>
-> Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
+> Acked-by: Martin KaFai Lau <kafai@fb.com>
+> ---
+>  include/linux/bpf.h  |  2 ++
+>  kernel/bpf/syscall.c | 53 +++++++++++++++++++++++++++++++++++++---------------
+>  2 files changed, 40 insertions(+), 15 deletions(-)
+> 
+> diff --git a/include/linux/bpf.h b/include/linux/bpf.h
+> index 5b5ad95cf339..5a4a256473c3 100644
+> --- a/include/linux/bpf.h
+> +++ b/include/linux/bpf.h
+> @@ -435,6 +435,8 @@ struct bpf_map * __must_check bpf_map_inc(struct bpf_map *map, bool uref);
+>  void bpf_map_put_with_uref(struct bpf_map *map);
+>  void bpf_map_put(struct bpf_map *map);
+>  int bpf_map_precharge_memlock(u32 pages);
+> +int bpf_map_charge_memlock(struct bpf_map *map, u32 pages);
+> +void bpf_map_uncharge_memlock(struct bpf_map *map, u32 pages);
+>  void *bpf_map_area_alloc(size_t size, int numa_node);
+>  void bpf_map_area_free(void *base);
+>  void bpf_map_init_from_attr(struct bpf_map *map, union bpf_attr *attr);
+> diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
+> index d10ecd78105f..cee452a19538 100644
+> --- a/kernel/bpf/syscall.c
+> +++ b/kernel/bpf/syscall.c
+> @@ -181,32 +181,55 @@ int bpf_map_precharge_memlock(u32 pages)
+>  	return 0;
+>  }
+>  
+> -static int bpf_map_charge_memlock(struct bpf_map *map)
+> +static int bpf_charge_memlock(struct user_struct *user, u32 pages)
+>  {
+> -	struct user_struct *user = get_current_user();
+> -	unsigned long memlock_limit;
+> +	unsigned long memlock_limit = rlimit(RLIMIT_MEMLOCK) >> PAGE_SHIFT;
+>  
+> -	memlock_limit = rlimit(RLIMIT_MEMLOCK) >> PAGE_SHIFT;
+> +	if (atomic_long_add_return(pages, &user->locked_vm) > memlock_limit) {
+> +		atomic_long_sub(pages, &user->locked_vm);
+> +		return -EPERM;
+> +	}
+> +	return 0;
+> +}
+>  
+> -	atomic_long_add(map->pages, &user->locked_vm);
+> +static int bpf_map_init_memlock(struct bpf_map *map)
+> +{
+> +	struct user_struct *user = get_current_user();
+> +	int ret;
+>  
+> -	if (atomic_long_read(&user->locked_vm) > memlock_limit) {
+> -		atomic_long_sub(map->pages, &user->locked_vm);
+> +	ret = bpf_charge_memlock(user, map->pages);
+> +	if (ret) {
+>  		free_uid(user);
+> -		return -EPERM;
+> +		return ret;
+>  	}
+>  	map->user = user;
+> -	return 0;
+> +	return ret;
+>  }
+>  
+> -static void bpf_map_uncharge_memlock(struct bpf_map *map)
+> +static void bpf_map_release_memlock(struct bpf_map *map)
+>  {
+>  	struct user_struct *user = map->user;
+> -
+> -	atomic_long_sub(map->pages, &user->locked_vm);
+> +	atomic_long_sub(map->pages, &map->user->locked_vm);
 
-Ah, you already sent this, LGTM, thanks Thomas!
+Just a small nit since you're respinning anyway, could you also make a
+proper destructor for the bpf_charge_memlock(), so we have a bpf_uncharge_memlock()
+which this one here would be calling as well as ...
 
->  tools/lib/bpf/libbpf.c | 2 ++
->  1 file changed, 2 insertions(+)
->=20
-> diff --git a/tools/lib/bpf/libbpf.c b/tools/lib/bpf/libbpf.c
-> index 73465caa33ba..66965ca96113 100644
-> --- a/tools/lib/bpf/libbpf.c
-> +++ b/tools/lib/bpf/libbpf.c
-> @@ -2349,6 +2349,8 @@ bpf_perf_event_read_simple(void *mem, unsigned long=
- size,
-> =20
->  	begin =3D base + data_tail % size;
->  	end =3D base + data_head % size;
-> +	if (begin =3D=3D end)
-> +		return LIBBPF_PERF_EVENT_ERROR;
-> =20
->  	while (begin !=3D end) {
->  		struct perf_event_header *ehdr;
+>  	free_uid(user);
+>  }
+>  
+> +int bpf_map_charge_memlock(struct bpf_map *map, u32 pages)
+> +{
+> +	int ret;
+> +
+> +	ret = bpf_charge_memlock(map->user, pages);
+> +	if (ret)
+> +		return ret;
+> +	map->pages += pages;
+> +	return ret;
+> +}
+> +
+> +void bpf_map_uncharge_memlock(struct bpf_map *map, u32 pages)
+> +{
+> +	atomic_long_sub(pages, &map->user->locked_vm);
+
+... this one, so we hide the details there.
+
+> +	map->pages -= pages;
+> +}
+> +
+>  static int bpf_map_alloc_id(struct bpf_map *map)
+>  {
+>  	int id;
+> @@ -256,7 +279,7 @@ static void bpf_map_free_deferred(struct work_struct *work)
+>  {
+>  	struct bpf_map *map = container_of(work, struct bpf_map, work);
+>  
+> -	bpf_map_uncharge_memlock(map);
+> +	bpf_map_release_memlock(map);
+>  	security_bpf_map_free(map);
+>  	/* implementation dependent freeing */
+>  	map->ops->map_free(map);
+> @@ -492,7 +515,7 @@ static int map_create(union bpf_attr *attr)
+>  	if (err)
+>  		goto free_map_nouncharge;
+>  
+> -	err = bpf_map_charge_memlock(map);
+> +	err = bpf_map_init_memlock(map);
+>  	if (err)
+>  		goto free_map_sec;
+>  
+> @@ -515,7 +538,7 @@ static int map_create(union bpf_attr *attr)
+>  	return err;
+>  
+>  free_map:
+> -	bpf_map_uncharge_memlock(map);
+> +	bpf_map_release_memlock(map);
+>  free_map_sec:
+>  	security_bpf_map_free(map);
+>  free_map_nouncharge:
+> 
 
