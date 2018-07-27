@@ -6,95 +6,105 @@ X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6FB2C67790
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 07:14:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 625F6C67790
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 07:15:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 634FB20857
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 07:14:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D243320891
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 07:15:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="fNabRNYE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 634FB20857
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="VffsnhbF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D243320891
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729560AbeG0Iea (ORCPT
+        id S1729889AbeG0IgU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 04:34:30 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:35302 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729463AbeG0Iea (ORCPT
+        Fri, 27 Jul 2018 04:36:20 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:39754 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729430AbeG0IgU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 04:34:30 -0400
-Received: by mail-wm0-f66.google.com with SMTP id o18-v6so4390448wmc.0
-        for <linux-kernel@vger.kernel.org>; Fri, 27 Jul 2018 00:13:58 -0700 (PDT)
+        Fri, 27 Jul 2018 04:36:20 -0400
+Received: by mail-wm0-f68.google.com with SMTP id h20-v6so4339464wmb.4
+        for <linux-kernel@vger.kernel.org>; Fri, 27 Jul 2018 00:15:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:content-transfer-encoding:in-reply-to
          :user-agent;
-        bh=G8rtzm0uxBiLjnv2qSJYkkOYhAYD+C0vakpuqE73G3A=;
-        b=fNabRNYEMaCHQmc7D9OwUanNlTiQEZ84+1bdmyz1hKLexC64aGIx0P7Oy/c7JaMyiW
-         Atvg1MfR5la4SVc5elufeWIQilM+CrbCYGTIOLtF+8YEGJzKINo5vbFZbqSC6pKYu140
-         4f1ejBPOauUswPaeiORZEWAJn+GV32YtaQHdU=
+        bh=LLGYLc5Ol/xnNAMHs4wYIO1iblMPl4LZoI50+ItSZw0=;
+        b=VffsnhbFYoZXUE+b0e/uaV71TWM32hb7vkddlqWwx5DPjh1hGK797FvZvZayPGSmCb
+         +UPzGoV33bAkJntWLifX8RFNgfZwPfvvvbKNQT3LMWHvPD0RPYd1Jvl/qjiIyUyi0faa
+         796BHbLj25aSXAN5zqmCAEXb++AhBFcgjAu74=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:content-transfer-encoding
          :in-reply-to:user-agent;
-        bh=G8rtzm0uxBiLjnv2qSJYkkOYhAYD+C0vakpuqE73G3A=;
-        b=hKlwvMsUjWYXacb5POHjiGg+k1LzUg1Ts/bPixQe32pkBQYR2n21QTJGw7p7zvI7k2
-         xgjmfaIG4+Sbx0Iio7BeJTgCSZJP5lIFfRlm+6k57bx4czqMvPW9LjMjH9AWRyrZEA4t
-         RlqLpWct+wIy6djpuxcKsEIr3+fLoin4ZmxtzDH/FCWh7SIwlEM8BPvXJB5waRmcdqrk
-         pgxFLYhaaKr3yCFuyJyxdZDbDapm/JSd010TYrcAYe/H2EJMmJ4VfrKBu33ZE+RlKBlj
-         /4+KxHSMArr94TB9LpQVr1UQx95d+aaZh2JKCNAT1TfgZkBkqoCTQ/MdqabDXB7Nvh1t
-         q9fw==
-X-Gm-Message-State: AOUpUlGe6lgbDm3in1fKLruwXGour0+aiEOucpsdUqa8HV506Vho8EQ4
-        II5aZ5i5modiHiaWtdx1/FS/2A==
-X-Google-Smtp-Source: AAOMgpfcVhi5A7majwGUGdERSTRZC9Xx++32TfXnQKiqxgWPn3GEMSESLATAbC64tzhX9OzC6CohMA==
-X-Received: by 2002:a1c:9290:: with SMTP id u138-v6mr3654328wmd.52.1532675637935;
-        Fri, 27 Jul 2018 00:13:57 -0700 (PDT)
+        bh=LLGYLc5Ol/xnNAMHs4wYIO1iblMPl4LZoI50+ItSZw0=;
+        b=NTL9GjNE7RNBOGMWayqLIvupEdIQi2h8WA9/GUb+/iuc3vbUWeP9qke0R7arhTkD/j
+         WMkjW8KoXphT/4lNU3PvoIr4RiuTGLss0BahaBlsI3p21GDOLsYnSt3Q4KEwD6RAGNM4
+         puHDrUHDXRnoK1bzNRq6Ci1aIHij3wxF+xYZyIDtTsdnvRS8akWRDiYv6fSA7MNuIn35
+         /CyRLjIKIT2zbzuY8ulpyWo7qXfPyI//zhaZokbsg66kb9PYD1FgXkqrQCOvIneGCMRS
+         wpAHSN7G9drb7Cyj1du1FZsAdwrkhGIEC3J89sCtpw1mGycDJD7sHEYjNLO2S4lAqLCx
+         I6Ew==
+X-Gm-Message-State: AOUpUlEjnpgQ6nHf017f+9tsBudik+yNQCkZdv5+l+dsHdB6ZKSnnoCp
+        G8+FLBw7ZJhMUeoF6lSO8o9KRw==
+X-Google-Smtp-Source: AAOMgpehzU37ksTjEV7fWg7EitZ5/IrwerpNPzDj5LLpkid9OUGuVfNRZAswlnbOUuig+9J6/eGGuQ==
+X-Received: by 2002:a1c:be13:: with SMTP id o19-v6mr3271758wmf.1.1532675747225;
+        Fri, 27 Jul 2018 00:15:47 -0700 (PDT)
 Received: from dell (host109-153-79-7.range109-153.btcentralplus.com. [109.153.79.7])
-        by smtp.gmail.com with ESMTPSA id q8-v6sm1721692wrj.97.2018.07.27.00.13.56
+        by smtp.gmail.com with ESMTPSA id y14-v6sm6680170wrq.45.2018.07.27.00.15.46
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 27 Jul 2018 00:13:57 -0700 (PDT)
-Date:   Fri, 27 Jul 2018 08:13:54 +0100
+        Fri, 27 Jul 2018 00:15:46 -0700 (PDT)
+Date:   Fri, 27 Jul 2018 08:15:44 +0100
 From:   Lee Jones <lee.jones@linaro.org>
-To:     Benson Leung <bleung@google.com>
-Cc:     dmitry.torokhov@gmail.com, linux@armlinux.org.uk,
-        bleung@chromium.org, enric.balletbo@collabora.com, krzk@kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [GIT PULL] Immutable branch (mfd, chrome) due for the v4.19
- window
-Message-ID: <20180727071354.GC4628@dell>
-References: <20180709011324.GA86474@decatoncale.mtv.corp.google.com>
+To:     Marcel Ziswiler <marcel@ziswiler.com>
+Cc:     linux-tegra@vger.kernel.org,
+        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
+        Laxman Dewangan <ldewangan@nvidia.com>,
+        devicetree@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
+        Rob Herring <robh+dt@kernel.org>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] mfd: as3722: disable auto power on when AC OK
+Message-ID: <20180727071544.GD4628@dell>
+References: <20180703150411.29709-1-marcel@ziswiler.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180709011324.GA86474@decatoncale.mtv.corp.google.com>
+In-Reply-To: <20180703150411.29709-1-marcel@ziswiler.com>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 08 Jul 2018, Benson Leung wrote:
+On Tue, 03 Jul 2018, Marcel Ziswiler wrote:
 
-> Hi all,
+> From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 > 
-> Please see this Immutable Branch which moves the cros_ec_i2c and cros_ec_spi
-> transport drivers from mfd to platform/chrome. Changes in arm are a simple
-> rename in defconfigs. Change in input is a rename in help text.
+> On ams AS3722, power on when AC OK is enabled by default.
+> Making this option as disable by default and enable only
+> when platform need this explicitly.
 > 
-> The following changes since commit 021c91791a5e7e85c567452f1be3e4c2c6cb6063:
+> Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
+> Reviewed-by: Bibek Basu <bbasu@nvidia.com>
+> Tested-by: Bibek Basu <bbasu@nvidia.com>
+> Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 > 
->   Linux 4.18-rc3 (2018-07-01 16:04:53 -0700)
+> ---
 > 
-> are available in the Git repository at:
+> Changes in v2:
+> - Document device tree property as suggested by Stefan.
+> - Rename SEQ1 to SEQU1 as per datasheet as suggested by Stefan.
+> - Drop reference to downstream commit as suggested by Lee.
 > 
->   git://git.kernel.org/pub/scm/linux/kernel/git/bleung/chrome-platform.git tags/ib-platform-chrome-mfd-move-cros-ec-transport-for-4.19
+>  Documentation/devicetree/bindings/mfd/as3722.txt |  2 ++
+>  drivers/mfd/as3722.c                             | 12 ++++++++++++
+>  include/linux/mfd/as3722.h                       |  3 +++
+>  3 files changed, 17 insertions(+)
 
-Pulled, thanks.
+Applied, thanks.
 
 -- 
 Lee Jones [李琼斯]
