@@ -2,82 +2,85 @@ Return-Path: <SRS0=OQFz=KL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 554C1C6778F
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 20:02:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B82E9C67790
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 20:02:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0EF2D20673
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 20:02:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0EF2D20673
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 7CD0920673
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 20:02:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7CD0920673
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389442AbeG0VZd (ORCPT
+        id S2389499AbeG0VZz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 17:25:33 -0400
-Received: from mailout.easymail.ca ([64.68.200.34]:60233 "EHLO
-        mailout.easymail.ca" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389326AbeG0VZc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 17:25:32 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by mailout.easymail.ca (Postfix) with ESMTP id CE7FFC0D04;
-        Fri, 27 Jul 2018 20:02:06 +0000 (UTC)
-Received: from mailout.easymail.ca ([127.0.0.1])
-        by localhost (emo01-pco.easydns.vpn [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id noiObS-tYBpi; Fri, 27 Jul 2018 20:02:06 +0000 (UTC)
-Received: from [192.168.1.87] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mailout.easymail.ca (Postfix) with ESMTPSA id EB5F7C0F75;
-        Fri, 27 Jul 2018 20:01:51 +0000 (UTC)
-Subject: Re: [PATCH 4.9 00/33] 4.9.116-stable review
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org
-Cc:     torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        linux@roeck-us.net, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org, Shuah Khan <shuah@kernel.org>
-References: <20180727100827.665729981@linuxfoundation.org>
-From:   Shuah Khan <shuah@kernel.org>
-Message-ID: <25368c2b-f794-461c-a308-a6ff066bbc66@kernel.org>
-Date:   Fri, 27 Jul 2018 14:01:50 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Fri, 27 Jul 2018 17:25:55 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:46990 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2389453AbeG0VZz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Jul 2018 17:25:55 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 2148820908; Fri, 27 Jul 2018 22:02:27 +0200 (CEST)
+Received: from localhost (unknown [88.191.26.124])
+        by mail.bootlin.com (Postfix) with ESMTPSA id E25312073D;
+        Fri, 27 Jul 2018 22:02:16 +0200 (CEST)
+Date:   Fri, 27 Jul 2018 22:02:17 +0200
+From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-kernel@vger.kernel.org,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 00/16] clk: at91: Rework DT bindings
+Message-ID: <20180727200217.GF7701@piout.net>
+References: <20180717222757.10253-1-alexandre.belloni@bootlin.com>
+ <153271100280.48062.2538655794734424353@swboyd.mtv.corp.google.com>
 MIME-Version: 1.0
-In-Reply-To: <20180727100827.665729981@linuxfoundation.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <153271100280.48062.2538655794734424353@swboyd.mtv.corp.google.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/27/2018 04:08 AM, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 4.9.116 release.
-> There are 33 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On 27/07/2018 10:03:22-0700, Stephen Boyd wrote:
+> Quoting Alexandre Belloni (2018-07-17 15:27:41)
+> > This is the promised rework of the at91 PMC clocks driver. It is mainly
+> > necessary to remove the DTC warnings but it also complies with the CCF
+> > rule that there should be one node per controller instead of one node
+> > per clock.
+> > 
+> > This only handles the PMC, I'm planning to also rework the SCKC bindings
+> > later (without breaking the DT ABI).
+> > 
+> > The series is based on top of clk-next plus at91-dt so I don't think it
+> > is convenient to have it this cycle. However, I would really like to
+> > ensure we agree on the new bindings this cycle before converting all the
+> > other platforms as this is a bit tedious.
+> > 
+> > The first two patches are actually fixes and may be considered for this
+> > cycle.
+> > 
+> > One nice note:
+> > at91-sama5d2_xplained.dtb goes from 29351 bytes to 22082 bytes
 > 
-> Responses should be made by Sun Jul 29 10:08:17 UTC 2018.
-> Anything received after that time might be too late.
+> Patches look mostly good. Rob is happy with the bindings and so am I.
 > 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.9.116-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.9.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
+> One general question is why the drivers can't be moved to real platform
+> drivers instead of using OF_CLK_DECLARE?
 > 
 
-Compiled and booted on my test system. No dmesg regressions.
+I actually didn't try. I'll do it early next week. I'm not sure how this
+will work with the PM handling on sama5d2 but I'll probably figure
+something out.
 
-thanks,
--- Shuah
-
+-- 
+Alexandre Belloni, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
