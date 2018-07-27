@@ -7,64 +7,64 @@ X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F24CECDFB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 17:32:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC4A8C67790
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 17:32:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C4F2F208B4
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 17:32:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8B933208B4
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 17:32:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k6suAa25"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C4F2F208B4
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Zonev8OP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B933208B4
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389332AbeG0Syz (ORCPT
+        id S2389368AbeG0Sy6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 14:54:55 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:52558 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388955AbeG0Syy (ORCPT
+        Fri, 27 Jul 2018 14:54:58 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:43936 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388955AbeG0Sy5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 14:54:54 -0400
-Received: by mail-wm0-f66.google.com with SMTP id o11-v6so6006956wmh.2
-        for <linux-kernel@vger.kernel.org>; Fri, 27 Jul 2018 10:32:00 -0700 (PDT)
+        Fri, 27 Jul 2018 14:54:57 -0400
+Received: by mail-wr1-f68.google.com with SMTP id b15-v6so5790192wrv.10
+        for <linux-kernel@vger.kernel.org>; Fri, 27 Jul 2018 10:32:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=+cF6KGIIY91UmDmhc0sy9fX/qmt9y/8jGM5RBagCXug=;
-        b=k6suAa25hb0PlnBPVNa3vbiGwwYlWY/40KpKCZNfDv8gy62gBR2o+3eGfvO4p2muaR
-         3Qv0RCnXJl5C/8pao+lhjknqobEgwJxp+Js4H4askqWehi3C7JWTT+7C0Geu1YCulg0n
-         nQ8fF6QaSta9s8OAWjDSqDuxhQVSWFoR6zRwzLLxckWpEV8v+G28DodsHTAD+fvJG1qK
-         9LhUi2IK5U9wbC8md27YbsoLnsQ4CpzyH1EF/5becy8JMuK3GGh4nqyrvsXlkpQ3k6hh
-         2g9AmLVoDQEn9wfYCK8bT+BRxe3UHTpHbFZP7vMagWW0u98cCSYJ+MSJgf5LDEBhzOXq
-         2VdQ==
+        bh=zvagxvPzr1gIGaQdP/vNEpoN/X7woYzNxyZGGkp+Gfs=;
+        b=Zonev8OPpKN8G2nm8Jw0P1nf2ElPpwjx2WQOy5MTkJ3wkF5Y0anJarOOLJLZjErspP
+         qnLH+/0SIOn6oBJ0tKm106ijUdRUZY0OpWrnXgAH/dBJtSEi8h5nP1GEASRdi16iEh8C
+         ZR4W78IAhnJY8VjlsREUJDp+zYwM1lJ1Xm38ttqjrRyND5cANCj726uMFO6z0bN27HPA
+         l8+v+76nMXfl/HR43InipC+vTv14Y+CxDGuJ0pBxrN9QIwOo4cLD41O8E/E89VKjyGpK
+         j6Dl3W/O7uyZO0gQaa4M5WBigm6/UzkTDSjDgaKSMeU81EUjCMHmZmkAc4oyLAnkTlkc
+         wG0A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=+cF6KGIIY91UmDmhc0sy9fX/qmt9y/8jGM5RBagCXug=;
-        b=dHJ4knwyJnbKVX+aAtLyGef6X1itaoQbx8O9rjBW3elrMaD3NXHq5xn0if55o7GVHt
-         2wSehxm2q1VRtPSjvUsceFGoX+3iYFnWMYHZioeYOYqPNKlxo416w/v4TGDdxGxjrrvW
-         1xVJTW/+JOBjR9W3tL3v1UqsC2h1UpiHBHFpv7BUweX0DsJJhoGuHJTtZFvIdhq4/2r/
-         6gB6BjWt7Nc3oot2nJUXdQeUnwg3/5zNxUP5bHJSodVMIGLIjT5aMVQuYOLXgdBRImEF
-         /jI8TNatFcYEMbqGJIfeLi5qq2m/elaYU/RmB1d9Ega/Ca3c5BRNYOgEXNo7+YHUIuXY
-         2efg==
-X-Gm-Message-State: AOUpUlE0rfpZvELQdfONXmW75pRACub4Zl69+ljwZC5KoWW1MchgtLsz
-        h5ZcVtAMNrs+PXVT7qkimM4JrgNstQo=
-X-Google-Smtp-Source: AAOMgpcbl2HefhrshvvvKibhHtKyzHPwp8h9NYf0P7SGINqSwwHr6HWoiKpld0n8bzcLSS6+HU2qdQ==
-X-Received: by 2002:a1c:3697:: with SMTP id y23-v6mr4853086wmh.71.1532712719876;
-        Fri, 27 Jul 2018 10:31:59 -0700 (PDT)
+        bh=zvagxvPzr1gIGaQdP/vNEpoN/X7woYzNxyZGGkp+Gfs=;
+        b=P49o7GhCZPMGucmZP1yEGct1jTGbMZOxZg+/8ODidtwq2Lckp5zQhjWJF10BE7PKVt
+         Ly/W1pVZRQGatO0p+3VENGlKlxbAY8kA9dDD6O8ZJN1cuLb58QzhYKnwb50TXy8ueCpm
+         s/qW/1oino0VQ8m64Ne18G0YpZoUs+3IUY53N2XNsUEhoJNhyC4cnD2jkkzcOewOEhZ2
+         pXyKUoBTvADyMAYjxDSRRes/PWikJ12SzZoUttvdJ9Azq3QJ8mwZVQR09KW0GL0fE0SJ
+         JR//T4HJ6UQoDKSZGrJ44ZxwJw0gcIC1TtZvaxIwxCmq4RNiq9hjUrj/nyFizNK3z8E8
+         YNAA==
+X-Gm-Message-State: AOUpUlFjAaVKOzD3LH/QGmrNYHQxgublj95T5+OBAtYAFNTYhxF94pvz
+        k8o6y03GY2U60NAOkfz8hX4H38taugE=
+X-Google-Smtp-Source: AAOMgpcyJqOweZuWQuoPuxjupiibuWe6J6Ut0uw9TsuvyiJbzkkq0T3SYD74ZdWdDCNnJDpCqjsHig==
+X-Received: by 2002:adf:db11:: with SMTP id s17-v6mr534553wri.221.1532712722881;
+        Fri, 27 Jul 2018 10:32:02 -0700 (PDT)
 Received: from localhost.localdomain (host81-158-116-187.range81-158.btcentralplus.com. [81.158.116.187])
-        by smtp.gmail.com with ESMTPSA id z3-v6sm6000010wru.27.2018.07.27.10.31.58
+        by smtp.gmail.com with ESMTPSA id z3-v6sm6000010wru.27.2018.07.27.10.32.01
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 27 Jul 2018 10:31:59 -0700 (PDT)
+        Fri, 27 Jul 2018 10:32:02 -0700 (PDT)
 From:   John Whitmore <johnfwhitmore@gmail.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     devel@driverdev.osuosl.org, gregkh@linuxfoundation.org,
         John Whitmore <johnfwhitmore@gmail.com>
-Subject: [PATCH 14/20] staging:rtl8192u: Rename RxTimeoutIndicateSeq _Style
-Date:   Fri, 27 Jul 2018 18:31:17 +0100
-Message-Id: <20180727173123.27391-15-johnfwhitmore@gmail.com>
+Subject: [PATCH 16/20] staging:rtl8192u: Rename RxPktPendingTimer - Style
+Date:   Fri, 27 Jul 2018 18:31:19 +0100
+Message-Id: <20180727173123.27391-17-johnfwhitmore@gmail.com>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180727173123.27391-1-johnfwhitmore@gmail.com>
 References: <20180727173123.27391-1-johnfwhitmore@gmail.com>
@@ -73,102 +73,103 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Rename member variable RxTimeoutIndicateSeq to rx_timeout_indicate_seq.
+Rename the member variable RxPktPendingTimer to rx_pkt_pending_timer.
 This change clears the checkpatch issue with CamelCase naming.
 
-The resulting changes are purely coding style in nature and should have
-no impact on runtime code execution.
+The resulting changes are coding style changes in nature so should
+have no impact on runtime code execution.
 
 Signed-off-by: John Whitmore <johnfwhitmore@gmail.com>
 ---
- drivers/staging/rtl8192u/ieee80211/ieee80211_rx.c   |  6 +++---
+ drivers/staging/rtl8192u/ieee80211/ieee80211_rx.c   | 10 +++++-----
  drivers/staging/rtl8192u/ieee80211/rtl819x_TS.h     |  2 +-
- drivers/staging/rtl8192u/ieee80211/rtl819x_TSProc.c | 12 ++++++------
- 3 files changed, 10 insertions(+), 10 deletions(-)
+ drivers/staging/rtl8192u/ieee80211/rtl819x_TSProc.c | 10 +++++-----
+ 3 files changed, 11 insertions(+), 11 deletions(-)
 
 diff --git a/drivers/staging/rtl8192u/ieee80211/ieee80211_rx.c b/drivers/staging/rtl8192u/ieee80211/ieee80211_rx.c
-index e1f5161be4f3..99fb59a3b8f0 100644
+index 0a1f433def2f..5a2a7a4aedca 100644
 --- a/drivers/staging/rtl8192u/ieee80211/ieee80211_rx.c
 +++ b/drivers/staging/rtl8192u/ieee80211/ieee80211_rx.c
-@@ -741,7 +741,7 @@ static void RxReorderIndicatePacket(struct ieee80211_device *ieee,
+@@ -740,7 +740,7 @@ static void RxReorderIndicatePacket(struct ieee80211_device *ieee,
+ 	/* Handling pending timer. Set this timer to prevent from long time Rx buffering.*/
  	if (index>0) {
  		// Cancel previous pending timer.
- 	//	del_timer_sync(&pTS->RxPktPendingTimer);
--		pTS->RxTimeoutIndicateSeq = 0xffff;
-+		pTS->rx_timeout_indicate_seq = 0xffff;
+-	//	del_timer_sync(&pTS->RxPktPendingTimer);
++	//	del_timer_sync(&pTS->rx_pkt_pending_timer);
+ 		pTS->rx_timeout_indicate_seq = 0xffff;
  
  		// Indicate packets
- 		if(index>REORDER_WIN_SIZE){
-@@ -752,10 +752,10 @@ static void RxReorderIndicatePacket(struct ieee80211_device *ieee,
- 		ieee80211_indicate_packets(ieee, prxbIndicateArray, index);
- 	}
- 
--	if (bPktInBuf && pTS->RxTimeoutIndicateSeq==0xffff) {
-+	if (bPktInBuf && pTS->rx_timeout_indicate_seq == 0xffff) {
+@@ -756,11 +756,11 @@ static void RxReorderIndicatePacket(struct ieee80211_device *ieee,
  		// Set new pending timer.
  		IEEE80211_DEBUG(IEEE80211_DL_REORDER,"%s(): SET rx timeout timer\n", __func__);
--		pTS->RxTimeoutIndicateSeq = pTS->rx_indicate_seq;
-+		pTS->rx_timeout_indicate_seq = pTS->rx_indicate_seq;
- 		if(timer_pending(&pTS->RxPktPendingTimer))
- 			del_timer_sync(&pTS->RxPktPendingTimer);
- 		pTS->RxPktPendingTimer.expires = jiffies +
+ 		pTS->rx_timeout_indicate_seq = pTS->rx_indicate_seq;
+-		if(timer_pending(&pTS->RxPktPendingTimer))
+-			del_timer_sync(&pTS->RxPktPendingTimer);
+-		pTS->RxPktPendingTimer.expires = jiffies +
++		if(timer_pending(&pTS->rx_pkt_pending_timer))
++			del_timer_sync(&pTS->rx_pkt_pending_timer);
++		pTS->rx_pkt_pending_timer.expires = jiffies +
+ 				msecs_to_jiffies(pHTInfo->RxReorderPendingTime);
+-		add_timer(&pTS->RxPktPendingTimer);
++		add_timer(&pTS->rx_pkt_pending_timer);
+ 	}
+ 
+ 	kfree(prxbIndicateArray);
 diff --git a/drivers/staging/rtl8192u/ieee80211/rtl819x_TS.h b/drivers/staging/rtl8192u/ieee80211/rtl819x_TS.h
-index 98be5e1b7c84..02b76d49b5e1 100644
+index 9c85d3623578..a338d53ff88c 100644
 --- a/drivers/staging/rtl8192u/ieee80211/rtl819x_TS.h
 +++ b/drivers/staging/rtl8192u/ieee80211/rtl819x_TS.h
-@@ -40,7 +40,7 @@ struct tx_ts_record {
- struct rx_ts_record {
- 	struct ts_common_info		ts_common_info;
+@@ -42,7 +42,7 @@ struct rx_ts_record {
  	u16				rx_indicate_seq;
--	u16				RxTimeoutIndicateSeq;
-+	u16				rx_timeout_indicate_seq;
- 	struct list_head		RxPendingPktList;
- 	struct timer_list		RxPktPendingTimer;
+ 	u16				rx_timeout_indicate_seq;
+ 	struct list_head		rx_pending_pkt_list;
+-	struct timer_list		RxPktPendingTimer;
++	struct timer_list		rx_pkt_pending_timer;
  	BA_RECORD			RxAdmittedBARecord;	 /*  For BA Recipient */
+ 	u16				RxLastSeqNum;
+ 	u8				RxLastFragNum;
 diff --git a/drivers/staging/rtl8192u/ieee80211/rtl819x_TSProc.c b/drivers/staging/rtl8192u/ieee80211/rtl819x_TSProc.c
-index ac45b502d07d..e3877f35e677 100644
+index 6a6aad6decd6..aad2704a7f46 100644
 --- a/drivers/staging/rtl8192u/ieee80211/rtl819x_TSProc.c
 +++ b/drivers/staging/rtl8192u/ieee80211/rtl819x_TSProc.c
-@@ -37,7 +37,7 @@ static void RxPktPendingTimeout(struct timer_list *t)
+@@ -25,7 +25,7 @@ static void TsInactTimeout(struct timer_list *unused)
+  ********************************************************************************************************************/
+ static void RxPktPendingTimeout(struct timer_list *t)
+ {
+-	struct rx_ts_record     *pRxTs = from_timer(pRxTs, t, RxPktPendingTimer);
++	struct rx_ts_record     *pRxTs = from_timer(pRxTs, t, rx_pkt_pending_timer);
+ 	struct ieee80211_device *ieee = container_of(pRxTs, struct ieee80211_device, RxTsRecord[pRxTs->num]);
  
- 	spin_lock_irqsave(&(ieee->reorder_spinlock), flags);
- 	IEEE80211_DEBUG(IEEE80211_DL_REORDER,"==================>%s()\n",__func__);
--	if(pRxTs->RxTimeoutIndicateSeq != 0xffff) {
-+	if(pRxTs->rx_timeout_indicate_seq != 0xffff) {
- 		// Indicate the pending packets sequentially according to SeqNum until meet the gap.
- 		while(!list_empty(&pRxTs->RxPendingPktList)) {
- 			pReorderEntry = (PRX_REORDER_ENTRY)list_entry(pRxTs->RxPendingPktList.prev,RX_REORDER_ENTRY,List);
-@@ -64,8 +64,8 @@ static void RxPktPendingTimeout(struct timer_list *t)
- 	}
+ 	PRX_REORDER_ENTRY	pReorderEntry = NULL;
+@@ -78,7 +78,7 @@ static void RxPktPendingTimeout(struct timer_list *t)
  
- 	if(index>0) {
--		// Set RxTimeoutIndicateSeq to 0xffff to indicate no pending packets in buffer now.
--		pRxTs->RxTimeoutIndicateSeq = 0xffff;
-+		// Set rx_timeout_indicate_seq to 0xffff to indicate no pending packets in buffer now.
-+		pRxTs->rx_timeout_indicate_seq = 0xffff;
- 
- 		// Indicate packets
- 		if(index > REORDER_WIN_SIZE) {
-@@ -76,8 +76,8 @@ static void RxPktPendingTimeout(struct timer_list *t)
- 		ieee80211_indicate_packets(ieee, ieee->stats_IndicateArray, index);
- 	}
- 
--	if(bPktInBuf && (pRxTs->RxTimeoutIndicateSeq==0xffff)) {
--		pRxTs->RxTimeoutIndicateSeq = pRxTs->rx_indicate_seq;
-+	if(bPktInBuf && (pRxTs->rx_timeout_indicate_seq == 0xffff)) {
-+		pRxTs->rx_timeout_indicate_seq = pRxTs->rx_indicate_seq;
- 		mod_timer(&pRxTs->RxPktPendingTimer,
+ 	if(bPktInBuf && (pRxTs->rx_timeout_indicate_seq == 0xffff)) {
+ 		pRxTs->rx_timeout_indicate_seq = pRxTs->rx_indicate_seq;
+-		mod_timer(&pRxTs->RxPktPendingTimer,
++		mod_timer(&pRxTs->rx_pkt_pending_timer,
  			  jiffies + msecs_to_jiffies(ieee->pHTInfo->RxReorderPendingTime));
  	}
-@@ -125,7 +125,7 @@ static void ResetRxTsEntry(struct rx_ts_record *pTS)
- {
- 	ResetTsCommonInfo(&pTS->ts_common_info);
- 	pTS->rx_indicate_seq = 0xffff; // This indicate the rx_indicate_seq is not used now!!
--	pTS->RxTimeoutIndicateSeq = 0xffff; // This indicate the RxTimeoutIndicateSeq is not used now!!
-+	pTS->rx_timeout_indicate_seq = 0xffff; // This indicate the rx_timeout_indicate_seq is not used now!!
- 	ResetBaEntry(&pTS->RxAdmittedBARecord);	  // For BA Recipient
- }
+ 	spin_unlock_irqrestore(&(ieee->reorder_spinlock), flags);
+@@ -173,7 +173,7 @@ void TSInitialize(struct ieee80211_device *ieee)
+ 			    0);
+ 		timer_setup(&pRxTS->RxAdmittedBARecord.Timer,
+ 			    RxBaInactTimeout, 0);
+-		timer_setup(&pRxTS->RxPktPendingTimer, RxPktPendingTimeout, 0);
++		timer_setup(&pRxTS->rx_pkt_pending_timer, RxPktPendingTimeout, 0);
+ 		ResetRxTsEntry(pRxTS);
+ 		list_add_tail(&pRxTS->ts_common_info.list, &ieee->Rx_TS_Unused_List);
+ 		pRxTS++;
+@@ -420,8 +420,8 @@ static void RemoveTsEntry(struct ieee80211_device *ieee, struct ts_common_info *
+ //#ifdef TO_DO_LIST
+ 		PRX_REORDER_ENTRY	pRxReorderEntry;
+ 		struct rx_ts_record     *pRxTS = (struct rx_ts_record *)pTs;
+-		if(timer_pending(&pRxTS->RxPktPendingTimer))
+-			del_timer_sync(&pRxTS->RxPktPendingTimer);
++		if(timer_pending(&pRxTS->rx_pkt_pending_timer))
++			del_timer_sync(&pRxTS->rx_pkt_pending_timer);
  
+ 		while(!list_empty(&pRxTS->rx_pending_pkt_list)) {
+ 			spin_lock_irqsave(&(ieee->reorder_spinlock), flags);
 -- 
 2.18.0
 
