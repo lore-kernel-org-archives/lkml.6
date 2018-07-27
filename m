@@ -7,99 +7,113 @@ X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D619C28CF6
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 02:20:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EBA8C28CF6
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 02:26:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0F90E2088E
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 02:20:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BFFCB20883
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 02:26:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YOan0+5P"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0F90E2088E
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UtThO+bD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BFFCB20883
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732141AbeG0Dju (ORCPT
+        id S1732122AbeG0DqB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 26 Jul 2018 23:39:50 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:33220 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732045AbeG0Dju (ORCPT
+        Thu, 26 Jul 2018 23:46:01 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:41988 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732026AbeG0DqB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Jul 2018 23:39:50 -0400
-Received: by mail-pg1-f194.google.com with SMTP id r5-v6so2300274pgv.0;
-        Thu, 26 Jul 2018 19:20:16 -0700 (PDT)
+        Thu, 26 Jul 2018 23:46:01 -0400
+Received: by mail-pg1-f193.google.com with SMTP id y4-v6so2297756pgp.9;
+        Thu, 26 Jul 2018 19:26:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id;
-        bh=gxkMzDrTrgnbLX3v/fz1b1mgSEVz+VFOADYn816I6ac=;
-        b=YOan0+5PoIr/xe1JjsqurUo+mR8/q1EUnBSM29LFJ+cKz8QpS7UfqE9nMZvNrIaKDL
-         ZIC/OAYOPrtbPt9UqaBvwVSnFvCQLApE0MjPnzoR4DOiEvkdUgHyuVFQ3/znjfrJBsSz
-         RZdaQcsOIU2hqqWoZWaWEwi7Zfow6XlgvPlPOJxWdetxNxnnDg602tXl3CuoqmtAVWB1
-         Ws9h36gaoi6CL0u0RbTSzI5IsZXPtmrao/PCK3Qao2S33m3PLJX+gXNw/4wK2FTcx7w+
-         lEEOgkb+dAXIgnQFYqg30HH2mzXYmWAqLwkLi93rOwUJ1Y8DJuIfSy8gTPC20DmTxdG1
-         DyCQ==
+        bh=09aB4mnXUPWnw9QWfGKDkygcyLROE1Zekoe4famf4AM=;
+        b=UtThO+bDbWi2YH87tt6mBKqPsFNYXYTxzopwd1LVTHjt1hGhuUfy4HCqEVVEoAgOMg
+         KFl6TEu6I8twFD9IIx/R9/4hFcTFjhhyWG8MuaZmMzBsxh5E7CF46f6aA2ufoPNNQJx5
+         RYJ/GruIhYBjemBCmIjceTrUM3yOWf4s7Y9lIRyN0JX8f18i4x4RXbp1hRJkoEQ97B4V
+         RkUBtwp4ZUwsT/sjPZC9ttpGQOCphkUphcvKC6tLBIEigZf/fC4ifaAt/7Vn4jB6uO4a
+         fhfWbRSgsZisGUSmTMi2ZafD4RtSrw34Idbod6QHLB4ZciQLZ2gcZxFYtagjBQU99/Kg
+         jZoA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=gxkMzDrTrgnbLX3v/fz1b1mgSEVz+VFOADYn816I6ac=;
-        b=RvXojOPQxnomgo4u0DEehA/az2/MEDmBAtEU7e0MpbW++z6LIrIK6F5/6NC1igWSJm
-         xaxRyltQP1qLseyev20XrP15WVlV7jCL+aOvEmRMh1IDeJ1E7uM49vT7GmlWaL94uDRH
-         qC94GxLnLKvZchNgTHgw4DxHTWqo6IFv0z1u+hVnucc9ySG1dh+81iDw7vsv88bP5PRc
-         Vmhs5ulC2+0knhb4ZG4p6AlVqQ06K10h5eD1ANkKWS/gEoFVbacj8Dk5M9C5SdZvAUhd
-         de0hOi56/6CmB/w483BAnvXHCmUj5/x7F2azjLjQpWRQ7p66gXVpkIjfZPejghJY0uzy
-         +CFQ==
-X-Gm-Message-State: AOUpUlEXH9I4hA8tFQwIa6oquEmXrdZo4kSuHAyc+6UNqBMlZCSi5ZyM
-        tEmzSfM0zzexZ2k6M6w6ex6zeScP
-X-Google-Smtp-Source: AAOMgpfPzqzXvESRLmHcBLNN8pCISXBUKMhYq1Zte4H994RxLcrDaAZZ8MsypRNjQA58rbjrJ1BsMQ==
-X-Received: by 2002:a63:951e:: with SMTP id p30-v6mr4195039pgd.318.1532658016311;
-        Thu, 26 Jul 2018 19:20:16 -0700 (PDT)
+        bh=09aB4mnXUPWnw9QWfGKDkygcyLROE1Zekoe4famf4AM=;
+        b=MXXYvP1lMdcntX3Tt95jI0qr0xD0pHQxYJ5vN4z+HPUARHpSbHQ9cuVf/hUuk4E610
+         tgdETASAh+2y/ExzxEwctcl/YBNA6Uk4f7woaCGvi+OxM7GeVSHz/FT5UbDdFuf9Demf
+         D78x5KbsVbF458TMvbrlWCXImh7vbwY6IRez5aJzrVrHo6O+aNca3hmr13inhL3cHvc9
+         OceCCcRaRkOpZyWIVSAPuX2pYZBqTATX36wJcjAVQLzHlxe/KILa/HiOqsdx28TP9Spd
+         feFjhgJuoU8Mx+O0BkS8V3OKoxnn8qk5wJnpX6I2vLSb4xSY6VaDrWZM9w94TmCgW2JF
+         pt8g==
+X-Gm-Message-State: AOUpUlHRxn6sCGTGdVxbTZ2RLMAfTLn1/efqxqFD2Ck3fMNOrRsIkjBa
+        bR7607/kM7vXjtHgxAhjVa8=
+X-Google-Smtp-Source: AAOMgpeSoU2ZBATsEJEDoj09W31mlSu5SQ9oy/SDfnE79bhVZBHSOe3H7L0vyX1nXBGPZI1lA3Or0Q==
+X-Received: by 2002:a63:b213:: with SMTP id x19-v6mr4147714pge.393.1532658386788;
+        Thu, 26 Jul 2018 19:26:26 -0700 (PDT)
 Received: from localhost.localdomain ([2402:f000:1:4414:6c14:7712:e625:1be4])
-        by smtp.gmail.com with ESMTPSA id q25-v6sm4399915pfk.96.2018.07.26.19.20.14
+        by smtp.gmail.com with ESMTPSA id t9-v6sm3844842pgi.87.2018.07.26.19.26.24
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 26 Jul 2018 19:20:15 -0700 (PDT)
+        Thu, 26 Jul 2018 19:26:26 -0700 (PDT)
 From:   Jia-Ju Bai <baijiaju1990@gmail.com>
-To:     Henk.Vergonet@gmail.com, dmitry.torokhov@gmail.com
-Cc:     usbb2k-api-dev@nongnu.org, linux-input@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Jia-Ju Bai <baijiaju1990@gmail.com>
-Subject: [PATCH] input: misc: yealink: Replace GFP_ATOMIC with GFP_KERNEL in usb_probe()
-Date:   Fri, 27 Jul 2018 10:20:07 +0800
-Message-Id: <20180727022007.883-1-baijiaju1990@gmail.com>
+To:     dmitry.torokhov@gmail.com, gustavo@embeddedor.com,
+        arvind.yadav.cs@gmail.com
+Cc:     linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jia-Ju Bai <baijiaju1990@gmail.com>
+Subject: [PATCH] input: mouse: appletouch: Replace GFP_ATOMIC with GFP_KERNEL
+Date:   Fri, 27 Jul 2018 10:26:18 +0800
+Message-Id: <20180727022618.1007-1-baijiaju1990@gmail.com>
 X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-usb_probe() is never called in atomic context.
-It calls usb_alloc_coherent() with GFP_ATOMIC, which is not necessary.
+atp_open(), atp_recover() and atp_resume() are never 
+called in atomic context.
+They call usb_submit_urb() with GFP_ATOMIC, which is not necessary.
 GFP_ATOMIC can be replaced with GFP_KERNEL.
 
 This is found by a static analysis tool named DCNS written by myself.
 
 Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
 ---
- drivers/input/misc/yealink.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/input/mouse/appletouch.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/input/misc/yealink.c b/drivers/input/misc/yealink.c
-index f0c9bf87b4e3..1365cd94ed9b 100644
---- a/drivers/input/misc/yealink.c
-+++ b/drivers/input/misc/yealink.c
-@@ -894,12 +894,12 @@ static int usb_probe(struct usb_interface *intf, const struct usb_device_id *id)
+diff --git a/drivers/input/mouse/appletouch.c b/drivers/input/mouse/appletouch.c
+index 032d27983b6c..f593ec96c95f 100644
+--- a/drivers/input/mouse/appletouch.c
++++ b/drivers/input/mouse/appletouch.c
+@@ -810,7 +810,7 @@ static int atp_open(struct input_dev *input)
+ {
+ 	struct atp *dev = input_get_drvdata(input);
  
- 	/* allocate usb buffers */
- 	yld->irq_data = usb_alloc_coherent(udev, USB_PKT_LEN,
--					   GFP_ATOMIC, &yld->irq_dma);
-+					   GFP_KERNEL, &yld->irq_dma);
- 	if (yld->irq_data == NULL)
- 		return usb_cleanup(yld, -ENOMEM);
+-	if (usb_submit_urb(dev->urb, GFP_ATOMIC))
++	if (usb_submit_urb(dev->urb, GFP_KERNEL))
+ 		return -EIO;
  
- 	yld->ctl_data = usb_alloc_coherent(udev, USB_PKT_LEN,
--					   GFP_ATOMIC, &yld->ctl_dma);
-+					   GFP_KERNEL, &yld->ctl_dma);
- 	if (!yld->ctl_data)
- 		return usb_cleanup(yld, -ENOMEM);
+ 	dev->open = true;
+@@ -976,7 +976,7 @@ static int atp_recover(struct atp *dev)
+ 	if (error)
+ 		return error;
  
+-	if (dev->open && usb_submit_urb(dev->urb, GFP_ATOMIC))
++	if (dev->open && usb_submit_urb(dev->urb, GFP_KERNEL))
+ 		return -EIO;
+ 
+ 	return 0;
+@@ -994,7 +994,7 @@ static int atp_resume(struct usb_interface *iface)
+ {
+ 	struct atp *dev = usb_get_intfdata(iface);
+ 
+-	if (dev->open && usb_submit_urb(dev->urb, GFP_ATOMIC))
++	if (dev->open && usb_submit_urb(dev->urb, GFP_KERNEL))
+ 		return -EIO;
+ 
+ 	return 0;
 -- 
 2.17.0
 
