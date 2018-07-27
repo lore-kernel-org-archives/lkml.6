@@ -6,35 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60F14C67790
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 09:48:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73949C6778F
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 09:48:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1F19820891
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 09:48:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1F19820891
+	by mail.kernel.org (Postfix) with ESMTP id 2671520891
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 09:48:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2671520891
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388724AbeG0LJr (ORCPT
+        id S2388735AbeG0LJu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 07:09:47 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:52568 "EHLO
+        Fri, 27 Jul 2018 07:09:50 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:52592 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730395AbeG0LJq (ORCPT
+        with ESMTP id S1730395AbeG0LJu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 07:09:46 -0400
+        Fri, 27 Jul 2018 07:09:50 -0400
 Received: from localhost (unknown [89.188.5.116])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E7362AF8;
-        Fri, 27 Jul 2018 09:48:40 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D3B96C03;
+        Fri, 27 Jul 2018 09:48:43 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Heiner Kallweit <hkallweit1@gmail.com>,
-        Andrew Lunn <andrew@lunn.ch>,
+        stable@vger.kernel.org, Roopa Prabhu <roopa@cumulusnetworks.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.17 32/66] net: phy: consider PHY_IGNORE_INTERRUPT in phy_start_aneg_priv
-Date:   Fri, 27 Jul 2018 11:45:25 +0200
-Message-Id: <20180727093812.767954515@linuxfoundation.org>
+Subject: [PATCH 4.17 40/66] vxlan: make netlink notify in vxlan_fdb_destroy optional
+Date:   Fri, 27 Jul 2018 11:45:33 +0200
+Message-Id: <20180727093813.647340646@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180727093809.043856530@linuxfoundation.org>
 References: <20180727093809.043856530@linuxfoundation.org>
@@ -51,32 +50,75 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Heiner Kallweit <hkallweit1@gmail.com>
+From: Roopa Prabhu <roopa@cumulusnetworks.com>
 
-[ Upstream commit 215d08a85b9acf5e1fe9dbf50f1774cde333efef ]
+[ Upstream commit f6e053858671bb156b6e44ad66418acc8c7f4e77 ]
 
-The situation described in the comment can occur also with
-PHY_IGNORE_INTERRUPT, therefore change the condition to include it.
+Add a new option do_notify to vxlan_fdb_destroy to make
+sending netlink notify optional. Used by a later patch.
 
-Fixes: f555f34fdc58 ("net: phy: fix auto-negotiation stall due to unavailable interrupt")
-Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+Signed-off-by: Roopa Prabhu <roopa@cumulusnetworks.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/phy/phy.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/vxlan.c |   14 ++++++++------
+ 1 file changed, 8 insertions(+), 6 deletions(-)
 
---- a/drivers/net/phy/phy.c
-+++ b/drivers/net/phy/phy.c
-@@ -514,7 +514,7 @@ static int phy_start_aneg_priv(struct ph
- 	 * negotiation may already be done and aneg interrupt may not be
- 	 * generated.
- 	 */
--	if (phy_interrupt_is_valid(phydev) && (phydev->state == PHY_AN)) {
-+	if (phydev->irq != PHY_POLL && phydev->state == PHY_AN) {
- 		err = phy_aneg_done(phydev);
- 		if (err > 0) {
- 			trigger = true;
+--- a/drivers/net/vxlan.c
++++ b/drivers/net/vxlan.c
+@@ -774,13 +774,15 @@ static void vxlan_fdb_free(struct rcu_he
+ 	kfree(f);
+ }
+ 
+-static void vxlan_fdb_destroy(struct vxlan_dev *vxlan, struct vxlan_fdb *f)
++static void vxlan_fdb_destroy(struct vxlan_dev *vxlan, struct vxlan_fdb *f,
++			      bool do_notify)
+ {
+ 	netdev_dbg(vxlan->dev,
+ 		    "delete %pM\n", f->eth_addr);
+ 
+ 	--vxlan->addrcnt;
+-	vxlan_fdb_notify(vxlan, f, first_remote_rtnl(f), RTM_DELNEIGH);
++	if (do_notify)
++		vxlan_fdb_notify(vxlan, f, first_remote_rtnl(f), RTM_DELNEIGH);
+ 
+ 	hlist_del_rcu(&f->hlist);
+ 	call_rcu(&f->rcu, vxlan_fdb_free);
+@@ -930,7 +932,7 @@ static int __vxlan_fdb_delete(struct vxl
+ 		goto out;
+ 	}
+ 
+-	vxlan_fdb_destroy(vxlan, f);
++	vxlan_fdb_destroy(vxlan, f, true);
+ 
+ out:
+ 	return 0;
+@@ -2393,7 +2395,7 @@ static void vxlan_cleanup(struct timer_l
+ 					   "garbage collect %pM\n",
+ 					   f->eth_addr);
+ 				f->state = NUD_STALE;
+-				vxlan_fdb_destroy(vxlan, f);
++				vxlan_fdb_destroy(vxlan, f, true);
+ 			} else if (time_before(timeout, next_timer))
+ 				next_timer = timeout;
+ 		}
+@@ -2444,7 +2446,7 @@ static void vxlan_fdb_delete_default(str
+ 	spin_lock_bh(&vxlan->hash_lock);
+ 	f = __vxlan_find_mac(vxlan, all_zeros_mac, vni);
+ 	if (f)
+-		vxlan_fdb_destroy(vxlan, f);
++		vxlan_fdb_destroy(vxlan, f, true);
+ 	spin_unlock_bh(&vxlan->hash_lock);
+ }
+ 
+@@ -2498,7 +2500,7 @@ static void vxlan_flush(struct vxlan_dev
+ 				continue;
+ 			/* the all_zeros_mac entry is deleted at vxlan_uninit */
+ 			if (!is_zero_ether_addr(f->eth_addr))
+-				vxlan_fdb_destroy(vxlan, f);
++				vxlan_fdb_destroy(vxlan, f, true);
+ 		}
+ 	}
+ 	spin_unlock_bh(&vxlan->hash_lock);
 
 
