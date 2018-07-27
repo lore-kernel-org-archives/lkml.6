@@ -2,97 +2,106 @@ Return-Path: <SRS0=OQFz=KL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 227D5C6778F
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 15:03:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B152AC67790
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 15:07:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B9AFB208B0
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 15:03:47 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nXscFqfP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B9AFB208B0
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 67425208B0
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 15:07:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 67425208B0
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=techadventures.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388811AbeG0Q0E (ORCPT
+        id S2388467AbeG0Q3x (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 12:26:04 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:33678 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732059AbeG0Q0D (ORCPT
+        Fri, 27 Jul 2018 12:29:53 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:53979 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730395AbeG0Q3x (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 12:26:03 -0400
-Received: by mail-pf1-f194.google.com with SMTP id d4-v6so1598470pfn.0;
-        Fri, 27 Jul 2018 08:03:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=3o6+2iqcmZF94OVFcnWYrc1u56Jdq9CoimG+M+2Buwk=;
-        b=nXscFqfPg7tprg2ZacOOeEb6nHC7DEvk91FC1SuK3KyZY2q/f7m+qouMXI8v7ukIXz
-         I3pFnSa9TAzpiuBbeIHBRouGmQlub3uB8ETYfzcmrI7w5k1C4h0Mfzl/gAnc/kCkBJh/
-         05yN0ZyGvzLAZW95P8GJfcm5E4K5w28H46pBJGfBKT9Fvo8puL5wi/OilfBYGiV5GnTZ
-         b7bN/EwDc/UmFYFzlt28wD/jgtgTVkJCzfyyEEBN1iXnr8/NpD+mwDoTu0vP10JJvZoq
-         NAicBGwgOH5sgzISawjJ3xfp6h2Z/qTLYsmbMlA5NVBN0s5JAqm+eyXc0zhr1SWRZItQ
-         j0NQ==
+        Fri, 27 Jul 2018 12:29:53 -0400
+Received: by mail-wm0-f65.google.com with SMTP id s9-v6so5580365wmh.3
+        for <linux-kernel@vger.kernel.org>; Fri, 27 Jul 2018 08:07:32 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=3o6+2iqcmZF94OVFcnWYrc1u56Jdq9CoimG+M+2Buwk=;
-        b=cNzctaRYZrsR/E3zWFTxPylf1hE7pN0/xKnGC6elCJnXbxIMRu6Q/A48PRxk1u9ro+
-         BjRyJ4ezUDGg+j70ECDAaqPFvVo7Q7bdoJ0aGun4YkmNbmo48fAASnSSQ3UEpXBMLEXa
-         /FbdIL/fdw1Mu+blw8t7xXVFTkTjrxJVRTwp7yMeJIhplO5/Kh5gC1ju+bmtdDHqbLYe
-         LU9PnjNI0JlURNLR8sL35bz2CGAh56FvlERO92LPrLZx3laTPloZxSXoLJ7qwbpljHSA
-         YdRdwtTJ1Li6CgNG9r8EvKNAv2RyjgCfioJ2Co5a3Azq1pbBkSl/hH5P3PIDHvqIgSDh
-         1QUQ==
-X-Gm-Message-State: AOUpUlHI8+pqhwO9vwqB3AHu8mx74WJ0u4aKtOPQAzI1T/Ie/86MkFE6
-        ievwtdzLICuB6e/47+GEfpPpTiyZ
-X-Google-Smtp-Source: AAOMgpdTJc1vSXqd1CuTsqd7tN5IvMHeiJBMyhwuQ5ODNdB9qPls3Aa1OQ1joA04BFzM7gbmqh5/PA==
-X-Received: by 2002:a62:464f:: with SMTP id t76-v6mr7071080pfa.118.1532703824324;
-        Fri, 27 Jul 2018 08:03:44 -0700 (PDT)
-Received: from [192.168.86.235] (c-67-180-167-114.hsd1.ca.comcast.net. [67.180.167.114])
-        by smtp.gmail.com with ESMTPSA id o3-v6sm5011553pgp.3.2018.07.27.08.03.43
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=8MrfnR3HHj0+/mRLp8JDGO54M+fVN0tbddLyG5kskus=;
+        b=qwnr1dhTQBEN9iflUsx6zQM3otoUSxsEEyV9r0YFM1WOUR/zv11l5/N1NWguN1ZYZ+
+         evC28+nLegERdQXmx4G9AK24s+8ejnKsPfB7wQS892rxFLdOLuxBd7CJgBCxPiBkGQ+r
+         sOc1n4qmaiTH/rBJyUv8M3DTMPlVn3XB/v5gAn2OakH0m+V6m5tyC4vbi3NebTKCsY3o
+         bIxeGAFk0mYuhbp9vYnyj8Lxwdh0GhULgj0opRbRsvNAQLWzdxCAJ0jOPd2xdzGojV2y
+         R5s2zM7b57+v3WNGnweigVzpjQaSnf135byXXufZLG5dDkszNDOCqZvemt0+zVxENLcA
+         2r6A==
+X-Gm-Message-State: AOUpUlGDRy/uLBgPtkLVhml0bgLH4DSy3pZAIlqVK/4DECLOMS0EYSyA
+        BAdOX9pIsfx3pxx7C96jJDE=
+X-Google-Smtp-Source: AAOMgpdRNUYBsvzcopuVu3x0YLB52Vt8l2MkbbqRmSfwlriFtEoTMw9GfV6gL+hj5ZYmUiqrivc3TQ==
+X-Received: by 2002:a1c:a691:: with SMTP id p139-v6mr4512006wme.42.1532704052253;
+        Fri, 27 Jul 2018 08:07:32 -0700 (PDT)
+Received: from techadventures.net (techadventures.net. [62.201.165.239])
+        by smtp.gmail.com with ESMTPSA id w8-v6sm6555877wrp.72.2018.07.27.08.07.31
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 27 Jul 2018 08:03:43 -0700 (PDT)
-Subject: Re: [PATCH] net/rds/Kconfig: Correct the RDS depends
-To:     Anders Roxell <anders.roxell@linaro.org>,
-        santosh.shilimkar@oracle.com, davem@davemloft.net,
-        eric.dumazet@gmail.com
-Cc:     netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
-        rds-devel@oss.oracle.com, linux-kernel@vger.kernel.org
-References: <20180727131849.18488-1-anders.roxell@linaro.org>
-From:   Eric Dumazet <eric.dumazet@gmail.com>
-Message-ID: <3872d906-99fe-b310-7d5e-ff0ef31de1e2@gmail.com>
-Date:   Fri, 27 Jul 2018 08:03:42 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Fri, 27 Jul 2018 08:07:31 -0700 (PDT)
+Received: by techadventures.net (Postfix, from userid 1000)
+        id DF7BE12440F; Fri, 27 Jul 2018 17:07:30 +0200 (CEST)
+Date:   Fri, 27 Jul 2018 17:07:30 +0200
+From:   Oscar Salvador <osalvador@techadventures.net>
+To:     Pavel Tatashin <pasha.tatashin@oracle.com>
+Cc:     Steven Sistare <steven.sistare@oracle.com>,
+        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        kirill.shutemov@linux.intel.com, Michal Hocko <mhocko@suse.com>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        dan.j.williams@intel.com, jack@suse.cz, jglisse@redhat.com,
+        Souptick Joarder <jrdr.linux@gmail.com>, bhe@redhat.com,
+        gregkh@linuxfoundation.org, Vlastimil Babka <vbabka@suse.cz>,
+        Wei Yang <richard.weiyang@gmail.com>, dave.hansen@intel.com,
+        rientjes@google.com, mingo@kernel.org, abdhalee@linux.vnet.ibm.com,
+        mpe@ellerman.id.au
+Subject: Re: [PATCH v2 2/3] mm: calculate deferred pages after skipping
+ mirrored memory
+Message-ID: <20180727150730.GA14428@techadventures.net>
+References: <20180726193509.3326-1-pasha.tatashin@oracle.com>
+ <20180726193509.3326-3-pasha.tatashin@oracle.com>
+ <20180727115645.GA13637@techadventures.net>
+ <CAGM2reZnrwy1Y8MFRgyDLG8VZ6Hf+v-PAmZvUG4H65zunmjWZw@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20180727131849.18488-1-anders.roxell@linaro.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAGM2reZnrwy1Y8MFRgyDLG8VZ6Hf+v-PAmZvUG4H65zunmjWZw@mail.gmail.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 07/27/2018 06:18 AM, Anders Roxell wrote:
-> Remove prefix 'CONFIG_' from CONFIG_IPV6
+On Fri, Jul 27, 2018 at 10:53:24AM -0400, Pavel Tatashin wrote:
+>                          unsigned long *nr_initialised)
+> > > +static bool __meminit
+> > > +defer_init(int nid, unsigned long pfn, unsigned long end_pfn)
+> >
+> > Hi Pavel,
+> >
+> > maybe I do not understand properly the __init/__meminit macros, but should not
+> > "defer_init" be __init instead of __meminit?
+> > I think that functions marked as __meminit are not freed up, right?
 > 
-> Fixes: ba7d7e2677c0 ("net/rds/Kconfig: RDS should depend on IPV6")
-> Reported-by: Eric Dumazet <eric.dumazet@gmail.com>
-> Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
-> ---
+> Not exactly. As I understand: __meminit is the same as __init when
+> CONFIG_MEMORY_HOTPLUG=n. But, when memory hotplug is configured,
+> __meminit is not freed, because code that adds memory is shared
+> between boot and hotplug. In this case defer_init() is called only
+> during boot, and could be __init, but it is called from
+> memmap_init_zone() which is __meminit and thus section mismatch would
+> happen.
 
-SGTM, thanks !
+Oh yes, I did not think about memmap_init_zone(), you are right.
+Then, nothing to argue about ;-).
 
-Reviewed-by: Eric Dumazet <edumazet@google.com>
-
+Thanks
+-- 
+Oscar Salvador
+SUSE L3
