@@ -3,47 +3,47 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46A83C67790
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 12:19:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 052D6C6778F
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 12:19:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E8E70208B0
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 12:19:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B0C41208B0
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 12:19:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="oRG7eMq+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E8E70208B0
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="BoGZ0i8q"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B0C41208B0
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388692AbeG0Nka (ORCPT
+        id S2388785AbeG0Nk7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 09:40:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35140 "EHLO mail.kernel.org"
+        Fri, 27 Jul 2018 09:40:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35288 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730488AbeG0Nk3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 09:40:29 -0400
+        id S1729493AbeG0Nk6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Jul 2018 09:40:58 -0400
 Received: from localhost.localdomain (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8148B208AC;
-        Fri, 27 Jul 2018 12:18:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A012B208B0;
+        Fri, 27 Jul 2018 12:19:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1532693929;
-        bh=2KPmnuGrjaCtGamcyKB0pHqRshE5pKlcvcRAScFpe3o=;
+        s=default; t=1532693957;
+        bh=az8jebAB1yTJKmzLf8MEHjseh05od2sntp9CcSCd1Hs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=oRG7eMq++SXSr0WI84pHKsKSfJBhg5AX0OMfEVe3OgF8NisJNFbtkrnY8v/VbAGo2
-         sc3rLJQc1JmNj6BZoUz2vl+lN6SwdBRAcyspO0AbfSuAyQc3ENI80XsJqbm4d6ULW1
-         N9Dk/Us9tmUcBzAlUtW/RRet7KqWTOSQVND0/YdY=
+        b=BoGZ0i8quKiA7E+2PnlAh1oVBpeevMPd6AJJf3s5YM4+Pu+dmf99yoJCXMye75swL
+         gEh4iefT4sT7gWqNi6Y0w3KnU/GBRXzbXQi/MRYxhViVFReulPRVUsdZvZsNRC/2jc
+         Fme3Htq3zlA+tD4gSdqnqjnJuoNuFlzBrjNPZYAU=
 From:   Masami Hiramatsu <mhiramat@kernel.org>
 To:     Shuah Khan <shuah@kernel.org>, Steven Rostedt <rostedt@goodmis.org>
 Cc:     Ingo Molnar <mingo@redhat.com>,
         Masami Hiramatsu <mhiramat@kernel.org>,
         linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 18/25] selftests/ftrace: Add a testcase for nop tracer
-Date:   Fri, 27 Jul 2018 21:18:26 +0900
-Message-Id: <153269390651.3084.11003353154583064083.stgit@devbox>
+Subject: [PATCH 19/25] selftests/ftrace: Add kprobe-event with symbol argument test
+Date:   Fri, 27 Jul 2018 21:18:54 +0900
+Message-Id: <153269393477.3084.13242296184705905821.stgit@devbox>
 X-Mailer: git-send-email 2.13.6
 In-Reply-To: <153269339575.3084.16279591141931053689.stgit@devbox>
 References: <153269339575.3084.16279591141931053689.stgit@devbox>
@@ -56,41 +56,69 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a testcase for nop tracer. This tracer has 2 test
-options, so check it too.
+Add a testcase for kprobe-event with @symbol argument.
+Since @symbol needs to refer the kernel data symbol
+(linux_proc_banner), it requires CONFIG_KALLSYMS_ALL.
 
 Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
 ---
- .../testing/selftests/ftrace/test.d/tracer/nop.tc  |   22 ++++++++++++++++++++
- 1 file changed, 22 insertions(+)
- create mode 100644 tools/testing/selftests/ftrace/test.d/tracer/nop.tc
+ tools/testing/selftests/ftrace/config              |    1 +
+ .../ftrace/test.d/kprobe/kprobe_args_symbol.tc     |   39 ++++++++++++++++++++
+ 2 files changed, 40 insertions(+)
+ create mode 100644 tools/testing/selftests/ftrace/test.d/kprobe/kprobe_args_symbol.tc
 
-diff --git a/tools/testing/selftests/ftrace/test.d/tracer/nop.tc b/tools/testing/selftests/ftrace/test.d/tracer/nop.tc
+diff --git a/tools/testing/selftests/ftrace/config b/tools/testing/selftests/ftrace/config
+index 766669592173..4c7d90aa97b2 100644
+--- a/tools/testing/selftests/ftrace/config
++++ b/tools/testing/selftests/ftrace/config
+@@ -8,3 +8,4 @@ CONFIG_MODULES=y
+ CONFIG_MODULE_UNLOAD=y
+ CONFIG_SAMPLES=y
+ CONFIG_SAMPLE_TRACE_PRINTK=m
++CONFIG_KALLSYMS_ALL=y
+diff --git a/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_args_symbol.tc b/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_args_symbol.tc
 new file mode 100644
-index 000000000000..ca63e316e0f5
+index 000000000000..2b6dd33f9076
 --- /dev/null
-+++ b/tools/testing/selftests/ftrace/test.d/tracer/nop.tc
-@@ -0,0 +1,22 @@
++++ b/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_args_symbol.tc
+@@ -0,0 +1,39 @@
 +#!/bin/sh
 +# SPDX-License-Identifier: GPL-2.0
-+# description: Test nop tracer
++# description: Kprobe event symbol argument
 +
-+# nop must be supported always
-+grep -q "nop" available_tracers
++[ -f kprobe_events ] || exit_unsupported # this is configurable
 +
-+echo "nop" > current_tracer
++SYMBOL="linux_proc_banner"
 +
-+# nop provides 2 test options
-+grep -q "test_nop_accept" trace_options
-+grep -q "test_nop_refuse" trace_options
++if [ ! -f /proc/kallsyms ]; then
++  echo "Can not check the target symbol - please enable CONFIG_KALLSYMS"
++  exit_unresolved
++elif ! grep "$SYMBOL\$" /proc/kallsyms; then
++  echo "Linux banner is not exported - please enable CONFIG_KALLSYMS_ALL"
++  exit_unresolved
++fi
 +
-+# nop_accept always success
-+echo "test_nop_accept" > trace_options
-+echo "notest_nop_accept" > trace_options
++: "Test get basic types symbol argument"
++echo "p:testprobe_u _do_fork arg1=@linux_proc_banner:u64 arg2=@linux_proc_banner:u32 arg3=@linux_proc_banner:u16 arg4=@linux_proc_banner:u8" > kprobe_events
++echo "p:testprobe_s _do_fork arg1=@linux_proc_banner:s64 arg2=@linux_proc_banner:s32 arg3=@linux_proc_banner:s16 arg4=@linux_proc_banner:s8" >> kprobe_events
++if grep -q "x8/16/32/64" README; then
++  echo "p:testprobe_x _do_fork arg1=@linux_proc_banner:x64 arg2=@linux_proc_banner:x32 arg3=@linux_proc_banner:x16 arg4=@linux_proc_banner:x8" >> kprobe_events
++fi
++echo "p:testprobe_bf _do_fork arg1=@linux_proc_banner:b8@4/32" >> kprobe_events
++echo 1 > events/kprobes/enable
++(echo "forked")
++echo 0 > events/kprobes/enable
++grep "testprobe_[usx]:.* arg1=.* arg2=.* arg3=.* arg4=.*" trace
++grep "testprobe_bf:.* arg1=.*" trace
 +
-+# nop_refuse always failed
-+! echo "test_nop_refuse" > trace_options
-+! echo "notest_nop_refuse" > trace_options
++: "Test get string symbol argument"
++echo "p:testprobe_str _do_fork arg1=@linux_proc_banner:string" > kprobe_events
++echo 1 > events/kprobes/enable
++(echo "forked")
++echo 0 > events/kprobes/enable
++RESULT=`grep "testprobe_str" trace | sed -e 's/.* arg1=\(.*\)/\1/'`
 +
-+exit 0
++RESULT=`echo $RESULT | sed -e 's/.* \((.*)\) \((.*)\) .*/\1 \2/'`
++ORIG=`cat /proc/version | sed -e 's/.* \((.*)\) \((.*)\) .*/\1 \2/'`
++test "$RESULT" = "$ORIG"
 
