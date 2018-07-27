@@ -2,57 +2,135 @@ Return-Path: <SRS0=OQFz=KL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73A2CC6778F
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 20:32:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE463C6778F
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 20:34:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 25ED820857
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 20:32:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8007F20673
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 20:34:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="oIiuV5WH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 25ED820857
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lunn.ch
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Sz8MrX+m";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Sz8MrX+m"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8007F20673
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389653AbeG0Vzm (ORCPT
+        id S2389632AbeG0V6F (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 17:55:42 -0400
-Received: from vps0.lunn.ch ([185.16.172.187]:48935 "EHLO vps0.lunn.ch"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389368AbeG0Vzl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 17:55:41 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch; s=20171124;
-        h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date; bh=E1OHhHlXKr/sMgtGidslBz87k/Wun/mjYBYwvCAVnmk=;
-        b=oIiuV5WHn0twYl8l4OkGX614vSZkMCwf9HQh6pyH482/1l/YfLTKTZOwG/iJmma1m9cxtMSTHlZ0q4bZwO7MrU+b9Nou7w6bKG6pgGAbvAOqFvvVzl1R8Hdvd44rjxso+DXmUC1vH+5KNEgu9/W1LblikRDsRjLqZM0btVhFz0Y=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.84_2)
-        (envelope-from <andrew@lunn.ch>)
-        id 1fj9P9-0004wv-DJ; Fri, 27 Jul 2018 22:32:03 +0200
-Date:   Fri, 27 Jul 2018 22:32:03 +0200
-From:   Andrew Lunn <andrew@lunn.ch>
-To:     Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
-Cc:     grygorii.strashko@ti.com, davem@davemloft.net,
-        linux-omap@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next] net: ethernet: ti: cpsw: replace unnecessarily
- macroses on functions
-Message-ID: <20180727203203.GB17441@lunn.ch>
-References: <20180727191318.18698-1-ivan.khoronzhuk@linaro.org>
+        Fri, 27 Jul 2018 17:58:05 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:51822 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389206AbeG0V6F (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Jul 2018 17:58:05 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id DFC75602A7; Fri, 27 Jul 2018 20:34:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1532723671;
+        bh=zBmH5RgIjOohg8x30slGTkxRUyt/7omIs1Ni0BBjn4c=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=Sz8MrX+mL+ZeXG4AIgI2PKNjg48C65RP+CdMGu39Dzhq3MAsgFg9wff2fJT4hb1eq
+         mqgFDZQ0Trn0ivmjAu+ibMK1CffkXknJjPpf/8ZVceZ91AC1xz2fvlrE0k0M/M9S1E
+         2E5io+FlPo8lTxHYVyIe0h2QzEQrcxedtWW+n5Jg=
+Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by smtp.codeaurora.org (Postfix) with ESMTP id 3F2E260241;
+        Fri, 27 Jul 2018 20:34:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1532723671;
+        bh=zBmH5RgIjOohg8x30slGTkxRUyt/7omIs1Ni0BBjn4c=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=Sz8MrX+mL+ZeXG4AIgI2PKNjg48C65RP+CdMGu39Dzhq3MAsgFg9wff2fJT4hb1eq
+         mqgFDZQ0Trn0ivmjAu+ibMK1CffkXknJjPpf/8ZVceZ91AC1xz2fvlrE0k0M/M9S1E
+         2E5io+FlPo8lTxHYVyIe0h2QzEQrcxedtWW+n5Jg=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180727191318.18698-1-ivan.khoronzhuk@linaro.org>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Fri, 27 Jul 2018 13:34:31 -0700
+From:   Sodagudi Prasad <psodagud@codeaurora.org>
+To:     Sodagudi Prasad <psodagud@codeaurora.org>
+Cc:     adilger.kernel@dilger.ca, wen.xu@gatech.edu,
+        linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: Remounting filesystem read-only
+In-Reply-To: <20180727195213.GE13922@thunk.org>
+References: <366cf3ac534bbadaaa61714a43006ac7@codeaurora.org>
+ <e9869d6cd358e9de395d730ab7b3aa60@codeaurora.org>
+ <20180727195213.GE13922@thunk.org>
+Message-ID: <c121825198eba667c09fc53fa9b4fd3a@codeaurora.org>
+X-Sender: psodagud@codeaurora.org
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> +static inline void cpsw_src_port_detect(struct cpsw_common *cpsw, int status,
-> +					struct sk_buff *skb)
+On 2018-07-27 12:52, Theodore Y. Ts'o wrote:
+> On Fri, Jul 27, 2018 at 12:26:25PM -0700, Sodagudi Prasad wrote:
+>> On 2018-07-26 18:04, Sodagudi Prasad wrote:
+>> > Hi All,
+>> >
+>> 
+>> +linux-kernel@vger.kernel.org list.
+>> 
+>> Hi All,
+>> 
+>> Observing the following issue with one of the partition on android 
+>> device
+>> with 4.14.56 kernel.  When I try to remount this partition using the 
+>> command
+>> - mount -o rw,remount /vendor/dsp, it is remounting as read-only.
+>> 
+>> [  191.364358] EXT4-fs error (device sde9): 
+>> ext4_has_uninit_itable:3108:
+>> comm mount: Inode table for bg 0 marked as needing zeroing
+>> [  191.364762] Aborting journal on device sde9-8.
+>> [  191.365226] EXT4-fs (sde9): Remounting filesystem read-only
+>> [  191.365232] EXT4-fs (sde9): re-mounted. Opts: data=ordere
+>> 
+>> If I revert this commit [1] -"ext4: only look at the bg_flags field if 
+>> it is
+>> valid", the issue is not observed. It is just giving following warning
+>> message.
+>> [1] - https://patchwork.ozlabs.org/patch/929239/.
+>> 
+>> [  123.373456] EXT4-fs (sde9): warning: mounting fs with errors, 
+>> running
+>> e2fsck is recommendedt
+>> [  123.389649] EXT4-fs (sde9): re-mounted. Opts: data=ordered
+>> 
+>> Can you provide some inputs what could be the issue with this 
+>> partition?
+> 
+> The error should be pretty clear: "Inode table for bg 0 marked as
+> needing zeroing".  That should never happen.
 
-Please don't use inline. Let the compiler decide.
+Hi Ted,
 
-       Andrew
+Can you provide any debug patch to detect when this corruption is 
+happening?
+Source of this corruption and how this is partition getting corrupted?
+Or which file system operation lead to this corruption?
+
+I am digging code a bit around this warning to understand more.
+
+Thanks in advance for your help.
+
+-Thanks, Prasad
+
+> The warning "mounting fs
+> with errors" means the file system was corrupted.  The commit is now
+> telling more about how the file system was corrupted, and is
+> protecting you from further data loss.  (You shoud never, ever, ever,
+> allow a file system to be mounted read/write with corruptions.  The
+> file system should have been checked using fsck.ext4, aka e2fsck,
+> before the file system was allowed to be mounted.)
+> 
+>        	   	       	   	      - Ted
+
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora 
+Forum,
+Linux Foundation Collaborative Project
