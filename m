@@ -2,99 +2,154 @@ Return-Path: <SRS0=OQFz=KL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4554CC6778F
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 12:55:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0247C67790
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 12:56:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E9924208AF
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 12:55:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E9924208AF
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 8D52F208AF
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 12:56:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D52F208AF
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730953AbeG0ORL (ORCPT
+        id S1731568AbeG0OSQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 10:17:11 -0400
-Received: from foss.arm.com ([217.140.101.70]:43182 "EHLO foss.arm.com"
+        Fri, 27 Jul 2018 10:18:16 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:36415 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730314AbeG0ORL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 10:17:11 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6305E15AD;
-        Fri, 27 Jul 2018 05:55:22 -0700 (PDT)
-Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 350A73F575;
-        Fri, 27 Jul 2018 05:55:22 -0700 (PDT)
-Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
-        id BA8441AE323F; Fri, 27 Jul 2018 13:55:22 +0100 (BST)
-Date:   Fri, 27 Jul 2018 13:55:22 +0100
-From:   Will Deacon <will.deacon@arm.com>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Kees Cook <keescook@google.com>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Alexander Popov <alex.popov@linux.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Laura Abbott <labbott@redhat.com>
-Subject: Re: linux-next: build failure after merge of the kspp tree
-Message-ID: <20180727125522.GA6173@arm.com>
-References: <20180727190207.7ce1c9b0@canb.auug.org.au>
- <20180727190647.3525f5f7@canb.auug.org.au>
- <20180727205511.7c0f2e62@canb.auug.org.au>
+        id S1730314AbeG0OSQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Jul 2018 10:18:16 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 0DA1E20893; Fri, 27 Jul 2018 14:56:25 +0200 (CEST)
+Received: from localhost (AAubervilliers-681-1-89-120.w90-88.abo.wanadoo.fr [90.88.30.120])
+        by mail.bootlin.com (Postfix) with ESMTPSA id CAA3A2072C;
+        Fri, 27 Jul 2018 14:56:14 +0200 (CEST)
+Date:   Fri, 27 Jul 2018 14:56:15 +0200
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Icenowy Zheng <icenowy@aosc.io>
+Cc:     Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+        Jagan Teki <jagan@amarulasolutions.com>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com
+Subject: Re: [PATCH v3.1 10/10] arm64: dts: allwinner: a64: Enable HDMI
+ output on A64 boards w/ HDMI
+Message-ID: <20180727125615.ju23ecgm6y4rz7p5@flea>
+References: <20180726171257.6688-1-icenowy@aosc.io>
+ <20180726171257.6688-11-icenowy@aosc.io>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="3xvit7syelf6yr45"
 Content-Disposition: inline
-In-Reply-To: <20180727205511.7c0f2e62@canb.auug.org.au>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <20180726171257.6688-11-icenowy@aosc.io>
+User-Agent: NeoMutt/20180622
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 27, 2018 at 08:55:11PM +1000, Stephen Rothwell wrote:
-> On Fri, 27 Jul 2018 19:06:47 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> >
-> > On Fri, 27 Jul 2018 19:02:07 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> > >
-> > > After merging the kspp tree, today's linux-next build (x86_64
-> > > allmodconfig) failed like this:
-> > > 
-> > > cc1: error: plugin stackleak_plugin should be specified before -fplugin-arg-stackleak_plugin-disable in the command line
-> > > 
-> > > Maybe caused by commit
-> > > 
-> > >   a8b9eaddb9c0 ("gcc-plugins: Add STACKLEAK plugin for tracking the kernel stack")
-> > > 
-> > > I have used the kspp tree from next-20180726 for today.  
-> > 
-> > Well, that obviously didn't work since the tree hasn't changed for a
-> > few days.
-> > 
-> > I can't see what has interacted to make this happen, so I have dropped
-> > the kspp tree for today.
-> 
-> Actually, it may have been caused by commit
-> 
->   0b3e336601b8 ("arm64: Add support for STACKLEAK gcc plugin")
-> 
-> from the arm64 tree.
 
-Thanks, Stephen. I managed to reproduce this by merging for-next/kspp from
-Kees's tree and for-next/core from the arm64 tree. The failure happens when
-building the EFI stub, so the commit you mention above is almost certainly
-the culprit.
+--3xvit7syelf6yr45
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-We build the stub with the following GCC invocation:
+On Fri, Jul 27, 2018 at 01:12:57AM +0800, Icenowy Zheng wrote:
+> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts b/arch/a=
+rm64/boot/dts/allwinner/sun50i-a64-pine64.dts
+> index 1b9b92e541d2..1b972bade9f6 100644
+> --- a/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts
+> +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts
+> @@ -62,6 +62,21 @@
+>  	chosen {
+>  		stdout-path =3D "serial0:115200n8";
+>  	};
+> +
+> +	connector {
+> +		compatible =3D "hdmi-connector";
+> +		type =3D "a";
+> +
+> +		port {
+> +			hdmi_con_in: endpoint {
+> +				remote-endpoint =3D <&hdmi_out_con>;
+> +			};
+> +		};
+> +	};
+> +};
+> +
+> +&de {
+> +	status =3D "okay";
+>  };
+> =20
+>  &ehci0 {
+> @@ -82,6 +97,17 @@
+> =20
+>  };
+> =20
+> +&hdmi {
+> +	hdmi-supply =3D <&reg_dldo1>;
+> +	status =3D "okay";
+> +};
+> +
+> +&hdmi_out {
+> +	hdmi_out_con: endpoint {
+> +		remote-endpoint =3D <&hdmi_con_in>;
+> +	};
+> +};
+> +
+>  &i2c1 {
+>  	pinctrl-names =3D "default";
+>  	pinctrl-0 =3D <&i2c1_pins>;
+> @@ -99,6 +125,10 @@
+>  	};
+>  };
+> =20
+> +&mixer1 {
+> +	status =3D "okay";
+> +};
+> +
+>  &mmc0 {
+>  	pinctrl-names =3D "default";
+>  	pinctrl-0 =3D <&mmc0_pins>;
+> @@ -238,6 +268,10 @@
+>  	status =3D "disabled";
+>  };
+> =20
+> +&tcon1 {
+> +	status =3D "okay";
+> +};
 
- gcc -Wp,-MD,drivers/firmware/efi/libstub/.efi-stub-helper.o.d  -nostdinc -isystem /usr/lib/gcc/x86_64-linux-gnu/4.9/include -I./arch/x86/include -I./arch/x86/include/generated  -I./include -I./arch/x86/include/uapi -I./arch/x86/include/generated/uapi -I./include/uapi -I./include/generated/uapi -include ./include/linux/kconfig.h -include ./include/linux/compiler_types.h -D__KERNEL__ -mcmodel=small -m64 -D__KERNEL__ -O2 -fPIC -fno-strict-aliasing -mno-red-zone -mno-mmx -mno-sse -fshort-wchar -DDISABLE_BRANCH_PROFILING -D__NO_FORTIFY -ffreestanding -fno-stack-protector -fplugin-arg-stackleak_plugin-disable   -fno-builtin      -DKBUILD_BASENAME='"efi_stub_helper"' -DKBUILD_MODNAME='"efi_stub_helper"' -c -o drivers/firmware/efi/libstub/.tmp_efi-stub-helper.o drivers/firmware/efi/libstub/efi-stub-helper.c
+Is it working or not on the pine64?
 
-so given that we're not passing any -fplugin= option anyway (because we
-override KBUILD_CFLAGS for the stub), I don't understand why we need
-to the disable option at all.
+Maxime
 
-Laura?
+--=20
+Maxime Ripard, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
-Will
+--3xvit7syelf6yr45
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAltbFm4ACgkQ0rTAlCFN
+r3T7LhAAkfFcBA6X1XtL00YHltRxggxIhKJOsMNhjI+FlX+s0zu3VPW3DSmrepgK
+ts4cEebJxlaobaHrEvE/fdvscPQgXKQsGvegeboi+jZtRwHF5uHKLxvdlc6dv/rT
+d/QpHUGAgTYMsHeS40mHMWkndPM3IAFWW4PNUDazXepHGzc4Y4/joK+Ik0U2uhEK
+Wr8U1ArDzkZTL7kEi7bW6WsHUaCWrTK/TjGOMJ/9cstL4i3bzeS19FvMs0Q2/v9/
+RLgL9OJDyEz6vxdRXkZTrOI1QyzZr3yEj4/1P8UZihsaysFqje7s14GFaqOXSvVp
+I9RJuses8/7MZApuhmnpSmUtui1Zctt/V1TZ6e3u6sCH8GNT5tpsOlSnfox4XiEV
+ofx0oTC/xB8CBPogpFObrTy8NSPUut5mkTGc1QpAVwk5/Dw3xbIJzxF0g10uEgxv
+mdQVHEpcjA/+c0gBWsg9fjhYJqshyWImiLw6F7VfeyF/tB3j1HJNMYLVZdfrcxkc
+5g3bgtLiTcSISv37D8zvkd6Zp7esTmLZVS0jQpm1LxpgF1EoIdZXScmEdRPkFU0D
+owbjIyZooZqtC7CID3Z7b0tONNgBrgbOAiqIgB3ZT34vCRtSxv4E9FQfrBf1Dk/6
+DBpXKF8w96zcCqdte9AAKr7W3PlwjkpJPNBEGR/gp/i3K1W5Y1g=
+=UoNb
+-----END PGP SIGNATURE-----
+
+--3xvit7syelf6yr45--
