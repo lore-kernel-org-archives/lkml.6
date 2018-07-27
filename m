@@ -2,199 +2,137 @@ Return-Path: <SRS0=OQFz=KL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 243E1C6778F
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 20:26:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 775B3C6778F
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 20:28:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C6E7B20857
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 20:26:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 234B820857
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 20:28:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="JbiEBUDz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C6E7B20857
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="SJxUR9m9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 234B820857
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389621AbeG0Vty (ORCPT
+        id S2389642AbeG0VwO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 17:49:54 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54394 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389210AbeG0Vtx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 17:49:53 -0400
-Received: from localhost (unknown [69.71.4.100])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A6A8420671;
-        Fri, 27 Jul 2018 20:26:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1532723182;
-        bh=bs6tU4soZemLTfvgJ80Mz5P3OQJtIk59h6hgSNWdu9M=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=JbiEBUDz528t6L/JNHS1U60PgRhfJWzi0x6kbpVIsnghsjvA0kkE+NaMMwlhgny5q
-         pmY1zNieX/dpPqpvDugplbMLkJmmqHIAIx8rC4zIgXO78pwrplmiibbt5Jhfy0Y3Fo
-         G8nBskJZXDj4rpygGQoZIMnwwtL9OQn4dPY04B80=
-Date:   Fri, 27 Jul 2018 15:26:19 -0500
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Rajat Jain <rajatja@google.com>
-Cc:     Bjorn Helgaas <bhelgaas@google.com>,
-        Keith Busch <keith.busch@intel.com>,
-        Vidya Sagar <vidyas@nvidia.com>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Kees Cook <keescook@chromium.org>,
-        "Gustavo A. R. Silva" <garsilva@embeddedor.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Sinan Kaya <okaya@codeaurora.org>,
-        Frederick Lawler <fred@fredlawl.com>,
-        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-        mayurkumar.patel@intel.com, rajatxjain@gmail.com,
-        Richard Hughes <rhughes@redhat.com>,
-        Carlos Garnacho <cgarnach@redhat.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Pali Rohar <pali.rohar@gmail.com>,
-        Takashi Iwai <tiwai@suse.de>,
-        Andy Whitcroft <apw@canonical.com>,
-        Colin Ian King <colin.king@canonical.com>
-Subject: Re: [PATCH v2] pci/aspm: Remove CONFIG_PCIEASPM_DEBUG
-Message-ID: <20180727202619.GD173328@bhelgaas-glaptop.roam.corp.google.com>
-References: <20180508230148.121852-1-rajatja@google.com>
- <20180510233912.96454-1-rajatja@google.com>
+        Fri, 27 Jul 2018 17:52:14 -0400
+Received: from mail-oi0-f66.google.com ([209.85.218.66]:38295 "EHLO
+        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389584AbeG0VwO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Jul 2018 17:52:14 -0400
+Received: by mail-oi0-f66.google.com with SMTP id v8-v6so11263310oie.5
+        for <linux-kernel@vger.kernel.org>; Fri, 27 Jul 2018 13:28:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=g8zamwCJhG2JH0emzOpTzwB/JCG1SNTehEBT1BIX3bM=;
+        b=SJxUR9m9y478ApKMcfzSe1i8wG0IVMCwjk0RbQF5zqtvvskwa3kG4wHnupEEaOX73i
+         o4pZADjnPmJyr6zyHbCLCpQo7oRpu1ej99KziYmNiXzYooB1tgQ16me3BdOuee0YClv5
+         P4gt3fU+kSggSnZBzc/Tr9hsoC8Zr/ozHwreOWPQ1/mfCPdl49JvjCjuiaZ4ZukVrntF
+         X/RnYdJXkP1xct0MJfA3GavQEFENclsw7H+ZNJayeuS5PQTSqmfTknuZKG0PLPWrxP/5
+         md0qWI8XByayS56WqC44GUycavCQnfu2IHPn3UXWBEx/yuVLDBN4LyayTREmwim6nvYZ
+         bYBQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=g8zamwCJhG2JH0emzOpTzwB/JCG1SNTehEBT1BIX3bM=;
+        b=qd9n79Qx262RZ4hgtLGY/c6eWhgMWm+tRdyiMj+q6TACjqvoQjAjVfu2JYir1BIaTD
+         GMKFBPZ1QtWkgt5v2REY9gmAofe7j0EtzJDncH6HeQu3ukdPdcg3iH288uZqXaRSV5Ci
+         lYVYeonYzZWtOAaPFcRYVe9HQpgQaqqT/8LLRoX7sOZjP8F+DhJzxX5r9J46p9uU3B82
+         Hp9OlvBLuzYeaTj4mjKBvZl3QKWRzk0bX2pIJcX4K+9F7a7b4UCOxD4uCjjXtiMh/xTp
+         1rZEK5UOIrBTpPHBy+YQUIRYEq8voZSJxeb4VwJuYJYG8odgCb267dgjC1R8CeYnT+/u
+         Kxvw==
+X-Gm-Message-State: AOUpUlHtel8Lb6YIAOXLzCVBUDF/mR+5ggdD/BaHKdkNXk/xPwg5ef5j
+        R3wPblGoDjOaGSnOdPKQB1m9sCep9NLcfehom1hv1Q==
+X-Google-Smtp-Source: AAOMgpfi5HMNjiw9SBgFWUA2/eFNOz7wTCgpxcrAQ9JQ3eua0zEDEeGpsgDp2Ta2uP+8LPdcAGM0W0zO/+jjNa1wrK0=
+X-Received: by 2002:aca:ec46:: with SMTP id k67-v6mr8600091oih.81.1532723322030;
+ Fri, 27 Jul 2018 13:28:42 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180510233912.96454-1-rajatja@google.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Received: by 2002:ac9:3404:0:0:0:0:0 with HTTP; Fri, 27 Jul 2018 13:28:41
+ -0700 (PDT)
+In-Reply-To: <CALCETrVS8ch-1harGv2NUy83ZLna8Vde1zNLxPTPaxuMexQMjw@mail.gmail.com>
+References: <20170208080917.24320-1-khuey@kylehuey.com> <20170208080917.24320-9-khuey@kylehuey.com>
+ <CALCETrVS8ch-1harGv2NUy83ZLna8Vde1zNLxPTPaxuMexQMjw@mail.gmail.com>
+From:   Jim Mattson <jmattson@google.com>
+Date:   Fri, 27 Jul 2018 13:28:41 -0700
+Message-ID: <CALMp9eSyJep6UPxeiZRWPrdzwvvcqJEbPPZ6C61EeHsvdyhMLg@mail.gmail.com>
+Subject: Re: [PATCH v14 8/9] KVM: x86: virtualize cpuid faulting
+To:     Andy Lutomirski <luto@kernel.org>
+Cc:     Kyle Huey <me@kylehuey.com>,
+        "Robert O'Callahan" <robert@ocallahan.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, X86 ML <x86@kernel.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Jeff Dike <jdike@addtoit.com>,
+        Richard Weinberger <richard@nod.at>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Shuah Khan <shuah@kernel.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Borislav Petkov <bp@suse.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Len Brown <len.brown@intel.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Dmitry Safonov <dsafonov@virtuozzo.com>,
+        David Matlack <dmatlack@google.com>,
+        Nadav Amit <nadav.amit@gmail.com>,
+        Andi Kleen <andi@firstfloor.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        user-mode-linux-devel@lists.sourceforge.net,
+        "open list:USER-MODE LINUX (UML)" 
+        <user-mode-linux-user@lists.sourceforge.net>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>, kvm list <kvm@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[+cc Rafael, Richard, Carlos, Pali, Takashi, Andy, Colin for question
-about how to expose ASPM power management in sysfs]
+On Fri, Jul 27, 2018 at 12:41 PM, Andy Lutomirski <luto@kernel.org> wrote:
+> On Wed, Feb 8, 2017 at 12:09 AM, Kyle Huey <me@kylehuey.com> wrote:
+>> Hardware support for faulting on the cpuid instruction is not required to
+>> emulate it, because cpuid triggers a VM exit anyways. KVM handles the relevant
+>> MSRs (MSR_PLATFORM_INFO and MSR_MISC_FEATURES_ENABLE) and upon a
+>> cpuid-induced VM exit checks the cpuid faulting state and the CPL.
+>> kvm_require_cpl is even kind enough to inject the GP fault for us.
+>>
+>> Signed-off-by: Kyle Huey <khuey@kylehuey.com>
+>> Reviewed-by: David Matlack <dmatlack@google.com>
+>> ---
+>> ...
+>> @@ -7613,16 +7636,19 @@ void kvm_vcpu_reset(struct kvm_vcpu *vcpu, bool init_event)
+>>
+>>         kvm_clear_async_pf_completion_queue(vcpu);
+>>         kvm_async_pf_hash_reset(vcpu);
+>>         vcpu->arch.apf.halted = false;
+>>
+>>         if (!init_event) {
+>>                 kvm_pmu_reset(vcpu);
+>>                 vcpu->arch.smbase = 0x30000;
+>> +
+>> +               vcpu->arch.msr_platform_info = MSR_PLATFORM_INFO_CPUID_FAULT;
+>> +               vcpu->arch.msr_misc_features_enables = 0;
+>
+> Jim, I assume you're worried about this bit?  It seems like
+> msr_platform_info should maybe be initialized to zero to avoid causing
+> an unintended migration issue.
 
-On Thu, May 10, 2018 at 04:39:12PM -0700, Rajat Jain wrote:
-> ...
-> And some suggestions from Bjorn here:
-> https://www.spinics.net/lists/linux-pci/msg60541.html
-> 
-> This patch picks up one of the suggestion, to remove the
-> CONFIG_PCIEASPM_DEBUG and thus make the code always
-> avilable. This provides control to userspace to control
-> ASPM on a per slot / device basis using sysfs interface.
+Initializing this bit to zero helps with migration, but then if the
+CPUID faulting bits in both MSRs are set, userspace has to take pains
+to ensure that MSR_PLATFORM_INFO is restored first, or the
+MSR_MISC_FEATURES_ENABLES value will be rejected.
 
-TL;DR: When CONFIG_PCIEASPM_DEBUG=y, Linux makes ASPM control files
-       visible in sysfs, associated with the upstream end (e.g., Root
-       Port) of a link.  Should these files be associated with the
-       downstream end (e.g., NIC, GPU, etc) instead?
-
-I think we do need to make ASPM control files visible in sysfs, as
-this patch does.  But I have a question about exactly *how* we want to
-do this.  I had planned to merge this patch for v4.19, but I think
-I'll postpone it until we figure this out.
-
-ASPM is a power management feature of a PCIe link, and it affects the
-devices on both ends of that link.  The upstream end (closest to the
-CPU) is typically a Root Port, and the downstream end is typically an
-Endpoint (e.g., a GPU, NIC, or NVMe device).  For example, my laptop
-has these devices:
-
-  00:1c.2 Intel Root Port to [bus 04]
-  04:00.0 Intel 8260 Wireless NIC
-
-There's a PCIe link between these two devices, and if both ends
-support it, ASPM reduces power usage when the NIC is idle.  The
-hardware reduces power usage automatically; the kernel only needs to
-configure ASPM.
-
-ASPM affects performance as well as power, so we have knobs to control
-the tradeoff.  Starting with the big hammers, we currently have:
-
-  - Kernel build-time setting (CONFIG_PCIEASPM_PERFORMANCE, etc).
-    Requires kernel rebuild and reboot.
-
-  - "pcie_aspm=X" kernel boot parameter.  Can only enable/disable and
-    requires a reboot.
-
-  - /sys/module/pcie_aspm/parameters/policy file.  At any time, root
-    can set the system-wide ASPM policy to one of these settings:
-
-      + highest performance, highest power consumption
-      + moderate power saving at cost of some performance
-      + aggressive power saving at cost of more performance
-      + use whatever setting BIOS configured
-
-  - Many /sys/devices/pci0000:00/0000:00:1c.2/power/link_state files.
-    At any time, root can set the ASPM policy to one of the above
-    settings, but for individual devices.  Currently these files are
-    only available when CONFIG_PCIEASPM_DEBUG=y (Red Hat does not
-    enable this, but Ubuntu does).
-
-The patch below changes it so these /sys/devices/.../link_state files
-*always* exist, regardless of CONFIG_PCIEASPM_DEBUG.
-
-The question is where those sysfs files should be.  Currently they are
-associated with the device at the *upstream* end of the link.  In the
-example above, they're associated with the Root Port:
-
-  /sys/devices/pci0000:00/0000:00:1c.2/power/link_state
-
-I don't know if that's the right place, or if they should be
-associated with the device at the *downstream* end of the link, i.e.,
-04:00.0.  The downstream end might be better because:
-
-  - It's easier to associate the downstream end with a device the user
-    cares about, e.g., a NIC, GPU, etc.  This is mostly a user-
-    interface issue.
-
-  - A link can lead to a multi-function device, and the spec allows
-    those functions to have different ASPM settings (see PCIe r4.0,
-    sec 5.4.1).  With the sysfs files at the upstream end of the link,
-    we have no way to configure those functions individually.
-
-Any thoughts?
-
-> ...
-> diff --git a/drivers/pci/pcie/Kconfig b/drivers/pci/pcie/Kconfig
-> index b12e28b3d8f9..089b9f559d88 100644
-> --- a/drivers/pci/pcie/Kconfig
-> +++ b/drivers/pci/pcie/Kconfig
-> @@ -46,14 +46,6 @@ config PCIEASPM
->  
->  	  When in doubt, say Y.
->  
-> -config PCIEASPM_DEBUG
-> -	bool "Debug PCI Express ASPM"
-> -	depends on PCIEASPM
-> -	default n
-> -	help
-> -	  This enables PCI Express ASPM debug support. It will add per-device
-> -	  interface to control ASPM.
-> -
->  choice
->  	prompt "Default ASPM policy"
->  	default PCIEASPM_DEFAULT
-> diff --git a/drivers/pci/pcie/aspm.c b/drivers/pci/pcie/aspm.c
-> index c687c817b47d..8ffc13d42baa 100644
-> --- a/drivers/pci/pcie/aspm.c
-> +++ b/drivers/pci/pcie/aspm.c
-> @@ -1161,7 +1161,6 @@ static int pcie_aspm_get_policy(char *buffer, const struct kernel_param *kp)
->  module_param_call(policy, pcie_aspm_set_policy, pcie_aspm_get_policy,
->  	NULL, 0644);
->  
-> -#ifdef CONFIG_PCIEASPM_DEBUG
->  static ssize_t link_state_show(struct device *dev,
->  		struct device_attribute *attr,
->  		char *buf)
-> @@ -1264,7 +1263,6 @@ void pcie_aspm_remove_sysfs_dev_files(struct pci_dev *pdev)
->  		sysfs_remove_file_from_group(&pdev->dev.kobj,
->  			&dev_attr_clk_ctl.attr, power_group);
->  }
-> -#endif
->  
->  static int __init pcie_aspm_disable(char *str)
->  {
-> -- 
-> 2.17.0.441.gb46fe60e1d-goog
-> 
+I'm also concerned about the 0 in the "Maximum Non-Turbo Ratio" field
+feeding into someone's calculated TSC frequency.
