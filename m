@@ -2,72 +2,98 @@ Return-Path: <SRS0=OQFz=KL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_MED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E14F0C67790
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 23:51:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF7B0C67790
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 23:58:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9B8A820647
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 23:51:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B8A820647
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 77FF220647
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 23:58:53 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="CtyO2jwT"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 77FF220647
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389154AbeG1BQA convert rfc822-to-8bit (ORCPT
+        id S2389173AbeG1BXA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 21:16:00 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:52520 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2388621AbeG1BP7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 21:15:59 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 1F8B440216E8;
-        Fri, 27 Jul 2018 23:51:47 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-116.rdu2.redhat.com [10.10.120.116])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 422301C5B8;
-        Fri, 27 Jul 2018 23:51:46 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <21395.1532735340@warthog.procyon.org.uk>
-References: <21395.1532735340@warthog.procyon.org.uk> <CAG48ez0SdSPkimsk-MW7oSQO-Y64X-LD4JXnuPsZXKuz=y1_Kg@mail.gmail.com> <153271267980.9458.7640156373438016898.stgit@warthog.procyon.org.uk> <153271291017.9458.7827028432894772673.stgit@warthog.procyon.org.uk>
-Cc:     dhowells@redhat.com, Jann Horn <jannh@google.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
+        Fri, 27 Jul 2018 21:23:00 -0400
+Received: from mail-oi0-f67.google.com ([209.85.218.67]:45158 "EHLO
+        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388870AbeG1BXA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Jul 2018 21:23:00 -0400
+Received: by mail-oi0-f67.google.com with SMTP id q11-v6so11958805oic.12
+        for <linux-kernel@vger.kernel.org>; Fri, 27 Jul 2018 16:58:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=SMN4Vbw3eQemnz0Xkl7waLDH3Q4LcOUFWxVf2C6cb8I=;
+        b=CtyO2jwTR+7nnjrkMKUQoUZ9HbrkI72tJ4lB4wjksJi5JTNOnvjDF/cR1nmfi0VqIU
+         foUHqifUWmXb2Pb+tJF/c5pT04Z1tL593Cl7Z+VcPzYF5LWa3pUyl9+zogtL9voZKtqv
+         XuLtmvZXe2QMmiAODRKW4vssISFo1expomBa0vbTufN8t5B+uO+6fakpy06l03G0GnP+
+         SPLISj7Upw62FWpzoOVZXNUcyI+qhGR6YiCNiJH+ofquO/SIlWG7zh6sHW5E0Fbe0uge
+         R9dsiw/NxTcu9HyUdRAihxFVCEjxo+QowRClntbkQR6MP33x948C0JUsgNFsRlb4Ox+q
+         Qtrw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=SMN4Vbw3eQemnz0Xkl7waLDH3Q4LcOUFWxVf2C6cb8I=;
+        b=SH3kr7e6unGhglW6Ph/2aTn5kO3Kw1kZTUA6RFV66lHHfiiqMQ3hfcG16xzronUkTR
+         qH+ki1+lF6E5YYjy7ZXXBAjXyMTWGu5NqIiSyMsvFAKUFXOKzEX99VhtoGoB6ghaacvN
+         AhmHBjxLp9fNhQrXgbydEZ2vzbUhO0BJCY4RayAulYvtgRCTzgLM7iuODKe64XFoTTcG
+         uRrSTF4sRoRRnS3unqvqxmbBVE21YnEzVw+3G1Kvh6eT+Q5GzsWQuR56LHG9MlYUQ4WN
+         j/buAGkbAi3Z3v7Fi+EgWXGsGbghQLvSoEb7GyFDOWe4OUZcJW+KaCAF/81XtldO4iqi
+         qVcg==
+X-Gm-Message-State: AOUpUlFPk6hLo8QlbM+5TkWGKIIy/kcO1+PUj0+hPp3Hwx6ISV7w9lYF
+        5obOdY3ouTdcdeWvpnRl0eCDehJuF+8EEp6rcI0nZw==
+X-Google-Smtp-Source: AAOMgpeZ+NYze2VkLRG0RWxU3bXLkIqLpbFuuCtV3q1hB/To3Miw7dQL1zdNGk3zJf6a122LHiMAbTQLU09r5Ikkujw=
+X-Received: by 2002:aca:1c04:: with SMTP id c4-v6mr9094351oic.173.1532735926272;
+ Fri, 27 Jul 2018 16:58:46 -0700 (PDT)
+MIME-Version: 1.0
+References: <CAG48ez0SdSPkimsk-MW7oSQO-Y64X-LD4JXnuPsZXKuz=y1_Kg@mail.gmail.com>
+ <153271267980.9458.7640156373438016898.stgit@warthog.procyon.org.uk>
+ <153271291017.9458.7827028432894772673.stgit@warthog.procyon.org.uk>
+ <21395.1532735340@warthog.procyon.org.uk> <21746.1532735504@warthog.procyon.org.uk>
+In-Reply-To: <21746.1532735504@warthog.procyon.org.uk>
+From:   Jann Horn <jannh@google.com>
+Date:   Sat, 28 Jul 2018 01:58:19 +0200
+Message-ID: <CAG48ez3vVEEbJzbK8Nc6HA-W7Sp7==ZXanzFUKo527p4U=OFpA@mail.gmail.com>
+Subject: Re: [PATCH 34/38] vfs: syscall: Add fsinfo() to query filesystem
+ information [ver #10]
+To:     David Howells <dhowells@redhat.com>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
         Linux API <linux-api@vger.kernel.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         linux-fsdevel@vger.kernel.org,
         kernel list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 34/38] vfs: syscall: Add fsinfo() to query filesystem information [ver #10]
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <21745.1532735504.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: 8BIT
-Date:   Sat, 28 Jul 2018 00:51:44 +0100
-Message-ID: <21746.1532735504@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Fri, 27 Jul 2018 23:51:47 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Fri, 27 Jul 2018 23:51:47 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'dhowells@redhat.com' RCPT:''
-To:     unlisted-recipients:; (no To-header on input)
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-David Howells <dhowells@redhat.com> wrote:
+On Sat, Jul 28, 2018 at 1:51 AM David Howells <dhowells@redhat.com> wrote:
+> David Howells <dhowells@redhat.com> wrote:
+>
+> > One thing I'm confused about is that fat has both a codepage and a charset and
+> > I'm not sure of the difference.
+>
+> In fact, it's not clear that the codepage is actually used.
+>
+>         warthog>git grep '[.>]codepage'
+>         fs/fat/inode.c: opts->codepage = fat_default_codepage;
+>         fs/fat/inode.c:                 opts->codepage = option;
+>         fs/fat/inode.c: sprintf(buf, "cp%d", sbi->options.codepage);
 
-> One thing I'm confused about is that fat has both a codepage and a charset and
-> I'm not sure of the difference.
-
-In fact, it's not clear that the codepage is actually used.
-
-	warthog>git grep '[.>]codepage'
-	fs/fat/inode.c: opts->codepage = fat_default_codepage;
-	fs/fat/inode.c:                 opts->codepage = option;
-	fs/fat/inode.c: sprintf(buf, "cp%d", sbi->options.codepage);
-
-David
+        sprintf(buf, "cp%d", sbi->options.codepage);
+        sbi->nls_disk = load_nls(buf);
+        if (!sbi->nls_disk) {
+                fat_msg(sb, KERN_ERR, "codepage %s not found", buf);
+                goto out_fail;
+        }
