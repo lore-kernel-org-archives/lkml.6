@@ -6,106 +6,98 @@ X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0325C6778F
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 16:56:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B067CC67790
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 16:56:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4E419208B0
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 16:56:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 683C2208B0
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 16:56:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DBZrUi3B"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4E419208B0
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f6xAXMkv"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 683C2208B0
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388957AbeG0STa (ORCPT
+        id S2389014AbeG0STe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 14:19:30 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:35910 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388332AbeG0ST3 (ORCPT
+        Fri, 27 Jul 2018 14:19:34 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:41626 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388332AbeG0STd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 14:19:29 -0400
-Received: by mail-wr1-f67.google.com with SMTP id h9-v6so5724381wro.3;
-        Fri, 27 Jul 2018 09:56:44 -0700 (PDT)
+        Fri, 27 Jul 2018 14:19:33 -0400
+Received: by mail-wr1-f66.google.com with SMTP id j5-v6so5708618wrr.8;
+        Fri, 27 Jul 2018 09:56:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=sender:from:to:cc:subject:date:message-id;
-        bh=zzGTrQy/l+HcCYm6ELnPpwdLxLB3q39BELBPsRJFhT0=;
-        b=DBZrUi3BAHIU1xJmCRhF2KSGeeGNuu3t8vkzC1hjO6BOao7Jz67t66pFL4mPshmNes
-         QSIRfcndhrtHcV0SAXOmfcOWq7Y9BT/c0SIvTOvPgOXoGt9TPYzsW0GmJ80aiPlpTl+l
-         zDKTT56Eekjn+hSK9I+tEEZ7GjasJ0ieVAoQtlUTk2bQUgwaqkgqT1slIH2cLyRwB7kt
-         gsZF7bnYooIhGU61dp9wOVko4ceX2TRVTirMrB3SD6ccC/+lZTa0RD5XG9srZeDn80/4
-         ZtM1c0gnhUi2j3O9yIfYsNL8eEO4MQi1/AAWv3/Owj2c5pRtJky7a9U95Ckprk7o07Q1
-         p52g==
+        h=sender:from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=F60zzfijjf8lEv4dG1kQPzWErD4tLNfeR3zJX3+Xs3Q=;
+        b=f6xAXMkvLpOTWxxgd/C4yc5V/FNkGIjL6FzQ/y3ISfoXY7lgSOD7VQ+hnsOCRe6p7j
+         zGf3k6oXM1XCAz+VwYd2a+23mXGTPS5n31SNlseWiqPTKkZ9Wi9ga4vLeUgwsxTqjG1F
+         kwYF4mCpdTSHI5E6CY6FnF0O4NMK8LZ/IgVnqjndByQxb0qQ/qaMU7MGCqjpkhQGoeXj
+         6336WFAl5YVKi/KcPIx4mWUf6VvTNEDkWRM/jmcTfwW06zz6JmRSMlYwq0cJDeD6dAgy
+         bI92AaNS0SEEqHWVABo6LfEINtM2P4HkpIHXe5G4BwmNczErIGM1aCeL9HDAEMqWjTTN
+         LSeA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id;
-        bh=zzGTrQy/l+HcCYm6ELnPpwdLxLB3q39BELBPsRJFhT0=;
-        b=B5DW0eqAp/71ZqGvePoURVme/n9kNPAkKaImMtb5V95awlSxnY/EjiW/bkn1m43hN0
-         4qvw3u1Hf9WZEtPWHR3+FkaVJd+l60HKwixBKKftXf8k4JIz2d/gXn19AVywN6DPAneB
-         75w6m07XBI893oqF0c8s8R7m/5FbNmfpm09j65ImW67hfYPkDIE9WfeNN3pH4Mohrm3V
-         W0W/PBpha8eXj9qWvMzWzMaaskj6E96GC4E0jfBLWp1D32T/JdGGyA7cHBC6INq+1Gud
-         kRNtt8Gvm1x/Pnf7lHyYa2hl3vtIYjEyAMLZdMJdeTSLVlvSSzNl+1mrfAV7gVrrKdtE
-         N/Dg==
-X-Gm-Message-State: AOUpUlEHmVzPZA6o5dLD+KLghGRp8Yq3LJf7QUzhw91WBj/3rlc97u6C
-        m6MqbNdGL4aM/bKvfS4TLeCD5UI3
-X-Google-Smtp-Source: AAOMgpfS58/33Qd6ZwpdWPXfTIa1yOLCum9pI/uYUpveXZbhssPhf8bDvUTVPSPlU0RoxZBi8e3gZw==
-X-Received: by 2002:adf:b69c:: with SMTP id j28-v6mr5679641wre.200.1532710603484;
-        Fri, 27 Jul 2018 09:56:43 -0700 (PDT)
+        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
+         :in-reply-to:references;
+        bh=F60zzfijjf8lEv4dG1kQPzWErD4tLNfeR3zJX3+Xs3Q=;
+        b=cLwGe3m8Kr/axixeNo6MX00kcKgtsJkdiOWLmuJ+t5kgMCM3Xg1NXF57lbKTLlwJb1
+         ZGuW0w+jRGT2qaA1BvuO31Balc4YoTxjq053wsJ1rQC3IVd4qKOyhoIOyyAqxQ/46Gz6
+         qkE1eGkhRKajJRMI1LM7MPuylR80IG3IH3bfBbG8HiXrrMA9LoCOtStKvqbup7BHm+EI
+         UDOKJVgHba/uAWCeax1TW9RRAg9/I7UTLLqafpdw/Mj0WFlnI/ESGDOG7VlBPavlSs2q
+         H1z9WYFJckoXzcqevlz0DnF/TRgyqUCs+wXGqdNFhScC83xkR2UzGjssFir5ftM5sjvC
+         aNPw==
+X-Gm-Message-State: AOUpUlHIE7KadgiBUxDCC2xE/Cb4P5aEXxX8l3Ig9ImtqnwotG8Yz6mI
+        djSAJ1C4QHmxr263oet/aMkUXIOH
+X-Google-Smtp-Source: AAOMgpfDzgJL4Vh9utrt7pOueQ6ySI3DaWDm6LjX4meGhlEWuciE7TdgqAps/ZjAjSprvS/yCmM85g==
+X-Received: by 2002:adf:ffc7:: with SMTP id x7-v6mr5725385wrs.137.1532710606349;
+        Fri, 27 Jul 2018 09:56:46 -0700 (PDT)
 Received: from 640k.lan (94-36-184-250.adsl-ull.clienti.tiscali.it. [94.36.184.250])
-        by smtp.gmail.com with ESMTPSA id u185-v6sm5528184wmg.25.2018.07.27.09.56.42
+        by smtp.gmail.com with ESMTPSA id u185-v6sm5528184wmg.25.2018.07.27.09.56.45
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 27 Jul 2018 09:56:42 -0700 (PDT)
+        Fri, 27 Jul 2018 09:56:45 -0700 (PDT)
 From:   Paolo Bonzini <pbonzini@redhat.com>
 To:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org
 Cc:     vkuznets@redhat.com
-Subject: [PATCH rebase/RFC 0/4] x86/kvm/nVMX: optimize MMU switch between L1 and L2
-Date:   Fri, 27 Jul 2018 18:56:37 +0200
-Message-Id: <1532710601-45449-1-git-send-email-pbonzini@redhat.com>
+Subject: [PATCH 2/4] x86/kvm/mmu.c: set get_pdptr hook in kvm_init_shadow_ept_mmu()
+Date:   Fri, 27 Jul 2018 18:56:39 +0200
+Message-Id: <1532710601-45449-3-git-send-email-pbonzini@redhat.com>
 X-Mailer: git-send-email 1.8.3.1
+In-Reply-To: <1532710601-45449-1-git-send-email-pbonzini@redhat.com>
+References: <1532710601-45449-1-git-send-email-pbonzini@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is a rebased version of Vitaly's RFC series.  This isn't
-quite ready for application as I haven't yet thought through
-the interactions between the root_mmu/guest_mmu split and
-the multi-root caching.
+From: Vitaly Kuznetsov <vkuznets@redhat.com>
 
-Speaking of the multi-root caching, it is a bit of a duplicate work
-with Vitaly's last three patches that avoided reinitialization if
-the parameters and CR3 matched, so the series got smaller too.
+kvm_init_shadow_ept_mmu() doesn't set get_pdptr() hook and is this
+not a problem just because MMU context is already initialized and this
+hook points to kvm_pdptr_read(). As we're intended to use a dedicated
+MMU for shadow EPT MMU set this hook explicitly.
 
-The scalability improvement on the nested CPUID benchamrk is sensible:
+Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+---
+ arch/x86/kvm/mmu.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-                  -smp 1      -smp 16      -smp 48
-  4.18            18k         86k
-  kvm/queue       18k         68k  
-  +gup_fast       18k         42k  
-  +guest_mmu      18k         26k          42k
-
-The slowdown between -smp 16 and -smp 48 is partly due to SMT,
-because the machine has 28 cores.
-
-Paolo
-
-Vitaly Kuznetsov (4):
-  x86/kvm/mmu: make vcpu->mmu a pointer to the current MMU
-  x86/kvm/mmu.c: set get_pdptr hook in kvm_init_shadow_ept_mmu()
-  x86/kvm/mmu.c: add kvm_mmu parameter to kvm_mmu_free_roots()
-  x86/kvm/mmu: introduce guest_mmu
-
- arch/x86/include/asm/kvm_host.h |  11 ++-
- arch/x86/kvm/mmu.c              | 183 +++++++++++++++++++++-------------------
- arch/x86/kvm/mmu.h              |   8 +-
- arch/x86/kvm/mmu_audit.c        |  12 +--
- arch/x86/kvm/paging_tmpl.h      |  15 ++--
- arch/x86/kvm/svm.c              |  14 +--
- arch/x86/kvm/vmx.c              |  43 ++++++----
- arch/x86/kvm/x86.c              |  20 ++---
- 8 files changed, 168 insertions(+), 138 deletions(-)
-
+diff --git a/arch/x86/kvm/mmu.c b/arch/x86/kvm/mmu.c
+index 0a40afd71d74..b013aec73d46 100644
+--- a/arch/x86/kvm/mmu.c
++++ b/arch/x86/kvm/mmu.c
+@@ -4816,6 +4816,8 @@ void kvm_init_shadow_ept_mmu(struct kvm_vcpu *vcpu, bool execonly,
+ 	context->root_level = PT64_ROOT_4LEVEL;
+ 	context->direct_map = false;
+ 	context->base_role.word = root_page_role.word & mmu_base_role_mask.word;
++	context->get_pdptr = kvm_pdptr_read;
++
+ 	update_permission_bitmask(vcpu, context, true);
+ 	update_pkru_bitmask(vcpu, context, true);
+ 	update_last_nonleaf_level(vcpu, context);
 -- 
 1.8.3.1
+
 
