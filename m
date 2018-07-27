@@ -6,37 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D2CFC6778F
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:02:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6A24C6778F
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:02:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D0E9E20895
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:02:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D0E9E20895
+	by mail.kernel.org (Postfix) with ESMTP id A580F20895
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:02:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A580F20895
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389209AbeG0LXq (ORCPT
+        id S2389222AbeG0LXt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 07:23:46 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:34402 "EHLO
+        Fri, 27 Jul 2018 07:23:49 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:34412 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732983AbeG0LXq (ORCPT
+        with ESMTP id S1730568AbeG0LXs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 07:23:46 -0400
+        Fri, 27 Jul 2018 07:23:48 -0400
 Received: from localhost (unknown [89.188.5.116])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A4448BB6;
-        Fri, 27 Jul 2018 10:02:35 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 6EF7BCB1;
+        Fri, 27 Jul 2018 10:02:38 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-        Juha-Matti Tilli <juha-matti.tilli@iki.fi>,
-        Yuchung Cheng <ycheng@google.com>,
-        Soheil Hassas Yeganeh <soheil@google.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 28/48] tcp: free batches of packets in tcp_prune_ofo_queue()
-Date:   Fri, 27 Jul 2018 12:00:13 +0200
-Message-Id: <20180727095921.457100398@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Stephane Grosjean <s.grosjean@peak-system.com>,
+        Marc Kleine-Budde <mkl@pengutronix.de>
+Subject: [PATCH 4.14 46/48] can: peak_canfd: fix firmware < v3.3.0: limit allocation to 32-bit DMA addr only
+Date:   Fri, 27 Jul 2018 12:00:31 +0200
+Message-Id: <20180727095923.253794276@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180727095918.503549522@linuxfoundation.org>
 References: <20180727095918.503549522@linuxfoundation.org>
@@ -53,88 +51,64 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Eric Dumazet <edumazet@google.com>
+From: Stephane Grosjean <s.grosjean@peak-system.com>
 
-[ Upstream commit 72cd43ba64fc172a443410ce01645895850844c8 ]
+commit 5d4c94ed9f564224d7b37dbee13f7c5d4a8a01ac upstream.
 
-Juha-Matti Tilli reported that malicious peers could inject tiny
-packets in out_of_order_queue, forcing very expensive calls
-to tcp_collapse_ofo_queue() and tcp_prune_ofo_queue() for
-every incoming packet. out_of_order_queue rb-tree can contain
-thousands of nodes, iterating over all of them is not nice.
+The DMA logic in firmwares < v3.3.0 embedded in the PCAN-PCIe FD cards
+family is not capable of handling a mix of 32-bit and 64-bit logical
+addresses. If the board is equipped with 2 or 4 CAN ports, then such a
+situation might lead to a PCIe Bus Error "Malformed TLP" packet
+as well as "irq xx: nobody cared" issue.
 
-Before linux-4.9, we would have pruned all packets in ofo_queue
-in one go, every XXXX packets. XXXX depends on sk_rcvbuf and skbs
-truesize, but is about 7000 packets with tcp_rmem[2] default of 6 MB.
+This patch adds a workaround that requests only 32-bit DMA addresses
+when these might be allocated outside of the 4 GB area.
 
-Since we plan to increase tcp_rmem[2] in the future to cope with
-modern BDP, can not revert to the old behavior, without great pain.
+This issue has been fixed in firmware v3.3.0 and next.
 
-Strategy taken in this patch is to purge ~12.5 % of the queue capacity.
-
-Fixes: 36a6503fedda ("tcp: refine tcp_prune_ofo_queue() to not drop all packets")
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Reported-by: Juha-Matti Tilli <juha-matti.tilli@iki.fi>
-Acked-by: Yuchung Cheng <ycheng@google.com>
-Acked-by: Soheil Hassas Yeganeh <soheil@google.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Stephane Grosjean <s.grosjean@peak-system.com>
+Cc: linux-stable <stable@vger.kernel.org>
+Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- include/linux/skbuff.h |    2 ++
- net/ipv4/tcp_input.c   |   15 +++++++++++----
- 2 files changed, 13 insertions(+), 4 deletions(-)
 
---- a/include/linux/skbuff.h
-+++ b/include/linux/skbuff.h
-@@ -3167,6 +3167,8 @@ static inline int __skb_grow_rcsum(struc
- 	return __skb_grow(skb, len);
- }
+---
+ drivers/net/can/peak_canfd/peak_pciefd_main.c |   19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
+
+--- a/drivers/net/can/peak_canfd/peak_pciefd_main.c
++++ b/drivers/net/can/peak_canfd/peak_pciefd_main.c
+@@ -58,6 +58,10 @@ MODULE_LICENSE("GPL v2");
+ #define PCIEFD_REG_SYS_VER1		0x0040	/* version reg #1 */
+ #define PCIEFD_REG_SYS_VER2		0x0044	/* version reg #2 */
  
-+#define rb_to_skb(rb) rb_entry_safe(rb, struct sk_buff, rbnode)
++#define PCIEFD_FW_VERSION(x, y, z)	(((u32)(x) << 24) | \
++					 ((u32)(y) << 16) | \
++					 ((u32)(z) << 8))
 +
- #define skb_queue_walk(queue, skb) \
- 		for (skb = (queue)->next;					\
- 		     skb != (struct sk_buff *)(queue);				\
---- a/net/ipv4/tcp_input.c
-+++ b/net/ipv4/tcp_input.c
-@@ -4924,6 +4924,7 @@ new_range:
-  * 2) not add too big latencies if thousands of packets sit there.
-  *    (But if application shrinks SO_RCVBUF, we could still end up
-  *     freeing whole queue here)
-+ * 3) Drop at least 12.5 % of sk_rcvbuf to avoid malicious attacks.
-  *
-  * Return true if queue has shrunk.
-  */
-@@ -4931,20 +4932,26 @@ static bool tcp_prune_ofo_queue(struct s
- {
- 	struct tcp_sock *tp = tcp_sk(sk);
- 	struct rb_node *node, *prev;
-+	int goal;
+ /* System Control Registers Bits */
+ #define PCIEFD_SYS_CTL_TS_RST		0x00000001	/* timestamp clock */
+ #define PCIEFD_SYS_CTL_CLK_EN		0x00000002	/* system clock */
+@@ -783,6 +787,21 @@ static int peak_pciefd_probe(struct pci_
+ 		 "%ux CAN-FD PCAN-PCIe FPGA v%u.%u.%u:\n", can_count,
+ 		 hw_ver_major, hw_ver_minor, hw_ver_sub);
  
- 	if (RB_EMPTY_ROOT(&tp->out_of_order_queue))
- 		return false;
- 
- 	NET_INC_STATS(sock_net(sk), LINUX_MIB_OFOPRUNED);
-+	goal = sk->sk_rcvbuf >> 3;
- 	node = &tp->ooo_last_skb->rbnode;
- 	do {
- 		prev = rb_prev(node);
- 		rb_erase(node, &tp->out_of_order_queue);
-+		goal -= rb_to_skb(node)->truesize;
- 		tcp_drop(sk, rb_entry(node, struct sk_buff, rbnode));
--		sk_mem_reclaim(sk);
--		if (atomic_read(&sk->sk_rmem_alloc) <= sk->sk_rcvbuf &&
--		    !tcp_under_memory_pressure(sk))
--			break;
-+		if (!prev || goal <= 0) {
-+			sk_mem_reclaim(sk);
-+			if (atomic_read(&sk->sk_rmem_alloc) <= sk->sk_rcvbuf &&
-+			    !tcp_under_memory_pressure(sk))
-+				break;
-+			goal = sk->sk_rcvbuf >> 3;
-+		}
- 		node = prev;
- 	} while (node);
- 	tp->ooo_last_skb = rb_entry(prev, struct sk_buff, rbnode);
++#ifdef CONFIG_ARCH_DMA_ADDR_T_64BIT
++	/* FW < v3.3.0 DMA logic doesn't handle correctly the mix of 32-bit and
++	 * 64-bit logical addresses: this workaround forces usage of 32-bit
++	 * DMA addresses only when such a fw is detected.
++	 */
++	if (PCIEFD_FW_VERSION(hw_ver_major, hw_ver_minor, hw_ver_sub) <
++	    PCIEFD_FW_VERSION(3, 3, 0)) {
++		err = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(32));
++		if (err)
++			dev_warn(&pdev->dev,
++				 "warning: can't set DMA mask %llxh (err %d)\n",
++				 DMA_BIT_MASK(32), err);
++	}
++#endif
++
+ 	/* stop system clock */
+ 	pciefd_sys_writereg(pciefd, PCIEFD_SYS_CTL_CLK_EN,
+ 			    PCIEFD_REG_SYS_CTL_CLR);
 
 
