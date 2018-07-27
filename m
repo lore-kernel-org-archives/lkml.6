@@ -6,76 +6,76 @@ X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2428C6778F
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 09:02:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19874C6778F
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 09:03:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5D34F2088E
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 09:02:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D34F2088E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id C65EC20671
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 09:03:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C65EC20671
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730561AbeG0KXq (ORCPT
+        id S1730590AbeG0KYY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 06:23:46 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:44100 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729492AbeG0KXq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 06:23:46 -0400
-Received: from localhost (unknown [89.188.5.116])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3E77684B;
-        Fri, 27 Jul 2018 09:02:50 +0000 (UTC)
-Date:   Fri, 27 Jul 2018 11:02:47 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        openbmc@lists.ozlabs.org, Joel Stanley <joel@jms.id.au>
-Subject: Re: [GIT PULL] FSI updates round 4 (last) for 4.19
-Message-ID: <20180727090247.GC17942@kroah.com>
-References: <81553544b2004efd42f256147d0d9f45df01df25.camel@kernel.crashing.org>
+        Fri, 27 Jul 2018 06:24:24 -0400
+Received: from foss.arm.com ([217.140.101.70]:39170 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729492AbeG0KYY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Jul 2018 06:24:24 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9A4A515AD;
+        Fri, 27 Jul 2018 02:03:28 -0700 (PDT)
+Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 6B3DE3F2EA;
+        Fri, 27 Jul 2018 02:03:28 -0700 (PDT)
+Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
+        id E42E41AE17A0; Fri, 27 Jul 2018 10:03:28 +0100 (BST)
+Date:   Fri, 27 Jul 2018 10:03:28 +0100
+From:   Will Deacon <will.deacon@arm.com>
+To:     Joerg Roedel <joro@8bytes.org>
+Cc:     Dmitry Osipenko <digetx@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Mikko Perttunen <cyndis@kapsi.fi>,
+        Rob Herring <robh+dt@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Ben Skeggs <bskeggs@redhat.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Nicolas Chauvet <kwizart@gmail.com>,
+        devicetree@vger.kernel.org, nouveau@lists.freedesktop.org,
+        iommu@lists.linux-foundation.org, dri-devel@lists.freedesktop.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH v1 0/6] Resolve unwanted DMA backing with IOMMU
+Message-ID: <20180727090328.GH28088@arm.com>
+References: <20180726231624.21084-1-digetx@gmail.com>
+ <20180727082512.lpvmeuvxnw3mpeym@8bytes.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <81553544b2004efd42f256147d0d9f45df01df25.camel@kernel.crashing.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20180727082512.lpvmeuvxnw3mpeym@8bytes.org>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 27, 2018 at 10:10:57AM +1000, Benjamin Herrenschmidt wrote:
-> Hi Greg !
+On Fri, Jul 27, 2018 at 10:25:13AM +0200, Joerg Roedel wrote:
+> On Fri, Jul 27, 2018 at 02:16:18AM +0300, Dmitry Osipenko wrote:
+> > The proposed solution adds a new option to the base device driver
+> > structure that allows device drivers to explicitly convey to the drivers
+> > core that the implicit IOMMU backing for devices must not happen.
 > 
-> This adds a few fixes for things reported since the last merge,
-> and the latch batch of changes pending for FSI for 4.19.
+> Why is IOMMU mapping a problem for the Tegra GPU driver?
 > 
-> That batch is a rather mechanical conversion of the misc devices
-> into proper char devices.
-> 
-> The misc devices were ill suited, the minor space for them is
-> limited and we can have a lot of chips in a system creating FSI
-> devices.
-> 
-> This also allows us to better control (and fix) object lifetime
-> getting rid of the bad devm_kzalloc() of the structures containing
-> the devices etc...
-> 
-> Finally, we add a chardev to the core FSI that provides raw CFAM
-> access to FSI slaves as a replacement for the current "raw" binary
-> sysfs file which will be ultimately deprecated and removed.
-> 
-> Thanks !
-> Ben.
-> 
-> The following changes since commit 0a213777d1dd879092225a7aa847b6e9b3a1c267:
-> 
->   fsi: Add support for device-tree provided chip IDs (2018-07-23 16:27:32 +1000)
-> 
-> are available in the Git repository at:
-> 
->   git://git.kernel.org/pub/scm/linux/kernel/git/benh/linux-fsi.git tags/fsi-updates-2018-07-27
+> If we add something like this then it should not be the choice of the
+> device driver, but of the user and/or the firmware.
 
-Pulled in and pushed out, thanks.
+Agreed, and it would still need somebody to configure an identity domain so
+that transactions aren't aborted immediately. We currently allow the
+identity domain to be used by default via a command-line option, so I guess
+we'd need a way for firmware to request that on a per-device basis.
 
-greg k-h
+Will
