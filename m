@@ -6,36 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36C7DC67790
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:02:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FC3CC67790
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:02:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E1CB920894
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:02:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E1CB920894
+	by mail.kernel.org (Postfix) with ESMTP id 1CFCF20894
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 10:02:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1CFCF20894
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388971AbeG0LXN (ORCPT
+        id S2388995AbeG0LXS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 07:23:13 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:34288 "EHLO
+        Fri, 27 Jul 2018 07:23:18 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:34320 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730120AbeG0LXM (ORCPT
+        with ESMTP id S1730120AbeG0LXR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 07:23:12 -0400
+        Fri, 27 Jul 2018 07:23:17 -0400
 Received: from localhost (unknown [89.188.5.116])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D84EBCBA;
-        Fri, 27 Jul 2018 10:02:01 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 939E8CBA;
+        Fri, 27 Jul 2018 10:02:07 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Yuchung Cheng <ycheng@google.com>,
-        Neal Cardwell <ncardwell@google.com>,
-        Eric Dumazet <edumazet@google.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 27/48] tcp: do not delay ACK in DCTCP upon CE status change
-Date:   Fri, 27 Jul 2018 12:00:12 +0200
-Message-Id: <20180727095921.353787541@linuxfoundation.org>
+        stable@vger.kernel.org, Jerry Zhang <zhangjerry@google.com>,
+        Felipe Balbi <felipe.balbi@linux.intel.com>
+Subject: [PATCH 4.14 37/48] usb: gadget: f_fs: Only return delayed status when len is 0
+Date:   Fri, 27 Jul 2018 12:00:22 +0200
+Message-Id: <20180727095922.344103799@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180727095918.503549522@linuxfoundation.org>
 References: <20180727095918.503549522@linuxfoundation.org>
@@ -52,138 +50,54 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Yuchung Cheng <ycheng@google.com>
+From: Jerry Zhang <zhangjerry@google.com>
 
-[ Upstream commit a0496ef2c23b3b180902dd185d0d63ccbc624cf8 ]
+commit 4d644abf25698362bd33d17c9ddc8f7122c30f17 upstream.
 
-Per DCTCP RFC8257 (Section 3.2) the ACK reflecting the CE status change
-has to be sent immediately so the sender can respond quickly:
+Commit 1b9ba000 ("Allow function drivers to pause control
+transfers") states that USB_GADGET_DELAYED_STATUS is only
+supported if data phase is 0 bytes.
 
-""" When receiving packets, the CE codepoint MUST be processed as follows:
+It seems that when the length is not 0 bytes, there is no
+need to explicitly delay the data stage since the transfer
+is not completed until the user responds. However, when the
+length is 0, there is no data stage and the transfer is
+finished once setup() returns, hence there is a need to
+explicitly delay completion.
 
-   1.  If the CE codepoint is set and DCTCP.CE is false, set DCTCP.CE to
-       true and send an immediate ACK.
+This manifests as the following bugs:
 
-   2.  If the CE codepoint is not set and DCTCP.CE is true, set DCTCP.CE
-       to false and send an immediate ACK.
-"""
+Prior to 946ef68ad4e4 ('Let setup() return
+USB_GADGET_DELAYED_STATUS'), when setup is 0 bytes, ffs
+would require user to queue a 0 byte request in order to
+clear setup state. However, that 0 byte request was actually
+not needed and would hang and cause errors in other setup
+requests.
 
-Previously DCTCP implementation may continue to delay the ACK. This
-patch fixes that to implement the RFC by forcing an immediate ACK.
+After the above commit, 0 byte setups work since the gadget
+now accepts empty queues to ep0 to clear the delay, but all
+other setups hang.
 
-Tested with this packetdrill script provided by Larry Brakmo
-
-0.000 socket(..., SOCK_STREAM, IPPROTO_TCP) = 3
-0.000 setsockopt(3, SOL_SOCKET, SO_REUSEADDR, [1], 4) = 0
-0.000 setsockopt(3, SOL_TCP, TCP_CONGESTION, "dctcp", 5) = 0
-0.000 bind(3, ..., ...) = 0
-0.000 listen(3, 1) = 0
-
-0.100 < [ect0] SEW 0:0(0) win 32792 <mss 1000,sackOK,nop,nop,nop,wscale 7>
-0.100 > SE. 0:0(0) ack 1 <mss 1460,nop,nop,sackOK,nop,wscale 8>
-0.110 < [ect0] . 1:1(0) ack 1 win 257
-0.200 accept(3, ..., ...) = 4
-   +0 setsockopt(4, SOL_SOCKET, SO_DEBUG, [1], 4) = 0
-
-0.200 < [ect0] . 1:1001(1000) ack 1 win 257
-0.200 > [ect01] . 1:1(0) ack 1001
-
-0.200 write(4, ..., 1) = 1
-0.200 > [ect01] P. 1:2(1) ack 1001
-
-0.200 < [ect0] . 1001:2001(1000) ack 2 win 257
-+0.005 < [ce] . 2001:3001(1000) ack 2 win 257
-
-+0.000 > [ect01] . 2:2(0) ack 2001
-// Previously the ACK below would be delayed by 40ms
-+0.000 > [ect01] E. 2:2(0) ack 3001
-
-+0.500 < F. 9501:9501(0) ack 4 win 257
-
-Signed-off-by: Yuchung Cheng <ycheng@google.com>
-Acked-by: Neal Cardwell <ncardwell@google.com>
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: 946ef68ad4e4 ("Let setup() return USB_GADGET_DELAYED_STATUS")
+Signed-off-by: Jerry Zhang <zhangjerry@google.com>
+Cc: stable <stable@vger.kernel.org>
+Acked-by: Felipe Balbi <felipe.balbi@linux.intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- include/net/tcp.h    |    1 +
- net/ipv4/tcp_dctcp.c |   30 ++++++++++++++++++------------
- net/ipv4/tcp_input.c |    3 ++-
- 3 files changed, 21 insertions(+), 13 deletions(-)
 
---- a/include/net/tcp.h
-+++ b/include/net/tcp.h
-@@ -372,6 +372,7 @@ ssize_t tcp_splice_read(struct socket *s
- 			struct pipe_inode_info *pipe, size_t len,
- 			unsigned int flags);
+---
+ drivers/usb/gadget/function/f_fs.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- a/drivers/usb/gadget/function/f_fs.c
++++ b/drivers/usb/gadget/function/f_fs.c
+@@ -3243,7 +3243,7 @@ static int ffs_func_setup(struct usb_fun
+ 	__ffs_event_add(ffs, FUNCTIONFS_SETUP);
+ 	spin_unlock_irqrestore(&ffs->ev.waitq.lock, flags);
  
-+void tcp_enter_quickack_mode(struct sock *sk);
- static inline void tcp_dec_quickack_mode(struct sock *sk,
- 					 const unsigned int pkts)
- {
---- a/net/ipv4/tcp_dctcp.c
-+++ b/net/ipv4/tcp_dctcp.c
-@@ -131,12 +131,15 @@ static void dctcp_ce_state_0_to_1(struct
- 	struct dctcp *ca = inet_csk_ca(sk);
- 	struct tcp_sock *tp = tcp_sk(sk);
- 
--	/* State has changed from CE=0 to CE=1 and delayed
--	 * ACK has not sent yet.
--	 */
--	if (!ca->ce_state &&
--	    inet_csk(sk)->icsk_ack.pending & ICSK_ACK_TIMER)
--		__tcp_send_ack(sk, ca->prior_rcv_nxt);
-+	if (!ca->ce_state) {
-+		/* State has changed from CE=0 to CE=1, force an immediate
-+		 * ACK to reflect the new CE state. If an ACK was delayed,
-+		 * send that first to reflect the prior CE state.
-+		 */
-+		if (inet_csk(sk)->icsk_ack.pending & ICSK_ACK_TIMER)
-+			__tcp_send_ack(sk, ca->prior_rcv_nxt);
-+		tcp_enter_quickack_mode(sk);
-+	}
- 
- 	ca->prior_rcv_nxt = tp->rcv_nxt;
- 	ca->ce_state = 1;
-@@ -149,12 +152,15 @@ static void dctcp_ce_state_1_to_0(struct
- 	struct dctcp *ca = inet_csk_ca(sk);
- 	struct tcp_sock *tp = tcp_sk(sk);
- 
--	/* State has changed from CE=1 to CE=0 and delayed
--	 * ACK has not sent yet.
--	 */
--	if (ca->ce_state &&
--	    inet_csk(sk)->icsk_ack.pending & ICSK_ACK_TIMER)
--		__tcp_send_ack(sk, ca->prior_rcv_nxt);
-+	if (ca->ce_state) {
-+		/* State has changed from CE=1 to CE=0, force an immediate
-+		 * ACK to reflect the new CE state. If an ACK was delayed,
-+		 * send that first to reflect the prior CE state.
-+		 */
-+		if (inet_csk(sk)->icsk_ack.pending & ICSK_ACK_TIMER)
-+			__tcp_send_ack(sk, ca->prior_rcv_nxt);
-+		tcp_enter_quickack_mode(sk);
-+	}
- 
- 	ca->prior_rcv_nxt = tp->rcv_nxt;
- 	ca->ce_state = 0;
---- a/net/ipv4/tcp_input.c
-+++ b/net/ipv4/tcp_input.c
-@@ -209,13 +209,14 @@ static void tcp_incr_quickack(struct soc
- 		icsk->icsk_ack.quick = min(quickacks, TCP_MAX_QUICKACKS);
+-	return USB_GADGET_DELAYED_STATUS;
++	return creq->wLength == 0 ? USB_GADGET_DELAYED_STATUS : 0;
  }
  
--static void tcp_enter_quickack_mode(struct sock *sk)
-+void tcp_enter_quickack_mode(struct sock *sk)
- {
- 	struct inet_connection_sock *icsk = inet_csk(sk);
- 	tcp_incr_quickack(sk);
- 	icsk->icsk_ack.pingpong = 0;
- 	icsk->icsk_ack.ato = TCP_ATO_MIN;
- }
-+EXPORT_SYMBOL(tcp_enter_quickack_mode);
- 
- /* Send ACKs quickly, if "quick" count is not exhausted
-  * and the session is not interactive.
+ static bool ffs_func_req_match(struct usb_function *f,
 
 
