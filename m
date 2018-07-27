@@ -6,110 +6,166 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12FF7C6778F
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 16:27:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A3B4C67790
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 16:28:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CAB70205C9
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 16:27:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CAB70205C9
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xmission.com
+	by mail.kernel.org (Postfix) with ESMTP id 367E0208B1
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 16:28:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 367E0208B1
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388909AbeG0Rtz (ORCPT
+        id S2388666AbeG0RvI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 13:49:55 -0400
-Received: from out03.mta.xmission.com ([166.70.13.233]:43930 "EHLO
-        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730784AbeG0Rty (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 13:49:54 -0400
-Received: from in01.mta.xmission.com ([166.70.13.51])
-        by out03.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1fj5aE-0006NY-C7; Fri, 27 Jul 2018 10:27:14 -0600
-Received: from [97.119.167.31] (helo=x220.xmission.com)
-        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1fj5aD-0004nO-Gk; Fri, 27 Jul 2018 10:27:13 -0600
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     David Laight <David.Laight@ACULAB.COM>
-Cc:     David Ahern <dsahern@gmail.com>,
-        Cong Wang <xiyou.wangcong@gmail.com>,
-        David Miller <davem@davemloft.net>,
-        Linux Kernel Network Developers <netdev@vger.kernel.org>,
-        "nikita.leshchenko\@oracle.com" <nikita.leshchenko@oracle.com>,
-        Roopa Prabhu <roopa@cumulusnetworks.com>,
-        Stephen Hemminger <stephen@networkplumber.org>,
-        Ido Schimmel <idosch@mellanox.com>,
-        Jiri Pirko <jiri@mellanox.com>,
-        "Saeed Mahameed" <saeedm@mellanox.com>,
-        Alexander Aring <alex.aring@gmail.com>,
-        "linux-wpan\@vger.kernel.org" <linux-wpan@vger.kernel.org>,
-        NetFilter <netfilter-devel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <1a3f59a9-0ba5-c83f-16a6-f9550a84f693@gmail.com>
-        <CAM_iQpWabZorkMNswyfHyS4KT=f_bgMtK8K35=84uah6Kfqxew@mail.gmail.com>
-        <1a27e301-3275-b349-a2f8-afdfdc02f04f@gmail.com>
-        <20180718.125938.2271502580775162784.davem@davemloft.net>
-        <28c30574-391c-b4bd-c337-51d3040d901a@gmail.com>
-        <CAM_iQpW4-JkZY7jXx0Q1b907hQ85UOL1eXv2YHwSukb5L=apUg@mail.gmail.com>
-        <5021d874-8e99-6eba-f24b-4257c62d4457@gmail.com>
-        <CAM_iQpUc-H2kZCBevePs6g-8qKyJkUhdd1ZDSQgYsCG0ChfC2w@mail.gmail.com>
-        <87muufze8w.fsf@xmission.com>
-        <4b03b5f6-87ce-9ff2-7c14-598beebd8fb8@gmail.com>
-        <87zhyfw70m.fsf@xmission.com>
-        <be5c3f5be49e4e22bf1160a1d6d3a1b0@AcuMS.aculab.com>
-Date:   Fri, 27 Jul 2018 11:27:06 -0500
-In-Reply-To: <be5c3f5be49e4e22bf1160a1d6d3a1b0@AcuMS.aculab.com> (David
-        Laight's message of "Thu, 26 Jul 2018 11:12:34 +0000")
-Message-ID: <87k1pg1w6d.fsf@xmission.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
+        Fri, 27 Jul 2018 13:51:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44386 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732097AbeG0RvI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Jul 2018 13:51:08 -0400
+Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 602F5205C9;
+        Fri, 27 Jul 2018 16:28:27 +0000 (UTC)
+Date:   Fri, 27 Jul 2018 12:28:25 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Joel Fernandes <joel@joelfernandes.org>
+Cc:     linux-kernel@vger.kernel.org, kernel-team@android.com,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Byungchul Park <byungchul.park@lge.com>,
+        Erick Reyes <erickreyes@google.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Julia Cartwright <julia@ni.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Paul McKenney <paulmck@linux.vnet.ibm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Glexiner <tglx@linutronix.de>,
+        Todd Kjos <tkjos@google.com>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>,
+        Will Deacon <will.deacon@arm.com>
+Subject: Re: [PATCH v11 3/3] tracing: Centralize preemptirq tracepoints and
+ unify their usage
+Message-ID: <20180727122825.281a3a67@gandalf.local.home>
+In-Reply-To: <20180726235044.10195-4-joel@joelfernandes.org>
+References: <20180726235044.10195-1-joel@joelfernandes.org>
+        <20180726235044.10195-4-joel@joelfernandes.org>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1fj5aD-0004nO-Gk;;;mid=<87k1pg1w6d.fsf@xmission.com>;;;hst=in01.mta.xmission.com;;;ip=97.119.167.31;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX18DuLPkLR4vYzZ4SYltuwqk4K9E1oVzPcw=
-X-SA-Exim-Connect-IP: 97.119.167.31
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-Subject: Re: [PATCH RFC/RFT net-next 00/17] net: Convert neighbor tables to per-namespace
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-David Laight <David.Laight@ACULAB.COM> writes:
+On Thu, 26 Jul 2018 16:50:44 -0700
+Joel Fernandes <joel@joelfernandes.org> wrote:
 
-> From: Eric W. Biederman
->> Sent: 25 July 2018 18:38
-> ...
->> >> Further unless I misread something you are increasing the number of
->> >> timers to 3 per namespace.  If I create create a thousand network
->> >> namespaces that feels like it will hurt system performance overall.
->> >
->> > It seems to me the timers are per neighbor entry not table. The per
->> > table ones are for proxies.
->> 
->> It seems I misread that bit when I was refreshing my memory on what
->> everything is doing.  If we can already have 1024 timers that makes
->> timers not a concern.
->
-> Surely it is enough to just have a timestamp in each entry.
-> Deletion of expired items need not be done until insert (which
-> has the table suitable locked) bumps into an expired item.
+> From: "Joel Fernandes (Google)" <joel@joelfernandes.org>
+> 
+> This patch detaches the preemptirq tracepoints from the tracers and
+> keeps it separate.
+> 
+> Advantages:
+> * Lockdep and irqsoff event can now run in parallel since they no longer
+> have their own calls.
+> 
+> * This unifies the usecase of adding hooks to an irqsoff and irqson
+> event, and a preemptoff and preempton event.
+>   3 users of the events exist:
+>   - Lockdep
+>   - irqsoff and preemptoff tracers
+>   - irqs and preempt trace events
+> 
+> The unification cleans up several ifdefs and makes the code in preempt
+> tracer and irqsoff tracers simpler. It gets rid of all the horrific
+> ifdeferry around PROVE_LOCKING and makes configuration of the different
+> users of the tracepoints more easy and understandable. It also gets rid
+> of the time_* function calls from the lockdep hooks used to call into
+> the preemptirq tracer which is not needed anymore. The negative delta in
+> lines of code in this patch is quite large too.
+> 
+> In the patch we introduce a new CONFIG option PREEMPTIRQ_TRACEPOINTS
+> as a single point for registering probes onto the tracepoints. With
+> this,
+> the web of config options for preempt/irq toggle tracepoints and its
+> users becomes:
+> 
+>  PREEMPT_TRACER   PREEMPTIRQ_EVENTS  IRQSOFF_TRACER PROVE_LOCKING
+>        |                 |     \         |           |
+>        \    (selects)    /      \        \ (selects) /
+>       TRACE_PREEMPT_TOGGLE       ----> TRACE_IRQFLAGS
+>                       \                  /
+>                        \ (depends on)   /
+>                      PREEMPTIRQ_TRACEPOINTS
+> 
+> One note, I have to check for lockdep recursion in the code that calls
+> the trace events API and bail out if we're in lockdep recursion
+> protection to prevent something like the following case: a spin_lock is
+> taken. Then lockdep_acquired is called.  That does a raw_local_irq_save
+> and then sets lockdep_recursion, and then calls __lockdep_acquired. In
+> this function, a call to get_lock_stats happens which calls
+> preempt_disable, which calls trace IRQS off somewhere which enters my
+> tracepoint code and sets the tracing_irq_cpu flag to prevent recursion.
+> This flag is then never cleared causing lockdep paths to never be
+> entered and thus causing splats and other bad things.
+> 
+> Other than the performance tests mentioned in the previous patch, I also
+> ran the locking API test suite. I verified that all tests cases are
+> passing.
+> 
+> I also injected issues by not registering lockdep probes onto the
+> tracepoints and I see failures to confirm that the probes are indeed
+> working.
+> 
+> This series + lockdep probes not registered (just to inject errors):
+> [    0.000000]      hard-irqs-on + irq-safe-A/21:  ok  |  ok  |  ok  |
+> [    0.000000]      soft-irqs-on + irq-safe-A/21:  ok  |  ok  |  ok  |
+> [    0.000000]        sirq-safe-A => hirqs-on/12:FAILED|FAILED|  ok  |
+> [    0.000000]        sirq-safe-A => hirqs-on/21:FAILED|FAILED|  ok  |
+> [    0.000000]          hard-safe-A + irqs-on/12:FAILED|FAILED|  ok  |
+> [    0.000000]          soft-safe-A + irqs-on/12:FAILED|FAILED|  ok  |
+> [    0.000000]          hard-safe-A + irqs-on/21:FAILED|FAILED|  ok  |
+> [    0.000000]          soft-safe-A + irqs-on/21:FAILED|FAILED|  ok  |
+> [    0.000000]     hard-safe-A + unsafe-B #1/123:  ok  |  ok  |  ok  |
+> [    0.000000]     soft-safe-A + unsafe-B #1/123:  ok  |  ok  |  ok  |
+> 
+> With this series + lockdep probes registered, all locking tests pass:
+> 
+> [    0.000000]      hard-irqs-on + irq-safe-A/21:  ok  |  ok  |  ok  |
+> [    0.000000]      soft-irqs-on + irq-safe-A/21:  ok  |  ok  |  ok  |
+> [    0.000000]        sirq-safe-A => hirqs-on/12:  ok  |  ok  |  ok  |
+> [    0.000000]        sirq-safe-A => hirqs-on/21:  ok  |  ok  |  ok  |
+> [    0.000000]          hard-safe-A + irqs-on/12:  ok  |  ok  |  ok  |
+> [    0.000000]          soft-safe-A + irqs-on/12:  ok  |  ok  |  ok  |
+> [    0.000000]          hard-safe-A + irqs-on/21:  ok  |  ok  |  ok  |
+> [    0.000000]          soft-safe-A + irqs-on/21:  ok  |  ok  |  ok  |
+> [    0.000000]     hard-safe-A + unsafe-B #1/123:  ok  |  ok  |  ok  |
+> [    0.000000]     soft-safe-A + unsafe-B #1/123:  ok  |  ok  |  ok  |
+> 
+> Reviewed-by: Namhyung Kim <namhyung@kernel.org>
+> Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+> ---
+>  include/linux/ftrace.h            |  11 +-
+>  include/linux/irqflags.h          |  11 +-
+>  include/linux/lockdep.h           |   8 +-
+>  include/linux/preempt.h           |   2 +-
+>  include/trace/events/preemptirq.h |  23 +--
+>  init/main.c                       |   5 +-
+>  kernel/locking/lockdep.c          |  35 ++---
 
-Part of the state machine the timer is used for is sending retransmits
-before we get out first response, so the state machine is not just
-about expiry and may not be simple enough to do without a timer.
+Did Peter ever give an Acked-by for this patch?
 
-I honestly don't remember the tradeoffs between the various kinds of
-timers.  If we already can have up to 1000 timers without problems I suspect
-they are cheap enough optimizing for fewer times simply doesn't matter.
-Certainly we are not in regression territory if we don't.
+-- Steve
 
-As for bumping into expired items on insert it would be a bad hash table
-if we were bumping into any other entries frequently on insert.
-
-Eric
+>  kernel/sched/core.c               |   2 +-
+>  kernel/trace/Kconfig              |  22 ++-
+>  kernel/trace/Makefile             |   2 +-
+>  kernel/trace/trace_irqsoff.c      | 231 ++++++++----------------------
+>  kernel/trace/trace_preemptirq.c   |  72 ++++++++++
+>  12 files changed, 195 insertions(+), 229 deletions(-)
+>  create mode 100644 kernel/trace/trace_preemptirq.c
+> 
+> 
