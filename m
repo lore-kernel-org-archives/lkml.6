@@ -2,98 +2,169 @@ Return-Path: <SRS0=OQFz=KL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF7B0C67790
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 23:58:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD100C6778F
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 23:59:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 77FF220647
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 23:58:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 64AE620842
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 23:59:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="CtyO2jwT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 77FF220647
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="PNS641OQ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 64AE620842
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389173AbeG1BXA (ORCPT
+        id S2389220AbeG1BXj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 21:23:00 -0400
-Received: from mail-oi0-f67.google.com ([209.85.218.67]:45158 "EHLO
-        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388870AbeG1BXA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 21:23:00 -0400
-Received: by mail-oi0-f67.google.com with SMTP id q11-v6so11958805oic.12
-        for <linux-kernel@vger.kernel.org>; Fri, 27 Jul 2018 16:58:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=SMN4Vbw3eQemnz0Xkl7waLDH3Q4LcOUFWxVf2C6cb8I=;
-        b=CtyO2jwTR+7nnjrkMKUQoUZ9HbrkI72tJ4lB4wjksJi5JTNOnvjDF/cR1nmfi0VqIU
-         foUHqifUWmXb2Pb+tJF/c5pT04Z1tL593Cl7Z+VcPzYF5LWa3pUyl9+zogtL9voZKtqv
-         XuLtmvZXe2QMmiAODRKW4vssISFo1expomBa0vbTufN8t5B+uO+6fakpy06l03G0GnP+
-         SPLISj7Upw62FWpzoOVZXNUcyI+qhGR6YiCNiJH+ofquO/SIlWG7zh6sHW5E0Fbe0uge
-         R9dsiw/NxTcu9HyUdRAihxFVCEjxo+QowRClntbkQR6MP33x948C0JUsgNFsRlb4Ox+q
-         Qtrw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=SMN4Vbw3eQemnz0Xkl7waLDH3Q4LcOUFWxVf2C6cb8I=;
-        b=SH3kr7e6unGhglW6Ph/2aTn5kO3Kw1kZTUA6RFV66lHHfiiqMQ3hfcG16xzronUkTR
-         qH+ki1+lF6E5YYjy7ZXXBAjXyMTWGu5NqIiSyMsvFAKUFXOKzEX99VhtoGoB6ghaacvN
-         AhmHBjxLp9fNhQrXgbydEZ2vzbUhO0BJCY4RayAulYvtgRCTzgLM7iuODKe64XFoTTcG
-         uRrSTF4sRoRRnS3unqvqxmbBVE21YnEzVw+3G1Kvh6eT+Q5GzsWQuR56LHG9MlYUQ4WN
-         j/buAGkbAi3Z3v7Fi+EgWXGsGbghQLvSoEb7GyFDOWe4OUZcJW+KaCAF/81XtldO4iqi
-         qVcg==
-X-Gm-Message-State: AOUpUlFPk6hLo8QlbM+5TkWGKIIy/kcO1+PUj0+hPp3Hwx6ISV7w9lYF
-        5obOdY3ouTdcdeWvpnRl0eCDehJuF+8EEp6rcI0nZw==
-X-Google-Smtp-Source: AAOMgpeZ+NYze2VkLRG0RWxU3bXLkIqLpbFuuCtV3q1hB/To3Miw7dQL1zdNGk3zJf6a122LHiMAbTQLU09r5Ikkujw=
-X-Received: by 2002:aca:1c04:: with SMTP id c4-v6mr9094351oic.173.1532735926272;
- Fri, 27 Jul 2018 16:58:46 -0700 (PDT)
-MIME-Version: 1.0
-References: <CAG48ez0SdSPkimsk-MW7oSQO-Y64X-LD4JXnuPsZXKuz=y1_Kg@mail.gmail.com>
- <153271267980.9458.7640156373438016898.stgit@warthog.procyon.org.uk>
- <153271291017.9458.7827028432894772673.stgit@warthog.procyon.org.uk>
- <21395.1532735340@warthog.procyon.org.uk> <21746.1532735504@warthog.procyon.org.uk>
-In-Reply-To: <21746.1532735504@warthog.procyon.org.uk>
-From:   Jann Horn <jannh@google.com>
-Date:   Sat, 28 Jul 2018 01:58:19 +0200
-Message-ID: <CAG48ez3vVEEbJzbK8Nc6HA-W7Sp7==ZXanzFUKo527p4U=OFpA@mail.gmail.com>
-Subject: Re: [PATCH 34/38] vfs: syscall: Add fsinfo() to query filesystem
- information [ver #10]
-To:     David Howells <dhowells@redhat.com>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
-        Linux API <linux-api@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-fsdevel@vger.kernel.org,
-        kernel list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Fri, 27 Jul 2018 21:23:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36264 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388708AbeG1BXj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Jul 2018 21:23:39 -0400
+Received: from devbox (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 65AAA20647;
+        Fri, 27 Jul 2018 23:59:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1532735965;
+        bh=qHmGCYMHKdPHAyrfU+dyY1zgBX3Keo4JK4uSq6lbIGw=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=PNS641OQD+5pRXxZq+MoVtwKwQRNqmt8F32uuowCl1jyJ1SxEiYQY5NVvirgvLopz
+         hfUFPuHg8yblQjLP7xVThD/79CKGSg6sL6YWWS3Pu8/sFR+Y0ZAMdtcm1/Zqon975G
+         4soqj2PsdcpLDuT2a7mX04zqyZqzm0GFCgvrSklU=
+Date:   Sat, 28 Jul 2018 08:59:22 +0900
+From:   Masami Hiramatsu <mhiramat@kernel.org>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     Francis Deslauriers <francis.deslauriers@efficios.com>,
+        peterz@infradead.org, mathieu.desnoyers@efficios.com,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 3/3] selftests/ftrace: Fix kprobe string testcase to
+ not probe notrace function
+Message-Id: <20180728085922.bbc1ff641f27d59ae8c02ef2@kernel.org>
+In-Reply-To: <20180727174307.33990e4f@gandalf.local.home>
+References: <153258437722.11602.12405835083073480618.stgit@devbox>
+        <153258446365.11602.5245508133014563916.stgit@devbox>
+        <20180727174307.33990e4f@gandalf.local.home>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jul 28, 2018 at 1:51 AM David Howells <dhowells@redhat.com> wrote:
-> David Howells <dhowells@redhat.com> wrote:
->
-> > One thing I'm confused about is that fat has both a codepage and a charset and
-> > I'm not sure of the difference.
->
-> In fact, it's not clear that the codepage is actually used.
->
->         warthog>git grep '[.>]codepage'
->         fs/fat/inode.c: opts->codepage = fat_default_codepage;
->         fs/fat/inode.c:                 opts->codepage = option;
->         fs/fat/inode.c: sprintf(buf, "cp%d", sbi->options.codepage);
+On Fri, 27 Jul 2018 17:43:07 -0400
+Steven Rostedt <rostedt@goodmis.org> wrote:
 
-        sprintf(buf, "cp%d", sbi->options.codepage);
-        sbi->nls_disk = load_nls(buf);
-        if (!sbi->nls_disk) {
-                fat_msg(sb, KERN_ERR, "codepage %s not found", buf);
-                goto out_fail;
-        }
+> On Thu, 26 Jul 2018 14:54:23 +0900
+> Masami Hiramatsu <mhiramat@kernel.org> wrote:
+> 
+> > Fix kprobe string argument testcase to not probe notrace
+> > function. Instead, it probes tracefs function which must
+> > be available with ftrace.
+> 
+> Hi Masami,
+> 
+> With these patches applied, this test fails:
+> 
+>  ./ftracetest  test.d/kprobe/probepoint.tc
+> 
+> Gives me the error in dmseg:
+> 
+>   trace_kprobe: Could not probe notrace function create_trace_kprobe
+> 
+> Is this expected? I don't see create_trace_kprobe as a notrace function
+> either.
+> 
+> I even applied patch 3 (going through Shuah's tree) to me test and it
+> still fails.
+
+Oops, why I missed this...
+OK, I'll fix it.
+
+Thanks,
+
+> 
+> Config attached.
+> 
+> -- Steve
+> 
+> > 
+> > Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
+> > ---
+> >  .../ftrace/test.d/kprobe/kprobe_args_string.tc     |   30 ++++++++------------
+> >  1 file changed, 12 insertions(+), 18 deletions(-)
+> > 
+> > diff --git a/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_args_string.tc b/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_args_string.tc
+> > index a0002563e9ee..1ad70cdaf442 100644
+> > --- a/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_args_string.tc
+> > +++ b/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_args_string.tc
+> > @@ -9,28 +9,22 @@ echo > kprobe_events
+> >  
+> >  case `uname -m` in
+> >  x86_64)
+> > -  ARG2=%si
+> > -  OFFS=8
+> > +  ARG1=%di
+> >  ;;
+> >  i[3456]86)
+> > -  ARG2=%cx
+> > -  OFFS=4
+> > +  ARG1=%ax
+> >  ;;
+> >  aarch64)
+> > -  ARG2=%x1
+> > -  OFFS=8
+> > +  ARG1=%x0
+> >  ;;
+> >  arm*)
+> > -  ARG2=%r1
+> > -  OFFS=4
+> > +  ARG1=%r0
+> >  ;;
+> >  ppc64*)
+> > -  ARG2=%r4
+> > -  OFFS=8
+> > +  ARG1=%r3
+> >  ;;
+> >  ppc*)
+> > -  ARG2=%r4
+> > -  OFFS=4
+> > +  ARG1=%r3
+> >  ;;
+> >  *)
+> >    echo "Please implement other architecture here"
+> > @@ -38,17 +32,17 @@ ppc*)
+> >  esac
+> >  
+> >  : "Test get argument (1)"
+> > -echo "p:testprobe create_trace_kprobe arg1=+0(+0(${ARG2})):string" > kprobe_events
+> > +echo "p:testprobe tracefs_create_dir arg1=+0(${ARG1}):string" > kprobe_events
+> >  echo 1 > events/kprobes/testprobe/enable
+> > -! echo test >> kprobe_events
+> > -tail -n 1 trace | grep -qe "testprobe.* arg1=\"test\""
+> > +echo "p:test _do_fork" >> kprobe_events
+> > +grep -qe "testprobe.* arg1=\"test\"" trace
+> >  
+> >  echo 0 > events/kprobes/testprobe/enable
+> >  : "Test get argument (2)"
+> > -echo "p:testprobe create_trace_kprobe arg1=+0(+0(${ARG2})):string arg2=+0(+${OFFS}(${ARG2})):string" > kprobe_events
+> > +echo "p:testprobe tracefs_create_dir arg1=+0(${ARG1}):string arg2=+0(${ARG1}):string" > kprobe_events
+> >  echo 1 > events/kprobes/testprobe/enable
+> > -! echo test1 test2 >> kprobe_events
+> > -tail -n 1 trace | grep -qe "testprobe.* arg1=\"test1\" arg2=\"test2\""
+> > +echo "p:test _do_fork" >> kprobe_events
+> > +grep -qe "testprobe.* arg1=\"test\" arg2=\"test\"" trace
+> >  
+> >  echo 0 > events/enable
+> >  echo > kprobe_events
+> 
+
+
+-- 
+Masami Hiramatsu <mhiramat@kernel.org>
