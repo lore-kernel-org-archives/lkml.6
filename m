@@ -2,121 +2,100 @@ Return-Path: <SRS0=OQFz=KL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42AEBC6778F
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 15:31:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E761C6778F
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 15:33:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0159C208AF
-	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 15:31:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0159C208AF
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ispras.ru
+	by mail.kernel.org (Postfix) with ESMTP id D0567208B2
+	for <linux-kernel@archiver.kernel.org>; Fri, 27 Jul 2018 15:33:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D0567208B2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388768AbeG0Qx3 (ORCPT
+        id S2388703AbeG0Q4S (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 12:53:29 -0400
-Received: from bran.ispras.ru ([83.149.199.196]:19366 "EHLO smtp.ispras.ru"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730771AbeG0Qx3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 12:53:29 -0400
-Received: from myklebust.intra.ispras.ru (unknown [10.10.2.207])
-        by smtp.ispras.ru (Postfix) with ESMTP id 1FFAA203B2;
-        Fri, 27 Jul 2018 18:31:02 +0300 (MSK)
-From:   Anton Vasilyev <vasilyev@ispras.ru>
-To:     Dave Airlie <airlied@redhat.com>
-Cc:     Anton Vasilyev <vasilyev@ispras.ru>,
-        Gerd Hoffmann <kraxel@redhat.com>,
-        David Airlie <airlied@linux.ie>,
-        virtualization@lists.linux-foundation.org,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        ldv-project@linuxtesting.org
-Subject: [PATCH] drm: qxl: Fix NULL pointer dereference at qxl_alloc_client_monitors_config
-Date:   Fri, 27 Jul 2018 18:30:58 +0300
-Message-Id: <20180727153058.23620-1-vasilyev@ispras.ru>
-X-Mailer: git-send-email 2.18.0
+        Fri, 27 Jul 2018 12:56:18 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58794 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730395AbeG0Q4S (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Jul 2018 12:56:18 -0400
+Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7883E2088E;
+        Fri, 27 Jul 2018 15:33:50 +0000 (UTC)
+Date:   Fri, 27 Jul 2018 11:33:48 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Yi Wang <wang.yi59@zte.com.cn>
+Cc:     tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
+        x86@kernel.org, douly.fnst@cn.fujitsu.com, jgross@suse.com,
+        ville.syrjala@linux.intel.com, len.brown@intel.com,
+        linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org,
+        jiang.biao2@zte.com.cn, zhong.weidong@zte.com.cn,
+        trivial@kernel.org
+Subject: Re: [PATCH] x86/apic: fix two slight indenting
+Message-ID: <20180727113348.331a49f7@gandalf.local.home>
+In-Reply-To: <1532672103-32250-1-git-send-email-wang.yi59@zte.com.cn>
+References: <1532672103-32250-1-git-send-email-wang.yi59@zte.com.cn>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If qxl_alloc_client_monitors_config() fails to allocate
-client_monitors_config then NULL pointer dereference occurs
-in function qxl_display_copy_rom_client_monitors_config() after
-qxl_alloc_client_monitors_config() call.
 
-The patch adds return error from qxl_alloc_client_monitors_config()
-and additional status for qxl_display_copy_rom_client_monitors_config
-return value.
+This looks like it should go through the trivial tree. Although I'm not
+the maintainer of this code, it looks reasonable to me, and I'll give
+my:
 
-Found by Linux Driver Verification project (linuxtesting.org).
+Acked-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 
-Signed-off-by: Anton Vasilyev <vasilyev@ispras.ru>
----
-Note: Is it correct that qxl_display_read_client_monitors_config() does not
-return error in case of fail?
----
- drivers/gpu/drm/qxl/qxl_display.c | 16 +++++++++++++---
- 1 file changed, 13 insertions(+), 3 deletions(-)
+-- Steve
 
-diff --git a/drivers/gpu/drm/qxl/qxl_display.c b/drivers/gpu/drm/qxl/qxl_display.c
-index 768207fbbae3..a59b2eca5f5b 100644
---- a/drivers/gpu/drm/qxl/qxl_display.c
-+++ b/drivers/gpu/drm/qxl/qxl_display.c
-@@ -37,7 +37,8 @@ static bool qxl_head_enabled(struct qxl_head *head)
- 	return head->width && head->height;
- }
- 
--static void qxl_alloc_client_monitors_config(struct qxl_device *qdev, unsigned count)
-+static int qxl_alloc_client_monitors_config(struct qxl_device *qdev,
-+		unsigned int count)
- {
- 	if (qdev->client_monitors_config &&
- 	    count > qdev->client_monitors_config->count) {
-@@ -49,15 +50,17 @@ static void qxl_alloc_client_monitors_config(struct qxl_device *qdev, unsigned c
- 				sizeof(struct qxl_monitors_config) +
- 				sizeof(struct qxl_head) * count, GFP_KERNEL);
- 		if (!qdev->client_monitors_config)
--			return;
-+			return -ENOMEM;
- 	}
- 	qdev->client_monitors_config->count = count;
-+	return 0;
- }
- 
- enum {
- 	MONITORS_CONFIG_MODIFIED,
- 	MONITORS_CONFIG_UNCHANGED,
- 	MONITORS_CONFIG_BAD_CRC,
-+	MONITORS_CONFIG_ERROR,
- };
- 
- static int qxl_display_copy_rom_client_monitors_config(struct qxl_device *qdev)
-@@ -87,7 +90,10 @@ static int qxl_display_copy_rom_client_monitors_config(struct qxl_device *qdev)
- 	      && (num_monitors != qdev->client_monitors_config->count)) {
- 		status = MONITORS_CONFIG_MODIFIED;
- 	}
--	qxl_alloc_client_monitors_config(qdev, num_monitors);
-+	if (qxl_alloc_client_monitors_config(qdev, num_monitors)) {
-+		status = MONITORS_CONFIG_ERROR;
-+		return status;
-+	}
- 	/* we copy max from the client but it isn't used */
- 	qdev->client_monitors_config->max_allowed =
- 				qdev->monitors_config->max_allowed;
-@@ -161,6 +167,10 @@ void qxl_display_read_client_monitors_config(struct qxl_device *qdev)
- 			break;
- 		udelay(5);
- 	}
-+	if (status == MONITORS_CONFIG_ERROR) {
-+		DRM_DEBUG_KMS("ignoring client monitors config: error");
-+		return;
-+	}
- 	if (status == MONITORS_CONFIG_BAD_CRC) {
- 		DRM_DEBUG_KMS("ignoring client monitors config: bad crc");
- 		return;
--- 
-2.18.0
+
+On Fri, 27 Jul 2018 14:15:03 +0800
+Yi Wang <wang.yi59@zte.com.cn> wrote:
+
+> There are two inconsistent indenting in calibrate_APIC_clock()
+> and activate_managed(). Remove the surplus TAB.
+> 
+> Signed-off-by: Yi Wang <wang.yi59@zte.com.cn>
+> Reviewed-by: Jiang Biao <jiang.biao2@zte.com.cn>
+> ---
+>  arch/x86/kernel/apic/apic.c   | 2 +-
+>  arch/x86/kernel/apic/vector.c | 2 +-
+>  2 files changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/arch/x86/kernel/apic/apic.c b/arch/x86/kernel/apic/apic.c
+> index 5071cc7..f222ebc 100644
+> --- a/arch/x86/kernel/apic/apic.c
+> +++ b/arch/x86/kernel/apic/apic.c
+> @@ -937,7 +937,7 @@ static int __init calibrate_APIC_clock(void)
+>  
+>  	if (levt->features & CLOCK_EVT_FEAT_DUMMY) {
+>  		pr_warning("APIC timer disabled due to verification failure\n");
+> -			return -1;
+> +		return -1;
+>  	}
+>  
+>  	return 0;
+> diff --git a/arch/x86/kernel/apic/vector.c b/arch/x86/kernel/apic/vector.c
+> index b708f59..19e0b2f 100644
+> --- a/arch/x86/kernel/apic/vector.c
+> +++ b/arch/x86/kernel/apic/vector.c
+> @@ -433,7 +433,7 @@ static int activate_managed(struct irq_data *irqd)
+>  		pr_err("Managed startup irq %u, no vector available\n",
+>  		       irqd->irq);
+>  	}
+> -       return ret;
+> +	return ret;
+>  }
+>  
+>  static int x86_vector_activate(struct irq_domain *dom, struct irq_data *irqd,
 
