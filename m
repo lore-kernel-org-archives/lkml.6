@@ -2,48 +2,86 @@ Return-Path: <SRS0=xGmI=KM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8CC3C43142
-	for <linux-kernel@archiver.kernel.org>; Sat, 28 Jul 2018 23:42:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39C6EC28CF6
+	for <linux-kernel@archiver.kernel.org>; Sat, 28 Jul 2018 23:42:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9B4CF20893
-	for <linux-kernel@archiver.kernel.org>; Sat, 28 Jul 2018 23:42:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B4CF20893
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id DB5AE20893
+	for <linux-kernel@archiver.kernel.org>; Sat, 28 Jul 2018 23:42:53 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OO/Sk28M"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DB5AE20893
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gnu.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731706AbeG2BKl (ORCPT
+        id S1731776AbeG2BLH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 28 Jul 2018 21:10:41 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:32798 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1731480AbeG2BKl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 28 Jul 2018 21:10:41 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 1FD994021FC2;
-        Sat, 28 Jul 2018 23:42:25 +0000 (UTC)
-Received: from [10.36.116.19] (ovpn-116-19.ams2.redhat.com [10.36.116.19])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 19F2B111CD5B;
-        Sat, 28 Jul 2018 23:42:18 +0000 (UTC)
-Subject: Re: [PATCH v2 16/17] driver/edac: enable Hygon support to AMD64 EDAC
- driver
-To:     Pu Wen <puwen@hygon.cn>, tglx@linutronix.de, bp@alien8.de,
-        thomas.lendacky@amd.com, mingo@redhat.com, hpa@zytor.com,
-        peterz@infradead.org, tony.luck@intel.com, rkrcmar@redhat.com,
-        boris.ostrovsky@oracle.com, jgross@suse.com, rjw@rjwysocki.net,
-        lenb@kernel.org, viresh.kumar@linaro.org, mchehab@kernel.org,
-        trenn@suse.com, shuah@kernel.org, JBeulich@suse.com, x86@kernel.org
-Cc:     linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-        kvm@vger.kernel.org, xen-devel@lists.xenproject.org
+        Sat, 28 Jul 2018 21:11:07 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:51170 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731480AbeG2BLH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 28 Jul 2018 21:11:07 -0400
+Received: by mail-wm0-f67.google.com with SMTP id s12-v6so9141119wmc.0;
+        Sat, 28 Jul 2018 16:42:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:subject:to:cc:references:from:openpgp:autocrypt:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=0PiCaEg4/YhEl0QpWNpJGSEQKSSLlNnod3rG5t/BEcM=;
+        b=OO/Sk28M5dbaouNqrs5zKGcYgKafbP6Q7+NaC3rDeiAx47ka8Z/7SJ5vaS3ThWcjcc
+         lXBeHwFDoddAfo07U9zm+EKMIcV/R8siS0l7OWNCoar2r7s3I1iPDU64wligCu4SEcMi
+         ozbtfpGXv1GFby6R3Zu+aGZhJRGnH1cgndxwFUWG+2r03LiBvyIF2XyYAIYwpRXkFwx0
+         sH1rB7hwi1eRwL1DcfSp8QIealYqHW8R5EfP9lH8hy038TIl+5QCxutfxQR5DqZyFtoP
+         iFuCjB2p/MzZgtmF9EOnRW6groP9cZDRirHXK1Y6BrN9eI1lfHCZ3och6Se6M+jSiobJ
+         fYkA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:subject:to:cc:references:from:openpgp
+         :autocrypt:message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=0PiCaEg4/YhEl0QpWNpJGSEQKSSLlNnod3rG5t/BEcM=;
+        b=PU/rJgMi4LdlFyyT5ok3JW4Kk45kxFiV7KqxhT4ANDwhOl6P9e32OFFs9NTE63362Z
+         G5ql/6T33nSBxJ0VNYaMHD77xsWOTJ3jeW/Wwtbi6YJQ78Oih5ghroFLSFWsUzai8I/f
+         feKFeCi+0Bl6sdEDMVJyt1KBY57k+8QHtiN9/JwZnSsYUWvvUgc/vJV3m/CoZMHklGIR
+         8eSHTZ3FvrLgbbZNd47AZhboNNcGI1p5BFG1TOVh9EgHRiFlhENzzDICSt8k3XsQ8t21
+         StTHHh4BFjzfRgyic9QkMcYEADvdLVCAzWhR07P3GDTu7Vbg00Oj5d8Ek5JiVZdqDL9x
+         rLNg==
+X-Gm-Message-State: AOUpUlF0xPXBBEyj6n1U9R5zlzS6+hF/jXtiQGQZ8J29M4tDrNIdLkje
+        7aalgZ7ZYTIiUQFijMVyr2ODRU2I
+X-Google-Smtp-Source: AAOMgpeJ5dNjR4CJBRMk1uoLrSKejsTT8H2YUgztKw68+RV7rWvrY1fZVGtuKa1jig3v1Fh01ybOuA==
+X-Received: by 2002:a1c:be13:: with SMTP id o19-v6mr9070224wmf.1.1532821369010;
+        Sat, 28 Jul 2018 16:42:49 -0700 (PDT)
+Received: from [192.168.10.165] (94-36-184-250.adsl-ull.clienti.tiscali.it. [94.36.184.250])
+        by smtp.googlemail.com with ESMTPSA id h7-v6sm8130831wrs.8.2018.07.28.16.42.46
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sat, 28 Jul 2018 16:42:48 -0700 (PDT)
+Subject: Re: [PATCH v2 01/17] x86/cpu: create Dhyana init file and register
+ new cpu_dev to system
+To:     "puwen@hygon.cn" <puwen@hygon.cn>, tglx <tglx@linutronix.de>,
+        bp <bp@alien8.de>, "thomas.lendacky" <thomas.lendacky@amd.com>,
+        mingo <mingo@redhat.com>, hpa <hpa@zytor.com>,
+        peterz <peterz@infradead.org>, "tony.luck" <tony.luck@intel.com>,
+        rkrcmar <rkrcmar@redhat.com>,
+        "boris.ostrovsky" <boris.ostrovsky@oracle.com>,
+        jgross <jgross@suse.com>, rjw <rjw@rjwysocki.net>,
+        lenb <lenb@kernel.org>, "viresh.kumar" <viresh.kumar@linaro.org>,
+        mchehab <mchehab@kernel.org>, trenn <trenn@suse.com>,
+        shuah <shuah@kernel.org>, x86 <x86@kernel.org>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        kvm <kvm@vger.kernel.org>
 References: <1532352037-7151-1-git-send-email-puwen@hygon.cn>
- <1532352037-7151-17-git-send-email-puwen@hygon.cn>
-From:   Paolo Bonzini <pbonzini@redhat.com>
+ <1532352037-7151-2-git-send-email-puwen@hygon.cn>
+ <ed090643-09da-cde7-6edd-970d973afd4d@redhat.com>
+ <201807290021145963620@hygon.cn>
+From:   Paolo Bonzini <bonzini@gnu.org>
 Openpgp: preference=signencrypt
-Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
+Autocrypt: addr=bonzini@gnu.org; keydata=
  xsEhBFRCcBIBDqDGsz4K0zZun3jh+U6Z9wNGLKQ0kSFyjN38gMqU1SfP+TUNQepFHb/Gc0E2
  CxXPkIBTvYY+ZPkoTh5xF9oS1jqI8iRLzouzF8yXs3QjQIZ2SfuCxSVwlV65jotcjD2FTN04
  hVopm9llFijNZpVIOGUTqzM4U55sdsCcZUluWM6x4HSOdw5F5Utxfp1wOjD/v92Lrax0hjiX
@@ -78,37 +116,96 @@ Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
  1lJAPPSIqZKvHzGShdh8DduC0U3xYkfbGAUvbxeepjgzp0uEnBXfPTy09JGpgWbg0w91GyfT
  /ujKaGd4vxG2Ei+MMNDmS1SMx7wu0evvQ5kT9NPzyq8R2GIhVSiAd2jioGuTjX6AZCFv3ToO
  53DliFMkVTecLptsXaesuUHgL9dKIfvpm+rNXRn9wAwGjk0X/A==
-Message-ID: <b24739e8-0833-8509-0850-815758accaee@redhat.com>
-Date:   Sun, 29 Jul 2018 01:42:17 +0200
+Message-ID: <bd73d865-acb3-66e5-a37a-dc4859e5f002@gnu.org>
+Date:   Sun, 29 Jul 2018 01:42:46 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <1532352037-7151-17-git-send-email-puwen@hygon.cn>
+In-Reply-To: <201807290021145963620@hygon.cn>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Sat, 28 Jul 2018 23:42:25 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Sat, 28 Jul 2018 23:42:25 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'pbonzini@redhat.com' RCPT:''
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 23/07/2018 15:20, Pu Wen wrote:
-> @@ -211,7 +211,7 @@ static int __set_scrub_rate(struct amd64_pvt *pvt, u32 new_bw, u32 min_rate)
->  
->  	scrubval = scrubrates[i].scrubval;
->  
-> -	if (pvt->fam == 0x17) {
-> +	if (pvt->fam == 0x17 || pvt->fam == 0x18) {
->  		__f17h_set_scrubval(pvt, scrubval);
->  	} else if (pvt->fam == 0x15 && pvt->model == 0x60) {
->  		f15h_select_dct(pvt, 0);
+On 28/07/2018 18:48, puwen@hygon.cn wrote:
+> Hi Paolo,
+> 
+> Thanks for your feedback.
+> 
+> As we described in the patch description, current Hygon Family 18h share
+> most architecture with AMD Family 17h. But Hygon Family 18h are not the
+> same with AMD family 17h, as it removed some features such as SME/SEV in
+> Dhyana.
 
-This, and many other occurrences in this file, should in my opinion
-avoid testing family 18h without also checking for Hygon as a vendor.
-You probably need to add a vendor field to struct amd64_pvt and
-initialize it in per_family_init.
+If the maintainers are okay with X86_FEATURE_HYGON that's certainly
+fine, however I think you can improve the consistency of the patches in
+a few ways.
+
+Lack of SME/SEV is not an issue, since there are AMD Zen chips without
+SME/SEV too, but potential incompatibility with future AMD fam18h chips
+is important.  Therefore, code like this one in amd_uncore_init
+
+
+-	if (boot_cpu_data.x86_vendor != X86_VENDOR_AMD)
++	if (boot_cpu_data.x86_vendor != X86_VENDOR_AMD &&
++	    boot_cpu_data.x86_vendor != X86_VENDOR_HYGON)
+ 		return -ENODEV;
+
+ 	if (!boot_cpu_has(X86_FEATURE_TOPOEXT))
+ 		return -ENODEV;
+
+-	if (boot_cpu_data.x86 == 0x17) {
++	if (boot_cpu_data.x86 == 0x17 || boot_cpu_data.x86 == 0x18) {
+
+should check explicitly for Hygon before checking for family 18h.  The
+same applies to the edac patch that I've just sent an answer to.
+
+On the other hand, in many cases the AMD code is testing something like
+"AMD && family >= 0x0f".  In this case you have a mix of:
+
+- duplicate code for HYGON, such as modern_apic or mce_is_correctable
+
+- change the condition to (AMD || HYGON) && family >= 0x0f, such as
+k8_check_syscfg_dram_mod_en and amd_special_default_mtrr
+
+- change the condition to (AMD && family >= 0x0f) || (HYGON && family >=
+0x18), such as smp_quirk_init_udelay
+
+I couldn't find any case where you used (AMD && family >= 0x0f) ||
+HYGON, but I think it would be clearer in most cases than all the above
+three alternatives.
+
+In general, I would duplicate code if and only if the AMD code is a maze
+of if/elseif/elseif.  In particular, code like this
+
+	case X86_VENDOR_AMD:
+ 		if (msr >= MSR_F15H_PERF_CTL)
+ 			return (msr - MSR_F15H_PERF_CTL) >> 1;
+ 		return msr - MSR_K7_EVNTSEL0;
++	case X86_VENDOR_HYGON:
++		if (msr >= MSR_F15H_PERF_CTL)
++			return (msr - MSR_F15H_PERF_CTL) >> 1;
++		return msr - MSR_K7_EVNTSEL0;
+
+or this
+
+	case X86_VENDOR_AMD:
+ 		rdmsr_on_cpu(cpu, MSR_K7_HWCR, &lo, &hi);
+ 		msr = lo | ((u64)hi << 32);
+ 		return !(msr & MSR_K7_HWCR_CPB_DIS);
++	case X86_VENDOR_HYGON:
++		rdmsr_on_cpu(cpu, MSR_K7_HWCR, &lo, &hi);
++		msr = lo | ((u64)hi << 32);
++		return !(msr & MSR_K7_HWCR_CPB_DIS);
+
+looks a bit silly, and you already have several cases when you are not
+introducing duplication (e.g. __mcheck_cpu_init_early).  On the other
+hand, code like xen_pmu_arch_init can be very simple for Hygon and so it
+may be useful to have a separate branch.
+
+Thanks,
 
 Paolo
