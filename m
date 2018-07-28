@@ -6,46 +6,44 @@ X-Spam-Status: No, score=-2.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77F90C28CF6
-	for <linux-kernel@archiver.kernel.org>; Sat, 28 Jul 2018 05:36:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B68C6C28CF6
+	for <linux-kernel@archiver.kernel.org>; Sat, 28 Jul 2018 05:36:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 181A72088E
-	for <linux-kernel@archiver.kernel.org>; Sat, 28 Jul 2018 05:36:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 181A72088E
+	by mail.kernel.org (Postfix) with ESMTP id 78A582088E
+	for <linux-kernel@archiver.kernel.org>; Sat, 28 Jul 2018 05:36:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 78A582088E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726172AbeG1HBV (ORCPT
+        id S1726234AbeG1HBW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 28 Jul 2018 03:01:21 -0400
-Received: from mailgw01.mediatek.com ([210.61.82.183]:21200 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726052AbeG1HBV (ORCPT
+        Sat, 28 Jul 2018 03:01:22 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:22107 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726047AbeG1HBV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Sat, 28 Jul 2018 03:01:21 -0400
-X-UUID: bd72859f023147c893f565fdbac925cc-20180728
-Received: from mtkexhb02.mediatek.inc [(172.21.101.103)] by mailgw01.mediatek.com
+X-UUID: 9220d135df184609b7a35b44ec2a0dea-20180728
+Received: from mtkcas08.mediatek.inc [(172.21.101.126)] by mailgw02.mediatek.com
         (envelope-from <sean.wang@mediatek.com>)
         (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 1367889538; Sat, 28 Jul 2018 13:36:06 +0800
+        with ESMTP id 284816014; Sat, 28 Jul 2018 13:36:06 +0800
 Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
- mtkmbs08n1.mediatek.inc (172.21.101.55) with Microsoft SMTP Server (TLS) id
- 15.0.1210.3; Sat, 28 Jul 2018 13:36:04 +0800
+ mtkmbs08n2.mediatek.inc (172.21.101.56) with Microsoft SMTP Server (TLS) id
+ 15.0.1210.3; Sat, 28 Jul 2018 13:36:03 +0800
 Received: from mtkswgap22.mediatek.inc (172.21.77.33) by MTKCAS06.mediatek.inc
  (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
- Transport; Sat, 28 Jul 2018 13:36:04 +0800
+ Transport; Sat, 28 Jul 2018 13:35:58 +0800
 From:   <sean.wang@mediatek.com>
 To:     <john@phrozen.org>, <davem@davemloft.net>
 CC:     <nbd@openwrt.org>, <netdev@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>,
         <linux-mediatek@lists.infradead.org>,
         Sean Wang <sean.wang@mediatek.com>
-Subject: [PATCH net-next 2/2] net-next: mediatek: cleanup unnecessary get chip id and its user
-Date:   Sat, 28 Jul 2018 13:35:56 +0800
-Message-ID: <d4fa77f13190aefa5cf3f609a3ae555aeef38259.1532755541.git.sean.wang@mediatek.com>
+Subject: [PATCH net-next 1/2] net-next: mediatek: improve more with using dma_zalloc_coherent
+Date:   Sat, 28 Jul 2018 13:35:55 +0800
+Message-ID: <658dfd485c035cdae5452bc5d572125076b47a48.1532755541.git.sean.wang@mediatek.com>
 X-Mailer: git-send-email 1.7.9.5
-In-Reply-To: <658dfd485c035cdae5452bc5d572125076b47a48.1532755541.git.sean.wang@mediatek.com>
-References: <658dfd485c035cdae5452bc5d572125076b47a48.1532755541.git.sean.wang@mediatek.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-MTK:  N
@@ -56,125 +54,55 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Sean Wang <sean.wang@mediatek.com>
 
-Since driver is devicetree-based, all device type and charateristic can be
-determined by the compatible string and its data. It's unnecessary to
-create another dependent function to check chip ID and then decide whether
-the specific funciton is being supported on a certain device. It can be
-totally replaced by the existing flag, so a cleanup is made by removing
-the function and the only user, HWLRO.
-
-MT2701 also have a missing HWLRO support in old code, so add it the same
-patch.
+Improve more in the existing code by reusing dma_zalloc_coherent instead
+of dma_alloc_coherent with __GFP_ZERO or superfluous zeroing buffer.
 
 Signed-off-by: Sean Wang <sean.wang@mediatek.com>
 ---
- drivers/net/ethernet/mediatek/mtk_eth_soc.c | 48 +++--------------------------
- drivers/net/ethernet/mediatek/mtk_eth_soc.h |  2 +-
- 2 files changed, 5 insertions(+), 45 deletions(-)
+ drivers/net/ethernet/mediatek/mtk_eth_soc.c | 16 +++++++---------
+ 1 file changed, 7 insertions(+), 9 deletions(-)
 
 diff --git a/drivers/net/ethernet/mediatek/mtk_eth_soc.c b/drivers/net/ethernet/mediatek/mtk_eth_soc.c
-index 8c85a4b..6e6abdc 100644
+index c30aea2..8c85a4b 100644
 --- a/drivers/net/ethernet/mediatek/mtk_eth_soc.c
 +++ b/drivers/net/ethernet/mediatek/mtk_eth_soc.c
-@@ -2458,42 +2458,6 @@ static int mtk_add_mac(struct mtk_eth *eth, struct device_node *np)
- 	return err;
- }
+@@ -605,10 +605,10 @@ static int mtk_init_fq_dma(struct mtk_eth *eth)
+ 	dma_addr_t dma_addr;
+ 	int i;
  
--static int mtk_get_chip_id(struct mtk_eth *eth, u32 *chip_id)
--{
--	u32 val[2], id[4];
--
--	regmap_read(eth->ethsys, ETHSYS_CHIPID0_3, &val[0]);
--	regmap_read(eth->ethsys, ETHSYS_CHIPID4_7, &val[1]);
--
--	id[3] = ((val[0] >> 16) & 0xff) - '0';
--	id[2] = ((val[0] >> 24) & 0xff) - '0';
--	id[1] = (val[1] & 0xff) - '0';
--	id[0] = ((val[1] >> 8) & 0xff) - '0';
--
--	*chip_id = (id[3] * 1000) + (id[2] * 100) +
--		   (id[1] * 10) + id[0];
--
--	if (!(*chip_id)) {
--		dev_err(eth->dev, "failed to get chip id\n");
--		return -ENODEV;
--	}
--
--	dev_info(eth->dev, "chip id = %d\n", *chip_id);
--
--	return 0;
--}
--
--static bool mtk_is_hwlro_supported(struct mtk_eth *eth)
--{
--	switch (eth->chip_id) {
--	case MT7622_ETH:
--	case MT7623_ETH:
--		return true;
--	}
--
--	return false;
--}
--
- static int mtk_probe(struct platform_device *pdev)
- {
- 	struct resource *res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-@@ -2572,11 +2536,7 @@ static int mtk_probe(struct platform_device *pdev)
- 	if (err)
- 		return err;
+-	eth->scratch_ring = dma_alloc_coherent(eth->dev,
+-					       cnt * sizeof(struct mtk_tx_dma),
+-					       &eth->phy_scratch_ring,
+-					       GFP_ATOMIC | __GFP_ZERO);
++	eth->scratch_ring = dma_zalloc_coherent(eth->dev,
++						cnt * sizeof(struct mtk_tx_dma),
++						&eth->phy_scratch_ring,
++						GFP_ATOMIC);
+ 	if (unlikely(!eth->scratch_ring))
+ 		return -ENOMEM;
  
--	err = mtk_get_chip_id(eth, &eth->chip_id);
--	if (err)
--		return err;
--
--	eth->hwlro = mtk_is_hwlro_supported(eth);
-+	eth->hwlro = MTK_HAS_CAPS(eth->soc->caps, MTK_HWLRO);
+@@ -623,7 +623,6 @@ static int mtk_init_fq_dma(struct mtk_eth *eth)
+ 	if (unlikely(dma_mapping_error(eth->dev, dma_addr)))
+ 		return -ENOMEM;
  
- 	for_each_child_of_node(pdev->dev.of_node, mac_np) {
- 		if (!of_device_is_compatible(mac_np,
-@@ -2665,19 +2625,19 @@ static int mtk_remove(struct platform_device *pdev)
- }
+-	memset(eth->scratch_ring, 0x0, sizeof(struct mtk_tx_dma) * cnt);
+ 	phy_ring_tail = eth->phy_scratch_ring +
+ 			(sizeof(struct mtk_tx_dma) * (cnt - 1));
  
- static const struct mtk_soc_data mt2701_data = {
--	.caps = MTK_GMAC1_TRGMII,
-+	.caps = MTK_GMAC1_TRGMII | MTK_HWLRO,
- 	.required_clks = MT7623_CLKS_BITMAP,
- 	.required_pctl = true,
- };
+@@ -1318,10 +1317,9 @@ static int mtk_rx_alloc(struct mtk_eth *eth, int ring_no, int rx_flag)
+ 			return -ENOMEM;
+ 	}
  
- static const struct mtk_soc_data mt7622_data = {
--	.caps = MTK_DUAL_GMAC_SHARED_SGMII | MTK_GMAC1_ESW,
-+	.caps = MTK_DUAL_GMAC_SHARED_SGMII | MTK_GMAC1_ESW | MTK_HWLRO,
- 	.required_clks = MT7622_CLKS_BITMAP,
- 	.required_pctl = false,
- };
+-	ring->dma = dma_alloc_coherent(eth->dev,
+-				       rx_dma_size * sizeof(*ring->dma),
+-				       &ring->phys,
+-				       GFP_ATOMIC | __GFP_ZERO);
++	ring->dma = dma_zalloc_coherent(eth->dev,
++					rx_dma_size * sizeof(*ring->dma),
++					&ring->phys, GFP_ATOMIC);
+ 	if (!ring->dma)
+ 		return -ENOMEM;
  
- static const struct mtk_soc_data mt7623_data = {
--	.caps = MTK_GMAC1_TRGMII,
-+	.caps = MTK_GMAC1_TRGMII | MTK_HWLRO,
- 	.required_clks = MT7623_CLKS_BITMAP,
- 	.required_pctl = true,
- };
-diff --git a/drivers/net/ethernet/mediatek/mtk_eth_soc.h b/drivers/net/ethernet/mediatek/mtk_eth_soc.h
-index 672b8c3..4681929 100644
---- a/drivers/net/ethernet/mediatek/mtk_eth_soc.h
-+++ b/drivers/net/ethernet/mediatek/mtk_eth_soc.h
-@@ -566,6 +566,7 @@ struct mtk_rx_ring {
- #define MTK_GMAC2_SGMII			(BIT(10) | MTK_SGMII)
- #define MTK_DUAL_GMAC_SHARED_SGMII	(BIT(11) | MTK_GMAC1_SGMII | \
- 					 MTK_GMAC2_SGMII)
-+#define MTK_HWLRO			BIT(12)
- #define MTK_HAS_CAPS(caps, _x)		(((caps) & (_x)) == (_x))
- 
- /* struct mtk_eth_data -	This is the structure holding all differences
-@@ -635,7 +636,6 @@ struct mtk_eth {
- 	struct regmap			*ethsys;
- 	struct regmap			*sgmiisys;
- 	struct regmap			*pctl;
--	u32				chip_id;
- 	bool				hwlro;
- 	refcount_t			dma_refcnt;
- 	struct mtk_tx_ring		tx_ring;
 -- 
 2.7.4
 
