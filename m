@@ -2,100 +2,121 @@ Return-Path: <SRS0=xGmI=KM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86C08C43142
-	for <linux-kernel@archiver.kernel.org>; Sat, 28 Jul 2018 23:07:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8B6FC43142
+	for <linux-kernel@archiver.kernel.org>; Sat, 28 Jul 2018 23:10:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 26C7220842
-	for <linux-kernel@archiver.kernel.org>; Sat, 28 Jul 2018 23:07:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 44D4E20878
+	for <linux-kernel@archiver.kernel.org>; Sat, 28 Jul 2018 23:10:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZYgkKe28"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 26C7220842
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SeU2rkI1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 44D4E20878
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731507AbeG2Afv (ORCPT
+        id S1731538AbeG2Ai1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 28 Jul 2018 20:35:51 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:46644 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730656AbeG2Afv (ORCPT
+        Sat, 28 Jul 2018 20:38:27 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:51485 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731435AbeG2Ai1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 28 Jul 2018 20:35:51 -0400
-Received: by mail-wr1-f68.google.com with SMTP id h14-v6so8700032wrw.13
-        for <linux-kernel@vger.kernel.org>; Sat, 28 Jul 2018 16:07:41 -0700 (PDT)
+        Sat, 28 Jul 2018 20:38:27 -0400
+Received: by mail-wm0-f66.google.com with SMTP id y2-v6so9103295wma.1;
+        Sat, 28 Jul 2018 16:10:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=RqCoUn7/bi3Uy5v9p9ZriAmLLGm3JhOtEDs5Pb92SJQ=;
-        b=ZYgkKe28S+vsDFWWzuqxt+cTR/YMb8d7akr+CoXWMccngINljzXYA/x/OTokXucquP
-         kxtynh5uYxohX8Fuj2KC7JV4XXybspac5G4U4oyQeOBjj/Mm9QvQVH8PBiUNL+rVbklO
-         u6M/+ybh31R3x6/dk6e5xofChVS9itY+zYcrKrYzALKUsQfZ2r+yowsHrMjtbgPsvq32
-         cv111wRgKcVM6OLpYhHErq4+K7eXUHiRSTFfd0dyPub590AXBTp7Kj4Kl/vcDp9VS2cC
-         91/vDiw70sh5DyQI6AbE+imrBmacK30mUfOwetC6OAQn5ZgXU5kO4JwHhKiH8MfGhjPR
-         um3g==
+        h=sender:from:to:cc:subject:date:message-id;
+        bh=WGX8jRFu+0DafYkuN8ixelyiU0xos9Kit4DLHmelkfQ=;
+        b=SeU2rkI1UWOWIYbpDYSl07cCkVkJTxXXcZ5xgE+danCu4EkVSQI25gDzC/mm5JcwK0
+         T9tM2M7e3w3adwO4cF/3x4Iaz+o3262L7T2e4nOetMB90UIBGx621FoH3oPvkHu+/UWg
+         Pyzyokoqgg3EW4QyA4mEUMmExXdF2BZFa2twLMh+GTLUh/RjU2Og36Bq4bjEEEkMpEco
+         7rZF8YG4R2F+GzzfCJ7C7HUzWdUJa6CRKyQAJZNBMjxaTuDLvRaTT7IUEutKRrcKRU9O
+         20bx1/UTlx+8vY21Lx+M/A6biWrBA6PtMjA2mh+3+HtnEF8ga9a9Bu2CLAQxErhWy6XS
+         yfZA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=RqCoUn7/bi3Uy5v9p9ZriAmLLGm3JhOtEDs5Pb92SJQ=;
-        b=jYk8j57nsmPM9iht3GuQM/CoH0JTnZ8XltqVqiR9FPvj/aPwfxKrwnTE9tBxfTUj87
-         3mjZ3bMZv83fPdu5bvFziI6O34JuVIfo1KU5fcoCJErZGdzs/zu1v06olbLFrve8GRR/
-         CDmhDnKdOU83BnOMWCkR0R1MlxkumzgOV4T9tQP8xdfaBvu6801Agbi5O1+kvms/oxo8
-         Eyl2LTGB6fY84THIKfv9L7E8hwRpPfpn4p+zfCHSRnDOWUqYPESHN6boYelDnTCmoQse
-         adFO6k0melJe1wt3J3+D71uda4uLE1gllIc0T+uYs8FOX9iiPUhKjmJfB4w8LZhPD3VO
-         r0vw==
-X-Gm-Message-State: AOUpUlE5D8gIglqxQkE4xAB2t5M679s81xWW2JhmF1e+/4/D7/dGy99H
-        XLskACWIc+Xa+mKk++TJyDA=
-X-Google-Smtp-Source: AAOMgpcNQogQEj5mOKiSklkoVoqopAb09qgv2YVpHaDN6fn2ieJjOJd5A1MkhxTB5gA/QB3qnW/SGw==
-X-Received: by 2002:adf:db11:: with SMTP id s17-v6mr5515777wri.221.1532819261171;
-        Sat, 28 Jul 2018 16:07:41 -0700 (PDT)
-Received: from xux707-tw (host81-158-116-187.range81-158.btcentralplus.com. [81.158.116.187])
-        by smtp.gmail.com with ESMTPSA id r1-v6sm8223327wrs.39.2018.07.28.16.07.39
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sat, 28 Jul 2018 16:07:40 -0700 (PDT)
-Date:   Sun, 29 Jul 2018 00:07:41 +0100
-From:   John Whitmore <arigead@gmail.com>
-To:     John Whitmore <johnfwhitmore@gmail.com>
-Cc:     linux-kernel@vger.kernel.org, devel@driverdev.osuosl.org,
-        gregkh@linuxfoundation.org
-Subject: Re: [PATCH 00/08] staging:rtl8192u: cleanup of rtl819x_Qos.h - Style
-Message-ID: <20180728230740.GA19821@xux707-tw>
-References: <20180728230300.19732-1-johnfwhitmore@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180728230300.19732-1-johnfwhitmore@gmail.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id;
+        bh=WGX8jRFu+0DafYkuN8ixelyiU0xos9Kit4DLHmelkfQ=;
+        b=Cw0DJHLzSYiwBS6omSIFvvEv33tegrHFfKxihDjeLlsWQ5T8ZgOBfvXdwjRok48XNm
+         O7z9+RnRMe1X2gDxKdXrckfJVhXX2TxGfVYM3+zXAj2nx78neKfzEOQSzN+nQ7Cq0zGp
+         N1+UUTrbbI3MiVvq7aQCE15xFlTdnRQDDY/vZWqnl5+k+J7ZIQNElSjQqWfQ5IX02epL
+         2IEXyLk37jds3K0oxCqA1eqvM8gwxzcqmES6HJwQyBBiUFmibn02a8XTaEKdk4bwocml
+         brvf1qRJLnNDAXyHTybrB/794rTsKnm0O5SUcqaqNhPMMeydOHBGEc+OPTzzdf0oZ+4s
+         1gfA==
+X-Gm-Message-State: AOUpUlE6QVu/8PybuuzoJHculvDaAMYDbTG84hcBFudkppeVFaw/qKrH
+        twHvLJlcMcbFGqwebitXrQYFKK2e
+X-Google-Smtp-Source: AAOMgpeDWwVhbOSpPB7JhxN4qscz+GQXl6DxaS1cqRhSK/joAlcpaYAlAChf8K8DXwNABtqwCLhtuQ==
+X-Received: by 2002:a1c:c60a:: with SMTP id w10-v6mr9447964wmf.26.1532819415522;
+        Sat, 28 Jul 2018 16:10:15 -0700 (PDT)
+Received: from 640k.lan (94-36-184-250.adsl-ull.clienti.tiscali.it. [94.36.184.250])
+        by smtp.gmail.com with ESMTPSA id j6-v6sm6190725wro.13.2018.07.28.16.10.14
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sat, 28 Jul 2018 16:10:14 -0700 (PDT)
+From:   Paolo Bonzini <pbonzini@redhat.com>
+To:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Cc:     Liran Alon <liran.alon@oracle.com>,
+        KarimAllah Ahmed <karahmed@amazon.de>,
+        Jim Mattson <jmattson@google.com>, rkrcmar@redhat.com
+Subject: [PATCH v6 00/10] kvm: x86: migration of nested virtualization state
+Date:   Sun, 29 Jul 2018 01:10:02 +0200
+Message-Id: <1532819412-51357-1-git-send-email-pbonzini@redhat.com>
+X-Mailer: git-send-email 1.8.3.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Jul 29, 2018 at 12:02:52AM +0100, John Whitmore wrote:
-> These are a few coding style changes to the file
-> drivers/staging/rtl8192u/ieee80211/rtl819x_Qos.h
-> I had more patches in the list but had to dump some of the later
-> patches as I made a mistake. Thought I'd send these 8.
-> 
-> John Whitmore (8):
->   staging:rtl8192u: Add spaces around operators - Style
->   staging:rtl8192u: Rename ACI_AIFSN - Style
->   staging:rtl8192u: Rename member variables - Style
->   staging:rtl8192u: Remove unused  union AC_PARAM - Style
->   staging:rtl8192u: Remove unused union ECW -Style
->   staging:rtl8192u: Rename enum DIRECTION_VALUE - Style
->   staging:rtl8192u: Rename union QOS_TSINFO - Style
->   staging:rtl8192u: Remove unused constants - Style
-> 
+This is the next version of the nested virtualization migration series,
+now with unit tests too.
 
-Sorry I forgot to edit the subject of each of the patch emails to
-truncate the patch series to just the 8 that were good. I'll edit and
-resend.
+Patches 6, 7, and 9 replace the (broken) WIP patches in the kvm/queue branch,
+while the other seven are new and related to the tests.  In particular, patch 1
+is an independent bugfix, which makes it much simpler to use KVM_GET_MSR/KVM_SET_MSR
+in a simple userspace client such as the new test.  Patches 2-4 are also
+improvements and bugfixes to the unit test infrastructure.
 
-jwhitmore
+Please review (especially the non-test patches of course!).
+
+Thanks,
+
+Paolo
+
+Jim Mattson (1):
+	kvm: nVMX: Introduce KVM_CAP_NESTED_STATE
+
+Paolo Bonzini (9):
+	KVM: x86: ensure all MSRs can always be KVM_GET/SET_MSR'd
+	kvm: selftests: create a GDT and TSS
+	kvm: selftests: actually use all of lib/vmx.c
+	kvm: selftests: ensure vcpu file is released
+	kvm: selftests: add basic test for state save and restore
+	KVM: x86: do not load vmcs12 pages while still in SMM
+	kvm: selftests: add test for nested state save/restore
+	KVM: nVMX: include shadow vmcs12 in nested state
+	KVM: selftests: add tests for shadow VMCS save/restore
+
+ Documentation/virtual/kvm/api.txt                   |   56 ++++
+ arch/x86/include/asm/kvm_host.h                     |    9 
+ arch/x86/include/uapi/asm/kvm.h                     |   37 ++
+ arch/x86/kvm/hyperv.c                               |   27 +-
+ arch/x86/kvm/hyperv.h                               |    2 
+ arch/x86/kvm/vmx.c                                  |  255 ++++++++++++++++++-
+ arch/x86/kvm/x86.c                                  |   71 +++++
+ include/uapi/linux/kvm.h                            |    4 
+ tools/testing/selftests/kvm/Makefile                |    1 
+ tools/testing/selftests/kvm/cr4_cpuid_sync_test.c   |    2 
+ tools/testing/selftests/kvm/include/kvm_util.h      |    4 
+ tools/testing/selftests/kvm/include/vmx.h           |   66 ++++-
+ tools/testing/selftests/kvm/include/x86.h           |    8 
+ tools/testing/selftests/kvm/lib/kvm_util.c          |  102 ++++++-
+ tools/testing/selftests/kvm/lib/kvm_util_internal.h |    7 
+ tools/testing/selftests/kvm/lib/vmx.c               |  104 +++++---
+ tools/testing/selftests/kvm/lib/x86.c               |  256 ++++++++++++++++----
+ tools/testing/selftests/kvm/state_test.c            |  224 +++++++++++++++++
+ tools/testing/selftests/kvm/vmx_tsc_adjust_test.c   |   69 +----
+ 19 files changed, 1105 insertions(+), 199 deletions(-)
+
