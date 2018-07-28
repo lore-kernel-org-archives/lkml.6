@@ -2,789 +2,198 @@ Return-Path: <SRS0=xGmI=KM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0071C28CF6
-	for <linux-kernel@archiver.kernel.org>; Sat, 28 Jul 2018 03:57:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B818C28CF6
+	for <linux-kernel@archiver.kernel.org>; Sat, 28 Jul 2018 04:08:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 74B0720862
-	for <linux-kernel@archiver.kernel.org>; Sat, 28 Jul 2018 03:57:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C7C0F2088E
+	for <linux-kernel@archiver.kernel.org>; Sat, 28 Jul 2018 04:08:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Ay6OZGeS";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="SZhxE5Vv"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 74B0720862
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=pass (1024-bit key) header.d=LenovoBeijing.onmicrosoft.com header.i=@LenovoBeijing.onmicrosoft.com header.b="VM0Bygi7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C7C0F2088E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=lenovo.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726215AbeG1FV7 (ORCPT
+        id S1726220AbeG1Fcp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 28 Jul 2018 01:21:59 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:57502 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726004AbeG1FV6 (ORCPT
+        Sat, 28 Jul 2018 01:32:45 -0400
+Received: from mail1.bemta24.messagelabs.com ([67.219.250.115]:32055 "EHLO
+        mail1.bemta24.messagelabs.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726047AbeG1Fco (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 28 Jul 2018 01:21:58 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 4CC92605BD; Sat, 28 Jul 2018 03:57:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1532750224;
-        bh=ktp/TroUfsk2FMBCCiCIKr26M1791jED11+7YPfiZhQ=;
-        h=From:To:Cc:Subject:Date:From;
-        b=Ay6OZGeSVmjLLDcv8Gkbn+vxfJ8eitW77PLSrqVNms+66XyjvBTqipfThoXB2nnn0
-         8+ptrmyHQJK4NPhQkdSrd3rB9h90oj9UsN3XL+1ig+p3KUzzTe58KDTetEd29OvryF
-         X+gVsbKoSYopYuYVVzfCW8u7CT6cj0MscPQ8gHXA=
-Received: from skannan1-linux.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: skannan@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id C7BE4605BD;
-        Sat, 28 Jul 2018 03:57:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1532750222;
-        bh=ktp/TroUfsk2FMBCCiCIKr26M1791jED11+7YPfiZhQ=;
-        h=From:To:Cc:Subject:Date:From;
-        b=SZhxE5Vvee7CX32vEfh1kOO2/Cku5EKVV1h/h7gAZiQYnFBXEGOWiq7hDPDgnufJH
-         i1B+ghJ5XCJBo4+KyRdwuoXuGYDusvZhLZRoeF8cPFMx5sUjCGNBpkejXEyv44yC0p
-         NBG5IhALpM6mw6+u7NJPgl+wlbarpTbDhPfdh+aQ=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org C7BE4605BD
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=skannan@codeaurora.org
-From:   Saravana Kannan <skannan@codeaurora.org>
-To:     MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc:     Saravana Kannan <skannan@codeaurora.org>, linux-pm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] PM / devfreq: Generic cpufreq governor
-Date:   Fri, 27 Jul 2018 20:56:54 -0700
-Message-Id: <1532750217-8886-1-git-send-email-skannan@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
+        Sat, 28 Jul 2018 01:32:44 -0400
+Received: from [67.219.250.198] (using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256 bits))
+        by server-4.bemta.az-b.us-west-2.aws.symcld.net id 52/D5-01623-31CEB5B5; Sat, 28 Jul 2018 04:07:47 +0000
+X-Brightmail-Tracker: H4sIAAAAAAAAA1WTfUwbZRzH99xd746XbkcB+9gMErvsD5mtLah
+  5jDHRf9xFszj9Rx1mrMCNlpVCekXK9g+kcRoK8uIYg5aXuc1NYKDdYqYWN+osFpkgL+qQ2Y0V
+  eVnpMtnieOu867Gpl1zy/T2f7/1+3+fJPTSumKJUNGe3cVaLwawm4wnj3A1MkxzOztbVdu5Av
+  YN+HHVdqyXR6NpdgJoqhynU1DgC0A9XK0nUF3HJkONEL4n8I/MEcjU5MDTkLELevgCBxr52k8
+  hR/zuF6o47cHR6IIqh+tlVAi39dJhCh7+4B9Dw+oAMTdb5MbR6XzB7v/8Qf0nJuip+Jtj+aR/
+  JnjuTwZ7wzmPs2JVSti3wBnuxtZtina4owd6ZmSTY299OkOxQx2WKPffjIXbJk85+cMmJsZ7Q
+  IsYOB6PUbmaPzGTJLbbvkxnPfteMlbwvtx8J9mAVIBxfBeJpBRMCcKW7ViYVPgBnOz+nxIJgz
+  uAw4vgFrwJxAqnF4PxXdskVBHBptZoUAck8CQNh0RRPpzARDK6snwVigTMXSdh63k+IrmRmP5
+  xs6aJEncIUwP6r9whJZ8Ll0FisE8Fsh5dvLsa0nHkXPrjgFPy0MG4fdNfYxeU45jk4s+COfQq
+  YNHh0OoiJGmeUsPVoi0zUkGHgSe8wLulUOH8zurGuhtOnfiUknQZH252xnJCpwaF/eg6TwC44
+  GO4gJTAA4JdtLpkYAjIZcPzuZlEC5k0YOb9Xsh+Ac+5mXHK8CifrN8amw86aG4TUxYPDkcAxS
+  gJboXd9ZgP8JoPt6/1YHdC0/GcPkn4KdnzzFynpHfDT47fwltixJMFAc4joAEQnQLlWU4HRVm
+  QwmTV6nU6j12dq9Fnim6U1HNTkakt5TRnH2zSZWkMZr+XLi/LM+VoLZ/MA4R/fJDwXQNCX7wO
+  P05g6VT4ezM5WbM4tzi83GnhjjrXUzPE+sJWm1VCuvyWwJCtXwNn3m8zCRXmIIZ2oTpFniljO
+  lxiKeFOBhAZBFt32WUMDTq/dbmzAFYSl2MKplPIk0cqIVmOp5VGjh5duFKSpkuVAiKZILOGsR
+  Sbb//kCUNJAnSxvXBC6JJostkfzFoQomBBlYO87YhSb4V+kqgDtK3zToSGzrjK1TrZltCwy1e
+  t4eWdzwu7FPGVe9ZT8o7eoiT+vD556+04Cl3UkeL+y5/nGtCcMeR8nvFb+bF/VK89s/2S5R1W
+  YUJ0DQuFt6ZrxS/wLha8/vbzLuCW8za070P/3H9E4z7VN17nWY1cUWPfsWNeLDTkPHnvvYH3h
+  xE7TyTU1wRsN+gzcyhv+AcJ/UDFvBAAA
+X-Env-Sender: yehs1@lenovo.com
+X-Msg-Ref: server-24.tower-346.messagelabs.com!1532750861!1371195!1
+X-Originating-IP: [104.232.225.2]
+X-SYMC-ESS-Client-Auth: outbound-route-from=pass
+X-StarScan-Received: 
+X-StarScan-Version: 9.9.15; banners=-,-,-
+X-VirusChecked: Checked
+Received: (qmail 19286 invoked from network); 28 Jul 2018 04:07:47 -0000
+Received: from unknown (HELO maesmtp01.lenovo.com) (104.232.225.2)
+  by server-24.tower-346.messagelabs.com with DHE-RSA-AES256-GCM-SHA384 encrypted SMTP; 28 Jul 2018 04:07:47 -0000
+Received: from USEXEDGE02.lenovo.com (unknown [10.62.65.5]) by maesmtp01.lenovo.com with smtp
+        (TLS: TLSv1/SSLv3,256bits,ECDHE-RSA-AES256-SHA)
+         id 2ec5_3682_67b076fe_f07a_40b8_81b8_efcda044f269;
+        Sat, 28 Jul 2018 04:07:33 +0000
+Received: from APC01-PU1-obe.outbound.protection.outlook.com (65.55.88.18) by
+ USEXEDGE02.lenovo.com (10.62.65.5) with Microsoft SMTP Server (TLS) id
+ 14.3.389.1; Sat, 28 Jul 2018 00:07:32 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=LenovoBeijing.onmicrosoft.com; s=selector1-lenovo-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=LbZLLgGDeuYLDqcQZBeHjuXEmpiJjUfyC+C+wWd/VW8=;
+ b=VM0Bygi7KUQKBLrQlE552T69843EJi7cJo//BXGoTJ/0vTh12R9XMGVJGosPiBRAFnE9jwlqf2bNt/GsB+gvn72BUBnRwQKb8rE6Drhw28uBwIllMVR3R6wTh8ByYemQiALOxHnz/Cb+tTx8WcLRNzImH7okMb80Aq/UlgXU28o=
+Received: from TY2PR03MB3343.apcprd03.prod.outlook.com (20.177.20.145) by
+ TY2PR03MB3680.apcprd03.prod.outlook.com (20.177.78.148) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.995.13; Sat, 28 Jul 2018 04:07:26 +0000
+Received: from TY2PR03MB3343.apcprd03.prod.outlook.com
+ ([fe80::2970:a034:38d1:9afe]) by TY2PR03MB3343.apcprd03.prod.outlook.com
+ ([fe80::2970:a034:38d1:9afe%2]) with mapi id 15.20.1017.010; Sat, 28 Jul 2018
+ 04:07:26 +0000
+From:   Huaisheng HS1 Ye <yehs1@lenovo.com>
+To:     "linux-s390@vger.kernel.org" <linux-s390@vger.kernel.org>,
+        "schwidefsky@de.ibm.com" <schwidefsky@de.ibm.com>,
+        "heiko.carstens@de.ibm.com" <heiko.carstens@de.ibm.com>,
+        "bart.vanassche@wdc.com" <bart.vanassche@wdc.com>,
+        "martin.petersen@oracle.com" <martin.petersen@oracle.com>,
+        "axboe@kernel.dk" <axboe@kernel.dk>,
+        "keescook@chromium.org" <keescook@chromium.org>
+CC:     "ross.zwisler@linux.intel.com" <ross.zwisler@linux.intel.com>,
+        "willy@infradead.org" <willy@infradead.org>,
+        "vishal.l.verma@intel.com" <vishal.l.verma@intel.com>,
+        "dave.jiang@intel.com" <dave.jiang@intel.com>,
+        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "jack@suse.cz" <jack@suse.cz>, "agk@redhat.com" <agk@redhat.com>,
+        "snitzer@redhat.com" <snitzer@redhat.com>,
+        "dm-devel@redhat.com" <dm-devel@redhat.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "NingTing Cheng" <chengnt@lenovo.com>,
+        "colyli@suse.de" <colyli@suse.de>,
+        Huaisheng Ye <yehs2007@zoho.com>,
+        "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>,
+        "dan.j.williams@intel.com" <dan.j.williams@intel.com>
+Subject: RE: [External]  [PATCH v2 2/6] s390, dcssblk: kaddr and pfn can be
+ NULL to ->direct_access()
+Thread-Topic: [External]  [PATCH v2 2/6] s390, dcssblk: kaddr and pfn can be
+ NULL to ->direct_access()
+Thread-Index: AQHUJDTYqNzaaZ4Lj0CwoIJqnX/Oo6SkA+uw
+Date:   Sat, 28 Jul 2018 04:07:25 +0000
+Message-ID: <TY2PR03MB334328133134A67C87E5CC5C92290@TY2PR03MB3343.apcprd03.prod.outlook.com>
+References: <20180725162849.8320-1-yehs2007@zoho.com>
+ <20180725162849.8320-3-yehs2007@zoho.com>
+In-Reply-To: <20180725162849.8320-3-yehs2007@zoho.com>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [114.240.70.214]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;TY2PR03MB3680;20:Eu/OpRlYqyaEolkDxUCl8YS9kIorPeT7p+ydjWZ1d/riKy5G7dD6NSioyU7j08CVnDhSL1fr4b4hy6zbwGfcpZxydbWmw6P2SIVNhHMoA+znA8edTZj/iz1pip7JxYwO9JvuZ7Jy/+GA3/weUAvT+guOjH5lMSsYljgglGH6gT6oV0pXksg7CZ7Lha+dveb5yDHgLx/F02pr6vVdGtR5X2zPEZiVS+6X3Gi5Rifrr943WgKdF+YnISyBRF05tQn+rllLYDY0HAzOJt+hyAIDwarysKFHGbo5fbaywB16aPR1HjK7n5xqnTeQ+J++fyGflKLEzYXxmLVVGtLTha8jKg==
+x-ms-office365-filtering-correlation-id: 9f814aba-6896-40ed-9012-08d5f43fa10e
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(5600074)(711020)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(2017052603328)(7153060)(7193020);SRVR:TY2PR03MB3680;
+x-ms-traffictypediagnostic: TY2PR03MB3680:
+x-microsoft-antispam-prvs: <TY2PR03MB36804E54D8DB8C819A52D24092290@TY2PR03MB3680.apcprd03.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(3940261145250)(247784426924974);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(3002001)(93006095)(93001095)(3231311)(944501410)(52105095)(10201501046)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123558120)(20161123562045)(20161123564045)(6072148)(201708071742011)(7699016);SRVR:TY2PR03MB3680;BCL:0;PCL:0;RULEID:;SRVR:TY2PR03MB3680;
+x-forefront-prvs: 07473990A5
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(136003)(396003)(346002)(376002)(39830400003)(189003)(199004)(4326008)(81166006)(25786009)(229853002)(6246003)(97736004)(8936002)(478600001)(33656002)(81156014)(6436002)(14454004)(9686003)(55016002)(2906002)(7416002)(5660300001)(53936002)(68736007)(106356001)(2900100001)(8676002)(3846002)(7736002)(5250100002)(2501003)(105586002)(6116002)(305945005)(2201001)(74316002)(476003)(76176011)(110136005)(6506007)(54906003)(26005)(102836004)(256004)(186003)(446003)(14444005)(66066001)(11346002)(99286004)(7696005)(486006)(86362001)(316002);DIR:OUT;SFP:1102;SCL:1;SRVR:TY2PR03MB3680;H:TY2PR03MB3343.apcprd03.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: lenovo.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: bMVBpwiUOj3lmcJVXSXAKQomQizESXMffbeQ/B8yvuGC3nc6pwgm+iPHeadndDmCQnjFsc9n8jVtDs3h6a8e1u1swUXrfPZrjyCqao2ILX8VoN9Prcrk/5mGEgmscUD357GFNn2GbuYbjTLEGkSKWbKX3pp0/+79ugJYkuk0QI8Riq6BSehRziIls0KwBprpb3zk8CC7WG3jzyz8J/b8qTRDmskgougLoNmjhSpc20bgy64Gr4poopvVk93jAeMPMEGBoRYGTsptModa/l1/LV37mqJlSOgYrp5fmzw+Xp2sKcnLcp6bqLHtKFa8bJvYWF8Ar1NwqqF44SLNQZ6NrxQ3Xp+18YzYU0hd+rGOqnM=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9f814aba-6896-40ed-9012-08d5f43fa10e
+X-MS-Exchange-CrossTenant-originalarrivaltime: 28 Jul 2018 04:07:26.0152
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 5c7d0b28-bdf8-410c-aa93-4df372b16203
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY2PR03MB3680
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Many CPU architectures have caches that can scale independent of the CPUs.
-Frequency scaling of the caches is necessary to make sure the cache is not
-a performance bottleneck that leads to poor performance and power. The same
-idea applies for RAM/DDR.
+Dear Maintainers of Linux-s390,
 
-To achieve this, this patch adds a generic devfreq governor that can listen
-to the frequency transitions of each CPU frequency domain and then adjusts
-the frequency of the cache (or any devfreq device) based on the frequency
-of the CPUs.
+Greetings.
 
-To decide the frequency of the device, the governor does one of the
-following:
+May I have your ack's for this patch? The whole series would be applied
+to libnvdimm if it could get your approval.
+And any suggestion is welcome.
 
-* Uses a CPU frequency to device frequency mapping table
-  - Either one mapping table used for all CPU freq policies (typically used
-    for system with homogeneous cores/clusters that have the same OPPs.
-  - One mapping table per CPU freq policy (typically used for ASMP systems
-    with heterogeneous CPUs with different OPPs)
+Cheers,
+Huaisheng Ye
 
-OR
-
-* Scales the device frequency in proportion to the CPU frequency. So, if
-  the CPUs are running at their max frequency, the device runs at its max
-  frequency.  If the CPUs are running at their min frequency, the device
-  runs at its min frequency. And interpolated for frequencies in between.
-
-Signed-off-by: Saravana Kannan <skannan@codeaurora.org>
----
- .../bindings/devfreq/devfreq-cpufreq.txt           |  53 ++
- drivers/devfreq/Kconfig                            |   8 +
- drivers/devfreq/Makefile                           |   1 +
- drivers/devfreq/governor_cpufreq.c                 | 583 +++++++++++++++++++++
- 4 files changed, 645 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/devfreq/devfreq-cpufreq.txt
- create mode 100644 drivers/devfreq/governor_cpufreq.c
-
-diff --git a/Documentation/devicetree/bindings/devfreq/devfreq-cpufreq.txt b/Documentation/devicetree/bindings/devfreq/devfreq-cpufreq.txt
-new file mode 100644
-index 0000000..6537538
---- /dev/null
-+++ b/Documentation/devicetree/bindings/devfreq/devfreq-cpufreq.txt
-@@ -0,0 +1,53 @@
-+Devfreq CPUfreq governor
-+
-+devfreq-cpufreq is a parent device that contains one or more child devices.
-+Each child device provides CPU frequency to device frequency mapping for a
-+specific device. Examples of devices that could use this are: DDR, cache and
-+CCI.
-+
-+Parent device name shall be "devfreq-cpufreq".
-+
-+Required child device properties:
-+- cpu-to-dev-map, or cpu-to-dev-map-<X>:
-+			A list of tuples where each tuple consists of a
-+			CPU frequency (KHz) and the corresponding device
-+			frequency. CPU frequencies not listed in the table
-+			will use the device frequency that corresponds to the
-+			next rounded up CPU frequency.
-+			Use "cpu-to-dev-map" if all CPUs in the system should
-+			share same mapping.
-+			Use cpu-to-dev-map-<cpuid> to describe different
-+			mappings for different CPUs. The property should be
-+			listed only for the first CPU if multiple CPUs are
-+			synchronous.
-+- target-dev:		Phandle to device that this mapping applies to.
-+
-+Example:
-+	devfreq-cpufreq {
-+		cpubw-cpufreq {
-+			target-dev = <&cpubw>;
-+			cpu-to-dev-map =
-+				<  300000  1144 >,
-+				<  422400  2288 >,
-+				<  652800  3051 >,
-+				<  883200  5996 >,
-+				< 1190400  8056 >,
-+				< 1497600 10101 >,
-+				< 1728000 12145 >,
-+				< 2649600 16250 >;
-+		};
-+
-+		cache-cpufreq {
-+			target-dev = <&cache>;
-+			cpu-to-dev-map =
-+				<  300000  300000 >,
-+				<  422400  422400 >,
-+				<  652800  499200 >,
-+				<  883200  576000 >,
-+				<  960000  960000 >,
-+				< 1497600 1036800 >,
-+				< 1574400 1574400 >,
-+				< 1728000 1651200 >,
-+				< 2649600 1728000 >;
-+		};
-+	};
-diff --git a/drivers/devfreq/Kconfig b/drivers/devfreq/Kconfig
-index 8503018..5eeb33f 100644
---- a/drivers/devfreq/Kconfig
-+++ b/drivers/devfreq/Kconfig
-@@ -73,6 +73,14 @@ config DEVFREQ_GOV_PASSIVE
- 	  through sysfs entries. The passive governor recommends that
- 	  devfreq device uses the OPP table to get the frequency/voltage.
- 
-+config DEVFREQ_GOV_CPUFREQ
-+	tristate "CPUfreq"
-+	depends on CPU_FREQ
-+	help
-+	  Chooses frequency based on the online CPUs' current frequency and a
-+	  CPU frequency to device frequency mapping table(s). This governor
-+	  can be useful for controlling devices such as DDR, cache, CCI, etc.
-+
- comment "DEVFREQ Drivers"
- 
- config ARM_EXYNOS_BUS_DEVFREQ
-diff --git a/drivers/devfreq/Makefile b/drivers/devfreq/Makefile
-index f1cc8990..cafe7c2 100644
---- a/drivers/devfreq/Makefile
-+++ b/drivers/devfreq/Makefile
-@@ -6,6 +6,7 @@ obj-$(CONFIG_DEVFREQ_GOV_PERFORMANCE)	+= governor_performance.o
- obj-$(CONFIG_DEVFREQ_GOV_POWERSAVE)	+= governor_powersave.o
- obj-$(CONFIG_DEVFREQ_GOV_USERSPACE)	+= governor_userspace.o
- obj-$(CONFIG_DEVFREQ_GOV_PASSIVE)	+= governor_passive.o
-+obj-$(CONFIG_DEVFREQ_GOV_CPUFREQ)	+= governor_cpufreq.o
- 
- # DEVFREQ Drivers
- obj-$(CONFIG_ARM_EXYNOS_BUS_DEVFREQ)	+= exynos-bus.o
-diff --git a/drivers/devfreq/governor_cpufreq.c b/drivers/devfreq/governor_cpufreq.c
-new file mode 100644
-index 0000000..0e7768c
---- /dev/null
-+++ b/drivers/devfreq/governor_cpufreq.c
-@@ -0,0 +1,583 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (c) 2014-2015, 2018, The Linux Foundation. All rights reserved.
-+ */
-+
-+#define pr_fmt(fmt) "dev-cpufreq: " fmt
-+
-+#include <linux/devfreq.h>
-+#include <linux/cpu.h>
-+#include <linux/cpufreq.h>
-+#include <linux/cpumask.h>
-+#include <linux/slab.h>
-+#include <linux/platform_device.h>
-+#include <linux/of.h>
-+#include <linux/module.h>
-+#include "governor.h"
-+
-+struct cpu_state {
-+	unsigned int freq;
-+	unsigned int min_freq;
-+	unsigned int max_freq;
-+	unsigned int first_cpu;
-+};
-+static struct cpu_state *state[NR_CPUS];
-+static int cpufreq_cnt;
-+
-+struct freq_map {
-+	unsigned int cpu_khz;
-+	unsigned int target_freq;
-+};
-+
-+struct devfreq_node {
-+	struct devfreq *df;
-+	void *orig_data;
-+	struct device *dev;
-+	struct device_node *of_node;
-+	struct list_head list;
-+	struct freq_map **map;
-+	struct freq_map *common_map;
-+};
-+static LIST_HEAD(devfreq_list);
-+static DEFINE_MUTEX(state_lock);
-+static DEFINE_MUTEX(cpufreq_reg_lock);
-+
-+static void update_all_devfreqs(void)
-+{
-+	struct devfreq_node *node;
-+
-+	list_for_each_entry(node, &devfreq_list, list) {
-+		struct devfreq *df = node->df;
-+
-+		if (!node->df)
-+			continue;
-+		mutex_lock(&df->lock);
-+		update_devfreq(df);
-+		mutex_unlock(&df->lock);
-+
-+	}
-+}
-+
-+static struct devfreq_node *find_devfreq_node(struct device *dev)
-+{
-+	struct devfreq_node *node;
-+
-+	list_for_each_entry(node, &devfreq_list, list)
-+		if (node->dev == dev || node->of_node == dev->of_node)
-+			return node;
-+
-+	return NULL;
-+}
-+
-+/* ==================== cpufreq part ==================== */
-+static cpu_state *add_policy(struct cpufreq_policy *policy)
-+{
-+	struct cpu_state *new_state;
-+	unsigned int cpu, first_cpu;
-+
-+	new_state = kzalloc(sizeof(struct cpu_state), GFP_KERNEL);
-+	if (!new_state)
-+		return NULL;
-+
-+	first_cpu = cpumask_first(policy->related_cpus);
-+	new_state->first_cpu = first_cpu;
-+	new_state->freq = policy->cur;
-+	new_state->min_freq = policy->cpuinfo.min_freq;
-+	new_state->max_freq = policy->cpuinfo.max_freq;
-+
-+	for_each_cpu(cpu, policy->related_cpus)
-+		state[cpu] = new_state;
-+
-+	return new_state;
-+}
-+
-+static int cpufreq_trans_notifier(struct notifier_block *nb,
-+		unsigned long event, void *data)
-+{
-+	struct cpufreq_freqs *freq = data;
-+	struct cpu_state *s;
-+	struct cpufreq_policy *policy = NULL;
-+
-+	if (event != CPUFREQ_POSTCHANGE)
-+		return 0;
-+
-+	mutex_lock(&state_lock);
-+
-+	s = state[freq->cpu];
-+	if (!s) {
-+		policy = cpufreq_cpu_get(cpu);
-+		if (policy) {
-+			s = add_policy(policy);
-+			cpufreq_cpu_put(policy);
-+		}
-+	}
-+	if (!s)
-+		goto out;
-+
-+	if (s->freq != freq->new || policy) {
-+		s->freq = freq->new;
-+		update_all_devfreqs();
-+	}
-+
-+out:
-+	mutex_unlock(&state_lock);
-+	return 0;
-+}
-+
-+static struct notifier_block cpufreq_trans_nb = {
-+	.notifier_call = cpufreq_trans_notifier
-+};
-+
-+static int register_cpufreq(void)
-+{
-+	int ret = 0;
-+	unsigned int cpu;
-+	struct cpufreq_policy *policy;
-+
-+	mutex_lock(&cpufreq_reg_lock);
-+
-+	if (cpufreq_cnt)
-+		goto cnt_not_zero;
-+
-+	get_online_cpus();
-+	ret = cpufreq_register_notifier(&cpufreq_trans_nb,
-+				CPUFREQ_TRANSITION_NOTIFIER);
-+	if (ret)
-+		goto out;
-+
-+	for_each_online_cpu(cpu) {
-+		policy = cpufreq_cpu_get(cpu);
-+		if (policy) {
-+			add_policy(policy);
-+			cpufreq_cpu_put(policy);
-+		}
-+	}
-+out:
-+	put_online_cpus();
-+cnt_not_zero:
-+	if (!ret)
-+		cpufreq_cnt++;
-+	mutex_unlock(&cpufreq_reg_lock);
-+	return ret;
-+}
-+
-+static int unregister_cpufreq(void)
-+{
-+	int ret = 0;
-+	int cpu;
-+
-+	mutex_lock(&cpufreq_reg_lock);
-+
-+	if (cpufreq_cnt > 1)
-+		goto out;
-+
-+	cpufreq_unregister_notifier(&cpufreq_trans_nb,
-+				CPUFREQ_TRANSITION_NOTIFIER);
-+
-+	for (cpu = ARRAY_SIZE(state) - 1; cpu >= 0; cpu--) {
-+		if (!state[cpu])
-+			continue;
-+		if (state[cpu]->first_cpu == cpu)
-+			kfree(state[cpu]);
-+		state[cpu] = NULL;
-+	}
-+
-+out:
-+	cpufreq_cnt--;
-+	mutex_unlock(&cpufreq_reg_lock);
-+	return ret;
-+}
-+
-+/* ==================== devfreq part ==================== */
-+
-+static unsigned int interpolate_freq(struct devfreq *df, unsigned int cpu)
-+{
-+	unsigned long *freq_table = df->profile->freq_table;
-+	unsigned int cpu_min = state[cpu]->min_freq;
-+	unsigned int cpu_max = state[cpu]->max_freq;
-+	unsigned int cpu_freq = state[cpu]->freq;
-+	unsigned int dev_min, dev_max, cpu_percent;
-+
-+	if (freq_table) {
-+		dev_min = freq_table[0];
-+		dev_max = freq_table[df->profile->max_state - 1];
-+	} else {
-+		if (df->max_freq <= df->min_freq)
-+			return 0;
-+		dev_min = df->min_freq;
-+		dev_max = df->max_freq;
-+	}
-+
-+	cpu_percent = ((cpu_freq - cpu_min) * 100) / (cpu_max - cpu_min);
-+	return dev_min + mult_frac(dev_max - dev_min, cpu_percent, 100);
-+}
-+
-+static unsigned int cpu_to_dev_freq(struct devfreq *df, unsigned int cpu)
-+{
-+	struct freq_map *map = NULL;
-+	unsigned int cpu_khz = 0, freq;
-+	struct devfreq_node *n = df->data;
-+
-+	if (!state[cpu] || state[cpu]->first_cpu != cpu) {
-+		freq = 0;
-+		goto out;
-+	}
-+
-+	if (n->common_map)
-+		map = n->common_map;
-+	else if (n->map)
-+		map = n->map[cpu];
-+
-+	cpu_khz = state[cpu]->freq;
-+
-+	if (!map) {
-+		freq = interpolate_freq(df, cpu);
-+		goto out;
-+	}
-+
-+	while (map->cpu_khz && map->cpu_khz < cpu_khz)
-+		map++;
-+	if (!map->cpu_khz)
-+		map--;
-+	freq = map->target_freq;
-+
-+out:
-+	dev_dbg(df->dev.parent, "CPU%u: %d -> dev: %u\n", cpu, cpu_khz, freq);
-+	return freq;
-+}
-+
-+static int devfreq_cpufreq_get_freq(struct devfreq *df,
-+					unsigned long *freq)
-+{
-+	unsigned int cpu, tgt_freq = 0;
-+	struct devfreq_node *node;
-+
-+	node = df->data;
-+	if (!node) {
-+		pr_err("Unable to find devfreq node!\n");
-+		return -ENODEV;
-+	}
-+
-+	for_each_possible_cpu(cpu)
-+		tgt_freq = max(tgt_freq, cpu_to_dev_freq(df, cpu));
-+
-+	*freq = tgt_freq;
-+	return 0;
-+}
-+
-+static unsigned int show_table(char *buf, unsigned int len,
-+				struct freq_map *map)
-+{
-+	unsigned int cnt = 0;
-+
-+	cnt += snprintf(buf + cnt, len - cnt, "CPU freq\tDevice freq\n");
-+
-+	while (map->cpu_khz && cnt < len) {
-+		cnt += snprintf(buf + cnt, len - cnt, "%8u\t%11u\n",
-+				map->cpu_khz, map->target_freq);
-+		map++;
-+	}
-+	if (cnt < len)
-+		cnt += snprintf(buf + cnt, len - cnt, "\n");
-+
-+	return cnt;
-+}
-+
-+static ssize_t freq_map_show(struct device *dev, struct device_attribute *attr,
-+			char *buf)
-+{
-+	struct devfreq *df = to_devfreq(dev);
-+	struct devfreq_node *n = df->data;
-+	struct freq_map *map;
-+	unsigned int cnt = 0, cpu;
-+
-+	mutex_lock(&state_lock);
-+	if (n->common_map) {
-+		map = n->common_map;
-+		cnt += snprintf(buf + cnt, PAGE_SIZE - cnt,
-+				"Common table for all CPUs:\n");
-+		cnt += show_table(buf + cnt, PAGE_SIZE - cnt, map);
-+	} else if (n->map) {
-+		for_each_possible_cpu(cpu) {
-+			map = n->map[cpu];
-+			if (!map)
-+				continue;
-+			cnt += snprintf(buf + cnt, PAGE_SIZE - cnt,
-+					"CPU %u:\n", cpu);
-+			if (cnt >= PAGE_SIZE)
-+				break;
-+			cnt += show_table(buf + cnt, PAGE_SIZE - cnt, map);
-+			if (cnt >= PAGE_SIZE)
-+				break;
-+		}
-+	} else {
-+		cnt += snprintf(buf + cnt, PAGE_SIZE - cnt,
-+				"Device freq interpolated based on CPU freq\n");
-+	}
-+	mutex_unlock(&state_lock);
-+
-+	return cnt;
-+}
-+
-+static DEVICE_ATTR_RO(freq_map);
-+static struct attribute *dev_attr[] = {
-+	&dev_attr_freq_map.attr,
-+	NULL,
-+};
-+
-+static struct attribute_group dev_attr_group = {
-+	.name = "cpufreq",
-+	.attrs = dev_attr,
-+};
-+
-+static int devfreq_cpufreq_gov_start(struct devfreq *devfreq)
-+{
-+	int ret = 0;
-+	struct devfreq_node *node;
-+	bool alloc = false;
-+
-+	ret = register_cpufreq();
-+	if (ret)
-+		return ret;
-+
-+	ret = sysfs_create_group(&devfreq->dev.kobj, &dev_attr_group);
-+	if (ret) {
-+		unregister_cpufreq();
-+		return ret;
-+	}
-+
-+	mutex_lock(&state_lock);
-+
-+	node = find_devfreq_node(devfreq->dev.parent);
-+	if (node == NULL) {
-+		node = kzalloc(sizeof(struct devfreq_node), GFP_KERNEL);
-+		if (!node) {
-+			ret = -ENOMEM;
-+			goto alloc_fail;
-+		}
-+		alloc = true;
-+		node->dev = devfreq->dev.parent;
-+		list_add_tail(&node->list, &devfreq_list);
-+	}
-+	node->df = devfreq;
-+	node->orig_data = devfreq->data;
-+	devfreq->data = node;
-+
-+	mutex_lock(&devfreq->lock);
-+	ret = update_devfreq(devfreq);
-+	mutex_unlock(&devfreq->lock);
-+	if (ret) {
-+		pr_err("Freq update failed!\n");
-+		goto update_fail;
-+	}
-+
-+	mutex_unlock(&state_lock);
-+	return 0;
-+
-+update_fail:
-+	devfreq->data = node->orig_data;
-+	if (alloc) {
-+		list_del(&node->list);
-+		kfree(node);
-+	}
-+alloc_fail:
-+	mutex_unlock(&state_lock);
-+	sysfs_remove_group(&devfreq->dev.kobj, &dev_attr_group);
-+	unregister_cpufreq();
-+	return ret;
-+}
-+
-+static void devfreq_cpufreq_gov_stop(struct devfreq *devfreq)
-+{
-+	struct devfreq_node *node = devfreq->data;
-+
-+	mutex_lock(&state_lock);
-+	devfreq->data = node->orig_data;
-+	if (node->map || node->common_map) {
-+		node->df = NULL;
-+	} else {
-+		list_del(&node->list);
-+		kfree(node);
-+	}
-+	mutex_unlock(&state_lock);
-+
-+	sysfs_remove_group(&devfreq->dev.kobj, &dev_attr_group);
-+	unregister_cpufreq();
-+}
-+
-+static int devfreq_cpufreq_ev_handler(struct devfreq *devfreq,
-+					unsigned int event, void *data)
-+{
-+	int ret;
-+
-+	switch (event) {
-+	case DEVFREQ_GOV_START:
-+
-+		ret = devfreq_cpufreq_gov_start(devfreq);
-+		if (ret) {
-+			pr_err("Governor start failed!\n");
-+			return ret;
-+		}
-+		pr_debug("Enabled dev CPUfreq governor\n");
-+		break;
-+
-+	case DEVFREQ_GOV_STOP:
-+
-+		devfreq_cpufreq_gov_stop(devfreq);
-+		pr_debug("Disabled dev CPUfreq governor\n");
-+		break;
-+	}
-+
-+	return 0;
-+}
-+
-+static struct devfreq_governor devfreq_cpufreq = {
-+	.name = "cpufreq",
-+	.get_target_freq = devfreq_cpufreq_get_freq,
-+	.event_handler = devfreq_cpufreq_ev_handler,
-+};
-+
-+#define NUM_COLS	2
-+static struct freq_map *read_tbl(struct device_node *of_node, char *prop_name)
-+{
-+	int len, nf, i, j;
-+	u32 data;
-+	struct freq_map *tbl;
-+
-+	if (!of_find_property(of_node, prop_name, &len))
-+		return NULL;
-+	len /= sizeof(data);
-+
-+	if (len % NUM_COLS || len == 0)
-+		return NULL;
-+	nf = len / NUM_COLS;
-+
-+	tbl = kzalloc((nf + 1) * sizeof(*tbl), GFP_KERNEL);
-+	if (!tbl)
-+		return NULL;
-+
-+	for (i = 0, j = 0; i < nf; i++, j += 2) {
-+		of_property_read_u32_index(of_node, prop_name, j, &data);
-+		tbl[i].cpu_khz = data;
-+
-+		of_property_read_u32_index(of_node, prop_name, j + 1, &data);
-+		tbl[i].target_freq = data;
-+	}
-+	tbl[i].cpu_khz = 0;
-+
-+	return tbl;
-+}
-+
-+#define PROP_TARGET "target-dev"
-+#define PROP_TABLE "cpu-to-dev-map"
-+static int add_table_from_of(struct device_node *of_node)
-+{
-+	struct device_node *target_of_node;
-+	struct devfreq_node *node;
-+	struct freq_map *common_tbl;
-+	struct freq_map **tbl_list = NULL;
-+	static char prop_name[] = PROP_TABLE "-999999";
-+	int cpu, ret, cnt = 0, prop_sz = ARRAY_SIZE(prop_name);
-+
-+	target_of_node = of_parse_phandle(of_node, PROP_TARGET, 0);
-+	if (!target_of_node)
-+		return -EINVAL;
-+
-+	node = kzalloc(sizeof(struct devfreq_node), GFP_KERNEL);
-+	if (!node)
-+		return -ENOMEM;
-+
-+	common_tbl = read_tbl(of_node, PROP_TABLE);
-+	if (!common_tbl) {
-+		tbl_list = kzalloc(sizeof(*tbl_list) * NR_CPUS, GFP_KERNEL);
-+		if (!tbl_list) {
-+			ret = -ENOMEM;
-+			goto err_list;
-+		}
-+
-+		for_each_possible_cpu(cpu) {
-+			ret = snprintf(prop_name, prop_sz, "%s-%d",
-+					PROP_TABLE, cpu);
-+			if (ret >= prop_sz) {
-+				pr_warn("More CPUs than I can handle!\n");
-+				pr_warn("Skipping rest of the tables!\n");
-+				break;
-+			}
-+			tbl_list[cpu] = read_tbl(of_node, prop_name);
-+			if (tbl_list[cpu])
-+				cnt++;
-+		}
-+	}
-+	if (!common_tbl && !cnt) {
-+		ret = -EINVAL;
-+		goto err_tbl;
-+	}
-+
-+	mutex_lock(&state_lock);
-+	node->of_node = target_of_node;
-+	node->map = tbl_list;
-+	node->common_map = common_tbl;
-+	list_add_tail(&node->list, &devfreq_list);
-+	mutex_unlock(&state_lock);
-+
-+	return 0;
-+err_tbl:
-+	kfree(tbl_list);
-+err_list:
-+	kfree(node);
-+	return ret;
-+}
-+
-+static int __init devfreq_cpufreq_init(void)
-+{
-+	int ret;
-+	struct device_node *of_par, *of_child;
-+
-+	of_par = of_find_node_by_name(NULL, "devfreq-cpufreq");
-+	if (of_par) {
-+		for_each_child_of_node(of_par, of_child) {
-+			ret = add_table_from_of(of_child);
-+			if (ret)
-+				pr_err("Parsing %s failed!\n", of_child->name);
-+			else
-+				pr_debug("Parsed %s.\n", of_child->name);
-+		}
-+		of_node_put(of_par);
-+	} else {
-+		pr_info("No tables parsed from DT.\n");
-+	}
-+
-+	ret = devfreq_add_governor(&devfreq_cpufreq);
-+	if (ret) {
-+		pr_err("Governor add failed!\n");
-+		return ret;
-+	}
-+
-+	return 0;
-+}
-+subsys_initcall(devfreq_cpufreq_init);
-+
-+static void __exit devfreq_cpufreq_exit(void)
-+{
-+	int ret, cpu;
-+	struct devfreq_node *node, *tmp;
-+
-+	ret = devfreq_remove_governor(&devfreq_cpufreq);
-+	if (ret)
-+		pr_err("Governor remove failed!\n");
-+
-+	mutex_lock(&state_lock);
-+	list_for_each_entry_safe(node, tmp, &devfreq_list, list) {
-+		kfree(node->common_map);
-+		for_each_possible_cpu(cpu)
-+			kfree(node->map[cpu]);
-+		kfree(node->map);
-+		list_del(&node->list);
-+		kfree(node);
-+	}
-+	mutex_unlock(&state_lock);
-+}
-+module_exit(devfreq_cpufreq_exit);
-+
-+MODULE_DESCRIPTION("CPU freq based generic governor for devfreq devices");
-+MODULE_LICENSE("GPL v2");
--- 
-Qualcomm Innovation Center, Inc.
-The Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
-
+> From: Huaisheng Ye <yehs2007@zoho.com>
+> Sent: Thursday, July 26, 2018 12:29 AM
+>=20
+> From: Huaisheng Ye <yehs1@lenovo.com>
+>=20
+> dcssblk_direct_access() needs to check the validity of pointers kaddr
+> and pfn for NULL assignment. If anyone equals to NULL, it doesn't need
+> to calculate the value.
+>=20
+> If either of them is equal to NULL, that is to say callers may
+> have no need for kaddr or pfn, so this patch is prepared for allowing
+> them to pass in NULL instead of having to pass in a pointer or local
+> variable that they then just throw away.
+>=20
+> Signed-off-by: Huaisheng Ye <yehs1@lenovo.com>
+> ---
+>  drivers/s390/block/dcssblk.c | 8 +++++---
+>  1 file changed, 5 insertions(+), 3 deletions(-)
+>=20
+> diff --git a/drivers/s390/block/dcssblk.c b/drivers/s390/block/dcssblk.c
+> index ed60728..23e526c 100644
+> --- a/drivers/s390/block/dcssblk.c
+> +++ b/drivers/s390/block/dcssblk.c
+> @@ -922,9 +922,11 @@ static DEVICE_ATTR(save, S_IWUSR | S_IRUSR, dcssblk_=
+save_show,
+>  	unsigned long dev_sz;
+>=20
+>  	dev_sz =3D dev_info->end - dev_info->start + 1;
+> -	*kaddr =3D (void *) dev_info->start + offset;
+> -	*pfn =3D __pfn_to_pfn_t(PFN_DOWN(dev_info->start + offset),
+> -			PFN_DEV|PFN_SPECIAL);
+> +	if (kaddr)
+> +		*kaddr =3D (void *) dev_info->start + offset;
+> +	if (pfn)
+> +		*pfn =3D __pfn_to_pfn_t(PFN_DOWN(dev_info->start + offset),
+> +				PFN_DEV|PFN_SPECIAL);
+>=20
+>  	return (dev_sz - offset) / PAGE_SIZE;
+>  }
+> --
+> 1.8.3.1
