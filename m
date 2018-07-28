@@ -2,124 +2,143 @@ Return-Path: <SRS0=xGmI=KM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B489BC28CF6
-	for <linux-kernel@archiver.kernel.org>; Sat, 28 Jul 2018 12:03:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB911C28CF6
+	for <linux-kernel@archiver.kernel.org>; Sat, 28 Jul 2018 12:23:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5D15E20873
-	for <linux-kernel@archiver.kernel.org>; Sat, 28 Jul 2018 12:03:33 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GQtziXdS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D15E20873
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 5E4A420878
+	for <linux-kernel@archiver.kernel.org>; Sat, 28 Jul 2018 12:23:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E4A420878
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728907AbeG1N3k (ORCPT
+        id S1728708AbeG1NtD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 28 Jul 2018 09:29:40 -0400
-Received: from mail-qt0-f195.google.com ([209.85.216.195]:33394 "EHLO
-        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728791AbeG1N3k (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 28 Jul 2018 09:29:40 -0400
-Received: by mail-qt0-f195.google.com with SMTP id c15-v6so7755453qtp.0;
-        Sat, 28 Jul 2018 05:03:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:subject:to:cc:references:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=hY9DWyyVD/YMEXbHukgIMrMW0ByhD0ZWNgtktya1LIE=;
-        b=GQtziXdSqBKAGvYFDDE1vmyVggFIf5HsDj8s7/i6Dl7+K4ud84KDcFz5r3YpI8sZD5
-         S0Tu4WgIUsNVr0B9Cz/fiie5ImTjoKJNn708O0OYUVa+RQF7/ugp9O9ym0EYxLg7AavX
-         8pTXYaWE5f/WvrL4I9A8xQYJi8u0uk+cemStEkjkmEgv3+UcYtMsYpvTf92c/IciuxOU
-         niyg6xmoSM8Uftyqj9wi+XCzOrIbuq2JNLsEjYBnPEpILfupoc1lPXpLfp/TBy46lTbz
-         Qk0u/B0SlYghvsSjzAGgO0ovmusObnu7x/3MCJNoVQZ1w5oha/4pFmRwQImRIPOItCTU
-         pG8w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:subject:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=hY9DWyyVD/YMEXbHukgIMrMW0ByhD0ZWNgtktya1LIE=;
-        b=oUghJrDwLELH7vOmp6T7+GETMjhzM1n/e2pwaBlnoBR+YeUk/D6KxKFHCZffn2zxG+
-         J1T1P+wz08C3yr9Glic9Ihx61IEJcKDcqCKJ775UZq3fiGXsDY/sBn2q251+DuCZa2wH
-         b1sStSlZrxxQQULCcpuqpep6GIsW79UFVlPivw/AZXnbKYLY+IzSU3sHeHAZn+CzsHal
-         v/shCv9EB/6+eXTyxEYDotgaUrO2BP/5qv0YpRnnzZGib4EZJ5rLA8K0e5VywRF+9Pyq
-         G3flH9gcgfRYmVtUiza7wKpIP54WaOxE8E2KvmWw9IoAesKnlxwDudcom37mI3WTS0o1
-         qYGA==
-X-Gm-Message-State: AOUpUlHwVtYLwZsVKQ6vjV1osHUtcbqgRC+FVXrzXRkeRdxO7/iQ2YST
-        Gtno+qZrZ5Pil2MgraX00F8LjQa5cUcIeQ==
-X-Google-Smtp-Source: AAOMgpdDpis0Aczxs6LrIAeZi5ZI/ydC/O3Y4isADYj9OuLaRGA1JuLa/dt2pd4UrJycnZ2pIUDbvA==
-X-Received: by 2002:ac8:6647:: with SMTP id j7-v6mr9554672qtp.231.1532779400934;
-        Sat, 28 Jul 2018 05:03:20 -0700 (PDT)
-Received: from ?IPv6:2601:153:601:7d2a::1005? ([2601:153:601:7d2a::1005])
-        by smtp.gmail.com with ESMTPSA id p64-v6sm4956461qkl.30.2018.07.28.05.03.20
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 28 Jul 2018 05:03:20 -0700 (PDT)
-From:   Peter Geis <pgwipeout@gmail.com>
-Subject: Re: [PATCH 3/3] mmc: tegra: prevent ACMD23 on Tegra 3
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     Stefan Agner <stefan@agner.ch>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        ulf.hansson@linaro.org, thierry.reding@gmail.com,
-        jonathanh@nvidia.com, marcel.ziswiler@toradex.com,
-        linux-mmc@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-tegra-owner@vger.kernel.org
-References: <20180712073904.4705-1-stefan@agner.ch>
- <4098188.Bd2NGYzoJE@dimapc>
- <CAMdYzYpawoCQ_08aJr0XUNxY8C=K95gkgMbZNetcw1vrmDgpig@mail.gmail.com>
- <7096174.4n8ysn5QrL@dimapc>
-Message-ID: <73510426-3b7e-cc7c-39db-4058bc6a4c22@gmail.com>
-Date:   Sat, 28 Jul 2018 08:03:19 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Sat, 28 Jul 2018 09:49:03 -0400
+Received: from mga04.intel.com ([192.55.52.120]:45889 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727777AbeG1NtD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 28 Jul 2018 09:49:03 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Jul 2018 05:22:40 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,413,1526367600"; 
+   d="scan'208";a="76289552"
+Received: from bee.sh.intel.com (HELO bee) ([10.239.97.14])
+  by fmsmga001.fm.intel.com with ESMTP; 28 Jul 2018 05:22:39 -0700
+Received: from kbuild by bee with local (Exim 4.84_2)
+        (envelope-from <lkp@intel.com>)
+        id 1fjOF3-000QkV-Qb; Sat, 28 Jul 2018 20:22:37 +0800
+Date:   Sat, 28 Jul 2018 20:22:27 +0800
+From:   kbuild test robot <lkp@intel.com>
+To:     Eric Richter <erichte@linux.vnet.ibm.com>
+Cc:     kbuild-all@01.org,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        linux-efi <linux-efi@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        David Howells <dhowells@redhat.com>,
+        Seth Forshee <seth.forshee@canonical.com>,
+        Justin Forbes <jforbes@redhat.com>,
+        Eric Richter <erichte@linux.vnet.ibm.com>
+Subject: Re: [PATCH 4/4] x86/ima: define arch_get_ima_policy() for x86
+Message-ID: <201807282011.jTLIG5hy%fengguang.wu@intel.com>
+References: <20180725233200.761-5-erichte@linux.vnet.ibm.com>
 MIME-Version: 1.0
-In-Reply-To: <7096174.4n8ysn5QrL@dimapc>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180725233200.761-5-erichte@linux.vnet.ibm.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: lkp@intel.com
+X-SA-Exim-Scanned: No (on bee); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Eric,
 
+Thank you for the patch! Perhaps something to improve:
 
-On 7/28/2018 6:13 AM, Dmitry Osipenko wrote:
-> On Friday, 27 July 2018 23:19:53 MSK Peter Geis wrote:
->> Kingston KE4CN3K6A.
->> Though I am pretty sure I've figured out the instability.
->> Brought it in to work and hooked it to a scope.
->> Couldn't find clock, but cmd and all eight bits are running at 1.2 volts.
->> Repeated the results with the bootloader, the original kernel, and my
->> mainline.
->> Also noticed that even on the slowest slew rate there is significant
->> ringing and overshoot of .15 volts.
-> 
-> Okay, but eMMC is working fine with the original kernel, isn't it?
-> 
-> 
-Correct, at roughly double the speed of the mainline kernel.
-According to the mmc spec, in high voltage mode it should have 2.7-3.3 
-volts in, and the minimum signal voltage should be .75 of that, which 
-equates to a minimum voltage of over 2 volts.
-For low voltage mode, it should be 1.8 volts in, with the signals being 
-between .3 and .7 volts.
-Signal voltage of 1.3 volts is .75 of 1.8, which means we have low 
-voltage in, but high voltage signaling.
-This is even with HS-200 or DDR-1.8 assigned in the controller mode, so 
-for some reason we aren't switching modes.
-The original kernel was running in SDR 25 signaling, but didn't try to 
-switch either.
+[auto build test WARNING on integrity/next-integrity]
+[also build test WARNING on next-20180727]
+[cannot apply to v4.18-rc6]
+[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
 
-Digging through the old code and the TRM, there are three ideas stuck in 
-my head.
-The original pinmux driver had settings such as low voltage divider and 
-two values for each pull direction.
-The pinmux driver is io resetting specifically the pads we are using, 
-dumping any values the bootloader had set.
-Is it possible the tap configuration is not working?
+url:    https://github.com/0day-ci/linux/commits/Eric-Richter/ima-add-support-for-arch-specific-policies/20180728-072442
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/zohar/linux-integrity.git next-integrity
+
+smatch warnings:
+security/integrity/ima/ima_policy.c:522 ima_init_arch_policy() error: potential null dereference 'arch_policy_entry'.  (kcalloc returns null)
+
+vim +/arch_policy_entry +522 security/integrity/ima/ima_policy.c
+
+b4c0791e Nayna Jain 2018-07-25  484  
+b4c0791e Nayna Jain 2018-07-25  485  /*
+b4c0791e Nayna Jain 2018-07-25  486   * ima_init_arch_policy - convert arch policy strings to rules
+b4c0791e Nayna Jain 2018-07-25  487   *
+b4c0791e Nayna Jain 2018-07-25  488   * Return number of arch specific rules.
+b4c0791e Nayna Jain 2018-07-25  489   */
+b4c0791e Nayna Jain 2018-07-25  490  static int __init ima_init_arch_policy(void)
+b4c0791e Nayna Jain 2018-07-25  491  {
+b4c0791e Nayna Jain 2018-07-25  492  	const char * const *arch_rules;
+b4c0791e Nayna Jain 2018-07-25  493  	const char * const *rules;
+b4c0791e Nayna Jain 2018-07-25  494  	int arch_entries = 0;
+b4c0791e Nayna Jain 2018-07-25  495  	int i = 0;
+b4c0791e Nayna Jain 2018-07-25  496  
+b4c0791e Nayna Jain 2018-07-25  497  	arch_rules = arch_get_ima_policy();
+b4c0791e Nayna Jain 2018-07-25  498  	if (!arch_rules) {
+b4c0791e Nayna Jain 2018-07-25  499  		pr_info("No architecture policy rules.\n");
+b4c0791e Nayna Jain 2018-07-25  500  		return arch_entries;
+b4c0791e Nayna Jain 2018-07-25  501  	}
+b4c0791e Nayna Jain 2018-07-25  502  
+b4c0791e Nayna Jain 2018-07-25  503  	/* Get number of rules */
+b4c0791e Nayna Jain 2018-07-25  504  	for (rules = arch_rules; *rules != NULL; rules++)
+b4c0791e Nayna Jain 2018-07-25  505  		arch_entries++;
+b4c0791e Nayna Jain 2018-07-25  506  
+b4c0791e Nayna Jain 2018-07-25  507  	arch_policy_rules = kcalloc(arch_entries + 1,
+b4c0791e Nayna Jain 2018-07-25  508  				    sizeof(*arch_policy_rules), GFP_KERNEL);
+b4c0791e Nayna Jain 2018-07-25  509  	if (!arch_policy_rules)
+b4c0791e Nayna Jain 2018-07-25  510  		return 0;
+b4c0791e Nayna Jain 2018-07-25  511  
+b4c0791e Nayna Jain 2018-07-25  512  	arch_policy_entry = kcalloc(arch_entries + 1,
+b4c0791e Nayna Jain 2018-07-25  513  				    sizeof(*arch_policy_entry), GFP_KERNEL);
+b4c0791e Nayna Jain 2018-07-25  514  
+b4c0791e Nayna Jain 2018-07-25  515  	/* Convert arch policy string rules to struct ima_rule_entry format */
+b4c0791e Nayna Jain 2018-07-25  516  	for (rules = arch_rules, i = 0; *rules != NULL; rules++) {
+b4c0791e Nayna Jain 2018-07-25  517  		char rule[255];
+b4c0791e Nayna Jain 2018-07-25  518  		int result;
+b4c0791e Nayna Jain 2018-07-25  519  
+b4c0791e Nayna Jain 2018-07-25  520  		result = strlcpy(rule, *rules, sizeof(rule));
+b4c0791e Nayna Jain 2018-07-25  521  
+b4c0791e Nayna Jain 2018-07-25 @522  		INIT_LIST_HEAD(&arch_policy_entry[i].list);
+b4c0791e Nayna Jain 2018-07-25  523  		result = ima_parse_rule(rule, &arch_policy_entry[i]);
+b4c0791e Nayna Jain 2018-07-25  524  		if (result) {
+b4c0791e Nayna Jain 2018-07-25  525  			pr_warn("Skipping unknown architecture policy rule: %s\n", rule);
+b4c0791e Nayna Jain 2018-07-25  526  			memset(&arch_policy_entry[i], 0,
+b4c0791e Nayna Jain 2018-07-25  527  			       sizeof(*arch_policy_entry));
+b4c0791e Nayna Jain 2018-07-25  528  			continue;
+b4c0791e Nayna Jain 2018-07-25  529  		}
+b4c0791e Nayna Jain 2018-07-25  530  		arch_policy_rules[i] = &arch_policy_entry[i];
+b4c0791e Nayna Jain 2018-07-25  531  		i++;
+b4c0791e Nayna Jain 2018-07-25  532  	}
+b4c0791e Nayna Jain 2018-07-25  533  	return i;
+b4c0791e Nayna Jain 2018-07-25  534  }
+b4c0791e Nayna Jain 2018-07-25  535  
+
+:::::: The code at line 522 was first introduced by commit
+:::::: b4c0791e0facd968a3e0502a8a544390025a9a38 ima: add support for arch specific policies
+
+:::::: TO: Nayna Jain <nayna@linux.vnet.ibm.com>
+:::::: CC: 0day robot <lkp@intel.com>
+
+---
+0-DAY kernel test infrastructure                Open Source Technology Center
+https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
