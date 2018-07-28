@@ -2,98 +2,68 @@ Return-Path: <SRS0=xGmI=KM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93CB0C43142
-	for <linux-kernel@archiver.kernel.org>; Sat, 28 Jul 2018 21:07:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B6F1C28CF6
+	for <linux-kernel@archiver.kernel.org>; Sat, 28 Jul 2018 21:09:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 49C1020862
-	for <linux-kernel@archiver.kernel.org>; Sat, 28 Jul 2018 21:07:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 49C1020862
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 0AA1120862
+	for <linux-kernel@archiver.kernel.org>; Sat, 28 Jul 2018 21:09:37 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="zW7Vhd3m"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0AA1120862
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lunn.ch
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730995AbeG1WfN (ORCPT
+        id S1731016AbeG1WhX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 28 Jul 2018 18:35:13 -0400
-Received: from mga05.intel.com ([192.55.52.43]:64574 "EHLO mga05.intel.com"
+        Sat, 28 Jul 2018 18:37:23 -0400
+Received: from vps0.lunn.ch ([185.16.172.187]:49318 "EHLO vps0.lunn.ch"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730941AbeG1WfN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 28 Jul 2018 18:35:13 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Jul 2018 14:07:25 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,415,1526367600"; 
-   d="scan'208";a="61514203"
-Received: from bartok.jf.intel.com ([10.54.75.128])
-  by orsmga006.jf.intel.com with ESMTP; 28 Jul 2018 14:07:25 -0700
-From:   Erik Schmauss <erik.schmauss@intel.com>
-To:     linux-acpi@vger.kernel.org, rafael@kernel.org
-Cc:     gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
-        oleksandr@natalenko.name, torvalds@linux-foundation.org,
-        Erik Schmauss <erik.schmauss@intel.com>
-Subject: [PATCH] ACPICA: AML Parser: ignore control method status in module-level code
-Date:   Sat, 28 Jul 2018 14:05:19 -0700
-Message-Id: <20180728210519.20195-1-erik.schmauss@intel.com>
-X-Mailer: git-send-email 2.17.1
+        id S1730518AbeG1WhW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 28 Jul 2018 18:37:22 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch; s=20171124;
+        h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date; bh=7N3KqC6sGxnlBOhwac0O+xOeqrz1fjQVA3BYHVSyocw=;
+        b=zW7Vhd3mXfuLeUWY3xjR8CvpNz/wUWlVk0DT7sNbzN0GRrgeZCnKlpyKb/I7OS9Yi+qi482+waSmPbnLiN0h2KTp7YCdEdaS4ALVWeeskwkY+M3rasrOSSDt0/gWJwOhl7q/4/ERdKvxdBPm76sxpadOpvzUs2CJZza1NnTLnKE=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.84_2)
+        (envelope-from <andrew@lunn.ch>)
+        id 1fjWSo-0001GD-9C; Sat, 28 Jul 2018 23:09:22 +0200
+Date:   Sat, 28 Jul 2018 23:09:22 +0200
+From:   Andrew Lunn <andrew@lunn.ch>
+To:     Arun Parameswaran <arun.parameswaran@broadcom.com>
+Cc:     "David S. Miller" <davem@davemloft.net>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>, netdev@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com
+Subject: Re: [PATCH v2 1/7] dt-bindings: net: Fix Broadcom iProc mdio mux
+ driver base address
+Message-ID: <20180728210922.GA4792@lunn.ch>
+References: <1532726613-6483-1-git-send-email-arun.parameswaran@broadcom.com>
+ <1532726613-6483-2-git-send-email-arun.parameswaran@broadcom.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1532726613-6483-2-git-send-email-arun.parameswaran@broadcom.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Previous change in the AML parser code blindly set all non-successful
-dispatcher statuses to AE_OK. This approach is incorrect because
-successful control method invocations from module-level return
-AE_CTRL_TRANSFER. Overwriting AE_OK to this status causes the AML
-parser to think that there was no return value from the control
-method invocation.
+On Fri, Jul 27, 2018 at 02:23:27PM -0700, Arun Parameswaran wrote:
+> Modify the base address of the Broadcom iProc MDIO mux driver to
+> point to the start of the block's register address space.
+> 
+> Signed-off-by: Arun Parameswaran <arun.parameswaran@broadcom.com>
 
-fixes: 73c2a01c52b6 (ACPICA: AML Parser: ignore dispatcher error status during table load)
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 
-Reported-by: Linus Torvalds <torvalds@linux-foundation.org>
-Tested-by: Linus Torvalds <torvalds@linux-foundation.org>
-Tested-by: Oleksandr Natalenko <oleksandr@natalenko.name>
-Signed-off-by: Erik Schmauss <erik.schmauss@intel.com>
----
- drivers/acpi/acpica/psloop.c | 19 ++++++++++++-------
- 1 file changed, 12 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/acpi/acpica/psloop.c b/drivers/acpi/acpica/psloop.c
-index ee840be150b5..44f35ab3347d 100644
---- a/drivers/acpi/acpica/psloop.c
-+++ b/drivers/acpi/acpica/psloop.c
-@@ -709,15 +709,20 @@ acpi_status acpi_ps_parse_loop(struct acpi_walk_state *walk_state)
- 			} else
- 			    if ((walk_state->
- 				 parse_flags & ACPI_PARSE_MODULE_LEVEL)
-+				&& status != AE_CTRL_TRANSFER
- 				&& ACPI_FAILURE(status)) {
- 				/*
--				 * ACPI_PARSE_MODULE_LEVEL means that we are loading a table by
--				 * executing it as a control method. However, if we encounter
--				 * an error while loading the table, we need to keep trying to
--				 * load the table rather than aborting the table load. Set the
--				 * status to AE_OK to proceed with the table load. If we get a
--				 * failure at this point, it means that the dispatcher got an
--				 * error while processing Op (most likely an AML operand error.
-+				 * ACPI_PARSE_MODULE_LEVEL flag means that we are currently
-+				 * loading a table by executing it as a control method.
-+				 * However, if we encounter an error while loading the table,
-+				 * we need to keep trying to load the table rather than
-+				 * aborting the table load (setting the status to AE_OK
-+				 * continues the table load). If we get a failure at this
-+				 * point, it means that the dispatcher got an error while
-+				 * processing Op (most likely an AML operand error) or a
-+				 * control method was called from module level and the
-+				 * dispatcher returned AE_CTRL_TRANSFER. In the latter case,
-+				 * leave the status alone, there's nothing wrong with it.
- 				 */
- 				status = AE_OK;
- 			}
--- 
-2.17.1
-
+    Andrew
