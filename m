@@ -2,148 +2,108 @@ Return-Path: <SRS0=xGmI=KM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94D59C28CF6
-	for <linux-kernel@archiver.kernel.org>; Sat, 28 Jul 2018 13:56:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB1B9C28CF6
+	for <linux-kernel@archiver.kernel.org>; Sat, 28 Jul 2018 14:09:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4A26020893
-	for <linux-kernel@archiver.kernel.org>; Sat, 28 Jul 2018 13:56:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 546E92064D
+	for <linux-kernel@archiver.kernel.org>; Sat, 28 Jul 2018 14:09:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="x6kGP9bu"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4A26020893
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="BjpRxqub"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 546E92064D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=163.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728963AbeG1PXY (ORCPT
+        id S1728903AbeG1PaN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 28 Jul 2018 11:23:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42112 "EHLO mail.kernel.org"
+        Sat, 28 Jul 2018 11:30:13 -0400
+Received: from m12-18.163.com ([220.181.12.18]:58029 "EHLO m12-18.163.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728774AbeG1PXY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 28 Jul 2018 11:23:24 -0400
-Received: from localhost.localdomain (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 19BF120878;
-        Sat, 28 Jul 2018 13:56:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1532786207;
-        bh=zBNgFys+OoLYf4LbEJsjIZmsKvb0ZNyKPMgIhEVPSdQ=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=x6kGP9bu9kGwVExi7AHkG7i0rtrq+xdrvrq8eJcIXs6rfo4IESUzSE8EqDql/3uWh
-         YRw7ECdzYDsnzeQMBJSI7Lg27q6t2Nm+DbXR+x7eeYMMKLKhrO6rAkFsO3NKdb2QEu
-         UdjsJN+h+aJ3EtMKa3cU32HJ3TnMRWZlEGIn6Nyo=
-From:   Masami Hiramatsu <mhiramat@kernel.org>
-To:     rostedt@goodmis.org,
-        Francis Deslauriers <francis.deslauriers@efficios.com>,
-        peterz@infradead.org, Shuah Khan <shuah@kernel.org>
-Cc:     mhiramat@kernel.org, mathieu.desnoyers@efficios.com,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v4 3/3] selftests/ftrace: Fix kprobe string testcase to not probe notrace function
-Date:   Sat, 28 Jul 2018 22:56:24 +0900
-Message-Id: <153278618398.9401.11752218963647501308.stgit@devbox>
-X-Mailer: git-send-email 2.13.6
-In-Reply-To: <153278609735.9401.5389431281006205214.stgit@devbox>
-References: <153278609735.9401.5389431281006205214.stgit@devbox>
-User-Agent: StGit/0.17.1-dirty
+        id S1728780AbeG1PaN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 28 Jul 2018 11:30:13 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+        s=s110527; h=Subject:From:Message-ID:Date:MIME-Version; bh=3MYvq
+        sG3cWz4bbMpteDqxdJyroApbFouTWsj6nMLLqY=; b=BjpRxqubFU0t+LdoN8rAd
+        TjnBWuvDWE4Kh4RLcDYLvlU6TI1LsXxW+ooh+cggWtZU8jJGs2AwdskDQ06l+sgl
+        GvKnMht86FR7wiNeW7Xslm5wNiD3R6ZnKzVvtu4jYUhXf4NyJDQCRAwSRoObO5Wz
+        MnnRqRhXuBOvnR5bgVbEUY=
+Received: from [192.168.0.103] (unknown [223.73.7.251])
+        by smtp14 (Coremail) with SMTP id EsCowABHpR2Kd1xbVv61Mw--.63351S3;
+        Sat, 28 Jul 2018 22:02:52 +0800 (CST)
+Subject: Re: [PATCH 1/1] lib: use sunday algorithm to do strstr() and
+ strnstr()
+To:     Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Matthew Wilcox <mawilcox@microsoft.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Zhaoxiu Zeng <zhaoxiu.zeng@gmail.com>
+References: <20180722173715.25327-1-zengzhaoxiu@163.com>
+ <20180722183706.GA7979@kroah.com>
+ <9b18802b-a451-eb81-3317-1de406f03118@163.com>
+ <6dc928cd-adbb-0304-1308-fb556d48698d@163.com>
+ <CAHp75Vd2Lu110om-hPE2bx_XFa0zpNHHC4RC_uLsTBSywJO2KQ@mail.gmail.com>
+From:   Zhaoxiu Zeng <zengzhaoxiu@163.com>
+Message-ID: <6b33eb08-b7f8-0104-4fe0-1c0f4cd5edfc@163.com>
+Date:   Sat, 28 Jul 2018 22:02:51 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <CAHp75Vd2Lu110om-hPE2bx_XFa0zpNHHC4RC_uLsTBSywJO2KQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID: EsCowABHpR2Kd1xbVv61Mw--.63351S3
+X-Coremail-Antispam: 1Uf129KBjvJXoWrKr48Kw13Kr1DuFWxtr1DJrb_yoW8JrWxpF
+        Wvva1rKF4DJay2yr1vkrn7XF4Yy3sakrykXry5Xwnaywn0qFn8Kr4xtrWj9F1kurn2kw1S
+        yFWDt3yUZF1DXaDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jiuc_UUUUU=
+X-Originating-IP: [223.73.7.251]
+X-CM-SenderInfo: p2hqw6xkdr5xrx6rljoofrz/1tbiow6RgFUMGqqqlwAAso
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fix kprobe string argument testcase to not probe notrace
-function. Instead, it probes tracefs function which must
-be available with ftrace.
+在 2018/7/27 18:39, Andy Shevchenko 写道:
+> On Fri, Jul 27, 2018 at 8:48 AM, Zhaoxiu Zeng <zengzhaoxiu@163.com> wrote:
+>> 在 2018/7/27 1:17, Zhaoxiu Zeng 写道:
+>>> 在 2018/7/23 2:37, Greg Kroah-Hartman 写道:
+>>>> On Mon, Jul 23, 2018 at 01:37:15AM +0800, Zhaoxiu Zeng wrote:
+> 
+>>>>> The Sunday algorithm is a variation of Boyer-Moore algorithm, it is easy and fast.
+>>>>> For the Sunday algorithm, to see
+>>>>>     http://www.inf.fh-flensburg.de/lang/algorithmen/pattern/sundayen.htm
+>>>>
+>>>> So you say, but what does this really buy us?  Why make this change?
+>>>> How was it tested?  What is the downside of not taking this?
+> 
+>>> I use the following program to test on fc28.
+>>> Compile with O2, the new version is almost 2X faster than the original.
+> 
+>>> The code size of the original is 0x80, the newer is 0xB0.
+> 
+> So, output of bloat-o-meter would be good to have in commit message.
+> 
+>>> The test result:
+> 
+> Compact performance statistics as well.
+> 
+>>> Thanks!
+> 
+>> The original strnstr might has a bug too!
+>> For example, assume s1 is "123\0abc...." and s2 is "abc\0",
+>> call strnstr(s1, s2, 7) will return &s1[4], but the correct result is NULL.
+> 
+> If there is a bug, send another patch to fix the bug first.
+> 
 
-Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
----
- Changes in v3:
-  - Fix probepoint testcase too.
----
- .../ftrace/test.d/kprobe/kprobe_args_string.tc     |   30 ++++++++------------
- .../selftests/ftrace/test.d/kprobe/probepoint.tc   |    2 +
- 2 files changed, 13 insertions(+), 19 deletions(-)
-
-diff --git a/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_args_string.tc b/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_args_string.tc
-index a0002563e9ee..1ad70cdaf442 100644
---- a/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_args_string.tc
-+++ b/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_args_string.tc
-@@ -9,28 +9,22 @@ echo > kprobe_events
- 
- case `uname -m` in
- x86_64)
--  ARG2=%si
--  OFFS=8
-+  ARG1=%di
- ;;
- i[3456]86)
--  ARG2=%cx
--  OFFS=4
-+  ARG1=%ax
- ;;
- aarch64)
--  ARG2=%x1
--  OFFS=8
-+  ARG1=%x0
- ;;
- arm*)
--  ARG2=%r1
--  OFFS=4
-+  ARG1=%r0
- ;;
- ppc64*)
--  ARG2=%r4
--  OFFS=8
-+  ARG1=%r3
- ;;
- ppc*)
--  ARG2=%r4
--  OFFS=4
-+  ARG1=%r3
- ;;
- *)
-   echo "Please implement other architecture here"
-@@ -38,17 +32,17 @@ ppc*)
- esac
- 
- : "Test get argument (1)"
--echo "p:testprobe create_trace_kprobe arg1=+0(+0(${ARG2})):string" > kprobe_events
-+echo "p:testprobe tracefs_create_dir arg1=+0(${ARG1}):string" > kprobe_events
- echo 1 > events/kprobes/testprobe/enable
--! echo test >> kprobe_events
--tail -n 1 trace | grep -qe "testprobe.* arg1=\"test\""
-+echo "p:test _do_fork" >> kprobe_events
-+grep -qe "testprobe.* arg1=\"test\"" trace
- 
- echo 0 > events/kprobes/testprobe/enable
- : "Test get argument (2)"
--echo "p:testprobe create_trace_kprobe arg1=+0(+0(${ARG2})):string arg2=+0(+${OFFS}(${ARG2})):string" > kprobe_events
-+echo "p:testprobe tracefs_create_dir arg1=+0(${ARG1}):string arg2=+0(${ARG1}):string" > kprobe_events
- echo 1 > events/kprobes/testprobe/enable
--! echo test1 test2 >> kprobe_events
--tail -n 1 trace | grep -qe "testprobe.* arg1=\"test1\" arg2=\"test2\""
-+echo "p:test _do_fork" >> kprobe_events
-+grep -qe "testprobe.* arg1=\"test\" arg2=\"test\"" trace
- 
- echo 0 > events/enable
- echo > kprobe_events
-diff --git a/tools/testing/selftests/ftrace/test.d/kprobe/probepoint.tc b/tools/testing/selftests/ftrace/test.d/kprobe/probepoint.tc
-index 4fda01a08da4..519d2763f5d2 100644
---- a/tools/testing/selftests/ftrace/test.d/kprobe/probepoint.tc
-+++ b/tools/testing/selftests/ftrace/test.d/kprobe/probepoint.tc
-@@ -4,7 +4,7 @@
- 
- [ -f kprobe_events ] || exit_unsupported # this is configurable
- 
--TARGET_FUNC=create_trace_kprobe
-+TARGET_FUNC=tracefs_create_dir
- 
- dec_addr() { # hexaddr
-   printf "%d" "0x"`echo $1 | tail -c 8`
+The bug could be fixed by this patch.
 
