@@ -2,169 +2,114 @@ Return-Path: <SRS0=xGmI=KM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	T_DKIMWL_WL_MED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D91BC6778F
-	for <linux-kernel@archiver.kernel.org>; Sat, 28 Jul 2018 16:27:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34F34C6778F
+	for <linux-kernel@archiver.kernel.org>; Sat, 28 Jul 2018 16:29:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 513ED20897
-	for <linux-kernel@archiver.kernel.org>; Sat, 28 Jul 2018 16:27:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D686020878
+	for <linux-kernel@archiver.kernel.org>; Sat, 28 Jul 2018 16:29:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=arista.com header.i=@arista.com header.b="gATr94cO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 513ED20897
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=arista.com
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="H7JZGVmi"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D686020878
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729224AbeG1RyC (ORCPT
+        id S1729283AbeG1R4I (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 28 Jul 2018 13:54:02 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:44238 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729164AbeG1RyC (ORCPT
+        Sat, 28 Jul 2018 13:56:08 -0400
+Received: from mail-io0-f194.google.com ([209.85.223.194]:35647 "EHLO
+        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729238AbeG1R4H (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 28 Jul 2018 13:54:02 -0400
-Received: by mail-wr1-f66.google.com with SMTP id r16-v6so8122249wrt.11
-        for <linux-kernel@vger.kernel.org>; Sat, 28 Jul 2018 09:26:59 -0700 (PDT)
+        Sat, 28 Jul 2018 13:56:07 -0400
+Received: by mail-io0-f194.google.com with SMTP id w11-v6so6607295iob.2
+        for <linux-kernel@vger.kernel.org>; Sat, 28 Jul 2018 09:29:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=arista.com; s=googlenew;
-        h=message-id:subject:from:to:cc:date:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=n7+L4GqPbxZP4/dH4uzDfjMNyVc/hIi3LHfAPgk6uFQ=;
-        b=gATr94cOmJEqeHDPB6K1Xlzzo+mr0yVK0zKyJc0qcEc6jT9e4MA4O+6f9SnyhZ2wxk
-         qSQikEErC5FPKv+ntGVFJXvNAOLuRN1H3BR9hP5IWZuwWkcS2ZA9LGKY6YOv/uNG8YOT
-         m8eiYPzC32iWrDySbqs6MX2Ue4aG0HN0Shy/2iDyCNIq60KdaAEhb/gwhb547o2NSU9x
-         3MFQNIsslESCrhAcdZ/WLVZVD5u//VX11AZtFuvKrnSctqv4RksSNfLFObhJnGUXJNYp
-         OY0veQL1ukMwz9y1EmnZt0uGt4Kq8zqnMYYKiuNMCp52bXqHQ9UmnXrx5x0a+g8qcnC3
-         TtYg==
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=7PwynDpToed+TUoMbg8D4UlLiZYVpuSwuwOqeSAmzho=;
+        b=H7JZGVmiKpqn7Jb1D8OaiYLfgG3w6Csxs8QB8CwGsoB8NJVKzhkBRaZMS0NfMfADkF
+         LJfmbDqMsh/zOD2yhnFiRTfMncVJIMCcdcvTZQg5q5GXvU+OATEU7yr6iS5fGbe/fH3+
+         pnHQcevlqazeF/7my2pJvmIuouC5hrE3rglhVN4X9rMyMAfOiTXaoX3IMlGTbX9DETi8
+         jbIeETer6Yur4+V+o6U3AkTKCY70W7bXu7w4V54ON59CqaNnisC4iRce8hUPRml9ZLqR
+         9+9WjwdAhmFYE69Ok4ylljok0N/QxoSmp+ydppf+LNXPZ8CGdbZi318SBdSB9fxM0Eeo
+         x8Ug==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=n7+L4GqPbxZP4/dH4uzDfjMNyVc/hIi3LHfAPgk6uFQ=;
-        b=l50O1RQyY2aAxDts2jGBTxGxzs5D7wr7ItL0mbMqYPgXnPWSQ8V4n5sNbiQst5psS2
-         duh6kdGOXAgHt2qpeh0I0cz2M+ebJFj62HM6sYCzXWOnLS4UaQtUi/9k3c6bJdQ8Gbut
-         j86/DWRvEnpJBiIWOrJWKGxZJP79icWkJH8usijp9YaPXdrc4AjveoeHjym2cSfRCXD1
-         QHBj3gzEbBS7fEmyTnWOeiyeRwn+CmrmOlukN44owdzyp3aJ627SNRx/DZZ+zthqtZJA
-         YPL4kQOkZAi6/zSCHqN37Wxm1JYu1y5C/QKfZvJYkn3mBvXmC+Wquz+pMNzwe0yECt0H
-         htCQ==
-X-Gm-Message-State: AOUpUlF4wnuymqbK/bryNZd/18GEBHGqLhVwQ9O/BlMl/CVudVAaq96Q
-        3v6zRYGnWlR9vGTnCekunqNwSBC/G+g=
-X-Google-Smtp-Source: AAOMgpdVEI58xjjreMU4RC6fdu5ZIr2IBRbaIh/tdRXpOP+Q8R63nfAxYVzolGtZiawKV/O6jJWuAg==
-X-Received: by 2002:adf:9996:: with SMTP id y22-v6mr10357518wrb.69.1532795218317;
-        Sat, 28 Jul 2018 09:26:58 -0700 (PDT)
-Received: from dhcp.ire.aristanetworks.com ([217.173.96.166])
-        by smtp.gmail.com with ESMTPSA id b2-v6sm8491394wmh.20.2018.07.28.09.26.56
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sat, 28 Jul 2018 09:26:57 -0700 (PDT)
-Message-ID: <1532795215.2679.27.camel@arista.com>
-Subject: Re: [PATCH 00/18] xfrm: Add compat layer
-From:   Dmitry Safonov <dima@arista.com>
-To:     Nathan Harold <nharold@google.com>
-Cc:     Florian Westphal <fw@strlen.de>,
-        Steffen Klassert <steffen.klassert@secunet.com>,
-        linux-kernel@vger.kernel.org,
-        "David S. Miller" <davem@davemloft.net>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Dmitry Safonov <0x7f454c46@gmail.com>, netdev@vger.kernel.org,
-        Andy Lutomirski <luto@kernel.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-        John Stultz <john.stultz@linaro.org>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
-        linux-efi@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Shuah Khan <shuah@kernel.org>, linux-kselftest@vger.kernel.org,
-        Eric Paris <eparis@redhat.com>,
-        Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
-        Paul Moore <paul@paul-moore.com>, coreteam@netfilter.org,
-        linux-audit@redhat.com, netfilter-devel@vger.kernel.org,
-        Fan Du <fan.du@intel.com>
-Date:   Sat, 28 Jul 2018 17:26:55 +0100
-In-Reply-To: <CADhJOfam+cY8uD4XTGvZSEFQdAgTu49G6cg6c64NJoP3bNuBmw@mail.gmail.com>
-References: <20180726023144.31066-1-dima@arista.com>
-         <20180726084959.pzjvflfjq6a76du6@breakpoint.cc>
-         <20180727073747.h27dtojlnmc3k25v@gauss3.secunet.de>
-         <1532700173.2679.18.camel@arista.com>
-         <20180727141936.uze6ohordx7ue3no@breakpoint.cc>
-         <1532703111.2679.20.camel@arista.com>
-         <CADhJOfam+cY8uD4XTGvZSEFQdAgTu49G6cg6c64NJoP3bNuBmw@mail.gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=7PwynDpToed+TUoMbg8D4UlLiZYVpuSwuwOqeSAmzho=;
+        b=iFyRNTMRfDQhUOyCBp9SBhgSDps73M9QCCuMA0yKhwKZkA3hhMr/3yT1/wpuqJfySI
+         L5RY9DqJK4x0UlyAy39mIU76+hv37uX/Lo2DDaUwwpiGas2Q4l64e1ZV3rVHunjFuffR
+         1FJwdhknaVZn7/hO0yRHml3f1rTR4qIlvO4NtEhSXimGKIpqVOvjX9F8e5ZshKe/9tzZ
+         gjlKowfH2RmCYkSH1hrF9cZajDfLMsZWjzlBPIBln4cyVYzzxqCLJn+wjFNV8Y2R2KpE
+         GxSAJg44fmK/737RAjiZ9iyrLWpMXPYCr0YDt7u9e6KNW9NBWskz2jB8jwlJsm9xsiFi
+         u/yA==
+X-Gm-Message-State: AOUpUlEUjOJThUugjO6dTJqTJ84wLSGO7tFyPH/nPnS/7oNVkFbq1N0R
+        qNbtkvQEvNw4Wp/cDzg52MsZWjPhj+JQYHeS015rSg==
+X-Google-Smtp-Source: AAOMgpdN9goQgRX1rG/FzKytWZD/SMcPnq8jL4eFGf05TFox11lDEsJQCp5uLTCQo6xPqYr5zp09QkKzLJBqlJLuDOw=
+X-Received: by 2002:a6b:f10f:: with SMTP id e15-v6mr8061747iog.271.1532795344151;
+ Sat, 28 Jul 2018 09:29:04 -0700 (PDT)
+MIME-Version: 1.0
+References: <1532746900-11710-1-git-send-email-laoar.shao@gmail.com>
+ <CANn89iJ=Ad7sVWr3zBmXNSyePJJZaxgnMymN8S7x6fCSvG2jTQ@mail.gmail.com>
+ <CALOAHbC4Rs7w1RwZRBsw_fjGSDvuHV37=nguzJNZzkreR5f4Dw@mail.gmail.com>
+ <CANn89iKXPu=RKkLop4NJWZLixE__qYV2S=PngSj6ienuvWWL8g@mail.gmail.com> <CALOAHbAjtNf1LOhWEJMKNEEHSxjfEKiVV22KPUK88CTzt-eW0w@mail.gmail.com>
+In-Reply-To: <CALOAHbAjtNf1LOhWEJMKNEEHSxjfEKiVV22KPUK88CTzt-eW0w@mail.gmail.com>
+From:   Eric Dumazet <edumazet@google.com>
+Date:   Sat, 28 Jul 2018 09:28:52 -0700
+Message-ID: <CANn89i+12HvAsvk9crDcqGh=v-DvLjuGQCOzVTPVDTUhHgeDiw@mail.gmail.com>
+Subject: Re: [PATCH net-next 1/2] tcp: call tcp_drop() in tcp collapse
+To:     Yafang Shao <laoar.shao@gmail.com>
+Cc:     David Miller <davem@davemloft.net>,
+        netdev <netdev@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.24.6 (3.24.6-1.fc26) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2018-07-27 at 09:48 -0700, Nathan Harold wrote:
-> We (Android) are very interested in removing the restriction for 32-
-> bit userspace processes accessing xfrm netlink on 64-bit kernels.
-> IPsec support is required to pass Android conformance tests, and any
-> manufacturer wishing to ship 32-bit userspace with a recent kernel
-> needs out-of-tree changes (removing the compat_task check) to do so.
+On Sat, Jul 28, 2018 at 12:43 AM Yafang Shao <laoar.shao@gmail.com> wrote:
+>
+> On Sat, Jul 28, 2018 at 11:38 AM, Eric Dumazet <edumazet@google.com> wrote:
+> > On Fri, Jul 27, 2018 at 8:35 PM Yafang Shao <laoar.shao@gmail.com> wrote:
+> >
+> >> So what about LINUX_MIB_TCPOFOMERGE ?
+> >> Regarding LINUX_MIB_TCPOFOMERGE,  a skb is already covered by another
+> >> skb, is that dropping the packet or simply lowering the memory
+> >> overhead ?
+> >
+> > What do you think ?
+> >
+> > If you receive two times the same payload, don't you have to drop one
+> > of the duplicate ?
+> >
+> > There is a a big difference between the two cases.
+>
+> If the drop caused some data lost (which may then cause retransmition
+> or something), then this is a really DROP.
+> While if the drop won't cause any data lost, meaning it is a
+> non-harmful behavior, I think it should not be defined as DROP.
+> This is my suggestion anyway.
 
-Glad to hear - that justify my attempts more :)
+Sigh.
 
-> That said, it’s not difficult to work around alignment issues
-> directly in userspace, so maybe we could just remove the check and
-> make this the caller's responsibility? Here’s an example of the
-> workaround currently in the Android tree:
-> https://android.googlesource.com/platform/system/netd/+/refs/heads/ma
-> ster/server/XfrmController.h#257
+We count drops, not because they are ' bad or something went wrong'.
 
-We've kinda same workarounds in our userspace..
-But I don't think reverting the check makes much sense - it'll make
-broken compat ABI in stone.
-If you're fine with disgraceful hacks and just want to get rid of
-additional non-mainstream patch - you can make 64-bit syscalls from 32-
-bit task (hint: examples in x86 selftests).
+If TCP stack receives twice the same sequence (same payload), we
+_drop_ one of the duplicate, so we account for this event.
 
+When ' collapsing'  we reorganize our own storage, not because we have
+to drop a payload,
+but for some memory pressure reason.
+We have specific SNMP counters to account for these, we do not want to
+pretend a packet was ' dropped' since it was not.
 
-> We could also employ a (relatively simple) solution such as the one
-> above in the uapi XFRM header itself, though it would require a
-> caller to declare the target kernel ABI at compile time. Maybe that’s
-> not unthinkable for an uncommon case?
-
-Well, I think, I'll rework my patches set according to critics and
-separate compat xfrm layer. I've already a selftest to check that 32/64
-bit xfrm works - so the most time-taking part is done.
-So, if you'll wait a week or two - you may help me to justify acception
-of mainstreaming those patches.
-
-> On Fri, Jul 27, 2018 at 7:51 AM, Dmitry Safonov <dima@arista.com>
-> wrote:
-> > On Fri, 2018-07-27 at 16:19 +0200, Florian Westphal wrote:
-> > > Dmitry Safonov <dima@arista.com> wrote:
-> > > > 1. It will double copy netlink messages, making it O(n) instead
-> > of
-> > > > O(1), where n - is number of bind()s.. Probably we don't care
-> > much.
-> > > 
-> > > About those bind() patches, I don't understand why they are
-> > needed.
-> > > 
-> > > Why can't you just add the compat skb to the native skb when
-> > doing
-> > > the multicast call?
-> > > 
-> > > skb_shinfo(skb)->frag_list = compat_skb;
-> > > xfrm_nlmsg_multicast(net, skb, 0, ...
-> > 
-> > Oh yeah, sorry, I think I misread the patch - will try to add
-> > compat
-> > skb in the multicast call.
-> > 
-
--- 
-Thanks,
-             Dmitry
+If we have to _drop_ some packets, it is called Pruning, and we do
+properly account for these drops.
