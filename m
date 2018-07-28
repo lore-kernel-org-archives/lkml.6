@@ -2,202 +2,183 @@ Return-Path: <SRS0=xGmI=KM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8F6EC28CF6
-	for <linux-kernel@archiver.kernel.org>; Sat, 28 Jul 2018 08:49:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D738C28CF6
+	for <linux-kernel@archiver.kernel.org>; Sat, 28 Jul 2018 08:56:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8D82C2088E
-	for <linux-kernel@archiver.kernel.org>; Sat, 28 Jul 2018 08:49:06 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kZ8xFKdU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D82C2088E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id BD4ED2088E
+	for <linux-kernel@archiver.kernel.org>; Sat, 28 Jul 2018 08:56:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BD4ED2088E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728476AbeG1KOs (ORCPT
+        id S1727868AbeG1KWV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 28 Jul 2018 06:14:48 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:38551 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726173AbeG1KOr (ORCPT
+        Sat, 28 Jul 2018 06:22:21 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:51022 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726350AbeG1KWU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 28 Jul 2018 06:14:47 -0400
-Received: by mail-lj1-f194.google.com with SMTP id p6-v6so6372919ljc.5;
-        Sat, 28 Jul 2018 01:49:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=ToOtSEawzuELzrjemXOuu2LMJQbrmbFv8R9berot09s=;
-        b=kZ8xFKdUDomoT9rsHPECe3bqMu/8LaZaNPDP80DRR3z2JP4gsOYGhDdXmBDwfy6gSN
-         uqEY2KD9zFGFCBOzrv5hApcrFMXvKQiOs8qLai9RiTuK77jY5W3mKfIJpxcS6QsWBnyl
-         nDMKrfmk3c7pHruPP9LugJe5achBlUjIsh9paov06YhpJoqIOOEIpcGMfnJm9mmRBROn
-         ungGZfmi1y2ky9UwbnLfdJ3D7YjcbEvnt9keq9t5cO0Z5MsEUvaDndA4DM3aY+478izS
-         R8ViYgmleAI8cSIiXQFEM6KFUttRQe2ve/tUMAjFJH2O/CcwCwccC0r/cwZcQdAX4blk
-         /azA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=ToOtSEawzuELzrjemXOuu2LMJQbrmbFv8R9berot09s=;
-        b=ZqN+9rUgLKi/viJlVK/ucCxECaeCtF7DSsaXezaCcXkA5nZgSCkpBKr9GFMK4qjsbg
-         CSuswMsjGdqUe67JdOZbWMdP9uvrQVs4uAM9FP8v5BzN60QoQ8wUSPRLEGLtAC/Vezz/
-         D2QJSdb4k7O685Chu4TDXCwy1mxUz4q+ZUkg9VRJwGcVJTd8VdV1p0VYHLeXABiVznQS
-         hb81yMGH3uFGYUUDcGD7D1KoI5rt9o/up3WiXZv50NgkfNMPBXq4fP3ksK9JNjLmH4nY
-         sfSwSwpbSkUHQwDhsy/2DdgjW8HNPsT5pgclC8X/KllKPebBakIE+bzmWfY+WcrpRcIN
-         cqDA==
-X-Gm-Message-State: AOUpUlF9t2KTwT1wPrAWbE/DMQgDqu4/JPcQ32C2Bix8YNwLU2YjhYIu
-        fJxebfkuWujOWYXgNfLb1wv1etL+knbDKGifEu8=
-X-Google-Smtp-Source: AAOMgpdMH1/bwJg5Vwe86j/6uDHCnySJ7YSeqZkyOoEf7BsP1N6ZnieVpOtjlrJr+0bPubodBwXtG1ivTRTL/dRcJ2g=
-X-Received: by 2002:a2e:5617:: with SMTP id k23-v6mr7101334ljb.86.1532767741387;
- Sat, 28 Jul 2018 01:49:01 -0700 (PDT)
+        Sat, 28 Jul 2018 06:22:20 -0400
+Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w6S8rsMq026311
+        for <linux-kernel@vger.kernel.org>; Sat, 28 Jul 2018 04:56:35 -0400
+Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2kgmp5s1ts-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Sat, 28 Jul 2018 04:56:34 -0400
+Received: from localhost
+        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <khandual@linux.vnet.ibm.com>;
+        Sat, 28 Jul 2018 09:56:33 +0100
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
+        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Sat, 28 Jul 2018 09:56:29 +0100
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w6S8uSsL42074162
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Sat, 28 Jul 2018 08:56:28 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 001E8A4055;
+        Sat, 28 Jul 2018 11:56:40 +0100 (BST)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 6700EA4040;
+        Sat, 28 Jul 2018 11:56:38 +0100 (BST)
+Received: from localhost.localdomain (unknown [9.122.224.197])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Sat, 28 Jul 2018 11:56:38 +0100 (BST)
+Subject: Re: [RFC 2/4] virtio: Override device's DMA OPS with
+ virtio_direct_dma_ops selectively
+To:     virtualization@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org
+References: <20180720035941.6844-1-khandual@linux.vnet.ibm.com>
+ <20180720035941.6844-3-khandual@linux.vnet.ibm.com>
+Cc:     linuxppc-dev@lists.ozlabs.org, aik@ozlabs.ru, robh@kernel.org,
+        joe@perches.com, elfring@users.sourceforge.net,
+        david@gibson.dropbear.id.au, jasowang@redhat.com,
+        benh@kernel.crashing.org, mpe@ellerman.id.au, mst@redhat.com,
+        hch@infradead.org, linuxram@us.ibm.com, haren@linux.vnet.ibm.com,
+        paulus@samba.org, srikar@linux.vnet.ibm.com
+From:   Anshuman Khandual <khandual@linux.vnet.ibm.com>
+Date:   Sat, 28 Jul 2018 14:26:24 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
+ Thunderbird/45.5.1
 MIME-Version: 1.0
-Received: by 2002:a19:2b14:0:0:0:0:0 with HTTP; Sat, 28 Jul 2018 01:49:00
- -0700 (PDT)
-In-Reply-To: <20180728085000.GA9136@jordon-HP-15-Notebook-PC>
-References: <20180728085000.GA9136@jordon-HP-15-Notebook-PC>
-From:   Souptick Joarder <jrdr.linux@gmail.com>
-Date:   Sat, 28 Jul 2018 14:19:00 +0530
-Message-ID: <CAFqt6zbvRa+_Qi=UaRMSvOaguyJ9GHzcgsv3BOOksjZjCyUCcQ@mail.gmail.com>
-Subject: Re: [PATCH] ext4: Convert int to vm_fault_t type
-To:     Matthew Wilcox <willy@infradead.org>,
-        "Theodore Ts'o" <tytso@mit.edu>, adilger.kernel@dilger.ca,
-        "Darrick J. Wong" <darrick.wong@oracle.com>, axboe@kernel.dk,
-        Andreas Gruenbacher <agruenba@redhat.com>,
-        Eric Biggers <ebiggers@google.com>,
-        Greg KH <gregkh@linuxfoundation.org>, kemi.wang@intel.com
-Cc:     Sabyasachi Gupta <sabyasachi.linux@gmail.com>,
-        Brajeswar Ghosh <brajeswar.linux@gmail.com>,
-        linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180720035941.6844-3-khandual@linux.vnet.ibm.com>
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 18072808-0020-0000-0000-000002AD3B6C
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18072808-0021-0000-0000-000020F94B4E
+Message-Id: <c443ad8c-fb81-302d-edb2-5521831d38da@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-28_04:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1806210000 definitions=main-1807280095
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jul 28, 2018 at 2:20 PM, Souptick Joarder <jrdr.linux@gmail.com> wrote:
-> Use new return type vm_fault_t for ext4_page_mkwrite
-> handler and block_page_mkwrite_return.
->
-> Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
-
-As part of commit 2fae376c0a16db42eb438 in linux-next tree,
-this conversion was missed. Sorry about it.
-
+On 07/20/2018 09:29 AM, Anshuman Khandual wrote:
+> Now that virtio core always needs all virtio devices to have DMA OPS, we
+> need to make sure that the structure it points is the right one. In the
+> absence of VIRTIO_F_IOMMU_PLATFORM flag QEMU expects GPA from guest kernel.
+> In such case, virtio device must use default virtio_direct_dma_ops DMA OPS
+> structure which transforms scatter gather buffer addresses as GPA. This
+> DMA OPS override must happen as early as possible during virtio device
+> initializatin sequence before virtio core starts using given device's DMA
+> OPS callbacks for I/O transactions. This change detects device's IOMMU flag
+> and does the override in case the flag is cleared.
+> 
+> Signed-off-by: Anshuman Khandual <khandual@linux.vnet.ibm.com>
 > ---
->  fs/ext4/ext4.h              |  2 +-
->  fs/ext4/inode.c             | 20 ++++++++++----------
->  include/linux/buffer_head.h |  3 ++-
->  3 files changed, 13 insertions(+), 12 deletions(-)
->
-> diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
-> index aec0010..1183773 100644
-> --- a/fs/ext4/ext4.h
-> +++ b/fs/ext4/ext4.h
-> @@ -2469,7 +2469,7 @@ int do_journal_get_write_access(handle_t *handle,
->  extern int ext4_chunk_trans_blocks(struct inode *, int nrblocks);
->  extern int ext4_zero_partial_blocks(handle_t *handle, struct inode *inode,
->                              loff_t lstart, loff_t lend);
-> -extern int ext4_page_mkwrite(struct vm_fault *vmf);
-> +extern vm_fault_t ext4_page_mkwrite(struct vm_fault *vmf);
->  extern vm_fault_t ext4_filemap_fault(struct vm_fault *vmf);
->  extern qsize_t *ext4_get_reserved_space(struct inode *inode);
->  extern int ext4_get_projid(struct inode *inode, kprojid_t *projid);
-> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-> index 03ac322..b491fdb 100644
-> --- a/fs/ext4/inode.c
-> +++ b/fs/ext4/inode.c
-> @@ -6108,27 +6108,27 @@ static int ext4_bh_unmapped(handle_t *handle, struct buffer_head *bh)
->         return !buffer_mapped(bh);
+>  drivers/virtio/virtio.c | 5 +++++
+>  1 file changed, 5 insertions(+)
+> 
+> diff --git a/drivers/virtio/virtio.c b/drivers/virtio/virtio.c
+> index 7907ad3..6b13987 100644
+> --- a/drivers/virtio/virtio.c
+> +++ b/drivers/virtio/virtio.c
+> @@ -166,6 +166,8 @@ void virtio_add_status(struct virtio_device *dev, unsigned int status)
 >  }
->
-> -int ext4_page_mkwrite(struct vm_fault *vmf)
-> +vm_fault_t ext4_page_mkwrite(struct vm_fault *vmf)
+>  EXPORT_SYMBOL_GPL(virtio_add_status);
+> 
+> +const struct dma_map_ops virtio_direct_dma_ops;
+> +
+>  int virtio_finalize_features(struct virtio_device *dev)
 >  {
->         struct vm_area_struct *vma = vmf->vma;
->         struct page *page = vmf->page;
->         loff_t size;
->         unsigned long len;
-> -       int ret;
-> +       vm_fault_t ret;
->         struct file *file = vma->vm_file;
->         struct inode *inode = file_inode(file);
->         struct address_space *mapping = inode->i_mapping;
->         handle_t *handle;
->         get_block_t *get_block;
-> -       int retries = 0;
-> +       int retries = 0, err;
->
->         sb_start_pagefault(inode->i_sb);
->         file_update_time(vma->vm_file);
->
->         down_read(&EXT4_I(inode)->i_mmap_sem);
->
-> -       ret = ext4_convert_inline_data(inode);
-> -       if (ret)
-> +       err = ext4_convert_inline_data(inode);
-> +       if (err)
->                 goto out_ret;
->
->         /* Delalloc case is easy... */
-> @@ -6138,9 +6138,9 @@ int ext4_page_mkwrite(struct vm_fault *vmf)
->                 do {
->                         ret = block_page_mkwrite(vma, vmf,
->                                                    ext4_da_get_block_prep);
-> -               } while (ret == -ENOSPC &&
-> +               } while (ret == VM_FAULT_SIGBUS &&
->                        ext4_should_retry_alloc(inode->i_sb, &retries));
-> -               goto out_ret;
-> +               goto out;
->         }
->
->         lock_page(page);
-> @@ -6188,17 +6188,17 @@ int ext4_page_mkwrite(struct vm_fault *vmf)
->                 if (ext4_walk_page_buffers(handle, page_buffers(page), 0,
->                           PAGE_SIZE, NULL, do_journal_get_write_access)) {
->                         unlock_page(page);
-> -                       ret = VM_FAULT_SIGBUS;
->                         ext4_journal_stop(handle);
->                         goto out;
->                 }
->                 ext4_set_inode_state(inode, EXT4_STATE_JDATA);
->         }
->         ext4_journal_stop(handle);
-> -       if (ret == -ENOSPC && ext4_should_retry_alloc(inode->i_sb, &retries))
-> +       if (ret == VM_FAULT_SIGBUS &&
-> +               ext4_should_retry_alloc(inode->i_sb, &retries))
->                 goto retry_alloc;
->  out_ret:
-> -       ret = block_page_mkwrite_return(ret);
-> +       ret = block_page_mkwrite_return(err);
->  out:
->         up_read(&EXT4_I(inode)->i_mmap_sem);
->         sb_end_pagefault(inode->i_sb);
-> diff --git a/include/linux/buffer_head.h b/include/linux/buffer_head.h
-> index 96225a7..ed7a81b 100644
-> --- a/include/linux/buffer_head.h
-> +++ b/include/linux/buffer_head.h
-> @@ -14,6 +14,7 @@
->  #include <linux/pagemap.h>
->  #include <linux/wait.h>
->  #include <linux/atomic.h>
-> +#include <linux/mm_types.h>
->
->  #ifdef CONFIG_BLOCK
->
-> @@ -242,7 +243,7 @@ int cont_write_begin(struct file *, struct address_space *, loff_t,
->  int block_page_mkwrite(struct vm_area_struct *vma, struct vm_fault *vmf,
->                                 get_block_t get_block);
->  /* Convert errno to return value from ->page_mkwrite() call */
-> -static inline int block_page_mkwrite_return(int err)
-> +static inline vm_fault_t block_page_mkwrite_return(int err)
->  {
->         if (err == 0)
->                 return VM_FAULT_LOCKED;
-> --
-> 1.9.1
->
+>  	int ret = dev->config->finalize_features(dev);
+> @@ -174,6 +176,9 @@ int virtio_finalize_features(struct virtio_device *dev)
+>  	if (ret)
+>  		return ret;
+
+
+The previous patch removed the code block for XEN guests which forced
+the use of DMA API all the time irrespective of VIRTIO_F_IOMMU_PLATFORM
+flag on the device. Here is what I have removed with patch 2/4 which
+breaks the existing semantics on XEN guests.
+
+-static bool vring_use_dma_api(struct virtio_device *vdev)
+-{
+-	if (!virtio_has_iommu_quirk(vdev))
+-		return true;
+-
+-	/* Otherwise, we are left to guess. */
+-	/*
+-	 * In theory, it's possible to have a buggy QEMU-supposed
+-	 * emulated Q35 IOMMU and Xen enabled at the same time.  On
+-	 * such a configuration, virtio has never worked and will
+-	 * not work without an even larger kludge.  Instead, enable
+-	 * the DMA API if we're a Xen guest, which at least allows
+-	 * all of the sensible Xen configurations to work correctly.
+-	 */
+-	if (xen_domain())
+-		return true;
+-
+-	return false;
+-}
+
+XEN guests would not like override with virtio_direct_dma_ops in any
+case irrespective of the flag VIRTIO_F_IOMMU_PLATFORM. So the existing
+semantics can be preserved with something like this. It just assumes
+that dev->dma_ops is non-NULL and a valid one set by the architecture.
+If required we can add those tests here before skipping the override.
+
+diff --git a/drivers/virtio/virtio.c b/drivers/virtio/virtio.c
+index 7907ad3..6b13987 100644
+--- a/drivers/virtio/virtio.c
++++ b/drivers/virtio/virtio.c
+@@ -166,6 +166,8 @@ void virtio_add_status(struct virtio_device *dev, unsigned int status)
+ }
+ EXPORT_SYMBOL_GPL(virtio_add_status);
+
++const struct dma_map_ops virtio_direct_dma_ops;
++
+ int virtio_finalize_features(struct virtio_device *dev)
+ {
+ 	int ret = dev->config->finalize_features(dev);
+@@ -174,6 +176,9 @@ int virtio_finalize_features(struct virtio_device *dev)
+ 	if (ret)
+ 		return ret;
++
++	if (xen_domain())
++		goto skip_override;
++
++	if (virtio_has_iommu_quirk(dev))
++		set_dma_ops(dev->dev.parent, &virtio_direct_dma_ops);
++
++ skip_override:
++
+ 	if (!virtio_has_feature(dev, VIRTIO_F_VERSION_1))
+ 		return 0
+
+Will incorporate these changes in the next version.
+
