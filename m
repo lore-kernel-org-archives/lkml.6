@@ -2,155 +2,105 @@ Return-Path: <SRS0=xGmI=KM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F9D5C43142
-	for <linux-kernel@archiver.kernel.org>; Sat, 28 Jul 2018 19:30:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 204E5C43142
+	for <linux-kernel@archiver.kernel.org>; Sat, 28 Jul 2018 19:34:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CF8C820878
-	for <linux-kernel@archiver.kernel.org>; Sat, 28 Jul 2018 19:30:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF8C820878
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=iogearbox.net
+	by mail.kernel.org (Postfix) with ESMTP id C474320878
+	for <linux-kernel@archiver.kernel.org>; Sat, 28 Jul 2018 19:34:22 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F6CijKcL"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C474320878
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730607AbeG1U6Q (ORCPT
+        id S1730597AbeG1VBw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 28 Jul 2018 16:58:16 -0400
-Received: from www62.your-server.de ([213.133.104.62]:44248 "EHLO
-        www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730569AbeG1U6Q (ORCPT
+        Sat, 28 Jul 2018 17:01:52 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:42268 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730538AbeG1VBw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 28 Jul 2018 16:58:16 -0400
-Received: from [78.46.172.2] (helo=sslproxy05.your-server.de)
-        by www62.your-server.de with esmtpsa (TLSv1.2:DHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.85_2)
-        (envelope-from <daniel@iogearbox.net>)
-        id 1fjUvH-000238-FQ; Sat, 28 Jul 2018 21:30:39 +0200
-Received: from [99.0.85.34] (helo=localhost.localdomain)
-        by sslproxy05.your-server.de with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.89)
-        (envelope-from <daniel@iogearbox.net>)
-        id 1fjUvG-00099K-Vp; Sat, 28 Jul 2018 21:30:39 +0200
-Subject: Re: [PATCH] perf build: Build error in libbpf missing initialization
-To:     Jakub Kicinski <jakub.kicinski@netronome.com>
-Cc:     Thomas Richter <tmricht@linux.ibm.com>, ast@kernel.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        heiko.carstens@de.ibm.com, brueckner@linux.vnet.ibm.com,
-        schwidefsky@de.ibm.com
-References: <20180727082126.87530-1-tmricht@linux.ibm.com>
- <20180727105923.2d5da6aa@cakuba.netronome.com>
- <c8409ab8-69df-17f4-9da3-610c60143d9a@iogearbox.net>
- <20180727125632.33634af5@cakuba.netronome.com>
-From:   Daniel Borkmann <daniel@iogearbox.net>
-Message-ID: <f78f1675-b34d-a21e-1714-4acc9e53414f@iogearbox.net>
-Date:   Sat, 28 Jul 2018 21:30:34 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.3.0
+        Sat, 28 Jul 2018 17:01:52 -0400
+Received: by mail-pg1-f195.google.com with SMTP id y4-v6so5067249pgp.9
+        for <linux-kernel@vger.kernel.org>; Sat, 28 Jul 2018 12:34:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=vH/JZSp/UfZvLbKKO03VZYYeLHxRCFnX6zIqywk0vSI=;
+        b=F6CijKcLNi5RAM03j6NNol7rRarcHP/FIPpaEYaSA0TEOaUhdLXA9OzJe3gEWDUD+v
+         oIVwJ4hFORUUms6Cg45ygrY0abuv8be3pLdxtubUEBzA0d3xp2T/Am8wvGhaSWd9zTAw
+         JZHvva5/t495GsJ/klhZHQl/9ckGYo+DSR7JXjqyeI4t54Wu77HU6aIEAdGynrnAZ5Qz
+         opon7iliZrE9wFB8vfB9YKRzeMS46SP3Sy4Iy8BcIFjwtE3gszymBUwSwy/eUbfAHXJo
+         tNl2W3ngmlo9+1F95doqusXWlnkYijMDrwwYOzIaMi5Dm42uoSGvt4dwmtV2Pbp8rO6N
+         ukWw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=vH/JZSp/UfZvLbKKO03VZYYeLHxRCFnX6zIqywk0vSI=;
+        b=HiSC1n3K6QqSNF67QYWsFLFPKVrr7nPdzfuYs6MnxT0+w07LfaFvG4AqxgjOyANUD5
+         QjkVeWs6ps+QzHqYOErGUKQlYB4oWIAeG3h1iez+uMJXhg6Q3kvS1Qdu0pimAN/MYhhE
+         gKA+227J2GMVt1HnSvioVaX/0Wf3nSAaYMlFuGWFkWSchoFwNzYyOmK0G5I8rvzK4ZcL
+         4Yt6yHyWpYPolFH/RCD3drv+hKuDZdxODDiWu6NdAabt/O6cVt7cbxZAC8K8n9PR4rYe
+         UJyQeQLbT9ZeSFTwVCEb+FunIHTkzSLtaX3yzB42MzlLMuA35ycA9TFJxbmWHS4Az8JA
+         N5pw==
+X-Gm-Message-State: AOUpUlGtjlksQCThpLrkmevJ+nH2fGbBgJJ6mRKW9cz+5Z1MD7aE+Jgx
+        ft4IkDW9DWeGZKc5EFlpChg=
+X-Google-Smtp-Source: AAOMgpftFgY/pzp/cGX7zHbDjduOpPXS1N9Jh7IEQEufp6MS1kSEObv79HG1funaN4KHLFgf6FzpSQ==
+X-Received: by 2002:a62:642:: with SMTP id 63-v6mr7848109pfg.42.1532806459891;
+        Sat, 28 Jul 2018 12:34:19 -0700 (PDT)
+Received: from toddpoynor2.mtv.corp.google.com ([2620:0:1000:3701:7d29:cd13:d903:7908])
+        by smtp.gmail.com with ESMTPSA id e16-v6sm9607483pfn.46.2018.07.28.12.34.18
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sat, 28 Jul 2018 12:34:19 -0700 (PDT)
+From:   Todd Poynor <toddpoynor@gmail.com>
+To:     Rob Springer <rspringer@google.com>,
+        John Joseph <jnjoseph@google.com>,
+        Ben Chan <benchan@chromium.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
+        Todd Poynor <toddpoynor@google.com>
+Subject: [PATCH 0/1 v2] staging: gasket: fixes and cleanups
+Date:   Sat, 28 Jul 2018 12:33:23 -0700
+Message-Id: <20180728193324.142821-1-toddpoynor@gmail.com>
+X-Mailer: git-send-email 2.18.0.345.g5c9ce644c3-goog
 MIME-Version: 1.0
-In-Reply-To: <20180727125632.33634af5@cakuba.netronome.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-X-Authenticated-Sender: daniel@iogearbox.net
-X-Virus-Scanned: Clear (ClamAV 0.100.0/24791/Sat Jul 28 18:42:40 2018)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/27/2018 09:56 PM, Jakub Kicinski wrote:
-> On Fri, 27 Jul 2018 21:31:01 +0200, Daniel Borkmann wrote:
->> On 07/27/2018 07:59 PM, Jakub Kicinski wrote:
->>> On Fri, 27 Jul 2018 10:21:26 +0200, Thomas Richter wrote:  
->>>> In linux-next tree compiling the perf tool with additional make flags
->>>> "EXTRA_CFLAGS="-Wp,-D_FORTIFY_SOURCE=2 -O2"
->>>> causes a compiler error. It is the warning
->>>> 	'variable may be used uninitialized'
->>>> which is treated as error:
->>>>
->>>> I compile it using a FEDORA 28 installation, my gcc compiler version:
->>>> gcc (GCC) 8.0.1 20180324 (Red Hat 8.0.1-0.20)
->>>>
->>>> The file that causes the error is tools/lib/bpf/libbpf.c
->>>>
->>>> Here is the error message:
->>>>
->>>> [root@p23lp27] # make V=1 EXTRA_CFLAGS="-Wp,-D_FORTIFY_SOURCE=2 -O2"
->>>> [...]
->>>> Makefile.config:849: No openjdk development package found, please
->>>>    install JDK package, e.g. openjdk-8-jdk, java-1.8.0-openjdk-devel
->>>> Warning: Kernel ABI header at 'tools/include/uapi/linux/if_link.h'
->>>>         differs from latest version at 'include/uapi/linux/if_link.h'
->>>>   CC       libbpf.o
->>>> libbpf.c: In function ‘bpf_perf_event_read_simple’:
->>>> libbpf.c:2342:6: error: ‘ret’ may be used uninitialized in this
->>>> 			function [-Werror=maybe-uninitialized]
->>>>   int ret;
->>>>       ^
->>>> cc1: all warnings being treated as errors
->>>> mv: cannot stat './.libbpf.o.tmp': No such file or directory
->>>> /home6/tmricht/linux-next/tools/build/Makefile.build:96: recipe for target 'libbpf.o' failed
->>>>
->>>> Fix this warning and add an addition check at the beginning
->>>> of the while loop.
->>>>
->>>> Cc: Alexei Starovoitov <ast@kernel.org>
->>>> Cc: Daniel Borkmann <daniel@iogearbox.net>
->>>>
->>>> Suggested-by: Jakub Kicinski <jakub.kicinski@netronome.com>
->>>> Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>  
->>>
->>> Ah, you already sent this, LGTM, thanks Thomas!
->>>   
->>>>  tools/lib/bpf/libbpf.c | 2 ++
->>>>  1 file changed, 2 insertions(+)
->>>>
->>>> diff --git a/tools/lib/bpf/libbpf.c b/tools/lib/bpf/libbpf.c
->>>> index 73465caa33ba..66965ca96113 100644
->>>> --- a/tools/lib/bpf/libbpf.c
->>>> +++ b/tools/lib/bpf/libbpf.c
->>>> @@ -2349,6 +2349,8 @@ bpf_perf_event_read_simple(void *mem, unsigned long size,
->>>>  
->>>>  	begin = base + data_tail % size;
->>>>  	end = base + data_head % size;
->>>> +	if (begin == end)
->>>> +		return LIBBPF_PERF_EVENT_ERROR;
->>>>  
->>>>  	while (begin != end) {
->>>>  		struct perf_event_header *ehdr;  
->>
->> One question though, any objections to go for something like the below instead?
->> I doubt we ever hit this in a 'normal' situation, and given we already test for
->> the begin and end anyway, we could just avoid the extra test altogether. I could
->> change it to the below if you're good as well (no need to resend anything):
->>
->> diff --git a/tools/lib/bpf/libbpf.c b/tools/lib/bpf/libbpf.c
->> index d881d37..1aafdbe 100644
->> --- a/tools/lib/bpf/libbpf.c
->> +++ b/tools/lib/bpf/libbpf.c
->> @@ -2273,8 +2273,8 @@ bpf_perf_event_read_simple(void *mem, unsigned long size,
->>         volatile struct perf_event_mmap_page *header = mem;
->>         __u64 data_tail = header->data_tail;
->>         __u64 data_head = header->data_head;
->> +       int ret = LIBBPF_PERF_EVENT_ERROR;
->>         void *base, *begin, *end;
->> -       int ret;
->>
->>         asm volatile("" ::: "memory"); /* in real code it should be smp_rmb() */
->>         if (data_head == data_tail)
-> 
-> No real objection, although as a matter of personal taste I'm not a big
-> fan of initializing err/ret variables unless the code is explicitly
-> structured to make use of it.  Here it looks slightly more like
-> silencing a compiler warning, hence my preference to address the actual
-> cause of the warning rather than catch all.  I guess one could argue
-> the other way, i.e. if the loop never run (and therefore ret was not
-> overwritten) there must be *some* error.  I like verbose/explicit code I
-> guess..
-> 
-> Up to you :)
+From: Todd Poynor <toddpoynor@google.com>
 
-Ok, I pushed this variant out to the bpf tree since it also is affected there.
-Thanks a lot everyone!
+The fun continues with gasket+apex: remove dead code and unnecessary
+stuff, fixup apex PCI class for devices that advertise class 0
+(undefined), and make sure the struct device doesn't go away on us.
+Most of these from review comments of previous patch series.
+
+Changed patches in v2:
+  staging: gasket: core: hold reference on device kobj while in use
+    Renamed: staging: gasket: core: hold reference on device while in use
+    Use device get/put functions.
+
+Removed patches in v2 already merged from v1:
+  staging: gasket: sysfs: remove check for refcount already zero
+  staging: gasket: apex: fixup undefined PCI class
+  staging: gasket: sysfs: remove unnecessary NULL check on device ptr
+  staging: gasket: page table: remove code for "no dma_ops"
+
+Todd Poynor (1):
+  staging: gasket: core: hold reference on device while in use
+
+ drivers/staging/gasket/gasket_core.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+-- 
+2.18.0.345.g5c9ce644c3-goog
+
