@@ -4,61 +4,61 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA685C6778F
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E2215C28CF6
 	for <linux-kernel@archiver.kernel.org>; Sat, 28 Jul 2018 05:22:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5CF7820862
+	by mail.kernel.org (Postfix) with ESMTP id 970EF20891
 	for <linux-kernel@archiver.kernel.org>; Sat, 28 Jul 2018 05:22:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QygouOaK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5CF7820862
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="rQeY51hY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 970EF20891
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726214AbeG1Gr3 (ORCPT
+        id S1726288AbeG1Gra (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 28 Jul 2018 02:47:29 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:46745 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725946AbeG1Gr3 (ORCPT
+        Sat, 28 Jul 2018 02:47:30 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:33780 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725946AbeG1Gra (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 28 Jul 2018 02:47:29 -0400
-Received: by mail-pg1-f194.google.com with SMTP id p23-v6so4344732pgv.13
-        for <linux-kernel@vger.kernel.org>; Fri, 27 Jul 2018 22:22:22 -0700 (PDT)
+        Sat, 28 Jul 2018 02:47:30 -0400
+Received: by mail-pg1-f196.google.com with SMTP id r5-v6so4361134pgv.0
+        for <linux-kernel@vger.kernel.org>; Fri, 27 Jul 2018 22:22:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=j+jUdHgKmDhMvYw9eWVnP3Moz5FAbaIHJlG86mjvcgs=;
-        b=QygouOaKzPSm03hNXsgAA9J5Hk5KMcE+n8zeeekDfRMkGtYwsDBqWPQNaNp0Pp7z7T
-         hpHHk8LOX3qsSpXTdzyv4F/6wQsm8JKxces6KLOk2trc7heQPtvUTDiBVFpgrKLWMhrT
-         DJ5+VkUoBwuPEo1YonKkuxMpGJL/Re5NrdfVzlYbqSTDWCa7sHhWM7mXIEa4x78TrL7D
-         +5Ze+D0TI3LupM4nC89mdzTXNHYY2/9VJlHjaLGJfMKxHVUcDZxMQYSFMEqKZN94RyeP
-         49kFfv22TYgTYCE1tgNF5alv6pBKraB8Yxe5Cnjoe+EInw4VyHNH2RIxluvZLARvVabl
-         AzLQ==
+        bh=g3DTaHMBk0c8q3SaHSbQjN4q2FsVZK91rmELZp2hvhg=;
+        b=rQeY51hYGX+CBI3/cylMmRWecV6G9+N9z87ikANskr97TJHxy08HVTOE9FFEihiRhP
+         peO/df7poUvZeBmZieGI4Oi/3DXEAmX7THA0X9K+a7ygEtLQnYY3GYVm5lrE8eAN3GRm
+         WY/i+Wi139EovySnVbna574zrZAfpd5DAS9gRucXn1LNRHB4JAlrd3UcrkAnugvnsdTu
+         MMiQV8jdwExEiH6qKhNbotFn51to/nnPmX0V8d1tAUrlfj35+8PWNw/efPyOstOSISwP
+         ZH1sprxtMOyVPC9kF9qO4K0L1mnnnGnrL2wLSb3bBc/g4kh2chGv2WzumXrwMH5hrFCv
+         u26A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=j+jUdHgKmDhMvYw9eWVnP3Moz5FAbaIHJlG86mjvcgs=;
-        b=XZHKiAlSEa8bqVKa5lBSFnGc5I3A2WN/A7gVk8t3l0JQIAp6JynFTeXivrAjXN4h1h
-         K2/6+SPTCUWhLiRB+M040LQDdOWUoQDE+8gXPGdFzXC2jc2yM2OS83NoM0JolcF3j47C
-         0y2SKbKM/XLSNkdhasvNcpTIABWa6khHQVduDyIt8FtvH+//sxlRmRBbDUwqfAWgfkZy
-         Qyl2iSAcMjH36JPEevH3LNm2Xlq/aJBh1KspnpNOKu01X3mx1FmS6DJ5R7yPW5gBTnjg
-         C2/jjpdzItQZ1U1SmpVpMkW7hU2/HLq/d+hzfkAp/jJqh1b0veHCqXqCkdMwvLty+B35
-         Dt0w==
-X-Gm-Message-State: AOUpUlH6Ty7LInFxGJKkSipRiuxcmmgWBF9KLyvmAou2sVDETPB83aDT
-        VhGuYsPJUAnMjln4YxAFsmc=
-X-Google-Smtp-Source: AAOMgpdiBFvdByucMTdbCfXw4TJ5EMbgv953pbKVJZU3smjC9/rHReEAzRa5F75evrBvrb3I8mEfxg==
-X-Received: by 2002:a63:9619:: with SMTP id c25-v6mr8464873pge.75.1532755342279;
-        Fri, 27 Jul 2018 22:22:22 -0700 (PDT)
+        bh=g3DTaHMBk0c8q3SaHSbQjN4q2FsVZK91rmELZp2hvhg=;
+        b=fQXLRQ4c4UK3SvBO6UbDhLy/HXKu3CcGrH2gJAHWwEN5G+D+koeW4ZKfxgDvM+gfn1
+         aD37KaHTjvmJ7twCrBWxJlzMaeDLE+kZkFjN/OzrInzBvnmCBwJVlOtVYVwu9lL6vPza
+         4rK+5LhrC8PpaK+vqdjOsEOYy/sf1AvekppgIEMoTcYZBAeO9mi28ofxhWBwxix+z77A
+         w5GlHOtJeY09eubJLvBXY6KKcmjMZ2q77DQUphDFzO4IevskNN7FVBj3gYn16l7Z6fX0
+         FYs8KJEuwYFsDaKlwPKQ4UPTEvj6dDgAxKw6jLpde5/aERTYoOSPRuMH5qMKBICToLw/
+         geeA==
+X-Gm-Message-State: AOUpUlGhUj3IF8LlnaluiWAP9hWud8Ogbsa1+CwNiq+nz01kUNX4Lk9o
+        jOQ8H6VAeoaqwP4CNuoiZbY=
+X-Google-Smtp-Source: AAOMgpfeJ18KRiN6xj8p5fvg6xyp0wEeBlzvjwupUDQxIrZiL4/fQrpdyX5Ocqzuyv2iKUH5ujbGFA==
+X-Received: by 2002:a63:4d5:: with SMTP id 204-v6mr8587840pge.129.1532755343167;
+        Fri, 27 Jul 2018 22:22:23 -0700 (PDT)
 Received: from toddpoynor2.mtv.corp.google.com ([2620:0:1000:3701:7d29:cd13:d903:7908])
-        by smtp.gmail.com with ESMTPSA id y85-v6sm8837195pfa.170.2018.07.27.22.22.21
+        by smtp.gmail.com with ESMTPSA id y85-v6sm8837195pfa.170.2018.07.27.22.22.22
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 27 Jul 2018 22:22:21 -0700 (PDT)
+        Fri, 27 Jul 2018 22:22:22 -0700 (PDT)
 From:   Todd Poynor <toddpoynor@gmail.com>
 To:     Rob Springer <rspringer@google.com>,
         John Joseph <jnjoseph@google.com>,
@@ -66,9 +66,9 @@ To:     Rob Springer <rspringer@google.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
         Todd Poynor <toddpoynor@google.com>
-Subject: [PATCH 2/5] staging: gasket: apex: fixup undefined PCI class
-Date:   Fri, 27 Jul 2018 22:21:57 -0700
-Message-Id: <20180728052200.228796-3-toddpoynor@gmail.com>
+Subject: [PATCH 3/5] staging: gasket: sysfs: remove unnecessary NULL check on device ptr
+Date:   Fri, 27 Jul 2018 22:21:58 -0700
+Message-Id: <20180728052200.228796-4-toddpoynor@gmail.com>
 X-Mailer: git-send-email 2.18.0.345.g5c9ce644c3-goog
 In-Reply-To: <20180728052200.228796-1-toddpoynor@gmail.com>
 References: <20180728052200.228796-1-toddpoynor@gmail.com>
@@ -81,29 +81,31 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Todd Poynor <toddpoynor@google.com>
 
-Apex chips with class 0 (PCI_CLASS_NOT_DEFINED) fixed up to
-PCI_CLASS_SYSTEM_OTHER to enable PCI resource assignments.
+The device pointer passed into get_mapping() will never be NULL; the
+check is unnecessary.
 
+Reported-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Todd Poynor <toddpoynor@google.com>
 ---
- drivers/staging/gasket/apex_driver.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+ drivers/staging/gasket/gasket_sysfs.c | 5 -----
+ 1 file changed, 5 deletions(-)
 
-diff --git a/drivers/staging/gasket/apex_driver.c b/drivers/staging/gasket/apex_driver.c
-index 73fc2683a834d..ab466d49608a7 100644
---- a/drivers/staging/gasket/apex_driver.c
-+++ b/drivers/staging/gasket/apex_driver.c
-@@ -739,3 +739,10 @@ static ssize_t sysfs_show(
- 	gasket_sysfs_put_device_data(device, gasket_dev);
- 	return ret;
- }
-+
-+static void apex_pci_fixup_class(struct pci_dev *pdev)
-+{
-+	pdev->class = (PCI_CLASS_SYSTEM_OTHER << 8) | pdev->class;
-+}
-+DECLARE_PCI_FIXUP_CLASS_HEADER(APEX_PCI_VENDOR_ID, APEX_PCI_DEVICE_ID,
-+			       PCI_CLASS_NOT_DEFINED, 8, apex_pci_fixup_class);
+diff --git a/drivers/staging/gasket/gasket_sysfs.c b/drivers/staging/gasket/gasket_sysfs.c
+index 2d8647de697cd..da972ce0e0db0 100644
+--- a/drivers/staging/gasket/gasket_sysfs.c
++++ b/drivers/staging/gasket/gasket_sysfs.c
+@@ -67,11 +67,6 @@ static struct gasket_sysfs_mapping *get_mapping(struct device *device)
+ {
+ 	int i;
+ 
+-	if (!device) {
+-		pr_debug("%s: Received NULL device\n", __func__);
+-		return NULL;
+-	}
+-
+ 	for (i = 0; i < GASKET_SYSFS_NUM_MAPPINGS; i++) {
+ 		mutex_lock(&dev_mappings[i].mutex);
+ 		if (dev_mappings[i].device == device) {
 -- 
 2.18.0.345.g5c9ce644c3-goog
 
