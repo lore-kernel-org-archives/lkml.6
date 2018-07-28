@@ -2,190 +2,124 @@ Return-Path: <SRS0=xGmI=KM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B44C8C67790
-	for <linux-kernel@archiver.kernel.org>; Sat, 28 Jul 2018 01:30:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38243C67790
+	for <linux-kernel@archiver.kernel.org>; Sat, 28 Jul 2018 01:32:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6AC3320671
-	for <linux-kernel@archiver.kernel.org>; Sat, 28 Jul 2018 01:30:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6AC3320671
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id DD8F720671
+	for <linux-kernel@archiver.kernel.org>; Sat, 28 Jul 2018 01:32:01 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qo4w/fsr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD8F720671
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389372AbeG1CzY (ORCPT
+        id S2389402AbeG1C42 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 22:55:24 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:10147 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2388893AbeG1CzY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 22:55:24 -0400
-Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 14243788CE4A9;
-        Sat, 28 Jul 2018 09:30:51 +0800 (CST)
-Received: from szvp000201624.huawei.com (10.120.216.130) by
- DGGEMS403-HUB.china.huawei.com (10.3.19.203) with Microsoft SMTP Server id
- 14.3.382.0; Sat, 28 Jul 2018 09:30:42 +0800
-From:   Chao Yu <yuchao0@huawei.com>
-To:     <jaegeuk@kernel.org>
-CC:     <linux-f2fs-devel@lists.sourceforge.net>,
-        <linux-kernel@vger.kernel.org>, <chao@kernel.org>,
-        Chao Yu <yuchao0@huawei.com>
-Subject: [PATCH v2 1/2] f2fs: fix to do sanity check with user_block_count
-Date:   Sat, 28 Jul 2018 09:30:34 +0800
-Message-ID: <20180728013034.90359-1-yuchao0@huawei.com>
-X-Mailer: git-send-email 2.18.0.rc1
+        Fri, 27 Jul 2018 22:56:28 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:42442 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388893AbeG1C42 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Jul 2018 22:56:28 -0400
+Received: by mail-pg1-f193.google.com with SMTP id y4-v6so4156990pgp.9;
+        Fri, 27 Jul 2018 18:31:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=74IexoqrWuAflctdUE888PDI6MI2K9K6VRp4yTZOwbM=;
+        b=qo4w/fsrvqFVqclogIc2Amzi/faG4+YBcH72DfwaOv/DOND0kA7GdHSAfu8FIqRLi5
+         6FcvHcT4IwtFLBSBCkAyNZv7152GkKX6sBUxwg2faxZDgjV33dZwyamDgojQ6yCEwcL7
+         ZZFVIm5dkDt7J145wEd40ZNohIxn9toojecN4g065bBuofseE6gXpl1uJvezb1R/rn7v
+         WdxpTAmfCyO85sfHSdE3VfEBFz46jWALMA1qod0CmpYXjs0gE8afEZLlrx8OYmacbYaV
+         7AeY8GkuXetf79fZQDnF9/I5SZZECDZ2hWOU6+zV+rOsVdoM4KRqKO+1NdajuoADG+Pv
+         yvcw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=74IexoqrWuAflctdUE888PDI6MI2K9K6VRp4yTZOwbM=;
+        b=J8Adg0zLYd+vEAnFtb+SmmiXU6zGAbcwmbVrW0BzYQpMAeBWyW9UiloOd+HqKJxVri
+         ITuRaQPF+VrBf2/g8yuRFXFLRkkIDO8B0MGKzKjDjc50oRxTRPU5dyYuQPN5T/LH8B5Z
+         nqT9hwVZBLNoAdARYT4ATo7s0VkrSNYF7bjNunAyamQwfr/S64sMUK4iidRYEHrMgGvm
+         nG+gg/sQ5jqnDmSo7XjVcUd9zxRz9DP4TLaUvzLRBuv1OUZcWFcpBb7IsNxDughwzv6c
+         xhbt4DX9cch10Rr3X4odt97SYyCmzzc7vhc7dbb2ZAnGwx2AoO4RTIhiANVeBp1u+K5Y
+         XQSA==
+X-Gm-Message-State: AOUpUlFgucMPfGZ9Ab1/hwc+GAqd+keCTLLHCephRV5Dqhsu4/8c4sGo
+        +Et9Pc6e6CqE8906CCmkdhwsWnzg
+X-Google-Smtp-Source: AAOMgpdYMVod2HCBuU92OBiNvjuhehWqB6+NnKvd8KQwyVELkteBESOhxgW2EUMyzH/D+CiGv40gEg==
+X-Received: by 2002:a63:8b44:: with SMTP id j65-v6mr8159108pge.248.1532741518887;
+        Fri, 27 Jul 2018 18:31:58 -0700 (PDT)
+Received: from pjb1027-Latitude-E5410 ([58.227.15.43])
+        by smtp.gmail.com with ESMTPSA id y18-v6sm5429764pfl.90.2018.07.27.18.31.55
+        (version=TLS1_2 cipher=AES128-SHA bits=128/128);
+        Fri, 27 Jul 2018 18:31:58 -0700 (PDT)
+Date:   Sat, 28 Jul 2018 10:31:51 +0900
+From:   Jinbum Park <jinb.park7@gmail.com>
+To:     axboe@kernel.dk, bart.vanassche@wdc.com,
+        jiufei.xue@linux.alibaba.com
+Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] pktcdvd: Fix possible Spectre-v1 for pkt_devs
+Message-ID: <20180728013151.GA15457@pjb1027-Latitude-E5410>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.120.216.130]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch fixs to do sanity check with user_block_count.
+User controls @dev_minor which to be used as index of pkt_devs.
+So, It can be exploited via Spectre-like attack. (speculative execution)
 
-- Overview
-Divide zero in utilization when mount() a corrupted f2fs image
+This kind of attack leaks address of pkt_devs, [1]
+It leads an attacker to bypass security mechanism such as KASLR.
 
-- Reproduce (4.18 upstream kernel)
+So sanitize @dev_minor before using it to prevent attack.
 
-- Kernel message
-[  564.099503] F2FS-fs (loop0): invalid crc value
-[  564.101991] divide error: 0000 [#1] SMP KASAN PTI
-[  564.103103] CPU: 1 PID: 1298 Comm: f2fs_discard-7: Not tainted 4.18.0-rc1+ #4
-[  564.104584] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS Ubuntu-1.8.2-1ubuntu1 04/01/2014
-[  564.106624] RIP: 0010:issue_discard_thread+0x248/0x5c0
-[  564.107692] Code: ff ff 48 8b bd e8 fe ff ff 41 8b 9d 4c 04 00 00 e8 cd b8 ad ff 41 8b 85 50 04 00 00 31 d2 48 8d 04 80 48 8d 04 80 48 c1 e0 02 <48> f7 f3 83 f8 50 7e 16 41 c7 86 7c ff ff ff 01 00 00 00 41 c7 86
-[  564.111686] RSP: 0018:ffff8801f3117dc0 EFLAGS: 00010206
-[  564.112775] RAX: 0000000000000384 RBX: 0000000000000000 RCX: ffffffffb88c1e03
-[  564.114250] RDX: 0000000000000000 RSI: dffffc0000000000 RDI: ffff8801e3aa4850
-[  564.115706] RBP: ffff8801f3117f00 R08: 1ffffffff751a1d0 R09: fffffbfff751a1d0
-[  564.117177] R10: 0000000000000001 R11: fffffbfff751a1d0 R12: 00000000fffffffc
-[  564.118634] R13: ffff8801e3aa4400 R14: ffff8801f3117ed8 R15: ffff8801e2050000
-[  564.120094] FS:  0000000000000000(0000) GS:ffff8801f6f00000(0000) knlGS:0000000000000000
-[  564.121748] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[  564.122923] CR2: 000000000202b078 CR3: 00000001f11ac000 CR4: 00000000000006e0
-[  564.124383] Call Trace:
-[  564.124924]  ? __issue_discard_cmd+0x480/0x480
-[  564.125882]  ? __sched_text_start+0x8/0x8
-[  564.126756]  ? __kthread_parkme+0xcb/0x100
-[  564.127620]  ? kthread_blkcg+0x70/0x70
-[  564.128412]  kthread+0x180/0x1d0
-[  564.129105]  ? __issue_discard_cmd+0x480/0x480
-[  564.130029]  ? kthread_associate_blkcg+0x150/0x150
-[  564.131033]  ret_from_fork+0x35/0x40
-[  564.131794] Modules linked in: snd_hda_codec_generic snd_hda_intel snd_hda_codec snd_hwdep snd_hda_core snd_pcm snd_timer snd mac_hid i2c_piix4 soundcore ib_iser rdma_cm iw_cm ib_cm ib_core iscsi_tcp libiscsi_tcp libiscsi scsi_transport_iscsi raid10 raid456 async_raid6_recov async_memcpy async_pq async_xor async_tx raid1 raid0 multipath linear 8139too crct10dif_pclmul crc32_pclmul qxl drm_kms_helper syscopyarea aesni_intel sysfillrect sysimgblt fb_sys_fops ttm drm aes_x86_64 crypto_simd cryptd 8139cp glue_helper mii pata_acpi floppy
-[  564.141798] ---[ end trace 4ce02f25ff7d3df5 ]---
-[  564.142773] RIP: 0010:issue_discard_thread+0x248/0x5c0
-[  564.143885] Code: ff ff 48 8b bd e8 fe ff ff 41 8b 9d 4c 04 00 00 e8 cd b8 ad ff 41 8b 85 50 04 00 00 31 d2 48 8d 04 80 48 8d 04 80 48 c1 e0 02 <48> f7 f3 83 f8 50 7e 16 41 c7 86 7c ff ff ff 01 00 00 00 41 c7 86
-[  564.147776] RSP: 0018:ffff8801f3117dc0 EFLAGS: 00010206
-[  564.148856] RAX: 0000000000000384 RBX: 0000000000000000 RCX: ffffffffb88c1e03
-[  564.150424] RDX: 0000000000000000 RSI: dffffc0000000000 RDI: ffff8801e3aa4850
-[  564.151906] RBP: ffff8801f3117f00 R08: 1ffffffff751a1d0 R09: fffffbfff751a1d0
-[  564.153463] R10: 0000000000000001 R11: fffffbfff751a1d0 R12: 00000000fffffffc
-[  564.154915] R13: ffff8801e3aa4400 R14: ffff8801f3117ed8 R15: ffff8801e2050000
-[  564.156405] FS:  0000000000000000(0000) GS:ffff8801f6f00000(0000) knlGS:0000000000000000
-[  564.158070] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[  564.159279] CR2: 000000000202b078 CR3: 00000001f11ac000 CR4: 00000000000006e0
-[  564.161043] ==================================================================
-[  564.162587] BUG: KASAN: stack-out-of-bounds in from_kuid_munged+0x1d/0x50
-[  564.163994] Read of size 4 at addr ffff8801f3117c84 by task f2fs_discard-7:/1298
+[1] https://github.com/jinb-park/linux-exploit/
+tree/master/exploit-remaining-spectre-gadget/leak_pkt_devs.c
 
-[  564.165852] CPU: 1 PID: 1298 Comm: f2fs_discard-7: Tainted: G      D           4.18.0-rc1+ #4
-[  564.167593] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS Ubuntu-1.8.2-1ubuntu1 04/01/2014
-[  564.169522] Call Trace:
-[  564.170057]  dump_stack+0x7b/0xb5
-[  564.170778]  print_address_description+0x70/0x290
-[  564.171765]  kasan_report+0x291/0x390
-[  564.172540]  ? from_kuid_munged+0x1d/0x50
-[  564.173408]  __asan_load4+0x78/0x80
-[  564.174148]  from_kuid_munged+0x1d/0x50
-[  564.174962]  do_notify_parent+0x1f5/0x4f0
-[  564.175808]  ? send_sigqueue+0x390/0x390
-[  564.176639]  ? css_set_move_task+0x152/0x340
-[  564.184197]  do_exit+0x1290/0x1390
-[  564.184950]  ? __issue_discard_cmd+0x480/0x480
-[  564.185884]  ? mm_update_next_owner+0x380/0x380
-[  564.186829]  ? __sched_text_start+0x8/0x8
-[  564.187672]  ? __kthread_parkme+0xcb/0x100
-[  564.188528]  ? kthread_blkcg+0x70/0x70
-[  564.189333]  ? kthread+0x180/0x1d0
-[  564.190052]  ? __issue_discard_cmd+0x480/0x480
-[  564.190983]  rewind_stack_do_exit+0x17/0x20
-
-[  564.192190] The buggy address belongs to the page:
-[  564.193213] page:ffffea0007cc45c0 count:0 mapcount:0 mapping:0000000000000000 index:0x0
-[  564.194856] flags: 0x2ffff0000000000()
-[  564.195644] raw: 02ffff0000000000 0000000000000000 dead000000000200 0000000000000000
-[  564.197247] raw: 0000000000000000 0000000000000000 00000000ffffffff 0000000000000000
-[  564.198826] page dumped because: kasan: bad access detected
-
-[  564.200299] Memory state around the buggy address:
-[  564.201306]  ffff8801f3117b80: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-[  564.202779]  ffff8801f3117c00: 00 00 00 00 00 00 00 00 00 00 00 f3 f3 f3 f3 f3
-[  564.204252] >ffff8801f3117c80: f3 f3 f3 00 00 00 00 00 00 00 00 00 f1 f1 f1 f1
-[  564.205742]                    ^
-[  564.206424]  ffff8801f3117d00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-[  564.207908]  ffff8801f3117d80: f3 f3 f3 f3 f3 f3 f3 f3 00 00 00 00 00 00 00 00
-[  564.209389] ==================================================================
-[  564.231795] F2FS-fs (loop0): Mounted with checkpoint version = 2
-
-- Location
-https://elixir.bootlin.com/linux/v4.18-rc1/source/fs/f2fs/segment.h#L586
-	return div_u64((u64)valid_user_blocks(sbi) * 100,
-					sbi->user_block_count);
-Missing checks on sbi->user_block_count.
-
-Reported-by: Wen Xu <wen.xu@gatech.edu>
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
+Signed-off-by: Jinbum Park <jinb.park7@gmail.com>
 ---
-v2:
-- replace le32_to_cpu with le64_to_cpu.
- fs/f2fs/super.c | 13 ++++++++++++-
- 1 file changed, 12 insertions(+), 1 deletion(-)
+ drivers/block/pktcdvd.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 7fb51885a240..09009f5b3e87 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -2283,6 +2283,8 @@ int f2fs_sanity_check_ckpt(struct f2fs_sb_info *sbi)
- 	unsigned int sit_segs, nat_segs;
- 	unsigned int sit_bitmap_size, nat_bitmap_size;
- 	unsigned int log_blocks_per_seg;
-+	unsigned int user_block_count;
-+	unsigned int segment_count_main;
- 	int i;
+diff --git a/drivers/block/pktcdvd.c b/drivers/block/pktcdvd.c
+index c61d20c..665760d 100644
+--- a/drivers/block/pktcdvd.c
++++ b/drivers/block/pktcdvd.c
+@@ -67,8 +67,8 @@
+ #include <scsi/scsi.h>
+ #include <linux/debugfs.h>
+ #include <linux/device.h>
+-
+ #include <linux/uaccess.h>
++#include <linux/nospec.h>
  
- 	total = le32_to_cpu(raw_super->segment_count);
-@@ -2307,6 +2309,16 @@ int f2fs_sanity_check_ckpt(struct f2fs_sb_info *sbi)
- 		return 1;
- 	}
+ #define DRIVER_NAME	"pktcdvd"
  
-+	user_block_count = le64_to_cpu(ckpt->user_block_count);
-+	segment_count_main = le32_to_cpu(raw_super->segment_count_main);
-+	log_blocks_per_seg = le32_to_cpu(raw_super->log_blocks_per_seg);
-+	if (!user_block_count || user_block_count >=
-+			segment_count_main << log_blocks_per_seg) {
-+		f2fs_msg(sbi->sb, KERN_ERR,
-+			"Wrong user_block_count: %u", user_block_count);
-+		return 1;
-+	}
+@@ -2229,9 +2229,13 @@ static void pkt_release_dev(struct pktcdvd_device *pd, int flush)
+ 
+ static struct pktcdvd_device *pkt_find_dev_from_minor(unsigned int dev_minor)
+ {
++	unsigned int idx = 0;
 +
- 	main_segs = le32_to_cpu(raw_super->segment_count_main);
- 	blocks_per_seg = sbi->blocks_per_seg;
+ 	if (dev_minor >= MAX_WRITERS)
+ 		return NULL;
+-	return pkt_devs[dev_minor];
++
++	idx = array_index_nospec(dev_minor, MAX_WRITERS);
++	return pkt_devs[idx];
+ }
  
-@@ -2323,7 +2335,6 @@ int f2fs_sanity_check_ckpt(struct f2fs_sb_info *sbi)
- 
- 	sit_bitmap_size = le32_to_cpu(ckpt->sit_ver_bitmap_bytesize);
- 	nat_bitmap_size = le32_to_cpu(ckpt->nat_ver_bitmap_bytesize);
--	log_blocks_per_seg = le32_to_cpu(raw_super->log_blocks_per_seg);
- 
- 	if (sit_bitmap_size != ((sit_segs / 2) << log_blocks_per_seg) / 8 ||
- 		nat_bitmap_size != ((nat_segs / 2) << log_blocks_per_seg) / 8) {
+ static int pkt_open(struct block_device *bdev, fmode_t mode)
 -- 
-2.18.0.rc1
+1.9.1
 
