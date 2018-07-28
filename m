@@ -2,135 +2,100 @@ Return-Path: <SRS0=xGmI=KM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46B07C28CF6
-	for <linux-kernel@archiver.kernel.org>; Sat, 28 Jul 2018 23:03:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86C08C43142
+	for <linux-kernel@archiver.kernel.org>; Sat, 28 Jul 2018 23:07:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EE12C20842
-	for <linux-kernel@archiver.kernel.org>; Sat, 28 Jul 2018 23:03:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 26C7220842
+	for <linux-kernel@archiver.kernel.org>; Sat, 28 Jul 2018 23:07:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ICsSqpwS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EE12C20842
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZYgkKe28"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 26C7220842
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731679AbeG2Ab1 (ORCPT
+        id S1731507AbeG2Afv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 28 Jul 2018 20:31:27 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:53905 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731559AbeG2AbZ (ORCPT
+        Sat, 28 Jul 2018 20:35:51 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:46644 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730656AbeG2Afv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 28 Jul 2018 20:31:25 -0400
-Received: by mail-wm0-f66.google.com with SMTP id s9-v6so9078607wmh.3
-        for <linux-kernel@vger.kernel.org>; Sat, 28 Jul 2018 16:03:16 -0700 (PDT)
+        Sat, 28 Jul 2018 20:35:51 -0400
+Received: by mail-wr1-f68.google.com with SMTP id h14-v6so8700032wrw.13
+        for <linux-kernel@vger.kernel.org>; Sat, 28 Jul 2018 16:07:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=wjqr9oW2v98Sh4Pkw8ZVY9CuXao3Z4EK2O6ZSMuHy6I=;
-        b=ICsSqpwSHh0VFUa586VaiY9f1ISNW+SfEmsaloijUFlDg9zjzt12EKpPNH5pMutkuM
-         /cHdCWF9wxhSFxC0YTglxLLoBgQ6EofWjMXLg2Gguh6AcMp9O10OmK74pUX3o98mJHco
-         +kD3gsC12upvYNGDdPxJ6/W8iiJknlZkGvsOPb3VbGhedCPjhUbdji9I8hZJ3cGlaLf1
-         jNpAaf8myexeGCHbSXUlY9GXUnNB8IB0lQefC5EMQEJtNQZDN+VMshztENCBXQa4IAoH
-         T6egafPJKTYoALnAhzFSEw6n2KZrYJ6xq/ZLLF7k0gx5kyGJho7tkZa3sKlzy+OMIbGy
-         ePVg==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=RqCoUn7/bi3Uy5v9p9ZriAmLLGm3JhOtEDs5Pb92SJQ=;
+        b=ZYgkKe28S+vsDFWWzuqxt+cTR/YMb8d7akr+CoXWMccngINljzXYA/x/OTokXucquP
+         kxtynh5uYxohX8Fuj2KC7JV4XXybspac5G4U4oyQeOBjj/Mm9QvQVH8PBiUNL+rVbklO
+         u6M/+ybh31R3x6/dk6e5xofChVS9itY+zYcrKrYzALKUsQfZ2r+yowsHrMjtbgPsvq32
+         cv111wRgKcVM6OLpYhHErq4+K7eXUHiRSTFfd0dyPub590AXBTp7Kj4Kl/vcDp9VS2cC
+         91/vDiw70sh5DyQI6AbE+imrBmacK30mUfOwetC6OAQn5ZgXU5kO4JwHhKiH8MfGhjPR
+         um3g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=wjqr9oW2v98Sh4Pkw8ZVY9CuXao3Z4EK2O6ZSMuHy6I=;
-        b=pk4IaKsXCBQ/gCkDTxvXIS1+plBJL3q4UUe/IsXk8PCSpjydYH1UgrI2ESlcoFbMsZ
-         Y699NGm1JeWVVzAFjwIBkf+IjfYl48w1CENypndHQE7ud3GQk3sT8un06eItSHafs7K3
-         M0lPmuTLQzg/LgDoV/u2TJMw5rz36IyPUc0kDwyTRz9YJa1vopvcOTHnkuA6fwPVw0eH
-         gTJOZCNGZOVW0Sv3V9ma4lFsqEMRyoaDM9pi7nG6KZh0a+QVokhkxjPpdvduSVy3E1xE
-         6IYfSf9mBUy03vK8U2p6KQy3ls2mkCAtwg9uldPts2AdUZ8lMze5DxIoAUSVtSM5c5RO
-         2rXA==
-X-Gm-Message-State: AOUpUlH6JRm77fIEbxfYH47zRrNVNL1inaob1uI4ob/Z8QMO5V94vs11
-        jE/T4vHLK95gGE9kt5Sl44eeJYPb
-X-Google-Smtp-Source: AAOMgpflarYnenK8PzvHv+Noa70eE3pu0Yskh2eWaTsXlR1eDOamfN/KArqnbtyi3RpfWW0bbe5pZw==
-X-Received: by 2002:a1c:b9cf:: with SMTP id j198-v6mr9728927wmf.93.1532818995648;
-        Sat, 28 Jul 2018 16:03:15 -0700 (PDT)
-Received: from localhost.localdomain (host81-158-116-187.range81-158.btcentralplus.com. [81.158.116.187])
-        by smtp.gmail.com with ESMTPSA id m207-v6sm11490569wma.31.2018.07.28.16.03.14
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 28 Jul 2018 16:03:14 -0700 (PDT)
-From:   John Whitmore <johnfwhitmore@gmail.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     devel@driverdev.osuosl.org, gregkh@linuxfoundation.org,
-        John Whitmore <johnfwhitmore@gmail.com>
-Subject: [PATCH 07/12] staging:rtl8192u: Rename union QOS_TSINFO - Style
-Date:   Sun, 29 Jul 2018 00:02:59 +0100
-Message-Id: <20180728230300.19732-8-johnfwhitmore@gmail.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180728230300.19732-1-johnfwhitmore@gmail.com>
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=RqCoUn7/bi3Uy5v9p9ZriAmLLGm3JhOtEDs5Pb92SJQ=;
+        b=jYk8j57nsmPM9iht3GuQM/CoH0JTnZ8XltqVqiR9FPvj/aPwfxKrwnTE9tBxfTUj87
+         3mjZ3bMZv83fPdu5bvFziI6O34JuVIfo1KU5fcoCJErZGdzs/zu1v06olbLFrve8GRR/
+         CDmhDnKdOU83BnOMWCkR0R1MlxkumzgOV4T9tQP8xdfaBvu6801Agbi5O1+kvms/oxo8
+         Eyl2LTGB6fY84THIKfv9L7E8hwRpPfpn4p+zfCHSRnDOWUqYPESHN6boYelDnTCmoQse
+         adFO6k0melJe1wt3J3+D71uda4uLE1gllIc0T+uYs8FOX9iiPUhKjmJfB4w8LZhPD3VO
+         r0vw==
+X-Gm-Message-State: AOUpUlE5D8gIglqxQkE4xAB2t5M679s81xWW2JhmF1e+/4/D7/dGy99H
+        XLskACWIc+Xa+mKk++TJyDA=
+X-Google-Smtp-Source: AAOMgpcNQogQEj5mOKiSklkoVoqopAb09qgv2YVpHaDN6fn2ieJjOJd5A1MkhxTB5gA/QB3qnW/SGw==
+X-Received: by 2002:adf:db11:: with SMTP id s17-v6mr5515777wri.221.1532819261171;
+        Sat, 28 Jul 2018 16:07:41 -0700 (PDT)
+Received: from xux707-tw (host81-158-116-187.range81-158.btcentralplus.com. [81.158.116.187])
+        by smtp.gmail.com with ESMTPSA id r1-v6sm8223327wrs.39.2018.07.28.16.07.39
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sat, 28 Jul 2018 16:07:40 -0700 (PDT)
+Date:   Sun, 29 Jul 2018 00:07:41 +0100
+From:   John Whitmore <arigead@gmail.com>
+To:     John Whitmore <johnfwhitmore@gmail.com>
+Cc:     linux-kernel@vger.kernel.org, devel@driverdev.osuosl.org,
+        gregkh@linuxfoundation.org
+Subject: Re: [PATCH 00/08] staging:rtl8192u: cleanup of rtl819x_Qos.h - Style
+Message-ID: <20180728230740.GA19821@xux707-tw>
 References: <20180728230300.19732-1-johnfwhitmore@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180728230300.19732-1-johnfwhitmore@gmail.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The union QOS_TSINFO, as a type, should have a lowercase name. The
-union has therefore been renamed to qos_tsinfo. Additionally the
-'typedef' directive has been removed to clear the checkpatch issue
-with defining new types.
+On Sun, Jul 29, 2018 at 12:02:52AM +0100, John Whitmore wrote:
+> These are a few coding style changes to the file
+> drivers/staging/rtl8192u/ieee80211/rtl819x_Qos.h
+> I had more patches in the list but had to dump some of the later
+> patches as I made a mistake. Thought I'd send these 8.
+> 
+> John Whitmore (8):
+>   staging:rtl8192u: Add spaces around operators - Style
+>   staging:rtl8192u: Rename ACI_AIFSN - Style
+>   staging:rtl8192u: Rename member variables - Style
+>   staging:rtl8192u: Remove unused  union AC_PARAM - Style
+>   staging:rtl8192u: Remove unused union ECW -Style
+>   staging:rtl8192u: Rename enum DIRECTION_VALUE - Style
+>   staging:rtl8192u: Rename union QOS_TSINFO - Style
+>   staging:rtl8192u: Remove unused constants - Style
+> 
 
-These are coding style changes which should have no impact on runtime
-code execution.
+Sorry I forgot to edit the subject of each of the patch emails to
+truncate the patch series to just the 8 that were good. I'll edit and
+resend.
 
-Signed-off-by: John Whitmore <johnfwhitmore@gmail.com>
----
- drivers/staging/rtl8192u/ieee80211/rtl819x_Qos.h    | 6 +++---
- drivers/staging/rtl8192u/ieee80211/rtl819x_TSProc.c | 2 +-
- 2 files changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/staging/rtl8192u/ieee80211/rtl819x_Qos.h b/drivers/staging/rtl8192u/ieee80211/rtl819x_Qos.h
-index 428a8c4cebf1..17b676b0ed8b 100644
---- a/drivers/staging/rtl8192u/ieee80211/rtl819x_Qos.h
-+++ b/drivers/staging/rtl8192u/ieee80211/rtl819x_Qos.h
-@@ -42,7 +42,7 @@ enum direction_value {
- //	1. WMM spec 2.2.11: WME TSPEC Element, p.18.
- //	2. 8185 QoS code: QOS_TSINFO [def. in QoS_mp.h]
- //
--typedef union _QOS_TSINFO {
-+union qos_tsinfo {
- 	u8		charData[3];
- 	struct {
- 		u8		ucTrafficType:1;			//WMM is reserved
-@@ -56,7 +56,7 @@ typedef union _QOS_TSINFO {
- 		u8		ucSchedule:1;			//WMM is reserved
- 		u8		ucReserved:7;
- 	} field;
--} QOS_TSINFO, *PQOS_TSINFO;
-+};
- 
- //
- // WMM TSPEC Body.
-@@ -66,7 +66,7 @@ typedef union _TSPEC_BODY {
- 	u8		charData[55];
- 
- 	struct {
--		QOS_TSINFO	TSInfo;	//u8	TSInfo[3];
-+		union qos_tsinfo	TSInfo;	//u8	TSInfo[3];
- 		u16	NominalMSDUsize;
- 		u16	MaxMSDUsize;
- 		u32	MinServiceItv;
-diff --git a/drivers/staging/rtl8192u/ieee80211/rtl819x_TSProc.c b/drivers/staging/rtl8192u/ieee80211/rtl819x_TSProc.c
-index 79c96da41d8b..4d92b97a1521 100644
---- a/drivers/staging/rtl8192u/ieee80211/rtl819x_TSProc.c
-+++ b/drivers/staging/rtl8192u/ieee80211/rtl819x_TSProc.c
-@@ -355,7 +355,7 @@ bool GetTs(
- 			// For HCCA or WMMSA, TS cannot be addmit without negotiation.
- 			//
- 			TSPEC_BODY	TSpec;
--			PQOS_TSINFO		pTSInfo = &TSpec.f.TSInfo;
-+			union qos_tsinfo	*pTSInfo = &TSpec.f.TSInfo;
- 			struct list_head	*pUnusedList =
- 								(TxRxSelect == TX_DIR)?
- 								(&ieee->Tx_TS_Unused_List):
--- 
-2.18.0
-
+jwhitmore
