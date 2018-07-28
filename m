@@ -6,78 +6,116 @@ X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 360FBC6778F
-	for <linux-kernel@archiver.kernel.org>; Sat, 28 Jul 2018 07:23:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EC15C28CF6
+	for <linux-kernel@archiver.kernel.org>; Sat, 28 Jul 2018 07:25:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EAD9720842
-	for <linux-kernel@archiver.kernel.org>; Sat, 28 Jul 2018 07:23:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EAD9720842
+	by mail.kernel.org (Postfix) with ESMTP id C70E320842
+	for <linux-kernel@archiver.kernel.org>; Sat, 28 Jul 2018 07:25:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C70E320842
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727565AbeG1ItX (ORCPT
+        id S1727023AbeG1IvW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 28 Jul 2018 04:49:23 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:37508 "EHLO
+        Sat, 28 Jul 2018 04:51:22 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:37544 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726103AbeG1ItX (ORCPT
+        with ESMTP id S1726103AbeG1IvV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 28 Jul 2018 04:49:23 -0400
+        Sat, 28 Jul 2018 04:51:21 -0400
 Received: from localhost (D57D388D.static.ziggozakelijk.nl [213.125.56.141])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D407474;
-        Sat, 28 Jul 2018 07:23:52 +0000 (UTC)
-Date:   Sat, 28 Jul 2018 09:23:50 +0200
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 018C83EE;
+        Sat, 28 Jul 2018 07:25:50 +0000 (UTC)
+Date:   Sat, 28 Jul 2018 09:25:48 +0200
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Todd Poynor <toddpoynor@gmail.com>
-Cc:     Rob Springer <rspringer@google.com>,
-        John Joseph <jnjoseph@google.com>,
-        Ben Chan <benchan@chromium.org>, devel@driverdev.osuosl.org,
-        Todd Poynor <toddpoynor@google.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 5/5] staging: gasket: core: hold reference on device kobj
- while in use
-Message-ID: <20180728072350.GA9809@kroah.com>
-References: <20180728052200.228796-1-toddpoynor@gmail.com>
- <20180728052200.228796-6-toddpoynor@gmail.com>
+To:     Gao Xiang <gaoxiang25@huawei.com>
+Cc:     devel@driverdev.osuosl.org, hsiangkao@aol.com,
+        linux-erofs@lists.ozlabs.org, yuchao0@huawei.com,
+        linux-kernel@vger.kernel.org, weidu.du@huawei.com,
+        linux-fsdevel@vger.kernel.org, miaoxie@huawei.com, chao@kernel.org
+Subject: Re: [PATCH 00/25] staging: erofs: introduce erofs file system
+Message-ID: <20180728072548.GA1500@kroah.com>
+References: <1527764767-22190-1-git-send-email-gaoxiang25@huawei.com>
+ <1532607728-103372-1-git-send-email-gaoxiang25@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180728052200.228796-6-toddpoynor@gmail.com>
+In-Reply-To: <1532607728-103372-1-git-send-email-gaoxiang25@huawei.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 27, 2018 at 10:22:00PM -0700, Todd Poynor wrote:
-> From: Todd Poynor <toddpoynor@google.com>
+On Thu, Jul 26, 2018 at 08:21:43PM +0800, Gao Xiang wrote:
+> Hi,
 > 
-> Hold a reference on the struct device kobject while a pointer to that
-> device is in use by gasket.
+> This is actually the 2nd patchset of erofs file system,
+> the original patchset can be found at
 > 
-> Reported-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Signed-off-by: Todd Poynor <toddpoynor@google.com>
-> ---
->  drivers/staging/gasket/gasket_core.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
+> Link: https://marc.info/?l=linux-fsdevel&m=152776480425624
 > 
-> diff --git a/drivers/staging/gasket/gasket_core.c b/drivers/staging/gasket/gasket_core.c
-> index 859a6df9e12df..1dc7273e38734 100644
-> --- a/drivers/staging/gasket/gasket_core.c
-> +++ b/drivers/staging/gasket/gasket_core.c
-> @@ -449,6 +449,7 @@ static int gasket_alloc_dev(
->  	gasket_dev->dev_idx = dev_idx;
->  	snprintf(gasket_dev->kobj_name, GASKET_NAME_MAX, "%s", kobj_name);
->  	gasket_dev->dev = parent;
-> +	kobject_get(&gasket_dev->dev->kobj);
+> In order to keep up with the mainline linux-kernel changes and
+> improve it in a more active and timely manner, we put forword
+> this upstream proposal for linux-staging.
+> 
+> EROFS file system is a read-only file system with compression
+> support designed for certain devices (especially embeded
+> devices) with very limited physical memory and lots of memory
+> consumers, such as Android devices. It aimes to provide
+> a complete compression solution for such devices focuing
+> on high performance and little extra memory overhead.
+> 
+> It is perferred to select larger compressed cluster sizes
+> (generally >= 128k) for traditional compression file systems.
+> It reads and decompresses a large compressed cluster at once,
+> which has a good-looking random read number when memory
+> is sufficient because all historial decompressed data
+> is expected to be cached in memory. However, it also
+> induces destructive effects when such devices have no enough
+> spare memory for caching and decompression.
+> 
+> EROFS file system acts in some different way. It uses
+> fixed-sized compressed size rather than fixed-sized input
+> size, namely VLE (variable-length extent) compression,
+> which has at least three adventages:
+> 
+>  1) all data read from block device at once can be
+>     utilized, and read amplification can be easier to
+>     estimate and control;
+>  2) generally, it has a better compression ratio than
+>     fixed-sized input compression approaches configured
+>     with the same size;
+>  3) aggressively optimized paths such as partial page
+>     read can be implemented to gain better performance
+>     for page-unaligned read (unimplemented yet, in TODO list).
+> 
+> As can be seen, VLE compression does a great job in small
+> compressed cluster sizes, which is of course suitable for
+> devices with limited memory. In this patchset, an in-place
+> decompresion is also introduced to minimize extra memory usage.
+> 
+> 
+> Apart from compression, EROFS also has the following features
+> available and some limits:
+>  o page-sized block support (currently, and no buffer-head);
+>  o 32-bit block address (16TB for 4KB block);
+>  o selectable v1 (32 bytes) / v2 (64 bytes) inode;
+>  o 32-bit / 64-bit file size;
+>  o 64-bit node number for addressing inodes;
+>  o 64-bit s and 32-bit ns timestamps;
+>  o inline data support;
+>  o inline and shared xattr support;
+>  o metadata and data can be mixed (optional);
+>  o special inode support;
+>  o posix acl support.
+> 
+> 
+> The file system is still actively WIP, see _TODO_ for more details.
+> 
+> Any comments are welcome. :)
 
-Hint, if you are a driver, working with devices, you should never call a
-kobject_* or sysfs_* call.  If you are, you are doing something really
-wrong and odd and should seriously reconsider it.  No driver should ever
-be touching a "raw" kobject.
-
-For this case, get_device()/put_device() is what you should be using.
-
-thanks,
+Thanks for submitting this, the filesystem looks very interesting.  I've
+queued it all up now in the staging-next tree.
 
 greg k-h
