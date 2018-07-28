@@ -2,117 +2,407 @@ Return-Path: <SRS0=xGmI=KM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0E6EC67790
-	for <linux-kernel@archiver.kernel.org>; Sat, 28 Jul 2018 00:04:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0901C6778F
+	for <linux-kernel@archiver.kernel.org>; Sat, 28 Jul 2018 00:05:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8306B20862
-	for <linux-kernel@archiver.kernel.org>; Sat, 28 Jul 2018 00:04:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3A4B020862
+	for <linux-kernel@archiver.kernel.org>; Sat, 28 Jul 2018 00:05:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=thunk.org header.i=@thunk.org header.b="l5T5JMgW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8306B20862
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mit.edu
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="BeI0lxq/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3A4B020862
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=wdc.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389302AbeG1B3J (ORCPT
+        id S2389246AbeG1B3I (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 21:29:09 -0400
-Received: from imap.thunk.org ([74.207.234.97]:37386 "EHLO imap.thunk.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388998AbeG1B3J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 21:29:09 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=thunk.org;
-         s=ef5046eb; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=iczM11v4Sb9qFS0jeKu0lewIsLnK/WmUlQd/yujAJpw=; b=l5T5JMgWtqzW25h3jtub1zFYUk
-        d9SrMDIAFY2HwH/pUSsg9EL+tCMB0JqrKoEbrnGCpBDhQwaQXM4G1B+qn09EQcPWqqkdE9+1+LcLR
-        68h0DsycAxUtGo/FIuzCAui81pb5B5dJtCAfq0c+B8dLLMVWnb4HWbtxEgFC1s/DbXbs=;
-Received: from root (helo=callcc.thunk.org)
-        by imap.thunk.org with local-esmtp (Exim 4.89)
-        (envelope-from <tytso@thunk.org>)
-        id 1fjCir-00035d-I2; Sat, 28 Jul 2018 00:04:38 +0000
-Received: by callcc.thunk.org (Postfix, from userid 15806)
-        id E2AF77A6163; Fri, 27 Jul 2018 20:04:28 -0400 (EDT)
-Date:   Fri, 27 Jul 2018 20:04:28 -0400
-From:   "Theodore Y. Ts'o" <tytso@mit.edu>
-To:     Sandeep Patil <sspatil@google.com>
-Cc:     Steven Rostedt <rostedt@goodmis.org>, Jann Horn <jannh@google.com>,
-        salyzyn@google.com, Nick Desaulniers <ndesaulniers@google.com>,
-        Golden_Miller83@protonmail.ch, Greg KH <greg@kroah.com>,
-        Kees Cook <keescook@google.com>, salyzyn@android.com,
-        kernel list <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@redhat.com>, kernel-team@android.com,
-        stable@vger.kernel.org,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Jeffrey Vander Stoep <jeffv@google.com>
-Subject: Re: [PATCH] tracing: do not leak kernel addresses
-Message-ID: <20180728000428.GI13922@thunk.org>
-Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Sandeep Patil <sspatil@google.com>,
-        Steven Rostedt <rostedt@goodmis.org>, Jann Horn <jannh@google.com>,
-        salyzyn@google.com, Nick Desaulniers <ndesaulniers@google.com>,
-        Golden_Miller83@protonmail.ch, Greg KH <greg@kroah.com>,
-        Kees Cook <keescook@google.com>, salyzyn@android.com,
-        kernel list <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@redhat.com>, kernel-team@android.com,
-        stable@vger.kernel.org,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Jeffrey Vander Stoep <jeffv@google.com>
-References: <20180727094730.3a448629@gandalf.local.home>
- <CAKwvOdmg4DSSwy9YBccYWzc+6ZU2yKSSFmfnj72wqbYDJU0gzw@mail.gmail.com>
- <20180727143141.4b53d554@gandalf.local.home>
- <CAMx4XWv3OazvURuN1XU2+5C5tNDzPuTniMn_T=XTA4P8_uwS_A@mail.gmail.com>
- <CAG48ez25zgjTQRux_rk1fn2DUVthtK31dRU9cxE+55pBGmYjXQ@mail.gmail.com>
- <CAG48ez1MdupASE1DMt0OWXv+rqZO-2GAbfDthEQcvNXrc2pTsQ@mail.gmail.com>
- <20180727195416.GF13922@thunk.org>
- <20180727161103.797f12b7@gandalf.local.home>
- <20180727202114.GH13922@thunk.org>
- <20180727220543.GT190909@sspatil-desktop.mtv.corp.google.com>
+        Fri, 27 Jul 2018 21:29:08 -0400
+Received: from esa5.hgst.iphmx.com ([216.71.153.144]:11251 "EHLO
+        esa5.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388893AbeG1B3I (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Jul 2018 21:29:08 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1532736294; x=1564272294;
+  h=subject:to:cc:references:from:message-id:date:
+   mime-version:in-reply-to:content-transfer-encoding;
+  bh=G1J6hjMs2b/FDXS4BiWaNwhy1C9ncRjwQhEggzfuPsg=;
+  b=BeI0lxq/vT58zWUy5xTL0Sd1nnSKAJsnyetkgYYtDtpKxPu7nv/Y5HqJ
+   dzlyIn3hfVxoSOko/lpqwtjfb3UMoi18oUeRxZjjmgr/kzQqsHYsk96nY
+   zPvZIyZGyLzvJYmqZNvsn2asDqZl1yBthEV+0c6hz/BgoOccDek2cOA6b
+   bf9xTCIo8J7r9SdA0chOFOar8QRRGktgZS9X75woqTaOFWa5KxG0U3qqs
+   fEsWpxlWJIdcfBr+esfyX/BdFDtfjoO6WwgeASxYGagSe5hUJuNnstKnY
+   Td/teXOLsIq/CnqwMgbK4TZokYrNtvnSLBIWO0L7ECFcTQVufziyIQSh9
+   A==;
+X-IronPort-AV: E=Sophos;i="5.51,411,1526313600"; 
+   d="scan'208";a="86033634"
+Received: from uls-op-cesaip01.wdc.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
+  by ob1.hgst.iphmx.com with ESMTP; 28 Jul 2018 08:04:53 +0800
+Received: from uls-op-cesaip01.wdc.com ([10.248.3.36])
+  by uls-op-cesaep01.wdc.com with ESMTP; 27 Jul 2018 16:53:25 -0700
+Received: from c02v91rdhtd5.sdcorp.global.sandisk.com (HELO [10.196.159.148]) ([10.196.159.148])
+  by uls-op-cesaip01.wdc.com with ESMTP; 27 Jul 2018 17:04:52 -0700
+Subject: Re: [PATCH 7/9] irqchip: add a RISC-V PLIC driver
+To:     Christoph Hellwig <hch@lst.de>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "palmer@sifive.com" <palmer@sifive.com>,
+        "jason@lakedaemon.net" <jason@lakedaemon.net>,
+        "marc.zyngier@arm.com" <marc.zyngier@arm.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>
+Cc:     "anup@brainfault.org" <anup@brainfault.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "aou@eecs.berkeley.edu" <aou@eecs.berkeley.edu>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
+        "shorne@gmail.com" <shorne@gmail.com>
+References: <20180726143723.16585-1-hch@lst.de>
+ <20180726143723.16585-8-hch@lst.de>
+From:   Atish Patra <atish.patra@wdc.com>
+Message-ID: <1b3f6066-0c7c-a5f5-75ad-559fe81091ee@wdc.com>
+Date:   Fri, 27 Jul 2018 17:04:52 -0700
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
+ Gecko/20100101 Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180727220543.GT190909@sspatil-desktop.mtv.corp.google.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: tytso@thunk.org
-X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
+In-Reply-To: <20180726143723.16585-8-hch@lst.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 27, 2018 at 03:05:43PM -0700, Sandeep Patil wrote:
-> On Fri, Jul 27, 2018 at 04:21:14PM -0400, Theodore Y. Ts'o wrote:
-> > On Fri, Jul 27, 2018 at 04:11:03PM -0400, Steven Rostedt wrote:
-> > > That said, I would assume that
-> > > other Android utilities are using other debugfs files for system
-> > > status and such.
+On 7/26/18 7:38 AM, Christoph Hellwig wrote:
+> This patch adds a driver for the Platform Level Interrupt Controller (PLIC)
+> specified as part of the RISC-V supervisor level ISA manual, in the memory
+> layout implemented by SiFive and qemu.
 > 
-> As of today, I think a lot of information in 'bugreports' is read
-> out of debugfs (including things like binder stats). We do have a plan
-> to change that.
+> The PLIC connects global interrupt sources to the local interrupt controller
+> on each hart.
+> 
+> This driver is based on the driver in the RISC-V tree from Palmer Dabbelt,
+> but has been almost entirely rewritten since.
+> 
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
 
-Hmm, if it's only for bugreports, maybe it can be only mounted when
-about root processes getting tricked into reading from debugfs.
+I tried to boot HighFive Unleashed with the patch series after applying 
+all the patches from riscv-all branch except timer & irq patches. It 
+gets stuck pretty early.
 
+Here is my github repo with all the changes:
+https://github.com/atishp04/riscv-linux/commits/master_chris_cleanup_hifive
 
-> Indeed, I think it can. However, the problem is the last time I tried to
-> remove this a whole bunch of things just broke. So, it wasn't about losing
-> a functionality here and there. Agree, we need to clean up platform to not use
-> debugfs first. Then we can expect Apps or other native processes to not rely
-> on debugfs at all.
+I am still looking into it.
+Palmer: Did I miss something?
 
-Is Android controlling access to debugfs files via SELinux?  If so,
-then access to debugfs can be gradually cranked down as use cases are
-removed.
+FWIW, here is the boot log.
+--------- Boot log -------------------------------------------
+[    0.000000] RCU: Adjusting geometry for rcu_fanout_leaf=16, nr_cpu_ids=5
+[    0.000000] NR_IRQS: 0, nr_irqs: 0, preallocated irqs: 0
+[    0.000000] plic: mapped 53 interrupts to 4 (out of 9) handlers.
+[    0.000000] clocksource: riscv_clocksource: mask: 0xffffffffffffffff 
+max_cycles: 0x1d854df40, max_idle_ns: 3526361616960 ns
+[    0.000000] Calibrating delay loop (skipped), value calculated using 
+timer frequency.. 2.00 BogoMIPS (lpj=10000)
+[    0.010000] pid_max: default: 32768 minimum: 301
+[    0.010000] Mount-cache hash table entries: 16384 (order: 5, 131072 
+bytes)
+[    0.020000] Mountpoint-cache hash table entries: 16384 (order: 5, 
+131072 bytes)
+[    0.020000] Hierarchical SRCU implementation.
+[    0.030000] smp: Bringing up secondary CPUs ...
+> ---
+>   drivers/irqchip/Kconfig          |  13 ++
+>   drivers/irqchip/Makefile         |   1 +
+>   drivers/irqchip/irq-riscv-plic.c | 219 +++++++++++++++++++++++++++++++
+>   3 files changed, 233 insertions(+)
+>   create mode 100644 drivers/irqchip/irq-riscv-plic.c
+> 
+> diff --git a/drivers/irqchip/Kconfig b/drivers/irqchip/Kconfig
+> index e9233db16e03..5ac6dd922a0d 100644
+> --- a/drivers/irqchip/Kconfig
+> +++ b/drivers/irqchip/Kconfig
+> @@ -372,3 +372,16 @@ config QCOM_PDC
+>   	  IRQs for Qualcomm Technologies Inc (QTI) mobile chips.
+>   
+>   endmenu
+> +
+> +config RISCV_PLIC
+> +	bool "Platform-Level Interrupt Controller"
+> +	depends on RISCV
+> +	default y
+> +	help
+> +	   This enables support for the PLIC chip found in standard RISC-V
+> +	   systems.  The PLIC controls devices interrupts and connects them to
+> +	   each core's local interrupt controller.  Aside from timer and
+> +	   software interrupts, all other interrupt sources (MSI, GPIO, etc)
+> +	   are subordinate to the PLIC.
+> +
+> +	   If you don't know what to do here, say Y.
+> diff --git a/drivers/irqchip/Makefile b/drivers/irqchip/Makefile
+> index 15f268f646bf..bf9238da8a31 100644
+> --- a/drivers/irqchip/Makefile
+> +++ b/drivers/irqchip/Makefile
+> @@ -87,3 +87,4 @@ obj-$(CONFIG_MESON_IRQ_GPIO)		+= irq-meson-gpio.o
+>   obj-$(CONFIG_GOLDFISH_PIC) 		+= irq-goldfish-pic.o
+>   obj-$(CONFIG_NDS32)			+= irq-ativic32.o
+>   obj-$(CONFIG_QCOM_PDC)			+= qcom-pdc.o
+> +obj-$(CONFIG_RISCV_PLIC)		+= irq-riscv-plic.o
+> diff --git a/drivers/irqchip/irq-riscv-plic.c b/drivers/irqchip/irq-riscv-plic.c
+> new file mode 100644
+> index 000000000000..274fe2cba544
+> --- /dev/null
+> +++ b/drivers/irqchip/irq-riscv-plic.c
+> @@ -0,0 +1,219 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (C) 2017 SiFive
+> + * Copyright (C) 2018 Christoph Hellwig
+> + */
+> +#define pr_fmt(fmt) "plic: " fmt
+> +#include <linux/cpumask.h>
+> +#include <linux/interrupt.h>
+> +#include <linux/io.h>
+> +#include <linux/irq.h>
+> +#include <linux/irqchip.h>
+> +#include <linux/irqdomain.h>
+> +#include <linux/module.h>
+> +#include <linux/of.h>
+> +#include <linux/of_address.h>
+> +#include <linux/of_irq.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/spinlock.h>
+> +
+> +/*
+> + * From the RISC-V Priviledged Spec v1.10:
+> + *
+> + * Global interrupt sources are assigned small unsigned integer identifiers,
+> + * beginning at the value 1.  An interrupt ID of 0 is reserved to mean "no
+> + * interrupt".  Interrupt identifiers are also used to break ties when two or
+> + * more interrupt sources have the same assigned priority. Smaller values of
+> + * interrupt ID take precedence over larger values of interrupt ID.
+> + *
+> + * While the RISC-V supervisor spec doesn't define the maximum number of
+> + * devices supported by the PLIC, the largest number supported by devices
+> + * marked as 'riscv,plic0' (which is the only device type this driver supports,
+> + * and is the only extant PLIC as of now) is 1024.  As mentioned above, device
+> + * 0 is defined to be non-existent so this device really only supports 1023
+> + * devices.
+> + */
+> +#define MAX_DEVICES			1024
+> +#define MAX_CONTEXTS			15872
+> +
 
-						- Ted
+Is there any way we can preserve some of the comments in the original 
+patch about memory-mapped control registers or at least a reference 
+where to find the register offset calculations?
 
+IMHO, it is helpful for anybody who is not familiar with the details.
+> +/*
+> + * Each interrupt source has a priority register associated with it.
+> + * We always hardwire it to one in Linux.
+> + */
+> +#define PRIORITY_BASE			0
+> +#define	    PRIORITY_PER_ID		4
+> +
+> +/*
+> + * Each hart context has a vector of interupt enable bits associated with it.
+> + * There's one bit for each interrupt source.
+> + */
+> +#define ENABLE_BASE			0x2000
+> +#define     ENABLE_PER_HART		0x80
+> +
+> +/*
+> + * Each hart context has a set of control registers associated with it.  Right
+> + * now there's only two: a source priority threshold over which the hart will
+> + * take an interrupt, and a register to claim interrupts.
+> + */
+> +#define CONTEXT_BASE			0x200000
+> +#define     CONTEXT_PER_HART		0x1000
+> +#define     CONTEXT_THRESHOLD		0x00
+> +#define     CONTEXT_CLAIM		0x04
+> +
+> +static void __iomem *plic_regs;
+> +
+> +static inline void __iomem *plic_hart_offset(int ctxid)
+> +{
+> +	return plic_regs + CONTEXT_BASE + ctxid * CONTEXT_PER_HART;
+> +}
+> +
+> +/*
+> + * Protect mask operations on the registers given that we can't assume that
+> + * atomic memory operations work on them.
+> + */
+> +static DEFINE_SPINLOCK(plic_toggle_lock);
+> +
+> +static inline void plic_toggle(int ctxid, int hwirq, int enable)
+> +{
+> +	u32 __iomem *reg = plic_regs + ENABLE_BASE + ctxid * ENABLE_PER_HART;
 
-   	   	       
+shouldn't it be
+u32 __iomem *reg = plic_regs + ENABLE_BASE + ctxid * ENABLE_PER_HART + 
+(hwirq / 32) * 4;
+
+Without that change, plic_handle_irq() gets called before irq mapping as 
+plic was not disabled for that irq.
+
+As per comment in the original patch,
+--------------------------------------------------------------
+* base + 0x002000: Enable bits for sources 0-31 on context 0
+* base + 0x002004: Enable bits for sources 32-63 on context 0
+--------------------------------------------------------------
+
+> +	u32 hwirq_mask = 1 << (hwirq % 32);
+> +
+> +	spin_lock(&plic_toggle_lock);
+> +	if (enable)
+> +		writel(readl(reg) | hwirq_mask, reg);
+> +	else
+> +		writel(readl(reg) & ~hwirq_mask, reg);
+> +	spin_unlock(&plic_toggle_lock);
+> +}
+> +
+> +static inline void plic_irq_toggle(struct irq_data *d, int enable)
+> +{
+> +	int cpu;
+> +
+> +	writel(enable, plic_regs + PRIORITY_BASE + d->hwirq * PRIORITY_PER_ID);
+> +	for_each_present_cpu(cpu)
+> +		plic_toggle(cpu, d->hwirq, enable);
+> +}
+> +
+> +static void plic_irq_enable(struct irq_data *d)
+> +{
+> +	plic_irq_toggle(d, 1);
+> +}
+> +
+> +static void plic_irq_disable(struct irq_data *d)
+> +{
+> +	plic_irq_toggle(d, 0);
+> +}
+> +
+> +static struct irq_chip plic_chip = {
+> +	.name		= "riscv,plic0",
+> +	/*
+> +	 * There is no need to mask/unmask PLIC interrupts.  They are "masked"
+> +	 * by reading claim and "unmasked" when writing it back.
+> +	 */
+> +	.irq_enable	= plic_irq_enable,
+> +	.irq_disable	= plic_irq_disable,
+> +};
+> +
+> +static int plic_irqdomain_map(struct irq_domain *d, unsigned int irq,
+> +			      irq_hw_number_t hwirq)
+> +{
+> +	irq_set_chip_and_handler(irq, &plic_chip, handle_simple_irq);
+> +	irq_set_chip_data(irq, NULL);
+> +	irq_set_noprobe(irq);
+> +	return 0;
+> +}
+> +
+> +static const struct irq_domain_ops plic_irqdomain_ops = {
+> +	.map		= plic_irqdomain_map,
+> +	.xlate		= irq_domain_xlate_onecell,
+> +};
+> +
+> +static struct irq_domain *plic_irqdomain;
+> +
+> +/*
+> + * Handling an interrupt is a two-step process: first you claim the interrupt
+> + * by reading the claim register, then you complete the interrupt by writing
+> + * that source ID back to the same claim register.  This automatically enables
+> + * and disables the interrupt, so there's nothing else to do.
+> + */
+> +static void plic_handle_irq(struct pt_regs *regs)
+> +{
+> +	void __iomem *claim =
+> +		plic_hart_offset(smp_processor_id()) + CONTEXT_CLAIM;
+> +	irq_hw_number_t hwirq;
+> +
+> +	csr_clear(sie, SIE_STIE);
+> +	while ((hwirq = readl(claim))) {
+> +		int irq = irq_find_mapping(plic_irqdomain, hwirq);
+> +
+> +		if (unlikely(irq <= 0)) {
+> +			pr_warn_ratelimited("can't find mapping for hwirq %lu\n",
+> +					hwirq);
+
+Ratlimiting the warning message here didn't help as ack_bad_irq() still 
+print message still flooded the console without any useful info.
+
+Regards,
+Atish
+> +			ack_bad_irq(irq);
+> +		} else {
+> +			generic_handle_irq(irq);
+> +		}
+> +		writel(hwirq, claim);
+> +	}
+> +	csr_set(sie, SIE_STIE);
+> +}
+> +
+> +static int __init plic_init(struct device_node *node,
+> +		struct device_node *parent)
+> +{
+> +	int error = 0, nr_mapped = 0, nr_handlers, cpu;
+> +	u32 nr_irqs;
+> +
+> +	if (plic_regs) {
+> +		pr_warning("PLIC already present.\n");
+> +		return -ENXIO;
+> +	}
+> +
+> +	plic_regs = of_iomap(node, 0);
+> +	if (WARN_ON(!plic_regs))
+> +		return -EIO;
+> +
+> +	error = -EINVAL;
+> +	of_property_read_u32(node, "riscv,ndev", &nr_irqs);
+> +	if (WARN_ON(!nr_irqs))
+> +		goto out_iounmap;
+> +
+> +	nr_handlers = of_irq_count(node);
+> +	if (WARN_ON(!nr_handlers))
+> +		goto out_iounmap;
+> +	if (WARN_ON(nr_handlers < num_possible_cpus()))
+> +		goto out_iounmap;
+> +
+> +	error = -ENOMEM;
+> +	plic_irqdomain = irq_domain_add_linear(node, nr_irqs + 1,
+> +			&plic_irqdomain_ops, NULL);
+> +	if (WARN_ON(!plic_irqdomain))
+> +		goto out_iounmap;
+> +
+> +	/*
+> +	 * We assume that each present hart is wire up to the PLIC.
+> +	 * If that isn't the case in the future this code will need to be
+> +	 * modified.
+> +	 */
+> +	for_each_present_cpu(cpu) {
+> +		irq_hw_number_t hwirq;
+> +
+> +		/* priority must be > threshold to trigger an interrupt */
+> +		writel(0, plic_hart_offset(cpu) + CONTEXT_THRESHOLD);
+> +		for (hwirq = 1; hwirq <= nr_irqs; ++hwirq)
+> +			plic_toggle(cpu, hwirq, 0);
+> +		nr_mapped++;
+> +	}
+> +
+> +	pr_info("mapped %d interrupts to %d (out of %d) handlers.\n",
+> +		nr_irqs, nr_mapped, nr_handlers);
+> +	set_handle_irq(plic_handle_irq);
+> +	return 0;
+> +
+> +out_iounmap:
+> +	iounmap(plic_regs);
+> +	return error;
+> +}
+> +
+> +IRQCHIP_DECLARE(plic0, "riscv,plic0", plic_init);
+> 
+
