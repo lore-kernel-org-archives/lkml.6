@@ -2,204 +2,97 @@ Return-Path: <SRS0=xGmI=KM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AC1DC28CF6
-	for <linux-kernel@archiver.kernel.org>; Sat, 28 Jul 2018 06:55:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A43AC28CF6
+	for <linux-kernel@archiver.kernel.org>; Sat, 28 Jul 2018 06:57:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 400CC2089B
-	for <linux-kernel@archiver.kernel.org>; Sat, 28 Jul 2018 06:55:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EF90120897
+	for <linux-kernel@archiver.kernel.org>; Sat, 28 Jul 2018 06:57:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="dm4W1gUN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 400CC2089B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=dugeo-com.20150623.gappssmtp.com header.i=@dugeo-com.20150623.gappssmtp.com header.b="TFY8yO6V"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EF90120897
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=dug.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728497AbeG1IVL (ORCPT
+        id S1728528AbeG1IWe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 28 Jul 2018 04:21:11 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:45593 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726585AbeG1IVL (ORCPT
+        Sat, 28 Jul 2018 04:22:34 -0400
+Received: from mail-pl0-f45.google.com ([209.85.160.45]:41690 "EHLO
+        mail-pl0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726000AbeG1IWe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 28 Jul 2018 04:21:11 -0400
-Received: by mail-lj1-f193.google.com with SMTP id w16-v6so2640249ljh.12
-        for <linux-kernel@vger.kernel.org>; Fri, 27 Jul 2018 23:55:45 -0700 (PDT)
+        Sat, 28 Jul 2018 04:22:34 -0400
+Received: by mail-pl0-f45.google.com with SMTP id w8-v6so3229338ply.8
+        for <linux-kernel@vger.kernel.org>; Fri, 27 Jul 2018 23:57:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=NOiS0epeIqe0tF/P/vnMJK2eGtTcvndBhuYOzfKlMb0=;
-        b=dm4W1gUNL8AyiaGWRp51bNXIJprqRHylvucIchF4A2tBvhcC+TYG0SujWZvPPY629X
-         c3Jn/5XTukY5ZiQWSHB37d3azmNHktfYLUdhSYp30CTAfUisDsaQHosYhMtN+4XU+TCO
-         /ZJS4SRkB8oi3ndR8CIMkixiHHqwFXlrCviiE=
+        d=dugeo-com.20150623.gappssmtp.com; s=20150623;
+        h=sender:from:to:cc:subject:date:message-id;
+        bh=dudzcry+KvQIRoofLEVC7OwJU8e0Oy8UNC2vmR39l7c=;
+        b=TFY8yO6V9DccbtGgIPA3vLnYXsXYmIYqa5Gt+79BzWxVZlmnqXnXG3/uHAy4N6ioxT
+         BZLIsy1LqDI8u64Or51tF+gDizBm29B0ZShE/ZmrHognS/m1wiHckCmHg/ghZ3dRDfQ4
+         EJSW9rJli4gX0MYxeI1+lEzNG/del4SH/iDI85evVBkrYgUwJ/2pIYh2KvAqKKb2vzNw
+         yOhhPBQE+SVZ6L+YO5RSRKTvYDSELmDlaaUQLXE7QOwNvJ+3nvunnGDS9JZm+OJOUt3s
+         XplAkVSGYkoFqWWMpjdjFtK0XEvANXXDsEe8ljn/oMM89dsqUm+KkBMM1gyTQpFISVqP
+         d5pQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=NOiS0epeIqe0tF/P/vnMJK2eGtTcvndBhuYOzfKlMb0=;
-        b=ZghB+b/QehT4nYHbuoCUqQzniQwTi5dJCjhl+74FqE4mHOqnmJJruHLxlbmeRizPia
-         77djpPhV6QzXml7N+ud72ITtDD2XFsRrKGEOj2SltitoBTD2RlLFaaatHpgXrNKqaqwd
-         cCSIeC5x+SdQrpQZRImF1UV++b14+I5x2v+F5nASlM0bDFYnUosXrttHr5g+GXllYUDm
-         CjwHr4bk4bTQfd0ReJEb0YYCvhKQSMDFwBhnOHPm8GdPNqPAldyg1C7xA2SkAVBH3wLt
-         zDBf8mIWBsy+v/CZT3Qdiw5/+2JgtvSTz6eJWt9U+idpZDJpqHFTAjRFxH3ETNqasGvl
-         BqfA==
-X-Gm-Message-State: AOUpUlEjxYgiz16Y53BPL4M7LBM4kfqbxPL1lhNOs9Guw5Ff99nSDgK2
-        dsT8s0LeSXqB8Q21UFAUIWSPJ6aTvRDDoCgTLUb4Ew==
-X-Google-Smtp-Source: AAOMgpeYGh1H0iLCcf+QIvNItZkrr67QJAaKn3ybe7QC6n3DJwu+OQ5kuYi4K1MgXQ+zXgIOYU3VjgyDXPgCN3ak1Kw=
-X-Received: by 2002:a2e:92c4:: with SMTP id k4-v6mr7481966ljh.18.1532760944273;
- Fri, 27 Jul 2018 23:55:44 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a19:169b:0:0:0:0:0 with HTTP; Fri, 27 Jul 2018 23:55:43
- -0700 (PDT)
-In-Reply-To: <20180727100845.054377089@linuxfoundation.org>
-References: <20180727100845.054377089@linuxfoundation.org>
-From:   Naresh Kamboju <naresh.kamboju@linaro.org>
-Date:   Sat, 28 Jul 2018 12:25:43 +0530
-Message-ID: <CA+G9fYttehR+2CpDkd311o=R1MV4nL+1XQwYew9WeA9GBrtLHg@mail.gmail.com>
-Subject: Re: [PATCH 4.4 00/23] 4.4.145-stable review
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     open list <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>,
-        lkft-triage@lists.linaro.org,
-        linux- stable <stable@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id;
+        bh=dudzcry+KvQIRoofLEVC7OwJU8e0Oy8UNC2vmR39l7c=;
+        b=cgI6+qt+9exRTWPnZVtxhee9CMCeH+cgrQb2Kqbs0IrXbEUFlJM5KRuOk3fRBarRLq
+         oNPeYWBJW4/vUi+ChD4RBkM1RVt+SgZOM2qUpvy0zNwkgakDZ1PDTsIckvh/JLSOvhVC
+         fPoWXnSvC/nt4nVO5ocIDJ0rjEMfKFBQQroczPC9KUuHzn02pQQEtKdxmRlZ1QPxMifx
+         cW8Ed0wMU86pG+Mo1231hHirRNzVCwlKuxVj17XtccOLAWx26//CuVpNpTiE0X399Y2Z
+         bXQs+mFipm1/GM8773hZ4N9YItl89+LYQmUa9bccbwHH6Mz4gHvpNfFgH9Zs4zrjdwrE
+         +8tg==
+X-Gm-Message-State: AOUpUlHKqaCBYNZVr131eynCouCDjdrHLtb/UXCGMeifOJckT17Ph693
+        A7SQSBx6s+gNVMp9oJ9daOkhfPcn6y4=
+X-Google-Smtp-Source: AAOMgpcYMmpW/JUbhH1wzUgaSmgJeF5zSALw5h/WxdCoUQJuCeqg2TY2Ll/fiCZzEe2jlLliG0gaZw==
+X-Received: by 2002:a17:902:7793:: with SMTP id o19-v6mr8942408pll.306.1532761028424;
+        Fri, 27 Jul 2018 23:57:08 -0700 (PDT)
+Received: from bud178.dugeo.com ([116.212.202.58])
+        by smtp.gmail.com with ESMTPSA id 203-v6sm9641242pgb.14.2018.07.27.23.57.05
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 27 Jul 2018 23:57:07 -0700 (PDT)
+From:   Jacek Tomaka <jacekt@dug.com>
+X-Google-Original-From: Jacek Tomaka <jacek.tomaka@poczta.fm>
+To:     linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>
+Cc:     Jacek Tomaka <jacekt@dugeo.com>
+Subject: [PATCH] perf/x86/intel: Add support for MISPREDICT bit on Knights Landing cpus
+Date:   Sat, 28 Jul 2018 14:56:41 +0800
+Message-Id: <20180728065641.26595-1-jacek.tomaka@poczta.fm>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 27 July 2018 at 15:39, Greg Kroah-Hartman <gregkh@linuxfoundation.org> w=
-rote:
-> This is the start of the stable review cycle for the 4.4.145 release.
-> There are 23 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Sun Jul 29 10:08:37 UTC 2018.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-=
-4.4.145-rc1.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git linux-4.4.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
+From: Jacek Tomaka <jacekt@dugeo.com>
 
-Results from Linaro=E2=80=99s test farm.
-No regressions on arm64, arm and x86_64.
+Knights Landing supports half baked LBR_FORMAT_TIME format. The addresses are linear but it does have MISPREDICT bit but nothing else.
+Unfortunately IA32_PERF_CAPABILITIES[5:0] will report LBR_FORMAT_LIP. This change teaches LBR about this Knights Landing quirk.
+---
+ arch/x86/events/intel/lbr.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-Summary
-------------------------------------------------------------------------
+diff --git a/arch/x86/events/intel/lbr.c b/arch/x86/events/intel/lbr.c
+index cf372b9055..0f73e60315 100644
+--- a/arch/x86/events/intel/lbr.c
++++ b/arch/x86/events/intel/lbr.c
+@@ -1230,4 +1230,10 @@ void intel_pmu_lbr_init_knl(void)
+ 
+ 	x86_pmu.lbr_sel_mask = LBR_SEL_MASK;
+ 	x86_pmu.lbr_sel_map  = snb_lbr_sel_map;
++
++	/* Knights Landing supports half baked LBR format. The addresses are linear but it does have MISPREDICT bit.
++	 * Unfortunately IA32_PERF_CAPABILITIES[5:0] will report LBR_FORMAT_LIP.
++	 */
++	if (x86_pmu.intel_cap.lbr_format == LBR_FORMAT_LIP)
++		lbr_desc[LBR_FORMAT_LIP] |= LBR_EIP_FLAGS;
+ }
+-- 
+2.17.0
 
-kernel: 4.4.145-rc1
-git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stab=
-le-rc.git
-git branch: linux-4.4.y
-git commit: 7022b47a6ec790378a63d49f7338587b3276a636
-git describe: v4.4.144-24-g7022b47a6ec7
-Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-4.4-oe/bui=
-ld/v4.4.144-24-g7022b47a6ec7
-
-No regressions (compared to build v4.4.144-24-ga03c11d24aac)
-
-Ran 11995 total tests in the following environments and test suites.
-
-Environments
---------------
-- juno-r2 - arm64
-- qemu_arm
-- qemu_x86_64
-- x15 - arm
-- x86_64
-
-Test Suites
------------
-* boot
-* kselftest
-* libhugetlbfs
-* ltp-cap_bounds-tests
-* ltp-containers-tests
-* ltp-cve-tests
-* ltp-fcntl-locktests-tests
-* ltp-filecaps-tests
-* ltp-fs-tests
-* ltp-fs_bind-tests
-* ltp-fs_perms_simple-tests
-* ltp-fsx-tests
-* ltp-hugetlb-tests
-* ltp-io-tests
-* ltp-ipc-tests
-* ltp-math-tests
-* ltp-nptl-tests
-* ltp-open-posix-tests
-* ltp-pty-tests
-* ltp-sched-tests
-* ltp-securebits-tests
-* ltp-syscalls-tests
-* ltp-timers-tests
-* kselftest-vsyscall-mode-native
-* kselftest-vsyscall-mode-none
-
-Summary
-------------------------------------------------------------------------
-
-kernel: 4.4.145-rc1
-git repo: https://git.linaro.org/lkft/arm64-stable-rc.git
-git branch: 4.4.145-rc1-hikey-20180727-245
-git commit: 1712dec90e9e99c2d1f1e30f1071bbe656ecf600
-git describe: 4.4.145-rc1-hikey-20180727-245
-Test details: https://qa-reports.linaro.org/lkft/linaro-hikey-stable-rc-4.4=
--oe/build/4.4.145-rc1-hikey-20180727-245
-
-
-No regressions (compared to build 4.4.145-rc1-hikey-20180727-243)
-
-
-Ran 2673 total tests in the following environments and test suites.
-
-Environments
---------------
-- hi6220-hikey - arm64
-- qemu_arm64
-
-Test Suites
------------
-* boot
-* kselftest
-* libhugetlbfs
-* ltp-cap_bounds-tests
-* ltp-containers-tests
-* ltp-cve-tests
-* ltp-fcntl-locktests-tests
-* ltp-filecaps-tests
-* ltp-fs-tests
-* ltp-fs_bind-tests
-* ltp-fs_perms_simple-tests
-* ltp-fsx-tests
-* ltp-hugetlb-tests
-* ltp-io-tests
-* ltp-ipc-tests
-* ltp-math-tests
-* ltp-nptl-tests
-* ltp-pty-tests
-* ltp-sched-tests
-* ltp-securebits-tests
-* ltp-syscalls-tests
-* ltp-timers-tests
-
---=20
-Linaro LKFT
-https://lkft.linaro.org
