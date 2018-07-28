@@ -2,86 +2,124 @@ Return-Path: <SRS0=xGmI=KM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35455C28CF6
-	for <linux-kernel@archiver.kernel.org>; Sat, 28 Jul 2018 05:56:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79FC7C28CF6
+	for <linux-kernel@archiver.kernel.org>; Sat, 28 Jul 2018 06:00:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DA96A20873
-	for <linux-kernel@archiver.kernel.org>; Sat, 28 Jul 2018 05:56:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DA96A20873
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=nod.at
+	by mail.kernel.org (Postfix) with ESMTP id 0AD5420873
+	for <linux-kernel@archiver.kernel.org>; Sat, 28 Jul 2018 06:00:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0AD5420873
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codewreck.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726265AbeG1HVb (ORCPT
+        id S1726336AbeG1HZR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 28 Jul 2018 03:21:31 -0400
-Received: from lithops.sigma-star.at ([195.201.40.130]:49794 "EHLO
-        lithops.sigma-star.at" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726101AbeG1HVb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 28 Jul 2018 03:21:31 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by lithops.sigma-star.at (Postfix) with ESMTP id 4A18D60A3584;
-        Sat, 28 Jul 2018 07:56:16 +0200 (CEST)
-Received: from lithops.sigma-star.at ([127.0.0.1])
-        by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id g9G42RoGs3U3; Sat, 28 Jul 2018 07:56:16 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-        by lithops.sigma-star.at (Postfix) with ESMTP id EB32560A3590;
-        Sat, 28 Jul 2018 07:56:15 +0200 (CEST)
-Received: from lithops.sigma-star.at ([127.0.0.1])
-        by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id oyV-3sfmINSQ; Sat, 28 Jul 2018 07:56:15 +0200 (CEST)
-Received: from blindfold.localnet (213-47-184-186.cable.dynamic.surfer.at [213.47.184.186])
-        by lithops.sigma-star.at (Postfix) with ESMTPSA id C5F6C60A3584;
-        Sat, 28 Jul 2018 07:56:15 +0200 (CEST)
-From:   Richard Weinberger <richard@nod.at>
-To:     Ben Hutchings <ben.hutchings@codethink.co.uk>
-Cc:     martin bayern <Martinbayern@outlook.com>, stable@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 4.4 15/47] ubi: fastmap: Correctly handle interrupted erasures in EBA
-Date:   Sat, 28 Jul 2018 07:56:09 +0200
-Message-ID: <2079260.rIAgkgY78I@blindfold>
-In-Reply-To: <1532741338.21552.55.camel@codethink.co.uk>
-References: <20180710182337.047502999@linuxfoundation.org> <2465050.YMUAORSpTR@blindfold> <1532741338.21552.55.camel@codethink.co.uk>
+        Sat, 28 Jul 2018 03:25:17 -0400
+Received: from nautica.notk.org ([91.121.71.147]:44925 "EHLO nautica.notk.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726107AbeG1HZR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 28 Jul 2018 03:25:17 -0400
+Received: by nautica.notk.org (Postfix, from userid 1001)
+        id DB8C9C009; Sat, 28 Jul 2018 08:00:00 +0200 (CEST)
+Date:   Sat, 28 Jul 2018 07:59:45 +0200
+From:   Dominique Martinet <asmadeus@codewreck.org>
+To:     Eric Van Hensbergen <ericvh@gmail.com>,
+        Ron Minnich <rminnich@sandia.gov>,
+        Latchesar Ionkov <lucho@ionkov.net>,
+        piaojun <piaojun@huawei.com>
+Cc:     v9fs-developer@lists.sourceforge.net, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org
+Subject: About the V9fs-developer list (Was: [PATCH] 9p: fix multiple
+Message-ID: <20180728055945.GA16684@nautica>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Ben,
+NULL-pointer-dereferences)
+Reply-To: 
+In-Reply-To: <5B5BBFCE.50002@huawei.com>
 
-Am Samstag, 28. Juli 2018, 03:28:58 CEST schrieb Ben Hutchings:
-> > > Isn't there a risk here, that a read error leads to erasing data that
-> > > might be recoverable if the read is retried?
-> > 
-> > Well, read error means that already something went very wrong. At other places
-> > in UBI wo also don't retry reading headers and consider it as fatal when we 
-> > are unable to read it.
-> > We could also read the EC header, but what do we gain from that?
-> > If the VID header is not readable we cannot check fastmap either.
-> > 
-> > What case exactly do you have in mind?
-> 
-> I suppose I'm thinking about data recovery from a flash device that has
-> become unreliable.  I'm not familiar with ubi; is there a read-only
-> mode where the erase wouldn't actually be performed?
 
-We have a ready only mode, UBI enters this mode upon fatal errors.
-But I don't see what this has to do with the case this patch addresses.
-Here we need to recover from interrupted erases when fastmap is used.
-With fastmap the mapping still looks valid to the upper layer but due to
-a bad erase we might face later ECC errors and therefore we have to check
-whether it is still valid upon first access.
-If data is present, mapping is ok. If not (no data or ECC error), unmap it
-to make the state sync with the upper layer.
+(Re-added Eric, ron, Latchesar to the recipients and removed a few
+others to make v9fs accept this mail without moderation, sorry Thomas &
+others)
 
-Thanks,
-//richard
 
+TL;DR: should we move the list, and should I send a patch adding myself
+to maintainers?
+
+
+piaojun wrote on Sat, Jul 28, 2018:
+> I could not recieve the original patch. Did the patch CC v9fs developer
+> maillist?
+
+Yes, but as usual there were too many recipients (I removed some like
+you did previously), so the patch is probably queued for moderation
+somewhere.
+
+For this specific patch, you can find the original message here from the
+lkml archives:
+http://lkml.kernel.org/r/20180727110558.5479-1-tomasbortoli@gmail.com
+
+
+(Or more generally for patches I say I've accepted, my current process
+is to push them to my 9p-test branch[1] then once they have been tested
+push the same thing to my 9p-next branch[2] that will be taken into
+linux-next; this is already in 9p-next now :
+https://github.com/martinetd/linux/commit/49fd386d1e67d7876770d46b57359c6891d4cb70
+
+[1] https://github.com/martinetd/linux/commits/9p-test
+[2] https://github.com/martinetd/linux/commits/9p-next
+
+I always check that linux-kernel@vger was in copy and insert the Link:
+tag as appropriate if you need to reply)
+
+
+
+
+In general though I'd realy like to bring up the subject of this mailing
+list as I feel it's been a burden lately.
+I'm not even an admin of the list so I feel a little out of place here
+but should I go around snooping to ask if we could make a new
+v9fs@vger.kernel.org mailing list and abandon the ship here?
+
+A second question that's been on my mind lately is if I'm going to be
+gathering 9p patchs from now I should probably start considering sending
+a patch to add myself to MAINTAINER.
+
+I've had a quick look at the file though and there aren't many
+subsystems with 4+ maintainer (breakdown if I can count: 1301 with 1,
+342 with 2, 104 with 3, 31 with 4, 4 with 5, 1 with 6 and 10
+maintainers) and more to the point I also think having too many
+maintainers is a nuisance, which is why I've been reluctant to add
+myself.
+
+I however don't want to forcefully remove anyone either, Eric has been
+somewhat active with three messages in may at least, and Latchesar akced
+patchs this past year as well (September but still within 12 months) so
+he's definitely still reading these emails a bit...
+That being said, it's not like retiring from maintainers means one won't
+be able to look and comment at patches, just that patches will get less
+recipients and might go to through to the list more easily.
+
+To be honest I wouldn't care at all if the list worked well, but in the
+state things are in it's easy for me to miss a patch unless someone
+redirects it to me like Greg did recently.
+
+There isn't any hurry, but let's discuss this and move forward.
+
+
+What do you three think about this?
+What do others think?
+
+Thanks!
+-- 
+Dominique Martinet
