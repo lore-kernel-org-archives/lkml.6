@@ -5,176 +5,93 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3203CC67790
-	for <linux-kernel@archiver.kernel.org>; Sat, 28 Jul 2018 01:48:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F308C67790
+	for <linux-kernel@archiver.kernel.org>; Sat, 28 Jul 2018 02:00:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CFD6B20673
-	for <linux-kernel@archiver.kernel.org>; Sat, 28 Jul 2018 01:48:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CFD6B20673
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+	by mail.kernel.org (Postfix) with ESMTP id 2B3EA20673
+	for <linux-kernel@archiver.kernel.org>; Sat, 28 Jul 2018 02:00:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2B3EA20673
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389381AbeG1DMn (ORCPT
+        id S2389346AbeG1DYv convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 23:12:43 -0400
-Received: from gateway24.websitewelcome.com ([192.185.50.91]:18036 "EHLO
-        gateway24.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2389016AbeG1DMn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 23:12:43 -0400
-Received: from cm10.websitewelcome.com (cm10.websitewelcome.com [100.42.49.4])
-        by gateway24.websitewelcome.com (Postfix) with ESMTP id 799B02269
-        for <linux-kernel@vger.kernel.org>; Fri, 27 Jul 2018 20:48:10 -0500 (CDT)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id jEL4flGcVBcCXjEL4fOCSx; Fri, 27 Jul 2018 20:48:10 -0500
-X-Authority-Reason: nr=8
-Received: from [189.250.102.187] (port=46718 helo=[192.168.1.71])
-        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1fjEL3-002Ix8-NR; Fri, 27 Jul 2018 20:48:10 -0500
-To:     Jinbum Park <jinb.park7@gmail.com>, axboe@kernel.dk,
-        bart.vanassche@wdc.com, jiufei.xue@linux.alibaba.com
-Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20180728013151.GA15457@pjb1027-Latitude-E5410>
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=gustavo@embeddedor.com; keydata=
- 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
- VtSixD1uOgytAP7RWS474w==
-Subject: Re: [PATCH] pktcdvd: Fix possible Spectre-v1 for pkt_devs
-Message-ID: <ecede2b4-a980-3ad3-4474-d1d9db3e6a74@embeddedor.com>
-Date:   Fri, 27 Jul 2018 20:47:41 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <20180728013151.GA15457@pjb1027-Latitude-E5410>
-Content-Type: text/plain; charset=utf-8
+        Fri, 27 Jul 2018 23:24:51 -0400
+Received: from mga14.intel.com ([192.55.52.115]:12373 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388893AbeG1DYu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Jul 2018 23:24:50 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Jul 2018 19:00:16 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,412,1526367600"; 
+   d="scan'208";a="57797384"
+Received: from fmsmsx108.amr.corp.intel.com ([10.18.124.206])
+  by fmsmga007.fm.intel.com with ESMTP; 27 Jul 2018 19:00:16 -0700
+Received: from fmsmsx101.amr.corp.intel.com (10.18.124.199) by
+ FMSMSX108.amr.corp.intel.com (10.18.124.206) with Microsoft SMTP Server (TLS)
+ id 14.3.319.2; Fri, 27 Jul 2018 19:00:16 -0700
+Received: from shsmsx103.ccr.corp.intel.com (10.239.4.69) by
+ fmsmsx101.amr.corp.intel.com (10.18.124.199) with Microsoft SMTP Server (TLS)
+ id 14.3.319.2; Fri, 27 Jul 2018 19:00:16 -0700
+Received: from shsmsx101.ccr.corp.intel.com ([169.254.1.57]) by
+ SHSMSX103.ccr.corp.intel.com ([169.254.4.100]) with mapi id 14.03.0319.002;
+ Sat, 28 Jul 2018 10:00:14 +0800
+From:   "Wang, Wei W" <wei.w.wang@intel.com>
+To:     "Michael S. Tsirkin" <mst@redhat.com>
+CC:     "virtio-dev@lists.oasis-open.org" <virtio-dev@lists.oasis-open.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "virtualization@lists.linux-foundation.org" 
+        <virtualization@lists.linux-foundation.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "mhocko@kernel.org" <mhocko@kernel.org>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>
+Subject: RE: [PATCH v2 0/2] virtio-balloon: some improvements
+Thread-Topic: [PATCH v2 0/2] virtio-balloon: some improvements
+Thread-Index: AQHUJY+X2m1M+XGKJkKV2YG1ggYCw6SilMmAgAFMxHA=
+Date:   Sat, 28 Jul 2018 02:00:13 +0000
+Message-ID: <286AC319A985734F985F78AFA26841F7397114A2@SHSMSX101.ccr.corp.intel.com>
+References: <1532683495-31974-1-git-send-email-wei.w.wang@intel.com>
+ <20180727170605-mutt-send-email-mst@kernel.org>
+In-Reply-To: <20180727170605-mutt-send-email-mst@kernel.org>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.102.187
-X-Source-L: No
-X-Exim-ID: 1fjEL3-002Ix8-NR
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.1.71]) [189.250.102.187]:46718
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 6
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiMjY0ZTJhYjAtY2U3Ni00MDY0LTg1ODgtZWI3YjQ4MDA2MDJkIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiUjVlbE5YZG5rMUFPQUxBdEw4M1wvT3FVcTFWaUFMYlZhZzZJYWlnUHRtZXBcLzBYa3FHWEROYmdwdm0zVGkrQkUzIn0=
+x-ctpclassification: CTP_NT
+dlp-product: dlpe-windows
+dlp-version: 11.0.400.15
+dlp-reaction: no-action
+x-originating-ip: [10.239.127.40]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+MIME-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jinbum,
-
-Thanks for working on this.
-
-Please, see some comments below.
-
-On 07/27/2018 08:31 PM, Jinbum Park wrote:
-> User controls @dev_minor which to be used as index of pkt_devs.
-> So, It can be exploited via Spectre-like attack. (speculative execution)
+On Friday, July 27, 2018 10:06 PM, Michael S. Tsirkin wrote:
+> On Fri, Jul 27, 2018 at 05:24:53PM +0800, Wei Wang wrote:
+> > This series is split from the "Virtio-balloon: support free page
+> > reporting" series to make some improvements.
+> >
+> > v1->v2 ChangeLog:
+> > - register the shrinker when VIRTIO_BALLOON_F_DEFLATE_ON_OOM is
+> negotiated.
+> >
+> > Wei Wang (2):
+> >   virtio-balloon: remove BUG() in init_vqs
+> >   virtio_balloon: replace oom notifier with shrinker
 > 
-> This kind of attack leaks address of pkt_devs, [1]
-> It leads an attacker to bypass security mechanism such as KASLR.
-> 
-> So sanitize @dev_minor before using it to prevent attack.
-> 
-> [1] https://github.com/jinb-park/linux-exploit/
-> tree/master/exploit-remaining-spectre-gadget/leak_pkt_devs.c
-> 
-> Signed-off-by: Jinbum Park <jinb.park7@gmail.com>
-> ---
->  drivers/block/pktcdvd.c | 8 ++++++--
->  1 file changed, 6 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/block/pktcdvd.c b/drivers/block/pktcdvd.c
-> index c61d20c..665760d 100644
-> --- a/drivers/block/pktcdvd.c
-> +++ b/drivers/block/pktcdvd.c
-> @@ -67,8 +67,8 @@
->  #include <scsi/scsi.h>
->  #include <linux/debugfs.h>
->  #include <linux/device.h>
-> -
->  #include <linux/uaccess.h>
-> +#include <linux/nospec.h>
->  
->  #define DRIVER_NAME	"pktcdvd"
->  
-> @@ -2229,9 +2229,13 @@ static void pkt_release_dev(struct pktcdvd_device *pd, int flush)
->  
->  static struct pktcdvd_device *pkt_find_dev_from_minor(unsigned int dev_minor)
->  {
-> +	unsigned int idx = 0;
-> +
+> Thanks!
+> Given it's very late in the release cycle, I'll merge this for the next Linux
+> release.
 
-There is no need for a new variable in this case.
+No problem. Thanks!
 
->  	if (dev_minor >= MAX_WRITERS)
->  		return NULL;
-> -	return pkt_devs[dev_minor];
-> +
-> +	idx = array_index_nospec(dev_minor, MAX_WRITERS);
-> +	return pkt_devs[idx];
-
-Also, the following style is preferred:
-
-if (dev_minor >= MAX_WRITERS)
-	return NULL;
-dev_minor = array_index_nospec(dev_minor, MAX_WRITERS);
-
-
-Thanks
---
-Gustavo
+Best,
+Wei
