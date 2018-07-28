@@ -6,66 +6,73 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92FC6C28CF6
-	for <linux-kernel@archiver.kernel.org>; Sat, 28 Jul 2018 10:38:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BE61C6778F
+	for <linux-kernel@archiver.kernel.org>; Sat, 28 Jul 2018 10:38:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4075820873
-	for <linux-kernel@archiver.kernel.org>; Sat, 28 Jul 2018 10:38:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4075820873
+	by mail.kernel.org (Postfix) with ESMTP id F03FC20841
+	for <linux-kernel@archiver.kernel.org>; Sat, 28 Jul 2018 10:38:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F03FC20841
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728677AbeG1MEQ (ORCPT
+        id S1728735AbeG1MEj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 28 Jul 2018 08:04:16 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:10152 "EHLO huawei.com"
+        Sat, 28 Jul 2018 08:04:39 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:56149 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726378AbeG1MEQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 28 Jul 2018 08:04:16 -0400
-Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 97DC96E228967;
-        Sat, 28 Jul 2018 18:38:09 +0800 (CST)
-Received: from szvp000201624.huawei.com (10.120.216.130) by
- DGGEMS413-HUB.china.huawei.com (10.3.19.213) with Microsoft SMTP Server id
- 14.3.382.0; Sat, 28 Jul 2018 18:38:00 +0800
-From:   Chao Yu <yuchao0@huawei.com>
-To:     <jaegeuk@kernel.org>
-CC:     <linux-f2fs-devel@lists.sourceforge.net>,
-        <linux-kernel@vger.kernel.org>, <chao@kernel.org>,
-        Chao Yu <yuchao0@huawei.com>
-Subject: [PATCH] f2fs: fix to reset i_gc_failures correctly
-Date:   Sat, 28 Jul 2018 18:37:58 +0800
-Message-ID: <20180728103758.8499-1-yuchao0@huawei.com>
-X-Mailer: git-send-email 2.18.0.rc1
+        id S1728213AbeG1MEj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 28 Jul 2018 08:04:39 -0400
+Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id BF975B0AF748F;
+        Sat, 28 Jul 2018 18:38:32 +0800 (CST)
+Received: from localhost (10.177.31.96) by DGGEMS410-HUB.china.huawei.com
+ (10.3.19.210) with Microsoft SMTP Server id 14.3.382.0; Sat, 28 Jul 2018
+ 18:38:27 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <davem@davemloft.net>, <ast@kernel.org>, <daniel@iogearbox.net>,
+        <jhs@mojatatu.com>, <xiyou.wangcong@gmail.com>, <jiri@resnulli.us>
+CC:     <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
+        YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH net-next] act_bpf: Use kmemdup instead of duplicating it in tcf_bpf_init_from_ops
+Date:   Sat, 28 Jul 2018 18:38:06 +0800
+Message-ID: <20180728103806.19592-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
 MIME-Version: 1.0
 Content-Type: text/plain
-X-Originating-IP: [10.120.216.130]
+X-Originating-IP: [10.177.31.96]
 X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Let's reset i_gc_failures to zero when we unset pinned state for file.
+Replace calls to kmalloc followed by a memcpy with a direct call to
+kmemdup.
 
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- fs/f2fs/file.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/sched/act_bpf.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index ed5c9b0e0d0c..22c83da0d5e2 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -2818,7 +2818,7 @@ static int f2fs_ioc_set_pin_file(struct file *filp, unsigned long arg)
+diff --git a/net/sched/act_bpf.c b/net/sched/act_bpf.c
+index 06f743d..6203eb0 100644
+--- a/net/sched/act_bpf.c
++++ b/net/sched/act_bpf.c
+@@ -196,12 +196,10 @@ static int tcf_bpf_init_from_ops(struct nlattr **tb, struct tcf_bpf_cfg *cfg)
+ 	if (bpf_size != nla_len(tb[TCA_ACT_BPF_OPS]))
+ 		return -EINVAL;
  
- 	if (!pin) {
- 		clear_inode_flag(inode, FI_PIN_FILE);
--		F2FS_I(inode)->i_gc_failures[GC_FAILURE_PIN] = 1;
-+		f2fs_i_gc_failures_write(inode, 0);
- 		goto done;
- 	}
+-	bpf_ops = kzalloc(bpf_size, GFP_KERNEL);
++	bpf_ops = kmemdup(nla_data(tb[TCA_ACT_BPF_OPS]), bpf_size, GFP_KERNEL);
+ 	if (bpf_ops == NULL)
+ 		return -ENOMEM;
+ 
+-	memcpy(bpf_ops, nla_data(tb[TCA_ACT_BPF_OPS]), bpf_size);
+-
+ 	fprog_tmp.len = bpf_num_ops;
+ 	fprog_tmp.filter = bpf_ops;
  
 -- 
-2.18.0.rc1
+2.7.0
+
 
