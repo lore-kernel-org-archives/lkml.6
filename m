@@ -2,124 +2,282 @@ Return-Path: <SRS0=xGmI=KM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38243C67790
-	for <linux-kernel@archiver.kernel.org>; Sat, 28 Jul 2018 01:32:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30204C67790
+	for <linux-kernel@archiver.kernel.org>; Sat, 28 Jul 2018 01:32:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DD8F720671
-	for <linux-kernel@archiver.kernel.org>; Sat, 28 Jul 2018 01:32:01 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qo4w/fsr"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD8F720671
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id C1D1420671
+	for <linux-kernel@archiver.kernel.org>; Sat, 28 Jul 2018 01:32:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C1D1420671
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389402AbeG1C42 (ORCPT
+        id S2389425AbeG1C5J (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 22:56:28 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:42442 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388893AbeG1C42 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 22:56:28 -0400
-Received: by mail-pg1-f193.google.com with SMTP id y4-v6so4156990pgp.9;
-        Fri, 27 Jul 2018 18:31:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=74IexoqrWuAflctdUE888PDI6MI2K9K6VRp4yTZOwbM=;
-        b=qo4w/fsrvqFVqclogIc2Amzi/faG4+YBcH72DfwaOv/DOND0kA7GdHSAfu8FIqRLi5
-         6FcvHcT4IwtFLBSBCkAyNZv7152GkKX6sBUxwg2faxZDgjV33dZwyamDgojQ6yCEwcL7
-         ZZFVIm5dkDt7J145wEd40ZNohIxn9toojecN4g065bBuofseE6gXpl1uJvezb1R/rn7v
-         WdxpTAmfCyO85sfHSdE3VfEBFz46jWALMA1qod0CmpYXjs0gE8afEZLlrx8OYmacbYaV
-         7AeY8GkuXetf79fZQDnF9/I5SZZECDZ2hWOU6+zV+rOsVdoM4KRqKO+1NdajuoADG+Pv
-         yvcw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=74IexoqrWuAflctdUE888PDI6MI2K9K6VRp4yTZOwbM=;
-        b=J8Adg0zLYd+vEAnFtb+SmmiXU6zGAbcwmbVrW0BzYQpMAeBWyW9UiloOd+HqKJxVri
-         ITuRaQPF+VrBf2/g8yuRFXFLRkkIDO8B0MGKzKjDjc50oRxTRPU5dyYuQPN5T/LH8B5Z
-         nqT9hwVZBLNoAdARYT4ATo7s0VkrSNYF7bjNunAyamQwfr/S64sMUK4iidRYEHrMgGvm
-         nG+gg/sQ5jqnDmSo7XjVcUd9zxRz9DP4TLaUvzLRBuv1OUZcWFcpBb7IsNxDughwzv6c
-         xhbt4DX9cch10Rr3X4odt97SYyCmzzc7vhc7dbb2ZAnGwx2AoO4RTIhiANVeBp1u+K5Y
-         XQSA==
-X-Gm-Message-State: AOUpUlFgucMPfGZ9Ab1/hwc+GAqd+keCTLLHCephRV5Dqhsu4/8c4sGo
-        +Et9Pc6e6CqE8906CCmkdhwsWnzg
-X-Google-Smtp-Source: AAOMgpdYMVod2HCBuU92OBiNvjuhehWqB6+NnKvd8KQwyVELkteBESOhxgW2EUMyzH/D+CiGv40gEg==
-X-Received: by 2002:a63:8b44:: with SMTP id j65-v6mr8159108pge.248.1532741518887;
-        Fri, 27 Jul 2018 18:31:58 -0700 (PDT)
-Received: from pjb1027-Latitude-E5410 ([58.227.15.43])
-        by smtp.gmail.com with ESMTPSA id y18-v6sm5429764pfl.90.2018.07.27.18.31.55
-        (version=TLS1_2 cipher=AES128-SHA bits=128/128);
-        Fri, 27 Jul 2018 18:31:58 -0700 (PDT)
-Date:   Sat, 28 Jul 2018 10:31:51 +0900
-From:   Jinbum Park <jinb.park7@gmail.com>
-To:     axboe@kernel.dk, bart.vanassche@wdc.com,
-        jiufei.xue@linux.alibaba.com
-Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] pktcdvd: Fix possible Spectre-v1 for pkt_devs
-Message-ID: <20180728013151.GA15457@pjb1027-Latitude-E5410>
+        Fri, 27 Jul 2018 22:57:09 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:9732 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2389048AbeG1C5J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Jul 2018 22:57:09 -0400
+Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id A4F7A9CA18460;
+        Sat, 28 Jul 2018 09:32:35 +0800 (CST)
+Received: from szvp000201624.huawei.com (10.120.216.130) by
+ DGGEMS409-HUB.china.huawei.com (10.3.19.209) with Microsoft SMTP Server id
+ 14.3.382.0; Sat, 28 Jul 2018 09:32:26 +0800
+From:   Chao Yu <yuchao0@huawei.com>
+To:     <jaegeuk@kernel.org>
+CC:     <linux-f2fs-devel@lists.sourceforge.net>,
+        <linux-kernel@vger.kernel.org>, <chao@kernel.org>,
+        Chao Yu <yuchao0@huawei.com>
+Subject: [PATCH v2] f2fs: fix to do sanity check with node footer and iblocks
+Date:   Sat, 28 Jul 2018 09:32:18 +0800
+Message-ID: <20180728013218.90619-1-yuchao0@huawei.com>
+X-Mailer: git-send-email 2.18.0.rc1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Type: text/plain
+X-Originating-IP: [10.120.216.130]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-User controls @dev_minor which to be used as index of pkt_devs.
-So, It can be exploited via Spectre-like attack. (speculative execution)
+This patch adds to do sanity check with below fields of inode to
+avoid reported panic.
+- node footer
+- iblocks
 
-This kind of attack leaks address of pkt_devs, [1]
-It leads an attacker to bypass security mechanism such as KASLR.
+https://bugzilla.kernel.org/show_bug.cgi?id=200223
 
-So sanitize @dev_minor before using it to prevent attack.
+- Overview
+BUG() triggered in f2fs_truncate_inode_blocks() when un-mounting a mounted f2fs image after writing to it
 
-[1] https://github.com/jinb-park/linux-exploit/
-tree/master/exploit-remaining-spectre-gadget/leak_pkt_devs.c
+- Reproduce
 
-Signed-off-by: Jinbum Park <jinb.park7@gmail.com>
+- POC (poc.c)
+
+static void activity(char *mpoint) {
+
+  char *foo_bar_baz;
+  int err;
+
+  static int buf[8192];
+  memset(buf, 0, sizeof(buf));
+
+  err = asprintf(&foo_bar_baz, "%s/foo/bar/baz", mpoint);
+
+  // open / write / read
+  int fd = open(foo_bar_baz, O_RDWR | O_TRUNC, 0777);
+  if (fd >= 0) {
+    write(fd, (char *)buf, 517);
+    write(fd, (char *)buf, sizeof(buf));
+    close(fd);
+  }
+
+}
+
+int main(int argc, char *argv[]) {
+  activity(argv[1]);
+  return 0;
+}
+
+- Kernel meesage
+[  552.479723] F2FS-fs (loop0): Mounted with checkpoint version = 2
+[  556.451891] ------------[ cut here ]------------
+[  556.451899] kernel BUG at fs/f2fs/node.c:987!
+[  556.452920] invalid opcode: 0000 [#1] SMP KASAN PTI
+[  556.453936] CPU: 1 PID: 1310 Comm: umount Not tainted 4.18.0-rc1+ #4
+[  556.455213] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS Ubuntu-1.8.2-1ubuntu1 04/01/2014
+[  556.457140] RIP: 0010:f2fs_truncate_inode_blocks+0x4a7/0x6f0
+[  556.458280] Code: e8 ae ea ff ff 41 89 c7 c1 e8 1f 84 c0 74 0a 41 83 ff fe 0f 85 35 ff ff ff 81 85 b0 fe ff ff fb 03 00 00 e9 f7 fd ff ff 0f 0b <0f> 0b e8 62 b7 9a 00 48 8b bd a0 fe ff ff e8 56 54 ae ff 48 8b b5
+[  556.462015] RSP: 0018:ffff8801f292f808 EFLAGS: 00010286
+[  556.463068] RAX: ffffed003e73242d RBX: ffff8801f292f958 RCX: ffffffffb88b81bc
+[  556.464479] RDX: 0000000000000000 RSI: 0000000000000004 RDI: ffff8801f3992164
+[  556.465901] RBP: ffff8801f292f980 R08: ffffed003e73242d R09: ffffed003e73242d
+[  556.467311] R10: 0000000000000001 R11: ffffed003e73242c R12: 00000000fffffc64
+[  556.468706] R13: ffff8801f3992000 R14: 0000000000000058 R15: 00000000ffff8801
+[  556.470117] FS:  00007f8029297840(0000) GS:ffff8801f6f00000(0000) knlGS:0000000000000000
+[  556.471702] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  556.472838] CR2: 000055f5f57305d8 CR3: 00000001f18b0000 CR4: 00000000000006e0
+[  556.474265] Call Trace:
+[  556.474782]  ? f2fs_alloc_nid_failed+0xf0/0xf0
+[  556.475686]  ? truncate_nodes+0x980/0x980
+[  556.476516]  ? pagecache_get_page+0x21f/0x2f0
+[  556.477412]  ? __asan_loadN+0xf/0x20
+[  556.478153]  ? __get_node_page+0x331/0x5b0
+[  556.478992]  ? reweight_entity+0x1e6/0x3b0
+[  556.479826]  f2fs_truncate_blocks+0x55e/0x740
+[  556.480709]  ? f2fs_truncate_data_blocks+0x20/0x20
+[  556.481689]  ? __radix_tree_lookup+0x34/0x160
+[  556.482630]  ? radix_tree_lookup+0xd/0x10
+[  556.483445]  f2fs_truncate+0xd4/0x1a0
+[  556.484206]  f2fs_evict_inode+0x5ce/0x630
+[  556.485032]  evict+0x16f/0x290
+[  556.485664]  iput+0x280/0x300
+[  556.486300]  dentry_unlink_inode+0x165/0x1e0
+[  556.487169]  __dentry_kill+0x16a/0x260
+[  556.487936]  dentry_kill+0x70/0x250
+[  556.488651]  shrink_dentry_list+0x125/0x260
+[  556.489504]  shrink_dcache_parent+0xc1/0x110
+[  556.490379]  ? shrink_dcache_sb+0x200/0x200
+[  556.491231]  ? bit_wait_timeout+0xc0/0xc0
+[  556.492047]  do_one_tree+0x12/0x40
+[  556.492743]  shrink_dcache_for_umount+0x3f/0xa0
+[  556.493656]  generic_shutdown_super+0x43/0x1c0
+[  556.494561]  kill_block_super+0x52/0x80
+[  556.495341]  kill_f2fs_super+0x62/0x70
+[  556.496105]  deactivate_locked_super+0x6f/0xa0
+[  556.497004]  deactivate_super+0x5e/0x80
+[  556.497785]  cleanup_mnt+0x61/0xa0
+[  556.498492]  __cleanup_mnt+0x12/0x20
+[  556.499218]  task_work_run+0xc8/0xf0
+[  556.499949]  exit_to_usermode_loop+0x125/0x130
+[  556.500846]  do_syscall_64+0x138/0x170
+[  556.501609]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+[  556.502659] RIP: 0033:0x7f8028b77487
+[  556.503384] Code: 83 c8 ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 31 f6 e9 09 00 00 00 66 0f 1f 84 00 00 00 00 00 b8 a6 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d e1 c9 2b 00 f7 d8 64 89 01 48
+[  556.507137] RSP: 002b:00007fff9f2e3598 EFLAGS: 00000246 ORIG_RAX: 00000000000000a6
+[  556.508637] RAX: 0000000000000000 RBX: 0000000000ebd030 RCX: 00007f8028b77487
+[  556.510069] RDX: 0000000000000001 RSI: 0000000000000000 RDI: 0000000000ec41e0
+[  556.511481] RBP: 0000000000ec41e0 R08: 0000000000000000 R09: 0000000000000014
+[  556.512892] R10: 00000000000006b2 R11: 0000000000000246 R12: 00007f802908083c
+[  556.514320] R13: 0000000000000000 R14: 0000000000ebd210 R15: 00007fff9f2e3820
+[  556.515745] Modules linked in: snd_hda_codec_generic snd_hda_intel snd_hda_codec snd_hwdep snd_hda_core snd_pcm snd_timer snd mac_hid i2c_piix4 soundcore ib_iser rdma_cm iw_cm ib_cm ib_core iscsi_tcp libiscsi_tcp libiscsi scsi_transport_iscsi raid10 raid456 async_raid6_recov async_memcpy async_pq async_xor async_tx raid1 raid0 multipath linear 8139too crct10dif_pclmul crc32_pclmul qxl drm_kms_helper syscopyarea aesni_intel sysfillrect sysimgblt fb_sys_fops ttm drm aes_x86_64 crypto_simd cryptd 8139cp glue_helper mii pata_acpi floppy
+[  556.529276] ---[ end trace 4ce02f25ff7d3df5 ]---
+[  556.530340] RIP: 0010:f2fs_truncate_inode_blocks+0x4a7/0x6f0
+[  556.531513] Code: e8 ae ea ff ff 41 89 c7 c1 e8 1f 84 c0 74 0a 41 83 ff fe 0f 85 35 ff ff ff 81 85 b0 fe ff ff fb 03 00 00 e9 f7 fd ff ff 0f 0b <0f> 0b e8 62 b7 9a 00 48 8b bd a0 fe ff ff e8 56 54 ae ff 48 8b b5
+[  556.535330] RSP: 0018:ffff8801f292f808 EFLAGS: 00010286
+[  556.536395] RAX: ffffed003e73242d RBX: ffff8801f292f958 RCX: ffffffffb88b81bc
+[  556.537824] RDX: 0000000000000000 RSI: 0000000000000004 RDI: ffff8801f3992164
+[  556.539290] RBP: ffff8801f292f980 R08: ffffed003e73242d R09: ffffed003e73242d
+[  556.540709] R10: 0000000000000001 R11: ffffed003e73242c R12: 00000000fffffc64
+[  556.542131] R13: ffff8801f3992000 R14: 0000000000000058 R15: 00000000ffff8801
+[  556.543579] FS:  00007f8029297840(0000) GS:ffff8801f6f00000(0000) knlGS:0000000000000000
+[  556.545180] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  556.546338] CR2: 000055f5f57305d8 CR3: 00000001f18b0000 CR4: 00000000000006e0
+[  556.547809] ==================================================================
+[  556.549248] BUG: KASAN: stack-out-of-bounds in arch_tlb_gather_mmu+0x52/0x170
+[  556.550672] Write of size 8 at addr ffff8801f292fd10 by task umount/1310
+
+[  556.552338] CPU: 1 PID: 1310 Comm: umount Tainted: G      D           4.18.0-rc1+ #4
+[  556.553886] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS Ubuntu-1.8.2-1ubuntu1 04/01/2014
+[  556.555756] Call Trace:
+[  556.556264]  dump_stack+0x7b/0xb5
+[  556.556944]  print_address_description+0x70/0x290
+[  556.557903]  kasan_report+0x291/0x390
+[  556.558649]  ? arch_tlb_gather_mmu+0x52/0x170
+[  556.559537]  __asan_store8+0x57/0x90
+[  556.560268]  arch_tlb_gather_mmu+0x52/0x170
+[  556.561110]  tlb_gather_mmu+0x12/0x40
+[  556.561862]  exit_mmap+0x123/0x2a0
+[  556.562555]  ? __ia32_sys_munmap+0x50/0x50
+[  556.563384]  ? exit_aio+0x98/0x230
+[  556.564079]  ? __x32_compat_sys_io_submit+0x260/0x260
+[  556.565099]  ? taskstats_exit+0x1f4/0x640
+[  556.565925]  ? kasan_check_read+0x11/0x20
+[  556.566739]  ? mm_update_next_owner+0x322/0x380
+[  556.567652]  mmput+0x8b/0x1d0
+[  556.568260]  do_exit+0x43a/0x1390
+[  556.568937]  ? mm_update_next_owner+0x380/0x380
+[  556.569855]  ? deactivate_super+0x5e/0x80
+[  556.570668]  ? cleanup_mnt+0x61/0xa0
+[  556.571395]  ? __cleanup_mnt+0x12/0x20
+[  556.572156]  ? task_work_run+0xc8/0xf0
+[  556.572917]  ? exit_to_usermode_loop+0x125/0x130
+[  556.573861]  rewind_stack_do_exit+0x17/0x20
+[  556.574707] RIP: 0033:0x7f8028b77487
+[  556.575428] Code: Bad RIP value.
+[  556.576106] RSP: 002b:00007fff9f2e3598 EFLAGS: 00000246 ORIG_RAX: 00000000000000a6
+[  556.577599] RAX: 0000000000000000 RBX: 0000000000ebd030 RCX: 00007f8028b77487
+[  556.579020] RDX: 0000000000000001 RSI: 0000000000000000 RDI: 0000000000ec41e0
+[  556.580422] RBP: 0000000000ec41e0 R08: 0000000000000000 R09: 0000000000000014
+[  556.581833] R10: 00000000000006b2 R11: 0000000000000246 R12: 00007f802908083c
+[  556.583252] R13: 0000000000000000 R14: 0000000000ebd210 R15: 00007fff9f2e3820
+
+[  556.584983] The buggy address belongs to the page:
+[  556.585961] page:ffffea0007ca4bc0 count:0 mapcount:0 mapping:0000000000000000 index:0x0
+[  556.587540] flags: 0x2ffff0000000000()
+[  556.588296] raw: 02ffff0000000000 0000000000000000 dead000000000200 0000000000000000
+[  556.589822] raw: 0000000000000000 0000000000000000 00000000ffffffff 0000000000000000
+[  556.591359] page dumped because: kasan: bad access detected
+
+[  556.592786] Memory state around the buggy address:
+[  556.593753]  ffff8801f292fc00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[  556.595191]  ffff8801f292fc80: 00 00 00 00 00 00 00 00 f1 f1 f1 f1 00 00 00 00
+[  556.596613] >ffff8801f292fd00: 00 00 f3 00 00 00 00 f3 f3 00 00 00 00 f4 f4 f4
+[  556.598044]                          ^
+[  556.598797]  ffff8801f292fd80: f3 f3 f3 f3 00 00 00 00 00 00 00 00 00 00 00 00
+[  556.600225]  ffff8801f292fe00: 00 00 00 00 00 00 00 00 f1 f1 f1 f1 00 f4 f4 f4
+[  556.601647] ==================================================================
+
+- Location
+https://elixir.bootlin.com/linux/v4.18-rc1/source/fs/f2fs/node.c#L987
+		case NODE_DIND_BLOCK:
+			err = truncate_nodes(&dn, nofs, offset[1], 3);
+			cont = 0;
+			break;
+
+		default:
+			BUG(); <---
+		}
+
+Reported-by Wen Xu <wen.xu@gatech.edu>
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
 ---
- drivers/block/pktcdvd.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+v2:
+- remove incorrect upper boundary check for iblock.
+ fs/f2fs/inode.c | 25 +++++++++++++++++++++++--
+ 1 file changed, 23 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/block/pktcdvd.c b/drivers/block/pktcdvd.c
-index c61d20c..665760d 100644
---- a/drivers/block/pktcdvd.c
-+++ b/drivers/block/pktcdvd.c
-@@ -67,8 +67,8 @@
- #include <scsi/scsi.h>
- #include <linux/debugfs.h>
- #include <linux/device.h>
--
- #include <linux/uaccess.h>
-+#include <linux/nospec.h>
- 
- #define DRIVER_NAME	"pktcdvd"
- 
-@@ -2229,9 +2229,13 @@ static void pkt_release_dev(struct pktcdvd_device *pd, int flush)
- 
- static struct pktcdvd_device *pkt_find_dev_from_minor(unsigned int dev_minor)
- {
-+	unsigned int idx = 0;
-+
- 	if (dev_minor >= MAX_WRITERS)
- 		return NULL;
--	return pkt_devs[dev_minor];
-+
-+	idx = array_index_nospec(dev_minor, MAX_WRITERS);
-+	return pkt_devs[idx];
+diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
+index 22810d30c054..f490393397d4 100644
+--- a/fs/f2fs/inode.c
++++ b/fs/f2fs/inode.c
+@@ -193,9 +193,30 @@ void f2fs_inode_chksum_set(struct f2fs_sb_info *sbi, struct page *page)
+ 	ri->i_inode_checksum = cpu_to_le32(f2fs_inode_chksum(sbi, page));
  }
  
- static int pkt_open(struct block_device *bdev, fmode_t mode)
+-static bool sanity_check_inode(struct inode *inode)
++static bool sanity_check_inode(struct inode *inode, struct page *node_page)
+ {
+ 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
++	unsigned long long iblocks;
++
++	iblocks = le64_to_cpu(F2FS_INODE(node_page)->i_blocks);
++	if (!iblocks) {
++		set_sbi_flag(sbi, SBI_NEED_FSCK);
++		f2fs_msg(sbi->sb, KERN_WARNING,
++			"%s: corrupted inode i_blocks i_ino=%lx iblocks=%llu, "
++			"run fsck to fix.",
++			__func__, inode->i_ino, iblocks);
++		return false;
++	}
++
++	if (ino_of_node(node_page) != nid_of_node(node_page)) {
++		set_sbi_flag(sbi, SBI_NEED_FSCK);
++		f2fs_msg(sbi->sb, KERN_WARNING,
++			"%s: corrupted inode footer i_ino=%lx, ino,nid: "
++			"[%u, %u] run fsck to fix.",
++			__func__, inode->i_ino,
++			ino_of_node(node_page), nid_of_node(node_page));
++		return false;
++	}
+ 
+ 	if (f2fs_sb_has_flexible_inline_xattr(sbi->sb)
+ 			&& !f2fs_has_extra_attr(inode)) {
+@@ -267,7 +288,7 @@ static int do_read_inode(struct inode *inode)
+ 
+ 	get_inline_info(inode, ri);
+ 
+-	if (!sanity_check_inode(inode)) {
++	if (!sanity_check_inode(inode, node_page)) {
+ 		f2fs_put_page(node_page, 1);
+ 		return -EINVAL;
+ 	}
 -- 
-1.9.1
+2.18.0.rc1
 
