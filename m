@@ -6,65 +6,65 @@ X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06A8CC28CF6
-	for <linux-kernel@archiver.kernel.org>; Sat, 28 Jul 2018 23:10:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3BD1C43142
+	for <linux-kernel@archiver.kernel.org>; Sat, 28 Jul 2018 23:10:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9710720878
-	for <linux-kernel@archiver.kernel.org>; Sat, 28 Jul 2018 23:10:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9F3F120878
+	for <linux-kernel@archiver.kernel.org>; Sat, 28 Jul 2018 23:10:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Una2UMrP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9710720878
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mkpa724r"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F3F120878
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731697AbeG2Aid (ORCPT
+        id S1731760AbeG2Aig (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 28 Jul 2018 20:38:33 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:39768 "EHLO
+        Sat, 28 Jul 2018 20:38:36 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:39772 "EHLO
         mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731435AbeG2Aia (ORCPT
+        with ESMTP id S1731546AbeG2Aif (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 28 Jul 2018 20:38:30 -0400
-Received: by mail-wm0-f66.google.com with SMTP id h20-v6so9483152wmb.4;
-        Sat, 28 Jul 2018 16:10:19 -0700 (PDT)
+        Sat, 28 Jul 2018 20:38:35 -0400
+Received: by mail-wm0-f66.google.com with SMTP id h20-v6so9483241wmb.4;
+        Sat, 28 Jul 2018 16:10:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=sender:from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=mX20Br/IeB5XpIR5slsbblFYEtSQups2qjDeKh8xwNo=;
-        b=Una2UMrPXziP+M45f3AoovKDo54Q4UNFfDwPs2sxQM9AZd4TxyOjGr1IU6+e4ZV6ND
-         AqhGKdPzxwWIhHEoB+VZemG3LfQZLKXW/5aCAXx0tJq47hpIaRxOOJfbB9RfivS8HS08
-         b0YIfcXZxx9F4q1A555xmkUUqgOdVp3wZWBohHQhYBTGUgbi3HSny8+gc7H6kjlXeDYf
-         RYAdWJeRB4sbS+lrER1trbd4A8QFY1z1hoXIA9RkqBL+eA/tDGtm6cSIW3WEoJP4pAzs
-         nWVWXteEbNtQl3NmjE31PvP/bBKzzNzvsN+0W7xNP3JO0nowVo7i093A2Owyc1zg7GX/
-         5IJw==
+        bh=Dw0tnLcPRlLp/CPLVdchiMw/KWxx8qaqoZVlMVZuHJA=;
+        b=mkpa724r9gDv6NJgyCcA9L5Rn/JyMpEp2lwLvQ4i15HyoNLfe2OPZjR7eL57Q43psX
+         iM0WDZt3Ru2JsKxtHSiv7W6+Zo5I8X78VGMuu0uKVrfG3foULzwrR30Xr3JQjgBumy+t
+         TeC64BdPHQEMRzb5ICnwFQTN0IMf4csx4vr5iSbqu9voz60PovE1SQGp0D6zFnyOZSHe
+         jpPInbGnmMw7oG3Zz3jbFir7pNIsFWLp1N5lUPn033lqSd8ZFgBS21f7L7TV31hDMV+n
+         vMyXmqmtCV5xH35HRqX2zKRDmFvq0KqJCU9xXzRcGjEUNJctaf7faaTfsNWr2RwMi9kc
+         EUOw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
          :in-reply-to:references;
-        bh=mX20Br/IeB5XpIR5slsbblFYEtSQups2qjDeKh8xwNo=;
-        b=U08pFDsXE0GdumeFeVyE5+JXRHX4JN+p0Gbkr9fRaXdHmpU6PlJ/2lsEGUYBgVroPl
-         NHQf7pp4H2G8yZVQaypyH8Z9BxdX3H5Vc9CxKyJ+5vbmOaLwnNsC+ljHfQghe2qOLivO
-         QaBGtHp5IaUW7QWmeWcc0zjrTZImY8U7l5Brro0h6JCHh4mLQODfKbQN5LVV+vd5UVFd
-         w7pD3fmZWm7hYkvqKmRraRkZxAUH7fB00sKzW/czcQtoSHeI1JCVT6a1QZcdqVF1/q83
-         98a6zTmQPQPZnVkPpz4adAEcTAHf6V8jH6nRG7+7JA2IOJW8mVgSZYK0aVc72OwekNv2
-         9/9w==
-X-Gm-Message-State: AOUpUlHLdsJCl2sKzNfCDLJKKJB19CJSsykWq40BsMqIPQIhDMuG1TbD
-        lqpsT9zpLN3JXcYoYbFGmm5MSmqI
-X-Google-Smtp-Source: AAOMgpdEop9OocS8oZV3MQd2KRf66wU+mdDwdjoABU5k3J15SVWpPCYmw1SDe5ZrqgzMR+0Ji9Z0cw==
-X-Received: by 2002:a1c:8b81:: with SMTP id n123-v6mr9360042wmd.142.1532819418386;
-        Sat, 28 Jul 2018 16:10:18 -0700 (PDT)
+        bh=Dw0tnLcPRlLp/CPLVdchiMw/KWxx8qaqoZVlMVZuHJA=;
+        b=HXZhCononIqyRrKgNGyc502059FKH9X73744Yq4MXcHd84G3qYV152SUlXyOwQQQuH
+         1dV64+BEW070Cbj/mAGzQyCw9G4rDMTo8nrd6xB8GHKnBcSioqCxPoieV8xj60jMm/pq
+         pUlVXwt+hwijVbLfYWUaYK5Agqww4GwVuoyY0pFX8LcTtxV5hQr4oIm2QENs+VZIFuDG
+         CPY8MHUrDSf7w8dstAfneb9S2s1FmGjqp6PyCh/hQRNOazOtZWKQlVmj69A3U+RSEqLF
+         r/rN8L8gjTVEyigbI89T+/rwOn4hu5/F+OkqV0XB5n4zOaL8LFrmBXliwaleRSTnBI+t
+         gSEQ==
+X-Gm-Message-State: AOUpUlHkySc/xeo6VY+jqhZIE9C+UVEx7E118f+aghzTTgQYxm13dDQo
+        pSjuBLiBwP9DbxzehW9ohG9HZplB
+X-Google-Smtp-Source: AAOMgpemd4weqKgSbPcezfo2YcDMSIFe7SPk0372ZpdY+gcrk4eEI0ebbejKXdhGjebvkj4Dl0uWNg==
+X-Received: by 2002:a1c:9b43:: with SMTP id d64-v6mr9505000wme.109.1532819423579;
+        Sat, 28 Jul 2018 16:10:23 -0700 (PDT)
 Received: from 640k.lan (94-36-184-250.adsl-ull.clienti.tiscali.it. [94.36.184.250])
-        by smtp.gmail.com with ESMTPSA id j6-v6sm6190725wro.13.2018.07.28.16.10.16
+        by smtp.gmail.com with ESMTPSA id j6-v6sm6190725wro.13.2018.07.28.16.10.22
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 28 Jul 2018 16:10:17 -0700 (PDT)
+        Sat, 28 Jul 2018 16:10:23 -0700 (PDT)
 From:   Paolo Bonzini <pbonzini@redhat.com>
 To:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org
 Cc:     Liran Alon <liran.alon@oracle.com>,
         KarimAllah Ahmed <karahmed@amazon.de>,
         Jim Mattson <jmattson@google.com>, rkrcmar@redhat.com
-Subject: [PATCH 02/10] kvm: selftests: create a GDT and TSS
-Date:   Sun, 29 Jul 2018 01:10:04 +0200
-Message-Id: <1532819412-51357-3-git-send-email-pbonzini@redhat.com>
+Subject: [PATCH 06/10] KVM: x86: do not load vmcs12 pages while still in SMM
+Date:   Sun, 29 Jul 2018 01:10:08 +0200
+Message-Id: <1532819412-51357-7-git-send-email-pbonzini@redhat.com>
 X-Mailer: git-send-email 1.8.3.1
 In-Reply-To: <1532819412-51357-1-git-send-email-pbonzini@redhat.com>
 References: <1532819412-51357-1-git-send-email-pbonzini@redhat.com>
@@ -73,293 +73,173 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The GDT and the TSS base were left to zero, and this has interesting effects
-when the TSS descriptor is later read to set up a VMCS's TR_BASE.  Basically
-it worked by chance, and this patch fixes it by setting up all the protected
-mode data structures properly.
+If the vCPU enters system management mode while running a nested guest,
+RSM starts processing the vmentry while still in SMM.  In that case,
+however, the pages pointed to by the vmcs12 might be incorrectly
+loaded from SMRAM.  To avoid this, delay the handling of the pages
+until just before the next vmentry.  This is done with a new request
+and a new entry in kvm_x86_ops, which we will be able to reuse for
+nested VMX state migration.
 
-Because the GDT and TSS addresses are virtual, the page tables now always
-exist at the time of vcpu setup.
+Extracted from a patch by Jim Mattson and KarimAllah Ahmed.
 
 Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 ---
- tools/testing/selftests/kvm/include/kvm_util.h     |   2 +-
- tools/testing/selftests/kvm/include/x86.h          |  11 +-
- tools/testing/selftests/kvm/lib/kvm_util.c         |   4 +-
- .../testing/selftests/kvm/lib/kvm_util_internal.h  |   5 +-
- tools/testing/selftests/kvm/lib/x86.c              | 111 +++++++++++++--------
- 5 files changed, 86 insertions(+), 47 deletions(-)
+ arch/x86/include/asm/kvm_host.h |  3 +++
+ arch/x86/kvm/vmx.c              | 53 +++++++++++++++++++++++++++--------------
+ arch/x86/kvm/x86.c              |  2 ++
+ 3 files changed, 40 insertions(+), 18 deletions(-)
 
-diff --git a/tools/testing/selftests/kvm/include/kvm_util.h b/tools/testing/selftests/kvm/include/kvm_util.h
-index 637b7017b6ee..87e05664c7f9 100644
---- a/tools/testing/selftests/kvm/include/kvm_util.h
-+++ b/tools/testing/selftests/kvm/include/kvm_util.h
-@@ -75,7 +75,7 @@ void vcpu_ioctl(struct kvm_vm *vm,
- 	uint32_t vcpuid, unsigned long ioctl, void *arg);
- void vm_ioctl(struct kvm_vm *vm, unsigned long ioctl, void *arg);
- void vm_mem_region_set_flags(struct kvm_vm *vm, uint32_t slot, uint32_t flags);
--void vm_vcpu_add(struct kvm_vm *vm, uint32_t vcpuid);
-+void vm_vcpu_add(struct kvm_vm *vm, uint32_t vcpuid, int pgd_memslot, int gdt_memslot);
- vm_vaddr_t vm_vaddr_alloc(struct kvm_vm *vm, size_t sz, vm_vaddr_t vaddr_min,
- 	uint32_t data_memslot, uint32_t pgd_memslot);
- void *addr_gpa2hva(struct kvm_vm *vm, vm_paddr_t gpa);
-diff --git a/tools/testing/selftests/kvm/include/x86.h b/tools/testing/selftests/kvm/include/x86.h
-index 4a5b2c4c1a0f..d8788ddb0210 100644
---- a/tools/testing/selftests/kvm/include/x86.h
-+++ b/tools/testing/selftests/kvm/include/x86.h
-@@ -56,8 +56,8 @@ enum x86_register {
- struct desc64 {
- 	uint16_t limit0;
- 	uint16_t base0;
--	unsigned base1:8, type:5, dpl:2, p:1;
--	unsigned limit1:4, zero0:3, g:1, base2:8;
-+	unsigned base1:8, s:1, type:4, dpl:2, p:1;
-+	unsigned limit1:4, avl:1, l:1, db:1, g:1, base2:8;
- 	uint32_t base3;
- 	uint32_t zero1;
- } __attribute__((packed));
-diff --git a/tools/testing/selftests/kvm/lib/kvm_util.c b/tools/testing/selftests/kvm/lib/kvm_util.c
-index 37e2a787d2fc..610d1326f03d 100644
---- a/tools/testing/selftests/kvm/lib/kvm_util.c
-+++ b/tools/testing/selftests/kvm/lib/kvm_util.c
-@@ -701,7 +701,7 @@ static int vcpu_mmap_sz(void)
-  * Creates and adds to the VM specified by vm and virtual CPU with
-  * the ID given by vcpuid.
-  */
--void vm_vcpu_add(struct kvm_vm *vm, uint32_t vcpuid)
-+void vm_vcpu_add(struct kvm_vm *vm, uint32_t vcpuid, int pgd_memslot, int gdt_memslot)
+diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
+index c13cd28d9d1b..da957725992d 100644
+--- a/arch/x86/include/asm/kvm_host.h
++++ b/arch/x86/include/asm/kvm_host.h
+@@ -75,6 +75,7 @@
+ #define KVM_REQ_HV_EXIT			KVM_ARCH_REQ(21)
+ #define KVM_REQ_HV_STIMER		KVM_ARCH_REQ(22)
+ #define KVM_REQ_LOAD_EOI_EXITMAP	KVM_ARCH_REQ(23)
++#define KVM_REQ_GET_VMCS12_PAGES	KVM_ARCH_REQ(24)
+ 
+ #define CR0_RESERVED_BITS                                               \
+ 	(~(unsigned long)(X86_CR0_PE | X86_CR0_MP | X86_CR0_EM | X86_CR0_TS \
+@@ -1085,6 +1086,8 @@ struct kvm_x86_ops {
+ 
+ 	void (*setup_mce)(struct kvm_vcpu *vcpu);
+ 
++	void (*get_vmcs12_pages)(struct kvm_vcpu *vcpu);
++
+ 	int (*smi_allowed)(struct kvm_vcpu *vcpu);
+ 	int (*pre_enter_smm)(struct kvm_vcpu *vcpu, char *smstate);
+ 	int (*pre_leave_smm)(struct kvm_vcpu *vcpu, u64 smbase);
+diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
+index 2630ab38d72c..17aede06ae0e 100644
+--- a/arch/x86/kvm/vmx.c
++++ b/arch/x86/kvm/vmx.c
+@@ -10636,9 +10636,9 @@ static void vmx_inject_page_fault_nested(struct kvm_vcpu *vcpu,
+ static inline bool nested_vmx_prepare_msr_bitmap(struct kvm_vcpu *vcpu,
+ 						 struct vmcs12 *vmcs12);
+ 
+-static void nested_get_vmcs12_pages(struct kvm_vcpu *vcpu,
+-					struct vmcs12 *vmcs12)
++static void nested_get_vmcs12_pages(struct kvm_vcpu *vcpu)
  {
- 	struct vcpu *vcpu;
- 
-@@ -736,7 +736,7 @@ void vm_vcpu_add(struct kvm_vm *vm, uint32_t vcpuid)
- 	vcpu->next = vm->vcpu_head;
- 	vm->vcpu_head = vcpu;
- 
--	vcpu_setup(vm, vcpuid);
-+	vcpu_setup(vm, vcpuid, pgd_memslot, gdt_memslot);
++	struct vmcs12 *vmcs12 = get_vmcs12(vcpu);
+ 	struct vcpu_vmx *vmx = to_vmx(vcpu);
+ 	struct page *page;
+ 	u64 hpa;
+@@ -11750,13 +11750,18 @@ static int check_vmentry_postreqs(struct kvm_vcpu *vcpu, struct vmcs12 *vmcs12,
+ 	return 0;
  }
  
- /* VM Virtual Address Unused Gap
-diff --git a/tools/testing/selftests/kvm/lib/kvm_util_internal.h b/tools/testing/selftests/kvm/lib/kvm_util_internal.h
-index a0bd1980c81c..cbb40288890a 100644
---- a/tools/testing/selftests/kvm/lib/kvm_util_internal.h
-+++ b/tools/testing/selftests/kvm/lib/kvm_util_internal.h
-@@ -51,13 +51,16 @@ struct kvm_vm {
- 	struct userspace_mem_region *userspace_mem_region_head;
- 	struct sparsebit *vpages_valid;
- 	struct sparsebit *vpages_mapped;
-+
- 	bool pgd_created;
- 	vm_paddr_t pgd;
-+	vm_vaddr_t gdt;
-+	vm_vaddr_t tss;
- };
+-static int enter_vmx_non_root_mode(struct kvm_vcpu *vcpu)
++/*
++ * If p_exit_qual is NULL, this is being called from state restore (either
++ * kvm_set_nested_state or RSM).  Otherwise it's called from vmlaunch/vmresume.
++ */
++static int enter_vmx_non_root_mode(struct kvm_vcpu *vcpu, u32 *p_exit_qual)
+ {
+ 	struct vcpu_vmx *vmx = to_vmx(vcpu);
+ 	struct vmcs12 *vmcs12 = get_vmcs12(vcpu);
++	bool from_vmentry = !!p_exit_qual;
+ 	u32 msr_entry_idx;
+-	u32 exit_qual;
+-	int r;
++	u32 dummy_exit_qual;
++	int r = 0;
  
- struct vcpu *vcpu_find(struct kvm_vm *vm,
- 	uint32_t vcpuid);
--void vcpu_setup(struct kvm_vm *vm, int vcpuid);
-+void vcpu_setup(struct kvm_vm *vm, int vcpuid, int pgd_memslot, int gdt_memslot);
- void virt_dump(FILE *stream, struct kvm_vm *vm, uint8_t indent);
- void regs_dump(FILE *stream, struct kvm_regs *regs,
- 	uint8_t indent);
-diff --git a/tools/testing/selftests/kvm/lib/x86.c b/tools/testing/selftests/kvm/lib/x86.c
-index 2f17675f4275..024e95f1b470 100644
---- a/tools/testing/selftests/kvm/lib/x86.c
-+++ b/tools/testing/selftests/kvm/lib/x86.c
-@@ -239,25 +239,6 @@ void virt_pgd_alloc(struct kvm_vm *vm, uint32_t pgd_memslot)
- 		vm_paddr_t paddr = vm_phy_page_alloc(vm,
- 			KVM_GUEST_PAGE_TABLE_MIN_PADDR, pgd_memslot);
- 		vm->pgd = paddr;
--
--		/* Set pointer to pgd tables in all the VCPUs that
--		 * have already been created.  Future VCPUs will have
--		 * the value set as each one is created.
--		 */
--		for (struct vcpu *vcpu = vm->vcpu_head; vcpu;
--			vcpu = vcpu->next) {
--			struct kvm_sregs sregs;
--
--			/* Obtain the current system register settings */
--			vcpu_sregs_get(vm, vcpu->id, &sregs);
--
--			/* Set and store the pointer to the start of the
--			 * pgd tables.
--			 */
--			sregs.cr3 = vm->pgd;
--			vcpu_sregs_set(vm, vcpu->id, &sregs);
--		}
--
- 		vm->pgd_created = true;
+ 	enter_guest_mode(vcpu);
+ 
+@@ -11770,17 +11775,27 @@ static int enter_vmx_non_root_mode(struct kvm_vcpu *vcpu)
+ 		vcpu->arch.tsc_offset += vmcs12->tsc_offset;
+ 
+ 	r = EXIT_REASON_INVALID_STATE;
+-	if (prepare_vmcs02(vcpu, vmcs12, &exit_qual))
++	if (prepare_vmcs02(vcpu, vmcs12, from_vmentry ? p_exit_qual : &dummy_exit_qual))
+ 		goto fail;
+ 
+-	nested_get_vmcs12_pages(vcpu, vmcs12);
++	if (from_vmentry) {
++		nested_get_vmcs12_pages(vcpu);
+ 
+-	r = EXIT_REASON_MSR_LOAD_FAIL;
+-	msr_entry_idx = nested_vmx_load_msr(vcpu,
+-					    vmcs12->vm_entry_msr_load_addr,
+-					    vmcs12->vm_entry_msr_load_count);
+-	if (msr_entry_idx)
+-		goto fail;
++		r = EXIT_REASON_MSR_LOAD_FAIL;
++		msr_entry_idx = nested_vmx_load_msr(vcpu,
++						    vmcs12->vm_entry_msr_load_addr,
++						    vmcs12->vm_entry_msr_load_count);
++		if (msr_entry_idx)
++			goto fail;
++	} else {
++		/*
++		 * The MMU is not initialized to point at the right entities yet and
++		 * "get pages" would need to read data from the guest (i.e. we will
++		 * need to perform gpa to hpa translation). Request a call
++		 * to nested_get_vmcs12_pages before the next VM-entry.
++		 */
++		kvm_make_request(KVM_REQ_GET_VMCS12_PAGES, vcpu);
++	}
+ 
+ 	/*
+ 	 * Note no nested_vmx_succeed or nested_vmx_fail here. At this point
+@@ -11795,8 +11810,7 @@ static int enter_vmx_non_root_mode(struct kvm_vcpu *vcpu)
+ 		vcpu->arch.tsc_offset -= vmcs12->tsc_offset;
+ 	leave_guest_mode(vcpu);
+ 	vmx_switch_vmcs(vcpu, &vmx->vmcs01);
+-	nested_vmx_entry_failure(vcpu, vmcs12, r, exit_qual);
+-	return 1;
++	return r;
+ }
+ 
+ /*
+@@ -11873,10 +11887,11 @@ static int nested_vmx_run(struct kvm_vcpu *vcpu, bool launch)
+ 	 */
+ 
+ 	vmx->nested.nested_run_pending = 1;
+-	ret = enter_vmx_non_root_mode(vcpu);
++	ret = enter_vmx_non_root_mode(vcpu, &exit_qual);
+ 	if (ret) {
++		nested_vmx_entry_failure(vcpu, vmcs12, ret, exit_qual);
+ 		vmx->nested.nested_run_pending = 0;
+-		return ret;
++		return 1;
  	}
- }
-@@ -460,9 +441,32 @@ static void kvm_seg_set_unusable(struct kvm_segment *segp)
- 	segp->unusable = true;
- }
  
-+static void kvm_seg_fill_gdt_64bit(struct kvm_vm *vm, struct kvm_segment *segp)
-+{
-+	void *gdt = addr_gva2hva(vm, vm->gdt);
-+	struct desc64 *desc = gdt + (segp->selector >> 3) * 8;
+ 	/*
+@@ -12962,7 +12977,7 @@ static int vmx_pre_leave_smm(struct kvm_vcpu *vcpu, u64 smbase)
+ 
+ 	if (vmx->nested.smm.guest_mode) {
+ 		vcpu->arch.hflags &= ~HF_SMM_MASK;
+-		ret = enter_vmx_non_root_mode(vcpu);
++		ret = enter_vmx_non_root_mode(vcpu, NULL);
+ 		vcpu->arch.hflags |= HF_SMM_MASK;
+ 		if (ret)
+ 			return ret;
+@@ -13111,6 +13126,8 @@ static int enable_smi_window(struct kvm_vcpu *vcpu)
+ 
+ 	.setup_mce = vmx_setup_mce,
+ 
++	.get_vmcs12_pages = nested_get_vmcs12_pages,
 +
-+	desc->limit0 = segp->limit & 0xFFFF;
-+	desc->base0 = segp->base & 0xFFFF;
-+	desc->base1 = segp->base >> 16;
-+	desc->s = segp->s;
-+	desc->type = segp->type;
-+	desc->dpl = segp->dpl;
-+	desc->p = segp->present;
-+	desc->limit1 = segp->limit >> 16;
-+	desc->l = segp->l;
-+	desc->db = segp->db;
-+	desc->g = segp->g;
-+	desc->base2 = segp->base >> 24;
-+	if (!segp->s)
-+		desc->base3 = segp->base >> 32;
-+}
-+
-+
- /* Set Long Mode Flat Kernel Code Segment
-  *
-  * Input Args:
-+ *   vm - VM whose GDT is being filled, or NULL to only write segp
-  *   selector - selector value
-  *
-  * Output Args:
-@@ -473,7 +477,7 @@ static void kvm_seg_set_unusable(struct kvm_segment *segp)
-  * Sets up the KVM segment pointed to by segp, to be a code segment
-  * with the selector value given by selector.
-  */
--static void kvm_seg_set_kernel_code_64bit(uint16_t selector,
-+static void kvm_seg_set_kernel_code_64bit(struct kvm_vm *vm, uint16_t selector,
- 	struct kvm_segment *segp)
- {
- 	memset(segp, 0, sizeof(*segp));
-@@ -486,11 +490,14 @@ static void kvm_seg_set_kernel_code_64bit(uint16_t selector,
- 	segp->g = true;
- 	segp->l = true;
- 	segp->present = 1;
-+	if (vm)
-+		kvm_seg_fill_gdt_64bit(vm, segp);
- }
+ 	.smi_allowed = vmx_smi_allowed,
+ 	.pre_enter_smm = vmx_pre_enter_smm,
+ 	.pre_leave_smm = vmx_pre_leave_smm,
+diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+index 2b812b3c5088..8ddf5f94876f 100644
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -7257,6 +7257,8 @@ static int vcpu_enter_guest(struct kvm_vcpu *vcpu)
+ 	bool req_immediate_exit = false;
  
- /* Set Long Mode Flat Kernel Data Segment
-  *
-  * Input Args:
-+ *   vm - VM whose GDT is being filled, or NULL to only write segp
-  *   selector - selector value
-  *
-  * Output Args:
-@@ -501,7 +508,7 @@ static void kvm_seg_set_kernel_code_64bit(uint16_t selector,
-  * Sets up the KVM segment pointed to by segp, to be a data segment
-  * with the selector value given by selector.
-  */
--static void kvm_seg_set_kernel_data_64bit(uint16_t selector,
-+static void kvm_seg_set_kernel_data_64bit(struct kvm_vm *vm, uint16_t selector,
- 	struct kvm_segment *segp)
- {
- 	memset(segp, 0, sizeof(*segp));
-@@ -513,6 +520,8 @@ static void kvm_seg_set_kernel_data_64bit(uint16_t selector,
- 					  */
- 	segp->g = true;
- 	segp->present = true;
-+	if (vm)
-+		kvm_seg_fill_gdt_64bit(vm, segp);
- }
- 
- /* Address Guest Virtual to Guest Physical
-@@ -575,13 +584,45 @@ vm_paddr_t addr_gva2gpa(struct kvm_vm *vm, vm_vaddr_t gva)
- 		    "gva: 0x%lx", gva);
- }
- 
--void vcpu_setup(struct kvm_vm *vm, int vcpuid)
-+static void kvm_setup_gdt(struct kvm_vm *vm, struct kvm_dtable *dt, int gdt_memslot,
-+			  int pgd_memslot)
-+{
-+	if (!vm->gdt)
-+		vm->gdt = vm_vaddr_alloc(vm, getpagesize(),
-+			KVM_UTIL_MIN_VADDR, gdt_memslot, pgd_memslot);
-+
-+	dt->base = vm->gdt;
-+	dt->limit = getpagesize();
-+}
-+
-+static void kvm_setup_tss_64bit(struct kvm_vm *vm, struct kvm_segment *segp,
-+				int selector, int gdt_memslot,
-+				int pgd_memslot)
-+{
-+	if (!vm->tss)
-+		vm->tss = vm_vaddr_alloc(vm, getpagesize(),
-+			KVM_UTIL_MIN_VADDR, gdt_memslot, pgd_memslot);
-+
-+	memset(segp, 0, sizeof(*segp));
-+	segp->base = vm->tss;
-+	segp->limit = 0x67;
-+	segp->selector = selector;
-+	segp->type = 0xb;
-+	segp->present = 1;
-+	kvm_seg_fill_gdt_64bit(vm, segp);
-+}
-+
-+void vcpu_setup(struct kvm_vm *vm, int vcpuid, int pgd_memslot, int gdt_memslot)
- {
- 	struct kvm_sregs sregs;
- 
- 	/* Set mode specific system register values. */
- 	vcpu_sregs_get(vm, vcpuid, &sregs);
- 
-+	sregs.idt.limit = 0;
-+
-+	kvm_setup_gdt(vm, &sregs.gdt, gdt_memslot, pgd_memslot);
-+
- 	switch (vm->mode) {
- 	case VM_MODE_FLAT48PG:
- 		sregs.cr0 = X86_CR0_PE | X86_CR0_NE | X86_CR0_PG;
-@@ -589,30 +630,18 @@ void vcpu_setup(struct kvm_vm *vm, int vcpuid)
- 		sregs.efer |= (EFER_LME | EFER_LMA | EFER_NX);
- 
- 		kvm_seg_set_unusable(&sregs.ldt);
--		kvm_seg_set_kernel_code_64bit(0x8, &sregs.cs);
--		kvm_seg_set_kernel_data_64bit(0x10, &sregs.ds);
--		kvm_seg_set_kernel_data_64bit(0x10, &sregs.es);
-+		kvm_seg_set_kernel_code_64bit(vm, 0x8, &sregs.cs);
-+		kvm_seg_set_kernel_data_64bit(vm, 0x10, &sregs.ds);
-+		kvm_seg_set_kernel_data_64bit(vm, 0x10, &sregs.es);
-+		kvm_setup_tss_64bit(vm, &sregs.tr, 0x18, gdt_memslot, pgd_memslot);
- 		break;
- 
- 	default:
- 		TEST_ASSERT(false, "Unknown guest mode, mode: 0x%x", vm->mode);
- 	}
--	vcpu_sregs_set(vm, vcpuid, &sregs);
--
--	/* If virtual translation table have been setup, set system register
--	 * to point to the tables.  It's okay if they haven't been setup yet,
--	 * in that the code that sets up the virtual translation tables, will
--	 * go back through any VCPUs that have already been created and set
--	 * their values.
--	 */
--	if (vm->pgd_created) {
--		struct kvm_sregs sregs;
- 
--		vcpu_sregs_get(vm, vcpuid, &sregs);
--
--		sregs.cr3 = vm->pgd;
--		vcpu_sregs_set(vm, vcpuid, &sregs);
--	}
-+	sregs.cr3 = vm->pgd;
-+	vcpu_sregs_set(vm, vcpuid, &sregs);
- }
- /* Adds a vCPU with reasonable defaults (i.e., a stack)
-  *
-@@ -629,7 +658,7 @@ void vm_vcpu_add_default(struct kvm_vm *vm, uint32_t vcpuid, void *guest_code)
- 				     DEFAULT_GUEST_STACK_VADDR_MIN, 0, 0);
- 
- 	/* Create VCPU */
--	vm_vcpu_add(vm, vcpuid);
-+	vm_vcpu_add(vm, vcpuid, 0, 0);
- 
- 	/* Setup guest general purpose registers */
- 	vcpu_regs_get(vm, vcpuid, &regs);
+ 	if (kvm_request_pending(vcpu)) {
++		if (kvm_check_request(KVM_REQ_GET_VMCS12_PAGES, vcpu))
++			kvm_x86_ops->get_vmcs12_pages(vcpu);
+ 		if (kvm_check_request(KVM_REQ_MMU_RELOAD, vcpu))
+ 			kvm_mmu_unload(vcpu);
+ 		if (kvm_check_request(KVM_REQ_MIGRATE_TIMER, vcpu))
 -- 
 1.8.3.1
 
