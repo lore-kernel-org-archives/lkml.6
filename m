@@ -6,1402 +6,247 @@ X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BA88C28CF6
-	for <linux-kernel@archiver.kernel.org>; Sat, 28 Jul 2018 06:26:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77FA5C6778F
+	for <linux-kernel@archiver.kernel.org>; Sat, 28 Jul 2018 06:26:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9ACA02088E
-	for <linux-kernel@archiver.kernel.org>; Sat, 28 Jul 2018 06:26:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9ACA02088E
+	by mail.kernel.org (Postfix) with ESMTP id 242AC20891
+	for <linux-kernel@archiver.kernel.org>; Sat, 28 Jul 2018 06:26:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 242AC20891
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728577AbeG1Hvn (ORCPT
+        id S1728625AbeG1HwC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 28 Jul 2018 03:51:43 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:36744 "EHLO
+        Sat, 28 Jul 2018 03:52:02 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:36772 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726000AbeG1Hvn (ORCPT
+        with ESMTP id S1726000AbeG1HwB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 28 Jul 2018 03:51:43 -0400
+        Sat, 28 Jul 2018 03:52:01 -0400
 Received: from localhost (D57D388D.static.ziggozakelijk.nl [213.125.56.141])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 2C36B825;
-        Sat, 28 Jul 2018 06:26:22 +0000 (UTC)
-Date:   Sat, 28 Jul 2018 08:26:19 +0200
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C693CA95;
+        Sat, 28 Jul 2018 06:26:42 +0000 (UTC)
+Date:   Sat, 28 Jul 2018 08:26:40 +0200
 From:   Greg KH <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org,
         Andrew Morton <akpm@linux-foundation.org>,
         torvalds@linux-foundation.org, stable@vger.kernel.org
 Cc:     lwn@lwn.net, Jiri Slaby <jslaby@suse.cz>
-Subject: Re: Linux 4.9.116
-Message-ID: <20180728062619.GB11964@kroah.com>
-References: <20180728062613.GA11964@kroah.com>
+Subject: Linux 4.14.59
+Message-ID: <20180728062640.GA12057@kroah.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="wac7ysb48OaltWcw"
 Content-Disposition: inline
-In-Reply-To: <20180728062613.GA11964@kroah.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-diff --git a/Makefile b/Makefile
-index 889c58e39928..a6b011778960 100644
---- a/Makefile
-+++ b/Makefile
-@@ -1,6 +1,6 @@
- VERSION = 4
- PATCHLEVEL = 9
--SUBLEVEL = 115
-+SUBLEVEL = 116
- EXTRAVERSION =
- NAME = Roaring Lionus
- 
-@@ -635,6 +635,7 @@ KBUILD_CFLAGS	+= $(call cc-disable-warning,frame-address,)
- KBUILD_CFLAGS	+= $(call cc-disable-warning, format-truncation)
- KBUILD_CFLAGS	+= $(call cc-disable-warning, format-overflow)
- KBUILD_CFLAGS	+= $(call cc-disable-warning, int-in-bool-context)
-+KBUILD_CFLAGS	+= $(call cc-disable-warning, attribute-alias)
- 
- ifdef CONFIG_LD_DEAD_CODE_DATA_ELIMINATION
- KBUILD_CFLAGS	+= $(call cc-option,-ffunction-sections,)
-diff --git a/arch/mips/ath79/common.c b/arch/mips/ath79/common.c
-index d071a3a0f876..fc97a11c41c5 100644
---- a/arch/mips/ath79/common.c
-+++ b/arch/mips/ath79/common.c
-@@ -58,7 +58,7 @@ EXPORT_SYMBOL_GPL(ath79_ddr_ctrl_init);
- 
- void ath79_ddr_wb_flush(u32 reg)
- {
--	void __iomem *flush_reg = ath79_ddr_wb_flush_base + reg;
-+	void __iomem *flush_reg = ath79_ddr_wb_flush_base + (reg * 4);
- 
- 	/* Flush the DDR write buffer. */
- 	__raw_writel(0x1, flush_reg);
-diff --git a/arch/mips/pci/pci.c b/arch/mips/pci/pci.c
-index f6325fa657fb..64ae8c094a54 100644
---- a/arch/mips/pci/pci.c
-+++ b/arch/mips/pci/pci.c
-@@ -55,7 +55,7 @@ void pci_resource_to_user(const struct pci_dev *dev, int bar,
- 	phys_addr_t size = resource_size(rsrc);
- 
- 	*start = fixup_bigphys_addr(rsrc->start, size);
--	*end = rsrc->start + size;
-+	*end = rsrc->start + size - 1;
- }
- 
- int pci_mmap_page_range(struct pci_dev *dev, struct vm_area_struct *vma,
-diff --git a/drivers/base/dd.c b/drivers/base/dd.c
-index d76cd97a98b6..ee25a69630c3 100644
---- a/drivers/base/dd.c
-+++ b/drivers/base/dd.c
-@@ -363,14 +363,6 @@ static int really_probe(struct device *dev, struct device_driver *drv)
- 			goto probe_failed;
- 	}
- 
--	/*
--	 * Ensure devices are listed in devices_kset in correct order
--	 * It's important to move Dev to the end of devices_kset before
--	 * calling .probe, because it could be recursive and parent Dev
--	 * should always go first
--	 */
--	devices_kset_move_last(dev);
--
- 	if (dev->bus->probe) {
- 		ret = dev->bus->probe(dev);
- 		if (ret)
-diff --git a/drivers/net/can/xilinx_can.c b/drivers/net/can/xilinx_can.c
-index c71a03593595..e680bab27dd7 100644
---- a/drivers/net/can/xilinx_can.c
-+++ b/drivers/net/can/xilinx_can.c
-@@ -2,6 +2,7 @@
-  *
-  * Copyright (C) 2012 - 2014 Xilinx, Inc.
-  * Copyright (C) 2009 PetaLogix. All rights reserved.
-+ * Copyright (C) 2017 Sandvik Mining and Construction Oy
-  *
-  * Description:
-  * This driver is developed for Axi CAN IP and for Zynq CANPS Controller.
-@@ -25,8 +26,10 @@
- #include <linux/module.h>
- #include <linux/netdevice.h>
- #include <linux/of.h>
-+#include <linux/of_device.h>
- #include <linux/platform_device.h>
- #include <linux/skbuff.h>
-+#include <linux/spinlock.h>
- #include <linux/string.h>
- #include <linux/types.h>
- #include <linux/can/dev.h>
-@@ -101,7 +104,7 @@ enum xcan_reg {
- #define XCAN_INTR_ALL		(XCAN_IXR_TXOK_MASK | XCAN_IXR_BSOFF_MASK |\
- 				 XCAN_IXR_WKUP_MASK | XCAN_IXR_SLP_MASK | \
- 				 XCAN_IXR_RXNEMP_MASK | XCAN_IXR_ERROR_MASK | \
--				 XCAN_IXR_ARBLST_MASK | XCAN_IXR_RXOK_MASK)
-+				 XCAN_IXR_RXOFLW_MASK | XCAN_IXR_ARBLST_MASK)
- 
- /* CAN register bit shift - XCAN_<REG>_<BIT>_SHIFT */
- #define XCAN_BTR_SJW_SHIFT		7  /* Synchronous jump width */
-@@ -118,6 +121,7 @@ enum xcan_reg {
- /**
-  * struct xcan_priv - This definition define CAN driver instance
-  * @can:			CAN private data structure.
-+ * @tx_lock:			Lock for synchronizing TX interrupt handling
-  * @tx_head:			Tx CAN packets ready to send on the queue
-  * @tx_tail:			Tx CAN packets successfully sended on the queue
-  * @tx_max:			Maximum number packets the driver can send
-@@ -132,6 +136,7 @@ enum xcan_reg {
-  */
- struct xcan_priv {
- 	struct can_priv can;
-+	spinlock_t tx_lock;
- 	unsigned int tx_head;
- 	unsigned int tx_tail;
- 	unsigned int tx_max;
-@@ -159,6 +164,11 @@ static const struct can_bittiming_const xcan_bittiming_const = {
- 	.brp_inc = 1,
- };
- 
-+#define XCAN_CAP_WATERMARK	0x0001
-+struct xcan_devtype_data {
-+	unsigned int caps;
-+};
-+
- /**
-  * xcan_write_reg_le - Write a value to the device register little endian
-  * @priv:	Driver private data structure
-@@ -238,6 +248,10 @@ static int set_reset_mode(struct net_device *ndev)
- 		usleep_range(500, 10000);
- 	}
- 
-+	/* reset clears FIFOs */
-+	priv->tx_head = 0;
-+	priv->tx_tail = 0;
-+
- 	return 0;
- }
- 
-@@ -392,6 +406,7 @@ static int xcan_start_xmit(struct sk_buff *skb, struct net_device *ndev)
- 	struct net_device_stats *stats = &ndev->stats;
- 	struct can_frame *cf = (struct can_frame *)skb->data;
- 	u32 id, dlc, data[2] = {0, 0};
-+	unsigned long flags;
- 
- 	if (can_dropped_invalid_skb(ndev, skb))
- 		return NETDEV_TX_OK;
-@@ -439,6 +454,9 @@ static int xcan_start_xmit(struct sk_buff *skb, struct net_device *ndev)
- 		data[1] = be32_to_cpup((__be32 *)(cf->data + 4));
- 
- 	can_put_echo_skb(skb, ndev, priv->tx_head % priv->tx_max);
-+
-+	spin_lock_irqsave(&priv->tx_lock, flags);
-+
- 	priv->tx_head++;
- 
- 	/* Write the Frame to Xilinx CAN TX FIFO */
-@@ -454,10 +472,16 @@ static int xcan_start_xmit(struct sk_buff *skb, struct net_device *ndev)
- 		stats->tx_bytes += cf->can_dlc;
- 	}
- 
-+	/* Clear TX-FIFO-empty interrupt for xcan_tx_interrupt() */
-+	if (priv->tx_max > 1)
-+		priv->write_reg(priv, XCAN_ICR_OFFSET, XCAN_IXR_TXFEMP_MASK);
-+
- 	/* Check if the TX buffer is full */
- 	if ((priv->tx_head - priv->tx_tail) == priv->tx_max)
- 		netif_stop_queue(ndev);
- 
-+	spin_unlock_irqrestore(&priv->tx_lock, flags);
-+
- 	return NETDEV_TX_OK;
- }
- 
-@@ -529,6 +553,123 @@ static int xcan_rx(struct net_device *ndev)
- 	return 1;
- }
- 
-+/**
-+ * xcan_current_error_state - Get current error state from HW
-+ * @ndev:	Pointer to net_device structure
-+ *
-+ * Checks the current CAN error state from the HW. Note that this
-+ * only checks for ERROR_PASSIVE and ERROR_WARNING.
-+ *
-+ * Return:
-+ * ERROR_PASSIVE or ERROR_WARNING if either is active, ERROR_ACTIVE
-+ * otherwise.
-+ */
-+static enum can_state xcan_current_error_state(struct net_device *ndev)
-+{
-+	struct xcan_priv *priv = netdev_priv(ndev);
-+	u32 status = priv->read_reg(priv, XCAN_SR_OFFSET);
-+
-+	if ((status & XCAN_SR_ESTAT_MASK) == XCAN_SR_ESTAT_MASK)
-+		return CAN_STATE_ERROR_PASSIVE;
-+	else if (status & XCAN_SR_ERRWRN_MASK)
-+		return CAN_STATE_ERROR_WARNING;
-+	else
-+		return CAN_STATE_ERROR_ACTIVE;
-+}
-+
-+/**
-+ * xcan_set_error_state - Set new CAN error state
-+ * @ndev:	Pointer to net_device structure
-+ * @new_state:	The new CAN state to be set
-+ * @cf:		Error frame to be populated or NULL
-+ *
-+ * Set new CAN error state for the device, updating statistics and
-+ * populating the error frame if given.
-+ */
-+static void xcan_set_error_state(struct net_device *ndev,
-+				 enum can_state new_state,
-+				 struct can_frame *cf)
-+{
-+	struct xcan_priv *priv = netdev_priv(ndev);
-+	u32 ecr = priv->read_reg(priv, XCAN_ECR_OFFSET);
-+	u32 txerr = ecr & XCAN_ECR_TEC_MASK;
-+	u32 rxerr = (ecr & XCAN_ECR_REC_MASK) >> XCAN_ESR_REC_SHIFT;
-+
-+	priv->can.state = new_state;
-+
-+	if (cf) {
-+		cf->can_id |= CAN_ERR_CRTL;
-+		cf->data[6] = txerr;
-+		cf->data[7] = rxerr;
-+	}
-+
-+	switch (new_state) {
-+	case CAN_STATE_ERROR_PASSIVE:
-+		priv->can.can_stats.error_passive++;
-+		if (cf)
-+			cf->data[1] = (rxerr > 127) ?
-+					CAN_ERR_CRTL_RX_PASSIVE :
-+					CAN_ERR_CRTL_TX_PASSIVE;
-+		break;
-+	case CAN_STATE_ERROR_WARNING:
-+		priv->can.can_stats.error_warning++;
-+		if (cf)
-+			cf->data[1] |= (txerr > rxerr) ?
-+					CAN_ERR_CRTL_TX_WARNING :
-+					CAN_ERR_CRTL_RX_WARNING;
-+		break;
-+	case CAN_STATE_ERROR_ACTIVE:
-+		if (cf)
-+			cf->data[1] |= CAN_ERR_CRTL_ACTIVE;
-+		break;
-+	default:
-+		/* non-ERROR states are handled elsewhere */
-+		WARN_ON(1);
-+		break;
-+	}
-+}
-+
-+/**
-+ * xcan_update_error_state_after_rxtx - Update CAN error state after RX/TX
-+ * @ndev:	Pointer to net_device structure
-+ *
-+ * If the device is in a ERROR-WARNING or ERROR-PASSIVE state, check if
-+ * the performed RX/TX has caused it to drop to a lesser state and set
-+ * the interface state accordingly.
-+ */
-+static void xcan_update_error_state_after_rxtx(struct net_device *ndev)
-+{
-+	struct xcan_priv *priv = netdev_priv(ndev);
-+	enum can_state old_state = priv->can.state;
-+	enum can_state new_state;
-+
-+	/* changing error state due to successful frame RX/TX can only
-+	 * occur from these states
-+	 */
-+	if (old_state != CAN_STATE_ERROR_WARNING &&
-+	    old_state != CAN_STATE_ERROR_PASSIVE)
-+		return;
-+
-+	new_state = xcan_current_error_state(ndev);
-+
-+	if (new_state != old_state) {
-+		struct sk_buff *skb;
-+		struct can_frame *cf;
-+
-+		skb = alloc_can_err_skb(ndev, &cf);
-+
-+		xcan_set_error_state(ndev, new_state, skb ? cf : NULL);
-+
-+		if (skb) {
-+			struct net_device_stats *stats = &ndev->stats;
-+
-+			stats->rx_packets++;
-+			stats->rx_bytes += cf->can_dlc;
-+			netif_rx(skb);
-+		}
-+	}
-+}
-+
- /**
-  * xcan_err_interrupt - error frame Isr
-  * @ndev:	net_device pointer
-@@ -544,16 +685,12 @@ static void xcan_err_interrupt(struct net_device *ndev, u32 isr)
- 	struct net_device_stats *stats = &ndev->stats;
- 	struct can_frame *cf;
- 	struct sk_buff *skb;
--	u32 err_status, status, txerr = 0, rxerr = 0;
-+	u32 err_status;
- 
- 	skb = alloc_can_err_skb(ndev, &cf);
- 
- 	err_status = priv->read_reg(priv, XCAN_ESR_OFFSET);
- 	priv->write_reg(priv, XCAN_ESR_OFFSET, err_status);
--	txerr = priv->read_reg(priv, XCAN_ECR_OFFSET) & XCAN_ECR_TEC_MASK;
--	rxerr = ((priv->read_reg(priv, XCAN_ECR_OFFSET) &
--			XCAN_ECR_REC_MASK) >> XCAN_ESR_REC_SHIFT);
--	status = priv->read_reg(priv, XCAN_SR_OFFSET);
- 
- 	if (isr & XCAN_IXR_BSOFF_MASK) {
- 		priv->can.state = CAN_STATE_BUS_OFF;
-@@ -563,28 +700,10 @@ static void xcan_err_interrupt(struct net_device *ndev, u32 isr)
- 		can_bus_off(ndev);
- 		if (skb)
- 			cf->can_id |= CAN_ERR_BUSOFF;
--	} else if ((status & XCAN_SR_ESTAT_MASK) == XCAN_SR_ESTAT_MASK) {
--		priv->can.state = CAN_STATE_ERROR_PASSIVE;
--		priv->can.can_stats.error_passive++;
--		if (skb) {
--			cf->can_id |= CAN_ERR_CRTL;
--			cf->data[1] = (rxerr > 127) ?
--					CAN_ERR_CRTL_RX_PASSIVE :
--					CAN_ERR_CRTL_TX_PASSIVE;
--			cf->data[6] = txerr;
--			cf->data[7] = rxerr;
--		}
--	} else if (status & XCAN_SR_ERRWRN_MASK) {
--		priv->can.state = CAN_STATE_ERROR_WARNING;
--		priv->can.can_stats.error_warning++;
--		if (skb) {
--			cf->can_id |= CAN_ERR_CRTL;
--			cf->data[1] |= (txerr > rxerr) ?
--					CAN_ERR_CRTL_TX_WARNING :
--					CAN_ERR_CRTL_RX_WARNING;
--			cf->data[6] = txerr;
--			cf->data[7] = rxerr;
--		}
-+	} else {
-+		enum can_state new_state = xcan_current_error_state(ndev);
-+
-+		xcan_set_error_state(ndev, new_state, skb ? cf : NULL);
- 	}
- 
- 	/* Check for Arbitration lost interrupt */
-@@ -600,7 +719,6 @@ static void xcan_err_interrupt(struct net_device *ndev, u32 isr)
- 	if (isr & XCAN_IXR_RXOFLW_MASK) {
- 		stats->rx_over_errors++;
- 		stats->rx_errors++;
--		priv->write_reg(priv, XCAN_SRR_OFFSET, XCAN_SRR_RESET_MASK);
- 		if (skb) {
- 			cf->can_id |= CAN_ERR_CRTL;
- 			cf->data[1] |= CAN_ERR_CRTL_RX_OVERFLOW;
-@@ -709,26 +827,20 @@ static int xcan_rx_poll(struct napi_struct *napi, int quota)
- 
- 	isr = priv->read_reg(priv, XCAN_ISR_OFFSET);
- 	while ((isr & XCAN_IXR_RXNEMP_MASK) && (work_done < quota)) {
--		if (isr & XCAN_IXR_RXOK_MASK) {
--			priv->write_reg(priv, XCAN_ICR_OFFSET,
--				XCAN_IXR_RXOK_MASK);
--			work_done += xcan_rx(ndev);
--		} else {
--			priv->write_reg(priv, XCAN_ICR_OFFSET,
--				XCAN_IXR_RXNEMP_MASK);
--			break;
--		}
-+		work_done += xcan_rx(ndev);
- 		priv->write_reg(priv, XCAN_ICR_OFFSET, XCAN_IXR_RXNEMP_MASK);
- 		isr = priv->read_reg(priv, XCAN_ISR_OFFSET);
- 	}
- 
--	if (work_done)
-+	if (work_done) {
- 		can_led_event(ndev, CAN_LED_EVENT_RX);
-+		xcan_update_error_state_after_rxtx(ndev);
-+	}
- 
- 	if (work_done < quota) {
- 		napi_complete(napi);
- 		ier = priv->read_reg(priv, XCAN_IER_OFFSET);
--		ier |= (XCAN_IXR_RXOK_MASK | XCAN_IXR_RXNEMP_MASK);
-+		ier |= XCAN_IXR_RXNEMP_MASK;
- 		priv->write_reg(priv, XCAN_IER_OFFSET, ier);
- 	}
- 	return work_done;
-@@ -743,18 +855,71 @@ static void xcan_tx_interrupt(struct net_device *ndev, u32 isr)
- {
- 	struct xcan_priv *priv = netdev_priv(ndev);
- 	struct net_device_stats *stats = &ndev->stats;
-+	unsigned int frames_in_fifo;
-+	int frames_sent = 1; /* TXOK => at least 1 frame was sent */
-+	unsigned long flags;
-+	int retries = 0;
-+
-+	/* Synchronize with xmit as we need to know the exact number
-+	 * of frames in the FIFO to stay in sync due to the TXFEMP
-+	 * handling.
-+	 * This also prevents a race between netif_wake_queue() and
-+	 * netif_stop_queue().
-+	 */
-+	spin_lock_irqsave(&priv->tx_lock, flags);
-+
-+	frames_in_fifo = priv->tx_head - priv->tx_tail;
-+
-+	if (WARN_ON_ONCE(frames_in_fifo == 0)) {
-+		/* clear TXOK anyway to avoid getting back here */
-+		priv->write_reg(priv, XCAN_ICR_OFFSET, XCAN_IXR_TXOK_MASK);
-+		spin_unlock_irqrestore(&priv->tx_lock, flags);
-+		return;
-+	}
-+
-+	/* Check if 2 frames were sent (TXOK only means that at least 1
-+	 * frame was sent).
-+	 */
-+	if (frames_in_fifo > 1) {
-+		WARN_ON(frames_in_fifo > priv->tx_max);
-+
-+		/* Synchronize TXOK and isr so that after the loop:
-+		 * (1) isr variable is up-to-date at least up to TXOK clear
-+		 *     time. This avoids us clearing a TXOK of a second frame
-+		 *     but not noticing that the FIFO is now empty and thus
-+		 *     marking only a single frame as sent.
-+		 * (2) No TXOK is left. Having one could mean leaving a
-+		 *     stray TXOK as we might process the associated frame
-+		 *     via TXFEMP handling as we read TXFEMP *after* TXOK
-+		 *     clear to satisfy (1).
-+		 */
-+		while ((isr & XCAN_IXR_TXOK_MASK) && !WARN_ON(++retries == 100)) {
-+			priv->write_reg(priv, XCAN_ICR_OFFSET, XCAN_IXR_TXOK_MASK);
-+			isr = priv->read_reg(priv, XCAN_ISR_OFFSET);
-+		}
- 
--	while ((priv->tx_head - priv->tx_tail > 0) &&
--			(isr & XCAN_IXR_TXOK_MASK)) {
-+		if (isr & XCAN_IXR_TXFEMP_MASK) {
-+			/* nothing in FIFO anymore */
-+			frames_sent = frames_in_fifo;
-+		}
-+	} else {
-+		/* single frame in fifo, just clear TXOK */
- 		priv->write_reg(priv, XCAN_ICR_OFFSET, XCAN_IXR_TXOK_MASK);
-+	}
-+
-+	while (frames_sent--) {
- 		can_get_echo_skb(ndev, priv->tx_tail %
- 					priv->tx_max);
- 		priv->tx_tail++;
- 		stats->tx_packets++;
--		isr = priv->read_reg(priv, XCAN_ISR_OFFSET);
- 	}
--	can_led_event(ndev, CAN_LED_EVENT_TX);
-+
- 	netif_wake_queue(ndev);
-+
-+	spin_unlock_irqrestore(&priv->tx_lock, flags);
-+
-+	can_led_event(ndev, CAN_LED_EVENT_TX);
-+	xcan_update_error_state_after_rxtx(ndev);
- }
- 
- /**
-@@ -773,6 +938,7 @@ static irqreturn_t xcan_interrupt(int irq, void *dev_id)
- 	struct net_device *ndev = (struct net_device *)dev_id;
- 	struct xcan_priv *priv = netdev_priv(ndev);
- 	u32 isr, ier;
-+	u32 isr_errors;
- 
- 	/* Get the interrupt status from Xilinx CAN */
- 	isr = priv->read_reg(priv, XCAN_ISR_OFFSET);
-@@ -791,18 +957,17 @@ static irqreturn_t xcan_interrupt(int irq, void *dev_id)
- 		xcan_tx_interrupt(ndev, isr);
- 
- 	/* Check for the type of error interrupt and Processing it */
--	if (isr & (XCAN_IXR_ERROR_MASK | XCAN_IXR_RXOFLW_MASK |
--			XCAN_IXR_BSOFF_MASK | XCAN_IXR_ARBLST_MASK)) {
--		priv->write_reg(priv, XCAN_ICR_OFFSET, (XCAN_IXR_ERROR_MASK |
--				XCAN_IXR_RXOFLW_MASK | XCAN_IXR_BSOFF_MASK |
--				XCAN_IXR_ARBLST_MASK));
-+	isr_errors = isr & (XCAN_IXR_ERROR_MASK | XCAN_IXR_RXOFLW_MASK |
-+			    XCAN_IXR_BSOFF_MASK | XCAN_IXR_ARBLST_MASK);
-+	if (isr_errors) {
-+		priv->write_reg(priv, XCAN_ICR_OFFSET, isr_errors);
- 		xcan_err_interrupt(ndev, isr);
- 	}
- 
- 	/* Check for the type of receive interrupt and Processing it */
--	if (isr & (XCAN_IXR_RXNEMP_MASK | XCAN_IXR_RXOK_MASK)) {
-+	if (isr & XCAN_IXR_RXNEMP_MASK) {
- 		ier = priv->read_reg(priv, XCAN_IER_OFFSET);
--		ier &= ~(XCAN_IXR_RXNEMP_MASK | XCAN_IXR_RXOK_MASK);
-+		ier &= ~XCAN_IXR_RXNEMP_MASK;
- 		priv->write_reg(priv, XCAN_IER_OFFSET, ier);
- 		napi_schedule(&priv->napi);
- 	}
-@@ -819,13 +984,9 @@ static irqreturn_t xcan_interrupt(int irq, void *dev_id)
- static void xcan_chip_stop(struct net_device *ndev)
- {
- 	struct xcan_priv *priv = netdev_priv(ndev);
--	u32 ier;
- 
- 	/* Disable interrupts and leave the can in configuration mode */
--	ier = priv->read_reg(priv, XCAN_IER_OFFSET);
--	ier &= ~XCAN_INTR_ALL;
--	priv->write_reg(priv, XCAN_IER_OFFSET, ier);
--	priv->write_reg(priv, XCAN_SRR_OFFSET, XCAN_SRR_RESET_MASK);
-+	set_reset_mode(ndev);
- 	priv->can.state = CAN_STATE_STOPPED;
- }
- 
-@@ -958,10 +1119,15 @@ static const struct net_device_ops xcan_netdev_ops = {
-  */
- static int __maybe_unused xcan_suspend(struct device *dev)
- {
--	if (!device_may_wakeup(dev))
--		return pm_runtime_force_suspend(dev);
-+	struct net_device *ndev = dev_get_drvdata(dev);
- 
--	return 0;
-+	if (netif_running(ndev)) {
-+		netif_stop_queue(ndev);
-+		netif_device_detach(ndev);
-+		xcan_chip_stop(ndev);
-+	}
-+
-+	return pm_runtime_force_suspend(dev);
- }
- 
- /**
-@@ -973,11 +1139,27 @@ static int __maybe_unused xcan_suspend(struct device *dev)
-  */
- static int __maybe_unused xcan_resume(struct device *dev)
- {
--	if (!device_may_wakeup(dev))
--		return pm_runtime_force_resume(dev);
-+	struct net_device *ndev = dev_get_drvdata(dev);
-+	int ret;
- 
--	return 0;
-+	ret = pm_runtime_force_resume(dev);
-+	if (ret) {
-+		dev_err(dev, "pm_runtime_force_resume failed on resume\n");
-+		return ret;
-+	}
-+
-+	if (netif_running(ndev)) {
-+		ret = xcan_chip_start(ndev);
-+		if (ret) {
-+			dev_err(dev, "xcan_chip_start failed on resume\n");
-+			return ret;
-+		}
-+
-+		netif_device_attach(ndev);
-+		netif_start_queue(ndev);
-+	}
- 
-+	return 0;
- }
- 
- /**
-@@ -992,14 +1174,6 @@ static int __maybe_unused xcan_runtime_suspend(struct device *dev)
- 	struct net_device *ndev = dev_get_drvdata(dev);
- 	struct xcan_priv *priv = netdev_priv(ndev);
- 
--	if (netif_running(ndev)) {
--		netif_stop_queue(ndev);
--		netif_device_detach(ndev);
--	}
--
--	priv->write_reg(priv, XCAN_MSR_OFFSET, XCAN_MSR_SLEEP_MASK);
--	priv->can.state = CAN_STATE_SLEEPING;
--
- 	clk_disable_unprepare(priv->bus_clk);
- 	clk_disable_unprepare(priv->can_clk);
- 
-@@ -1018,7 +1192,6 @@ static int __maybe_unused xcan_runtime_resume(struct device *dev)
- 	struct net_device *ndev = dev_get_drvdata(dev);
- 	struct xcan_priv *priv = netdev_priv(ndev);
- 	int ret;
--	u32 isr, status;
- 
- 	ret = clk_prepare_enable(priv->bus_clk);
- 	if (ret) {
-@@ -1032,27 +1205,6 @@ static int __maybe_unused xcan_runtime_resume(struct device *dev)
- 		return ret;
- 	}
- 
--	priv->write_reg(priv, XCAN_SRR_OFFSET, XCAN_SRR_RESET_MASK);
--	isr = priv->read_reg(priv, XCAN_ISR_OFFSET);
--	status = priv->read_reg(priv, XCAN_SR_OFFSET);
--
--	if (netif_running(ndev)) {
--		if (isr & XCAN_IXR_BSOFF_MASK) {
--			priv->can.state = CAN_STATE_BUS_OFF;
--			priv->write_reg(priv, XCAN_SRR_OFFSET,
--					XCAN_SRR_RESET_MASK);
--		} else if ((status & XCAN_SR_ESTAT_MASK) ==
--					XCAN_SR_ESTAT_MASK) {
--			priv->can.state = CAN_STATE_ERROR_PASSIVE;
--		} else if (status & XCAN_SR_ERRWRN_MASK) {
--			priv->can.state = CAN_STATE_ERROR_WARNING;
--		} else {
--			priv->can.state = CAN_STATE_ERROR_ACTIVE;
--		}
--		netif_device_attach(ndev);
--		netif_start_queue(ndev);
--	}
--
- 	return 0;
- }
- 
-@@ -1061,6 +1213,18 @@ static const struct dev_pm_ops xcan_dev_pm_ops = {
- 	SET_RUNTIME_PM_OPS(xcan_runtime_suspend, xcan_runtime_resume, NULL)
- };
- 
-+static const struct xcan_devtype_data xcan_zynq_data = {
-+	.caps = XCAN_CAP_WATERMARK,
-+};
-+
-+/* Match table for OF platform binding */
-+static const struct of_device_id xcan_of_match[] = {
-+	{ .compatible = "xlnx,zynq-can-1.0", .data = &xcan_zynq_data },
-+	{ .compatible = "xlnx,axi-can-1.00.a", },
-+	{ /* end of list */ },
-+};
-+MODULE_DEVICE_TABLE(of, xcan_of_match);
-+
- /**
-  * xcan_probe - Platform registration call
-  * @pdev:	Handle to the platform device structure
-@@ -1075,8 +1239,10 @@ static int xcan_probe(struct platform_device *pdev)
- 	struct resource *res; /* IO mem resources */
- 	struct net_device *ndev;
- 	struct xcan_priv *priv;
-+	const struct of_device_id *of_id;
-+	int caps = 0;
- 	void __iomem *addr;
--	int ret, rx_max, tx_max;
-+	int ret, rx_max, tx_max, tx_fifo_depth;
- 
- 	/* Get the virtual base address for the device */
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-@@ -1086,7 +1252,8 @@ static int xcan_probe(struct platform_device *pdev)
- 		goto err;
- 	}
- 
--	ret = of_property_read_u32(pdev->dev.of_node, "tx-fifo-depth", &tx_max);
-+	ret = of_property_read_u32(pdev->dev.of_node, "tx-fifo-depth",
-+				   &tx_fifo_depth);
- 	if (ret < 0)
- 		goto err;
- 
-@@ -1094,6 +1261,30 @@ static int xcan_probe(struct platform_device *pdev)
- 	if (ret < 0)
- 		goto err;
- 
-+	of_id = of_match_device(xcan_of_match, &pdev->dev);
-+	if (of_id) {
-+		const struct xcan_devtype_data *devtype_data = of_id->data;
-+
-+		if (devtype_data)
-+			caps = devtype_data->caps;
-+	}
-+
-+	/* There is no way to directly figure out how many frames have been
-+	 * sent when the TXOK interrupt is processed. If watermark programming
-+	 * is supported, we can have 2 frames in the FIFO and use TXFEMP
-+	 * to determine if 1 or 2 frames have been sent.
-+	 * Theoretically we should be able to use TXFWMEMP to determine up
-+	 * to 3 frames, but it seems that after putting a second frame in the
-+	 * FIFO, with watermark at 2 frames, it can happen that TXFWMEMP (less
-+	 * than 2 frames in FIFO) is set anyway with no TXOK (a frame was
-+	 * sent), which is not a sensible state - possibly TXFWMEMP is not
-+	 * completely synchronized with the rest of the bits?
-+	 */
-+	if (caps & XCAN_CAP_WATERMARK)
-+		tx_max = min(tx_fifo_depth, 2);
-+	else
-+		tx_max = 1;
-+
- 	/* Create a CAN device instance */
- 	ndev = alloc_candev(sizeof(struct xcan_priv), tx_max);
- 	if (!ndev)
-@@ -1108,6 +1299,7 @@ static int xcan_probe(struct platform_device *pdev)
- 					CAN_CTRLMODE_BERR_REPORTING;
- 	priv->reg_base = addr;
- 	priv->tx_max = tx_max;
-+	spin_lock_init(&priv->tx_lock);
- 
- 	/* Get IRQ for the device */
- 	ndev->irq = platform_get_irq(pdev, 0);
-@@ -1172,9 +1364,9 @@ static int xcan_probe(struct platform_device *pdev)
- 
- 	pm_runtime_put(&pdev->dev);
- 
--	netdev_dbg(ndev, "reg_base=0x%p irq=%d clock=%d, tx fifo depth:%d\n",
-+	netdev_dbg(ndev, "reg_base=0x%p irq=%d clock=%d, tx fifo depth: actual %d, using %d\n",
- 			priv->reg_base, ndev->irq, priv->can.clock.freq,
--			priv->tx_max);
-+			tx_fifo_depth, priv->tx_max);
- 
- 	return 0;
- 
-@@ -1208,14 +1400,6 @@ static int xcan_remove(struct platform_device *pdev)
- 	return 0;
- }
- 
--/* Match table for OF platform binding */
--static const struct of_device_id xcan_of_match[] = {
--	{ .compatible = "xlnx,zynq-can-1.0", },
--	{ .compatible = "xlnx,axi-can-1.00.a", },
--	{ /* end of list */ },
--};
--MODULE_DEVICE_TABLE(of, xcan_of_match);
--
- static struct platform_driver xcan_driver = {
- 	.probe = xcan_probe,
- 	.remove	= xcan_remove,
-diff --git a/drivers/net/ethernet/mellanox/mlx4/resource_tracker.c b/drivers/net/ethernet/mellanox/mlx4/resource_tracker.c
-index d6b06bef1b69..9d1a7d5ae835 100644
---- a/drivers/net/ethernet/mellanox/mlx4/resource_tracker.c
-+++ b/drivers/net/ethernet/mellanox/mlx4/resource_tracker.c
-@@ -2916,7 +2916,7 @@ int mlx4_RST2INIT_QP_wrapper(struct mlx4_dev *dev, int slave,
- 	u32 srqn = qp_get_srqn(qpc) & 0xffffff;
- 	int use_srq = (qp_get_srqn(qpc) >> 24) & 1;
- 	struct res_srq *srq;
--	int local_qpn = be32_to_cpu(qpc->local_qpn) & 0xffffff;
-+	int local_qpn = vhcr->in_modifier & 0xffffff;
- 
- 	err = adjust_qp_sched_queue(dev, slave, qpc, inbox);
- 	if (err)
-diff --git a/drivers/net/ethernet/mellanox/mlx5/core/en_arfs.c b/drivers/net/ethernet/mellanox/mlx5/core/en_arfs.c
-index a8cb38789774..4a51fc6908ad 100644
---- a/drivers/net/ethernet/mellanox/mlx5/core/en_arfs.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/en_arfs.c
-@@ -383,14 +383,14 @@ static void arfs_may_expire_flow(struct mlx5e_priv *priv)
- 	HLIST_HEAD(del_list);
- 	spin_lock_bh(&priv->fs.arfs.arfs_lock);
- 	mlx5e_for_each_arfs_rule(arfs_rule, htmp, priv->fs.arfs.arfs_tables, i, j) {
--		if (quota++ > MLX5E_ARFS_EXPIRY_QUOTA)
--			break;
- 		if (!work_pending(&arfs_rule->arfs_work) &&
- 		    rps_may_expire_flow(priv->netdev,
- 					arfs_rule->rxq, arfs_rule->flow_id,
- 					arfs_rule->filter_id)) {
- 			hlist_del_init(&arfs_rule->hlist);
- 			hlist_add_head(&arfs_rule->hlist, &del_list);
-+			if (quota++ > MLX5E_ARFS_EXPIRY_QUOTA)
-+				break;
- 		}
- 	}
- 	spin_unlock_bh(&priv->fs.arfs.arfs_lock);
-@@ -715,6 +715,9 @@ int mlx5e_rx_flow_steer(struct net_device *dev, const struct sk_buff *skb,
- 	    skb->protocol != htons(ETH_P_IPV6))
- 		return -EPROTONOSUPPORT;
- 
-+	if (skb->encapsulation)
-+		return -EPROTONOSUPPORT;
-+
- 	arfs_t = arfs_get_table(arfs, arfs_get_ip_proto(skb), skb->protocol);
- 	if (!arfs_t)
- 		return -EPROTONOSUPPORT;
-diff --git a/drivers/net/ethernet/mellanox/mlx5/core/en_clock.c b/drivers/net/ethernet/mellanox/mlx5/core/en_clock.c
-index 1612ec0d9103..f8b99d0b54d5 100644
---- a/drivers/net/ethernet/mellanox/mlx5/core/en_clock.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/en_clock.c
-@@ -233,6 +233,7 @@ static void mlx5e_timestamp_init_config(struct mlx5e_tstamp *tstamp)
- void mlx5e_timestamp_init(struct mlx5e_priv *priv)
- {
- 	struct mlx5e_tstamp *tstamp = &priv->tstamp;
-+	u64 overflow_cycles;
- 	u64 ns;
- 	u64 frac = 0;
- 	u32 dev_freq;
-@@ -257,10 +258,17 @@ void mlx5e_timestamp_init(struct mlx5e_priv *priv)
- 
- 	/* Calculate period in seconds to call the overflow watchdog - to make
- 	 * sure counter is checked at least once every wrap around.
-+	 * The period is calculated as the minimum between max HW cycles count
-+	 * (The clock source mask) and max amount of cycles that can be
-+	 * multiplied by clock multiplier where the result doesn't exceed
-+	 * 64bits.
- 	 */
--	ns = cyclecounter_cyc2ns(&tstamp->cycles, tstamp->cycles.mask,
-+	overflow_cycles = div64_u64(~0ULL >> 1, tstamp->cycles.mult);
-+	overflow_cycles = min(overflow_cycles, tstamp->cycles.mask >> 1);
-+
-+	ns = cyclecounter_cyc2ns(&tstamp->cycles, overflow_cycles,
- 				 frac, &frac);
--	do_div(ns, NSEC_PER_SEC / 2 / HZ);
-+	do_div(ns, NSEC_PER_SEC / HZ);
- 	tstamp->overflow_period = ns;
- 
- 	INIT_DELAYED_WORK(&tstamp->overflow_work, mlx5e_timestamp_overflow);
-diff --git a/drivers/net/phy/phy.c b/drivers/net/phy/phy.c
-index 4d217649c8b1..5fde8e335f13 100644
---- a/drivers/net/phy/phy.c
-+++ b/drivers/net/phy/phy.c
-@@ -598,7 +598,7 @@ static int phy_start_aneg_priv(struct phy_device *phydev, bool sync)
- 	 * negotiation may already be done and aneg interrupt may not be
- 	 * generated.
- 	 */
--	if (phy_interrupt_is_valid(phydev) && (phydev->state == PHY_AN)) {
-+	if (phydev->irq != PHY_POLL && phydev->state == PHY_AN) {
- 		err = phy_aneg_done(phydev);
- 		if (err > 0) {
- 			trigger = true;
-diff --git a/drivers/usb/class/cdc-acm.c b/drivers/usb/class/cdc-acm.c
-index 08bef18372ea..a9c950d29ce2 100644
---- a/drivers/usb/class/cdc-acm.c
-+++ b/drivers/usb/class/cdc-acm.c
-@@ -1785,6 +1785,9 @@ static const struct usb_device_id acm_ids[] = {
- 	{ USB_DEVICE(0x09d8, 0x0320), /* Elatec GmbH TWN3 */
- 	.driver_info = NO_UNION_NORMAL, /* has misplaced union descriptor */
- 	},
-+	{ USB_DEVICE(0x0ca6, 0xa050), /* Castles VEGA3000 */
-+	.driver_info = NO_UNION_NORMAL, /* reports zero length descriptor */
-+	},
- 
- 	{ USB_DEVICE(0x2912, 0x0001), /* ATOL FPrint */
- 	.driver_info = CLEAR_HALT_CONDITIONS,
-diff --git a/drivers/usb/core/hub.c b/drivers/usb/core/hub.c
-index 8bf0090218dd..bdb19db542a4 100644
---- a/drivers/usb/core/hub.c
-+++ b/drivers/usb/core/hub.c
-@@ -1139,10 +1139,14 @@ static void hub_activate(struct usb_hub *hub, enum hub_activation_type type)
- 
- 		if (!udev || udev->state == USB_STATE_NOTATTACHED) {
- 			/* Tell hub_wq to disconnect the device or
--			 * check for a new connection
-+			 * check for a new connection or over current condition.
-+			 * Based on USB2.0 Spec Section 11.12.5,
-+			 * C_PORT_OVER_CURRENT could be set while
-+			 * PORT_OVER_CURRENT is not. So check for any of them.
- 			 */
- 			if (udev || (portstatus & USB_PORT_STAT_CONNECTION) ||
--			    (portstatus & USB_PORT_STAT_OVERCURRENT))
-+			    (portstatus & USB_PORT_STAT_OVERCURRENT) ||
-+			    (portchange & USB_PORT_STAT_C_OVERCURRENT))
- 				set_bit(port1, hub->change_bits);
- 
- 		} else if (portstatus & USB_PORT_STAT_ENABLE) {
-diff --git a/drivers/usb/gadget/function/f_fs.c b/drivers/usb/gadget/function/f_fs.c
-index af72224f8ba2..04eb64381d92 100644
---- a/drivers/usb/gadget/function/f_fs.c
-+++ b/drivers/usb/gadget/function/f_fs.c
-@@ -3243,7 +3243,7 @@ static int ffs_func_setup(struct usb_function *f,
- 	__ffs_event_add(ffs, FUNCTIONFS_SETUP);
- 	spin_unlock_irqrestore(&ffs->ev.waitq.lock, flags);
- 
--	return USB_GADGET_DELAYED_STATUS;
-+	return creq->wLength == 0 ? USB_GADGET_DELAYED_STATUS : 0;
- }
- 
- static bool ffs_func_req_match(struct usb_function *f,
-diff --git a/fs/exec.c b/fs/exec.c
-index b8c43be24751..fcd8642ef2d2 100644
---- a/fs/exec.c
-+++ b/fs/exec.c
-@@ -1228,15 +1228,14 @@ static int de_thread(struct task_struct *tsk)
- 	return -EAGAIN;
- }
- 
--char *get_task_comm(char *buf, struct task_struct *tsk)
-+char *__get_task_comm(char *buf, size_t buf_size, struct task_struct *tsk)
- {
--	/* buf must be at least sizeof(tsk->comm) in size */
- 	task_lock(tsk);
--	strncpy(buf, tsk->comm, sizeof(tsk->comm));
-+	strncpy(buf, tsk->comm, buf_size);
- 	task_unlock(tsk);
- 	return buf;
- }
--EXPORT_SYMBOL_GPL(get_task_comm);
-+EXPORT_SYMBOL_GPL(__get_task_comm);
- 
- /*
-  * These functions flushes out all traces of the currently running executable
-diff --git a/include/linux/sched.h b/include/linux/sched.h
-index 5ebef8c86c26..1cc5723a7821 100644
---- a/include/linux/sched.h
-+++ b/include/linux/sched.h
-@@ -2999,7 +2999,11 @@ static inline void set_task_comm(struct task_struct *tsk, const char *from)
- {
- 	__set_task_comm(tsk, from, false);
- }
--extern char *get_task_comm(char *to, struct task_struct *tsk);
-+extern char *__get_task_comm(char *to, size_t len, struct task_struct *tsk);
-+#define get_task_comm(buf, tsk) ({			\
-+	BUILD_BUG_ON(sizeof(buf) != TASK_COMM_LEN);	\
-+	__get_task_comm(buf, sizeof(buf), tsk);		\
-+})
- 
- #ifdef CONFIG_SMP
- void scheduler_ipi(void);
-diff --git a/include/linux/skbuff.h b/include/linux/skbuff.h
-index b048d3d3b327..1f207dd22757 100644
---- a/include/linux/skbuff.h
-+++ b/include/linux/skbuff.h
-@@ -2982,6 +2982,8 @@ static inline int __skb_grow_rcsum(struct sk_buff *skb, unsigned int len)
- 	return __skb_grow(skb, len);
- }
- 
-+#define rb_to_skb(rb) rb_entry_safe(rb, struct sk_buff, rbnode)
-+
- #define skb_queue_walk(queue, skb) \
- 		for (skb = (queue)->next;					\
- 		     skb != (struct sk_buff *)(queue);				\
-diff --git a/include/net/tcp.h b/include/net/tcp.h
-index 18f029bcb8c7..5d440bb0e409 100644
---- a/include/net/tcp.h
-+++ b/include/net/tcp.h
-@@ -363,6 +363,7 @@ ssize_t tcp_splice_read(struct socket *sk, loff_t *ppos,
- 			struct pipe_inode_info *pipe, size_t len,
- 			unsigned int flags);
- 
-+void tcp_enter_quickack_mode(struct sock *sk);
- static inline void tcp_dec_quickack_mode(struct sock *sk,
- 					 const unsigned int pkts)
- {
-@@ -553,6 +554,7 @@ void tcp_send_fin(struct sock *sk);
- void tcp_send_active_reset(struct sock *sk, gfp_t priority);
- int tcp_send_synack(struct sock *);
- void tcp_push_one(struct sock *, unsigned int mss_now);
-+void __tcp_send_ack(struct sock *sk, u32 rcv_nxt);
- void tcp_send_ack(struct sock *sk);
- void tcp_send_delayed_ack(struct sock *sk);
- void tcp_send_loss_probe(struct sock *sk);
-diff --git a/net/core/rtnetlink.c b/net/core/rtnetlink.c
-index f3a0ad14b454..194e844e1021 100644
---- a/net/core/rtnetlink.c
-+++ b/net/core/rtnetlink.c
-@@ -2339,9 +2339,12 @@ int rtnl_configure_link(struct net_device *dev, const struct ifinfomsg *ifm)
- 			return err;
- 	}
- 
--	dev->rtnl_link_state = RTNL_LINK_INITIALIZED;
--
--	__dev_notify_flags(dev, old_flags, ~0U);
-+	if (dev->rtnl_link_state == RTNL_LINK_INITIALIZED) {
-+		__dev_notify_flags(dev, old_flags, 0U);
-+	} else {
-+		dev->rtnl_link_state = RTNL_LINK_INITIALIZED;
-+		__dev_notify_flags(dev, old_flags, ~0U);
-+	}
- 	return 0;
- }
- EXPORT_SYMBOL(rtnl_configure_link);
-diff --git a/net/core/skbuff.c b/net/core/skbuff.c
-index 8cae7aa4a4ec..84c731aef0d8 100644
---- a/net/core/skbuff.c
-+++ b/net/core/skbuff.c
-@@ -3253,6 +3253,7 @@ struct sk_buff *skb_segment(struct sk_buff *head_skb,
- 				net_warn_ratelimited(
- 					"skb_segment: too many frags: %u %u\n",
- 					pos, mss);
-+				err = -EINVAL;
- 				goto err;
- 			}
- 
-@@ -3289,11 +3290,10 @@ struct sk_buff *skb_segment(struct sk_buff *head_skb,
- 
- perform_csum_check:
- 		if (!csum) {
--			if (skb_has_shared_frag(nskb)) {
--				err = __skb_linearize(nskb);
--				if (err)
--					goto err;
--			}
-+			if (skb_has_shared_frag(nskb) &&
-+			    __skb_linearize(nskb))
-+				goto err;
-+
- 			if (!nskb->remcsum_offload)
- 				nskb->ip_summed = CHECKSUM_NONE;
- 			SKB_GSO_CB(nskb)->csum =
-diff --git a/net/ipv4/igmp.c b/net/ipv4/igmp.c
-index 7f5fe07d0b13..f2e6e874e4ec 100644
---- a/net/ipv4/igmp.c
-+++ b/net/ipv4/igmp.c
-@@ -1193,8 +1193,7 @@ static void igmpv3_del_delrec(struct in_device *in_dev, struct ip_mc_list *im)
- 	if (pmc) {
- 		im->interface = pmc->interface;
- 		im->crcount = in_dev->mr_qrv ?: net->ipv4.sysctl_igmp_qrv;
--		im->sfmode = pmc->sfmode;
--		if (pmc->sfmode == MCAST_INCLUDE) {
-+		if (im->sfmode == MCAST_INCLUDE) {
- 			im->tomb = pmc->tomb;
- 			im->sources = pmc->sources;
- 			for (psf = im->sources; psf; psf = psf->sf_next)
-diff --git a/net/ipv4/ip_output.c b/net/ipv4/ip_output.c
-index 3b1f3bc8becb..100c86f1f547 100644
---- a/net/ipv4/ip_output.c
-+++ b/net/ipv4/ip_output.c
-@@ -497,6 +497,8 @@ static void ip_copy_metadata(struct sk_buff *to, struct sk_buff *from)
- 	to->dev = from->dev;
- 	to->mark = from->mark;
- 
-+	skb_copy_hash(to, from);
-+
- 	/* Copy the flags to each fragment. */
- 	IPCB(to)->flags = IPCB(from)->flags;
- 
-diff --git a/net/ipv4/ip_sockglue.c b/net/ipv4/ip_sockglue.c
-index dd80276a8205..b21e435f428c 100644
---- a/net/ipv4/ip_sockglue.c
-+++ b/net/ipv4/ip_sockglue.c
-@@ -135,15 +135,18 @@ static void ip_cmsg_recv_dstaddr(struct msghdr *msg, struct sk_buff *skb)
- {
- 	struct sockaddr_in sin;
- 	const struct iphdr *iph = ip_hdr(skb);
--	__be16 *ports = (__be16 *)skb_transport_header(skb);
-+	__be16 *ports;
-+	int end;
- 
--	if (skb_transport_offset(skb) + 4 > (int)skb->len)
-+	end = skb_transport_offset(skb) + 4;
-+	if (end > 0 && !pskb_may_pull(skb, end))
- 		return;
- 
- 	/* All current transport protocols have the port numbers in the
- 	 * first four bytes of the transport header and this function is
- 	 * written with this assumption in mind.
- 	 */
-+	ports = (__be16 *)skb_transport_header(skb);
- 
- 	sin.sin_family = AF_INET;
- 	sin.sin_addr.s_addr = iph->daddr;
-diff --git a/net/ipv4/tcp_dctcp.c b/net/ipv4/tcp_dctcp.c
-index ab37c6775630..dd52ccb812ea 100644
---- a/net/ipv4/tcp_dctcp.c
-+++ b/net/ipv4/tcp_dctcp.c
-@@ -131,23 +131,14 @@ static void dctcp_ce_state_0_to_1(struct sock *sk)
- 	struct dctcp *ca = inet_csk_ca(sk);
- 	struct tcp_sock *tp = tcp_sk(sk);
- 
--	/* State has changed from CE=0 to CE=1 and delayed
--	 * ACK has not sent yet.
--	 */
--	if (!ca->ce_state && ca->delayed_ack_reserved) {
--		u32 tmp_rcv_nxt;
--
--		/* Save current rcv_nxt. */
--		tmp_rcv_nxt = tp->rcv_nxt;
--
--		/* Generate previous ack with CE=0. */
--		tp->ecn_flags &= ~TCP_ECN_DEMAND_CWR;
--		tp->rcv_nxt = ca->prior_rcv_nxt;
--
--		tcp_send_ack(sk);
--
--		/* Recover current rcv_nxt. */
--		tp->rcv_nxt = tmp_rcv_nxt;
-+	if (!ca->ce_state) {
-+		/* State has changed from CE=0 to CE=1, force an immediate
-+		 * ACK to reflect the new CE state. If an ACK was delayed,
-+		 * send that first to reflect the prior CE state.
-+		 */
-+		if (inet_csk(sk)->icsk_ack.pending & ICSK_ACK_TIMER)
-+			__tcp_send_ack(sk, ca->prior_rcv_nxt);
-+		tcp_enter_quickack_mode(sk);
- 	}
- 
- 	ca->prior_rcv_nxt = tp->rcv_nxt;
-@@ -161,23 +152,14 @@ static void dctcp_ce_state_1_to_0(struct sock *sk)
- 	struct dctcp *ca = inet_csk_ca(sk);
- 	struct tcp_sock *tp = tcp_sk(sk);
- 
--	/* State has changed from CE=1 to CE=0 and delayed
--	 * ACK has not sent yet.
--	 */
--	if (ca->ce_state && ca->delayed_ack_reserved) {
--		u32 tmp_rcv_nxt;
--
--		/* Save current rcv_nxt. */
--		tmp_rcv_nxt = tp->rcv_nxt;
--
--		/* Generate previous ack with CE=1. */
--		tp->ecn_flags |= TCP_ECN_DEMAND_CWR;
--		tp->rcv_nxt = ca->prior_rcv_nxt;
--
--		tcp_send_ack(sk);
--
--		/* Recover current rcv_nxt. */
--		tp->rcv_nxt = tmp_rcv_nxt;
-+	if (ca->ce_state) {
-+		/* State has changed from CE=1 to CE=0, force an immediate
-+		 * ACK to reflect the new CE state. If an ACK was delayed,
-+		 * send that first to reflect the prior CE state.
-+		 */
-+		if (inet_csk(sk)->icsk_ack.pending & ICSK_ACK_TIMER)
-+			__tcp_send_ack(sk, ca->prior_rcv_nxt);
-+		tcp_enter_quickack_mode(sk);
- 	}
- 
- 	ca->prior_rcv_nxt = tp->rcv_nxt;
-diff --git a/net/ipv4/tcp_input.c b/net/ipv4/tcp_input.c
-index be453aa8fce8..44d136fd2af5 100644
---- a/net/ipv4/tcp_input.c
-+++ b/net/ipv4/tcp_input.c
-@@ -209,13 +209,14 @@ static void tcp_incr_quickack(struct sock *sk)
- 		icsk->icsk_ack.quick = min(quickacks, TCP_MAX_QUICKACKS);
- }
- 
--static void tcp_enter_quickack_mode(struct sock *sk)
-+void tcp_enter_quickack_mode(struct sock *sk)
- {
- 	struct inet_connection_sock *icsk = inet_csk(sk);
- 	tcp_incr_quickack(sk);
- 	icsk->icsk_ack.pingpong = 0;
- 	icsk->icsk_ack.ato = TCP_ATO_MIN;
- }
-+EXPORT_SYMBOL(tcp_enter_quickack_mode);
- 
- /* Send ACKs quickly, if "quick" count is not exhausted
-  * and the session is not interactive.
-@@ -4516,7 +4517,7 @@ static void tcp_data_queue_ofo(struct sock *sk, struct sk_buff *skb)
- 				/* All the bits are present. Drop. */
- 				NET_INC_STATS(sock_net(sk),
- 					      LINUX_MIB_TCPOFOMERGE);
--				__kfree_skb(skb);
-+				tcp_drop(sk, skb);
- 				skb = NULL;
- 				tcp_dsack_set(sk, seq, end_seq);
- 				goto add_sack;
-@@ -4535,7 +4536,7 @@ static void tcp_data_queue_ofo(struct sock *sk, struct sk_buff *skb)
- 						 TCP_SKB_CB(skb1)->end_seq);
- 				NET_INC_STATS(sock_net(sk),
- 					      LINUX_MIB_TCPOFOMERGE);
--				__kfree_skb(skb1);
-+				tcp_drop(sk, skb1);
- 				goto merge_right;
- 			}
- 		} else if (tcp_try_coalesce(sk, skb1, skb, &fragstolen)) {
-@@ -4917,6 +4918,7 @@ tcp_collapse(struct sock *sk, struct sk_buff_head *list, struct rb_root *root,
- static void tcp_collapse_ofo_queue(struct sock *sk)
- {
- 	struct tcp_sock *tp = tcp_sk(sk);
-+	u32 range_truesize, sum_tiny = 0;
- 	struct sk_buff *skb, *head;
- 	struct rb_node *p;
- 	u32 start, end;
-@@ -4935,6 +4937,7 @@ static void tcp_collapse_ofo_queue(struct sock *sk)
- 	}
- 	start = TCP_SKB_CB(skb)->seq;
- 	end = TCP_SKB_CB(skb)->end_seq;
-+	range_truesize = skb->truesize;
- 
- 	for (head = skb;;) {
- 		skb = tcp_skb_next(skb, NULL);
-@@ -4945,11 +4948,20 @@ static void tcp_collapse_ofo_queue(struct sock *sk)
- 		if (!skb ||
- 		    after(TCP_SKB_CB(skb)->seq, end) ||
- 		    before(TCP_SKB_CB(skb)->end_seq, start)) {
--			tcp_collapse(sk, NULL, &tp->out_of_order_queue,
--				     head, skb, start, end);
-+			/* Do not attempt collapsing tiny skbs */
-+			if (range_truesize != head->truesize ||
-+			    end - start >= SKB_WITH_OVERHEAD(SK_MEM_QUANTUM)) {
-+				tcp_collapse(sk, NULL, &tp->out_of_order_queue,
-+					     head, skb, start, end);
-+			} else {
-+				sum_tiny += range_truesize;
-+				if (sum_tiny > sk->sk_rcvbuf >> 3)
-+					return;
-+			}
- 			goto new_range;
- 		}
- 
-+		range_truesize += skb->truesize;
- 		if (unlikely(before(TCP_SKB_CB(skb)->seq, start)))
- 			start = TCP_SKB_CB(skb)->seq;
- 		if (after(TCP_SKB_CB(skb)->end_seq, end))
-@@ -4964,6 +4976,7 @@ static void tcp_collapse_ofo_queue(struct sock *sk)
-  * 2) not add too big latencies if thousands of packets sit there.
-  *    (But if application shrinks SO_RCVBUF, we could still end up
-  *     freeing whole queue here)
-+ * 3) Drop at least 12.5 % of sk_rcvbuf to avoid malicious attacks.
-  *
-  * Return true if queue has shrunk.
-  */
-@@ -4971,20 +4984,26 @@ static bool tcp_prune_ofo_queue(struct sock *sk)
- {
- 	struct tcp_sock *tp = tcp_sk(sk);
- 	struct rb_node *node, *prev;
-+	int goal;
- 
- 	if (RB_EMPTY_ROOT(&tp->out_of_order_queue))
- 		return false;
- 
- 	NET_INC_STATS(sock_net(sk), LINUX_MIB_OFOPRUNED);
-+	goal = sk->sk_rcvbuf >> 3;
- 	node = &tp->ooo_last_skb->rbnode;
- 	do {
- 		prev = rb_prev(node);
- 		rb_erase(node, &tp->out_of_order_queue);
-+		goal -= rb_to_skb(node)->truesize;
- 		tcp_drop(sk, rb_entry(node, struct sk_buff, rbnode));
--		sk_mem_reclaim(sk);
--		if (atomic_read(&sk->sk_rmem_alloc) <= sk->sk_rcvbuf &&
--		    !tcp_under_memory_pressure(sk))
--			break;
-+		if (!prev || goal <= 0) {
-+			sk_mem_reclaim(sk);
-+			if (atomic_read(&sk->sk_rmem_alloc) <= sk->sk_rcvbuf &&
-+			    !tcp_under_memory_pressure(sk))
-+				break;
-+			goal = sk->sk_rcvbuf >> 3;
-+		}
- 		node = prev;
- 	} while (node);
- 	tp->ooo_last_skb = rb_entry(prev, struct sk_buff, rbnode);
-@@ -5019,6 +5038,9 @@ static int tcp_prune_queue(struct sock *sk)
- 	else if (tcp_under_memory_pressure(sk))
- 		tp->rcv_ssthresh = min(tp->rcv_ssthresh, 4U * tp->advmss);
- 
-+	if (atomic_read(&sk->sk_rmem_alloc) <= sk->sk_rcvbuf)
-+		return 0;
-+
- 	tcp_collapse_ofo_queue(sk);
- 	if (!skb_queue_empty(&sk->sk_receive_queue))
- 		tcp_collapse(sk, &sk->sk_receive_queue, NULL,
-diff --git a/net/ipv4/tcp_output.c b/net/ipv4/tcp_output.c
-index f07a0a1c98ff..5f916953b28e 100644
---- a/net/ipv4/tcp_output.c
-+++ b/net/ipv4/tcp_output.c
-@@ -174,8 +174,13 @@ static void tcp_event_data_sent(struct tcp_sock *tp,
- }
- 
- /* Account for an ACK we sent. */
--static inline void tcp_event_ack_sent(struct sock *sk, unsigned int pkts)
-+static inline void tcp_event_ack_sent(struct sock *sk, unsigned int pkts,
-+				      u32 rcv_nxt)
- {
-+	struct tcp_sock *tp = tcp_sk(sk);
-+
-+	if (unlikely(rcv_nxt != tp->rcv_nxt))
-+		return;  /* Special ACK sent by DCTCP to reflect ECN */
- 	tcp_dec_quickack_mode(sk, pkts);
- 	inet_csk_clear_xmit_timer(sk, ICSK_TIME_DACK);
- }
-@@ -905,8 +910,8 @@ void tcp_wfree(struct sk_buff *skb)
-  * We are working here with either a clone of the original
-  * SKB, or a fresh unique copy made by the retransmit engine.
-  */
--static int tcp_transmit_skb(struct sock *sk, struct sk_buff *skb, int clone_it,
--			    gfp_t gfp_mask)
-+static int __tcp_transmit_skb(struct sock *sk, struct sk_buff *skb,
-+			      int clone_it, gfp_t gfp_mask, u32 rcv_nxt)
- {
- 	const struct inet_connection_sock *icsk = inet_csk(sk);
- 	struct inet_sock *inet;
-@@ -969,7 +974,7 @@ static int tcp_transmit_skb(struct sock *sk, struct sk_buff *skb, int clone_it,
- 	th->source		= inet->inet_sport;
- 	th->dest		= inet->inet_dport;
- 	th->seq			= htonl(tcb->seq);
--	th->ack_seq		= htonl(tp->rcv_nxt);
-+	th->ack_seq		= htonl(rcv_nxt);
- 	*(((__be16 *)th) + 6)	= htons(((tcp_header_size >> 2) << 12) |
- 					tcb->tcp_flags);
- 
-@@ -1010,7 +1015,7 @@ static int tcp_transmit_skb(struct sock *sk, struct sk_buff *skb, int clone_it,
- 	icsk->icsk_af_ops->send_check(sk, skb);
- 
- 	if (likely(tcb->tcp_flags & TCPHDR_ACK))
--		tcp_event_ack_sent(sk, tcp_skb_pcount(skb));
-+		tcp_event_ack_sent(sk, tcp_skb_pcount(skb), rcv_nxt);
- 
- 	if (skb->len != tcp_header_size) {
- 		tcp_event_data_sent(tp, sk);
-@@ -1046,6 +1051,13 @@ static int tcp_transmit_skb(struct sock *sk, struct sk_buff *skb, int clone_it,
- 	return err;
- }
- 
-+static int tcp_transmit_skb(struct sock *sk, struct sk_buff *skb, int clone_it,
-+			    gfp_t gfp_mask)
-+{
-+	return __tcp_transmit_skb(sk, skb, clone_it, gfp_mask,
-+				  tcp_sk(sk)->rcv_nxt);
-+}
-+
- /* This routine just queues the buffer for sending.
-  *
-  * NOTE: probe0 timer is not checked, do not forget tcp_push_pending_frames,
-@@ -3482,7 +3494,7 @@ void tcp_send_delayed_ack(struct sock *sk)
- }
- 
- /* This routine sends an ack and also updates the window. */
--void tcp_send_ack(struct sock *sk)
-+void __tcp_send_ack(struct sock *sk, u32 rcv_nxt)
- {
- 	struct sk_buff *buff;
- 
-@@ -3520,9 +3532,14 @@ void tcp_send_ack(struct sock *sk)
- 
- 	/* Send it off, this clears delayed acks for us. */
- 	skb_mstamp_get(&buff->skb_mstamp);
--	tcp_transmit_skb(sk, buff, 0, (__force gfp_t)0);
-+	__tcp_transmit_skb(sk, buff, 0, (__force gfp_t)0, rcv_nxt);
-+}
-+EXPORT_SYMBOL_GPL(__tcp_send_ack);
-+
-+void tcp_send_ack(struct sock *sk)
-+{
-+	__tcp_send_ack(sk, tcp_sk(sk)->rcv_nxt);
- }
--EXPORT_SYMBOL_GPL(tcp_send_ack);
- 
- /* This routine sends a packet with an out of date sequence
-  * number. It assumes the other end will try to ack it.
-diff --git a/net/ipv6/datagram.c b/net/ipv6/datagram.c
-index 38062f403ceb..2d3c8fe27583 100644
---- a/net/ipv6/datagram.c
-+++ b/net/ipv6/datagram.c
-@@ -694,13 +694,16 @@ void ip6_datagram_recv_specific_ctl(struct sock *sk, struct msghdr *msg,
- 	}
- 	if (np->rxopt.bits.rxorigdstaddr) {
- 		struct sockaddr_in6 sin6;
--		__be16 *ports = (__be16 *) skb_transport_header(skb);
-+		__be16 *ports;
-+		int end;
- 
--		if (skb_transport_offset(skb) + 4 <= (int)skb->len) {
-+		end = skb_transport_offset(skb) + 4;
-+		if (end <= 0 || pskb_may_pull(skb, end)) {
- 			/* All current transport protocols have the port numbers in the
- 			 * first four bytes of the transport header and this function is
- 			 * written with this assumption in mind.
- 			 */
-+			ports = (__be16 *)skb_transport_header(skb);
- 
- 			sin6.sin6_family = AF_INET6;
- 			sin6.sin6_addr = ipv6_hdr(skb)->daddr;
-diff --git a/net/ipv6/ip6_output.c b/net/ipv6/ip6_output.c
-index eb9046eae581..ea14466cdca8 100644
---- a/net/ipv6/ip6_output.c
-+++ b/net/ipv6/ip6_output.c
-@@ -576,6 +576,8 @@ static void ip6_copy_metadata(struct sk_buff *to, struct sk_buff *from)
- 	to->dev = from->dev;
- 	to->mark = from->mark;
- 
-+	skb_copy_hash(to, from);
-+
- #ifdef CONFIG_NET_SCHED
- 	to->tc_index = from->tc_index;
- #endif
-diff --git a/net/ipv6/mcast.c b/net/ipv6/mcast.c
-index ca8fac6e5a09..918c161e5b55 100644
---- a/net/ipv6/mcast.c
-+++ b/net/ipv6/mcast.c
-@@ -771,8 +771,7 @@ static void mld_del_delrec(struct inet6_dev *idev, struct ifmcaddr6 *im)
- 	if (pmc) {
- 		im->idev = pmc->idev;
- 		im->mca_crcount = idev->mc_qrv;
--		im->mca_sfmode = pmc->mca_sfmode;
--		if (pmc->mca_sfmode == MCAST_INCLUDE) {
-+		if (im->mca_sfmode == MCAST_INCLUDE) {
- 			im->mca_tomb = pmc->mca_tomb;
- 			im->mca_sources = pmc->mca_sources;
- 			for (psf = im->mca_sources; psf; psf = psf->sf_next)
+
+--wac7ysb48OaltWcw
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+I'm announcing the release of the 4.14.59 kernel.
+
+All users of the 4.14 kernel series must upgrade.
+
+The updated 4.14.y git tree can be found at:
+	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git linu=
+x-4.14.y
+and can be browsed at the normal kernel.org git web browser:
+	http://git.kernel.org/?p=3Dlinux/kernel/git/stable/linux-stable.git;a=3Dsu=
+mmary
+
+thanks,
+
+greg k-h
+
+------------
+
+ Makefile                                              |    3=20
+ arch/mips/ath79/common.c                              |    2=20
+ arch/mips/pci/pci.c                                   |    2=20
+ arch/powerpc/include/asm/mmu_context.h                |    4=20
+ arch/powerpc/kvm/book3s_64_vio.c                      |    2=20
+ arch/powerpc/kvm/book3s_64_vio_hv.c                   |    6=20
+ arch/powerpc/mm/mmu_context_iommu.c                   |   37 +
+ arch/x86/xen/xen-pvh.S                                |   26 +
+ drivers/base/dd.c                                     |    8=20
+ drivers/gpu/drm/nouveau/dispnv04/disp.c               |    3=20
+ drivers/gpu/drm/nouveau/nouveau_drm.c                 |    7=20
+ drivers/gpu/drm/nouveau/nv50_display.c                |    8=20
+ drivers/net/bonding/bond_options.c                    |   23 -
+ drivers/net/can/m_can/m_can.c                         |    3=20
+ drivers/net/can/peak_canfd/peak_pciefd_main.c         |   19=20
+ drivers/net/can/xilinx_can.c                          |  392 +++++++++++++=
+-----
+ drivers/net/ethernet/mellanox/mlx4/resource_tracker.c |    2=20
+ drivers/net/ethernet/mellanox/mlx5/core/en_arfs.c     |    7=20
+ drivers/net/ethernet/mellanox/mlx5/core/en_clock.c    |   12=20
+ drivers/net/phy/phy.c                                 |    2=20
+ drivers/net/vxlan.c                                   |  126 +++--
+ drivers/staging/speakup/speakup_soft.c                |    6=20
+ drivers/usb/class/cdc-acm.c                           |    3=20
+ drivers/usb/core/hub.c                                |    8=20
+ drivers/usb/dwc2/hcd.c                                |   44 +-
+ drivers/usb/gadget/function/f_fs.c                    |    2=20
+ drivers/vfio/vfio_iommu_spapr_tce.c                   |    2=20
+ fs/cifs/smb2pdu.c                                     |    7=20
+ include/linux/skbuff.h                                |    2=20
+ include/net/tcp.h                                     |    7=20
+ net/core/rtnetlink.c                                  |    9=20
+ net/core/skbuff.c                                     |   10=20
+ net/ipv4/igmp.c                                       |    3=20
+ net/ipv4/ip_output.c                                  |    2=20
+ net/ipv4/ip_sockglue.c                                |    7=20
+ net/ipv4/tcp_dctcp.c                                  |   50 --
+ net/ipv4/tcp_input.c                                  |   65 ++
+ net/ipv4/tcp_output.c                                 |   33 +
+ net/ipv6/datagram.c                                   |    7=20
+ net/ipv6/icmp.c                                       |    5=20
+ net/ipv6/ip6_output.c                                 |    2=20
+ net/ipv6/mcast.c                                      |    3=20
+ net/ipv6/tcp_ipv6.c                                   |    6=20
+ net/tls/tls_sw.c                                      |    7=20
+ 44 files changed, 690 insertions(+), 294 deletions(-)
+
+Alexey Kardashevskiy (1):
+      KVM: PPC: Check if IOMMU page is contained in the pinned physical page
+
+Anssi Hannula (7):
+      can: xilinx_can: fix RX loop if RXNEMP is asserted without RXOK
+      can: xilinx_can: fix power management handling
+      can: xilinx_can: fix recovery from error states not being propagated
+      can: xilinx_can: fix device dropping off bus on RX overrun
+      can: xilinx_can: keep only 1-2 frames in TX FIFO to fix TX accounting
+      can: xilinx_can: fix incorrect clear of non-processed interrupts
+      can: xilinx_can: fix RX overflow interrupt not being enabled
+
+Antti Sepp=E4l=E4 (1):
+      usb: dwc2: Fix DMA alignment to start at allocated boundary
+
+Ariel Levkovich (1):
+      net/mlx5: Adjust clock overflow work period
+
+Arnd Bergmann (1):
+      turn off -Wattribute-alias
+
+Bin Liu (1):
+      usb: core: handle hub C_PORT_OVER_CURRENT condition
+
+Boris Ostrovsky (1):
+      xen/PVH: Set up GS segment for stack canary
+
+Daniel Borkmann (1):
+      sock: fix sg page frag coalescing in sk_alloc_sg
+
+David Ahern (1):
+      net/ipv6: Fix linklocal to global address with VRF
+
+Eran Ben Elisha (2):
+      net/mlx5e: Don't allow aRFS for encapsulated packets
+      net/mlx5e: Fix quota counting in aRFS expire flow
+
+Eric Dumazet (6):
+      net: skb_segment() should not return NULL
+      tcp: free batches of packets in tcp_prune_ofo_queue()
+      tcp: avoid collapses in tcp_prune_queue() if possible
+      tcp: detect malicious patterns in tcp_collapse_ofo_queue()
+      tcp: call tcp_drop() from tcp_data_queue_ofo()
+      tcp: add tcp_ooo_try_coalesce() helper
+
+Felix Fietkau (1):
+      MIPS: ath79: fix register address in ath79_ddr_wb_flush()
+
+Greg Kroah-Hartman (2):
+      Revert "cifs: Fix slab-out-of-bounds in send_set_info() on SMB2 ACE s=
+etting"
+      Linux 4.14.59
+
+Hangbin Liu (1):
+      multicast: do not restore deleted record source filter mode to new one
+
+Heiner Kallweit (1):
+      net: phy: consider PHY_IGNORE_INTERRUPT in phy_start_aneg_priv
+
+Jack Morgenstein (1):
+      net/mlx4_core: Save the qpn from the input modifier in RST2INIT wrapp=
+er
+
+Jarod Wilson (1):
+      bonding: set default miimon value for non-arp modes if not set
+
+Jerry Zhang (1):
+      usb: gadget: f_fs: Only return delayed status when len is 0
+
+Lubomir Rintel (1):
+      usb: cdc_acm: Add quirk for Castles VEGA3000
+
+Lyude Paul (2):
+      drm/nouveau/drm/nouveau: Fix runtime PM leak in nv50_disp_atomic_comm=
+it()
+      drm/nouveau: Set DRIVER_ATOMIC cap earlier to fix debugfs
+
+Paolo Abeni (1):
+      ip: hash fragments consistently
+
+Paul Burton (1):
+      MIPS: Fix off-by-one in pci_resource_to_user()
+
+Rafael J. Wysocki (1):
+      driver core: Partially revert "driver core: correct device's shutdown=
+ order"
+
+Roman Fietze (1):
+      can: m_can.c: fix setup of CCCR register: clear CCCR NISO bit before =
+checking can.ctrlmode
+
+Roopa Prabhu (4):
+      rtnetlink: add rtnl_link_state check in rtnl_configure_link
+      vxlan: add new fdb alloc and create helpers
+      vxlan: make netlink notify in vxlan_fdb_destroy optional
+      vxlan: fix default fdb entry netlink notify ordering during netdev cr=
+eate
+
+Samuel Thibault (1):
+      staging: speakup: fix wraparound in uaccess length check
+
+Stephane Grosjean (1):
+      can: peak_canfd: fix firmware < v3.3.0: limit allocation to 32-bit DM=
+A addr only
+
+Willem de Bruijn (1):
+      ip: in cmsg IP(V6)_ORIGDSTADDR call pskb_may_pull
+
+Yuchung Cheng (4):
+      tcp: fix dctcp delayed ACK schedule
+      tcp: helpers to send special DCTCP ack
+      tcp: do not cancel delay-AcK on DCTCP special ACK
+      tcp: do not delay ACK in DCTCP upon CE status change
+
+
+--wac7ysb48OaltWcw
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEZH8oZUiU471FcZm+ONu9yGCSaT4FAltcDKAACgkQONu9yGCS
+aT41ag/+LHTAvGtGuXx6dAgScDN8kQitOkG2OgWDcsqLC3lM/y2gDYA5uzRSSMkk
+Fa3YHEHZ08Som4gYoqWl6jpVGp0aZ8AyrlFjLYb3HF6hsx9FWsZKW6cTLeaK+23Z
+hOzaZtLWsFFOj2Upr4zvXkHvl416G8T8WPifuJaRt3BBll8RkQY6ER6xHuN99E15
+DPt7sT4ZjGhFnrmyu3jIXNV0qPDUvym99GbBm6xkxx54VmvvomNvGU3jrz7/nl9o
+Il6nmR9fh+F16+kQRuzThrxEoPgv+qRLi7ioC21fNoTBIUw/DmpkR13PGcejvhcr
+4KP/ehQV7vFp7DU4umA0s2MfM/kjKirY5VB5Dgi6SSmUE6ySbR/h7PGQmacKsj2n
+9j7jVLS8MuY4MuaEh8ChCvIJqDLbsZhGzyNLOgZOzEsGmxbGhrGncS9dofQ5gyeU
+mOFbzkBKcD0EXT/HxrsU29+dg7/kNhFXPInis/QwsoDmKXUlUXz/HjORALa+N0rn
+os3ThV7DOix0m76YuDRxN0bfMQSpzA6q8af6O5ACCtSfo6RAQmdjdOt0NU8Vctt1
+1oJy1LOxPtphhA58176xb5ENxCdr0hRYG5V+AjRoAeXbs39VYmFlyGraYcY8b7Kn
+hs9ae006+R2nFA0w8f/ynOirnhAzCGtZvSx3zT5TeV+j0nXArvw=
+=p0wn
+-----END PGP SIGNATURE-----
+
+--wac7ysb48OaltWcw--
