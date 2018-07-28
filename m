@@ -2,114 +2,191 @@ Return-Path: <SRS0=xGmI=KM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34F34C6778F
-	for <linux-kernel@archiver.kernel.org>; Sat, 28 Jul 2018 16:29:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99702C28CF6
+	for <linux-kernel@archiver.kernel.org>; Sat, 28 Jul 2018 16:40:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D686020878
-	for <linux-kernel@archiver.kernel.org>; Sat, 28 Jul 2018 16:29:07 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="H7JZGVmi"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D686020878
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id 3978020862
+	for <linux-kernel@archiver.kernel.org>; Sat, 28 Jul 2018 16:40:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3978020862
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729283AbeG1R4I (ORCPT
+        id S1729378AbeG1SHF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 28 Jul 2018 13:56:08 -0400
-Received: from mail-io0-f194.google.com ([209.85.223.194]:35647 "EHLO
-        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729238AbeG1R4H (ORCPT
+        Sat, 28 Jul 2018 14:07:05 -0400
+Received: from smtprelay0150.hostedemail.com ([216.40.44.150]:59675 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1729059AbeG1SHF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 28 Jul 2018 13:56:07 -0400
-Received: by mail-io0-f194.google.com with SMTP id w11-v6so6607295iob.2
-        for <linux-kernel@vger.kernel.org>; Sat, 28 Jul 2018 09:29:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=7PwynDpToed+TUoMbg8D4UlLiZYVpuSwuwOqeSAmzho=;
-        b=H7JZGVmiKpqn7Jb1D8OaiYLfgG3w6Csxs8QB8CwGsoB8NJVKzhkBRaZMS0NfMfADkF
-         LJfmbDqMsh/zOD2yhnFiRTfMncVJIMCcdcvTZQg5q5GXvU+OATEU7yr6iS5fGbe/fH3+
-         pnHQcevlqazeF/7my2pJvmIuouC5hrE3rglhVN4X9rMyMAfOiTXaoX3IMlGTbX9DETi8
-         jbIeETer6Yur4+V+o6U3AkTKCY70W7bXu7w4V54ON59CqaNnisC4iRce8hUPRml9ZLqR
-         9+9WjwdAhmFYE69Ok4ylljok0N/QxoSmp+ydppf+LNXPZ8CGdbZi318SBdSB9fxM0Eeo
-         x8Ug==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=7PwynDpToed+TUoMbg8D4UlLiZYVpuSwuwOqeSAmzho=;
-        b=iFyRNTMRfDQhUOyCBp9SBhgSDps73M9QCCuMA0yKhwKZkA3hhMr/3yT1/wpuqJfySI
-         L5RY9DqJK4x0UlyAy39mIU76+hv37uX/Lo2DDaUwwpiGas2Q4l64e1ZV3rVHunjFuffR
-         1FJwdhknaVZn7/hO0yRHml3f1rTR4qIlvO4NtEhSXimGKIpqVOvjX9F8e5ZshKe/9tzZ
-         gjlKowfH2RmCYkSH1hrF9cZajDfLMsZWjzlBPIBln4cyVYzzxqCLJn+wjFNV8Y2R2KpE
-         GxSAJg44fmK/737RAjiZ9iyrLWpMXPYCr0YDt7u9e6KNW9NBWskz2jB8jwlJsm9xsiFi
-         u/yA==
-X-Gm-Message-State: AOUpUlEUjOJThUugjO6dTJqTJ84wLSGO7tFyPH/nPnS/7oNVkFbq1N0R
-        qNbtkvQEvNw4Wp/cDzg52MsZWjPhj+JQYHeS015rSg==
-X-Google-Smtp-Source: AAOMgpdN9goQgRX1rG/FzKytWZD/SMcPnq8jL4eFGf05TFox11lDEsJQCp5uLTCQo6xPqYr5zp09QkKzLJBqlJLuDOw=
-X-Received: by 2002:a6b:f10f:: with SMTP id e15-v6mr8061747iog.271.1532795344151;
- Sat, 28 Jul 2018 09:29:04 -0700 (PDT)
-MIME-Version: 1.0
-References: <1532746900-11710-1-git-send-email-laoar.shao@gmail.com>
- <CANn89iJ=Ad7sVWr3zBmXNSyePJJZaxgnMymN8S7x6fCSvG2jTQ@mail.gmail.com>
- <CALOAHbC4Rs7w1RwZRBsw_fjGSDvuHV37=nguzJNZzkreR5f4Dw@mail.gmail.com>
- <CANn89iKXPu=RKkLop4NJWZLixE__qYV2S=PngSj6ienuvWWL8g@mail.gmail.com> <CALOAHbAjtNf1LOhWEJMKNEEHSxjfEKiVV22KPUK88CTzt-eW0w@mail.gmail.com>
-In-Reply-To: <CALOAHbAjtNf1LOhWEJMKNEEHSxjfEKiVV22KPUK88CTzt-eW0w@mail.gmail.com>
-From:   Eric Dumazet <edumazet@google.com>
-Date:   Sat, 28 Jul 2018 09:28:52 -0700
-Message-ID: <CANn89i+12HvAsvk9crDcqGh=v-DvLjuGQCOzVTPVDTUhHgeDiw@mail.gmail.com>
-Subject: Re: [PATCH net-next 1/2] tcp: call tcp_drop() in tcp collapse
-To:     Yafang Shao <laoar.shao@gmail.com>
-Cc:     David Miller <davem@davemloft.net>,
-        netdev <netdev@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Sat, 28 Jul 2018 14:07:05 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay06.hostedemail.com (Postfix) with ESMTP id 719A0180033B9;
+        Sat, 28 Jul 2018 16:40:00 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-HE-Tag: silk27_916c550ab772a
+X-Filterd-Recvd-Size: 6362
+Received: from joe-laptop.perches.com (unknown [47.151.153.53])
+        (Authenticated sender: joe@perches.com)
+        by omf05.hostedemail.com (Postfix) with ESMTPA;
+        Sat, 28 Jul 2018 16:39:59 +0000 (UTC)
+From:   Joe Perches <joe@perches.com>
+To:     Oleg Nesterov <oleg@redhat.com>,
+        Palmer Dabbelt <palmer@sifive.com>,
+        Albert Ou <aou@eecs.berkeley.edu>
+Cc:     linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH V2] riscv: Convert uses of REG_FMT to %p
+Date:   Sat, 28 Jul 2018 09:39:57 -0700
+Message-Id: <e14dedc721b7aed1cf3ff1bdbc09014c0131c276.1532795905.git.joe@perches.com>
+X-Mailer: git-send-email 2.15.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jul 28, 2018 at 12:43 AM Yafang Shao <laoar.shao@gmail.com> wrote:
->
-> On Sat, Jul 28, 2018 at 11:38 AM, Eric Dumazet <edumazet@google.com> wrote:
-> > On Fri, Jul 27, 2018 at 8:35 PM Yafang Shao <laoar.shao@gmail.com> wrote:
-> >
-> >> So what about LINUX_MIB_TCPOFOMERGE ?
-> >> Regarding LINUX_MIB_TCPOFOMERGE,  a skb is already covered by another
-> >> skb, is that dropping the packet or simply lowering the memory
-> >> overhead ?
-> >
-> > What do you think ?
-> >
-> > If you receive two times the same payload, don't you have to drop one
-> > of the duplicate ?
-> >
-> > There is a a big difference between the two cases.
->
-> If the drop caused some data lost (which may then cause retransmition
-> or something), then this is a really DROP.
-> While if the drop won't cause any data lost, meaning it is a
-> non-harmful behavior, I think it should not be defined as DROP.
-> This is my suggestion anyway.
+Use %p pointer output instead of REG_FMT and cast the unsigned longs to
+(void *) to avoid exposing kernel addresses.
 
-Sigh.
+Miscellanea:
 
-We count drops, not because they are ' bad or something went wrong'.
+o Convert pr_cont to printk(KERN_DEFAULT as these uses are
+  new logging lines and not previous line continuations
+o Remove the now unused REG_FMT defines
 
-If TCP stack receives twice the same sequence (same payload), we
-_drop_ one of the duplicate, so we account for this event.
+Signed-off-by: Joe Perches <joe@perches.com>
+---
 
-When ' collapsing'  we reorganize our own storage, not because we have
-to drop a payload,
-but for some memory pressure reason.
-We have specific SNMP counters to account for these, we do not want to
-pretend a packet was ' dropped' since it was not.
+v2: sigh: Add missing fault.c
 
-If we have to _drop_ some packets, it is called Pruning, and we do
-properly account for these drops.
+ arch/riscv/include/asm/ptrace.h |  6 -----
+ arch/riscv/kernel/process.c     | 52 +++++++++++++++++++++--------------------
+ arch/riscv/kernel/traps.c       |  4 ++--
+ arch/riscv/mm/fault.c           |  6 ++---
+ 4 files changed, 32 insertions(+), 36 deletions(-)
+
+diff --git a/arch/riscv/include/asm/ptrace.h b/arch/riscv/include/asm/ptrace.h
+index 2c5df945d43c..b123e723f8fa 100644
+--- a/arch/riscv/include/asm/ptrace.h
++++ b/arch/riscv/include/asm/ptrace.h
+@@ -60,12 +60,6 @@ struct pt_regs {
+         unsigned long orig_a0;
+ };
+ 
+-#ifdef CONFIG_64BIT
+-#define REG_FMT "%016lx"
+-#else
+-#define REG_FMT "%08lx"
+-#endif
+-
+ #define user_mode(regs) (((regs)->sstatus & SR_SPP) == 0)
+ 
+ 
+diff --git a/arch/riscv/kernel/process.c b/arch/riscv/kernel/process.c
+index d7c6ca7c95ae..7223f6715ff3 100644
+--- a/arch/riscv/kernel/process.c
++++ b/arch/riscv/kernel/process.c
+@@ -36,7 +36,7 @@
+ extern asmlinkage void ret_from_fork(void);
+ extern asmlinkage void ret_from_kernel_thread(void);
+ 
+-void arch_cpu_idle(void)
++void arch_yycpu_idle(void)
+ {
+ 	wait_for_interrupt();
+ 	local_irq_enable();
+@@ -46,31 +46,33 @@ void show_regs(struct pt_regs *regs)
+ {
+ 	show_regs_print_info(KERN_DEFAULT);
+ 
+-	pr_cont("sepc: " REG_FMT " ra : " REG_FMT " sp : " REG_FMT "\n",
+-		regs->sepc, regs->ra, regs->sp);
+-	pr_cont(" gp : " REG_FMT " tp : " REG_FMT " t0 : " REG_FMT "\n",
+-		regs->gp, regs->tp, regs->t0);
+-	pr_cont(" t1 : " REG_FMT " t2 : " REG_FMT " s0 : " REG_FMT "\n",
+-		regs->t1, regs->t2, regs->s0);
+-	pr_cont(" s1 : " REG_FMT " a0 : " REG_FMT " a1 : " REG_FMT "\n",
+-		regs->s1, regs->a0, regs->a1);
+-	pr_cont(" a2 : " REG_FMT " a3 : " REG_FMT " a4 : " REG_FMT "\n",
+-		regs->a2, regs->a3, regs->a4);
+-	pr_cont(" a5 : " REG_FMT " a6 : " REG_FMT " a7 : " REG_FMT "\n",
+-		regs->a5, regs->a6, regs->a7);
+-	pr_cont(" s2 : " REG_FMT " s3 : " REG_FMT " s4 : " REG_FMT "\n",
+-		regs->s2, regs->s3, regs->s4);
+-	pr_cont(" s5 : " REG_FMT " s6 : " REG_FMT " s7 : " REG_FMT "\n",
+-		regs->s5, regs->s6, regs->s7);
+-	pr_cont(" s8 : " REG_FMT " s9 : " REG_FMT " s10: " REG_FMT "\n",
+-		regs->s8, regs->s9, regs->s10);
+-	pr_cont(" s11: " REG_FMT " t3 : " REG_FMT " t4 : " REG_FMT "\n",
+-		regs->s11, regs->t3, regs->t4);
+-	pr_cont(" t5 : " REG_FMT " t6 : " REG_FMT "\n",
+-		regs->t5, regs->t6);
++	printk(KERN_DEFAULT "sepc: %p ra : %p sp : %p\n",
++	       (void *)regs->sepc, (void *)regs->ra, (void *)regs->sp);
++	printk(KERN_DEFAULT " gp : %p tp : %p t0 : %p\n",
++	       (void *)regs->gp, (void *)regs->tp, (void *)regs->t0);
++	printk(KERN_DEFAULT " t1 : %p t2 : %p s0 : %p\n",
++	       (void *)regs->t1, (void *)regs->t2, (void *)regs->s0);
++	printk(KERN_DEFAULT " s1 : %p a0 : %p a1 : %p\n",
++	       (void *)regs->s1, (void *)regs->a0, (void *)regs->a1);
++	printk(KERN_DEFAULT " a2 : %p a3 : %p a4 : %p\n",
++	       (void *)regs->a2, (void *)regs->a3, (void *)regs->a4);
++	printk(KERN_DEFAULT " a5 : %p a6 : %p a7 : %p\n",
++	       (void *)regs->a5, (void *)regs->a6, (void *)regs->a7);
++	printk(KERN_DEFAULT " s2 : %p s3 : %p s4 : %p\n",
++	       (void *)regs->s2, (void *)regs->s3, (void *)regs->s4);
++	printk(KERN_DEFAULT " s5 : %p s6 : %p s7 : %p\n",
++	       (void *)regs->s5, (void *)regs->s6, (void *)regs->s7);
++	printk(KERN_DEFAULT " s8 : %p s9 : %p s10: %p\n",
++	       (void *)regs->s8, (void *)regs->s9, (void *)regs->s10);
++	printk(KERN_DEFAULT " s11: %p t3 : %p t4 : %p\n",
++	       (void *)regs->s11, (void *)regs->t3, (void *)regs->t4);
++	printk(KERN_DEFAULT " t5 : %p t6 : %p\n",
++	       (void *)regs->t5, (void *)regs->t6);
+ 
+-	pr_cont("sstatus: " REG_FMT " sbadaddr: " REG_FMT " scause: " REG_FMT "\n",
+-		regs->sstatus, regs->sbadaddr, regs->scause);
++	printk(KERN_DEFAULT "sstatus: %p sbadaddr: %p scause: %p\n",
++	       (void *)regs->sstatus,
++	       (void *)regs->sbadaddr,
++	       (void *)regs->scause);
+ }
+ 
+ void start_thread(struct pt_regs *regs, unsigned long pc,
+diff --git a/arch/riscv/kernel/traps.c b/arch/riscv/kernel/traps.c
+index 81a1952015a6..ba1942befa6a 100644
+--- a/arch/riscv/kernel/traps.c
++++ b/arch/riscv/kernel/traps.c
+@@ -68,8 +68,8 @@ void do_trap(struct pt_regs *regs, int signo, int code,
+ {
+ 	if (show_unhandled_signals && unhandled_signal(tsk, signo)
+ 	    && printk_ratelimit()) {
+-		pr_info("%s[%d]: unhandled signal %d code 0x%x at 0x" REG_FMT,
+-			tsk->comm, task_pid_nr(tsk), signo, code, addr);
++		pr_info("%s[%d]: unhandled signal %d code 0x%x at 0x%p",
++			tsk->comm, task_pid_nr(tsk), signo, code, (void *)addr);
+ 		print_vma_addr(KERN_CONT " in ", GET_IP(regs));
+ 		pr_cont("\n");
+ 		show_regs(regs);
+diff --git a/arch/riscv/mm/fault.c b/arch/riscv/mm/fault.c
+index 88401d5125bc..f258a58fe9fc 100644
+--- a/arch/riscv/mm/fault.c
++++ b/arch/riscv/mm/fault.c
+@@ -195,9 +195,9 @@ asmlinkage void do_page_fault(struct pt_regs *regs)
+ 	 * terminate things with extreme prejudice.
+ 	 */
+ 	bust_spinlocks(1);
+-	pr_alert("Unable to handle kernel %s at virtual address " REG_FMT "\n",
+-		(addr < PAGE_SIZE) ? "NULL pointer dereference" :
+-		"paging request", addr);
++	pr_alert("Unable to handle kernel %s at virtual address %p\n",
++		 (addr < PAGE_SIZE) ? "NULL pointer dereference" :
++		 "paging request", (void *)addr);
+ 	die(regs, "Oops");
+ 	do_exit(SIGKILL);
+ 
+-- 
+2.15.0
+
