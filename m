@@ -6,95 +6,121 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B71CAC28CF6
-	for <linux-kernel@archiver.kernel.org>; Sat, 28 Jul 2018 21:59:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 948E2C28CF6
+	for <linux-kernel@archiver.kernel.org>; Sat, 28 Jul 2018 22:00:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7457320893
-	for <linux-kernel@archiver.kernel.org>; Sat, 28 Jul 2018 21:59:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7457320893
+	by mail.kernel.org (Postfix) with ESMTP id 4F95320862
+	for <linux-kernel@archiver.kernel.org>; Sat, 28 Jul 2018 22:00:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F95320862
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxonhyperv.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731418AbeG1X1t (ORCPT
+        id S1731395AbeG1X1t (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Sat, 28 Jul 2018 19:27:49 -0400
-Received: from a2nlsmtp01-04.prod.iad2.secureserver.net ([198.71.225.38]:48506
-        "EHLO a2nlsmtp01-04.prod.iad2.secureserver.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1731332AbeG1X1t (ORCPT
+Received: from a2nlsmtp01-03.prod.iad2.secureserver.net ([198.71.225.37]:39950
+        "EHLO a2nlsmtp01-03.prod.iad2.secureserver.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1731330AbeG1X1s (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 28 Jul 2018 19:27:49 -0400
+        Sat, 28 Jul 2018 19:27:48 -0400
 Received: from linuxonhyperv2.linuxonhyperv.com ([107.180.71.197])
         by : HOSTING RELAY : with SMTP
-        id jXEgfS03Kq9i0jXEgfFIen; Sat, 28 Jul 2018 14:58:50 -0700
+        id jXEgfoPyRVktnjXEgf9FrL; Sat, 28 Jul 2018 14:58:50 -0700
 x-originating-ip: 107.180.71.197
 Received: from kys by linuxonhyperv2.linuxonhyperv.com with local (Exim 4.91)
         (envelope-from <kys@linuxonhyperv2.linuxonhyperv.com>)
-        id 1fjXEg-0003bj-CJ; Sat, 28 Jul 2018 14:58:50 -0700
+        id 1fjXEg-0003bp-H3; Sat, 28 Jul 2018 14:58:50 -0700
 From:   kys@linuxonhyperv.com
 To:     gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
         devel@linuxdriverproject.org, olaf@aepfle.de, apw@canonical.com,
         jasowang@redhat.com, sthemmin@microsoft.com,
         Michael.H.Kelley@microsoft.com, vkuznets@redhat.com
-Cc:     Sunil Muthuswamy <sunilmut@microsoft.com>,
+Cc:     Stephen Hemminger <stephen@networkplumber.org>,
         "K . Y . Srinivasan" <kys@microsoft.com>
-Subject: [PATCH 3/4] Drivers: hv: vmbus: Get rid of MSR access from vmbus_drv.c
-Date:   Sat, 28 Jul 2018 21:58:47 +0000
-Message-Id: <20180728215848.13814-3-kys@linuxonhyperv.com>
+Subject: [PATCH 4/4] Drivers: hv: vmbus: add numa_node to sysfs
+Date:   Sat, 28 Jul 2018 21:58:48 +0000
+Message-Id: <20180728215848.13814-4-kys@linuxonhyperv.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180728215848.13814-1-kys@linuxonhyperv.com>
 References: <20180728215630.13712-1-kys@linuxonhyperv.com>
  <20180728215848.13814-1-kys@linuxonhyperv.com>
 Reply-To: kys@microsoft.com
-X-CMAE-Envelope: MS4wfL7SP7eMaKUZNjKYJS1av4w7hgNlnZjGtZqIGBQA9Q60Fhyn5ipWTRwLFvANSpwri2VMFUydoPg5btRUIo0GvHX5Jkq7h6TQyMIJhsl95LzbnXBeLvgg
- MoF8+NrRDS9ug93l3AtA5rfGi1flmJFezml+XhJn4RaDLGVgIJKrF4n7EsyF5tBkj2b/9vtDkzPsublWR6sUUR456v9RrjBXkUdheV7pbFdwukN0QNQYI6KT
- fJnYd/NsYB5/E02H0BS93yduFviSrL82rmExgk3mBji5z2mzIVXiFu4uQXsRUA4Hvme0dklK+jWwCODhEWuX9Tzt6CTTu4HegpZgcB/4mP5j46d9Wr5R59J5
- rGOJFT0TVQCn78W63tT0NZ2heA3RCgyjM+9EPmTS+U4GgFedAcMV5eWXTpCwco1DXF9qx1HNtOaX2M32LooVoLwd11GW5SCr0fgLL4Y7qt6oY095058+PGSm
- X5iuDgS1g6gyjhyfSz+lLjh/tGrxbZLZO8DJ2naJuAKxj6gXJnQ4T6VEGnXkzS7+nYS8BfXjYTvqOJeIiP7hYTGRoFPchNAHcMgeGw==
+X-CMAE-Envelope: MS4wfKmyjAN23z8Xx5yeTVnmWB6u/GLJ+CvcavpxuMCPoDhMib1e4KzELlxTg5fmcEfGvC7XFYrCgUXThHOMn4pYs8uv9f0T3H5s7JUR4noFlXRUHd+5af4Z
+ x0w3OxDmlmow0HmSPlY92l5bPSjyx0/otVu+vacnFkzz9p9nFMjUpI+UurNBBrr0BrvkraxUBGlWzXB0xhOBHCu5KRMoypJevm3DxwzlBqOMsQOSWqOZhQBI
+ UDURTf3WULeQzAiecH9loF9oBjlc33GCtIg7m1FGXkFFTuUEL6Sx9orYeYFNt7WrX90sRIEw+u2L9Alk+mh7SkakP2n+JoiT7LL55tLCrdFYAFBmLDUS6Ja8
+ /cO3nuvKTOcJGEB/qg/vO0AA3p9VV0vOM8drlA0CxmZ0XpUmeMS1rRiZpUzzaRcp0xR+nSJKGtHlP/FhX1is/WGARpkY2Q1aMoyMSYJph3OLo5SxMsTdP9qU
+ q0SGZkJfjDc2Q2nGsCQTamOUO6GGDVgrQ+804yYGu2jKLzFO4ycm05Fw5z6wjPIqLpdvB5D/i/s/UpzAtSPyqbIenJropy2mYBDS3Q==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sunil Muthuswamy <sunilmut@microsoft.com>
+From: Stephen Hemminger <stephen@networkplumber.org>
 
-Get rid of ISA specific code from vmus_drv.c which is common code.
+Being able to find the numa_node for a device is useful for userspace
+drivers (DPDK) and also for diagnosing performance issues.  This makes
+vmbus similar to pci.
 
-Fixes: 81b18bce48af ("Drivers: HV: Send one page worth of kmsg dump over Hyper-V during panic")
-
-Signed-off-by: Sunil Muthuswamy <sunilmut@microsoft.com>
+Signed-off-by: Stephen Hemminger <sthemmin@microsoft.com>
 Signed-off-by: K. Y. Srinivasan <kys@microsoft.com>
 ---
- arch/x86/include/asm/mshyperv.h | 3 +++
- drivers/hv/vmbus_drv.c          | 2 +-
- 2 files changed, 4 insertions(+), 1 deletion(-)
+ Documentation/ABI/stable/sysfs-bus-vmbus |  7 +++++++
+ drivers/hv/vmbus_drv.c                   | 17 +++++++++++++++++
+ 2 files changed, 24 insertions(+)
 
-diff --git a/arch/x86/include/asm/mshyperv.h b/arch/x86/include/asm/mshyperv.h
-index 156a2e5a97a9..b731c4bf70ed 100644
---- a/arch/x86/include/asm/mshyperv.h
-+++ b/arch/x86/include/asm/mshyperv.h
-@@ -96,6 +96,9 @@ static inline void vmbus_signal_eom(struct hv_message *msg, u32 old_msg_type)
- #define hv_set_synint_state(int_num, val) \
- 	wrmsrl(HV_X64_MSR_SINT0 + int_num, val)
+diff --git a/Documentation/ABI/stable/sysfs-bus-vmbus b/Documentation/ABI/stable/sysfs-bus-vmbus
+index 3eaffbb2d468..3fed8fdb873d 100644
+--- a/Documentation/ABI/stable/sysfs-bus-vmbus
++++ b/Documentation/ABI/stable/sysfs-bus-vmbus
+@@ -42,6 +42,13 @@ Contact:	K. Y. Srinivasan <kys@microsoft.com>
+ Description:	The 16 bit vendor ID of the device
+ Users:		tools/hv/lsvmbus and user level RDMA libraries
  
-+#define hv_get_crash_ctl(val) \
-+	rdmsrl(HV_X64_MSR_CRASH_CTL, val)
++What:		/sys/bus/vmbus/devices/<UUID>/numa_node
++Date:		Jul 2018
++KernelVersion:	4.19
++Contact:	Stephen Hemminger <sthemmin@microsoft.com>
++Description:	This NUMA node to which the VMBUS device is
++		attached, or -1 if the node is unknown.
 +
- void hyperv_callback_vector(void);
- void hyperv_reenlightenment_vector(void);
- #ifdef CONFIG_TRACING
+ What:		/sys/bus/vmbus/devices/<UUID>/channels/<N>
+ Date:		September. 2017
+ KernelVersion:	4.14
 diff --git a/drivers/hv/vmbus_drv.c b/drivers/hv/vmbus_drv.c
-index 5e946b1be54c..db145e1a7049 100644
+index db145e1a7049..b1b548a21f91 100644
 --- a/drivers/hv/vmbus_drv.c
 +++ b/drivers/hv/vmbus_drv.c
-@@ -1146,7 +1146,7 @@ static int vmbus_bus_init(void)
- 		 * Register for panic kmsg callback only if the right
- 		 * capability is supported by the hypervisor.
- 		 */
--		rdmsrl(HV_X64_MSR_CRASH_CTL, hyperv_crash_ctl);
-+		hv_get_crash_ctl(hyperv_crash_ctl);
- 		if (hyperv_crash_ctl & HV_CRASH_CTL_CRASH_NOTIFY_MSG) {
- 			hv_panic_page = (void *)get_zeroed_page(GFP_KERNEL);
- 			if (hv_panic_page) {
+@@ -210,6 +210,20 @@ static ssize_t modalias_show(struct device *dev,
+ }
+ static DEVICE_ATTR_RO(modalias);
+ 
++#ifdef CONFIG_NUMA
++static ssize_t numa_node_show(struct device *dev,
++			      struct device_attribute *attr, char *buf)
++{
++	struct hv_device *hv_dev = device_to_hv_device(dev);
++
++	if (!hv_dev->channel)
++		return -ENODEV;
++
++	return sprintf(buf, "%d\n", hv_dev->channel->numa_node);
++}
++static DEVICE_ATTR_RO(numa_node);
++#endif
++
+ static ssize_t server_monitor_pending_show(struct device *dev,
+ 					   struct device_attribute *dev_attr,
+ 					   char *buf)
+@@ -492,6 +506,9 @@ static struct attribute *vmbus_dev_attrs[] = {
+ 	&dev_attr_class_id.attr,
+ 	&dev_attr_device_id.attr,
+ 	&dev_attr_modalias.attr,
++#ifdef CONFIG_NUMA
++	&dev_attr_numa_node.attr,
++#endif
+ 	&dev_attr_server_monitor_pending.attr,
+ 	&dev_attr_client_monitor_pending.attr,
+ 	&dev_attr_server_monitor_latency.attr,
 -- 
 2.17.1
 
