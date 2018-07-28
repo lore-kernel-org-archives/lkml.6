@@ -2,392 +2,179 @@ Return-Path: <SRS0=xGmI=KM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18795C67790
-	for <linux-kernel@archiver.kernel.org>; Sat, 28 Jul 2018 01:47:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3203CC67790
+	for <linux-kernel@archiver.kernel.org>; Sat, 28 Jul 2018 01:48:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9F06D20862
-	for <linux-kernel@archiver.kernel.org>; Sat, 28 Jul 2018 01:47:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F06D20862
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id CFD6B20673
+	for <linux-kernel@archiver.kernel.org>; Sat, 28 Jul 2018 01:48:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CFD6B20673
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389333AbeG1DLh (ORCPT
+        id S2389381AbeG1DMn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 23:11:37 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:56458 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2389051AbeG1DLh (ORCPT
+        Fri, 27 Jul 2018 23:12:43 -0400
+Received: from gateway24.websitewelcome.com ([192.185.50.91]:18036 "EHLO
+        gateway24.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2389016AbeG1DMn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 23:11:37 -0400
-Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w6S1Y6tH087973
-        for <linux-kernel@vger.kernel.org>; Fri, 27 Jul 2018 21:47:04 -0400
-Received: from e11.ny.us.ibm.com (e11.ny.us.ibm.com [129.33.205.201])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2kg7bpf9t5-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Fri, 27 Jul 2018 21:47:04 -0400
-Received: from localhost
-        by e11.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Fri, 27 Jul 2018 21:47:02 -0400
-Received: from b01cxnp23034.gho.pok.ibm.com (9.57.198.29)
-        by e11.ny.us.ibm.com (146.89.104.198) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 27 Jul 2018 21:47:00 -0400
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp23034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w6S1kxtt9175532
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Sat, 28 Jul 2018 01:46:59 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 2A9D6B2066;
-        Fri, 27 Jul 2018 21:46:38 -0400 (EDT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id EF82EB2065;
-        Fri, 27 Jul 2018 21:46:37 -0400 (EDT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.159])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Fri, 27 Jul 2018 21:46:37 -0400 (EDT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id 385C216CA3D4; Fri, 27 Jul 2018 18:47:00 -0700 (PDT)
-Date:   Fri, 27 Jul 2018 18:47:00 -0700
-From:   "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-To:     David Chen <david.chen@nutanix.com>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: RCU nocb list not reclaiming causing OOM
-Reply-To: paulmck@linux.vnet.ibm.com
-References: <BYAPR02MB4501B990E353A2616594821294510@BYAPR02MB4501.namprd02.prod.outlook.com>
- <20180720233212.GC12945@linux.vnet.ibm.com>
- <BYAPR02MB450146DF9F67788ED1F0801D94500@BYAPR02MB4501.namprd02.prod.outlook.com>
- <BYAPR02MB4501690DB627FBB8640A5C46942A0@BYAPR02MB4501.namprd02.prod.outlook.com>
- <20180727223125.GJ24813@linux.vnet.ibm.com>
- <DM6PR02MB4508A4A735450EAAC469E635942A0@DM6PR02MB4508.namprd02.prod.outlook.com>
- <20180727234723.GN24813@linux.vnet.ibm.com>
- <DM6PR02MB4508E33C65B189DF3B5D6D54942A0@DM6PR02MB4508.namprd02.prod.outlook.com>
+        Fri, 27 Jul 2018 23:12:43 -0400
+Received: from cm10.websitewelcome.com (cm10.websitewelcome.com [100.42.49.4])
+        by gateway24.websitewelcome.com (Postfix) with ESMTP id 799B02269
+        for <linux-kernel@vger.kernel.org>; Fri, 27 Jul 2018 20:48:10 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id jEL4flGcVBcCXjEL4fOCSx; Fri, 27 Jul 2018 20:48:10 -0500
+X-Authority-Reason: nr=8
+Received: from [189.250.102.187] (port=46718 helo=[192.168.1.71])
+        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1fjEL3-002Ix8-NR; Fri, 27 Jul 2018 20:48:10 -0500
+To:     Jinbum Park <jinb.park7@gmail.com>, axboe@kernel.dk,
+        bart.vanassche@wdc.com, jiufei.xue@linux.alibaba.com
+Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20180728013151.GA15457@pjb1027-Latitude-E5410>
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=gustavo@embeddedor.com; keydata=
+ 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
+ VtSixD1uOgytAP7RWS474w==
+Subject: Re: [PATCH] pktcdvd: Fix possible Spectre-v1 for pkt_devs
+Message-ID: <ecede2b4-a980-3ad3-4474-d1d9db3e6a74@embeddedor.com>
+Date:   Fri, 27 Jul 2018 20:47:41 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+In-Reply-To: <20180728013151.GA15457@pjb1027-Latitude-E5410>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <DM6PR02MB4508E33C65B189DF3B5D6D54942A0@DM6PR02MB4508.namprd02.prod.outlook.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18072801-2213-0000-0000-000002D10480
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009441; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000266; SDB=6.01067119; UDB=6.00548316; IPR=6.00844988;
- MB=3.00022360; MTD=3.00000008; XFM=3.00000015; UTC=2018-07-28 01:47:01
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18072801-2214-0000-0000-00005AFE3055
-Message-Id: <20180728014700.GO24813@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-27_09:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1806210000 definitions=main-1807280015
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.102.187
+X-Source-L: No
+X-Exim-ID: 1fjEL3-002Ix8-NR
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.1.71]) [189.250.102.187]:46718
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 6
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jul 28, 2018 at 12:07:19AM +0000, David Chen wrote:
-> Hi Paul,
-> 
-> I wasn't talking about the xchg() though.
-> 
-> The smp_mb__after_atomic() is not for xchg(), it's for `*tail = rdp->nocb_gp_head;`
-> it's stated so in the comment. And I do think we need ordering between
-> `*tail = rdp->nocb_gp_head;` and wake up, because the waiter is checking on head not tail.
-> 
-> 			swait_event_interruptible(rdp->nocb_wq,
-> 						 READ_ONCE(rdp->nocb_follower_head));
-> 
-> So what I'm saying is that since we need to maintain ordering between `*tail = rdp->nocb_gp_head;`
-> and wake up, we need to change the smp_mb__after_atomic() to smp_mb(). Because
-> smp_mb__after_atomic() wouldn't guarantee 
-> 
-> So this is what I'm proposing.
+Hi Jinbum,
 
-Good eyes!
+Thanks for working on this.
 
-Hmmm...  What do I do about this in mainline?  Ah, I introduced a
-->nocb_lock in mainline to prevent this from happening.  In that same
-commit that you didn't want to use because it is hard to backport.  ;-)
+Please, see some comments below.
 
-So yes, but there might well be other misorderings fixed by the
-hard-to-backport commit that your change below does not cover.  Still I
-do agree that you need full ordering at that point.
+On 07/27/2018 08:31 PM, Jinbum Park wrote:
+> User controls @dev_minor which to be used as index of pkt_devs.
+> So, It can be exploited via Spectre-like attack. (speculative execution)
+> 
+> This kind of attack leaks address of pkt_devs, [1]
+> It leads an attacker to bypass security mechanism such as KASLR.
+> 
+> So sanitize @dev_minor before using it to prevent attack.
+> 
+> [1] https://github.com/jinb-park/linux-exploit/
+> tree/master/exploit-remaining-spectre-gadget/leak_pkt_devs.c
+> 
+> Signed-off-by: Jinbum Park <jinb.park7@gmail.com>
+> ---
+>  drivers/block/pktcdvd.c | 8 ++++++--
+>  1 file changed, 6 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/block/pktcdvd.c b/drivers/block/pktcdvd.c
+> index c61d20c..665760d 100644
+> --- a/drivers/block/pktcdvd.c
+> +++ b/drivers/block/pktcdvd.c
+> @@ -67,8 +67,8 @@
+>  #include <scsi/scsi.h>
+>  #include <linux/debugfs.h>
+>  #include <linux/device.h>
+> -
+>  #include <linux/uaccess.h>
+> +#include <linux/nospec.h>
+>  
+>  #define DRIVER_NAME	"pktcdvd"
+>  
+> @@ -2229,9 +2229,13 @@ static void pkt_release_dev(struct pktcdvd_device *pd, int flush)
+>  
+>  static struct pktcdvd_device *pkt_find_dev_from_minor(unsigned int dev_minor)
+>  {
+> +	unsigned int idx = 0;
+> +
 
-							Thanx, Paul
+There is no need for a new variable in this case.
 
-> diff -ru linux-4.9.37.orig/kernel/rcu/tree_plugin.h linux-4.9.37/kernel/rcu/tree_plugin.h
-> --- linux-4.9.37.orig/kernel/rcu/tree_plugin.h	2017-07-12 06:42:41.000000000 -0700
-> +++ linux-4.9.37/kernel/rcu/tree_plugin.h	2018-07-27 16:23:41.349044259 -0700
-> @@ -2076,7 +2076,7 @@
->  		/* Append callbacks to follower's "done" list. */
->  		tail = xchg(&rdp->nocb_follower_tail, rdp->nocb_gp_tail);
->  		*tail = rdp->nocb_gp_head;
-> -		smp_mb__after_atomic(); /* Store *tail before wakeup. */
-> +		smp_mb(); /* Store *tail before wakeup. */
->  		if (rdp != my_rdp && tail == &rdp->nocb_follower_head) {
->  			/*
->  			 * List was empty, wake up the follower.
-> 
-> Thanks,
-> David
-> 
-> From: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
-> Sent: Friday, July 27, 2018 4:47 PM
-> To: David Chen
-> Cc: linux-kernel@vger.kernel.org
-> Subject: Re: RCU nocb list not reclaiming causing OOM
->   
-> 
-> On Fri, Jul 27, 2018 at 11:16:39PM +0000, David Chen wrote:
-> > Hi Paul,
-> > 
-> > Thanks for the advice.
-> > The bug is kind of hard to hit, so I can't say for certain yet.
-> 
-> Well, you can always remove the "tail == &rdp->nocb_follower_head" as an
-> extra belt-and-suspenders safety net.  I am not putting that in mainline,
-> but in the privacy of your own copy of the kernel, I don't see any really
-> serious problem with it.  (As long as you aren't going for absolute maximum
-> performance, but even then there are other more important tuning actions
-> and code changes you could make.)
-> 
-> > Though after another look at the code, I found out the `smp_mb__after_atomic();`
-> > seems to be only a compiler barrier on x86.
-> 
-> Yes, and that is because the locked xchg instruction used on x86 to
-> implement xchg() already provides full ordering.  ;-)
-> 
-> >                tail = xchg(&rdp->nocb_follower_tail, rdp->nocb_gp_tail);
-> >                *tail = rdp->nocb_gp_head;
-> >                smp_mb__after_atomic(); /* Store *tail before wakeup. */
-> >                if (rdp != my_rdp && tail == &rdp->nocb_follower_head) {
-> >                        swake_up(&rdp->nocb_wq);
-> > 
-> > But that wouldn't be enough right? Because from 6b5fc3a13318, it stated that
-> > wakeup operation don't guarantee ordering. And when the follower wakes up, it checks
-> > for nocb_follower_head, which is assigned by `*tail = rdp->nocb_gp_head;` which doesn't
-> > have LOCK prefix. So it's possible for follower to wake up and see the list is empty and go
-> > back to sleep.
-> 
-> Again, xchg() is defined to provide full ordering against all operations
-> before and after it.  Each architecture is required to do whatever is
-> necessary to implement that full ordering, and x86 need only provide
-> its "lock xchg" instruction.
-> 
-> The smp_mb__after_atomic() has effect only after atomic read-modify-write
-> operations that do not return a value, for example, atomic_inc().
-> If you use it after a value-returning atomic read-modify-write operation
-> like xchg(), all you do is needlessly slow things down on platforms
-> that provide non-empty smp_mb__after_atomic() definitions.  So again,
-> smp_mb__after_atomic() after xchg() is pointless.
-> 
-> Please take a look at Documentation/core-api/atomic_ops.rst in the
-> Linux-kernel source tree for more information.  Or get a v4.17 kernel
-> source tree and check this using the memory model (tools/memory-model
-> in that version).
-> 
->                                                         Thanx, Paul
-> 
-> > Thanks,
-> > David
-> > 
-> > From: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
-> > Sent: Friday, July 27, 2018 3:31 PM
-> > To: David Chen
-> > Cc: linux-kernel@vger.kernel.org
-> > Subject: Re: RCU nocb list not reclaiming causing OOM
-> >   
-> > 
-> > On Fri, Jul 27, 2018 at 07:07:46PM +0000, David Chen wrote:
-> > > Hi Paul,
-> > > 
-> > > I'd like to opinion again on this subject.
-> > > 
-> > > So we are going to backport this patch:
-> > > 6b5fc3a13318 ("rcu: Add memory barriers for NOCB leader wakeup")
-> > 
-> > Does this one solve the problem, or are you still seeing hangs?
-> > If you are no longer seeing hangs, my advice is "hands off keyboard",
-> > though some would no doubt point out that I should follow that advice
-> > more myself.  ;-)
-> > 
-> > > But the other one:
-> > > 8be6e1b15c54 ("rcu: Use timer as backstop for NOCB deferred wakeups")
-> > > It doesn't apply cleanly, and I'm not too comfortable porting it myself.
-> > 
-> > Yeah, that one is a bit on the non-trivial side, no two ways about it.
-> > 
-> > > So I'm wondering if I use the following change to always wake up follower thread
-> > > regardless if the list was empty or not, just to be on the safe side. Do you think
-> > > this change is reasonable? Do you see any problem it might cause?
-> > > 
-> > > Thanks,
-> > > David
-> > > 
-> > > diff -ru linux-4.9.37.orig/kernel/rcu/tree_plugin.h linux-4.9.37/kernel/rcu/tree_plugin.h
-> > > --- linux-4.9.37.orig/kernel/rcu/tree_plugin.h        2017-07-12 06:42:41.000000000 -0700
-> > > +++ linux-4.9.37/kernel/rcu/tree_plugin.h     2018-07-27 11:57:03.582134519 -0700
-> > > @@ -2077,7 +2077,7 @@
-> > >                tail = xchg(&rdp->nocb_follower_tail, rdp->nocb_gp_tail);
-> > >                *tail = rdp->nocb_gp_head;
-> > >                smp_mb__after_atomic(); /* Store *tail before wakeup. */
-> > > -             if (rdp != my_rdp && tail == &rdp->nocb_follower_head) {
-> > > +             if (rdp != my_rdp) {
-> > 
-> > This will burn a bit of extra CPU time, but it should be fine other than
-> > that.
-> > 
-> >                                                         Thanx, Paul
-> > 
-> > >                        /*
-> > >                         * List was empty, wake up the follower.
-> > >                         * Memory barriers supplied by atomic_long_add().
-> > > 
-> > > 
-> > > From: David Chen
-> > > Sent: Friday, July 20, 2018 5:12 PM
-> > > To: paulmck@linux.vnet.ibm.com
-> > > Cc: linux-kernel@vger.kernel.org
-> > > Subject: Re: RCU nocb list not reclaiming causing OOM
-> > >    
-> > > 
-> > > Hi Paul,
-> > > 
-> > > Ok, I'll try those patches.
-> > > 
-> > > Thanks,
-> > > David
-> > >   
-> > > From: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
-> > > Sent: Friday, July 20, 2018 4:32:12 PM
-> > > To: David Chen
-> > > Cc: linux-kernel@vger.kernel.org
-> > > Subject: Re: RCU nocb list not reclaiming causing OOM
-> > >   
-> > > 
-> > > On Fri, Jul 20, 2018 at 11:05:52PM +0000, David Chen wrote:
-> > > > Hi Paul,
-> > > > 
-> > > > We hit an RCU issue on 4.9.37 kernel. One of the nocb_follower list grows too
-> > > > large, and not getting reclaimed, causing the system to OOM.
-> > > > 
-> > > > Printing the culprit rcu_sched_data:
-> > > > 
-> > > >   nocb_q_count = {
-> > > >     counter = 32369635
-> > > >   },
-> > > >   nocb_follower_head = 0xffff88ae901c0a00,
-> > > >   nocb_follower_tail = 0xffff88af1538b8d8,
-> > > >   nocb_kthread = 0xffff88b06d290000,
-> > > > 
-> > > > As you can see here, the nocb_follower_head is not empty, so in theory, the
-> > > > nocb_kthread shouldn't go to sleep. However, if dump the stack of the kthread:
-> > > > 
-> > > > crash> bt 0xffff88b06d290000
-> > > > PID: 21     TASK: ffff88b06d290000  CPU: 3   COMMAND: "rcuos/1"
-> > > >  #0 [ffffafc9020b7dc0] __schedule at ffffffff8d8789dc
-> > > >  #1 [ffffafc9020b7e38] schedule at ffffffff8d878e76
-> > > >  #2 [ffffafc9020b7e50] rcu_nocb_kthread at ffffffff8d112337
-> > > >  #3 [ffffafc9020b7ec8] kthread at ffffffff8d0c6ce7
-> > > >  #4 [ffffafc9020b7f50] ret_from_fork at ffffffff8d87d755
-> > > > 
-> > > > And if we dis the address at ffffffff8d112337:
-> > > > 
-> > > > /usr/src/debug/kernel-4.9.37/linux-4.9.37-29.nutanix.07142017.el7.centos.x86_64/kernel/rcu/tree_plugin.h: 2106
-> > > > 0xffffffff8d11232d <rcu_nocb_kthread+381>:      test   %rax,%rax
-> > > > 0xffffffff8d112330 <rcu_nocb_kthread+384>:      jne    0xffffffff8d112355 <rcu_nocb_kthread+421>
-> > > > 0xffffffff8d112332 <rcu_nocb_kthread+386>:      callq  0xffffffff8d878e40 <schedule>
-> > > > 0xffffffff8d112337 <rcu_nocb_kthread+391>:      lea    -0x40(%rbp),%rsi
-> > > > 
-> > > > So the kthread is blocked at swait_event_interruptible in the nocb_follower_wait.
-> > > > This contradict with the fact that nocb_follower_head was not empty. So I
-> > > > wonder if this is caused by the lack of memory barrier in the place shown below.
-> > > > If the head is set to NULL after doing xchg, it will overwrite the head set
-> > > > by leader. This caused the kthread to sleep the next iteration, and the leader
-> > > > won't wake him up as the tail doesn't point to head.
-> > > > 
-> > > > Please tell me what do you think.
-> > > > 
-> > > > Thanks,
-> > > > David
-> > > > 
-> > > > diff -ru linux-4.9.37.orig/kernel/rcu/tree_plugin.h linux-4.9.37/kernel/rcu/tree_plugin.h
-> > > > --- linux-4.9.37.orig/kernel/rcu/tree_plugin.h        2017-07-12 06:42:41.000000000 -0700
-> > > > +++ linux-4.9.37/kernel/rcu/tree_plugin.h     2018-07-20 15:25:57.311206343 -0700
-> > > > @@ -2149,6 +2149,7 @@
-> > > >                BUG_ON(!list);
-> > > >                trace_rcu_nocb_wake(rdp->rsp->name, rdp->cpu, "WokeNonEmpty");
-> > > >                WRITE_ONCE(rdp->nocb_follower_head, NULL);
-> > > > +             smp_mb();
-> > > >                tail = xchg(&rdp->nocb_follower_tail, &rdp->nocb_follower_head);
-> > > 
-> > > The xchg() operation implies full memory barriers both before and after,
-> > > so adding the smp_mb() before would have no effect.
-> > > 
-> > > But let me take a look at post-4.9 changes to this code...
-> > > 
-> > > I suggest trying out the following commit:
-> > > 
-> > > 6b5fc3a13318 ("rcu: Add memory barriers for NOCB leader wakeup")
-> > > 
-> > > If that one doesn't help, the following might be worth trying, but probably
-> > > a lot harder to backport:
-> > > 
-> > > 8be6e1b15c54 ("rcu: Use timer as backstop for NOCB deferred wakeups")
-> > > 
-> > > Please let me know how it goes!
-> > > 
-> > >                                                         Thanx, Paul
-> > > 
-> > > ------------------------------------------------------------------------
-> > > 
-> > > commit 6b5fc3a1331810db407c9e0e673dc1837afdc9d0
-> > > Author: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
-> > > Date:   Fri Apr 28 20:11:09 2017 -0700
-> > > 
-> > >     rcu: Add memory barriers for NOCB leader wakeup
-> > >     
-> > >     Wait/wakeup operations do not guarantee ordering on their own.  Instead,
-> > >     either locking or memory barriers are required.  This commit therefore
-> > >     adds memory barriers to wake_nocb_leader() and nocb_leader_wait().
-> > >     
-> > >     Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
-> > >     Tested-by: Krister Johansen <kjlx@templeofstupid.com>
-> > >     Cc: <stable@vger.kernel.org> # 4.6.x
-> > > 
-> > > diff --git a/kernel/rcu/tree_plugin.h b/kernel/rcu/tree_plugin.h
-> > > index 0b1042545116..573fbe9640a0 100644
-> > > --- a/kernel/rcu/tree_plugin.h
-> > > +++ b/kernel/rcu/tree_plugin.h
-> > > @@ -1810,6 +1810,7 @@ static void wake_nocb_leader(struct rcu_data *rdp, bool force)
-> > >          if (READ_ONCE(rdp_leader->nocb_leader_sleep) || force) {
-> > >                  /* Prior smp_mb__after_atomic() orders against prior enqueue. */
-> > >                  WRITE_ONCE(rdp_leader->nocb_leader_sleep, false);
-> > > +               smp_mb(); /* ->nocb_leader_sleep before swake_up(). */
-> > >                  swake_up(&rdp_leader->nocb_wq);
-> > >          }
-> > >  }
-> > > @@ -2064,6 +2065,7 @@ static void nocb_leader_wait(struct rcu_data *my_rdp)
-> > >           * nocb_gp_head, where they await a grace period.
-> > >           */
-> > >          gotcbs = false;
-> > > +       smp_mb(); /* wakeup before ->nocb_head reads. */
-> > >          for (rdp = my_rdp; rdp; rdp = rdp->nocb_next_follower) {
-> > >                  rdp->nocb_gp_head = READ_ONCE(rdp->nocb_head);
-> > >                  if (!rdp->nocb_gp_head)
-> > > 
-> > >      
-> > 
-> >     
-> 
->     
+>  	if (dev_minor >= MAX_WRITERS)
+>  		return NULL;
+> -	return pkt_devs[dev_minor];
+> +
+> +	idx = array_index_nospec(dev_minor, MAX_WRITERS);
+> +	return pkt_devs[idx];
 
+Also, the following style is preferred:
+
+if (dev_minor >= MAX_WRITERS)
+	return NULL;
+dev_minor = array_index_nospec(dev_minor, MAX_WRITERS);
+
+
+Thanks
+--
+Gustavo
