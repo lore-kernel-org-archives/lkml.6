@@ -2,132 +2,121 @@ Return-Path: <SRS0=xGmI=KM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13AA5C6778F
-	for <linux-kernel@archiver.kernel.org>; Sat, 28 Jul 2018 13:02:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26A34C6778F
+	for <linux-kernel@archiver.kernel.org>; Sat, 28 Jul 2018 13:03:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BBB4620841
-	for <linux-kernel@archiver.kernel.org>; Sat, 28 Jul 2018 13:02:40 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qQgCFLG1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BBB4620841
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id D496C20841
+	for <linux-kernel@archiver.kernel.org>; Sat, 28 Jul 2018 13:03:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D496C20841
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kemnade.info
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728750AbeG1O3F (ORCPT
+        id S1728777AbeG1OaU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 28 Jul 2018 10:29:05 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:43448 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728449AbeG1O3E (ORCPT
+        Sat, 28 Jul 2018 10:30:20 -0400
+Received: from mail.andi.de1.cc ([85.214.239.24]:39258 "EHLO
+        h2641619.stratoserver.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726193AbeG1OaU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 28 Jul 2018 10:29:04 -0400
-Received: by mail-pg1-f195.google.com with SMTP id d17-v6so326567pgv.10
-        for <linux-kernel@vger.kernel.org>; Sat, 28 Jul 2018 06:02:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=cKVmWbsmRatw9lLoErXDgnioJWcQrmaPhuuoM37+lJQ=;
-        b=qQgCFLG1IBsip9ghRe9nZotP5C5/QD5mK+fDA57Yzsve6XaTbwF9JiqAfteqhBirZ7
-         67r+KpkXz3/gXbgEsRpeIhPjrLP1xL/8ha5BY5QGTdEhEZ0/J+lHRp/8efOvwZkIBpmL
-         JNTu0RvfuqRuhmwOLD0CVKolOtcvHnwoHxUOheYAZ+nqJQ+UCM5ZCSW3dLT7gA1uOtdu
-         bHgHsOejMmwBdzzYTZeXjMLBHNg6LDnXKIicKTvrx2wEDcYEoLNyEfacdVxkS4MUgv5z
-         IWG+vbAldJ6IdwXxP1uNWvqplvf6+WLwKHZB1irS2BEKmic+cVBXgIsHvIjSaZrarDlD
-         0Tiw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=cKVmWbsmRatw9lLoErXDgnioJWcQrmaPhuuoM37+lJQ=;
-        b=EP87U4rDkTsJURvJ8YRXJfGXjvh8yiidWsH7zLIV7TGCZoL8+iL6131Ob+c74W55kM
-         DNDV16XCZxCdRAjl5BHjIutM58WMNPUxzG7OyeOeem57T2vg4qnyVd2GNbzYUNg08UxU
-         0nTDlToQYTcW4IpNgB574xOhtP1cGkyQwMnrYXYaEaomn17/nsOKRzxtdZCI9y/LTjBx
-         wwDiQxXvcmdQ3pNh+g92rFsp7PtN0XEmfbU/2SAtPVGBd+QnltQIdoCLpTuy4TSFil2t
-         yEcpBq6RGxyF/NGK6m0GqDDct1gfurNuYWzj++DTG18oTsVzL8igtFbR45CxP8NeZUZa
-         OA9g==
-X-Gm-Message-State: AOUpUlFOLYYs0aCDpWcj0Ib2IqqZS+p2/ARXiLFcGyzMFakzi5DF7M5s
-        M8ax1axENp+0krfXWsksopQ=
-X-Google-Smtp-Source: AAOMgpe6KSAiJg5Zdyd2XLOjJOb73B4v609aLWjA1iaa5Cn0998EKp+TydO6JAPfoDNUGREf4LT32A==
-X-Received: by 2002:a62:3ece:: with SMTP id y75-v6mr10697621pfj.7.1532782957075;
-        Sat, 28 Jul 2018 06:02:37 -0700 (PDT)
-Received: from jordon-HP-15-Notebook-PC ([183.82.18.16])
-        by smtp.gmail.com with ESMTPSA id 13-v6sm9595141pfw.131.2018.07.28.06.02.34
-        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Sat, 28 Jul 2018 06:02:35 -0700 (PDT)
-Date:   Sat, 28 Jul 2018 18:35:21 +0530
-From:   Souptick Joarder <jrdr.linux@gmail.com>
-To:     p.zabel@pengutronix.de, airlied@linux.ie
-Cc:     dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        ajitn.linux@gmail.com, daniel@ffwll.ch
-Subject: [PATCH] drm/imx: Convert drm_atomic_helper_suspend/resume()
-Message-ID: <20180728130521.GA6336@jordon-HP-15-Notebook-PC>
+        Sat, 28 Jul 2018 10:30:20 -0400
+Received: from pd9e2fa68.dip0.t-ipconnect.de ([217.226.250.104] helo=aktux)
+        by h2641619.stratoserver.net with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <andreas@kemnade.info>)
+        id 1fjOsy-0006Nu-2V; Sat, 28 Jul 2018 15:03:52 +0200
+Date:   Sat, 28 Jul 2018 15:03:51 +0200
+From:   Andreas Kemnade <andreas@kemnade.info>
+To:     Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: bloated defconfigs
+Message-ID: <20180728150351.467c46ae@aktux>
+In-Reply-To: <CAHp75VcVGJqoVN5-R4HbTdG-ANpj-bTHh9dFAtQ+dKMSxesE4A@mail.gmail.com>
+References: <20180728145906.52c68e91@aktux>
+        <CAHp75VcVGJqoVN5-R4HbTdG-ANpj-bTHh9dFAtQ+dKMSxesE4A@mail.gmail.com>
+X-Mailer: Claws Mail 3.14.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/gFRHdQCMzx9Cr/TRMgXEcxy"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-convert drm_atomic_helper_suspend/resume() to use
-drm_mode_config_helper_suspend/resume().
+--Sig_/gFRHdQCMzx9Cr/TRMgXEcxy
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
-Signed-off-by: Ajit Negi <ajitn.linux@gmail.com>
----
- drivers/gpu/drm/imx/imx-drm-core.c | 26 ++------------------------
- 1 file changed, 2 insertions(+), 24 deletions(-)
+Hi,
 
-diff --git a/drivers/gpu/drm/imx/imx-drm-core.c b/drivers/gpu/drm/imx/imx-drm-core.c
-index 1d053bb..cdd83ea 100644
---- a/drivers/gpu/drm/imx/imx-drm-core.c
-+++ b/drivers/gpu/drm/imx/imx-drm-core.c
-@@ -355,37 +355,15 @@ static int imx_drm_platform_remove(struct platform_device *pdev)
- static int imx_drm_suspend(struct device *dev)
- {
- 	struct drm_device *drm_dev = dev_get_drvdata(dev);
--	struct imx_drm_device *imxdrm;
--
--	/* The drm_dev is NULL before .load hook is called */
--	if (drm_dev == NULL)
--		return 0;
--
--	drm_kms_helper_poll_disable(drm_dev);
--
--	imxdrm = drm_dev->dev_private;
--	imxdrm->state = drm_atomic_helper_suspend(drm_dev);
--	if (IS_ERR(imxdrm->state)) {
--		drm_kms_helper_poll_enable(drm_dev);
--		return PTR_ERR(imxdrm->state);
--	}
- 
--	return 0;
-+	return drm_mode_config_helper_suspend(drm_dev);
- }
- 
- static int imx_drm_resume(struct device *dev)
- {
- 	struct drm_device *drm_dev = dev_get_drvdata(dev);
--	struct imx_drm_device *imx_drm;
--
--	if (drm_dev == NULL)
--		return 0;
- 
--	imx_drm = drm_dev->dev_private;
--	drm_atomic_helper_resume(drm_dev, imx_drm->state);
--	drm_kms_helper_poll_enable(drm_dev);
--
--	return 0;
-+	return drm_mode_config_helper_resume(drm_dev);
- }
- #endif
- 
--- 
-1.9.1
+On Sat, 28 Jul 2018 16:01:41 +0300
+Andy Shevchenko <andy.shevchenko@gmail.com> wrote:
 
+> On Sat, Jul 28, 2018 at 3:59 PM, Andreas Kemnade <andreas@kemnade.info> w=
+rote:
+> > Hi,
+> >
+> > I just stumbled upon our defconfigs.
+> >
+> > andi@aktux:~/gta04/gta04-kernel$ ls -l arch/arm/configs/ -Sr | tail -n
+> > 10 -rw-r--r-- 1 andi andi   9524 Apr  7 14:53 imote2_defconfig
+> > -rw-r--r-- 1 andi andi   9985 Jul 28 13:34 imx_v6_v7_defconfig
+> > -rw-r--r-- 1 andi andi  10118 Apr  7 14:53 ezx_defconfig
+> > -rw-r--r-- 1 andi andi  10665 Apr  7 14:53 s3c2410_defconfig
+> > -rw-r--r-- 1 andi andi  13161 May 29 18:14 omap2plus_defconfig
+> > -rw-r--r-- 1 andi andi  17834 May 29 18:14 pxa_defconfig
+> > -rw-r--r-- 1 andi andi  24624 Jul 28 13:34 multi_v7_defconfig
+> > -rw-r--r-- 1 andi andi 157222 Jul 28 13:34 letux_udoo_defconfig
+> > -rw-r--r-- 1 andi andi 157271 Jul 28 13:34 letux_lpae_defconfig
+> > -rw-r--r-- 1 andi andi 157352 Jul 28 13:34 letux_defconfig
+> >
+> >
+> > So we are bloated somehow. So I am wondering how these defconfigs are c=
+reated.
+> > AFAIK the tool is
+> >
+> > make ARCH=3Darm CROSS_COMPILE=3D... savedefconfig
+> >
+> > the file can then be used as a defconfig. I just did it and copied it o=
+ver to
+> > .config and used
+> > make ARCH=3Darm CROSS_COMPILE=3D... olddefconfig
+> >
+> > The result is the same. But the defconfig created by savedefconfig is o=
+nly 20KB.
+> > Well, what is the advantage? We have a better overview where we have
+> > non-default values. =20
+>=20
+> So, why not to send patches?
+>=20
+sorry for the noise, wrong list, these bloated letux*defconfigs are not
+mainline.
+
+Regards,
+Andreas
+
+--Sig_/gFRHdQCMzx9Cr/TRMgXEcxy
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEE7sDbhY5mwNpwYgrAfb1qx03ikyQFAltcabcACgkQfb1qx03i
+kyR5Sw/9HJpCxdkOs8EYgXkRkfxd0YouyyPQq0hYP7x+J6kpFCasQ1iTl4qbdWxl
+cPVtQxfmfNBSEcCbl5EHD7oLa0gVd/FIWxQxbSGlEmPQuexP2NLHKUaFX/rILw1d
+jxjKKsL2H5OQVCWTPBxMZ78+NkPV4d48DAWQl1FLnrELnXBOCToNehAVq4arZ1Rv
+zvF4HceMkcWlUL5sBW13gEEPEldGpbKagkmrWJG5rfVAV6z005oXU1+pl9n3LMjy
+aa7Q8q8CEvxBSx71yiyGgflTU0myjVKj5gk8Ja3hD7D5yUNJ+ybPGZVutRYl+AS+
+LC/T+HIZkCU53rG/Il1pPmqzdEtHPnqiZ5frDQBn1Pt+LjMkhdygzVqHpgancW4l
+YShqUth2b9LlaBPuge0JwMKI/n9TdEY3mQG/mViZ3XpIqPc7M9HVcF4DR/E+uwzZ
++cYzpCEr5L4iHzo3UVzh1IgK5qPGz+tx0V4vE2QXgy/JmJ8LsOHy1nwY9w6Dwpyd
+pf27YI3Y8eWjuhhTMi3c204wYC+qUoSa2pmAWrKFkJELTqLZB3zKFR3uuCbsbNeu
+iC15pSXsH7Y0TNSviOkybWMTvbHxnbaB0GOA8/RwZlEA/6LNn32vL41zZCQIJwkv
+Oipp4bQ81Uw2UyYFd9nLSMlo+/kdRqsnMrVGRuILJuu4/OshU4I=
+=8riK
+-----END PGP SIGNATURE-----
+
+--Sig_/gFRHdQCMzx9Cr/TRMgXEcxy--
