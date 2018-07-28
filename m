@@ -2,109 +2,151 @@ Return-Path: <SRS0=xGmI=KM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B5C7C67790
-	for <linux-kernel@archiver.kernel.org>; Sat, 28 Jul 2018 00:51:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6883FC67790
+	for <linux-kernel@archiver.kernel.org>; Sat, 28 Jul 2018 00:59:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9AAE220862
-	for <linux-kernel@archiver.kernel.org>; Sat, 28 Jul 2018 00:51:49 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="VgrkuMEg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9AAE220862
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	by mail.kernel.org (Postfix) with ESMTP id 1A97A20862
+	for <linux-kernel@archiver.kernel.org>; Sat, 28 Jul 2018 00:59:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1A97A20862
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389163AbeG1CQA (ORCPT
+        id S2389248AbeG1CXe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 22:16:00 -0400
-Received: from conssluserg-04.nifty.com ([210.131.2.83]:32021 "EHLO
-        conssluserg-04.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388527AbeG1CQA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 22:16:00 -0400
-Received: from mail-ua0-f170.google.com (mail-ua0-f170.google.com [209.85.217.170]) (authenticated)
-        by conssluserg-04.nifty.com with ESMTP id w6S0pQ0Z027601;
-        Sat, 28 Jul 2018 09:51:27 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-04.nifty.com w6S0pQ0Z027601
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1532739087;
-        bh=bhaAELsm5CS/1q96pfgKx2Ukn4asFNw2KvuvznxN5Jw=;
-        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
-        b=VgrkuMEgdtpI41RC+kbPxPz8kJokHRkjjnwFlkIPTAn1pGw2U0FX43HUA9EVfc4g3
-         w61fGBrzyIw+PzsFMqgZmon0RbGsmXLVn+azTypU4UzvQC7Q010gAADorwb7GZqGkV
-         W6VTPfYDmdXQMJJxQ4DVWe6waj5qfPSWct7rp5+Ow4EylZ7iqAUNiZMwrQg+JS9Fi+
-         T/Jj9rMcYsQBwsJKW+dknUa3+QSO1oYPnrf2HEejhjVoM1vbRqdaE0mvhTYVFjCQXZ
-         kO9y2K5VKCGQCeJqobQSUc1vOAiOcKxcdSzShp443qVVDAJBR+Xc0R+AKu0mDjOXMN
-         NPUeHVQ0A4SUA==
-X-Nifty-SrcIP: [209.85.217.170]
-Received: by mail-ua0-f170.google.com with SMTP id k25-v6so4473824uao.11;
-        Fri, 27 Jul 2018 17:51:27 -0700 (PDT)
-X-Gm-Message-State: AOUpUlHFVJDMlLKRq65MiSiWBuFWVuS/ab+RYbOIf8Y+VcK1KF1OEoPj
-        jS3nr3TaA7V+Py3mtxhI+8pRiFNOj7Oj4LuChM8=
-X-Google-Smtp-Source: AAOMgpfLjzOwQjGUkZARy1ap+qzPBP+oFIZx/0cwm+bYFFbHD6eqLfokv4TITVRTaxvTpaSCJRXCLioyzKhmtVEryVM=
-X-Received: by 2002:ab0:4946:: with SMTP id a6-v6mr6190300uad.82.1532739085934;
- Fri, 27 Jul 2018 17:51:25 -0700 (PDT)
+        Fri, 27 Jul 2018 22:23:34 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:42103 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2388902AbeG1CXe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Jul 2018 22:23:34 -0400
+Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 60618EFEBCDE6;
+        Sat, 28 Jul 2018 08:59:06 +0800 (CST)
+Received: from [10.177.253.249] (10.177.253.249) by smtp.huawei.com
+ (10.3.19.201) with Microsoft SMTP Server id 14.3.382.0; Sat, 28 Jul 2018
+ 08:59:06 +0800
+Subject: Re: [V9fs-developer] [PATCH] 9p: fix multiple
+ NULL-pointer-dereferences
+To:     Dominique Martinet <asmadeus@codewreck.org>,
+        Tomas Bortoli <tomasbortoli@gmail.com>
+References: <20180727110558.5479-1-tomasbortoli@gmail.com>
+ <20180727153904.GA500@nautica>
+CC:     <v9fs-developer@lists.sourceforge.net>,
+        <syzkaller@googlegroups.com>, <davem@davemloft.net>,
+        <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>
+From:   piaojun <piaojun@huawei.com>
+Message-ID: <5B5BBFCE.50002@huawei.com>
+Date:   Sat, 28 Jul 2018 08:58:54 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:38.0) Gecko/20100101
+ Thunderbird/38.2.0
 MIME-Version: 1.0
-Received: by 2002:ab0:7289:0:0:0:0:0 with HTTP; Fri, 27 Jul 2018 17:50:45
- -0700 (PDT)
-In-Reply-To: <20180727074854.GA21840@lst.de>
-References: <20180724175646.3621-1-hch@lst.de> <CAK7LNARP2HZ8GdsAU8h_b04jLWbvFXTWqiVt2hpE0vJbjP82ZA@mail.gmail.com>
- <20180726172143.GA9836@lst.de> <CAK7LNASd0YCj4wwmT9-6GYiBz=wDoXkmQW2F_5XjbCzS9-weUw@mail.gmail.com>
- <20180727074854.GA21840@lst.de>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Sat, 28 Jul 2018 09:50:45 +0900
-X-Gmail-Original-Message-ID: <CAK7LNATnt9ryzMD7=6WNnoJq2B3wT_TJisJgpF=MPFwqF6yP=g@mail.gmail.com>
-Message-ID: <CAK7LNATnt9ryzMD7=6WNnoJq2B3wT_TJisJgpF=MPFwqF6yP=g@mail.gmail.com>
-Subject: Re: include architecture Kconfig files from top-level Kconfig v3
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Randy Dunlap <rdunlap@infradead.org>,
-        Richard Weinberger <richard@nod.at>,
-        Ley Foon Tan <lftan@altera.com>,
-        Michal Simek <monstr@monstr.eu>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        linux-um@lists.infradead.org, linux-arch@lists.infradead.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180727153904.GA500@nautica>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.177.253.249]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-07-27 16:48 GMT+09:00 Christoph Hellwig <hch@lst.de>:
-> On Fri, Jul 27, 2018 at 10:32:19AM +0900, Masahiro Yamada wrote:
->> This will just add a new unmet dependency warning.
->> CONFIG_PREEMPT_COUNT will be still selected.
->
-> True.  I guess we simply need to prohibit CONFIG_DEBUG_ATOMIC_SLEEP
-> explicitly if PREEMPT_COUNT isn't supported.  E.g something like this:
->
-> diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
-> index 26d3ff7e3cf4..373ce9fecd7e 100644
-> --- a/lib/Kconfig.debug
-> +++ b/lib/Kconfig.debug
-> @@ -1195,6 +1195,7 @@ config DEBUG_ATOMIC_SLEEP
->         bool "Sleep inside atomic section checking"
->         select PREEMPT_COUNT
->         depends on DEBUG_KERNEL
-> +       depends on !ARCH_NO_PREEMPT
->         help
->           If you say Y here, various routines which may sleep will become very
->           noisy if they are called inside atomic sections: when a spinlock is
+Hi Tomas & Dominique,
 
+I could not recieve the original patch. Did the patch CC v9fs developer
+maillist?
 
-I will fold this into 07/10.
+Thanks,
+Jun
 
-
-I see another 'select PREEMPT_COUNT' in
-drivers/gpu/drm/i915/Kconfig.debug
-but DRM_I915 depends on X86, so this is not
-a real problem.
-
-
-
--- 
-Best Regards
-Masahiro Yamada
+On 2018/7/27 23:39, Dominique Martinet wrote:
+> Tomas Bortoli wrote on Fri, Jul 27, 2018:
+>> Added checks to prevent GPFs from raising.
+>>
+>> Signed-off-by: Tomas Bortoli <tomasbortoli@gmail.com>
+>> Reported-by: syzbot+1a262da37d3bead15c39@syzkaller.appspotmail.com
+> 
+> LGTM, I'll take this. Thanks!
+> 
+> Just a note for future patchs that have multiple versions, it's usually
+> good to write in the subject [PATCH v2] (then v3 etc) so we can easily
+> tell it's a new version.
+> If the thread isn't too long I'd also recommend considering setting a
+> reply-to to the previous patch so we can easily compare versions/write
+> off old patches.
+> 
+>> ---
+>>  net/9p/trans_fd.c     | 5 ++++-
+>>  net/9p/trans_rdma.c   | 3 +++
+>>  net/9p/trans_virtio.c | 3 +++
+>>  net/9p/trans_xen.c    | 3 +++
+>>  4 files changed, 13 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/net/9p/trans_fd.c b/net/9p/trans_fd.c
+>> index 964260265b13..e2ef3c782c53 100644
+>> --- a/net/9p/trans_fd.c
+>> +++ b/net/9p/trans_fd.c
+>> @@ -945,7 +945,7 @@ p9_fd_create_tcp(struct p9_client *client, const char *addr, char *args)
+>>  	if (err < 0)
+>>  		return err;
+>>  
+>> -	if (valid_ipaddr4(addr) < 0)
+>> +	if (addr == NULL || valid_ipaddr4(addr) < 0)
+>>  		return -EINVAL;
+>>  
+>>  	csocket = NULL;
+>> @@ -995,6 +995,9 @@ p9_fd_create_unix(struct p9_client *client, const char *addr, char *args)
+>>  
+>>  	csocket = NULL;
+>>  
+>> +	if (addr == NULL)
+>> +		return -EINVAL;
+>> +
+>>  	if (strlen(addr) >= UNIX_PATH_MAX) {
+>>  		pr_err("%s (%d): address too long: %s\n",
+>>  		       __func__, task_pid_nr(current), addr);
+>> diff --git a/net/9p/trans_rdma.c b/net/9p/trans_rdma.c
+>> index 2649b2ebf961..2ab4574183c9 100644
+>> --- a/net/9p/trans_rdma.c
+>> +++ b/net/9p/trans_rdma.c
+>> @@ -645,6 +645,9 @@ rdma_create_trans(struct p9_client *client, const char *addr, char *args)
+>>  	struct rdma_conn_param conn_param;
+>>  	struct ib_qp_init_attr qp_attr;
+>>  
+>> +	if (addr == NULL)
+>> +		return -EINVAL;
+>> +
+>>  	/* Parse the transport specific mount options */
+>>  	err = parse_opts(args, &opts);
+>>  	if (err < 0)
+>> diff --git a/net/9p/trans_virtio.c b/net/9p/trans_virtio.c
+>> index 06dcd3cc6a29..8ca356eb66bb 100644
+>> --- a/net/9p/trans_virtio.c
+>> +++ b/net/9p/trans_virtio.c
+>> @@ -654,6 +654,9 @@ p9_virtio_create(struct p9_client *client, const char *devname, char *args)
+>>  	int ret = -ENOENT;
+>>  	int found = 0;
+>>  
+>> +	if (devname == NULL)
+>> +		return -EINVAL;
+>> +
+>>  	mutex_lock(&virtio_9p_lock);
+>>  	list_for_each_entry(chan, &virtio_chan_list, chan_list) {
+>>  		if (!strncmp(devname, chan->tag, chan->tag_len) &&
+>> diff --git a/net/9p/trans_xen.c b/net/9p/trans_xen.c
+>> index 2e2b8bca54f3..c2d54ac76bfd 100644
+>> --- a/net/9p/trans_xen.c
+>> +++ b/net/9p/trans_xen.c
+>> @@ -94,6 +94,9 @@ static int p9_xen_create(struct p9_client *client, const char *addr, char *args)
+>>  {
+>>  	struct xen_9pfs_front_priv *priv;
+>>  
+>> +	if (addr == NULL)
+>> +		return -EINVAL;
+>> +
+>>  	read_lock(&xen_9pfs_lock);
+>>  	list_for_each_entry(priv, &xen_9pfs_devs, list) {
+>>  		if (!strcmp(priv->tag, addr)) {
+> 
