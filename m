@@ -2,137 +2,105 @@ Return-Path: <SRS0=xGmI=KM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7678DC28CF6
-	for <linux-kernel@archiver.kernel.org>; Sat, 28 Jul 2018 19:53:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD732C43142
+	for <linux-kernel@archiver.kernel.org>; Sat, 28 Jul 2018 20:15:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 234C020841
-	for <linux-kernel@archiver.kernel.org>; Sat, 28 Jul 2018 19:53:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 860E320878
+	for <linux-kernel@archiver.kernel.org>; Sat, 28 Jul 2018 20:15:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CdVE82bf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 234C020841
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="g9JzTZdM";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="jM6p9rEM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 860E320878
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730671AbeG1VV2 (ORCPT
+        id S1730802AbeG1Vip (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 28 Jul 2018 17:21:28 -0400
-Received: from mail-oi0-f66.google.com ([209.85.218.66]:42368 "EHLO
-        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730409AbeG1VV1 (ORCPT
+        Sat, 28 Jul 2018 17:38:45 -0400
+Received: from mail-yw0-f193.google.com ([209.85.161.193]:33772 "EHLO
+        mail-yw0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730557AbeG1Vip (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 28 Jul 2018 17:21:27 -0400
-Received: by mail-oi0-f66.google.com with SMTP id n84-v6so14842627oib.9;
-        Sat, 28 Jul 2018 12:53:52 -0700 (PDT)
+        Sat, 28 Jul 2018 17:38:45 -0400
+Received: by mail-yw0-f193.google.com with SMTP id c135-v6so3094626ywa.0
+        for <linux-kernel@vger.kernel.org>; Sat, 28 Jul 2018 13:11:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:from:in-reply-to:references:date:message-id:subject:to;
-        bh=Cyff5ZDAljJB2q/b6oSjpFNPcmyk7DiuV5K1MtrWWIc=;
-        b=CdVE82bfIj4IHTl9H1UGzlXwGFQk0VA+AZE3A9K8HwLgL2TULDaDP2YGurgLxNfWXp
-         54hKdm5wxO1R1eL7NVeiduSKxXpUgOvDdhg9lYuSjA1uA74QHJr8StITfSNO1n5xCSuU
-         cJ8nYisdJiTXRs0Zmx/pXODkeSRBgQWdg3C9UgRCMZc6rvZBzB50DCMgP+6L0GZAi9ot
-         DjZ3gDo66aHi9aU52XmUZd9rdX0edbCUGs5d+iVWhloTn/5mxq+DTVh7FBQlnkJr6Wl0
-         TQ46qSFJ8uV9oT1WybsVql7IJpSBaANYbTSHWhvI0uukVsdFbLSrn3HZIXEUwcqgpdIK
-         tXLQ==
+        d=google.com; s=20161025;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=cPMoboKkFV7lwvGjxrHbKH2jYD56z7LFUQwSYJjXuQ8=;
+        b=g9JzTZdM+9ufVpk4TCSeCXz7VTcIioJCBYF80Upkoa1A/wAjpE9DR5rmh6PT+8i5ea
+         SeBmC9AIDpXDGhtbXmwloVj+54yCWIDIL++rcOtiCCa6lzmPCszPlXnJgi9cQzOkjEq9
+         qDA2FWTl6R6aEWd4ARZC7SBre+01lmFg2Mu3nsY15oxqUHcSiOW+PHSreZSlXhyvn9V7
+         n3rn52AI/IfS8xsdudcPbRuXiubMa4XDzvgFljh7EIwuhm6BYtBgg2hQ8mOt/CW8+rFK
+         YI4nC+EII2oWGkuf57RCz5TdD3aAETE9hJM0VBL9hQv9H+3maIRPb8eqr1JAHw/y+oN0
+         IEzw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=cPMoboKkFV7lwvGjxrHbKH2jYD56z7LFUQwSYJjXuQ8=;
+        b=jM6p9rEMJ5aRlsgdNfYo0paZ3Ca0C/wEKOAEIwFckxVyUvC25xZyiH+7uti8byV69r
+         fxXVhhfL7Lzbek40Iddms21wKybOTWAhiUBF3nW6NKYWxa83h3HCWLoaJoxsx6flWC8d
+         n1YD/8ankcZHPqpHBg2WL/EbKsw1fOey5+vR4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:in-reply-to:references:date
-         :message-id:subject:to;
-        bh=Cyff5ZDAljJB2q/b6oSjpFNPcmyk7DiuV5K1MtrWWIc=;
-        b=pJsaeOWz/hCChM+4jnus67bbZ+Kt42n2v6cd0vxvO4tJ5IW9AzG5ApuPEgNixbBB66
-         kCC8F3taGRb6uEtFS9KD67QnQRmioSQm5IPGbM2RpZ3ZlpXp7f7lmTVJIar3czsGvpLX
-         JWGv9ZC7sfLtXVlFbR7ZuChhcu19mmU6Q8NtQBWCi5Mdd58VMz9N/CgjN33kq+i3Lqme
-         f+ceTGdVmw/DGpIIypRr2VevZmc07yPjPtV/uR4x1TlhI/OrCv9P5IzNEHUp2KoYZO6G
-         bkMaxvb4MTTICMpXGM/qTpDIcpyz9dtSLlsjZCD+cl7qCX5tx9nokJgQumznJYT7YkUX
-         2p8w==
-X-Gm-Message-State: AOUpUlF4Gomo9Zy9Qta07nm3sCEhnA31pI2qLYkBuwj+TG6+M7yzpmSJ
-        KoKaCfoJsK3LlwWTJyL+Oh0R1cKrqhPGhdCUREM=
-X-Google-Smtp-Source: AAOMgpe9ooudiO4UrMj5Kwda7pF++YCs6lL8dWd6qDFRqBs5hkpMXN90dNHgAAvzOPdI81TCcKutrPG6C5k8TofXktQ=
+        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
+         :date:message-id:subject:to:cc;
+        bh=cPMoboKkFV7lwvGjxrHbKH2jYD56z7LFUQwSYJjXuQ8=;
+        b=t2vh5hRigdhv9hQ0Kn43McIA0dKH5Oz3mERjDhNL/zyLkvXG/toh/6kezqOr1ijG29
+         HF9Bxgu4xeuzYvX2G6MQ34X4IFbU3htRr9Oee79lP0/BQB/OLmLTglJg7fPDG7evLpdn
+         Yix5UqzLbq6rt3wJLBHrpJgjzrJGEYf8gF1TqH4za6gpPop/NQ6Ur52Q4T9V2vEpx4h1
+         Px8EN+P7Eeau2OQPqKKnG+t8Q+uTDOv5oZ6lVsl9kKjguW19LbnuJEMUqQnkHB8tPdob
+         8g59qVAwMT9NNm3q98xWgrfXpUu/3oF/5NtyAhcTrcgv5lglJJpDIUa3UCnpryFndifC
+         Pdyw==
+X-Gm-Message-State: AOUpUlGWY5yC9sY/5XnnGcovQyzGQHaTRdkDd2MuSCmfDH6/wZCGrX9z
+        lX+GrXmTUFpXSeCzzeg+QJvhKvcHY/l7TFUYTuDBzg==
+X-Google-Smtp-Source: AAOMgpc4EAEafm++isfD2OCjn2naYO7Y7w64eS+FYJUM2lNayhGFJJUSf66eRXsw80thUNg07kxXG1yHy97FkKCWsNU=
+X-Received: by 2002:a81:2706:: with SMTP id n6-v6mr5733915ywn.88.1532808666448;
+ Sat, 28 Jul 2018 13:11:06 -0700 (PDT)
 MIME-Version: 1.0
-X-Received: by 2002:aca:d682:: with SMTP id n124-v6mr12443151oig.32.1532807631580;
- Sat, 28 Jul 2018 12:53:51 -0700 (PDT)
-Received: from 329980741037 named unknown by gmailapi.google.com with
- HTTPREST; Sat, 28 Jul 2018 15:53:51 -0400
-From:   John S Gruber <JohnSGruber@gmail.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1532807605-26023-1-git-send-email-JohnSGruber@gmail.com>
-References: <CAPotdmQtXmfHJfcgrXZ02NrPgS3Az=SpZnBsRZ_8dGvPfdi+Mw@mail.gmail.com>
- <1532807605-26023-1-git-send-email-JohnSGruber@gmail.com>
-Date:   Sat, 28 Jul 2018 15:53:51 -0400
-Message-ID: <CAPotdmQh_sWqPmiQ=_+fJ27AT7GA5hcne=wsXcmKhNnUpUs3wQ@mail.gmail.com>
-Subject: [PATCH 2/2] HID: redragon Add additional verification to rdesc
- modification quirk
-To:     Jiri Kosina <jikos@kernel.org>,
-        Robert Munteanu <rombert@apache.org>,
-        linux-input@vger.kernel.org, benjamin.tissoires@redhat.com,
-        dmitry.torokhov@gmail.com, linux-kernel@vger.kernel.org,
-        JohnSGruber@gmail.com
+Received: by 2002:a25:6602:0:0:0:0:0 with HTTP; Sat, 28 Jul 2018 13:11:05
+ -0700 (PDT)
+In-Reply-To: <CAK7LNASyzWvJ6Bf1Zp4k=B-QFOHEg7YqeFErA2Gg9PNZadvuew@mail.gmail.com>
+References: <1531935483-30784-1-git-send-email-s.mesoraca16@gmail.com>
+ <CAGXu5jK4q6HLDZ6jokTeDABbzVasY85Jo0HFNKYeaKWZYPjPKg@mail.gmail.com> <CAK7LNASyzWvJ6Bf1Zp4k=B-QFOHEg7YqeFErA2Gg9PNZadvuew@mail.gmail.com>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Sat, 28 Jul 2018 13:11:05 -0700
+X-Google-Sender-Auth: a6VCqA5ncmQl7X8EMscit5HvJu4
+Message-ID: <CAGXu5jL2s-Dv+4mFV3Wwev51kcQ3h5M02UoH6K71s_NqeXw1yw@mail.gmail.com>
+Subject: Re: [RFC] kconfig: add hardened defconfig helpers
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     Salvatore Mesoraca <s.mesoraca16@gmail.com>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Laura Abbott <labbott@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There are many devices using the vendor_id 0c45 and device_id of 760b
-combination. Also the two bytes 0x81 0x00 aren't rare for a report
-description. For these reasons the report description being altered
-by the quirk should be verified more completely
+On Sun, Jul 22, 2018 at 6:55 PM, Masahiro Yamada
+<yamada.masahiro@socionext.com> wrote:
+> 2018-07-20 14:15 GMT+09:00 Kees Cook <keescook@chromium.org>:
+>> +lkml, Masahiro, and linux-doc, just for wider review/thoughts.
+>
+>
+> I do not subscribe to kernel-hardening ML.
+>
+> I do not see the original patch in lkml or kbuild/kconfig ML.
 
-If I'm understanding this correctly, I believe for an array field the
-report_size should be greater or equal to
-ceil(log2(usage_maximum - usage_minimum + 1)). That's 3 bits for these 8
-shift keys, 0xe0-0xe7. Therefore the incorrect report description can't
-be valid for any device.
+Here's the start of the thread:
+http://www.openwall.com/lists/kernel-hardening/2018/07/18/1
 
-Check the actual count of the rdesc and compare the entire field
-description to reduce the chance of patching the wrong thing by
-inadvertence.
+-Kees
 
-Signed-off-by: John S Gruber <JohnSGruber@gmail.com>
----
- drivers/hid/hid-redragon.c | 19 ++++++++++++++++++-
- 1 file changed, 18 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/hid/hid-redragon.c b/drivers/hid/hid-redragon.c
-index 85a5fbb..6e506cb 100644
---- a/drivers/hid/hid-redragon.c
-+++ b/drivers/hid/hid-redragon.c
-@@ -18,6 +18,21 @@
-
- #include "hid-ids.h"
-
-+static __u8 asura_redragon_badfield[] = {
-+	0x05, 0x01,	/* Usage Page (GenericDesktop)		*/
-+	0x09, 0x06,	/* Usage (Keyboard)			*/
-+	0xa1, 0x01,	/* Collection (Application)		*/
-+	0x85, 0x04,	/* Report ID (4)			*/
-+	0x05, 0x07,	/* Usage Page (Keyboard)		*/
-+	0x19, 0xe0,	/* Usage Minimum (0xe0) Left Control	*/
-+	0x29, 0xe7,	/* Usage Maximum (0xe7) Right GUI	*/
-+	0x15, 0x00,	/* Logical Minimum (0)			*/
-+	0x25, 0x01,	/* Logical Maximum (1)			*/
-+	0x75, 0x01,	/* Report Size (1)			*/
-+	0x95, 0x08,	/* Report Count(8)			*/
-+	0x81, 0x00	/* Input Array [Should be Input Var]	*/
-+};
-+
-
- /*
-  * The Redragon Asura keyboard sends an incorrect HID descriptor.
-@@ -36,7 +51,9 @@
- static __u8 *redragon_report_fixup(struct hid_device *hdev, __u8 *rdesc,
- 	unsigned int *rsize)
- {
--	if (*rsize >= 102 && rdesc[100] == 0x81 && rdesc[101] == 0x00) {
-+	if (*rsize == 169 &&
-+			memcmp(&rdesc[78], asura_redragon_badfield,
-+			sizeof(asura_redragon_badfield)) == 0) {
- 		dev_info(&hdev->dev, "Fixing Redragon ASURA report descriptor.\n");
- 		rdesc[101] = 0x02;
- 	}
 -- 
-1.9.1
+Kees Cook
+Pixel Security
