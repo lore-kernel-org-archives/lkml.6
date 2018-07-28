@@ -2,127 +2,135 @@ Return-Path: <SRS0=xGmI=KM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE747C28CF6
-	for <linux-kernel@archiver.kernel.org>; Sat, 28 Jul 2018 17:49:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B038C6778F
+	for <linux-kernel@archiver.kernel.org>; Sat, 28 Jul 2018 17:50:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9BFC2204EC
-	for <linux-kernel@archiver.kernel.org>; Sat, 28 Jul 2018 17:49:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9BFC2204EC
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=collabora.com
+	by mail.kernel.org (Postfix) with ESMTP id 64686204EC
+	for <linux-kernel@archiver.kernel.org>; Sat, 28 Jul 2018 17:50:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 64686204EC
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=vaishalithakkar.in
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729523AbeG1TQs (ORCPT
+        id S1729578AbeG1TRY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 28 Jul 2018 15:16:48 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:49922 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729368AbeG1TQs (ORCPT
+        Sat, 28 Jul 2018 15:17:24 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:39404 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729368AbeG1TRX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 28 Jul 2018 15:16:48 -0400
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: koike)
-        with ESMTPSA id 27A5B263B35
-Subject: Re: [PATCH] media: vimc: Remove redundant free
-To:     Anton Vasilyev <vasilyev@ispras.ru>
-Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ldv-project@linuxtesting.org
-References: <20180727114759.10601-1-vasilyev@ispras.ru>
-From:   Helen Koike <helen.koike@collabora.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=helen.koike@collabora.com; keydata=
- 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
-Message-ID: <653fb6f2-a7a6-c123-7df0-1b1c8ab34fbf@collabora.com>
-Date:   Sat, 28 Jul 2018 14:49:03 -0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Sat, 28 Jul 2018 15:17:23 -0400
+Received: by mail-lj1-f195.google.com with SMTP id l15-v6so7082595lji.6;
+        Sat, 28 Jul 2018 10:50:07 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=3GcIO9hKtjhadE1Llxdyg8z8qPIe/5kLRcz8pQLRkgs=;
+        b=ZD1y7jcSL0FtKpOyBLUBoKseLAf04/sabnWoKbaUN/9v5fOvCRMPCFHC93aJ9G+dEs
+         rr0zER4VH9FV/oZ+qri/hB+J4HV+p/sjjpcHHAKFqpUNAdGH6YmXn8hG3HUj3rYUuPbN
+         FbaysFqMcImL1S3uKmki8b7MAu9cK3ulLTWm5zr/pRWnfZFREoWbmI+twEcAysbBzxGc
+         h9GXMCk+ac+XIWFvgxIJ3aFq+C1t4ifmkm7DdbPgcNIoHDYn58oNnZPE6DxtebX0jOHO
+         XnMsC1FfNujZ/aI/bHJNPoJE8PWiOtOwjWdyFo7B0XPlGHfZ2Fpi4yLzM1iYwPHLhQaU
+         8xew==
+X-Gm-Message-State: AOUpUlFkBINwBkvJeg/1IjQ+DY3beIMZeL8gmcT1rmGHckEj/mZ8B0r/
+        In47TfJ4Yrds4fh+YOvVjEYmGg5L3fI=
+X-Google-Smtp-Source: AAOMgpewKxrdjn+Tqq2M8dO+zjcDqOi+O/dBe4aPeJkppFgKOLUBIDjKg8hFSZ3w21K0xeFC2uJeVQ==
+X-Received: by 2002:a2e:21d5:: with SMTP id h82-v6mr8088146lji.46.1532800205947;
+        Sat, 28 Jul 2018 10:50:05 -0700 (PDT)
+Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com. [209.85.208.169])
+        by smtp.gmail.com with ESMTPSA id i1-v6sm1226953ljg.43.2018.07.28.10.50.05
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sat, 28 Jul 2018 10:50:05 -0700 (PDT)
+Received: by mail-lj1-f169.google.com with SMTP id w16-v6so3483167ljh.12;
+        Sat, 28 Jul 2018 10:50:05 -0700 (PDT)
+X-Received: by 2002:a2e:3313:: with SMTP id d19-v6mr498331ljc.25.1532800205493;
+ Sat, 28 Jul 2018 10:50:05 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20180727114759.10601-1-vasilyev@ispras.ru>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Received: by 2002:a2e:88c2:0:0:0:0:0 with HTTP; Sat, 28 Jul 2018 10:50:05
+ -0700 (PDT)
+In-Reply-To: <20180728154007.GA28426@jordon-HP-15-Notebook-PC>
+References: <20180728154007.GA28426@jordon-HP-15-Notebook-PC>
+From:   Vaishali Thakkar <vthakkar@vaishalithakkar.in>
+Date:   Sat, 28 Jul 2018 23:20:05 +0530
+X-Gmail-Original-Message-ID: <CAK-LDbKqU4Yub5H0_6tRpED4DLN8D+XrsUaNT5SN9Oq0sEpBNg@mail.gmail.com>
+Message-ID: <CAK-LDbKqU4Yub5H0_6tRpED4DLN8D+XrsUaNT5SN9Oq0sEpBNg@mail.gmail.com>
+Subject: Re: [PATCH] drm/rcar-du: Convert drm_atomic_helper_suspend/resume()
+To:     Souptick Joarder <jrdr.linux@gmail.com>
+Cc:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        airlied@linux.ie, ajitn.linux@gmail.com,
+        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Daniel Vetter <daniel@ffwll.ch>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Anton,
+On Sat, Jul 28, 2018 at 9:10 PM, Souptick Joarder <jrdr.linux@gmail.com> wrote:
+> convert drm_atomic_helper_suspend/resume() to use
+> drm_mode_config_helper_suspend/resume().
 
-Thanks for the patch
+Hi Souptick,
 
-On 07/27/2018 08:47 AM, Anton Vasilyev wrote:
-> Commit 4a29b7090749 ("[media] vimc: Subdevices as modules") removes
-> vimc allocation from vimc_probe(), so corresponding deallocation
-> on the error path tries to free static memory.
-> 
-> Found by Linux Driver Verification project (linuxtesting.org).
-> 
-> Signed-off-by: Anton Vasilyev <vasilyev@ispras.ru>
+Thanks for your patch.
 
-Acked-by: Helen Koike <helen.koike@collabora.com>
-
+> Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
+> Signed-off-by: Ajit Negi <ajitn.linux@gmail.com>
 > ---
->  drivers/media/platform/vimc/vimc-core.c | 1 -
->  1 file changed, 1 deletion(-)
-> 
-> diff --git a/drivers/media/platform/vimc/vimc-core.c b/drivers/media/platform/vimc/vimc-core.c
-> index fe088a953860..9246f265de31 100644
-> --- a/drivers/media/platform/vimc/vimc-core.c
-> +++ b/drivers/media/platform/vimc/vimc-core.c
-> @@ -328,7 +328,6 @@ static int vimc_probe(struct platform_device *pdev)
->  	if (ret) {
->  		media_device_cleanup(&vimc->mdev);
->  		vimc_rm_subdevs(vimc);
-> -		kfree(vimc);
->  		return ret;
->  	}
->  
-> 
+>  drivers/gpu/drm/rcar-du/rcar_du_drv.c | 21 ++-------------------
+>  1 file changed, 2 insertions(+), 19 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_drv.c b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
+> index 02aee6c..288220f 100644
+> --- a/drivers/gpu/drm/rcar-du/rcar_du_drv.c
+> +++ b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
+> @@ -357,32 +357,15 @@ static void rcar_du_lastclose(struct drm_device *dev)
+>  static int rcar_du_pm_suspend(struct device *dev)
+>  {
+>         struct rcar_du_device *rcdu = dev_get_drvdata(dev);
+> -       struct drm_atomic_state *state;
+>
+> -       drm_kms_helper_poll_disable(rcdu->ddev);
+> -       drm_fbdev_cma_set_suspend_unlocked(rcdu->fbdev, true);
+> -
+> -       state = drm_atomic_helper_suspend(rcdu->ddev);
+> -       if (IS_ERR(state)) {
+> -               drm_fbdev_cma_set_suspend_unlocked(rcdu->fbdev, false);
 
-Regards,
-Helen
+I don't think we can use drm_mode_config_helper_(suspend/resume)
+API here as this file uses CMA functions. And from git grep it seems that
+there are very few drivers using it at the moment, so not sure if introducing
+new API functions similar to  drm_mode_config will make sense or not.
+
+Thanks.
+
+> -               drm_kms_helper_poll_enable(rcdu->ddev);
+> -               return PTR_ERR(state);
+> -       }
+> -
+> -       rcdu->suspend_state = state;
+> -
+> -       return 0;
+> +       return drm_mode_config_helper_suspend(rcdu->ddev);
+>  }
+>
+>  static int rcar_du_pm_resume(struct device *dev)
+>  {
+>         struct rcar_du_device *rcdu = dev_get_drvdata(dev);
+>
+> -       drm_atomic_helper_resume(rcdu->ddev, rcdu->suspend_state);
+> -       drm_fbdev_cma_set_suspend_unlocked(rcdu->fbdev, false);
+> -       drm_kms_helper_poll_enable(rcdu->ddev);
+> -
+> -       return 0;
+> +       return drm_mode_config_helper_resume(rcdu->ddev);
+>  }
+>  #endif
+>
+> --
+> 1.9.1
+>
