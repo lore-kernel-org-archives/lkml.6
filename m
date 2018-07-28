@@ -2,66 +2,82 @@ Return-Path: <SRS0=xGmI=KM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 069FEC28CF6
-	for <linux-kernel@archiver.kernel.org>; Sat, 28 Jul 2018 07:23:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 360FBC6778F
+	for <linux-kernel@archiver.kernel.org>; Sat, 28 Jul 2018 07:23:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 909D320842
-	for <linux-kernel@archiver.kernel.org>; Sat, 28 Jul 2018 07:23:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 909D320842
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux.ee
+	by mail.kernel.org (Postfix) with ESMTP id EAD9720842
+	for <linux-kernel@archiver.kernel.org>; Sat, 28 Jul 2018 07:23:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EAD9720842
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726585AbeG1Iss (ORCPT
+        id S1727565AbeG1ItX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 28 Jul 2018 04:48:48 -0400
-Received: from smtp2.it.da.ut.ee ([193.40.5.67]:57982 "EHLO smtp2.it.da.ut.ee"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726185AbeG1Isr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 28 Jul 2018 04:48:47 -0400
-Received: from math.ut.ee (unknown [IPv6:2001:bb8:2002:2400:5054:ff:fe3b:8db9])
-        by smtp2.it.da.ut.ee (Postfix) with ESMTP id 713379001B;
-        Sat, 28 Jul 2018 10:23:15 +0300 (EEST)
-Received: by math.ut.ee (Postfix, from userid 1014)
-        id 57D87220922; Sat, 28 Jul 2018 10:23:13 +0300 (EEST)
-Received: from localhost (localhost [127.0.0.1])
-        by math.ut.ee (Postfix) with ESMTP id 5870B220905;
-        Sat, 28 Jul 2018 10:23:13 +0300 (EEST)
-Date:   Sat, 28 Jul 2018 10:23:13 +0300 (EEST)
-From:   mroos@linux.ee
-To:     Wang YanQing <udknight@gmail.com>
-cc:     daniel@iogearbox.net, ast@kernel.org, davem@davemloft.net,
-        illusionist.neo@gmail.com, tglx@linutronix.de, mingo@redhat.com,
-        hpa@zytor.com, x86@kernel.org, netdev@vger.kernel.org,
-        Linux Kernel list <linux-kernel@vger.kernel.org>,
-        arnd@arndb.de
-Subject: Re: [PATCH] bpf, x32: Fix regression caused by commit 24dea04767e6
-In-Reply-To: <20180725164611.GA12441@udknight>
-Message-ID: <alpine.LRH.2.21.1807281017420.16256@math.ut.ee>
-References: <20180725164611.GA12441@udknight>
-User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
+        Sat, 28 Jul 2018 04:49:23 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:37508 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726103AbeG1ItX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 28 Jul 2018 04:49:23 -0400
+Received: from localhost (D57D388D.static.ziggozakelijk.nl [213.125.56.141])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D407474;
+        Sat, 28 Jul 2018 07:23:52 +0000 (UTC)
+Date:   Sat, 28 Jul 2018 09:23:50 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Todd Poynor <toddpoynor@gmail.com>
+Cc:     Rob Springer <rspringer@google.com>,
+        John Joseph <jnjoseph@google.com>,
+        Ben Chan <benchan@chromium.org>, devel@driverdev.osuosl.org,
+        Todd Poynor <toddpoynor@google.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 5/5] staging: gasket: core: hold reference on device kobj
+ while in use
+Message-ID: <20180728072350.GA9809@kroah.com>
+References: <20180728052200.228796-1-toddpoynor@gmail.com>
+ <20180728052200.228796-6-toddpoynor@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180728052200.228796-6-toddpoynor@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> Commit 24dea04767e6 ("bpf, x32: remove ld_abs/ld_ind")
-> removed the 4 /* Extra space for skb_copy_bits buffer */
-> from _STACK_SIZE, but it didn't fix the concerned code
-> in emit_prologue and emit_epilogue, and this error will
-> bring very strange kernel runtime errors.
+On Fri, Jul 27, 2018 at 10:22:00PM -0700, Todd Poynor wrote:
+> From: Todd Poynor <toddpoynor@google.com>
 > 
-> This patch fix it.
+> Hold a reference on the struct device kobject while a pointer to that
+> device is in use by gasket.
+> 
+> Reported-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Signed-off-by: Todd Poynor <toddpoynor@google.com>
+> ---
+>  drivers/staging/gasket/gasket_core.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/staging/gasket/gasket_core.c b/drivers/staging/gasket/gasket_core.c
+> index 859a6df9e12df..1dc7273e38734 100644
+> --- a/drivers/staging/gasket/gasket_core.c
+> +++ b/drivers/staging/gasket/gasket_core.c
+> @@ -449,6 +449,7 @@ static int gasket_alloc_dev(
+>  	gasket_dev->dev_idx = dev_idx;
+>  	snprintf(gasket_dev->kobj_name, GASKET_NAME_MAX, "%s", kobj_name);
+>  	gasket_dev->dev = parent;
+> +	kobject_get(&gasket_dev->dev->kobj);
 
-For the record:
+Hint, if you are a driver, working with devices, you should never call a
+kobject_* or sysfs_* call.  If you are, you are doing something really
+wrong and odd and should seriously reconsider it.  No driver should ever
+be touching a "raw" kobject.
 
-Tested it on top of 4.18.0-rc6-00192-g864af0d40cdc on the affected
-machine and it worked.
+For this case, get_device()/put_device() is what you should be using.
 
--- 
-Meelis Roos (mroos@linux.ee)
+thanks,
+
+greg k-h
