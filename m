@@ -2,163 +2,150 @@ Return-Path: <SRS0=xGmI=KM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E9B3C67790
-	for <linux-kernel@archiver.kernel.org>; Sat, 28 Jul 2018 00:24:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4937C67790
+	for <linux-kernel@archiver.kernel.org>; Sat, 28 Jul 2018 00:43:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E7BF320671
-	for <linux-kernel@archiver.kernel.org>; Sat, 28 Jul 2018 00:24:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 72BCD205F4
+	for <linux-kernel@archiver.kernel.org>; Sat, 28 Jul 2018 00:43:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="o8Z8WNTd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E7BF320671
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="LRKAdqMO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 72BCD205F4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389283AbeG1Bsv (ORCPT
+        id S2389147AbeG1CE7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 27 Jul 2018 21:48:51 -0400
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:46957 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388735AbeG1Bsv (ORCPT
+        Fri, 27 Jul 2018 22:04:59 -0400
+Received: from aserp2130.oracle.com ([141.146.126.79]:60754 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388527AbeG1CE7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Jul 2018 21:48:51 -0400
-Received: by mail-pl0-f65.google.com with SMTP id t17-v6so2954954ply.13
-        for <linux-kernel@vger.kernel.org>; Fri, 27 Jul 2018 17:24:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=IvsC6PIBsmEaE4mlDdp6wGYswjjP4f05wewW0lYb8Dw=;
-        b=o8Z8WNTd5pvEU4nYnC/U6P7zeh/AF9rpV8QTwwb7vO3xGkWZPEiALUeTCI4KNkcfrI
-         YnVv3g6wQApZ0tnqsCQrnSJpcxUwdSrLZaeQ3l/HZwK2xRlsHg2Uz3Wz/x/3WwPzsKBi
-         V0Z+ED2YPUnue7FCbNibiPsYt5gY7kjkWyf9VOXNfF3vxgSDC/MRn/D60zIr5zi2fInO
-         F2SOHCtAynZVUILKeUwrCacf6tn5qR62Uj0p+K7vtMugXWf1LxnOwPTNrd5pqbzVNpDh
-         RBWBNCSq3STKhzWVEfD/vAVbWDyfMB3vgeRrFsKL/JIdCc/SsAsLJEHmxjvfRRbWF+zi
-         NjFg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=IvsC6PIBsmEaE4mlDdp6wGYswjjP4f05wewW0lYb8Dw=;
-        b=N3FQSiyzFPM88+fJ0Si0NY+bjVaFkiPauGBi6C1X8/TZES8BvPU3QK/6Xyyqnar8sy
-         lkl30a++WtxYRug4C4OEh+TNyUq/VrbYbfE+wfGMPiaPWY8439wYeO5cbP6vCe3P6bi7
-         HSZGSI9GwMGfiWIwZ5xMgEjy622J/1kP+Y7rB0HQQDbDNo1cuvM390JF4YxFpfRFoUvN
-         Ivdz6y9V82jNx9//Ql+9O+1qK231TTiuJz5jxHn2CwJThVR6W5zZFALlOFyl2cuGr3kA
-         MvgfnvHWicTIrEAICl+Fo+kgwKQwLgCCzCa7bfp4DkhEjtSwWv2TcqyCup0KR542JEi+
-         NmHw==
-X-Gm-Message-State: AOUpUlHP6IPNpHpDdiQljB1IabJv1s1D35cKv8DJI0LE4mzHI0M6uNCA
-        e8CV/mdXJ/trXYcnKZ6v9R2rdBWh
-X-Google-Smtp-Source: AAOMgpePZAFQP+5k/G5JQG1f/vMpglhBHykpoIWmuE/QC7dBUl2IwVvrOZfYJUYZmdsHT9e0qru1vA==
-X-Received: by 2002:a17:902:243:: with SMTP id 61-v6mr7761921plc.301.1532737472089;
-        Fri, 27 Jul 2018 17:24:32 -0700 (PDT)
-Received: from tw-172-25-29-199.office.twttr.net ([8.25.197.27])
-        by smtp.gmail.com with ESMTPSA id a134-v6sm7284118pfa.158.2018.07.27.17.24.30
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 27 Jul 2018 17:24:31 -0700 (PDT)
-From:   Cong Wang <xiyou.wangcong@gmail.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Cong Wang <xiyou.wangcong@gmail.com>,
-        Xunlei Pang <xlpang@linux.alibaba.com>,
-        Ben Segall <bsegall@google.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: [PATCH] sched/fair: sync expires_seq in distribute_cfs_runtime()
-Date:   Fri, 27 Jul 2018 17:24:09 -0700
-Message-Id: <20180728002409.5781-1-xiyou.wangcong@gmail.com>
-X-Mailer: git-send-email 2.14.4
+        Fri, 27 Jul 2018 22:04:59 -0400
+Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
+        by aserp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w6S0eFXx167108;
+        Sat, 28 Jul 2018 00:40:22 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=emJ1te2Zr11ThXkXHMZd9C0CzgVsKzB0FnEJw1KXVxw=;
+ b=LRKAdqMOfcCfLxR2gv1GjRutLC/H44uoXf9kV86n0NLY6cg61c7rOJWdQ0pWWygcM6rp
+ GKlLRfZwl5rBvh7rD6pMfWG3sd8pLQf+SdQYlOxu+o5BtOmf9GA3KUceuUWzH9WU8I9f
+ +fDpLehOEf2jqdP0XbzzfyRwrqvWmE6Kz+5uqgsPuS1xlFsZjXq7DkH9rK7AOUATK5TL
+ MyrIjHjCttHpD0cyXI5OAgRyGZO4dIGqiIGPZYGQ/IMSstyzaHja5IoGFVORY6qL98Vv
+ 8636tSFElnx3TREAKjFveqTv4XGbjFCfIvFacA/uw3kFYKsuY1N9u6cf/FMcwmkXp0OK Mg== 
+Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
+        by aserp2130.oracle.com with ESMTP id 2kge0cr08v-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Sat, 28 Jul 2018 00:40:22 +0000
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w6S0eJ7B005309
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Sat, 28 Jul 2018 00:40:20 GMT
+Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w6S0eIUd018633;
+        Sat, 28 Jul 2018 00:40:18 GMT
+Received: from [10.154.103.88] (/10.154.103.88)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Fri, 27 Jul 2018 17:40:18 -0700
+Subject: Re: [PATCH] ipc/shm.c add ->pagesize function to shm_vm_ops
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     dan.j.williams@intel.com, mhocko@suse.com, jack@suse.cz,
+        jglisse@redhat.com, mike.kravetz@oracle.com, dave@stgolabs.net,
+        linux-mm@kvack.org, linux-nvdimm@lists.01.org,
+        linux-kernel@vger.kernel.org, Hugh Dickins <hughd@google.com>,
+        Jane Chu <jane.chu@oracle.com>
+References: <20180727211727.5020-1-jane.chu@oracle.com>
+ <20180727145009.5dde68fb680ec148a7504f37@linux-foundation.org>
+From:   Jane Chu <jane.chu@oracle.com>
+Organization: Oracle Corporation
+Message-ID: <6ea01f10-066a-6fe6-bf82-3a3b4ddf1175@oracle.com>
+Date:   Fri, 27 Jul 2018 17:40:16 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <20180727145009.5dde68fb680ec148a7504f37@linux-foundation.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8967 signatures=668706
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1806210000 definitions=main-1807280006
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Each time we sync cfs_rq->runtime_expires with cfs_b->runtime_expires,
-we should sync its ->expires_seq too. However it is missing
-for distribute_cfs_runtime(), especially the slack timer call path.
+Hi, Andrew,
 
-Fixes: 512ac999d275 ("sched/fair: Fix bandwidth timer clock drift condition")
-Cc: Xunlei Pang <xlpang@linux.alibaba.com>
-Cc: Ben Segall <bsegall@google.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Signed-off-by: Cong Wang <xiyou.wangcong@gmail.com>
----
- kernel/sched/fair.c | 12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
+On 7/27/2018 2:50 PM, Andrew Morton wrote:
 
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 2f0a0be4d344..910c50db3d74 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -4857,7 +4857,7 @@ void unthrottle_cfs_rq(struct cfs_rq *cfs_rq)
- }
- 
- static u64 distribute_cfs_runtime(struct cfs_bandwidth *cfs_b,
--		u64 remaining, u64 expires)
-+		u64 remaining, u64 expires, int expires_seq)
- {
- 	struct cfs_rq *cfs_rq;
- 	u64 runtime;
-@@ -4880,6 +4880,7 @@ static u64 distribute_cfs_runtime(struct cfs_bandwidth *cfs_b,
- 
- 		cfs_rq->runtime_remaining += runtime;
- 		cfs_rq->runtime_expires = expires;
-+		cfs_rq->expires_seq = expires_seq;
- 
- 		/* we check whether we're throttled above */
- 		if (cfs_rq->runtime_remaining > 0)
-@@ -4905,7 +4906,7 @@ static u64 distribute_cfs_runtime(struct cfs_bandwidth *cfs_b,
- static int do_sched_cfs_period_timer(struct cfs_bandwidth *cfs_b, int overrun)
- {
- 	u64 runtime, runtime_expires;
--	int throttled;
-+	int throttled, expires_seq;
- 
- 	/* no need to continue the timer with no bandwidth constraint */
- 	if (cfs_b->quota == RUNTIME_INF)
-@@ -4933,6 +4934,7 @@ static int do_sched_cfs_period_timer(struct cfs_bandwidth *cfs_b, int overrun)
- 	cfs_b->nr_throttled += overrun;
- 
- 	runtime_expires = cfs_b->runtime_expires;
-+	expires_seq = cfs_b->expires_seq;
- 
- 	/*
- 	 * This check is repeated as we are holding onto the new bandwidth while
-@@ -4946,7 +4948,7 @@ static int do_sched_cfs_period_timer(struct cfs_bandwidth *cfs_b, int overrun)
- 		raw_spin_unlock(&cfs_b->lock);
- 		/* we can't nest cfs_b->lock while distributing bandwidth */
- 		runtime = distribute_cfs_runtime(cfs_b, runtime,
--						 runtime_expires);
-+						 runtime_expires, expires_seq);
- 		raw_spin_lock(&cfs_b->lock);
- 
- 		throttled = !list_empty(&cfs_b->throttled_cfs_rq);
-@@ -5055,6 +5057,7 @@ static __always_inline void return_cfs_rq_runtime(struct cfs_rq *cfs_rq)
- static void do_sched_cfs_slack_timer(struct cfs_bandwidth *cfs_b)
- {
- 	u64 runtime = 0, slice = sched_cfs_bandwidth_slice();
-+	int expires_seq;
- 	u64 expires;
- 
- 	/* confirm we're still not at a refresh boundary */
-@@ -5068,12 +5071,13 @@ static void do_sched_cfs_slack_timer(struct cfs_bandwidth *cfs_b)
- 		runtime = cfs_b->runtime;
- 
- 	expires = cfs_b->runtime_expires;
-+	expires_seq = cfs_b->expires_seq;
- 	raw_spin_unlock(&cfs_b->lock);
- 
- 	if (!runtime)
- 		return;
- 
--	runtime = distribute_cfs_runtime(cfs_b, runtime, expires);
-+	runtime = distribute_cfs_runtime(cfs_b, runtime, expires, expires_seq);
- 
- 	raw_spin_lock(&cfs_b->lock);
- 	if (expires == cfs_b->runtime_expires)
--- 
-2.14.4
+> On Fri, 27 Jul 2018 15:17:27 -0600 Jane Chu <jane.chu@oracle.com> wrote:
+>
+>> Commit 05ea88608d4e13 (mm, hugetlbfs: introduce ->pagesize() to
+>> vm_operations_struct) adds a new ->pagesize() function to
+>> hugetlb_vm_ops, intended to cover all hugetlbfs backed files.
+> That was merged three months ago.  Can you suggest why this was only
+> noticed now?
+
+The issue was recently reported by a QA engineer running Oracle database
+test in Oracle Linux. He first noticed the issue in upstream 4.17, then 4.18,
+but because the issue wasn't in Oracle product, it wasn't reported, not
+until I cherry picked the patch into Oracle Linux recently.
+
+> What workload triggered this?  I see no cc:stable, but 4.17 is affected?
+
+It's Oracle database workload. Large shared memory segments(SGAs) were created
+and shared among dozens to hundreds of processes. The crash occurs when the
+test stops the database workload.  I do not have access to the test source.
+Yes, 4.17 is affected.
+
+>> With System V shared memory model, if "huge page" is specified,
+>> the "shared memory" is backed by hugetlbfs files, but the mappings
+>> initiated via shmget/shmat have their original vm_ops overwritten
+>> with shm_vm_ops, so we need to add a ->pagesize function to shm_vm_ops.
+>> Otherwise, vma_kernel_pagesize() returns PAGE_SIZE given a hugetlbfs
+>> backed vma, result in below BUG:
+>>
+>> fs/hugetlbfs/inode.c
+>>          443             if (unlikely(page_mapped(page))) {
+>>          444                     BUG_ON(truncate_op);
+> OK, help me out here.  How does an incorrect return value from
+> vma_kernel_pagesize() result in remove_inode_hugepages() deciding that
+> it's truncating a mapped page?
+
+To be honest, I don't have a satisfactory answer to how the wrong
+pagesize causes a page that's about to be truncated remain mapped.
+I relied on the hind sight of BUG_ON(truncate_op).
+
+At a time I inserted dump_stack() into vma_kernel_pagesize() as Mike
+suggested to try to dig out more,
+
+unsigned long vma_kernel_pagesize(struct vm_area_struct *vma)
+{
+-       if (vma->vm_ops && vma->vm_ops->pagesize)
++       if (vma->vm_ops && vma->vm_ops->pagesize) {
+                 return vma->vm_ops->pagesize(vma);
++        } else if (is_vm_hugetlb_page(vma)) {
++               struct hstate *hstate;
++               dump_stack();
++               hstate = hstate_vma(vma);
++               return 1UL << huge_page_shift(hstate);
++       }
+         return PAGE_SIZE;
+}
+
+There were too many stack traces that clogged the console, I didn't
+capture the entire output, perhaps I should go back to capture them.
+
+Any other ideas?
+
+Regards,
+-jane
+
 
