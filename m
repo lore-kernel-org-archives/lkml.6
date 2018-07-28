@@ -2,127 +2,98 @@ Return-Path: <SRS0=xGmI=KM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_MED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98B6CC67790
-	for <linux-kernel@archiver.kernel.org>; Sat, 28 Jul 2018 03:02:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 273D5C67790
+	for <linux-kernel@archiver.kernel.org>; Sat, 28 Jul 2018 03:06:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 48C4E20671
-	for <linux-kernel@archiver.kernel.org>; Sat, 28 Jul 2018 03:02:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BFC2C20862
+	for <linux-kernel@archiver.kernel.org>; Sat, 28 Jul 2018 03:06:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XE2IXBqv"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 48C4E20671
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="CS35gKYs"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BFC2C20862
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726153AbeG1E1F (ORCPT
+        id S1726284AbeG1EbG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 28 Jul 2018 00:27:05 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:39018 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725854AbeG1E1F (ORCPT
+        Sat, 28 Jul 2018 00:31:06 -0400
+Received: from mail-io0-f196.google.com ([209.85.223.196]:34668 "EHLO
+        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725898AbeG1EbG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 28 Jul 2018 00:27:05 -0400
-Received: by mail-pf1-f193.google.com with SMTP id j8-v6so2338354pff.6;
-        Fri, 27 Jul 2018 20:02:20 -0700 (PDT)
+        Sat, 28 Jul 2018 00:31:06 -0400
+Received: by mail-io0-f196.google.com with SMTP id l7-v6so5713018ioj.1
+        for <linux-kernel@vger.kernel.org>; Fri, 27 Jul 2018 20:06:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=GpakFfEDqryGEy6++JYYrObaoedZ7wDazvR4vyyeqBk=;
-        b=XE2IXBqveh7oOqPFvSO6RZIQ7wibYRFgGnVzJ5L+ctcQZx2iRVZNt5DsxIpu09alrL
-         wTFalOBiRTQOftTuDJg+pX29PT/swg63oCMud7fNB/EdLPBUDmQMprNk4/bY0pdjUFMC
-         eQXBmtla23UdJIfZ3DBVzX4YWrgN+qlTXOzUqLxI4i4OofrahWRDeg0tYQBG8c+AP7K9
-         cZrO6rnOZAtUvh00/buOSjpue4BVoYsPStxejmxHdPTzV/Ma8T4MePKElxTRdrD3KdaZ
-         r1Ogh9ECMzMWlLr+uUaKWNSRiWzHfaASh0sJ5yShFRFi/s78oxSPhVVbZ7VLBye3LK+I
-         dyLA==
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=onm8mXfE6xFzwHbybl1j+WNjU0RRlLK7PzLbBMjpozA=;
+        b=CS35gKYsnyWsBpH2ijs9F3/aBFoYTpO3jqTesV1Znm99/PjWhvkBTk03gDAx94QYry
+         YtJr/k1ZpZBIAK3wa51dIbSw5mUIpb1l/qA4QrbSyjrCTUz08yR2AOt+HKwvph37AbQ+
+         +6eS4ghnHKf1zti1/ctBaCzraAI7ewXaQH6OSUX+Gsw9yO4cdQVuNsnawZ1EX3vBbRHX
+         ZeFliz2yJ42rVMFa1bwlUZnR/i8s+9GTaRy5+34Azlky026MJ8G0/2Ndd2ZEV73ooTT6
+         LERzy5/8k4wHipwLzaCQ0JIjWhTS5qbyTr0x7KH7MGKly5CNBiOK4/3q2NokfAusmEXP
+         Ubbw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=GpakFfEDqryGEy6++JYYrObaoedZ7wDazvR4vyyeqBk=;
-        b=OzAwounugnea11FAsFbCbpW2ApejVxPx1p7se9WTg1qtHxWH8k4poXC/7wnyRtlCON
-         zIKz7OTQeJUCPesUmDDZNy5XtPFBXoI7Cp/JphiDpvsznwTUOw0HYO+3leGm0ONEWWga
-         DzLYNrkzYxbd95EOzwj5J6KCc0Idnn2Y+1NIXTBq5bY1EkgVtIn8jR6jqXA6DZnQeKoz
-         7vXA2WAOGgxFrd8/RYbwmJezwYnTRW5KtWuSVgedEQan/ZueYw50YlNm9+iaa4jg/glM
-         kpQp7xBXLU9p49JsiVPt8u9toPI/2gy19KLRtJzG3gYcSCdbNp5kXdr5QtPOQKc5bjuf
-         qRPg==
-X-Gm-Message-State: AOUpUlETSJbZAF/sIesljN1IBU1kNXkOuuSrsCioby9WvtEsRnZ+gPQ+
-        vV7FwTUC1nOCqEr/99INe2/i4L9r1qk=
-X-Google-Smtp-Source: AAOMgpcN1ARKidVKf9ELfCFIcLnALbidu4U062onx1uyjumbFI4/a+qiF3L+zPHBWkxoT+NMaDZswA==
-X-Received: by 2002:a62:4bc6:: with SMTP id d67-v6mr8953576pfj.175.1532746940432;
-        Fri, 27 Jul 2018 20:02:20 -0700 (PDT)
-Received: from bogon.didichuxing.com ([203.100.54.194])
-        by smtp.gmail.com with ESMTPSA id z10-v6sm7329196pfh.83.2018.07.27.20.02.17
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 27 Jul 2018 20:02:19 -0700 (PDT)
-From:   Yafang Shao <laoar.shao@gmail.com>
-To:     edumazet@google.com, davem@davemloft.net
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Yafang Shao <laoar.shao@gmail.com>
-Subject: [PATCH net-next 2/2] tcp: propagate GSO to the new skb built in tcp collapse
-Date:   Sat, 28 Jul 2018 11:01:40 +0800
-Message-Id: <1532746900-11710-2-git-send-email-laoar.shao@gmail.com>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1532746900-11710-1-git-send-email-laoar.shao@gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=onm8mXfE6xFzwHbybl1j+WNjU0RRlLK7PzLbBMjpozA=;
+        b=pfmKbhlsDzWDzFIQZNK0rje/WuQ9+jTVt3JvL/R7dBd06RqbAfUv649EireqCqggEr
+         itynw206nyg0rAsklDHYnLpP/nijYIB7uT5Gd6Z84DAVZmKPaMset7YK6EmdBVeTk/sk
+         7xSvcoGFiaeRuTpaiaHu5/hp8GXMqIzgJjLXc+NSdXZDMpf285OjqR5tlkMn0bUJZV8M
+         Y3Xce9sYH0qj9LolfljYYUcolUZjLdH90jgpRyUKYeeyl40soesky9KzsRyxDtEwlHZv
+         RPGLDKQZ6KOuz3bdeLKwDC35voUxM8m8rfz94iP/KIgeRkZPeTl54rCrz+zMQ647K2bB
+         aY7g==
+X-Gm-Message-State: AOUpUlE14jdl7u/fS8LPLvSgwqPiRKlULwnHEoRFyVPSafxUfOEnESOV
+        nZRVBZQgPLeQlcIy2Rkzxw/hjOsLG6T/TkGXGnRVH9r+
+X-Google-Smtp-Source: AAOMgpfc7dbKReGO6oelXBZzizicWLhTi8q4rA45LedQ/ZSsKa8rnqWlNEygXIWPLb9TM6QEafbIuodmguchW7OZ9Lg=
+X-Received: by 2002:a6b:825e:: with SMTP id e91-v6mr7088093iod.118.1532747180476;
+ Fri, 27 Jul 2018 20:06:20 -0700 (PDT)
+MIME-Version: 1.0
 References: <1532746900-11710-1-git-send-email-laoar.shao@gmail.com>
+In-Reply-To: <1532746900-11710-1-git-send-email-laoar.shao@gmail.com>
+From:   Eric Dumazet <edumazet@google.com>
+Date:   Fri, 27 Jul 2018 20:06:09 -0700
+Message-ID: <CANn89iJ=Ad7sVWr3zBmXNSyePJJZaxgnMymN8S7x6fCSvG2jTQ@mail.gmail.com>
+Subject: Re: [PATCH net-next 1/2] tcp: call tcp_drop() in tcp collapse
+To:     Yafang Shao <laoar.shao@gmail.com>
+Cc:     David Miller <davem@davemloft.net>,
+        netdev <netdev@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently the collapsed SKB doesn't propagate the GSO information to the
-new SKB.
-The GSO should be propagated for better tracking, i.e. when this SKB is
-dropped we could know how many network segments are dropped.
+On Fri, Jul 27, 2018 at 8:02 PM Yafang Shao <laoar.shao@gmail.com> wrote:
+>
+> When this SKB is dropped, we should add the counter sk_drops.
+> That could help us better tracking this behavior.
+>
+> Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
+> ---
+>  net/ipv4/tcp_input.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/net/ipv4/tcp_input.c b/net/ipv4/tcp_input.c
+> index d51fa35..90f83eb 100644
+> --- a/net/ipv4/tcp_input.c
+> +++ b/net/ipv4/tcp_input.c
+> @@ -4802,7 +4802,7 @@ static struct sk_buff *tcp_collapse_one(struct sock *sk, struct sk_buff *skb,
+>         else
+>                 rb_erase(&skb->rbnode, root);
+>
+> -       __kfree_skb(skb);
+> +       tcp_drop(sk, skb);
 
-Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
----
- net/ipv4/tcp_input.c | 12 ++++++++++--
- 1 file changed, 10 insertions(+), 2 deletions(-)
 
-diff --git a/net/ipv4/tcp_input.c b/net/ipv4/tcp_input.c
-index 90f83eb..af52e4e 100644
---- a/net/ipv4/tcp_input.c
-+++ b/net/ipv4/tcp_input.c
-@@ -4893,6 +4893,8 @@ void tcp_rbtree_insert(struct rb_root *root, struct sk_buff *skb)
- 		if (!nskb)
- 			break;
- 
-+		skb_shinfo(nskb)->gso_size = skb_shinfo(skb)->gso_size;
-+		skb_shinfo(nskb)->gso_type = skb_shinfo(skb)->gso_type;
- 		memcpy(nskb->cb, skb->cb, sizeof(skb->cb));
- #ifdef CONFIG_TLS_DEVICE
- 		nskb->decrypted = skb->decrypted;
-@@ -4906,18 +4908,24 @@ void tcp_rbtree_insert(struct rb_root *root, struct sk_buff *skb)
- 
- 		/* Copy data, releasing collapsed skbs. */
- 		while (copy > 0) {
--			int offset = start - TCP_SKB_CB(skb)->seq;
- 			int size = TCP_SKB_CB(skb)->end_seq - start;
-+			int offset = start - TCP_SKB_CB(skb)->seq;
- 
- 			BUG_ON(offset < 0);
- 			if (size > 0) {
--				size = min(copy, size);
-+				if (copy >= size)
-+					skb_shinfo(nskb)->gso_segs +=
-+						max_t(u16, 1, skb_shinfo(skb)->gso_segs);
-+				else
-+					size = copy;
-+
- 				if (skb_copy_bits(skb, offset, skb_put(nskb, size), size))
- 					BUG();
- 				TCP_SKB_CB(nskb)->end_seq += size;
- 				copy -= size;
- 				start += size;
- 			}
-+
- 			if (!before(start, TCP_SKB_CB(skb)->end_seq)) {
- 				skb = tcp_collapse_one(sk, skb, list, root);
- 				if (!skb ||
--- 
-1.8.3.1
+Absolutely not.
 
+We do not drop the packet, we have simply lowered the memory overhead.
