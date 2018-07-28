@@ -2,101 +2,75 @@ Return-Path: <SRS0=xGmI=KM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+X-Spam-Status: No, score=-0.5 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
+	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF743C28CF6
-	for <linux-kernel@archiver.kernel.org>; Sat, 28 Jul 2018 09:02:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1340FC28CF6
+	for <linux-kernel@archiver.kernel.org>; Sat, 28 Jul 2018 09:07:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 684002088E
-	for <linux-kernel@archiver.kernel.org>; Sat, 28 Jul 2018 09:02:37 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k/WtnQu5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 684002088E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id BC9BD20842
+	for <linux-kernel@archiver.kernel.org>; Sat, 28 Jul 2018 09:07:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BC9BD20842
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gmx.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728553AbeG1K2O (ORCPT
+        id S1728537AbeG1KdJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 28 Jul 2018 06:28:14 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:42049 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727651AbeG1K2N (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 28 Jul 2018 06:28:13 -0400
-Received: by mail-pg1-f196.google.com with SMTP id y4-v6so4548046pgp.9;
-        Sat, 28 Jul 2018 02:02:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=GkAq7Tj2OeFjuXVMmElzKhccyfcH9hgvMt0rWEL+cho=;
-        b=k/WtnQu5e1l2KsohOYSW4szKLytki++ZeJsX3Cnxj+xAK0eFX3Er/EYAJ6b0JNjSEl
-         iTxKmb30VW/gFlB2ri0ksN7sETkBbRAQ6213DfFK5kBA9CuCf41xRLQnoAdp3IN/pAn0
-         ZLHUuCdVE0otRNXsKMTW9Br7XDm2DeC4G+JTcnhUR0NIg8bRDVXixz5WaAyno1IcMJO/
-         nx0+3V7a9Kd4e+HH2p0aRxEBP+bL+A6l1HYvEfQFN7nqajIm9oajOUQv8ianRjW9+zwd
-         DvpY/OvLxg7HhGt5Ofz4wm+xx50GkjdEvwLjIpsmgsILpGAhPRuUacVc+UROth72aCie
-         W6zA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=GkAq7Tj2OeFjuXVMmElzKhccyfcH9hgvMt0rWEL+cho=;
-        b=kIpzzr3aSTehVC08GgPcfSF2NZRf1/4vNFOko+GESI+k8IhyVZBHy90ADBnNi+Ir20
-         CEGhss2hqf28zKQ3xu7ltJpOoAz91V/3kuOCAanJxzxB5YGiHRj/84pdnvfqEG4xs+zz
-         vF3Sux8dI7niQcPydISQNPYaLuwvqQujZt7S5VPRK6KtfTy5M/Nu1tGJ+f2ia7x8SYMd
-         FN7snFbqZyncdBBkukyG9O3LKnfx7OZPghRj/WUuxNIuTq9y+UBzw3en8ehx9k37ma6a
-         QYtIHccLMV6LuoMDJygMes+cXPZMp4Y+kpy0wig/KvU9ZUu/IiqZvPN+XiQ1gMlzBy80
-         0ZFA==
-X-Gm-Message-State: AOUpUlFINNBAutPmVfohVSCsJV3rIbKfbe1NK47/C2ZKec8ZYlbnzYGK
-        t4MSoTXjk/n+eQ8yPWzQaag=
-X-Google-Smtp-Source: AAOMgpeBAoYsW9tJJha7EMDP4KfpSxIyAXPEIIWeIyqIEYPU0BB/wjjzMGITKfvOJjFw++R0gdHCyA==
-X-Received: by 2002:a62:9dcc:: with SMTP id a73-v6mr9653262pfk.249.1532768547157;
-        Sat, 28 Jul 2018 02:02:27 -0700 (PDT)
-Received: from zenus ([106.51.26.178])
-        by smtp.gmail.com with ESMTPSA id h24-v6sm12439476pfk.113.2018.07.28.02.02.24
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sat, 28 Jul 2018 02:02:26 -0700 (PDT)
-Date:   Sat, 28 Jul 2018 14:32:21 +0530
-From:   Sohil Ladhani <supertakumi86@gmail.com>
-To:     davem@davemloft.net
-Cc:     nic_swsd@realtek.com, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Sohil Ladhani <supertakumi86@gmail.com>
-Subject: [PATCH] net: ethernet: realtek: r8169: Add spaces after commas
- coding style issue
-Message-ID: <20180728090217.GA19065@zenus>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Sat, 28 Jul 2018 06:33:09 -0400
+Received: from mout.gmx.net ([212.227.15.18]:50999 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726311AbeG1KdI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 28 Jul 2018 06:33:08 -0400
+Received: from homer.simpson.net ([185.221.150.73]) by mail.gmx.com (mrgmx002
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 0LikQP-1gFfLB1y2f-00cvCa; Sat, 28
+ Jul 2018 11:07:12 +0200
+Message-ID: <1532768831.9882.71.camel@gmx.de>
+Subject: candidates for @devel-rt localversion-rt++
+From:   Mike Galbraith <efault@gmx.de>
+To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Thomas Gleixner <tglx@linutronix.de>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        linux-rt-users <linux-rt-users@vger.kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>
+Date:   Sat, 28 Jul 2018 11:07:11 +0200
+In-Reply-To: <20180727215710.zq6gkoqzlb4ca7qv@linutronix.de>
+References: <20180727215710.zq6gkoqzlb4ca7qv@linutronix.de>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.26.6 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:LZRsZjy0RS9zmA65TPb+7gA40YULbQ5OMvaV3wQgYAORCwUHNxz
+ xwYdnn2azOGDWUeiZ9BQFSyizHEDtBymBVVspLNFRN4b7NeHdSLrlGAloAeKdyVKP1j0ePi
+ 7gTrcqkvTYL7MS3MM+IBrnKvd980xlQMNvQ+WVy54vemPA/oCTQmTpuXTwfXxqdvGyLoGLL
+ FwSxtaDqjJthFhrDeNefw==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:Vi0gNqvl4io=:kBY/KueJEnV1KMuMOlxDz+
+ XsYT/uip8Wd9FfArHTN0r8kYTS6r1bZngtrJrredezmhdih5c2aV8NlqIH5aVN4Y1VFVoOVMG
+ NxlXWFfxAOwKKWRcTD3B374WyZ6yexeL5KAQunvPZnBMNPTQApvdwhunquc9QeuiNtN5yugdt
+ MIaDmO+6txN1WCKCyod8k3UuN00jDAqn9ZpeRniLNRbntTF1cteFnXsUQTzLVQJdHejWeVCF7
+ +N/PothBd9ejXVKrX5cli42xP8m+6Eez/ZwufBonwgtD2wxhKZ9BrT+ltPatOhp1bMs4C3MX0
+ wrYmYV9kRXu15hLC55m5rfBBQuuyKh8nkmZXgzeyKfVWmVvSQQSbzlhfS4f8ChV/NkSSPxpVF
+ zdl9Coo1oqdiS+AoQq/0Ij2cya0/JER5gCaGmgcNqLH2nALkB2lW+HfDgO9GxgTLLa9Dgl94y
+ IArPeOHlx6EqM0HPuGwSCCHbgIhEVXOiFWHY01rsPKp8tz/gPCfoSKYPKnxO5FyaOmyUplmqu
+ wFIZKSFYvl9Wrrge+TJaR9Vx2Ws+daQD25zo8/vxArAMW8c6Gf5+vitEi7b0vlOhIj0LQ9hPj
+ ioF6BD376cihtLnnZSBTQjIZVbcW5fq1OHEjl0eXGtei12CIaBINxpdE14IgsZ+uxM7L7BYj7
+ P8zqsZugauzboEr/r2YqkX1CFnlykUQYpOmteJck8i0RYikww6TMoKqgRHHf+OO3CMhC1Ov/6
+ ammaYhbhn1U5iQ88qWcMmgVytRwdeTY+sr2mRt0qez/yf+xX2UnxiuPs/LtpkMadlTu7YvmP/
+ ljTwCSz
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fixed a coding style issue
+1. arm64/acpi/perf: move pmu allocation to an early CPU up hook
+2. sched: Introduce raw_cond_resched_lock()
+3. arm, KVM: convert vgic_irq.irq_lock to raw_spinlock_t
 
-Signed-off-by: Sohil Ladhani <supertakumi86@gmail.com>
----
- drivers/net/ethernet/realtek/r8169.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+With these applied, 4 socket TaiShan 2280 box boots shiny new -rt11
+gripe free, and has been tossed into SUSE's kvm build-bot slave pit,
+where it is presumably performing acceptably, given its boss keeps
+giving it more work to do.  (I see only lack of smoke/flame)
 
-diff --git a/drivers/net/ethernet/realtek/r8169.c b/drivers/net/ethernet/realtek/r8169.c
-index f4cae2be0fda..e4754f336c34 100644
---- a/drivers/net/ethernet/realtek/r8169.c
-+++ b/drivers/net/ethernet/realtek/r8169.c
-@@ -61,7 +61,7 @@
- #define assert(expr) \
- 	if (!(expr)) {					\
- 		printk( "Assertion failed! %s,%s,%s,line=%d\n",	\
--		#expr,__FILE__,__func__,__LINE__);		\
-+		#expr, __FILE__, __func__, __LINE__);		\
- 	}
- #define dprintk(fmt, args...) \
- 	do { printk(KERN_DEBUG PFX fmt, ## args); } while (0)
--- 
-2.18.0
+1 should fly, 2 and 3 may well die.. as box does without them.
 
+	-Mike
