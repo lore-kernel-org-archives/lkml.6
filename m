@@ -2,107 +2,78 @@ Return-Path: <SRS0=xGmI=KM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B68C6C28CF6
-	for <linux-kernel@archiver.kernel.org>; Sat, 28 Jul 2018 05:36:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FE36C28CF6
+	for <linux-kernel@archiver.kernel.org>; Sat, 28 Jul 2018 05:41:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 78A582088E
-	for <linux-kernel@archiver.kernel.org>; Sat, 28 Jul 2018 05:36:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 78A582088E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
+	by mail.kernel.org (Postfix) with ESMTP id 4D91320893
+	for <linux-kernel@archiver.kernel.org>; Sat, 28 Jul 2018 05:41:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D91320893
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726234AbeG1HBW (ORCPT
+        id S1726170AbeG1HGR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 28 Jul 2018 03:01:22 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:22107 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726047AbeG1HBV (ORCPT
+        Sat, 28 Jul 2018 03:06:17 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:34842 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726056AbeG1HGR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 28 Jul 2018 03:01:21 -0400
-X-UUID: 9220d135df184609b7a35b44ec2a0dea-20180728
-Received: from mtkcas08.mediatek.inc [(172.21.101.126)] by mailgw02.mediatek.com
-        (envelope-from <sean.wang@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 284816014; Sat, 28 Jul 2018 13:36:06 +0800
-Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
- mtkmbs08n2.mediatek.inc (172.21.101.56) with Microsoft SMTP Server (TLS) id
- 15.0.1210.3; Sat, 28 Jul 2018 13:36:03 +0800
-Received: from mtkswgap22.mediatek.inc (172.21.77.33) by MTKCAS06.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
- Transport; Sat, 28 Jul 2018 13:35:58 +0800
-From:   <sean.wang@mediatek.com>
-To:     <john@phrozen.org>, <davem@davemloft.net>
-CC:     <nbd@openwrt.org>, <netdev@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>,
-        Sean Wang <sean.wang@mediatek.com>
-Subject: [PATCH net-next 1/2] net-next: mediatek: improve more with using dma_zalloc_coherent
-Date:   Sat, 28 Jul 2018 13:35:55 +0800
-Message-ID: <658dfd485c035cdae5452bc5d572125076b47a48.1532755541.git.sean.wang@mediatek.com>
-X-Mailer: git-send-email 1.7.9.5
+        Sat, 28 Jul 2018 03:06:17 -0400
+Received: from localhost (D57D388D.static.ziggozakelijk.nl [213.125.56.141])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D2C5374;
+        Sat, 28 Jul 2018 05:41:05 +0000 (UTC)
+Date:   Sat, 28 Jul 2018 07:41:02 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Shuah Khan <shuah@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        akpm@linux-foundation.org, linux@roeck-us.net,
+        patches@kernelci.org, ben.hutchings@codethink.co.uk,
+        lkft-triage@lists.linaro.org, stable@vger.kernel.org
+Subject: Re: [PATCH 4.17 00/66] 4.17.11-stable review
+Message-ID: <20180728054102.GA28739@kroah.com>
+References: <20180727093809.043856530@linuxfoundation.org>
+ <e636aa6a-6299-5a59-77fe-3956786bf1c3@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e636aa6a-6299-5a59-77fe-3956786bf1c3@kernel.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sean Wang <sean.wang@mediatek.com>
+On Fri, Jul 27, 2018 at 01:49:42PM -0600, Shuah Khan wrote:
+> On 07/27/2018 03:44 AM, Greg Kroah-Hartman wrote:
+> > This is the start of the stable review cycle for the 4.17.11 release.
+> > There are 66 patches in this series, all will be posted as a response
+> > to this one.  If anyone has any issues with these being applied, please
+> > let me know.
+> > 
+> > Responses should be made by Sun Jul 29 09:37:38 UTC 2018.
+> > Anything received after that time might be too late.
+> > 
+> > The whole patch series can be found in one patch at:
+> > 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.17.11-rc1.gz
+> > or in the git tree and branch at:
+> > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.17.y
+> > and the diffstat can be found below.
+> > 
+> > thanks,
+> > 
+> > greg k-h
+> > 
+> 
+> Missed a few releases while I was away :)
 
-Improve more in the existing code by reusing dma_zalloc_coherent instead
-of dma_alloc_coherent with __GFP_ZERO or superfluous zeroing buffer.
+Welcome back!
 
-Signed-off-by: Sean Wang <sean.wang@mediatek.com>
----
- drivers/net/ethernet/mediatek/mtk_eth_soc.c | 16 +++++++---------
- 1 file changed, 7 insertions(+), 9 deletions(-)
+> Compiled and booted on my test system. No dmesg regressions.
 
-diff --git a/drivers/net/ethernet/mediatek/mtk_eth_soc.c b/drivers/net/ethernet/mediatek/mtk_eth_soc.c
-index c30aea2..8c85a4b 100644
---- a/drivers/net/ethernet/mediatek/mtk_eth_soc.c
-+++ b/drivers/net/ethernet/mediatek/mtk_eth_soc.c
-@@ -605,10 +605,10 @@ static int mtk_init_fq_dma(struct mtk_eth *eth)
- 	dma_addr_t dma_addr;
- 	int i;
- 
--	eth->scratch_ring = dma_alloc_coherent(eth->dev,
--					       cnt * sizeof(struct mtk_tx_dma),
--					       &eth->phy_scratch_ring,
--					       GFP_ATOMIC | __GFP_ZERO);
-+	eth->scratch_ring = dma_zalloc_coherent(eth->dev,
-+						cnt * sizeof(struct mtk_tx_dma),
-+						&eth->phy_scratch_ring,
-+						GFP_ATOMIC);
- 	if (unlikely(!eth->scratch_ring))
- 		return -ENOMEM;
- 
-@@ -623,7 +623,6 @@ static int mtk_init_fq_dma(struct mtk_eth *eth)
- 	if (unlikely(dma_mapping_error(eth->dev, dma_addr)))
- 		return -ENOMEM;
- 
--	memset(eth->scratch_ring, 0x0, sizeof(struct mtk_tx_dma) * cnt);
- 	phy_ring_tail = eth->phy_scratch_ring +
- 			(sizeof(struct mtk_tx_dma) * (cnt - 1));
- 
-@@ -1318,10 +1317,9 @@ static int mtk_rx_alloc(struct mtk_eth *eth, int ring_no, int rx_flag)
- 			return -ENOMEM;
- 	}
- 
--	ring->dma = dma_alloc_coherent(eth->dev,
--				       rx_dma_size * sizeof(*ring->dma),
--				       &ring->phys,
--				       GFP_ATOMIC | __GFP_ZERO);
-+	ring->dma = dma_zalloc_coherent(eth->dev,
-+					rx_dma_size * sizeof(*ring->dma),
-+					&ring->phys, GFP_ATOMIC);
- 	if (!ring->dma)
- 		return -ENOMEM;
- 
--- 
-2.7.4
+Thanks for testing all of these and letting me know.
 
+greg k-h
