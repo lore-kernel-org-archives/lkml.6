@@ -2,143 +2,112 @@ Return-Path: <SRS0=xGmI=KM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB911C28CF6
-	for <linux-kernel@archiver.kernel.org>; Sat, 28 Jul 2018 12:23:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C85C5C28CF6
+	for <linux-kernel@archiver.kernel.org>; Sat, 28 Jul 2018 12:42:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5E4A420878
-	for <linux-kernel@archiver.kernel.org>; Sat, 28 Jul 2018 12:23:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E4A420878
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 768FB20873
+	for <linux-kernel@archiver.kernel.org>; Sat, 28 Jul 2018 12:42:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 768FB20873
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=techsingularity.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728708AbeG1NtD (ORCPT
+        id S1728701AbeG1ODF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 28 Jul 2018 09:49:03 -0400
-Received: from mga04.intel.com ([192.55.52.120]:45889 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727777AbeG1NtD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 28 Jul 2018 09:49:03 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Jul 2018 05:22:40 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,413,1526367600"; 
-   d="scan'208";a="76289552"
-Received: from bee.sh.intel.com (HELO bee) ([10.239.97.14])
-  by fmsmga001.fm.intel.com with ESMTP; 28 Jul 2018 05:22:39 -0700
-Received: from kbuild by bee with local (Exim 4.84_2)
-        (envelope-from <lkp@intel.com>)
-        id 1fjOF3-000QkV-Qb; Sat, 28 Jul 2018 20:22:37 +0800
-Date:   Sat, 28 Jul 2018 20:22:27 +0800
-From:   kbuild test robot <lkp@intel.com>
-To:     Eric Richter <erichte@linux.vnet.ibm.com>
-Cc:     kbuild-all@01.org,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        linux-efi <linux-efi@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        David Howells <dhowells@redhat.com>,
-        Seth Forshee <seth.forshee@canonical.com>,
-        Justin Forbes <jforbes@redhat.com>,
-        Eric Richter <erichte@linux.vnet.ibm.com>
-Subject: Re: [PATCH 4/4] x86/ima: define arch_get_ima_policy() for x86
-Message-ID: <201807282011.jTLIG5hy%fengguang.wu@intel.com>
-References: <20180725233200.761-5-erichte@linux.vnet.ibm.com>
+        Sat, 28 Jul 2018 10:03:05 -0400
+Received: from outbound-smtp10.blacknight.com ([46.22.139.15]:41396 "EHLO
+        outbound-smtp10.blacknight.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728115AbeG1ODF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 28 Jul 2018 10:03:05 -0400
+Received: from mail.blacknight.com (pemlinmail03.blacknight.ie [81.17.254.16])
+        by outbound-smtp10.blacknight.com (Postfix) with ESMTPS id 22F8E1C1D32
+        for <linux-kernel@vger.kernel.org>; Sat, 28 Jul 2018 13:36:40 +0100 (IST)
+Received: (qmail 16350 invoked from network); 28 Jul 2018 12:36:40 -0000
+Received: from unknown (HELO techsingularity.net) (mgorman@techsingularity.net@[37.228.237.66])
+  by 81.17.254.9 with ESMTPSA (DHE-RSA-AES256-SHA encrypted, authenticated); 28 Jul 2018 12:36:39 -0000
+Date:   Sat, 28 Jul 2018 13:36:39 +0100
+From:   Mel Gorman <mgorman@techsingularity.net>
+To:     Francisco Jerez <currojerez@riseup.net>
+Cc:     Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+        lenb@kernel.org, rjw@rjwysocki.net, peterz@infradead.org,
+        ggherdovich@suse.cz, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, juri.lelli@redhat.com,
+        viresh.kumar@linaro.org, Chris Wilson <chris@chris-wilson.co.uk>,
+        Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Eero Tamminen <eero.t.tamminen@intel.com>
+Subject: Re: [PATCH 4/4] cpufreq: intel_pstate: enable boost for Skylake Xeon
+Message-ID: <20180728123639.7ckv3ljnei3urn6m@techsingularity.net>
+References: <20180605214242.62156-1-srinivas.pandruvada@linux.intel.com>
+ <20180605214242.62156-5-srinivas.pandruvada@linux.intel.com>
+ <87bmarhqk4.fsf@riseup.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-15
 Content-Disposition: inline
-In-Reply-To: <20180725233200.761-5-erichte@linux.vnet.ibm.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: lkp@intel.com
-X-SA-Exim-Scanned: No (on bee); SAEximRunCond expanded to false
+In-Reply-To: <87bmarhqk4.fsf@riseup.net>
+User-Agent: NeoMutt/20170912 (1.9.0)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Eric,
+On Fri, Jul 27, 2018 at 10:34:03PM -0700, Francisco Jerez wrote:
+> Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com> writes:
+> 
+> > Enable HWP boost on Skylake server and workstations.
+> >
+> 
+> Please revert this series, it led to significant energy usage and
+> graphics performance regressions [1].  The reasons are roughly the ones
+> we discussed by e-mail off-list last April: This causes the intel_pstate
+> driver to decrease the EPP to zero when the workload blocks on IO
+> frequently enough, which for the regressing benchmarks detailed in [1]
+> is a symptom of the workload being heavily IO-bound, which means they
+> won't benefit at all from the EPP boost since they aren't significantly
+> CPU-bound, and they will suffer a decrease in parallelism due to the
+> active CPU core using a larger fraction of the TDP in order to achieve
+> the same work, causing the GPU to have a lower power budget available,
+> leading to a decrease in system performance.
 
-Thank you for the patch! Perhaps something to improve:
+It slices both ways. With the series, there are large boosts to
+performance on other workloads where a slight increase in power usage is
+acceptable in exchange for performance. For example,
 
-[auto build test WARNING on integrity/next-integrity]
-[also build test WARNING on next-20180727]
-[cannot apply to v4.18-rc6]
-[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+Single socket skylake running sqlite
+                                 v4.17               41ab43c9
+Min       Trans     2580.85 (   0.00%)     5401.58 ( 109.29%)
+Hmean     Trans     2610.38 (   0.00%)     5518.36 ( 111.40%)
+Stddev    Trans       28.08 (   0.00%)      208.90 (-644.02%)
+CoeffVar  Trans        1.08 (   0.00%)        3.78 (-251.57%)
+Max       Trans     2648.02 (   0.00%)     5992.74 ( 126.31%)
+BHmean-50 Trans     2629.78 (   0.00%)     5643.81 ( 114.61%)
+BHmean-95 Trans     2620.38 (   0.00%)     5538.32 ( 111.36%)
+BHmean-99 Trans     2620.38 (   0.00%)     5538.32 ( 111.36%)
 
-url:    https://github.com/0day-ci/linux/commits/Eric-Richter/ima-add-support-for-arch-specific-policies/20180728-072442
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/zohar/linux-integrity.git next-integrity
+That's over doubling the transactions per second for that workload.
 
-smatch warnings:
-security/integrity/ima/ima_policy.c:522 ima_init_arch_policy() error: potential null dereference 'arch_policy_entry'.  (kcalloc returns null)
+Two-socket skylake running dbench4
+                                v4.17               41ab43c9
+Amean      1         40.85 (   0.00%)       14.97 (  63.36%)
+Amean      2         42.31 (   0.00%)       17.33 (  59.04%)
+Amean      4         53.77 (   0.00%)       27.85 (  48.20%)
+Amean      8         68.86 (   0.00%)       43.78 (  36.42%)
+Amean      16        82.62 (   0.00%)       56.51 (  31.60%)
+Amean      32       135.80 (   0.00%)      116.06 (  14.54%)
+Amean      64       737.51 (   0.00%)      701.00 (   4.95%)
+Amean      512    14996.60 (   0.00%)    14755.05 (   1.61%)
 
-vim +/arch_policy_entry +522 security/integrity/ima/ima_policy.c
+This is reporting the average latency of operations running dbench. The
+series over halves the latencies. There are many examples of basic
+workloads that benefit heavily from the series and while I accept it may
+not be universal, such as the case where the graphics card needs the power
+and not the CPU, a straight revert is not the answer. Without the series,
+HWP cripplies the CPU.
 
-b4c0791e Nayna Jain 2018-07-25  484  
-b4c0791e Nayna Jain 2018-07-25  485  /*
-b4c0791e Nayna Jain 2018-07-25  486   * ima_init_arch_policy - convert arch policy strings to rules
-b4c0791e Nayna Jain 2018-07-25  487   *
-b4c0791e Nayna Jain 2018-07-25  488   * Return number of arch specific rules.
-b4c0791e Nayna Jain 2018-07-25  489   */
-b4c0791e Nayna Jain 2018-07-25  490  static int __init ima_init_arch_policy(void)
-b4c0791e Nayna Jain 2018-07-25  491  {
-b4c0791e Nayna Jain 2018-07-25  492  	const char * const *arch_rules;
-b4c0791e Nayna Jain 2018-07-25  493  	const char * const *rules;
-b4c0791e Nayna Jain 2018-07-25  494  	int arch_entries = 0;
-b4c0791e Nayna Jain 2018-07-25  495  	int i = 0;
-b4c0791e Nayna Jain 2018-07-25  496  
-b4c0791e Nayna Jain 2018-07-25  497  	arch_rules = arch_get_ima_policy();
-b4c0791e Nayna Jain 2018-07-25  498  	if (!arch_rules) {
-b4c0791e Nayna Jain 2018-07-25  499  		pr_info("No architecture policy rules.\n");
-b4c0791e Nayna Jain 2018-07-25  500  		return arch_entries;
-b4c0791e Nayna Jain 2018-07-25  501  	}
-b4c0791e Nayna Jain 2018-07-25  502  
-b4c0791e Nayna Jain 2018-07-25  503  	/* Get number of rules */
-b4c0791e Nayna Jain 2018-07-25  504  	for (rules = arch_rules; *rules != NULL; rules++)
-b4c0791e Nayna Jain 2018-07-25  505  		arch_entries++;
-b4c0791e Nayna Jain 2018-07-25  506  
-b4c0791e Nayna Jain 2018-07-25  507  	arch_policy_rules = kcalloc(arch_entries + 1,
-b4c0791e Nayna Jain 2018-07-25  508  				    sizeof(*arch_policy_rules), GFP_KERNEL);
-b4c0791e Nayna Jain 2018-07-25  509  	if (!arch_policy_rules)
-b4c0791e Nayna Jain 2018-07-25  510  		return 0;
-b4c0791e Nayna Jain 2018-07-25  511  
-b4c0791e Nayna Jain 2018-07-25  512  	arch_policy_entry = kcalloc(arch_entries + 1,
-b4c0791e Nayna Jain 2018-07-25  513  				    sizeof(*arch_policy_entry), GFP_KERNEL);
-b4c0791e Nayna Jain 2018-07-25  514  
-b4c0791e Nayna Jain 2018-07-25  515  	/* Convert arch policy string rules to struct ima_rule_entry format */
-b4c0791e Nayna Jain 2018-07-25  516  	for (rules = arch_rules, i = 0; *rules != NULL; rules++) {
-b4c0791e Nayna Jain 2018-07-25  517  		char rule[255];
-b4c0791e Nayna Jain 2018-07-25  518  		int result;
-b4c0791e Nayna Jain 2018-07-25  519  
-b4c0791e Nayna Jain 2018-07-25  520  		result = strlcpy(rule, *rules, sizeof(rule));
-b4c0791e Nayna Jain 2018-07-25  521  
-b4c0791e Nayna Jain 2018-07-25 @522  		INIT_LIST_HEAD(&arch_policy_entry[i].list);
-b4c0791e Nayna Jain 2018-07-25  523  		result = ima_parse_rule(rule, &arch_policy_entry[i]);
-b4c0791e Nayna Jain 2018-07-25  524  		if (result) {
-b4c0791e Nayna Jain 2018-07-25  525  			pr_warn("Skipping unknown architecture policy rule: %s\n", rule);
-b4c0791e Nayna Jain 2018-07-25  526  			memset(&arch_policy_entry[i], 0,
-b4c0791e Nayna Jain 2018-07-25  527  			       sizeof(*arch_policy_entry));
-b4c0791e Nayna Jain 2018-07-25  528  			continue;
-b4c0791e Nayna Jain 2018-07-25  529  		}
-b4c0791e Nayna Jain 2018-07-25  530  		arch_policy_rules[i] = &arch_policy_entry[i];
-b4c0791e Nayna Jain 2018-07-25  531  		i++;
-b4c0791e Nayna Jain 2018-07-25  532  	}
-b4c0791e Nayna Jain 2018-07-25  533  	return i;
-b4c0791e Nayna Jain 2018-07-25  534  }
-b4c0791e Nayna Jain 2018-07-25  535  
-
-:::::: The code at line 522 was first introduced by commit
-:::::: b4c0791e0facd968a3e0502a8a544390025a9a38 ima: add support for arch specific policies
-
-:::::: TO: Nayna Jain <nayna@linux.vnet.ibm.com>
-:::::: CC: 0day robot <lkp@intel.com>
-
----
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+-- 
+Mel Gorman
+SUSE Labs
