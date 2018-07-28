@@ -7,64 +7,64 @@ X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62258C28CF6
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B252C6778F
 	for <linux-kernel@archiver.kernel.org>; Sat, 28 Jul 2018 23:03:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1ACDF2089A
+	by mail.kernel.org (Postfix) with ESMTP id 525CF20842
 	for <linux-kernel@archiver.kernel.org>; Sat, 28 Jul 2018 23:03:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YNQaVFQK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1ACDF2089A
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GPd9Q7uo"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 525CF20842
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731566AbeG2AbS (ORCPT
+        id S1731589AbeG2AbT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 28 Jul 2018 20:31:18 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:52754 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731476AbeG2AbS (ORCPT
+        Sat, 28 Jul 2018 20:31:19 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:36852 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731559AbeG2AbT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 28 Jul 2018 20:31:18 -0400
-Received: by mail-wm0-f66.google.com with SMTP id o11-v6so9048771wmh.2
-        for <linux-kernel@vger.kernel.org>; Sat, 28 Jul 2018 16:03:09 -0700 (PDT)
+        Sat, 28 Jul 2018 20:31:19 -0400
+Received: by mail-wr1-f66.google.com with SMTP id h9-v6so8724911wro.3
+        for <linux-kernel@vger.kernel.org>; Sat, 28 Jul 2018 16:03:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=KnwOqrYtk3Q6CdQJuA3T8ApkJrIY5ZMUs2foDYRD8Q4=;
-        b=YNQaVFQKmyNPQiJBmCK37bMyg+M2ED2pDHXr1Aktx4KxS41G1IKPtS6LL6dRxajNqf
-         eQrvsszYu7tis3iO6N4Bnf6FY/mIgn4CQ1GTWkffZtJriFUXVy9r5uxkiHii3JHSUzPb
-         SJ+pBBqXQtrYkzoKcODxYFDL81zVJ19UjvGI02S+jEoQ0DW7+YUtIqAs1TkU+6dNP98T
-         OqpIF7qWNVFvVl8xFHHgo8sqvreT1tNrf/UCN53ofRsqXEuN2DgurSJA7f8seag3eUQb
-         BTN/7RsRezAlcXRq3fFvCcHUVy043jhJZHGIDoA5v4ueu90M0HQ2g/uAfksvIarohGxS
-         fr6Q==
+        bh=1FdxKaBA9biXmuwgATGI2n1vN+fQJCeFueRVKSiXXyU=;
+        b=GPd9Q7uo6lSU4HFADsN/GsH6RIq/5UtS3xa+qAxZwa3ARFuGQyUGkYWWVctKuM/Kod
+         OOCSz3avypGf8jI14IJzz2HSBqIxeKNVjN+Z+qh8KCvRfTbcMULsg5OCU2aPClIcgzbB
+         M/GtvvLFfrMxk1etmPmVpZUzGvkIPk/pw4TvLztBzXmKj190McDqthBGYWXxn246j6c+
+         tQoouTieQTq1Wi0QwK60vIdELQp6MD4oe8yVpE6u07LqzIGb/sMlv+myPq8c8zD8hZ1v
+         DUXNKrjOGn2VNs0eyQBMc2TayCj2kU4n7YNDZB/ZjwRLAjKN58jea9Whh8FSqaasybLy
+         KaKw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=KnwOqrYtk3Q6CdQJuA3T8ApkJrIY5ZMUs2foDYRD8Q4=;
-        b=n4bvu03wwybAl3boE+3tEdtHgFCmPL/91cOKT0oPETzEw3rGvLzvNVX/1mNqDTxPzg
-         WXRRA3fxUnDNTJYNZyH4xazkyvKgRdSfCCrOfRFYmEYrs3oPzED3NKsgpSeoS40WJP0T
-         KE0yw0ds65+fIAb6C1WgF301JFDW8H7Hwo3hVHyQQt9eut63I5aPW0fP2MbyqcQMwLaI
-         JTi8yw3UxvvfFIkx3UQITEZJvCLU24BHh7ZBp9mmEHSk0ALu8NoyxCJ9X1AE3u+wZXzs
-         YvFck+rCoQxf8lW2zp5mz8d+MKWoMAYNCMcIPVfRAiaVchVk4D1TdBwLtyaRx6eebMJc
-         9wyw==
-X-Gm-Message-State: AOUpUlHIe/0wK5U82ECyi6xVdutNVuwkDm4pWSZ9C2jNsjPmST+jc7UC
-        Y8uNvlqF9UrNLfQfYy8FEobkL+BX
-X-Google-Smtp-Source: AAOMgpc2dFisW08QlYQhr4uNXcxvWSRcGNOwlQTTpRJ3mPmWrt57k2r6fy/Nqk5JmwXZZCtJHkKAsg==
-X-Received: by 2002:a1c:b584:: with SMTP id e126-v6mr10229323wmf.136.1532818988681;
-        Sat, 28 Jul 2018 16:03:08 -0700 (PDT)
+        bh=1FdxKaBA9biXmuwgATGI2n1vN+fQJCeFueRVKSiXXyU=;
+        b=BxGX0FpDVxWMjhubUh3R61nsHG2ZQgp8CLFajubbBi0yKN36NkiANL6KpXnCbcQVnm
+         4wdqZDFlN+NfSMdonraplkioPUvUO36KTal0ameoOAdDO1af5XmQKHb3taNOx6ZFZ2ZM
+         XZD2X/+lXzHnErW+JaThfPhOJmQUF2QmSZOsz+bYOOT0Pjtp0e3P89eg/El1GVWa7Wo2
+         y1vsgKtQ6fzRTrMMCkeUMJ2DZZVyWPybfYndQV64jgRnHBM0n3EtkH+pSSah9UJaDCJH
+         ak+sHhcW23DicrTnHZCPyaiBKJn2V2p/R+ZoguMtOGgWvHSva87FDEUveEhTH4iEj4Ui
+         /58A==
+X-Gm-Message-State: AOUpUlEzMzNTF59YhjuQDsQ7s18oJ/2yWYuoomYpFq7DIwI6pTKn0hIS
+        UK5eASQIEsg3JCgul8yX40kdZnYg
+X-Google-Smtp-Source: AAOMgpc8MCkrKZlnM3cWo9XAoifNfGwP7mNslGpdYTtxyMHdVWC5Ga5eA4MyPDG/4sqbQ8gaFhkYDg==
+X-Received: by 2002:adf:9d1c:: with SMTP id k28-v6mr627368wre.29.1532818990036;
+        Sat, 28 Jul 2018 16:03:10 -0700 (PDT)
 Received: from localhost.localdomain (host81-158-116-187.range81-158.btcentralplus.com. [81.158.116.187])
-        by smtp.gmail.com with ESMTPSA id m207-v6sm11490569wma.31.2018.07.28.16.03.07
+        by smtp.gmail.com with ESMTPSA id m207-v6sm11490569wma.31.2018.07.28.16.03.08
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 28 Jul 2018 16:03:07 -0700 (PDT)
+        Sat, 28 Jul 2018 16:03:09 -0700 (PDT)
 From:   John Whitmore <johnfwhitmore@gmail.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     devel@driverdev.osuosl.org, gregkh@linuxfoundation.org,
         John Whitmore <johnfwhitmore@gmail.com>
-Subject: [PATCH 02/12] staging:rtl8192u: Rename ACI_AIFSN - Style
-Date:   Sun, 29 Jul 2018 00:02:54 +0100
-Message-Id: <20180728230300.19732-3-johnfwhitmore@gmail.com>
+Subject: [PATCH 03/12] staging:rtl8192u: Rename member variables - Style
+Date:   Sun, 29 Jul 2018 00:02:55 +0100
+Message-Id: <20180728230300.19732-4-johnfwhitmore@gmail.com>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180728230300.19732-1-johnfwhitmore@gmail.com>
 References: <20180728230300.19732-1-johnfwhitmore@gmail.com>
@@ -73,65 +73,55 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Rename the union ACI_AIFSN to aci_aifsn and remove the typedef directive.
+Rename the member variables of union aci_aifsn, which should be named
+in lowercase. The only member variable, of this union, which is
+actually used is 'acm'.
 
-The removal of the typedef clears the checkpatch issue with defining
-new types. The renaming is to adhere to the coding style where types
-are name in lower case.
-
-These changes are coding style changes which should have no impact on
-runtime execution.
+This are coding style changes which should have no impact on runtime
+code execution.
 
 Signed-off-by: John Whitmore <johnfwhitmore@gmail.com>
 ---
- drivers/staging/rtl8192u/ieee80211/rtl819x_Qos.h | 6 +++---
- drivers/staging/rtl8192u/r8192U_dm.c             | 2 +-
- 2 files changed, 4 insertions(+), 4 deletions(-)
+ drivers/staging/rtl8192u/ieee80211/rtl819x_Qos.h | 10 +++++-----
+ drivers/staging/rtl8192u/r8192U_dm.c             |  2 +-
+ 2 files changed, 6 insertions(+), 6 deletions(-)
 
 diff --git a/drivers/staging/rtl8192u/ieee80211/rtl819x_Qos.h b/drivers/staging/rtl8192u/ieee80211/rtl819x_Qos.h
-index 92afa9dc9663..5856bf87c5dc 100644
+index 5856bf87c5dc..901b85139d3b 100644
 --- a/drivers/staging/rtl8192u/ieee80211/rtl819x_Qos.h
 +++ b/drivers/staging/rtl8192u/ieee80211/rtl819x_Qos.h
-@@ -13,7 +13,7 @@
- // ACI/AIFSN Field.
+@@ -14,13 +14,13 @@
  // Ref: WMM spec 2.2.2: WME Parameter Element, p.12.
  //
--typedef	union _ACI_AIFSN {
-+union aci_aifsn {
- 	u8	charData;
+ union aci_aifsn {
+-	u8	charData;
++	u8	char_data;
  
  	struct {
-@@ -22,7 +22,7 @@ typedef	union _ACI_AIFSN {
- 		u8	ACI:2;
- 		u8	Reserved:1;
+-		u8	AIFSN:4;
+-		u8	ACM:1;
+-		u8	ACI:2;
+-		u8	Reserved:1;
++		u8	aifsn:4;
++		u8	acm:1;
++		u8	aci:2;
++		u8	reserved:1;
  	} f;	// Field
--} ACI_AIFSN, *PACI_AIFSN;
-+};
+ };
  
- //
- // ECWmin/ECWmax field.
-@@ -45,7 +45,7 @@ typedef	union _AC_PARAM {
- 	u8	charData[4];
- 
- 	struct {
--		ACI_AIFSN	AciAifsn;
-+		union aci_aifsn	AciAifsn;
- 		ECW		Ecw;
- 		u16		TXOPLimit;
- 	} f;	// Field
 diff --git a/drivers/staging/rtl8192u/r8192U_dm.c b/drivers/staging/rtl8192u/r8192U_dm.c
-index c4e4e3ba394b..04c08ca8a0bb 100644
+index 04c08ca8a0bb..7dc912dd53af 100644
 --- a/drivers/staging/rtl8192u/r8192U_dm.c
 +++ b/drivers/staging/rtl8192u/r8192U_dm.c
-@@ -2333,7 +2333,7 @@ static void dm_check_edca_turbo(
- 			{
- 				/*  TODO:  Modified this part and try to set acm control in only 1 IO processing!! */
- 
--				PACI_AIFSN	pAciAifsn = (PACI_AIFSN)&(qos_parameters->aifs[0]);
-+				union aci_aifsn *pAciAifsn = (union aci_aifsn *)&(qos_parameters->aifs[0]);
- 				u8		AcmCtrl;
+@@ -2338,7 +2338,7 @@ static void dm_check_edca_turbo(
  
  				read_nic_byte(dev, AcmHwCtrl, &AcmCtrl);
+ 
+-				if (pAciAifsn->f.ACM) { /*  ACM bit is 1. */
++				if (pAciAifsn->f.acm) { /*  acm bit is 1. */
+ 					AcmCtrl |= AcmHw_BeqEn;
+ 				} else {	/* ACM bit is 0. */
+ 					AcmCtrl &= (~AcmHw_BeqEn);
 -- 
 2.18.0
 
