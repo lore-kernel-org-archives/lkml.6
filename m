@@ -2,76 +2,85 @@ Return-Path: <SRS0=jKyA=KN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86623C46462
-	for <linux-kernel@archiver.kernel.org>; Sun, 29 Jul 2018 20:12:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67902C46462
+	for <linux-kernel@archiver.kernel.org>; Sun, 29 Jul 2018 20:14:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2D5F520873
-	for <linux-kernel@archiver.kernel.org>; Sun, 29 Jul 2018 20:12:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 06BDD20873
+	for <linux-kernel@archiver.kernel.org>; Sun, 29 Jul 2018 20:14:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=thunk.org header.i=@thunk.org header.b="ejb6PWzJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D5F520873
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mit.edu
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="I8lTktlB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 06BDD20873
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729023AbeG2VoX (ORCPT
+        id S1728698AbeG2VqU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 29 Jul 2018 17:44:23 -0400
-Received: from imap.thunk.org ([74.207.234.97]:40114 "EHLO imap.thunk.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726785AbeG2VoX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Jul 2018 17:44:23 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=thunk.org;
-         s=ef5046eb; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=MwqYN2B+gHMYntI1jnGVT7ccOppkUfdOAgqTkYFgnd8=; b=ejb6PWzJISw7V0OO9NsYwwAKf8
-        NDsdehJT4DjxIxZC0aCLmx8ct6EDoHTAQ2DoD9zw3tSM/awM2hnAnHsm4WcjhvAuzgfRTvktZ8PvY
-        C+WkKR9G8tFvw29j8RnKP3SbBS+opEyBmaZMwlZ+/JqllBFgV9rzWu2NH0E2N6b5aMQE=;
-Received: from root (helo=callcc.thunk.org)
-        by imap.thunk.org with local-esmtp (Exim 4.89)
-        (envelope-from <tytso@thunk.org>)
-        id 1fjs3V-00061Y-VM; Sun, 29 Jul 2018 20:12:42 +0000
-Received: by callcc.thunk.org (Postfix, from userid 15806)
-        id 48E1F7A64C1; Sun, 29 Jul 2018 16:12:36 -0400 (EDT)
-Date:   Sun, 29 Jul 2018 16:12:36 -0400
-From:   "Theodore Y. Ts'o" <tytso@mit.edu>
-To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc:     Andreas Dilger <adilger.kernel@dilger.ca>,
-        linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] ext4: use swap macro in mext_page_double_lock
-Message-ID: <20180729201236.GF21725@thunk.org>
-Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20180726174323.GA28731@embeddedor.com>
+        Sun, 29 Jul 2018 17:46:20 -0400
+Received: from mail-it0-f66.google.com ([209.85.214.66]:39542 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726813AbeG2VqU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 29 Jul 2018 17:46:20 -0400
+Received: by mail-it0-f66.google.com with SMTP id g141-v6so14091597ita.4
+        for <linux-kernel@vger.kernel.org>; Sun, 29 Jul 2018 13:14:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ZefVeQjz/Bp+bhV02lDkI5lYW0WEGa4dmnSRHna9SXw=;
+        b=I8lTktlB6VtBJKq8dCYRr6dDxWBYEMTZk4IYtflkEHnlP+kxdgaDtWdySbkjM+XyOk
+         isj9uC9/ZiELWh/j5cpfxfzY8oWaO5HlWCMxY7o0i9+PvF7yEcBmP3TRObpXlvvI4AYP
+         aD7b/WKm9KAXxz/ap01YeykYp2qalSR2rOalw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ZefVeQjz/Bp+bhV02lDkI5lYW0WEGa4dmnSRHna9SXw=;
+        b=PWz+JMn+cvCfp+knraCId1bX+lF7h9/Xkqht3pFPrgW9lDYcbIfYrn2ymK5gdxARRk
+         HH8sl3QFrVzfvGpfVTY9lH3YQOEjV7pTtKcN12s6WSBw2vrLM4tOmZyHz8iq+d3zX9gy
+         r46+c/SwzmK93AHLtGXUpQS9fHz9jAT4puJ9bdxDa4sWOdb0/1By5/8JTkVmbTOk2y7X
+         1wCCg3hZmoyinbSlAlN9/rM4KTPQixPYQCE1c7dZbEQWck82xSUlEA8UEarryTc9heL+
+         DcDWQr9bPiT8VeCrSWLl/GZSlcG3ynM+ekCJMWmApFgFymMMXhPqymcedXs/qDm2Ijar
+         p7RQ==
+X-Gm-Message-State: AOUpUlGmbZ16sfylpIREb0TpBJiKsVDkSee36jYj0tumC9YjOn9dgo7p
+        ZmeX40P1KOOZjV3e4ZTsUFAyuiApCI/r3jCL2cj1Bg==
+X-Google-Smtp-Source: AAOMgpcBF+J4C7F8u5Cn7MwFYc4zKQ9F+SzLTQH0xMDq8OhlC7XOyfHklyhV+App35NKftDwNBUxTvtzOvJJ94qlzEU=
+X-Received: by 2002:a24:2c49:: with SMTP id i70-v6mr12496374iti.135.1532895280504;
+ Sun, 29 Jul 2018 13:14:40 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180726174323.GA28731@embeddedor.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: tytso@thunk.org
-X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
+References: <1531821387-29845-1-git-send-email-ludovic.Barre@st.com> <1531821387-29845-2-git-send-email-ludovic.Barre@st.com>
+In-Reply-To: <1531821387-29845-2-git-send-email-ludovic.Barre@st.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Sun, 29 Jul 2018 22:14:28 +0200
+Message-ID: <CACRpkdb1OEQ+bsymueBTVwi+Qv8PYsxqipVWuLputdrhz_OgfA@mail.gmail.com>
+Subject: Re: [PATCH 1/2] dt-bindings: pinctrl: add syscfg mask parameter
+To:     Ludovic Barre <ludovic.Barre@st.com>
+Cc:     Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre TORGUE <alexandre.torgue@st.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 26, 2018 at 12:43:23PM -0500, Gustavo A. R. Silva wrote:
-> Make use of the swap macro and remove unnecessary variable *tmp*.
-> This makes the code easier to read and maintain.
-> 
-> This code was detected with the help of Coccinelle.
-> 
-> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+On Tue, Jul 17, 2018 at 11:56 AM Ludovic Barre <ludovic.Barre@st.com> wrote:
 
-Thanks, applied.
+> From: Ludovic Barre <ludovic.barre@st.com>
+>
+> This patch adds mask parameter to define IRQ mux field.
+> This field could vary depend of IRQ mux selection register.
+> This parameter is needed if the mask is different of 0xf.
+>
+> Signed-off-by: Ludovic Barre <ludovic.barre@st.com>
 
-					- Ted
+Patch applied with Alexandre's ACK.
+
+Yours,
+Linus Walleij
