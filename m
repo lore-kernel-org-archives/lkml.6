@@ -5,54 +5,55 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 416A9C46462
-	for <linux-kernel@archiver.kernel.org>; Sun, 29 Jul 2018 20:17:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67C49C46461
+	for <linux-kernel@archiver.kernel.org>; Sun, 29 Jul 2018 20:18:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F33F020873
-	for <linux-kernel@archiver.kernel.org>; Sun, 29 Jul 2018 20:17:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F33F020873
+	by mail.kernel.org (Postfix) with ESMTP id 1FD9020857
+	for <linux-kernel@archiver.kernel.org>; Sun, 29 Jul 2018 20:18:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1FD9020857
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728938AbeG2VtW (ORCPT
+        id S1729378AbeG2Vu1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 29 Jul 2018 17:49:22 -0400
-Received: from shards.monkeyblade.net ([23.128.96.9]:44494 "EHLO
+        Sun, 29 Jul 2018 17:50:27 -0400
+Received: from shards.monkeyblade.net ([23.128.96.9]:44506 "EHLO
         shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726832AbeG2VtW (ORCPT
+        with ESMTP id S1726776AbeG2Vu1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Jul 2018 17:49:22 -0400
+        Sun, 29 Jul 2018 17:50:27 -0400
 Received: from localhost (c-73-37-107-99.hsd1.or.comcast.net [73.37.107.99])
         (using TLSv1 with cipher AES256-SHA (256/256 bits))
         (Client did not present a certificate)
         (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id C8D9013E33738;
-        Sun, 29 Jul 2018 13:17:41 -0700 (PDT)
-Date:   Sun, 29 Jul 2018 13:17:41 -0700 (PDT)
-Message-Id: <20180729.131741.711465145442387927.davem@davemloft.net>
-To:     supertakumi86@gmail.com
-Cc:     nic_swsd@realtek.com, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] net: ethernet: realtek: r8169: Add spaces after commas
- coding style issue
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id 71A9C13E33738;
+        Sun, 29 Jul 2018 13:18:46 -0700 (PDT)
+Date:   Sun, 29 Jul 2018 13:18:45 -0700 (PDT)
+Message-Id: <20180729.131845.335462825951067009.davem@davemloft.net>
+To:     yuehaibing@huawei.com
+Cc:     Ariel.Elior@cavium.com, everest-linux-l2@cavium.com,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org
+Subject: Re: [PATCH net-next] qed: remove redundant functions
+ qed_get_cm_pq_idx_rl
 From:   David Miller <davem@davemloft.net>
-In-Reply-To: <20180728090217.GA19065@zenus>
-References: <20180728090217.GA19065@zenus>
+In-Reply-To: <20180728102336.16956-1-yuehaibing@huawei.com>
+References: <20180728102336.16956-1-yuehaibing@huawei.com>
 X-Mailer: Mew version 6.7 on Emacs 26 / Mule 6.0 (HANACHIRUSATO)
 Mime-Version: 1.0
 Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Sun, 29 Jul 2018 13:17:42 -0700 (PDT)
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Sun, 29 Jul 2018 13:18:46 -0700 (PDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sohil Ladhani <supertakumi86@gmail.com>
-Date: Sat, 28 Jul 2018 14:32:21 +0530
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Sat, 28 Jul 2018 18:23:36 +0800
 
-> Fixed a coding style issue
+> There are no in-tree callers of qed_get_cm_pq_idx_rl since it be there,
+> so it can be removed.
 > 
-> Signed-off-by: Sohil Ladhani <supertakumi86@gmail.com>
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 
-This doesn't apply to the current net-next tree.
+Applied.
