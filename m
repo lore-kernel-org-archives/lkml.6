@@ -2,258 +2,114 @@ Return-Path: <SRS0=jKyA=KN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0487C46461
-	for <linux-kernel@archiver.kernel.org>; Sun, 29 Jul 2018 19:55:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CCD2C46462
+	for <linux-kernel@archiver.kernel.org>; Sun, 29 Jul 2018 19:57:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 778C220882
-	for <linux-kernel@archiver.kernel.org>; Sun, 29 Jul 2018 19:55:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 778C220882
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com
+	by mail.kernel.org (Postfix) with ESMTP id 4952220882
+	for <linux-kernel@archiver.kernel.org>; Sun, 29 Jul 2018 19:57:00 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="CxCaRLUq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4952220882
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728654AbeG2V04 (ORCPT
+        id S1728476AbeG2V2e (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 29 Jul 2018 17:26:56 -0400
-Received: from shelob.surriel.com ([96.67.55.147]:48302 "EHLO
-        shelob.surriel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726644AbeG2V04 (ORCPT
+        Sun, 29 Jul 2018 17:28:34 -0400
+Received: from mail-it0-f67.google.com ([209.85.214.67]:50328 "EHLO
+        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726644AbeG2V2e (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Jul 2018 17:26:56 -0400
-Received: from [2603:3005:d05:2b00:6e0b:84ff:fee2:98bb] (helo=imladris.surriel.com)
-        by shelob.surriel.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.90_1)
-        (envelope-from <riel@shelob.surriel.com>)
-        id 1fjrmh-0002MM-Vm; Sun, 29 Jul 2018 15:55:19 -0400
-Date:   Sun, 29 Jul 2018 15:54:52 -0400
-From:   Rik van Riel <riel@surriel.com>
-To:     Andy Lutomirski <luto@kernel.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Sun, 29 Jul 2018 17:28:34 -0400
+Received: by mail-it0-f67.google.com with SMTP id g191-v6so3416982ita.0
+        for <linux-kernel@vger.kernel.org>; Sun, 29 Jul 2018 12:56:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=8sfgsSz3YTOMGINWX5xbwvOPbnsWQCfLZ9UYwzEYogs=;
+        b=CxCaRLUqNWtWeV3Q8aLyLRgJIheSpL/4YxUPuEGnqONakDpHSqJp1KL400RqXle4H1
+         4HjxfRAKPJYCMzqA5qVaFb+W8KFS2pFPygmna1Dk/30mQ62av26/kM+PxtZDD1bzUBhN
+         IyQXQqvz4SEGH+IQeHtgdXZuIHA9PGduJSA9A=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=8sfgsSz3YTOMGINWX5xbwvOPbnsWQCfLZ9UYwzEYogs=;
+        b=Mxq/WS1rCY3U29Pjic0bZPUR0zEMHwyXJ9eB5HLBi8Kk9QNSkXXSzzyZrHi7TEcgfu
+         9bm4CVgh/K9RcbLURTT4uO++oR33gGSTG+L7w/LCHSkwCtpTfC0m4OT5IVslP0HIWVz7
+         4GqkCvgS/YcTv1yawl92xlz//SbtGIB02GtmVZB6BN/O9Qi0AJlEdxCQXhOXkks+wjBh
+         5bdmrI4Io0OuMb168p36tiPvyJsuWGNOgptfyL6kRsiB7bTl1RYESaiFgIhICwKc3gZL
+         XOjfJKcMoocX6Jz+dp8e5pEt+PMs8jMsnErSn+e8f3UN3HZP3pA/aLCQrcCXGHT6i9b0
+         5GyQ==
+X-Gm-Message-State: AOUpUlFBL6aT1tL9+h0PnAeGADkr1t8RG0/XhcWjPuq5QY58UN7OUpML
+        P/QBqRwlNhg/N+O8DmG7idjJVN9XRJyYV3Xjkj0=
+X-Google-Smtp-Source: AAOMgpf8iD/riy5s/sU4I//iSZiDIho6b7RFfGkNae4+4Lavw1HtxyGEkjCAadN/5eqC+R7jbYFayod/fnxn3H4uXHA=
+X-Received: by 2002:a24:5002:: with SMTP id m2-v6mr11977541itb.16.1532894217159;
+ Sun, 29 Jul 2018 12:56:57 -0700 (PDT)
+MIME-Version: 1.0
+References: <20180728215357.3249-1-riel@surriel.com> <20180728215357.3249-4-riel@surriel.com>
+ <CALCETrUipqat-78++E8fL7d2=77Cbj72jCTZMO=yNF8nX9HhCA@mail.gmail.com>
+ <1532865634.28585.2.camel@surriel.com> <E710FBA5-CC5E-4941-ACBF-4AB3424F1F68@amacapital.net>
+ <1532886673.28585.24.camel@surriel.com> <8A3221EE-0D94-487E-B53D-885A555634BD@amacapital.net>
+In-Reply-To: <8A3221EE-0D94-487E-B53D-885A555634BD@amacapital.net>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Sun, 29 Jul 2018 12:56:46 -0700
+Message-ID: <CA+55aFx4eLxPK+jn639GW8UcdguVvXFdwMsM4Ko33yWMME5tAA@mail.gmail.com>
+Subject: Re: [PATCH 03/10] smp,cpumask: introduce on_each_cpu_cond_mask
+To:     Andy Lutomirski <luto@amacapital.net>
+Cc:     Rik van Riel <riel@surriel.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Andrew Lutomirski <luto@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         kernel-team <kernel-team@fb.com>,
-        Peter Zijlstra <peterz@infradead.org>, X86 ML <x86@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
         Vitaly Kuznetsov <vkuznets@redhat.com>,
         Ingo Molnar <mingo@kernel.org>, Mike Galbraith <efault@gmx.de>,
-        Dave Hansen <dave.hansen@intel.com>,
+        Dave Hansen <dave.hansen@intel.com>, will.daecon@arm.com,
         Catalin Marinas <catalin.marinas@arm.com>,
         Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Subject: [PATCH v2 11/11] mm,sched: conditionally skip lazy TLB mm
- refcounting
-Message-ID: <20180729155452.37eddc11@imladris.surriel.com>
-In-Reply-To: <CALCETrWS4pE5Tv3OErM3AD-E=CGG3U+2CBVecRF3N0c+g42vEg@mail.gmail.com>
-References: <20180728215357.3249-1-riel@surriel.com>
-        <20180728215357.3249-11-riel@surriel.com>
-        <CALCETrWS4pE5Tv3OErM3AD-E=CGG3U+2CBVecRF3N0c+g42vEg@mail.gmail.com>
-X-Mailer: Claws Mail 3.15.1-dirty (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 28 Jul 2018 21:21:17 -0700
-Andy Lutomirski <luto@kernel.org> wrote:
+On Sun, Jul 29, 2018 at 11:55 AM Andy Lutomirski <luto@amacapital.net> wrote:
+> > On Jul 29, 2018, at 10:51 AM, Rik van Riel <riel@surriel.com> wrote:
+> >
+> > This seems to result in systems with ->has_wbinvd_exit
+> > only calling wbinvd_ipi on OTHER CPUs, and not on the
+> > CPU where the guest exited with wbinvd?
+> >
+> > This seems unintended.
+> >
+> > I guess looking into on_each_cpu_mask might be a little
+> > higher priority than waiting until the next Outreachy
+> > season :)
+>
+> The right approach might be a tree wise rename from smp_call_... to on_other_cpus_mask() it similar. The current naming and semantics are extremely confusing.
 
-> On Sat, Jul 28, 2018 at 2:53 PM, Rik van Riel <riel@surriel.com> wrote:
-> > Conditionally skip lazy TLB mm refcounting. When an architecture has
-> > CONFIG_ARCH_NO_ACTIVE_MM_REFCOUNTING enabled, an mm that is used in
-> > lazy TLB mode anywhere will get shot down from exit_mmap, and there
-> > in no need to incur the cache line bouncing overhead of refcounting
-> > a lazy TLB mm.  
-> 
-> Unless I've misunderstood something, this patch results in idle tasks
-> whose active_mm has been freed still having active_mm pointing at
-> freed memory.
+Ugh.
 
----8<---
+Renaming might be worth it, but at least one issue is that we are
+simply not very consistent.
 
-Author: Rik van Riel <riel@surriel.com>
-Subject: [PATCH 11/11] mm,sched: conditionally skip lazy TLB mm refcounting
+For example. smp_call_function_many() does indeed explicitly ignore
+the current CPU.
 
-Conditionally skip lazy TLB mm refcounting. When an architecture has
-CONFIG_ARCH_NO_ACTIVE_MM_REFCOUNTING enabled, an mm that is used in
-lazy TLB mode anywhere will get shot down from exit_mmap, and there
-in no need to incur the cache line bouncing overhead of refcounting
-a lazy TLB mm.
+But smp_call_function_any() (one "m" less) does _not_ ignore the
+current CPU, and in fact prefers it.
 
-Implement this by moving the refcounting of a lazy TLB mm to helper
-functions, which skip the refcounting when it is not necessary.
+So it's not that smp_call_... should *generally* be renamed. Only some
+of the cases might be worth renaming.
 
-Deal with use_mm and unuse_mm by fully splitting out the refcounting
-of the lazy TLB mm a kernel thread may have when entering use_mm from
-the refcounting of the mm that use_mm is about to start using.
+And just a "rename and forget" isn't really great. As Rik's example
+shows, existing users should be checked too..
 
-Signed-off-by: Rik van Riel <riel@surriel.com>
----
- arch/x86/mm/tlb.c        |  5 +++--
- fs/exec.c                |  2 +-
- include/linux/sched/mm.h | 25 +++++++++++++++++++++++++
- kernel/sched/core.c      |  6 +++---
- mm/mmu_context.c         | 21 ++++++++++++++-------
- 5 files changed, 46 insertions(+), 13 deletions(-)
-
-diff --git a/arch/x86/mm/tlb.c b/arch/x86/mm/tlb.c
-index 425cb9fa2640..d53d9c19b97d 100644
---- a/arch/x86/mm/tlb.c
-+++ b/arch/x86/mm/tlb.c
-@@ -8,6 +8,7 @@
- #include <linux/cpu.h>
- #include <linux/debugfs.h>
- #include <linux/gfp.h>
-+#include <linux/sched/mm.h>
- 
- #include <asm/tlbflush.h>
- #include <asm/mmu_context.h>
-@@ -141,7 +142,7 @@ void leave_mm(void *dummy)
- 
- 	switch_mm(NULL, &init_mm, NULL);
- 	current->active_mm = &init_mm;
--	mmdrop(loaded_mm);
-+	drop_lazy_mm(loaded_mm);
- }
- EXPORT_SYMBOL_GPL(leave_mm);
- 
-@@ -486,7 +487,7 @@ static void flush_tlb_func_common(const struct flush_tlb_info *f,
- 		 */
- 		switch_mm_irqs_off(NULL, &init_mm, NULL);
- 		current->active_mm = &init_mm;
--		mmdrop(loaded_mm);
-+		drop_lazy_mm(loaded_mm);
- 		return;
- 	}
- 
-diff --git a/fs/exec.c b/fs/exec.c
-index bdd0eacefdf5..7a6d4811b02b 100644
---- a/fs/exec.c
-+++ b/fs/exec.c
-@@ -1043,7 +1043,7 @@ static int exec_mmap(struct mm_struct *mm)
- 		mmput(old_mm);
- 		return 0;
- 	}
--	mmdrop(active_mm);
-+	drop_lazy_mm(active_mm);
- 	return 0;
- }
- 
-diff --git a/include/linux/sched/mm.h b/include/linux/sched/mm.h
-index 44d356f5e47c..7308bf38012f 100644
---- a/include/linux/sched/mm.h
-+++ b/include/linux/sched/mm.h
-@@ -49,6 +49,31 @@ static inline void mmdrop(struct mm_struct *mm)
- 		__mmdrop(mm);
- }
- 
-+/*
-+ * In lazy TLB mode, a CPU keeps the mm of the last process mapped while
-+ * running a kernel thread or idle; we must make sure the lazy TLB mm and
-+ * page tables do not disappear while a lazy TLB mode CPU uses them.
-+ * There are two ways to handle the race between lazy TLB CPUs and exit_mmap:
-+ * 1) Have a lazy TLB CPU hold a refcount on the lazy TLB mm.
-+ * 2) Have the architecture code shoot down the lazy TLB mm from exit_mmap;
-+ *    in that case, refcounting can be skipped, reducing cache line bouncing.
-+ */
-+static inline void grab_lazy_mm(struct mm_struct *mm)
-+{
-+	if (IS_ENABLED(CONFIG_ARCH_NO_ACTIVE_MM_REFCOUNTING))
-+		return;
-+
-+	mmgrab(mm);
-+}
-+
-+static inline void drop_lazy_mm(struct mm_struct *mm)
-+{
-+	if (IS_ENABLED(CONFIG_ARCH_NO_ACTIVE_MM_REFCOUNTING))
-+		return;
-+
-+	mmdrop(mm);
-+}
-+
- /**
-  * mmget() - Pin the address space associated with a &struct mm_struct.
-  * @mm: The address space to pin.
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index c45de46fdf10..11724c9e88b0 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -2691,7 +2691,7 @@ static struct rq *finish_task_switch(struct task_struct *prev)
- 	 */
- 	if (mm) {
- 		membarrier_mm_sync_core_before_usermode(mm);
--		mmdrop(mm);
-+		drop_lazy_mm(mm);
- 	}
- 	if (unlikely(prev_state == TASK_DEAD)) {
- 		if (prev->sched_class->task_dead)
-@@ -2805,7 +2805,7 @@ context_switch(struct rq *rq, struct task_struct *prev,
- 	 */
- 	if (!mm) {
- 		next->active_mm = oldmm;
--		mmgrab(oldmm);
-+		grab_lazy_mm(oldmm);
- 		enter_lazy_tlb(oldmm, next);
- 	} else
- 		switch_mm_irqs_off(oldmm, mm, next);
-@@ -5532,7 +5532,7 @@ void idle_task_exit(void)
- 		current->active_mm = &init_mm;
- 		finish_arch_post_lock_switch();
- 	}
--	mmdrop(mm);
-+	drop_lazy_mm(mm);
- }
- 
- /*
-diff --git a/mm/mmu_context.c b/mm/mmu_context.c
-index 3e612ae748e9..d5c2524cdd9a 100644
---- a/mm/mmu_context.c
-+++ b/mm/mmu_context.c
-@@ -24,12 +24,15 @@ void use_mm(struct mm_struct *mm)
- 	struct mm_struct *active_mm;
- 	struct task_struct *tsk = current;
- 
-+	/* Kernel threads have a NULL tsk->mm when entering. */
-+	WARN_ON(tsk->mm);
-+
- 	task_lock(tsk);
-+	/* Previous ->active_mm was held in lazy TLB mode. */
- 	active_mm = tsk->active_mm;
--	if (active_mm != mm) {
--		mmgrab(mm);
--		tsk->active_mm = mm;
--	}
-+	/* Grab mm for reals; tsk->mm needs to stick around until unuse_mm. */
-+	mmgrab(mm);
-+	tsk->active_mm = mm;
- 	tsk->mm = mm;
- 	switch_mm(active_mm, mm, tsk);
- 	task_unlock(tsk);
-@@ -37,8 +40,9 @@ void use_mm(struct mm_struct *mm)
- 	finish_arch_post_lock_switch();
- #endif
- 
--	if (active_mm != mm)
--		mmdrop(active_mm);
-+	/* Drop the lazy TLB mode mm. */
-+	if (active_mm)
-+		drop_lazy_mm(active_mm);
- }
- EXPORT_SYMBOL_GPL(use_mm);
- 
-@@ -57,8 +61,11 @@ void unuse_mm(struct mm_struct *mm)
- 	task_lock(tsk);
- 	sync_mm_rss(mm);
- 	tsk->mm = NULL;
--	/* active_mm is still 'mm' */
-+	/* active_mm is still 'mm'; grab it as a lazy TLB mm */
-+	grab_lazy_mm(mm);
- 	enter_lazy_tlb(mm, tsk);
-+	/* drop the tsk->mm refcount */
-+	mmdrop(mm);
- 	task_unlock(tsk);
- }
- EXPORT_SYMBOL_GPL(unuse_mm);
--- 
-2.14.4
-
+                    Linus
