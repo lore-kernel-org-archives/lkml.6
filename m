@@ -2,90 +2,157 @@ Return-Path: <SRS0=jKyA=KN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3DB7C28CF6
-	for <linux-kernel@archiver.kernel.org>; Sun, 29 Jul 2018 02:14:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4272C43142
+	for <linux-kernel@archiver.kernel.org>; Sun, 29 Jul 2018 02:20:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5C3F5204EC
-	for <linux-kernel@archiver.kernel.org>; Sun, 29 Jul 2018 02:14:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 724F9204EC
+	for <linux-kernel@archiver.kernel.org>; Sun, 29 Jul 2018 02:20:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="QeAqoTnb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5C3F5204EC
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="WgXDrW7Y"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 724F9204EC
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731797AbeG2Dmi (ORCPT
+        id S1731860AbeG2DsL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 28 Jul 2018 23:42:38 -0400
-Received: from ozlabs.org ([203.11.71.1]:47333 "EHLO ozlabs.org"
+        Sat, 28 Jul 2018 23:48:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57392 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731506AbeG2Dmi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 28 Jul 2018 23:42:38 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1731818AbeG2DsL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 28 Jul 2018 23:48:11 -0400
+Received: from [192.168.0.101] (unknown [180.111.102.36])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 41dR8P6d1cz9s0R;
-        Sun, 29 Jul 2018 12:13:57 +1000 (AEST)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1532830438;
-        bh=j8Y47AJcPaGyiCHyuLvRCzsnA9iQpHGDthQyJe0IzSM=;
-        h=Date:From:To:Cc:Subject:From;
-        b=QeAqoTnbcL70CMxVQEk6m2ftFJvMiijjposThoKqahnhICCLwIHXe98PMvp1rR+0V
-         e543hWgIWo2rrv4LcjwklG+oDsinZwcha3Nt7ZDbNFzskLHIAFwXOKSzkV2rIQmiJR
-         mAsxct/toPrV/ilVpCk+SRLMlFSpudCxNm/A2ce1eIyySp3HrLww1/m6YcWyylxjTS
-         oMwy1mBNHtuHF1ENV4Mi3xlyJPkiXH4ywMEAaa+NgQT8LwB9fLd4oVlIK0Itzhoz8p
-         v90++Gtrb4OGbWggpqu5pdF8Gb7+7xMDOuWdfXAikaYmn5vf/EFPrzU//tn+7R7cbu
-         gLzrIrM/xx4Dg==
-Date:   Sun, 29 Jul 2018 12:13:51 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Vineet Gupta <Vineet.Gupta1@synopsys.com>
-Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: linux-next: Signed-off-by missing for commit in the arc-current
- tree
-Message-ID: <20180729121351.26912f3c@canb.auug.org.au>
+        by mail.kernel.org (Postfix) with ESMTPSA id 7AAA9204EC;
+        Sun, 29 Jul 2018 02:19:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1532830770;
+        bh=CNQH8Gh98saHDKlD57tgow+aOlVLDxCxRf1rb9dNXPw=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=WgXDrW7Ym6u4HJ+GffkKW8bLwQewevOB49ys88rN/pZJyE5QMnsVq/6ej3FUcmsHX
+         s0VDGKLT/F/Dvmkx6bNyJ+PK0wtpA2udn1VQDMXlzXrxdZplZnuMEIdTeclJOOfp0a
+         5SMrhIUQO9JF1NwNsI5mTSEVWyiLvxL05sjGM188=
+Subject: Re: [PATCH 4/4] f2fs: fix to spread clear_cold_data()
+To:     Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>
+Cc:     linux-f2fs-devel@lists.sourceforge.net,
+        linux-kernel@vger.kernel.org, Weichao Guo <guoweichao@huawei.com>
+References: <20180727101516.41403-1-yuchao0@huawei.com>
+ <20180727101516.41403-4-yuchao0@huawei.com>
+ <20180729020013.GG83620@jaegeuk-macbookpro.roam.corp.google.com>
+From:   Chao Yu <chao@kernel.org>
+Message-ID: <b7d39e79-dfb0-17c3-1eee-6afb969008a4@kernel.org>
+Date:   Sun, 29 Jul 2018 10:19:26 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/bP1TogKgY+TMCHMoYvJmZfV"; protocol="application/pgp-signature"
+In-Reply-To: <20180729020013.GG83620@jaegeuk-macbookpro.roam.corp.google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/bP1TogKgY+TMCHMoYvJmZfV
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On 2018/7/29 10:00, Jaegeuk Kim wrote:
+> On 07/27, Chao Yu wrote:
+>> We need to drop PG_checked flag on page as well when we clear PG_uptodate
+>> flag, in order to avoid treating the page as GCing one later.
+> 
+> What do you mean "treating the page as GCing one"?
 
-Hi Vineet,
+I mean if PG_checked flag in page is not cleared, allocator will make it goes
+into cold area.
 
-Commit
+static int __get_segment_type_6(struct f2fs_io_info *fio)
+...
+		if (is_cold_data(fio->page) || file_is_cold(inode))
+			return CURSEG_COLD_DATA;
 
-  fa52704e2816 ("ARC: add SMP_CACHE_BYTES value validate")
+Thanks,
 
-is missing a Signed-off-by from its committer.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/bP1TogKgY+TMCHMoYvJmZfV
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltdIt8ACgkQAVBC80lX
-0GzUHQgAk4ZkHYWgVDL9X2LfqrFaQEqpiZyB2VCvysq268etv9YW66ySfCgR7hLv
-O0HxtGPpYiMpISvJxtUw0kmDkfolZp36j+EZIYOW8cia5F86YF6uVwCNLU1LfE0J
-XSaDTnXPsAK/A7uT32APZFEwla6H6GecMlG+2k0cAnJfuCULUAPQM34s+Fv1PPdI
-0jBAao9YNLWIOwLL7WSRsypvZtQ4ejF7sebYAEkr64HWaVMrt43wmIbYF22vJSS9
-uqndV+4nt+zZbpGCiZszQc/kJ94VATz/2qCCuIMmkJhCL+c93S96XSgtx6EcvDkZ
-lsX5uuOQ/UlyKdebhIEyfJ1FqawdsQ==
-=BDEO
------END PGP SIGNATURE-----
-
---Sig_/bP1TogKgY+TMCHMoYvJmZfV--
+> 
+>>
+>> Signed-off-by: Weichao Guo <guoweichao@huawei.com>
+>> Signed-off-by: Chao Yu <yuchao0@huawei.com>
+>> ---
+>>  fs/f2fs/data.c    | 8 +++++++-
+>>  fs/f2fs/dir.c     | 1 +
+>>  fs/f2fs/segment.c | 4 +++-
+>>  3 files changed, 11 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+>> index a29f3162b887..2817e2f4eb17 100644
+>> --- a/fs/f2fs/data.c
+>> +++ b/fs/f2fs/data.c
+>> @@ -1768,6 +1768,7 @@ int f2fs_do_write_data_page(struct f2fs_io_info *fio)
+>>  	/* This page is already truncated */
+>>  	if (fio->old_blkaddr == NULL_ADDR) {
+>>  		ClearPageUptodate(page);
+>> +		clear_cold_data(page);
+>>  		goto out_writepage;
+>>  	}
+>>  got_it:
+>> @@ -1943,8 +1944,10 @@ static int __write_data_page(struct page *page, bool *submitted,
+>>  
+>>  out:
+>>  	inode_dec_dirty_pages(inode);
+>> -	if (err)
+>> +	if (err) {
+>>  		ClearPageUptodate(page);
+>> +		clear_cold_data(page);
+>> +	}
+>>  
+>>  	if (wbc->for_reclaim) {
+>>  		f2fs_submit_merged_write_cond(sbi, inode, 0, page->index, DATA);
+>> @@ -2534,6 +2537,8 @@ void f2fs_invalidate_page(struct page *page, unsigned int offset,
+>>  		}
+>>  	}
+>>  
+>> +	clear_cold_data(page);
+>> +
+>>  	/* This is atomic written page, keep Private */
+>>  	if (IS_ATOMIC_WRITTEN_PAGE(page))
+>>  		return f2fs_drop_inmem_page(inode, page);
+>> @@ -2552,6 +2557,7 @@ int f2fs_release_page(struct page *page, gfp_t wait)
+>>  	if (IS_ATOMIC_WRITTEN_PAGE(page))
+>>  		return 0;
+>>  
+>> +	clear_cold_data(page);
+>>  	set_page_private(page, 0);
+>>  	ClearPagePrivate(page);
+>>  	return 1;
+>> diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
+>> index 7f955c4e86a4..1e4a4122eb0c 100644
+>> --- a/fs/f2fs/dir.c
+>> +++ b/fs/f2fs/dir.c
+>> @@ -734,6 +734,7 @@ void f2fs_delete_entry(struct f2fs_dir_entry *dentry, struct page *page,
+>>  		clear_page_dirty_for_io(page);
+>>  		ClearPagePrivate(page);
+>>  		ClearPageUptodate(page);
+>> +		clear_cold_data(page);
+>>  		inode_dec_dirty_pages(dir);
+>>  		f2fs_remove_dirty_inode(dir);
+>>  	}
+>> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+>> index 58abbdc53561..4d83961745e6 100644
+>> --- a/fs/f2fs/segment.c
+>> +++ b/fs/f2fs/segment.c
+>> @@ -267,8 +267,10 @@ static int __revoke_inmem_pages(struct inode *inode,
+>>  		}
+>>  next:
+>>  		/* we don't need to invalidate this in the sccessful status */
+>> -		if (drop || recover)
+>> +		if (drop || recover) {
+>>  			ClearPageUptodate(page);
+>> +			clear_cold_data(page);
+>> +		}
+>>  		set_page_private(page, 0);
+>>  		ClearPagePrivate(page);
+>>  		f2fs_put_page(page, 1);
+>> -- 
+>> 2.18.0.rc1
