@@ -2,152 +2,128 @@ Return-Path: <SRS0=jKyA=KN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18682C46462
-	for <linux-kernel@archiver.kernel.org>; Sun, 29 Jul 2018 17:06:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FC4CC46461
+	for <linux-kernel@archiver.kernel.org>; Sun, 29 Jul 2018 17:09:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A8F0C20857
-	for <linux-kernel@archiver.kernel.org>; Sun, 29 Jul 2018 17:06:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A8F0C20857
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id AF59720857
+	for <linux-kernel@archiver.kernel.org>; Sun, 29 Jul 2018 17:09:20 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="W8mBOqfm"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AF59720857
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726524AbeG2ShE (ORCPT
+        id S1726587AbeG2SkV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 29 Jul 2018 14:37:04 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:34686 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726417AbeG2ShE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Jul 2018 14:37:04 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 262FD87A70;
-        Sun, 29 Jul 2018 17:05:59 +0000 (UTC)
-Received: from krava (ovpn-204-74.brq.redhat.com [10.40.204.74])
-        by smtp.corp.redhat.com (Postfix) with SMTP id BF6222156701;
-        Sun, 29 Jul 2018 17:05:56 +0000 (UTC)
-Date:   Sun, 29 Jul 2018 19:05:56 +0200
-From:   Jiri Olsa <jolsa@redhat.com>
-To:     Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc:     rodia@autistici.org, Jiri Olsa <jolsa@kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        David Ahern <dsahern@gmail.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Joe Mario <jmario@redhat.com>
-Subject: Re: [PATCH] perf c2c report: Fix crash for empty browser
-Message-ID: <20180729170556.GB17776@krava>
-References: <20180724062008.26126-1-jolsa@kernel.org>
- <20180726193046.GC20438@kernel.org>
- <c5cb64016f7da6c2abdef4a05ea74425@autistici.org>
- <20180727070623.GA24770@krava>
- <20180727141340.GA4722@kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180727141340.GA4722@kernel.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Sun, 29 Jul 2018 17:05:59 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Sun, 29 Jul 2018 17:05:59 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jolsa@redhat.com' RCPT:''
+        Sun, 29 Jul 2018 14:40:21 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:40484 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726368AbeG2SkV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 29 Jul 2018 14:40:21 -0400
+Received: by mail-wm0-f65.google.com with SMTP id y9-v6so11060477wma.5
+        for <linux-kernel@vger.kernel.org>; Sun, 29 Jul 2018 10:09:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=7/W48QyIR6XHID4Vjb2pO/vmCmxJiftq4xnfc/WBzHM=;
+        b=W8mBOqfmUKGk+6ZSa8gk6VdZ0J++4xUZdk3XU1Z2+W61DIAt3l9bpE6L5oU4sTrXZV
+         Cy715HBhBzitm2t7MBdRPgZNmpPBC/Y4Zw0VwE8ftxU3Boyeyy40su/NkeSZ3HdVqh67
+         WmjgYFUpifAQS82Jsd9zX2EwrLXudAzbQT9OAy41OqMEX7ZivpTq4GgJFRHX+LtmHNL/
+         pNxqhk6RcZ57snkkYg+74D6GxeKr23ALMHDvAtUr0LTaAvL9j2TMOfi5T8897/vaXMqv
+         eg8HUx7DNXfBsZ4Nx9azaZhmcwHwRd3iluJlmJto/VC0UEsXrnGt3ecZILmZe520Ysur
+         ZxWg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=7/W48QyIR6XHID4Vjb2pO/vmCmxJiftq4xnfc/WBzHM=;
+        b=uWaxY4RARrSyAoREQ/8GPoY7Fh8b+MpvH6MgsImh2amlnmdqH3UIkMauTkUfFSuI/Z
+         yLiLANtX+4c24VfdRMFtz5jftpZPmL1IsqXD9nBaFK80HvM4MfGhCXc1w6s1zmer4V49
+         hXrD/wh0xVkwyXt4qd8+fv8ha5ZpZNGwW6WS1l3XosxJSel8rQLghNPXidlePR+T7lcF
+         D/cFfiaT7SBPXtkJrJON+o6cJI/xC39U3vx8Jr2ad/W1gds5GjcdM6XdJnfmCGAzgit/
+         TXKlXmzdmP5H2YQC0rKzX5GkyaNZuQgW0QiJBnHlfpD8u01d8KGvp20EtVeh2LCb5zAn
+         5khg==
+X-Gm-Message-State: AOUpUlGLD1c68F5Nj4czjrjm387dZAZ8IPdrjlK39anzl5/BzbDyNP6n
+        8WkhZPqI7MkcbadYHN09WkA=
+X-Google-Smtp-Source: AAOMgpcZyhAyS3tTNxtGqhju1/sDf2lqfmMEfau/g9tOdKXV4KYEPT7kU4tmBG1HG0JNHAHXKIETZg==
+X-Received: by 2002:a1c:f03:: with SMTP id 3-v6mr12211849wmp.129.1532884155187;
+        Sun, 29 Jul 2018 10:09:15 -0700 (PDT)
+Received: from localhost.localdomain ([2a02:8108:85c0:57c8:32db:916d:97a2:c4eb])
+        by smtp.gmail.com with ESMTPSA id v1-v6sm19916360wrs.34.2018.07.29.10.09.14
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 29 Jul 2018 10:09:14 -0700 (PDT)
+From:   Michael Straube <straube.linux@gmail.com>
+To:     gregkh@linuxfoundation.org
+Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
+        Michael Straube <straube.linux@gmail.com>
+Subject: [PATCH 1/8] staging: rtl8188eu: remove unused dump_txrpt_ccx_88e()
+Date:   Sun, 29 Jul 2018 19:08:44 +0200
+Message-Id: <20180729170851.2581-1-straube.linux@gmail.com>
+X-Mailer: git-send-email 2.18.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 27, 2018 at 11:13:40AM -0300, Arnaldo Carvalho de Melo wrote:
-> Adding Joe to the CC list.
-> 
-> Em Fri, Jul 27, 2018 at 09:06:23AM +0200, Jiri Olsa escreveu:
-> > On Thu, Jul 26, 2018 at 11:31:34PM +0000, rodia@autistici.org wrote:
-> > > On 2018-07-26 19:30, Arnaldo Carvalho de Melo wrote:
-> > > > Em Tue, Jul 24, 2018 at 08:20:08AM +0200, Jiri Olsa escreveu:
-> > > > > Do not try to display entry details if there's
-> > > > > not any. Currently this ends up in crash:
-> > > > >   $ perf c2c report
-> > > > >   perf: Segmentation fault
-> 
-> > > > How to replicate this?
-> 
-> > > > I tried:
-> 
-> > > > $ perf record sleep 1
-> > > > $ perf c2c report
-> 
-> > > > But it didn't segfault
-> 
-> > > Similarly I have tried :
-> > > $ perf record sleep 1
-> > > $ perf c2c report
-> > > Then Press `d` to show the cache-line contents.
-> 
-> > yep, sry I forgot to mention you need to press the 'd' to show details
->  
-> > > This replies the segfault on my machine (4.17.8-1).
-> > > The patch mentioned above should solve it, even tough I am not sure as I
-> > > haven't been able to recompile the kernel.
->  
-> > no need to recompile kernel
->  
-> > > The segfault by itself seems to be due to the report logic, as it did not
-> > > expect to report on an empty browser.
-> > > What has stepped me back is that application which I have been testing with
-> > > rely on multiple threads instantiated through pthread, which should be
-> > > counted in user-level threads right? But they still seem to return an empty
-> > > browser.
->  
-> > right, c2c scans read/write accesses and tries to find false sharing
-> > cases maybe there was nothing to be found
->  
-> > > When instead c2c is runned system-wide, with an application running on
-> > > multiple threads like firefox or julia, cache hits are measured and also
-> > > they are traced back in the source code.
->  
-> > I got a cache line (attached) for 'perf bench sched messaging'
-> > NOT being traced system wide and just for user (you'll get plenty
-> > of detected cachelines in kernel space):
-> 
-> With that info in mind, we get:
-> 
-> [root@seventh ~]# perf record sleep 1
-> [ perf record: Woken up 1 times to write data ]
-> [ perf record: Captured and wrote 0.001 MB perf.data (6 samples) ]
-> [root@seventh ~]# 
-> [root@seventh ~]# 
-> [root@seventh ~]# perf c2c report # and press 'd'
-> perf: Segmentation fault
-> -------- backtrace --------
-> perf[0x5b1d2a]
-> /lib64/libc.so.6(+0x346df)[0x7fcb566e36df]
-> perf[0x46fcae]
-> perf[0x4a9f1e]
-> perf[0x4aa220]
-> perf(main+0x301)[0x42c561]
-> /lib64/libc.so.6(__libc_start_main+0xe9)[0x7fcb566cff29]
-> perf(_start+0x29)[0x42c999]
-> [root@seventh ~]#
-> 
-> With your patches the segfault is gone, but I'd do a follow up patch to
-> show some message telling the user why 'd' showed nothing and
-> instructing him about what is missing, i.e. is this done on a perf.data
-> file that has no events of interest? Suggest using 'perf c2c record' or
-> 'perf record -e events,of,interest,to,perf,c2c', was this done on some
-> workload where no false sharing was detected? Say so, etc.
+The function dump_txrpt_ccx_88e() is nerver used, so remove it.
+Discovered by cppcheck.
 
-ok, will try to come up with something
+Signed-off-by: Michael Straube <straube.linux@gmail.com>
+---
+ drivers/staging/rtl8188eu/hal/rtl8188e_xmit.c | 22 -------------------
+ .../staging/rtl8188eu/include/rtl8188e_xmit.h |  1 -
+ 2 files changed, 23 deletions(-)
 
-> 
-> I applied your patch with a more detailed commit log to state how this
-> can reproduced, etc, as usual:
-> 
-> https://git.kernel.org/acme/c/983eb6aa7098
+diff --git a/drivers/staging/rtl8188eu/hal/rtl8188e_xmit.c b/drivers/staging/rtl8188eu/hal/rtl8188e_xmit.c
+index 6883746f3b8b..9b8a284544ac 100644
+--- a/drivers/staging/rtl8188eu/hal/rtl8188e_xmit.c
++++ b/drivers/staging/rtl8188eu/hal/rtl8188e_xmit.c
+@@ -10,28 +10,6 @@
+ #include <drv_types.h>
+ #include <rtl8188e_hal.h>
+ 
+-void dump_txrpt_ccx_88e(void *buf)
+-{
+-	struct txrpt_ccx_88e *txrpt_ccx = buf;
+-
+-	DBG_88E("%s:\n"
+-		"tag1:%u, pkt_num:%u, txdma_underflow:%u, int_bt:%u, int_tri:%u, int_ccx:%u\n"
+-		"mac_id:%u, pkt_ok:%u, bmc:%u\n"
+-		"retry_cnt:%u, lifetime_over:%u, retry_over:%u\n"
+-		"ccx_qtime:%u\n"
+-		"final_data_rate:0x%02x\n"
+-		"qsel:%u, sw:0x%03x\n",
+-		__func__, txrpt_ccx->tag1, txrpt_ccx->pkt_num,
+-		txrpt_ccx->txdma_underflow, txrpt_ccx->int_bt,
+-		txrpt_ccx->int_tri, txrpt_ccx->int_ccx,
+-		txrpt_ccx->mac_id, txrpt_ccx->pkt_ok, txrpt_ccx->bmc,
+-		txrpt_ccx->retry_cnt, txrpt_ccx->lifetime_over,
+-		txrpt_ccx->retry_over, txrpt_ccx_qtime_88e(txrpt_ccx),
+-		txrpt_ccx->final_data_rate, txrpt_ccx->qsel,
+-		txrpt_ccx_sw_88e(txrpt_ccx)
+-	);
+-}
+-
+ void handle_txrpt_ccx_88e(struct adapter *adapter, u8 *buf)
+ {
+ 	struct txrpt_ccx_88e *txrpt_ccx = (struct txrpt_ccx_88e *)buf;
+diff --git a/drivers/staging/rtl8188eu/include/rtl8188e_xmit.h b/drivers/staging/rtl8188eu/include/rtl8188e_xmit.h
+index 17e7b3016674..20d35480dab8 100644
+--- a/drivers/staging/rtl8188eu/include/rtl8188e_xmit.h
++++ b/drivers/staging/rtl8188eu/include/rtl8188e_xmit.h
+@@ -152,7 +152,6 @@ void rtl8188eu_xmit_tasklet(void *priv);
+ s32 rtl8188eu_xmitframe_complete(struct adapter *padapter,
+ 				 struct xmit_priv *pxmitpriv);
+ 
+-void dump_txrpt_ccx_88e(void *buf);
+ void handle_txrpt_ccx_88e(struct adapter *adapter, u8 *buf);
+ 
+ void _dbg_dump_tx_info(struct adapter *padapter, int frame_tag,
+-- 
+2.18.0
 
-I checked, looks good, thanks
-
-jirka
