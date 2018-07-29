@@ -2,109 +2,78 @@ Return-Path: <SRS0=jKyA=KN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70C21FA372B
-	for <linux-kernel@archiver.kernel.org>; Sun, 29 Jul 2018 09:01:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30BE6FA3731
+	for <linux-kernel@archiver.kernel.org>; Sun, 29 Jul 2018 09:11:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D8EB820873
-	for <linux-kernel@archiver.kernel.org>; Sun, 29 Jul 2018 09:01:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D8EB820873
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	by mail.kernel.org (Postfix) with ESMTP id CD53520882
+	for <linux-kernel@archiver.kernel.org>; Sun, 29 Jul 2018 09:11:56 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Gd2hFNTu"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CD53520882
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726299AbeG2KaM (ORCPT
+        id S1726308AbeG2Kjf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 29 Jul 2018 06:30:12 -0400
-Received: from mail-ua0-f194.google.com ([209.85.217.194]:45351 "EHLO
-        mail-ua0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726146AbeG2KaL (ORCPT
+        Sun, 29 Jul 2018 06:39:35 -0400
+Received: from mail-yb0-f181.google.com ([209.85.213.181]:34545 "EHLO
+        mail-yb0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726170AbeG2Kje (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Jul 2018 06:30:11 -0400
-Received: by mail-ua0-f194.google.com with SMTP id k8-v6so5991401uaq.12
-        for <linux-kernel@vger.kernel.org>; Sun, 29 Jul 2018 02:00:28 -0700 (PDT)
+        Sun, 29 Jul 2018 06:39:34 -0400
+Received: by mail-yb0-f181.google.com with SMTP id e9-v6so3662144ybq.1
+        for <linux-kernel@vger.kernel.org>; Sun, 29 Jul 2018 02:09:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:from:date:message-id:subject:to;
+        bh=FN9aD4W60jNdb/kPBFrOauRS3YTaIGCx31hwoikrBmE=;
+        b=Gd2hFNTugwnrhRl1/oXHod4ZsbZWsrUZPdpGHlCOR8OxIeHwTlMIRkrZJdUfOqrOA1
+         ZJFGCp80UZ9/v+w8wmuvTHJaG1eFiL3rtjAokbrlVACe6E7KZlawOBntvoKnOPHAhncp
+         IDaULItX8vATjkD0AvCCPUzCfEEPLzLUC0Q9vEmSo7VnY3SvEBX2BgPPLB8sx27wfr8f
+         uhDMPpejeiQ3R5qpL2AI8qBg+UqMLzhrbgDOkgaoT4Y5X7GdjasYlu00bQ67FPw7NiP8
+         TqfAogCDngXR3lhs2o3+8d/UgRFs2bSaWHY74a1XDvXJCC0UB+hclUN8lGVvDphz2Wkw
+         ssHA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=pcc4bazwLcygUb1pYeJka69Bgyq/Ga6+xr4NSWTfOjs=;
-        b=aSnVcD8EJ5JnCt07hrxMqoB253FAXV7jMVz7kYuwNV1kASXtkkrI7b8QoQRNIs/suk
-         QLMizvzLazTH6w3X+f0KB2cIxl6EMt5BpW7Ody0t2EdOad4cwLCs94ualtZ5Oam/9jIn
-         WJFOl332Gu1oQNiIv9onDl4dLlEJFygkkDFdE6vV3xjsfRBZS2tl38zojpPVcSf2kXy9
-         H5nAzFxz9rvOAoXL0cWzmAbiduYugAM1aOETmyIO5brt02BtOQBDhof06KBn4wnZT5QW
-         xeyXswp0MkUlKWeEyo4R8lvhBLyrmBj+FGUmOvLo36jCJYWO3+/GUHmGtjnYGkV+vpiU
-         MO+Q==
-X-Gm-Message-State: AOUpUlEfPY0rh5laKEEW89zG9l9ElhzttIYjd2XH+MkiqZE3f8pSlCeh
-        YxZwW2/eFC7cWCkPBWxufQqXK7EkEuJy+P06QwMh7A==
-X-Google-Smtp-Source: AAOMgpfM2+MELIO6gKNlLTobTNuDIqNjQblSEUXdbyCggXKzXkcoVrzsnEdkRQKAG4I8JaFFBpgcoSiB6rZqSNXND38=
-X-Received: by 2002:ab0:72d1:: with SMTP id g17-v6mr9728256uap.33.1532854827677;
- Sun, 29 Jul 2018 02:00:27 -0700 (PDT)
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
+        bh=FN9aD4W60jNdb/kPBFrOauRS3YTaIGCx31hwoikrBmE=;
+        b=r/1A9PVo+F/hMWMS4ISJH70AIda2n3VL1QRn1usS5zq4t8cm9rMoj7XPDvE1S7GSu2
+         hN5DDLVAhnmky7IIBUqMRgbbiNUPYKziIdkTIJ26MlPVoW+xZUP3NezbOeazxj2rjnL8
+         7IrMdfrhor3Xagli14PPJKuxAZU1IhCgJXLg/l8msbfOxKJ8H+09/OYd55ULYd5vDXJg
+         dXJ1bIEy1BpbGRza9yoEOZxLefGEP+WEFnvBrwiymvEdO6NXoq9i7Yajt23w6rlrDQMq
+         LfpPrhmhJYvB2hXvqQXKP/ycJ7145i2h4bePD0pSOYMtnqFmlqkEtr7Kg1hhsK+R2XDo
+         BQpg==
+X-Gm-Message-State: AOUpUlEA3x87w+fDTNHzqLf+Jb1J3ywaEj32Kgol66LpZvjm/F2s770k
+        nAVK2TyMBKEGov3ySfvIVLa6Ts9Y2svizYXvDRAYGrSm
+X-Google-Smtp-Source: AAOMgpf6Y3Ylx40fJzkLefSqsG3wxDnLAqckqgDzS5AtZ3joCMTxFnD4Nf/ePs3sbqo1yfkUzLWL1eBD124Nl53Hmws=
+X-Received: by 2002:a25:ef04:: with SMTP id g4-v6mr6829991ybd.223.1532855389139;
+ Sun, 29 Jul 2018 02:09:49 -0700 (PDT)
 MIME-Version: 1.0
-References: <58f371f95c10969bacff4d5bc393ff0f0c6102fb.1532415410.git.fthain@telegraphics.com.au>
-In-Reply-To: <58f371f95c10969bacff4d5bc393ff0f0c6102fb.1532415410.git.fthain@telegraphics.com.au>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Sun, 29 Jul 2018 11:00:15 +0200
-Message-ID: <CAMuHMdWaJEEvt_-g7Lp8Wwc=UbT6tSYewGK0YWgDhC=GVX=LyA@mail.gmail.com>
-Subject: Re: [PATCH] m68k/mac: Rework patch "use time64_t in RTC handling"
-To:     Finn Thain <fthain@telegraphics.com.au>,
-        Arnd Bergmann <arnd@arndb.de>
-Cc:     linux-m68k <linux-m68k@lists.linux-m68k.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Received: by 2002:a81:3007:0:0:0:0:0 with HTTP; Sun, 29 Jul 2018 02:09:48
+ -0700 (PDT)
+From:   Jeff Chua <jeff.chua.linux@gmail.com>
+Date:   Sun, 29 Jul 2018 17:09:48 +0800
+Message-ID: <CAAJw_ZuQXrYaEu9_pXWtoDpUjR2au1gGT_FP9F1e1Y7veHSz2Q@mail.gmail.com>
+Subject: How to secure erase PCI-E NVME SSD connected via USB3?
+To:     lkml <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Finn, Arnd,
+I'm testing the USB3-to-PCI-E NVME SSD. It's works using uas module,
+recognized it as /dev/sda.
 
-On Tue, Jul 24, 2018 at 9:07 AM Finn Thain <fthain@telegraphics.com.au> wrote:
-> This addresses the issues arising from commit 324caa29cd04
-> ("m68k: mac: use time64_t in RTC handling").
->
-> Adopt __u32 for the union in via_read_time(), consistent with changes
-> to via_write_time().
->
-> Use low_32_bits() in via_write_time(), consistent with changes to
+Since it's an USB device, the nvme-cli tools won't work, nor does
+hdparm, as it's a NVME SSD.
 
-lower_32_bits()
+So, how to secure-erase the NVME SSD connected via the JMS583 chip?
 
-> pmu_write_time() and cuda_write_time().
->
-> Have via_read_time() return a time64_t, consistent with changes to
-> pmu_read_time and cuda_read_time().
-
-pmu_read_time()
-
-> Drop the pointless wraparound conditional in via_read_time().
->
-> Cc: Arnd Bergmann <arnd@arndb.de>
-> Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
-
-Thanks!
-
-Applied to master with the above fixed.
-Folded into the original commit on for-v4.19, with:
-
-    [fthain: Adopt __u32 for the union in via_read_time(), consistent with
-             changes to via_write_time()]
-    [fthain: Use lower_32_bits() in via_write_time(), consistent with changes
-             to pmu_write_time() and cuda_write_time()]
-    [fthain: Have via_read_time() return a time64_t, consistent with changes
-             to pmu_read_time() and cuda_read_time()]
-    [fthain: Drop the pointless wraparound conditional in via_read_time()]
-    Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
-    Reviewed-by: Arnd Bergmann <arnd@arndb.de>
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Thanks,
+Jeff.
