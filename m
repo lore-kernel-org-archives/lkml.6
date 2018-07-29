@@ -6,32 +6,32 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2CC4C46461
-	for <linux-kernel@archiver.kernel.org>; Sun, 29 Jul 2018 22:05:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A28FC46462
+	for <linux-kernel@archiver.kernel.org>; Sun, 29 Jul 2018 22:05:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5DAC620881
-	for <linux-kernel@archiver.kernel.org>; Sun, 29 Jul 2018 22:05:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5DAC620881
+	by mail.kernel.org (Postfix) with ESMTP id B0A4320881
+	for <linux-kernel@archiver.kernel.org>; Sun, 29 Jul 2018 22:05:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B0A4320881
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ZenIV.linux.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732140AbeG2Xg5 (ORCPT
+        id S1732315AbeG2XhY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 29 Jul 2018 19:36:57 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:51562 "EHLO
+        Sun, 29 Jul 2018 19:37:24 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:51610 "EHLO
         ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726835AbeG2Xg4 (ORCPT
+        with ESMTP id S1729023AbeG2Xg5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Jul 2018 19:36:56 -0400
+        Sun, 29 Jul 2018 19:36:57 -0400
 Received: from viro by ZenIV.linux.org.uk with local (Exim 4.87 #1 (Red Hat Linux))
-        id 1fjto6-0003VT-Ae; Sun, 29 Jul 2018 22:04:54 +0000
+        id 1fjto7-0003WA-0c; Sun, 29 Jul 2018 22:04:55 +0000
 From:   Al Viro <viro@ZenIV.linux.org.uk>
 To:     linux-fsdevel@vger.kernel.org
 Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
         linux-kernel@vger.kernel.org, Miklos Szeredi <mszeredi@redhat.com>
-Subject: [PATCH 05/16] ufs: switch to discard_new_inode()
-Date:   Sun, 29 Jul 2018 23:04:42 +0100
-Message-Id: <20180729220453.13431-5-viro@ZenIV.linux.org.uk>
+Subject: [PATCH 11/16] jfs: switch to discard_new_inode()
+Date:   Sun, 29 Jul 2018 23:04:48 +0100
+Message-Id: <20180729220453.13431-11-viro@ZenIV.linux.org.uk>
 X-Mailer: git-send-email 2.9.5
 In-Reply-To: <20180729220453.13431-1-viro@ZenIV.linux.org.uk>
 References: <20180729220317.GB30522@ZenIV.linux.org.uk>
@@ -48,58 +48,81 @@ has failed setup halfway through.
 
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
- fs/ufs/ialloc.c | 3 +--
- fs/ufs/namei.c  | 9 +++------
- 2 files changed, 4 insertions(+), 8 deletions(-)
+ fs/jfs/jfs_inode.c |  8 ++++----
+ fs/jfs/namei.c     | 12 ++++--------
+ 2 files changed, 8 insertions(+), 12 deletions(-)
 
-diff --git a/fs/ufs/ialloc.c b/fs/ufs/ialloc.c
-index e1ef0f0a1353..02c0a4be4212 100644
---- a/fs/ufs/ialloc.c
-+++ b/fs/ufs/ialloc.c
-@@ -343,8 +343,7 @@ struct inode *ufs_new_inode(struct inode *dir, umode_t mode)
- fail_remove_inode:
- 	mutex_unlock(&sbi->s_lock);
+diff --git a/fs/jfs/jfs_inode.c b/fs/jfs/jfs_inode.c
+index 5e9b7bb3aabf..96732c24b054 100644
+--- a/fs/jfs/jfs_inode.c
++++ b/fs/jfs/jfs_inode.c
+@@ -61,8 +61,7 @@ struct inode *ialloc(struct inode *parent, umode_t mode)
+ 	inode = new_inode(sb);
+ 	if (!inode) {
+ 		jfs_warn("ialloc: new_inode returned NULL!");
+-		rc = -ENOMEM;
+-		goto fail;
++		return ERR_PTR(-ENOMEM);
+ 	}
+ 
+ 	jfs_inode = JFS_IP(inode);
+@@ -141,9 +140,10 @@ struct inode *ialloc(struct inode *parent, umode_t mode)
+ 	dquot_drop(inode);
+ 	inode->i_flags |= S_NOQUOTA;
  	clear_nlink(inode);
 -	unlock_new_inode(inode);
--	iput(inode);
 +	discard_new_inode(inode);
- 	UFSD("EXIT (FAILED): err %d\n", err);
- 	return ERR_PTR(err);
- failed:
-diff --git a/fs/ufs/namei.c b/fs/ufs/namei.c
-index d5f43ba76c59..9ef40f100415 100644
---- a/fs/ufs/namei.c
-+++ b/fs/ufs/namei.c
-@@ -43,8 +43,7 @@ static inline int ufs_add_nondir(struct dentry *dentry, struct inode *inode)
- 		return 0;
++	return ERR_PTR(rc);
++
+ fail_put:
+ 	iput(inode);
+-fail:
+ 	return ERR_PTR(rc);
+ }
+diff --git a/fs/jfs/namei.c b/fs/jfs/namei.c
+index 56c3fcbfe80e..14528c0ffe63 100644
+--- a/fs/jfs/namei.c
++++ b/fs/jfs/namei.c
+@@ -175,8 +175,7 @@ static int jfs_create(struct inode *dip, struct dentry *dentry, umode_t mode,
+ 	if (rc) {
+ 		free_ea_wmap(ip);
+ 		clear_nlink(ip);
+-		unlock_new_inode(ip);
+-		iput(ip);
++		discard_new_inode(ip);
+ 	} else {
+ 		d_instantiate_new(dentry, ip);
  	}
- 	inode_dec_link_count(inode);
--	unlock_new_inode(inode);
--	iput(inode);
-+	discard_new_inode(inode);
- 	return err;
- }
- 
-@@ -142,8 +141,7 @@ static int ufs_symlink (struct inode * dir, struct dentry * dentry,
- 
- out_fail:
- 	inode_dec_link_count(inode);
--	unlock_new_inode(inode);
--	iput(inode);
-+	discard_new_inode(inode);
- 	return err;
- }
- 
-@@ -198,8 +196,7 @@ static int ufs_mkdir(struct inode * dir, struct dentry * dentry, umode_t mode)
- out_fail:
- 	inode_dec_link_count(inode);
- 	inode_dec_link_count(inode);
--	unlock_new_inode(inode);
--	iput (inode);
-+	discard_new_inode(inode);
- out_dir:
- 	inode_dec_link_count(dir);
- 	return err;
+@@ -309,8 +308,7 @@ static int jfs_mkdir(struct inode *dip, struct dentry *dentry, umode_t mode)
+ 	if (rc) {
+ 		free_ea_wmap(ip);
+ 		clear_nlink(ip);
+-		unlock_new_inode(ip);
+-		iput(ip);
++		discard_new_inode(ip);
+ 	} else {
+ 		d_instantiate_new(dentry, ip);
+ 	}
+@@ -1054,8 +1052,7 @@ static int jfs_symlink(struct inode *dip, struct dentry *dentry,
+ 	if (rc) {
+ 		free_ea_wmap(ip);
+ 		clear_nlink(ip);
+-		unlock_new_inode(ip);
+-		iput(ip);
++		discard_new_inode(ip);
+ 	} else {
+ 		d_instantiate_new(dentry, ip);
+ 	}
+@@ -1441,8 +1438,7 @@ static int jfs_mknod(struct inode *dir, struct dentry *dentry,
+ 	if (rc) {
+ 		free_ea_wmap(ip);
+ 		clear_nlink(ip);
+-		unlock_new_inode(ip);
+-		iput(ip);
++		discard_new_inode(ip);
+ 	} else {
+ 		d_instantiate_new(dentry, ip);
+ 	}
 -- 
 2.11.0
 
