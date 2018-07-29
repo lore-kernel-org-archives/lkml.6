@@ -6,37 +6,36 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BFD5C46462
-	for <linux-kernel@archiver.kernel.org>; Sun, 29 Jul 2018 22:06:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85665C46462
+	for <linux-kernel@archiver.kernel.org>; Sun, 29 Jul 2018 22:06:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2066720881
-	for <linux-kernel@archiver.kernel.org>; Sun, 29 Jul 2018 22:06:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2066720881
+	by mail.kernel.org (Postfix) with ESMTP id 3B66E20881
+	for <linux-kernel@archiver.kernel.org>; Sun, 29 Jul 2018 22:06:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3B66E20881
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ZenIV.linux.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732369AbeG2XiQ (ORCPT
+        id S1731986AbeG2XiP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 29 Jul 2018 19:38:16 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:51618 "EHLO
+        Sun, 29 Jul 2018 19:38:15 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:51584 "EHLO
         ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729283AbeG2Xg4 (ORCPT
+        with ESMTP id S1728750AbeG2Xg4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Sun, 29 Jul 2018 19:36:56 -0400
 Received: from viro by ZenIV.linux.org.uk with local (Exim 4.87 #1 (Red Hat Linux))
-        id 1fjto6-0003Vy-O7; Sun, 29 Jul 2018 22:04:54 +0000
+        id 1fjto5-0003VE-R0; Sun, 29 Jul 2018 22:04:53 +0000
 From:   Al Viro <viro@ZenIV.linux.org.uk>
 To:     linux-fsdevel@vger.kernel.org
 Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
         linux-kernel@vger.kernel.org, Miklos Szeredi <mszeredi@redhat.com>,
-        Chris Mason <clm@fb.com>
-Subject: [PATCH 09/16] btrfs: IS_ERR(p) && PTR_ERR(p) == n is a weird way to spell p == ERR_PTR(n)
-Date:   Sun, 29 Jul 2018 23:04:46 +0100
-Message-Id: <20180729220453.13431-9-viro@ZenIV.linux.org.uk>
+        Trond Myklebust <trond.myklebust@primarydata.com>
+Subject: [PATCH 01/16] nfs_instantiate(): prevent multiple aliases for directory inode
+Date:   Sun, 29 Jul 2018 23:04:38 +0100
+Message-Id: <20180729220453.13431-1-viro@ZenIV.linux.org.uk>
 X-Mailer: git-send-email 2.9.5
-In-Reply-To: <20180729220453.13431-1-viro@ZenIV.linux.org.uk>
+In-Reply-To: <20180729220317.GB30522@ZenIV.linux.org.uk>
 References: <20180729220317.GB30522@ZenIV.linux.org.uk>
- <20180729220453.13431-1-viro@ZenIV.linux.org.uk>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -44,49 +43,63 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Al Viro <viro@zeniv.linux.org.uk>
 
-Cc: Chris Mason <clm@fb.com>
+Since NFS allows open-by-fhandle, we have to cope with the possibility
+of mkdir vs. open-by-guessed-handle races.  A local filesystem could
+decide what the inumber of the new object will be and insert a locked
+inode with that inumber into icache _before_ the on-disk data structures
+begin to look good and unlock it only once it has a dentry alias, so
+that open-by-handle coming first would quietly fail and mkdir coming
+first would have open-by-handle grab its dentry.
+
+For NFS it's a non-starter - the icache key is server-supplied fhandle
+and we do not get that until the object has been fully created on server.
+We really have to deal with the possibility that open-by-handle gets
+the in-core inode and attaches a dentry to it before mkdir does.
+
+Solution: let nfs_mkdir() use d_splice_alias() to catch those.  We can
+	* get an error.  Just return it to our caller.
+	* get NULL - no preexisting dentry aliases, we'd just done what
+d_add() would've done.  Success.
+	* get a reference to preexisting alias.  In that case the alias
+had been moved in place of nfs_mkdir() argument (and hashed there), while
+nfs_mkdir() argument is left unhashed negative.  Which is just fine for
+->mkdir() callers, all we need is to release the reference we'd got from
+d_splice_alias() and report success.
+
+Cc: Trond Myklebust <trond.myklebust@primarydata.com>
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
- fs/btrfs/transaction.c | 2 +-
- fs/btrfs/tree-log.c    | 5 ++---
- 2 files changed, 3 insertions(+), 4 deletions(-)
+ fs/nfs/dir.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
-diff --git a/fs/btrfs/transaction.c b/fs/btrfs/transaction.c
-index ff5f6c719976..feb0348dbcbf 100644
---- a/fs/btrfs/transaction.c
-+++ b/fs/btrfs/transaction.c
-@@ -680,7 +680,7 @@ btrfs_attach_transaction_barrier(struct btrfs_root *root)
+diff --git a/fs/nfs/dir.c b/fs/nfs/dir.c
+index 7a9c14426855..df6fd4e5b068 100644
+--- a/fs/nfs/dir.c
++++ b/fs/nfs/dir.c
+@@ -1641,6 +1641,7 @@ int nfs_instantiate(struct dentry *dentry, struct nfs_fh *fhandle,
+ 	struct dentry *parent = dget_parent(dentry);
+ 	struct inode *dir = d_inode(parent);
+ 	struct inode *inode;
++	struct dentry *d;
+ 	int error = -EACCES;
  
- 	trans = start_transaction(root, 0, TRANS_ATTACH,
- 				  BTRFS_RESERVE_NO_FLUSH, true);
--	if (IS_ERR(trans) && PTR_ERR(trans) == -ENOENT)
-+	if (trans == ERR_PTR(-ENOENT))
- 		btrfs_wait_for_commit(root->fs_info, 0);
- 
- 	return trans;
-diff --git a/fs/btrfs/tree-log.c b/fs/btrfs/tree-log.c
-index fcfbe1d8584a..2c13e8155ff1 100644
---- a/fs/btrfs/tree-log.c
-+++ b/fs/btrfs/tree-log.c
-@@ -2116,7 +2116,7 @@ static noinline int check_item_in_log(struct btrfs_trans_handle *trans,
- 						     dir_key->offset,
- 						     name, name_len, 0);
- 		}
--		if (!log_di || (IS_ERR(log_di) && PTR_ERR(log_di) == -ENOENT)) {
-+		if (!log_di || log_di ==  ERR_PTR(-ENOENT)) {
- 			btrfs_dir_item_key_to_cpu(eb, di, &location);
- 			btrfs_release_path(path);
- 			btrfs_release_path(log_path);
-@@ -5090,8 +5090,7 @@ static int btrfs_log_inode(struct btrfs_trans_handle *trans,
- 				 * we don't need to do more work nor fallback to
- 				 * a transaction commit.
- 				 */
--				if (IS_ERR(other_inode) &&
--				    PTR_ERR(other_inode) == -ENOENT) {
-+				if (other_inode == ERR_PTR(-ENOENT)) {
- 					goto next_key;
- 				} else if (IS_ERR(other_inode)) {
- 					err = PTR_ERR(other_inode);
+ 	d_drop(dentry);
+@@ -1662,10 +1663,12 @@ int nfs_instantiate(struct dentry *dentry, struct nfs_fh *fhandle,
+ 			goto out_error;
+ 	}
+ 	inode = nfs_fhget(dentry->d_sb, fhandle, fattr, label);
+-	error = PTR_ERR(inode);
+-	if (IS_ERR(inode))
++	d = d_splice_alias(inode, dentry);
++	if (IS_ERR(d)) {
++		error = PTR_ERR(d);
+ 		goto out_error;
+-	d_add(dentry, inode);
++	}
++	dput(d);
+ out:
+ 	dput(parent);
+ 	return 0;
 -- 
 2.11.0
 
