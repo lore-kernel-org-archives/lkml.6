@@ -6,98 +6,83 @@ X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B178EC46462
-	for <linux-kernel@archiver.kernel.org>; Sun, 29 Jul 2018 20:44:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BCC81C46461
+	for <linux-kernel@archiver.kernel.org>; Sun, 29 Jul 2018 20:47:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5236920881
-	for <linux-kernel@archiver.kernel.org>; Sun, 29 Jul 2018 20:44:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 67BFB20881
+	for <linux-kernel@archiver.kernel.org>; Sun, 29 Jul 2018 20:47:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="k16TDRkC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5236920881
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="LgQqJZUy"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 67BFB20881
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729407AbeG2WQP (ORCPT
+        id S1730797AbeG2WTR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 29 Jul 2018 18:16:15 -0400
-Received: from mail-it0-f66.google.com ([209.85.214.66]:40011 "EHLO
-        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726835AbeG2WQO (ORCPT
+        Sun, 29 Jul 2018 18:19:17 -0400
+Received: from mail-it0-f65.google.com ([209.85.214.65]:37952 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726835AbeG2WTR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Jul 2018 18:16:14 -0400
-Received: by mail-it0-f66.google.com with SMTP id h23-v6so14136087ita.5
-        for <linux-kernel@vger.kernel.org>; Sun, 29 Jul 2018 13:44:29 -0700 (PDT)
+        Sun, 29 Jul 2018 18:19:17 -0400
+Received: by mail-it0-f65.google.com with SMTP id v71-v6so14151128itb.3
+        for <linux-kernel@vger.kernel.org>; Sun, 29 Jul 2018 13:47:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=3+nB2kG60q1S99d5DA0vKgpccrOIC4fcn3RuZpQMn+M=;
-        b=k16TDRkCMzebNyfyOe7Dd1OmIwpTcc2QiyoUZjIzWLbwHNipQr1IYCZ5Ax0BbbCk8N
-         dO0GWHNruYfvMt/RgD4bIbRySzudgLYlDQR4H1TJtTOXOBjsAb3A+OFzUsALO6Ww3gaO
-         pNXHr4pnTZD89YJnQNwi/yslJprgHYgP5rnX8=
+        bh=O0XJ73p9AmUDRyXmYJx3AeBjw7ZR9thb6t1BaxJMTuk=;
+        b=LgQqJZUyfrbEBNqHxZ+3lHZghxGt3udppcrisXTyq8kNa1BQJjpYzVExnYtFW3eKXr
+         wFqRjBLXkr0P1b+KgVP3RIoiI15IxWBFIoukGAA4NbZ54XwiUThMRF0fxGGm4DHuziIr
+         PFP/kSJsCLK74L09ki8js4pYk3O0eYGWGHt9Y=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=3+nB2kG60q1S99d5DA0vKgpccrOIC4fcn3RuZpQMn+M=;
-        b=KJMxE5KC0epwHDMrDwxdOEGtJVNwLaSs7oRIop2iz5XjDwq2CrPapQLebGV+8+ezHP
-         GgjB49PiKk0Bya2xbJnHvwGEx4CL2cNvYC+XuRQHOREKlqPD9l+2uRFuBS/vreEjtWN3
-         /WwakgDXLKXC7qT7e1+hnqi2q+TQ+5wFa4USC9iIwoO/u5h+kUVTY+Ck+WljcaeaDON1
-         NeIFn/CPojWhiumWeb4N501ll4WruHsDNW7RjVwDGnPXhcpJMvZ6nSvgA1Rxg34IzFuE
-         gB7iXYLJj20tyY4mNri64/sSuQZs/DFKeAubHHttGvk9LgYLycFwxDW2jQeOltebDbvw
-         5ZTA==
-X-Gm-Message-State: AOUpUlFcClSqLcCbaB2NDQ01xQEJZjqz4jvNkZeOe/gDw8pfslVmGHIl
-        rXN7//IaJE+tgT2ufd/aOSfnPZJSkqJanARuh0WrXg==
-X-Google-Smtp-Source: AAOMgpd74ZazA/mAzhUJYGl2cRT6SkWku9i6i1IUeNMElI7euFE66ee/m/bklm4pVeFwK5R/kGqIlpwLUTJGLb7/CHA=
-X-Received: by 2002:a24:5004:: with SMTP id m4-v6mr12104707itb.38.1532897069127;
- Sun, 29 Jul 2018 13:44:29 -0700 (PDT)
+        bh=O0XJ73p9AmUDRyXmYJx3AeBjw7ZR9thb6t1BaxJMTuk=;
+        b=RgVaWEwDYH30X1KBeBj/OgKRvecsCtKUOW9bqN875SEnu39EG17uJx7loT+ETMrGUh
+         OO+VElSSvYxYCSJXqTjG4jQ5hPpa+fgYjyGozLGHfakLhj+VcvfY/1GjSw5+VsYNZ7O/
+         ycsz+0nVXbZjx/WyDekFLxNdiRO8/Nswvqz8BV5fACHv/4j4p5pSePlJIhI3TiPFDI3V
+         KhKrySu/f6K6jvnA+VdvZb38rx92OqxJPqunz18WNUaIZr4FBgh8RllSoN9oWnnuSwlv
+         EmtPhTNBCE+Cjzk1XQzGWvkyAC9r6+B78/Kd/RpRoX231xntsh/J4X4Ai/8UrOZSNPlk
+         dXQg==
+X-Gm-Message-State: AOUpUlHP5m37OD7SirlkGDbiX2k3HXZaxjAxjO5tf9Py2jVrGZMyKsbq
+        FSDbagoX2LP6vRKL3TpBc+8u5c88zQcCROtOybbW9Bvc
+X-Google-Smtp-Source: AAOMgpd+djduGFIK/1pnRjbG/c62ZF0XJ76EK9vLUZsNj6aZ/ncaV1z1lupV1Npxf48iSsDq5b+3SnvAZj9xDc035ZI=
+X-Received: by 2002:a02:6c45:: with SMTP id w66-v6mr14202057jab.87.1532897251306;
+ Sun, 29 Jul 2018 13:47:31 -0700 (PDT)
 MIME-Version: 1.0
-References: <20180717005719.258905-1-djkurtz@chromium.org>
-In-Reply-To: <20180717005719.258905-1-djkurtz@chromium.org>
+References: <1531981249-26329-1-git-send-email-hayashibara.keiji@socionext.com>
+In-Reply-To: <1531981249-26329-1-git-send-email-hayashibara.keiji@socionext.com>
 From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Sun, 29 Jul 2018 22:44:17 +0200
-Message-ID: <CACRpkdbL85B9aGAbJ4U146jsxXgDSdojEO8=y5h94edpsXwsPA@mail.gmail.com>
-Subject: Re: [PATCH 1/2] pinctrl/amd: only handle irq if it is pending and unmasked
-To:     Daniel Kurtz <djkurtz@chromium.org>
-Cc:     "S-k, Shyam-sundar" <Shyam-sundar.S-k@amd.com>,
-        "Shah, Nehal-bakulchandra" <Nehal-bakulchandra.Shah@amd.com>,
-        Ken Xue <Ken.Xue@amd.com>, Daniel Drake <drake@endlessm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
+Date:   Sun, 29 Jul 2018 22:47:19 +0200
+Message-ID: <CACRpkdYD6FT9k50kc4kSx_nzv91wTeBYgJ1jHVrbFDY-XMaB9w@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: uniphier: add spi pin-mux settings
+To:     hayashibara.keiji@socionext.com
+Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
         "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Masami Hiramatsu <masami.hiramatsu@linaro.org>,
+        Jassi Brar <jaswinder.singh@linaro.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 17, 2018 at 2:57 AM Daniel Kurtz <djkurtz@chromium.org> wrote:
+On Thu, Jul 19, 2018 at 8:21 AM Keiji Hayashibara
+<hayashibara.keiji@socionext.com> wrote:
 
-> The AMD pinctrl driver demultiplexes GPIO interrupts and fires off their
-> individual handlers.
+> From: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
 >
-> If one of these GPIO irqs is configured as a level interrupt, and its
-> downstream handler is a threaded ONESHOT interrupt, the GPIO interrupt
-> source is masked by handle_level_irq() until the eventual return of the
-> threaded irq handler.  During this time the level GPIO interrupt status
-> will still report as high until the actual gpio source is cleared - both
-> in the individual GPIO interrupt status bit (INTERRUPT_STS_OFF) and in
-> its corresponding "WAKE_INT_STATUS_REG" bit.
+> Add pin-mux settings for spi controller.
 >
-> Thus, if another GPIO interrupt occurs during this time,
-> amd_gpio_irq_handler() will see that the (masked-and-not-yet-cleared)
-> level irq is still pending and incorrectly call its handler again.
->
-> To fix this, have amd_gpio_irq_handler() check for both interrupts status
-> and mask before calling generic_handle_irq().
->
-> Note: Is it possible that this bug was the source of the interrupt storm
-> on Ryzen when using chained interrupts before commit ba714a9c1dea85
-> ("pinctrl/amd: Use regular interrupt instead of chained")?
->
-> Signed-off-by: Daniel Kurtz <djkurtz@chromium.org>
+> Signed-off-by: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+> Signed-off-by: Keiji Hayashibara <hayashibara.keiji@socionext.com>
 
-Patch applied with TGLX ACK.
+There is some problem with the test robot, can you comment/followup?
 
 Yours,
 Linus Walleij
