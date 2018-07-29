@@ -2,115 +2,137 @@ Return-Path: <SRS0=jKyA=KN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D6A2F83CA1
-	for <linux-kernel@archiver.kernel.org>; Sun, 29 Jul 2018 10:56:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DE2FFF05E1
+	for <linux-kernel@archiver.kernel.org>; Sun, 29 Jul 2018 11:12:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AF02320870
-	for <linux-kernel@archiver.kernel.org>; Sun, 29 Jul 2018 10:56:07 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b="hkTOHZTR";
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="JmNIbupV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AF02320870
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kroah.com
+	by mail.kernel.org (Postfix) with ESMTP id DC72E20873
+	for <linux-kernel@archiver.kernel.org>; Sun, 29 Jul 2018 11:12:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DC72E20873
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726417AbeG2M0D (ORCPT
+        id S1726342AbeG2MmI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 29 Jul 2018 08:26:03 -0400
-Received: from out1-smtp.messagingengine.com ([66.111.4.25]:56891 "EHLO
-        out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726294AbeG2M0D (ORCPT
+        Sun, 29 Jul 2018 08:42:08 -0400
+Received: from mail-io0-f197.google.com ([209.85.223.197]:41217 "EHLO
+        mail-io0-f197.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726234AbeG2MmI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Jul 2018 08:26:03 -0400
-Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
-        by mailout.nyi.internal (Postfix) with ESMTP id AF147219FE;
-        Sun, 29 Jul 2018 06:56:00 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute6.internal (MEProxy); Sun, 29 Jul 2018 06:56:00 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=cc
-        :content-transfer-encoding:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-sender
-        :x-me-sender:x-sasl-enc; s=fm1; bh=HNVPgMwaKf+xi9lU789xV7HyEEw3D
-        JG+9HeFS10R7zs=; b=hkTOHZTRNXrgAC1pp4groe71MJsB/nSt8VawUHW97WqKL
-        AFndinFnhLob3VVBoA8jOxP5p5kV3m+fjiEXWUw62GoaUt8j5bodglsl08PAyiKk
-        ihtou1B/HLr4I9C/yCk4O5VKN232/RZuLxWhAMSDBQZbt7o4jwuVH5h3cVsG/rPY
-        Q47+iYZ81bAoLcdBoR0qXARh44j1zg3pZWyB+vNXdK+QA9ScoZB62A28nFUNLoUO
-        WbnxVF9BlGipT/POvGuTzwmt3gPXIBigMjHgzOkHfvgsjYRRdnFE3S2JuSH/pXUB
-        883NwCOWBCDJ1HB00Z584W4htzv6g7YUmaiEiCaHg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:content-type
-        :date:from:in-reply-to:message-id:mime-version:references
-        :subject:to:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=HNVPgM
-        waKf+xi9lU789xV7HyEEw3DJG+9HeFS10R7zs=; b=JmNIbupVbHq0oGTPOGoRWq
-        b+9IvTnnpaZrJ8lRFzRxMAoqL7WXMvTL4raDeQsG2vzZqBG2Q25Hb/u/LX4o7S08
-        kiFp95P+ifsHsodRn9R0F6jPxqjISLeHTJTju67ZB8LBiDGFWNBdq7hpDEAl9WGV
-        4QwlVtu9f1QGFlflVaXj71ropeQS5HCkXx1Q76sqKxU9ZZGpiirNTPFpZqLQBM04
-        3qNxhlXU0vs3ah41jAKPVNTsj+/1HT8oWVX4OIGsXWptXHmpUFED/K3q0FYRyKMw
-        bcXFP8lfepbOlAhjjFFiQe+gAboY+KNSFM5jBUcm/VVaOavCV5wXKa4S/hinDW0g
-        ==
-X-ME-Proxy: <xmx:QJ1dW13PZ0b5VBwEHtbZXAbA6Dih2ch3B8ge_K4g8WHjjvTuJEgVIA>
-    <xmx:QJ1dW3zr1vi0vcTOrT4a41fi0SyFWIz2JQZcp9b5fRO-wMZnDozEyA>
-    <xmx:QJ1dWxiRz61WxG4QhOyHBtuTk25-3UTA1kHsiL-HucpkgFsDwqvHBA>
-    <xmx:QJ1dW--1QP_SUWcIlMPG9P2GTQI7bvcxfd6anGIpM9ymQ5v-L9XL9A>
-    <xmx:QJ1dW-aeDm58JmvtvClpG0q7w4jLumLcsm8hRoIJRigIcqRDi_qhiw>
-    <xmx:QJ1dW10OOIOMVRJitt-vi52T4RMjsroN-j3n_k_VWr6ZDm4tWI-Yxw>
-X-ME-Sender: <xms:QJ1dWy4xZB797pEF2xPLqyEPH4Zu3m7F4X9SY6WF5Um9sv28m-n4hw>
-Received: from [10.75.146.250] (unknown [37.170.65.248])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 65455E4512;
-        Sun, 29 Jul 2018 06:55:59 -0400 (EDT)
-Date:   Sun, 29 Jul 2018 12:55:54 +0200
-User-Agent: K-9 Mail for Android
-In-Reply-To: <2964e51e-f5b5-dbb7-8975-09fa74b8295a@web.de>
-References: <20180728062700.GA12127@kroah.com> <2964e51e-f5b5-dbb7-8975-09fa74b8295a@web.de>
+        Sun, 29 Jul 2018 08:42:08 -0400
+Received: by mail-io0-f197.google.com with SMTP id p12-v6so6886810iog.8
+        for <linux-kernel@vger.kernel.org>; Sun, 29 Jul 2018 04:12:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
+         :from:to;
+        bh=JzOQSTRfKvcdJubdCttL0qa6DJPhvUEvBDQms7qBVRQ=;
+        b=G84tYTf03o9ZHF5B1sF2ooFKsvPO77ZL5Hv0RV0vf7l1FaLn6oxHiCHbPgS77ixJTe
+         j8d93/TxBNPutWcTW9eFFKgM3QB466DgTSz9KoxuL1NJm0RLWluU6wgtZApMRVh0/sKx
+         +IN3U4qF1lX9FJS/AYRVzqHQL5IQpvYruVkNZyQaeFhM6kKOWBd3/bVCnSii82u03f13
+         2eV8UDN9og3wTQIxLLnrnDNINkNrV2xIhkkuWyOUOvbzILUbV4fjSMsBTT5RP1iO+NRf
+         a8u98s0hQKZ+HyZ4y54Y26c9G3n3GhX9OVNGw8JC+R8Dktc+zDvFYxDu4cvsIBEyAFbE
+         QHCw==
+X-Gm-Message-State: AOUpUlGgEm2+OfXwYWyZaDd5k4bGWrojfHw/Ze2THXkp9VtRblB7XVJh
+        cFdtvUQersayqrEDBgpdindG3GJh+ZpJugNlyTF7IrI/z8ht
+X-Google-Smtp-Source: AAOMgpfiekYDwy4ywSDuodisTa+DY36P4qokhrO1lgBbm1d8gYLIzNSKwzjFFmXUEIeQYmcF6T2IX+Xbtzd8KIeDmG/JxCn5VdAO
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: Linux 4.17.11
-To:     =?ISO-8859-1?Q?J=F6rg-Volker_Peetz?= <jvpeetz@web.de>,
-        stable@vger.kernel.org
-CC:     linux-kernel@vger.kernel.org
-From:   Greg K-H <greg@kroah.com>
-Message-ID: <A7A60EC1-4599-4075-B663-1DF7527A19AF@kroah.com>
+X-Received: by 2002:a6b:28d4:: with SMTP id o203-v6mr4949169ioo.135.1532862722908;
+ Sun, 29 Jul 2018 04:12:02 -0700 (PDT)
+Date:   Sun, 29 Jul 2018 04:12:02 -0700
+In-Reply-To: <000000000000f68d660570dcddd8@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000016abfe0572216a0d@google.com>
+Subject: Re: kernel BUG at net/ipv4/ip_output.c:LINE!
+From:   syzbot <syzbot+90d5ec0c05e708f3b66d@syzkaller.appspotmail.com>
+To:     davem@davemloft.net, kuznet@ms2.inr.ac.ru,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, yoshfuji@linux-ipv6.org
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On July 29, 2018 12:47:16 PM GMT+02:00, "J=C3=B6rg-Volker Peetz" <jvpeetz@w=
-eb=2Ede> wrote:
->Greg KH wrote on 07/28/18 08:27:
->> I'm announcing the release of the 4=2E17=2E11 kernel=2E
->>=20
->> All users of the 4=2E17 kernel series must upgrade=2E
->>=20
->> The updated 4=2E17=2Ey git tree can be found at:
->>
->	git://git=2Ekernel=2Eorg/pub/scm/linux/kernel/git/stable/linux-stable=2E=
-git
->linux-4=2E17=2Ey
->> and can be browsed at the normal kernel=2Eorg git web browser:
->>
->	http://git=2Ekernel=2Eorg/?p=3Dlinux/kernel/git/stable/linux-stable=2Egi=
-t;a=3Dsummary
->>=20
->> thanks,
->>=20
->> greg k-h
->>=20
-><snip>
->
->Hi Greg,
->
->your signature files did not yet appear on
->https://www=2Ekernel=2Eorg/pub/linux/kernel/v4=2Ex/ =2E
->Any idea?
->
->Regards,
->J=C3=B6rg=2E
+syzbot has found a reproducer for the following crash on:
 
-https://www=2Ekernel=2Eorg/minor-changes-to-tarball-release-format=2Ehtml
+HEAD commit:    71eb5255f55b bpf: use GFP_ATOMIC instead of GFP_KERNEL in ..
+git tree:       bpf
+console output: https://syzkaller.appspot.com/x/log.txt?x=14d07f94400000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=75c10f3ddcafec09
+dashboard link: https://syzkaller.appspot.com/bug?extid=90d5ec0c05e708f3b66d
+compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=113514b4400000
+
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+90d5ec0c05e708f3b66d@syzkaller.appspotmail.com
+
+hrtimer: interrupt took 252517 ns
+------------[ cut here ]------------
+kernel BUG at net/ipv4/ip_output.c:775!
+invalid opcode: 0000 [#1] SMP KASAN
+CPU: 1 PID: 17086 Comm: syz-executor0 Not tainted 4.18.0-rc5+ #22
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+RIP: 0010:ip_do_fragment+0x2436/0x2aa0 net/ipv4/ip_output.c:775
+Code: 8b 8d 70 fe ff ff e9 99 e8 ff ff 4c 89 ef e8 a1 8b 40 fc e9 7b e9 ff  
+ff 4c 89 f7 e8 94 8b 40 fc e9 f3 e5 ff ff e8 ca a9 02 fc <0f> 0b 4c 89 e7  
+e8 80 8b 40 fc e9 b7 e8 ff ff 4c 89 f7 89 8d 70 fe
+RSP: 0018:ffff8801b17f6880 EFLAGS: 00010293
+RAX: ffff8801d4688100 RBX: ffff8801a8ead7c0 RCX: ffffffff85794b66
+RDX: 0000000000000000 RSI: ffffffff857961b6 RDI: 0000000000000005
+RBP: ffff8801b17f6a58 R08: ffff8801d4688100 R09: ffffed0039188032
+R10: ffffed0039188034 R11: ffff8801c8c401a3 R12: ffff8801a8ead884
+R13: 00000000fffffff2 R14: ffff8801a8ead890 R15: dffffc0000000000
+FS:  00007f00d6501700(0000) GS:ffff8801db100000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000000000072c081 CR3: 00000001cb927000 CR4: 00000000001406e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+  ip_fragment.constprop.49+0x179/0x240 net/ipv4/ip_output.c:548
+  ip_finish_output+0x6e4/0xfa0 net/ipv4/ip_output.c:315
+  NF_HOOK_COND include/linux/netfilter.h:276 [inline]
+  ip_output+0x223/0x880 net/ipv4/ip_output.c:405
+  dst_output include/net/dst.h:444 [inline]
+  ip_local_out+0xc5/0x1b0 net/ipv4/ip_output.c:124
+  iptunnel_xmit+0x53b/0x800 net/ipv4/ip_tunnel_core.c:91
+  ip_tunnel_xmit+0x1598/0x3af1 net/ipv4/ip_tunnel.c:778
+  __gre_xmit+0x5b7/0x950 net/ipv4/ip_gre.c:449
+  ipgre_xmit+0x3e8/0xb50 net/ipv4/ip_gre.c:701
+  __netdev_start_xmit include/linux/netdevice.h:4148 [inline]
+  netdev_start_xmit include/linux/netdevice.h:4157 [inline]
+  xmit_one net/core/dev.c:3034 [inline]
+  dev_hard_start_xmit+0x26c/0xc30 net/core/dev.c:3050
+  __dev_queue_xmit+0x29c2/0x38e0 net/core/dev.c:3569
+  dev_queue_xmit+0x17/0x20 net/core/dev.c:3602
+  __bpf_tx_skb net/core/filter.c:1995 [inline]
+  __bpf_redirect_common net/core/filter.c:2033 [inline]
+  __bpf_redirect+0x563/0xa80 net/core/filter.c:2040
+  ____bpf_clone_redirect net/core/filter.c:2073 [inline]
+  bpf_clone_redirect+0x2f6/0x490 net/core/filter.c:2045
+  bpf_prog_bebbfe2050753572+0x359/0x1000
+Modules linked in:
+Dumping ftrace buffer:
+    (ftrace buffer empty)
+---[ end trace ee1a333a6a4f77b3 ]---
+RIP: 0010:ip_do_fragment+0x2436/0x2aa0 net/ipv4/ip_output.c:775
+Code: 8b 8d 70 fe ff ff e9 99 e8 ff ff 4c 89 ef e8 a1 8b 40 fc e9 7b e9 ff  
+ff 4c 89 f7 e8 94 8b 40 fc e9 f3 e5 ff ff e8 ca a9 02 fc <0f> 0b 4c 89 e7  
+e8 80 8b 40 fc e9 b7 e8 ff ff 4c 89 f7 89 8d 70 fe
+RSP: 0018:ffff8801b17f6880 EFLAGS: 00010293
+RAX: ffff8801d4688100 RBX: ffff8801a8ead7c0 RCX: ffffffff85794b66
+RDX: 0000000000000000 RSI: ffffffff857961b6 RDI: 0000000000000005
+RBP: ffff8801b17f6a58 R08: ffff8801d4688100 R09: ffffed0039188032
+R10: ffffed0039188034 R11: ffff8801c8c401a3 R12: ffff8801a8ead884
+R13: 00000000fffffff2 R14: ffff8801a8ead890 R15: dffffc0000000000
+FS:  00007f00d6501700(0000) GS:ffff8801db100000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000000000072c081 CR3: 00000001cb927000 CR4: 00000000001406e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+
