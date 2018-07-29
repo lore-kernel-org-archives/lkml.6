@@ -7,64 +7,64 @@ X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 671CFC46462
-	for <linux-kernel@archiver.kernel.org>; Sun, 29 Jul 2018 21:08:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B04BC46461
+	for <linux-kernel@archiver.kernel.org>; Sun, 29 Jul 2018 21:08:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 129C4208A1
-	for <linux-kernel@archiver.kernel.org>; Sun, 29 Jul 2018 21:08:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0A5F820857
+	for <linux-kernel@archiver.kernel.org>; Sun, 29 Jul 2018 21:08:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="scqw6Jiw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 129C4208A1
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KsOXABDm"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0A5F820857
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732032AbeG2Wkf (ORCPT
+        id S1732041AbeG2Wkj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 29 Jul 2018 18:40:35 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:52151 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731047AbeG2Wkd (ORCPT
+        Sun, 29 Jul 2018 18:40:39 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:35690 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731767AbeG2Wkf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Jul 2018 18:40:33 -0400
-Received: by mail-wm0-f65.google.com with SMTP id y2-v6so10954141wma.1
-        for <linux-kernel@vger.kernel.org>; Sun, 29 Jul 2018 14:08:42 -0700 (PDT)
+        Sun, 29 Jul 2018 18:40:35 -0400
+Received: by mail-wm0-f68.google.com with SMTP id o18-v6so11485904wmc.0
+        for <linux-kernel@vger.kernel.org>; Sun, 29 Jul 2018 14:08:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=d+/Nr+HczgTe9aJw50VdbujcfkdYPhHGBlYLzqkfvUc=;
-        b=scqw6Jiw3oo1L6cb51OKhGYOlHvnKe4ylKq0D8/7tCCILmZDMwMtgF2qZ5CXAk6gn1
-         0UsgY9JOBYEtJ8FMHxnn72/MC6IAJlFa753YtOcWSOTakO+KiGjvgif7NfkeWRFtIsAI
-         /U64KULBCYIj4eff2igIXt0zGZ7E8LViRe3gzBk43G7pF/R/kuaXuKOItGynsH32E4WO
-         jl3isx6Ewk1I4g5VD66Z7UJ+QAfItX3XAf7VD7hxHGlI/+L3iFgzkmJll5EckAKcUgkh
-         sNDS7xKJCJqahcBB51ksJZHpf2bkAMg6R78V95tSEEr1zsfmqxtDQ8oG/56EL4cNZVAH
-         jELA==
+        bh=UR0N1HWiWWwjHZ8nhIrp5asAe0+E6+xg4umX+qxGJbo=;
+        b=KsOXABDmYAlvyZWHHoSRvlo7GmjQcM+rOwPgZjJkWO1n/wcELEsbhrW1V1h4vjvMEZ
+         l4Cc7TiQro7z70PdrIEsAKZI3C8iJ2koJbOroneddlNwZAYH80vSNSK4sT7qtXRbzZ/g
+         RBdnTLCB2dgpJ6FSRA4XESf5FZFeEDHkcVmxfbTNlSqCnyu+4eGzFMc2AsucVYV1hWLh
+         y96Yw5VY6E9QL7tCcv4mLdHxuIPCw9mU/Pm2wld0xEUEaCLccDxOSJn78g/Uj0bWIbt/
+         3kX3451jonpoBX3oUcqlBriJlWjnPPszgBSQ3JlM5OrDElbZMp458ZwFv4aJb9MDbvGi
+         lj8Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=d+/Nr+HczgTe9aJw50VdbujcfkdYPhHGBlYLzqkfvUc=;
-        b=Q7VY4DB3r55CLIRFDSOOVx3v0ulqbJCZnvH/WHRT0q0zLXVEbvVnrQPUqRQGYJOhG+
-         JYTytzGKe/zPCqAFBD7bXuy7pyiegKrE5s26REhGXQH5eInzgU8mpswttMK2H20/NvSI
-         zfQJ0zfhBGlBoBoNLqYh1aglWLC2AmbxJKtavboz3M4ZBmEmLjaZbWj6DYLDryuScR2C
-         t32ce6gCL4kTBQpe8/tuqQcuf27J4eCq9cPOG6uPWBPidmsd4dFR117ky79jygfKHPBR
-         TXKAWJfMNK7FkjjGb5aaxTVjGJdr6E/NOvDl1oePTdQf1rK6e7LGCsSeL7d8HtM3CeLh
-         npBA==
-X-Gm-Message-State: AOUpUlEeYDP0PSkm+muORqVe+iWfFQOj792pvJ/ZfKTefBfWXPZp7sd0
-        CBpR6AkfmC2q8AcUT6y6DFkL0aKaUy0=
-X-Google-Smtp-Source: AAOMgpd0JXSp81GCyPpfOUPrA0u7qTx8YGRgOrKKpbvVJw3qCR336pyL/9tK2mPNORcmitjqkJVb8g==
-X-Received: by 2002:a1c:790b:: with SMTP id l11-v6mr12359570wme.66.1532898521579;
-        Sun, 29 Jul 2018 14:08:41 -0700 (PDT)
+        bh=UR0N1HWiWWwjHZ8nhIrp5asAe0+E6+xg4umX+qxGJbo=;
+        b=kx19NYLPW+BhMbiwhtj79VjSzQIQ8MwXIDZzOZjC1GHemMqmQby59j3DWbT2UzmgqK
+         K2xkQDx6jrYlcE/sbSRKQGhL3a+BNgeYndmRHEvwM0Vj1AJf6OLY1mU3XlIIyNqRTtMK
+         Vg0mMVnxBrjYeNvnqRWov22JqeEdNrNNBA5CF36xlbODHh3HFH1KlDU4YZxq6D8irDOC
+         kyoDIwjMi82Cm7DwyFqTt+oQdt7B68iS3cMACkknvHb1gdhUkI/dUi7Lel5SR1xhnOvX
+         8/qajD276vXdGMloy4hcMFLFsTv+by0VGZ4BDlzvcb/Ea/sTjA2+s+H5Ie7EELhO36mF
+         kHMw==
+X-Gm-Message-State: AOUpUlFB4YLSWFrF2XCyoVOfkQnA4If4wW5n/zD+tuZxu9NDSM++6QUr
+        nCESnjdiz/b2+6SieCDLL+A+eLjOLF8=
+X-Google-Smtp-Source: AAOMgpfGNm6NZIg26wegXQMSbNjicfbcT4rpcIhuGxIl/zcW5ZDnqJzlkpbiIxJnA0bWqsdW04T6Mg==
+X-Received: by 2002:a1c:1ad0:: with SMTP id a199-v6mr12679578wma.131.1532898522944;
+        Sun, 29 Jul 2018 14:08:42 -0700 (PDT)
 Received: from localhost.localdomain (host81-158-116-187.range81-158.btcentralplus.com. [81.158.116.187])
-        by smtp.gmail.com with ESMTPSA id d26-v6sm9264532wmb.15.2018.07.29.14.08.40
+        by smtp.gmail.com with ESMTPSA id d26-v6sm9264532wmb.15.2018.07.29.14.08.41
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 29 Jul 2018 14:08:40 -0700 (PDT)
+        Sun, 29 Jul 2018 14:08:42 -0700 (PDT)
 From:   John Whitmore <johnfwhitmore@gmail.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     devel@driverdev.osuosl.org, gregkh@linuxfoundation.org,
         John Whitmore <johnfwhitmore@gmail.com>
-Subject: [PATCH v2 14/15] staging:rtl8192u: Refactor enum dm_dig_cs_ratio_e - Style
-Date:   Sun, 29 Jul 2018 22:07:46 +0100
-Message-Id: <20180729210747.10803-15-johnfwhitmore@gmail.com>
+Subject: [PATCH v2 15/15] staging:rtl8192u: Refactor enum DM_CCK_Rx_Path_Method - Style
+Date:   Sun, 29 Jul 2018 22:07:47 +0100
+Message-Id: <20180729210747.10803-16-johnfwhitmore@gmail.com>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180729210747.10803-1-johnfwhitmore@gmail.com>
 References: <20180729210747.10803-1-johnfwhitmore@gmail.com>
@@ -73,69 +73,61 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The enumerated type dm_dig_cs_ratio_e is never actually used as a type,
-but only as a collection of related constants. This is because the
-variables, which use the defined constant values, are defined as being
-of type u8 rather then tne enumerated type. This omission negates the
-possibility of taking advantage of compiler type checking.
+The enumerated type DM_CCK_Rx_Path_Method is used as a container for
+constant definitions, rather then an enumerated type enabling compiler
+type checking. To correct this, the variable which uses the constants,
+defined by the enumeration, has had its type changed from a u8 to the
+enumeration.
 
-To enable the use of compiler type checking of the enumeration the two
-variables, (curcs_ratio_state & precs_ratio_state), which use the type's
-constants have their types changed from u8 to enum dig_cck_cs_ratio_state.
+Additionally the type has been moved above the structure where the type
+is used, to avoid compiler error. The typedef has been removed from the
+enumerated type to clear the checkpatch issue with defining new types.
+The name of the type has been changed to cck_rx_path_method to clear
+the checkpatch issue with CamelCase naming. And the enumerated constant
+CCK_Rx_Version_MAX has been removed, since it is never used in code.
 
-Additionally the types declaration has been moved above the dig
-structure, where the type is used. The 'typedef' keyword has been
-removed from the type to clear the checkpatch issue with defining new
-types. And the constant DIG_CS_MAX has been removed since this is never
-used in the code.
-
-These changes are purely coding style changes and should not impact
-on runtime code execution.
+The changes are all coding style in nature and so should have no
+impact on runtime code execution.
 
 Signed-off-by: John Whitmore <johnfwhitmore@gmail.com>
 ---
- drivers/staging/rtl8192u/r8192U_dm.h | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+ drivers/staging/rtl8192u/r8192U_dm.h | 13 ++++++-------
+ 1 file changed, 6 insertions(+), 7 deletions(-)
 
 diff --git a/drivers/staging/rtl8192u/r8192U_dm.h b/drivers/staging/rtl8192u/r8192U_dm.h
-index f9d75ad9eaee..f0e259ddea5d 100644
+index f0e259ddea5d..2ba6a4208870 100644
 --- a/drivers/staging/rtl8192u/r8192U_dm.h
 +++ b/drivers/staging/rtl8192u/r8192U_dm.h
-@@ -87,6 +87,11 @@ enum dig_pkt_detection_threshold {
- 	DIG_PD_AT_HIGH_POWER = 2,
- };
- 
-+enum dig_cck_cs_ratio_state {
-+	DIG_CS_RATIO_LOWER = 0,
-+	DIG_CS_RATIO_HIGHER = 1,
-+};
-+
- /* 2007/10/04 MH Define upper and lower threshold of DIG enable or disable. */
- struct dig {
- 	u8		dig_enable_flag;
-@@ -107,8 +112,8 @@ struct dig {
- 
- 	enum dig_pkt_detection_threshold		curpd_thstate;
- 	enum dig_pkt_detection_threshold		prepd_thstate;
--	u8		curcs_ratio_state;
--	u8		precs_ratio_state;
-+	enum dig_cck_cs_ratio_state		curcs_ratio_state;
-+	enum dig_cck_cs_ratio_state		precs_ratio_state;
- 
- 	u32		pre_ig_value;
- 	u32		cur_ig_value;
-@@ -121,11 +126,6 @@ struct dig {
+@@ -126,10 +126,15 @@ struct dig {
  	long		rssi_val;
  };
  
--typedef enum tag_dig_cck_cs_ratio_state_definition {
--	DIG_CS_RATIO_LOWER = 0,
--	DIG_CS_RATIO_HIGHER = 1,
--	DIG_CS_MAX
--} dm_dig_cs_ratio_e;
++enum cck_rx_path_method {
++	CCK_Rx_Version_1 = 0,
++	CCK_Rx_Version_2 = 1,
++};
++
  struct dynamic_rx_path_sel {
  	u8		Enable;
  	u8		DbgMode;
+-	u8		cck_method;
++	enum cck_rx_path_method		cck_method;
+ 	u8		cck_Rx_path;
+ 
+ 	u8		SS_TH_low;
+@@ -142,12 +147,6 @@ struct dynamic_rx_path_sel {
+ 	long		cck_pwdb_sta[4];
+ };
+ 
+-typedef enum tag_CCK_Rx_Path_Method_Definition {
+-	CCK_Rx_Version_1 = 0,
+-	CCK_Rx_Version_2 = 1,
+-	CCK_Rx_Version_MAX
+-} DM_CCK_Rx_Path_Method;
+-
+ typedef enum tag_DM_DbgMode_Definition {
+ 	DM_DBG_OFF = 0,
+ 	DM_DBG_ON = 1,
 -- 
 2.18.0
 
