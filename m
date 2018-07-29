@@ -7,57 +7,57 @@ X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BEC213765E0
-	for <linux-kernel@archiver.kernel.org>; Sun, 29 Jul 2018 20:01:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F248C46462
+	for <linux-kernel@archiver.kernel.org>; Sun, 29 Jul 2018 20:01:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AABA520882
-	for <linux-kernel@archiver.kernel.org>; Sun, 29 Jul 2018 20:01:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A9E5A20882
+	for <linux-kernel@archiver.kernel.org>; Sun, 29 Jul 2018 20:01:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eG3eY9GX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AABA520882
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NOYT2UOL"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A9E5A20882
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728696AbeG2Vc4 (ORCPT
+        id S1728756AbeG2Vc5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 29 Jul 2018 17:32:56 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:54825 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726814AbeG2Vcz (ORCPT
+        Sun, 29 Jul 2018 17:32:57 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:41275 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726689AbeG2Vc5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Jul 2018 17:32:55 -0400
-Received: by mail-wm0-f67.google.com with SMTP id c14-v6so10826967wmb.4;
-        Sun, 29 Jul 2018 13:01:17 -0700 (PDT)
+        Sun, 29 Jul 2018 17:32:57 -0400
+Received: by mail-wr1-f66.google.com with SMTP id j5-v6so10493575wrr.8;
+        Sun, 29 Jul 2018 13:01:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=yV4BrGATtpd2ZcOZd+Y/6AlGg77OpnyLdAi+gf3Ef/k=;
-        b=eG3eY9GXidaiGv+Fwyw59ZOUZgOAiqSHHwF3Ex/ygCIlaNx4ZHWaXJa9A9apgbJXQf
-         X6SpjgMBo+CnUJOXH1ziWK6PDQYLwR05frq4H33SNlcNsvxrEoJpQSr/fEThuaCDp8d/
-         SZsbgc4LRG0O1qaHUoYRFqFT7iD07ezUcUkbbpsSkGkJ+2JGG5t5isZVlL2p6QixEqC1
-         KRZkQ5/tDvCv5jdTj0NSx+dz5Ez+pzNHKWQ+nqKQ9XbQocGpCp7ZFSXuN4gWJhyJYzI3
-         iHEq7e/Ti2yw6UpzThghr4nOejnr7jF/eSYaYbm9B8EJ2E7zXJhq0Ugv9ott8ThPYWCL
-         SNXA==
+        bh=EIzsYNTblUGRSRBF+KQjqSRwijHZZ8m9W32BQz0Kni0=;
+        b=NOYT2UOLiuzdI0w5iNITjHbZfmudWLtRGxTuhgAyZ8efe8LgP9Tqk0T5fNwb59i1tZ
+         h7OkbhRW5RkbIfLwgg7WWABHuHzbCbMoS41iQZucibmksA7DoX313TITNOS+M0sKziNv
+         SXdbW+xy2qU4BCFH/bQH7rnhxh5ivOPJJ2n4Rax3rQi6MNNo4puhd4TEK4YRlc4EFnpY
+         qVxyy/u8UiCG9uWcM3JMo8f+p3S6P0+QCjfzdEg/yMa3A5Ox35SmWST6I793MKUOYicQ
+         7hkvRDWfjmagDoVt61XdtKfdTg6XT16qlP7/fbjsPxxb69PI5xViGgCK/nz+Z7POSOPo
+         dUYA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=yV4BrGATtpd2ZcOZd+Y/6AlGg77OpnyLdAi+gf3Ef/k=;
-        b=giaBlCZiU8QIzVtEspDMoRyw43HIp6z0+YA0kI3hUZZOg37zMUcygwcpqBBoZP2ovZ
-         oZq7GgglvfGGRSTgC7b5aHcCLYy+yJ5SKmw+UKst3CPbXiwb3tbBR8IoEQo9LO8b5rH8
-         KmfYgVr0cEiJ4ML6ifulSqnzg2Umykx/GzbDNGwnVS85cZdughDjmRSbtzvgcXK/JnY1
-         cewLPNf2RnvwvlW/TZrcUU3hhH1NcjGbKUO8tdG0EIojuXuCZeN5MyXSbkg3/J9xeJBd
-         jjMS9Q9ZO0/13/T0o5x8r26a0asQC1vUBtnboxTzbacdopvwCi+ygV6ofBAME4P3DNKJ
-         lEqA==
-X-Gm-Message-State: AOUpUlH3fqmXxqgUFNmIS/LyCbuGFCx3POFeOBgRGg05lX4t5xjDt+GF
-        +pMww8mjJVJXGBwbpOVMcFQ=
-X-Google-Smtp-Source: AAOMgpdTRhgjc0PQXUG2HeIK0MaBRn5wM+IGpj6TWZtlL/+bfyZhnuDhmKVBVQYq4KsfrzVnTunoOA==
-X-Received: by 2002:a1c:6444:: with SMTP id y65-v6mr11888010wmb.98.1532894476342;
-        Sun, 29 Jul 2018 13:01:16 -0700 (PDT)
+        bh=EIzsYNTblUGRSRBF+KQjqSRwijHZZ8m9W32BQz0Kni0=;
+        b=oO80zhhp3Q+1DvEoR1JRRfowmMLfZEsZtqAQEzTqE2H5dKvkXXTIAnwXvPiWRe+k4S
+         DD0xKT434OmgMULr6BaE17UIN2c01MNuAeNDlbrGJrPVB3WNyJaNGYvx+0IaU7LUtHTC
+         c6q9BG30IC+yHuUQ7cHJ42Cl+idcFi6YbSUwzE/9lvRqmL2azZej5CCNHeLFFUxXUTc8
+         idJZMNedvdy0eL9eKGmyST0lC7JQf4sNA1TJ9O3YZQP1P7Ei08TIaLRj/DHE6vgNFx6o
+         1dFmmP7unW6/qlNjtcFAnKh01R5AokSVhcTDyee4BEWEqysQR+iLuTB4M/Fx99+mrA8G
+         EbbA==
+X-Gm-Message-State: AOUpUlFD0HYZCr6sWcBhwdhYWAMOltn7lu6e3Tr8RVZabi6WXn/6Dq7c
+        ro71cuYCXsxUrgOShSDj6T8=
+X-Google-Smtp-Source: AAOMgpcfBHmnCozN3DDcOC1iQrkMmx40PmZmFJIQVyEV2KXgZagJxW+4IClYrEbi6UMnpnfBovXmdA==
+X-Received: by 2002:adf:dd07:: with SMTP id a7-v6mr14968190wrm.2.1532894477629;
+        Sun, 29 Jul 2018 13:01:17 -0700 (PDT)
 Received: from localhost.localdomain (p5DCFE1FB.dip0.t-ipconnect.de. [93.207.225.251])
-        by smtp.gmail.com with ESMTPSA id g15-v6sm12334213wrh.48.2018.07.29.13.01.14
+        by smtp.gmail.com with ESMTPSA id g15-v6sm12334213wrh.48.2018.07.29.13.01.16
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 29 Jul 2018 13:01:15 -0700 (PDT)
+        Sun, 29 Jul 2018 13:01:16 -0700 (PDT)
 From:   Saravanan Sekar <sravanhome@gmail.com>
 To:     manivannan.sadhasivam@linaro.org, linus.walleij@linaro.org,
         robh+dt@kernel.org, mark.rutland@arm.com, afaerber@suse.de,
@@ -67,9 +67,9 @@ Cc:     linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
         pn@denx.de, mp-cs@actions-semi.com, jeff.chen@actions-semi.com,
         thomas.liau@actions-semi.com, linux@cubietech.com,
         Saravanan Sekar <sravanhome@gmail.com>
-Subject: [PATCH v3 1/5] pinctrl: actions: define constructor generic to Actions Semi SoC's
-Date:   Sun, 29 Jul 2018 22:00:34 +0200
-Message-Id: <20180729200038.11795-2-sravanhome@gmail.com>
+Subject: [PATCH v3 2/5] pinctrl: actions: define pad control configurtion to SoC specific
+Date:   Sun, 29 Jul 2018 22:00:35 +0200
+Message-Id: <20180729200038.11795-3-sravanhome@gmail.com>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180729200038.11795-1-sravanhome@gmail.com>
 References: <20180729182551.19383-1-sravanhome@gmail.com>
@@ -79,350 +79,233 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Move generic defines common to the Owl family out of S900 driver.
+pad control for s900 and s700 are differs in number of
+pull control configuraions
+s900 has 4 pull controls - high impedence, pull up, pull down, repeater
+s700, s500 has 2 pull controls - pull up and pull down
+
+so pad control configuration has to SoC specific, moved out from pinctrl
+common to s700, s900 specific.
 
 Signed-off-by: Parthiban Nallathambi <pn@denx.de>
 Signed-off-by: Saravanan Sekar <sravanhome@gmail.com>
 ---
- drivers/pinctrl/actions/pinctrl-owl.h  | 131 +++++++++++++++++++++++
- drivers/pinctrl/actions/pinctrl-s900.c | 139 ++-----------------------
- 2 files changed, 137 insertions(+), 133 deletions(-)
+ drivers/pinctrl/actions/pinctrl-owl.c  | 64 ++++---------------------
+ drivers/pinctrl/actions/pinctrl-owl.h  | 13 +++--
+ drivers/pinctrl/actions/pinctrl-s900.c | 66 +++++++++++++++++++++++++-
+ 3 files changed, 79 insertions(+), 64 deletions(-)
 
+diff --git a/drivers/pinctrl/actions/pinctrl-owl.c b/drivers/pinctrl/actions/pinctrl-owl.c
+index 4fa9cc377b3b..004bdc66e158 100644
+--- a/drivers/pinctrl/actions/pinctrl-owl.c
++++ b/drivers/pinctrl/actions/pinctrl-owl.c
+@@ -246,60 +246,6 @@ static int owl_pad_pinconf_reg(const struct owl_padinfo *info,
+ 	return 0;
+ }
+ 
+-static int owl_pad_pinconf_arg2val(const struct owl_padinfo *info,
+-				unsigned int param,
+-				u32 *arg)
+-{
+-	switch (param) {
+-	case PIN_CONFIG_BIAS_BUS_HOLD:
+-		*arg = OWL_PINCONF_PULL_HOLD;
+-		break;
+-	case PIN_CONFIG_BIAS_HIGH_IMPEDANCE:
+-		*arg = OWL_PINCONF_PULL_HIZ;
+-		break;
+-	case PIN_CONFIG_BIAS_PULL_DOWN:
+-		*arg = OWL_PINCONF_PULL_DOWN;
+-		break;
+-	case PIN_CONFIG_BIAS_PULL_UP:
+-		*arg = OWL_PINCONF_PULL_UP;
+-		break;
+-	case PIN_CONFIG_INPUT_SCHMITT_ENABLE:
+-		*arg = (*arg >= 1 ? 1 : 0);
+-		break;
+-	default:
+-		return -ENOTSUPP;
+-	}
+-
+-	return 0;
+-}
+-
+-static int owl_pad_pinconf_val2arg(const struct owl_padinfo *padinfo,
+-				unsigned int param,
+-				u32 *arg)
+-{
+-	switch (param) {
+-	case PIN_CONFIG_BIAS_BUS_HOLD:
+-		*arg = *arg == OWL_PINCONF_PULL_HOLD;
+-		break;
+-	case PIN_CONFIG_BIAS_HIGH_IMPEDANCE:
+-		*arg = *arg == OWL_PINCONF_PULL_HIZ;
+-		break;
+-	case PIN_CONFIG_BIAS_PULL_DOWN:
+-		*arg = *arg == OWL_PINCONF_PULL_DOWN;
+-		break;
+-	case PIN_CONFIG_BIAS_PULL_UP:
+-		*arg = *arg == OWL_PINCONF_PULL_UP;
+-		break;
+-	case PIN_CONFIG_INPUT_SCHMITT_ENABLE:
+-		*arg = *arg == 1;
+-		break;
+-	default:
+-		return -ENOTSUPP;
+-	}
+-
+-	return 0;
+-}
+-
+ static int owl_pin_config_get(struct pinctrl_dev *pctrldev,
+ 				unsigned int pin,
+ 				unsigned long *config)
+@@ -318,7 +264,10 @@ static int owl_pin_config_get(struct pinctrl_dev *pctrldev,
+ 
+ 	arg = owl_read_field(pctrl, reg, bit, width);
+ 
+-	ret = owl_pad_pinconf_val2arg(info, param, &arg);
++	if (!pctrl->soc->padctl_val2arg)
++		return -ENOTSUPP;
++
++	ret = pctrl->soc->padctl_val2arg(info, param, &arg);
+ 	if (ret)
+ 		return ret;
+ 
+@@ -349,7 +298,10 @@ static int owl_pin_config_set(struct pinctrl_dev *pctrldev,
+ 		if (ret)
+ 			return ret;
+ 
+-		ret = owl_pad_pinconf_arg2val(info, param, &arg);
++		if (!pctrl->soc->padctl_arg2val)
++			return -ENOTSUPP;
++
++		ret = pctrl->soc->padctl_arg2val(info, param, &arg);
+ 		if (ret)
+ 			return ret;
+ 
 diff --git a/drivers/pinctrl/actions/pinctrl-owl.h b/drivers/pinctrl/actions/pinctrl-owl.h
-index a724d1d406d4..31cc33d7c4a5 100644
+index 31cc33d7c4a5..dae2e8363fd5 100644
 --- a/drivers/pinctrl/actions/pinctrl-owl.h
 +++ b/drivers/pinctrl/actions/pinctrl-owl.h
-@@ -15,6 +15,136 @@
- #define OWL_PINCONF_SLEW_SLOW 0
- #define OWL_PINCONF_SLEW_FAST 1
+@@ -145,13 +145,6 @@
+ 		.shared_ctl_offset = _share,			\
+ 	}
  
-+#define MUX_PG(group_name, reg, shift, width)				\
-+	{								\
-+		.name = #group_name,					\
-+		.pads = group_name##_pads,				\
-+		.npads = ARRAY_SIZE(group_name##_pads),			\
-+		.funcs = group_name##_funcs,				\
-+		.nfuncs = ARRAY_SIZE(group_name##_funcs),		\
-+		.mfpctl_reg  = MFCTL##reg,				\
-+		.mfpctl_shift = shift,					\
-+		.mfpctl_width = width,					\
-+		.drv_reg = -1,						\
-+		.drv_shift = -1,					\
-+		.drv_width = -1,					\
-+		.sr_reg = -1,						\
-+		.sr_shift = -1,						\
-+		.sr_width = -1,						\
-+	}
-+
-+#define DRV_PG(group_name, reg, shift, width)				\
-+	{								\
-+		.name = #group_name,					\
-+		.pads = group_name##_pads,				\
-+		.npads = ARRAY_SIZE(group_name##_pads),			\
-+		.mfpctl_reg  = -1,					\
-+		.mfpctl_shift = -1,					\
-+		.mfpctl_width = -1,					\
-+		.drv_reg = PAD_DRV##reg,				\
-+		.drv_shift = shift,					\
-+		.drv_width = width,					\
-+		.sr_reg = -1,						\
-+		.sr_shift = -1,						\
-+		.sr_width = -1,						\
-+	}
-+
-+#define SR_PG(group_name, reg, shift, width)				\
-+	{								\
-+		.name = #group_name,					\
-+		.pads = group_name##_pads,				\
-+		.npads = ARRAY_SIZE(group_name##_pads),			\
-+		.mfpctl_reg  = -1,					\
-+		.mfpctl_shift = -1,					\
-+		.mfpctl_width = -1,					\
-+		.drv_reg = -1,						\
-+		.drv_shift = -1,					\
-+		.drv_width = -1,					\
-+		.sr_reg = PAD_SR##reg,					\
-+		.sr_shift = shift,					\
-+		.sr_width = width,					\
-+	}
-+
-+#define FUNCTION(fname)					\
-+	{						\
-+		.name = #fname,				\
-+		.groups = fname##_groups,		\
-+		.ngroups = ARRAY_SIZE(fname##_groups),	\
-+	}
-+
-+/* PAD PULL UP/DOWN CONFIGURES */
-+#define PULLCTL_CONF(pull_reg, pull_sft, pull_wdt)	\
-+	{						\
-+		.reg = PAD_PULLCTL##pull_reg,		\
-+		.shift = pull_sft,			\
-+		.width = pull_wdt,			\
-+	}
-+
-+#define PAD_PULLCTL_CONF(pad_name, pull_reg, pull_sft, pull_wdt)	\
-+	struct owl_pullctl pad_name##_pullctl_conf			\
-+		= PULLCTL_CONF(pull_reg, pull_sft, pull_wdt)
-+
-+#define ST_CONF(st_reg, st_sft, st_wdt)			\
-+	{						\
-+		.reg = PAD_ST##st_reg,			\
-+		.shift = st_sft,			\
-+		.width = st_wdt,			\
-+	}
-+
-+#define PAD_ST_CONF(pad_name, st_reg, st_sft, st_wdt)	\
-+	struct owl_st pad_name##_st_conf		\
-+		= ST_CONF(st_reg, st_sft, st_wdt)
-+
-+#define PAD_INFO(name)					\
-+	{						\
-+		.pad = name,				\
-+		.pullctl = NULL,			\
-+		.st = NULL,				\
-+	}
-+
-+#define PAD_INFO_ST(name)				\
-+	{						\
-+		.pad = name,				\
-+		.pullctl = NULL,			\
-+		.st = &name##_st_conf,			\
-+	}
-+
-+#define PAD_INFO_PULLCTL(name)				\
-+	{						\
-+		.pad = name,				\
-+		.pullctl = &name##_pullctl_conf,	\
-+		.st = NULL,				\
-+	}
-+
-+#define PAD_INFO_PULLCTL_ST(name)			\
-+	{						\
-+		.pad = name,				\
-+		.pullctl = &name##_pullctl_conf,	\
-+		.st = &name##_st_conf,			\
-+	}
-+
-+#define OWL_GPIO_PORT_A		0
-+#define OWL_GPIO_PORT_B		1
-+#define OWL_GPIO_PORT_C		2
-+#define OWL_GPIO_PORT_D		3
-+#define OWL_GPIO_PORT_E		4
-+#define OWL_GPIO_PORT_F		5
-+
-+#define OWL_GPIO_PORT(port, base, count, _outen, _inen, _dat, _intc_ctl,\
-+			_intc_pd, _intc_msk, _intc_type, _share)	\
-+	[OWL_GPIO_PORT_##port] = {				\
-+		.offset = base,					\
-+		.pins = count,					\
-+		.outen = _outen,				\
-+		.inen = _inen,					\
-+		.dat = _dat,					\
-+		.intc_ctl = _intc_ctl,				\
-+		.intc_pd = _intc_pd,				\
-+		.intc_msk = _intc_msk,				\
-+		.intc_type = _intc_type,			\
-+		.shared_ctl_offset = _share,			\
-+	}
-+
- enum owl_pinconf_pull {
- 	OWL_PINCONF_PULL_HIZ,
- 	OWL_PINCONF_PULL_DOWN,
-@@ -148,6 +278,7 @@ struct owl_gpio_port {
- 	unsigned int intc_pd;
- 	unsigned int intc_msk;
- 	unsigned int intc_type;
-+	u8 shared_ctl_offset;
+-enum owl_pinconf_pull {
+-	OWL_PINCONF_PULL_HIZ,
+-	OWL_PINCONF_PULL_DOWN,
+-	OWL_PINCONF_PULL_UP,
+-	OWL_PINCONF_PULL_HOLD,
+-};
+-
+ enum owl_pinconf_drv {
+ 	OWL_PINCONF_DRV_2MA,
+ 	OWL_PINCONF_DRV_4MA,
+@@ -305,6 +298,12 @@ struct owl_pinctrl_soc_data {
+ 	unsigned int ngpios;
+ 	const struct owl_gpio_port *ports;
+ 	unsigned int nports;
++	int (*padctl_val2arg)(const struct owl_padinfo *padinfo,
++				unsigned int param,
++				u32 *arg);
++	int (*padctl_arg2val)(const struct owl_padinfo *info,
++				unsigned int param,
++				u32 *arg);
  };
  
- /**
+ int owl_pinctrl_probe(struct platform_device *pdev,
 diff --git a/drivers/pinctrl/actions/pinctrl-s900.c b/drivers/pinctrl/actions/pinctrl-s900.c
-index ea67b14ef93b..0597009d8369 100644
+index 0597009d8369..2e19fecbe5e9 100644
 --- a/drivers/pinctrl/actions/pinctrl-s900.c
 +++ b/drivers/pinctrl/actions/pinctrl-s900.c
-@@ -33,13 +33,6 @@
- #define PAD_SR1			(0x0274)
- #define PAD_SR2			(0x0278)
+@@ -13,6 +13,7 @@
+ #include <linux/of.h>
+ #include <linux/platform_device.h>
+ #include <linux/pinctrl/pinctrl.h>
++#include <linux/pinctrl/pinconf-generic.h>
+ #include "pinctrl-owl.h"
  
--#define OWL_GPIO_PORT_A		0
--#define OWL_GPIO_PORT_B		1
--#define OWL_GPIO_PORT_C		2
--#define OWL_GPIO_PORT_D		3
--#define OWL_GPIO_PORT_E		4
--#define OWL_GPIO_PORT_F		5
--
- #define _GPIOA(offset)		(offset)
- #define _GPIOB(offset)		(32 + (offset))
- #define _GPIOC(offset)		(64 + (offset))
-@@ -892,55 +885,6 @@ static unsigned int i2c2_sr_pads[]		= { I2C2_SCLK, I2C2_SDATA };
- static unsigned int sensor0_sr_pads[]		= { SENSOR0_PCLK,
- 						    SENSOR0_CKOUT };
- 
--#define MUX_PG(group_name, reg, shift, width)				\
--	{								\
--		.name = #group_name,					\
--		.pads = group_name##_pads,				\
--		.npads = ARRAY_SIZE(group_name##_pads),			\
--		.funcs = group_name##_funcs,				\
--		.nfuncs = ARRAY_SIZE(group_name##_funcs),		\
--		.mfpctl_reg  = MFCTL##reg,				\
--		.mfpctl_shift = shift,					\
--		.mfpctl_width = width,					\
--		.drv_reg = -1,						\
--		.drv_shift = -1,					\
--		.drv_width = -1,					\
--		.sr_reg = -1,						\
--		.sr_shift = -1,						\
--		.sr_width = -1,						\
--	}
--
--#define DRV_PG(group_name, reg, shift, width)				\
--	{								\
--		.name = #group_name,					\
--		.pads = group_name##_pads,				\
--		.npads = ARRAY_SIZE(group_name##_pads),			\
--		.mfpctl_reg  = -1,					\
--		.mfpctl_shift = -1,					\
--		.mfpctl_width = -1,					\
--		.drv_reg = PAD_DRV##reg,				\
--		.drv_shift = shift,					\
--		.drv_width = width,					\
--		.sr_reg = -1,						\
--		.sr_shift = -1,						\
--		.sr_width = -1,						\
--	}
--
--#define SR_PG(group_name, reg, shift, width)				\
--	{								\
--		.name = #group_name,					\
--		.pads = group_name##_pads,				\
--		.npads = ARRAY_SIZE(group_name##_pads),			\
--		.mfpctl_reg  = -1,					\
--		.mfpctl_shift = -1,					\
--		.mfpctl_width = -1,					\
--		.drv_reg = -1,						\
--		.drv_shift = -1,					\
--		.drv_width = -1,					\
--		.sr_reg = PAD_SR##reg,					\
--		.sr_shift = shift,					\
--		.sr_width = width,					\
--	}
- 
- /* Pinctrl groups */
- static const struct owl_pingroup s900_groups[] = {
-@@ -1442,13 +1386,6 @@ static const char * const sirq2_groups[] = {
- 	"sirq2_dummy",
+ /* Pinctrl registers offset */
+@@ -1717,6 +1718,67 @@ static const struct owl_gpio_port s900_gpio_ports[] = {
+ 	OWL_GPIO_PORT(F, 0x00F0, 8, 0x0, 0x4, 0x8, 0x460, 0x140, 0x144, 0x178, 0)
  };
  
--#define FUNCTION(fname)					\
--	{						\
--		.name = #fname,				\
--		.groups = fname##_groups,		\
--		.ngroups = ARRAY_SIZE(fname##_groups),	\
--	}
--
- static const struct owl_pinmux_func s900_functions[] = {
- 	[S900_MUX_ERAM] = FUNCTION(eram),
- 	[S900_MUX_ETH_RMII] = FUNCTION(eth_rmii),
-@@ -1500,28 +1437,6 @@ static const struct owl_pinmux_func s900_functions[] = {
- 	[S900_MUX_SIRQ1] = FUNCTION(sirq1),
- 	[S900_MUX_SIRQ2] = FUNCTION(sirq2)
- };
--/* PAD PULL UP/DOWN CONFIGURES */
--#define PULLCTL_CONF(pull_reg, pull_sft, pull_wdt)			\
--	{								\
--		.reg = PAD_PULLCTL##pull_reg,				\
--		.shift = pull_sft,					\
--		.width = pull_wdt,					\
--	}
--
--#define PAD_PULLCTL_CONF(pad_name, pull_reg, pull_sft, pull_wdt)	\
--	struct owl_pullctl pad_name##_pullctl_conf			\
--		= PULLCTL_CONF(pull_reg, pull_sft, pull_wdt)
--
--#define ST_CONF(st_reg, st_sft, st_wdt)					\
--	{								\
--		.reg = PAD_ST##st_reg,					\
--		.shift = st_sft,					\
--		.width = st_wdt,					\
--	}
--
--#define PAD_ST_CONF(pad_name, st_reg, st_sft, st_wdt)			\
--	struct owl_st pad_name##_st_conf				\
--		= ST_CONF(st_reg, st_sft, st_wdt)
- 
- /* PAD_PULLCTL0 */
- static PAD_PULLCTL_CONF(ETH_RXER, 0, 18, 2);
-@@ -1639,34 +1554,6 @@ static PAD_ST_CONF(SPI0_SS, 1, 2, 1);
- static PAD_ST_CONF(I2S_BCLK0, 1, 1, 1);
- static PAD_ST_CONF(I2S_MCLK0, 1, 0, 1);
- 
--#define PAD_INFO(name)							\
--	{								\
--		.pad = name,						\
--		.pullctl = NULL,					\
--		.st = NULL,						\
--	}
--
--#define PAD_INFO_ST(name)						\
--	{								\
--		.pad = name,						\
--		.pullctl = NULL,					\
--		.st = &name##_st_conf,					\
--	}
--
--#define PAD_INFO_PULLCTL(name)						\
--	{								\
--		.pad = name,						\
--		.pullctl = &name##_pullctl_conf,			\
--		.st = NULL,						\
--	}
--
--#define PAD_INFO_PULLCTL_ST(name)					\
--	{								\
--		.pad = name,						\
--		.pullctl = &name##_pullctl_conf,			\
--		.st = &name##_st_conf,					\
--	}
--
- /* Pad info table */
- static struct owl_padinfo s900_padinfo[NUM_PADS] = {
- 	[ETH_TXD0] = PAD_INFO_ST(ETH_TXD0),
-@@ -1821,27 +1708,13 @@ static struct owl_padinfo s900_padinfo[NUM_PADS] = {
- 	[SGPIO3] = PAD_INFO_PULLCTL_ST(SGPIO3)
- };
- 
--#define OWL_GPIO_PORT(port, base, count, _outen, _inen, _dat,		\
--			_intc_ctl, _intc_pd, _intc_msk, _intc_type)	\
--	[OWL_GPIO_PORT_##port] = {					\
--		.offset = base,						\
--		.pins = count,						\
--		.outen = _outen,					\
--		.inen = _inen,						\
--		.dat = _dat,						\
--		.intc_ctl = _intc_ctl,					\
--		.intc_pd = _intc_pd,					\
--		.intc_msk = _intc_msk,					\
--		.intc_type = _intc_type,				\
--	}
--
- static const struct owl_gpio_port s900_gpio_ports[] = {
--	OWL_GPIO_PORT(A, 0x0000, 32, 0x0, 0x4, 0x8, 0x204, 0x208, 0x20C, 0x240),
--	OWL_GPIO_PORT(B, 0x000C, 32, 0x0, 0x4, 0x8, 0x534, 0x204, 0x208, 0x23C),
--	OWL_GPIO_PORT(C, 0x0018, 12, 0x0, 0x4, 0x8, 0x52C, 0x200, 0x204, 0x238),
--	OWL_GPIO_PORT(D, 0x0024, 30, 0x0, 0x4, 0x8, 0x524, 0x1FC, 0x200, 0x234),
--	OWL_GPIO_PORT(E, 0x0030, 32, 0x0, 0x4, 0x8, 0x51C, 0x1F8, 0x1FC, 0x230),
--	OWL_GPIO_PORT(F, 0x00F0, 8, 0x0, 0x4, 0x8, 0x460, 0x140, 0x144, 0x178)
-+	OWL_GPIO_PORT(A, 0x0000, 32, 0x0, 0x4, 0x8, 0x204, 0x208, 0x20C, 0x240, 0),
-+	OWL_GPIO_PORT(B, 0x000C, 32, 0x0, 0x4, 0x8, 0x534, 0x204, 0x208, 0x23C, 0),
-+	OWL_GPIO_PORT(C, 0x0018, 12, 0x0, 0x4, 0x8, 0x52C, 0x200, 0x204, 0x238, 0),
-+	OWL_GPIO_PORT(D, 0x0024, 30, 0x0, 0x4, 0x8, 0x524, 0x1FC, 0x200, 0x234, 0),
-+	OWL_GPIO_PORT(E, 0x0030, 32, 0x0, 0x4, 0x8, 0x51C, 0x1F8, 0x1FC, 0x230, 0),
-+	OWL_GPIO_PORT(F, 0x00F0, 8, 0x0, 0x4, 0x8, 0x460, 0x140, 0x144, 0x178, 0)
- };
- 
++enum owl_pinconf_pull {
++	OWL_PINCONF_PULL_HIZ,
++	OWL_PINCONF_PULL_DOWN,
++	OWL_PINCONF_PULL_UP,
++	OWL_PINCONF_PULL_HOLD,
++};
++
++static int s900_pad_pinconf_arg2val(const struct owl_padinfo *info,
++				unsigned int param,
++				u32 *arg)
++{
++	switch (param) {
++	case PIN_CONFIG_BIAS_BUS_HOLD:
++		*arg = OWL_PINCONF_PULL_HOLD;
++		break;
++	case PIN_CONFIG_BIAS_HIGH_IMPEDANCE:
++		*arg = OWL_PINCONF_PULL_HIZ;
++		break;
++	case PIN_CONFIG_BIAS_PULL_DOWN:
++		*arg = OWL_PINCONF_PULL_DOWN;
++		break;
++	case PIN_CONFIG_BIAS_PULL_UP:
++		*arg = OWL_PINCONF_PULL_UP;
++		break;
++	case PIN_CONFIG_INPUT_SCHMITT_ENABLE:
++		*arg = (*arg >= 1 ? 1 : 0);
++		break;
++	default:
++		return -ENOTSUPP;
++	}
++
++	return 0;
++}
++
++static int s900_pad_pinconf_val2arg(const struct owl_padinfo *padinfo,
++				unsigned int param,
++				u32 *arg)
++{
++	switch (param) {
++	case PIN_CONFIG_BIAS_BUS_HOLD:
++		*arg = *arg == OWL_PINCONF_PULL_HOLD;
++		break;
++	case PIN_CONFIG_BIAS_HIGH_IMPEDANCE:
++		*arg = *arg == OWL_PINCONF_PULL_HIZ;
++		break;
++	case PIN_CONFIG_BIAS_PULL_DOWN:
++		*arg = *arg == OWL_PINCONF_PULL_DOWN;
++		break;
++	case PIN_CONFIG_BIAS_PULL_UP:
++		*arg = *arg == OWL_PINCONF_PULL_UP;
++		break;
++	case PIN_CONFIG_INPUT_SCHMITT_ENABLE:
++		*arg = *arg == 1;
++		break;
++	default:
++		return -ENOTSUPP;
++	}
++
++	return 0;
++}
++
  static struct owl_pinctrl_soc_data s900_pinctrl_data = {
+ 	.padinfo = s900_padinfo,
+ 	.pins = (const struct pinctrl_pin_desc *)s900_pads,
+@@ -1727,7 +1789,9 @@ static struct owl_pinctrl_soc_data s900_pinctrl_data = {
+ 	.ngroups = ARRAY_SIZE(s900_groups),
+ 	.ngpios = NUM_GPIOS,
+ 	.ports = s900_gpio_ports,
+-	.nports = ARRAY_SIZE(s900_gpio_ports)
++	.nports = ARRAY_SIZE(s900_gpio_ports),
++	.padctl_arg2val = s900_pad_pinconf_arg2val,
++	.padctl_val2arg = s900_pad_pinconf_val2arg,
+ };
+ 
+ static int s900_pinctrl_probe(struct platform_device *pdev)
 -- 
 2.18.0
 
