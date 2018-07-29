@@ -1,143 +1,188 @@
 Return-Path: <SRS0=jKyA=KN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Level: *
+X-Spam-Status: No, score=1.8 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SORTED_RECIPS,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77384C46461
-	for <linux-kernel@archiver.kernel.org>; Sun, 29 Jul 2018 22:35:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53359C46462
+	for <linux-kernel@archiver.kernel.org>; Sun, 29 Jul 2018 23:23:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 16EAB20873
-	for <linux-kernel@archiver.kernel.org>; Sun, 29 Jul 2018 22:35:45 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hpvocCtp"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 16EAB20873
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id DE87120873
+	for <linux-kernel@archiver.kernel.org>; Sun, 29 Jul 2018 23:23:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DE87120873
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731466AbeG3AH0 (ORCPT
+        id S1731659AbeG3AuQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 29 Jul 2018 20:07:26 -0400
-Received: from mail-oi0-f68.google.com ([209.85.218.68]:36243 "EHLO
-        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726814AbeG3AHZ (ORCPT
+        Sun, 29 Jul 2018 20:50:16 -0400
+Received: from mail-it0-f70.google.com ([209.85.214.70]:33177 "EHLO
+        mail-it0-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727384AbeG3AuQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Jul 2018 20:07:25 -0400
-Received: by mail-oi0-f68.google.com with SMTP id n21-v6so17975585oig.3
-        for <linux-kernel@vger.kernel.org>; Sun, 29 Jul 2018 15:35:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=hGXjudSXbMqpGtwtp4Fl8ptFkSd3qc43by/CY/mgIYE=;
-        b=hpvocCtp+ncC2e+Tx5WfpGrnJvM5VdDDGXYI8LGgIYt5VpN75Kum4XuiH0mDOUk74c
-         WA3dW0MumTIos3HSvtVfalNJjAx2PUnFSEk5DUPp7zlq+AtgR7bvAc09neKUbFBa11IL
-         lUt1jbsczr3bg0Jk8VItyzNj8f0uRBy5kdZYzNRxSzHuc1FaJ36WejkNmJMQIsitXilt
-         d+iDdMxnbAcv7SQpR90DRzs5FC4a8aernepy3OGpGxqadUqGBfubpFtOlnZOUEoab2XI
-         bgr5MukFqKhcZrtEPGiNMUDH55UZWJOAdSMzwcoiALQ8Nl0STGNOu3fQcDbv+qeD4Ub9
-         p4Hg==
+        Sun, 29 Jul 2018 20:50:16 -0400
+Received: by mail-it0-f70.google.com with SMTP id g4-v6so1196110iti.0
+        for <linux-kernel@vger.kernel.org>; Sun, 29 Jul 2018 16:18:03 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=hGXjudSXbMqpGtwtp4Fl8ptFkSd3qc43by/CY/mgIYE=;
-        b=ju7Xxc71nEUaLw0CmLwt+twkv6nAFFExgqIm+pxWkPmxfQi/ZiY4DXVBTUwgi4xRJq
-         gaIYXZDpPKnLCx3OUnCgk0/YD2mhbCqEKoZebgXC6rWl+129jWWb7qo4wcuApkz5mtcE
-         apWAWojjt9YvB/va59NL33nhlwpps/YLTQ3jThd5FEDN+FGMMLldbCgmSo3wrEEzYr5+
-         0B4AN5RNHuS9nyjtjVMAeS2h/Q832Mq5bPFPGUEIYeHSblT8y9iUtFiD0QFxlOyeAIxw
-         ofqvKKtxmSLk0FSAmUOEcxqgXqyJuqAxwLFfX2Y02pbi59vu7WhQ1YZEEKFsukKTko6F
-         o85A==
-X-Gm-Message-State: AOUpUlGP5pINJ8defTPaSAHrhz1ENg8VYAyGo6SG5l1oQU+FG2PpGsUd
-        XU1kLuxW96V2mnrAwZaMDApuLJP7EDAp1s2Wus0mYw==
-X-Google-Smtp-Source: AAOMgpeJbGMvWCGjUQjUQWd5REW+3+cd3xyIe0CmnMkaSj13hLKik5veVt4PPcVlhZQ1pNuayprHWIxSEO0cQsrZJO4=
-X-Received: by 2002:aca:cd84:: with SMTP id d126-v6mr16712571oig.325.1532903718924;
- Sun, 29 Jul 2018 15:35:18 -0700 (PDT)
+        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
+         :from:to;
+        bh=P4Y/4h/1D5s+kQXjBr8XdJwpFh4jAyhHIEK+dnViL5Q=;
+        b=PLjR9zq/YpygiomzaK5PPKNOmGva5wmcDZfouKmOW7YrAlSGEM9Fab/P3eDFed+RiR
+         7VWuZeLY8GM8vkHfDF+PBN7zFrkEwsU3i0NXkHE2aUNFTEVQCMGBooa47CtQ/KNwINZN
+         ilZDVuVlcRaO/4XooSHO/ieghJlb6DFChdOQ2tnW7EBQ39wiTcbfqXHDjPidZPTI9lG/
+         98+vMUEb/d/3D6Uv5pP0r2bTXRGP8ohYUncVFva53jgTnCvx/nFF1uP3pNuAIs+V8dP6
+         0+ea5k+suWPbAo+y9oQEQsO9vzPabSzzBzaKcUx4u+Wl0jjwnzmvOXjYZApbtHmtbU1K
+         bVVQ==
+X-Gm-Message-State: AOUpUlFgKWANBs85ruAtw2zXUWkEcE+0Nh8Mn5XUG75uDddZRUzwilyI
+        pk9e3l8WKYbb03g4NDaZR4ZckVU4AtvGqrOUyg9l/kZo2Jmn
+X-Google-Smtp-Source: AAOMgpfshZ3PrdCkYB2KO0d6lBuQVBHrRoyipYXNYTXGzOeMfwKqrqITE/wo4Y8EnOD01KAvuvvbiOxLfEqtDopRRNRh/dijCFnm
 MIME-Version: 1.0
-References: <20180729144358.3442-1-tsotsos@gmail.com> <233f0f7b1165f6427fa86f026c4e7dcb5cafe35f.camel@perches.com>
-In-Reply-To: <233f0f7b1165f6427fa86f026c4e7dcb5cafe35f.camel@perches.com>
-From:   Georgios Tsotsos <tsotsos@gmail.com>
-Date:   Mon, 30 Jul 2018 01:35:07 +0300
-Message-ID: <CADERADNz1_ep8pC0fuHXHKzn7Ap6MCpgeR33q95jAUKcNB72UA@mail.gmail.com>
-Subject: Re: [PATCH] Staging: octeon: Fixing coding style for minor notices.
-To:     Joe Perches <joe@perches.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        John Smith <catalinnow@gmail.com>, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+X-Received: by 2002:a02:3f2c:: with SMTP id d44-v6mr7632982jaa.60.1532906283403;
+ Sun, 29 Jul 2018 16:18:03 -0700 (PDT)
+Date:   Sun, 29 Jul 2018 16:18:03 -0700
+In-Reply-To: <00000000000047116205715df655@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000007f198105722b8e15@google.com>
+Subject: Re: KASAN: use-after-free Read in generic_perform_write
+From:   syzbot <syzbot+b173e77096a8ba815511@syzkaller.appspotmail.com>
+To:     ak@linux.intel.com, akpm@linux-foundation.org,
+        asmadeus@codewreck.org, jack@suse.cz, jlayton@redhat.com,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        mgorman@techsingularity.net, syzkaller-bugs@googlegroups.com,
+        v9fs-developer@lists.sourceforge.net, willy@infradead.org
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Thank you, i found a few case on this module i will try to fix them
-and send a new patch series.
-On Sun, 29 Jul 2018 at 20:33, Joe Perches <joe@perches.com> wrote:
->
-> On Sun, 2018-07-29 at 17:43 +0300, Georgios Tsotsos wrote:
-> > Fixing coding style for a few lines that were reported to check from
-> > checkpatch.pl in minor cases for alignment and ending with parenthesis.
-> >
-> > Signed-off-by: Georgios Tsotsos <tsotsos@gmail.com>
-> > ---
-> >  drivers/staging/octeon/ethernet.c | 10 +++++-----
-> >  1 file changed, 5 insertions(+), 5 deletions(-)
-> >
-> > diff --git a/drivers/staging/octeon/ethernet.c b/drivers/staging/octeon/ethernet.c
-> > index 9b15c9ed844b..1e258deecacc 100644
-> > --- a/drivers/staging/octeon/ethernet.c
-> > +++ b/drivers/staging/octeon/ethernet.c
-> > @@ -141,8 +141,8 @@ static void cvm_oct_periodic_worker(struct work_struct *work)
-> >       if (priv->poll)
-> >               priv->poll(cvm_oct_device[priv->port]);
-> >
-> > -     cvm_oct_device[priv->port]->netdev_ops->ndo_get_stats(
-> > -                                             cvm_oct_device[priv->port]);
-> > +     cvm_oct_device[priv->port]->netdev_ops
-> > +                             ->ndo_get_stats(cvm_oct_device[priv->port]);
-> >
-> >       if (!atomic_read(&cvm_oct_poll_queue_stopping))
-> >               schedule_delayed_work(&priv->port_periodic_work, HZ);
->
-> Probably more sensible to use a temporary.  Something like:
-> ---
->  drivers/staging/octeon/ethernet.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/staging/octeon/ethernet.c b/drivers/staging/octeon/ethernet.c
-> index 9b15c9ed844b..2febf1229587 100644
-> --- a/drivers/staging/octeon/ethernet.c
-> +++ b/drivers/staging/octeon/ethernet.c
-> @@ -137,12 +137,12 @@ static void cvm_oct_periodic_worker(struct work_struct *work)
->         struct octeon_ethernet *priv = container_of(work,
->                                                     struct octeon_ethernet,
->                                                     port_periodic_work.work);
-> +       struct net_device *ndev = cvm_oct_device[priv->port];
->
->         if (priv->poll)
-> -               priv->poll(cvm_oct_device[priv->port]);
-> +               priv->poll(ndev);
->
-> -       cvm_oct_device[priv->port]->netdev_ops->ndo_get_stats(
-> -                                               cvm_oct_device[priv->port]);
-> +       ndev->netdev_ops->ndo_get_stats(ndev);
->
->         if (!atomic_read(&cvm_oct_poll_queue_stopping))
->                 schedule_delayed_work(&priv->port_periodic_work, HZ);
->
->
+syzbot has found a reproducer for the following crash on:
 
+HEAD commit:    d1e0b8e0cb7a Add linux-next specific files for 20180725
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=10eff978400000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=eef3552c897e4d33
+dashboard link: https://syzkaller.appspot.com/bug?extid=b173e77096a8ba815511
+compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=171d9578400000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=132d14b4400000
 
--- 
-Best regards!
-Georgios Tsotsos
-Greece-Evia-Chalkida
-tsotsos@linux.com
-skype: tsotsos
-------------------------------------
-Georgios Tsotsos
-*Greece - Evia - Chalkida*
-tsotsos[at]linux.com
-skype: tsotsos
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+b173e77096a8ba815511@syzkaller.appspotmail.com
+
+RDX: 0000000000000030 RSI: 0000000020011fd2 RDI: 0000000000000004
+RBP: 00000000006dbc40 R08: 00000000006dbc40 R09: 0000000000000000
+R10: 00007fc1cd74ccf0 R11: 0000000000000246 R12: 00000000006dbc4c
+R13: 00007fffabd5ea5f R14: 00007fc1cd74d9c0 R15: 00000000006dbd4c
+==================================================================
+BUG: KASAN: use-after-free in memcpy include/linux/string.h:345 [inline]
+BUG: KASAN: use-after-free in iov_iter_copy_from_user_atomic+0xb8d/0xfa0  
+lib/iov_iter.c:916
+Read of size 21 at addr ffff8801ad780d60 by task kworker/0:1/13
+
+CPU: 0 PID: 13 Comm: kworker/0:1 Not tainted 4.18.0-rc6-next-20180725+ #18
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Workqueue: events p9_write_work
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x1c9/0x2b4 lib/dump_stack.c:113
+  print_address_description+0x6c/0x20b mm/kasan/report.c:256
+  kasan_report_error mm/kasan/report.c:354 [inline]
+  kasan_report.cold.7+0x242/0x30d mm/kasan/report.c:412
+  check_memory_region_inline mm/kasan/kasan.c:260 [inline]
+  check_memory_region+0x13e/0x1b0 mm/kasan/kasan.c:267
+  memcpy+0x23/0x50 mm/kasan/kasan.c:302
+  memcpy include/linux/string.h:345 [inline]
+  iov_iter_copy_from_user_atomic+0xb8d/0xfa0 lib/iov_iter.c:916
+  generic_perform_write+0x469/0x6c0 mm/filemap.c:3147
+  __generic_file_write_iter+0x26e/0x630 mm/filemap.c:3264
+  ext4_file_write_iter+0x390/0x1450 fs/ext4/file.c:266
+  call_write_iter include/linux/fs.h:1807 [inline]
+  new_sync_write fs/read_write.c:474 [inline]
+  __vfs_write+0x6af/0x9d0 fs/read_write.c:487
+  vfs_write+0x1fc/0x560 fs/read_write.c:549
+  kernel_write+0xab/0x120 fs/read_write.c:526
+  p9_fd_write net/9p/trans_fd.c:432 [inline]
+  p9_write_work+0x6f1/0xd50 net/9p/trans_fd.c:481
+  process_one_work+0xc73/0x1ba0 kernel/workqueue.c:2153
+  worker_thread+0x189/0x13c0 kernel/workqueue.c:2296
+  kthread+0x345/0x410 kernel/kthread.c:246
+  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:415
+
+Allocated by task 4438:
+  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
+  set_track mm/kasan/kasan.c:460 [inline]
+  kasan_kmalloc+0xc4/0xe0 mm/kasan/kasan.c:553
+  __do_kmalloc mm/slab.c:3718 [inline]
+  __kmalloc+0x14e/0x760 mm/slab.c:3727
+  kmalloc include/linux/slab.h:518 [inline]
+  p9_fcall_alloc+0x1e/0x90 net/9p/client.c:237
+  p9_tag_alloc net/9p/client.c:266 [inline]
+  p9_client_prepare_req.part.8+0x107/0xa00 net/9p/client.c:647
+  p9_client_prepare_req net/9p/client.c:682 [inline]
+  p9_client_rpc+0x247/0x1420 net/9p/client.c:682
+  p9_client_version net/9p/client.c:897 [inline]
+  p9_client_create+0xd76/0x1631 net/9p/client.c:981
+  v9fs_session_init+0x21a/0x1a80 fs/9p/v9fs.c:400
+  v9fs_mount+0x7c/0x900 fs/9p/vfs_super.c:135
+  legacy_get_tree+0x131/0x460 fs/fs_context.c:674
+  vfs_get_tree+0x1cb/0x5c0 fs/super.c:1762
+  do_new_mount fs/namespace.c:2629 [inline]
+  do_mount+0x6f2/0x1e20 fs/namespace.c:2953
+  ksys_mount+0x12d/0x140 fs/namespace.c:3169
+  __do_sys_mount fs/namespace.c:3183 [inline]
+  __se_sys_mount fs/namespace.c:3180 [inline]
+  __x64_sys_mount+0xbe/0x150 fs/namespace.c:3180
+  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+Freed by task 4438:
+  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
+  set_track mm/kasan/kasan.c:460 [inline]
+  __kasan_slab_free+0x11a/0x170 mm/kasan/kasan.c:521
+  kasan_slab_free+0xe/0x10 mm/kasan/kasan.c:528
+  __cache_free mm/slab.c:3498 [inline]
+  kfree+0xd9/0x260 mm/slab.c:3813
+  p9_free_req+0xb5/0x120 net/9p/client.c:338
+  p9_client_rpc+0xb20/0x1420 net/9p/client.c:746
+  p9_client_version net/9p/client.c:897 [inline]
+  p9_client_create+0xd76/0x1631 net/9p/client.c:981
+  v9fs_session_init+0x21a/0x1a80 fs/9p/v9fs.c:400
+  v9fs_mount+0x7c/0x900 fs/9p/vfs_super.c:135
+  legacy_get_tree+0x131/0x460 fs/fs_context.c:674
+  vfs_get_tree+0x1cb/0x5c0 fs/super.c:1762
+  do_new_mount fs/namespace.c:2629 [inline]
+  do_mount+0x6f2/0x1e20 fs/namespace.c:2953
+  ksys_mount+0x12d/0x140 fs/namespace.c:3169
+  __do_sys_mount fs/namespace.c:3183 [inline]
+  __se_sys_mount fs/namespace.c:3180 [inline]
+  __x64_sys_mount+0xbe/0x150 fs/namespace.c:3180
+  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+The buggy address belongs to the object at ffff8801ad780d40
+  which belongs to the cache kmalloc-16384 of size 16384
+The buggy address is located 32 bytes inside of
+  16384-byte region [ffff8801ad780d40, ffff8801ad784d40)
+The buggy address belongs to the page:
+page:ffffea0006b5e000 count:1 mapcount:0 mapping:ffff8801dac02200 index:0x0  
+compound_mapcount: 0
+flags: 0x2fffc0000008100(slab|head)
+raw: 02fffc0000008100 ffffea00072e3008 ffffea0006c75408 ffff8801dac02200
+raw: 0000000000000000 ffff8801ad780d40 0000000100000001 0000000000000000
+page dumped because: kasan: bad access detected
+
+Memory state around the buggy address:
+  ffff8801ad780c00: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+  ffff8801ad780c80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+> ffff8801ad780d00: fc fc fc fc fc fc fc fc fb fb fb fb fb fb fb fb
+                                                        ^
+  ffff8801ad780d80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+  ffff8801ad780e00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+==================================================================
+
