@@ -2,97 +2,134 @@ Return-Path: <SRS0=jKyA=KN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC220C46461
-	for <linux-kernel@archiver.kernel.org>; Sun, 29 Jul 2018 18:19:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0D38C46462
+	for <linux-kernel@archiver.kernel.org>; Sun, 29 Jul 2018 18:21:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9AE2520882
-	for <linux-kernel@archiver.kernel.org>; Sun, 29 Jul 2018 18:19:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9AE2520882
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goldelico.com
+	by mail.kernel.org (Postfix) with ESMTP id 853F220882
+	for <linux-kernel@archiver.kernel.org>; Sun, 29 Jul 2018 18:21:29 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k3ZJKLW+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 853F220882
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728510AbeG2Tui convert rfc822-to-8bit (ORCPT
+        id S1726853AbeG2Two (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 29 Jul 2018 15:50:38 -0400
-Received: from mo4-p01-ob.smtp.rzone.de ([85.215.255.52]:19097 "EHLO
-        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726545AbeG2Tuh (ORCPT
+        Sun, 29 Jul 2018 15:52:44 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:33814 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726437AbeG2Two (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Jul 2018 15:50:37 -0400
-X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMgPgp8VKxflSZ1P34KBj5gpw91kgwllS1BmEjh4="
-X-RZG-CLASS-ID: mo00
-Received: from imac.fritz.box
-        by smtp.strato.de (RZmta 43.13 DYNA|AUTH)
-        with ESMTPSA id 6047f4u6TIJ9qqj
-        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
-        (Client did not present a certificate);
-        Sun, 29 Jul 2018 20:19:09 +0200 (CEST)
-Content-Type: text/plain; charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 9.3 \(3124\))
-Subject: Re: [PATCH] pwm: pwm-omap-dmtimer: fix probing problems by returning EPROBE_DEFER
-From:   "H. Nikolaus Schaller" <hns@goldelico.com>
-In-Reply-To: <20180729180804.GA18468@lenoch>
-Date:   Sun, 29 Jul 2018 20:19:08 +0200
-Cc:     Andreas Kemnade <andreas@kemnade.info>, linux-pwm@vger.kernel.org,
-        linux-omap <linux-omap@vger.kernel.org>,
-        Tony Lindgren <tony@atomide.com>, Keerthy <j-keerthy@ti.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Discussions about the Letux Kernel 
-        <letux-kernel@openphoenux.org>
-Content-Transfer-Encoding: 8BIT
-Message-Id: <920A2836-9266-46F8-9A3F-111C01999C9E@goldelico.com>
-References: <20180728165914.15871-1-andreas@kemnade.info> <20180728203501.GA16194@lenoch> <BE83C4E8-55B0-4EA7-8FF6-756460464264@goldelico.com> <20180729180804.GA18468@lenoch>
-To:     Ladislav Michl <ladis@linux-mips.org>,
-        David Rivshin <drivshin@allworx.com>
-X-Mailer: Apple Mail (2.3124)
+        Sun, 29 Jul 2018 15:52:44 -0400
+Received: by mail-wm0-f66.google.com with SMTP id l2-v6so6494705wme.1
+        for <linux-kernel@vger.kernel.org>; Sun, 29 Jul 2018 11:21:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=g2iINn5UC2jWNst8ibfLjal91Q56LI9H+h5gS5WeOvk=;
+        b=k3ZJKLW+3CzjKd20W5GCAs4vIS+/ByhmDyvULAUJtlWMJDOSG5lQTXU1JoHgEqmDNI
+         sFrkaQE6RAJSERPjye3TtBJ/M3d3WTSqfainzRFRJMP24LKqmpIk2VeHhov2KIl9htRQ
+         hOXYbrdVC0PUk6z7DgObvMnOHF1YLQ8oAyaHSRVG1CtH6pzclWUhEfcdi9nCF5cbybqe
+         aDl57+e6EhpQAqgMmfLflw74XMAqaDa6J+x7y0VoyhmF/JRBkNdHy74/Q4vx2Bu6Kkxw
+         YhTiqH+bk3G7MK5p7ehsq42E2jJcB7PsaXwaOFjP6WzS4nQ4lJoG7ky6WZyUUgrF9nYV
+         lqlg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=g2iINn5UC2jWNst8ibfLjal91Q56LI9H+h5gS5WeOvk=;
+        b=m7utDgRnoOBF8UoiPJy63LymyngfrTWwZMCw6hvbDXsj+Vueg2n8Ow0rZNi01vFGPO
+         wjBfWIEhu3gj3MkcKfFpaFJqfYgWcGaMfDtWV09kB6yYVfb45alTel7A65/EOWyO52nw
+         jcFHBwXVSMkreOBL2UTfeX0kC3FkHY+4At090OMVa750RkijuwjRYB3J7pwdTS19KEG5
+         be1DCgVHTH08AecThepBRdgwICJ8Ss93seFezy5HCF/u6Fa1zmH+vQYWLxvP+MOmEhzn
+         hSG9Z1s00mSjyopbSNq1/PGRT1oyw5srJY6inGn2GRMHGt+IR6YG0n7IE70rpNcgmDzv
+         nFGQ==
+X-Gm-Message-State: AOUpUlFV/52vA1mRNcwP/jIyWcldJl5TOyk+DLu9uARwI0Jwl1RUOgYU
+        hfN0xE1+YfXP1EtMgxITkuV0HNtS
+X-Google-Smtp-Source: AAOMgpcmOBeRW05PdkTUzkfWNuYqXljhYXQ/o55sVkkAjJWebmHAEDVFoDPLdsgtpNC72hYMxV5rBQ==
+X-Received: by 2002:a1c:369c:: with SMTP id y28-v6mr11919398wmh.34.1532888484394;
+        Sun, 29 Jul 2018 11:21:24 -0700 (PDT)
+Received: from ?IPv6:2a02:8108:85c0:57c8:32db:916d:97a2:c4eb? ([2a02:8108:85c0:57c8:32db:916d:97a2:c4eb])
+        by smtp.gmail.com with ESMTPSA id k4-v6sm12150837wrv.4.2018.07.29.11.21.23
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 29 Jul 2018 11:21:23 -0700 (PDT)
+Subject: Re: [PATCH 8/8] staging: rtl8188eu: use is_broadcast_ether_addr
+To:     Joe Perches <joe@perches.com>, gregkh@linuxfoundation.org
+Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+References: <20180729170851.2581-1-straube.linux@gmail.com>
+ <20180729170851.2581-8-straube.linux@gmail.com>
+ <07a456ef0b1163115ef9aeb717120c191263fe28.camel@perches.com>
+ <90fb5087-22df-0480-548a-7658881181c8@gmail.com>
+ <12e1804800e490aa57b51a0e64c6da573d32a3a4.camel@perches.com>
+From:   Michael Straube <straube.linux@gmail.com>
+Message-ID: <85e40925-21aa-1030-24ed-9dce498b98f6@gmail.com>
+Date:   Sun, 29 Jul 2018 20:21:22 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <12e1804800e490aa57b51a0e64c6da573d32a3a4.camel@perches.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-> Am 29.07.2018 um 20:08 schrieb Ladislav Michl <ladis@linux-mips.org>:
+On 07/29/18 19:59, Joe Perches wrote:
+> On Sun, 2018-07-29 at 19:42 +0200, Michael Straube wrote:
+>> On 07/29/18 19:21, Joe Perches wrote:
+>>> On Sun, 2018-07-29 at 19:08 +0200, Michael Straube wrote:
+>>>> Use is_broadcast_ether_addr instead of checking each byte of the
+>>>> address array for 0xff. Shortens the code and improves readability.
+>>>
+>>> You should show in the commit log that sta_addr is __aligned(2)
+>>> as required by is_broadcast_ether_addr, otherwise you could be
+>>> introducing runtime alignment defects.
+>>>
+>>
+>> Ok, sta_addr is used from following structs.
+>>
+>> struct ieee_param {
+>>           u32 cmd;
+>>           u8 sta_addr[ETH_ALEN];
+>>           union {
+>>           ...
+>>           ...
+>>           }; u
+>> };
+>>
+>> struct ieee_param_ex {
+>> 	u32 cmd;
+>> 	u8 sta_addr[ETH_ALEN];
+>> 	u8 data[0];
+>> };
+>>
+>> Well, looking at it now, I'm not sure about the alignment anymore
+>> in the struct that contains the union. Is sta_addr in the first
+>> struct __aligned(2)?
+>>
+>> Should I include the snippets in the commit message, or is just
+>> writing that sta_addr is __aligned(2) enough? (if it is in the
+>> first case...)
 > 
-> On Sun, Jul 29, 2018 at 08:32:41AM +0200, H. Nikolaus Schaller wrote:
->> Hi,
->> 
->>> Am 28.07.2018 um 22:35 schrieb Ladislav Michl <ladis@linux-mips.org>:
->>> 
->>> Hi Andreas,
->>> 
->>> On Sat, Jul 28, 2018 at 06:59:14PM +0200, Andreas Kemnade wrote:
->>>> I got this in the kernel log:
->>>> [    0.756042] omap-dmtimer-pwm dmtimer-pwm: dmtimer pdata structure NULL
->>>> [    0.756134] omap-dmtimer-pwm: probe of dmtimer-pwm failed with error -22
->>>> 
->>>> the probe function has to wait until omap_dm_timer_probe() in
->>>> clocksource/timer-ti-dm.c has initialized pdata, so defer probing
->>> 
->>> There already is a patch by David Rivshin addressing the same issue...
->> 
->> Here it is:
->> 
->> https://patchwork.ozlabs.org/patch/943148/
->> 
->> but hasn't arrived in linux-next.
+> It's enough to just state that the uses are properly aligned
+> as long as you looked and understand that it's required.
 > 
-> That's because there'll be v3.
-> 
->> But it is questionable if a driver should dev_info() about doing deferred probing.
->> IMHO, it should just do it which is how Andreas' patch works.
-> 
-> See here: https://patchwork.ozlabs.org/patch/949659/
 
-Ah, I see (neither Andreas nor me did follow the original discussions
-and therefore came up independently with the same thoughts).
+Ok, thank you.
 
-So we will wait for the v3.
+I looked at it and understand that it's required.
+But, as mentioned, at second look I'm not sure about the union.
 
-BR and thanks,
-Nikolaus
+I guess I need to read a little more about the alignment of unions.
+Any hints are welcomed. :)
 
+Michael
