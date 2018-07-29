@@ -6,66 +6,67 @@ X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE1BEC46462
-	for <linux-kernel@archiver.kernel.org>; Sun, 29 Jul 2018 20:29:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E06EC46462
+	for <linux-kernel@archiver.kernel.org>; Sun, 29 Jul 2018 20:34:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 972DE20857
-	for <linux-kernel@archiver.kernel.org>; Sun, 29 Jul 2018 20:29:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0592F20881
+	for <linux-kernel@archiver.kernel.org>; Sun, 29 Jul 2018 20:34:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Mnktm6FN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 972DE20857
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="j7Ornk5Z"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0592F20881
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728963AbeG2WBB (ORCPT
+        id S1729118AbeG2WFo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 29 Jul 2018 18:01:01 -0400
-Received: from mail-it0-f67.google.com ([209.85.214.67]:35603 "EHLO
-        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728476AbeG2WBB (ORCPT
+        Sun, 29 Jul 2018 18:05:44 -0400
+Received: from mail-it0-f66.google.com ([209.85.214.66]:40247 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728637AbeG2WFo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Jul 2018 18:01:01 -0400
-Received: by mail-it0-f67.google.com with SMTP id q20-v6so14150551ith.0
-        for <linux-kernel@vger.kernel.org>; Sun, 29 Jul 2018 13:29:18 -0700 (PDT)
+        Sun, 29 Jul 2018 18:05:44 -0400
+Received: by mail-it0-f66.google.com with SMTP id h23-v6so14116829ita.5
+        for <linux-kernel@vger.kernel.org>; Sun, 29 Jul 2018 13:34:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=23K1/86xlmZVqzd8v2b81GxT8R66KfoT1vrcVVMrQaU=;
-        b=Mnktm6FNEQzzGL5cM5ypzfUOSnAZy5xKc0HeRlfrVuzGUieyB+WmOn+p5Udqtt/quB
-         s4zu4SEg7rGqL5/ZfOZXGgFjjDH8u9lWPGyFY6bYAA9+pxKsyOKcrV8QTqjd+1IXMcXf
-         +/UhwqHLDQ4OTRFvZ+Tk9aiTN8H31sb4Z1QlI=
+        bh=6pqUoOULaUm7F4BE8xvA9BguWkhy4WDnmsqZO7JuL+8=;
+        b=j7Ornk5ZHJ4KVbyEH6fXJHxtr9/QqfFxWZ2NjiHzcjYsd+WmxNXDoAndvg+MryoYMT
+         6awh1X2R4ix+i11UOoW+NzOKScZ4exuvHeh6oDQgztQTQFcpdOSwYUD1t+qLV5Uu/4tT
+         b838T58U5vov0FwF1HklWuLw7mgVmoDf9GOik=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=23K1/86xlmZVqzd8v2b81GxT8R66KfoT1vrcVVMrQaU=;
-        b=W87WX0uJf1eBX0HwtF48VFJVQdvpBb4U1MHvEMJWx41gPRaOXQGwvc7DRMTDrL9suy
-         6WQoCZAZvrJObkTuVfY2+MOIUMvTDZKdU7fbHOUsLpqi1Y3OX4VyC+pIs6lyZJG8Iz8S
-         dBlAik5KRoMSjdXglSstDxiRDZoqJZyjTqm8R3pPJce+lnJ6fOesTTKTa2HqJjVs/RWW
-         FVUoUZ/ErkN2F/44lzI+fy6/aV7t1lupffGVyz8yeyGTBHmu3H4MKzCjXwVWdM85xCwi
-         umC9aZ2Ylx4+uoOV/USs36ZhRtHPcsIP1jQA7ilju02pp6mlaJWjqwZCTEv05ibRQIM/
-         vXSw==
-X-Gm-Message-State: AOUpUlFV9VPXhRiubAT/xvn1hXzyuYa5uCaBg6m9e+F+3dEjM9I3KZV2
-        iVGDKQbDStGhoUvfNUy7AMdUzHPuj7izO+mHtt+NlQ==
-X-Google-Smtp-Source: AAOMgpcH21saGeBzqPIH8j3RYxPq4o6e0/62aDn60wL0SNnfwFjyp4RAgL1GXNGhcqchSJpyQ1sCWy/IQlFer18OJjs=
-X-Received: by 2002:a24:7503:: with SMTP id y3-v6mr12113461itc.70.1532896158292;
- Sun, 29 Jul 2018 13:29:18 -0700 (PDT)
+        bh=6pqUoOULaUm7F4BE8xvA9BguWkhy4WDnmsqZO7JuL+8=;
+        b=rx5gBSwywiZ0dkX7LVs9/lp3SO7cO0p5zJXhW338JkFtUnj9/fetyiCYdcrKj76JNa
+         cjIJMB4dKwGP89MGO/rdmECnlGH65T64FeXiqRbjpxktMNpZSl72bWmoc8Df3Qm0pyvj
+         vXAMF5c36Ap27ccMoijh6nN/S3idzI/+0rdhYVVynWS/Q+YdMzFbow8+vqmWTsbtqrAE
+         ADMbttrKcwj8zgkwiVJFPNVVFGdv90CFmGCVfOCMef65tDqwX3sFw/WKSDRgblV/lrzc
+         HYzAJlwkVpnG+0zPyQkr9u+yYctyIMdqRWr2k3CCqcNJfrgFDJWyYfTfyoeJ1aOaid3t
+         7M+Q==
+X-Gm-Message-State: AOUpUlEm/OLKm6xpkjjCdR5KQZJ5JhrmA4YMrYiaSB3cGnyIwSmXQ61v
+        bupH5HGvcb50ULM4pdwgKymRJM2V1BSF7ni9dOxznQ==
+X-Google-Smtp-Source: AAOMgpddztxUqNt/YsoaiLTIJtEN1FySTWkIu8DNHI4zWL/nrSkz+nuFDospcXKh2Jkss4guwol6F0hmaLkOBmsTetI=
+X-Received: by 2002:a24:5004:: with SMTP id m4-v6mr12090215itb.38.1532896440367;
+ Sun, 29 Jul 2018 13:34:00 -0700 (PDT)
 MIME-Version: 1.0
-References: <20180718235710.18242-1-jmkrzyszt@gmail.com> <20180718235710.18242-7-jmkrzyszt@gmail.com>
-In-Reply-To: <20180718235710.18242-7-jmkrzyszt@gmail.com>
+References: <20180718235710.18242-1-jmkrzyszt@gmail.com> <20180718235710.18242-8-jmkrzyszt@gmail.com>
+In-Reply-To: <20180718235710.18242-8-jmkrzyszt@gmail.com>
 From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Sun, 29 Jul 2018 22:29:05 +0200
-Message-ID: <CACRpkdbH9Vu12RckQPKhGgyJnyxaQ04d5qa9srHwneP3SS6FAA@mail.gmail.com>
-Subject: Re: [RFC PATCH 6/8] gpio: omap: Add get/set_multiple() callbacks
-To:     Janusz Krzysztofik <jmkrzyszt@gmail.com>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Grygorii Strashko <grygorii.strashko@ti.com>,
-        ext Tony Lindgren <tony@atomide.com>,
-        Kevin Hilman <khilman@kernel.org>
+Date:   Sun, 29 Jul 2018 22:33:48 +0200
+Message-ID: <CACRpkdZ316o4rwCftOWsRMNd3B+4v0mWGbdMFvp1mm7yaFsccA@mail.gmail.com>
+Subject: Re: [RFC PATCH 7/8] mtd: rawnand: ams-delta: Check sanity of data
+ GPIO resource
+To:     Janusz Krzysztofik <jmkrzyszt@gmail.com>
 Cc:     Boris Brezillon <boris.brezillon@bootlin.com>,
         =?UTF-8?Q?Miqu=C3=A8l_Raynal?= <miquel.raynal@bootlin.com>,
+        ext Tony Lindgren <tony@atomide.com>,
         Aaro Koskinen <aaro.koskinen@iki.fi>,
+        Grygorii Strashko <grygorii.strashko@ti.com>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        Kevin Hilman <khilman@kernel.org>,
         Richard Weinberger <richard@nod.at>,
         David Woodhouse <dwmw2@infradead.org>,
         Brian Norris <computersforpeace@gmail.com>,
@@ -82,15 +83,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 19, 2018 at 1:56 AM Janusz Krzysztofik <jmkrzyszt@gmail.com> wrote:
+Hi Janusz!
 
-> This should make applications utilizing whole banks work faster.
->
-> Signed-off-by: Janusz Krzysztofik <jmkrzyszt@gmail.com>
+Nice work overall! Some feedback:
 
-This patch looks good to me and I have an urge to just apply it.
+On Thu, Jul 19, 2018 at 1:57 AM Janusz Krzysztofik <jmkrzyszt@gmail.com> wrote:
 
-Can we get some feedback from the maintainers?
+> +#include <linux/gpio/driver.h>
+
+Let's skip that.
+
+> +       /*
+> +        * For acceptable performance require the data GPIO
+> +        * chip to support get/set_multiple() callbacks.
+> +        */
+> +       if (!data_gpioc->get_multiple || !data_gpioc->set_multiple) {
+> +               err = -EINVAL;
+> +               dev_err(&pdev->dev,
+> +                       "data GPIO chip does not support get/set_multiple()\n");
+> +               goto out_mtd;
+> +       }
+
+Since we know which platform it is, we know that we applied the previous
+get/set multiple patch, so we need not check this if the patches are
+applied in sequence.
+
+As long as all patches go in the same merge window, no problem.
+
+I'm BTW ready to apply the get/set multiple patch already.
 
 Yours,
 Linus Walleij
