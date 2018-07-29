@@ -2,108 +2,87 @@ Return-Path: <SRS0=jKyA=KN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB7D8C46462
-	for <linux-kernel@archiver.kernel.org>; Sun, 29 Jul 2018 21:09:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BD49C46462
+	for <linux-kernel@archiver.kernel.org>; Sun, 29 Jul 2018 21:13:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6F81820857
-	for <linux-kernel@archiver.kernel.org>; Sun, 29 Jul 2018 21:09:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0EEC120870
+	for <linux-kernel@archiver.kernel.org>; Sun, 29 Jul 2018 21:13:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QTOuHYUy"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6F81820857
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="b5hSoDT9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0EEC120870
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731606AbeG2WlU (ORCPT
+        id S1728708AbeG2Wpq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 29 Jul 2018 18:41:20 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:43878 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726712AbeG2WkT (ORCPT
+        Sun, 29 Jul 2018 18:45:46 -0400
+Received: from mail-it0-f67.google.com ([209.85.214.67]:53623 "EHLO
+        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726712AbeG2Wpq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Jul 2018 18:40:19 -0400
-Received: by mail-wr1-f67.google.com with SMTP id b15-v6so10589660wrv.10
-        for <linux-kernel@vger.kernel.org>; Sun, 29 Jul 2018 14:08:28 -0700 (PDT)
+        Sun, 29 Jul 2018 18:45:46 -0400
+Received: by mail-it0-f67.google.com with SMTP id 72-v6so14624700itw.3
+        for <linux-kernel@vger.kernel.org>; Sun, 29 Jul 2018 14:13:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=QAujNV4yi1xw7jw37/eLGQx9/QRasJpEiLkqU/Cs00g=;
-        b=QTOuHYUyqhIexh/TKW9dl4MZaOxbz0yoaz/6QmuUmshkBXIrNDP2ViT7jH7bx6lm4/
-         FoAV+PmIGBjXA9Vbg+fApHfyiuZGsUogR3hFYxZzF83LEMrgZ9Q3eI9tU2xrVQt5vGz0
-         SwsG1ZmA87JMH3fC/3HdTIa5FYqkBoD4oPNmqNYhubGiNqZm+aBlQ7YDcNS1PzozvfIp
-         SXCDjCxup435W8g93CsvKjg5mXbd5YsRpUqYkGs53UwaycbX/GuGAt67H6cKAEthehAr
-         oOcx9CyfBUwVu30OK+If1NdrVKp2pYrGuE5aD+7inT5X1GFqx7qCM33DGtazo9q3MLAj
-         uRaA==
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=5gNxDYP8f1bF8Bl/sa2d4WEEauYaVxCms3equItjypM=;
+        b=b5hSoDT9A6zqZfavzW/duijaMkbyQPrdrEATVRU80y7fQ/HKvItoYLY1eYeFfqe3Y1
+         JeR7IBTvz+4vCF3XEUJMVRf2EHFg6MmPEc1wWFxspgnxBn3ud1eSE6A58u8v1k0os1X1
+         +gEP69VxuQkWrIyAStaQoGvY1ranEh6b9zhnA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=QAujNV4yi1xw7jw37/eLGQx9/QRasJpEiLkqU/Cs00g=;
-        b=kt4RotGP3aYYr8+rdZrL6MQMRqH4L3Oek5Tz+3lzv13wULkdZKWD53jBfApsoODiaQ
-         qUhH6u4yQlW/85K7so4fOMhNqNcX+eLYgniX4QKxW/+LJRo2d1oqDlvfq6MboS+ytUqV
-         1XG7z7/rHzjmTeJszDFUWoxK+0gwVio7wRb8d5d3ua7y5AagWaP5Q29wbSq9brbBXFnD
-         H2Nxvi1yRRKZQVRDI53gc+0T1cdOgnmtcx2SFSDIDPEf1argwjQTFMACVeP/IMojV2S8
-         rgEAPpg6Uz4+o3eiHmDuzdMoiDPqpF4tOPL9EKSQz3M2QP0Fa0xhEFwOwCr8unCDjM1L
-         ky4Q==
-X-Gm-Message-State: AOUpUlHa8Tzf+t/K7c3TdfoC47Rnp165P4VdApnTyD7PVVrzurlsi1rv
-        u/toUJZN8wcf3owE+wvRXgEqLZM8q0k=
-X-Google-Smtp-Source: AAOMgpd8jVfKrAqCAItGY33S9cw3UPk1AOMzCw/dvggNth0uoDqXtF7KDgMoZrC1tHuoQM3fm4CJFQ==
-X-Received: by 2002:adf:81c3:: with SMTP id 61-v6mr14826415wra.120.1532898507359;
-        Sun, 29 Jul 2018 14:08:27 -0700 (PDT)
-Received: from localhost.localdomain (host81-158-116-187.range81-158.btcentralplus.com. [81.158.116.187])
-        by smtp.gmail.com with ESMTPSA id d26-v6sm9264532wmb.15.2018.07.29.14.08.26
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 29 Jul 2018 14:08:26 -0700 (PDT)
-From:   John Whitmore <johnfwhitmore@gmail.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     devel@driverdev.osuosl.org, gregkh@linuxfoundation.org,
-        John Whitmore <johnfwhitmore@gmail.com>
-Subject: [PATCH v2 04/15] staging:rtl8192u: Correct spelling in comments - style
-Date:   Sun, 29 Jul 2018 22:07:36 +0100
-Message-Id: <20180729210747.10803-5-johnfwhitmore@gmail.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180729210747.10803-1-johnfwhitmore@gmail.com>
-References: <20180729210747.10803-1-johnfwhitmore@gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=5gNxDYP8f1bF8Bl/sa2d4WEEauYaVxCms3equItjypM=;
+        b=VjAFgr9Pkf8zDF8z1uGQrkDclSrpRP7C41+kBkuC08DUAfYmLf2JKXPTE+P4VF40SX
+         gMe0cjZoNq3ml1udCoKz4m8rCyVx36Hp5EWed6InbS5JYnO38fxRA2bg2oFE10tXGHNM
+         Aku5ZRcq5W+Ck5WWSQhr3C7gNINqiCzUqoQ8j94Ccbed7HK3ODxw2Bo005vyVEGZiu1v
+         i8EwlKsM2sdHqIZE7owHnSEnHst6Zl/z8hcdOpDnKiVK7dys+m1xjY/5Mct+iB52UR6m
+         kTWyTK5elHhEyC9RlKpUgmS8f2BVIE6I8vexV1kcOOXD2+st0fe7hPK24wnieqFC4YEY
+         pdqQ==
+X-Gm-Message-State: AOUpUlHWFZ7p67nrW7fA4AaHyIIujZ1BQrv2YXsmja9NR8yXLIegNz9W
+        gjWrOMUjnunDYJlCK7aGwkGpqQIxVXQQczD65pVAXOob
+X-Google-Smtp-Source: AAOMgpcb+QDP8Fh4r5DlWju2AQh7VXw16+rEMkHOjkpRDx82XeEGl5MbsCMlTbtESYOiFeJ8OrXeJb85Fe4b6jprADI=
+X-Received: by 2002:a24:2c49:: with SMTP id i70-v6mr12590639iti.135.1532898834034;
+ Sun, 29 Jul 2018 14:13:54 -0700 (PDT)
+MIME-Version: 1.0
+References: <20180723165330.25213-1-vasilyev@ispras.ru>
+In-Reply-To: <20180723165330.25213-1-vasilyev@ispras.ru>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Sun, 29 Jul 2018 23:13:42 +0200
+Message-ID: <CACRpkdZ1RuSOFh8_w0Ds4sC2rpJhVEEtuo=SzVxFLk4OggM7_A@mail.gmail.com>
+Subject: Re: [PATCH] gpio: ml-ioh: Fix buffer underwrite on probe error path
+To:     vasilyev@ispras.ru
+Cc:     "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        ldv-project@linuxtesting.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Correct the spelling of a number of comments, which cause a checkpatch
-issue. This is purely a coding style change which should have no impact
-on runtime code execution.
+On Mon, Jul 23, 2018 at 6:54 PM Anton Vasilyev <vasilyev@ispras.ru> wrote:
 
-Signed-off-by: John Whitmore <johnfwhitmore@gmail.com>
----
- drivers/staging/rtl8192u/r819xU_cmdpkt.h | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+> If ioh_gpio_probe() fails on devm_irq_alloc_descs() then chip may point
+> to any element of chip_save array, so reverse iteration from pointer chip
+> may become chip_save[-1] and gpiochip_remove() will operate with wrong
+> memory.
+>
+> The patch fix the error path of ioh_gpio_probe() to correctly bypass
+> chip_save array.
+>
+> Found by Linux Driver Verification project (linuxtesting.org).
+>
+> Signed-off-by: Anton Vasilyev <vasilyev@ispras.ru>
 
-diff --git a/drivers/staging/rtl8192u/r819xU_cmdpkt.h b/drivers/staging/rtl8192u/r819xU_cmdpkt.h
-index 50218d9a406b..d2e07b0ff30b 100644
---- a/drivers/staging/rtl8192u/r819xU_cmdpkt.h
-+++ b/drivers/staging/rtl8192u/r819xU_cmdpkt.h
-@@ -53,7 +53,7 @@ struct cmd_pkt_tx_feedback {
- };
- 
- /* 2. RX side: Interrupt status packet. It includes Beacon State,
-- * Beacon Timer Interrupt and other useful informations in MAC ISR Reg.
-+ * Beacon Timer Interrupt and other useful information in MAC ISR Reg.
-  */
- typedef struct tag_cmd_pkt_interrupt_status {
- 	u8	element_id;			/* Command packet type. */
-@@ -80,7 +80,7 @@ typedef struct tag_cmd_pkt_set_configuration {
- 	u32	mask;
- } cmpk_set_cfg_t;
- 
--/* 4. Both side : TX/RX query configuraton packet. The query structure is the
-+/* 4. Both side : TX/RX query configuration packet. The query structure is the
-  *    same as set configuration.
-  */
- #define		cmpk_query_cfg_t	cmpk_set_cfg_t
--- 
-2.18.0
+Patch applied, nice work!
 
+Yours,
+Linus Walleij
