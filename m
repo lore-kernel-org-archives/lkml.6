@@ -2,104 +2,115 @@ Return-Path: <SRS0=jKyA=KN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AA2FFF05E2
-	for <linux-kernel@archiver.kernel.org>; Sun, 29 Jul 2018 11:48:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75D86FF05E2
+	for <linux-kernel@archiver.kernel.org>; Sun, 29 Jul 2018 11:48:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ED9EC20873
-	for <linux-kernel@archiver.kernel.org>; Sun, 29 Jul 2018 11:48:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ED9EC20873
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gmx.de
+	by mail.kernel.org (Postfix) with ESMTP id 2CF7520893
+	for <linux-kernel@archiver.kernel.org>; Sun, 29 Jul 2018 11:48:34 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="c+XfeUp0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2CF7520893
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726458AbeG2NSJ (ORCPT
+        id S1726714AbeG2NSn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 29 Jul 2018 09:18:09 -0400
-Received: from mout.gmx.net ([212.227.17.20]:42235 "EHLO mout.gmx.net"
+        Sun, 29 Jul 2018 09:18:43 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58446 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726289AbeG2NSJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Jul 2018 09:18:09 -0400
-Received: from homer.simpson.net ([185.221.148.245]) by mail.gmx.com (mrgmx103
- [212.227.17.168]) with ESMTPSA (Nemesis) id 0LvUwp-1gAJbL3RR5-010bKs; Sun, 29
- Jul 2018 13:47:48 +0200
-Message-ID: <1532864867.1618.32.camel@gmx.de>
-Subject: Re: candidates for @devel-rt localversion-rt++
-From:   Mike Galbraith <efault@gmx.de>
-To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Thomas Gleixner <tglx@linutronix.de>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        linux-rt-users <linux-rt-users@vger.kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>
-Date:   Sun, 29 Jul 2018 13:47:47 +0200
-In-Reply-To: <1532847330.1618.8.camel@gmx.de>
-References: <20180727215710.zq6gkoqzlb4ca7qv@linutronix.de>
-         <1532768831.9882.71.camel@gmx.de> <1532847330.1618.8.camel@gmx.de>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.26.6 
-Mime-Version: 1.0
+        id S1726289AbeG2NSn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 29 Jul 2018 09:18:43 -0400
+Received: from archlinux (cpc91196-cmbg18-2-0-cust659.5-4.cable.virginm.net [81.96.234.148])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6517720873;
+        Sun, 29 Jul 2018 11:48:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1532864911;
+        bh=EC7gBJTPnn/wFeLFZevhpjMVvLZlYe7kyX41pNfiKr0=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=c+XfeUp0/FPgNLSgRGFFaW//rixt3jUMbFJQuCgjbRbBDMl9yOpYhN8CER+SGp6vp
+         EkjtoOF3zFneVmquWuYeRjp9/CDlTZ/x0dT/TDm4bG5Y4NHLEBU/9AEWG5LM4wyhbV
+         hK6Wh+g41bezyYyBeyY3522q0lIVxsp3PqpImyRE=
+Date:   Sun, 29 Jul 2018 12:48:26 +0100
+From:   Jonathan Cameron <jic23@kernel.org>
+To:     Manish Narani <manish.narani@xilinx.com>
+Cc:     <lakshmi.sai.krishna.potthuri@xilinx.com>,
+        <michal.simek@xilinx.com>, <pmeerw@pmeerw.net>, <lars@metafoo.de>,
+        <knaack.h@gmx.de>, <anirudh@xilinx.com>, <sgoud@xilinx.com>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-iio@vger.kernel.org>
+Subject: Re: [PATCH v2 1/4] iio: adc: xilinx: Check for return values in clk
+ related functions
+Message-ID: <20180729124826.74784bf2@archlinux>
+In-Reply-To: <1532358123-23485-2-git-send-email-manish.narani@xilinx.com>
+References: <1532358123-23485-1-git-send-email-manish.narani@xilinx.com>
+        <1532358123-23485-2-git-send-email-manish.narani@xilinx.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:DdeYjcAecvzKWsJbo+d8cMoZY+ntwcGolLTYNPMW4wNJvOderCm
- 2RrwZYnh9LwZhoOAC5RC3020qW3xGQw7xM2hFeH7iNpL4s4jlMAc9FE4pItaGkoEXPCswxM
- ieD4fn9EK8hbPhKgJbxy38FCXuItYefFQ++Dz/pTOhiw9omcvCymxsbnRLCYW4M9FaEPhlR
- PrfcPM+JStDPBYnMITdgg==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:D+litNtwTts=:mxLEb/tPapnRQBlumM+l8T
- X006n3tMsbNpejcq1LxNd0gQXnujYB54W/tsN73P0dP38Juglqt3GRmJtBvoJx36cwUq715NL
- 5SdkLWSrgyPF31IA6O/QOOeQAjYNTboz4r8xl0psVRx5cTsOtmXopb44+qRz15QJ6UWtYZpsB
- CK+1Z2XltUyAP6HNd7ThNsm+Yy6Kr6Sf08IRec5DDAQNxfShR3Z1E8tXyYgt1KJtm94fpcvXv
- hc6DmBHYYA1fGCQJ37aTKiN2Jlp9ZVQmsK6Mmw7XuvFhZjppdF+Yf9utMNVGdQ9L+B4sPvBCv
- ml+NKpTeRuPR1wVCyPr8v4NUJvr2JwvJXktwciaV6FhMYrmF8cySusZTDSIPcHmpHojR0S445
- wW24wssMmAt8G9wuu+Ykg0byOaHQnWs8lrmdibCgk2W7CAO2wNmkzaj6ORNTh0NB9QgXPNy8x
- VAln3ggb06nHT8aVRO5608bsu3FXQ3jgaSuL68dcdxI7tYLo+U/ftbRnAvPB8vEyeDHgepcHo
- tj1IefmljqDNLVnqSlJolK3GTEfOQlK1gfD9ycBVnl8t1DRAzGYAg3Ftd4abZnyBctISvK7mu
- ubwc1G48PMCU+sivNMCjHaw2vjRfSDL0XUoNwuJnz3V5AAZV2/nc/TwShDh+prJ0MmzX447iw
- a48WR5uuRnLHI0TWk9ISQySrNqRnTW4ab+3IVVbdR2LtZCabboS+msrZdkMTXhht27t4h6j4v
- 2Wt7/KP3nin4/OPjJy9Ua4vn6dKEUa5ZZbqZqEpr6iZV2v6getaMoctGAC9DPLNx2yOYnmoe4
- QvxLNHQ
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-FYI, per kvm unit tests, 4.16-rt definitely has more kvm issues.
+On Mon, 23 Jul 2018 20:32:00 +0530
+Manish Narani <manish.narani@xilinx.com> wrote:
 
-huawei5:/abuild/mike/kvm-unit-tests # uname -r
-4.16.18-rt11-rt
-huawei5:/abuild/mike/kvm-unit-tests # ./run_tests.sh
-PASS selftest-setup (2 tests)
-FAIL selftest-vectors-kernel 
-FAIL selftest-vectors-user 
-PASS selftest-smp (65 tests)
-PASS pci-test (1 tests)
-PASS pmu (3 tests)
-FAIL gicv2-ipi 
-FAIL gicv3-ipi 
-FAIL gicv2-active 
-FAIL gicv3-active 
-PASS psci (4 tests)
-FAIL timer 
-huawei5:/abuild/mike/kvm-unit-tests #
+> This patch adds check for return values from clock related functions.
+> This was reported by static code analysis tool.
+> 
+> Signed-off-by: Manish Narani <manish.narani@xilinx.com>
+Applied to the togreg branch of iio.git and pushed out as testing for
+the autobuilders to play with it.
 
-4.14-rt passes all tests.  The above is with the kvm raw_spinlock_t
-conversion patch applied, but the 4.12 based SLERT tree I cloned to
-explore arm-land in the first place shows only one timer failure, and
-has/needs it applied as well, which would seem to vindicate it.
+Thanks,
 
-huawei5:/abuild/mike/kvm-unit-tests # uname -r
-4.12.14-0.gec0b559-rt
-huawei5:/abuild/mike/kvm-unit-tests # ./run_tests.sh
-PASS selftest-setup (2 tests)
-PASS selftest-vectors-kernel (2 tests)
-PASS selftest-vectors-user (2 tests)
-PASS selftest-smp (65 tests)
-PASS pci-test (1 tests)
-PASS pmu (3 tests)
-PASS gicv2-ipi (3 tests)
-PASS gicv3-ipi (3 tests)
-PASS gicv2-active (1 tests)
-PASS gicv3-active (1 tests)
-PASS psci (4 tests)
-FAIL timer (8 tests, 1 unexpected failures)
-huawei5:/abuild/mike/kvm-unit-tests #
+Jonathan
+
+> ---
+>  drivers/iio/adc/xilinx-xadc-core.c | 11 +++++++++--
+>  1 file changed, 9 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/iio/adc/xilinx-xadc-core.c b/drivers/iio/adc/xilinx-xadc-core.c
+> index 0127e85..23395fc 100644
+> --- a/drivers/iio/adc/xilinx-xadc-core.c
+> +++ b/drivers/iio/adc/xilinx-xadc-core.c
+> @@ -340,6 +340,8 @@ static int xadc_zynq_setup(struct platform_device *pdev,
+>  	xadc->zynq_intmask = ~0;
+>  
+>  	pcap_rate = clk_get_rate(xadc->clk);
+> +	if (!pcap_rate)
+> +		return -EINVAL;
+>  
+>  	if (tck_rate > pcap_rate / 2) {
+>  		div = 2;
+> @@ -887,6 +889,9 @@ static int xadc_write_raw(struct iio_dev *indio_dev,
+>  	unsigned long clk_rate = xadc_get_dclk_rate(xadc);
+>  	unsigned int div;
+>  
+> +	if (!clk_rate)
+> +		return -EINVAL;
+> +
+>  	if (info != IIO_CHAN_INFO_SAMP_FREQ)
+>  		return -EINVAL;
+>  
+> @@ -1237,8 +1242,10 @@ static int xadc_probe(struct platform_device *pdev)
+>  		goto err_free_irq;
+>  
+>  	/* Disable all alarms */
+> -	xadc_update_adc_reg(xadc, XADC_REG_CONF1, XADC_CONF1_ALARM_MASK,
+> -		XADC_CONF1_ALARM_MASK);
+> +	ret = xadc_update_adc_reg(xadc, XADC_REG_CONF1, XADC_CONF1_ALARM_MASK,
+> +				  XADC_CONF1_ALARM_MASK);
+> +	if (ret)
+> +		goto err_free_irq;
+>  
+>  	/* Set thresholds to min/max */
+>  	for (i = 0; i < 16; i++) {
+
