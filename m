@@ -7,64 +7,64 @@ X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7ED3C46461
-	for <linux-kernel@archiver.kernel.org>; Sun, 29 Jul 2018 21:08:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99889C46462
+	for <linux-kernel@archiver.kernel.org>; Sun, 29 Jul 2018 21:08:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 70EDC20857
-	for <linux-kernel@archiver.kernel.org>; Sun, 29 Jul 2018 21:08:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 419C420892
+	for <linux-kernel@archiver.kernel.org>; Sun, 29 Jul 2018 21:08:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G8Gy04vw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 70EDC20857
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="uA1wxk+A"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 419C420892
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731688AbeG2WkX (ORCPT
+        id S1731846AbeG2Wk0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 29 Jul 2018 18:40:23 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:43885 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729542AbeG2WkX (ORCPT
+        Sun, 29 Jul 2018 18:40:26 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:40578 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729378AbeG2WkY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Jul 2018 18:40:23 -0400
-Received: by mail-wr1-f68.google.com with SMTP id b15-v6so10589760wrv.10
-        for <linux-kernel@vger.kernel.org>; Sun, 29 Jul 2018 14:08:32 -0700 (PDT)
+        Sun, 29 Jul 2018 18:40:24 -0400
+Received: by mail-wr1-f66.google.com with SMTP id h15-v6so10590083wrs.7
+        for <linux-kernel@vger.kernel.org>; Sun, 29 Jul 2018 14:08:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=5vsa0KOCGtXDPKts07R2gp/2/VrWVSLUkcW4Vvzm35g=;
-        b=G8Gy04vwXWpCr3e/VKuh+mNSLn45i7n2CuLiKfkEe9c7ay36hl2vodn5371uQqFZzq
-         oq+nnlumfkW797hetcr+KxqMNZeBFJYDRdJ/OKN6o/VtRpJhTHw6GEGPaaRJbOas7fZ4
-         JprFx3H3VNOGwTN9kzuiIrZXYnhO3o2AMZIalj/jejeJD4G8eHp4+S12NhNhNuXr5KfJ
-         3DPA1oPnIGG6pi7pnEK2gkO6ILThgvfpSFra64M45CmcRE1i4a7iJOwveF5BXSCg4adc
-         94FYkLH5O7UlvnpsZruPXQmy13vFVkEZpl8ATT62gy8GuHvW22vNYSH0u4eIjzLvGPzP
-         7aQQ==
+        bh=nC037p4FtoVIrMCNzU8I7gaT/iXgNmtqDq3KbXQXHm4=;
+        b=uA1wxk+AgNNQjBqrEphpnjlvegN3sAM9+cpYFB8lD3ixZ5YMOP7dL7sVqaKOaDNNog
+         hzfHBSx1HJtNn0PEB+0hU3GkW6mi/UGJ7GW9gDo1ONs0AwdlHwfVDkFPqyNoM1TDPxYx
+         fW2rV+G4j07OmMYqHrm5UIpDrejzdj4vayOwXgemmAtBZFkf8N20tmRwVLwS5Q8EosoM
+         UCvu6pfzTYB/Kh3RM2WYIETAW3kdQsCOeEi9xL0/479+Gcdzgd5fjWpljHIqweG3je62
+         hS16p+F8UhASu4kdGmwTcHajsbMJaaDEobciuwVT03DJM15+KSXfooWNfOLic2y17h5G
+         2/hw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=5vsa0KOCGtXDPKts07R2gp/2/VrWVSLUkcW4Vvzm35g=;
-        b=NQBaDW/QkGVZ3Xy6GsbaQ0jUTcrhbXQj3oJ0VYqL9f8r+oZCCnhP0holhukqaEzdZK
-         mKzl63/Ows0qQl04Hq+nNObS5LT0xtHru9xLiLMPL+1OMiRL3ip40uKRaDfuFdD7qPsE
-         RM6UqhDlRvYS2xYENpKGZEBlLl6T053hwBTS51h7OVsopCvNcE71W+LKDD/X94oLSrzt
-         2t+tl5P1QOZFwBCWsSufmXmoM6xMAv9+Yocw9UQMbUXlQkWB1Rj9T513FekzVAdnNHdm
-         ybk2oJ5raILA9i8K3GBYFou5ijSCfVVbIZCsK9CPD6b1F2W1N5hltbf0R4R6Z97x+eBl
-         RV9Q==
-X-Gm-Message-State: AOUpUlGm37iymXPhLmL42Qfvtb21l9rq7YsJccjje9hbdSPuD20BuIT0
-        DkMzP2954/gysn2cxl+bHrzDvIXXsmk=
-X-Google-Smtp-Source: AAOMgpdDCvCNuLqkY7KgG6XCFnu8xqdogYNMFmGHzwaWB7u7xZ5dTEtgYOqVTOBt9RfIWCcc33uD7g==
-X-Received: by 2002:adf:b1d2:: with SMTP id r18-v6mr15060341wra.79.1532898511460;
-        Sun, 29 Jul 2018 14:08:31 -0700 (PDT)
+        bh=nC037p4FtoVIrMCNzU8I7gaT/iXgNmtqDq3KbXQXHm4=;
+        b=Sjv2O8whUpq0+mF6kHak7R5Qoa2mWpjtasVC82qR2ZVG2rhvE1RQShw5jbFhw1ef7Y
+         WPrJr9SuOnKAwvc9IFJZHWNbzurXbUH/maTURAQpBO4eirZJqthYz5gLhZgkt3VsvNrr
+         3JLsceRgZZwGEWeJB7v5eV0y7n9SPyorNgurLu44Mm+NPa0rSIdx+4PCl2jOAWnQDhlb
+         bJtFl2pok5Et228G4SHjDsH9AfZRXk4zlfUzYO6KC5BVLdrdnWqD+xEgyvZ1jIVcL7I8
+         frLMHBthedugxRlRy6PpBbQD81ETNX69trm8HhHyQk0IWLxblgCfN/XZRnbPcRz8Bpu5
+         iKiA==
+X-Gm-Message-State: AOUpUlG+HwwHA0cKpGXpF30melzlLIVsni+oNZjr3ln7dybIMRHdmW9c
+        BCOKP7vwLTihDf+8kVHGeS3xnjcBrE4=
+X-Google-Smtp-Source: AAOMgpdA//a4oTkCVdzLGLhQcniWCSCZScevG9l4QtbBPyfXw1Um2lhEyk9sN6rqijGDkMFsqkZkTA==
+X-Received: by 2002:adf:93a3:: with SMTP id 32-v6mr14373102wrp.140.1532898512927;
+        Sun, 29 Jul 2018 14:08:32 -0700 (PDT)
 Received: from localhost.localdomain (host81-158-116-187.range81-158.btcentralplus.com. [81.158.116.187])
-        by smtp.gmail.com with ESMTPSA id d26-v6sm9264532wmb.15.2018.07.29.14.08.30
+        by smtp.gmail.com with ESMTPSA id d26-v6sm9264532wmb.15.2018.07.29.14.08.31
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 29 Jul 2018 14:08:30 -0700 (PDT)
+        Sun, 29 Jul 2018 14:08:32 -0700 (PDT)
 From:   John Whitmore <johnfwhitmore@gmail.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     devel@driverdev.osuosl.org, gregkh@linuxfoundation.org,
         John Whitmore <johnfwhitmore@gmail.com>
-Subject: [PATCH v2 07/15] staging:rtl8192u: Refactor use of enum dm_dig_sta_e - Style
-Date:   Sun, 29 Jul 2018 22:07:39 +0100
-Message-Id: <20180729210747.10803-8-johnfwhitmore@gmail.com>
+Subject: [PATCH v2 08/15] staging:rtl8192u: Refactor enum dm_ratr_sta_e usage - Style
+Date:   Sun, 29 Jul 2018 22:07:40 +0100
+Message-Id: <20180729210747.10803-9-johnfwhitmore@gmail.com>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180729210747.10803-1-johnfwhitmore@gmail.com>
 References: <20180729210747.10803-1-johnfwhitmore@gmail.com>
@@ -73,75 +73,75 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Refactor the use of the enumerated type dm_dig_sta_e, which is not
-actually used for type checking by the compiler.
+The enumerated type dm_ratr_sta_e was defined in the file
+drivers/staging/rtl8192u/r8192U_dm.h but never actually used in that
+file. The only variable which uses this enumerated type is 'ratr_state',
+a member variable of the _rate_adaptive structure defined in the file
+drivers/staging/rtl8192u/r8192U.h.
 
-The typedef of dm_dig_sta_e is removed to clear the checkpatch issue
-with defining new types, and the enumerated type is left with the name
-enum dynamic_init_gain_state
+To clarify and place the enumerated type close to where it is used the
+type was moved to the drivers/staging/rtl8192u/r8192U.h file.
 
-The enumerated type defines values for the enumeration, which are used
-by both dig_state and dig_highpwr_state, (members of the struct dig).
-Both of those variables were defined as being of type u8. This negates
-any usefulness of the use of the enumeration, (compiler type checking).
+In addition the member variable 'ratr_state' which uses the enumerated
+constants was declared as being of type 'u8'. This negates any advantage
+of the enumerated type, compiler type-checking, so that member variable's
+type has been changed to being of the enumerated type.
 
-To make use of the compiler's type-checking the two member variables,
-dig_state and dig_highpwr_state have been changed to being of type
-enum dynamic_init_gain_state. The enumerated type has been moved above
-the struct dig definition so that the enumeration is already defined
-when the compiler reaches the two types using the enumerated type.
+The typedef from the enumerated type has been removed to clear the
+checkpatch issue with defining new types. Additionally the name of the
+type has been left as enum dynamic_ratr_state
 
-These changes, whilst convoluted, are purely coding style in nature and
-should not impact runtime code execution.
+This is a coding style change and should have no impact on runtime code
+execution.
 
 Signed-off-by: John Whitmore <johnfwhitmore@gmail.com>
 ---
- drivers/staging/rtl8192u/r8192U_dm.h | 18 +++++++++---------
- 1 file changed, 9 insertions(+), 9 deletions(-)
+ drivers/staging/rtl8192u/r8192U.h    | 10 +++++++++-
+ drivers/staging/rtl8192u/r8192U_dm.h |  8 --------
+ 2 files changed, 9 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/staging/rtl8192u/r8192U_dm.h b/drivers/staging/rtl8192u/r8192U_dm.h
-index e86dda99c223..078770a8c7bf 100644
---- a/drivers/staging/rtl8192u/r8192U_dm.h
-+++ b/drivers/staging/rtl8192u/r8192U_dm.h
-@@ -64,6 +64,13 @@
+diff --git a/drivers/staging/rtl8192u/r8192U.h b/drivers/staging/rtl8192u/r8192U.h
+index e615d9b3f6b1..94a148994069 100644
+--- a/drivers/staging/rtl8192u/r8192U.h
++++ b/drivers/staging/rtl8192u/r8192U.h
+@@ -662,9 +662,17 @@ typedef enum _RT_RF_TYPE_819xU {
+ 	RF_PSEUDO_11N = 4,
+ } RT_RF_TYPE_819xU, *PRT_RF_TYPE_819xU;
  
- 
- /*------------------------------Define structure----------------------------*/
-+
-+enum dynamic_init_gain_state {
-+	DM_STA_DIG_OFF = 0,
-+	DM_STA_DIG_ON,
-+	DM_STA_DIG_MAX
++/* 2007/10/08 MH Define RATR state. */
++enum dynamic_ratr_state {
++	DM_RATR_STA_HIGH = 0,
++	DM_RATR_STA_MIDDLE = 1,
++	DM_RATR_STA_LOW = 2,
++	DM_RATR_STA_MAX
 +};
 +
- /* 2007/10/04 MH Define upper and lower threshold of DIG enable or disable. */
- struct dig {
- 	u8		dig_enable_flag;
-@@ -77,8 +84,8 @@ struct dig {
- 	long		rssi_high_power_lowthresh;
- 	long		rssi_high_power_highthresh;
+ typedef struct _rate_adaptive {
+ 	u8				rate_adaptive_disabled;
+-	u8				ratr_state;
++	enum dynamic_ratr_state		ratr_state;
+ 	u16				reserve;
  
--	u8		dig_state;
--	u8		dig_highpwr_state;
-+	enum dynamic_init_gain_state		dig_state;
-+	enum dynamic_init_gain_state		dig_highpwr_state;
- 	u8		cur_connect_state;
- 	u8		pre_connect_state;
- 
-@@ -98,13 +105,6 @@ struct dig {
+ 	u32				high_rssi_thresh_for_ra;
+diff --git a/drivers/staging/rtl8192u/r8192U_dm.h b/drivers/staging/rtl8192u/r8192U_dm.h
+index 078770a8c7bf..d7bd257a7e93 100644
+--- a/drivers/staging/rtl8192u/r8192U_dm.h
++++ b/drivers/staging/rtl8192u/r8192U_dm.h
+@@ -105,14 +105,6 @@ struct dig {
  	long		rssi_val;
  };
  
--typedef enum tag_dynamic_init_gain_state_definition {
--	DM_STA_DIG_OFF = 0,
--	DM_STA_DIG_ON,
--	DM_STA_DIG_MAX
--} dm_dig_sta_e;
+-/* 2007/10/08 MH Define RATR state. */
+-typedef enum tag_dynamic_ratr_state_definition {
+-	DM_RATR_STA_HIGH = 0,
+-	DM_RATR_STA_MIDDLE = 1,
+-	DM_RATR_STA_LOW = 2,
+-	DM_RATR_STA_MAX
+-} dm_ratr_sta_e;
 -
--
- /* 2007/10/08 MH Define RATR state. */
- typedef enum tag_dynamic_ratr_state_definition {
- 	DM_RATR_STA_HIGH = 0,
+ /* 2007/10/11 MH Define DIG operation type. */
+ typedef enum tag_dynamic_init_gain_operation_type_definition {
+ 	DIG_TYPE_THRESH_HIGH	= 0,
 -- 
 2.18.0
 
