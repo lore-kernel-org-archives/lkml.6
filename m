@@ -2,114 +2,129 @@ Return-Path: <SRS0=jKyA=KN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CCD2C46462
-	for <linux-kernel@archiver.kernel.org>; Sun, 29 Jul 2018 19:57:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E77C5C46461
+	for <linux-kernel@archiver.kernel.org>; Sun, 29 Jul 2018 20:01:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4952220882
-	for <linux-kernel@archiver.kernel.org>; Sun, 29 Jul 2018 19:57:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8B30920882
+	for <linux-kernel@archiver.kernel.org>; Sun, 29 Jul 2018 20:01:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="CxCaRLUq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4952220882
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KS+ypCvR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B30920882
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728476AbeG2V2e (ORCPT
+        id S1728553AbeG2Vcy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 29 Jul 2018 17:28:34 -0400
-Received: from mail-it0-f67.google.com ([209.85.214.67]:50328 "EHLO
-        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726644AbeG2V2e (ORCPT
+        Sun, 29 Jul 2018 17:32:54 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:39192 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726689AbeG2Vcx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Jul 2018 17:28:34 -0400
-Received: by mail-it0-f67.google.com with SMTP id g191-v6so3416982ita.0
-        for <linux-kernel@vger.kernel.org>; Sun, 29 Jul 2018 12:56:57 -0700 (PDT)
+        Sun, 29 Jul 2018 17:32:53 -0400
+Received: by mail-wm0-f66.google.com with SMTP id h20-v6so11284311wmb.4;
+        Sun, 29 Jul 2018 13:01:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=8sfgsSz3YTOMGINWX5xbwvOPbnsWQCfLZ9UYwzEYogs=;
-        b=CxCaRLUqNWtWeV3Q8aLyLRgJIheSpL/4YxUPuEGnqONakDpHSqJp1KL400RqXle4H1
-         4HjxfRAKPJYCMzqA5qVaFb+W8KFS2pFPygmna1Dk/30mQ62av26/kM+PxtZDD1bzUBhN
-         IyQXQqvz4SEGH+IQeHtgdXZuIHA9PGduJSA9A=
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=1e/Z6iDtW29Zz88e4CLIZEz9d8fpoppz46fhoPYktZo=;
+        b=KS+ypCvRgNfR5zrpJzYy46CCbOZ0q52V7XhqspB8qNzmYFC9Yxv9o64HRqrkxcw73y
+         nT1xFlxTkMK39Vq02L3LDMKraFwdLagAovb72+CUo1aWgnGMgpybNcXe0djgoBmVUHym
+         16mOfzHYbgRvslCxrLUFiYpG38Ysisx0L8H5om+8KIoWe7nLW2Pqbmq4aVyW/NYFFFvI
+         tYTLrUcTZ6qChAwVoUwMdM251POdz7MqfwCUtIBID2oz1j+5lrlP0JsA7AKK9Ywnem6M
+         ZRiBjR4mKNu2P6g2r1pqwumJVf0g0gviPkFtLCNM+i17PJbyfoZ42o6w44AW27nz+sU+
+         lIkQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=8sfgsSz3YTOMGINWX5xbwvOPbnsWQCfLZ9UYwzEYogs=;
-        b=Mxq/WS1rCY3U29Pjic0bZPUR0zEMHwyXJ9eB5HLBi8Kk9QNSkXXSzzyZrHi7TEcgfu
-         9bm4CVgh/K9RcbLURTT4uO++oR33gGSTG+L7w/LCHSkwCtpTfC0m4OT5IVslP0HIWVz7
-         4GqkCvgS/YcTv1yawl92xlz//SbtGIB02GtmVZB6BN/O9Qi0AJlEdxCQXhOXkks+wjBh
-         5bdmrI4Io0OuMb168p36tiPvyJsuWGNOgptfyL6kRsiB7bTl1RYESaiFgIhICwKc3gZL
-         XOjfJKcMoocX6Jz+dp8e5pEt+PMs8jMsnErSn+e8f3UN3HZP3pA/aLCQrcCXGHT6i9b0
-         5GyQ==
-X-Gm-Message-State: AOUpUlFBL6aT1tL9+h0PnAeGADkr1t8RG0/XhcWjPuq5QY58UN7OUpML
-        P/QBqRwlNhg/N+O8DmG7idjJVN9XRJyYV3Xjkj0=
-X-Google-Smtp-Source: AAOMgpf8iD/riy5s/sU4I//iSZiDIho6b7RFfGkNae4+4Lavw1HtxyGEkjCAadN/5eqC+R7jbYFayod/fnxn3H4uXHA=
-X-Received: by 2002:a24:5002:: with SMTP id m2-v6mr11977541itb.16.1532894217159;
- Sun, 29 Jul 2018 12:56:57 -0700 (PDT)
-MIME-Version: 1.0
-References: <20180728215357.3249-1-riel@surriel.com> <20180728215357.3249-4-riel@surriel.com>
- <CALCETrUipqat-78++E8fL7d2=77Cbj72jCTZMO=yNF8nX9HhCA@mail.gmail.com>
- <1532865634.28585.2.camel@surriel.com> <E710FBA5-CC5E-4941-ACBF-4AB3424F1F68@amacapital.net>
- <1532886673.28585.24.camel@surriel.com> <8A3221EE-0D94-487E-B53D-885A555634BD@amacapital.net>
-In-Reply-To: <8A3221EE-0D94-487E-B53D-885A555634BD@amacapital.net>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Sun, 29 Jul 2018 12:56:46 -0700
-Message-ID: <CA+55aFx4eLxPK+jn639GW8UcdguVvXFdwMsM4Ko33yWMME5tAA@mail.gmail.com>
-Subject: Re: [PATCH 03/10] smp,cpumask: introduce on_each_cpu_cond_mask
-To:     Andy Lutomirski <luto@amacapital.net>
-Cc:     Rik van Riel <riel@surriel.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Andrew Lutomirski <luto@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        kernel-team <kernel-team@fb.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Ingo Molnar <mingo@kernel.org>, Mike Galbraith <efault@gmx.de>,
-        Dave Hansen <dave.hansen@intel.com>, will.daecon@arm.com,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=1e/Z6iDtW29Zz88e4CLIZEz9d8fpoppz46fhoPYktZo=;
+        b=UUBGxKBbryNP4oq0CcKMc4sNjWztUC2a/dCAjYm/izxOXKXmbnyE4GEJ8SfW/9uhyI
+         aC/TLcIRmOgJTCZMGVOM2i4i3ew9Ki0r5L0/OrdMb6EceJjIU1ylvyR8HWxGL5X+jQMK
+         x/FfsEymoKabliDAmALP2owZ2h6t7KMQcSJovEzyPMw+M9DnWzYdPKeunyPBNn8OBIQB
+         iRI/ru4hmjbean64POxnRwy1p759b6kBeYqGCDyX0GxZMxtGvF6khgOlQxp/lG6WZGEw
+         s7yHcmiT8rmRbQ6Tj7rnRi4l9ddofagYwtXp8naIqqDmWFXfhOfP/I46NPAuPAfFHHEu
+         iiUA==
+X-Gm-Message-State: AOUpUlFKqU5KcY2C7wYBQsnWWKMKcKfgPl9JVcvlfEmtAOENIop10uxY
+        //B03w97U8zPIBsreeMtGe4=
+X-Google-Smtp-Source: AAOMgpewoh4/G6k1RISZVW/tEf1s45NBM9Mjz9HtDIvKI2g0y+Hu2TdIEJWoEAYrmUQdmdZBckVMCA==
+X-Received: by 2002:a1c:4d16:: with SMTP id o22-v6mr12115483wmh.49.1532894474666;
+        Sun, 29 Jul 2018 13:01:14 -0700 (PDT)
+Received: from localhost.localdomain (p5DCFE1FB.dip0.t-ipconnect.de. [93.207.225.251])
+        by smtp.gmail.com with ESMTPSA id g15-v6sm12334213wrh.48.2018.07.29.13.01.13
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 29 Jul 2018 13:01:13 -0700 (PDT)
+From:   Saravanan Sekar <sravanhome@gmail.com>
+To:     manivannan.sadhasivam@linaro.org, linus.walleij@linaro.org,
+        robh+dt@kernel.org, mark.rutland@arm.com, afaerber@suse.de,
+        catalin.marinas@arm.com, will.deacon@arm.com
+Cc:     linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        pn@denx.de, mp-cs@actions-semi.com, jeff.chen@actions-semi.com,
+        thomas.liau@actions-semi.com, linux@cubietech.com,
+        Saravanan Sekar <sravanhome@gmail.com>
+Subject: [PATCH v3 0/5] Add Actions Semi S700 pinctrl support
+Date:   Sun, 29 Jul 2018 22:00:33 +0200
+Message-Id: <20180729200038.11795-1-sravanhome@gmail.com>
+X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20180729182551.19383-1-sravanhome@gmail.com>
+References: <20180729182551.19383-1-sravanhome@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Jul 29, 2018 at 11:55 AM Andy Lutomirski <luto@amacapital.net> wrote:
-> > On Jul 29, 2018, at 10:51 AM, Rik van Riel <riel@surriel.com> wrote:
-> >
-> > This seems to result in systems with ->has_wbinvd_exit
-> > only calling wbinvd_ipi on OTHER CPUs, and not on the
-> > CPU where the guest exited with wbinvd?
-> >
-> > This seems unintended.
-> >
-> > I guess looking into on_each_cpu_mask might be a little
-> > higher priority than waiting until the next Outreachy
-> > season :)
->
-> The right approach might be a tree wise rename from smp_call_... to on_other_cpus_mask() it similar. The current naming and semantics are extremely confusing.
+This patchset adds pinctrl support for Actions Semi S700 SoC.
+Pinmux functions are only accessible for pin groups while pinconf
+parameters are available for both pin groups and individual pins.
 
-Ugh.
+pinctrl driver is verified using the Cubieboard7.
 
-Renaming might be worth it, but at least one issue is that we are
-simply not very consistent.
+common functionalities from s900 is moved for all Actions Semi
+SoC's usage.
+Common pad control configurations are moved to SoC specific
 
-For example. smp_call_function_many() does indeed explicitly ignore
-the current CPU.
+dts entry for pinctrl depends on clock driver which is still under review:
+https://patchwork.kernel.org/patch/10533959/
 
-But smp_call_function_any() (one "m" less) does _not_ ignore the
-current CPU, and in fact prefers it.
+Thanks,
+Saravanan
+Parthiban
 
-So it's not that smp_call_... should *generally* be renamed. Only some
-of the cases might be worth renaming.
+Changelog in v2
+- GPIO Interrupt support is added
+- Device tree entry for GPIO and Interrupt configured
+- GPIO and pinctrl define reorder, commit message findings fixed
 
-And just a "rename and forget" isn't really great. As Rik's example
-shows, existing users should be checked too..
+depends on owl GPIO Interrupt support
+https://patchwork.kernel.org/patch/10483477/
 
-                    Linus
+Chnagelog in v3
+- Fixed 0-DAY bisectibility error
+
+Saravanan Sekar (5):
+  pinctrl: actions: define constructor generic to Actions Semi SoC's
+  pinctrl: actions: define pad control configurtion to SoC specific
+  dt-bindings: pinctrl: Add bindings for Actions Semi S700 SoC
+  pinctrl: actions: Add Actions Semi S700 pinctrl driver
+  arm64: dts: actions: Add pinctrl node for Actions Semi S700
+
+ .../bindings/pinctrl/actions,s700-pinctrl.txt |  170 ++
+ arch/arm64/boot/dts/actions/s700.dtsi         |   16 +
+ drivers/pinctrl/actions/Kconfig               |    6 +
+ drivers/pinctrl/actions/Makefile              |    1 +
+ drivers/pinctrl/actions/pinctrl-owl.c         |   71 +-
+ drivers/pinctrl/actions/pinctrl-owl.h         |  142 +-
+ drivers/pinctrl/actions/pinctrl-s700.c        | 1925 +++++++++++++++++
+ drivers/pinctrl/actions/pinctrl-s900.c        |  205 +-
+ 8 files changed, 2337 insertions(+), 199 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/actions,s700-pinctrl.txt
+ create mode 100644 drivers/pinctrl/actions/pinctrl-s700.c
+
+-- 
+2.18.0
+
