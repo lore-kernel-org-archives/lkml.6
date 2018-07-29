@@ -6,97 +6,106 @@ X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E85BC46461
-	for <linux-kernel@archiver.kernel.org>; Sun, 29 Jul 2018 22:01:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B91CC46461
+	for <linux-kernel@archiver.kernel.org>; Sun, 29 Jul 2018 22:03:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 08CEF20870
-	for <linux-kernel@archiver.kernel.org>; Sun, 29 Jul 2018 22:01:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 08CEF20870
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 973E720881
+	for <linux-kernel@archiver.kernel.org>; Sun, 29 Jul 2018 22:03:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 973E720881
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ZenIV.linux.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732085AbeG2XdU (ORCPT
+        id S1732037AbeG2XfU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 29 Jul 2018 19:33:20 -0400
-Received: from mga05.intel.com ([192.55.52.43]:22975 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731589AbeG2XdT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Jul 2018 19:33:19 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Jul 2018 15:01:18 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,420,1526367600"; 
-   d="scan'208";a="71505140"
-Received: from bee.sh.intel.com (HELO bee) ([10.239.97.14])
-  by fmsmga002.fm.intel.com with ESMTP; 29 Jul 2018 15:01:16 -0700
-Received: from kbuild by bee with local (Exim 4.84_2)
-        (envelope-from <lkp@intel.com>)
-        id 1fjtkW-000TFR-AJ; Mon, 30 Jul 2018 06:01:12 +0800
-Date:   Mon, 30 Jul 2018 06:00:45 +0800
-From:   kbuild test robot <fengguang.wu@intel.com>
-To:     Saravanan Sekar <sravanhome@gmail.com>
-Cc:     kbuild-all@01.org, manivannan.sadhasivam@linaro.org,
-        linus.walleij@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        afaerber@suse.de, catalin.marinas@arm.com, will.deacon@arm.com,
-        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        pn@denx.de, mp-cs@actions-semi.com, jeff.chen@actions-semi.com,
-        thomas.liau@actions-semi.com, linux@cubietech.com,
-        Saravanan Sekar <sravanhome@gmail.com>
-Subject: [RFC PATCH] pinctrl: actions: s700_pads[] can be static
-Message-ID: <20180729220045.GA5007@lkp-ib03>
-References: <20180729200038.11795-5-sravanhome@gmail.com>
+        Sun, 29 Jul 2018 19:35:20 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:51516 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726826AbeG2XfU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 29 Jul 2018 19:35:20 -0400
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.87 #1 (Red Hat Linux))
+        id 1fjtmX-0003Pd-Do; Sun, 29 Jul 2018 22:03:17 +0000
+Date:   Sun, 29 Jul 2018 23:03:17 +0100
+From:   Al Viro <viro@ZenIV.linux.org.uk>
+To:     linux-fsdevel@vger.kernel.org
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, Miklos Szeredi <miklos@szeredi.hu>
+Subject: [PATCHES][RFC] icache-related stuff
+Message-ID: <20180729220317.GB30522@ZenIV.linux.org.uk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180729200038.11795-5-sravanhome@gmail.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: lkp@intel.com
-X-SA-Exim-Scanned: No (on bee); SAEximRunCond expanded to false
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Assorted icache-related fixes for the next window; some of that is -stable
+fodder.
 
-Fixes: e96a1c4b279a ("pinctrl: actions: Add Actions Semi S700 pinctrl driver")
-Signed-off-by: kbuild test robot <fengguang.wu@intel.com>
----
- pinctrl-s700.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+1) NFS and FUSE mkdir/open_by_handle() race fix.  NFS side posted and
+discussed earlier, NFS folks hadn't objected...  Basically, the strategy
+used by local filesystems to deal with that kind of races does not (and
+cannot) work for NFS - there the icache search key is not even known to us
+until the underlying (== server-side) data structures for the object being
+created look good.  So we need a different approach - just let nfs_mkdir()
+use d_splice_alias() and leave the originally passed dentry unhashed
+negative if we'd raced and picked an existing alias.  The callers of
+->mkdir() are fine with that.   Unlike NFS, FUSE (which has the same kind
+of problem) does deal with it in mainline.  However, the same approach
+(d_splice_alias() and leave the argument unhashed negative if aliases
+exist) works better than what FUSE does in mainline *and* allows to kill
+a warty primitive nobody else is using.
 
-diff --git a/drivers/pinctrl/actions/pinctrl-s700.c b/drivers/pinctrl/actions/pinctrl-s700.c
-index 7e9d23a..df69827 100644
---- a/drivers/pinctrl/actions/pinctrl-s700.c
-+++ b/drivers/pinctrl/actions/pinctrl-s700.c
-@@ -225,7 +225,7 @@
- #define NUM_PADS		(_LASTPAD - _FIRSTPAD + 1)
- 
- /* Pad names for the pinmux subsystem */
--const struct pinctrl_pin_desc s700_pads[] = {
-+static const struct pinctrl_pin_desc s700_pads[] = {
- 	PINCTRL_PIN(ETH_TXD0, "eth_txd0"),
- 	PINCTRL_PIN(ETH_TXD1, "eth_txd1"),
- 	PINCTRL_PIN(ETH_TXD2, "eth_txd2"),
-@@ -1549,7 +1549,7 @@ static const char * const sirq2_groups[] = {
- 	"sirq2_dummy",
- };
- 
--const struct owl_pinmux_func s700_functions[] = {
-+static const struct owl_pinmux_func s700_functions[] = {
- 	[S700_MUX_NOR] = FUNCTION(nor),
- 	[S700_MUX_ETH_RGMII] = FUNCTION(eth_rmii),
- 	[S700_MUX_ETH_SGMII] = FUNCTION(eth_smii),
-@@ -1697,7 +1697,7 @@ static PAD_PULLCTL_CONF(I2C2_SCLK, 2, 7, 1);
- /********PAD INFOS*****************************/
- 
- /* Pad info table for the pinmux subsystem */
--struct owl_padinfo s700_padinfo[NUM_PADS] = {
-+static struct owl_padinfo s700_padinfo[NUM_PADS] = {
- 	[ETH_TXD0] = PAD_INFO_ST(ETH_TXD0),
- 	[ETH_TXD1] = PAD_INFO_ST(ETH_TXD1),
- 	[ETH_TXEN] = PAD_INFO_ST(ETH_TXEN),
+      nfs_instantiate(): prevent multiple aliases for directory inode
+      kill d_instantiate_no_diralias()
+
+2) The local side of things isn't exactly correct either - typical local
+fh_to_dentry() will do icache lookup and if setup fails halfway through
+e.g. mkdir(), we are left with a nasty choice - either we leave the
+not-quite-set-up inode hashed (and then open_by_handle() can pick it,
+with subsequent nasal demons) or we unhash it and risk open_by_handle()
+coming immediately after unhash and getting a separate in-core inode
+for the same on-disk one, just as the on-disk one gets freed.  Some
+filesystems are careful enough with those half-set-up inodes to be
+safe (with the first variant, that is).  Some are not.
+
+        Solution: new flag (I_CREATING) set by insert_inode_locked() and
+removed by unlock_new_inode() and a new primitive (discard_new_inode())
+to be used by such halfway-through-setup failure exits instead of
+unlock_new_inode() / iput() combinations.  That primitive unlocks new
+inode, but leaves I_CREATING in place.
+
+        iget_locked() treats finding an I_CREATING inode as failure
+(-ESTALE, once we sort out the error propagation).
+        insert_inode_locked() treats the same as instant -EBUSY.
+        ilookup() treats those as icache miss.
+
+A bunch of filesystems switched to discard_new_inode() (btrfs, ufs, udf, ext2,
+jfs)
+      new primitive: discard_new_inode()
+      btrfs: switch to discard_new_inode()
+      ufs: switch to discard_new_inode()
+      udf: switch to discard_new_inode()
+      ext2: make sure that partially set up inodes won't be returned by ext2_iget()
+      jfs: switch to discard_new_inode()
+
+3) Miklos' regression fix (he had been too optimistic in iget5_locked cleanups
+this window; I'd grumbled about that being wrong, but hadn't realized how
+bad it was).
+      vfs: don't evict uninitialized inode
+
+4) several btrfs cleanups around btrfs_iget() and friends.
+      btrfs: btrfs_iget() never returns an is_bad_inode() inode.
+      btrfs: IS_ERR(p) && PTR_ERR(p) == n is a weird way to spell p == ERR_PTR(n)
+      btrfs: lift make_bad_inode() into btrfs_iget()
+      btrfs: simplify btrfs_iget()
+
+5) misc stuff - new primitive for filesystems that want inodes to look hashed,
+but don't want them polluting the hash chains (currently open-coded), making
+adfs use that (it never ever looks anything in icache), dropping a cargo-culted
+make_bad_inode() in jfs ialloc failure path.
+      new helper: inode_fake_hash()
+      adfs: don't put inodes into icache
+      jfs: don't bother with make_bad_inode() in ialloc()
