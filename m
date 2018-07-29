@@ -7,124 +7,122 @@ X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0941EC46461
-	for <linux-kernel@archiver.kernel.org>; Sun, 29 Jul 2018 14:34:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1C06C46461
+	for <linux-kernel@archiver.kernel.org>; Sun, 29 Jul 2018 14:44:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9B1D920873
-	for <linux-kernel@archiver.kernel.org>; Sun, 29 Jul 2018 14:34:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5F71220873
+	for <linux-kernel@archiver.kernel.org>; Sun, 29 Jul 2018 14:44:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NYBOyzWX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B1D920873
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g092kJLy"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5F71220873
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727023AbeG2QEs (ORCPT
+        id S1726470AbeG2QOq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 29 Jul 2018 12:04:48 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:37367 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726388AbeG2QEs (ORCPT
+        Sun, 29 Jul 2018 12:14:46 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:34074 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726294AbeG2QOp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Jul 2018 12:04:48 -0400
-Received: by mail-wm0-f66.google.com with SMTP id n11-v6so10757081wmc.2
-        for <linux-kernel@vger.kernel.org>; Sun, 29 Jul 2018 07:34:08 -0700 (PDT)
+        Sun, 29 Jul 2018 12:14:45 -0400
+Received: by mail-wr1-f66.google.com with SMTP id c13-v6so9955401wrt.1
+        for <linux-kernel@vger.kernel.org>; Sun, 29 Jul 2018 07:44:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=ZYftl/T68n7Y59Hsk+fiWLfQWFzrh/htNURzxHN4IWg=;
-        b=NYBOyzWX/PhAvq76m+nciH98raf4gPwJ1tYy7vKJgsB6JphkZQ97kGuvXrlHDys7qo
-         +uzCJVvMZSNdQhIdIdaYrbXhNPGMvErTYtDfxIP43eVMonWu23j44OnIhB2m4jOxVDdx
-         Y3aJNEo5tqnug3TP+OJDtoj8Y+DK/vXAhHUwHHg5zreeDouIixKMJIkYVRY95ozsARbN
-         EjTAtLasewqxB6liGTtnNOm4CWWw+j9erLHCI7+RL8YpDUmHxM2jZW+b/1nobVZjWbVL
-         QFp1RUvyunS6pebcrPKGOSWQu0xc+/z+NZ1m6nuNw/QjXtylk9OELoRGQG+6ABEHMc2u
-         m9DA==
+        h=from:to:cc:subject:date:message-id;
+        bh=Uy6gVihIWFflaCq2NaGuFSq3o/027m024flCb0MhFic=;
+        b=g092kJLyuVmNC5NMgYA9DOXwd6Qbl2OiJCdKkXr9TT+vNeosI07uaRaTVLUfVOjAxq
+         vqPLmPhF90CEb6zBukM2wXgvHnQ4st3Q6LhfyYzUxF9s5FkKvrVDFGpeErqLyYoHNm3B
+         y69LjKuoYOKlHDWrTyn/agcN3FPgxNIE8qt3zSgR3ogxIxa+7ZuAJU4qpeBUHayDUSys
+         KrVFUWoayyPvpa7m/FYxv3vCcr7sNFxrWkleE2D6MbKAN4WfwOLB9spI0TR9gylPGmbC
+         RsG1DHUKMS7GZrzYFoRqSTww6fe1jrmU8gcTONCI8LHSNVHhxITAh1YmIHNM7839tTqo
+         CJLQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=ZYftl/T68n7Y59Hsk+fiWLfQWFzrh/htNURzxHN4IWg=;
-        b=p5Z+oBrbsoPvzCfiDFdEElQzdk0W/bCE5YwwMJMQLMFEoyInRCqqeIfWMWsHBTKnwd
-         Gv4zmAXUdVT5xDKxPFAO9u+r+kD19MznFC26VKNOS3dl1Hv8v1pQkcS26uKM5D39fGrh
-         vXPUCmahK87/X7s2TAKV4FW1nm1cUZJIvPzXjy+Ckt1IT1FitqIRp9Tj1+QOdR679kSg
-         8yuAXmgQQlqvTPQ9cXURs872ZshMb0ak7ldD8Y7Znx5u+1LP2fUBGQiBbn/G2+2D73TH
-         jQTQidnYShn9m/97GZsqqsDHTyV+YmgWhYT1Ko9SP5IIR/evOfKr1ycJveMsOrsuuNN2
-         ZNeg==
-X-Gm-Message-State: AOUpUlHBAsNqvWkmepLuJELTJj/PlXmZkZzVqIaud5T5MOdY+sMgCGgE
-        OBAACPABcDV3akWru2rqoTrop+KA
-X-Google-Smtp-Source: AAOMgpf5IUvga2zqa7CWR45rqWvGeYw78mqJ/cufU8YHW+/sC3n+01ZW9ZbbIXoI6OBnGfmjoURYRw==
-X-Received: by 2002:a1c:f913:: with SMTP id x19-v6mr11950640wmh.63.1532874847948;
-        Sun, 29 Jul 2018 07:34:07 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=Uy6gVihIWFflaCq2NaGuFSq3o/027m024flCb0MhFic=;
+        b=MgiMWWOoZ/GqMb8WqYyGnNY4k0lnQ5pcbwvOo7LRXMtlFsvdgGy7XosQ7Wyq4YgyGA
+         4PsFUlL32oggsbsAN9Xw+0Y//ZeDzMYyTLws1O3pC5wiAAWXKr98dEl4Bk/3lGqusL+e
+         QodXJw5kg9ENUbmbhpK6nfWziwz+hUbGReOvYdNSQvm9HN55WpRTxMOjUYlCJq7JT7bf
+         Zv5CCiRbSZbzfLodk5r2BsbhHinooXfKv3X9k0IrpAXDibFQPBG00LJEQF4WhlsZ08OO
+         MGfmphA5JBxV7xOfAFSAwrQU++if5QpfQjHyJ0Hb0xZsbWOaRfv/B+c/xyF0SXVHw/cK
+         ey2A==
+X-Gm-Message-State: AOUpUlGfCHDoIexQwmpmv/7iLbSfbfJF0Sm3TpjWGm1qXDilQXjYre0j
+        uU8CHHqWkbrzGKfrmkLFpZMp+IQM
+X-Google-Smtp-Source: AAOMgpdNCnWC8cpBFyXV98pFu+vnPYSJLnLjpXR+HJGpDRKr8MXqeCHsGZTil2JO3FQyYgbmmyiwXw==
+X-Received: by 2002:a5d:574d:: with SMTP id q13-v6mr13368249wrw.24.1532875443784;
+        Sun, 29 Jul 2018 07:44:03 -0700 (PDT)
 Received: from we.local (ppp-2-87-92-87.home.otenet.gr. [2.87.92.87])
-        by smtp.gmail.com with ESMTPSA id w9-v6sm12266768wrk.28.2018.07.29.07.34.07
+        by smtp.gmail.com with ESMTPSA id u185-v6sm11513485wmg.25.2018.07.29.07.44.02
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 29 Jul 2018 07:34:07 -0700 (PDT)
+        Sun, 29 Jul 2018 07:44:03 -0700 (PDT)
 Received: from localhost (localhost [127.0.0.1])
-        by we.local (Postfix) with ESMTP id 297426403C9;
-        Sun, 29 Jul 2018 17:34:06 +0300 (EEST)
+        by we.local (Postfix) with ESMTP id CEB3E6403C9;
+        Sun, 29 Jul 2018 17:44:01 +0300 (EEST)
 X-Virus-Scanned: amavisd-new at local
 Received: from we.local ([127.0.0.1])
         by localhost (we.local [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id xEtEwebEXLap; Sun, 29 Jul 2018 17:34:04 +0300 (EEST)
+        with ESMTP id 5mBQi-Nd7m77; Sun, 29 Jul 2018 17:44:01 +0300 (EEST)
 Received: by we.local (Postfix, from userid 1000)
-        id D5A6F6408D2; Sun, 29 Jul 2018 17:34:04 +0300 (EEST)
+        id 222036408D2; Sun, 29 Jul 2018 17:44:01 +0300 (EEST)
 From:   Georgios Tsotsos <tsotsos@gmail.com>
 To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc:     Georgios Tsotsos <tsotsos@gmail.com>,
-        Aaro Koskinen <aaro.koskinen@iki.fi>,
-        James Hogan <jhogan@kernel.org>, devel@driverdev.osuosl.org,
+        John Smith <catalinnow@gmail.com>, devel@driverdev.osuosl.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v4 1/1] Staging: octeon-usb: Using defined error codes and applying coding style
-Date:   Sun, 29 Jul 2018 17:33:38 +0300
-Message-Id: <20180729143338.2251-1-tsotsos@gmail.com>
+Subject: [PATCH] Staging: octeon: Fixing coding style for minor notices.
+Date:   Sun, 29 Jul 2018 17:43:58 +0300
+Message-Id: <20180729144358.3442-1-tsotsos@gmail.com>
 X-Mailer: git-send-email 2.16.4
-In-Reply-To: <20180729124320.GA27275@kroah.com>
-References: <20180729124320.GA27275@kroah.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Replaced -1 with defined error code EINVAL
+Fixing coding style for a few lines that were reported to check from
+checkpatch.pl in minor cases for alignment and ending with parenthesis.
 
 Signed-off-by: Georgios Tsotsos <tsotsos@gmail.com>
 ---
-v2: Apply coding style to function cvmx_usb_poll_channel
-v3: Break down function cvmx_usb_poll_channel
-v4: Return defined error code and applying coding style for function calls
- drivers/staging/octeon-usb/octeon-hcd.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ drivers/staging/octeon/ethernet.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/staging/octeon-usb/octeon-hcd.c b/drivers/staging/octeon-usb/octeon-hcd.c
-index 3f44ac260eff..edf87d1b3609 100644
---- a/drivers/staging/octeon-usb/octeon-hcd.c
-+++ b/drivers/staging/octeon-usb/octeon-hcd.c
-@@ -2590,6 +2590,7 @@ static void cvmx_usb_transfer_isoc(struct octeon_hcd *usb,
- 		}
- 	} else {
- 		pipe->next_tx_frame += pipe->interval;
-+
- 		cvmx_usb_complete(usb, pipe, transaction, CVMX_USB_STATUS_OK);
- 	}
- }
-@@ -2624,16 +2625,16 @@ static int cvmx_usb_dma_halt(u32 hcchar_chena, u32 hcint_xfercompl,
- 		cvmx_usb_write_csr32(usb,
- 				     CVMX_USBCX_HCCHARX(channel, usb->index),
- 				     usbc_hcchar.u32);
--		return -1;
-+		return -EINVAL;
- 	} else if (hcint_xfercompl) {
- 		/*
- 		 * Successful IN/OUT with transfer complete.
- 		 * Channel halt isn't needed.
- 		 */
- 	} else {
--		dev_err(dev, "USB%d: Channel %d interrupt without halt\n",
-+		dev_	err(dev, "USB%d: Channel %d interrupt without halt\n",
- 			usb->index, channel);
--		return -1;
-+		return -EINVAL;
- 	}
+diff --git a/drivers/staging/octeon/ethernet.c b/drivers/staging/octeon/ethernet.c
+index 9b15c9ed844b..1e258deecacc 100644
+--- a/drivers/staging/octeon/ethernet.c
++++ b/drivers/staging/octeon/ethernet.c
+@@ -141,8 +141,8 @@ static void cvm_oct_periodic_worker(struct work_struct *work)
+ 	if (priv->poll)
+ 		priv->poll(cvm_oct_device[priv->port]);
  
- 	return 0;
+-	cvm_oct_device[priv->port]->netdev_ops->ndo_get_stats(
+-						cvm_oct_device[priv->port]);
++	cvm_oct_device[priv->port]->netdev_ops
++				->ndo_get_stats(cvm_oct_device[priv->port]);
+ 
+ 	if (!atomic_read(&cvm_oct_poll_queue_stopping))
+ 		schedule_delayed_work(&priv->port_periodic_work, HZ);
+@@ -621,8 +621,8 @@ static const struct net_device_ops cvm_oct_pow_netdev_ops = {
+ #endif
+ };
+ 
+-static struct device_node *cvm_oct_of_get_child(
+-				const struct device_node *parent, int reg_val)
++static struct device_node *cvm_oct_of_get_child(const struct device_node *parent
++						, int reg_val)
+ {
+ 	struct device_node *node = NULL;
+ 	int size;
+@@ -818,7 +818,7 @@ static int cvm_oct_probe(struct platform_device *pdev)
+ 			priv = netdev_priv(dev);
+ 			priv->netdev = dev;
+ 			priv->of_node = cvm_oct_node_for_port(pip, interface,
+-								port_index);
++							      port_index);
+ 
+ 			INIT_DELAYED_WORK(&priv->port_periodic_work,
+ 					  cvm_oct_periodic_worker);
 -- 
 2.16.4
+
