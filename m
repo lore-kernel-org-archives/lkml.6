@@ -2,111 +2,99 @@ Return-Path: <SRS0=jKyA=KN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B491FF05E2
-	for <linux-kernel@archiver.kernel.org>; Sun, 29 Jul 2018 11:40:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BB71FF05E2
+	for <linux-kernel@archiver.kernel.org>; Sun, 29 Jul 2018 11:40:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 24F3820870
-	for <linux-kernel@archiver.kernel.org>; Sun, 29 Jul 2018 11:40:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 24F3820870
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
+	by mail.kernel.org (Postfix) with ESMTP id F1A9920870
+	for <linux-kernel@archiver.kernel.org>; Sun, 29 Jul 2018 11:40:46 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KcLhCIUF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F1A9920870
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726394AbeG2NKS (ORCPT
+        id S1726495AbeG2NKy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 29 Jul 2018 09:10:18 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:51909 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726203AbeG2NKS (ORCPT
+        Sun, 29 Jul 2018 09:10:54 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:39521 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726203AbeG2NKy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Jul 2018 09:10:18 -0400
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id 81A028063B; Sun, 29 Jul 2018 13:40:06 +0200 (CEST)
-Date:   Sun, 29 Jul 2018 13:40:06 +0200
-From:   Pavel Machek <pavel@ucw.cz>
-To:     Kees Cook <keescook@chromium.org>
-Cc:     "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Salvatore Mesoraca <s.mesoraca16@gmail.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        David Laight <David.Laight@aculab.com>
-Subject: Re: [PATCH v2] net: dsa: Remove VLA usage
-Message-ID: <20180729114006.GA11104@amd>
-References: <20180717041034.GA37382@beast>
- <20180729113806.GC7333@amd>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="zhXaljGHf11kAtnf"
-Content-Disposition: inline
-In-Reply-To: <20180729113806.GC7333@amd>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+        Sun, 29 Jul 2018 09:10:54 -0400
+Received: by mail-wm0-f66.google.com with SMTP id h20-v6so10449665wmb.4
+        for <linux-kernel@vger.kernel.org>; Sun, 29 Jul 2018 04:40:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=oeEqcemZnTgdCcs/XvkkaPTf6TrAKN0DmO7aWlzcD6M=;
+        b=KcLhCIUFzfi23nlZ9p16SQGikqm/PpQq8qjao/dZqvU2uFyrC21utsnnVf+XpbIf0H
+         5Zr9S/c8xnE2vvf2EaAb4iaQ4CJhADP1Kn57uuO46j3gjcBAoF42aFg6kupkrflAmg85
+         HMTwk9q9gslx6UCgIE8TeNwqnX6acYkNwsw3/5HbWsEEVBKnyrhNiwXI53psF5JVtFui
+         7RgaRZndFc25KGfvNdatbPrUrLLBEt8bfcCjDq7EvAVBgjGDFCRDj6/7LoxI7l16N5ux
+         n0A2HiPyaN6tfNJoC9vo3aNoikKeF/9D8doQ3dVlNldiHloKyi1IYd74fNsGMKxFxQwF
+         IGIw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=oeEqcemZnTgdCcs/XvkkaPTf6TrAKN0DmO7aWlzcD6M=;
+        b=G1ju5vRSm68pXvsWXhppBx/QB6Cw2VfRN9cmGixBQR+/IdNdQ3t5dBr2oBzqXrhDpx
+         kIVC4k9uJBUkXzw+olaTHwPQs5jB+FJbwWy29wNFQblkTQ4zvVeNVPAf7qneOJdv8oqN
+         T+i1G1ubbW7xgmoZEqBFyZY9OTITVQ0j4lbwYI3XorEET0L6RkU5dSIqzEkOH5Vs46L+
+         4tUdpLQzSLH91OVXFr4RjATADQwDWTKlRrLvfU8Vw+FAQIbhpppwwFgt7TQJT6M+zcHK
+         DoMF7FCBnipD8FBBg7qT4JnrndG7Iklo7I6+1obOKbPCeoFg7Pa7yPYeRWw+5QpNkaRO
+         eb1A==
+X-Gm-Message-State: AOUpUlFDK0fk32dYt8lV60B20KlhFpVJzna5K4f39xe1UJp0YDP8nIPM
+        ycfbwPfsAv9jhnLiF/BByuE=
+X-Google-Smtp-Source: AAOMgpd3ksMzuKEwfitD6XESgPoasx+Cnb+2P1JTe+52Aea4w7FgN75hSOHkcGU+Bej9MehvUZNorw==
+X-Received: by 2002:a1c:ed1a:: with SMTP id l26-v6mr9439616wmh.61.1532864443171;
+        Sun, 29 Jul 2018 04:40:43 -0700 (PDT)
+Received: from we.local (ppp-2-87-92-87.home.otenet.gr. [2.87.92.87])
+        by smtp.gmail.com with ESMTPSA id l11-v6sm11150699wru.25.2018.07.29.04.40.42
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sun, 29 Jul 2018 04:40:42 -0700 (PDT)
+Received: from localhost (localhost [127.0.0.1])
+        by we.local (Postfix) with ESMTP id 460556403C9;
+        Sun, 29 Jul 2018 14:40:41 +0300 (EEST)
+X-Virus-Scanned: amavisd-new at local
+Received: from we.local ([127.0.0.1])
+        by localhost (we.local [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id T07iCLnmk0cC; Sun, 29 Jul 2018 14:40:40 +0300 (EEST)
+Received: by we.local (Postfix, from userid 1000)
+        id C98136408D2; Sun, 29 Jul 2018 14:40:40 +0300 (EEST)
+From:   Georgios Tsotsos <tsotsos@gmail.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Georgios Tsotsos <tsotsos@gmail.com>,
+        Aaro Koskinen <aaro.koskinen@iki.fi>,
+        James Hogan <jhogan@kernel.org>, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v3 0/2] Staging: octeon-usb: Changed CVMX_WAIT_FOR_FIELD32 macro
+Date:   Sun, 29 Jul 2018 14:40:33 +0300
+Message-Id: <cover.1532864087.git.tsotsos@gmail.com>
+X-Mailer: git-send-email 2.16.4
+In-Reply-To: <20180727151527.GA2209@kroah.com>
+References: <20180727151527.GA2209@kroah.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Replying to previous message, i changed CVMX_WAIT_FOR_FIELD32 macro to function
+and altered a multiple calling of CVMX_USBCX_GRSTCTL call to single call and
+stored to variable.
 
---zhXaljGHf11kAtnf
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Georgios Tsotsos (2):
+  Staging: octeon-usb: Change multiple calling of CVMX_USBCX_GRSTCTL
+  Staging: octeon-usb: Changes macro CVMX_WAIT_FOR_FIELD32 to function
+    call.
 
-Hi!
+ drivers/staging/octeon-usb/octeon-hcd.c | 77 +++++++++++++++++++--------------
+ 1 file changed, 44 insertions(+), 33 deletions(-)
 
-> > We avoid 2 VLAs by using a pre-allocated field in dsa_switch. We also
-> > try to avoid dynamic allocation whenever possible (when using fewer than
-> > bits-per-long ports, which is the common case).
-> >=20
-> > Link: http://lkml.kernel.org/r/CA+55aFzCG-zNmZwX4A2FQpadafLfEzK6CC=3DqP=
-XydAacU1RqZWA@mail.gmail.com
-> > Link: http://lkml.kernel.org/r/20180505185145.GB32630@lunn.ch
-> > Signed-off-by: Salvatore Mesoraca <s.mesoraca16@gmail.com>
-> > [kees: tweak commit subject and message slightly]
-> > Signed-off-by: Kees Cook <keescook@chromium.org>
-> > ---
-> >  include/net/dsa.h |  3 +++
-> >  net/dsa/dsa2.c    | 14 ++++++++++++++
-> >  net/dsa/switch.c  | 22 ++++++++++------------
-> >  3 files changed, 27 insertions(+), 12 deletions(-)
-> >=20
-> > diff --git a/include/net/dsa.h b/include/net/dsa.h
-> > index fdbd6082945d..461e8a7661b7 100644
-> > --- a/include/net/dsa.h
-> > +++ b/include/net/dsa.h
-> > @@ -259,6 +259,9 @@ struct dsa_switch {
-> >  	/* Number of switch port queues */
-> >  	unsigned int		num_tx_queues;
-> > =20
-> > +	unsigned long		*bitmap;
-> > +	unsigned long		_bitmap;
->=20
-> This looks rather confusing. _bitmap -> bitmap_data? bitmap_bits?
-
-Actually, AFAICT that long is not used as a long, but as array of
-bits. So maybe char bitmap_data[8] would be more appropriate?
-
-(resend, now with right cc list).
-									Pavel
-
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---zhXaljGHf11kAtnf
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAltdp5YACgkQMOfwapXb+vKbeACcDQsR8Uj+kaHa/Sj4+IOLf6z0
-q/gAnjQgCb4rUYgNGQkpu4CMQnQnK/Vv
-=kASv
------END PGP SIGNATURE-----
-
---zhXaljGHf11kAtnf--
+-- 
+2.16.4
