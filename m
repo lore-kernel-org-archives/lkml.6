@@ -4,120 +4,102 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DAC02C46462
-	for <linux-kernel@archiver.kernel.org>; Sun, 29 Jul 2018 15:53:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47B63C46461
+	for <linux-kernel@archiver.kernel.org>; Sun, 29 Jul 2018 15:57:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7F8A220881
-	for <linux-kernel@archiver.kernel.org>; Sun, 29 Jul 2018 15:53:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E10B220881
+	for <linux-kernel@archiver.kernel.org>; Sun, 29 Jul 2018 15:57:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kx4qeOf7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F8A220881
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y2jIwzVz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E10B220881
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726524AbeG2RWc (ORCPT
+        id S1726564AbeG2R2W (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 29 Jul 2018 13:22:32 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:33269 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726388AbeG2RWc (ORCPT
+        Sun, 29 Jul 2018 13:28:22 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:34927 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726354AbeG2R2W (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Jul 2018 13:22:32 -0400
-Received: by mail-wm0-f68.google.com with SMTP id r24-v6so6275178wmh.0;
-        Sun, 29 Jul 2018 08:51:39 -0700 (PDT)
+        Sun, 29 Jul 2018 13:28:22 -0400
+Received: by mail-wr1-f66.google.com with SMTP id a3-v6so10071411wrt.2;
+        Sun, 29 Jul 2018 08:57:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:from:date:message-id:subject:to:cc;
-        bh=39UvLTHY8O5qMau5EMfE3lquIZ1lFjBikAlQG2vgaeY=;
-        b=kx4qeOf7ZDdlwTT1UJrmJ5xc4Y2OX0l6aEH/UW/gx3sl1gfOVa9htuilKSVsrsh+E/
-         lTExzwbmqtNespAsI8YWY17NZP85xdH1/yJ+tlhapWMwtw5JRLK6uQgM1yZojV0b+YWN
-         03gbYVYaNwv7QPGxk1RMgBcrhDwOAImNbhRL6FwTmw2aq9l579cBB6trYvBuUlpAkdrg
-         AWswivnvocTgi8iv063O+fy8ukB8yjWzlYZnAToeMn6sqqkldwqvLu6VSOBKiCCtyZ3/
-         t42Idr6lI+7ES2VT0lVuPEOhRP+ZVRvrlgVcXPjadt1mXam123YHnLTqo21pmI9kVU2f
-         iVBg==
+        bh=qik5EZhO6nCv6/GEahsT+raUFb0n02OsuKth8kudm0U=;
+        b=Y2jIwzVzMUyKAL2xUU5oaNql0cTk+v2Ul++fMHHo0QVKFyV3rJvhcaxiQgh+IJBTEK
+         IDVs8DEvaLMvlARpCSUoJEpBXpuNmCjQDida/r3I5rN0Q7AUzPHqNax5cY+JupV4m7fb
+         VPGni7L8gcS0cXVLzFGvj2PKaDDZtVy1Zv90Ei4+EoTOS55uppeBAntVQnetsKn14VU6
+         wN0u74pFWzNX8YTmi14WhknKjgN77B/KCKfPqDKJlQuNpkpJ1DpoxQjgOgYqj6P3XyE5
+         S34jaez56CiQxqe4m9ceP7dCwdACrjalvw29c/4yBUMuRUwfIP6cp8e1pPT9GY+CJYKC
+         3pPA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
-        bh=39UvLTHY8O5qMau5EMfE3lquIZ1lFjBikAlQG2vgaeY=;
-        b=BTfx8SQpvbeC6HQT1qrD6mk+nRLgPxvJYP9SIRnsGWCnjEiwfxWuQW/RHps27dFwx6
-         Q9SuT84csTeDHYdxrnuv5z7aZNU3B16dj4JVSSGz5+6CvOsIjHg+pyt7OtkuK5xWTcUi
-         ERpAefurc2Q/JyhgmRQq+23iptK9Ap0Ucq1bGTYDzCqqcsD9RPwSLD1RlYoFWHAGVp4k
-         P/1qRviL209Fw5N8uLUXpbvs9syuDXOYV7QjK6ig0L5ZGQs8RRXLsZOppwstU9ftlxt0
-         JcNpv8/krCaOrPtRqxh30twK4qLFWAvgILu+D88gWQ+vmAWxxBaHREY0X9KJgVIzc+lW
-         C7Bg==
-X-Gm-Message-State: AOUpUlH81KX4bh8JZ2+UrS8A3Xc9F6OQGXtYKH2UFjk3+pXs1TbQBL+F
-        tDklLfemCdvZeu21hG7iaaua9qeDrn9T9Ni7vZY=
-X-Google-Smtp-Source: AAOMgpca1HzwSWPZbbUtUkhGGMnq0Hv0ZSvnIvEH9HKng4nUw8ZZflevyWjTQcmIJB/Bt/Y+SXSvDpLiNZKExZtRSic=
-X-Received: by 2002:a1c:8291:: with SMTP id e139-v6mr12756161wmd.39.1532879498603;
- Sun, 29 Jul 2018 08:51:38 -0700 (PDT)
+        bh=qik5EZhO6nCv6/GEahsT+raUFb0n02OsuKth8kudm0U=;
+        b=PEDM5MQGId5GwauCQrdONDz9w6I/BGsneZHGpWFHrTdM9HXuGrPvXYyacb0N+0WJIZ
+         9ocFMDG59RhKIoX2d1Lshjb7l7lZkn32nUa2s2c8NrMe7elYbbMc+qrnU5+gAsDNqmME
+         8sAGn4O9FaFLceU9FsQd8HgQh9cibeci+t4cGGkPCBSnVLpm7m0a9E8y9AzxOdtF5hEx
+         WYQZUIpyJGXxRBG8WxULIpFSapbpCz9dYqY1GcqZ0AzT8phn1Urd4mw2XKlm7ZqWFfGG
+         tOGQ4jMGBG4kngwCfiyn/LY8uVGNTz7xQrRgwdXv6M15FgxttGpp8j3KntmR/pq8kikz
+         +7RA==
+X-Gm-Message-State: AOUpUlEVobYD1BIZcxsWk2oSYkbW/E86IPTNb3UXcEw4KXrO/XPFqGup
+        +Zo29Lw+L+jUPg51IzPDa+2BAH6pz9wo1oV5XhE=
+X-Google-Smtp-Source: AAOMgpe/kNqdo74LklaeBSrU1B3jy6HegqfsHX8dralVLImpugTKoNQkElibgZwO50nsxJmH+infDPva6VlQ15mwbEk=
+X-Received: by 2002:adf:ba12:: with SMTP id o18-v6mr14493157wrg.249.1532879847255;
+ Sun, 29 Jul 2018 08:57:27 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:adf:e64f:0:0:0:0:0 with HTTP; Sun, 29 Jul 2018 08:51:18
+Received: by 2002:adf:e64f:0:0:0:0:0 with HTTP; Sun, 29 Jul 2018 08:57:06
  -0700 (PDT)
 From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date:   Sun, 29 Jul 2018 18:51:18 +0300
-Message-ID: <CAADnVQL4twmGF3d26TgLsQJvnqLnM0F6hqL_42DSs95OuZ1y9A@mail.gmail.com>
-Subject: Re: [PATCH v2] Add BPF_SYNCHRONIZE_MAPS bpf(2) command
+Date:   Sun, 29 Jul 2018 18:57:06 +0300
+Message-ID: <CAADnVQL=yTRvNLun2_oiwDvUvpvTV9=pOLyNhu=_cQ2sX04p5w@mail.gmail.com>
+Subject: Re: [RFC] Add BPF_SYNCHRONIZE bpf(2) command
 To:     Daniel Colascione <dancol@google.com>
-Cc:     Joel Fernandes <joelaf@google.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Tim Murray <timmurray@google.com>,
-        Network Development <netdev@vger.kernel.org>,
+Cc:     Joel Fernandes <joel@joelfernandes.org>,
         Lorenzo Colitti <lorenzo@google.com>,
         Chenbo Feng <fengc@google.com>,
         Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Joel Fernandes <joelaf@google.com>,
         Alexei Starovoitov <ast@fb.com>,
-        Daniel Borkmann <daniel@iogearbox.net>
+        lkml <linux-kernel@vger.kernel.org>,
+        Tim Murray <timmurray@google.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        netdev <netdev@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 26, 2018 at 7:51 PM, Daniel Colascione <dancol@google.com> wrote:
-> BPF_SYNCHRONIZE_MAPS waits for the release of any references to a BPF
-> map made by a BPF program that is running at the time the
-> BPF_SYNCHRONIZE_MAPS command is issued. The purpose of this command is
-> to provide a means for userspace to replace a BPF map with another,
-> newer version, then ensure that no component is still using the "old"
-> map before manipulating the "old" map in some way.
+On Fri, Jul 27, 2018 at 10:17 PM, Daniel Colascione <dancol@google.com> wrote:
+> On Sat, Jul 14, 2018 at 11:18 AM, Joel Fernandes <joel@joelfernandes.org>
+> wrote:
+>>
+>> By the way just curious I was briefly going through kernel/bpf/arraymap.c.
+>> How are you protecting against load-store tearing of values of array map
+>> updates/lookups?
+>>
+>> For example, if userspace reads an array map at a particular index, while
+>> another CPU is updating it, then userspace can read partial values /
+>> half-updated values right? Since rcu_read_lock is in use, I was hoping to
+>> find something like rcu_assign_pointer there to protect readers against
+>> concurrent updates.  Thanks for any clarification.
 >
-> Signed-off-by: Daniel Colascione <dancol@google.com>
-> ---
->  include/uapi/linux/bpf.h |  9 +++++++++
->  kernel/bpf/syscall.c     | 13 +++++++++++++
->  2 files changed, 22 insertions(+)
 >
-> diff --git a/include/uapi/linux/bpf.h b/include/uapi/linux/bpf.h
-> index b7db3261c62d..5b27e9117d3e 100644
-> --- a/include/uapi/linux/bpf.h
-> +++ b/include/uapi/linux/bpf.h
-> @@ -75,6 +75,14 @@ struct bpf_lpm_trie_key {
->         __u8    data[0];        /* Arbitrary size */
->  };
->
-> +/* BPF_SYNCHRONIZE_MAPS waits for the release of any references to a
-> + * BPF map made by a BPF program that is running at the time the
-> + * BPF_SYNCHRONIZE_MAPS command is issued. The purpose of this command
+> I'm also curious about the answer to this question.
 
-that doesn't sound right to me.
-such command won't wait for the release of the references.
-in case of map-in-map the program does not hold
-the references to inner map (only to outer map).
-
-> + * is to provide a means for userspace to replace a BPF map with
-> + * another, newer version, then ensure that no component is still
-> + * using the "old" map before manipulating the "old" map in some way.
-> + */
-
-that's correct, but the whole paragraph still reads too
-'generic' which will lead to confusion,
-whereas the use case is map-in-map only.
-I think bpf_sync_inner_map or
-bpf_sync_map_in_map would be better
-choices for the name.
-
-btw i don't have reliable internet access at the moment,
-so pls excuse the delays.
+i'm not sure I understand the question.
+bpf_map_type_array is a C-like array.
+There is no locking of elements.
+If single program executing on two cpus
+and accesses the same value it will collide.
+Same goes for user space vs prog parallel access.
+bpf long_memcpy is an attempt to provide minimal
+level of automicity when values are aligned and
+size==long.
