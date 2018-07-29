@@ -3,95 +3,112 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C265C46461
-	for <linux-kernel@archiver.kernel.org>; Sun, 29 Jul 2018 18:02:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24836C46462
+	for <linux-kernel@archiver.kernel.org>; Sun, 29 Jul 2018 18:08:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1406220857
-	for <linux-kernel@archiver.kernel.org>; Sun, 29 Jul 2018 18:02:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1406220857
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
+	by mail.kernel.org (Postfix) with ESMTP id D081F20881
+	for <linux-kernel@archiver.kernel.org>; Sun, 29 Jul 2018 18:08:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D081F20881
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-mips.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726832AbeG2Tds (ORCPT
+        id S1727384AbeG2Tjb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 29 Jul 2018 15:33:48 -0400
-Received: from bmailout2.hostsharing.net ([83.223.90.240]:41819 "EHLO
-        bmailout2.hostsharing.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726417AbeG2Tds (ORCPT
+        Sun, 29 Jul 2018 15:39:31 -0400
+Received: from eddie.linux-mips.org ([148.251.95.138]:37254 "EHLO
+        cvs.linux-mips.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726493AbeG2Tjb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Jul 2018 15:33:48 -0400
-Received: from h08.hostsharing.net (h08.hostsharing.net [83.223.95.28])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client CN "*.hostsharing.net", Issuer "COMODO RSA Domain Validation Secure Server CA" (not verified))
-        by bmailout2.hostsharing.net (Postfix) with ESMTPS id 241CE2800B3DC;
-        Sun, 29 Jul 2018 20:02:31 +0200 (CEST)
-Received: by h08.hostsharing.net (Postfix, from userid 100393)
-        id C08E37DDE8; Sun, 29 Jul 2018 20:02:30 +0200 (CEST)
-Date:   Sun, 29 Jul 2018 20:02:30 +0200
-From:   Lukas Wunner <lukas@wunner.de>
-To:     Sinan Kaya <okaya@kernel.org>
-Cc:     Bjorn Helgaas <helgaas@kernel.org>,
-        Oza Pawandeep <poza@codeaurora.org>, linux-pci@vger.kernel.org,
-        open list <linux-kernel@vger.kernel.org>,
-        Keith Busch <keith.busch@intel.com>,
-        linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH V5 3/3] PCI: Mask and unmask hotplug interrupts during
- reset
-Message-ID: <20180729180230.GA11016@wunner.de>
-References: <CAK9iUCM=zWexWow9TwkRfO186Hwr5WyGy0NHZF1vtXn3wbbZGQ@mail.gmail.com>
- <12fc8de5-ff03-cb00-52cb-25a43c71d03a@codeaurora.org>
- <20180708171418.GA11476@wunner.de>
- <CAK9iUCMcic5mzGiT20KNxgwPo6AuajHFsoj7GOjSht5SwrQevg@mail.gmail.com>
- <20180709160008.GA1490@wunner.de>
- <CAK9iUCMMVR114msKiMHu7ik0VK8T5j=LAYAKsEkdnocTqkdMjQ@mail.gmail.com>
- <20180720200123.GS128988@bhelgaas-glaptop.roam.corp.google.com>
- <2febe688-f973-5ff5-f61d-0451ad7d36ae@kernel.org>
+        Sun, 29 Jul 2018 15:39:31 -0400
+Received: (from localhost user: 'ladis' uid#1021 fake: STDIN
+        (ladis@eddie.linux-mips.org)) by eddie.linux-mips.org
+        id S23993024AbeG2SINQQSw4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org> + 2 others);
+        Sun, 29 Jul 2018 20:08:13 +0200
+Date:   Sun, 29 Jul 2018 20:08:04 +0200
+From:   Ladislav Michl <ladis@linux-mips.org>
+To:     "H. Nikolaus Schaller" <hns@goldelico.com>
+Cc:     Andreas Kemnade <andreas@kemnade.info>,
+        David Rivshin <drivshin@allworx.com>,
+        linux-pwm@vger.kernel.org, linux-omap <linux-omap@vger.kernel.org>,
+        Tony Lindgren <tony@atomide.com>, Keerthy <j-keerthy@ti.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Discussions about the Letux Kernel 
+        <letux-kernel@openphoenux.org>
+Subject: Re: [PATCH] pwm: pwm-omap-dmtimer: fix probing problems by returning
+ EPROBE_DEFER
+Message-ID: <20180729180804.GA18468@lenoch>
+References: <20180728165914.15871-1-andreas@kemnade.info>
+ <20180728203501.GA16194@lenoch>
+ <BE83C4E8-55B0-4EA7-8FF6-756460464264@goldelico.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <2febe688-f973-5ff5-f61d-0451ad7d36ae@kernel.org>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <BE83C4E8-55B0-4EA7-8FF6-756460464264@goldelico.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 20, 2018 at 07:58:20PM -0700, Sinan Kaya wrote:
-> My patch solves the problem if AER interrupt happens before the hotplug
-> interrupt. We are masking the data link layer active interrupt. So,
-> AER/DPC can perform their link operations without hotplug driver race.
+On Sun, Jul 29, 2018 at 08:32:41AM +0200, H. Nikolaus Schaller wrote:
+> Hi,
 > 
-> We need to figure out how to gracefully return inside hotplug driver
-> if link down happened and there is an error pending.
+> > Am 28.07.2018 um 22:35 schrieb Ladislav Michl <ladis@linux-mips.org>:
+> > 
+> > Hi Andreas,
+> > 
+> > On Sat, Jul 28, 2018 at 06:59:14PM +0200, Andreas Kemnade wrote:
+> >> I got this in the kernel log:
+> >> [    0.756042] omap-dmtimer-pwm dmtimer-pwm: dmtimer pdata structure NULL
+> >> [    0.756134] omap-dmtimer-pwm: probe of dmtimer-pwm failed with error -22
+> >> 
+> >> the probe function has to wait until omap_dm_timer_probe() in
+> >> clocksource/timer-ti-dm.c has initialized pdata, so defer probing
+> > 
+> > There already is a patch by David Rivshin addressing the same issue...
 > 
-> My first question is why hotplug driver is reacting to the link event
-> if there was not an actual device insertion/removal.
+> Here it is:
 > 
-> Would it help to keep track of presence changed interrupts since last
-> link event?
+> https://patchwork.ozlabs.org/patch/943148/
 > 
-> IF counter is 0 and device is present, hotplug driver bails out
-> silently as an example.
+> but hasn't arrived in linux-next.
 
-Counting PDC events doesn't work reliably if multiple such events
-occur in very short succession as the interrupt handler may not
-run quickly enough.  See this commit message which shows unbalanced
-Link Up / Link Down events:
-https://patchwork.ozlabs.org/patch/867418/
+That's because there'll be v3.
 
-And on Thunderbolt, interrupts can be signaled even though the port
-and its parents are in D3hot (sic!).  A Thunderbolt daisy chain can
-consist of up to 6 devices, each comprising a PCI switch, so there's
-a cascade of over a dozen Upstream / Downstream ports between the
-Root port and the hotplug port at the end of the daisy chain.
-God knows how many events have occurred by the time all the parents
-are resumed to D0 and the Slot Status register of the hotplug port
-is read/written.  That was really the motivation for the event
-handling rework.
+> But it is questionable if a driver should dev_info() about doing deferred probing.
+> IMHO, it should just do it which is how Andreas' patch works.
 
-Thanks,
+See here: https://patchwork.ozlabs.org/patch/949659/
 
-Lukas
+> >> Fixes: b7290cf6ff78 (pwm: pwm-omap-dmtimer: Adapt driver to utilize dmtimer pdata ops)
+> >> Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
+> >> ---
+> >> drivers/pwm/pwm-omap-dmtimer.c | 3 +--
+> >> 1 file changed, 1 insertion(+), 2 deletions(-)
+> >> 
+> >> diff --git a/drivers/pwm/pwm-omap-dmtimer.c b/drivers/pwm/pwm-omap-dmtimer.c
+> >> index 665da3c8fbce..808835179c2e 100644
+> >> --- a/drivers/pwm/pwm-omap-dmtimer.c
+> >> +++ b/drivers/pwm/pwm-omap-dmtimer.c
+> >> @@ -264,8 +264,7 @@ static int pwm_omap_dmtimer_probe(struct platform_device *pdev)
+> >> 
+> >> 	timer_pdata = dev_get_platdata(&timer_pdev->dev);
+> >> 	if (!timer_pdata) {
+> >> -		dev_err(&pdev->dev, "dmtimer pdata structure NULL\n");
+> >> -		ret = -EINVAL;
+> >> +		ret = -EPROBE_DEFER;
+> >> 		goto put;
+> >> 	}
+> >> 
+> >> -- 
+> >> 2.11.0
+> >> 
+> 
+> BR,
+> Nikolaus
+> 
