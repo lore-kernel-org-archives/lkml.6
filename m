@@ -2,126 +2,144 @@ Return-Path: <SRS0=jKyA=KN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
-	FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC879FA3735
-	for <linux-kernel@archiver.kernel.org>; Sun, 29 Jul 2018 09:17:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 004E1FA3737
+	for <linux-kernel@archiver.kernel.org>; Sun, 29 Jul 2018 09:21:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7E98820882
-	for <linux-kernel@archiver.kernel.org>; Sun, 29 Jul 2018 09:17:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7E98820882
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id AAF1920870
+	for <linux-kernel@archiver.kernel.org>; Sun, 29 Jul 2018 09:21:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AAF1920870
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=codethink.co.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726327AbeG2Kqq (ORCPT
+        id S1726312AbeG2KvO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 29 Jul 2018 06:46:46 -0400
-Received: from 212.199.177.27.static.012.net.il ([212.199.177.27]:51499 "EHLO
-        herzl.nuvoton.co.il" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726170AbeG2Kqp (ORCPT
+        Sun, 29 Jul 2018 06:51:14 -0400
+Received: from imap1.codethink.co.uk ([176.9.8.82]:46583 "EHLO
+        imap1.codethink.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726214AbeG2KvO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Jul 2018 06:46:45 -0400
-Received: from taln60.nuvoton.co.il (ntil-fw [212.199.177.25])
-        by herzl.nuvoton.co.il (8.13.8/8.13.8) with ESMTP id w6T8jC9q010351;
-        Sun, 29 Jul 2018 11:45:12 +0300
-Received: by taln60.nuvoton.co.il (Postfix, from userid 20088)
-        id 629666312A; Sun, 29 Jul 2018 12:15:11 +0300 (IDT)
-From:   Tali Perry <tali.perry1@gmail.com>
-To:     tali.perry1@gmail.com, avifishman70@gmail.com, tmaimon77@gmail.com,
-        venture@google.com, yuenn@google.com, brendanhiggins@google.com,
-        robh+dt@kernel.org, mark.rutland@arm.com, davem@davemloft.net,
-        mchehab+samsung@kernel.org, gregkh@linuxfoundation.org,
-        akpm@linux-foundation.org, arnd@arndb.de, wsa@the-dreams.de,
-        andriy.shevchenko@linux.intel.com, pierre-yves.mordret@st.com,
-        cedric.madianga@gmail.com, baolin.wang@spreadtrum.com,
-        jarkko.nikula@linux.intel.com, hdegoede@redhat.com,
-        rmk+kernel@armlinux.org.uk, ard.biesheuvel@linaro.org,
-        thor.thayer@linux.intel.com, geert@linux-m68k.org,
-        heikki.krogerus@linux.intel.com, tglx@linutronix.de
-Cc:     linux-i2c@vger.kernel.org, openbmc@lists.ozlabs.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v1 1/2] dt-binding: i2c: npcm7xx: add binding for i2c
-Date:   Sun, 29 Jul 2018 12:14:48 +0300
-Message-Id: <20180729091449.385951-2-tali.perry1@gmail.com>
-X-Mailer: git-send-email 2.14.1
-In-Reply-To: <20180729091449.385951-1-tali.perry1@gmail.com>
-References: <20180729091449.385951-1-tali.perry1@gmail.com>
+        Sun, 29 Jul 2018 06:51:14 -0400
+Received: from [192.168.122.135] (helo=_)
+        by imap1.codethink.co.uk with esmtpsa (Exim 4.84_2 #1 (Debian))
+        id 1fjht5-0007jj-1O; Sun, 29 Jul 2018 10:21:15 +0100
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Sun, 29 Jul 2018 10:21:14 +0100
+From:   Ben Dooks <ben.dooks@codethink.co.uk>
+To:     kbuild test robot <lkp@intel.com>
+Cc:     Jorge Sanjuan <jorge.sanjuan@codethink.co.uk>,
+        linux-kernel@lists.codethink.co.uk, alsa-devel@alsa-project.org,
+        linux-kernel@vger.kernel.org, lgirdwood@gmail.com,
+        jonathanh@nvidia.com, broonie@kernel.org, thierry.reding@gmail.com,
+        kbuild-all@01.org, linux-tegra@vger.kernel.org
+Subject: Re: [Linux-kernel] [PATCH 3/4] ASoC: tegra: Allow 32-bit and 24-bit
+ samples
+In-Reply-To: <201807290647.ybnC01Ii%fengguang.wu@intel.com>
+References: <20180727125931.9794-4-jorge.sanjuan@codethink.co.uk>
+ <201807290647.ybnC01Ii%fengguang.wu@intel.com>
+Message-ID: <0e990da63c37ef2bc0babc9ee96ef798@codethink.co.uk>
+X-Sender: ben.dooks@codethink.co.uk
+User-Agent: Roundcube Webmail/1.1.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Nuvoton NPCM7XX I2C Controller
-NPCM7xx includes 16 I2C contollers. This driver operates the controller.
-This module also includes a slave mode, which will be submitted later on.
-
-Any feedback would be appreciated.  
 
 
-Signed-off-by: Tali Perry <tali.perry1@gmail.com>
+On 2018-07-28 23:28, kbuild test robot wrote:
+> Hi Edward,
+> 
+> Thank you for the patch! Yet something to improve:
+> 
+> [auto build test ERROR on tegra/for-next]
+> [also build test ERROR on v4.18-rc6 next-20180727]
+> [if your patch is applied to the wrong git tree, please drop us a note
+> to help improve the system]
+> 
+> url:
+> https://github.com/0day-ci/linux/commits/Jorge-Sanjuan/ASoC-Tegra30-TDM-support/20180728-163720
+> base:   https://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git 
+> for-next
+> config: arm-multi_v7_defconfig (attached as .config)
+> compiler: arm-linux-gnueabi-gcc (Debian 7.2.0-11) 7.2.0
+> reproduce:
+>         wget
+> https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross
+> -O ~/bin/make.cross
+>         chmod +x ~/bin/make.cross
+>         # save the attached .config to linux build tree
+>         GCC_VERSION=7.2.0 make.cross ARCH=arm
+> 
+> Note: the
+> linux-review/Jorge-Sanjuan/ASoC-Tegra30-TDM-support/20180728-163720
+> HEAD 14bbc96df0fa027f7bc057eb2da8181baff4e22c builds fine.
+>       It only hurts bisectibility.
+> 
+> All errors (new ones prefixed by >>):
+> 
+>    sound/soc/tegra/tegra30_i2s.c: In function 'tegra30_i2s_hw_params':
+>>> sound/soc/tegra/tegra30_i2s.c:155:3: error: 'audio_bits' undeclared 
+>>> (first use in this function); did you mean 'audit_names'?
+>       audio_bits = TEGRA30_AUDIOCIF_BITS_24;
+>       ^~~~~~~~~~
+>       audit_names
+>    sound/soc/tegra/tegra30_i2s.c:155:3: note: each undeclared
+> identifier is reported only once for each function it appears in
+> 
+> vim +155 sound/soc/tegra/tegra30_i2s.c
+> 
+>    133
+>    134	static int tegra30_i2s_hw_params(struct snd_pcm_substream 
+> *substream,
+>    135					 struct snd_pcm_hw_params *params,
+>    136					 struct snd_soc_dai *dai)
+>    137	{
+>    138		struct device *dev = dai->dev;
+>    139		struct tegra30_i2s *i2s = snd_soc_dai_get_drvdata(dai);
+>    140		unsigned int mask, val, reg;
+>    141		int ret, sample_size, srate, i2sclock, bitcnt;
+>    142		struct tegra30_ahub_cif_conf cif_conf;
+>    143
+>    144		if (params_channels(params) != 2)
+>    145			return -EINVAL;
+>    146
+>    147		mask = TEGRA30_I2S_CTRL_BIT_SIZE_MASK;
+>    148		switch (params_format(params)) {
+>    149		case SNDRV_PCM_FORMAT_S16_LE:
+>    150			val = TEGRA30_I2S_CTRL_BIT_SIZE_16;
+>    151			sample_size = 16;
+>    152			break;
+>    153		case SNDRV_PCM_FORMAT_S24_LE:
+>    154			val = TEGRA30_I2S_CTRL_BIT_SIZE_24;
+>  > 155			audio_bits = TEGRA30_AUDIOCIF_BITS_24;
+>    156			sample_size = 24;
+>    157			break;
+>    158		case SNDRV_PCM_FORMAT_S32_LE:
+>    159			val = TEGRA30_I2S_CTRL_BIT_SIZE_32;
+>    160			sample_size = 32;
+>    161			break;
+>    162		default:
+>    163			return -EINVAL;
+>    164		}
+> 
 
----
- .../devicetree/bindings/i2c/i2c-npcm7xx.txt        | 27 ++++++++++++++++++++++
- MAINTAINERS                                        |  9 ++++++++
- 2 files changed, 36 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/i2c/i2c-npcm7xx.txt
+looks like we failed to merge in a fix from later in the internal
+series we have.
 
-diff --git a/Documentation/devicetree/bindings/i2c/i2c-npcm7xx.txt b/Documentation/devicetree/bindings/i2c/i2c-npcm7xx.txt
-new file mode 100644
-index 000000000000..e2ee45d7a41e
---- /dev/null
-+++ b/Documentation/devicetree/bindings/i2c/i2c-npcm7xx.txt
-@@ -0,0 +1,27 @@
-+Nuvoton NPCM7XX I2C bus
-+
-+The NPCM750x includes sixteen I2C busses
-+
-+Required properties:
-+- compatible      : must be "nuvoton,npcm750-i2c-bus"
-+- reg             : Offset and length of the register set for the device.
-+- interrupts      : Contain the I2C interrupt with flags for falling edge.
-+- clocks          : phandle of I2C reference clock.
-+
-+Optional:
-+- bus-frequency   : Contain the I2C bus frequency,
-+			the default I2C bus frequency is 100000.
-+- pinctrl-0       : must be <&smbX_pins>, X is module number
-+			(on NPCM7XX it's 0 to 15)
-+- pinctrl-names   : should be set to "default"
-+Example:
-+
-+	i2c0: i2c-bus@80000 {
-+		compatible = "nuvoton,npcm750-i2c-bus";
-+		reg = <0x80000 0x1000>;
-+		clocks = <&clk NPCM7XX_CLK_APB2>;
-+		bus-frequency = <100000>;
-+		interrupts = <GIC_SPI 64 IRQ_TYPE_LEVEL_HIGH>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&smb0_pins>;
-+	};
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 192d7f73fd01..a28edc9daabb 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -1735,6 +1735,15 @@ F:	drivers/*/*npcm*
- F:	Documentation/devicetree/bindings/*/*npcm*
- F:	Documentation/devicetree/bindings/*/*/*npcm*
- 
-+ARM/NUVOTON I2C DRIVER
-+M:	Tali Perry <tali.perry1@gmail.com>
-+M:	Avi Fishman <avifishman70@gmail.com>
-+L:	linux-i2c@vger.kernel.org
-+L:	openbmc@lists.ozlabs.org (moderated for non-subscribers)
-+S:	Supported
-+F:	drivers/i2c/busses/i2c-npcm7xx.c
-+F:	Documentation/devicetree/bindings/i2c/i2c-npcm7xx.txt
-+
- ARM/NUVOTON W90X900 ARM ARCHITECTURE
- M:	Wan ZongShun <mcuos.com@gmail.com>
- L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
--- 
-2.14.1
+jorge: can we get the channel fix from here into this patch and 
+resubmit?
+
+commit dd439f5f0b748eba43da7f18cabec8850dcd18b1
+Author: Edward Cragg <edward.cragg@codethink.co.uk>
+Date:   Thu Sep 15 17:01:49 2016 +0100
+
+     ASoC: tegra: i2s: Add support for more than 2 channels
+
 
