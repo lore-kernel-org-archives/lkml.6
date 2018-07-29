@@ -2,78 +2,80 @@ Return-Path: <SRS0=jKyA=KN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
+	FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30BE6FA3731
-	for <linux-kernel@archiver.kernel.org>; Sun, 29 Jul 2018 09:11:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 155A3FA3734
+	for <linux-kernel@archiver.kernel.org>; Sun, 29 Jul 2018 09:17:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CD53520882
-	for <linux-kernel@archiver.kernel.org>; Sun, 29 Jul 2018 09:11:56 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Gd2hFNTu"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CD53520882
+	by mail.kernel.org (Postfix) with ESMTP id AD50F20882
+	for <linux-kernel@archiver.kernel.org>; Sun, 29 Jul 2018 09:17:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AD50F20882
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726308AbeG2Kjf (ORCPT
+        id S1726361AbeG2Kqq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 29 Jul 2018 06:39:35 -0400
-Received: from mail-yb0-f181.google.com ([209.85.213.181]:34545 "EHLO
-        mail-yb0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726170AbeG2Kje (ORCPT
+        Sun, 29 Jul 2018 06:46:46 -0400
+Received: from 212.199.177.27.static.012.net.il ([212.199.177.27]:51500 "EHLO
+        herzl.nuvoton.co.il" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726022AbeG2Kqp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Jul 2018 06:39:34 -0400
-Received: by mail-yb0-f181.google.com with SMTP id e9-v6so3662144ybq.1
-        for <linux-kernel@vger.kernel.org>; Sun, 29 Jul 2018 02:09:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:from:date:message-id:subject:to;
-        bh=FN9aD4W60jNdb/kPBFrOauRS3YTaIGCx31hwoikrBmE=;
-        b=Gd2hFNTugwnrhRl1/oXHod4ZsbZWsrUZPdpGHlCOR8OxIeHwTlMIRkrZJdUfOqrOA1
-         ZJFGCp80UZ9/v+w8wmuvTHJaG1eFiL3rtjAokbrlVACe6E7KZlawOBntvoKnOPHAhncp
-         IDaULItX8vATjkD0AvCCPUzCfEEPLzLUC0Q9vEmSo7VnY3SvEBX2BgPPLB8sx27wfr8f
-         uhDMPpejeiQ3R5qpL2AI8qBg+UqMLzhrbgDOkgaoT4Y5X7GdjasYlu00bQ67FPw7NiP8
-         TqfAogCDngXR3lhs2o3+8d/UgRFs2bSaWHY74a1XDvXJCC0UB+hclUN8lGVvDphz2Wkw
-         ssHA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
-        bh=FN9aD4W60jNdb/kPBFrOauRS3YTaIGCx31hwoikrBmE=;
-        b=r/1A9PVo+F/hMWMS4ISJH70AIda2n3VL1QRn1usS5zq4t8cm9rMoj7XPDvE1S7GSu2
-         hN5DDLVAhnmky7IIBUqMRgbbiNUPYKziIdkTIJ26MlPVoW+xZUP3NezbOeazxj2rjnL8
-         7IrMdfrhor3Xagli14PPJKuxAZU1IhCgJXLg/l8msbfOxKJ8H+09/OYd55ULYd5vDXJg
-         dXJ1bIEy1BpbGRza9yoEOZxLefGEP+WEFnvBrwiymvEdO6NXoq9i7Yajt23w6rlrDQMq
-         LfpPrhmhJYvB2hXvqQXKP/ycJ7145i2h4bePD0pSOYMtnqFmlqkEtr7Kg1hhsK+R2XDo
-         BQpg==
-X-Gm-Message-State: AOUpUlEA3x87w+fDTNHzqLf+Jb1J3ywaEj32Kgol66LpZvjm/F2s770k
-        nAVK2TyMBKEGov3ySfvIVLa6Ts9Y2svizYXvDRAYGrSm
-X-Google-Smtp-Source: AAOMgpf6Y3Ylx40fJzkLefSqsG3wxDnLAqckqgDzS5AtZ3joCMTxFnD4Nf/ePs3sbqo1yfkUzLWL1eBD124Nl53Hmws=
-X-Received: by 2002:a25:ef04:: with SMTP id g4-v6mr6829991ybd.223.1532855389139;
- Sun, 29 Jul 2018 02:09:49 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a81:3007:0:0:0:0:0 with HTTP; Sun, 29 Jul 2018 02:09:48
- -0700 (PDT)
-From:   Jeff Chua <jeff.chua.linux@gmail.com>
-Date:   Sun, 29 Jul 2018 17:09:48 +0800
-Message-ID: <CAAJw_ZuQXrYaEu9_pXWtoDpUjR2au1gGT_FP9F1e1Y7veHSz2Q@mail.gmail.com>
-Subject: How to secure erase PCI-E NVME SSD connected via USB3?
-To:     lkml <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Sun, 29 Jul 2018 06:46:45 -0400
+Received: from taln60.nuvoton.co.il (ntil-fw [212.199.177.25])
+        by herzl.nuvoton.co.il (8.13.8/8.13.8) with ESMTP id w6T8j6eO010350;
+        Sun, 29 Jul 2018 11:45:06 +0300
+Received: by taln60.nuvoton.co.il (Postfix, from userid 20088)
+        id 339F363129; Sun, 29 Jul 2018 12:15:05 +0300 (IDT)
+From:   Tali Perry <tali.perry1@gmail.com>
+To:     tali.perry1@gmail.com, avifishman70@gmail.com, tmaimon77@gmail.com,
+        venture@google.com, yuenn@google.com, brendanhiggins@google.com,
+        robh+dt@kernel.org, mark.rutland@arm.com, davem@davemloft.net,
+        mchehab+samsung@kernel.org, gregkh@linuxfoundation.org,
+        akpm@linux-foundation.org, arnd@arndb.de, wsa@the-dreams.de,
+        andriy.shevchenko@linux.intel.com, pierre-yves.mordret@st.com,
+        cedric.madianga@gmail.com, baolin.wang@spreadtrum.com,
+        jarkko.nikula@linux.intel.com, hdegoede@redhat.com,
+        rmk+kernel@armlinux.org.uk, ard.biesheuvel@linaro.org,
+        thor.thayer@linux.intel.com, geert@linux-m68k.org,
+        heikki.krogerus@linux.intel.com, tglx@linutronix.de
+Cc:     linux-i2c@vger.kernel.org, openbmc@lists.ozlabs.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v1 0/2] i2c: npcm7xx: new driver for I2C controller
+Date:   Sun, 29 Jul 2018 12:14:47 +0300
+Message-Id: <20180729091449.385951-1-tali.perry1@gmail.com>
+X-Mailer: git-send-email 2.14.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I'm testing the USB3-to-PCI-E NVME SSD. It's works using uas module,
-recognized it as /dev/sda.
+Nuvoton NPCM7XX I2C Controller
+NPCM7xx includes 16 I2C contollers. THis driver operates the controller.
+This module also includes a slave mode, which will be submitted later on.
 
-Since it's an USB device, the nvme-cli tools won't work, nor does
-hdparm, as it's a NVME SSD.
+Any feedback would be appreciated.  
 
-So, how to secure-erase the NVME SSD connected via the JMS583 chip?
 
-Thanks,
-Jeff.
+Signed-off-by: Tali Perry <tali.perry1@gmail.com>
+
+
+---
+Tali Perry (2):
+  dt-binding: i2c: npcm7xx: add binding for i2c controller
+  i2c: npcm7xx: add i2c controller master mode only
+
+ .../devicetree/bindings/i2c/i2c-npcm7xx.txt        |   27 +
+ MAINTAINERS                                        |    9 +
+ drivers/i2c/busses/Kconfig                         |   11 +
+ drivers/i2c/busses/Makefile                        |    1 +
+ drivers/i2c/busses/i2c-npcm7xx.c                   | 2574 ++++++++++++++++++++
+ 5 files changed, 2622 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/i2c/i2c-npcm7xx.txt
+ create mode 100644 drivers/i2c/busses/i2c-npcm7xx.c
+
+-- 
+2.14.1
+
