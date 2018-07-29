@@ -6,33 +6,32 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 314DFC46461
-	for <linux-kernel@archiver.kernel.org>; Sun, 29 Jul 2018 22:05:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62A40C46462
+	for <linux-kernel@archiver.kernel.org>; Sun, 29 Jul 2018 22:05:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DC65120881
-	for <linux-kernel@archiver.kernel.org>; Sun, 29 Jul 2018 22:05:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DC65120881
+	by mail.kernel.org (Postfix) with ESMTP id 1BF6120881
+	for <linux-kernel@archiver.kernel.org>; Sun, 29 Jul 2018 22:05:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1BF6120881
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ZenIV.linux.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732221AbeG2XhI (ORCPT
+        id S1732255AbeG2XhQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 29 Jul 2018 19:37:08 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:51606 "EHLO
+        Sun, 29 Jul 2018 19:37:16 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:51622 "EHLO
         ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729011AbeG2Xg5 (ORCPT
+        with ESMTP id S1729378AbeG2Xg5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Sun, 29 Jul 2018 19:36:57 -0400
 Received: from viro by ZenIV.linux.org.uk with local (Exim 4.87 #1 (Red Hat Linux))
-        id 1fjto6-0003W4-R4; Sun, 29 Jul 2018 22:04:54 +0000
+        id 1fjto7-0003WL-41; Sun, 29 Jul 2018 22:04:55 +0000
 From:   Al Viro <viro@ZenIV.linux.org.uk>
 To:     linux-fsdevel@vger.kernel.org
 Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, Miklos Szeredi <mszeredi@redhat.com>,
-        Miklos Szeredi <miklos@szeredi.hu>
-Subject: [PATCH 10/16] kill d_instantiate_no_diralias()
-Date:   Sun, 29 Jul 2018 23:04:47 +0100
-Message-Id: <20180729220453.13431-10-viro@ZenIV.linux.org.uk>
+        linux-kernel@vger.kernel.org, Miklos Szeredi <mszeredi@redhat.com>
+Subject: [PATCH 12/16] new helper: inode_fake_hash()
+Date:   Sun, 29 Jul 2018 23:04:49 +0100
+Message-Id: <20180729220453.13431-12-viro@ZenIV.linux.org.uk>
 X-Mailer: git-send-email 2.9.5
 In-Reply-To: <20180729220453.13431-1-viro@ZenIV.linux.org.uk>
 References: <20180729220317.GB30522@ZenIV.linux.org.uk>
@@ -44,106 +43,97 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Al Viro <viro@zeniv.linux.org.uk>
 
-The only user is fuse_create_new_entry(), and there it's used to
-mitigate the same mkdir/open-by-handle race as in nfs_mkdir().
-The same solution applies - unhash the mkdir argument, then
-call d_splice_alias() and if that returns a reference to preexisting
-alias, dput() and report success.  ->mkdir() argument left unhashed
-negative with the preexisting alias moved in the right place is just
-fine from the ->mkdir() callers point of view.
+open-coded in a quite a few places...
 
-Cc: Miklos Szeredi <miklos@szeredi.hu>
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
- fs/dcache.c            | 27 ---------------------------
- fs/fuse/dir.c          | 15 +++++++++++----
- include/linux/dcache.h |  1 -
- 3 files changed, 11 insertions(+), 32 deletions(-)
+ fs/hfs/inode.c     |  2 +-
+ fs/jfs/jfs_imap.c  |  8 +-------
+ fs/jfs/super.c     |  2 +-
+ fs/xfs/xfs_iops.c  |  2 +-
+ include/linux/fs.h | 11 +++++++++++
+ 5 files changed, 15 insertions(+), 10 deletions(-)
 
-diff --git a/fs/dcache.c b/fs/dcache.c
-index 0e8e5de3c48a..a7d9e7a4c283 100644
---- a/fs/dcache.c
-+++ b/fs/dcache.c
-@@ -1899,33 +1899,6 @@ void d_instantiate_new(struct dentry *entry, struct inode *inode)
+diff --git a/fs/hfs/inode.c b/fs/hfs/inode.c
+index 2a16111d312f..a2dfa1b2a89c 100644
+--- a/fs/hfs/inode.c
++++ b/fs/hfs/inode.c
+@@ -541,7 +541,7 @@ static struct dentry *hfs_file_lookup(struct inode *dir, struct dentry *dentry,
+ 	HFS_I(inode)->rsrc_inode = dir;
+ 	HFS_I(dir)->rsrc_inode = inode;
+ 	igrab(dir);
+-	hlist_add_fake(&inode->i_hash);
++	inode_fake_hash(inode);
+ 	mark_inode_dirty(inode);
+ 	dont_mount(dentry);
+ out:
+diff --git a/fs/jfs/jfs_imap.c b/fs/jfs/jfs_imap.c
+index f36ef68905a7..93e8c590ff5c 100644
+--- a/fs/jfs/jfs_imap.c
++++ b/fs/jfs/jfs_imap.c
+@@ -491,13 +491,7 @@ struct inode *diReadSpecial(struct super_block *sb, ino_t inum, int secondary)
+ 	/* release the page */
+ 	release_metapage(mp);
+ 
+-	/*
+-	 * __mark_inode_dirty expects inodes to be hashed.  Since we don't
+-	 * want special inodes in the fileset inode space, we make them
+-	 * appear hashed, but do not put on any lists.  hlist_del()
+-	 * will work fine and require no locking.
+-	 */
+-	hlist_add_fake(&ip->i_hash);
++	inode_fake_hash(ip);
+ 
+ 	return (ip);
  }
- EXPORT_SYMBOL(d_instantiate_new);
+diff --git a/fs/jfs/super.c b/fs/jfs/super.c
+index 1b9264fd54b6..5403ece57dba 100644
+--- a/fs/jfs/super.c
++++ b/fs/jfs/super.c
+@@ -581,7 +581,7 @@ static int jfs_fill_super(struct super_block *sb, void *data, int silent)
+ 	inode->i_ino = 0;
+ 	inode->i_size = i_size_read(sb->s_bdev->bd_inode);
+ 	inode->i_mapping->a_ops = &jfs_metapage_aops;
+-	hlist_add_fake(&inode->i_hash);
++	inode_fake_hash(inode);
+ 	mapping_set_gfp_mask(inode->i_mapping, GFP_NOFS);
  
--/**
-- * d_instantiate_no_diralias - instantiate a non-aliased dentry
-- * @entry: dentry to complete
-- * @inode: inode to attach to this dentry
-- *
-- * Fill in inode information in the entry.  If a directory alias is found, then
-- * return an error (and drop inode).  Together with d_materialise_unique() this
-- * guarantees that a directory inode may never have more than one alias.
-- */
--int d_instantiate_no_diralias(struct dentry *entry, struct inode *inode)
--{
--	BUG_ON(!hlist_unhashed(&entry->d_u.d_alias));
--
--	security_d_instantiate(entry, inode);
--	spin_lock(&inode->i_lock);
--	if (S_ISDIR(inode->i_mode) && !hlist_empty(&inode->i_dentry)) {
--		spin_unlock(&inode->i_lock);
--		iput(inode);
--		return -EBUSY;
--	}
--	__d_instantiate(entry, inode);
--	spin_unlock(&inode->i_lock);
--
--	return 0;
--}
--EXPORT_SYMBOL(d_instantiate_no_diralias);
--
- struct dentry *d_make_root(struct inode *root_inode)
- {
- 	struct dentry *res = NULL;
-diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
-index 56231b31f806..4bbae6ac75c3 100644
---- a/fs/fuse/dir.c
-+++ b/fs/fuse/dir.c
-@@ -539,6 +539,7 @@ static int create_new_entry(struct fuse_conn *fc, struct fuse_args *args,
- {
- 	struct fuse_entry_out outarg;
- 	struct inode *inode;
-+	struct dentry *d;
- 	int err;
- 	struct fuse_forget_link *forget;
+ 	sbi->direct_inode = inode;
+diff --git a/fs/xfs/xfs_iops.c b/fs/xfs/xfs_iops.c
+index 0fa29f39d658..3a75de777843 100644
+--- a/fs/xfs/xfs_iops.c
++++ b/fs/xfs/xfs_iops.c
+@@ -1253,7 +1253,7 @@ xfs_setup_inode(
  
-@@ -570,11 +571,17 @@ static int create_new_entry(struct fuse_conn *fc, struct fuse_args *args,
- 	}
- 	kfree(forget);
+ 	inode_sb_list_add(inode);
+ 	/* make the inode look hashed for the writeback code */
+-	hlist_add_fake(&inode->i_hash);
++	inode_fake_hash(inode);
  
--	err = d_instantiate_no_diralias(entry, inode);
--	if (err)
--		return err;
-+	d_drop(entry);
-+	d = d_splice_alias(inode, entry);
-+	if (IS_ERR(d))
-+		return PTR_ERR(d);
+ 	inode->i_uid    = xfs_uid_to_kuid(ip->i_d.di_uid);
+ 	inode->i_gid    = xfs_gid_to_kgid(ip->i_d.di_gid);
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index a42600565925..43941e230e2b 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -685,6 +685,17 @@ static inline int inode_unhashed(struct inode *inode)
+ }
  
--	fuse_change_entry_timeout(entry, &outarg);
-+	if (d) {
-+		fuse_change_entry_timeout(d, &outarg);
-+		dput(d);
-+	} else {
-+		fuse_change_entry_timeout(entry, &outarg);
-+	}
- 	fuse_invalidate_attr(dir);
- 	return 0;
- 
-diff --git a/include/linux/dcache.h b/include/linux/dcache.h
-index 66c6e17e61e5..0b83629a3d8f 100644
---- a/include/linux/dcache.h
-+++ b/include/linux/dcache.h
-@@ -227,7 +227,6 @@ extern void d_instantiate(struct dentry *, struct inode *);
- extern void d_instantiate_new(struct dentry *, struct inode *);
- extern struct dentry * d_instantiate_unique(struct dentry *, struct inode *);
- extern struct dentry * d_instantiate_anon(struct dentry *, struct inode *);
--extern int d_instantiate_no_diralias(struct dentry *, struct inode *);
- extern void __d_drop(struct dentry *dentry);
- extern void d_drop(struct dentry *dentry);
- extern void d_delete(struct dentry *);
+ /*
++ * __mark_inode_dirty expects inodes to be hashed.  Since we don't
++ * want special inodes in the fileset inode space, we make them
++ * appear hashed, but do not put on any lists.  hlist_del()
++ * will work fine and require no locking.
++ */
++static inline void inode_fake_hash(struct inode *inode)
++{
++	hlist_add_fake(&inode->i_hash);
++}
++
++/*
+  * inode->i_mutex nesting subclasses for the lock validator:
+  *
+  * 0: the object of the current VFS operation
 -- 
 2.11.0
 
