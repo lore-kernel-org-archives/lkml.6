@@ -2,187 +2,110 @@ Return-Path: <SRS0=jKyA=KN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20AEBF83CA2
-	for <linux-kernel@archiver.kernel.org>; Sun, 29 Jul 2018 06:16:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91C01F83CA1
+	for <linux-kernel@archiver.kernel.org>; Sun, 29 Jul 2018 06:40:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B4DEB20893
-	for <linux-kernel@archiver.kernel.org>; Sun, 29 Jul 2018 06:16:36 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="R6ydMJ55"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B4DEB20893
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 44C57205C9
+	for <linux-kernel@archiver.kernel.org>; Sun, 29 Jul 2018 06:40:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 44C57205C9
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goldelico.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726272AbeG2Hpu (ORCPT
+        id S1726302AbeG2ICS convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 29 Jul 2018 03:45:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36700 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725899AbeG2Hpu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Jul 2018 03:45:50 -0400
-Received: from [192.168.0.101] (unknown [180.111.102.36])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1F7BA20892;
-        Sun, 29 Jul 2018 06:16:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1532844993;
-        bh=6vHmGMNvX8dPsAbh/r5fpyaGfJVeq05XKuhMskJQbOw=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=R6ydMJ55QWI2XG5/lusPmDMVKbwX2v2ivC3RuFus1JI0r2H53xfI+N60eri2r1lPg
-         YVnP+niZQjiFMpxwGbSpf5dw1DD72OBuO23e1KFhcSETfGrBUFd5lgALDjg37GXN0S
-         EwXX1CYIDzC23rL13JmluiA18mifVLLo+zzTbo3g=
-Subject: Re: [PATCH 3/4] f2fs: fix avoid race between truncate and background
- GC
-To:     Jaegeuk Kim <jaegeuk@kernel.org>
-Cc:     Chao Yu <yuchao0@huawei.com>,
-        linux-f2fs-devel@lists.sourceforge.net,
-        linux-kernel@vger.kernel.org
-References: <20180727101516.41403-1-yuchao0@huawei.com>
- <20180727101516.41403-3-yuchao0@huawei.com>
- <20180729015806.GF83620@jaegeuk-macbookpro.roam.corp.google.com>
- <39022876-5d16-c78a-4869-a316a5021384@kernel.org>
- <20180729061351.GA5102@jaegeuk-macbookpro.roam.corp.google.com>
-From:   Chao Yu <chao@kernel.org>
-Message-ID: <17b3ee11-ad97-b313-629f-8167bc8a266a@kernel.org>
-Date:   Sun, 29 Jul 2018 14:16:29 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <20180729061351.GA5102@jaegeuk-macbookpro.roam.corp.google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Sun, 29 Jul 2018 04:02:18 -0400
+Received: from mo4-p01-ob.smtp.rzone.de ([81.169.146.167]:30526 "EHLO
+        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726154AbeG2ICR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 29 Jul 2018 04:02:17 -0400
+X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMgPgp8VKxflSZ1P34KBs7wpz98S0pHy2eYvMPA=="
+X-RZG-CLASS-ID: mo00
+Received: from imac.fritz.box
+        by smtp.strato.de (RZmta 43.13 DYNA|AUTH)
+        with ESMTPSA id 6047f4u6T6Wgq6Z
+        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
+        (Client did not present a certificate);
+        Sun, 29 Jul 2018 08:32:42 +0200 (CEST)
+Content-Type: text/plain; charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 9.3 \(3124\))
+Subject: Re: [PATCH] pwm: pwm-omap-dmtimer: fix probing problems by returning EPROBE_DEFER
+From:   "H. Nikolaus Schaller" <hns@goldelico.com>
+In-Reply-To: <20180728203501.GA16194@lenoch>
+Date:   Sun, 29 Jul 2018 08:32:41 +0200
+Cc:     linux-pwm@vger.kernel.org, linux-omap <linux-omap@vger.kernel.org>,
+        Tony Lindgren <tony@atomide.com>, Keerthy <j-keerthy@ti.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Discussions about the Letux Kernel 
+        <letux-kernel@openphoenux.org>
+Content-Transfer-Encoding: 8BIT
+Message-Id: <BE83C4E8-55B0-4EA7-8FF6-756460464264@goldelico.com>
+References: <20180728165914.15871-1-andreas@kemnade.info> <20180728203501.GA16194@lenoch>
+To:     Ladislav Michl <ladis@linux-mips.org>,
+        Andreas Kemnade <andreas@kemnade.info>,
+        David Rivshin <drivshin@allworx.com>
+X-Mailer: Apple Mail (2.3124)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/7/29 14:13, Jaegeuk Kim wrote:
-> On 07/29, Chao Yu wrote:
->> On 2018/7/29 9:58, Jaegeuk Kim wrote:
->>> On 07/27, Chao Yu wrote:
->>>> Thread A				Background GC
->>>> - f2fs_setattr isize to 0
->>>>  - truncate_setsize
->>>> 					- gc_data_segment
->>>> 					 - f2fs_get_read_data_page page #0
->>>> 					  - set_page_dirty
->>>> 					  - set_cold_data
->>>>  - f2fs_truncate
->>>>
->>>> - f2fs_setattr isize to 4k
->>>> - read 4k <--- hit data in cached page #0
->>>>
->>>> Above race condition can cause read out invalid data in a truncated
->>>> page, fix it by i_gc_rwsem[WRITE] lock.
->>>
->>> We can truncate pages again after f2fs_truncate()?
->>
->> I think it can fix this issue, although it looks a little strange to truncate
->> page cache twice.
+Hi,
+
+> Am 28.07.2018 um 22:35 schrieb Ladislav Michl <ladis@linux-mips.org>:
 > 
-> It'd be fine to do setsize first, and drop the cache later.
+> Hi Andreas,
+> 
+> On Sat, Jul 28, 2018 at 06:59:14PM +0200, Andreas Kemnade wrote:
+>> I got this in the kernel log:
+>> [    0.756042] omap-dmtimer-pwm dmtimer-pwm: dmtimer pdata structure NULL
+>> [    0.756134] omap-dmtimer-pwm: probe of dmtimer-pwm failed with error -22
+>> 
+>> the probe function has to wait until omap_dm_timer_probe() in
+>> clocksource/timer-ti-dm.c has initialized pdata, so defer probing
+> 
+> There already is a patch by David Rivshin addressing the same issue...
 
-Let me rethink about this solution, since we have different case like punch_hole
-which may not need setsize.
+Here it is:
 
-Thanks,
+https://patchwork.ozlabs.org/patch/943148/
+
+but hasn't arrived in linux-next.
+
+But it is questionable if a driver should dev_info() about doing deferred probing.
+IMHO, it should just do it which is how Andreas' patch works.
 
 > 
->>
->> Thanks,
->>
->>>
->>>>
->>>> Signed-off-by: Chao Yu <yuchao0@huawei.com>
->>>> ---
->>>>  fs/f2fs/data.c |  4 ++++
->>>>  fs/f2fs/file.c | 33 +++++++++++++++++++--------------
->>>>  2 files changed, 23 insertions(+), 14 deletions(-)
->>>>
->>>> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
->>>> index 071224ded5f4..a29f3162b887 100644
->>>> --- a/fs/f2fs/data.c
->>>> +++ b/fs/f2fs/data.c
->>>> @@ -2214,10 +2214,14 @@ static void f2fs_write_failed(struct address_space *mapping, loff_t to)
->>>>  	loff_t i_size = i_size_read(inode);
->>>>  
->>>>  	if (to > i_size) {
->>>> +		down_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
->>>>  		down_write(&F2FS_I(inode)->i_mmap_sem);
->>>> +
->>>>  		truncate_pagecache(inode, i_size);
->>>>  		f2fs_truncate_blocks(inode, i_size, true);
->>>> +
->>>>  		up_write(&F2FS_I(inode)->i_mmap_sem);
->>>> +		up_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
->>>>  	}
->>>>  }
->>>>  
->>>> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
->>>> index 7bd2412a8c37..ed5c9b0e0d0c 100644
->>>> --- a/fs/f2fs/file.c
->>>> +++ b/fs/f2fs/file.c
->>>> @@ -796,22 +796,25 @@ int f2fs_setattr(struct dentry *dentry, struct iattr *attr)
->>>>  	}
->>>>  
->>>>  	if (attr->ia_valid & ATTR_SIZE) {
->>>> -		if (attr->ia_size <= i_size_read(inode)) {
->>>> -			down_write(&F2FS_I(inode)->i_mmap_sem);
->>>> -			truncate_setsize(inode, attr->ia_size);
->>>> +		bool to_smaller = (attr->ia_size <= i_size_read(inode));
->>>> +
->>>> +		down_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
->>>> +		down_write(&F2FS_I(inode)->i_mmap_sem);
->>>> +
->>>> +		truncate_setsize(inode, attr->ia_size);
->>>> +
->>>> +		if (to_smaller)
->>>>  			err = f2fs_truncate(inode);
->>>> -			up_write(&F2FS_I(inode)->i_mmap_sem);
->>>> -			if (err)
->>>> -				return err;
->>>> -		} else {
->>>> -			/*
->>>> -			 * do not trim all blocks after i_size if target size is
->>>> -			 * larger than i_size.
->>>> -			 */
->>>> -			down_write(&F2FS_I(inode)->i_mmap_sem);
->>>> -			truncate_setsize(inode, attr->ia_size);
->>>> -			up_write(&F2FS_I(inode)->i_mmap_sem);
->>>> +		/*
->>>> +		 * do not trim all blocks after i_size if target size is
->>>> +		 * larger than i_size.
->>>> +		 */
->>>> +		up_write(&F2FS_I(inode)->i_mmap_sem);
->>>> +		up_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
->>>> +		if (err)
->>>> +			return err;
->>>>  
->>>> +		if (!to_smaller) {
->>>>  			/* should convert inline inode here */
->>>>  			if (!f2fs_may_inline_data(inode)) {
->>>>  				err = f2fs_convert_inline_inode(inode);
->>>> @@ -958,6 +961,7 @@ static int punch_hole(struct inode *inode, loff_t offset, loff_t len)
->>>>  
->>>>  			blk_start = (loff_t)pg_start << PAGE_SHIFT;
->>>>  			blk_end = (loff_t)pg_end << PAGE_SHIFT;
->>>> +			down_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
->>>>  			down_write(&F2FS_I(inode)->i_mmap_sem);
->>>>  			truncate_inode_pages_range(mapping, blk_start,
->>>>  					blk_end - 1);
->>>> @@ -966,6 +970,7 @@ static int punch_hole(struct inode *inode, loff_t offset, loff_t len)
->>>>  			ret = f2fs_truncate_hole(inode, pg_start, pg_end);
->>>>  			f2fs_unlock_op(sbi);
->>>>  			up_write(&F2FS_I(inode)->i_mmap_sem);
->>>> +			up_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
->>>>  		}
->>>>  	}
->>>>  
->>>> -- 
->>>> 2.18.0.rc1
+>> Fixes: b7290cf6ff78 (pwm: pwm-omap-dmtimer: Adapt driver to utilize dmtimer pdata ops)
+>> Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
+>> ---
+>> drivers/pwm/pwm-omap-dmtimer.c | 3 +--
+>> 1 file changed, 1 insertion(+), 2 deletions(-)
+>> 
+>> diff --git a/drivers/pwm/pwm-omap-dmtimer.c b/drivers/pwm/pwm-omap-dmtimer.c
+>> index 665da3c8fbce..808835179c2e 100644
+>> --- a/drivers/pwm/pwm-omap-dmtimer.c
+>> +++ b/drivers/pwm/pwm-omap-dmtimer.c
+>> @@ -264,8 +264,7 @@ static int pwm_omap_dmtimer_probe(struct platform_device *pdev)
+>> 
+>> 	timer_pdata = dev_get_platdata(&timer_pdev->dev);
+>> 	if (!timer_pdata) {
+>> -		dev_err(&pdev->dev, "dmtimer pdata structure NULL\n");
+>> -		ret = -EINVAL;
+>> +		ret = -EPROBE_DEFER;
+>> 		goto put;
+>> 	}
+>> 
+>> -- 
+>> 2.11.0
+>> 
+
+BR,
+Nikolaus
+
+
