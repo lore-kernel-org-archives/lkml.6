@@ -2,134 +2,116 @@ Return-Path: <SRS0=jKyA=KN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4E94C46462
-	for <linux-kernel@archiver.kernel.org>; Sun, 29 Jul 2018 19:38:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FFC2C46462
+	for <linux-kernel@archiver.kernel.org>; Sun, 29 Jul 2018 19:42:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6B7BD20857
-	for <linux-kernel@archiver.kernel.org>; Sun, 29 Jul 2018 19:38:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B7D1720857
+	for <linux-kernel@archiver.kernel.org>; Sun, 29 Jul 2018 19:42:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mOfMlYjh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B7BD20857
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="Wf8mW9rE"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B7D1720857
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731818AbeG2VJj (ORCPT
+        id S1728637AbeG2VOF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 29 Jul 2018 17:09:39 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:41963 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728750AbeG2VIc (ORCPT
+        Sun, 29 Jul 2018 17:14:05 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:46570 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726802AbeG2VOF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Jul 2018 17:08:32 -0400
-Received: by mail-pg1-f195.google.com with SMTP id z8-v6so6024640pgu.8
-        for <linux-kernel@vger.kernel.org>; Sun, 29 Jul 2018 12:37:00 -0700 (PDT)
+        Sun, 29 Jul 2018 17:14:05 -0400
+Received: by mail-pg1-f193.google.com with SMTP id p23-v6so6020750pgv.13
+        for <linux-kernel@vger.kernel.org>; Sun, 29 Jul 2018 12:42:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=VbeR4UeSqh4Lwp8spvsYG7QS8gcKKa52mTJVodO+cNQ=;
-        b=mOfMlYjhVE21Dfz+m+PZZbygWi9hqQopMXdROiGGewZ79Ae4cUmLl0RXMO7DSVwWEd
-         HDw8d8q90IC2gWHuq2ITYpxUOhIyDNaLSXb5ItgFQ1Bu7iekR6wctzb1B3OG3vOk69hG
-         /uWxOf84bNywceB/PYxWezyAwVrldzwWY1RJGCfw11QeXSv133AJsQqhQqvQDsBa5Dle
-         yUaq6coHSr3OQo0+Tk8xxs1JgH38/07hwZkt/F2nDfaNNgSxiqvB6X06nZCnoTLitLcw
-         q5xnKp9XKACDJnMlFM8Cb/OhWe6Db01zmFSpA+NXQL48dUpN9kDGP4ENrUbWzSEtcN/Y
-         ic4Q==
+        d=ziepe.ca; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=eQtzkxl+5zelMvUlMOP4jFfEI76tX0GopRFobohk7ms=;
+        b=Wf8mW9rE27AX/lH9RTsMdV/5ywnkUiM92M4KSCiMI11wNrcAuufVrRaBVOfmR+y8XE
+         NIzbcg97ij6U/tkUnzdBhG0sCBRuBcxUc0ubcLPzlPupRn8bfGW2EK/X/joBG9VISFDb
+         vrx5Rio8g7g4n4tLbCB5ESOXptx7Xe1bYVhcPeZY3O+45XVaBq2q/g/dbDKT/oupis2q
+         COXqwk6z7NVCZhTiiRJcS+CzvUPPDi9mmJnM++c9FHn0pqEjaNkB5DG0G1e4phz2qhXK
+         xHITePswT4ebH/KREQY9A+7O77OAz9CvOgnhxzk1g2g4PurUk5X0eFEKGHjw6vets2oX
+         4DVw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=VbeR4UeSqh4Lwp8spvsYG7QS8gcKKa52mTJVodO+cNQ=;
-        b=b/Mg2dCMjCGzH9hsNDMgYXYdNkVmF9A1uYj3UTEt6Cc//RBTNtx+c4Rf4UWaRbGf/b
-         JqrNiGE8tlibvU2Gs7cvz70+WhCmSPxtO55juuC4uv2+S1UvZKEV4DOsVLQ83nhukC3t
-         FVQpjyCGUIHBygvY9rF3N4lMzMs8yCMkZyMCaTG2eCOgkFNnWF2rkjzWX1dpwzWoWrcM
-         +A48STCCEMHlSwnX9zcF4OANV4FmNAQAZYsJ9rabz9AX89Que49owFyG1zr4p95iWo3c
-         /ZtwNmnPhk0KN01USi4x8YRcQlqArfLPULh9gYA8WAq0LYo73VkjTm+PNy6q+YxemCn4
-         vttg==
-X-Gm-Message-State: AOUpUlGtKz/kjvuN5Tt5zGKWrEMgYOXKuRwgBKaHb9FFFUGBaZUfBy8C
-        WCzYPSaWsWzhkoJlsIrOV/A=
-X-Google-Smtp-Source: AAOMgpfTygFc7RQursE26+BmAiVKSNxWzsj6iNwiU9Ra/Ro1qQh1AsMXD3Wz1aM32i9MAi9x5zhTWA==
-X-Received: by 2002:a65:52cc:: with SMTP id z12-v6mr13757142pgp.69.1532893020118;
-        Sun, 29 Jul 2018 12:37:00 -0700 (PDT)
-Received: from toddpoynor2.mtv.corp.google.com ([2620:0:1000:3701:7d29:cd13:d903:7908])
-        by smtp.gmail.com with ESMTPSA id k26-v6sm27474062pfb.167.2018.07.29.12.36.59
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=eQtzkxl+5zelMvUlMOP4jFfEI76tX0GopRFobohk7ms=;
+        b=LL9kYl1Hw/mZNJv/s8O3Vg/PIf963kjPaTdTcm/4565Ls21EvsNqsg9UvPRw0GdOEN
+         BqzR7egwdJJDq8mOWTj+SC9JWUDRcRN4XjOCzYq8C2y6gOJS0+RzmdHBO8Rzn/aTuT67
+         7f9dUq223aqx+T8QIyKEQ2d62Jpjram9K5oWsbqB0WxKKLR1pJqENKRsLdWNmhGmvg7w
+         N0cQC8JkNkjrqHRgO3v0y5kuxzZNp8M4bSvqP+DnU55TN1KKTmGpymOhZbo0eFHv0bib
+         Qoz2DtJwsCr83JZOWrLL4VtuJV1pPPpfEkePrNsFDJxN3H0X9jB0HiW+Z5aRCmefecYm
+         85gw==
+X-Gm-Message-State: AOUpUlH7qEqp99itU9ceTFrgnEpFLhyizLlpzSVmdwc0KDDm5bVw7MhH
+        G40zXjW5iCyc5KKXVUUniiNkmA==
+X-Google-Smtp-Source: AAOMgpcAcXhi9skHWi4fYQh8ZrLkX96OVojo9q8hg8rouCy3IVekn/yAcCUuFuu6pKiaILLJ8rlGTw==
+X-Received: by 2002:a63:8042:: with SMTP id j63-v6mr13794069pgd.230.1532893351927;
+        Sun, 29 Jul 2018 12:42:31 -0700 (PDT)
+Received: from ziepe.ca (S010614cc2056d97f.ed.shawcable.net. [174.3.196.123])
+        by smtp.gmail.com with ESMTPSA id b12-v6sm13679327pfe.148.2018.07.29.12.42.30
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 29 Jul 2018 12:36:59 -0700 (PDT)
-From:   Todd Poynor <toddpoynor@gmail.com>
-To:     Rob Springer <rspringer@google.com>,
-        John Joseph <jnjoseph@google.com>,
-        Ben Chan <benchan@chromium.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
-        Dmitry Torokhov <dtor@chromium.org>,
-        Todd Poynor <toddpoynor@google.com>
-Subject: [PATCH 02/13] staging: gasket: sysfs: hold reference to device while in use
-Date:   Sun, 29 Jul 2018 12:36:35 -0700
-Message-Id: <20180729193646.201721-3-toddpoynor@gmail.com>
-X-Mailer: git-send-email 2.18.0.345.g5c9ce644c3-goog
-In-Reply-To: <20180729193646.201721-1-toddpoynor@gmail.com>
-References: <20180729193646.201721-1-toddpoynor@gmail.com>
+        Sun, 29 Jul 2018 12:42:31 -0700 (PDT)
+Received: from jgg by mlx.ziepe.ca with local (Exim 4.86_2)
+        (envelope-from <jgg@ziepe.ca>)
+        id 1fjraI-0004Pz-AE; Sun, 29 Jul 2018 13:42:30 -0600
+Date:   Sun, 29 Jul 2018 13:42:30 -0600
+From:   Jason Gunthorpe <jgg@ziepe.ca>
+To:     linux-rdma@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     David Miller <davem@davemloft.net>,
+        Networking <netdev@vger.kernel.org>,
+        Doug Ledford <dledford@redhat.com>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Parav Pandit <parav@mellanox.com>,
+        Ursula Braun <ubraun@linux.ibm.com>,
+        Leon Romanovsky <leonro@mellanox.com>
+Subject: Re: [PATCH rdma] IB/cache: Restore compatibility for ib_query_gid
+Message-ID: <20180729194230.GB15106@ziepe.ca>
+References: <20180727155402.GA15253@ziepe.ca>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180727155402.GA15253@ziepe.ca>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Todd Poynor <toddpoynor@google.com>
+On Fri, Jul 27, 2018 at 09:54:02AM -0600, Jason Gunthorpe wrote:
+> Code changes in smc have become so complicated this cycle that the RDMA
+> patches to remove ib_query_gid in smc create too complex merge conflicts.
+> Allow those conflicts to be resolved by using the net/smc hunks by
+> providing a compatibility wrapper. During the second phase of the merge
+> window this wrapper will be deleted and smc updated to use the new API.
+> 
+> Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+>  include/rdma/ib_cache.h | 24 ++++++++++++++++++++++++
+>  1 file changed, 24 insertions(+)
+> 
+> The resolution Stephen had to make is too complicated, I think we
+> should go this way instead. Parav can send a patch to DaveM during the
+> 2nd half of the merge window to safely update SMC and delete this
+> wrapper.
+> 
+> Parav, can you check this?
+> 
+> Ursula, this is only for SMC, are you able to test SMC with it? You
+> will need to apply it to the RDMA tree here:
+> 
+> https://git.kernel.org/pub/scm/linux/kernel/git/rdma/rdma.git/log/?h=for-next
+> 
+> Thanks,
+> Jason
 
-Hold a reference to the struct device while a gasket sysfs mapping
-exists for the device and a pointer to the struct is kept in the mapping
-data structures.
+I applied this to rdma for-next with Parav's notes.
 
-Signed-off-by: Todd Poynor <toddpoynor@google.com>
----
- drivers/staging/gasket/gasket_sysfs.c | 11 +++++------
- 1 file changed, 5 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/staging/gasket/gasket_sysfs.c b/drivers/staging/gasket/gasket_sysfs.c
-index da972ce0e0db0..fde04658419bc 100644
---- a/drivers/staging/gasket/gasket_sysfs.c
-+++ b/drivers/staging/gasket/gasket_sysfs.c
-@@ -126,6 +126,7 @@ static void put_mapping(struct gasket_sysfs_mapping *mapping)
- 		kfree(mapping->attributes);
- 		mapping->attributes = NULL;
- 		mapping->attribute_count = 0;
-+		put_device(mapping->device);
- 		mapping->device = NULL;
- 		mapping->gasket_dev = NULL;
- 	}
-@@ -208,22 +209,20 @@ int gasket_sysfs_create_mapping(
- 		device->kobj.name);
- 
- 	mapping = &dev_mappings[map_idx];
--	kref_init(&mapping->refcount);
--	mapping->device = device;
--	mapping->gasket_dev = gasket_dev;
- 	mapping->attributes = kcalloc(GASKET_SYSFS_MAX_NODES,
- 				      sizeof(*mapping->attributes),
- 				      GFP_KERNEL);
--	mapping->attribute_count = 0;
- 	if (!mapping->attributes) {
- 		dev_dbg(device, "Unable to allocate sysfs attribute array\n");
--		mapping->device = NULL;
--		mapping->gasket_dev = NULL;
- 		mutex_unlock(&mapping->mutex);
- 		mutex_unlock(&function_mutex);
- 		return -ENOMEM;
- 	}
- 
-+	kref_init(&mapping->refcount);
-+	mapping->device = get_device(device);
-+	mapping->gasket_dev = gasket_dev;
-+	mapping->attribute_count = 0;
- 	mutex_unlock(&mapping->mutex);
- 	mutex_unlock(&function_mutex);
- 
--- 
-2.18.0.345.g5c9ce644c3-goog
-
+Jason
