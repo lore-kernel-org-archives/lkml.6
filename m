@@ -2,86 +2,137 @@ Return-Path: <SRS0=jKyA=KN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91CE9FF05FE
-	for <linux-kernel@archiver.kernel.org>; Sun, 29 Jul 2018 12:33:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7EDDFF05E2
+	for <linux-kernel@archiver.kernel.org>; Sun, 29 Jul 2018 12:39:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 40B2620870
-	for <linux-kernel@archiver.kernel.org>; Sun, 29 Jul 2018 12:33:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 40B2620870
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
+	by mail.kernel.org (Postfix) with ESMTP id 4DA71205F4
+	for <linux-kernel@archiver.kernel.org>; Sun, 29 Jul 2018 12:39:39 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G7wZHhzl"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4DA71205F4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726646AbeG2ODM (ORCPT
+        id S1726438AbeG2OJM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 29 Jul 2018 10:03:12 -0400
-Received: from bmailout1.hostsharing.net ([83.223.95.100]:49215 "EHLO
-        bmailout1.hostsharing.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726361AbeG2ODM (ORCPT
+        Sun, 29 Jul 2018 10:09:12 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:36937 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726255AbeG2OJM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Jul 2018 10:03:12 -0400
-Received: from h08.hostsharing.net (h08.hostsharing.net [83.223.95.28])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client CN "*.hostsharing.net", Issuer "COMODO RSA Domain Validation Secure Server CA" (not verified))
-        by bmailout1.hostsharing.net (Postfix) with ESMTPS id 0947830000621;
-        Sun, 29 Jul 2018 14:32:52 +0200 (CEST)
-Received: by h08.hostsharing.net (Postfix, from userid 100393)
-        id D357EB6609; Sun, 29 Jul 2018 14:32:51 +0200 (CEST)
-Date:   Sun, 29 Jul 2018 14:32:51 +0200
-From:   Lukas Wunner <lukas@wunner.de>
-To:     poza@codeaurora.org
-Cc:     okaya@codeaurora.org, linux-pci@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Keith Busch <keith.busch@intel.com>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH V5 3/3] PCI: Mask and unmask hotplug interrupts during
- reset
-Message-ID: <20180729123251.GB4364@wunner.de>
-References: <1530571967-19099-1-git-send-email-okaya@codeaurora.org>
- <1530571967-19099-4-git-send-email-okaya@codeaurora.org>
- <20180703083447.GA2689@wunner.de>
- <8b6ce0f415858463d1c0588c29e30415@codeaurora.org>
- <9e871cc3978fbdca12ccf8a91f34ad07@codeaurora.org>
+        Sun, 29 Jul 2018 10:09:12 -0400
+Received: by mail-pg1-f195.google.com with SMTP id n7-v6so5732498pgq.4
+        for <linux-kernel@vger.kernel.org>; Sun, 29 Jul 2018 05:38:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=gUgjOV2D8iFP9n34w8rmetiXqG0g4HQ677T8ARMWEIc=;
+        b=G7wZHhzlN52sXONy25mfbgS2/uJKL/EzcgifhK4OefkFKKvXnqy3AkcPzbBXNkbTIs
+         8ikoufyNUaSehHkixx/cbs1UbgNXAOj2NrVfd78RMvVW13IfrXOYTNg65jowZ1teNNTC
+         J6ssMmXdfiQ0Up6XvdikDf0jmwgsXs8EmIVggYRTZ1mwwFJNMvl4E4DMXTuUKg0apARP
+         3Ryj+79qVaeTEo/9kOu3f5NTQnfWSjaH9n+FzDLYCh1b76gwKM6Op4hxIlD7Z5P70Eoh
+         yf9LnY9U0oXNwV9qdZT5hDcCn67Clo/qZ2fqAh7B4jkb22bjlY5YRbhok7y6UpjL+cIf
+         kT3w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=gUgjOV2D8iFP9n34w8rmetiXqG0g4HQ677T8ARMWEIc=;
+        b=eJOC6m3IGa4kuifAgM9cfPlnrmUjpeyHMmFhQlRaiQyCa9Vp5P713dD6Z5X8hVzv2q
+         VyDKCKTx0letmPHNHX5PPay0nZ7K8z5QqwzoKnVnLSkuhzCdoPMHBkAg2HMJsXCJG8ZB
+         KiSZ1S003H84Vh/HceZGApr2U6UhCW2FvAK3bPDemgMKw/oX6rR0z6Y3CpXIXV6Na2HW
+         YY9mzO53GPkbi1N5j1eHEJ3ka/SwMIFaY+VDFi7VnWIWlp07F2WfnkOe4dZ7o7kykkAk
+         DwQeqlcUBjDAyyGwK9UaW0NAvrDUnHbmHqbyv5y0UK4OtYry1iTXLBhsNQyyunkRObqZ
+         OqRA==
+X-Gm-Message-State: AOUpUlFMpfjeWcsLoQBrbAYW+IxsPMX1x1t04ETYax4tGqOnn3HyS0Wp
+        kG2V4mAQ5X1bB+qodEKgyfs=
+X-Google-Smtp-Source: AAOMgpfAT1MQevgHck/uewLCDD6vPHUbFsZGAK02FeAZeNAAjJ24rM1DKhLkHIWvvQKMg1RwAxtovw==
+X-Received: by 2002:a65:52cc:: with SMTP id z12-v6mr12709978pgp.69.1532867931988;
+        Sun, 29 Jul 2018 05:38:51 -0700 (PDT)
+Received: from smtp.gmail.com ([140.113.61.252])
+        by smtp.gmail.com with ESMTPSA id i25-v6sm21082139pfi.150.2018.07.29.05.38.49
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sun, 29 Jul 2018 05:38:51 -0700 (PDT)
+Date:   Sun, 29 Jul 2018 09:38:47 -0300
+From:   Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
+To:     Souptick Joarder <jrdr.linux@gmail.com>
+Cc:     willy@infradead.org, airlied@linux.ie, daniel.vetter@ffwll.ch,
+        gustavo.padovan@collabora.com, hamohammed.sa@gmail.com,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] drm/vkms: Use new return type vm_fault_t
+Message-ID: <20180729123847.txpcltjb2k2d6yhb@smtp.gmail.com>
+References: <20180726144549.GA9434@jordon-HP-15-Notebook-PC>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <9e871cc3978fbdca12ccf8a91f34ad07@codeaurora.org>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <20180726144549.GA9434@jordon-HP-15-Notebook-PC>
+User-Agent: NeoMutt/20180323
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 03, 2018 at 06:41:33PM +0530, poza@codeaurora.org wrote:
-> pciehp_unconfigure_device doing little more than enumeration to quiescence
-> the bus.
+On 07/26, Souptick Joarder wrote:
+> Use new return type vm_fault_t for fault handler.
 > 
->		/*
-> 		 * Ensure that no new Requests will be generated from
-> 		 * the device.
-> 		 */
-> 		if (presence) {
-> 			pci_read_config_word(dev, PCI_COMMAND, &command);
-> 			command &= ~(PCI_COMMAND_MASTER | PCI_COMMAND_SERR);
-> 			command |= PCI_COMMAND_INTX_DISABLE;
-> 			pci_write_config_word(dev, PCI_COMMAND, command);
-> 		}
+> Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
+> ---
+> v2: Updated patch title
+> 
+>  drivers/gpu/drm/vkms/vkms_drv.h | 2 +-
+>  drivers/gpu/drm/vkms/vkms_gem.c | 5 ++---
+>  2 files changed, 3 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/vkms/vkms_drv.h b/drivers/gpu/drm/vkms/vkms_drv.h
+> index 07be29f..d5d04a8 100644
+> --- a/drivers/gpu/drm/vkms/vkms_drv.h
+> +++ b/drivers/gpu/drm/vkms/vkms_drv.h
+> @@ -65,7 +65,7 @@ struct drm_gem_object *vkms_gem_create(struct drm_device *dev,
+>  				       u32 *handle,
+>  				       u64 size);
+>  
+> -int vkms_gem_fault(struct vm_fault *vmf);
+> +vm_fault_t vkms_gem_fault(struct vm_fault *vmf);
+>  
+>  int vkms_dumb_create(struct drm_file *file, struct drm_device *dev,
+>  		     struct drm_mode_create_dumb *args);
+> diff --git a/drivers/gpu/drm/vkms/vkms_gem.c b/drivers/gpu/drm/vkms/vkms_gem.c
+> index c7e3836..62e05dc 100644
+> --- a/drivers/gpu/drm/vkms/vkms_gem.c
+> +++ b/drivers/gpu/drm/vkms/vkms_gem.c
+> @@ -43,14 +43,14 @@ void vkms_gem_free_object(struct drm_gem_object *obj)
+>  	kfree(gem);
+>  }
+>  
+> -int vkms_gem_fault(struct vm_fault *vmf)
+> +vm_fault_t vkms_gem_fault(struct vm_fault *vmf)
+>  {
+>  	struct vm_area_struct *vma = vmf->vma;
+>  	struct vkms_gem_object *obj = vma->vm_private_data;
+>  	unsigned long vaddr = vmf->address;
+>  	pgoff_t page_offset;
+>  	loff_t num_pages;
+> -	int ret;
+> +	vm_fault_t ret = VM_FAULT_SIGBUS;
+>  
+>  	page_offset = (vaddr - vma->vm_start) >> PAGE_SHIFT;
+>  	num_pages = DIV_ROUND_UP(obj->gem.size, PAGE_SIZE);
+> @@ -58,7 +58,6 @@ int vkms_gem_fault(struct vm_fault *vmf)
+>  	if (page_offset > num_pages)
+>  		return VM_FAULT_SIGBUS;
+>  
+> -	ret = -ENOENT;
+>  	mutex_lock(&obj->pages_lock);
+>  	if (obj->pages) {
+>  		get_page(obj->pages[page_offset]);
+> -- 
+> 1.9.1
+>
 
-That piece of code is supposed to be executed on safe removal via sysfs
-or an Attention Button press:  The card remains in the slot, even though
-the slot is brought down.  So the card is quiesced.
-
-However IIUC, on fatal error the link goes down and for pciehp, that's
-essentially a surprise removal.  In that case, the above code is not
-intended to be executed, rather the devices below the hotplug bridge
-are marked disconnected.  See this patch I posted yesterday:
-https://www.spinics.net/lists/linux-pci/msg74763.html
-
-Thanks,
-
-Lukas
+Reviewed-by: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
