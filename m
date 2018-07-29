@@ -7,64 +7,64 @@ X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41CBBC46461
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B23AD113C62A
 	for <linux-kernel@archiver.kernel.org>; Sun, 29 Jul 2018 18:55:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E08FE20881
-	for <linux-kernel@archiver.kernel.org>; Sun, 29 Jul 2018 18:55:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 64D5C20881
+	for <linux-kernel@archiver.kernel.org>; Sun, 29 Jul 2018 18:55:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b5nizbc8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E08FE20881
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="N4MEHRNP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 64D5C20881
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728934AbeG2U0e (ORCPT
+        id S1729407AbeG2U0i (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 29 Jul 2018 16:26:34 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:43602 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728657AbeG2U0d (ORCPT
+        Sun, 29 Jul 2018 16:26:38 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:56228 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728963AbeG2U0h (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Jul 2018 16:26:33 -0400
-Received: by mail-wr1-f67.google.com with SMTP id b15-v6so10363684wrv.10
-        for <linux-kernel@vger.kernel.org>; Sun, 29 Jul 2018 11:55:09 -0700 (PDT)
+        Sun, 29 Jul 2018 16:26:37 -0400
+Received: by mail-wm0-f68.google.com with SMTP id f21-v6so10712697wmc.5
+        for <linux-kernel@vger.kernel.org>; Sun, 29 Jul 2018 11:55:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=XSF8o3Id0Zgpcd/q6+maD80rTPHuqgWeaMtipuETFzg=;
-        b=b5nizbc8SkjEFwq2h3pDryXfqCSF112DLl5XYth7JL+9Sisu1ri3t3bIf6tA4Gh50f
-         +Z7bflCfbxvKFvpz+ItTeLIjBvfN0eA1QM7NX4qjpRFvUwoJBhY6/uBvw5DE9Ujubrvg
-         lR5/pBGpoITc9GzCxJN8CN0ya+qZBZWn8JZ3i7O6iJtN88jQMVa9RX8dqfU2l6SN/AVD
-         M0/s9RTYy9y0b/sOnExmiuFto2uoqoJ7qOlLvM5ZvJwojlPT59a/n707+2HNS6xzX/bn
-         OUjraS8+dRBBlgTOpBZmI+uUQtIEByk69eB5HgDDo2oGpnbDTTL645ZPMQ/e9c9O3ZRD
-         6HGw==
+        bh=rB4/hg8RO73toEiKmPlnSrntqLStIoWKWrMoDa0XxwY=;
+        b=N4MEHRNPcuaK5DE04RDff8hp2Qf4LcJGRV641kBcPZZP0U6cNVWameoCPO7Y7xIFm1
+         clH8+D1EKc7sMWnv6h6yDsZ8d+j8vhumdcG0iqptDLD1AOGzVxwhiwRgv4UlPmN/FyGP
+         c2Mv02rIVFMA2qN+AUfQX5VRmeQGeKTiEAY9uLUZzSyrVvefIlu32+UVAQkTltpxz1gg
+         B9VphHtPy3TrAQ/QENqIRy0Gnt2ZmYeGeMbT8R7vjWH6tNMm1/LYMFW12WSkC+AVYKSb
+         FlUAOLGz7VVP8dn2cTqwocJxBtpUsgJ5zcap56jNz+96djWxtjhr27H8Nj6wNJFdy+ZU
+         NvAg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=XSF8o3Id0Zgpcd/q6+maD80rTPHuqgWeaMtipuETFzg=;
-        b=osJLqoz+1/V7LOKQx0pObz1Knnho7lgkefoKU9KZeCQVn8jXPYVXi8EWFn0p0RWO9T
-         dOoDyOafyU644NALnRPe74rkpKJhW7M77vvndZthhp5lMhS+P1OcfZRY2nsQOWaPmly7
-         KPT1T4QSZSdXOJGwrvraj1OmPELd1eo8DTPoMbAg8eE4rgnsS6qtXJAFMhzomf02bgRf
-         dO/7tAbN+qdxYARk8kPqhicmXr6RoG6q4cDdxfveR52/08c7Uioqgm7RmVg/XixyuiLk
-         oFgZDN632BmfOOAb5gRyuxbBAPpjtBEkesXy2O5lDMfXS6Sd5N7df3O9ziHrKPh0K9YD
-         N2Hg==
-X-Gm-Message-State: AOUpUlHLuAD0mg0UBRtFW1jFqwkBaZkR/Z3EGLY2X3f8u0GfVZSZtbtP
-        SouBHMbcyg1c2e0bgGt/Mik=
-X-Google-Smtp-Source: AAOMgpe0HxPOQFLmMY4Een1aMi0hPpVLpJDQIeDbj/VlHUQqadPHNy4dOn/J+dlLJC+KPz9V2Cg9fA==
-X-Received: by 2002:adf:9d46:: with SMTP id o6-v6mr14371043wre.51.1532890508662;
-        Sun, 29 Jul 2018 11:55:08 -0700 (PDT)
+        bh=rB4/hg8RO73toEiKmPlnSrntqLStIoWKWrMoDa0XxwY=;
+        b=ivVsuEADYh7+RpM2DYKX8AjVNIcEes/gCaLceBGa5IoEUdDmPcBPqYzJKUXDqwLlab
+         EJZwRLrmU+JYVjsYoYvYgOnQl29+THmtuf/nnVqg94Tq5nNGaoVGZhp1DhLyGayjzqkj
+         bwz9NKenkK9VScFaejx6a2XKGhQ2Fai4er4aquHY9MglU0QNwc1TN3stXtmQa0scLQn4
+         F8QkOZgX83/TmLmGdxp+dIaxI0lDrD9cq5Nkc5TrrYZEQL9uuHfuhAGEKjC+Vh4Y7ga1
+         9yyJ+A32nilf9cbzPiXfnhmnBlm7DSbw72kcZYLP7XoDjN+PMxh3G1pRe+64GUfG54W3
+         yXlg==
+X-Gm-Message-State: AOUpUlFepSs6r8GFvrX7sJCGSnxp8wvyWyqbhPSnAu2dJ8wRaaTt820L
+        icRsDvzAra0P6VLC5t7c9TA=
+X-Google-Smtp-Source: AAOMgpdV2sFKzgUqNWdNkXl9vUIWJJBvHizZmReJNkOpNGnEqoIAD8eplCW/uO+A6MZfIVZMeWggnQ==
+X-Received: by 2002:a1c:8b0d:: with SMTP id n13-v6mr11664521wmd.46.1532890512973;
+        Sun, 29 Jul 2018 11:55:12 -0700 (PDT)
 Received: from localhost.localdomain ([2a02:8108:85c0:57c8:32db:916d:97a2:c4eb])
-        by smtp.gmail.com with ESMTPSA id g125-v6sm8674247wmf.16.2018.07.29.11.55.07
+        by smtp.gmail.com with ESMTPSA id g125-v6sm8674247wmf.16.2018.07.29.11.55.12
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 29 Jul 2018 11:55:08 -0700 (PDT)
+        Sun, 29 Jul 2018 11:55:12 -0700 (PDT)
 From:   Michael Straube <straube.linux@gmail.com>
 To:     gregkh@linuxfoundation.org
 Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
         Michael Straube <straube.linux@gmail.com>
-Subject: [PATCH v2 4/7] staging: rtl8188eu: remove redundant includes
-Date:   Sun, 29 Jul 2018 20:54:44 +0200
-Message-Id: <20180729185447.19903-4-straube.linux@gmail.com>
+Subject: [PATCH v2 7/7] staging: rtl8188eu: remove unnecessary parentheses
+Date:   Sun, 29 Jul 2018 20:54:47 +0200
+Message-Id: <20180729185447.19903-7-straube.linux@gmail.com>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180729185447.19903-1-straube.linux@gmail.com>
 References: <20180729185447.19903-1-straube.linux@gmail.com>
@@ -73,27 +73,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Both osdep_service.h and drv_types.h are included from hal_intf.h,
-so remove the redundant includes from hal_intf.c.
+Remove unnecessary parentheses, also clears checkpatch issues about
+missing spaces around '-'.
 
 Signed-off-by: Michael Straube <straube.linux@gmail.com>
 ---
- drivers/staging/rtl8188eu/hal/hal_intf.c | 2 --
- 1 file changed, 2 deletions(-)
+ drivers/staging/rtl8188eu/hal/hal_intf.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/staging/rtl8188eu/hal/hal_intf.c b/drivers/staging/rtl8188eu/hal/hal_intf.c
-index aaa1718ca603..0baf4e616b6a 100644
+index b21ba01abc57..b8fecc952cfc 100644
 --- a/drivers/staging/rtl8188eu/hal/hal_intf.c
 +++ b/drivers/staging/rtl8188eu/hal/hal_intf.c
-@@ -6,8 +6,6 @@
-  ******************************************************************************/
+@@ -48,15 +48,15 @@ uint rtw_hal_deinit(struct adapter *adapt)
  
- #define _HAL_INTF_C_
--#include <osdep_service.h>
--#include <drv_types.h>
- #include <hal_intf.h>
+ void rtw_hal_update_ra_mask(struct adapter *adapt, u32 mac_id, u8 rssi_level)
+ {
+-	struct mlme_priv *pmlmepriv = &(adapt->mlmepriv);
++	struct mlme_priv *pmlmepriv = &adapt->mlmepriv;
  
- uint	 rtw_hal_init(struct adapter *adapt)
+ 	if (check_fwstate(pmlmepriv, WIFI_AP_STATE)) {
+ #ifdef CONFIG_88EU_AP_MODE
+ 		struct sta_info *psta = NULL;
+ 		struct sta_priv *pstapriv = &adapt->stapriv;
+ 
+-		if ((mac_id-1) > 0)
+-			psta = pstapriv->sta_aid[(mac_id-1) - 1];
++		if (mac_id - 1 > 0)
++			psta = pstapriv->sta_aid[mac_id - 2];
+ 		if (psta)
+ 			add_RATid(adapt, psta, 0);/* todo: based on rssi_level*/
+ #endif
 -- 
 2.18.0
 
