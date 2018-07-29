@@ -7,28 +7,28 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 155A3FA3734
-	for <linux-kernel@archiver.kernel.org>; Sun, 29 Jul 2018 09:17:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EF51FA3735
+	for <linux-kernel@archiver.kernel.org>; Sun, 29 Jul 2018 09:17:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AD50F20882
-	for <linux-kernel@archiver.kernel.org>; Sun, 29 Jul 2018 09:17:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AD50F20882
+	by mail.kernel.org (Postfix) with ESMTP id E12E420882
+	for <linux-kernel@archiver.kernel.org>; Sun, 29 Jul 2018 09:17:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E12E420882
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726361AbeG2Kqq (ORCPT
+        id S1726400AbeG2Kqs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 29 Jul 2018 06:46:46 -0400
-Received: from 212.199.177.27.static.012.net.il ([212.199.177.27]:51500 "EHLO
+        Sun, 29 Jul 2018 06:46:48 -0400
+Received: from 212.199.177.27.static.012.net.il ([212.199.177.27]:51501 "EHLO
         herzl.nuvoton.co.il" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726022AbeG2Kqp (ORCPT
+        with ESMTP id S1726211AbeG2Kqr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Jul 2018 06:46:45 -0400
+        Sun, 29 Jul 2018 06:46:47 -0400
 Received: from taln60.nuvoton.co.il (ntil-fw [212.199.177.25])
-        by herzl.nuvoton.co.il (8.13.8/8.13.8) with ESMTP id w6T8j6eO010350;
-        Sun, 29 Jul 2018 11:45:06 +0300
+        by herzl.nuvoton.co.il (8.13.8/8.13.8) with ESMTP id w6T8jGPG010356;
+        Sun, 29 Jul 2018 11:45:16 +0300
 Received: by taln60.nuvoton.co.il (Postfix, from userid 20088)
-        id 339F363129; Sun, 29 Jul 2018 12:15:05 +0300 (IDT)
+        id EFDBA63129; Sun, 29 Jul 2018 12:15:15 +0300 (IDT)
 From:   Tali Perry <tali.perry1@gmail.com>
 To:     tali.perry1@gmail.com, avifishman70@gmail.com, tmaimon77@gmail.com,
         venture@google.com, yuenn@google.com, brendanhiggins@google.com,
@@ -43,10 +43,15 @@ To:     tali.perry1@gmail.com, avifishman70@gmail.com, tmaimon77@gmail.com,
         heikki.krogerus@linux.intel.com, tglx@linutronix.de
 Cc:     linux-i2c@vger.kernel.org, openbmc@lists.ozlabs.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v1 0/2] i2c: npcm7xx: new driver for I2C controller
-Date:   Sun, 29 Jul 2018 12:14:47 +0300
-Message-Id: <20180729091449.385951-1-tali.perry1@gmail.com>
+Subject: [PATCH v1 2/2] i2c: npcm7xx: add i2c controller master mode only
+Date:   Sun, 29 Jul 2018 12:14:49 +0300
+Message-Id: <20180729091449.385951-3-tali.perry1@gmail.com>
 X-Mailer: git-send-email 2.14.1
+In-Reply-To: <20180729091449.385951-1-tali.perry1@gmail.com>
+References: <20180729091449.385951-1-tali.perry1@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=y
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -61,21 +66,2627 @@ Any feedback would be appreciated.
 
 Signed-off-by: Tali Perry <tali.perry1@gmail.com>
 
-
 ---
-Tali Perry (2):
-  dt-binding: i2c: npcm7xx: add binding for i2c controller
-  i2c: npcm7xx: add i2c controller master mode only
-
- .../devicetree/bindings/i2c/i2c-npcm7xx.txt        |   27 +
- MAINTAINERS                                        |    9 +
- drivers/i2c/busses/Kconfig                         |   11 +
- drivers/i2c/busses/Makefile                        |    1 +
- drivers/i2c/busses/i2c-npcm7xx.c                   | 2574 ++++++++++++++++++++
- 5 files changed, 2622 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/i2c/i2c-npcm7xx.txt
+ drivers/i2c/busses/Kconfig       |   11 +
+ drivers/i2c/busses/Makefile      |    1 +
+ drivers/i2c/busses/i2c-npcm7xx.c | 2574 ++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 2586 insertions(+)
  create mode 100644 drivers/i2c/busses/i2c-npcm7xx.c
 
+diff --git a/drivers/i2c/busses/Kconfig b/drivers/i2c/busses/Kconfig
+index 4f8df2ec87b1..692ce1568fb0 100644
+--- a/drivers/i2c/busses/Kconfig
++++ b/drivers/i2c/busses/Kconfig
+@@ -742,6 +742,17 @@ config I2C_NOMADIK
+ 	  I2C interface from ST-Ericsson's Nomadik and Ux500 architectures,
+ 	  as well as the STA2X11 PCIe I/O HUB.
+ 
++config I2C_NPCM7XX
++	tristate "Nuvoton I2C Controller"
++	depends on ARCH_NPCM7XX
++	select I2C_SLAVE
++	help
++	  If you say yes to this option, support will be included for the
++	  Nuvoton I2C controller.
++
++	  This driver can also be built as a module.  If so, the module
++	  will be called i2c-npcm7xx.
++
+ config I2C_OCORES
+ 	tristate "OpenCores I2C Controller"
+ 	help
+diff --git a/drivers/i2c/busses/Makefile b/drivers/i2c/busses/Makefile
+index 5a869144a0c5..80d4ec8908e1 100644
+--- a/drivers/i2c/busses/Makefile
++++ b/drivers/i2c/busses/Makefile
+@@ -74,6 +74,7 @@ obj-$(CONFIG_I2C_MT65XX)	+= i2c-mt65xx.o
+ obj-$(CONFIG_I2C_MV64XXX)	+= i2c-mv64xxx.o
+ obj-$(CONFIG_I2C_MXS)		+= i2c-mxs.o
+ obj-$(CONFIG_I2C_NOMADIK)	+= i2c-nomadik.o
++obj-$(CONFIG_I2C_NPCM7XX)	+= i2c-npcm7xx.o
+ obj-$(CONFIG_I2C_OCORES)	+= i2c-ocores.o
+ obj-$(CONFIG_I2C_OMAP)		+= i2c-omap.o
+ obj-$(CONFIG_I2C_PASEMI)	+= i2c-pasemi.o
+diff --git a/drivers/i2c/busses/i2c-npcm7xx.c b/drivers/i2c/busses/i2c-npcm7xx.c
+new file mode 100644
+index 000000000000..442b23aacaaf
+--- /dev/null
++++ b/drivers/i2c/busses/i2c-npcm7xx.c
+@@ -0,0 +1,2574 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Nuvoton NPCM7xx SMB Controller driver
++ *
++ * Copyright (C) 2018 Nuvoton Technologies tali.perry@nuvoton.com
++ */
++
++#include <linux/kernel.h>
++#include <linux/clk.h>
++#include <linux/jiffies.h>
++#include <linux/completion.h>
++#include <linux/err.h>
++#include <linux/errno.h>
++#include <linux/i2c.h>
++#include <linux/init.h>
++#include <linux/delay.h>
++
++#include <linux/interrupt.h>
++#include <linux/io.h>
++#include <linux/irq.h>
++#include <linux/irqchip/chained_irq.h>
++#include <linux/irqdomain.h>
++#include <linux/kernel.h>
++#include <linux/module.h>
++#include <linux/delay.h>
++#include <linux/of_address.h>
++#include <linux/of_irq.h>
++#include <linux/of_platform.h>
++#include <linux/platform_device.h>
++#include <linux/slab.h>
++#include <linux/clk/nuvoton.h>
++#include <linux/bitops.h>
++#include <linux/bitfield.h>
++
++#include <linux/of.h>
++#include <linux/of_device.h>
++#include <linux/dma-mapping.h>
++
++#include <linux/regmap.h>
++#include <linux/mfd/syscon.h>
++
++static struct regmap *gcr_regmap;
++static struct regmap *clk_regmap;
++
++#define	 I2CSEGCTL_OFFSET 0xE4
++
++#define NPCM7XX_SECCNT		(0x68)
++#define NPCM7XX_CNTR25M		(0x6C)
++
++#define	 I2CSEGCTL_VAL	0x0333F000
++
++#define ENABLE	1
++#define DISABLE	0
++
++#define _1Hz_		(u32)1UL
++#define _1KHz_		(1000 * _1Hz_)
++#define _1MHz_		(1000 * _1KHz_)
++#define _1GHz_		(1000 * _1MHz_)
++
++#ifndef ASSERT
++#ifdef DEBUG
++#define ASSERT(cond)  {if (!(cond)) for (;;) ; }
++#else
++#define ASSERT(cond)
++#endif
++#endif
++
++#define ROUND_UP(val, n)	(((val)+(n)-1) & ~((n)-1))
++#define DIV_CEILING(a, b)	 (((a) + ((b)-1)) / (b))
++
++#define I2C_VERSION "0.0.2"
++
++#define I2C_DEBUG2(f, x...)
++
++
++
++
++// HW module supports TO. in Linux, we choose to use SW TO to avoid conflicts
++// However this code is still available in this driver:
++// #define SMB_CAPABILITY_TIMEOUT_SUPPORT
++
++#define SMB_RECOVERY_SUPPORT
++
++// override HW SMBus may fail to supply stop condition in Master Write operation
++#define SMB_SW_BYPASS_HW_ISSUE_SMB_STOP
++
++// slave mode: if end device reads more data than available, ask issuer or
++// request for more data:
++#define SMB_WRAP_AROUND_BUFFER
++
++#define SMB_QUICK_PROT	 0xFFFF
++#define SMB_BLOCK_PROT	 0xFFFE
++#define SMB_EXCLUDE_BLOCK_SIZE_FROM_BUF	0xFFFD
++
++
++enum smb_mode {
++	SMB_SLAVE = 1,
++	SMB_MASTER
++};
++
++/*
++ * External SMB Interface driver states values, which indicate to the
++ * upper-level layer the status of the
++ * operation it initiated or wake up events from one of the buses
++ */
++enum smb_state_ind {
++	SMB_NO_STATUS_IND = 0,
++	SMB_SLAVE_RCV_IND = 1,
++	SMB_SLAVE_XMIT_IND = 2,
++	SMB_SLAVE_XMIT_MISSING_DATA_IND = 3,
++	SMB_SLAVE_RESTART_IND = 4,
++	SMB_SLAVE_DONE_IND = 5,
++	SMB_MASTER_DONE_IND = 6,
++	SMB_NO_DATA_IND = 7,
++	SMB_NACK_IND = 8,
++	SMB_BUS_ERR_IND = 9,
++	SMB_WAKE_UP_IND = 10,
++	SMB_MASTER_PEC_ERR_IND = 11,
++	SMB_BLOCK_BYTES_ERR_IND = 12,
++	SMB_SLAVE_PEC_ERR_IND = 13,
++	SMB_SLAVE_RCV_MISSING_DATA_IND = 14,
++};
++
++// SMBus Operation type values
++enum smb_oper {
++	SMB_NO_OPER = 0,
++	SMB_WRITE_OPER = 1,
++	SMB_READ_OPER = 2
++};
++
++
++// SMBus Bank (FIFO mode)
++enum smb_bank {
++	SMB_BANK_0 = 0,
++	SMB_BANK_1 = 1
++};
++
++// Internal SMB states values, which reflect events which occurred on the bus
++enum smb_state {
++	SMB_DISABLE = 0,
++	SMB_IDLE,
++	SMB_MASTER_START,
++	SMB_SLAVE_MATCH,
++	SMB_OPER_STARTED,
++	SMB_REPEATED_START,
++	SMB_STOP_PENDING
++};
++
++// Module supports setting multiple own slave addresses:
++enum smb_addr {
++	SMB_SLAVE_ADDR1 = 0,
++	SMB_SLAVE_ADDR2,
++	SMB_SLAVE_ADDR3,
++	SMB_SLAVE_ADDR4,
++	SMB_SLAVE_ADDR5,
++	SMB_SLAVE_ADDR6,
++	SMB_SLAVE_ADDR7,
++	SMB_SLAVE_ADDR8,
++	SMB_SLAVE_ADDR9,
++	SMB_SLAVE_ADDR10,
++	SMB_GC_ADDR,
++	SMB_ARP_ADDR
++};
++
++
++
++// Common regs
++#define NPCM7XX_SMBSDA(bus)		(bus->base + 0x000)
++#define NPCM7XX_SMBST(bus)		(bus->base + 0x002)
++#define NPCM7XX_SMBCST(bus)		(bus->base + 0x004)
++#define NPCM7XX_SMBCTL1(bus)		(bus->base + 0x006)
++#define NPCM7XX_SMBADDR1(bus)		(bus->base + 0x008)
++#define NPCM7XX_SMBCTL2(bus)		(bus->base + 0x00A)
++#define NPCM7XX_SMBADDR2(bus)		(bus->base + 0x00C)
++#define NPCM7XX_SMBCTL3(bus)		(bus->base + 0x00E)
++#define NPCM7XX_SMBCST2(bus)		(bus->base + 0x018)  // Control Status 2
++#define NPCM7XX_SMBCST3(bus)		(bus->base + 0x019)  // Control Status 3
++#define SMB_VER(bus)			(bus->base + 0x01F)  // SMB Version reg
++
++// BANK 0 regs
++#define NPCM7XX_SMBADDR3(bus)		(bus->base + 0x010)
++#define NPCM7XX_SMBADDR7(bus)		(bus->base + 0x011)
++#define NPCM7XX_SMBADDR4(bus)		(bus->base + 0x012)
++#define NPCM7XX_SMBADDR8(bus)		(bus->base + 0x013)
++#define NPCM7XX_SMBADDR5(bus)		(bus->base + 0x014)
++#define NPCM7XX_SMBADDR9(bus)		(bus->base + 0x015)
++#define NPCM7XX_SMBADDR6(bus)		(bus->base + 0x016)
++#define NPCM7XX_SMBADDR10(bus)		(bus->base + 0x017)
++#define NPCM7XX_SMBADDR(bus, i)	(bus->base + 0x008 + \
++	(u32)(((int)i * 4) + (((int)i < 2) ? 0 : \
++	((int)i - 2)*(-2)) + (((int)i < 6) ? 0 : (-7))))
++
++#define NPCM7XX_SMBCTL4(bus)		(bus->base + 0x01A)
++#define NPCM7XX_SMBCTL5(bus)		(bus->base + 0x01B)
++#define NPCM7XX_SMBSCLLT(bus)		(bus->base + 0x01C)  // SCL Low Time
++#define NPCM7XX_SMBFIF_CTL(bus)		(bus->base + 0x01D)  // FIFO Control
++#define NPCM7XX_SMBSCLHT(bus)		(bus->base + 0x01E)  // SCL High Time
++
++// BANK 1 regs
++#define NPCM7XX_SMBFIF_CTS(bus)		(bus->base + 0x010)  // FIFO Control
++#define NPCM7XX_SMBTXF_CTL(bus)		(bus->base + 0x012)  // Tx-FIFO Control
++#define NPCM7XX_SMBT_OUT(bus)		(bus->base + 0x014)  // Bus T.O.
++#define NPCM7XX_SMBPEC(bus)		(bus->base + 0x016)  // PEC Data
++#define NPCM7XX_SMBTXF_STS(bus)		(bus->base + 0x01A)  // Tx-FIFO Status
++#define NPCM7XX_SMBRXF_STS(bus)		(bus->base + 0x01C)  // Rx-FIFO Status
++#define NPCM7XX_SMBRXF_CTL(bus)		(bus->base + 0x01E)  // Rx-FIFO Control
++
++
++
++// NPCM7XX_SMBST reg fields
++#define NPCM7XX_SMBST_XMIT			BIT(0)
++#define NPCM7XX_SMBST_MASTER			BIT(1)
++#define NPCM7XX_SMBST_NMATCH			BIT(2)
++#define NPCM7XX_SMBST_STASTR			BIT(3)
++#define NPCM7XX_SMBST_NEGACK			BIT(4)
++#define NPCM7XX_SMBST_BER			BIT(5)
++#define NPCM7XX_SMBST_SDAST			BIT(6)
++#define NPCM7XX_SMBST_SLVSTP			BIT(7)
++
++// NPCM7XX_SMBCST reg fields
++#define NPCM7XX_SMBCST_BUSY			BIT(0)
++#define NPCM7XX_SMBCST_BB			BIT(1)
++#define NPCM7XX_SMBCST_MATCH			BIT(2)
++#define NPCM7XX_SMBCST_GCMATCH			BIT(3)
++#define NPCM7XX_SMBCST_TSDA			BIT(4)
++#define NPCM7XX_SMBCST_TGSCL			BIT(5)
++#define NPCM7XX_SMBCST_MATCHAF			BIT(6)
++#define NPCM7XX_SMBCST_ARPMATCH			BIT(7)
++
++// NPCM7XX_SMBCTL1 reg fields
++#define NPCM7XX_SMBCTL1_START			BIT(0)
++#define NPCM7XX_SMBCTL1_STOP			BIT(1)
++#define NPCM7XX_SMBCTL1_INTEN			BIT(2)
++#define NPCM7XX_SMBCTL1_EOBINTE			BIT(3)
++#define NPCM7XX_SMBCTL1_ACK			BIT(4)
++#define NPCM7XX_SMBCTL1_GCMEN			BIT(5)
++#define NPCM7XX_SMBCTL1_NMINTE			BIT(6)
++#define NPCM7XX_SMBCTL1_STASTRE			BIT(7)
++
++// NPCM7XX_SMBADDRx reg fields
++#define NPCM7XX_SMBADDRx_ADDR			GENMASK(6, 0)
++#define NPCM7XX_SMBADDRx_SAEN			BIT(7)
++
++// NPCM7XX_SMBCTL2 reg fields
++#define SMBCTL2_ENABLE				BIT(0)
++#define SMBCTL2_SCLFRQ6_0			GENMASK(7, 1)
++
++// NPCM7XX_SMBCTL3 reg fields
++#define SMBCTL3_SCLFRQ8_7			GENMASK(1, 0)
++#define SMBCTL3_ARPMEN				BIT(2)
++#define SMBCTL3_IDL_START			BIT(3)
++#define SMBCTL3_400K_MODE			BIT(4)
++#define SMBCTL3_BNK_SEL				BIT(5)
++#define SMBCTL3_SDA_LVL				BIT(6)
++#define SMBCTL3_SCL_LVL				BIT(7)
++
++// NPCM7XX_SMBCST2 reg fields
++#define NPCM7XX_SMBCST2_MATCHA1F		BIT(0)
++#define NPCM7XX_SMBCST2_MATCHA2F		BIT(1)
++#define NPCM7XX_SMBCST2_MATCHA3F		BIT(2)
++#define NPCM7XX_SMBCST2_MATCHA4F		BIT(3)
++#define NPCM7XX_SMBCST2_MATCHA5F		BIT(4)
++#define NPCM7XX_SMBCST2_MATCHA6F		BIT(5)
++#define NPCM7XX_SMBCST2_MATCHA7F		BIT(5)
++#define NPCM7XX_SMBCST2_INTSTS			BIT(7)
++
++// NPCM7XX_SMBCST3 reg fields
++#define NPCM7XX_SMBCST3_MATCHA8F		BIT(0)
++#define NPCM7XX_SMBCST3_MATCHA9F		BIT(1)
++#define NPCM7XX_SMBCST3_MATCHA10F		BIT(2)
++#define NPCM7XX_SMBCST3_EO_BUSY			BIT(7)
++
++
++// NPCM7XX_SMBCTL4 reg fields
++#define SMBCTL4_HLDT				GENMASK(5, 0)
++#define SMBCTL4_LVL_WE				BIT(7)
++
++// NPCM7XX_SMBCTL5 reg fields
++#define SMBCTL5_DBNCT				GENMASK(3, 0)
++
++// NPCM7XX_SMBFIF_CTS reg fields
++#define NPCM7XX_SMBFIF_CTS_RXF_TXE		BIT(1)
++#define NPCM7XX_SMBFIF_CTS_RFTE_IE		BIT(3)
++#define NPCM7XX_SMBFIF_CTS_CLR_FIFO		BIT(6)
++#define NPCM7XX_SMBFIF_CTS_SLVRSTR		BIT(7)
++
++// NPCM7XX_SMBTXF_CTL reg fields
++#ifdef SMB_CAPABILITY_32B_FIFO
++#define NPCM7XX_SMBTXF_CTL_TX_THR		GENMASK(5, 0)
++#else
++#define NPCM7XX_SMBTXF_CTL_TX_THR		GENMASK(4, 0)
++#endif
++#define NPCM7XX_SMBTXF_CTL_THR_TXIE		BIT(6)
++
++// NPCM7XX_SMBT_OUT reg fields
++#define NPCM7XX_SMBT_OUT_TO_CKDIV		GENMASK(5, 0)
++#define NPCM7XX_SMBT_OUT_T_OUTIE		BIT(6)
++#define NPCM7XX_SMBT_OUT_T_OUTST		BIT(7)
++
++// NPCM7XX_SMBTXF_STS reg fields
++#ifdef SMB_CAPABILITY_32B_FIFO
++#define NPCM7XX_SMBTXF_STS_TX_BYTES		GENMASK(5, 0)
++#else
++#define NPCM7XX_SMBTXF_STS_TX_BYTES		GENMASK(4, 0)
++#endif
++#define NPCM7XX_SMBTXF_STS_TX_THST		BIT(6)
++
++// NPCM7XX_SMBRXF_STS reg fields
++#ifdef SMB_CAPABILITY_32B_FIFO
++#define NPCM7XX_SMBRXF_STS_RX_BYTES		GENMASK(5, 0)
++#else
++#define NPCM7XX_SMBRXF_STS_RX_BYTES		GENMASK(4, 0)
++#endif
++#define NPCM7XX_SMBRXF_STS_RX_THST		BIT(6)
++
++// NPCM7XX_SMBFIF_CTL reg fields
++#define NPCM7XX_SMBFIF_CTL_FIFO_EN		BIT(4)
++
++// NPCM7XX_SMBRXF_CTL reg fields
++// Note: on the next HW version of this module, this HW is about to switch to
++//	 32 bytes FIFO. This size will be set using a config.
++//	 on current version 16 bytes FIFO is set using a define
++#ifdef SMB_CAPABILITY_32B_FIFO
++#define NPCM7XX_SMBRXF_CTL_RX_THR		GENMASK(5, 0)
++#define NPCM7XX_SMBRXF_CTL_THR_RXIE		BIT(6)
++#define NPCM7XX_SMBRXF_CTL_LAST_PEC		BIT(7)
++#define SMBUS_FIFO_SIZE				32
++#else
++#define NPCM7XX_SMBRXF_CTL_RX_THR		GENMASK(4, 0)
++#define NPCM7XX_SMBRXF_CTL_LAST_PEC		BIT(5)
++#define NPCM7XX_SMBRXF_CTL_THR_RXIE		BIT(6)
++#define SMBUS_FIFO_SIZE				16
++#endif
++
++// SMB_VER reg fields
++#define SMB_VER_VERSION				GENMASK(6, 0)
++#define SMB_VER_FIFO_EN				BIT(7)
++
++
++
++// stall/stuck timeout
++const unsigned int DEFAULT_STALL_COUNT =	25;
++
++
++// Data abort timeout
++const unsigned int ABORT_TIMEOUT =	 1000;
++
++// SMBus spec. values in KHz
++const unsigned int SMBUS_FREQ_MIN =	10;
++
++const unsigned int SMBUS_FREQ_MAX =	1000;
++const unsigned int SMBUS_FREQ_100KHz = 100;
++const unsigned int SMBUS_FREQ_400KHz =	 400;
++const unsigned int SMBUS_FREQ_1MHz =	1000;
++
++
++
++// SCLFRQ min/max field values
++const unsigned int SCLFRQ_MIN =		10;
++const unsigned int SCLFRQ_MAX =		511;
++
++// SCLFRQ field position
++#define SCLFRQ_0_TO_6		GENMASK(6, 0)
++#define SCLFRQ_7_TO_8		GENMASK(8, 7)
++
++// SMB Maximum Retry Trials (on Bus Arbitration Loss)
++const unsigned int SMB_RETRY_MAX_COUNT = 2;
++
++const unsigned int SMB_NUM_OF_ADDR = 10;
++
++
++
++// for logging:
++#define NPCM7XX_I2C_EVENT_START	  BIT(0)
++#define NPCM7XX_I2C_EVENT_STOP	  BIT(1)
++#define NPCM7XX_I2C_EVENT_ABORT	  BIT(2)
++#define NPCM7XX_I2C_EVENT_WRITE	  BIT(3)
++#define NPCM7XX_I2C_EVENT_READ	  BIT(4)
++#define NPCM7XX_I2C_EVENT_BER	  BIT(5)
++#define NPCM7XX_I2C_EVENT_NACK	  BIT(6)
++#define NPCM7XX_I2C_EVENT_TO	  BIT(7)
++#define NPCM7XX_I2C_EVENT_EOB	  BIT(8)
++
++#define NPCM7XX_I2C_EVENT_LOG(event)   (bus->event_log |= event)
++
++// Status of one SMBus module
++struct NPCM7XX_i2c {
++	struct i2c_adapter		adap;
++	struct device			*dev;
++	unsigned char __iomem		*base;
++	spinlock_t			lock;
++	struct completion		cmd_complete;
++	int				irq;
++	int				cmd_err;
++	struct i2c_msg			*msgs;
++	int				msgs_num;
++	int				num;
++	u32				apb_clk;
++
++	// Current state of SMBus
++	enum smb_state		state;
++
++	// Type of the last SMBus operation
++	enum smb_oper			operation;
++
++	// Mode of operation on SMBus
++	enum smb_mode			master_or_slave;
++
++	// The indication to the hi level after Master Stop
++	enum smb_state_ind			stop_ind;
++
++	// SMBus slave device's Slave Address in 8-bit format -for master xfer
++	u8				dest_addr;
++
++	// Buffer where read data should be placed
++	u8				*rd_data_buf;
++
++	// Number of bytes to be read
++	u16				rd_size;
++
++	// Number of bytes already read
++	u16				rd_ind;
++
++	// Buffer with data to be written
++	u8				*wr_data_buf;
++
++	// Number of bytes to write
++	u16				wr_size;
++
++	// Number of bytes already written
++	u16				wr_ind;
++
++	// use fifo hardware or not
++	bool				fifo_use;
++
++	// fifo threshold size
++	u8				threshold_fifo;
++
++	// PEC bit mask per slave address.
++	//		1: use PEC for this address,
++	//		0: do not use PEC for this address
++	u16				PEC_mask;
++
++	// Use PEC CRC
++	bool				PEC_use;
++
++	// PEC CRC data
++	u8				crc_data;
++
++	// Use read block
++	bool				read_block_use;
++
++	// Number of retries remaining
++	u8				retry_count;
++
++	// int counter
++	u8				int_cnt;
++
++	// log events, fir debugging
++	u32				event_log;
++
++	// The indication to the hi level after Master Stop
++	u32				clk_period_us;
++	u32				int_time_stamp[2];
++};
++
++
++static bool NPCM7XX_smb_init_module(struct NPCM7XX_i2c *bus,
++				    enum smb_mode mode, u16 bus_freq);
++
++static bool NPCM7XX_smb_master_start_xmit(struct NPCM7XX_i2c
++					  *bus, u8 slave_addr,
++					  u16 nwrite, u16 nread,
++					  u8 *write_data, u8 *read_data,
++					  bool use_PEC);
++static int  NPCM7XX_smb_master_abort(struct NPCM7XX_i2c *bus);
++
++static int  NPCM7XX_smb_recovery(struct i2c_adapter *_adap);
++
++
++static void NPCM7XX_smb_set_SCL(struct i2c_adapter *_adap, int level);
++static int  NPCM7XX_smb_get_SCL(struct i2c_adapter *_adap);
++static int  NPCM7XX_smb_get_SDA(struct i2c_adapter *_adap);
++
++
++
++typedef void(*SMB_CALLBACK_T)(struct NPCM7XX_i2c *bus,
++			enum smb_state_ind op_status, u16 info);
++
++static inline void NPCM7XX_smb_write_byte(struct NPCM7XX_i2c *bus, u8 data);
++static inline bool NPCM7XX_smb_read_byte(struct NPCM7XX_i2c *bus, u8 *data);
++static inline void NPCM7XX_smb_select_bank(struct NPCM7XX_i2c *bus,
++						enum smb_bank bank);
++static inline u16  NPCM7XX_smb_get_index(struct NPCM7XX_i2c *bus);
++static inline void NPCM7XX_smb_master_start(struct NPCM7XX_i2c *bus);
++static inline void NPCM7XX_smb_master_stop(struct NPCM7XX_i2c *bus);
++static inline void NPCM7XX_smb_abort_data(struct NPCM7XX_i2c *bus);
++static inline void NPCM7XX_smb_stall_after_start(struct NPCM7XX_i2c *bus,
++						 bool stall);
++static inline void NPCM7XX_smb_nack(struct NPCM7XX_i2c *bus);
++static	void NPCM7XX_smb_reset(struct NPCM7XX_i2c *bus);
++static	void NPCM7XX_smb_int_enable(struct NPCM7XX_i2c *bus, bool enable);
++static	bool NPCM7XX_smb_init_clk(struct NPCM7XX_i2c *bus, enum smb_mode mode,
++					  u16 bus_freq);
++static	void NPCM7XX_smb_int_master_handler(struct NPCM7XX_i2c *bus);
++static	void NPCM7XX_smb_int_master_handler_write(struct NPCM7XX_i2c *bus);
++static	void NPCM7XX_smb_int_master_handler_read(struct NPCM7XX_i2c *bus);
++
++
++static inline	void NPCM7XX_smb_eob_int(struct NPCM7XX_i2c *bus, bool enable);
++
++static		void NPCM7XX_smb_write_to_fifo(struct NPCM7XX_i2c *bus,
++					       u16 max_bytes_to_send);
++static inline	bool NPCM7XX_smb_tx_fifo_full(struct NPCM7XX_i2c *bus);
++static inline	bool NPCM7XX_smb_rx_fifo_full(struct NPCM7XX_i2c *bus);
++static inline	void NPCM7XX_smb_clear_tx_fifo(struct NPCM7XX_i2c *bus);
++static inline	void NPCM7XX_smb_clear_rx_fifo(struct NPCM7XX_i2c *bus);
++
++
++static		void NPCM7XX_smb_set_fifo(struct NPCM7XX_i2c *bus,
++				int bytes_read, int bytes_write);
++static		void NPCM7XX_smb_calc_PEC(struct NPCM7XX_i2c *bus, u8 data);
++static inline	void NPCM7XX_smb_write_PEC(struct NPCM7XX_i2c *bus);
++static inline	u8   NPCM7XX_smb_get_PEC(struct NPCM7XX_i2c *bus);
++static		void NPCM7XX_smb_callback(struct NPCM7XX_i2c *bus,
++					enum smb_state_ind op_status, u16 info);
++
++
++
++static inline void _npcm7xx_get_time_stamp(u32 *time_quad0, u32 *time_quad1);
++static inline u32  _npcm7xx_delay_relative(u32 us_delay, u32 t0_time0,
++						u32 t0_time1);
++
++
++static inline void _npcm7xx_get_time_stamp(u32 *time_quad0, u32 *time_quad1)
++{
++	u32 seconds, seconds_last;
++	u32 ref_clock;
++
++	regmap_read(clk_regmap, NPCM7XX_SECCNT, &seconds_last);
++
++	do {
++		regmap_read(clk_regmap, NPCM7XX_SECCNT, &seconds);
++		regmap_read(clk_regmap, NPCM7XX_CNTR25M, &ref_clock);
++		regmap_read(clk_regmap, NPCM7XX_SECCNT, &seconds_last);
++	} while (seconds_last != seconds);
++
++	*time_quad0 = ref_clock;
++	*time_quad1 = seconds;
++}
++
++#define EXT_CLOCK_FREQUENCY_MHZ 25
++#define	 CNTR25M_ACCURECY  EXT_CLOCK_FREQUENCY_MHZ  // minimum accurecy
++
++
++
++// Function:	 _npcm7xx_delay_relative
++// Parameters:
++//		 us_delay -  number of microseconds to delay since t0_time.
++//				  if zero: no delay.
++//
++//		t0_time	      - start time , to measure time from.
++// get a time stamp, delay us_delay from it. If us_delay has already passed
++// since the time stamp , then no delay is executed. returns the time elapsed
++// since t0_time
++
++static inline u32 _npcm7xx_delay_relative(u32 us_delay, u32 t0_time0,
++			u32 t0_time1){
++
++	u32 iUsCnt2_0, iUsCnt2_1;
++	u32 timeElapsedSince;  // Acctual delay generated by FW
++	u32 minimum_delay = (us_delay * EXT_CLOCK_FREQUENCY_MHZ)
++		+ CNTR25M_ACCURECY;
++
++	// this is equivalent to microSec/0.64 + minimal tic length.
++	do {
++		_npcm7xx_get_time_stamp(&iUsCnt2_0, &iUsCnt2_1);
++		timeElapsedSince = ((EXT_CLOCK_FREQUENCY_MHZ*_1MHz_)*
++				    (iUsCnt2_1 - t0_time1)) +
++				    (iUsCnt2_0 - t0_time0);
++	} while (timeElapsedSince < minimum_delay);
++
++	// return elapsed time
++	return (u32)(timeElapsedSince / EXT_CLOCK_FREQUENCY_MHZ);
++}
++
++
++
++static inline void NPCM7XX_smb_write_byte(struct NPCM7XX_i2c *bus, u8 data)
++{
++	I2C_DEBUG2("\t\tSDA master bus%d wr 0x%x\n", bus->num, data);
++
++	iowrite8(data, NPCM7XX_SMBSDA(bus));
++	NPCM7XX_smb_calc_PEC(bus, data);
++}
++
++static inline bool NPCM7XX_smb_read_byte(struct NPCM7XX_i2c *bus, u8 *data)
++{
++	*data = ioread8(NPCM7XX_SMBSDA(bus));
++	I2C_DEBUG2("\t\tSDA master bus%d rd 0x%x\n", bus->num, *data);
++	NPCM7XX_smb_calc_PEC(bus, *data);
++	return true;
++}
++
++static inline void NPCM7XX_smb_select_bank(struct NPCM7XX_i2c *bus,
++						enum smb_bank  bank)
++{
++	if (bus->fifo_use == true)
++		iowrite8((ioread8(NPCM7XX_SMBCTL3(bus)) & ~SMBCTL3_BNK_SEL) |
++		FIELD_PREP(SMBCTL3_BNK_SEL, bank), NPCM7XX_SMBCTL3(bus));
++}
++
++
++static inline u16 NPCM7XX_smb_get_index(struct NPCM7XX_i2c *bus)
++{
++	u16 index = 0;
++
++	if (bus->operation == SMB_READ_OPER)
++		index = bus->rd_ind;
++	else if (bus->operation == SMB_WRITE_OPER)
++		index = bus->wr_ind;
++
++	return index;
++}
++
++
++
++static inline void NPCM7XX_smb_master_start(struct NPCM7XX_i2c *bus)
++{
++	NPCM7XX_I2C_EVENT_LOG(NPCM7XX_I2C_EVENT_START);
++
++	iowrite8(ioread8(NPCM7XX_SMBCTL1(bus)) | NPCM7XX_SMBCTL1_START,
++		 NPCM7XX_SMBCTL1(bus));
++
++}
++
++static inline void NPCM7XX_smb_master_stop(struct NPCM7XX_i2c *bus)
++{
++	NPCM7XX_I2C_EVENT_LOG(NPCM7XX_I2C_EVENT_STOP);
++
++#ifdef SMB_SW_BYPASS_HW_ISSUE_SMB_STOP
++	// override HW issue: SMBus may fail to supply stop condition in Master
++	// Write operation.
++	// Need to delay at least 5 us from the last int, before issueing a stop
++	_npcm7xx_delay_relative(5, bus->int_time_stamp[0],
++					bus->int_time_stamp[1]);
++
++#endif //   SMB_SW_BYPASS_HW_ISSUE_SMB_STOP
++
++	iowrite8(ioread8(NPCM7XX_SMBCTL1(bus)) | NPCM7XX_SMBCTL1_STOP,
++		 NPCM7XX_SMBCTL1(bus));
++
++
++	if (bus->fifo_use) {
++		NPCM7XX_smb_select_bank(bus, SMB_BANK_1);
++
++		NPCM7XX_smb_clear_rx_fifo(bus);
++
++		iowrite8(ioread8(NPCM7XX_SMBFIF_CTS(bus)) |
++				 NPCM7XX_SMBFIF_CTS_SLVRSTR |
++				 NPCM7XX_SMBFIF_CTS_RXF_TXE,
++				 NPCM7XX_SMBFIF_CTS(bus));
++
++		iowrite8(0, NPCM7XX_SMBTXF_CTL(bus));
++	}
++
++
++}
++
++static inline void NPCM7XX_smb_abort_data(struct NPCM7XX_i2c *bus)
++{
++	unsigned int timeout = ABORT_TIMEOUT;
++
++	NPCM7XX_I2C_EVENT_LOG(NPCM7XX_I2C_EVENT_ABORT);
++
++	// Generate a STOP condition
++	NPCM7XX_smb_master_stop(bus);
++
++	// Clear NEGACK, STASTR and BER bits
++	iowrite8(NPCM7XX_SMBST_STASTR | NPCM7XX_SMBST_NEGACK |
++		NPCM7XX_SMBST_BER, NPCM7XX_SMBST(bus));
++
++	// Wait till STOP condition is generated
++	while (FIELD_GET(NPCM7XX_SMBCTL1_STOP, ioread8(NPCM7XX_SMBCTL1(bus)))) {
++		timeout--;
++		if (!FIELD_GET(NPCM7XX_SMBCTL1_STOP,
++				ioread8(NPCM7XX_SMBCTL1(bus))))
++			break;
++		if (timeout <= 1) {
++			dev_err(bus->dev, "%s, abort timeout!\n", __func__);
++			break;
++		}
++	}
++}
++
++
++static inline void NPCM7XX_smb_stall_after_start(struct NPCM7XX_i2c *bus,
++			bool stall)
++{
++	I2C_DEBUG2("\t\tSDA stall bus%d\n", bus->num);
++	iowrite8((ioread8(NPCM7XX_SMBCTL1(bus))
++		& ~NPCM7XX_SMBCTL1_STASTRE)
++		| FIELD_PREP(NPCM7XX_SMBCTL1_STASTRE, stall),
++		NPCM7XX_SMBCTL1(bus));
++}
++
++static inline void NPCM7XX_smb_nack(struct NPCM7XX_i2c *bus)
++{
++	if (bus->rd_ind < (bus->rd_size - 1))
++		dev_info(bus->dev,
++			"\tNACK err bus%d, SA=0x%x, rd(%d\%d), op=%d st=%d\n",
++			bus->num, bus->dest_addr, bus->rd_ind, bus->rd_size,
++			bus->operation, bus->state);
++	iowrite8(ioread8(NPCM7XX_SMBCTL1(bus)) | NPCM7XX_SMBCTL1_ACK,
++		 NPCM7XX_SMBCTL1(bus));
++}
++
++
++static void NPCM7XX_smb_disable(struct NPCM7XX_i2c *bus)
++{
++	int i;
++
++	// select bank 0 for SMB addresses
++	NPCM7XX_smb_select_bank(bus, SMB_BANK_0);
++
++	// Slave Addresses Removal
++	for (i = SMB_SLAVE_ADDR1; i < SMB_NUM_OF_ADDR; i++)
++		iowrite8(0, NPCM7XX_SMBADDR(bus, i));
++
++	// select bank 0 for SMB addresses
++	NPCM7XX_smb_select_bank(bus, SMB_BANK_1);
++
++
++	// Disable module.
++	iowrite8((ioread8(NPCM7XX_SMBCTL2(bus))	& ~SMBCTL2_ENABLE),
++			NPCM7XX_SMBCTL2(bus));
++
++	// Set module disable
++	bus->state = SMB_DISABLE;
++}
++
++static void NPCM7XX_smb_enable(struct NPCM7XX_i2c *bus)
++{
++	iowrite8((ioread8(NPCM7XX_SMBCTL2(bus)) | SMBCTL2_ENABLE),
++			NPCM7XX_SMBCTL2(bus));
++}
++
++static bool NPCM7XX_smb_init_module(struct NPCM7XX_i2c *bus, enum smb_mode mode,
++				    u16 bus_freq)
++{
++	// Check whether module already enabled or frequency is out of bounds
++	if (((bus->state != SMB_DISABLE) &&
++		(bus->state != SMB_IDLE)) ||
++		(bus_freq < SMBUS_FREQ_MIN) || (bus_freq > SMBUS_FREQ_MAX))
++		return false;
++
++
++	// Configure FIFO disabled mode so slave will not use fifo
++	// (maste will set it on if supported)
++	bus->threshold_fifo = SMBUS_FIFO_SIZE;
++	iowrite8(ioread8(NPCM7XX_SMBFIF_CTL(bus)) & ~NPCM7XX_SMBFIF_CTL_FIFO_EN,
++		 NPCM7XX_SMBFIF_CTL(bus));
++
++	bus->fifo_use = false;
++
++	// Configure SMB module clock frequency
++	if (!NPCM7XX_smb_init_clk(bus, mode, bus_freq)) {
++		pr_err("NPCM7XX_smb_init_clk failed\n");
++		return false;
++	}
++
++	NPCM7XX_smb_disable(bus);
++
++	// Enable module (before configuring CTL1)
++	NPCM7XX_smb_enable(bus);
++
++	bus->state = SMB_IDLE;
++
++	// Enable SMB int and New Address Match int source
++	iowrite8((ioread8(NPCM7XX_SMBCTL1(bus)) | NPCM7XX_SMBCTL1_NMINTE),
++				NPCM7XX_SMBCTL1(bus));
++
++	NPCM7XX_smb_int_enable(bus, true);
++
++	return true;
++}
++
++static bool NPCM7XX_smb_master_start_xmit(struct NPCM7XX_i2c *bus,
++					  u8 slave_addr, u16 nwrite, u16 nread,
++					  u8 *write_data, u8 *read_data,
++					  bool use_PEC)
++{
++	//
++	// Allow only if bus is not busy
++	//
++	if ((bus->state != SMB_IDLE)
++	    ||
++	    ((nwrite >= 32*1024)
++	    && (nwrite != SMB_QUICK_PROT)) ||
++	    ((nread >= 32*1024) && (nread != SMB_BLOCK_PROT)
++	    && (nread != SMB_QUICK_PROT))
++
++	    )	{
++		dev_info(bus->dev, "\tbus%d->state != SMB_IDLE\n", bus->num);
++		return false;
++	}
++
++	// Configure FIFO mode :
++	if (FIELD_GET(SMB_VER_FIFO_EN, ioread8(SMB_VER(bus)))) {
++		bus->fifo_use = true;
++		iowrite8(ioread8(NPCM7XX_SMBFIF_CTL(bus)) |
++			NPCM7XX_SMBFIF_CTL_FIFO_EN, NPCM7XX_SMBFIF_CTL(bus));
++	} else
++		bus->fifo_use = false;
++
++	// Update driver state
++	bus->master_or_slave = SMB_MASTER;
++	bus->state = SMB_MASTER_START;
++	if (nwrite > 0)
++		bus->operation = SMB_WRITE_OPER;
++	else
++		bus->operation = SMB_READ_OPER;
++
++
++	if ((nwrite == 0) && (nread == 0))
++		nwrite = nread = SMB_QUICK_PROT;
++
++	bus->dest_addr = (u8)(slave_addr << 1);// Translate 7bit to 8bit format
++	bus->wr_data_buf = write_data;
++	bus->wr_size = nwrite;
++	bus->wr_ind = 0;
++	bus->rd_data_buf = read_data;
++	bus->rd_size = nread;
++	bus->rd_ind = 0;
++	bus->PEC_use = use_PEC;
++	bus->read_block_use = false;
++	bus->retry_count = SMB_RETRY_MAX_COUNT;
++
++	// Check if transaction uses Block read protocol
++	if ((bus->rd_size == SMB_BLOCK_PROT) ||
++	    (bus->rd_size == SMB_EXCLUDE_BLOCK_SIZE_FROM_BUF)) {
++		bus->read_block_use = true;
++
++		// Change nread in order to configure receive threshold to 1
++		nread = 1;
++	}
++
++	// clear BER just in case it is set due to a previous transaction
++	iowrite8(NPCM7XX_SMBST_BER, NPCM7XX_SMBST(bus));
++
++
++	// Initiate SMBus master transaction
++	// Generate a Start condition on the SMBus
++	if (bus->fifo_use == true) {
++		// select bank 1 for FIFO regs
++		NPCM7XX_smb_select_bank(bus, SMB_BANK_1);
++
++		// clear FIFO and relevant status bits.
++		iowrite8(ioread8(NPCM7XX_SMBFIF_CTS(bus))
++			 | NPCM7XX_SMBFIF_CTS_SLVRSTR
++			 | NPCM7XX_SMBFIF_CTS_CLR_FIFO
++			 | NPCM7XX_SMBFIF_CTS_RXF_TXE, NPCM7XX_SMBFIF_CTS(bus));
++
++		if (bus->operation == SMB_READ_OPER) {
++			//This is a read only operation. Configure the FIFO
++			//threshold according to the needed # of bytes to read.
++
++			NPCM7XX_smb_set_fifo(bus, nread, -1);
++
++		} else if (bus->operation == SMB_WRITE_OPER) {
++			NPCM7XX_smb_set_fifo(bus, -1, nwrite);
++		}
++	}
++
++	bus->int_cnt = 100;
++	bus->event_log = 0;
++
++	NPCM7XX_smb_master_start(bus);
++
++	return true;
++}
++
++
++// enable\disable end of busy (EOB) interrupt
++static inline void NPCM7XX_smb_eob_int(struct NPCM7XX_i2c *bus, bool enable)
++{
++	if (enable == true)
++		iowrite8(ioread8(NPCM7XX_SMBCTL1(bus)) |
++			NPCM7XX_SMBCTL1_EOBINTE, NPCM7XX_SMBCTL1(bus));
++	else {
++		iowrite8(ioread8(NPCM7XX_SMBCTL1(bus)) &
++			(~NPCM7XX_SMBCTL1_EOBINTE), NPCM7XX_SMBCTL1(bus));
++
++		// Clear EO_BUSY pending bit:
++		iowrite8(ioread8(NPCM7XX_SMBCST3(bus)) |
++			NPCM7XX_SMBCST3_EO_BUSY, NPCM7XX_SMBCST3(bus));
++	}
++}
++
++
++static inline bool NPCM7XX_smb_tx_fifo_full(struct NPCM7XX_i2c *bus)
++{
++	// check if TX FIFO full:
++	return (bool)FIELD_GET(NPCM7XX_SMBTXF_STS_TX_THST,
++			ioread8(NPCM7XX_SMBTXF_STS(bus)));
++}
++
++
++static inline bool NPCM7XX_smb_rx_fifo_full(struct NPCM7XX_i2c *bus)
++{
++	// check if RX FIFO full:
++	return (bool)FIELD_GET(NPCM7XX_SMBRXF_STS_RX_THST,
++			ioread8(NPCM7XX_SMBRXF_STS(bus)));
++}
++
++static inline void NPCM7XX_smb_clear_tx_fifo(struct NPCM7XX_i2c *bus)
++{
++	// clear TX FIFO:
++	iowrite8(ioread8(NPCM7XX_SMBTXF_STS(bus)) |
++		 NPCM7XX_SMBTXF_STS_TX_THST,
++		 NPCM7XX_SMBTXF_STS(bus));
++}
++
++
++static inline void NPCM7XX_smb_clear_rx_fifo(struct NPCM7XX_i2c *bus)
++{
++	// clear RX FIFO:
++	iowrite8(ioread8(NPCM7XX_SMBRXF_STS(bus)) |
++			 NPCM7XX_SMBRXF_STS_RX_THST,
++			 NPCM7XX_SMBRXF_STS(bus));
++}
++
++
++
++// configure the FIFO before using it. If nread is -1 RX FIFO will not be
++// configured. same for	nwrite
++static void NPCM7XX_smb_set_fifo(struct NPCM7XX_i2c *bus, int nread,
++			int nwrite)
++{
++	if (bus->fifo_use == false)
++		return;
++
++	NPCM7XX_smb_select_bank(bus, SMB_BANK_1);
++
++	NPCM7XX_smb_clear_tx_fifo(bus);
++	NPCM7XX_smb_clear_rx_fifo(bus);
++
++	// configure RX FIFO
++	if (nread > 0) {
++		// clear LAST bit:
++		iowrite8(ioread8(NPCM7XX_SMBRXF_CTL(bus)) &
++					(~NPCM7XX_SMBRXF_CTL_LAST_PEC),
++					NPCM7XX_SMBRXF_CTL(bus));
++
++
++		if (nread > SMBUS_FIFO_SIZE && (nread != SMB_QUICK_PROT))
++			iowrite8((ioread8(NPCM7XX_SMBRXF_CTL(bus)) &
++				~NPCM7XX_SMBRXF_CTL_RX_THR)
++				| FIELD_PREP(NPCM7XX_SMBRXF_CTL_RX_THR,
++				SMBUS_FIFO_SIZE), NPCM7XX_SMBRXF_CTL(bus));
++		else {
++			iowrite8((ioread8(NPCM7XX_SMBRXF_CTL(bus)) &
++				~NPCM7XX_SMBRXF_CTL_RX_THR)
++				| FIELD_PREP(NPCM7XX_SMBRXF_CTL_RX_THR,
++				(u8)(nread)), NPCM7XX_SMBRXF_CTL(bus));
++		}
++		if ((nread <= SMBUS_FIFO_SIZE)	 &&
++		    (bus->rd_size != SMB_BLOCK_PROT) &&
++		    (bus->rd_size != SMB_EXCLUDE_BLOCK_SIZE_FROM_BUF))
++			iowrite8(ioread8(NPCM7XX_SMBRXF_CTL(bus)) |
++				NPCM7XX_SMBRXF_CTL_LAST_PEC,
++				NPCM7XX_SMBRXF_CTL(bus));
++
++	}
++
++
++
++	// configure TX FIFO
++	if (nwrite > 0) {
++
++		if (nwrite > SMBUS_FIFO_SIZE)
++			// data to send is more then FIFO size.
++			// Configure the FIFO int to be mid of FIFO.
++			iowrite8(NPCM7XX_SMBTXF_CTL_THR_TXIE |
++				(SMBUS_FIFO_SIZE / 2),
++				NPCM7XX_SMBTXF_CTL(bus));
++		else if ((nwrite > SMBUS_FIFO_SIZE / 2) &&
++					(bus->wr_ind != 0))
++			// wr_ind != 0 means that this is not the first
++			// write. since int is in the mid of FIFO, only
++			// half of the fifo is empty.
++			// Continue to configure the FIFO int to be mid
++			// of FIFO.
++			iowrite8(NPCM7XX_SMBTXF_CTL_THR_TXIE |
++					(SMBUS_FIFO_SIZE / 2),
++					NPCM7XX_SMBTXF_CTL(bus));
++		else {
++
++			// This is the either first write (wr_ind = 0)
++			// and data to send is less or equal to FIFO
++			// size.
++			// Or this is the last write and data to send
++			// is less or equal half FIFO size.
++			// In both cases disable the FIFO threshold int.
++			// The next int will happen after the FIFO will
++			// get empty.
++			iowrite8((u8)0, NPCM7XX_SMBTXF_CTL(bus));
++		}
++
++		NPCM7XX_smb_clear_tx_fifo(bus);
++	}
++
++}
++
++static
++void NPCM7XX_smb_read_from_fifo(struct NPCM7XX_i2c *bus, u8 bytes_in_fifo)
++{
++	while (bytes_in_fifo--) {
++		// Keep read data
++		u8 data = ioread8(NPCM7XX_SMBSDA(bus));
++
++		NPCM7XX_smb_calc_PEC(bus, data);
++		if (bus->rd_ind < bus->rd_size) {
++			bus->rd_data_buf[bus->rd_ind++] = data;
++			if ((bus->rd_ind == 1) &&
++			    (bus->rd_size == SMB_BLOCK_PROT))
++				// First byte indicates length in block protocol
++				bus->rd_size = data;
++		}
++	}
++}
++
++static void NPCM7XX_smb_master_fifo_read(struct NPCM7XX_i2c *bus)
++{
++	u16 rcount;
++	u8 fifo_bytes;
++	enum smb_state_ind ind = SMB_MASTER_DONE_IND;
++
++	rcount = bus->rd_size - bus->rd_ind;
++
++
++	// In order not to change the RX_TRH during transaction (we found that
++	// this might be problematic if it takes too much time to read the FIFO)
++	//  we read the data in the following way. If the number of bytes to
++	// read == FIFO Size + C (where C < FIFO Size)then first read C bytes
++	// and in the next int we read rest of the data.
++	if ((rcount < (2 * SMBUS_FIFO_SIZE)) && (rcount > SMBUS_FIFO_SIZE))
++		fifo_bytes = (u8)(rcount - SMBUS_FIFO_SIZE);
++	else
++		fifo_bytes = FIELD_GET(NPCM7XX_SMBRXF_STS_RX_BYTES, ioread8(
++		NPCM7XX_SMBRXF_STS(bus)));
++
++	if (rcount - fifo_bytes == 0) {
++		// last byte is about to be read - end of transaction.
++		// Stop should be set before reading last byte.
++		NPCM7XX_smb_eob_int(bus, true);
++
++		NPCM7XX_smb_master_stop(bus);
++
++		NPCM7XX_smb_read_from_fifo(bus, fifo_bytes);
++
++		if (NPCM7XX_smb_get_PEC(bus) != 0)
++			ind = SMB_MASTER_PEC_ERR_IND;
++		bus->state = SMB_STOP_PENDING;
++		bus->stop_ind = ind;
++
++	} else {
++		NPCM7XX_smb_read_from_fifo(bus, fifo_bytes);
++		rcount = bus->rd_size - bus->rd_ind;
++
++		NPCM7XX_smb_set_fifo(bus, rcount, -1);
++	}
++
++}
++
++
++static void NPCM7XX_smb_write_to_fifo(struct NPCM7XX_i2c *bus,
++				      u16 max_bytes_to_send)
++{
++	dev_dbg(bus->dev, "SDA master bus%d fifo wr %d bytes\n", bus->num,
++		   max_bytes_to_send);
++
++	// Fill the FIFO, while the FIFO is not full and there are more bytes to
++	// write
++	while ((max_bytes_to_send--) && (SMBUS_FIFO_SIZE -
++		FIELD_GET(NPCM7XX_SMBTXF_STS_TX_BYTES,
++		ioread8(NPCM7XX_SMBTXF_STS(bus))))) {
++		// write the data
++		if (bus->wr_ind < bus->wr_size) {
++			if ((bus->PEC_use == true) &&
++			    ((bus->wr_ind + 1) == bus->wr_size) &&
++			    ((bus->rd_size == 0) ||
++			    (bus->master_or_slave == SMB_SLAVE))) {
++				// Master send PEC in write protocol, Slave send
++				// PEC in read protocol.
++				NPCM7XX_smb_write_PEC(bus);
++				bus->wr_ind++;
++			} else
++				NPCM7XX_smb_write_byte(bus,
++					bus->wr_data_buf[bus->wr_ind++]);
++		} else {
++
++#ifdef SMB_WRAP_AROUND_BUFFER
++			// We're out of bytes. Ask the higher level for
++			// more bytes. Let it know that driver
++			// used all its' bytes
++
++			NPCM7XX_smb_clear_tx_fifo(bus);
++
++			// Reset state for the remaining bytes transaction
++			bus->state = SMB_SLAVE_MATCH;
++
++			// Notify upper layer of transaction completion
++			NPCM7XX_smb_callback(bus,
++					SMB_SLAVE_XMIT_MISSING_DATA_IND,
++					bus->wr_ind);
++
++			iowrite8(NPCM7XX_SMBST_SDAST, NPCM7XX_SMBST(bus));
++#else
++			NPCM7XX_smb_write_byte(bus, 0xFF);
++#endif
++		}
++	}
++}
++
++
++static bool NPCM7XX_smb_init_clk(struct NPCM7XX_i2c *bus, enum smb_mode mode,
++				 u16 bus_freq)
++{
++	u16  k1 = 0;
++	u16  k2 = 0;
++	u8   dbnct = 0;
++	u16  sclfrq = 0;
++	u8   hldt = 7;
++	bool fastMode = false;
++	u32  source_clock_freq;
++
++	source_clock_freq = bus->apb_clk;
++
++
++	// Frequency is less or equal to 100 KHz
++	if (bus_freq <= SMBUS_FREQ_100KHz) {
++		// Set frequency (in khz):
++		// SCLFRQ = T(SCL)/4/T(CLK) =
++		// FREQ(CLK)/4/FREQ(SCL) = FREQ(CLK) / ( FREQ(SCL)*4 )
++		sclfrq = (u16)((source_clock_freq /
++				((u32)bus_freq * _1KHz_ * 4)));
++
++		// Check whether requested freq can be achieved in current CLK
++		if ((sclfrq < SCLFRQ_MIN) || (sclfrq > SCLFRQ_MAX))
++			return false;
++
++		if (source_clock_freq >= 40000000)
++			hldt = 17;
++		else if (source_clock_freq >= 12500000)
++			hldt = 15;
++		else
++			hldt = 7;
++	}
++
++	// Frequency equal to 400 KHz
++	else if (bus_freq == SMBUS_FREQ_400KHz) {
++		sclfrq = 0;
++		fastMode = true;
++
++		if ((mode == SMB_MASTER && source_clock_freq < 7500000) ||
++		   (mode == SMB_SLAVE && source_clock_freq < 10000000))
++		  // 400KHz cannot be supported for master core clock < 7.5 MHz
++		  // or slave core clock < 10 MHz
++			return false;
++
++		// Master or Slave with frequency > 25 MHz
++		if (mode == SMB_MASTER || source_clock_freq > 25000000) {
++			// Set HLDT:
++			// SDA hold time:  (HLDT-7) * T(CLK) >= 300
++			// HLDT = 300/T(CLK) + 7 = 300 * FREQ(CLK) + 7
++			hldt = (u8)DIV_CEILING((300 *
++				(source_clock_freq / _1KHz_)), (_1MHz_)) + 7;
++
++			if (mode == SMB_MASTER) {
++				// Set k1:
++				// clk low time: k1 * T(CLK) - T(SMBFO) >= 1300
++				// T(SMBRO) = T(SMBFO) = 300
++				// k1 = (1300 + T(SMBFO)) / T(CLK) =
++				//			1600 * FREQ(CLK)
++				k1 = ROUND_UP(((u16)DIV_CEILING((1600 *
++					(source_clock_freq / _1KHz_)),
++					(_1MHz_))), 2);
++
++				// Set k2:
++				// setup: (k2 - 1) * T(CLK) - T(SMBFO) >= 600
++				// T(SMBRO) = T(SMBFO) = 300
++				// k2 = (600 + T(SMBFO)) / T(CLK) + 1 = 900 *
++				// FREQ(CLK) + 1
++				k2 = ROUND_UP(((u16)DIV_CEILING(
++					(900 *  (source_clock_freq / _1KHz_)),
++					(_1MHz_)) + 1), 2);
++
++				// Check whether requested frequency can be
++				// achieved in current CLK
++				if ((k1 < SCLFRQ_MIN) || (k1 > SCLFRQ_MAX) ||
++				    (k2 < SCLFRQ_MIN) || (k2 > SCLFRQ_MAX))
++					return false;
++			}
++		} else { // Slave with frequency 10-25 MHz
++			hldt = 7;
++			dbnct = 2;
++		}
++	}
++
++	// Frequency equal to 1 MHz
++	else if (bus_freq == SMBUS_FREQ_1MHz) {
++		sclfrq = 0;
++		fastMode = true;
++
++		if ((mode == SMB_MASTER && source_clock_freq < 15000000) ||
++		    (mode == SMB_SLAVE	&& source_clock_freq < 24000000))
++		// 1MHz cannot be supported for master core clock < 15 MHz
++		// or slave core clock < 24 MHz
++			return false;
++
++		// Master or Slave with frequency > 40 MHz
++		if (mode == SMB_MASTER || source_clock_freq > 40000000) {
++
++			// Set HLDT:
++			// SDA hold time:  (HLDT-7) * T(CLK) >= 120
++			// HLDT = 120/T(CLK) + 7 = 120 * FREQ(CLK) + 7
++			hldt = (u8)DIV_CEILING((120 *
++				(source_clock_freq / _1KHz_)),
++				((u32)_1MHz_)) + 7;
++
++			if (mode == SMB_MASTER) {
++
++				// Set k1:
++				// clk low time: k1 * T(CLK) - T(SMBFO) >= 500
++				// T(SMBRO) = T(SMBFO) = 120
++				// k1 = (500 + T(SMBFO)) / T(CLK) = 620 * FREQ
++				k1 = ROUND_UP(((u16)DIV_CEILING((620 *
++					(source_clock_freq / _1KHz_)),
++					((u32)_1MHz_))), 2);
++
++
++				// Set k2:
++				// START setup: (k2 - 1) * T - T(SMBFO) >= 260
++				// T(SMBRO) = T(SMBFO) = 120
++				// k2 = (260 + T(SMBFO)) / T + 1 = 380 *
++				// FREQ(CLK) + 1
++				k2 = ROUND_UP(((u16)DIV_CEILING((380
++					* (source_clock_freq / _1KHz_)),
++					((u32)_1MHz_))
++					+ 1), 2);
++
++
++				// Check whether requested frequency can be
++				// achieved in current CLK
++				if ((k1 < SCLFRQ_MIN) || (k1 > SCLFRQ_MAX) ||
++				    (k2 < SCLFRQ_MIN) || (k2 > SCLFRQ_MAX)) {
++					return false;
++				}
++			}
++		// Slave with frequency 24-40 MHz
++		} else {
++			hldt = 7;
++			dbnct = 2;
++		}
++	}
++
++	// Frequency larger than 1 MHz
++	else
++		return false;
++
++
++
++	// After clock parameters calculation update the reg
++	iowrite8((ioread8(NPCM7XX_SMBCTL2(bus))
++		& ~SMBCTL2_SCLFRQ6_0) | FIELD_PREP(SMBCTL2_SCLFRQ6_0,
++		sclfrq & 0x7F), NPCM7XX_SMBCTL2(bus));
++
++	iowrite8((ioread8(NPCM7XX_SMBCTL3(bus)) & ~SMBCTL3_SCLFRQ8_7) |
++		 FIELD_PREP(SMBCTL3_SCLFRQ8_7,
++		 (sclfrq >> 7) & 0x3), NPCM7XX_SMBCTL3(bus));
++
++	iowrite8((ioread8(NPCM7XX_SMBCTL3(bus))
++		& ~SMBCTL3_400K_MODE) | FIELD_PREP(SMBCTL3_400K_MODE,
++		fastMode), NPCM7XX_SMBCTL3(bus));
++
++	iowrite8((ioread8(NPCM7XX_SMBCTL3(bus)) & ~SMBCTL3_400K_MODE) |
++		 FIELD_PREP(SMBCTL3_400K_MODE, fastMode), NPCM7XX_SMBCTL3(bus));
++
++
++	// Select Bank 0 to access NPCM7XX_SMBCTL4/NPCM7XX_SMBCTL5
++	NPCM7XX_smb_select_bank(bus, SMB_BANK_0);
++
++	if (bus_freq >= SMBUS_FREQ_400KHz) {
++
++		// k1 and k2 are relevant for master mode only
++		if (mode == SMB_MASTER) {
++
++			// Set SCL Low/High Time:
++			// k1 = 2 * SCLLT7-0 -> Low Time  = k1 / 2
++			// k2 = 2 * SCLLT7-0 -> High Time = k2 / 2
++			iowrite8((u8)k1 / 2, NPCM7XX_SMBSCLLT(bus));
++			iowrite8((u8)k2 / 2, NPCM7XX_SMBSCLHT(bus));
++		} else // DBNCT is relevant for slave mode only
++			iowrite8((ioread8(NPCM7XX_SMBCTL5(bus)) &
++			   ~SMBCTL5_DBNCT) | FIELD_PREP(SMBCTL5_DBNCT, dbnct),
++			NPCM7XX_SMBCTL5(bus));
++	}
++
++	iowrite8((ioread8(NPCM7XX_SMBCTL4(bus)) & ~SMBCTL4_HLDT)
++		 | FIELD_PREP(SMBCTL4_HLDT,
++		 hldt), NPCM7XX_SMBCTL4(bus));
++
++	// Return to Bank 1
++	NPCM7XX_smb_select_bank(bus, SMB_BANK_1);
++
++	return true;
++}
++
++
++#if defined(SMB_CAPABILITY_TIMEOUT_SUPPORT)
++static void NPCM7XX_smb_enable_timeout(struct NPCM7XX_i2c *bus, bool enable)
++{
++	u8 toCkDiv;
++	u8 smbEnabled;
++	u8 smbctl1 = 0;
++
++	dev_info(bus->dev, "SDA master bus%d enable TO %d\n", bus->num, enable);
++
++	if (enable) {
++
++		// TO_CKDIV may be changed only when the SMB is disabled
++		smbEnabled = FIELD_GET(SMBCTL2_ENABLE,
++				ioread8(NPCM7XX_SMBCTL2(bus)));
++
++		// If SMB is enabled - disable the SMB module
++		if (smbEnabled) {
++
++			// Save NPCM7XX_SMBCTL1 relevant bits. It is being
++			// cleared when the module is disabled
++			smbctl1 = ioread8(NPCM7XX_SMBCTL1(bus)) &
++				(NPCM7XX_SMBCTL1_GCMEN
++				NPCM7XX_SMBCTL1_INTEN
++				| NPCM7XX_SMBCTL1_NMINTE);
++
++			// Disable the SMB module
++			iowrite8(ioread8(NPCM7XX_SMBCTL2(bus) &
++				~SMBCTL2_ENABLE), NPCM7XX_SMBCTL2(bus));
++		}
++
++		// Clear EO_BUSY pending bit
++		iowrite8(ioread8(NPCM7XX_SMBT_OUT(bus))|
++			NPCM7XX_SMBT_OUT_T_OUTST,
++			 NPCM7XX_SMBT_OUT(bus));
++
++		// Configure the division of the SMB Module Basic clock (BCLK)
++		// to generate the 1 KHz clock of the timeout detector.
++		// The timeout detector has an “n+1” divider, controlled
++		// by TO_CKDIV and a fixed divider by 1000.
++		// Together they generate the 1 ms clock cycle
++		toCkDiv = (u8)(((bus->apb_clk / _1KHz_) / 1000) - 1);
++
++		// Set the bus timeout clock divisor
++		iowrite8((ioread8(NPCM7XX_SMBT_OUT(bus)) &
++			~NPCM7XX_SMBT_OUT_TO_CKDIV)
++			| FIELD_PREP(NPCM7XX_SMBT_OUT_TO_CKDIV,
++			toCkDiv), NPCM7XX_SMBT_OUT(bus));
++
++		// If SMB was enabled - re-enable the SMB module
++		if (smbEnabled) {
++
++			// Enable the SMB module
++			NPCM7XX_smb_enable(bus);
++
++			// Restore NPCM7XX_SMBCTL1 status
++			iowrite8(smbctl1, NPCM7XX_SMBCTL1(bus));
++		}
++	}
++
++
++	// Enable/Disable the bus timeout int
++	iowrite8((ioread8(NPCM7XX_SMBT_OUT(bus)) & ~NPCM7XX_SMBT_OUT_T_OUTIE)
++		 | FIELD_PREP(NPCM7XX_SMBT_OUT_T_OUTIE,
++		 enable), NPCM7XX_SMBT_OUT(bus));
++}
++#endif
++
++static void NPCM7XX_smb_int_master_handler(struct NPCM7XX_i2c *bus)
++{
++
++	// A negative acknowledge has occurred
++	if (FIELD_GET(NPCM7XX_SMBST_NEGACK, ioread8(NPCM7XX_SMBST(bus)))) {
++		dev_dbg(bus->dev, "NACK bus = %d\n", bus->num);
++		NPCM7XX_I2C_EVENT_LOG(NPCM7XX_I2C_EVENT_NACK);
++		if (bus->fifo_use) {
++			// if there are still untransmitted bytes in TX FIFO
++			// reduce them from wr_ind
++			bus->wr_ind -= FIELD_GET(NPCM7XX_SMBTXF_STS_TX_BYTES,
++					 ioread8(NPCM7XX_SMBTXF_STS(bus)));
++
++			dev_dbg(bus->dev, "NACK bus%d fifo, wr_ind = %d\n",
++					bus->num, bus->wr_ind);
++
++			// clear the FIFO
++			iowrite8(NPCM7XX_SMBFIF_CTS_CLR_FIFO,
++					NPCM7XX_SMBFIF_CTS(bus));
++		}
++
++		// In master write operation, NACK is a problem
++
++		// number of bytes sent to master less than required
++		// notify upper layer.
++		NPCM7XX_smb_master_abort(bus);
++
++		// iowrite8(NPCM7XX_SMBST_NEGACK, NPCM7XX_SMBST(bus));
++		bus->state = SMB_IDLE;
++
++		// In Master mode, NEGACK should be cleared only after
++		// generating STOP.
++		// In such case, the bus is released from stall only after the
++		// software clears NEGACK bit.
++		// Then a Stop condition is sent.
++		iowrite8(NPCM7XX_SMBST_NEGACK, NPCM7XX_SMBST(bus));
++
++		NPCM7XX_smb_callback(bus, SMB_NACK_IND, bus->wr_ind);
++
++		return;
++	}
++
++
++	// Master mode: a Bus Error has been identified
++	if (FIELD_GET(NPCM7XX_SMBST_BER, ioread8(NPCM7XX_SMBST(bus)))) {
++		// Check whether bus arbitration or Start or Stop during data
++		// xfer bus arbitration problem should not result in recovery
++		if (FIELD_GET(NPCM7XX_SMBST_MASTER,
++				ioread8(NPCM7XX_SMBST(bus))))
++			// Only current master is allowed to issue stop
++			NPCM7XX_smb_master_abort(bus);
++		else {
++
++			// Bus arbitration loss
++			if (bus->retry_count-- > 0) {
++				dev_info(bus->dev, "\tretry bus%d\n", bus->num);
++				// Perform a retry (generate a start condition
++				// as soon as the SMBus is free)
++				iowrite8(NPCM7XX_SMBST_BER, NPCM7XX_SMBST(bus));
++				NPCM7XX_smb_master_start(bus);
++				return;
++			}
++		}
++		iowrite8(NPCM7XX_SMBST_BER, NPCM7XX_SMBST(bus));
++		bus->state = SMB_IDLE;
++		NPCM7XX_smb_callback(bus, SMB_BUS_ERR_IND,
++						NPCM7XX_smb_get_index(bus));
++		return;
++	}
++
++#if defined(SMB_CAPABILITY_TIMEOUT_SUPPORT)
++	// A Bus Timeout has been identified
++	if ((FIELD_GET(NPCM7XX_SMBT_OUT_T_OUTIE,
++	     ioread8(NPCM7XX_SMBT_OUT(bus))) == 1)
++	     &&  // bus timeout int is on
++	     (FIELD_GET(NPCM7XX_SMBT_OUT_T_OUTST,
++	     // and bus timeout status is set
++	     ioread8(NPCM7XX_SMBT_OUT(bus))))) {
++		NPCM7XX_smb_master_abort(bus);
++		NPCM7XX_I2C_EVENT_LOG(NPCM7XX_I2C_EVENT_TO);
++		iowrite8(ioread8(NPCM7XX_SMBT_OUT(bus)) |
++			NPCM7XX_SMBT_OUT_T_OUTST,
++			NPCM7XX_SMBT_OUT(bus));// Clear EO_BUSY pending bit
++		bus->state = SMB_IDLE;
++		NPCM7XX_smb_callback(bus, SMB_BUS_ERR_IND,
++			NPCM7XX_smb_get_index(bus));
++		return;
++	}
++#endif
++
++
++	// A Master End of Busy (meaning Stop Condition happened)
++		// End of Busy int is on and End of Busy is set
++	if ((FIELD_GET(NPCM7XX_SMBCTL1_EOBINTE,
++			ioread8(NPCM7XX_SMBCTL1(bus))) == 1) &&
++	    (FIELD_GET(NPCM7XX_SMBCST3_EO_BUSY,
++			ioread8(NPCM7XX_SMBCST3(bus))))) {
++		dev_dbg(bus->dev, "End of busy bus = %d\n", bus->num);
++
++		NPCM7XX_I2C_EVENT_LOG(NPCM7XX_I2C_EVENT_EOB);
++
++		NPCM7XX_smb_eob_int(bus, false);
++
++		bus->state = SMB_IDLE;
++
++		if ((bus->wr_size == SMB_QUICK_PROT) ||
++		    (bus->rd_size == SMB_QUICK_PROT) ||
++		    (bus->rd_size == 0)) {
++			NPCM7XX_smb_callback(bus, bus->stop_ind, 0);
++		} else {
++			NPCM7XX_smb_callback(bus, bus->stop_ind, bus->rd_ind);
++		}
++		return;
++	}
++
++
++
++	// Address sent and requested stall occurred (Master mode)
++	if (FIELD_GET(NPCM7XX_SMBST_STASTR, ioread8(NPCM7XX_SMBST(bus)))) {
++		dev_dbg(bus->dev, "master stall bus = %d\n", bus->num);
++
++		ASSERT(FIELD_GET(NPCM7XX_SMBST_MASTER,
++			ioread8(NPCM7XX_SMBST(bus))));
++
++		// Check for Quick Command SMBus protocol (block protocol)
++		if ((bus->wr_size == SMB_QUICK_PROT)
++		    ||
++		    (bus->rd_size == SMB_QUICK_PROT)) {
++
++			// No need to write any data bytes -
++			//  reached here only in Quick Command
++			NPCM7XX_smb_eob_int(bus, true);
++
++			NPCM7XX_smb_master_stop(bus);
++
++			// Update status
++			bus->state = SMB_STOP_PENDING;
++			bus->stop_ind = SMB_MASTER_DONE_IND;
++
++		} else if (bus->rd_size == 1)
++
++			// Receiving one byte only - set NACK after ensuring
++			// slave ACKed the address byte
++			NPCM7XX_smb_nack(bus);
++
++		// Reset stall-after-address-byte
++		NPCM7XX_smb_stall_after_start(bus, false);
++
++		// Clear stall only after setting STOP
++		iowrite8(NPCM7XX_SMBST_STASTR, NPCM7XX_SMBST(bus));
++		return;
++	}
++
++
++	// SDA status is set - transmit or receive, master
++	if (FIELD_GET(NPCM7XX_SMBST_SDAST, ioread8(NPCM7XX_SMBST(bus))) ||
++			(bus->fifo_use &&
++			(NPCM7XX_smb_tx_fifo_full(bus) ||
++			NPCM7XX_smb_rx_fifo_full(bus)))) {
++
++		// Status Bit is cleared by writing to or reading from SDA
++		// (depending on current direction)
++		dev_dbg(bus->dev, "SDA set bus%d addr 0x%x state=%d op=%d\n",
++			  bus->num, bus->dest_addr, bus->state, bus->operation);
++
++		switch (bus->state) {
++
++		// Handle unsuccessful bus mastership
++		case SMB_IDLE:
++			NPCM7XX_smb_master_abort(bus);
++			return;
++
++		case SMB_MASTER_START:
++			if (FIELD_GET(NPCM7XX_SMBST_MASTER,
++				ioread8(NPCM7XX_SMBST(bus)))) {
++				u8 addr_byte = bus->dest_addr;
++
++				dev_dbg(bus->dev, "SDA master bus%d start\n",
++						bus->num);
++
++
++				bus->crc_data = 0;
++				// Check for Quick Command SMBus protocol
++				if ((bus->wr_size == SMB_QUICK_PROT)
++					|| (bus->rd_size == SMB_QUICK_PROT))
++				// Need to stall after successful completion
++				// of sending address byte
++					NPCM7XX_smb_stall_after_start(bus,
++									true);
++				// Prepare address byte
++				if (bus->wr_size == 0) {
++					if (bus->rd_size == 1)
++	// Receiving one byte only - stall after successful completion of
++	// sending address byte. If we NACK here, and slave doesn't ACK the
++	// address, we might unintentionally NACK the next multi-byte read
++						NPCM7XX_smb_stall_after_start(
++							bus, true);
++
++					// Set direction to Read
++					addr_byte |= (u8)0x1;
++					bus->operation = SMB_READ_OPER;
++				} else
++					bus->operation = SMB_WRITE_OPER;
++				// Write the address to the bus
++				bus->state = SMB_OPER_STARTED;
++				NPCM7XX_smb_write_byte(bus, addr_byte);
++			} else
++				dev_err(bus->dev,
++				   "SDA, bus%d is not master, wr %d 0x%x...\n",
++				   bus->num, bus->wr_size, bus->wr_data_buf[0]);
++			break;
++
++		// SDA status is set - transmit or receive: Handle master mode
++		case SMB_OPER_STARTED:
++			if (bus->operation == SMB_WRITE_OPER)
++				NPCM7XX_smb_int_master_handler_write(bus);
++
++			else if (bus->operation == SMB_READ_OPER)
++				NPCM7XX_smb_int_master_handler_read(bus);
++
++
++			else
++				pr_err("I2C%d: unknown operation state.\n",
++					bus->num);
++
++			break;
++		default:
++			dev_err(bus->dev, "master sda err on state machine\n");
++		}
++		// End of master operation: SDA status is set - tx or rx.
++	} //SDAST
++}
++
++
++static void NPCM7XX_smb_int_master_handler_write(struct NPCM7XX_i2c *bus)
++{
++	u16 wcount;
++
++	dev_dbg(bus->dev, "SDA master bus%d addr=0x%x oper wr\n", bus->num,
++			bus->dest_addr);
++	NPCM7XX_I2C_EVENT_LOG(NPCM7XX_I2C_EVENT_WRITE);
++
++	if (bus->fifo_use == true)
++		NPCM7XX_smb_clear_tx_fifo(bus);
++
++	// Master write operation - last byte handling
++	if (bus->wr_ind == bus->wr_size) {
++		dev_dbg(bus->dev, "SDA master bus%d addr 0x%x last byte\n",
++			   bus->num, bus->dest_addr);
++		if ((bus->fifo_use == true) &&
++			(FIELD_GET(NPCM7XX_SMBTXF_STS_TX_BYTES,
++			ioread8(NPCM7XX_SMBTXF_STS(bus))) > 0))
++	// No more bytes to send (to add to the FIFO), however the FIFO is not
++	// empty yet. It is still in the middle of tx. Currently there's nothing
++	// to do except for waiting to the end of the tx.
++	// We will get an int when the FIFO will get empty.
++			return;
++
++		if (bus->rd_size == 0) {
++			// all bytes have been written, in a pure wr operation
++			NPCM7XX_smb_eob_int(bus, true);
++
++			// Issue a STOP condition on the bus
++			NPCM7XX_smb_master_stop(bus);
++			// Clear SDA Status bit (by writing dummy byte)
++			NPCM7XX_smb_write_byte(bus, 0xFF);
++
++			bus->state = SMB_STOP_PENDING;
++			bus->stop_ind = SMB_MASTER_DONE_IND;
++		} else {
++			// last write-byte written on previous int - need to
++			// restart & send slave address
++			if ((bus->PEC_use == true) &&
++			    (bus->rd_size < SMB_EXCLUDE_BLOCK_SIZE_FROM_BUF))
++			    // PEC is used but the protocol is not block read
++			    // then we add extra bytes for PEC support
++				bus->rd_size += 1; // move this to xmit !!!
++
++			if (bus->fifo_use == true) {
++				if (((bus->rd_size == 1) ||
++					bus->rd_size ==
++					   SMB_EXCLUDE_BLOCK_SIZE_FROM_BUF ||
++					bus->rd_size == SMB_BLOCK_PROT)) {
++					// SMBus Block read transaction.
++
++					iowrite8(0, NPCM7XX_SMBTXF_CTL(bus));
++					iowrite8(1, NPCM7XX_SMBRXF_CTL(bus));
++
++
++				}
++			}
++
++			NPCM7XX_smb_set_fifo(bus, bus->rd_size, -1);
++
++			// Generate (Repeated) Start upon next write to SDA
++			NPCM7XX_smb_master_start(bus);
++
++			if (bus->rd_size == 1)
++
++	// Receiving one byte only - stall after successful completion of send
++	// address byte. If we NACK here, and slave doesn't ACK the address, we
++	// might unintentionally NACK the next multi-byte read
++
++				NPCM7XX_smb_stall_after_start(bus, true);
++
++			// send the slave address in read direction
++			NPCM7XX_smb_write_byte(bus, bus->dest_addr | 0x1);
++
++			// Next int will occur on read
++			bus->operation = SMB_READ_OPER;
++		}
++	} else {
++		if ((bus->PEC_use == true) && (bus->wr_ind == 0)
++		    && (bus->rd_size == 0))// extra bytes for PEC support
++			bus->wr_size += 1;
++
++		// write next byte not last byte and not slave address
++		if ((bus->fifo_use == false) || (bus->wr_size == 1)) {
++			if ((bus->PEC_use == true) && (bus->rd_size == 0) &&
++			    (bus->wr_ind + 1 == bus->wr_size)) {
++				// Master write protocol to send PEC byte.
++				NPCM7XX_smb_write_PEC(bus);
++				bus->wr_ind++;
++			} else
++				NPCM7XX_smb_write_byte(bus,
++					bus->wr_data_buf[bus->wr_ind++]);
++		} else { // FIFO is used
++			wcount = bus->wr_size - bus->wr_ind;
++			NPCM7XX_smb_set_fifo(bus, -1, wcount);
++
++			NPCM7XX_smb_write_to_fifo(bus, wcount);
++
++		}
++	}
++
++
++}
++
++static void NPCM7XX_smb_int_master_handler_read(struct NPCM7XX_i2c *bus)
++{
++	u16 block_zero_bytes;
++	// Master read operation (pure read or following a write operation).
++	NPCM7XX_I2C_EVENT_LOG(NPCM7XX_I2C_EVENT_READ);
++
++	if (bus->rd_ind > bus->rd_size)
++		dev_dbg(bus->dev, "SDA master bus%d addr=0x%x rd %d / %d\n",
++			bus->num, bus->dest_addr, bus->rd_ind, bus->rd_size);
++
++	// Initialize number of bytes to include only the first byte (presents
++	// a case where number of bytes to read is zero); add PEC if applicable
++	block_zero_bytes = 1;
++	if (bus->PEC_use == true)
++		block_zero_bytes++;
++
++	// Perform master read, distinguishing between last byte and the rest of
++	// the bytes. The last byte should be read when the clock is stopped
++	if ((bus->rd_ind < (bus->rd_size - 1)) ||  bus->fifo_use == true) {
++		u8 data;
++
++		dev_dbg(bus->dev, "SDA bus%d addr=0x%x oper rd last fifo\n",
++			   bus->num, bus->dest_addr);
++		// byte to be read is not the last one
++		// Check if byte-before-last is about to be read
++		if ((bus->rd_ind == (bus->rd_size - 2)) &&
++		    bus->fifo_use == false){
++
++			// Set nack before reading byte-before-last, so that
++			// nack will be generated after receive of last byte
++			NPCM7XX_smb_nack(bus);
++
++			if (!FIELD_GET(NPCM7XX_SMBST_SDAST,
++					ioread8(NPCM7XX_SMBST(bus)))) {
++				// No data available - reset state for new xfer
++				bus->state = SMB_IDLE;
++
++				// Notify upper layer of rx completion
++				NPCM7XX_smb_callback(bus, SMB_NO_DATA_IND,
++							bus->rd_ind);
++			}
++		} else if (bus->rd_ind == 0) { //first byte handling:
++			// in block protocol first byte is the size
++			if (bus->rd_size == SMB_EXCLUDE_BLOCK_SIZE_FROM_BUF ||
++			    bus->rd_size == SMB_BLOCK_PROT) {
++				(void)NPCM7XX_smb_read_byte(bus, &data);
++
++				// First byte indicates length in block protocol
++				if (bus->rd_size ==
++						SMB_EXCLUDE_BLOCK_SIZE_FROM_BUF)
++					bus->rd_size = data;
++				else {
++					bus->rd_data_buf[bus->rd_ind++] = data;
++					bus->rd_size = data + 1;
++				}
++
++				if (bus->PEC_use == true) {
++					bus->rd_size += 1;
++					data += 1;
++				}
++
++				if (bus->fifo_use == true) {
++					iowrite8(
++					  ioread8(NPCM7XX_SMBFIF_CTS(bus))
++					  | NPCM7XX_SMBFIF_CTS_RXF_TXE,
++					  NPCM7XX_SMBFIF_CTS(bus));
++
++					// first byte in block protocol
++					// is zero -> not supported. read at
++					// least one byte
++					if (data == 0)
++						data = 1;
++				}
++				NPCM7XX_smb_set_fifo(bus, bus->rd_size, -1);
++			} else {
++				if (bus->fifo_use == false) {
++					(void)NPCM7XX_smb_read_byte(bus, &data);
++					bus->rd_data_buf[bus->rd_ind++] = data;
++				} else {
++					NPCM7XX_smb_clear_tx_fifo(bus);
++					NPCM7XX_smb_master_fifo_read(bus);
++				}
++			}
++
++		} else {
++			if (bus->fifo_use == true) {   // FIFO in used.
++				if ((bus->rd_size == block_zero_bytes) &&
++				    (bus->read_block_use == true)) {
++					NPCM7XX_smb_eob_int(bus, true);
++					NPCM7XX_smb_master_stop(bus);
++					NPCM7XX_smb_read_from_fifo(bus,
++					   FIELD_GET(NPCM7XX_SMBRXF_CTL_RX_THR,
++					   ioread8(NPCM7XX_SMBRXF_CTL(bus))));
++
++					bus->state = SMB_STOP_PENDING;
++					bus->stop_ind = SMB_BLOCK_BYTES_ERR_IND;
++
++				} else
++					NPCM7XX_smb_master_fifo_read(bus);
++			} else {
++				(void)NPCM7XX_smb_read_byte(bus, &data);
++				bus->rd_data_buf[bus->rd_ind++] = data;
++			}
++		}
++	} else {
++		// last byte is about to be read - end of transaction.
++		// Stop should be set before reading last byte.
++		u8 data;
++		enum smb_state_ind ind = SMB_MASTER_DONE_IND;
++
++		dev_dbg(bus->dev, "SDA master bus%d addr=0x%x oper rd last\n",
++			   bus->num, bus->dest_addr);
++		NPCM7XX_smb_eob_int(bus, true);
++
++		NPCM7XX_smb_master_stop(bus);
++
++		(void)NPCM7XX_smb_read_byte(bus, &data);
++
++		if ((bus->rd_size == block_zero_bytes)
++		    && (bus->read_block_use == true))
++			ind = SMB_BLOCK_BYTES_ERR_IND;
++		else {
++			bus->rd_data_buf[bus->rd_ind++] = data;
++			if (NPCM7XX_smb_get_PEC(bus) != 0)
++				ind = SMB_MASTER_PEC_ERR_IND;
++		}
++
++		bus->state = SMB_STOP_PENDING;
++		bus->stop_ind = ind;
++
++	} // last read byte
++} // read operation
++
++
++
++static void NPCM7XX_smb_reset(struct NPCM7XX_i2c *bus)
++{
++	// Save NPCM7XX_SMBCTL1 relevant bits. It is being cleared when the
++	// module is disabled
++	u8 smbctl1 = ioread8(NPCM7XX_SMBCTL1(bus)) & (NPCM7XX_SMBCTL1_GCMEN
++						      | NPCM7XX_SMBCTL1_INTEN
++						      | NPCM7XX_SMBCTL1_NMINTE);
++
++	// Disable the SMB module
++	iowrite8((ioread8(NPCM7XX_SMBCTL2(bus))	& ~SMBCTL2_ENABLE),
++			NPCM7XX_SMBCTL2(bus));
++
++	// Enable the SMB module
++	NPCM7XX_smb_enable(bus);
++
++	// Restore NPCM7XX_SMBCTL1 status
++	iowrite8(smbctl1, NPCM7XX_SMBCTL1(bus));
++
++	// Reset driver status
++	bus->state = SMB_IDLE;
++	//
++	// Configure FIFO disabled mode so slave will not use fifo
++	//  (master will set it on if supported)
++	iowrite8(ioread8(NPCM7XX_SMBFIF_CTL(bus)) & ~NPCM7XX_SMBFIF_CTL_FIFO_EN,
++		 NPCM7XX_SMBFIF_CTL(bus));
++	bus->fifo_use = false;
++}
++
++
++static int NPCM7XX_smb_master_abort(struct NPCM7XX_i2c *bus)
++{
++	int ret = -(EIO);
++
++	dev_dbg(bus->dev, "bus%d addr=0x%x\n", bus->num, bus->dest_addr);
++
++	// Only current master is allowed to issue Stop Condition
++	if (FIELD_GET(NPCM7XX_SMBST_MASTER, ioread8(NPCM7XX_SMBST(bus)))) {
++		NPCM7XX_smb_abort_data(bus);
++		ret = 0;
++
++	}
++
++	NPCM7XX_smb_reset(bus);
++
++	return ret;
++}
++
++
++static int NPCM7XX_smb_recovery(struct i2c_adapter *_adap)
++{
++	u8   iter = 27;	  // Allow one byte to be sent by the Slave
++	u16  timeout;
++	bool done = false;
++	struct NPCM7XX_i2c *bus = container_of(_adap, struct NPCM7XX_i2c, adap);
++
++	dev_info(bus->dev, "recovery bus%d\n",  bus->num);
++
++	might_sleep();
++
++	// Disable int
++	NPCM7XX_smb_int_enable(bus, false);
++
++	// Check If the SDA line is active (low)
++	if (FIELD_GET(NPCM7XX_SMBCST_TSDA, ioread8(NPCM7XX_SMBCST(bus))) == 0) {
++		// Repeat the following sequence until SDA is released
++		do {
++			// Issue a single SCL cycle
++			iowrite8(NPCM7XX_SMBCST_TGSCL, NPCM7XX_SMBCST(bus));
++			timeout = ABORT_TIMEOUT;
++			while (
++			    (FIELD_GET(NPCM7XX_SMBCST_TGSCL,
++			    ioread8(NPCM7XX_SMBCST(bus))) == 0) &&
++			    (timeout != 0))
++				timeout--;
++
++			// If SDA line is inactive (high), stop
++			if (
++					FIELD_GET(NPCM7XX_SMBCST_TSDA,
++					ioread8(NPCM7XX_SMBCST(bus))) == 1)
++				done = true;
++		} while ((done == false) && (--iter != 0));
++
++		// If SDA line is released (high)
++		if (done) {
++			// Clear BB (BUS BUSY) bit
++			iowrite8(NPCM7XX_SMBCST_BB, NPCM7XX_SMBCST(bus));
++
++			// Generate a START, to synchronize Master and Slave
++			NPCM7XX_smb_master_start(bus);
++
++			// Wait until START condition is sent, or timeout
++			timeout = ABORT_TIMEOUT;
++			while ((!FIELD_GET(NPCM7XX_SMBST_MASTER,
++			     ioread8(NPCM7XX_SMBST(bus))) == 0) &&
++			     (timeout != 0))
++				timeout--;
++
++			// If START condition was sent
++			if (timeout > 0) {
++				// Send an address byte
++				NPCM7XX_smb_write_byte(bus, bus->dest_addr);
++
++				// Generate a STOP condition
++				NPCM7XX_smb_master_stop(bus);
++			}
++			return 0;
++		}
++	}
++
++
++	// check if success:
++	if ((NPCM7XX_smb_get_SCL(_adap) == 1) &&
++	    (NPCM7XX_smb_get_SDA(_adap) == 1))
++		goto NPCM7XX_smb_recovery_done;
++
++	// hold clock low for 35ms: 25 and some spair:
++	NPCM7XX_smb_set_SCL(_adap, 0);
++	msleep(35);
++	NPCM7XX_smb_set_SCL(_adap, 1);
++	udelay(1000);
++
++	// check if success:
++	if ((NPCM7XX_smb_get_SCL(_adap) == 1) &&
++			(NPCM7XX_smb_get_SDA(_adap) == 1))
++		goto NPCM7XX_smb_recovery_done;
++
++	return 0;
++
++NPCM7XX_smb_recovery_done:
++
++	// Enable int
++	NPCM7XX_smb_int_enable(bus, true);
++
++	return -(ENOTRECOVERABLE);
++}
++
++
++static void NPCM7XX_smb_int_enable(struct NPCM7XX_i2c *bus, bool enable)
++{
++	iowrite8((ioread8(NPCM7XX_SMBCTL1(bus)) & ~NPCM7XX_SMBCTL1_INTEN) |
++		 FIELD_PREP(NPCM7XX_SMBCTL1_INTEN,
++		 enable), NPCM7XX_SMBCTL1(bus));
++}
++
++static const u8 crc8_table[256] = {
++	0x00, 0x07, 0x0E, 0x09, 0x1C, 0x1B, 0x12, 0x15,
++	0x38, 0x3F, 0x36, 0x31, 0x24, 0x23, 0x2A, 0x2D,
++	0x70, 0x77, 0x7E, 0x79, 0x6C, 0x6B, 0x62, 0x65,
++	0x48, 0x4F, 0x46, 0x41, 0x54, 0x53, 0x5A, 0x5D,
++	0xE0, 0xE7, 0xEE, 0xE9, 0xFC, 0xFB, 0xF2, 0xF5,
++	0xD8, 0xDF, 0xD6, 0xD1, 0xC4, 0xC3, 0xCA, 0xCD,
++	0x90, 0x97, 0x9E, 0x99, 0x8C, 0x8B, 0x82, 0x85,
++	0xA8, 0xAF, 0xA6, 0xA1, 0xB4, 0xB3, 0xBA, 0xBD,
++	0xC7, 0xC0, 0xC9, 0xCE, 0xDB, 0xDC, 0xD5, 0xD2,
++	0xFF, 0xF8, 0xF1, 0xF6, 0xE3, 0xE4, 0xED, 0xEA,
++	0xB7, 0xB0, 0xB9, 0xBE, 0xAB, 0xAC, 0xA5, 0xA2,
++	0x8F, 0x88, 0x81, 0x86, 0x93, 0x94, 0x9D, 0x9A,
++	0x27, 0x20, 0x29, 0x2E, 0x3B, 0x3C, 0x35, 0x32,
++	0x1F, 0x18, 0x11, 0x16, 0x03, 0x04, 0x0D, 0x0A,
++	0x57, 0x50, 0x59, 0x5E, 0x4B, 0x4C, 0x45, 0x42,
++	0x6F, 0x68, 0x61, 0x66, 0x73, 0x74, 0x7D, 0x7A,
++	0x89, 0x8E, 0x87, 0x80, 0x95, 0x92, 0x9B, 0x9C,
++	0xB1, 0xB6, 0xBF, 0xB8, 0xAD, 0xAA, 0xA3, 0xA4,
++	0xF9, 0xFE, 0xF7, 0xF0, 0xE5, 0xE2, 0xEB, 0xEC,
++	0xC1, 0xC6, 0xCF, 0xC8, 0xDD, 0xDA, 0xD3, 0xD4,
++	0x69, 0x6E, 0x67, 0x60, 0x75, 0x72, 0x7B, 0x7C,
++	0x51, 0x56, 0x5F, 0x58, 0x4D, 0x4A, 0x43, 0x44,
++	0x19, 0x1E, 0x17, 0x10, 0x05, 0x02, 0x0B, 0x0C,
++	0x21, 0x26, 0x2F, 0x28, 0x3D, 0x3A, 0x33, 0x34,
++	0x4E, 0x49, 0x40, 0x47, 0x52, 0x55, 0x5C, 0x5B,
++	0x76, 0x71, 0x78, 0x7F, 0x6A, 0x6D, 0x64, 0x63,
++	0x3E, 0x39, 0x30, 0x37, 0x22, 0x25, 0x2C, 0x2B,
++	0x06, 0x01, 0x08, 0x0F, 0x1A, 0x1D, 0x14, 0x13,
++	0xAE, 0xA9, 0xA0, 0xA7, 0xB2, 0xB5, 0xBC, 0xBB,
++	0x96, 0x91, 0x98, 0x9F, 0x8A, 0x8D, 0x84, 0x83,
++	0xDE, 0xD9, 0xD0, 0xD7, 0xC2, 0xC5, 0xCC, 0xCB,
++	0xE6, 0xE1, 0xE8, 0xEF, 0xFA, 0xFD, 0xF4, 0xF3
++};
++
++static u8 NPCM7XX_smb_calc_crc8(u8 crc_data, u8 data)
++{
++	u8 tmp = crc_data ^ data;
++
++	crc_data = crc8_table[tmp];
++
++	return crc_data;
++}
++
++static void NPCM7XX_smb_calc_PEC(struct NPCM7XX_i2c *bus, u8 data)
++{
++	if (bus->PEC_use)
++		bus->crc_data = NPCM7XX_smb_calc_crc8(bus->crc_data, data);
++}
++
++static inline u8 NPCM7XX_smb_get_PEC(struct NPCM7XX_i2c *bus)
++{
++	if (bus->PEC_use)
++		return bus->crc_data;
++	else
++		return 0;
++}
++
++static inline void NPCM7XX_smb_write_PEC(struct NPCM7XX_i2c *bus)
++{
++	if (bus->PEC_use) {
++		// get PAC value and write to the bus:
++		NPCM7XX_smb_write_byte(bus, NPCM7XX_smb_get_PEC(bus));
++	}
++}
++
++
++//
++//  NPCM7XX SMB module allows writing to SCL and SDA pins directly
++//  without the need to change muxing of pins.
++//  This feature will be used for recovery sequences i.e.
++//
++static void NPCM7XX_smb_set_SCL(struct i2c_adapter *_adap, int level)
++{
++	unsigned long flags;
++	struct NPCM7XX_i2c *bus = container_of(_adap, struct NPCM7XX_i2c, adap);
++
++	// Select Bank 0 to access NPCM7XX_SMBCTL4
++	spin_lock_irqsave(&bus->lock, flags);
++	NPCM7XX_smb_select_bank(bus, SMB_BANK_0);
++#ifdef SMB_CAPABILITY_FORCE_SCL_SDA
++	// Set SCL_LVL, SDA_LVL bits as Read/Write (R/W)
++	iowrite8(ioread8(NPCM7XX_SMBCTL4(bus)) | SMBCTL4_LVL_WE,
++		 NPCM7XX_SMBCTL4(bus));
++
++	// Set level
++	iowrite8((ioread8(NPCM7XX_SMBCTL3(bus))
++		& ~SMBCTL3_SCL_LVL) | FIELD_PREP(SMBCTL3_SCL_LVL,
++		level), NPCM7XX_SMBCTL3(bus));
++
++	// Set SCL_LVL, SDA_LVL bits as Read Only (RO)
++	iowrite8(ioread8(NPCM7XX_SMBCTL4(bus))
++		 & ~SMBCTL4_LVL_WE, NPCM7XX_SMBCTL4(bus));
++#endif
++	// Return to Bank 1
++	NPCM7XX_smb_select_bank(bus, SMB_BANK_1);
++	spin_unlock_irqrestore(&bus->lock, flags);
++}
++
++
++static int NPCM7XX_smb_get_SCL(struct i2c_adapter *_adap)
++{
++	unsigned long flags;
++	unsigned int ret = 0;
++	struct NPCM7XX_i2c *bus = container_of(_adap, struct NPCM7XX_i2c, adap);
++
++
++	// Select Bank 0 to access NPCM7XX_SMBCTL4
++	spin_lock_irqsave(&bus->lock, flags);
++	NPCM7XX_smb_select_bank(bus, SMB_BANK_0);
++
++	// Get SCL level
++	ret = FIELD_GET(SMBCTL3_SCL_LVL,  ioread8(NPCM7XX_SMBCTL3(bus)));
++
++	// Return to Bank 1
++	NPCM7XX_smb_select_bank(bus, SMB_BANK_1);
++	spin_unlock_irqrestore(&bus->lock, flags);
++	return ret;
++}
++
++
++
++static int NPCM7XX_smb_get_SDA(struct i2c_adapter *_adap)
++{
++	unsigned long flags;
++	unsigned int ret = 0;
++	struct NPCM7XX_i2c *bus = container_of(_adap, struct NPCM7XX_i2c, adap);
++
++	// Select Bank 0 to access NPCM7XX_SMBCTL4
++	spin_lock_irqsave(&bus->lock, flags);
++	NPCM7XX_smb_select_bank(bus, SMB_BANK_0);
++
++	// Get SDA level
++	ret = FIELD_GET(SMBCTL3_SDA_LVL,  ioread8(NPCM7XX_SMBCTL3(bus)));
++
++	// Return to Bank 1
++	NPCM7XX_smb_select_bank(bus, SMB_BANK_1);
++	spin_unlock_irqrestore(&bus->lock, flags);
++	return ret;
++
++}
++
++
++
++static void NPCM7XX_smb_callback(struct NPCM7XX_i2c *bus,
++				enum smb_state_ind op_status, u16 info)
++{
++	struct i2c_msg *msgs = bus->msgs;
++	int msgs_num = bus->msgs_num;
++
++	if (op_status != 6)
++		dev_dbg(bus->dev, "CB bus%d status %d info %d\n", bus->num,
++			op_status, info);
++	switch (op_status) {
++	case SMB_MASTER_DONE_IND:
++	// Master transaction finished and all transmit bytes were sent
++	// info: number of bytes actually received after the Master
++	//	receive operation (if Master didn't issue receive it
++	//	should be 0)
++	// Notify that not all data was received on Master or Slave
++	// info:
++	//	on receive: number of actual bytes received
++	//	when PEC is used even if 'info' is the expected number
++	//	of bytes, it means that PEC error occurred.
++	{
++		if (msgs[0].flags & I2C_M_RD)
++			msgs[0].len = info;
++		else if (msgs_num == 2 && msgs[1].flags & I2C_M_RD)
++			msgs[1].len = info;
++
++		bus->cmd_err = 0;
++		complete(&bus->cmd_complete);
++	}
++	break;
++
++	case SMB_NO_DATA_IND:
++	// Notify that not all data was received on Master or Slave
++	// info:
++	//on receive: number of actual bytes received
++	//	when PEC is used even if 'info' is the expected number
++	//	of bytes,it means that PEC error occurred.
++	{
++		if (msgs[0].flags & I2C_M_RD)
++			msgs[0].len = info;
++		else if (msgs_num == 2 && msgs[1].flags & I2C_M_RD)
++			msgs[1].len = info;
++
++		bus->cmd_err = -EFAULT;
++		dev_info(bus->dev, "I2C%d no data: SA=0x%x wr=%d / %d, rd=%d / %d, ",
++			bus->num, bus->dest_addr, bus->wr_ind, bus->wr_size,
++			bus->rd_ind, bus->rd_size);
++
++		dev_info(bus->dev, "state %d, op=%d, ind=%d, int_cnt=%d, log=0x%x\n",
++			bus->state, bus->operation, bus->stop_ind,
++			bus->int_cnt, bus->event_log);
++		complete(&bus->cmd_complete);
++	}
++	break;
++	case SMB_NACK_IND:
++		// MASTER transmit got a NAK before transmitting all bytes
++		// info: number of transmitted bytes
++		bus->cmd_err = -EAGAIN;
++		complete(&bus->cmd_complete);
++
++		break;
++	case SMB_BUS_ERR_IND:
++		// Bus error
++		// info: has no meaning
++		bus->cmd_err = -EIO;
++		dev_info(bus->dev, "I2C%d BER: SA=0x%x wr=%d / %d, rd=%d / %d, ",
++			bus->num, bus->dest_addr, bus->wr_ind, bus->wr_size,
++			bus->rd_ind, bus->rd_size);
++
++		dev_info(bus->dev, "state %d, op=%d, ind=%d, int_cnt=%d, log=0x%x\n",
++			bus->state, bus->operation, bus->stop_ind,
++			bus->int_cnt, bus->event_log);
++
++		complete(&bus->cmd_complete);
++		break;
++	case SMB_WAKE_UP_IND:
++		// SMBus wake up
++		// info: has no meaning
++		break;
++	default:
++		break;
++	}
++}
++
++
++static int __NPCM7XX_i2c_init(struct NPCM7XX_i2c *bus,
++struct platform_device *pdev)
++{
++	u32 clk_freq;
++	int ret;
++
++	// Initialize the internal data structures
++	bus->state = SMB_DISABLE;
++	bus->master_or_slave = SMB_SLAVE;
++
++
++	ret = of_property_read_u32(pdev->dev.of_node,
++				   "bus-frequency", &clk_freq);
++	if (ret < 0) {
++		dev_err(&pdev->dev,
++			"Could not read bus-frequency property\n");
++		clk_freq = 100000;
++	}
++	dev_dbg(bus->dev, "clk_freq = %d\n", clk_freq);
++	ret = NPCM7XX_smb_init_module(bus, SMB_MASTER, clk_freq / 1000);
++	if (ret == false) {
++		dev_err(&pdev->dev,
++			"NPCM7XX_smb_init_module() failed\n");
++		return -1;
++	}
++#if defined(SMB_CAPABILITY_TIMEOUT_SUPPORT)
++	NPCM7XX_smb_enable_timeout(bus, true);
++#endif //SMB_CAPABILITY_TIMEOUT_SUPPORT
++
++	return 0;
++}
++
++
++static irqreturn_t NPCM7XX_i2c_bus_irq(int irq, void *dev_id)
++{
++	struct NPCM7XX_i2c *bus = dev_id;
++
++	bus->int_cnt++;
++
++	_npcm7xx_get_time_stamp(&bus->int_time_stamp[0],
++				&bus->int_time_stamp[1]);
++	if (bus->master_or_slave == SMB_MASTER)	{
++		NPCM7XX_smb_int_master_handler(bus);
++		return IRQ_HANDLED;
++	}
++
++	dev_err(bus->dev, "int unknown on bus%d\n", bus->num);
++
++	return IRQ_NONE;
++}
++
++
++static int  NPCM7XX_i2c_master_xfer(struct i2c_adapter *adap,
++					struct i2c_msg *msgs, int num)
++{
++	struct NPCM7XX_i2c *bus = adap->algo_data;
++	struct i2c_msg *msg0, *msg1;
++	unsigned long time_left, flags;
++	u16 nwrite, nread;
++	u8 *write_data, *read_data;
++	u8 slave_addr;
++	int ret = 0;
++
++	spin_lock_irqsave(&bus->lock, flags);
++	bus->cmd_err = -EPERM; // restart error to unused value by this driver.
++	bus->int_cnt = 0;
++
++	iowrite8(0xFF, NPCM7XX_SMBST(bus));
++
++	if (num > 2 || num < 1) {
++		pr_err("I2C command not supported, num of msgs = %d\n", num);
++		spin_unlock_irqrestore(&bus->lock, flags);
++		return -EINVAL;
++	}
++
++	msg0 = &msgs[0];
++	slave_addr = msg0->addr;
++	if (msg0->flags & I2C_M_RD) { // read
++		if (num == 2) {
++			pr_err(" num = 2 but first msg is rd instead of wr\n");
++			spin_unlock_irqrestore(&bus->lock, flags);
++			return -EINVAL;
++		}
++		nwrite = 0;
++		write_data = NULL;
++		if (msg0->flags & I2C_M_RECV_LEN)
++			nread = SMB_BLOCK_PROT;
++		else
++			nread = msg0->len;
++
++		read_data = msg0->buf;
++
++	} else { // write
++		nwrite = msg0->len;
++		write_data = msg0->buf;
++		nread = 0;
++		read_data = NULL;
++		if (num == 2) {
++			msg1 = &msgs[1];
++			if (slave_addr != msg1->addr) {
++				pr_err(" SA==%02x but msg1->addr == %02x\n",
++					slave_addr, msg1->addr);
++				spin_unlock_irqrestore(&bus->lock, flags);
++				return -EINVAL;
++			}
++			if ((msg1->flags & I2C_M_RD) == 0) {
++				pr_err(" num = 2 but both msg are write.\n");
++				spin_unlock_irqrestore(&bus->lock, flags);
++				return -EINVAL;
++			}
++			if (msg1->flags & I2C_M_RECV_LEN)
++				nread = SMB_BLOCK_PROT;
++			else
++				nread = msg1->len;
++
++			read_data = msg1->buf;
++		}
++	}
++
++	bus->msgs = msgs;
++	bus->msgs_num = num;
++
++
++	reinit_completion(&bus->cmd_complete);
++
++	if (NPCM7XX_smb_master_start_xmit(bus, slave_addr, nwrite, nread,
++		write_data, read_data, 0) == false)
++		ret = -(EBUSY);
++
++	if (ret != -(EBUSY)) {
++		time_left = wait_for_completion_timeout(&bus->cmd_complete,
++							bus->adap.timeout);
++
++		if (time_left == 0 && bus->cmd_err == -EPERM) {
++
++#if defined(CONFIG_I2C_DEBUG_BUS)
++			dev_dbg(bus->dev, "I2C%d TO! SA=0x%x err %d, nwrite=%d, nread=%d",
++					bus->num, slave_addr,
++					bus->cmd_err,
++					nwrite, nread);
++			dev_dbg(bus->dev, "st%d, op%d, ind%d, int%d, ret%d, log0x%x\n",
++					bus->state, bus->operation,
++					bus->stop_ind, bus->int_cnt, ret,
++					bus->event_log);
++#endif
++			NPCM7XX_smb_master_abort(bus);
++			ret = -ETIMEDOUT;
++		} else
++			ret = bus->cmd_err;
++	} else {
++#if defined(CONFIG_I2C_DEBUG_BUS)
++		dev_dbg(bus->dev, "I2C%d busy! SA=0x%x error %d, nwrite=%d, nread=%d",
++				bus->num, slave_addr,
++				bus->cmd_err,
++				nwrite, nread);
++		dev_dbg(bus->dev, "st %d, op=%d, ind=%d, int_cnt=%d, ret=%d, log=0x%x\n",
++				bus->state, bus->operation,
++				bus->stop_ind, bus->int_cnt, ret,
++				bus->event_log);
++#endif
++	}
++
++	bus->msgs = NULL;
++	bus->msgs_num = 0;
++	spin_unlock_irqrestore(&bus->lock, flags);
++
++	// If nothing went wrong, return number of messages xferred.
++	if (ret >= 0)
++		return num;
++	else
++		return ret;
++}
++
++static u32 NPCM7XX_i2c_functionality(struct i2c_adapter *adap)
++{
++	return I2C_FUNC_I2C | I2C_FUNC_SMBUS_EMUL | I2C_FUNC_SMBUS_BLOCK_DATA;
++}
++
++
++static const struct i2c_algorithm NPCM7XX_i2c_algo = {
++	.master_xfer = NPCM7XX_i2c_master_xfer,
++	.functionality = NPCM7XX_i2c_functionality,
++};
++
++
++static struct i2c_bus_recovery_info NPCM7XX_i2c_recovery = {
++	.recover_bus = NPCM7XX_smb_recovery,
++	.get_scl = NPCM7XX_smb_get_SCL,
++	.set_scl = NPCM7XX_smb_set_SCL,
++	.get_sda = NPCM7XX_smb_get_SDA,
++};
++
++
++static int  NPCM7XX_i2c_probe_bus(struct platform_device *pdev)
++{
++	struct NPCM7XX_i2c *bus;
++	struct resource *res;
++	struct clk *i2c_clk;
++	int ret;
++	int num;
++
++	bus = devm_kzalloc(&pdev->dev, sizeof(*bus), GFP_KERNEL);
++	if (!bus)
++		return -ENOMEM;
++
++#ifdef CONFIG_OF
++	num = of_alias_get_id(pdev->dev.of_node, "i2c");
++	bus->num = num;
++
++
++
++	i2c_clk = devm_clk_get(&pdev->dev, NULL);
++
++	if (IS_ERR(i2c_clk)) {
++		pr_err(" I2C probe failed: can't read clk.\n");
++		return	-EPROBE_DEFER;
++	}
++
++	bus->apb_clk = clk_get_rate(i2c_clk);
++	dev_dbg(bus->dev, "I2C APB clock is %d\n", bus->apb_clk);
++#endif //  CONFIG_OF
++
++
++	if (gcr_regmap == NULL) {
++		gcr_regmap = syscon_regmap_lookup_by_compatible(
++							"nuvoton,npcm750-gcr");
++		if (IS_ERR(gcr_regmap)) {
++			pr_err("%s: failed to find nuvoton,npcm750-gcr\n",
++			__func__);
++			return IS_ERR(gcr_regmap);
++		}
++		regmap_write(gcr_regmap, I2CSEGCTL_OFFSET, I2CSEGCTL_VAL);
++		pr_info("I2C%d: gcr mapped\n", bus->num);
++	}
++
++	if (clk_regmap == NULL) {
++		clk_regmap = syscon_regmap_lookup_by_compatible(
++			"nuvoton,npcm750-clk");
++		if (IS_ERR(clk_regmap)) {
++			pr_err("%s: failed to find nuvoton,npcm750-clk\n",
++						__func__);
++			return IS_ERR(clk_regmap);
++		}
++		pr_info("I2C%d: clk mapped\n", bus->num);
++	}
++
++
++	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
++	dev_dbg(bus->dev, "resource: %pR\n", res);
++	bus->base = devm_ioremap_resource(&pdev->dev, res);
++	if (IS_ERR(bus->base))
++		return PTR_ERR(bus->base);
++	dev_dbg(bus->dev, "base = %p\n", bus->base);
++
++	// Initialize the I2C adapter
++	spin_lock_init(&bus->lock);
++	init_completion(&bus->cmd_complete);
++	bus->adap.owner = THIS_MODULE;
++	bus->adap.class = I2C_CLASS_HWMON | I2C_CLASS_SPD;
++	bus->adap.retries = 0;
++	bus->adap.timeout = 500 * HZ / 1000;
++	bus->adap.algo = &NPCM7XX_i2c_algo;
++	bus->adap.algo_data = bus;
++	bus->adap.dev.parent = &pdev->dev;
++	bus->adap.dev.of_node = pdev->dev.of_node;
++	bus->adap.bus_recovery_info = &NPCM7XX_i2c_recovery;
++
++	snprintf(bus->adap.name, sizeof(bus->adap.name), "Nuvoton i2c");
++
++	bus->dev = &pdev->dev;
++
++	ret = __NPCM7XX_i2c_init(bus, pdev);
++	if (ret < 0)
++		return ret;
++
++	bus->irq = platform_get_irq(pdev, 0);
++	if (bus->irq < 0) {
++		pr_err("I2C platform_get_irq error.");
++		return -ENODEV;
++	}
++	dev_dbg(bus->dev, "irq = %d\n", bus->irq);
++
++	ret = request_irq(bus->irq, NPCM7XX_i2c_bus_irq, 0,
++			  dev_name(&pdev->dev), (void *)bus);
++	if (ret) {
++		dev_err(&pdev->dev, "I2C%d: request_irq fail\n", bus->num);
++		return ret;
++	}
++
++	ret = i2c_add_adapter(&bus->adap);
++	if (ret < 0) {
++		dev_err(&pdev->dev, "I2C%d: i2c_add_adapter fail\n", bus->num);
++		return ret;
++	}
++
++	platform_set_drvdata(pdev, bus);
++
++	pr_info("i2c bus %d registered, irq %d\n",
++		  bus->adap.nr, bus->irq);
++
++	return 0;
++}
++
++static int  NPCM7XX_i2c_remove_bus(struct platform_device *pdev)
++{
++	struct NPCM7XX_i2c *bus = platform_get_drvdata(pdev);
++	unsigned long lock_flags;
++
++	spin_lock_irqsave(&bus->lock, lock_flags);
++
++	// Disable everything.
++	NPCM7XX_smb_disable(bus);
++
++	spin_unlock_irqrestore(&bus->lock, lock_flags);
++
++	i2c_del_adapter(&bus->adap);
++
++	return 0;
++}
++
++static const struct of_device_id NPCM7XX_i2c_bus_of_table[] = {
++	{ .compatible = "nuvoton,npcm750-i2c-bus", },
++	{},
++};
++MODULE_DEVICE_TABLE(of, NPCM7XX_i2c_bus_of_table);
++
++static struct platform_driver NPCM7XX_i2c_bus_driver = {
++	.probe = NPCM7XX_i2c_probe_bus,
++	.remove = NPCM7XX_i2c_remove_bus,
++	.driver = {
++		.name = "nuvoton-i2c-bus",
++		.of_match_table = NPCM7XX_i2c_bus_of_table,
++	},
++};
++module_platform_driver(NPCM7XX_i2c_bus_driver);
++
++MODULE_AUTHOR("Avi Fishman <avi.fishman@gmail.com>");
++MODULE_AUTHOR("Tali Perry <tali.perry@nuvoton.com>");
++MODULE_DESCRIPTION("Nuvoton I2C Bus Driver");
++MODULE_LICENSE("GPL v2");
++MODULE_VERSION(I2C_VERSION);
 -- 
 2.14.1
 
