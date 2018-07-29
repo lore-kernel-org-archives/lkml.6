@@ -7,64 +7,64 @@ X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10E7EC46462
-	for <linux-kernel@archiver.kernel.org>; Sun, 29 Jul 2018 21:08:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7ED3C46461
+	for <linux-kernel@archiver.kernel.org>; Sun, 29 Jul 2018 21:08:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BA2F920857
-	for <linux-kernel@archiver.kernel.org>; Sun, 29 Jul 2018 21:08:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 70EDC20857
+	for <linux-kernel@archiver.kernel.org>; Sun, 29 Jul 2018 21:08:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FkJTGnl3"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA2F920857
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G8Gy04vw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 70EDC20857
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731362AbeG2WkX (ORCPT
+        id S1731688AbeG2WkX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Sun, 29 Jul 2018 18:40:23 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:34107 "EHLO
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:43885 "EHLO
         mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729507AbeG2WkU (ORCPT
+        with ESMTP id S1729542AbeG2WkX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Jul 2018 18:40:20 -0400
-Received: by mail-wr1-f68.google.com with SMTP id c13-v6so10599561wrt.1
-        for <linux-kernel@vger.kernel.org>; Sun, 29 Jul 2018 14:08:29 -0700 (PDT)
+        Sun, 29 Jul 2018 18:40:23 -0400
+Received: by mail-wr1-f68.google.com with SMTP id b15-v6so10589760wrv.10
+        for <linux-kernel@vger.kernel.org>; Sun, 29 Jul 2018 14:08:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=ToL7ZXRip2C4HloVJz5p63aPsFPJAuy2RKtnDYCpTbk=;
-        b=FkJTGnl3cj+vq2yQYOwi+Pzinz10b1SIpOjbn9ufurzlvZMewDfeXNl7tNVzGgdsdq
-         kMBKDBxVMSR6X5h92eVNg10TJ4CKH9aY728alqYh88alUDFdCjo5NYbHFfSBsUIAx/fc
-         Vwr5El8q/uL6dN9gSh1bSc9ElmfDl5fk8oIrue9jhFr1NSQ+xIysJ/M1RpIqLskP6xYX
-         2JPBON1+4X7xrEySHPoF/zzm/GVIjLniyLVPQc9O639QskJdo8ggkGUu+BmFKWys7ttx
-         cdjeqe6qt3WhvHj5p19UYfQ0sBCBqMIQHuSIKpFcvvzVU/JbNq1ViSp5lPKS0WFd6i/f
-         kIbA==
+        bh=5vsa0KOCGtXDPKts07R2gp/2/VrWVSLUkcW4Vvzm35g=;
+        b=G8Gy04vwXWpCr3e/VKuh+mNSLn45i7n2CuLiKfkEe9c7ay36hl2vodn5371uQqFZzq
+         oq+nnlumfkW797hetcr+KxqMNZeBFJYDRdJ/OKN6o/VtRpJhTHw6GEGPaaRJbOas7fZ4
+         JprFx3H3VNOGwTN9kzuiIrZXYnhO3o2AMZIalj/jejeJD4G8eHp4+S12NhNhNuXr5KfJ
+         3DPA1oPnIGG6pi7pnEK2gkO6ILThgvfpSFra64M45CmcRE1i4a7iJOwveF5BXSCg4adc
+         94FYkLH5O7UlvnpsZruPXQmy13vFVkEZpl8ATT62gy8GuHvW22vNYSH0u4eIjzLvGPzP
+         7aQQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=ToL7ZXRip2C4HloVJz5p63aPsFPJAuy2RKtnDYCpTbk=;
-        b=dFl2lLGevfToNBECZBvmws/Su2xA+yvaZUanfBQhi7AlKK6Q7de6AF6isMKnUBCgoG
-         yTQ/rrb403Pwc2ui/ZEYyGWu3plz+4weoWusgypdcDvuV/8ipV1G/fl7JiqN1xuiF1gb
-         PmUOO96pySrHDFITcF4BjyDIH0TOgdEDw8l45shmGEbEMQ4JcwUts5UApxFwpR82QfNz
-         hSRh6b2ntisa0PSnTaMgkc1lte7WBOHJ3XbbAWb7NfVQgGJUyQvFOS1Pkum2mAfCN1Al
-         A2a6aBUYhcXvTzmYt+Q5kKj0jaBfg8eeFTPP5toJQwD5yoQWgd2emz6DiDSRSLljjhYH
-         ao0Q==
-X-Gm-Message-State: AOUpUlFzwr8pNZNn7lkm4oOF8wOMb7FmAnaf0yOdsQ+fdhhacC+c6Y0P
-        eC9DGrxBfG1HgQOm0qaKvkVXyUwUhiw=
-X-Google-Smtp-Source: AAOMgpc3Q7gj3qpjDP/MsQ4fk5Cbpi2k15w+rhNH1p6ZdvKRPKE+vf+F6EqXjJRMJdmk3qmwnzxgNg==
-X-Received: by 2002:adf:f9c9:: with SMTP id w9-v6mr14722221wrr.105.1532898508693;
-        Sun, 29 Jul 2018 14:08:28 -0700 (PDT)
+        bh=5vsa0KOCGtXDPKts07R2gp/2/VrWVSLUkcW4Vvzm35g=;
+        b=NQBaDW/QkGVZ3Xy6GsbaQ0jUTcrhbXQj3oJ0VYqL9f8r+oZCCnhP0holhukqaEzdZK
+         mKzl63/Ows0qQl04Hq+nNObS5LT0xtHru9xLiLMPL+1OMiRL3ip40uKRaDfuFdD7qPsE
+         RM6UqhDlRvYS2xYENpKGZEBlLl6T053hwBTS51h7OVsopCvNcE71W+LKDD/X94oLSrzt
+         2t+tl5P1QOZFwBCWsSufmXmoM6xMAv9+Yocw9UQMbUXlQkWB1Rj9T513FekzVAdnNHdm
+         ybk2oJ5raILA9i8K3GBYFou5ijSCfVVbIZCsK9CPD6b1F2W1N5hltbf0R4R6Z97x+eBl
+         RV9Q==
+X-Gm-Message-State: AOUpUlGm37iymXPhLmL42Qfvtb21l9rq7YsJccjje9hbdSPuD20BuIT0
+        DkMzP2954/gysn2cxl+bHrzDvIXXsmk=
+X-Google-Smtp-Source: AAOMgpdDCvCNuLqkY7KgG6XCFnu8xqdogYNMFmGHzwaWB7u7xZ5dTEtgYOqVTOBt9RfIWCcc33uD7g==
+X-Received: by 2002:adf:b1d2:: with SMTP id r18-v6mr15060341wra.79.1532898511460;
+        Sun, 29 Jul 2018 14:08:31 -0700 (PDT)
 Received: from localhost.localdomain (host81-158-116-187.range81-158.btcentralplus.com. [81.158.116.187])
-        by smtp.gmail.com with ESMTPSA id d26-v6sm9264532wmb.15.2018.07.29.14.08.27
+        by smtp.gmail.com with ESMTPSA id d26-v6sm9264532wmb.15.2018.07.29.14.08.30
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 29 Jul 2018 14:08:28 -0700 (PDT)
+        Sun, 29 Jul 2018 14:08:30 -0700 (PDT)
 From:   John Whitmore <johnfwhitmore@gmail.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     devel@driverdev.osuosl.org, gregkh@linuxfoundation.org,
         John Whitmore <johnfwhitmore@gmail.com>
-Subject: [PATCH v2 05/15] staging:rtl8192u: Remove typedef of cmpk_intr_sta_t - Style
-Date:   Sun, 29 Jul 2018 22:07:37 +0100
-Message-Id: <20180729210747.10803-6-johnfwhitmore@gmail.com>
+Subject: [PATCH v2 07/15] staging:rtl8192u: Refactor use of enum dm_dig_sta_e - Style
+Date:   Sun, 29 Jul 2018 22:07:39 +0100
+Message-Id: <20180729210747.10803-8-johnfwhitmore@gmail.com>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180729210747.10803-1-johnfwhitmore@gmail.com>
 References: <20180729210747.10803-1-johnfwhitmore@gmail.com>
@@ -73,67 +73,75 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove the typedef of struct cmpk_intr_sta_t, the name of the structure
-has been left as cmd_pkt_interrupt_status. This clears the checkpatch
-issue with creating new types in code. The change is purely a coding
-style change and should have no impact on runtime code execution.
+Refactor the use of the enumerated type dm_dig_sta_e, which is not
+actually used for type checking by the compiler.
+
+The typedef of dm_dig_sta_e is removed to clear the checkpatch issue
+with defining new types, and the enumerated type is left with the name
+enum dynamic_init_gain_state
+
+The enumerated type defines values for the enumeration, which are used
+by both dig_state and dig_highpwr_state, (members of the struct dig).
+Both of those variables were defined as being of type u8. This negates
+any usefulness of the use of the enumeration, (compiler type checking).
+
+To make use of the compiler's type-checking the two member variables,
+dig_state and dig_highpwr_state have been changed to being of type
+enum dynamic_init_gain_state. The enumerated type has been moved above
+the struct dig definition so that the enumeration is already defined
+when the compiler reaches the two types using the enumerated type.
+
+These changes, whilst convoluted, are purely coding style in nature and
+should not impact runtime code execution.
 
 Signed-off-by: John Whitmore <johnfwhitmore@gmail.com>
 ---
- drivers/staging/rtl8192u/r819xU_cmdpkt.c | 6 +++---
- drivers/staging/rtl8192u/r819xU_cmdpkt.h | 4 ++--
- 2 files changed, 5 insertions(+), 5 deletions(-)
+ drivers/staging/rtl8192u/r8192U_dm.h | 18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/staging/rtl8192u/r819xU_cmdpkt.c b/drivers/staging/rtl8192u/r819xU_cmdpkt.c
-index 630cf612f265..c71fda0f13b2 100644
---- a/drivers/staging/rtl8192u/r819xU_cmdpkt.c
-+++ b/drivers/staging/rtl8192u/r819xU_cmdpkt.c
-@@ -225,7 +225,7 @@ static void cmdpkt_beacontimerinterrupt_819xusb(struct net_device *dev)
-  */
- static void cmpk_handle_interrupt_status(struct net_device *dev, u8 *pmsg)
- {
--	cmpk_intr_sta_t		rx_intr_status;	/* */
-+	struct cmd_pkt_interrupt_status	 rx_intr_status;	/* */
- 	struct r8192_priv *priv = ieee80211_priv(dev);
+diff --git a/drivers/staging/rtl8192u/r8192U_dm.h b/drivers/staging/rtl8192u/r8192U_dm.h
+index e86dda99c223..078770a8c7bf 100644
+--- a/drivers/staging/rtl8192u/r8192U_dm.h
++++ b/drivers/staging/rtl8192u/r8192U_dm.h
+@@ -64,6 +64,13 @@
  
- 	DMESG("---> cmpk_Handle_Interrupt_Status()\n");
-@@ -236,7 +236,7 @@ static void cmpk_handle_interrupt_status(struct net_device *dev, u8 *pmsg)
- 	 * endian type before copy the message copy.
- 	 */
- 	rx_intr_status.length = pmsg[1];
--	if (rx_intr_status.length != (sizeof(cmpk_intr_sta_t) - 2)) {
-+	if (rx_intr_status.length != (sizeof(struct cmd_pkt_interrupt_status) - 2)) {
- 		DMESG("cmpk_Handle_Interrupt_Status: wrong length!\n");
- 		return;
- 	}
-@@ -528,7 +528,7 @@ u32 cmpk_message_handle_rx(struct net_device *dev,
  
- 		case RX_INTERRUPT_STATUS:
- 			cmpk_handle_interrupt_status(dev, pcmd_buff);
--			cmd_length = sizeof(cmpk_intr_sta_t);
-+			cmd_length = sizeof(struct cmd_pkt_interrupt_status);
- 			break;
- 
- 		case BOTH_QUERY_CONFIG:
-diff --git a/drivers/staging/rtl8192u/r819xU_cmdpkt.h b/drivers/staging/rtl8192u/r819xU_cmdpkt.h
-index d2e07b0ff30b..d2590b00fe98 100644
---- a/drivers/staging/rtl8192u/r819xU_cmdpkt.h
-+++ b/drivers/staging/rtl8192u/r819xU_cmdpkt.h
-@@ -55,12 +55,12 @@ struct cmd_pkt_tx_feedback {
- /* 2. RX side: Interrupt status packet. It includes Beacon State,
-  * Beacon Timer Interrupt and other useful information in MAC ISR Reg.
-  */
--typedef struct tag_cmd_pkt_interrupt_status {
-+struct cmd_pkt_interrupt_status {
- 	u8	element_id;			/* Command packet type. */
- 	u8	length;				/* Command packet length. */
- 	u16	reserve;
- 	u32	interrupt_status;		/* Interrupt Status. */
--} cmpk_intr_sta_t;
+ /*------------------------------Define structure----------------------------*/
++
++enum dynamic_init_gain_state {
++	DM_STA_DIG_OFF = 0,
++	DM_STA_DIG_ON,
++	DM_STA_DIG_MAX
 +};
++
+ /* 2007/10/04 MH Define upper and lower threshold of DIG enable or disable. */
+ struct dig {
+ 	u8		dig_enable_flag;
+@@ -77,8 +84,8 @@ struct dig {
+ 	long		rssi_high_power_lowthresh;
+ 	long		rssi_high_power_highthresh;
  
- /* 3. TX side: Set configuration packet. */
- typedef struct tag_cmd_pkt_set_configuration {
+-	u8		dig_state;
+-	u8		dig_highpwr_state;
++	enum dynamic_init_gain_state		dig_state;
++	enum dynamic_init_gain_state		dig_highpwr_state;
+ 	u8		cur_connect_state;
+ 	u8		pre_connect_state;
+ 
+@@ -98,13 +105,6 @@ struct dig {
+ 	long		rssi_val;
+ };
+ 
+-typedef enum tag_dynamic_init_gain_state_definition {
+-	DM_STA_DIG_OFF = 0,
+-	DM_STA_DIG_ON,
+-	DM_STA_DIG_MAX
+-} dm_dig_sta_e;
+-
+-
+ /* 2007/10/08 MH Define RATR state. */
+ typedef enum tag_dynamic_ratr_state_definition {
+ 	DM_RATR_STA_HIGH = 0,
 -- 
 2.18.0
 
