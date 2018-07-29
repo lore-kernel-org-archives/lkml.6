@@ -5,127 +5,101 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8964A113C609
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E9B8C46462
 	for <linux-kernel@archiver.kernel.org>; Sun, 29 Jul 2018 17:39:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4C85020892
+	by mail.kernel.org (Postfix) with ESMTP id 1E3B820882
 	for <linux-kernel@archiver.kernel.org>; Sun, 29 Jul 2018 17:39:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4C85020892
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E3B820882
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726606AbeG2TK2 (ORCPT
+        id S1726564AbeG2TE3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 29 Jul 2018 15:10:28 -0400
-Received: from shelob.surriel.com ([96.67.55.147]:48052 "EHLO
-        shelob.surriel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726438AbeG2TK2 (ORCPT
+        Sun, 29 Jul 2018 15:04:29 -0400
+Received: from smtprelay0134.hostedemail.com ([216.40.44.134]:58905 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726440AbeG2TE3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Jul 2018 15:10:28 -0400
-Received: from imladris.surriel.com ([96.67.55.152])
-        by shelob.surriel.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.90_1)
-        (envelope-from <riel@shelob.surriel.com>)
-        id 1fjpev-0000i2-Lr; Sun, 29 Jul 2018 13:39:09 -0400
-Message-ID: <1532885949.28585.20.camel@surriel.com>
-Subject: Re: [PATCH 03/10] smp,cpumask: introduce on_each_cpu_cond_mask
-From:   Rik van Riel <riel@surriel.com>
-To:     Andy Lutomirski <luto@amacapital.net>
-Cc:     Andy Lutomirski <luto@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        kernel-team <kernel-team@fb.com>,
-        Peter Zijlstra <peterz@infradead.org>, X86 ML <x86@kernel.org>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Ingo Molnar <mingo@kernel.org>, Mike Galbraith <efault@gmx.de>,
-        Dave Hansen <dave.hansen@intel.com>, will.daecon@arm.com,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Date:   Sun, 29 Jul 2018 13:39:09 -0400
-In-Reply-To: <E710FBA5-CC5E-4941-ACBF-4AB3424F1F68@amacapital.net>
-References: <20180728215357.3249-1-riel@surriel.com>
-         <20180728215357.3249-4-riel@surriel.com>
-         <CALCETrUipqat-78++E8fL7d2=77Cbj72jCTZMO=yNF8nX9HhCA@mail.gmail.com>
-         <1532865634.28585.2.camel@surriel.com>
-         <E710FBA5-CC5E-4941-ACBF-4AB3424F1F68@amacapital.net>
-Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-YJ6J6367Vg/8hmVEmuKY"
-X-Mailer: Evolution 3.26.6 (3.26.6-1.fc27) 
+        Sun, 29 Jul 2018 15:04:29 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay07.hostedemail.com (Postfix) with ESMTP id 485E3181D341A;
+        Sun, 29 Jul 2018 17:33:19 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-HE-Tag: voice89_5708ea456c010
+X-Filterd-Recvd-Size: 2910
+Received: from XPS-9350.home (unknown [47.151.153.53])
+        (Authenticated sender: joe@perches.com)
+        by omf08.hostedemail.com (Postfix) with ESMTPA;
+        Sun, 29 Jul 2018 17:33:17 +0000 (UTC)
+Message-ID: <233f0f7b1165f6427fa86f026c4e7dcb5cafe35f.camel@perches.com>
+Subject: Re: [PATCH] Staging: octeon: Fixing coding style for minor notices.
+From:   Joe Perches <joe@perches.com>
+To:     Georgios Tsotsos <tsotsos@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     John Smith <catalinnow@gmail.com>, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org
+Date:   Sun, 29 Jul 2018 10:33:16 -0700
+In-Reply-To: <20180729144358.3442-1-tsotsos@gmail.com>
+References: <20180729144358.3442-1-tsotsos@gmail.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+X-Mailer: Evolution 3.28.1-2 
 Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Sun, 2018-07-29 at 17:43 +0300, Georgios Tsotsos wrote:
+> Fixing coding style for a few lines that were reported to check from
+> checkpatch.pl in minor cases for alignment and ending with parenthesis.
+> 
+> Signed-off-by: Georgios Tsotsos <tsotsos@gmail.com>
+> ---
+>  drivers/staging/octeon/ethernet.c | 10 +++++-----
+>  1 file changed, 5 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/staging/octeon/ethernet.c b/drivers/staging/octeon/ethernet.c
+> index 9b15c9ed844b..1e258deecacc 100644
+> --- a/drivers/staging/octeon/ethernet.c
+> +++ b/drivers/staging/octeon/ethernet.c
+> @@ -141,8 +141,8 @@ static void cvm_oct_periodic_worker(struct work_struct *work)
+>  	if (priv->poll)
+>  		priv->poll(cvm_oct_device[priv->port]);
+>  
+> -	cvm_oct_device[priv->port]->netdev_ops->ndo_get_stats(
+> -						cvm_oct_device[priv->port]);
+> +	cvm_oct_device[priv->port]->netdev_ops
+> +				->ndo_get_stats(cvm_oct_device[priv->port]);
+>  
+>  	if (!atomic_read(&cvm_oct_poll_queue_stopping))
+>  		schedule_delayed_work(&priv->port_periodic_work, HZ);
 
---=-YJ6J6367Vg/8hmVEmuKY
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Probably more sensible to use a temporary.  Something like:
+---
+ drivers/staging/octeon/ethernet.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-On Sun, 2018-07-29 at 08:36 -0700, Andy Lutomirski wrote:
-> On Jul 29, 2018, at 5:00 AM, Rik van Riel <riel@surriel.com> wrote:
->=20
-> > On Sat, 2018-07-28 at 19:57 -0700, Andy Lutomirski wrote:
-> > > On Sat, Jul 28, 2018 at 2:53 PM, Rik van Riel <riel@surriel.com>
-> > > wrote:
-> > > > Introduce a variant of on_each_cpu_cond that iterates only over
-> > > > the
-> > > > CPUs in a cpumask, in order to avoid making callbacks for every
-> > > > single
-> > > > CPU in the system when we only need to test a subset.
-> > > Nice.
-> > > Although, if you want to be really fancy, you could optimize this
-> > > (or
-> > > add a variant) that does the callback on the local CPU in
-> > > parallel
-> > > with the remote ones.  That would give a small boost to TLB
-> > > flushes.
-> >=20
-> > The test_func callbacks are not run remotely, but on
-> > the local CPU, before deciding who to send callbacks
-> > to.
-> >=20
-> > The actual IPIs are sent in parallel, if the cpumask
-> > allocation succeeds (it always should in many kernel
-> > configurations, and almost always in the rest).
-> >=20
->=20
-> What I meant is that on_each_cpu_mask does:
->=20
-> smp_call_function_many(mask, func, info, wait);
-> if (cpumask_test_cpu(cpu, mask)) {
->    unsigned long flags;
->    local_irq_save(flags); func(info);
->    local_irq_restore(flags);
-> }
->=20
-> So it IPIs all the remote CPUs in parallel, then waits, then does the
-> local work.  In principle, the local flush could be done after
-> triggering the IPIs but before they all finish.
+diff --git a/drivers/staging/octeon/ethernet.c b/drivers/staging/octeon/ethernet.c
+index 9b15c9ed844b..2febf1229587 100644
+--- a/drivers/staging/octeon/ethernet.c
++++ b/drivers/staging/octeon/ethernet.c
+@@ -137,12 +137,12 @@ static void cvm_oct_periodic_worker(struct work_struct *work)
+ 	struct octeon_ethernet *priv = container_of(work,
+ 						    struct octeon_ethernet,
+ 						    port_periodic_work.work);
++	struct net_device *ndev = cvm_oct_device[priv->port];
+ 
+ 	if (priv->poll)
+-		priv->poll(cvm_oct_device[priv->port]);
++		priv->poll(ndev);
+ 
+-	cvm_oct_device[priv->port]->netdev_ops->ndo_get_stats(
+-						cvm_oct_device[priv->port]);
++	ndev->netdev_ops->ndo_get_stats(ndev);
+ 
+ 	if (!atomic_read(&cvm_oct_poll_queue_stopping))
+ 		schedule_delayed_work(&priv->port_periodic_work, HZ);
 
-Sure, moving the function call for the local CPU
-into smp_call_function_many might be a nice optimization.
-
-A quick grep suggests it touch stuff all over the tree,
-so it could be a nice Outreachy intern project :)
-
---=20
-All Rights Reversed.
---=-YJ6J6367Vg/8hmVEmuKY
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCAAdFiEEKR73pCCtJ5Xj3yADznnekoTE3oMFAltd+70ACgkQznnekoTE
-3oM6xAf+LW3b7ytQ/AWHWbd/6imsPNnK7yJLQf6DN8SbORaONdPYkisg+8O0sHdM
-5uyNh6LxZqHRGuL5pk4cVLeAVXvDxcjV0gb45yd3ieN1GyOyVGMyO3eV0huPhlGB
-J26NfMJ4+wCKRwn9ZVclq3g9iUgZeUxb12aYqPam/aUKZ0HbbaF+VXhOxigqx7Pf
-g/uM+Sp3M/4AZbmRwRfovsxiu7h0yY9C+BOf/SVLiR1wNkD6DhfWOWHCdqdfWYqT
-wOGtt5SeGKobWa6NW+A6QBGyG+Rk5r7UnaUlnyo4+Vgc5pjP9+xXT2CxDgXB+tM3
-d24Fwim3Cm8oVGoT+rYpX7ne8M9iNg==
-=BNtc
------END PGP SIGNATURE-----
-
---=-YJ6J6367Vg/8hmVEmuKY--
 
