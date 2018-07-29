@@ -7,58 +7,58 @@ X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E876CC46462
-	for <linux-kernel@archiver.kernel.org>; Sun, 29 Jul 2018 19:38:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4E94C46462
+	for <linux-kernel@archiver.kernel.org>; Sun, 29 Jul 2018 19:38:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9AC2220892
-	for <linux-kernel@archiver.kernel.org>; Sun, 29 Jul 2018 19:38:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6B7BD20857
+	for <linux-kernel@archiver.kernel.org>; Sun, 29 Jul 2018 19:38:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KZrreNgk"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9AC2220892
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mOfMlYjh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B7BD20857
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728918AbeG2VIc (ORCPT
+        id S1731818AbeG2VJj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 29 Jul 2018 17:08:32 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:43810 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726586AbeG2VIa (ORCPT
+        Sun, 29 Jul 2018 17:09:39 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:41963 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728750AbeG2VIc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Jul 2018 17:08:30 -0400
-Received: by mail-pg1-f194.google.com with SMTP id d17-v6so1592334pgv.10
-        for <linux-kernel@vger.kernel.org>; Sun, 29 Jul 2018 12:36:59 -0700 (PDT)
+        Sun, 29 Jul 2018 17:08:32 -0400
+Received: by mail-pg1-f195.google.com with SMTP id z8-v6so6024640pgu.8
+        for <linux-kernel@vger.kernel.org>; Sun, 29 Jul 2018 12:37:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=vVj1a9aoqq+jMPjxXfqU1FR7aZDkjTxC3929c002Pbk=;
-        b=KZrreNgkXBUaMTxlX21CIqhjNL9lPT4QS+j9M8qLm4MUgjXTwkJZksm+bEZZzDdfYL
-         03TH+2+Sa101QgfJfVFSkEWIW/FIbm8zUvlnZCB1vctYltWhCy36YD+mfq5o+/kEBtkm
-         fPatbbHSfGuAgNwGVgxCqw6R+5KKouYV62d+sNBMem5T3TbiwkV8r6bv8XemHW2FN906
-         cQSRu78gSssgzEjR+vPm9TOKnE1PSLBR92a2/xHWdgvLgmCoaLP7d9SI6AHYsvRhScLL
-         gVN6J0r/Ydg+tS1FJhNY4+0DvgfSWqWFkGSFAvBkbotL9nOxkPVVaEMJbprUUaqqlv2G
-         7lMA==
+        bh=VbeR4UeSqh4Lwp8spvsYG7QS8gcKKa52mTJVodO+cNQ=;
+        b=mOfMlYjhVE21Dfz+m+PZZbygWi9hqQopMXdROiGGewZ79Ae4cUmLl0RXMO7DSVwWEd
+         HDw8d8q90IC2gWHuq2ITYpxUOhIyDNaLSXb5ItgFQ1Bu7iekR6wctzb1B3OG3vOk69hG
+         /uWxOf84bNywceB/PYxWezyAwVrldzwWY1RJGCfw11QeXSv133AJsQqhQqvQDsBa5Dle
+         yUaq6coHSr3OQo0+Tk8xxs1JgH38/07hwZkt/F2nDfaNNgSxiqvB6X06nZCnoTLitLcw
+         q5xnKp9XKACDJnMlFM8Cb/OhWe6Db01zmFSpA+NXQL48dUpN9kDGP4ENrUbWzSEtcN/Y
+         ic4Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=vVj1a9aoqq+jMPjxXfqU1FR7aZDkjTxC3929c002Pbk=;
-        b=EsuU7hCfKwibJYJRIpWjH49szgC8sKy2BkSPFtLrp2txghwYNAFHMVsUHfDhlAiJnL
-         0gWQm/zxxkTfGv8RRdDy5h8xo0mro8U9ZPEl7TNyM5Kk1DgSV9+fzAxrHYPlaYIxKXPx
-         hV8OWUX/vtIe3MKE3n4QcNAOEKzPEHK6ik80rAbVX6gxD3qfqiKgrzsscNtjwmvs/hcn
-         Tfolc/OZbF0PkIs5u/TKr241TtEHwU4WfiH2xF/rU1PELS/FZ/U13ixTYRmrI6qYmjOY
-         m5geI3DBFJVCTiB55PATbrR8q98z6EJiC1ccS6uDngRzs22UwrW5EjK+AqgWI91TSF3l
-         gQmQ==
-X-Gm-Message-State: AOUpUlF3yKZuiWVDoBONTmX63VHkGwobr86L7nt/hf1bvdP7+mRttarC
-        oTVrVLmq3ODi6MhL67cDm0M=
-X-Google-Smtp-Source: AAOMgpcEjmrj3PQy/rKPnlma+M/Itq8i4MzdXs38TXts4+cRUJg3nSxj2TupGhLtuLMz6cFymAhm3w==
-X-Received: by 2002:a65:6398:: with SMTP id h24-v6mr13719096pgv.245.1532893019150;
-        Sun, 29 Jul 2018 12:36:59 -0700 (PDT)
+        bh=VbeR4UeSqh4Lwp8spvsYG7QS8gcKKa52mTJVodO+cNQ=;
+        b=b/Mg2dCMjCGzH9hsNDMgYXYdNkVmF9A1uYj3UTEt6Cc//RBTNtx+c4Rf4UWaRbGf/b
+         JqrNiGE8tlibvU2Gs7cvz70+WhCmSPxtO55juuC4uv2+S1UvZKEV4DOsVLQ83nhukC3t
+         FVQpjyCGUIHBygvY9rF3N4lMzMs8yCMkZyMCaTG2eCOgkFNnWF2rkjzWX1dpwzWoWrcM
+         +A48STCCEMHlSwnX9zcF4OANV4FmNAQAZYsJ9rabz9AX89Que49owFyG1zr4p95iWo3c
+         /ZtwNmnPhk0KN01USi4x8YRcQlqArfLPULh9gYA8WAq0LYo73VkjTm+PNy6q+YxemCn4
+         vttg==
+X-Gm-Message-State: AOUpUlGtKz/kjvuN5Tt5zGKWrEMgYOXKuRwgBKaHb9FFFUGBaZUfBy8C
+        WCzYPSaWsWzhkoJlsIrOV/A=
+X-Google-Smtp-Source: AAOMgpfTygFc7RQursE26+BmAiVKSNxWzsj6iNwiU9Ra/Ro1qQh1AsMXD3Wz1aM32i9MAi9x5zhTWA==
+X-Received: by 2002:a65:52cc:: with SMTP id z12-v6mr13757142pgp.69.1532893020118;
+        Sun, 29 Jul 2018 12:37:00 -0700 (PDT)
 Received: from toddpoynor2.mtv.corp.google.com ([2620:0:1000:3701:7d29:cd13:d903:7908])
-        by smtp.gmail.com with ESMTPSA id k26-v6sm27474062pfb.167.2018.07.29.12.36.58
+        by smtp.gmail.com with ESMTPSA id k26-v6sm27474062pfb.167.2018.07.29.12.36.59
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 29 Jul 2018 12:36:58 -0700 (PDT)
+        Sun, 29 Jul 2018 12:36:59 -0700 (PDT)
 From:   Todd Poynor <toddpoynor@gmail.com>
 To:     Rob Springer <rspringer@google.com>,
         John Joseph <jnjoseph@google.com>,
@@ -67,9 +67,9 @@ To:     Rob Springer <rspringer@google.com>,
 Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
         Dmitry Torokhov <dtor@chromium.org>,
         Todd Poynor <toddpoynor@google.com>
-Subject: [PATCH 01/13] staging: gasket: core: hold reference to pci_dev while used
-Date:   Sun, 29 Jul 2018 12:36:34 -0700
-Message-Id: <20180729193646.201721-2-toddpoynor@gmail.com>
+Subject: [PATCH 02/13] staging: gasket: sysfs: hold reference to device while in use
+Date:   Sun, 29 Jul 2018 12:36:35 -0700
+Message-Id: <20180729193646.201721-3-toddpoynor@gmail.com>
 X-Mailer: git-send-email 2.18.0.345.g5c9ce644c3-goog
 In-Reply-To: <20180729193646.201721-1-toddpoynor@gmail.com>
 References: <20180729193646.201721-1-toddpoynor@gmail.com>
@@ -82,50 +82,54 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Todd Poynor <toddpoynor@google.com>
 
-Hold a reference on the struct pci_dev while a pointer to it is held in
-the gasket data structures.
+Hold a reference to the struct device while a gasket sysfs mapping
+exists for the device and a pointer to the struct is kept in the mapping
+data structures.
 
 Signed-off-by: Todd Poynor <toddpoynor@google.com>
 ---
- drivers/staging/gasket/gasket_core.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/staging/gasket/gasket_sysfs.c | 11 +++++------
+ 1 file changed, 5 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/staging/gasket/gasket_core.c b/drivers/staging/gasket/gasket_core.c
-index 2b484d067c38a..b832a4f529f27 100644
---- a/drivers/staging/gasket/gasket_core.c
-+++ b/drivers/staging/gasket/gasket_core.c
-@@ -488,6 +488,7 @@ static void gasket_free_dev(struct gasket_dev *gasket_dev)
- 	internal_desc->devs[gasket_dev->dev_idx] = NULL;
- 	mutex_unlock(&internal_desc->mutex);
- 	put_device(gasket_dev->dev);
-+	pci_dev_put(gasket_dev->pci_dev);
- 	kfree(gasket_dev);
- }
- 
-@@ -565,6 +566,7 @@ static int gasket_pci_probe(
- 	ret = gasket_alloc_dev(internal_desc, parent, &gasket_dev, kobj_name);
- 	if (ret)
- 		return ret;
-+	gasket_dev->pci_dev = pci_dev_get(pci_dev);
- 	if (IS_ERR_OR_NULL(gasket_dev->dev_info.device)) {
- 		pr_err("Cannot create %s device %s [ret = %ld]\n",
- 		       driver_desc->name, gasket_dev->dev_info.name,
-@@ -572,7 +574,6 @@ static int gasket_pci_probe(
- 		ret = -ENODEV;
- 		goto fail1;
+diff --git a/drivers/staging/gasket/gasket_sysfs.c b/drivers/staging/gasket/gasket_sysfs.c
+index da972ce0e0db0..fde04658419bc 100644
+--- a/drivers/staging/gasket/gasket_sysfs.c
++++ b/drivers/staging/gasket/gasket_sysfs.c
+@@ -126,6 +126,7 @@ static void put_mapping(struct gasket_sysfs_mapping *mapping)
+ 		kfree(mapping->attributes);
+ 		mapping->attributes = NULL;
+ 		mapping->attribute_count = 0;
++		put_device(mapping->device);
+ 		mapping->device = NULL;
+ 		mapping->gasket_dev = NULL;
  	}
--	gasket_dev->pci_dev = pci_dev;
+@@ -208,22 +209,20 @@ int gasket_sysfs_create_mapping(
+ 		device->kobj.name);
  
- 	ret = gasket_setup_pci(pci_dev, gasket_dev);
- 	if (ret)
-@@ -703,7 +704,6 @@ static int gasket_setup_pci(
- {
- 	int i, mapped_bars, ret;
+ 	mapping = &dev_mappings[map_idx];
+-	kref_init(&mapping->refcount);
+-	mapping->device = device;
+-	mapping->gasket_dev = gasket_dev;
+ 	mapping->attributes = kcalloc(GASKET_SYSFS_MAX_NODES,
+ 				      sizeof(*mapping->attributes),
+ 				      GFP_KERNEL);
+-	mapping->attribute_count = 0;
+ 	if (!mapping->attributes) {
+ 		dev_dbg(device, "Unable to allocate sysfs attribute array\n");
+-		mapping->device = NULL;
+-		mapping->gasket_dev = NULL;
+ 		mutex_unlock(&mapping->mutex);
+ 		mutex_unlock(&function_mutex);
+ 		return -ENOMEM;
+ 	}
  
--	gasket_dev->pci_dev = pci_dev;
- 	ret = pci_enable_device(pci_dev);
- 	if (ret) {
- 		dev_err(gasket_dev->dev, "cannot enable PCI device\n");
++	kref_init(&mapping->refcount);
++	mapping->device = get_device(device);
++	mapping->gasket_dev = gasket_dev;
++	mapping->attribute_count = 0;
+ 	mutex_unlock(&mapping->mutex);
+ 	mutex_unlock(&function_mutex);
+ 
 -- 
 2.18.0.345.g5c9ce644c3-goog
 
