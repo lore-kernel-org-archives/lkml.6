@@ -2,171 +2,125 @@ Return-Path: <SRS0=jKyA=KN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4934CC46462
-	for <linux-kernel@archiver.kernel.org>; Sun, 29 Jul 2018 14:52:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0648C46461
+	for <linux-kernel@archiver.kernel.org>; Sun, 29 Jul 2018 15:29:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E52AF20857
-	for <linux-kernel@archiver.kernel.org>; Sun, 29 Jul 2018 14:52:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9B79520873
+	for <linux-kernel@archiver.kernel.org>; Sun, 29 Jul 2018 15:29:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KM2MU0XH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E52AF20857
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="njxCHMKv"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B79520873
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726564AbeG2QXE (ORCPT
+        id S1726470AbeG2RAT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 29 Jul 2018 12:23:04 -0400
-Received: from mail-oi0-f67.google.com ([209.85.218.67]:43298 "EHLO
-        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726347AbeG2QXE (ORCPT
+        Sun, 29 Jul 2018 13:00:19 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:44655 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726355AbeG2RAT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Jul 2018 12:23:04 -0400
-Received: by mail-oi0-f67.google.com with SMTP id b15-v6so16929940oib.10
-        for <linux-kernel@vger.kernel.org>; Sun, 29 Jul 2018 07:52:21 -0700 (PDT)
+        Sun, 29 Jul 2018 13:00:19 -0400
+Received: by mail-pg1-f193.google.com with SMTP id r1-v6so5842452pgp.11
+        for <linux-kernel@vger.kernel.org>; Sun, 29 Jul 2018 08:29:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=6Mj3jzqOH4ucWcl8JL/T9VLgS75LofnzFvrs3qnCc8I=;
-        b=KM2MU0XHu05gQHlsVFwIB4LWic8AzEtlHFIBYXsRbka8JaDiBc/atT1Njxl7HRTfbA
-         6pZPF+WTsz/g3Q6KrvUATgJopdoadF1nT7OcZioZuVfykdyudwm2YIdaIgaw/fXrrCYB
-         ZLufo3riYIacEPQrqSNiJ1KuNzB4Pe0VhvFg3huKx59r3NlaF2P0YHcFXygPMk55XfLW
-         AMBV9dAt0wjdVxhlNAbm4rbl4gmsNhYE2aaIK+ftbk/0NztIc6/b4i2GkStWy0vrUqvc
-         PkJ986fArgPaBa73uodf5mGvUciHtyacG6yY6oTbIVcfhgtkfV/P96WB8EU/KT+mst8P
-         pkow==
+        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=Z9s052X3Y/4DSY7S3yWI6aVARuUoXuKMXkn7jAF6rQA=;
+        b=njxCHMKvWKey9xXbKB/HSjz6mph8OdV+xiGTaBzzA3fw6MG4GUPtx2SQCWPaflt6JV
+         59yxigQrIwIjsHJZNTVKU5zdx0ueA4jU+Px+UMhx1UaJTRTnqEBBdDO8sWEEMallanzB
+         baHG0Zrwb0tx4Y65snKxHNJMzHM9d3coxcpDXCvyzbVwW/X9GXLJnCygH6nNYFVXV8p9
+         fmtzSj9R39MHpumAVcU8QDMyjhIzwhMnWUk8iY2BSK6Zj4IxROqwfJwqZ8lRWPKoiwD8
+         JrQ/ntr9p6S/AA6uRFmgbdR8B3EMr52o6DBkNc61HxeqKKk7SxGgjlkVu8K4BvzbZgbT
+         KTpA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=6Mj3jzqOH4ucWcl8JL/T9VLgS75LofnzFvrs3qnCc8I=;
-        b=B5zKRsJIZCqIkUuKh4cAVJVP95HLX6tXVW0fk2I9TL77evkEInBaJTqjLBn4WwR1dJ
-         hIRsyJFAgUtf0cNHvO5UiIQclRLt3E9bjiXS+ug4x1k9hO+hfGO5st+7Td7Qsdyp2yDg
-         Vi3dtDshoSJMHjV6MOuBQW1G3heHY45EZSKBIfH+OXPObIMLZWI6Vjf2DubbOczXL6Nn
-         gylaCZ9IQdsMllQHUm/pUReVf5/R2Sa3CHPa+tOKLlNcN4LB9Lxc8Gy1kluriHWqEZAq
-         bP0JhGoxZe7MUJb8OHd2OTSrnDn+F2d6LFZyWU+5AYG43P+y1fDq8XRmcPrAAHifnSWp
-         HthQ==
-X-Gm-Message-State: AOUpUlFyhGBavBR521MOi0bCFXEOlL2YPhxRihIYevqEi1VOOSSYn7FA
-        KUFDbwWEhYDYE8/82SCcLzJJYL8AN+b8rbR/P7M=
-X-Google-Smtp-Source: AAOMgpec7sWKqkKwVCnkWhZhiDO7bYjVDA9OvWv/Xa/bd+rSWeMfeKesa4x4Wgf9SL4AIqAx5Qg5cH1AewyMPZqNOaE=
-X-Received: by 2002:aca:cd84:: with SMTP id d126-v6mr15417035oig.325.1532875941287;
- Sun, 29 Jul 2018 07:52:21 -0700 (PDT)
-MIME-Version: 1.0
-References: <3b90173dc3a8ce12ef7f4896f05673140ac3b4d7.camel@perches.com>
- <cover.1532864059.git.tsotsos@gmail.com> <81f71a7c1997e53ec97f2b90ae562ff361a46f42.1532864059.git.tsotsos@gmail.com>
- <20180729124320.GA27275@kroah.com>
-In-Reply-To: <20180729124320.GA27275@kroah.com>
-From:   Georgios Tsotsos <tsotsos@gmail.com>
-Date:   Sun, 29 Jul 2018 17:52:10 +0300
-Message-ID: <CADERADOfQrrgi09SyFR4gdGLyF5k3x6rdoMtJkfU5rjHQjTrYw@mail.gmail.com>
-Subject: Re: [PATCH v3 1/1] Staging: octeon-usb: Breaks down cvmx_usb_poll_channel().
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     devel@driverdev.osuosl.org, James Hogan <jhogan@kernel.org>,
-        linux-kernel@vger.kernel.org, Aaro Koskinen <aaro.koskinen@iki.fi>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=Z9s052X3Y/4DSY7S3yWI6aVARuUoXuKMXkn7jAF6rQA=;
+        b=c+QsAYhrYnEHsujdmU/mVgyRe99rLZLhY4GWa0Wk3SfYZ8sDo6IXrSAtRnJk4pd4in
+         FR6HO7bYgNsVUnvqRDGiqMV2THj0lqs0tO3+TfN7WCChPhXycRI0WOSkUZN2brmutHfR
+         WQ/6Qm2FyT4uOR4/tAcoqc/tUw8hxblhF5OWti5zXRTolhWbJjUyJ5tzoON35Jca/znv
+         v5VCmzRfJIVulYgF+Mp0As9biXkcngHpKMJHmXweMQjhFBYg12LEFMajLtGeFOpWyOPZ
+         3FoVMYbKmXem24qLqiDRaCx+h71v/+ZT06YHVF9B3q3VDAviIwextB/VGq7zywDqWVkc
+         pYSQ==
+X-Gm-Message-State: AOUpUlHqdgos33FE9U6Lvi0YNin0p58GeNsp9Ej7YDMhvm5WZmPe/fnF
+        Cs27bAC4ubDlVR389bCjGqNyeA==
+X-Google-Smtp-Source: AAOMgpcTyIgWwuEEhgQzglxvfsX8UilI0p2X94V7WS9BDC/sF16ecWQVGYGvxFiZi4Sa7dxaBHeTuA==
+X-Received: by 2002:a65:4849:: with SMTP id i9-v6mr13156675pgs.350.1532878170604;
+        Sun, 29 Jul 2018 08:29:30 -0700 (PDT)
+Received: from ?IPv6:2600:1010:b066:ba1f:d10d:1ec8:df2a:b975? ([2600:1010:b066:ba1f:d10d:1ec8:df2a:b975])
+        by smtp.gmail.com with ESMTPSA id s20-v6sm11413696pga.37.2018.07.29.08.29.28
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 29 Jul 2018 08:29:29 -0700 (PDT)
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (1.0)
+Subject: Re: [PATCH 10/10] mm,sched: conditionally skip lazy TLB mm refcounting
+From:   Andy Lutomirski <luto@amacapital.net>
+X-Mailer: iPhone Mail (15G77)
+In-Reply-To: <1532866319.28585.12.camel@surriel.com>
+Date:   Sun, 29 Jul 2018 08:29:27 -0700
+Cc:     Andy Lutomirski <luto@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        kernel-team <kernel-team@fb.com>,
+        Peter Zijlstra <peterz@infradead.org>, X86 ML <x86@kernel.org>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Ingo Molnar <mingo@kernel.org>, Mike Galbraith <efault@gmx.de>,
+        Dave Hansen <dave.hansen@intel.com>, will.daecon@arm.com,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <FC4DF151-463C-4CED-8962-9056648BFEDC@amacapital.net>
+References: <20180728215357.3249-1-riel@surriel.com> <20180728215357.3249-11-riel@surriel.com> <CALCETrWS4pE5Tv3OErM3AD-E=CGG3U+2CBVecRF3N0c+g42vEg@mail.gmail.com> <1532866319.28585.12.camel@surriel.com>
+To:     Rik van Riel <riel@surriel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
-Regarding your latest comment, i have notice many functions in this module
-using kerneldoc and not been global, also there are various erroneous
-situations that functions return not defined error codes.
-I will try to fix them all and a new patch series for those two issues after
-this one is ok. (I hope with less versions :))
-On Sun, 29 Jul 2018 at 15:43, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> On Sun, Jul 29, 2018 at 02:41:53PM +0300, Georgios Tsotsos wrote:
-> > In order to make this function more clear a new function created that controls
-> > channels halt on no DMA mode.
-> >
-> > Signed-off-by: Georgios Tsotsos <tsotsos@gmail.com>
-> > ---
-> >  drivers/staging/octeon-usb/octeon-hcd.c | 81 +++++++++++++++++++++------------
-> >  1 file changed, 53 insertions(+), 28 deletions(-)
-> >
-> > diff --git a/drivers/staging/octeon-usb/octeon-hcd.c b/drivers/staging/octeon-usb/octeon-hcd.c
-> > index 8a7bdf1a9fe6..3f44ac260eff 100644
-> > --- a/drivers/staging/octeon-usb/octeon-hcd.c
-> > +++ b/drivers/staging/octeon-usb/octeon-hcd.c
-> > @@ -2593,7 +2593,51 @@ static void cvmx_usb_transfer_isoc(struct octeon_hcd *usb,
-> >               cvmx_usb_complete(usb, pipe, transaction, CVMX_USB_STATUS_OK);
-> >       }
-> >  }
-> > +/**
->
-> Blank line between functions please.
->
-> Also, as this is not a global function, no need for kerneldoc
-> formatting, but you did it already, so no big deal.
->
-> > + * Handles channels halt in non DMA mode
-> > + * @hcchar_chena:
-> > + * @hcint_xfercompl:
-> > + * @usb:             USB device
-> > + * @channel:         Channel to poll
-> > + *
-> > + * In non DMA mode the channels don't halt themselves. We need
-> > + * to manually disable channels that are left running
-> > + *
-> > + * Returns: -1 on halt
-> > + */
-> > +static int cvmx_usb_dma_halt(u32 hcchar_chena, u32 hcint_xfercompl,
-> > +                          struct octeon_hcd *usb, int channel)
-> > +{
-> > +     struct usb_hcd *hcd = octeon_to_hcd(usb);
-> > +     struct device *dev = hcd->self.controller;
-> >
-> > +     if (hcchar_chena) {
-> > +             union cvmx_usbcx_hcintmskx hcintmsk;
-> > +             union cvmx_usbcx_hccharx usbc_hcchar;
-> > +             /* Disable all interrupts except CHHLTD */
-> > +             hcintmsk.u32 = 0;
-> > +             hcintmsk.s.chhltdmsk = 1;
-> > +             cvmx_usb_write_csr32(usb,
-> > +                                  CVMX_USBCX_HCINTMSKX(channel, usb->index),
-> > +                                  hcintmsk.u32);
-> > +             usbc_hcchar.s.chdis = 1;
-> > +             cvmx_usb_write_csr32(usb,
-> > +                                  CVMX_USBCX_HCCHARX(channel, usb->index),
-> > +                                  usbc_hcchar.u32);
-> > +             return -1;
->
-> Do not make up error values, return -EINVAL or something like that (what
-> ever the real error here is.)
->
-> > +     } else if (hcint_xfercompl) {
-> > +             /*
-> > +              * Successful IN/OUT with transfer complete.
-> > +              * Channel halt isn't needed.
-> > +              */
-> > +     } else {
-> > +             dev_err(dev, "USB%d: Channel %d interrupt without halt\n",
-> > +                     usb->index, channel);
-> > +             return -1;
->
-> Same here.
->
-> thanks,
->
-> greg k-h
 
 
+> On Jul 29, 2018, at 5:11 AM, Rik van Riel <riel@surriel.com> wrote:
+>=20
+>> On Sat, 2018-07-28 at 21:21 -0700, Andy Lutomirski wrote:
+>> On Sat, Jul 28, 2018 at 2:53 PM, Rik van Riel <riel@surriel.com>
+>> wrote:
+>>> Conditionally skip lazy TLB mm refcounting. When an architecture
+>>> has
+>>> CONFIG_ARCH_NO_ACTIVE_MM_REFCOUNTING enabled, an mm that is used in
+>>> lazy TLB mode anywhere will get shot down from exit_mmap, and there
+>>> in no need to incur the cache line bouncing overhead of refcounting
+>>> a lazy TLB mm.
+>>=20
+>> Unless I've misunderstood something, this patch results in idle tasks
+>> whose active_mm has been freed still having active_mm pointing at
+>> freed memory.=20
+>=20
+> Patch 9/10 is supposed to ensure that the lazy TLB CPUs get
+> switched to init_mm before an mm is freed. No CPU should ever
+> have its active_mm pointing at a freed mm.
+>=20
+> Your message made me re-read the code, and now I realize that
+> leave_mm does not actually do that.
+>=20
+> Looking at the other callers of leave_mm, I might not be the
+> only one surprised by that; xen_drop_mm_ref comes to mind.
+>=20
+> I guess I should some code to leave_mm to have it actually
+> clear active_mm and call the conditional refcount drop helper
+> function.
+>=20
+> Does that clear up the confusion?
+>=20
 
---
-Best regards!
-Georgios Tsotsos
-Greece-Evia-Chalkida
-tsotsos@linux.com
-skype: tsotsos
-------------------------------------
-Georgios Tsotsos
-*Greece - Evia - Chalkida*
-tsotsos[at]linux.com
-skype: tsotsos
+Kind of. But what=E2=80=99s the point of keeping active_mm?  On architecture=
+s that opt in to the new mode, there won=E2=80=99t be any code that cares ab=
+out it=E2=80=99s value.  What=E2=80=99s the benefit of keeping it around?  I=
+f you ifdef it out, then it can=E2=80=99t possibly point to freed memory, an=
+d there=E2=80=99s nothing to worry about.=
