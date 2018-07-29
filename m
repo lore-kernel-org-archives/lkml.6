@@ -2,132 +2,105 @@ Return-Path: <SRS0=jKyA=KN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1055AFA3751
-	for <linux-kernel@archiver.kernel.org>; Sun, 29 Jul 2018 10:25:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CD0EFA3754
+	for <linux-kernel@archiver.kernel.org>; Sun, 29 Jul 2018 10:32:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A12D520873
-	for <linux-kernel@archiver.kernel.org>; Sun, 29 Jul 2018 10:25:35 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jQ1bkV+s"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A12D520873
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 00A3120893
+	for <linux-kernel@archiver.kernel.org>; Sun, 29 Jul 2018 10:32:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 00A3120893
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=the-dreams.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726417AbeG2LzY (ORCPT
+        id S1726452AbeG2MCK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 29 Jul 2018 07:55:24 -0400
-Received: from mail-oi0-f65.google.com ([209.85.218.65]:34796 "EHLO
-        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726361AbeG2LzY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Jul 2018 07:55:24 -0400
-Received: by mail-oi0-f65.google.com with SMTP id 13-v6so16383615ois.1;
-        Sun, 29 Jul 2018 03:25:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=qvukRtzl8KcvmaFDZEMrYpXoxevaggdLNkphfGjs0P0=;
-        b=jQ1bkV+sczvvK8K6askkPUirrpNNTXszPKeLzJFnoL5DBv6JvByNVz01W/GIxVhaag
-         KIS6+KeZ4TSvkWq54a1v4T/kk51uSB4tp339LZE6F2lUdLaw6j7q2rApRxMS0wNRlBUF
-         oJyYl60V1Z6QfeyCl9rxI5qOzdDfbXK/eohIuAQ7idLVfjSD9BCKr8L4+fCmJHt18Jjm
-         Ct/Q+K+VS25WmvDi5rZbhLQyqA5YuZzRcczMJTJWc8/GFbYUMwYm2aOED9t7QWZl8U31
-         yVbWOSgd4DstV56/zn+oxV5aG19IwqNqSWkCMoaQ31/5af5d7/DM8SwBiWjpKqtTDIEK
-         XKbA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
-         :date:message-id:subject:to:cc;
-        bh=qvukRtzl8KcvmaFDZEMrYpXoxevaggdLNkphfGjs0P0=;
-        b=HwWQdh4SKuXei6J5OEA9v+8/12FK1S6AGiVkKK4JEQhjiO6d+Zvbm3zdpsWXyuG36l
-         b+0/gnGuwg4DHemO0O90nbuSmfMcZcu0B3Ed1mStr8tECwT8JRRTtNe7tTGeZhvRHAxH
-         VSUODAU10dT8piOv4FAI8ZXPZFer5U9LjJWhdtI4RrZepX7G97X6Fio3+CaXaTWJNKXj
-         aJRr17hVieRmd05PqJDO56JNIV+r4G0vN8O9oySyLHSFKRf9F7VRF+rR/efx9HOgbHB6
-         gA1u20uqTAvFYrlkNbBOdQBCS3hfblQ1tDpPoROyue9lM7ON9SvWQBVr3w5orw0VZY8C
-         bmaQ==
-X-Gm-Message-State: AOUpUlGZBEyqmFTYfpDNWW8h1Hkl21DWHI1t+iTWycVSoPWPFG/PoG9O
-        mTJSlbGyaGWiGjrkJYobSzP1xjkVyd+oOwTmh30NZQ==
-X-Google-Smtp-Source: AAOMgpeFDo3owRuqpU9O9TB/kMWXkuI8hW+q2Co1sPe85gzaqWkHKyMFMZAkslEM4VSPGqr6yRoBYSJe16Hx2IQpc9M=
-X-Received: by 2002:aca:6285:: with SMTP id w127-v6mr12942764oib.120.1532859926472;
- Sun, 29 Jul 2018 03:25:26 -0700 (PDT)
+        Sun, 29 Jul 2018 08:02:10 -0400
+Received: from sauhun.de ([88.99.104.3]:37388 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726283AbeG2MCK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 29 Jul 2018 08:02:10 -0400
+Received: from localhost (p54B331DF.dip0.t-ipconnect.de [84.179.49.223])
+        by pokefinder.org (Postfix) with ESMTPSA id 1F954658E25;
+        Sun, 29 Jul 2018 12:32:09 +0200 (CEST)
+Date:   Sun, 29 Jul 2018 12:32:08 +0200
+From:   Wolfram Sang <wsa@the-dreams.de>
+To:     Karthikeyan Ramasubramanian <kramasub@codeaurora.org>
+Cc:     andy.gross@linaro.org, david.brown@linaro.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, gregkh@linuxfoundation.org,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-i2c@vger.kernel.org,
+        evgreen@chromium.org, acourbot@chromium.org, swboyd@chromium.org,
+        dianders@chromium.org, Sagar Dharia <sdharia@codeaurora.org>,
+        Girish Mahadevan <girishm@codeaurora.org>
+Subject: Re: [PATCH v7 1/4] i2c: i2c-qcom-geni: Add bus driver for the
+ Qualcomm GENI I2C controller
+Message-ID: <20180729103208.uyxp2feonvznmzsp@ninjato>
+References: <1528823348-30532-1-git-send-email-kramasub@codeaurora.org>
+ <1528823348-30532-2-git-send-email-kramasub@codeaurora.org>
 MIME-Version: 1.0
-Received: by 2002:a9d:63d2:0:0:0:0:0 with HTTP; Sun, 29 Jul 2018 03:25:26
- -0700 (PDT)
-In-Reply-To: <20180728210519.20195-1-erik.schmauss@intel.com>
-References: <20180728210519.20195-1-erik.schmauss@intel.com>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Sun, 29 Jul 2018 12:25:26 +0200
-X-Google-Sender-Auth: n8lSReOaRA23A9kyGZdJ1qb6lY8
-Message-ID: <CAJZ5v0jQuBSFDZXtrWmmsKHexuk-0X5pHMkbQAJ3sqPJGH7EQQ@mail.gmail.com>
-Subject: Re: [PATCH] ACPICA: AML Parser: ignore control method status in
- module-level code
-To:     Erik Schmauss <erik.schmauss@intel.com>
-Cc:     ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        oleksandr@natalenko.name,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="ns6ol5ohpitnty2i"
+Content-Disposition: inline
+In-Reply-To: <1528823348-30532-2-git-send-email-kramasub@codeaurora.org>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jul 28, 2018 at 11:05 PM, Erik Schmauss <erik.schmauss@intel.com> wrote:
-> Previous change in the AML parser code blindly set all non-successful
-> dispatcher statuses to AE_OK. This approach is incorrect because
-> successful control method invocations from module-level return
-> AE_CTRL_TRANSFER. Overwriting AE_OK to this status causes the AML
-> parser to think that there was no return value from the control
-> method invocation.
->
-> fixes: 73c2a01c52b6 (ACPICA: AML Parser: ignore dispatcher error status during table load)
->
-> Reported-by: Linus Torvalds <torvalds@linux-foundation.org>
-> Tested-by: Linus Torvalds <torvalds@linux-foundation.org>
-> Tested-by: Oleksandr Natalenko <oleksandr@natalenko.name>
-> Signed-off-by: Erik Schmauss <erik.schmauss@intel.com>
-> ---
->  drivers/acpi/acpica/psloop.c | 19 ++++++++++++-------
->  1 file changed, 12 insertions(+), 7 deletions(-)
->
-> diff --git a/drivers/acpi/acpica/psloop.c b/drivers/acpi/acpica/psloop.c
-> index ee840be150b5..44f35ab3347d 100644
-> --- a/drivers/acpi/acpica/psloop.c
-> +++ b/drivers/acpi/acpica/psloop.c
-> @@ -709,15 +709,20 @@ acpi_status acpi_ps_parse_loop(struct acpi_walk_state *walk_state)
->                         } else
->                             if ((walk_state->
->                                  parse_flags & ACPI_PARSE_MODULE_LEVEL)
-> +                               && status != AE_CTRL_TRANSFER
->                                 && ACPI_FAILURE(status)) {
->                                 /*
-> -                                * ACPI_PARSE_MODULE_LEVEL means that we are loading a table by
-> -                                * executing it as a control method. However, if we encounter
-> -                                * an error while loading the table, we need to keep trying to
-> -                                * load the table rather than aborting the table load. Set the
-> -                                * status to AE_OK to proceed with the table load. If we get a
-> -                                * failure at this point, it means that the dispatcher got an
-> -                                * error while processing Op (most likely an AML operand error.
-> +                                * ACPI_PARSE_MODULE_LEVEL flag means that we are currently
-> +                                * loading a table by executing it as a control method.
-> +                                * However, if we encounter an error while loading the table,
-> +                                * we need to keep trying to load the table rather than
-> +                                * aborting the table load (setting the status to AE_OK
-> +                                * continues the table load). If we get a failure at this
-> +                                * point, it means that the dispatcher got an error while
-> +                                * processing Op (most likely an AML operand error) or a
-> +                                * control method was called from module level and the
-> +                                * dispatcher returned AE_CTRL_TRANSFER. In the latter case,
-> +                                * leave the status alone, there's nothing wrong with it.
->                                  */
->                                 status = AE_OK;
->                         }
-> --
 
-Applied, thanks!
+--ns6ol5ohpitnty2i
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Tue, Jun 12, 2018 at 11:09:05AM -0600, Karthikeyan Ramasubramanian wrote:
+> This bus driver supports the GENI based i2c hardware controller in the
+> Qualcomm SOCs. The Qualcomm Generic Interface (GENI) is a programmable
+> module supporting a wide range of serial interfaces including I2C. The
+> driver supports FIFO mode and DMA mode of transfer and switches modes
+> dynamically depending on the size of the transfer.
+>=20
+> Signed-off-by: Karthikeyan Ramasubramanian <kramasub@codeaurora.org>
+> Signed-off-by: Sagar Dharia <sdharia@codeaurora.org>
+> Signed-off-by: Girish Mahadevan <girishm@codeaurora.org>
+> Reviewed-by: Douglas Anderson <dianders@chromium.org>
+
+Looks good except one minor thing:
+
+> +	pm_runtime_set_suspended(gi2c->se.dev);
+> +	pm_runtime_set_autosuspend_delay(gi2c->se.dev, I2C_AUTO_SUSPEND_DELAY);
+> +	pm_runtime_use_autosuspend(gi2c->se.dev);
+> +	pm_runtime_enable(gi2c->se.dev);
+> +	i2c_add_adapter(&gi2c->adap);
+> +
+> +	return 0;
+
+i2c_add_adapter can fail. So, I'd guess you want to check the return
+value and move it above the pm_runtime calls?
+
+
+--ns6ol5ohpitnty2i
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAltdl6QACgkQFA3kzBSg
+KbbpRQ/7BY/oo/gRQ8eUBnz5fBJ3bMzwg6CwHH3zsZwEWyT7/MqP6O0ToSIMXiSL
+CsR9snfwAqHev+eJiLVgsFZ3OvLSK+Kizm+HpgAM21A7wy9/hXawPy7s34PkIqDA
+Ive1qOF0Dj+k/mtEwBFp3Pmw2kKVkCPg7KwBbtCnk8bvFKzCFbFvI7eBim+Ox75c
+7riFRuDKzQJpX5m10l8p2ysC7xlnncIY/5gL1lfdjSIv0qU4vQrP8BRBtXKNy89U
+kyWqWVIZVW/O4jsXd3ww4YqDGe/3rjIykXv8xU0BBj6640rQW7D9ZOzowa2W7jbU
+UT9GMhrag1O9w7j9EiMjZ1+u1/yRw2vfzneJxf8s0eslz/5rJ+HV9qJdkn4JvSQ4
+8eAfJ4+SUB/9S7ApDIkkhOauFO3n3nnO6wOqxtaUSjNBTpDfwSOidCc61cHhzx1k
+AwUyYTz/Ap6ASlBx9q411qubYiJRfXOs2fntBhw4pGxpMdLMfq9OAThISoYlygf+
+mlMdg7KPssbuX7O3JOKiOiuk3uAPdsfQkb/x8pXkji+oUNj9iKpi/vLDMO1ahnex
+Stv69cq4TtP+JdJIdRaquVP3S3W8urjqKxnfX1apVQkrcQEv7DdiL1BY66BX0VPI
+4IMZbKOgy4MYCgFfA+tCSSkvwHpbjLKMtiaAEtUqq6m1z0Fo/qk=
+=H+It
+-----END PGP SIGNATURE-----
+
+--ns6ol5ohpitnty2i--
