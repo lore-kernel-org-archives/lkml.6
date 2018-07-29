@@ -2,171 +2,610 @@ Return-Path: <SRS0=jKyA=KN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A858C43142
-	for <linux-kernel@archiver.kernel.org>; Sun, 29 Jul 2018 03:24:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FE1EC43142
+	for <linux-kernel@archiver.kernel.org>; Sun, 29 Jul 2018 03:49:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 42AFE20882
-	for <linux-kernel@archiver.kernel.org>; Sun, 29 Jul 2018 03:24:56 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ESBdBIBq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 42AFE20882
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 27A4A20840
+	for <linux-kernel@archiver.kernel.org>; Sun, 29 Jul 2018 03:49:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 27A4A20840
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alien8.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726337AbeG2EsU (ORCPT
+        id S1726368AbeG2FSX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 29 Jul 2018 00:48:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37754 "EHLO mail.kernel.org"
+        Sun, 29 Jul 2018 01:18:23 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:38176 "EHLO mail.skyhub.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726206AbeG2EsU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Jul 2018 00:48:20 -0400
-Received: from [192.168.0.101] (unknown [180.111.102.36])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1726127AbeG2FSW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 29 Jul 2018 01:18:22 -0400
+X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
+Received: from mail.skyhub.de ([127.0.0.1])
+        by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id ddO5rix7S8LM; Sun, 29 Jul 2018 05:49:27 +0200 (CEST)
+Received: from nazgul.tnic (95-42-131-245.ip.btc-net.bg [95.42.131.245])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CCEE220882;
-        Sun, 29 Jul 2018 03:19:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1532834371;
-        bh=VEfB/C+XyROfE16r1nyyMjldh4euFWTPY4STLHH7WFc=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=ESBdBIBqF3K5hjjbJ/M90GsZUPbCAGhfLNcvB1oD/s4qxMYWBYsXnJ95tm5HEzAKa
-         bZAgCqzssdrrgZNq7iG2PMn4+Au3f/vMotk7ABe79fYk9UqIPE3i0Sg2NscftNi9I+
-         +QhnzRwdq32615QbtaXyp2QdZBn7soufpc27XiSU=
-Subject: Re: [PATCH 4/4] f2fs: fix to spread clear_cold_data()
-To:     Jaegeuk Kim <jaegeuk@kernel.org>
-Cc:     Chao Yu <yuchao0@huawei.com>,
-        linux-f2fs-devel@lists.sourceforge.net,
-        linux-kernel@vger.kernel.org, Weichao Guo <guoweichao@huawei.com>
-References: <20180727101516.41403-1-yuchao0@huawei.com>
- <20180727101516.41403-4-yuchao0@huawei.com>
- <20180729020013.GG83620@jaegeuk-macbookpro.roam.corp.google.com>
- <b7d39e79-dfb0-17c3-1eee-6afb969008a4@kernel.org>
- <20180729024456.GJ83620@jaegeuk-macbookpro.roam.corp.google.com>
-From:   Chao Yu <chao@kernel.org>
-Message-ID: <2c48e483-25ea-1a13-d605-59ce939832d8@kernel.org>
-Date:   Sun, 29 Jul 2018 11:19:27 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 1508F1EC00EA;
+        Sun, 29 Jul 2018 05:49:26 +0200 (CEST)
+Date:   Sun, 29 Jul 2018 05:49:27 +0200
+From:   Borislav Petkov <bp@alien8.de>
+To:     Venkata Narendra Kumar Gutta <vnkgutta@codeaurora.org>
+Cc:     evgreen@chromium.org, robh@kernel.org, mchehab@kernel.org,
+        linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org,
+        andy.gross@linaro.org, david.brown@linaro.org,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        robh+dt@kernel.org, mark.rutland@arm.com,
+        devicetree@vger.kernel.org, tsoni@codeaurora.org,
+        ckadabi@codeaurora.org, rishabhb@codeaurora.org
+Subject: Re: [PATCH v0 3/4] drivers: edac: Add cache erp driver for Last
+ Level Cache Controller (LLCC)
+Message-ID: <20180729034927.GA2916@nazgul.tnic>
+References: <1532540697-26630-1-git-send-email-vnkgutta@codeaurora.org>
+ <1532540697-26630-4-git-send-email-vnkgutta@codeaurora.org>
 MIME-Version: 1.0
-In-Reply-To: <20180729024456.GJ83620@jaegeuk-macbookpro.roam.corp.google.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+In-Reply-To: <1532540697-26630-4-git-send-email-vnkgutta@codeaurora.org>
+User-Agent: Mutt/1.6.0 (2016-04-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/7/29 10:44, Jaegeuk Kim wrote:
-> On 07/29, Chao Yu wrote:
->> On 2018/7/29 10:00, Jaegeuk Kim wrote:
->>> On 07/27, Chao Yu wrote:
->>>> We need to drop PG_checked flag on page as well when we clear PG_uptodate
->>>> flag, in order to avoid treating the page as GCing one later.
->>>
->>> What do you mean "treating the page as GCing one"?
->>
->> I mean if PG_checked flag in page is not cleared, allocator will make it goes
->> into cold area.
->>
->> static int __get_segment_type_6(struct f2fs_io_info *fio)
->> ...
->> 		if (is_cold_data(fio->page) || file_is_cold(inode))
->> 			return CURSEG_COLD_DATA;
+On Wed, Jul 25, 2018 at 10:44:56AM -0700, Venkata Narendra Kumar Gutta wrote:
+> Add cache error reporting driver for single and double bit errors on
+> Last Level Cache Controller (LLCC) cache. This driver takes care of
+> dumping registers and add config options to enable and disable panic
+> when these errors happen.
 > 
-> This will come only when page is dirty. So, it'd better to clear this in
-> f2fs_set_data_page_dirty()? set_cold_data() is called after set_page_dirty().
+> Signed-off-by: Channagoud Kadabi <ckadabi@codeaurora.org>
+> Signed-off-by: Venkata Narendra Kumar Gutta <vnkgutta@codeaurora.org>
 
-Looks fine, let me send v2.
+This SOB chain doesn't make any sense - see
+Documentation/process/submitting-patches.rst
 
-Thanks,
+> ---
+>  drivers/edac/Kconfig          |  21 ++
+>  drivers/edac/Makefile         |   1 +
+>  drivers/edac/qcom_llcc_edac.c | 520 ++++++++++++++++++++++++++++++++++++++++++
+>  3 files changed, 542 insertions(+)
+>  create mode 100644 drivers/edac/qcom_llcc_edac.c
 
-> 
->>
->> Thanks,
->>
->>>
->>>>
->>>> Signed-off-by: Weichao Guo <guoweichao@huawei.com>
->>>> Signed-off-by: Chao Yu <yuchao0@huawei.com>
->>>> ---
->>>>  fs/f2fs/data.c    | 8 +++++++-
->>>>  fs/f2fs/dir.c     | 1 +
->>>>  fs/f2fs/segment.c | 4 +++-
->>>>  3 files changed, 11 insertions(+), 2 deletions(-)
->>>>
->>>> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
->>>> index a29f3162b887..2817e2f4eb17 100644
->>>> --- a/fs/f2fs/data.c
->>>> +++ b/fs/f2fs/data.c
->>>> @@ -1768,6 +1768,7 @@ int f2fs_do_write_data_page(struct f2fs_io_info *fio)
->>>>  	/* This page is already truncated */
->>>>  	if (fio->old_blkaddr == NULL_ADDR) {
->>>>  		ClearPageUptodate(page);
->>>> +		clear_cold_data(page);
->>>>  		goto out_writepage;
->>>>  	}
->>>>  got_it:
->>>> @@ -1943,8 +1944,10 @@ static int __write_data_page(struct page *page, bool *submitted,
->>>>  
->>>>  out:
->>>>  	inode_dec_dirty_pages(inode);
->>>> -	if (err)
->>>> +	if (err) {
->>>>  		ClearPageUptodate(page);
->>>> +		clear_cold_data(page);
->>>> +	}
->>>>  
->>>>  	if (wbc->for_reclaim) {
->>>>  		f2fs_submit_merged_write_cond(sbi, inode, 0, page->index, DATA);
->>>> @@ -2534,6 +2537,8 @@ void f2fs_invalidate_page(struct page *page, unsigned int offset,
->>>>  		}
->>>>  	}
->>>>  
->>>> +	clear_cold_data(page);
->>>> +
->>>>  	/* This is atomic written page, keep Private */
->>>>  	if (IS_ATOMIC_WRITTEN_PAGE(page))
->>>>  		return f2fs_drop_inmem_page(inode, page);
->>>> @@ -2552,6 +2557,7 @@ int f2fs_release_page(struct page *page, gfp_t wait)
->>>>  	if (IS_ATOMIC_WRITTEN_PAGE(page))
->>>>  		return 0;
->>>>  
->>>> +	clear_cold_data(page);
->>>>  	set_page_private(page, 0);
->>>>  	ClearPagePrivate(page);
->>>>  	return 1;
->>>> diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
->>>> index 7f955c4e86a4..1e4a4122eb0c 100644
->>>> --- a/fs/f2fs/dir.c
->>>> +++ b/fs/f2fs/dir.c
->>>> @@ -734,6 +734,7 @@ void f2fs_delete_entry(struct f2fs_dir_entry *dentry, struct page *page,
->>>>  		clear_page_dirty_for_io(page);
->>>>  		ClearPagePrivate(page);
->>>>  		ClearPageUptodate(page);
->>>> +		clear_cold_data(page);
->>>>  		inode_dec_dirty_pages(dir);
->>>>  		f2fs_remove_dirty_inode(dir);
->>>>  	}
->>>> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
->>>> index 58abbdc53561..4d83961745e6 100644
->>>> --- a/fs/f2fs/segment.c
->>>> +++ b/fs/f2fs/segment.c
->>>> @@ -267,8 +267,10 @@ static int __revoke_inmem_pages(struct inode *inode,
->>>>  		}
->>>>  next:
->>>>  		/* we don't need to invalidate this in the sccessful status */
->>>> -		if (drop || recover)
->>>> +		if (drop || recover) {
->>>>  			ClearPageUptodate(page);
->>>> +			clear_cold_data(page);
->>>> +		}
->>>>  		set_page_private(page, 0);
->>>>  		ClearPagePrivate(page);
->>>>  		f2fs_put_page(page, 1);
->>>> -- 
->>>> 2.18.0.rc1
+Needs MAINTAINERS entry so that you get all the bug reports.
+
+> diff --git a/drivers/edac/Kconfig b/drivers/edac/Kconfig
+> index 57304b2..68518ad 100644
+> --- a/drivers/edac/Kconfig
+> +++ b/drivers/edac/Kconfig
+> @@ -460,4 +460,25 @@ config EDAC_TI
+>  	  Support for error detection and correction on the
+>            TI SoCs.
+>  
+> +config EDAC_QCOM_LLCC
+> +        depends on QCOM_LLCC
+> +        tristate "QCOM EDAC Controller for LLCC Cache"
+
+No edac driver per functional unit pls - see how altera_edac.c does it,
+for example. IOW, this driver - if it cannot share/reuse any of the
+existing edac drivers, it should be called qcom_edac and contain all the
+Qualcomm-specific RAS features there.
+
+> +        help
+> +          Support for error detection and correction on the
+> +          QCOM LLCC cache. Report errors caught by LLCC ECC
+> +          mechanism.
+> +
+> +          For debugging issues having to do with stability and overall system
+> +          health, you should probably say 'Y' here.
+> +
+> +config EDAC_QCOM_LLCC_PANIC_ON_UE
+> +        depends on EDAC_QCOM_LLCC
+> +        bool "Panic on uncorrectable errors - qcom llcc"
+> +        help
+> +          Forcibly cause a kernel panic if an uncorrectable error (UE) is
+> +          detected. This can reduce debugging times on hardware which may be
+> +          operating at voltages or frequencies outside normal specification.
+> +
+> +          For production builds, you should probably say 'N' here.
+> +
+>  endif # EDAC
+> diff --git a/drivers/edac/Makefile b/drivers/edac/Makefile
+> index 02b43a7..28aff28 100644
+> --- a/drivers/edac/Makefile
+> +++ b/drivers/edac/Makefile
+> @@ -77,3 +77,4 @@ obj-$(CONFIG_EDAC_ALTERA)		+= altera_edac.o
+>  obj-$(CONFIG_EDAC_SYNOPSYS)		+= synopsys_edac.o
+>  obj-$(CONFIG_EDAC_XGENE)		+= xgene_edac.o
+>  obj-$(CONFIG_EDAC_TI)			+= ti_edac.o
+> +obj-$(CONFIG_EDAC_QCOM_LLCC)		+= qcom_llcc_edac.o
+> diff --git a/drivers/edac/qcom_llcc_edac.c b/drivers/edac/qcom_llcc_edac.c
+> new file mode 100644
+> index 0000000..7a678b5
+> --- /dev/null
+> +++ b/drivers/edac/qcom_llcc_edac.c
+> @@ -0,0 +1,520 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (c) 2018, The Linux Foundation. All rights reserved.
+> + */
+> +
+> +#include <linux/kernel.h>
+> +#include <linux/edac.h>
+> +#include <linux/of_device.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/smp.h>
+> +#include <linux/spinlock.h>
+> +#include <linux/regmap.h>
+> +#include <linux/interrupt.h>
+> +#include <linux/soc/qcom/llcc-qcom.h>
+> +#include "edac_mc.h"
+> +#include "edac_device.h"
+> +
+> +#ifdef CONFIG_EDAC_QCOM_LLCC_PANIC_ON_UE
+> +#define LLCC_ERP_PANIC_ON_UE 1
+> +#else
+> +#define LLCC_ERP_PANIC_ON_UE 0
+> +#endif
+> +
+> +#define EDAC_LLCC	"qcom_llcc"
+> +
+> +#define TRP_SYN_REG_CNT	6
+> +
+> +#define DRP_SYN_REG_CNT	8
+> +
+> +#define LLCC_COMMON_STATUS0		0x0003000C
+> +#define LLCC_LB_CNT_MASK		GENMASK(31, 28)
+> +#define LLCC_LB_CNT_SHIFT		28
+> +
+> +/* single & Double Bit syndrome register offsets */
+> +#define TRP_ECC_SB_ERR_SYN0		0x0002304C
+> +#define TRP_ECC_DB_ERR_SYN0		0x00020370
+> +#define DRP_ECC_SB_ERR_SYN0		0x0004204C
+> +#define DRP_ECC_DB_ERR_SYN0		0x00042070
+> +
+> +/* Error register offsets */
+> +#define TRP_ECC_ERROR_STATUS1		0x00020348
+> +#define TRP_ECC_ERROR_STATUS0		0x00020344
+> +#define DRP_ECC_ERROR_STATUS1		0x00042048
+> +#define DRP_ECC_ERROR_STATUS0		0x00042044
+> +
+> +/* TRP, DRP interrupt register offsets */
+> +#define DRP_INTERRUPT_STATUS		0x00041000
+> +#define TRP_INTERRUPT_0_STATUS		0x00020480
+> +#define DRP_INTERRUPT_CLEAR		0x00041008
+> +#define DRP_ECC_ERROR_CNTR_CLEAR	0x00040004
+> +#define TRP_INTERRUPT_0_CLEAR		0x00020484
+> +#define TRP_ECC_ERROR_CNTR_CLEAR	0x00020440
+> +
+> +/* Mask and shift macros */
+> +#define ECC_DB_ERR_COUNT_MASK	GENMASK(4, 0)
+
+Align all those to the same vertical column.
+
+> +#define ECC_DB_ERR_WAYS_MASK	GENMASK(31, 16)
+> +#define ECC_DB_ERR_WAYS_SHIFT	BIT(4)
+> +
+> +#define ECC_SB_ERR_COUNT_MASK	GENMASK(23, 16)
+> +#define ECC_SB_ERR_COUNT_SHIFT	BIT(4)
+> +#define ECC_SB_ERR_WAYS_MASK	GENMASK(15, 0)
+> +
+> +#define SB_ECC_ERROR		BIT(0)
+> +#define DB_ECC_ERROR		BIT(1)
+> +
+> +#define DRP_TRP_INT_CLEAR	GENMASK(1, 0)
+> +#define DRP_TRP_CNT_CLEAR	GENMASK(1, 0)
+> +
+> +/* Config registers offsets*/
+> +#define DRP_ECC_ERROR_CFG       0x00040000
+> +
+> +/* TRP, DRP interrupt register offsets */
+> +#define CMN_INTERRUPT_0_ENABLE          0x0003001C
+> +#define CMN_INTERRUPT_2_ENABLE          0x0003003C
+> +#define TRP_INTERRUPT_0_ENABLE          0x00020488
+> +#define DRP_INTERRUPT_ENABLE            0x0004100C
+> +
+> +#define SB_ERROR_THRESHOLD      0x1
+> +#define SB_ERROR_THRESHOLD_SHIFT        24
+> +#define SB_DB_TRP_INTERRUPT_ENABLE      0x3
+> +#define TRP0_INTERRUPT_ENABLE   0x1
+> +#define DRP0_INTERRUPT_ENABLE   BIT(6)
+> +#define SB_DB_DRP_INTERRUPT_ENABLE      0x3
+> +
+> +
+> +enum {
+> +	LLCC_DRAM_CE = 0,
+> +	LLCC_DRAM_UE,
+> +	LLCC_TRAM_CE,
+> +	LLCC_TRAM_UE,
+> +};
+> +
+> +struct errors_edac {
+> +	const char *msg;
+> +	void (*func)(struct edac_device_ctl_info *edev_ctl,
+> +				int inst_nr, int block_nr, const char *msg);
+> +};
+> +
+> +static const struct errors_edac errors[] = {
+> +	{"LLCC Data RAM correctable Error", edac_device_handle_ce},
+> +	{"LLCC Data RAM uncorrectable Error", edac_device_handle_ue},
+> +	{"LLCC Tag RAM correctable Error", edac_device_handle_ce},
+> +	{"LLCC Tag RAM uncorrectable Error", edac_device_handle_ue},
+> +};
+> +
+> +static int qcom_llcc_core_setup(struct regmap *llcc_bcast_regmap)
+> +{
+> +	u32 sb_err_threshold;
+> +	int ret;
+> +
+> +	/* Enable TRP in instance 2 of common interrupt enable register */
+> +	ret = regmap_update_bits(llcc_bcast_regmap, CMN_INTERRUPT_2_ENABLE,
+> +				TRP0_INTERRUPT_ENABLE,
+> +				TRP0_INTERRUPT_ENABLE);
+
+Align arguments at the opening brace. Check the rest below too.
+
+> +	if (ret)
+> +		return ret;
+> +
+> +	/* Enable ECC interrupts on Tag Ram */
+> +	ret = regmap_update_bits(llcc_bcast_regmap, TRP_INTERRUPT_0_ENABLE,
+> +				SB_DB_TRP_INTERRUPT_ENABLE,
+> +				SB_DB_TRP_INTERRUPT_ENABLE);
+> +	if (ret)
+> +		return ret;
+> +
+> +	/* Enable SB error for Data RAM */
+> +	sb_err_threshold = (SB_ERROR_THRESHOLD << SB_ERROR_THRESHOLD_SHIFT);
+> +	ret = regmap_write(llcc_bcast_regmap, DRP_ECC_ERROR_CFG,
+> +				sb_err_threshold);
+> +	if (ret)
+> +		return ret;
+> +
+> +	/* Enable DRP in instance 2 of common interrupt enable register */
+> +	ret = regmap_update_bits(llcc_bcast_regmap, CMN_INTERRUPT_2_ENABLE,
+> +				DRP0_INTERRUPT_ENABLE, DRP0_INTERRUPT_ENABLE);
+> +	if (ret)
+> +		return ret;
+> +
+> +	/* Enable ECC interrupts on Data Ram */
+> +	ret = regmap_write(llcc_bcast_regmap, DRP_INTERRUPT_ENABLE,
+> +				SB_DB_DRP_INTERRUPT_ENABLE);
+> +	return ret;
+> +}
+> +
+> +/* Clear the error interrupt and counter registers */
+> +static int qcom_llcc_clear_errors(int err_type, struct llcc_drv_data *drv)
+> +{
+> +	int ret = 0;
+> +
+> +	switch (err_type) {
+> +	case LLCC_DRAM_CE:
+> +	case LLCC_DRAM_UE:
+> +		/* Clear the interrupt */
+> +		ret = regmap_write(drv->bcast_regmap, DRP_INTERRUPT_CLEAR,
+> +					DRP_TRP_INT_CLEAR);
+> +		if (ret)
+> +			return ret;
+> +
+> +		/* Clear the counters */
+> +		ret = regmap_write(drv->bcast_regmap, DRP_ECC_ERROR_CNTR_CLEAR,
+> +					DRP_TRP_CNT_CLEAR);
+> +		if (ret)
+> +			return ret;
+> +		break;
+> +	case LLCC_TRAM_CE:
+> +	case LLCC_TRAM_UE:
+> +		ret = regmap_write(drv->bcast_regmap, TRP_INTERRUPT_0_CLEAR,
+> +					DRP_TRP_INT_CLEAR);
+> +		if (ret)
+> +			return ret;
+> +
+> +		ret = regmap_write(drv->bcast_regmap, TRP_ECC_ERROR_CNTR_CLEAR,
+> +					DRP_TRP_CNT_CLEAR);
+> +		if (ret)
+> +			return ret;
+> +		break;
+> +	}
+> +	return ret;
+> +}
+> +
+> +/* Dump syndrome registers for tag Ram Double bit errors */
+> +static int dump_trp_db_syn_reg(struct llcc_drv_data *drv, u32 bank)
+> +{
+> +	int i, ret;
+> +	int db_err_cnt;
+> +	int db_err_ways;
+> +	u32 synd_reg;
+> +	u32 synd_val;
+> +
+> +	for (i = 0; i < TRP_SYN_REG_CNT; i++) {
+> +		synd_reg = TRP_ECC_DB_ERR_SYN0 + (i * 4);
+> +		ret = regmap_read(drv->regmap, drv->offsets[bank] + synd_reg,
+> +				&synd_val);
+> +		if (ret)
+> +			return ret;
+> +		edac_printk(KERN_CRIT, EDAC_LLCC, "TRP_ECC_SYN%d: 0x%8x\n",
+> +			i, synd_val);
+> +	}
+> +
+> +	ret = regmap_read(drv->regmap,
+> +				drv->offsets[bank] + TRP_ECC_ERROR_STATUS1,
+> +				&db_err_cnt);
+> +	if (ret)
+> +		return ret;
+> +	db_err_cnt = (db_err_cnt & ECC_DB_ERR_COUNT_MASK);
+> +	edac_printk(KERN_CRIT, EDAC_LLCC, "Double-Bit error count: 0x%4x\n",
+> +		db_err_cnt);
+> +
+> +	ret = regmap_read(drv->regmap,
+> +		drv->offsets[bank] + TRP_ECC_ERROR_STATUS0, &db_err_ways);
+> +	if (ret)
+> +		return ret;
+> +	db_err_ways = (db_err_ways & ECC_DB_ERR_WAYS_MASK);
+> +	db_err_ways >>= ECC_DB_ERR_WAYS_SHIFT;
+> +
+> +	edac_printk(KERN_CRIT, EDAC_LLCC, "Double-Bit error ways: 0x%4x\n",
+> +		db_err_ways);
+> +
+> +	return ret;
+> +}
+> +
+> +/* Dump syndrome register for tag Ram Single Bit Errors */
+> +static int dump_trp_sb_syn_reg(struct llcc_drv_data *drv, u32 bank)
+> +{
+> +	int i, ret;
+> +	int sb_err_cnt;
+> +	int sb_err_ways;
+> +	u32 synd_reg;
+> +	u32 synd_val;
+> +
+> +	for (i = 0; i < TRP_SYN_REG_CNT; i++) {
+> +		synd_reg = TRP_ECC_SB_ERR_SYN0 + (i * 4);
+> +		ret = regmap_read(drv->regmap, drv->offsets[bank] + synd_reg,
+> +					&synd_val);
+> +		if (ret)
+> +			return ret;
+> +		edac_printk(KERN_CRIT, EDAC_LLCC, "TRP_ECC_SYN%d: 0x%8x\n",
+> +				i, synd_val);
+> +	}
+> +
+> +	ret = regmap_read(drv->regmap,
+> +				drv->offsets[bank] + TRP_ECC_ERROR_STATUS1,
+> +				&sb_err_cnt);
+> +	if (ret)
+> +		return ret;
+> +	sb_err_cnt = (sb_err_cnt & ECC_SB_ERR_COUNT_MASK);
+> +	sb_err_cnt >>= ECC_SB_ERR_COUNT_SHIFT;
+> +	edac_printk(KERN_CRIT, EDAC_LLCC, "Single-Bit error count: 0x%4x\n",
+> +		sb_err_cnt);
+> +
+> +	ret = regmap_read(drv->regmap,
+> +				drv->offsets[bank] + TRP_ECC_ERROR_STATUS0,
+> +				&sb_err_ways);
+> +	if (ret)
+> +		return ret;
+> +
+> +	sb_err_ways = sb_err_ways & ECC_SB_ERR_WAYS_MASK;
+> +
+> +	edac_printk(KERN_CRIT, EDAC_LLCC, "Single-Bit error ways: 0x%4x\n",
+> +			sb_err_ways);
+> +
+> +	return ret;
+> +}
+> +
+> +/* Dump syndrome registers for Data Ram Double bit errors */
+> +static int dump_drp_db_syn_reg(struct llcc_drv_data *drv, u32 bank)
+> +{
+> +	int i, ret;
+> +	int db_err_cnt;
+> +	int db_err_ways;
+> +	u32 synd_reg;
+> +	u32 synd_val;
+> +
+> +	for (i = 0; i < DRP_SYN_REG_CNT; i++) {
+> +		synd_reg = DRP_ECC_DB_ERR_SYN0 + (i * 4);
+> +		ret = regmap_read(drv->regmap, drv->offsets[bank] + synd_reg,
+> +					&synd_val);
+> +		if (ret)
+> +			return ret;
+> +		edac_printk(KERN_CRIT, EDAC_LLCC, "DRP_ECC_SYN%d: 0x%8x\n",
+> +				i, synd_val);
+> +	}
+> +
+> +	ret = regmap_read(drv->regmap,
+> +				drv->offsets[bank] + DRP_ECC_ERROR_STATUS1,
+> +				&db_err_cnt);
+> +	if (ret)
+> +		return ret;
+> +	db_err_cnt = (db_err_cnt & ECC_DB_ERR_COUNT_MASK);
+> +	edac_printk(KERN_CRIT, EDAC_LLCC, "Double-Bit error count: 0x%4x\n",
+> +		db_err_cnt);
+> +
+> +	ret = regmap_read(drv->regmap,
+> +				drv->offsets[bank] + DRP_ECC_ERROR_STATUS0,
+> +				&db_err_ways);
+> +	if (ret)
+> +		return ret;
+> +	db_err_ways &= ECC_DB_ERR_WAYS_MASK;
+> +	db_err_ways >>= ECC_DB_ERR_WAYS_SHIFT;
+> +	edac_printk(KERN_CRIT, EDAC_LLCC, "Double-Bit error ways: 0x%4x\n",
+> +		db_err_ways);
+> +
+> +	return ret;
+> +}
+> +
+> +/* Dump Syndrome registers for Data Ram Single bit errors*/
+> +static int dump_drp_sb_syn_reg(struct llcc_drv_data *drv, u32 bank)
+> +{
+> +	int i, ret;
+> +	int sb_err_cnt;
+> +	int sb_err_ways;
+> +	u32 synd_reg;
+> +	u32 synd_val;
+> +
+> +	for (i = 0; i < DRP_SYN_REG_CNT; i++) {
+> +		synd_reg = DRP_ECC_SB_ERR_SYN0 + (i * 4);
+> +		ret = regmap_read(drv->regmap, drv->offsets[bank] + synd_reg,
+> +					&synd_val);
+> +		if (ret)
+> +			return ret;
+> +		edac_printk(KERN_CRIT, EDAC_LLCC, "DRP_ECC_SYN%d: 0x%8x\n",
+> +				i, synd_val);
+> +	}
+> +
+> +	ret = regmap_read(drv->regmap,
+> +				drv->offsets[bank] + DRP_ECC_ERROR_STATUS1,
+> +				&sb_err_cnt);
+> +	if (ret)
+> +		return ret;
+> +	sb_err_cnt &= ECC_SB_ERR_COUNT_MASK;
+> +	sb_err_cnt >>= ECC_SB_ERR_COUNT_SHIFT;
+> +	edac_printk(KERN_CRIT, EDAC_LLCC, "Single-Bit error count: 0x%4x\n",
+> +		sb_err_cnt);
+> +
+> +	ret = regmap_read(drv->regmap,
+> +				drv->offsets[bank] + DRP_ECC_ERROR_STATUS0,
+> +				&sb_err_ways);
+> +	if (ret)
+> +		return ret;
+> +	sb_err_ways = sb_err_ways & ECC_SB_ERR_WAYS_MASK;
+> +
+> +	edac_printk(KERN_CRIT, EDAC_LLCC, "Single-Bit error ways: 0x%4x\n",
+> +		sb_err_ways);
+> +
+> +	return ret;
+> +}
+> +
+> +
+
+one newline is enough.
+
+> +static int dump_syn_reg(struct edac_device_ctl_info *edev_ctl,
+> +			 int err_type, u32 bank)
+> +{
+> +	int ret = 0;
+> +	struct llcc_drv_data *drv = edev_ctl->pvt_info;
+> +
+> +	switch (err_type) {
+> +	case LLCC_DRAM_CE:
+> +		ret = dump_drp_sb_syn_reg(drv, bank);
+> +		break;
+> +	case LLCC_DRAM_UE:
+> +		ret = dump_drp_db_syn_reg(drv, bank);
+> +		break;
+> +	case LLCC_TRAM_CE:
+> +		ret = dump_trp_sb_syn_reg(drv, bank);
+> +		break;
+> +	case LLCC_TRAM_UE:
+> +		ret = dump_trp_db_syn_reg(drv, bank);
+> +		break;
+> +	}
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = qcom_llcc_clear_errors(err_type, drv);
+> +	if (ret)
+> +		return ret;
+> +
+> +	errors[err_type].func(edev_ctl, 0, bank, errors[err_type].msg);
+> +
+> +	return ret;
+> +}
+> +
+> +static irqreturn_t qcom_llcc_check_cache_errors
+> +		(struct edac_device_ctl_info *edev_ctl)
+
+Please don't split the function name from the args.
+
+static irqreturn_t
+qcom_llcc_check_cache_errors(struct edac_device_ctl_info *edev_ctl)
+
+is a bit better, for example.
+
+> +{
+> +	int ret;
+> +	u32 drp_error;
+> +	u32 trp_error;
+> +	struct llcc_drv_data *drv = edev_ctl->pvt_info;
+> +	u32 i;
+> +	irqreturn_t irq_rc = IRQ_NONE;
+> +
+> +	for (i = 0; i < drv->num_banks; i++) {
+> +		/* Look for Data RAM errors */
+> +		ret = regmap_read(drv->regmap,
+> +				drv->offsets[i] + DRP_INTERRUPT_STATUS,
+> +				&drp_error);
+> +		if (ret)
+> +			return irq_rc;
+> +
+> +		if (drp_error & SB_ECC_ERROR) {
+> +			edac_printk(KERN_CRIT, EDAC_LLCC,
+> +				"Single Bit Error detected in Data Ram\n");
+> +			dump_syn_reg(edev_ctl, LLCC_DRAM_CE, i);
+> +			irq_rc = IRQ_HANDLED;
+> +		} else if (drp_error & DB_ECC_ERROR) {
+> +			edac_printk(KERN_CRIT, EDAC_LLCC,
+> +				"Double Bit Error detected in Data Ram\n");
+> +			dump_syn_reg(edev_ctl, LLCC_DRAM_UE, i);
+> +			irq_rc = IRQ_HANDLED;
+> +		}
+> +
+> +		/* Look for Tag RAM errors */
+> +		ret = regmap_read(drv->regmap,
+> +				drv->offsets[i] + TRP_INTERRUPT_0_STATUS,
+> +				&trp_error);
+> +		if (ret)
+> +			return irq_rc;
+> +		if (trp_error & SB_ECC_ERROR) {
+> +			edac_printk(KERN_CRIT, EDAC_LLCC,
+> +				"Single Bit Error detected in Tag Ram\n");
+> +			dump_syn_reg(edev_ctl, LLCC_TRAM_CE, i);
+> +			irq_rc = IRQ_HANDLED;
+> +		} else if (trp_error & DB_ECC_ERROR) {
+> +			edac_printk(KERN_CRIT, EDAC_LLCC,
+> +				"Double Bit Error detected in Tag Ram\n");
+> +			dump_syn_reg(edev_ctl, LLCC_TRAM_UE, i);
+> +			irq_rc = IRQ_HANDLED;
+> +		}
+> +	}
+> +
+> +	return irq_rc;
+> +}
+> +
+> +static irqreturn_t llcc_ecc_irq_handler
+> +			(int irq, void *edev_ctl)
+
+That looks like a useless wrapper, get rid of it.
+
+> +{
+> +	return qcom_llcc_check_cache_errors(edev_ctl);
+> +}
+> +
+> +static int qcom_llcc_erp_probe(struct platform_device *pdev)
+> +{
+> +	int rc;
+> +	u32 ecc_irq;
+> +	struct edac_device_ctl_info *edev_ctl;
+> +	struct device *dev = &pdev->dev;
+> +	struct llcc_drv_data *llcc_driv_data = pdev->dev.platform_data;
+
+Please sort function local variables declaration in a reverse christmas
+tree order:
+
+	<type> longest_variable_name;
+	<type> shorter_var_name;
+	<type> even_shorter;
+	<type> i;
+
+Ditto for the other functions.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+ECO tip #101: Trim your mails when you reply.
+--
