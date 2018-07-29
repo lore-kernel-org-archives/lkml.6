@@ -6,40 +6,45 @@ X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C21F6FF05E2
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EBCD1FF05E1
 	for <linux-kernel@archiver.kernel.org>; Sun, 29 Jul 2018 11:37:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 75D7A20870
+	by mail.kernel.org (Postfix) with ESMTP id A3B6920893
 	for <linux-kernel@archiver.kernel.org>; Sun, 29 Jul 2018 11:37:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 75D7A20870
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A3B6920893
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726384AbeG2NIB (ORCPT
+        id S1726440AbeG2NIG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 29 Jul 2018 09:08:01 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:51803 "EHLO
+        Sun, 29 Jul 2018 09:08:06 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:51809 "EHLO
         atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726203AbeG2NIB (ORCPT
+        with ESMTP id S1726203AbeG2NIF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Jul 2018 09:08:01 -0400
+        Sun, 29 Jul 2018 09:08:05 -0400
 Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id 642EC80646; Sun, 29 Jul 2018 13:37:50 +0200 (CEST)
-Date:   Sun, 29 Jul 2018 13:37:49 +0200
+        id 9E5FE80647; Sun, 29 Jul 2018 13:37:55 +0200 (CEST)
+Date:   Sun, 29 Jul 2018 13:37:55 +0200
 From:   Pavel Machek <pavel@ucw.cz>
-To:     David Howells <dhowells@redhat.com>
-Cc:     viro@zeniv.linux.org.uk, torvalds@linux-foundation.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 36/38] vfs: Add a sample program for the new mount API
- [ver #10]
-Message-ID: <20180729113749.GA7333@amd>
-References: <153271267980.9458.7640156373438016898.stgit@warthog.procyon.org.uk>
- <153271292330.9458.14583488053811372222.stgit@warthog.procyon.org.uk>
+To:     Al Viro <viro@ZenIV.linux.org.uk>
+Cc:     Jann Horn <jannh@google.com>, Richard Henderson <rth@twiddle.net>,
+        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
+        Matt Turner <mattst88@gmail.com>,
+        linux-fsdevel@vger.kernel.org,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Theodore Ts'o <tytso@mit.edu>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] fs: don't let getdents return bogus names
+Message-ID: <20180729113755.GB7333@amd>
+References: <20180716194843.252772-1-jannh@google.com>
+ <20180716195657.GO30522@ZenIV.linux.org.uk>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="SUOF0GtieIMvvwua"
+        protocol="application/pgp-signature"; boundary="nVMJ2NtxeReIH9PS"
 Content-Disposition: inline
-In-Reply-To: <153271292330.9458.14583488053811372222.stgit@warthog.procyon.org.uk>
+In-Reply-To: <20180716195657.GO30522@ZenIV.linux.org.uk>
 User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -47,58 +52,31 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---SUOF0GtieIMvvwua
+--nVMJ2NtxeReIH9PS
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi!
+On Mon 2018-07-16 20:56:57, Al Viro wrote:
+> On Mon, Jul 16, 2018 at 09:48:43PM +0200, Jann Horn wrote:
+> > When you e.g. run `find` on a directory for which getdents returns
+> > "filenames" that contain slashes, `find` passes those "filenames" back =
+to
+> > the kernel, which then interprets them as paths. That could conceivably
+> > cause userspace to do something bad when accessing something like an
+> > untrusted USB stick, but I'm not aware of any specific example.
+> >=20
+> > Instead of returning bogus filenames to userspace, return -EUCLEAN.
+>=20
+> Because there's such a lot of userland code that expect and handles that
+> error value...
+>=20
+> I'm not sure if this mitigation is actually better than "just return it
+> as-is", TBH.
 
-> Add a sample program to demonstrate fsopen/fsmount/move_mount to mount
-> something.
-
-> @@ -0,0 +1,118 @@
-> +/* fd-based mount test.
-> + *
-> + * Copyright (C) 2017 Red Hat, Inc. All Rights Reserved.
-> + * Written by David Howells (dhowells@redhat.com)
-> + *
-> + * This program is free software; you can redistribute it and/or
-> + * modify it under the terms of the GNU General Public Licence
-> + * as published by the Free Software Foundation; either version
-> + * 2 of the Licence, or (at your option) any later version.
-> + */
-
-Can we do SPDX here?
-
-> +static void check_messages(int fd)
-> +{
-> +	char buf[4096];
-> +	int err, n;
-> +
-> +	err =3D errno;
-> +
-> +	for (;;) {
-> +		n =3D read(fd, buf, sizeof(buf));
-> +		if (n < 0)
-> +			break;
-> +		n -=3D 2;
-> +
-> +		switch (buf[0]) {
-> +		case 'e':
-> +			fprintf(stderr, "Error: %*.*s\n", n, n, buf + 2);
-> +			break;
-> +		case 'w':
-> +			fprintf(stderr, "Warning: %*.*s\n", n, n, buf + 2);
-> +			break;
-> +		case 'i':
-> +			fprintf(stderr, "Info: %*.*s\n", n, n, buf + 2);
-> +			break;
-> +		}
-> +	}
-
-Hmm, so kernel now returns messages in english? Not sure that is
-reasonable, as that is going to cause problems with translations...
+Well, userspace should handle errors.. it may not understand what this
+particular error means, but that's still better than risking issues
+with / in path....
 
 									Pavel
 --=20
@@ -106,16 +84,16 @@ reasonable, as that is going to cause problems with translations...
 (cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
 g.html
 
---SUOF0GtieIMvvwua
+--nVMJ2NtxeReIH9PS
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1
 
-iEYEARECAAYFAltdpw0ACgkQMOfwapXb+vJVPQCfTdFl0Cg4welkfP0BroZo+10H
-ipEAnA2qnvw/D+ipZkAGPHJU8lECpTM1
-=IODW
+iEYEARECAAYFAltdpxMACgkQMOfwapXb+vLXiwCgvna3Iw+Gbdg1U/GXNW0JeBwb
+6GgAn1X3GXWcK1tPTRBGUd5bAnxB4dSI
+=Io9+
 -----END PGP SIGNATURE-----
 
---SUOF0GtieIMvvwua--
+--nVMJ2NtxeReIH9PS--
