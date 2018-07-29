@@ -2,125 +2,142 @@ Return-Path: <SRS0=jKyA=KN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7D6EC46462
-	for <linux-kernel@archiver.kernel.org>; Sun, 29 Jul 2018 22:31:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77384C46461
+	for <linux-kernel@archiver.kernel.org>; Sun, 29 Jul 2018 22:35:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 69B7720882
-	for <linux-kernel@archiver.kernel.org>; Sun, 29 Jul 2018 22:31:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 16EAB20873
+	for <linux-kernel@archiver.kernel.org>; Sun, 29 Jul 2018 22:35:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k7bvI1Lj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 69B7720882
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hpvocCtp"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 16EAB20873
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731085AbeG3ABs (ORCPT
+        id S1731466AbeG3AH0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 29 Jul 2018 20:01:48 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:45393 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729283AbeG3ABs (ORCPT
+        Sun, 29 Jul 2018 20:07:26 -0400
+Received: from mail-oi0-f68.google.com ([209.85.218.68]:36243 "EHLO
+        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726814AbeG3AHZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Jul 2018 20:01:48 -0400
-Received: by mail-wr1-f67.google.com with SMTP id f12-v6so802247wrv.12
-        for <linux-kernel@vger.kernel.org>; Sun, 29 Jul 2018 15:29:42 -0700 (PDT)
+        Sun, 29 Jul 2018 20:07:25 -0400
+Received: by mail-oi0-f68.google.com with SMTP id n21-v6so17975585oig.3
+        for <linux-kernel@vger.kernel.org>; Sun, 29 Jul 2018 15:35:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=r7RC4Vj7QqvT3awHXNjKpq1wj3R0ios9S4af+iLQ/i8=;
-        b=k7bvI1Ljoa+rybMrz5Dwez7Tr7LC07r457WtkpDOC5DlXCzdx4Tz0T516wBt2J4z45
-         yZwfEr0mHZfxLumFB9WOE9SOIaTAOgHtik9nQWXHpGL8Xp6ZcXGoqY/n/GZXNSmE29Qg
-         zhsfNcln2q7utubsuimT/37EQNXpe5hqoDSOOprXsnu88OagEneh1/0RmdseWHpWajcM
-         gZ8/aHlyHde6DheCMxzo1tt84ykfTqZEqoaLqKlGHGhc4atTlkU84ZcLA9eHhBCqAizm
-         gIM4f7FH1nHJJFtvumZclkYL0pJoEYXbSs4QW4SEljcAwUp6xv+04r/p8JNPSTls0m1Z
-         lowg==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=hGXjudSXbMqpGtwtp4Fl8ptFkSd3qc43by/CY/mgIYE=;
+        b=hpvocCtp+ncC2e+Tx5WfpGrnJvM5VdDDGXYI8LGgIYt5VpN75Kum4XuiH0mDOUk74c
+         WA3dW0MumTIos3HSvtVfalNJjAx2PUnFSEk5DUPp7zlq+AtgR7bvAc09neKUbFBa11IL
+         lUt1jbsczr3bg0Jk8VItyzNj8f0uRBy5kdZYzNRxSzHuc1FaJ36WejkNmJMQIsitXilt
+         d+iDdMxnbAcv7SQpR90DRzs5FC4a8aernepy3OGpGxqadUqGBfubpFtOlnZOUEoab2XI
+         bgr5MukFqKhcZrtEPGiNMUDH55UZWJOAdSMzwcoiALQ8Nl0STGNOu3fQcDbv+qeD4Ub9
+         p4Hg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=r7RC4Vj7QqvT3awHXNjKpq1wj3R0ios9S4af+iLQ/i8=;
-        b=m9mGds6Vw6kuzwFl4LYMtV/jcMsqxo9NIMTw2g9yfYXEW5ipo8nrGEoQNyq4auLyKM
-         HSpJWH6sLMP/4WYseDyYnty8x0KCZqeiovbMsqzq19BIoTeSVz5xc8SxsFSWhe8tbU8R
-         l4SWiyQZbMTa3bGadLv6Er2a5O9MTRblUbLvweHpuTrZk/Z63CmY6D0w2iYz+1ar3wJQ
-         4YrQyOcQdIL8h0xpbQW6eYeTA+bDR+Zeha7SE1Bhay5FyIQWsYcwfI5xSl//M3Z/bO7p
-         wa4BrYKEvp9L/QszfD3nSCs4lT3xmM26fLoabWSxdX7YHeUSNEXZm8NyOXnqWQd6T6ym
-         SKNA==
-X-Gm-Message-State: AOUpUlGdHTGIWihutJd8lbzkB/t9Pb/8qVg5tBOLtsN1hQ6aKZTRcRZw
-        KFF186SoMsh0MRFZaLAiqAC1fnWp
-X-Google-Smtp-Source: AAOMgpc2di9Ql/6ewTqvCtA6+MJ2jPHTjZUsq6qw0YkBd9Yrgw+azNZsGdEm8UFxd+mP8Gy4EaWeEw==
-X-Received: by 2002:adf:9f13:: with SMTP id l19-v6mr14800137wrf.206.1532903381617;
-        Sun, 29 Jul 2018 15:29:41 -0700 (PDT)
-Received: from we.local (ppp-2-87-92-87.home.otenet.gr. [2.87.92.87])
-        by smtp.gmail.com with ESMTPSA id a12-v6sm9267643wru.61.2018.07.29.15.29.40
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 29 Jul 2018 15:29:40 -0700 (PDT)
-Received: from localhost (localhost [127.0.0.1])
-        by we.local (Postfix) with ESMTP id 9186F6407C0;
-        Mon, 30 Jul 2018 01:29:39 +0300 (EEST)
-X-Virus-Scanned: amavisd-new at local
-Received: from we.local ([127.0.0.1])
-        by localhost (we.local [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id DnEgbgjrwuMf; Mon, 30 Jul 2018 01:29:39 +0300 (EEST)
-Received: by we.local (Postfix, from userid 1000)
-        id 28D806408DF; Mon, 30 Jul 2018 01:29:39 +0300 (EEST)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=hGXjudSXbMqpGtwtp4Fl8ptFkSd3qc43by/CY/mgIYE=;
+        b=ju7Xxc71nEUaLw0CmLwt+twkv6nAFFExgqIm+pxWkPmxfQi/ZiY4DXVBTUwgi4xRJq
+         gaIYXZDpPKnLCx3OUnCgk0/YD2mhbCqEKoZebgXC6rWl+129jWWb7qo4wcuApkz5mtcE
+         apWAWojjt9YvB/va59NL33nhlwpps/YLTQ3jThd5FEDN+FGMMLldbCgmSo3wrEEzYr5+
+         0B4AN5RNHuS9nyjtjVMAeS2h/Q832Mq5bPFPGUEIYeHSblT8y9iUtFiD0QFxlOyeAIxw
+         ofqvKKtxmSLk0FSAmUOEcxqgXqyJuqAxwLFfX2Y02pbi59vu7WhQ1YZEEKFsukKTko6F
+         o85A==
+X-Gm-Message-State: AOUpUlGP5pINJ8defTPaSAHrhz1ENg8VYAyGo6SG5l1oQU+FG2PpGsUd
+        XU1kLuxW96V2mnrAwZaMDApuLJP7EDAp1s2Wus0mYw==
+X-Google-Smtp-Source: AAOMgpeJbGMvWCGjUQjUQWd5REW+3+cd3xyIe0CmnMkaSj13hLKik5veVt4PPcVlhZQ1pNuayprHWIxSEO0cQsrZJO4=
+X-Received: by 2002:aca:cd84:: with SMTP id d126-v6mr16712571oig.325.1532903718924;
+ Sun, 29 Jul 2018 15:35:18 -0700 (PDT)
+MIME-Version: 1.0
+References: <20180729144358.3442-1-tsotsos@gmail.com> <233f0f7b1165f6427fa86f026c4e7dcb5cafe35f.camel@perches.com>
+In-Reply-To: <233f0f7b1165f6427fa86f026c4e7dcb5cafe35f.camel@perches.com>
 From:   Georgios Tsotsos <tsotsos@gmail.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Georgios Tsotsos <tsotsos@gmail.com>,
-        Aaro Koskinen <aaro.koskinen@iki.fi>,
-        James Hogan <jhogan@kernel.org>, devel@driverdev.osuosl.org,
+Date:   Mon, 30 Jul 2018 01:35:07 +0300
+Message-ID: <CADERADNz1_ep8pC0fuHXHKzn7Ap6MCpgeR33q95jAUKcNB72UA@mail.gmail.com>
+Subject: Re: [PATCH] Staging: octeon: Fixing coding style for minor notices.
+To:     Joe Perches <joe@perches.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        John Smith <catalinnow@gmail.com>, devel@driverdev.osuosl.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v5] Staging: octeon-usb: Using defined error codes and applying coding style.
-Date:   Mon, 30 Jul 2018 01:29:36 +0300
-Message-Id: <20180729222936.27608-1-tsotsos@gmail.com>
-X-Mailer: git-send-email 2.16.4
-In-Reply-To: <20180729202108.GB14390@darkstar.musicnaut.iki.fi>
-References: <20180729202108.GB14390@darkstar.musicnaut.iki.fi>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Replaced -1 with defined error code EINVAL
+Thank you, i found a few case on this module i will try to fix them
+and send a new patch series.
+On Sun, 29 Jul 2018 at 20:33, Joe Perches <joe@perches.com> wrote:
+>
+> On Sun, 2018-07-29 at 17:43 +0300, Georgios Tsotsos wrote:
+> > Fixing coding style for a few lines that were reported to check from
+> > checkpatch.pl in minor cases for alignment and ending with parenthesis.
+> >
+> > Signed-off-by: Georgios Tsotsos <tsotsos@gmail.com>
+> > ---
+> >  drivers/staging/octeon/ethernet.c | 10 +++++-----
+> >  1 file changed, 5 insertions(+), 5 deletions(-)
+> >
+> > diff --git a/drivers/staging/octeon/ethernet.c b/drivers/staging/octeon/ethernet.c
+> > index 9b15c9ed844b..1e258deecacc 100644
+> > --- a/drivers/staging/octeon/ethernet.c
+> > +++ b/drivers/staging/octeon/ethernet.c
+> > @@ -141,8 +141,8 @@ static void cvm_oct_periodic_worker(struct work_struct *work)
+> >       if (priv->poll)
+> >               priv->poll(cvm_oct_device[priv->port]);
+> >
+> > -     cvm_oct_device[priv->port]->netdev_ops->ndo_get_stats(
+> > -                                             cvm_oct_device[priv->port]);
+> > +     cvm_oct_device[priv->port]->netdev_ops
+> > +                             ->ndo_get_stats(cvm_oct_device[priv->port]);
+> >
+> >       if (!atomic_read(&cvm_oct_poll_queue_stopping))
+> >               schedule_delayed_work(&priv->port_periodic_work, HZ);
+>
+> Probably more sensible to use a temporary.  Something like:
+> ---
+>  drivers/staging/octeon/ethernet.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/staging/octeon/ethernet.c b/drivers/staging/octeon/ethernet.c
+> index 9b15c9ed844b..2febf1229587 100644
+> --- a/drivers/staging/octeon/ethernet.c
+> +++ b/drivers/staging/octeon/ethernet.c
+> @@ -137,12 +137,12 @@ static void cvm_oct_periodic_worker(struct work_struct *work)
+>         struct octeon_ethernet *priv = container_of(work,
+>                                                     struct octeon_ethernet,
+>                                                     port_periodic_work.work);
+> +       struct net_device *ndev = cvm_oct_device[priv->port];
+>
+>         if (priv->poll)
+> -               priv->poll(cvm_oct_device[priv->port]);
+> +               priv->poll(ndev);
+>
+> -       cvm_oct_device[priv->port]->netdev_ops->ndo_get_stats(
+> -                                               cvm_oct_device[priv->port]);
+> +       ndev->netdev_ops->ndo_get_stats(ndev);
+>
+>         if (!atomic_read(&cvm_oct_poll_queue_stopping))
+>                 schedule_delayed_work(&priv->port_periodic_work, HZ);
+>
+>
 
-Signed-off-by: Georgios Tsotsos <tsotsos@gmail.com>
----
-v2: Apply coding style to function cvmx_usb_poll_channel
-v3: Break down function cvmx_usb_poll_channel
-v4: Return defined error code and applying coding style for function calls
-v5: Fixing wrong patch applied before with typo on dev_err and applying coding
-style as suggested on v3
 
- drivers/staging/octeon-usb/octeon-hcd.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/staging/octeon-usb/octeon-hcd.c b/drivers/staging/octeon-usb/octeon-hcd.c
-index c9fbff93bed4..dd73fd48e12e 100644
---- a/drivers/staging/octeon-usb/octeon-hcd.c
-+++ b/drivers/staging/octeon-usb/octeon-hcd.c
-@@ -2587,10 +2587,10 @@ static void cvmx_usb_transfer_isoc(struct octeon_hcd *usb,
- 		}
- 	} else {
- 		pipe->next_tx_frame += pipe->interval;
--
- 		cvmx_usb_complete(usb, pipe, transaction, CVMX_USB_STATUS_OK);
- 	}
- }
-+
- /**
-  * Handles channels halt in non DMA mode
-  * @hcchar_chena:
-@@ -2629,7 +2629,7 @@ static int cvmx_usb_dma_halt(u32 hcchar_chena, u32 hcint_xfercompl,
- 		 * Channel halt isn't needed.
- 		 */
- 	} else {
--		dev_	err(dev, "USB%d: Channel %d interrupt without halt\n",
-+		dev_err(dev, "USB%d: Channel %d interrupt without halt\n",
- 			usb->index, channel);
- 		return -EINVAL;
- 	}
 -- 
-2.16.4
+Best regards!
+Georgios Tsotsos
+Greece-Evia-Chalkida
+tsotsos@linux.com
+skype: tsotsos
+------------------------------------
+Georgios Tsotsos
+*Greece - Evia - Chalkida*
+tsotsos[at]linux.com
+skype: tsotsos
