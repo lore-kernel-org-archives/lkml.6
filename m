@@ -6,32 +6,32 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FB57C46461
-	for <linux-kernel@archiver.kernel.org>; Sun, 29 Jul 2018 22:06:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6506DC46462
+	for <linux-kernel@archiver.kernel.org>; Sun, 29 Jul 2018 22:06:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C97D320881
-	for <linux-kernel@archiver.kernel.org>; Sun, 29 Jul 2018 22:06:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C97D320881
+	by mail.kernel.org (Postfix) with ESMTP id 0D0AB20894
+	for <linux-kernel@archiver.kernel.org>; Sun, 29 Jul 2018 22:06:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0D0AB20894
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ZenIV.linux.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732123AbeG2Xg4 (ORCPT
+        id S1732105AbeG2Xg4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Sun, 29 Jul 2018 19:36:56 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:51572 "EHLO
+Received: from zeniv.linux.org.uk ([195.92.253.2]:51580 "EHLO
         ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726813AbeG2Xg4 (ORCPT
+        with ESMTP id S1726814AbeG2Xg4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Sun, 29 Jul 2018 19:36:56 -0400
 Received: from viro by ZenIV.linux.org.uk with local (Exim 4.87 #1 (Red Hat Linux))
-        id 1fjto6-0003VX-E9; Sun, 29 Jul 2018 22:04:54 +0000
+        id 1fjto6-0003VL-3v; Sun, 29 Jul 2018 22:04:54 +0000
 From:   Al Viro <viro@ZenIV.linux.org.uk>
 To:     linux-fsdevel@vger.kernel.org
 Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
         linux-kernel@vger.kernel.org, Miklos Szeredi <mszeredi@redhat.com>
-Subject: [PATCH 06/16] udf: switch to discard_new_inode()
-Date:   Sun, 29 Jul 2018 23:04:43 +0100
-Message-Id: <20180729220453.13431-6-viro@ZenIV.linux.org.uk>
+Subject: [PATCH 03/16] vfs: don't evict uninitialized inode
+Date:   Sun, 29 Jul 2018 23:04:40 +0100
+Message-Id: <20180729220453.13431-3-viro@ZenIV.linux.org.uk>
 X-Mailer: git-send-email 2.9.5
 In-Reply-To: <20180729220453.13431-1-viro@ZenIV.linux.org.uk>
 References: <20180729220317.GB30522@ZenIV.linux.org.uk>
@@ -41,60 +41,60 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Al Viro <viro@zeniv.linux.org.uk>
+From: Miklos Szeredi <mszeredi@redhat.com>
 
-we don't want open-by-handle to pick an in-core inode that
-has failed setup halfway through.
+iput() ends up calling ->evict() on new inode, which is not yet initialized
+by owning fs.  So use destroy_inode() instead.
 
+Add to sb->s_inodes list only if inode is not in I_CREATING state (meaning
+that it wasn't allocated with new_inode(), which already does the
+insertion).
+
+Reported-by: Al Viro <viro@zeniv.linux.org.uk>
+Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+Fixes: 80ea09a002bf ("vfs: factor out inode_insert5()")
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
- fs/udf/namei.c | 12 ++++--------
- 1 file changed, 4 insertions(+), 8 deletions(-)
+ fs/inode.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-diff --git a/fs/udf/namei.c b/fs/udf/namei.c
-index c586026508db..061d049c2620 100644
---- a/fs/udf/namei.c
-+++ b/fs/udf/namei.c
-@@ -608,8 +608,7 @@ static int udf_add_nondir(struct dentry *dentry, struct inode *inode)
- 	fi = udf_add_entry(dir, dentry, &fibh, &cfi, &err);
- 	if (unlikely(!fi)) {
- 		inode_dec_link_count(inode);
--		unlock_new_inode(inode);
--		iput(inode);
-+		discard_new_inode(inode);
- 		return err;
- 	}
- 	cfi.icb.extLength = cpu_to_le32(inode->i_sb->s_blocksize);
-@@ -700,8 +699,7 @@ static int udf_mkdir(struct inode *dir, struct dentry *dentry, umode_t mode)
- 	fi = udf_add_entry(inode, NULL, &fibh, &cfi, &err);
- 	if (!fi) {
- 		inode_dec_link_count(inode);
--		unlock_new_inode(inode);
--		iput(inode);
-+		discard_new_inode(inode);
- 		goto out;
- 	}
- 	set_nlink(inode, 2);
-@@ -719,8 +717,7 @@ static int udf_mkdir(struct inode *dir, struct dentry *dentry, umode_t mode)
- 	if (!fi) {
- 		clear_nlink(inode);
- 		mark_inode_dirty(inode);
--		unlock_new_inode(inode);
--		iput(inode);
-+		discard_new_inode(inode);
- 		goto out;
- 	}
- 	cfi.icb.extLength = cpu_to_le32(inode->i_sb->s_blocksize);
-@@ -1047,8 +1044,7 @@ static int udf_symlink(struct inode *dir, struct dentry *dentry,
- out_no_entry:
- 	up_write(&iinfo->i_data_sem);
- 	inode_dec_link_count(inode);
--	unlock_new_inode(inode);
--	iput(inode);
-+	discard_new_inode(inode);
- 	goto out;
- }
+diff --git a/fs/inode.c b/fs/inode.c
+index 04dd7e0d5142..0aa5b29b6f87 100644
+--- a/fs/inode.c
++++ b/fs/inode.c
+@@ -1050,6 +1050,7 @@ struct inode *inode_insert5(struct inode *inode, unsigned long hashval,
+ {
+ 	struct hlist_head *head = inode_hashtable + hash(inode->i_sb, hashval);
+ 	struct inode *old;
++	bool creating = inode->i_state & I_CREATING;
  
+ again:
+ 	spin_lock(&inode_hash_lock);
+@@ -1083,6 +1084,8 @@ struct inode *inode_insert5(struct inode *inode, unsigned long hashval,
+ 	inode->i_state |= I_NEW;
+ 	hlist_add_head(&inode->i_hash, head);
+ 	spin_unlock(&inode->i_lock);
++	if (!creating)
++		inode_sb_list_add(inode);
+ unlock:
+ 	spin_unlock(&inode_hash_lock);
+ 
+@@ -1117,12 +1120,13 @@ struct inode *iget5_locked(struct super_block *sb, unsigned long hashval,
+ 	struct inode *inode = ilookup5(sb, hashval, test, data);
+ 
+ 	if (!inode) {
+-		struct inode *new = new_inode(sb);
++		struct inode *new = alloc_inode(sb);
+ 
+ 		if (new) {
++			new->i_state = 0;
+ 			inode = inode_insert5(new, hashval, test, set, data);
+ 			if (unlikely(inode != new))
+-				iput(new);
++				destroy_inode(new);
+ 		}
+ 	}
+ 	return inode;
 -- 
 2.11.0
 
