@@ -2,217 +2,79 @@ Return-Path: <SRS0=qqIy=KO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1479216256E1
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 17:20:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F0D116256E1
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 17:22:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BB1D820892
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 17:20:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BB1D820892
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=jmondi.org
+	by mail.kernel.org (Postfix) with ESMTP id 0DB3520857
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 17:22:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0DB3520857
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=codethink.co.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728965AbeG3S4a (ORCPT
+        id S1731288AbeG3S6N (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 30 Jul 2018 14:56:30 -0400
-Received: from relay4-d.mail.gandi.net ([217.70.183.196]:32793 "EHLO
-        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726752AbeG3S43 (ORCPT
+        Mon, 30 Jul 2018 14:58:13 -0400
+Received: from imap1.codethink.co.uk ([176.9.8.82]:45795 "EHLO
+        imap1.codethink.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726782AbeG3S6N (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Jul 2018 14:56:29 -0400
-X-Originating-IP: 2.224.242.101
-Received: from w540.lan (2-224-242-101.ip172.fastwebnet.it [2.224.242.101])
-        (Authenticated sender: jacopo@jmondi.org)
-        by relay4-d.mail.gandi.net (Postfix) with ESMTPSA id C727EE0004;
-        Mon, 30 Jul 2018 17:20:27 +0000 (UTC)
-From:   Jacopo Mondi <jacopo@jmondi.org>
-To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        David Airlie <airlied@linux.ie>
-Cc:     Jacopo Mondi <jacopo@jmondi.org>,
-        dri-devel@lists.freedesktop.org (open list:DRM DRIVERS FOR RENESAS),
-        linux-renesas-soc@vger.kernel.org (open list:DRM DRIVERS FOR RENESAS),
-        linux-kernel@vger.kernel.org (open list),
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Subject: [PATCH 1/3] drm: rcar-du: Rework clock configuration based on hardware limits
-Date:   Mon, 30 Jul 2018 19:20:12 +0200
-Message-Id: <1532971214-17962-2-git-send-email-jacopo@jmondi.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1532971214-17962-1-git-send-email-jacopo@jmondi.org>
-References: <1532971214-17962-1-git-send-email-jacopo@jmondi.org>
+        Mon, 30 Jul 2018 14:58:13 -0400
+Received: from [192.168.122.135] (helo=_)
+        by imap1.codethink.co.uk with esmtpsa (Exim 4.84_2 #1 (Debian))
+        id 1fkBs0-0003My-Q2; Mon, 30 Jul 2018 18:22:08 +0100
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Mon, 30 Jul 2018 18:22:08 +0100
+From:   Ben Dooks <ben.dooks@codethink.co.uk>
+To:     Jorge Sanjuan <jorge.sanjuan@codethink.co.uk>
+Cc:     lgirdwood@gmail.com, broonie@kernel.org,
+        linux-kernel@lists.codethink.co.uk, alsa-devel@alsa-project.org,
+        linux-kernel@vger.kernel.org, jonathanh@nvidia.com,
+        thierry.reding@gmail.com, linux-tegra@vger.kernel.org
+Subject: Re: [Linux-kernel] [PATCH 0/4] ASoC: Tegra30 TDM support
+In-Reply-To: <20180727125931.9794-1-jorge.sanjuan@codethink.co.uk>
+References: <20180727125931.9794-1-jorge.sanjuan@codethink.co.uk>
+Message-ID: <e7961b55c10610a7e137edee2995add9@codethink.co.uk>
+X-Sender: ben.dooks@codethink.co.uk
+User-Agent: Roundcube Webmail/1.1.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 
-The DU channels that have a display PLL (DPLL) can only use external
-clock sources, and don't have an internal clock divider (with the
-exception of H3 ES1.x where the post-divider is present and needs to be
-used as a workaround for a DPLL silicon issue).
 
-Rework the clock configuration to take this into account, avoiding
-selection of non-existing clock sources or usage of a missing
-post-divider.
+On 2018-07-27 13:59, Jorge Sanjuan wrote:
+> This patchset adds support for TDM audio on Tegra30 hardware.
+> It adds the DAI's `set_tdm_slot` callback and enables a tegra
+> pcm to have up to 8 channels.
+> 
+> It also includes support for other audio formats supported by
+> the Tegra30 HW and fixes a broken macro needed for setting the
+> TDM on the registers.
+> 
+> Based on Linux 4.18-rc3 tag.
+> 
+> Edward Cragg (4):
+>   ASoC: tegra: i2s: Fix typo/broken macro
+>   ASoC: tegra: Add a TDM configuration callback
+>   ASoC: tegra: Allow 32-bit and 24-bit samples
+>   ASoC: tegra: i2s: Add support for more than 2 channels
+> 
+>  sound/soc/tegra/tegra30_i2s.c | 72 
+> ++++++++++++++++++++++++++++++++++++-------
+>  sound/soc/tegra/tegra30_i2s.h |  2 +-
+>  2 files changed, 62 insertions(+), 12 deletions(-)
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
----
- drivers/gpu/drm/rcar-du/rcar_du_crtc.c | 122 ++++++++++++++++++---------------
- 1 file changed, 67 insertions(+), 55 deletions(-)
+Just as a note, Ed Cragg has moved on from Codethink and I've not
+got a new address for him. We've been cleaning some of the work Ed,
+Jorge, Terry and myself have been doing.
 
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-index b52b3e8..6d55cec 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-@@ -208,78 +208,90 @@ static void rcar_du_crtc_set_display_timing(struct rcar_du_crtc *rcrtc)
- 	const struct drm_display_mode *mode = &rcrtc->crtc.state->adjusted_mode;
- 	struct rcar_du_device *rcdu = rcrtc->group->dev;
- 	unsigned long mode_clock = mode->clock * 1000;
--	unsigned long clk;
- 	u32 value;
- 	u32 escr;
--	u32 div;
- 
--	/*
--	 * Compute the clock divisor and select the internal or external dot
--	 * clock based on the requested frequency.
--	 */
--	clk = clk_get_rate(rcrtc->clock);
--	div = DIV_ROUND_CLOSEST(clk, mode_clock);
--	div = clamp(div, 1U, 64U) - 1;
--	escr = div | ESCR_DCLKSEL_CLKS;
--
--	if (rcrtc->extclock) {
-+	if (rcdu->info->dpll_ch & (1 << rcrtc->index)) {
-+		unsigned long target = mode_clock;
- 		struct dpll_info dpll = { 0 };
- 		unsigned long extclk;
--		unsigned long extrate;
--		unsigned long rate;
--		u32 extdiv;
-+		u32 dpllcr;
-+		u32 div = 0;
- 
--		extclk = clk_get_rate(rcrtc->extclock);
--		if (rcdu->info->dpll_ch & (1 << rcrtc->index)) {
--			unsigned long target = mode_clock;
-+		/*
-+		 * DU channels that have a display PLL can't use the internal
-+		 * system clock, and have no internal clock divider.
-+		 */
- 
--			/*
--			 * The H3 ES1.x exhibits dot clock duty cycle stability
--			 * issues. We can work around them by configuring the
--			 * DPLL to twice the desired frequency, coupled with a
--			 * /2 post-divider. This isn't needed on other SoCs and
--			 * breaks HDMI output on M3-W for a currently unknown
--			 * reason, so restrict the workaround to H3 ES1.x.
--			 */
--			if (soc_device_match(rcar_du_r8a7795_es1))
--				target *= 2;
-+		if (WARN_ON(!rcrtc->extclock))
-+			return;
- 
--			rcar_du_dpll_divider(rcrtc, &dpll, extclk, target);
--			extclk = dpll.output;
-+		/*
-+		 * The H3 ES1.x exhibits dot clock duty cycle stability issues.
-+		 * We can work around them by configuring the DPLL to twice the
-+		 * desired frequency, coupled with a /2 post-divider. Restrict
-+		 * the workaround to H3 ES1.x as ES2.0 and all other SoCs have
-+		 * no post-divider when a display PLL is present (as shown by
-+		 * the workaround breaking HDMI output on M3-W during testing).
-+		 */
-+		if (soc_device_match(rcar_du_r8a7795_es1)) {
-+			target *= 2;
-+			div = 1;
- 		}
- 
--		extdiv = DIV_ROUND_CLOSEST(extclk, mode_clock);
--		extdiv = clamp(extdiv, 1U, 64U) - 1;
-+		extclk = clk_get_rate(rcrtc->extclock);
-+		rcar_du_dpll_divider(rcrtc, &dpll, extclk, target);
- 
--		rate = clk / (div + 1);
--		extrate = extclk / (extdiv + 1);
-+		dpllcr = DPLLCR_CODE | DPLLCR_CLKE
-+		       | DPLLCR_FDPLL(dpll.fdpll)
-+		       | DPLLCR_N(dpll.n) | DPLLCR_M(dpll.m)
-+		       | DPLLCR_STBY;
- 
--		if (abs((long)extrate - (long)mode_clock) <
--		    abs((long)rate - (long)mode_clock)) {
-+		if (rcrtc->index == 1)
-+			dpllcr |= DPLLCR_PLCS1
-+			       |  DPLLCR_INCS_DOTCLKIN1;
-+		else
-+			dpllcr |= DPLLCR_PLCS0
-+			       |  DPLLCR_INCS_DOTCLKIN0;
- 
--			if (rcdu->info->dpll_ch & (1 << rcrtc->index)) {
--				u32 dpllcr = DPLLCR_CODE | DPLLCR_CLKE
--					   | DPLLCR_FDPLL(dpll.fdpll)
--					   | DPLLCR_N(dpll.n) | DPLLCR_M(dpll.m)
--					   | DPLLCR_STBY;
-+		rcar_du_group_write(rcrtc->group, DPLLCR, dpllcr);
- 
--				if (rcrtc->index == 1)
--					dpllcr |= DPLLCR_PLCS1
--					       |  DPLLCR_INCS_DOTCLKIN1;
--				else
--					dpllcr |= DPLLCR_PLCS0
--					       |  DPLLCR_INCS_DOTCLKIN0;
-+		escr = ESCR_DCLKSEL_DCLKIN | div;
-+	} else {
-+		unsigned long clk;
-+		u32 div;
- 
--				rcar_du_group_write(rcrtc->group, DPLLCR,
--						    dpllcr);
--			}
-+		/*
-+		 * Compute the clock divisor and select the internal or external
-+		 * dot clock based on the requested frequency.
-+		 */
-+		clk = clk_get_rate(rcrtc->clock);
-+		div = DIV_ROUND_CLOSEST(clk, mode_clock);
-+		div = clamp(div, 1U, 64U) - 1;
- 
--			escr = ESCR_DCLKSEL_DCLKIN | extdiv;
--		}
-+		escr = ESCR_DCLKSEL_CLKS | div;
- 
--		dev_dbg(rcrtc->group->dev->dev,
--			"mode clock %lu extrate %lu rate %lu ESCR 0x%08x\n",
--			mode_clock, extrate, rate, escr);
-+		if (rcrtc->extclock) {
-+			unsigned long extclk;
-+			unsigned long extrate;
-+			unsigned long rate;
-+			u32 extdiv;
-+
-+			extclk = clk_get_rate(rcrtc->extclock);
-+			extdiv = DIV_ROUND_CLOSEST(extclk, mode_clock);
-+			extdiv = clamp(extdiv, 1U, 64U) - 1;
-+
-+			extrate = extclk / (extdiv + 1);
-+			rate = clk / (div + 1);
-+
-+			if (abs((long)extrate - (long)mode_clock) <
-+			    abs((long)rate - (long)mode_clock))
-+				escr = ESCR_DCLKSEL_DCLKIN | extdiv;
-+
-+			dev_dbg(rcrtc->group->dev->dev,
-+				"mode clock %lu extrate %lu rate %lu ESCR 0x%08x\n",
-+				mode_clock, extrate, rate, escr);
-+		}
- 	}
- 
- 	rcar_du_group_write(rcrtc->group, rcrtc->index % 2 ? ESCR2 : ESCR,
 -- 
-2.7.4
+Ben
 
