@@ -2,106 +2,270 @@ Return-Path: <SRS0=qqIy=KO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C350913F6DFF
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 10:21:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 004FBFD21E1
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 10:22:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7135D20870
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 10:21:52 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="rlzDHQDk"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7135D20870
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id A502C20870
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 10:22:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A502C20870
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728976AbeG3L4I (ORCPT
+        id S1729042AbeG3L4f (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 30 Jul 2018 07:56:08 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:37310 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726808AbeG3L4I (ORCPT
+        Mon, 30 Jul 2018 07:56:35 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:41123 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726777AbeG3L4f (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Jul 2018 07:56:08 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=jDTTyW2KUl6ulW67CVRcrexsvc5Sg/CrnTnoSP+kCGM=; b=rlzDHQDkTJC+J7l+QrD5BHrBL
-        gXnn+S9MC3fpX9futgF8t3KTHc/hnRSbLsOJAUw1iTiMUQuxjcO+SZ+2KwxcpsxTVDqwLMw/vOye3
-        GxkYudYzZhXgBHjy+A9i1vdZ4NsngC4HFBTm/HOtgeTeLCnoi7puQx9k5xfWkR4qXc1Us=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1fk5JB-0004wI-VY; Mon, 30 Jul 2018 10:21:46 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id B0CAC1124216; Mon, 30 Jul 2018 11:21:45 +0100 (BST)
-Date:   Mon, 30 Jul 2018 11:21:45 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Jon Hunter <jonathanh@nvidia.com>
-Cc:     Jorge Sanjuan <jorge.sanjuan@codethink.co.uk>, lgirdwood@gmail.com,
-        thierry.reding@gmail.com, alsa-devel@alsa-project.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-kernel@lists.codethink.co.uk
-Subject: Re: [PATCH 4/4] ASoC: tegra: i2s: Add support for more than 2
- channels
-Message-ID: <20180730102145.GG5789@sirena.org.uk>
-References: <20180727125931.9794-1-jorge.sanjuan@codethink.co.uk>
- <20180727125931.9794-5-jorge.sanjuan@codethink.co.uk>
- <d81d5c3c-2b2f-308f-d98e-d39c5d5d147f@nvidia.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="cyV/sMl4KAhiehtf"
-Content-Disposition: inline
-In-Reply-To: <d81d5c3c-2b2f-308f-d98e-d39c5d5d147f@nvidia.com>
-X-Cookie: But they went to MARS around 1953!!
-User-Agent: Mutt/1.10.0 (2018-05-17)
+        Mon, 30 Jul 2018 07:56:35 -0400
+Received: from lupine.hi.pengutronix.de ([2001:67c:670:100:3ad5:47ff:feaf:1a17] helo=lupine)
+        by metis.ext.pengutronix.de with esmtp (Exim 4.89)
+        (envelope-from <p.zabel@pengutronix.de>)
+        id 1fk5JR-0007qR-ST; Mon, 30 Jul 2018 12:22:01 +0200
+Message-ID: <1532946112.3471.2.camel@pengutronix.de>
+Subject: Re: [PATCH 7/9] clk: actions: Add Actions Semi Owl SoCs Reset
+ Management Unit support
+From:   Philipp Zabel <p.zabel@pengutronix.de>
+To:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        mturquette@baylibre.com, sboyd@kernel.org, afaerber@suse.de,
+        robh+dt@kernel.org
+Cc:     linux-clk@vger.kernel.org, liuwei@actions-semi.com,
+        mp-cs@actions-semi.com, 96boards@ucrobotics.com,
+        devicetree@vger.kernel.org, daniel.thompson@linaro.org,
+        amit.kucheria@linaro.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, hzhang@ucrobotics.com,
+        bdong@ucrobotics.com, manivannanece23@gmail.com,
+        thomas.liau@actions-semi.com, jeff.chen@actions-semi.com,
+        pn@denx.de, edgar.righi@lsitec.org.br, sravanhome@gmail.com
+Date:   Mon, 30 Jul 2018 12:21:52 +0200
+In-Reply-To: <20180727184527.13287-8-manivannan.sadhasivam@linaro.org>
+References: <20180727184527.13287-1-manivannan.sadhasivam@linaro.org>
+         <20180727184527.13287-8-manivannan.sadhasivam@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6-1+deb9u1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 2001:67c:670:100:3ad5:47ff:feaf:1a17
+X-SA-Exim-Mail-From: p.zabel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Manivannan,
 
---cyV/sMl4KAhiehtf
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Thank you for the patch, a few small comments below:
 
-On Mon, Jul 30, 2018 at 10:46:14AM +0100, Jon Hunter wrote:
-> On 27/07/18 13:59, Jorge Sanjuan wrote:
+On Sat, 2018-07-28 at 00:15 +0530, Manivannan Sadhasivam wrote:
+> Add Reset Management Unit (RMU) support for Actions Semi Owl SoCs.
+> 
+> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> ---
+>  drivers/clk/actions/Kconfig      |  1 +
+>  drivers/clk/actions/Makefile     |  1 +
+>  drivers/clk/actions/owl-common.h |  2 +
+>  drivers/clk/actions/owl-reset.c  | 72 ++++++++++++++++++++++++++++++++
+>  drivers/clk/actions/owl-reset.h  | 32 ++++++++++++++
+>  5 files changed, 108 insertions(+)
+>  create mode 100644 drivers/clk/actions/owl-reset.c
+>  create mode 100644 drivers/clk/actions/owl-reset.h
+> 
+> diff --git a/drivers/clk/actions/Kconfig b/drivers/clk/actions/Kconfig
+> index dc38c85a4833..04f0a6355726 100644
+> --- a/drivers/clk/actions/Kconfig
+> +++ b/drivers/clk/actions/Kconfig
+> @@ -2,6 +2,7 @@ config CLK_ACTIONS
+>  	bool "Clock driver for Actions Semi SoCs"
+>  	depends on ARCH_ACTIONS || COMPILE_TEST
+>  	select REGMAP_MMIO
+> +	select RESET_CONTROLLER
+>  	default ARCH_ACTIONS
+>  
+>  if CLK_ACTIONS
+> diff --git a/drivers/clk/actions/Makefile b/drivers/clk/actions/Makefile
+> index 78c17d56f991..ccfdf9781cef 100644
+> --- a/drivers/clk/actions/Makefile
+> +++ b/drivers/clk/actions/Makefile
+> @@ -7,6 +7,7 @@ clk-owl-y			+= owl-divider.o
+>  clk-owl-y			+= owl-factor.o
+>  clk-owl-y			+= owl-composite.o
+>  clk-owl-y			+= owl-pll.o
+> +clk-owl-y			+= owl-reset.o
+>  
+>  # SoC support
+>  obj-$(CONFIG_CLK_OWL_S700)	+= owl-s700.o
+> diff --git a/drivers/clk/actions/owl-common.h b/drivers/clk/actions/owl-common.h
+> index 56f01f7774aa..4dc7f286831f 100644
+> --- a/drivers/clk/actions/owl-common.h
+> +++ b/drivers/clk/actions/owl-common.h
+> @@ -26,6 +26,8 @@ struct owl_clk_desc {
+>  	struct owl_clk_common		**clks;
+>  	unsigned long			num_clks;
+>  	struct clk_hw_onecell_data	*hw_clks;
+> +	struct owl_reset_map		*resets;
 
-> > -	if (params_channels(params) != 2)
-> > +	if (params_channels(params) > 8)
-> >  		return -EINVAL;
+Could this be:
+	const struct owl_reset_map	*resets;
+?
 
-> For normal I2S mode, channels should always be 2 and so it could be worth checking
-> if we are using TDM mode here or not.
+> +	unsigned long			num_resets;
+>  	struct regmap			*regmap;
+>  };
+>  
+> diff --git a/drivers/clk/actions/owl-reset.c b/drivers/clk/actions/owl-reset.c
+> new file mode 100644
+> index 000000000000..91b161cc68de
+> --- /dev/null
+> +++ b/drivers/clk/actions/owl-reset.c
+> @@ -0,0 +1,72 @@
+> +// SPDX-License-Identifier: GPL-2.0-or-later
+> +//
+> +// Actions Semi Owl SoCs Reset Management Unit driver
+> +//
+> +// Copyright (c) 2018 Linaro Ltd.
+> +// Author: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> +
+> +#include <linux/delay.h>
+> +#include <linux/io.h>
 
-Yes, there's some question if a multi-channel I2S setup is going to be
-all the left channels then all the right channels, have multiple data
-lines in parallel (this especially common for high end applications) or
-something else.  Usually it's safer to use a DSP mode for those.
+This seems unnecessary, since register access is done via regmap.
 
-Please fix your mail client to word wrap within paragraphs at something
-substantially less than 80 columns.  Doing this makes your messages much
-easier to read and reply to.
+> +#include <linux/regmap.h>
+> +#include <linux/reset-controller.h>
+> +
+> +#include "owl-reset.h"
+> +
+> +static int owl_reset_assert(struct reset_controller_dev *rcdev,
+> +			    unsigned long id)
+> +{
+> +	struct owl_reset *reset = to_owl_reset(rcdev);
+> +	const struct owl_reset_map *map = &reset->reset_map[id];
+> +	u32 reg;
+> +
+> +	regmap_read(reset->regmap, map->reg, &reg);
+> +	regmap_write(reset->regmap, map->reg, reg & ~map->bit);
 
---cyV/sMl4KAhiehtf
-Content-Type: application/pgp-signature; name="signature.asc"
+This read-modify-write sequence needs locking against concurrent
+register access. Better use regmap_update_bits():
 
------BEGIN PGP SIGNATURE-----
+	return regmap_update_bits(reset->regmap, map->reg, map->bit, 0);
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlte5rgACgkQJNaLcl1U
-h9Az4wf9ENuJw9xHWLzCcUCojvR2r6t/dd8C4zfCSklN8D/pL24kyXy+HXtDXgqw
-dzYaYCL27iECyw16JmuMzM3U/vnnOTIxamjlcCF3/6BjBxYaJJ94gZP3RBLImrDF
-bCga+cNlb3FK0D7FEpyFSlSvREN3ZBpG5H+Da0vhdHZxglKYFsvqkjzJABamiGDK
-u3ryKn9BWMWVFITB5X9o24f902wdc2DY/ErIfCB5nQbmSLPXU7dAJ/3I7YmNSOLD
-8HiHKm74QIAtiDzZT3Sv+kZ8EgAbp8XmkWs/PGxoN7eveBbAJpEQHewQ99ystzKy
-tJNxVjlj1mGVRCxIsi+vNT1JAm9+RA==
-=moNh
------END PGP SIGNATURE-----
+> +
+> +	return 0;
+> +}
+> +
+> +static int owl_reset_deassert(struct reset_controller_dev *rcdev,
+> +			      unsigned long id)
+> +{
+> +	struct owl_reset *reset = to_owl_reset(rcdev);
+> +	const struct owl_reset_map *map = &reset->reset_map[id];
+> +	u32 reg;
+> +
+> +	regmap_read(reset->regmap, map->reg, &reg);
+> +	regmap_write(reset->regmap, map->reg, reg | map->bit);
 
---cyV/sMl4KAhiehtf--
+Better:
+
+	return regmap_update_bits(reset->regmap, map->reg, map->bit, map->bit);
+
+> +
+> +	return 0;
+> +}
+> +
+> +static int owl_reset_reset(struct reset_controller_dev *rcdev,
+> +			   unsigned long id)
+> +{
+> +	owl_reset_assert(rcdev, id);
+> +	udelay(1);
+
+Is the delay valid for all IP cores on all SoCs variants?
+
+> +	owl_reset_deassert(rcdev, id);
+> +
+> +	return 0;
+> +}
+> +
+> +static int owl_reset_status(struct reset_controller_dev *rcdev,
+> +			    unsigned long id)
+> +{
+> +	struct owl_reset *reset = to_owl_reset(rcdev);
+> +	const struct owl_reset_map *map = &reset->reset_map[id];
+> +	u32 reg;
+> +
+> +	regmap_read(reset->regmap, map->reg, &reg);
+
+If this could return an error, better report it.
+
+> +
+> +	/*
+> +	 * The reset control API expects 0 if reset is not asserted,
+> +	 * which is the opposite of what our hardware uses.
+> +	 */
+> +	return !(map->bit & reg);
+> +}
+> +
+> +const struct reset_control_ops owl_reset_ops = {
+> +	.assert		= owl_reset_assert,
+> +	.deassert	= owl_reset_deassert,
+> +	.reset		= owl_reset_reset,
+> +	.status		= owl_reset_status,
+> +};
+> diff --git a/drivers/clk/actions/owl-reset.h b/drivers/clk/actions/owl-reset.h
+> new file mode 100644
+> index 000000000000..1a5e987ba99b
+> --- /dev/null
+> +++ b/drivers/clk/actions/owl-reset.h
+> @@ -0,0 +1,32 @@
+> +// SPDX-License-Identifier: GPL-2.0-or-later
+> +//
+> +// Actions Semi Owl SoCs Reset Management Unit driver
+> +//
+> +// Copyright (c) 2018 Linaro Ltd.
+> +// Author: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> +
+> +#ifndef _OWL_RESET_H_
+> +#define _OWL_RESET_H_
+> +
+> +#include <linux/reset-controller.h>
+> +#include <linux/spinlock.h>
+
+spinlock?
+
+> +
+> +struct owl_reset_map {
+> +	u16	reg;
+
+Note that this will be aligned to 32-bits. If the intention was to save
+space, consider storing an u8 bit index instead of the mask.
+
+> +	u32	bit;
+> +};
+> +
+> +struct owl_reset {
+> +	struct reset_controller_dev	rcdev;
+> +	struct owl_reset_map		*reset_map;
+
+Could this be
+	const struct owl_reset_map	*reset_map;
+?
+
+> +	struct regmap			*regmap;
+> +};
+> +
+> +static inline struct owl_reset *to_owl_reset(struct reset_controller_dev *rcdev)
+> +{
+> +	return container_of(rcdev, struct owl_reset, rcdev);
+> +}
+> +
+> +extern const struct reset_control_ops owl_reset_ops;
+> +
+> +#endif /* _OWL_RESET_H_ */
+
+regards
+Philipp
