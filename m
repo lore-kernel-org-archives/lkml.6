@@ -2,95 +2,81 @@ Return-Path: <SRS0=qqIy=KO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 028E913F6DFF
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 14:11:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2664FD21E1
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 14:13:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A81E620870
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 14:11:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A81E620870
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=apache.org
+	by mail.kernel.org (Postfix) with ESMTP id 6C44420893
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 14:13:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C44420893
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731606AbeG3PrE (ORCPT
+        id S1731029AbeG3Ps6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 30 Jul 2018 11:47:04 -0400
-Received: from hermes.apache.org ([140.211.11.3]:37587 "HELO mail.apache.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with SMTP
-        id S1726740AbeG3PrE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Jul 2018 11:47:04 -0400
-X-Greylist: delayed 402 seconds by postgrey-1.27 at vger.kernel.org; Mon, 30 Jul 2018 11:47:04 EDT
-Received: (qmail 56131 invoked by uid 99); 30 Jul 2018 14:05:13 -0000
-Received: from mail-relay.apache.org (HELO mailrelay2-lw-us.apache.org) (207.244.88.137)
-    by apache.org (qpsmtpd/0.29) with ESMTP; Mon, 30 Jul 2018 14:05:13 +0000
-Received: from rombert.eur.adobe.com (unknown [192.147.117.11])
-        by mailrelay2-lw-us.apache.org (ASF Mail Server at mailrelay2-lw-us.apache.org) with ESMTPSA id 5234C23D;
-        Mon, 30 Jul 2018 14:05:11 +0000 (UTC)
-Message-ID: <6330995a9313ade9196cadb2e3696d53d4ef9aa8.camel@apache.org>
-Subject: Re: [PATCH 1/2] HID: redragon: Fix regression in non-Redragon
- keyboard due to this new driver
-From:   Robert Munteanu <rombert@apache.org>
-To:     John S Gruber <JohnSGruber@gmail.com>,
-        Jiri Kosina <jikos@kernel.org>, linux-input@vger.kernel.org,
-        benjamin.tissoires@redhat.com, dmitry.torokhov@gmail.com,
-        linux-kernel@vger.kernel.org
-Date:   Mon, 30 Jul 2018 16:05:09 +0200
-In-Reply-To: <CAPotdmT-zCVL=hoV0y83bbksTQ3AWsCybzisL8B6n-OB-M645g@mail.gmail.com>
-References: <CAPotdmQtXmfHJfcgrXZ02NrPgS3Az=SpZnBsRZ_8dGvPfdi+Mw@mail.gmail.com>
-         <1532807605-26023-1-git-send-email-JohnSGruber@gmail.com>
-         <CAPotdmT-zCVL=hoV0y83bbksTQ3AWsCybzisL8B6n-OB-M645g@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.4 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Mon, 30 Jul 2018 11:48:58 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:33566 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726762AbeG3Ps6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Jul 2018 11:48:58 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id E87BB20884; Mon, 30 Jul 2018 16:13:44 +0200 (CEST)
+Received: from localhost (242.171.71.37.rev.sfr.net [37.71.171.242])
+        by mail.bootlin.com (Postfix) with ESMTPSA id B414C207AC;
+        Mon, 30 Jul 2018 16:13:34 +0200 (CEST)
+Date:   Mon, 30 Jul 2018 16:13:35 +0200
+From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
+To:     Quentin Schulz <quentin.schulz@bootlin.com>
+Cc:     andrew@lunn.ch, f.fainelli@gmail.com, davem@davemloft.net,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        thomas.petazzoni@bootlin.com
+Subject: Re: [PATCH net-next] net: phy: mscc: the extended page access
+ register is 16 bits
+Message-ID: <20180730141335.GG28585@piout.net>
+References: <20180730125313.3405-1-quentin.schulz@bootlin.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180730125313.3405-1-quentin.schulz@bootlin.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi John,
-
-On Sat, 2018-07-28 at 15:53 -0400, John S Gruber wrote:
-> The Redragon keyboard uses the second device being presented, but
-> other
-> devices with the same vendor_id/device_id pair (0x0c45:760b) use the
-> first.
-> Don't cause its deletion. Problem introduced in commit 85455dd906d5
-> ("HID: redragon: Fix modifier keys for Redragon Asura Keyboard")
+On 30/07/2018 14:53:13+0200, Quentin Schulz wrote:
+> The Extended Page Access is a 16-bit register, so change the page
+> parameter of vsc85xx_phy_page_set to a u16.
 > 
-> Fixes: 85455dd906d5
-> Signed-off-by: John S Gruber <JohnSGruber@gmail.com>
+> Signed-off-by: Quentin Schulz <quentin.schulz@bootlin.com>
+
+Reviewed-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+
 > ---
->  drivers/hid/hid-redragon.c | 4 ----
->  1 file changed, 4 deletions(-)
+>  drivers/net/phy/mscc.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/drivers/hid/hid-redragon.c b/drivers/hid/hid-redragon.c
-> index daf5957..85a5fbb 100644
-> --- a/drivers/hid/hid-redragon.c
-> +++ b/drivers/hid/hid-redragon.c
-> @@ -55,10 +55,6 @@ static int redragon_probe(struct hid_device *dev,
->  		return ret;
->  	}
+> diff --git a/drivers/net/phy/mscc.c b/drivers/net/phy/mscc.c
+> index 650c2667d523..84ca9ff40ae0 100644
+> --- a/drivers/net/phy/mscc.c
+> +++ b/drivers/net/phy/mscc.c
+> @@ -123,7 +123,7 @@ static const struct vsc8531_edge_rate_table edge_table[] = {
+>  };
+>  #endif /* CONFIG_OF_MDIO */
+>  
+> -static int vsc85xx_phy_page_set(struct phy_device *phydev, u8 page)
+> +static int vsc85xx_phy_page_set(struct phy_device *phydev, u16 page)
+>  {
+>  	int rc;
+>  
+> -- 
+> 2.17.1
 > 
-> -	/* do not register unused input device */
-> -	if (dev->maxapplication == 1)
-> -		return 0;
-> -
->  	ret = hid_hw_start(dev, HID_CONNECT_DEFAULT);
->  	if (ret) {
->  		hid_err(dev, "hw start failed\n");
 
-As I mentioned, this is already fixed by
-dc9b8e85ed95cbe7e3ad0eabb5b48d617bbc365e, scheduled for 4.19, and I
-suggest that we instead add that one to 4.18.
-
-The explanation is that the block you deleted was the whole reason for
-adding the redragon_probe function, so the changes are largely
-equivalent.
-
-Thanks,
-
-Robert
-
+-- 
+Alexandre Belloni, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
