@@ -3,104 +3,78 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 044E9FD21E1
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 07:27:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B3B8C46461
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 07:28:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A7DA520892
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 07:27:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A7DA520892
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	by mail.kernel.org (Postfix) with ESMTP id CAD0720892
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 07:28:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CAD0720892
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726710AbeG3JBU (ORCPT
+        id S1726737AbeG3JBo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 30 Jul 2018 05:01:20 -0400
-Received: from mail-ua0-f194.google.com ([209.85.217.194]:37354 "EHLO
-        mail-ua0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726492AbeG3JBT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Jul 2018 05:01:19 -0400
-Received: by mail-ua0-f194.google.com with SMTP id y10-v6so7175035uao.4
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Jul 2018 00:27:42 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=gQtTymIw4tia0rPgA/OCw5KNlErlUZr8sYRLmIcLFw8=;
-        b=ZPcf29qFmb0F2RZI6pdijz58v6XziJu6Wp5Nb5zli+F3l2FSrktbpwxcy1T7QFEu0n
-         NFC/xr4/csmVJa6Zzt9HrsM2eIJu8D7FMt2nfuEOw4jypgUjEPpbJTkJsE5uKE/9Mqpb
-         At8Asqmd7FKV91C30eEoeTSdchlMuXgSoR7ujOWiWbUW4ndeZjF2MiDDXbJxoQ4qKUxv
-         p2M6P+7IaYdeba32egzRBGuMD/8ZQ32k+gezsYdkonL+yd1jNRkHpE0qiafOi5lf6NZm
-         3NqquBAqqeQYga2EIqyPtArHiUjlBSLY8B6mDVrci9geZXPVwp521bbNlm/C8fXhBo/N
-         xRGQ==
-X-Gm-Message-State: AOUpUlHAcBsfFow9eZFIu+TSi/TuJksBlQWfKbFpRIV44X8kfwiXAO4Z
-        TPhdYl0VjF+GP3A9C75ZvGq1Klt2DjKflb4Eddk=
-X-Google-Smtp-Source: AAOMgpfLrpM+G1P2iBYCIPNfuauompe7phEdVhbzTMZuvxVNJAkWgVtKcrfVH3Mc4kzsWA+uSt2w2CMz0m5mbwVifqo=
-X-Received: by 2002:ab0:5b57:: with SMTP id v23-v6mr11365755uae.72.1532935661635;
- Mon, 30 Jul 2018 00:27:41 -0700 (PDT)
+        Mon, 30 Jul 2018 05:01:44 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:53694 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726492AbeG3JBo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Jul 2018 05:01:44 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 757C47C6A9;
+        Mon, 30 Jul 2018 07:28:06 +0000 (UTC)
+Received: from [10.72.12.118] (ovpn-12-118.pek2.redhat.com [10.72.12.118])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 7CBD92156701;
+        Mon, 30 Jul 2018 07:28:04 +0000 (UTC)
+Subject: Re: [PATCH 1/2] tools/virtio: add dma barrier stubs
+To:     "Michael S. Tsirkin" <mst@redhat.com>, linux-kernel@vger.kernel.org
+Cc:     khandual@linux.vnet.ibm.com,
+        virtualization@lists.linux-foundation.org
+References: <20180725134057.113423-1-mst@redhat.com>
+From:   Jason Wang <jasowang@redhat.com>
+Message-ID: <066294db-82d6-9b7c-14ac-d64428b3a15a@redhat.com>
+Date:   Mon, 30 Jul 2018 15:28:01 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-References: <cover.1530519301.git.fthain@telegraphics.com.au>
- <03e778fa5a025ac72f6d11c519939c5f8dbc6b8c.1530519301.git.fthain@telegraphics.com.au>
- <87tvohi5ji.fsf@concordia.ellerman.id.au>
-In-Reply-To: <87tvohi5ji.fsf@concordia.ellerman.id.au>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 30 Jul 2018 09:27:30 +0200
-Message-ID: <CAMuHMdURrJ6d22QCBsX9NKvmtaVckWKGayohgidBPpZoxwTrWg@mail.gmail.com>
-Subject: Re: [PATCH v4 09/11] macintosh/via-pmu: Replace via-pmu68k driver
- with via-pmu driver
-To:     Michael Ellerman <mpe@ellerman.id.au>
-Cc:     Finn Thain <fthain@telegraphics.com.au>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Michael Schmitz <schmitzmic@gmail.com>,
-        linux-m68k <linux-m68k@lists.linux-m68k.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180725134057.113423-1-mst@redhat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Mon, 30 Jul 2018 07:28:06 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Mon, 30 Jul 2018 07:28:06 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jasowang@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Michael,
 
-On Mon, Jul 30, 2018 at 8:47 AM Michael Ellerman <mpe@ellerman.id.au> wrote:
-> Finn Thain <fthain@telegraphics.com.au> writes:
-> > Now that the PowerMac via-pmu driver supports m68k PowerBooks,
-> > switch over to that driver and remove the via-pmu68k driver.
-> >
-> > Cc: Geert Uytterhoeven <geert@linux-m68k.org>
-> > Tested-by: Stan Johnson <userm57@yahoo.com>
-> > Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
-> > ---
-> >  arch/m68k/configs/mac_defconfig   |   2 +-
-> >  arch/m68k/configs/multi_defconfig |   2 +-
-> >  arch/m68k/mac/config.c            |   2 +-
-> >  arch/m68k/mac/misc.c              |  48 +--
-> >  drivers/macintosh/Kconfig         |  13 +-
-> >  drivers/macintosh/Makefile        |   1 -
-> >  drivers/macintosh/adb.c           |   2 +-
-> >  drivers/macintosh/via-pmu68k.c    | 846 --------------------------------------
-> >  include/uapi/linux/pmu.h          |   2 +-
-> >  9 files changed, 14 insertions(+), 904 deletions(-)
-> >  delete mode 100644 drivers/macintosh/via-pmu68k.c
+
+On 2018年07月25日 21:45, Michael S. Tsirkin wrote:
+> Fixes: 55e49dc43a8 ("virtio_ring: switch to dma_XX barriers for rpmsg")
+> Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
+> ---
+>   tools/virtio/asm/barrier.h | 4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
 >
-> Geert are you OK with this and the other one that touches arch/m68k ?
+> diff --git a/tools/virtio/asm/barrier.h b/tools/virtio/asm/barrier.h
+> index 0ac3caf90877..d0351f83aebe 100644
+> --- a/tools/virtio/asm/barrier.h
+> +++ b/tools/virtio/asm/barrier.h
+> @@ -13,8 +13,8 @@
+>   } while (0);
+>   /* Weak barriers should be used. If not - it's a bug */
+>   # define mb() abort()
+> -# define rmb() abort()
+> -# define wmb() abort()
+> +# define dma_rmb() abort()
+> +# define dma_wmb() abort()
+>   #else
+>   #error Please fill in barrier macros
+>   #endif
 
-Sure, feel free to take them through the PPC tree.
-Acked-by: Geert Uytterhoeven <geert@linux-m68k.org>
-
-Thanks!
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Reviewed-by: Jason Wang <jasowang@redhat.com>
