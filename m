@@ -2,118 +2,243 @@ Return-Path: <SRS0=qqIy=KO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6E3AFD21E1
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 09:31:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 667DDFD21E1
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 09:33:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9DCE020881
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 09:31:49 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="TZCAXU+8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9DCE020881
+	by mail.kernel.org (Postfix) with ESMTP id 1CD8420881
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 09:33:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1CD8420881
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727366AbeG3LFs (ORCPT
+        id S1726872AbeG3LHJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 30 Jul 2018 07:05:48 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:35046 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726703AbeG3LFs (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Jul 2018 07:05:48 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Subject:Cc:To:
-        From:Date:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=SbkjBoWInJJMPsFGBAI72P5z7I6y/jfV4DDG6h25E2s=; b=TZCAXU+8fdx6d8wn3pXNXGEii
-        BJgxUzwgtGZ4bpe7fDVx+J811UTu+8JWcY2fvahjptKPK+Zh8PxptKlj2S/l2xDA4DO5ywANgd6zq
-        seJQ1W9aXtaVd+Wk2CVybBQ+hl/WDrTL1Mogck6qZ+MhNYdtjBqby78bMW3E+fuzsQBLVSnyTFMD4
-        LOf5m12pf6SIJAbLug7XRvEevjxtn3Ng6AAZbQljlBEGdEopAjeUj68rBBUcGY36KTb24Ydj38+BX
-        CI++aJsEVDVS2NKeZHFMbc/1y4YUC+NhtwVWiTfkLgZtCEK/BjGnVCUnsXElx+WIzawGDwL/kZS0M
-        Rt8hOMJIQ==;
-Received: from [179.95.0.119] (helo=coco.lan)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fk4Wf-0002ky-RN; Mon, 30 Jul 2018 09:31:38 +0000
-Date:   Mon, 30 Jul 2018 06:31:30 -0300
-From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-To:     Pavel Machek <pavel@ucw.cz>
-Cc:     pali.rohar@gmail.com, sre@kernel.org,
-        kernel list <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-omap@vger.kernel.org, tony@atomide.com, khilman@kernel.org,
-        aaro.koskinen@iki.fi, ivo.g.dimitrov.75@gmail.com,
-        patrikbachan@gmail.com, serge@hallyn.com, abcloriens@gmail.com,
-        clayton@craftyguy.net, martijn@brixit.nl,
-        sakari.ailus@linux.intel.com,
-        Filip =?UTF-8?B?TWF0aWpldmnEhw==?= <filip.matijevic.pz@gmail.com>,
-        mchehab@s-opensource.com, sakari.ailus@iki.fi,
-        linux-media@vger.kernel.org, hans.verkuil@cisco.com
-Subject: Re: new libv4l2 (was Re: [PATCH, libv4l]: Make libv4l2 usable on
- devices with complex pipeline)
-Message-ID: <20180730063122.73a20c55@coco.lan>
-In-Reply-To: <20180728211110.GB1152@amd>
-References: <20180708213258.GA18217@amd>
-        <20180719205344.GA12098@amd>
-        <20180723153649.73337c0f@coco.lan>
-        <20180728211110.GB1152@amd>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+        Mon, 30 Jul 2018 07:07:09 -0400
+Received: from mx2.suse.de ([195.135.220.15]:43672 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726705AbeG3LHI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Jul 2018 07:07:08 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id B9E41B01D;
+        Mon, 30 Jul 2018 09:32:58 +0000 (UTC)
+Date:   Mon, 30 Jul 2018 11:32:57 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc:     Roman Gushchin <guro@fb.com>, Johannes Weiner <hannes@cmpxchg.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        David Rientjes <rientjes@google.com>,
+        Tejun Heo <tj@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-mm <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] mm,page_alloc: PF_WQ_WORKER threads must sleep at
+ should_reclaim_retry().
+Message-ID: <20180730093257.GG24267@dhcp22.suse.cz>
+References: <ca3da8b8-1bb5-c302-b190-fa6cebab58ca@I-love.SAKURA.ne.jp>
+ <20180726113958.GE28386@dhcp22.suse.cz>
+ <55c9da7f-e448-964a-5b50-47f89a24235b@i-love.sakura.ne.jp>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <55c9da7f-e448-964a-5b50-47f89a24235b@i-love.sakura.ne.jp>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Sat, 28 Jul 2018 23:11:10 +0200
-Pavel Machek <pavel@ucw.cz> escreveu:
-
-> Hi!
-> 
-> > > > Add support for opening multiple devices in v4l2_open(), and for
-> > > > mapping controls between devices.
-> > > > 
-> > > > This is necessary for complex devices, such as Nokia N900.
-> > > > 
-> > > > Signed-off-by: Pavel Machek <pavel@ucw.cz>    
-> > > 
-> > > Ping?
-> > > 
-> > > There's a lot of work to do on libv4l2... timely patch handling would
-> > > be nice.  
+On Sat 28-07-18 00:47:40, Tetsuo Handa wrote:
+> On 2018/07/26 20:39, Michal Hocko wrote:
+> > On Thu 26-07-18 20:06:24, Tetsuo Handa wrote:
+> >> Before applying "an OOM lockup mitigation patch", I want to apply this
+> >> "another OOM lockup avoidance" patch.
 > > 
-> > As we're be start working at the new library in order to support
-> > complex cameras, and I don't want to prevent you keeping doing your
-> > work, IMHO the best way to keep doing it would be to create two
-> > libv4l2 forks:  
+> > I do not really see why. All these are borderline interesting as the
+> > system is basically dead by the time you reach this state.
 > 
-> BTW.. new library. Was there decision what langauge to use? I know C
-> is obvious choice, but while working on libv4l2, I wished it would be
-> Rust...
+> I don't like your "borderline interesting". We still don't have a watchdog
+> which tells something went wrong. Thus, "borderline interesting" has to be
+> examined and fixed.
+
+No question about that. Bugs should be fixed. But this doesn't look like
+something we should panic about and rush a half baked or not fully
+understood fixes.
+ 
+> >> Complete log is at http://I-love.SAKURA.ne.jp/tmp/serial-20180726.txt.xz
+> >> (which was captured with
+> >>
+> >>   --- a/mm/oom_kill.c
+> >>   +++ b/mm/oom_kill.c
+> >>   @@ -1071,6 +1071,12 @@ bool out_of_memory(struct oom_control *oc)
+> >>    {
+> >>    	unsigned long freed = 0;
+> >>    	bool delay = false; /* if set, delay next allocation attempt */
+> >>   +	static unsigned long last_warned;
+> >>   +	if (!last_warned || time_after(jiffies, last_warned + 10 * HZ)) {
+> >>   +		pr_warn("%s(%d) gfp_mask=%#x(%pGg), order=%d\n", current->comm,
+> >>   +			current->pid, oc->gfp_mask, &oc->gfp_mask, oc->order);
+> >>   +		last_warned = jiffies;
+> >>   +	}
+> >>    
+> >>    	oc->constraint = CONSTRAINT_NONE;
+> >>    	if (oom_killer_disabled)
+> >>
+> >> in order to demonstrate that the GFP_NOIO allocation from disk_events_workfn() is
+> >> calling out_of_memory() rather than by error failing to give up direct reclaim).
+> >>
+> >> [  258.619119] kworker/0:0(5) gfp_mask=0x600000(GFP_NOIO), order=0
+> >> [  268.622732] kworker/0:0(5) gfp_mask=0x600000(GFP_NOIO), order=0
+> >> [  278.635344] kworker/0:0(5) gfp_mask=0x600000(GFP_NOIO), order=0
+> >> [  288.639360] kworker/0:0(5) gfp_mask=0x600000(GFP_NOIO), order=0
+> >> [  298.642715] kworker/0:0(5) gfp_mask=0x600000(GFP_NOIO), order=0
+> > 
+> > Hmm, so there is no other memory allocation to trigger the oom or they
+> > all just back off on the oom_lock trylock? In other words what is
+> > preventing from the oom killer invocation?
 > 
-> Rewriting same routine over and over, with slightly different types
-> was not too much fun, and it looked like textbook example for
-> generics...
+> All __GFP_FS allocations got stuck at direct reclaim or workqueue.
 
-Whatever language it uses, the library should provide a standard C API
-interface and avoid using libraries that may not be available on
-the systems supported by the v4l-utils package, as other packages
-and a libv4l-compatible interface should be linked using it.
+OK, I see. This is important information which was missing in the
+previous examination.
 
-It should also be something that the existing v4l-utils developers are
-familiar with. Right now, we have only C and C++ code inside v4l-utils.
+[...]
 
-So, I'd say that the language should be either C (the obvious choice)
-or C++.
+> >> Since the patch shown below was suggested by Michal Hocko at
+> >> https://marc.info/?l=linux-mm&m=152723708623015 , it is from Michal Hocko.
+> >>
+> >> >From cd8095242de13ace61eefca0c3d6f2a5a7b40032 Mon Sep 17 00:00:00 2001
+> >> From: Michal Hocko <mhocko@suse.com>
+> >> Date: Thu, 26 Jul 2018 14:40:03 +0900
+> >> Subject: [PATCH] mm,page_alloc: PF_WQ_WORKER threads must sleep at should_reclaim_retry().
+> >>
+> >> Tetsuo Handa has reported that it is possible to bypass the short sleep
+> >> for PF_WQ_WORKER threads which was introduced by commit 373ccbe5927034b5
+> >> ("mm, vmstat: allow WQ concurrency to discover memory reclaim doesn't make
+> >> any progress") and moved by commit ede37713737834d9 ("mm: throttle on IO
+> >> only when there are too many dirty and writeback pages") and lock up the
+> >> system if OOM.
+> >>
+> >> This is because we are implicitly counting on falling back to
+> >> schedule_timeout_uninterruptible() in __alloc_pages_may_oom() when
+> >> schedule_timeout_uninterruptible() in should_reclaim_retry() was not
+> >> called due to __zone_watermark_ok() == false.
+> > 
+> > How do we rely on that?
+> 
+> Unless disk_events_workfn() (PID=5) sleeps at schedule_timeout_uninterruptible()
+> in __alloc_pages_may_oom(), drain_local_pages_wq() which a thread doing __GFP_FS
+> allocation (PID=498) is waiting for cannot be started.
 
-It should also be licensed using the same terms as v4l-utils libraries,
-e. g. LGPL 2.1+.
+Now you are losing me again. What is going on about
+drain_local_pages_wq? I can see that all __GFP_FS allocations are
+waiting for a completion which depends on the kworker context to run but
+I fail to see why drain_local_pages_wq matters. The memory on the pcp
+lists is not accounted to NR_FREE_PAGES IIRC but that should be a
+relatively small amount of memory so this cannot be a fundamental
+problem here.
 
-Thanks,
-Mauro
+> >> However, schedule_timeout_uninterruptible() in __alloc_pages_may_oom() is
+> >> not called if all allocating threads but a PF_WQ_WORKER thread got stuck at
+> >> __GFP_FS direct reclaim, for mutex_trylock(&oom_lock) by that PF_WQ_WORKER
+> >> thread succeeds and out_of_memory() remains no-op unless that PF_WQ_WORKER
+> >> thread is doing __GFP_FS allocation.
+> > 
+> > I have really hard time to parse and understand this.
+> 
+> You can write as you like.
+
+I can as soon as I understand what is going on.
+
+> >> Tetsuo is observing that GFP_NOIO
+> >> allocation request from disk_events_workfn() is preventing other pending
+> >> works from starting.
+> > 
+> > What about any other allocation from !PF_WQ_WORKER context? Why those do
+> > not jump in?
+> 
+> All __GFP_FS allocations got stuck at direct reclaim or workqueue.
+> 
+> > 
+> >> Since should_reclaim_retry() should be a natural reschedule point,
+> >> let's do the short sleep for PF_WQ_WORKER threads unconditionally
+> >> in order to guarantee that other pending works are started.
+> > 
+> > OK, this is finally makes some sense. But it doesn't explain why it
+> > handles the live lock.
+> 
+> As explained above, if disk_events_workfn() (PID=5) explicitly sleeps,
+> vmstat_update and drain_local_pages_wq from WQ_MEM_RECLAIM workqueue will
+> start, and unblock PID=498 which is waiting for drain_local_pages_wq and
+> allow PID=498 to invoke the OOM killer.
+
+[  313.714537] systemd-journal D12600   498      1 0x00000000
+[  313.716538] Call Trace:
+[  313.717683]  ? __schedule+0x245/0x7f0
+[  313.719221]  schedule+0x23/0x80
+[  313.720586]  schedule_timeout+0x21f/0x400
+[  313.722163]  wait_for_completion+0xb2/0x130
+[  313.723750]  ? wake_up_q+0x70/0x70
+[  313.725134]  flush_work+0x1db/0x2b0
+[  313.726535]  ? flush_workqueue_prep_pwqs+0x1b0/0x1b0
+[  313.728336]  ? page_alloc_cpu_dead+0x30/0x30
+[  313.729936]  drain_all_pages+0x174/0x1e0
+[  313.731446]  __alloc_pages_slowpath+0x428/0xc50
+[  313.733120]  __alloc_pages_nodemask+0x2a6/0x2c0
+[  313.734826]  filemap_fault+0x437/0x8e0
+[  313.736296]  ? lock_acquire+0x51/0x70
+[  313.737769]  ? xfs_ilock+0x86/0x190 [xfs]
+[  313.739309]  __xfs_filemap_fault.constprop.21+0x37/0xc0 [xfs]
+[  313.741291]  __do_fault+0x13/0x126
+[  313.742667]  __handle_mm_fault+0xc8d/0x11c0
+[  313.744245]  handle_mm_fault+0x17a/0x390
+[  313.745755]  __do_page_fault+0x24c/0x4d0
+[  313.747290]  do_page_fault+0x2a/0x70
+[  313.748728]  ? page_fault+0x8/0x30
+[  313.750148]  page_fault+0x1e/0x30
+
+This one is waiting for draining and we are in mm_percpu_wq WQ context
+which has its rescuer so no other activity can block us for ever. So
+this certainly shouldn't deadlock. It can be dead slow but well, this is
+what you will get when your shoot your system to death.
+
+So there must be something more going on...
+ 
+> >> Reported-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+> >> Signed-off-by: Michal Hocko <mhocko@suse.com>
+> > 
+> > Your s-o-b is missing again. I have already told you that previously
+> > when you were posting the patch.
+> 
+> I'm waiting for you to post this change with your wording.
+> 
+> > 
+> > I do not mind this change per se but I am not happy about _your_ changelog.
+> > It doesn't explain the underlying problem IMHO. Having a natural and
+> > unconditional scheduling point in should_reclaim_retry is a reasonable
+> > thing. But how the hack it relates to the livelock you are seeing. So
+> > namely the changelog should explain
+> > 1) why nobody is able to make forward progress during direct reclaim
+> 
+> Because GFP_NOIO allocation from one workqueue prevented WQ_MEM_RECLAIM
+> workqueues from starting, for it did not call schedule_timeout_*() because
+> mutex_trylock(&oom_lock) did not fail because nobody else could call
+> __alloc_pages_may_oom().
+
+Why hasn't the rescuer helped here?
+
+> > 2) why nobody is able to trigger oom killer as the last resort
+> 
+> Because only one !__GFP_FS allocating thread which did not get stuck at
+> direct reclaim was able to call __alloc_pages_may_oom().
+
+All the remaining allocations got stuck waiting for completion which
+depends on !WQ_MEM_RECLAIM workers right?
+
+-- 
+Michal Hocko
+SUSE Labs
