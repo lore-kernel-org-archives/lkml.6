@@ -2,109 +2,405 @@ Return-Path: <SRS0=qqIy=KO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35466C43142
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 22:11:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3CDDC43142
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 22:11:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E82A120894
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 22:10:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E82A120894
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=brown.name
+	by mail.kernel.org (Postfix) with ESMTP id 0DDE220857
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 22:11:17 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="VJcj1tAi"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0DDE220857
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731994AbeG3Xr7 (ORCPT
+        id S1732033AbeG3XsR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 30 Jul 2018 19:47:59 -0400
-Received: from mx2.suse.de ([195.135.220.15]:43868 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726622AbeG3Xr7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Jul 2018 19:47:59 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 61F5AAFC2;
-        Mon, 30 Jul 2018 22:10:55 +0000 (UTC)
-From:   NeilBrown <neil@brown.name>
-To:     Nishad Kamdar <nishadkamdar@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Date:   Tue, 31 Jul 2018 08:10:43 +1000
-Cc:     Christian =?utf-8?Q?L=C3=BCtke-Stetzkamp?= <christian@lkamp.de>,
-        John Crispin <blogic@openwrt.org>, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] staging: mt7621-mmc: Use BIT macro instead of explicit shifting in board.h
-In-Reply-To: <20180727160733.GA10467@nishad>
-References: <20180727160733.GA10467@nishad>
-Message-ID: <87muu8l6ho.fsf@notabene.neil.brown.name>
+        Mon, 30 Jul 2018 19:48:17 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:48812 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726622AbeG3XsQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Jul 2018 19:48:16 -0400
+Received: from avalon.localnet (dfj612ybrt5fhg77mgycy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:2e86:4862:ef6a:2804])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 41DB31AC2;
+        Tue, 31 Jul 2018 00:11:11 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1532988671;
+        bh=gkXsKzM1kkrIySY3uihIZ/jZMm1sxhz8wwJgQa0QDbQ=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=VJcj1tAiMKsQpal68aYZvYCIERDrMtulf3y/XKjOBXyWMMYOXUmt+L8mtS/toDafD
+         it0g+WfpcrrtMAAVBIB2Inh6caY+XwzrE47YN0RjZZH4EEN60R4ZNLD3nN568N39je
+         K2tXBJoUCSnsbsWGa4rc4GINHc7KK5H8qRy4Lk3M=
+From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To:     Kieran Bingham <kieran.bingham@ideasonboard.com>
+Cc:     linux-media@vger.kernel.org,
+        Guennadi Liakhovetski <g.liakhovetski@gmx.de>,
+        Olivier BRAUN <olivier.braun@stereolabs.com>,
+        Troy Kisky <troy.kisky@boundarydevices.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Philipp Zabel <philipp.zabel@gmail.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v4 6/6] media: uvcvideo: Move decode processing to process context
+Date:   Tue, 31 Jul 2018 01:11:51 +0300
+Message-ID: <2606200.TATdTEd0YG@avalon>
+Organization: Ideas on Board Oy
+In-Reply-To: <cae511f90085701e7093ce39dc8dabf8fc16b844.1522168131.git-series.kieran.bingham@ideasonboard.com>
+References: <cover.3cb9065dabdf5d455da508fb4109201e626d5ee7.1522168131.git-series.kieran.bingham@ideasonboard.com> <cae511f90085701e7093ce39dc8dabf8fc16b844.1522168131.git-series.kieran.bingham@ideasonboard.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-        micalg=pgp-sha256; protocol="application/pgp-signature"
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+Hi Kieran,
 
-On Fri, Jul 27 2018, Nishad Kamdar wrote:
+Thank you for the patch.
 
-> Replace explicit shifting with BIT macro in board.h.
-> Issue found by checkpatch.
->
-> Signed-off-by: Nishad Kamdar <nishadkamdar@gmail.com>
-
-Reviewed-by: NeilBrown <neil@brown.name>
-
-Thanks,
-NeilBrown
-
+On Tuesday, 27 March 2018 19:46:03 EEST Kieran Bingham wrote:
+> Newer high definition cameras, and cameras with multiple lenses such as
+> the range of stereo-vision cameras now available have ever increasing
+> data rates.
+> 
+> The inclusion of a variable length packet header in URB packets mean
+> that we must memcpy the frame data out to our destination 'manually'.
+> This can result in data rates of up to 2 gigabits per second being
+> processed.
+> 
+> To improve efficiency, and maximise throughput, handle the URB decode
+> processing through a work queue to move it from interrupt context, and
+> allow multiple processors to work on URBs in parallel.
+> 
+> Signed-off-by: Kieran Bingham <kieran.bingham@ideasonboard.com>
+> 
 > ---
->  drivers/staging/mt7621-mmc/board.h | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/staging/mt7621-mmc/board.h b/drivers/staging/mt7621-=
-mmc/board.h
-> index a7d82f321b00..983791ee308d 100644
-> --- a/drivers/staging/mt7621-mmc/board.h
-> +++ b/drivers/staging/mt7621-mmc/board.h
-> @@ -36,10 +36,10 @@
->  #ifndef __ARCH_ARM_MACH_BOARD_H
->  #define __ARCH_ARM_MACH_BOARD_H
->=20=20
-> -#define MSDC_CD_PIN_EN      (1 << 0)  /* card detection pin is wired   */
-> -#define MSDC_WP_PIN_EN      (1 << 1)  /* write protection pin is wired */
-> -#define MSDC_RST_PIN_EN     (1 << 2)  /* emmc reset pin is wired       */
-> -#define MSDC_REMOVABLE      (1 << 5)  /* removable slot                */
-> +#define MSDC_CD_PIN_EN      BIT(0)  /* card detection pin is wired   */
-> +#define MSDC_WP_PIN_EN      BIT(1)  /* write protection pin is wired */
-> +#define MSDC_RST_PIN_EN     BIT(2)  /* emmc reset pin is wired       */
-> +#define MSDC_REMOVABLE      BIT(5)  /* removable slot                */
->=20=20
->  #define MSDC_SMPL_RISING    (0)
->  #define MSDC_SMPL_FALLING   (1)
-> --=20
-> 2.17.1
+> v2:
+>  - Lock full critical section of usb_submit_urb()
+> 
+> v3:
+>  - Fix race on submitting uvc_video_decode_data_work() to work queue.
+>  - Rename uvc_decode_op -> uvc_copy_op (Generic to encode/decode)
+>  - Rename decodes -> copy_operations
+>  - Don't queue work if there is no async task
+>  - obtain copy op structure directly in uvc_video_decode_data()
+>  - uvc_video_decode_data_work() -> uvc_video_copy_data_work()
+> 
+> v4:
+>  - Provide for_each_uvc_urb()
+>  - Simplify fix for shutdown race to flush queue before freeing URBs
 
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
+Indeed, v4 looks simpler, I like it.
 
------BEGIN PGP SIGNATURE-----
+>  - Rebase to v4.16-rc4 (linux-media/master) adjusting for metadata
+>    conflicts.
+> 
+>  drivers/media/usb/uvc/uvc_video.c | 107 ++++++++++++++++++++++++-------
+>  drivers/media/usb/uvc/uvcvideo.h  |  28 ++++++++-
+>  2 files changed, 111 insertions(+), 24 deletions(-)
+> 
+> diff --git a/drivers/media/usb/uvc/uvc_video.c
+> b/drivers/media/usb/uvc/uvc_video.c index 7dd0dcb457f3..a62e8caf367c 100644
+> --- a/drivers/media/usb/uvc/uvc_video.c
+> +++ b/drivers/media/usb/uvc/uvc_video.c
+> @@ -1042,21 +1042,54 @@ static int uvc_video_decode_start(struct
+> uvc_streaming *stream, return data[0];
+>  }
+> 
+> -static void uvc_video_decode_data(struct uvc_streaming *stream,
+> +/*
+> + * uvc_video_decode_data_work: Asynchronous memcpy processing
+> + *
+> + * Perform memcpy tasks in process context, with completion handlers
+> + * to return the URB, and buffer handles.
 
-iQIzBAEBCAAdFiEEG8Yp69OQ2HB7X0l6Oeye3VZigbkFAltfjOYACgkQOeye3VZi
-gbkm9A//R2oeRHsq/v8i7dWZZkVkpJ2ghbJ6mpgG5tEj1r+Pyfx19weKLmriqP09
-VR00XPeiM8BXFxWZ0f0BvduyDf7UQqgqIWz2FVV/2l2eLWIfnKgJt8DB8OIqm+oB
-c/SPDAEI5eA9TTQF+U8dl0NPY92SP8WGhjHLK8YQ94BLVXpDEvX6vkB/NYlobJzG
-qSlm2WQ5W4LOGQuLMOErELB1AXGNdHWgxUm2YdiuUjqtuyE2nmUpOUQbLDmOkAEr
-sZy5LPIzh4pzCfNnJxBIFFHtpSOW/cKvxSWzBjqiexjT7Q+4LGjsIZRVfJ47RWwk
-sUlXb/CZKFxlUxAtgCgG4aYi1Jmns+XW+vVCH2P9WXZx55RVO7RJaXUQUzteSoFk
-RzZbULDNxkk8EY8Rt5yCufIaJYu+vOHI/Q3S7CFfUuUqCwcOeT+FGzsNmxWg07LX
-tFwzWI96hdsBGYwyyICVcdeyS18zcE9/hpXEfsVzAmHVETysJGuoC9gqIFOBBQ7a
-cuuCnPb+8+IXKJhgmhSvhuFOyxr2znX4f5rmGo+SMnJ3sBzJlAkxDxWwQiBCGxSD
-e5YkZg1zGnnEJ5wQpquBqjucIwANJHapuGrH2Q8IWPkg0YFgMIisnSEACbpxjXA3
-EA0rgROxlIwpIF7g6Fyx+e6SS0TIRBGWUxUJdZCObTlDdkR4KSo=
-=s3CJ
------END PGP SIGNATURE-----
---=-=-=--
+By "and buffer handles" do you mean you release the buffer reference ? I'd 
+then write this as
+
+"Copy URB data to video buffers in process context, releasing buffer 
+references and requeuing the URB when done."
+
+> + */
+> +static void uvc_video_copy_data_work(struct work_struct *work)
+> +{
+> +	struct uvc_urb *uvc_urb = container_of(work, struct uvc_urb, work);
+> +	unsigned int i;
+> +	int ret;
+> +
+> +	for (i = 0; i < uvc_urb->async_operations; i++) {
+> +		struct uvc_copy_op *op = &uvc_urb->copy_operations[i];
+> +
+> +		memcpy(op->dst, op->src, op->len);
+> +
+> +		/* Release reference taken on this buffer */
+
+Missing period at the end of the sentence, here and in other locations in this 
+patch.
+
+> +		uvc_queue_buffer_release(op->buf);
+> +	}
+> +
+> +	ret = usb_submit_urb(uvc_urb->urb, GFP_ATOMIC);
+> +	if (ret < 0)
+> +		uvc_printk(KERN_ERR, "Failed to resubmit video URB (%d).\n",
+> +			   ret);
+> +}
+> +
+> +static void uvc_video_decode_data(struct uvc_urb *uvc_urb,
+>  		struct uvc_buffer *buf, const u8 *data, int len)
+>  {
+> -	unsigned int maxlen, nbytes;
+> -	void *mem;
+> +	unsigned int active_op = uvc_urb->async_operations;
+> +	struct uvc_copy_op *decode = &uvc_urb->copy_operations[active_op];
+
+How about calling the variable "op" as it's a copy operation ?
+
+> +	unsigned int maxlen;
+> 
+>  	if (len <= 0)
+>  		return;
+> 
+> -	/* Copy the video data to the buffer. */
+>  	maxlen = buf->length - buf->bytesused;
+> -	mem = buf->mem + buf->bytesused;
+> -	nbytes = min((unsigned int)len, maxlen);
+> -	memcpy(mem, data, nbytes);
+> -	buf->bytesused += nbytes;
+> +
+> +	/* Take a buffer reference for async work */
+> +	kref_get(&buf->ref);
+> +
+> +	decode->buf = buf;
+> +	decode->src = data;
+> +	decode->dst = buf->mem + buf->bytesused;
+> +	decode->len = min_t(unsigned int, len, maxlen);
+> +
+> +	buf->bytesused += decode->len;
+> 
+>  	/* Complete the current frame if the buffer size was exceeded. */
+>  	if (len > maxlen) {
+> @@ -1064,6 +1097,8 @@ static void uvc_video_decode_data(struct uvc_streaming
+> *stream, buf->error = 1;
+>  		buf->state = UVC_BUF_STATE_READY;
+>  	}
+> +
+> +	uvc_urb->async_operations++;
+>  }
+> 
+>  static void uvc_video_decode_end(struct uvc_streaming *stream,
+> @@ -1272,7 +1307,7 @@ static void uvc_video_decode_isoc(struct uvc_urb
+> *uvc_urb, uvc_video_decode_meta(stream, meta_buf, mem, ret);
+> 
+>  		/* Decode the payload data. */
+> -		uvc_video_decode_data(stream, buf, mem + ret,
+> +		uvc_video_decode_data(uvc_urb, buf, mem + ret,
+>  			urb->iso_frame_desc[i].actual_length - ret);
+> 
+>  		/* Process the header again. */
+> @@ -1334,9 +1369,9 @@ static void uvc_video_decode_bulk(struct uvc_urb
+> *uvc_urb, * sure buf is never dereferenced if NULL.
+>  	 */
+> 
+> -	/* Process video data. */
+> +	/* Prepare video data for processing. */
+>  	if (!stream->bulk.skip_payload && buf != NULL)
+> -		uvc_video_decode_data(stream, buf, mem, len);
+> +		uvc_video_decode_data(uvc_urb, buf, mem, len);
+> 
+>  	/* Detect the payload end by a URB smaller than the maximum size (or
+>  	 * a payload size equal to the maximum) and process the header again.
+> @@ -1422,7 +1457,7 @@ static void uvc_video_complete(struct urb *urb)
+>  		uvc_printk(KERN_WARNING, "Non-zero status (%d) in video "
+>  			"completion handler.\n", urb->status);
+>  		/* fall through */
+> -	case -ENOENT:		/* usb_kill_urb() called. */
+> +	case -ENOENT:		/* usb_poison_urb() called. */
+>  		if (stream->frozen)
+>  			return;
+>  		/* fall through */
+> @@ -1436,6 +1471,9 @@ static void uvc_video_complete(struct urb *urb)
+> 
+>  	buf = uvc_queue_get_current_buffer(queue);
+> 
+> +	/* Re-initialise the URB async work. */
+> +	uvc_urb->async_operations = 0;
+> +
+
+I'd move this just after the vb2_qmeta block to keep the buf and buf_meta code 
+together.
+
+>  	if (vb2_qmeta) {
+>  		spin_lock_irqsave(&qmeta->irqlock, flags);
+>  		if (!list_empty(&qmeta->irqqueue))
+> @@ -1444,12 +1482,24 @@ static void uvc_video_complete(struct urb *urb)
+>  		spin_unlock_irqrestore(&qmeta->irqlock, flags);
+>  	}
+> 
+> +	/*
+> +	 * Process the URB headers, and optionally queue expensive memcpy tasks
+> +	 * to be deferred to a work queue.
+> +	 */
+>  	stream->decode(uvc_urb, buf, buf_meta);
+> 
+> -	if ((ret = usb_submit_urb(urb, GFP_ATOMIC)) < 0) {
+> -		uvc_printk(KERN_ERR, "Failed to resubmit video URB (%d).\n",
+> -			ret);
+> +	/* If no async work is needed, resubmit the URB immediately. */
+> +	if (!uvc_urb->async_operations) {
+> +		ret = usb_submit_urb(uvc_urb->urb, GFP_ATOMIC);
+> +		if (ret < 0)
+> +			uvc_printk(KERN_ERR,
+> +				   "Failed to resubmit video URB (%d).\n",
+> +				   ret);
+> +		return;
+>  	}
+> +
+> +	INIT_WORK(&uvc_urb->work, uvc_video_copy_data_work);
+
+Do you need to reinit the work every time ? I thought that once after 
+allocating it was enough. I could be wrong though.
+
+> +	queue_work(stream->async_wq, &uvc_urb->work);
+>  }
+> 
+>  /*
+> @@ -1544,25 +1594,29 @@ static int uvc_alloc_urb_buffers(struct
+> uvc_streaming *stream, */
+>  static void uvc_uninit_video(struct uvc_streaming *stream, int
+> free_buffers) {
+> -	struct urb *urb;
+> -	unsigned int i;
+> +	struct uvc_urb *uvc_urb;
+> 
+>  	uvc_video_stats_stop(stream);
+> 
+> -	for (i = 0; i < UVC_URBS; ++i) {
+> -		struct uvc_urb *uvc_urb = &stream->uvc_urb[i];
+> +	/*
+> +	 * We must poison the URBs rather than kill them to ensure that even
+> +	 * after the completion handler returns, any asynchronous workqueues
+> +	 * will be prevented from resubmitting the URBs
+
+Missing period.
+
+> +	 */
+> +	for_each_uvc_urb(uvc_urb, stream)
+> +		usb_poison_urb(uvc_urb->urb);
+> 
+> -		urb = uvc_urb->urb;
+> -		if (urb == NULL)
+> -			continue;
+> +	flush_workqueue(stream->async_wq);
+> 
+> -		usb_kill_urb(urb);
+> -		usb_free_urb(urb);
+> +	for_each_uvc_urb(uvc_urb, stream) {
+> +		usb_free_urb(uvc_urb->urb);
+>  		uvc_urb->urb = NULL;
+>  	}
+> 
+>  	if (free_buffers)
+>  		uvc_free_urb_buffers(stream);
+> +
+> +	destroy_workqueue(stream->async_wq);
+>  }
+> 
+>  /*
+> @@ -1720,6 +1774,11 @@ static int uvc_init_video(struct uvc_streaming
+> *stream, gfp_t gfp_flags)
+> 
+>  	uvc_video_stats_start(stream);
+> 
+> +	stream->async_wq = alloc_workqueue("uvcvideo", WQ_UNBOUND | WQ_HIGHPRI,
+> +			0);
+> +	if (!stream->async_wq)
+> +		return -ENOMEM;
+> +
+
+Is there a reason to allocate the workqueue at stream on time and destroy it 
+at stream off time ? Does it consume resources if we keep it allocated without 
+work queued ?
+
+>  	if (intf->num_altsetting > 1) {
+>  		struct usb_host_endpoint *best_ep = NULL;
+>  		unsigned int best_psize = UINT_MAX;
+> diff --git a/drivers/media/usb/uvc/uvcvideo.h
+> b/drivers/media/usb/uvc/uvcvideo.h index 112eed49bf50..27c230430eda 100644
+> --- a/drivers/media/usb/uvc/uvcvideo.h
+> +++ b/drivers/media/usb/uvc/uvcvideo.h
+> @@ -485,12 +485,30 @@ struct uvc_stats_stream {
+>  #define UVC_METATADA_BUF_SIZE 1024
+> 
+>  /**
+> + * struct uvc_copy_op: Context structure to schedule asynchronous memcpy
+> + *
+> + * @buf: active buf object for this operation
+> + * @dst: copy destination address
+> + * @src: copy source address
+> + * @len: copy length
+> + */
+> +struct uvc_copy_op {
+> +	struct uvc_buffer *buf;
+> +	void *dst;
+> +	const __u8 *src;
+> +	size_t len;
+> +};
+> +
+> +/**
+>   * struct uvc_urb - URB context management structure
+>   *
+>   * @urb: the URB described by this context structure
+>   * @stream: UVC streaming context
+>   * @buffer: memory storage for the URB
+>   * @dma: DMA coherent addressing for the urb_buffer
+> + * @async_operations: counter to indicate the number of copy operations
+> + * @copy_operations: work descriptors for asynchronous copy operations
+> + * @work: work queue entry for asynchronous decode
+>   */
+>  struct uvc_urb {
+>  	struct urb *urb;
+> @@ -498,6 +516,10 @@ struct uvc_urb {
+> 
+>  	char *buffer;
+>  	dma_addr_t dma;
+> +
+> +	unsigned int async_operations;
+> +	struct uvc_copy_op copy_operations[UVC_MAX_PACKETS];
+> +	struct work_struct work;
+>  };
+> 
+>  struct uvc_streaming {
+> @@ -530,6 +552,7 @@ struct uvc_streaming {
+>  	/* Buffers queue. */
+>  	unsigned int frozen : 1;
+>  	struct uvc_video_queue queue;
+> +	struct workqueue_struct *async_wq;
+>  	void (*decode)(struct uvc_urb *uvc_urb, struct uvc_buffer *buf,
+>  		       struct uvc_buffer *meta_buf);
+> 
+> @@ -583,6 +606,11 @@ struct uvc_streaming {
+>  	} clock;
+>  };
+> 
+> +#define for_each_uvc_urb(uvc_urb, uvc_streaming) \
+> +	for (uvc_urb = &uvc_streaming->uvc_urb[0]; \
+> +	     uvc_urb < &uvc_streaming->uvc_urb[UVC_URBS]; \
+> +	     ++uvc_urb)
+> +
+>  struct uvc_device {
+>  	struct usb_device *udev;
+>  	struct usb_interface *intf;
+
+-- 
+Regards,
+
+Laurent Pinchart
+
+
+
