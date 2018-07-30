@@ -2,263 +2,121 @@ Return-Path: <SRS0=qqIy=KO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B49E8FD21E1
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 09:23:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 506A6FD21E1
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 09:24:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 692E820881
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 09:23:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 692E820881
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=codethink.co.uk
+	by mail.kernel.org (Postfix) with ESMTP id EF78120881
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 09:24:11 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TDvD11fA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EF78120881
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727016AbeG3K6A (ORCPT
+        id S1727259AbeG3K6P (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 30 Jul 2018 06:58:00 -0400
-Received: from imap1.codethink.co.uk ([176.9.8.82]:56188 "EHLO
-        imap1.codethink.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726617AbeG3K5t (ORCPT
+        Mon, 30 Jul 2018 06:58:15 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:40742 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726703AbeG3K6P (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Jul 2018 06:57:49 -0400
-Received: from [148.252.241.226] (helo=ct-lt-1121.office.codethink.co.uk)
-        by imap1.codethink.co.uk with esmtpsa (Exim 4.84_2 #1 (Debian))
-        id 1fk4Oy-0004qJ-Ql; Mon, 30 Jul 2018 10:23:40 +0100
-From:   Jorge Sanjuan <jorge.sanjuan@codethink.co.uk>
-To:     tiwai@suse.de
-Cc:     alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 2/4] ALSA: usb-audio: AudioStreaming Power Domain parsing
-Date:   Mon, 30 Jul 2018 10:23:34 +0100
-Message-Id: <20180730092336.18741-3-jorge.sanjuan@codethink.co.uk>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20180730092336.18741-1-jorge.sanjuan@codethink.co.uk>
-References: <20180719112215.4219-1-jorge.sanjuan@codethink.co.uk>
- <20180730092336.18741-1-jorge.sanjuan@codethink.co.uk>
+        Mon, 30 Jul 2018 06:58:15 -0400
+Received: by mail-pf1-f193.google.com with SMTP id e13-v6so4267177pff.7;
+        Mon, 30 Jul 2018 02:24:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=uQ9newEHcGdTfHYxexpgeCSpanVtUOSJPKQQb8/8RxI=;
+        b=TDvD11fAdkYX25xKpHUvSKegyTcjKPLjd9GWx5BxusjEeciaRLkfAOh2xe4QZtfSqC
+         8hmww5CQI8/mZx66bmRNCjpg9MbLbsfNhdQse8q7U8rVsOxL6Hi+FQvhgeYOtY8zMO3o
+         ogk5DYRIvemXccb8+rCqzHXcD4fdNmSYeeO6itysaQQjBcKzlUFnvUPLlHJnVJOXmRJ8
+         /q/cJJIqSs83wQCMYHY/BXc3tftN296YzTdRO/vtQZAQ7vWDy/mNj70ChdWRSe6G9VUJ
+         ioeB6w6X69kfatxVIaxO/+AnpbTHqTIDrI6huThoP4CBEf6fHdra2FukfIwaeLw+0EPP
+         sj1w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=uQ9newEHcGdTfHYxexpgeCSpanVtUOSJPKQQb8/8RxI=;
+        b=CfNJXgC22rPLCnFQ8I17mg7C91lqD2q2JqfyLehqZ0pfoWTQiMzIpM6ddlwMD/9VLe
+         Vs1fM7t6Kt2W6NcrnlvdpEEN55nVA1vhGjyc6fpRnmQ6575pO8yZk5L9SU/4kp5lgzrw
+         XM3YOiFKC0ncPCL5Qm9MsZprqmDlyDEk9vh9ojMJuXXWfnOq8GaCr/5Sbrx7sckYNJhJ
+         GZqz5iiVsQSlrvKvlaGQIzpUoHEIiatInPmdHJWP5pUS10m1yGTb/vfR2WA5raY7ndcc
+         3GPCYCPnlMbrIcWi7ED+t32lvjObMC+MMhNR0Z1EfMz+6NyYSkBal1v/XJf1wECK1Wkg
+         zx+A==
+X-Gm-Message-State: AOUpUlGPwFSt+sXy5T87skcUljtHFejxsZYzF/+FZhFf06OIBWW8ZbL4
+        63DZhj7BftzWxOkOmDpTMDM=
+X-Google-Smtp-Source: AAOMgpdKx195s4Mj9lEHfxMJlwYC4Zt5xKvXTkpfTKHyQIEifLF7hVfEyhS1/uZ6yv1MLj/EPfUwsg==
+X-Received: by 2002:a62:1157:: with SMTP id z84-v6mr17257532pfi.66.1532942649791;
+        Mon, 30 Jul 2018 02:24:09 -0700 (PDT)
+Received: from localhost.localdomain ([2402:f000:1:4414:4550:ab75:cee3:d6c1])
+        by smtp.gmail.com with ESMTPSA id j1-v6sm29092327pfk.125.2018.07.30.02.24.07
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 30 Jul 2018 02:24:09 -0700 (PDT)
+From:   Jia-Ju Bai <baijiaju1990@gmail.com>
+To:     mchehab@kernel.org
+Cc:     linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jia-Ju Bai <baijiaju1990@gmail.com>
+Subject: [PATCH 1/3] media: usb: em28xx: Replace GFP_ATOMIC with GFP_KERNEL in em28xx_audio_urb_init()
+Date:   Mon, 30 Jul 2018 17:23:52 +0800
+Message-Id: <20180730092352.7775-1-baijiaju1990@gmail.com>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Power Domains in the UAC3 spec are mainly intended to be
-associated to an Input or Output Terminal so the host
-changes the power state of the entire capture or playback
-path within the topology.
+em28xx_audio_urb_init() is never called in atomic context.
+It calls kcalloc(), usb_alloc_urb() and usb_alloc_coherent() 
+with GFP_ATOMIC, which is not necessary.
+GFP_ATOMIC can be replaced with GFP_KERNEL.
 
-This patch adds support for finding Power Domains associated
-to an Audio Streaming Interface (bTerminalLink) and adds a
-reference to them in the usb audio substreams (snd_usb_substream).
+This is found by a static analysis tool named DCNS written by myself.
 
-Signed-off-by: Jorge Sanjuan <jorge.sanjuan@codethink.co.uk>
+Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
 ---
- sound/usb/card.h   |  2 ++
- sound/usb/stream.c | 66 +++++++++++++++++++++++++++++++++++++++++++++++-------
- 2 files changed, 60 insertions(+), 8 deletions(-)
+ drivers/media/usb/em28xx/em28xx-audio.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/sound/usb/card.h b/sound/usb/card.h
-index 9b41b7dda84f..ac785d15ced4 100644
---- a/sound/usb/card.h
-+++ b/sound/usb/card.h
-@@ -37,6 +37,7 @@ struct audioformat {
+diff --git a/drivers/media/usb/em28xx/em28xx-audio.c b/drivers/media/usb/em28xx/em28xx-audio.c
+index 8e799ae1df69..bb510cf8fbbb 100644
+--- a/drivers/media/usb/em28xx/em28xx-audio.c
++++ b/drivers/media/usb/em28xx/em28xx-audio.c
+@@ -842,11 +842,11 @@ static int em28xx_audio_urb_init(struct em28xx *dev)
  
- struct snd_usb_substream;
- struct snd_usb_endpoint;
-+struct snd_usb_power_domain;
+ 	dev->adev.transfer_buffer = kcalloc(num_urb,
+ 					    sizeof(*dev->adev.transfer_buffer),
+-					    GFP_ATOMIC);
++					    GFP_KERNEL);
+ 	if (!dev->adev.transfer_buffer)
+ 		return -ENOMEM;
  
- struct snd_urb_ctx {
- 	struct urb *urb;
-@@ -115,6 +116,7 @@ struct snd_usb_substream {
- 	int interface;	/* current interface */
- 	int endpoint;	/* assigned endpoint */
- 	struct audioformat *cur_audiofmt;	/* current audioformat pointer (for hw_params callback) */
-+	struct snd_usb_power_domain *str_pd;	/* UAC3 Power Domain for streaming path */
- 	snd_pcm_format_t pcm_format;	/* current audio format (for hw_params callback) */
- 	unsigned int channels;		/* current number of channels (for hw_params callback) */
- 	unsigned int channels_max;	/* max channels in the all audiofmts */
-diff --git a/sound/usb/stream.c b/sound/usb/stream.c
-index 729afd808cc4..c0567fa1e84b 100644
---- a/sound/usb/stream.c
-+++ b/sound/usb/stream.c
-@@ -37,6 +37,7 @@
- #include "format.h"
- #include "clock.h"
- #include "stream.h"
-+#include "power.h"
+-	dev->adev.urb = kcalloc(num_urb, sizeof(*dev->adev.urb), GFP_ATOMIC);
++	dev->adev.urb = kcalloc(num_urb, sizeof(*dev->adev.urb), GFP_KERNEL);
+ 	if (!dev->adev.urb) {
+ 		kfree(dev->adev.transfer_buffer);
+ 		return -ENOMEM;
+@@ -859,14 +859,14 @@ static int em28xx_audio_urb_init(struct em28xx *dev)
+ 		int j, k;
+ 		void *buf;
  
- /*
-  * free a substream
-@@ -53,6 +54,7 @@ static void free_substream(struct snd_usb_substream *subs)
- 		kfree(fp);
- 	}
- 	kfree(subs->rate_list.list);
-+	kfree(subs->str_pd);
- }
- 
- 
-@@ -82,7 +84,8 @@ static void snd_usb_audio_pcm_free(struct snd_pcm *pcm)
- 
- static void snd_usb_init_substream(struct snd_usb_stream *as,
- 				   int stream,
--				   struct audioformat *fp)
-+				   struct audioformat *fp,
-+				   struct snd_usb_power_domain *pd)
- {
- 	struct snd_usb_substream *subs = &as->substream[stream];
- 
-@@ -107,6 +110,9 @@ static void snd_usb_init_substream(struct snd_usb_stream *as,
- 	if (fp->channels > subs->channels_max)
- 		subs->channels_max = fp->channels;
- 
-+	if (pd)
-+		subs->str_pd = pd;
-+
- 	snd_usb_preallocate_buffer(subs);
- }
- 
-@@ -468,9 +474,11 @@ snd_pcm_chmap_elem *convert_chmap_v3(struct uac3_cluster_header_descriptor
-  * fmt_list and will be freed on the chip instance release. do not free
-  * fp or do remove it from the substream fmt_list to avoid double-free.
-  */
--int snd_usb_add_audio_stream(struct snd_usb_audio *chip,
--			     int stream,
--			     struct audioformat *fp)
-+static int __snd_usb_add_audio_stream(struct snd_usb_audio *chip,
-+				      int stream,
-+				      struct audioformat *fp,
-+				      struct snd_usb_power_domain *pd)
-+
- {
- 	struct snd_usb_stream *as;
- 	struct snd_usb_substream *subs;
-@@ -498,7 +506,7 @@ int snd_usb_add_audio_stream(struct snd_usb_audio *chip,
- 		err = snd_pcm_new_stream(as->pcm, stream, 1);
- 		if (err < 0)
- 			return err;
--		snd_usb_init_substream(as, stream, fp);
-+		snd_usb_init_substream(as, stream, fp, pd);
- 		return add_chmap(as->pcm, stream, subs);
- 	}
- 
-@@ -526,7 +534,7 @@ int snd_usb_add_audio_stream(struct snd_usb_audio *chip,
- 	else
- 		strcpy(pcm->name, "USB Audio");
- 
--	snd_usb_init_substream(as, stream, fp);
-+	snd_usb_init_substream(as, stream, fp, pd);
- 
- 	/*
- 	 * Keep using head insertion for M-Audio Audiophile USB (tm) which has a
-@@ -544,6 +552,21 @@ int snd_usb_add_audio_stream(struct snd_usb_audio *chip,
- 	return add_chmap(pcm, stream, &as->substream[stream]);
- }
- 
-+int snd_usb_add_audio_stream(struct snd_usb_audio *chip,
-+			     int stream,
-+			     struct audioformat *fp)
-+{
-+	return __snd_usb_add_audio_stream(chip, stream, fp, NULL);
-+}
-+
-+static int snd_usb_add_audio_stream_v3(struct snd_usb_audio *chip,
-+				       int stream,
-+				       struct audioformat *fp,
-+				       struct snd_usb_power_domain *pd)
-+{
-+	return __snd_usb_add_audio_stream(chip, stream, fp, pd);
-+}
-+
- static int parse_uac_endpoint_attributes(struct snd_usb_audio *chip,
- 					 struct usb_host_interface *alts,
- 					 int protocol, int iface_no)
-@@ -819,6 +842,7 @@ snd_usb_get_audioformat_uac12(struct snd_usb_audio *chip,
- static struct audioformat *
- snd_usb_get_audioformat_uac3(struct snd_usb_audio *chip,
- 			     struct usb_host_interface *alts,
-+			     struct snd_usb_power_domain **pd_out,
- 			     int iface_no, int altset_idx,
- 			     int altno, int stream)
- {
-@@ -829,6 +853,7 @@ snd_usb_get_audioformat_uac3(struct snd_usb_audio *chip,
- 	struct uac3_as_header_descriptor *as = NULL;
- 	struct uac3_hc_descriptor_header hc_header;
- 	struct snd_pcm_chmap_elem *chmap;
-+	struct snd_usb_power_domain *pd;
- 	unsigned char badd_profile;
- 	u64 badd_formats = 0;
- 	unsigned int num_channels;
-@@ -1008,12 +1033,28 @@ snd_usb_get_audioformat_uac3(struct snd_usb_audio *chip,
- 		fp->rate_max = UAC3_BADD_SAMPLING_RATE;
- 		fp->rates = SNDRV_PCM_RATE_CONTINUOUS;
- 
-+		pd = kzalloc(sizeof(pd), GFP_KERNEL);
-+		if (!pd) {
-+			kfree(fp->rate_table);
-+			kfree(fp);
-+			return NULL;
-+		}
-+		pd->pd_id = (stream == SNDRV_PCM_STREAM_PLAYBACK) ?
-+					UAC3_BADD_PD_ID10 : UAC3_BADD_PD_ID11;
-+		pd->pd_d1d0_rec = UAC3_BADD_PD_RECOVER_D1D0;
-+		pd->pd_d2d0_rec = UAC3_BADD_PD_RECOVER_D2D0;
-+
- 	} else {
- 		fp->attributes = parse_uac_endpoint_attributes(chip, alts,
- 							       UAC_VERSION_3,
- 							       iface_no);
-+
-+		pd = snd_usb_find_power_domain(chip->ctrl_intf,
-+					       as->bTerminalLink);
-+
- 		/* ok, let's parse further... */
- 		if (snd_usb_parse_audio_format_v3(chip, fp, as, stream) < 0) {
-+			kfree(pd);
- 			kfree(fp->chmap);
- 			kfree(fp->rate_table);
- 			kfree(fp);
-@@ -1021,6 +1062,9 @@ snd_usb_get_audioformat_uac3(struct snd_usb_audio *chip,
+-		urb = usb_alloc_urb(npackets, GFP_ATOMIC);
++		urb = usb_alloc_urb(npackets, GFP_KERNEL);
+ 		if (!urb) {
+ 			em28xx_audio_free_urb(dev);
+ 			return -ENOMEM;
  		}
- 	}
+ 		dev->adev.urb[i] = urb;
  
-+	if (pd)
-+		*pd_out = pd;
-+
- 	return fp;
- }
- 
-@@ -1032,6 +1076,7 @@ int snd_usb_parse_audio_interface(struct snd_usb_audio *chip, int iface_no)
- 	struct usb_interface_descriptor *altsd;
- 	int i, altno, err, stream;
- 	struct audioformat *fp = NULL;
-+	struct snd_usb_power_domain *pd = NULL;
- 	int num, protocol;
- 
- 	dev = chip->dev;
-@@ -1114,7 +1159,7 @@ int snd_usb_parse_audio_interface(struct snd_usb_audio *chip, int iface_no)
- 			break;
- 		}
- 		case UAC_VERSION_3:
--			fp = snd_usb_get_audioformat_uac3(chip, alts,
-+			fp = snd_usb_get_audioformat_uac3(chip, alts, &pd,
- 						iface_no, i, altno, stream);
- 			break;
- 		}
-@@ -1125,9 +1170,14 @@ int snd_usb_parse_audio_interface(struct snd_usb_audio *chip, int iface_no)
- 			return PTR_ERR(fp);
- 
- 		dev_dbg(&dev->dev, "%u:%d: add audio endpoint %#x\n", iface_no, altno, fp->endpoint);
--		err = snd_usb_add_audio_stream(chip, stream, fp);
-+		if (protocol == UAC_VERSION_3)
-+			err = snd_usb_add_audio_stream_v3(chip, stream, fp, pd);
-+		else
-+			err = snd_usb_add_audio_stream(chip, stream, fp);
-+
- 		if (err < 0) {
- 			list_del(&fp->list); /* unlink for avoiding double-free */
-+			kfree(pd);
- 			kfree(fp->rate_table);
- 			kfree(fp->chmap);
- 			kfree(fp);
+-		buf = usb_alloc_coherent(udev, npackets * ep_size, GFP_ATOMIC,
++		buf = usb_alloc_coherent(udev, npackets * ep_size, GFP_KERNEL,
+ 					 &urb->transfer_dma);
+ 		if (!buf) {
+ 			dev_err(&dev->intf->dev,
 -- 
-2.11.0
+2.17.0
 
