@@ -6,30 +6,30 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 796C816256E1
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 16:18:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CD9A16256E1
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 16:19:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2D798204EC
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 16:18:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D798204EC
+	by mail.kernel.org (Postfix) with ESMTP id 44670204EC
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 16:19:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 44670204EC
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=deltatee.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731991AbeG3Ryh (ORCPT
+        id S1731962AbeG3Ryh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Mon, 30 Jul 2018 13:54:37 -0400
-Received: from ale.deltatee.com ([207.54.116.67]:54574 "EHLO ale.deltatee.com"
+Received: from ale.deltatee.com ([207.54.116.67]:54550 "EHLO ale.deltatee.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731576AbeG3Ryg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1731535AbeG3Ryg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 30 Jul 2018 13:54:36 -0400
 Received: from cgy1-donard.priv.deltatee.com ([172.16.1.31])
         by ale.deltatee.com with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <gunthorp@deltatee.com>)
-        id 1fkAsk-0005Yy-7y; Mon, 30 Jul 2018 10:18:53 -0600
+        id 1fkAsk-0005Yv-7y; Mon, 30 Jul 2018 10:18:51 -0600
 Received: from gunthorp by cgy1-donard.priv.deltatee.com with local (Exim 4.89)
         (envelope-from <gunthorp@deltatee.com>)
-        id 1fkAsc-0003aO-Aq; Mon, 30 Jul 2018 10:18:42 -0600
+        id 1fkAsc-0003aI-2T; Mon, 30 Jul 2018 10:18:42 -0600
 From:   Logan Gunthorpe <logang@deltatee.com>
 To:     linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
         linux-doc@vger.kernel.org
@@ -50,15 +50,18 @@ Cc:     Stephen Bates <sbates@raithlin.com>,
         =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
         Matthew Wilcox <willy@infradead.org>,
         Logan Gunthorpe <logang@deltatee.com>
-Date:   Mon, 30 Jul 2018 10:18:39 -0600
-Message-Id: <20180730161840.13733-4-logang@deltatee.com>
+Date:   Mon, 30 Jul 2018 10:18:37 -0600
+Message-Id: <20180730161840.13733-2-logang@deltatee.com>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20180730161840.13733-1-logang@deltatee.com>
 References: <20180730161840.13733-1-logang@deltatee.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 X-SA-Exim-Connect-IP: 172.16.1.31
 X-SA-Exim-Rcpt-To: linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, linux-doc@vger.kernel.org, sbates@raithlin.com, hch@lst.de, bhelgaas@google.com, corbet@lwn.net, tglx@linutronix.de, paulmck@linux.vnet.ibm.com, marc.zyngier@arm.com, kai.heng.feng@canonical.com, mingo@kernel.org, frederic@kernel.org, dan.j.williams@intel.com, benh@kernel.crashing.org, jglisse@redhat.com, alex.williamson@redhat.com, christian.koenig@amd.com, willy@infradead.org, logang@deltatee.com
 X-SA-Exim-Mail-From: gunthorp@deltatee.com
-Subject: [PATCH v8 3/4] PCI: Introduce disable_acs_redir quirk
+Subject: [PATCH v8 1/4] PCI: Make specifying PCI devices in kernel parameters reusable
 X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
 X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-kernel-owner@vger.kernel.org
@@ -66,145 +69,260 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Intel SPT PCH hardware has an implementation of the ACS bits that
-does not comply with the PCI express standard. To deal with this
-the existing code has an enable_acs() quirk for the hardware.
+Separate out the code to match a PCI device with a string (typically
+originating from a kernel parameter) from the
+pci_specified_resource_alignment() function into its own helper
+function.
 
-In order to be able to correctly disable the ACS redirect bits for
-all hardware we need an analagous quirk to disable those bits.
+While we are at it, this change fixes the kernel style of the function
+(fixing a number of long lines and extra parentheses).
 
-This adds the function pci_dev_specific_disable_acs_redir() which
-behaves similarly to pci_dev_specific_enable_acs() but uses a new
-function pointer for quirks which disables the ACS redirect bits.
+Additionally, make the analogous change to the kernel parameter
+documentation: Separating the description of how to specify a PCI device
+into it's own section at the head of the pci= parameter.
+
+This patch should have no functional alterations.
 
 Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
+Reviewed-by: Stephen Bates <sbates@raithlin.com>
+Acked-by: Christian König <christian.koenig@amd.com>
 Reviewed-by: Alex Williamson <alex.williamson@redhat.com>
 ---
- drivers/pci/quirks.c | 78 ++++++++++++++++++++++++++++++++++++++++++++--------
- include/linux/pci.h  |  5 ++++
- 2 files changed, 71 insertions(+), 12 deletions(-)
+ Documentation/admin-guide/kernel-parameters.txt |  28 ++++-
+ drivers/pci/pci.c                               | 157 ++++++++++++++++--------
+ 2 files changed, 126 insertions(+), 59 deletions(-)
 
-diff --git a/drivers/pci/quirks.c b/drivers/pci/quirks.c
-index f439de848658..414b22dc06b8 100644
---- a/drivers/pci/quirks.c
-+++ b/drivers/pci/quirks.c
-@@ -4553,27 +4553,81 @@ static int pci_quirk_enable_intel_spt_pch_acs(struct pci_dev *dev)
- 	return 0;
- }
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index 533ff5c68970..5cc215870ee1 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -2994,7 +2994,26 @@
+ 			See header of drivers/block/paride/pcd.c.
+ 			See also Documentation/blockdev/paride.txt.
  
--static const struct pci_dev_enable_acs {
-+static int pci_quirk_disable_intel_spt_pch_acs_redir(struct pci_dev *dev)
-+{
-+	int pos;
-+	u32 cap, ctrl;
+-	pci=option[,option...]	[PCI] various PCI subsystem options:
++	pci=option[,option...]	[PCI] various PCI subsystem options.
 +
-+	if (!pci_quirk_intel_spt_pch_acs_match(dev))
-+		return -ENOTTY;
++				Some options herein operate on a specific device
++				or a set of devices (<pci_dev>). These are
++				specified in one of the following formats:
 +
-+	pos = pci_find_ext_capability(dev, PCI_EXT_CAP_ID_ACS);
-+	if (!pos)
-+		return -ENOTTY;
++				[<domain>:]<bus>:<slot>.<func>
++				pci:<vendor>:<device>[:<subvendor>:<subdevice>]
 +
-+	pci_read_config_dword(dev, pos + PCI_ACS_CAP, &cap);
-+	pci_read_config_dword(dev, pos + INTEL_SPT_ACS_CTRL, &ctrl);
++				Note: the first format specifies a PCI
++				bus/slot/function address which may change
++				if new hardware is inserted, if motherboard
++				firmware changes, or due to changes caused
++				by other kernel parameters. If the
++				domain is left unspecified, it is
++				taken to be zero. The second format
++				selects devices using IDs from the
++				configuration space which may match multiple
++				devices in the system.
 +
-+	ctrl &= ~(PCI_ACS_RR | PCI_ACS_CR | PCI_ACS_EC);
-+
-+	pci_write_config_dword(dev, pos + INTEL_SPT_ACS_CTRL, ctrl);
-+
-+	pci_info(dev, "Intel SPT PCH root port workaround: disabled ACS redirect\n");
-+
-+	return 0;
-+}
-+
-+static const struct pci_dev_acs_ops {
- 	u16 vendor;
- 	u16 device;
- 	int (*enable_acs)(struct pci_dev *dev);
--} pci_dev_enable_acs[] = {
--	{ PCI_VENDOR_ID_INTEL, PCI_ANY_ID, pci_quirk_enable_intel_pch_acs },
--	{ PCI_VENDOR_ID_INTEL, PCI_ANY_ID, pci_quirk_enable_intel_spt_pch_acs },
--	{ 0 }
-+	int (*disable_acs_redir)(struct pci_dev *dev);
-+} pci_dev_acs_ops[] = {
-+	{ PCI_VENDOR_ID_INTEL, PCI_ANY_ID,
-+	  .enable_acs = pci_quirk_enable_intel_pch_acs,
-+	},
-+	{ PCI_VENDOR_ID_INTEL, PCI_ANY_ID,
-+	  .enable_acs = pci_quirk_enable_intel_spt_pch_acs,
-+	  .disable_acs_redir = pci_quirk_disable_intel_spt_pch_acs_redir
-+	},
- };
- 
- int pci_dev_specific_enable_acs(struct pci_dev *dev)
- {
--	const struct pci_dev_enable_acs *i;
-+	const struct pci_dev_acs_ops *p;
-+	int i;
- 	int ret;
- 
--	for (i = pci_dev_enable_acs; i->enable_acs; i++) {
--		if ((i->vendor == dev->vendor ||
--		     i->vendor == (u16)PCI_ANY_ID) &&
--		    (i->device == dev->device ||
--		     i->device == (u16)PCI_ANY_ID)) {
--			ret = i->enable_acs(dev);
-+	for (i = 0; i < ARRAY_SIZE(pci_dev_acs_ops); i++) {
-+		p = &pci_dev_acs_ops[i];
-+		if ((p->vendor == dev->vendor ||
-+		     p->vendor == (u16)PCI_ANY_ID) &&
-+		    (p->device == dev->device ||
-+		     p->device == (u16)PCI_ANY_ID) &&
-+		    p->enable_acs) {
-+			ret = p->enable_acs(dev);
-+			if (ret >= 0)
-+				return ret;
-+		}
-+	}
-+
-+	return -ENOTTY;
-+}
-+
-+int pci_dev_specific_disable_acs_redir(struct pci_dev *dev)
-+{
-+	const struct pci_dev_acs_ops *p;
-+	int i;
-+	int ret;
-+
-+	for (i = 0; i < ARRAY_SIZE(pci_dev_acs_ops); i++) {
-+		p = &pci_dev_acs_ops[i];
-+		if ((p->vendor == dev->vendor ||
-+		     p->vendor == (u16)PCI_ANY_ID) &&
-+		    (p->device == dev->device ||
-+		     p->device == (u16)PCI_ANY_ID) &&
-+		    p->disable_acs_redir) {
-+			ret = p->disable_acs_redir(dev);
- 			if (ret >= 0)
- 				return ret;
- 		}
-diff --git a/include/linux/pci.h b/include/linux/pci.h
-index abd5d5e17aee..0a436ec4fef5 100644
---- a/include/linux/pci.h
-+++ b/include/linux/pci.h
-@@ -1880,6 +1880,7 @@ enum pci_fixup_pass {
- void pci_fixup_device(enum pci_fixup_pass pass, struct pci_dev *dev);
- int pci_dev_specific_acs_enabled(struct pci_dev *dev, u16 acs_flags);
- int pci_dev_specific_enable_acs(struct pci_dev *dev);
-+int pci_dev_specific_disable_acs_redir(struct pci_dev *dev);
- #else
- static inline void pci_fixup_device(enum pci_fixup_pass pass,
- 				    struct pci_dev *dev) { }
-@@ -1892,6 +1893,10 @@ static inline int pci_dev_specific_enable_acs(struct pci_dev *dev)
- {
- 	return -ENOTTY;
- }
-+static inline int pci_dev_specific_disable_acs_redir(struct pci_dev *dev)
-+{
-+	return -ENOTTY;
-+}
+ 		earlydump	[X86] dump PCI config space before the kernel
+ 				changes anything
+ 		off		[X86] don't probe for the PCI bus
+@@ -3123,11 +3142,10 @@
+ 				window. The default value is 64 megabytes.
+ 		resource_alignment=
+ 				Format:
+-				[<order of align>@][<domain>:]<bus>:<slot>.<func>[; ...]
+-				[<order of align>@]pci:<vendor>:<device>\
+-						[:<subvendor>:<subdevice>][; ...]
++				[<order of align>@]<pci_dev>[; ...]
+ 				Specifies alignment and device to reassign
+-				aligned memory resources.
++				aligned memory resources. How to
++				specify the device is described above.
+ 				If <order of align> is not specified,
+ 				PAGE_SIZE is used as alignment.
+ 				PCI-PCI bridge can be specified, if resource
+diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+index 316496e99da9..a6e5d195cbac 100644
+--- a/drivers/pci/pci.c
++++ b/drivers/pci/pci.c
+@@ -191,6 +191,92 @@ void __iomem *pci_ioremap_wc_bar(struct pci_dev *pdev, int bar)
+ EXPORT_SYMBOL_GPL(pci_ioremap_wc_bar);
  #endif
  
- void __iomem *pcim_iomap(struct pci_dev *pdev, int bar, unsigned long maxlen);
++/**
++ * pci_dev_str_match - test if a string matches a device
++ * @dev:    the PCI device to test
++ * @p:      string to match the device against
++ * @endptr: pointer to the string after the match
++ *
++ * Test if a string (typically from a kernel parameter) matches a specified
++ * PCI device. The string may be of one of the following formats:
++ *
++ *   [<domain>:]<bus>:<slot>.<func>
++ *   pci:<vendor>:<device>[:<subvendor>:<subdevice>]
++ *
++ * The first format specifies a PCI bus/slot/function address which
++ * may change if new hardware is inserted, if motherboard firmware changes,
++ * or due to changes caused in kernel parameters. If the domain is
++ * left unspecified, it is taken to be 0.
++ *
++ * The second format matches devices using IDs in the configuration
++ * space which may match multiple devices in the system. A value of 0
++ * for any field will match all devices. (Note: this differs from
++ * in-kernel code that uses PCI_ANY_ID which is ~0; this is for
++ * legacy reasons and convenience so users don't have to specify
++ * FFFFFFFFs on the command line.)
++ *
++ * Returns 1 if the string matches the device, 0 if it does not and
++ * a negative error code if the string cannot be parsed.
++ */
++static int pci_dev_str_match(struct pci_dev *dev, const char *p,
++			     const char **endptr)
++{
++	int ret;
++	int seg, bus, slot, func, count;
++	unsigned short vendor, device, subsystem_vendor, subsystem_device;
++
++	if (strncmp(p, "pci:", 4) == 0) {
++		/* PCI vendor/device (subvendor/subdevice) ids are specified */
++		p += 4;
++		ret = sscanf(p, "%hx:%hx:%hx:%hx%n", &vendor, &device,
++			     &subsystem_vendor, &subsystem_device, &count);
++		if (ret != 4) {
++			ret = sscanf(p, "%hx:%hx%n", &vendor, &device, &count);
++			if (ret != 2)
++				return -EINVAL;
++
++			subsystem_vendor = 0;
++			subsystem_device = 0;
++		}
++
++		p += count;
++
++		if ((!vendor || vendor == dev->vendor) &&
++		    (!device || device == dev->device) &&
++		    (!subsystem_vendor ||
++			    subsystem_vendor == dev->subsystem_vendor) &&
++		    (!subsystem_device ||
++			    subsystem_device == dev->subsystem_device))
++			goto found;
++
++	} else {
++		/* PCI Bus,Slot,Function ids are specified */
++		ret = sscanf(p, "%x:%x:%x.%x%n", &seg, &bus, &slot,
++			     &func, &count);
++		if (ret != 4) {
++			seg = 0;
++			ret = sscanf(p, "%x:%x.%x%n", &bus, &slot,
++				     &func, &count);
++			if (ret != 3)
++				return -EINVAL;
++		}
++
++		p += count;
++
++		if (seg == pci_domain_nr(dev->bus) &&
++		    bus == dev->bus->number &&
++		    slot == PCI_SLOT(dev->devfn) &&
++		    func == PCI_FUNC(dev->devfn))
++			goto found;
++	}
++
++	*endptr = p;
++	return 0;
++
++found:
++	*endptr = p;
++	return 1;
++}
+ 
+ static int __pci_find_next_cap_ttl(struct pci_bus *bus, unsigned int devfn,
+ 				   u8 pos, int cap, int *ttl)
+@@ -5492,10 +5578,10 @@ static DEFINE_SPINLOCK(resource_alignment_lock);
+ static resource_size_t pci_specified_resource_alignment(struct pci_dev *dev,
+ 							bool *resize)
+ {
+-	int seg, bus, slot, func, align_order, count;
+-	unsigned short vendor, device, subsystem_vendor, subsystem_device;
++	int align_order, count;
+ 	resource_size_t align = pcibios_default_alignment();
+-	char *p;
++	const char *p;
++	int ret;
+ 
+ 	spin_lock(&resource_alignment_lock);
+ 	p = resource_alignment_param;
+@@ -5515,58 +5601,21 @@ static resource_size_t pci_specified_resource_alignment(struct pci_dev *dev,
+ 		} else {
+ 			align_order = -1;
+ 		}
+-		if (strncmp(p, "pci:", 4) == 0) {
+-			/* PCI vendor/device (subvendor/subdevice) ids are specified */
+-			p += 4;
+-			if (sscanf(p, "%hx:%hx:%hx:%hx%n",
+-				&vendor, &device, &subsystem_vendor, &subsystem_device, &count) != 4) {
+-				if (sscanf(p, "%hx:%hx%n", &vendor, &device, &count) != 2) {
+-					printk(KERN_ERR "PCI: Can't parse resource_alignment parameter: pci:%s\n",
+-						p);
+-					break;
+-				}
+-				subsystem_vendor = subsystem_device = 0;
+-			}
+-			p += count;
+-			if ((!vendor || (vendor == dev->vendor)) &&
+-				(!device || (device == dev->device)) &&
+-				(!subsystem_vendor || (subsystem_vendor == dev->subsystem_vendor)) &&
+-				(!subsystem_device || (subsystem_device == dev->subsystem_device))) {
+-				*resize = true;
+-				if (align_order == -1)
+-					align = PAGE_SIZE;
+-				else
+-					align = 1 << align_order;
+-				/* Found */
+-				break;
+-			}
+-		}
+-		else {
+-			if (sscanf(p, "%x:%x:%x.%x%n",
+-				&seg, &bus, &slot, &func, &count) != 4) {
+-				seg = 0;
+-				if (sscanf(p, "%x:%x.%x%n",
+-						&bus, &slot, &func, &count) != 3) {
+-					/* Invalid format */
+-					printk(KERN_ERR "PCI: Can't parse resource_alignment parameter: %s\n",
+-						p);
+-					break;
+-				}
+-			}
+-			p += count;
+-			if (seg == pci_domain_nr(dev->bus) &&
+-				bus == dev->bus->number &&
+-				slot == PCI_SLOT(dev->devfn) &&
+-				func == PCI_FUNC(dev->devfn)) {
+-				*resize = true;
+-				if (align_order == -1)
+-					align = PAGE_SIZE;
+-				else
+-					align = 1 << align_order;
+-				/* Found */
+-				break;
+-			}
++
++		ret = pci_dev_str_match(dev, p, &p);
++		if (ret == 1) {
++			*resize = true;
++			if (align_order == -1)
++				align = PAGE_SIZE;
++			else
++				align = 1 << align_order;
++			break;
++		} else if (ret < 0) {
++			pr_err("PCI: Can't parse resource_alignment parameter: %s\n",
++			       p);
++			break;
+ 		}
++
+ 		if (*p != ';' && *p != ',') {
+ 			/* End of param or invalid format */
+ 			break;
 -- 
 2.11.0
 
