@@ -2,97 +2,98 @@ Return-Path: <SRS0=qqIy=KO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BB3CFD21E1
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 13:58:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F05313F6DFF
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 13:59:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5702B20881
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 13:58:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2D3EE20881
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 13:59:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="ghgo7/Ph"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5702B20881
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lunn.ch
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YHcDPxi7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D3EE20881
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729138AbeG3Pd0 (ORCPT
+        id S1726854AbeG3Pe6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 30 Jul 2018 11:33:26 -0400
-Received: from vps0.lunn.ch ([185.16.172.187]:50449 "EHLO vps0.lunn.ch"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726530AbeG3Pd0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Jul 2018 11:33:26 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch; s=20171124;
-        h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date; bh=WO66kSbvOcn3PBk1aFheaTemX3FRoYo8IRJdfsuZV3o=;
-        b=ghgo7/PhrNxUoVWLJahGUI+PKhamU7k5nS1YV23apmEjnmTsq6G5meQD9ftgYrTq3vH+N3DDggMTjFynk8WT1i9mtvmBGXoRn4IvEhbnZFRLvfaHCRA/I8SSXTrIpiEc24qntKhvCLfhMmNy29Ew2Llt8qV4pkd5Ya1vUvSf22g=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.84_2)
-        (envelope-from <andrew@lunn.ch>)
-        id 1fk8gf-0008Ip-LZ; Mon, 30 Jul 2018 15:58:13 +0200
-Date:   Mon, 30 Jul 2018 15:58:13 +0200
-From:   Andrew Lunn <andrew@lunn.ch>
-To:     Quentin Schulz <quentin.schulz@bootlin.com>
-Cc:     f.fainelli@gmail.com, davem@davemloft.net, robh+dt@kernel.org,
-        mark.rutland@arm.com, devicetree@vger.kernel.org,
-        netdev@vger.kernel.org, alexandre.belloni@bootlin.com,
-        linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com
-Subject: Re: [PATCH 3/4] dt-bindings: net: phy: mscc: vsc8531: fix missing
- "/bits/ 8" in example
-Message-ID: <20180730135813.GH13198@lunn.ch>
-References: <20180730130236.3837-1-quentin.schulz@bootlin.com>
- <20180730130236.3837-3-quentin.schulz@bootlin.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180730130236.3837-3-quentin.schulz@bootlin.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+        Mon, 30 Jul 2018 11:34:58 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:46574 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726723AbeG3Pe6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Jul 2018 11:34:58 -0400
+Received: by mail-pg1-f193.google.com with SMTP id p23-v6so7303668pgv.13;
+        Mon, 30 Jul 2018 06:59:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=dBiCWXblctIr3vvyM+Skj+Lv6yBR00qTBG4Bud6S7Bk=;
+        b=YHcDPxi7ZzvCeoYbhbi0xhpKITv3aQhStS2eDLRRm8HWaAFjZxSO6seqXgOxf7K+dS
+         Mh2T2J0Qwo2RL6XON5uQccpV1eUb7vXGMOMp+ttBCPQ+k2poPEItaJ2U7doDRYGtw7te
+         1CRIoQnE61G0hIDb40jvMoVw/5jpxpeAG4lnyzu3pbzGoswM3rlrJOFCyRkwHjnY+PTx
+         0WbHpxcj4gt/rA0CHDmXn07/rijL3aWLs67Mr8xyo//6FcUDk2Qb4XGJauzMACCxF2tb
+         k5P6GP70dkNiJ3durrP65YnWgcCEeIdkU+i4EqQ9uW9HSUs5MyMn5j7UqdaujREZ/xcK
+         Ew5Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=dBiCWXblctIr3vvyM+Skj+Lv6yBR00qTBG4Bud6S7Bk=;
+        b=depOdyvk+plEgB3Bq4oobWNzj71LRyN9Q74XqfXHQNvcB/xVH3xUeyNDvUGkOCm+Wv
+         fatNMESvOGMQx7aGcnXlcj2mdieDhKvvsCFaJMH4SmZAFH3eam7tsCB05+z2KN5qw9uv
+         YeO70OgbSxAy3+CSVC9qH2vuswVBf8fypWHRTkwejXLhadL9mEEfkyq2pGm5y5vfICdI
+         lPFh31ELdikOL/zz6Wiw5/Yh9wirQtRM8GKweMVQiL+azXM9YztdXdA5SzLdRyyv2mCP
+         RXW1ctAfvuRmbGjNIVxPGSzEsZO3voSl9QVgGVOX1sFGHgFpcMuf2bW5GUt5xTfNmfCM
+         Fogw==
+X-Gm-Message-State: AOUpUlE5pW3Um4SlUrLDQMrRatUkcICX7/3c+Fh2BPBhB2L7D4YtffXe
+        +IcglNqDmfK4B7kkbw9FBO8=
+X-Google-Smtp-Source: AAOMgpfjUlP3m9XJeip14eRnK6TLPn1JsDiYPpLpTfUhx/CGe0MK5fwyJiXpX4orN/9aFebLhUSSzw==
+X-Received: by 2002:a65:58c8:: with SMTP id e8-v6mr16280702pgu.96.1532959190454;
+        Mon, 30 Jul 2018 06:59:50 -0700 (PDT)
+Received: from localhost.localdomain ([2402:f000:1:4414:4550:ab75:cee3:d6c1])
+        by smtp.gmail.com with ESMTPSA id n12-v6sm32934094pfh.146.2018.07.30.06.59.48
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 30 Jul 2018 06:59:49 -0700 (PDT)
+From:   Jia-Ju Bai <baijiaju1990@gmail.com>
+To:     a.zummo@towertech.it, alexandre.belloni@bootlin.com
+Cc:     linux-rtc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jia-Ju Bai <baijiaju1990@gmail.com>
+Subject: [PATCH] rtc: rtc-mrst: Replace mdelay() with msleep() in mrst_read_time()
+Date:   Mon, 30 Jul 2018 21:59:03 +0800
+Message-Id: <20180730135903.9442-1-baijiaju1990@gmail.com>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 30, 2018 at 03:02:35PM +0200, Quentin Schulz wrote:
-> The "vsc8531,led-N-mode" property is read as a u8 in the driver and
-> there aren't a lot of modes anyway.
-> 
-> Without the "/bits/ 8" in front of the value of the property, the
-> value is stored as an u32 resulting in of_read_property_u8 to always
-> return 0.
+mrst_read_time() is never called in atomic context.
+It calls mdelay() to busily wait, which is not necessary.
+mdelay() can be replaced with msleep().
 
-Hi Quentin
+This is found by a static analysis tool named DCNS written by myself.
 
-on big endian systems. I'm expect this worked on little endian ARM. I
-think the development work was done on a hacked RPi, if i remember
-correctly.
+Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+---
+ drivers/rtc/rtc-mrst.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> 
-> Fix the example so that people using the property can actually use it.
-> 
-> Signed-off-by: Quentin Schulz <quentin.schulz@bootlin.com>
-> ---
->  Documentation/devicetree/bindings/net/mscc-phy-vsc8531.txt | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/net/mscc-phy-vsc8531.txt b/Documentation/devicetree/bindings/net/mscc-phy-vsc8531.txt
-> index 664d9d0543fc..4c7d1d384df0 100644
-> --- a/Documentation/devicetree/bindings/net/mscc-phy-vsc8531.txt
-> +++ b/Documentation/devicetree/bindings/net/mscc-phy-vsc8531.txt
-> @@ -63,6 +63,6 @@ Example:
->                  compatible = "ethernet-phy-id0007.0570";
->                  vsc8531,vddmac		= <3300>;
->                  vsc8531,edge-slowdown	= <7>;
-> -                vsc8531,led-0-mode	= <LINK_1000_ACTIVITY>;
-> -                vsc8531,led-1-mode	= <LINK_100_ACTIVITY>;
-> +                vsc8531,led-0-mode	= /bits/ 8 <LINK_1000_ACTIVITY>;
-> +                vsc8531,led-1-mode	= /bits/ 8 <LINK_100_ACTIVITY>;
+diff --git a/drivers/rtc/rtc-mrst.c b/drivers/rtc/rtc-mrst.c
+index fcb9de5218b2..e4015f70f9fe 100644
+--- a/drivers/rtc/rtc-mrst.c
++++ b/drivers/rtc/rtc-mrst.c
+@@ -91,7 +91,7 @@ static int mrst_read_time(struct device *dev, struct rtc_time *time)
+ 	unsigned long flags;
+ 
+ 	if (vrtc_is_updating())
+-		mdelay(20);
++		msleep(20);
+ 
+ 	spin_lock_irqsave(&rtc_lock, flags);
+ 	time->tm_sec = vrtc_cmos_read(RTC_SECONDS);
+-- 
+2.17.0
 
-I don't know the device tree language well enough...
-
-Would this work?
-
-vsc8531,led-1-mode	= < /bits/ 8  LINK_100_ACTIVITY>;
-
-If so, you can make it part of the #define.
-
-   Andrew
