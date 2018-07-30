@@ -2,158 +2,173 @@ Return-Path: <SRS0=qqIy=KO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E848C43142
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 20:55:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CCCF0C43142
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 20:55:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1289720892
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 20:55:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7FA2820892
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 20:55:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WMjywlV8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1289720892
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="G9aTh4b4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7FA2820892
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731905AbeG3Wbq (ORCPT
+        id S1732000AbeG3Wbw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 30 Jul 2018 18:31:46 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:44571 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726378AbeG3Wbq (ORCPT
+        Mon, 30 Jul 2018 18:31:52 -0400
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:41873 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729331AbeG3Wbu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Jul 2018 18:31:46 -0400
-Received: by mail-pg1-f193.google.com with SMTP id r1-v6so7878103pgp.11
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Jul 2018 13:54:59 -0700 (PDT)
+        Mon, 30 Jul 2018 18:31:50 -0400
+Received: by mail-pl0-f65.google.com with SMTP id w8-v6so6085690ply.8
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Jul 2018 13:55:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:reply-to;
-        bh=cy/3pXjkep3M/L/Tj0ud/Zs1kpYrhFra5uDqMg77AVM=;
-        b=WMjywlV8I3n1mSRzGrNt5TdoIMSP3T3GboGAnn6MmWkjbL13Ekq0ZWrToy3WxEX02s
-         KBIM/D3efpbFFnljRYlVAxlEwqGvY10GB9PvYUPuF2HBUqFoz9IveNBjP+uC8pk8y5BA
-         Xj46z7+HCB4aqaemMpavJkXVFUAjic4VHAPlbAIh/BoBIEL3mWWjLcm2agrtkonA30X/
-         I9mDKdvrVMzfUll2jAT1j1Oseq3Yun0ZePSPY67ShVAnmwSdkZcYebm14+59rKiwc3Ca
-         UH7avdzqJuUP/v9NuZ6eZAJvTTCa1IHkAZxIKQjVEjj4Dn0OYMjDq+v3EyYbLCQIET/I
-         +Oxg==
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=M+s3s7vmClttRoqUAxQqrCOU+mU4w3UtWb/jgeBziMU=;
+        b=G9aTh4b4NVeEVa1rB+1rLfn8UzJzRvPIx6HZAGsAYPTTzKtegyOZqbEfFlN1FbQ8xH
+         9sVfP2ZgPCy2dbV5M5jQxeNX5kDyhzStg2xyCQZoaz0+DGFLbTkHrC4E2dUv+7FbdEoO
+         KjzvwjN124UjxkQY501BJGg4YMUBdsfX/lp7I=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=cy/3pXjkep3M/L/Tj0ud/Zs1kpYrhFra5uDqMg77AVM=;
-        b=l+ps3ezRD11wG/izh1z7dt94zBe25WbkG/vaxfKgWIwwtpvPLs4V55XqU3KQxWcPnm
-         rFxM9YI9jQypwruRpif/INIFjJcBSwGlEqT5zJKQY9MHdBq67tWFC1xw+ndJbNm3z2Jt
-         49jiN9ScigqLa+dlu0CswyH/FTNHXhKu3/PgM9PZBkrImvhkZqX4U+kWpf+s9VhTC6LO
-         G0rq9t+h2jEuDnpc8x2jeEkRF3e8ui/gZD2d26rgMu+kfnDyq0QOby029VJmoNIXqwi5
-         60IKNRMPN8QdlJQIwgvlpsoBm4PnMfVSbvdO8ngoWLkPB/uPmRBNh1lvY3lLsFalwpEz
-         60zA==
-X-Gm-Message-State: AOUpUlE9T3847fVZe0CYAnXAI1r7iZzcqN1V51ReC9NcC1LXzJu9rtT6
-        1KAP9BHde3GyL2OdQfKE+x0=
-X-Google-Smtp-Source: AAOMgpf1SxTNvn7kluIMWVzs53D/8afat/NiI4QJZIQrf4RzggqldUsVZ8Vgv2qAeNCwY5qV3ffnsQ==
-X-Received: by 2002:a63:35c3:: with SMTP id c186-v6mr17706161pga.217.1532984099213;
-        Mon, 30 Jul 2018 13:54:59 -0700 (PDT)
-Received: from mhkkerneltest.corp.microsoft.com ([131.107.160.207])
-        by smtp.gmail.com with ESMTPSA id y33-v6sm15347430pga.41.2018.07.30.13.54.58
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 30 Jul 2018 13:54:58 -0700 (PDT)
-From:   mhkelley58@gmail.com
-X-Google-Original-From: mikelley@microsoft.com
-To:     gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
-        devel@linuxdriverproject.org, olaf@aepfle.de, apw@canonical.com,
-        vkuznets@redhat.com, jasowang@redhat.com,
-        marcelo.cerri@canonical.com, sthemmin@microsoft.com,
-        kys@microsoft.com
-Cc:     mikelley@microsoft.com
-Subject: [PATCH char-misc 1/1] Drivers: hv: vmbus: Remove use of slow_virt_to_phys()
-Date:   Mon, 30 Jul 2018 13:17:11 -0700
-Message-Id: <1532981831-28816-1-git-send-email-mikelley@microsoft.com>
-X-Mailer: git-send-email 1.8.3.1
-Reply-To: mikelley@microsoft.com
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=M+s3s7vmClttRoqUAxQqrCOU+mU4w3UtWb/jgeBziMU=;
+        b=NGbT9VWR8iy9Zlq6Itc0/xXH0phLoe/K3/5TdaQKT7A6e0hzkAszYzzaR8CUsnISCX
+         FB8i569yrWR5ahfnoUFg2gBvWxLr2FDqv4jyYBeXd7UZA85GhTU8qb8RVW35HBVNXRk2
+         qzIyY1F72AtnuCA+npat7tkD8knY03GmiRyW5gdO7VmO9YpY3TBEbThZnNV/upVMFmNf
+         h8z0SQMooP/QNLIPiW1mNhWj23a91NOXJWJBkr+Iqdscakxuk4aIiOXAfy/NhpEs5h2d
+         upxy20E560WgIWbRL6Dgn3UuISXJ5fgo6RZ2ekm6cNYYDnBiT50XjsCuVsQmqZlUy0Uo
+         zf5g==
+X-Gm-Message-State: AOUpUlF6zPDs0P2ZjB14BrMm/x1FPIZy+Xa19dZDsuiP11+21JFY55Qv
+        o114E4Bp1qprRm7ujP6V8gQyyw==
+X-Google-Smtp-Source: AAOMgpfpTrVCG5duzshd43r8aDgGFIkbrT4qnlGMBkT+SB/CNqTqwakeL+12CbmefaUKZmqCeFh9jg==
+X-Received: by 2002:a17:902:7009:: with SMTP id y9-v6mr18181101plk.249.1532984103769;
+        Mon, 30 Jul 2018 13:55:03 -0700 (PDT)
+Received: from localhost ([2620:15c:202:1:b6af:f85:ed6c:ac6a])
+        by smtp.gmail.com with ESMTPSA id u42-v6sm21916018pgn.1.2018.07.30.13.55.02
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 30 Jul 2018 13:55:02 -0700 (PDT)
+Date:   Mon, 30 Jul 2018 13:55:02 -0700
+From:   Matthias Kaehlcke <mka@chromium.org>
+To:     Balakrishna Godavarthi <bgodavar@bgodavar-linux.qualcomm.com>
+Cc:     marcel@holtmann.org, johan.hedberg@gmail.com,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-bluetooth@vger.kernel.org, thierry.escande@linaro.org,
+        rtatiya@codeaurora.org, hemantg@codeaurora.org,
+        linux-arm-msm@vger.kernel.org,
+        Balakrishna Godavarthi <bgodavar@codeaurora.org>
+Subject: Re: [PATCH v11 7/7] Bluetooth: hci_qca: Add support for Qualcomm
+ Bluetooth chip wcn3990
+Message-ID: <20180730205502.GC68975@google.com>
+References: <20180727141320.25218-1-bgodavar@bgodavar-linux.qualcomm.com>
+ <20180727141320.25218-8-bgodavar@bgodavar-linux.qualcomm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20180727141320.25218-8-bgodavar@bgodavar-linux.qualcomm.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Michael Kelley <mikelley@microsoft.com>
+On Fri, Jul 27, 2018 at 07:43:20PM +0530, Balakrishna Godavarthi wrote:
+> From: Balakrishna Godavarthi <bgodavar@codeaurora.org>
+> 
+> Add support to set voltage/current of various regulators
+> to power up/down Bluetooth chip wcn3990.
+> 
+> Signed-off-by: Balakrishna Godavarthi <bgodavar@codeaurora.org>
+> ---
+> Changes in v11:
+>     * removed support to read regulator currents from dts.	
+>     * updated review comments.
 
-slow_virt_to_phys() is only implemented for arch/x86.
-Remove its use in arch independent Hyper-V drivers, and
-replace with test for vmalloc() address followed by
-appropriate v-to-p function. This follows the typical
-pattern of other drivers and avoids the need to implement
-slow_virt_to_phys() for Hyper-V on ARM64.
+Updated regulator voltage ranges?
 
-Signed-off-by: Michael Kelley <mikelley@microsoft.com>
----
- drivers/hv/channel.c | 27 ++++++++++++++++++++-------
- 1 file changed, 20 insertions(+), 7 deletions(-)
+> +static int qca_wcn3990_init(struct hci_uart *hu, u32 *soc_ver)
+> +{
+> +	struct hci_dev *hdev = hu->hdev;
+> +	int i, ret;
+> +
+> +	/* wcn3990 is a discrete Bluetooth chip connected to SoC.
+> +	 * sometimes we will face communication synchronization issues,
+> +	 * like reading version command timeouts. In which HCI_SETUP fails,
+> +	 * to overcome these issues, we try to communicate by performing an
+> +	 * cold power off and on.
+> +	 */
+> +	for (i = 0; i <= 3; i++) {
+> +		ret = qca_power_setup(hu, true);
+> +		if (ret)
+> +			goto regs_off;
+> +
+> +		/* Forcefully enable wcn3990 to enter in to boot mode. */
+> +		host_set_baudrate(hu, 2400);
+> +		ret = qca_send_power_pulse(hdev, QCA_WCN3990_POWEROFF_PULSE);
+> +		if (ret)
+> +			goto regs_off;
+> +
+> +		qca_set_speed(hu, QCA_INIT_SPEED);
+> +		ret = qca_send_power_pulse(hdev, QCA_WCN3990_POWERON_PULSE);
+> +		if (ret)
+> +			goto regs_off;
+> +
+> +		/* Wait for 100 ms for SoC to boot */
+> +		msleep(100);
+> +
+> +		/* Now the device is in ready state to communicate with host.
+> +		 * To sync host with device we need to reopen port.
+> +		 * Without this, we will have RTS and CTS synchronization
+> +		 * issues.
+> +		 */
+> +		serdev_device_close(hu->serdev);
+> +		ret = serdev_device_open(hu->serdev);
+> +		if (ret) {
+> +			bt_dev_err(hu->hdev, "failed to open port");
+> +			break;
+> +		}
+> +
+> +		hci_uart_set_flow_control(hu, false);
+> +		ret = qca_read_soc_version(hdev, soc_ver);
+> +
+> +		if (!ret)
+> +			break;
+> +
+> +regs_off:
+> +		bt_dev_err(hdev, "retrying to establish communication: %d",
+> +			   i + 1);
+> +		qca_power_shutdown(hdev);
+> +	}
+> +
+> +	return ret;
+> +}
 
-diff --git a/drivers/hv/channel.c b/drivers/hv/channel.c
-index ba0a092..d972a12 100644
---- a/drivers/hv/channel.c
-+++ b/drivers/hv/channel.c
-@@ -29,12 +29,26 @@
- #include <linux/hyperv.h>
- #include <linux/uio.h>
- #include <linux/interrupt.h>
-+#include <asm/page.h>
- 
- #include "hyperv_vmbus.h"
- 
- #define NUM_PAGES_SPANNED(addr, len) \
- ((PAGE_ALIGN(addr + len) >> PAGE_SHIFT) - (addr >> PAGE_SHIFT))
- 
-+static unsigned long virt_to_hvpfn(void *addr)
-+{
-+	unsigned long paddr;
-+
-+	if (is_vmalloc_addr(addr))
-+		paddr = page_to_phys(vmalloc_to_page(addr)) +
-+					 offset_in_page(addr);
-+	else
-+		paddr = __pa(addr);
-+
-+	return  paddr >> PAGE_SHIFT;
-+}
-+
- /*
-  * vmbus_setevent- Trigger an event notification on the specified
-  * channel.
-@@ -298,8 +312,8 @@ static int create_gpadl_header(void *kbuffer, u32 size,
- 		gpadl_header->range[0].byte_offset = 0;
- 		gpadl_header->range[0].byte_count = size;
- 		for (i = 0; i < pfncount; i++)
--			gpadl_header->range[0].pfn_array[i] = slow_virt_to_phys(
--				kbuffer + PAGE_SIZE * i) >> PAGE_SHIFT;
-+			gpadl_header->range[0].pfn_array[i] = virt_to_hvpfn(
-+				kbuffer + PAGE_SIZE * i);
- 		*msginfo = msgheader;
- 
- 		pfnsum = pfncount;
-@@ -350,9 +364,8 @@ static int create_gpadl_header(void *kbuffer, u32 size,
- 			 * so the hypervisor guarantees that this is ok.
- 			 */
- 			for (i = 0; i < pfncurr; i++)
--				gpadl_body->pfn[i] = slow_virt_to_phys(
--					kbuffer + PAGE_SIZE * (pfnsum + i)) >>
--					PAGE_SHIFT;
-+				gpadl_body->pfn[i] = virt_to_hvpfn(
-+					kbuffer + PAGE_SIZE * (pfnsum + i));
- 
- 			/* add to msg header */
- 			list_add_tail(&msgbody->msglistentry,
-@@ -380,8 +393,8 @@ static int create_gpadl_header(void *kbuffer, u32 size,
- 		gpadl_header->range[0].byte_offset = 0;
- 		gpadl_header->range[0].byte_count = size;
- 		for (i = 0; i < pagecount; i++)
--			gpadl_header->range[0].pfn_array[i] = slow_virt_to_phys(
--				kbuffer + PAGE_SIZE * i) >> PAGE_SHIFT;
-+			gpadl_header->range[0].pfn_array[i] = virt_to_hvpfn(
-+				kbuffer + PAGE_SIZE * i);
- 
- 		*msginfo = msgheader;
- 	}
--- 
-1.8.3.1
+I'm still not convinced that the retry loop is needed/desirable, I
+commented on the discussion on v10.
 
+> +static const struct qca_vreg_data qca_soc_data = {
+> +	.soc_type = QCA_WCN3990,
+> +	.vregs = (struct qca_vreg []) {
+> +		{ "vddio",   1800000, 1900000,  15000  },
+> +		{ "vddxo",   1800000, 1900000,  80000  },
+> +		{ "vddrf",   1300000, 1350000,  300000 },
+> +		{ "vddch0",  3300000, 3400000,  450000 },
+> +	},
+
+In v10 this was:
+
+		{ "vddio",   1800000, 1800000,  15000  },
+		{ "vddxo",   1800000, 1800000,  80000  },
+		{ "vddrf",   1304000, 1304000,  300000 },
+		{ "vddch0",  3000000, 3312000,  450000 },
+
+I don't have concerns about the new voltage ranges, but you should
+mention such changes in the changelog, ideally with a brief
+description why the change was made.
