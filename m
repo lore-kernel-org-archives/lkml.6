@@ -2,150 +2,156 @@ Return-Path: <SRS0=qqIy=KO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92992C46461
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 08:06:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76CEDFD21E1
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 08:11:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4402A20881
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 08:06:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4402A20881
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id 2C3D520893
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 08:11:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2C3D520893
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=collabora.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726629AbeG3Jkd (ORCPT
+        id S1726589AbeG3Jp3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 30 Jul 2018 05:40:33 -0400
-Received: from mx2.suse.de ([195.135.220.15]:37450 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726344AbeG3Jkc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Jul 2018 05:40:32 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 91D5CADD8;
-        Mon, 30 Jul 2018 08:06:43 +0000 (UTC)
-Subject: Re: [PATCH 09/16] btrfs: IS_ERR(p) && PTR_ERR(p) == n is a weird way
- to spell p == ERR_PTR(n)
-To:     Al Viro <viro@ZenIV.linux.org.uk>, linux-fsdevel@vger.kernel.org
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, Miklos Szeredi <mszeredi@redhat.com>,
-        Chris Mason <clm@fb.com>, David Sterba <dsterba@suse.cz>,
-        linux-btrfs <linux-btrfs@vger.kernel.org>
-References: <20180729220317.GB30522@ZenIV.linux.org.uk>
- <20180729220453.13431-1-viro@ZenIV.linux.org.uk>
- <20180729220453.13431-9-viro@ZenIV.linux.org.uk>
-From:   Nikolay Borisov <nborisov@suse.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=nborisov@suse.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <a15c7158-bc61-e2f2-0904-2cb637238b04@suse.com>
-Date:   Mon, 30 Jul 2018 11:06:42 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <20180729220453.13431-9-viro@ZenIV.linux.org.uk>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Mon, 30 Jul 2018 05:45:29 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:55872 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726344AbeG3Jp3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Jul 2018 05:45:29 -0400
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: eballetbo)
+        with ESMTPSA id 2F7EF263C00
+From:   Enric Balletbo i Serra <enric.balletbo@collabora.com>
+To:     MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Sandy Huang <hjc@rock-chips.com>,
+        David Airlie <airlied@linux.ie>
+Cc:     linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Derek Basehore <dbasehore@chromium.org>,
+        linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org,
+        dri-devel@lists.freedesktop.org, Lin Huang <hl@rock-chips.com>,
+        kernel@collabora.com, robin.murphy@arm.com,
+        Sean Paul <seanpaul@chromium.org>,
+        linux-arm-kernel@lists.infradead.org,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Mark Yao <markyao0591@gmail.com>,
+        Jacob Chen <jacob-chen@iotwrt.com>,
+        Brian Norris <briannorris@chromium.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        Jeffy Chen <jeffy.chen@rock-chips.com>,
+        Nickey Yang <nickey.yang@rock-chips.com>,
+        devicetree@vger.kernel.org,
+        Klaus Goger <klaus.goger@theobroma-systems.com>,
+        Randy Li <ayaka@soulik.info>, Chris Zhong <zyw@rock-chips.com>,
+        Shunqian Zheng <zhengsq@rock-chips.com>,
+        Mark Rutland <mark.rutland@arm.com>
+Subject: [PATCH 0/8] Add support for drm/rockchip to dynamically control the DDR frequency.
+Date:   Mon, 30 Jul 2018 10:11:16 +0200
+Message-Id: <20180730081124.30698-1-enric.balletbo@collabora.com>
+X-Mailer: git-send-email 2.18.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Dear all,
 
-[ADDED David Sterba and Linux-btrfs mailing list]
+The rk3399 platform has a DFI controller that can monitor DDR load and a
+DMC driver that talks with the TF-A (Trusted Firmware-A) to dynamically
+set the DDR frequency with following flow.
 
-On 30.07.2018 01:04, Al Viro wrote:
-> From: Al Viro <viro@zeniv.linux.org.uk>
-> 
-> Cc: Chris Mason <clm@fb.com>
-> Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+             kernel                          Trusted Firmware-A
+                                                  (bl31)
+        monitor ddr load
+                |
+                |
+        get_target_rate
+                |
+                |           pass rate to TF-A
+        clk_set_rate(ddr) --------------------->run ddr dvs flow
+                                                    |
+                                                    |
+                 <------------------------------end ddr dvs flow
+                |
+                |
+              return
 
-Reviewed-by: Nikolay Borisov <nborisov@suse.com>
+These patches add support for devfreq to dynamically control the DDR
+frequency into the drm rockchip driver. By default it uses the
+'simple_ondemand' governor which can adjust the frequency based on the
+DDR load.
 
-David, yout might want to pull this immediately, it's a nice cleanup.
+Waiting for your feedback.
 
-> ---
->  fs/btrfs/transaction.c | 2 +-
->  fs/btrfs/tree-log.c    | 5 ++---
->  2 files changed, 3 insertions(+), 4 deletions(-)
-> 
-> diff --git a/fs/btrfs/transaction.c b/fs/btrfs/transaction.c
-> index ff5f6c719976..feb0348dbcbf 100644
-> --- a/fs/btrfs/transaction.c
-> +++ b/fs/btrfs/transaction.c
-> @@ -680,7 +680,7 @@ btrfs_attach_transaction_barrier(struct btrfs_root *root)
->  
->  	trans = start_transaction(root, 0, TRANS_ATTACH,
->  				  BTRFS_RESERVE_NO_FLUSH, true);
-> -	if (IS_ERR(trans) && PTR_ERR(trans) == -ENOENT)
-> +	if (trans == ERR_PTR(-ENOENT))
->  		btrfs_wait_for_commit(root->fs_info, 0);
->  
->  	return trans;
-> diff --git a/fs/btrfs/tree-log.c b/fs/btrfs/tree-log.c
-> index fcfbe1d8584a..2c13e8155ff1 100644
-> --- a/fs/btrfs/tree-log.c
-> +++ b/fs/btrfs/tree-log.c
-> @@ -2116,7 +2116,7 @@ static noinline int check_item_in_log(struct btrfs_trans_handle *trans,
->  						     dir_key->offset,
->  						     name, name_len, 0);
->  		}
-> -		if (!log_di || (IS_ERR(log_di) && PTR_ERR(log_di) == -ENOENT)) {
-> +		if (!log_di || log_di ==  ERR_PTR(-ENOENT)) {
->  			btrfs_dir_item_key_to_cpu(eb, di, &location);
->  			btrfs_release_path(path);
->  			btrfs_release_path(log_path);
-> @@ -5090,8 +5090,7 @@ static int btrfs_log_inode(struct btrfs_trans_handle *trans,
->  				 * we don't need to do more work nor fallback to
->  				 * a transaction commit.
->  				 */
-> -				if (IS_ERR(other_inode) &&
-> -				    PTR_ERR(other_inode) == -ENOENT) {
-> +				if (other_inode == ERR_PTR(-ENOENT)) {
->  					goto next_key;
->  				} else if (IS_ERR(other_inode)) {
->  					err = PTR_ERR(other_inode);
-> 
+Best regards,
+ Enric
+
+Changes in v1:
+- [RFC 1/10] Add Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
+- [RFC 1/10] s/Generic/General/ (Robin Murphy)
+- [RFC 2/10] Add reviewed and acked tags from Chanwoo Choi and Rob Herring
+- [RFC 3/10] Add an explanation for platform SIP calls.
+- [RFC 3/10] Change if statement for a switch.
+- [RFC 3/10] Rename ddr_flag to odt_enable to be more clear.
+- [RFC 4/10] Removed from the series. I did not found a use case where not holding the mutex causes the issue.
+- [RFC 7/10] Removed from the series. I did not found a use case where this matters.
+- [RFC 8/10] Move rk3399-dram.h to dt-includes.
+- [RFC 8/10] Put sdram default values under the dmc node.
+- [RFC 8/10] Removed rk3399-dram-default-timing.dts
+
+Derek Basehore (2):
+  devfreq: rk3399_dmc / clk: rockchip: Sync with vblank in the kernel
+    for DDRfreq.
+  devfreq: rk3399_dmc / clk: rockchip: Disable DDR clk timeout on
+    suspend.
+
+Enric Balletbo i Serra (3):
+  devfreq: rockchip-dfi: Move GRF definitions to a common place.
+  dt-bindings: devfreq: rk3399_dmc: Add rockchip,pmu phandle.
+  devfreq: rk3399_dmc: Pass ODT and auto power down parameters to TF-A.
+
+Lin Huang (2):
+  arm64: dts: rk3399: Add dfi and dmc nodes.
+  arm64: dts: rockchip: Enable dmc and dfi nodes on gru.
+
+Sean Paul (1):
+  drm: rockchip: Add DDR devfreq support.
+
+ .../bindings/devfreq/rk3399_dmc.txt           |   2 +
+ arch/arm64/boot/dts/rockchip/rk3399-gru.dtsi  |  21 ++
+ .../boot/dts/rockchip/rk3399-op1-opp.dtsi     |  29 +++
+ arch/arm64/boot/dts/rockchip/rk3399.dtsi      |  51 ++++-
+ drivers/clk/rockchip/clk-ddr.c                | 157 +++++++++++--
+ drivers/clk/rockchip/clk.c                    |   2 +-
+ drivers/clk/rockchip/clk.h                    |   3 +-
+ drivers/devfreq/event/rockchip-dfi.c          |  23 +-
+ drivers/devfreq/rk3399_dmc.c                  | 209 +++++++++++++++---
+ drivers/devfreq/rk3399_dmc_priv.h             |  16 ++
+ drivers/gpu/drm/rockchip/rockchip_drm_drv.c   |  46 ++++
+ drivers/gpu/drm/rockchip/rockchip_drm_drv.h   |   9 +
+ drivers/gpu/drm/rockchip/rockchip_drm_fb.c    |  35 +++
+ drivers/gpu/drm/rockchip/rockchip_drm_vop.c   |  34 +++
+ include/dt-bindings/power/rk3399-dram.h       |  73 ++++++
+ include/soc/rockchip/rk3399_dmc.h             |  42 ++++
+ include/soc/rockchip/rk3399_grf.h             |  21 ++
+ include/soc/rockchip/rockchip_sip.h           |   1 +
+ 18 files changed, 704 insertions(+), 70 deletions(-)
+ create mode 100644 drivers/devfreq/rk3399_dmc_priv.h
+ create mode 100644 include/dt-bindings/power/rk3399-dram.h
+ create mode 100644 include/soc/rockchip/rk3399_dmc.h
+ create mode 100644 include/soc/rockchip/rk3399_grf.h
+
+-- 
+2.18.0
+
