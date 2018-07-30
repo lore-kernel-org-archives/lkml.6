@@ -2,112 +2,124 @@ Return-Path: <SRS0=qqIy=KO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3426C43142
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 21:56:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B111EC43142
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 22:00:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5F45C20894
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 21:56:50 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="gaCgGm9+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5F45C20894
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 65C8520890
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 22:00:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 65C8520890
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731948AbeG3Xdr (ORCPT
+        id S1731785AbeG3Xhc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 30 Jul 2018 19:33:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55956 "EHLO mail.kernel.org"
+        Mon, 30 Jul 2018 19:37:32 -0400
+Received: from mga07.intel.com ([134.134.136.100]:11464 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731606AbeG3Xdr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Jul 2018 19:33:47 -0400
-Received: from localhost (unknown [69.71.4.100])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 744BD20890;
-        Mon, 30 Jul 2018 21:56:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1532987807;
-        bh=DlWE536LTbxp025/4JGxB7zD/0iu3EBEMrtbntkPTSU=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=gaCgGm9+X/Quw3NtLeABCBpOB06elKvviWW52w+iKmV4Nfg7WbAr0EK3G6gycwivO
-         T4QbCpogcKp8JAAn9OuSw38xAkc1MdPufAGxVMEC9dXbQxAKsxzQV7zpTVkZB2MVb0
-         xsn8T9Zy1JJ7MIbYk1Gh4tr2c4WlZ3pCC6OvlUdE=
-Date:   Mon, 30 Jul 2018 16:56:46 -0500
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Lukas Wunner <lukas@wunner.de>
-Cc:     linux-pci@vger.kernel.org, linux-acpi@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 1/2] PCI: Document patch submission hints
-Message-ID: <20180730215646.GD45322@bhelgaas-glaptop.roam.corp.google.com>
-References: <153030390808.57832.2200774416664543563.stgit@bhelgaas-glaptop.roam.corp.google.com>
- <153030405971.57832.12860154795039493576.stgit@bhelgaas-glaptop.roam.corp.google.com>
- <20180701174508.GB28249@wunner.de>
- <20180712155946.GB28466@bhelgaas-glaptop.roam.corp.google.com>
- <20180730143136.GA4093@wunner.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180730143136.GA4093@wunner.de>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+        id S1729104AbeG3Xhc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Jul 2018 19:37:32 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Jul 2018 15:00:31 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,424,1526367600"; 
+   d="scan'208";a="61989951"
+Received: from spandruv-desk.jf.intel.com ([10.54.75.31])
+  by orsmga006.jf.intel.com with ESMTP; 30 Jul 2018 15:00:31 -0700
+From:   Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+To:     lenb@kernel.org, rjw@rjwysocki.net, viresh.kumar@linaro.org
+Cc:     linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        eero.t.tamminen@intel.com, ggherdovich@suse.cz,
+        mgorman@techsingularity.net, currojerez@riseup.net,
+        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+Subject: [PATCH] cpufreq: intel_pstate: Limit the scope of HWP dynamic boost platforms
+Date:   Mon, 30 Jul 2018 15:00:29 -0700
+Message-Id: <20180730220029.81983-1-srinivas.pandruvada@linux.intel.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 30, 2018 at 04:31:36PM +0200, Lukas Wunner wrote:
-> On Thu, Jul 12, 2018 at 10:59:46AM -0500, Bjorn Helgaas wrote:
-> > But on reflection, I think the overall value of this writeup is
-> > minimal.  It's a lot of repetition of things already documented
-> > elsewhere and most of it boils down to "pay attention to existing
-> > practice and don't do things differently unless you're innovating and
-> > adding value."  That *should* be obvious, and if it's not, I doubt
-> > that adding one more thing to read is going to make it more obvious.
-> 
-> So my opinion is that your writeup does contain valid points that are
-> worth documenting:  For an open source project, a top priority is to
-> attract and retain contributors who improve the bus factor, who keep
-> the code base alive and maintained, thereby avoiding bit rot.
-> 
-> Knowledge diffusion, including documentation of best practices and
-> conventions, goes a long way towards that goal.  Your writeup was
-> mainly from a maintainer perspective: "consistency makes maintenance
-> easier".  But consistency is also valuable from a contributor
-> perspective:  It makes it easier to dive into a code base and find
-> your way around, and that includes changelogs in the git history.
-> 
-> There are important bits of knowledge in the writeup, if those can
-> be distilled, the result would very much be valuable to have in the tree.
-> 
-> Example:
-> 
-> > I generally use
-> > "PCI/XXX" for things in the core (mostly capabilities like MSI, AER,
-> > DPC, etc) and "PCI: xxx:" for drivers (shpchp, pciehp, etc).
-> 
-> That was in fact unknown to me.
-> 
-> If you find it difficult to put yourself in the shoes of a contributor,
-> I could try to rework the document and distill the points I find important.
+Dynamic boosting of HWP performance on IO wake showed significant
+improvement to IO workloads. This series was intended for Skylake Xeon
+platforms only and feature was enabled by default based on CPU model
+number.
 
-I definitely want to make it easy and attractive for people to
-contribute to Linux in general.  I'd be glad for any hints.  You're
-right, it's hard for me to put myself in the shoes of a contributor,
-at least a new one.
+But some Xeon platforms reused the Skylake desktop CPU model number. This
+caused some undesirable side effects to some graphics workloads. Since
+they are heavily IO bound, the increase in CPU performance decreased the
+power available for GPU to do its computing and hence decrease in graphics
+benchmark performance.
 
-I guess I'm hesitant because a lot of the things I included there seem
-like they border on the obsessive, and I don't want to ask
-contributors to make trivial changes to fit in with my personal
-quirks.  Since they're my quirks, I'd rather just silently fix them up
-as I apply patches.
+For example on a Skylake desktop, GpuTest benchmark showed average FPS
+reduction from 529 to 506.
 
-If there were a wider consensus on some things and they could be
-folded into Documentation/process/ somehow, that would be ideal, but
-I'm not sure there would be enough of a consensus, and I don't really
-want to start a big discussion about it.  But maybe there are a few
-things that wouldn't be controversial, I dunno.
+This change makes sure that HWP boost feature is only enabled for Skylake
+server platforms by using ACPI FADT preferred PM Profile. If some desktop
+users wants to get benefit of boost, they can still enable boost from
+intel_pstate sysfs attribute "hwp_dynamic_boost".
 
-Bjorn
+Fixes: 41ab43c9c89e (cpufreq: intel_pstate: enable boost for Skylake Xeon)
+Link: https://bugs.freedesktop.org/show_bug.cgi?id=107410
+Reported-by: Eero Tamminen <eero.t.tamminen@intel.com>
+Signed-off-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+---
+ drivers/cpufreq/intel_pstate.c | 17 +++++++++++++++--
+ 1 file changed, 15 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/cpufreq/intel_pstate.c b/drivers/cpufreq/intel_pstate.c
+index 3c3971256130..d4ed0022b0dd 100644
+--- a/drivers/cpufreq/intel_pstate.c
++++ b/drivers/cpufreq/intel_pstate.c
+@@ -311,12 +311,20 @@ static DEFINE_MUTEX(intel_pstate_limits_lock);
+ 
+ #ifdef CONFIG_ACPI
+ 
+-static bool intel_pstate_get_ppc_enable_status(void)
++static bool intel_pstate_acpi_pm_profile_server(void)
+ {
+ 	if (acpi_gbl_FADT.preferred_profile == PM_ENTERPRISE_SERVER ||
+ 	    acpi_gbl_FADT.preferred_profile == PM_PERFORMANCE_SERVER)
+ 		return true;
+ 
++	return false;
++}
++
++static bool intel_pstate_get_ppc_enable_status(void)
++{
++	if (intel_pstate_acpi_pm_profile_server())
++		return true;
++
+ 	return acpi_ppc;
+ }
+ 
+@@ -459,6 +467,11 @@ static inline void intel_pstate_init_acpi_perf_limits(struct cpufreq_policy *pol
+ static inline void intel_pstate_exit_perf_limits(struct cpufreq_policy *policy)
+ {
+ }
++
++static inline bool intel_pstate_acpi_pm_profile_server(void)
++{
++	return false;
++}
+ #endif
+ 
+ static inline void update_turbo_state(void)
+@@ -1841,7 +1854,7 @@ static int intel_pstate_init_cpu(unsigned int cpunum)
+ 		intel_pstate_hwp_enable(cpu);
+ 
+ 		id = x86_match_cpu(intel_pstate_hwp_boost_ids);
+-		if (id)
++		if (id && intel_pstate_acpi_pm_profile_server())
+ 			hwp_boost = true;
+ 	}
+ 
+-- 
+2.17.1
+
