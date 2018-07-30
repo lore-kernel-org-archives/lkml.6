@@ -2,97 +2,293 @@ Return-Path: <SRS0=qqIy=KO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4BA2FD21E1
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 15:59:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D9EEFD21E1
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 16:00:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 635A2205C9
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 15:59:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2C3D9205C9
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 16:00:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ERsNxviW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 635A2205C9
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="Y0HQTMb5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2C3D9205C9
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727094AbeG3RfN (ORCPT
+        id S1727597AbeG3Rfr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 30 Jul 2018 13:35:13 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:42776 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726661AbeG3RfM (ORCPT
+        Mon, 30 Jul 2018 13:35:47 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:41564 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726661AbeG3Rfr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Jul 2018 13:35:12 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Transfer-Encoding
-        :Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-        Sender:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=JhUGT8sN1qnvQgwPcAGp95UI9VXlMTxKP19lrE71egg=; b=ERsNxviW6dodssOHkG98471HCn
-        g2inBLUt0s27o+JlXhTEftTY1k/G85PyUglbq4T3m6zb/Y4/LonVS3IcqvLV6o7f0PisL5ft4hNs0
-        ADg4mmAMHUzY7yEKjM9tI/70mV0vM0ndvudZIrediVniAeAVSj0d/PfCfJwtlRSYNTcrbXiyg8BfY
-        XOpEE8ysM9XC47UDEcJ8sDimyWVIoYBoslRSiAXjdHys2hNMskjE3gKWkszFOWfnAMbGu5EnhRIRC
-        MxpxNA1C7ZwS3i2oh8rbUlYHCBW2s4CXtfoj6l3WQOVl2oQkCyFZHzMFxo6MYP9mrWI30pChB7UgY
-        hzwXYRzQ==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fkAa7-0003y6-AA; Mon, 30 Jul 2018 15:59:35 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 15B742026873D; Mon, 30 Jul 2018 17:59:33 +0200 (CEST)
-Date:   Mon, 30 Jul 2018 17:59:33 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     "weiqi (C)" <weiqi4@huawei.com>
+        Mon, 30 Jul 2018 13:35:47 -0400
+Received: from avalon.localnet (dfj612ybrt5fhg77mgycy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:2e86:4862:ef6a:2804])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 459F31AC2;
+        Mon, 30 Jul 2018 18:00:07 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1532966408;
+        bh=X0zIpPEKJU7zIjw8TQJ9/3iFjD+xa6McIS8b8ybZUzc=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=Y0HQTMb5XhV+RZ4TBNgc3Qbtpp2pxJYym1Q3xdycKFniyuCg8LShmUzHzDkSAvw0D
+         F9VUMoQwPnLzMsRfxwvW4jIJ649cRTXTfoq3v0AtDvmYi3RbdDpRn6JZtJK3cnXxBs
+         L+tvi6ILk8e56pzXireQD6ScozRcuZGRE0AGDxcE=
+From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To:     Keiichi Watanabe <keiichiw@chromium.org>
 Cc:     linux-kernel@vger.kernel.org,
-        Zhanghailiang <zhang.zhanghailiang@huawei.com>
-Subject: Re: [Question] load balance move tasks not suitable ?
-Message-ID: <20180730155933.GK2494@hirez.programming.kicks-ass.net>
-References: <6e782fa5-de1d-93a9-ed11-5b43b65b20c9@huawei.com>
- <20180730125606.GP2476@hirez.programming.kicks-ass.net>
- <8513a5c1-2067-cdf6-285f-3fb422274c05@huawei.com>
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-media@vger.kernel.org, kieran.bingham@ideasonboard.com,
+        tfiga@chromium.org, dianders@chromium.org,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Ezequiel Garcia <ezequiel@collabora.com>,
+        "Matwey V. Kornilov" <matwey@sai.msu.ru>
+Subject: Re: [RFC PATCH v1] media: uvcvideo: Cache URB header data before processing
+Date:   Mon, 30 Jul 2018 19:00:46 +0300
+Message-ID: <11886963.8nkeRH3xvi@avalon>
+Organization: Ideas on Board Oy
+In-Reply-To: <20180627103408.33003-1-keiichiw@chromium.org>
+References: <20180627103408.33003-1-keiichiw@chromium.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <8513a5c1-2067-cdf6-285f-3fb422274c05@huawei.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Keiichi,
 
-A: Because it messes up the order in which people normally read text.
-Q: Why is top-posting such a bad thing?
-A: Top-posting.
-Q: What is the most annoying thing in e-mail?
+(CC'ing Alan, Ezequiel and Matwey)
 
-On Mon, Jul 30, 2018 at 09:42:27PM +0800, weiqi (C) wrote:
-> in latest  linux kernel version,  load-balance's  detach_tasks() keeps
-> "load/2"  behavior:
+Thank you for the patch.
+
+On Wednesday, 27 June 2018 13:34:08 EEST Keiichi Watanabe wrote:
+> On some platforms with non-coherent DMA (e.g. ARM), USB drivers use
+> uncached memory allocation methods. In such situations, it sometimes
+> takes a long time to access URB buffers.  This can be a cause of video
+> flickering problems if a resolution is high and a USB controller has
+> a very tight time limit. (e.g. dwc2) To avoid this problem, we copy
+> header data from (uncached) URB buffer into (cached) local buffer.
 > 
-> """
+> This change should make the elapsed time of the interrupt handler
+> shorter on platforms with non-coherent DMA. We measured the elapsed
+> time of each callback of uvc_video_complete without/with this patch
+> while capturing Full HD video in
+> https://webrtc.github.io/samples/src/content/getusermedia/resolution/.
+> I tested it on the top of Kieran Bingham's Asynchronous UVC series
+> https://www.mail-archive.com/linux-media@vger.kernel.org/msg128359.html.
+> The test device was Jerry Chromebook (RK3288) with Logitech Brio 4K.
+> I collected data for 5 seconds. (There were around 480 callbacks in
+> this case.) The following result shows that this patch makes
+> uvc_video_complete about 2x faster.
 > 
->         if (( load / 2 ) > env->imbalance)
->                 goto next;
-> """
+>            | average | median  | min     | max     | standard deviation
 > 
-> It  means  a task  "p",  which  load  is 1.5 times than "env->imbalance" can
-> move from "src_rq" to "dst_rq".
-> after this move,  imbalance between  "src_rq"  and "dst_rq" may larger than
-> before.
+> w/o caching| 45319ns | 40250ns | 33834ns | 142625ns| 16611ns
+> w/  caching| 20620ns | 19250ns | 12250ns | 56583ns | 6285ns
+> 
+> In addition, we confirmed that this patch doesn't make it worse on
+> coherent DMA architecture by performing the same measurements on a
+> Broadwell Chromebox with the same camera.
+> 
+>            | average | median  | min     | max     | standard deviation
+> 
+> w/o caching| 21026ns | 21424ns | 12263ns | 23956ns | 1932ns
+> w/  caching| 20728ns | 20398ns |  8922ns | 45120ns | 3368ns
 
-imbalance is how much we should move to get in balance. So if we move 1
-imbalance we'll end up being just right. If we move 1.5 we end up
-slightly better then before, but imbalanced the other way.
+This is very interesting, and it seems related to https://
+patchwork.kernel.org/patch/10468937/. You might have seen that discussion as 
+you got CC'ed at some point.
 
-If we move 2 imbalance, we're exactly where we were, just the other way
-around.
+I wonder whether performances couldn't be further improved by allocating the 
+URB buffers cached, as that would speed up the memcpy() as well. Have you 
+tested that by any chance ?
 
-> but if use "load*2" here,  It means we can pick a task "p" , which load is
-> half of "env->imbalance"， and after move，
-> "src_rq" and "dst_rq"  is balanced.
+> Signed-off-by: Keiichi Watanabe <keiichiw@chromium.org>
+> ---
+> 
+> After applying 6 patches in
+> https://www.mail-archive.com/linux-media@vger.kernel.org/msg128359.html,
+> I measured elapsed time by adding the following code to
+> /drivers/media/usb/uvc/uvc_video.c
+> 
+> @@ -XXXX,6 +XXXX,9 @@ static void uvc_video_complete(struct urb *urb)
+>         struct uvc_video_queue *queue = &stream->queue;
+>  	struct uvc_buffer *buf = NULL;
+>  	int ret;
+> +	ktime_t start, end;
+> +	int elapsed_time;
+> +	start = ktime_get();
+>  	switch (urb->status) {
+>  	case 0:
+> 
+> @@ -XXXX,6 +XXXX,10 @@ static void uvc_video_complete(struct urb *urb)
+> 
+>  	INIT_WORK(&uvc_urb->work, uvc_video_copy_data_work);
+>  	queue_work(stream->async_wq, &uvc_urb->work);
+> +
+> +	end = ktime_get();
+> +	elapsed_time = ktime_to_ns(ktime_sub(end, start));
+> +	pr_err("elapsed time: %d ns", elapsed_time);
+>  }
+> 
+>  /*
+> 
+> 
+>  drivers/media/usb/uvc/uvc_video.c | 92 +++++++++++++++----------------
+>  1 file changed, 43 insertions(+), 49 deletions(-)
+> diff --git a/drivers/media/usb/uvc/uvc_video.c
+> b/drivers/media/usb/uvc/uvc_video.c index a88b2e51a666..ff2eddc55530 100644
+> --- a/drivers/media/usb/uvc/uvc_video.c
+> +++ b/drivers/media/usb/uvc/uvc_video.c
+> @@ -391,36 +391,15 @@ static inline ktime_t uvc_video_get_time(void)
+> 
+>  static void
+>  uvc_video_clock_decode(struct uvc_streaming *stream, struct uvc_buffer
+> *buf, -		       const u8 *data, int len)
+> +		       const u8 *data, int len, unsigned int header_size,
+> +		       bool has_pts, bool has_scr)
+>  {
+>  	struct uvc_clock_sample *sample;
+> -	unsigned int header_size;
+> -	bool has_pts = false;
+> -	bool has_scr = false;
+>  	unsigned long flags;
+>  	ktime_t time;
+>  	u16 host_sof;
+>  	u16 dev_sof;
+> 
+> -	switch (data[1] & (UVC_STREAM_PTS | UVC_STREAM_SCR)) {
+> -	case UVC_STREAM_PTS | UVC_STREAM_SCR:
+> -		header_size = 12;
+> -		has_pts = true;
+> -		has_scr = true;
+> -		break;
+> -	case UVC_STREAM_PTS:
+> -		header_size = 6;
+> -		has_pts = true;
+> -		break;
+> -	case UVC_STREAM_SCR:
+> -		header_size = 8;
+> -		has_scr = true;
+> -		break;
+> -	default:
+> -		header_size = 2;
+> -		break;
+> -	}
+> -
+>  	/* Check for invalid headers. */
+>  	if (len < header_size)
+>  		return;
+> @@ -717,11 +696,10 @@ void uvc_video_clock_update(struct uvc_streaming
+> *stream, */
+> 
+>  static void uvc_video_stats_decode(struct uvc_streaming *stream,
+> -		const u8 *data, int len)
+> +				   const u8 *data, int len,
+> +				   unsigned int header_size, bool has_pts,
+> +				   bool has_scr)
+>  {
+> -	unsigned int header_size;
+> -	bool has_pts = false;
+> -	bool has_scr = false;
+>  	u16 uninitialized_var(scr_sof);
+>  	u32 uninitialized_var(scr_stc);
+>  	u32 uninitialized_var(pts);
+> @@ -730,25 +708,6 @@ static void uvc_video_stats_decode(struct uvc_streaming
+> *stream, stream->stats.frame.nb_packets == 0)
+>  		stream->stats.stream.start_ts = ktime_get();
+> 
+> -	switch (data[1] & (UVC_STREAM_PTS | UVC_STREAM_SCR)) {
+> -	case UVC_STREAM_PTS | UVC_STREAM_SCR:
+> -		header_size = 12;
+> -		has_pts = true;
+> -		has_scr = true;
+> -		break;
+> -	case UVC_STREAM_PTS:
+> -		header_size = 6;
+> -		has_pts = true;
+> -		break;
+> -	case UVC_STREAM_SCR:
+> -		header_size = 8;
+> -		has_scr = true;
+> -		break;
+> -	default:
+> -		header_size = 2;
+> -		break;
+> -	}
+> -
+>  	/* Check for invalid headers. */
+>  	if (len < header_size || data[0] < header_size) {
+>  		stream->stats.frame.nb_invalid++;
+> @@ -957,10 +916,41 @@ static void uvc_video_stats_stop(struct uvc_streaming
+> *stream) * to be called with a NULL buf parameter. uvc_video_decode_data
+> and * uvc_video_decode_end will never be called with a NULL buffer.
+>   */
+> +static void uvc_video_decode_header_size(const u8 *data, int *header_size,
+> +					 bool *has_pts, bool *has_scr)
+> +{
+> +	switch (data[1] & (UVC_STREAM_PTS | UVC_STREAM_SCR)) {
+> +	case UVC_STREAM_PTS | UVC_STREAM_SCR:
+> +		*header_size = 12;
+> +		*has_pts = true;
+> +		*has_scr = true;
+> +		break;
+> +	case UVC_STREAM_PTS:
+> +		*header_size = 6;
+> +		*has_pts = true;
+> +		break;
+> +	case UVC_STREAM_SCR:
+> +		*header_size = 8;
+> +		*has_scr = true;
+> +		break;
+> +	default:
+> +		*header_size = 2;
+> +	}
+> +}
+> +
+>  static int uvc_video_decode_start(struct uvc_streaming *stream,
+> -		struct uvc_buffer *buf, const u8 *data, int len)
+> +				  struct uvc_buffer *buf, const u8 *urb_data,
+> +				  int len)
+>  {
+>  	u8 fid;
+> +	u8 data[12];
+> +	unsigned int header_size;
+> +	bool has_pts = false, has_scr = false;
+> +
+> +	/* Cache the header since urb_data is uncached memory. The size of
+> +	 * header is at most 12 bytes.
+> +	 */
+> +	memcpy(data, urb_data, min(len, 12));
+> 
+>  	/* Sanity checks:
+>  	 * - packet must be at least 2 bytes long
+> @@ -983,8 +973,12 @@ static int uvc_video_decode_start(struct uvc_streaming
+> *stream, uvc_video_stats_update(stream);
+>  	}
+> 
+> -	uvc_video_clock_decode(stream, buf, data, len);
+> -	uvc_video_stats_decode(stream, data, len);
+> +	uvc_video_decode_header_size(data, &header_size, &has_pts, &has_scr);
+> +
+> +	uvc_video_clock_decode(stream, buf, data, len, header_size, has_pts,
+> +			       has_scr);
+> +	uvc_video_stats_decode(stream, data, len, header_size, has_pts,
+> +			       has_scr);
+> 
+>  	/* Store the payload FID bit and return immediately when the buffer is
+>  	 * NULL.
+> --
+> 2.18.0.rc2.346.g013aa6912e-goog
 
-We might not move anything and not improve even if we could.
+
+-- 
+Regards,
+
+Laurent Pinchart
+
+
+
