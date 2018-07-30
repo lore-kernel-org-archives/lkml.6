@@ -6,27 +6,27 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6172E13F6DFF
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 13:03:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BE3513F6DFF
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 13:03:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 21E8F20873
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 13:03:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 21E8F20873
+	by mail.kernel.org (Postfix) with ESMTP id D17B420873
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 13:03:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D17B420873
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731962AbeG3Oh5 (ORCPT
+        id S1732040AbeG3Oh6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 30 Jul 2018 10:37:57 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:60037 "EHLO mail.bootlin.com"
+        Mon, 30 Jul 2018 10:37:58 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:60059 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729138AbeG3Oh4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Jul 2018 10:37:56 -0400
+        id S1730422AbeG3Oh5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Jul 2018 10:37:57 -0400
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 39649207BD; Mon, 30 Jul 2018 15:03:00 +0200 (CEST)
+        id F26D2207AC; Mon, 30 Jul 2018 15:03:00 +0200 (CEST)
 Received: from localhost.localdomain (AAubervilliers-681-1-89-120.w90-88.abo.wanadoo.fr [90.88.30.120])
-        by mail.bootlin.com (Postfix) with ESMTPSA id E2AA920703;
-        Mon, 30 Jul 2018 15:02:59 +0200 (CEST)
+        by mail.bootlin.com (Postfix) with ESMTPSA id A6FC620712;
+        Mon, 30 Jul 2018 15:03:00 +0200 (CEST)
 From:   Quentin Schulz <quentin.schulz@bootlin.com>
 To:     andrew@lunn.ch, f.fainelli@gmail.com, davem@davemloft.net,
         robh+dt@kernel.org, mark.rutland@arm.com,
@@ -34,147 +34,54 @@ To:     andrew@lunn.ch, f.fainelli@gmail.com, davem@davemloft.net,
 Cc:     netdev@vger.kernel.org, alexandre.belloni@bootlin.com,
         linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com,
         Quentin Schulz <quentin.schulz@bootlin.com>
-Subject: [PATCH net-next 1/4] net: phy: mscc: factorize code for LEDs mode
-Date:   Mon, 30 Jul 2018 15:02:33 +0200
-Message-Id: <20180730130236.3837-1-quentin.schulz@bootlin.com>
+Subject: [PATCH 4/4] dt-bindings: net: phy: mscc: vsc8531: factorize vsc8531,led-N-mode
+Date:   Mon, 30 Jul 2018 15:02:36 +0200
+Message-Id: <20180730130236.3837-4-quentin.schulz@bootlin.com>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180730130236.3837-1-quentin.schulz@bootlin.com>
+References: <20180730130236.3837-1-quentin.schulz@bootlin.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-LEDs modes are set the same way, except they are offset by 4 times the
-index of the LED.
-
-Let's factorize all the code so that it's easier to add support for the
-4 LEDs of the VSC8584 PHY.
+VSC8584 supports 4 LEDs while VSC8531 only supports 2. Let's factorize
+the documentation for LED mode properties and give the 4 default values
+(the first two being shared between VSC8531 and VSC8584).
 
 Signed-off-by: Quentin Schulz <quentin.schulz@bootlin.com>
 ---
- drivers/net/phy/mscc.c | 66 ++++++++++++++++++++----------------------
- 1 file changed, 32 insertions(+), 34 deletions(-)
+ .../devicetree/bindings/net/mscc-phy-vsc8531.txt | 16 +++++++++-------
+ 1 file changed, 9 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/net/phy/mscc.c b/drivers/net/phy/mscc.c
-index 84ca9ff40ae0..02954cc0d2ad 100644
---- a/drivers/net/phy/mscc.c
-+++ b/drivers/net/phy/mscc.c
-@@ -54,9 +54,9 @@ enum rgmii_rx_clock_delay {
- #define HP_AUTO_MDIX_X_OVER_IND_MASK	  0x2000
- 
- #define MSCC_PHY_LED_MODE_SEL		  29
--#define LED_1_MODE_SEL_MASK		  0x00F0
--#define LED_0_MODE_SEL_MASK		  0x000F
--#define LED_1_MODE_SEL_POS		  4
-+#define LED_MODE_SEL_POS(x)		  ((x) * 4)
-+#define LED_MODE_SEL_MASK(x)		  (GENMASK(3, 0) << LED_MODE_SEL_POS(x))
-+#define LED_MODE_SEL(x, mode)		  (((mode) << LED_MODE_SEL_POS(x)) & LED_MODE_SEL_MASK(x))
- 
- #define MSCC_EXT_PAGE_ACCESS		  31
- #define MSCC_PHY_PAGE_STANDARD		  0x0000 /* Standard registers */
-@@ -103,10 +103,11 @@ enum rgmii_rx_clock_delay {
- 
- #define DOWNSHIFT_COUNT_MAX		  5
- 
-+#define MAX_LEDS			  4
- struct vsc8531_private {
- 	int rate_magic;
--	u8 led_0_mode;
--	u8 led_1_mode;
-+	u8 leds_mode[MAX_LEDS];
-+	u8 nleds;
- };
- 
- #ifdef CONFIG_OF_MDIO
-@@ -140,14 +141,8 @@ static int vsc85xx_led_cntl_set(struct phy_device *phydev,
- 
- 	mutex_lock(&phydev->lock);
- 	reg_val = phy_read(phydev, MSCC_PHY_LED_MODE_SEL);
--	if (led_num) {
--		reg_val &= ~LED_1_MODE_SEL_MASK;
--		reg_val |= (((u16)mode << LED_1_MODE_SEL_POS) &
--			    LED_1_MODE_SEL_MASK);
--	} else {
--		reg_val &= ~LED_0_MODE_SEL_MASK;
--		reg_val |= ((u16)mode & LED_0_MODE_SEL_MASK);
--	}
-+	reg_val &= ~LED_MODE_SEL_MASK(led_num);
-+	reg_val |= LED_MODE_SEL(led_num, (u16)mode);
- 	rc = phy_write(phydev, MSCC_PHY_LED_MODE_SEL, reg_val);
- 	mutex_unlock(&phydev->lock);
- 
-@@ -545,7 +540,7 @@ static int vsc85xx_set_tunable(struct phy_device *phydev,
- 
- static int vsc85xx_config_init(struct phy_device *phydev)
- {
--	int rc;
-+	int rc, i;
- 	struct vsc8531_private *vsc8531 = phydev->priv;
- 
- 	rc = vsc85xx_default_config(phydev);
-@@ -560,13 +555,12 @@ static int vsc85xx_config_init(struct phy_device *phydev)
- 	if (rc)
- 		return rc;
- 
--	rc = vsc85xx_led_cntl_set(phydev, 1, vsc8531->led_1_mode);
--	if (rc)
--		return rc;
--
--	rc = vsc85xx_led_cntl_set(phydev, 0, vsc8531->led_0_mode);
--	if (rc)
--		return rc;
-+	/* Support for only 2 LEDs */
-+	for (i = 0; i < vsc8531->nleds; i++) {
-+		rc = vsc85xx_led_cntl_set(phydev, i, vsc8531->leds_mode[i]);
-+		if (rc)
-+			return rc;
-+	}
- 
- 	rc = genphy_config_init(phydev);
- 
-@@ -627,6 +621,10 @@ static int vsc85xx_probe(struct phy_device *phydev)
- 	struct vsc8531_private *vsc8531;
- 	int rate_magic;
- 	int led_mode;
-+	int i;
-+	char led_dt_prop[19];
-+	u8 default_mode[2] = {VSC8531_LINK_1000_ACTIVITY,
-+	   VSC8531_LINK_100_ACTIVITY};
- 
- 	rate_magic = vsc85xx_edge_rate_magic_get(phydev);
- 	if (rate_magic < 0)
-@@ -639,19 +637,19 @@ static int vsc85xx_probe(struct phy_device *phydev)
- 	phydev->priv = vsc8531;
- 
- 	vsc8531->rate_magic = rate_magic;
--
--	/* LED[0] and LED[1] mode */
--	led_mode = vsc85xx_dt_led_mode_get(phydev, "vsc8531,led-0-mode",
--					   VSC8531_LINK_1000_ACTIVITY);
--	if (led_mode < 0)
--		return led_mode;
--	vsc8531->led_0_mode = led_mode;
--
--	led_mode = vsc85xx_dt_led_mode_get(phydev, "vsc8531,led-1-mode",
--					   VSC8531_LINK_100_ACTIVITY);
--	if (led_mode < 0)
--		return led_mode;
--	vsc8531->led_1_mode = led_mode;
-+	vsc8531->nleds = 2;
+diff --git a/Documentation/devicetree/bindings/net/mscc-phy-vsc8531.txt b/Documentation/devicetree/bindings/net/mscc-phy-vsc8531.txt
+index 4c7d1d384df0..4d3f8b07a286 100644
+--- a/Documentation/devicetree/bindings/net/mscc-phy-vsc8531.txt
++++ b/Documentation/devicetree/bindings/net/mscc-phy-vsc8531.txt
+@@ -22,14 +22,16 @@ Optional properties:
+ 			  'vddmac'.
+ 			  Default value is 0%.
+ 			  Ref: Table:1 - Edge rate change (below).
+-- vsc8531,led-0-mode	: LED mode. Specify how the LED[0] should behave.
+-			  Allowed values are define in
++- vsc8531,led-[N]-mode	: LED mode. Specify how the LED[N] should behave.
++			  N depends on the number of LEDs supported by a
++			  PHY.
++			  Allowed values are defined in
+ 			  "include/dt-bindings/net/mscc-phy-vsc8531.h".
+-			  Default value is VSC8531_LINK_1000_ACTIVITY (1).
+-- vsc8531,led-1-mode	: LED mode. Specify how the LED[1] should behave.
+-			  Allowed values are define in
+-			  "include/dt-bindings/net/mscc-phy-vsc8531.h".
+-			  Default value is VSC8531_LINK_100_ACTIVITY (2).
++			  Default values are VSC8531_LINK_1000_ACTIVITY (1),
++			  VSC8531_LINK_100_ACTIVITY (2),
++			  VSC8531_LINK_ACTIVITY (0) and
++			  VSC8531_DUPLEX_COLLISION (8).
 +
-+	for (i = 0; i < vsc8531->nleds; i++) {
-+		led_mode = sprintf(led_dt_prop, "vsc8531,led-%d-mode", i);
-+		if (led_mode < 0)
-+			return led_mode;
-+
-+		led_mode = vsc85xx_dt_led_mode_get(phydev, led_dt_prop,
-+						   default_mode[i]);
-+		if (led_mode < 0)
-+			return led_mode;
-+		vsc8531->leds_mode[i] = led_mode;
-+	}
  
- 	return 0;
- }
+ Table: 1 - Edge rate change
+ ----------------------------------------------------------------|
 -- 
 2.17.1
 
