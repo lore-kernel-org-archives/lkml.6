@@ -2,203 +2,97 @@ Return-Path: <SRS0=qqIy=KO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 026FA13F6DFF
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 13:58:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BB3CFD21E1
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 13:58:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8F69D20881
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 13:58:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5702B20881
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 13:58:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iHqh/zL1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F69D20881
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="ghgo7/Ph"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5702B20881
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lunn.ch
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727082AbeG3PdU (ORCPT
+        id S1729138AbeG3Pd0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 30 Jul 2018 11:33:20 -0400
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:40356 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726530AbeG3PdU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Jul 2018 11:33:20 -0400
-Received: by mail-lf1-f68.google.com with SMTP id y200-v6so8205258lfd.7;
-        Mon, 30 Jul 2018 06:58:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=HoKK75wSNcJSOZf0rpf0V7USYG4exr8UT0M+vlolyPk=;
-        b=iHqh/zL1zUN71WRHddrBV0vf4wXf2pWToFDoM819QDgWl31EaWMOqqK5k3ZMuQK8lQ
-         XxefCpp7zU2RyXfrPtVAaZza+zVUzT3Izk2uzNdzvhFSowTiUvXnV+p0yK7aemRFnWdZ
-         H0yBgqzmAG3OkjB58w9DLHew8udbOmoO/pVKsG8kfMc2ybSFEfUus1INuCtD8c+aJ9+2
-         dcdGj1oLkEPBhumbA+BmqaXcCYSQcbT1DXyrO/zyLdmOxBk+qHU20e7AW9uYfREqd+Uz
-         w8p0CtWrdRKAMWQWBIbPShyVe3CmaGfdih2fx1r8nwuKCnKg7RJMGSJEshhmZ9U9xyy9
-         JY2A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=HoKK75wSNcJSOZf0rpf0V7USYG4exr8UT0M+vlolyPk=;
-        b=D5rLNhQaCNsmBlF9pWOhp4emk2ywGNcTpH6RbvNazO2+OT5OKvOk4c5QnI1AsRFevO
-         65rzO8fODD1g0nFEBV12OGqsZz//7017Vwx73YUOinMM5mlgX+H5wrEE/ylBI7zrNIcW
-         9HuHMy2ntUSzeC/gUb2nFoLyRWWiwVsWuXqLBDzySECaPqZ1CXa+pyLxxVA81JYbJlxc
-         EeCuqKBnvq42FKb8/f+sHvzyX4kZ/dJVD6wfVmxWuSuJnskLElFnj92hxoMRfgyyCQ0c
-         hcs70qf9p5wM0G5vII5FguvfcbFH7NlbbeCUxS3TZjHJSyyF8ehBQVddW3tGUiLG7kfd
-         +nBA==
-X-Gm-Message-State: AOUpUlFvkOHmRseBzSILjKx6pDZU7M8k91bw2VA0YN4QtAskOoGzvPWC
-        dnzQGNnxJA/F3A+vnYLJ92mWhy/s9WkIVbON9qvB4g==
-X-Google-Smtp-Source: AAOMgpfb6qwQmoZQ74yGhXs8VDNjqM3sZciRaT60VN4RVgRrvRelgUeEcQXe/8PhbX379/GjkfPFq9J0CuC2NeldDP8=
-X-Received: by 2002:a19:5f11:: with SMTP id t17-v6mr10627527lfb.64.1532959090015;
- Mon, 30 Jul 2018 06:58:10 -0700 (PDT)
+        Mon, 30 Jul 2018 11:33:26 -0400
+Received: from vps0.lunn.ch ([185.16.172.187]:50449 "EHLO vps0.lunn.ch"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726530AbeG3Pd0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Jul 2018 11:33:26 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch; s=20171124;
+        h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date; bh=WO66kSbvOcn3PBk1aFheaTemX3FRoYo8IRJdfsuZV3o=;
+        b=ghgo7/PhrNxUoVWLJahGUI+PKhamU7k5nS1YV23apmEjnmTsq6G5meQD9ftgYrTq3vH+N3DDggMTjFynk8WT1i9mtvmBGXoRn4IvEhbnZFRLvfaHCRA/I8SSXTrIpiEc24qntKhvCLfhMmNy29Ew2Llt8qV4pkd5Ya1vUvSf22g=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.84_2)
+        (envelope-from <andrew@lunn.ch>)
+        id 1fk8gf-0008Ip-LZ; Mon, 30 Jul 2018 15:58:13 +0200
+Date:   Mon, 30 Jul 2018 15:58:13 +0200
+From:   Andrew Lunn <andrew@lunn.ch>
+To:     Quentin Schulz <quentin.schulz@bootlin.com>
+Cc:     f.fainelli@gmail.com, davem@davemloft.net, robh+dt@kernel.org,
+        mark.rutland@arm.com, devicetree@vger.kernel.org,
+        netdev@vger.kernel.org, alexandre.belloni@bootlin.com,
+        linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com
+Subject: Re: [PATCH 3/4] dt-bindings: net: phy: mscc: vsc8531: fix missing
+ "/bits/ 8" in example
+Message-ID: <20180730135813.GH13198@lunn.ch>
+References: <20180730130236.3837-1-quentin.schulz@bootlin.com>
+ <20180730130236.3837-3-quentin.schulz@bootlin.com>
 MIME-Version: 1.0
-Received: by 2002:a19:2b14:0:0:0:0:0 with HTTP; Mon, 30 Jul 2018 06:58:09
- -0700 (PDT)
-In-Reply-To: <10502231.oSnn9dME1M@avalon>
-References: <20180728154007.GA28426@jordon-HP-15-Notebook-PC>
- <CAK-LDbKqU4Yub5H0_6tRpED4DLN8D+XrsUaNT5SN9Oq0sEpBNg@mail.gmail.com>
- <CAFqt6zYy4GfQn0VQ5rfoygY+8M1RQYEv_BH-Jxmv6epoLj3xmw@mail.gmail.com> <10502231.oSnn9dME1M@avalon>
-From:   Souptick Joarder <jrdr.linux@gmail.com>
-Date:   Mon, 30 Jul 2018 19:28:09 +0530
-Message-ID: <CAFqt6zaiThFYHRGYqTFYVcYK3Z6vCV4qAU0qMMheY7wGyggVrA@mail.gmail.com>
-Subject: Re: [PATCH] drm/rcar-du: Convert drm_atomic_helper_suspend/resume()
-To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc:     Vaishali Thakkar <vthakkar@vaishalithakkar.in>, airlied@linux.ie,
-        Ajit Linux <ajitn.linux@gmail.com>,
-        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Daniel Vetter <daniel@ffwll.ch>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180730130236.3837-3-quentin.schulz@bootlin.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Jul 29, 2018 at 1:50 AM, Laurent Pinchart
-<laurent.pinchart@ideasonboard.com> wrote:
-> Hi Souptick,
->
-> Thank you for the patch.
->
-> On Saturday, 28 July 2018 21:50:58 EEST Souptick Joarder wrote:
->> On Sat, Jul 28, 2018 at 11:20 PM, Vaishali Thakkar wrote:
->> > On Sat, Jul 28, 2018 at 9:10 PM, Souptick Joarder wrote:
->> >> convert drm_atomic_helper_suspend/resume() to use
->> >> drm_mode_config_helper_suspend/resume().
->> >
->> > Hi Souptick,
->> >
->> > Thanks for your patch.
->> >
->> >> Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
->> >> Signed-off-by: Ajit Negi <ajitn.linux@gmail.com>
->> >> ---
->> >>
->> >>  drivers/gpu/drm/rcar-du/rcar_du_drv.c | 21 ++-------------------
->> >>  1 file changed, 2 insertions(+), 19 deletions(-)
->> >>
->> >> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_drv.c
->> >> b/drivers/gpu/drm/rcar-du/rcar_du_drv.c index 02aee6c..288220f 100644
->> >> --- a/drivers/gpu/drm/rcar-du/rcar_du_drv.c
->> >> +++ b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
->> >> @@ -357,32 +357,15 @@ static void rcar_du_lastclose(struct drm_device
->> >> *dev)
->> >>
->> >>  static int rcar_du_pm_suspend(struct device *dev)
->> >>  {
->> >>         struct rcar_du_device *rcdu = dev_get_drvdata(dev);
->> >> -       struct drm_atomic_state *state;
->> >>
->> >> -       drm_kms_helper_poll_disable(rcdu->ddev);
->> >> -       drm_fbdev_cma_set_suspend_unlocked(rcdu->fbdev, true);
->> >> -
->> >> -       state = drm_atomic_helper_suspend(rcdu->ddev);
->> >> -       if (IS_ERR(state)) {
->> >> -               drm_fbdev_cma_set_suspend_unlocked(rcdu->fbdev, false);
->> >
->> > I don't think we can use drm_mode_config_helper_(suspend/resume)
->> > API here as this file uses CMA functions.
->>
->> drm_fbdev_cma_set_suspend_unlocked() is wrapper function which
->> invokes drm_fb_helper_set_suspend_unlocked().
->>
->> Where the new API drm_mode_config_helper_suspend/resume() directly invokes
->> drm_fb_helper_set_suspend_unlocked(). So it is safe to replace exiting
->> code with API drm_mode_config_helper_suspend/resume().
->
+On Mon, Jul 30, 2018 at 03:02:35PM +0200, Quentin Schulz wrote:
+> The "vsc8531,led-N-mode" property is read as a u8 in the driver and
+> there aren't a lot of modes anyway.
+> 
+> Without the "/bits/ 8" in front of the value of the property, the
+> value is stored as an u32 resulting in of_read_property_u8 to always
+> return 0.
 
-> I agree that they're functionally equivalent for now, but what if
-> drm_fbdev_cma_set_suspend_unlocked() gets extended later ? This change risks
-> introducing a breakage that could could unnoticed at that point.
+Hi Quentin
 
-No, any extention of drm_fbdev_cma_set_suspend_unlocked() will not have
-any impact on driver because with this patch we will be retaining the original
-suspend/resume logic of the rcar-du driver and further this driver is not going
-to use drm_fbdev_cma_set_suspend_unlocked().
+on big endian systems. I'm expect this worked on little endian ARM. I
+think the development work was done on a hacked RPi, if i remember
+correctly.
 
+> 
+> Fix the example so that people using the property can actually use it.
+> 
+> Signed-off-by: Quentin Schulz <quentin.schulz@bootlin.com>
+> ---
+>  Documentation/devicetree/bindings/net/mscc-phy-vsc8531.txt | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/net/mscc-phy-vsc8531.txt b/Documentation/devicetree/bindings/net/mscc-phy-vsc8531.txt
+> index 664d9d0543fc..4c7d1d384df0 100644
+> --- a/Documentation/devicetree/bindings/net/mscc-phy-vsc8531.txt
+> +++ b/Documentation/devicetree/bindings/net/mscc-phy-vsc8531.txt
+> @@ -63,6 +63,6 @@ Example:
+>                  compatible = "ethernet-phy-id0007.0570";
+>                  vsc8531,vddmac		= <3300>;
+>                  vsc8531,edge-slowdown	= <7>;
+> -                vsc8531,led-0-mode	= <LINK_1000_ACTIVITY>;
+> -                vsc8531,led-1-mode	= <LINK_100_ACTIVITY>;
+> +                vsc8531,led-0-mode	= /bits/ 8 <LINK_1000_ACTIVITY>;
+> +                vsc8531,led-1-mode	= /bits/ 8 <LINK_100_ACTIVITY>;
 
-> At the very
-> least you should add a comment in drm_fbdev_cma_set_suspend_unlocked() to
-> explain that any extension of the function should also address all drivers
-> using drm_mode_config_helper_suspend() and drm_mode_config_helper_resume().
+I don't know the device tree language well enough...
 
-The consumers of drm_fbdev_cma_set_suspend_unlocked() are -
-drivers/gpu/drm/arm/hdlcd_drv.c
-drivers/gpu/drm/drm_fb_cma_helper.c
+Would this work?
 
-and both will be converted to use API drm_mode_config_helper_suspend/resume().
-As there will be no more consumer of drm_fbdev_cma_set_suspend_unlocked() , we
-can remove this wrapper API forever :)
+vsc8531,led-1-mode	= < /bits/ 8  LINK_100_ACTIVITY>;
 
->
->> > And from git grep it seems that there are very few drivers using it at the
->> > moment, so not sure if introducing new API functions similar to
->> > drm_mode_config will make sense or not.
->>
->> https://www.kernel.org/doc/html/latest/gpu/todo.html
->>
->> It was picked up from TODO list after discussing with
->> Daniel.
->>
->> > Thanks.
->> >
->> >> -               drm_kms_helper_poll_enable(rcdu->ddev);
->> >> -               return PTR_ERR(state);
->> >> -       }
->> >> -
->> >> -       rcdu->suspend_state = state;
->
-> Additionally, I think you can remove the suspend_state field from the rcdu
-> structure.
+If so, you can make it part of the #define.
 
-Sure, I will remove it in v2.
-
->
->> >> -       return 0;
->> >> +       return drm_mode_config_helper_suspend(rcdu->ddev);
->> >>  }
->> >>
->> >>  static int rcar_du_pm_resume(struct device *dev)
->> >>  {
->> >>         struct rcar_du_device *rcdu = dev_get_drvdata(dev);
->> >>
->> >> -       drm_atomic_helper_resume(rcdu->ddev, rcdu->suspend_state);
->> >> -       drm_fbdev_cma_set_suspend_unlocked(rcdu->fbdev, false);
->> >> -       drm_kms_helper_poll_enable(rcdu->ddev);
->> >> -
->> >> -       return 0;
->> >> +       return drm_mode_config_helper_resume(rcdu->ddev);
->> >>  }
->> >>  #endif
->
-> --
-> Regards,
->
-> Laurent Pinchart
->
->
->
+   Andrew
