@@ -2,293 +2,175 @@ Return-Path: <SRS0=qqIy=KO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D9EEFD21E1
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 16:00:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C10E016256E1
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 16:03:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2C3D9205C9
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 16:00:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 55684205C9
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 16:03:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="Y0HQTMb5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2C3D9205C9
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="kmD/KUXy"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 55684205C9
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727597AbeG3Rfr (ORCPT
+        id S1726916AbeG3Riu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 30 Jul 2018 13:35:47 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:41564 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726661AbeG3Rfr (ORCPT
+        Mon, 30 Jul 2018 13:38:50 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:45524 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726681AbeG3Riu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Jul 2018 13:35:47 -0400
-Received: from avalon.localnet (dfj612ybrt5fhg77mgycy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:2e86:4862:ef6a:2804])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 459F31AC2;
-        Mon, 30 Jul 2018 18:00:07 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1532966408;
-        bh=X0zIpPEKJU7zIjw8TQJ9/3iFjD+xa6McIS8b8ybZUzc=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Y0HQTMb5XhV+RZ4TBNgc3Qbtpp2pxJYym1Q3xdycKFniyuCg8LShmUzHzDkSAvw0D
-         F9VUMoQwPnLzMsRfxwvW4jIJ649cRTXTfoq3v0AtDvmYi3RbdDpRn6JZtJK3cnXxBs
-         L+tvi6ILk8e56pzXireQD6ScozRcuZGRE0AGDxcE=
-From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To:     Keiichi Watanabe <keiichiw@chromium.org>
-Cc:     linux-kernel@vger.kernel.org,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-media@vger.kernel.org, kieran.bingham@ideasonboard.com,
-        tfiga@chromium.org, dianders@chromium.org,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Ezequiel Garcia <ezequiel@collabora.com>,
-        "Matwey V. Kornilov" <matwey@sai.msu.ru>
-Subject: Re: [RFC PATCH v1] media: uvcvideo: Cache URB header data before processing
-Date:   Mon, 30 Jul 2018 19:00:46 +0300
-Message-ID: <11886963.8nkeRH3xvi@avalon>
-Organization: Ideas on Board Oy
-In-Reply-To: <20180627103408.33003-1-keiichiw@chromium.org>
-References: <20180627103408.33003-1-keiichiw@chromium.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+        Mon, 30 Jul 2018 13:38:50 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
+        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
+        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
+        List-Archive; bh=nD1ADE8OmyxmMGDDv+zK01i5aIAD1spQNLVroH7KX5c=; b=kmD/KUXy3ajt
+        cj2NpVNXteKjSMTZr/MhQhgUECfb/FT1nIeHiXXM5nj/jvH92A0WqPzANGz1KSR8Wstcg4JlBaAD4
+        jIsruobqkghWVR1zVUkUF5IfzseSNykLGXa4iqelEF/D3KoyH53upxpdWnCCSzd4y5krYIJXfZLkI
+        Ohsa0=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1fkAdZ-0005YD-Qk; Mon, 30 Jul 2018 16:03:09 +0000
+Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
+        id 770721124216; Mon, 30 Jul 2018 17:03:09 +0100 (BST)
+From:   Mark Brown <broonie@kernel.org>
+To:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Cc:     Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org
+Subject: Applied "regulator: bd71837: adobt MFD changes to regulator driver" to the regulator tree
+In-Reply-To: 
+Message-Id: <20180730160309.770721124216@debutante.sirena.org.uk>
+Date:   Mon, 30 Jul 2018 17:03:09 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Keiichi,
+The patch
 
-(CC'ing Alan, Ezequiel and Matwey)
+   regulator: bd71837: adobt MFD changes to regulator driver
 
-Thank you for the patch.
+has been applied to the regulator tree at
 
-On Wednesday, 27 June 2018 13:34:08 EEST Keiichi Watanabe wrote:
-> On some platforms with non-coherent DMA (e.g. ARM), USB drivers use
-> uncached memory allocation methods. In such situations, it sometimes
-> takes a long time to access URB buffers.  This can be a cause of video
-> flickering problems if a resolution is high and a USB controller has
-> a very tight time limit. (e.g. dwc2) To avoid this problem, we copy
-> header data from (uncached) URB buffer into (cached) local buffer.
-> 
-> This change should make the elapsed time of the interrupt handler
-> shorter on platforms with non-coherent DMA. We measured the elapsed
-> time of each callback of uvc_video_complete without/with this patch
-> while capturing Full HD video in
-> https://webrtc.github.io/samples/src/content/getusermedia/resolution/.
-> I tested it on the top of Kieran Bingham's Asynchronous UVC series
-> https://www.mail-archive.com/linux-media@vger.kernel.org/msg128359.html.
-> The test device was Jerry Chromebook (RK3288) with Logitech Brio 4K.
-> I collected data for 5 seconds. (There were around 480 callbacks in
-> this case.) The following result shows that this patch makes
-> uvc_video_complete about 2x faster.
-> 
->            | average | median  | min     | max     | standard deviation
-> 
-> w/o caching| 45319ns | 40250ns | 33834ns | 142625ns| 16611ns
-> w/  caching| 20620ns | 19250ns | 12250ns | 56583ns | 6285ns
-> 
-> In addition, we confirmed that this patch doesn't make it worse on
-> coherent DMA architecture by performing the same measurements on a
-> Broadwell Chromebox with the same camera.
-> 
->            | average | median  | min     | max     | standard deviation
-> 
-> w/o caching| 21026ns | 21424ns | 12263ns | 23956ns | 1932ns
-> w/  caching| 20728ns | 20398ns |  8922ns | 45120ns | 3368ns
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git 
 
-This is very interesting, and it seems related to https://
-patchwork.kernel.org/patch/10468937/. You might have seen that discussion as 
-you got CC'ed at some point.
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
 
-I wonder whether performances couldn't be further improved by allocating the 
-URB buffers cached, as that would speed up the memcpy() as well. Have you 
-tested that by any chance ?
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
-> Signed-off-by: Keiichi Watanabe <keiichiw@chromium.org>
-> ---
-> 
-> After applying 6 patches in
-> https://www.mail-archive.com/linux-media@vger.kernel.org/msg128359.html,
-> I measured elapsed time by adding the following code to
-> /drivers/media/usb/uvc/uvc_video.c
-> 
-> @@ -XXXX,6 +XXXX,9 @@ static void uvc_video_complete(struct urb *urb)
->         struct uvc_video_queue *queue = &stream->queue;
->  	struct uvc_buffer *buf = NULL;
->  	int ret;
-> +	ktime_t start, end;
-> +	int elapsed_time;
-> +	start = ktime_get();
->  	switch (urb->status) {
->  	case 0:
-> 
-> @@ -XXXX,6 +XXXX,10 @@ static void uvc_video_complete(struct urb *urb)
-> 
->  	INIT_WORK(&uvc_urb->work, uvc_video_copy_data_work);
->  	queue_work(stream->async_wq, &uvc_urb->work);
-> +
-> +	end = ktime_get();
-> +	elapsed_time = ktime_to_ns(ktime_sub(end, start));
-> +	pr_err("elapsed time: %d ns", elapsed_time);
->  }
-> 
->  /*
-> 
-> 
->  drivers/media/usb/uvc/uvc_video.c | 92 +++++++++++++++----------------
->  1 file changed, 43 insertions(+), 49 deletions(-)
-> diff --git a/drivers/media/usb/uvc/uvc_video.c
-> b/drivers/media/usb/uvc/uvc_video.c index a88b2e51a666..ff2eddc55530 100644
-> --- a/drivers/media/usb/uvc/uvc_video.c
-> +++ b/drivers/media/usb/uvc/uvc_video.c
-> @@ -391,36 +391,15 @@ static inline ktime_t uvc_video_get_time(void)
-> 
->  static void
->  uvc_video_clock_decode(struct uvc_streaming *stream, struct uvc_buffer
-> *buf, -		       const u8 *data, int len)
-> +		       const u8 *data, int len, unsigned int header_size,
-> +		       bool has_pts, bool has_scr)
->  {
->  	struct uvc_clock_sample *sample;
-> -	unsigned int header_size;
-> -	bool has_pts = false;
-> -	bool has_scr = false;
->  	unsigned long flags;
->  	ktime_t time;
->  	u16 host_sof;
->  	u16 dev_sof;
-> 
-> -	switch (data[1] & (UVC_STREAM_PTS | UVC_STREAM_SCR)) {
-> -	case UVC_STREAM_PTS | UVC_STREAM_SCR:
-> -		header_size = 12;
-> -		has_pts = true;
-> -		has_scr = true;
-> -		break;
-> -	case UVC_STREAM_PTS:
-> -		header_size = 6;
-> -		has_pts = true;
-> -		break;
-> -	case UVC_STREAM_SCR:
-> -		header_size = 8;
-> -		has_scr = true;
-> -		break;
-> -	default:
-> -		header_size = 2;
-> -		break;
-> -	}
-> -
->  	/* Check for invalid headers. */
->  	if (len < header_size)
->  		return;
-> @@ -717,11 +696,10 @@ void uvc_video_clock_update(struct uvc_streaming
-> *stream, */
-> 
->  static void uvc_video_stats_decode(struct uvc_streaming *stream,
-> -		const u8 *data, int len)
-> +				   const u8 *data, int len,
-> +				   unsigned int header_size, bool has_pts,
-> +				   bool has_scr)
->  {
-> -	unsigned int header_size;
-> -	bool has_pts = false;
-> -	bool has_scr = false;
->  	u16 uninitialized_var(scr_sof);
->  	u32 uninitialized_var(scr_stc);
->  	u32 uninitialized_var(pts);
-> @@ -730,25 +708,6 @@ static void uvc_video_stats_decode(struct uvc_streaming
-> *stream, stream->stats.frame.nb_packets == 0)
->  		stream->stats.stream.start_ts = ktime_get();
-> 
-> -	switch (data[1] & (UVC_STREAM_PTS | UVC_STREAM_SCR)) {
-> -	case UVC_STREAM_PTS | UVC_STREAM_SCR:
-> -		header_size = 12;
-> -		has_pts = true;
-> -		has_scr = true;
-> -		break;
-> -	case UVC_STREAM_PTS:
-> -		header_size = 6;
-> -		has_pts = true;
-> -		break;
-> -	case UVC_STREAM_SCR:
-> -		header_size = 8;
-> -		has_scr = true;
-> -		break;
-> -	default:
-> -		header_size = 2;
-> -		break;
-> -	}
-> -
->  	/* Check for invalid headers. */
->  	if (len < header_size || data[0] < header_size) {
->  		stream->stats.frame.nb_invalid++;
-> @@ -957,10 +916,41 @@ static void uvc_video_stats_stop(struct uvc_streaming
-> *stream) * to be called with a NULL buf parameter. uvc_video_decode_data
-> and * uvc_video_decode_end will never be called with a NULL buffer.
->   */
-> +static void uvc_video_decode_header_size(const u8 *data, int *header_size,
-> +					 bool *has_pts, bool *has_scr)
-> +{
-> +	switch (data[1] & (UVC_STREAM_PTS | UVC_STREAM_SCR)) {
-> +	case UVC_STREAM_PTS | UVC_STREAM_SCR:
-> +		*header_size = 12;
-> +		*has_pts = true;
-> +		*has_scr = true;
-> +		break;
-> +	case UVC_STREAM_PTS:
-> +		*header_size = 6;
-> +		*has_pts = true;
-> +		break;
-> +	case UVC_STREAM_SCR:
-> +		*header_size = 8;
-> +		*has_scr = true;
-> +		break;
-> +	default:
-> +		*header_size = 2;
-> +	}
-> +}
-> +
->  static int uvc_video_decode_start(struct uvc_streaming *stream,
-> -		struct uvc_buffer *buf, const u8 *data, int len)
-> +				  struct uvc_buffer *buf, const u8 *urb_data,
-> +				  int len)
->  {
->  	u8 fid;
-> +	u8 data[12];
-> +	unsigned int header_size;
-> +	bool has_pts = false, has_scr = false;
-> +
-> +	/* Cache the header since urb_data is uncached memory. The size of
-> +	 * header is at most 12 bytes.
-> +	 */
-> +	memcpy(data, urb_data, min(len, 12));
-> 
->  	/* Sanity checks:
->  	 * - packet must be at least 2 bytes long
-> @@ -983,8 +973,12 @@ static int uvc_video_decode_start(struct uvc_streaming
-> *stream, uvc_video_stats_update(stream);
->  	}
-> 
-> -	uvc_video_clock_decode(stream, buf, data, len);
-> -	uvc_video_stats_decode(stream, data, len);
-> +	uvc_video_decode_header_size(data, &header_size, &has_pts, &has_scr);
-> +
-> +	uvc_video_clock_decode(stream, buf, data, len, header_size, has_pts,
-> +			       has_scr);
-> +	uvc_video_stats_decode(stream, data, len, header_size, has_pts,
-> +			       has_scr);
-> 
->  	/* Store the payload FID bit and return immediately when the buffer is
->  	 * NULL.
-> --
-> 2.18.0.rc2.346.g013aa6912e-goog
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
 
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
 
+Thanks,
+Mark
+
+From 410e8b4f5ca34e026ffc460a86e2354febe06fac Mon Sep 17 00:00:00 2001
+From: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Date: Mon, 30 Jul 2018 14:50:08 +0300
+Subject: [PATCH] regulator: bd71837: adobt MFD changes to regulator driver
+
+MFD part for bd71837 was changed during the review. Clean regulator part to
+match changed MFD:
+- renamed header file => fix include
+- remove unused platdata as also type definition was removed
+- Kconfig option for MFD part was changed => fix depends on clause
+- Rename Kconfig option for regulators
+  As Kconfig option for regulators gets now used (when dependency to MFD is
+  satisfied) change it so that it won't require new change when support for
+  bd71847 is added.
+
+Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ drivers/regulator/Kconfig             | 4 ++--
+ drivers/regulator/Makefile            | 2 +-
+ drivers/regulator/bd71837-regulator.c | 7 +------
+ 3 files changed, 4 insertions(+), 9 deletions(-)
+
+diff --git a/drivers/regulator/Kconfig b/drivers/regulator/Kconfig
+index 8233dc7f0a68..347351e79b1e 100644
+--- a/drivers/regulator/Kconfig
++++ b/drivers/regulator/Kconfig
+@@ -180,9 +180,9 @@ config REGULATOR_BCM590XX
+ 	  BCM590xx PMUs. This will enable support for the software
+ 	  controllable LDO/Switching regulators.
+ 
+-config REGULATOR_BD71837
++config REGULATOR_BD718XX
+ 	tristate "ROHM BD71837 Power Regulator"
+-	depends on MFD_BD71837
++	depends on MFD_ROHM_BD718XX
+ 	help
+ 	  This driver supports voltage regulators on ROHM BD71837 PMIC.
+ 	  This will enable support for the software controllable buck
+diff --git a/drivers/regulator/Makefile b/drivers/regulator/Makefile
+index b7839f41591e..18bfed61e7fe 100644
+--- a/drivers/regulator/Makefile
++++ b/drivers/regulator/Makefile
+@@ -27,7 +27,7 @@ obj-$(CONFIG_REGULATOR_AS3711) += as3711-regulator.o
+ obj-$(CONFIG_REGULATOR_AS3722) += as3722-regulator.o
+ obj-$(CONFIG_REGULATOR_AXP20X) += axp20x-regulator.o
+ obj-$(CONFIG_REGULATOR_BCM590XX) += bcm590xx-regulator.o
+-obj-$(CONFIG_REGULATOR_BD71837) += bd71837-regulator.o
++obj-$(CONFIG_REGULATOR_BD718XX) += bd71837-regulator.o
+ obj-$(CONFIG_REGULATOR_BD9571MWV) += bd9571mwv-regulator.o
+ obj-$(CONFIG_REGULATOR_DA903X)	+= da903x.o
+ obj-$(CONFIG_REGULATOR_DA9052)	+= da9052-regulator.o
+diff --git a/drivers/regulator/bd71837-regulator.c b/drivers/regulator/bd71837-regulator.c
+index 3a487255482c..0f8ac8dec3e1 100644
+--- a/drivers/regulator/bd71837-regulator.c
++++ b/drivers/regulator/bd71837-regulator.c
+@@ -7,7 +7,7 @@
+ #include <linux/gpio.h>
+ #include <linux/interrupt.h>
+ #include <linux/kernel.h>
+-#include <linux/mfd/bd71837.h>
++#include <linux/mfd/rohm-bd718x7.h>
+ #include <linux/module.h>
+ #include <linux/platform_device.h>
+ #include <linux/regulator/driver.h>
+@@ -490,7 +490,6 @@ struct reg_init {
+ static int bd71837_probe(struct platform_device *pdev)
+ {
+ 	struct bd71837_pmic *pmic;
+-	struct bd71837_board *pdata;
+ 	struct regulator_config config = { 0 };
+ 	struct reg_init pmic_regulator_inits[] = {
+ 		{
+@@ -558,7 +557,6 @@ static int bd71837_probe(struct platform_device *pdev)
+ 		goto err;
+ 	}
+ 	platform_set_drvdata(pdev, pmic);
+-	pdata = dev_get_platdata(pmic->mfd->dev);
+ 
+ 	/* Register LOCK release */
+ 	err = regmap_update_bits(pmic->mfd->regmap, BD71837_REG_REGLOCK,
+@@ -578,9 +576,6 @@ static int bd71837_probe(struct platform_device *pdev)
+ 
+ 		desc = &pmic->descs[i];
+ 
+-		if (pdata)
+-			config.init_data = pdata->init_data[i];
+-
+ 		config.dev = pdev->dev.parent;
+ 		config.driver_data = pmic;
+ 		config.regmap = pmic->mfd->regmap;
 -- 
-Regards,
-
-Laurent Pinchart
-
-
+2.18.0
 
