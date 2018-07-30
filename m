@@ -6,114 +6,105 @@ X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
 	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EAA74C43142
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 21:02:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD6BAC43142
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 21:07:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A249A208A1
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 21:02:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 521DC20870
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 21:07:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=thunk.org header.i=@thunk.org header.b="BVRiGPEZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A249A208A1
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mit.edu
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="NQrik2BB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 521DC20870
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731993AbeG3WjN (ORCPT
+        id S1731806AbeG3WoZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 30 Jul 2018 18:39:13 -0400
-Received: from imap.thunk.org ([74.207.234.97]:44402 "EHLO imap.thunk.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728799AbeG3WjN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Jul 2018 18:39:13 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=thunk.org;
-         s=ef5046eb; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=I0OXXUQ+HUkAoh85Px7CBSfmnfPizp8wN6b5Q3OhQXA=; b=BVRiGPEZQTylNbDLP/qqbO/IOs
-        NPK0Bo+KYqYGhCMhKpG2teQWoyG1130QZDga2zm2kc6szrwAc6oA423R3C54Twz9vOt2XfPgAVSMd
-        ZzIfmbNd+TAn5XKG9e6L/u0J/P3oAXmLWxpErPXpdD0q+OrDecvtjaC5ouEuCBik0qyQ=;
-Received: from root (helo=callcc.thunk.org)
-        by imap.thunk.org with local-esmtp (Exim 4.89)
-        (envelope-from <tytso@thunk.org>)
-        id 1fkFIx-0007XN-CL; Mon, 30 Jul 2018 21:02:11 +0000
-Received: by callcc.thunk.org (Postfix, from userid 15806)
-        id 0382C7A614A; Mon, 30 Jul 2018 17:02:09 -0400 (EDT)
-Date:   Mon, 30 Jul 2018 17:02:09 -0400
-From:   "Theodore Y. Ts'o" <tytso@mit.edu>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Pavel Machek <pavel@ucw.cz>,
-        David Howells <dhowells@redhat.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 36/38] vfs: Add a sample program for the new mount API
- [ver #10]
-Message-ID: <20180730210209.GY21725@thunk.org>
-Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Matthew Wilcox <willy@infradead.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Pavel Machek <pavel@ucw.cz>, David Howells <dhowells@redhat.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <20180729113749.GA7333@amd>
- <153271267980.9458.7640156373438016898.stgit@warthog.procyon.org.uk>
- <153271292330.9458.14583488053811372222.stgit@warthog.procyon.org.uk>
- <25489.1532953411@warthog.procyon.org.uk>
- <20180730143104.GB24051@amd>
- <20180730180842.GA5544@bombadil.infradead.org>
- <CA+55aFwY1nQ0LG8CeC8chugWO40kOGKpovBOadpGOOMBinNhbg@mail.gmail.com>
- <20180730183847.GB5544@bombadil.infradead.org>
- <CA+55aFzpisX0+T_ipwUdOCXY+tkhe2Ao3KDZxx+UPpguVmirnQ@mail.gmail.com>
- <20180730194938.GA12962@bombadil.infradead.org>
+        Mon, 30 Jul 2018 18:44:25 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:59168 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728746AbeG3WoZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Jul 2018 18:44:25 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=sP53BLfYc73/c9QAd2hpYtrz7QXf39oYfXfpVz8T08M=; b=NQrik2BB4L7PYKZjOIGN2KCfJ
+        glsfdGv7oqrf30LJAXT+LHoRxt/SI88t7eqpDrt0ClfZbX8NpXX6tdDuG5xIeP88vl0JOFTryPFMG
+        3S7IzFnDhpc5iFuDFrpNMwc7fZvkHA3iI10t/KbGOkZspm/BWUtySOB5gz+3nw8g7R1b8xKFek5TT
+        aB3N+nPjgN8T+FlIzBlG8aKqE26ZmEm6fP93k2xMTOUK8Y6gzhJKSO3QLuUbdXOEl8/cEPBcO0eWw
+        WltUSbiGD7EPsw1BHrI8mTxIbUi23+7ToqWJ21ygL8PYExawUQA7y6+pQC8zcrM1WtkWlc05UpMV+
+        mIQndtZcg==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fkFO6-0004Gk-IV; Mon, 30 Jul 2018 21:07:30 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 2683420298BC1; Mon, 30 Jul 2018 23:07:28 +0200 (CEST)
+Date:   Mon, 30 Jul 2018 23:07:28 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Sodagudi Prasad <psodagud@codeaurora.org>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        isaacm@codeaurora.org, matt@codeblueprint.co.uk, mingo@kernel.org,
+        linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org,
+        pkondeti@codeaurora.org, stable@vger.kernel.org
+Subject: Re: [PATCH] stop_machine: Disable preemption after queueing stopper
+ threads
+Message-ID: <20180730210728.GQ2494@hirez.programming.kicks-ass.net>
+References: <1531856129-9871-1-git-send-email-isaacm@codeaurora.org>
+ <a30d1e147d3181fc7b294262e380a10c@codeaurora.org>
+ <20180724062350.nlem2suuy5wlxpts@linutronix.de>
+ <alpine.DEB.2.21.1807301220280.2518@nanos.tec.linutronix.de>
+ <20180730112140.GH2494@hirez.programming.kicks-ass.net>
+ <alpine.DEB.2.21.1807301440340.2518@nanos.tec.linutronix.de>
+ <109d0e70606ccd34861a80525d6d11aa@codeaurora.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180730194938.GA12962@bombadil.infradead.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: tytso@thunk.org
-X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
+In-Reply-To: <109d0e70606ccd34861a80525d6d11aa@codeaurora.org>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 30, 2018 at 12:49:38PM -0700, Matthew Wilcox wrote:
-> > That said, people have wanted these kinds of extended error
-> > descriptors forever, and the reason we haven't added them is that it
-> > generally is more pain than it is necessarily worth. I'm not actually
-> > at all convinced that has magically changed with the mount
-> > configuration thing.
+On Mon, Jul 30, 2018 at 10:12:43AM -0700, Sodagudi Prasad wrote:
+> How about including below change as well?  Currently, there is no way to
+> identify thread migrations completed or not.  When we observe this issue,
+> the symptom was work queue lock up. It is better to have some timeout here
+> and induce the bug_on.
+
+You'd trigger the soft-lockup or hung-task detector I think. And if not,
+we ought to look at making it trigger at least one of those.
+
+> There is no way to identify the migration threads stuck or not.
+
+Should be pretty obvious from the splat generated by the above, no?
+
+> --- a/kernel/stop_machine.c
+> +++ b/kernel/stop_machine.c
+> @@ -290,6 +290,7 @@ int stop_two_cpus(unsigned int cpu1, unsigned int cpu2,
+> cpu_stop_fn_t fn, void *
+>         struct cpu_stop_done done;
+>         struct cpu_stop_work work1, work2;
+>         struct multi_stop_data msdata;
+> +       int ret;
 > 
-> I'm not convinced we want to do this either, but if there's anywhere we
-> do want to do it then mount seems like one of the few places it might be
-> worth doing.  The reasons that a mount failed are many, and it doesn't
-> seem like a good idea to introduce a new errno every time a network
-> filesystem finds a new failure mode.
+>         msdata = (struct multi_stop_data){
+>                 .fn = fn,
+> @@ -312,7 +313,10 @@ int stop_two_cpus(unsigned int cpu1, unsigned int cpu2,
+> cpu_stop_fn_t fn, void *
+>         if (cpu_stop_queue_two_works(cpu1, &work1, cpu2, &work2))
+>                 return -ENOENT;
+> 
+> -       wait_for_completion(&done.completion);
+> +       ret = wait_for_completion_timeout(&done.completion,
+> msecs_to_jiffies(1000));
+> +       if (!ret)
+> +               BUG_ON(1);
+> +
 
-We've lived without VMS-style error reporting for a long time, and it
-*that* much of a real problem.  Even with network file systems, I
-don't think it's been that hard of a problem.
-
-I'd also argue that if there was something super-complicated, the
-right way to solve that problem is to push that processing into
-userspace --- e.g., if President Trump and President Putin both have
-to authenticate to the Nuclear Launch Codes server, then in
-mount.pentagonfs, the relevant X.509 certificates would be sent to
-server in the userspace process, and if there needs to be complex
-error messages reflecting Certificate Revocation List handling, etc.,
-mount.pentagonfs can use gettextfs so the program can be localized in
-English and Russian.  Once the authentication is completed, then
-mount.pentagonfs can pass the file descriptor for the network
-connection into fsconfig.
-
-So it might be that we're seriously over-thinking things.  Most of the
-really complicated error messages are at connection setup time, and
-that can be done in userspace, and then userspace can handle all of
-that awful gettext, or VMS-style error messages, or whatever other
-horrors the I18N community want to inflict on us.  :-)
-
-	    	 	   	   - Ted
+That's a random timeout, which if you spuriously trigger it, will take
+down your machine. That seems like a cure worse than the disease.
