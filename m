@@ -2,182 +2,92 @@ Return-Path: <SRS0=qqIy=KO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AA0813F6DFF
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 14:09:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68E20FD21E1
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 14:10:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AB84020870
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 14:09:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 15BC220870
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 14:10:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="vqkYY8pz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AB84020870
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="o0wW/2xQ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 15BC220870
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727474AbeG3Po6 (ORCPT
+        id S1729283AbeG3PqG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 30 Jul 2018 11:44:58 -0400
-Received: from aserp2130.oracle.com ([141.146.126.79]:35370 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726740AbeG3Po5 (ORCPT
+        Mon, 30 Jul 2018 11:46:06 -0400
+Received: from mail-yw0-f194.google.com ([209.85.161.194]:38534 "EHLO
+        mail-yw0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726765AbeG3PqG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Jul 2018 11:44:57 -0400
-Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
-        by aserp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w6UE8wMS014091
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Jul 2018 14:09:46 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=mime-version :
- references : in-reply-to : from : date : message-id : subject : to : cc :
- content-type; s=corp-2018-07-02;
- bh=aEYywBpLuJb06lebWVOkgljrAav/y+L2dQUSu2nsXR0=;
- b=vqkYY8pzAWi0lT0QFyglPZIUXOtQ7+BXW4DqgfpVA2Sb9nXD2Y++4jO35FrpO6SMvQLy
- cM60bGVwL8FcPaIVVGQU+LvCD1N6+yBerx+xN7iSEnQivvK3ZEj0UMj/ihxrU/CoyFCT
- oEF1K+9o875vv9rm+dGq7hEXtdrE2WdUe8hV0/yki5QWEqt0pxFH/0jf0yvx63bE2gT2
- AUvkvkyVDRYaKWejw4c8v4fNfItlLjRxxsgLHhob2+zI0lw/LXNoV8k5sLjlr3YAhXXj
- LzTgTHYxtGBH80/Bcw4qENo1bF8D3ysMucxF1mYcJQoPdoZhkjS20UPTITLavzMKXOCo IQ== 
-Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
-        by aserp2130.oracle.com with ESMTP id 2kge0cvsn0-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK)
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Jul 2018 14:09:46 +0000
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w6UE9itq018900
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK)
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Jul 2018 14:09:44 GMT
-Received: from abhmp0009.oracle.com (abhmp0009.oracle.com [141.146.116.15])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w6UE9iD2000320
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Jul 2018 14:09:44 GMT
-Received: from mail-oi0-f44.google.com (/209.85.218.44)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 30 Jul 2018 07:09:44 -0700
-Received: by mail-oi0-f44.google.com with SMTP id s198-v6so21451705oih.11
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Jul 2018 07:09:44 -0700 (PDT)
-X-Gm-Message-State: AOUpUlGZ4PNknANq/ZWS1viVCBNXzy/dgH4kg7yGXXU/GJy9JZrEDAfQ
-        9+3YO5mrXDYnzgCyIir8FlEWm2dEPb1g8OFx1pc=
-X-Google-Smtp-Source: AAOMgpfslVkE7C0au497fy4JJ28GzkhAlo5aWdDfA8yyjo0OvGbkNq+2TSuqCkKfFFrCY06ZGcQ0UKoaNdB3+Ct6buM=
-X-Received: by 2002:aca:db09:: with SMTP id s9-v6mr19391498oig.339.1532959783786;
- Mon, 30 Jul 2018 07:09:43 -0700 (PDT)
+        Mon, 30 Jul 2018 11:46:06 -0400
+Received: by mail-yw0-f194.google.com with SMTP id r3-v6so4392405ywc.5;
+        Mon, 30 Jul 2018 07:10:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=eWRTwL/5+4+PhEBsNLIiCHp2Gqle593wB1wxCVEjlA8=;
+        b=o0wW/2xQXez0KwYI1xGVc6hbSEWgbt1jgScUbWG3n2ShaUEoRNJrv8VhGsruMFjVji
+         OVPQ/UbFZ+ibreKCXUDCD74VZ4+HgGrLfbnqpKnTIcYkTV2G4Z7gUGKSHmxpSgvUKCYm
+         qRCWdzqeIQs9oVu2GpQgmi/zRuVwmL4Gkz/9xOt5NTQGFS5X03TM/K3BI+us7i1IF29T
+         UoyCFiikCY2kg2IHBolNmSPbKYvK4Co4v483LiUU78gA6rz3tvuJdB4eLvzz6HZuSDjJ
+         JU9q4geQ3/XJKFtZbg69Egc5f/dLt/BLgE8SHJEYexRXaj/UH9EdI3DHsKs4XkIJ7wBW
+         dyJw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=eWRTwL/5+4+PhEBsNLIiCHp2Gqle593wB1wxCVEjlA8=;
+        b=j1rvpKqM90wOy4IopKt+OlEozy5gPwwDH12TQCPOh1gjOEZKarF+SvchKAp7j6awd2
+         SxxVAdS63WueqNwA0PmNhe5XuwUnGB1s2lJ6wSarL0rF4Z11L2W/zZG0USSHPwUgtzZA
+         DgDWDTiCal+OFHS1bEQdx2hnI7EhsLs82Oe3LoxyjUUDH/rphkntRkVzZlWvnZUrZLeb
+         572btm5rMwClQaZ7ftw9zFsMlf6YnaCG/dFg+kTLB2V4xoKs1sCiq1niVmpm4u+suQBy
+         BEbzciJlCyEZKrY9f9erd9P1lJNjELK1RgfBgc3sLkuJq9HH6QQcQyRrlZvBeJmTzbTR
+         o28w==
+X-Gm-Message-State: AOUpUlGI0DDUoEwfrgIQvvEKukKpopSdO5CyJLJ4WLumXnBOvk9hzkYE
+        KF1nRegYoEQY2XpC7S6coaU=
+X-Google-Smtp-Source: AAOMgpcLb5w3BbbCmcWwHpOer8vqIWBeoBvBHG35hplTWKmItsiE4EaxDSqHtOHCS+WQwGB7iJ6slw==
+X-Received: by 2002:a0d:f506:: with SMTP id e6-v6mr6779777ywf.298.1532959854887;
+        Mon, 30 Jul 2018 07:10:54 -0700 (PDT)
+Received: from localhost ([2620:10d:c091:200::2:4bfe])
+        by smtp.gmail.com with ESMTPSA id i67-v6sm11270136ywc.27.2018.07.30.07.10.53
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 30 Jul 2018 07:10:53 -0700 (PDT)
+Date:   Mon, 30 Jul 2018 07:10:52 -0700
+From:   Tejun Heo <tj@kernel.org>
+To:     Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+Cc:     hdegoede@redhat.com, rjw@rjwysocki.net, alan.cox@intel.com,
+        linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org, Mario.Limonciello@dell.com
+Subject: Re: [PATCH v2 0/2] ata: ahci: Enable DEVSLP by default on SLP_S0
+ support
+Message-ID: <20180730141052.GB1206094@devbig004.ftw2.facebook.com>
+References: <20180727204703.6505-1-srinivas.pandruvada@linux.intel.com>
 MIME-Version: 1.0
-References: <20180730075421.22830-1-douly.fnst@cn.fujitsu.com> <20180730075421.22830-2-douly.fnst@cn.fujitsu.com>
-In-Reply-To: <20180730075421.22830-2-douly.fnst@cn.fujitsu.com>
-From:   Pavel Tatashin <pasha.tatashin@oracle.com>
-Date:   Mon, 30 Jul 2018 10:09:07 -0400
-X-Gmail-Original-Message-ID: <CAGM2rebgzrPAOSHXq8XY=e6YoHLeg-qhJZy4JJLntV7xLnrPDw@mail.gmail.com>
-Message-ID: <CAGM2rebgzrPAOSHXq8XY=e6YoHLeg-qhJZy4JJLntV7xLnrPDw@mail.gmail.com>
-Subject: Re: [PATCH 1/2] x86/tsc: Avoid a double call if TSC initializes earlier.
-To:     douly.fnst@cn.fujitsu.com
-Cc:     LKML <linux-kernel@vger.kernel.org>, x86@kernel.org,
-        tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
-        peterz@infradead.org
-Content-Type: text/plain; charset="UTF-8"
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8969 signatures=668706
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=3 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1806210000 definitions=main-1807300157
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180727204703.6505-1-srinivas.pandruvada@linux.intel.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 30, 2018 at 3:55 AM Dou Liyang <douly.fnst@cn.fujitsu.com> wrote:
->
-> static_branch_enable(&__use_tsc) may be called twice in common case, that
-> is redundant. And there are also some common functions both in
-> tsc_early_init() and tsc_init().
->
-> Move them into a separate helper function, only call it once.
-> Also fix comments:
->  -s/authorative/authoritative
->  -s/cyc2ns_init/tsc_init
->
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Ingo Molnar <mingo@redhat.com>
-> Cc: "H. Peter Anvin" <hpa@zytor.com>
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: Pavel Tatashin <pasha.tatashin@oracle.com>
-> Signed-off-by: Dou Liyang <douly.fnst@cn.fujitsu.com>
+On Fri, Jul 27, 2018 at 01:47:01PM -0700, Srinivas Pandruvada wrote:
+> One of the requirement for modern x86 system to enter lowest power mode
+> (SLP_S0) is SATA IP block to be off. This is true even during when
+> platform is suspended to idle and not only in opportunistic (runtime)
+> suspend.
+> This series is to enable DEVSLP by default.
 
-Hi Dou,
+Applied to 1-2 to libata/for-4.19.
 
-Nice cleanup.
-Reviewed-by: Pavel Tatashin <pasha.tatashin@oracle.com>
+Thanks.
 
-Thank you,
-Pavel
-
-> ---
->  arch/x86/kernel/tsc.c | 22 ++++++++++++----------
->  1 file changed, 12 insertions(+), 10 deletions(-)
->
-> diff --git a/arch/x86/kernel/tsc.c b/arch/x86/kernel/tsc.c
-> index 02e416b87ac1..ba0a6b6e0726 100644
-> --- a/arch/x86/kernel/tsc.c
-> +++ b/arch/x86/kernel/tsc.c
-> @@ -182,7 +182,7 @@ static void __init cyc2ns_init_boot_cpu(void)
->  }
->
->  /*
-> - * Secondary CPUs do not run through cyc2ns_init(), so set up
-> + * Secondary CPUs do not run through tsc_init(), so set up
->   * all the scale factors for all CPUs, assuming the same
->   * speed as the bootup CPU. (cpufreq notifiers will fix this
->   * up if their speed diverges)
-> @@ -1389,7 +1389,7 @@ static bool __init determine_cpu_tsc_frequencies(bool early)
->         }
->
->         /*
-> -        * Trust non-zero tsc_khz as authorative,
-> +        * Trust non-zero tsc_khz as authoritative,
->          * and use it to sanity check cpu_khz,
->          * which will be off if system timer is off.
->          */
-> @@ -1421,6 +1421,14 @@ static unsigned long __init get_loops_per_jiffy(void)
->         return lpj;
->  }
->
-> +static void __init enable_use_tsc(void)
-> +{
-> +       /* Sanitize TSC ADJUST before cyc2ns gets initialized */
-> +       tsc_store_and_check_tsc_adjust(true);
-> +       cyc2ns_init_boot_cpu();
-> +       static_branch_enable(&__use_tsc);
-> +}
-> +
->  void __init tsc_early_init(void)
->  {
->         if (!boot_cpu_has(X86_FEATURE_TSC))
-> @@ -1429,10 +1437,7 @@ void __init tsc_early_init(void)
->                 return;
->         loops_per_jiffy = get_loops_per_jiffy();
->
-> -       /* Sanitize TSC ADJUST before cyc2ns gets initialized */
-> -       tsc_store_and_check_tsc_adjust(true);
-> -       cyc2ns_init_boot_cpu();
-> -       static_branch_enable(&__use_tsc);
-> +       enable_use_tsc();
->  }
->
->  void __init tsc_init(void)
-> @@ -1456,13 +1461,10 @@ void __init tsc_init(void)
->                         setup_clear_cpu_cap(X86_FEATURE_TSC_DEADLINE_TIMER);
->                         return;
->                 }
-> -               /* Sanitize TSC ADJUST before cyc2ns gets initialized */
-> -               tsc_store_and_check_tsc_adjust(true);
-> -               cyc2ns_init_boot_cpu();
-> +               enable_use_tsc();
->         }
->
->         cyc2ns_init_secondary_cpus();
-> -       static_branch_enable(&__use_tsc);
->
->         if (!no_sched_irq_time)
->                 enable_sched_clock_irqtime();
-> --
-> 2.14.3
->
->
->
+-- 
+tejun
