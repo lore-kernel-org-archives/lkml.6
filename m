@@ -2,137 +2,133 @@ Return-Path: <SRS0=qqIy=KO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C6D413F6DFF
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 09:25:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9411BFD21E1
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 09:25:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DF97420881
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 09:25:07 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UbdTyfHC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DF97420881
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 5364A20881
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 09:25:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5364A20881
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727641AbeG3K7K (ORCPT
+        id S1728696AbeG3K7O (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 30 Jul 2018 06:59:10 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:33495 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726758AbeG3K7K (ORCPT
+        Mon, 30 Jul 2018 06:59:14 -0400
+Received: from mail-vk0-f66.google.com ([209.85.213.66]:42134 "EHLO
+        mail-vk0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726650AbeG3K7K (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 30 Jul 2018 06:59:10 -0400
-Received: by mail-pg1-f195.google.com with SMTP id r5-v6so6937075pgv.0;
+Received: by mail-vk0-f66.google.com with SMTP id t4-v6so5371725vke.9;
         Mon, 30 Jul 2018 02:25:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=pvBmAOvXm54SsGN8KhTiaSDPeHZFYKBxD2lIOwMg75g=;
-        b=UbdTyfHCiahVwQ/v1xD33EQYe2jfAM31fRy8D3KXQKvdM+J76LZyGX6X+74RZJUNcN
-         qYXwuhqQRXRB40vr0gVITZQkY/wUfojvphVFXbS+xTS4xpALvjssvQF7gxajW6hLtaJz
-         QFKlhRmpsUvhL0kGWEhCszyQsVfQ7HwPPGWyEilId5rEKAtyEmKctvUUTIlbhkI+ZPxx
-         fUMNV0BQi3gw+RdSPLdeAZ2W+EiXbXiXb9GxcshffDzzVui6oUWXJ+ik7piG5ACPq8Zh
-         4UTTAy5KxDNd2KitGSC8j+YCRK94s4vkhQCbjZFsAx3cXHXOUm2VjfaWJ0T21NPSUd+c
-         D6wQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=pvBmAOvXm54SsGN8KhTiaSDPeHZFYKBxD2lIOwMg75g=;
-        b=t7q0aR/RFB+h5dkv3kEALXckymg72bQowTrACXblkLoFvHN2jDZdsE9gvH0Tox7Aez
-         XV54+E/vZ9Wdm34diVK5Bbwg4uCo2/VbW8rXbj5VERg2rOwL1ocUqrqWkb9nCzNzbjZo
-         X2soA4vGaIOj6K8LedhGOa7TvcX+yYjjbZlJnIWrLbWaqAM9iTI3NTTs5JiQ9izANf08
-         aHEl/Szxx8WpmfFzdZwm2OPXGc508lH+rzvieCJNvvjtRAHufkD51vicrBtTjRKPLwzH
-         z8zLJUfbcLJfRtaCgNV57Y6JmpuXwEDR72cw7wpnzMkEW+jKH9a/WovLBcLeMNZvzzmR
-         zihw==
-X-Gm-Message-State: AOUpUlH1qqAbnKdSNOZHwifcdchCJ10blSlJ+kbEpdGNOcW62fofWZos
-        qqAqkaygbrf8IK/EGCrGdeY=
-X-Google-Smtp-Source: AAOMgpc7cqNuyltE1ZlFmti0Axf0dRFUymsdrE4UpGZaHStfQI1BKV7LHIddsUY/wB/5GPhHR9dcOQ==
-X-Received: by 2002:a62:d10b:: with SMTP id z11-v6mr17134499pfg.255.1532942704907;
-        Mon, 30 Jul 2018 02:25:04 -0700 (PDT)
-Received: from localhost.localdomain ([2402:f000:1:4414:4550:ab75:cee3:d6c1])
-        by smtp.gmail.com with ESMTPSA id f67-v6sm18975558pfe.75.2018.07.30.02.25.03
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 30 Jul 2018 02:25:04 -0700 (PDT)
-From:   Jia-Ju Bai <baijiaju1990@gmail.com>
-To:     mchehab@kernel.org
-Cc:     linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jia-Ju Bai <baijiaju1990@gmail.com>
-Subject: [PATCH 2/3] media: usb: em28xx: Replace mdelay() with msleep() in em28xx_pre_card_setup()
-Date:   Mon, 30 Jul 2018 17:24:59 +0800
-Message-Id: <20180730092459.7848-1-baijiaju1990@gmail.com>
-X-Mailer: git-send-email 2.17.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ju9Jd9qEnbDxSbNmxfr1+J4UbJVqy1PPSjoI9Ui3gLg=;
+        b=qw5LnRLxE92s/QmMgch1fgRhVPvVYtmvVaDTh3694prEUx9ryyk+/uN678pSPX2+rX
+         t7MKG5XZcKxqDlP93RIeJkXmpAm0xwG15P4mKXLJEOtYn8KC7xplWS0ZJwVXCfZ7WaME
+         D38JBgI2okEFLmSqHai2PvOIpUzHaf+AuR3Vf5yTIAfNGcCLM1irm0nqisPJfKivoIIl
+         llcwnI5AKSX9n/TBln83M263XIx7kaHSM8kTgZejl2Xy1ZW+dEIhiQNPqQ6b44kB5aQM
+         mG+ytyhP/Vg0P+aIqEUxknOuteTy6woMDLLA41zXG+IviRRkjgdf7sDOl2tIv91CJcht
+         b58Q==
+X-Gm-Message-State: AOUpUlFfLqHproeRSsxb6hLHD1HuEAfu1B8dDd111t4dETPjh2LfEPhq
+        0mq4I9wVNsfn9I3QjHPJwMlUWKz13skQQHILT+8KeA==
+X-Google-Smtp-Source: AAOMgpcq6GF+uPGwSBMUqGbVrEEIHqvI0qzj9KCz0Np3ez9m64I2wdxiLvX7q5kmkxKTnFMFzZi9cLTYSuvKjE7XfVg=
+X-Received: by 2002:a1f:6b11:: with SMTP id g17-v6mr10090522vkc.82.1532942704594;
+ Mon, 30 Jul 2018 02:25:04 -0700 (PDT)
+MIME-Version: 1.0
+References: <20180724120147.15096-1-hch@lst.de> <20180724202115.GA4685@lst.de> <18df6608-61c1-963d-bb1a-d46320232f40@landley.net>
+In-Reply-To: <18df6608-61c1-963d-bb1a-d46320232f40@landley.net>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Mon, 30 Jul 2018 11:24:52 +0200
+Message-ID: <CAMuHMdXkaoypaszdyXyVA-qZvDtbcEdtdbEwpdoT8ocx-2TPYA@mail.gmail.com>
+Subject: Re: use the generic dma-noncoherent code for sh V2
+To:     Rob Landley <rob@landley.net>,
+        Guennadi Liakhovetski <g.liakhovetski@gmx.de>
+Cc:     Christoph Hellwig <hch@lst.de>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rich Felker <dalias@libc.org>,
+        Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+        Linux IOMMU <iommu@lists.linux-foundation.org>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux-sh list <linux-sh@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-em28xx_pre_card_setup() is never called in atomic context.
-It calls mdelay() to busily wait, which is not necessary.
-mdelay() can be replaced with msleep().
+Hi Rob,
 
-This is found by a static analysis tool named DCNS written by myself.
+CC Guennadi
 
-Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
----
- drivers/media/usb/em28xx/em28xx-cards.c | 20 ++++++++++----------
- 1 file changed, 10 insertions(+), 10 deletions(-)
+On Fri, Jul 27, 2018 at 6:21 PM Rob Landley <rob@landley.net> wrote:
+> On 07/24/2018 03:21 PM, Christoph Hellwig wrote:
+> > On Tue, Jul 24, 2018 at 02:01:42PM +0200, Christoph Hellwig wrote:
+> >> can you review these patches to switch sh to use the generic
+> >> dma-noncoherent code?  All the requirements are in mainline already
+> >> and we've switched various architectures over to it already.
+> >
+> > Ok, there is one more issue with this version.   Wait for a new one
+> > tomorrow.
+>
+> Speaking of DMA:
+>
+> I'm trying to wire up DMAEngine to an sh7760 board that uses platform data (and
+> fix the smc91x.c driver to use DMAEngine without #ifdef arm), so I've been
+> reading through all that stuff, but the docs seem kinda... thin?
+>
+> Is there something I should have read other than
+> Documentation/driver-model/platform.txt,
+> Documentation/dmaegine/{provider,client}.txt, then trying to picking through the
+> source code and the sh7760 hardware pdf? (And watching the youtube video of
+> Laurent Pinchart's 2014 ELC talk on DMA, Maxime Ripard's 2015 ELC overview of
+> DMAEngine, the Xilinx video on DMAEngine...)
+>
+> At first I thought the SH_DMAE could initialize itself, but the probe function
+> needs platform data, and although arch/sh/kernel/cpu/sh4a/setup-sh7722.c looks
+> _kind_ of like a model I can crib from:
+>
+> A) "make ARCH=sh se7722_defconfig" results in a config with SH_DMA disabled??!?
+> (This is why I use miniconfig instead of defconfig format, I'm assuming that's
+> bit rot?)
+>
+> B) That platform data is supplying sh_dmae_slave_config preallocating slave
+> channels to devices? (Does it have to? The docs gave me the impression the
+> driver would dynamically request them and devices could even share. Wasn't that
+> sort of the point of DMAEngine? Can my new board data _not_ do that? What's the
+> minimum amount of micromanaging I have to do?)
+>
+> C) It's full of stuff like setting ts_low_shift to CHCR_TS_LOW_SHIFT where both
+> grepping Docuemntation and Google "dmaengine ts_low_shift" are unhelpful.
+>
+> What I'd really like is a "hello world" version of DMAEngine somewhere I can
+> build and run on a supported qemu target, to set up _one_ channel with a block
+> device or something using it. I can't tell what's optional, or what the minimal
+> version of this looks like.
 
-diff --git a/drivers/media/usb/em28xx/em28xx-cards.c b/drivers/media/usb/em28xx/em28xx-cards.c
-index 6e0e67d23876..24ac257fd421 100644
---- a/drivers/media/usb/em28xx/em28xx-cards.c
-+++ b/drivers/media/usb/em28xx/em28xx-cards.c
-@@ -2825,13 +2825,13 @@ static void em28xx_pre_card_setup(struct em28xx *dev)
- 		em28xx_write_reg(dev, EM2880_R04_GPO, 0x01);
- 		usleep_range(10000, 11000);
- 		em28xx_write_reg(dev, EM2820_R08_GPIO_CTRL, 0xfd);
--		mdelay(70);
-+		msleep(70);
- 		em28xx_write_reg(dev, EM2820_R08_GPIO_CTRL, 0xfc);
--		mdelay(70);
-+		msleep(70);
- 		em28xx_write_reg(dev, EM2820_R08_GPIO_CTRL, 0xdc);
--		mdelay(70);
-+		msleep(70);
- 		em28xx_write_reg(dev, EM2820_R08_GPIO_CTRL, 0xfc);
--		mdelay(70);
-+		msleep(70);
- 		break;
- 	case EM2870_BOARD_TERRATEC_XS_MT2060:
- 		/*
-@@ -2839,11 +2839,11 @@ static void em28xx_pre_card_setup(struct em28xx *dev)
- 		 * demod work
- 		 */
- 		em28xx_write_reg(dev, EM2820_R08_GPIO_CTRL, 0xfe);
--		mdelay(70);
-+		msleep(70);
- 		em28xx_write_reg(dev, EM2820_R08_GPIO_CTRL, 0xde);
--		mdelay(70);
-+		msleep(70);
- 		em28xx_write_reg(dev, EM2820_R08_GPIO_CTRL, 0xfe);
--		mdelay(70);
-+		msleep(70);
- 		break;
- 	case EM2870_BOARD_PINNACLE_PCTV_DVB:
- 		/*
-@@ -2851,11 +2851,11 @@ static void em28xx_pre_card_setup(struct em28xx *dev)
- 		 * DVB-T demod work
- 		 */
- 		em28xx_write_reg(dev, EM2820_R08_GPIO_CTRL, 0xfe);
--		mdelay(70);
-+		msleep(70);
- 		em28xx_write_reg(dev, EM2820_R08_GPIO_CTRL, 0xde);
--		mdelay(70);
-+		msleep(70);
- 		em28xx_write_reg(dev, EM2820_R08_GPIO_CTRL, 0xfe);
--		mdelay(70);
-+		msleep(70);
- 		break;
- 	case EM2820_BOARD_GADMEI_UTV310:
- 	case EM2820_BOARD_MSI_VOX_USB_2:
--- 
-2.17.0
+I have no experience with DMA on SH, only with DMA on (DT-based) Renesas
+ARM SoCs. But I believe the DMA engines are somewhat similar.
 
+I don't know if all pieces to support DMA were ever upstreamed.
+See e.g. commit 219fb0c1436e4893 ("serial: sh-sci: Remove the platform data
+dma slave rx/tx channel IDs").
+
+Perhaps Guennadi knows/remembers?
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
