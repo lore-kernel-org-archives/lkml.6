@@ -2,150 +2,105 @@ Return-Path: <SRS0=qqIy=KO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50437FD21E1
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 10:46:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AB9513F6DFF
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 10:49:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0CA7920894
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 10:46:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0CA7920894
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fi.rohmeurope.com
+	by mail.kernel.org (Postfix) with ESMTP id 220F620892
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 10:49:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 220F620892
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728812AbeG3MVP (ORCPT
+        id S1726993AbeG3MXm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 30 Jul 2018 08:21:15 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:43352 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726637AbeG3MVO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Jul 2018 08:21:14 -0400
-Received: by mail-lj1-f196.google.com with SMTP id r13-v6so10046165ljg.10;
-        Mon, 30 Jul 2018 03:46:50 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=9msh/sUMmBfjN3v+w61oDS3q1DpWTifVmR6uNOLYVgI=;
-        b=JchpQxYZsZJXDny65D81DjFSbj0Z6e6hd657IvzkR55SZSPfCQ5UU7tW0vqYle/sWk
-         8EQ0IaP/tay0/6zEnA18FZAteI7yt5QiMtzCvXK0ZqyRQ5iYSS+B5spNZOxRFCmSUO43
-         1hig9U/TJ6eQ3C62nmEtqQLTY3H1fscMuiQkIFD67Z+qTSvDGjBIPKIYis+klVfHg+vd
-         WfOEbxDQHkrNBmRsYQjIbZVxoc5yC9rlEUPVjWMTnMvniP4dUeLrrfX+H1xZryPdLMDk
-         xDRgL05jnZHGW9mDuSvKJHKVD6DwNAc+Kv/IZNsD5MQ0IO5ZgXT2ZjrkJdJGLID0EOnP
-         n+wg==
-X-Gm-Message-State: AOUpUlGJdI9FOcUd91HMCYZc+Xg5tWZ8dXmFuTAcGLTIAkzy4JXErWdb
-        WiOnJdj3PXa2adXtxCesALQ=
-X-Google-Smtp-Source: AAOMgpeFZS2hZapoDJQnvUFQyWV92i6p7TD9NWcgc2egFz2Fwb0hqPpSYwnUq1/ZijjXhdxEbyKgGg==
-X-Received: by 2002:a2e:82cc:: with SMTP id n12-v6mr12262880ljh.58.1532947609430;
-        Mon, 30 Jul 2018 03:46:49 -0700 (PDT)
-Received: from localhost.localdomain ([213.255.186.46])
-        by smtp.gmail.com with ESMTPSA id f198-v6sm1521453lfg.86.2018.07.30.03.46.48
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 30 Jul 2018 03:46:48 -0700 (PDT)
-Date:   Mon, 30 Jul 2018 13:46:37 +0300
-From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-To:     lee.jones@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        eballetbo@gmail.com, linus.walleij@linaro.org,
-        mazziesaccount@gmail.com, dmitry.torokhov@gmail.com
-Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, sboyd@kernel.org, broonie@kernel.org,
-        linux-input@vger.kernel.org, mikko.mutanen@fi.rohmeurope.com,
-        heikki.haikola@fi.rohmeurope.com
-Subject: [PATCH v11 2/2] mfd: bd71837: Devicetree bindings for ROHM BD71837
- PMIC
-Message-ID: <04328e559dcb38b8722248af5a2de028d4237224.1532946848.git.matti.vaittinen@fi.rohmeurope.com>
-References: <cover.1532946848.git.matti.vaittinen@fi.rohmeurope.com>
+        Mon, 30 Jul 2018 08:23:42 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:33384 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726562AbeG3MXm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Jul 2018 08:23:42 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 625597DAC6;
+        Mon, 30 Jul 2018 10:49:18 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-116.rdu2.redhat.com [10.10.120.116])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 9EEB7112D17A;
+        Mon, 30 Jul 2018 10:49:16 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <b4be11f6-8235-1ee1-9a01-c09eb9b88404@I-love.SAKURA.ne.jp>
+References: <b4be11f6-8235-1ee1-9a01-c09eb9b88404@I-love.SAKURA.ne.jp> <153271267980.9458.7640156373438016898.stgit@warthog.procyon.org.uk> <153271277078.9458.16912166489973051987.stgit@warthog.procyon.org.uk>
+To:     Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Cc:     dhowells@redhat.com, viro@zeniv.linux.org.uk,
+        tomoyo-dev-en@lists.sourceforge.jp,
+        linux-security-module@vger.kernel.org,
+        torvalds@linux-foundation.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, miklos@szeredi.hu,
+        kent.overstreet@gmail.com
+Subject: Re: [PATCH 13/38] tomoyo: Implement security hooks for the new mount API [ver #10]
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1532946848.git.matti.vaittinen@fi.rohmeurope.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <10223.1532947756.1@warthog.procyon.org.uk>
+Date:   Mon, 30 Jul 2018 11:49:16 +0100
+Message-ID: <10224.1532947756@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Mon, 30 Jul 2018 10:49:18 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Mon, 30 Jul 2018 10:49:18 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'dhowells@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Document devicetree bindings for ROHM BD71837 PMIC MFD.
+Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp> wrote:
 
-Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
-Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
----
- .../devicetree/bindings/mfd/rohm,bd71837-pmic.txt  | 62 ++++++++++++++++++++++
- 1 file changed, 62 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/mfd/rohm,bd71837-pmic.txt
+> Would you provide examples of each possible combination as a C program?
+> For example, if one mount point from multiple sources with different
+> options are possible, please describe such pattern using syscall so that
+> LSM modules can run it to see whether they are working as expected. 
 
-diff --git a/Documentation/devicetree/bindings/mfd/rohm,bd71837-pmic.txt b/Documentation/devicetree/bindings/mfd/rohm,bd71837-pmic.txt
-new file mode 100644
-index 000000000000..3ca56fdb5ffe
---- /dev/null
-+++ b/Documentation/devicetree/bindings/mfd/rohm,bd71837-pmic.txt
-@@ -0,0 +1,62 @@
-+* ROHM BD71837 Power Management Integrated Circuit bindings
-+
-+BD71837MWV is a programmable Power Management IC for powering single-core,
-+dual-core, and quad-core SoCs such as NXP-i.MX 8M. It is optimized for
-+low BOM cost and compact solution footprint. It integrates 8 Buck
-+egulators and 7 LDOs to provide all the power rails required by the SoC and
-+the commonly used peripherals.
-+
-+Datasheet for PMIC is available at:
-+https://www.rohm.com/datasheet/BD71837MWV/bd71837mwv-e
-+
-+Required properties:
-+ - compatible		: Should be "rohm,bd71837".
-+ - reg			: I2C slave address.
-+ - interrupt-parent	: Phandle to the parent interrupt controller.
-+ - interrupts		: The interrupt line the device is connected to.
-+ - clocks		: The parent clock connected to PMIC. If this is missing
-+			  32768 KHz clock is assumed.
-+ - #clock-cells		: Should be 0.
-+ - regulators:		: List of child nodes that specify the regulators.
-+			  Please see ../regulator/rohm,bd71837-regulator.txt
-+
-+Optional properties:
-+- clock-output-names	: Should contain name for output clock.
-+
-+Example:
-+
-+	/* external oscillator node */
-+	osc: oscillator {
-+		compatible = "fixed-clock";
-+		#clock-cells = <1>;
-+		clock-frequency  = <32768>;
-+		clock-output-names = "osc";
-+	};
-+
-+	pmic: pmic@4b {
-+		compatible = "rohm,bd71837";
-+		reg = <0x4b>;
-+		interrupt-parent = <&gpio1>;
-+		interrupts = <29 GPIO_ACTIVE_LOW>;
-+		interrupt-names = "irq";
-+		#clock-cells = <0>;
-+		clocks = <&osc 0>;
-+		clock-output-names = "bd71837-32k-out";
-+
-+		regulators {
-+			buck1: BUCK1 {
-+				regulator-name = "buck1";
-+				regulator-min-microvolt = <700000>;
-+				regulator-max-microvolt = <1300000>;
-+				regulator-boot-on;
-+				regulator-ramp-delay = <1250>;
-+			};
-+		};
-+	};
-+
-+	/* Clock consumer node */
-+	rtc@0 {
-+		compatible = "company,my-rtc";
-+		clock-names = "my-clock";
-+		clocks = <&pmic>;
-+	};
--- 
-2.14.3
+One example could be overlayfs.  So you might do, say:
 
+	ufd = open("/overlay", O_PATH);
+	fsfd = fsopen("overlay", 0);
+	fsconfig(fsfd, fsconfig_set_path, "lowerdir", "/src", AT_FDCWD);
+	fsconfig(fsfd, fsconfig_set_path, "upperdir", "upper", ufd);
+	fsconfig(fsfd, fsconfig_set_path, "workdir", "scratch", ufd);
+	mfd = fsmount(fsfd, 0, 0);
+	move_mount(fsfd, "", AT_FDCWD, "/mnt", MOVE_MOUNT_F_EMPTY_PATH);
+
+which would allow you to specify the "sources" using dirfds.
+
+Another possibility is could be ext4 with separate journal:
+
+	fsfd = fsopen("ext4", 0);
+	fsconfig(fsfd, fsconfig_set_path, "source", "/dev/sda1", AT_FDCWD);
+	fsconfig(fsfd, fsconfig_set_path, "journal_path", "/dev/sda2", AT_FDCWD);
+	mfd = fsmount(fsfd, 0, 0);
+	move_mount(fsfd, "", AT_FDCWD, "/mnt", MOVE_MOUNT_F_EMPTY_PATH);
+
+And then there's bcachefs which suggests on the webpage:
+
+	mount -t bcachefs /dev/sda1:/dev/sdb1 /mnt
+
+but you could then do:
+
+	fsfd = fsopen("bcachefs", 0);
+	fsconfig(fsfd, fsconfig_set_path, "source", "/dev/sda1", AT_FDCWD);
+	fsconfig(fsfd, fsconfig_set_path, "source", "/dev/sdb2", AT_FDCWD);
+	mfd = fsmount(fsfd, 0, 0);
+	move_mount(fsfd, "", AT_FDCWD, "/mnt", MOVE_MOUNT_F_EMPTY_PATH);
+
+One thing I'm not certain of is whether I should allow multiple values to the
+same key name, or whether I should require that each key be labelled
+differently, possibly something like:
+
+	fsconfig(fsfd, fsconfig_set_path, "source", "/dev/sda1", AT_FDCWD);
+	fsconfig(fsfd, fsconfig_set_path, "source.1", "/dev/sdb2", AT_FDCWD);
+
+David
