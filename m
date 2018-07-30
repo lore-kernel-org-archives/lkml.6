@@ -2,96 +2,59 @@ Return-Path: <SRS0=qqIy=KO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD21DFD21E1
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 07:41:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4450BC46461
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 07:42:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7FADC20870
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 07:41:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7FADC20870
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id EF77F20870
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 07:42:20 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="p96gK10S"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EF77F20870
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726693AbeG3JPP (ORCPT
+        id S1726728AbeG3JP7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 30 Jul 2018 05:15:15 -0400
-Received: from mail-oi0-f67.google.com ([209.85.218.67]:46899 "EHLO
-        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726481AbeG3JPP (ORCPT
+        Mon, 30 Jul 2018 05:15:59 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:50060 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726481AbeG3JP7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Jul 2018 05:15:15 -0400
-Received: by mail-oi0-f67.google.com with SMTP id y207-v6so19511999oie.13
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Jul 2018 00:41:34 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=xBfL030f1ZHgv6lLCYn+TM4Y8fxklaDJt/kIBRqWk9c=;
-        b=nzvg8Zg+rtTXaO8C0PyF+LTk195nj1El+Xer7R0z3gHg8Quu85DxU4n35FBiGTaq6M
-         BLRSY9TuSjpG4bebyd3wcZ8PzHiudprhVElzHal6tg9RCn1DSqohQ4QdxkZN5uV0yEKs
-         n1C0CcE9+ekAx/m8Pw0VYIr9xT42GtGEciKNoaSBYxNLu1rJhiJd8i5kuOgTJ/5xrZqY
-         oc3K1gJVKxblNA1XOOTnlc7zApFVo9KEwHLLsqyyO4HKRnWBNL+OoBA040Gkdi9C1eiX
-         zhXvj2c4RtCtmCtMLICKmcfXOcbFaOGO7HNh0OcBwFodtM9OCxKfuXkEbNavyiB0OOmS
-         ea0Q==
-X-Gm-Message-State: AOUpUlHPLHR6iRwV4GHhYdOeKCesaKRnhAz1aRwaZRdpFJ3n9HrpFouE
-        KUAQd3XXSdNMClne/leDd3qWiCZEwmxICMzXOqGcLQ==
-X-Google-Smtp-Source: AAOMgpdr1JvLWjfnEIH1Uoc1+9sP5EiGXYW36S6V+zgwdwiJtDQjznQEsnolWlpcUkIqkK/n+/XWst++P6VvWr4n4qs=
-X-Received: by 2002:aca:5004:: with SMTP id e4-v6mr17936769oib.111.1532936494641;
- Mon, 30 Jul 2018 00:41:34 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a9d:3407:0:0:0:0:0 with HTTP; Mon, 30 Jul 2018 00:41:33
- -0700 (PDT)
-In-Reply-To: <CAOQ4uxgOLEpaZ=UwA_CG6CzYbsJBPV4unEV9D5mXrooLXO0+0w@mail.gmail.com>
-References: <20180729220317.GB30522@ZenIV.linux.org.uk> <20180729220453.13431-1-viro@ZenIV.linux.org.uk>
- <20180729220453.13431-3-viro@ZenIV.linux.org.uk> <CAOQ4uxgOLEpaZ=UwA_CG6CzYbsJBPV4unEV9D5mXrooLXO0+0w@mail.gmail.com>
-From:   Miklos Szeredi <mszeredi@redhat.com>
-Date:   Mon, 30 Jul 2018 09:41:33 +0200
-Message-ID: <CAOssrKfmR0beT4dXjg1dn6DBsPbmGBpS5xHpG9QtAAEgMWo_Xg@mail.gmail.com>
-Subject: Re: [PATCH 03/16] vfs: don't evict uninitialized inode
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Greg KH <gregkh@linuxfoundation.org>
-Content-Type: text/plain; charset="UTF-8"
+        Mon, 30 Jul 2018 05:15:59 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Message-Id:Date:Subject:Cc:To:From:
+        Sender:Reply-To:MIME-Version:Content-Type:Content-Transfer-Encoding:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=Y4X/O3jQkmVrHMreA4iqrexBlVGtDOMFJb7lFQaK/rA=; b=p96gK10SrqfWxpgP45AXZCVXa
+        d6ONftGD2+xBT+rXug+M7SndrYGc1FrUlMBjb51EolmFBDmG89Szx6EYe26t6lM8rarvjrP8gCQRc
+        lMEUaAh9OzuVAafuAEvtw5fmpjX3ObG/pBkw+cSIrHzpmrv4Dgm8YeYwpZeZCPL8kxc8tLtRGG1DK
+        qRUwLRaLMrXhEjoaiRza0jbirN9oCWDp0tjDMu5cITqpI5tuxpc5RibtleUH9X984+QN98tIDA1X7
+        NHZyRfi64yZZnp4V8wSZFlp/UnsoMrWsUheI9fPxiD7KSSo9sAaSAGEZw5T+qI3pVTjih9fbI1/ti
+        QrN7PsB4Q==;
+Received: from 089144213232.atnat0022.highway.a1.net ([89.144.213.232] helo=localhost)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fk2or-0002J8-Rv; Mon, 30 Jul 2018 07:42:18 +0000
+From:   Christoph Hellwig <hch@lst.de>
+To:     netdev@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org
+Subject: socket poll related cleanups v2
+Date:   Mon, 30 Jul 2018 09:42:09 +0200
+Message-Id: <20180730074213.16832-1-hch@lst.de>
+X-Mailer: git-send-email 2.18.0
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 30, 2018 at 7:09 AM, Amir Goldstein <amir73il@gmail.com> wrote:
-> On Mon, Jul 30, 2018 at 1:04 AM, Al Viro <viro@zeniv.linux.org.uk> wrote:
->> From: Miklos Szeredi <mszeredi@redhat.com>
->>
->> iput() ends up calling ->evict() on new inode, which is not yet initialized
->> by owning fs.  So use destroy_inode() instead.
->>
->> Add to sb->s_inodes list only if inode is not in I_CREATING state (meaning
->> that it wasn't allocated with new_inode(), which already does the
->> insertion).
->>
->> Reported-by: Al Viro <viro@zeniv.linux.org.uk>
->> Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
->> Fixes: 80ea09a002bf ("vfs: factor out inode_insert5()")
->
-> Backport hint: this patch depends on the patch ("new primitive:
-> discard_new_inode()") currently commit 22dc9a168272 in Al's for-next.
->
-> Still trying to figure out the best format to channel this information to
-> stable maintainers...
+A couple of cleanups I stumbled upon when studying the networking
+poll code.
 
-Why are we talking about stable?  This regression was introduced in
-4.18-rc1, spotted by Al *and* reported by testers.  It needs to be
-fixed in one way or other in 4.18.
-
-I've nothing against applying "new primitive: discard_new_inode() now
-+ this patch, but if it is deemed too risky at this point, we could
-just revert the buggy commit 80ea09a002bf ("vfs: factor out
-inode_insert5()") and its dependencies.
-
-Thanks,
-Miklos
+Changes since v1:
+ - drop a dispute patch from this series (to be sent separately)
