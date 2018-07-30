@@ -2,109 +2,104 @@ Return-Path: <SRS0=qqIy=KO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC1C1FD21E1
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 15:07:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77A15FD21E1
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 15:08:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8F465208A3
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 15:07:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2B4E0208A3
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 15:08:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="gP2ntFxa"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F465208A3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="djQ6NSss"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2B4E0208A3
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726800AbeG3QnU (ORCPT
+        id S1730406AbeG3QnZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 30 Jul 2018 12:43:20 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:37532 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726663AbeG3QnU (ORCPT
+        Mon, 30 Jul 2018 12:43:25 -0400
+Received: from mail-it0-f65.google.com ([209.85.214.65]:50664 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726828AbeG3QnY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Jul 2018 12:43:20 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=xhFb0rLdfmWvEdFhaCBSBot3Hi8iz8zujSR2SlQzco4=; b=gP2ntFxawMXF6SUvSipqif9tz
-        VkXSa6Mrrs2Qk4AVNaSW67soLK1iIEE21pw4VuiEDvndpDqtMt92ItzMqAyK/vq1+OFMN+UF48iWh
-        8HLKQs07wbR/UN7wvskhUy2e61zf6+4bkxCOSBzMoz6egSK3QejKjElrPfj59cRtnbXFg=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1fk9m1-0005W5-SY; Mon, 30 Jul 2018 15:07:49 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 7CFFC1124216; Mon, 30 Jul 2018 16:07:49 +0100 (BST)
-Date:   Mon, 30 Jul 2018 16:07:49 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Jon Hunter <jonathanh@nvidia.com>
-Cc:     Jorge Sanjuan <jorge.sanjuan@codethink.co.uk>, lgirdwood@gmail.com,
-        thierry.reding@gmail.com, alsa-devel@alsa-project.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-kernel@lists.codethink.co.uk
-Subject: Re: [PATCH 2/4] ASoC: tegra: Add a TDM configuration callback
-Message-ID: <20180730150749.GK5789@sirena.org.uk>
-References: <20180727125931.9794-1-jorge.sanjuan@codethink.co.uk>
- <20180727125931.9794-3-jorge.sanjuan@codethink.co.uk>
- <2392df6f-12bc-74fe-ec0f-50dbb7b9a33a@nvidia.com>
- <20180730101800.GF5789@sirena.org.uk>
- <2a91268d-351b-d342-42bd-8ffbf33a316e@nvidia.com>
+        Mon, 30 Jul 2018 12:43:24 -0400
+Received: by mail-it0-f65.google.com with SMTP id g191-v6so6645791ita.0
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Jul 2018 08:07:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=ILo4JCLTw1IKQrg+mW1sKsL/tYnm+d93robLPtzv7KM=;
+        b=djQ6NSssLubG7PC1KjKzNlhgSNxenv9kG74k6y3hLyQQdcaKKZ2SXKktsTKI3Q0PFc
+         LpgdClo8CZFtI5m7fEjoy78DTdjKSMkRl3r53bh7xS+Tapfx5SajLpDT7txb68xFlPva
+         x/WXEKaVWgz6IJC+ZxtXwuNKAr37EdSZHFUSs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=ILo4JCLTw1IKQrg+mW1sKsL/tYnm+d93robLPtzv7KM=;
+        b=CfGZa3zGBRw4qsYpvwk8+rESr6gNATLERbyGTKXXsjaZZrPTPK9kD8CMFiGsXyFlzn
+         Z+Pac99Ax1PNQQXUka22ia79XN++QoA7BdrL4pEtnzhG8svhTobuiLqmv3RbJwDonqAt
+         xw1jO0QjyEcjY3Qkiv8S0xkeq9xUlMRWMsWUKfiAdL8lrS5iifQKSMq2w8krZR5SFFUR
+         K+rTmfl0G0kfONCiFUlHmwYHOkwT4h4GKBdwpn5j6WeLwghJzubJW+P19Q2fFndemWkR
+         gSfBheCTHMuK4NlIzlAepTvDCCmbiJyjLUy7PP4HrNHLPmBWqKb3sZEId/djQmKabkib
+         ZeGQ==
+X-Gm-Message-State: AOUpUlF7KIX2j3E5CnjdpUE9Lw9Wo/Bnrry0rSE9K6aAtdyHd1yTNLIv
+        Bmfw75XZSTrLLhpuMrgvRu8OHozUkRvsMfqDmzZrVg==
+X-Google-Smtp-Source: AAOMgpeDLpD8v9HXFy9FGWHUy3hAYxPKlwuDHZ50gDEdUEgLelj+1jfWHkf6ibxXaDEzDx0I5ShadsjlGjQvKm5UIiw=
+X-Received: by 2002:a24:4524:: with SMTP id y36-v6mr1548556ita.97.1532963279556;
+ Mon, 30 Jul 2018 08:07:59 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="T4Djgzn3z2HSNnx0"
-Content-Disposition: inline
-In-Reply-To: <2a91268d-351b-d342-42bd-8ffbf33a316e@nvidia.com>
-X-Cookie: But they went to MARS around 1953!!
-User-Agent: Mutt/1.10.0 (2018-05-17)
+Received: by 2002:a02:2b03:0:0:0:0:0 with HTTP; Mon, 30 Jul 2018 08:07:59
+ -0700 (PDT)
+In-Reply-To: <1532608016-14319-1-git-send-email-avienamo@nvidia.com>
+References: <1532608016-14319-1-git-send-email-avienamo@nvidia.com>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Mon, 30 Jul 2018 17:07:59 +0200
+Message-ID: <CAPDyKFo+nv+9qYV=J5k-63cDhQO=L==87RLMj_7BnjEjUf5iEQ@mail.gmail.com>
+Subject: Re: [PATCH v2 00/10] Tegra SDHCI update the pad autocal procedure
+To:     Aapo Vienamo <avienamo@nvidia.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Mikko Perttunen <mperttunen@nvidia.com>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 26 July 2018 at 14:26, Aapo Vienamo <avienamo@nvidia.com> wrote:
+> Hi all,
+>
+> Update the tegra_sdhci_pad_autocalib() pad drive strength calibration
+> procedure to match the ones specified in the TRMs of the more recent
+> SoCs. This was tested on Tegra186, Tegra210, and Tegra124, although it
+> should not break things older generations either.
+>
+> This series depends on the "Tegra SDHCI enable 1.8 V signaling on
+> Tegar210 and Tegra186" series posted earlier.
 
---T4Djgzn3z2HSNnx0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+According to the cover letter of the above series, it states that it
+depends on $subject series. A circular dependency. :-)
 
-On Mon, Jul 30, 2018 at 03:04:46PM +0100, Jon Hunter wrote:
-> On 30/07/18 11:18, Mark Brown wrote:
+In fact, there should be no dependency at all or else there seems to
+be a DT compatibility problem here...
 
-> > DSP modes only care about the rising edge of the LRCLK, the pulse can be
-> > any width without causing interoperability problems.
+Anyway, I think it actually makes sense to fold in all changes into
+one series. Make sure the dt-doc changes comes first, then the driver
+changes and finally arm64/dts changes. This should make it easy to
+follow the review and I can pick the mmc parts and the soc maintainer
+can pick the arm64/dts changes.
 
-> OK, thanks I was not able to find a spec that defines this, but I saw a
-> lot of codecs use a single bit clock width. So then equally making the
-> default '1' should also be fine.
+[...]
 
-There's not really a spec for this, it's just what tends to be
-implemented.
-
-> I still do not like configuring the fsync width in this function. The
-> fsync width needs to be configured for both DSP modes and normal I2S
-> modes and so it seems it would be more appropriate to do this in the
-> hw_params function for this driver.
-
-You *could* just always use the I2S width, it's going to look odd when
-people use a scope but it will work most of the time.
-
---T4Djgzn3z2HSNnx0
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAltfKcQACgkQJNaLcl1U
-h9BB0Af+IyXKfsxp1Wb1UfKoIPDIVgYtmwl+1Y8/bfWN3+FAgD2w+KKS2NA5mRBg
-WpXyuoJ1JxIj4016p+YX1JBtzQKAULHGaEK/GjWGHbh0e6hlG6uKgnAXTD2bGBjT
-vz0SanSzblF0DTUHzH4gZHc+/K8TK/LUWjLdDmrOFePZ+Uk83fCDbtPuJWPQ4t/B
-b57efuww3wXP0tAKIKFAtW+trIWXhByODi/tjqsR2VFE9gcUIsgpPtiq+dkbhPDb
-3GJMrdExpTTIh5oG3oBu+8MyhJxw/Km6djZrC5cXPUXCV4B/dg0Y7TXcIRn5/lDI
-8gaHajCblyhEYmfxnF+8ybq0yjffag==
-=Bfke
------END PGP SIGNATURE-----
-
---T4Djgzn3z2HSNnx0--
+Kind regards
+Uffe
