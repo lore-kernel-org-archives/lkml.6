@@ -6,326 +6,104 @@ X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F16B813F6DFF
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 12:55:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05EC9FD21E1
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 12:55:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A9AA220892
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 12:55:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A9AA220892
+	by mail.kernel.org (Postfix) with ESMTP id AE6A420892
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 12:55:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AE6A420892
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732007AbeG3O2J (ORCPT
+        id S1731934AbeG3Oan (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 30 Jul 2018 10:28:09 -0400
-Received: from mx2.suse.de ([195.135.220.15]:49124 "EHLO mx1.suse.de"
+        Mon, 30 Jul 2018 10:30:43 -0400
+Received: from mx2.suse.de ([195.135.220.15]:50022 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729477AbeG3O2I (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Jul 2018 10:28:08 -0400
+        id S1729407AbeG3Oam (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Jul 2018 10:30:42 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id D4B4AAF5B;
-        Mon, 30 Jul 2018 12:53:12 +0000 (UTC)
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 9DC21AE4D;
+        Mon, 30 Jul 2018 12:55:49 +0000 (UTC)
 Received: by unicorn.suse.cz (Postfix, from userid 1000)
-        id 7E959A0BE8; Mon, 30 Jul 2018 14:53:12 +0200 (CEST)
-Message-Id: <e0e0433fd250dc331caa23aa739d7841e9602e0f.1532953989.git.mkubecek@suse.cz>
-In-Reply-To: <cover.1532953989.git.mkubecek@suse.cz>
-References: <cover.1532953989.git.mkubecek@suse.cz>
+        id 49058A0BE8; Mon, 30 Jul 2018 14:55:49 +0200 (CEST)
+Message-Id: <6720ebfe08ea06ddc81aa3f576b5cca8a2495fd6.1532954671.git.mkubecek@suse.cz>
+In-Reply-To: <cover.1532954671.git.mkubecek@suse.cz>
+References: <cover.1532954671.git.mkubecek@suse.cz>
 From:   Michal Kubecek <mkubecek@suse.cz>
-Subject: [RFC PATCH net-next v2 06/17] ethtool: support for netlink
- notifications
+Subject: [RFC PATCH ethtool v2 01/23] move UAPI header copies to a separate
+ directory
 To:     netdev@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, Jiri Pirko <jiri@resnulli.us>,
-        David Miller <davem@davemloft.net>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Roopa Prabhu <roopa@cumulusnetworks.com>,
-        Jakub Kicinski <kubakici@wp.pl>,
+Cc:     linux-kernel@vger.kernel.org,
         "John W. Linville" <linville@tuxdriver.com>
-Date:   Mon, 30 Jul 2018 14:53:12 +0200 (CEST)
+Date:   Mon, 30 Jul 2018 14:55:49 +0200 (CEST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add infrastructure for ethtool netlink notifications. There is only one
-multicast group, "monitor" which userspace can use to get notifications.
-Notifications are supposed to be broadcasted on every configuration change,
-whether it is done using the netlink interface or legacy ioctl one.
+The upcoming netlink series is going to add more local copies of kernel
+UAPI header files and some of them are going to include others. Keeping
+them in the main directory under modified name would require modifying
+those includes as well which would be impractical.
 
-To trigger a notification, netlink code calls ethtool_notify(), external
-code (ioctl interface) uses NETDEV_ETHTOOL event, preferrably by the means
-of netdev_ethtool_info_change() helper. For both, the caller must hold
-RTNL (and, obviously, allow sleeping).
+Create a subdirectory uapi and move the UAPI headers there to allow
+including them in the usual way.
 
 Signed-off-by: Michal Kubecek <mkubecek@suse.cz>
 ---
- include/linux/ethtool_netlink.h      |  5 ++
- include/linux/netdevice.h            | 23 ++++++++
- include/uapi/linux/ethtool_netlink.h |  2 +
- net/core/dev.c                       | 24 +++++++-
- net/ethtool/netlink.c                | 82 +++++++++++++++++++++++++++-
- net/ethtool/netlink.h                |  5 ++
- 6 files changed, 139 insertions(+), 2 deletions(-)
+ Makefile.am                                  | 6 +++---
+ internal.h                                   | 4 ++--
+ ethtool-copy.h => uapi/linux/ethtool.h       | 0
+ net_tstamp-copy.h => uapi/linux/net_tstamp.h | 0
+ 4 files changed, 5 insertions(+), 5 deletions(-)
+ rename ethtool-copy.h => uapi/linux/ethtool.h (100%)
+ rename net_tstamp-copy.h => uapi/linux/net_tstamp.h (100%)
 
-diff --git a/include/linux/ethtool_netlink.h b/include/linux/ethtool_netlink.h
-index 0412adb4f42f..2a15e64a16f3 100644
---- a/include/linux/ethtool_netlink.h
-+++ b/include/linux/ethtool_netlink.h
-@@ -5,5 +5,10 @@
+diff --git a/Makefile.am b/Makefile.am
+index 14f79b68a9ee..e7da37a85499 100644
+--- a/Makefile.am
++++ b/Makefile.am
+@@ -1,12 +1,12 @@
+-AM_CFLAGS = -Wall
++AM_CFLAGS = -I./uapi -Wall
+ LDADD = -lm
  
- #include <uapi/linux/ethtool_netlink.h>
- #include <linux/ethtool.h>
-+#include <linux/netdevice.h>
-+
-+enum ethtool_multicast_groups {
-+	ETHNL_MCGRP_MONITOR,
-+};
+ man_MANS = ethtool.8
+ EXTRA_DIST = LICENSE ethtool.8 ethtool.spec.in aclocal.m4 ChangeLog autogen.sh
  
- #endif /* _LINUX_ETHTOOL_NETLINK_H_ */
-diff --git a/include/linux/netdevice.h b/include/linux/netdevice.h
-index c1295c7a452e..c4b0c575d57e 100644
---- a/include/linux/netdevice.h
-+++ b/include/linux/netdevice.h
-@@ -2444,6 +2444,7 @@ enum netdev_cmd {
- 	NETDEV_CVLAN_FILTER_DROP_INFO,
- 	NETDEV_SVLAN_FILTER_PUSH_INFO,
- 	NETDEV_SVLAN_FILTER_DROP_INFO,
-+	NETDEV_ETHTOOL,
- };
- const char *netdev_cmd_to_name(enum netdev_cmd cmd);
+ sbin_PROGRAMS = ethtool
+-ethtool_SOURCES = ethtool.c ethtool-copy.h internal.h net_tstamp-copy.h \
+-		  rxclass.c
++ethtool_SOURCES = ethtool.c uapi/linux/ethtool.h internal.h \
++		  uapi/linux/net_tstamp.h rxclass.c
+ if ETHTOOL_ENABLE_PRETTY_DUMP
+ ethtool_SOURCES += \
+ 		  amd8111e.c de2104x.c e100.c e1000.c et131x.c igb.c	\
+diff --git a/internal.h b/internal.h
+index b239dc7acbd8..0b04a9794b6b 100644
+--- a/internal.h
++++ b/internal.h
+@@ -42,8 +42,8 @@ typedef int32_t s32;
+ #define __KERNEL_DIV_ROUND_UP(n, d) (((n) + (d) - 1) / (d))
+ #endif
  
-@@ -4221,6 +4222,28 @@ struct netdev_notifier_bonding_info {
- void netdev_bonding_info_change(struct net_device *dev,
- 				struct netdev_bonding_info *bonding_info);
+-#include "ethtool-copy.h"
+-#include "net_tstamp-copy.h"
++#include <linux/ethtool.h>
++#include <linux/net_tstamp.h>
  
-+struct netdev_ethtool_info {
-+	unsigned int cmd;
-+	u32 req_mask;
-+};
-+
-+struct netdev_notifier_ethtool_info {
-+	struct netdev_notifier_info info; /* must be first */
-+	struct netdev_ethtool_info ethtool_info;
-+};
-+
-+#if IS_ENABLED(CONFIG_ETHTOOL_NETLINK)
-+int netdev_ethtool_info_change(struct net_device *dev,
-+			       struct netlink_ext_ack *extack,
-+			       unsigned int cmd, u32 req_mask);
-+#else
-+static inline void netdev_ethtool_info_change(struct net_device *dev,
-+					      struct netlink_ext_ack *extack,
-+					      unsigned int cmd, u32 req_mask)
-+{
-+}
-+#endif
-+
- static inline
- struct sk_buff *skb_gso_segment(struct sk_buff *skb, netdev_features_t features)
- {
-diff --git a/include/uapi/linux/ethtool_netlink.h b/include/uapi/linux/ethtool_netlink.h
-index 98d6fae315f3..444a668e4a08 100644
---- a/include/uapi/linux/ethtool_netlink.h
-+++ b/include/uapi/linux/ethtool_netlink.h
-@@ -58,4 +58,6 @@ enum {
- #define ETHTOOL_GENL_NAME "ethtool"
- #define ETHTOOL_GENL_VERSION 1
- 
-+#define ETHTOOL_MCGRP_MONITOR_NAME "monitor"
-+
- #endif /* _UAPI_LINUX_ETHTOOL_NETLINK_H_ */
-diff --git a/net/core/dev.c b/net/core/dev.c
-index 87c42c8249ae..8a0773a52dd7 100644
---- a/net/core/dev.c
-+++ b/net/core/dev.c
-@@ -1585,7 +1585,7 @@ const char *netdev_cmd_to_name(enum netdev_cmd cmd)
- 	N(PRECHANGEUPPER) N(CHANGELOWERSTATE) N(UDP_TUNNEL_PUSH_INFO)
- 	N(UDP_TUNNEL_DROP_INFO) N(CHANGE_TX_QUEUE_LEN)
- 	N(CVLAN_FILTER_PUSH_INFO) N(CVLAN_FILTER_DROP_INFO)
--	N(SVLAN_FILTER_PUSH_INFO) N(SVLAN_FILTER_DROP_INFO)
-+	N(SVLAN_FILTER_PUSH_INFO) N(SVLAN_FILTER_DROP_INFO) N(ETHTOOL)
- 	}
- #undef N
- 	return "UNKNOWN_NETDEV_EVENT";
-@@ -7058,6 +7058,28 @@ void netdev_bonding_info_change(struct net_device *dev,
- }
- EXPORT_SYMBOL(netdev_bonding_info_change);
- 
-+#if IS_ENABLED(CONFIG_ETHTOOL_NETLINK)
-+int netdev_ethtool_info_change(struct net_device *dev,
-+			       struct netlink_ext_ack *extack,
-+			       unsigned int cmd, u32 req_mask)
-+{
-+	struct netdev_notifier_ethtool_info ethtool_info = {
-+		.info = {
-+			.dev = dev,
-+			.extack = extack,
-+		},
-+		.ethtool_info = {
-+			.cmd = cmd,
-+			.req_mask = req_mask,
-+		},
-+	};
-+
-+	return call_netdevice_notifiers_info(NETDEV_ETHTOOL,
-+					     &ethtool_info.info);
-+}
-+EXPORT_SYMBOL(netdev_ethtool_info_change);
-+#endif
-+
- static void netdev_adjacent_add_links(struct net_device *dev)
- {
- 	struct netdev_adjacent *iter;
-diff --git a/net/ethtool/netlink.c b/net/ethtool/netlink.c
-index df065fd3dc80..e4a20bb6c1d4 100644
---- a/net/ethtool/netlink.c
-+++ b/net/ethtool/netlink.c
-@@ -6,6 +6,8 @@
- #include <linux/ethtool_netlink.h>
- #include "netlink.h"
- 
-+u32 ethnl_bcast_seq;
-+
- static const struct nla_policy dev_policy[ETHA_DEV_MAX + 1] = {
- 	[ETHA_DEV_UNSPEC]	= { .type = NLA_UNSPEC },
- 	[ETHA_DEV_INDEX]	= { .type = NLA_U32 },
-@@ -19,6 +21,11 @@ struct net_device *ethnl_dev_get(struct genl_info *info, struct nlattr *nest)
- 	struct net_device *dev;
- 	int ret;
- 
-+	if (!nest) {
-+		ETHNL_SET_ERRMSG(info,
-+				 "mandatory device identification missing");
-+		return ERR_PTR(-EINVAL);
-+	}
- 	ret = nla_parse_nested(tb, ETHA_DEV_MAX, nest, dev_policy,
- 			       info->extack);
- 	if (ret < 0)
-@@ -562,11 +569,69 @@ int ethnl_dumpit(struct sk_buff *skb, struct netlink_callback *cb)
- 	return ret;
- }
- 
-+/* notifications */
-+
-+typedef void (*ethnl_notify_handler_t)(struct netdev_notifier_ethtool_info *);
-+
-+ethnl_notify_handler_t ethnl_notify_handlers[] = {
-+};
-+
-+static void __ethnl_notify(struct netdev_notifier_ethtool_info *info)
-+{
-+	unsigned int cmd = info->ethtool_info.cmd;
-+
-+	ASSERT_RTNL();
-+	if (likely(cmd < ARRAY_SIZE(ethnl_notify_handlers) &&
-+		   ethnl_notify_handlers[cmd]))
-+		ethnl_notify_handlers[cmd](info);
-+	else
-+		WARN_ONCE(1, "notification %u not implemented (dev=%s, req_mask=0x%x\n",
-+			  cmd, netdev_name(info->info.dev),
-+			  info->ethtool_info.req_mask);
-+}
-+
-+void ethnl_notify(struct net_device *dev, struct netlink_ext_ack *extack,
-+		  unsigned int cmd, u32 req_mask)
-+{
-+	struct netdev_notifier_ethtool_info ethtool_info = {
-+		.info = {
-+			.dev = dev,
-+			.extack = extack,
-+		},
-+		.ethtool_info = {
-+			.cmd = cmd,
-+			.req_mask = req_mask,
-+		},
-+	};
-+
-+	return __ethnl_notify(&ethtool_info);
-+}
-+
-+static int ethnl_netdev_event(struct notifier_block *this, unsigned long event,
-+			      void *ptr)
-+{
-+	switch(event) {
-+	case NETDEV_ETHTOOL:
-+		__ethnl_notify(ptr);
-+		break;
-+	}
-+
-+	return NOTIFY_DONE;
-+}
-+
-+static struct notifier_block ethnl_netdev_notifier = {
-+	.notifier_call = ethnl_netdev_event,
-+};
-+
- /* genetlink setup */
- 
- static const struct genl_ops ethtool_genl_ops[] = {
- };
- 
-+static const struct genl_multicast_group ethtool_nl_mcgrps[] = {
-+	[ETHNL_MCGRP_MONITOR] = { .name = ETHTOOL_MCGRP_MONITOR_NAME },
-+};
-+
- struct genl_family ethtool_genl_family = {
- 	.hdrsize	= 0,
- 	.name		= ETHTOOL_GENL_NAME,
-@@ -575,17 +640,32 @@ struct genl_family ethtool_genl_family = {
- 	.parallel_ops	= true,
- 	.ops		= ethtool_genl_ops,
- 	.n_ops		= ARRAY_SIZE(ethtool_genl_ops),
-+	.mcgrps		= ethtool_nl_mcgrps,
-+	.n_mcgrps	= ARRAY_SIZE(ethtool_nl_mcgrps),
- };
- 
- /* module setup */
- 
- static int __init ethtool_nl_init(void)
- {
--	return genl_register_family(&ethtool_genl_family);
-+	int ret;
-+
-+	ret = genl_register_family(&ethtool_genl_family);
-+	if (ret < 0)
-+		return ret;
-+	ret = register_netdevice_notifier(&ethnl_netdev_notifier);
-+	if (ret < 0)
-+		goto err_unregister;
-+	return 0;
-+
-+err_unregister:
-+	genl_unregister_family(&ethtool_genl_family);
-+	return ret;
- }
- 
- static void __exit ethtool_nl_exit(void)
- {
-+	unregister_netdevice_notifier(&ethnl_netdev_notifier);
- 	genl_unregister_family(&ethtool_genl_family);
- }
- 
-diff --git a/net/ethtool/netlink.h b/net/ethtool/netlink.h
-index 6e9e854eec5d..94c14ec2c3fc 100644
---- a/net/ethtool/netlink.h
-+++ b/net/ethtool/netlink.h
-@@ -11,6 +11,8 @@
- #define ETHNL_SET_ERRMSG(info, msg) \
- 	do { if (info) GENL_SET_ERR_MSG(info, msg); } while (0)
- 
-+extern u32 ethnl_bcast_seq;
-+
- extern struct genl_family ethtool_genl_family;
- 
- struct net_device *ethnl_dev_get(struct genl_info *info, struct nlattr *nest);
-@@ -159,4 +161,7 @@ static inline bool ethnl_is_privileged(struct sk_buff *skb)
- 	return netlink_ns_capable(skb, net->user_ns, CAP_NET_ADMIN);
- }
- 
-+void ethnl_notify(struct net_device *dev, struct netlink_ext_ack *extack,
-+		  unsigned int cmd, u32 req_mask);
-+
- #endif /* _NET_ETHTOOL_NETLINK_H */
+ #if __BYTE_ORDER == __BIG_ENDIAN
+ static inline u16 cpu_to_be16(u16 value)
+diff --git a/ethtool-copy.h b/uapi/linux/ethtool.h
+similarity index 100%
+rename from ethtool-copy.h
+rename to uapi/linux/ethtool.h
+diff --git a/net_tstamp-copy.h b/uapi/linux/net_tstamp.h
+similarity index 100%
+rename from net_tstamp-copy.h
+rename to uapi/linux/net_tstamp.h
 -- 
 2.18.0
 
