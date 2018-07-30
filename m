@@ -2,94 +2,89 @@ Return-Path: <SRS0=qqIy=KO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71A9CFD21E1
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 08:58:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07F38FD21E1
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 08:58:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 27B4720881
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 08:58:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 27B4720881
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
+	by mail.kernel.org (Postfix) with ESMTP id A782520870
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 08:58:31 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="iH1My6uU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A782520870
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726767AbeG3KcM (ORCPT
+        id S1726798AbeG3Kc2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 30 Jul 2018 06:32:12 -0400
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:15146 "EHLO
-        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726565AbeG3KcM (ORCPT
+        Mon, 30 Jul 2018 06:32:28 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:58520 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726664AbeG3Kc1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Jul 2018 06:32:12 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1, AES128-SHA)
-        id <B5b5ed3220000>; Mon, 30 Jul 2018 01:58:10 -0700
-Received: from HQMAIL101.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Mon, 30 Jul 2018 01:58:13 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Mon, 30 Jul 2018 01:58:13 -0700
-Received: from [10.21.132.122] (172.20.13.39) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Mon, 30 Jul
- 2018 08:58:11 +0000
-Subject: Re: [PATCH 1/4] ASoC: tegra: i2s: Fix typo/broken macro
-To:     Jorge Sanjuan <jorge.sanjuan@codethink.co.uk>,
-        <lgirdwood@gmail.com>, <broonie@kernel.org>
-CC:     <thierry.reding@gmail.com>, <alsa-devel@alsa-project.org>,
-        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-kernel@lists.codethink.co.uk>
-References: <20180727125931.9794-1-jorge.sanjuan@codethink.co.uk>
- <20180727125931.9794-2-jorge.sanjuan@codethink.co.uk>
-From:   Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <f9e2eaad-bd5c-2e3d-f2a7-d7ea5f3a237c@nvidia.com>
-Date:   Mon, 30 Jul 2018 09:58:09 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Mon, 30 Jul 2018 06:32:27 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=Y+X3vxVdsP+CFbA4NZjUWZ+qIthYSfvbpCPqjuFSiMA=; b=iH1My6uU3dwpY1MihdtC4EkKH
+        vx2+Wnt6rshbmAl20Qjtgg6WqY8V5i2xEzYj4IdPGwIXfspK+zDLPMZzi/fd86d3927jAU7f5IJA+
+        ZGMWUTGFn0ITLHm906jHuzDW3HiqVSvkc4e0TzkSi/fBC4T8HBnpcyNHH4+QqSkHWKNJo45RzNtsD
+        mJgi2cUTawSp0qZD79pf0AZJERW4Zc63DhbXmkIc/qPNfv0Cy3LYFjR8L/QLAH0LxZh7OP+eW95nG
+        WlVi2VjElwdNMqwkJjkd9wzCLY+xHUmXbrOh6ErhZGdfCo8MPjFOBikFWREj/Q0FwZq1fPqkRe+mz
+        y8jgaZRuw==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fk40O-0003FI-00; Mon, 30 Jul 2018 08:58:16 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id EC5B820268325; Mon, 30 Jul 2018 10:58:13 +0200 (CEST)
+Date:   Mon, 30 Jul 2018 10:58:13 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Joel Fernandes <joel@joelfernandes.org>
+Cc:     linux-kernel@vger.kernel.org, kernel-team@android.com,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Byungchul Park <byungchul.park@lge.com>,
+        Erick Reyes <erickreyes@google.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Julia Cartwright <julia@ni.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Paul McKenney <paulmck@linux.vnet.ibm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Thomas Glexiner <tglx@linutronix.de>,
+        Todd Kjos <tkjos@google.com>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>,
+        Will Deacon <will.deacon@arm.com>
+Subject: Re: [PATCH v11 3/3] tracing: Centralize preemptirq tracepoints and
+ unify their usage
+Message-ID: <20180730085813.GB2494@hirez.programming.kicks-ass.net>
+References: <20180726235044.10195-1-joel@joelfernandes.org>
+ <20180726235044.10195-4-joel@joelfernandes.org>
 MIME-Version: 1.0
-In-Reply-To: <20180727125931.9794-2-jorge.sanjuan@codethink.co.uk>
-X-Originating-IP: [172.20.13.39]
-X-ClientProxiedBy: HQMAIL103.nvidia.com (172.20.187.11) To
- HQMAIL101.nvidia.com (172.20.187.10)
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180726235044.10195-4-joel@joelfernandes.org>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Jul 26, 2018 at 04:50:44PM -0700, Joel Fernandes wrote:
+> One note, I have to check for lockdep recursion in the code that calls
+> the trace events API and bail out if we're in lockdep recursion
+> protection to prevent something like the following case: a spin_lock is
+> taken. Then lockdep_acquired is called.  That does a raw_local_irq_save
+> and then sets lockdep_recursion, and then calls __lockdep_acquired. In
+> this function, a call to get_lock_stats happens which calls
+> preempt_disable, which calls trace IRQS off somewhere which enters my
+> tracepoint code and sets the tracing_irq_cpu flag to prevent recursion.
+> This flag is then never cleared causing lockdep paths to never be
+> entered and thus causing splats and other bad things.
 
-On 27/07/18 13:59, Jorge Sanjuan wrote:
-> From: Edward Cragg <edward.cragg@codethink.co.uk>
-> 
-> Fix typo in macro TEGRA30_I2S_SLOT_CTRL_TOTAL_SLOTS_MASK.
-> 
-> Signed-off-by: Edward Cragg <edward.cragg@codethink.co.uk>
-> Signed-off-by: Jorge Sanjuan <jorge.sanjuan@codethink.co.uk>
-> ---
->  sound/soc/tegra/tegra30_i2s.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/sound/soc/tegra/tegra30_i2s.h b/sound/soc/tegra/tegra30_i2s.h
-> index 774fc6ad2026..2e561e946de2 100644
-> --- a/sound/soc/tegra/tegra30_i2s.h
-> +++ b/sound/soc/tegra/tegra30_i2s.h
-> @@ -173,7 +173,7 @@
->  /* Number of slots in frame, minus 1 */
->  #define TEGRA30_I2S_SLOT_CTRL_TOTAL_SLOTS_SHIFT		16
->  #define TEGRA30_I2S_SLOT_CTRL_TOTAL_SLOTS_MASK_US	7
-> -#define TEGRA30_I2S_SLOT_CTRL_TOTAL_SLOTS_MASK		(TEGRA30_I2S_SLOT_CTRL_TOTAL_SLOT_MASK_US << TEGRA30_I2S_SLOT_CTRL_TOTAL_SLOT_SHIFT)
-> +#define TEGRA30_I2S_SLOT_CTRL_TOTAL_SLOTS_MASK		(TEGRA30_I2S_SLOT_CTRL_TOTAL_SLOTS_MASK_US << TEGRA30_I2S_SLOT_CTRL_TOTAL_SLOTS_SHIFT)
->  
->  /* TDM mode slot enable bitmask */
->  #define TEGRA30_I2S_SLOT_CTRL_RX_SLOT_ENABLES_SHIFT	8
-
-Thanks for fixing.
-
-Reviewed-by: Jon Hunter <jonathanh@nvidia.com>
-
-Cheers
-Jon
-
--- 
-nvpublic
+That is now fixed, right?
