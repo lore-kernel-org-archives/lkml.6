@@ -6,102 +6,89 @@ X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71649FD21E1
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 05:30:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE0B3FD21E1
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 05:33:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2E75F20873
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 05:30:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E75F20873
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	by mail.kernel.org (Postfix) with ESMTP id AA0BB20873
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 05:33:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA0BB20873
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726497AbeG3HDp convert rfc822-to-8bit (ORCPT
+        id S1726434AbeG3HHJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 30 Jul 2018 03:03:45 -0400
-Received: from mx.socionext.com ([202.248.49.38]:57521 "EHLO mx.socionext.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725858AbeG3HDp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Jul 2018 03:03:45 -0400
-Received: from unknown (HELO kinkan-ex.css.socionext.com) ([172.31.9.52])
-  by mx.socionext.com with ESMTP; 30 Jul 2018 14:30:29 +0900
-Received: from mail.mfilter.local (m-filter-2 [10.213.24.62])
-        by kinkan-ex.css.socionext.com (Postfix) with ESMTP id AFFF318011F;
-        Mon, 30 Jul 2018 14:30:29 +0900 (JST)
-Received: from 172.31.9.53 (172.31.9.53) by m-FILTER with ESMTP; Mon, 30 Jul 2018 14:30:29 +0900
-Received: from yuzu.css.socionext.com (yuzu [172.31.8.45])
-        by iyokan.css.socionext.com (Postfix) with ESMTP id 71DDE40385;
-        Mon, 30 Jul 2018 14:30:29 +0900 (JST)
-Received: from DESKTOP0FARE34 (unknown [10.213.134.218])
-        by yuzu.css.socionext.com (Postfix) with ESMTP id 35486120448;
-        Mon, 30 Jul 2018 14:30:29 +0900 (JST)
-From:   "Keiji Hayashibara" <hayashibara.keiji@socionext.com>
-To:     "'Trent Piepho'" <tpiepho@impinj.com>, <andy.shevchenko@gmail.com>
-Cc:     <linux-kernel@vger.kernel.org>, <robh+dt@kernel.org>,
-        <devicetree@vger.kernel.org>, <masami.hiramatsu@linaro.org>,
-        =?utf-8?Q?Hayashi=2C_Kunihiko/=E6=9E=97_=E9=82=A6=E5=BD=A6?= 
-        <hayashi.kunihiko@socionext.com>, <broonie@kernel.org>,
-        <mark.rutland@arm.com>, <linux-spi@vger.kernel.org>,
-        =?utf-8?B?WWFtYWRhLCBNYXNhaGlyby/lsbHnlLAg55yf5byY?= 
-        <yamada.masahiro@socionext.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <jaswinder.singh@linaro.org>
-References: <1532588943-19481-1-git-send-email-hayashibara.keiji@socionext.com>  <1532588943-19481-3-git-send-email-hayashibara.keiji@socionext.com>     <CAHp75VcEdxDEo0T5_9BzOPaeaqjbmbrWmaE9+ZuUDYhjh6jpVw@mail.gmail.com> <1532624495.2283.197.camel@impinj.com>
-In-Reply-To: <1532624495.2283.197.camel@impinj.com>
-Subject: RE: [PATCH v2 2/2] spi: add SPI controller driver for UniPhier SoC
-Date:   Mon, 30 Jul 2018 14:30:25 +0900
-Message-ID: <002901d427c6$6b9a4ff0$42ceefd0$@socionext.com>
+        Mon, 30 Jul 2018 03:07:09 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:33398 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726015AbeG3HHI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Jul 2018 03:07:08 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 51E1F1684;
+        Sun, 29 Jul 2018 22:33:53 -0700 (PDT)
+Received: from mail-it0-f46.google.com (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 30FA63FB21;
+        Sun, 29 Jul 2018 22:33:53 -0700 (PDT)
+Received: by mail-it0-f46.google.com with SMTP id g141-v6so15184368ita.4;
+        Sun, 29 Jul 2018 22:33:53 -0700 (PDT)
+X-Gm-Message-State: AOUpUlGb6yCLv7b1wjP7qFPWuCW/++xWGpEyoRX2NlhhVoxEF5YCIJ5w
+        LO0otDABTkDToOVMifz/xA9l1Qj0r/4m3L9h+DA=
+X-Google-Smtp-Source: AAOMgpdypxGjZVOJp40pbeZV3rvDX8DV+j0wQ01dbBZSGzgl5B0JECUE1VtXQ5sUtylVQfZQySKWWKX+GngmXNAtyZ4=
+X-Received: by 2002:a24:9686:: with SMTP id z128-v6mr12220073itd.58.1532928832346;
+ Sun, 29 Jul 2018 22:33:52 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain;
-        charset="utf-8"
-Content-Transfer-Encoding: 8BIT
-X-Mailer: Microsoft Outlook 15.0
-Thread-Index: AQHUJK+Lb4PtBS+ckEWxak8O5zFtw6SgmfYAgACKagCABh0EkA==
-Content-Language: ja
-x-securitypolicycheck: OK by SHieldMailChecker v2.5.2
-x-shieldmailcheckerpolicyversion: POLICY180220
+Received: by 2002:a02:88b8:0:0:0:0:0 with HTTP; Sun, 29 Jul 2018 22:33:51
+ -0700 (PDT)
+In-Reply-To: <153270946725.48062.11195853363758024681@swboyd.mtv.corp.google.com>
+References: <1532700112-11852-1-git-send-email-amit.kachhap@arm.com> <153270946725.48062.11195853363758024681@swboyd.mtv.corp.google.com>
+From:   Amit Daniel Kachhap <amit.kachhap@arm.com>
+Date:   Mon, 30 Jul 2018 11:03:51 +0530
+X-Gmail-Original-Message-ID: <CADGdYn5T2-B2UE9DX3wFHdvqfF85n0NAbKDBf2KHOQreRi=H+g@mail.gmail.com>
+Message-ID: <CADGdYn5T2-B2UE9DX3wFHdvqfF85n0NAbKDBf2KHOQreRi=H+g@mail.gmail.com>
+Subject: Re: [PATCH] clk: scmi: Fix the rounding of clock rate
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     LAK <linux-arm-kernel@lists.infradead.org>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Trent and Andy,
+Hi,
 
-> From: Trent Piepho [mailto:tpiepho@impinj.com]
-> Sent: Friday, July 27, 2018 2:02 AM
-> To: andy.shevchenko@gmail.com; Hayashibara, Keiji/林原 啓二 <hayashibara.keiji@socionext.com>
-> Subject: Re: [PATCH v2 2/2] spi: add SPI controller driver for UniPhier SoC
-> 
-> On Thu, 2018-07-26 at 11:46 +0300, Andy Shevchenko wrote:
-> > > +
-> > > +       /*
-> > > +        * the supported rates are even numbers from 4 to 254. (4,6,8...254)
-> > > +        * round up as we look for equal or less speed
-> > > +        */
-> > > +       ckrat = DIV_ROUND_UP(clk_get_rate(priv->clk), speed);
-> > > +       ckrat = roundup(ckrat, 2);
-> >
-> > ckrat += ckrat & 1;
-> 
-> Either way, the compiler produces the same code:
-> 
->  add r0, r0, #1 
->  bic r0, r0, #1
-> 
-> I.e., ckrat = (ckrat + 1) & ~1, one "add" and one "and".
-> 
-> Might as well use the macro so it's clear. There is also round_up(x,y), which I believe is intended to be used
-> only with power of 2 values of y.
-
-I confirmed round_up() macro.
-This macro is optimized to power of 2 argument,
-and it matches to this case and clear.
-
-I will replace to round_up() macro.
-
-Thank you.
-
------------------
-Best Regards,
-Keiji Hayashibara
-
-
+On Fri, Jul 27, 2018 at 10:07 PM, Stephen Boyd <sboyd@kernel.org> wrote:
+> Quoting Amit Daniel Kachhap (2018-07-27 07:01:52)
+>> This fix rounds the clock rate properly by using quotient and not
+>> remainder in the calculation. This issue was found while testing HDMI
+>> in the Juno platform.
+>>
+>> Signed-off-by: Amit Daniel Kachhap <amit.kachhap@arm.com>
+>
+> Any Fixes: tag here?
+Yes, This patch is tested with Linux v4.18-rc6 tag.
+>
+>> ---
+>>  drivers/clk/clk-scmi.c | 5 ++---
+>>  1 file changed, 2 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/drivers/clk/clk-scmi.c b/drivers/clk/clk-scmi.c
+>> index bb2a6f2..a985bf5 100644
+>> --- a/drivers/clk/clk-scmi.c
+>> +++ b/drivers/clk/clk-scmi.c
+>> @@ -60,9 +59,9 @@ static long scmi_clk_round_rate(struct clk_hw *hw, unsigned long rate,
+>>
+>>         ftmp = rate - fmin;
+>>         ftmp += clk->info->range.step_size - 1; /* to round up */
+>> -       step = do_div(ftmp, clk->info->range.step_size);
+>> +       do_div(ftmp, clk->info->range.step_size);
+>>
+>> -       return step * clk->info->range.step_size + fmin;
+>> +       return ftmp * clk->info->range.step_size + fmin;
+>
+> Good catch.
+Thanks.
+>
+Regards,
+Amit
