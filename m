@@ -4,33 +4,33 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5A70C46461
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 07:16:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA032C46461
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 07:16:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7DE2220892
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 07:16:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7DE2220892
+	by mail.kernel.org (Postfix) with ESMTP id 8265520892
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 07:16:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8265520892
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zoho.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726962AbeG3IuR (ORCPT
+        id S1727076AbeG3IuT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 30 Jul 2018 04:50:17 -0400
-Received: from sender-pp-092.zoho.com ([135.84.80.237]:25482 "EHLO
+        Mon, 30 Jul 2018 04:50:19 -0400
+Received: from sender-pp-092.zoho.com ([135.84.80.237]:25485 "EHLO
         sender-pp-092.zoho.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726210AbeG3IuR (ORCPT
+        with ESMTP id S1726210AbeG3IuS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Jul 2018 04:50:17 -0400
+        Mon, 30 Jul 2018 04:50:18 -0400
 DomainKey-Signature: a=rsa-sha1; q=dns; c=nofws; 
   s=zapps768; d=zoho.com; 
-  h=from:to:cc:subject:date:message-id; 
-  b=knHOh6YvevoSp9xI3qCJCtl+umkguSzLO38fhTaOsVIaaivoM65fYFGOaEb/3jX6epaTHa5+t2Rn
-    6pJgDNTcOlxLfaRHAsUfbojLQWn1VDefmflXJ5h06FMgJMLz/oZ9  
+  h=from:to:cc:subject:date:message-id:in-reply-to:references; 
+  b=jTBqWLRQ206iA+xQbDQ+uUjiYq6j3IOCUnQjCtDNQsJ1dwZMA0MLksx/i8fhK6gYIugvXZ66TCCw
+    CJPEa6dhFX3v7XqM8nRpKWBlTMr7ijn2kRdHSLZ7DlMvdIbPR+KQ  
 Received: from YEHS1XR956R00D1.lenovo.com (221.219.122.69 [221.219.122.69]) by mx.zohomail.com
-        with SMTPS id 1532934965421456.2684745169777; Mon, 30 Jul 2018 00:16:05 -0700 (PDT)
+        with SMTPS id 1532934972894438.38404019626455; Mon, 30 Jul 2018 00:16:12 -0700 (PDT)
 From:   Huaisheng Ye <yehs2007@zoho.com>
 To:     linux-nvdimm@lists.01.org, dan.j.williams@intel.com
 Cc:     ross.zwisler@linux.intel.com, willy@infradead.org,
@@ -43,10 +43,12 @@ Cc:     ross.zwisler@linux.intel.com, willy@infradead.org,
         linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
         linux-fsdevel@vger.kernel.org, colyli@suse.de, chengnt@lenovo.com,
         Huaisheng Ye <yehs1@lenovo.com>
-Subject: [PATCH v3 0/6] kaddr and pfn can be NULL to ->direct_access()
-Date:   Mon, 30 Jul 2018 15:15:42 +0800
-Message-Id: <20180730071548.9172-1-yehs2007@zoho.com>
+Subject: [PATCH v3 1/6] libnvdimm, pmem: kaddr and pfn can be NULL to ->direct_access()
+Date:   Mon, 30 Jul 2018 15:15:43 +0800
+Message-Id: <20180730071548.9172-2-yehs2007@zoho.com>
 X-Mailer: git-send-email 2.17.0.windows.1
+In-Reply-To: <20180730071548.9172-1-yehs2007@zoho.com>
+References: <20180730071548.9172-1-yehs2007@zoho.com>
 X-ZohoMailClient: External
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -55,47 +57,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Huaisheng Ye <yehs1@lenovo.com>
 
-Changes since v2 [2]:
-* Collect Martin and Mike's acks for dcssblk and dm-writecache;
-* Rebase the series of patch to v4.18-rc7.
+pmem_direct_access() needs to check the validity of pointers kaddr
+and pfn for NULL assignment. If anyone equals to NULL, it doesn't need
+to calculate the value.
 
-Changes since v1 [1]:
-* Involve the previous patches for pfn can be NULL.
-* Reword the patch descriptions according to Christian's comment.
-* According to Ross's suggestion, replace local pointer dummy_addr
-  with NULL within md/dm-writecache for direct_access.
+If pointer equals to NULL, that is to say callers may have no need for
+kaddr or pfn, so this patch is prepared for allowing them to pass in
+NULL instead of having to pass in a pointer or local variable that
+they then just throw away.
 
-[1]: https://lkml.org/lkml/2018/7/24/199
-[2]: https://lkml.org/lkml/2018/7/25/581
+Signed-off-by: Huaisheng Ye <yehs1@lenovo.com>
+Reviewed-by: Ross Zwisler <ross.zwisler@linux.intel.com>
+---
+ drivers/nvdimm/pmem.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-Some functions within fs/dax, dax/super and md/dm-writecache don't
-need to get local pointer kaddr or variable pfn from direct_access.
-Assigning NULL to kaddr or pfn with ->direct_access() is more
-straightforward and simple than offering a useless local pointer or
-variable.
-
-So all ->direct_access() need to check the validity of pointer kaddr
-and pfn for NULL assignment. If either of them is equal to NULL, that
-is to say callers may have no need for kaddr or pfn, so this series of
-patch are prepared for allowing them to pass in NULL instead of having
-to pass in a local pointer or variable that they then just throw away.
-
-Huaisheng Ye (6):
-  libnvdimm, pmem: kaddr and pfn can be NULL to ->direct_access()
-  s390, dcssblk: kaddr and pfn can be NULL to ->direct_access()
-  tools/testing/nvdimm: kaddr and pfn can be NULL to ->direct_access()
-  dax/super: Do not request a pointer kaddr when not required
-  md/dm-writecache: Don't request pointer dummy_addr when not required
-  filesystem-dax: Do not request kaddr and pfn when not required
-
- drivers/dax/super.c             |  3 +--
- drivers/md/dm-writecache.c      |  3 +--
- drivers/nvdimm/pmem.c           |  7 +++++--
- drivers/s390/block/dcssblk.c    |  8 +++++---
- fs/dax.c                        | 13 ++++---------
- tools/testing/nvdimm/pmem-dax.c | 12 ++++++++----
- 6 files changed, 24 insertions(+), 22 deletions(-)
-
+diff --git a/drivers/nvdimm/pmem.c b/drivers/nvdimm/pmem.c
+index 8b1fd7f..ecf9024 100644
+--- a/drivers/nvdimm/pmem.c
++++ b/drivers/nvdimm/pmem.c
+@@ -227,8 +227,11 @@ __weak long __pmem_direct_access(struct pmem_device *pmem, pgoff_t pgoff,
+ 	if (unlikely(is_bad_pmem(&pmem->bb, PFN_PHYS(pgoff) / 512,
+ 					PFN_PHYS(nr_pages))))
+ 		return -EIO;
+-	*kaddr = pmem->virt_addr + offset;
+-	*pfn = phys_to_pfn_t(pmem->phys_addr + offset, pmem->pfn_flags);
++
++	if (kaddr)
++		*kaddr = pmem->virt_addr + offset;
++	if (pfn)
++		*pfn = phys_to_pfn_t(pmem->phys_addr + offset, pmem->pfn_flags);
+ 
+ 	/*
+ 	 * If badblocks are present, limit known good range to the
 -- 
 1.8.3.1
 
