@@ -6,101 +6,145 @@ X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B12B4FD21E1
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 15:31:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32890FD21E1
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 15:32:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 65C2C20894
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 15:31:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 65C2C20894
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=st.com
+	by mail.kernel.org (Postfix) with ESMTP id E991A20894
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 15:32:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E991A20894
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727447AbeG3RHU (ORCPT
+        id S1727667AbeG3RHz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 30 Jul 2018 13:07:20 -0400
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:52977 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726623AbeG3RHU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Jul 2018 13:07:20 -0400
-Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
-        by mx08-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id w6UFSvpE030452;
-        Mon, 30 Jul 2018 17:31:25 +0200
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx08-00178001.pphosted.com with ESMTP id 2kgfcr1rvy-1
-        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Mon, 30 Jul 2018 17:31:25 +0200
-Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 937F531;
-        Mon, 30 Jul 2018 15:31:23 +0000 (GMT)
-Received: from Webmail-eu.st.com (sfhdag3node2.st.com [10.75.127.8])
-        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 75C465444;
-        Mon, 30 Jul 2018 15:31:23 +0000 (GMT)
-Received: from [10.201.21.58] (10.75.127.48) by SFHDAG3NODE2.st.com
- (10.75.127.8) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Mon, 30 Jul
- 2018 17:31:22 +0200
-Subject: Re: [PATCH 2/2] pinctrl: stm32: check node status before new gpio
- bank registering
-To:     Linus Walleij <linus.walleij@linaro.org>
-CC:     Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Amelie Delaunay <amelie.delaunay@st.com>
-References: <1531745857-5561-1-git-send-email-alexandre.torgue@st.com>
- <1531745857-5561-3-git-send-email-alexandre.torgue@st.com>
- <CACRpkdaDy5MGPMxh3GYFHL9VqTv44=t6J=xu_0sdXc4OHFo84g@mail.gmail.com>
-From:   Alexandre Torgue <alexandre.torgue@st.com>
-Message-ID: <2f76dbc9-16f1-ddb6-be11-bf0c383b83c6@st.com>
-Date:   Mon, 30 Jul 2018 17:31:22 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
-MIME-Version: 1.0
-In-Reply-To: <CACRpkdaDy5MGPMxh3GYFHL9VqTv44=t6J=xu_0sdXc4OHFo84g@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.75.127.48]
-X-ClientProxiedBy: SFHDAG3NODE2.st.com (10.75.127.8) To SFHDAG3NODE2.st.com
- (10.75.127.8)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-30_07:,,
- signatures=0
+        Mon, 30 Jul 2018 13:07:55 -0400
+Received: from mx2.suse.de ([195.135.220.15]:49070 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726623AbeG3RHz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Jul 2018 13:07:55 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 12808ADE7;
+        Mon, 30 Jul 2018 15:32:23 +0000 (UTC)
+Date:   Mon, 30 Jul 2018 17:32:21 +0200
+Message-ID: <s5hy3dsviwq.wl-tiwai@suse.de>
+From:   Takashi Iwai <tiwai@suse.de>
+To:     "Pierre-Louis Bossart" <pierre-louis.bossart@linux.intel.com>
+Cc:     "Akshu Agrawal" <Akshu.Agrawal@amd.com>,
+        "moderated list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM..." 
+        <alsa-devel@alsa-project.org>, <Alexander.Deucher@amd.com>,
+        <djkurtz@chromium.org>, "Liam Girdwood" <lgirdwood@gmail.com>,
+        "Mark Brown" <broonie@kernel.org>,
+        "open list" <linux-kernel@vger.kernel.org>
+Subject: Re: [alsa-devel] [PATCH] ASoC: soc-pcm: Use delay set in pointer function
+In-Reply-To: <dd4d3dc6-88f3-d53f-cd5c-5035c80be3da@linux.intel.com>
+References: <1532686422-1790-1-git-send-email-akshu.agrawal@amd.com>
+        <66c8b8c4-bdd0-0129-5e5b-850890cfdb8d@linux.intel.com>
+        <e0990b62-897c-6dc7-8ac9-296932c505b7@amd.com>
+        <dd4d3dc6-88f3-d53f-cd5c-5035c80be3da@linux.intel.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI/1.14.6 (Maruoka)
+ FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 Emacs/26
+ (x86_64-suse-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+MIME-Version: 1.0 (generated by SEMI 1.14.6 - "Maruoka")
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus
+On Mon, 30 Jul 2018 17:15:44 +0200,
+Pierre-Louis Bossart wrote:
+> 
+> On 7/27/18 11:28 PM, Agrawal, Akshu wrote:
+> >
+> >
+> > On 7/27/2018 8:39 PM, Pierre-Louis Bossart wrote:
+> >> On 7/27/18 5:13 AM, Akshu Agrawal wrote:
+> >>> There are cases where a pointer function populates
+> >>> runtime->delay, such as:
+> >>> ./sound/pci/hda/hda_controller.c
+> >>> ./sound/soc/intel/atom/sst-mfld-platform-pcm.c
+> >>>
+> >>> Also, in some cases cpu dai used is generic and the pcm
+> >>> driver needs to set delay.
+> >>>
+> >>> This delay was getting lost and was overwritten by delays
+> >>> from codec or cpu dai delay function if exposed.
+> >>
+> >> Humm, yes the runtime->delay set in the .pointer function would be lost
+> >> without this change, but the delay would still be provided in the
+> >> followup call to .delay.
+> >> With your change, the same delay will be accounted for twice?
+> >>
+> >
+> > It will not be accounted twice because no driver which is setting
+> > runtime->delay is defining .delay op for cpu_dai. Vice versa is also
+> > true, the drivers which define .delay for cpu_dai don't set
+> > runtime->delay. And I think this is expected from drivers else it would
+> > be a bug from their side.
+> 
+> what do you mean my 'no driver'? Can you clarify if this is based on
+> analysis of the code or by-design. I don't recall having seen any
+> guidelines on this topic, and it's quite likely that different people
+> have different interpretation on how delay is supposed to be reported.
 
-On 07/29/2018 10:11 PM, Linus Walleij wrote:
-> On Mon, Jul 16, 2018 at 2:57 PM Alexandre Torgue
-> <alexandre.torgue@st.com> wrote:
-> 
->> Register a new GPIO bank only if GPIO bank node is enabled. This patch also
->> adds checks on ranges which are defined only if a bank is registered.
->>
->> Signed-off-by: Alexandre Torgue <alexandre.torgue@st.com>
-> 
-> Patch applied.
-> 
-Thanks
+Currently the problem seems to be the ambiguity of delay callback.
 
-> Alexandre can you check the discussion we've had about using
-> GPIOLIB_IRQCHIP for multi-bank GPIOs with several IRQ
-> lines as per drivers/gpio/gpio-tegra186.c?
-> 
-> Is this approach applicable for STM32 so we can pull
-> more stuff in under GPIOLIB_IRQCHIP?
-> 
-Ok. I'm going to check what's possible to do. I let you know soon.
+Through a quick glance, Akshu's patch looks correct to me.  The delay
+value that was calculated in some drivers aren't taken properly
+because the current soc_pcm_pointer() presumes that the delay
+calculation is provided *only* by delay callback.  The two drivers
+suggested in the patch set runtime->delay in its pointer callback, and
+these values are gone.
 
-regards
-Alex
+That said, if delay callback of CPU dai provides the additional delay,
+the patch does correct thing.  OTOH, if CPU dai provides the base
+delay instead, we need to clarify that it's rather a must; the delay
+calculation in pointer callback becomes bogus in this scenario.
 
-> Yours,
-> Linus Walleij
+
+thanks,
+
+Takashi
+
+> 
+> >
+> > .delay for codec_dai anyway is different and has to be accounted for.
+> >
+> > Thanks,
+> > Akshu
+> >>>
+> >>> Signed-off-by: Akshu Agrawal <akshu.agrawal@amd.com>
+> >>> ---
+> >>>    sound/soc/soc-pcm.c | 5 ++++-
+> >>>    1 file changed, 4 insertions(+), 1 deletion(-)
+> >>>
+> >>> diff --git a/sound/soc/soc-pcm.c b/sound/soc/soc-pcm.c
+> >>> index 98be04b..b1a2bc2 100644
+> >>> --- a/sound/soc/soc-pcm.c
+> >>> +++ b/sound/soc/soc-pcm.c
+> >>> @@ -1179,6 +1179,9 @@ static snd_pcm_uframes_t soc_pcm_pointer(struct snd_pcm_substream *substream)
+> >>>    	snd_pcm_sframes_t codec_delay = 0;
+> >>>    	int i;
+> >>>    +	/* clearing the previous delay */
+> >>> +	runtime->delay = 0;
+> >>> +
+> >>>    	for_each_rtdcom(rtd, rtdcom) {
+> >>>    		component = rtdcom->component;
+> >>>    @@ -1203,7 +1206,7 @@ static snd_pcm_uframes_t
+> >>> soc_pcm_pointer(struct snd_pcm_substream *substream)
+> >>>    	}
+> >>>    	delay += codec_delay;
+> >>>    -	runtime->delay = delay;
+> >>> +	runtime->delay += delay;
+> >>>       	return offset;
+> >>>    }
+> >>>
+> >>
+> > _______________________________________________
+> > Alsa-devel mailing list
+> > Alsa-devel@alsa-project.org
+> > http://mailman.alsa-project.org/mailman/listinfo/alsa-devel
+> >
+> 
 > 
