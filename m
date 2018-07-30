@@ -2,116 +2,171 @@ Return-Path: <SRS0=qqIy=KO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27D1BFD21E1
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 06:14:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61500FD21E1
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 06:14:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D373520873
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 06:14:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D373520873
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id BBB8920873
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 06:14:57 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="hAuYmLdn"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BBB8920873
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726535AbeG3HsM (ORCPT
+        id S1726632AbeG3HsS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 30 Jul 2018 03:48:12 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:51430 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726344AbeG3HsM (ORCPT
+        Mon, 30 Jul 2018 03:48:18 -0400
+Received: from mailout2.samsung.com ([203.254.224.25]:26928 "EHLO
+        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726344AbeG3HsR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Jul 2018 03:48:12 -0400
-Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w6U69atW017213
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Jul 2018 02:14:48 -0400
-Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2khqwdh8dq-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Jul 2018 02:14:48 -0400
-Received: from localhost
-        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <rppt@linux.vnet.ibm.com>;
-        Mon, 30 Jul 2018 07:14:47 +0100
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
-        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 30 Jul 2018 07:14:44 +0100
-Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w6U6Eh4V33554654
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 30 Jul 2018 06:14:43 GMT
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 67BD14C04E;
-        Mon, 30 Jul 2018 09:14:56 +0100 (BST)
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 73B1C4C040;
-        Mon, 30 Jul 2018 09:14:55 +0100 (BST)
-Received: from rapoport-lnx (unknown [9.148.8.125])
-        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Mon, 30 Jul 2018 09:14:55 +0100 (BST)
-Date:   Mon, 30 Jul 2018 09:14:40 +0300
-From:   Mike Rapoport <rppt@linux.vnet.ibm.com>
-To:     Ley Foon Tan <lftan@altera.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Michal Hocko <mhocko@kernel.org>,
-        nios2-dev@lists.rocketboards.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/3] nios2: switch to NO_BOOTMEM
-References: <1530710295-10774-1-git-send-email-rppt@linux.vnet.ibm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1530710295-10774-1-git-send-email-rppt@linux.vnet.ibm.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-TM-AS-GCONF: 00
-x-cbid: 18073006-0008-0000-0000-00000259BA1E
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18073006-0009-0000-0000-000021C046C6
-Message-Id: <20180730061439.GB15948@rapoport-lnx>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-30_02:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=660 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1806210000 definitions=main-1807300071
+        Mon, 30 Jul 2018 03:48:17 -0400
+Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
+        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20180730061452epoutp0259d223cb9b7292229ea8bf34238070bd~GEOOSFVtS1349713497epoutp02m
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Jul 2018 06:14:52 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20180730061452epoutp0259d223cb9b7292229ea8bf34238070bd~GEOOSFVtS1349713497epoutp02m
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1532931292;
+        bh=ZweHNJrLKzBpIbjnjV8yVQJdDIVnvDtMLUR/8CpKQeY=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=hAuYmLdnmAbznTcMMg70b/4SoTP9VEgNRhrkiGpxftXDQUlxf2ymUo0Qxw5hhgrwO
+         4zr2OAayhdxpwEW2byFbeYkUl/J0lhcy7vXjOX1f/SUz/bz3OUwcoOlZEiPmH/DxFR
+         s6pf6GugTCQnDBDFZVcCZ3d1N7SnDoLcjIHYZeOA=
+Received: from epsmges5p2new.samsung.com (unknown [182.195.40.196]) by
+        epcas5p4.samsung.com (KnoxPortal) with ESMTP id
+        20180730061452epcas5p4753bff3ab30bf6ded44b258f063f8950~GEONxf2dX1094910949epcas5p40;
+        Mon, 30 Jul 2018 06:14:52 +0000 (GMT)
+Received: from epcas5p1.samsung.com ( [182.195.41.39]) by
+        epsmges5p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        7C.A2.04309.CDCAE5B5; Mon, 30 Jul 2018 15:14:52 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+        epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
+        20180730061450epcas5p137fd022ec7fda83eeadea2102a62ae4f~GEOMmSYCD1391313913epcas5p1G;
+        Mon, 30 Jul 2018 06:14:50 +0000 (GMT)
+Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
+        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20180730061450epsmtrp121de2edb54db742de62397debf4ff834~GEOMiULif0793407934epsmtrp1R;
+        Mon, 30 Jul 2018 06:14:50 +0000 (GMT)
+X-AuditID: b6c32a4a-9cbff700000010d5-92-5b5eacdc7eaa
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+        epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        2E.7B.03889.ADCAE5B5; Mon, 30 Jul 2018 15:14:50 +0900 (KST)
+Received: from localhost.localdomain (unknown [107.108.161.94]) by
+        epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20180730061449epsmtip219d822d7a9e9f07694d01c1c14770dc1~GEOKzF7vV1811118111epsmtip2S;
+        Mon, 30 Jul 2018 06:14:48 +0000 (GMT)
+From:   Satendra Singh Thakur <satendra.t@samsung.com>
+To:     Gustavo Padovan <gustavo@padovan.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Sean Paul <seanpaul@chromium.org>,
+        David Airlie <airlied@linux.ie>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Cc:     vineet.j@samsung.com, hemanshu.s@samsung.com, sst2005@gmail.com,
+        Satendra Singh Thakur <satendra.t@samsung.com>
+Subject: [PATCH] drm/kms/atomic: Improved the func
+ drm_atomic_set_crtc_for_connector
+Date:   Mon, 30 Jul 2018 11:44:15 +0530
+X-Mailer: git-send-email 2.7.4
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrBKsWRmVeSWpSXmKPExsWy7bCmuu6dNXHRBmeWcVv0njvJZHHl63s2
+        i50PdrFbvDr/htni8q45bBYLP25lsVh7vpXF4u6Gs4wWy09fZ7Y4tvUSuwOXx+yGiyweO2fd
+        ZffY/u0Bq8e8k4Ee97uPM3nsnLSXyaNvyypGj8+b5AI4olJtMlITU1KLFFLzkvNTMvPSbZW8
+        g+Od403NDAx1DS0tzJUU8hJzU22VXHwCdN0yc4BuVFIoS8wpBQoFJBYXK+nb2RTll5akKmTk
+        F5fYKkUbGhrpGRqY6xkZAWnTWCsjU6CShNSMPb8mMxf0ClS8OSfawLiNt4uRg0NCwETi+aey
+        LkYuDiGB3YwS3zc8YIZwPjFKND2czw7hfGOUuLqqm6WLkROs49iC40wQib2MEieXfWMHSQgJ
+        fGGUmDo9H8RmAxk7ZwYrSJGIwEtGiZstZ1hBEswCpRIPbjYxg9jCAmESx779ApvKIqAqMWPC
+        dWaIDXISN891gt0hIbCGTWJvcy8LyLG8AmUSPXMEIWpcJKbfWgNVLyzx6vgWdghbSuJlfxuU
+        PZlRovmsH8Sc1YwSZy/2QiXsJVqmHACbySygKbF+lz7EbXwSvb+fMEHChVeio00IolpFYuWL
+        w8ww4/8s6GKFsD0kNi6dzQZSLiQQK/Gl32ACo8wshJkLGBlXMUqmFhTnpqcWmxYY5aWW6xUn
+        5haX5qXrJefnbmIEpzItrx2My875HGIU4GBU4uEVkIiLFmJNLCuuzD3EKMHBrCTCm3Q/NlqI
+        NyWxsiq1KD++qDQntfgQoykwyCYyS4km5wPTbF5JvKGpkZmZgaWBqbGFmaGSOO8Hv+BoIYH0
+        xJLU7NTUgtQimD4mDk6pBsblR5dM5hD6ylU516bkYPrBGg3/Xi/N3yq25dYTRfm2fRc96nP0
+        RqZscyxbvrxdbKtzw9Nr62d6a75+w2i/6yzzBqW+e19Tq+Z9Xqr7Z/Wt/oUhLjk3m6T3tb+Q
+        3KzhsWzxmiQzLS/BK4+rv8+aH3aiOZhhaWEe267zX4P+5rJfShE7Fuwq8kqJpTgj0VCLuag4
+        EQAL7/YRewMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrJLMWRmVeSWpSXmKPExsWy7bCSvO6tNXHRBo9mGlv0njvJZHHl63s2
+        i50PdrFbvDr/htni8q45bBYLP25lsVh7vpXF4u6Gs4wWy09fZ7Y4tvUSuwOXx+yGiyweO2fd
+        ZffY/u0Bq8e8k4Ee97uPM3nsnLSXyaNvyypGj8+b5AI4orhsUlJzMstSi/TtErgy9vyazFzQ
+        K1Dx5pxoA+M23i5GTg4JAROJYwuOM3UxcnEICexmlGif18MGkZCSWPZmG5QtLLHy33N2iKJP
+        jBK3upuZQRJsQN3P58xgBUmICLxllGjdeZoFJMEsUClx7vlkRhBbWCBE4uu77WA2i4CqxIwJ
+        18GaeQVcJQ7sv8wEsUFO4ua5TuYJjDwLGBlWMUqmFhTnpucWGxYY5aWW6xUn5haX5qXrJefn
+        bmIEB6CW1g7GEyfiDzEKcDAq8fBmSMVFC7EmlhVX5h5ilOBgVhLhTbofGy3Em5JYWZValB9f
+        VJqTWnyIUZqDRUmcVz7/WKSQQHpiSWp2ampBahFMlomDU6qBsdXgztfSK3cNDmasEK8Pe9+4
+        hvdV2CwZMwWnZauf/GhscljG2npkeWuHQrFzaqJ46+Fts8+enqX24obzkh8a7Cs4MwJf9RXc
+        +F0+7U/ZzWZzdgcDM4/5O9a1LX3xplhnZo5a08tKX14NrqQCu8Aeh3smh2WiJBY8jTm/n+nq
+        7UfzjjyzvBn8WImlOCPRUIu5qDgRAD9jWcA8AgAA
+Message-Id: <20180730061450epcas5p137fd022ec7fda83eeadea2102a62ae4f~GEOMmSYCD1391313913epcas5p1G@epcas5p1.samsung.com>
+X-CMS-MailID: 20180730061450epcas5p137fd022ec7fda83eeadea2102a62ae4f
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20180730061450epcas5p137fd022ec7fda83eeadea2102a62ae4f
+References: <CGME20180730061450epcas5p137fd022ec7fda83eeadea2102a62ae4f@epcas5p1.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Any updates on this?
+a. Used drm_atomic_get_crtc_state instead of drm_atomic_get_new_crtc_state.
+   Anyway new_state and state are same, this should make no difference.
+   This change will make the code of this func and the func
+   drm_atomic_set_crtc_for_plane similar.
+b. Added error checking after this func call
+c. Currently conn_state->crtc is getting assigned a value at two places
+   We can just reduce this assignment to one
 
-On Wed, Jul 04, 2018 at 04:18:12PM +0300, Mike Rapoport wrote:
-> These patches switch nios2 boot time memory allocators from bootmem to
-> memblock + no_bootmem.
-> 
-> As nios2 uses fdt, the conversion is pretty much about actually using the
-> existing fdt infrastructure for the early memory management.
-> 
-> The first patch in the series is not strictly related to nios2. It's just
-> I've got really interesting memory layout without it because of 1K long
-> memory ranges defined in arch/nios2/boot/dts/10m50_devboard.dts.
-> 
-> Mike Rapoport (3):
->   of: ignore sub-page memory regions
->   nios2: use generic early_init_dt_add_memory_arch
->   nios2: switch to NO_BOOTMEM
-> 
->  arch/nios2/Kconfig        |  3 +++
->  arch/nios2/kernel/prom.c  | 17 -----------------
->  arch/nios2/kernel/setup.c | 39 +++++++--------------------------------
->  drivers/of/fdt.c          | 11 ++++++-----
->  4 files changed, 16 insertions(+), 54 deletions(-)
-> 
-> -- 
-> 2.7.4
-> 
+Signed-off-by: Satendra Singh Thakur <satendra.t@samsung.com>
+---
+ drivers/gpu/drm/drm_atomic.c | 9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
 
+diff --git a/drivers/gpu/drm/drm_atomic.c b/drivers/gpu/drm/drm_atomic.c
+index 895741e..907fb2d 100644
+--- a/drivers/gpu/drm/drm_atomic.c
++++ b/drivers/gpu/drm/drm_atomic.c
+@@ -1552,16 +1552,16 @@ drm_atomic_set_crtc_for_connector(struct drm_connector_state *conn_state,
+ 		return 0;
+ 
+ 	if (conn_state->crtc) {
+-		crtc_state = drm_atomic_get_new_crtc_state(conn_state->state,
++		crtc_state = drm_atomic_get_crtc_state(conn_state->state,
+ 							   conn_state->crtc);
++		if (IS_ERR(crtc_state))
++			return PTR_ERR(crtc_state);
+ 
+ 		crtc_state->connector_mask &=
+ 			~(1 << drm_connector_index(conn_state->connector));
+ 
+ 		drm_connector_put(conn_state->connector);
+-		conn_state->crtc = NULL;
+ 	}
+-
+ 	if (crtc) {
+ 		crtc_state = drm_atomic_get_crtc_state(conn_state->state, crtc);
+ 		if (IS_ERR(crtc_state))
+@@ -1571,7 +1571,6 @@ drm_atomic_set_crtc_for_connector(struct drm_connector_state *conn_state,
+ 			1 << drm_connector_index(conn_state->connector);
+ 
+ 		drm_connector_get(conn_state->connector);
+-		conn_state->crtc = crtc;
+ 
+ 		DRM_DEBUG_ATOMIC("Link connector state %p to [CRTC:%d:%s]\n",
+ 				 conn_state, crtc->base.id, crtc->name);
+@@ -1579,7 +1578,7 @@ drm_atomic_set_crtc_for_connector(struct drm_connector_state *conn_state,
+ 		DRM_DEBUG_ATOMIC("Link connector state %p to [NOCRTC]\n",
+ 				 conn_state);
+ 	}
+-
++	conn_state->crtc = crtc;
+ 	return 0;
+ }
+ EXPORT_SYMBOL(drm_atomic_set_crtc_for_connector);
 -- 
-Sincerely yours,
-Mike.
+2.7.4
 
