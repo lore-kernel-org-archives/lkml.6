@@ -2,210 +2,271 @@ Return-Path: <SRS0=qqIy=KO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DB1AFD21E1
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 14:59:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C727BFD21E1
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 14:59:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CA23120870
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 14:59:03 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q0v0Ntoz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA23120870
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 77A3C20870
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 14:59:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 77A3C20870
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731783AbeG3QeY (ORCPT
+        id S1731953AbeG3Qe4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 30 Jul 2018 12:34:24 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:39537 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727119AbeG3QeX (ORCPT
+        Mon, 30 Jul 2018 12:34:56 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:33292 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1731797AbeG3Qe4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Jul 2018 12:34:23 -0400
-Received: by mail-pf1-f195.google.com with SMTP id j8-v6so4651732pff.6;
-        Mon, 30 Jul 2018 07:59:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=Zo2IcPN+YDyX615MW/9rPyYaNzvi5cxf3kzJtY5lUgM=;
-        b=Q0v0NtozO+5aZLchbMn8BjDeX4dGlRYKpPJw/HgqKZCYQIEgqUi+tU3YjDv7ALwXh3
-         UquM+rDYUjyq18bLA6eAwkwXvR4CqhGyArLi6kpg58wCaA9pBRd8vJtaXOsT2+qgq8rO
-         Q3dsWSiOWN9BQ0bn//iupuuYaQQ6cSVzw9lU4TcW2ww5vl1MMicz8T1MiWmG+rqD37YC
-         cSC+WgFnooIegXmBC4Cs18H3IJ5iHE4JqCvV8n/Be066+hRvv6EhIjB4emIsojt60IN+
-         vWRNHz/mReNxCeMbiLJZpDVwnnI9wC+F0E6IqMHBPrcnBfOMKUMMNInvrH2uDt3JSFHn
-         9eVw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=Zo2IcPN+YDyX615MW/9rPyYaNzvi5cxf3kzJtY5lUgM=;
-        b=CO3TvoNUKTFypqyYX3fTIoZ7LZjt8ezbXQFbQG8sINtlUVtEicjC7TBSZLtgcqffvE
-         15dSc23tJmHdMQlx/PmeY4vZVG6t4tIlTePdEyGlpX25m+ncjA7IMtdAGWZUXtVD64U9
-         +pT//XhD9cI4+ZHQVLSkTlj8BBLpvJCw+Xs4GpMwrJVbdQoHkXCsNjQ58wNLiID/AtL/
-         oItx9Umef/ud7a+GFLAuuWQBr/kKUGPnmUD5+W/MB75GabWFUkQhCfwCSpsu14Kmxv8b
-         R+wMFL6rvGpaFhMm/0G+naLpuJxh4j1xdwwYiPORFjrS0ekhfdAzWIfzMCwNzJIsNTx2
-         Dz7Q==
-X-Gm-Message-State: AOUpUlHg10sZtel3BW/XJAwvFu5BiSdeKsHPnTPHHZv+bRAy0oBq4tCH
-        zowp9rtI8iYfcCtLNNVctA4=
-X-Google-Smtp-Source: AAOMgpdcedJkkiIlOjozBl3Yv4qaYXjK2EpTeq85lOKmS1veG6Ftfq572FcDLX6uWRr7+BLLW0Z4gw==
-X-Received: by 2002:a63:e40d:: with SMTP id a13-v6mr7946037pgi.289.1532962740722;
-        Mon, 30 Jul 2018 07:59:00 -0700 (PDT)
-Received: from jordon-HP-15-Notebook-PC ([2405:204:5404:362:7122:cc54:b987:a840])
-        by smtp.gmail.com with ESMTPSA id f67-v6sm20257954pfe.75.2018.07.30.07.58.58
-        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 30 Jul 2018 07:58:59 -0700 (PDT)
-Date:   Mon, 30 Jul 2018 20:31:42 +0530
-From:   Souptick Joarder <jrdr.linux@gmail.com>
-To:     viro@zeniv.linux.org.uk, konishi.ryusuke@lab.ntt.co.jp,
-        axboe@kernel.dk, darrick.wong@oracle.com, ebiggers@google.com,
-        kstewart@linuxfoundation.org, gregkh@linuxfoundation.org,
-        kemi.wang@intel.com, willy@infradead.org
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-nilfs@vger.kernel.org, sabyasachi.linux@gmail.com,
-        brajeswar.linux@gmail.com
-Subject: [PATCH v2] fs/buffer: Convert return type int to vm_fault_t
-Message-ID: <20180730150142.GA8414@jordon-HP-15-Notebook-PC>
+        Mon, 30 Jul 2018 12:34:56 -0400
+Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w6UExL4A060396
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Jul 2018 10:59:33 -0400
+Received: from e12.ny.us.ibm.com (e12.ny.us.ibm.com [129.33.205.202])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2kj3pwuh0r-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Jul 2018 10:59:33 -0400
+Received: from localhost
+        by e12.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
+        Mon, 30 Jul 2018 10:59:32 -0400
+Received: from b01cxnp22035.gho.pok.ibm.com (9.57.198.25)
+        by e12.ny.us.ibm.com (146.89.104.199) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 30 Jul 2018 10:59:31 -0400
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp22035.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w6UExU4q9044554
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 30 Jul 2018 14:59:30 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id BD770B205F;
+        Mon, 30 Jul 2018 10:59:05 -0400 (EDT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 8E206B2067;
+        Mon, 30 Jul 2018 10:59:05 -0400 (EDT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.159])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Mon, 30 Jul 2018 10:59:05 -0400 (EDT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id 20F6416C17E6; Mon, 30 Jul 2018 07:59:33 -0700 (PDT)
+Date:   Mon, 30 Jul 2018 07:59:33 -0700
+From:   "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RFC tip/core/rcu] Avoid resched_cpu() when rescheduling
+ the current CPU
+Reply-To: paulmck@linux.vnet.ibm.com
+References: <20180727154931.GA12106@linux.vnet.ibm.com>
+ <20180730092513.GD2494@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20180730092513.GD2494@hirez.programming.kicks-ass.net>
 User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18073014-0060-0000-0000-00000294CE81
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009457; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000266; SDB=6.01068112; UDB=6.00549045; IPR=6.00846205;
+ MB=3.00022406; MTD=3.00000008; XFM=3.00000015; UTC=2018-07-30 14:59:32
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18073014-0061-0000-0000-000045FBE63E
+Message-Id: <20180730145933.GX24813@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-30_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1806210000 definitions=main-1807300164
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Return type of block_page_mkwrite() is converted to
-vm_fault_t type. The caller of block_page_mkwrite
-inside fs/nilfs2 nilfs_page_mkwrite converted accordingly.
+On Mon, Jul 30, 2018 at 11:25:13AM +0200, Peter Zijlstra wrote:
+> On Fri, Jul 27, 2018 at 08:49:31AM -0700, Paul E. McKenney wrote:
+> > Hello, Peter,
+> > 
+> > It occurred to me that it is wasteful to let resched_cpu() acquire
+> > ->pi_lock when doing something like resched_cpu(smp_processor_id()),
+> 
+> rq->lock
 
-Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
----
-v2: Address Jens's comment. Remove ret variable
-    from block_page_mkwrite().
+Good catch, will fix.  And thank you for looking this over!
 
- fs/buffer.c                 | 16 ++++++++--------
- fs/nilfs2/file.c            | 13 ++++++++-----
- include/linux/buffer_head.h |  2 +-
- 3 files changed, 17 insertions(+), 14 deletions(-)
+> > and that it would be better to instead use set_tsk_need_resched(current)
+> > and set_preempt_need_resched().
+> > 
+> > But is doing so really worthwhile?  For that matter, are there some
+> > constraints on the use of those two functions that I am failing to
+> > allow for in the patch below?
+> 
+> 
+> >     The resched_cpu() interface is quite handy, but it does acquire the
+> >     specified CPU's runqueue lock, which does not come for free.  This
+> >     commit therefore substitutes the following when directing resched_cpu()
+> >     at the current CPU:
+> >     
+> >             set_tsk_need_resched(current);
+> >             set_preempt_need_resched();
+> 
+> That is only a valid substitute for resched_cpu(smp_processor_id()).
 
-diff --git a/fs/buffer.c b/fs/buffer.c
-index cabc045..aeed99f 100644
---- a/fs/buffer.c
-+++ b/fs/buffer.c
-@@ -2444,21 +2444,21 @@ int block_commit_write(struct page *page, unsigned from, unsigned to)
-  * Direct callers of this function should protect against filesystem freezing
-  * using sb_start_pagefault() - sb_end_pagefault() functions.
-  */
--int block_page_mkwrite(struct vm_area_struct *vma, struct vm_fault *vmf,
-+vm_fault_t block_page_mkwrite(struct vm_area_struct *vma, struct vm_fault *vmf,
- 			 get_block_t get_block)
- {
- 	struct page *page = vmf->page;
- 	struct inode *inode = file_inode(vma->vm_file);
- 	unsigned long end;
- 	loff_t size;
--	int ret;
-+	int err;
- 
- 	lock_page(page);
- 	size = i_size_read(inode);
- 	if ((page->mapping != inode->i_mapping) ||
- 	    (page_offset(page) > size)) {
- 		/* We overload EFAULT to mean page got truncated */
--		ret = -EFAULT;
-+		err = -EFAULT;
- 		goto out_unlock;
- 	}
- 
-@@ -2468,18 +2468,18 @@ int block_page_mkwrite(struct vm_area_struct *vma, struct vm_fault *vmf,
- 	else
- 		end = PAGE_SIZE;
- 
--	ret = __block_write_begin(page, 0, end, get_block);
--	if (!ret)
--		ret = block_commit_write(page, 0, end);
-+	err = __block_write_begin(page, 0, end, get_block);
-+	if (!err)
-+		err = block_commit_write(page, 0, end);
- 
--	if (unlikely(ret < 0))
-+	if (unlikely(err < 0))
- 		goto out_unlock;
- 	set_page_dirty(page);
- 	wait_for_stable_page(page);
- 	return 0;
- out_unlock:
- 	unlock_page(page);
--	return ret;
-+	return block_page_mkwrite_return(err);
- }
- EXPORT_SYMBOL(block_page_mkwrite);
- 
-diff --git a/fs/nilfs2/file.c b/fs/nilfs2/file.c
-index c5fa3de..da2759e 100644
---- a/fs/nilfs2/file.c
-+++ b/fs/nilfs2/file.c
-@@ -57,7 +57,8 @@ static int nilfs_page_mkwrite(struct vm_fault *vmf)
- 	struct page *page = vmf->page;
- 	struct inode *inode = file_inode(vma->vm_file);
- 	struct nilfs_transaction_info ti;
--	int ret = 0;
-+	vm_fault_t ret = VM_FAULT_LOCKED;
-+	int err = 0;
- 
- 	if (unlikely(nilfs_near_disk_full(inode->i_sb->s_fs_info)))
- 		return VM_FAULT_SIGBUS; /* -ENOSPC */
-@@ -67,7 +68,7 @@ static int nilfs_page_mkwrite(struct vm_fault *vmf)
- 	if (page->mapping != inode->i_mapping ||
- 	    page_offset(page) >= i_size_read(inode) || !PageUptodate(page)) {
- 		unlock_page(page);
--		ret = -EFAULT;	/* make the VM retry the fault */
-+		ret = VM_FAULT_NOPAGE;	/* make the VM retry the fault */
- 		goto out;
- 	}
- 
-@@ -99,10 +100,12 @@ static int nilfs_page_mkwrite(struct vm_fault *vmf)
- 	/*
- 	 * fill hole blocks
- 	 */
--	ret = nilfs_transaction_begin(inode->i_sb, &ti, 1);
-+	err = nilfs_transaction_begin(inode->i_sb, &ti, 1);
- 	/* never returns -ENOMEM, but may return -ENOSPC */
--	if (unlikely(ret))
-+	if (unlikely(err)) {
-+		ret = block_page_mkwrite_return(err);
- 		goto out;
-+	}
- 
- 	file_update_time(vma->vm_file);
- 	ret = block_page_mkwrite(vma, vmf, nilfs_get_block);
-@@ -117,7 +120,7 @@ static int nilfs_page_mkwrite(struct vm_fault *vmf)
- 	wait_for_stable_page(page);
-  out:
- 	sb_end_pagefault(inode->i_sb);
--	return block_page_mkwrite_return(ret);
-+	return ret;
- }
- 
- static const struct vm_operations_struct nilfs_file_vm_ops = {
-diff --git a/include/linux/buffer_head.h b/include/linux/buffer_head.h
-index ed7a81b..7184c6e 100644
---- a/include/linux/buffer_head.h
-+++ b/include/linux/buffer_head.h
-@@ -240,7 +240,7 @@ int cont_write_begin(struct file *, struct address_space *, loff_t,
- 			get_block_t *, loff_t *);
- int generic_cont_expand_simple(struct inode *inode, loff_t size);
- int block_commit_write(struct page *page, unsigned from, unsigned to);
--int block_page_mkwrite(struct vm_area_struct *vma, struct vm_fault *vmf,
-+vm_fault_t block_page_mkwrite(struct vm_area_struct *vma, struct vm_fault *vmf,
- 				get_block_t get_block);
- /* Convert errno to return value from ->page_mkwrite() call */
- static inline vm_fault_t block_page_mkwrite_return(int err)
--- 
-1.9.1
+Understood.
+
+> But also note how this can cause more context switches over
+> resched_curr() for not checking if TIF_NEED_RESCHED wasn't already set.
+> 
+> Something that might be more in line with
+> resched_curr(smp_processor_id()) would be:
+> 
+> 	preempt_disable();
+> 	if (!test_tsk_need_resched(current)) {
+> 		set_tsk_need_resched(current);
+> 		set_preempt_need_resched();
+> 	}
+> 	preempt_enable();
+> 
+> Where the preempt_enable() could of course instantly trigger the
+> reschedule if it was the outer most one.
+
+Ah.  So should I use resched_curr() from rcu_check_callbacks(), which
+is invoked from the scheduling-clock interrupt?  Right now I have calls
+to set_tsk_need_resched() and set_preempt_need_resched().
+
+> > @@ -2674,10 +2675,12 @@ static __latent_entropy void rcu_process_callbacks(struct softirq_action *unused
+> 
+> > -		resched_cpu(rdp->cpu); /* Provoke future context switch. */
+> 
+> > +		set_tsk_need_resched(current);
+> > +		set_preempt_need_resched();
+> 
+> That's not obviously correct. rdp->cpu had better be smp_processor_id().
+
+At the beginning of the function, we have:
+
+	struct rcu_data *rdp = raw_cpu_ptr(&rcu_data);
+
+And this is in a softirq handler, so we are OK.
+
+> > @@ -672,7 +672,8 @@ static void sync_rcu_exp_handler(void *unused)
+> >  			rcu_report_exp_rdp(rdp);
+> >  		} else {
+> >  			rdp->deferred_qs = true;
+> > -			resched_cpu(rdp->cpu);
+> > +			set_tsk_need_resched(t);
+> > +			set_preempt_need_resched();
+> 
+> That only works if @t == current.
+
+At the beginning of the function, we have:
+
+	struct task_struct *t = current;
+
+So we should be OK.
+
+> >  		}
+> >  		return;
+> >  	}
+> 
+> > -	else
+> > -		resched_cpu(rdp->cpu);
+> > +	} else {
+> > +		set_tsk_need_resched(t);
+> > +		set_preempt_need_resched();
+> 
+> Similar...
+
+Same function, so we should be good here as well.
+
+> >  }
+> 
+> > @@ -791,8 +791,10 @@ static void rcu_flavor_check_callbacks(int user)
+> >  	if (t->rcu_read_lock_nesting > 0 ||
+> >  	    (preempt_count() & (PREEMPT_MASK | SOFTIRQ_MASK))) {
+> >  		/* No QS, force context switch if deferred. */
+> > -		if (rcu_preempt_need_deferred_qs(t))
+> > -			resched_cpu(smp_processor_id());
+> > +		if (rcu_preempt_need_deferred_qs(t)) {
+> > +			set_tsk_need_resched(t);
+> > +			set_preempt_need_resched();
+> > +		}
+> 
+> And another dodgy one..
+
+And the beginning of this function also has:
+
+	struct task_struct *t = current;
+
+So good there as well.
+
+Should I be instead using resched_curr() on some or all of these?
+
+kernel/rcu/tiny.c rcu_check_callbacks():
+
+	Interrupts disabled (scheduling clock interrupt), so no
+	point in preempt_disable().  It would make sense to check
+	test_tsk_need_resched().  This is handling the case where someone
+	disabled something over rcu_read_unlock(), but got preempted
+	within (or had an overly long) RCU read-side critical section.
+	This used to result in deadlock, but now just messes up real-time
+	response.
+
+kernel/rcu/tree.c print_cpu_stall():
+
+	Interrupts disabled, so no point in preempt_disable().
+	It might make sense to check test_tsk_need_resched(), but
+	on the other hand at this point this CPU has gone for
+	tens of seconds without a quiescent state.  Wouldn't hurt
+	to check, though.
+
+kernel/rcu/tree.c rcu_check_callbacks():
+
+	Interrupts disabled (scheduling clock interrupt), so no
+	point in preempt_disable().  It would make sense to check
+	test_tsk_need_resched().  This is handling the case where someone
+	disabled something over rcu_read_unlock(), but got preempted
+	within (or had an overly long) RCU read-side critical section.
+	This used to result in deadlock, but now just messes up real-time
+	response.
+
+kernel/rcu/tree.c rcu_process_callbacks():
+
+	Softirqs disabled (softirq handler), so no point
+	in preempt_disable().  It might make sense to check
+	test_tsk_need_resched().  This is handling the case where someone
+	disabled something over rcu_read_unlock(), but got preempted
+	within (or had an overly long) RCU read-side critical section.
+	This used to result in deadlock, but now just messes up real-time
+	response.
+
+kernel/rcu/tree_exp.h sync_rcu_exp_handler():
+kernel/rcu/tree_exp.h sync_sched_exp_handler():
+
+	Interrupts disabled (IPI handler), so no point in
+	preempt_disable().  It might make sense to check
+	test_tsk_need_resched().  This is the expedited
+	grace-period case.  (The first is PREEMPT, the second
+	!PREEMPT.)
+
+kernel/rcu/tree_plugin.h rcu_flavor_check_callbacks():
+
+	Interrupts disabled (scheduling clock interrupt), so no
+	point in preempt_disable().  It would make sense to check
+	test_tsk_need_resched().  This is handling the case where someone
+	disabled something over rcu_read_unlock(), but got preempted
+	within (or had an overly long) RCU read-side critical section.
+	This used to result in deadlock, but now just messes up real-time
+	response.
+
+So it looks safe for me to invoke resched_curr() in all cases.  I don't
+believe that the extra nested preempt_disable() will be a performance
+problem.  Anything that I am missing here?
+
+							Thanx, Paul
 
