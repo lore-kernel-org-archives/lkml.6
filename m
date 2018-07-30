@@ -2,134 +2,160 @@ Return-Path: <SRS0=qqIy=KO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DEF713F6DFF
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 13:26:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 438B213F6DFF
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 13:30:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3662020870
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 13:26:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3662020870
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id D1F1C20870
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 13:30:58 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="uqwYQN4v"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D1F1C20870
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731339AbeG3PBk (ORCPT
+        id S1731078AbeG3PF4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 30 Jul 2018 11:01:40 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:60648 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726570AbeG3PBk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Jul 2018 11:01:40 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 4D2C24219DBF;
-        Mon, 30 Jul 2018 13:26:39 +0000 (UTC)
-Received: from redhat.com (ovpn-117-43.ams2.redhat.com [10.36.117.43])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 4886E2142F20;
-        Mon, 30 Jul 2018 13:26:33 +0000 (UTC)
-Date:   Mon, 30 Jul 2018 16:26:32 +0300
-From:   "Michael S. Tsirkin" <mst@redhat.com>
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     Will Deacon <will.deacon@arm.com>,
-        Anshuman Khandual <khandual@linux.vnet.ibm.com>,
-        virtualization@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        aik@ozlabs.ru, robh@kernel.org, joe@perches.com,
-        elfring@users.sourceforge.net, david@gibson.dropbear.id.au,
-        jasowang@redhat.com, benh@kernel.crashing.org, mpe@ellerman.id.au,
-        linuxram@us.ibm.com, haren@linux.vnet.ibm.com, paulus@samba.org,
-        srikar@linux.vnet.ibm.com, robin.murphy@arm.com,
-        jean-philippe.brucker@arm.com, marc.zyngier@arm.com
-Subject: Re: [RFC 0/4] Virtio uses DMA API for all devices
-Message-ID: <20180730155633-mutt-send-email-mst@kernel.org>
-References: <20180720035941.6844-1-khandual@linux.vnet.ibm.com>
- <20180727095804.GA25592@arm.com>
- <20180730093414.GD26245@infradead.org>
- <20180730125100-mutt-send-email-mst@kernel.org>
- <20180730111802.GA9830@infradead.org>
+        Mon, 30 Jul 2018 11:05:56 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:42962 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726570AbeG3PF4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Jul 2018 11:05:56 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w6UDT72Q152558
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Jul 2018 13:30:54 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=mime-version :
+ references : in-reply-to : from : date : message-id : subject : to : cc :
+ content-type; s=corp-2018-07-02;
+ bh=w8cJnMlMTVvhmpqHOrQyrXCgRfDvLFxNh07Vmz04Sjs=;
+ b=uqwYQN4vag6BBtxd0GRsMnJDeg78SQv8gUtRQvLky4k5WqmAs7yEgdHVhVCplGlcNaD7
+ P29UGhBaYIfDsdvnA2UV40XpycRXPdafKJPEJ9dq6bUpqjXGhyfMoT89HPjnmSEX7oZm
+ u6hTKIQjcCFXlCDrRYAOHUHowEfVg8ERYWOhqKoZXADykBCVoVIs0E1XaTQNec02kamU
+ xL9bkO9Au/a1mFmiDCWr5iJWbHmCyPa2+aaUkCjq/fc2CdHS8zkyVL/taapwurbIbu8l
+ vL1MI3tjVknk96ioMbSQ9BJnZrPWaWDj/0iXfpqesDxw2ukHGvZaOG7Oj7UoXzfLqSB0 OQ== 
+Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
+        by userp2130.oracle.com with ESMTP id 2kgfwsvgj6-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK)
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Jul 2018 13:30:54 +0000
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w6UDUqDA001255
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK)
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Jul 2018 13:30:52 GMT
+Received: from abhmp0017.oracle.com (abhmp0017.oracle.com [141.146.116.23])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w6UDUpFF013112
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Jul 2018 13:30:51 GMT
+Received: from mail-oi0-f41.google.com (/209.85.218.41)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 30 Jul 2018 06:30:51 -0700
+Received: by mail-oi0-f41.google.com with SMTP id w126-v6so21203207oie.7
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Jul 2018 06:30:51 -0700 (PDT)
+X-Gm-Message-State: AOUpUlFj3FHi7sJBAsO3Lc+iP86Oc86iTcn+MTi9mYch7l+GwK6QUKeR
+        HApMy0h/LMYtvrXMpzVapquE56TKcJ4NfkBdbS8=
+X-Google-Smtp-Source: AAOMgpeqLLt7NMHCy+ovSrdt6loEhpUsBRMtLDBulQXm5e3QUs9Pxmcii2z5eehg1Kw81dJzVDCEGUNm95voM68hs9s=
+X-Received: by 2002:aca:e089:: with SMTP id x131-v6mr16712167oig.221.1532957450740;
+ Mon, 30 Jul 2018 06:30:50 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180730111802.GA9830@infradead.org>
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Mon, 30 Jul 2018 13:26:39 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Mon, 30 Jul 2018 13:26:39 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'mst@redhat.com' RCPT:''
+References: <20180727165454.27292-1-david@redhat.com> <20180730113029.GM24267@dhcp22.suse.cz>
+ <6cc416e7-522c-a67e-2706-f37aadff084f@redhat.com> <20180730120529.GN24267@dhcp22.suse.cz>
+ <7b58af7b-5187-2c76-b458-b0f49875a1fc@redhat.com>
+In-Reply-To: <7b58af7b-5187-2c76-b458-b0f49875a1fc@redhat.com>
+From:   Pavel Tatashin <pasha.tatashin@oracle.com>
+Date:   Mon, 30 Jul 2018 09:30:14 -0400
+X-Gmail-Original-Message-ID: <CAGM2reahiWj5LFq1npRpwK2k-4K-L9hr3AHUV9uYcmT2s3Bnuw@mail.gmail.com>
+Message-ID: <CAGM2reahiWj5LFq1npRpwK2k-4K-L9hr3AHUV9uYcmT2s3Bnuw@mail.gmail.com>
+Subject: Re: [PATCH v1] mm: inititalize struct pages when adding a section
+To:     david@redhat.com
+Cc:     mhocko@kernel.org,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>, gregkh@linuxfoundation.org,
+        mingo@kernel.org, Andrew Morton <akpm@linux-foundation.org>,
+        dan.j.williams@intel.com, jack@suse.cz, mawilcox@microsoft.com,
+        jglisse@redhat.com, Souptick Joarder <jrdr.linux@gmail.com>,
+        kirill.shutemov@linux.intel.com, Vlastimil Babka <vbabka@suse.cz>,
+        osalvador@techadventures.net, yasu.isimatu@gmail.com,
+        malat@debian.org, Mel Gorman <mgorman@suse.de>,
+        iamjoonsoo.kim@lge.com
+Content-Type: text/plain; charset="UTF-8"
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8969 signatures=668706
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=3 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1806210000 definitions=main-1807300150
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 30, 2018 at 04:18:02AM -0700, Christoph Hellwig wrote:
-> On Mon, Jul 30, 2018 at 01:28:03PM +0300, Michael S. Tsirkin wrote:
-> > Let me reply to the "crappy" part first:
-> > So virtio devices can run on another CPU or on a PCI bus. Configuration
-> > can happen over mupltiple transports.  There is a discovery protocol to
-> > figure out where it is. It has some warts but any real system has warts.
-> > 
-> > So IMHO virtio running on another CPU isn't "legacy virtual crappy
-> > virtio". virtio devices that actually sit on a PCI bus aren't "sane"
-> > simply because the DMA is more convoluted on some architectures.
-> 
-> All of what you said would be true if virtio didn't claim to be
-> a PCI device.  
+On Mon, Jul 30, 2018 at 8:11 AM David Hildenbrand <david@redhat.com> wrote:
+>
+> On 30.07.2018 14:05, Michal Hocko wrote:
+> > On Mon 30-07-18 13:53:06, David Hildenbrand wrote:
+> >> On 30.07.2018 13:30, Michal Hocko wrote:
+> >>> On Fri 27-07-18 18:54:54, David Hildenbrand wrote:
+> >>>> Right now, struct pages are inititalized when memory is onlined, not
+> >>>> when it is added (since commit d0dc12e86b31 ("mm/memory_hotplug: optimize
+> >>>> memory hotplug")).
+> >>>>
+> >>>> remove_memory() will call arch_remove_memory(). Here, we usually access
+> >>>> the struct page to get the zone of the pages.
+> >>>>
+> >>>> So effectively, we access stale struct pages in case we remove memory that
+> >>>> was never onlined. So let's simply inititalize them earlier, when the
+> >>>> memory is added. We only have to take care of updating the zone once we
+> >>>> know it. We can use a dummy zone for that purpose.
+> >>>
+> >>> I have considered something like this when I was reworking memory
+> >>> hotplug to not associate struct pages with zone before onlining and I
+> >>> considered this to be rather fragile. I would really not like to get
+> >>> back to that again if possible.
+> >>>
+> >>>> So effectively, all pages will already be initialized and set to
+> >>>> reserved after memory was added but before it was onlined (and even the
+> >>>> memblock is added). We only inititalize pages once, to not degrade
+> >>>> performance.
+> >>>
+> >>> To be honest, I would rather see d0dc12e86b31 reverted. It is late in
+> >>> the release cycle and if the patch is buggy then it should be reverted
+> >>> rather than worked around. I found the optimization not really
+> >>> convincing back then and this is still the case TBH.
+> >>>
+> >>
+> >> If I am not wrong, that's already broken in 4.17, no? What about that?
+> >
+> > Ohh, I thought this was merged in 4.18.
+> > $ git describe --contains d0dc12e86b31 --match="v*"
+> > v4.17-rc1~99^2~44
+> >
+> > proves me wrong. This means that the fix is not so urgent as I thought.
+> > If you can figure out a reasonable fix then it should be preferable to
+> > the revert.
+> >
+> > Fake zone sounds too hackish to me though.
+> >
+>
+> If I am not wrong, that's the same we had before d0dc12e86b31 but now it
+> is explicit and only one single value for all kernel configs
+> ("ZONE_NORMAL").
+>
+> Before d0dc12e86b31, struct pages were initialized to 0. So it was
+> (depending on the config) ZONE_DMA, ZONE_DMA32 or ZONE_NORMAL.
+>
+> Now the value is random and might not even be a valid zone.
 
-There's nothing virtio claims to be.  It's a PV device that uses PCI for
-its configuration.  Configuration is enumerated on the virtual PCI bus.
-That part of the interface is emulated PCI. Data path is through a
-PV device enumerated on the virtio bus.
+Hi David,
 
-> Once it claims to be a PCI device and we also see
-> real hardware written to the interface I stand to all what I said
-> above.
+Have you figured out why we access struct pages during hot-unplug for
+offlined memory? Also, a panic trace would be useful in the patch.
 
-Real hardware would reuse parts of the interface but by necessity it
-needs to behave slightly differently on some platforms.  However for
-some platforms (such as x86) a PV virtio driver will by luck work with a
-PCI device backend without changes. As these platforms and drivers are
-widely deployed, some people will deploy hardware like that.  Should be
-a non issue as by definition it's transparent to guests.
+As I understand the bug may occur only when hotremove is enabled, and
+default onlining of added memory is disabled. Is this correct? I
+suspect the reason we have not heard about this bug is that it is rare
+to add memory and not to online it.
 
-> > With this out of my system:
-> > I agree these approaches are hacky. I think it is generally better to
-> > have virtio feature negotiation tell you whether device runs on a CPU or
-> > not rather than rely on platform specific ways for this. To this end
-> > there was a recent proposal to rename VIRTIO_F_IO_BARRIER to
-> > VIRTIO_F_REAL_DEVICE.  It got stuck since "real" sounds vague to people,
-> > e.g.  what if it's a VF - is that real or not? But I can see something
-> > like e.g. VIRTIO_F_PLATFORM_DMA gaining support.
-> > 
-> > We would then rename virtio_has_iommu_quirk to virtio_has_dma_quirk
-> > and test VIRTIO_F_PLATFORM_DMA in addition to the IOMMU thing.
-> 
-> I don't really care about the exact naming, and indeed a device that
-> sets the flag doesn't have to be a 'real' device - it just has to act
-> like one.  I explained all the issues that this means (at least relating
-> to DMA) in one of the previous threads.
-
-I believe you refer to this:
-https://lkml.org/lkml/2018/6/7/15
-that was a very helpful list outlining the problems we need to solve,
-thanks a lot for that!
-
-> The important bit is that we can specify exact behavior for both
-> devices that sets the "I'm real!" flag and that ones that don't exactly
-> in the spec.
-
-I would very much like that, yes.
-
-> And that very much excludes arch-specific (or
-> Xen-specific) overrides.
-
-We already committed to a xen specific hack but generally I prefer
-devices that describe how they work instead of platforms magically
-guessing, yes.
-
-However the question people raise is that DMA API is already full of
-arch-specific tricks the likes of which are outlined in your post linked
-above. How is this one much worse?
-
--- 
-MST
+Thank you,
+Pavel
