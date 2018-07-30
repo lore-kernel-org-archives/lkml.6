@@ -7,157 +7,94 @@ X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA020FD21E1
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 04:46:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94832FD21E1
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 04:50:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 942E920873
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 04:46:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3837620873
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 04:50:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FVWSrfnS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 942E920873
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CRY/Rlep"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3837620873
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726497AbeG3GTy (ORCPT
+        id S1726506AbeG3GXG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 30 Jul 2018 02:19:54 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:46501 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725845AbeG3GTy (ORCPT
+        Mon, 30 Jul 2018 02:23:06 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:41827 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726208AbeG3GXF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Jul 2018 02:19:54 -0400
-Received: by mail-lj1-f195.google.com with SMTP id 203-v6so9217860ljj.13
-        for <linux-kernel@vger.kernel.org>; Sun, 29 Jul 2018 21:46:47 -0700 (PDT)
+        Mon, 30 Jul 2018 02:23:05 -0400
+Received: by mail-lj1-f193.google.com with SMTP id y17-v6so9247165ljy.8;
+        Sun, 29 Jul 2018 21:49:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:in-reply-to:references:from:date:message-id:subject:to
          :cc;
-        bh=xSPPahrJHUeB20VFlUnG3g7FNZ0k9zxztEC7Idse5Tg=;
-        b=FVWSrfnSCIzoRYWjefplingQg15UN0MdEX0FDp2JAVab2ny9nzmIlR5unF0usF4dyv
-         /XZi/BwIZcUrHmUKP170XHfCzuF/+Y5Anm6jSeA0VpS5fyQ4d5cOgRQUTvZdjyTk3BI3
-         Gc5SgAKBlPg1k8scgVPh9rTPfTckEPtdiS5u6V8dbdZJhAixi6+8kKsAFYf4b4XZ3ycT
-         3bQkeRRSuA/82PIZvb/EV1aWfc0EL6kwGGvn2oCfE8I/iVEtGZoQxGmJ+4AAnuxu3+Zq
-         76BjFncqpdpmNf4pYhzJYslJdo8kEhs24zYLTuIOzY3aLo4l5GYn/qddnf66gZZX4SIt
-         oKrA==
+        bh=KAu0lnE+i48nXxt0r7z0sA8TcpvLp4I4zbDy5VBL3iw=;
+        b=CRY/RlepBUjHt+a3sfpc5LWG0OCYd5018k4NQ0E9cEDTnsTkXFor68x9R4HhIsseLw
+         Lr43RrB/vC35mVEWb+aZr4Mg9jK+EO8yf60XzttGe0gkz4cSflXPlLzCz0KRLLu6mp0o
+         KJmxNCBiGv535PJFTemWkw4W7HHp1PpT+FS0ogxe2YslYqwVLGUQrYNni5t706HR7RCA
+         Itdn74UEVXPRGWDM1YFzx0ZJ1DnliFncAHgsJ8O7zfhtIrjrcf1Ut6H85Mn8moe9owR6
+         W27tw9LAcZ1IzC6G40qGoLBPyInPqxWodtt6PlxNCn1xiM92FltaHnjBumTZzWwDqcGj
+         NSzg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:in-reply-to:references:from:date
          :message-id:subject:to:cc;
-        bh=xSPPahrJHUeB20VFlUnG3g7FNZ0k9zxztEC7Idse5Tg=;
-        b=O/5bqkNF5jUMPKIADEcrwLRyGYzrOIHT++60MgeVaTL2t7B2qMsr8dOrMmXiMZW0F8
-         DD/Td/XWPJVlZkYNoNKbedWxy9OruPeyp6t4iM7QmAKUbq/uYsd2lek0SREp92OVutdE
-         2EfmLrb8Ijr9GDLmBSJQUky1deQQzP6zRXQk7iGxuwoYDZnWGQcsNLqycjwvrbFbj1zt
-         hsPanXOPeRtKsJcwyaWuGQBZIuQPGkHuosPgpBtsKtGeSDC2/F2UBhYa2LuvTopY1Kl0
-         5JUTJ8dX38hy47iHtUgfoNpDx7r1taEwgjmcIQ3cEzsTdFbIOyWqaXnDOi0czLL59zoa
-         FtJQ==
-X-Gm-Message-State: AOUpUlG0qjGqOIBLd1rNRaOXcdiDHtQqh0M4dHkG6yYcxZ1cCHFFaDXK
-        ERlCGDn5ZcEutBtdzo484jP2Vf3IH+Ahc+eZWR8=
-X-Google-Smtp-Source: AAOMgpdB0wyE84ghJueISnmk141Ca3xfuhbI2Bf9EURDAHCSzEdep9OgVt5v+9DGw+QrNpRyHL7hbN92nxwBv6lXe+g=
-X-Received: by 2002:a2e:4186:: with SMTP id d6-v6mr10933010ljf.36.1532926006514;
- Sun, 29 Jul 2018 21:46:46 -0700 (PDT)
+        bh=KAu0lnE+i48nXxt0r7z0sA8TcpvLp4I4zbDy5VBL3iw=;
+        b=huShZk61N4xnkI+FdDVuOkd5bEHJBmUDhJW0KYlejeksg/7/nGrzuQ/xwtc4rdy/A0
+         +vq3jpcejCoPv+ONyIGM7YE1pO/r4N6nfUNppHHSYajBaw+V8ua3J0KP+PuycCu7VWgP
+         GTOgXhJ5tpR7+cyIhSV8rQijDrsIHKZr0ZJDiaz+1BXv6+VYYT6P9m3rKww/0FWDYC1/
+         8jrMPIH6cw9+l7yI0YBSZWKSYWEBE3ZDRpkzX0fA7cXzEkrTaFW/UPuxSAX77dtujaW8
+         zM6vKKdH08I306ILa+uC6mCH/1HlUrR+Z4sUG+d2j7q3p33E79fVzPTFrdxfvnUQz62H
+         kbkg==
+X-Gm-Message-State: AOUpUlF9s0EdSEa8bR2M7nA1ey3XJuM8bWLgAPQcRh0UZqklJhsEKYIR
+        csNCONCVroK11HMK1FeramRFbih2o0RiXV7jVWs=
+X-Google-Smtp-Source: AAOMgpcicl3M/6OXtA+EuJMFkcYOKBMI0uSuv4wj7krTc2xTWjCR9z6zcr6BKnLdsBvGSTf+FML8daBZqGFIOsUAJ/Y=
+X-Received: by 2002:a2e:4619:: with SMTP id t25-v6mr12063455lja.96.1532926196687;
+ Sun, 29 Jul 2018 21:49:56 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a19:2b14:0:0:0:0:0 with HTTP; Sun, 29 Jul 2018 21:46:45
+Received: by 2002:a19:2b14:0:0:0:0:0 with HTTP; Sun, 29 Jul 2018 21:49:56
  -0700 (PDT)
-In-Reply-To: <CAFqt6zaZYyes+BRcMuCo39fj6q3K26MzAUgG_YhZpM0HMs3a4Q@mail.gmail.com>
-References: <20180703153353.GA3375@jordon-HP-15-Notebook-PC>
- <CAFqt6zaqh+Jv6vmn2iOZL9jVtX7Qwf9b_QFPSfwg2+EcBRo5vA@mail.gmail.com> <CAFqt6zaZYyes+BRcMuCo39fj6q3K26MzAUgG_YhZpM0HMs3a4Q@mail.gmail.com>
+In-Reply-To: <bf0ac658-582e-25a2-3a1d-1046d2c6228f@kernel.dk>
+References: <20180728095043.GA24085@jordon-HP-15-Notebook-PC> <bf0ac658-582e-25a2-3a1d-1046d2c6228f@kernel.dk>
 From:   Souptick Joarder <jrdr.linux@gmail.com>
-Date:   Mon, 30 Jul 2018 10:16:45 +0530
-Message-ID: <CAFqt6zYap9s3fp3uiZxoDciDtS2vMJ1a5J-268C5x1s-88vvrQ@mail.gmail.com>
-Subject: Re: [PATCH v2] gpu: drm: virtio: code cleanup
-To:     airlied@linux.ie, Gerd Hoffmann <kraxel@redhat.com>
-Cc:     dri-devel@lists.freedesktop.org,
-        virtualization@lists.linux-foundation.org,
+Date:   Mon, 30 Jul 2018 10:19:56 +0530
+Message-ID: <CAFqt6zY2756xkqQruBtfRun+fQNHRRF2dXJHOQYfrhW4g1-HFg@mail.gmail.com>
+Subject: Re: [PATCH] fs/buffer: Convert return type int to vm_fault_t
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Ryusuke Konishi <konishi.ryusuke@lab.ntt.co.jp>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Dave Chinner <dchinner@redhat.com>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Eric Biggers <ebiggers@google.com>,
+        Greg KH <gregkh@linuxfoundation.org>, kemi.wang@intel.com,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
         linux-kernel@vger.kernel.org,
-        SUMAN TRIPATHI <svptas.linux@gmail.com>,
-        Ajit Linux <ajitn.linux@gmail.com>,
-        Brajeswar Ghosh <brajeswar.linux@gmail.com>,
+        linux-nilfs <linux-nilfs@vger.kernel.org>,
         Sabyasachi Gupta <sabyasachi.linux@gmail.com>,
-        Matthew Wilcox <willy@infradead.org>
+        Brajeswar Ghosh <brajeswar.linux@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 24, 2018 at 11:33 AM, Souptick Joarder <jrdr.linux@gmail.com> wrote:
-> On Tue, Jul 17, 2018 at 5:04 PM, Souptick Joarder <jrdr.linux@gmail.com> wrote:
->> On Tue, Jul 3, 2018 at 9:03 PM, Souptick Joarder <jrdr.linux@gmail.com> wrote:
->>> The fault handler code is commented since v4.2.
->>> If there is no plan to enable the fault handler
->>> code in future, we can remove this dead code.
->>>
->>> Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
->>> ---
->>> v2: corrected subject line
->>>
->>
->> Any further comment on this patch ?
+On Sat, Jul 28, 2018 at 8:34 PM, Jens Axboe <axboe@kernel.dk> wrote:
+> On 7/28/18 3:50 AM, Souptick Joarder wrote:
+>>  out_unlock:
+>>       unlock_page(page);
+>> +     ret = block_page_mkwrite_return(err);
+>>       return ret;
 >
-> If no further comment, can we get this patch in queue for 4.19 ?
+>         return block_page_mkwrite_return(err);
+>
+> --
+> Jens Axboe
 >
 
-Gerd, can we get this patch in queue for 4.19 ?
-
->>
->>>  drivers/gpu/drm/virtio/virtgpu_ttm.c | 36 +-----------------------------------
->>>  1 file changed, 1 insertion(+), 35 deletions(-)
->>>
->>> diff --git a/drivers/gpu/drm/virtio/virtgpu_ttm.c b/drivers/gpu/drm/virtio/virtgpu_ttm.c
->>> index 11f8ae5..b6f021c 100644
->>> --- a/drivers/gpu/drm/virtio/virtgpu_ttm.c
->>> +++ b/drivers/gpu/drm/virtio/virtgpu_ttm.c
->>> @@ -106,29 +106,6 @@ static void virtio_gpu_ttm_global_fini(struct virtio_gpu_device *vgdev)
->>>         }
->>>  }
->>>
->>> -#if 0
->>> -/*
->>> - * Hmm, seems to not do anything useful.  Leftover debug hack?
->>> - * Something like printing pagefaults to kernel log?
->>> - */
->>> -static struct vm_operations_struct virtio_gpu_ttm_vm_ops;
->>> -static const struct vm_operations_struct *ttm_vm_ops;
->>> -
->>> -static int virtio_gpu_ttm_fault(struct vm_fault *vmf)
->>> -{
->>> -       struct ttm_buffer_object *bo;
->>> -       struct virtio_gpu_device *vgdev;
->>> -       int r;
->>> -
->>> -       bo = (struct ttm_buffer_object *)vmf->vma->vm_private_data;
->>> -       if (bo == NULL)
->>> -               return VM_FAULT_NOPAGE;
->>> -       vgdev = virtio_gpu_get_vgdev(bo->bdev);
->>> -       r = ttm_vm_ops->fault(vmf);
->>> -       return r;
->>> -}
->>> -#endif
->>> -
->>>  int virtio_gpu_mmap(struct file *filp, struct vm_area_struct *vma)
->>>  {
->>>         struct drm_file *file_priv;
->>> @@ -143,19 +120,8 @@ int virtio_gpu_mmap(struct file *filp, struct vm_area_struct *vma)
->>>                 return -EINVAL;
->>>         }
->>>         r = ttm_bo_mmap(filp, vma, &vgdev->mman.bdev);
->>> -#if 0
->>> -       if (unlikely(r != 0))
->>> -               return r;
->>> -       if (unlikely(ttm_vm_ops == NULL)) {
->>> -               ttm_vm_ops = vma->vm_ops;
->>> -               virtio_gpu_ttm_vm_ops = *ttm_vm_ops;
->>> -               virtio_gpu_ttm_vm_ops.fault = &virtio_gpu_ttm_fault;
->>> -       }
->>> -       vma->vm_ops = &virtio_gpu_ttm_vm_ops;
->>> -       return 0;
->>> -#else
->>> +
->>>         return r;
->>> -#endif
->>>  }
->>>
->>>  static int virtio_gpu_invalidate_caches(struct ttm_bo_device *bdev,
->>> --
->>> 1.9.1
->>>
+OK, I will post v2.
