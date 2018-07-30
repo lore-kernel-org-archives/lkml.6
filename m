@@ -2,128 +2,109 @@ Return-Path: <SRS0=qqIy=KO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6BE7FD21E1
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 14:01:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3752EFD21E1
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 14:01:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 75ADE20881
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 14:01:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 75ADE20881
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id E865320881
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 14:01:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E865320881
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730953AbeG3PgL (ORCPT
+        id S1727660AbeG3Pgz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 30 Jul 2018 11:36:11 -0400
-Received: from mx2.suse.de ([195.135.220.15]:33122 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730790AbeG3PgL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Jul 2018 11:36:11 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 5ABD5AE5B;
-        Mon, 30 Jul 2018 14:01:01 +0000 (UTC)
-Date:   Mon, 30 Jul 2018 16:00:59 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     osalvador@techadventures.net
-Cc:     akpm@linux-foundation.org, vbabka@suse.cz, sfr@canb.auug.org.au,
-        rientjes@google.com, pasha.tatashin@oracle.com,
-        kemi.wang@intel.com, jia.he@hxt-semitech.com, ptesarik@suse.com,
-        aryabinin@virtuozzo.com, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, dan.j.williams@intel.com,
-        Oscar Salvador <osalvador@suse.de>
-Subject: Re: [PATCH] mm: Remove zone_id() and make use of zone_idx() in
- is_dev_zone()
-Message-ID: <20180730140059.GU24267@dhcp22.suse.cz>
-References: <20180730133718.28683-1-osalvador@techadventures.net>
+        Mon, 30 Jul 2018 11:36:55 -0400
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:9281 "EHLO
+        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726740AbeG3Pgy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Jul 2018 11:36:54 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1, AES128-SHA)
+        id <B5b5f1a470000>; Mon, 30 Jul 2018 07:01:43 -0700
+Received: from HQMAIL103.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Mon, 30 Jul 2018 07:01:46 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Mon, 30 Jul 2018 07:01:46 -0700
+Received: from HQMAIL103.nvidia.com (172.20.187.11) by HQMAIL103.nvidia.com
+ (172.20.187.11) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Mon, 30 Jul
+ 2018 14:01:45 +0000
+Received: from hqnvemgw02.nvidia.com (172.16.227.111) by HQMAIL103.nvidia.com
+ (172.20.187.11) with Microsoft SMTP Server (TLS) id 15.0.1347.2 via Frontend
+ Transport; Mon, 30 Jul 2018 14:01:45 +0000
+Received: from dhcp-10-21-25-168.Nvidia.com (Not Verified[10.21.25.201]) by hqnvemgw02.nvidia.com with Trustwave SEG (v7,5,8,10121)
+        id <B5b5f1a470003>; Mon, 30 Jul 2018 07:01:45 -0700
+From:   Aapo Vienamo <avienamo@nvidia.com>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Mikko Perttunen <mperttunen@nvidia.com>,
+        Laxman Dewangan <ldewangan@nvidia.com>
+CC:     Aapo Vienamo <avienamo@nvidia.com>, <devicetree@vger.kernel.org>,
+        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH v6 0/7] Tegra PMC pinctrl pad configuration
+Date:   Mon, 30 Jul 2018 17:01:32 +0300
+Message-ID: <1532959299-17089-1-git-send-email-avienamo@nvidia.com>
+X-Mailer: git-send-email 2.7.4
+X-NVConfidentiality: public
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180730133718.28683-1-osalvador@techadventures.net>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 30-07-18 15:37:18, osalvador@techadventures.net wrote:
-> From: Oscar Salvador <osalvador@suse.de>
-> 
-> is_dev_zone() is using zone_id() to check if the zone is ZONE_DEVICE.
-> zone_id() looks pretty much the same as zone_idx(), and while the use of
-> zone_idx() is quite spread in the kernel, zone_id() is only being
-> used by is_dev_zone().
-> 
-> This patch removes zone_id() and makes is_dev_zone() use zone_idx()
-> to check the zone, so we do not have two things with the same
-> functionality around.
+Hi all,
 
-Yes this looks like a pointless code duplication. I guess Dan just
-wasn't aware of zone_idx() macro.
+The Tegra Power Management Controller (PMC) can set pad power states
+and voltage configuration. This series implements pinctrl interfaces
+for configuring said pad properties.
 
-> Signed-off-by: Oscar Salvador <osalvador@suse.de>
+Changelog
+v6:
+	- Fix typos and grammar in dt-bindings docs.
+v5:
+	- Fix a typo in "soc/tegra: pmc: Remove public pad voltage APIs"
+		- 1.8 V / 3.3 V selection logic worked the wrong way
+		  around on SoCs without pmc->soc->has_impl_33v_pwr.
+v4:
+	- Revise the dt-bindings docs
+v3:
+	- Don't expose tegra_io_pad_is_powered()
+	- Remove tegra_io_pad_set_voltage() stub from pmc.h
+		- Fixes i386 build failure reported by kbuild test robot
+v2:
+	- Add Tegra186 AO_HV pad
+	- Make the IO pad tables narrower
+	- Add parens to TEGRA_IO_PAD() and TEGRA_IO_PIN_DESC()
+	- Fix a typo in the dt-bindings docs
+	- Remove old pmc pad voltage configuration APIs
+	- Check return value of tegra_io_pad_find() in
+	  tegra_io_pad_pinconf_get()/_set()
 
-Acked-by: Michal Hocko <mhocko@suse.com>
 
-> ---
->  include/linux/mmzone.h | 31 ++++++++++++-------------------
->  1 file changed, 12 insertions(+), 19 deletions(-)
-> 
-> diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
-> index 83b1d11e90eb..dbe7635c33dd 100644
-> --- a/include/linux/mmzone.h
-> +++ b/include/linux/mmzone.h
-> @@ -755,25 +755,6 @@ static inline bool pgdat_is_empty(pg_data_t *pgdat)
->  	return !pgdat->node_start_pfn && !pgdat->node_spanned_pages;
->  }
->  
-> -static inline int zone_id(const struct zone *zone)
-> -{
-> -	struct pglist_data *pgdat = zone->zone_pgdat;
-> -
-> -	return zone - pgdat->node_zones;
-> -}
-> -
-> -#ifdef CONFIG_ZONE_DEVICE
-> -static inline bool is_dev_zone(const struct zone *zone)
-> -{
-> -	return zone_id(zone) == ZONE_DEVICE;
-> -}
-> -#else
-> -static inline bool is_dev_zone(const struct zone *zone)
-> -{
-> -	return false;
-> -}
-> -#endif
-> -
->  #include <linux/memory_hotplug.h>
->  
->  void build_all_zonelists(pg_data_t *pgdat);
-> @@ -824,6 +805,18 @@ static inline int local_memory_node(int node_id) { return node_id; };
->   */
->  #define zone_idx(zone)		((zone) - (zone)->zone_pgdat->node_zones)
->  
-> +#ifdef CONFIG_ZONE_DEVICE
-> +static inline bool is_dev_zone(const struct zone *zone)
-> +{
-> +	return zone_idx(zone) == ZONE_DEVICE;
-> +}
-> +#else
-> +static inline bool is_dev_zone(const struct zone *zone)
-> +{
-> +	return false;
-> +}
-> +#endif
-> +
->  /*
->   * Returns true if a zone has pages managed by the buddy allocator.
->   * All the reclaim decisions have to use this function rather than
-> -- 
-> 2.13.6
-> 
+Aapo Vienamo (7):
+  soc/tegra: pmc: Fix pad voltage configuration for Tegra186
+  soc/tegra: pmc: Factor out DPD register bit calculation
+  soc/tegra: pmc: Implement tegra_io_pad_is_powered()
+  soc/tegra: pmc: Use X macro to generate IO pad tables
+  dt-bindings: Add Tegra PMC pad configuration bindings
+  soc/tegra: pmc: Remove public pad voltage APIs
+  soc/tegra: pmc: Implement pad configuration via pinctrl
+
+ .../bindings/arm/tegra/nvidia,tegra186-pmc.txt     |  92 ++++
+ .../bindings/arm/tegra/nvidia,tegra20-pmc.txt      | 103 +++++
+ drivers/soc/tegra/pmc.c                            | 512 +++++++++++++++------
+ include/dt-bindings/pinctrl/pinctrl-tegra-io-pad.h |  18 +
+ include/soc/tegra/pmc.h                            |  20 +-
+ 5 files changed, 597 insertions(+), 148 deletions(-)
+ create mode 100644 include/dt-bindings/pinctrl/pinctrl-tegra-io-pad.h
 
 -- 
-Michal Hocko
-SUSE Labs
+2.7.4
+
