@@ -6,55 +6,55 @@ X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A908C43142
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 22:24:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C32DC43142
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 22:24:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D272820857
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 22:24:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C5C6820857
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 22:24:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="VnFxFZ7A"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D272820857
+	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="E/adBkTl"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C5C6820857
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=joelfernandes.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731913AbeGaABw (ORCPT
+        id S1731994AbeGaABy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 30 Jul 2018 20:01:52 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:40537 "EHLO
+        Mon, 30 Jul 2018 20:01:54 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:43932 "EHLO
         mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726622AbeGaABw (ORCPT
+        with ESMTP id S1726622AbeGaABx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Jul 2018 20:01:52 -0400
-Received: by mail-pg1-f196.google.com with SMTP id x5-v6so7988544pgp.7
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Jul 2018 15:24:47 -0700 (PDT)
+        Mon, 30 Jul 2018 20:01:53 -0400
+Received: by mail-pg1-f196.google.com with SMTP id d17-v6so3551277pgv.10
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Jul 2018 15:24:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=joelfernandes.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=/czMhb1QemsAd31haxvAVX6PsBRZge5ZhQaYenBgIik=;
-        b=VnFxFZ7A8vmywHSZR9e7mRGCqSVkld5obMyKcR62D/OJAkaBYVOCDyw9d5gTpW/qoi
-         DpT7h8z51IBDLPaStWfi4vCSBtQE38VyXisHSjed1x5eYkZUMWVd4yA0Huw0lox4FxT8
-         M1KsCAIlO2BYy2o5PbwarY1HwvqSQweLE6GS8=
+        bh=hsnFwcN7mJfKlH6J0vgYGpAWbL9lQblexuCLGnoVpEo=;
+        b=E/adBkTl/P1KqJXNmX2N6sZR3baBZCKuEyzVhWwJ/GEmHZJihOSnpti7Qe4MQ3gHrd
+         ODUFGb0gM1jK9bJ+4HigGbCKnCu75PxGLuNMGtO8XLJs92Gd8n4Z3zzKy/msBXzJUjeC
+         ALRuJwPahGyVcjql+4dwFy0F9fecN7HOdl14k=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=/czMhb1QemsAd31haxvAVX6PsBRZge5ZhQaYenBgIik=;
-        b=Dohg8z3b2gVG3MxyBO3zJc7ddFzFlSQF/YwMMrPMkKp8ZXcf+cQI//cow1qtxpAgZv
-         eNKeqqJkK/Vg5omF3YHhu+JrwWo8eFSoVoaAL7ZYXcIMnXmaJQ/KB8oIJSp2IT+P8nAx
-         qjXWxBo/1CKF2Z9rsujAFS+fKEx26MC/P0Nf8khKt7Ldd6mM4We8Fr6Fs/jFcI+NS6p4
-         LbKXtUF+QaodOHvFYzhvQk54gAoYI+nEDptP0kiOrjd0NlWIMImIVqJJu+MGf/dNDgUF
-         Z5x8fRXKcC0gJLN85KoDqSYEtSuZlZDLhFXSmYAwp4EDKIp0FfWmzS+TqwUlnA7FzZQH
-         f2Ow==
-X-Gm-Message-State: AOUpUlG1D/V5Uv51oEFOlKim04JS+kLTs7HePN2zzWHNQ2DiOwRyPhVl
-        QW9qJVIcaZEnoUX++z/QvRKy9L4wYu8=
-X-Google-Smtp-Source: AAOMgpfVFN3K78RI+mfKasLr5r5SsiRtDMqGoMd+uhgMX8L8yvBfr7hWnE9riU5gNldm1DUUagP0Ow==
-X-Received: by 2002:a62:e813:: with SMTP id c19-v6mr19440786pfi.124.1532989486581;
-        Mon, 30 Jul 2018 15:24:46 -0700 (PDT)
+        bh=hsnFwcN7mJfKlH6J0vgYGpAWbL9lQblexuCLGnoVpEo=;
+        b=IiryTU2KXLGCEjZ07kqi6iLclzx86+AeZAK0WzE+ZqC2bEx7Z5MrPkN/Qdojubowe1
+         uWdpQvYhoX3HHPKQ1u2YoYe042KpkbWty9zN75soeUDK4PMZTwWmPmxFDnHvEsOMVT0v
+         usZo+TPqiPkYjmZ1FSIUZaIymxVBXVLe+YWmM/vy3k9efVQCdWVrHlnQdj5YTLBvv29k
+         gv1x01sQBaGghC2+e6QTlnyF1evobZhW4khNrgbqKd9gGniTIVJ+VLHH2LVbc4IY4c2V
+         bQ+BXBnjtoYu2DyhAKAwd58z39acU1PMKBJvUYbfdkI+C7Ykb5ZTtrBBDPJNgI58Zxc3
+         7pCQ==
+X-Gm-Message-State: AOUpUlG+E92Sd5BNToDaIntwqD1m9W70IORBetmMGgD3Lzhej5o8iaGs
+        Od/mX/5cGUbiEwchUobY/VmIE1qItGk=
+X-Google-Smtp-Source: AAOMgpd+4G0/qxXVe7jRExIs3S175iu9gI0SVJqw5GJsrYEmY861s9Y9WKUaiI5L4KwXTnN+yqRpHw==
+X-Received: by 2002:a62:d693:: with SMTP id a19-v6mr19396488pfl.248.1532989487593;
+        Mon, 30 Jul 2018 15:24:47 -0700 (PDT)
 Received: from joelaf.mtv.corp.google.com ([2620:0:1000:1600:3122:ea9c:d178:eb])
-        by smtp.gmail.com with ESMTPSA id t21-v6sm21183914pfi.73.2018.07.30.15.24.45
+        by smtp.gmail.com with ESMTPSA id t21-v6sm21183914pfi.73.2018.07.30.15.24.46
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 30 Jul 2018 15:24:46 -0700 (PDT)
+        Mon, 30 Jul 2018 15:24:47 -0700 (PDT)
 From:   Joel Fernandes <joel@joelfernandes.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     kernel-team@android.com,
@@ -70,9 +70,9 @@ Cc:     kernel-team@android.com,
         Steven Rostedt <rostedt@goodmis.org>,
         Thomas Glexiner <tglx@linutronix.de>,
         Tom Zanussi <tom.zanussi@linux.intel.com>
-Subject: [PATCH v12 1/3] lockdep: use this_cpu_ptr instead of get_cpu_var stats
-Date:   Mon, 30 Jul 2018 15:24:21 -0700
-Message-Id: <20180730222423.196630-2-joel@joelfernandes.org>
+Subject: [PATCH v12 2/3] tracepoint: Make rcuidle tracepoint callers use SRCU
+Date:   Mon, 30 Jul 2018 15:24:22 -0700
+Message-Id: <20180730222423.196630-3-joel@joelfernandes.org>
 X-Mailer: git-send-email 2.18.0.345.g5c9ce644c3-goog
 In-Reply-To: <20180730222423.196630-1-joel@joelfernandes.org>
 References: <20180730222423.196630-1-joel@joelfernandes.org>
@@ -85,60 +85,192 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: "Joel Fernandes (Google)" <joel@joelfernandes.org>
 
-get_cpu_var disables preemption which has the potential to call into the
-preemption disable trace points causing some complications. There's also
-no need to disable preemption in uses of get_lock_stats anyway since
-preempt is already disabled. So lets simplify the code.
+In recent tests with IRQ on/off tracepoints, a large performance
+overhead ~10% is noticed when running hackbench. This is root caused to
+calls to rcu_irq_enter_irqson and rcu_irq_exit_irqson from the
+tracepoint code. Following a long discussion on the list [1] about this,
+we concluded that srcu is a better alternative for use during rcu idle.
+Although it does involve extra barriers, its lighter than the sched-rcu
+version which has to do additional RCU calls to notify RCU idle about
+entry into RCU sections.
 
-Suggested-by: Peter Zijlstra <peterz@infradead.org>
+In this patch, we change the underlying implementation of the
+trace_*_rcuidle API to use SRCU. This has shown to improve performance
+alot for the high frequency irq enable/disable tracepoints.
+
+Test: Tested idle and preempt/irq tracepoints.
+
+Here are some performance numbers:
+
+With a run of the following 30 times on a single core x86 Qemu instance
+with 1GB memory:
+hackbench -g 4 -f 2 -l 3000
+
+Completion times in seconds. CONFIG_PROVE_LOCKING=y.
+
+No patches (without this series)
+Mean: 3.048
+Median: 3.025
+Std Dev: 0.064
+
+With Lockdep using irq tracepoints with RCU implementation:
+Mean: 3.451   (-11.66 %)
+Median: 3.447 (-12.22%)
+Std Dev: 0.049
+
+With Lockdep using irq tracepoints with SRCU implementation (this series):
+Mean: 3.020   (I would consider the improvement against the "without
+	       this series" case as just noise).
+Median: 3.013
+Std Dev: 0.033
+
+[1] https://patchwork.kernel.org/patch/10344297/
+
+[remove rcu_read_lock_sched_notrace as its the equivalent of
+preempt_disable_notrace and is unnecessary to call in tracepoint code]
+Cleaned-up-by: Peter Zijlstra <peterz@infradead.org>
 Acked-by: Peter Zijlstra <peterz@infradead.org>
+Reviewed-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
 Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
 ---
- kernel/locking/lockdep.c | 10 +---------
- 1 file changed, 1 insertion(+), 9 deletions(-)
+ include/linux/tracepoint.h | 41 ++++++++++++++++++++++++++++++--------
+ kernel/tracepoint.c        | 16 ++++++++++++++-
+ 2 files changed, 48 insertions(+), 9 deletions(-)
 
-diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
-index 5fa4d3138bf1..fbbb79d5cfa0 100644
---- a/kernel/locking/lockdep.c
-+++ b/kernel/locking/lockdep.c
-@@ -248,12 +248,7 @@ void clear_lock_stats(struct lock_class *class)
+diff --git a/include/linux/tracepoint.h b/include/linux/tracepoint.h
+index 19a690b559ca..6e7bc6ebfcd8 100644
+--- a/include/linux/tracepoint.h
++++ b/include/linux/tracepoint.h
+@@ -15,6 +15,7 @@
+  */
  
- static struct lock_class_stats *get_lock_stats(struct lock_class *class)
+ #include <linux/smp.h>
++#include <linux/srcu.h>
+ #include <linux/errno.h>
+ #include <linux/types.h>
+ #include <linux/cpumask.h>
+@@ -33,6 +34,8 @@ struct trace_eval_map {
+ 
+ #define TRACEPOINT_DEFAULT_PRIO	10
+ 
++extern struct srcu_struct tracepoint_srcu;
++
+ extern int
+ tracepoint_probe_register(struct tracepoint *tp, void *probe, void *data);
+ extern int
+@@ -75,10 +78,16 @@ int unregister_tracepoint_module_notifier(struct notifier_block *nb)
+  * probe unregistration and the end of module exit to make sure there is no
+  * caller executing a probe when it is freed.
+  */
++#ifdef CONFIG_TRACEPOINTS
+ static inline void tracepoint_synchronize_unregister(void)
  {
--	return &get_cpu_var(cpu_lock_stats)[class - lock_classes];
--}
--
--static void put_lock_stats(struct lock_class_stats *stats)
--{
--	put_cpu_var(cpu_lock_stats);
-+	return &this_cpu_ptr(cpu_lock_stats)[class - lock_classes];
++	synchronize_srcu(&tracepoint_srcu);
+ 	synchronize_sched();
+ }
++#else
++static inline void tracepoint_synchronize_unregister(void)
++{ }
++#endif
+ 
+ #ifdef CONFIG_HAVE_SYSCALL_TRACEPOINTS
+ extern int syscall_regfunc(void);
+@@ -129,18 +138,32 @@ extern void syscall_unregfunc(void);
+  * as "(void *, void)". The DECLARE_TRACE_NOARGS() will pass in just
+  * "void *data", where as the DECLARE_TRACE() will pass in "void *data, proto".
+  */
+-#define __DO_TRACE(tp, proto, args, cond, rcucheck)			\
++#define __DO_TRACE(tp, proto, args, cond, rcuidle)			\
+ 	do {								\
+ 		struct tracepoint_func *it_func_ptr;			\
+ 		void *it_func;						\
+ 		void *__data;						\
++		int __maybe_unused idx = 0;				\
+ 									\
+ 		if (!(cond))						\
+ 			return;						\
+-		if (rcucheck)						\
+-			rcu_irq_enter_irqson();				\
+-		rcu_read_lock_sched_notrace();				\
+-		it_func_ptr = rcu_dereference_sched((tp)->funcs);	\
++									\
++		/* srcu can't be used from NMI */			\
++		if (rcuidle && in_nmi())				\
++			WARN_ON_ONCE(1);				\
++									\
++		/* keep srcu and sched-rcu usage consistent */		\
++		preempt_disable_notrace();				\
++									\
++		/*							\
++		 * For rcuidle callers, use srcu since sched-rcu	\
++		 * doesn't work from the idle path.			\
++		 */							\
++		if (rcuidle)						\
++			idx = srcu_read_lock_notrace(&tracepoint_srcu);	\
++									\
++		it_func_ptr = rcu_dereference_raw((tp)->funcs);		\
++									\
+ 		if (it_func_ptr) {					\
+ 			do {						\
+ 				it_func = (it_func_ptr)->func;		\
+@@ -148,9 +171,11 @@ extern void syscall_unregfunc(void);
+ 				((void(*)(proto))(it_func))(args);	\
+ 			} while ((++it_func_ptr)->func);		\
+ 		}							\
+-		rcu_read_unlock_sched_notrace();			\
+-		if (rcucheck)						\
+-			rcu_irq_exit_irqson();				\
++									\
++		if (rcuidle)						\
++			srcu_read_unlock_notrace(&tracepoint_srcu, idx);\
++									\
++		preempt_enable_notrace();				\
+ 	} while (0)
+ 
+ #ifndef MODULE
+diff --git a/kernel/tracepoint.c b/kernel/tracepoint.c
+index 6dc6356c3327..955148d91b74 100644
+--- a/kernel/tracepoint.c
++++ b/kernel/tracepoint.c
+@@ -31,6 +31,9 @@
+ extern struct tracepoint * const __start___tracepoints_ptrs[];
+ extern struct tracepoint * const __stop___tracepoints_ptrs[];
+ 
++DEFINE_SRCU(tracepoint_srcu);
++EXPORT_SYMBOL_GPL(tracepoint_srcu);
++
+ /* Set to 1 to enable tracepoint debug output */
+ static const int tracepoint_debug;
+ 
+@@ -67,16 +70,27 @@ static inline void *allocate_probes(int count)
+ 	return p == NULL ? NULL : p->probes;
  }
  
- static void lock_release_holdtime(struct held_lock *hlock)
-@@ -271,7 +266,6 @@ static void lock_release_holdtime(struct held_lock *hlock)
- 		lock_time_inc(&stats->read_holdtime, holdtime);
- 	else
- 		lock_time_inc(&stats->write_holdtime, holdtime);
--	put_lock_stats(stats);
- }
- #else
- static inline void lock_release_holdtime(struct held_lock *hlock)
-@@ -4090,7 +4084,6 @@ __lock_contended(struct lockdep_map *lock, unsigned long ip)
- 		stats->contending_point[contending_point]++;
- 	if (lock->cpu != smp_processor_id())
- 		stats->bounces[bounce_contended + !!hlock->read]++;
--	put_lock_stats(stats);
+-static void rcu_free_old_probes(struct rcu_head *head)
++static void srcu_free_old_probes(struct rcu_head *head)
+ {
+ 	kfree(container_of(head, struct tp_probes, rcu));
  }
  
- static void
-@@ -4138,7 +4131,6 @@ __lock_acquired(struct lockdep_map *lock, unsigned long ip)
++static void rcu_free_old_probes(struct rcu_head *head)
++{
++	call_srcu(&tracepoint_srcu, head, srcu_free_old_probes);
++}
++
+ static inline void release_probes(struct tracepoint_func *old)
+ {
+ 	if (old) {
+ 		struct tp_probes *tp_probes = container_of(old,
+ 			struct tp_probes, probes[0]);
++		/*
++		 * Tracepoint probes are protected by both sched RCU and SRCU,
++		 * by calling the SRCU callback in the sched RCU callback we
++		 * cover both cases. So let us chain the SRCU and sched RCU
++		 * callbacks to wait for both grace periods.
++		 */
+ 		call_rcu_sched(&tp_probes->rcu, rcu_free_old_probes);
  	}
- 	if (lock->cpu != cpu)
- 		stats->bounces[bounce_acquired + !!hlock->read]++;
--	put_lock_stats(stats);
- 
- 	lock->cpu = cpu;
- 	lock->ip = ip;
+ }
 -- 
 2.18.0.345.g5c9ce644c3-goog
 
