@@ -2,92 +2,107 @@ Return-Path: <SRS0=qqIy=KO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68E20FD21E1
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 14:10:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1F6A13F6DFF
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 14:11:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 15BC220870
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 14:10:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 637D220894
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 14:11:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="o0wW/2xQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 15BC220870
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="omsEQSZM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 637D220894
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729283AbeG3PqG (ORCPT
+        id S1731333AbeG3PqK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 30 Jul 2018 11:46:06 -0400
-Received: from mail-yw0-f194.google.com ([209.85.161.194]:38534 "EHLO
-        mail-yw0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726765AbeG3PqG (ORCPT
+        Mon, 30 Jul 2018 11:46:10 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:48494 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726765AbeG3PqI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Jul 2018 11:46:06 -0400
-Received: by mail-yw0-f194.google.com with SMTP id r3-v6so4392405ywc.5;
-        Mon, 30 Jul 2018 07:10:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=eWRTwL/5+4+PhEBsNLIiCHp2Gqle593wB1wxCVEjlA8=;
-        b=o0wW/2xQXez0KwYI1xGVc6hbSEWgbt1jgScUbWG3n2ShaUEoRNJrv8VhGsruMFjVji
-         OVPQ/UbFZ+ibreKCXUDCD74VZ4+HgGrLfbnqpKnTIcYkTV2G4Z7gUGKSHmxpSgvUKCYm
-         qRCWdzqeIQs9oVu2GpQgmi/zRuVwmL4Gkz/9xOt5NTQGFS5X03TM/K3BI+us7i1IF29T
-         UoyCFiikCY2kg2IHBolNmSPbKYvK4Co4v483LiUU78gA6rz3tvuJdB4eLvzz6HZuSDjJ
-         JU9q4geQ3/XJKFtZbg69Egc5f/dLt/BLgE8SHJEYexRXaj/UH9EdI3DHsKs4XkIJ7wBW
-         dyJw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=eWRTwL/5+4+PhEBsNLIiCHp2Gqle593wB1wxCVEjlA8=;
-        b=j1rvpKqM90wOy4IopKt+OlEozy5gPwwDH12TQCPOh1gjOEZKarF+SvchKAp7j6awd2
-         SxxVAdS63WueqNwA0PmNhe5XuwUnGB1s2lJ6wSarL0rF4Z11L2W/zZG0USSHPwUgtzZA
-         DgDWDTiCal+OFHS1bEQdx2hnI7EhsLs82Oe3LoxyjUUDH/rphkntRkVzZlWvnZUrZLeb
-         572btm5rMwClQaZ7ftw9zFsMlf6YnaCG/dFg+kTLB2V4xoKs1sCiq1niVmpm4u+suQBy
-         BEbzciJlCyEZKrY9f9erd9P1lJNjELK1RgfBgc3sLkuJq9HH6QQcQyRrlZvBeJmTzbTR
-         o28w==
-X-Gm-Message-State: AOUpUlGI0DDUoEwfrgIQvvEKukKpopSdO5CyJLJ4WLumXnBOvk9hzkYE
-        KF1nRegYoEQY2XpC7S6coaU=
-X-Google-Smtp-Source: AAOMgpcLb5w3BbbCmcWwHpOer8vqIWBeoBvBHG35hplTWKmItsiE4EaxDSqHtOHCS+WQwGB7iJ6slw==
-X-Received: by 2002:a0d:f506:: with SMTP id e6-v6mr6779777ywf.298.1532959854887;
-        Mon, 30 Jul 2018 07:10:54 -0700 (PDT)
-Received: from localhost ([2620:10d:c091:200::2:4bfe])
-        by smtp.gmail.com with ESMTPSA id i67-v6sm11270136ywc.27.2018.07.30.07.10.53
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 30 Jul 2018 07:10:53 -0700 (PDT)
-Date:   Mon, 30 Jul 2018 07:10:52 -0700
-From:   Tejun Heo <tj@kernel.org>
-To:     Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Cc:     hdegoede@redhat.com, rjw@rjwysocki.net, alan.cox@intel.com,
-        linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, Mario.Limonciello@dell.com
-Subject: Re: [PATCH v2 0/2] ata: ahci: Enable DEVSLP by default on SLP_S0
- support
-Message-ID: <20180730141052.GB1206094@devbig004.ftw2.facebook.com>
-References: <20180727204703.6505-1-srinivas.pandruvada@linux.intel.com>
+        Mon, 30 Jul 2018 11:46:08 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w6UE8rdo181222
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Jul 2018 14:10:56 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=mime-version :
+ references : in-reply-to : from : date : message-id : subject : to : cc :
+ content-type; s=corp-2018-07-02;
+ bh=ZmZgMWg7qNJdaV2KwClTNnNHABqTAulkQetC3rYphJQ=;
+ b=omsEQSZMFN+0yF6CqowiFDnViAR2af/DvSjtulqmDgvvCWwCigpxRujjWsEp1lC6Y1ZG
+ wZ66AiyHF1eVHsdNgN+g07S2xq1nSUF9JSwduFWoE82aTfUKVnokey7kBEbD59f9221I
+ 6rS0A3+5rwL9r0PQNBstrSFnW18Ho5M5YltscaU+lKiDt2EQrGBUf+8JMfQCet2daq2K
+ WI/ntAydZxlkEcIsuB2UF4skMRJ6wRzKvzBlbVc0ECCIWaSgNRlxI0eufBjU2K4KTeC4
+ ZvoY3M0RPBnm8yfpmkK5valp9IpK3FMmIqeEidt89+icDAzPvb51E09dpmjHz1nPIhzt bg== 
+Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
+        by userp2120.oracle.com with ESMTP id 2kgh4pvk6x-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK)
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Jul 2018 14:10:56 +0000
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w6UEAtwI009385
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK)
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Jul 2018 14:10:55 GMT
+Received: from abhmp0010.oracle.com (abhmp0010.oracle.com [141.146.116.16])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w6UEAsun009330
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Jul 2018 14:10:55 GMT
+Received: from mail-oi0-f47.google.com (/209.85.218.47)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 30 Jul 2018 07:10:54 -0700
+Received: by mail-oi0-f47.google.com with SMTP id n84-v6so21444699oib.9
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Jul 2018 07:10:54 -0700 (PDT)
+X-Gm-Message-State: AOUpUlH0duydwW6m9cTCBWl8d1BMfIEYVHlarQkQZFXBR2l77klEkU/F
+        P3NaP7JkiE1pe7uHFsxnmpwNw6GCwiKbeVofp1E=
+X-Google-Smtp-Source: AAOMgpek9CEe01p0RUP83MMeatL6TNw+mzMhuxKUgIFp+d3i1RTm9qsznJsrvyqno14vP+4Q65bFAI/3+YC3/AuYYK8=
+X-Received: by 2002:aca:edc1:: with SMTP id l184-v6mr16826049oih.65.1532959854517;
+ Mon, 30 Jul 2018 07:10:54 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180727204703.6505-1-srinivas.pandruvada@linux.intel.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+References: <20180730133718.28683-1-osalvador@techadventures.net>
+In-Reply-To: <20180730133718.28683-1-osalvador@techadventures.net>
+From:   Pavel Tatashin <pasha.tatashin@oracle.com>
+Date:   Mon, 30 Jul 2018 10:10:18 -0400
+X-Gmail-Original-Message-ID: <CAGM2reYo+3ONoLQqD8tQMMKuQ5ZPJf6CjpcahHeMtNQ-B1FuRA@mail.gmail.com>
+Message-ID: <CAGM2reYo+3ONoLQqD8tQMMKuQ5ZPJf6CjpcahHeMtNQ-B1FuRA@mail.gmail.com>
+Subject: Re: [PATCH] mm: Remove zone_id() and make use of zone_idx() in is_dev_zone()
+To:     osalvador@techadventures.net
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Stephen Rothwell <sfr@canb.auug.org.au>, rientjes@google.com,
+        kemi.wang@intel.com, jia.he@hxt-semitech.com,
+        =?UTF-8?B?UGV0ciBUZXNhxZnDrWs=?= <ptesarik@suse.com>,
+        aryabinin@virtuozzo.com,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>, dan.j.williams@intel.com,
+        osalvador@suse.de
+Content-Type: text/plain; charset="UTF-8"
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8969 signatures=668706
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=3 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=700
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1806210000 definitions=main-1807300157
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 27, 2018 at 01:47:01PM -0700, Srinivas Pandruvada wrote:
-> One of the requirement for modern x86 system to enter lowest power mode
-> (SLP_S0) is SATA IP block to be off. This is true even during when
-> platform is suspended to idle and not only in opportunistic (runtime)
-> suspend.
-> This series is to enable DEVSLP by default.
+On Mon, Jul 30, 2018 at 9:37 AM <osalvador@techadventures.net> wrote:
+>
+> From: Oscar Salvador <osalvador@suse.de>
+>
+> is_dev_zone() is using zone_id() to check if the zone is ZONE_DEVICE.
+> zone_id() looks pretty much the same as zone_idx(), and while the use of
+> zone_idx() is quite spread in the kernel, zone_id() is only being
+> used by is_dev_zone().
+>
+> This patch removes zone_id() and makes is_dev_zone() use zone_idx()
+> to check the zone, so we do not have two things with the same
+> functionality around.
+>
+> Signed-off-by: Oscar Salvador <osalvador@suse.de>
 
-Applied to 1-2 to libata/for-4.19.
-
-Thanks.
-
--- 
-tejun
+Thank you:
+Reviewed-by: Pavel Tatashin <pasha.tatashin@oracle.com>
