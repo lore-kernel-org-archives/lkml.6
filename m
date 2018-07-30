@@ -2,149 +2,142 @@ Return-Path: <SRS0=qqIy=KO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B76516256E1
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 16:49:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DCFC016256E1
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 16:51:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2D3562083E
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 16:49:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8CE7420857
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 16:51:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="doORg11K"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D3562083E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=broadcom.com
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="rZ+pQ/rH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8CE7420857
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=amazon.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731535AbeG3SZV (ORCPT
+        id S1727213AbeG3S04 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 30 Jul 2018 14:25:21 -0400
-Received: from mail-qk0-f195.google.com ([209.85.220.195]:36131 "EHLO
-        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726916AbeG3SZV (ORCPT
+        Mon, 30 Jul 2018 14:26:56 -0400
+Received: from smtp-fw-33001.amazon.com ([207.171.190.10]:5389 "EHLO
+        smtp-fw-33001.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726668AbeG3S04 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Jul 2018 14:25:21 -0400
-Received: by mail-qk0-f195.google.com with SMTP id a132-v6so8244761qkg.3
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Jul 2018 09:49:29 -0700 (PDT)
+        Mon, 30 Jul 2018 14:26:56 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=BKk9Q69RwQjWvdHWuxZRr+tH8jq+w3Ah7bWyX8qbHmc=;
-        b=doORg11Kxwok8IzHEkGZu4FXqMT7fUGQdSZEEB3PdceIXtUPvqos5jit2VXcFGSCSu
-         lRFqRy4xTx8bWCBeV9b4NU0S/rbUR1p/qNLB7pAdNtNgB1Z8eGw3tMiDNJxrSYaY1TPV
-         aJtxqeDsd4lQ2RGBfkBC6VYsk0MOR+4liwDoA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=BKk9Q69RwQjWvdHWuxZRr+tH8jq+w3Ah7bWyX8qbHmc=;
-        b=sE7ZZy6ju9FYqw148TN/pNlF76qQ53/im/9Mc0321mgGc/lrbHNuEjuBdRntD0QSzZ
-         1QVv5f07DjLK+5vT7ge1eWN8ARdc5HAEhHr1/lk7pWaD+rY3l1Eh74z7hjtkIJFA6Qrp
-         pmsKqsc0ru09Cqtzwk1upQchAh3CcmcLAEd3h7LaoBi3sypw4RisTGDuuobm2qzlsWs7
-         bdArTaozihC94QnWpWYOG1ZacWG5HWheoEYleMdhP7A6ImYtuldafNvAEF3/UMpx157R
-         W4UCbxM7V1fxIQ28bOWfC5qsFxfTAtr1uHNsjO5cgOYBOWomFo2ISq8tqOEsHG/xUZpq
-         SxUw==
-X-Gm-Message-State: AOUpUlHSsnB4nDyL1YBywxQsZlSifVOFe4IvDnbXxUMfMpGvEyZa7hrO
-        KEiV5boShJlYoQnXCkoh+uwjDg==
-X-Google-Smtp-Source: AAOMgpdLEKsiMCAklUislL/kIBIUUGVDi9ExpkGWqKGdN9o5K1B1DmHJ7jPJBShKXK+V16/gfzmm0Q==
-X-Received: by 2002:a37:4fcd:: with SMTP id d196-v6mr16616369qkb.323.1532969369097;
-        Mon, 30 Jul 2018 09:49:29 -0700 (PDT)
-Received: from [10.136.4.147] ([192.19.228.250])
-        by smtp.gmail.com with ESMTPSA id l22-v6sm9501794qkh.72.2018.07.30.09.49.25
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 30 Jul 2018 09:49:28 -0700 (PDT)
-Subject: Re: [PATCH v2 6/7] net: phy: Add support to configure clock in
- Broadcom iProc mdio mux
-To:     Andrew Lunn <andrew@lunn.ch>
-Cc:     "David S. Miller" <davem@davemloft.net>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>, netdev@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com
-References: <1532726613-6483-1-git-send-email-arun.parameswaran@broadcom.com>
- <1532726613-6483-7-git-send-email-arun.parameswaran@broadcom.com>
- <20180728212224.GF4792@lunn.ch>
-From:   Arun Parameswaran <arun.parameswaran@broadcom.com>
-Message-ID: <d19bb673-9088-bbee-ce9f-f2a4d8f404bf@broadcom.com>
-Date:   Mon, 30 Jul 2018 09:49:48 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1532969464; x=1564505464;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=a6EWL3Gykq4/sL1IRbBsbFmC8npvdWHwA313SgeOfV8=;
+  b=rZ+pQ/rHljSg2z9PP2Ng9HWSFP3nqcB0QUHvk1g3WRAuLm7DMxrMriIU
+   S9ZExDT1Cyen4t3N5kJsVS5cxk95LsZ8vxDwTaQkIEGfe8Lmw4/FPsc+X
+   csKyN6n86ph5d2H1iieflfEH46A37jyoX6TGVyUrQYwqQkmkBEJJjdKp1
+   4=;
+X-IronPort-AV: E=Sophos;i="5.51,422,1526342400"; 
+   d="scan'208";a="747039686"
+Received: from sea3-co-svc-lb6-vlan2.sea.amazon.com (HELO email-inbound-relay-2a-7c6d20a4.us-west-2.amazon.com) ([10.47.22.34])
+  by smtp-border-fw-out-33001.sea14.amazon.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 30 Jul 2018 16:41:35 +0000
+Received: from EX13MTAUWB001.ant.amazon.com (pdx1-ws-svc-p6-lb9-vlan3.pdx.amazon.com [10.236.137.198])
+        by email-inbound-relay-2a-7c6d20a4.us-west-2.amazon.com (8.14.7/8.14.7) with ESMTP id w6UGf0IR070864
+        (version=TLSv1/SSLv3 cipher=AES256-SHA bits=256 verify=FAIL);
+        Mon, 30 Jul 2018 16:41:00 GMT
+Received: from EX13D05UWB004.ant.amazon.com (10.43.161.208) by
+ EX13MTAUWB001.ant.amazon.com (10.43.161.207) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3; Mon, 30 Jul 2018 16:41:00 +0000
+Received: from EX13MTAUWA001.ant.amazon.com (10.43.160.58) by
+ EX13D05UWB004.ant.amazon.com (10.43.161.208) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3; Mon, 30 Jul 2018 16:41:00 +0000
+Received: from localhost (10.55.160.54) by mail-relay.amazon.com
+ (10.43.160.118) with Microsoft SMTP Server id 15.0.1367.3 via Frontend
+ Transport; Mon, 30 Jul 2018 16:41:00 +0000
+Date:   Mon, 30 Jul 2018 09:41:00 -0700
+From:   Eduardo Valentin <eduval@amazon.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+CC:     Eduardo Valentin <eduval@amazon.com>,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Dou Liyang <douly.fnst@cn.fujitsu.com>,
+        Len Brown <len.brown@intel.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        "mike.travis@hpe.com" <mike.travis@hpe.com>,
+        Rajvi Jingar <rajvi.jingar@intel.com>,
+        Pavel Tatashin <pasha.tatashin@oracle.com>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        "Kate Stewart" <kstewart@linuxfoundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        <x86@kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-pm@vger.kernel.org>
+Subject: Re: [PATCH RESEND 1/1] x86: tsc: avoid system instability in
+ hibernation
+Message-ID: <20180730164100.GD15414@u40b0340c692b58f6553c.ant.amazon.com>
+References: <20180726155656.14873-1-eduval@amazon.com>
+ <20180730085354.GA2494@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-In-Reply-To: <20180728212224.GF4792@lunn.ch>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20180730085354.GA2494@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Andrew,
+Hey Peter,
 
-On 18-07-28 02:22 PM, Andrew Lunn wrote:
->> @@ -198,10 +219,22 @@ static int mdio_mux_iproc_probe(struct platform_device *pdev)
->>  		return PTR_ERR(md->base);
->>  	}
->>  
->> +	md->core_clk = devm_clk_get(&pdev->dev, NULL);
->> +	if (IS_ERR(md->core_clk)) {
->> +		md->core_clk = NULL;
->> +	} else {
->> +		rc = clk_prepare_enable(md->core_clk);
->> +		if (rc) {
->> +			dev_err(&pdev->dev, "failed to enable core clk\n");
->> +			return rc;
->> +		}
->> +	}
->> +
->>  	md->mii_bus = mdiobus_alloc();
->>  	if (!md->mii_bus) {
->>  		dev_err(&pdev->dev, "mdiomux bus alloc failed\n");
->> -		return -ENOMEM;
->> +		rc = -ENOMEM;
->> +		goto out;
+On Mon, Jul 30, 2018 at 10:53:54AM +0200, Peter Zijlstra wrote:
+> On Thu, Jul 26, 2018 at 08:56:56AM -0700, Eduardo Valentin wrote:
+> > System instability are seen during resume from hibernation when system
+> > is under heavy CPU load. This is due to the lack of update of sched
+> > clock data
 > 
-> Hi Arun
-> 
-> There is a devm_mdiobus_alloc() which could make the cleanup on error
-> simple.
-> 
-Should I do this as a separate patch ?
+> Which would suggest you're already running with unstable sched clock.
+> Otherwise nobody would care about the scd stuff.
 
-Thanks
-Arun
->>  	}
->>  
->>  	bus = md->mii_bus;
->> @@ -217,7 +250,7 @@ static int mdio_mux_iproc_probe(struct platform_device *pdev)
->>  	rc = mdiobus_register(bus);
->>  	if (rc) {
->>  		dev_err(&pdev->dev, "mdiomux registration failed\n");
->> -		goto out;
->> +		goto out_alloc;
->>  	}
->>  
->>  	platform_set_drvdata(pdev, md);
->> @@ -236,8 +269,11 @@ static int mdio_mux_iproc_probe(struct platform_device *pdev)
->>  
->>  out_register:
->>  	mdiobus_unregister(bus);
->> -out:
->> +out_alloc:
->>  	mdiobus_free(bus);
->> +out:
->> +	if (md->core_clk)
->> +		clk_disable_unprepare(md->core_clk);
->>  	return rc;
->>  }
+
+Yes.
+
 > 
->    Andrew
+> What kind of machine are you running? What does:
 > 
+>   dmesg | grep -i tsc
+> 
+> say?
+
+Here:
+[    0.000000] tsc: Fast TSC calibration using PIT
+[    0.004005] tsc: Detected 3000.000 MHz processor
+[    0.066796] TSC deadline timer enabled
+[    3.904269] clocksource: tsc: mask: 0xffffffffffffffff max_cycles: 0x2b3e459bf4c, max_idle_ns: 440795289890 ns
+
+> 
+> > The fix for this situation is to mark the sched clock as unstable
+> > as early as possible in the resume path, leaving it unstable
+> > for the duration of the resume process. This will force the
+> > scheduler to attempt to align the sched clock across CPUs using
+> > the delta with time of day, updating sched clock data. In a post
+> > hibernation event, we can then mark the sched clock as stable
+> > again, avoiding unnecessary syncs with time of day on systems
+> > in which TSC is reliable.
+> 
+> None of this makes any sense. Either you were already unstable and it
+> should already have worked and them marking it stable is an outright
+> bug, or your sched clock was stable but then your initial diagnosis of
+> lack of scd updates is complete garbage.
+> 
+
+I see, or it is just a workaround for the underling issue. I, for sure, see no
+lockups anymore after forcing the scd updates. The other thing which are not
+super clear is that this happens during the unfreezing of tasks. If I get a
+set of cpu hog tasks while unfreezing, I see the system throwing worqueue lockup
+detectors in hibernation restore.
+
+> 
+
+-- 
+All the best,
+Eduardo Valentin
