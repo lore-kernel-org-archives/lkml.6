@@ -6,590 +6,393 @@ X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D5EE13F6DFF
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 12:56:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13CD5FD21E1
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 12:56:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 16D3C20892
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 12:56:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 16D3C20892
+	by mail.kernel.org (Postfix) with ESMTP id BBCC520893
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 12:56:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BBCC520893
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732366AbeG3Oba (ORCPT
+        id S1732379AbeG3Obe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 30 Jul 2018 10:31:30 -0400
-Received: from mx2.suse.de ([195.135.220.15]:50332 "EHLO mx1.suse.de"
+        Mon, 30 Jul 2018 10:31:34 -0400
+Received: from mx2.suse.de ([195.135.220.15]:50388 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729138AbeG3Oba (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Jul 2018 10:31:30 -0400
+        id S1729138AbeG3Obd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Jul 2018 10:31:33 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id D9BD4AF56;
-        Mon, 30 Jul 2018 12:56:34 +0000 (UTC)
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id D2DEBAF5B;
+        Mon, 30 Jul 2018 12:56:39 +0000 (UTC)
 Received: by unicorn.suse.cz (Postfix, from userid 1000)
-        id 8123DA0BE8; Mon, 30 Jul 2018 14:56:34 +0200 (CEST)
-Message-Id: <184c7cae56aa3fa9a2116874cd7024ec45f4d05e.1532954671.git.mkubecek@suse.cz>
+        id 8720CA0BE8; Mon, 30 Jul 2018 14:56:39 +0200 (CEST)
+Message-Id: <72e0ca806f24935c068f0da8b0dcd909042285e2.1532954671.git.mkubecek@suse.cz>
 In-Reply-To: <cover.1532954671.git.mkubecek@suse.cz>
 References: <cover.1532954671.git.mkubecek@suse.cz>
 From:   Michal Kubecek <mkubecek@suse.cz>
-Subject: [RFC PATCH ethtool v2 10/23] netlink: add netlink handler for
- gfeatures (-k)
+Subject: [RFC PATCH ethtool v2 11/23] netlink: add netlink handler for
+ sfeatures (-K)
 To:     netdev@vger.kernel.org
 Cc:     linux-kernel@vger.kernel.org,
         "John W. Linville" <linville@tuxdriver.com>
-Date:   Mon, 30 Jul 2018 14:56:34 +0200 (CEST)
+Date:   Mon, 30 Jul 2018 14:56:39 +0200 (CEST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Implement "ethtool -k <dev>" subcommand using netlink interface command
-ETHNL_CMD_GET_SETTINGS with ETH_SETTINGS_IM_FEATURES mask.
+Implement "ethtool -K <dev>" subcommand using netlink interface command
+ETHNL_CMD_SET_SETTINGS.
 
 The implementation tries to emulate legacy flags but the result is not
 exactly equal to the ioctl code. In particular, we map netdev features to
 legacy flags based on name patterns in off_flag_def[] but this mapping is
-slightly different from mapping used by kernel ioctl code.
+slightly different from mapping used by kernel ioctl code. It also does not
+try to emulate legacy flags in "actual changes" output show when actual
+change of device features does not match userspace request exactly.
 
 Signed-off-by: Michal Kubecek <mkubecek@suse.cz>
 ---
- common.c           |  30 ++++++
- common.h           |  21 +++++
- ethtool.c          |  70 +++-----------
+ ethtool.c          |   3 +-
  netlink/extapi.h   |   1 +
- netlink/monitor.c  |   6 ++
- netlink/settings.c | 226 +++++++++++++++++++++++++++++++++++++++++++++
- 6 files changed, 296 insertions(+), 58 deletions(-)
+ netlink/settings.c | 292 +++++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 295 insertions(+), 1 deletion(-)
 
-diff --git a/common.c b/common.c
-index 59897acd2512..db9a360ffae6 100644
---- a/common.c
-+++ b/common.c
-@@ -283,3 +283,33 @@ void dump_mdix(u8 mdix, u8 mdix_ctrl)
- 		fprintf(stdout, "\n");
- 	}
- }
-+
-+const struct off_flag_def off_flag_def[OFF_FLAG_DEF_SIZE] = {
-+	{ "rx",     "rx-checksumming",		    "rx-checksum",
-+	  ETHTOOL_GRXCSUM, ETHTOOL_SRXCSUM, ETH_FLAG_RXCSUM,	0 },
-+	{ "tx",     "tx-checksumming",		    "tx-checksum-*",
-+	  ETHTOOL_GTXCSUM, ETHTOOL_STXCSUM, ETH_FLAG_TXCSUM,	0 },
-+	{ "sg",     "scatter-gather",		    "tx-scatter-gather*",
-+	  ETHTOOL_GSG,	   ETHTOOL_SSG,     ETH_FLAG_SG,	0 },
-+	{ "tso",    "tcp-segmentation-offload",	    "tx-tcp*-segmentation",
-+	  ETHTOOL_GTSO,	   ETHTOOL_STSO,    ETH_FLAG_TSO,	0 },
-+	{ "ufo",    "udp-fragmentation-offload",    "tx-udp-fragmentation",
-+	  ETHTOOL_GUFO,	   ETHTOOL_SUFO,    ETH_FLAG_UFO,	0 },
-+	{ "gso",    "generic-segmentation-offload", "tx-generic-segmentation",
-+	  ETHTOOL_GGSO,	   ETHTOOL_SGSO,    ETH_FLAG_GSO,	0 },
-+	{ "gro",    "generic-receive-offload",	    "rx-gro",
-+	  ETHTOOL_GGRO,	   ETHTOOL_SGRO,    ETH_FLAG_GRO,	0 },
-+	{ "lro",    "large-receive-offload",	    "rx-lro",
-+	  0,		   0,		    ETH_FLAG_LRO,
-+	  KERNEL_VERSION(2,6,24) },
-+	{ "rxvlan", "rx-vlan-offload",		    "rx-vlan-hw-parse",
-+	  0,		   0,		    ETH_FLAG_RXVLAN,
-+	  KERNEL_VERSION(2,6,37) },
-+	{ "txvlan", "tx-vlan-offload",		    "tx-vlan-hw-insert",
-+	  0,		   0,		    ETH_FLAG_TXVLAN,
-+	  KERNEL_VERSION(2,6,37) },
-+	{ "ntuple", "ntuple-filters",		    "rx-ntuple-filter",
-+	  0,		   0,		    ETH_FLAG_NTUPLE,	0 },
-+	{ "rxhash", "receive-hashing",		    "rx-hashing",
-+	  0,		   0,		    ETH_FLAG_RXHASH,	0 },
-+};
-diff --git a/common.h b/common.h
-index a980b844a0ed..36f96ddaa3bd 100644
---- a/common.h
-+++ b/common.h
-@@ -1,6 +1,8 @@
- #ifndef ETHTOOL_COMMON_H__
- #define ETHTOOL_COMMON_H__
- 
-+#define KERNEL_VERSION(a,b,c) (((a) << 16) + ((b) << 8) + (c))
-+
- struct flag_info {
- 	const char *name;
- 	u32 value;
-@@ -25,6 +27,25 @@ struct link_mode_info {
- 	u8			duplex;
- };
- 
-+struct off_flag_def {
-+	const char *short_name;
-+	const char *long_name;
-+	const char *kernel_name;
-+	u32 get_cmd, set_cmd;
-+	u32 value;
-+	/* For features exposed through ETHTOOL_GFLAGS, the oldest
-+	 * kernel version for which we can trust the result.  Where
-+	 * the flag was added at the same time the kernel started
-+	 * supporting the feature, this is 0 (to allow for backports).
-+	 * Where the feature was supported before the flag was added,
-+	 * it is the version that introduced the flag.
-+	 */
-+	u32 min_kernel_ver;
-+};
-+
-+#define OFF_FLAG_DEF_SIZE 12
-+extern const struct off_flag_def off_flag_def[OFF_FLAG_DEF_SIZE];
-+
- extern const struct link_mode_info link_modes[];
- extern const unsigned int link_modes_count;
- 
 diff --git a/ethtool.c b/ethtool.c
-index 0b40b96cf9bf..b29086bbabde 100644
+index b29086bbabde..b2f93a331098 100644
 --- a/ethtool.c
 +++ b/ethtool.c
-@@ -61,8 +61,6 @@
- #define NETLINK_GENERIC	16
- #endif
- 
--#define KERNEL_VERSION(a,b,c) (((a) << 16) + ((b) << 8) + (c))
--
- static void exit_bad_args(void) __attribute__((noreturn));
- 
- static void exit_bad_args(void)
-@@ -104,51 +102,6 @@ struct cmdline_info {
- 	void *seen_val;
- };
- 
--struct off_flag_def {
--	const char *short_name;
--	const char *long_name;
--	const char *kernel_name;
--	u32 get_cmd, set_cmd;
--	u32 value;
--	/* For features exposed through ETHTOOL_GFLAGS, the oldest
--	 * kernel version for which we can trust the result.  Where
--	 * the flag was added at the same time the kernel started
--	 * supporting the feature, this is 0 (to allow for backports).
--	 * Where the feature was supported before the flag was added,
--	 * it is the version that introduced the flag.
--	 */
--	u32 min_kernel_ver;
--};
--static const struct off_flag_def off_flag_def[] = {
--	{ "rx",     "rx-checksumming",		    "rx-checksum",
--	  ETHTOOL_GRXCSUM, ETHTOOL_SRXCSUM, ETH_FLAG_RXCSUM,	0 },
--	{ "tx",     "tx-checksumming",		    "tx-checksum-*",
--	  ETHTOOL_GTXCSUM, ETHTOOL_STXCSUM, ETH_FLAG_TXCSUM,	0 },
--	{ "sg",     "scatter-gather",		    "tx-scatter-gather*",
--	  ETHTOOL_GSG,	   ETHTOOL_SSG,     ETH_FLAG_SG,	0 },
--	{ "tso",    "tcp-segmentation-offload",	    "tx-tcp*-segmentation",
--	  ETHTOOL_GTSO,	   ETHTOOL_STSO,    ETH_FLAG_TSO,	0 },
--	{ "ufo",    "udp-fragmentation-offload",    "tx-udp-fragmentation",
--	  ETHTOOL_GUFO,	   ETHTOOL_SUFO,    ETH_FLAG_UFO,	0 },
--	{ "gso",    "generic-segmentation-offload", "tx-generic-segmentation",
--	  ETHTOOL_GGSO,	   ETHTOOL_SGSO,    ETH_FLAG_GSO,	0 },
--	{ "gro",    "generic-receive-offload",	    "rx-gro",
--	  ETHTOOL_GGRO,	   ETHTOOL_SGRO,    ETH_FLAG_GRO,	0 },
--	{ "lro",    "large-receive-offload",	    "rx-lro",
--	  0,		   0,		    ETH_FLAG_LRO,
--	  KERNEL_VERSION(2,6,24) },
--	{ "rxvlan", "rx-vlan-offload",		    "rx-vlan-hw-parse",
--	  0,		   0,		    ETH_FLAG_RXVLAN,
--	  KERNEL_VERSION(2,6,37) },
--	{ "txvlan", "tx-vlan-offload",		    "tx-vlan-hw-insert",
--	  0,		   0,		    ETH_FLAG_TXVLAN,
--	  KERNEL_VERSION(2,6,37) },
--	{ "ntuple", "ntuple-filters",		    "rx-ntuple-filter",
--	  0,		   0,		    ETH_FLAG_NTUPLE,	0 },
--	{ "rxhash", "receive-hashing",		    "rx-hashing",
--	  0,		   0,		    ETH_FLAG_RXHASH,	0 },
--};
--
- struct feature_def {
- 	char name[ETH_GSTRING_LEN];
- 	int off_flag_index; /* index in off_flag_def; negative if none match */
-@@ -157,7 +110,7 @@ struct feature_def {
- struct feature_defs {
- 	size_t n_features;
- 	/* Number of features each offload flag is associated with */
--	unsigned int off_flag_matched[ARRAY_SIZE(off_flag_def)];
-+	unsigned int off_flag_matched[OFF_FLAG_DEF_SIZE];
- 	/* Name and offload flag index for each feature */
- 	struct feature_def def[0];
- };
-@@ -1325,7 +1278,7 @@ static void dump_features(const struct feature_defs *defs,
- 	int indent;
- 	int i, j;
- 
--	for (i = 0; i < ARRAY_SIZE(off_flag_def); i++) {
-+	for (i = 0; i < OFF_FLAG_DEF_SIZE; i++) {
- 		/* Don't show features whose state is unknown on this
- 		 * kernel version
- 		 */
-@@ -1640,7 +1593,7 @@ static struct feature_defs *get_feature_defs(struct cmd_context *ctx)
- 		defs->def[i].off_flag_index = -1;
- 
- 		for (j = 0;
--		     j < ARRAY_SIZE(off_flag_def) &&
-+		     j < OFF_FLAG_DEF_SIZE &&
- 			     defs->def[i].off_flag_index < 0;
- 		     j++) {
- 			const char *pattern =
-@@ -2082,7 +2035,7 @@ get_features(struct cmd_context *ctx, const struct feature_defs *defs)
- 
- 	state->off_flags = 0;
- 
--	for (i = 0; i < ARRAY_SIZE(off_flag_def); i++) {
-+	for (i = 0; i < OFF_FLAG_DEF_SIZE; i++) {
- 		value = off_flag_def[i].value;
- 		if (!off_flag_def[i].get_cmd)
- 			continue;
-@@ -2198,14 +2151,14 @@ static int do_sfeatures(struct cmd_context *ctx)
- 	/* Generate cmdline_info for legacy flags and kernel-named
- 	 * features, and parse our arguments.
- 	 */
--	cmdline_features = calloc(ARRAY_SIZE(off_flag_def) + defs->n_features,
-+	cmdline_features = calloc(OFF_FLAG_DEF_SIZE + defs->n_features,
- 				  sizeof(cmdline_features[0]));
- 	if (!cmdline_features) {
- 		perror("Cannot parse arguments");
- 		rc = 1;
- 		goto err;
- 	}
--	for (i = 0; i < ARRAY_SIZE(off_flag_def); i++)
-+	for (i = 0; i < OFF_FLAG_DEF_SIZE; i++)
- 		flag_to_cmdline_info(off_flag_def[i].short_name,
- 				     off_flag_def[i].value,
- 				     &off_flags_wanted, &off_flags_mask,
-@@ -2215,9 +2168,9 @@ static int do_sfeatures(struct cmd_context *ctx)
- 			defs->def[i].name, FEATURE_FIELD_FLAG(i),
- 			&FEATURE_WORD(efeatures->features, i, requested),
- 			&FEATURE_WORD(efeatures->features, i, valid),
--			&cmdline_features[ARRAY_SIZE(off_flag_def) + i]);
-+			&cmdline_features[OFF_FLAG_DEF_SIZE + i]);
- 	parse_generic_cmdline(ctx, &any_changed, cmdline_features,
--			      ARRAY_SIZE(off_flag_def) + defs->n_features);
-+			      OFF_FLAG_DEF_SIZE + defs->n_features);
- 	free(cmdline_features);
- 
- 	if (!any_changed) {
-@@ -2237,7 +2190,7 @@ static int do_sfeatures(struct cmd_context *ctx)
- 		 * related features that the user did not specify and that
- 		 * are not fixed.  Warn if all related features are fixed.
- 		 */
--		for (i = 0; i < ARRAY_SIZE(off_flag_def); i++) {
-+		for (i = 0; i < OFF_FLAG_DEF_SIZE; i++) {
- 			int fixed = 1;
- 
- 			if (!(off_flags_mask & off_flag_def[i].value))
-@@ -2278,7 +2231,7 @@ static int do_sfeatures(struct cmd_context *ctx)
- 			goto err;
- 		}
- 	} else {
--		for (i = 0; i < ARRAY_SIZE(off_flag_def); i++) {
-+		for (i = 0; i < OFF_FLAG_DEF_SIZE; i++) {
- 			if (!off_flag_def[i].set_cmd)
- 				continue;
- 			if (off_flags_mask & off_flag_def[i].value) {
-@@ -4924,6 +4877,7 @@ static int show_usage(struct cmd_context *ctx);
- #define nl_gdrv		NULL
+@@ -4878,6 +4878,7 @@ static int show_usage(struct cmd_context *ctx);
  #define nl_gset		NULL
  #define nl_sset		NULL
-+#define nl_gfeatures	NULL
+ #define nl_gfeatures	NULL
++#define nl_sfeatures	NULL
  #endif
  
  static const struct option {
-@@ -4988,7 +4942,7 @@ static const struct option {
- 	  "		[ rx-mini N ]\n"
- 	  "		[ rx-jumbo N ]\n"
+@@ -4944,7 +4945,7 @@ static const struct option {
  	  "		[ tx N ]\n" },
--	{ "-k|--show-features|--show-offload", 1, do_gfeatures, NULL,
-+	{ "-k|--show-features|--show-offload", 1, do_gfeatures, nl_gfeatures,
+ 	{ "-k|--show-features|--show-offload", 1, do_gfeatures, nl_gfeatures,
  	  "Get state of protocol offload and other features" },
- 	{ "-K|--features|--offload", 1, do_sfeatures, NULL,
+-	{ "-K|--features|--offload", 1, do_sfeatures, NULL,
++	{ "-K|--features|--offload", 1, do_sfeatures, nl_sfeatures,
  	  "Set protocol offload and other features",
+ 	  "		FEATURE on|off ...\n" },
+ 	{ "-i|--driver", 1, do_gdrv, nl_gdrv,
 diff --git a/netlink/extapi.h b/netlink/extapi.h
-index 66573f0b4304..c656ff862687 100644
+index c656ff862687..ad67e81449ba 100644
 --- a/netlink/extapi.h
 +++ b/netlink/extapi.h
-@@ -16,6 +16,7 @@ int netlink_done(struct cmd_context *ctx);
- int nl_gdrv(struct cmd_context *ctx);
+@@ -17,6 +17,7 @@ int nl_gdrv(struct cmd_context *ctx);
  int nl_gset(struct cmd_context *ctx);
  int nl_sset(struct cmd_context *ctx);
-+int nl_gfeatures(struct cmd_context *ctx);
+ int nl_gfeatures(struct cmd_context *ctx);
++int nl_sfeatures(struct cmd_context *ctx);
  int nl_monitor(struct cmd_context *ctx);
  
  void monitor_usage();
-diff --git a/netlink/monitor.c b/netlink/monitor.c
-index 32d842611011..e3b8bb46f561 100644
---- a/netlink/monitor.c
-+++ b/netlink/monitor.c
-@@ -127,6 +127,12 @@ static struct monitor_option monitor_opts[] = {
- 				  ETH_SETTINGS_IM_WOLINFO |
- 				  ETH_SETTINGS_IM_LINK,
- 	},
-+	{
-+		.pattern	= "-k|--show-features|--show-offload"
-+				  "|-K|--features|--offload",
-+		.cmd		= ETHNL_CMD_SET_SETTINGS,
-+		.info_mask	= ETH_SETTINGS_IM_FEATURES,
-+	},
- };
- 
- static bool pattern_match(const char *s, const char *pattern)
 diff --git a/netlink/settings.c b/netlink/settings.c
-index b077a96325e5..51a01b400224 100644
+index 51a01b400224..b7bfe14668df 100644
 --- a/netlink/settings.c
 +++ b/netlink/settings.c
-@@ -5,6 +5,7 @@
- #include "../internal.h"
- #include "../common.h"
- #include "netlink.h"
-+#include "strset.h"
- #include "parser.h"
- 
- /* GET_SETTINGS */
-@@ -34,6 +35,219 @@ err:
- 	return ret;
+@@ -741,3 +741,295 @@ int nl_sset(struct cmd_context *ctx)
+ 		return 0;
+ 	return nlctx->exit_code ?: 75;
  }
- 
-+uint32_t *get_compact_bitset_value(const struct nlattr *bitset)
-+{
-+        const struct nlattr *tb[ETHA_BITSET_MAX + 1] = {};
-+        DECLARE_ATTR_TB_INFO(tb);
-+	unsigned int count;
-+        int ret;
 +
-+        ret = mnl_attr_parse_nested(bitset, attr_cb, &tb_info);
-+        if (ret < 0 || !tb[ETHA_BITSET_SIZE] || !tb[ETHA_BITSET_VALUE])
-+		return NULL;
-+	count = mnl_attr_get_u32(tb[ETHA_BITSET_SIZE]);
-+	if (32 * mnl_attr_get_payload_len(tb[ETHA_BITSET_VALUE]) < count)
-+		return NULL;
++/* features */
 +
-+	return mnl_attr_get_payload(tb[ETHA_BITSET_VALUE]);
-+}
-+
-+uint32_t *get_compact_bitset_mask(const struct nlattr *bitset)
-+{
-+        const struct nlattr *tb[ETHA_BITSET_MAX + 1] = {};
-+        DECLARE_ATTR_TB_INFO(tb);
-+	unsigned int count;
-+        int ret;
-+
-+        ret = mnl_attr_parse_nested(bitset, attr_cb, &tb_info);
-+        if (ret < 0 || !tb[ETHA_BITSET_SIZE] || !tb[ETHA_BITSET_MASK])
-+		return NULL;
-+	count = mnl_attr_get_u32(tb[ETHA_BITSET_SIZE]);
-+	if (32 * mnl_attr_get_payload_len(tb[ETHA_BITSET_MASK]) < count)
-+		return NULL;
-+
-+	return mnl_attr_get_payload(tb[ETHA_BITSET_MASK]);
-+}
-+
-+struct feature_results {
-+	uint32_t	*hw;
-+	uint32_t	*wanted;
-+	uint32_t	*active;
-+	uint32_t	*nochange;
-+	unsigned int	count;
-+	unsigned int	words;
++struct sfeatures_context {
++	uint32_t		req_mask[0];
 +};
 +
-+static int prepare_feature_results(const struct nlattr *bitset,
-+				   struct feature_results *dest)
++static void show_feature_changes(struct nl_context *nlctx,
++				 const struct nlattr *feat_attr)
 +{
++	struct sfeatures_context *sfctx = nlctx->cmd_private;
++	const struct stringset *feature_names =
++		global_stringset(ETH_SS_FEATURES);
++	const unsigned int count = get_count(feature_names);
++	const unsigned int words = (count + 31) / 32;
 +	const struct nlattr *tb[ETHA_FEATURES_MAX + 1] = {};
 +	DECLARE_ATTR_TB_INFO(tb);
-+	unsigned int count;
++	const uint32_t *wanted_val;
++	const uint32_t *wanted_mask;
++	const uint32_t *active_val;
++	const uint32_t *active_mask;
++	unsigned int i;
++	bool diff;
 +	int ret;
 +
-+	memset(dest, '\0', sizeof(*dest));
-+	ret = mnl_attr_parse_nested(bitset, attr_cb, &tb_info);
++	ret = mnl_attr_parse_nested(feat_attr, attr_cb, &tb_info);
 +	if (ret < 0)
-+		return ret;
-+	if (!tb[ETHA_FEATURES_HW] || !tb[ETHA_FEATURES_WANTED] ||
-+	    !tb[ETHA_FEATURES_ACTIVE] || !tb[ETHA_FEATURES_NOCHANGE])
-+		return -EFAULT;
-+	count = bitset_get_count(tb[ETHA_FEATURES_HW], &ret);
-+	if (ret < 0)
-+		return -EFAULT;
-+	if ((bitset_get_count(tb[ETHA_FEATURES_WANTED], &ret) != count) ||
-+	    (bitset_get_count(tb[ETHA_FEATURES_ACTIVE], &ret) != count) ||
-+	    (bitset_get_count(tb[ETHA_FEATURES_NOCHANGE], &ret) != count))
-+		return -EFAULT;
-+	dest->hw = get_compact_bitset_value(tb[ETHA_FEATURES_HW]);
-+	dest->wanted = get_compact_bitset_value(tb[ETHA_FEATURES_WANTED]);
-+	dest->active = get_compact_bitset_value(tb[ETHA_FEATURES_ACTIVE]);
-+	dest->nochange = get_compact_bitset_value(tb[ETHA_FEATURES_NOCHANGE]);
-+	if (!dest->hw || !dest->wanted || !dest->active || !dest->nochange)
-+		return -EFAULT;
-+	dest->count = count;
-+	dest->words = (count + 31) / 32;
++		goto err;
++	if (!tb[ETHA_FEATURES_WANTED] || !tb[ETHA_FEATURES_ACTIVE])
++		goto err;
++	if (bitset_get_count(tb[ETHA_FEATURES_WANTED], &ret) != count ||
++	    ret < 0)
++		goto err;
++	if (bitset_get_count(tb[ETHA_FEATURES_ACTIVE], &ret) != count ||
++	    ret < 0)
++		goto err;
++	wanted_val = get_compact_bitset_value(tb[ETHA_FEATURES_WANTED]);
++	wanted_mask = get_compact_bitset_mask(tb[ETHA_FEATURES_WANTED]);
++	active_val = get_compact_bitset_value(tb[ETHA_FEATURES_ACTIVE]);
++	active_mask = get_compact_bitset_mask(tb[ETHA_FEATURES_ACTIVE]);
++	if (!wanted_val || !wanted_mask || !active_val || !active_mask)
++		goto err;
++
++	diff = false;
++	for (i = 0; i < words; i++)
++		if (wanted_mask[i] || active_mask[i])
++			diff = true;
++	if (!diff)
++		return;
++
++	/* result is not exactly as requested, show differences */
++	printf("Actual changes:\n");
++	for (i = 0; i < count; i++) {
++		const char *name = get_string(feature_names, i);
++
++		if (!name)
++			continue;
++		if (!feature_on(wanted_mask, i) && !feature_on(active_mask, i))
++			continue;
++		printf("%s: ", name);
++		if (feature_on(wanted_mask, i))
++			/* we requested a value but result is different */
++			printf("%s [requested %s]",
++			       feature_on(wanted_val, i) ? "off" : "on",
++			       feature_on(wanted_val, i) ? "on" : "off");
++		else if (!feature_on(sfctx->req_mask, i))
++			/* not requested but changed anyway */
++			printf("%s [not requested]",
++			       feature_on(active_val, i) ? "on" : "off");
++		else
++			printf("%s", feature_on(active_val, i) ? "on" : "off");
++		fputc('\n', stdout);
++	}
++
++	return;
++err:
++	fprintf(stderr, "malformed diff info from kernel\n");
++}
++
++static int find_feature(const char *name)
++{
++	const struct stringset *feature_names =
++		global_stringset(ETH_SS_FEATURES);
++	const unsigned int count = get_count(feature_names);
++	unsigned int i;
++
++	for (i = 0; i < count; i++)
++		if (!strcmp(name, get_string(feature_names, i)))
++			return i;
++
++	return -1;
++}
++
++static int fill_feature(struct nl_context *nlctx, const char *name, bool val)
++{
++	struct nlattr *bit_attr;
++
++	bit_attr = ethnla_nest_start(nlctx, ETHA_BITS_BIT);
++	if (!bit_attr)
++		return -EMSGSIZE;
++	if (ethnla_put_strz(nlctx, ETHA_BIT_NAME, name))
++		return -EMSGSIZE;
++	if (ethnla_put_flag(nlctx, ETHA_BIT_VALUE, val))
++		return -EMSGSIZE;
++	mnl_attr_nest_end(nlctx->nlhdr, bit_attr);
 +
 +	return 0;
 +}
 +
-+static bool feature_on(const uint32_t *bitmap, unsigned int idx)
++static void set_sf_req_mask(struct nl_context *nlctx, unsigned int idx)
 +{
-+	return bitmap[idx / 32] & (1 << (idx % 32));
++	struct sfeatures_context *sfctx = nlctx->cmd_private;
++
++	sfctx->req_mask[idx / 32] |= (1 << (idx % 32));
 +}
 +
-+static void dump_feature(const struct feature_results *results,
-+			 const uint32_t *ref, const uint32_t *ref_mask,
-+			 unsigned int idx, const char *name, const char *prefix)
++static int fill_legacy_flag(struct nl_context *nlctx, const char *flag_name,
++			    bool val)
 +{
-+	const char *suffix = "";
++	const struct stringset *feature_names =
++		global_stringset(ETH_SS_FEATURES);
++	const unsigned int count = get_count(feature_names);
++	unsigned int i, j;
++	int ret;
 +
-+	if (!name || !*name)
-+		return;
-+	if (ref) {
-+		if (ref_mask && !feature_on(ref_mask, idx))
-+			return;
-+		if ((!ref_mask || feature_on(ref_mask, idx)) &&
-+		    (feature_on(results->active, idx) == feature_on(ref, idx)))
-+			return;
++	for (i = 0; i < OFF_FLAG_DEF_SIZE; i++) {
++		const char *pattern;
++
++		if (strcmp(flag_name, off_flag_def[i].short_name) &&
++		    strcmp(flag_name, off_flag_def[i].long_name))
++			continue;
++		pattern = off_flag_def[i].kernel_name;
++
++		for (j = 0; j < count; j++) {
++			const char *name = get_string(feature_names, j);
++
++			if (flag_pattern_match(name, pattern)) {
++				ret = fill_feature(nlctx, name, val);
++				if (ret < 0)
++					return ret;
++				set_sf_req_mask(nlctx, j);
++			}
++		}
++
++		return 0;
 +	}
 +
-+	if (!feature_on(results->hw, idx) || feature_on(results->nochange, idx))
-+		suffix = " [fixed]";
-+	else if (feature_on(results->active, idx) !=
-+		 feature_on(results->wanted, idx))
-+		suffix = feature_on(results->wanted, idx) ?
-+			 " [requested on]" : " [requested off]";
-+	printf("%s%s: %s%s\n", prefix, name,
-+	       feature_on(results->active, idx) ? "on" : "off", suffix);
++	return 1;
 +}
 +
-+/* this assumes pattern contains no more than one asterisk */
-+static bool _flag_pattern_match(const char *name, const char *pattern)
++int sfeatures_reply_cb(const struct nlmsghdr *nlhdr, void *data)
 +{
-+	const char *p_ast = strchr(pattern, '*');
++	const struct genlmsghdr *ghdr = (const struct genlmsghdr *)(nlhdr + 1);
++	const struct nlattr *tb[ETHA_SETTINGS_MAX + 1] = {};
++	DECLARE_ATTR_TB_INFO(tb);
++	struct nl_context *nlctx = data;
++	const char *devname;
++	int ret;
 +
-+	if (p_ast) {
-+		size_t name_len = strlen(name);
-+		size_t pattern_len = strlen(pattern);
-+
-+		if (name_len + 1 < pattern_len)
-+			return false;
-+		if (strncmp(name, pattern, p_ast - pattern))
-+			return false;
-+		pattern_len -= (p_ast - pattern) + 1;
-+		name += name_len  - pattern_len;
-+		pattern = p_ast + 1;
++	if (ghdr->cmd != ETHNL_CMD_SET_SETTINGS) {
++		fprintf(stderr, "warning: unexpected reply message type %u\n",
++			ghdr->cmd);
++		return MNL_CB_OK;
 +	}
-+	return !strcmp(name, pattern);
++	ret = mnl_attr_parse(nlhdr, GENL_HDRLEN, attr_cb, &tb_info);
++	if (ret < 0)
++		return ret;
++	devname = get_dev_name(tb[ETHA_SETTINGS_DEV]);
++	if (strcmp(devname, nlctx->devname)) {
++		fprintf(stderr, "warning: unexpected message for device %s\n",
++			devname);
++		return MNL_CB_OK;
++	}
++	if (!tb[ETHA_SETTINGS_FEATURES])
++		return MNL_CB_OK;
++
++	show_feature_changes(nlctx, tb[ETHA_SETTINGS_FEATURES]);
++	return MNL_CB_OK;
 +}
 +
-+static bool flag_pattern_match(const char *name, const char *pattern)
++int fill_sfeatures_bitmap(struct nl_context *nlctx)
 +{
-+	bool ret = _flag_pattern_match(name, pattern);
++	struct nlmsghdr *nlhdr = nlctx->nlhdr;
++	struct nlattr *bitset_attr;
++	struct nlattr *bits_attr;
++	int ret;
 +
++	ret = -EMSGSIZE;
++	bitset_attr = ethnla_nest_start(nlctx, ETHA_FEATURES_WANTED);
++	if (!bitset_attr)
++		return ret;
++	bits_attr = ethnla_nest_start(nlctx, ETHA_BITSET_BITS);
++	if (!bits_attr)
++		goto err;
++
++	while (nlctx->argc > 0) {
++		bool val;
++
++		if (!strcmp(*nlctx->argp, "--")) {
++			nlctx->argp++;
++			nlctx->argc--;
++			break;
++		}
++		ret = -EINVAL;
++		if (nlctx->argc < 2 ||
++		    (strcmp(nlctx->argp[1], "on") &&
++		     strcmp(nlctx->argp[1], "off"))) {
++			fprintf(stderr,
++				"ethtool (%s): flag '%s' for parameter '%s' is"
++				" not followed by 'on' or 'off'\n",
++				nlctx->cmd, nlctx->argp[1], nlctx->param);
++			goto err;
++		}
++
++		val = !strcmp(nlctx->argp[1], "on");
++		ret = fill_legacy_flag(nlctx, nlctx->argp[0], val);
++		if (ret > 0) {
++			ret = fill_feature(nlctx, nlctx->argp[0], val);
++			if (ret == 0) {
++				int idx = find_feature(nlctx->argp[0]);
++
++				if (idx >= 0)
++					set_sf_req_mask(nlctx, idx);
++			}
++		}
++		if (ret < 0)
++			goto err;
++
++		nlctx->argp += 2;
++		nlctx->argc -= 2;
++	}
++
++	mnl_attr_nest_end(nlhdr, bits_attr);
++	mnl_attr_nest_end(nlhdr, bitset_attr);
++	return 0;
++err:
++	mnl_attr_nest_cancel(nlhdr, bitset_attr);
 +	return ret;
 +}
 +
-+int dump_features(const struct nlattr *bitset)
++int nl_sfeatures(struct cmd_context *ctx)
 +{
 +	const struct stringset *feature_names;
-+	struct feature_results results;
-+	unsigned int i, j;
-+	int *feature_flags = NULL;
++	struct sfeatures_context *sfctx;
++	struct nl_context *nlctx = ctx->nlctx;
++	struct nlattr *feat_attr;
++	unsigned int words;
 +	int ret;
 +
-+	ret = prepare_feature_results(bitset, &results);
-+	if (ret < 0)
-+		return -EFAULT;
++	nlctx->cmd = "-K";
++	nlctx->argp = ctx->argp;
++	nlctx->argc = ctx->argc;
++	nlctx->cmd_private = &sfctx;
 +
-+	ret = -ENOMEM;
-+	feature_flags = calloc(results.count, sizeof(feature_flags[0]));
-+	if (!feature_flags)
-+	       goto out_free;
++	load_global_strings(nlctx);
 +	feature_names = global_stringset(ETH_SS_FEATURES);
++	words = (get_count(feature_names) + 31) / 32;
++	sfctx = malloc(sizeof(*sfctx) + words * sizeof(sfctx->req_mask[0]));
++	if (!sfctx)
++		return -ENOMEM;
++	memset(sfctx, '\0',
++	       sizeof(*sfctx) + words * sizeof(sfctx->req_mask[0]));
++	nlctx->cmd_private = sfctx;
 +
-+	/* map netdev features to legacy flags */
-+	for (i = 0; i < results.count; i++) {
-+		const char *name = get_string(feature_names, i);
-+		feature_flags[i] = -1;
++	nlctx->devname = ctx->devname;
++	ret = msg_init(nlctx, ETHNL_CMD_SET_SETTINGS,
++		       NLM_F_REQUEST | NLM_F_ACK);
++	if (ret < 0)
++		return 2;
++	if (ethnla_put_dev(nlctx, ETHA_SETTINGS_DEV, ctx->devname))
++		return -EMSGSIZE;
++	if (ethnla_put_flag(nlctx, ETHA_SETTINGS_COMPACT, true))
++		return -EMSGSIZE;
 +
-+		if (!name || !*name)
-+			continue;
-+		for (j = 0; j < OFF_FLAG_DEF_SIZE; j++) {
-+			const char *flag_name = off_flag_def[j].kernel_name;
++	feat_attr = ethnla_nest_start(nlctx, ETHA_SETTINGS_FEATURES);
++	if (!feat_attr)
++		return -EMSGSIZE;
++	ret = fill_sfeatures_bitmap(nlctx);
++	if (ret < 0)
++		return ret;
++	if (ethnla_put_flag(nlctx, ETHA_FEATURES_WANT_DIFF, true))
++		return -EMSGSIZE;
++	mnl_attr_nest_end(nlctx->nlhdr, feat_attr);
 +
-+			if (flag_pattern_match(name, flag_name)) {
-+				feature_flags[i] = j;
-+				break;
-+			}
-+		}
-+	}
-+	/* show legacy flags and their matching features first */
-+	for (i = 0; i < OFF_FLAG_DEF_SIZE; i++) {
-+		unsigned int n_match = 0;
-+		bool flag_value = false;
-+
-+		for (j = 0; j < results.count; j++) {
-+			if (feature_flags[j] == i) {
-+				n_match++;
-+				flag_value = flag_value ||
-+					     feature_on(results.active, j);
-+			}
-+		}
-+		if (n_match != 1)
-+			printf("%s: %s\n", off_flag_def[i].long_name,
-+			       flag_value ? "on" : "off");
-+		if (n_match == 0)
-+			continue;
-+		for (j = 0; j < results.count; j++) {
-+			const char *name = get_string(feature_names, j);
-+
-+			if (feature_flags[j] != i)
-+				continue;
-+			if (n_match == 1)
-+				dump_feature(&results, NULL, NULL, j,
-+					     off_flag_def[i].long_name, "");
-+			else
-+				dump_feature(&results, NULL, NULL, j, name,
-+					     "\t");
-+		}
-+	}
-+	/* and, finally, remaining netdev_features not matching legacy flags */
-+	for (i = 0; i < results.count; i++) {
-+		const char *name = get_string(feature_names, i);
-+
-+		if (!name || !*name || feature_flags[i] >= 0)
-+			continue;
-+		dump_feature(&results, NULL, NULL, i, name, "");
-+	}
-+
-+out_free:
-+	free(feature_flags);
-+	return 0;
++	ret = ethnl_sendmsg(nlctx);
++	if (ret < 0)
++		return 92;
++	ret = ethnl_process_reply(nlctx, sfeatures_reply_cb);
++	if (ret == 0)
++		return 0;
++	return nlctx->exit_code ?: 92;
 +}
-+
- int settings_reply_cb(const struct nlmsghdr *nlhdr, void *data)
- {
- 	const struct nlattr *tb[ETHA_SETTINGS_MAX + 1] = {};
-@@ -262,6 +476,15 @@ int settings_reply_cb(const struct nlmsghdr *nlhdr, void *data)
- 		printf("\tLink detected: %s\n", link ? "yes" : "no");
- 		allfail = false;
- 	};
-+	if (tb[ETHA_SETTINGS_FEATURES] &&
-+	    mask_ok(nlctx, ETH_SETTINGS_IM_FEATURES)) {
-+		int ret;
-+
-+		printf("Features for %s:\n", nlctx->devname);
-+		ret = dump_features(tb[ETHA_SETTINGS_FEATURES]);
-+		if (ret == 0)
-+			allfail = false;
-+	}
- 
- 	if (allfail && !nlctx->is_monitor) {
- 		fputs("No data available\n", stdout);
-@@ -299,6 +522,9 @@ int nl_gset(struct cmd_context *ctx)
- 				     ETH_SETTINGS_IM_LINK);
- }
- 
-+int nl_gfeatures(struct cmd_context *ctx)
-+{
-+	return settings_request(ctx, ETH_SETTINGS_IM_FEATURES);
- }
- 
- /* SET_SETTINGS */
 -- 
 2.18.0
 
