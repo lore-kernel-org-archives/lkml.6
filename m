@@ -6,668 +6,445 @@ X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69A3EFD21E1
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 12:56:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6443E13F6DFF
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 12:56:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2046F20893
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 12:56:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2046F20893
+	by mail.kernel.org (Postfix) with ESMTP id 0F8C420892
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 12:56:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0F8C420892
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732346AbeG3ObT (ORCPT
+        id S1732359AbeG3ObY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 30 Jul 2018 10:31:19 -0400
-Received: from mx2.suse.de ([195.135.220.15]:50282 "EHLO mx1.suse.de"
+        Mon, 30 Jul 2018 10:31:24 -0400
+Received: from mx2.suse.de ([195.135.220.15]:50296 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729198AbeG3ObS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Jul 2018 10:31:18 -0400
+        id S1729138AbeG3ObY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Jul 2018 10:31:24 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id D2C75ADDD;
-        Mon, 30 Jul 2018 12:56:24 +0000 (UTC)
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id C2C3EAEEB;
+        Mon, 30 Jul 2018 12:56:29 +0000 (UTC)
 Received: by unicorn.suse.cz (Postfix, from userid 1000)
-        id 73E93A0BE8; Mon, 30 Jul 2018 14:56:24 +0200 (CEST)
-Message-Id: <70e163a6ce3f75f44876b30bf28b26b132b4f27a.1532954671.git.mkubecek@suse.cz>
+        id 7A4CEA0BE8; Mon, 30 Jul 2018 14:56:29 +0200 (CEST)
+Message-Id: <9ba722afe5357ba9ab3eb11ceef318328b9b552d.1532954671.git.mkubecek@suse.cz>
 In-Reply-To: <cover.1532954671.git.mkubecek@suse.cz>
 References: <cover.1532954671.git.mkubecek@suse.cz>
 From:   Michal Kubecek <mkubecek@suse.cz>
-Subject: [RFC PATCH ethtool v2 08/23] netlink: add helpers for command line
- parsing
+Subject: [RFC PATCH ethtool v2 09/23] netlink: add netlink handler for sset
+ (-s)
 To:     netdev@vger.kernel.org
 Cc:     linux-kernel@vger.kernel.org,
         "John W. Linville" <linville@tuxdriver.com>
-Date:   Mon, 30 Jul 2018 14:56:24 +0200 (CEST)
+Date:   Mon, 30 Jul 2018 14:56:29 +0200 (CEST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Support for easier parsing of subcommand parameters and their values from
-command line. Existing parser helpers in ethtool.c are closely tied to
-ioctl() interface and using them would be often inconvenient.
+Implement "ethtool -s <dev>" subcommand using netlink interface command
+ETHNL_CMD_SET_SETTINGS.
+
+Add specific parsers for wol modes and MAC address (used for wake-on-lan
+password here).
 
 Signed-off-by: Michal Kubecek <mkubecek@suse.cz>
 ---
- Makefile.am       |   1 +
- netlink/netlink.h |   4 +
- netlink/parser.c  | 527 ++++++++++++++++++++++++++++++++++++++++++++++
- netlink/parser.h  |  45 ++++
- 4 files changed, 577 insertions(+)
- create mode 100644 netlink/parser.c
- create mode 100644 netlink/parser.h
+ ethtool.c          |   9 +-
+ netlink/extapi.h   |   1 +
+ netlink/netlink.c  |   9 ++
+ netlink/netlink.h  |   1 +
+ netlink/parser.c   |  34 ++++++-
+ netlink/parser.h   |   4 +
+ netlink/settings.c | 216 +++++++++++++++++++++++++++++++++++++++++++++
+ 7 files changed, 269 insertions(+), 5 deletions(-)
 
-diff --git a/Makefile.am b/Makefile.am
-index 629f04e1202b..7cc4adc53c59 100644
---- a/Makefile.am
-+++ b/Makefile.am
-@@ -23,6 +23,7 @@ if ETHTOOL_ENABLE_NETLINK
- ethtool_SOURCES += \
- 		  netlink/netlink.c netlink/netlink.h netlink/extapi.h \
- 		  netlink/strset.c netlink/strset.h netlink/monitor.c \
-+		  netlink/parser.c netlink/parser.h \
- 		  netlink/drvinfo.c netlink/settings.c \
- 		  uapi/linux/ethtool_netlink.h \
- 		  uapi/linux/netlink.h uapi/linux/genetlink.h
+diff --git a/ethtool.c b/ethtool.c
+index bc7969f829f6..0b40b96cf9bf 100644
+--- a/ethtool.c
++++ b/ethtool.c
+@@ -4923,6 +4923,7 @@ static int show_usage(struct cmd_context *ctx);
+  */
+ #define nl_gdrv		NULL
+ #define nl_gset		NULL
++#define nl_sset		NULL
+ #endif
+ 
+ static const struct option {
+@@ -4933,19 +4934,19 @@ static const struct option {
+ 	char *help;
+ 	char *opthelp;
+ } args[] = {
+-	{ "-s|--change", 1, do_sset, NULL,
++	{ "-s|--change", 1, do_sset, nl_sset,
+ 	  "Change generic options",
+ 	  "		[ speed %d ]\n"
+ 	  "		[ duplex half|full ]\n"
+ 	  "		[ port tp|aui|bnc|mii|fibre ]\n"
+ 	  "		[ mdix auto|on|off ]\n"
+ 	  "		[ autoneg on|off ]\n"
+-	  "		[ advertise %x ]\n"
++	  "		[ advertise %x[/%x] | mode on|off ... [--] ]\n"
+ 	  "		[ phyad %d ]\n"
+ 	  "		[ xcvr internal|external ]\n"
+-	  "		[ wol p|u|m|b|a|g|s|d... ]\n"
++	  "		[ wol %d[/%d] |  p|u|m|b|a|g|s|d...[/p|u|m|b|a|g|s|d...] ]\n"
+ 	  "		[ sopass %x:%x:%x:%x:%x:%x ]\n"
+-	  "		[ msglvl %d | msglvl type on|off ... ]\n" },
++	  "		[ msglvl %d[/%d] | type on|off ... [--] ]\n" },
+ 	{ "-a|--show-pause", 1, do_gpause, NULL,
+ 	  "Show pause options" },
+ 	{ "-A|--pause", 1, do_spause, NULL,
+diff --git a/netlink/extapi.h b/netlink/extapi.h
+index 20c9b03b2d3c..66573f0b4304 100644
+--- a/netlink/extapi.h
++++ b/netlink/extapi.h
+@@ -15,6 +15,7 @@ int netlink_done(struct cmd_context *ctx);
+ 
+ int nl_gdrv(struct cmd_context *ctx);
+ int nl_gset(struct cmd_context *ctx);
++int nl_sset(struct cmd_context *ctx);
+ int nl_monitor(struct cmd_context *ctx);
+ 
+ void monitor_usage();
+diff --git a/netlink/netlink.c b/netlink/netlink.c
+index fc87577191f0..8b3dce970fd1 100644
+--- a/netlink/netlink.c
++++ b/netlink/netlink.c
+@@ -573,6 +573,15 @@ static int get_ethnl_family(struct nl_context *nlctx)
+ 	return (nlctx->ethnl_fam ? 0 : -EADDRNOTAVAIL);
+ }
+ 
++int nomsg_reply_cb(const struct nlmsghdr *nlhdr, void *data)
++{
++	const struct genlmsghdr *ghdr = (const struct genlmsghdr *)(nlhdr + 1);
++
++	fprintf(stderr, "received unexpected message: len=%u type=%u cmd=%u\n",
++	       nlhdr->nlmsg_len, nlhdr->nlmsg_type, ghdr->cmd);
++	return MNL_CB_OK;
++}
++
+ /* initialization */
+ 
+ static int nlctx_init(struct nl_context *nlctx)
 diff --git a/netlink/netlink.h b/netlink/netlink.h
-index a572a165718e..32c2f9f33ba1 100644
+index 32c2f9f33ba1..9c23526da627 100644
 --- a/netlink/netlink.h
 +++ b/netlink/netlink.h
-@@ -30,6 +30,10 @@ struct nl_context {
- 	void *msg;
- 	const char *devname;
- 	bool is_dump;
-+	const char *cmd;
-+	const char *param;
-+	char **argp;
-+	int argc;
- 	int exit_code;
- 	bool is_monitor;
- 	uint8_t filter_cmd;
+@@ -72,6 +72,7 @@ int attr_cb(const struct nlattr *attr, void *data);
+ int ethnl_prep_get_request(struct cmd_context *ctx, unsigned int nlcmd,
+ 			   uint16_t dev_attrtype);
+ int ethnl_send_get_request(struct nl_context *nlctx, mnl_cb_t cb);
++int nomsg_reply_cb(const struct nlmsghdr *nlhdr, void *data);
+ int __init_aux_nlctx(struct nl_context *nlctx);
+ 
+ /* put data wrappers */
 diff --git a/netlink/parser.c b/netlink/parser.c
-new file mode 100644
-index 000000000000..589004d1f9f9
---- /dev/null
+index 589004d1f9f9..d1536ecb1d52 100644
+--- a/netlink/parser.c
 +++ b/netlink/parser.c
-@@ -0,0 +1,527 @@
-+#include <string.h>
-+#include <stdlib.h>
-+#include <errno.h>
-+#include <ctype.h>
-+
-+#include "../internal.h"
-+#include "../common.h"
-+#include "netlink.h"
-+#include "parser.h"
-+
-+static void parser_err_unknown_param(struct nl_context *nlctx)
+@@ -69,7 +69,7 @@ static int parse_x32(const char *arg, u32 *result)
+ 	return __parse_u32(arg, result, 0, 0xffffffff, 16);
+ }
+ 
+-static int parse_u32(const char *arg, u32 *result)
++int parse_u32(const char *arg, u32 *result)
+ {
+ 	if (!arg)
+ 		return -EINVAL;
+@@ -485,6 +485,38 @@ int nl_parse_bitset(struct nl_context *nlctx, uint16_t type, const void *data)
+ 		return nl_parse_bitset_list(nlctx, type, data);
+ }
+ 
++int nl_parse_mac_addr(struct nl_context *nlctx, uint16_t type, const void *data)
 +{
-+	fprintf(stderr, "ethtool (%s): unknown parameter '%s'\n", nlctx->cmd,
-+		nlctx->param);
-+}
++	const char *arg = *nlctx->argp;
++	u8 val[ETH_ALEN];
++	unsigned int i;
++	const char *p;
 +
-+static void parser_err_dup_param(struct nl_context *nlctx)
-+{
-+	fprintf(stderr, "ethtool (%s): duplicate parameter '%s'\n", nlctx->cmd,
-+		nlctx->param);
-+}
++	nlctx->argp++;
++	nlctx->argc--;
 +
-+static void parser_err_min_argc(struct nl_context *nlctx, unsigned int min_argc)
-+{
-+	if (min_argc == 1)
-+		fprintf(stderr, "ethtool (%s): no value for parameter '%s'\n",
-+			nlctx->cmd, nlctx->param);
-+	else
-+		fprintf(stderr,
-+			"ethtool (%s): parameter '%s' requires %u words\n",
-+			nlctx->cmd, nlctx->param, min_argc);
-+}
++	p = arg;
++	i = 0;
++	while (i < ETH_ALEN && *p) {
++		char *endp;
++		unsigned long byte = strtoul(p, &endp, 16);
 +
-+static void parser_err_invalid_value(struct nl_context *nlctx, const char *val)
-+{
-+	fprintf(stderr, "ethtool (%s): invalid value '%s' for parameter '%s'\n",
-+		nlctx->cmd, val, nlctx->param);
-+}
-+
-+static void parser_err_invalid_flag(struct nl_context *nlctx, const char *flag)
-+{
-+	fprintf(stderr, "ethtool (%s): flag '%s' for parameter '%s' is not "
-+			"followed by 'on' or 'off'\n",
-+		nlctx->cmd, flag, nlctx->param);
-+}
-+
-+static int __parse_u32(const char *arg, u32 *result, u32 min, u32 max, int base)
-+{
-+	unsigned long long val;
-+	char *endptr;
-+
-+	if (!arg || !arg[0])
-+		return -EINVAL;
-+	val = strtoul(arg, &endptr, base);
-+	if (*endptr || val < min || val > max)
-+		return -EINVAL;
-+
-+	*result = (u32)val;
-+	return 0;
-+}
-+
-+static int parse_u32d(const char *arg, u32 *result)
-+{
-+	return __parse_u32(arg, result, 0, 0xffffffff, 10);
-+}
-+
-+static int parse_x32(const char *arg, u32 *result)
-+{
-+	return __parse_u32(arg, result, 0, 0xffffffff, 16);
-+}
-+
-+static int parse_u32(const char *arg, u32 *result)
-+{
-+	if (!arg)
-+		return -EINVAL;
-+	if ((arg[0] == '0') && (arg[1] == 'x' || arg[1] == 'X'))
-+		return parse_x32(arg + 2, result);
-+	else
-+		return parse_u32d(arg, result);
-+}
-+
-+static int parse_u8(const char *arg, u8 *result)
-+{
-+	u32 val;
-+	int ret = parse_u32(arg, &val);
-+
-+	if (ret < 0)
-+		return ret;
-+	if (val > UINT8_MAX)
-+		return -EINVAL;
-+
-+	*result = (u8)val;
-+	return 0;
-+}
-+
-+static int lookup_u8(const char *arg, u8 *result,
-+		     const struct lookup_entry_u8 *tbl)
-+{
-+	if (!arg)
-+		return -EINVAL;
-+	while (tbl->arg) {
-+		if (!strcmp(tbl->arg, arg)) {
-+			*result = tbl->val;
-+			return 0;
-+		}
-+		tbl++;
++		if ((endp - p > 2) || (*endp && *endp != ':'))
++			goto err;
++		val[i++] = (u8) byte;
++		p = endp + (*endp ? 1 : 0);
 +	}
++	if (i < ETH_ALEN)
++		goto err;
 +
++	return ethnla_put(nlctx, type, ETH_ALEN, val);
++
++err:
++	fprintf(stderr, "ethtool (%s): invalid value '%s' of parameter '%s'\n",
++		nlctx->cmd, arg, nlctx->param);
 +	return -EINVAL;
 +}
 +
-+int nl_parse_direct_u32(struct nl_context *nlctx, uint16_t type,
-+			const void *data)
+ int nl_parser(struct cmd_context *ctx, const struct param_parser *params,
+ 	      unsigned int max_type)
+ {
+diff --git a/netlink/parser.h b/netlink/parser.h
+index 7308da25f093..2fd9a8bb23d9 100644
+--- a/netlink/parser.h
++++ b/netlink/parser.h
+@@ -28,6 +28,8 @@ struct param_parser {
+ 	unsigned int		min_argc;
+ };
+ 
++int parse_u32(const char *arg, u32 *result);
++
+ int nl_parse_direct_u32(struct nl_context *nlctx, uint16_t type,
+ 			const void *data);
+ int nl_parse_direct_u8(struct nl_context *nlctx, uint16_t type,
+@@ -38,6 +40,8 @@ int nl_parse_lookup_u8(struct nl_context *nlctx, uint16_t type,
+ int nl_parse_bitfield32(struct nl_context *nlctx, uint16_t type,
+ 			const void *data);
+ int nl_parse_bitset(struct nl_context *nlctx, uint16_t type, const void *data);
++int nl_parse_mac_addr(struct nl_context *nlctx, uint16_t type,
++		      const void *data);
+ 
+ int nl_parser(struct cmd_context *ctx, const struct param_parser *params,
+ 	      unsigned int max_type);
+diff --git a/netlink/settings.c b/netlink/settings.c
+index 120fc95aad19..b077a96325e5 100644
+--- a/netlink/settings.c
++++ b/netlink/settings.c
+@@ -5,6 +5,7 @@
+ #include "../internal.h"
+ #include "../common.h"
+ #include "netlink.h"
++#include "parser.h"
+ 
+ /* GET_SETTINGS */
+ 
+@@ -299,3 +300,218 @@ int nl_gset(struct cmd_context *ctx)
+ }
+ 
+ }
++
++/* SET_SETTINGS */
++
++enum {
++	WAKE_PHY_BIT		= 0,
++	WAKE_UCAST_BIT		= 1,
++	WAKE_MCAST_BIT		= 2,
++	WAKE_BCAST_BIT		= 3,
++	WAKE_ARP_BIT		= 4,
++	WAKE_MAGIC_BIT		= 5,
++	WAKE_MAGICSECURE_BIT	= 6,
++};
++
++#define WAKE_ALL (WAKE_PHY | WAKE_UCAST | WAKE_MCAST | WAKE_BCAST | WAKE_ARP | \
++		  WAKE_MAGIC | WAKE_MAGICSECURE)
++
++char wol_modes[32] = {
++	[WAKE_PHY_BIT]		= 'p',
++	[WAKE_UCAST_BIT]	= 'u',
++	[WAKE_MCAST_BIT]	= 'm',
++	[WAKE_BCAST_BIT]	= 'b',
++	[WAKE_ARP_BIT]		= 'a',
++	[WAKE_MAGIC_BIT]	= 'g',
++	[WAKE_MAGICSECURE_BIT]	= 's',
++};
++
++static int __nl_parse_wol_modes(struct nl_context *nlctx, const char *str,
++				u32 *result)
 +{
-+	const char *arg = *nlctx->argp;
-+	u32 val;
++	unsigned int i;
++	const char *p;
 +	int ret;
 +
-+	nlctx->argp++;
-+	nlctx->argc--;
-+	ret = parse_u32(arg, &val);
-+	if (ret < 0) {
-+		parser_err_invalid_value(nlctx, arg);
-+		return ret;
++	ret = parse_u32(str, result);
++	if (ret == 0)
++		return 0;
++
++	*result = 0;
++	if (str[0] == 'd' && !str[1])
++		return 0;
++
++	p = str;
++	while (*p) {
++		for (i = 0; i < 32; i++) {
++			if (wol_modes[i] == *p) {
++				*result |= (1U << i);
++				break;
++			}
++		}
++		if (i == 32) {
++			fprintf(stderr,
++				"ethtool (%s): invalid wol modes '%s'\n",
++				nlctx->cmd, str);
++			return -EINVAL;
++		}
++		p++;
 +	}
 +
-+	return ethnla_put_u32(nlctx, type, val) ? -EMSGSIZE : 0;
++	return 0;
 +}
 +
-+int nl_parse_direct_u8(struct nl_context *nlctx, uint16_t type,
-+		       const void *data)
++static int nl_parse_wol_modes(struct nl_context *nlctx, uint16_t type,
++			      const void *data)
 +{
 +	const char *arg = *nlctx->argp;
-+	u8 val;
-+	int ret;
-+
-+	nlctx->argp++;
-+	nlctx->argc--;
-+	ret = parse_u8(arg, &val);
-+	if (ret < 0) {
-+		parser_err_invalid_value(nlctx, arg);
-+		return ret;
-+	}
-+
-+	return ethnla_put_u8(nlctx, type, val) ? -EMSGSIZE : 0;
-+}
-+
-+int nl_parse_bool(struct nl_context *nlctx, uint16_t type, const void *data)
-+{
-+	const char *arg = *nlctx->argp;
-+	int ret;
-+
-+	nlctx->argp++;
-+	nlctx->argc--;
-+	if (!strcmp(arg, "on"))
-+		ret = ethnla_put_u8(nlctx, type, 1);
-+	else if (!strcmp(arg, "off"))
-+		ret = ethnla_put_u8(nlctx, type, 0);
-+	else {
-+		parser_err_invalid_value(nlctx, arg);
-+		return -EINVAL;
-+	}
-+
-+	return ret ? -EMSGSIZE : 0;
-+}
-+
-+int nl_parse_lookup_u8(struct nl_context *nlctx, uint16_t type,
-+		       const void *data)
-+{
-+	const char *arg = *nlctx->argp;
-+	u8 val;
-+	int ret;
-+
-+	nlctx->argp++;
-+	nlctx->argc--;
-+	ret = lookup_u8(arg, &val, data);
-+	if (ret < 0) {
-+		parser_err_invalid_value(nlctx, arg);
-+		return ret;
-+	}
-+
-+	return ethnla_put_u8(nlctx, type, val) ? -EMSGSIZE : 0;
-+}
-+
-+int nl_parse_bitfield32(struct nl_context *nlctx, uint16_t type,
-+			const void *data)
-+{
-+	const char *arg = *nlctx->argp;
-+	const struct flag_info *flags = data;
++	char *mask = strchr(arg, '/');
 +	u32 value, selector;
 +	int ret;
 +
-+	ret = parse_u32(arg, &value);
-+	if (isdigit(arg[0])) {
-+		char *mask = strchr(arg, '/');
++	nlctx->argp++;
++	nlctx->argc--;
++	if (mask) {
++		*mask = '\0';
++		mask++;
++	}
 +
-+		if (mask) {
-+			/* numeric value / mask */
-+			*mask = '\0';
-+			mask++;
-+			ret = parse_u32(mask, &selector);
-+			if (ret < 0) {
-+				parser_err_invalid_value(nlctx, mask);
-+				return ret;
-+			}
-+		} else {
-+			/* numeric value */
-+			selector = ~(u32)0;
-+		}
-+		ret = parse_u32(arg, &value);
-+		if (ret < 0) {
-+			parser_err_invalid_value(nlctx, arg);
-+			return ret;
-+		}
-+		nlctx->argp++;
-+		nlctx->argc--;
++	ret = __nl_parse_wol_modes(nlctx, arg, &value);
++	if (ret < 0)
++		return ret;
++
++	if (!mask) {
++		selector = ~(u32)0;
 +	} else {
-+		/* flag on/off... [--] */
-+		value = 0;
-+		selector = 0;
-+		while (nlctx->argc > 0) {
-+			const struct flag_info *flag = flags;
-+
-+			if (!strcmp(*nlctx->argp, "--")) {
-+				nlctx->argp++;
-+				nlctx->argc--;
-+				break;
-+			}
-+			if (nlctx->argc < 2 ||
-+			    (strcmp(nlctx->argp[1], "on") &&
-+			     strcmp(nlctx->argp[1], "off"))) {
-+				parser_err_invalid_flag(nlctx, *nlctx->argp);
-+				return -EINVAL;
-+			}
-+			while (flag->name && strcmp(*nlctx->argp, flag->name))
-+				flag++;
-+			if (!flag->name) {
-+				parser_err_invalid_value(nlctx, *nlctx->argp);
-+				return -EINVAL;
-+			}
-+			selector |= flag->value;
-+			if (!strcmp(nlctx->argp[1], "on"))
-+				value |= flag->value;
-+
-+			nlctx->argp += 2;
-+			nlctx->argc -= 2;
-+		}
++		ret = __nl_parse_wol_modes(nlctx, mask, &selector);
++		if (ret < 0)
++			return ret;
 +	}
 +
 +	return ethnla_put_bitfield32(nlctx, type, value, selector);
 +}
 +
-+static bool is_hex(char c)
-+{
-+	if (isdigit(c))
-+		return true;
-+	else
-+		return (c >= 'a' && c <= 'f');
-+}
++static const struct lookup_entry_u32 duplex_values[] = {
++	{ .arg = "half",	.val = DUPLEX_HALF },
++	{ .arg = "full",	.val = DUPLEX_FULL },
++	{}
++};
 +
-+/* Return true if a bitset argument should be parsed as numeric, i.e.
-+ * (a) it starts with '0x'
-+ * (b) it consists only of hex digits and at most one slash which can be
-+ *     optionally followed by "0x"
-+ */
-+static bool is_numeric_bitset(const char *arg)
-+{
-+	const char *p = arg;
-+	bool has_slash = false;
++static const struct lookup_entry_u8 port_values[] = {
++	{ .arg = "tp",		.val = PORT_TP },
++	{ .arg = "aui",		.val = PORT_AUI },
++	{ .arg = "bnc",		.val = PORT_BNC },
++	{ .arg = "mii",		.val = PORT_MII },
++	{ .arg = "fibre",	.val = PORT_FIBRE },
++	{}
++};
 +
-+	if (arg[0] == '0' && arg[1] == 'x')
-+		return true;
-+	while (*p) {
-+		if (*p == '/') {
-+			if (has_slash)
-+				return false;
-+			has_slash = true;
-+			p++;
-+			if (p[0] == '0' && p[1] == 'x')
-+				p += 2;
-+			continue;
-+		}
-+		if (!is_hex(*p))
-+			return false;
-+		p++;
-+	}
-+	return true;
-+}
++static const struct lookup_entry_u8 mdix_values[] = {
++	{ .arg = "auto",	.val = ETH_TP_MDI_AUTO },
++	{ .arg = "on",		.val = ETH_TP_MDI_X },
++	{ .arg = "off",		.val = ETH_TP_MDI },
++	{}
++};
 +
-+/* number of significant bits */
-+static unsigned int nsb(u32 x)
-+{
-+	unsigned int ret = 0;
++static const struct lookup_entry_u8 autoneg_values[] = {
++	{ .arg = "off",		.val = AUTONEG_DISABLE },
++	{ .arg = "on",		.val = AUTONEG_ENABLE },
++	{}
++};
 +
-+	if (!(x & 0xffff0000U)) {
-+		x >>= 16;
-+		ret += 16;
-+	}
-+	if (!(x & 0xff00U)) {
-+		x >>= 8;
-+		ret += 8;
-+	}
-+	if (!(x & 0xf0U)) {
-+		x >>= 4;
-+		ret += 4;
-+	}
-+	if (!(x & 0xcU)) {
-+		x >>= 2;
-+		ret += 2;
-+	}
-+	if (!(x & 0x2U)) {
-+		x >>= 1;
-+		ret += 1;
-+	}
++static const struct param_parser sset_params[] = {
++	{
++		.arg		= "speed",
++		.type		= ETHA_SETTINGS_SPEED,
++		.handler	= nl_parse_direct_u32,
++		.min_argc	= 1,
++	},
++	{
++		.arg		= "duplex",
++		.type		= ETHA_SETTINGS_DUPLEX,
++		.handler	= nl_parse_lookup_u8,
++		.handler_data	= duplex_values,
++		.min_argc	= 1,
++	},
++	{
++		.arg		= "port",
++		.type		= ETHA_SETTINGS_PORT,
++		.handler	= nl_parse_lookup_u8,
++		.handler_data	= port_values,
++		.min_argc	= 1,
++	},
++	{
++		.arg		= "mdix",
++		.type		= ETHA_SETTINGS_TP_MDIX_CTRL,
++		.handler	= nl_parse_lookup_u8,
++		.handler_data	= mdix_values,
++		.min_argc	= 1,
++	},
++	{
++		.arg		= "autoneg",
++		.type		= ETHA_SETTINGS_AUTONEG,
++		.handler	= nl_parse_lookup_u8,
++		.handler_data	= autoneg_values,
++		.min_argc	= 1,
++	},
++	{
++		.arg		= "advertise",
++		.type		= ETHA_SETTINGS_LINK_MODES,
++		.handler	= nl_parse_bitset,
++		.min_argc	= 1,
++	},
++	{
++		.arg		= "phyad",
++		.type		= ETHA_SETTINGS_PHYADDR,
++		.handler	= nl_parse_direct_u8,
++		.min_argc	= 1,
++	},
++	{
++		.arg		= "wol",
++		.type		= ETHA_SETTINGS_WOL_MODES,
++		.handler	= nl_parse_wol_modes,
++		.min_argc	= 1,
++	},
++	{
++		.arg		= "sopass",
++		.type		= ETHA_SETTINGS_SOPASS,
++		.handler	= nl_parse_mac_addr,
++		.min_argc	= 1,
++	},
++	{
++		.arg		= "msglvl",
++		.type		= ETHA_SETTINGS_MSGLVL,
++		.handler	= nl_parse_bitfield32,
++		.handler_data	= flags_msglvl,
++		.min_argc	= 1,
++	},
++	{}
++};
 +
-+	return ret + x;
-+}
-+
-+/* Parse hex string (without leading "0x") into a bitmap consisting of 32-bit
-+ * words. Caller must make sure arg is at least len characters long and dst has
-+ * place for at least (len + 7) / 8 32-bit words.
-+ * Returns number of significant bits in the bitmap on success and negative
-+ * value on error.
-+ */
-+static int parse_hex_string(const char *arg, unsigned int len, u32 *dst)
-+{
-+	const char *p = arg;
-+	unsigned int nwords = (len + 7) / 8;
-+	unsigned int nbits = 0;
-+	char buff[9];
-+
-+	memset(dst, '\0', nwords * sizeof(u32));
-+	while (len > 0) {
-+		unsigned int chunk = (len % 8) ?: 8;
-+		unsigned long val;
-+		char *endp;
-+
-+		memcpy(buff, p, chunk);
-+		buff[chunk] = '\0';
-+		val = strtoul(buff, &endp, 16);
-+		if (*endp)
-+			return -EINVAL;
-+		*dst++ = (u32)val;
-+		if (nbits)
-+			nbits += 8 * chunk;
-+		else
-+			nbits = nsb(val);
-+
-+		p += chunk;
-+		len -= chunk;
-+	}
-+	return nbits;
-+}
-+
-+static int nl_parse_bitset_compact(struct nl_context *nlctx, uint16_t type)
-+{
-+	const char *arg = *nlctx->argp;
-+	unsigned int nwords, len1, len2;
-+	bool has_mask = false;
-+	struct nlattr *nest;
-+	const char *maskptr;
-+	u32 *value = NULL;
-+	u32 *mask = NULL;
-+	int nbits;
-+	int ret;
-+
-+	if (arg[0] == '0' && arg[1] == 'x')
-+		arg += 2;
-+
-+	maskptr = strchr(arg, '/');
-+	len1 = maskptr ? ( maskptr - arg) : strlen(arg);
-+	nwords = (len1 + 7) / 8;
-+	nbits = 0;
-+
-+	value = malloc(nwords * sizeof(u32));
-+	if (!value)
-+		return -ENOMEM;
-+	ret = -ENOMEM;
-+	mask = malloc(nwords * sizeof(u32));
-+	if (!mask)
-+		goto free_value;
-+
-+	if (maskptr) {
-+		has_mask = true;
-+		maskptr++;
-+		if (maskptr[0] == '0' && maskptr[1] == 'x')
-+			maskptr += 2;
-+		len2 = strlen(maskptr);
-+		if (len2 > len1)
-+			nwords = (len2 + 7) / 8;
-+		mask = malloc(nwords * sizeof(u32));
-+		if (!mask)
-+			return -ENOMEM;
-+		ret = parse_hex_string(maskptr, strlen(maskptr),
-+					  mask);
-+		if (ret < 0)
-+			goto free_mask;
-+		nbits = ret;
-+	}
-+
-+	ret = parse_hex_string(arg, len1, value);
-+	if (ret < 0)
-+		goto free_value;
-+	nbits = nbits ?: ret;
-+	nwords = (nbits + 31) / 32;
-+
-+	ret = -EMSGSIZE;
-+	if (!(nest = ethnla_nest_start(nlctx, type)) ||
-+	    ethnla_put_u32(nlctx, ETHA_BITSET_SIZE, nbits) ||
-+	    ethnla_put(nlctx, ETHA_BITSET_VALUE, nwords * sizeof(u32), value) ||
-+	    (has_mask &&
-+	     ethnla_put(nlctx, ETHA_BITSET_MASK, nwords * sizeof(u32), mask)))
-+		goto free_mask;
-+	mnl_attr_nest_end(nlctx->nlhdr, nest);
-+	ret = 0;
-+
-+free_mask:
-+	free(mask);
-+free_value:
-+	free(value);
-+	nlctx->argp++;
-+	nlctx->argc--;
-+	return ret;
-+}
-+
-+static int nl_parse_bitset_list(struct nl_context *nlctx, uint16_t type,
-+				const void *data)
-+{
-+	struct nlmsghdr *nlhdr = nlctx->nlhdr;
-+	struct nlattr *bitset_attr;
-+	struct nlattr *bits_attr;
-+	struct nlattr *bit_attr;
-+	int ret;
-+
-+	ret = -EMSGSIZE;
-+	bitset_attr = ethnla_nest_start(nlctx, type);
-+	if (!bitset_attr)
-+		return ret;
-+	bits_attr = ethnla_nest_start(nlctx, ETHA_BITSET_BITS);
-+	if (!bits_attr)
-+		goto err;
-+
-+	while (nlctx->argc > 0) {
-+		if (!strcmp(*nlctx->argp, "--")) {
-+			nlctx->argp++;
-+			nlctx->argc--;
-+			break;
-+		}
-+		ret = -EINVAL;
-+		if (nlctx->argc < 2 ||
-+		    (strcmp(nlctx->argp[1], "on") &&
-+		     strcmp(nlctx->argp[1], "off"))) {
-+			parser_err_invalid_flag(nlctx, *nlctx->argp);
-+			goto err;
-+		}
-+
-+		ret = -EMSGSIZE;
-+		bit_attr = ethnla_nest_start(nlctx, ETHA_BITS_BIT);
-+		if (!bit_attr)
-+			goto err;
-+		if (ethnla_put_strz(nlctx, ETHA_BIT_NAME, nlctx->argp[0]))
-+			goto err;
-+		if (ethnla_put_flag(nlctx, ETHA_BIT_VALUE,
-+				    !strcmp(nlctx->argp[1], "on")))
-+			goto err;
-+		mnl_attr_nest_end(nlhdr, bit_attr);
-+
-+		nlctx->argp += 2;
-+		nlctx->argc -= 2;
-+	}
-+
-+	mnl_attr_nest_end(nlhdr, bits_attr);
-+	mnl_attr_nest_end(nlhdr, bitset_attr);
-+	return 0;
-+err:
-+	mnl_attr_nest_cancel(nlhdr, bitset_attr);
-+	return ret;
-+}
-+
-+int nl_parse_bitset(struct nl_context *nlctx, uint16_t type, const void *data)
-+{
-+	if (is_numeric_bitset(*nlctx->argp))
-+		return nl_parse_bitset_compact(nlctx, type);
-+	else
-+		return nl_parse_bitset_list(nlctx, type, data);
-+}
-+
-+int nl_parser(struct cmd_context *ctx, const struct param_parser *params,
-+	      unsigned int max_type)
++int nl_sset(struct cmd_context *ctx)
 +{
 +	struct nl_context *nlctx = ctx->nlctx;
-+	bool attr_set[max_type];
 +	int ret;
 +
-+	memset(attr_set, '\0', max_type * sizeof(attr_set[0]));
++	nlctx->cmd = "-s";
++	nlctx->argp = ctx->argp;
++	nlctx->argc = ctx->argc;
++	ret = msg_init(nlctx, ETHNL_CMD_SET_SETTINGS,
++		       NLM_F_REQUEST | NLM_F_ACK);
++	if (ret < 0)
++		return 2;
++	if (ethnla_put_dev(nlctx, ETHA_SETTINGS_DEV, ctx->devname))
++		return -EMSGSIZE;
 +
-+	while (nlctx->argc > 0) {
-+		const struct param_parser *parser = params;
++	ret = nl_parser(ctx, sset_params, ETHA_SETTINGS_MAX);
++	if (ret < 0)
++		return 2;
 +
-+		nlctx->param = *nlctx->argp;
-+		while (parser->arg) {
-+			if (!strcmp(nlctx->param, parser->arg))
-+				break;
-+			parser++;
-+		}
-+		if (!parser->arg) {
-+			parser_err_unknown_param(nlctx);
-+			return -EINVAL;
-+		}
-+		nlctx->argp++;
-+		nlctx->argc--;
-+		if (attr_set[parser - params]) {
-+			parser_err_dup_param(nlctx);
-+			return -EINVAL;
-+		}
-+		if (nlctx->argc < parser->min_argc) {
-+			parser_err_min_argc(nlctx, parser->min_argc);
-+			return -EINVAL;
-+		}
-+
-+		ret = parser->handler(nlctx, parser->type, parser->handler_data);
-+		if (ret < 0)
-+			return ret;
-+	}
-+
-+	return 0;
++	ret = ethnl_sendmsg(nlctx);
++	if (ret < 0)
++		return 75;
++	ret = ethnl_process_reply(nlctx, nomsg_reply_cb);
++	if (ret == 0)
++		return 0;
++	return nlctx->exit_code ?: 75;
 +}
-diff --git a/netlink/parser.h b/netlink/parser.h
-new file mode 100644
-index 000000000000..7308da25f093
---- /dev/null
-+++ b/netlink/parser.h
-@@ -0,0 +1,45 @@
-+#ifndef ETHTOOL_NETLINK_PARSER_H__
-+#define ETHTOOL_NETLINK_PARSER_H__
-+
-+#include "netlink.h"
-+
-+struct lookup_entry_u32 {
-+	const char	*arg;
-+	u32		val;
-+};
-+
-+struct lookup_entry_u16 {
-+	const char	*arg;
-+	u16		val;
-+};
-+
-+struct lookup_entry_u8{
-+	const char	*arg;
-+	u8		val;
-+};
-+
-+typedef int (*param_parser_cb_t)(struct nl_context *, uint16_t, const void *);
-+
-+struct param_parser {
-+	const char		*arg;
-+	uint16_t		type;
-+	param_parser_cb_t	handler;
-+	const void		*handler_data;
-+	unsigned int		min_argc;
-+};
-+
-+int nl_parse_direct_u32(struct nl_context *nlctx, uint16_t type,
-+			const void *data);
-+int nl_parse_direct_u8(struct nl_context *nlctx, uint16_t type,
-+		       const void *data);
-+int nl_parse_bool(struct nl_context *nlctx, uint16_t type, const void *data);
-+int nl_parse_lookup_u8(struct nl_context *nlctx, uint16_t type,
-+		       const void *data);
-+int nl_parse_bitfield32(struct nl_context *nlctx, uint16_t type,
-+			const void *data);
-+int nl_parse_bitset(struct nl_context *nlctx, uint16_t type, const void *data);
-+
-+int nl_parser(struct cmd_context *ctx, const struct param_parser *params,
-+	      unsigned int max_type);
-+
-+#endif /* ETHTOOL_NETLINK_PARSER_H__ */
 -- 
 2.18.0
 
