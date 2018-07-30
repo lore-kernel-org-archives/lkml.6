@@ -2,208 +2,120 @@ Return-Path: <SRS0=qqIy=KO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH autolearn=ham
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AD49C46461
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 07:05:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A577FD21E1
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 07:08:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D8A9F20893
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 07:05:24 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="fM1Tj7NL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D8A9F20893
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 2A18D20873
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 07:08:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2A18D20873
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sympatico.ca
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726499AbeG3Iiw (ORCPT
+        id S1726651AbeG3Ily (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 30 Jul 2018 04:38:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44148 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726399AbeG3Iiw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Jul 2018 04:38:52 -0400
-Received: from devbox (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 048C320873;
-        Mon, 30 Jul 2018 07:05:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1532934319;
-        bh=7KWuLybK3izgmDITc3mHuyk7G0RGtPD5KyTEWznHhzU=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=fM1Tj7NLctqr19cYSWzWXvQ38SURGoPIsVnWGg2GYx/5rOndrkxUTgoRwVYe44jKE
-         e1eJ18Sm7dpVSHgZIFON2KltOlYUdEJsjihdyfxDdcIAYICPCbO3DfN1UjdgHiBFhx
-         A1iFgtIMrbkvhDDKCVBFw7EitUYQFJvkVXgt1+40=
-Date:   Mon, 30 Jul 2018 16:05:15 +0900
-From:   Masami Hiramatsu <mhiramat@kernel.org>
-To:     Masami Hiramatsu <mhiramat@kernel.org>
-Cc:     rostedt@goodmis.org,
-        Francis Deslauriers <francis.deslauriers@efficios.com>,
-        peterz@infradead.org, Shuah Khan <shuah@kernel.org>,
-        mathieu.desnoyers@efficios.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 1/3] tracing: kprobes: Prohibit probing on notrace
- function
-Message-Id: <20180730160515.c0bc0d564123892182f94310@kernel.org>
-In-Reply-To: <153278612708.9401.10169488927809009324.stgit@devbox>
-References: <153278609735.9401.5389431281006205214.stgit@devbox>
-        <153278612708.9401.10169488927809009324.stgit@devbox>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
+        Mon, 30 Jul 2018 04:41:54 -0400
+Received: from simcoe207srvr.owm.bell.net ([184.150.200.207]:41125 "EHLO
+        torfep01.bell.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726463AbeG3Ily (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Jul 2018 04:41:54 -0400
+Received: from bell.net torfep01 184.150.200.158 by torfep01.bell.net
+          with ESMTP
+          id <20180730070820.HGLQ3030.torfep01.bell.net@torspm02.bell.net>
+          for <linux-kernel@vger.kernel.org>;
+          Mon, 30 Jul 2018 03:08:20 -0400
+Received: from arcusix ([67.71.42.39]) by torspm02.bell.net with ESMTP
+          id <20180730070820.MLVF31064.torspm02.bell.net@arcusix>;
+          Mon, 30 Jul 2018 03:08:20 -0400
+Message-ID: <2bc48efc86800949761b8f4d3a165a9f9c25c57e.camel@sympatico.ca>
+Subject: Re: [PATCH 0/3] PTI x86-32 Updates and Fixes
+From:   "David H. Gutteridge" <dhgutteridge@sympatico.ca>
+To:     Joerg Roedel <joro@8bytes.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>,
+        "H . Peter Anvin" <hpa@zytor.com>
+Cc:     x86@kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Juergen Gross <jgross@suse.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Borislav Petkov <bp@alien8.de>, Jiri Kosina <jkosina@suse.cz>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Brian Gerst <brgerst@gmail.com>,
+        David Laight <David.Laight@aculab.com>,
+        Denys Vlasenko <dvlasenk@redhat.com>,
+        Eduardo Valentin <eduval@amazon.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Will Deacon <will.deacon@arm.com>, aliguori@amazon.com,
+        daniel.gruss@iaik.tugraz.at, hughd@google.com, keescook@google.com,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Waiman Long <llong@redhat.com>, Pavel Machek <pavel@ucw.cz>,
+        jroedel@suse.de, Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>
+Date:   Mon, 30 Jul 2018 03:08:14 -0400
+In-Reply-To: <1532533683-5988-1-git-send-email-joro@8bytes.org>
+References: <1532533683-5988-1-git-send-email-joro@8bytes.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.4 (3.28.4-1.fc28) 
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
+X-Cloudmark-Analysis: v=2.2 cv=JtkelIwC c=1 sm=0 tr=0 a=/4BQ6POolEllGJf7n1YyrQ==:17 a=IkcTkHD0fZMA:10 a=R9QF1RCXAYgA:10 a=k_m-kdumAAAA:8 a=Q1IQS8c1w_6sp_oRIawA:9 a=QEXdDO2ut3YA:10 a=2aFmp3DG3lfw9CblUY6y:22
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 28 Jul 2018 22:55:27 +0900
-Masami Hiramatsu <mhiramat@kernel.org> wrote:
-
-> Prohibit kprobe-events probing on notrace function.
-> Since probing on the notrace function can cause recursive
-> event call. In most case those are just skipped, but
-> in some case it falls into infinit recursive call.
+On Wed, 2018-07-25 at 17:48 +0200, Joerg Roedel wrote:
+> Hi,
 > 
-> This protection can be disabled by the kconfig
-> CONFIG_KPROBE_EVENTS_ON_NOTRACE=y, but it is highly
-> recommended to keep it "n" for normal kernel.
+> here are three patches on-top of tip/x86/pti to update the
+> vmallo_fault() fix and also with another important fix.
 > 
-> Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
-> Tested-by: Francis Deslauriers <francis.deslauriers@efficios.com>
-> ---
->   Changes in v2
->    - Add CONFIG_KPROBE_EVENTS_ON_NOTRACE kconfig for knocking down
->      the protection.
->   Changes in v3
->    - Fix to check raw-address (no symbol) probe point correctly.
->   Changes in v4
->    - No notrace check if CONFIG_FUNCTION_TRACER=n. In that case
->      notrace is ignored.
-
-Oops, this must be DYNAMIC_FTRACE, not FUNCTION_TRACER, since
-ftrace_location_range() is provided only if CONFIG_DYNAMIC_FTACE=y.
-(And CONFIG_DYNAMIC_FTRACE depends on FUNCTION_TRACER)
-
-Thanks,
-
-> ---
->  kernel/trace/Kconfig        |   18 ++++++++++++++++
->  kernel/trace/trace_kprobe.c |   47 +++++++++++++++++++++++++++++++++++--------
->  2 files changed, 56 insertions(+), 9 deletions(-)
+> The first two patches remove the WARN_ON_ONCE(in_nmi) from
+> the vmalloc_fault() function and revert the previous fix, as
+> discussed at the last patch-set.
 > 
-> diff --git a/kernel/trace/Kconfig b/kernel/trace/Kconfig
-> index dcc0166d1997..24d5a58467a3 100644
-> --- a/kernel/trace/Kconfig
-> +++ b/kernel/trace/Kconfig
-> @@ -456,6 +456,24 @@ config KPROBE_EVENTS
->  	  This option is also required by perf-probe subcommand of perf tools.
->  	  If you want to use perf tools, this option is strongly recommended.
->  
-> +config KPROBE_EVENTS_ON_NOTRACE
-> +	bool "Do NOT protect notrace function from kprobe events"
-> +	depends on KPROBE_EVENTS
-> +	default n
-> +	help
-> +	  This is only for the developers who want to debug ftrace itself
-> +	  using kprobe events.
-> +
-> +	  Usually, ftrace related functions are protected from kprobe-events
-> +	  to prevent an infinit recursion or any unexpected execution path
-> +	  which leads to a kernel crash.
-> +
-> +	  This option disables such protection and allows you to put kprobe
-> +	  events on ftrace functions for debugging ftrace by itself.
-> +	  Note that this might let you shoot yourself in the foot.
-> +
-> +	  If unsure, say N.
-> +
->  config UPROBE_EVENTS
->  	bool "Enable uprobes-based dynamic events"
->  	depends on ARCH_SUPPORTS_UPROBES
-> diff --git a/kernel/trace/trace_kprobe.c b/kernel/trace/trace_kprobe.c
-> index b37b92e7dbd4..a6ff37a9b65b 100644
-> --- a/kernel/trace/trace_kprobe.c
-> +++ b/kernel/trace/trace_kprobe.c
-> @@ -87,6 +87,21 @@ static nokprobe_inline unsigned long trace_kprobe_nhit(struct trace_kprobe *tk)
->  	return nhit;
->  }
->  
-> +static nokprobe_inline
-> +unsigned long trace_kprobe_address(struct trace_kprobe *tk)
-> +{
-> +	unsigned long addr;
-> +
-> +	if (tk->symbol) {
-> +		addr = (unsigned long)
-> +			kallsyms_lookup_name(trace_kprobe_symbol(tk));
-> +		addr += tk->rp.kp.offset;
-> +	} else {
-> +		addr = (unsigned long)tk->rp.kp.addr;
-> +	}
-> +	return addr;
-> +}
-> +
->  bool trace_kprobe_on_func_entry(struct trace_event_call *call)
->  {
->  	struct trace_kprobe *tk = (struct trace_kprobe *)call->data;
-> @@ -99,16 +114,8 @@ bool trace_kprobe_on_func_entry(struct trace_event_call *call)
->  bool trace_kprobe_error_injectable(struct trace_event_call *call)
->  {
->  	struct trace_kprobe *tk = (struct trace_kprobe *)call->data;
-> -	unsigned long addr;
->  
-> -	if (tk->symbol) {
-> -		addr = (unsigned long)
-> -			kallsyms_lookup_name(trace_kprobe_symbol(tk));
-> -		addr += tk->rp.kp.offset;
-> -	} else {
-> -		addr = (unsigned long)tk->rp.kp.addr;
-> -	}
-> -	return within_error_injection_list(addr);
-> +	return within_error_injection_list(trace_kprobe_address(tk));
->  }
->  
->  static int register_kprobe_event(struct trace_kprobe *tk);
-> @@ -487,6 +494,22 @@ disable_trace_kprobe(struct trace_kprobe *tk, struct trace_event_file *file)
->  	return ret;
->  }
->  
-> +#if defined(CONFIG_KPROBE_EVENTS_ON_NOTRACE) || \
-> +	!defined(CONFIG_FUNCTION_TRACER)
-> +#define within_notrace_func(tk)	(false)
-> +#else
-> +static bool within_notrace_func(struct trace_kprobe *tk)
-> +{
-> +	unsigned long offset, size, addr;
-> +
-> +	addr = trace_kprobe_address(tk);
-> +	if (!kallsyms_lookup_size_offset(addr, &size, &offset))
-> +		return true;	/* Out of range. */
-> +
-> +	return !ftrace_location_range(addr - offset, addr - offset + size);
-> +}
-> +#endif
-> +
->  /* Internal register function - just handle k*probes and flags */
->  static int __register_trace_kprobe(struct trace_kprobe *tk)
->  {
-> @@ -495,6 +518,12 @@ static int __register_trace_kprobe(struct trace_kprobe *tk)
->  	if (trace_probe_is_registered(&tk->tp))
->  		return -EINVAL;
->  
-> +	if (within_notrace_func(tk)) {
-> +		pr_warn("Could not probe notrace function %s\n",
-> +			trace_kprobe_symbol(tk));
-> +		return -EINVAL;
-> +	}
-> +
->  	for (i = 0; i < tk->tp.nr_args; i++)
->  		traceprobe_update_arg(&tk->tp.args[i]);
->  
+> The third patch is an important fix for a silent memory
+> corruption issue found by the trinity fuzzer, which did take
+> a while to track down. But I found it and with the fix the
+> fuzzer already runs for couple of hours now and the VM is
+> still alive.
 > 
+> Regards,
+> 
+> 	Joerg
+> 
+> Joerg Roedel (3):
+>   x86/mm: Remove in_nmi() warning from vmalloc_fault()
+>   Revert "perf/core: Make sure the ring-buffer is mapped in all
+>     page-tables"
+>   x86/kexec: Allocate 8k PGDs for PTI
+> 
+>  arch/x86/kernel/machine_kexec_32.c |  5 +++--
+>  arch/x86/mm/fault.c                |  2 --
+>  kernel/events/ring_buffer.c        | 16 ----------------
+>  3 files changed, 3 insertions(+), 20 deletions(-)
+
+Hi Joerg,
+
+I've found no significant issues in my testing of this patch set.
+The only minor thing I noted is that in your previous "v8" patch set
+([PATCH 38/39] x86/mm/pti: Add Warning when booting on a PCID capable
+CPU), it reports the warning on non-PCID capable CPUs: I think you
+intended a bitwise "&", not a logical "&&" in the if statement?
+
+Tested-by: David H. Gutteridge <dhgutteridge@sympatico.ca>
+
+Regards,
+
+Dave
 
 
--- 
-Masami Hiramatsu <mhiramat@kernel.org>
