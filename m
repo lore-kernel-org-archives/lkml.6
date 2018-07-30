@@ -2,31 +2,31 @@ Return-Path: <SRS0=qqIy=KO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UPPERCASE_50_75,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DFB04FD21E1
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 12:44:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8854AFD21E1
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 12:44:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 44C4220870
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 12:44:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 44C4220870
+	by mail.kernel.org (Postfix) with ESMTP id 37A2220870
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 12:44:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 37A2220870
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731970AbeG3OTY (ORCPT
+        id S1731899AbeG3OTU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 30 Jul 2018 10:19:24 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:58430 "EHLO mail.bootlin.com"
+        Mon, 30 Jul 2018 10:19:20 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:58471 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729378AbeG3OTX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Jul 2018 10:19:23 -0400
+        id S1729283AbeG3OTT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Jul 2018 10:19:19 -0400
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id E149620893; Mon, 30 Jul 2018 14:44:24 +0200 (CEST)
+        id F2B7B207BD; Mon, 30 Jul 2018 14:44:26 +0200 (CEST)
 Received: from localhost.localdomain (AAubervilliers-681-1-89-120.w90-88.abo.wanadoo.fr [90.88.30.120])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 54A7420765;
-        Mon, 30 Jul 2018 14:44:24 +0200 (CEST)
+        by mail.bootlin.com (Postfix) with ESMTPSA id 8EC2B20765;
+        Mon, 30 Jul 2018 14:44:26 +0200 (CEST)
 From:   Quentin Schulz <quentin.schulz@bootlin.com>
 To:     alexandre.belloni@bootlin.com, ralf@linux-mips.org,
         paul.burton@mips.com, jhogan@kernel.org, robh+dt@kernel.org,
@@ -36,9 +36,9 @@ Cc:     kishon@ti.com, andrew@lunn.ch, f.fainelli@gmail.com,
         linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
         allan.nielsen@microsemi.com, thomas.petazzoni@bootlin.com,
         Quentin Schulz <quentin.schulz@bootlin.com>
-Subject: [PATCH net-next 04/10] net: mscc: ocelot: move the HSIO header to include/soc
-Date:   Mon, 30 Jul 2018 14:43:49 +0200
-Message-Id: <01e5bd12299a1121b94265c64ed2a91f5f629b9a.1532954208.git-series.quentin.schulz@bootlin.com>
+Subject: [PATCH net-next 10/10] net: mscc: ocelot: make use of SerDes PHYs for handling their configuration
+Date:   Mon, 30 Jul 2018 14:43:55 +0200
+Message-Id: <0ce1b3e8466064741dc6e484f87bbe48542cb978.1532954208.git-series.quentin.schulz@bootlin.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <cover.aa759035f6eefdd0bb2a5ae335dab5bd5399bd46.1532954208.git-series.quentin.schulz@bootlin.com>
 References: <cover.aa759035f6eefdd0bb2a5ae335dab5bd5399bd46.1532954208.git-series.quentin.schulz@bootlin.com>
@@ -49,1625 +49,167 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since HSIO address space can be used by different drivers (PLL, SerDes
-muxing, temperature sensor), let's move it somewhere it can be included
-by all drivers.
+Previously, the SerDes muxing was hardcoded to a given mode in the MAC
+controller driver. Now, the SerDes muxing is configured within the
+Device Tree and is enforced in the MAC controller driver so we can have
+a lot of different SerDes configurations.
+
+Make use of the SerDes PHYs in the MAC controller to set up the SerDes
+according to the SerDes<->switch port mapping and the communication mode
+with the Ethernet PHY.
 
 Signed-off-by: Quentin Schulz <quentin.schulz@bootlin.com>
 ---
- drivers/net/ethernet/mscc/ocelot.h      |   1 +-
- drivers/net/ethernet/mscc/ocelot_hsio.h | 785 +-------------------------
- drivers/net/ethernet/mscc/ocelot_regs.c |   1 +-
- include/soc/mscc/ocelot_hsio.h          | 785 +++++++++++++++++++++++++-
- 4 files changed, 786 insertions(+), 786 deletions(-)
- delete mode 100644 drivers/net/ethernet/mscc/ocelot_hsio.h
- create mode 100644 include/soc/mscc/ocelot_hsio.h
+ drivers/net/ethernet/mscc/Kconfig        |  2 +-
+ drivers/net/ethernet/mscc/ocelot.c       | 16 ++++++++-
+ drivers/net/ethernet/mscc/ocelot.h       |  5 +++-
+ drivers/net/ethernet/mscc/ocelot_board.c | 43 +++++++++++++++++++------
+ 4 files changed, 55 insertions(+), 11 deletions(-)
 
+diff --git a/drivers/net/ethernet/mscc/Kconfig b/drivers/net/ethernet/mscc/Kconfig
+index 36c8462..bcec058 100644
+--- a/drivers/net/ethernet/mscc/Kconfig
++++ b/drivers/net/ethernet/mscc/Kconfig
+@@ -23,6 +23,8 @@ config MSCC_OCELOT_SWITCH
+ config MSCC_OCELOT_SWITCH_OCELOT
+ 	tristate "Ocelot switch driver on Ocelot"
+ 	depends on MSCC_OCELOT_SWITCH
++	depends on GENERIC_PHY
++	depends on OF_NET
+ 	help
+ 	  This driver supports the Ocelot network switch device as present on
+ 	  the Ocelot SoCs.
+diff --git a/drivers/net/ethernet/mscc/ocelot.c b/drivers/net/ethernet/mscc/ocelot.c
+index 1a4f2bb..8f11fdb 100644
+--- a/drivers/net/ethernet/mscc/ocelot.c
++++ b/drivers/net/ethernet/mscc/ocelot.c
+@@ -472,6 +472,7 @@ static int ocelot_port_open(struct net_device *dev)
+ {
+ 	struct ocelot_port *port = netdev_priv(dev);
+ 	struct ocelot *ocelot = port->ocelot;
++	enum phy_mode phy_mode;
+ 	int err;
+ 
+ 	/* Enable receiving frames on the port, and activate auto-learning of
+@@ -482,8 +483,21 @@ static int ocelot_port_open(struct net_device *dev)
+ 			 ANA_PORT_PORT_CFG_PORTID_VAL(port->chip_port),
+ 			 ANA_PORT_PORT_CFG, port->chip_port);
+ 
++	if (port->serdes) {
++		if (port->phy_mode == PHY_INTERFACE_MODE_SGMII)
++			phy_mode = PHY_MODE_SGMII;
++		else
++			phy_mode = PHY_MODE_QSGMII;
++
++		err = phy_set_mode(port->serdes, phy_mode);
++		if (err) {
++			netdev_err(dev, "Could not set mode of SerDes\n");
++			return err;
++		}
++	}
++
+ 	err = phy_connect_direct(dev, port->phy, &ocelot_port_adjust_link,
+-				 PHY_INTERFACE_MODE_NA);
++				 port->phy_mode);
+ 	if (err) {
+ 		netdev_err(dev, "Could not attach to PHY\n");
+ 		return err;
 diff --git a/drivers/net/ethernet/mscc/ocelot.h b/drivers/net/ethernet/mscc/ocelot.h
-index 616bec3..2da20a3 100644
+index 3720e51..62c7c8e 100644
 --- a/drivers/net/ethernet/mscc/ocelot.h
 +++ b/drivers/net/ethernet/mscc/ocelot.h
-@@ -16,7 +16,6 @@
+@@ -11,6 +11,8 @@
+ #include <linux/bitops.h>
+ #include <linux/etherdevice.h>
+ #include <linux/if_vlan.h>
++#include <linux/phy.h>
++#include <linux/phy/phy.h>
+ #include <linux/platform_device.h>
+ #include <linux/regmap.h>
  
- #include "ocelot_ana.h"
- #include "ocelot_dev.h"
--#include "ocelot_hsio.h"
- #include "ocelot_qsys.h"
- #include "ocelot_rew.h"
- #include "ocelot_sys.h"
-diff --git a/drivers/net/ethernet/mscc/ocelot_hsio.h b/drivers/net/ethernet/mscc/ocelot_hsio.h
-deleted file mode 100644
-index d93ddec..0000000
---- a/drivers/net/ethernet/mscc/ocelot_hsio.h
-+++ /dev/null
-@@ -1,785 +0,0 @@
--/* SPDX-License-Identifier: (GPL-2.0 OR MIT) */
--/*
-- * Microsemi Ocelot Switch driver
-- *
-- * Copyright (c) 2017 Microsemi Corporation
-- */
--
--#ifndef _MSCC_OCELOT_HSIO_H_
--#define _MSCC_OCELOT_HSIO_H_
--
--#define HSIO_PLL5G_CFG0_ENA_ROT                           BIT(31)
--#define HSIO_PLL5G_CFG0_ENA_LANE                          BIT(30)
--#define HSIO_PLL5G_CFG0_ENA_CLKTREE                       BIT(29)
--#define HSIO_PLL5G_CFG0_DIV4                              BIT(28)
--#define HSIO_PLL5G_CFG0_ENA_LOCK_FINE                     BIT(27)
--#define HSIO_PLL5G_CFG0_SELBGV820(x)                      (((x) << 23) & GENMASK(26, 23))
--#define HSIO_PLL5G_CFG0_SELBGV820_M                       GENMASK(26, 23)
--#define HSIO_PLL5G_CFG0_SELBGV820_X(x)                    (((x) & GENMASK(26, 23)) >> 23)
--#define HSIO_PLL5G_CFG0_LOOP_BW_RES(x)                    (((x) << 18) & GENMASK(22, 18))
--#define HSIO_PLL5G_CFG0_LOOP_BW_RES_M                     GENMASK(22, 18)
--#define HSIO_PLL5G_CFG0_LOOP_BW_RES_X(x)                  (((x) & GENMASK(22, 18)) >> 18)
--#define HSIO_PLL5G_CFG0_SELCPI(x)                         (((x) << 16) & GENMASK(17, 16))
--#define HSIO_PLL5G_CFG0_SELCPI_M                          GENMASK(17, 16)
--#define HSIO_PLL5G_CFG0_SELCPI_X(x)                       (((x) & GENMASK(17, 16)) >> 16)
--#define HSIO_PLL5G_CFG0_ENA_VCO_CONTRH                    BIT(15)
--#define HSIO_PLL5G_CFG0_ENA_CP1                           BIT(14)
--#define HSIO_PLL5G_CFG0_ENA_VCO_BUF                       BIT(13)
--#define HSIO_PLL5G_CFG0_ENA_BIAS                          BIT(12)
--#define HSIO_PLL5G_CFG0_CPU_CLK_DIV(x)                    (((x) << 6) & GENMASK(11, 6))
--#define HSIO_PLL5G_CFG0_CPU_CLK_DIV_M                     GENMASK(11, 6)
--#define HSIO_PLL5G_CFG0_CPU_CLK_DIV_X(x)                  (((x) & GENMASK(11, 6)) >> 6)
--#define HSIO_PLL5G_CFG0_CORE_CLK_DIV(x)                   ((x) & GENMASK(5, 0))
--#define HSIO_PLL5G_CFG0_CORE_CLK_DIV_M                    GENMASK(5, 0)
--
--#define HSIO_PLL5G_CFG1_ENA_DIRECT                        BIT(18)
--#define HSIO_PLL5G_CFG1_ROT_SPEED                         BIT(17)
--#define HSIO_PLL5G_CFG1_ROT_DIR                           BIT(16)
--#define HSIO_PLL5G_CFG1_READBACK_DATA_SEL                 BIT(15)
--#define HSIO_PLL5G_CFG1_RC_ENABLE                         BIT(14)
--#define HSIO_PLL5G_CFG1_RC_CTRL_DATA(x)                   (((x) << 6) & GENMASK(13, 6))
--#define HSIO_PLL5G_CFG1_RC_CTRL_DATA_M                    GENMASK(13, 6)
--#define HSIO_PLL5G_CFG1_RC_CTRL_DATA_X(x)                 (((x) & GENMASK(13, 6)) >> 6)
--#define HSIO_PLL5G_CFG1_QUARTER_RATE                      BIT(5)
--#define HSIO_PLL5G_CFG1_PWD_TX                            BIT(4)
--#define HSIO_PLL5G_CFG1_PWD_RX                            BIT(3)
--#define HSIO_PLL5G_CFG1_OUT_OF_RANGE_RECAL_ENA            BIT(2)
--#define HSIO_PLL5G_CFG1_HALF_RATE                         BIT(1)
--#define HSIO_PLL5G_CFG1_FORCE_SET_ENA                     BIT(0)
--
--#define HSIO_PLL5G_CFG2_ENA_TEST_MODE                     BIT(30)
--#define HSIO_PLL5G_CFG2_ENA_PFD_IN_FLIP                   BIT(29)
--#define HSIO_PLL5G_CFG2_ENA_VCO_NREF_TESTOUT              BIT(28)
--#define HSIO_PLL5G_CFG2_ENA_FBTESTOUT                     BIT(27)
--#define HSIO_PLL5G_CFG2_ENA_RCPLL                         BIT(26)
--#define HSIO_PLL5G_CFG2_ENA_CP2                           BIT(25)
--#define HSIO_PLL5G_CFG2_ENA_CLK_BYPASS1                   BIT(24)
--#define HSIO_PLL5G_CFG2_AMPC_SEL(x)                       (((x) << 16) & GENMASK(23, 16))
--#define HSIO_PLL5G_CFG2_AMPC_SEL_M                        GENMASK(23, 16)
--#define HSIO_PLL5G_CFG2_AMPC_SEL_X(x)                     (((x) & GENMASK(23, 16)) >> 16)
--#define HSIO_PLL5G_CFG2_ENA_CLK_BYPASS                    BIT(15)
--#define HSIO_PLL5G_CFG2_PWD_AMPCTRL_N                     BIT(14)
--#define HSIO_PLL5G_CFG2_ENA_AMPCTRL                       BIT(13)
--#define HSIO_PLL5G_CFG2_ENA_AMP_CTRL_FORCE                BIT(12)
--#define HSIO_PLL5G_CFG2_FRC_FSM_POR                       BIT(11)
--#define HSIO_PLL5G_CFG2_DISABLE_FSM_POR                   BIT(10)
--#define HSIO_PLL5G_CFG2_GAIN_TEST(x)                      (((x) << 5) & GENMASK(9, 5))
--#define HSIO_PLL5G_CFG2_GAIN_TEST_M                       GENMASK(9, 5)
--#define HSIO_PLL5G_CFG2_GAIN_TEST_X(x)                    (((x) & GENMASK(9, 5)) >> 5)
--#define HSIO_PLL5G_CFG2_EN_RESET_OVERRUN                  BIT(4)
--#define HSIO_PLL5G_CFG2_EN_RESET_LIM_DET                  BIT(3)
--#define HSIO_PLL5G_CFG2_EN_RESET_FRQ_DET                  BIT(2)
--#define HSIO_PLL5G_CFG2_DISABLE_FSM                       BIT(1)
--#define HSIO_PLL5G_CFG2_ENA_GAIN_TEST                     BIT(0)
--
--#define HSIO_PLL5G_CFG3_TEST_ANA_OUT_SEL(x)               (((x) << 22) & GENMASK(23, 22))
--#define HSIO_PLL5G_CFG3_TEST_ANA_OUT_SEL_M                GENMASK(23, 22)
--#define HSIO_PLL5G_CFG3_TEST_ANA_OUT_SEL_X(x)             (((x) & GENMASK(23, 22)) >> 22)
--#define HSIO_PLL5G_CFG3_TESTOUT_SEL(x)                    (((x) << 19) & GENMASK(21, 19))
--#define HSIO_PLL5G_CFG3_TESTOUT_SEL_M                     GENMASK(21, 19)
--#define HSIO_PLL5G_CFG3_TESTOUT_SEL_X(x)                  (((x) & GENMASK(21, 19)) >> 19)
--#define HSIO_PLL5G_CFG3_ENA_ANA_TEST_OUT                  BIT(18)
--#define HSIO_PLL5G_CFG3_ENA_TEST_OUT                      BIT(17)
--#define HSIO_PLL5G_CFG3_SEL_FBDCLK                        BIT(16)
--#define HSIO_PLL5G_CFG3_SEL_CML_CMOS_PFD                  BIT(15)
--#define HSIO_PLL5G_CFG3_RST_FB_N                          BIT(14)
--#define HSIO_PLL5G_CFG3_FORCE_VCO_CONTRH                  BIT(13)
--#define HSIO_PLL5G_CFG3_FORCE_LO                          BIT(12)
--#define HSIO_PLL5G_CFG3_FORCE_HI                          BIT(11)
--#define HSIO_PLL5G_CFG3_FORCE_ENA                         BIT(10)
--#define HSIO_PLL5G_CFG3_FORCE_CP                          BIT(9)
--#define HSIO_PLL5G_CFG3_FBDIVSEL_TST_ENA                  BIT(8)
--#define HSIO_PLL5G_CFG3_FBDIVSEL(x)                       ((x) & GENMASK(7, 0))
--#define HSIO_PLL5G_CFG3_FBDIVSEL_M                        GENMASK(7, 0)
--
--#define HSIO_PLL5G_CFG4_IB_BIAS_CTRL(x)                   (((x) << 16) & GENMASK(23, 16))
--#define HSIO_PLL5G_CFG4_IB_BIAS_CTRL_M                    GENMASK(23, 16)
--#define HSIO_PLL5G_CFG4_IB_BIAS_CTRL_X(x)                 (((x) & GENMASK(23, 16)) >> 16)
--#define HSIO_PLL5G_CFG4_IB_CTRL(x)                        ((x) & GENMASK(15, 0))
--#define HSIO_PLL5G_CFG4_IB_CTRL_M                         GENMASK(15, 0)
--
--#define HSIO_PLL5G_CFG5_OB_BIAS_CTRL(x)                   (((x) << 16) & GENMASK(23, 16))
--#define HSIO_PLL5G_CFG5_OB_BIAS_CTRL_M                    GENMASK(23, 16)
--#define HSIO_PLL5G_CFG5_OB_BIAS_CTRL_X(x)                 (((x) & GENMASK(23, 16)) >> 16)
--#define HSIO_PLL5G_CFG5_OB_CTRL(x)                        ((x) & GENMASK(15, 0))
--#define HSIO_PLL5G_CFG5_OB_CTRL_M                         GENMASK(15, 0)
--
--#define HSIO_PLL5G_CFG6_REFCLK_SEL_SRC                    BIT(23)
--#define HSIO_PLL5G_CFG6_REFCLK_SEL(x)                     (((x) << 20) & GENMASK(22, 20))
--#define HSIO_PLL5G_CFG6_REFCLK_SEL_M                      GENMASK(22, 20)
--#define HSIO_PLL5G_CFG6_REFCLK_SEL_X(x)                   (((x) & GENMASK(22, 20)) >> 20)
--#define HSIO_PLL5G_CFG6_REFCLK_SRC                        BIT(19)
--#define HSIO_PLL5G_CFG6_POR_DEL_SEL(x)                    (((x) << 16) & GENMASK(17, 16))
--#define HSIO_PLL5G_CFG6_POR_DEL_SEL_M                     GENMASK(17, 16)
--#define HSIO_PLL5G_CFG6_POR_DEL_SEL_X(x)                  (((x) & GENMASK(17, 16)) >> 16)
--#define HSIO_PLL5G_CFG6_DIV125REF_SEL(x)                  (((x) << 8) & GENMASK(15, 8))
--#define HSIO_PLL5G_CFG6_DIV125REF_SEL_M                   GENMASK(15, 8)
--#define HSIO_PLL5G_CFG6_DIV125REF_SEL_X(x)                (((x) & GENMASK(15, 8)) >> 8)
--#define HSIO_PLL5G_CFG6_ENA_REFCLKC2                      BIT(7)
--#define HSIO_PLL5G_CFG6_ENA_FBCLKC2                       BIT(6)
--#define HSIO_PLL5G_CFG6_DDR_CLK_DIV(x)                    ((x) & GENMASK(5, 0))
--#define HSIO_PLL5G_CFG6_DDR_CLK_DIV_M                     GENMASK(5, 0)
--
--#define HSIO_PLL5G_STATUS0_RANGE_LIM                      BIT(12)
--#define HSIO_PLL5G_STATUS0_OUT_OF_RANGE_ERR               BIT(11)
--#define HSIO_PLL5G_STATUS0_CALIBRATION_ERR                BIT(10)
--#define HSIO_PLL5G_STATUS0_CALIBRATION_DONE               BIT(9)
--#define HSIO_PLL5G_STATUS0_READBACK_DATA(x)               (((x) << 1) & GENMASK(8, 1))
--#define HSIO_PLL5G_STATUS0_READBACK_DATA_M                GENMASK(8, 1)
--#define HSIO_PLL5G_STATUS0_READBACK_DATA_X(x)             (((x) & GENMASK(8, 1)) >> 1)
--#define HSIO_PLL5G_STATUS0_LOCK_STATUS                    BIT(0)
--
--#define HSIO_PLL5G_STATUS1_SIG_DEL(x)                     (((x) << 21) & GENMASK(28, 21))
--#define HSIO_PLL5G_STATUS1_SIG_DEL_M                      GENMASK(28, 21)
--#define HSIO_PLL5G_STATUS1_SIG_DEL_X(x)                   (((x) & GENMASK(28, 21)) >> 21)
--#define HSIO_PLL5G_STATUS1_GAIN_STAT(x)                   (((x) << 16) & GENMASK(20, 16))
--#define HSIO_PLL5G_STATUS1_GAIN_STAT_M                    GENMASK(20, 16)
--#define HSIO_PLL5G_STATUS1_GAIN_STAT_X(x)                 (((x) & GENMASK(20, 16)) >> 16)
--#define HSIO_PLL5G_STATUS1_FBCNT_DIF(x)                   (((x) << 4) & GENMASK(13, 4))
--#define HSIO_PLL5G_STATUS1_FBCNT_DIF_M                    GENMASK(13, 4)
--#define HSIO_PLL5G_STATUS1_FBCNT_DIF_X(x)                 (((x) & GENMASK(13, 4)) >> 4)
--#define HSIO_PLL5G_STATUS1_FSM_STAT(x)                    (((x) << 1) & GENMASK(3, 1))
--#define HSIO_PLL5G_STATUS1_FSM_STAT_M                     GENMASK(3, 1)
--#define HSIO_PLL5G_STATUS1_FSM_STAT_X(x)                  (((x) & GENMASK(3, 1)) >> 1)
--#define HSIO_PLL5G_STATUS1_FSM_LOCK                       BIT(0)
--
--#define HSIO_PLL5G_BIST_CFG0_PLLB_START_BIST              BIT(31)
--#define HSIO_PLL5G_BIST_CFG0_PLLB_MEAS_MODE               BIT(30)
--#define HSIO_PLL5G_BIST_CFG0_PLLB_LOCK_REPEAT(x)          (((x) << 20) & GENMASK(23, 20))
--#define HSIO_PLL5G_BIST_CFG0_PLLB_LOCK_REPEAT_M           GENMASK(23, 20)
--#define HSIO_PLL5G_BIST_CFG0_PLLB_LOCK_REPEAT_X(x)        (((x) & GENMASK(23, 20)) >> 20)
--#define HSIO_PLL5G_BIST_CFG0_PLLB_LOCK_UNCERT(x)          (((x) << 16) & GENMASK(19, 16))
--#define HSIO_PLL5G_BIST_CFG0_PLLB_LOCK_UNCERT_M           GENMASK(19, 16)
--#define HSIO_PLL5G_BIST_CFG0_PLLB_LOCK_UNCERT_X(x)        (((x) & GENMASK(19, 16)) >> 16)
--#define HSIO_PLL5G_BIST_CFG0_PLLB_DIV_FACTOR_PRE(x)       ((x) & GENMASK(15, 0))
--#define HSIO_PLL5G_BIST_CFG0_PLLB_DIV_FACTOR_PRE_M        GENMASK(15, 0)
--
--#define HSIO_PLL5G_BIST_STAT0_PLLB_FSM_STAT(x)            (((x) << 4) & GENMASK(7, 4))
--#define HSIO_PLL5G_BIST_STAT0_PLLB_FSM_STAT_M             GENMASK(7, 4)
--#define HSIO_PLL5G_BIST_STAT0_PLLB_FSM_STAT_X(x)          (((x) & GENMASK(7, 4)) >> 4)
--#define HSIO_PLL5G_BIST_STAT0_PLLB_BUSY                   BIT(2)
--#define HSIO_PLL5G_BIST_STAT0_PLLB_DONE_N                 BIT(1)
--#define HSIO_PLL5G_BIST_STAT0_PLLB_FAIL                   BIT(0)
--
--#define HSIO_PLL5G_BIST_STAT1_PLLB_CNT_OUT(x)             (((x) << 16) & GENMASK(31, 16))
--#define HSIO_PLL5G_BIST_STAT1_PLLB_CNT_OUT_M              GENMASK(31, 16)
--#define HSIO_PLL5G_BIST_STAT1_PLLB_CNT_OUT_X(x)           (((x) & GENMASK(31, 16)) >> 16)
--#define HSIO_PLL5G_BIST_STAT1_PLLB_CNT_REF_DIFF(x)        ((x) & GENMASK(15, 0))
--#define HSIO_PLL5G_BIST_STAT1_PLLB_CNT_REF_DIFF_M         GENMASK(15, 0)
--
--#define HSIO_RCOMP_CFG0_PWD_ENA                           BIT(13)
--#define HSIO_RCOMP_CFG0_RUN_CAL                           BIT(12)
--#define HSIO_RCOMP_CFG0_SPEED_SEL(x)                      (((x) << 10) & GENMASK(11, 10))
--#define HSIO_RCOMP_CFG0_SPEED_SEL_M                       GENMASK(11, 10)
--#define HSIO_RCOMP_CFG0_SPEED_SEL_X(x)                    (((x) & GENMASK(11, 10)) >> 10)
--#define HSIO_RCOMP_CFG0_MODE_SEL(x)                       (((x) << 8) & GENMASK(9, 8))
--#define HSIO_RCOMP_CFG0_MODE_SEL_M                        GENMASK(9, 8)
--#define HSIO_RCOMP_CFG0_MODE_SEL_X(x)                     (((x) & GENMASK(9, 8)) >> 8)
--#define HSIO_RCOMP_CFG0_FORCE_ENA                         BIT(4)
--#define HSIO_RCOMP_CFG0_RCOMP_VAL(x)                      ((x) & GENMASK(3, 0))
--#define HSIO_RCOMP_CFG0_RCOMP_VAL_M                       GENMASK(3, 0)
--
--#define HSIO_RCOMP_STATUS_BUSY                            BIT(12)
--#define HSIO_RCOMP_STATUS_DELTA_ALERT                     BIT(7)
--#define HSIO_RCOMP_STATUS_RCOMP(x)                        ((x) & GENMASK(3, 0))
--#define HSIO_RCOMP_STATUS_RCOMP_M                         GENMASK(3, 0)
--
--#define HSIO_SYNC_ETH_CFG_RSZ                             0x4
--
--#define HSIO_SYNC_ETH_CFG_SEL_RECO_CLK_SRC(x)             (((x) << 4) & GENMASK(7, 4))
--#define HSIO_SYNC_ETH_CFG_SEL_RECO_CLK_SRC_M              GENMASK(7, 4)
--#define HSIO_SYNC_ETH_CFG_SEL_RECO_CLK_SRC_X(x)           (((x) & GENMASK(7, 4)) >> 4)
--#define HSIO_SYNC_ETH_CFG_SEL_RECO_CLK_DIV(x)             (((x) << 1) & GENMASK(3, 1))
--#define HSIO_SYNC_ETH_CFG_SEL_RECO_CLK_DIV_M              GENMASK(3, 1)
--#define HSIO_SYNC_ETH_CFG_SEL_RECO_CLK_DIV_X(x)           (((x) & GENMASK(3, 1)) >> 1)
--#define HSIO_SYNC_ETH_CFG_RECO_CLK_ENA                    BIT(0)
--
--#define HSIO_SYNC_ETH_PLL_CFG_PLL_AUTO_SQUELCH_ENA        BIT(0)
--
--#define HSIO_S1G_DES_CFG_DES_PHS_CTRL(x)                  (((x) << 13) & GENMASK(16, 13))
--#define HSIO_S1G_DES_CFG_DES_PHS_CTRL_M                   GENMASK(16, 13)
--#define HSIO_S1G_DES_CFG_DES_PHS_CTRL_X(x)                (((x) & GENMASK(16, 13)) >> 13)
--#define HSIO_S1G_DES_CFG_DES_CPMD_SEL(x)                  (((x) << 11) & GENMASK(12, 11))
--#define HSIO_S1G_DES_CFG_DES_CPMD_SEL_M                   GENMASK(12, 11)
--#define HSIO_S1G_DES_CFG_DES_CPMD_SEL_X(x)                (((x) & GENMASK(12, 11)) >> 11)
--#define HSIO_S1G_DES_CFG_DES_MBTR_CTRL(x)                 (((x) << 8) & GENMASK(10, 8))
--#define HSIO_S1G_DES_CFG_DES_MBTR_CTRL_M                  GENMASK(10, 8)
--#define HSIO_S1G_DES_CFG_DES_MBTR_CTRL_X(x)               (((x) & GENMASK(10, 8)) >> 8)
--#define HSIO_S1G_DES_CFG_DES_BW_ANA(x)                    (((x) << 5) & GENMASK(7, 5))
--#define HSIO_S1G_DES_CFG_DES_BW_ANA_M                     GENMASK(7, 5)
--#define HSIO_S1G_DES_CFG_DES_BW_ANA_X(x)                  (((x) & GENMASK(7, 5)) >> 5)
--#define HSIO_S1G_DES_CFG_DES_SWAP_ANA                     BIT(4)
--#define HSIO_S1G_DES_CFG_DES_BW_HYST(x)                   (((x) << 1) & GENMASK(3, 1))
--#define HSIO_S1G_DES_CFG_DES_BW_HYST_M                    GENMASK(3, 1)
--#define HSIO_S1G_DES_CFG_DES_BW_HYST_X(x)                 (((x) & GENMASK(3, 1)) >> 1)
--#define HSIO_S1G_DES_CFG_DES_SWAP_HYST                    BIT(0)
--
--#define HSIO_S1G_IB_CFG_IB_FX100_ENA                      BIT(27)
--#define HSIO_S1G_IB_CFG_ACJTAG_HYST(x)                    (((x) << 24) & GENMASK(26, 24))
--#define HSIO_S1G_IB_CFG_ACJTAG_HYST_M                     GENMASK(26, 24)
--#define HSIO_S1G_IB_CFG_ACJTAG_HYST_X(x)                  (((x) & GENMASK(26, 24)) >> 24)
--#define HSIO_S1G_IB_CFG_IB_DET_LEV(x)                     (((x) << 19) & GENMASK(21, 19))
--#define HSIO_S1G_IB_CFG_IB_DET_LEV_M                      GENMASK(21, 19)
--#define HSIO_S1G_IB_CFG_IB_DET_LEV_X(x)                   (((x) & GENMASK(21, 19)) >> 19)
--#define HSIO_S1G_IB_CFG_IB_HYST_LEV                       BIT(14)
--#define HSIO_S1G_IB_CFG_IB_ENA_CMV_TERM                   BIT(13)
--#define HSIO_S1G_IB_CFG_IB_ENA_DC_COUPLING                BIT(12)
--#define HSIO_S1G_IB_CFG_IB_ENA_DETLEV                     BIT(11)
--#define HSIO_S1G_IB_CFG_IB_ENA_HYST                       BIT(10)
--#define HSIO_S1G_IB_CFG_IB_ENA_OFFSET_COMP                BIT(9)
--#define HSIO_S1G_IB_CFG_IB_EQ_GAIN(x)                     (((x) << 6) & GENMASK(8, 6))
--#define HSIO_S1G_IB_CFG_IB_EQ_GAIN_M                      GENMASK(8, 6)
--#define HSIO_S1G_IB_CFG_IB_EQ_GAIN_X(x)                   (((x) & GENMASK(8, 6)) >> 6)
--#define HSIO_S1G_IB_CFG_IB_SEL_CORNER_FREQ(x)             (((x) << 4) & GENMASK(5, 4))
--#define HSIO_S1G_IB_CFG_IB_SEL_CORNER_FREQ_M              GENMASK(5, 4)
--#define HSIO_S1G_IB_CFG_IB_SEL_CORNER_FREQ_X(x)           (((x) & GENMASK(5, 4)) >> 4)
--#define HSIO_S1G_IB_CFG_IB_RESISTOR_CTRL(x)               ((x) & GENMASK(3, 0))
--#define HSIO_S1G_IB_CFG_IB_RESISTOR_CTRL_M                GENMASK(3, 0)
--
--#define HSIO_S1G_OB_CFG_OB_SLP(x)                         (((x) << 17) & GENMASK(18, 17))
--#define HSIO_S1G_OB_CFG_OB_SLP_M                          GENMASK(18, 17)
--#define HSIO_S1G_OB_CFG_OB_SLP_X(x)                       (((x) & GENMASK(18, 17)) >> 17)
--#define HSIO_S1G_OB_CFG_OB_AMP_CTRL(x)                    (((x) << 13) & GENMASK(16, 13))
--#define HSIO_S1G_OB_CFG_OB_AMP_CTRL_M                     GENMASK(16, 13)
--#define HSIO_S1G_OB_CFG_OB_AMP_CTRL_X(x)                  (((x) & GENMASK(16, 13)) >> 13)
--#define HSIO_S1G_OB_CFG_OB_CMM_BIAS_CTRL(x)               (((x) << 10) & GENMASK(12, 10))
--#define HSIO_S1G_OB_CFG_OB_CMM_BIAS_CTRL_M                GENMASK(12, 10)
--#define HSIO_S1G_OB_CFG_OB_CMM_BIAS_CTRL_X(x)             (((x) & GENMASK(12, 10)) >> 10)
--#define HSIO_S1G_OB_CFG_OB_DIS_VCM_CTRL                   BIT(9)
--#define HSIO_S1G_OB_CFG_OB_EN_MEAS_VREG                   BIT(8)
--#define HSIO_S1G_OB_CFG_OB_VCM_CTRL(x)                    (((x) << 4) & GENMASK(7, 4))
--#define HSIO_S1G_OB_CFG_OB_VCM_CTRL_M                     GENMASK(7, 4)
--#define HSIO_S1G_OB_CFG_OB_VCM_CTRL_X(x)                  (((x) & GENMASK(7, 4)) >> 4)
--#define HSIO_S1G_OB_CFG_OB_RESISTOR_CTRL(x)               ((x) & GENMASK(3, 0))
--#define HSIO_S1G_OB_CFG_OB_RESISTOR_CTRL_M                GENMASK(3, 0)
--
--#define HSIO_S1G_SER_CFG_SER_IDLE                         BIT(9)
--#define HSIO_S1G_SER_CFG_SER_DEEMPH                       BIT(8)
--#define HSIO_S1G_SER_CFG_SER_CPMD_SEL                     BIT(7)
--#define HSIO_S1G_SER_CFG_SER_SWAP_CPMD                    BIT(6)
--#define HSIO_S1G_SER_CFG_SER_ALISEL(x)                    (((x) << 4) & GENMASK(5, 4))
--#define HSIO_S1G_SER_CFG_SER_ALISEL_M                     GENMASK(5, 4)
--#define HSIO_S1G_SER_CFG_SER_ALISEL_X(x)                  (((x) & GENMASK(5, 4)) >> 4)
--#define HSIO_S1G_SER_CFG_SER_ENHYS                        BIT(3)
--#define HSIO_S1G_SER_CFG_SER_BIG_WIN                      BIT(2)
--#define HSIO_S1G_SER_CFG_SER_EN_WIN                       BIT(1)
--#define HSIO_S1G_SER_CFG_SER_ENALI                        BIT(0)
--
--#define HSIO_S1G_COMMON_CFG_SYS_RST                       BIT(31)
--#define HSIO_S1G_COMMON_CFG_SE_AUTO_SQUELCH_ENA           BIT(21)
--#define HSIO_S1G_COMMON_CFG_ENA_LANE                      BIT(18)
--#define HSIO_S1G_COMMON_CFG_PWD_RX                        BIT(17)
--#define HSIO_S1G_COMMON_CFG_PWD_TX                        BIT(16)
--#define HSIO_S1G_COMMON_CFG_LANE_CTRL(x)                  (((x) << 13) & GENMASK(15, 13))
--#define HSIO_S1G_COMMON_CFG_LANE_CTRL_M                   GENMASK(15, 13)
--#define HSIO_S1G_COMMON_CFG_LANE_CTRL_X(x)                (((x) & GENMASK(15, 13)) >> 13)
--#define HSIO_S1G_COMMON_CFG_ENA_DIRECT                    BIT(12)
--#define HSIO_S1G_COMMON_CFG_ENA_ELOOP                     BIT(11)
--#define HSIO_S1G_COMMON_CFG_ENA_FLOOP                     BIT(10)
--#define HSIO_S1G_COMMON_CFG_ENA_ILOOP                     BIT(9)
--#define HSIO_S1G_COMMON_CFG_ENA_PLOOP                     BIT(8)
--#define HSIO_S1G_COMMON_CFG_HRATE                         BIT(7)
--#define HSIO_S1G_COMMON_CFG_IF_MODE                       BIT(0)
--
--#define HSIO_S1G_PLL_CFG_PLL_ENA_FB_DIV2                  BIT(22)
--#define HSIO_S1G_PLL_CFG_PLL_ENA_RC_DIV2                  BIT(21)
--#define HSIO_S1G_PLL_CFG_PLL_FSM_CTRL_DATA(x)             (((x) << 8) & GENMASK(15, 8))
--#define HSIO_S1G_PLL_CFG_PLL_FSM_CTRL_DATA_M              GENMASK(15, 8)
--#define HSIO_S1G_PLL_CFG_PLL_FSM_CTRL_DATA_X(x)           (((x) & GENMASK(15, 8)) >> 8)
--#define HSIO_S1G_PLL_CFG_PLL_FSM_ENA                      BIT(7)
--#define HSIO_S1G_PLL_CFG_PLL_FSM_FORCE_SET_ENA            BIT(6)
--#define HSIO_S1G_PLL_CFG_PLL_FSM_OOR_RECAL_ENA            BIT(5)
--#define HSIO_S1G_PLL_CFG_PLL_RB_DATA_SEL                  BIT(3)
--
--#define HSIO_S1G_PLL_STATUS_PLL_CAL_NOT_DONE              BIT(12)
--#define HSIO_S1G_PLL_STATUS_PLL_CAL_ERR                   BIT(11)
--#define HSIO_S1G_PLL_STATUS_PLL_OUT_OF_RANGE_ERR          BIT(10)
--#define HSIO_S1G_PLL_STATUS_PLL_RB_DATA(x)                ((x) & GENMASK(7, 0))
--#define HSIO_S1G_PLL_STATUS_PLL_RB_DATA_M                 GENMASK(7, 0)
--
--#define HSIO_S1G_DFT_CFG0_LAZYBIT                         BIT(31)
--#define HSIO_S1G_DFT_CFG0_INV_DIS                         BIT(23)
--#define HSIO_S1G_DFT_CFG0_PRBS_SEL(x)                     (((x) << 20) & GENMASK(21, 20))
--#define HSIO_S1G_DFT_CFG0_PRBS_SEL_M                      GENMASK(21, 20)
--#define HSIO_S1G_DFT_CFG0_PRBS_SEL_X(x)                   (((x) & GENMASK(21, 20)) >> 20)
--#define HSIO_S1G_DFT_CFG0_TEST_MODE(x)                    (((x) << 16) & GENMASK(18, 16))
--#define HSIO_S1G_DFT_CFG0_TEST_MODE_M                     GENMASK(18, 16)
--#define HSIO_S1G_DFT_CFG0_TEST_MODE_X(x)                  (((x) & GENMASK(18, 16)) >> 16)
--#define HSIO_S1G_DFT_CFG0_RX_PHS_CORR_DIS                 BIT(4)
--#define HSIO_S1G_DFT_CFG0_RX_PDSENS_ENA                   BIT(3)
--#define HSIO_S1G_DFT_CFG0_RX_DFT_ENA                      BIT(2)
--#define HSIO_S1G_DFT_CFG0_TX_DFT_ENA                      BIT(0)
--
--#define HSIO_S1G_DFT_CFG1_TX_JITTER_AMPL(x)               (((x) << 8) & GENMASK(17, 8))
--#define HSIO_S1G_DFT_CFG1_TX_JITTER_AMPL_M                GENMASK(17, 8)
--#define HSIO_S1G_DFT_CFG1_TX_JITTER_AMPL_X(x)             (((x) & GENMASK(17, 8)) >> 8)
--#define HSIO_S1G_DFT_CFG1_TX_STEP_FREQ(x)                 (((x) << 4) & GENMASK(7, 4))
--#define HSIO_S1G_DFT_CFG1_TX_STEP_FREQ_M                  GENMASK(7, 4)
--#define HSIO_S1G_DFT_CFG1_TX_STEP_FREQ_X(x)               (((x) & GENMASK(7, 4)) >> 4)
--#define HSIO_S1G_DFT_CFG1_TX_JI_ENA                       BIT(3)
--#define HSIO_S1G_DFT_CFG1_TX_WAVEFORM_SEL                 BIT(2)
--#define HSIO_S1G_DFT_CFG1_TX_FREQOFF_DIR                  BIT(1)
--#define HSIO_S1G_DFT_CFG1_TX_FREQOFF_ENA                  BIT(0)
--
--#define HSIO_S1G_DFT_CFG2_RX_JITTER_AMPL(x)               (((x) << 8) & GENMASK(17, 8))
--#define HSIO_S1G_DFT_CFG2_RX_JITTER_AMPL_M                GENMASK(17, 8)
--#define HSIO_S1G_DFT_CFG2_RX_JITTER_AMPL_X(x)             (((x) & GENMASK(17, 8)) >> 8)
--#define HSIO_S1G_DFT_CFG2_RX_STEP_FREQ(x)                 (((x) << 4) & GENMASK(7, 4))
--#define HSIO_S1G_DFT_CFG2_RX_STEP_FREQ_M                  GENMASK(7, 4)
--#define HSIO_S1G_DFT_CFG2_RX_STEP_FREQ_X(x)               (((x) & GENMASK(7, 4)) >> 4)
--#define HSIO_S1G_DFT_CFG2_RX_JI_ENA                       BIT(3)
--#define HSIO_S1G_DFT_CFG2_RX_WAVEFORM_SEL                 BIT(2)
--#define HSIO_S1G_DFT_CFG2_RX_FREQOFF_DIR                  BIT(1)
--#define HSIO_S1G_DFT_CFG2_RX_FREQOFF_ENA                  BIT(0)
--
--#define HSIO_S1G_RC_PLL_BIST_CFG_PLL_BIST_ENA             BIT(20)
--#define HSIO_S1G_RC_PLL_BIST_CFG_PLL_BIST_FBS_HIGH(x)     (((x) << 16) & GENMASK(17, 16))
--#define HSIO_S1G_RC_PLL_BIST_CFG_PLL_BIST_FBS_HIGH_M      GENMASK(17, 16)
--#define HSIO_S1G_RC_PLL_BIST_CFG_PLL_BIST_FBS_HIGH_X(x)   (((x) & GENMASK(17, 16)) >> 16)
--#define HSIO_S1G_RC_PLL_BIST_CFG_PLL_BIST_HIGH(x)         (((x) << 8) & GENMASK(15, 8))
--#define HSIO_S1G_RC_PLL_BIST_CFG_PLL_BIST_HIGH_M          GENMASK(15, 8)
--#define HSIO_S1G_RC_PLL_BIST_CFG_PLL_BIST_HIGH_X(x)       (((x) & GENMASK(15, 8)) >> 8)
--#define HSIO_S1G_RC_PLL_BIST_CFG_PLL_BIST_LOW(x)          ((x) & GENMASK(7, 0))
--#define HSIO_S1G_RC_PLL_BIST_CFG_PLL_BIST_LOW_M           GENMASK(7, 0)
--
--#define HSIO_S1G_MISC_CFG_DES_100FX_KICK_MODE(x)          (((x) << 11) & GENMASK(12, 11))
--#define HSIO_S1G_MISC_CFG_DES_100FX_KICK_MODE_M           GENMASK(12, 11)
--#define HSIO_S1G_MISC_CFG_DES_100FX_KICK_MODE_X(x)        (((x) & GENMASK(12, 11)) >> 11)
--#define HSIO_S1G_MISC_CFG_DES_100FX_CPMD_SWAP             BIT(10)
--#define HSIO_S1G_MISC_CFG_DES_100FX_CPMD_MODE             BIT(9)
--#define HSIO_S1G_MISC_CFG_DES_100FX_CPMD_ENA              BIT(8)
--#define HSIO_S1G_MISC_CFG_RX_LPI_MODE_ENA                 BIT(5)
--#define HSIO_S1G_MISC_CFG_TX_LPI_MODE_ENA                 BIT(4)
--#define HSIO_S1G_MISC_CFG_RX_DATA_INV_ENA                 BIT(3)
--#define HSIO_S1G_MISC_CFG_TX_DATA_INV_ENA                 BIT(2)
--#define HSIO_S1G_MISC_CFG_LANE_RST                        BIT(0)
--
--#define HSIO_S1G_DFT_STATUS_PLL_BIST_NOT_DONE             BIT(7)
--#define HSIO_S1G_DFT_STATUS_PLL_BIST_FAILED               BIT(6)
--#define HSIO_S1G_DFT_STATUS_PLL_BIST_TIMEOUT_ERR          BIT(5)
--#define HSIO_S1G_DFT_STATUS_BIST_ACTIVE                   BIT(3)
--#define HSIO_S1G_DFT_STATUS_BIST_NOSYNC                   BIT(2)
--#define HSIO_S1G_DFT_STATUS_BIST_COMPLETE_N               BIT(1)
--#define HSIO_S1G_DFT_STATUS_BIST_ERROR                    BIT(0)
--
--#define HSIO_S1G_MISC_STATUS_DES_100FX_PHASE_SEL          BIT(0)
--
--#define HSIO_MCB_S1G_ADDR_CFG_SERDES1G_WR_ONE_SHOT        BIT(31)
--#define HSIO_MCB_S1G_ADDR_CFG_SERDES1G_RD_ONE_SHOT        BIT(30)
--#define HSIO_MCB_S1G_ADDR_CFG_SERDES1G_ADDR(x)            ((x) & GENMASK(8, 0))
--#define HSIO_MCB_S1G_ADDR_CFG_SERDES1G_ADDR_M             GENMASK(8, 0)
--
--#define HSIO_S6G_DIG_CFG_GP(x)                            (((x) << 16) & GENMASK(18, 16))
--#define HSIO_S6G_DIG_CFG_GP_M                             GENMASK(18, 16)
--#define HSIO_S6G_DIG_CFG_GP_X(x)                          (((x) & GENMASK(18, 16)) >> 16)
--#define HSIO_S6G_DIG_CFG_TX_BIT_DOUBLING_MODE_ENA         BIT(7)
--#define HSIO_S6G_DIG_CFG_SIGDET_TESTMODE                  BIT(6)
--#define HSIO_S6G_DIG_CFG_SIGDET_AST(x)                    (((x) << 3) & GENMASK(5, 3))
--#define HSIO_S6G_DIG_CFG_SIGDET_AST_M                     GENMASK(5, 3)
--#define HSIO_S6G_DIG_CFG_SIGDET_AST_X(x)                  (((x) & GENMASK(5, 3)) >> 3)
--#define HSIO_S6G_DIG_CFG_SIGDET_DST(x)                    ((x) & GENMASK(2, 0))
--#define HSIO_S6G_DIG_CFG_SIGDET_DST_M                     GENMASK(2, 0)
--
--#define HSIO_S6G_DFT_CFG0_LAZYBIT                         BIT(31)
--#define HSIO_S6G_DFT_CFG0_INV_DIS                         BIT(23)
--#define HSIO_S6G_DFT_CFG0_PRBS_SEL(x)                     (((x) << 20) & GENMASK(21, 20))
--#define HSIO_S6G_DFT_CFG0_PRBS_SEL_M                      GENMASK(21, 20)
--#define HSIO_S6G_DFT_CFG0_PRBS_SEL_X(x)                   (((x) & GENMASK(21, 20)) >> 20)
--#define HSIO_S6G_DFT_CFG0_TEST_MODE(x)                    (((x) << 16) & GENMASK(18, 16))
--#define HSIO_S6G_DFT_CFG0_TEST_MODE_M                     GENMASK(18, 16)
--#define HSIO_S6G_DFT_CFG0_TEST_MODE_X(x)                  (((x) & GENMASK(18, 16)) >> 16)
--#define HSIO_S6G_DFT_CFG0_RX_PHS_CORR_DIS                 BIT(4)
--#define HSIO_S6G_DFT_CFG0_RX_PDSENS_ENA                   BIT(3)
--#define HSIO_S6G_DFT_CFG0_RX_DFT_ENA                      BIT(2)
--#define HSIO_S6G_DFT_CFG0_TX_DFT_ENA                      BIT(0)
--
--#define HSIO_S6G_DFT_CFG1_TX_JITTER_AMPL(x)               (((x) << 8) & GENMASK(17, 8))
--#define HSIO_S6G_DFT_CFG1_TX_JITTER_AMPL_M                GENMASK(17, 8)
--#define HSIO_S6G_DFT_CFG1_TX_JITTER_AMPL_X(x)             (((x) & GENMASK(17, 8)) >> 8)
--#define HSIO_S6G_DFT_CFG1_TX_STEP_FREQ(x)                 (((x) << 4) & GENMASK(7, 4))
--#define HSIO_S6G_DFT_CFG1_TX_STEP_FREQ_M                  GENMASK(7, 4)
--#define HSIO_S6G_DFT_CFG1_TX_STEP_FREQ_X(x)               (((x) & GENMASK(7, 4)) >> 4)
--#define HSIO_S6G_DFT_CFG1_TX_JI_ENA                       BIT(3)
--#define HSIO_S6G_DFT_CFG1_TX_WAVEFORM_SEL                 BIT(2)
--#define HSIO_S6G_DFT_CFG1_TX_FREQOFF_DIR                  BIT(1)
--#define HSIO_S6G_DFT_CFG1_TX_FREQOFF_ENA                  BIT(0)
--
--#define HSIO_S6G_DFT_CFG2_RX_JITTER_AMPL(x)               (((x) << 8) & GENMASK(17, 8))
--#define HSIO_S6G_DFT_CFG2_RX_JITTER_AMPL_M                GENMASK(17, 8)
--#define HSIO_S6G_DFT_CFG2_RX_JITTER_AMPL_X(x)             (((x) & GENMASK(17, 8)) >> 8)
--#define HSIO_S6G_DFT_CFG2_RX_STEP_FREQ(x)                 (((x) << 4) & GENMASK(7, 4))
--#define HSIO_S6G_DFT_CFG2_RX_STEP_FREQ_M                  GENMASK(7, 4)
--#define HSIO_S6G_DFT_CFG2_RX_STEP_FREQ_X(x)               (((x) & GENMASK(7, 4)) >> 4)
--#define HSIO_S6G_DFT_CFG2_RX_JI_ENA                       BIT(3)
--#define HSIO_S6G_DFT_CFG2_RX_WAVEFORM_SEL                 BIT(2)
--#define HSIO_S6G_DFT_CFG2_RX_FREQOFF_DIR                  BIT(1)
--#define HSIO_S6G_DFT_CFG2_RX_FREQOFF_ENA                  BIT(0)
--
--#define HSIO_S6G_RC_PLL_BIST_CFG_PLL_BIST_ENA             BIT(20)
--#define HSIO_S6G_RC_PLL_BIST_CFG_PLL_BIST_FBS_HIGH(x)     (((x) << 16) & GENMASK(19, 16))
--#define HSIO_S6G_RC_PLL_BIST_CFG_PLL_BIST_FBS_HIGH_M      GENMASK(19, 16)
--#define HSIO_S6G_RC_PLL_BIST_CFG_PLL_BIST_FBS_HIGH_X(x)   (((x) & GENMASK(19, 16)) >> 16)
--#define HSIO_S6G_RC_PLL_BIST_CFG_PLL_BIST_HIGH(x)         (((x) << 8) & GENMASK(15, 8))
--#define HSIO_S6G_RC_PLL_BIST_CFG_PLL_BIST_HIGH_M          GENMASK(15, 8)
--#define HSIO_S6G_RC_PLL_BIST_CFG_PLL_BIST_HIGH_X(x)       (((x) & GENMASK(15, 8)) >> 8)
--#define HSIO_S6G_RC_PLL_BIST_CFG_PLL_BIST_LOW(x)          ((x) & GENMASK(7, 0))
--#define HSIO_S6G_RC_PLL_BIST_CFG_PLL_BIST_LOW_M           GENMASK(7, 0)
--
--#define HSIO_S6G_MISC_CFG_SEL_RECO_CLK(x)                 (((x) << 13) & GENMASK(14, 13))
--#define HSIO_S6G_MISC_CFG_SEL_RECO_CLK_M                  GENMASK(14, 13)
--#define HSIO_S6G_MISC_CFG_SEL_RECO_CLK_X(x)               (((x) & GENMASK(14, 13)) >> 13)
--#define HSIO_S6G_MISC_CFG_DES_100FX_KICK_MODE(x)          (((x) << 11) & GENMASK(12, 11))
--#define HSIO_S6G_MISC_CFG_DES_100FX_KICK_MODE_M           GENMASK(12, 11)
--#define HSIO_S6G_MISC_CFG_DES_100FX_KICK_MODE_X(x)        (((x) & GENMASK(12, 11)) >> 11)
--#define HSIO_S6G_MISC_CFG_DES_100FX_CPMD_SWAP             BIT(10)
--#define HSIO_S6G_MISC_CFG_DES_100FX_CPMD_MODE             BIT(9)
--#define HSIO_S6G_MISC_CFG_DES_100FX_CPMD_ENA              BIT(8)
--#define HSIO_S6G_MISC_CFG_RX_BUS_FLIP_ENA                 BIT(7)
--#define HSIO_S6G_MISC_CFG_TX_BUS_FLIP_ENA                 BIT(6)
--#define HSIO_S6G_MISC_CFG_RX_LPI_MODE_ENA                 BIT(5)
--#define HSIO_S6G_MISC_CFG_TX_LPI_MODE_ENA                 BIT(4)
--#define HSIO_S6G_MISC_CFG_RX_DATA_INV_ENA                 BIT(3)
--#define HSIO_S6G_MISC_CFG_TX_DATA_INV_ENA                 BIT(2)
--#define HSIO_S6G_MISC_CFG_LANE_RST                        BIT(0)
--
--#define HSIO_S6G_OB_ANEG_CFG_AN_OB_POST0(x)               (((x) << 23) & GENMASK(28, 23))
--#define HSIO_S6G_OB_ANEG_CFG_AN_OB_POST0_M                GENMASK(28, 23)
--#define HSIO_S6G_OB_ANEG_CFG_AN_OB_POST0_X(x)             (((x) & GENMASK(28, 23)) >> 23)
--#define HSIO_S6G_OB_ANEG_CFG_AN_OB_POST1(x)               (((x) << 18) & GENMASK(22, 18))
--#define HSIO_S6G_OB_ANEG_CFG_AN_OB_POST1_M                GENMASK(22, 18)
--#define HSIO_S6G_OB_ANEG_CFG_AN_OB_POST1_X(x)             (((x) & GENMASK(22, 18)) >> 18)
--#define HSIO_S6G_OB_ANEG_CFG_AN_OB_PREC(x)                (((x) << 13) & GENMASK(17, 13))
--#define HSIO_S6G_OB_ANEG_CFG_AN_OB_PREC_M                 GENMASK(17, 13)
--#define HSIO_S6G_OB_ANEG_CFG_AN_OB_PREC_X(x)              (((x) & GENMASK(17, 13)) >> 13)
--#define HSIO_S6G_OB_ANEG_CFG_AN_OB_ENA_CAS(x)             (((x) << 6) & GENMASK(8, 6))
--#define HSIO_S6G_OB_ANEG_CFG_AN_OB_ENA_CAS_M              GENMASK(8, 6)
--#define HSIO_S6G_OB_ANEG_CFG_AN_OB_ENA_CAS_X(x)           (((x) & GENMASK(8, 6)) >> 6)
--#define HSIO_S6G_OB_ANEG_CFG_AN_OB_LEV(x)                 ((x) & GENMASK(5, 0))
--#define HSIO_S6G_OB_ANEG_CFG_AN_OB_LEV_M                  GENMASK(5, 0)
--
--#define HSIO_S6G_DFT_STATUS_PRBS_SYNC_STAT                BIT(8)
--#define HSIO_S6G_DFT_STATUS_PLL_BIST_NOT_DONE             BIT(7)
--#define HSIO_S6G_DFT_STATUS_PLL_BIST_FAILED               BIT(6)
--#define HSIO_S6G_DFT_STATUS_PLL_BIST_TIMEOUT_ERR          BIT(5)
--#define HSIO_S6G_DFT_STATUS_BIST_ACTIVE                   BIT(3)
--#define HSIO_S6G_DFT_STATUS_BIST_NOSYNC                   BIT(2)
--#define HSIO_S6G_DFT_STATUS_BIST_COMPLETE_N               BIT(1)
--#define HSIO_S6G_DFT_STATUS_BIST_ERROR                    BIT(0)
--
--#define HSIO_S6G_MISC_STATUS_DES_100FX_PHASE_SEL          BIT(0)
--
--#define HSIO_S6G_DES_CFG_DES_PHS_CTRL(x)                  (((x) << 13) & GENMASK(16, 13))
--#define HSIO_S6G_DES_CFG_DES_PHS_CTRL_M                   GENMASK(16, 13)
--#define HSIO_S6G_DES_CFG_DES_PHS_CTRL_X(x)                (((x) & GENMASK(16, 13)) >> 13)
--#define HSIO_S6G_DES_CFG_DES_MBTR_CTRL(x)                 (((x) << 10) & GENMASK(12, 10))
--#define HSIO_S6G_DES_CFG_DES_MBTR_CTRL_M                  GENMASK(12, 10)
--#define HSIO_S6G_DES_CFG_DES_MBTR_CTRL_X(x)               (((x) & GENMASK(12, 10)) >> 10)
--#define HSIO_S6G_DES_CFG_DES_CPMD_SEL(x)                  (((x) << 8) & GENMASK(9, 8))
--#define HSIO_S6G_DES_CFG_DES_CPMD_SEL_M                   GENMASK(9, 8)
--#define HSIO_S6G_DES_CFG_DES_CPMD_SEL_X(x)                (((x) & GENMASK(9, 8)) >> 8)
--#define HSIO_S6G_DES_CFG_DES_BW_HYST(x)                   (((x) << 5) & GENMASK(7, 5))
--#define HSIO_S6G_DES_CFG_DES_BW_HYST_M                    GENMASK(7, 5)
--#define HSIO_S6G_DES_CFG_DES_BW_HYST_X(x)                 (((x) & GENMASK(7, 5)) >> 5)
--#define HSIO_S6G_DES_CFG_DES_SWAP_HYST                    BIT(4)
--#define HSIO_S6G_DES_CFG_DES_BW_ANA(x)                    (((x) << 1) & GENMASK(3, 1))
--#define HSIO_S6G_DES_CFG_DES_BW_ANA_M                     GENMASK(3, 1)
--#define HSIO_S6G_DES_CFG_DES_BW_ANA_X(x)                  (((x) & GENMASK(3, 1)) >> 1)
--#define HSIO_S6G_DES_CFG_DES_SWAP_ANA                     BIT(0)
--
--#define HSIO_S6G_IB_CFG_IB_SOFSI(x)                       (((x) << 29) & GENMASK(30, 29))
--#define HSIO_S6G_IB_CFG_IB_SOFSI_M                        GENMASK(30, 29)
--#define HSIO_S6G_IB_CFG_IB_SOFSI_X(x)                     (((x) & GENMASK(30, 29)) >> 29)
--#define HSIO_S6G_IB_CFG_IB_VBULK_SEL                      BIT(28)
--#define HSIO_S6G_IB_CFG_IB_RTRM_ADJ(x)                    (((x) << 24) & GENMASK(27, 24))
--#define HSIO_S6G_IB_CFG_IB_RTRM_ADJ_M                     GENMASK(27, 24)
--#define HSIO_S6G_IB_CFG_IB_RTRM_ADJ_X(x)                  (((x) & GENMASK(27, 24)) >> 24)
--#define HSIO_S6G_IB_CFG_IB_ICML_ADJ(x)                    (((x) << 20) & GENMASK(23, 20))
--#define HSIO_S6G_IB_CFG_IB_ICML_ADJ_M                     GENMASK(23, 20)
--#define HSIO_S6G_IB_CFG_IB_ICML_ADJ_X(x)                  (((x) & GENMASK(23, 20)) >> 20)
--#define HSIO_S6G_IB_CFG_IB_TERM_MODE_SEL(x)               (((x) << 18) & GENMASK(19, 18))
--#define HSIO_S6G_IB_CFG_IB_TERM_MODE_SEL_M                GENMASK(19, 18)
--#define HSIO_S6G_IB_CFG_IB_TERM_MODE_SEL_X(x)             (((x) & GENMASK(19, 18)) >> 18)
--#define HSIO_S6G_IB_CFG_IB_SIG_DET_CLK_SEL(x)             (((x) << 15) & GENMASK(17, 15))
--#define HSIO_S6G_IB_CFG_IB_SIG_DET_CLK_SEL_M              GENMASK(17, 15)
--#define HSIO_S6G_IB_CFG_IB_SIG_DET_CLK_SEL_X(x)           (((x) & GENMASK(17, 15)) >> 15)
--#define HSIO_S6G_IB_CFG_IB_REG_PAT_SEL_HP(x)              (((x) << 13) & GENMASK(14, 13))
--#define HSIO_S6G_IB_CFG_IB_REG_PAT_SEL_HP_M               GENMASK(14, 13)
--#define HSIO_S6G_IB_CFG_IB_REG_PAT_SEL_HP_X(x)            (((x) & GENMASK(14, 13)) >> 13)
--#define HSIO_S6G_IB_CFG_IB_REG_PAT_SEL_MID(x)             (((x) << 11) & GENMASK(12, 11))
--#define HSIO_S6G_IB_CFG_IB_REG_PAT_SEL_MID_M              GENMASK(12, 11)
--#define HSIO_S6G_IB_CFG_IB_REG_PAT_SEL_MID_X(x)           (((x) & GENMASK(12, 11)) >> 11)
--#define HSIO_S6G_IB_CFG_IB_REG_PAT_SEL_LP(x)              (((x) << 9) & GENMASK(10, 9))
--#define HSIO_S6G_IB_CFG_IB_REG_PAT_SEL_LP_M               GENMASK(10, 9)
--#define HSIO_S6G_IB_CFG_IB_REG_PAT_SEL_LP_X(x)            (((x) & GENMASK(10, 9)) >> 9)
--#define HSIO_S6G_IB_CFG_IB_REG_PAT_SEL_OFFSET(x)          (((x) << 7) & GENMASK(8, 7))
--#define HSIO_S6G_IB_CFG_IB_REG_PAT_SEL_OFFSET_M           GENMASK(8, 7)
--#define HSIO_S6G_IB_CFG_IB_REG_PAT_SEL_OFFSET_X(x)        (((x) & GENMASK(8, 7)) >> 7)
--#define HSIO_S6G_IB_CFG_IB_ANA_TEST_ENA                   BIT(6)
--#define HSIO_S6G_IB_CFG_IB_SIG_DET_ENA                    BIT(5)
--#define HSIO_S6G_IB_CFG_IB_CONCUR                         BIT(4)
--#define HSIO_S6G_IB_CFG_IB_CAL_ENA                        BIT(3)
--#define HSIO_S6G_IB_CFG_IB_SAM_ENA                        BIT(2)
--#define HSIO_S6G_IB_CFG_IB_EQZ_ENA                        BIT(1)
--#define HSIO_S6G_IB_CFG_IB_REG_ENA                        BIT(0)
--
--#define HSIO_S6G_IB_CFG1_IB_TJTAG(x)                      (((x) << 17) & GENMASK(21, 17))
--#define HSIO_S6G_IB_CFG1_IB_TJTAG_M                       GENMASK(21, 17)
--#define HSIO_S6G_IB_CFG1_IB_TJTAG_X(x)                    (((x) & GENMASK(21, 17)) >> 17)
--#define HSIO_S6G_IB_CFG1_IB_TSDET(x)                      (((x) << 12) & GENMASK(16, 12))
--#define HSIO_S6G_IB_CFG1_IB_TSDET_M                       GENMASK(16, 12)
--#define HSIO_S6G_IB_CFG1_IB_TSDET_X(x)                    (((x) & GENMASK(16, 12)) >> 12)
--#define HSIO_S6G_IB_CFG1_IB_SCALY(x)                      (((x) << 8) & GENMASK(11, 8))
--#define HSIO_S6G_IB_CFG1_IB_SCALY_M                       GENMASK(11, 8)
--#define HSIO_S6G_IB_CFG1_IB_SCALY_X(x)                    (((x) & GENMASK(11, 8)) >> 8)
--#define HSIO_S6G_IB_CFG1_IB_FILT_HP                       BIT(7)
--#define HSIO_S6G_IB_CFG1_IB_FILT_MID                      BIT(6)
--#define HSIO_S6G_IB_CFG1_IB_FILT_LP                       BIT(5)
--#define HSIO_S6G_IB_CFG1_IB_FILT_OFFSET                   BIT(4)
--#define HSIO_S6G_IB_CFG1_IB_FRC_HP                        BIT(3)
--#define HSIO_S6G_IB_CFG1_IB_FRC_MID                       BIT(2)
--#define HSIO_S6G_IB_CFG1_IB_FRC_LP                        BIT(1)
--#define HSIO_S6G_IB_CFG1_IB_FRC_OFFSET                    BIT(0)
--
--#define HSIO_S6G_IB_CFG2_IB_TINFV(x)                      (((x) << 27) & GENMASK(29, 27))
--#define HSIO_S6G_IB_CFG2_IB_TINFV_M                       GENMASK(29, 27)
--#define HSIO_S6G_IB_CFG2_IB_TINFV_X(x)                    (((x) & GENMASK(29, 27)) >> 27)
--#define HSIO_S6G_IB_CFG2_IB_OINFI(x)                      (((x) << 22) & GENMASK(26, 22))
--#define HSIO_S6G_IB_CFG2_IB_OINFI_M                       GENMASK(26, 22)
--#define HSIO_S6G_IB_CFG2_IB_OINFI_X(x)                    (((x) & GENMASK(26, 22)) >> 22)
--#define HSIO_S6G_IB_CFG2_IB_TAUX(x)                       (((x) << 19) & GENMASK(21, 19))
--#define HSIO_S6G_IB_CFG2_IB_TAUX_M                        GENMASK(21, 19)
--#define HSIO_S6G_IB_CFG2_IB_TAUX_X(x)                     (((x) & GENMASK(21, 19)) >> 19)
--#define HSIO_S6G_IB_CFG2_IB_OINFS(x)                      (((x) << 16) & GENMASK(18, 16))
--#define HSIO_S6G_IB_CFG2_IB_OINFS_M                       GENMASK(18, 16)
--#define HSIO_S6G_IB_CFG2_IB_OINFS_X(x)                    (((x) & GENMASK(18, 16)) >> 16)
--#define HSIO_S6G_IB_CFG2_IB_OCALS(x)                      (((x) << 10) & GENMASK(15, 10))
--#define HSIO_S6G_IB_CFG2_IB_OCALS_M                       GENMASK(15, 10)
--#define HSIO_S6G_IB_CFG2_IB_OCALS_X(x)                    (((x) & GENMASK(15, 10)) >> 10)
--#define HSIO_S6G_IB_CFG2_IB_TCALV(x)                      (((x) << 5) & GENMASK(9, 5))
--#define HSIO_S6G_IB_CFG2_IB_TCALV_M                       GENMASK(9, 5)
--#define HSIO_S6G_IB_CFG2_IB_TCALV_X(x)                    (((x) & GENMASK(9, 5)) >> 5)
--#define HSIO_S6G_IB_CFG2_IB_UMAX(x)                       (((x) << 3) & GENMASK(4, 3))
--#define HSIO_S6G_IB_CFG2_IB_UMAX_M                        GENMASK(4, 3)
--#define HSIO_S6G_IB_CFG2_IB_UMAX_X(x)                     (((x) & GENMASK(4, 3)) >> 3)
--#define HSIO_S6G_IB_CFG2_IB_UREG(x)                       ((x) & GENMASK(2, 0))
--#define HSIO_S6G_IB_CFG2_IB_UREG_M                        GENMASK(2, 0)
--
--#define HSIO_S6G_IB_CFG3_IB_INI_HP(x)                     (((x) << 18) & GENMASK(23, 18))
--#define HSIO_S6G_IB_CFG3_IB_INI_HP_M                      GENMASK(23, 18)
--#define HSIO_S6G_IB_CFG3_IB_INI_HP_X(x)                   (((x) & GENMASK(23, 18)) >> 18)
--#define HSIO_S6G_IB_CFG3_IB_INI_MID(x)                    (((x) << 12) & GENMASK(17, 12))
--#define HSIO_S6G_IB_CFG3_IB_INI_MID_M                     GENMASK(17, 12)
--#define HSIO_S6G_IB_CFG3_IB_INI_MID_X(x)                  (((x) & GENMASK(17, 12)) >> 12)
--#define HSIO_S6G_IB_CFG3_IB_INI_LP(x)                     (((x) << 6) & GENMASK(11, 6))
--#define HSIO_S6G_IB_CFG3_IB_INI_LP_M                      GENMASK(11, 6)
--#define HSIO_S6G_IB_CFG3_IB_INI_LP_X(x)                   (((x) & GENMASK(11, 6)) >> 6)
--#define HSIO_S6G_IB_CFG3_IB_INI_OFFSET(x)                 ((x) & GENMASK(5, 0))
--#define HSIO_S6G_IB_CFG3_IB_INI_OFFSET_M                  GENMASK(5, 0)
--
--#define HSIO_S6G_IB_CFG4_IB_MAX_HP(x)                     (((x) << 18) & GENMASK(23, 18))
--#define HSIO_S6G_IB_CFG4_IB_MAX_HP_M                      GENMASK(23, 18)
--#define HSIO_S6G_IB_CFG4_IB_MAX_HP_X(x)                   (((x) & GENMASK(23, 18)) >> 18)
--#define HSIO_S6G_IB_CFG4_IB_MAX_MID(x)                    (((x) << 12) & GENMASK(17, 12))
--#define HSIO_S6G_IB_CFG4_IB_MAX_MID_M                     GENMASK(17, 12)
--#define HSIO_S6G_IB_CFG4_IB_MAX_MID_X(x)                  (((x) & GENMASK(17, 12)) >> 12)
--#define HSIO_S6G_IB_CFG4_IB_MAX_LP(x)                     (((x) << 6) & GENMASK(11, 6))
--#define HSIO_S6G_IB_CFG4_IB_MAX_LP_M                      GENMASK(11, 6)
--#define HSIO_S6G_IB_CFG4_IB_MAX_LP_X(x)                   (((x) & GENMASK(11, 6)) >> 6)
--#define HSIO_S6G_IB_CFG4_IB_MAX_OFFSET(x)                 ((x) & GENMASK(5, 0))
--#define HSIO_S6G_IB_CFG4_IB_MAX_OFFSET_M                  GENMASK(5, 0)
--
--#define HSIO_S6G_IB_CFG5_IB_MIN_HP(x)                     (((x) << 18) & GENMASK(23, 18))
--#define HSIO_S6G_IB_CFG5_IB_MIN_HP_M                      GENMASK(23, 18)
--#define HSIO_S6G_IB_CFG5_IB_MIN_HP_X(x)                   (((x) & GENMASK(23, 18)) >> 18)
--#define HSIO_S6G_IB_CFG5_IB_MIN_MID(x)                    (((x) << 12) & GENMASK(17, 12))
--#define HSIO_S6G_IB_CFG5_IB_MIN_MID_M                     GENMASK(17, 12)
--#define HSIO_S6G_IB_CFG5_IB_MIN_MID_X(x)                  (((x) & GENMASK(17, 12)) >> 12)
--#define HSIO_S6G_IB_CFG5_IB_MIN_LP(x)                     (((x) << 6) & GENMASK(11, 6))
--#define HSIO_S6G_IB_CFG5_IB_MIN_LP_M                      GENMASK(11, 6)
--#define HSIO_S6G_IB_CFG5_IB_MIN_LP_X(x)                   (((x) & GENMASK(11, 6)) >> 6)
--#define HSIO_S6G_IB_CFG5_IB_MIN_OFFSET(x)                 ((x) & GENMASK(5, 0))
--#define HSIO_S6G_IB_CFG5_IB_MIN_OFFSET_M                  GENMASK(5, 0)
--
--#define HSIO_S6G_OB_CFG_OB_IDLE                           BIT(31)
--#define HSIO_S6G_OB_CFG_OB_ENA1V_MODE                     BIT(30)
--#define HSIO_S6G_OB_CFG_OB_POL                            BIT(29)
--#define HSIO_S6G_OB_CFG_OB_POST0(x)                       (((x) << 23) & GENMASK(28, 23))
--#define HSIO_S6G_OB_CFG_OB_POST0_M                        GENMASK(28, 23)
--#define HSIO_S6G_OB_CFG_OB_POST0_X(x)                     (((x) & GENMASK(28, 23)) >> 23)
--#define HSIO_S6G_OB_CFG_OB_PREC(x)                        (((x) << 18) & GENMASK(22, 18))
--#define HSIO_S6G_OB_CFG_OB_PREC_M                         GENMASK(22, 18)
--#define HSIO_S6G_OB_CFG_OB_PREC_X(x)                      (((x) & GENMASK(22, 18)) >> 18)
--#define HSIO_S6G_OB_CFG_OB_R_ADJ_MUX                      BIT(17)
--#define HSIO_S6G_OB_CFG_OB_R_ADJ_PDR                      BIT(16)
--#define HSIO_S6G_OB_CFG_OB_POST1(x)                       (((x) << 11) & GENMASK(15, 11))
--#define HSIO_S6G_OB_CFG_OB_POST1_M                        GENMASK(15, 11)
--#define HSIO_S6G_OB_CFG_OB_POST1_X(x)                     (((x) & GENMASK(15, 11)) >> 11)
--#define HSIO_S6G_OB_CFG_OB_R_COR                          BIT(10)
--#define HSIO_S6G_OB_CFG_OB_SEL_RCTRL                      BIT(9)
--#define HSIO_S6G_OB_CFG_OB_SR_H                           BIT(8)
--#define HSIO_S6G_OB_CFG_OB_SR(x)                          (((x) << 4) & GENMASK(7, 4))
--#define HSIO_S6G_OB_CFG_OB_SR_M                           GENMASK(7, 4)
--#define HSIO_S6G_OB_CFG_OB_SR_X(x)                        (((x) & GENMASK(7, 4)) >> 4)
--#define HSIO_S6G_OB_CFG_OB_RESISTOR_CTRL(x)               ((x) & GENMASK(3, 0))
--#define HSIO_S6G_OB_CFG_OB_RESISTOR_CTRL_M                GENMASK(3, 0)
--
--#define HSIO_S6G_OB_CFG1_OB_ENA_CAS(x)                    (((x) << 6) & GENMASK(8, 6))
--#define HSIO_S6G_OB_CFG1_OB_ENA_CAS_M                     GENMASK(8, 6)
--#define HSIO_S6G_OB_CFG1_OB_ENA_CAS_X(x)                  (((x) & GENMASK(8, 6)) >> 6)
--#define HSIO_S6G_OB_CFG1_OB_LEV(x)                        ((x) & GENMASK(5, 0))
--#define HSIO_S6G_OB_CFG1_OB_LEV_M                         GENMASK(5, 0)
--
--#define HSIO_S6G_SER_CFG_SER_4TAP_ENA                     BIT(8)
--#define HSIO_S6G_SER_CFG_SER_CPMD_SEL                     BIT(7)
--#define HSIO_S6G_SER_CFG_SER_SWAP_CPMD                    BIT(6)
--#define HSIO_S6G_SER_CFG_SER_ALISEL(x)                    (((x) << 4) & GENMASK(5, 4))
--#define HSIO_S6G_SER_CFG_SER_ALISEL_M                     GENMASK(5, 4)
--#define HSIO_S6G_SER_CFG_SER_ALISEL_X(x)                  (((x) & GENMASK(5, 4)) >> 4)
--#define HSIO_S6G_SER_CFG_SER_ENHYS                        BIT(3)
--#define HSIO_S6G_SER_CFG_SER_BIG_WIN                      BIT(2)
--#define HSIO_S6G_SER_CFG_SER_EN_WIN                       BIT(1)
--#define HSIO_S6G_SER_CFG_SER_ENALI                        BIT(0)
--
--#define HSIO_S6G_COMMON_CFG_SYS_RST                       BIT(17)
--#define HSIO_S6G_COMMON_CFG_SE_DIV2_ENA                   BIT(16)
--#define HSIO_S6G_COMMON_CFG_SE_AUTO_SQUELCH_ENA           BIT(15)
--#define HSIO_S6G_COMMON_CFG_ENA_LANE                      BIT(14)
--#define HSIO_S6G_COMMON_CFG_PWD_RX                        BIT(13)
--#define HSIO_S6G_COMMON_CFG_PWD_TX                        BIT(12)
--#define HSIO_S6G_COMMON_CFG_LANE_CTRL(x)                  (((x) << 9) & GENMASK(11, 9))
--#define HSIO_S6G_COMMON_CFG_LANE_CTRL_M                   GENMASK(11, 9)
--#define HSIO_S6G_COMMON_CFG_LANE_CTRL_X(x)                (((x) & GENMASK(11, 9)) >> 9)
--#define HSIO_S6G_COMMON_CFG_ENA_DIRECT                    BIT(8)
--#define HSIO_S6G_COMMON_CFG_ENA_ELOOP                     BIT(7)
--#define HSIO_S6G_COMMON_CFG_ENA_FLOOP                     BIT(6)
--#define HSIO_S6G_COMMON_CFG_ENA_ILOOP                     BIT(5)
--#define HSIO_S6G_COMMON_CFG_ENA_PLOOP                     BIT(4)
--#define HSIO_S6G_COMMON_CFG_HRATE                         BIT(3)
--#define HSIO_S6G_COMMON_CFG_QRATE                         BIT(2)
--#define HSIO_S6G_COMMON_CFG_IF_MODE(x)                    ((x) & GENMASK(1, 0))
--#define HSIO_S6G_COMMON_CFG_IF_MODE_M                     GENMASK(1, 0)
--
--#define HSIO_S6G_PLL_CFG_PLL_ENA_OFFS(x)                  (((x) << 16) & GENMASK(17, 16))
--#define HSIO_S6G_PLL_CFG_PLL_ENA_OFFS_M                   GENMASK(17, 16)
--#define HSIO_S6G_PLL_CFG_PLL_ENA_OFFS_X(x)                (((x) & GENMASK(17, 16)) >> 16)
--#define HSIO_S6G_PLL_CFG_PLL_DIV4                         BIT(15)
--#define HSIO_S6G_PLL_CFG_PLL_ENA_ROT                      BIT(14)
--#define HSIO_S6G_PLL_CFG_PLL_FSM_CTRL_DATA(x)             (((x) << 6) & GENMASK(13, 6))
--#define HSIO_S6G_PLL_CFG_PLL_FSM_CTRL_DATA_M              GENMASK(13, 6)
--#define HSIO_S6G_PLL_CFG_PLL_FSM_CTRL_DATA_X(x)           (((x) & GENMASK(13, 6)) >> 6)
--#define HSIO_S6G_PLL_CFG_PLL_FSM_ENA                      BIT(5)
--#define HSIO_S6G_PLL_CFG_PLL_FSM_FORCE_SET_ENA            BIT(4)
--#define HSIO_S6G_PLL_CFG_PLL_FSM_OOR_RECAL_ENA            BIT(3)
--#define HSIO_S6G_PLL_CFG_PLL_RB_DATA_SEL                  BIT(2)
--#define HSIO_S6G_PLL_CFG_PLL_ROT_DIR                      BIT(1)
--#define HSIO_S6G_PLL_CFG_PLL_ROT_FRQ                      BIT(0)
--
--#define HSIO_S6G_ACJTAG_CFG_ACJTAG_INIT_DATA_N            BIT(5)
--#define HSIO_S6G_ACJTAG_CFG_ACJTAG_INIT_DATA_P            BIT(4)
--#define HSIO_S6G_ACJTAG_CFG_ACJTAG_INIT_CLK               BIT(3)
--#define HSIO_S6G_ACJTAG_CFG_OB_DIRECT                     BIT(2)
--#define HSIO_S6G_ACJTAG_CFG_ACJTAG_ENA                    BIT(1)
--#define HSIO_S6G_ACJTAG_CFG_JTAG_CTRL_ENA                 BIT(0)
--
--#define HSIO_S6G_GP_CFG_GP_MSB(x)                         (((x) << 16) & GENMASK(31, 16))
--#define HSIO_S6G_GP_CFG_GP_MSB_M                          GENMASK(31, 16)
--#define HSIO_S6G_GP_CFG_GP_MSB_X(x)                       (((x) & GENMASK(31, 16)) >> 16)
--#define HSIO_S6G_GP_CFG_GP_LSB(x)                         ((x) & GENMASK(15, 0))
--#define HSIO_S6G_GP_CFG_GP_LSB_M                          GENMASK(15, 0)
--
--#define HSIO_S6G_IB_STATUS0_IB_CAL_DONE                   BIT(8)
--#define HSIO_S6G_IB_STATUS0_IB_HP_GAIN_ACT                BIT(7)
--#define HSIO_S6G_IB_STATUS0_IB_MID_GAIN_ACT               BIT(6)
--#define HSIO_S6G_IB_STATUS0_IB_LP_GAIN_ACT                BIT(5)
--#define HSIO_S6G_IB_STATUS0_IB_OFFSET_ACT                 BIT(4)
--#define HSIO_S6G_IB_STATUS0_IB_OFFSET_VLD                 BIT(3)
--#define HSIO_S6G_IB_STATUS0_IB_OFFSET_ERR                 BIT(2)
--#define HSIO_S6G_IB_STATUS0_IB_OFFSDIR                    BIT(1)
--#define HSIO_S6G_IB_STATUS0_IB_SIG_DET                    BIT(0)
--
--#define HSIO_S6G_IB_STATUS1_IB_HP_GAIN_STAT(x)            (((x) << 18) & GENMASK(23, 18))
--#define HSIO_S6G_IB_STATUS1_IB_HP_GAIN_STAT_M             GENMASK(23, 18)
--#define HSIO_S6G_IB_STATUS1_IB_HP_GAIN_STAT_X(x)          (((x) & GENMASK(23, 18)) >> 18)
--#define HSIO_S6G_IB_STATUS1_IB_MID_GAIN_STAT(x)           (((x) << 12) & GENMASK(17, 12))
--#define HSIO_S6G_IB_STATUS1_IB_MID_GAIN_STAT_M            GENMASK(17, 12)
--#define HSIO_S6G_IB_STATUS1_IB_MID_GAIN_STAT_X(x)         (((x) & GENMASK(17, 12)) >> 12)
--#define HSIO_S6G_IB_STATUS1_IB_LP_GAIN_STAT(x)            (((x) << 6) & GENMASK(11, 6))
--#define HSIO_S6G_IB_STATUS1_IB_LP_GAIN_STAT_M             GENMASK(11, 6)
--#define HSIO_S6G_IB_STATUS1_IB_LP_GAIN_STAT_X(x)          (((x) & GENMASK(11, 6)) >> 6)
--#define HSIO_S6G_IB_STATUS1_IB_OFFSET_STAT(x)             ((x) & GENMASK(5, 0))
--#define HSIO_S6G_IB_STATUS1_IB_OFFSET_STAT_M              GENMASK(5, 0)
--
--#define HSIO_S6G_ACJTAG_STATUS_ACJTAG_CAPT_DATA_N         BIT(2)
--#define HSIO_S6G_ACJTAG_STATUS_ACJTAG_CAPT_DATA_P         BIT(1)
--#define HSIO_S6G_ACJTAG_STATUS_IB_DIRECT                  BIT(0)
--
--#define HSIO_S6G_PLL_STATUS_PLL_CAL_NOT_DONE              BIT(10)
--#define HSIO_S6G_PLL_STATUS_PLL_CAL_ERR                   BIT(9)
--#define HSIO_S6G_PLL_STATUS_PLL_OUT_OF_RANGE_ERR          BIT(8)
--#define HSIO_S6G_PLL_STATUS_PLL_RB_DATA(x)                ((x) & GENMASK(7, 0))
--#define HSIO_S6G_PLL_STATUS_PLL_RB_DATA_M                 GENMASK(7, 0)
--
--#define HSIO_S6G_REVID_SERDES_REV(x)                      (((x) << 26) & GENMASK(31, 26))
--#define HSIO_S6G_REVID_SERDES_REV_M                       GENMASK(31, 26)
--#define HSIO_S6G_REVID_SERDES_REV_X(x)                    (((x) & GENMASK(31, 26)) >> 26)
--#define HSIO_S6G_REVID_RCPLL_REV(x)                       (((x) << 21) & GENMASK(25, 21))
--#define HSIO_S6G_REVID_RCPLL_REV_M                        GENMASK(25, 21)
--#define HSIO_S6G_REVID_RCPLL_REV_X(x)                     (((x) & GENMASK(25, 21)) >> 21)
--#define HSIO_S6G_REVID_SER_REV(x)                         (((x) << 16) & GENMASK(20, 16))
--#define HSIO_S6G_REVID_SER_REV_M                          GENMASK(20, 16)
--#define HSIO_S6G_REVID_SER_REV_X(x)                       (((x) & GENMASK(20, 16)) >> 16)
--#define HSIO_S6G_REVID_DES_REV(x)                         (((x) << 10) & GENMASK(15, 10))
--#define HSIO_S6G_REVID_DES_REV_M                          GENMASK(15, 10)
--#define HSIO_S6G_REVID_DES_REV_X(x)                       (((x) & GENMASK(15, 10)) >> 10)
--#define HSIO_S6G_REVID_OB_REV(x)                          (((x) << 5) & GENMASK(9, 5))
--#define HSIO_S6G_REVID_OB_REV_M                           GENMASK(9, 5)
--#define HSIO_S6G_REVID_OB_REV_X(x)                        (((x) & GENMASK(9, 5)) >> 5)
--#define HSIO_S6G_REVID_IB_REV(x)                          ((x) & GENMASK(4, 0))
--#define HSIO_S6G_REVID_IB_REV_M                           GENMASK(4, 0)
--
--#define HSIO_MCB_S6G_ADDR_CFG_SERDES6G_WR_ONE_SHOT        BIT(31)
--#define HSIO_MCB_S6G_ADDR_CFG_SERDES6G_RD_ONE_SHOT        BIT(30)
--#define HSIO_MCB_S6G_ADDR_CFG_SERDES6G_ADDR(x)            ((x) & GENMASK(24, 0))
--#define HSIO_MCB_S6G_ADDR_CFG_SERDES6G_ADDR_M             GENMASK(24, 0)
--
--#define HSIO_HW_CFG_DEV2G5_10_MODE                        BIT(6)
--#define HSIO_HW_CFG_DEV1G_9_MODE                          BIT(5)
--#define HSIO_HW_CFG_DEV1G_6_MODE                          BIT(4)
--#define HSIO_HW_CFG_DEV1G_5_MODE                          BIT(3)
--#define HSIO_HW_CFG_DEV1G_4_MODE                          BIT(2)
--#define HSIO_HW_CFG_PCIE_ENA                              BIT(1)
--#define HSIO_HW_CFG_QSGMII_ENA                            BIT(0)
--
--#define HSIO_HW_QSGMII_CFG_SHYST_DIS                      BIT(3)
--#define HSIO_HW_QSGMII_CFG_E_DET_ENA                      BIT(2)
--#define HSIO_HW_QSGMII_CFG_USE_I1_ENA                     BIT(1)
--#define HSIO_HW_QSGMII_CFG_FLIP_LANES                     BIT(0)
--
--#define HSIO_HW_QSGMII_STAT_DELAY_VAR_X200PS(x)           (((x) << 1) & GENMASK(6, 1))
--#define HSIO_HW_QSGMII_STAT_DELAY_VAR_X200PS_M            GENMASK(6, 1)
--#define HSIO_HW_QSGMII_STAT_DELAY_VAR_X200PS_X(x)         (((x) & GENMASK(6, 1)) >> 1)
--#define HSIO_HW_QSGMII_STAT_SYNC                          BIT(0)
--
--#define HSIO_CLK_CFG_CLKDIV_PHY(x)                        (((x) << 1) & GENMASK(8, 1))
--#define HSIO_CLK_CFG_CLKDIV_PHY_M                         GENMASK(8, 1)
--#define HSIO_CLK_CFG_CLKDIV_PHY_X(x)                      (((x) & GENMASK(8, 1)) >> 1)
--#define HSIO_CLK_CFG_CLKDIV_PHY_DIS                       BIT(0)
--
--#define HSIO_TEMP_SENSOR_CTRL_FORCE_TEMP_RD               BIT(5)
--#define HSIO_TEMP_SENSOR_CTRL_FORCE_RUN                   BIT(4)
--#define HSIO_TEMP_SENSOR_CTRL_FORCE_NO_RST                BIT(3)
--#define HSIO_TEMP_SENSOR_CTRL_FORCE_POWER_UP              BIT(2)
--#define HSIO_TEMP_SENSOR_CTRL_FORCE_CLK                   BIT(1)
--#define HSIO_TEMP_SENSOR_CTRL_SAMPLE_ENA                  BIT(0)
--
--#define HSIO_TEMP_SENSOR_CFG_RUN_WID(x)                   (((x) << 8) & GENMASK(15, 8))
--#define HSIO_TEMP_SENSOR_CFG_RUN_WID_M                    GENMASK(15, 8)
--#define HSIO_TEMP_SENSOR_CFG_RUN_WID_X(x)                 (((x) & GENMASK(15, 8)) >> 8)
--#define HSIO_TEMP_SENSOR_CFG_SAMPLE_PER(x)                ((x) & GENMASK(7, 0))
--#define HSIO_TEMP_SENSOR_CFG_SAMPLE_PER_M                 GENMASK(7, 0)
--
--#define HSIO_TEMP_SENSOR_STAT_TEMP_VALID                  BIT(8)
--#define HSIO_TEMP_SENSOR_STAT_TEMP(x)                     ((x) & GENMASK(7, 0))
--#define HSIO_TEMP_SENSOR_STAT_TEMP_M                      GENMASK(7, 0)
--
--#endif
-diff --git a/drivers/net/ethernet/mscc/ocelot_regs.c b/drivers/net/ethernet/mscc/ocelot_regs.c
-index e334b40..bf0c609 100644
---- a/drivers/net/ethernet/mscc/ocelot_regs.c
-+++ b/drivers/net/ethernet/mscc/ocelot_regs.c
-@@ -5,6 +5,7 @@
-  * Copyright (c) 2017 Microsemi Corporation
+@@ -453,6 +455,9 @@ struct ocelot_port {
+ 	u8 vlan_aware;
+ 
+ 	u64 *stats;
++
++	phy_interface_t phy_mode;
++	struct phy *serdes;
+ };
+ 
+ u32 __ocelot_read_ix(struct ocelot *ocelot, u32 reg, u32 offset);
+diff --git a/drivers/net/ethernet/mscc/ocelot_board.c b/drivers/net/ethernet/mscc/ocelot_board.c
+index b7d755b..3bb71b7 100644
+--- a/drivers/net/ethernet/mscc/ocelot_board.c
++++ b/drivers/net/ethernet/mscc/ocelot_board.c
+@@ -6,6 +6,7 @@
   */
- #include "ocelot.h"
-+#include <soc/mscc/ocelot_hsio.h>
+ #include <linux/interrupt.h>
+ #include <linux/module.h>
++#include <linux/of_net.h>
+ #include <linux/netdevice.h>
+ #include <linux/of_mdio.h>
+ #include <linux/of_platform.h>
+@@ -247,18 +248,12 @@ static int mscc_ocelot_probe(struct platform_device *pdev)
+ 	INIT_LIST_HEAD(&ocelot->multicast);
+ 	ocelot_init(ocelot);
  
- static const u32 ocelot_ana_regmap[] = {
- 	REG(ANA_ADVLEARN,                  0x009000),
-diff --git a/include/soc/mscc/ocelot_hsio.h b/include/soc/mscc/ocelot_hsio.h
-new file mode 100644
-index 0000000..d93ddec
---- /dev/null
-+++ b/include/soc/mscc/ocelot_hsio.h
-@@ -0,0 +1,785 @@
-+/* SPDX-License-Identifier: (GPL-2.0 OR MIT) */
-+/*
-+ * Microsemi Ocelot Switch driver
-+ *
-+ * Copyright (c) 2017 Microsemi Corporation
-+ */
-+
-+#ifndef _MSCC_OCELOT_HSIO_H_
-+#define _MSCC_OCELOT_HSIO_H_
-+
-+#define HSIO_PLL5G_CFG0_ENA_ROT                           BIT(31)
-+#define HSIO_PLL5G_CFG0_ENA_LANE                          BIT(30)
-+#define HSIO_PLL5G_CFG0_ENA_CLKTREE                       BIT(29)
-+#define HSIO_PLL5G_CFG0_DIV4                              BIT(28)
-+#define HSIO_PLL5G_CFG0_ENA_LOCK_FINE                     BIT(27)
-+#define HSIO_PLL5G_CFG0_SELBGV820(x)                      (((x) << 23) & GENMASK(26, 23))
-+#define HSIO_PLL5G_CFG0_SELBGV820_M                       GENMASK(26, 23)
-+#define HSIO_PLL5G_CFG0_SELBGV820_X(x)                    (((x) & GENMASK(26, 23)) >> 23)
-+#define HSIO_PLL5G_CFG0_LOOP_BW_RES(x)                    (((x) << 18) & GENMASK(22, 18))
-+#define HSIO_PLL5G_CFG0_LOOP_BW_RES_M                     GENMASK(22, 18)
-+#define HSIO_PLL5G_CFG0_LOOP_BW_RES_X(x)                  (((x) & GENMASK(22, 18)) >> 18)
-+#define HSIO_PLL5G_CFG0_SELCPI(x)                         (((x) << 16) & GENMASK(17, 16))
-+#define HSIO_PLL5G_CFG0_SELCPI_M                          GENMASK(17, 16)
-+#define HSIO_PLL5G_CFG0_SELCPI_X(x)                       (((x) & GENMASK(17, 16)) >> 16)
-+#define HSIO_PLL5G_CFG0_ENA_VCO_CONTRH                    BIT(15)
-+#define HSIO_PLL5G_CFG0_ENA_CP1                           BIT(14)
-+#define HSIO_PLL5G_CFG0_ENA_VCO_BUF                       BIT(13)
-+#define HSIO_PLL5G_CFG0_ENA_BIAS                          BIT(12)
-+#define HSIO_PLL5G_CFG0_CPU_CLK_DIV(x)                    (((x) << 6) & GENMASK(11, 6))
-+#define HSIO_PLL5G_CFG0_CPU_CLK_DIV_M                     GENMASK(11, 6)
-+#define HSIO_PLL5G_CFG0_CPU_CLK_DIV_X(x)                  (((x) & GENMASK(11, 6)) >> 6)
-+#define HSIO_PLL5G_CFG0_CORE_CLK_DIV(x)                   ((x) & GENMASK(5, 0))
-+#define HSIO_PLL5G_CFG0_CORE_CLK_DIV_M                    GENMASK(5, 0)
-+
-+#define HSIO_PLL5G_CFG1_ENA_DIRECT                        BIT(18)
-+#define HSIO_PLL5G_CFG1_ROT_SPEED                         BIT(17)
-+#define HSIO_PLL5G_CFG1_ROT_DIR                           BIT(16)
-+#define HSIO_PLL5G_CFG1_READBACK_DATA_SEL                 BIT(15)
-+#define HSIO_PLL5G_CFG1_RC_ENABLE                         BIT(14)
-+#define HSIO_PLL5G_CFG1_RC_CTRL_DATA(x)                   (((x) << 6) & GENMASK(13, 6))
-+#define HSIO_PLL5G_CFG1_RC_CTRL_DATA_M                    GENMASK(13, 6)
-+#define HSIO_PLL5G_CFG1_RC_CTRL_DATA_X(x)                 (((x) & GENMASK(13, 6)) >> 6)
-+#define HSIO_PLL5G_CFG1_QUARTER_RATE                      BIT(5)
-+#define HSIO_PLL5G_CFG1_PWD_TX                            BIT(4)
-+#define HSIO_PLL5G_CFG1_PWD_RX                            BIT(3)
-+#define HSIO_PLL5G_CFG1_OUT_OF_RANGE_RECAL_ENA            BIT(2)
-+#define HSIO_PLL5G_CFG1_HALF_RATE                         BIT(1)
-+#define HSIO_PLL5G_CFG1_FORCE_SET_ENA                     BIT(0)
-+
-+#define HSIO_PLL5G_CFG2_ENA_TEST_MODE                     BIT(30)
-+#define HSIO_PLL5G_CFG2_ENA_PFD_IN_FLIP                   BIT(29)
-+#define HSIO_PLL5G_CFG2_ENA_VCO_NREF_TESTOUT              BIT(28)
-+#define HSIO_PLL5G_CFG2_ENA_FBTESTOUT                     BIT(27)
-+#define HSIO_PLL5G_CFG2_ENA_RCPLL                         BIT(26)
-+#define HSIO_PLL5G_CFG2_ENA_CP2                           BIT(25)
-+#define HSIO_PLL5G_CFG2_ENA_CLK_BYPASS1                   BIT(24)
-+#define HSIO_PLL5G_CFG2_AMPC_SEL(x)                       (((x) << 16) & GENMASK(23, 16))
-+#define HSIO_PLL5G_CFG2_AMPC_SEL_M                        GENMASK(23, 16)
-+#define HSIO_PLL5G_CFG2_AMPC_SEL_X(x)                     (((x) & GENMASK(23, 16)) >> 16)
-+#define HSIO_PLL5G_CFG2_ENA_CLK_BYPASS                    BIT(15)
-+#define HSIO_PLL5G_CFG2_PWD_AMPCTRL_N                     BIT(14)
-+#define HSIO_PLL5G_CFG2_ENA_AMPCTRL                       BIT(13)
-+#define HSIO_PLL5G_CFG2_ENA_AMP_CTRL_FORCE                BIT(12)
-+#define HSIO_PLL5G_CFG2_FRC_FSM_POR                       BIT(11)
-+#define HSIO_PLL5G_CFG2_DISABLE_FSM_POR                   BIT(10)
-+#define HSIO_PLL5G_CFG2_GAIN_TEST(x)                      (((x) << 5) & GENMASK(9, 5))
-+#define HSIO_PLL5G_CFG2_GAIN_TEST_M                       GENMASK(9, 5)
-+#define HSIO_PLL5G_CFG2_GAIN_TEST_X(x)                    (((x) & GENMASK(9, 5)) >> 5)
-+#define HSIO_PLL5G_CFG2_EN_RESET_OVERRUN                  BIT(4)
-+#define HSIO_PLL5G_CFG2_EN_RESET_LIM_DET                  BIT(3)
-+#define HSIO_PLL5G_CFG2_EN_RESET_FRQ_DET                  BIT(2)
-+#define HSIO_PLL5G_CFG2_DISABLE_FSM                       BIT(1)
-+#define HSIO_PLL5G_CFG2_ENA_GAIN_TEST                     BIT(0)
-+
-+#define HSIO_PLL5G_CFG3_TEST_ANA_OUT_SEL(x)               (((x) << 22) & GENMASK(23, 22))
-+#define HSIO_PLL5G_CFG3_TEST_ANA_OUT_SEL_M                GENMASK(23, 22)
-+#define HSIO_PLL5G_CFG3_TEST_ANA_OUT_SEL_X(x)             (((x) & GENMASK(23, 22)) >> 22)
-+#define HSIO_PLL5G_CFG3_TESTOUT_SEL(x)                    (((x) << 19) & GENMASK(21, 19))
-+#define HSIO_PLL5G_CFG3_TESTOUT_SEL_M                     GENMASK(21, 19)
-+#define HSIO_PLL5G_CFG3_TESTOUT_SEL_X(x)                  (((x) & GENMASK(21, 19)) >> 19)
-+#define HSIO_PLL5G_CFG3_ENA_ANA_TEST_OUT                  BIT(18)
-+#define HSIO_PLL5G_CFG3_ENA_TEST_OUT                      BIT(17)
-+#define HSIO_PLL5G_CFG3_SEL_FBDCLK                        BIT(16)
-+#define HSIO_PLL5G_CFG3_SEL_CML_CMOS_PFD                  BIT(15)
-+#define HSIO_PLL5G_CFG3_RST_FB_N                          BIT(14)
-+#define HSIO_PLL5G_CFG3_FORCE_VCO_CONTRH                  BIT(13)
-+#define HSIO_PLL5G_CFG3_FORCE_LO                          BIT(12)
-+#define HSIO_PLL5G_CFG3_FORCE_HI                          BIT(11)
-+#define HSIO_PLL5G_CFG3_FORCE_ENA                         BIT(10)
-+#define HSIO_PLL5G_CFG3_FORCE_CP                          BIT(9)
-+#define HSIO_PLL5G_CFG3_FBDIVSEL_TST_ENA                  BIT(8)
-+#define HSIO_PLL5G_CFG3_FBDIVSEL(x)                       ((x) & GENMASK(7, 0))
-+#define HSIO_PLL5G_CFG3_FBDIVSEL_M                        GENMASK(7, 0)
-+
-+#define HSIO_PLL5G_CFG4_IB_BIAS_CTRL(x)                   (((x) << 16) & GENMASK(23, 16))
-+#define HSIO_PLL5G_CFG4_IB_BIAS_CTRL_M                    GENMASK(23, 16)
-+#define HSIO_PLL5G_CFG4_IB_BIAS_CTRL_X(x)                 (((x) & GENMASK(23, 16)) >> 16)
-+#define HSIO_PLL5G_CFG4_IB_CTRL(x)                        ((x) & GENMASK(15, 0))
-+#define HSIO_PLL5G_CFG4_IB_CTRL_M                         GENMASK(15, 0)
-+
-+#define HSIO_PLL5G_CFG5_OB_BIAS_CTRL(x)                   (((x) << 16) & GENMASK(23, 16))
-+#define HSIO_PLL5G_CFG5_OB_BIAS_CTRL_M                    GENMASK(23, 16)
-+#define HSIO_PLL5G_CFG5_OB_BIAS_CTRL_X(x)                 (((x) & GENMASK(23, 16)) >> 16)
-+#define HSIO_PLL5G_CFG5_OB_CTRL(x)                        ((x) & GENMASK(15, 0))
-+#define HSIO_PLL5G_CFG5_OB_CTRL_M                         GENMASK(15, 0)
-+
-+#define HSIO_PLL5G_CFG6_REFCLK_SEL_SRC                    BIT(23)
-+#define HSIO_PLL5G_CFG6_REFCLK_SEL(x)                     (((x) << 20) & GENMASK(22, 20))
-+#define HSIO_PLL5G_CFG6_REFCLK_SEL_M                      GENMASK(22, 20)
-+#define HSIO_PLL5G_CFG6_REFCLK_SEL_X(x)                   (((x) & GENMASK(22, 20)) >> 20)
-+#define HSIO_PLL5G_CFG6_REFCLK_SRC                        BIT(19)
-+#define HSIO_PLL5G_CFG6_POR_DEL_SEL(x)                    (((x) << 16) & GENMASK(17, 16))
-+#define HSIO_PLL5G_CFG6_POR_DEL_SEL_M                     GENMASK(17, 16)
-+#define HSIO_PLL5G_CFG6_POR_DEL_SEL_X(x)                  (((x) & GENMASK(17, 16)) >> 16)
-+#define HSIO_PLL5G_CFG6_DIV125REF_SEL(x)                  (((x) << 8) & GENMASK(15, 8))
-+#define HSIO_PLL5G_CFG6_DIV125REF_SEL_M                   GENMASK(15, 8)
-+#define HSIO_PLL5G_CFG6_DIV125REF_SEL_X(x)                (((x) & GENMASK(15, 8)) >> 8)
-+#define HSIO_PLL5G_CFG6_ENA_REFCLKC2                      BIT(7)
-+#define HSIO_PLL5G_CFG6_ENA_FBCLKC2                       BIT(6)
-+#define HSIO_PLL5G_CFG6_DDR_CLK_DIV(x)                    ((x) & GENMASK(5, 0))
-+#define HSIO_PLL5G_CFG6_DDR_CLK_DIV_M                     GENMASK(5, 0)
-+
-+#define HSIO_PLL5G_STATUS0_RANGE_LIM                      BIT(12)
-+#define HSIO_PLL5G_STATUS0_OUT_OF_RANGE_ERR               BIT(11)
-+#define HSIO_PLL5G_STATUS0_CALIBRATION_ERR                BIT(10)
-+#define HSIO_PLL5G_STATUS0_CALIBRATION_DONE               BIT(9)
-+#define HSIO_PLL5G_STATUS0_READBACK_DATA(x)               (((x) << 1) & GENMASK(8, 1))
-+#define HSIO_PLL5G_STATUS0_READBACK_DATA_M                GENMASK(8, 1)
-+#define HSIO_PLL5G_STATUS0_READBACK_DATA_X(x)             (((x) & GENMASK(8, 1)) >> 1)
-+#define HSIO_PLL5G_STATUS0_LOCK_STATUS                    BIT(0)
-+
-+#define HSIO_PLL5G_STATUS1_SIG_DEL(x)                     (((x) << 21) & GENMASK(28, 21))
-+#define HSIO_PLL5G_STATUS1_SIG_DEL_M                      GENMASK(28, 21)
-+#define HSIO_PLL5G_STATUS1_SIG_DEL_X(x)                   (((x) & GENMASK(28, 21)) >> 21)
-+#define HSIO_PLL5G_STATUS1_GAIN_STAT(x)                   (((x) << 16) & GENMASK(20, 16))
-+#define HSIO_PLL5G_STATUS1_GAIN_STAT_M                    GENMASK(20, 16)
-+#define HSIO_PLL5G_STATUS1_GAIN_STAT_X(x)                 (((x) & GENMASK(20, 16)) >> 16)
-+#define HSIO_PLL5G_STATUS1_FBCNT_DIF(x)                   (((x) << 4) & GENMASK(13, 4))
-+#define HSIO_PLL5G_STATUS1_FBCNT_DIF_M                    GENMASK(13, 4)
-+#define HSIO_PLL5G_STATUS1_FBCNT_DIF_X(x)                 (((x) & GENMASK(13, 4)) >> 4)
-+#define HSIO_PLL5G_STATUS1_FSM_STAT(x)                    (((x) << 1) & GENMASK(3, 1))
-+#define HSIO_PLL5G_STATUS1_FSM_STAT_M                     GENMASK(3, 1)
-+#define HSIO_PLL5G_STATUS1_FSM_STAT_X(x)                  (((x) & GENMASK(3, 1)) >> 1)
-+#define HSIO_PLL5G_STATUS1_FSM_LOCK                       BIT(0)
-+
-+#define HSIO_PLL5G_BIST_CFG0_PLLB_START_BIST              BIT(31)
-+#define HSIO_PLL5G_BIST_CFG0_PLLB_MEAS_MODE               BIT(30)
-+#define HSIO_PLL5G_BIST_CFG0_PLLB_LOCK_REPEAT(x)          (((x) << 20) & GENMASK(23, 20))
-+#define HSIO_PLL5G_BIST_CFG0_PLLB_LOCK_REPEAT_M           GENMASK(23, 20)
-+#define HSIO_PLL5G_BIST_CFG0_PLLB_LOCK_REPEAT_X(x)        (((x) & GENMASK(23, 20)) >> 20)
-+#define HSIO_PLL5G_BIST_CFG0_PLLB_LOCK_UNCERT(x)          (((x) << 16) & GENMASK(19, 16))
-+#define HSIO_PLL5G_BIST_CFG0_PLLB_LOCK_UNCERT_M           GENMASK(19, 16)
-+#define HSIO_PLL5G_BIST_CFG0_PLLB_LOCK_UNCERT_X(x)        (((x) & GENMASK(19, 16)) >> 16)
-+#define HSIO_PLL5G_BIST_CFG0_PLLB_DIV_FACTOR_PRE(x)       ((x) & GENMASK(15, 0))
-+#define HSIO_PLL5G_BIST_CFG0_PLLB_DIV_FACTOR_PRE_M        GENMASK(15, 0)
-+
-+#define HSIO_PLL5G_BIST_STAT0_PLLB_FSM_STAT(x)            (((x) << 4) & GENMASK(7, 4))
-+#define HSIO_PLL5G_BIST_STAT0_PLLB_FSM_STAT_M             GENMASK(7, 4)
-+#define HSIO_PLL5G_BIST_STAT0_PLLB_FSM_STAT_X(x)          (((x) & GENMASK(7, 4)) >> 4)
-+#define HSIO_PLL5G_BIST_STAT0_PLLB_BUSY                   BIT(2)
-+#define HSIO_PLL5G_BIST_STAT0_PLLB_DONE_N                 BIT(1)
-+#define HSIO_PLL5G_BIST_STAT0_PLLB_FAIL                   BIT(0)
-+
-+#define HSIO_PLL5G_BIST_STAT1_PLLB_CNT_OUT(x)             (((x) << 16) & GENMASK(31, 16))
-+#define HSIO_PLL5G_BIST_STAT1_PLLB_CNT_OUT_M              GENMASK(31, 16)
-+#define HSIO_PLL5G_BIST_STAT1_PLLB_CNT_OUT_X(x)           (((x) & GENMASK(31, 16)) >> 16)
-+#define HSIO_PLL5G_BIST_STAT1_PLLB_CNT_REF_DIFF(x)        ((x) & GENMASK(15, 0))
-+#define HSIO_PLL5G_BIST_STAT1_PLLB_CNT_REF_DIFF_M         GENMASK(15, 0)
-+
-+#define HSIO_RCOMP_CFG0_PWD_ENA                           BIT(13)
-+#define HSIO_RCOMP_CFG0_RUN_CAL                           BIT(12)
-+#define HSIO_RCOMP_CFG0_SPEED_SEL(x)                      (((x) << 10) & GENMASK(11, 10))
-+#define HSIO_RCOMP_CFG0_SPEED_SEL_M                       GENMASK(11, 10)
-+#define HSIO_RCOMP_CFG0_SPEED_SEL_X(x)                    (((x) & GENMASK(11, 10)) >> 10)
-+#define HSIO_RCOMP_CFG0_MODE_SEL(x)                       (((x) << 8) & GENMASK(9, 8))
-+#define HSIO_RCOMP_CFG0_MODE_SEL_M                        GENMASK(9, 8)
-+#define HSIO_RCOMP_CFG0_MODE_SEL_X(x)                     (((x) & GENMASK(9, 8)) >> 8)
-+#define HSIO_RCOMP_CFG0_FORCE_ENA                         BIT(4)
-+#define HSIO_RCOMP_CFG0_RCOMP_VAL(x)                      ((x) & GENMASK(3, 0))
-+#define HSIO_RCOMP_CFG0_RCOMP_VAL_M                       GENMASK(3, 0)
-+
-+#define HSIO_RCOMP_STATUS_BUSY                            BIT(12)
-+#define HSIO_RCOMP_STATUS_DELTA_ALERT                     BIT(7)
-+#define HSIO_RCOMP_STATUS_RCOMP(x)                        ((x) & GENMASK(3, 0))
-+#define HSIO_RCOMP_STATUS_RCOMP_M                         GENMASK(3, 0)
-+
-+#define HSIO_SYNC_ETH_CFG_RSZ                             0x4
-+
-+#define HSIO_SYNC_ETH_CFG_SEL_RECO_CLK_SRC(x)             (((x) << 4) & GENMASK(7, 4))
-+#define HSIO_SYNC_ETH_CFG_SEL_RECO_CLK_SRC_M              GENMASK(7, 4)
-+#define HSIO_SYNC_ETH_CFG_SEL_RECO_CLK_SRC_X(x)           (((x) & GENMASK(7, 4)) >> 4)
-+#define HSIO_SYNC_ETH_CFG_SEL_RECO_CLK_DIV(x)             (((x) << 1) & GENMASK(3, 1))
-+#define HSIO_SYNC_ETH_CFG_SEL_RECO_CLK_DIV_M              GENMASK(3, 1)
-+#define HSIO_SYNC_ETH_CFG_SEL_RECO_CLK_DIV_X(x)           (((x) & GENMASK(3, 1)) >> 1)
-+#define HSIO_SYNC_ETH_CFG_RECO_CLK_ENA                    BIT(0)
-+
-+#define HSIO_SYNC_ETH_PLL_CFG_PLL_AUTO_SQUELCH_ENA        BIT(0)
-+
-+#define HSIO_S1G_DES_CFG_DES_PHS_CTRL(x)                  (((x) << 13) & GENMASK(16, 13))
-+#define HSIO_S1G_DES_CFG_DES_PHS_CTRL_M                   GENMASK(16, 13)
-+#define HSIO_S1G_DES_CFG_DES_PHS_CTRL_X(x)                (((x) & GENMASK(16, 13)) >> 13)
-+#define HSIO_S1G_DES_CFG_DES_CPMD_SEL(x)                  (((x) << 11) & GENMASK(12, 11))
-+#define HSIO_S1G_DES_CFG_DES_CPMD_SEL_M                   GENMASK(12, 11)
-+#define HSIO_S1G_DES_CFG_DES_CPMD_SEL_X(x)                (((x) & GENMASK(12, 11)) >> 11)
-+#define HSIO_S1G_DES_CFG_DES_MBTR_CTRL(x)                 (((x) << 8) & GENMASK(10, 8))
-+#define HSIO_S1G_DES_CFG_DES_MBTR_CTRL_M                  GENMASK(10, 8)
-+#define HSIO_S1G_DES_CFG_DES_MBTR_CTRL_X(x)               (((x) & GENMASK(10, 8)) >> 8)
-+#define HSIO_S1G_DES_CFG_DES_BW_ANA(x)                    (((x) << 5) & GENMASK(7, 5))
-+#define HSIO_S1G_DES_CFG_DES_BW_ANA_M                     GENMASK(7, 5)
-+#define HSIO_S1G_DES_CFG_DES_BW_ANA_X(x)                  (((x) & GENMASK(7, 5)) >> 5)
-+#define HSIO_S1G_DES_CFG_DES_SWAP_ANA                     BIT(4)
-+#define HSIO_S1G_DES_CFG_DES_BW_HYST(x)                   (((x) << 1) & GENMASK(3, 1))
-+#define HSIO_S1G_DES_CFG_DES_BW_HYST_M                    GENMASK(3, 1)
-+#define HSIO_S1G_DES_CFG_DES_BW_HYST_X(x)                 (((x) & GENMASK(3, 1)) >> 1)
-+#define HSIO_S1G_DES_CFG_DES_SWAP_HYST                    BIT(0)
-+
-+#define HSIO_S1G_IB_CFG_IB_FX100_ENA                      BIT(27)
-+#define HSIO_S1G_IB_CFG_ACJTAG_HYST(x)                    (((x) << 24) & GENMASK(26, 24))
-+#define HSIO_S1G_IB_CFG_ACJTAG_HYST_M                     GENMASK(26, 24)
-+#define HSIO_S1G_IB_CFG_ACJTAG_HYST_X(x)                  (((x) & GENMASK(26, 24)) >> 24)
-+#define HSIO_S1G_IB_CFG_IB_DET_LEV(x)                     (((x) << 19) & GENMASK(21, 19))
-+#define HSIO_S1G_IB_CFG_IB_DET_LEV_M                      GENMASK(21, 19)
-+#define HSIO_S1G_IB_CFG_IB_DET_LEV_X(x)                   (((x) & GENMASK(21, 19)) >> 19)
-+#define HSIO_S1G_IB_CFG_IB_HYST_LEV                       BIT(14)
-+#define HSIO_S1G_IB_CFG_IB_ENA_CMV_TERM                   BIT(13)
-+#define HSIO_S1G_IB_CFG_IB_ENA_DC_COUPLING                BIT(12)
-+#define HSIO_S1G_IB_CFG_IB_ENA_DETLEV                     BIT(11)
-+#define HSIO_S1G_IB_CFG_IB_ENA_HYST                       BIT(10)
-+#define HSIO_S1G_IB_CFG_IB_ENA_OFFSET_COMP                BIT(9)
-+#define HSIO_S1G_IB_CFG_IB_EQ_GAIN(x)                     (((x) << 6) & GENMASK(8, 6))
-+#define HSIO_S1G_IB_CFG_IB_EQ_GAIN_M                      GENMASK(8, 6)
-+#define HSIO_S1G_IB_CFG_IB_EQ_GAIN_X(x)                   (((x) & GENMASK(8, 6)) >> 6)
-+#define HSIO_S1G_IB_CFG_IB_SEL_CORNER_FREQ(x)             (((x) << 4) & GENMASK(5, 4))
-+#define HSIO_S1G_IB_CFG_IB_SEL_CORNER_FREQ_M              GENMASK(5, 4)
-+#define HSIO_S1G_IB_CFG_IB_SEL_CORNER_FREQ_X(x)           (((x) & GENMASK(5, 4)) >> 4)
-+#define HSIO_S1G_IB_CFG_IB_RESISTOR_CTRL(x)               ((x) & GENMASK(3, 0))
-+#define HSIO_S1G_IB_CFG_IB_RESISTOR_CTRL_M                GENMASK(3, 0)
-+
-+#define HSIO_S1G_OB_CFG_OB_SLP(x)                         (((x) << 17) & GENMASK(18, 17))
-+#define HSIO_S1G_OB_CFG_OB_SLP_M                          GENMASK(18, 17)
-+#define HSIO_S1G_OB_CFG_OB_SLP_X(x)                       (((x) & GENMASK(18, 17)) >> 17)
-+#define HSIO_S1G_OB_CFG_OB_AMP_CTRL(x)                    (((x) << 13) & GENMASK(16, 13))
-+#define HSIO_S1G_OB_CFG_OB_AMP_CTRL_M                     GENMASK(16, 13)
-+#define HSIO_S1G_OB_CFG_OB_AMP_CTRL_X(x)                  (((x) & GENMASK(16, 13)) >> 13)
-+#define HSIO_S1G_OB_CFG_OB_CMM_BIAS_CTRL(x)               (((x) << 10) & GENMASK(12, 10))
-+#define HSIO_S1G_OB_CFG_OB_CMM_BIAS_CTRL_M                GENMASK(12, 10)
-+#define HSIO_S1G_OB_CFG_OB_CMM_BIAS_CTRL_X(x)             (((x) & GENMASK(12, 10)) >> 10)
-+#define HSIO_S1G_OB_CFG_OB_DIS_VCM_CTRL                   BIT(9)
-+#define HSIO_S1G_OB_CFG_OB_EN_MEAS_VREG                   BIT(8)
-+#define HSIO_S1G_OB_CFG_OB_VCM_CTRL(x)                    (((x) << 4) & GENMASK(7, 4))
-+#define HSIO_S1G_OB_CFG_OB_VCM_CTRL_M                     GENMASK(7, 4)
-+#define HSIO_S1G_OB_CFG_OB_VCM_CTRL_X(x)                  (((x) & GENMASK(7, 4)) >> 4)
-+#define HSIO_S1G_OB_CFG_OB_RESISTOR_CTRL(x)               ((x) & GENMASK(3, 0))
-+#define HSIO_S1G_OB_CFG_OB_RESISTOR_CTRL_M                GENMASK(3, 0)
-+
-+#define HSIO_S1G_SER_CFG_SER_IDLE                         BIT(9)
-+#define HSIO_S1G_SER_CFG_SER_DEEMPH                       BIT(8)
-+#define HSIO_S1G_SER_CFG_SER_CPMD_SEL                     BIT(7)
-+#define HSIO_S1G_SER_CFG_SER_SWAP_CPMD                    BIT(6)
-+#define HSIO_S1G_SER_CFG_SER_ALISEL(x)                    (((x) << 4) & GENMASK(5, 4))
-+#define HSIO_S1G_SER_CFG_SER_ALISEL_M                     GENMASK(5, 4)
-+#define HSIO_S1G_SER_CFG_SER_ALISEL_X(x)                  (((x) & GENMASK(5, 4)) >> 4)
-+#define HSIO_S1G_SER_CFG_SER_ENHYS                        BIT(3)
-+#define HSIO_S1G_SER_CFG_SER_BIG_WIN                      BIT(2)
-+#define HSIO_S1G_SER_CFG_SER_EN_WIN                       BIT(1)
-+#define HSIO_S1G_SER_CFG_SER_ENALI                        BIT(0)
-+
-+#define HSIO_S1G_COMMON_CFG_SYS_RST                       BIT(31)
-+#define HSIO_S1G_COMMON_CFG_SE_AUTO_SQUELCH_ENA           BIT(21)
-+#define HSIO_S1G_COMMON_CFG_ENA_LANE                      BIT(18)
-+#define HSIO_S1G_COMMON_CFG_PWD_RX                        BIT(17)
-+#define HSIO_S1G_COMMON_CFG_PWD_TX                        BIT(16)
-+#define HSIO_S1G_COMMON_CFG_LANE_CTRL(x)                  (((x) << 13) & GENMASK(15, 13))
-+#define HSIO_S1G_COMMON_CFG_LANE_CTRL_M                   GENMASK(15, 13)
-+#define HSIO_S1G_COMMON_CFG_LANE_CTRL_X(x)                (((x) & GENMASK(15, 13)) >> 13)
-+#define HSIO_S1G_COMMON_CFG_ENA_DIRECT                    BIT(12)
-+#define HSIO_S1G_COMMON_CFG_ENA_ELOOP                     BIT(11)
-+#define HSIO_S1G_COMMON_CFG_ENA_FLOOP                     BIT(10)
-+#define HSIO_S1G_COMMON_CFG_ENA_ILOOP                     BIT(9)
-+#define HSIO_S1G_COMMON_CFG_ENA_PLOOP                     BIT(8)
-+#define HSIO_S1G_COMMON_CFG_HRATE                         BIT(7)
-+#define HSIO_S1G_COMMON_CFG_IF_MODE                       BIT(0)
-+
-+#define HSIO_S1G_PLL_CFG_PLL_ENA_FB_DIV2                  BIT(22)
-+#define HSIO_S1G_PLL_CFG_PLL_ENA_RC_DIV2                  BIT(21)
-+#define HSIO_S1G_PLL_CFG_PLL_FSM_CTRL_DATA(x)             (((x) << 8) & GENMASK(15, 8))
-+#define HSIO_S1G_PLL_CFG_PLL_FSM_CTRL_DATA_M              GENMASK(15, 8)
-+#define HSIO_S1G_PLL_CFG_PLL_FSM_CTRL_DATA_X(x)           (((x) & GENMASK(15, 8)) >> 8)
-+#define HSIO_S1G_PLL_CFG_PLL_FSM_ENA                      BIT(7)
-+#define HSIO_S1G_PLL_CFG_PLL_FSM_FORCE_SET_ENA            BIT(6)
-+#define HSIO_S1G_PLL_CFG_PLL_FSM_OOR_RECAL_ENA            BIT(5)
-+#define HSIO_S1G_PLL_CFG_PLL_RB_DATA_SEL                  BIT(3)
-+
-+#define HSIO_S1G_PLL_STATUS_PLL_CAL_NOT_DONE              BIT(12)
-+#define HSIO_S1G_PLL_STATUS_PLL_CAL_ERR                   BIT(11)
-+#define HSIO_S1G_PLL_STATUS_PLL_OUT_OF_RANGE_ERR          BIT(10)
-+#define HSIO_S1G_PLL_STATUS_PLL_RB_DATA(x)                ((x) & GENMASK(7, 0))
-+#define HSIO_S1G_PLL_STATUS_PLL_RB_DATA_M                 GENMASK(7, 0)
-+
-+#define HSIO_S1G_DFT_CFG0_LAZYBIT                         BIT(31)
-+#define HSIO_S1G_DFT_CFG0_INV_DIS                         BIT(23)
-+#define HSIO_S1G_DFT_CFG0_PRBS_SEL(x)                     (((x) << 20) & GENMASK(21, 20))
-+#define HSIO_S1G_DFT_CFG0_PRBS_SEL_M                      GENMASK(21, 20)
-+#define HSIO_S1G_DFT_CFG0_PRBS_SEL_X(x)                   (((x) & GENMASK(21, 20)) >> 20)
-+#define HSIO_S1G_DFT_CFG0_TEST_MODE(x)                    (((x) << 16) & GENMASK(18, 16))
-+#define HSIO_S1G_DFT_CFG0_TEST_MODE_M                     GENMASK(18, 16)
-+#define HSIO_S1G_DFT_CFG0_TEST_MODE_X(x)                  (((x) & GENMASK(18, 16)) >> 16)
-+#define HSIO_S1G_DFT_CFG0_RX_PHS_CORR_DIS                 BIT(4)
-+#define HSIO_S1G_DFT_CFG0_RX_PDSENS_ENA                   BIT(3)
-+#define HSIO_S1G_DFT_CFG0_RX_DFT_ENA                      BIT(2)
-+#define HSIO_S1G_DFT_CFG0_TX_DFT_ENA                      BIT(0)
-+
-+#define HSIO_S1G_DFT_CFG1_TX_JITTER_AMPL(x)               (((x) << 8) & GENMASK(17, 8))
-+#define HSIO_S1G_DFT_CFG1_TX_JITTER_AMPL_M                GENMASK(17, 8)
-+#define HSIO_S1G_DFT_CFG1_TX_JITTER_AMPL_X(x)             (((x) & GENMASK(17, 8)) >> 8)
-+#define HSIO_S1G_DFT_CFG1_TX_STEP_FREQ(x)                 (((x) << 4) & GENMASK(7, 4))
-+#define HSIO_S1G_DFT_CFG1_TX_STEP_FREQ_M                  GENMASK(7, 4)
-+#define HSIO_S1G_DFT_CFG1_TX_STEP_FREQ_X(x)               (((x) & GENMASK(7, 4)) >> 4)
-+#define HSIO_S1G_DFT_CFG1_TX_JI_ENA                       BIT(3)
-+#define HSIO_S1G_DFT_CFG1_TX_WAVEFORM_SEL                 BIT(2)
-+#define HSIO_S1G_DFT_CFG1_TX_FREQOFF_DIR                  BIT(1)
-+#define HSIO_S1G_DFT_CFG1_TX_FREQOFF_ENA                  BIT(0)
-+
-+#define HSIO_S1G_DFT_CFG2_RX_JITTER_AMPL(x)               (((x) << 8) & GENMASK(17, 8))
-+#define HSIO_S1G_DFT_CFG2_RX_JITTER_AMPL_M                GENMASK(17, 8)
-+#define HSIO_S1G_DFT_CFG2_RX_JITTER_AMPL_X(x)             (((x) & GENMASK(17, 8)) >> 8)
-+#define HSIO_S1G_DFT_CFG2_RX_STEP_FREQ(x)                 (((x) << 4) & GENMASK(7, 4))
-+#define HSIO_S1G_DFT_CFG2_RX_STEP_FREQ_M                  GENMASK(7, 4)
-+#define HSIO_S1G_DFT_CFG2_RX_STEP_FREQ_X(x)               (((x) & GENMASK(7, 4)) >> 4)
-+#define HSIO_S1G_DFT_CFG2_RX_JI_ENA                       BIT(3)
-+#define HSIO_S1G_DFT_CFG2_RX_WAVEFORM_SEL                 BIT(2)
-+#define HSIO_S1G_DFT_CFG2_RX_FREQOFF_DIR                  BIT(1)
-+#define HSIO_S1G_DFT_CFG2_RX_FREQOFF_ENA                  BIT(0)
-+
-+#define HSIO_S1G_RC_PLL_BIST_CFG_PLL_BIST_ENA             BIT(20)
-+#define HSIO_S1G_RC_PLL_BIST_CFG_PLL_BIST_FBS_HIGH(x)     (((x) << 16) & GENMASK(17, 16))
-+#define HSIO_S1G_RC_PLL_BIST_CFG_PLL_BIST_FBS_HIGH_M      GENMASK(17, 16)
-+#define HSIO_S1G_RC_PLL_BIST_CFG_PLL_BIST_FBS_HIGH_X(x)   (((x) & GENMASK(17, 16)) >> 16)
-+#define HSIO_S1G_RC_PLL_BIST_CFG_PLL_BIST_HIGH(x)         (((x) << 8) & GENMASK(15, 8))
-+#define HSIO_S1G_RC_PLL_BIST_CFG_PLL_BIST_HIGH_M          GENMASK(15, 8)
-+#define HSIO_S1G_RC_PLL_BIST_CFG_PLL_BIST_HIGH_X(x)       (((x) & GENMASK(15, 8)) >> 8)
-+#define HSIO_S1G_RC_PLL_BIST_CFG_PLL_BIST_LOW(x)          ((x) & GENMASK(7, 0))
-+#define HSIO_S1G_RC_PLL_BIST_CFG_PLL_BIST_LOW_M           GENMASK(7, 0)
-+
-+#define HSIO_S1G_MISC_CFG_DES_100FX_KICK_MODE(x)          (((x) << 11) & GENMASK(12, 11))
-+#define HSIO_S1G_MISC_CFG_DES_100FX_KICK_MODE_M           GENMASK(12, 11)
-+#define HSIO_S1G_MISC_CFG_DES_100FX_KICK_MODE_X(x)        (((x) & GENMASK(12, 11)) >> 11)
-+#define HSIO_S1G_MISC_CFG_DES_100FX_CPMD_SWAP             BIT(10)
-+#define HSIO_S1G_MISC_CFG_DES_100FX_CPMD_MODE             BIT(9)
-+#define HSIO_S1G_MISC_CFG_DES_100FX_CPMD_ENA              BIT(8)
-+#define HSIO_S1G_MISC_CFG_RX_LPI_MODE_ENA                 BIT(5)
-+#define HSIO_S1G_MISC_CFG_TX_LPI_MODE_ENA                 BIT(4)
-+#define HSIO_S1G_MISC_CFG_RX_DATA_INV_ENA                 BIT(3)
-+#define HSIO_S1G_MISC_CFG_TX_DATA_INV_ENA                 BIT(2)
-+#define HSIO_S1G_MISC_CFG_LANE_RST                        BIT(0)
-+
-+#define HSIO_S1G_DFT_STATUS_PLL_BIST_NOT_DONE             BIT(7)
-+#define HSIO_S1G_DFT_STATUS_PLL_BIST_FAILED               BIT(6)
-+#define HSIO_S1G_DFT_STATUS_PLL_BIST_TIMEOUT_ERR          BIT(5)
-+#define HSIO_S1G_DFT_STATUS_BIST_ACTIVE                   BIT(3)
-+#define HSIO_S1G_DFT_STATUS_BIST_NOSYNC                   BIT(2)
-+#define HSIO_S1G_DFT_STATUS_BIST_COMPLETE_N               BIT(1)
-+#define HSIO_S1G_DFT_STATUS_BIST_ERROR                    BIT(0)
-+
-+#define HSIO_S1G_MISC_STATUS_DES_100FX_PHASE_SEL          BIT(0)
-+
-+#define HSIO_MCB_S1G_ADDR_CFG_SERDES1G_WR_ONE_SHOT        BIT(31)
-+#define HSIO_MCB_S1G_ADDR_CFG_SERDES1G_RD_ONE_SHOT        BIT(30)
-+#define HSIO_MCB_S1G_ADDR_CFG_SERDES1G_ADDR(x)            ((x) & GENMASK(8, 0))
-+#define HSIO_MCB_S1G_ADDR_CFG_SERDES1G_ADDR_M             GENMASK(8, 0)
-+
-+#define HSIO_S6G_DIG_CFG_GP(x)                            (((x) << 16) & GENMASK(18, 16))
-+#define HSIO_S6G_DIG_CFG_GP_M                             GENMASK(18, 16)
-+#define HSIO_S6G_DIG_CFG_GP_X(x)                          (((x) & GENMASK(18, 16)) >> 16)
-+#define HSIO_S6G_DIG_CFG_TX_BIT_DOUBLING_MODE_ENA         BIT(7)
-+#define HSIO_S6G_DIG_CFG_SIGDET_TESTMODE                  BIT(6)
-+#define HSIO_S6G_DIG_CFG_SIGDET_AST(x)                    (((x) << 3) & GENMASK(5, 3))
-+#define HSIO_S6G_DIG_CFG_SIGDET_AST_M                     GENMASK(5, 3)
-+#define HSIO_S6G_DIG_CFG_SIGDET_AST_X(x)                  (((x) & GENMASK(5, 3)) >> 3)
-+#define HSIO_S6G_DIG_CFG_SIGDET_DST(x)                    ((x) & GENMASK(2, 0))
-+#define HSIO_S6G_DIG_CFG_SIGDET_DST_M                     GENMASK(2, 0)
-+
-+#define HSIO_S6G_DFT_CFG0_LAZYBIT                         BIT(31)
-+#define HSIO_S6G_DFT_CFG0_INV_DIS                         BIT(23)
-+#define HSIO_S6G_DFT_CFG0_PRBS_SEL(x)                     (((x) << 20) & GENMASK(21, 20))
-+#define HSIO_S6G_DFT_CFG0_PRBS_SEL_M                      GENMASK(21, 20)
-+#define HSIO_S6G_DFT_CFG0_PRBS_SEL_X(x)                   (((x) & GENMASK(21, 20)) >> 20)
-+#define HSIO_S6G_DFT_CFG0_TEST_MODE(x)                    (((x) << 16) & GENMASK(18, 16))
-+#define HSIO_S6G_DFT_CFG0_TEST_MODE_M                     GENMASK(18, 16)
-+#define HSIO_S6G_DFT_CFG0_TEST_MODE_X(x)                  (((x) & GENMASK(18, 16)) >> 16)
-+#define HSIO_S6G_DFT_CFG0_RX_PHS_CORR_DIS                 BIT(4)
-+#define HSIO_S6G_DFT_CFG0_RX_PDSENS_ENA                   BIT(3)
-+#define HSIO_S6G_DFT_CFG0_RX_DFT_ENA                      BIT(2)
-+#define HSIO_S6G_DFT_CFG0_TX_DFT_ENA                      BIT(0)
-+
-+#define HSIO_S6G_DFT_CFG1_TX_JITTER_AMPL(x)               (((x) << 8) & GENMASK(17, 8))
-+#define HSIO_S6G_DFT_CFG1_TX_JITTER_AMPL_M                GENMASK(17, 8)
-+#define HSIO_S6G_DFT_CFG1_TX_JITTER_AMPL_X(x)             (((x) & GENMASK(17, 8)) >> 8)
-+#define HSIO_S6G_DFT_CFG1_TX_STEP_FREQ(x)                 (((x) << 4) & GENMASK(7, 4))
-+#define HSIO_S6G_DFT_CFG1_TX_STEP_FREQ_M                  GENMASK(7, 4)
-+#define HSIO_S6G_DFT_CFG1_TX_STEP_FREQ_X(x)               (((x) & GENMASK(7, 4)) >> 4)
-+#define HSIO_S6G_DFT_CFG1_TX_JI_ENA                       BIT(3)
-+#define HSIO_S6G_DFT_CFG1_TX_WAVEFORM_SEL                 BIT(2)
-+#define HSIO_S6G_DFT_CFG1_TX_FREQOFF_DIR                  BIT(1)
-+#define HSIO_S6G_DFT_CFG1_TX_FREQOFF_ENA                  BIT(0)
-+
-+#define HSIO_S6G_DFT_CFG2_RX_JITTER_AMPL(x)               (((x) << 8) & GENMASK(17, 8))
-+#define HSIO_S6G_DFT_CFG2_RX_JITTER_AMPL_M                GENMASK(17, 8)
-+#define HSIO_S6G_DFT_CFG2_RX_JITTER_AMPL_X(x)             (((x) & GENMASK(17, 8)) >> 8)
-+#define HSIO_S6G_DFT_CFG2_RX_STEP_FREQ(x)                 (((x) << 4) & GENMASK(7, 4))
-+#define HSIO_S6G_DFT_CFG2_RX_STEP_FREQ_M                  GENMASK(7, 4)
-+#define HSIO_S6G_DFT_CFG2_RX_STEP_FREQ_X(x)               (((x) & GENMASK(7, 4)) >> 4)
-+#define HSIO_S6G_DFT_CFG2_RX_JI_ENA                       BIT(3)
-+#define HSIO_S6G_DFT_CFG2_RX_WAVEFORM_SEL                 BIT(2)
-+#define HSIO_S6G_DFT_CFG2_RX_FREQOFF_DIR                  BIT(1)
-+#define HSIO_S6G_DFT_CFG2_RX_FREQOFF_ENA                  BIT(0)
-+
-+#define HSIO_S6G_RC_PLL_BIST_CFG_PLL_BIST_ENA             BIT(20)
-+#define HSIO_S6G_RC_PLL_BIST_CFG_PLL_BIST_FBS_HIGH(x)     (((x) << 16) & GENMASK(19, 16))
-+#define HSIO_S6G_RC_PLL_BIST_CFG_PLL_BIST_FBS_HIGH_M      GENMASK(19, 16)
-+#define HSIO_S6G_RC_PLL_BIST_CFG_PLL_BIST_FBS_HIGH_X(x)   (((x) & GENMASK(19, 16)) >> 16)
-+#define HSIO_S6G_RC_PLL_BIST_CFG_PLL_BIST_HIGH(x)         (((x) << 8) & GENMASK(15, 8))
-+#define HSIO_S6G_RC_PLL_BIST_CFG_PLL_BIST_HIGH_M          GENMASK(15, 8)
-+#define HSIO_S6G_RC_PLL_BIST_CFG_PLL_BIST_HIGH_X(x)       (((x) & GENMASK(15, 8)) >> 8)
-+#define HSIO_S6G_RC_PLL_BIST_CFG_PLL_BIST_LOW(x)          ((x) & GENMASK(7, 0))
-+#define HSIO_S6G_RC_PLL_BIST_CFG_PLL_BIST_LOW_M           GENMASK(7, 0)
-+
-+#define HSIO_S6G_MISC_CFG_SEL_RECO_CLK(x)                 (((x) << 13) & GENMASK(14, 13))
-+#define HSIO_S6G_MISC_CFG_SEL_RECO_CLK_M                  GENMASK(14, 13)
-+#define HSIO_S6G_MISC_CFG_SEL_RECO_CLK_X(x)               (((x) & GENMASK(14, 13)) >> 13)
-+#define HSIO_S6G_MISC_CFG_DES_100FX_KICK_MODE(x)          (((x) << 11) & GENMASK(12, 11))
-+#define HSIO_S6G_MISC_CFG_DES_100FX_KICK_MODE_M           GENMASK(12, 11)
-+#define HSIO_S6G_MISC_CFG_DES_100FX_KICK_MODE_X(x)        (((x) & GENMASK(12, 11)) >> 11)
-+#define HSIO_S6G_MISC_CFG_DES_100FX_CPMD_SWAP             BIT(10)
-+#define HSIO_S6G_MISC_CFG_DES_100FX_CPMD_MODE             BIT(9)
-+#define HSIO_S6G_MISC_CFG_DES_100FX_CPMD_ENA              BIT(8)
-+#define HSIO_S6G_MISC_CFG_RX_BUS_FLIP_ENA                 BIT(7)
-+#define HSIO_S6G_MISC_CFG_TX_BUS_FLIP_ENA                 BIT(6)
-+#define HSIO_S6G_MISC_CFG_RX_LPI_MODE_ENA                 BIT(5)
-+#define HSIO_S6G_MISC_CFG_TX_LPI_MODE_ENA                 BIT(4)
-+#define HSIO_S6G_MISC_CFG_RX_DATA_INV_ENA                 BIT(3)
-+#define HSIO_S6G_MISC_CFG_TX_DATA_INV_ENA                 BIT(2)
-+#define HSIO_S6G_MISC_CFG_LANE_RST                        BIT(0)
-+
-+#define HSIO_S6G_OB_ANEG_CFG_AN_OB_POST0(x)               (((x) << 23) & GENMASK(28, 23))
-+#define HSIO_S6G_OB_ANEG_CFG_AN_OB_POST0_M                GENMASK(28, 23)
-+#define HSIO_S6G_OB_ANEG_CFG_AN_OB_POST0_X(x)             (((x) & GENMASK(28, 23)) >> 23)
-+#define HSIO_S6G_OB_ANEG_CFG_AN_OB_POST1(x)               (((x) << 18) & GENMASK(22, 18))
-+#define HSIO_S6G_OB_ANEG_CFG_AN_OB_POST1_M                GENMASK(22, 18)
-+#define HSIO_S6G_OB_ANEG_CFG_AN_OB_POST1_X(x)             (((x) & GENMASK(22, 18)) >> 18)
-+#define HSIO_S6G_OB_ANEG_CFG_AN_OB_PREC(x)                (((x) << 13) & GENMASK(17, 13))
-+#define HSIO_S6G_OB_ANEG_CFG_AN_OB_PREC_M                 GENMASK(17, 13)
-+#define HSIO_S6G_OB_ANEG_CFG_AN_OB_PREC_X(x)              (((x) & GENMASK(17, 13)) >> 13)
-+#define HSIO_S6G_OB_ANEG_CFG_AN_OB_ENA_CAS(x)             (((x) << 6) & GENMASK(8, 6))
-+#define HSIO_S6G_OB_ANEG_CFG_AN_OB_ENA_CAS_M              GENMASK(8, 6)
-+#define HSIO_S6G_OB_ANEG_CFG_AN_OB_ENA_CAS_X(x)           (((x) & GENMASK(8, 6)) >> 6)
-+#define HSIO_S6G_OB_ANEG_CFG_AN_OB_LEV(x)                 ((x) & GENMASK(5, 0))
-+#define HSIO_S6G_OB_ANEG_CFG_AN_OB_LEV_M                  GENMASK(5, 0)
-+
-+#define HSIO_S6G_DFT_STATUS_PRBS_SYNC_STAT                BIT(8)
-+#define HSIO_S6G_DFT_STATUS_PLL_BIST_NOT_DONE             BIT(7)
-+#define HSIO_S6G_DFT_STATUS_PLL_BIST_FAILED               BIT(6)
-+#define HSIO_S6G_DFT_STATUS_PLL_BIST_TIMEOUT_ERR          BIT(5)
-+#define HSIO_S6G_DFT_STATUS_BIST_ACTIVE                   BIT(3)
-+#define HSIO_S6G_DFT_STATUS_BIST_NOSYNC                   BIT(2)
-+#define HSIO_S6G_DFT_STATUS_BIST_COMPLETE_N               BIT(1)
-+#define HSIO_S6G_DFT_STATUS_BIST_ERROR                    BIT(0)
-+
-+#define HSIO_S6G_MISC_STATUS_DES_100FX_PHASE_SEL          BIT(0)
-+
-+#define HSIO_S6G_DES_CFG_DES_PHS_CTRL(x)                  (((x) << 13) & GENMASK(16, 13))
-+#define HSIO_S6G_DES_CFG_DES_PHS_CTRL_M                   GENMASK(16, 13)
-+#define HSIO_S6G_DES_CFG_DES_PHS_CTRL_X(x)                (((x) & GENMASK(16, 13)) >> 13)
-+#define HSIO_S6G_DES_CFG_DES_MBTR_CTRL(x)                 (((x) << 10) & GENMASK(12, 10))
-+#define HSIO_S6G_DES_CFG_DES_MBTR_CTRL_M                  GENMASK(12, 10)
-+#define HSIO_S6G_DES_CFG_DES_MBTR_CTRL_X(x)               (((x) & GENMASK(12, 10)) >> 10)
-+#define HSIO_S6G_DES_CFG_DES_CPMD_SEL(x)                  (((x) << 8) & GENMASK(9, 8))
-+#define HSIO_S6G_DES_CFG_DES_CPMD_SEL_M                   GENMASK(9, 8)
-+#define HSIO_S6G_DES_CFG_DES_CPMD_SEL_X(x)                (((x) & GENMASK(9, 8)) >> 8)
-+#define HSIO_S6G_DES_CFG_DES_BW_HYST(x)                   (((x) << 5) & GENMASK(7, 5))
-+#define HSIO_S6G_DES_CFG_DES_BW_HYST_M                    GENMASK(7, 5)
-+#define HSIO_S6G_DES_CFG_DES_BW_HYST_X(x)                 (((x) & GENMASK(7, 5)) >> 5)
-+#define HSIO_S6G_DES_CFG_DES_SWAP_HYST                    BIT(4)
-+#define HSIO_S6G_DES_CFG_DES_BW_ANA(x)                    (((x) << 1) & GENMASK(3, 1))
-+#define HSIO_S6G_DES_CFG_DES_BW_ANA_M                     GENMASK(3, 1)
-+#define HSIO_S6G_DES_CFG_DES_BW_ANA_X(x)                  (((x) & GENMASK(3, 1)) >> 1)
-+#define HSIO_S6G_DES_CFG_DES_SWAP_ANA                     BIT(0)
-+
-+#define HSIO_S6G_IB_CFG_IB_SOFSI(x)                       (((x) << 29) & GENMASK(30, 29))
-+#define HSIO_S6G_IB_CFG_IB_SOFSI_M                        GENMASK(30, 29)
-+#define HSIO_S6G_IB_CFG_IB_SOFSI_X(x)                     (((x) & GENMASK(30, 29)) >> 29)
-+#define HSIO_S6G_IB_CFG_IB_VBULK_SEL                      BIT(28)
-+#define HSIO_S6G_IB_CFG_IB_RTRM_ADJ(x)                    (((x) << 24) & GENMASK(27, 24))
-+#define HSIO_S6G_IB_CFG_IB_RTRM_ADJ_M                     GENMASK(27, 24)
-+#define HSIO_S6G_IB_CFG_IB_RTRM_ADJ_X(x)                  (((x) & GENMASK(27, 24)) >> 24)
-+#define HSIO_S6G_IB_CFG_IB_ICML_ADJ(x)                    (((x) << 20) & GENMASK(23, 20))
-+#define HSIO_S6G_IB_CFG_IB_ICML_ADJ_M                     GENMASK(23, 20)
-+#define HSIO_S6G_IB_CFG_IB_ICML_ADJ_X(x)                  (((x) & GENMASK(23, 20)) >> 20)
-+#define HSIO_S6G_IB_CFG_IB_TERM_MODE_SEL(x)               (((x) << 18) & GENMASK(19, 18))
-+#define HSIO_S6G_IB_CFG_IB_TERM_MODE_SEL_M                GENMASK(19, 18)
-+#define HSIO_S6G_IB_CFG_IB_TERM_MODE_SEL_X(x)             (((x) & GENMASK(19, 18)) >> 18)
-+#define HSIO_S6G_IB_CFG_IB_SIG_DET_CLK_SEL(x)             (((x) << 15) & GENMASK(17, 15))
-+#define HSIO_S6G_IB_CFG_IB_SIG_DET_CLK_SEL_M              GENMASK(17, 15)
-+#define HSIO_S6G_IB_CFG_IB_SIG_DET_CLK_SEL_X(x)           (((x) & GENMASK(17, 15)) >> 15)
-+#define HSIO_S6G_IB_CFG_IB_REG_PAT_SEL_HP(x)              (((x) << 13) & GENMASK(14, 13))
-+#define HSIO_S6G_IB_CFG_IB_REG_PAT_SEL_HP_M               GENMASK(14, 13)
-+#define HSIO_S6G_IB_CFG_IB_REG_PAT_SEL_HP_X(x)            (((x) & GENMASK(14, 13)) >> 13)
-+#define HSIO_S6G_IB_CFG_IB_REG_PAT_SEL_MID(x)             (((x) << 11) & GENMASK(12, 11))
-+#define HSIO_S6G_IB_CFG_IB_REG_PAT_SEL_MID_M              GENMASK(12, 11)
-+#define HSIO_S6G_IB_CFG_IB_REG_PAT_SEL_MID_X(x)           (((x) & GENMASK(12, 11)) >> 11)
-+#define HSIO_S6G_IB_CFG_IB_REG_PAT_SEL_LP(x)              (((x) << 9) & GENMASK(10, 9))
-+#define HSIO_S6G_IB_CFG_IB_REG_PAT_SEL_LP_M               GENMASK(10, 9)
-+#define HSIO_S6G_IB_CFG_IB_REG_PAT_SEL_LP_X(x)            (((x) & GENMASK(10, 9)) >> 9)
-+#define HSIO_S6G_IB_CFG_IB_REG_PAT_SEL_OFFSET(x)          (((x) << 7) & GENMASK(8, 7))
-+#define HSIO_S6G_IB_CFG_IB_REG_PAT_SEL_OFFSET_M           GENMASK(8, 7)
-+#define HSIO_S6G_IB_CFG_IB_REG_PAT_SEL_OFFSET_X(x)        (((x) & GENMASK(8, 7)) >> 7)
-+#define HSIO_S6G_IB_CFG_IB_ANA_TEST_ENA                   BIT(6)
-+#define HSIO_S6G_IB_CFG_IB_SIG_DET_ENA                    BIT(5)
-+#define HSIO_S6G_IB_CFG_IB_CONCUR                         BIT(4)
-+#define HSIO_S6G_IB_CFG_IB_CAL_ENA                        BIT(3)
-+#define HSIO_S6G_IB_CFG_IB_SAM_ENA                        BIT(2)
-+#define HSIO_S6G_IB_CFG_IB_EQZ_ENA                        BIT(1)
-+#define HSIO_S6G_IB_CFG_IB_REG_ENA                        BIT(0)
-+
-+#define HSIO_S6G_IB_CFG1_IB_TJTAG(x)                      (((x) << 17) & GENMASK(21, 17))
-+#define HSIO_S6G_IB_CFG1_IB_TJTAG_M                       GENMASK(21, 17)
-+#define HSIO_S6G_IB_CFG1_IB_TJTAG_X(x)                    (((x) & GENMASK(21, 17)) >> 17)
-+#define HSIO_S6G_IB_CFG1_IB_TSDET(x)                      (((x) << 12) & GENMASK(16, 12))
-+#define HSIO_S6G_IB_CFG1_IB_TSDET_M                       GENMASK(16, 12)
-+#define HSIO_S6G_IB_CFG1_IB_TSDET_X(x)                    (((x) & GENMASK(16, 12)) >> 12)
-+#define HSIO_S6G_IB_CFG1_IB_SCALY(x)                      (((x) << 8) & GENMASK(11, 8))
-+#define HSIO_S6G_IB_CFG1_IB_SCALY_M                       GENMASK(11, 8)
-+#define HSIO_S6G_IB_CFG1_IB_SCALY_X(x)                    (((x) & GENMASK(11, 8)) >> 8)
-+#define HSIO_S6G_IB_CFG1_IB_FILT_HP                       BIT(7)
-+#define HSIO_S6G_IB_CFG1_IB_FILT_MID                      BIT(6)
-+#define HSIO_S6G_IB_CFG1_IB_FILT_LP                       BIT(5)
-+#define HSIO_S6G_IB_CFG1_IB_FILT_OFFSET                   BIT(4)
-+#define HSIO_S6G_IB_CFG1_IB_FRC_HP                        BIT(3)
-+#define HSIO_S6G_IB_CFG1_IB_FRC_MID                       BIT(2)
-+#define HSIO_S6G_IB_CFG1_IB_FRC_LP                        BIT(1)
-+#define HSIO_S6G_IB_CFG1_IB_FRC_OFFSET                    BIT(0)
-+
-+#define HSIO_S6G_IB_CFG2_IB_TINFV(x)                      (((x) << 27) & GENMASK(29, 27))
-+#define HSIO_S6G_IB_CFG2_IB_TINFV_M                       GENMASK(29, 27)
-+#define HSIO_S6G_IB_CFG2_IB_TINFV_X(x)                    (((x) & GENMASK(29, 27)) >> 27)
-+#define HSIO_S6G_IB_CFG2_IB_OINFI(x)                      (((x) << 22) & GENMASK(26, 22))
-+#define HSIO_S6G_IB_CFG2_IB_OINFI_M                       GENMASK(26, 22)
-+#define HSIO_S6G_IB_CFG2_IB_OINFI_X(x)                    (((x) & GENMASK(26, 22)) >> 22)
-+#define HSIO_S6G_IB_CFG2_IB_TAUX(x)                       (((x) << 19) & GENMASK(21, 19))
-+#define HSIO_S6G_IB_CFG2_IB_TAUX_M                        GENMASK(21, 19)
-+#define HSIO_S6G_IB_CFG2_IB_TAUX_X(x)                     (((x) & GENMASK(21, 19)) >> 19)
-+#define HSIO_S6G_IB_CFG2_IB_OINFS(x)                      (((x) << 16) & GENMASK(18, 16))
-+#define HSIO_S6G_IB_CFG2_IB_OINFS_M                       GENMASK(18, 16)
-+#define HSIO_S6G_IB_CFG2_IB_OINFS_X(x)                    (((x) & GENMASK(18, 16)) >> 16)
-+#define HSIO_S6G_IB_CFG2_IB_OCALS(x)                      (((x) << 10) & GENMASK(15, 10))
-+#define HSIO_S6G_IB_CFG2_IB_OCALS_M                       GENMASK(15, 10)
-+#define HSIO_S6G_IB_CFG2_IB_OCALS_X(x)                    (((x) & GENMASK(15, 10)) >> 10)
-+#define HSIO_S6G_IB_CFG2_IB_TCALV(x)                      (((x) << 5) & GENMASK(9, 5))
-+#define HSIO_S6G_IB_CFG2_IB_TCALV_M                       GENMASK(9, 5)
-+#define HSIO_S6G_IB_CFG2_IB_TCALV_X(x)                    (((x) & GENMASK(9, 5)) >> 5)
-+#define HSIO_S6G_IB_CFG2_IB_UMAX(x)                       (((x) << 3) & GENMASK(4, 3))
-+#define HSIO_S6G_IB_CFG2_IB_UMAX_M                        GENMASK(4, 3)
-+#define HSIO_S6G_IB_CFG2_IB_UMAX_X(x)                     (((x) & GENMASK(4, 3)) >> 3)
-+#define HSIO_S6G_IB_CFG2_IB_UREG(x)                       ((x) & GENMASK(2, 0))
-+#define HSIO_S6G_IB_CFG2_IB_UREG_M                        GENMASK(2, 0)
-+
-+#define HSIO_S6G_IB_CFG3_IB_INI_HP(x)                     (((x) << 18) & GENMASK(23, 18))
-+#define HSIO_S6G_IB_CFG3_IB_INI_HP_M                      GENMASK(23, 18)
-+#define HSIO_S6G_IB_CFG3_IB_INI_HP_X(x)                   (((x) & GENMASK(23, 18)) >> 18)
-+#define HSIO_S6G_IB_CFG3_IB_INI_MID(x)                    (((x) << 12) & GENMASK(17, 12))
-+#define HSIO_S6G_IB_CFG3_IB_INI_MID_M                     GENMASK(17, 12)
-+#define HSIO_S6G_IB_CFG3_IB_INI_MID_X(x)                  (((x) & GENMASK(17, 12)) >> 12)
-+#define HSIO_S6G_IB_CFG3_IB_INI_LP(x)                     (((x) << 6) & GENMASK(11, 6))
-+#define HSIO_S6G_IB_CFG3_IB_INI_LP_M                      GENMASK(11, 6)
-+#define HSIO_S6G_IB_CFG3_IB_INI_LP_X(x)                   (((x) & GENMASK(11, 6)) >> 6)
-+#define HSIO_S6G_IB_CFG3_IB_INI_OFFSET(x)                 ((x) & GENMASK(5, 0))
-+#define HSIO_S6G_IB_CFG3_IB_INI_OFFSET_M                  GENMASK(5, 0)
-+
-+#define HSIO_S6G_IB_CFG4_IB_MAX_HP(x)                     (((x) << 18) & GENMASK(23, 18))
-+#define HSIO_S6G_IB_CFG4_IB_MAX_HP_M                      GENMASK(23, 18)
-+#define HSIO_S6G_IB_CFG4_IB_MAX_HP_X(x)                   (((x) & GENMASK(23, 18)) >> 18)
-+#define HSIO_S6G_IB_CFG4_IB_MAX_MID(x)                    (((x) << 12) & GENMASK(17, 12))
-+#define HSIO_S6G_IB_CFG4_IB_MAX_MID_M                     GENMASK(17, 12)
-+#define HSIO_S6G_IB_CFG4_IB_MAX_MID_X(x)                  (((x) & GENMASK(17, 12)) >> 12)
-+#define HSIO_S6G_IB_CFG4_IB_MAX_LP(x)                     (((x) << 6) & GENMASK(11, 6))
-+#define HSIO_S6G_IB_CFG4_IB_MAX_LP_M                      GENMASK(11, 6)
-+#define HSIO_S6G_IB_CFG4_IB_MAX_LP_X(x)                   (((x) & GENMASK(11, 6)) >> 6)
-+#define HSIO_S6G_IB_CFG4_IB_MAX_OFFSET(x)                 ((x) & GENMASK(5, 0))
-+#define HSIO_S6G_IB_CFG4_IB_MAX_OFFSET_M                  GENMASK(5, 0)
-+
-+#define HSIO_S6G_IB_CFG5_IB_MIN_HP(x)                     (((x) << 18) & GENMASK(23, 18))
-+#define HSIO_S6G_IB_CFG5_IB_MIN_HP_M                      GENMASK(23, 18)
-+#define HSIO_S6G_IB_CFG5_IB_MIN_HP_X(x)                   (((x) & GENMASK(23, 18)) >> 18)
-+#define HSIO_S6G_IB_CFG5_IB_MIN_MID(x)                    (((x) << 12) & GENMASK(17, 12))
-+#define HSIO_S6G_IB_CFG5_IB_MIN_MID_M                     GENMASK(17, 12)
-+#define HSIO_S6G_IB_CFG5_IB_MIN_MID_X(x)                  (((x) & GENMASK(17, 12)) >> 12)
-+#define HSIO_S6G_IB_CFG5_IB_MIN_LP(x)                     (((x) << 6) & GENMASK(11, 6))
-+#define HSIO_S6G_IB_CFG5_IB_MIN_LP_M                      GENMASK(11, 6)
-+#define HSIO_S6G_IB_CFG5_IB_MIN_LP_X(x)                   (((x) & GENMASK(11, 6)) >> 6)
-+#define HSIO_S6G_IB_CFG5_IB_MIN_OFFSET(x)                 ((x) & GENMASK(5, 0))
-+#define HSIO_S6G_IB_CFG5_IB_MIN_OFFSET_M                  GENMASK(5, 0)
-+
-+#define HSIO_S6G_OB_CFG_OB_IDLE                           BIT(31)
-+#define HSIO_S6G_OB_CFG_OB_ENA1V_MODE                     BIT(30)
-+#define HSIO_S6G_OB_CFG_OB_POL                            BIT(29)
-+#define HSIO_S6G_OB_CFG_OB_POST0(x)                       (((x) << 23) & GENMASK(28, 23))
-+#define HSIO_S6G_OB_CFG_OB_POST0_M                        GENMASK(28, 23)
-+#define HSIO_S6G_OB_CFG_OB_POST0_X(x)                     (((x) & GENMASK(28, 23)) >> 23)
-+#define HSIO_S6G_OB_CFG_OB_PREC(x)                        (((x) << 18) & GENMASK(22, 18))
-+#define HSIO_S6G_OB_CFG_OB_PREC_M                         GENMASK(22, 18)
-+#define HSIO_S6G_OB_CFG_OB_PREC_X(x)                      (((x) & GENMASK(22, 18)) >> 18)
-+#define HSIO_S6G_OB_CFG_OB_R_ADJ_MUX                      BIT(17)
-+#define HSIO_S6G_OB_CFG_OB_R_ADJ_PDR                      BIT(16)
-+#define HSIO_S6G_OB_CFG_OB_POST1(x)                       (((x) << 11) & GENMASK(15, 11))
-+#define HSIO_S6G_OB_CFG_OB_POST1_M                        GENMASK(15, 11)
-+#define HSIO_S6G_OB_CFG_OB_POST1_X(x)                     (((x) & GENMASK(15, 11)) >> 11)
-+#define HSIO_S6G_OB_CFG_OB_R_COR                          BIT(10)
-+#define HSIO_S6G_OB_CFG_OB_SEL_RCTRL                      BIT(9)
-+#define HSIO_S6G_OB_CFG_OB_SR_H                           BIT(8)
-+#define HSIO_S6G_OB_CFG_OB_SR(x)                          (((x) << 4) & GENMASK(7, 4))
-+#define HSIO_S6G_OB_CFG_OB_SR_M                           GENMASK(7, 4)
-+#define HSIO_S6G_OB_CFG_OB_SR_X(x)                        (((x) & GENMASK(7, 4)) >> 4)
-+#define HSIO_S6G_OB_CFG_OB_RESISTOR_CTRL(x)               ((x) & GENMASK(3, 0))
-+#define HSIO_S6G_OB_CFG_OB_RESISTOR_CTRL_M                GENMASK(3, 0)
-+
-+#define HSIO_S6G_OB_CFG1_OB_ENA_CAS(x)                    (((x) << 6) & GENMASK(8, 6))
-+#define HSIO_S6G_OB_CFG1_OB_ENA_CAS_M                     GENMASK(8, 6)
-+#define HSIO_S6G_OB_CFG1_OB_ENA_CAS_X(x)                  (((x) & GENMASK(8, 6)) >> 6)
-+#define HSIO_S6G_OB_CFG1_OB_LEV(x)                        ((x) & GENMASK(5, 0))
-+#define HSIO_S6G_OB_CFG1_OB_LEV_M                         GENMASK(5, 0)
-+
-+#define HSIO_S6G_SER_CFG_SER_4TAP_ENA                     BIT(8)
-+#define HSIO_S6G_SER_CFG_SER_CPMD_SEL                     BIT(7)
-+#define HSIO_S6G_SER_CFG_SER_SWAP_CPMD                    BIT(6)
-+#define HSIO_S6G_SER_CFG_SER_ALISEL(x)                    (((x) << 4) & GENMASK(5, 4))
-+#define HSIO_S6G_SER_CFG_SER_ALISEL_M                     GENMASK(5, 4)
-+#define HSIO_S6G_SER_CFG_SER_ALISEL_X(x)                  (((x) & GENMASK(5, 4)) >> 4)
-+#define HSIO_S6G_SER_CFG_SER_ENHYS                        BIT(3)
-+#define HSIO_S6G_SER_CFG_SER_BIG_WIN                      BIT(2)
-+#define HSIO_S6G_SER_CFG_SER_EN_WIN                       BIT(1)
-+#define HSIO_S6G_SER_CFG_SER_ENALI                        BIT(0)
-+
-+#define HSIO_S6G_COMMON_CFG_SYS_RST                       BIT(17)
-+#define HSIO_S6G_COMMON_CFG_SE_DIV2_ENA                   BIT(16)
-+#define HSIO_S6G_COMMON_CFG_SE_AUTO_SQUELCH_ENA           BIT(15)
-+#define HSIO_S6G_COMMON_CFG_ENA_LANE                      BIT(14)
-+#define HSIO_S6G_COMMON_CFG_PWD_RX                        BIT(13)
-+#define HSIO_S6G_COMMON_CFG_PWD_TX                        BIT(12)
-+#define HSIO_S6G_COMMON_CFG_LANE_CTRL(x)                  (((x) << 9) & GENMASK(11, 9))
-+#define HSIO_S6G_COMMON_CFG_LANE_CTRL_M                   GENMASK(11, 9)
-+#define HSIO_S6G_COMMON_CFG_LANE_CTRL_X(x)                (((x) & GENMASK(11, 9)) >> 9)
-+#define HSIO_S6G_COMMON_CFG_ENA_DIRECT                    BIT(8)
-+#define HSIO_S6G_COMMON_CFG_ENA_ELOOP                     BIT(7)
-+#define HSIO_S6G_COMMON_CFG_ENA_FLOOP                     BIT(6)
-+#define HSIO_S6G_COMMON_CFG_ENA_ILOOP                     BIT(5)
-+#define HSIO_S6G_COMMON_CFG_ENA_PLOOP                     BIT(4)
-+#define HSIO_S6G_COMMON_CFG_HRATE                         BIT(3)
-+#define HSIO_S6G_COMMON_CFG_QRATE                         BIT(2)
-+#define HSIO_S6G_COMMON_CFG_IF_MODE(x)                    ((x) & GENMASK(1, 0))
-+#define HSIO_S6G_COMMON_CFG_IF_MODE_M                     GENMASK(1, 0)
-+
-+#define HSIO_S6G_PLL_CFG_PLL_ENA_OFFS(x)                  (((x) << 16) & GENMASK(17, 16))
-+#define HSIO_S6G_PLL_CFG_PLL_ENA_OFFS_M                   GENMASK(17, 16)
-+#define HSIO_S6G_PLL_CFG_PLL_ENA_OFFS_X(x)                (((x) & GENMASK(17, 16)) >> 16)
-+#define HSIO_S6G_PLL_CFG_PLL_DIV4                         BIT(15)
-+#define HSIO_S6G_PLL_CFG_PLL_ENA_ROT                      BIT(14)
-+#define HSIO_S6G_PLL_CFG_PLL_FSM_CTRL_DATA(x)             (((x) << 6) & GENMASK(13, 6))
-+#define HSIO_S6G_PLL_CFG_PLL_FSM_CTRL_DATA_M              GENMASK(13, 6)
-+#define HSIO_S6G_PLL_CFG_PLL_FSM_CTRL_DATA_X(x)           (((x) & GENMASK(13, 6)) >> 6)
-+#define HSIO_S6G_PLL_CFG_PLL_FSM_ENA                      BIT(5)
-+#define HSIO_S6G_PLL_CFG_PLL_FSM_FORCE_SET_ENA            BIT(4)
-+#define HSIO_S6G_PLL_CFG_PLL_FSM_OOR_RECAL_ENA            BIT(3)
-+#define HSIO_S6G_PLL_CFG_PLL_RB_DATA_SEL                  BIT(2)
-+#define HSIO_S6G_PLL_CFG_PLL_ROT_DIR                      BIT(1)
-+#define HSIO_S6G_PLL_CFG_PLL_ROT_FRQ                      BIT(0)
-+
-+#define HSIO_S6G_ACJTAG_CFG_ACJTAG_INIT_DATA_N            BIT(5)
-+#define HSIO_S6G_ACJTAG_CFG_ACJTAG_INIT_DATA_P            BIT(4)
-+#define HSIO_S6G_ACJTAG_CFG_ACJTAG_INIT_CLK               BIT(3)
-+#define HSIO_S6G_ACJTAG_CFG_OB_DIRECT                     BIT(2)
-+#define HSIO_S6G_ACJTAG_CFG_ACJTAG_ENA                    BIT(1)
-+#define HSIO_S6G_ACJTAG_CFG_JTAG_CTRL_ENA                 BIT(0)
-+
-+#define HSIO_S6G_GP_CFG_GP_MSB(x)                         (((x) << 16) & GENMASK(31, 16))
-+#define HSIO_S6G_GP_CFG_GP_MSB_M                          GENMASK(31, 16)
-+#define HSIO_S6G_GP_CFG_GP_MSB_X(x)                       (((x) & GENMASK(31, 16)) >> 16)
-+#define HSIO_S6G_GP_CFG_GP_LSB(x)                         ((x) & GENMASK(15, 0))
-+#define HSIO_S6G_GP_CFG_GP_LSB_M                          GENMASK(15, 0)
-+
-+#define HSIO_S6G_IB_STATUS0_IB_CAL_DONE                   BIT(8)
-+#define HSIO_S6G_IB_STATUS0_IB_HP_GAIN_ACT                BIT(7)
-+#define HSIO_S6G_IB_STATUS0_IB_MID_GAIN_ACT               BIT(6)
-+#define HSIO_S6G_IB_STATUS0_IB_LP_GAIN_ACT                BIT(5)
-+#define HSIO_S6G_IB_STATUS0_IB_OFFSET_ACT                 BIT(4)
-+#define HSIO_S6G_IB_STATUS0_IB_OFFSET_VLD                 BIT(3)
-+#define HSIO_S6G_IB_STATUS0_IB_OFFSET_ERR                 BIT(2)
-+#define HSIO_S6G_IB_STATUS0_IB_OFFSDIR                    BIT(1)
-+#define HSIO_S6G_IB_STATUS0_IB_SIG_DET                    BIT(0)
-+
-+#define HSIO_S6G_IB_STATUS1_IB_HP_GAIN_STAT(x)            (((x) << 18) & GENMASK(23, 18))
-+#define HSIO_S6G_IB_STATUS1_IB_HP_GAIN_STAT_M             GENMASK(23, 18)
-+#define HSIO_S6G_IB_STATUS1_IB_HP_GAIN_STAT_X(x)          (((x) & GENMASK(23, 18)) >> 18)
-+#define HSIO_S6G_IB_STATUS1_IB_MID_GAIN_STAT(x)           (((x) << 12) & GENMASK(17, 12))
-+#define HSIO_S6G_IB_STATUS1_IB_MID_GAIN_STAT_M            GENMASK(17, 12)
-+#define HSIO_S6G_IB_STATUS1_IB_MID_GAIN_STAT_X(x)         (((x) & GENMASK(17, 12)) >> 12)
-+#define HSIO_S6G_IB_STATUS1_IB_LP_GAIN_STAT(x)            (((x) << 6) & GENMASK(11, 6))
-+#define HSIO_S6G_IB_STATUS1_IB_LP_GAIN_STAT_M             GENMASK(11, 6)
-+#define HSIO_S6G_IB_STATUS1_IB_LP_GAIN_STAT_X(x)          (((x) & GENMASK(11, 6)) >> 6)
-+#define HSIO_S6G_IB_STATUS1_IB_OFFSET_STAT(x)             ((x) & GENMASK(5, 0))
-+#define HSIO_S6G_IB_STATUS1_IB_OFFSET_STAT_M              GENMASK(5, 0)
-+
-+#define HSIO_S6G_ACJTAG_STATUS_ACJTAG_CAPT_DATA_N         BIT(2)
-+#define HSIO_S6G_ACJTAG_STATUS_ACJTAG_CAPT_DATA_P         BIT(1)
-+#define HSIO_S6G_ACJTAG_STATUS_IB_DIRECT                  BIT(0)
-+
-+#define HSIO_S6G_PLL_STATUS_PLL_CAL_NOT_DONE              BIT(10)
-+#define HSIO_S6G_PLL_STATUS_PLL_CAL_ERR                   BIT(9)
-+#define HSIO_S6G_PLL_STATUS_PLL_OUT_OF_RANGE_ERR          BIT(8)
-+#define HSIO_S6G_PLL_STATUS_PLL_RB_DATA(x)                ((x) & GENMASK(7, 0))
-+#define HSIO_S6G_PLL_STATUS_PLL_RB_DATA_M                 GENMASK(7, 0)
-+
-+#define HSIO_S6G_REVID_SERDES_REV(x)                      (((x) << 26) & GENMASK(31, 26))
-+#define HSIO_S6G_REVID_SERDES_REV_M                       GENMASK(31, 26)
-+#define HSIO_S6G_REVID_SERDES_REV_X(x)                    (((x) & GENMASK(31, 26)) >> 26)
-+#define HSIO_S6G_REVID_RCPLL_REV(x)                       (((x) << 21) & GENMASK(25, 21))
-+#define HSIO_S6G_REVID_RCPLL_REV_M                        GENMASK(25, 21)
-+#define HSIO_S6G_REVID_RCPLL_REV_X(x)                     (((x) & GENMASK(25, 21)) >> 21)
-+#define HSIO_S6G_REVID_SER_REV(x)                         (((x) << 16) & GENMASK(20, 16))
-+#define HSIO_S6G_REVID_SER_REV_M                          GENMASK(20, 16)
-+#define HSIO_S6G_REVID_SER_REV_X(x)                       (((x) & GENMASK(20, 16)) >> 16)
-+#define HSIO_S6G_REVID_DES_REV(x)                         (((x) << 10) & GENMASK(15, 10))
-+#define HSIO_S6G_REVID_DES_REV_M                          GENMASK(15, 10)
-+#define HSIO_S6G_REVID_DES_REV_X(x)                       (((x) & GENMASK(15, 10)) >> 10)
-+#define HSIO_S6G_REVID_OB_REV(x)                          (((x) << 5) & GENMASK(9, 5))
-+#define HSIO_S6G_REVID_OB_REV_M                           GENMASK(9, 5)
-+#define HSIO_S6G_REVID_OB_REV_X(x)                        (((x) & GENMASK(9, 5)) >> 5)
-+#define HSIO_S6G_REVID_IB_REV(x)                          ((x) & GENMASK(4, 0))
-+#define HSIO_S6G_REVID_IB_REV_M                           GENMASK(4, 0)
-+
-+#define HSIO_MCB_S6G_ADDR_CFG_SERDES6G_WR_ONE_SHOT        BIT(31)
-+#define HSIO_MCB_S6G_ADDR_CFG_SERDES6G_RD_ONE_SHOT        BIT(30)
-+#define HSIO_MCB_S6G_ADDR_CFG_SERDES6G_ADDR(x)            ((x) & GENMASK(24, 0))
-+#define HSIO_MCB_S6G_ADDR_CFG_SERDES6G_ADDR_M             GENMASK(24, 0)
-+
-+#define HSIO_HW_CFG_DEV2G5_10_MODE                        BIT(6)
-+#define HSIO_HW_CFG_DEV1G_9_MODE                          BIT(5)
-+#define HSIO_HW_CFG_DEV1G_6_MODE                          BIT(4)
-+#define HSIO_HW_CFG_DEV1G_5_MODE                          BIT(3)
-+#define HSIO_HW_CFG_DEV1G_4_MODE                          BIT(2)
-+#define HSIO_HW_CFG_PCIE_ENA                              BIT(1)
-+#define HSIO_HW_CFG_QSGMII_ENA                            BIT(0)
-+
-+#define HSIO_HW_QSGMII_CFG_SHYST_DIS                      BIT(3)
-+#define HSIO_HW_QSGMII_CFG_E_DET_ENA                      BIT(2)
-+#define HSIO_HW_QSGMII_CFG_USE_I1_ENA                     BIT(1)
-+#define HSIO_HW_QSGMII_CFG_FLIP_LANES                     BIT(0)
-+
-+#define HSIO_HW_QSGMII_STAT_DELAY_VAR_X200PS(x)           (((x) << 1) & GENMASK(6, 1))
-+#define HSIO_HW_QSGMII_STAT_DELAY_VAR_X200PS_M            GENMASK(6, 1)
-+#define HSIO_HW_QSGMII_STAT_DELAY_VAR_X200PS_X(x)         (((x) & GENMASK(6, 1)) >> 1)
-+#define HSIO_HW_QSGMII_STAT_SYNC                          BIT(0)
-+
-+#define HSIO_CLK_CFG_CLKDIV_PHY(x)                        (((x) << 1) & GENMASK(8, 1))
-+#define HSIO_CLK_CFG_CLKDIV_PHY_M                         GENMASK(8, 1)
-+#define HSIO_CLK_CFG_CLKDIV_PHY_X(x)                      (((x) & GENMASK(8, 1)) >> 1)
-+#define HSIO_CLK_CFG_CLKDIV_PHY_DIS                       BIT(0)
-+
-+#define HSIO_TEMP_SENSOR_CTRL_FORCE_TEMP_RD               BIT(5)
-+#define HSIO_TEMP_SENSOR_CTRL_FORCE_RUN                   BIT(4)
-+#define HSIO_TEMP_SENSOR_CTRL_FORCE_NO_RST                BIT(3)
-+#define HSIO_TEMP_SENSOR_CTRL_FORCE_POWER_UP              BIT(2)
-+#define HSIO_TEMP_SENSOR_CTRL_FORCE_CLK                   BIT(1)
-+#define HSIO_TEMP_SENSOR_CTRL_SAMPLE_ENA                  BIT(0)
-+
-+#define HSIO_TEMP_SENSOR_CFG_RUN_WID(x)                   (((x) << 8) & GENMASK(15, 8))
-+#define HSIO_TEMP_SENSOR_CFG_RUN_WID_M                    GENMASK(15, 8)
-+#define HSIO_TEMP_SENSOR_CFG_RUN_WID_X(x)                 (((x) & GENMASK(15, 8)) >> 8)
-+#define HSIO_TEMP_SENSOR_CFG_SAMPLE_PER(x)                ((x) & GENMASK(7, 0))
-+#define HSIO_TEMP_SENSOR_CFG_SAMPLE_PER_M                 GENMASK(7, 0)
-+
-+#define HSIO_TEMP_SENSOR_STAT_TEMP_VALID                  BIT(8)
-+#define HSIO_TEMP_SENSOR_STAT_TEMP(x)                     ((x) & GENMASK(7, 0))
-+#define HSIO_TEMP_SENSOR_STAT_TEMP_M                      GENMASK(7, 0)
-+
-+#endif
+-	ocelot_rmw(ocelot, HSIO_HW_CFG_DEV1G_4_MODE |
+-		     HSIO_HW_CFG_DEV1G_6_MODE |
+-		     HSIO_HW_CFG_DEV1G_9_MODE,
+-		     HSIO_HW_CFG_DEV1G_4_MODE |
+-		     HSIO_HW_CFG_DEV1G_6_MODE |
+-		     HSIO_HW_CFG_DEV1G_9_MODE,
+-		     HSIO_HW_CFG);
+-
+ 	for_each_available_child_of_node(ports, portnp) {
+ 		struct device_node *phy_node;
+ 		struct phy_device *phy;
+ 		struct resource *res;
++		struct phy *serdes;
++		enum phy_mode phy_mode;
+ 		void __iomem *regs;
+ 		char res_name[8];
+ 		u32 port;
+@@ -283,10 +278,38 @@ static int mscc_ocelot_probe(struct platform_device *pdev)
+ 			continue;
+ 
+ 		err = ocelot_probe_port(ocelot, port, regs, phy);
+-		if (err) {
+-			dev_err(&pdev->dev, "failed to probe ports\n");
++		if (err)
++			return err;
++
++		err = of_get_phy_mode(portnp);
++		if (err < 0)
++			ocelot->ports[port]->phy_mode = PHY_INTERFACE_MODE_NA;
++		else
++			ocelot->ports[port]->phy_mode = err;
++
++		if (ocelot->ports[port]->phy_mode == PHY_INTERFACE_MODE_NA)
++			continue;
++
++		if (ocelot->ports[port]->phy_mode == PHY_INTERFACE_MODE_SGMII)
++			phy_mode = PHY_MODE_SGMII;
++		else
++			phy_mode = PHY_MODE_QSGMII;
++
++		serdes = devm_of_phy_get(ocelot->dev, portnp, NULL);
++		if (IS_ERR(serdes)) {
++			if (PTR_ERR(serdes) == -EPROBE_DEFER) {
++				dev_err(ocelot->dev, "deferring probe\n");
++				err = -EPROBE_DEFER;
++				goto err_probe_ports;
++			}
++
++			dev_err(ocelot->dev, "missing SerDes phys for port%d\n",
++				port);
++			err = -ENODEV;
+ 			goto err_probe_ports;
+ 		}
++
++		ocelot->ports[port]->serdes = serdes;
+ 	}
+ 
+ 	register_netdevice_notifier(&ocelot_netdevice_nb);
 -- 
 git-series 0.9.1
