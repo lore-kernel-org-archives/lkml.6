@@ -5,54 +5,45 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A35713F6DFF
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 11:05:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44C96FD21E1
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 11:06:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 342A720881
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 11:05:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 342A720881
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id EC8EE20881
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 11:06:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EC8EE20881
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731395AbeG3MkP (ORCPT
+        id S1731503AbeG3Mki (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 30 Jul 2018 08:40:15 -0400
-Received: from mga02.intel.com ([134.134.136.20]:35319 "EHLO mga02.intel.com"
+        Mon, 30 Jul 2018 08:40:38 -0400
+Received: from foss.arm.com ([217.140.101.70]:36834 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726922AbeG3MkO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Jul 2018 08:40:14 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Jul 2018 04:05:47 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,422,1526367600"; 
-   d="scan'208";a="77146422"
-Received: from speedy.fi.intel.com (HELO [10.237.72.71]) ([10.237.72.71])
-  by orsmga001.jf.intel.com with ESMTP; 30 Jul 2018 04:05:43 -0700
-Subject: Re: [PATCH 4/4] cpufreq: intel_pstate: enable boost for Skylake Xeon
-To:     Mel Gorman <mgorman@techsingularity.net>,
-        Francisco Jerez <currojerez@riseup.net>
-Cc:     Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-        lenb@kernel.org, rjw@rjwysocki.net, peterz@infradead.org,
-        ggherdovich@suse.cz, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, juri.lelli@redhat.com,
-        viresh.kumar@linaro.org, Chris Wilson <chris@chris-wilson.co.uk>,
-        Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
-References: <20180605214242.62156-1-srinivas.pandruvada@linux.intel.com>
- <20180605214242.62156-5-srinivas.pandruvada@linux.intel.com>
- <87bmarhqk4.fsf@riseup.net>
- <20180728123639.7ckv3ljnei3urn6m@techsingularity.net>
-From:   Eero Tamminen <eero.t.tamminen@intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-Message-ID: <e7388bf4-deb1-34b6-97d7-89ced8e78ef1@intel.com>
-Date:   Mon, 30 Jul 2018 14:16:51 +0300
+        id S1726611AbeG3Mki (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Jul 2018 08:40:38 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CAAA480D;
+        Mon, 30 Jul 2018 04:06:10 -0700 (PDT)
+Received: from [10.4.12.131] (e110467-lin.Emea.Arm.com [10.4.12.131])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BAAA23F6A8;
+        Mon, 30 Jul 2018 04:06:09 -0700 (PDT)
+Subject: Re: [PATCH mmc-next v2 3/3] mmc: sdhci-of-dwcmshc: solve 128MB DMA
+ boundary limitation
+To:     Jisheng Zhang <Jisheng.Zhang@synaptics.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Cc:     linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+References: <20180726151017.4da1e336@xhacker.debian>
+ <20180726151424.4bcecf41@xhacker.debian>
+From:   Robin Murphy <robin.murphy@arm.com>
+Message-ID: <edaa7605-e0e0-b17a-8403-c3d7d60d7989@arm.com>
+Date:   Mon, 30 Jul 2018 12:06:08 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <20180728123639.7ckv3ljnei3urn6m@techsingularity.net>
-Content-Type: text/plain; charset=iso-8859-15; format=flowed
+In-Reply-To: <20180726151424.4bcecf41@xhacker.debian>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -60,89 +51,103 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Mel,
+Hi Jisheng,
 
-On 28.07.2018 15:36, Mel Gorman wrote:
-> On Fri, Jul 27, 2018 at 10:34:03PM -0700, Francisco Jerez wrote:
->> Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com> writes:
->>
->>> Enable HWP boost on Skylake server and workstations.
->>>
->>
->> Please revert this series, it led to significant energy usage and
->> graphics performance regressions [1].  The reasons are roughly the ones
->> we discussed by e-mail off-list last April: This causes the intel_pstate
->> driver to decrease the EPP to zero when the workload blocks on IO
->> frequently enough, which for the regressing benchmarks detailed in [1]
->> is a symptom of the workload being heavily IO-bound, which means they
->> won't benefit at all from the EPP boost since they aren't significantly
->> CPU-bound, and they will suffer a decrease in parallelism due to the
->> active CPU core using a larger fraction of the TDP in order to achieve
->> the same work, causing the GPU to have a lower power budget available,
->> leading to a decrease in system performance.
- >
-> It slices both ways. With the series, there are large boosts to
-> performance on other workloads where a slight increase in power usage is
-> acceptable in exchange for performance. For example,
+On 26/07/18 08:14, Jisheng Zhang wrote:
+> When using DMA, if the DMA addr spans 128MB boundary, we have to split
+> the DMA transfer into two so that each one doesn't exceed the boundary.
+
+Out of interest, is the driver already setting its segment boundary mask 
+appropriately? This sounds like the exact kind of hardware restriction 
+that dma_parms is intended to describe, which scatterlist-generating 
+code is *supposed* to already respect.
+
+Robin.
+
+> Signed-off-by: Jisheng Zhang <Jisheng.Zhang@synaptics.com>
+> ---
+>   drivers/mmc/host/sdhci-of-dwcmshc.c | 42 +++++++++++++++++++++++++++++
+>   1 file changed, 42 insertions(+)
 > 
-> Single socket skylake running sqlite
-[...]
-> That's over doubling the transactions per second for that workload.
+> diff --git a/drivers/mmc/host/sdhci-of-dwcmshc.c b/drivers/mmc/host/sdhci-of-dwcmshc.c
+> index 1b7cd144fb01..7e189514bc83 100644
+> --- a/drivers/mmc/host/sdhci-of-dwcmshc.c
+> +++ b/drivers/mmc/host/sdhci-of-dwcmshc.c
+> @@ -8,21 +8,51 @@
+>    */
+>   
+>   #include <linux/clk.h>
+> +#include <linux/mm.h>
+>   #include <linux/module.h>
+>   #include <linux/of.h>
+>   
+>   #include "sdhci-pltfm.h"
+>   
+> +#define BOUNDARY_OK(addr, len) \
+> +	((addr | (SZ_128M - 1)) == ((addr + len - 1) | (SZ_128M - 1)))
+> +
+>   struct dwcmshc_priv {
+>   	struct clk	*bus_clk;
+>   };
+>   
+> +/*
+> + * if DMA addr spans 128MB boundary, we split the DMA transfer into two
+> + * so that the DMA transfer doesn't exceed the boundary.
+> + */
+> +static unsigned int dwcmshc_adma_write_desc(struct sdhci_host *host,
+> +					    void *desc, dma_addr_t addr,
+> +					    int len, unsigned int cmd)
+> +{
+> +	int tmplen, offset;
+> +
+> +	if (BOUNDARY_OK(addr, len) || !len)
+> +		return _sdhci_adma_write_desc(host, desc, addr, len, cmd);
+> +
+> +	offset = addr & (SZ_128M - 1);
+> +	tmplen = SZ_128M - offset;
+> +	_sdhci_adma_write_desc(host, desc, addr, tmplen, cmd);
+> +
+> +	addr += tmplen;
+> +	len -= tmplen;
+> +	desc += host->desc_sz;
+> +	_sdhci_adma_write_desc(host, desc, addr, len, cmd);
+> +
+> +	return host->desc_sz * 2;
+> +}
+> +
+>   static const struct sdhci_ops sdhci_dwcmshc_ops = {
+>   	.set_clock		= sdhci_set_clock,
+>   	.set_bus_width		= sdhci_set_bus_width,
+>   	.set_uhs_signaling	= sdhci_set_uhs_signaling,
+>   	.get_max_clock		= sdhci_pltfm_clk_get_max_clock,
+>   	.reset			= sdhci_reset,
+> +	.adma_write_desc	= dwcmshc_adma_write_desc,
+>   };
+>   
+>   static const struct sdhci_pltfm_data sdhci_dwcmshc_pdata = {
+> @@ -36,12 +66,24 @@ static int dwcmshc_probe(struct platform_device *pdev)
+>   	struct sdhci_host *host;
+>   	struct dwcmshc_priv *priv;
+>   	int err;
+> +	u32 extra;
+>   
+>   	host = sdhci_pltfm_init(pdev, &sdhci_dwcmshc_pdata,
+>   				sizeof(struct dwcmshc_priv));
+>   	if (IS_ERR(host))
+>   		return PTR_ERR(host);
+>   
+> +	/*
+> +	 * The DMA descriptor table number is calculated as the maximum
+> +	 * number of segments times 2, to allow for an alignment
+> +	 * descriptor for each segment, plus 1 for a nop end descriptor,
+> +	 * plus extra number for cross 128M boundary handling.
+> +	 */
+> +	extra = DIV_ROUND_UP(totalram_pages, SZ_128M / PAGE_SIZE);
+> +	if (extra > SDHCI_MAX_SEGS)
+> +		extra = SDHCI_MAX_SEGS;
+> +	host->adma_table_num = SDHCI_MAX_SEGS * 2 + 1 + extra;
+> +
+>   	pltfm_host = sdhci_priv(host);
+>   	priv = sdhci_pltfm_priv(pltfm_host);
+>   
 > 
-> Two-socket skylake running dbench4
-[...]> This is reporting the average latency of operations running 
-dbench. The
-> series over halves the latencies. There are many examples of basic
-> workloads that benefit heavily from the series and while I accept it may
-> not be universal, such as the case where the graphics card needs the power
-> and not the CPU, a straight revert is not the answer. Without the series,
-> HWP cripplies the CPU.
-
-I assume SQLite IO-bottleneck is for the disk.  Disk doesn't share
-the TDP limit with the CPU, like IGP does.
-
-Constraints / performance considerations for TDP sharing IO-loads
-differ from ones that don't share TDP with CPU cores.
-
-
-Workloads that can be "IO-bound" and which can be on the same chip
-with CPU i.e. share TDP with it are:
-- 3D rendering
-- Camera / video processing
-- Compute
-
-Intel, AMD and ARM manufacturers all have (non-server) chips where these
-IP blocks are on the same die as CPU cores.  If CPU part redundantly
-doubles its power consumption, it's directly eating TDP budget away from
-these devices.
-
-For workloads where IO bottleneck doesn't share TDP budget with CPU,
-like (sqlite) databases, you don't lose performance by running CPU
-constantly at full tilt, you only use more power [1].
-
-Questions:
-
-* Does currently kernel CPU freq management have any idea which IO
-   devices share TDP with the CPU cores?
-
-* Do you do performance testing also in conditions that hit TDP limits?
-
-
-	- Eero
-
-[1]  For them power usage is performance problem only if you start
-hitting TDP limit with CPUs alone, or you hit temperature limits.
-
-For CPUs alone to hit TDP limits, our test-case needs to be utilizing 
-multiple cores and device needs to have lowish TDP compared to the
-performance of the chip.
-
-TDP limiting adds test results variance significantly, but that's
-a property of the chips themselves so it cannot be avoided. :-/
-
-Temperature limiting might happen on small enclosures like the ones used
-for the SKL HQ devices i.e. laptops & NUCs, but not on servers.   In our
-testing we try to avoid temperature limitations when its possible (=
-extra cooling) as it increases variance so much that results are mostly
-useless (same devices are also TDP limited i.e. already have high
-variance).
