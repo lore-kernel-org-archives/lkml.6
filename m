@@ -2,76 +2,87 @@ Return-Path: <SRS0=qqIy=KO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54A0013F6DFF
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 09:15:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 632B513F6DFF
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 09:16:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B9B6620873
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 09:14:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B9B6620873
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 1874120873
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 09:16:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1874120873
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726692AbeG3KtA (ORCPT
+        id S1726743AbeG3KuK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 30 Jul 2018 06:49:00 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:57700 "EHLO mx1.redhat.com"
+        Mon, 30 Jul 2018 06:50:10 -0400
+Received: from mx2.suse.de ([195.135.220.15]:38070 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726561AbeG3Ks7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Jul 2018 06:48:59 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 17B497C6A9;
-        Mon, 30 Jul 2018 09:14:57 +0000 (UTC)
-Received: from vitty.brq.redhat.com.redhat.com (unknown [10.43.2.155])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id CB3662026D68;
-        Mon, 30 Jul 2018 09:14:55 +0000 (UTC)
-From:   Vitaly Kuznetsov <vkuznets@redhat.com>
-To:     Paolo Bonzini <pbonzini@redhat.com>
-Cc:     Jim Mattson <jmattson@google.com>, kvm list <kvm@vger.kernel.org>,
-        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH RFC] x86/kvm/lapic: always disable MMIO interface in x2APIC mode
-References: <20180727144448.9606-1-vkuznets@redhat.com>
-        <CALMp9eSaiw7wMMhzKZQpM141h6zEz=shu5P++BerbQBTVyFdYA@mail.gmail.com>
-        <e3b7080f-b788-048b-6f3a-e1a90e4206b7@redhat.com>
-Date:   Mon, 30 Jul 2018 11:14:54 +0200
-In-Reply-To: <e3b7080f-b788-048b-6f3a-e1a90e4206b7@redhat.com> (Paolo
-        Bonzini's message of "Fri, 27 Jul 2018 19:00:38 +0200")
-Message-ID: <87sh41nkz5.fsf@vitty.brq.redhat.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
+        id S1726686AbeG3KuK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Jul 2018 06:50:10 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 767C4AE08;
+        Mon, 30 Jul 2018 09:16:06 +0000 (UTC)
+Date:   Mon, 30 Jul 2018 11:16:05 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     John Allen <jallen@linux.ibm.com>
+Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        kamezawa.hiroyu@jp.fujitsu.com, n-horiguchi@ah.jp.nec.com,
+        mgorman@suse.de, nfont@linux.vnet.ibm.com
+Subject: Re: Infinite looping observed in __offline_pages
+Message-ID: <20180730091605.GF24267@dhcp22.suse.cz>
+References: <20180725181115.hmlyd3tmnu3mn3sf@p50.austin.ibm.com>
+ <20180725200336.GP28386@dhcp22.suse.cz>
+ <20180727173259.htdxpn4i2fxprpaj@p50.austin.ibm.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Mon, 30 Jul 2018 09:14:57 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Mon, 30 Jul 2018 09:14:57 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'vkuznets@redhat.com' RCPT:''
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180727173259.htdxpn4i2fxprpaj@p50.austin.ibm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Paolo Bonzini <pbonzini@redhat.com> writes:
+On Fri 27-07-18 12:32:59, John Allen wrote:
+> On Wed, Jul 25, 2018 at 10:03:36PM +0200, Michal Hocko wrote:
+> > On Wed 25-07-18 13:11:15, John Allen wrote:
+> > [...]
+> > > Does a failure in do_migrate_range indicate that the range is unmigratable
+> > > and the loop in __offline_pages should terminate and goto failed_removal? Or
+> > > should we allow a certain number of retrys before we
+> > > give up on migrating the range?
+> > 
+> > Unfortunatelly not. Migration code doesn't tell a difference between
+> > ephemeral and permanent failures. We are relying on
+> > start_isolate_page_range to tell us this. So the question is, what kind
+> > of page is not migratable and for what reason.
+> > 
+> > Are you able to add some debugging to give us more information. The
+> > current debugging code in the hotplug/migration sucks...
+> 
+> After reproducing the problem a couple times, it seems that it can occur for
+> different types of pages. Running page-types on the offending page over two
+> separate instances produced the following:
+> 
+> # tools/vm/page-types -a 307968-308224
+>             flags	page-count       MB  symbolic-flags			long-symbolic-flags
+> 0x0000000000000400	         1        0  __________B________________________________	buddy
+> 	     total	         1        0
 
-> On 27/07/2018 18:48, Jim Mattson wrote:
->> On a physical machine, I would expect the default local APIC page to
->> fall in the PCI hole, so it would be correct to sink writes and to
->> return all ones for reads. Does qemu implement a PCI hole, and does
->> this address fall into it?
->
-> It does implement a PCI hole, but when using the kernel LAPIC it expects
-> that only devices write to that range; therefore that address doesn't
-> fall into the PCI hole, and instead it generates an MSIs.
+Huh! How come a buddy page has non zero reference count.
+> 
+> And the following on a separate run:
+> 
+> # tools/vm/page-types -a 313088-313344
+>             flags	page-count       MB  symbolic-flags			long-symbolic-flags
+> 0x000000000000006c	         1        0  __RU_lA____________________________________	referenced,uptodate,lru,active
+>             total	         1        0
 
-Yes, and that's why I believe it's correct to never forward lapic
-reads/writes from KVM to userspace when lapic is in kernel.
-
-"RFC" was mostly about the inconsistency with the case when APIC access
-page is in use. To be 100% correct I would suggest to somehow make it
-behave like MMIO hole in case we're in x2APIC/disabled mode too.
-
+Hmm, what is the expected page count in this case? Seeing 1 doesn't look
+particularly wrong.
 -- 
-  Vitaly
+Michal Hocko
+SUSE Labs
