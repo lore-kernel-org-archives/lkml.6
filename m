@@ -6,454 +6,185 @@ X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8DBC13F6DFF
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 12:56:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9F5E13F6DFF
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 12:56:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 950EF20892
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 12:56:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 950EF20892
+	by mail.kernel.org (Postfix) with ESMTP id 9E1B520893
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 12:56:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9E1B520893
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732312AbeG3ObG (ORCPT
+        id S1732324AbeG3ObI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 30 Jul 2018 10:31:06 -0400
-Received: from mx2.suse.de ([195.135.220.15]:50102 "EHLO mx1.suse.de"
+        Mon, 30 Jul 2018 10:31:08 -0400
+Received: from mx2.suse.de ([195.135.220.15]:50162 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729395AbeG3ObF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Jul 2018 10:31:05 -0400
+        id S1729395AbeG3ObI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Jul 2018 10:31:08 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id C0A1EAEC7;
-        Mon, 30 Jul 2018 12:56:09 +0000 (UTC)
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id AF51CAF54;
+        Mon, 30 Jul 2018 12:56:14 +0000 (UTC)
 Received: by unicorn.suse.cz (Postfix, from userid 1000)
-        id 62706A0BE8; Mon, 30 Jul 2018 14:56:09 +0200 (CEST)
-Message-Id: <a6033f12c548cb9655c930f792faaaf8d310dd03.1532954671.git.mkubecek@suse.cz>
+        id 682FDA0BE8; Mon, 30 Jul 2018 14:56:14 +0200 (CEST)
+Message-Id: <26ffda3b080026f5f0ca1d36dcdee201923b4f33.1532954671.git.mkubecek@suse.cz>
 In-Reply-To: <cover.1532954671.git.mkubecek@suse.cz>
 References: <cover.1532954671.git.mkubecek@suse.cz>
 From:   Michal Kubecek <mkubecek@suse.cz>
-Subject: [RFC PATCH ethtool v2 05/23] netlink: add notification monitor
+Subject: [RFC PATCH ethtool v2 06/23] netlink: add netlink handler for gdrv
+ (-i)
 To:     netdev@vger.kernel.org
 Cc:     linux-kernel@vger.kernel.org,
         "John W. Linville" <linville@tuxdriver.com>
-Date:   Mon, 30 Jul 2018 14:56:09 +0200 (CEST)
+Date:   Mon, 30 Jul 2018 14:56:14 +0200 (CEST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-With 'ethtool --monitor [ --all | opt ] [dev]', let ethtool listen to
-netlink notification and display them in a format similar to output of
-related "get" commands. With --all, show all types of notifications. If
-device name is specified, show only notifications for that device, if no
-device name or "*" is passed, show notifications for all devices.
+Implement "-i" subcommand using netlink interface command
+ETHNL_CMD_GET_DRVINFO.
 
 Signed-off-by: Michal Kubecek <mkubecek@suse.cz>
 ---
- Makefile.am       |   2 +-
- ethtool.c         |  17 ++++
- netlink/extapi.h  |   4 +
- netlink/monitor.c | 218 ++++++++++++++++++++++++++++++++++++++++++++++
- netlink/netlink.c |  32 ++++++-
- netlink/netlink.h |  26 ++++++
- 6 files changed, 297 insertions(+), 2 deletions(-)
- create mode 100644 netlink/monitor.c
+ Makefile.am       |  1 +
+ ethtool.c         |  3 ++-
+ netlink/drvinfo.c | 43 +++++++++++++++++++++++++++++++++++++++++++
+ netlink/extapi.h  |  1 +
+ netlink/monitor.c | 10 ++++++++++
+ 5 files changed, 57 insertions(+), 1 deletion(-)
+ create mode 100644 netlink/drvinfo.c
 
 diff --git a/Makefile.am b/Makefile.am
-index 6a4d7083919e..a412734fffd1 100644
+index a412734fffd1..7e24fe8c50f4 100644
 --- a/Makefile.am
 +++ b/Makefile.am
-@@ -22,7 +22,7 @@ endif
- if ETHTOOL_ENABLE_NETLINK
+@@ -23,6 +23,7 @@ if ETHTOOL_ENABLE_NETLINK
  ethtool_SOURCES += \
  		  netlink/netlink.c netlink/netlink.h netlink/extapi.h \
--		  netlink/strset.c netlink/strset.h \
-+		  netlink/strset.c netlink/strset.h netlink/monitor.c \
+ 		  netlink/strset.c netlink/strset.h netlink/monitor.c \
++		  netlink/drvinfo.c \
  		  uapi/linux/ethtool_netlink.h \
  		  uapi/linux/netlink.h uapi/linux/genetlink.h
  ethtool_CFLAGS += @MNL_CFLAGS@
 diff --git a/ethtool.c b/ethtool.c
-index e8044a6af76c..b7f40d2f3826 100644
+index b7f40d2f3826..0edb80b19b9d 100644
 --- a/ethtool.c
 +++ b/ethtool.c
-@@ -5294,6 +5294,9 @@ static int show_usage(struct cmd_context *ctx)
- 		if (args[i].opthelp)
- 			fputs(args[i].opthelp, stdout);
- 	}
-+#ifdef ETHTOOL_ENABLE_NETLINK
-+	monitor_usage();
-+#endif
+@@ -5056,6 +5056,7 @@ static int show_usage(struct cmd_context *ctx);
+ /* Just define all netlink handlers as null when building without netlink
+  * support so that we do not get unresolved symbols in args array below
+  */
++#define nl_gdrv		NULL
+ #endif
  
- 	return 0;
- }
-@@ -5335,6 +5338,20 @@ int main(int argc, char **argp)
- 	argp++;
- 	argc--;
- 
-+#ifdef ETHTOOL_ENABLE_NETLINK
-+	if (*argp && !strcmp(*argp, "--monitor")) {
-+		if (netlink_init(&ctx)) {
-+			fprintf(stderr,
-+				"Option --monitor is only available with netlink.\n");
-+			return 1;
-+		} else {
-+			ctx.argp = ++argp;
-+			ctx.argc = --argc;
-+			return nl_monitor(&ctx);
-+		}
-+	}
-+#endif
+ static const struct option {
+@@ -5125,7 +5126,7 @@ static const struct option {
+ 	{ "-K|--features|--offload", 1, do_sfeatures, NULL,
+ 	  "Set protocol offload and other features",
+ 	  "		FEATURE on|off ...\n" },
+-	{ "-i|--driver", 1, do_gdrv, NULL,
++	{ "-i|--driver", 1, do_gdrv, nl_gdrv,
+ 	  "Show driver information" },
+ 	{ "-d|--register-dump", 1, do_gregs, NULL,
+ 	  "Do a register dump",
+diff --git a/netlink/drvinfo.c b/netlink/drvinfo.c
+new file mode 100644
+index 000000000000..78b4394788a5
+--- /dev/null
++++ b/netlink/drvinfo.c
+@@ -0,0 +1,43 @@
++#include "../internal.h"
++#include "netlink.h"
 +
- 	/* First argument must be either a valid option or a device
- 	 * name to get settings for (which we don't expect to begin
- 	 * with '-').
++int drvinfo_reply_cb(const struct nlmsghdr *nlhdr, void *data)
++{
++	const struct nlattr *tb[ETHA_DRVINFO_MAX + 1] = {};
++	DECLARE_ATTR_TB_INFO(tb);
++	struct nl_context *nlctx = data;
++	int ret;
++
++	ret = mnl_attr_parse(nlhdr, GENL_HDRLEN, attr_cb, &tb_info);
++	if (ret < 0)
++		return ret;
++	nlctx->devname = get_dev_name(tb[ETHA_DRVINFO_DEV]);
++	if (!dev_ok(nlctx))
++		return MNL_CB_OK;
++	if (nlctx->is_dump || nlctx->is_monitor)
++		fprintf(stdout, "\nDriver info for %s:\n", nlctx->devname);
++
++	show_string(tb, ETHA_DRVINFO_DRIVER, "driver");
++	show_string(tb, ETHA_DRVINFO_VERSION, "version");
++	show_string(tb, ETHA_DRVINFO_FWVERSION, "firmware-version");
++	show_string(tb, ETHA_DRVINFO_EROM_VER, "expansion-rom-version");
++	show_string(tb, ETHA_DRVINFO_BUSINFO, "bus-info");
++	show_u32_yn(tb, ETHA_DRVINFO_N_STATS, "supports-statistics");
++	show_u32_yn(tb, ETHA_DRVINFO_TESTINFO_LEN, "supports-test");
++	show_u32_yn(tb, ETHA_DRVINFO_EEDUMP_LEN, "supports-eeprom-access");
++	show_u32_yn(tb, ETHA_DRVINFO_REGDUMP_LEN, "supports-register-dump");
++	show_u32_yn(tb, ETHA_DRVINFO_N_PRIV_FLAGS, "supports-priv-flags");
++
++	return MNL_CB_OK;
++}
++
++int nl_gdrv(struct cmd_context *ctx)
++{
++	int ret;
++
++	ret = ethnl_prep_get_request(ctx, ETHNL_CMD_GET_DRVINFO,
++				     ETHA_DRVINFO_DEV);
++	if (ret < 0)
++		return ret;
++	return ethnl_send_get_request(ctx->nlctx, drvinfo_reply_cb);
++}
 diff --git a/netlink/extapi.h b/netlink/extapi.h
-index 05ab083d9b9c..827e3732888a 100644
+index 827e3732888a..546090a02a0d 100644
 --- a/netlink/extapi.h
 +++ b/netlink/extapi.h
-@@ -13,4 +13,8 @@ struct nl_context;
+@@ -13,6 +13,7 @@ struct nl_context;
  int netlink_init(struct cmd_context *ctx);
  int netlink_done(struct cmd_context *ctx);
  
-+int nl_monitor(struct cmd_context *ctx);
-+
-+void monitor_usage();
-+
- #endif /* ETHTOOL_EXTAPI_H__ */
++int nl_gdrv(struct cmd_context *ctx);
+ int nl_monitor(struct cmd_context *ctx);
+ 
+ void monitor_usage();
 diff --git a/netlink/monitor.c b/netlink/monitor.c
-new file mode 100644
-index 000000000000..d7ed562356f1
---- /dev/null
+index d7ed562356f1..ae7d6080e03d 100644
+--- a/netlink/monitor.c
 +++ b/netlink/monitor.c
-@@ -0,0 +1,218 @@
-+#include <errno.h>
-+
-+#include "../internal.h"
-+#include "netlink.h"
-+#include "strset.h"
-+
-+static void monitor_newdev(struct nl_context *nlctx, struct nlattr *evattr)
-+{
-+	const struct nlattr *tb[ETHA_NEWDEV_MAX + 1] = {};
-+	DECLARE_ATTR_TB_INFO(tb);
-+	const char *devname;
-+	int ret;
-+
-+	ret = mnl_attr_parse_nested(evattr, attr_cb, &tb_info);
-+	if (ret < 0)
-+		return;
-+	if (!tb[ETHA_NEWDEV_DEV])
-+		return;
-+	devname = get_dev_name(tb[ETHA_NEWDEV_DEV]);
-+	if (!devname)
-+		return;
-+	printf("New device %s registered.\n", devname);
-+
-+	ret = init_aux_nlctx(nlctx);
-+	if (ret < 0)
-+		return;
-+	load_perdev_strings(nlctx->aux_nlctx, devname);
-+}
-+
-+static void monitor_deldev(struct nl_context *nlctx, struct nlattr *evattr)
-+{
-+	const struct nlattr *tb[ETHA_DELDEV_MAX + 1] = {};
-+	DECLARE_ATTR_TB_INFO(tb);
-+	const char *devname;
-+	int ret;
-+
-+	ret = mnl_attr_parse_nested(evattr, attr_cb, &tb_info);
-+	if (ret < 0)
-+		return;
-+	if (!tb[ETHA_DELDEV_DEV])
-+		return;
-+	devname = get_dev_name(tb[ETHA_DELDEV_DEV]);
-+	if (!devname)
-+		return;
-+	printf("Device %s unregistered.\n", devname);
-+
-+	free_perdev_strings(devname);
-+}
-+
-+static int monitor_event_cb(const struct nlmsghdr *nlhdr, void *data)
-+{
-+	struct nl_context *nlctx = data;
-+	struct nlattr *evattr;
-+
-+	mnl_attr_for_each(evattr, nlhdr, GENL_HDRLEN) {
-+		switch(mnl_attr_get_type(evattr)) {
-+		case ETHA_EVENT_NEWDEV:
-+			monitor_newdev(nlctx, evattr);
-+			break;
-+		case ETHA_EVENT_DELDEV:
-+			monitor_deldev(nlctx, evattr);
-+			break;
-+		}
-+	}
-+
-+	return MNL_CB_OK;
-+}
-+
-+static struct {
-+	uint8_t		cmd;
-+	mnl_cb_t	cb;
-+} monitor_callbacks[] = {
-+	{
-+		.cmd	= ETHNL_CMD_EVENT,
-+		.cb	= monitor_event_cb,
-+	},
-+};
-+
-+static int monitor_any_cb(const struct nlmsghdr *nlhdr, void *data)
-+{
-+	const struct genlmsghdr *ghdr = (const struct genlmsghdr *)(nlhdr + 1);
-+	struct nl_context *nlctx = data;
-+	unsigned i;
-+
-+	if (nlctx->filter_cmd && ghdr->cmd != nlctx->filter_cmd)
-+		return MNL_CB_OK;
-+
-+	for (i = 0; i < MNL_ARRAY_SIZE(monitor_callbacks); i++)
-+		if (monitor_callbacks[i].cmd == ghdr->cmd)
-+			return monitor_callbacks[i].cb(nlhdr, data);
-+
-+	return MNL_CB_OK;
-+}
-+
-+struct monitor_option {
-+	const char	*pattern;
-+	uint8_t		cmd;
-+	uint32_t	info_mask;
-+};
-+
-+static struct monitor_option monitor_opts[] = {
-+	{
-+		.pattern	= "--all",
-+		.cmd		= 0,
-+	},
-+};
-+
-+static bool pattern_match(const char *s, const char *pattern)
-+{
-+	const char *opt = pattern;
-+	const char *next;
-+	int slen = strlen(s);
-+	int optlen;
-+
-+	do {
-+		next = opt;
-+		while (*next && *next != '|')
-+			next++;
-+		optlen = next - opt;
-+		if (slen == optlen && !strncmp(s, opt, optlen))
-+			return true;
-+
-+		opt = next;
-+		if (*opt == '|')
-+			opt++;
-+	} while (*opt);
-+
-+	return false;
-+}
-+
-+static int parse_monitor(struct cmd_context *ctx)
-+{
-+	struct nl_context *nlctx = ctx->nlctx;
-+	char **argp = ctx->argp;
-+	int argc = ctx->argc;
-+	const char *opt = "";
-+	unsigned int i;
-+
-+	if (*argp && argp[0][0] == '-') {
-+		opt = *argp;
-+		argp++;
-+		argc--;
-+	}
-+	for (i = 0; i < MNL_ARRAY_SIZE(monitor_opts); i++) {
-+		if (pattern_match(opt, monitor_opts[i].pattern)) {
-+			nlctx->filter_cmd = monitor_opts[i].cmd;
-+			nlctx->filter_mask = monitor_opts[i].info_mask;
-+			goto opt_found;
-+		}
-+	}
-+	fprintf(stderr, "monitoring for option '%s' not supported\n", *argp);
-+	return -1;
-+
-+opt_found:
-+	if (*argp && strcmp(*argp, WILDCARD_DEVNAME))
-+		ctx->devname = *argp;
-+	return 0;
-+}
-+
-+int nl_monitor(struct cmd_context *ctx)
-+{
-+	bool is_dev;
-+	struct nl_context *nlctx = ctx->nlctx;
-+	uint32_t grpid = nlctx->mon_mcgrp_id;
-+	int ret;
-+
-+	if (!grpid) {
-+		fprintf(stderr, "multicast group 'monitor' not found\n");
-+		return -EOPNOTSUPP;
-+	}
-+	if (parse_monitor(ctx) < 0)
-+		return 1;
-+	is_dev = ctx->devname && strcmp(ctx->devname, WILDCARD_DEVNAME);
-+
-+	ret = load_global_strings(nlctx);
-+	if (ret < 0)
-+		return ret;
-+	ret = mnl_socket_setsockopt(nlctx->sk, NETLINK_ADD_MEMBERSHIP,
-+				    &grpid, sizeof(grpid));
-+	if (ret < 0)
-+		return ret;
-+	ret = load_perdev_strings(nlctx, is_dev ? ctx->devname : NULL);
-+	if (ret < 0)
-+		return ret;
-+
-+	nlctx->filter_devname = ctx->devname;
-+	nlctx->is_monitor = true;
-+	nlctx->port = 0;
-+	nlctx->seq = 0;
-+
-+	fputs("listening...\n", stdout);
-+	fflush(stdout);
-+	ret = ethnl_process_reply(nlctx, monitor_any_cb);
-+	free_perdev_strings(NULL);
-+	return ret;
-+}
-+
-+void monitor_usage()
-+{
-+	const char *p;
-+	unsigned i;
-+
-+	fputs("        ethtool --monitor               Show kernel notifications\n",
-+	      stdout);
-+	for (i = 0; i < MNL_ARRAY_SIZE(monitor_opts); i++) {
-+		if (i > 0)
-+			fputs("\n                  | ", stdout);
-+		else
-+			fputs("                ( ", stdout);
-+		for (p = monitor_opts[i].pattern; *p; p++)
-+			if (*p == '|')
-+				fputs(" | ", stdout);
-+			else
-+				fputc(*p, stdout);
-+	}
-+	fputs(" )\n", stdout);
-+	fputs("                [ DEVNAME | * ]\n", stdout);
-+}
-diff --git a/netlink/netlink.c b/netlink/netlink.c
-index 0671c4589c72..69f692d2cf04 100644
---- a/netlink/netlink.c
-+++ b/netlink/netlink.c
-@@ -391,6 +391,31 @@ err:
- 
- /* get ethtool family id */
- 
-+static void ethnl_find_monitor_group(struct nl_context *nlctx,
-+				     struct nlattr *nest)
-+{
-+	const struct nlattr *grp_tb[CTRL_ATTR_MCAST_GRP_MAX + 1] = {};
-+	DECLARE_ATTR_TB_INFO(grp_tb);
-+	struct nlattr *grp_attr;
-+	int ret;
-+
-+	nlctx->mon_mcgrp_id = 0;
-+	mnl_attr_for_each_nested(grp_attr, nest) {
-+		ret = mnl_attr_parse_nested(grp_attr, attr_cb, &grp_tb_info);
-+		if (ret < 0)
-+			return;
-+		if (!grp_tb[CTRL_ATTR_MCAST_GRP_NAME] ||
-+		    !grp_tb[CTRL_ATTR_MCAST_GRP_ID])
-+			continue;
-+		if (strcmp(mnl_attr_get_str(grp_tb[CTRL_ATTR_MCAST_GRP_NAME]),
-+			   ETHTOOL_MCGRP_MONITOR_NAME))
-+			continue;
-+		nlctx->mon_mcgrp_id =
-+			mnl_attr_get_u32(grp_tb[CTRL_ATTR_MCAST_GRP_ID]);
-+		return;
-+	}
-+}
-+
- static int ethnl_family_cb(const struct nlmsghdr *nlhdr, void *data)
- {
- 	struct nl_context *nlctx = data;
-@@ -398,9 +423,13 @@ static int ethnl_family_cb(const struct nlmsghdr *nlhdr, void *data)
- 
- 	nlctx->ethnl_fam = 0;
- 	mnl_attr_for_each(attr, nlhdr, GENL_HDRLEN) {
--		if (mnl_attr_get_type(attr) == CTRL_ATTR_FAMILY_ID) {
-+		switch(mnl_attr_get_type(attr)) {
-+		case CTRL_ATTR_FAMILY_ID:
- 			nlctx->ethnl_fam = mnl_attr_get_u16(attr);
- 			break;
-+		case CTRL_ATTR_MCAST_GROUPS:
-+			ethnl_find_monitor_group(nlctx, attr);
-+			break;
- 		}
- 	}
- 
-@@ -478,6 +507,7 @@ int __init_aux_nlctx(struct nl_context *nlctx)
- 	}
- 
- 	aux->ethnl_fam = nlctx->ethnl_fam;
-+	aux->mon_mcgrp_id = nlctx->mon_mcgrp_id;
- 	nlctx->aux_nlctx = aux;
- 
- 	return 0;
-diff --git a/netlink/netlink.h b/netlink/netlink.h
-index 547c865ed535..15bf9f3873b0 100644
---- a/netlink/netlink.h
-+++ b/netlink/netlink.h
-@@ -17,6 +17,7 @@
- 
- struct nl_context {
- 	int ethnl_fam;
-+	uint32_t mon_mcgrp_id;
- 	struct mnl_socket *sk;
- 	struct nl_context *aux_nlctx;
- 	void *cmd_private;
-@@ -30,6 +31,10 @@ struct nl_context {
- 	const char *devname;
- 	bool is_dump;
- 	int exit_code;
-+	bool is_monitor;
-+	uint8_t filter_cmd;
-+	uint32_t filter_mask;
-+	const char *filter_devname;
- };
- 
- struct attr_tb_info {
-@@ -144,6 +149,27 @@ static inline void show_u32_yn(const struct nlattr **tb, unsigned int idx,
- 		       mnl_attr_get_u32(tb[idx]) ? "yes" : "no");
+@@ -66,6 +66,8 @@ static int monitor_event_cb(const struct nlmsghdr *nlhdr, void *data)
+ 	return MNL_CB_OK;
  }
  
-+/* reply content filtering */
++int drvinfo_reply_cb(const struct nlmsghdr *nlhdr, void *data);
 +
-+static inline bool mask_ok(const struct nl_context *nlctx, uint32_t bits)
-+{
-+	return !nlctx->filter_mask || (nlctx->filter_mask & bits);
-+}
-+
-+static inline bool dev_ok(const struct nl_context *nlctx)
-+{
-+	return !nlctx->filter_devname ||
-+	       (nlctx->devname &&
-+		!strcmp(nlctx->devname, nlctx->filter_devname));
-+}
-+
-+static inline bool show_only(const struct nl_context *nlctx, uint32_t bits)
-+{
-+	if (nlctx->is_monitor || !nlctx->filter_mask)
-+		return false;
-+	return nlctx->filter_mask & ~bits;
-+}
-+
- /* misc */
+ static struct {
+ 	uint8_t		cmd;
+ 	mnl_cb_t	cb;
+@@ -74,6 +76,10 @@ static struct {
+ 		.cmd	= ETHNL_CMD_EVENT,
+ 		.cb	= monitor_event_cb,
+ 	},
++	{
++		.cmd	= ETHNL_CMD_SET_DRVINFO,
++		.cb	= drvinfo_reply_cb,
++	},
+ };
  
- static inline int init_aux_nlctx(struct nl_context *nlctx)
+ static int monitor_any_cb(const struct nlmsghdr *nlhdr, void *data)
+@@ -103,6 +109,10 @@ static struct monitor_option monitor_opts[] = {
+ 		.pattern	= "--all",
+ 		.cmd		= 0,
+ 	},
++	{
++		.pattern	= "-i|--driver",
++		.cmd		= ETHNL_CMD_SET_DRVINFO,
++	},
+ };
+ 
+ static bool pattern_match(const char *s, const char *pattern)
 -- 
 2.18.0
 
