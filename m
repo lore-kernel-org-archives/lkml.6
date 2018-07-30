@@ -2,105 +2,109 @@ Return-Path: <SRS0=qqIy=KO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FBD813F6DFF
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 13:45:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6163B13F6DFF
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 13:46:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CCA0920893
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 13:45:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0ECC320873
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 13:46:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="QlIIJB4p"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CCA0920893
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Aq3BcCEL"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0ECC320873
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726962AbeG3PUY (ORCPT
+        id S1727016AbeG3PV1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 30 Jul 2018 11:20:24 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:54640 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726573AbeG3PUY (ORCPT
+        Mon, 30 Jul 2018 11:21:27 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:39536 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726562AbeG3PV1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Jul 2018 11:20:24 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w6UDhvJw164253;
-        Mon, 30 Jul 2018 13:45:19 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=mime-version :
- references : in-reply-to : from : date : message-id : subject : to : cc :
- content-type; s=corp-2018-07-02;
- bh=DD60IoeXMYjlvYKgQPIVaEQ17v4KxRwCXRLrs3PftYM=;
- b=QlIIJB4p/0YaiTE713+1Xv3+fJFzOMmqw4wsLwR2Z3Za446NV6afizfpBO9zJjv729sp
- FZepCzZySUKRq2eBecesYZqKMWa/D2iAWqHYRPey56zAHaA4N0XKtcJGxMUVQXMd/PJc
- ai+pB9ZL+AAyDmAAYT0/epD2N4UHo7jZGvg1lFEMhFqW11Wrc5vzG0PyG5z5dpnVOsyC
- FpVfxfblamIsd7g8Axet7NiUPCvw+YDFVGn5X5o+9Z+Ecvlu7dnnXcXDurzdD+mscRP2
- P4V/O1Ol4HzJ9xPl5DaOqkewT/n9hlBY2HPYR/fLLefFumB3y91afkeCqMdQcb1TFMsM 9w== 
-Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
-        by userp2130.oracle.com with ESMTP id 2kgfwsvjkc-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 30 Jul 2018 13:45:18 +0000
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w6UDjHmA007657
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 30 Jul 2018 13:45:17 GMT
-Received: from abhmp0015.oracle.com (abhmp0015.oracle.com [141.146.116.21])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w6UDjHl1024872;
-        Mon, 30 Jul 2018 13:45:17 GMT
-Received: from mail-oi0-f48.google.com (/209.85.218.48)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 30 Jul 2018 06:45:17 -0700
-Received: by mail-oi0-f48.google.com with SMTP id b15-v6so21276300oib.10;
-        Mon, 30 Jul 2018 06:45:17 -0700 (PDT)
-X-Gm-Message-State: AOUpUlFz9IHezkwp2K6Egv0/GZ5lssBMoQNLPItkfFZql6vp1ekdvnUc
-        RRnPvnC8QrC0LeEczjV0A8mbahElOhdh47yiyh0=
-X-Google-Smtp-Source: AAOMgpcmd4xlafCbPe1QmlXkkQVor6DLrz1pSQ6q4135hACJjpAqhnrrYBi25IBoF7CBRmOVvKWMWmeBRK+L25WoL1c=
-X-Received: by 2002:aca:e089:: with SMTP id x131-v6mr16763749oig.221.1532958316995;
- Mon, 30 Jul 2018 06:45:16 -0700 (PDT)
-MIME-Version: 1.0
-References: <20180719205545.16512-24-pasha.tatashin@oracle.com>
- <tip-857baa87b6422bcfb84ed3631d6839920cb5b09d@git.kernel.org>
- <20180724195215.GA22496@roeck-us.net> <CAGM2reayvBs8rs6yHZYV9SvPz-tsNG_Ux8ypHguLLagiS2SkuA@mail.gmail.com>
- <CAGM2rebX7dq_ejNuSotV_0gJZY6pqro-KteXz9zzhDkjtSxaOw@mail.gmail.com>
- <ddb6bc3d-b764-3115-ebc7-54c70c967f24@roeck-us.net> <CAGM2reaUEOMbbtfbLY2n66jJV=ZH0Wy7GtX-tfCG62U7Uhn14g@mail.gmail.com>
- <CAGM2reYevKGh7pqvK5O7oLB5FYkuU31v7t_AMDYt0=Q+jsVEqw@mail.gmail.com> <20180730123631.GO2476@hirez.programming.kicks-ass.net>
-In-Reply-To: <20180730123631.GO2476@hirez.programming.kicks-ass.net>
-From:   Pavel Tatashin <pasha.tatashin@oracle.com>
-Date:   Mon, 30 Jul 2018 09:44:41 -0400
-X-Gmail-Original-Message-ID: <CAGM2reZxGzjfs8pEBsZ3CHdVFOZu7fz5_XRifcqj6E87qZiA9g@mail.gmail.com>
-Message-ID: <CAGM2reZxGzjfs8pEBsZ3CHdVFOZu7fz5_XRifcqj6E87qZiA9g@mail.gmail.com>
-Subject: Re: [tip:x86/timers] sched/clock: Enable sched clock early
-To:     peterz@infradead.org
-Cc:     Guenter Roeck <linux@roeck-us.net>,
-        LKML <linux-kernel@vger.kernel.org>, mingo@kernel.org,
-        tglx@linutronix.de, hpa@zytor.com,
-        linux-tip-commits@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8969 signatures=668706
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=3 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=483
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1806210000 definitions=main-1807300153
+        Mon, 30 Jul 2018 11:21:27 -0400
+Received: by mail-pg1-f196.google.com with SMTP id a11-v6so7299332pgw.6;
+        Mon, 30 Jul 2018 06:46:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=cpeRy15Wk6bv+h52Ji00CmuhkRmAG9Bs8LCMfFc87Pk=;
+        b=Aq3BcCELBFVHB10lws86HcTMWBdMFwUx2uvsnNa8A2apAaWWtQR7BdEsh7TwAOtlfD
+         i84SSIm1Qc/KIUGZ9b8XhRaCVcEbZIukQxVxW7XSri5hon2jR9oTLRsql+i4ntXMStb2
+         AyEh0+lSo9OonBAltFe1yvS4S92STA+U7ci9mWowKbVTc9cpL8L0FS43OVnNJs6HbtnJ
+         ZAWvMdDZiwcsrPzxBY3JlPXRuCUGMZV6OmY0a0obSJ4vgiUKPDRaXx0UZpyduRBZxXYE
+         rF+4fNZcDwNyKduNmwAetkhFh8/5XUkmleJI7iNbiip1ozMnF3g59E/UGbHs3Ejq39XZ
+         fDig==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=cpeRy15Wk6bv+h52Ji00CmuhkRmAG9Bs8LCMfFc87Pk=;
+        b=blK3j0/vRgU5trNdJIk7h4IGqrTtQmOyevKSOF4Tf6Sa5oZOwYEOOXfwbBefA5+qg5
+         HDr46/bLkM4TrO0WZ4rsJcaYPuhHu36ryLEe90AW0hxCti0y323HrFdt3hDE2yr20PBs
+         DJ5iMQ3nAD10t7oPsYBnGhr4e8ZI5xCzyCSaI4Ae79or2xhj+TFtZWvYi9ohkNHSpo0V
+         9zXRhGZNWAYyNuIyNSQKthqXmY0An5nNNGLYVALVdBgMOSk9qXNk72dmEVErMgeR8nkg
+         3JuIBxg967jIr19jB4RfiedWVr7O3qk0I/zBPRn4mHKDzFz1DA87CB2KvtWsuFwGkSdQ
+         ouOQ==
+X-Gm-Message-State: AOUpUlEXGTFORJv3dB5OVewUsV51B4ai6kYwSZ5FwUpWtdjn1xUEAaz+
+        ueW1FhwyI0gjwiy61YBWNvU=
+X-Google-Smtp-Source: AAOMgpeiSODPpwbTJglI9UMopQ4p2cTWArKBnkWLTXWFN8rkXwk6tH6iYQA4vFIc07XadILxqb7PCA==
+X-Received: by 2002:a63:2404:: with SMTP id k4-v6mr16282632pgk.191.1532958382697;
+        Mon, 30 Jul 2018 06:46:22 -0700 (PDT)
+Received: from localhost.localdomain ([2402:f000:1:4414:4550:ab75:cee3:d6c1])
+        by smtp.gmail.com with ESMTPSA id k123-v6sm25456998pga.21.2018.07.30.06.46.20
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 30 Jul 2018 06:46:22 -0700 (PDT)
+From:   Jia-Ju Bai <baijiaju1990@gmail.com>
+To:     sre@kernel.org
+Cc:     linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jia-Ju Bai <baijiaju1990@gmail.com>
+Subject: [PATCH] power: reset: gpio-poweroff: Replace mdelay() with msleep() in gpio_poweroff_do_poweroff()
+Date:   Mon, 30 Jul 2018 21:46:14 +0800
+Message-Id: <20180730134614.9016-1-baijiaju1990@gmail.com>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> > -       if (cd.actual_read_sched_clock == jiffy_sched_clock_read)
-> > +       if (cd.actual_read_sched_clock == jiffy_sched_clock_read) {
-> > +               local_irq_disable();
-> >                 sched_clock_register(jiffy_sched_clock_read, BITS_PER_LONG, HZ);
-> > +               local_irq_enable();
-> > +       }
-> >
-> >         update_sched_clock();
->
-> I'm thinking maybe disable IRQs for that entire function, instead of
-> just the register call.
+gpio_poweroff_do_poweroff() is never called in atomic context.
+It calls mdelay() to busily wait, which is not necessary.
+mdelay() can be replaced with msleep().
 
-Sure, I will send a patch.
+This is found by a static analysis tool named DCNS written by myself.
 
-Thank you,
-Pavel
+Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+---
+ drivers/power/reset/gpio-poweroff.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/power/reset/gpio-poweroff.c b/drivers/power/reset/gpio-poweroff.c
+index 6273ad3b411d..bbe55cfa87d0 100644
+--- a/drivers/power/reset/gpio-poweroff.c
++++ b/drivers/power/reset/gpio-poweroff.c
+@@ -33,16 +33,16 @@ static void gpio_poweroff_do_poweroff(void)
+ 
+ 	/* drive it active, also inactive->active edge */
+ 	gpiod_direction_output(reset_gpio, 1);
+-	mdelay(100);
++	msleep(100);
+ 	/* drive inactive, also active->inactive edge */
+ 	gpiod_set_value(reset_gpio, 0);
+-	mdelay(100);
++	msleep(100);
+ 
+ 	/* drive it active, also inactive->active edge */
+ 	gpiod_set_value(reset_gpio, 1);
+ 
+ 	/* give it some time */
+-	mdelay(timeout);
++	msleep(timeout);
+ 
+ 	WARN_ON(1);
+ }
+-- 
+2.17.0
+
