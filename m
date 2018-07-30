@@ -2,98 +2,142 @@ Return-Path: <SRS0=qqIy=KO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BABFAFD21E1
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 15:35:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ACCF2160A325
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 15:35:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6D170208B2
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 15:35:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5B32920894
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 15:35:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="FtgcCgoS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6D170208B2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="CjoTPzcr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B32920894
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728250AbeG3RKk (ORCPT
+        id S1729138AbeG3RKm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 30 Jul 2018 13:10:40 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:54984 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726762AbeG3RKj (ORCPT
+        Mon, 30 Jul 2018 13:10:42 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:40758 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726762AbeG3RKm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Jul 2018 13:10:39 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=AsfBezTL97gH4iDO4Ep6SUWk4Dz4Szv31UCxcOEM1EU=; b=FtgcCgoSUvW4QKEZCC7iRahR9
-        latWwGhjHOeJVCxvS6W+o2uGJutXEy3GzjBbO7Q8jxf+cDjhklb2xLI2wzcKZCAymU7LkMeFrZXIT
-        OFF9oB5fHdgduuIrl9C/NgO1M04snObra6wV7lQcOC3EG5j/ZDGtWuGfh/+NUPL3PlojU=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1fkACN-0005XJ-Ag; Mon, 30 Jul 2018 15:35:03 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 09B931124216; Mon, 30 Jul 2018 16:35:03 +0100 (BST)
-Date:   Mon, 30 Jul 2018 16:35:03 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>
-Cc:     linux-mips@linux-mips.org, Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>,
-        James Hogan <jhogan@kernel.org>, linux-kernel@vger.kernel.org,
-        Ionela Voinescu <ionela.voinescu@imgtec.com>,
-        linux-spi@vger.kernel.org
-Subject: Re: [PATCH 14/15] spi: img-spfi: Finish every transfer cleanly
-Message-ID: <20180730153503.GO5789@sirena.org.uk>
-References: <20180722212010.3979-1-afaerber@suse.de>
- <20180722212010.3979-15-afaerber@suse.de>
+        Mon, 30 Jul 2018 13:10:42 -0400
+Received: from avalon.localnet (dfj612ybrt5fhg77mgycy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:2e86:4862:ef6a:2804])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 36B111BE8;
+        Mon, 30 Jul 2018 17:35:09 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1532964910;
+        bh=v81mQXqRptK04rcULpOQ6VpSsXiiXfLfJ8X+7QbwbCQ=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=CjoTPzcrMawj3qA6a/61aDhlkmxP44uolbt06YF5pGk7PnfgPuqtcaQ6xfTkGG4ds
+         QsHtPCMBcGK6mijYj7xhlr9W2i7CkbaILVbxQaIlT6WQDX/3mZu0RFAKAW8UEnDppb
+         HYgxASsURvhfAS0OKftebsSVQ1VTYKc0mB0cxUBg=
+From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To:     "Matwey V. Kornilov" <matwey@sai.msu.ru>
+Cc:     Alan Stern <stern@rowland.harvard.edu>,
+        Tomasz Figa <tfiga@chromium.org>,
+        Ezequiel Garcia <ezequiel@collabora.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>, mingo@redhat.com,
+        Mike Isely <isely@pobox.com>,
+        Bhumika Goyal <bhumirks@gmail.com>,
+        Colin King <colin.king@canonical.com>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        keiichiw@chromium.org
+Subject: Re: [PATCH 2/2] media: usb: pwc: Don't use coherent DMA buffers for ISO transfer
+Date:   Mon, 30 Jul 2018 18:35:48 +0300
+Message-ID: <1556658.LS2rrRvGR3@avalon>
+Organization: Ideas on Board Oy
+In-Reply-To: <CAJs94EahjbkJRWKR=2QeD=tOMR=kznwXbQgTbKvSuTg4jBk1ew@mail.gmail.com>
+References: <CAJs94EZEqWEscECp7bsJ3DvqoU83_Y2WQ55jPaG4MyoG-hvLFQ@mail.gmail.com> <Pine.LNX.4.44L0.1807231444150.1328-100000@iolanthe.rowland.org> <CAJs94EahjbkJRWKR=2QeD=tOMR=kznwXbQgTbKvSuTg4jBk1ew@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="O3WNCzIuUImKerqE"
-Content-Disposition: inline
-In-Reply-To: <20180722212010.3979-15-afaerber@suse.de>
-X-Cookie: But they went to MARS around 1953!!
-User-Agent: Mutt/1.10.0 (2018-05-17)
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Matwey,
 
---O3WNCzIuUImKerqE
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Tuesday, 24 July 2018 21:56:09 EEST Matwey V. Kornilov wrote:
+> 2018-07-23 21:57 GMT+03:00 Alan Stern:
+> > On Mon, 23 Jul 2018, Matwey V. Kornilov wrote:
+> >> I've tried to strategies:
+> >> 
+> >> 1) Use dma_unmap and dma_map inside the handler (I suppose this is
+> >> similar to how USB core does when there is no URB_NO_TRANSFER_DMA_MAP)
+> > 
+> > Yes.
+> > 
+> >> 2) Use sync_cpu and sync_device inside the handler (and dma_map only
+> >> once at memory allocation)
+> >> 
+> >> It is interesting that dma_unmap/dma_map pair leads to the lower
+> >> overhead (+1us) than sync_cpu/sync_device (+2us) at x86_64 platform.
+> >> At armv7l platform using dma_unmap/dma_map  leads to ~50 usec in the
+> >> handler, and sync_cpu/sync_device - ~65 usec.
+> >> 
+> >> However, I am not sure is it mandatory to call
+> >> dma_sync_single_for_device for FROM_DEVICE direction?
+> > 
+> > According to Documentation/DMA-API-HOWTO.txt, the CPU should not write
+> > to a DMA_FROM_DEVICE-mapped area, so dma_sync_single_for_device() is
+> > not needed.
+> 
+> Well, I measured the following at armv7l. The handler execution time
+> (URB_NO_TRANSFER_DMA_MAP is used for all cases):
+> 
+> 1) coherent DMA: ~3000 usec (pwc is not functional)
+> 2) explicit dma_unmap and dma_map in the handler: ~52 usec
+> 3) explicit dma_sync_single_for_cpu (no dma_sync_single_for_device): ~56
+> usec
 
-On Sun, Jul 22, 2018 at 11:20:09PM +0200, Andreas F=E4rber wrote:
-> From: Ionela Voinescu <ionela.voinescu@imgtec.com>
->=20
-> Before this change, the interrupt status bit that signaled
-> the end of a transfer was cleared in the wait_all_done
-> function. That functionality triggered issues for DMA
-> duplex transactions where the wait function was called
-> twice, in both the TX and RX callbacks.
+I really don't understand why the sync option is slower. Could you please 
+investigate ? Before doing anything we need to make sure we have a full 
+understanding of the problem.
 
-Again, is this not a fix?
+> So, I suppose that unfortunately Tomasz suggestion doesn't work. There
+> is no performance improvement when dma_sync_single is used.
+> 
+> At x86_64 the following happens:
+> 
+> 1) coherent DMA: ~2 usec
 
---O3WNCzIuUImKerqE
-Content-Type: application/pgp-signature; name="signature.asc"
+What do you mean by coherent DMA for x86_64 ? Is that usb_alloc_coherent() ? 
+Could you trace it to see how memory is allocated exactly, and how it's mapped 
+to the CPU ? I suspect that it will end up in dma_direct_alloc() but I'd like 
+a confirmation.
 
------BEGIN PGP SIGNATURE-----
+> 2) explicit dma_unmap and dma_map in the handler: ~3.5 usec
+> 3) explicit dma_sync_single_for_cpu (no dma_sync_single_for_device): ~4 usec
+> 
+> So, whats to do next? Personally, I think that DMA streaming API
+> introduces not so great overhead.
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAltfMCYACgkQJNaLcl1U
-h9BZmAf/QwgRuAnirIDhBewibP4c4V9oElrLpan9KExyh8toALsp037PJxbaO9oN
-sCnn3i2vHYQPNmM92QOn24RQf5wE3KbuqDeS+5podX+Js+xX7VBqTT6X63KvtR6j
-5R1wZ8XD0Nla/K8eNPoG55mbVNgFxeSwkVeQy2HU3JYo0Bzx6ShxDqkaBKFnoMkC
-I0RoWsX2xV0DLcfRhQRRSpEIe2dtV++GR48Nfs2Auw8ZpAYukTZBik4DQ9ZwgEro
-pP9MYuuGcW6TNGIqIDybg2DK2snVR9QBmCQv96IpTI9grZJiKBEQimOtw3eJ0qip
-6RdZjmm9JC60Ejak/3jBUqfQTbuH7Q==
-=ZyLh
------END PGP SIGNATURE-----
+It might not be very large, but with USB3 cameras at high resolutions and 
+framerates, it might still become noticeable. I wouldn't degrade performances 
+on x86, especially if we can decide which option to use based on the platform 
+(or perhaps even better based on Kconfig options such as DMA_NONCOHERENT).
 
---O3WNCzIuUImKerqE--
+> Does anybody happy with turning to streaming DMA or I'll introduce
+> module-level switch as Ezequiel suggested?
+
+A module-level switch isn't a good idea, it will just confuse users. We need 
+to establish a strategy and come up with a good heuristic that can be applied 
+at compile and/or runtime to automatically decide how to allocate buffers.
+
+-- 
+Regards,
+
+Laurent Pinchart
+
+
+
