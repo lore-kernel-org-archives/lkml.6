@@ -2,674 +2,130 @@ Return-Path: <SRS0=qqIy=KO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72FEAFD21E1
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 10:43:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6885FD21E1
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 10:46:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E059320892
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 10:43:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E059320892
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fi.rohmeurope.com
+	by mail.kernel.org (Postfix) with ESMTP id 5C9F220892
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 10:46:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5C9F220892
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727058AbeG3MSO (ORCPT
+        id S1728672AbeG3MUy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 30 Jul 2018 08:18:14 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:45655 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726904AbeG3MSN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Jul 2018 08:18:13 -0400
-Received: by mail-lj1-f195.google.com with SMTP id w16-v6so6438674ljh.12;
-        Mon, 30 Jul 2018 03:43:48 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=cPCGtLO6BaXGnFuNo9m2cE7oCb0ioJTXlxXE7RJDN38=;
-        b=Uwo0aRQFqy6VYlkEDLzGL3+ymXuqpTQHlTItOwQQcH9Ii70xCxe1I6UnFgJ8YedPGs
-         9s3b8UHwfGsufKF7I3P2ArBPSosKdO49FrfvPemWpNIvdmioL+0eHRNXZB/Cjsc2qVNP
-         EA5GF60QdfoEtmqonfZbra3zERuQHFw2PXAJICIoSKY3AL4txPTMdWP3p3L8t0EEM7fa
-         ve9LluloGtzXLbVnBCYlotrp9ftWeJESHpIDePtibZUiXrrqra6EYOHd2H7psDPTI3F6
-         IQcFnVdY4pxNdW6AJNk8+RV8tcy5YgxasoEIxPpbNtATUYeJEdtHQDC5+KAE2eeTPMv7
-         1wrg==
-X-Gm-Message-State: AOUpUlFR37NYtY3VIUNZsC5jADv/1k3JqG20HpG9M2HFQAowtjZYLMM6
-        Gt/WAw0GI8ev8F+gZlQ5VLg=
-X-Google-Smtp-Source: AAOMgpdoh1/CPZ7zluRGJevlGW3i6biBvSkDVA0vry1nOjSoTF1AJO/IcjO6l+xoSjEHMzCxDZOaEA==
-X-Received: by 2002:a2e:4557:: with SMTP id s84-v6mr12216544lja.47.1532947427437;
-        Mon, 30 Jul 2018 03:43:47 -0700 (PDT)
-Received: from localhost.localdomain ([213.255.186.46])
-        by smtp.gmail.com with ESMTPSA id f9-v6sm2015538ljf.9.2018.07.30.03.43.46
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 30 Jul 2018 03:43:46 -0700 (PDT)
-Date:   Mon, 30 Jul 2018 13:43:34 +0300
-From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-To:     lee.jones@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        eballetbo@gmail.com, linus.walleij@linaro.org,
-        mazziesaccount@gmail.com, dmitry.torokhov@gmail.com
-Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, sboyd@kernel.org, broonie@kernel.org,
-        linux-input@vger.kernel.org, mikko.mutanen@fi.rohmeurope.com,
-        heikki.haikola@fi.rohmeurope.com
-Subject: [PATCH v11 1/2] mfd: bd71837: mfd driver for ROHM BD71837 PMIC
-Message-ID: <77184f651e5cefb112f1061bc682b759f88144c6.1532946848.git.matti.vaittinen@fi.rohmeurope.com>
-References: <cover.1532946848.git.matti.vaittinen@fi.rohmeurope.com>
+        Mon, 30 Jul 2018 08:20:54 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:56513 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726637AbeG3MUy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Jul 2018 08:20:54 -0400
+Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id E83F929A2712D;
+        Mon, 30 Jul 2018 18:46:18 +0800 (CST)
+Received: from [10.151.23.176] (10.151.23.176) by smtp.huawei.com
+ (10.3.19.210) with Microsoft SMTP Server (TLS) id 14.3.399.0; Mon, 30 Jul
+ 2018 18:46:13 +0800
+Subject: Re: linux-next: build failure after merge of the staging tree
+To:     David Howells <dhowells@redhat.com>
+CC:     Stephen Rothwell <sfr@canb.auug.org.au>, Greg KH <greg@kroah.com>,
+        Al Viro <viro@ZenIV.linux.org.uk>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Miao Xie <miaoxie@huawei.com>, Chao Yu <yuchao0@huawei.com>
+References: <559c49b8-9d58-e242-20c2-fe1b491664dd@huawei.com>
+ <20180730161622.3837cb15@canb.auug.org.au>
+ <2379.1532944057@warthog.procyon.org.uk>
+From:   Gao Xiang <gaoxiang25@huawei.com>
+Message-ID: <b4645de1-a58f-7615-4f47-7a3fd8c7e056@huawei.com>
+Date:   Mon, 30 Jul 2018 18:45:48 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1532946848.git.matti.vaittinen@fi.rohmeurope.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <2379.1532944057@warthog.procyon.org.uk>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.151.23.176]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-ROHM BD71837 PMIC MFD driver providing interrupts and support
-for three subsystems:
-- clk
-- Regulators
-- input/power-key
+Hi David,
 
-Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Reviewed-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
----
- drivers/mfd/Kconfig              |  13 ++
- drivers/mfd/Makefile             |   1 +
- drivers/mfd/rohm-bd718x7.c       | 208 ++++++++++++++++++++++++
- include/linux/mfd/rohm-bd718x7.h | 332 +++++++++++++++++++++++++++++++++++++++
- 4 files changed, 554 insertions(+)
- create mode 100644 drivers/mfd/rohm-bd718x7.c
- create mode 100644 include/linux/mfd/rohm-bd718x7.h
+Thanks for your reply :)
 
-diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
-index f3fa516011ec..11841f4b7b2b 100644
---- a/drivers/mfd/Kconfig
-+++ b/drivers/mfd/Kconfig
-@@ -1817,6 +1817,19 @@ config MFD_STW481X
- 	  in various ST Microelectronics and ST-Ericsson embedded
- 	  Nomadik series.
- 
-+config MFD_ROHM_BD718XX
-+	tristate "ROHM BD71837 Power Management IC"
-+	depends on I2C=y
-+	depends on OF
-+	select REGMAP_I2C
-+	select REGMAP_IRQ
-+	select MFD_CORE
-+	help
-+	  Select this option to get support for the ROHM BD71837
-+	  Power Management ICs. BD71837 is designed to power processors like
-+	  NXP i.MX8. It contains 8 BUCK outputs and 7 LDOs, voltage monitoring
-+	  and emergency shut down as well as 32,768KHz clock output.
-+
- config MFD_STM32_LPTIMER
- 	tristate "Support for STM32 Low-Power Timer"
- 	depends on (ARCH_STM32 && OF) || COMPILE_TEST
-diff --git a/drivers/mfd/Makefile b/drivers/mfd/Makefile
-index 2852a6042ecf..5856a9489cbd 100644
---- a/drivers/mfd/Makefile
-+++ b/drivers/mfd/Makefile
-@@ -239,4 +239,5 @@ obj-$(CONFIG_MFD_STM32_TIMERS) 	+= stm32-timers.o
- obj-$(CONFIG_MFD_MXS_LRADC)     += mxs-lradc.o
- obj-$(CONFIG_MFD_SC27XX_PMIC)	+= sprd-sc27xx-spi.o
- obj-$(CONFIG_RAVE_SP_CORE)	+= rave-sp.o
-+obj-$(CONFIG_MFD_ROHM_BD718XX)	+= rohm-bd718x7.o
- 
-diff --git a/drivers/mfd/rohm-bd718x7.c b/drivers/mfd/rohm-bd718x7.c
-new file mode 100644
-index 000000000000..7392b73b2f9a
---- /dev/null
-+++ b/drivers/mfd/rohm-bd718x7.c
-@@ -0,0 +1,208 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later
-+//
-+// Copyright (C) 2018 ROHM Semiconductors
-+//
-+// ROHM BD71837MWV PMIC driver
-+//
-+// Datasheet available from
-+// https://www.rohm.com/datasheet/BD71837MWV/bd71837mwv-e
-+
-+#include <linux/i2c.h>
-+#include <linux/input.h>
-+#include <linux/interrupt.h>
-+#include <linux/mfd/rohm-bd718x7.h>
-+#include <linux/mfd/core.h>
-+#include <linux/module.h>
-+#include <linux/regmap.h>
-+
-+/*
-+ * gpio_keys.h requires definiton of bool. It is brought in
-+ * by above includes. Keep this as last until gpio_keys.h gets fixed.
-+ */
-+#include <linux/gpio_keys.h>
-+
-+static const u8 supported_revisions[] = { 0xA2 /* BD71837 */ };
-+
-+static struct gpio_keys_button button = {
-+	.code = KEY_POWER,
-+	.gpio = -1,
-+	.type = EV_KEY,
-+};
-+
-+static struct gpio_keys_platform_data bd718xx_powerkey_data = {
-+	.buttons = &button,
-+	.nbuttons = 1,
-+	.name = "bd718xx-pwrkey",
-+};
-+
-+static struct mfd_cell bd71837_mfd_cells[] = {
-+	{
-+		.name = "gpio-keys",
-+		.platform_data = &bd718xx_powerkey_data,
-+		.pdata_size = sizeof(bd718xx_powerkey_data),
-+	},
-+	{ .name = "bd71837-clk", },
-+	{ .name = "bd71837-pmic", },
-+};
-+
-+static const struct regmap_irq bd71837_irqs[] = {
-+	REGMAP_IRQ_REG(BD71837_INT_SWRST, 0, BD71837_INT_SWRST_MASK),
-+	REGMAP_IRQ_REG(BD71837_INT_PWRBTN_S, 0, BD71837_INT_PWRBTN_S_MASK),
-+	REGMAP_IRQ_REG(BD71837_INT_PWRBTN_L, 0, BD71837_INT_PWRBTN_L_MASK),
-+	REGMAP_IRQ_REG(BD71837_INT_PWRBTN, 0, BD71837_INT_PWRBTN_MASK),
-+	REGMAP_IRQ_REG(BD71837_INT_WDOG, 0, BD71837_INT_WDOG_MASK),
-+	REGMAP_IRQ_REG(BD71837_INT_ON_REQ, 0, BD71837_INT_ON_REQ_MASK),
-+	REGMAP_IRQ_REG(BD71837_INT_STBY_REQ, 0, BD71837_INT_STBY_REQ_MASK),
-+};
-+
-+static struct regmap_irq_chip bd71837_irq_chip = {
-+	.name = "bd71837-irq",
-+	.irqs = bd71837_irqs,
-+	.num_irqs = ARRAY_SIZE(bd71837_irqs),
-+	.num_regs = 1,
-+	.irq_reg_stride = 1,
-+	.status_base = BD71837_REG_IRQ,
-+	.mask_base = BD71837_REG_MIRQ,
-+	.ack_base = BD71837_REG_IRQ,
-+	.init_ack_masked = true,
-+	.mask_invert = false,
-+};
-+
-+static const struct regmap_range pmic_status_range = {
-+	.range_min = BD71837_REG_IRQ,
-+	.range_max = BD71837_REG_POW_STATE,
-+};
-+
-+static const struct regmap_access_table volatile_regs = {
-+	.yes_ranges = &pmic_status_range,
-+	.n_yes_ranges = 1,
-+};
-+
-+static const struct regmap_config bd71837_regmap_config = {
-+	.reg_bits = 8,
-+	.val_bits = 8,
-+	.volatile_table = &volatile_regs,
-+	.max_register = BD71837_MAX_REGISTER - 1,
-+	.cache_type = REGCACHE_RBTREE,
-+};
-+
-+static int bd71837_i2c_probe(struct i2c_client *i2c,
-+			    const struct i2c_device_id *id)
-+{
-+	struct bd71837 *bd71837;
-+	int ret, i;
-+	unsigned int val;
-+
-+	bd71837 = devm_kzalloc(&i2c->dev, sizeof(struct bd71837), GFP_KERNEL);
-+
-+	if (!bd71837)
-+		return -ENOMEM;
-+
-+	bd71837->chip_irq = i2c->irq;
-+
-+	if (!bd71837->chip_irq) {
-+		dev_err(&i2c->dev, "No IRQ configured\n");
-+		return -EINVAL;
-+	}
-+
-+	bd71837->dev = &i2c->dev;
-+	dev_set_drvdata(&i2c->dev, bd71837);
-+
-+	bd71837->regmap = devm_regmap_init_i2c(i2c, &bd71837_regmap_config);
-+	if (IS_ERR(bd71837->regmap)) {
-+		dev_err(&i2c->dev, "regmap initialization failed\n");
-+		return PTR_ERR(bd71837->regmap);
-+	}
-+
-+	ret = regmap_read(bd71837->regmap, BD71837_REG_REV, &val);
-+	if (ret) {
-+		dev_err(&i2c->dev, "Read BD71837_REG_DEVICE failed\n");
-+		return ret;
-+	}
-+	for (i = 0; i < ARRAY_SIZE(supported_revisions); i++)
-+		if (supported_revisions[i] == val)
-+			break;
-+
-+	if (i == ARRAY_SIZE(supported_revisions)) {
-+		dev_err(&i2c->dev, "Unsupported chip revision\n");
-+		return -ENODEV;
-+	}
-+
-+	ret = devm_regmap_add_irq_chip(&i2c->dev, bd71837->regmap,
-+				       bd71837->chip_irq, IRQF_ONESHOT, 0,
-+				       &bd71837_irq_chip, &bd71837->irq_data);
-+	if (ret) {
-+		dev_err(&i2c->dev, "Failed to add irq_chip\n");
-+		return ret;
-+	}
-+
-+	/* Configure short press to 10 milliseconds */
-+	ret = regmap_update_bits(bd71837->regmap,
-+				 BD71837_REG_PWRONCONFIG0,
-+				 BD718XX_PWRBTN_PRESS_DURATION_MASK,
-+				 BD718XX_PWRBTN_SHORT_PRESS_10MS);
-+	if (ret) {
-+		dev_err(&i2c->dev, "Failed to configure button short press timeout\n");
-+		return ret;
-+	}
-+
-+	/* Configure long press to 10 seconds */
-+	ret = regmap_update_bits(bd71837->regmap,
-+				 BD71837_REG_PWRONCONFIG1,
-+				 BD718XX_PWRBTN_PRESS_DURATION_MASK,
-+				 BD718XX_PWRBTN_LONG_PRESS_10S);
-+
-+	if (ret) {
-+		dev_err(&i2c->dev, "Failed to configure button long press timeout\n");
-+		return ret;
-+	}
-+
-+	button.irq = regmap_irq_get_virq(bd71837->irq_data,
-+					  BD71837_INT_PWRBTN_S);
-+
-+	if (button.irq < 0) {
-+		dev_err(&i2c->dev, "Failed to get the IRQ\n");
-+		return button.irq;
-+	}
-+
-+	ret = devm_mfd_add_devices(bd71837->dev, PLATFORM_DEVID_AUTO,
-+				   bd71837_mfd_cells,
-+				   ARRAY_SIZE(bd71837_mfd_cells), NULL, 0,
-+				   regmap_irq_get_domain(bd71837->irq_data));
-+	if (ret)
-+		dev_err(&i2c->dev, "Failed to create subdevices\n");
-+
-+	return ret;
-+}
-+
-+static const struct of_device_id bd71837_of_match[] = {
-+	{ .compatible = "rohm,bd71837", },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, bd71837_of_match);
-+
-+static struct i2c_driver bd71837_i2c_driver = {
-+	.driver = {
-+		.name = "rohm-bd718x7",
-+		.of_match_table = bd71837_of_match,
-+	},
-+	.probe = bd71837_i2c_probe,
-+};
-+
-+static int __init bd71837_i2c_init(void)
-+{
-+	return i2c_add_driver(&bd71837_i2c_driver);
-+}
-+
-+/* Initialise early so consumer devices can complete system boot */
-+subsys_initcall(bd71837_i2c_init);
-+
-+static void __exit bd71837_i2c_exit(void)
-+{
-+	i2c_del_driver(&bd71837_i2c_driver);
-+}
-+module_exit(bd71837_i2c_exit);
-+
-+MODULE_AUTHOR("Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>");
-+MODULE_DESCRIPTION("ROHM BD71837 Power Management IC driver");
-+MODULE_LICENSE("GPL");
-diff --git a/include/linux/mfd/rohm-bd718x7.h b/include/linux/mfd/rohm-bd718x7.h
-new file mode 100644
-index 000000000000..a528747f8aed
---- /dev/null
-+++ b/include/linux/mfd/rohm-bd718x7.h
-@@ -0,0 +1,332 @@
-+/* SPDX-License-Identifier: GPL-2.0-or-later */
-+/* Copyright (C) 2018 ROHM Semiconductors */
-+
-+#ifndef __LINUX_MFD_BD71837_H__
-+#define __LINUX_MFD_BD71837_H__
-+
-+#include <linux/regmap.h>
-+
-+enum {
-+	BD71837_BUCK1	=	0,
-+	BD71837_BUCK2,
-+	BD71837_BUCK3,
-+	BD71837_BUCK4,
-+	BD71837_BUCK5,
-+	BD71837_BUCK6,
-+	BD71837_BUCK7,
-+	BD71837_BUCK8,
-+	BD71837_LDO1,
-+	BD71837_LDO2,
-+	BD71837_LDO3,
-+	BD71837_LDO4,
-+	BD71837_LDO5,
-+	BD71837_LDO6,
-+	BD71837_LDO7,
-+	BD71837_REGULATOR_CNT,
-+};
-+
-+#define BD71837_BUCK1_VOLTAGE_NUM	0x40
-+#define BD71837_BUCK2_VOLTAGE_NUM	0x40
-+#define BD71837_BUCK3_VOLTAGE_NUM	0x40
-+#define BD71837_BUCK4_VOLTAGE_NUM	0x40
-+
-+#define BD71837_BUCK5_VOLTAGE_NUM	0x08
-+#define BD71837_BUCK6_VOLTAGE_NUM	0x04
-+#define BD71837_BUCK7_VOLTAGE_NUM	0x08
-+#define BD71837_BUCK8_VOLTAGE_NUM	0x40
-+
-+#define BD71837_LDO1_VOLTAGE_NUM	0x04
-+#define BD71837_LDO2_VOLTAGE_NUM	0x02
-+#define BD71837_LDO3_VOLTAGE_NUM	0x10
-+#define BD71837_LDO4_VOLTAGE_NUM	0x10
-+#define BD71837_LDO5_VOLTAGE_NUM	0x10
-+#define BD71837_LDO6_VOLTAGE_NUM	0x10
-+#define BD71837_LDO7_VOLTAGE_NUM	0x10
-+
-+enum {
-+	BD71837_REG_REV                = 0x00,
-+	BD71837_REG_SWRESET            = 0x01,
-+	BD71837_REG_I2C_DEV            = 0x02,
-+	BD71837_REG_PWRCTRL0           = 0x03,
-+	BD71837_REG_PWRCTRL1           = 0x04,
-+	BD71837_REG_BUCK1_CTRL         = 0x05,
-+	BD71837_REG_BUCK2_CTRL         = 0x06,
-+	BD71837_REG_BUCK3_CTRL         = 0x07,
-+	BD71837_REG_BUCK4_CTRL         = 0x08,
-+	BD71837_REG_BUCK5_CTRL         = 0x09,
-+	BD71837_REG_BUCK6_CTRL         = 0x0A,
-+	BD71837_REG_BUCK7_CTRL         = 0x0B,
-+	BD71837_REG_BUCK8_CTRL         = 0x0C,
-+	BD71837_REG_BUCK1_VOLT_RUN     = 0x0D,
-+	BD71837_REG_BUCK1_VOLT_IDLE    = 0x0E,
-+	BD71837_REG_BUCK1_VOLT_SUSP    = 0x0F,
-+	BD71837_REG_BUCK2_VOLT_RUN     = 0x10,
-+	BD71837_REG_BUCK2_VOLT_IDLE    = 0x11,
-+	BD71837_REG_BUCK3_VOLT_RUN     = 0x12,
-+	BD71837_REG_BUCK4_VOLT_RUN     = 0x13,
-+	BD71837_REG_BUCK5_VOLT         = 0x14,
-+	BD71837_REG_BUCK6_VOLT         = 0x15,
-+	BD71837_REG_BUCK7_VOLT         = 0x16,
-+	BD71837_REG_BUCK8_VOLT         = 0x17,
-+	BD71837_REG_LDO1_VOLT          = 0x18,
-+	BD71837_REG_LDO2_VOLT          = 0x19,
-+	BD71837_REG_LDO3_VOLT          = 0x1A,
-+	BD71837_REG_LDO4_VOLT          = 0x1B,
-+	BD71837_REG_LDO5_VOLT          = 0x1C,
-+	BD71837_REG_LDO6_VOLT          = 0x1D,
-+	BD71837_REG_LDO7_VOLT          = 0x1E,
-+	BD71837_REG_TRANS_COND0        = 0x1F,
-+	BD71837_REG_TRANS_COND1        = 0x20,
-+	BD71837_REG_VRFAULTEN          = 0x21,
-+	BD71837_REG_MVRFLTMASK0        = 0x22,
-+	BD71837_REG_MVRFLTMASK1        = 0x23,
-+	BD71837_REG_MVRFLTMASK2        = 0x24,
-+	BD71837_REG_RCVCFG             = 0x25,
-+	BD71837_REG_RCVNUM             = 0x26,
-+	BD71837_REG_PWRONCONFIG0       = 0x27,
-+	BD71837_REG_PWRONCONFIG1       = 0x28,
-+	BD71837_REG_RESETSRC           = 0x29,
-+	BD71837_REG_MIRQ               = 0x2A,
-+	BD71837_REG_IRQ                = 0x2B,
-+	BD71837_REG_IN_MON             = 0x2C,
-+	BD71837_REG_POW_STATE          = 0x2D,
-+	BD71837_REG_OUT32K             = 0x2E,
-+	BD71837_REG_REGLOCK            = 0x2F,
-+	BD71837_REG_OTPVER             = 0xFF,
-+	BD71837_MAX_REGISTER           = 0x100,
-+};
-+
-+#define REGLOCK_PWRSEQ	0x1
-+#define REGLOCK_VREG	0x10
-+
-+/* Generic BUCK control masks */
-+#define BD71837_BUCK_SEL	0x02
-+#define BD71837_BUCK_EN		0x01
-+#define BD71837_BUCK_RUN_ON	0x04
-+
-+/* Generic LDO masks */
-+#define BD71837_LDO_SEL		0x80
-+#define BD71837_LDO_EN		0x40
-+
-+/* BD71837 BUCK ramp rate CTRL reg bits */
-+#define BUCK_RAMPRATE_MASK	0xC0
-+#define BUCK_RAMPRATE_10P00MV	0x0
-+#define BUCK_RAMPRATE_5P00MV	0x1
-+#define BUCK_RAMPRATE_2P50MV	0x2
-+#define BUCK_RAMPRATE_1P25MV	0x3
-+
-+/* BD71837_REG_BUCK1_VOLT_RUN bits */
-+#define BUCK1_RUN_MASK		0x3F
-+#define BUCK1_RUN_DEFAULT	0x14
-+
-+/* BD71837_REG_BUCK1_VOLT_SUSP bits */
-+#define BUCK1_SUSP_MASK		0x3F
-+#define BUCK1_SUSP_DEFAULT	0x14
-+
-+/* BD71837_REG_BUCK1_VOLT_IDLE bits */
-+#define BUCK1_IDLE_MASK		0x3F
-+#define BUCK1_IDLE_DEFAULT	0x14
-+
-+/* BD71837_REG_BUCK2_VOLT_RUN bits */
-+#define BUCK2_RUN_MASK		0x3F
-+#define BUCK2_RUN_DEFAULT	0x1E
-+
-+/* BD71837_REG_BUCK2_VOLT_IDLE bits */
-+#define BUCK2_IDLE_MASK		0x3F
-+#define BUCK2_IDLE_DEFAULT	0x14
-+
-+/* BD71837_REG_BUCK3_VOLT_RUN bits */
-+#define BUCK3_RUN_MASK		0x3F
-+#define BUCK3_RUN_DEFAULT	0x1E
-+
-+/* BD71837_REG_BUCK4_VOLT_RUN bits */
-+#define BUCK4_RUN_MASK		0x3F
-+#define BUCK4_RUN_DEFAULT	0x1E
-+
-+/* BD71837_REG_BUCK5_VOLT bits */
-+#define BUCK5_MASK		0x07
-+#define BUCK5_DEFAULT		0x02
-+
-+/* BD71837_REG_BUCK6_VOLT bits */
-+#define BUCK6_MASK		0x03
-+#define BUCK6_DEFAULT		0x03
-+
-+/* BD71837_REG_BUCK7_VOLT bits */
-+#define BUCK7_MASK		0x07
-+#define BUCK7_DEFAULT		0x03
-+
-+/* BD71837_REG_BUCK8_VOLT bits */
-+#define BUCK8_MASK		0x3F
-+#define BUCK8_DEFAULT		0x1E
-+
-+/* BD71837_REG_IRQ bits */
-+#define IRQ_SWRST		0x40
-+#define IRQ_PWRON_S		0x20
-+#define IRQ_PWRON_L		0x10
-+#define IRQ_PWRON		0x08
-+#define IRQ_WDOG		0x04
-+#define IRQ_ON_REQ		0x02
-+#define IRQ_STBY_REQ		0x01
-+
-+/* BD71837_REG_OUT32K bits */
-+#define BD71837_OUT32K_EN	0x01
-+
-+/* BD71837 gated clock rate */
-+#define BD71837_CLK_RATE 32768
-+
-+/* ROHM BD71837 irqs */
-+enum {
-+	BD71837_INT_STBY_REQ,
-+	BD71837_INT_ON_REQ,
-+	BD71837_INT_WDOG,
-+	BD71837_INT_PWRBTN,
-+	BD71837_INT_PWRBTN_L,
-+	BD71837_INT_PWRBTN_S,
-+	BD71837_INT_SWRST
-+};
-+
-+/* ROHM BD71837 interrupt masks */
-+#define BD71837_INT_SWRST_MASK		0x40
-+#define BD71837_INT_PWRBTN_S_MASK	0x20
-+#define BD71837_INT_PWRBTN_L_MASK	0x10
-+#define BD71837_INT_PWRBTN_MASK		0x8
-+#define BD71837_INT_WDOG_MASK		0x4
-+#define BD71837_INT_ON_REQ_MASK		0x2
-+#define BD71837_INT_STBY_REQ_MASK	0x1
-+
-+/* BD71837_REG_LDO1_VOLT bits */
-+#define LDO1_MASK		0x03
-+
-+/* BD71837_REG_LDO1_VOLT bits */
-+#define LDO2_MASK		0x20
-+
-+/* BD71837_REG_LDO3_VOLT bits */
-+#define LDO3_MASK		0x0F
-+
-+/* BD71837_REG_LDO4_VOLT bits */
-+#define LDO4_MASK		0x0F
-+
-+/* BD71837_REG_LDO5_VOLT bits */
-+#define LDO5_MASK		0x0F
-+
-+/* BD71837_REG_LDO6_VOLT bits */
-+#define LDO6_MASK		0x0F
-+
-+/* BD71837_REG_LDO7_VOLT bits */
-+#define LDO7_MASK		0x0F
-+
-+/* Register write induced reset settings */
-+
-+/*
-+ * Even though the bit zero is not SWRESET type we still want to write zero
-+ * to it when changing type. Bit zero is 'SWRESET' trigger bit and if we
-+ * write 1 to it we will trigger the action. So always write 0 to it when
-+ * changning SWRESET action - no matter what we read from it.
-+ */
-+#define BD71837_SWRESET_TYPE_MASK	7
-+#define BD71837_SWRESET_TYPE_DISABLED	0
-+#define BD71837_SWRESET_TYPE_COLD	4
-+#define BD71837_SWRESET_TYPE_WARM	6
-+
-+#define BD71837_SWRESET_RESET_MASK	1
-+#define BD71837_SWRESET_RESET		1
-+
-+/* Poweroff state transition conditions */
-+
-+#define BD718XX_ON_REQ_POWEROFF_MASK	1
-+#define BD718XX_SWRESET_POWEROFF_MASK	2
-+#define BD718XX_WDOG_POWEROFF_MASK	4
-+#define BD718XX_KEY_L_POWEROFF_MASK	8
-+
-+#define BD718XX_POWOFF_TO_SNVS	0
-+#define BD718XX_POWOFF_TO_RDY	0xF
-+
-+#define BD718XX_POWOFF_TIME_MASK 0xF0
-+enum {
-+	BD718XX_POWOFF_TIME_5MS = 0,
-+	BD718XX_POWOFF_TIME_10MS,
-+	BD718XX_POWOFF_TIME_15MS,
-+	BD718XX_POWOFF_TIME_20MS,
-+	BD718XX_POWOFF_TIME_25MS,
-+	BD718XX_POWOFF_TIME_30MS,
-+	BD718XX_POWOFF_TIME_35MS,
-+	BD718XX_POWOFF_TIME_40MS,
-+	BD718XX_POWOFF_TIME_45MS,
-+	BD718XX_POWOFF_TIME_50MS,
-+	BD718XX_POWOFF_TIME_75MS,
-+	BD718XX_POWOFF_TIME_100MS,
-+	BD718XX_POWOFF_TIME_250MS,
-+	BD718XX_POWOFF_TIME_500MS,
-+	BD718XX_POWOFF_TIME_750MS,
-+	BD718XX_POWOFF_TIME_1500MS
-+};
-+
-+/* Poweron sequence state transition conditions */
-+#define BD718XX_RDY_TO_SNVS_MASK 0xF
-+#define BD718XX_SNVS_TO_RUN_MASK 0xF0
-+
-+#define BD718XX_PWR_TRIG_KEY_L		1
-+#define BD718XX_PWR_TRIG_KEY_S		2
-+#define BD718XX_PWR_TRIG_PMIC_ON	4
-+#define BD718XX_PWR_TRIG_VSYS_UVLO	8
-+#define BD718XX_RDY_TO_SNVS_SIFT	0
-+#define BD718XX_SNVS_TO_RUN_SIFT	4
-+
-+#define BD718XX_PWRBTN_PRESS_DURATION_MASK 0xF
-+
-+/* Timeout value for detecting short press */
-+enum {
-+	BD718XX_PWRBTN_SHORT_PRESS_10MS = 0,
-+	BD718XX_PWRBTN_SHORT_PRESS_500MS,
-+	BD718XX_PWRBTN_SHORT_PRESS_1000MS,
-+	BD718XX_PWRBTN_SHORT_PRESS_1500MS,
-+	BD718XX_PWRBTN_SHORT_PRESS_2000MS,
-+	BD718XX_PWRBTN_SHORT_PRESS_2500MS,
-+	BD718XX_PWRBTN_SHORT_PRESS_3000MS,
-+	BD718XX_PWRBTN_SHORT_PRESS_3500MS,
-+	BD718XX_PWRBTN_SHORT_PRESS_4000MS,
-+	BD718XX_PWRBTN_SHORT_PRESS_4500MS,
-+	BD718XX_PWRBTN_SHORT_PRESS_5000MS,
-+	BD718XX_PWRBTN_SHORT_PRESS_5500MS,
-+	BD718XX_PWRBTN_SHORT_PRESS_6000MS,
-+	BD718XX_PWRBTN_SHORT_PRESS_6500MS,
-+	BD718XX_PWRBTN_SHORT_PRESS_7000MS,
-+	BD718XX_PWRBTN_SHORT_PRESS_7500MS
-+};
-+
-+/* Timeout value for detecting LONG press */
-+enum {
-+	BD718XX_PWRBTN_LONG_PRESS_10MS = 0,
-+	BD718XX_PWRBTN_LONG_PRESS_1S,
-+	BD718XX_PWRBTN_LONG_PRESS_2S,
-+	BD718XX_PWRBTN_LONG_PRESS_3S,
-+	BD718XX_PWRBTN_LONG_PRESS_4S,
-+	BD718XX_PWRBTN_LONG_PRESS_5S,
-+	BD718XX_PWRBTN_LONG_PRESS_6S,
-+	BD718XX_PWRBTN_LONG_PRESS_7S,
-+	BD718XX_PWRBTN_LONG_PRESS_8S,
-+	BD718XX_PWRBTN_LONG_PRESS_9S,
-+	BD718XX_PWRBTN_LONG_PRESS_10S,
-+	BD718XX_PWRBTN_LONG_PRESS_11S,
-+	BD718XX_PWRBTN_LONG_PRESS_12S,
-+	BD718XX_PWRBTN_LONG_PRESS_13S,
-+	BD718XX_PWRBTN_LONG_PRESS_14S,
-+	BD718XX_PWRBTN_LONG_PRESS_15S
-+};
-+
-+struct bd71837_pmic;
-+struct bd71837_clk;
-+
-+struct bd71837 {
-+	struct device *dev;
-+	struct regmap *regmap;
-+	unsigned long int id;
-+
-+	int chip_irq;
-+	struct regmap_irq_chip_data *irq_data;
-+
-+	struct bd71837_pmic *pmic;
-+	struct bd71837_clk *clk;
-+};
-+
-+#endif /* __LINUX_MFD_BD71837_H__ */
--- 
-2.14.3
+On 2018/7/30 17:47, David Howells wrote:
+> Gao Xiang <gaoxiang25@huawei.com> wrote:
+> 
+>>>   sb->s_flags |= MS_RDONLY | MS_NOATIME;
+> 
+> This should be using SB_* rather than MS_* for interaction with sb->s_flags.
 
+Yes, I saw the related discussion and your submission in the linux-fsdevel mailing list last year. :D
+The code of erofs once had to support from 3.13 ~ the current kernel, therefore I didn't turn MS_RDONLY into SB_RDONLY.
+But it seems that "vfs: Suppress MS_* flag defs within the kernel unless explicitly enabled" tends to remove them all.
+
+I have submitted a patch to linux-erofs mailing list for preview.
+https://lists.ozlabs.org/pipermail/linux-erofs/2018-July/000282.html
+
+> 
+>>> drivers/staging/erofs/super.c: In function 'erofs_mount':
+>>> drivers/staging/erofs/super.c:501:10: warning: passing argument 5 of 'mount_bdev' makes integer from pointer without a cast [-Wint-conversion]
+>>>    &priv, erofs_fill_super);
+>>>           ^~~~~~~~~~~~~~~~
+>>> In file included from include/linux/buffer_head.h:12:0,
+>>>                  from drivers/staging/erofs/super.c:14:
+>>> include/linux/fs.h:2151:23: note: expected 'size_t {aka long unsigned int}' but argument is of type 'int (*)(struct super_block *, void *, int)'
+>>>  extern struct dentry *mount_bdev(struct file_system_type *fs_type,
+>>>                        ^~~~~~~~~~
+>>> drivers/staging/erofs/super.c:500:9: error: too few arguments to function 'mount_bdev'
+>>>   return mount_bdev(fs_type, flags, dev_name,
+>>>          ^~~~~~~~~~
+> 
+> There's a patch in Al Viro's tree that passes a size_t argument indicating the
+> size of the mount data from mount down into the filesystem and into the
+> helpers as the data may be on a kernel stack or in kernel .rodata rather than
+> in a full page of its own.
+> 
+> https://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git
+> 
+> Currently this is commit 0a191e4505a4f255e6513b49426213da69bf0e80
+> 
+> vfs: Require specification of size of mount data for internal mounts
+
+I just fixed according to the latest linux-next tree (the same patchset, also for preview)
+https://lists.ozlabs.org/pipermail/linux-erofs/2018-July/000284.html
+
+Once I tend to use void *data to pass more mount arguments on stack, eg.
+
+struct erofs_mount_private {
+	const char *dev_name;
+	char *options;
+};
+...
+struct erofs_mount_private priv = {
+	.dev_name = dev_name,
+	.options = data
+};
+return mount_bdev(fs_type, flags, dev_name, &priv, erofs_fill_super);
+
+
+However, I have no idea if it is safe to do so in the future, so I also change it into a more stardard way.
+
+
+BTW, It seems that Greg's staging tree doesn't have Al Viro's submission...
+And I have little experience to handle that, so I just ask Chao for help...
+
+
+Thanks for your kindly reminder :)
+
+Thanks,
+Gao Xiang
+
+> 
+> David
+> 
