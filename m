@@ -2,68 +2,168 @@ Return-Path: <SRS0=qqIy=KO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9F5F160A325
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 15:00:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71E35160A325
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 15:03:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7345E20870
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 15:00:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7345E20870
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=nomi.cz
+	by mail.kernel.org (Postfix) with ESMTP id 0F19B20870
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 15:03:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0F19B20870
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732000AbeG3Qfl (ORCPT
+        id S1731760AbeG3Qi5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 30 Jul 2018 12:35:41 -0400
-Received: from ackle.nomi.cz ([81.31.33.35]:54700 "EHLO ackle.nomi.cz"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727113AbeG3Qfl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Jul 2018 12:35:41 -0400
-Received: from localhost (notes.lisk.in [IPv6:2a01:430:1::115:4])
-        by ackle.nomi.cz (Postfix) with ESMTPSA id F194B9F10A;
-        Mon, 30 Jul 2018 17:00:15 +0200 (CEST)
-Date:   Mon, 30 Jul 2018 17:00:15 +0200
-From:   Tomas Janousek <tomi@nomi.cz>
-To:     Ming Lei <ming.lei@redhat.com>
-Cc:     Patrick Steinhardt <ps@pks.im>, Ming Lei <tom.leiming@gmail.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        linux-block <linux-block@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] block: fix NPE when resuming SCSI devices using blk-mq
-Message-ID: <20180730150015.bpgckk73e3jyz4zc@nomi.cz>
-References: <b712b87a509dc64619a3aec7c673935ed09be5de.1531488173.git.ps@pks.im>
- <CACVXFVPoO7kcEnUVmqGVWDgiTVYup2sD9puBZ8FzY+mDaMp-bQ@mail.gmail.com>
- <20180729094131.4kwuukzgfgtisgya@notes.lisk.in>
- <20180730075949.GA1755@xps.pks.im>
- <20180730115002.GA6972@ming.t460p>
+        Mon, 30 Jul 2018 12:38:57 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:51710 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726961AbeG3Qi5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Jul 2018 12:38:57 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 1E3827DAC2;
+        Mon, 30 Jul 2018 15:03:32 +0000 (UTC)
+Received: from [10.36.117.179] (ovpn-117-179.ams2.redhat.com [10.36.117.179])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 96691201E1C5;
+        Mon, 30 Jul 2018 15:03:27 +0000 (UTC)
+Subject: Re: [PATCH v1] mm: inititalize struct pages when adding a section
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     Pavel Tatashin <pasha.tatashin@oracle.com>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>, gregkh@linuxfoundation.org,
+        mingo@kernel.org, Andrew Morton <akpm@linux-foundation.org>,
+        dan.j.williams@intel.com, jack@suse.cz, mawilcox@microsoft.com,
+        jglisse@redhat.com, Souptick Joarder <jrdr.linux@gmail.com>,
+        kirill.shutemov@linux.intel.com, Vlastimil Babka <vbabka@suse.cz>,
+        osalvador@techadventures.net, yasu.isimatu@gmail.com,
+        malat@debian.org, Mel Gorman <mgorman@suse.de>,
+        iamjoonsoo.kim@lge.com
+References: <20180727165454.27292-1-david@redhat.com>
+ <20180730113029.GM24267@dhcp22.suse.cz>
+ <6cc416e7-522c-a67e-2706-f37aadff084f@redhat.com>
+ <20180730120529.GN24267@dhcp22.suse.cz>
+ <7b58af7b-5187-2c76-b458-b0f49875a1fc@redhat.com>
+ <CAGM2reahiWj5LFq1npRpwK2k-4K-L9hr3AHUV9uYcmT2s3Bnuw@mail.gmail.com>
+ <56e97799-fbe1-9546-46ab-a9b8ee8794e0@redhat.com>
+ <20180730141058.GV24267@dhcp22.suse.cz>
+ <80641d1a-72fe-26b2-7927-98fcac5e5d71@redhat.com>
+ <20180730145035.GY24267@dhcp22.suse.cz>
+From:   David Hildenbrand <david@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+ SE+xAvmumFBY
+Organization: Red Hat GmbH
+Message-ID: <0be90c23-e5a0-2628-c671-9923d8e45b0a@redhat.com>
+Date:   Mon, 30 Jul 2018 17:03:27 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
+In-Reply-To: <20180730145035.GY24267@dhcp22.suse.cz>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180730115002.GA6972@ming.t460p>
-User-Agent: NeoMutt/20180716
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Mon, 30 Jul 2018 15:03:32 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Mon, 30 Jul 2018 15:03:32 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'david@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Ming,
+On 30.07.2018 16:50, Michal Hocko wrote:
+> On Mon 30-07-18 16:42:27, David Hildenbrand wrote:
+>> On 30.07.2018 16:10, Michal Hocko wrote:
+>>> On Mon 30-07-18 15:51:45, David Hildenbrand wrote:
+>>>> On 30.07.2018 15:30, Pavel Tatashin wrote:
+>>> [...]
+>>>>> Hi David,
+>>>>>
+>>>>> Have you figured out why we access struct pages during hot-unplug for
+>>>>> offlined memory? Also, a panic trace would be useful in the patch.
+>>>>
+>>>> __remove_pages() needs a zone as of now (e.g. to recalculate if the zone
+>>>> is contiguous). This zone is taken from the first page of memory to be
+>>>> removed. If the struct pages are uninitialized that value is random and
+>>>> we might even get an invalid zone.
+>>>>
+>>>> The zone is also used to locate pgdat.
+>>>>
+>>>> No stack trace available so far, I'm just reading the code and try to
+>>>> understand how this whole memory hotplug/unplug machinery works.
+>>>
+>>> Yes this is a mess (evolution of the code called otherwise ;) [1].
+>>
+>> So I guess I should not feel bad if I am having problems understanding
+>> all the details? ;)
+>>
+>>> Functionality has been just added on top of not very well thought
+>>> through bases. This is a nice example of it. We are trying to get a zone
+>>> to 1) special case zone_device 2) recalculate zone state. The first
+>>> shouldn't be really needed because we should simply rely on altmap.
+>>> Whether it is used for zone device or not. 2) shouldn't be really needed
+>>> if the section is offline and we can check that trivially.
+>>>
+>>
+>> About 2, I am not sure if this is the case and that easy. To me it looks
+>> more like remove_pages() fixes up things that should be done in
+>> offline_pages(). Especially, if the same memory was onlined/offlined to
+>> different zones we might be in trouble (looking at code on a very high
+>> level view).
+> 
+> Well, this might be possible. Hotplug remove path was on my todo list
+> for a long time. I didn't get that far TBH. shrink_zone_span begs for
+> some attention.
+> 
 
-On Mon, Jul 30, 2018 at 07:50:03PM +0800, Ming Lei wrote:
-> Now runtime PM is still enabled for sd/sr, and I believe the following
-> patch is needed until we figure out one perfect way for supporting it
-> well:
-> [...]
-> +		pm_runtime_disable(dev);
-
-Awesome, thanks for the quick reaction! :-)
-
-(I don't happen to have a .config for the hardware I'm experincing the problem
-on, so don't expect a Tested-By from me, but I don't see why it wouldn't fix
-the issue, and it did for Patrick.)
+So i guess we agree that the right fix for this is to not touch struct
+pages when removing memory, correct?
 
 -- 
-Tomáš Janoušek, a.k.a. Pivník, a.k.a. Liskni_si, http://work.lisk.in/
+
+Thanks,
+
+David / dhildenb
