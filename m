@@ -2,84 +2,164 @@ Return-Path: <SRS0=qqIy=KO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8547D160A325
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 15:43:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EBD1160A325
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 15:43:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3371D20870
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 15:43:14 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="M/w3N8gP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3371D20870
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id C612B20870
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 15:43:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C612B20870
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=techsingularity.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730431AbeG3RSp (ORCPT
+        id S1730613AbeG3RTY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 30 Jul 2018 13:18:45 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:38014 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726854AbeG3RSp (ORCPT
+        Mon, 30 Jul 2018 13:19:24 -0400
+Received: from outbound-smtp12.blacknight.com ([46.22.139.17]:43368 "EHLO
+        outbound-smtp12.blacknight.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726843AbeG3RTY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Jul 2018 13:18:45 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:To:From:Date:Sender:Reply-To:Cc:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=8ztXLKv92fsz0q9bH9yPXuFZkcAoDO8YjzcW5OHSQ7Q=; b=M/w3N8gPwliXBoWPP04QB/4Jt
-        Qf87XyVvU4wA0rTst0sRF107BVv8cVZXhuOCcO1P5j70dLspEcaUilosl85LbxGFcnETX07g8LM1l
-        HdLcQoZX3Xf6wtBfjmfUMqMJkCqmvd1P/Tclx/++F7FNeWY6MqlYE+fVjOvhbQ2f0e7GqeTwXoi6c
-        he0KXjtoLtg3DjnhLq/e7rwiK+rbr+Ov8ZUdA+HFiRVXTfmSos8uT5ajOqGOlpaJyAtTSncTKUP0R
-        GicvvY1Wc/bGeF1LBnCi8nzw+k9uOZT7IU5tsDjiwfjCm3NS5nX98LQLnguxsYuhWuXeaXF02Lu9F
-        V8xdCVMfw==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fkAKE-0005Wl-Pd; Mon, 30 Jul 2018 15:43:10 +0000
-Date:   Mon, 30 Jul 2018 08:43:10 -0700
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Ross Zwisler <ross.zwisler@linux.intel.com>, zwisler@kernel.org,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Jan Kara <jack@suse.cz>,
-        Jeff Layton <jlayton@redhat.com>,
-        Lukas Czerner <lczerner@redhat.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Goldwyn Rodrigues <rgoldwyn@suse.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Ryusuke Konishi <konishi.ryusuke@lab.ntt.co.jp>,
-        linux-nilfs@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>,
-        Chao Yu <yuchao0@huawei.com>,
-        linux-f2fs-devel@lists.sourceforge.net
-Subject: Re: [PATCH v14 00/74] Convert page cache to XArray
-Message-ID: <20180730154310.GA4685@bombadil.infradead.org>
-References: <20180617020052.4759-1-willy@infradead.org>
- <20180619031257.GA12527@linux.intel.com>
- <20180619092230.GA1438@bombadil.infradead.org>
- <20180619164037.GA6679@linux.intel.com>
- <20180619171638.GE1438@bombadil.infradead.org>
- <20180627110529.GA19606@bombadil.infradead.org>
- <20180627194438.GA20774@linux.intel.com>
- <20180725210323.GB1366@bombadil.infradead.org>
- <20180727172035.GA13586@linux.intel.com>
+        Mon, 30 Jul 2018 13:19:24 -0400
+Received: from mail.blacknight.com (pemlinmail02.blacknight.ie [81.17.254.11])
+        by outbound-smtp12.blacknight.com (Postfix) with ESMTPS id E23621C1ECA
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Jul 2018 16:43:48 +0100 (IST)
+Received: (qmail 7637 invoked from network); 30 Jul 2018 15:43:48 -0000
+Received: from unknown (HELO techsingularity.net) (mgorman@techsingularity.net@[37.228.237.66])
+  by 81.17.254.9 with ESMTPSA (DHE-RSA-AES256-SHA encrypted, authenticated); 30 Jul 2018 15:43:48 -0000
+Date:   Mon, 30 Jul 2018 16:43:47 +0100
+From:   Mel Gorman <mgorman@techsingularity.net>
+To:     Francisco Jerez <currojerez@riseup.net>
+Cc:     Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+        lenb@kernel.org, rjw@rjwysocki.net, peterz@infradead.org,
+        ggherdovich@suse.cz, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, juri.lelli@redhat.com,
+        viresh.kumar@linaro.org, Chris Wilson <chris@chris-wilson.co.uk>,
+        Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Eero Tamminen <eero.t.tamminen@intel.com>
+Subject: Re: [PATCH 4/4] cpufreq: intel_pstate: enable boost for Skylake Xeon
+Message-ID: <20180730154347.wrcrkweckclgbyrp@techsingularity.net>
+References: <20180605214242.62156-1-srinivas.pandruvada@linux.intel.com>
+ <20180605214242.62156-5-srinivas.pandruvada@linux.intel.com>
+ <87bmarhqk4.fsf@riseup.net>
+ <20180728123639.7ckv3ljnei3urn6m@techsingularity.net>
+ <87r2jnf6w0.fsf@riseup.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-15
 Content-Disposition: inline
-In-Reply-To: <20180727172035.GA13586@linux.intel.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <87r2jnf6w0.fsf@riseup.net>
+User-Agent: NeoMutt/20170912 (1.9.0)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 27, 2018 at 11:20:35AM -0600, Ross Zwisler wrote:
-> Okay, the next failure I'm hitting is with DAX + XFS + generic/344.  It
-> doesn't happen every time, but I can usually recreate it within 10 iterations
-> of the test.  Here's the failure:
+On Sat, Jul 28, 2018 at 01:21:51PM -0700, Francisco Jerez wrote:
+> >> Please revert this series, it led to significant energy usage and
+> >> graphics performance regressions [1].  The reasons are roughly the ones
+> >> we discussed by e-mail off-list last April: This causes the intel_pstate
+> >> driver to decrease the EPP to zero when the workload blocks on IO
+> >> frequently enough, which for the regressing benchmarks detailed in [1]
+> >> is a symptom of the workload being heavily IO-bound, which means they
+> >> won't benefit at all from the EPP boost since they aren't significantly
+> >> CPU-bound, and they will suffer a decrease in parallelism due to the
+> >> active CPU core using a larger fraction of the TDP in order to achieve
+> >> the same work, causing the GPU to have a lower power budget available,
+> >> leading to a decrease in system performance.
+> >
+> > It slices both ways.
+> 
+> I don't think it's acceptable to land an optimization that trades
+> performance of one use-case for another,
 
-Thanks.  I've made some progress with this; the WARNing is coming from
-a vm_insert_* mkwrite call.  Inserting sufficient debugging code has
-let me determine we still have a zero_pfn in the page table when we're
-trying to insert a new PFN.
+The same logic applies to a revert but that aside, I see that there is
+at least one patch floating around to disable HWP Boost for desktops and
+laptops. Maybe that'll be sufficient for the cases where IGP is a major
+component.
+
+> especially since one could make
+> both use-cases happy by avoiding the boost in cases where we know
+> beforehand that we aren't going to achieve any improvement in
+> performance, because an application waiting frequently on an IO device
+> which is 100% utilized isn't going to run faster just because we ramp up
+> the CPU frequency, since the IO device won't be able to process requests
+> from the application faster anyway, so we will only be pessimizing
+> energy efficiency (and potentially decreasing performance of the GPU
+> *and* of other CPU cores living on the same package for no benefit).
+> 
+
+The benchmarks in question are not necessarily utilising IO at 100% or
+IO-bound. One pattern is a small fsync which ends up context switching
+between the process and a journalling thread (may be dedicated thread, may be
+workqueue depending on filesystem) and the process waking again in the very
+near future on IO completion. While the workload may be single threaded,
+more than one core is in use because of how the short sleeps migrate the
+task to other cores.  HWP does not necessarily notice that the task is
+quite CPU-intensive due to the migrations and so the performance suffers.
+
+Some effort is made to minimise the number of cores used with this sort
+of waker/wakee relationship but it's not necessarily enough for HWP to
+boost the frequency.  Minimally, the journalling thread woken up will
+not wake on the same CPU as the IO issuer except under extremely heavily
+utilisation and this is not likely to change (stacking stacks too often
+increases wakeup latency).
+
+> > With the series, there are large boosts to performance on other
+> > workloads where a slight increase in power usage is acceptable in
+> > exchange for performance. For example,
+> >
+> > Single socket skylake running sqlite
+> >                                  v4.17               41ab43c9
+> > Min       Trans     2580.85 (   0.00%)     5401.58 ( 109.29%)
+> > Hmean     Trans     2610.38 (   0.00%)     5518.36 ( 111.40%)
+> > Stddev    Trans       28.08 (   0.00%)      208.90 (-644.02%)
+> > CoeffVar  Trans        1.08 (   0.00%)        3.78 (-251.57%)
+> > Max       Trans     2648.02 (   0.00%)     5992.74 ( 126.31%)
+> > BHmean-50 Trans     2629.78 (   0.00%)     5643.81 ( 114.61%)
+> > BHmean-95 Trans     2620.38 (   0.00%)     5538.32 ( 111.36%)
+> > BHmean-99 Trans     2620.38 (   0.00%)     5538.32 ( 111.36%)
+> >
+> > That's over doubling the transactions per second for that workload.
+> >
+> > Two-socket skylake running dbench4
+> >                                 v4.17               41ab43c9
+> > Amean      1         40.85 (   0.00%)       14.97 (  63.36%)
+> > Amean      2         42.31 (   0.00%)       17.33 (  59.04%)
+> > Amean      4         53.77 (   0.00%)       27.85 (  48.20%)
+> > Amean      8         68.86 (   0.00%)       43.78 (  36.42%)
+> > Amean      16        82.62 (   0.00%)       56.51 (  31.60%)
+> > Amean      32       135.80 (   0.00%)      116.06 (  14.54%)
+> > Amean      64       737.51 (   0.00%)      701.00 (   4.95%)
+> > Amean      512    14996.60 (   0.00%)    14755.05 (   1.61%)
+> >
+> > This is reporting the average latency of operations running
+> > dbench. The series over halves the latencies. There are many examples
+> > of basic workloads that benefit heavily from the series and while I
+> > accept it may not be universal, such as the case where the graphics
+> > card needs the power and not the CPU, a straight revert is not the
+> > answer. Without the series, HWP cripplies the CPU.
+> >
+> 
+> That seems like a huge overstatement.  HWP doesn't "cripple" the CPU
+> without this series.  It will certainly set lower clocks than with this
+> series for workloads like you show above that utilize the CPU very
+> intermittently (i.e. they underutilize it). 
+
+Dbench for example can be quite CPU intensive. When bound to a single
+core, it shows up to 80% utilisation of a single core. When unbound,
+the usage of individual cores appears low due to the migrations. It may
+be intermittent usage as it context switches to worker threads but it's
+not low utilisation either.
+
+intel_pstate also had logic for IO-boosting before HWP so the user-visible
+impact for some workloads is that upgrading a machine's CPU can result
+in regressions due to HWP. Similarly it has been observed prior to the
+series that specifying no_hwp often performed better. So one could argue
+that HWP isn't "crippled" but it did have surprising behaviour.
+
+-- 
+Mel Gorman
+SUSE Labs
