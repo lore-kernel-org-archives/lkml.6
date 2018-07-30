@@ -3,190 +3,282 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8C47C43142
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 20:01:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA6B6C43142
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 20:02:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 50AB020857
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 20:01:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 54DB320890
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 20:02:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I8e98gh0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 50AB020857
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="XeLDsnyr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 54DB320890
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732010AbeG3ViA (ORCPT
+        id S1731803AbeG3VjM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 30 Jul 2018 17:38:00 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:53562 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731904AbeG3Vh7 (ORCPT
+        Mon, 30 Jul 2018 17:39:12 -0400
+Received: from mail-it0-f66.google.com ([209.85.214.66]:37259 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727019AbeG3VjM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Jul 2018 17:37:59 -0400
-Received: by mail-wm0-f66.google.com with SMTP id s9-v6so630718wmh.3;
-        Mon, 30 Jul 2018 13:01:22 -0700 (PDT)
+        Mon, 30 Jul 2018 17:39:12 -0400
+Received: by mail-it0-f66.google.com with SMTP id h20-v6so1019438itf.2
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Jul 2018 13:02:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=aYbEuuEymCMOEvWE8VMBNTm0H1Ih87GNt+6/xIuYeDE=;
-        b=I8e98gh0bh11qrH7I7Te2toyi8NmGGDDY9nUDIFQJEnzRFbla5JTs0XfbYWam3K8Ae
-         nKNV/T7hXQ5F95xvLk04zM/hwoBq892HVbI9UFbziKpzFtX8xEdS6s/Wy1s/JWFDxuCz
-         piwEErQ89p2RSPs7Fig0J3lwznWORLrwgyRiyfBJ0XvLiNd3lq1+viJr3lDLiA+dSyf+
-         +++PuWWRGRzclRIZSMR+tIc4M8VROqDlae2w4F5XFKGegBAQHPWom8YhLCSVTHUFSam3
-         /bEAiEpbHofalBmJHrIZEL8aJ4i3LCpssj3gwlCgLf9Sw6lWUvCVYH/S1Zjva+uGNKz0
-         +8+w==
+         :content-disposition:in-reply-to:user-agent;
+        bh=wZ7IykVgdFujF+dPDcPgpGPmbZMEDhXUtVMpaGeqPmA=;
+        b=XeLDsnyrXMxdDiN7I4C02ozMWkic0HbXMAjLpIwcUgbHGRVJT5/ZCrWMzMinzpLBuE
+         1XbzEp5JuJ28NQMeYpSf2dKtzg8u3k2bQWFTBDesKmnGn83uSmACS2GeWw4QwwUiFySs
+         XHoOrmI3HcyeBiGETsU6rq12dRovX+vetcp3w=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=aYbEuuEymCMOEvWE8VMBNTm0H1Ih87GNt+6/xIuYeDE=;
-        b=ZGTEB/1L1k0qziaYjhz5DZAF+LeEc6c/P/5bus7pSRhtdumPCTM5b7EymNNVW2qh/D
-         HbpAYXiHeh2iZNR8/nDxayUgAE11A9FJFgsoPE7thaVOdgy9cRkh83bkg45vPlnPE4TZ
-         oI3+hdq/mf0KB1GDwaQIbjlO78LMo5aKZ0VTkSPFh2z9h/e1hiLK6iSTe6BYIIs4CzSk
-         wuNJ2aKMO20U/oSvEXmSy8Msix321L4UuQrwwZ1KEcloe9oQi/oHaOaNE9Bmjztig0F6
-         LRge6nFvVgfyz0G+8VEOsze5Le/7T0pMnJjQ5ZMugpLK0oRM0zXFhOVOzblLWQIy/GC6
-         qsCg==
-X-Gm-Message-State: AOUpUlH2KRGs+UeteqfJp6F/yt9McEHz5043YWKh62GzBTrlXzHzJhe1
-        1DyWY59B/uMHnOsht2E9ZMI=
-X-Google-Smtp-Source: AAOMgpfFlbicJGAZG5qAB+f+OyqC5Xg93tf55uEyqlkehutVSWirLnTQbyUpsNabDmqu7LhI3Xou5g==
-X-Received: by 2002:a1c:cc01:: with SMTP id h1-v6mr409791wmb.82.1532980881866;
-        Mon, 30 Jul 2018 13:01:21 -0700 (PDT)
-Received: from flashbox ([2a01:4f8:10b:24a5::2])
-        by smtp.gmail.com with ESMTPSA id e137-v6sm699906wma.20.2018.07.30.13.01.20
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 30 Jul 2018 13:01:20 -0700 (PDT)
-Date:   Mon, 30 Jul 2018 13:01:19 -0700
-From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     Nick Desaulniers <ndesaulniers@google.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Matthias Kaehlcke <mka@chromium.org>, ghackmann@android.com,
-        Greg Hackmann <ghackmann@google.com>, stable@vger.kernel.org,
-        Kees Cook <keescook@chromium.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Wei Wang <wvw@google.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        rdunlap@infradead.org, neilb@suse.com,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] kernel.h: Disable -Wreturn-stack-address for _THIS_IP_
-Message-ID: <20180730200119.GA8599@flashbox>
-References: <20180730170622.99349-1-ndesaulniers@google.com>
- <20180730183943.GA9221@flashbox>
- <CAKwvOdmYjgSMH5jESiK3kQa1DSyBpxesAmi_gbY9LL5_8XrA5g@mail.gmail.com>
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=wZ7IykVgdFujF+dPDcPgpGPmbZMEDhXUtVMpaGeqPmA=;
+        b=hn3hOHUBPtRyexrK0PF1ghTRrUdl2CaHE5NKPg57Da/I7QMXoDrXriHkbfzAga/NGl
+         ZoyGW23g4tDrR0beYObKH4Wy5Ar3sjZd3wZzAat8plqoVlacvU9Z0FpsowJV94GzzveW
+         iiQMx5+hU0Zo/84WE8dMrPg8vkYRYUQy9KPr4lTj1+avwLo14tVuy3OYKgqxh/aM+IEX
+         1X8/LAe5J+DDDRD1Qeynvw9X2HT/f1ylFiyu+dUqux11lnXqcKy0ndBn/3bHK4a/bRwE
+         0uGZC54i2n4+qRVKxTtqLspBnHmnAzCyln8t+79ad6o+7as7X4dZ53/0hx223kgJhkl4
+         DP9w==
+X-Gm-Message-State: AOUpUlF2yudNTGhExq4rnimdOwlfb3BJ64BR1mRGrtZUyR0cucfOPeqT
+        wMLflElcw7hYRFy+i2d7wye/Ag==
+X-Google-Smtp-Source: AAOMgpe2g7FvfObp0+qSCNfxWYNNAxTAq+3bmG3WI/RsU7WQR59BQC712943TTO0jk5SrRRgo4eLDg==
+X-Received: by 2002:a24:be8f:: with SMTP id i137-v6mr652068itf.61.1532980956095;
+        Mon, 30 Jul 2018 13:02:36 -0700 (PDT)
+Received: from xps15 (S0106002369de4dac.cg.shawcable.net. [68.147.8.254])
+        by smtp.gmail.com with ESMTPSA id c97-v6sm284868itd.19.2018.07.30.13.02.33
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 30 Jul 2018 13:02:35 -0700 (PDT)
+Date:   Mon, 30 Jul 2018 14:02:32 -0600
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+To:     Suzuki K Poulose <suzuki.poulose@arm.com>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        mike.leach@linaro.org, robert.walker@arm.com,
+        coresight@lists.linaro.org, robh@kernel.org,
+        frowand.list@gmail.com, devicetree@vger.kernel.org,
+        matt.sealey@arm.com, charles.garcia-tobin@arm.com,
+        john.horley@arm.com, al.grant@arm.com
+Subject: Re: [PATCH v3 0/9] coresight: Update device tree bindings
+Message-ID: <20180730200232.GA31755@xps15>
+References: <1532686537-12380-1-git-send-email-suzuki.poulose@arm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAKwvOdmYjgSMH5jESiK3kQa1DSyBpxesAmi_gbY9LL5_8XrA5g@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <1532686537-12380-1-git-send-email-suzuki.poulose@arm.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 30, 2018 at 12:48:06PM -0700, Nick Desaulniers wrote:
-> On Mon, Jul 30, 2018 at 11:39 AM Nathan Chancellor
-> <natechancellor@gmail.com> wrote:
-> >
-> > On Mon, Jul 30, 2018 at 10:06:20AM -0700, Nick Desaulniers wrote:
-> > > Starting with Clang-7.0, _THIS_IP_ generates -Wreturn-stack-address
-> > > warnings for almost every translation unit. In general, I'd prefer to
-> > > leave this on (returning the address of a stack allocated variable is in
-> > > general a bad idea) and disable it only at whitelisted call sites.
-> > >
-> > > We can't do something like:
-> > >  #pragma clang diagnostic push
-> > >  #pragma clang diagnostic ignored "-Wreturn-stack-address"
-> > >  <code>
-> > >  #pragma clang diagnostic pop
-> > >
-> > > in a GNU Statement Expression or macro, hence we use _Pragma, which is
-> > > its raison d'être: https://gcc.gnu.org/onlinedocs/cpp/Pragmas.html
-> > >
-> > > Cc: stable@vger.kernel.org # 4.17, 4.14, 4.9, 4.4
-> > > Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
-> > > ---
-> > >  include/linux/kernel.h | 10 +++++++++-
-> > >  1 file changed, 9 insertions(+), 1 deletion(-)
-> > >
-> > > diff --git a/include/linux/kernel.h b/include/linux/kernel.h
-> > > index 941dc0a5a877..5906f5727f90 100644
-> > > --- a/include/linux/kernel.h
-> > > +++ b/include/linux/kernel.h
-> > > @@ -168,7 +168,15 @@
-> > >
-> > >
-> > >  #define _RET_IP_             (unsigned long)__builtin_return_address(0)
-> > > -#define _THIS_IP_  ({ __label__ __here; __here: (unsigned long)&&__here; })
-> > > +#define _THIS_IP_  (                                                 \
-> > > +{                                                                    \
-> > > +     _Pragma("clang diagnostic push")                                \
-> > > +     _Pragma("clang diagnostic ignored \"-Wreturn-stack-address\"")  \
-> > > +     __label__ __here;                                               \
-> > > +__here: (unsigned long)&&__here;                                     \
-> > > +     _Pragma("clang diagnostic pop")                                 \
-> > > +}                                                                    \
-> > > +)
-> > >
-> > >  #ifdef CONFIG_LBDAF
-> > >  # include <asm/div64.h>
-> > > --
-> > > 2.18.0.233.g985f88cf7e-goog
-> > >
-> >
-> > This generates a ton of warnings with GCC:
-> >
-> > In file included from ./include/linux/spinlock.h:58,
-> >                  from ./include/linux/mmzone.h:8,
-> >                  from ./include/linux/gfp.h:6,
-> >                  from ./include/linux/slab.h:15,
-> >                  from ./include/linux/crypto.h:24,
-> >                  from arch/x86/kernel/asm-offsets.c:9:
-> > ./include/linux/bottom_half.h: In function ‘local_bh_disable’:
-> > ./include/linux/bottom_half.h:19: error: ignoring #pragma clang diagnostic [-Werror=unknown-pragmas]
-> >   __local_bh_disable_ip(_THIS_IP_, SOFTIRQ_DISABLE_OFFSET);
-> >
-> > ./include/linux/bottom_half.h:19: error: ignoring #pragma clang diagnostic [-Werror=unknown-pragmas]
-> > ./include/linux/bottom_half.h:19: error: ignoring #pragma clang diagnostic [-Werror=unknown-pragmas]
-> > ./include/linux/bottom_half.h: In function ‘local_bh_enable’:
-> > ./include/linux/bottom_half.h:32: error: ignoring #pragma clang diagnostic [-Werror=unknown-pragmas]
-> >   __local_bh_enable_ip(_THIS_IP_, SOFTIRQ_DISABLE_OFFSET);
-> >
-> > ./include/linux/bottom_half.h:32: error: ignoring #pragma clang diagnostic [-Werror=unknown-pragmas]
-> > ./include/linux/bottom_half.h:32: error: ignoring #pragma clang diagnostic [-Werror=unknown-pragmas]
-> > cc1: all warnings being treated as errors
-> > make[1]: *** [Kbuild:56: arch/x86/kernel/asm-offsets.s] Error 1
-> > make: *** [Makefile:1081: prepare0] Error 2
+On Fri, Jul 27, 2018 at 11:15:28AM +0100, Suzuki K Poulose wrote:
+> Coresight uses DT graph bindings to describe the connections of the
+> components. However we have some undocumented usage of the bindings
+> to describe some of the properties of the connections.
 > 
-> Ah, good catch.  I thought I had tested locally with gcc-8, but it
-> seems that it was likely only godbolt.  I do see the errors locally
-> when building with gcc-8.
+> The coresight driver needs to know the hardware ports invovled
+> in the connection and the direction of data flow to effectively
+> manage the trace sessions. So far we have relied on the "port"
+> address (as described by the generic graph bindings) to represent
+> the hardware port of the component for a connection.
 > 
-> >
-> > A proper solution is probably going to involve what was done for the
-> > -Wattribute-alias warnings from GCC 8 in commits 8793bb7f4a9d ("kbuild:
-> > add macro for controlling warnings to linux/compiler.h") and
-> > bee20031772a ("disable -Wattribute-alias warning for SYSCALL_DEFINEx()")
-> >
-> > I'll take a look at it in a bit unless someone beats me to it.
+> The hardware uses separate numbering scheme for input and output
+> ports, which implies, we could have two different (input and output)
+> ports with the same port number. This could create problems in the
+> graph bindings where the label of the port wouldn't match the address.
 > 
-> I'll fix this up, triple check with gcc-8, and attribute you in the
-> Suggested-by tag.  Thank you for verifying.
+> e.g, with the existing bindings we get :
+> 
+> 	port@0{				// Output port 0
+> 		reg = <0>;
+> 		...
+> 	};
+> 
+> 	port@1{
+> 		reg = <0>;		// Input port 0
+> 		endpoint {
+> 			slave-mode;
+> 			...
+> 		};
+> 	};
+> 
+> With the new enforcement in the DT rules, mismatches in label and address
+> are not allowed (as see in the case for port@1). So, we need a new mechanism
+> to describe the hardware port number reliably.
+> 
+> Also, we relied on an undocumented "slave-mode" property (see the above
+> example) to indicate if the port is an input port. Let us formalise and
+> switch to a new property to describe the direction of data flow.
+> 
+> There were three options considered for the hardware port number scheme:
+> 
+>  1) Use natural ordering in the DT to infer the hardware port number.
+>   i.e, Mandate that the all ports are listed in the DT and in the ascending
+>   order for each class (input and output respectively).
+>    Pros :
+>       - We don't need new properties and if the existing DTS list them in
+>         order (which most of them do), they work out of the box.
+>    Cons :
+>       - We must list all the ports even if the system cannot/shouldn't use
+>         it.
+>       - It is prone to human errors (if the order is not kept).
+> 
+>  2) Use an explicit property to list both the direction and the hw port
+>     number and direction. Define "coresight,hwid" as 2 member array of u32,
+>     where the members are port number and the direction respectively.
+> 	e.g
+> 
+> 	port@0{
+> 		reg = <0>;
+> 		endpoint {
+> 			coresight,hwid = <0 1>;	// Port # 0, Output
+> 		}
+> 	};
+> 
+> 	port@1{
+> 		reg = <1>;
+> 		endpoint {
+> 			coresight,hwid = <0 0>;	// Port # 0, Input
+> 		};
+> 	};
+> 
+> 	Pros:
+> 	  - The bindings are formal but not so reader friendly and could
+> 	    potentially lead to human errors.
+> 	Cons:
+> 	  - Backward compatiblity is lost.
+>  3) Use explicit properties (implemented in the series) for the hardware
+>     port id and direction. We define a new property "coresight,hwid" for
+>     each endpoint in coresight devices to specify the hardware port number
+>     explicitly. Also use a separate property "direction" to specify the
+>     direction of the data flow.
+> 
+> 	e.g,
+> 
+> 	port@0{
+> 		reg = <0>;
+> 		endpoint {
+> 			direction = <1>;	// Output
+> 			coresight,hwid = <0>;	// Port # 0
+> 		}
+> 	};
+> 
+> 	port@1{
+> 		reg = <1>;
+> 		endpoint {
+> 			direction = <0>;	// Input
+> 			coresight,hwid = <0>;	// Port # 0
+> 		};
+> 	};
+> 
+>     Pros:
+>        - The bindings are formal and reader friendly, and less prone to errors.
+>     Cons:
+>        - Backward compatibility is lost.
+> 
+> After a round of discussions [1], the following option (4) is adopted :
+> 
+>  4) Group ports based on the directions under a dedicated node. This has been
+>     checked with the upstream DTC tool to resolve the "address mismatch" issue.
+> 
+> 	e.g,
+> 
+> 	out-ports {				// Output ports for this component
+> 
+> 		port@0 {			// Outport 0
+> 		  reg = 0;
+> 		  endpoint { ... };
+> 		};
+> 
+> 		port@1 {			// Outport 1
+> 		  reg = 1;
+> 		  endpoint { ... };
+> 		};
+> 
+> 	};
+> 
+> 	in-ports {				// Input ports for this component
+> 		port@0 {			// Inport 0
+> 		  reg = 0;
+> 		  endpoint { ... };
+> 		};
+> 
+> 		port@1 {			// Inport 1
+> 		  reg = 1;
+> 		  endpoint { ... };
+> 		};
+> 
+> 	};
+> 
+> 
+> This series implements Option (4) listed above and falls back to the old
+> bindings if the new bindings are not available. This allows the systems
+> with old bindings work with the new driver. The driver now issues a warning
+> (once) when it encounters the old bindings. The series contains DT update
+> for Juno platform. The remaining in-kernel sources could be updated once
+> we are fine with the proposal.
+> 
+> It also cleans up the platform parsing code to reduce the memory usage by
+> reusing the platform description.
+> 
+> Applies on coresight/next
+> 
+> Changes since V2:
+>   - Clean of_coresight_parse_endpoint() to return 1 to indicate a connection
+>     record was updated.
+>   - Drop documentation for old bindings
+> 
+> Changes since V1:
+>   - Implement the proposal by Rob.
+>   - Drop the DTS updates for all platforms except Juno
+>   - Drop the incorrect fix in coresight_register. Instead document the code
+>     to prevent people trying to un-fix it again.
+>   - Add a patch to drop remote device references in DT graph parsing
+>   - Split of_node refcount fixing patch, fix a typo in the comment.
+>   - Add Reviewed-by tags from Mathieu.
+>   - Drop patches picked up for 4.18-rc series
+> 
+> Changes since RFC:
+>  - Fixed style issues
+>  - Fix an existing memory leak coresight_register (Found in code update)
+>  - Fix missing of_node_put() in the existing driver (Reported-by Mathieu)
+>  - Update the existing dts in kernel tree.
+> 
+> Suzuki K Poulose (9):
+>   coresight: Document error handling in coresight_register
+>   coresight: platform: Refactor graph endpoint parsing
+>   coresight: platform: Fix refcounting for graph nodes
+>   coresight: platform: Fix leaking device reference
+>   coresight: Fix remote endpoint parsing
+>   coresight: Add helper to check if the endpoint is input
+>   coresight: platform: Cleanup coresight connection handling
+>   coresight: Cleanup coresight DT bindings
+>   dts: juno: Update coresight bindings
+> 
+>  .../devicetree/bindings/arm/coresight.txt          |  95 +++++---
+>  arch/arm64/boot/dts/arm/juno-base.dtsi             | 161 ++++++------
+>  arch/arm64/boot/dts/arm/juno-cs-r1r2.dtsi          |  52 ++--
+>  arch/arm64/boot/dts/arm/juno.dts                   |  13 +-
+>  drivers/hwtracing/coresight/coresight.c            |  35 +--
+>  drivers/hwtracing/coresight/of_coresight.c         | 269 ++++++++++++++-------
+>  include/linux/coresight.h                          |   9 +-
+>  7 files changed, 359 insertions(+), 275 deletions(-)
+>
+
+Good day,
+
+I have applied patches 1 to 7.  I will wait for Rob's ACK before doing the same
+with 8 and 9. 
+
+Thanks,
+Mathieu
+ 
 > -- 
-> Thanks,
-> ~Nick Desaulniers
-
-I forgot to mention there is a similar macro that will need this same
-fix in arch/arm64/include/asm/processor.h (current_text_addr), if you
-want to tackle it in v2. Do CC me on the next series so that I can test,
-thank you for doing this!
-
-Cheers,
-Nathan
+> 2.7.4
+> 
